@@ -306,7 +306,8 @@
    "holtzman2019nucleus"
   ],
   "cited_in": [
-   "hallucinations"
+   "hallucinations",
+   "music_video_generation"
   ]
  },
  {
@@ -337,12 +338,14 @@
   "city": "London, United Kingdom",
   "year": 2016.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "vq_vae",
    "oord2016wavenet"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "music_video_generation"
   ]
  },
  {
@@ -438,13 +441,9 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "dauphin2014saddle"
-  ],
-  "cited_in": [
-   "deeplearninglab"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Abraham Wald",
@@ -731,13 +730,9 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "merchant2023gnome"
-  ],
-  "cited_in": [
-   "ai_for_science"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Aditya Grover",
@@ -1176,6 +1171,7 @@
    "history",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -1214,6 +1210,7 @@
    "silver2016go"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -1234,7 +1231,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -1739,19 +1737,20 @@
    "firstgpt",
    "radford2021clip",
    "radford2023whisper",
-   "schulman2017ppo",
-   "radford2019language"
+   "radford2019language",
+   "whisper2022"
   ],
   "cited_in": [
+   "ai_and_society",
    "beyond_llms",
    "computer_vision",
    "history",
    "hyperparameters",
    "mechanistic_interpretability",
    "multimodal",
+   "music_video_generation",
    "philosophy",
    "positionalembeddingslab",
-   "reinforcement_learning",
    "transformer"
   ]
  },
@@ -1875,6 +1874,7 @@
   "cited_in": [
    "algorithms",
    "deeplearninglab",
+   "loss_landscape",
    "mechanistic_interpretability"
   ]
  },
@@ -1951,7 +1951,8 @@
   "cited_in": [
    "attentionlab",
    "beyond_llms",
-   "history"
+   "history",
+   "music_video_generation"
   ]
  },
  {
@@ -2336,8 +2337,10 @@
    "lakshminarayanan2017ensembles"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
-   "reliability"
+   "reliability",
+   "untold_history"
   ]
  },
  {
@@ -2536,7 +2539,9 @@
   "keys": [
    "defossez2022encodec"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Alexandre Remez",
@@ -2551,7 +2556,9 @@
   "keys": [
    "defossez2022encodec"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Alexandre Variengien",
@@ -3103,10 +3110,8 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "draxler_mode_connectivity"
-  ],
+  "works": 0,
+  "keys": [],
   "cited_in": []
  },
  {
@@ -3442,6 +3447,7 @@
    "cosmic_web_image"
   ],
   "cited_in": [
+   "atlas",
    "foam_of_meaning"
   ]
  },
@@ -3589,12 +3595,14 @@
   "city": "Vienna, Austria",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rombach2022ldm"
+   "rombach2022ldm",
+   "blattmann2023svid"
   ],
   "cited_in": [
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -3987,11 +3995,14 @@
   "city": "New York, USA",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "saxe2014deep"
+   "saxe2014deep",
+   "saxe2014exact"
   ],
-  "cited_in": []
+  "cited_in": [
+   "loss_landscape"
+  ]
  },
  {
   "name": "Andrew McAfee",
@@ -4075,7 +4086,8 @@
    "oord2016wavenet"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "music_video_generation"
   ]
  },
  {
@@ -4143,11 +4155,13 @@
   "city": "Oxford, United Kingdom",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "simonyan2014vgg"
+   "simonyan2014vgg",
+   "bain2021webvid"
   ],
   "cited_in": [
+   "music_video_generation",
    "origami"
   ]
  },
@@ -4264,13 +4278,15 @@
   "city": "Brighton, United Kingdom",
   "year": 1998.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "clark1998extended",
-   "clark2013surfing"
+   "clark2013surfing",
+   "clark2013whatevernext"
   ],
   "cited_in": [
    "hallucinations",
+   "mirror_in_machine",
    "myths"
   ]
  },
@@ -4409,6 +4425,7 @@
    "fan2018topk"
   ],
   "cited_in": [
+   "music_video_generation",
    "samplinglab"
   ]
  },
@@ -4807,12 +4824,14 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "moscowpapyrus"
+   "moscowpapyrus",
+   "img_flaming_heart"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "untold_history"
   ]
  },
  {
@@ -5310,7 +5329,9 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": []
+  "cited_in": [
+   "loss_landscape"
+  ]
  },
  {
   "name": "Aristide Baratin",
@@ -5645,6 +5666,7 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -5953,6 +5975,7 @@
    "history",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -6715,7 +6738,9 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": []
+  "cited_in": [
+   "loss_landscape"
+  ]
  },
  {
   "name": "Beidi Chen",
@@ -6979,10 +7004,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_ddim_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_ddim_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -7078,6 +7103,7 @@
    "baars"
   ],
   "cited_in": [
+   "mirror_in_machine",
    "philosophy"
   ]
  },
@@ -7111,7 +7137,9 @@
   "keys": [
    "widrow1960adaline"
   ],
-  "cited_in": []
+  "cited_in": [
+   "history"
+  ]
  },
  {
   "name": "Bernardino Romera-Paredes",
@@ -7198,7 +7226,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -7264,11 +7293,13 @@
   "city": "Göttingen, Germany",
   "year": 1854.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "riemann1857genus",
    "riemann1854raum"
   ],
   "cited_in": [
+   "geometry_i",
    "math_iv"
   ]
  },
@@ -7513,7 +7544,8 @@
    "rombach2022ldm"
   ],
   "cited_in": [
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -7821,6 +7853,7 @@
    "cosmic_web_image"
   ],
   "cited_in": [
+   "atlas",
    "foam_of_meaning"
   ]
  },
@@ -8608,6 +8641,7 @@
    "golgi1873"
   ],
   "cited_in": [
+   "mirror_in_machine",
    "untold_history"
   ]
  },
@@ -9859,7 +9893,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "multimodal"
+   "multimodal",
+   "music_video_generation"
   ]
  },
  {
@@ -9915,6 +9950,7 @@
    "silver2016go"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -10200,7 +10236,8 @@
    "li2018losslandscape"
   ],
   "cited_in": [
-   "deeplearninglab"
+   "deeplearninglab",
+   "loss_landscape"
   ]
  },
  {
@@ -10535,7 +10572,8 @@
    "strachey1952"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "music_video_generation"
   ]
  },
  {
@@ -12616,10 +12654,8 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "draxler_mode_connectivity"
-  ],
+  "works": 0,
+  "keys": [],
   "cited_in": []
  },
  {
@@ -12701,16 +12737,18 @@
   "city": "San Diego, USA",
   "year": 1986.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "rumelhart1986",
-   "rumelhart1986pdp"
+   "rumelhart1986pdp",
+   "rumelhart1986learning"
   ],
   "cited_in": [
    "autodiff",
    "backproplab",
    "differentiation",
    "history",
+   "loss_landscape",
    "optimizerlab"
   ]
  },
@@ -12886,7 +12924,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -13181,13 +13220,15 @@
   "city": "College Park, USA",
   "year": 2003.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "blei2003lda",
-   "blei2017vi"
+   "blei2017vi",
+   "mandt2017variational"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "loss_landscape"
   ]
  },
  {
@@ -13318,11 +13359,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rein2024gpqa"
+   "rein2024gpqa",
+   "becker2025metr"
   ],
-  "cited_in": []
+  "cited_in": [
+   "ai_and_society"
+  ]
  },
  {
   "name": "David Rosenthal",
@@ -13375,6 +13419,7 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "reinforcement_learning",
@@ -13725,15 +13770,17 @@
   "city": "London, United Kingdom",
   "year": 2016.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "silver2016alphago",
    "mnih2015dqn",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "romera2023funsearch"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -14090,6 +14137,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "music_video_generation",
    "optimizerlab",
    "overandunderfittinglab"
   ]
@@ -14323,6 +14371,7 @@
    "silver2016go"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -14342,7 +14391,8 @@
    "rombach2022ldm"
   ],
   "cited_in": [
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -14552,6 +14602,7 @@
   ],
   "cited_in": [
    "history",
+   "mirror_in_machine",
    "untold_history"
   ]
  },
@@ -14619,7 +14670,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -15493,7 +15545,9 @@
    "merchant2023gnome"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
   ]
  },
  {
@@ -16232,11 +16286,13 @@
   "city": "Cambridge, USA",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "brynjolfsson2014secondmachine"
+   "brynjolfsson2014secondmachine",
+   "brynjolfsson2023genai"
   ],
   "cited_in": [
+   "ai_and_society",
    "myths"
   ]
  },
@@ -16395,6 +16451,7 @@
    "cosmic_web_image"
   ],
   "cited_in": [
+   "atlas",
    "foam_of_meaning"
   ]
  },
@@ -16466,7 +16523,8 @@
    "alphafold_db"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_for_science",
+   "untold_history"
   ]
  },
  {
@@ -17217,9 +17275,10 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rahaman2019spectral"
+   "rahaman2019spectral",
+   "draxler_mode_connectivity"
   ],
   "cited_in": []
  },
@@ -17253,7 +17312,9 @@
   "keys": [
    "copet2023musicgen"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Feng Ma",
@@ -17874,10 +17935,8 @@
   "city": "Munich, Germany",
   "year": 2018.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "draxler_mode_connectivity"
-  ],
+  "works": 0,
+  "keys": [],
   "cited_in": []
  },
  {
@@ -17962,9 +18021,10 @@
   "city": "Munich, Germany",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "rahaman2019spectral"
+   "rahaman2019spectral",
+   "draxler_mode_connectivity"
   ],
   "cited_in": []
  },
@@ -18192,12 +18252,14 @@
   "city": "Cambridge, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "fli2023pause",
-   "fli2025ban"
+   "fli2025ban",
+   "eu_ai_act_wiki"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_existential_risk"
   ]
  },
@@ -18303,7 +18365,9 @@
   "keys": [
    "defossez2022encodec"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Gabriele Monfardini",
@@ -18638,7 +18702,8 @@
    "li2018losslandscape"
   ],
   "cited_in": [
-   "deeplearninglab"
+   "deeplearninglab",
+   "loss_landscape"
   ]
  },
  {
@@ -18771,7 +18836,7 @@
   "city": "Toronto, Canada",
   "year": 2007.0,
   "conf": 1,
-  "works": 12,
+  "works": 13,
   "keys": [
    "ackley1985boltzmann",
    "boltzmannlearning",
@@ -18784,7 +18849,8 @@
    "hinton1995wakesleep",
    "hinton1989autoencoder",
    "hinton2011capsules",
-   "sabour2017capsules"
+   "sabour2017capsules",
+   "rumelhart1986learning"
   ],
   "cited_in": [
    "activationlab",
@@ -18795,7 +18861,9 @@
    "differentiation",
    "geometry_i",
    "history",
+   "loss_landscape",
    "mechanistic_interpretability",
+   "mirror_in_machine",
    "optimizerlab",
    "philosophy",
    "transformer",
@@ -18958,7 +19026,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "human_mind"
+   "human_mind",
+   "mirror_in_machine"
   ]
  },
  {
@@ -19263,6 +19332,7 @@
    "silver2016go"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -19864,7 +19934,9 @@
    "merchant2023gnome"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
   ]
  },
  {
@@ -19927,11 +19999,13 @@
   "city": "San Francisco, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "openai2021dota"
+   "openai2021dota",
+   "whisper2022"
   ],
   "cited_in": [
+   "ai_and_society",
    "beyond_llms"
   ]
  },
@@ -21084,7 +21158,8 @@
    "li2018losslandscape"
   ],
   "cited_in": [
-   "deeplearninglab"
+   "deeplearninglab",
+   "loss_landscape"
   ]
  },
  {
@@ -21135,11 +21210,14 @@
   "city": "Hangzhou, China",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "wu2023audiolm"
+   "wu2023audiolm",
+   "liu2023audioldm"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Haokun Liu",
@@ -21313,6 +21391,7 @@
   "cited_in": [
    "algorithms",
    "deeplearninglab",
+   "loss_landscape",
    "mechanistic_interpretability"
   ]
  },
@@ -21541,7 +21620,8 @@
    "oord2016wavenet"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "music_video_generation"
   ]
  },
  {
@@ -21627,6 +21707,7 @@
    "waldeyer1891"
   ],
   "cited_in": [
+   "mirror_in_machine",
    "untold_history"
   ]
  },
@@ -21840,7 +21921,8 @@
   ],
   "cited_in": [
    "history",
-   "human_mind"
+   "human_mind",
+   "mirror_in_machine"
   ]
  },
  {
@@ -22425,7 +22507,9 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": []
+  "cited_in": [
+   "loss_landscape"
+  ]
  },
  {
   "name": "Hou Pong Chan",
@@ -23166,6 +23250,7 @@
   "cited_in": [
    "algorithms",
    "deeplearninglab",
+   "loss_landscape",
    "mechanistic_interpretability"
   ]
  },
@@ -23279,6 +23364,7 @@
    "history",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -23311,7 +23397,7 @@
   "city": "San Francisco, United States",
   "year": 2014.0,
   "conf": 1,
-  "works": 11,
+  "works": 12,
   "keys": [
    "gpt2",
    "firstgpt",
@@ -23323,9 +23409,11 @@
    "silver2016alphago",
    "radford2019language",
    "silver2016go",
-   "nakkiran2019deepdd"
+   "nakkiran2019deepdd",
+   "whisper2022"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "computer_vision",
@@ -23480,6 +23568,7 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -23692,7 +23781,9 @@
   "keys": [
    "copet2023musicgen"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Ivan Edward Sutherland",
@@ -24291,10 +24382,11 @@
   "city": "Palo Alto, United States",
   "year": 2019.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "zou2023representation",
-   "bai2018tcn"
+   "bai2018tcn",
+   "cohen2021edgeofstability"
   ],
   "cited_in": [
    "beyond_llms",
@@ -24763,7 +24855,9 @@
    "defossez2022encodec",
    "copet2023musicgen"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Jaehoon Lee",
@@ -24874,6 +24968,7 @@
    "history",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -25188,13 +25283,15 @@
   "city": "San Diego, United States",
   "year": 1986.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "saxe2014deep",
-   "rumelhart1986pdp"
+   "rumelhart1986pdp",
+   "saxe2014exact"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "loss_landscape"
   ]
  },
  {
@@ -25453,6 +25550,7 @@
   ],
   "cited_in": [
    "hallucinations",
+   "music_video_generation",
    "samplinglab"
   ]
  },
@@ -25760,14 +25858,16 @@
   "city": "Menlo Park, United States",
   "year": 2015.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "weston2015babi",
+   "hao2025coconut",
    "bordes2013transE",
    "bordes2013transe"
   ],
   "cited_in": [
    "beyond_llms",
+   "mechanistic_interpretability",
    "philosophy",
    "symbolic_ai"
   ]
@@ -26781,15 +26881,17 @@
   "city": "Beijing, China",
   "year": 2015.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "he2015resnet",
-   "ren2015faster"
+   "ren2015faster",
+   "he2016identity"
   ],
   "cited_in": [
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "loss_landscape",
    "origami",
    "resnetlab",
    "transformer"
@@ -27733,13 +27835,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "li2018losslandscape"
-  ],
-  "cited_in": [
-   "deeplearninglab"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "John H. Flavell",
@@ -27898,7 +27996,8 @@
    "hopfield1982"
   ],
   "cited_in": [
-   "fact_lookup"
+   "fact_lookup",
+   "loss_landscape"
   ]
  },
  {
@@ -27915,7 +28014,9 @@
    "jumper2021alphafold"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
   ]
  },
  {
@@ -27962,14 +28063,16 @@
   "city": "Palo Alto, United States",
   "year": 1969.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "algol60report",
    "darthmouthartificialintelligence",
-   "mccarthy1969some"
+   "mccarthy1969some",
+   "mccarthy1956dartmouth"
   ],
   "cited_in": [
    "agents",
+   "ai_and_society",
    "history",
    "untold_history"
   ]
@@ -28057,6 +28160,7 @@
    "silver2016go"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -28203,7 +28307,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -28697,14 +28802,16 @@
   "city": "Palo Alto, United States",
   "year": 2020.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "ho2020ddpm",
-   "ho2022cfg"
+   "ho2022cfg",
+   "ho2022imagenvideo"
   ],
   "cited_in": [
    "beyond_llms",
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -28821,14 +28928,17 @@
   "city": "San Francisco, United States",
   "year": 2021.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "radford2021clip",
-   "radford2023whisper"
+   "radford2023whisper",
+   "whisper2022"
   ],
   "cited_in": [
+   "ai_and_society",
    "computer_vision",
-   "multimodal"
+   "multimodal",
+   "music_video_generation"
   ]
  },
  {
@@ -28937,6 +29047,7 @@
   "cited_in": [
    "autodiff",
    "history",
+   "loss_landscape",
    "recurrent_networks",
    "resnetlab"
   ]
@@ -29578,6 +29689,7 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -29937,7 +30049,7 @@
   "city": "Lugano, Switzerland",
   "year": 2025.0,
   "conf": 1,
-  "works": 10,
+  "works": 11,
   "keys": [
    "greff2015lstm",
    "schmidhuber1996nplm",
@@ -29948,11 +30060,13 @@
    "lstm",
    "ciresan2011flexible",
    "schmidhuber2022deep",
-   "schmidhuber2025cnn"
+   "schmidhuber2025cnn",
+   "ha2018worldmodels"
   ],
   "cited_in": [
    "alternative_architectures",
    "history",
+   "music_video_generation",
    "positionalembeddingslab",
    "recurrent_networks",
    "resnetlab"
@@ -30207,18 +30321,20 @@
   "city": "Cambridge, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "he2015resnet",
    "wu2018groupnorm",
    "ren2015faster",
    "he2017maskrcnn",
-   "he2021mae"
+   "he2021mae",
+   "he2016identity"
   ],
   "cited_in": [
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "loss_landscape",
    "normalizationlab",
    "origami",
    "resnetlab",
@@ -30402,6 +30518,7 @@
   "cited_in": [
    "ai_for_science",
    "beyond_llms",
+   "music_video_generation",
    "origami"
   ]
  },
@@ -31381,8 +31498,9 @@
   "city": "London, UK",
   "year": 2016.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
+   "vq_vae",
    "mnih2013dqn",
    "silver2016alphago",
    "mnih2015dqn",
@@ -31390,8 +31508,10 @@
    "oord2016wavenet"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
+   "music_video_generation",
    "reinforcement_learning",
    "untold_history"
   ]
@@ -31554,7 +31674,8 @@
   "cited_in": [
    "activationlab",
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -31690,13 +31811,17 @@
   "city": "Montreal, Canada",
   "year": 2014.0,
   "conf": 1,
-  "works": 2,
+  "works": 4,
   "keys": [
    "cho2014gru",
-   "bahdanau2014"
+   "bahdanau2014",
+   "dauphin2014saddle",
+   "dauphin2014identifying"
   ],
   "cited_in": [
+   "deeplearninglab",
    "history",
+   "loss_landscape",
    "positionalembeddingslab",
    "recurrent_networks"
   ]
@@ -31987,13 +32112,15 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "dinh2016realnvp",
-   "dinh2017realnvp"
+   "dinh2017realnvp",
+   "dinh2017sharpness"
   ],
   "cited_in": [
    "beyond_llms",
+   "loss_landscape",
    "origami"
   ]
  },
@@ -32014,6 +32141,7 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -32071,7 +32199,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -32673,6 +32802,7 @@
   ],
   "cited_in": [
    "hallucinations",
+   "music_video_generation",
    "samplinglab"
   ]
  },
@@ -32904,6 +33034,7 @@
    "dehaene"
   ],
   "cited_in": [
+   "mirror_in_machine",
    "philosophy"
   ]
  },
@@ -33028,6 +33159,7 @@
    "history",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -33245,7 +33377,8 @@
    "lapicque1907"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -34074,6 +34207,7 @@
    "silver2016go"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -34127,7 +34261,8 @@
    "telgarsky2016wars"
   ],
   "cited_in": [
-   "deeplearninglab"
+   "deeplearninglab",
+   "loss_landscape"
   ]
  },
  {
@@ -34321,6 +34456,7 @@
    "silver2018zero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -34376,7 +34512,9 @@
   "keys": [
    "widrow1960adaline"
   ],
-  "cited_in": []
+  "cited_in": [
+   "history"
+  ]
  },
  {
   "name": "Marco Gori",
@@ -34460,7 +34598,8 @@
    "raichle2007defaultmode"
   ],
   "cited_in": [
-   "human_mind"
+   "human_mind",
+   "mirror_in_machine"
   ]
  },
  {
@@ -35447,13 +35586,15 @@
   "city": "Cambridge, USA",
   "year": 1969.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "minsky1954",
    "minskyperceptrons",
-   "minsky1986society"
+   "minsky1986society",
+   "mccarthy1956dartmouth"
   ],
   "cited_in": [
+   "ai_and_society",
    "history",
    "human_mind"
   ]
@@ -35694,13 +35835,15 @@
   "city": "Palo Alto, USA",
   "year": 2014.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "hoffman2014nuts",
-   "carpenter2017stan"
+   "carpenter2017stan",
+   "mandt2017variational"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "loss_landscape"
   ]
  },
  {
@@ -36104,6 +36247,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "music_video_generation",
    "symbolic_ai"
   ]
  },
@@ -36176,6 +36320,7 @@
   ],
   "cited_in": [
    "hallucinations",
+   "music_video_generation",
    "samplinglab"
   ]
  },
@@ -36226,8 +36371,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "javascript_mdn",
-   "mozillareadability"
+   "mozillareadability",
+   "javascript_mdn"
   ],
   "cited_in": [
    "software",
@@ -36400,11 +36545,13 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "chernozhukov2018dml"
+   "chernozhukov2018dml",
+   "peng2023copilot"
   ],
   "cited_in": [
+   "ai_and_society",
    "beyond_llms"
   ]
  },
@@ -37391,6 +37538,7 @@
    "frontier",
    "inference_optimization",
    "mechanistic_interpretability",
+   "music_video_generation",
    "positionalembeddingslab",
    "rag",
    "samplinglab",
@@ -37569,7 +37717,8 @@
    "alphafold_db"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_for_science",
+   "untold_history"
   ]
  },
  {
@@ -37670,7 +37819,8 @@
    "alphafold_db"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_for_science",
+   "untold_history"
   ]
  },
  {
@@ -38187,13 +38337,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "merchant2023gnome"
-  ],
-  "cited_in": [
-   "ai_for_science"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Muru Zhang",
@@ -38399,8 +38545,10 @@
    "oord2016wavenet"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
+   "music_video_generation",
    "untold_history"
   ]
  },
@@ -38565,6 +38713,7 @@
    "img_deep_space_1"
   ],
   "cited_in": [
+   "atlas",
    "foam_of_meaning",
    "untold_history"
   ]
@@ -38595,10 +38744,11 @@
   "city": "Pasadena, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "perseverance_selfie_image",
-   "img_ranger7_moon"
+   "img_ranger7_moon",
+   "img_ranger7_guericke"
   ],
   "cited_in": [
    "untold_history"
@@ -38753,11 +38903,13 @@
   "city": "Cambridge, USA",
   "year": 1956.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "darthmouthartificialintelligence"
+   "darthmouthartificialintelligence",
+   "mccarthy1956dartmouth"
   ],
   "cited_in": [
+   "ai_and_society",
    "history"
   ]
  },
@@ -39642,6 +39794,7 @@
    "history",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -39881,12 +40034,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 2,
+  "works": 3,
   "keys": [
    "keskar2019ctrl",
-   "basu2020mirostat"
+   "basu2020mirostat",
+   "keskar2016largebatch"
   ],
   "cited_in": [
+   "loss_landscape",
    "samplinglab"
   ]
  },
@@ -40099,6 +40254,7 @@
    "inference_optimization",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -40442,14 +40598,9 @@
   "city": "San Francisco, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "schulman2017ppo"
-  ],
-  "cited_in": [
-   "beyond_llms",
-   "reinforcement_learning"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Olivia Caramello",
@@ -40553,15 +40704,17 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "openai2023functioncalling",
    "openai2024o1",
    "openai2023apipricing",
    "navier_stokes_openai",
-   "openai2023superintelligence"
+   "openai2023superintelligence",
+   "openai2022chatgpt"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_existential_risk",
    "ai_for_science",
    "websearch"
@@ -40644,14 +40797,16 @@
   "city": "Mountain View, USA",
   "year": 2016.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "hinton2015distilling",
    "sutskever2014seq2seq",
+   "vq_vae",
    "oord2016wavenet"
   ],
   "cited_in": [
    "beyond_llms",
+   "music_video_generation",
    "production_serving"
   ]
  },
@@ -41120,7 +41275,8 @@
    "rombach2022ldm"
   ],
   "cited_in": [
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -41825,7 +41981,8 @@
    "schultz1997dopamine"
   ],
   "cited_in": [
-   "human_mind"
+   "human_mind",
+   "mirror_in_machine"
   ]
  },
  {
@@ -42407,7 +42564,9 @@
   "keys": [
    "foret2021sam"
   ],
-  "cited_in": []
+  "cited_in": [
+   "loss_landscape"
+  ]
  },
  {
   "name": "Pierre Hansen",
@@ -42507,9 +42666,10 @@
   "city": "Berkeley, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 8,
+  "works": 9,
   "keys": [
    "ho2020ddpm",
+   "yan2021videogpt",
    "li2023seqparallel",
    "liu2023ringattention",
    "liu2023ring",
@@ -42523,6 +42683,7 @@
    "contextwindows",
    "diffusion",
    "frontier",
+   "music_video_generation",
    "training_infrastructure"
   ]
  },
@@ -43138,7 +43299,7 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 7,
+  "works": 8,
   "keys": [
    "trinh2018commonsense",
    "ramachandran2017swish",
@@ -43146,12 +43307,14 @@
    "mikolov2013exploiting",
    "mckenzie2023inverse",
    "chung2022flan",
-   "real2019amoeba"
+   "real2019amoeba",
+   "smithle2018bayesian"
   ],
   "cited_in": [
    "activationlab",
    "beyond_llms",
    "embeddinglab",
+   "loss_landscape",
    "origami",
    "philosophy",
    "unexpected_capabilities"
@@ -43943,12 +44106,17 @@
   "city": "Toronto, Canada",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 5,
   "keys": [
-   "montufar2014regions"
+   "montufar2014regions",
+   "dauphin2014saddle",
+   "dauphin2014identifying",
+   "pascanu2014saddle",
+   "dinh2017sharpness"
   ],
   "cited_in": [
    "deeplearninglab",
+   "loss_landscape",
    "math_iv",
    "origami"
   ]
@@ -44272,6 +44440,7 @@
   ],
   "cited_in": [
    "history",
+   "music_video_generation",
    "statistics",
    "statistics_i",
    "transformer",
@@ -44287,13 +44456,9 @@
   "city": "",
   "year": 2014.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "dauphin2014saddle"
-  ],
-  "cited_in": [
-   "deeplearninglab"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Richard A. Mortlock",
@@ -44398,7 +44563,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -44415,7 +44581,9 @@
    "jumper2021alphafold"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
   ]
  },
  {
@@ -45319,7 +45487,8 @@
    "rombach2022ldm"
   ],
   "cited_in": [
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -45768,10 +45937,11 @@
   "city": "Toronto, Canada",
   "year": 1992.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "rumelhart1986",
-   "williams1992reinforce"
+   "williams1992reinforce",
+   "rumelhart1986learning"
   ],
   "cited_in": [
    "autodiff",
@@ -45779,6 +45949,7 @@
    "beyond_llms",
    "differentiation",
    "history",
+   "loss_landscape",
    "optimizerlab",
    "reinforcement_learning"
   ]
@@ -46639,7 +46810,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -46829,13 +47001,9 @@
   "city": "Palo Alto, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "merchant2023gnome"
-  ],
-  "cited_in": [
-   "ai_for_science"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Samuel Butler",
@@ -46917,12 +47085,14 @@
   "city": "",
   "year": 2017.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "smith2017orthogonal"
+   "smith2017orthogonal",
+   "smithle2018bayesian"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "loss_landscape"
   ]
  },
  {
@@ -46982,8 +47152,10 @@
    "merchant2023gnome"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
-   "origami"
+   "origami",
+   "untold_history"
   ]
  },
  {
@@ -46995,15 +47167,17 @@
   "city": "Montréal, Canada",
   "year": 2002.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "dinh2016realnvp",
    "collobert2002",
-   "dinh2017realnvp"
+   "dinh2017realnvp",
+   "dinh2017sharpness"
   ],
   "cited_in": [
    "beyond_llms",
    "history",
+   "loss_landscape",
    "origami"
   ]
  },
@@ -47055,8 +47229,10 @@
    "oord2016wavenet"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
+   "music_video_generation",
    "untold_history"
   ]
  },
@@ -47224,6 +47400,7 @@
   ],
   "cited_in": [
    "history",
+   "mirror_in_machine",
    "untold_history"
   ]
  },
@@ -48168,15 +48345,17 @@
   "city": "Palo Alto, USA",
   "year": 2015.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "he2015resnet",
-   "ren2015faster"
+   "ren2015faster",
+   "he2016identity"
   ],
   "cited_in": [
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "loss_landscape",
    "origami",
    "resnetlab",
    "transformer"
@@ -49505,7 +49684,8 @@
    "diekelmann2010sleep"
   ],
   "cited_in": [
-   "human_mind"
+   "human_mind",
+   "mirror_in_machine"
   ]
  },
  {
@@ -49814,15 +49994,18 @@
   "city": "Paris, France",
   "year": 2001.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "dehaene2001gnwt",
    "dehaene2017c0c1c2",
    "dehaene",
+   "amalric2019neuroimage",
    "dehaene1997numbersense"
   ],
   "cited_in": [
    "human_mind",
+   "mechanistic_interpretability",
+   "mirror_in_machine",
    "philosophy"
   ]
  },
@@ -50637,14 +50820,20 @@
   "city": "Stanford, USA",
   "year": 2015.0,
   "conf": 1,
-  "works": 2,
+  "works": 6,
   "keys": [
    "saxe2014deep",
-   "sohl2015deep"
+   "sohl2015deep",
+   "dauphin2014saddle",
+   "dauphin2014identifying",
+   "pascanu2014saddle",
+   "saxe2014exact"
   ],
   "cited_in": [
    "beyond_llms",
-   "diffusion"
+   "deeplearninglab",
+   "diffusion",
+   "loss_landscape"
   ]
  },
  {
@@ -51057,11 +51246,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "radford2023whisper"
+   "radford2023whisper",
+   "whisper2022"
   ],
-  "cited_in": []
+  "cited_in": [
+   "ai_and_society"
+  ]
  },
  {
   "name": "Tara A. Estlin",
@@ -51435,11 +51627,13 @@
   "city": "New York, USA",
   "year": 1958.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "newyorktimesperceptron"
+   "newyorktimesperceptron",
+   "bartz2025anthropic"
   ],
   "cited_in": [
+   "ai_and_society",
    "history",
    "untold_history"
   ]
@@ -51922,11 +52116,14 @@
   "city": "Princeton, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "sumers2024cognitive"
+   "sumers2024cognitive",
+   "huth2016semanticmaps"
   ],
-  "cited_in": []
+  "cited_in": [
+   "mirror_in_machine"
+  ]
  },
  {
   "name": "Thomas Lukasiewicz",
@@ -52117,6 +52314,7 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -52429,6 +52627,7 @@
    "beyond_llms",
    "diffusion",
    "history",
+   "music_video_generation",
    "positionalembeddingslab"
   ]
  },
@@ -52510,6 +52709,7 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "frontier",
@@ -52751,14 +52951,17 @@
   "city": "College Park, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "jain2023baseline",
-   "elhage2021mathematical"
+   "elhage2021mathematical",
+   "li2018losslandscape"
   ],
   "cited_in": [
+   "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
+   "loss_landscape",
    "mechanistic_interpretability",
    "security_inference",
    "transformer"
@@ -53105,7 +53308,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -53800,6 +54004,7 @@
    "silver2016go"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "beyond_llms",
    "untold_history"
@@ -53822,6 +54027,7 @@
   "cited_in": [
    "algorithms",
    "deeplearninglab",
+   "loss_landscape",
    "mechanistic_interpretability"
   ]
  },
@@ -54478,16 +54684,17 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_astronaut_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
    "diffusion",
    "human_mind",
    "intro",
+   "music_video_generation",
    "untold_history"
   ]
  },
@@ -54718,6 +54925,7 @@
   ],
   "cited_in": [
    "history",
+   "mirror_in_machine",
    "untold_history"
   ]
  },
@@ -54753,7 +54961,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "history"
+   "history",
+   "mirror_in_machine"
   ]
  },
  {
@@ -55276,7 +55485,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 147,
+  "works": 236,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -55338,11 +55547,28 @@
    "antikytherawiki",
    "perceptronswiki",
    "hebbianlearningrule",
+   "markkac",
    "kishtablet",
    "vincasymbols",
    "prehistoriccounting",
    "ancientnumeralsystems",
    "history_of_a",
+   "brooks2024sora",
+   "music_theory",
+   "midi",
+   "pcm",
+   "cd_digital_audio",
+   "nyquist_sampling",
+   "mp3",
+   "mdct",
+   "panharmonicon",
+   "max_mathews",
+   "illiac_suite",
+   "video_compression",
+   "dct",
+   "h264",
+   "av1",
+   "vhs",
    "edroberts",
    "altair8800",
    "ibm702",
@@ -55424,9 +55650,82 @@
    "superconductingqubit",
    "dolnivestonice",
    "lamarchecave",
-   "differenceengine"
+   "alchemy_wiki",
+   "zosimos_panopolis",
+   "hermes_trismegistus",
+   "tabula_smaragdina",
+   "maria_jewess",
+   "jabir_ibn_hayyan",
+   "aqua_regia",
+   "libavius",
+   "athanor",
+   "paracelsus",
+   "iatrochemistry",
+   "newton_alchemy",
+   "philosophers_stone",
+   "phlogiston",
+   "lavoisier",
+   "stockholm_papyrus",
+   "leyden_papyrus_x",
+   "pseudo_democritus",
+   "bolus_of_mendes",
+   "empedocles",
+   "democritus",
+   "atomism",
+   "chinese_alchemy",
+   "ge_hong",
+   "rasayana",
+   "nagarjuna_metallurgist",
+   "alchemy_islam",
+   "al_razi",
+   "avicenna",
+   "robert_of_chester",
+   "liber_de_compositione",
+   "turba_philosophorum",
+   "albertus_magnus",
+   "roger_bacon",
+   "sendivogius",
+   "chrysopoeia",
+   "sceptical_chymist",
+   "differenceengine",
+   "lateral_inhibition_wiki",
+   "winner_take_all_wiki",
+   "ai_winter_wiki",
+   "deepblue_wiki",
+   "edmond_belamy_wiki",
+   "theatre_dopera_wiki",
+   "heart_on_my_sleeve_wiki",
+   "wga2023strike_wiki",
+   "cbs2024characterai",
+   "audio_deepfake_wiki",
+   "romance_scam_wiki",
+   "ward2014googleeffect",
+   "parasuraman1997automation",
+   "replika_wiki",
+   "ai_and_elections_wiki",
+   "alpha_geometry_wiki",
+   "rentosertib_wiki",
+   "khanacademy_wiki",
+   "vibe_coding_wiki",
+   "calculator_wiki",
+   "duolingo_wiki",
+   "ira_wiki",
+   "cambridge_analytica_wiki",
+   "synthetic_media_wiki",
+   "chatgpt_wiki",
+   "stable_diffusion_wiki",
+   "google_translate_wiki",
+   "deepl_wiki",
+   "insilico_wiki",
+   "alphafold_wiki",
+   "erdos_problems_wiki",
+   "magnetic_field_wiki",
+   "magnetosphere_wiki",
+   "atmosphere_wiki",
+   "goe_wiki"
   ],
   "cited_in": [
+   "ai_and_society",
    "autodiff",
    "coherent_difference",
    "foam_of_meaning",
@@ -55434,6 +55733,8 @@
    "history",
    "language",
    "math_iv",
+   "mirror_in_machine",
+   "music_video_generation",
    "myths",
    "origami",
    "philosophy",
@@ -55855,7 +56156,8 @@
    "peebles2023dit"
   ],
   "cited_in": [
-   "diffusion"
+   "diffusion",
+   "music_video_generation"
   ]
  },
  {
@@ -56160,7 +56462,8 @@
    "schultz1997dopamine"
   ],
   "cited_in": [
-   "human_mind"
+   "human_mind",
+   "mirror_in_machine"
   ]
  },
  {
@@ -56445,14 +56748,16 @@
   "city": "Beijing, China",
   "year": 2015.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "he2015resnet"
+   "he2015resnet",
+   "he2016identity"
   ],
   "cited_in": [
    "autodiff",
    "computer_vision",
    "deeplearninglab",
+   "loss_landscape",
    "origami",
    "resnetlab",
    "transformer"
@@ -57229,13 +57534,16 @@
   "city": "Mountain View, USA",
   "year": 2018.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "fan2018topk",
-   "dauphin2014saddle"
+   "dauphin2014saddle",
+   "dauphin2014identifying"
   ],
   "cited_in": [
    "deeplearninglab",
+   "loss_landscape",
+   "music_video_generation",
    "samplinglab"
   ]
  },
@@ -57248,7 +57556,7 @@
   "city": "New York, USA",
   "year": 1998.0,
   "conf": 1,
-  "works": 7,
+  "works": 8,
   "keys": [
    "lecun2007ebm",
    "lecun2022autonomous",
@@ -57256,14 +57564,16 @@
    "lecun2006",
    "lecun1989backpropagation",
    "lecun1998gradientbased",
-   "dauphin2014saddle"
+   "choromanska2015loss",
+   "chaudhari2016entropysgd"
   ],
   "cited_in": [
    "activationlab",
    "ai_existential_risk",
    "computer_vision",
-   "deeplearninglab",
    "history",
+   "loss_landscape",
+   "mirror_in_machine",
    "untold_history",
    "websearch"
   ]
@@ -57277,9 +57587,10 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "gehring2017convs2s"
+   "gehring2017convs2s",
+   "pascanu2014saddle"
   ],
   "cited_in": [
    "positionalembeddingslab"
@@ -57566,6 +57877,7 @@
   "cited_in": [
    "hallucinations",
    "mechanistic_interpretability",
+   "music_video_generation",
    "philosophy",
    "samplinglab"
   ]
@@ -57687,11 +57999,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "wu2023audiolm"
+   "wu2023audiolm",
+   "liu2023audioldm"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Yi Zhang",
@@ -57976,12 +58291,14 @@
   "city": "Mountain View, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "shumailov2023modelcollapse",
+   "wong2025sinks",
    "shumailov2024collapse"
   ],
   "cited_in": [
+   "attentionlab",
    "philosophy",
    "training_data"
   ]
@@ -58336,7 +58653,7 @@
   "city": "Montreal, Canada",
   "year": 2011.0,
   "conf": 1,
-  "works": 15,
+  "works": 19,
   "keys": [
    "cho2014gru",
    "bahdanau2014",
@@ -58352,6 +58669,10 @@
    "velickovic2018gat",
    "rahaman2019spectral",
    "montufar2014regions",
+   "dauphin2014saddle",
+   "dauphin2014identifying",
+   "pascanu2014saddle",
+   "dinh2017sharpness",
    "bergstra2010random"
   ],
   "cited_in": [
@@ -58362,6 +58683,7 @@
    "embeddinglab",
    "history",
    "hyperparameters",
+   "loss_landscape",
    "math_iv",
    "origami",
    "positionalembeddingslab",
@@ -58557,12 +58879,14 @@
   "city": "Menlo Park, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "hao2025coconut",
    "xiao2023streaming"
   ],
   "cited_in": [
-   "attentionlab"
+   "attentionlab",
+   "mechanistic_interpretability"
   ]
  },
  {
@@ -58604,9 +58928,10 @@
   "city": "Redmond, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "bubeck2023sparks"
+   "bubeck2023sparks",
+   "cohen2021edgeofstability"
   ],
   "cited_in": [
    "unexpected_capabilities"
@@ -58980,6 +59305,7 @@
   "cited_in": [
    "algorithms",
    "deeplearninglab",
+   "loss_landscape",
    "mechanistic_interpretability"
   ]
  },
@@ -59363,11 +59689,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "wu2023audiolm"
+   "wu2023audiolm",
+   "liu2023audioldm"
   ],
-  "cited_in": []
+  "cited_in": [
+   "music_video_generation"
+  ]
  },
  {
   "name": "Zellig Harris",
@@ -59590,7 +59919,8 @@
    "li2018losslandscape"
   ],
   "cited_in": [
-   "deeplearninglab"
+   "deeplearninglab",
+   "loss_landscape"
   ]
  },
  {
@@ -60193,6 +60523,7 @@
    "history",
    "intuition",
    "math_iv",
+   "music_video_generation",
    "origami",
    "philosophy",
    "positionalembeddingslab",
@@ -60449,9 +60780,7 @@
   "keys": [
    "pirsig"
   ],
-  "cited_in": [
-   "intro"
-  ]
+  "cited_in": []
  },
  {
   "name": "Volker Springel / Max-Planck-Institute for Astrophysics (MPA Garching)",
@@ -60466,9 +60795,7 @@
   "keys": [
    "cosmic_web_foam_image"
   ],
-  "cited_in": [
-   "map"
-  ]
+  "cited_in": []
  },
  {
   "name": "Ashish Vaswani and colleagues (Google)",
@@ -60481,12 +60808,12 @@
   "conf": 1,
   "works": 3,
   "keys": [
+   "transformer_attention_figure",
    "puppeteer",
-   "googlecustomsearch",
-   "transformer_attention_figure"
+   "googlecustomsearch"
   ],
   "cited_in": [
-   "map",
+   "atlas",
    "websearch"
   ]
  },
@@ -60504,7 +60831,7 @@
    "starfield_eso_image"
   ],
   "cited_in": [
-   "map"
+   "atlas"
   ]
  },
  {
@@ -60522,7 +60849,7 @@
    "earth_moon_cc_textures"
   ],
   "cited_in": [
-   "map"
+   "atlas"
   ]
  },
  {
@@ -60556,7 +60883,7 @@
    "earth_night_lights"
   ],
   "cited_in": [
-   "map"
+   "atlas"
   ]
  },
  {
@@ -60620,8 +60947,10 @@
   "city": "Stanford, USA",
   "year": 2025.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
+   "litman2026theory",
+   "litman2026a_theory_of_dl",
    "litman2025sdpaot"
   ],
   "cited_in": [
@@ -61120,7 +61449,7 @@
    "m87_blackhole_image"
   ],
   "cited_in": [
-   "map"
+   "atlas"
   ]
  },
  {
@@ -61321,7 +61650,7 @@
    "crab_nebula_image"
   ],
   "cited_in": [
-   "map"
+   "atlas"
   ]
  },
  {

@@ -1,0 +1,2752 @@
+[
+  {
+    "id": "person-nick-cave",
+    "name": "Nick Cave",
+    "type": "person",
+    "loc": "Melbourne, Victoria, Australia",
+    "lat": -37.81,
+    "lng": 144.96,
+    "years": "1957-",
+    "active": [
+      1980,
+      2026
+    ],
+    "blurb": "Australian musician who publicly rejected a ChatGPT song written in his style, calling it bullshit.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "chatgpt_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-robbie-barrat",
+    "name": "Robbie Barrat",
+    "type": "person",
+    "loc": "Miami, Florida, US",
+    "lat": 25.76,
+    "lng": -80.19,
+    "years": "1986-",
+    "active": [
+      2016,
+      2026
+    ],
+    "blurb": "Artist whose open-source GAN code was used by Obvious to create Edmond de Belamy; called out the uncredited use.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "edmond_belamy_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jason-m-allen",
+    "name": "Jason M. Allen",
+    "type": "person",
+    "loc": "Colorado, US",
+    "lat": 39.55,
+    "lng": -105.78,
+    "years": "-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "Artist whose Midjourney image Theatre D'opera Spatial won a Colorado State Fair fine-arts prize, sparking a viral backlash.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "theatre_dopera_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-maurizio-cattelan",
+    "name": "Maurizio Cattelan",
+    "type": "person",
+    "loc": "Turin, Piedmont, Italy",
+    "lat": 45.07,
+    "lng": 7.69,
+    "years": "1960-",
+    "active": [
+      1986,
+      2026
+    ],
+    "blurb": "Italian conceptual artist whose banana installation was invoked in the debate over AI art at the Colorado State Fair.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-jonathan-jones",
+    "name": "Jonathan Jones",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1959-",
+    "active": [
+      1996,
+      2026
+    ],
+    "blurb": "Guardian art critic who refused to call Edmond de Belamy art after its record-breaking auction sale.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-david-baker",
+    "name": "David Baker",
+    "type": "person",
+    "loc": "Seattle, Washington, US",
+    "lat": 47.61,
+    "lng": -122.33,
+    "years": "1956-",
+    "active": [
+      1980,
+      2026
+    ],
+    "blurb": "University of Washington protein scientist who shared the 2024 Nobel Prize in Chemistry for computational protein design.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "nobel2024chemistry"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-demis-hassabis",
+    "name": "Demis Hassabis",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1976-",
+    "active": [
+      2010,
+      2026
+    ],
+    "blurb": "DeepMind co-founder who shared the 2024 Nobel Prize in Chemistry for AlphaFold protein structure prediction.",
+    "cited_in": [
+      "ai_and_society",
+      "ai_existential_risk"
+    ],
+    "bibkeys": [
+      "nobel2024chemistry"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-joel-becker",
+    "name": "Joel Becker",
+    "type": "person",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "METR researcher who led the 2025 RCT showing experienced open-source developers were 19% slower with AI tools.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "becker2025metr"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-nate-rush",
+    "name": "Nate Rush",
+    "type": "person",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "METR co-author of the 2025 study measuring AI's impact on experienced developer productivity.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "becker2025metr"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-elizabeth-barnes",
+    "name": "Elizabeth Barnes",
+    "type": "person",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "METR co-author of the 2025 study measuring AI's impact on experienced developer productivity.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "becker2025metr"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-david-rein",
+    "name": "David Rein",
+    "type": "person",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "METR co-author of the 2025 study measuring AI's impact on experienced developer productivity.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "becker2025metr"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-erik-brynjolfsson",
+    "name": "Erik Brynjolfsson",
+    "type": "person",
+    "loc": "Stanford, California, US",
+    "lat": 37.43,
+    "lng": -122.17,
+    "years": "1960-",
+    "active": [
+      1990,
+      2026
+    ],
+    "blurb": "Stanford economist who studied generative AI's 14% productivity gain for customer-support agents, with novices gaining 34%.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "brynjolfsson2023genai"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sida-peng",
+    "name": "Sida Peng",
+    "type": "person",
+    "loc": "Redmond, Washington, US",
+    "lat": 47.67,
+    "lng": -122.12,
+    "years": "-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "Microsoft researcher who led the controlled experiment showing GitHub Copilot made developers 55.8% faster on a boilerplate task.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "peng2023copilot"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-seda-aral",
+    "name": "Seda Aral",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, US",
+    "lat": 42.37,
+    "lng": -71.11,
+    "years": "1970-",
+    "active": [
+      2000,
+      2026
+    ],
+    "blurb": "MIT professor who formalized the augmentation trap: rational employers deploy AI even when it erodes long-run skill.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "caosun2026augmentation"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-maia-sandu",
+    "name": "Maia Sandu",
+    "type": "person",
+    "loc": "Chisinau, Moldova",
+    "lat": 47.01,
+    "lng": 28.86,
+    "years": "1972-",
+    "active": [
+      2013,
+      2026
+    ],
+    "blurb": "President of Moldova who was the target of a Russian-backed deepfake in the 2024 election cycle.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-rishi-sunak",
+    "name": "Rishi Sunak",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1980-",
+    "active": [
+      2010,
+      2026
+    ],
+    "blurb": "UK Prime Minister whose deepfake appeared in the 2024 election cycle claiming 18-year-olds would be sent to war zones.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-keir-starmer",
+    "name": "Keir Starmer",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1962-",
+    "active": [
+      2003,
+      2026
+    ],
+    "blurb": "UK Prime Minister whose deepfake swearing at a staffer was released during the Labour Party conference in 2024.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-eminem",
+    "name": "Eminem",
+    "type": "person",
+    "loc": "Detroit, Michigan, US",
+    "lat": 42.33,
+    "lng": -83.05,
+    "years": "1972-",
+    "active": [
+      1996,
+      2026
+    ],
+    "blurb": "Rapper whose deepfake appeared in South Africa's 2024 election cycle endorsing the wrong political party.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-yevgeny-prigozhin",
+    "name": "Yevgeny Prigozhin",
+    "type": "person",
+    "loc": "Saint Petersburg, Russia",
+    "lat": 59.93,
+    "lng": 30.36,
+    "years": "1961-2023",
+    "active": [
+      2000,
+      2023
+    ],
+    "blurb": "Russian oligarch who founded the Internet Research Agency in 2013, Russia's main computational-propaganda factory.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ira_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alexander-nix",
+    "name": "Alexander Nix",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1981-",
+    "active": [
+      2010,
+      2026
+    ],
+    "blurb": "CEO of Cambridge Analytica, which claimed to model the personality of every US adult using 87 million Facebook profiles.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "cambridge_analytica_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-joyojeet-pal",
+    "name": "Joyojeet Pal",
+    "type": "person",
+    "loc": "Ann Arbor, Michigan, US",
+    "lat": 42.28,
+    "lng": -83.74,
+    "years": "-",
+    "active": [
+      2015,
+      2026
+    ],
+    "blurb": "University of Michigan media scholar who noted AI cements polarised opinions by serving content matching pre-existing beliefs.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "person-andrew-cuomo",
+    "name": "Andrew Cuomo",
+    "type": "person",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1957-",
+    "active": [
+      1985,
+      2026
+    ],
+    "blurb": "Former New York Governor whose official X account shared an AI-generated video of Zohran Mamdani eating rice with his hands.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "bellingcat2026bjp"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-zohran-mamdani",
+    "name": "Zohran Mamdani",
+    "type": "person",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1991-",
+    "active": [
+      2021,
+      2026
+    ],
+    "blurb": "NYC mayoral candidate who was the subject of an AI-generated video shared from Andrew Cuomo's official X account.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "bellingcat2026bjp"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-marine-le-pen",
+    "name": "Marine Le Pen",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1968-",
+    "active": [
+      2000,
+      2026
+    ],
+    "blurb": "French far-right politician whose non-existent nieces were depicted in deepfake videos during the 2024 election cycle.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-luis-von-ahn",
+    "name": "Luis von Ahn",
+    "type": "person",
+    "loc": "Pittsburgh, Pennsylvania, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "1978-",
+    "active": [
+      2003,
+      2026
+    ],
+    "blurb": "Duolingo co-founder who was motivated to create the platform after seeing how expensive English learning was in Guatemala.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "duolingo_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-daniel-de-freitas",
+    "name": "Daniel de Freitas",
+    "type": "person",
+    "loc": "Mountain View, California, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Character.AI co-founder (ex-Google LaMDA team) whose platform was central to the first high-profile AI-companion suicide lawsuit.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "characterai_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-svetlana-kirillov",
+    "name": "Svetlana Kirillov",
+    "type": "person",
+    "loc": "Prague, Czech Republic",
+    "lat": 50.08,
+    "lng": 14.44,
+    "years": "-",
+    "active": [
+      2018,
+      2026
+    ],
+    "blurb": "Lead author of the CUBBITT study showing machine translation outperformed professional human translators in adequacy.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "popel2020cubitt"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-george-georgiou",
+    "name": "George Georgiou",
+    "type": "person",
+    "loc": "Leiden, Netherlands",
+    "lat": 52.16,
+    "lng": 4.49,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Leiden University researcher who published a 2025 RCT showing ChatGPT access significantly lowered cognitive engagement in reasoning tasks.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "georgiou2025lazy"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-brett-prather",
+    "name": "Brett Prather",
+    "type": "person",
+    "loc": "Pittsburgh, Pennsylvania, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Researcher who led the first controlled study of novice CS students using GitHub Copilot, finding reduced metacognitive awareness.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "prather2023copilot"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-sunny-yu",
+    "name": "Sunny Yu",
+    "type": "person",
+    "loc": "Berkeley, California, US",
+    "lat": 37.87,
+    "lng": -122.26,
+    "years": "-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "UC Berkeley researcher who co-authored the speedup illusion study: AI-assisted tasks feel faster but are not actually faster.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "speedup_illusion2025"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-dan-jurafsky",
+    "name": "Dan Jurafsky",
+    "type": "person",
+    "loc": "Stanford, California, US",
+    "lat": 37.43,
+    "lng": -122.17,
+    "years": "1963-",
+    "active": [
+      1986,
+      2026
+    ],
+    "blurb": "Stanford linguist and NLP pioneer who co-authored the speedup illusion study on AI-assisted cognitive tasks.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "speedup_illusion2025"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-rachel-moran",
+    "name": "Rachel Moran",
+    "type": "person",
+    "loc": "Seattle, Washington, US",
+    "lat": 47.61,
+    "lng": -122.33,
+    "years": "-",
+    "active": [
+      2015,
+      2026
+    ],
+    "blurb": "University of Washington researcher who noted high-quality fake videos in crisis periods make distinguishing truth from rumour more taxing.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "person-steve-kramer",
+    "name": "Steve Kramer",
+    "type": "person",
+    "loc": "New Hampshire, US",
+    "lat": 43.21,
+    "lng": -71.56,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Political consultant who admitted commissioning the 500-dollar AI robocall campaign impersonating President Biden in New Hampshire 2024.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "audio_deepfake_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-toby-ord",
+    "name": "Toby Ord",
+    "type": "person",
+    "loc": "Oxford, England, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "1988-",
+    "active": [
+      2010,
+      2026
+    ],
+    "blurb": "Oxford philosopher who frames the AI risk question as proceeding with due caution, not abandoning AI, in The Precipice.",
+    "cited_in": [
+      "ai_existential_risk"
+    ],
+    "bibkeys": [
+      "ord2020precipice"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-adam-bales",
+    "name": "Adam Bales",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Philosopher who co-authored a 2024 review formalizing the Singularity Hypothesis and assessing both sides of the AI existential-risk debate.",
+    "cited_in": [
+      "ai_existential_risk"
+    ],
+    "bibkeys": [
+      "bales2024catastrophic"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-bogdan-georgiev",
+    "name": "Bogdan Georgiev",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "DeepMind researcher co-author of AlphaEvolve, which improved on 67 open problems with Terence Tao as co-author.",
+    "cited_in": [
+      "ai_for_science"
+    ],
+    "bibkeys": [
+      "alphaevolve"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-javier-gomez-serrano",
+    "name": "Javier Gomez-Serrano",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "DeepMind researcher co-author of AlphaEvolve, which improved on 67 open problems with Terence Tao as co-author.",
+    "cited_in": [
+      "ai_for_science"
+    ],
+    "bibkeys": [
+      "alphaevolve"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-adam-wagner",
+    "name": "Adam Zsolt Wagner",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "DeepMind researcher co-author of AlphaEvolve, which improved on 67 open problems with Terence Tao as co-author.",
+    "cited_in": [
+      "ai_for_science"
+    ],
+    "bibkeys": [
+      "alphaevolve"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-heinrich-waldeyer",
+    "name": "Heinrich Wilhelm Gottfried von Waldeyer-Hartz",
+    "type": "person",
+    "loc": "Berlin, Germany",
+    "lat": 52.52,
+    "lng": 13.4,
+    "years": "1836-1921",
+    "active": [
+      1868,
+      1921
+    ],
+    "blurb": "Anatomist who coined the term neuron in 1891, giving machine learning its most fundamental unit of vocabulary.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "waldeyer1891"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-edgar-adrian",
+    "name": "Edgar Douglas Adrian",
+    "type": "person",
+    "loc": "Oxford, England, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "1889-1977",
+    "active": [
+      1913,
+      1977
+    ],
+    "blurb": "Physiologist who established the all-or-none principle for sensory nerves in the 1920s, the law that became the binary neuron.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "adrian1922allornothing"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-haldan-hartline",
+    "name": "Haldan Keffer Hartline",
+    "type": "person",
+    "loc": "Princeton, New Jersey, US",
+    "lat": 40.34,
+    "lng": -74.66,
+    "years": "1903-1971",
+    "active": [
+      1930,
+      1971
+    ],
+    "blurb": "Princeton neuroscientist who recorded lateral inhibition from the horseshoe-crab retina, the biological basis of winner-take-all dynamics.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "hartline1956limulus"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-john-okeefe",
+    "name": "John O'Keefe",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1939-",
+    "active": [
+      1963,
+      2026
+    ],
+    "blurb": "UCL neuroscientist who discovered place cells in 1971; shared the 2014 Nobel Prize for the brain's GPS.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "okeefe1971place",
+      "nobel2014spatial"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-edvard-moser",
+    "name": "Edvard Moser",
+    "type": "person",
+    "loc": "Trondheim, Norway",
+    "lat": 63.43,
+    "lng": 10.39,
+    "years": "1962-",
+    "active": [
+      1990,
+      2026
+    ],
+    "blurb": "NTNU neuroscientist who, with May-Britt Moser, discovered grid cells; shared the 2014 Nobel Prize for the brain's GPS.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "nobel2014spatial"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-may-britt-moser",
+    "name": "May-Britt Moser",
+    "type": "person",
+    "loc": "Trondheim, Norway",
+    "lat": 63.43,
+    "lng": 10.39,
+    "years": "1963-",
+    "active": [
+      1990,
+      2026
+    ],
+    "blurb": "NTNU neuroscientist who, with Edvard Moser, discovered grid cells; shared the 2014 Nobel Prize for the brain's GPS.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "nobel2014spatial"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-neil-cowan",
+    "name": "Neil Cowan",
+    "type": "person",
+    "loc": "Austin, Texas, US",
+    "lat": 30.27,
+    "lng": -97.74,
+    "years": "1945-",
+    "active": [
+      1973,
+      2026
+    ],
+    "blurb": "University of Texas cognitive psychologist who revised Miller's magical number seven to four, reshaping the context-window analogy.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "cowan2001magical4"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alan-baddeley",
+    "name": "Alan D. Baddeley",
+    "type": "person",
+    "loc": "Bristol, England, UK",
+    "lat": 51.45,
+    "lng": -2.59,
+    "years": "1951-",
+    "active": [
+      1975,
+      2026
+    ],
+    "blurb": "University of Bristol psychologist who mapped working memory's cramped scratch space, the cognitive basis of the context window.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "baddeley1986workingmemory"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sonja-diekelmann",
+    "name": "Sonja Diekelmann",
+    "type": "person",
+    "loc": "Tuebingen, Baden-Wurttemberg, Germany",
+    "lat": 48.52,
+    "lng": 9.04,
+    "years": "1973-",
+    "active": [
+      2000,
+      2026
+    ],
+    "blurb": "University of Tuebingen sleep researcher who documented memory replay and stabilization during sleep, the brain's offline training.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "diekelmann2010sleep"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-rajesh-rao",
+    "name": "Rajesh P. N. Rao",
+    "type": "person",
+    "loc": "Austin, Texas, US",
+    "lat": 30.27,
+    "lng": -97.74,
+    "years": "1966-",
+    "active": [
+      1995,
+      2026
+    ],
+    "blurb": "UT Austin neuroscientist who showed the visual cortex works top-down via predictive coding, a brain theory identical to a learning algorithm.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "rao1999predictive"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-james-whittington",
+    "name": "James C. R. Whittington",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1991-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "UCL computational neuroscientist who asked how a nervous system could push error signals backwards, questioning whether backprop is a brain mechanism.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "whittington2019backprop"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nikolaus-kriegeskorte",
+    "name": "Nikolaus Kriegeskorte",
+    "type": "person",
+    "loc": "Leipzig, Saxony, Germany",
+    "lat": 51.34,
+    "lng": 12.37,
+    "years": "1973-",
+    "active": [
+      2000,
+      2026
+    ],
+    "blurb": "Max Planck Institute neuroscientist who argued a pretrained deep CNN is now the best computational model of the primate visual ventral stream.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "kriegeskorte2015dcnn"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-shinji-nishimoto",
+    "name": "Shinji Nishimoto",
+    "type": "person",
+    "loc": "Berkeley, California, US",
+    "lat": 37.87,
+    "lng": -122.26,
+    "years": "1981-",
+    "active": [
+      2005,
+      2026
+    ],
+    "blurb": "UC Berkeley neuroscientist who reconstructed the actual movie a person watched from fMRI data in visual cortex in 2011.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "nishimoto2011reconstruct"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-jack-gallant",
+    "name": "Jack L. Gallant",
+    "type": "person",
+    "loc": "Berkeley, California, US",
+    "lat": 37.87,
+    "lng": -122.26,
+    "years": "1953-",
+    "active": [
+      1985,
+      2026
+    ],
+    "blurb": "UC Berkeley neuroscientist who led fMRI reconstruction studies, including the 2011 movie-from-fMRI breakthrough and the 2016 semantic maps paper.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "nishimoto2011reconstruct",
+      "huth2016semanticmaps"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alexander-huth",
+    "name": "Alexander G. Huth",
+    "type": "person",
+    "loc": "Berkeley, California, US",
+    "lat": 37.87,
+    "lng": -122.26,
+    "years": "1977-",
+    "active": [
+      2003,
+      2026
+    ],
+    "blurb": "UC Berkeley neuroscientist who fit a single model to how natural speech activates the whole cortex, revealing semantic maps.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "huth2016semanticmaps"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-nicolas-affolter",
+    "name": "Nicolas Affolter",
+    "type": "person",
+    "loc": "Zurich, Switzerland",
+    "lat": 47.37,
+    "lng": 8.54,
+    "years": "-",
+    "active": [
+      2018,
+      2026
+    ],
+    "blurb": "ETH Zurich researcher who decoded the specific word a person was reading from brain activity and fed it to a language model to finish the sentence.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "affolter2020brain2word"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-dan-schwartz",
+    "name": "Dan Schwartz",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "-",
+    "active": [
+      2018,
+      2026
+    ],
+    "blurb": "Researcher who fine-tuned a transformer until its internal representations predicted human brain activity, showing alignment runs deeper than correlation.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "schwartz2019brainbias"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-evelina-fedorenko",
+    "name": "Evelina Fedorenko",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, US",
+    "lat": 42.37,
+    "lng": -71.11,
+    "years": "1975-",
+    "active": [
+      1998,
+      2026
+    ],
+    "blurb": "MIT cognitive neuroscientist who co-found evidence for universal representational structure shared between biological and artificial neural networks.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "hosseini2024universality"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-eric-wang",
+    "name": "Eric Y. Wang",
+    "type": "person",
+    "loc": "Pittsburgh, Pennsylvania, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Carnegie Mellon researcher who trained a foundation model on neural recordings to predict a single mouse's visual-cortex responses zero-shot.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "wang2025foundation"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-anton-tolias",
+    "name": "Anton S. Tolias",
+    "type": "person",
+    "loc": "Pittsburgh, Pennsylvania, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "1962-",
+    "active": [
+      1988,
+      2026
+    ],
+    "blurb": "Carnegie Mellon neuroscientist who co-led the brain foundation-model study predicting a mouse's visual-cortex responses to novel stimuli.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "wang2025foundation"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kimberly-stachenfeld",
+    "name": "Kimberly L. Stachenfeld",
+    "type": "person",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "-",
+    "active": [
+      2010,
+      2026
+    ],
+    "blurb": "NYU researcher who showed the hippocampus predicts where you will go, not just where you are, establishing the brain's predictive map.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "stachenfeld2017predictivemap"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-samuel-gershman",
+    "name": "Samuel J. Gershman",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, US",
+    "lat": 42.37,
+    "lng": -71.11,
+    "years": "1978-",
+    "active": [
+      2005,
+      2026
+    ],
+    "blurb": "MIT cognitive scientist who co-authored the predictive-map paper showing the hippocampus builds a model of the environment used to plan.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "stachenfeld2017predictivemap"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-michael-keaton",
+    "name": "Michael Keaton",
+    "type": "person",
+    "loc": "Cincinnati, Ohio, US",
+    "lat": 39.1,
+    "lng": -84.51,
+    "years": "1952-",
+    "active": [
+      1978,
+      2026
+    ],
+    "blurb": "Actor who played Batman in 1989; used as an example of multi-hop fact retrieval that the mechanistic picture cannot yet explain.",
+    "cited_in": [
+      "fact_lookup"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-mrinank-sharma",
+    "name": "Mrinank Sharma",
+    "type": "person",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Anthropic researcher who documented sycophancy: AI models agreeing with users even when the user makes a false claim.",
+    "cited_in": [
+      "hallucinations"
+    ],
+    "bibkeys": [
+      "sharma2023sycophancy"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-lukas-berglund",
+    "name": "Lukas Berglund",
+    "type": "person",
+    "loc": "Oxford, England, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "-",
+    "active": [
+      2020,
+      2026
+    ],
+    "blurb": "Oxford researcher who documented the Reversal Curse: LLMs trained on A is B fail to infer B is A.",
+    "cited_in": [
+      "hallucinations"
+    ],
+    "bibkeys": [
+      "berglund2023reversal"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-chetan-prakash",
+    "name": "Chetan Prakash",
+    "type": "person",
+    "loc": "Los Angeles, California, US",
+    "lat": 34.05,
+    "lng": -118.24,
+    "years": "-",
+    "active": [
+      2018,
+      2026
+    ],
+    "blurb": "Researcher who co-authored the Fitness-Beats-Truth Theorem proving fitness-only strategies dominate truth-tracking under evolutionary selection.",
+    "cited_in": [
+      "hallucinations"
+    ],
+    "bibkeys": [
+      "prakash2021fitness"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-nicholas-carlini",
+    "name": "Nicholas Carlini",
+    "type": "person",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1988-",
+    "active": [
+      2012,
+      2026
+    ],
+    "blurb": "Security researcher who demonstrated min-checksum tests to detect whether a model has seen test set data during training.",
+    "cited_in": [
+      "evaluation"
+    ],
+    "bibkeys": [
+      "carlini2021extracting"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-chuan-guo",
+    "name": "Chuan Guo",
+    "type": "person",
+    "loc": "Pittsburgh, Pennsylvania, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "Carnegie Mellon researcher who introduced temperature scaling, the cheap fix for over-confident neural network calibration.",
+    "cited_in": [
+      "reliability"
+    ],
+    "bibkeys": [
+      "guo2017calibration"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-alex-kendall",
+    "name": "Alex Kendall",
+    "type": "person",
+    "loc": "Cambridge, England, UK",
+    "lat": 52.2,
+    "lng": 0.12,
+    "years": "-",
+    "active": [
+      2013,
+      2026
+    ],
+    "blurb": "Researcher who, with Yarin Gal, separated aleatoric from epistemic uncertainty in Bayesian deep learning for computer vision.",
+    "cited_in": [
+      "reliability"
+    ],
+    "bibkeys": [
+      "kendall2017uncertainties"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-yarin-gal",
+    "name": "Yarin Gal",
+    "type": "person",
+    "loc": "Cambridge, England, UK",
+    "lat": 52.2,
+    "lng": 0.12,
+    "years": "1985-",
+    "active": [
+      2012,
+      2026
+    ],
+    "blurb": "Cambridge researcher who, with Alex Kendall, formalized the aleatoric versus epistemic uncertainty distinction in deep learning.",
+    "cited_in": [
+      "reliability"
+    ],
+    "bibkeys": [
+      "kendall2017uncertainties"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-balaji-lakshminarayanan",
+    "name": "Balaji Lakshminarayanan",
+    "type": "person",
+    "loc": "Oxford, England, UK",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "1983-",
+    "active": [
+      2010,
+      2026
+    ],
+    "blurb": "Oxford researcher who introduced deep ensembles, a cheap way to approximate Bayesian uncertainty by training and averaging several networks.",
+    "cited_in": [
+      "reliability"
+    ],
+    "bibkeys": [
+      "lakshminarayanan2017ensembles"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-anastasios-angelopoulos",
+    "name": "Anastasios N. Angelopoulos",
+    "type": "person",
+    "loc": "Princeton, New Jersey, US",
+    "lat": 40.34,
+    "lng": -74.66,
+    "years": "-",
+    "active": [
+      2018,
+      2026
+    ],
+    "blurb": "Princeton statistician who, with Stephen Bates, popularized conformal prediction: distribution-free guarantees for black-box model outputs.",
+    "cited_in": [
+      "reliability"
+    ],
+    "bibkeys": [
+      "angelopoulos2021conformal"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-stephen-bates",
+    "name": "Stephen Bates",
+    "type": "person",
+    "loc": "Princeton, New Jersey, US",
+    "lat": 40.34,
+    "lng": -74.66,
+    "years": "1977-",
+    "active": [
+      2005,
+      2026
+    ],
+    "blurb": "Princeton statistician who, with Anastasios Angelopoulos, developed conformal prediction as a distribution-free uncertainty framework.",
+    "cited_in": [
+      "reliability"
+    ],
+    "bibkeys": [
+      "angelopoulos2021conformal"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-angela-fan",
+    "name": "Angela Fan",
+    "type": "person",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1990-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "FAIR (Meta) researcher who introduced top-k sampling for neural story generation, one of the first decoding filters for LLMs.",
+    "cited_in": [
+      "samplinglab"
+    ],
+    "bibkeys": [
+      "fan2018topk"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ari-holtzman",
+    "name": "Ari Holtzman",
+    "type": "person",
+    "loc": "Palo Alto, California, US",
+    "lat": 37.44,
+    "lng": -122.14,
+    "years": "1986-",
+    "active": [
+      2015,
+      2026
+    ],
+    "blurb": "AI2 researcher who introduced nucleus (top-p) sampling, the adaptive decoding filter now default in most production LLM APIs.",
+    "cited_in": [
+      "samplinglab"
+    ],
+    "bibkeys": [
+      "holtzman2020nucleus"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-minh-nguyen",
+    "name": "Minh Nguyen",
+    "type": "person",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "Researcher who introduced min-p sampling, the confidence-scaling decoding filter recommended by Qwen and Mistral.",
+    "cited_in": [
+      "samplinglab"
+    ],
+    "bibkeys": [
+      "nguyen2025minp"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-sourya-basu",
+    "name": "Sourya Basu",
+    "type": "person",
+    "loc": "Austin, Texas, US",
+    "lat": 30.27,
+    "lng": -97.74,
+    "years": "-",
+    "active": [
+      2015,
+      2026
+    ],
+    "blurb": "UT Austin researcher who introduced Mirostat, a decoding algorithm that targets a fixed perplexity for consistent information density.",
+    "cited_in": [
+      "samplinglab"
+    ],
+    "bibkeys": [
+      "basu2020mirostat"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "person-nitish-keskar",
+    "name": "Nitish Shirish Keskar",
+    "type": "person",
+    "loc": "Toronto, Ontario, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "1990-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "Salesforce AI researcher who introduced the repetition penalty in CTRL, a key technique for preventing degenerate LLM loops.",
+    "cited_in": [
+      "samplinglab"
+    ],
+    "bibkeys": [
+      "keskar2019ctrl"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-metr",
+    "name": "METR",
+    "type": "institution",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2019-",
+    "active": [
+      2019,
+      2026
+    ],
+    "blurb": "AI safety research organization that ran the 2025 RCT showing experienced open-source developers were 19% slower with AI tools.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "becker2025metr"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-laion",
+    "name": "LAION",
+    "type": "institution",
+    "loc": "Berlin, Germany",
+    "lat": 52.52,
+    "lng": 13.4,
+    "years": "2021-",
+    "active": [
+      2021,
+      2024
+    ],
+    "blurb": "German non-profit that released LAION-5B, a 5.85-billion image-text pair dataset that trained Stable Diffusion without artist consent.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "laion2022blog"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-obvious",
+    "name": "Obvious",
+    "type": "institution",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "2016-2019",
+    "active": [
+      2016,
+      2019
+    ],
+    "blurb": "Paris collective whose GAN-generated portrait Edmond de Belamy sold at Christie's for $432,500, the first AI artwork at a major auction.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "edmond_belamy_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-insilico-medicine",
+    "name": "Insilico Medicine",
+    "type": "institution",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2014-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "AI drug-discovery company whose Pharma.AI platform generated the first fully AI-designed drug to reach clinical trials.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "insilico_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-luka",
+    "name": "Luka Inc.",
+    "type": "institution",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2012-",
+    "active": [
+      2012,
+      2026
+    ],
+    "blurb": "Company that launched Replika, the AI companion app temporarily banned by Italy's Garante over minors' data collection.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "replika_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-duolingo",
+    "name": "Duolingo",
+    "type": "institution",
+    "loc": "Pittsburgh, Pennsylvania, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "2011-",
+    "active": [
+      2011,
+      2026
+    ],
+    "blurb": "Language-learning platform with 130 million monthly users that launched 148 AI-generated language courses in April 2025.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "duolingo_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-deepl",
+    "name": "DeepL",
+    "type": "institution",
+    "loc": "Cologne, North Rhine-Westphalia, Germany",
+    "lat": 50.94,
+    "lng": 6.96,
+    "years": "2017-",
+    "active": [
+      2017,
+      2026
+    ],
+    "blurb": "AI translation company that reached a $2 billion valuation in 2024, serving 200,000+ business customers including many Fortune 500 firms.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "deepl_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-khan-academy",
+    "name": "Khan Academy",
+    "type": "institution",
+    "loc": "Mountain View, California, US",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2008-",
+    "active": [
+      2008,
+      2026
+    ],
+    "blurb": "501(c)(3) nonprofit offering Khanmigo, a GPT-4-based AI tutor that reached 65,000 students across 53 US school districts.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "khanacademy_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-be-my-eyes",
+    "name": "Be My Eyes",
+    "type": "institution",
+    "loc": "Copenhagen, Denmark",
+    "lat": 55.68,
+    "lng": 12.57,
+    "years": "2014-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "Accessibility app connecting blind users to sighted volunteers; launched Be My AI in March 2023, a GPT-4-powered visual assistant.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "beemyeyes2023"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-center-for-countering-digital-hate",
+    "name": "Center for Countering Digital Hate",
+    "type": "institution",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "2019-",
+    "active": [
+      2019,
+      2026
+    ],
+    "blurb": "UK-based organization that tested major AI image generators and found 41% of election-related outputs constituted disinformation.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-writers-guild-of-america",
+    "name": "Writers Guild of America",
+    "type": "institution",
+    "loc": "Burbank, California, US",
+    "lat": 34.18,
+    "lng": -118.31,
+    "years": "1933-",
+    "active": [
+      1933,
+      2026
+    ],
+    "blurb": "Writers' union whose 2023 strike codified the first major labor protections for AI in creative work.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "wga2023strike_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-eedi",
+    "name": "Eedi",
+    "type": "institution",
+    "loc": "Cambridge, England, UK",
+    "lat": 52.2,
+    "lng": 0.12,
+    "years": "2011-",
+    "active": [
+      2011,
+      2026
+    ],
+    "blurb": "UK-based education technology company that partnered with Google to run the LearnLM RCT in 5 UK secondary schools.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "learnlm2025rct"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-goldman-sachs",
+    "name": "Goldman Sachs",
+    "type": "institution",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1869-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "Investment bank whose March 2023 report estimated 300 million full-time jobs globally are exposed to LLM automation.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "institution-internet-research-agency",
+    "name": "Internet Research Agency",
+    "type": "institution",
+    "loc": "Saint Petersburg, Russia",
+    "lat": 59.93,
+    "lng": 30.36,
+    "years": "2013-2023",
+    "active": [
+      2013,
+      2023
+    ],
+    "blurb": "Russian computational-propaganda factory founded by Prigozhin in 2013, employing over 1,000 people to generate disinformation at scale.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ira_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-cambridge-analytica",
+    "name": "Cambridge Analytica",
+    "type": "institution",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "2013-2018",
+    "active": [
+      2013,
+      2018
+    ],
+    "blurb": "Data-analytics firm that used 87 million Facebook profiles for psychological profiling at scale, demonstrating the targeting half of the propaganda equation.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "cambridge_analytica_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-bellingcat",
+    "name": "Bellingcat",
+    "type": "institution",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "2014-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "Online investigative journalism collective that documented AI deepfake propaganda in the India-Pakistan conflict and Indian elections.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "bellingcat2025india",
+      "bellingcat2026bjp"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-fcc",
+    "name": "Federal Communications Commission",
+    "type": "institution",
+    "loc": "Washington, D.C., US",
+    "lat": 38.91,
+    "lng": -77.04,
+    "years": "1934-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "US telecom regulator that proposed a $6 million fine and voted to ban AI-faked voices in robocalls in February 2024.",
+    "cited_in": [
+      "ai_and_society",
+      "law_regulation"
+    ],
+    "bibkeys": [
+      "audio_deepfake_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-pew-research-center",
+    "name": "Pew Research Center",
+    "type": "institution",
+    "loc": "Washington, D.C., US",
+    "lat": 38.91,
+    "lng": -77.04,
+    "years": "1990-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "US research organization that published the first authoritative large-scale measurement of AI-generated web content share.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "pew2026ai"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-nber",
+    "name": "National Bureau of Economic Research",
+    "type": "institution",
+    "loc": "Cambridge, Massachusetts, US",
+    "lat": 42.37,
+    "lng": -71.11,
+    "years": "1920-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "US economic research organization that published the Brynjolfsson et al. study on generative AI productivity in customer support.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "brynjolfsson2023genai"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-huawei",
+    "name": "Huawei",
+    "type": "institution",
+    "loc": "Shenzhen, Guangdong, China",
+    "lat": 22.55,
+    "lng": 114.05,
+    "years": "1987-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "Chinese technology company whose Pangu-Weather model outperformed the ECMWF IFS on deterministic medium-range forecasts in 2023.",
+    "cited_in": [
+      "ai_and_society",
+      "ai_for_science"
+    ],
+    "bibkeys": [
+      "bi2023pangu"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-worldcoin",
+    "name": "Worldcoin",
+    "type": "institution",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2019-",
+    "active": [
+      2019,
+      2026
+    ],
+    "blurb": "Iris-scanning biometric project banned by Spain's AEPD in 2024, setting a precedent for biometric AI requiring explicit consent.",
+    "cited_in": [
+      "law_regulation"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-authors-guild",
+    "name": "Authors Guild",
+    "type": "institution",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1912-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "US writers' organization that filed the Kadrey v. Meta lawsuit alleging Meta's Llama was trained on pirated books.",
+    "cited_in": [
+      "law_regulation"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-umg",
+    "name": "Universal Music Group",
+    "type": "institution",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "1934-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "Major record label that filed takedowns against AI-generated vocal clones and settled with Suno and Udio in November 2025.",
+    "cited_in": [
+      "ai_and_society",
+      "law_regulation"
+    ],
+    "bibkeys": [
+      "heart_on_my_sleeve_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-suno",
+    "name": "Suno",
+    "type": "institution",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2022-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "AI music generation company that settled with UMG in November 2025, agreeing to launch a licensed training platform.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-udio",
+    "name": "Udio",
+    "type": "institution",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2023-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "AI music generation company that settled with UMG in November 2025, agreeing to launch a licensed training platform.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "institution-c2pa",
+    "name": "C2PA",
+    "type": "institution",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2021-",
+    "active": [
+      2021,
+      2026
+    ],
+    "blurb": "Coalition of 500+ companies maintaining an open standard for content provenance metadata, a nutrition label for digital content.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "c2pa_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-wga-2023-strike",
+    "name": "WGA Strike, 2023",
+    "type": "event",
+    "loc": "Burbank, California, US",
+    "lat": 34.18,
+    "lng": -118.31,
+    "years": "2023",
+    "active": [
+      2023,
+      2023
+    ],
+    "blurb": "May-September 2023 Hollywood writers' strike whose final contract included the first major labor protections for AI in creative work.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "wga2023strike_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-cambridge-analytica-scandal",
+    "name": "Cambridge Analytica scandal",
+    "type": "event",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "2018",
+    "active": [
+      2018,
+      2018
+    ],
+    "blurb": "2018 scandal revealing that Cambridge Analytica used 87 million Facebook profiles for psychological profiling at scale.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "cambridge_analytica_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-india-pakistan-deepfake-2025",
+    "name": "India-Pakistan deepfake, May 2025",
+    "type": "event",
+    "loc": "Islamabad, Pakistan",
+    "lat": 33.69,
+    "lng": 73.05,
+    "years": "2025",
+    "active": [
+      2025,
+      2025
+    ],
+    "blurb": "May 2025 deepfake of a Pakistani general claiming two fighter jets were lost, shared 700,000 times before debunking.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "bellingcat2025india"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "event-edmond-de-belamy-sale",
+    "name": "Edmond de Belamy auction sale",
+    "type": "event",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "2018",
+    "active": [
+      2018,
+      2018
+    ],
+    "blurb": "October 2018 Christie's auction where a GAN-generated portrait sold for $432,500, the first AI artwork at a major auction house.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "edmond_belamy_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-heart-on-my-sleeve",
+    "name": "Heart on My Sleeve AI song",
+    "type": "event",
+    "loc": "Los Angeles, California, US",
+    "lat": 34.05,
+    "lng": -118.24,
+    "years": "2023",
+    "active": [
+      2023,
+      2023
+    ],
+    "blurb": "April 2023 AI-generated song using vocal clones of Drake and The Weeknd that reached 600,000 Spotify streams before takedown.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "heart_on_my_sleeve_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "event-ai-voice-fraud-2019",
+    "name": "First AI voice fraud, 2019",
+    "type": "event",
+    "loc": "London, England, UK",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "2019",
+    "active": [
+      2019,
+      2019
+    ],
+    "blurb": "2019 incident where scammers cloned a German energy CEO's voice to trick a UK subsidiary's finance director into a 220,000 euro transfer.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "audio_deepfake_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "event-grok-x-scandal",
+    "name": "Grok/X nudify scandal",
+    "type": "event",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2025",
+    "active": [
+      2025,
+      2026
+    ],
+    "blurb": "Late 2025/early 2026 scandal where users generated 6,700 sexually suggestive or nudified images per hour on the Grok platform.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "deepfake_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "event-colorado-state-fair-ai-art",
+    "name": "Colorado State Fair AI art controversy",
+    "type": "event",
+    "loc": "Colorado, US",
+    "lat": 39.55,
+    "lng": -105.78,
+    "years": "2022",
+    "active": [
+      2022,
+      2022
+    ],
+    "blurb": "August 2022 controversy when a Midjourney image won a fine-arts prize, leading the Fair to require AI disclosure starting in 2023.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "theatre_dopera_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "event-bartz-v-anthropic-settlement",
+    "name": "Bartz v. Anthropic settlement",
+    "type": "event",
+    "loc": "San Francisco, California, US",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2025",
+    "active": [
+      2025,
+      2025
+    ],
+    "blurb": "September 2025 $1.5 billion settlement, the largest US copyright settlement in history, over training on pirated books.",
+    "cited_in": [
+      "ai_and_society",
+      "law_regulation"
+    ],
+    "bibkeys": [
+      "bartz2025anthropic"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "event-california-sb1047-veto",
+    "name": "California SB 1047 veto",
+    "type": "event",
+    "loc": "Sacramento, California, US",
+    "lat": 38.58,
+    "lng": -121.49,
+    "years": "2024",
+    "active": [
+      2024,
+      2024
+    ],
+    "blurb": "September 2024 veto by Governor Newsom of the Safe and Secure Innovation for Frontier AI Models Act.",
+    "cited_in": [
+      "law_regulation"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "event-g7-hiroshima-ai-process",
+    "name": "G7 Hiroshima AI Process",
+    "type": "event",
+    "loc": "Hiroshima, Japan",
+    "lat": 34.39,
+    "lng": 132.46,
+    "years": "2023",
+    "active": [
+      2023,
+      2023
+    ],
+    "blurb": "2023 G7 voluntary code of conduct for advanced AI, one of the first international attempts at AI governance.",
+    "cited_in": [
+      "law_regulation"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "event-un-ai-advisory-body",
+    "name": "UN AI Advisory Body report",
+    "type": "event",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "2024",
+    "active": [
+      2024,
+      2024
+    ],
+    "blurb": "2024 UN report calling for international AI governance, a signal of growing multilateral consensus on AI principles.",
+    "cited_in": [
+      "law_regulation"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "event-riaa-v-suno-udio-settlement",
+    "name": "RIAA v. Suno & Udio settlements",
+    "type": "event",
+    "loc": "New York, New York, US",
+    "lat": 40.71,
+    "lng": -74.01,
+    "years": "2025",
+    "active": [
+      2025,
+      2025
+    ],
+    "blurb": "November 2025 settlements where UMG agreed to licensed training platforms with AI music companies Suno and Udio.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "stated"
+  },
+  {
+    "id": "event-italy-replika-ban",
+    "name": "Italy Replika ban",
+    "type": "event",
+    "loc": "Rome, Italy",
+    "lat": 41.9,
+    "lng": 12.5,
+    "years": "2023",
+    "active": [
+      2023,
+      2023
+    ],
+    "blurb": "February-March 2023 temporary ban by Italy's Garante on Replika over improper collection of minors' data.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "replika_wiki"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "place-moldova",
+    "name": "Moldova",
+    "type": "place",
+    "loc": "Chisinau, Moldova",
+    "lat": 47.01,
+    "lng": 28.86,
+    "years": "-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "Eastern European country whose president Maia Sandu was targeted by a Russian-backed deepfake in the 2024 election cycle.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-chisinau",
+    "name": "Chisinau",
+    "type": "place",
+    "loc": "Chisinau, Moldova",
+    "lat": 47.01,
+    "lng": 28.86,
+    "years": "-",
+    "active": [
+      2024,
+      2026
+    ],
+    "blurb": "Capital of Moldova, where President Maia Sandu was targeted by a deepfake in the 2024 election cycle.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ai_and_elections_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-pakistan",
+    "name": "Pakistan",
+    "type": "place",
+    "loc": "Islamabad, Pakistan",
+    "lat": 33.69,
+    "lng": 73.05,
+    "years": "-",
+    "active": [
+      2025,
+      2025
+    ],
+    "blurb": "South Asian country involved in the May 2025 military standoff where a deepfake of a general went viral.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "bellingcat2025india"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-islamabad",
+    "name": "Islamabad",
+    "type": "place",
+    "loc": "Islamabad, Pakistan",
+    "lat": 33.69,
+    "lng": 73.05,
+    "years": "-",
+    "active": [
+      2025,
+      2025
+    ],
+    "blurb": "Capital of Pakistan, where the deepfake of General Ahmed Sharif Chaudhry was produced during the May 2025 standoff.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "bellingcat2025india"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-trondheim",
+    "name": "Trondheim",
+    "type": "place",
+    "loc": "Trondheim, Norway",
+    "lat": 63.43,
+    "lng": 10.39,
+    "years": "-",
+    "active": [
+      1990,
+      2026
+    ],
+    "blurb": "Norwegian city where Edvard and May-Britt Moser discovered grid cells at NTNU, sharing the 2014 Nobel Prize.",
+    "cited_in": [
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "nobel2014spatial"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-turin",
+    "name": "Turin",
+    "type": "place",
+    "loc": "Turin, Piedmont, Italy",
+    "lat": 45.07,
+    "lng": 7.69,
+    "years": "-",
+    "active": [
+      1986,
+      2026
+    ],
+    "blurb": "Italian city where conceptual artist Maurizio Cattelan is based, whose banana was invoked in the AI art debate.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-melbourne",
+    "name": "Melbourne",
+    "type": "place",
+    "loc": "Melbourne, Victoria, Australia",
+    "lat": -37.81,
+    "lng": 144.96,
+    "years": "-",
+    "active": [
+      1980,
+      2026
+    ],
+    "blurb": "Australian city where musician Nick Cave is based, who publicly rejected a ChatGPT song written in his style.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "chatgpt_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-miami",
+    "name": "Miami",
+    "type": "place",
+    "loc": "Miami, Florida, US",
+    "lat": 25.76,
+    "lng": -80.19,
+    "years": "-",
+    "active": [
+      2016,
+      2026
+    ],
+    "blurb": "Florida city where artist Robbie Barrat is based, whose GAN code was used to create Edmond de Belamy.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "edmond_belamy_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-copenhagen",
+    "name": "Copenhagen",
+    "type": "place",
+    "loc": "Copenhagen, Denmark",
+    "lat": 55.68,
+    "lng": 12.57,
+    "years": "-",
+    "active": [
+      2014,
+      2026
+    ],
+    "blurb": "Danish capital where Be My Eyes is headquartered, the accessibility app that launched Be My AI in 2023.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "beemyeyes2023"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-cologne",
+    "name": "Cologne",
+    "type": "place",
+    "loc": "Cologne, North Rhine-Westphalia, Germany",
+    "lat": 50.94,
+    "lng": 6.96,
+    "years": "-",
+    "active": [
+      2017,
+      2026
+    ],
+    "blurb": "German city where AI translation company DeepL is headquartered, reaching a $2 billion valuation in 2024.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "deepl_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-pittsburgh",
+    "name": "Pittsburgh",
+    "type": "place",
+    "loc": "Pittsburgh, Pennsylvania, US",
+    "lat": 40.44,
+    "lng": -79.99,
+    "years": "-",
+    "active": [
+      2011,
+      2026
+    ],
+    "blurb": "Pennsylvania city where Duolingo is headquartered and where Carnegie Mellon researchers trained brain foundation models.",
+    "cited_in": [
+      "ai_and_society",
+      "mirror_in_machine"
+    ],
+    "bibkeys": [
+      "duolingo_wiki",
+      "wang2025foundation"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-redmond",
+    "name": "Redmond",
+    "type": "place",
+    "loc": "Redmond, Washington, US",
+    "lat": 47.67,
+    "lng": -122.12,
+    "years": "-",
+    "active": [
+      2022,
+      2026
+    ],
+    "blurb": "Washington city where Microsoft is headquartered, where the GitHub Copilot productivity study was conducted.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "peng2023copilot"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-saint-petersburg",
+    "name": "Saint Petersburg",
+    "type": "place",
+    "loc": "Saint Petersburg, Russia",
+    "lat": 59.93,
+    "lng": 30.36,
+    "years": "-",
+    "active": [
+      2013,
+      2023
+    ],
+    "blurb": "Russian city where Yevgeny Prigozhin founded the Internet Research Agency in 2013, the main Russian propaganda factory.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "ira_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-hiroshima",
+    "name": "Hiroshima",
+    "type": "place",
+    "loc": "Hiroshima, Japan",
+    "lat": 34.39,
+    "lng": 132.46,
+    "years": "-",
+    "active": [
+      2023,
+      2023
+    ],
+    "blurb": "Japanese city where the 2023 G7 summit produced the first voluntary international code of conduct for advanced AI.",
+    "cited_in": [
+      "law_regulation"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-burbank",
+    "name": "Burbank",
+    "type": "place",
+    "loc": "Burbank, California, US",
+    "lat": 34.18,
+    "lng": -118.31,
+    "years": "-",
+    "active": [
+      2023,
+      2023
+    ],
+    "blurb": "California city where the Writers Guild of America is headquartered, site of the 2023 strike that codified AI labor protections.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "wga2023strike_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-shenzhen",
+    "name": "Shenzhen",
+    "type": "place",
+    "loc": "Shenzhen, Guangdong, China",
+    "lat": 22.55,
+    "lng": 114.05,
+    "years": "-",
+    "active": [
+      2023,
+      2026
+    ],
+    "blurb": "Chinese city where Huawei is headquartered, whose Pangu-Weather model outperformed the ECMWF in 2023.",
+    "cited_in": [
+      "ai_and_society"
+    ],
+    "bibkeys": [
+      "bi2023pangu"
+    ],
+    "conf": "known"
+  }
+]

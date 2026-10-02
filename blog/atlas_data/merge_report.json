@@ -1,9 +1,10 @@
 {
- "entity_merges": 207,
+ "entity_merges": 217,
  "entity_rejects": [],
  "entity_repairs": {
   "slugs-normalized": 130,
   "years-from-active": 194,
+  "cited_in-str": 169,
   "nested-location": 216,
   "id-generated": 216,
   "active-missing": 85,
@@ -61,6 +62,512 @@
  "author_repairs": {},
  "load_errors": [],
  "missing_files": [],
- "coverage_missing": [],
- "entity_dropped_refs": []
+ "coverage_missing": [
+  "Mohamed A. Mabrok",
+  "Peter Gärdenfors",
+  "R. David Joseph",
+  "Belmont G. Farley",
+  "Wesley A. Clark",
+  "Shibo Hao",
+  "Sainbayar Sukhbaatar",
+  "DiJia Su",
+  "Xian Li",
+  "Zhiting Hu",
+  "Michael Rizvi-Martel",
+  "Guillaume Rabusseau",
+  "Marius Mosbach",
+  "Timothée Darcet",
+  "Maxime Oquab",
+  "Julien Mairal",
+  "Piotr Bojanowski",
+  "Nicola Cancedda",
+  "Jeffrey T. H. Wong",
+  "Cheng Zhang",
+  "Louis Mahon",
+  "Wayne Luk",
+  "Anton Isopoussu",
+  "Evelina Fedorenko",
+  "Michael K. Behr",
+  "Nancy Kanwisher",
+  "Marie Amalric",
+  "Martin M. Monti",
+  "Daniel N. Osherson",
+  "Michael J. Martinez",
+  "Lawrence M. Parsons",
+  "Steven T. Piantadosi",
+  "Edward A. F. Gibson",
+  "David Ha",
+  "Thomas Unterthiner",
+  "Sjoerd van Steenkiste",
+  "Karol Kurach",
+  "Sergey Tulyakov",
+  "Ming-Yu Liu",
+  "Xiaodong Yang",
+  "Jan Kautz",
+  "Wilson Yan",
+  "Yunzhi Zhang",
+  "Aravind Srinivas",
+  "Max Bain",
+  "Arsha Nagrani",
+  "Gül Varol",
+  "Uriel Singer",
+  "Adam Polyak",
+  "Thomas Hayes",
+  "William Chan",
+  "Chitwan Saharia",
+  "Tim Dockhorn",
+  "Sumith Kulal",
+  "Neil Zeghidour",
+  "Alejandro Luebs",
+  "Ahmed Omran",
+  "Jan Skoglund",
+  "Marco Tagliasacchi",
+  "Zalán Borsos",
+  "Raphaël Marinier",
+  "Damien Vincent",
+  "Andrea Agostinelli",
+  "Timo I. Denk",
+  "Melissa Ursula Dawn Goldsmith",
+  "Xato",
+  "liamz2r",
+  "Sagenat2",
+  "Evan-Amos",
+  "mannyisdead",
+  "LoMit",
+  "Alexandre Rebollal Lucas",
+  "Unmismoobjetivo",
+  "Pablo Carlos Budassi",
+  "Amil Merchant",
+  "Simon Batzner",
+  "Murat A. Aykol",
+  "Kambis Veschgini",
+  "Gabe Guo",
+  "U.S. Senate",
+  "Committee on Aeronautical and Space Sciences (via the Digital Public Library of America)",
+  "Caglar Gulcehre",
+  "Anna Choromanska",
+  "Mikael Henaff",
+  "Michael Mathieu",
+  "Gérard Ben Arous",
+  "Yan V. Fyodorov",
+  "Ian N. Williams",
+  "Dhagash Mehta",
+  "Xiaojun Zhao",
+  "Edgar A. Bernal",
+  "David J. Wales",
+  "Lei Wu",
+  "Zhanxing Zhu",
+  "Weinan E",
+  "Quynh Nguyen",
+  "Matthias Hein",
+  "Timur Garipov",
+  "Pavel Izmailov",
+  "Dmitrii Podoprikhin",
+  "Dmitry Vetrov",
+  "Andrew Gordon Wilson",
+  "Dheevatsa Mudigere",
+  "Jorge Nocedal",
+  "Mikhail Smelyanskiy",
+  "Ping Tak Peter Tang",
+  "Sergey Ioffe",
+  "Christian Szegedy",
+  "Jeremy Cohen",
+  "Simran Kaur",
+  "Andrej Risteski",
+  "Pratik Chaudhari",
+  "Stefano Soatto",
+  "Carlo Baldi",
+  "Kurt Keutzer",
+  "Stephan Mandt",
+  "Daniel J. Amit",
+  "Kenji Kawaguchi",
+  "Yingcong Lu",
+  "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
+  "Rectas",
+  "Miles Olson et al.",
+  "Maximilian Balandat et al.",
+  "Takuya Akiba et al.",
+  "Robert Boyle",
+  "A. Hirschvogel",
+  "Jabir ibn Hayyan",
+  "Thomas Wyck (attr.)",
+  "Andreas Libavius",
+  "Anonymous (French",
+  "13th century)",
+  "Rajesh P. N. Rao",
+  "Dana H. Ballard",
+  "James C. R. Whittington",
+  "Rafal Bogacz",
+  "John O'Keefe",
+  "Jonathan Dostrovsky",
+  "Nobel Assembly",
+  "Karolinska Institute",
+  "Kimberly L. Stachenfeld",
+  "Matthew M. Botvinick",
+  "Samuel J. Gershman",
+  "Leslie G. Ungerleider",
+  "Margaret Mishkin",
+  "Alan D. Baddeley",
+  "Neil Cowan",
+  "Gustav Theodor Fechner",
+  "Kent C. Berridge",
+  "Donald A. Waterhouse",
+  "Georg B. Keller",
+  "Thomas D. Mrsić-Flogel",
+  "Andre M. Bastos",
+  "W. Martin Usrey",
+  "Rick A. Adams",
+  "George R. Mangun",
+  "Pascal Fries",
+  "Karl J. Friston",
+  "Nicolas Affolter",
+  "Beni Egressy",
+  "Damian Pascual",
+  "Roger Wattenhofer",
+  "Dan Schwartz",
+  "Mariya Toneva",
+  "Leila Wehbe",
+  "Shinji Nishimoto",
+  "An T. Vu",
+  "Thomas Naselaris",
+  "Yuval Benjamini",
+  "Bin Yu",
+  "Jack L. Gallant",
+  "Alexander G. Huth",
+  "Wendy A. de Heer",
+  "Frédéric E. Theunissen",
+  "Emily J. Allen",
+  "Ghislain St-Yves",
+  "Yihan Wu",
+  "Jesse L. Breedlove",
+  "Jacob S. Prince",
+  "Adam Bales",
+  "William D'Alessandro",
+  "Cameron Domenico Kirk-Giannini",
+  "Edgar D. Adrian",
+  "A. Forbes",
+  "Haldan K. Hartline",
+  "H. G. Wagner",
+  "F. Ratliff",
+  "Nikolaus Kriegeskorte",
+  "Camille Caucheteux",
+  "Alexandre Gramfort",
+  "Jean-Remi King",
+  "Eric Y. Wang",
+  "Peter G. Fahey",
+  "Zechen Ding",
+  "Friedrich S. Sinz",
+  "Anton S. Tolias",
+  "Ehsan Hosseini",
+  "Christopher Casto",
+  "Nick Zaslavsky",
+  "Christopher Conwell",
+  "Michael Richardson",
+  "Weicheng Lu",
+  "Deyu Nie",
+  "Peng Xue",
+  "Zihan Cui",
+  "Peng Li",
+  "Di Zhang",
+  "Xiaowei Wen",
+  "Claude Shannon",
+  "Joel Becker",
+  "Nate Rush",
+  "Elizabeth Barnes",
+  "Sida Peng",
+  "Eirini Kalliamvakou",
+  "Peter Cihon",
+  "Dana Li",
+  "Lindsey Raymond",
+  "The Nobel Foundation",
+  "Brendan Romera-Paredes",
+  "Miniumo Lokshtanov",
+  "Ahmed Obaid",
+  "Carlos Pulido",
+  "Jørgen N. Rosenblatt",
+  "Pablo Sessa",
+  "Manas Rietzler",
+  "Tanmay Jayaram",
+  "Pushmeet Kohli",
+  "Alvaro Sanchez",
+  "Kang Bi",
+  "Liheng Xie",
+  "Heng Chang",
+  "Xiaodian Chen",
+  "Xiaotian Ma",
+  "Ping Luo",
+  "Limin Wang",
+  "Qibo Chen",
+  "Xinghao Chen",
+  "Romain Beaumont",
+  "Christoph Schuhmann",
+  "Jenia Jitsev",
+  "Pew Research Center",
+  "Cade Metz",
+  "Stack Overflow",
+  "Christine McLeavey",
+  "Svetlana Kirillov",
+  "Sanchit Kumar",
+  "Be My Eyes",
+  "Sunny Yu",
+  "Myra Cheng",
+  "Ahmad Jabbar",
+  "Ilia Sucholutsky",
+  "Katherine M. Collins",
+  "Dan Jurafsky",
+  "Robert D. Hawkins",
+  "Google and Eedi",
+  "Brett Prather",
+  "Jey Hong",
+  "Thomas D. LaToza",
+  "George Georgiou",
+  "Guti et al.",
+  "Caosun",
+  "Sun and Aral",
+  "Seda",
+  "Kokkas et al.",
+  "Kubota et al.",
+  "Wikipedia contributors (original: Paul & Matthews",
+  "RAND Corporation",
+  "Bellingcat",
+  "C2PA Steering Committee",
+  "Lihi Idan",
+  "Bharat Anand",
+  "Serge Lang",
+  "Stephen Boyd",
+  "Lieven Vandenberghe",
+  "Sheldon Axler",
+  "Sigmundur Gudmundsson",
+  "Sidney A. Morris",
+  "William Gilbert",
+  "Edmond Halley",
+  "Jan Baptist van Helmont",
+  "Stephen Hales",
+  "Joseph Black",
+  "Joseph Priestley",
+  "Carl Wilhelm Scheele",
+  "Jan Ingenhousz",
+  "Jean Senebier",
+  "Antoine Lavoisier",
+  "Nicolas-Théodore de Saussure"
+ ],
+ "entity_dropped_refs": [
+  {
+   "name": "Stable Diffusion",
+   "type": "artifact",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "Jonathan Ho",
+   "type": "person",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "Tim Salimans",
+   "type": "person",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "Robin Rombach",
+   "type": "person",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "Andreas Blattmann",
+   "type": "person",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "William Peebles",
+   "type": "person",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "Saining Xie",
+   "type": "person",
+   "dropped": [
+    "slug:computer_vision,diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "Télemaque Jégou",
+   "type": "person",
+   "dropped": [
+    "slug:rag,vectorsearch"
+   ]
+  },
+  {
+   "name": "Matthijs Douzé",
+   "type": "person",
+   "dropped": [
+    "slug:rag,vectorsearch"
+   ]
+  },
+  {
+   "name": "Cordelia Schmid",
+   "type": "person",
+   "dropped": [
+    "slug:rag,vectorsearch"
+   ]
+  },
+  {
+   "name": "DDPM",
+   "type": "artifact",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "DiT",
+   "type": "artifact",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "Classifier-Free Guidance",
+   "type": "artifact",
+   "dropped": [
+    "slug:diffusion,music_video_generation"
+   ]
+  },
+  {
+   "name": "CLIP",
+   "type": "artifact",
+   "dropped": [
+    "slug:computer_vision,multimodal,music_video_generation"
+   ]
+  },
+  {
+   "name": "ViT (Vision Transformer)",
+   "type": "artifact",
+   "dropped": [
+    "slug:computer_vision,multimodal"
+   ]
+  },
+  {
+   "name": "Inceptionism (DeepDream)",
+   "type": "artifact",
+   "dropped": [
+    "slug:computer_vision,inceptionism"
+   ]
+  },
+  {
+   "name": "SoundStream",
+   "type": "artifact",
+   "dropped": [
+    "slug:music_video_generation,speech_audio"
+   ]
+  },
+  {
+   "name": "EnCodec",
+   "type": "artifact",
+   "dropped": [
+    "slug:music_video_generation,speech_audio"
+   ]
+  },
+  {
+   "name": "HNSW",
+   "type": "artifact",
+   "dropped": [
+    "slug:rag,vectorsearch"
+   ]
+  },
+  {
+   "name": "Product Quantization",
+   "type": "artifact",
+   "dropped": [
+    "slug:rag,vectorsearch"
+   ]
+  },
+  {
+   "name": "ReAct",
+   "type": "artifact",
+   "dropped": [
+    "slug:agents,promptengineering"
+   ]
+  },
+  {
+   "name": "Chain-of-Thought Prompting",
+   "type": "artifact",
+   "dropped": [
+    "slug:unexpected_capabilities,promptengineering"
+   ]
+  },
+  {
+   "name": "Tree of Thoughts",
+   "type": "artifact",
+   "dropped": [
+    "slug:unexpected_capabilities,promptengineering"
+   ]
+  },
+  {
+   "name": "Reflexion",
+   "type": "artifact",
+   "dropped": [
+    "slug:agents,promptengineering"
+   ]
+  },
+  {
+   "name": "Self-Refine",
+   "type": "artifact",
+   "dropped": [
+    "slug:unexpected_capabilities,promptengineering"
+   ]
+  },
+  {
+   "name": "University of Wisconsin–Madison",
+   "type": "place",
+   "dropped": [
+    "slug:multimodal,unexpected_capabilities"
+   ]
+  },
+  {
+   "name": "Volker Springel",
+   "type": "person",
+   "dropped": [
+    "slug:map"
+   ]
+  },
+  {
+   "name": "Max Planck Institute for Astrophysics",
+   "type": "institution",
+   "dropped": [
+    "slug:map"
+   ]
+  },
+  {
+   "name": "European Southern Observatory",
+   "type": "institution",
+   "dropped": [
+    "slug:map"
+   ]
+  },
+  {
+   "name": "European Space Agency",
+   "type": "institution",
+   "dropped": [
+    "slug:map"
+   ]
+  },
+  {
+   "name": "NOAA",
+   "type": "institution",
+   "dropped": [
+    "slug:map"
+   ]
+  }
+ ]
 }

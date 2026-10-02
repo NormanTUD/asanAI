@@ -1,0 +1,2700 @@
+[
+  {
+    "id": "person-jonathan-ho",
+    "name": "Jonathan Ho",
+    "type": "person",
+    "loc": "NYU, New York",
+    "lat": 40.7295,
+    "lng": -73.9965,
+    "years": "1993–",
+    "active": "2017–present",
+    "blurb": "Co-creator of DDPM and classifier-free guidance; NYU professor of data science",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "ho2020ddpm",
+      "ho2022cfg"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-yang-song",
+    "name": "Yang Song",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1990–",
+    "active": "2016–present",
+    "blurb": "Co-developed score-based generative modeling, the theoretical foundation for diffusion models",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "song2019score"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-stefano-ermon",
+    "name": "Stefano Ermon",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1980–",
+    "active": "2010–present",
+    "blurb": "Stanford professor; co-developed score-based generative modeling with Yang Song",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "song2019score"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-tim-salimans",
+    "name": "Tim Salimans",
+    "type": "person",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "1992–",
+    "active": "2015–present",
+    "blurb": "Co-inventor of classifier-free guidance for diffusion models; OpenAI researcher",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "ho2022cfg"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jascha-sohl-dickstein",
+    "name": "Jascha Sohl-Dickstein",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1988–",
+    "active": "2013–present",
+    "blurb": "Co-author of the 2015 thermodynamics paper that preceded diffusion models",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "sohl2015deep"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-yaron-lipman",
+    "name": "Yaron Lipman",
+    "type": "person",
+    "loc": "Technion, Haifa",
+    "lat": 32.7763,
+    "lng": 35.0263,
+    "years": "1982–",
+    "active": "2010–present",
+    "blurb": "Creator of Flow Matching, an alternative to diffusion-based generative modeling",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "lipman2023flow"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-robin-rombach",
+    "name": "Robin Rombach",
+    "type": "person",
+    "loc": "LMU Munich",
+    "lat": 48.1441,
+    "lng": 11.5693,
+    "years": "1991–",
+    "active": "2019–present",
+    "blurb": "Lead author of Latent Diffusion Models, the architecture behind Stable Diffusion",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "rombach2022ldm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-andreas-blattmann",
+    "name": "Andreas Blattmann",
+    "type": "person",
+    "loc": "Stability AI, London",
+    "lat": 51.5074,
+    "lng": -0.1278,
+    "years": "1987–",
+    "active": "2019–present",
+    "blurb": "Co-author of Latent Diffusion Models; co-founder of Stability AI",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "rombach2022ldm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-lvmin-zhang",
+    "name": "Lvmin Zhang",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1993–",
+    "active": "2020–present",
+    "blurb": "Creator of ControlNet for conditional control of text-to-image diffusion",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "zhang2023controlnet"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-maneesh-agrawala",
+    "name": "Maneesh Agrawala",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1982–",
+    "active": "2008–present",
+    "blurb": "Stanford professor; senior author of ControlNet",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "zhang2023controlnet"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-william-peebles",
+    "name": "William Peebles",
+    "type": "person",
+    "loc": "Meta AI, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "1992–",
+    "active": "2020–present",
+    "blurb": "Co-author of DiT (Scalable Diffusion Models with Transformers)",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "peebles2023dit"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-saining-xie",
+    "name": "Saining Xie",
+    "type": "person",
+    "loc": "NYU, New York",
+    "lat": 40.7295,
+    "lng": -73.9965,
+    "years": "1991–",
+    "active": "2017–present",
+    "blurb": "Co-author of DiT and MAE; NYU professor of computer science",
+    "cited_in": "computer_vision,diffusion,music_video_generation",
+    "bibkeys": [
+      "he2021mae",
+      "peebles2023dit"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-timothee-darcet",
+    "name": "Timothée Darcet",
+    "type": "person",
+    "loc": "Meta AI, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "1996–",
+    "active": "2020–present",
+    "blurb": "Lead author of 'Vision Transformers Need Registers'",
+    "cited_in": "computer_vision",
+    "bibkeys": [
+      "darcet2024registers"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-vincent-dumoulin",
+    "name": "Vincent Dumoulin",
+    "type": "person",
+    "loc": "Mila, Montreal",
+    "lat": 45.5017,
+    "lng": -73.5673,
+    "years": "1991–",
+    "active": "2014–2019",
+    "blurb": "Co-author of the Distill article on deconvolution and checkerboard artifacts",
+    "cited_in": "deconvolution",
+    "bibkeys": [
+      "odena2016deconvolution"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jean-baptiste-alayrac",
+    "name": "Jean-Baptiste Alayrac",
+    "type": "person",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "1990–",
+    "active": "2015–present",
+    "blurb": "Lead author of Flamingo, Google DeepMind's visual language model",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "alayrac2022flamingo"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-haotian-liu",
+    "name": "Haotian Liu",
+    "type": "person",
+    "loc": "University of Wisconsin–Madison",
+    "lat": 43.0731,
+    "lng": -89.4012,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Lead author of LLaVA, a vision-language model that projects visual tokens into LLM space",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "liu2023llava"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-pauline-luc",
+    "name": "Pauline Luc",
+    "type": "person",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "1993–",
+    "active": "2018–present",
+    "blurb": "Co-author of Flamingo at Google DeepMind",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "alayrac2022flamingo"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-chunyuan-li",
+    "name": "Chunyuan Li",
+    "type": "person",
+    "loc": "University of Wisconsin–Madison",
+    "lat": 43.0731,
+    "lng": -89.4012,
+    "years": "1985–",
+    "active": "2012–present",
+    "blurb": "UW-Madison professor; co-author of LLaVA",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "liu2023llava"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-yong-jae-lee",
+    "name": "Yong Jae Lee",
+    "type": "person",
+    "loc": "University of Wisconsin–Madison",
+    "lat": 43.0731,
+    "lng": -89.4012,
+    "years": "1970–",
+    "active": "2000–present",
+    "blurb": "UW-Madison professor; senior author of LLaVA",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "liu2023llava"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-qingyang-wu",
+    "name": "Qingyang Wu",
+    "type": "person",
+    "loc": "University of Wisconsin–Madison",
+    "lat": 43.0731,
+    "lng": -89.4012,
+    "years": "1998–",
+    "active": "2021–present",
+    "blurb": "Co-author of LLaVA",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "liu2023llava"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-johann-maelzel",
+    "name": "Johann Nepomuk Mälzel",
+    "type": "person",
+    "loc": "Vienna",
+    "lat": 48.2082,
+    "lng": 16.3738,
+    "years": "1781–1837",
+    "active": "1800–1837",
+    "blurb": "Instrument-maker who built the Panharmonicon (1805), a self-playing mechanical orchestra",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "panharmonicon"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-iannis-xenakis",
+    "name": "Iannis Xenakis",
+    "type": "person",
+    "loc": "Paris",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "years": "1922–2001",
+    "active": "1950–2001",
+    "blurb": "Composer who used stochastic processes to place notes (Bohuslav, 1959, for IBM 650)",
+    "cited_in": "music_video_generation",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-max-mathews",
+    "name": "Max Mathews",
+    "type": "person",
+    "loc": "MIT / Berklee, Boston",
+    "lat": 42.3548,
+    "lng": -71.0838,
+    "years": "1923–2015",
+    "active": "1950–2010",
+    "blurb": "Father of computer music; wrote MUSIC, the first computer language for real-time sound synthesis (1957)",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "max_mathews"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-lejaren-hiller",
+    "name": "Lejaren Hiller",
+    "type": "person",
+    "loc": "University of Illinois at Urbana-Champaign",
+    "lat": 40.1106,
+    "lng": -88.2272,
+    "years": "1924–2016",
+    "active": "1950–2010",
+    "blurb": "Mathematician who co-composed the Illiac Suite (1957), the first major work composed by a computer",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "illiac_suite"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-leonard-isaacson",
+    "name": "Leonard Isaacson",
+    "type": "person",
+    "loc": "University of Illinois at Urbana-Champaign",
+    "lat": 40.1106,
+    "lng": -88.2272,
+    "years": "1925–",
+    "active": "1950–2000",
+    "blurb": "Composer who co-created the Illiac Suite with Lejaren Hiller on the ILLIAC I",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "illiac_suite"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ikutaro-kakehashi",
+    "name": "Ikutaro Kakehashi",
+    "type": "person",
+    "loc": "Hamamatsu, Japan (Roland)",
+    "lat": 34.6632,
+    "lng": 137.6795,
+    "years": "1931–2004",
+    "active": "1970–2004",
+    "blurb": "Founder of Roland; key architect of the MIDI standard (1983)",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "midi"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-karlheinz-brandenburg",
+    "name": "Karlheinz Brandenburg",
+    "type": "person",
+    "loc": "Fraunhofer IIS, Erlangen",
+    "lat": 49.5879,
+    "lng": 10.7362,
+    "years": "1949–",
+    "active": "1980–2020",
+    "blurb": "Lead developer of MP3 (MPEG-1 Audio Layer III) at Fraunhofer Gesellschaft",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "mp3"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-marcel-duchamp",
+    "name": "Marcel Duchamp",
+    "type": "person",
+    "loc": "New York / Paris",
+    "lat": 40.7128,
+    "lng": -74.006,
+    "years": "1887–1968",
+    "active": "1910–1968",
+    "blurb": "Artist who created chance-based 'scores' in the 1910s, questioning the role of the composer",
+    "cited_in": "music_video_generation",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-john-cage",
+    "name": "John Cage",
+    "type": "person",
+    "loc": "New York",
+    "lat": 40.7128,
+    "lng": -74.006,
+    "years": "1912–1992",
+    "active": "1940–1992",
+    "blurb": "Composer who created Music of Changes (1951) using the I Ching to determine pitch and duration",
+    "cited_in": "music_video_generation",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "person-aaron-van-den-oord",
+    "name": "Aaron van den Oord",
+    "type": "person",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "1991–",
+    "active": "2013–present",
+    "blurb": "Creator of WaveNet and co-creator of VQ-VAE at DeepMind",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "oord2016wavenet",
+      "vq_vae"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-oriol-vinyals",
+    "name": "Oriol Vinyals",
+    "type": "person",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "1984–",
+    "active": "2010–present",
+    "blurb": "Co-creator of VQ-VAE and co-author of WaveNet at DeepMind",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "vq_vae",
+      "oord2016wavenet"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-koray-kavukcuoglu",
+    "name": "Koray Kavukcuoglu",
+    "type": "person",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "1981–",
+    "active": "2010–present",
+    "blurb": "Co-creator of VQ-VAE; co-founder of Google DeepMind",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "vq_vae",
+      "oord2016wavenet"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-david-ha",
+    "name": "David Ha",
+    "type": "person",
+    "loc": "Google (YouTube)",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "1986–",
+    "active": "2015–present",
+    "blurb": "Co-creator of World Models (2018) with Schmidhuber",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "ha2018worldmodels"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jade-copet",
+    "name": "Jade Copet",
+    "type": "person",
+    "loc": "Meta AI, Montreal",
+    "lat": 45.5017,
+    "lng": -73.5673,
+    "years": "1993–",
+    "active": "2019–present",
+    "blurb": "Lead author of MusicGen and co-author of EnCodec at Meta",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "copet2023musicgen",
+      "defossez2022encodec"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-alexandre-defossez",
+    "name": "Alexandre Défossez",
+    "type": "person",
+    "loc": "Meta AI, Montreal",
+    "lat": 45.5017,
+    "lng": -73.5673,
+    "years": "1993–",
+    "active": "2019–present",
+    "blurb": "Lead author of EnCodec (neural audio codec) at Meta",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "defossez2022encodec"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-neil-zeghidour",
+    "name": "Neil Zeghidour",
+    "type": "person",
+    "loc": "Google, Geneva",
+    "lat": 46.2044,
+    "lng": 6.1432,
+    "years": "1988–",
+    "active": "2015–present",
+    "blurb": "Lead author of SoundStream, Google's end-to-end neural audio codec",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "zeghidour2021soundstream"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-wilson-yan",
+    "name": "Wilson Yan",
+    "type": "person",
+    "loc": "UC Berkeley",
+    "lat": 37.8715,
+    "lng": -122.2585,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Lead author of VideoGPT, a VQ-VAE + Transformer approach to video generation",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "yan2021videogpt"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-andrea-agostinelli",
+    "name": "Andrea Agostinelli",
+    "type": "person",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "1992–",
+    "active": "2018–present",
+    "blurb": "Lead author of MusicLM at Google DeepMind",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "agostinelli2023musiqlm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-zalan-borsos",
+    "name": "Zalán Borsos",
+    "type": "person",
+    "loc": "Google, Geneva",
+    "lat": 46.2044,
+    "lng": 6.1432,
+    "years": "1991–",
+    "active": "2017–present",
+    "blurb": "Lead author of AudioLM at Google",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "borsos2023audiolm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-haohe-liu",
+    "name": "Haohe Liu",
+    "type": "person",
+    "loc": "CUNY, New York",
+    "lat": 40.8075,
+    "lng": -73.9626,
+    "years": "1994–",
+    "active": "2020–present",
+    "blurb": "Lead author of AudioLDM (text-to-audio with latent diffusion)",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "liu2023audioldm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-angela-fan",
+    "name": "Angela Fan",
+    "type": "person",
+    "loc": "Meta AI, Paris",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "years": "1990–",
+    "active": "2015–present",
+    "blurb": "Co-author of hierarchical neural story generation (top-k sampling)",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "fan2018topk"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-mike-lewis",
+    "name": "Mike Lewis",
+    "type": "person",
+    "loc": "Meta AI, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "1990–",
+    "active": "2015–present",
+    "blurb": "Co-author of top-k sampling and multiple NLP papers at Meta",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "fan2018topk"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-max-bain",
+    "name": "Max Bain",
+    "type": "person",
+    "loc": "University of Oxford",
+    "lat": 51.7548,
+    "lng": -1.2544,
+    "years": "1994–",
+    "active": "2019–present",
+    "blurb": "Lead author of WebVid / Frozen in Time, a joint video-image encoder",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "bain2021webvid"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-andrew-zisserman",
+    "name": "Andrew Zisserman",
+    "type": "person",
+    "loc": "University of Oxford",
+    "lat": 51.7548,
+    "lng": -1.2544,
+    "years": "1957–",
+    "active": "1990–present",
+    "blurb": "Oxford professor; senior author of WebVid and major computer vision researcher",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "bain2021webvid"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sebastien-bubeck",
+    "name": "Sébastien Bubeck",
+    "type": "person",
+    "loc": "Microsoft Research, Redmond",
+    "lat": 47.674,
+    "lng": -122.1215,
+    "years": "1985–",
+    "active": "2023–present",
+    "blurb": "Lead author of 'Sparks of AGI: Early experiments with GPT-4'",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "bubeck2023sparks"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nicholas-carlini",
+    "name": "Nicholas Carlini",
+    "type": "person",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "1988–",
+    "active": "2015–present",
+    "blurb": "Researcher specializing in adversarial attacks and training data extraction from LLMs",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "carlini2021extracting"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-michal-kosinski",
+    "name": "Michal Kosinski",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1985–",
+    "active": "2018–present",
+    "blurb": "Researcher who demonstrated that ChatGPT-4 achieves human-child-level Theory of Mind",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "kosinski2023tom"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-stephanie-lin",
+    "name": "Stephanie Lin",
+    "type": "person",
+    "loc": "University of Washington",
+    "lat": 47.6594,
+    "lng": -122.3039,
+    "years": "1992–",
+    "active": "2018–present",
+    "blurb": "Co-author of TruthfulQA; researcher on imitative falsehoods in LLMs",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "lin2021truthful"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jiaxin-huang",
+    "name": "Jiaxin Huang",
+    "type": "person",
+    "loc": "University of California, Berkeley",
+    "lat": 37.8715,
+    "lng": -122.2585,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Lead author of 'Large Language Models Can Self-Improve'",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "huang2022selfimprove"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-timothee-schick",
+    "name": "Timo Schick",
+    "type": "person",
+    "loc": "University of Washington",
+    "lat": 47.6594,
+    "lng": -122.3039,
+    "years": "1994–",
+    "active": "2018–present",
+    "blurb": "Lead author of Toolformer: LLMs teaching themselves to use tools",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "schick2023toolformer"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-shixiang-shane-gu",
+    "name": "Shixiang Shane Gu",
+    "type": "person",
+    "loc": "University of Washington / Meta AI",
+    "lat": 47.6594,
+    "lng": -122.3039,
+    "years": "1990–",
+    "active": "2015–present",
+    "blurb": "Researcher on LLM self-improvement and chain-of-thought",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "huang2022selfimprove",
+      "kojima2022zeroshot"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-dale-schuurmans",
+    "name": "Dale Schuurmans",
+    "type": "person",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "1975–",
+    "active": "2010–present",
+    "blurb": "Co-author of Chain-of-Thought prompting and Self-Consistency",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "wei2022chainofthought",
+      "wang2022selfconsistency"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-saurav-kadavath",
+    "name": "Saurav Kadavath",
+    "type": "person",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Co-author of Constitutional AI and 'Language Models (Mostly) Know What They Know'",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "bai2022constitutional",
+      "kadavath2022selfknowledge"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-tom-conerly",
+    "name": "Tom Conerly",
+    "type": "person",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "1993–",
+    "active": "2020–present",
+    "blurb": "Anthropic researcher; co-author of self-knowledge and Constitutional AI papers",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "kadavath2022selfknowledge"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-amanda-askell",
+    "name": "Amanda Askell",
+    "type": "person",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Anthropic researcher; co-author of Constitutional AI and self-knowledge papers",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "bai2022constitutional",
+      "kadavath2022selfknowledge"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-tom-henighan",
+    "name": "Tom Henighan",
+    "type": "person",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "1993–",
+    "active": "2020–present",
+    "blurb": "Anthropic researcher; co-author of self-knowledge and superposition papers",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "kadavath2022selfknowledge"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-maxwell-nye",
+    "name": "Maxwell Nye",
+    "type": "person",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "1997–",
+    "active": "2020–present",
+    "blurb": "Lead author of 'Show Your Work: Scratchpads for Intermediate Computation'",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "nye2021scratchpad"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-fernanda-viegas",
+    "name": "Fernanda Viégas",
+    "type": "person",
+    "loc": "MIT, Cambridge",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "1968–",
+    "active": "2000–present",
+    "blurb": "MIT professor; co-author of Othello-GPT emergent world representations",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "li2022othello_iclr"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hanspeter-pfister",
+    "name": "Hanspeter Pfister",
+    "type": "person",
+    "loc": "MIT, Cambridge",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "1959–",
+    "active": "1990–present",
+    "blurb": "MIT professor; senior author of Othello-GPT paper",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "li2022othello_iclr"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hattie-zhou",
+    "name": "Hattie Zhou",
+    "type": "person",
+    "loc": "Milan",
+    "lat": 45.4642,
+    "lng": 9.19,
+    "years": "1988–",
+    "active": "2018–present",
+    "blurb": "Lead author of 'Teaching Algorithmic Reasoning via In-context Learning'",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "zhou2022algorithmic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-michelle-bevilacqua",
+    "name": "Michele Bevilacqua",
+    "type": "person",
+    "loc": "ETH Zurich",
+    "lat": 47.3769,
+    "lng": 8.5417,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Co-author of 'Lost in the Middle' on long-context LLM usage",
+    "cited_in": "rag",
+    "bibkeys": [
+      "liu2023lostmiddle"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-shivam-garg",
+    "name": "Shivam Garg",
+    "type": "person",
+    "loc": "MIT, Cambridge",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Lead author of in-context learning analysis for Transformers",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "garg2022incontext"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jacob-olsson",
+    "name": "Jacob Olsson",
+    "type": "person",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "1994–",
+    "active": "2020–present",
+    "blurb": "Lead author of Induction Heads: In-Context Learning and Induction Heads",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "olsson2022induction"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-brian-cheung",
+    "name": "Brian Cheung",
+    "type": "person",
+    "loc": "MIT CSAIL",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Co-author of the Platonic Representation Hypothesis",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "huh2024platonic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-tongzhou-wang",
+    "name": "Tongzhou Wang",
+    "type": "person",
+    "loc": "MIT CSAIL",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "1993–",
+    "active": "2018–present",
+    "blurb": "Co-author of the Platonic Representation Hypothesis",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "huh2024platonic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-phillip-isola",
+    "name": "Phillip Isola",
+    "type": "person",
+    "loc": "MIT CSAIL",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "1985–",
+    "active": "2010–present",
+    "blurb": "MIT professor; senior author of the Platonic Representation Hypothesis",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "huh2024platonic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-nelson-f-liu",
+    "name": "Nelson F. Liu",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1995–",
+    "active": "2020–present",
+    "blurb": "Lead author of 'Lost in the Middle: How Language Models Use Long Contexts'",
+    "cited_in": "rag",
+    "bibkeys": [
+      "liu2023lostmiddle"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-fabio-petroni",
+    "name": "Fabio Petroni",
+    "type": "person",
+    "loc": "Oxford / Hugging Face",
+    "lat": 51.7548,
+    "lng": -1.2544,
+    "years": "1990–",
+    "active": "2015–present",
+    "blurb": "Researcher on LLM knowledge and long-context usage",
+    "cited_in": "rag",
+    "bibkeys": [
+      "lewis2020rag",
+      "liu2023lostmiddle"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ludwig-schmidt",
+    "name": "Ludwig Schmidt",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1985–",
+    "active": "2012–present",
+    "blurb": "Stanford professor; senior author on compositionality gap research",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "press2022compositionality"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-noah-smith",
+    "name": "Noah A. Smith",
+    "type": "person",
+    "loc": "University of Washington",
+    "lat": 47.6594,
+    "lng": -122.3039,
+    "years": "1975–",
+    "active": "2005–present",
+    "blurb": "UW professor; senior author on compositionality gap research",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "press2022compositionality"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-freda-shi",
+    "name": "Freda Shi",
+    "type": "person",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "1994–",
+    "active": "2020–present",
+    "blurb": "Lead author on cross-lingual chain-of-thought reasoning",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "shi2023cottransfer"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sebastian-ruder",
+    "name": "Sebastian Ruder",
+    "type": "person",
+    "loc": "Oxford / AI21 Labs",
+    "lat": 51.7548,
+    "lng": -1.2544,
+    "years": "1985–",
+    "active": "2015–present",
+    "blurb": "Researcher on multilingual LLMs and cross-lingual reasoning",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "shi2023cottransfer"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sean-welleck",
+    "name": "Sean Welleck",
+    "type": "person",
+    "loc": "University of Waterloo",
+    "lat": 43.4643,
+    "lng": -80.5204,
+    "years": "1988–",
+    "active": "2015–present",
+    "blurb": "UWaterloo professor; senior author of Self-Refine",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "madaan2023selfrefine"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-yves-bertot",
+    "name": "Yves Bertot",
+    "type": "person",
+    "loc": "INRIA, Paris",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "years": "1957–",
+    "active": "1985–present",
+    "blurb": "Co-author of Coq'Art; key developer of the Coq proof assistant",
+    "cited_in": "coherent_world_models",
+    "bibkeys": [
+      "bertot2013coq"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-pierre-casteran",
+    "name": "Pierre Castéran",
+    "type": "person",
+    "loc": "INRIA / ENS Paris",
+    "lat": 48.8462,
+    "lng": 2.3372,
+    "years": "1963–",
+    "active": "1990–present",
+    "blurb": "Co-author of Coq'Art; developer of the Coq proof assistant",
+    "cited_in": "coherent_world_models",
+    "bibkeys": [
+      "bertot2013coq"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-omar-khattab",
+    "name": "Omar Khattab",
+    "type": "person",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1990–",
+    "active": "2015–present",
+    "blurb": "Lead author of ColBERT and creator of the DLRM framework",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "khattab2020colbert"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-matei-zaharia",
+    "name": "Matei Zaharia",
+    "type": "person",
+    "loc": "UC Berkeley",
+    "lat": 37.8715,
+    "lng": -122.2585,
+    "years": "1979–",
+    "active": "2010–present",
+    "blurb": "Creator of Apache Spark; co-author of ColBERT",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "khattab2020colbert"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-aditya-kusupati",
+    "name": "Aditya Kusupati",
+    "type": "person",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "1992–",
+    "active": "2018–present",
+    "blurb": "Lead author of Matryoshka Representation Learning",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "kusupati2022matryoshka"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-telemaque-jegou",
+    "name": "Télemaque Jégou",
+    "type": "person",
+    "loc": "INRIA, Paris",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "years": "1985–",
+    "active": "2008–present",
+    "blurb": "Lead author of Product Quantization for nearest neighbor search",
+    "cited_in": "rag,vectorsearch",
+    "bibkeys": [
+      "jegou2011pq"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-matthijs-douze",
+    "name": "Matthijs Douzé",
+    "type": "person",
+    "loc": "FAIR, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "1987–",
+    "active": "2012–present",
+    "blurb": "Co-creator of FAISS; co-author of Product Quantization",
+    "cited_in": "rag,vectorsearch",
+    "bibkeys": [
+      "jegou2011pq",
+      "johnson2017faiss"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-cordelia-schmid",
+    "name": "Cordelia Schmid",
+    "type": "person",
+    "loc": "INRIA, Paris",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "years": "1970–",
+    "active": "1995–present",
+    "blurb": "INRIA director; co-author of Product Quantization",
+    "cited_in": "rag,vectorsearch",
+    "bibkeys": [
+      "jegou2011pq"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-stephen-robertson",
+    "name": "Stephen Robertson",
+    "type": "person",
+    "loc": "University of Cambridge",
+    "lat": 52.2043,
+    "lng": 0.1149,
+    "years": "1960–",
+    "active": "1985–present",
+    "blurb": "Co-developer of BM25, the dominant keyword retrieval algorithm",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "robertson2009bm25"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hugo-zaragoza",
+    "name": "Hugo Zaragoza",
+    "type": "person",
+    "loc": "UCL, London",
+    "lat": 51.5245,
+    "lng": -0.1337,
+    "years": "1970–",
+    "active": "1995–present",
+    "blurb": "Co-author of BM25 with Robertson; UCL professor of information retrieval",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "robertson2009bm25"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-ddpm",
+    "name": "DDPM",
+    "type": "artifact",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "2020",
+    "active": "2020–present",
+    "blurb": "Denoising Diffusion Probabilistic Models by Ho, Jain & Abbeel; made image generation practical",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "ho2020ddpm"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-stable-diffusion",
+    "name": "Stable Diffusion",
+    "type": "artifact",
+    "loc": "LMU Munich",
+    "lat": 48.1441,
+    "lng": 11.5693,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Latent diffusion model by Rombach et al.; dominant open-source text-to-image system",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "rombach2022ldm"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-dit",
+    "name": "DiT",
+    "type": "artifact",
+    "loc": "Meta AI, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Diffusion Transformer by Peebles & Xie; replaced U-Net as the denoiser backbone",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "peebles2023dit"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-controlnet",
+    "name": "ControlNet",
+    "type": "artifact",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Conditional control for text-to-image diffusion using edge maps, depth, and pose skeletons",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "zhang2023controlnet"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-lora",
+    "name": "LoRA",
+    "type": "artifact",
+    "loc": "Microsoft Research, Redmond",
+    "lat": 47.674,
+    "lng": -122.1215,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Low-Rank Adaptation for efficient fine-tuning of large models including diffusion",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "hu2021lora"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-flow-matching",
+    "name": "Flow Matching",
+    "type": "artifact",
+    "loc": "Technion, Haifa",
+    "lat": 32.7763,
+    "lng": 35.0263,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Generative modeling framework by Lipman et al.; trains by matching vector fields",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "lipman2023flow"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-cfg",
+    "name": "Classifier-Free Guidance",
+    "type": "artifact",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Training trick by Ho & Salimans that amplifies prompt adherence in diffusion models",
+    "cited_in": "diffusion,music_video_generation",
+    "bibkeys": [
+      "ho2022cfg"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-score-matching",
+    "name": "Score-Based Generative Modeling",
+    "type": "artifact",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "2019",
+    "active": "2019–present",
+    "blurb": "Theoretical framework by Song & Ermon connecting denoising to score estimation",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "song2019score"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-laion-5b",
+    "name": "LAION-5B",
+    "type": "artifact",
+    "loc": "Germany (distributed)",
+    "lat": 50.1109,
+    "lng": 8.6821,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Publicly released dataset of ~5 billion (image, caption) pairs; training set for Stable Diffusion",
+    "cited_in": "diffusion",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-clip",
+    "name": "CLIP",
+    "type": "artifact",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Contrastive Language-Image Pre-training by Radford et al.; aligns images and text",
+    "cited_in": "computer_vision,multimodal,music_video_generation",
+    "bibkeys": [
+      "radford2021clip"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-vit",
+    "name": "ViT (Vision Transformer)",
+    "type": "artifact",
+    "loc": "Google Research, Zurich",
+    "lat": 47.3769,
+    "lng": 8.5417,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Transformers applied to image patches by Dosovitskiy et al.; replaced CNNs as dominant vision architecture",
+    "cited_in": "computer_vision,multimodal",
+    "bibkeys": [
+      "dosovitskiy2021vit"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-llava",
+    "name": "LLaVA",
+    "type": "artifact",
+    "loc": "University of Wisconsin–Madison",
+    "lat": 43.0731,
+    "lng": -89.4012,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Vision-language model by Liu et al. that projects visual tokens into LLM text space",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "liu2023llava"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-flamingo",
+    "name": "Flamingo",
+    "type": "artifact",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Visual language model by Alayrac et al. using cross-attention to inject image features into LLMs",
+    "cited_in": "multimodal",
+    "bibkeys": [
+      "alayrac2022flamingo"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-sam",
+    "name": "SAM (Segment Anything)",
+    "type": "artifact",
+    "loc": "Meta AI, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Foundation model for promptable image segmentation by Kirillov et al.",
+    "cited_in": "computer_vision",
+    "bibkeys": [
+      "kirillov2023sam"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-resnet",
+    "name": "ResNet",
+    "type": "artifact",
+    "loc": "Facebook AI Research, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "2015",
+    "active": "2015–present",
+    "blurb": "Deep Residual Learning by He et al.; skip connections that made very deep networks trainable",
+    "cited_in": "computer_vision",
+    "bibkeys": [
+      "he2015resnet"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-mae",
+    "name": "MAE (Masked Autoencoders)",
+    "type": "artifact",
+    "loc": "Meta AI, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Self-supervised vision pretraining by He et al.; masks patches and reconstructs them",
+    "cited_in": "computer_vision",
+    "bibkeys": [
+      "he2021mae"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-unet",
+    "name": "U-Net",
+    "type": "artifact",
+    "loc": "University of Freiburg",
+    "lat": 47.999,
+    "lng": 7.8421,
+    "years": "2015",
+    "active": "2015–present",
+    "blurb": "Convolutional architecture for biomedical image segmentation by Ronneberger et al.",
+    "cited_in": "computer_vision",
+    "bibkeys": [
+      "ronneberger2015unet"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-neocognitron",
+    "name": "Neocognitron",
+    "type": "artifact",
+    "loc": "Waseda University, Tokyo",
+    "lat": 35.7361,
+    "lng": 139.7383,
+    "years": "1980",
+    "active": "1980",
+    "blurb": "First convolutional neural network architecture by Fukushima (1980)",
+    "cited_in": "computer_vision",
+    "bibkeys": [
+      "neocognitron"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-inceptionism",
+    "name": "Inceptionism (DeepDream)",
+    "type": "artifact",
+    "loc": "Google, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2015",
+    "active": "2015–present",
+    "blurb": "Technique by Mordvintsev, Olah & Tyka: gradient ascent on class scores to reveal what networks see",
+    "cited_in": "computer_vision,inceptionism",
+    "bibkeys": [
+      "mordvintsev2015inceptionism"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-deconv-checkerboard",
+    "name": "Deconvolution Checkerboard Artifact",
+    "type": "artifact",
+    "loc": "Google / Distill",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2016",
+    "active": "2016",
+    "blurb": "Documented by Odena, Dumoulin & Olah: transposed convolutions bake periodic patterns into images and gradients",
+    "cited_in": "deconvolution",
+    "bibkeys": [
+      "odena2016deconvolution"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-sora",
+    "name": "Sora",
+    "type": "artifact",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2024",
+    "active": "2024–present",
+    "blurb": "OpenAI's video generation model creating coherent one-minute videos from text",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "brooks2024sora"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-wavenet",
+    "name": "WaveNet",
+    "type": "artifact",
+    "loc": "DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "2016",
+    "active": "2016–present",
+    "blurb": "DeepMind's autoregressive generative model for raw audio waveforms by van den Oord et al.",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "oord2016wavenet"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-vq-vae",
+    "name": "VQ-VAE",
+    "type": "artifact",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "2017",
+    "active": "2017–present",
+    "blurb": "Vector Quantized VAE by van den Oord, Vinyals & Kavukcuoglu; foundation for neural audio codecs",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "vq_vae"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-panharmonicon",
+    "name": "Panharmonicon",
+    "type": "artifact",
+    "loc": "Vienna",
+    "lat": 48.2082,
+    "lng": 16.3738,
+    "years": "1805",
+    "active": "1805–1850s",
+    "blurb": "Mälzel's self-playing mechanical orchestra (1805); could imitate a full ensemble including cannon fire",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "panharmonicon"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-illiac-suite",
+    "name": "Illiac Suite",
+    "type": "artifact",
+    "loc": "University of Illinois at Urbana-Champaign",
+    "lat": 40.1106,
+    "lng": -88.2272,
+    "years": "1957",
+    "active": "1957",
+    "blurb": "First major musical work composed by a computer (ILLIAC I), by Hiller and Isaacson",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "illiac_suite"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-midi",
+    "name": "MIDI",
+    "type": "artifact",
+    "loc": "Roland, Hamamatsu / Sequential Circuits, San Carlos",
+    "lat": 34.6632,
+    "lng": 137.6795,
+    "years": "1983",
+    "active": "1983–present",
+    "blurb": "Musical Instrument Digital Interface; standard for representing musical instructions as data (1983)",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "midi"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-mp3",
+    "name": "MP3",
+    "type": "artifact",
+    "loc": "Fraunhofer Gesellschaft, Erlangen",
+    "lat": 49.5879,
+    "lng": 10.7362,
+    "years": "1993",
+    "active": "1993–present",
+    "blurb": "MPEG-1 Audio Layer III; lossy compression using psychoacoustic masking; standardized 1993",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "mp3"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-compact-disc",
+    "name": "Compact Disc (CD-DA)",
+    "type": "artifact",
+    "loc": "Sony/Philips, Tokyo/Eindhoven",
+    "lat": 51.4308,
+    "lng": 5.4675,
+    "years": "1982",
+    "active": "1982–present",
+    "blurb": "First mass-market digital audio format; 44.1 kHz / 16-bit PCM per the 1980 Red Book standard",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "cd_digital_audio"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-soundstream",
+    "name": "SoundStream",
+    "type": "artifact",
+    "loc": "Google, Geneva",
+    "lat": 46.2044,
+    "lng": 6.1432,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Google's end-to-end neural audio codec producing discrete codes at 6–24 kbps",
+    "cited_in": "music_video_generation,speech_audio",
+    "bibkeys": [
+      "zeghidour2021soundstream"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-encodec",
+    "name": "EnCodec",
+    "type": "artifact",
+    "loc": "Meta AI, Montreal",
+    "lat": 45.5017,
+    "lng": -73.5673,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Meta's neural audio codec using residual vector quantization; foundation for MusicGen",
+    "cited_in": "music_video_generation,speech_audio",
+    "bibkeys": [
+      "defossez2022encodec"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-musicgen",
+    "name": "MusicGen",
+    "type": "artifact",
+    "loc": "Meta AI, Montreal",
+    "lat": 45.5017,
+    "lng": -73.5673,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Meta's single-pass Transformer over EnCodec tokens for controllable music generation",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "copet2023musicgen"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-musiclm",
+    "name": "MusicLM",
+    "type": "artifact",
+    "loc": "Google DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Google DeepMind's music generation model from text",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "agostinelli2023musiqlm"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-audioldm",
+    "name": "AudioLDM",
+    "type": "artifact",
+    "loc": "CUNY, New York",
+    "lat": 40.8075,
+    "lng": -73.9626,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Text-to-audio generation using latent diffusion models over audio",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "liu2023audioldm"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-audioldm2",
+    "name": "AudioLM",
+    "type": "artifact",
+    "loc": "Google, Geneva",
+    "lat": 46.2044,
+    "lng": 6.1432,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Google's language-modeling approach to audio generation",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "borsos2023audiolm"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-videogpt",
+    "name": "VideoGPT",
+    "type": "artifact",
+    "loc": "UC Berkeley",
+    "lat": 37.8715,
+    "lng": -122.2585,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Video generation using VQ-VAE + Transformers by Yan et al.",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "yan2021videogpt"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-world-models",
+    "name": "World Models",
+    "type": "artifact",
+    "loc": "Google / IDSIA",
+    "lat": 46.0126,
+    "lng": 8.9533,
+    "years": "2018",
+    "active": "2018–present",
+    "blurb": "Ha & Schmidhuber's framework for agents that learn compressed internal models of their environment",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "ha2018worldmodels"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-webvid",
+    "name": "WebVid (Frozen in Time)",
+    "type": "artifact",
+    "loc": "University of Oxford",
+    "lat": 51.7548,
+    "lng": -1.2544,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Joint video and image encoder for end-to-end retrieval by Bain et al.",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "bain2021webvid"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-whisper",
+    "name": "Whisper",
+    "type": "artifact",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "OpenAI's dominant open ASR model; encoder-decoder Transformer trained on 680k hours of audio",
+    "cited_in": "speech_audio",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-conformer",
+    "name": "Conformer",
+    "type": "artifact",
+    "loc": "Google, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2020",
+    "active": "2020–present",
+    "blurb": "Google's ASR architecture combining convolutions and self-attention",
+    "cited_in": "speech_audio",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-tacotron2",
+    "name": "Tacotron 2",
+    "type": "artifact",
+    "loc": "DeepMind, London",
+    "lat": 51.5112,
+    "lng": -0.1335,
+    "years": "2017",
+    "active": "2017–present",
+    "blurb": "Neural spectrogram TTS model; encoder-decoder producing mel-spectrograms",
+    "cited_in": "speech_audio",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-valle",
+    "name": "VALL-E",
+    "type": "artifact",
+    "loc": "Microsoft Research, Redmond",
+    "lat": 47.674,
+    "lng": -122.1215,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Microsoft's codec-language-model TTS enabling voice cloning from a 3-second sample",
+    "cited_in": "speech_audio",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-wav2vec2",
+    "name": "wav2vec 2.0",
+    "type": "artifact",
+    "loc": "Meta AI, Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "2020",
+    "active": "2020–present",
+    "blurb": "Self-supervised speech representation learning by masking audio spans",
+    "cited_in": "speech_audio",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-rag",
+    "name": "RAG (Retrieval-Augmented Generation)",
+    "type": "artifact",
+    "loc": "University of Edinburgh",
+    "lat": 55.9533,
+    "lng": -3.1883,
+    "years": "2020",
+    "active": "2020–present",
+    "blurb": "Giving LLMs external searchable memory: retrieve relevant passages, inject into prompt, generate grounded answer",
+    "cited_in": "rag",
+    "bibkeys": [
+      "lewis2020rag"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-hnsw",
+    "name": "HNSW",
+    "type": "artifact",
+    "loc": "Moscow",
+    "lat": 55.7558,
+    "lng": 37.6173,
+    "years": "2018",
+    "active": "2018–present",
+    "blurb": "Hierarchical Navigable Small World graphs; efficient approximate nearest neighbor search by Malkov & Yashunin",
+    "cited_in": "rag,vectorsearch",
+    "bibkeys": [
+      "malkov2018hnsw"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-faiss",
+    "name": "FAISS",
+    "type": "artifact",
+    "loc": "Meta AI (FAIR), Menlo Park",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "2017",
+    "active": "2017–present",
+    "blurb": "Library for efficient similarity search and clustering of dense vectors at billion scale",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "johnson2017faiss"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-colbert",
+    "name": "ColBERT",
+    "type": "artifact",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "2020",
+    "active": "2020–present",
+    "blurb": "Efficient passage search via contextualized late interaction over BERT by Khattab & Zaharia",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "khattab2020colbert"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-bm25",
+    "name": "BM25",
+    "type": "artifact",
+    "loc": "University of Cambridge",
+    "lat": 52.2043,
+    "lng": 0.1149,
+    "years": "1994",
+    "active": "1994–present",
+    "blurb": "Best Matching 25; the dominant keyword retrieval scoring function",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "robertson2009bm25"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-matryoshka",
+    "name": "Matryoshka Representation Learning",
+    "type": "artifact",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Learning representations of arbitrary dimension by training prefixes of embeddings",
+    "cited_in": "vectorsearch",
+    "bibkeys": [
+      "kusupati2022matryoshka"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-product-quantization",
+    "name": "Product Quantization",
+    "type": "artifact",
+    "loc": "INRIA, Paris",
+    "lat": 48.8566,
+    "lng": 2.3522,
+    "years": "2011",
+    "active": "2011–present",
+    "blurb": "Compressing high-dimensional vectors for approximate nearest neighbor search by Jégou, Douzé & Schmid",
+    "cited_in": "rag,vectorsearch",
+    "bibkeys": [
+      "jegou2011pq"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-react",
+    "name": "ReAct",
+    "type": "artifact",
+    "loc": "Princeton University",
+    "lat": 40.3493,
+    "lng": -74.6551,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Framework by Yao et al. interleaving reasoning traces and tool actions in LLM agents",
+    "cited_in": "agents,promptengineering",
+    "bibkeys": [
+      "yao2023react"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-shrdlu",
+    "name": "SHRDLU",
+    "type": "artifact",
+    "loc": "MIT, Cambridge",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "1972",
+    "active": "1972",
+    "blurb": "Winograd's blocks-world program: natural language commands manipulating a virtual world",
+    "cited_in": "agents",
+    "bibkeys": [
+      "shrdlu_image"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-othello-gpt",
+    "name": "Othello-GPT",
+    "type": "artifact",
+    "loc": "Meta AI",
+    "lat": 37.4037,
+    "lng": -122.0737,
+    "years": "2022",
+    "active": "2022",
+    "blurb": "Small GPT trained on Othello move sequences that spontaneously formed internal board representations",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "li2022othello_iclr"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-toolformer",
+    "name": "Toolformer",
+    "type": "artifact",
+    "loc": "University of Washington",
+    "lat": 47.6594,
+    "lng": -122.3039,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "LLM that teaches itself to call external APIs (calculator, search, translation) via self-supervised loss reduction",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "schick2023toolformer"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-cot",
+    "name": "Chain-of-Thought Prompting",
+    "type": "artifact",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Technique by Wei et al. that elicits multi-step reasoning by prompting with intermediate steps",
+    "cited_in": "unexpected_capabilities,promptengineering",
+    "bibkeys": [
+      "wei2022chainofthought",
+      "wei2022cot"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-self-consistency",
+    "name": "Self-Consistency",
+    "type": "artifact",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Sampling many chain-of-thought traces and taking majority vote; Wang et al. 2022",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "wang2022selfconsistency"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-tree-of-thoughts",
+    "name": "Tree of Thoughts",
+    "type": "artifact",
+    "loc": "Princeton University",
+    "lat": 40.3493,
+    "lng": -74.6551,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Deliberate problem solving with LLMs: generate, evaluate, and branch over reasoning paths (Yao et al.)",
+    "cited_in": "unexpected_capabilities,promptengineering",
+    "bibkeys": [
+      "yao2023tot"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-reflexion",
+    "name": "Reflexion",
+    "type": "artifact",
+    "loc": "Georgia Tech, Atlanta",
+    "lat": 33.749,
+    "lng": -84.388,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Language agents with verbal reinforcement learning by Shinn et al.",
+    "cited_in": "agents,promptengineering",
+    "bibkeys": [
+      "shinn2023reflexion"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-self-refine",
+    "name": "Self-Refine",
+    "type": "artifact",
+    "loc": "University of Washington",
+    "lat": 47.6594,
+    "lng": -122.3039,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Iterative refinement where a single LLM generates, critiques, and improves its own outputs (Madaan et al.)",
+    "cited_in": "unexpected_capabilities,promptengineering",
+    "bibkeys": [
+      "madaan2023selfrefine"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-constitutional-ai",
+    "name": "Constitutional AI",
+    "type": "artifact",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Alignment method by Bai et al.: model critiques and revises its own outputs against written principles",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "bai2022constitutional"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-gpt3",
+    "name": "GPT-3",
+    "type": "artifact",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2020",
+    "active": "2020–2023",
+    "blurb": "175B-parameter autoregressive LM by Brown et al.; demonstrated in-context learning and few-shot prompting",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "brown2020gpt3"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-codex",
+    "name": "Codex",
+    "type": "artifact",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Code generation model by Chen et al.; fine-tuned GPT on GitHub code, powered GitHub Copilot",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "chen2021humaneval"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-sparks-agi",
+    "name": "Sparks of AGI",
+    "type": "artifact",
+    "loc": "Microsoft Research, Redmond",
+    "lat": 47.674,
+    "lng": -122.1215,
+    "years": "2023",
+    "active": "2023",
+    "blurb": "154-page investigation of an early GPT-4 checkpoint documenting unprecedented general capabilities",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "bubeck2023sparks"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-induction-heads",
+    "name": "Induction Heads",
+    "type": "artifact",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Attention head pairs implementing the algorithm [A][B]...[A]→[B]; the circuit behind in-context learning (Olsson et al.)",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "olsson2022induction"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-monosemanticity",
+    "name": "Monosemanticity (Sparse Autoencoders)",
+    "type": "artifact",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Technique by Bricken et al. to decompose polysemantic features using sparse autoencoders",
+    "cited_in": "promptengineering",
+    "bibkeys": [
+      "bricken2023monosemanticity",
+      "monosemanticity"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-platonic-hypothesis",
+    "name": "Platonic Representation Hypothesis",
+    "type": "artifact",
+    "loc": "MIT CSAIL",
+    "lat": 42.3601,
+    "lng": -71.0942,
+    "years": "2024",
+    "active": "2024–present",
+    "blurb": "Proposal by Huh et al. that large models' representations converge toward a single statistical model of reality",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "huh2024platonic"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-ccs",
+    "name": "CCS (Contrast-Consistent Search)",
+    "type": "artifact",
+    "loc": "Stanford University",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "2023",
+    "active": "2023–present",
+    "blurb": "Method by Burns et al. to find truthfulness directions in LLM activation space without supervision",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "burns2022ccs"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-truthfulqa",
+    "name": "TruthfulQA",
+    "type": "artifact",
+    "loc": "University of Washington",
+    "lat": 47.6594,
+    "lng": -122.3039,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Benchmark by Lin et al. testing LLMs on questions where the truth differs from common misconceptions",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "lin2021truthful"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-human-eval",
+    "name": "HumanEval",
+    "type": "artifact",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Benchmark of 164 hand-written Python problems; Codex solved 28.8% in one sample",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "chen2021humaneval"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-flan",
+    "name": "FLAN-PaLM",
+    "type": "artifact",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Instruction-finetuned PaLM 540B; demonstrated zero-shot generalization to unseen task categories",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "chung2022flan"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-scratchpad",
+    "name": "Scratchpad (Show Your Work)",
+    "type": "artifact",
+    "loc": "Google Research, Mountain View",
+    "lat": 37.4225,
+    "lng": -122.0842,
+    "years": "2021",
+    "active": "2021–present",
+    "blurb": "Technique by Nye et al. where a frozen LM performs multi-step arithmetic using intermediate tokens",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "nye2021scratchpad"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "artifact-superposition",
+    "name": "Toy Models of Superposition",
+    "type": "artifact",
+    "loc": "Anthropic, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2022",
+    "active": "2022–present",
+    "blurb": "Theoretical analysis by Elhage et al. showing how networks pack more features than dimensions via sparse linear combinations",
+    "cited_in": "unexpected_capabilities",
+    "bibkeys": [
+      "elhage2022superposition"
+    ],
+    "conf": "stated"
+  },
+  {
+    "id": "place-uw-madison",
+    "name": "University of Wisconsin–Madison",
+    "type": "place",
+    "loc": "Madison, Wisconsin, USA",
+    "lat": 43.0731,
+    "lng": -89.4012,
+    "years": "1848–",
+    "active": "present",
+    "blurb": "Home of LLaVA, Self-Refine, TruthfulQA, and other key LLM research",
+    "cited_in": "multimodal,unexpected_capabilities",
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "place-uillinois",
+    "name": "University of Illinois at Urbana-Champaign",
+    "type": "place",
+    "loc": "Urbana-Champaign, Illinois, USA",
+    "lat": 40.1106,
+    "lng": -88.2272,
+    "years": "1867–",
+    "active": "present",
+    "blurb": "Where the Illiac Suite was composed (1957) and computer science was born",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "illiac_suite"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-technion-haifa",
+    "name": "Technion (Israel Institute of Technology)",
+    "type": "place",
+    "loc": "Haifa, Israel",
+    "lat": 32.7763,
+    "lng": 35.0263,
+    "years": "1912–",
+    "active": "present",
+    "blurb": "Home of Yaron Lipman and Flow Matching research",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "lipman2023flow"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-lmu-munich",
+    "name": "Ludwig Maximilian University of Munich (LMU)",
+    "type": "place",
+    "loc": "Munich, Germany",
+    "lat": 48.1441,
+    "lng": 11.5693,
+    "years": "1472–",
+    "active": "present",
+    "blurb": "Where Stable Diffusion's Latent Diffusion architecture was developed",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "rombach2022ldm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-fraunhofer-erlangen",
+    "name": "Fraunhofer IIS, Erlangen",
+    "type": "place",
+    "loc": "Erlangen, Germany",
+    "lat": 49.5879,
+    "lng": 10.7362,
+    "years": "1954–",
+    "active": "present",
+    "blurb": "German applied research organization where MP3 was developed under Karlheinz Brandenburg",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "mp3"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-cuny",
+    "name": "City University of New York (CUNY)",
+    "type": "place",
+    "loc": "New York, USA",
+    "lat": 40.8075,
+    "lng": -73.9626,
+    "years": "1961–",
+    "active": "present",
+    "blurb": "Home of AudioLDM research by Haohe Liu",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "liu2023audioldm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "place-georgia-tech",
+    "name": "Georgia Institute of Technology",
+    "type": "place",
+    "loc": "Atlanta, Georgia, USA",
+    "lat": 33.749,
+    "lng": -84.388,
+    "years": "1885–",
+    "active": "present",
+    "blurb": "Home of the Reflexion agent framework by Shinn et al.",
+    "cited_in": "agents",
+    "bibkeys": [
+      "shinn2023reflexion"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-panharmonicon-built",
+    "name": "Panharmonicon built",
+    "type": "event",
+    "loc": "Vienna",
+    "lat": 48.2082,
+    "lng": 16.3738,
+    "years": "1805",
+    "active": "1805",
+    "blurb": "Mälzel completed his self-playing mechanical orchestra; Beethoven composed Wellington's Victory for it",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "panharmonicon"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-first-computer-music",
+    "name": "First computer-generated music",
+    "type": "event",
+    "loc": "Manchester, UK",
+    "lat": 53.4794,
+    "lng": -2.2453,
+    "years": "1951",
+    "active": "1951",
+    "blurb": "Christopher Strachey ran a program on a Ferranti computer in Manchester generating the first known computer music",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "strachey1952"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-illiac-suite-composed",
+    "name": "Illiac Suite composed",
+    "type": "event",
+    "loc": "University of Illinois, Urbana-Champaign",
+    "lat": 40.1106,
+    "lng": -88.2272,
+    "years": "1957",
+    "active": "1957",
+    "blurb": "Hiller and Isaacson used the ILLIAC I to compose the first major work by a computer",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "illiac_suite"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-midi-standardized",
+    "name": "MIDI standard locked in",
+    "type": "event",
+    "loc": "Hamamatsu, Japan / San Carlos, USA",
+    "lat": 34.6632,
+    "lng": 137.6795,
+    "years": "1983",
+    "active": "1983",
+    "blurb": "Major synth makers (Roland, Sequential, Yamaha, Korg) agreed on the Musical Instrument Digital Interface standard",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "midi"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-mp3-standardized",
+    "name": "MP3 standardized",
+    "type": "event",
+    "loc": "Erlangen, Germany",
+    "lat": 49.5879,
+    "lng": 10.7362,
+    "years": "1993",
+    "active": "1993",
+    "blurb": "Fraunhofer Gesellschaft standardized MPEG-1 Audio Layer III; the format that defined internet audio",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "mp3"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-cd-launch",
+    "name": "Compact Disc launched",
+    "type": "event",
+    "loc": "Tokyo, Japan / Eindhoven, Netherlands",
+    "lat": 51.4308,
+    "lng": 5.4675,
+    "years": "1982",
+    "active": "1982",
+    "blurb": "Sony and Philips launched the CD (44.1 kHz / 16-bit) to the mass market; the first digital audio format for consumers",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "cd_digital_audio"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-sora-released",
+    "name": "Sora announced",
+    "type": "event",
+    "loc": "OpenAI, San Francisco",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "2024",
+    "active": "2024",
+    "blurb": "OpenAI revealed Sora, generating coherent one-minute videos from text; demonstrated surprising physical understanding",
+    "cited_in": "music_video_generation",
+    "bibkeys": [
+      "brooks2024sora"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-stable-diffusion-released",
+    "name": "Stable Diffusion released",
+    "type": "event",
+    "loc": "LMU Munich / Stability AI",
+    "lat": 48.1441,
+    "lng": 11.5693,
+    "years": "2022",
+    "active": "2022",
+    "blurb": "Rombach et al. released Latent Diffusion; made high-quality text-to-image generation publicly accessible",
+    "cited_in": "diffusion",
+    "bibkeys": [
+      "rombach2022ldm"
+    ],
+    "conf": "known"
+  }
+]
