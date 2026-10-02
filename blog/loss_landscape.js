@@ -344,9 +344,9 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 
 	const surfaceTrace = {
 		type: "surface", x: Ws, y: Bs, z: Z,
-		colorscale: "Jet", reversescale: true,
-		cmin, cmax, showscale: true, opacity: 0.85,
-		lighting: { ambient: 0.6, diffuse: 0.6 },
+		colorscale: "Viridis", reversescale: false,
+		cmin, cmax, showscale: true, opacity: 0.92,
+		lighting: { ambient: 0.7, diffuse: 0.7, roughness: 0.3 },
 		contours: { z: { show: false } },
 		name: "loss surface",
 		hoverinfo: "skip"
