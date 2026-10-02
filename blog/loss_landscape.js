@@ -316,14 +316,6 @@ function ensureSurfaceCoversTrajectories(xsT, ysT) {
 	}
 }
 
-function redrawSurfaceAndTrajectories() {
-	const plotEl = document.getElementById("ll-3d-plot");
-	if (!plotEl || !plotEl.data || plotEl.data.length === 0) return;
-	const surfaceGrid = buildSurfaceGrid();
-	Plotly.restyle("ll-3d-plot", { z: [surfaceGrid.Z] }, [0]).catch(() => {});
-	redraw3DTrajectories();
-}
-
 function calculatePredictionLine(w, b) {
 	return tf.tidy(() => {
 		const xs = [];
@@ -599,6 +591,26 @@ function setScale3D(scale) {
 }
 window.setScale3D = setScale3D;
 
+function redrawSurfaceAndTrajectories() {
+	const plotEl = document.getElementById("ll-3d-plot");
+	if (!plotEl || !plotEl.data || plotEl.data.length === 0) return;
+	const surfaceGrid = buildSurfaceGrid();
+	const flatZ = surfaceGrid.Z.flat().filter(v => v !== null && isFinite(v));
+	if (flatZ.length === 0) return;
+	const scale = state.scale3D || "log";
+	let zMin = Math.min.apply(null, flatZ);
+	let zMax = Math.max.apply(null, flatZ);
+	if (zMax - zMin < 0.5) { const mid = (zMax + zMin) / 2; zMin = mid - 0.25; zMax = mid + 0.25; }
+	const newCmin = scale === "log" ? zMin - 1 : Math.max(0, zMin - (zMax - zMin) * 0.05);
+	const newCmax = scale === "log" ? zMax + 0.5 : zMax * 1.1;
+	Plotly.restyle("ll-3d-plot", { z: [surfaceGrid.Z], cmin: [newCmin], cmax: [newCmax] }, [0]).catch(() => {});
+	Plotly.relayout("ll-3d-plot", {
+		"scene.zaxis.range": [newCmin, newCmax],
+		"scene.zaxis.autorange": false
+	}).catch(() => {});
+	redraw3DTrajectories();
+}
+
 function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const { Ws, Bs, Z } = surfaceGrid;
 	const losses = Z.flat().filter(z => z !== null).map(z => Math.pow(10, z));
@@ -792,7 +804,22 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 					const surfaceGrid = buildSurfaceGrid();
 					const plotEl = document.getElementById("ll-3d-plot");
 					if (plotEl && plotEl.data && plotEl.data[0]) {
-						Plotly.restyle("ll-3d-plot", { z: [surfaceGrid.Z] }, [0]).catch(err => console.error("[loss_landscape] guard: surface restyle failed:", err));
+						const scale = state.scale3D || "log";
+						const flatZ = surfaceGrid.Z.flat().filter(v => v !== null && isFinite(v));
+						let newMin = flatZ.length > 0 ? Math.min.apply(null, flatZ) : 0;
+						let newMax = flatZ.length > 0 ? Math.max.apply(null, flatZ) : 1;
+						if (newMax - newMin < 0.5) { const mid = (newMax + newMin) / 2; newMin = mid - 0.25; newMax = mid + 0.25; }
+						const newCmin = scale === "log" ? newMin - 1 : Math.max(0, newMin - (newMax - newMin) * 0.05);
+						const newCmax = scale === "log" ? newMax + 0.5 : newMax * 1.1;
+						Plotly.restyle("ll-3d-plot", {
+							z: [surfaceGrid.Z],
+							cmin: [newCmin],
+							cmax: [newCmax]
+						}, [0]).catch(err => console.error("[loss_landscape] guard: surface restyle failed:", err));
+						Plotly.relayout("ll-3d-plot", {
+							"scene.zaxis.range": [newCmin, newCmax],
+							"scene.zaxis.autorange": false
+						}).catch(() => {});
 					}
 				}
 				redraw3DTrajectories();
