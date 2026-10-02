@@ -574,16 +574,27 @@ const SpaceMorph = (() => {
         if (!active || cur >= S.length - 1) return;
         if (cur === 7) {
             if (!autoOrbitActive && !autoOrbitDone) {
+                // 1. Pfeil-Druck: Auto-Orbit starten UND nach Ablauf automatisch
+                // zu Schritt 9 springen — User muss NICHT nochmal drücken.
                 autoOrbitActive = true;
                 autoOrbitDone = false;
                 autoOrbitStart = performance.now();
                 autoOrbitFromAngle = camA;
                 updateText();
+                setTimeout(() => {
+                    if (!autoOrbitDone) {
+                        autoOrbitDone = true;
+                        if (cur === 7) go(1);
+                    }
+                }, ORBIT_AUTO_DUR + 80);
                 return;
             }
-            // Animation läuft noch oder ist fertig → Schritt 9
-            autoOrbitActive = false;
-            autoOrbitDone = true;
+            // Zweiter Druck während des Orbit → sofort zu Schritt 9 (skip)
+            if (autoOrbitActive) {
+                autoOrbitActive = false;
+                autoOrbitDone = true;
+                camA = autoOrbitFromAngle + Math.PI * 2;
+            }
             go(1);
             return;
         }

@@ -7,6 +7,9 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	height: 100vh;
 	position: relative;
 	overflow: hidden;
+	/* Heller Hintergrund, damit der ~32-ms-Spalt zwischen alter/neuer Folie
+	   (zwei rAFs) während Crossfade nicht kurz das dunkle Body durchscheinen lässt. */
+	background: #ffffff;
 }
 
 /* ============ SLIDES ============ */
@@ -81,7 +84,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 /* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
 #nn-intro-anim {
 	position: relative;
-	min-height: 9.2em;
+	min-height: 14em;
 	overflow: hidden;
 }
 #nn-intro-anim .nn-anim-scene {
