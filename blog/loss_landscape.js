@@ -539,9 +539,6 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	const fitIdx   = state.currentOptimizers.indexOf(name) + 1;
 	const lossIdx  = state.currentOptimizers.indexOf(name);
 
-	const zMin = state.surfaceZMin;
-	const zMax = state.surfaceZMax;
-
 	function scheduleRestyle(targetId, update, indices) {
 		requestAnimationFrame(() => {
 			Plotly.restyle(targetId, update, indices).catch(() => {});
@@ -558,7 +555,7 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				const layer = model.layers[0];
 				const ws = layer.getWeights();
 				const w = ws[0].dataSync()[0], b = ws[1].dataSync()[0];
-				trajW.push(w); trajB.push(b); trajLoss.push(logs.loss);
+				trajW.push(w); trajB.push(b);
 
 				state.model.finals = state.model.finals || {};
 				state.model.finals[name] = { w: w, b: b, loss: logs.loss };
@@ -574,7 +571,10 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 
 				if (epoch % 3 === 0 || epoch === epochs - 1) {
 					const scale = state.scale3D || "log";
-					const trajZ = trajLoss.map(l => {
+					const surfaceZ = buildSurfaceGridFor(scale).Z.flat().filter(v => v !== null && isFinite(v));
+					const zMin = surfaceZ.length > 0 ? Math.min.apply(null, surfaceZ) : 0;
+					const zMax = surfaceZ.length > 0 ? Math.max.apply(null, surfaceZ) : 1;
+					const trajZ = losses.map(l => {
 						let z = Math.max(l, 1e-12);
 						if (scale === "log") z = Math.log10(z);
 						if (z > zMax) z = zMax;
