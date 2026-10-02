@@ -376,11 +376,12 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 			yaxis: Object.assign(commonAxis("bias b"),  { range: [Bs[0], Bs[Bs.length - 1]], autorange: false }),
 			zaxis: Object.assign(commonAxis("loss (log₁₀)"), { range: [cmin, cmax], autorange: false }),
 			camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } },
-			dragmode: "orbit"
+			dragmode: "turntable"
 		},
 		legend: { font: { color: tText() }, x: 0, y: 1 },
 		margin: { l: 0, r: 0, b: 0, t: 40 },
-		showlegend: true
+		showlegend: true,
+		modebar: { orientation: "h", remove: ["toImage", "sendDataToCloud"] }
 	}, { responsive: true }).then(() => {
 		Plotly.restyle("ll-3d-plot", { z: [[initZ]] }, trajTraces.map((_, i) => i + 1)).catch(() => {});
 	});
