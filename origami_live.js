@@ -2461,17 +2461,13 @@ var OrigamiLive = (function (global) {
 	].join("\n");
 
 	var FOLD_FS = [
-		"uniform float uTime;",
 		"uniform vec3  uColor;",
 		"uniform float uOpacity;",
-		"uniform float uPulse;",
 		"varying float vT;",
 		"varying float vS;",
 		"void main() {",
-		"  float ph = fract(vT * 1.4 - uTime * 0.42);",
-		"  float pulse = smoothstep(0.0, 0.10, ph) * smoothstep(0.42, 0.10, ph);",
-		"  vec3 col = uColor * (0.82 + 1.55 * pulse * uPulse);",
-		"  float a = uOpacity * (0.46 + 0.54 * pulse * uPulse) * (0.35 + 0.65 * vS);",
+		"  vec3 col = uColor;",
+		"  float a = uOpacity * (0.35 + 0.65 * vS);",
 		"  gl_FragColor = vec4(col, a);",
 		"}"
 	].join("\n");
@@ -2527,15 +2523,12 @@ var OrigamiLive = (function (global) {
 	].join("\n");
 
 	var BOUND_FS = [
-		"uniform float uTime;",
 		"uniform vec3  uColor;",
 		"uniform float uOpacity;",
 		"varying float vT;",
 		"void main() {",
-		"  float ph = fract(vT * 0.8 - uTime * 0.28);",
-		"  float pulse = smoothstep(0.0, 0.08, ph) * smoothstep(0.36, 0.08, ph);",
-		"  vec3 col = uColor * (1.0 + 1.9 * pulse);",
-		"  float a = uOpacity * (0.74 + 0.26 * pulse);",
+		"  vec3 col = uColor;",
+		"  float a = uOpacity;",
 		"  gl_FragColor = vec4(col, a);",
 		"}"
 	].join("\n");
@@ -4162,10 +4155,6 @@ var OrigamiLive = (function (global) {
 		// ---- Bewegung ----
 		section(_tr("origami_live_sec_motion", "Bewegung"));
 
-		check("animate", _tr("origami_live_animate", "Pulsierende Kanten"),
-			_tr("origami_live_animate_tip",
-				"Lichtimpulse laufen über die Faltkanten — macht sichtbar, " +
-				"welche Kanten aktiv sind."));
 		check("autoRotate", _tr("origami_live_rotate", "Automatisch drehen"),
 			_tr("origami_live_rotate_tip",
 				"Dreht die Szene langsam, damit die Faltung räumlich lesbar wird."));
