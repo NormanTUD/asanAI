@@ -368,6 +368,10 @@ function buildSurfaceGridFor(scale) {
 function updateTrajectoryZ3D(name, trajIdx) {
 	const scale = state.scale3D || "log";
 	const losses = state.lossHistory[name] || [];
+	const initialLoss = state.model.loss;
+	const allLosses = (initialLoss !== null && initialLoss !== undefined && isFinite(initialLoss))
+		? [initialLoss, ...losses]
+		: losses.slice();
 	const surfaceGrid = buildSurfaceGridFor(scale);
 	const cleanZ = surfaceGrid.Z.map(row =>
 		row.map(v => (v === null || isFinite(v)) ? v : null)
@@ -386,7 +390,7 @@ function updateTrajectoryZ3D(name, trajIdx) {
 	const cmax = scale === "log" ? zMax + 0.5 : zMax * 1.1;
 	if (!isFinite(cmin) || !isFinite(cmax) || cmax <= cmin) return;
 
-	const trajZ = losses.map(l => {
+	const trajZ = allLosses.map(l => {
 		if (l === null || l === undefined || !isFinite(l)) return cmin;
 		let z = Math.max(l, 1e-12);
 		if (scale === "log") z = Math.log10(z);
@@ -395,21 +399,14 @@ function updateTrajectoryZ3D(name, trajIdx) {
 		if (!isFinite(z)) return cmin;
 		return z;
 	});
-	const plotEl = document.getElementById("ll-3d-plot");
-	let prefix = [];
-	if (plotEl && plotEl.data && plotEl.data[trajIdx] && plotEl.data[trajIdx].z) {
-		const current = plotEl.data[trajIdx].z;
-		if (current.length > trajZ.length) prefix = current.slice(0, current.length - trajZ.length);
-	}
-	const out = prefix.concat(trajZ);
-	if (out.length === 0) out.push(scale === "log" ? Math.log10(0.1) : 0.1);
 	requestAnimationFrame(() => {
+		const plotEl = document.getElementById("ll-3d-plot");
 		if (!plotEl || !plotEl.data || !plotEl.data[trajIdx]) return;
-		const currentXY = plotEl.data[trajIdx];
-		const curX = currentXY.x || [];
-		const curY = currentXY.y || [];
-		const trimLen = Math.min(curX.length, curY.length, out.length);
-		const safeZ = out.slice(0, trimLen);
+		const curX = plotEl.data[trajIdx].x || [];
+		const curY = plotEl.data[trajIdx].y || [];
+		const targetLen = Math.min(curX.length, curY.length, trajZ.length);
+		const safeZ = trajZ.slice(0, targetLen);
+		if (safeZ.length === 0) safeZ.push(scale === "log" ? Math.log10(0.1) : 0.1);
 		Plotly.restyle("ll-3d-plot", { z: [safeZ] }, [trajIdx]).catch(() => {});
 	});
 }
@@ -548,7 +545,8 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		margin: { l: 0, r: 0, b: 0, t: 40 },
 		showlegend: true
 	}, { responsive: true, displaylogo: false, modebar: { orientation: "h" }, displayModeBar: true }).then(() => {
-		Plotly.restyle("ll-3d-plot", { z: [[initZ]] }, trajTraces.map((_, i) => i + 1)).catch(() => {});
+		const initialZValues = trajTraces.map(() => [initZ]);
+		Plotly.restyle("ll-3d-plot", { z: initialZValues }, trajTraces.map((_, i) => i + 1)).catch(() => {});
 	});
 }
 
