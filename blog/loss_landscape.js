@@ -17,10 +17,10 @@
 const PLOT_DENSITY_STEP = 0.1;
 
 const OPTIMIZER_INFO = {
-	SGD:      { factory: (lr) => tf.train.sgd(lr),                  color: "#ef4444", defaultLr: 0.05, dash: "solid",   symbol: "circle",      line3Dash: "solid",    marker3Symbol: "circle" },
-	Momentum: { factory: (lr) => tf.train.momentum(lr, 0.9, false), color: "#a855f7", defaultLr: 0.05, dash: "dashdot", symbol: "diamond",     line3Dash: "dashdot", marker3Symbol: "diamond" },
-	Adam:     { factory: (lr) => tf.train.adam(lr),                color: "#ec4899", defaultLr: 0.05, dash: "dash",    symbol: "square",      line3Dash: "dash",    marker3Symbol: "square" },
-	RMSProp:  { factory: (lr) => tf.train.rmsprop(lr),             color: "#22d3ee", defaultLr: 0.01, dash: "dot",     symbol: "triangle-up", line3Dash: "dot",     marker3Symbol: "triangle-up" }
+	SGD:      { factory: (lr) => tf.train.sgd(lr),                  color: "#ef4444", defaultLr: 0.01, dash: "solid",   symbol: "circle",      line3Dash: "solid",    marker3Symbol: "circle" },
+	Momentum: { factory: (lr) => tf.train.momentum(lr, 0.9, false), color: "#a855f7", defaultLr: 0.01, dash: "dashdot", symbol: "diamond",     line3Dash: "dashdot", marker3Symbol: "diamond" },
+	Adam:     { factory: (lr) => tf.train.adam(lr),                color: "#ec4899", defaultLr: 0.01, dash: "dash",    symbol: "square",      line3Dash: "dash",    marker3Symbol: "square" },
+	RMSProp:  { factory: (lr) => tf.train.rmsprop(lr),             color: "#22d3ee", defaultLr: 0.005, dash: "dot",     symbol: "triangle-up", line3Dash: "dot",     marker3Symbol: "triangle-up" }
 };
 
 const state = {
@@ -34,7 +34,10 @@ const state = {
 	landscape:         { W: [], B: [], L: [] },
 	lossHistory:       {},
 	currentOptimizers: [],
-	model:             { w: 0.1, b: 0.1, loss: null }
+	model:             { w: 0.1, b: 0.1, loss: null },
+	trajW:             {},
+	trajB:             {},
+	scale3D:           "log"
 };
 
 /* ── Theme helpers ───────────────────────────────────────────────────────── */
@@ -254,15 +257,60 @@ function calculateLoss(w, b, xsT, ysT) {
 }
 
 function createModel(initW, initB) {
+	const w = (typeof initW === "number" && isFinite(initW)) ? initW : 0.1;
+	const b = (typeof initB === "number" && isFinite(initB)) ? initB : 0.1;
+	if (initW !== w) console.error("[loss_landscape] guard: initW fallback from", initW, "to", w);
+	if (initB !== b) console.error("[loss_landscape] guard: initB fallback from", initB, "to", b);
+	const activation = (typeof state.activation === "string" && state.activation.length > 0) ? state.activation : "linear";
+	if (state.activation !== activation) console.error("[loss_landscape] guard: activation fallback from", state.activation, "to", activation);
 	const model = tf.sequential();
 	model.add(tf.layers.dense({
 		units: 1,
 		inputShape: [1],
-		kernelInitializer: tf.initializers.constant({ value: initW }),
-		biasInitializer:  tf.initializers.constant({ value: initB }),
-		activation: state.activation
+		kernelInitializer: tf.initializers.constant({ value: w }),
+		biasInitializer:  tf.initializers.constant({ value: b }),
+		activation
 	}));
 	return model;
+}
+
+function ensureSurfaceCoversTrajectories(xsT, ysT) {
+	const allW = [], allB = [];
+	(state.currentOptimizers || []).forEach(name => {
+		const w = state.trajW && state.trajW[name];
+		const b = state.trajB && state.trajB[name];
+		if (Array.isArray(w)) allW.push(...w);
+		if (Array.isArray(b)) allB.push(...b);
+	});
+	if (allW.length === 0) return;
+
+	const minW = Math.min.apply(null, allW);
+	const maxW = Math.max.apply(null, allW);
+	const minB = Math.min.apply(null, allB);
+	const maxB = Math.max.apply(null, allB);
+
+	const pad = 1.0;
+	const loW = Math.floor((minW - pad) * 10) / 10;
+	const hiW = Math.ceil((maxW + pad) * 10) / 10;
+	const loB = Math.floor((minB - pad) * 10) / 10;
+	const hiB = Math.ceil((maxB + pad) * 10) / 10;
+
+	for (let b = loB; b <= hiB + 1e-9; b = Math.round((b + 0.1) * 10) / 10) {
+		for (let w = loW; w <= hiW + 1e-9; w = Math.round((w + 0.1) * 10) / 10) {
+			const loss = computeLossForWeights(w, b, xsT, ysT, state.activation);
+			state.landscape.W.push(w);
+			state.landscape.B.push(b);
+			state.landscape.L.push(loss);
+		}
+	}
+}
+
+function redrawSurfaceAndTrajectories() {
+	const plotEl = document.getElementById("ll-3d-plot");
+	if (!plotEl || !plotEl.data || plotEl.data.length === 0) return;
+	const surfaceGrid = buildSurfaceGrid();
+	Plotly.restyle("ll-3d-plot", { z: [surfaceGrid.Z] }, [0]).catch(() => {});
+	redraw3DTrajectories();
 }
 
 function calculatePredictionLine(w, b) {
@@ -284,20 +332,24 @@ async function sampleLandscapeAround(w0, b0, buffer, xsT, ysT) {
 	const minB = b0 - buffer, maxB = b0 + buffer;
 	const Ws = [], Bs = [], Ls = [];
 	const losses = [];
-	for (let b = Math.floor(minB * 10) / 10; b <= Math.ceil(maxB * 10) / 10 + 1e-9; b = Math.round((b + 0.1) * 10) / 10) {
-		for (let w = Math.floor(minW * 10) / 10; w <= Math.ceil(maxW * 10) / 10 + 1e-9; w = Math.round((w + 0.1) * 10) / 10) {
+	let count = 0;
+	const step = 0.2;
+	const totalEst = Math.ceil((maxW - minW) / step + 1) * Math.ceil((maxB - minB) / step + 1);
+	for (let b = Math.floor(minB / step) * step; b <= Math.ceil(maxB / step) * step + 1e-9; b = Math.round((b + step) * 10) / 10) {
+		for (let w = Math.floor(minW / step) * step; w <= Math.ceil(maxW / step) * step + 1e-9; w = Math.round((w + step) * 10) / 10) {
 			Ws.push(w);
 			Bs.push(b);
 			losses.push(calculateLoss(w, b, xsT, ysT));
+			count++;
+			if (count % 200 === 0) {
+				setStatus(`Sampling loss surface: ${count}/${totalEst}`);
+				await tf.nextFrame();
+			}
 		}
 	}
 	state.landscape.W.push(...Ws);
 	state.landscape.B.push(...Bs);
 	state.landscape.L.push(...losses);
-	for (let i = 50; i < losses.length; i += 50) {
-		setStatus(`Sampling loss surface: ${i}/${losses.length}`);
-		await tf.nextFrame();
-	}
 	setStatus(`Sampled ${losses.length} points.`);
 }
 
@@ -366,50 +418,87 @@ function buildSurfaceGridFor(scale) {
 }
 
 function updateTrajectoryZ3D(name, trajIdx) {
-	const scale = state.scale3D || "log";
-	const losses = state.lossHistory[name] || [];
-	const initialLoss = state.model.loss;
-	const allLosses = (initialLoss !== null && initialLoss !== undefined && isFinite(initialLoss))
-		? [initialLoss, ...losses]
-		: losses.slice();
-	const surfaceGrid = buildSurfaceGridFor(scale);
-	const cleanZ = surfaceGrid.Z.map(row =>
-		row.map(v => (v === null || isFinite(v)) ? v : null)
-	);
-	const validZ = cleanZ.flat().filter(v => v !== null);
-	if (validZ.length === 0) return;
-	let zMin = Math.min.apply(null, validZ);
-	let zMax = Math.max.apply(null, validZ);
-	const minWidth = scale === "log" ? 0.5 : 0.01;
-	if (!isFinite(zMin) || !isFinite(zMax) || (zMax - zMin) < minWidth) {
-		const mid = (isFinite(zMin) && isFinite(zMax)) ? (zMin + zMax) / 2 : (scale === "log" ? 0 : 1);
-		zMin = mid - minWidth / 2;
-		zMax = mid + minWidth / 2;
-	}
-	const cmin = scale === "log" ? zMin - 1 : Math.max(0, zMin - (zMax - zMin) * 0.05);
-	const cmax = scale === "log" ? zMax + 0.5 : zMax * 1.1;
-	if (!isFinite(cmin) || !isFinite(cmax) || cmax <= cmin) return;
-
-	const trajZ = allLosses.map(l => {
-		if (l === null || l === undefined || !isFinite(l)) return cmin;
-		let z = Math.max(l, 1e-12);
-		if (scale === "log") z = Math.log10(z);
-		if (z > cmax) z = cmax;
-		if (z < cmin) z = cmin;
-		if (!isFinite(z)) return cmin;
-		return z;
-	});
-	requestAnimationFrame(() => {
-		const plotEl = document.getElementById("ll-3d-plot");
-		if (!plotEl || !plotEl.data || !plotEl.data[trajIdx]) return;
-		const curX = plotEl.data[trajIdx].x || [];
-		const curY = plotEl.data[trajIdx].y || [];
-		const targetLen = Math.min(curX.length, curY.length, trajZ.length);
-		const safeZ = trajZ.slice(0, targetLen);
-		if (safeZ.length === 0) safeZ.push(scale === "log" ? Math.log10(0.1) : 0.1);
-		Plotly.restyle("ll-3d-plot", { z: [safeZ] }, [trajIdx]).catch(() => {});
-	});
+	redraw3DTrajectories();
 }
+
+function redraw3DTrajectories() {
+	// ── Guard 1: plot element must exist with data ─────────────────────────────
+	const plotEl = document.getElementById("ll-3d-plot");
+	if (!plotEl) { console.error("[loss_landscape] guard: #ll-3d-plot not in DOM"); return; }
+	if (!plotEl.data || plotEl.data.length === 0) { console.error("[loss_landscape] guard: plotEl.data empty"); return; }
+
+	const scale = state.scale3D || "log";
+	const optimizers = state.currentOptimizers || [];
+	if (optimizers.length === 0) { console.error("[loss_landscape] guard: currentOptimizers empty"); return; }
+
+	const initialLoss = state.model && state.model.loss;
+	const initLossValid = initialLoss !== null && initialLoss !== undefined && isFinite(initialLoss);
+	if (!initLossValid) console.error("[loss_landscape] guard: state.model.loss invalid:", initialLoss);
+
+	// ── Guard 2: build per-trace arrays (single source of truth) ─────────────
+	const xArrays = [];
+	const yArrays = [];
+	const zArrays = [];
+	const traceIndices = [];
+
+	optimizers.forEach((name, i) => {
+		const trajIdx = i + 1;
+		// ── Guard 3: trace index must exist ──────────────────────────────────
+		if (!plotEl.data[trajIdx]) { console.error("[loss_landscape] guard: trace " + trajIdx + " missing for " + name); return; }
+
+		let trajW = state.trajW && state.trajW[name];
+		let trajB = state.trajB && state.trajB[name];
+		// ── Guard 4: state must have trajectory arrays ────────────────────────
+		if (!Array.isArray(trajW) || trajW.length === 0) { console.error("[loss_landscape] guard: trajW empty for " + name); trajW = [state.model.w]; }
+		if (!Array.isArray(trajB) || trajB.length === 0) { console.error("[loss_landscape] guard: trajB empty for " + name); trajB = [state.model.b]; }
+
+		const losses = state.lossHistory[name] || [];
+		const allLosses = initLossValid ? [initialLoss, ...losses] : losses.slice();
+		// ── Guard 5: trajectory must have at least one point ─────────────────
+		if (allLosses.length === 0) { console.error("[loss_landscape] guard: no losses for " + name); return; }
+
+		// ── Guard 6: NaN-safe z conversion ───────────────────────────────────
+		let nanCount = 0;
+		const trajZ = allLosses.map(l => {
+			if (l === null || l === undefined || !isFinite(l) || l <= 0) {
+				nanCount++;
+				return scale === "log" ? Math.log10(1e-12) : 0;
+			}
+			let z = l;
+			if (scale === "log") z = Math.log10(z);
+			if (!isFinite(z)) {
+				nanCount++;
+				return scale === "log" ? Math.log10(1e-12) : 0;
+			}
+			return z;
+		});
+		if (nanCount > 0) console.error("[loss_landscape] guard: " + nanCount + " NaN losses for " + name);
+
+		// ── Guard 7: enforce equal lengths across x, y, z ────────────────────
+		const targetLen = Math.min(trajW.length, trajB.length, trajZ.length);
+		// ── Guard 8: lengths must match ──────────────────────────────────────
+		if (trajW.length !== trajB.length || trajB.length !== trajZ.length) {
+			console.error("[loss_landscape] guard: length mismatch for " + name + " w=" + trajW.length + " b=" + trajB.length + " z=" + trajZ.length);
+		}
+		if (targetLen === 0) { console.error("[loss_landscape] guard: targetLen 0 for " + name); return; }
+
+		xArrays.push(trajW.slice(0, targetLen));
+		yArrays.push(trajB.slice(0, targetLen));
+		zArrays.push(trajZ.slice(0, targetLen));
+		traceIndices.push(trajIdx);
+	});
+
+	if (traceIndices.length === 0) { console.error("[loss_landscape] guard: no traces to update"); return; }
+
+	// ── Guard 9: single batched Plotly.restyle ──────────────────────────────
+	Plotly.restyle("ll-3d-plot", {
+		x: xArrays,
+		y: yArrays,
+		z: zArrays,
+		visible: traceIndices.map(() => true)
+	}, traceIndices).catch(err => console.error("[loss_landscape] guard: Plotly.restyle failed:", err));
+}
+window.redraw3DTrajectories = redraw3DTrajectories;
 
 function setScale3D(scale) {
 	// ── Guard 1: validate scale argument ──────────────────────────────────────
@@ -475,9 +564,7 @@ function setScale3D(scale) {
 			cmax: [cmax]
 		}, [0]).catch(err => console.warn("[loss_landscape] surface restyle failed:", err));
 
-		state.currentOptimizers.forEach((name, i) => {
-			updateTrajectoryZ3D(name, i + 1);
-		});
+		redraw3DTrajectories();
 
 		Plotly.relayout("ll-3d-plot", {
 			"scene.zaxis.range": [cmin, cmax],
@@ -519,35 +606,35 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		return {
 			type: "scatter3d", mode: "lines+markers",
 			x: [w0], y: [b0], z: [Math.log10(initLoss)],
-			marker: { size: 2.5, color: info.color, symbol: info.marker3Symbol, line: { width: 0.5, color: info.color } },
-			line:   { width: 5, color: info.color, dash: info.line3Dash },
+			marker: {
+				size: 4, color: info.color, symbol: info.marker3Symbol,
+				line: { width: 1, color: "#ffffff" }
+			},
+			line:   { width: 10, color: info.color, dash: info.line3Dash, shape: "linear" },
 			name,
 			legendgroup: name,
 			hovertemplate: "<b>" + name + "</b><br>w = %{x:.3g}<br>b = %{y:.3g}<br>log₁₀(loss) = %{z:.3g}<extra></extra>"
 		};
 	});
 
-	const initZ = Math.min(Math.log10(initLoss), zMax);
+	const initZ = Math.log10(initLoss);
 
 	Plotly.newPlot("ll-3d-plot", [surfaceTrace, ...trajTraces], {
 		title: { text: "3-D Loss Landscape & Optimizer Trajectories", font: { color: tText() } },
 		paper_bgcolor: "rgba(0,0,0,0)",
 		plot_bgcolor:  "rgba(0,0,0,0)",
+		transition: { duration: 0 },
 		scene: {
 			xaxis: Object.assign(commonAxis("weight w"), { range: [Ws[0], Ws[Ws.length - 1]], autorange: false }),
 			yaxis: Object.assign(commonAxis("bias b"),  { range: [Bs[0], Bs[Bs.length - 1]], autorange: false }),
 			zaxis: Object.assign(commonAxis("loss (log₁₀)"), { range: [cmin, cmax], autorange: false }),
 			camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } },
-			aspectmode: "cube",
 			dragmode: "turntable"
 		},
 		legend: { font: { color: tText() }, x: 0, y: 1 },
 		margin: { l: 0, r: 0, b: 0, t: 40 },
 		showlegend: true
-	}, { responsive: true, displaylogo: false, modebar: { orientation: "h" }, displayModeBar: true }).then(() => {
-		const initialZValues = trajTraces.map(() => [initZ]);
-		Plotly.restyle("ll-3d-plot", { z: initialZValues }, trajTraces.map((_, i) => i + 1)).catch(() => {});
-	});
+	}, { responsive: true, displaylogo: false, modebar: { orientation: "h" }, displayModeBar: true });
 }
 
 function initFitPlot(optimizers) {
@@ -615,9 +702,14 @@ function setProgress(fraction) {
 }
 
 async function trainOne(name, lr, epochs, xsT, ysT) {
+	// ── Guard: optimizer must be in registry ─────────────────────────────────
+	if (!OPTIMIZER_INFO[name]) { console.error("[loss_landscape] guard: unknown optimizer " + name); return; }
+
 	const initModel = createModel(0.1, 0.1);
 	const wInit = initModel.layers[0].getWeights()[0].dataSync()[0];
 	const bInit = initModel.layers[0].getWeights()[1].dataSync()[0];
+	// ── Guard: initial weights must be valid numbers ────────────────────────
+	if (!isFinite(wInit) || !isFinite(bInit)) { console.error("[loss_landscape] guard: init weights invalid", wInit, bInit); return; }
 	initModel.dispose();
 
 	const optimizer = OPTIMIZER_INFO[name].factory(lr);
@@ -626,6 +718,11 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 
 	const trajW = [wInit], trajB = [bInit], trajLoss = [];
 	const losses = [];
+
+	state.trajW = state.trajW || {};
+	state.trajB = state.trajB || {};
+	state.trajW[name] = trajW.slice();
+	state.trajB[name] = trajB.slice();
 
 	const trajIdx  = state.currentOptimizers.indexOf(name) + 1;
 	const fitIdx   = state.currentOptimizers.indexOf(name) + 1;
@@ -643,10 +740,19 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 			onBatchEnd: async () => { await tf.nextFrame(); },
 			onEpochEnd: (epoch, logs) => {
 				if (state.stopRequested) { model.stopTraining = true; return; }
+				if (!logs || typeof logs.loss !== "number" || !isFinite(logs.loss)) {
+					console.error("[loss_landscape] guard: invalid loss at epoch " + epoch + " for " + name, logs);
+					return;
+				}
 				losses.push(logs.loss);
 				const layer = model.layers[0];
 				const ws = layer.getWeights();
 				const w = ws[0].dataSync()[0], b = ws[1].dataSync()[0];
+				if (!isFinite(w) || !isFinite(b)) {
+					console.error("[loss_landscape] guard: NaN weights at epoch " + epoch + " for " + name, w, b);
+					model.stopTraining = true;
+					return;
+				}
 				trajW.push(w); trajB.push(b);
 
 				state.model.finals = state.model.finals || {};
@@ -661,12 +767,18 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				const pl = calculatePredictionLine(w, b);
 				scheduleRestyle("ll-fit-plot", { x: [pl.xs], y: [pl.ys] }, [fitIdx]);
 
-				if (epoch % 3 === 0 || epoch === epochs - 1) {
-					const newX = trajW.slice();
-					const newY = trajB.slice();
-					scheduleRestyle("ll-3d-plot", { x: [newX], y: [newY] }, [trajIdx]);
-					updateTrajectoryZ3D(name, trajIdx);
+				state.trajW[name] = trajW.slice();
+				state.trajB[name] = trajB.slice();
+				state.lossHistory[name] = losses.slice();
+				if (epoch % 5 === 0 || epoch === epochs - 1) {
+					ensureSurfaceCoversTrajectories(xsT, ysT);
+					const surfaceGrid = buildSurfaceGrid();
+					const plotEl = document.getElementById("ll-3d-plot");
+					if (plotEl && plotEl.data && plotEl.data[0]) {
+						Plotly.restyle("ll-3d-plot", { z: [surfaceGrid.Z] }, [0]).catch(err => console.error("[loss_landscape] guard: surface restyle failed:", err));
+					}
 				}
+				redraw3DTrajectories();
 
 				setProgress((epoch + 1) / epochs);
 			}
@@ -676,6 +788,9 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	optimizer.dispose();
 	model.dispose();
 	state.lossHistory[name] = losses;
+	state.trajW[name] = trajW.slice();
+	state.trajB[name] = trajB.slice();
+	redraw3DTrajectories();
 
 	const finalW = trajW[trajW.length - 1];
 	const finalB = trajB[trajB.length - 1];
@@ -713,7 +828,9 @@ function getSelectedOptimizers() {
 }
 
 async function startExperiment() {
-	if (state.experimentRunning) return;
+	if (state.experimentRunning) { console.error("[loss_landscape] guard: experiment already running, ignoring click"); return; }
+	if (!window.tf) { console.error("[loss_landscape] guard: tf.js not loaded"); return; }
+	if (!window.Plotly) { console.error("[loss_landscape] guard: Plotly not loaded"); return; }
 	setRunningUI(true);
 	setProgress(0);
 	state.stopRequested = false;
@@ -732,8 +849,12 @@ async function startExperiment() {
 		return;
 	}
 	state.currentOptimizers = optimizers;
+	state.trajW = {};
+	state.trajB = {};
 	const lr = parseFloat(document.getElementById("ll-lr").value) || 0.01;
 	const epochs = parseInt(document.getElementById("ll-epochs").value) || 100;
+	if (!isFinite(lr) || lr <= 0) console.error("[loss_landscape] guard: invalid lr", lr);
+	if (!isFinite(epochs) || epochs <= 0) console.error("[loss_landscape] guard: invalid epochs", epochs);
 	state.activation = document.getElementById("ll-act").value;
 
 	let data;
@@ -743,7 +864,7 @@ async function startExperiment() {
 		await tf.nextFrame();
 
 		setStatus("Sampling loss surface...");
-		await sampleLandscapeAround(0.1, 0.1, 4, data.xsT, data.ysT);
+		await sampleLandscapeAround(0.1, 0.1, 5, data.xsT, data.ysT);
 
 		state.model.loss = calculateLoss(0.1, 0.1, data.xsT, data.ysT);
 
@@ -761,6 +882,10 @@ async function startExperiment() {
 
 		setStatus(`Training ${optimizers.join(", ")} in parallel ...`);
 		await Promise.all(optimizers.map(name => trainOne(name, lr, epochs, data.xsT, data.ysT)));
+
+		setStatus("Re-sampling surface to cover trajectory ...");
+		ensureSurfaceCoversTrajectories(data.xsT, data.ysT);
+		redrawSurfaceAndTrajectories();
 
 		setStatus(state.stopRequested ? "Stopped." : "Done.");
 		setProgress(1);
