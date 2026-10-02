@@ -289,7 +289,7 @@ def run() -> int:
 
             if surface_alignment:
                 for r in surface_alignment:
-                    if r.get("maxDelta", 0) > 0.01:
+                    if r.get("maxDelta", 0) > 0.0001:
                         failures.append(
                             f"trajectory {r.get('name')} point #{r.get('worstIdx')} "
                             f"off-surface by {r.get('maxDelta'):.4g}: "
