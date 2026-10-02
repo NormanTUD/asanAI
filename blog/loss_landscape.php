@@ -54,375 +54,307 @@ Most of the plots in this chapter are 2-D slices of that kind.
 
 <div class="md">
 
-### See it: a 2-D loss landscape you can walk on
+### See it: walk a 2-D loss landscape
 
-The figure on the left above (a 56-layer network, $\approx 8.5 \times 10^4$ parameters) is a 2-D slice of a real loss landscape, but it is *read-only*. Below is the smallest possible interactive version: a single neuron
+The static figures above are 2-D slices of real (huge) loss landscapes, but you only see the result — the *descent* that produced them is invisible. Here is the smallest landscape you can actually walk on: a single neuron
 
 $$\hat{y} \;=\; \sigma(\mathbf{W}\,x + b),$$
 
-fitted to 1-D data. There is only one weight $\mathbf{W} \in \mathbb{R}$ and one bias $b \in \mathbb{R}$, so the loss is a true 2-D function $\mathcal{L}(w, b)$ and the entire surface fits in a 3-D plot. The red line on the surface is the *trajectory* the optimizer traces while it descends, batch by batch. Pick two optimizers (SGD and Adam are pre-selected), pick a target function (try the parabola or the sine), press **Experiment starten** and watch the two trajectories carve different paths into the same basin. The bar on the right side of each optimizer plot turns red where the network over-predicts and green where it under-predicts.
+fitted to 1-D data. There is one weight $\mathbf{W} \in \mathbb{R}$ and one bias $b \in \mathbb{R}$, so $\mathcal{L}(w, b)$ is a genuine 2-D surface and fits in a 3-D plot. The line drawn on the surface is the optimizer's *trajectory*, batch by batch.
 
-Why this is the right way to internalise the prose above:
+Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum are pre-selected), press **Start**, and watch. The point of the widget is to *feel* each claim above:
 
-* **Non-convexity comes from non-linearities.** Switch the activation from `Linear` to `ReLU` and watch the surface bend — the very same $(w, b)$ grid now has sharp ridges, saddle points, and flat plateaus that gradient descent must navigate.
-* **Saddles outnumber minima.** With `ReLU` and a low learning rate, the SGD trajectory stalls for long stretches on flat plateaus before a stochastic kick sends it downhill. Adam, with its adaptive second moment, escapes them faster.
-* **Sharp minima vs. flat minima.** `Adam` with a small batch size often finds a different basin from `Momentum` — both are local minima of the same loss, but with different curvature. The two trajectories end at different points and the optimizer configurations have different losses.
-* **The noise-smoothed surface.** Crank the epochs up and reduce the buffer; the trajectory now visits grid cells the initial loss surface never evaluated, because the *mini-batch noise* has effectively smoothed the surface underneath it.
+* **Non-convexity comes from non-linearities.** Switch the activation from `Linear` to `ReLU` and the same $(w, b)$ grid suddenly has flat plateaus, saddles, and sharp ridges.
+* **Saddles outnumber minima.** With `ReLU` and a low learning rate, the SGD line stalls for many epochs on a flat plateau before a stochastic step kicks it downhill. Adam escapes faster.
+* **Different basins.** `Adam` and `Momentum` often land in *different* minima of the same surface — the trajectories diverge visibly.
+* **The noise-smoothed surface.** Crank the epoch count up; the trajectory visits cells the initial surface never sampled, because mini-batch noise is effectively smoothing the loss underneath it.
 
 </div>
 
 <style>
-.loss-landscape-lab {
-	background-color: #252526;
-	color: #d4d4d4;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-	margin: 20px 0;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.ll-lab {
+	margin: 28px 0 24px 0;
+	padding: 22px 22px 18px 22px;
+	background: var(--mn-surface, #FDFAF1);
+	border: 1px solid var(--mn-border, #D8CFB6);
+	border-radius: 12px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+	font-family: var(--mn-font-body, system-ui, sans-serif);
+	color: var(--mn-text, #3A2F25);
 }
-.loss-landscape-lab .ll-title {
-	color: #ffffff;
-	font-weight: 300;
-	margin: 0 0 16px 0;
-	font-size: 1.4em;
+.ll-lab .ll-title {
+	margin: 0 0 4px 0;
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--mn-heading, #1A140E);
 }
-.loss-landscape-lab .controls {
-	background-color: #1e1e1e;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-	margin-bottom: 20px;
+.ll-lab .ll-sub {
+	margin: 0 0 18px 0;
+	font-size: 0.88rem;
+	color: var(--mn-text-secondary, #5C5043);
+}
+.ll-lab .ll-controls {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1.2fr;
-	gap: 30px;
-	align-items: start;
+	grid-template-columns: 1.1fr 1fr 0.9fr;
+	gap: 14px;
+	margin-bottom: 18px;
 }
 @media (max-width: 900px) {
-	.loss-landscape-lab .controls {
-		grid-template-columns: 1fr;
-	}
+	.ll-lab .ll-controls { grid-template-columns: 1fr; }
 }
-.loss-landscape-lab .control-group {
+.ll-lab .ll-card {
+	background: var(--mn-bg, #FAF8F1);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 10px;
+	padding: 14px 16px;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 8px;
+}
+.ll-lab .ll-card h4 {
+	margin: 4px 0 2px 0;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--mn-accent, #6366f1);
+}
+.ll-lab .ll-card label {
+	font-size: 0.82rem;
+	color: var(--mn-text-secondary, #5C5043);
+	margin: 4px 0 0 0;
+}
+.ll-lab input[type="number"],
+.ll-lab textarea,
+.ll-lab select {
+	background: var(--mn-surface, #FDFAF1);
+	border: 1px solid var(--mn-border, #D8CFB6);
+	border-radius: 6px;
+	padding: 6px 8px;
+	font-family: var(--mn-font-mono, ui-monospace, monospace);
+	color: var(--mn-text, #3A2F25);
+	font-size: 0.9rem;
 	width: 100%;
-}
-.loss-landscape-lab .control-group h3 {
-	color: #ffffff;
-	font-weight: 300;
-	margin: 0 0 6px 0;
-	font-size: 1.05em;
-}
-.loss-landscape-lab label {
-	font-size: 0.9em;
-	color: #9cdcfe;
-	margin-bottom: 2px;
-}
-.loss-landscape-lab input[type="text"],
-.loss-landscape-lab input[type="number"],
-.loss-landscape-lab textarea,
-.loss-landscape-lab select {
-	background-color: #3c3c3c;
-	border: 1px solid #555;
-	color: #d4d4d4;
-	padding: 8px;
-	border-radius: 4px;
-	font-family: monospace;
-}
-.loss-landscape-lab textarea {
-	resize: vertical;
-	min-height: 60px;
-}
-.loss-landscape-lab button {
-	background-color: #0e639c;
-	color: white;
-	border: none;
-	padding: 10px 15px;
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background-color 0.2s;
-	font-weight: bold;
-	margin-top: 5px;
-}
-.loss-landscape-lab button:hover {
-	background-color: #1177bb;
-}
-.loss-landscape-lab button:disabled {
-	background-color: #444;
-	cursor: not-allowed;
-	opacity: 0.7;
-}
-.loss-landscape-lab button#stopButton {
-	background-color: #ce9178;
-	color: #1e1e1e;
-}
-.loss-landscape-lab button#stopButton:hover {
-	background-color: #d7ba7d;
-}
-.loss-landscape-lab .example-buttons {
-	display: flex;
-	gap: 5px;
-	flex-wrap: wrap;
-}
-.loss-landscape-lab .example-buttons button {
-	background-color: #3f51b5;
-	font-size: 0.8em;
-	padding: 5px 10px;
-	margin-top: 0;
-}
-.loss-landscape-lab .example-buttons button:hover {
-	background-color: #303f9f;
-}
-.loss-landscape-lab .optimizer-selection {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-}
-.loss-landscape-lab .optimizer-selection label {
-	display: inline-flex;
-	align-items: center;
-	padding: 5px 10px;
-	border: 1px solid #444;
-	border-radius: 4px;
-	cursor: pointer;
-	transition: background-color 0.2s;
-	margin-bottom: 0;
-	color: #d4d4d4;
-}
-.loss-landscape-lab .optimizer-selection label:hover {
-	background-color: #333;
-}
-.loss-landscape-lab .optimizer-selection input[type="checkbox"] {
-	margin-right: 5px;
-	width: auto;
-}
-.loss-landscape-lab .optimizer-selection label.is-active {
-	border: 3px solid #00bfff;
-	box-shadow: 0 0 15px rgba(0, 191, 255, 0.7);
-	transition: all 0.3s ease-in-out;
-}
-.loss-landscape-lab #optimizer-options-container {
-	margin-top: 15px;
-	padding-top: 10px;
-	border-top: 1px solid #444;
-}
-.loss-landscape-lab .param-group {
-	margin-bottom: 15px;
-	padding: 10px;
-	background-color: #333;
-	border-radius: 4px;
-}
-.loss-landscape-lab .param-group p {
-	margin: 0 0 5px 0;
-	font-size: 0.85em;
-	color: #bbb;
-}
-.loss-landscape-lab #status {
-	margin-bottom: 20px;
-	padding: 10px;
-	background-color: #007acc;
-	color: white;
-	border-radius: 4px;
-	font-family: monospace;
-}
-.loss-landscape-lab #plot-container {
-	display: flex;
-	flex-direction: column;
-	gap: 30px;
-	margin-top: 30px;
-	align-items: center;
-}
-.loss-landscape-lab .plot-div {
-	background-color: #252526;
-	border-radius: 8px;
-	height: 400px;
-	width: 100%;
-	padding: 10px;
 	box-sizing: border-box;
 }
-.loss-landscape-lab .plot-group {
-	border: 1px solid #444;
-	padding: 15px;
-	background-color: #1e1e1e;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-	transition: all 0.3s ease;
-	width: 95%;
-	max-width: 1400px;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 15px;
+.ll-lab input[type="number"]:focus,
+.ll-lab textarea:focus,
+.ll-lab select:focus {
+	outline: none;
+	border-color: var(--mn-accent, #6366f1);
+	box-shadow: 0 0 0 2px var(--mn-accent-lighter, #eef2ff);
 }
-.loss-landscape-lab .plot-group.is-active {
-	border-color: #00bcd4;
-	box-shadow: 0 0 15px rgba(0, 188, 212, 0.7);
-	padding: 10px;
-	margin-bottom: 20px;
+.ll-lab textarea {
+	min-height: 50px;
+	resize: vertical;
 }
-.loss-landscape-lab .details-button-container {
-	grid-column: 1 / 3;
-	text-align: left;
-	width: 100%;
-	margin-top: 10px;
-	margin-bottom: 5px;
-	padding-left: 10px;
-	height: auto !important;
-}
-.loss-landscape-lab .details-button-container button {
-	background-color: #00bcd4;
-	padding: 8px 15px;
-	font-size: 0.9em;
-	margin-top: 0;
-}
-.loss-landscape-lab .details-section {
-	grid-column: 1 / 3;
-	display: none;
-	grid-template-columns: 1fr 1fr;
-	gap: 20px;
-	width: 100%;
-	margin-top: 15px;
-	padding-top: 15px;
-	border-top: 1px dashed #555;
-}
-.loss-landscape-lab .details-table {
-	max-height: 400px;
-	overflow-y: auto;
-}
-.loss-landscape-lab .details-section table {
-	width: 100%;
-	border-collapse: collapse;
-	color: #d4d4d4;
-	font-size: 0.9em;
-}
-.loss-landscape-lab .details-section th,
-.loss-landscape-lab .details-section td {
-	border: 1px solid #444;
-	padding: 6px;
-	text-align: left;
-}
-.loss-landscape-lab .details-section th {
-	background-color: #333;
-	color: #fff;
-	position: sticky;
-	top: 0;
-	z-index: 10;
-}
-.loss-landscape-lab .details-section tr:nth-child(even) {
-	background-color: #222;
-}
-.loss-landscape-lab .equation-display {
-	width: 100%;
-	flex-basis: 100%;
-	grid-column: 1 / -1;
-	margin-top: 15px;
-	padding: 10px;
-	border-top: 1px solid #444;
-	color: #d4d4d4;
-	font-family: 'Consolas', 'Courier New', monospace;
-	overflow-x: hidden;
-	height: auto !important;
-}
-.loss-landscape-lab .equation-display .math-row {
-	margin-bottom: 5px;
-	font-size: 1.1em;
-}
-.loss-landscape-lab .equation-display h4 {
-	color: #ff69b4;
-	border-bottom: 1px solid #ff69b4;
-	padding-bottom: 5px;
-	margin-bottom: 10px;
-	font-size: 1.05em;
-	font-weight: 600;
-}
-.loss-landscape-lab .deviation-row {
+.ll-lab .ll-examples {
 	display: flex;
-	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 6px;
+}
+.ll-lab .ll-examples button {
+	background: var(--mn-accent-lighter, #eef2ff);
+	border: 1px solid var(--mn-accent-light, #c7d2fe);
+	color: var(--mn-accent-dark, #4338ca);
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-size: 0.8rem;
+	cursor: pointer;
+	transition: background-color 0.15s;
+}
+.ll-lab .ll-examples button:hover {
+	background: var(--mn-accent-light, #e0e7ff);
+}
+.ll-lab .ll-opts {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 4px 0 6px 0;
+}
+.ll-lab .ll-opt-label {
+	display: inline-flex;
 	align-items: center;
-	margin-bottom: 5px;
-	padding-right: 10px;
+	gap: 4px;
+	padding: 4px 10px;
+	background: var(--mn-bg-subtle, #F2EBD9);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 0.85rem;
+	color: var(--mn-text, #3A2F25);
 }
-.loss-landscape-lab .deviation-row span.math-content {
-	flex-grow: 1;
-	text-align: left;
+.ll-lab .ll-opt-label:hover {
+	background: var(--mn-surface-raised, #EBE3CE);
 }
-.loss-landscape-lab .deviation-row span.error-metrics {
-	flex-shrink: 0;
-	margin-left: 20px;
-	font-size: 0.9em;
-	text-align: right;
-	line-height: 1.2;
+.ll-lab button#ll-start {
+	background: var(--mn-accent, #6366f1);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	padding: 10px 16px;
+	font-weight: 600;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: background-color 0.15s;
+	width: 100%;
 }
-.loss-landscape-lab .deviation-indicator {
-	width: 15px;
-	height: 15px;
-	margin-right: 10px;
-	border-radius: 3px;
-	flex-shrink: 0;
+.ll-lab button#ll-start:hover {
+	background: var(--mn-accent-dark, #4338ca);
+}
+.ll-lab button#ll-start:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+.ll-lab button#ll-stop {
+	background: #ef4444;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	padding: 10px 16px;
+	font-weight: 600;
+	font-size: 0.95rem;
+	cursor: pointer;
+	width: 100%;
+}
+.ll-lab .ll-status {
+	font-family: var(--mn-font-mono, ui-monospace, monospace);
+	font-size: 0.85rem;
+	color: var(--mn-text-secondary, #5C5043);
+	background: var(--mn-bg-warm, #F5EFDC);
+	border-radius: 6px;
+	padding: 8px 10px;
+	min-height: 18px;
+}
+.ll-lab .ll-row {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+	gap: 14px;
+	margin-bottom: 14px;
+}
+.ll-lab .ll-plot-3d {
+	background: var(--mn-surface, #FDFAF1);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 10px;
+	height: 420px;
+	width: 100%;
+	min-width: 0;
+}
+.ll-lab .ll-plot-2d {
+	background: var(--mn-surface, #FDFAF1);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 10px;
+	height: 320px;
+	width: 100%;
+	min-width: 0;
+}
+.ll-lab .ll-loss {
+	background: var(--mn-surface, #FDFAF1);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 10px;
+	height: 280px;
+	width: 100%;
+	min-width: 0;
+	margin-top: 4px;
+}
+.ll-lab .ll-readout {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 10px 14px;
+	margin-bottom: 14px;
+	background: var(--mn-bg-warm, #F5EFDC);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 10px;
+	min-height: 48px;
+	flex-wrap: wrap;
+}
+.ll-lab .ll-readout-label {
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--mn-accent, #6366f1);
+	white-space: nowrap;
+}
+.ll-lab .ll-equation {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0;
+}
+.ll-lab .ll-equation .ll-eq-row {
+	font-size: 1.15rem;
+	color: var(--mn-text, #3A2F25);
+}
+.ll-lab .ll-equation .ll-eq-meta {
+	font-family: var(--mn-font-mono, ui-monospace, monospace);
+	font-size: 0.82rem;
+	color: var(--mn-text-secondary, #5C5043);
 }
 </style>
 
-<div class="loss-landscape-lab">
-<h3 class="ll-title">Loss-Landscape & Optimizer-Trajektorien</h3>
+<div class="ll-lab">
+	<h4 class="ll-title">Loss Landscape — Interactive</h4>
+	<p class="ll-sub">Single-neuron regression on 1-D data. Two optimizers are pre-selected; press Start and watch the descent.</p>
 
-<div class="controls">
-	<div class="control-group">
-		<h3>🔢 Daten (x, y Paare)</h3>
-		<label for="dataInput">x-Werte (kommagetrennt):</label>
-		<textarea id="dataInput">0, 1, 2, 3, 4</textarea>
-		<label for="dataOutput">y-Werte (kommagetrennt):</label>
-		<textarea id="dataOutput">1.0, 3.0, 5.0, 7.0, 9.0</textarea>
+	<div class="ll-controls">
+		<div class="ll-card">
+			<h4>Data</h4>
+			<label for="ll-x">x (comma-separated):</label>
+			<textarea id="ll-x">0, 1, 2, 3, 4</textarea>
+			<label for="ll-y">y (comma-separated):</label>
+			<textarea id="ll-y">1.0, 3.0, 5.0, 7.0, 9.0</textarea>
+			<div class="ll-examples">
+				<button type="button" onclick="loadExample('linear')">Line (y=2x+1)</button>
+				<button type="button" onclick="loadExample('linear_negative')">Line (y=-0.5x-0.8)</button>
+				<button type="button" onclick="loadExample('parabola')">Parabola (y=x²)</button>
+				<button type="button" onclick="loadExample('sine')">Sine</button>
+			</div>
+		</div>
 
-		<div class="example-buttons">
-			<button onclick="loadExample('linear')">Linie (y=2x+1)</button>
-			<button onclick="loadExample('linear_negative')">Linie (y=-0.5x-0.8)</button>
-			<button onclick="loadExample('parabola')">Parabel (y=x²)</button>
-			<button onclick="loadExample('sinus')">Sinuswelle</button>
+		<div class="ll-card">
+			<h4>Model</h4>
+			<label for="ll-act">Activation:</label>
+			<select id="ll-act">
+				<option value="linear" selected>Linear</option>
+				<option value="relu">ReLU</option>
+				<option value="tanh">Tanh</option>
+			</select>
+
+			<h4>Optimizers</h4>
+			<div class="ll-opts">
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="SGD" checked> SGD</label>
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Momentum" checked> Momentum</label>
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Adam"> Adam</label>
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="RMSProp"> RMSProp</label>
+			</div>
+
+			<label for="ll-lr">Learning rate:</label>
+			<input type="number" id="ll-lr" value="0.01" step="0.001" min="0.0001" max="1">
+
+			<label for="ll-epochs">Epochs:</label>
+			<input type="number" id="ll-epochs" value="200" min="1" max="5000">
+		</div>
+
+		<div class="ll-card">
+			<h4>Run</h4>
+			<button type="button" id="ll-start" onclick="startExperiment()">Start</button>
+			<button type="button" id="ll-stop" onclick="stopExperiment()" style="display:none;">Stop</button>
+			<div id="ll-status" class="ll-status">Ready.</div>
 		</div>
 	</div>
 
-	<div class="control-group">
-		<h3>⚙️ Initializer</h3>
-		<label for="initialWConstant" style="margin-top: 10px;">Initialgewicht (Konst.):</label>
-		<input type="number" id="initialWConstant" value="0.1" step="0.01">
-		<label for="initialBConstant">Initialbias (Konst.):</label>
-		<input type="number" id="initialBConstant" value="0.1" step="0.01">
+	<div class="ll-readout">
+		<span class="ll-readout-label">Current model</span>
+		<div id="ll-equation" class="ll-equation"></div>
 	</div>
 
-	<div class="control-group">
-		<h3>⚙️ Allgemeine Parameter</h3>
-		<label for="epochs">Epochen:</label>
-		<input type="number" id="epochs" value="50" min="1" max="2000">
-		<label for="steps">Puffer (N) für Landschaftsrand:</label>
-		<input type="number" id="steps" value="3" min="0" max="10">
-		<label for="activation" style="margin-top: 10px; color: #ce9178;">Aktivierungsfunktion:</label>
-		<select id="activation">
-			<option value="linear" selected>Linear (Standard)</option>
-			<option value="relu">ReLU</option>
-			<option value="sigmoid">Sigmoid</option>
-			<option value="tanh">Tanh</option>
-		</select>
-
-		<div class="control-group" style="margin-top: 20px; border: none; padding: 0;">
-			<button id="startButton" onclick="startExperiment()">Experiment starten</button>
-			<button id="stopButton" onclick="stopExperiment()" style="display:none;">Experiment stoppen</button>
-			<button id="continueButton" onclick="continueExperiment()" style="display:none; margin-top: 5px; background-color: #f7a600; color: #1e1e1e;">Weiterlernen (Zustand beibehalten)</button>
-		</div>
-	</div>
-
-	<div class="control-group">
-		<h3>🤖 Optimizer-Auswahl</h3>
-		<div id="optimizer-checkboxes" class="optimizer-selection"></div>
-		<div id="optimizer-options-container">
-			Bitte wählen Sie einen Optimizer.
-		</div>
-	</div>
-</div>
-
-<div id="status">Bereit. Bitte starten Sie das Experiment.</div>
-
-<div class="plot-container" id="plot-container"></div>
+	<div class="ll-row" id="ll-3d-row"></div>
+	<div class="ll-row" id="ll-2d-row"></div>
+	<div id="ll-loss-plot" class="ll-loss" data-plot-theme="self"></div>
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Why naive plots of the landscape lie">
