@@ -227,27 +227,23 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	padding: 8px 10px;
 	min-height: 18px;
 }
-.ll-lab .ll-row {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-	gap: 14px;
-	margin-bottom: 14px;
-}
 .ll-lab .ll-plot-3d {
 	background: var(--mn-surface, #FDFAF1);
 	border: 1px solid var(--mn-border-light, #E8DFC6);
 	border-radius: 10px;
-	height: 420px;
+	height: 460px;
 	width: 100%;
 	min-width: 0;
+	margin-bottom: 14px;
 }
 .ll-lab .ll-plot-2d {
 	background: var(--mn-surface, #FDFAF1);
 	border: 1px solid var(--mn-border-light, #E8DFC6);
 	border-radius: 10px;
-	height: 320px;
+	height: 340px;
 	width: 100%;
 	min-width: 0;
+	margin-bottom: 14px;
 }
 .ll-lab .ll-loss {
 	background: var(--mn-surface, #FDFAF1);
@@ -352,8 +348,8 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 		<div id="ll-equation" class="ll-equation"></div>
 	</div>
 
-	<div class="ll-row" id="ll-3d-row"></div>
-	<div class="ll-row" id="ll-2d-row"></div>
+	<div id="ll-3d-plot" class="ll-plot-3d" data-plot-theme="self"></div>
+	<div id="ll-fit-plot" class="ll-plot-2d" data-plot-theme="self"></div>
 	<div id="ll-loss-plot" class="ll-loss" data-plot-theme="self"></div>
 </div>
 

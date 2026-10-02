@@ -295,11 +295,11 @@ function commonAxis(title, opts = {}) {
 		tickfont: { color: tText() },
 		titlefont: { color: tText() },
 		zerolinecolor: tGrid(),
-		tickformat: "g"
+		tickformat: ".0f"
 	}, opts);
 }
 
-function init3DPlots(optimizers, surfaceGrid, w0, b0, initLoss) {
+function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const { Ws, Bs, Z } = surfaceGrid;
 	const losses = Z.flat().filter(z => z !== null).map(z => Math.pow(10, z));
 	const minL = losses.length > 0 ? Math.max(Math.min(...losses), 1e-7) : 1e-7;
@@ -307,82 +307,71 @@ function init3DPlots(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const cmin = Math.log10(minL) - 1;
 	const cmax = Math.log10(maxL) + 0.1;
 
-	const row = document.getElementById("ll-3d-row");
-	row.innerHTML = "";
-	for (const name of optimizers) {
-		const id = `ll-3d-${name}`;
-		const div = document.createElement("div");
-		div.id = id;
-		div.className = "ll-plot-3d";
-		div.setAttribute("data-plot-theme", "self");
-		row.appendChild(div);
+	const surfaceTrace = {
+		type: "surface", x: Ws, y: Bs, z: Z,
+		colorscale: "Jet", reversescale: true,
+		cmin, cmax, showscale: true, opacity: 0.85,
+		lighting: { ambient: 0.6, diffuse: 0.6 },
+		contours: { z: { show: false } },
+		name: "loss surface",
+		hoverinfo: "skip"
+	};
+	const trajTraces = optimizers.map(name => ({
+		type: "scatter3d", mode: "lines+markers",
+		x: [w0], y: [b0], z: [Math.log10(initLoss)],
+		marker: { size: 5, color: OPTIMIZER_INFO[name].color },
+		line:   { width: 4, color: OPTIMIZER_INFO[name].color },
+		name,
+		legendgroup: name,
+		hovertemplate: "w = %{x:.3g}<br>b = %{y:.3g}<br>loss = %{z:.3g}<extra>" + name + "</extra>"
+	}));
 
-		const surfaceTrace = {
-			type: "surface", x: Ws, y: Bs, z: Z,
-			colorscale: "Jet", reversescale: true,
-			cmin, cmax, showscale: true, opacity: 0.85,
-			lighting: { ambient: 0.6, diffuse: 0.6 },
-			contours: { z: { show: false } },
-			name: "loss"
-		};
-		const trajTrace = {
-			type: "scatter3d", mode: "lines+markers",
-			x: [w0], y: [b0], z: [Math.log10(initLoss)],
-			marker: { size: 6, color: OPTIMIZER_INFO[name].color },
-			line:   { width: 5, color: OPTIMIZER_INFO[name].color },
-			name: "trajectory",
-			hovertemplate: "w = %{x:.3g}<br>b = %{y:.3g}<br>loss = %{z:.3g}<extra></extra>"
-		};
-		Plotly.newPlot(id, [surfaceTrace, trajTrace], {
-			title: { text: `${name} — 3-D Loss Surface`, font: { color: tText() } },
-			paper_bgcolor: "rgba(0,0,0,0)",
-			plot_bgcolor:  "rgba(0,0,0,0)",
-			scene: {
-				xaxis: commonAxis("weight w"),
-				yaxis: commonAxis("bias b"),
-				zaxis: commonAxis("loss (log₁₀)"),
-				camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } }
-			},
-			margin: { l: 0, r: 0, b: 0, t: 40 },
-			showlegend: false
-		}, { responsive: true });
-	}
+	Plotly.newPlot("ll-3d-plot", [surfaceTrace, ...trajTraces], {
+		title: { text: "3-D Loss Landscape & Optimizer Trajectories", font: { color: tText() } },
+		paper_bgcolor: "rgba(0,0,0,0)",
+		plot_bgcolor:  "rgba(0,0,0,0)",
+		scene: {
+			xaxis: commonAxis("weight w"),
+			yaxis: commonAxis("bias b"),
+			zaxis: commonAxis("loss (log₁₀)"),
+			camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } }
+		},
+		legend: { font: { color: tText() }, x: 0, y: 1 },
+		margin: { l: 0, r: 0, b: 0, t: 40 },
+		showlegend: true
+	}, { responsive: true });
 }
 
-function initFitPlots(optimizers) {
-	const row = document.getElementById("ll-2d-row");
-	row.innerHTML = "";
-	for (const name of optimizers) {
-		const id = `ll-2d-${name}`;
-		const div = document.createElement("div");
-		div.id = id;
-		div.className = "ll-plot-2d";
-		div.setAttribute("data-plot-theme", "self");
-		row.appendChild(div);
+function initFitPlot(optimizers) {
+	const initModel = createModel(0.1, 0.1);
+	const wInit = initModel.layers[0].getWeights()[0].dataSync()[0];
+	const bInit = initModel.layers[0].getWeights()[1].dataSync()[0];
+	initModel.dispose();
+	const pl = calculatePredictionLine(wInit, bInit);
 
-		const initModel = createModel(0.1, 0.1);
-		const wInit = initModel.layers[0].getWeights()[0].dataSync()[0];
-		const bInit = initModel.layers[0].getWeights()[1].dataSync()[0];
-		initModel.dispose();
-		const pl = calculatePredictionLine(wInit, bInit);
+	const dataTrace = {
+		x: state.xs, y: state.ys, mode: "markers", type: "scatter",
+		name: "data",
+		marker: { color: tText(), size: 9, line: { color: tText(), width: 1 } },
+		hovertemplate: "x = %{x:.3g}<br>y = %{y:.3g}<extra>data</extra>"
+	};
+	const fitTraces = optimizers.map(name => ({
+		x: pl.xs, y: pl.ys, mode: "lines", type: "scatter",
+		name,
+		legendgroup: name,
+		line: { color: OPTIMIZER_INFO[name].color, width: 3 },
+		hovertemplate: "x = %{x:.3g}<br>ŷ = %{y:.3g}<extra>" + name + "</extra>"
+	}));
 
-		Plotly.newPlot(id, [
-			{ x: state.xs, y: state.ys, mode: "markers", type: "scatter", name: "data",
-			  marker: { color: tText(), size: 9, line: { color: tText(), width: 1 } },
-			  hovertemplate: "x = %{x:.3g}<br>y = %{y:.3g}<extra>data</extra>" },
-			{ x: pl.xs, y: pl.ys, mode: "lines", type: "scatter", name: "fit",
-			  line: { color: OPTIMIZER_INFO[name].color, width: 3 },
-			  hovertemplate: "x = %{x:.3g}<br>ŷ = %{y:.3g}<extra>" + name + "</extra>" }
-		], {
-			title: { text: `${name} — Fit vs. Data`, font: { color: tText() } },
-			paper_bgcolor: "rgba(0,0,0,0)",
-			plot_bgcolor:  "rgba(0,0,0,0)",
-			xaxis: commonAxis("x"),
-			yaxis: commonAxis("y"),
-			legend: { font: { color: tText() } },
-			margin: { l: 50, r: 20, b: 40, t: 40 }
-		}, { responsive: true });
-	}
+	Plotly.newPlot("ll-fit-plot", [dataTrace, ...fitTraces], {
+		title: { text: "Fit vs. Data — All Optimizers", font: { color: tText() } },
+		paper_bgcolor: "rgba(0,0,0,0)",
+		plot_bgcolor:  "rgba(0,0,0,0)",
+		xaxis: commonAxis("x"),
+		yaxis: commonAxis("y"),
+		legend: { font: { color: tText() } },
+		margin: { l: 50, r: 20, b: 40, t: 40 }
+	}, { responsive: true });
 }
 
 function initLossCurvePlot(optimizers, initLoss) {
@@ -398,9 +387,9 @@ function initLossCurvePlot(optimizers, initLoss) {
 		paper_bgcolor: "rgba(0,0,0,0)",
 		plot_bgcolor:  "rgba(0,0,0,0)",
 		xaxis: commonAxis("epoch"),
-		yaxis: commonAxis("loss (MSE)", { type: "log" }),
+		yaxis: commonAxis("loss (MSE)", { type: "log", tickformat: ".0~e" }),
 		legend: { font: { color: tText() } },
-		margin: { l: 50, r: 20, b: 40, t: 40 }
+		margin: { l: 60, r: 20, b: 40, t: 40 }
 	}, { responsive: true });
 }
 
@@ -419,6 +408,10 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	const trajW = [wInit], trajB = [bInit], trajLoss = [];
 	const losses = [];
 
+	const trajIdx  = state.currentOptimizers.indexOf(name) + 1;
+	const fitIdx   = state.currentOptimizers.indexOf(name) + 1;
+	const lossIdx  = state.currentOptimizers.indexOf(name);
+
 	await model.fit(xsT, ysT, {
 		epochs, batchSize: state.xs.length, verbose: 0,
 		callbacks: {
@@ -435,12 +428,18 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				state.model.loss = logs.loss;
 				state.model.activeOptimizer = name;
 
-				Plotly.restyle(`ll-3d-${name}`, {
+				Plotly.restyle("ll-3d-plot", {
 					x: [trajW], y: [trajB], z: [trajLoss.map(l => Math.log10(l))]
-				}, [1]);
+				}, [trajIdx]);
 
 				const pl = calculatePredictionLine(w, b);
-				Plotly.restyle(`ll-2d-${name}`, { x: [pl.xs], y: [pl.ys] }, [1]);
+				Plotly.restyle("ll-fit-plot", { x: [pl.xs], y: [pl.ys] }, [fitIdx]);
+
+				Plotly.restyle("ll-loss-plot", {
+					x: [losses.map((_, k) => k + 1)],
+					y: [losses]
+				}, [lossIdx]);
+
 				renderModelReadout();
 			}
 		}
@@ -507,8 +506,8 @@ async function startExperiment() {
 
 		state.model.loss = calculateLoss(0.1, 0.1, data.xsT, data.ysT);
 
-		init3DPlots(optimizers, buildSurfaceGrid(), 0.1, 0.1, state.model.loss);
-		initFitPlots(optimizers);
+		init3DPlot(optimizers, buildSurfaceGrid(), 0.1, 0.1, state.model.loss);
+		initFitPlot(optimizers);
 		initLossCurvePlot(optimizers, state.model.loss);
 		renderModelReadout();
 		resizeAllPlots();
@@ -517,12 +516,6 @@ async function startExperiment() {
 			if (state.stopRequested) break;
 			setStatus(`Training ${name} ...`);
 			await trainOne(name, lr, epochs, data.xsT, data.ysT);
-			const losses = state.lossHistory[name] || [];
-			const idx = optimizers.indexOf(name);
-			Plotly.restyle("ll-loss-plot", {
-				x: [losses.map((_, k) => k + 1)],
-				y: [losses]
-			}, [idx]);
 		}
 
 		setStatus(state.stopRequested ? "Stopped." : "Done.");
@@ -567,8 +560,8 @@ async function loadLossLandscapeLabModule() {
 		await sampleLandscapeAround(state.model.w, state.model.b, 3, xsT, ysT);
 		const surface = buildSurfaceGrid();
 
-		init3DPlots(opts, surface, state.model.w, state.model.b, state.model.loss);
-		initFitPlots(opts);
+		init3DPlot(opts, surface, state.model.w, state.model.b, state.model.loss);
+		initFitPlot(opts);
 		initLossCurvePlot(opts, state.model.loss);
 		renderModelReadout();
 		resizeAllPlots();
