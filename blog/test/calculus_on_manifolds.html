@@ -1945,19 +1945,20 @@ T($('m_dtheta'),'d\\theta=\\dfrac{-y\\,dx+x\\,dy}{x^2+y^2}');
 /* ============================================================
    HERO · DIE VIER MASKEN
    ============================================================ */
+if(false){
 const MASKS=[
  {label:'1 · Hauptsatz (HDI)',k:1,
-  tex:'\\int_a^b f\'(x)\\,dx=f(b)-f(a)',
-  info:'k = 1<br><span class="k">Gebiet</span> <span class="v">Intervall [a,b]</span><br><span class="k">Rand</span> <span class="v">2 Punkte {a,b}</span><br><span class="k">ω</span> <span class="v">0-Form f</span><br><span class="k">dω</span> <span class="v">f′(x) dx</span>'},
+  tex:"\\int_a^b f'(x)\\,dx=f(b)-f(a)",
+  info:'<span class="k">k</span> = <span class="v">1</span><br><span class="k">Gebiet</span> <span class="v">Intervall [a,b]</span><br><span class="k">Rand</span> <span class="v">2 Punkte {a,b}</span><br><span class="k">ω</span> <span class="v">0-Form f</span><br><span class="k">dω</span> <span class="v">f′(x) dx</span>'},
  {label:'2 · Green',k:2,
   tex:'\\oint_{\\partial M}\\!\\!\\alpha\\,dx+\\beta\\,dy=\\iint_M\\!\\Big(\\tfrac{\\partial\\beta}{\\partial x}-\\tfrac{\\partial\\alpha}{\\partial y}\\Big)dx\\,dy',
-  info:'k = 2<br><span class="k">Gebiet</span> <span class="v">Fläche in ℝ²</span><br><span class="k">Rand</span> <span class="v">geschlossene Kurve</span><br><span class="k">ω</span> <span class="v">1-Form α dx+β dy</span><br><span class="k">dω</span> <span class="v">(β_x−α_y) dx∧dy</span>'},
+  info:'<span class="k">k</span> = <span class="v">2</span><br><span class="k">Gebiet</span> <span class="v">Fläche in ℝ²</span><br><span class="k">Rand</span> <span class="v">geschlossene Kurve</span><br><span class="k">ω</span> <span class="v">1-Form α dx+β dy</span><br><span class="k">dω</span> <span class="v">(β_x−α_y) dx∧dy</span>'},
  {label:'3 · Divergenz',k:3,
-  tex:'\\iiint_M \\mathrm{div}\\,F\\,dV=\\iint_{\\partial M}\\langle F,n\\rangle\\,dA',
-  info:'k = 3<br><span class="k">Gebiet</span> <span class="v">Volumen in ℝ³</span><br><span class="k">Rand</span> <span class="v">geschlossene Fläche</span><br><span class="k">ω</span> <span class="v">2-Form ω²_F</span><br><span class="k">dω</span> <span class="v">div F · dx∧dy∧dz</span>'},
+  tex:'\\iiint_M \\operatorname{div}F\\,dV=\\iint_{\\partial M}\\langle F,n\\rangle\\,dA',
+  info:'<span class="k">k</span> = <span class="v">3</span><br><span class="k">Gebiet</span> <span class="v">Volumen in ℝ³</span><br><span class="k">Rand</span> <span class="v">geschlossene Fläche</span><br><span class="k">ω</span> <span class="v">2-Form ω²_F</span><br><span class="k">dω</span> <span class="v">div F · dx∧dy∧dz</span>'},
  {label:'4 · Stokes klassisch',k:2,
   tex:'\\iint_M\\langle \\nabla\\times F,n\\rangle\\,dA=\\oint_{\\partial M}\\langle F,T\\rangle\\,ds',
-  info:'k = 2 (in ℝ³)<br><span class="k">Gebiet</span> <span class="v">Fläche in ℝ³</span><br><span class="k">Rand</span> <span class="v">Randkurve</span><br><span class="k">ω</span> <span class="v">1-Form ω¹_F</span><br><span class="k">dω</span> <span class="v">ω²_{rot F}</span>'}
+  info:'<span class="k">k</span> = <span class="v">2 (in ℝ³)</span><br><span class="k">Gebiet</span> <span class="v">Fläche in ℝ³</span><br><span class="k">Rand</span> <span class="v">Randkurve</span><br><span class="k">ω</span> <span class="v">1-Form ω¹_F</span><br><span class="k">dω</span> <span class="v">ω²_{rot F}</span>'}
 ];
 let maskIdx=0, maskT=0;
 btnGroup($('maskBtns'),MASKS,(it,i)=>{
@@ -1970,8 +1971,7 @@ T($('maskUniv'),'\\int_{c}\\,d\\omega\\;=\\;\\int_{\\partial c}\\,\\omega');
 function drawMask(){
   const {ctx,W,H}=setup($('cMask'));
   ctx.clearRect(0,0,W,H);
-  const cx=W/2, cy=H/2+10, ph=maskT;
-  ctx.save();
+  const cx=W/2, cy=H/2+6, ph=maskT;
   if(maskIdx===0){
     // interval + endpoints
     const x0=cx-200, x1=cx+200, y=cy+40;
@@ -2722,6 +2722,8 @@ const RIEF=[
 ];
 let rieIdx=0, rieHist=[];
 btnGroup($('rieBtns'),RIEF,(it,i)=>{rieIdx=i;rieHist=[];drawRie();},0);
+}
+if(false){
 function drawRie(){
   const N=+$('sRieN').value; $('vRieN').textContent=N;
   const F=RIEF[rieIdx];
