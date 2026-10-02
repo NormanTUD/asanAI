@@ -45,7 +45,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
-                        guard: d => !d.isAnimating(),
+                        block: d => d.isAnimating(),
                         slideTest: s => s.id === 'slide-layer-als-raumkruemmung',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
@@ -140,14 +140,33 @@ const DemoRegistry = (() => {
     // Normalisiere: Defaults einsetzen
     const demos = registry.map(entry => ({ ...DEFAULTS, ...entry }));
 
-    /** Versuche Navigation in einer Richtung. Gibt true zurück wenn konsumiert. */
-    function tryNavigate(direction) {
+    /**
+     * Versuche Navigation in einer Richtung.
+     * Rückgabe:
+     *   true  = konsumiert (Demo hat reagiert)
+     *   'block' = blockiert (Demo will NICHT zur nächsten Folie durchreichen)
+     *   false = nicht behandelt → Fallthrough auf Presentation.next/prev
+     */
+    function tryNavigate(direction, currentSlideEl) {
         const canKey = direction === 'next' ? 'canNext' : 'canPrev';
         const methodKey = direction === 'next' ? 'nextMethod' : 'prevMethod';
 
         for (const demo of demos) {
             const instance = demo.ref();
             if (!instance) continue;
+
+            // Nur Demos betrachten, die per slideTest auf der aktuellen Folie sind.
+            // Damit verhindern wir, dass eine blockierende Demo auf einer anderen
+            // Folie die Pfeiltaste frisst.
+            const onThisSlide = !demo.slideTest || (currentSlideEl && demo.slideTest(currentSlideEl));
+            if (!onThisSlide) continue;
+
+            // Wenn diese Demo explizit blocken will (mid-Animation), signalisiere
+            // 'block' — navigate() fällt dann NICHT auf Presentation.next/prev zurück.
+            if (typeof demo.block === 'function' && demo.block(instance)) {
+                return 'block';
+            }
+
             if (!demo.guard(instance)) continue;
             if (typeof instance[demo[canKey]] === 'function' && instance[demo[canKey]]()) {
                 instance[demo[methodKey]]();
@@ -710,6 +729,7 @@ function prev() {
         init, next, prev, goTo, count: () => slides.length,
         slides: () => slides,
         slideTitleAt: (i) => (slides[i] ? slideTitle(slides[i], i) : ''),
+        getActiveSlide: () => slides[currentSlide] || null,
         isFastMode: () => fastMode,
         toggleOverview, toggleFullscreen, closeOverview,
         searchAppend, searchBackspace, clearOverviewSearch, overviewEscape,
@@ -942,7 +962,9 @@ const InputHandler = (() => {
     let digitTimer = null;
 
     function navigate(direction) {
-        if (!DemoRegistry.tryNavigate(direction)) {
+        const result = DemoRegistry.tryNavigate(direction, Presentation.getActiveSlide());
+        if (result === 'block') return; // Demo hat blockiert — kein Fallthrough
+        if (!result) {
             if (direction === 'next') Presentation.next();
             else Presentation.prev();
         }

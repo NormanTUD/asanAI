@@ -6124,6 +6124,8 @@ var OrigamiLive = (function (global) {
 		play:        play,
 		pause:       pause,
 		resetCamera: resetCamera,
+		toggleFullscreen: _toggleFullscreen,
+		refreshTranslations: _refreshUIText,
 
 		MODE_FOLD:     MODE_FOLD,
 		MODE_BOUNDARY: MODE_BOUNDARY,
