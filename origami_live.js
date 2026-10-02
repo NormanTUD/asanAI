@@ -4141,7 +4141,7 @@ var OrigamiLive = (function (global) {
 		slider("stackOpacity", _tr("origami_live_stackop", "Stapel-Deckkraft"),
 			0.05, 1, 0.01, "", function (v) { return v.toFixed(2); });
 		slider("stackSpread", _tr("origami_live_spread", "Stapel-Abstand"),
-			0, 4, 0.05,
+			0, 8, 0.05,
 			_tr("origami_live_spread_tip",
 				"Zieht die gestapelten Halbräume auseinander."),
 			function (v) { return v.toFixed(2); });
@@ -4951,6 +4951,7 @@ var OrigamiLive = (function (global) {
 	function _resetCamera() {
 		var o = _state.orbit;
 		var pipe = _state.pipeline;
+		var cfg = _state.cfg;
 
 		var R = 420;
 		if (pipe && pipe.stages) {
@@ -4962,6 +4963,24 @@ var OrigamiLive = (function (global) {
 					Math.abs(st.bounds.y.hi - st.bounds.y.lo),
 					Math.abs(st.bounds.z.hi - st.bounds.z.lo)
 				) * st.scale;
+
+				// Im Stapel-Modus werden die Halbräume zusätzlich in z
+				// auseinandergezogen — das hier mit einrechnen, sonst
+				// schießt die Szene oben/unten aus dem Bild.
+				if (cfg.mode === MODE_STACK && li > 0) {
+					var prev = pipe.stages[li - 1];
+					if (prev && prev.bounds) {
+						var xyExt = Math.max(
+							Math.abs(prev.bounds.x.hi - prev.bounds.x.lo),
+							Math.abs(prev.bounds.y.hi - prev.bounds.y.lo)
+						) * prev.scale;
+						var nShow = Math.max(1, cfg.maxNeurons | 0);
+						var spread = _fin(cfg.stackSpread) ? cfg.stackSpread : 1;
+						var stackH = (nShow - 1) * xyExt * 0.14 * spread;
+						if (_fin(stackH) && stackH > 0) ext = Math.max(ext, stackH);
+					}
+				}
+
 				if (_fin(ext) && ext > 1e-6) R = ext * 1.9;
 			}
 		}
@@ -5093,6 +5112,14 @@ var OrigamiLive = (function (global) {
 			if (_state.destroyed) return;
 			if (!_state.visible) return;
 			if (!_state.renderer || !_state.scene || !_state.camera) return;
+
+			// gui.js → disable_everything() macht beim Training alle
+			// <input>s zu — auch unseren Schicht-Scrubber. Hier wieder
+			// flott machen, damit der Nutzer mitten im Training
+			// durch die Schichten scrollen kann.
+			if (_state.scrubEl && _state.scrubEl.disabled) {
+				_state.scrubEl.disabled = false;
+			}
 
 			var t0 = (global.performance && performance.now)
 			         ? performance.now() : Date.now();

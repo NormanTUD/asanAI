@@ -34,7 +34,8 @@ ignored_files = [
     "optimizer_info.js",
     "cnn3d.js",
     "origami_folds.js",
-    "explainability_lib.js"
+    "explainability_lib.js",
+    "origami_live.js"
 ]
 
 def read_file(path: str) -> str:

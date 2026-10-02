@@ -534,6 +534,13 @@ function prev() {
 
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
+        // Focus aus Inputs/Textareas rausnehmen, damit Pfeiltasten wieder
+        // navigieren statt z.B. Slider-Werte zu ändern. Sonst bleibt der
+        // Focus auf einem Range/Select hängen und die nächste Folie ist
+        // nicht mehr erreichbar.
+        const ae = document.activeElement;
+        if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ae.blur();
+
         const oldSlide = slides[currentSlide];
         currentSlide = idx;
         const newSlide = slides[currentSlide];
