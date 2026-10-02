@@ -455,6 +455,11 @@ function redraw3DTrajectories() {
 	const zArrays = [];
 	const traceIndices = [];
 
+	const surfaceGrid = buildSurfaceGrid();
+	const wIdxMap = new Map(surfaceGrid.Ws.map((w, idx) => [w.toFixed(1), idx]));
+	const bIdxMap = new Map(surfaceGrid.Bs.map((b, idx) => [b.toFixed(1), idx]));
+	const surfaceFallback = scale === "log" ? Math.log10(1e-12) : 0;
+
 	optimizers.forEach((name, i) => {
 		const trajIdx = i + 1;
 		if (!plotEl.data[trajIdx]) { console.error("[loss_landscape] guard: trace " + trajIdx + " missing for " + name); return; }
@@ -468,29 +473,28 @@ function redraw3DTrajectories() {
 		const allLosses = initLossValid ? [initialLoss, ...losses] : losses.slice();
 		if (allLosses.length === 0) { console.error("[loss_landscape] guard: no losses for " + name); return; }
 
-		let nanCount = 0;
-		const trajZ = allLosses.map(l => {
-			if (l === null || l === undefined || !isFinite(l) || l <= 0) {
-				nanCount++;
-				return scale === "log" ? Math.log10(1e-12) : 0;
-			}
-			let z = l;
-			if (scale === "log") z = Math.log10(z);
-			if (!isFinite(z)) { nanCount++; return scale === "log" ? Math.log10(1e-12) : 0; }
-			return z;
-		});
-		if (nanCount > 0) console.error("[loss_landscape] guard: " + nanCount + " NaN losses for " + name);
-
-		const targetLen = Math.min(trajW.length, trajB.length, trajZ.length);
-		if (trajW.length !== trajB.length || trajB.length !== trajZ.length) {
-			console.error("[loss_landscape] guard: length mismatch for " + name + " w=" + trajW.length + " b=" + trajB.length + " z=" + trajZ.length);
+		const targetLen = Math.min(trajW.length, trajB.length, allLosses.length);
+		if (trajW.length !== trajB.length || trajB.length !== allLosses.length) {
+			console.error("[loss_landscape] guard: length mismatch for " + name + " w=" + trajW.length + " b=" + trajB.length + " z=" + allLosses.length);
 		}
 		if (targetLen === 0) { console.error("[loss_landscape] guard: targetLen 0 for " + name); return; }
 
-		// ── Snap (w, b) to 0.1 grid so trajectory lands exactly on the surface mesh ──
-		const safeX = trajW.slice(0, targetLen).map(v => Math.round(v * 10) / 10);
-		const safeY = trajB.slice(0, targetLen).map(v => Math.round(v * 10) / 10);
-		const safeZ = trajZ.slice(0, targetLen);
+		const safeX = [];
+		const safeY = [];
+		const safeZ = [];
+		for (let k = 0; k < targetLen; k++) {
+			const wSnap = Math.round(trajW[k] * 10) / 10;
+			const bSnap = Math.round(trajB[k] * 10) / 10;
+			const wi = wIdxMap.get(wSnap.toFixed(1));
+			const bi = bIdxMap.get(bSnap.toFixed(1));
+			let surfaceZ = (wi !== undefined && bi !== undefined && surfaceGrid.Z[bi] && surfaceGrid.Z[bi][wi] !== null && surfaceGrid.Z[bi][wi] !== undefined)
+				? surfaceGrid.Z[bi][wi]
+				: surfaceFallback;
+			if (!isFinite(surfaceZ)) surfaceZ = surfaceFallback;
+			safeX.push(wSnap);
+			safeY.push(bSnap);
+			safeZ.push(surfaceZ);
+		}
 
 		xArrays.push(safeX);
 		yArrays.push(safeY);
@@ -799,8 +803,8 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				state.trajW[name] = trajW.slice();
 				state.trajB[name] = trajB.slice();
 				state.lossHistory[name] = losses.slice();
+				ensureSurfaceCoversTrajectories(xsT, ysT);
 				if (epoch % 5 === 0 || epoch === epochs - 1) {
-					ensureSurfaceCoversTrajectories(xsT, ysT);
 					const surfaceGrid = buildSurfaceGrid();
 					const plotEl = document.getElementById("ll-3d-plot");
 					if (plotEl && plotEl.data && plotEl.data[0]) {

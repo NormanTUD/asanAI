@@ -242,6 +242,54 @@ def run() -> int:
                     if t.get("visible") is False:
                         failures.append(f"trajectory {t.get('name')} is hidden")
 
+            # ── Guard: every trajectory point must sit exactly on the surface ──
+            surface_alignment = page.evaluate("""() => {
+                const plot = document.getElementById('ll-3d-plot');
+                if (!plot || !plot.data) return null;
+                const surf = plot.data[0];
+                const surfX = surf.x || [];
+                const surfY = surf.y || [];
+                const surfZ = surf.z || [];
+                if (!surfZ.length || !surfZ[0].length) return null;
+                const out = [];
+                for (let t = 1; t < plot.data.length; t++) {
+                    const tr = plot.data[t];
+                    const tx = tr.x || [];
+                    const ty = tr.y || [];
+                    const tz = tr.z || [];
+                    let maxDelta = 0;
+                    let worstIdx = -1;
+                    let worstPoint = null;
+                    for (let k = 0; k < tx.length; k++) {
+                        const wKey = tx[k].toFixed(1);
+                        const bKey = ty[k].toFixed(1);
+                        const wi = surfX.findIndex(v => v.toFixed(1) === wKey);
+                        const bi = surfY.findIndex(v => v.toFixed(1) === bKey);
+                        if (wi < 0 || bi < 0) continue;
+                        const sz = surfZ[bi][wi];
+                        if (sz == null) continue;
+                        const d = Math.abs(tz[k] - sz);
+                        if (d > maxDelta) {
+                            maxDelta = d;
+                            worstIdx = k;
+                            worstPoint = { w: tx[k], b: ty[k], tz: tz[k], sz: sz };
+                        }
+                    }
+                    out.push({ name: tr.name, maxDelta, worstIdx, worstPoint });
+                }
+                return out;
+            }""")
+
+            if surface_alignment:
+                for r in surface_alignment:
+                    if r.get("maxDelta", 0) > 0.01:
+                        failures.append(
+                            f"trajectory {r.get('name')} point #{r.get('worstIdx')} "
+                            f"off-surface by {r.get('maxDelta'):.4g}: "
+                            f"w={r.get('worstPoint', {}).get('w')}, b={r.get('worstPoint', {}).get('b')}, "
+                            f"trajZ={r.get('worstPoint', {}).get('tz'):.4g}, surfZ={r.get('worstPoint', {}).get('sz'):.4g}"
+                        )
+
             if loss_state:
                 for t in loss_state:
                     losses = page.evaluate(f"""() => {{
