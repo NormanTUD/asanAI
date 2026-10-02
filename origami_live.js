@@ -2945,10 +2945,8 @@ var OrigamiLive = (function (global) {
 		var col = new T.Color(kind === "soft" ? PALETTE.foldSoft : PALETTE.foldHard);
 		return new T.ShaderMaterial({
 			uniforms: {
-				uTime:    { value: 0 },
 				uColor:   { value: new T.Vector3(col.r, col.g, col.b) },
-				uOpacity: { value: _fin(opacity) ? opacity : 0.95 },
-				uPulse:   { value: kind === "soft" ? 0.45 : 1.0 }
+				uOpacity: { value: _fin(opacity) ? opacity : 0.95 }
 			},
 			vertexShader:   FOLD_VS,
 			fragmentShader: FOLD_FS,
