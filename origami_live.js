@@ -5528,16 +5528,17 @@ var OrigamiLive = (function (global) {
 		}
 
 		var sig = _chainSig(built.chain);
-		if (sig !== _state.lastChainSig) {
+		var chainChanged = (sig !== _state.lastChainSig);
+		if (chainChanged) {
 			_log("Kette geändert: " + sig);
 			_state.lastChainSig = sig;
 			_state.lastFingerprint = null;
 			_setOn();
-			// Kamera an den neuen Raum anpassen
+			// An den neuen Raum anpassen — Kamera wird unten neu eingestellt,
+			// sobald die Pipeline steht.
 			_state.scrub = 1;
 			_state.scrubTarget = 1;
 			_syncScrub();
-			_resetCamera();
 		} else {
 			_setOn();
 		}
@@ -5609,8 +5610,11 @@ var OrigamiLive = (function (global) {
 		_state.lastRebuild = now;
 		_state.dirty = true;
 
-		// Erste Kamera-Einstellung
-		if (!_state.hasFramed) {
+		// Kamera an den neuen Raum anpassen — beim allerersten Build oder
+		// wenn sich die Netzarchitektur geändert hat (neue Schicht, neuer
+		// Datensatz). Bei reinem Trainingsfortschritt (gleiche Kette, neue
+		// Gewichte) bleibt der vom Nutzer eingestellte Blick unangetastet.
+		if (!_state.hasFramed || chainChanged) {
 			_resetCamera();
 			_state.hasFramed = true;
 		}
