@@ -458,7 +458,6 @@ function redraw3DTrajectories() {
 	const initLossValid = initialLoss !== null && initialLoss !== undefined && isFinite(initialLoss);
 	if (!initLossValid) console.error("[loss_landscape] guard: state.model.loss invalid:", initialLoss);
 
-	// ── Guard 2: build per-trace arrays (single source of truth) ─────────────
 	const xArrays = [];
 	const yArrays = [];
 	const zArrays = [];
@@ -466,21 +465,17 @@ function redraw3DTrajectories() {
 
 	optimizers.forEach((name, i) => {
 		const trajIdx = i + 1;
-		// ── Guard 3: trace index must exist ──────────────────────────────────
 		if (!plotEl.data[trajIdx]) { console.error("[loss_landscape] guard: trace " + trajIdx + " missing for " + name); return; }
 
 		let trajW = state.trajW && state.trajW[name];
 		let trajB = state.trajB && state.trajB[name];
-		// ── Guard 4: state must have trajectory arrays ────────────────────────
 		if (!Array.isArray(trajW) || trajW.length === 0) { console.error("[loss_landscape] guard: trajW empty for " + name); trajW = [state.model.w]; }
 		if (!Array.isArray(trajB) || trajB.length === 0) { console.error("[loss_landscape] guard: trajB empty for " + name); trajB = [state.model.b]; }
 
 		const losses = state.lossHistory[name] || [];
 		const allLosses = initLossValid ? [initialLoss, ...losses] : losses.slice();
-		// ── Guard 5: trajectory must have at least one point ─────────────────
 		if (allLosses.length === 0) { console.error("[loss_landscape] guard: no losses for " + name); return; }
 
-		// ── Guard 6: NaN-safe z conversion ───────────────────────────────────
 		let nanCount = 0;
 		const trajZ = allLosses.map(l => {
 			if (l === null || l === undefined || !isFinite(l) || l <= 0) {
@@ -489,31 +484,30 @@ function redraw3DTrajectories() {
 			}
 			let z = l;
 			if (scale === "log") z = Math.log10(z);
-			if (!isFinite(z)) {
-				nanCount++;
-				return scale === "log" ? Math.log10(1e-12) : 0;
-			}
+			if (!isFinite(z)) { nanCount++; return scale === "log" ? Math.log10(1e-12) : 0; }
 			return z;
 		});
 		if (nanCount > 0) console.error("[loss_landscape] guard: " + nanCount + " NaN losses for " + name);
 
-		// ── Guard 7: enforce equal lengths across x, y, z ────────────────────
 		const targetLen = Math.min(trajW.length, trajB.length, trajZ.length);
-		// ── Guard 8: lengths must match ──────────────────────────────────────
 		if (trajW.length !== trajB.length || trajB.length !== trajZ.length) {
 			console.error("[loss_landscape] guard: length mismatch for " + name + " w=" + trajW.length + " b=" + trajB.length + " z=" + trajZ.length);
 		}
 		if (targetLen === 0) { console.error("[loss_landscape] guard: targetLen 0 for " + name); return; }
 
-		xArrays.push(trajW.slice(0, targetLen));
-		yArrays.push(trajB.slice(0, targetLen));
-		zArrays.push(trajZ.slice(0, targetLen));
+		// ── Snap (w, b) to 0.1 grid so trajectory lands exactly on the surface mesh ──
+		const safeX = trajW.slice(0, targetLen).map(v => Math.round(v * 10) / 10);
+		const safeY = trajB.slice(0, targetLen).map(v => Math.round(v * 10) / 10);
+		const safeZ = trajZ.slice(0, targetLen);
+
+		xArrays.push(safeX);
+		yArrays.push(safeY);
+		zArrays.push(safeZ);
 		traceIndices.push(trajIdx);
 	});
 
 	if (traceIndices.length === 0) { console.error("[loss_landscape] guard: no traces to update"); return; }
 
-	// ── Guard 9: single batched Plotly.restyle ──────────────────────────────
 	Plotly.restyle("ll-3d-plot", {
 		x: xArrays,
 		y: yArrays,
