@@ -591,9 +591,10 @@ const SpaceMorph = (() => {
                 updateText();
                 setTimeout(() => {
                     autoOrbitDone = true;
-                    animating = false;
-                    updateText();
+                    // animating bleibt true; go(1) startet den Step-Übergang,
+                    // und der nachfolgende DUR+80 setzt animating auf false.
                     if (cur === 7) go(1);
+                    setTimeout(() => { animating = false; updateText(); }, DUR + 80);
                 }, ORBIT_AUTO_DUR + 80);
                 return;
             }
