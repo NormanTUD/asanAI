@@ -1,6 +1,70 @@
 {
- "entity_merges": 217,
- "entity_rejects": [],
+ "entity_merges": 225,
+ "entity_rejects": [
+  {
+   "name": "Quynh Nguyen",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "John Harer",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Illia Polosukhin",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "David Letscher",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Christian Keup",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Leland McInnes",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Douglas C. Youvan",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Sigmundur Gudmundsson",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Michal Lewandowski",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  }
+ ],
  "entity_repairs": {
   "slugs-normalized": 130,
   "years-from-active": 194,

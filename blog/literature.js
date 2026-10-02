@@ -3849,6 +3849,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1412.6980",
 		author: "Diederik P. Kingma, Jimmy Ba"
 	},
+	"ruder2016overview": {
+		title: "An overview of gradient descent optimization algorithms",
+		author: "Sebastian Ruder",
+		year: 2016,
+		url: "https://arxiv.org/abs/1609.04747",
+		alternativetitle: "Ruder, 2016"
+	},
 	"momentum": {
 		title: "Some methods of speeding up the convergence of iteration methods",
 		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf",

@@ -629,7 +629,7 @@ person-arthur-eddington | person | Arthur Stanley Eddington | 1882-1944 | 54.32,
 person-arthur-hoerl | person | Arthur E. Hoerl | 1924- | 44.05,-123.09
 person-arthur-samuel | person | Arthur Samuel | 1901-2001 | 41.34,-73.88
 person-aryabhata | person | Āryabhaṭa | 476-550 | 21.0,78.0
-person-asaf-amrami | person | Asaf Amrami | unknown | 31.91,34.81
+person-asaf-amrami | person | Asaf Amrami | 2021 | 31.91,34.81
 person-ashish-vaswani | person | Ashish Vaswani | b. 1984 | 37.39,-122.08
 person-august-mobius | person | August Ferdinand Möbius | 1790-1868 | 51.49,11.97
 person-augustin-jean-fresnel | person | Augustin-Jean Fresnel | 1788-1827 | 48.86,2.35
@@ -691,7 +691,6 @@ person-chetan-prakash | person | Chetan Prakash | - | 34.05,-118.24
 person-chevalier-de-mere | person | Chevalier de Méré | 1602-1685 | 48.85,2.35
 person-chris-olah | person | Chris Olah | b. 1992 | 37.77,-122.42
 person-christiaan-huygens | person | Christiaan Huygens | 1629-1695 | 52.08,4.3
-person-christian-keup | person | Christian Keup | unknown | 49.4,8.69
 person-christian-szegedy | person | Christian Szegedy | 1980- | 47.5,19.04
 person-christine-taylor | person | Christine Taylor | 1952- | 41.82,-71.41
 person-christopher-bishop | person | Christopher Bishop | 1963- | 47.67,-122.12
@@ -886,7 +885,7 @@ person-gregory-bateson | person | Gregory Bateson | 1904-1980 | 34.05,-118.24
 person-gregory-naitzat | person | Gregory Naitzat | - | 35.7796,-78.6382
 person-grigori-perelman | person | Grigori Perelman | b. 1966 | 59.93,30.37
 person-guido-imbens | person | Guido Imbens | 1967 | 52.37,4.9
-person-guido-montufar | person | Guido Montúfar | unknown | 49.87,8.65
+person-guido-montufar | person | Guido Montúfar | 2014 | 49.87,8.65
 person-guido-van-rossum | person | Guido van Rossum | 1956- | 52.389,4.635
 person-gunnar-carlsson | person | Gunnar Carlsson | b. 1964 | 59.33,18.07
 person-h-h-joachim | person | H. H. Joachim | 1857-1935 | 51.75,-1.26
@@ -1023,7 +1022,6 @@ person-jiaxin-huang | person | Jiaxin Huang | 1995– | 37.8715,-122.2585
 person-jimmy-ba | person | Jimmy Lei Ba | 1987-present | 43.65,-79.38
 person-jimmy-ba-2 | person | Jimmy Ba | 1989- | 43.65,-79.38
 person-jiwoo-hong | person | Jiwoo Hong | active 2018-present | 36.35,127.38
-person-joav-goldberg | person | Yoav Goldberg | unknown | 32.78,35.02
 person-joe-biden | person | Joe Biden | 1942- | 38.9,-77.04
 person-joel-becker | person | Joel Becker | - | 37.77,-122.42
 person-johann-maelzel | person | Johann Nepomuk Mälzel | 1781–1837 | 48.2082,16.3738
@@ -1232,7 +1230,6 @@ person-michael-polanyi | person | Michael Polanyi | 1891-1976 | 51.75,-1.26
 person-michael-sandel | person | Michael Sandel | 1953- | 42.37,-71.11
 person-michael-tomasello | person | Michael Tomasello | 1950 | 51.34,12.37
 person-michal-kosinski | person | Michal Kosinski | 1985– | 37.4275,-122.1697
-person-michal-lewandowski | person | Michal Lewandowski | unknown | 47.38,8.54
 person-michelle-bevilacqua | person | Michele Bevilacqua | 1995– | 47.3769,8.5417
 person-mike-lewis | person | Mike Lewis | 1990– | 37.4037,-122.0737
 person-mike-schuster | person | Mike Schuster | 2010-2020 | 37.39,-122.08
@@ -1245,7 +1242,7 @@ person-mohammad-gheshlaghi-azar | person | Mohammad Gheshlaghi Azar | active 201
 person-mohammad-shoeybi | person | Mohammad Shoeybi | active 2015-present | 37.35,-121.95
 person-mor-geva | person | Mor Geva | unknown | 31.92,34.86
 person-moritz-grillo | person | Moritz Grillo | - | 47.3769,8.5417
-person-moritz-helias | person | Moritz Helias | unknown | 49.4,8.69
+person-moritz-helias | person | Moritz Helias | 2022 | 49.4,8.69
 person-mrinank-sharma | person | Mrinank Sharma | - | 37.77,-122.42
 person-myles-tierney | person | Myles Tierney | 1990-2020 | 52.41,-1.52
 person-naftali-tishby | person | Naftali Tishby | 1961- | 31.9,34.81
@@ -1586,6 +1583,7 @@ person-yarin-gal | person | Yarin Gal | 1985- | 52.2,0.12
 person-yaron-lipman | person | Yaron Lipman | 1982– | 32.7763,35.0263
 person-yevgeny-prigozhin | person | Yevgeny Prigozhin | 1961-2023 | 59.93,30.36
 person-yilun-du | person | Yilun Du | active 2015-present | 42.36,-71.09
+person-yoav-goldberg | person | Yoav Goldberg | 2021 | 32.78,35.02
 person-yochai-benkler | person | Yochai Benkler | 1965- | 42.37,-71.11
 person-yong-jae-lee | person | Yong Jae Lee | 1970– | 43.0731,-89.4012
 person-yoram-freund | person | Yoram Freund | 1966- | 37.43,-122.17

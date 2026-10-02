@@ -1424,6 +1424,558 @@
   "label": "ResNet as the CNN baseline ViT is measured against"
  },
  {
+  "kind": "influence",
+  "from": "person-zeno-of-elea",
+  "to": "person-aristotle",
+  "y1": -460,
+  "y2": -350,
+  "label": "Reductio ad absurdum to the syllogism"
+ },
+ {
+  "kind": "influence",
+  "from": "person-socrates",
+  "to": "person-plato",
+  "y1": -470,
+  "y2": -399,
+  "label": "Dialectic to the theory of forms"
+ },
+ {
+  "kind": "influence",
+  "from": "person-socrates",
+  "to": "person-aristotle",
+  "y1": -470,
+  "y2": -350,
+  "label": "Dialectic to formal logic"
+ },
+ {
+  "kind": "influence",
+  "from": "person-plato",
+  "to": "person-aristotle",
+  "y1": -399,
+  "y2": -350,
+  "label": "Ideas to the categorization of thought"
+ },
+ {
+  "kind": "influence",
+  "from": "person-aristotle",
+  "to": "person-george-boole",
+  "y1": -350,
+  "y2": 1854,
+  "label": "Syllogism to the algebra of logic"
+ },
+ {
+  "kind": "influence",
+  "from": "person-aristotle",
+  "to": "person-konrad-zuse",
+  "y1": -322,
+  "y2": 1936,
+  "label": "Reason as formal calculus"
+ },
+ {
+  "kind": "influence",
+  "from": "person-thales-of-miletus",
+  "to": "person-anaximander",
+  "y1": -600,
+  "y2": -560,
+  "label": "The Milesian school of natural philosophy"
+ },
+ {
+  "kind": "influence",
+  "from": "person-anaximander",
+  "to": "person-anaximenes",
+  "y1": -580,
+  "y2": -540,
+  "label": "The Milesian school continues"
+ },
+ {
+  "kind": "influence",
+  "from": "person-heron-of-alexandria",
+  "to": "person-david-wheeler",
+  "y1": 70,
+  "y2": 1965,
+  "label": "Mechanical mediation to layers of abstraction"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ramon-llull",
+  "to": "person-gottfried-wilhelm-leibniz",
+  "y1": 1300,
+  "y2": 1679,
+  "label": "Combinatorial wheels to calculemus"
+ },
+ {
+  "kind": "influence",
+  "from": "person-gottfried-wilhelm-leibniz",
+  "to": "person-charles-babbage",
+  "y1": 1672,
+  "y2": 1837,
+  "label": "The calculus to the Analytical Engine"
+ },
+ {
+  "kind": "influence",
+  "from": "person-gottfried-wilhelm-leibniz",
+  "to": "person-george-boole",
+  "y1": 1679,
+  "y2": 1854,
+  "label": "The universal characteristic to logic algebra"
+ },
+ {
+  "kind": "influence",
+  "from": "person-gottfried-wilhelm-leibniz",
+  "to": "person-konrad-zuse",
+  "y1": 1672,
+  "y2": 1936,
+  "label": "Binary to the calculating machine"
+ },
+ {
+  "kind": "influence",
+  "from": "person-charles-babbage",
+  "to": "person-konrad-zuse",
+  "y1": 1837,
+  "y2": 1936,
+  "label": "The engine to the Z3"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ramon-llull",
+  "to": "person-konrad-zuse",
+  "y1": 1300,
+  "y2": 1936,
+  "label": "Symbol manipulation to Plankalkul"
+ },
+ {
+  "kind": "influence",
+  "from": "person-pingala",
+  "to": "person-gottfried-wilhelm-leibniz",
+  "y1": -200,
+  "y2": 1679,
+  "label": "Binary meter to binary notation"
+ },
+ {
+  "kind": "influence",
+  "from": "person-leonardo-torres-quevedo",
+  "to": "person-claude-shannon",
+  "y1": 1914,
+  "y2": 1950,
+  "label": "The chess machine to the chess program"
+ },
+ {
+  "kind": "influence",
+  "from": "person-claude-shannon",
+  "to": "artifact-deep-blue",
+  "y1": 1950,
+  "y2": 1997,
+  "label": "The minimax template scaled up"
+ },
+ {
+  "kind": "influence",
+  "from": "institution-nvidia",
+  "to": "event-alexnet-imagenet-victory",
+  "y1": 2006,
+  "y2": 2012,
+  "label": "GPUs power the deep learning boom"
+ },
+ {
+  "kind": "influence",
+  "from": "person-dan-ciresan",
+  "to": "event-alexnet-imagenet-victory",
+  "y1": 2011,
+  "y2": 2012,
+  "label": "GPU CNNs ahead of AlexNet"
+ },
+ {
+  "kind": "influence",
+  "from": "person-santiago-ramon-y-cajal",
+  "to": "person-warren-mcculloch",
+  "y1": 1888,
+  "y2": 1943,
+  "label": "Neuron doctrine to the mathematical neuron"
+ },
+ {
+  "kind": "influence",
+  "from": "person-louis-lapicque",
+  "to": "person-warren-mcculloch",
+  "y1": 1907,
+  "y2": 1943,
+  "label": "Integrate-and-fire to the logical neuron"
+ },
+ {
+  "kind": "influence",
+  "from": "person-rene-descartes",
+  "to": "person-warren-mcculloch",
+  "y1": 1637,
+  "y2": 1943,
+  "label": "The body as machine to the brain as computer"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ernst-ising",
+  "to": "person-shunichi-amari",
+  "y1": 1925,
+  "y2": 1972,
+  "label": "Spins to the adaptive network"
+ },
+ {
+  "kind": "influence",
+  "from": "person-shunichi-amari",
+  "to": "person-john-hopfield",
+  "y1": 1972,
+  "y2": 1982,
+  "label": "The adaptive network republished as Hopfield"
+ },
+ {
+  "kind": "influence",
+  "from": "person-donald-hebb",
+  "to": "person-frank-rosenblatt",
+  "y1": 1949,
+  "y2": 1958,
+  "label": "Hebbian learning to the perceptron"
+ },
+ {
+  "kind": "influence",
+  "from": "person-norbert-wiener",
+  "to": "person-alan-turing",
+  "y1": 1937,
+  "y2": 1950,
+  "label": "Can a machine think, thirteen years early"
+ },
+ {
+  "kind": "influence",
+  "from": "person-norbert-wiener",
+  "to": "event-dartmouth-workshop-1956",
+  "y1": 1948,
+  "y2": 1956,
+  "label": "Cybernetics, the parent field"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alkindi",
+  "to": "person-claude-shannon",
+  "y1": 830,
+  "y2": 1948,
+  "label": "Frequency analysis to statistical language"
+ },
+ {
+  "kind": "influence",
+  "from": "person-max-bense",
+  "to": "person-theo-lutz",
+  "y1": 1950,
+  "y2": 1959,
+  "label": "Cybernetics to digital poetry"
+ },
+ {
+  "kind": "influence",
+  "from": "person-claude-shannon",
+  "to": "person-theo-lutz",
+  "y1": 1948,
+  "y2": 1959,
+  "label": "Stochastic process to stochastic text"
+ },
+ {
+  "kind": "influence",
+  "from": "person-christopher-strachey",
+  "to": "person-theo-lutz",
+  "y1": 1952,
+  "y2": 1959,
+  "label": "The earliest computer-generated text"
+ },
+ {
+  "kind": "influence",
+  "from": "person-max-planck",
+  "to": "person-niels-bohr",
+  "y1": 1900,
+  "y2": 1913,
+  "label": "The quantum to the quantized atom"
+ },
+ {
+  "kind": "influence",
+  "from": "person-niels-bohr",
+  "to": "person-werner-heisenberg",
+  "y1": 1913,
+  "y2": 1925,
+  "label": "The atom to matrix mechanics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-werner-heisenberg",
+  "to": "person-erwin-schroedinger",
+  "y1": 1925,
+  "y2": 1926,
+  "label": "Matrix mechanics to wave mechanics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-felix-bloch",
+  "to": "person-alan-herries-wilson",
+  "y1": 1929,
+  "y2": 1931,
+  "label": "Band theory to the semiconductor"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alan-herries-wilson",
+  "to": "person-john-bardeen",
+  "y1": 1931,
+  "y2": 1947,
+  "label": "Semiconductor theory to the transistor"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-bardeen",
+  "to": "person-william-shockley",
+  "y1": 1947,
+  "y2": 1948,
+  "label": "Point-contact to the junction transistor"
+ },
+ {
+  "kind": "influence",
+  "from": "person-theophrastus",
+  "to": "person-pliny-the-elder",
+  "y1": -250,
+  "y2": 77,
+  "label": "Mineralogy across generations"
+ },
+ {
+  "kind": "influence",
+  "from": "person-pliny-the-elder",
+  "to": "person-georgius-agricola",
+  "y1": 77,
+  "y2": 1556,
+  "label": "The metals to the mining treatise"
+ },
+ {
+  "kind": "influence",
+  "from": "person-thomas-newcomen",
+  "to": "person-james-watt",
+  "y1": 1712,
+  "y2": 1769,
+  "label": "Atmospheric engine to the separate condenser"
+ },
+ {
+  "kind": "influence",
+  "from": "person-james-watt",
+  "to": "person-charles-babbage",
+  "y1": 1769,
+  "y2": 1822,
+  "label": "Steam to the precision machine tools"
+ },
+ {
+  "kind": "influence",
+  "from": "person-gerardus-mercator",
+  "to": "person-john-harrison",
+  "y1": 1569,
+  "y2": 1765,
+  "label": "Navigation to the chronometer"
+ },
+ {
+  "kind": "influence",
+  "from": "person-otto-von-guericke",
+  "to": "person-heinrich-geissler",
+  "y1": 1654,
+  "y2": 1857,
+  "label": "The vacuum to the discharge tube"
+ },
+ {
+  "kind": "influence",
+  "from": "person-heinrich-geissler",
+  "to": "person-john-ambrose-fleming",
+  "y1": 1857,
+  "y2": 1904,
+  "label": "Vacuum tubes to the diode"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-ambrose-fleming",
+  "to": "person-lee-de-forest",
+  "y1": 1904,
+  "y2": 1906,
+  "label": "The diode to the triode"
+ },
+ {
+  "kind": "influence",
+  "from": "person-lee-de-forest",
+  "to": "artifact-eniac",
+  "y1": 1906,
+  "y2": 1946,
+  "label": "Vacuum tubes to the first electronic computer"
+ },
+ {
+  "kind": "influence",
+  "from": "person-karl-ferdinand-braun",
+  "to": "person-philo-farnsworth",
+  "y1": 1897,
+  "y2": 1927,
+  "label": "The CRT to electronic television"
+ },
+ {
+  "kind": "influence",
+  "from": "person-philo-farnsworth",
+  "to": "person-ivan-sutherland",
+  "y1": 1927,
+  "y2": 1963,
+  "label": "Television to the graphical screen"
+ },
+ {
+  "kind": "influence",
+  "from": "person-william-cullen",
+  "to": "person-carl-von-linde",
+  "y1": 1756,
+  "y2": 1877,
+  "label": "Artificial cold to the ammonia refrigerator"
+ },
+ {
+  "kind": "influence",
+  "from": "person-carl-von-linde",
+  "to": "person-willis-carrier",
+  "y1": 1877,
+  "y2": 1902,
+  "label": "Compression refrigeration to air conditioning"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-b-goodenough",
+  "to": "person-akira-yoshino",
+  "y1": 1980,
+  "y2": 1985,
+  "label": "The cathode to the lithium-ion cell"
+ },
+ {
+  "kind": "influence",
+  "from": "person-jean-daniel-colladon",
+  "to": "person-charles-k-kao",
+  "y1": 1842,
+  "y2": 1966,
+  "label": "Light in a water jet to fiber optics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-tyndall",
+  "to": "person-charles-k-kao",
+  "y1": 1850,
+  "y2": 1966,
+  "label": "Total internal reflection to fiber optics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-cyrus-west-field",
+  "to": "event-first-transatlantic-telegraph",
+  "y1": 1844,
+  "y2": 1858,
+  "label": "The cable that crossed the Atlantic"
+ },
+ {
+  "kind": "influence",
+  "from": "person-joseph-nicéphore-niépce",
+  "to": "person-louis-daguerre",
+  "y1": 1826,
+  "y2": 1839,
+  "label": "The first photograph to the daguerreotype"
+ },
+ {
+  "kind": "influence",
+  "from": "person-louis-daguerre",
+  "to": "person-william-fox-talbot",
+  "y1": 1839,
+  "y2": 1841,
+  "label": "The daguerreotype to the calotype"
+ },
+ {
+  "kind": "influence",
+  "from": "person-william-fox-talbot",
+  "to": "person-eadweard-muybridge",
+  "y1": 1841,
+  "y2": 1878,
+  "label": "Photography to chronophotography"
+ },
+ {
+  "kind": "influence",
+  "from": "person-nicolaus-copernicus",
+  "to": "person-galileo-galilei",
+  "y1": 1543,
+  "y2": 1610,
+  "label": "Heliocentrism to the telescope"
+ },
+ {
+  "kind": "influence",
+  "from": "person-edmond-halley",
+  "to": "person-isaac-newton",
+  "y1": 1684,
+  "y2": 1687,
+  "label": "Financing and editing the Principia"
+ },
+ {
+  "kind": "influence",
+  "from": "person-immanuel-kant",
+  "to": "person-pierre-simon-laplace",
+  "y1": 1755,
+  "y2": 1796,
+  "label": "The nebular hypothesis to its mathematics"
+ },
+ {
+  "kind": "influence",
+  "from": "person-isaac-newton",
+  "to": "person-pierre-simon-laplace",
+  "y1": 1687,
+  "y2": 1796,
+  "label": "Determinism to Laplace's demon"
+ },
+ {
+  "kind": "influence",
+  "from": "person-bertrand-russell",
+  "to": "person-alonzo-church",
+  "y1": 1910,
+  "y2": 1940,
+  "label": "Principia to type theory"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alonzo-church",
+  "to": "person-roger-hindley",
+  "y1": 1940,
+  "y2": 1969,
+  "label": "The lambda calculus to the lambda cube"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alonzo-church",
+  "to": "person-robin-milner",
+  "y1": 1940,
+  "y2": 1978,
+  "label": "The lambda calculus to type inference"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alonzo-church",
+  "to": "person-per-martin-lof",
+  "y1": 1940,
+  "y2": 1971,
+  "label": "The lambda calculus to dependent types"
+ },
+ {
+  "kind": "influence",
+  "from": "person-arthur-cayley",
+  "to": "person-john-backus",
+  "y1": 1855,
+  "y2": 1957,
+  "label": "Matrix algebra to the array data structure"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-von-neumann",
+  "to": "person-jule-charney",
+  "y1": 1940,
+  "y2": 1950,
+  "label": "The IAS group to the first forecast"
+ },
+ {
+  "kind": "influence",
+  "from": "person-tommy-flowers",
+  "to": "artifact-colossus-mark-2",
+  "y1": 1943,
+  "y2": 1944,
+  "label": "The Colossus built"
+ },
+ {
   "kind": "signal",
   "from": "place-england",
   "to": "place-canada",
@@ -1566,6 +2118,22 @@
   "y1": 1946,
   "y2": 1947,
   "label": "Monte Carlo method goes civilian"
+ },
+ {
+  "kind": "signal",
+  "from": "place-china",
+  "to": "place-spain",
+  "y1": 751,
+  "y2": 1100,
+  "label": "Paper reaches Europe via Moorish Spain"
+ },
+ {
+  "kind": "signal",
+  "from": "place-india",
+  "to": "place-spain",
+  "y1": 800,
+  "y2": 976,
+  "label": "Hindu-Arabic numerals reach Europe"
  },
  {
   "kind": "journey",
@@ -1933,5 +2501,50 @@
   ],
   "y1": 1494,
   "y2": 1494
+ },
+ {
+  "kind": "journey",
+  "person": "person-robert-nathan",
+  "path": [
+   "institution-jpl"
+  ],
+  "y1": 1960,
+  "y2": 1969
+ },
+ {
+  "kind": "journey",
+  "person": "person-charles-stark-draper",
+  "path": [
+   "institution-mit"
+  ],
+  "y1": 1950,
+  "y2": 1969
+ },
+ {
+  "kind": "journey",
+  "person": "person-margaret-hamilton",
+  "path": [
+   "institution-mit"
+  ],
+  "y1": 1962,
+  "y2": 1969
+ },
+ {
+  "kind": "journey",
+  "person": "person-jule-charney",
+  "path": [
+   "institution-institute-for-advanced-study"
+  ],
+  "y1": 1949,
+  "y2": 1955
+ },
+ {
+  "kind": "journey",
+  "person": "person-stanisław-ulam",
+  "path": [
+   "place-los-alamos"
+  ],
+  "y1": 1943,
+  "y2": 1949
  }
 ]

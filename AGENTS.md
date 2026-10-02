@@ -516,12 +516,17 @@ and tour stop. A hardcoded marker in `atlas.js` breaks all of that:
   `conf: 1` ⇒ real lat/lng **and** non-empty city, `conf: 0` ⇒ nulls.
 - Entity ids are unique and type-prefixed kebab-case
   (`person-alan-turing`, `place-bletchley-park`); `conf` ∈ stated/known/inferred.
-- **Hand-maintained magic numbers** in `atlas_check.py`: bibliography entry
-  count (`entries == 2120` — bump when literature.js grows), thread floor
-  (`>= 100`), and the fixed list of expected `raw/` files (a new
-  `out_part11.json` is not audited until added to that list).
-  **The Atlas data is currently stale** (literature.js has grown past 2120
-  keys) — re-run the pipeline and bump the count before relying on `check`.
+- The only remaining hand-tuned constant is the **thread floor** (`>= 100`).
+  The bibliography entry count is now **derived from `literature.js`** at check
+  time (unique top-level keys — `literature.js` carries a handful of duplicate
+  keys that JS last-wins resolves, so the check counts *unique* keys to match
+  `atlas_parse_bib.py`), and provenance is **glob-based** per raw file family
+  (`out_part*.json`, `placed_*.json`, `authors_chunk_*.json`, …) so a new
+  `out_part15.json` / `placed_12.json` is audited automatically. No re-bumping.
+  **When literature.js or any lesson's `\cite` macros change:** re-run
+  `atlas_parse_bib.py` → `atlas_merge.py --merge` → `atlas_threads.py --build`
+  → `atlas_check.py`; the 234→310 thread / 1456→1887 entity baseline grows as
+  lessons cite more sources.
 - Every texture loaded in `atlas.js` must be a real file in `blog/`, cited in
   `atlas.php` with a `literature.js` key, and recorded in
   `bildquellen-pruefung.txt` (known outlier: the public-domain WMAP CMB photo
