@@ -286,6 +286,45 @@ var OrigamiLive = (function (global) {
 		return (fb != null ? fb : key);
 	}
 
+	function _refreshUIText() {
+		if (!_state.uiText) return;
+		for (var i = 0; i < _state.uiText.length; i++) {
+			var e = _state.uiText[i];
+			if (!e || !e.el) continue;
+			var v = _tr(e.key, e.fb);
+			if (e.kind === "text") {
+				e.el.textContent = (e.prefix || "") + v;
+			} else if (e.kind === "tip") {
+				e.el.title = v;
+			} else if (e.kind === "label") {
+				e.el.textContent = v + " —";
+			}
+		}
+		// HUD- und Diagnose-Texte hängen an _updateHud/_updateDiag
+		if (_state.pipeline) {
+			_updateHud(_state.pipeline);
+			_updateNetDiagram(_state.pipeline);
+		}
+	}
+
+	function _toggleFullscreen() {
+		var el = _state.container;
+		if (!el) return;
+		try {
+			var fsEl = document.fullscreenElement ||
+			           document.webkitFullscreenElement || null;
+			if (fsEl === el) {
+				if (document.exitFullscreen) document.exitFullscreen();
+				else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+			} else {
+				var req = el.requestFullscreen || el.webkitRequestFullscreen;
+				if (req) req.call(el);
+			}
+		} catch (e) {
+			_wrn("Vollbild nicht möglich: " + e);
+		}
+	}
+
 	// ==================================================================
 	// 4. GUARDS
 	// ==================================================================
@@ -2961,7 +3000,6 @@ var OrigamiLive = (function (global) {
 		var col = new T.Color(PALETTE.boundary);
 		return new T.ShaderMaterial({
 			uniforms: {
-				uTime:    { value: 0 },
 				uColor:   { value: new T.Vector3(col.r, col.g, col.b) },
 				uOpacity: { value: _fin(opacity) ? opacity : 1.0 }
 			},
@@ -3711,27 +3749,26 @@ var OrigamiLive = (function (global) {
 		modeRow.style.cssText = "display:flex;gap:6px;pointer-events:auto;";
 
 		var MODES = [
-			[MODE_FOLD,     "\u25F0 " + _tr("origami_live_mode_fold", "Faltung"),
-			 _tr("origami_live_mode_fold_tip",
+			[MODE_FOLD,     "\u25F0", "origami_live_mode_fold",     "Faltung",
+			 "origami_live_mode_fold_tip",
 			  "Das Eingabeblatt wird Schicht für Schicht geknickt. " +
-			  "Cyan = positive Seite, Ocker = plattgedrückte Seite.")],
-			[MODE_BOUNDARY, "\u25C8 " + _tr("origami_live_mode_boundary", "Grenze"),
-			 _tr("origami_live_mode_boundary_tip",
+			  "Cyan = positive Seite, Ocker = plattgedrückte Seite."],
+			[MODE_BOUNDARY, "\u25C8", "origami_live_mode_boundary", "Grenze",
+			 "origami_live_mode_boundary_tip",
 			  "Die flache Trennebene der letzten Schicht, zurück durch alle " +
-			  "Falten in den Eingaberaum projiziert.")],
-			[MODE_STACK,    "\u2338 " + _tr("origami_live_mode_stack", "Stapel"),
-			 _tr("origami_live_mode_stack_tip",
+			  "Falten in den Eingaberaum projiziert."],
+			[MODE_STACK,    "\u2338", "origami_live_mode_stack",    "Stapel",
+			 "origami_live_mode_stack_tip",
 			  "Pro Neuron ein Halbraum-Blatt, gestapelt. Weiße Kante = " +
 			  "die Hyperebene, an der ReLU knickt.")]
 		];
 
 		_state.modeBtns = {};
+		_state.uiText = [];   // [{el, kind: "text"|"tip", key, fb, prefix}, ...]
 		for (var mi = 0; mi < MODES.length; mi++) {
 			(function (def) {
 				var b = document.createElement("button");
 				b.type = "button";
-				b.textContent = def[1];
-				b.title = def[2];
 				b.setAttribute("data-mode", def[0]);
 				b.style.cssText = _btnCss(th, _state.cfg.mode === def[0]);
 				b.addEventListener("click", function (e) {
@@ -3740,6 +3777,9 @@ var OrigamiLive = (function (global) {
 				});
 				modeRow.appendChild(b);
 				_state.modeBtns[def[0]] = b;
+				_state.uiText.push({ el: b, kind: "text", prefix: def[1],
+				                     key: def[2], fb: def[3] });
+				_state.uiText.push({ el: b, kind: "tip", key: def[4], fb: def[5] });
 			})(MODES[mi]);
 		}
 		head.appendChild(modeRow);
@@ -3769,10 +3809,19 @@ var OrigamiLive = (function (global) {
 			_tr("origami_live_play_tip",
 				"Zeitlupe: faltet das Blatt Schicht für Schicht auf und zu."),
 			function () { _togglePlay(); });
+		_state.uiText.push({ el: _state.playBtn, kind: "tip",
+		                     key: "origami_live_play_tip",
+		                     fb: "Zeitlupe: faltet das Blatt Schicht für Schicht auf und zu." });
 
 		tool("\u21BA",
 			_tr("origami_live_reset_tip", "Kamera zurücksetzen."),
 			function () { _resetCamera(); });
+
+		_state.fsBtn = tool("\u26F6",
+			_tr("origami_live_fullscreen_tip", "Vollbild."),
+			function () { _toggleFullscreen(); });
+		_state.uiText.push({ el: _state.fsBtn, kind: "tip",
+		                     key: "origami_live_fullscreen_tip", fb: "Vollbild." });
 
 		_state.gearBtn = tool("\u2699",
 			_tr("origami_live_settings_tip", "Einstellungen und Qualität."),
@@ -3800,6 +3849,8 @@ var OrigamiLive = (function (global) {
 		scrubLbl.textContent = _tr("origami_live_layer", "Schicht") + " —";
 		scrubWrap.appendChild(scrubLbl);
 		_state.scrubLblEl = scrubLbl;
+		_state.uiText.push({ el: scrubLbl, kind: "label",
+		                     key: "origami_live_layer", fb: "Schicht" });
 
 		var scrub = document.createElement("input");
 		scrub.type = "range";
@@ -3810,6 +3861,10 @@ var OrigamiLive = (function (global) {
 		scrub.title = _tr("origami_live_scrub_tip",
 			"Zieht das Blatt durch die Schichten. Links = Eingaberaum, " +
 			"rechts = letzte Faltung.");
+		_state.uiText.push({ el: scrub, kind: "tip",
+		                     key: "origami_live_scrub_tip",
+		                     fb: "Zieht das Blatt durch die Schichten. " +
+		                         "Links = Eingaberaum, rechts = letzte Faltung." });
 		scrub.style.cssText = [
 			"flex:1 1 auto", "cursor:pointer",
 			"accent-color:" + (th.dark ? "#e8b43c" : "#d99a16")
@@ -5351,6 +5406,7 @@ var OrigamiLive = (function (global) {
 				_state.lastDark = d;
 				_state.lastLang = lg;
 				_applyTheme();
+				_refreshUIText();
 				_state.lastViewHash = null;
 				_markDirty(true);
 				return;
@@ -5784,6 +5840,7 @@ var OrigamiLive = (function (global) {
 		_setupObserver();
 		_setupResizeObserver();
 		_startWatchdog();
+		_refreshUIText();
 
 		if (_visibleNow()) _state.visible = true;
 

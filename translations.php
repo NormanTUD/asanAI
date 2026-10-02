@@ -1044,6 +1044,7 @@
 		       "origami_live_sec_motion" => "Motion",
 		       "origami_live_sec_quality" => "Quality",
 		       "origami_live_settings_tip" => "Settings and quality.",
+		       "origami_live_fullscreen_tip" => "Fullscreen.",
 		       "origami_live_sheetop" => "Sheet opacity",
 		       "origami_live_show_axes" => "Axes",
 		       "origami_live_show_axes_tip" => "Coordinate axes of the current space.",
