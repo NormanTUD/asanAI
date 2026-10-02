@@ -333,33 +333,6 @@ function restoreCamera(plotId, cam) {
 
 /* ─── 3-D plot: trajectory + surface clipping ────────────────────────────── */
 
-/** Build a (w, b) -> z lookup by bilinear interpolation over the sampled
- *  surface grid. Returns null when (w, b) lies outside the grid. */
-function makeSurfaceInterpolator(Ws, Bs, Z) {
-	const wN = Ws.length, bN = Bs.length;
-	if (wN < 2 || bN < 2) return null;
-	const wMin = Ws[0], wMax = Ws[wN - 1];
-	const bMin = Bs[0], bMax = Bs[bN - 1];
-	return function lookup(w, b) {
-		if (w < wMin || w > wMax || b < bMin || b > bMax) return null;
-		const fx = (w - wMin) / (wMax - wMin) * (wN - 1);
-		const fy = (b - bMin) / (bMax - bMin) * (bN - 1);
-		const ix = Math.floor(fx), iy = Math.floor(fy);
-		const tx = fx - ix, ty = fy - iy;
-		const z00 = Z[iy][ix];
-		const z10 = Z[iy][ix + 1];
-		const z01 = Z[iy + 1][ix];
-		const z11 = Z[iy + 1][ix + 1];
-		if (z00 === null || z10 === null || z01 === null || z11 === null) {
-			const candidates = [z00, z10, z01, z11].filter(v => v !== null);
-			return candidates.length ? Math.max.apply(null, candidates) : null;
-		}
-		const top    = z00 * (1 - tx) + z10 * tx;
-		const bottom = z01 * (1 - tx) + z11 * tx;
-		return top * (1 - ty) + bottom * ty;
-	};
-}
-
 function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const { Ws, Bs, Z } = surfaceGrid;
 	const losses = Z.flat().filter(z => z !== null).map(z => Math.pow(10, z));
@@ -492,7 +465,7 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	const fitIdx   = state.currentOptimizers.indexOf(name) + 1;
 	const lossIdx  = state.currentOptimizers.indexOf(name);
 
-	const surfaceLookup = state.surfaceLookup;
+	const zMin = state.surfaceZMin;
 	const zMax = state.surfaceZMax;
 
 	const cam0 = captureCamera("ll-3d-plot");
@@ -510,12 +483,10 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				trajW.push(w); trajB.push(b); trajLoss.push(logs.loss);
 
 				const trajZ = trajLoss.map(l => {
-					let z = Math.log10(l);
+					let z = Math.log10(Math.max(l, 1e-12));
 					if (z > zMax) z = zMax;
-					if (!surfaceLookup) return z;
-					const lookup = surfaceLookup(w, b);
-					if (lookup === null) return zMax;
-					return Math.min(z, lookup);
+					if (z < zMin) z = zMin;
+					return z;
 				});
 
 				Plotly.restyle("ll-3d-plot", {
@@ -589,6 +560,7 @@ async function startExperiment() {
 	state.lossHistory = {};
 	state.model = { w: 0.1, b: 0.1, loss: null };
 	state.surfaceLookup = null;
+	state.surfaceZMin = 0;
 	state.surfaceZMax = 0;
 
 	const optimizers = getSelectedOptimizers();
@@ -615,8 +587,9 @@ async function startExperiment() {
 
 		const surfaceGrid = buildSurfaceGrid();
 		const surfaceZ = surfaceGrid.Z.flat().filter(v => v !== null && isFinite(v));
+		state.surfaceZMin = surfaceZ.length > 0 ? Math.min.apply(null, surfaceZ) : 0;
 		state.surfaceZMax = surfaceZ.length > 0 ? Math.max.apply(null, surfaceZ) : 0;
-		state.surfaceLookup = makeSurfaceInterpolator(surfaceGrid.Ws, surfaceGrid.Bs, surfaceGrid.Z);
+		state.surfaceLookup = null;
 
 		init3DPlot(optimizers, surfaceGrid, 0.1, 0.1, state.model.loss);
 		initFitPlot(optimizers);
