@@ -10,6 +10,7 @@
 		<li style="display: none"><a onclick="if(typeof NeuralSpaceWarps!=='undefined'){NeuralSpaceWarps.refresh();}" id="space_warps_tab_label" href="#space_warps_tab" style="display: none"><span class="TRANSLATEME_space_warps"></span></a></li>
 		-->
 		<li style="display: none" data-origami-tab="1"><a onclick="update_origami_folds();" id="origami_folds_tab_label" href="#origami_folds_tab"><span class="TRANSLATEME_origami_folds"></span></a></li>
+		<li style="display: none" data-origami-live-tab="1"><a onclick="update_origami_live();" id="origami_live_tab_label" href="#origami_live_tab"><span class="TRANSLATEME_origami_live"></span></a></li>
 		<li><a id="health_status_tab_label" href="#health_status"><span class="TRANSLATEME_health_status"></span></a></li>
 		<li><a id="dimensionality_river_tab_label" href="#dimensionality_river"><span class="TRANSLATEME_dimensionality_river"></span></a></li>
 		<li><a id="activation_atlas_tab_label" class="hide_when_no_image" href="#activation_atlas"><span class="TRANSLATEME_activation_atlas"></span></a></li>
@@ -94,6 +95,13 @@
 		</div>
 		<div id="origami_folds_plot" style="width: 100%; min-height: 500px;"></div>
 		<div id="origami_folds_info" style="display: none; padding: 8px 12px; font-size: 0.85em;"></div>
+	</div>
+
+	<div id="origami_live_tab" class="tab" style="display: none">
+		<div style="padding: 8px 12px;">
+			<span class="TRANSLATEME_origami_live_hint" style="font-size: 0.85em; opacity: 0.7;"></span>
+		</div>
+		<div id="origami_live_plot" style="width: 100%; min-height: 500px;"></div>
 	</div>
 
 	<div id="health_status" class="tab">

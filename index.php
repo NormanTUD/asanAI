@@ -154,6 +154,7 @@
 		_js("layer_descriptions.js");
 		_js("loss_landscape.js");
 		_js("origami_folds.js");
+		_js("origami_live.js");
 
 		_js("libs/atrament.js", 1, 1);
 		_js("main.js");

@@ -92,6 +92,10 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 	if (typeof check_origami_folds_tab === "function") {
 		check_origami_folds_tab();
 	}
+
+	if (typeof check_origami_live_tab === "function") {
+		check_origami_live_tab();
+	}
 }
 
 var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers) => {
