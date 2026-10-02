@@ -278,8 +278,6 @@ The lineage that leads here is the cleanest story in the optimizer zoo. Adagrad 
 | **Stuck in local minimum** | Loss plateaus at a suboptimal value | Try Momentum or Adam; increase LR temporarily; restart from a different position |
 | **Overfitting** | Training loss is low but validation loss rises | Add regularization (dropout, weight decay); reduce model size; get more data |
 
-**💡 Experiment:** Try starting from x = 3.5 with SGD at LR = 0.05 and watch it descend into the right side of the valley. Then restart from x = −3.5, does it find the same minimum? This illustrates how **initialization** affects the final result.
-
 ### The Edge of Stability: why the best learning rate sits on a knife-edge
 
 You may have seen the advice that the *best* learning rate is the largest one that "just barely" doesn't diverge. That is not folklore; it names a sharp, studied regime called the **edge of stability**. When the learning rate $\eta$ is large enough that a single step would overshoot a sharp region, gradient descent does **not** blow up. Instead it **locks** onto that sharp region and *oscillates* at its rim, with the largest curvature (the sharpness, the top Hessian eigenvalue) settling right around $\lambda_{\max} \approx 2/\eta$ while the loss still drifts downward (\cite[Arora et al., 2022]{arora2022edgeofstability}). The optimizer is balancing on the knife-edge of a sharp minimum, and — surprisingly — it *prefers* those edges over the flat bottoms it would otherwise settle into.
