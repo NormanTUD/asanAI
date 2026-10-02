@@ -32,7 +32,7 @@
 				$theme_base = "dark";
 			} else if($_COOKIE["theme"] == "lightmode") {
 				$theme_base = "light";
-			} else if($_COOKIE["theme"] == "natural") {
+			} else if($_COOKIE["theme"] == "naturalmode") {
 				$theme_base = "natural";
 			}
 		}
@@ -157,6 +157,8 @@
 		_js("origami_live.js");
 
 		_js("libs/atrament.js", 1, 1);
+		_js("organic-network.js");
+		_js("loader-network.js");
 		_js("main.js");
 
 		_js("libs/plotly-latest.min.js");

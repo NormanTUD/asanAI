@@ -69,7 +69,20 @@ function show_overlay(text, title="", options={}) {
 
 		_apply_overlay_background(overlay, bg_color);
 
+		var networkCanvas = document.createElement("canvas");
+		networkCanvas.className = "overlay-network-canvas";
+		networkCanvas.setAttribute("aria-hidden", "true");
+		networkCanvas.style.position = "absolute";
+		networkCanvas.style.inset = "0";
+		networkCanvas.style.width = "100%";
+		networkCanvas.style.height = "100%";
+		networkCanvas.style.zIndex = "0";
+		networkCanvas.style.pointerEvents = "none";
+		overlay.appendChild(networkCanvas);
+
 		var contentWrapper = document.createElement("div");
+		contentWrapper.style.position = "relative";
+		contentWrapper.style.zIndex = "1";
 		contentWrapper.style.display = "flex";
 		contentWrapper.style.flexDirection = "column";
 		contentWrapper.style.alignItems = "center";
@@ -111,6 +124,23 @@ function show_overlay(text, title="", options={}) {
 		overlay.appendChild(contentWrapper);
 		document.body.appendChild(overlay);
 
+		if (window.LoaderNetwork) {
+			requestAnimationFrame(function () {
+				requestAnimationFrame(function () {
+					overlay._loaderNet = window.LoaderNetwork.attach(networkCanvas, {
+						targetCount: 24,
+						minCount: 14,
+						densityDivis: 6000,
+						maxLinkPx: 160,
+						linkAlpha: is_dark_mode ? 0.35 : 0.30,
+						nodeAlpha: is_dark_mode ? 0.65 : 0.55,
+						speed: 0.038,
+						wobble: 0.028
+					});
+				});
+			});
+		}
+
 		requestAnimationFrame(function () {
 			overlay.style.opacity = "1";
 		});
@@ -138,6 +168,10 @@ function remove_overlay() {
 
 	for (var i = 0; i < overlays.length; i++) {
 		var ov = overlays[i];
+		if (ov._loaderNet && window.LoaderNetwork) {
+			window.LoaderNetwork.destroy(ov._loaderNet);
+			ov._loaderNet = null;
+		}
 		ov.style.transition = "opacity 0.2s ease-out";
 		ov.style.opacity = "0";
 

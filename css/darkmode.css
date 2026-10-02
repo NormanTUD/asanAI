@@ -160,14 +160,6 @@ hr {
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-#loading_icon_wrapper {
-	filter: invert(100%);
-}
-
-#load_msg {
-	color: black;
-}
-
 .tt {
 	background-color: rgba(30, 33, 48, 0.85) !important;
 }
@@ -188,6 +180,15 @@ hr {
 textarea {
 	background-color: rgba(20, 23, 35, 0.8);
 	color: white;
+}
+
+:root {
+	--mn-loader-bg: #0f172a;
+	--mn-loader-text: #f1f5f9;
+	--mn-loader-text-muted: #94a3b8;
+	--mn-loader-accent: #6366f1;
+	--intro-warm-rgb: 233,170,96;
+	--intro-glow: rgba(233,170,96,0.20);
 }
 
 #navbar1 {

@@ -712,7 +712,20 @@ function _update_mobile_bottom_nav() {
 function show_website_and_hide_loader() {
 	$("#mainsite").show();
 	$("#status_bar").show();
-	$("#loading_icon_wrapper").fadeOut(200);
+	var loader = document.getElementById("loading_icon_wrapper");
+	if(loader) {
+		loader.classList.add("is-settled");
+		setTimeout(function () {
+			loader.classList.add("is-revealing");
+		}, 250);
+		setTimeout(function () {
+			if(window.LoaderNetwork && window._loaderNet) {
+				window.LoaderNetwork.destroy(window._loaderNet);
+				window._loaderNet = null;
+			}
+			if(loader.parentNode) loader.parentNode.removeChild(loader);
+		}, 850);
+	}
 	update_ribbon_compactness();
 	_website_shown = true;
 	_update_mobile_bottom_nav();
@@ -1124,6 +1137,26 @@ async function _init_app_finalization(LM) {
 
 $(document).ready(async function() {
 	var LM = language[lang];
+
+	if(window.LoaderNetwork) {
+		var canvas = document.getElementById("loader-network-canvas");
+		if(canvas) {
+			requestAnimationFrame(function () {
+				requestAnimationFrame(function () {
+					window._loaderNet = window.LoaderNetwork.attach(canvas, {
+						targetCount: 50,
+						minCount: 24,
+						densityDivis: 5000,
+						maxLinkPx: 200,
+						linkAlpha: 0.5,
+						nodeAlpha: 0.8,
+						speed: 0.042,
+						wobble: 0.032
+					});
+				});
+			});
+		}
+	}
 
 	var ok = await _init_app_backend_and_ui(LM);
 	if (!ok) return;
