@@ -2723,7 +2723,6 @@ const RIEF=[
 let rieIdx=0, rieHist=[];
 btnGroup($('rieBtns'),RIEF,(it,i)=>{rieIdx=i;rieHist=[];drawRie();},0);
 }
-if(false){
 function drawRie(){
   const N=+$('sRieN').value; $('vRieN').textContent=N;
   const F=RIEF[rieIdx];
@@ -2733,6 +2732,7 @@ function drawRie(){
   let L=0,U=0;
   const sub=1/N;
   // sample min/max on each subrectangle
+}
 T($('m_dfclass'),'df=\\tfrac{\\partial f}{\\partial x}dx+\\tfrac{\\partial f}{\\partial y}dy',false);
 T($('m_alt'),'\\omega(v_1,v_2)=-\\,\\omega(v_2,v_1)');
 T($('m_altdef'),'\\mathrm{Alt}(T)=\\tfrac{1}{k!}\\sum_{\\sigma\\in S_k}\\operatorname{sgn}\\sigma\\cdot T(v_{\\sigma(1)},\\dots,v_{\\sigma(k)})');
