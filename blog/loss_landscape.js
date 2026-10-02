@@ -314,7 +314,15 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 
 	const surfaceTrace = {
 		type: "surface", x: Ws, y: Bs, z: Z,
-		colorscale: "Viridis", reversescale: false,
+		colorscale: [
+			[0.0, "#1e3a8a"],
+			[0.2, "#3b82f6"],
+			[0.4, "#06b6d4"],
+			[0.6, "#10b981"],
+			[0.8, "#facc15"],
+			[1.0, "#f97316"]
+		],
+		reversescale: false,
 		cmin, cmax, showscale: true, opacity: 0.92,
 		lighting: { ambient: 0.7, diffuse: 0.7, roughness: 0.3 },
 		contours: { z: { show: false } },
