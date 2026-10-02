@@ -52,6 +52,379 @@ Most of the plots in this chapter are 2-D slices of that kind.
 
 </div>
 
+<div class="md">
+
+### See it: a 2-D loss landscape you can walk on
+
+The figure on the left above (a 56-layer network, $\approx 8.5 \times 10^4$ parameters) is a 2-D slice of a real loss landscape, but it is *read-only*. Below is the smallest possible interactive version: a single neuron
+
+$$\hat{y} \;=\; \sigma(\mathbf{W}\,x + b),$$
+
+fitted to 1-D data. There is only one weight $\mathbf{W} \in \mathbb{R}$ and one bias $b \in \mathbb{R}$, so the loss is a true 2-D function $\mathcal{L}(w, b)$ and the entire surface fits in a 3-D plot. The red line on the surface is the *trajectory* the optimizer traces while it descends, batch by batch. Pick two optimizers (SGD and Adam are pre-selected), pick a target function (try the parabola or the sine), press **Experiment starten** and watch the two trajectories carve different paths into the same basin. The bar on the right side of each optimizer plot turns red where the network over-predicts and green where it under-predicts.
+
+Why this is the right way to internalise the prose above:
+
+* **Non-convexity comes from non-linearities.** Switch the activation from `Linear` to `ReLU` and watch the surface bend — the very same $(w, b)$ grid now has sharp ridges, saddle points, and flat plateaus that gradient descent must navigate.
+* **Saddles outnumber minima.** With `ReLU` and a low learning rate, the SGD trajectory stalls for long stretches on flat plateaus before a stochastic kick sends it downhill. Adam, with its adaptive second moment, escapes them faster.
+* **Sharp minima vs. flat minima.** `Adam` with a small batch size often finds a different basin from `Momentum` — both are local minima of the same loss, but with different curvature. The two trajectories end at different points and the optimizer configurations have different losses.
+* **The noise-smoothed surface.** Crank the epochs up and reduce the buffer; the trajectory now visits grid cells the initial loss surface never evaluated, because the *mini-batch noise* has effectively smoothed the surface underneath it.
+
+</div>
+
+<style>
+.loss-landscape-lab {
+	background-color: #252526;
+	color: #d4d4d4;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+	margin: 20px 0;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.loss-landscape-lab .ll-title {
+	color: #ffffff;
+	font-weight: 300;
+	margin: 0 0 16px 0;
+	font-size: 1.4em;
+}
+.loss-landscape-lab .controls {
+	background-color: #1e1e1e;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+	margin-bottom: 20px;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1.2fr;
+	gap: 30px;
+	align-items: start;
+}
+@media (max-width: 900px) {
+	.loss-landscape-lab .controls {
+		grid-template-columns: 1fr;
+	}
+}
+.loss-landscape-lab .control-group {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+}
+.loss-landscape-lab .control-group h3 {
+	color: #ffffff;
+	font-weight: 300;
+	margin: 0 0 6px 0;
+	font-size: 1.05em;
+}
+.loss-landscape-lab label {
+	font-size: 0.9em;
+	color: #9cdcfe;
+	margin-bottom: 2px;
+}
+.loss-landscape-lab input[type="text"],
+.loss-landscape-lab input[type="number"],
+.loss-landscape-lab textarea,
+.loss-landscape-lab select {
+	background-color: #3c3c3c;
+	border: 1px solid #555;
+	color: #d4d4d4;
+	padding: 8px;
+	border-radius: 4px;
+	font-family: monospace;
+}
+.loss-landscape-lab textarea {
+	resize: vertical;
+	min-height: 60px;
+}
+.loss-landscape-lab button {
+	background-color: #0e639c;
+	color: white;
+	border: none;
+	padding: 10px 15px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	font-weight: bold;
+	margin-top: 5px;
+}
+.loss-landscape-lab button:hover {
+	background-color: #1177bb;
+}
+.loss-landscape-lab button:disabled {
+	background-color: #444;
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+.loss-landscape-lab button#stopButton {
+	background-color: #ce9178;
+	color: #1e1e1e;
+}
+.loss-landscape-lab button#stopButton:hover {
+	background-color: #d7ba7d;
+}
+.loss-landscape-lab .example-buttons {
+	display: flex;
+	gap: 5px;
+	flex-wrap: wrap;
+}
+.loss-landscape-lab .example-buttons button {
+	background-color: #3f51b5;
+	font-size: 0.8em;
+	padding: 5px 10px;
+	margin-top: 0;
+}
+.loss-landscape-lab .example-buttons button:hover {
+	background-color: #303f9f;
+}
+.loss-landscape-lab .optimizer-selection {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+.loss-landscape-lab .optimizer-selection label {
+	display: inline-flex;
+	align-items: center;
+	padding: 5px 10px;
+	border: 1px solid #444;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	margin-bottom: 0;
+	color: #d4d4d4;
+}
+.loss-landscape-lab .optimizer-selection label:hover {
+	background-color: #333;
+}
+.loss-landscape-lab .optimizer-selection input[type="checkbox"] {
+	margin-right: 5px;
+	width: auto;
+}
+.loss-landscape-lab .optimizer-selection label.is-active {
+	border: 3px solid #00bfff;
+	box-shadow: 0 0 15px rgba(0, 191, 255, 0.7);
+	transition: all 0.3s ease-in-out;
+}
+.loss-landscape-lab #optimizer-options-container {
+	margin-top: 15px;
+	padding-top: 10px;
+	border-top: 1px solid #444;
+}
+.loss-landscape-lab .param-group {
+	margin-bottom: 15px;
+	padding: 10px;
+	background-color: #333;
+	border-radius: 4px;
+}
+.loss-landscape-lab .param-group p {
+	margin: 0 0 5px 0;
+	font-size: 0.85em;
+	color: #bbb;
+}
+.loss-landscape-lab #status {
+	margin-bottom: 20px;
+	padding: 10px;
+	background-color: #007acc;
+	color: white;
+	border-radius: 4px;
+	font-family: monospace;
+}
+.loss-landscape-lab #plot-container {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+	margin-top: 30px;
+	align-items: center;
+}
+.loss-landscape-lab .plot-div {
+	background-color: #252526;
+	border-radius: 8px;
+	height: 400px;
+	width: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+}
+.loss-landscape-lab .plot-group {
+	border: 1px solid #444;
+	padding: 15px;
+	background-color: #1e1e1e;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+	transition: all 0.3s ease;
+	width: 95%;
+	max-width: 1400px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 15px;
+}
+.loss-landscape-lab .plot-group.is-active {
+	border-color: #00bcd4;
+	box-shadow: 0 0 15px rgba(0, 188, 212, 0.7);
+	padding: 10px;
+	margin-bottom: 20px;
+}
+.loss-landscape-lab .details-button-container {
+	grid-column: 1 / 3;
+	text-align: left;
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 5px;
+	padding-left: 10px;
+	height: auto !important;
+}
+.loss-landscape-lab .details-button-container button {
+	background-color: #00bcd4;
+	padding: 8px 15px;
+	font-size: 0.9em;
+	margin-top: 0;
+}
+.loss-landscape-lab .details-section {
+	grid-column: 1 / 3;
+	display: none;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	width: 100%;
+	margin-top: 15px;
+	padding-top: 15px;
+	border-top: 1px dashed #555;
+}
+.loss-landscape-lab .details-table {
+	max-height: 400px;
+	overflow-y: auto;
+}
+.loss-landscape-lab .details-section table {
+	width: 100%;
+	border-collapse: collapse;
+	color: #d4d4d4;
+	font-size: 0.9em;
+}
+.loss-landscape-lab .details-section th,
+.loss-landscape-lab .details-section td {
+	border: 1px solid #444;
+	padding: 6px;
+	text-align: left;
+}
+.loss-landscape-lab .details-section th {
+	background-color: #333;
+	color: #fff;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+.loss-landscape-lab .details-section tr:nth-child(even) {
+	background-color: #222;
+}
+.loss-landscape-lab .equation-display {
+	width: 100%;
+	flex-basis: 100%;
+	grid-column: 1 / -1;
+	margin-top: 15px;
+	padding: 10px;
+	border-top: 1px solid #444;
+	color: #d4d4d4;
+	font-family: 'Consolas', 'Courier New', monospace;
+	overflow-x: hidden;
+	height: auto !important;
+}
+.loss-landscape-lab .equation-display .math-row {
+	margin-bottom: 5px;
+	font-size: 1.1em;
+}
+.loss-landscape-lab .equation-display h4 {
+	color: #ff69b4;
+	border-bottom: 1px solid #ff69b4;
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+	font-size: 1.05em;
+	font-weight: 600;
+}
+.loss-landscape-lab .deviation-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 5px;
+	padding-right: 10px;
+}
+.loss-landscape-lab .deviation-row span.math-content {
+	flex-grow: 1;
+	text-align: left;
+}
+.loss-landscape-lab .deviation-row span.error-metrics {
+	flex-shrink: 0;
+	margin-left: 20px;
+	font-size: 0.9em;
+	text-align: right;
+	line-height: 1.2;
+}
+.loss-landscape-lab .deviation-indicator {
+	width: 15px;
+	height: 15px;
+	margin-right: 10px;
+	border-radius: 3px;
+	flex-shrink: 0;
+}
+</style>
+
+<div class="loss-landscape-lab">
+<h3 class="ll-title">Loss-Landscape & Optimizer-Trajektorien</h3>
+
+<div class="controls">
+	<div class="control-group">
+		<h3>🔢 Daten (x, y Paare)</h3>
+		<label for="dataInput">x-Werte (kommagetrennt):</label>
+		<textarea id="dataInput">0, 1, 2, 3, 4</textarea>
+		<label for="dataOutput">y-Werte (kommagetrennt):</label>
+		<textarea id="dataOutput">1.0, 3.0, 5.0, 7.0, 9.0</textarea>
+
+		<div class="example-buttons">
+			<button onclick="loadExample('linear')">Linie (y=2x+1)</button>
+			<button onclick="loadExample('linear_negative')">Linie (y=-0.5x-0.8)</button>
+			<button onclick="loadExample('parabola')">Parabel (y=x²)</button>
+			<button onclick="loadExample('sinus')">Sinuswelle</button>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<h3>⚙️ Initializer</h3>
+		<label for="initialWConstant" style="margin-top: 10px;">Initialgewicht (Konst.):</label>
+		<input type="number" id="initialWConstant" value="0.1" step="0.01">
+		<label for="initialBConstant">Initialbias (Konst.):</label>
+		<input type="number" id="initialBConstant" value="0.1" step="0.01">
+	</div>
+
+	<div class="control-group">
+		<h3>⚙️ Allgemeine Parameter</h3>
+		<label for="epochs">Epochen:</label>
+		<input type="number" id="epochs" value="50" min="1" max="2000">
+		<label for="steps">Puffer (N) für Landschaftsrand:</label>
+		<input type="number" id="steps" value="3" min="0" max="10">
+		<label for="activation" style="margin-top: 10px; color: #ce9178;">Aktivierungsfunktion:</label>
+		<select id="activation">
+			<option value="linear" selected>Linear (Standard)</option>
+			<option value="relu">ReLU</option>
+			<option value="sigmoid">Sigmoid</option>
+			<option value="tanh">Tanh</option>
+		</select>
+
+		<div class="control-group" style="margin-top: 20px; border: none; padding: 0;">
+			<button id="startButton" onclick="startExperiment()">Experiment starten</button>
+			<button id="stopButton" onclick="stopExperiment()" style="display:none;">Experiment stoppen</button>
+			<button id="continueButton" onclick="continueExperiment()" style="display:none; margin-top: 5px; background-color: #f7a600; color: #1e1e1e;">Weiterlernen (Zustand beibehalten)</button>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<h3>🤖 Optimizer-Auswahl</h3>
+		<div id="optimizer-checkboxes" class="optimizer-selection"></div>
+		<div id="optimizer-options-container">
+			Bitte wählen Sie einen Optimizer.
+		</div>
+	</div>
+</div>
+
+<div id="status">Bereit. Bitte starten Sie das Experiment.</div>
+
+<div class="plot-container" id="plot-container"></div>
+</div>
+
 <div class="md" data-mathlevel="50" data-optionaltitle="Why naive plots of the landscape lie">
 
 ### Why naive plots of the landscape lie
