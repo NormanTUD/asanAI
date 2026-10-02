@@ -939,6 +939,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	font-family: 'Cambria Math', Georgia, serif;
 	font-size: 13px;
 	border-collapse: collapse;
+	display: table;
 	width: auto;
 	background: rgba(255,255,255,0.7);
 	border: 1px solid #cbd5e1;
@@ -1042,12 +1043,14 @@ body.sel-mode .sel-check { display: inline-flex; }
 	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
 }
 
-/* Extra-Zeile (B₂): ab Schritt 9 sichtbar */
+/* Extra-Zeile (B₂): die ganze Zeit sichtbar — keine An/Aus-Logik mehr */
 .sm-table .extra-row {
-	display: none;
+	opacity: 0.55;
+	border-top: 1px dashed #94a3b8;
 }
 .sm-table.show-extra .extra-row {
-	display: table-row;
+	opacity: 1;
+	border-top: 1px solid #e2e8f0;
 	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
 }
 

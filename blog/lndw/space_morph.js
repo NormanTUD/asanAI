@@ -213,18 +213,21 @@ const SpaceMorph = (() => {
         // z-Spalte ab Schritt 3 (ℝ³), verschwindet ab Schritt 7
         egg.classList.toggle('show-z', cur >= 2 && cur < 6);
 
-        // Tori: w-Spalte + Extra-Zeile erst ab Schritt 9
+        // Tori: w-Spalte + Extra-Zeile ab Schritt 9 (Extra-Zeile ist aber immer da)
         tori.classList.toggle('show-w', cur >= 8);
         tori.classList.toggle('show-extra', cur >= 8);
 
         // Live-Werte aktualisieren — bei Rückprojektion interpoliert L wieder zurück
         const L = S[cur].L || 0;
+        const is1D = (cur === 6);  // Schritt 7 = 1D-Projektion → x zeigt s
         let innerIdx = 0, outerIdx = 0;
         EGG_PTS.forEach((pt) => {
             const row = pt.cls === 0 ? 'inner-row' : 'outer-row';
             const idx = pt.cls === 0 ? innerIdx++ : outerIdx++;
-            const z = (pt.x * pt.x + pt.y * pt.y) * L;
-            setCell('egg-table', row, 'xv', fmt2(pt.x), idx);
+            const s = pt.x * pt.x + pt.y * pt.y;
+            const xv = is1D ? s : pt.x;
+            const z = s * L;
+            setCell('egg-table', row, 'xv', fmt2(xv), idx);
             setCell('egg-table', row, 'yv', fmt2(pt.y), idx);
             setCell('egg-table', row, 'zv', fmt2(z), idx);
         });
