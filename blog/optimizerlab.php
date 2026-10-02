@@ -33,6 +33,8 @@ Different optimizers use different strategies for step 2:
 * **\cite[Momentum]{momentum}:** Adds a “memory” of past gradients, like a heavy ball rolling downhill. If the ball has been rolling in one direction for a while, it builds up speed (velocity) and can power through small bumps and flat regions that would stall plain SGD.
 * **\cite[Adam]{adam}:** The most sophisticated of the three. It tracks *two* running averages: the **mean of recent gradients** (like Momentum) and the **mean of recent squared gradients** (which measures how volatile the gradient has been). This lets it automatically tune the effective learning rate for each parameter, cautious where the landscape is noisy, aggressive where it's smooth. It's the industry standard for training modern neural networks.
 
+The three optimizers above are only a sample. \citeauthor{ruder2016overview}'s overview article (\citeyear{ruder2016overview}) surveys the full family in active use — Batch, SGD, Mini-batch, Momentum, Nesterov accelerated gradient, Adagrad, Adadelta, RMSprop, Adam, AdaMax, Nadam, and AMSGrad — with derivations and the practitioner choices between them. Almost a decade on, it remains the most-cited practitioner-facing reference for the optimizer zoo.
+
 **💡 Try this:** Run SGD with a low learning rate (0.05) from x = −3.5. Watch it crawl. Then switch to Adam with the same settings and watch it accelerate through the flat region. That difference is why Adam dominates modern AI.
 
 ### Parameters You Can Control
@@ -177,6 +179,8 @@ To understand *why* Adam has become the industry standard, consider its key diff
 This means parameters that receive sparse, infrequent gradient signals, like the embeddings for rare words, automatically get larger effective learning rates, because their second moment estimate stays small. Conversely, parameters that are updated densely and frequently get smaller effective steps, preventing them from overshooting. In essence, Adam doesn't just navigate the loss landscape, it *reshapes* the landscape to appear more uniform for each parameter independently.
 
 This is especially critical in NLP, where token frequencies follow a **\cite[Zipf distribution]{zipf1949human}**: a few words like “the” appear constantly, while most words are rare. Without Adam, rare tokens would be starved of meaningful updates, and common tokens would dominate the optimization. Adam's per-parameter adaptivity elegantly solves this imbalance, which is a major reason it is the default optimizer for training modern large language models.
+
+The lineage that leads here is the cleanest story in the optimizer zoo. Adagrad introduced per-parameter learning rates; Adadelta and RMSprop fixed Adagrad's flaw that the accumulated denominator shrank the effective step toward zero; Adam added a bias-corrected first moment (essentially momentum with a different normalization) on top. \citeauthor{ruder2016overview} (\citeyear{ruder2016overview}) walks through each derivation, and that genealogy is the one this lesson has been climbing toward.
 
 ### Common Pitfalls & Practical Tips
 
