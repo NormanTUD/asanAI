@@ -228,10 +228,9 @@
 
 <!-- ==================== SLIDE: Layer als Raumkrümmung (space_morph) ==================== -->
 <div class="slide" id="slide-layer-als-raumkruemmung" data-title="Layer als Raumkrümmung">
-    <div class="slide-content">
-        <h2>Layer als Raumkrümmung</h2>
+    <div class="slide-content" style="background:#f8fafc;">
 
-        <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1280px; margin:10px auto 0; height:640px; border-radius:14px; overflow:hidden; background:#f8fafc; border:1px solid #cbd5e1;">
+        <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1340px; margin:14px auto 0; height:640px; border-radius:14px; overflow:hidden; background:#f8fafc; border:1px solid #cbd5e1;">
             <canvas id="space-morph-canvas" style="display:block; position:absolute; inset:0; width:100%; height:100%; cursor:grab;"></canvas>
 
             <div style="position:absolute; left:32px; top:20px; max-width:320px; pointer-events:none; z-index:2;">
@@ -240,16 +239,8 @@
                 <div id="sm-body" style="font-size:12.5px; line-height:1.5; color:#334155;"></div>
             </div>
 
-            <div id="sm-bar" style="position:absolute; left:32px; bottom:22px; display:flex; gap:7px; z-index:2;"></div>
-        </div>
-
-        <div class="key-insight" style="margin-top:14px; max-width:950px; margin-left:auto; margin-right:auto;">
-            <strong>Ein Layer = eine Verbiegung des Raums.</strong> Danach trennt wieder eine simple Gerade — in der neuen Geometrie.
-        </div>
-
-        <div id="sm-tables-wrap" style="margin-top:14px; width:100%;">
-            <div id="sm-tables-head" style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#94a3b8; margin-bottom:6px;">Beispielpunkte</div>
-            <div id="sm-tables-scroll" style="overflow-x:auto;">
+            <div id="sm-table-container" style="position:absolute; left:32px; bottom:54px; max-width:480px; z-index:3;">
+                <div id="sm-tables-head" style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#94a3b8; margin-bottom:6px;">Beispielpunkte</div>
                 <table id="egg-table" class="sm-table">
                     <thead>
                         <tr>
@@ -329,6 +320,12 @@
                     </tbody>
                 </table>
             </div>
+
+            <div id="sm-bar" style="position:absolute; left:32px; bottom:22px; display:flex; gap:7px; z-index:2;"></div>
+        </div>
+
+        <div class="key-insight" style="margin-top:14px; max-width:950px; margin-left:auto; margin-right:auto;">
+            <strong>Ein Layer = eine Verbiegung des Raums.</strong> Danach trennt wieder eine simple Gerade — in der neuen Geometrie.
         </div>
     </div>
 </div>

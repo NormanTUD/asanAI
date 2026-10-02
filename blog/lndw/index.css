@@ -927,25 +927,26 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 
 /* ============ SPACE MORPH ("Layer als Raumkrümmung") ============ */
-#sm-tables-wrap {
-	min-height: 0;
-}
+#slide-layer-als-raumkruemmung { background: #f8fafc; }
 #sm-tables-head {
 	transition: opacity 0.4s ease;
+}
+#sm-table-container {
+	max-height: 230px;
+	overflow: hidden;
 }
 .sm-table {
 	font-family: 'Cambria Math', Georgia, serif;
 	font-size: 13px;
 	border-collapse: collapse;
-	width: 100%;
-	background: rgba(255,255,255,0.55);
+	width: auto;
+	background: rgba(255,255,255,0.7);
 	border: 1px solid #cbd5e1;
 	border-radius: 6px;
 	overflow: hidden;
 	margin-bottom: 6px;
+	table-layout: fixed;
 }
-#egg-table { width: 38%; max-width: 480px; min-width: 320px; }
-#tori-table { width: 50%; max-width: 620px; min-width: 420px; }
 .sm-table thead th {
 	text-align: right;
 	padding: 6px 12px;
@@ -953,16 +954,19 @@ body.sel-mode .sel-check { display: inline-flex; }
 	color: #475569;
 	font-size: 12px;
 	border-bottom: 1px solid #cbd5e1;
+	background: rgba(241,245,9,0.85);
 	background: rgba(241,245,249,0.85);
+	white-space: nowrap;
 }
 .sm-table thead th.lbl-col {
 	text-align: left;
 	width: 72px;
 	padding-right: 10px;
+	white-space: nowrap;
 }
 .sm-table thead th.coord-col {
-	width: 18%;
-	min-width: 64px;
+	width: 80px;
+	white-space: nowrap;
 }
 .sm-table tbody td {
 	padding: 5px 12px;
@@ -1003,7 +1007,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	color: #cbd5e1;
 }
 
-/* Z-Spalte (Ei): am Anfang versteckt, kommt eigenständig rein */
+/* Z-Spalte (Ei): am Anfang versteckt, kommt eigenständig dazu (rechts angefügt) */
 .sm-table .z-col, .sm-table .zv {
 	display: none;
 }
@@ -1027,27 +1031,14 @@ body.sel-mode .sel-check { display: inline-flex; }
 	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
 }
 
-/* Extra-Zeile (B₂): kommt eigenständig dazu */
+/* Extra-Zeile (B₂): Platz von Anfang an reservieren,
+   damit die Tabelle beim Wechsel Ei→Tori nicht springt. */
 .sm-table .extra-row td {
-	font-size: 0;
-	padding-top: 0;
-	padding-bottom: 0;
-	border-bottom: 0;
 	opacity: 0;
-	transition: font-size 0.5s ease,
-	            padding-top 0.5s ease,
-	            padding-bottom 0.5s ease,
-	            opacity 0.5s ease;
-	overflow: hidden;
+	transition: opacity 0.55s ease;
 }
 .sm-table.show-extra .extra-row td {
-	font-size: 13px;
-	padding-top: 5px;
-	padding-bottom: 5px;
 	opacity: 1;
-}
-.sm-table.show-extra .extra-row td.lbl {
-	font-size: 12px;
 }
 
 /* ============ "DIE WIESE DER WÖRTER" (Slide) ============ */
