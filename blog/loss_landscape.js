@@ -301,36 +301,6 @@ function commonAxis(title, opts) {
 	return Object.assign(base, opts);
 }
 
-/* ─── 3-D plot: camera preservation ────────────────────────────────────────── */
-
-/** Save the current camera state of a 3-D Plotly plot. */
-function captureCamera(plotId) {
-	const el = document.getElementById(plotId);
-	if (!el || !el._fullLayout || !el._fullLayout.scene) return null;
-	const c = el._fullLayout.scene.camera;
-	return {
-		eye:    { x: c.eye.x,    y: c.eye.y,    z: c.eye.z },
-		center: { x: c.center.x, y: c.center.y, z: c.center.z },
-		up:     { x: c.up.x,     y: c.up.y,     z: c.up.z }
-	};
-}
-
-/** Restore a previously captured camera state. */
-function restoreCamera(plotId, cam) {
-	if (!cam) return;
-	Plotly.relayout(plotId, {
-		"scene.camera.eye.x":    cam.eye.x,
-		"scene.camera.eye.y":    cam.eye.y,
-		"scene.camera.eye.z":    cam.eye.z,
-		"scene.camera.center.x": cam.center.x,
-		"scene.camera.center.y": cam.center.y,
-		"scene.camera.center.z": cam.center.z,
-		"scene.camera.up.x":     cam.up.x,
-		"scene.camera.up.y":     cam.up.y,
-		"scene.camera.up.z":     cam.up.z
-	}).catch(() => {});
-}
-
 /* ─── 3-D plot: trajectory + surface clipping ────────────────────────────── */
 
 function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
@@ -374,7 +344,8 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 			xaxis: Object.assign(commonAxis("weight w"), { range: [Ws[0], Ws[Ws.length - 1]], autorange: false }),
 			yaxis: Object.assign(commonAxis("bias b"),  { range: [Bs[0], Bs[Bs.length - 1]], autorange: false }),
 			zaxis: Object.assign(commonAxis("loss (log₁₀)"), { range: [cmin, cmax], autorange: false }),
-			camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } }
+			camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } },
+			dragmode: "orbit"
 		},
 		legend: { font: { color: tText() }, x: 0, y: 1 },
 		margin: { l: 0, r: 0, b: 0, t: 40 },
@@ -468,8 +439,6 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	const zMin = state.surfaceZMin;
 	const zMax = state.surfaceZMax;
 
-	const cam0 = captureCamera("ll-3d-plot");
-
 	await model.fit(xsT, ysT, {
 		epochs, batchSize: state.xs.length, verbose: 0,
 		callbacks: {
@@ -505,8 +474,6 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 			}
 		}
 	});
-
-	if (cam0) restoreCamera("ll-3d-plot", cam0);
 
 	optimizer.dispose();
 	model.dispose();
