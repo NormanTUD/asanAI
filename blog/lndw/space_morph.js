@@ -204,16 +204,20 @@ const SpaceMorph = (() => {
         } else {
             egg.setAttribute('style', 'display:none');
             tori.removeAttribute('style');
+            // Tori sind 3D-Daten → x, y, z immer sichtbar (CSS versteckt .yv/.zv per Default).
+            tori.classList.add('show-y', 'show-z');
         }
 
-        // z-Spalte am Ei: ab Schritt 3 (ℝ³) zeigen
-        egg.classList.toggle('show-z', cur >= 2);
+        // Ei: y-Spalte sichtbar in 1-6 (verschwindet bei 1D-Projektion in Schritt 7)
+        egg.classList.toggle('show-y', cur < 6);
+        // z-Spalte ab Schritt 3 (ℝ³), verschwindet ab Schritt 7
+        egg.classList.toggle('show-z', cur >= 2 && cur < 6);
 
-        // w-Spalte + Extra-Zeile an den Tori: ab Schritt 9 (4D)
+        // Tori: w-Spalte + Extra-Zeile erst ab Schritt 9
         tori.classList.toggle('show-w', cur >= 8);
         tori.classList.toggle('show-extra', cur >= 8);
 
-        // Live-Werte aktualisieren — x/y bleiben symbolisch gleich, z reagiert auf L, w auf ut
+        // Live-Werte aktualisieren — bei Rückprojektion interpoliert L wieder zurück
         const L = S[cur].L || 0;
         let innerIdx = 0, outerIdx = 0;
         EGG_PTS.forEach((pt) => {
@@ -225,13 +229,14 @@ const SpaceMorph = (() => {
             setCell('egg-table', row, 'zv', fmt2(z), idx);
         });
 
-        // Tori-Werte
+        // Tori-Werte — ut interpoliert smooth zwischen den Schritten
         if (cur >= 7) {
-            // Schritt 8 → 9 Übergang: w-Spalte erscheint, Werte aber leer bis Step 9 stabil.
-            const wAppearing = (cur === 8 && prevIdx === 7);
-            const wTransitionRaw = raw;
+            const utPrev = S[prevIdx].ut || 0;
+            const utCur = S[cur].ut || 0;
+            // Schritt 8 → 9: ut startet bei 0 (noch nicht entwirrt)
+            const utStart = (cur === 8 && prevIdx === 7) ? 0 : utPrev;
+            const ut = lerp(utStart, utCur, raw);
 
-            const ut = S[cur].ut || 0;
             const e = ut * ut * (3 - 2 * ut);
             const swell = 1 + 0.22 * Math.sin(ut * Math.PI);
             const sep = 0.95 * e;
@@ -246,11 +251,9 @@ const SpaceMorph = (() => {
                 setCellByPid('tori-table', ex.id, 'xv', fmt2(x));
                 setCellByPid('tori-table', ex.id, 'yv', fmt2(y));
                 setCellByPid('tori-table', ex.id, 'zv', fmt2(z));
-                // w: während 8→9-Übergang leer, danach Wert
-                const showEmpty = wAppearing && wTransitionRaw < 0.7;
-                const wText = showEmpty ? '—' : fmt2(w);
-                setCellByPid('tori-table', ex.id, 'wv', wText);
-                setCellEmpty('tori-table', ex.id, 'wv', showEmpty);
+                // w füllt sich smooth von 0 zum Endwert — keine leeren Zellen
+                setCellByPid('tori-table', ex.id, 'wv', fmt2(w));
+                setCellEmpty('tori-table', ex.id, 'wv', false);
             });
         }
     }
@@ -490,8 +493,6 @@ const SpaceMorph = (() => {
                 ctx.strokeStyle = '#7c3aed';
                 ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(o.X, o.Y - H * 0.34); ctx.stroke();
                 ctx.setLineDash([]);
-                ctx.fillStyle = '#6d28d9'; ctx.font = 'italic 700 18px Georgia';
-                ctx.fillText('w  (4. Dimension)', o.X + 12, o.Y - H * 0.30);
                 ctx.globalAlpha = 1;
             }
             const titems = [];
@@ -563,9 +564,7 @@ const SpaceMorph = (() => {
                 ctx.font = '13px Georgia'; ctx.fillStyle = '#b45309';
                 ctx.fillText('Trennebene', tl.X + 8, tl.Y);
             }
-            ctx.font = '600 13px system-ui,sans-serif';
-            ctx.fillStyle = '#15803d'; ctx.fillText('Klasse a — grüner Torus (β→(1,0,0))', 16, H - 52);
-            ctx.fillStyle = '#e11d48'; ctx.fillText('Klasse b — roter Torus (β→(1,0,0))', 16, H - 32);
+            // Legende entfällt — die Tabelle links unten zeigt die Klassen.
         }
 
         raf = requestAnimationFrame(draw);

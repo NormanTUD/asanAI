@@ -1007,6 +1007,17 @@ body.sel-mode .sel-check { display: inline-flex; }
 	color: #cbd5e1;
 }
 
+/* Y-Spalte (Ei): ab Schritt 7 (1D-Projektion) ausgeblendet,
+   damit nur die sortierte s-Spalte (jetzt in z) übrig bleibt. */
+.sm-table .y-col, .sm-table .yv {
+	display: none;
+}
+.sm-table.show-y .y-col,
+.sm-table.show-y .yv {
+	display: table-cell;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
+}
+
 /* Z-Spalte (Ei): am Anfang versteckt, kommt eigenständig dazu (rechts angefügt) */
 .sm-table .z-col, .sm-table .zv {
 	display: none;
@@ -1031,14 +1042,13 @@ body.sel-mode .sel-check { display: inline-flex; }
 	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
 }
 
-/* Extra-Zeile (B₂): Platz von Anfang an reservieren,
-   damit die Tabelle beim Wechsel Ei→Tori nicht springt. */
-.sm-table .extra-row td {
-	opacity: 0;
-	transition: opacity 0.55s ease;
+/* Extra-Zeile (B₂): ab Schritt 9 sichtbar */
+.sm-table .extra-row {
+	display: none;
 }
-.sm-table.show-extra .extra-row td {
-	opacity: 1;
+.sm-table.show-extra .extra-row {
+	display: table-row;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
 }
 
 /* ============ "DIE WIESE DER WÖRTER" (Slide) ============ */
