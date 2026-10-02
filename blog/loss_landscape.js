@@ -463,17 +463,6 @@ function setScale3D(scale) {
 	const intFmt = (v) => String(Math.round(v));
 	const axisTitle = scale === "log" ? "loss (log₁₀)" : "loss (linear)";
 
-	// ── Guard 5: shift camera to center on the new z-range (fixed offset, no zoom-out) ─
-	const midZ = (cmin + cmax) / 2;
-	const camUpdates = {
-		"scene.camera.eye.x": 1.3,
-		"scene.camera.eye.y": 1.3,
-		"scene.camera.eye.z": midZ + 1.2,
-		"scene.camera.center.x": 0,
-		"scene.camera.center.y": 0,
-		"scene.camera.center.z": midZ
-	};
-
 	const surfaceZUpdate = [cleanZ];
 
 	Promise.resolve().then(() => {
@@ -493,12 +482,12 @@ function setScale3D(scale) {
 			updateTrajectoryZ3D(name, i + 1);
 		});
 
-		Plotly.relayout("ll-3d-plot", Object.assign({
+		Plotly.relayout("ll-3d-plot", {
 			"scene.zaxis.range": [cmin, cmax],
 			"scene.zaxis.autorange": false,
 			"scene.zaxis.tickformat": intFmt,
 			"scene.zaxis.title.text": axisTitle
-		}, camUpdates)).then(() => {
+		}).then(() => {
 			const bar = document.querySelector("#ll-3d-plot .colorbar");
 			if (bar) {
 				const titleEl = bar.querySelector(".colorbar-title");
