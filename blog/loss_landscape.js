@@ -161,6 +161,14 @@ function renderModelReadout() {
 	if (!el) return;
 	const finals = state.model && state.model.finals;
 	const names = Object.keys(finals || {});
+
+	const origEl = document.getElementById("ll-original-eq");
+	if (origEl) {
+		const origEq = state.exampleType && EXAMPLE_EQUATIONS[state.exampleType];
+		origEl.textContent = origEq ? "Original (data): " + origEq : "";
+		origEl.style.display = origEq ? "" : "none";
+	}
+
 	if (names.length === 0) {
 		const w = state.model.w, b = state.model.b;
 		const latex = buildEquationLatex(state.activation, w, b);
@@ -194,6 +202,13 @@ function renderModelReadout() {
 }
 
 /* ── Example presets ─────────────────────────────────────────────────────── */
+
+const EXAMPLE_EQUATIONS = {
+	"linear":         "y = 2x + 1",
+	"linear_negative": "y = -0.5x - 0.8",
+	"parabola":       "y = x²",
+	"sine":           "y = x·sin(x)"
+};
 
 function loadExample(type) {
 	const xEl = document.getElementById("ll-x");
@@ -229,7 +244,8 @@ function loadExample(type) {
 	state.ys = ys;
 	state.xMin = Math.min(...xs);
 	state.xMax = Math.max(...xs);
-	setStatus(`Loaded "${type}" example.`);
+	state.exampleType = type;
+	renderModelReadout();
 }
 window.loadExample = loadExample;
 
@@ -381,10 +397,10 @@ function ensureSurfaceCoversTrajectories(xsT, ysT) {
 			const wi = wIdxMap.get(wSnap.toFixed(1));
 			const bi = bIdxMap.get(bSnap.toFixed(1));
 			if (wi === undefined || bi === undefined) continue;
-			const expected = calculateLoss(wSnap, bSnap, xsT, ysT);
-			ll_assert_close(sg.Z[bi][wi], Math.log10(expected), 0.005,
+			const expected = Math.log10(calculateLoss(wSnap, bSnap, xsT, ysT));
+			ll_assert_close(sg.Z[bi][wi], expected, 0.005,
 				"ensureSurfaceCoversTrajectories: buildSurfaceGrid Z must equal log10(calculateLoss(snap))",
-				{ name: name, i: i, wSnap: wSnap, bSnap: bSnap, sz: sg.Z[bi][wi], expectedLoss: expected });
+				{ name: name, i: i, wSnap: wSnap, bSnap: bSnap, sz: sg.Z[bi][wi], expected: expected });
 		}
 	});
 }

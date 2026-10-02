@@ -95,7 +95,7 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 }
 .ll-lab .ll-controls {
 	display: grid;
-	grid-template-columns: 1.1fr 1fr 0.9fr;
+	grid-template-columns: 1fr 1fr;
 	gap: 14px;
 	margin-bottom: 18px;
 }
@@ -240,6 +240,62 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	background: linear-gradient(90deg, var(--mn-accent, #6366f1), var(--mn-accent-dark, #4338ca));
 	transition: width 0.18s ease-out;
 	width: 0%;
+}
+.ll-lab .ll-run-bar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0 0 14px 0;
+	padding: 8px 12px;
+	background: var(--mn-bg-warm, #F5EFDC);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 10px;
+	min-width: 0;
+}
+.ll-lab .ll-run-bar .ll-run-btn {
+	flex: 0 1 50%;
+	min-width: 0;
+	max-width: 50%;
+	padding: 6px 14px;
+	font-family: var(--mn-font-mono, ui-monospace, monospace);
+	font-size: 0.88rem;
+	font-weight: 600;
+	background: var(--mn-accent, #6366f1);
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.ll-lab .ll-run-bar .ll-run-btn:hover {
+	background: var(--mn-accent-dark, #4338ca);
+}
+.ll-lab .ll-run-bar .ll-status {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+	padding: 6px 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.ll-lab .ll-run-bar .ll-progress-wrap {
+	flex: 2 1 auto;
+	min-width: 60px;
+	max-width: 240px;
+	margin-top: 0;
+}
+.ll-lab .ll-original-eq {
+	font-family: var(--mn-font-mono, ui-monospace, monospace);
+	font-size: 0.85rem;
+	color: var(--mn-text-secondary, #5C5043);
+	margin-bottom: 6px;
+	padding: 4px 8px;
+	background: var(--mn-bg-warm, #F5EFDC);
+	border-left: 3px solid var(--mn-border, #D8CDA8);
+	border-radius: 4px;
 }
 .ll-lab .ll-plot-3d {
 	background: var(--mn-surface, #FDFAF1);
@@ -434,19 +490,10 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 			<label for="ll-epochs">Epochs:</label>
 			<input type="number" id="ll-epochs" value="100" min="1" max="5000">
 		</div>
-
-		<div class="ll-card">
-			<h4>Run</h4>
-			<button type="button" id="ll-start" onclick="startExperiment()">Start</button>
-			<button type="button" id="ll-stop" onclick="stopExperiment()" style="display:none;">Stop</button>
-			<div id="ll-status" class="ll-status">Ready.</div>
-			<div class="ll-progress-wrap">
-				<div id="ll-progress" class="ll-progress" style="width:0%;"></div>
-			</div>
-		</div>
 	</div>
 
 	<div class="ll-readout">
+		<div id="ll-original-eq" class="ll-original-eq" style="display:none;"></div>
 		<span class="ll-readout-label">Trained models</span>
 		<div id="ll-equation" class="ll-equation"></div>
 	</div>
@@ -463,7 +510,17 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 		<button type="button" class="ll-scale-btn"            id="ll-scale-linear" onclick="setScale3D('linear')">Linear z</button>
 	</div>
 
+	<div class="ll-run-bar">
+		<button type="button" id="ll-start" class="ll-run-btn" onclick="startExperiment()">Start</button>
+		<button type="button" id="ll-stop" class="ll-run-btn" onclick="stopExperiment()" style="display:none;">Stop</button>
+		<div id="ll-status" class="ll-status">Ready.</div>
+		<div class="ll-progress-wrap">
+			<div id="ll-progress" class="ll-progress" style="width:0%;"></div>
+		</div>
+	</div>
+
 	<div id="ll-3d-plot" class="ll-plot-3d" data-plot-theme="self"></div>
+
 	<div id="ll-fit-plot" class="ll-plot-2d" data-plot-theme="self"></div>
 	<div id="ll-loss-plot" class="ll-loss" data-plot-theme="self"></div>
 </div>
