@@ -5,9 +5,10 @@ title: Hyperparameters: The Numbers You Choose
 description: Weights are learned, hyperparameters are chosen. What they are, why they cannot be solved for, and how practitioners actually find good values.
 icon: &#9881;
 part: 2
-order: 7
+order: 8
 color: emerald
 topics: training, architecture, math-i, programming
+math: 40
 -->
 
 <div class="md">
