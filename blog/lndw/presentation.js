@@ -956,8 +956,14 @@ const InputHandler = (() => {
         const target = e.target;
         const tag = target.tagName;
         const isCheckbox = tag === 'INPUT' && target.type === 'checkbox';
-        // Text-Inputs/Textarea: Browser übernimmt die Tasten.
-        if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA') return;
+        // Pfeiltasten auf Inputs/Selects: normalerweise würde der Browser
+        // den Wert ändern (z.B. Slider). Stattdessen wollen wir
+        // navigieren — also Input bluren und weiterreichen.
+        const isNavKey = KEY_ACTIONS.next.includes(e.key) || KEY_ACTIONS.prev.includes(e.key);
+        if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA' || tag === 'SELECT') {
+            if (isNavKey) { target.blur(); }
+            else { return; }
+        }
         // Fokussierte Auswahl-Checkbox: Space toggelt sie (Standard);
         // alle anderen Tasten (Pfeile, Home/End, Buchstaben, Ziffern)
         // navigieren normal und geben den Fokus an die Folie zurück.
