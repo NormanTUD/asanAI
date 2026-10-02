@@ -91,7 +91,15 @@ function relayoutForTheme(plotId) {
 function formatNumber(n) {
 	if (!isFinite(n)) return String(n);
 	const a = Math.abs(n);
-	if (a !== 0 && (a >= 1e6 || a < 1e-3)) return n.toExponential(2);
+	if (a === 0) return "0";
+	if (a < 1e-4) {
+		const s = n.toFixed(10);
+		return s.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+	}
+	if (a < 1) {
+		const s = n.toFixed(6);
+		return s.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+	}
 	const rounded = Math.round(n);
 	if (Math.abs(n - rounded) < 1e-9) return String(rounded);
 	const fixed = n.toFixed(4);
@@ -357,7 +365,62 @@ function buildSurfaceGridFor(scale) {
 	return { Ws, Bs, Z };
 }
 
+function updateTrajectoryZ3D(name, trajIdx) {
+	const scale = state.scale3D || "log";
+	const losses = state.lossHistory[name] || [];
+	const surfaceGrid = buildSurfaceGridFor(scale);
+	const cleanZ = surfaceGrid.Z.map(row =>
+		row.map(v => (v === null || isFinite(v)) ? v : null)
+	);
+	const validZ = cleanZ.flat().filter(v => v !== null);
+	if (validZ.length === 0) return;
+	let zMin = Math.min.apply(null, validZ);
+	let zMax = Math.max.apply(null, validZ);
+	const minWidth = scale === "log" ? 0.5 : 0.01;
+	if (!isFinite(zMin) || !isFinite(zMax) || (zMax - zMin) < minWidth) {
+		const mid = (isFinite(zMin) && isFinite(zMax)) ? (zMin + zMax) / 2 : (scale === "log" ? 0 : 1);
+		zMin = mid - minWidth / 2;
+		zMax = mid + minWidth / 2;
+	}
+	const cmin = scale === "log" ? zMin - 1 : Math.max(0, zMin - (zMax - zMin) * 0.05);
+	const cmax = scale === "log" ? zMax + 0.5 : zMax * 1.1;
+	if (!isFinite(cmin) || !isFinite(cmax) || cmax <= cmin) return;
+
+	const trajZ = losses.map(l => {
+		if (l === null || l === undefined || !isFinite(l)) return cmin;
+		let z = Math.max(l, 1e-12);
+		if (scale === "log") z = Math.log10(z);
+		if (z > cmax) z = cmax;
+		if (z < cmin) z = cmin;
+		if (!isFinite(z)) return cmin;
+		return z;
+	});
+	const plotEl = document.getElementById("ll-3d-plot");
+	let prefix = [];
+	if (plotEl && plotEl.data && plotEl.data[trajIdx] && plotEl.data[trajIdx].z) {
+		const current = plotEl.data[trajIdx].z;
+		if (current.length > trajZ.length) prefix = current.slice(0, current.length - trajZ.length);
+	}
+	const out = prefix.concat(trajZ);
+	if (out.length === 0) out.push(scale === "log" ? Math.log10(0.1) : 0.1);
+	requestAnimationFrame(() => {
+		if (!plotEl || !plotEl.data || !plotEl.data[trajIdx]) return;
+		const currentXY = plotEl.data[trajIdx];
+		const curX = currentXY.x || [];
+		const curY = currentXY.y || [];
+		const trimLen = Math.min(curX.length, curY.length, out.length);
+		const safeZ = out.slice(0, trimLen);
+		Plotly.restyle("ll-3d-plot", { z: [safeZ] }, [trajIdx]).catch(() => {});
+	});
+}
+
 function setScale3D(scale) {
+	// ── Guard 1: validate scale argument ──────────────────────────────────────
+	if (scale !== "log" && scale !== "linear") {
+		console.warn("[loss_landscape] setScale3D: invalid scale", scale, "— defaulting to log");
+		scale = "log";
+	}
+
 	state.scale3D = scale;
 	const logBtn = document.getElementById("ll-scale-log");
 	const linBtn = document.getElementById("ll-scale-linear");
@@ -365,42 +428,83 @@ function setScale3D(scale) {
 	if (linBtn) linBtn.classList.toggle("is-active", scale === "linear");
 
 	const surfaceGrid = buildSurfaceGridFor(scale);
-	const lossesAll = state.landscape.L.filter(v => isFinite(v) && v > 0);
-	const validZ = surfaceGrid.Z.flat().filter(v => v !== null && isFinite(v));
-	const zMin = validZ.length > 0 ? Math.min.apply(null, validZ) : 0;
-	const zMax = validZ.length > 0 ? Math.max.apply(null, validZ) : 1;
+
+	// ── Guard 2: sanitize surface Z (drop NaN/Infinity, keep nulls) ───────────
+	const cleanZ = surfaceGrid.Z.map(row =>
+		row.map(v => (v === null || isFinite(v)) ? v : null)
+	);
+	const validZ = cleanZ.flat().filter(v => v !== null);
+
+	if (validZ.length === 0) {
+		console.warn("[loss_landscape] setScale3D: no valid surface data — aborting toggle");
+		return;
+	}
+
+	let zMin = Math.min.apply(null, validZ);
+	let zMax = Math.max.apply(null, validZ);
+
+	// ── Guard 3: enforce minimum z range width so the axis never collapses ────
+	const minWidth = scale === "log" ? 0.5 : 0.01;
+	if (!isFinite(zMin) || !isFinite(zMax) || (zMax - zMin) < minWidth) {
+		const mid = (isFinite(zMin) && isFinite(zMax)) ? (zMin + zMax) / 2 : (scale === "log" ? 0 : 1);
+		zMin = mid - minWidth / 2;
+		zMax = mid + minWidth / 2;
+	}
+
 	const cmin = scale === "log" ? zMin - 1 : Math.max(0, zMin - (zMax - zMin) * 0.05);
 	const cmax = scale === "log" ? zMax + 0.5 : zMax * 1.1;
 
-	const surfaceZUpdate = [surfaceGrid.Z];
-
-	const trajIndices = state.currentOptimizers.map((_, i) => i + 1);
-	const trajZUpdates = state.currentOptimizers.map(name => {
-		const losses = state.lossHistory[name] || [];
-		return losses.map(l => {
-			let z = Math.max(l, 1e-12);
-			if (scale === "log") z = Math.log10(z);
-			if (z > cmax) z = cmax;
-			if (z < cmin) z = cmin;
-			return z;
-		});
-	});
+	// ── Guard 4: validate final axis range before touching Plotly ─────────────
+	if (!isFinite(cmin) || !isFinite(cmax) || cmax <= cmin) {
+		console.warn("[loss_landscape] setScale3D: invalid axis range", cmin, cmax, "— aborting");
+		return;
+	}
 
 	const intFmt = (v) => String(Math.round(v));
+	const axisTitle = scale === "log" ? "loss (log₁₀)" : "loss (linear)";
 
-	const updates = {
-		"scene.zaxis.range": [cmin, cmax],
-		"scene.zaxis.autorange": false,
-		"scene.zaxis.tickformat": intFmt,
-		"scene.zaxis.title.text": scale === "log" ? "loss (log₁₀)" : "loss (linear)"
+	// ── Guard 5: shift camera to center on the new z-range (fixed offset, no zoom-out) ─
+	const midZ = (cmin + cmax) / 2;
+	const camUpdates = {
+		"scene.camera.eye.x": 1.3,
+		"scene.camera.eye.y": 1.3,
+		"scene.camera.eye.z": midZ + 1.2,
+		"scene.camera.center.x": 0,
+		"scene.camera.center.y": 0,
+		"scene.camera.center.z": midZ
 	};
 
-	requestAnimationFrame(() => {
-		Plotly.restyle("ll-3d-plot", { z: surfaceZUpdate }, [0]).catch(() => {});
+	const surfaceZUpdate = [cleanZ];
+
+	Promise.resolve().then(() => {
+		const plotEl = document.getElementById("ll-3d-plot");
+		if (!plotEl || !plotEl.data || plotEl.data.length === 0) {
+			console.warn("[loss_landscape] setScale3D: plot not ready — aborting restyle");
+			return;
+		}
+
+		Plotly.restyle("ll-3d-plot", {
+			z: surfaceZUpdate,
+			cmin: [cmin],
+			cmax: [cmax]
+		}, [0]).catch(err => console.warn("[loss_landscape] surface restyle failed:", err));
+
 		state.currentOptimizers.forEach((name, i) => {
-			Plotly.restyle("ll-3d-plot", { z: [trajZUpdates[i]] }, [i + 1]).catch(() => {});
+			updateTrajectoryZ3D(name, i + 1);
 		});
-		Plotly.relayout("ll-3d-plot", updates).catch(() => {});
+
+		Plotly.relayout("ll-3d-plot", Object.assign({
+			"scene.zaxis.range": [cmin, cmax],
+			"scene.zaxis.autorange": false,
+			"scene.zaxis.tickformat": intFmt,
+			"scene.zaxis.title.text": axisTitle
+		}, camUpdates)).then(() => {
+			const bar = document.querySelector("#ll-3d-plot .colorbar");
+			if (bar) {
+				const titleEl = bar.querySelector(".colorbar-title");
+				if (titleEl) titleEl.textContent = axisTitle;
+			}
+		}).catch(err => console.warn("[loss_landscape] relayout failed:", err));
 	});
 }
 window.setScale3D = setScale3D;
@@ -448,6 +552,7 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 			yaxis: Object.assign(commonAxis("bias b"),  { range: [Bs[0], Bs[Bs.length - 1]], autorange: false }),
 			zaxis: Object.assign(commonAxis("loss (log₁₀)"), { range: [cmin, cmax], autorange: false }),
 			camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } },
+			aspectmode: "cube",
 			dragmode: "turntable"
 		},
 		legend: { font: { color: tText() }, x: 0, y: 1 },
@@ -509,7 +614,7 @@ function initLossCurvePlot(optimizers, initLoss) {
 		paper_bgcolor: "rgba(0,0,0,0)",
 		plot_bgcolor:  "rgba(0,0,0,0)",
 		xaxis: commonAxis("epoch"),
-		yaxis: commonAxis("loss (MSE)", { type: "log", tickformat: ".0~e" }),
+		yaxis: commonAxis("loss (MSE)", { type: "log", tickformat: ".2~g" }),
 		legend: { font: { color: tText() } },
 		margin: { l: 60, r: 20, b: 40, t: 40 }
 	}, { responsive: true });
@@ -570,20 +675,10 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				scheduleRestyle("ll-fit-plot", { x: [pl.xs], y: [pl.ys] }, [fitIdx]);
 
 				if (epoch % 3 === 0 || epoch === epochs - 1) {
-					const scale = state.scale3D || "log";
-					const surfaceZ = buildSurfaceGridFor(scale).Z.flat().filter(v => v !== null && isFinite(v));
-					const zMin = surfaceZ.length > 0 ? Math.min.apply(null, surfaceZ) : 0;
-					const zMax = surfaceZ.length > 0 ? Math.max.apply(null, surfaceZ) : 1;
-					const trajZ = losses.map(l => {
-						let z = Math.max(l, 1e-12);
-						if (scale === "log") z = Math.log10(z);
-						if (z > zMax) z = zMax;
-						if (z < zMin) z = zMin;
-						return z;
-					});
-					scheduleRestyle("ll-3d-plot", {
-						x: [trajW], y: [trajB], z: [trajZ]
-					}, [trajIdx]);
+					const newX = trajW.slice();
+					const newY = trajB.slice();
+					scheduleRestyle("ll-3d-plot", { x: [newX], y: [newY] }, [trajIdx]);
+					updateTrajectoryZ3D(name, trajIdx);
 				}
 
 				setProgress((epoch + 1) / epochs);
