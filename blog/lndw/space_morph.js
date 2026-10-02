@@ -111,8 +111,8 @@ const SpaceMorph = (() => {
             b: "Andere Daten, anderes Problem: zwei verknotete Volltori im ℝ³, jeder β₁ = 1. Keine Ebene trennt sie. Pfeiltaste → einmal um die Tori herumdrehen.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
         { n: "Schritt 9 / 10", t: "4. Dimension + Projektion",
-            b: "Ein Layer hebt in eine Extra-Dimension w (die Breite): dort ziehen sich die Ringe hindurch. In 3D fast noch verhakt — aber selbst in der 2D-Projektion unten liegen sie sauber getrennt.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.12, proj: 1 },
+            b: "Ein Layer hebt in eine Extra-Dimension w (die Breite): dort ziehen sich die Ringe hindurch. In 3D fast noch verhakt — der 4D-Bogen macht die Trennung erst möglich.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.12 },
         { n: "Schritt 10 / 10", t: "Entwirrt – jetzt reicht eine Ebene",
             b: "Zurück im ℝ³: zwei Klumpen, je β → (1,0,0). Eine Ebene trennt sie.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 }
@@ -376,7 +376,6 @@ const SpaceMorph = (() => {
             fl = lerp(a.fail, b.fail, u) * (1 - tor),
             lb = lerp(a.lab, b.lab, u) * (1 - tor),
             bx = lerp(a.box, b.box, u);
-        const proj2d = lerp(a.proj || 0, b.proj || 0, u);
         // Schritt-8-Auto-Orbit: 1× Pfeil-rechts → ~5 s sanfter 360°-Kamera-Umlauf.
         if (autoOrbitActive && tor > 0.01) {
             const elapsed = now - autoOrbitStart;
@@ -509,47 +508,9 @@ const SpaceMorph = (() => {
                 const r = (2.6 + 0.6 * it.s.k) * it.s.k;
                 ctx.beginPath(); ctx.arc(it.s.X, it.s.Y, r, 0, 6.2832);
                 ctx.fillStyle = it.c ? '#e11d48' : '#15803d';
-                ctx.globalAlpha = (0.4 + 0.6 * it.s.k) * (1 - proj2d * 0.55); ctx.fill(); ctx.globalAlpha = 1;
+                ctx.globalAlpha = 0.4 + 0.6 * it.s.k; ctx.fill(); ctx.globalAlpha = 1;
             });
 
-            // Sanfte 2D-Projektion: alle Punkte auf z=0 stauchen und mit Extra-Separation
-            // seitlich auseinanderziehen → 2 Ringe auf einer Ebene, ohne Überlappung.
-            // Wird bei Schritt 9 sichtbar (proj2d → 1) und überlagert die (noch verhakten)
-            // 3D-Tori — "selbst in 2D sind sie bereits trennbar".
-            if (proj2d > 0.01) {
-                const pitems = [];
-                const PROJ_EXTRA = 0.65;
-                TORI.forEach(p => {
-                    const q = untangle(ut, p);
-                    const dir = p.c === 0 ? -1 : 1;
-                    const pp = { x: q.x + dir * PROJ_EXTRA, y: q.y, z: 0 };
-                    pitems.push({ d: proj(pp).d, s: proj(pp), c: p.c });
-                });
-                pitems.sort((p, q) => p.d - q.d);
-                pitems.forEach(it => {
-                    const r = (3.2 + 0.7 * it.s.k) * it.s.k;
-                    ctx.beginPath(); ctx.arc(it.s.X, it.s.Y, r, 0, 6.2832);
-                    ctx.fillStyle = it.c ? '#e11d48' : '#15803d';
-                    ctx.globalAlpha = (0.45 + 0.55 * it.s.k) * proj2d;
-                    ctx.fill(); ctx.globalAlpha = 1;
-                });
-                // z=0-Bodenlinie, damit klar wird, dass es eine Projektion ist
-                if (proj2d > 0.3) {
-                    const pa = 0.7;
-                    const L1 = proj({ x: -1.6, y: -1.6, z: 0 }), L2 = proj({ x: 1.6, y: -1.6, z: 0 });
-                    const L3 = proj({ x: 1.6, y: 1.6, z: 0 }), L4 = proj({ x: -1.6, y: 1.6, z: 0 });
-                    ctx.globalAlpha = pa * proj2d;
-                    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; ctx.setLineDash([4, 5]);
-                    ctx.beginPath();
-                    ctx.moveTo(L1.X, L1.Y); ctx.lineTo(L2.X, L2.Y);
-                    ctx.lineTo(L3.X, L3.Y); ctx.lineTo(L4.X, L4.Y); ctx.closePath();
-                    ctx.stroke(); ctx.setLineDash([]);
-                    ctx.fillStyle = '#475569'; ctx.font = 'italic 13px Georgia';
-                    const tL = proj({ x: -1.6, y: 1.6, z: 0 });
-                    ctx.fillText('2D-Projektion (z = 0)', tL.X + 8, tL.Y - 6);
-                    ctx.globalAlpha = 1;
-                }
-            }
             // Trennebene am Ende: senkrechte Ebene x = const zwischen den Klumpen
             if (pl > 0.01) {
                 const PX = 0.36, E = 0.95, M = 7;
