@@ -17,10 +17,10 @@
 const PLOT_DENSITY_STEP = 0.1;
 
 const OPTIMIZER_INFO = {
-	SGD:      { factory: (lr) => tf.train.sgd(lr),                       color: "#6366f1", defaultLr: 0.05 },
-	Momentum: { factory: (lr) => tf.train.momentum(lr, 0.9, false),      color: "#10b981", defaultLr: 0.01 },
-	Adam:     { factory: (lr) => tf.train.adam(lr),                     color: "#f59e0b", defaultLr: 0.01 },
-	RMSProp:  { factory: (lr) => tf.train.rmsprop(lr),                   color: "#ec4899", defaultLr: 0.01 }
+	SGD:      { factory: (lr) => tf.train.sgd(lr),                  color: "#6366f1", defaultLr: 0.05, dash: "solid",   symbol: "circle",      line3Dash: "solid",    marker3Symbol: "circle" },
+	Momentum: { factory: (lr) => tf.train.momentum(lr, 0.9, false), color: "#10b981", defaultLr: 0.05, dash: "dashdot", symbol: "diamond",     line3Dash: "dashdot", marker3Symbol: "diamond" },
+	Adam:     { factory: (lr) => tf.train.adam(lr),                color: "#f59e0b", defaultLr: 0.05, dash: "dash",    symbol: "square",      line3Dash: "dash",    marker3Symbol: "square" },
+	RMSProp:  { factory: (lr) => tf.train.rmsprop(lr),             color: "#ec4899", defaultLr: 0.01, dash: "dot",     symbol: "triangle-up", line3Dash: "dot",     marker3Symbol: "triangle-up" }
 };
 
 const state = {
@@ -301,32 +301,63 @@ function commonAxis(title, opts) {
 	return Object.assign(base, opts);
 }
 
-function setAxisIntegerTicks(plotId, axisKey, lo, hi) {
-	const vals = [];
-	let step = 1;
-	const start = Math.ceil(lo / step) * step;
-	const end = Math.floor(hi / step) * step;
-	const half = step / 2;
-	let v = start;
-	const top = end + half;
-	while (v <= top) {
-		const r = Math.round(v);
-		if (r >= lo - half && r <= hi + half) vals.push(r);
-		v = v + step;
-	}
-	const text = vals.map(String);
-	const keys = ["xaxis", "yaxis", "zaxis"];
-	const i = keys.indexOf(axisKey);
-	const prop = i >= 0 ? keys[i] : "zaxis";
-	const intFmt = (v) => String(Math.round(v));
-	const update = {};
-	update["scene." + prop + ".tickvals"]  = vals;
-	update["scene." + prop + ".ticktext"]  = text;
-	update["scene." + prop + ".tickmode"]  = "array";
-	update["scene." + prop + ".tickformat"] = intFmt;
-	update["scene." + prop + ".range"]      = [lo, hi];
-	update["scene." + prop + ".autorange"] = false;
-	Plotly.relayout(plotId, update).catch(() => {});
+/* ─── 3-D plot: camera preservation ────────────────────────────────────────── */
+
+/** Save the current camera state of a 3-D Plotly plot. */
+function captureCamera(plotId) {
+	const el = document.getElementById(plotId);
+	if (!el || !el._fullLayout || !el._fullLayout.scene) return null;
+	const c = el._fullLayout.scene.camera;
+	return {
+		eye:    { x: c.eye.x,    y: c.eye.y,    z: c.eye.z },
+		center: { x: c.center.x, y: c.center.y, z: c.center.z },
+		up:     { x: c.up.x,     y: c.up.y,     z: c.up.z }
+	};
+}
+
+/** Restore a previously captured camera state. */
+function restoreCamera(plotId, cam) {
+	if (!cam) return;
+	Plotly.relayout(plotId, {
+		"scene.camera.eye.x":    cam.eye.x,
+		"scene.camera.eye.y":    cam.eye.y,
+		"scene.camera.eye.z":    cam.eye.z,
+		"scene.camera.center.x": cam.center.x,
+		"scene.camera.center.y": cam.center.y,
+		"scene.camera.center.z": cam.center.z,
+		"scene.camera.up.x":     cam.up.x,
+		"scene.camera.up.y":     cam.up.y,
+		"scene.camera.up.z":     cam.up.z
+	}).catch(() => {});
+}
+
+/* ─── 3-D plot: trajectory + surface clipping ────────────────────────────── */
+
+/** Build a (w, b) -> z lookup by bilinear interpolation over the sampled
+ *  surface grid. Returns null when (w, b) lies outside the grid. */
+function makeSurfaceInterpolator(Ws, Bs, Z) {
+	const wN = Ws.length, bN = Bs.length;
+	if (wN < 2 || bN < 2) return null;
+	const wMin = Ws[0], wMax = Ws[wN - 1];
+	const bMin = Bs[0], bMax = Bs[bN - 1];
+	return function lookup(w, b) {
+		if (w < wMin || w > wMax || b < bMin || b > bMax) return null;
+		const fx = (w - wMin) / (wMax - wMin) * (wN - 1);
+		const fy = (b - bMin) / (bMax - bMin) * (bN - 1);
+		const ix = Math.floor(fx), iy = Math.floor(fy);
+		const tx = fx - ix, ty = fy - iy;
+		const z00 = Z[iy][ix];
+		const z10 = Z[iy][ix + 1];
+		const z01 = Z[iy + 1][ix];
+		const z11 = Z[iy + 1][ix + 1];
+		if (z00 === null || z10 === null || z01 === null || z11 === null) {
+			const candidates = [z00, z10, z01, z11].filter(v => v !== null);
+			return candidates.length ? Math.max.apply(null, candidates) : null;
+		}
+		const top    = z00 * (1 - tx) + z10 * tx;
+		const bottom = z01 * (1 - tx) + z11 * tx;
+		return top * (1 - ty) + bottom * ty;
+	};
 }
 
 function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
@@ -336,6 +367,7 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 	const maxL = losses.length > 0 ? Math.max(...losses, minL * 10) : 1;
 	const cmin = Math.log10(minL) - 1;
 	const cmax = Math.log10(maxL) + 0.1;
+	const zMax = Math.log10(maxL);
 
 	const surfaceTrace = {
 		type: "surface", x: Ws, y: Bs, z: Z,
@@ -346,37 +378,36 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		name: "loss surface",
 		hoverinfo: "skip"
 	};
-	const trajTraces = optimizers.map(name => ({
-		type: "scatter3d", mode: "lines+markers",
-		x: [w0], y: [b0], z: [Math.log10(initLoss)],
-		marker: { size: 3, color: OPTIMIZER_INFO[name].color },
-		line:   { width: 4, color: OPTIMIZER_INFO[name].color },
-		name,
-		legendgroup: name,
-		hovertemplate: "w = %{x:.3g}<br>b = %{y:.3g}<br>loss = %{z:.3g}<extra>" + name + "</extra>"
-	}));
+	const trajTraces = optimizers.map(name => {
+		const info = OPTIMIZER_INFO[name];
+		return {
+			type: "scatter3d", mode: "lines+markers",
+			x: [w0], y: [b0], z: [Math.log10(initLoss)],
+			marker: { size: 4, color: info.color, symbol: info.marker3Symbol, line: { width: 1, color: info.color } },
+			line:   { width: 5, color: info.color, dash: info.line3Dash },
+			name,
+			legendgroup: name,
+			hovertemplate: "<b>" + name + "</b><br>w = %{x:.3g}<br>b = %{y:.3g}<br>log₁₀(loss) = %{z:.3g}<extra></extra>"
+		};
+	});
+
+	const initZ = Math.min(Math.log10(initLoss), zMax);
 
 	Plotly.newPlot("ll-3d-plot", [surfaceTrace, ...trajTraces], {
 		title: { text: "3-D Loss Landscape & Optimizer Trajectories", font: { color: tText() } },
 		paper_bgcolor: "rgba(0,0,0,0)",
 		plot_bgcolor:  "rgba(0,0,0,0)",
 		scene: {
-			xaxis: commonAxis("weight w"),
-			yaxis: commonAxis("bias b"),
-			zaxis: commonAxis("loss (log₁₀)"),
+			xaxis: Object.assign(commonAxis("weight w"), { range: [Ws[0], Ws[Ws.length - 1]], autorange: false }),
+			yaxis: Object.assign(commonAxis("bias b"),  { range: [Bs[0], Bs[Bs.length - 1]], autorange: false }),
+			zaxis: Object.assign(commonAxis("loss (log₁₀)"), { range: [cmin, cmax], autorange: false }),
 			camera: { up: { x: 0, y: 0, z: 1 }, center: { x: 0, y: 0, z: 0 }, eye: { x: 1.3, y: 1.3, z: 1.2 } }
 		},
 		legend: { font: { color: tText() }, x: 0, y: 1 },
 		margin: { l: 0, r: 0, b: 0, t: 40 },
 		showlegend: true
 	}, { responsive: true }).then(() => {
-		const minW = Math.min(...Ws), maxW = Math.max(...Ws);
-		const minB = Math.min(...Bs), maxB = Math.max(...Bs);
-		const validL = Z.flat().filter(v => v !== null && isFinite(v));
-		const minL = Math.min(...validL), maxL = Math.max(...validL);
-		setAxisIntegerTicks("ll-3d-plot", "xaxis", minW, maxW);
-		setAxisIntegerTicks("ll-3d-plot", "yaxis", minB, maxB);
-		setAxisIntegerTicks("ll-3d-plot", "zaxis", minL, maxL);
+		Plotly.restyle("ll-3d-plot", { z: [[initZ]] }, trajTraces.map((_, i) => i + 1)).catch(() => {});
 	});
 }
 
@@ -391,15 +422,18 @@ function initFitPlot(optimizers) {
 		x: state.xs, y: state.ys, mode: "markers", type: "scatter",
 		name: "data",
 		marker: { color: tText(), size: 9, line: { color: tText(), width: 1 } },
-		hovertemplate: "x = %{x:.3g}<br>y = %{y:.3g}<extra>data</extra>"
+		hovertemplate: "<b>data point</b><br>x = %{x:.3g}<br>y = %{y:.3g}<extra></extra>"
 	};
-	const fitTraces = optimizers.map(name => ({
-		x: pl.xs, y: pl.ys, mode: "lines", type: "scatter",
-		name,
-		legendgroup: name,
-		line: { color: OPTIMIZER_INFO[name].color, width: 3 },
-		hovertemplate: "x = %{x:.3g}<br>ŷ = %{y:.3g}<extra>" + name + "</extra>"
-	}));
+	const fitTraces = optimizers.map(name => {
+		const info = OPTIMIZER_INFO[name];
+		return {
+			x: pl.xs, y: pl.ys, mode: "lines", type: "scatter",
+			name,
+			legendgroup: name,
+			line: { color: info.color, width: 3, dash: info.dash },
+			hovertemplate: "<b>" + name + "</b> fit<br>x = %{x:.3g}<br>ŷ = %{y:.3g}<extra></extra>"
+		};
+	});
 
 	Plotly.newPlot("ll-fit-plot", [dataTrace, ...fitTraces], {
 		title: { text: "Fit vs. Data — All Optimizers", font: { color: tText() } },
@@ -413,13 +447,16 @@ function initFitPlot(optimizers) {
 }
 
 function initLossCurvePlot(optimizers, initLoss) {
-	const traces = optimizers.map(name => ({
-		x: [0], y: [initLoss], mode: "lines+markers", type: "scatter",
-		name,
-		line:   { color: OPTIMIZER_INFO[name].color, width: 2 },
-		marker: { size: 4, color: OPTIMIZER_INFO[name].color },
-		hovertemplate: "epoch = %{x}<br>loss = %{y:.3g}<extra>" + name + "</extra>"
-	}));
+	const traces = optimizers.map(name => {
+		const info = OPTIMIZER_INFO[name];
+		return {
+			x: [0], y: [initLoss], mode: "lines+markers", type: "scatter",
+			name,
+			line:   { color: info.color, width: 2, dash: info.dash },
+			marker: { size: 5, color: info.color, symbol: info.symbol, line: { width: 1, color: info.color } },
+			hovertemplate: "<b>" + name + "</b><br>epoch = %{x}<br>loss = %{y:.4g}<extra></extra>"
+		};
+	});
 	Plotly.newPlot("ll-loss-plot", traces, {
 		title: { text: "Loss vs. Epoch", font: { color: tText() } },
 		paper_bgcolor: "rgba(0,0,0,0)",
@@ -455,6 +492,11 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 	const fitIdx   = state.currentOptimizers.indexOf(name) + 1;
 	const lossIdx  = state.currentOptimizers.indexOf(name);
 
+	const surfaceLookup = state.surfaceLookup;
+	const zMax = state.surfaceZMax;
+
+	const cam0 = captureCamera("ll-3d-plot");
+
 	await model.fit(xsT, ysT, {
 		epochs, batchSize: state.xs.length, verbose: 0,
 		callbacks: {
@@ -467,8 +509,17 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 				const w = ws[0].dataSync()[0], b = ws[1].dataSync()[0];
 				trajW.push(w); trajB.push(b); trajLoss.push(logs.loss);
 
+				const trajZ = trajLoss.map(l => {
+					let z = Math.log10(l);
+					if (z > zMax) z = zMax;
+					if (!surfaceLookup) return z;
+					const lookup = surfaceLookup(w, b);
+					if (lookup === null) return zMax;
+					return Math.min(z, lookup);
+				});
+
 				Plotly.restyle("ll-3d-plot", {
-					x: [trajW], y: [trajB], z: [trajLoss.map(l => Math.log10(l))]
+					x: [trajW], y: [trajB], z: [trajZ]
 				}, [trajIdx]);
 
 				const pl = calculatePredictionLine(w, b);
@@ -483,6 +534,8 @@ async function trainOne(name, lr, epochs, xsT, ysT) {
 			}
 		}
 	});
+
+	if (cam0) restoreCamera("ll-3d-plot", cam0);
 
 	optimizer.dispose();
 	model.dispose();
@@ -535,6 +588,8 @@ async function startExperiment() {
 	state.landscape = { W: [], B: [], L: [], cache: {} };
 	state.lossHistory = {};
 	state.model = { w: 0.1, b: 0.1, loss: null };
+	state.surfaceLookup = null;
+	state.surfaceZMax = 0;
 
 	const optimizers = getSelectedOptimizers();
 	if (optimizers.length === 0) {
@@ -558,7 +613,12 @@ async function startExperiment() {
 
 		state.model.loss = calculateLoss(0.1, 0.1, data.xsT, data.ysT);
 
-		init3DPlot(optimizers, buildSurfaceGrid(), 0.1, 0.1, state.model.loss);
+		const surfaceGrid = buildSurfaceGrid();
+		const surfaceZ = surfaceGrid.Z.flat().filter(v => v !== null && isFinite(v));
+		state.surfaceZMax = surfaceZ.length > 0 ? Math.max.apply(null, surfaceZ) : 0;
+		state.surfaceLookup = makeSurfaceInterpolator(surfaceGrid.Ws, surfaceGrid.Bs, surfaceGrid.Z);
+
+		init3DPlot(optimizers, surfaceGrid, 0.1, 0.1, state.model.loss);
 		initFitPlot(optimizers);
 		initLossCurvePlot(optimizers, state.model.loss);
 		renderModelReadout();

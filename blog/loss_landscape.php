@@ -338,9 +338,9 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 			<h4>Optimizers</h4>
 			<div class="ll-opts">
 				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="SGD" checked> SGD</label>
-				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Momentum" checked> Momentum</label>
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Momentum"> Momentum</label>
 				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="Adam" checked> Adam</label>
-				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="RMSProp" checked> RMSProp</label>
+				<label class="ll-opt-label"><input type="checkbox" class="ll-opt" value="RMSProp"> RMSProp</label>
 			</div>
 
 			<label for="ll-lr">Learning rate:</label>
