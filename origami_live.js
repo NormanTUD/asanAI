@@ -167,6 +167,8 @@ var OrigamiLive = (function (global) {
 		modelRef:        null,
 		errorStreak:     0,
 		lastRebuild:     0,
+		hasFramed:       false,
+		lastFramedHash:  null,
 
 		// Deaktivierung
 		off:     false,
@@ -5637,13 +5639,16 @@ var OrigamiLive = (function (global) {
 		_state.lastRebuild = now;
 		_state.dirty = true;
 
-		// Kamera an den neuen Raum anpassen — beim allerersten Build oder
-		// wenn sich die Netzarchitektur geändert hat (neue Schicht, neuer
-		// Datensatz). Bei reinem Trainingsfortschritt (gleiche Kette, neue
-		// Gewichte) bleibt der vom Nutzer eingestellte Blick unangetastet.
-		if (!_state.hasFramed || chainChanged) {
+		// Kamera an den neuen Raum anpassen — beim allerersten Build, wenn
+		// sich die Netzarchitektur geändert hat, oder wenn ein neuer
+		// Datensatz geladen wurde (andere Skala/Ausdehnung). Bei reinem
+		// Trainingsfortschritt (gleiche Kette, gleiche Daten, neue Gewichte)
+		// bleibt der vom Nutzer eingestellte Blick unangetastet.
+		var dataChanged = (_state.cache.xHash !== _state.lastFramedHash);
+		if (!_state.hasFramed || chainChanged || dataChanged) {
 			_resetCamera();
 			_state.hasFramed = true;
+			_state.lastFramedHash = _state.cache.xHash;
 		}
 
 		_updateScrubLabel();
@@ -6012,6 +6017,7 @@ var OrigamiLive = (function (global) {
 		_state.lastFingerprint = null;
 		_state.lastViewHash = null;
 		_state.lastChainSig = null;
+		_state.lastFramedHash = null;
 	}
 
 	function destroy() {
