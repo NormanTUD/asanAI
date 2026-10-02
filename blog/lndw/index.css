@@ -927,11 +927,127 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 
 /* ============ SPACE MORPH ("Layer als Raumkrümmung") ============ */
-#sm-formula small {
-	display: block;
-	font-size: 12.5px;
-	color: #9a8f6d;
-	margin-top: 5px;
+#sm-tables-wrap {
+	min-height: 0;
+}
+#sm-tables-head {
+	transition: opacity 0.4s ease;
+}
+.sm-table {
+	font-family: 'Cambria Math', Georgia, serif;
+	font-size: 13px;
+	border-collapse: collapse;
+	width: 100%;
+	background: rgba(255,255,255,0.55);
+	border: 1px solid #cbd5e1;
+	border-radius: 6px;
+	overflow: hidden;
+	margin-bottom: 6px;
+}
+#egg-table { width: 38%; max-width: 480px; min-width: 320px; }
+#tori-table { width: 50%; max-width: 620px; min-width: 420px; }
+.sm-table thead th {
+	text-align: right;
+	padding: 6px 12px;
+	font-weight: 600;
+	color: #475569;
+	font-size: 12px;
+	border-bottom: 1px solid #cbd5e1;
+	background: rgba(241,245,249,0.85);
+}
+.sm-table thead th.lbl-col {
+	text-align: left;
+	width: 72px;
+	padding-right: 10px;
+}
+.sm-table thead th.coord-col {
+	width: 18%;
+	min-width: 64px;
+}
+.sm-table tbody td {
+	padding: 5px 12px;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	border-bottom: 1px solid #e2e8f0;
+	font-size: 13px;
+	color: #0f172a;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.sm-table tbody tr:last-child td {
+	border-bottom: 0;
+}
+.sm-table td.lbl {
+	text-align: left;
+	font-weight: 700;
+	font-size: 12px;
+	border-right: 1px solid #cbd5e1;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+.sm-table tr.inner-row td.lbl,
+.sm-table tr.outer-row td.lbl {
+	background: rgba(255,255,255,0.5);
+}
+.sm-table tr.inner-row td.lbl   { color: #be123c; }
+.sm-table tr.outer-row td.lbl   { color: #0369a1; }
+.sm-table tr.green-row td.lbl   { color: #15803d; }
+.sm-table tr.red-row td.lbl     { color: #be123c; }
+.sm-table tr.green-row td:not(.lbl) { background: rgba(21,128,61,0.07); }
+.sm-table tr.red-row td:not(.lbl)   { background: rgba(190,18,60,0.07); }
+.sm-table td.xv, .sm-table td.yv, .sm-table td.zv, .sm-table td.wv {
+	transition: color 0.3s ease, background-color 0.3s ease;
+}
+.sm-table td.empty {
+	color: #cbd5e1;
+}
+
+/* Z-Spalte (Ei): am Anfang versteckt, kommt eigenständig rein */
+.sm-table .z-col, .sm-table .zv {
+	display: none;
+}
+.sm-table.show-z .z-col,
+.sm-table.show-z .zv {
+	display: table-cell;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes smCellIn {
+	from { opacity: 0; transform: translateX(8px); }
+	to   { opacity: 1; transform: translateX(0); }
+}
+
+/* W-Spalte (Tori): analog */
+.sm-table .w-col, .sm-table .wv {
+	display: none;
+}
+.sm-table.show-w .w-col,
+.sm-table.show-w .wv {
+	display: table-cell;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
+}
+
+/* Extra-Zeile (B₂): kommt eigenständig dazu */
+.sm-table .extra-row td {
+	font-size: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	border-bottom: 0;
+	opacity: 0;
+	transition: font-size 0.5s ease,
+	            padding-top 0.5s ease,
+	            padding-bottom 0.5s ease,
+	            opacity 0.5s ease;
+	overflow: hidden;
+}
+.sm-table.show-extra .extra-row td {
+	font-size: 13px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	opacity: 1;
+}
+.sm-table.show-extra .extra-row td.lbl {
+	font-size: 12px;
 }
 
 /* ============ "DIE WIESE DER WÖRTER" (Slide) ============ */

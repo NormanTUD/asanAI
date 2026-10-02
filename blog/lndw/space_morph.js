@@ -20,6 +20,14 @@ const SpaceMorph = (() => {
     let md = false, mx = 0, my = 0;
     let cur = 0, prevIdx = 0, t0 = 0, dA0 = 0, dB0 = 0;
 
+    // Schritt 8: 1× Pfeil-rechts startet eine ~5-Sekunden-Drehung um die Tori.
+    // Danach (oder wenn der User nochmal drückt) → Schritt 9.
+    const ORBIT_AUTO_DUR = 5000;
+    let autoOrbitActive = false;
+    let autoOrbitStart = 0;
+    let autoOrbitFromAngle = 0;
+    let autoOrbitDone = false;
+
     // ---------- Daten ----------
     let rng = 42;
     const rnd = () => (rng = (rng * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
@@ -73,50 +81,40 @@ const SpaceMorph = (() => {
     // ---------- Szenen ----------
     const S = [
         { n: "Schritt 1 / 10", t: "Zwei Klassen, keine Gerade",
-            b: "Innen eine Punktwolke, außen ein Ring. Kein einziger gerader Schnitt trennt Rot von Blau.",
-            f: "X ⊂ ℝ²,&nbsp; y ∈ {0,1}<small>nicht linear separierbar</small>",
+            b: "Innen eine Punktwolke, außen ein Ring. Keine Gerade trennt Rot von Blau.",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { n: "Schritt 2 / 10", t: "Jeder Versuch scheitert",
             b: "Eine lineare Trennung ist eine Gerade. Sie schneidet den Ring immer — die Topologie lässt es nicht zu.",
-            f: "w₁x + w₂y + b = 0<small>eine Gerade, immer</small>",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
         { n: "Schritt 3 / 10", t: "Eine Dimension mehr Platz",
-            b: "Das alte Bild liegt jetzt als Boden unter uns. Senkrecht dazu steht die neue Achse z. Die Daten sind unverändert — aber über ihnen ist Raum entstanden.",
-            f: "ℝ² ↪ ℝ³<small>Einbettung, noch ohne Krümmung</small>",
+            b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden.",
             L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { n: "Schritt 4 / 10", t: "Der Layer krümmt den Raum",
-            b: "Die Kamera fährt in die Seitenansicht und bleibt dort. Das Gitter hebt sich zu einer Schale: innere Punkte sinken, äußere steigen. Es zerreißt nicht, es biegt sich.",
-            f: "φ(x,y) = (x, y, x² + y²)<small>ein Layer = eine Verbiegung</small>",
+            b: "Das Gitter hebt sich zu einer Schale: innere Punkte sinken, äußere steigen. Es zerreißt nicht, es biegt sich.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { n: "Schritt 5 / 10", t: "Eine Ebene passt dazwischen",
-            b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen. In 2D war das unmöglich.",
-            f: "wᵀφ(x) + b = 0<small>lineare Trennung in ℝ³</small>",
+            b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { n: "Schritt 6 / 10", t: "Die Ebene wird zur Linie",
-            b: "Wir stauchen die Ebene entlang der Blickrichtung. Ihre Querlinien laufen zusammen, das Band wird schmaler — bis nur noch eine Linie übrig ist.",
-            f: "wᵀφ(x) + b ⋛ 0<small>Fläche → Kante → Linie</small>",
+            b: "Wir stauchen die Ebene entlang der Blickrichtung, bis nur noch eine Linie übrig ist.",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 1, fail: 0, lab: 1, pr: 0, box: 0 },
-        { n: "Schritt 7 / 10", t: "Der Raum fällt auf eine Zahl",
-            b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Abbildung trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich. Rot links, blau rechts.",
-            f: "s = wᵀφ(x) + b ∈ ℝ<small>ℝ³ → ℝ, jetzt trennt ein Punkt</small>",
+        { n: "Schritt 7 / 10", t: "Der Raum wird zu einer Linie",
+            b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Projektion trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich — eine 1D-Achse, auf der s = 0 trennt.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
 
         // ── Bonusphase: zwei verhakte Volltori (Datensatz D-II) ──
-        // 2D war der Lehrfilm. Jetzt die echte 3D-Geometrie aus dem Paper:
-        // zwei ineinander verschlungene Donuts, die kein einzelner Layer –
-        // und keine Ebene – trennen kann. Sie entwirren sich erst, weil der
-        // Layer sie durch eine VIERTE Dimension (w) ziehen darf.
-        { n: "Schritt 8 / 10", t: "Die echte Datengeometrie: zwei verhakte Tori",
-            b: "In der Wirklichkeit liegen die Daten im ℝ³. Zwei ineinander verknotete Volltori, jeder β₁ = 1: keine Ebene im Raum trennt sie. Genau die Datengeometrie aus dem Paper (D-II).",
-            f: "M = Mₐ ∪ M_b ⊂ ℝ³,&nbsp; β₁(Mₐ)=β₁(M_b)=1<small>verhakten Tori, unseparabel</small>",
+        // Komplett anderes Beispiel — kein Fortsetzen der Punktwolke von oben.
+        // Zwei echte 3D-Datenpunkte (verknotete Donuts) brauchen eine 4. Dimension,
+        // um ohne Schnitt trennbar zu werden. Pfeiltaste rechts startet eine
+        // 5-Sekunden-Drehung um die Tori; danach geht's zu Schritt 9.
+        { n: "Schritt 8 / 10", t: "Neues Beispiel: verhakte Tori",
+            b: "Andere Daten, anderes Problem: zwei verknotete Volltori im ℝ³, jeder β₁ = 1. Keine Ebene trennt sie. Pfeiltaste → einmal um die Tori herumdrehen.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
-        { n: "Schritt 9 / 10", t: "Durch eine vierte Dimension entwirren",
-            b: "Ein Layer hebt die Daten in eine Extra-Dimension w (die Breite des Netzraums). In dieser vierten Dimension ziehen sich die beiden Ringe hindurch – das einzige Weg, verhakten Tori zu entwirren, ohne sie zu zerschneiden. Die gepunktete w-Achse deutet es an.",
-            f: "ℝ³ ↪ ℝ⁴,&nbsp; φ(x,y,z) ↦ (…, w)<small>Breite = Extra-Dimension</small>",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.55 },
+        { n: "Schritt 9 / 10", t: "4. Dimension + Projektion",
+            b: "Ein Layer hebt in eine Extra-Dimension w (die Breite): dort ziehen sich die Ringe hindurch. In 3D fast noch verhakt — aber selbst in der 2D-Projektion unten liegen sie sauber getrennt.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.12, proj: 1 },
         { n: "Schritt 10 / 10", t: "Entwirrt – jetzt reicht eine Ebene",
-            b: "Zurück im dreidimensionalen Raum liegen die beiden Tori sauber getrennt: jede Klasse ist ein einzelner Klumpen (β → (1,0,0)). Eine Ebene trennt sie. Was unmöglich schien, erledigt eine Sequenz aus Verbiegen + Falten – Schicht für Schicht.",
-            f: "β → (1, 0, 0)<small>linear separierbar im ausgestreckten Raum</small>",
+            b: "Zurück im ℝ³: zwei Klumpen, je β → (1,0,0). Eine Ebene trennt sie.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 }
     ];
 
@@ -131,19 +129,128 @@ const SpaceMorph = (() => {
         const elStep = document.getElementById('sm-step');
         const elTitle = document.getElementById('sm-title');
         const elBody = document.getElementById('sm-body');
-        const elForm = document.getElementById('sm-formula');
         if (elStep) elStep.textContent = s.n;
         if (elTitle) elTitle.textContent = s.t;
         if (elBody) elBody.textContent = s.b;
-        if (elForm) elForm.innerHTML = s.f;
+        updateTables();
         const bar = document.getElementById('sm-bar');
         if (bar) {
             bar.innerHTML = '';
             S.forEach((_, i) => {
                 const e = document.createElement('div');
-                e.style.cssText = 'width:24px;height:3px;transition:background .5s;background:' +
-                    (i <= cur ? '#d97706' : '#cbd5e1') + ';';
+                let bg = '#cbd5e1';
+                if (i < cur) bg = '#d97706';
+                else if (i === cur && cur === 7) {
+                    // Schritt 8: lila, solange Auto-Orbit aktiv ist, sonst orange
+                    bg = autoOrbitActive ? '#7c3aed' : (autoOrbitDone ? '#d97706' : '#94a3b8');
+                } else if (i === cur) {
+                    bg = '#d97706';
+                }
+                e.style.cssText = 'width:24px;height:3px;transition:background .5s;background:' + bg + ';';
                 bar.appendChild(e);
+            });
+        }
+    }
+
+    // Beispielpunkte für die Begleit-Tabellen
+    const EGG_PTS = [
+        { id: 'I1', x: 0.20, y: 0.00, cls: 0 },   // innen₁
+        { id: 'I2', x: 0.00, y: 0.25, cls: 0 },   // innen₂
+        { id: 'O1', x: 0.90, y: 0.00, cls: 1 },   // außen₁
+        { id: 'O2', x: 0.00, y: 0.95, cls: 1 }    // außen₂
+    ];
+    // Beispielpunkte für die Tori (s=π/2 → z ≠ 0, also echte 3D-Daten):
+    // 2 von Klasse A (grün) + 1 von Klasse B (rot) = 3 initiale Zeilen,
+    // plus B₂ als Extra-Zeile — der "interlockte" Punkt.
+    const TORI_EX = [
+        { id: 'A1', c: 0, t: 0,           s: Math.PI / 2 },
+        { id: 'A2', c: 0, t: Math.PI / 2, s: Math.PI / 2 },
+        { id: 'B1', c: 1, t: Math.PI / 2, s: Math.PI / 2 },
+        { id: 'B2', c: 1, t: Math.PI,     s: Math.PI / 2 }
+    ];
+    const M = 0.72, RHO = 0.16;
+    function buildToriPoint(ex) {
+        const R = M + RHO * Math.cos(ex.s);
+        if (ex.c === 0) {
+            return { x: R * Math.cos(ex.t), y: R * Math.sin(ex.t), z: RHO * Math.sin(ex.s) };
+        }
+        return { x: M + R * Math.cos(ex.t), y: RHO * Math.sin(ex.s), z: R * Math.sin(ex.t) };
+    }
+
+    const fmt2 = v => (Math.abs(v) < 0.005 ? '0' : (v.toFixed(2).replace(/^-0\.00$/, '0.00')));
+    function setCell(tableId, rowClass, colClass, value, idx) {
+        const rows = document.querySelectorAll(`#${tableId} tr.${rowClass}`);
+        const cell = rows[idx] ? rows[idx].querySelector(`.${colClass}`) : null;
+        if (cell) cell.textContent = value;
+    }
+    function setCellByPid(tableId, pid, colClass, value) {
+        const cell = document.querySelector(`#${tableId} tr[data-pid="${pid}"] .${colClass}`);
+        if (cell) cell.textContent = value;
+    }
+    function setCellEmpty(tableId, pid, colClass, empty) {
+        const cell = document.querySelector(`#${tableId} tr[data-pid="${pid}"] .${colClass}`);
+        if (cell) cell.classList.toggle('empty', empty);
+    }
+
+    function updateTables(raw = 1) {
+        const egg = document.getElementById('egg-table');
+        const tori = document.getElementById('tori-table');
+        if (!egg || !tori) return;
+
+        // Ei-Tabelle: sichtbar für Schritte 1-7, Tori-Tabelle für 8-10
+        if (cur <= 6) {
+            egg.removeAttribute('style');
+            tori.setAttribute('style', 'display:none');
+        } else {
+            egg.setAttribute('style', 'display:none');
+            tori.removeAttribute('style');
+        }
+
+        // z-Spalte am Ei: ab Schritt 3 (ℝ³) zeigen
+        egg.classList.toggle('show-z', cur >= 2);
+
+        // w-Spalte + Extra-Zeile an den Tori: ab Schritt 9 (4D)
+        tori.classList.toggle('show-w', cur >= 8);
+        tori.classList.toggle('show-extra', cur >= 8);
+
+        // Live-Werte aktualisieren — x/y bleiben symbolisch gleich, z reagiert auf L, w auf ut
+        const L = S[cur].L || 0;
+        let innerIdx = 0, outerIdx = 0;
+        EGG_PTS.forEach((pt) => {
+            const row = pt.cls === 0 ? 'inner-row' : 'outer-row';
+            const idx = pt.cls === 0 ? innerIdx++ : outerIdx++;
+            const z = (pt.x * pt.x + pt.y * pt.y) * L;
+            setCell('egg-table', row, 'xv', fmt2(pt.x), idx);
+            setCell('egg-table', row, 'yv', fmt2(pt.y), idx);
+            setCell('egg-table', row, 'zv', fmt2(z), idx);
+        });
+
+        // Tori-Werte
+        if (cur >= 7) {
+            // Schritt 8 → 9 Übergang: w-Spalte erscheint, Werte aber leer bis Step 9 stabil.
+            const wAppearing = (cur === 8 && prevIdx === 7);
+            const wTransitionRaw = raw;
+
+            const ut = S[cur].ut || 0;
+            const e = ut * ut * (3 - 2 * ut);
+            const swell = 1 + 0.22 * Math.sin(ut * Math.PI);
+            const sep = 0.95 * e;
+            const wobble = Math.sin(ut * Math.PI) * 0.18;
+            TORI_EX.forEach((ex) => {
+                const base = buildToriPoint(ex);
+                const dir = ex.c === 0 ? -1 : 1;
+                const x = base.x * swell + dir * sep;
+                const y = base.y * swell + dir * wobble;
+                const z = base.z * swell;
+                const w = dir * e;
+                setCellByPid('tori-table', ex.id, 'xv', fmt2(x));
+                setCellByPid('tori-table', ex.id, 'yv', fmt2(y));
+                setCellByPid('tori-table', ex.id, 'zv', fmt2(z));
+                // w: während 8→9-Übergang leer, danach Wert
+                const showEmpty = wAppearing && wTransitionRaw < 0.7;
+                const wText = showEmpty ? '—' : fmt2(w);
+                setCellByPid('tori-table', ex.id, 'wv', wText);
+                setCellEmpty('tori-table', ex.id, 'wv', showEmpty);
             });
         }
     }
@@ -153,6 +260,11 @@ const SpaceMorph = (() => {
         if (n === cur) return;
         dA0 = dragA; dB0 = dragB;
         prevIdx = cur; cur = n; t0 = performance.now();
+        if (n === 7) {
+            autoOrbitActive = false;
+            autoOrbitDone = false;
+            autoOrbitStart = 0;
+        }
         updateText();
     }
 
@@ -243,6 +355,8 @@ const SpaceMorph = (() => {
 
         axisGeom();
         const raw = clamp((now - t0) / DUR, 0, 1), u = ease(raw);
+        // Tabellen-Werte smooth mitziehen (w erscheint leer, füllt sich dann)
+        updateTables(raw);
         const a = S[prevIdx], b = S[cur];
         const L = lerp(a.L, b.L, u); pers = lerp(a.P, b.P, u);
         const prRaw = lerp(a.pr, b.pr, raw);
@@ -256,6 +370,19 @@ const SpaceMorph = (() => {
             fl = lerp(a.fail, b.fail, u) * (1 - tor),
             lb = lerp(a.lab, b.lab, u) * (1 - tor),
             bx = lerp(a.box, b.box, u);
+        const proj2d = lerp(a.proj || 0, b.proj || 0, u);
+        // Schritt-8-Auto-Orbit: 1× Pfeil-rechts → ~5 s sanfter 360°-Kamera-Umlauf.
+        if (autoOrbitActive && tor > 0.01) {
+            const elapsed = now - autoOrbitStart;
+            if (elapsed >= ORBIT_AUTO_DUR) {
+                autoOrbitActive = false;
+                autoOrbitDone = true;
+            } else {
+                const tt = elapsed / ORBIT_AUTO_DUR;
+                const e = ease(tt);
+                camA = autoOrbitFromAngle + e * Math.PI * 2;
+            }
+        }
         const lesson = 1 - tor;
         const fwd = b.pr > a.pr;
         const tCol = fwd ? sub(prRaw, 0, 1) : 1 - sub(1 - prRaw, 0, 1);
@@ -378,8 +505,47 @@ const SpaceMorph = (() => {
                 const r = (2.6 + 0.6 * it.s.k) * it.s.k;
                 ctx.beginPath(); ctx.arc(it.s.X, it.s.Y, r, 0, 6.2832);
                 ctx.fillStyle = it.c ? '#e11d48' : '#15803d';
-                ctx.globalAlpha = 0.4 + 0.6 * it.s.k; ctx.fill(); ctx.globalAlpha = 1;
+                ctx.globalAlpha = (0.4 + 0.6 * it.s.k) * (1 - proj2d * 0.55); ctx.fill(); ctx.globalAlpha = 1;
             });
+
+            // Sanfte 2D-Projektion: alle Punkte auf z=0 stauchen und mit Extra-Separation
+            // seitlich auseinanderziehen → 2 Ringe auf einer Ebene, ohne Überlappung.
+            // Wird bei Schritt 9 sichtbar (proj2d → 1) und überlagert die (noch verhakten)
+            // 3D-Tori — "selbst in 2D sind sie bereits trennbar".
+            if (proj2d > 0.01) {
+                const pitems = [];
+                const PROJ_EXTRA = 0.65;
+                TORI.forEach(p => {
+                    const q = untangle(ut, p);
+                    const dir = p.c === 0 ? -1 : 1;
+                    const pp = { x: q.x + dir * PROJ_EXTRA, y: q.y, z: 0 };
+                    pitems.push({ d: proj(pp).d, s: proj(pp), c: p.c });
+                });
+                pitems.sort((p, q) => p.d - q.d);
+                pitems.forEach(it => {
+                    const r = (3.2 + 0.7 * it.s.k) * it.s.k;
+                    ctx.beginPath(); ctx.arc(it.s.X, it.s.Y, r, 0, 6.2832);
+                    ctx.fillStyle = it.c ? '#e11d48' : '#15803d';
+                    ctx.globalAlpha = (0.45 + 0.55 * it.s.k) * proj2d;
+                    ctx.fill(); ctx.globalAlpha = 1;
+                });
+                // z=0-Bodenlinie, damit klar wird, dass es eine Projektion ist
+                if (proj2d > 0.3) {
+                    const pa = 0.7;
+                    const L1 = proj({ x: -1.6, y: -1.6, z: 0 }), L2 = proj({ x: 1.6, y: -1.6, z: 0 });
+                    const L3 = proj({ x: 1.6, y: 1.6, z: 0 }), L4 = proj({ x: -1.6, y: 1.6, z: 0 });
+                    ctx.globalAlpha = pa * proj2d;
+                    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; ctx.setLineDash([4, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(L1.X, L1.Y); ctx.lineTo(L2.X, L2.Y);
+                    ctx.lineTo(L3.X, L3.Y); ctx.lineTo(L4.X, L4.Y); ctx.closePath();
+                    ctx.stroke(); ctx.setLineDash([]);
+                    ctx.fillStyle = '#475569'; ctx.font = 'italic 13px Georgia';
+                    const tL = proj({ x: -1.6, y: 1.6, z: 0 });
+                    ctx.fillText('2D-Projektion (z = 0)', tL.X + 8, tL.Y - 6);
+                    ctx.globalAlpha = 1;
+                }
+            }
             // Trennebene am Ende: senkrechte Ebene x = const zwischen den Klumpen
             if (pl > 0.01) {
                 const PX = 0.36, E = 0.95, M = 7;
@@ -441,7 +607,25 @@ const SpaceMorph = (() => {
 
     function canGoNext() { return active && cur < S.length - 1; }
     function canGoPrev() { return active && cur > 0; }
-    function next() { if (canGoNext()) go(1); }
+    function next() {
+        if (!active || cur >= S.length - 1) return;
+        if (cur === 7) {
+            if (!autoOrbitActive && !autoOrbitDone) {
+                autoOrbitActive = true;
+                autoOrbitDone = false;
+                autoOrbitStart = performance.now();
+                autoOrbitFromAngle = camA;
+                updateText();
+                return;
+            }
+            // Animation läuft noch oder ist fertig → Schritt 9
+            autoOrbitActive = false;
+            autoOrbitDone = true;
+            go(1);
+            return;
+        }
+        go(1);
+    }
     function prev() { if (canGoPrev()) go(-1); }
 
     function init() {
@@ -461,7 +645,12 @@ const SpaceMorph = (() => {
         cur = 0; prevIdx = 0;
         dragA = 0; dragB = 0; dA0 = 0; dB0 = 0;
         pers = 1; FIT = 1; YOFF = 0;
+        autoOrbitActive = false;
+        autoOrbitDone = false;
+        autoOrbitStart = 0;
+        autoOrbitFromAngle = 0;
         if (inited) updateText();
+        updateTables();
     }
 
     return { init, reset, next, prev, canGoNext, canGoPrev, isOnSlide };
