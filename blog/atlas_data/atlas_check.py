@@ -132,7 +132,23 @@ def main():
           str(sorted(missing)[:10]))
 
     print("== bibliography.json ==")
-    check("entries == 2120", len(bib["entries"]) == 2120, str(len(bib["entries"])))
+    # derive the expected entry count from literature.js so this does not need
+    # re-bumping every time the bibliography grows (same top-level-key pattern
+    # as atlas_parse_bib.py).
+    lit = os.path.join(BLOG, "literature.js")
+    expected_entries = None
+    if os.path.exists(lit):
+        with open(lit, encoding="utf-8") as f:
+            # top-level bibData keys only (tab-indented), UNIQUE — must match
+            # the parse pattern in atlas_parse_bib.py. Unique because
+            # literature.js carries duplicate top-level keys (JS last-wins) and
+            # parse_bib dedupes them; counting occurrences would inflate the total.
+            expected_entries = len(set(re.findall(r'\n\t"([^"]+)"\s*:\s*\{', f.read())))
+    if expected_entries is not None:
+        check("entries match literature.js", len(bib["entries"]) == expected_entries,
+              "%d vs %d" % (len(bib["entries"]), expected_entries))
+    else:
+        check("literature.js present", False)
     cites_ok = all(all(s in slugs for s in v) for v in bib["cites"].values())
     check("cites slugs exist", cites_ok)
 
@@ -171,17 +187,23 @@ def main():
         check("threads present", False)
 
     print("== provenance ==")
+    import glob as _glob
     raw = os.path.join(HERE, "raw")
-    for f in ("out_part1.json", "out_part2.json", "out_part3.json", "out_part4.json",
-              "out_part5.json", "out_part6.json", "out_part7_polar.json",
-              "out_part8.json", "out_part9.json", "out_part10.json",
-              "placed_1.json", "placed_2.json",
-              "placed_3.json", "placed_4.json", "placed_5.json", "placed_6.json",
-              "placed_7.json", "placed_8.json", "placed_9.json",
-              "authors_chunk_1.json", "authors_chunk_2.json", "authors_chunk_3.json",
-              "authors_chunk_4.json", "authors_chunk_5.json", "authors_chunk_6.json",
-              "bib_parsed.json", "ne110_land.geojson", "ne110_borders.geojson"):
-        check("raw/%s" % f, os.path.exists(os.path.join(raw, f)))
+    # require each raw *family* to have at least one file (new out_partN /
+    # placed_N are picked up automatically — no re-bumping needed), plus the
+    # fixed inputs that must always be present.
+    families = {
+        "out_part*.json": "entity source list",
+        "placed_*.json": "author placement rows",
+        "authors_chunk_*.json": "bib author coverage chunks",
+        "bib_parsed.json": "parsed literature.js",
+        "ne110_land.geojson": "world land geometry",
+        "ne110_borders.geojson": "world border geometry",
+    }
+    for pat, desc in families.items():
+        hits = sorted(_glob.glob(os.path.join(raw, pat)))
+        check("raw/%s (%s)" % (pat, desc), len(hits) >= 1,
+              "%d file(s)" % len(hits))
 
     print()
     if FAILS:

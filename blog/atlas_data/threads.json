@@ -1208,6 +1208,222 @@
   "label": "Saturn V from Redstone Arsenal"
  },
  {
+  "kind": "influence",
+  "from": "person-yann-lecun",
+  "to": "person-alex-krizhevsky",
+  "y1": 1989,
+  "y2": 2012,
+  "label": "LeNet CNNs to AlexNet"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alex-krizhevsky",
+  "to": "person-ross-girshick",
+  "y1": 2012,
+  "y2": 2014,
+  "label": "CNN features to R-CNN"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ross-girshick",
+  "to": "person-shaoqing-ren",
+  "y1": 2014,
+  "y2": 2015,
+  "label": "R-CNN to Faster R-CNN"
+ },
+ {
+  "kind": "influence",
+  "from": "person-shaoqing-ren",
+  "to": "person-kaiming-he",
+  "y1": 2015,
+  "y2": 2017,
+  "label": "Faster R-CNN to Mask R-CNN"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ashish-vaswani",
+  "to": "person-alexey-dosovitskiy",
+  "y1": 2017,
+  "y2": 2021,
+  "label": "Transformers arrive in vision"
+ },
+ {
+  "kind": "influence",
+  "from": "person-alexey-dosovitskiy",
+  "to": "person-alec-radford",
+  "y1": 2021,
+  "y2": 2021,
+  "label": "ViT image tower in CLIP"
+ },
+ {
+  "kind": "influence",
+  "from": "person-sepp-hochreiter",
+  "to": "person-yoshua-bengio",
+  "y1": 1991,
+  "y2": 1994,
+  "label": "Vanishing gradient diagnosis"
+ },
+ {
+  "kind": "influence",
+  "from": "person-sepp-hochreiter",
+  "to": "person-kaiming-he",
+  "y1": 1991,
+  "y2": 2015,
+  "label": "Skip connections foreshadowed in the vanishing fix"
+ },
+ {
+  "kind": "influence",
+  "from": "person-juergen-schmidhuber",
+  "to": "person-kaiming-he",
+  "y1": 2015,
+  "y2": 2015,
+  "label": "Highway Networks to ResNet"
+ },
+ {
+  "kind": "influence",
+  "from": "person-kaiming-he",
+  "to": "person-ashish-vaswani",
+  "y1": 2015,
+  "y2": 2017,
+  "label": "Skip connections to the residual stream"
+ },
+ {
+  "kind": "influence",
+  "from": "person-sepp-hochreiter",
+  "to": "person-kyunghyun-cho",
+  "y1": 1997,
+  "y2": 2014,
+  "label": "LSTM gates to the GRU"
+ },
+ {
+  "kind": "influence",
+  "from": "person-sepp-hochreiter",
+  "to": "person-dzmitry-bahdanau",
+  "y1": 1997,
+  "y2": 2014,
+  "label": "LSTM to attention"
+ },
+ {
+  "kind": "influence",
+  "from": "person-christopher-watkins",
+  "to": "person-volodymyr-mnih",
+  "y1": 1989,
+  "y2": 2013,
+  "label": "Q-Learning to DQN"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ronald-j-williams",
+  "to": "person-john-schulman",
+  "y1": 1992,
+  "y2": 2017,
+  "label": "REINFORCE to PPO"
+ },
+ {
+  "kind": "influence",
+  "from": "person-richard-sutton",
+  "to": "person-john-schulman",
+  "y1": 1992,
+  "y2": 2017,
+  "label": "Policy gradients to PPO"
+ },
+ {
+  "kind": "influence",
+  "from": "person-volodymyr-mnih",
+  "to": "person-john-schulman",
+  "y1": 2016,
+  "y2": 2017,
+  "label": "A3C to PPO"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-schulman",
+  "to": "person-long-ouyang",
+  "y1": 2017,
+  "y2": 2022,
+  "label": "PPO to RLHF"
+ },
+ {
+  "kind": "influence",
+  "from": "person-paul-christiano",
+  "to": "person-long-ouyang",
+  "y1": 2017,
+  "y2": 2022,
+  "label": "RLHF to InstructGPT"
+ },
+ {
+  "kind": "influence",
+  "from": "person-long-ouyang",
+  "to": "person-rafael-rafailov",
+  "y1": 2022,
+  "y2": 2023,
+  "label": "RLHF to DPO"
+ },
+ {
+  "kind": "influence",
+  "from": "person-john-schulman",
+  "to": "person-zhihong-shao",
+  "y1": 2017,
+  "y2": 2024,
+  "label": "PPO to GRPO"
+ },
+ {
+  "kind": "influence",
+  "from": "person-yann-lecun",
+  "to": "person-anmol-gulati",
+  "y1": 1998,
+  "y2": 2020,
+  "label": "Convolutions to the Conformer"
+ },
+ {
+  "kind": "influence",
+  "from": "person-ashish-vaswani",
+  "to": "person-anmol-gulati",
+  "y1": 2017,
+  "y2": 2020,
+  "label": "Attention to the Conformer"
+ },
+ {
+  "kind": "influence",
+  "from": "person-kaiming-he",
+  "to": "person-alec-radford",
+  "y1": 2015,
+  "y2": 2021,
+  "label": "ResNet image tower in CLIP"
+ },
+ {
+  "kind": "influence",
+  "from": "person-kunihiko-fukushima",
+  "to": "artifact-neocognitron",
+  "y1": 1975,
+  "y2": 1980,
+  "label": "Fukushima builds the neocognitron"
+ },
+ {
+  "kind": "influence",
+  "from": "artifact-neocognitron",
+  "to": "person-yann-lecun",
+  "y1": 1980,
+  "y2": 1989,
+  "label": "Neocognitron to LeNet"
+ },
+ {
+  "kind": "influence",
+  "from": "person-kaiming-he",
+  "to": "artifact-resnet",
+  "y1": 2015,
+  "y2": 2015,
+  "label": "He builds ResNet"
+ },
+ {
+  "kind": "influence",
+  "from": "artifact-resnet",
+  "to": "person-alexey-dosovitskiy",
+  "y1": 2015,
+  "y2": 2021,
+  "label": "ResNet as the CNN baseline ViT is measured against"
+ },
+ {
   "kind": "signal",
   "from": "place-england",
   "to": "place-canada",
@@ -1338,7 +1554,7 @@
  {
   "kind": "signal",
   "from": "place-bletchley-park",
-  "to": "event-colossus-breaks-lorenz",
+  "to": "artifact-colossus-mark-2",
   "y1": 1943,
   "y2": 1944,
   "label": "Colossus breaks the Lorenz cipher"

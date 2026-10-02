@@ -225,6 +225,36 @@ INFLUENCE = [
     ("influence", "Luca Pacioli", "Venice", 1494, 1494, "Double-entry bookkeeping"),
     ("influence", "Margaret Hamilton", "MIT", 1962, 1969, "Apollo guidance software at MIT"),
     ("influence", "Wernher von Braun", "Huntsville", 1950, 1969, "Saturn V from Redstone Arsenal"),
+    # ── gap fill: vision / deep-learning / RL / multimodal lineage ──
+    ("influence", "Yann LeCun", "Alex Krizhevsky", 1989, 2012, "LeNet CNNs to AlexNet"),
+    ("influence", "Alex Krizhevsky", "Ross Girshick", 2012, 2014, "CNN features to R-CNN"),
+    ("influence", "Ross Girshick", "Shaoqing Ren", 2014, 2015, "R-CNN to Faster R-CNN"),
+    ("influence", "Shaoqing Ren", "Kaiming He", 2015, 2017, "Faster R-CNN to Mask R-CNN"),
+    ("influence", "Ashish Vaswani", "Alexey Dosovitskiy", 2017, 2021, "Transformers arrive in vision"),
+    ("influence", "Alexey Dosovitskiy", "Alec Radford", 2021, 2021, "ViT image tower in CLIP"),
+    ("influence", "Sepp Hochreiter", "Yoshua Bengio", 1991, 1994, "Vanishing gradient diagnosis"),
+    ("influence", "Sepp Hochreiter", "Kaiming He", 1991, 2015, "Skip connections foreshadowed in the vanishing fix"),
+    ("influence", "Jürgen Schmidhuber", "Kaiming He", 2015, 2015, "Highway Networks to ResNet"),
+    ("influence", "Kaiming He", "Ashish Vaswani", 2015, 2017, "Skip connections to the residual stream"),
+    ("influence", "Sepp Hochreiter", "Kyunghyun Cho", 1997, 2014, "LSTM gates to the GRU"),
+    ("influence", "Sepp Hochreiter", "Dzmitry Bahdanau", 1997, 2014, "LSTM to attention"),
+    ("influence", "Christopher Watkins", "Volodymyr Mnih", 1989, 2013, "Q-Learning to DQN"),
+    ("influence", "Ronald J. Williams", "John Schulman", 1992, 2017, "REINFORCE to PPO"),
+    ("influence", "Richard Sutton", "John Schulman", 1992, 2017, "Policy gradients to PPO"),
+    ("influence", "Volodymyr Mnih", "John Schulman", 2016, 2017, "A3C to PPO"),
+    ("influence", "John Schulman", "Long Ouyang", 2017, 2022, "PPO to RLHF"),
+    ("influence", "Paul Christiano", "Long Ouyang", 2017, 2022, "RLHF to InstructGPT"),
+    ("influence", "Long Ouyang", "Rafael Rafailov", 2022, 2023, "RLHF to DPO"),
+    ("influence", "John Schulman", "Zhihong Shao", 2017, 2024, "PPO to GRPO"),
+    ("influence", "Yann LeCun", "Anmol Gulati", 1998, 2020, "Convolutions to the Conformer"),
+    ("influence", "Ashish Vaswani", "Anmol Gulati", 2017, 2020, "Attention to the Conformer"),
+    ("influence", "Kaiming He", "Alec Radford", 2015, 2021, "ResNet image tower in CLIP"),
+    # thread the Neocognitron artifact into the CNN lineage
+    ("influence", "Kunihiko Fukushima", "Neocognitron", 1975, 1980, "Fukushima builds the neocognitron"),
+    ("influence", "Neocognitron", "Yann LeCun", 1980, 1989, "Neocognitron to LeNet"),
+    # ResNet artifact into the graph
+    ("influence", "Kaiming He", "ResNet", 2015, 2015, "He builds ResNet"),
+    ("influence", "ResNet", "Alexey Dosovitskiy", 2015, 2021, "ResNet as the CNN baseline ViT is measured against"),
 ]
 
 # (person_name, [stop names], y1, y2)

@@ -1,0 +1,770 @@
+[
+ [
+  "Matthias Hein",
+  51.51,
+  7.47,
+  "Dortmund, Germany",
+  2017,
+  1
+ ],
+ [
+  "Timur Garipov",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Pavel Izmailov",
+  55.76,
+  37.54,
+  "Moscow, Russia",
+  2018,
+  1
+ ],
+ [
+  "Dmitrii Podoprikhin",
+  55.76,
+  37.54,
+  "Moscow, Russia",
+  2018,
+  1
+ ],
+ [
+  "Dmitry Vetrov",
+  55.76,
+  37.54,
+  "Moscow, Russia",
+  2018,
+  1
+ ],
+ [
+  "Andrew Gordon Wilson",
+  37.43,
+  -122.17,
+  "Stanford, USA",
+  2018,
+  1
+ ],
+ [
+  "Dheevatsa Mudigere",
+  37.35,
+  -121.95,
+  "Santa Clara, USA",
+  2018,
+  1
+ ],
+ [
+  "Jorge Nocedal",
+  41.66,
+  -91.53,
+  "Iowa City, USA",
+  2019,
+  1
+ ],
+ [
+  "Mikhail Smelyanskiy",
+  55.76,
+  37.62,
+  "Moscow, Russia",
+  2018,
+  1
+ ],
+ [
+  "Ping Tak Peter Tang",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Sergey Ioffe",
+  43.65,
+  -79.38,
+  "Toronto, Canada",
+  2015,
+  1
+ ],
+ [
+  "Christian Szegedy",
+  37.39,
+  -122.08,
+  "Mountain View, USA",
+  2015,
+  1
+ ],
+ [
+  "Jeremy Cohen",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Simran Kaur",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Andrej Risteski",
+  33.78,
+  -84.39,
+  "Atlanta, USA",
+  2020,
+  1
+ ],
+ [
+  "Pratik Chaudhari",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Stefano Soatto",
+  34.07,
+  -118.44,
+  "Los Angeles, USA",
+  2020,
+  1
+ ],
+ [
+  "Carlo Baldi",
+  40.43,
+  -86.91,
+  "West Lafayette, USA",
+  2016,
+  1
+ ],
+ [
+  "Kurt Keutzer",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2020,
+  1
+ ],
+ [
+  "Stephan Mandt",
+  55.76,
+  37.54,
+  "Moscow, Russia",
+  2017,
+  1
+ ],
+ [
+  "Daniel J. Amit",
+  32.04,
+  34.82,
+  "Ramat Gan, Israel",
+  1992,
+  1
+ ],
+ [
+  "Kenji Kawaguchi",
+  34.69,
+  135.5,
+  "Osaka, Japan",
+  2017,
+  1
+ ],
+ [
+  "Yingcong Lu",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
+  34.22,
+  -118.1,
+  "Pasadena, USA",
+  2022,
+  1
+ ],
+ [
+  "Rectas",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Miles Olson et al.",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Maximilian Balandat et al.",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Takuya Akiba et al.",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Robert Boyle",
+  51.51,
+  -0.13,
+  "London, England",
+  1661,
+  1
+ ],
+ [
+  "A. Hirschvogel",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jabir ibn Hayyan",
+  32.03,
+  44.4,
+  "Kufa, Iraq",
+  750,
+  1
+ ],
+ [
+  "Thomas Wyck (attr.)",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Andreas Libavius",
+  50.93,
+  11.59,
+  "Jena, Germany",
+  1590,
+  1
+ ],
+ [
+  "Anonymous (French",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "13th century)",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Rajesh P. N. Rao",
+  47.66,
+  -122.31,
+  "Seattle, USA",
+  2004,
+  1
+ ],
+ [
+  "Dana H. Ballard",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "James C. R. Whittington",
+  51.75,
+  -1.26,
+  "Oxford, England",
+  2018,
+  1
+ ],
+ [
+  "Rafal Bogacz",
+  51.75,
+  -1.26,
+  "Oxford, England",
+  2006,
+  1
+ ],
+ [
+  "John O'Keefe",
+  51.51,
+  -0.13,
+  "London, England",
+  1971,
+  1
+ ],
+ [
+  "Jonathan Dostrovsky",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Nobel Assembly",
+  59.33,
+  18.07,
+  "Stockholm, Sweden",
+  1901,
+  1
+ ],
+ [
+  "Karolinska Institute",
+  59.33,
+  18.07,
+  "Stockholm, Sweden",
+  1901,
+  1
+ ],
+ [
+  "Kimberly L. Stachenfeld",
+  40.35,
+  -74.66,
+  "Princeton, USA",
+  2021,
+  1
+ ],
+ [
+  "Matthew M. Botvinick",
+  40.35,
+  -74.66,
+  "Princeton, USA",
+  2021,
+  1
+ ],
+ [
+  "Samuel J. Gershman",
+  42.36,
+  -71.09,
+  "Cambridge, USA",
+  2015,
+  1
+ ],
+ [
+  "Leslie G. Ungerleider",
+  32.88,
+  -117.24,
+  "La Jolla, USA",
+  1988,
+  1
+ ],
+ [
+  "Margaret Mishkin",
+  40.81,
+  -73.96,
+  "New York, USA",
+  1988,
+  1
+ ],
+ [
+  "Alan D. Baddeley",
+  51.51,
+  -0.13,
+  "London, England",
+  1974,
+  1
+ ],
+ [
+  "Neil Cowan",
+  32.88,
+  -117.24,
+  "San Diego, USA",
+  2001,
+  1
+ ],
+ [
+  "Gustav Theodor Fechner",
+  51.34,
+  12.37,
+  "Leipzig, Germany",
+  1860,
+  1
+ ],
+ [
+  "Kent C. Berridge",
+  42.28,
+  -83.74,
+  "Ann Arbor, USA",
+  2004,
+  1
+ ],
+ [
+  "Donald A. Waterhouse",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Georg B. Keller",
+  47.99,
+  7.85,
+  "Freiburg, Germany",
+  2015,
+  1
+ ],
+ [
+  "Thomas D. Mrsić-Flogel",
+  51.51,
+  -0.13,
+  "London, England",
+  2012,
+  1
+ ],
+ [
+  "Andre M. Bastos",
+  51.51,
+  -0.13,
+  "London, England",
+  2012,
+  1
+ ],
+ [
+  "W. Martin Usrey",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Rick A. Adams",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "George R. Mangun",
+  33.65,
+  -117.84,
+  "Irvine, USA",
+  2012,
+  1
+ ],
+ [
+  "Pascal Fries",
+  48.85,
+  2.35,
+  "Paris, France",
+  2012,
+  1
+ ],
+ [
+  "Karl J. Friston",
+  51.51,
+  -0.13,
+  "London, England",
+  2010,
+  1
+ ],
+ [
+  "Nicolas Affolter",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Beni Egressy",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Damian Pascual",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Roger Wattenhofer",
+  47.38,
+  8.55,
+  "Zurich, Switzerland",
+  2010,
+  1
+ ],
+ [
+  "Dan Schwartz",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Mariya Toneva",
+  37.77,
+  -122.42,
+  "San Francisco, USA",
+  2018,
+  1
+ ],
+ [
+  "Leila Wehbe",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Shinji Nishimoto",
+  47.66,
+  -122.31,
+  "Seattle, USA",
+  2011,
+  1
+ ],
+ [
+  "An T. Vu",
+  47.66,
+  -122.31,
+  "Seattle, USA",
+  2011,
+  1
+ ],
+ [
+  "Thomas Naselaris",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2011,
+  1
+ ],
+ [
+  "Yuval Benjamini",
+  31.91,
+  34.81,
+  "Rehovot, Israel",
+  2018,
+  1
+ ],
+ [
+  "Bin Yu",
+  47.66,
+  -122.31,
+  "Seattle, USA",
+  2014,
+  1
+ ],
+ [
+  "Jack L. Gallant",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2011,
+  1
+ ],
+ [
+  "Alexander G. Huth",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2016,
+  1
+ ],
+ [
+  "Wendy A. de Heer",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2016,
+  1
+ ],
+ [
+  "Frédéric E. Theunissen",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2016,
+  1
+ ],
+ [
+  "Emily J. Allen",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2016,
+  1
+ ],
+ [
+  "Ghislain St-Yves",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Yihan Wu",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jesse L. Breedlove",
+  42.34,
+  -71.11,
+  "Boston, USA",
+  2020,
+  1
+ ],
+ [
+  "Jacob S. Prince",
+  42.34,
+  -71.11,
+  "Boston, USA",
+  2020,
+  1
+ ],
+ [
+  "Adam Bales",
+  42.34,
+  -71.11,
+  "Boston, USA",
+  2020,
+  1
+ ],
+ [
+  "William D'Alessandro",
+  42.34,
+  -71.11,
+  "Boston, USA",
+  2020,
+  1
+ ],
+ [
+  "Cameron Domenico Kirk-Giannini",
+  42.34,
+  -71.11,
+  "Boston, USA",
+  2020,
+  1
+ ],
+ [
+  "Edgar D. Adrian",
+  52.21,
+  0.12,
+  "Cambridge, England",
+  1927,
+  1
+ ],
+ [
+  "A. Forbes",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Haldan K. Hartline",
+  40.81,
+  -73.96,
+  "New York, USA",
+  1950,
+  1
+ ],
+ [
+  "H. G. Wagner",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "F. Ratliff",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Nikolaus Kriegeskorte",
+  40.35,
+  -74.66,
+  "Princeton, USA",
+  2008,
+  1
+ ],
+ [
+  "Camille Caucheteux",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Alexandre Gramfort",
+  48.85,
+  2.35,
+  "Paris, France",
+  2014,
+  1
+ ],
+ [
+  "Jean-Remi King",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Eric Y. Wang",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Peter G. Fahey",
+  null,
+  null,
+  "",
+  0,
+  0
+ ]
+]

@@ -217,7 +217,8 @@ def norm_entity(e, source):
 
     cited_in = e.get("cited_in") or []
     if isinstance(cited_in, str):
-        cited_in = [cited_in]
+        # workers sometimes write "slug1,slug2" instead of ["slug1","slug2"]
+        cited_in = [c for c in cited_in.split(",") if c.strip()]
         repairs.append("cited_in-str")
     # workers sometimes use dash slugs (statistics-i); files use underscores
     raw_cited = [c.strip() for c in cited_in if isinstance(c, str) and c.strip()]

@@ -9489,7 +9489,7 @@
   ],
   "blurb": "German astrophysicist and director of computational astrophysics at the Max Planck Institute for Astrophysics; pioneer of cosmological simulation.",
   "cited_in": [
-   "map"
+   "atlas"
   ],
   "bibkeys": [
    "cosmic_web_foam_image"
@@ -9550,7 +9550,7 @@
   ],
   "blurb": "Theoretical astrophysics institute in Garching, north of Munich; source of the Atlas's large-scale-structure imagery.",
   "cited_in": [
-   "map"
+   "atlas"
   ],
   "bibkeys": [
    "cosmic_web_foam_image"
@@ -9571,7 +9571,7 @@
   ],
   "blurb": "European intergovernmental astronomy organization headquartered in Garching; operates the VLT in Chile.",
   "cited_in": [
-   "map"
+   "atlas"
   ],
   "bibkeys": [
    "starfield_eso_image"
@@ -9613,7 +9613,7 @@
   ],
   "blurb": "European intergovernmental space agency headquartered in Paris; partner on the Atlas's Hubble and CMB imagery.",
   "cited_in": [
-   "map"
+   "atlas"
   ],
   "bibkeys": [
    "crab_nebula_image"
@@ -9634,7 +9634,7 @@
   ],
   "blurb": "US agency for weather and ocean science; its VIIRS night-lights composite maps Earth's city lights in the Atlas.",
   "cited_in": [
-   "map"
+   "atlas"
   ],
   "bibkeys": [
    "earth_night_lights"

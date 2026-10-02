@@ -9369,7 +9369,9 @@
   "blurb": "A latent U-Net diffusion model for image generation; its ResBlocks use Conv → GroupNorm → SiLU.",
   "cited_in": [
    "activationlab",
-   "normalizationlab"
+   "normalizationlab",
+   "diffusion",
+   "music_video_generation"
   ],
   "bibkeys": [
    "rombach2022ldm"
@@ -9963,7 +9965,10 @@
    null
   ],
   "blurb": "Co-creator of DDPM and classifier-free guidance; NYU professor of data science",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "ho2020ddpm",
    "ho2022cfg"
@@ -10031,7 +10036,10 @@
    null
   ],
   "blurb": "Co-inventor of classifier-free guidance for diffusion models; OpenAI researcher",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "ho2022cfg"
   ],
@@ -10098,7 +10106,10 @@
    null
   ],
   "blurb": "Lead author of Latent Diffusion Models, the architecture behind Stable Diffusion",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "rombach2022ldm"
   ],
@@ -10119,7 +10130,10 @@
    null
   ],
   "blurb": "Co-author of Latent Diffusion Models; co-founder of Stability AI",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "rombach2022ldm"
   ],
@@ -10186,7 +10200,10 @@
    null
   ],
   "blurb": "Co-author of DiT (Scalable Diffusion Models with Transformers)",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "peebles2023dit"
   ],
@@ -10207,7 +10224,11 @@
    null
   ],
   "blurb": "Co-author of DiT and MAE; NYU professor of computer science",
-  "cited_in": [],
+  "cited_in": [
+   "computer_vision",
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "he2021mae",
    "peebles2023dit"
@@ -11754,7 +11775,10 @@
    null
   ],
   "blurb": "Lead author of Product Quantization for nearest neighbor search",
-  "cited_in": [],
+  "cited_in": [
+   "rag",
+   "vectorsearch"
+  ],
   "bibkeys": [
    "jegou2011pq"
   ],
@@ -11775,7 +11799,10 @@
    null
   ],
   "blurb": "Co-creator of FAISS; co-author of Product Quantization",
-  "cited_in": [],
+  "cited_in": [
+   "rag",
+   "vectorsearch"
+  ],
   "bibkeys": [
    "jegou2011pq",
    "johnson2017faiss"
@@ -11797,7 +11824,10 @@
    null
   ],
   "blurb": "INRIA director; co-author of Product Quantization",
-  "cited_in": [],
+  "cited_in": [
+   "rag",
+   "vectorsearch"
+  ],
   "bibkeys": [
    "jegou2011pq"
   ],
@@ -11864,7 +11894,10 @@
    null
   ],
   "blurb": "Denoising Diffusion Probabilistic Models by Ho, Jain & Abbeel; made image generation practical",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "ho2020ddpm"
   ],
@@ -11885,7 +11918,10 @@
    null
   ],
   "blurb": "Diffusion Transformer by Peebles & Xie; replaced U-Net as the denoiser backbone",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "peebles2023dit"
   ],
@@ -11975,7 +12011,10 @@
    null
   ],
   "blurb": "Training trick by Ho & Salimans that amplifies prompt adherence in diffusion models",
-  "cited_in": [],
+  "cited_in": [
+   "diffusion",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "ho2022cfg"
   ],
@@ -12040,7 +12079,11 @@
    null
   ],
   "blurb": "Contrastive Language-Image Pre-training by Radford et al.; aligns images and text",
-  "cited_in": [],
+  "cited_in": [
+   "computer_vision",
+   "multimodal",
+   "music_video_generation"
+  ],
   "bibkeys": [
    "radford2021clip"
   ],
@@ -12061,7 +12104,10 @@
    null
   ],
   "blurb": "Transformers applied to image patches by Dosovitskiy et al.; replaced CNNs as dominant vision architecture",
-  "cited_in": [],
+  "cited_in": [
+   "computer_vision",
+   "multimodal"
+  ],
   "bibkeys": [
    "dosovitskiy2021vit"
   ],
@@ -12197,7 +12243,10 @@
    null
   ],
   "blurb": "Technique by Mordvintsev, Olah & Tyka: gradient ascent on class scores to reveal what networks see",
-  "cited_in": [],
+  "cited_in": [
+   "computer_vision",
+   "inceptionism"
+  ],
   "bibkeys": [
    "mordvintsev2015inceptionism"
   ],
@@ -12425,7 +12474,10 @@
    null
   ],
   "blurb": "Google's end-to-end neural audio codec producing discrete codes at 6–24 kbps",
-  "cited_in": [],
+  "cited_in": [
+   "music_video_generation",
+   "speech_audio"
+  ],
   "bibkeys": [
    "zeghidour2021soundstream"
   ],
@@ -12446,7 +12498,10 @@
    null
   ],
   "blurb": "Meta's neural audio codec using residual vector quantization; foundation for MusicGen",
-  "cited_in": [],
+  "cited_in": [
+   "music_video_generation",
+   "speech_audio"
+  ],
   "bibkeys": [
    "defossez2022encodec"
   ],
@@ -12756,7 +12811,10 @@
    null
   ],
   "blurb": "Hierarchical Navigable Small World graphs; efficient approximate nearest neighbor search by Malkov & Yashunin",
-  "cited_in": [],
+  "cited_in": [
+   "rag",
+   "vectorsearch"
+  ],
   "bibkeys": [
    "malkov2018hnsw"
   ],
@@ -12869,7 +12927,10 @@
    null
   ],
   "blurb": "Compressing high-dimensional vectors for approximate nearest neighbor search by Jégou, Douzé & Schmid",
-  "cited_in": [],
+  "cited_in": [
+   "rag",
+   "vectorsearch"
+  ],
   "bibkeys": [
    "jegou2011pq"
   ],
@@ -12890,7 +12951,10 @@
    null
   ],
   "blurb": "Framework by Yao et al. interleaving reasoning traces and tool actions in LLM agents",
-  "cited_in": [],
+  "cited_in": [
+   "agents",
+   "promptengineering"
+  ],
   "bibkeys": [
    "yao2023react"
   ],
@@ -12980,7 +13044,10 @@
    null
   ],
   "blurb": "Technique by Wei et al. that elicits multi-step reasoning by prompting with intermediate steps",
-  "cited_in": [],
+  "cited_in": [
+   "unexpected_capabilities",
+   "promptengineering"
+  ],
   "bibkeys": [
    "wei2022chainofthought",
    "wei2022cot"
@@ -13025,7 +13092,10 @@
    null
   ],
   "blurb": "Deliberate problem solving with LLMs: generate, evaluate, and branch over reasoning paths (Yao et al.)",
-  "cited_in": [],
+  "cited_in": [
+   "unexpected_capabilities",
+   "promptengineering"
+  ],
   "bibkeys": [
    "yao2023tot"
   ],
@@ -13046,7 +13116,10 @@
    null
   ],
   "blurb": "Language agents with verbal reinforcement learning by Shinn et al.",
-  "cited_in": [],
+  "cited_in": [
+   "agents",
+   "promptengineering"
+  ],
   "bibkeys": [
    "shinn2023reflexion"
   ],
@@ -13067,7 +13140,10 @@
    null
   ],
   "blurb": "Iterative refinement where a single LLM generates, critiques, and improves its own outputs (Madaan et al.)",
-  "cited_in": [],
+  "cited_in": [
+   "unexpected_capabilities",
+   "promptengineering"
+  ],
   "bibkeys": [
    "madaan2023selfrefine"
   ],
@@ -13365,7 +13441,10 @@
    null
   ],
   "blurb": "Home of LLaVA, Self-Refine, TruthfulQA, and other key LLM research",
-  "cited_in": [],
+  "cited_in": [
+   "multimodal",
+   "unexpected_capabilities"
+  ],
   "bibkeys": [],
   "conf": "known",
   "source": "out_part12.json",
@@ -38559,7 +38638,9 @@
    2026.0
   ],
   "blurb": "German astrophysicist and director of computational astrophysics at the Max Planck Institute for Astrophysics; pioneer of cosmological simulation.",
-  "cited_in": [],
+  "cited_in": [
+   "atlas"
+  ],
   "bibkeys": [
    "cosmic_web_foam_image"
   ],
@@ -38624,7 +38705,9 @@
    2026.0
   ],
   "blurb": "Theoretical astrophysics institute in Garching, north of Munich; source of the Atlas's large-scale-structure imagery.",
-  "cited_in": [],
+  "cited_in": [
+   "atlas"
+  ],
   "bibkeys": [
    "cosmic_web_foam_image"
   ],
@@ -38645,7 +38728,9 @@
    2026.0
   ],
   "blurb": "European intergovernmental astronomy organization headquartered in Garching; operates the VLT in Chile.",
-  "cited_in": [],
+  "cited_in": [
+   "atlas"
+  ],
   "bibkeys": [
    "starfield_eso_image"
   ],
@@ -38689,7 +38774,9 @@
    2026.0
   ],
   "blurb": "European intergovernmental space agency headquartered in Paris; partner on the Atlas's Hubble and CMB imagery.",
-  "cited_in": [],
+  "cited_in": [
+   "atlas"
+  ],
   "bibkeys": [
    "crab_nebula_image"
   ],
@@ -38710,7 +38797,9 @@
    2026.0
   ],
   "blurb": "US agency for weather and ocean science; its VIIRS night-lights composite maps Earth's city lights in the Atlas.",
-  "cited_in": [],
+  "cited_in": [
+   "atlas"
+  ],
   "bibkeys": [
    "earth_night_lights"
   ],

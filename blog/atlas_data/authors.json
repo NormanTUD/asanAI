@@ -4826,8 +4826,8 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "moscowpapyrus",
-   "img_flaming_heart"
+   "img_flaming_heart",
+   "moscowpapyrus"
   ],
   "cited_in": [
    "geometry_i",
@@ -10042,6 +10042,4848 @@
   "works": 1,
   "keys": [
    "allegre1995age"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Mohamed A. Mabrok",
+  "canon": "Mohamed A. Mabrok",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mabrok2026latent"
+  ],
+  "cited_in": [
+   "foam_of_meaning"
+  ]
+ },
+ {
+  "name": "Peter Gärdenfors",
+  "canon": "Peter Gärdenfors",
+  "alias": null,
+  "lat": 59.8586,
+  "lng": 17.6389,
+  "city": "Uppsala, Sweden",
+  "year": 2000.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "gardenfors2000conceptual"
+  ],
+  "cited_in": [
+   "foam_of_meaning"
+  ]
+ },
+ {
+  "name": "R. David Joseph",
+  "canon": "R. David Joseph",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "joseph1961perceptron"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Belmont G. Farley",
+  "canon": "Belmont G. Farley",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "farleyclark1954"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Wesley A. Clark",
+  "canon": "Wesley A. Clark",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2018.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "farleyclark1954"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Shibo Hao",
+  "canon": "Shibo Hao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hao2025coconut"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Sainbayar Sukhbaatar",
+  "canon": "Sainbayar Sukhbaatar",
+  "alias": null,
+  "lat": 37.572,
+  "lng": -122.3434,
+  "city": "Menlo Park, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "hao2025coconut"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "DiJia Su",
+  "canon": "DiJia Su",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hao2025coconut"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Xian Li",
+  "canon": "Xian Li",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hao2025coconut"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Zhiting Hu",
+  "canon": "Zhiting Hu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hao2025coconut"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Michael Rizvi-Martel",
+  "canon": "Michael Rizvi-Martel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rizvimartel2026illusion"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Guillaume Rabusseau",
+  "canon": "Guillaume Rabusseau",
+  "alias": null,
+  "lat": 45.5019,
+  "lng": -73.5674,
+  "city": "Montreal, Canada",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rizvimartel2026illusion"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Marius Mosbach",
+  "canon": "Marius Mosbach",
+  "alias": null,
+  "lat": 51.5393,
+  "lng": 9.9362,
+  "city": "Göttingen, Germany",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rizvimartel2026illusion"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Timothée Darcet",
+  "canon": "Timothée Darcet",
+  "alias": null,
+  "lat": 48.8566,
+  "lng": 2.3522,
+  "city": "Paris, France",
+  "year": 2024.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "darcet2024registers"
+  ],
+  "cited_in": [
+   "attentionlab",
+   "computer_vision"
+  ]
+ },
+ {
+  "name": "Maxime Oquab",
+  "canon": "Maxime Oquab",
+  "alias": null,
+  "lat": 48.8566,
+  "lng": 2.3522,
+  "city": "Paris, France",
+  "year": 2024.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "darcet2024registers"
+  ],
+  "cited_in": [
+   "attentionlab",
+   "computer_vision"
+  ]
+ },
+ {
+  "name": "Julien Mairal",
+  "canon": "Julien Mairal",
+  "alias": null,
+  "lat": 48.8566,
+  "lng": 2.3522,
+  "city": "Paris, France",
+  "year": 2024.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "darcet2024registers"
+  ],
+  "cited_in": [
+   "attentionlab",
+   "computer_vision"
+  ]
+ },
+ {
+  "name": "Piotr Bojanowski",
+  "canon": "Piotr Bojanowski",
+  "alias": null,
+  "lat": 48.8566,
+  "lng": 2.3522,
+  "city": "Paris, France",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "darcet2024registers"
+  ],
+  "cited_in": [
+   "attentionlab",
+   "computer_vision"
+  ]
+ },
+ {
+  "name": "Nicola Cancedda",
+  "canon": "Nicola Cancedda",
+  "alias": null,
+  "lat": 48.8566,
+  "lng": 2.3522,
+  "city": "Paris, France",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "cancedda2024sinks"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Jeffrey T. H. Wong",
+  "canon": "Jeffrey T. H. Wong",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wong2025sinks"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Cheng Zhang",
+  "canon": "Cheng Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2022.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wong2025sinks"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Louis Mahon",
+  "canon": "Louis Mahon",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wong2025sinks"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Wayne Luk",
+  "canon": "Wayne Luk",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wong2025sinks"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Anton Isopoussu",
+  "canon": "Anton Isopoussu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wong2025sinks"
+  ],
+  "cited_in": [
+   "attentionlab"
+  ]
+ },
+ {
+  "name": "Evelina Fedorenko",
+  "canon": "Evelina Fedorenko",
+  "alias": null,
+  "lat": 42.3601,
+  "lng": -71.0942,
+  "city": "Cambridge, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 3,
+  "keys": [
+   "fedorenko2011language",
+   "fedorenko2024nature",
+   "hosseini2024universality"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability",
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Michael K. Behr",
+  "canon": "Michael K. Behr",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "fedorenko2011language"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Nancy Kanwisher",
+  "canon": "Nancy Kanwisher",
+  "alias": null,
+  "lat": 42.3601,
+  "lng": -71.0942,
+  "city": "Cambridge, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "fedorenko2011language"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Marie Amalric",
+  "canon": "Marie Amalric",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "amalric2019neuroimage"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Martin M. Monti",
+  "canon": "Martin M. Monti",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "monti2007neuroimage"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Daniel N. Osherson",
+  "canon": "Daniel N. Osherson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "monti2007neuroimage"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Michael J. Martinez",
+  "canon": "Michael J. Martinez",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "monti2007neuroimage"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Lawrence M. Parsons",
+  "canon": "Lawrence M. Parsons",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "monti2007neuroimage"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Steven T. Piantadosi",
+  "canon": "Steven T. Piantadosi",
+  "alias": null,
+  "lat": 39.9526,
+  "lng": -75.1652,
+  "city": "Philadelphia, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "fedorenko2024nature"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "Edward A. F. Gibson",
+  "canon": "Edward A. F. Gibson",
+  "alias": null,
+  "lat": 42.3601,
+  "lng": -71.0942,
+  "city": "Cambridge, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "fedorenko2024nature"
+  ],
+  "cited_in": [
+   "mechanistic_interpretability"
+  ]
+ },
+ {
+  "name": "David Ha",
+  "canon": "David Ha",
+  "alias": null,
+  "lat": 37.402,
+  "lng": -122.0787,
+  "city": "Mountain View, United States",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ha2018worldmodels"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Thomas Unterthiner",
+  "canon": "Thomas Unterthiner",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "unterthiner2018fvd"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Sjoerd van Steenkiste",
+  "canon": "Sjoerd van Steenkiste",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "unterthiner2018fvd"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Karol Kurach",
+  "canon": "Karol Kurach",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "unterthiner2018fvd"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Sergey Tulyakov",
+  "canon": "Sergey Tulyakov",
+  "alias": null,
+  "lat": 37.3541,
+  "lng": -121.9552,
+  "city": "Santa Clara, United States",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "tulyakov2018mocogan"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Ming-Yu Liu",
+  "canon": "Ming-Yu Liu",
+  "alias": null,
+  "lat": 37.3541,
+  "lng": -121.9552,
+  "city": "Santa Clara, United States",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "tulyakov2018mocogan"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Xiaodong Yang",
+  "canon": "Xiaodong Yang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tulyakov2018mocogan"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Jan Kautz",
+  "canon": "Jan Kautz",
+  "alias": null,
+  "lat": 37.3541,
+  "lng": -121.9552,
+  "city": "Santa Clara, United States",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "tulyakov2018mocogan"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Wilson Yan",
+  "canon": "Wilson Yan",
+  "alias": null,
+  "lat": 37.3541,
+  "lng": -121.9552,
+  "city": "Santa Clara, United States",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "yan2021videogpt"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Yunzhi Zhang",
+  "canon": "Yunzhi Zhang",
+  "alias": null,
+  "lat": 37.3541,
+  "lng": -121.9552,
+  "city": "Santa Clara, United States",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "yan2021videogpt"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Aravind Srinivas",
+  "canon": "Aravind Srinivas",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "yan2021videogpt"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Max Bain",
+  "canon": "Max Bain",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bain2021webvid"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Arsha Nagrani",
+  "canon": "Arsha Nagrani",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bain2021webvid"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Gül Varol",
+  "canon": "Gül Varol",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bain2021webvid"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Uriel Singer",
+  "canon": "Uriel Singer",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "singer2022makeavideo"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Adam Polyak",
+  "canon": "Adam Polyak",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "singer2022makeavideo"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Thomas Hayes",
+  "canon": "Thomas Hayes",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "singer2022makeavideo"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "William Chan",
+  "canon": "William Chan",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ho2022imagenvideo"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Chitwan Saharia",
+  "canon": "Chitwan Saharia",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ho2022imagenvideo"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Tim Dockhorn",
+  "canon": "Tim Dockhorn",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "blattmann2023svid"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Sumith Kulal",
+  "canon": "Sumith Kulal",
+  "alias": null,
+  "lat": 37.7749,
+  "lng": -122.4194,
+  "city": "San Francisco, United States",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "blattmann2023svid"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Neil Zeghidour",
+  "canon": "Neil Zeghidour",
+  "alias": null,
+  "lat": 47.3769,
+  "lng": 8.5417,
+  "city": "Zürich, Switzerland",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "zeghidour2021soundstream"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Alejandro Luebs",
+  "canon": "Alejandro Luebs",
+  "alias": null,
+  "lat": 47.3769,
+  "lng": 8.5417,
+  "city": "Zürich, Switzerland",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "zeghidour2021soundstream"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Ahmed Omran",
+  "canon": "Ahmed Omran",
+  "alias": null,
+  "lat": 47.3769,
+  "lng": 8.5417,
+  "city": "Zürich, Switzerland",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "zeghidour2021soundstream"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Jan Skoglund",
+  "canon": "Jan Skoglund",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zeghidour2021soundstream"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Marco Tagliasacchi",
+  "canon": "Marco Tagliasacchi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2021.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "zeghidour2021soundstream"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Zalán Borsos",
+  "canon": "Zalán Borsos",
+  "alias": null,
+  "lat": 47.3769,
+  "lng": 8.5417,
+  "city": "Zürich, Switzerland",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 2,
+  "keys": [
+   "borsos2023audiolm",
+   "agostinelli2023musiqlm"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Raphaël Marinier",
+  "canon": "Raphaël Marinier",
+  "alias": null,
+  "lat": 47.3769,
+  "lng": 8.5417,
+  "city": "Zürich, Switzerland",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "borsos2023audiolm"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Damien Vincent",
+  "canon": "Damien Vincent",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2023.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "borsos2023audiolm"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Andrea Agostinelli",
+  "canon": "Andrea Agostinelli",
+  "alias": null,
+  "lat": 47.3769,
+  "lng": 8.5417,
+  "city": "Zürich, Switzerland",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "agostinelli2023musiqlm"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Timo I. Denk",
+  "canon": "Timo I. Denk",
+  "alias": null,
+  "lat": 47.3769,
+  "lng": 8.5417,
+  "city": "Zürich, Switzerland",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "agostinelli2023musiqlm"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Melissa Ursula Dawn Goldsmith",
+  "canon": "Melissa Ursula Dawn Goldsmith",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "midi_keyboard_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Xato",
+  "canon": "Xato",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "oscilloscope_waveform_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "liamz2r",
+  "canon": "liamz2r",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cd_compact_disc_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Sagenat2",
+  "canon": "Sagenat2",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "audio_spectrogram_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Evan-Amos",
+  "canon": "Evan-Amos",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "vinyl_lp_record_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "mannyisdead",
+  "canon": "mannyisdead",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "film_strip_35mm_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "LoMit",
+  "canon": "LoMit",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "vhs_cassette_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Alexandre Rebollal Lucas",
+  "canon": "Alexandre Rebollal Lucas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "h264_coding_structure_img"
+  ],
+  "cited_in": [
+   "music_video_generation"
+  ]
+ },
+ {
+  "name": "Unmismoobjetivo",
+  "canon": "Unmismoobjetivo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cosmic_web_texture_image"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Pablo Carlos Budassi",
+  "canon": "Pablo Carlos Budassi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "budassi_universe_image"
+  ],
+  "cited_in": [
+   "atlas",
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Amil Merchant",
+  "canon": "Amil Merchant",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "merchant2023gnome"
+  ],
+  "cited_in": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Simon Batzner",
+  "canon": "Simon Batzner",
+  "alias": null,
+  "lat": 40.3431,
+  "lng": -74.6551,
+  "city": "Princeton, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "merchant2023gnome"
+  ],
+  "cited_in": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Murat A. Aykol",
+  "canon": "Murat A. Aykol",
+  "alias": null,
+  "lat": 35.9312,
+  "lng": -84.2991,
+  "city": "Oak Ridge, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "merchant2023gnome"
+  ],
+  "cited_in": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Kambis Veschgini",
+  "canon": "Kambis Veschgini",
+  "alias": null,
+  "lat": 40.3431,
+  "lng": -74.6551,
+  "city": "Princeton, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "draxler_mode_connectivity"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Gabe Guo",
+  "canon": "Gabe Guo",
+  "alias": null,
+  "lat": 40.3431,
+  "lng": -74.6551,
+  "city": "Princeton, United States",
+  "year": 2023.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "litman2026theory"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "U.S. Senate",
+  "canon": "U.S. Senate",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_ranger7_impact"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Committee on Aeronautical and Space Sciences (via the Digital Public Library of America)",
+  "canon": "Committee on Aeronautical and Space Sciences",
+  "alias": "via the Digital Public Library of America",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_ranger7_impact"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Caglar Gulcehre",
+  "canon": "Caglar Gulcehre",
+  "alias": null,
+  "lat": 43.6532,
+  "lng": -79.3832,
+  "city": "Toronto, Canada",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 2,
+  "keys": [
+   "dauphin2014saddle",
+   "dauphin2014identifying"
+  ],
+  "cited_in": [
+   "deeplearninglab",
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Anna Choromanska",
+  "canon": "Anna Choromanska",
+  "alias": null,
+  "lat": 45.5019,
+  "lng": -73.5674,
+  "city": "Montreal, Canada",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 2,
+  "keys": [
+   "choromanska2015loss",
+   "chaudhari2016entropysgd"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Mikael Henaff",
+  "canon": "Mikael Henaff",
+  "alias": null,
+  "lat": 48.8566,
+  "lng": 2.3522,
+  "city": "Paris, France",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "choromanska2015loss"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Michael Mathieu",
+  "canon": "Michael Mathieu",
+  "alias": null,
+  "lat": 45.5019,
+  "lng": -73.5674,
+  "city": "Montreal, Canada",
+  "year": 2011.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "choromanska2015loss"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Gérard Ben Arous",
+  "canon": "Gérard Ben Arous",
+  "alias": null,
+  "lat": 48.8566,
+  "lng": 2.3522,
+  "city": "Paris, France",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "choromanska2015loss"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Yan V. Fyodorov",
+  "canon": "Yan V. Fyodorov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2019.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "fyodorov2007complexity"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Ian N. Williams",
+  "canon": "Ian N. Williams",
+  "alias": null,
+  "lat": 51.752,
+  "lng": -1.2577,
+  "city": "Oxford, United Kingdom",
+  "year": 2006.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "fyodorov2007complexity"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Dhagash Mehta",
+  "canon": "Dhagash Mehta",
+  "alias": null,
+  "lat": 40.7128,
+  "lng": -74.006,
+  "city": "New York, United States",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "mehta2018lossxor"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Xiaojun Zhao",
+  "canon": "Xiaojun Zhao",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mehta2018lossxor"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Edgar A. Bernal",
+  "canon": "Edgar A. Bernal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mehta2018lossxor"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "David J. Wales",
+  "canon": "David J. Wales",
+  "alias": null,
+  "lat": 52.386,
+  "lng": -1.5712,
+  "city": "Warwick, United Kingdom",
+  "year": 2002.0,
+  "conf": 1,
+  "works": 2,
+  "keys": [
+   "mehta2018lossxor",
+   "wales2003energy"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Lei Wu",
+  "canon": "Lei Wu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wu2017towards"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Zhanxing Zhu",
+  "canon": "Zhanxing Zhu",
+  "alias": null,
+  "lat": 31.2304,
+  "lng": 121.4737,
+  "city": "Shanghai, China",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "wu2017towards"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Weinan E",
+  "canon": "Weinan E",
+  "alias": null,
+  "lat": 31.2304,
+  "lng": 121.4737,
+  "city": "Shanghai, China",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "wu2017towards"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Quynh Nguyen",
+  "canon": "Quynh Nguyen",
+  "alias": null,
+  "lat": 45.5019,
+  "lng": -73.5674,
+  "city": "Montreal, Canada",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nguyen2017loss"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Matthias Hein",
+  "canon": "Matthias Hein",
+  "alias": null,
+  "lat": 51.51,
+  "lng": 7.47,
+  "city": "Dortmund, Germany",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nguyen2017loss"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Timur Garipov",
+  "canon": "Timur Garipov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "garipov2018mode"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Pavel Izmailov",
+  "canon": "Pavel Izmailov",
+  "alias": null,
+  "lat": 55.76,
+  "lng": 37.54,
+  "city": "Moscow, Russia",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "garipov2018mode"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Dmitrii Podoprikhin",
+  "canon": "Dmitrii Podoprikhin",
+  "alias": null,
+  "lat": 55.76,
+  "lng": 37.54,
+  "city": "Moscow, Russia",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "garipov2018mode"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Dmitry Vetrov",
+  "canon": "Dmitry Vetrov",
+  "alias": null,
+  "lat": 55.76,
+  "lng": 37.54,
+  "city": "Moscow, Russia",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "garipov2018mode"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Andrew Gordon Wilson",
+  "canon": "Andrew Gordon Wilson",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "garipov2018mode"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Dheevatsa Mudigere",
+  "canon": "Dheevatsa Mudigere",
+  "alias": null,
+  "lat": 37.35,
+  "lng": -121.95,
+  "city": "Santa Clara, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "keskar2016largebatch"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Jorge Nocedal",
+  "canon": "Jorge Nocedal",
+  "alias": null,
+  "lat": 41.66,
+  "lng": -91.53,
+  "city": "Iowa City, USA",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "keskar2016largebatch"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Mikhail Smelyanskiy",
+  "canon": "Mikhail Smelyanskiy",
+  "alias": null,
+  "lat": 55.76,
+  "lng": 37.62,
+  "city": "Moscow, Russia",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "keskar2016largebatch"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Ping Tak Peter Tang",
+  "canon": "Ping Tak Peter Tang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "keskar2016largebatch"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Sergey Ioffe",
+  "canon": "Sergey Ioffe",
+  "alias": null,
+  "lat": 43.65,
+  "lng": -79.38,
+  "city": "Toronto, Canada",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ioffe2015batchnorm"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Christian Szegedy",
+  "canon": "Christian Szegedy",
+  "alias": null,
+  "lat": 37.39,
+  "lng": -122.08,
+  "city": "Mountain View, USA",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ioffe2015batchnorm"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Jeremy Cohen",
+  "canon": "Jeremy Cohen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cohen2021edgeofstability"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Simran Kaur",
+  "canon": "Simran Kaur",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cohen2021edgeofstability"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Andrej Risteski",
+  "canon": "Andrej Risteski",
+  "alias": null,
+  "lat": 33.78,
+  "lng": -84.39,
+  "city": "Atlanta, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "cohen2021edgeofstability"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Pratik Chaudhari",
+  "canon": "Pratik Chaudhari",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "chaudhari2016entropysgd"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Stefano Soatto",
+  "canon": "Stefano Soatto",
+  "alias": null,
+  "lat": 34.07,
+  "lng": -118.44,
+  "city": "Los Angeles, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "chaudhari2016entropysgd"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Carlo Baldi",
+  "canon": "Carlo Baldi",
+  "alias": null,
+  "lat": 40.43,
+  "lng": -86.91,
+  "city": "West Lafayette, USA",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "chaudhari2016entropysgd"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Kurt Keutzer",
+  "canon": "Kurt Keutzer",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "chaudhari2016entropysgd"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Stephan Mandt",
+  "canon": "Stephan Mandt",
+  "alias": null,
+  "lat": 55.76,
+  "lng": 37.54,
+  "city": "Moscow, Russia",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "mandt2017variational"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Daniel J. Amit",
+  "canon": "Daniel J. Amit",
+  "alias": null,
+  "lat": 32.04,
+  "lng": 34.82,
+  "city": "Ramat Gan, Israel",
+  "year": 1992.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "amit1989modeling"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Kenji Kawaguchi",
+  "canon": "Kenji Kawaguchi",
+  "alias": null,
+  "lat": 34.69,
+  "lng": 135.5,
+  "city": "Osaka, Japan",
+  "year": 2017.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "kawaguchi2016deep"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Yingcong Lu",
+  "canon": "Yingcong Lu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2017expressive"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
+  "canon": "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
+  "alias": null,
+  "lat": 34.22,
+  "lng": -118.1,
+  "city": "Pasadena, USA",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "titan_contour_map"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Rectas",
+  "canon": "Rectas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hyperbolic_paraboloid_saddle"
+  ],
+  "cited_in": [
+   "loss_landscape"
+  ]
+ },
+ {
+  "name": "Miles Olson et al.",
+  "canon": "Miles Olson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "olson2025ax"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Maximilian Balandat et al.",
+  "canon": "Maximilian Balandat",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "balandat2020botorch"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Takuya Akiba et al.",
+  "canon": "Takuya Akiba",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "akiba2019optuna"
+  ],
+  "cited_in": [
+   "hyperparameters"
+  ]
+ },
+ {
+  "name": "Robert Boyle",
+  "canon": "Robert Boyle",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, England",
+  "year": 1661.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "sceptical_chymist_text"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "A. Hirschvogel",
+  "canon": "A. Hirschvogel",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_paracelsus_portrait"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jabir ibn Hayyan",
+  "canon": "Jabir ibn Hayyan",
+  "alias": null,
+  "lat": 32.03,
+  "lng": 44.4,
+  "city": "Kufa, Iraq",
+  "year": 750.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "img_jabir_alembic"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Thomas Wyck (attr.)",
+  "canon": "Thomas Wyck",
+  "alias": "attr.",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_alchemist_studio"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Andreas Libavius",
+  "canon": "Andreas Libavius",
+  "alias": null,
+  "lat": 50.93,
+  "lng": 11.59,
+  "city": "Jena, Germany",
+  "year": 1590.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "img_libavius_alembics"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Anonymous (French",
+  "canon": "Anonymous (French",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_merlin_enchanteur"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "13th century)",
+  "canon": "13th century",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_merlin_enchanteur"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Rajesh P. N. Rao",
+  "canon": "Rajesh P. N. Rao",
+  "alias": null,
+  "lat": 47.66,
+  "lng": -122.31,
+  "city": "Seattle, USA",
+  "year": 2004.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rao1999predictive"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Dana H. Ballard",
+  "canon": "Dana H. Ballard",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rao1999predictive"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "James C. R. Whittington",
+  "canon": "James C. R. Whittington",
+  "alias": null,
+  "lat": 51.75,
+  "lng": -1.26,
+  "city": "Oxford, England",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "whittington2019backprop"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Rafal Bogacz",
+  "canon": "Rafal Bogacz",
+  "alias": null,
+  "lat": 51.75,
+  "lng": -1.26,
+  "city": "Oxford, England",
+  "year": 2006.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "whittington2019backprop"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "John O'Keefe",
+  "canon": "John O'Keefe",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, England",
+  "year": 1971.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "okeefe1971place"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Jonathan Dostrovsky",
+  "canon": "Jonathan Dostrovsky",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "okeefe1971place"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Nobel Assembly",
+  "canon": "Nobel Assembly",
+  "alias": null,
+  "lat": 59.33,
+  "lng": 18.07,
+  "city": "Stockholm, Sweden",
+  "year": 1901.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nobel2014spatial"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Karolinska Institute",
+  "canon": "Karolinska Institute",
+  "alias": null,
+  "lat": 59.33,
+  "lng": 18.07,
+  "city": "Stockholm, Sweden",
+  "year": 1901.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nobel2014spatial"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Kimberly L. Stachenfeld",
+  "canon": "Kimberly L. Stachenfeld",
+  "alias": null,
+  "lat": 40.35,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "stachenfeld2017predictivemap"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Matthew M. Botvinick",
+  "canon": "Matthew M. Botvinick",
+  "alias": null,
+  "lat": 40.35,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 2021.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "stachenfeld2017predictivemap"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Samuel J. Gershman",
+  "canon": "Samuel J. Gershman",
+  "alias": null,
+  "lat": 42.36,
+  "lng": -71.09,
+  "city": "Cambridge, USA",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "stachenfeld2017predictivemap"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Leslie G. Ungerleider",
+  "canon": "Leslie G. Ungerleider",
+  "alias": null,
+  "lat": 32.88,
+  "lng": -117.24,
+  "city": "La Jolla, USA",
+  "year": 1988.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ungerleider1982twostreams"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Margaret Mishkin",
+  "canon": "Margaret Mishkin",
+  "alias": null,
+  "lat": 40.81,
+  "lng": -73.96,
+  "city": "New York, USA",
+  "year": 1988.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ungerleider1982twostreams"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Alan D. Baddeley",
+  "canon": "Alan D. Baddeley",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, England",
+  "year": 1974.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "baddeley1986workingmemory"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Neil Cowan",
+  "canon": "Neil Cowan",
+  "alias": null,
+  "lat": 32.88,
+  "lng": -117.24,
+  "city": "San Diego, USA",
+  "year": 2001.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "cowan2001magical4"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Gustav Theodor Fechner",
+  "canon": "Gustav Theodor Fechner",
+  "alias": null,
+  "lat": 51.34,
+  "lng": 12.37,
+  "city": "Leipzig, Germany",
+  "year": 1860.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "fechner1860psychophysics"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Kent C. Berridge",
+  "canon": "Kent C. Berridge",
+  "alias": null,
+  "lat": 42.28,
+  "lng": -83.74,
+  "city": "Ann Arbor, USA",
+  "year": 2004.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "berridge2006dopamine"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Donald A. Waterhouse",
+  "canon": "Donald A. Waterhouse",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "berridge2006dopamine"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Georg B. Keller",
+  "canon": "Georg B. Keller",
+  "alias": null,
+  "lat": 47.99,
+  "lng": 7.85,
+  "city": "Freiburg, Germany",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "keller2018canonical"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Thomas D. Mrsić-Flogel",
+  "canon": "Thomas D. Mrsić-Flogel",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, England",
+  "year": 2012.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "keller2018canonical"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Andre M. Bastos",
+  "canon": "Andre M. Bastos",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, England",
+  "year": 2012.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bastos2012microcircuit"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "W. Martin Usrey",
+  "canon": "W. Martin Usrey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bastos2012microcircuit"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Rick A. Adams",
+  "canon": "Rick A. Adams",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bastos2012microcircuit"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "George R. Mangun",
+  "canon": "George R. Mangun",
+  "alias": null,
+  "lat": 33.65,
+  "lng": -117.84,
+  "city": "Irvine, USA",
+  "year": 2012.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bastos2012microcircuit"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Pascal Fries",
+  "canon": "Pascal Fries",
+  "alias": null,
+  "lat": 48.85,
+  "lng": 2.35,
+  "city": "Paris, France",
+  "year": 2012.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bastos2012microcircuit"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Karl J. Friston",
+  "canon": "Karl J. Friston",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, England",
+  "year": 2010.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bastos2012microcircuit"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Nicolas Affolter",
+  "canon": "Nicolas Affolter",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "affolter2020brain2word"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Beni Egressy",
+  "canon": "Beni Egressy",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "affolter2020brain2word"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Damian Pascual",
+  "canon": "Damian Pascual",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "affolter2020brain2word"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Roger Wattenhofer",
+  "canon": "Roger Wattenhofer",
+  "alias": null,
+  "lat": 47.38,
+  "lng": 8.55,
+  "city": "Zurich, Switzerland",
+  "year": 2010.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "affolter2020brain2word"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Dan Schwartz",
+  "canon": "Dan Schwartz",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "schwartz2019brainbias"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Mariya Toneva",
+  "canon": "Mariya Toneva",
+  "alias": null,
+  "lat": 37.77,
+  "lng": -122.42,
+  "city": "San Francisco, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "schwartz2019brainbias"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Leila Wehbe",
+  "canon": "Leila Wehbe",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "schwartz2019brainbias"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Shinji Nishimoto",
+  "canon": "Shinji Nishimoto",
+  "alias": null,
+  "lat": 47.66,
+  "lng": -122.31,
+  "city": "Seattle, USA",
+  "year": 2011.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nishimoto2011reconstruct"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "An T. Vu",
+  "canon": "An T. Vu",
+  "alias": null,
+  "lat": 47.66,
+  "lng": -122.31,
+  "city": "Seattle, USA",
+  "year": 2011.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nishimoto2011reconstruct"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Thomas Naselaris",
+  "canon": "Thomas Naselaris",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2011.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nishimoto2011reconstruct"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Yuval Benjamini",
+  "canon": "Yuval Benjamini",
+  "alias": null,
+  "lat": 31.91,
+  "lng": 34.81,
+  "city": "Rehovot, Israel",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nishimoto2011reconstruct"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Bin Yu",
+  "canon": "Bin Yu",
+  "alias": null,
+  "lat": 47.66,
+  "lng": -122.31,
+  "city": "Seattle, USA",
+  "year": 2014.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nishimoto2011reconstruct"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Jack L. Gallant",
+  "canon": "Jack L. Gallant",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2011.0,
+  "conf": 1,
+  "works": 2,
+  "keys": [
+   "nishimoto2011reconstruct",
+   "huth2016semanticmaps"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Alexander G. Huth",
+  "canon": "Alexander G. Huth",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "huth2016semanticmaps"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Wendy A. de Heer",
+  "canon": "Wendy A. de Heer",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "huth2016semanticmaps"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Frédéric E. Theunissen",
+  "canon": "Frédéric E. Theunissen",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "huth2016semanticmaps"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Emily J. Allen",
+  "canon": "Emily J. Allen",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "allen2022nsd"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Ghislain St-Yves",
+  "canon": "Ghislain St-Yves",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "allen2022nsd"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Yihan Wu",
+  "canon": "Yihan Wu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "allen2022nsd"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Jesse L. Breedlove",
+  "canon": "Jesse L. Breedlove",
+  "alias": null,
+  "lat": 42.34,
+  "lng": -71.11,
+  "city": "Boston, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "allen2022nsd"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Jacob S. Prince",
+  "canon": "Jacob S. Prince",
+  "alias": null,
+  "lat": 42.34,
+  "lng": -71.11,
+  "city": "Boston, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "allen2022nsd"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Adam Bales",
+  "canon": "Adam Bales",
+  "alias": null,
+  "lat": 42.34,
+  "lng": -71.11,
+  "city": "Boston, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bales2024catastrophic"
+  ],
+  "cited_in": [
+   "ai_existential_risk"
+  ]
+ },
+ {
+  "name": "William D'Alessandro",
+  "canon": "William D'Alessandro",
+  "alias": null,
+  "lat": 42.34,
+  "lng": -71.11,
+  "city": "Boston, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bales2024catastrophic"
+  ],
+  "cited_in": [
+   "ai_existential_risk"
+  ]
+ },
+ {
+  "name": "Cameron Domenico Kirk-Giannini",
+  "canon": "Cameron Domenico Kirk-Giannini",
+  "alias": null,
+  "lat": 42.34,
+  "lng": -71.11,
+  "city": "Boston, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bales2024catastrophic"
+  ],
+  "cited_in": [
+   "ai_existential_risk"
+  ]
+ },
+ {
+  "name": "Edgar D. Adrian",
+  "canon": "Edgar D. Adrian",
+  "alias": null,
+  "lat": 52.21,
+  "lng": 0.12,
+  "city": "Cambridge, England",
+  "year": 1927.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "adrian1922allornothing"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "A. Forbes",
+  "canon": "A. Forbes",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "adrian1922allornothing"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Haldan K. Hartline",
+  "canon": "Haldan K. Hartline",
+  "alias": null,
+  "lat": 40.81,
+  "lng": -73.96,
+  "city": "New York, USA",
+  "year": 1950.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "hartline1956limulus"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "H. G. Wagner",
+  "canon": "H. G. Wagner",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hartline1956limulus"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "F. Ratliff",
+  "canon": "F. Ratliff",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hartline1956limulus"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Nikolaus Kriegeskorte",
+  "canon": "Nikolaus Kriegeskorte",
+  "alias": null,
+  "lat": 40.35,
+  "lng": -74.66,
+  "city": "Princeton, USA",
+  "year": 2008.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "kriegeskorte2015dcnn"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Camille Caucheteux",
+  "canon": "Camille Caucheteux",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "caucheteux2023predictive"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Alexandre Gramfort",
+  "canon": "Alexandre Gramfort",
+  "alias": null,
+  "lat": 48.85,
+  "lng": 2.35,
+  "city": "Paris, France",
+  "year": 2014.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "caucheteux2023predictive"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Jean-Remi King",
+  "canon": "Jean-Remi King",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "caucheteux2023predictive"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Eric Y. Wang",
+  "canon": "Eric Y. Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2025foundation"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Peter G. Fahey",
+  "canon": "Peter G. Fahey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2025foundation"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Zechen Ding",
+  "canon": "Zechen Ding",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2025foundation"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Friedrich S. Sinz",
+  "canon": "Friedrich S. Sinz",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2025foundation"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Anton S. Tolias",
+  "canon": "Anton S. Tolias",
+  "alias": null,
+  "lat": 29.7,
+  "lng": -95.38,
+  "city": "Houston, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "wang2025foundation"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Ehsan Hosseini",
+  "canon": "Ehsan Hosseini",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hosseini2024universality"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Christopher Casto",
+  "canon": "Christopher Casto",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hosseini2024universality"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Nick Zaslavsky",
+  "canon": "Nick Zaslavsky",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hosseini2024universality"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Christopher Conwell",
+  "canon": "Christopher Conwell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hosseini2024universality"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Michael Richardson",
+  "canon": "Michael Richardson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hosseini2024universality"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Weicheng Lu",
+  "canon": "Weicheng Lu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2025fmritotext"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Deyu Nie",
+  "canon": "Deyu Nie",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2025fmritotext"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Peng Xue",
+  "canon": "Peng Xue",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2025fmritotext"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Zihan Cui",
+  "canon": "Zihan Cui",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2025fmritotext"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Peng Li",
+  "canon": "Peng Li",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2025fmritotext"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Di Zhang",
+  "canon": "Di Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2025fmritotext"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Xiaowei Wen",
+  "canon": "Xiaowei Wen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lu2025fmritotext"
+  ],
+  "cited_in": [
+   "mirror_in_machine"
+  ]
+ },
+ {
+  "name": "Claude Shannon",
+  "canon": "Claude Shannon",
+  "alias": null,
+  "lat": 40.85,
+  "lng": -74.42,
+  "city": "Murray Hill, USA",
+  "year": 1948.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "mccarthy1956dartmouth"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Joel Becker",
+  "canon": "Joel Becker",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "becker2025metr"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Nate Rush",
+  "canon": "Nate Rush",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "becker2025metr"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Elizabeth Barnes",
+  "canon": "Elizabeth Barnes",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "becker2025metr"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Sida Peng",
+  "canon": "Sida Peng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "peng2023copilot"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Eirini Kalliamvakou",
+  "canon": "Eirini Kalliamvakou",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "peng2023copilot"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Peter Cihon",
+  "canon": "Peter Cihon",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "peng2023copilot"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Dana Li",
+  "canon": "Dana Li",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "brynjolfsson2023genai"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Lindsey Raymond",
+  "canon": "Lindsey Raymond",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "brynjolfsson2023genai"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "The Nobel Foundation",
+  "canon": "The Nobel Foundation",
+  "alias": null,
+  "lat": 59.33,
+  "lng": 18.06,
+  "city": "Stockholm, Sweden",
+  "year": 0.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nobel2024chemistry"
+  ],
+  "cited_in": [
+   "ai_and_society",
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Brendan Romera-Paredes",
+  "canon": "Brendan Romera-Paredes",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Miniumo Lokshtanov",
+  "canon": "Miniumo Lokshtanov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Ahmed Obaid",
+  "canon": "Ahmed Obaid",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Carlos Pulido",
+  "canon": "Carlos Pulido",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Jørgen N. Rosenblatt",
+  "canon": "Jørgen N. Rosenblatt",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Pablo Sessa",
+  "canon": "Pablo Sessa",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Manas Rietzler",
+  "canon": "Manas Rietzler",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Tanmay Jayaram",
+  "canon": "Tanmay Jayaram",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Pushmeet Kohli",
+  "canon": "Pushmeet Kohli",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Alvaro Sanchez",
+  "canon": "Alvaro Sanchez",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "romera2023funsearch"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Kang Bi",
+  "canon": "Kang Bi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Liheng Xie",
+  "canon": "Liheng Xie",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Heng Chang",
+  "canon": "Heng Chang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Xiaodian Chen",
+  "canon": "Xiaodian Chen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Xiaotian Ma",
+  "canon": "Xiaotian Ma",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Ping Luo",
+  "canon": "Ping Luo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Limin Wang",
+  "canon": "Limin Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Qibo Chen",
+  "canon": "Qibo Chen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Xinghao Chen",
+  "canon": "Xinghao Chen",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bi2023pangu"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Romain Beaumont",
+  "canon": "Romain Beaumont",
+  "alias": null,
+  "lat": 45.5,
+  "lng": -73.57,
+  "city": "Montreal, Canada",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "laion2022blog"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Christoph Schuhmann",
+  "canon": "Christoph Schuhmann",
+  "alias": null,
+  "lat": 50.74,
+  "lng": 7.09,
+  "city": "Bonn, Germany",
+  "year": 2022.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "laion2022blog"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Jenia Jitsev",
+  "canon": "Jenia Jitsev",
+  "alias": null,
+  "lat": 40.11,
+  "lng": -88.22,
+  "city": "Urbana, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "laion2022blog"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Pew Research Center",
+  "canon": "Pew Research Center",
+  "alias": null,
+  "lat": 38.9,
+  "lng": -77.03,
+  "city": "Washington, USA",
+  "year": 0.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "pew2026ai"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Cade Metz",
+  "canon": "Cade Metz",
+  "alias": null,
+  "lat": 40.71,
+  "lng": -74.0,
+  "city": "New York, USA",
+  "year": 0.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "bartz2025anthropic"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Stack Overflow",
+  "canon": "Stack Overflow",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "stackoverflow2024ai"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Christine McLeavey",
+  "canon": "Christine McLeavey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "whisper2022"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Svetlana Kirillov",
+  "canon": "Svetlana Kirillov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "popel2020cubitt"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Sanchit Kumar",
+  "canon": "Sanchit Kumar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "popel2020cubitt"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Be My Eyes",
+  "canon": "Be My Eyes",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "beemyeyes2023",
+   "beemyeyes_site"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Sunny Yu",
+  "canon": "Sunny Yu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "speedup_illusion2025"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Myra Cheng",
+  "canon": "Myra Cheng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "speedup_illusion2025"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Ahmad Jabbar",
+  "canon": "Ahmad Jabbar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "speedup_illusion2025"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Ilia Sucholutsky",
+  "canon": "Ilia Sucholutsky",
+  "alias": null,
+  "lat": 45.5,
+  "lng": -73.57,
+  "city": "Montreal, Canada",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "speedup_illusion2025"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Katherine M. Collins",
+  "canon": "Katherine M. Collins",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "speedup_illusion2025"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Dan Jurafsky",
+  "canon": "Dan Jurafsky",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2020.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "speedup_illusion2025"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Robert D. Hawkins",
+  "canon": "Robert D. Hawkins",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "speedup_illusion2025"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Google and Eedi",
+  "canon": "Google and Eedi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "learnlm2025rct"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Brett Prather",
+  "canon": "Brett Prather",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "prather2023copilot"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Jey Hong",
+  "canon": "Jey Hong",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "prather2023copilot"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Thomas D. LaToza",
+  "canon": "Thomas D. LaToza",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "prather2023copilot"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "George Georgiou",
+  "canon": "George Georgiou",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "georgiou2025lazy"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Guti et al.",
+  "canon": "Guti",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "huti2026jagged"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Caosun",
+  "canon": "Caosun",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "caosun2026augmentation"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Sun and Aral",
+  "canon": "Sun and Aral",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "caosun2026augmentation"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Seda",
+  "canon": "Seda",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "caosun2026augmentation"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Kokkas et al.",
+  "canon": "Kokkas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kokkas2026evidence"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Kubota et al.",
+  "canon": "Kubota",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kubota2026replication"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Wikipedia contributors (original: Paul & Matthews",
+  "canon": "Wikipedia contributors (original: Paul & Matthews",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rand2016firehose"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "RAND Corporation",
+  "canon": "RAND Corporation",
+  "alias": null,
+  "lat": 34.02,
+  "lng": -118.48,
+  "city": "Santa Monica, USA",
+  "year": 0.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rand2016firehose"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Bellingcat",
+  "canon": "Bellingcat",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "bellingcat2025india",
+   "bellingcat2026bjp"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "C2PA Steering Committee",
+  "canon": "C2PA Steering Committee",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "c2pa_wiki"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Lihi Idan",
+  "canon": "Lihi Idan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "idan2026complementarity"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Bharat Anand",
+  "canon": "Bharat Anand",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "idan2026complementarity"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Serge Lang",
+  "canon": "Serge Lang",
+  "alias": null,
+  "lat": 42.36,
+  "lng": -71.09,
+  "city": "Cambridge, USA",
+  "year": 1964.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "lang2005basicmath"
+  ],
+  "cited_in": [
+   "math_i",
+   "math_iii",
+   "math_iv"
+  ]
+ },
+ {
+  "name": "Stephen Boyd",
+  "canon": "Stephen Boyd",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2004.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "boyd2018appliedlinearalgebra"
+  ],
+  "cited_in": [
+   "geometry_ii",
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Lieven Vandenberghe",
+  "canon": "Lieven Vandenberghe",
+  "alias": null,
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Stanford, USA",
+  "year": 2004.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "boyd2018appliedlinearalgebra"
+  ],
+  "cited_in": [
+   "geometry_ii",
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Sheldon Axler",
+  "canon": "Sheldon Axler",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 1996.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "axler2024linearalgebra"
+  ],
+  "cited_in": [
+   "geometry_ii",
+   "math_ii"
+  ]
+ },
+ {
+  "name": "Sigmundur Gudmundsson",
+  "canon": "Sigmundur Gudmundsson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "gudmundsson2004riemannian"
+  ],
+  "cited_in": [
+   "geometry_i"
+  ]
+ },
+ {
+  "name": "Sidney A. Morris",
+  "canon": "Sidney A. Morris",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "morris2007topology"
+  ],
+  "cited_in": [
+   "geometry_i",
+   "geometry_iii",
+   "math_iv",
+   "topology"
+  ]
+ },
+ {
+  "name": "William Gilbert",
+  "canon": "William Gilbert",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, UK",
+  "year": 1600.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "gilbert1600magnete"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Edmond Halley",
+  "canon": "Edmond Halley",
+  "alias": null,
+  "lat": 51.75,
+  "lng": -1.26,
+  "city": "Oxford, UK",
+  "year": 1705.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "halley1692magnetic"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jan Baptist van Helmont",
+  "canon": "Jan Baptist van Helmont",
+  "alias": null,
+  "lat": 51.21,
+  "lng": 3.22,
+  "city": "Bruges, Belgium",
+  "year": 1600.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "helmont1648ortus"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Stephen Hales",
+  "canon": "Stephen Hales",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, UK",
+  "year": 1727.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "hales1727vegetable"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Joseph Black",
+  "canon": "Joseph Black",
+  "alias": null,
+  "lat": 55.86,
+  "lng": -4.25,
+  "city": "Glasgow, UK",
+  "year": 1756.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "black1756fixedair"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Joseph Priestley",
+  "canon": "Joseph Priestley",
+  "alias": null,
+  "lat": 52.58,
+  "lng": -1.98,
+  "city": "Walsall, UK",
+  "year": 1774.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "priestley1771airs"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Carl Wilhelm Scheele",
+  "canon": "Carl Wilhelm Scheele",
+  "alias": null,
+  "lat": 59.86,
+  "lng": 17.64,
+  "city": "Uppsala, Sweden",
+  "year": 1772.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "scheele1777airfire"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jan Ingenhousz",
+  "canon": "Jan Ingenhousz",
+  "alias": null,
+  "lat": 52.07,
+  "lng": 4.3,
+  "city": "The Hague, Netherlands",
+  "year": 1779.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "ingenhousz1779experiments"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jean Senebier",
+  "canon": "Jean Senebier",
+  "alias": null,
+  "lat": 46.2,
+  "lng": 6.14,
+  "city": "Geneva, Switzerland",
+  "year": 1782.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "senebier1783recherches"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Antoine Lavoisier",
+  "canon": "Antoine Lavoisier",
+  "alias": null,
+  "lat": 48.85,
+  "lng": 2.35,
+  "city": "Paris, France",
+  "year": 1789.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "lavoisier1789traite"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Nicolas-Théodore de Saussure",
+  "canon": "Nicolas-Théodore de Saussure",
+  "alias": null,
+  "lat": 46.2,
+  "lng": 6.14,
+  "city": "Geneva, Switzerland",
+  "year": 1804.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "desaussure1804recherches"
   ],
   "cited_in": [
    "untold_history"
@@ -22659,10 +27501,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "eisgalgen_mittenwald"
   ],
   "cited_in": [
    "ai_for_science",
@@ -28952,10 +33794,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "metropolis_hastings_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "metropolis_hastings_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -52778,10 +57620,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "monte_carlo_animation_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -54684,10 +59526,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_astronaut_img"
   ],
   "cited_in": [
    "ai_for_science",
