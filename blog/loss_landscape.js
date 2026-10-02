@@ -17,9 +17,9 @@
 const PLOT_DENSITY_STEP = 0.1;
 
 const OPTIMIZER_INFO = {
-	SGD:      { factory: (lr) => tf.train.sgd(lr),                  color: "#f43f5e", defaultLr: 0.05, dash: "solid",   symbol: "circle",      line3Dash: "solid",    marker3Symbol: "circle" },
-	Momentum: { factory: (lr) => tf.train.momentum(lr, 0.9, false), color: "#84cc16", defaultLr: 0.05, dash: "dashdot", symbol: "diamond",     line3Dash: "dashdot", marker3Symbol: "diamond" },
-	Adam:     { factory: (lr) => tf.train.adam(lr),                color: "#fb923c", defaultLr: 0.05, dash: "dash",    symbol: "square",      line3Dash: "dash",    marker3Symbol: "square" },
+	SGD:      { factory: (lr) => tf.train.sgd(lr),                  color: "#ef4444", defaultLr: 0.05, dash: "solid",   symbol: "circle",      line3Dash: "solid",    marker3Symbol: "circle" },
+	Momentum: { factory: (lr) => tf.train.momentum(lr, 0.9, false), color: "#a855f7", defaultLr: 0.05, dash: "dashdot", symbol: "diamond",     line3Dash: "dashdot", marker3Symbol: "diamond" },
+	Adam:     { factory: (lr) => tf.train.adam(lr),                color: "#ec4899", defaultLr: 0.05, dash: "dash",    symbol: "square",      line3Dash: "dash",    marker3Symbol: "square" },
 	RMSProp:  { factory: (lr) => tf.train.rmsprop(lr),             color: "#22d3ee", defaultLr: 0.01, dash: "dot",     symbol: "triangle-up", line3Dash: "dot",     marker3Symbol: "triangle-up" }
 };
 

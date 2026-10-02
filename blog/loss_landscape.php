@@ -304,6 +304,42 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	font-size: 0.82rem;
 	color: var(--mn-text-secondary, #5C5043);
 }
+.ll-lab .ll-cam-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 10px;
+	flex-wrap: wrap;
+}
+.ll-lab .ll-cam-label {
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--mn-accent, #6366f1);
+	margin-right: 4px;
+}
+.ll-lab .ll-cam-btn {
+	background: var(--mn-bg-subtle, #F2EBD9);
+	color: var(--mn-text, #3A2F25);
+	border: 1px solid var(--mn-border-light, #E8DFC6);
+	border-radius: 6px;
+	padding: 4px 10px;
+	font-size: 0.8rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.15s;
+	margin: 0;
+}
+.ll-lab .ll-cam-btn:hover {
+	background: var(--mn-surface-raised, #EBE3CE);
+}
+.ll-lab .ll-cam-hint {
+	font-size: 0.75rem;
+	color: var(--mn-text-secondary, #5C5043);
+	font-style: italic;
+	margin-left: auto;
+}
 </style>
 
 <div class="ll-lab">
@@ -364,6 +400,16 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	<div class="ll-readout">
 		<span class="ll-readout-label">Current model</span>
 		<div id="ll-equation" class="ll-equation"></div>
+	</div>
+
+	<div class="ll-cam-bar">
+		<span class="ll-cam-label">3-D view</span>
+		<button type="button" class="ll-cam-btn" onclick="setCam3D('iso')">Isometric</button>
+		<button type="button" class="ll-cam-btn" onclick="setCam3D('top')">Top</button>
+		<button type="button" class="ll-cam-btn" onclick="setCam3D('front')">Front</button>
+		<button type="button" class="ll-cam-btn" onclick="setCam3D('side')">Side</button>
+		<button type="button" class="ll-cam-btn" onclick="setCam3D('reset')">Reset</button>
+		<span class="ll-cam-hint">drag = rotate · scroll = zoom · shift-drag = pan</span>
 	</div>
 
 	<div id="ll-3d-plot" class="ll-plot-3d" data-plot-theme="self"></div>
