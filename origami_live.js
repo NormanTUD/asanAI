@@ -5189,23 +5189,10 @@ var OrigamiLive = (function (global) {
 				_state.dirty = true;
 			}
 
-			// --- Aktives Neuron rotieren (Mini-Netz-Highlight) ---
-			if (cfg.animate) {
-				var newNeuron = Math.floor(_state.timeAccum * 1.1) % 8;
-				if (newNeuron !== _state.activeNeuron) {
-					_state.activeNeuron = newNeuron;
-					_updateNetDiagram(_state.pipeline);
-				}
-			}
-
-			// --- Shader-Uniforms aktualisieren ---
-			if (cfg.animate) {
-				_updateUniforms(_state.timeAccum);
-				_state.dirty = true;
-			} else {
-				// Kamera-Position muss trotzdem in die Sheet-Shader
-				_updateCamUniforms();
-			}
+			// --- Kamera-Position in die Shader schieben ---
+			// (Pulsierende Kanten sind entfernt — uTime wird nicht mehr
+			// animiert, also reicht das hier für die Sheet-Beleuchtung.)
+			_updateCamUniforms();
 
 			if (!_state.dirty) {
 				_autoQualityTick((global.performance && performance.now
