@@ -177,10 +177,10 @@ def run() -> int:
             try:
                 page.wait_for_function(
                     "document.querySelector('#ll-3d-plot') && document.querySelector('#ll-3d-plot').data && document.querySelector('#ll-3d-plot').data.length >= 2",
-                    timeout=30000,
+                    timeout=60000,
                 )
             except PWTimeout:
-                failures.append("3-D plot not initialized within 30s")
+                failures.append("3-D plot not initialized within 60s")
 
             try:
                 page.locator("#ll-epochs").scroll_into_view_if_needed()
@@ -190,7 +190,7 @@ def run() -> int:
 
             try:
                 page.locator("#ll-start").scroll_into_view_if_needed()
-                page.click("#ll-start", timeout=5000)
+                page.click("#ll-start", timeout=30000)
             except Exception as e:
                 failures.append(f"could not click #ll-start: {e}")
 

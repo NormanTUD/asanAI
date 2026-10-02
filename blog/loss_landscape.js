@@ -275,31 +275,42 @@ function createModel(initW, initB) {
 }
 
 function ensureSurfaceCoversTrajectories(xsT, ysT) {
-	const allW = [], allB = [];
-	(state.currentOptimizers || []).forEach(name => {
+	const optimizers = state.currentOptimizers || [];
+	if (optimizers.length === 0) return;
+	const initLoss = state.model && state.model.loss;
+	const initLossValid = initLoss !== null && initLoss !== undefined && isFinite(initLoss);
+
+	const allW = [], allB = [], allLosses = [];
+	optimizers.forEach(name => {
 		const w = state.trajW && state.trajW[name];
 		const b = state.trajB && state.trajB[name];
-		if (Array.isArray(w)) allW.push(...w);
-		if (Array.isArray(b)) allB.push(...b);
+		const losses = state.lossHistory[name] || [];
+		const lossesFull = initLossValid ? [initLoss, ...losses] : losses.slice();
+		if (!Array.isArray(w) || !Array.isArray(b)) return;
+		const n = Math.min(w.length, b.length, lossesFull.length);
+		for (let i = 0; i < n; i++) {
+			allW.push(w[i]);
+			allB.push(b[i]);
+			allLosses.push(lossesFull[i]);
+		}
 	});
 	if (allW.length === 0) return;
 
-	const minW = Math.min.apply(null, allW);
-	const maxW = Math.max.apply(null, allW);
-	const minB = Math.min.apply(null, allB);
-	const maxB = Math.max.apply(null, allB);
-
-	const pad = 1.0;
-	const loW = Math.floor((minW - pad) * 10) / 10;
-	const hiW = Math.ceil((maxW + pad) * 10) / 10;
-	const loB = Math.floor((minB - pad) * 10) / 10;
-	const hiB = Math.ceil((maxB + pad) * 10) / 10;
-
-	for (let b = loB; b <= hiB + 1e-9; b = Math.round((b + 0.1) * 10) / 10) {
-		for (let w = loW; w <= hiW + 1e-9; w = Math.round((w + 0.1) * 10) / 10) {
-			const loss = computeLossForWeights(w, b, xsT, ysT, state.activation);
-			state.landscape.W.push(w);
-			state.landscape.B.push(b);
+	for (let i = 0; i < allW.length; i++) {
+		const w = allW[i], b = allB[i], loss = allLosses[i];
+		const wSnap = Math.round(w * 10) / 10;
+		const bSnap = Math.round(b * 10) / 10;
+		let replaced = false;
+		for (let k = 0; k < state.landscape.W.length; k++) {
+			if (Math.abs(state.landscape.W[k] - wSnap) < 0.05 && Math.abs(state.landscape.B[k] - bSnap) < 0.05) {
+				state.landscape.L[k] = loss;
+				replaced = true;
+				break;
+			}
+		}
+		if (!replaced) {
+			state.landscape.W.push(wSnap);
+			state.landscape.B.push(bSnap);
 			state.landscape.L.push(loss);
 		}
 	}
@@ -330,23 +341,35 @@ function calculatePredictionLine(w, b) {
 async function sampleLandscapeAround(w0, b0, buffer, xsT, ysT) {
 	const minW = w0 - buffer, maxW = w0 + buffer;
 	const minB = b0 - buffer, maxB = b0 + buffer;
-	const Ws = [], Bs = [], Ls = [];
-	const losses = [];
-	let count = 0;
-	const step = 0.2;
-	const totalEst = Math.ceil((maxW - minW) / step + 1) * Math.ceil((maxB - minB) / step + 1);
+	const Ws = [], Bs = [];
+	const step = 0.1;
 	for (let b = Math.floor(minB / step) * step; b <= Math.ceil(maxB / step) * step + 1e-9; b = Math.round((b + step) * 10) / 10) {
 		for (let w = Math.floor(minW / step) * step; w <= Math.ceil(maxW / step) * step + 1e-9; w = Math.round((w + step) * 10) / 10) {
 			Ws.push(w);
 			Bs.push(b);
-			losses.push(calculateLoss(w, b, xsT, ysT));
-			count++;
-			if (count % 200 === 0) {
-				setStatus(`Sampling loss surface: ${count}/${totalEst}`);
-				await tf.nextFrame();
-			}
 		}
 	}
+	setStatus(`Sampling loss surface (${Ws.length} points) ...`);
+	await tf.nextFrame();
+
+	const losses = tf.tidy(() => {
+		const WsT = tf.tensor1d(Ws);
+		const BsT = tf.tensor1d(Bs);
+		const N = Ws.length;
+		const WsCol = WsT.reshape([N, 1]);
+		const BsCol = BsT.reshape([N, 1]);
+		const Wt = WsCol.expandDims(2);
+		const Bt = BsCol.expandDims(2);
+		const xsB = xsT.reshape([1, xsT.shape[0], xsT.shape[1]]);
+		const Wb = Wt;
+		const Bb = Bt;
+		const p = xsB.matMul(Wb).add(Bb);
+		const ysB = ysT.reshape([1, ysT.shape[0], ysT.shape[1]]);
+		const sq = p.sub(ysB).square();
+		const sqFlat = sq.reshape([N, xsT.shape[0]]);
+		return Array.from(sqFlat.mean(1).dataSync());
+	});
+
 	state.landscape.W.push(...Ws);
 	state.landscape.B.push(...Bs);
 	state.landscape.L.push(...losses);
@@ -595,8 +618,8 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 		type: "surface", x: Ws, y: Bs, z: Z,
 		colorscale: "Viridis",
 		reversescale: true,
-		cmin, cmax, showscale: true, opacity: 0.95,
-		lighting: { ambient: 0.65, diffuse: 0.65, roughness: 0.4, fresnel: 0.2 },
+		cmin, cmax, showscale: true, opacity: 0.55,
+		lighting: { ambient: 0.7, diffuse: 0.5, roughness: 0.5, fresnel: 0.1 },
 		contours: { z: { show: false } },
 		name: "loss surface",
 		hoverinfo: "skip"
@@ -607,10 +630,10 @@ function init3DPlot(optimizers, surfaceGrid, w0, b0, initLoss) {
 			type: "scatter3d", mode: "lines+markers",
 			x: [w0], y: [b0], z: [Math.log10(initLoss)],
 			marker: {
-				size: 4, color: info.color, symbol: info.marker3Symbol,
-				line: { width: 1, color: "#ffffff" }
+				size: 6, color: info.color, symbol: info.marker3Symbol,
+				line: { width: 1.5, color: "#ffffff" }
 			},
-			line:   { width: 10, color: info.color, dash: info.line3Dash, shape: "linear" },
+			line:   { width: 12, color: info.color, dash: info.line3Dash, shape: "linear" },
 			name,
 			legendgroup: name,
 			hovertemplate: "<b>" + name + "</b><br>w = %{x:.3g}<br>b = %{y:.3g}<br>log₁₀(loss) = %{z:.3g}<extra></extra>"
@@ -864,7 +887,7 @@ async function startExperiment() {
 		await tf.nextFrame();
 
 		setStatus("Sampling loss surface...");
-		await sampleLandscapeAround(0.1, 0.1, 5, data.xsT, data.ysT);
+		await sampleLandscapeAround(0.1, 0.1, 3, data.xsT, data.ysT);
 
 		state.model.loss = calculateLoss(0.1, 0.1, data.xsT, data.ysT);
 
