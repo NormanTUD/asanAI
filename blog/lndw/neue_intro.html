@@ -254,9 +254,10 @@
      Suche-KI Antwortkarte (mit Websites als Quellen)
      ========================= */
   .ai-card {
+    position: relative;
     width: 100%;
     margin-top: 14px;
-    min-height: 138px;
+    min-height: 115px;
     background: #ffffff;
     border-radius: 16px;
     padding: 12px 14px;
@@ -270,12 +271,6 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-  .ai-head {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 6px;
-  }
   .ai-spark {
     font-size: 15px;
     line-height: 1;
@@ -283,12 +278,6 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-  }
-  .ai-name {
-    font-size: 11px;
-    font-weight: 600;
-    color: #5f6368;
-    letter-spacing: 0.4px;
   }
   .ai-text {
     font-size: 12px;
@@ -310,10 +299,11 @@
   }
   /* „Die KI denkt" — drei pulsierende Punkte */
   .ai-thinking {
+    position: absolute;
+    top: 14px; left: 14px;
     display: none;
     gap: 6px;
     align-items: center;
-    height: 22px;
   }
   .ai-thinking.on { display: flex; }
   .ai-thinking span {
@@ -551,7 +541,7 @@
   .code-window {
     position: absolute;
     top: 50%; left: 50%;
-    width: 560px;
+    width: 640px;
     transform: translate(-50%, -50%) scale(0.85);
     background: #10141f;
     border-radius: 16px;
@@ -621,6 +611,7 @@
   .cw-code .fn  { color: #61afef; }
   .cw-code .num { color: #d19a66; }
   .cw-code .cmt { color: #5c6370; font-style: italic; }
+  .cw-code .str { color: #34d399; }
   .cw-out {
     padding: 12px 20px 16px;
     border-top: 1px solid rgba(255, 255, 255, 0.07);
@@ -1064,10 +1055,6 @@
         </div>
       </div>
       <div class="ai-card" id="aiCard">
-        <div class="ai-head">
-          <span class="ai-spark">✦</span>
-          <span class="ai-name">Suche-KI</span>
-        </div>
         <div class="ai-text" id="aiText"></div>
         <div class="ai-thinking" id="aiThinking">
           <span></span><span></span><span></span>
@@ -1137,7 +1124,7 @@
     </div>
     <pre class="cw-code" id="cwCode"></pre>
     <div class="cw-out" id="cwOut">
-      <div class="out-cmd"><span class="dollar">$</span> python himmel.py</div>
+      <div class="out-cmd"><span class="dollar">$</span> python3 himmel.py</div>
       <div class="out-line">Blau wird 4.35× stärker gestreut als Rot</div>
     </div>
   </div>
@@ -1289,6 +1276,8 @@
   const micBtn        = $('micBtn');
   const waveform      = $('waveform');
   const aiCard        = $('aiCard');
+  const aiText        = $('aiText');
+  const aiThinking    = $('aiThinking');
   const serpList      = $('serpList');
   const statement2    = $('statement2');
   const capPic        = $('capPic');
@@ -1297,6 +1286,11 @@
   const cwCode        = $('cwCode');
   const cwOut         = $('cwOut');
   const capCode       = $('capCode');
+  const capSatz       = $('capSatz');
+  const ttower        = $('ttower');
+  const ttAnswer      = $('ttHeadAnswer');
+  const ttCode        = $('ttHeaderCode');
+  const ttPic         = $('ttHeadPic');
   const floatingText  = $('floatingText');
   const tokensLayer   = $('tokensLayer');
   const layerLabel    = $('layerLabel');
@@ -1324,11 +1318,21 @@
      { t: ', ' }, { t: '1e5', c: 'num' }, { t: ', ' }, { t: '293', c: 'num' }, { t: ')' }],
     [{ t: 'rot  = ' }, { t: 'streuung', c: 'fn' }, { t: '(' }, { t: '650e-9', c: 'num' },
      { t: ', ' }, { t: '1e5', c: 'num' }, { t: ', ' }, { t: '293', c: 'num' }, { t: ')' }],
-    [{ t: 'print', c: 'fn' }, { t: '(f"' }, { t: '{blau / rot:.2f}', c: 'num' }, { t: '")' }],
+    [{ t: 'print', c: 'fn' }, { t: '(f"Blau wird ', c: 'str' }, { t: '{blau / rot:.2f}', c: 'num' }, { t: '× stärker gestreut als Rot")', c: 'str' }],
   ];
 
   const QUERY_KEYS = ['warum', 'ist', 'der', 'himmel', 'blau'];
   const ALL_KEYS = QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']);
+
+  // Die KI-Antwort — wird Beat für Beat Zeichen für Zeichen gestreamt
+  const AI_TEXT = [
+    { t: 'Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm) — das nennt man ' },
+    { t: 'Rayleigh-Streuung', c: 'b' },
+    { t: '.' },
+  ];
+
+  // Token-Pillen — wortweise
+  const TOKENS = ['warum', 'ist', 'der', 'himmel', 'blau'];
 
   let typeTimer = null;
 
@@ -1359,6 +1363,60 @@
       }
       if (i >= lines.length) stopTyping();
     }, 350);
+  }
+
+  // Die KI-Antwort streamen — wie ein echter LLM-Stream
+  let aiTimer = null;
+
+  function stopAiTyping() {
+    if (aiTimer) { clearInterval(aiTimer); aiTimer = null; }
+  }
+
+  function startAiTyping() {
+    stopAiTyping();
+    aiText.innerHTML = '';
+    const spans = AI_TEXT.map(seg => {
+      const s = document.createElement('span');
+      if (seg.c) s.className = seg.c;
+      aiText.appendChild(s);
+      return s;
+    });
+    const cursor = document.createElement('span');
+    cursor.className = 'ai-cursor';
+    aiText.appendChild(cursor);
+    let si = 0, ci = 0;
+    aiTimer = setInterval(() => {
+      if (si >= spans.length) { stopAiTyping(); return; }
+      ci++;
+      spans[si].textContent = AI_TEXT[si].t.slice(0, ci);
+      if (ci >= AI_TEXT[si].t.length) { si++; ci = 0; }
+    }, 22);
+  }
+
+  // Timer, die zu einem Beat gehören — resetAll killt sie alle
+  let beatTimers = [];
+  function later(fn, ms) {
+    const id = setTimeout(fn, ms);
+    beatTimers.push(id);
+  }
+  function clearBeatTimers() {
+    beatTimers.forEach(clearTimeout);
+    beatTimers = [];
+  }
+
+  // Token-Pillen bauen (freshKeys bekommen Pop + Glow)
+  function renderTokens(list, freshKeys = []) {
+    tokensLayer.innerHTML = list.map(tok =>
+      '<div class="token-pill' + (freshKeys.includes(tok) ? ' fresh' : '') + '">' + tok + '</div>'
+    ).join('');
+  }
+
+  // Mini-Transformer: welche Köpfe leuchten? (null = komplett unsichtbar)
+  function setTower(lit) {
+    ttower.classList.toggle('on', !!lit);
+    ttAnswer.classList.toggle('lit', !!(lit && lit.includes('answer')));
+    ttCode.classList.toggle('lit', !!(lit && lit.includes('code')));
+    ttPic.classList.toggle('lit', !!(lit && lit.includes('pic')));
   }
 
   // Hilfsfunktionen
@@ -1402,8 +1460,11 @@
     micBtn.classList.remove('listening');
     waveform.classList.remove('active');
     aiCard.classList.remove('on');
+    stopAiTyping();
+    aiText.innerHTML = '';
+    aiThinking.classList.remove('on');
     serpList.classList.remove('on');
-    statement2.classList.remove('on');
+    statement2.classList.remove('on', 'high');
     capPic.style.opacity = '0';
     chatWindow.classList.remove('on');
     setCodeWindow({scale: 0.85, x: 0, y: 0, opacity: 0});
@@ -1411,9 +1472,13 @@
     renderCode(false);
     cwOut.classList.remove('on');
     capCode.style.opacity = '0';
+    capSatz.style.opacity = '0';
+    setTower(null);
+    clearBeatTimers();
     floatingText.style.opacity = '0';
-    floatingText.style.transform = 'translate(-50%, -50%) scale(0.3)';
+    floatingText.style.transform = 'translate(-50%, calc(-50% + 61px)) scale(0.29)';
     tokensLayer.style.opacity = '0';
+    renderTokens([]);
     layerLabel.style.opacity = '0';
     embeddingSp.style.opacity = '0';
     embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
@@ -1454,71 +1519,98 @@
       setSearchText(SATZ, true);
     },
 
-    // BEAT 3 — Suche-KI antwortet: Zusammenfassung + Treffer wie bei Google
+    // BEAT 3 — Die KI denkt (drei pulsierende Punkte)
     () => {
       resetAll();
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       setSearchText(SATZ, false);
       aiCard.classList.add('on');
-      serpList.classList.add('on');
+      aiThinking.classList.add('on');
     },
 
-    // BEAT 4 — „sie können auch programmieren“: Code-Fenster mit Programm
+    // BEAT 4 — Die KI antwortet: streamt ihre Antwort + Treffer wie bei Google
+    () => {
+      resetAll();
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+      setSearchText(SATZ, false);
+      aiCard.classList.add('on');
+      startAiTyping();
+      serpList.classList.add('on');
+      setTower(['answer']);
+    },
+
+    // BEAT 5 — „sie können auch programmieren“: Code-Fenster mit Programm
     () => {
       resetAll();
       setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
       capCode.style.opacity = '1';
       startCodeTyping();
+      setTower(['answer', 'code']);
     },
 
-    // BEAT 5 — Code komplett, das (richtige) Ergebnis erscheint
+    // BEAT 6 — Code komplett, das (richtige) Ergebnis erscheint
     () => {
       resetAll();
       setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
       capCode.style.opacity = '1';
       renderCode(true);
       cwOut.classList.add('on');
+      setTower(['answer', 'code']);
     },
 
-    // BEAT 6 — Weitere Stärke: Bilder zeichnen (Chat: Prompt → Bild)
+    // BEAT 7 — Weitere Stärke: Bilder zeichnen (Chat: Prompt → Bild)
     () => {
       resetAll();
       capPic.style.opacity = '1';
       chatWindow.classList.add('on');
+      setTower(['answer', 'code', 'pic']);
     },
 
-    // BEAT 7 — Und alles geht über den Transformer
+    // BEAT 8 — Alles geht über den Transformer
     () => {
       resetAll();
       statement2.classList.add('on');
+      setTower(['answer', 'code', 'pic']);
     },
 
-    // BEAT 8 — Der Satz schwebt frei im Raum
+    // BEAT 9 — Der Satz fliegt aus dem Suchfeld in den Raum
     () => {
       resetAll();
+      setPhone({scale: 0.7, x: 0, y: 210, opacity: 0});
       floatingText.style.opacity = '1';
       floatingText.style.transform = 'translate(-50%, -50%) scale(1)';
+      capSatz.style.opacity = '1';
     },
 
-    // BEAT 9 — Tokenisierung: Der Satz zerbricht in Token-Pillen
+    // BEAT 10 — Tokenisierung: Der Satz zerbricht — und „himmel“ in „him“ + „mel“
     () => {
       resetAll();
+      renderTokens(TOKENS_FULL);
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
+      later(() => {
+        tokensLayer.querySelectorAll('.token-pill').forEach(p => {
+          if (p.textContent === 'himmel') p.classList.add('crack');
+        });
+      }, 2000);
+      later(() => {
+        renderTokens(TOKENS_SPLIT, ['him', 'mel']);
+        layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — und „himmel“? Das wird zu him + mel';
+      }, 2900);
     },
 
-    // BEAT 10 — Embedding: Tokens werden zu Punkten im Raum
+    // BEAT 11 — Embedding: Tokens werden zu Punkten im Raum
     () => {
       resetAll();
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
+      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Stück wird zu einem Punkt im Bedeutungsraum';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
       showEmbedPoints(QUERY_KEYS);
     },
 
-    // BEAT 11 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
+    // BEAT 12 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
     () => {
       resetAll();
       layerLabel.style.opacity = '1';
@@ -1531,7 +1623,7 @@
       analogyCap.style.opacity = '1';
     },
 
-    // BEAT 12 — Übergabe: Alles verdichtet sich zum Modell-Block
+    // BEAT 13 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
       resetAll();
       embeddingSp.style.opacity = '0.15';
@@ -1605,13 +1697,6 @@
       if (dx < 0) next(); else prev();
     }
   }, { passive: true });
-
-  // Klick auf die Bühne = weiter
-  $('stage').addEventListener('click', (e) => {
-    // Ignoriere Klicks auf die Nav-Elemente
-    if (e.target.closest('.nav-hint') || e.target.closest('.beat-dots')) return;
-    next();
-  });
 
   // Initial-Zustand
   renderBeat(0);

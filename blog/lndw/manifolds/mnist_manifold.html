@@ -347,20 +347,6 @@ const SURFACE_FNS = {
     const x = (u / Math.PI - 1) * 1.3;
     const y = (v / Math.PI - 1) * 1.3;
     return [x, y, (x * x - y * y) * 0.85];
-  },
-  klein:    (u, v) => {
-    // 3D-Immersion der Kleinschen Flasche (klassisch, Selbstschnitt)
-    const a = 2;
-    let x, y, z;
-    if (u < Math.PI) {
-      x = a * Math.cos(u) * (1 + Math.sin(v));
-      z = -a * Math.sin(u) * (1 + Math.sin(v));
-    } else {
-      x = a * Math.cos(u) * (1 - Math.sin(v)) + 2 * a * Math.cos(u);
-      z = -a * Math.sin(u) * (1 - Math.sin(v));
-    }
-    y = -a * Math.cos(u + v) - a * Math.cos(u - v) + 2 * a * Math.cos(u);
-    return [x * 0.17, z * 0.17, y * 0.17];
   }
 };
 
@@ -547,13 +533,54 @@ function genAxiomSecondCountable() {
   return out;
 }
 
+// --- Gegenbeispiele (verletzen die Axiome) ---
+
+function genBugEyedLine() {
+  // Linie mit zwei Ursprüngen: alle Punkte identifiziert außer am Ursprung,
+  // wo es ZWEI Punkte gibt (O_A unten, O_B oben). Diese lassen sich nicht
+  // durch disjunkte offene Mengen trennen → kein Hausdorff-Raum.
+  const a = [];
+  for (let i = -120; i <= 120; i++) {
+    if (i === 0) continue;
+    a.push(i / 120, 0, 0);
+  }
+  a.push(0, 0, -0.18);  // O_A
+  a.push(0, 0,  0.18);  // O_B
+  return new Float32Array(a);
+}
+
+function genDiscreteTopology() {
+  // Diskrete Topologie auf einer Linie: JEDER Punkt ist sein eigenes offenes
+  // Setz → die Topologie hat UNABZÄHLBAR viele Basiselemente, eine für jeden
+  // Punkt. Man bräuchte eine Basis der Größe |ℝ|, die man nicht abzählen kann.
+  const a = [];
+  const N = 200;
+  for (let i = 0; i < N; i++) {
+    const x = (i / (N - 1) - 0.5) * 2.2;
+    a.push(x, 0, 0);
+  }
+  return new Float32Array(a);
+}
+
+function genDiscreteTopologyDisks() {
+  // Zusätzliche Visualisierung: um jeden Punkt ein winziger "Hof" (transparente
+  // Kreisscheibe), die zeigt: nichts außer dem Punkt selbst ist im offenen Set.
+  const a = [];
+  const N = 60;
+  for (let i = 0; i < N; i++) {
+    const x = (i / (N - 1) - 0.5) * 2.2;
+    a.push(x, 0, 0);
+  }
+  return new Float32Array(a);
+}
+
 // ============================================================
 // BEATS — jeder beschreibt einen vollständigen Zielzustand
 // ============================================================
 const BEATS = [
   // ---------- KONZEPT ----------
   {
-    n: '1 / 21', group: 'konzept',
+    n: '1 / 23', group: 'konzept',
     gt: 'Was ist ein Manifold?',
     t: 'Drei Beispiele nebeneinander',
     b: 'Ein <b>Manifold</b> ist ein Ding niedrigerer Dimension in einem Raum höherer Dimension — ' +
@@ -564,7 +591,7 @@ const BEATS = [
 
   // ---------- GALERIE: 1D ----------
   {
-    n: '2 / 21', group: 'galerie',
+    n: '2 / 23', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Kreis (S¹)',
     b: 'Die einfachste geschlossene 1D-Mannigfaltigkeit. <b>Geschlossen</b> heißt: kein Rand, kein Anfang, kein Ende. ' +
@@ -572,7 +599,7 @@ const BEATS = [
     mode: 'curve_circle', spin: 0.05, table: 'gallery'
   },
   {
-    n: '3 / 21', group: 'galerie',
+    n: '3 / 23', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Figur-8',
     b: 'Auch geschlossen und ohne Rand — aber die Krümmung wechselt das Vorzeichen entlang der Kurve. ' +
@@ -580,7 +607,7 @@ const BEATS = [
     mode: 'curve_figure8', spin: 0.05, table: 'gallery'
   },
   {
-    n: '4 / 21', group: 'galerie',
+    n: '4 / 23', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Möbius-Band',
     b: 'Ein Papierstreifen, einmal verzwirbelt und zusammengeklebt. ' +
@@ -591,7 +618,7 @@ const BEATS = [
 
   // ---------- GALERIE: 2D (Kleinsche Flasche entfernt) ----------
   {
-    n: '5 / 21', group: 'galerie',
+    n: '5 / 23', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Ebene ℝ²',
     b: 'Flach, unendlich, <b>Krümmung 0</b>. Die einfachste 2D-Mannigfaltigkeit. ' +
@@ -599,7 +626,7 @@ const BEATS = [
     mode: 'surface_plane', spin: 0.04, table: 'gallery'
   },
   {
-    n: '6 / 21', group: 'galerie',
+    n: '6 / 23', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Zylinder',
     b: 'Ein Rechteck zu einer Röhre gerollt. <b>Abrollbar</b>: schneiden Sie ihn entlang einer Geraden auf, ' +
@@ -607,7 +634,7 @@ const BEATS = [
     mode: 'surface_cylinder', spin: 0.05, table: 'gallery'
   },
   {
-    n: '7 / 21', group: 'galerie',
+    n: '7 / 23', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Torus',
     b: 'Geschlossen, genus 1 (ein "Loch"). Krümmung wechselt: <b>außen positiv</b> (wie Sphäre), ' +
@@ -615,7 +642,7 @@ const BEATS = [
     mode: 'surface_torus', spin: 0.05, table: 'gallery'
   },
   {
-    n: '8 / 21', group: 'galerie',
+    n: '8 / 23', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Sphäre S²',
     b: 'Geschlossen, genus 0 (kein Loch). <b>Krümmung +1/r² überall</b> — keine Abflachung, keine Dellen. ' +
@@ -623,7 +650,7 @@ const BEATS = [
     mode: 'surface_sphere', spin: 0, table: 'gallery'
   },
   {
-    n: '9 / 21', group: 'galerie',
+    n: '9 / 23', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Sattelfläche',
     b: '<b>Negative Gauß-Krümmung</b> — hyperbolisch. Projiziert man sie in die Ebene, ' +
@@ -634,7 +661,7 @@ const BEATS = [
 
   // ---------- DATEN-MANIFOLDS ----------
   {
-    n: '10 / 21', group: 'galerie',
+    n: '10 / 23', group: 'galerie',
     gt: 'Manifolds IN Daten',
     t: 'Swiss Roll',
     b: 'Ein 2D-Manifold (ein Blatt Papier), zu einer Spirale gerollt und in ℝ³ eingebettet. ' +
@@ -643,7 +670,7 @@ const BEATS = [
     mode: 'data_swissroll', spin: 0.05, table: 'gallery'
   },
   {
-    n: '11 / 21', group: 'galerie',
+    n: '11 / 23', group: 'galerie',
     gt: 'Manifolds IN Daten',
     t: 'Two Moons',
     b: 'Zwei 1D-Manifolds (zwei Bögen), in ℝ² verschlungen. ' +
@@ -654,7 +681,7 @@ const BEATS = [
 
   // ---------- DEFINITION: DIE 3 AXIOME ----------
   {
-    n: '12 / 21', group: 'axiome',
+    n: '12 / 23', group: 'axiome',
     gt: 'Definition — die 3 Axiome',
     t: 'Axiom 1 — Lokal euklidisch',
     b: 'Jeder Punkt P der Mannigfaltigkeit hat eine Umgebung U, die <b>homöomorph</b> zu einer offenen Teilmenge des ℝⁿ ist ' +
@@ -664,7 +691,7 @@ const BEATS = [
     mode: 'axiom_local_euclidean', spin: 0.03, table: 'gallery'
   },
   {
-    n: '13 / 21', group: 'axiome',
+    n: '13 / 23', group: 'axiome',
     gt: 'Definition — die 3 Axiome',
     t: 'Axiom 2 — Hausdorff',
     b: 'Je zwei verschiedene Punkte lassen sich durch <b>disjunkte offene Mengen</b> trennen. ' +
@@ -675,7 +702,7 @@ const BEATS = [
     mode: 'axiom_hausdorff', spin: 0.02, table: 'gallery'
   },
   {
-    n: '14 / 21', group: 'axiome',
+    n: '14 / 23', group: 'axiome',
     gt: 'Definition — die 3 Axiome',
     t: 'Axiom 3 — Zweite Abzählbarkeit',
     b: 'Die Topologie hat eine <b>abzählbare Basis</b> — es gibt abzählbar viele offene Mengen, ' +
@@ -686,9 +713,35 @@ const BEATS = [
     mode: 'axiom_second_countable', spin: 0.03, table: 'gallery'
   },
 
+  // ---------- GEGENBEISPIELE (verletzen die Axiome) ----------
+  {
+    n: '15 / 23', group: 'gegenbeispiele',
+    gt: 'Was die Axiome ausschließen',
+    t: 'Nicht Hausdorff: Linie mit zwei Ursprüngen',
+    b: 'Klassiker: zwei Kopien von ℝ, identifiziert an allen Punkten außer am Ursprung — ' +
+       'es bleiben <b>zwei verschiedene Punkte O<sub>A</sub> und O<sub>B</sub></b>, die beide die Rolle der Null spielen. ' +
+       '<b>Warum kein Hausdorff?</b> Jede offene Umgebung von O<sub>A</sub> enthält O<sub>B</sub> (und umgekehrt). ' +
+       'Die beiden Punkte lassen sich nicht durch disjunkte offene Mengen trennen. ' +
+       'Im Bild: die orange Linie mit zwei <b>roten Ursprüngen</b>, die nach oben und unten auseinandergezogen sind — ' +
+       'sie sind topologisch untrennbar, auch wenn sie im ℝ³ räumlich getrennt aussehen.',
+    mode: 'gb_bug_eyed_line', spin: 0.02, table: 'gallery'
+  },
+  {
+    n: '16 / 23', group: 'gegenbeispiele',
+    gt: 'Was die Axiome ausschließen',
+    t: 'Nicht second-countable: diskrete Topologie',
+    b: 'Auf einer normalen Linie sind Intervalle die offenen Mengen — endlich viele erzeugen alle anderen. ' +
+       'In der <b>diskreten Topologie</b> auf ℝ ist dagegen <b>jeder Punkt sein eigenes offenes Setz</b>. ' +
+       'Die Topologie hat dann eine Basis der Größe |ℝ| — <b>unabzählbar viele</b> offene Mengen, ' +
+       'eine für jeden Punkt. Zu groß zum Abzählen. Zu wild, um noch handhabbar zu sein. ' +
+       'Im Bild: die violetten Punkte sehen aus wie eine Linie, aber topologisch ist jeder Punkt ' +
+       '<b>völlig isoliert</b> — kein Intervall, das zwei Punkte zusammenfasst.',
+    mode: 'gb_discrete_topology', spin: 0, table: 'gallery'
+  },
+
   // ---------- MNIST: AUFBAU ----------
   {
-    n: '15 / 21', group: 'mnist-aufbau',
+    n: '17 / 23', group: 'mnist-aufbau',
     gt: 'MNIST — Aufbau',
     t: '784 Zahlen sind ein Punkt',
     b: 'Ein MNIST-Bild besteht aus <b>28 × 28 = 784 Pixeln</b>. Jeder Balken rechts ist ein Pixel, ' +
@@ -697,7 +750,7 @@ const BEATS = [
     mode: 'pixels', spin: 0, table: 'ambient'
   },
   {
-    n: '16 / 21', group: 'mnist-aufbau',
+    n: '18 / 23', group: 'mnist-aufbau',
     gt: 'MNIST — Aufbau',
     t: 'Die Insel im Nebel',
     b: 'Die <b>farbigen Punkte</b> sind 4 000 echte MNIST-Bilder, eingefärbt nach ihrer Ziffer. ' +
@@ -711,7 +764,7 @@ const BEATS = [
 
   // ---------- MNIST: DIAGNOSE ----------
   {
-    n: '17 / 21', group: 'mnist-diagnose',
+    n: '19 / 23', group: 'mnist-diagnose',
     gt: 'MNIST — Diagnose',
     t: 'Das Varianz-Spektrum',
     b: 'Jeder Balken zeigt, <b>wieviel Varianz</b> in einer der 784 Achsen steckt — geordnet von groß nach klein. ' +
@@ -722,7 +775,7 @@ const BEATS = [
     mode: 'spectrum', spin: 0, table: 'spectrum'
   },
   {
-    n: '18 / 21', group: 'mnist-diagnose',
+    n: '20 / 23', group: 'mnist-diagnose',
     gt: 'MNIST — Diagnose',
     t: 'Die intrinsische Dimension',
     b: 'Der <b>Two-NN-Schätzer</b> (Facco et al. 2017) misst direkt: für jeden Punkt, ' +
@@ -736,7 +789,7 @@ const BEATS = [
 
   // ---------- MNIST: GEOMETRIE ----------
   {
-    n: '19 / 21', group: 'mnist-geometrie',
+    n: '21 / 23', group: 'mnist-geometrie',
     gt: 'MNIST — Geometrie',
     t: 'PCA scheitert an der Krümmung',
     b: 'Wir projizieren die 4 000 Bilder auf die <b>drei stärksten linearen Achsen</b> (PCA). ' +
@@ -749,7 +802,7 @@ const BEATS = [
     mode: 'pca3', spin: 0.12, table: 'overlap'
   },
   {
-    n: '20 / 21', group: 'mnist-geometrie',
+    n: '22 / 23', group: 'mnist-geometrie',
     gt: 'MNIST — Geometrie',
     t: 'Isomap: entlang der Fläche messen',
     b: 'Gleiche Punkte, <b>andere Abstandsdefinition</b>. Isomap baut einen Nachbarschaftsgraphen (k = 12) ' +
@@ -763,7 +816,7 @@ const BEATS = [
 
   // ---------- POINTE ----------
   {
-    n: '21 / 21', group: 'pointe',
+    n: '23 / 23', group: 'pointe',
     gt: 'Pointe — Daten liegen auf Räumen',
     t: 'Daten liegen AUF Räumen',
     b: 'Was wir gefunden haben: die 70 000 Bilder füllen keine 784 Dimensionen, sondern liegen auf einer ' +
@@ -938,10 +991,6 @@ function prepare() {
   LAYOUT_KIND.surface_saddle   = 'lines';
   LAYOUT_COUNT.surface_saddle   = LAYOUT.surface_saddle.length / 6;
 
-  LAYOUT.surface_klein    = pad(genSurfaceUV(SURFACE_FNS.klein,    28, 10, 2*Math.PI, 2*Math.PI));
-  LAYOUT_KIND.surface_klein    = 'lines';
-  LAYOUT_COUNT.surface_klein    = LAYOUT.surface_klein.length / 6;
-
   LAYOUT.surface_mobius   = pad(genMobiusSurface(80, 6));
   LAYOUT_KIND.surface_mobius   = 'lines';
   LAYOUT_COUNT.surface_mobius   = LAYOUT.surface_mobius.length / 6;
@@ -972,6 +1021,15 @@ function prepare() {
   LAYOUT.axiom_second_countable = pad(genAxiomSecondCountable());
   LAYOUT_KIND.axiom_second_countable = 'points';
   LAYOUT_COUNT.axiom_second_countable = 1000 + 36;
+
+  // ---------- Gegenbeispiele (verletzen die Axiome) ----------
+  LAYOUT.gb_bug_eyed_line = pad(genBugEyedLine());
+  LAYOUT_KIND.gb_bug_eyed_line = 'points';
+  LAYOUT_COUNT.gb_bug_eyed_line = 240 + 2;
+
+  LAYOUT.gb_discrete_topology = pad(genDiscreteTopology());
+  LAYOUT_KIND.gb_discrete_topology = 'points';
+  LAYOUT_COUNT.gb_discrete_topology = 200;
 
   // Startposition = Beat 0
   CURPOS.set(LAYOUT[BEATS[0].mode]);
@@ -1161,12 +1219,24 @@ function pickPalette(mode) {
     return i => i < 1200 ? '#d97706' : '#3b82f6';
   }
   if (mode === 'axiom_hausdorff') {
-    // 2 rote Punkte + 2 blaue trennende Bälle
-    return i => i < 2 ? '#dc2626' : '#0ea5e9';
+    // 2 rote Punkte + 2 Bälle in verschiedenen Farben, damit die Trennung sichtbar wird
+    return i => {
+      if (i < 2) return '#dc2626';
+      if (i < 262) return '#d97706';
+      return '#3b82f6';
+    };
   }
   if (mode === 'axiom_second_countable') {
     // Sphäre (orange) + abzählbare Chart-Marker (grün) auf der Oberfläche
     return i => i < 1000 ? '#d97706' : '#10b981';
+  }
+  if (mode === 'gb_bug_eyed_line') {
+    // Linie orange, die zwei Ursprünge rot
+    return i => i < 240 ? '#d97706' : '#dc2626';
+  }
+  if (mode === 'gb_discrete_topology') {
+    // Viele isolierte Punkte, jede in eigener Farbe (violett) — wirkt "wild"
+    return () => '#7c3aed';
   }
   return () => '#d97706';
 }
