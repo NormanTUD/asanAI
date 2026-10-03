@@ -908,8 +908,6 @@ function drawPoints(mode, count, dimsMode, specMode) {
   }
   Array.prototype.sort.call(order, (a, b) => depth[a] - depth[b]);
 
-  const isMnist = (mode === 'pca3' || mode === 'iso3');
-  const isData  = (mode === 'data_swissroll' || mode === 'data_twomoons' || mode === 'data_mnist');
   const palette = pickPalette(mode);
   screenCache = { sx, sy, sk, n: count };
 
@@ -933,16 +931,20 @@ function pickPalette(mode) {
     return i => PALETTE[D.labels[i]];
   }
   if (mode === 'data_swissroll') {
-    // Schweizer Rolle: Farbe nach t (Parameter, projiziert auf xz-Distanz von Achse)
-    return i => gradientColor(i / 1800);
+    // Farbe nach echter Bogenlänge t = sqrt(x² + z²)
+    return i => {
+      const x = CURPOS[i*3+0], z = CURPOS[i*3+2];
+      const t = Math.sqrt(x * x + z * z);
+      const u = clamp((t - 4.7) / 10.1, 0, 1);
+      return gradientColor(u);
+    };
   }
   if (mode === 'data_twomoons') {
     return i => i < 500 ? '#0ea5e9' : '#f97316';
   }
   if (mode === 'concept_examples') {
-    // Gruppe 0: Linie (blau), 1: Kreis (grün), 2: Kugel (orange)
     const offsets = [80, 180, 1200];
-    if (i < offsets[0]) return () => '#3b82f6';
+    if (i < offsets[0])          return () => '#3b82f6';
     if (i < offsets[0] + offsets[1]) return () => '#10b981';
     return () => '#f97316';
   }
