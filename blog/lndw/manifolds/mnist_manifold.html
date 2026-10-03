@@ -812,7 +812,6 @@ function go(d) {
   const n = clamp(cur + d, 0, BEATS.length - 1);
   if (n === cur) return;
   animating = true;
-  dA0 = dragA; dB0 = dragB;
   prevIdx = cur;
   cur = n;
   t0 = performance.now();
@@ -848,7 +847,6 @@ function bind() {
   window.addEventListener('mouseup', () => {
     md = false;
     cv.classList.remove('dragging');
-    dA0 = dragA; dB0 = dragB;
   });
 
   window.addEventListener('mousemove', e => {
@@ -860,7 +858,6 @@ function bind() {
     dragA += (e.clientX - mx) * 0.006;
     dragB += (e.clientY - my) * 0.005;
     dragB = clamp(dragB, -1.1, 1.1);
-    dA0 = dragA; dB0 = dragB;
     mx = e.clientX; my = e.clientY;
   });
 

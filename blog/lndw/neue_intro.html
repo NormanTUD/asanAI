@@ -112,7 +112,7 @@
   }
 
   .app-logo {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 700;
     letter-spacing: -1px;
     margin-top: 32px;
@@ -120,13 +120,12 @@
     opacity: 0;
     transition: opacity 0.8s ease 0.3s;
   }
-  /* GooGle — Google-Farben, aber nicht Google */
+  /* „Suche“ — in den vertrauten Farben, aber kein Google */
   .app-logo .l1 { color: #4285f4; }
   .app-logo .l2 { color: #ea4335; }
   .app-logo .l3 { color: #fbbc04; }
   .app-logo .l4 { color: #4285f4; }
   .app-logo .l5 { color: #34a853; }
-  .app-logo .l6 { color: #ea4335; }
 
   .search-bar {
     width: 100%;
@@ -252,7 +251,7 @@
   }
 
   /* =========================
-     GooGle-KI Antwortkarte (statt Trefferliste)
+     Suche-KI Antwortkarte (mit Websites als Quellen)
      ========================= */
   .ai-card {
     width: 100%;
@@ -291,17 +290,30 @@
     letter-spacing: 0.4px;
   }
   .ai-text {
-    font-size: 12.5px;
-    line-height: 1.55;
+    font-size: 12px;
+    line-height: 1.5;
     color: #202124;
   }
   .ai-text b {
     color: #1a73e8;
     font-weight: 600;
   }
+  .ai-sources {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .source-chip {
+    font-size: 9.5px;
+    padding: 3px 8px;
+    background: rgba(26, 115, 232, 0.08);
+    border-radius: 10px;
+    color: #1a73e8;
+  }
 
   /* =========================
-     Beat-Captions (unter dem Handy / über dem Code-Fenster)
+     Beat-Captions (über den Fenstern)
      ========================= */
   .beat-caption {
     position: absolute;
@@ -318,13 +330,100 @@
     transition: opacity 1s ease;
     pointer-events: none;
   }
-  .beat-caption .dim { color: var(--ink-dim); }
   .beat-caption .acc { color: var(--accent); font-weight: 400; }
-  #capSearch { top: calc(50% + 372px); }
-  #capCode   { top: calc(50% - 212px); }
+  #capCode { top: calc(50% - 212px); }
+  #capPic  { top: calc(50% - 212px); }
 
   /* =========================
-     Code-Fenster (Folie: "kann auch programmieren")
+     Statement-Folie („kann auch programmieren")
+     ========================= */
+  .statement {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.96);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+    pointer-events: none;
+  }
+  .statement.on {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .statement .st-line1 {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink-dim);
+    letter-spacing: -0.2px;
+    margin-bottom: 14px;
+  }
+  .statement .st-line2 {
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.8px;
+  }
+  .statement .st-line2 .acc {
+    color: var(--accent-2);
+    font-weight: 400;
+  }
+
+  /* =========================
+     Bild-Fenster (Folie: kann auch Bilder zeichnen)
+     ========================= */
+  .pic-window {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 480px;
+    transform: translate(-50%, -50%) scale(0.85);
+    background: #10141f;
+    border-radius: 16px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 0 80px rgba(110, 168, 255, 0.18);
+    opacity: 0;
+    transition: transform 1.6s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 1.2s ease;
+    pointer-events: none;
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+  .pic-window.on {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .pic-body { padding: 14px; }
+  .pic-prompt {
+    font-size: 13px;
+    color: var(--ink-dim);
+    padding: 4px 6px 12px;
+    font-style: italic;
+  }
+  .pic-prompt .qm {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+  .pic-img {
+    display: block;
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    opacity: 0;
+    filter: blur(14px);
+    transform: scale(1.04);
+    transition: opacity 1.4s ease 0.4s, filter 1.8s ease 0.4s, transform 2s ease 0.4s;
+  }
+  .pic-window.on .pic-img {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+
+  /* =========================
+     Code-Fenster (Folie: das geschriebene Programm)
      ========================= */
   .code-window {
     position: absolute;
@@ -365,7 +464,7 @@
     margin: 0;
     padding: 18px 20px 10px;
     font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
-    font-size: 15.5px;
+    font-size: 15px;
     line-height: 1.7;
     color: #dfe6f5;
   }
@@ -397,10 +496,15 @@
     transition: opacity 0.7s ease;
   }
   .cw-out.on { opacity: 1; }
+  .cw-out .out-val {
+    font-size: 17px;
+    font-weight: 700;
+  }
   .cw-out .out-note {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     font-size: 13px;
     color: var(--ink-dim);
+    margin-left: 8px;
   }
 
   /* =========================
@@ -436,15 +540,16 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%) scale(0.3);
-    font-size: 46px;
+    font-size: 38px;
     font-weight: 300;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
     color: var(--ink);
     letter-spacing: -0.5px;
+    line-height: 1.35;
+    text-align: center;
     opacity: 0;
     transition: opacity 1.2s ease, transform 1.8s cubic-bezier(0.65, 0, 0.35, 1);
     text-shadow: 0 0 30px rgba(110, 168, 255, 0.3);
-    white-space: nowrap;
     pointer-events: none;
   }
 
@@ -456,18 +561,18 @@
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
     opacity: 0;
     transition: opacity 0.8s ease;
     pointer-events: none;
   }
   .token-pill {
-    padding: 14px 22px;
+    padding: 12px 18px;
     background: var(--pill-bg);
     border: 1.5px solid var(--pill-border);
     border-radius: 999px;
-    font-size: 24px;
+    font-size: 21px;
     font-weight: 500;
     color: var(--ink);
     backdrop-filter: blur(8px);
@@ -565,8 +670,6 @@
   .embed-point.royal  .dot { color: #fbbf24; background: #fbbf24; }
   .embed-point.person .dot { color: #6ea8ff; background: #6ea8ff; }
   .embed-point.query  .dot { color: #34d399; background: #34d399; }
-  .embed-point.sky    .dot { color: #a78bfa; background: #a78bfa; }
-  .embed-point.color  .dot { color: #f472b6; background: #f472b6; }
 
   /* Analogie-Pfeile */
   .analogy-arrow {
@@ -743,7 +846,7 @@
     <div class="phone-notch"></div>
     <div class="phone-screen">
       <div class="app-logo" id="appLogo">
-        <span class="l1">G</span><span class="l2">o</span><span class="l3">o</span><span class="l4">G</span><span class="l5">l</span><span class="l6">e</span>
+        <span class="l1">S</span><span class="l2">u</span><span class="l3">c</span><span class="l4">h</span><span class="l5">e</span>
       </div>
       <div class="search-bar">
         <div class="search-icon"></div>
@@ -755,13 +858,18 @@
       <div class="ai-card" id="aiCard">
         <div class="ai-head">
           <span class="ai-spark">✦</span>
-          <span class="ai-name">GooGle-KI</span>
+          <span class="ai-name">Suche-KI</span>
         </div>
         <div class="ai-text">
-          Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker
-          streuen als langwelliges. Blau (450&nbsp;nm) wird etwa 4× stärker
-          gestreut als Rot (650&nbsp;nm) — das nennt man
-          <b>Rayleigh-Streuung</b>.
+          Lichtstreuung in Luft folgt der <b>Rayleigh-Streuung</b>:
+          kurzes Licht wird stärker gestreut (∝ 1/λ⁴).
+          Blau (450&nbsp;nm) etwa 4× mehr als Rot (650&nbsp;nm) —
+          deshalb ist der Himmel blau. Das Programm dazu gleich.
+        </div>
+        <div class="ai-sources">
+          <span class="source-chip">wikipedia.de</span>
+          <span class="source-chip">leifiphysik.de</span>
+          <span class="source-chip">spektrum.de</span>
         </div>
       </div>
     </div>
@@ -775,13 +883,33 @@
     <div class="bar"></div><div class="bar"></div>
   </div>
 
-  <!-- Caption: Früher Links, heute Antwort -->
-  <div class="beat-caption" id="capSearch">
-    <span class="dim">Früher: 10 blaue Links, selbst durchforstet.</span><br>
-    <span class="acc">Heute: eine Antwort, fertig zusammengefasst.</span>
+  <!-- ============ Statement: kann auch programmieren ============ -->
+  <div class="statement" id="statement">
+    <div class="st-line1">Diese Systeme können viel mehr —</div>
+    <div class="st-line2">sie können auch <span class="acc">programmieren</span>.</div>
   </div>
 
-  <!-- ============ Code-Fenster (Programmieren) ============ -->
+  <!-- ============ Bild-Fenster (Bilder zeichnen) ============ -->
+  <div class="beat-caption" id="capPic">
+    Und sie können auch <span class="acc">Bilder zeichnen</span>.
+  </div>
+  <div class="pic-window" id="picWindow">
+    <div class="cw-title">
+      <span class="cw-dot r"></span>
+      <span class="cw-dot y"></span>
+      <span class="cw-dot g"></span>
+      <span class="cw-name">katze.png</span>
+    </div>
+    <div class="pic-body">
+      <div class="pic-prompt"><span class="qm">Prompt:</span> „eine katze, fotorealistisch“</div>
+      <img class="pic-img" src="katze1.jpg" alt="Generiertes Bild: eine Katze">
+    </div>
+  </div>
+
+  <!-- ============ Code-Fenster (das geschriebene Programm) ============ -->
+  <div class="beat-caption" id="capCode">
+    Die Tokens werden zu <span class="acc">Code</span>:
+  </div>
   <div class="code-window" id="codeWindow">
     <div class="cw-title">
       <span class="cw-dot r"></span>
@@ -791,13 +919,9 @@
     </div>
     <pre class="cw-code" id="cwCode"></pre>
     <div class="cw-out" id="cwOut">
-      4.35 <span class="out-note">— kurzes Licht wird ~4× stärker gestreut</span>
+      <span class="out-val">4.35</span>
+      <span class="out-note">— blaues Licht (450 nm) wird ~4× stärker gestreut als rotes (650 nm)</span>
     </div>
-  </div>
-
-  <!-- Caption: Programmieren -->
-  <div class="beat-caption" id="capCode">
-    Diese Systeme können viel mehr — sie können auch <span class="acc">programmieren</span>.
   </div>
 
   <!-- Die Frage, die sich im Raum entfaltet -->
@@ -806,7 +930,7 @@
   </div>
 
   <!-- Der schwebende Text nach dem Zoom -->
-  <div class="floating-text" id="floatingText">warum ist der himmel blau</div>
+  <div class="floating-text" id="floatingText">Schreib ein Programm,<br>das die Lichtstreuung in Luft berechnet</div>
 
   <!-- Layer-Label über den Tokens/Embeddings -->
   <div class="layer-label" id="layerLabel">
@@ -815,11 +939,14 @@
 
   <!-- Die Tokens -->
   <div class="tokens-layer" id="tokensLayer">
-    <div class="token-pill">warum</div>
-    <div class="token-pill">ist</div>
-    <div class="token-pill">der</div>
-    <div class="token-pill">himmel</div>
-    <div class="token-pill">blau</div>
+    <div class="token-pill">schreib</div>
+    <div class="token-pill">ein</div>
+    <div class="token-pill">programm</div>
+    <div class="token-pill">die</div>
+    <div class="token-pill">lichtstreuung</div>
+    <div class="token-pill">in</div>
+    <div class="token-pill">luft</div>
+    <div class="token-pill">berechnet</div>
   </div>
 
   <!-- Der Embedding-Raum (2D-Plot) -->
@@ -843,20 +970,20 @@
     </div>
 
     <!-- Die Query-Tokens (unsere gesprochene Frage) -->
-    <div class="embed-point query" data-key="warum" style="left: 15%; top: 78%;">
-      <div class="dot"></div><div class="label">warum</div>
+    <div class="embed-point query" data-key="schreib" style="left: 12%; top: 76%;">
+      <div class="dot"></div><div class="label">schreib</div>
     </div>
-    <div class="embed-point query" data-key="ist" style="left: 22%; top: 82%;">
-      <div class="dot"></div><div class="label">ist</div>
+    <div class="embed-point query" data-key="programm" style="left: 25%; top: 84%;">
+      <div class="dot"></div><div class="label">programm</div>
     </div>
-    <div class="embed-point query" data-key="der" style="left: 44%; top: 85%;">
-      <div class="dot"></div><div class="label">der</div>
+    <div class="embed-point query" data-key="lichtstreuung" style="left: 45%; top: 79%;">
+      <div class="dot"></div><div class="label">lichtstreuung</div>
     </div>
-    <div class="embed-point sky" data-key="himmel" style="left: 78%; top: 20%;">
-      <div class="dot"></div><div class="label">himmel</div>
+    <div class="embed-point query" data-key="luft" style="left: 60%; top: 87%;">
+      <div class="dot"></div><div class="label">luft</div>
     </div>
-    <div class="embed-point color" data-key="blau" style="left: 85%; top: 45%;">
-      <div class="dot"></div><div class="label">blau</div>
+    <div class="embed-point query" data-key="berechnet" style="left: 74%; top: 80%;">
+      <div class="dot"></div><div class="label">berechnet</div>
     </div>
 
     <!-- Analogie-Pfeile: mann → könig, frau → königin -->
@@ -912,7 +1039,9 @@
   const micBtn        = $('micBtn');
   const waveform      = $('waveform');
   const aiCard        = $('aiCard');
-  const capSearch     = $('capSearch');
+  const statement     = $('statement');
+  const capPic        = $('capPic');
+  const picWindow     = $('picWindow');
   const codeWindow    = $('codeWindow');
   const cwCode        = $('cwCode');
   const cwOut         = $('cwOut');
@@ -929,18 +1058,27 @@
   const modelBlock    = $('modelBlock');
   const handoff       = $('handoffHint');
 
-  const SATZ = 'warum ist der himmel blau';
+  // Was im Suchfeld steht (der Satz ist länger, das Feld zeigt das Ende)
+  const SATZ = '…Lichtstreuung in Luft';
 
-  // Der Code für die Programmier-Folie (Zeile pro Zeile, Token pro Farbe)
+  // Das Programm, das die KI schreibt (Rayleigh-Streuung, ∝ Dichte/λ⁴).
+  // Liefert: (650/450)⁴ ≈ 4.35 — blaues Licht wird ~4× stärker gestreut.
   const CODE_LINES = [
-    [{ t: '# Warum ist der Himmel blau?', c: 'cmt' }],
-    [{ t: 'def ', c: 'kw' }, { t: 'streuung', c: 'fn' }, { t: '(laenge):' }],
-    [{ t: '    return 1 / laenge ** 4' }],
+    [{ t: '# Rayleigh-Streuung in Luft', c: 'cmt' }],
+    [{ t: 'K_B ' }, { t: '1.380649e-23', c: 'num' }, { t: '   # Joule/Kelvin', c: 'cmt' }],
     [{ t: '' }],
-    [{ t: 'print', c: 'fn' }, { t: '(' }, { t: 'streuung', c: 'fn' }, { t: '(' },
-     { t: '450', c: 'num' }, { t: ') / ' }, { t: 'streuung', c: 'fn' }, { t: '(' },
-     { t: '650', c: 'num' }, { t: '))' }],
+    [{ t: 'def ', c: 'kw' }, { t: 'streuung', c: 'fn' }, { t: '(laenge, p, t):' }],
+    [{ t: '    dichte = p / (K_B * t)' }],
+    [{ t: '    return dichte / laenge ** 4' }],
+    [{ t: '' }],
+    [{ t: 'blau = ' }, { t: 'streuung', c: 'fn' }, { t: '(' }, { t: '450e-9', c: 'num' },
+     { t: ', ' }, { t: '1e5', c: 'num' }, { t: ', ' }, { t: '293', c: 'num' }, { t: ')' }],
+    [{ t: 'rot  = ' }, { t: 'streuung', c: 'fn' }, { t: '(' }, { t: '650e-9', c: 'num' },
+     { t: ', ' }, { t: '1e5', c: 'num' }, { t: ', ' }, { t: '293', c: 'num' }, { t: ')' }],
+    [{ t: 'print', c: 'fn' }, { t: '(f"' }, { t: '{blau / rot:.2f}', c: 'num' }, { t: '")' }],
   ];
+
+  const QUERY_KEYS = ['schreib', 'programm', 'lichtstreuung', 'luft', 'berechnet'];
 
   let typeTimer = null;
 
@@ -970,7 +1108,7 @@
         i++;
       }
       if (i >= lines.length) stopTyping();
-    }, 420);
+    }, 350);
   }
 
   // Hilfsfunktionen
@@ -1011,7 +1149,7 @@
 
   const beats = [
 
-    // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, GooGle-Logo an
+    // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, Logo „Suche“
     () => {
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       appLogo.style.opacity = '1';
@@ -1019,7 +1157,9 @@
       micBtn.classList.remove('listening');
       waveform.classList.remove('active');
       aiCard.classList.remove('on');
-      capSearch.style.opacity = '0';
+      statement.classList.remove('on');
+      capPic.style.opacity = '0';
+      picWindow.classList.remove('on');
       setCodeWindow({scale: 0.85, x: 0, y: 0, opacity: 0});
       stopTyping();
       renderCode(false);
@@ -1050,10 +1190,9 @@
       micBtn.classList.add('listening');
       waveform.classList.add('active');
       aiCard.classList.remove('on');
-      capSearch.style.opacity = '0';
     },
 
-    // BEAT 2 — Speech-to-Text: Satz erscheint im Suchfeld
+    // BEAT 2 — Speech-to-Text: Die Frage erscheint im Suchfeld
     () => {
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       appLogo.style.opacity = '1';
@@ -1061,10 +1200,9 @@
       micBtn.classList.remove('listening');
       waveform.classList.remove('active');
       aiCard.classList.remove('on');
-      capSearch.style.opacity = '0';
     },
 
-    // BEAT 3 — GooGle-KI antwortet: statt 10 Links eine Zusammenfassung
+    // BEAT 3 — Suche-KI antwortet: Zusammenfassung + Websites als Quellen
     () => {
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       appLogo.style.opacity = '1';
@@ -1072,54 +1210,42 @@
       micBtn.classList.remove('listening');
       waveform.classList.remove('active');
       aiCard.classList.add('on');
-      capSearch.style.opacity = '1';
     },
 
-    // BEAT 4 — Übergang zur Programmier-Folie:
-    // Handy gleitet weg, Code-Fenster erscheint, Code tippt sich
+    // BEAT 4 — Direkt danach: „sie können auch programmieren“
     () => {
       setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
       aiCard.classList.remove('on');
-      capSearch.style.opacity = '0';
-      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
-      capCode.style.opacity = '1';
-      cwOut.classList.remove('on');
-      startCodeTyping();
+      statement.classList.add('on');
     },
 
-    // BEAT 5 — Code komplett, Ausgabe erscheint
+    // BEAT 5 — Weitere Stärke: Bilder zeichnen (Prompt → Bild)
     () => {
       setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
-      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
-      capCode.style.opacity = '1';
-      stopTyping();
-      renderCode(true);
-      cwOut.classList.add('on');
+      statement.classList.remove('on');
+      capPic.style.opacity = '1';
+      picWindow.classList.add('on');
     },
 
     // BEAT 6 — Die Frage taucht auf: "was passiert da eigentlich?"
     () => {
-      setCodeWindow({scale: 0.65, x: 0, y: -170, opacity: 0.3});
-      stopTyping();
-      renderCode(true);
-      cwOut.classList.add('on');
-      capCode.style.opacity = '0';
+      picWindow.classList.remove('on');
+      capPic.style.opacity = '0';
       questionOv.style.opacity = '1';
       questionOv.style.transform = 'translate(-50%, calc(-50% + 330px))';
     },
 
-    // BEAT 7 — Kamera zoomt in den Text hinein
+    // BEAT 7 — Der Satz schwebt frei im Raum
     () => {
-      setCodeWindow({scale: 0.65, x: 0, y: -170, opacity: 0});
       questionOv.style.opacity = '0';
       floatingText.style.opacity = '1';
       floatingText.style.transform = 'translate(-50%, -50%) scale(1)';
     },
 
-    // BEAT 8 — Tokenisierung: Text zerbricht in Token-Pillen
+    // BEAT 8 — Tokenisierung: Der Satz zerbricht in Token-Pillen
     () => {
       floatingText.style.opacity = '0';
-      floatingText.style.transform = 'translate(-50%, -50%) scale(1.4)';
+      floatingText.style.transform = 'translate(-50%, -50%) scale(1.3)';
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
@@ -1127,15 +1253,34 @@
       modelBlock.style.opacity = '0';
     },
 
-    // BEAT 9 — Embedding: Tokens werden zu Punkten im Raum
-    // Query-Tokens (warum, ist, der, himmel, blau) tauchen auf
+    // BEAT 9 — Code-Teil: Das Fenster erscheint, der Code tippt sich
     () => {
       tokensLayer.style.opacity = '0';
+      layerLabel.style.opacity = '0';
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      cwOut.classList.remove('on');
+      startCodeTyping();
+    },
+
+    // BEAT 10 — Code komplett, das (richtige) Ergebnis erscheint
+    () => {
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      stopTyping();
+      renderCode(true);
+      cwOut.classList.add('on');
+    },
+
+    // BEAT 11 — Embedding: Tokens werden zu Punkten im Raum
+    () => {
+      setCodeWindow({scale: 0.6, x: 0, y: 0, opacity: 0.15});
+      capCode.style.opacity = '0';
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau']);
+      showEmbedPoints(QUERY_KEYS);
       arrowMK.style.opacity = '0';
       arrowWQ.style.opacity = '0';
       analogyCap.style.opacity = '0';
@@ -1143,28 +1288,26 @@
       handoff.style.opacity = '0';
     },
 
-    // BEAT 10 — Der Raum hat Struktur: König/Königin/Mann/Frau erscheinen,
-    // die Analogie wird sichtbar
+    // BEAT 12 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
     () => {
-      tokensLayer.style.opacity = '0';
+      setCodeWindow({scale: 0.6, x: 0, y: 0, opacity: 0});
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = 'Die Positionen sind <span class="accent">nicht zufällig</span> — Bedeutung wird Geometrie';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau', 'king', 'queen', 'man', 'woman']);
+      showEmbedPoints(QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']));
       arrowMK.style.opacity = '0.9';
       arrowWQ.style.opacity = '0.9';
       analogyCap.style.opacity = '1';
       modelBlock.style.opacity = '0';
     },
 
-    // BEAT 11 — Übergabe: Alles verdichtet sich zum Modell-Block
+    // BEAT 13 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
-      tokensLayer.style.opacity = '0';
       layerLabel.style.opacity = '0';
       embeddingSp.style.opacity = '0.15';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.6)';
-      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau', 'king', 'queen', 'man', 'woman']);
+      showEmbedPoints(QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']));
       arrowMK.style.opacity = '0';
       arrowWQ.style.opacity = '0';
       analogyCap.style.opacity = '0';
