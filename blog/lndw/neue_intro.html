@@ -443,7 +443,7 @@
   }
 
   /* =========================
-     Chat-Fenster (Bilder zeichnen: Prompt → Bild)
+      Chat-Fenster (Bilder generieren: Prompt → Bild)
      ========================= */
   .chat-window {
     position: absolute;
@@ -684,6 +684,31 @@
   .token-pill:nth-child(odd)  { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.14); }
   .token-pill:nth-child(3n)   { border-color: rgba(52, 211, 153, 0.5);  background: rgba(52, 211, 153, 0.14); }
   .token-pill:nth-child(4n)   { border-color: rgba(251, 191, 36, 0.5);  background: rgba(251, 191, 36, 0.14); }
+  /* Token-Schock: „himmel" bricht in „him" + „mel" */
+  .token-pill.crack {
+    border-color: #f87171 !important;
+    background: rgba(248, 113, 113, 0.18) !important;
+    animation: crackShake 0.4s ease 2;
+  }
+  @keyframes crackShake {
+    0%, 100% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(0) scale(1) translateX(-5px) rotate(-1.5deg); }
+    75% { transform: translateY(0) scale(1) translateX(5px) rotate(1.5deg); }
+  }
+  .token-pill.fresh {
+    animation: freshPop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
+               freshGlow 1.8s ease forwards;
+  }
+  @keyframes freshPop {
+    0%   { transform: translateY(0) scale(0.4); }
+    60%  { transform: translateY(0) scale(1.15); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  @keyframes freshGlow {
+    0%   { box-shadow: 0 0 34px rgba(248, 113, 113, 0.85); }
+    100% { box-shadow: 0 4px 20px rgba(110, 168, 255, 0.15); }
+  }
+
   /* Kleines Label unter den Tokens */
   .layer-label {
     position: absolute;
@@ -1103,9 +1128,9 @@
     </div>
   </div>
 
-  <!-- ============ Chat-Fenster (Folie: Bilder zeichnen) ============ -->
+  <!-- ============ Chat-Fenster (Folie: Bilder generieren) ============ -->
   <div class="beat-caption" id="capPic">
-    Und sie können auch <span class="acc">Bilder zeichnen</span>.
+    Und sie können auch <span class="acc">Bilder generieren</span>.
   </div>
   <div class="chat-window" id="chatWindow">
     <div class="chat-head">
@@ -1171,8 +1196,11 @@
     <div class="embed-point query" data-key="der" style="left: 44%; top: 85%;">
       <div class="dot"></div><div class="label">der</div>
     </div>
-    <div class="embed-point sky" data-key="himmel" style="left: 78%; top: 20%;">
-      <div class="dot"></div><div class="label">himmel</div>
+    <div class="embed-point sky" data-key="him" style="left: 75%; top: 18%;">
+      <div class="dot"></div><div class="label">him</div>
+    </div>
+    <div class="embed-point sky" data-key="mel" style="left: 83%; top: 27%;">
+      <div class="dot"></div><div class="label">mel</div>
     </div>
     <div class="embed-point color" data-key="blau" style="left: 85%; top: 45%;">
       <div class="dot"></div><div class="label">blau</div>
@@ -1279,7 +1307,7 @@
   // Liefert: (650/450)⁴ ≈ 4.35 — blaues Licht wird ~4× stärker gestreut.
   const CODE_LINES = [
     [{ t: '# Rayleigh-Streuung in Luft', c: 'cmt' }],
-    [{ t: 'K_B ' }, { t: '1.380649e-23', c: 'num' }, { t: '   # Joule/Kelvin', c: 'cmt' }],
+    [{ t: 'K_B = ' }, { t: '1.380649e-23', c: 'num' }, { t: '   # Joule/Kelvin', c: 'cmt' }],
     [{ t: '' }],
     [{ t: 'def ', c: 'kw' }, { t: 'streuung', c: 'fn' }, { t: '(laenge, p, t):' }],
     [{ t: '    dichte = p / (K_B * t)' }],
@@ -1292,7 +1320,7 @@
     [{ t: 'print', c: 'fn' }, { t: '(f"Blau wird ', c: 'str' }, { t: '{blau / rot:.2f}', c: 'num' }, { t: '× stärker gestreut als Rot")', c: 'str' }],
   ];
 
-  const QUERY_KEYS = ['warum', 'ist', 'der', 'himmel', 'blau'];
+  const QUERY_KEYS = ['warum', 'ist', 'der', 'him', 'mel', 'blau'];
   const ALL_KEYS = QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']);
 
   // Die KI-Antwort — wird Beat für Beat Zeichen für Zeichen gestreamt
@@ -1302,8 +1330,9 @@
     { t: '.' },
   ];
 
-  // Token-Pillen — wortweise
-  const TOKENS = ['warum', 'ist', 'der', 'himmel', 'blau'];
+  // Token-Pillen: zuerst wortweise, dann bricht „himmel" in „him" + „mel"
+  const TOKENS_FULL  = ['warum', 'ist', 'der', 'himmel', 'blau'];
+  const TOKENS_SPLIT = ['warum', 'ist', 'der', 'him', 'mel', 'blau'];
 
   let typeTimer = null;
 
@@ -1375,10 +1404,10 @@
     beatTimers = [];
   }
 
-  // Token-Pillen bauen
-  function renderTokens(list) {
+  // Token-Pillen bauen (freshKeys bekommen Pop + Glow)
+  function renderTokens(list, freshKeys = []) {
     tokensLayer.innerHTML = list.map(tok =>
-      '<div class="token-pill">' + tok + '</div>'
+      '<div class="token-pill' + (freshKeys.includes(tok) ? ' fresh' : '') + '">' + tok + '</div>'
     ).join('');
   }
 
@@ -1529,7 +1558,7 @@
       setTower(['answer', 'code']);
     },
 
-    // BEAT 7 — Weitere Stärke: Bilder zeichnen (Chat: Prompt → Bild)
+    // BEAT 7 — Weitere Stärke: Bilder generieren (Chat: Prompt → Bild)
     () => {
       resetAll();
       capPic.style.opacity = '1';
@@ -1553,20 +1582,29 @@
       capSatz.style.opacity = '1';
     },
 
-    // BEAT 10 — Tokenisierung: Der Satz zerbricht in Wörter
+    // BEAT 10 — Tokenisierung: Der Satz zerbricht — und „himmel" in „him" + „mel"
     () => {
       resetAll();
-      renderTokens(TOKENS);
+      renderTokens(TOKENS_FULL);
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Wörter zerlegt';
+      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
+      later(() => {
+        tokensLayer.querySelectorAll('.token-pill').forEach(p => {
+          if (p.textContent === 'himmel') p.classList.add('crack');
+        });
+      }, 1600);
+      later(() => {
+        renderTokens(TOKENS_SPLIT, ['him', 'mel']);
+        layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — und „himmel“? Das wird zu him + mel';
+      }, 2500);
     },
 
     // BEAT 11 — Embedding: Tokens werden zu Punkten im Raum
     () => {
       resetAll();
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
+      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Stück wird zu einem Punkt im Bedeutungsraum';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
       showEmbedPoints(QUERY_KEYS);
