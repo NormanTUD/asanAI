@@ -16,7 +16,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 
 .slide.active {
 	opacity: 1;
-	transform: translateY(0) scale(1);
+	transform: scale(1);
 	pointer-events: auto;
 	z-index: 1;
 }
@@ -42,11 +42,9 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     background: #ffffff;
     overflow: hidden;
     opacity: 0;
-    transform: scale(0.985);
     pointer-events: none;
-	transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-	           transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: opacity, transform;
+	transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
 }
 
 .slide-content {
