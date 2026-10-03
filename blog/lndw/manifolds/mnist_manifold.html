@@ -38,6 +38,16 @@
     font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
     color: var(--dim); font-weight: 600;
   }
+  #group-tag {
+    display: inline-block;
+    font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+    margin: 6px 0 -4px;
+    padding: 2px 8px;
+    background: rgba(217, 119, 6, 0.12);
+    border-radius: 3px;
+    transition: opacity .45s ease;
+  }
   #title {
     font-size: 23px; font-weight: 650; color: var(--ink);
     margin: 7px 0 9px; line-height: 1.15; letter-spacing: -0.4px;
@@ -99,6 +109,7 @@
     width: 26px; height: 3px; border-radius: 2px;
     background: #cbd5e1; transition: background .5s ease;
   }
+  #bar div.group-end { margin-right: 14px; }
 
   /* ---- Hover-Thumbnail ---- */
   #tip {
@@ -162,6 +173,7 @@
 
   <div id="panel">
     <div id="step"></div>
+    <div id="group-tag"></div>
     <div id="title"></div>
     <div id="body"></div>
   </div>
@@ -238,64 +250,96 @@ const sub = (t, a, b) => ease(clamp((t - a) / (b - a), 0, 1));
 // ============================================================
 const BEATS = [
   {
-    n: 'Beat 1 / 7',
-    t: '784 Zahlen sind ein Punkt',
-    b: 'Ein MNIST-Bild hat 28 × 28 = <b>784 Pixel</b>. Jeder Pixel ist eine Zahl zwischen 0 und 1. ' +
-       'Damit ist <b>ein Bild = ein Punkt</b> in einem 784-dimensionalen Raum ℝ⁷⁸⁴. ' +
-       'Die 784 Balken rechts sind genau dieser eine Punkt — seine Koordinaten.',
+    n: '1 / 7', group: 'aufbau',
+    gt: 'Aufbau — der Raum',
+    t: 'Was Sie sehen: ein Bild, 784 Balken',
+    b: 'Ein MNIST-Bild besteht aus <b>28 × 28 = 784 Pixeln</b>. Jeder Balken rechts ist ein Pixel, ' +
+       'seine Helligkeit als Zahl zwischen 0 und 1. Fassen Sie alle 784 Zahlen in einer Spalte zusammen, ' +
+       'haben Sie <b>einen Punkt im Raum ℝ⁷⁸⁴</b>. 70 000 Bilder im Datensatz = 70 000 Punkte. ' +
+       'Ein Bild ist also kein Bild mehr — es ist eine Spalte Zahlen. Und jede Zahl landet auf einer eigenen Achse.',
     mode: 'pixels', spin: 0, table: 'ambient'
   },
   {
-    n: 'Beat 2 / 7',
-    t: 'Der Raum ist fast vollständig leer',
-    b: 'Zieht man <span class="hl2">zufällige</span> Punkte aus ℝ⁷⁸⁴ — mit exakt derselben Pixelstatistik wie MNIST — ' +
-       'sieht <b>keiner</b> davon je wie eine Ziffer aus. Die echten Daten (farbig) liegen dicht gedrängt, ' +
-       'das Rauschen (grau) streut weit. <b>Die Ziffern füllen den Raum nicht aus. Sie bewohnen eine dünne Schicht darin.</b>',
+    n: '2 / 7', group: 'aufbau',
+    gt: 'Aufbau — der Raum',
+    t: 'Die Insel im Nebel',
+    b: 'Die <b>farbigen Punkte</b> sind 4 000 echte MNIST-Bilder, eingefärbt nach ihrer Ziffer. ' +
+       'Die <span class="hl2">grauen Punkte</span> sind keine echten Bilder — pro Pixel wurde rein zufällig ' +
+       'eine Helligkeit gezogen, mit derselben Statistik wie MNIST. Der Unterschied springt ins Auge: ' +
+       'die echten Bilder drängen sich <b>dicht zusammen</b>, das Rauschen <b>streut weit</b>. ' +
+       'ℝ⁷⁸⁴ ist riesig, aber die Bilder bewohnen nur einen winzigen Teil davon. ' +
+       '<b>Verdacht:</b> die Daten liegen nicht irgendwo im Raum, sondern <b>auf etwas</b>. ' +
+       'Dieses <i>Etwas</i> ist die <b>Mannigfaltigkeit</b> — das Manifold.',
     mode: 'noise', spin: 0.08, table: 'noise'
   },
   {
-    n: 'Beat 3 / 7',
-    t: 'Die Schicht ist messbar dünn',
-    b: 'Das PCA-Spektrum zeigt, wie sich die Varianz auf die Richtungen verteilt. ' +
-       'Statt 784 gleichberechtigter Achsen genügen <span class="hl">wenige Dutzend</span>, um fast alles zu erfassen. ' +
-       'Die restlichen Hunderte Richtungen sind nahezu <b>flach</b> — in ihnen bewegen sich die Daten praktisch nicht. ' +
-       'Die orangene Kurve ist die kumulierte Varianz, die Marken zeigen 90 %, 95 % und 99 %.',
+    n: '3 / 7', group: 'diagnose',
+    gt: 'Diagnose — wie dünn?',
+    t: 'Das Varianz-Spektrum',
+    b: 'Jeder Balken zeigt, <b>wieviel Varianz</b> in einer der 784 Achsen steckt — geordnet von groß nach klein. ' +
+       'Achse 1 trägt am meisten, Achse 2 etwas weniger, … Achse 784 fast nichts. ' +
+       'Die <b>orangene Kurve</b> ist die <i>kumulierte</i> Varianz: an der Stelle k ist ihr Wert die Summe ' +
+       'der Varianzen aller Achsen 1..k. An den Marken lesen Sie ab, <b>wieviele Achsen Sie brauchen</b>, ' +
+       'um 90 %, 95 % oder 99 % der Gesamtvarianz zu erklären. Wir brauchen keine 784 Achsen — ' +
+       'rund <span class="hl">50</span> reichen für 99 %. Der Raum der Bilder ist tatsächlich ' +
+       '<b>fast flach in den meisten Richtungen</b>. Die Schicht ist dünn — und sie hat <i>eine</i> bevorzugte Richtung.',
     mode: 'spectrum', spin: 0, table: 'spectrum'
   },
   {
-    n: 'Beat 4 / 7',
-    t: 'PCA: die Schatten überlappen',
-    b: 'Dieselben 4000 Ziffern, projiziert auf die drei stärksten <b>linearen</b> Richtungen. ' +
-       'Man sieht Struktur — <span class="hl2">0</span> und <span class="hl2">1</span> trennen sich klar. ' +
-       'Aber <b>4/9</b> und <b>3/5/8</b> liegen übereinander. ' +
-       'PCA darf nur <b>drehen und strecken</b>, nicht biegen. Eine gekrümmte Fläche lässt sich so nicht flach ausbreiten.',
-    mode: 'pca3', spin: 0.12, table: 'overlap'
-  },
-  {
-    n: 'Beat 5 / 7',
-    t: 'Isomap: entlang der Fläche messen',
-    b: 'Dieselben Punkte, andere Metrik. Isomap misst Abstände nicht quer durch den Raum, ' +
-       'sondern <span class="hl">entlang der Datenfläche</span> (geodätisch, über einen 12-Nachbarn-Graphen). ' +
-       'Die Cluster lösen sich voneinander. <b>Genau das ist die Krümmung</b> — dieselbe Pointe wie bei den verhakten Tori: ' +
-       'Was linear unlösbar ist, wird lösbar, sobald man die Geometrie respektiert.',
-    mode: 'iso3', spin: 0.12, table: 'overlap'
-  },
-  {
-    n: 'Beat 6 / 7',
-    t: 'Wie dick ist die Schicht wirklich?',
-    b: 'Der <b>Two-NN-Schätzer</b> (Facco et al. 2017) nutzt nur das Verhältnis der Abstände zum ersten und zweiten Nachbarn. ' +
+    n: '4 / 7', group: 'diagnose',
+    gt: 'Diagnose — wie dünn?',
+    t: 'Die intrinsische Dimension',
+    b: 'Der <b>Two-NN-Schätzer</b> (Facco et al. 2017) misst nicht Achsen, sondern direkt: ' +
+       'für jeden Punkt, um wieviel sein Abstand zum <i>zweit</i>nächsten Nachbarn größer ist als zum nächsten. ' +
+       'Aus dem Verhältnis vieler solcher Paare schätzt er die <b>intrinsische Dimension</b>. ' +
        'Ergebnis: jede Ziffer lebt auf einer Fläche von rund <span class="hl">8 bis 15 Dimensionen</span> — ' +
-       'eingebettet in ℝ⁷⁸⁴. Zum Vergleich: reines Rauschen liefert eine <b>deutlich höhere</b> Schätzung. ' +
-       'Die Ziffern sind also keine Wolke im Raum, sondern eine dünne, gekrümmte Fläche.',
+       'nicht 784. Das ist konsistent mit dem Spektrum, aber genauer: 1 und 7 sind am dünnsten (~8), ' +
+       '8 am dicksten (~15). Reine Zufallsbilder landen bei 200+. ' +
+       '<b>Die Schicht ist messbar dünn. Aber flach? Das kommt jetzt.</b>',
     mode: 'dims', spin: 0, table: 'dims'
   },
   {
-    n: 'Beat 7 / 7',
-    t: 'Das gilt auch für Sprache',
-    b: 'Was hier an Pixeln sichtbar wird, gilt genauso für <b>Wort-Embeddings</b>: ' +
-       'Tokens füllen den Embedding-Raum nicht aus, sie liegen auf einer gekrümmten Fläche. ' +
-       'Deshalb funktioniert Übersetzung als <span class="hl2">Bewegung zwischen zwei Mannigfaltigkeiten</span> — ' +
-       'und deshalb braucht ein Netz <b>Layer</b>: jeder Layer biegt den Raum, bis eine Gerade wieder reicht.',
+    n: '5 / 7', group: 'geometrie',
+    gt: 'Geometrie — was krümmt sich?',
+    t: 'PCA scheitert an der Krümmung',
+    b: 'Wir projizieren die 4 000 Bilder auf die <b>drei stärksten linearen Achsen</b> (PCA). ' +
+       'Was sich trennt: <span class="hl2">0</span> und <span class="hl2">1</span> klar, ' +
+       '<span class="hl2">6</span> etwas abseits. Was sich <b>nicht</b> trennt: ' +
+       '<b>4/9</b> überlappen fast komplett, <b>3/5/8</b> ebenso, <b>2/7</b> mittendrin. ' +
+       'PCA darf nur <b>drehen und strecken, nicht biegen</b>. ' +
+       'Stellen Sie sich ein Blatt Papier vor, das zu einer Röhre gerollt ist: von oben betrachtet ' +
+       '(flach projiziert) liegen zwei Punkte, die auf dem Blatt Nachbarn waren, plötzlich weit auseinander. ' +
+       'Genau das passiert hier. <b>Eine gekrümmte Fläche lässt sich nicht flach ausbreiten, ohne sie zu zerreißen.</b>',
+    mode: 'pca3', spin: 0.12, table: 'overlap'
+  },
+  {
+    n: '6 / 7', group: 'geometrie',
+    gt: 'Geometrie — was krümmt sich?',
+    t: 'Isomap: entlang der Fläche messen',
+    b: 'Gleiche Punkte, <b>andere Abstandsdefinition</b>. Isomap baut einen Nachbarschaftsgraphen (k = 12) ' +
+       'und misst Abstände <span class="hl">entlang der Fläche</span>, nicht quer durch den Raum — ' +
+       'wie ein Wanderer, der dem Weg folgt, statt die Luftlinie zu nehmen. <b>Geodätisch</b> statt euklidisch. ' +
+       'Die Cluster, die eben noch verschmolzen, <b>lösen sich auf</b>. ' +
+       '<b>Was heißt Krümmung?</b> Schlicht dies: der kürzeste Weg zwischen zwei Bildern führt nicht ' +
+       'durch den Raum, sondern <b>durch die Wolke hindurch</b>. Lineare Methoden sehen diesen Weg nicht — ' +
+       'nichtlineare schon. <b>Das ist der Unterschied zwischen einer Ebene und einer Mannigfaltigkeit.</b>',
+    mode: 'iso3', spin: 0.12, table: 'overlap'
+  },
+  {
+    n: '7 / 7', group: 'pointe',
+    gt: 'Pointe — Daten liegen auf Räumen',
+    t: 'Daten liegen AUF Räumen',
+    b: 'Dieselbe Wolke wie eben, jetzt mit Blick aufs Ganze. Was wir gefunden haben: ' +
+       'die 70 000 Bilder füllen keine 784 Dimensionen, sondern liegen auf einer ' +
+       '<b>gekrümmten Fläche von ≈10 Dimensionen</b>. ' +
+       'Das ist <b>nicht</b> MNIST-spezifisch. <b>Wort-Embeddings</b> (word2vec, BERT) liegen genauso auf ' +
+       'einer dünnen, gekrümmten Schicht in ihrem hochdimensionalen Raum. ' +
+       'Deshalb funktioniert <span class="hl2">Übersetzung als Geometrie</span>: ein Token in Sprache A wird ' +
+       'auf einen Punkt abgebildet, in Sprache B ebenfalls — die gesuchte Übersetzung ist die ' +
+       '<b>Bewegung zwischen zwei Mannigfaltigkeiten</b>. ' +
+       'Und deshalb brauchen neuronale Netze <b>Layer</b>: jeder Layer darf die Fläche <b>biegen</b>, ' +
+       'bis eine Gerade wieder reicht. ' +
+       '<b>Die Pointe der ganzen Vorlesung: Daten liegen nicht in Räumen — sie liegen auf Räumen.</b>',
     mode: 'iso3', spin: 0.07, table: 'summary'
   }
 ];
@@ -780,24 +824,29 @@ function updateText() {
   const b = BEATS[cur];
   const title = document.getElementById('title');
   const body  = document.getElementById('body');
+  const gtag  = document.getElementById('group-tag');
 
   // kurzes Ausblenden → Text tauschen → einblenden (verhindert Flackern)
   title.style.opacity = '0';
   body.style.opacity  = '0';
+  gtag.style.opacity  = '0';
   setTimeout(() => {
     document.getElementById('step').textContent = b.n;
-    title.textContent = b.t;
-    body.innerHTML = b.b;
+    gtag.textContent   = b.gt;
+    title.textContent  = b.t;
+    body.innerHTML     = b.b;
     buildTable(b.table);
     title.style.opacity = '1';
     body.style.opacity  = '1';
+    gtag.style.opacity  = '1';
   }, 180);
 
   const bar = document.getElementById('bar');
   bar.innerHTML = '';
-  BEATS.forEach((_, i) => {
+  BEATS.forEach((bt, i) => {
     const e = document.createElement('div');
     e.style.background = i <= cur ? '#d97706' : '#cbd5e1';
+    if (i > 0 && BEATS[i - 1].group !== bt.group) e.classList.add('group-end');
     bar.appendChild(e);
   });
 }

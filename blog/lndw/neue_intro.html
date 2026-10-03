@@ -331,11 +331,11 @@
     pointer-events: none;
   }
   .beat-caption .acc { color: var(--accent); font-weight: 400; }
-  #capCode { top: calc(50% - 212px); }
+  #capCode { top: calc(50% - 224px); }
   #capPic  { top: calc(50% - 212px); }
 
   /* =========================
-     Statement-Folie („kann auch programmieren")
+     Statement-Folien (große Thesen)
      ========================= */
   .statement {
     position: absolute;
@@ -362,6 +362,9 @@
     font-weight: 300;
     color: var(--ink);
     letter-spacing: -0.8px;
+  }
+  .statement .st-line2.small {
+    font-size: 36px;
   }
   .statement .st-line2 .acc {
     color: var(--accent-2);
@@ -460,9 +463,21 @@
     font-size: 13px;
     color: #8a95b0;
   }
+  .code-prompt {
+    font-size: 13px;
+    color: var(--ink-dim);
+    font-style: italic;
+    line-height: 1.45;
+    padding: 12px 20px 2px;
+  }
+  .code-prompt .qm {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
   .cw-code {
     margin: 0;
-    padding: 18px 20px 10px;
+    padding: 14px 20px 10px;
     font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
     font-size: 15px;
     line-height: 1.7;
@@ -540,16 +555,15 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%) scale(0.3);
-    font-size: 38px;
+    font-size: 46px;
     font-weight: 300;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
     color: var(--ink);
     letter-spacing: -0.5px;
-    line-height: 1.35;
-    text-align: center;
     opacity: 0;
     transition: opacity 1.2s ease, transform 1.8s cubic-bezier(0.65, 0, 0.35, 1);
     text-shadow: 0 0 30px rgba(110, 168, 255, 0.3);
+    white-space: nowrap;
     pointer-events: none;
   }
 
@@ -561,18 +575,18 @@
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
     opacity: 0;
     transition: opacity 0.8s ease;
     pointer-events: none;
   }
   .token-pill {
-    padding: 12px 18px;
+    padding: 14px 22px;
     background: var(--pill-bg);
     border: 1.5px solid var(--pill-border);
     border-radius: 999px;
-    font-size: 21px;
+    font-size: 24px;
     font-weight: 500;
     color: var(--ink);
     backdrop-filter: blur(8px);
@@ -670,6 +684,8 @@
   .embed-point.royal  .dot { color: #fbbf24; background: #fbbf24; }
   .embed-point.person .dot { color: #6ea8ff; background: #6ea8ff; }
   .embed-point.query  .dot { color: #34d399; background: #34d399; }
+  .embed-point.sky    .dot { color: #a78bfa; background: #a78bfa; }
+  .embed-point.color  .dot { color: #f472b6; background: #f472b6; }
 
   /* Analogie-Pfeile */
   .analogy-arrow {
@@ -861,10 +877,10 @@
           <span class="ai-name">Suche-KI</span>
         </div>
         <div class="ai-text">
-          Lichtstreuung in Luft folgt der <b>Rayleigh-Streuung</b>:
-          kurzes Licht wird stärker gestreut (∝ 1/λ⁴).
-          Blau (450&nbsp;nm) etwa 4× mehr als Rot (650&nbsp;nm) —
-          deshalb ist der Himmel blau. Das Programm dazu gleich.
+          Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht
+          stärker streuen als langwelliges. Blau (450&nbsp;nm) wird etwa
+          4× mehr gestreut als Rot (650&nbsp;nm) — das nennt man
+          <b>Rayleigh-Streuung</b>.
         </div>
         <div class="ai-sources">
           <span class="source-chip">wikipedia.de</span>
@@ -906,9 +922,15 @@
     </div>
   </div>
 
+  <!-- ============ Statement: alles geht über Transformer ============ -->
+  <div class="statement" id="statement2">
+    <div class="st-line1">Und all das funktioniert nach ähnlichen Mechanismen —</div>
+    <div class="st-line2 small">dem <span class="acc">Transformer</span>, den ich euch heute erkläre.</div>
+  </div>
+
   <!-- ============ Code-Fenster (das geschriebene Programm) ============ -->
   <div class="beat-caption" id="capCode">
-    Die Tokens werden zu <span class="acc">Code</span>:
+    Der Auftrag wird zu <span class="acc">Code</span>:
   </div>
   <div class="code-window" id="codeWindow">
     <div class="cw-title">
@@ -916,6 +938,10 @@
       <span class="cw-dot y"></span>
       <span class="cw-dot g"></span>
       <span class="cw-name">himmel.py</span>
+    </div>
+    <div class="code-prompt">
+      <span class="qm">Auftrag:</span> „Schreib mir ein Programm, das die
+      Lichtstreuung in der Atmosphäre berechnet“
     </div>
     <pre class="cw-code" id="cwCode"></pre>
     <div class="cw-out" id="cwOut">
@@ -930,7 +956,7 @@
   </div>
 
   <!-- Der schwebende Text nach dem Zoom -->
-  <div class="floating-text" id="floatingText">Schreib ein Programm,<br>das die Lichtstreuung in Luft berechnet</div>
+  <div class="floating-text" id="floatingText">warum ist der himmel blau?</div>
 
   <!-- Layer-Label über den Tokens/Embeddings -->
   <div class="layer-label" id="layerLabel">
@@ -939,14 +965,11 @@
 
   <!-- Die Tokens -->
   <div class="tokens-layer" id="tokensLayer">
-    <div class="token-pill">schreib</div>
-    <div class="token-pill">ein</div>
-    <div class="token-pill">programm</div>
-    <div class="token-pill">die</div>
-    <div class="token-pill">lichtstreuung</div>
-    <div class="token-pill">in</div>
-    <div class="token-pill">luft</div>
-    <div class="token-pill">berechnet</div>
+    <div class="token-pill">warum</div>
+    <div class="token-pill">ist</div>
+    <div class="token-pill">der</div>
+    <div class="token-pill">himmel</div>
+    <div class="token-pill">blau</div>
   </div>
 
   <!-- Der Embedding-Raum (2D-Plot) -->
@@ -970,20 +993,20 @@
     </div>
 
     <!-- Die Query-Tokens (unsere gesprochene Frage) -->
-    <div class="embed-point query" data-key="schreib" style="left: 12%; top: 76%;">
-      <div class="dot"></div><div class="label">schreib</div>
+    <div class="embed-point query" data-key="warum" style="left: 15%; top: 78%;">
+      <div class="dot"></div><div class="label">warum</div>
     </div>
-    <div class="embed-point query" data-key="programm" style="left: 25%; top: 84%;">
-      <div class="dot"></div><div class="label">programm</div>
+    <div class="embed-point query" data-key="ist" style="left: 22%; top: 82%;">
+      <div class="dot"></div><div class="label">ist</div>
     </div>
-    <div class="embed-point query" data-key="lichtstreuung" style="left: 45%; top: 79%;">
-      <div class="dot"></div><div class="label">lichtstreuung</div>
+    <div class="embed-point query" data-key="der" style="left: 44%; top: 85%;">
+      <div class="dot"></div><div class="label">der</div>
     </div>
-    <div class="embed-point query" data-key="luft" style="left: 60%; top: 87%;">
-      <div class="dot"></div><div class="label">luft</div>
+    <div class="embed-point sky" data-key="himmel" style="left: 78%; top: 20%;">
+      <div class="dot"></div><div class="label">himmel</div>
     </div>
-    <div class="embed-point query" data-key="berechnet" style="left: 74%; top: 80%;">
-      <div class="dot"></div><div class="label">berechnet</div>
+    <div class="embed-point color" data-key="blau" style="left: 85%; top: 45%;">
+      <div class="dot"></div><div class="label">blau</div>
     </div>
 
     <!-- Analogie-Pfeile: mann → könig, frau → königin -->
@@ -1025,9 +1048,9 @@
 <script>
   // =========================================================
   // Choreographie: eine Sequenz von Beats.
-  // Jeder Beat ist eine Funktion, die den Zielzustand setzt.
-  // Rückwärts ist immer möglich, weil wir den State neu setzen
-  // statt Animationen "abzuspielen" — CSS interpoliert.
+  // Jeder Beat setzt den KOMPLETTEN Zustand (resetAll + eigene
+  // Elemente) — so kann beim Zurück- und Springen nichts
+  // überlappen.
   // =========================================================
 
   const $ = (id) => document.getElementById(id);
@@ -1040,6 +1063,7 @@
   const waveform      = $('waveform');
   const aiCard        = $('aiCard');
   const statement     = $('statement');
+  const statement2    = $('statement2');
   const capPic        = $('capPic');
   const picWindow     = $('picWindow');
   const codeWindow    = $('codeWindow');
@@ -1058,8 +1082,7 @@
   const modelBlock    = $('modelBlock');
   const handoff       = $('handoffHint');
 
-  // Was im Suchfeld steht (der Satz ist länger, das Feld zeigt das Ende)
-  const SATZ = '…Lichtstreuung in Luft';
+  const SATZ = 'warum ist der himmel blau?';
 
   // Das Programm, das die KI schreibt (Rayleigh-Streuung, ∝ Dichte/λ⁴).
   // Liefert: (650/450)⁴ ≈ 4.35 — blaues Licht wird ~4× stärker gestreut.
@@ -1078,7 +1101,8 @@
     [{ t: 'print', c: 'fn' }, { t: '(f"' }, { t: '{blau / rot:.2f}', c: 'num' }, { t: '")' }],
   ];
 
-  const QUERY_KEYS = ['schreib', 'programm', 'lichtstreuung', 'luft', 'berechnet'];
+  const QUERY_KEYS = ['warum', 'ist', 'der', 'himmel', 'blau'];
+  const ALL_KEYS = QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']);
 
   let typeTimer = null;
 
@@ -1118,6 +1142,10 @@
     phone.style.opacity = opacity;
   }
 
+  function hidePhone() {
+    setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
+  }
+
   function setCodeWindow({scale=1, x=0, y=0, opacity=1}) {
     codeWindow.style.transform =
       `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
@@ -1143,174 +1171,165 @@
     });
   }
 
+  // Setzt ALLES in den Grundzustand — jeder Beat startet damit,
+  // damit beim Springen/Rückwärts nichts überlappen kann.
+  function resetAll() {
+    setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+    appLogo.style.opacity = '1';
+    setSearchText('', false);
+    micBtn.classList.remove('listening');
+    waveform.classList.remove('active');
+    aiCard.classList.remove('on');
+    statement.classList.remove('on');
+    statement2.classList.remove('on');
+    capPic.style.opacity = '0';
+    picWindow.classList.remove('on');
+    setCodeWindow({scale: 0.85, x: 0, y: 0, opacity: 0});
+    stopTyping();
+    renderCode(false);
+    cwOut.classList.remove('on');
+    capCode.style.opacity = '0';
+    questionOv.style.opacity = '0';
+    questionOv.style.transform = 'translate(-50%, calc(-50% + 380px))';
+    floatingText.style.opacity = '0';
+    floatingText.style.transform = 'translate(-50%, -50%) scale(0.3)';
+    tokensLayer.style.opacity = '0';
+    layerLabel.style.opacity = '0';
+    embeddingSp.style.opacity = '0';
+    embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
+    showEmbedPoints([]);
+    arrowMK.style.opacity = '0';
+    arrowWQ.style.opacity = '0';
+    analogyCap.style.opacity = '0';
+    modelBlock.style.opacity = '0';
+    modelBlock.style.transform = 'translate(-50%, -50%) scale(0.5)';
+    handoff.style.opacity = '0';
+  }
+
   // =========================================================
-  // BEATS – jede Funktion setzt den kompletten Zustand
+  // BEATS – jeder setzt den kompletten Zustand
   // =========================================================
 
   const beats = [
 
     // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, Logo „Suche“
-    () => {
-      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      appLogo.style.opacity = '1';
-      setSearchText('', false);
-      micBtn.classList.remove('listening');
-      waveform.classList.remove('active');
-      aiCard.classList.remove('on');
-      statement.classList.remove('on');
-      capPic.style.opacity = '0';
-      picWindow.classList.remove('on');
-      setCodeWindow({scale: 0.85, x: 0, y: 0, opacity: 0});
-      stopTyping();
-      renderCode(false);
-      cwOut.classList.remove('on');
-      capCode.style.opacity = '0';
-      questionOv.style.opacity = '0';
-      questionOv.style.transform = 'translate(-50%, calc(-50% + 380px))';
-      floatingText.style.opacity = '0';
-      floatingText.style.transform = 'translate(-50%, -50%) scale(0.3)';
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
-      embeddingSp.style.opacity = '0';
-      embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
-      showEmbedPoints([]);
-      arrowMK.style.opacity = '0';
-      arrowWQ.style.opacity = '0';
-      analogyCap.style.opacity = '0';
-      modelBlock.style.opacity = '0';
-      modelBlock.style.transform = 'translate(-50%, -50%) scale(0.5)';
-      handoff.style.opacity = '0';
-    },
+    () => { resetAll(); },
 
     // BEAT 1 — Mikrofon aktiv, Waveform pulsiert
     () => {
-      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      appLogo.style.opacity = '1';
+      resetAll();
       setSearchText('', true);
       micBtn.classList.add('listening');
       waveform.classList.add('active');
-      aiCard.classList.remove('on');
     },
 
     // BEAT 2 — Speech-to-Text: Die Frage erscheint im Suchfeld
     () => {
-      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      appLogo.style.opacity = '1';
+      resetAll();
       setSearchText(SATZ, true);
-      micBtn.classList.remove('listening');
-      waveform.classList.remove('active');
-      aiCard.classList.remove('on');
     },
 
     // BEAT 3 — Suche-KI antwortet: Zusammenfassung + Websites als Quellen
     () => {
-      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      appLogo.style.opacity = '1';
+      resetAll();
       setSearchText(SATZ, false);
-      micBtn.classList.remove('listening');
-      waveform.classList.remove('active');
       aiCard.classList.add('on');
     },
 
     // BEAT 4 — Direkt danach: „sie können auch programmieren“
     () => {
-      setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
-      aiCard.classList.remove('on');
+      resetAll();
+      hidePhone();
       statement.classList.add('on');
     },
 
     // BEAT 5 — Weitere Stärke: Bilder zeichnen (Prompt → Bild)
     () => {
-      setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
-      statement.classList.remove('on');
+      resetAll();
+      hidePhone();
       capPic.style.opacity = '1';
       picWindow.classList.add('on');
     },
 
-    // BEAT 6 — Die Frage taucht auf: "was passiert da eigentlich?"
+    // BEAT 6 — Und alles geht über den Transformer
     () => {
-      picWindow.classList.remove('on');
-      capPic.style.opacity = '0';
+      resetAll();
+      hidePhone();
+      statement2.classList.add('on');
+    },
+
+    // BEAT 7 — Die Frage taucht auf: "was passiert da eigentlich?"
+    () => {
+      resetAll();
+      hidePhone();
       questionOv.style.opacity = '1';
       questionOv.style.transform = 'translate(-50%, calc(-50% + 330px))';
     },
 
-    // BEAT 7 — Der Satz schwebt frei im Raum
+    // BEAT 8 — Der Satz schwebt frei im Raum
     () => {
-      questionOv.style.opacity = '0';
+      resetAll();
       floatingText.style.opacity = '1';
       floatingText.style.transform = 'translate(-50%, -50%) scale(1)';
     },
 
-    // BEAT 8 — Tokenisierung: Der Satz zerbricht in Token-Pillen
+    // BEAT 9 — Tokenisierung: Der Satz zerbricht in Token-Pillen
     () => {
-      floatingText.style.opacity = '0';
-      floatingText.style.transform = 'translate(-50%, -50%) scale(1.3)';
+      resetAll();
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
-      embeddingSp.style.opacity = '0';
-      modelBlock.style.opacity = '0';
     },
 
-    // BEAT 9 — Code-Teil: Das Fenster erscheint, der Code tippt sich
+    // BEAT 10 — Code-Teil: Fenster mit Auftrag erscheint, Code tippt sich
     () => {
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
+      resetAll();
       setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
       capCode.style.opacity = '1';
-      cwOut.classList.remove('on');
       startCodeTyping();
     },
 
-    // BEAT 10 — Code komplett, das (richtige) Ergebnis erscheint
+    // BEAT 11 — Code komplett, das (richtige) Ergebnis erscheint
     () => {
+      resetAll();
       setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
       capCode.style.opacity = '1';
-      stopTyping();
       renderCode(true);
       cwOut.classList.add('on');
     },
 
-    // BEAT 11 — Embedding: Tokens werden zu Punkten im Raum
+    // BEAT 12 — Embedding: Tokens werden zu Punkten im Raum
     () => {
+      resetAll();
       setCodeWindow({scale: 0.6, x: 0, y: 0, opacity: 0.15});
-      capCode.style.opacity = '0';
+      renderCode(true);
+      cwOut.classList.add('on');
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
       showEmbedPoints(QUERY_KEYS);
-      arrowMK.style.opacity = '0';
-      arrowWQ.style.opacity = '0';
-      analogyCap.style.opacity = '0';
-      modelBlock.style.opacity = '0';
-      handoff.style.opacity = '0';
     },
 
-    // BEAT 12 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
+    // BEAT 13 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
     () => {
-      setCodeWindow({scale: 0.6, x: 0, y: 0, opacity: 0});
+      resetAll();
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = 'Die Positionen sind <span class="accent">nicht zufällig</span> — Bedeutung wird Geometrie';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']));
+      showEmbedPoints(ALL_KEYS);
       arrowMK.style.opacity = '0.9';
       arrowWQ.style.opacity = '0.9';
       analogyCap.style.opacity = '1';
-      modelBlock.style.opacity = '0';
     },
 
-    // BEAT 13 — Übergabe: Alles verdichtet sich zum Modell-Block
+    // BEAT 14 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
-      layerLabel.style.opacity = '0';
+      resetAll();
       embeddingSp.style.opacity = '0.15';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.6)';
-      showEmbedPoints(QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']));
-      arrowMK.style.opacity = '0';
-      arrowWQ.style.opacity = '0';
-      analogyCap.style.opacity = '0';
+      showEmbedPoints(ALL_KEYS);
       modelBlock.style.opacity = '1';
       modelBlock.style.transform = 'translate(-50%, -50%) scale(1)';
       handoff.style.opacity = '0.8';
