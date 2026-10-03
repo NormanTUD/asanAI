@@ -685,31 +685,6 @@
   .token-pill:nth-child(odd)  { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.14); }
   .token-pill:nth-child(3n)   { border-color: rgba(52, 211, 153, 0.5);  background: rgba(52, 211, 153, 0.14); }
   .token-pill:nth-child(4n)   { border-color: rgba(251, 191, 36, 0.5);  background: rgba(251, 191, 36, 0.14); }
-  /* Token-Schock: „himmel" bricht in „him" + „mel" */
-  .token-pill.crack {
-    border-color: #f87171 !important;
-    background: rgba(248, 113, 113, 0.18) !important;
-    animation: crackShake 0.4s ease 2;
-  }
-  @keyframes crackShake {
-    0%, 100% { transform: translateY(0) scale(1); }
-    25% { transform: translateY(0) scale(1) translateX(-5px) rotate(-1.5deg); }
-    75% { transform: translateY(0) scale(1) translateX(5px) rotate(1.5deg); }
-  }
-  .token-pill.fresh {
-    animation: freshPop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
-               freshGlow 1.8s ease forwards;
-  }
-  @keyframes freshPop {
-    0%   { transform: translateY(0) scale(0.4); }
-    60%  { transform: translateY(0) scale(1.15); }
-    100% { transform: translateY(0) scale(1); }
-  }
-  @keyframes freshGlow {
-    0%   { box-shadow: 0 0 34px rgba(248, 113, 113, 0.85); }
-    100% { box-shadow: 0 4px 20px rgba(110, 168, 255, 0.15); }
-  }
-
   /* Kleines Label unter den Tokens */
   .layer-label {
     position: absolute;
@@ -1197,11 +1172,8 @@
     <div class="embed-point query" data-key="der" style="left: 44%; top: 85%;">
       <div class="dot"></div><div class="label">der</div>
     </div>
-    <div class="embed-point sky" data-key="him" style="left: 75%; top: 18%;">
-      <div class="dot"></div><div class="label">him</div>
-    </div>
-    <div class="embed-point sky" data-key="mel" style="left: 83%; top: 27%;">
-      <div class="dot"></div><div class="label">mel</div>
+    <div class="embed-point sky" data-key="himmel" style="left: 78%; top: 20%;">
+      <div class="dot"></div><div class="label">himmel</div>
     </div>
     <div class="embed-point color" data-key="blau" style="left: 85%; top: 45%;">
       <div class="dot"></div><div class="label">blau</div>
@@ -1404,10 +1376,10 @@
     beatTimers = [];
   }
 
-  // Token-Pillen bauen (freshKeys bekommen Pop + Glow)
-  function renderTokens(list, freshKeys = []) {
+  // Token-Pillen bauen
+  function renderTokens(list) {
     tokensLayer.innerHTML = list.map(tok =>
-      '<div class="token-pill' + (freshKeys.includes(tok) ? ' fresh' : '') + '">' + tok + '</div>'
+      '<div class="token-pill">' + tok + '</div>'
     ).join('');
   }
 
@@ -1595,7 +1567,7 @@
     () => {
       resetAll();
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Stück wird zu einem Punkt im Bedeutungsraum';
+      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
       showEmbedPoints(QUERY_KEYS);
