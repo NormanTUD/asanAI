@@ -1778,22 +1778,34 @@
     // BEAT 12 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
     () => {
       resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = 'Die Positionen sind <span class="accent">nicht zufällig</span> — Bedeutung wird Geometrie';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(ALL_KEYS);
-      arrowMK.style.opacity = '0.9';
-      arrowWQ.style.opacity = '0.9';
-      analogyCap.style.opacity = '1';
+      showEmbedPoints(ALL_KEYS, 0.1);
+      later(() => {
+        arrowMK.style.opacity = '0.9';
+        arrowMK.style.transform = 'scaleX(1)';
+      }, 900);
+      later(() => {
+        arrowWQ.style.opacity = '0.9';
+        arrowWQ.style.transform = 'scaleX(1)';
+      }, 1300);
+      later(() => {
+        analogyCap.style.opacity = '1';
+      }, 1800);
     },
 
     // BEAT 13 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
       resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
       embeddingSp.style.opacity = '0.15';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.6)';
-      showEmbedPoints(ALL_KEYS);
+      showEmbedPoints(ALL_KEYS, 0.06);
       modelBlock.style.opacity = '1';
       modelBlock.style.transform = 'translate(-50%, -50%) scale(1)';
       handoff.style.opacity = '0.8';
