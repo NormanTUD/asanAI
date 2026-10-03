@@ -53,6 +53,17 @@
     to   { transform: translate(-40px, -20px); }
   }
 
+  /* Welten-Wechsel: ab Beat 9 (Raum-Welt) schiebt sich eine
+     kühler-violette Schicht über den Hintergrund */
+  .world-shift {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, #221a4a 0%, #0a0714 100%);
+    opacity: 0;
+    transition: opacity 2.5s ease;
+    pointer-events: none;
+  }
+  .world-shift.on { opacity: 0.55; }
+
   /* =========================
      Die Bühne — hier passiert alles
      ========================= */
@@ -62,7 +73,11 @@
     height: 100vh;
     perspective: 1600px;
     overflow: hidden;
+    transform: scale(1.03);
+    transform-origin: center center;
+    transition: transform 2.5s cubic-bezier(0.65, 0, 0.35, 1);
   }
+  .stage.zoomed-out { transform: scale(1); }
 
   /* =========================
      Das Smartphone (CSS-Kunst)
@@ -75,7 +90,16 @@
     transform-origin: center center;
     transition: transform 2.2s cubic-bezier(0.65, 0, 0.35, 1),
                 opacity 1.2s ease;
-    will-change: transform, opacity;
+    will-change: transform, opacity, translate;
+  }
+  /* Ruhendes Handy schwebt sanft auf und ab (komponiert sich mit dem
+     JS-Transform, weil `translate` ein eigenes CSS-Property ist) */
+  .phone.levitate {
+    animation: levitate 4.5s ease-in-out infinite;
+  }
+  @keyframes levitate {
+    0%, 100% { translate: 0 0px; }
+    50%      { translate: 0 -6px; }
   }
 
   .phone-frame {
@@ -119,6 +143,13 @@
     margin-bottom: 28px;
     opacity: 0;
     transition: opacity 0.8s ease 0.3s;
+  }
+  .app-logo.breathe {
+    animation: logoBreathe 3.6s ease-in-out infinite;
+  }
+  @keyframes logoBreathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.045); }
   }
   /* „Suche“ — in den vertrauten Farben, aber kein Google */
   .app-logo .l1 { color: #4285f4; }
@@ -325,17 +356,22 @@
     display: flex;
     flex-direction: column;
     gap: 13px;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 1s ease .35s, transform 1s ease .35s;
     -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
     mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
     pointer-events: none;
   }
-  .serp.on { opacity: 1; transform: translateY(0); }
-  .result { filter: blur(0.3px); }
-  .result.r2 { filter: blur(1.2px); opacity: .82; }
-  .result.r3 { filter: blur(2.2px); opacity: .6; }
+  /* Treffer laden nacheinander, wie eine echte Suchergebnisseite */
+  .result {
+    filter: blur(0.3px);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.7s ease;
+  }
+  .result.r2 { filter: blur(1.2px); }
+  .result.r3 { filter: blur(2.2px); }
+  .serp.on .result.r1 { opacity: 1;    transform: translateY(0); transition-delay: 0.35s; }
+  .serp.on .result.r2 { opacity: 0.82; transform: translateY(0); transition-delay: 0.55s; }
+  .serp.on .result.r3 { opacity: 0.6;  transform: translateY(0); transition-delay: 0.75s; }
   .res-head {
     display: flex;
     align-items: center;
@@ -684,6 +720,15 @@
   .token-pill:nth-child(odd)  { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.14); }
   .token-pill:nth-child(3n)   { border-color: rgba(52, 211, 153, 0.5);  background: rgba(52, 211, 153, 0.14); }
   .token-pill:nth-child(4n)   { border-color: rgba(251, 191, 36, 0.5);  background: rgba(251, 191, 36, 0.14); }
+  /* Leerzeichen-Tokens — kleine, gestrichelte Pillen */
+  .token-pill.space {
+    padding: 14px 13px;
+    font-size: 16px;
+    color: rgba(232, 236, 245, 0.55);
+    background: rgba(138, 149, 176, 0.1) !important;
+    border-color: rgba(138, 149, 176, 0.45) !important;
+    border-style: dashed;
+  }
   /* Token-Schock: „himmel" bricht in „him" + „mel" */
   .token-pill.crack {
     border-color: #f87171 !important;
@@ -736,6 +781,10 @@
     opacity: 0;
     transition: opacity 1.2s ease, transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
     pointer-events: none;
+  }
+  /* Für den Token-Flug: sofort in Endgröße, nur Fade */
+  .embedding-space.nozoom {
+    transition: opacity 0.9s ease;
   }
   .embedding-space .axis {
     position: absolute;
@@ -795,14 +844,15 @@
   .embed-point.sky    .dot { color: #a78bfa; background: #a78bfa; }
   .embed-point.color  .dot { color: #f472b6; background: #f472b6; }
 
-  /* Analogie-Pfeile */
+  /* Analogie-Pfeile — zeichnen sich von links nach rechts */
   .analogy-arrow {
     position: absolute;
     height: 2px;
     background: linear-gradient(90deg, rgba(251, 191, 36, 0), rgba(251, 191, 36, 0.7), rgba(251, 191, 36, 0));
+    transform: scaleX(0);
     transform-origin: left center;
     opacity: 0;
-    transition: opacity 0.8s ease;
+    transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
   }
   .analogy-arrow::after {
     content: '';
@@ -1033,6 +1083,7 @@
 <body>
 
 <div class="starfield"></div>
+<div class="world-shift" id="worldShift"></div>
 
 <div class="beat-dots" id="beatDots"></div>
 
@@ -1208,9 +1259,9 @@
 
     <!-- Analogie-Pfeile: mann → könig, frau → königin -->
     <div class="analogy-arrow" id="arrowManKing"
-         style="left: 34%; top: 33%; width: 27%; transform: rotate(0deg);"></div>
+         style="left: 34%; top: 33%; width: 27%;"></div>
     <div class="analogy-arrow" id="arrowWomanQueen"
-         style="left: 34%; top: 63%; width: 27%; transform: rotate(0deg);"></div>
+         style="left: 34%; top: 63%; width: 27%;"></div>
     <div class="analogy-caption" id="analogyCaption"
          style="left: 42%; top: 15%;">
       könig − mann + frau ≈ königin
@@ -1300,6 +1351,8 @@
   const analogyCap    = $('analogyCaption');
   const modelBlock    = $('modelBlock');
   const handoff       = $('handoffHint');
+  const stage         = $('stage');
+  const worldShift    = $('worldShift');
 
   const SATZ = 'warum ist der himmel blau?';
 
@@ -1330,9 +1383,15 @@
     { t: '.' },
   ];
 
-  // Token-Pillen: zuerst wortweise, dann bricht „himmel" in „him" + „mel"
-  const TOKENS_FULL  = ['warum', 'ist', 'der', 'himmel', 'blau'];
-  const TOKENS_SPLIT = ['warum', 'ist', 'der', 'him', 'mel', 'blau'];
+  // Token-Pillen (inkl. Leerzeichen): zuerst wortweise,
+  // dann bricht „himmel" in „him" + „mel"
+  const SP = { t: ' ', s: 1 };
+  const TOKENS_FULL  = [
+    { t: 'warum' }, SP, { t: 'ist' }, SP, { t: 'der' }, SP, { t: 'himmel' }, SP, { t: 'blau' },
+  ];
+  const TOKENS_SPLIT = [
+    { t: 'warum' }, SP, { t: 'ist' }, SP, { t: 'der' }, SP, { t: 'him' }, SP, { t: 'mel' }, SP, { t: 'blau' },
+  ];
 
   let typeTimer = null;
 
@@ -1365,11 +1424,12 @@
     }, 350);
   }
 
-  // Die KI-Antwort streamen — wie ein echter LLM-Stream
+  // Die KI-Antwort streamen — wie ein echter LLM-Stream:
+  // Zeichen kommen in kleinen Stößen, an Wortgrenzen kurze Pausen
   let aiTimer = null;
 
   function stopAiTyping() {
-    if (aiTimer) { clearInterval(aiTimer); aiTimer = null; }
+    if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
   }
 
   function startAiTyping() {
@@ -1385,12 +1445,17 @@
     cursor.className = 'ai-cursor';
     aiText.appendChild(cursor);
     let si = 0, ci = 0;
-    aiTimer = setInterval(() => {
+    function tick() {
       if (si >= spans.length) { stopAiTyping(); return; }
+      const seg = AI_TEXT[si];
       ci++;
-      spans[si].textContent = AI_TEXT[si].t.slice(0, ci);
-      if (ci >= AI_TEXT[si].t.length) { si++; ci = 0; }
-    }, 22);
+      spans[si].textContent = seg.t.slice(0, ci);
+      let delay = 18 + Math.random() * 22;
+      if (seg.t[ci - 1] === ' ') delay += 25 + Math.random() * 45;
+      if (ci >= seg.t.length) { si++; ci = 0; delay += 35; }
+      aiTimer = setTimeout(tick, delay);
+    }
+    aiTimer = setTimeout(tick, 250);
   }
 
   // Timer, die zu einem Beat gehören — resetAll killt sie alle
@@ -1404,11 +1469,12 @@
     beatTimers = [];
   }
 
-  // Token-Pillen bauen (freshKeys bekommen Pop + Glow)
+  // Token-Pillen bauen (freshKeys bekommen Pop + Glow, s = Leerzeichen)
   function renderTokens(list, freshKeys = []) {
-    tokensLayer.innerHTML = list.map(tok =>
-      '<div class="token-pill' + (freshKeys.includes(tok) ? ' fresh' : '') + '">' + tok + '</div>'
-    ).join('');
+    tokensLayer.innerHTML = list.map(tok => {
+      if (tok.s) return '<div class="token-pill space">·</div>';
+      return '<div class="token-pill' + (freshKeys.includes(tok.t) ? ' fresh' : '') + '">' + tok.t + '</div>';
+    }).join('');
   }
 
   // Mini-Transformer: welche Köpfe leuchten? (null = komplett unsichtbar)
@@ -1442,12 +1508,82 @@
     }
   }
 
-  function showEmbedPoints(keys) {
+  // Speech-to-Text: Während das Mikrofon läuft, tippt sich
+  // der Satz Zeichen für Zeichen ins Suchfeld
+  let searchTypeTimer = null;
+
+  function stopSearchTyping() {
+    if (searchTypeTimer) { clearInterval(searchTypeTimer); searchTypeTimer = null; }
+  }
+
+  function typeSearchText(text) {
+    stopSearchTyping();
+    searchText.classList.add('typing');
+    searchText.innerHTML = '<span class="caret"></span>';
+    let i = 0;
+    searchTypeTimer = setInterval(() => {
+      if (i < text.length) {
+        i++;
+        searchText.innerHTML = text.slice(0, i) + '<span class="caret"></span>';
+      } else {
+        stopSearchTyping();
+      }
+    }, 65);
+  }
+
+  function showEmbedPoints(keys, stagger = 0) {
     const all = document.querySelectorAll('.embed-point');
+    let i = 0;
     all.forEach(pt => {
       const k = pt.getAttribute('data-key');
-      if (keys.includes(k)) pt.classList.add('visible');
-      else pt.classList.remove('visible');
+      if (keys.includes(k)) {
+        pt.style.transitionDelay = (i * stagger) + 's';
+        i++;
+        pt.classList.add('visible');
+      } else {
+        pt.classList.remove('visible');
+        pt.style.transitionDelay = '0s';
+      }
+    });
+  }
+
+  // Aktueller Scale-Faktor der Bühne (für den Flug in lokalen Einheiten)
+  function getStageScale() {
+    const t = getComputedStyle(stage).transform;
+    if (!t || t === 'none') return 1;
+    try { return (new DOMMatrix(t)).a || 1; } catch (e) { return 1; }
+  }
+
+  // Token-Pillen fliegen zu ihren Embedding-Dots
+  function flyTokensToDots() {
+    const s = getStageScale();
+    const embRect = embeddingSp.getBoundingClientRect();
+    void tokensLayer.offsetWidth;
+    tokensLayer.querySelectorAll('.token-pill').forEach(pill => {
+      const pr = pill.getBoundingClientRect();
+      const px = pr.left + pr.width / 2;
+      const py = pr.top + pr.height / 2;
+      if (pill.classList.contains('space')) {
+        pill.style.transition = 'opacity 0.5s ease';
+        pill.style.opacity = '0';
+        return;
+      }
+      const word = pill.textContent;
+      const ptEl = document.querySelector('.embed-point[data-key="' + word + '"]');
+      if (!ptEl) {
+        pill.style.transition = 'opacity 0.5s ease';
+        pill.style.opacity = '0';
+        return;
+      }
+      const leftPct = parseFloat(ptEl.style.left) / 100;
+      const topPct = parseFloat(ptEl.style.top) / 100;
+      const dotX = embRect.left + leftPct * embRect.width;
+      const dotY = embRect.top + topPct * embRect.height;
+      const dx = (dotX - px) / s;
+      const dy = (dotY - py) / s;
+      pill.style.transition = 'transform 1.05s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease 0.8s';
+      pill.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(0.12)';
+      pill.style.opacity = '0';
     });
   }
 
@@ -1455,8 +1591,11 @@
   // in den Such-Beats 0–3 explizit eingeblendet).
   function resetAll() {
     setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
+    phone.classList.remove('levitate');
     appLogo.style.opacity = '1';
+    appLogo.classList.remove('breathe');
     setSearchText('', false);
+    stopSearchTyping();
     micBtn.classList.remove('listening');
     waveform.classList.remove('active');
     aiCard.classList.remove('on');
@@ -1475,16 +1614,21 @@
     capSatz.style.opacity = '0';
     setTower(null);
     clearBeatTimers();
+    worldShift.classList.remove('on');
+    stage.classList.remove('zoomed-out');
     floatingText.style.opacity = '0';
     floatingText.style.transform = 'translate(-50%, calc(-50% + 61px)) scale(0.29)';
     tokensLayer.style.opacity = '0';
     renderTokens([]);
     layerLabel.style.opacity = '0';
+    embeddingSp.classList.remove('nozoom');
     embeddingSp.style.opacity = '0';
     embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
     showEmbedPoints([]);
     arrowMK.style.opacity = '0';
+    arrowMK.style.transform = 'scaleX(0)';
     arrowWQ.style.opacity = '0';
+    arrowWQ.style.transform = 'scaleX(0)';
     analogyCap.style.opacity = '0';
     modelBlock.style.opacity = '0';
     modelBlock.style.transform = 'translate(-50%, -50%) scale(0.5)';
@@ -1497,10 +1641,12 @@
 
   const beats = [
 
-    // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, Logo „Suche“
+    // BEAT 0 — Ruhezustand: Handy schwebt, Logo atmet
     () => {
       resetAll();
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+      phone.classList.add('levitate');
+      appLogo.classList.add('breathe');
     },
 
     // BEAT 1 — Mikrofon aktiv, Waveform pulsiert
@@ -1512,11 +1658,13 @@
       waveform.classList.add('active');
     },
 
-    // BEAT 2 — Speech-to-Text: Die Frage erscheint im Suchfeld
+    // BEAT 2 — Speech-to-Text: Die Frage tippt sich ins Suchfeld
     () => {
       resetAll();
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      setSearchText(SATZ, true);
+      micBtn.classList.add('listening');
+      waveform.classList.add('active');
+      typeSearchText(SATZ);
     },
 
     // BEAT 3 — Die KI denkt (drei pulsierende Punkte)
@@ -1576,6 +1724,8 @@
     // BEAT 9 — Der Satz fliegt aus dem Suchfeld in den Raum
     () => {
       resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
       setPhone({scale: 0.7, x: 0, y: 210, opacity: 0});
       floatingText.style.opacity = '1';
       floatingText.style.transform = 'translate(-50%, -50%) scale(1)';
@@ -1585,6 +1735,8 @@
     // BEAT 10 — Tokenisierung: Der Satz zerbricht — und „himmel" in „him" + „mel"
     () => {
       resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
       renderTokens(TOKENS_FULL);
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
@@ -1600,14 +1752,27 @@
       }, 2500);
     },
 
-    // BEAT 11 — Embedding: Tokens werden zu Punkten im Raum
+    // BEAT 11 — Embedding: Die Tokens fliegen zu ihren Punkten im Raum
     () => {
       resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Stück wird zu einem Punkt im Bedeutungsraum';
+      embeddingSp.classList.add('nozoom');
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(QUERY_KEYS);
+      showEmbedPoints([]);
+      renderTokens(TOKENS_SPLIT);
+      tokensLayer.style.transition = 'none';
+      tokensLayer.style.opacity = '1';
+      void tokensLayer.offsetWidth;
+      tokensLayer.style.transition = 'opacity 0.8s ease';
+      later(flyTokensToDots, 80);
+      later(() => {
+        showEmbedPoints(QUERY_KEYS, 0.09);
+        tokensLayer.style.opacity = '0';
+      }, 1000);
     },
 
     // BEAT 12 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
