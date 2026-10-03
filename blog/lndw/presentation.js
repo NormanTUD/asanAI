@@ -586,13 +586,9 @@ function prev() {
     let slideTransitionUntil = 0;
     function lockSlideTransition() {
         slideTransitionUntil = Date.now() + SLIDE_TRANSITION_MS;
-        console.log('[lockSlideTransition] until=', new Date(slideTransitionUntil).toISOString());
     }
     function isSlideTransitioning() { return Date.now() < slideTransitionUntil; }
-    function cancelSlideTransition() {
-        console.log('[cancelSlideTransition] was until=', slideTransitionUntil);
-        slideTransitionUntil = 0;
-    }
+    function cancelSlideTransition() { slideTransitionUntil = 0; }
 
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;

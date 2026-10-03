@@ -486,20 +486,6 @@ const SpaceMorph = (() => {
 
         // ---------- Zwei verhakte Tori (Bonusphase) ----------
         if (tor > 0.01) {
-            // 4D-Andeutung: gepunktete w-Achse pulsiert nur während des Entwirrens (ut<1).
-            // Ist ut=1 (Trennung vollzogen), bleibt die Achse sichtbar als Marker der
-            // "verborgenen" Dimension, in der die Trennung stattgefunden hat.
-            const wA = ut < 1 ? 1 - Math.abs(ut - 0.5) * 2 : 1; // Spitze bei ut=0.5
-            const wPulse = 0.45 + 0.55 * wA;
-            if (wPulse > 0.02) {
-                const o = proj({ x: 0, y: 0, z: 0 });
-                ctx.globalAlpha = wPulse * 0.8 * tor;
-                ctx.setLineDash([3, 7]); ctx.lineWidth = 2.2;
-                ctx.strokeStyle = '#7c3aed';
-                ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(o.X, o.Y - H * 0.34); ctx.stroke();
-                ctx.setLineDash([]);
-                ctx.globalAlpha = 1;
-            }
             const titems = [];
             TORI.forEach(p => {
                 const q = untangle(ut, p);
