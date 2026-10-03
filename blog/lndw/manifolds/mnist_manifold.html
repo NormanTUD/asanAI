@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Mannigfaltigkeit der Ziffern — MNIST in ℝ⁷⁸⁴</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --dim: #94a3b8;
+    --accent: #d97706;
+    --accent-2: #7c3aed;
+    --line: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #wrap { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+  #cv { display: block; position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; }
+  #cv.dragging { cursor: grabbing; }
+
+  /* ---- Textspalte oben links ---- */
+  #panel {
+    position: absolute; left: 36px; top: 28px;
+    max-width: 380px; pointer-events: none; z-index: 3;
+  }
+  #step {
+    font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--dim); font-weight: 600;
+  }
+  #title {
+    font-size: 23px; font-weight: 650; color: var(--ink);
+    margin: 7px 0 9px; line-height: 1.15; letter-spacing: -0.4px;
+    transition: opacity .45s ease;
+  }
+  #body {
+    font-size: 13px; line-height: 1.6; color: var(--ink-2);
+    transition: opacity .45s ease;
+  }
+  #body b { color: var(--ink); font-weight: 600; }
+  #body .hl { color: var(--accent); font-weight: 600; }
+  #body .hl2 { color: var(--accent-2); font-weight: 600; }
+
+  /* ---- Kennzahlen-Tabelle links unten ---- */
+  #table-wrap {
+    position: absolute; left: 36px; bottom: 62px;
+    z-index: 3; pointer-events: none;
+    transition: opacity .5s ease;
+  }
+  #table-head {
+    font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--dim); margin-bottom: 7px; font-weight: 600;
+  }
+  table.mt {
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(6px);
+    border-radius: 7px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15,23,42,.07);
+  }
+  table.mt th {
+    font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--dim); font-weight: 600;
+    padding: 6px 11px 4px; text-align: right;
+    border-bottom: 1px solid var(--line);
+  }
+  table.mt th:first-child { text-align: left; }
+  table.mt td {
+    padding: 4px 11px; text-align: right; color: var(--ink-2);
+    border-bottom: 1px solid rgba(226,232,240,.5);
+  }
+  table.mt td:first-child { text-align: left; font-weight: 600; color: var(--ink); }
+  table.mt tr:last-child td { border-bottom: none; }
+  table.mt td.num { font-feature-settings: "tnum"; }
+  .swatch {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 2px; margin-right: 7px; vertical-align: -1px;
+  }
+
+  /* ---- Fortschrittsbalken ---- */
+  #bar {
+    position: absolute; left: 36px; bottom: 28px;
+    display: flex; gap: 7px; z-index: 3;
+  }
+  #bar div {
+    width: 26px; height: 3px; border-radius: 2px;
+    background: #cbd5e1; transition: background .5s ease;
+  }
+
+  /* ---- Hover-Thumbnail ---- */
+  #tip {
+    position: absolute; z-index: 10; pointer-events: none;
+    display: none;
+    background: rgba(255,255,255,.96);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 8px;
+    box-shadow: 0 6px 24px rgba(15,23,42,.14);
+    text-align: center;
+  }
+  #tip canvas {
+    display: block; width: 72px; height: 72px;
+    image-rendering: pixelated;
+    border-radius: 5px; background: #000;
+  }
+  #tip .lbl {
+    margin-top: 6px; font-size: 11px; color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+  #tip .lbl b { color: var(--ink); font-size: 13px; }
+
+  /* ---- Navigationshinweis ---- */
+  #nav {
+    position: absolute; right: 36px; bottom: 28px;
+    font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--dim); z-index: 3; pointer-events: none;
+  }
+  #nav kbd {
+    display: inline-block; padding: 2px 7px; margin: 0 3px;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 4px; font-family: inherit; font-size: 9.5px;
+    color: var(--ink-2);
+  }
+
+  /* ---- Ladebildschirm ---- */
+  #load {
+    position: absolute; inset: 0; z-index: 50;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--bg); transition: opacity .6s ease;
+  }
+  #load.gone { opacity: 0; pointer-events: none; }
+  #load .t { font-size: 15px; color: var(--ink-2); margin-bottom: 14px; }
+  #load .track {
+    width: 220px; height: 2px; background: var(--line);
+    border-radius: 2px; overflow: hidden;
+  }
+  #load .fill {
+    height: 100%; width: 0%; background: var(--accent);
+    transition: width .35s ease;
+  }
+  #load .err { color: #dc2626; font-size: 13px; max-width: 420px; text-align: center; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div id="wrap">
+  <canvas id="cv"></canvas>
+
+  <div id="panel">
+    <div id="step"></div>
+    <div id="title"></div>
+    <div id="body"></div>
+  </div>
+
+  <div id="table-wrap">
+    <div id="table-head">Kennzahlen</div>
+    <table class="mt" id="mtable"></table>
+  </div>
+
+  <div id="bar"></div>
+
+  <div id="tip">
+    <canvas id="tipcv" width="28" height="28"></canvas>
+    <div class="lbl"></div>
+  </div>
+
+  <div id="nav">
+    <kbd>→</kbd> weiter <kbd>←</kbd> zurück &nbsp;·&nbsp; Ziehen = drehen
+  </div>
+
+  <div id="load">
+    <div class="t" id="load-t">Lade MNIST-Mannigfaltigkeit …</div>
+    <div class="track"><div class="fill" id="load-fill"></div></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// MNIST MANIFOLD — Mannigfaltigkeits-Hypothese an echten Daten
+//
+// Rendering im Geist von space_morph.js: Canvas 2D, eigene
+// Projektion mit Perspektive, Depth-Sort, Beat-basierte
+// Choreographie mit smootherstep-Interpolation.
+// ============================================================
+(() => {
+'use strict';
+
+// ---------- Konstanten ----------
+const DUR = 1600;                 // Übergangsdauer zwischen Beats (ms)
+const PALETTE = [
+  '#e11d48', '#f97316', '#eab308', '#84cc16', '#10b981',
+  '#06b6d4', '#3b82f6', '#6366f1', '#a855f7', '#ec4899'
+];
+const DIGIT_NAMES = ['0','1','2','3','4','5','6','7','8','9'];
+
+// ---------- Zustand ----------
+let D = null;                     // geladene Daten
+let sprites = null;               // Image des Atlas
+let ctx = null, cv = null;
+let W = 0, H = 0, DPR = 1;
+
+let cur = 0, prevIdx = 0, t0 = 0;
+let raf = null;
+
+// Kamera
+let camA = 0.45, camB = 0.34;     // Zielwinkel (Azimut, Elevation)
+let dragA = 0, dragB = 0;         // Nutzer-Offset
+let dA0 = 0, dB0 = 0;             // Offset beim Beat-Wechsel (fährt zurück)
+let md = false, mx = 0, my = 0, moved = false;
+let autoSpin = 0;                 // langsame Eigenrotation
+
+// Hover
+let hoverIdx = -1, pointerX = -1, pointerY = -1;
+let screenCache = null;           // {x,y,r,i}[] vom letzten Frame
+
+// ---------- Mathe-Helfer ----------
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, u) => a + (b - a) * u;
+// smootherstep — identisch zu space_morph, ergibt den "flüssigen" Look
+const ease = u => u * u * u * (u * (u * 6 - 15) + 10);
+const sub = (t, a, b) => ease(clamp((t - a) / (b - a), 0, 1));
+
+// ============================================================
+// BEATS — jeder beschreibt einen vollständigen Zielzustand
+// ============================================================
+const BEATS = [
+  {
+    n: 'Beat 1 / 7',
+    t: '784 Zahlen sind ein Punkt',
+    b: 'Ein MNIST-Bild hat 28 × 28 = <b>784 Pixel</b>. Jeder Pixel ist eine Zahl zwischen 0 und 1. ' +
+       'Damit ist <b>ein Bild = ein Punkt</b> in einem 784-dimensionalen Raum ℝ⁷⁸⁴. ' +
+       'Die 784 Balken rechts sind genau dieser eine Punkt — seine Koordinaten.',
+    mode: 'pixels', spin: 0, table: 'ambient'
+  },
+  {
+    n: 'Beat 2 / 7',
+    t: 'Der Raum ist fast vollständig leer',
+    b: 'Zieht man <span class="hl2">zufällige</span> Punkte aus ℝ⁷⁸⁴ — mit exakt derselben Pixelstatistik wie MNIST — ' +
+       'sieht <b>keiner</b> davon je wie eine Ziffer aus. Die echten Daten (farbig) liegen dicht gedrängt, ' +
+       'das Rauschen (grau) streut weit. <b>Die Ziffern füllen den Raum nicht aus. Sie bewohnen eine dünne Schicht darin.</b>',
+    mode: 'noise', spin: 0.08, table: 'noise'
+  },
+  {
+    n: 'Beat 3 / 7',
+    t: 'Die Schicht ist messbar dünn',
+    b: 'Das PCA-Spektrum zeigt, wie sich die Varianz auf die Richtungen verteilt. ' +
+       'Statt 784 gleichberechtigter Achsen genügen <span class="hl">wenige Dutzend</span>, um fast alles zu erfassen. ' +
+       'Die restlichen Hunderte Richtungen sind nahezu <b>flach</b> — in ihnen bewegen sich die
+  {
+    n: 'Beat 3 / 7',
+    t: 'Die Schicht ist messbar dünn',
+    b: 'Das PCA-Spektrum zeigt, wie sich die Varianz auf die Richtungen verteilt. ' +
+       'Statt 784 gleichberechtigter Achsen genügen <span class="hl">wenige Dutzend</span>, um fast alles zu erfassen. ' +
+       'Die restlichen Hunderte Richtungen sind nahezu <b>flach</b> — in ihnen bewegen sich die Daten praktisch nicht. ' +
+       'Die orangene Kurve ist die kumulierte Varianz, die Marken zeigen 90 %, 95 % und 99 %.',
+    mode: 'spectrum', spin: 0, table: 'spectrum'
+  },
+  {
+    n: 'Beat 4 / 7',
+    t: 'PCA: die Schatten überlappen',
+    b: 'Dieselben 4000 Ziffern, projiziert auf die drei stärksten <b>linearen</b> Richtungen. ' +
+       'Man sieht Struktur — <span class="hl2">0</span> und <span class="hl2">1</span> trennen sich klar. ' +
+       'Aber <b>4/9</b> und <b>3/5/8</b> liegen übereinander. ' +
+       'PCA darf nur <b>drehen und strecken</b>, nicht biegen. Eine gekrümmte Fläche lässt sich so nicht flach ausbreiten.',
+    mode: 'pca3', spin: 0.12, table: 'overlap'
+  },
+  {
+    n: 'Beat 5 / 7',
+    t: 'Isomap: entlang der Fläche messen',
+    b: 'Dieselben Punkte, andere Metrik. Isomap misst Abstände nicht quer durch den Raum, ' +
+       'sondern <span class="hl">entlang der Datenfläche</span> (geodätisch, über einen 12-Nachbarn-Graphen). ' +
+       'Die Cluster lösen sich voneinander. <b>Genau das ist die Krümmung</b> — dieselbe Pointe wie bei den verhakten Tori: ' +
+       'Was linear unlösbar ist, wird lösbar, sobald man die Geometrie respektiert.',
+    mode: 'iso3', spin: 0.12, table: 'overlap'
+  },
+  {
+    n: 'Beat 6 / 7',
+    t: 'Wie dick ist die Schicht wirklich?',
+    b: 'Der <b>Two-NN-Schätzer</b> (Facco et al. 2017) nutzt nur das Verhältnis der Abstände zum ersten und zweiten Nachbarn. ' +
+       'Ergebnis: jede Ziffer lebt auf einer Fläche von rund <span class="hl">8 bis 15 Dimensionen</span> — ' +
+       'eingebettet in ℝ⁷⁸⁴. Zum Vergleich: reines Rauschen liefert eine <b>deutlich höhere</b> Schätzung. ' +
+       'Die Ziffern sind also keine Wolke im Raum, sondern eine dünne, gekrümmte Fläche.',
+    mode: 'dims', spin: 0, table: 'dims'
+  },
+  {
+    n: 'Beat 7 / 7',
+    t: 'Das gilt auch für Sprache',
+    b: 'Was hier an Pixeln sichtbar wird, gilt genauso für <b>Wort-Embeddings</b>: ' +
+       'Tokens füllen den Embedding-Raum nicht aus, sie liegen auf einer gekrümmten Fläche. ' +
+       'Deshalb funktioniert Übersetzung als <span class="hl2">Bewegung zwischen zwei Mannigfaltigkeiten</span> — ' +
+       'und deshalb braucht ein Netz <b>Layer</b>: jeder Layer biegt den Raum, bis eine Gerade wieder reicht.',
+    mode: 'iso3', spin: 0.07, table: 'summary'
+  }
+];
+
+// ============================================================
+// DATEN LADEN
+// ============================================================
+async function boot() {
+  const fill = document.getElementById('load-fill');
+  const txt  = document.getElementById('load-t');
+  const setP = p => { if (fill) fill.style.width = p + '%'; };
+
+  try {
+    setP(8);
+    txt.textContent = 'Lade mnist_manifold.json …';
+    const res = await fetch('mnist_manifold.json');
+    if (!res.ok) throw new Error('mnist_manifold.json nicht gefunden (HTTP ' + res.status + ')');
+    D = await res.json();
+    setP(55);
+
+    txt.textContent = 'Lade Sprite-Atlas …';
+    sprites = await loadImage(D.meta.sprite_file || 'mnist_sprites.png');
+    setP(88);
+
+    txt.textContent = 'Berechne Layout …';
+    prepare();
+    setP(100);
+
+    setTimeout(() => {
+      document.getElementById('load').classList.add('gone');
+      start();
+    }, 260);
+
+  } catch (e) {
+    document.getElementById('load').innerHTML =
+      '<div class="err"><b>Fehler beim Laden.</b><br><br>' + e.message +
+      '<br><br>Bitte erst <code>prepare_mnist_manifold.py</code> ausführen und die Seite ' +
+      'über einen lokalen Server öffnen (<code>python3 -m http.server</code>) — ' +
+      '<code>file://</code> blockiert <code>fetch</code>.</div>';
+    console.error(e);
+  }
+}
+
+function loadImage(src) {
+  return new Promise((res, rej) => {
+    const im = new Image();
+    im.onload = () => res(im);
+    im.onerror = () => rej(new Error('Sprite-Atlas "' + src + '" nicht ladbar.'));
+    im.src = src;
+  });
+}
+
+// ============================================================
+// VORBERECHNUNG — alle Zielpositionen pro Modus
+// ============================================================
+let LAYOUT = {};   // modus -> Float32Array der 3D-Zielkoordinaten
+let CURPOS = null; // aktuelle, interpolierte Positionen
+let NOISE  = null; // Rauschpunkte (nur Beat 2)
+
+function prepare() {
+  const n = D.meta.n;
+  CURPOS = new Float32Array(n * 3);
+
+  // --- pca3 / iso3 direkt übernehmen ---
+  LAYOUT.pca3 = flat(D.pca3);
+  LAYOUT.iso3 = flat(D.iso3);
+
+  // --- pixels: ein Bild als 784 Balken im Raum ---
+  // 28x28 Raster, Höhe = Pixelwert. Die 4000 Punkte verteilen sich
+  // zyklisch auf die 784 Zellen, damit alle Punkte einen Platz haben.
+  {
+    const a = new Float32Array(n * 3);
+    const img = D.example_image;
+    for (let i = 0; i < n; i++) {
+      const c = i % 784;
+      const r = (c / 28) | 0, cc = c % 28;
+      const v = img[c] / 255;
+      const jitter = ((i / 784) | 0) * 0.004;
+      a[i*3+0] = (cc - 13.5) / 14.5;
+      a[i*3+1] = (13.5 - r) / 14.5;
+      a[i*3+2] = v * 0.85 - 0.3 + jitter;
+    }
+    LAYOUT.pixels = a;
+  }
+
+  // --- noise: echte Daten kompakt, Rauschen weit gestreut ---
+  // Beide in PCA-Koordinaten, damit der Vergleich fair ist.
+  LAYOUT.noise = LAYOUT.pca3;
+  NOISE = flat(D.noise_pca3);
+
+  // --- spectrum: Punkte formen die Varianzkurve ---
+  {
+    const a = new Float32Array(n * 3);
+    const cum = D.spectrum.cumulative;
+    const K = cum.length;
+    for (let i = 0; i < n; i++) {
+      const k = i % K;
+      const band = (i / K) | 0;
+      const x = (k / (K - 1)) * 2 - 1;
+      const y = cum[k] * 1.7 - 0.85;
+      a[i*3+0] = x;
+      a[i*3+1] = y - band * 0.012;
+      a[i*3+2] = (band % 7 - 3) * 0.015;
+    }
+    LAYOUT.spectrum = a;
+  }
+
+  // --- dims: Balkendiagramm der intrinsischen Dimension ---
+  {
+    const a = new Float32Array(n * 3);
+    const pd = D.intrinsic_dim.per_digit;
+    const maxD = Math.max(...Object.values(pd), D.intrinsic_dim.noise);
+    const counts = new Array(10).fill(0);
+    for (let i = 0; i < n; i++) {
+      const lab = D.labels[i];
+      const k = counts[lab]++;
+      const h = (pd[lab] / maxD) * 1.5;
+      const perRow = 20;
+      const row = (k / perRow) | 0;
+      const col = k % perRow;
+      const barW = 0.14;
+      a[i*3+0] = (lab - 4.5) * 0.19 + (col / (perRow - 1) - 0.5) * barW;
+      a[i*3+1] = -0.85 + (row / 20) * h;
+      a[i*3+2] = ((k % 3) - 1) * 0.02;
+    }
+    LAYOUT.dims = a;
+  }
+
+  // Startposition = Beat 0
+  CURPOS.set(LAYOUT[BEATS[0].mode]);
+}
+
+function flat(arr) {
+  const a = new Float32Array(arr.length * 3);
+  for (let i = 0; i < arr.length; i++) {
+    a[i*3+0] = arr[i][0];
+    a[i*3+1] = arr[i][1];
+    a[i*3+2] = arr[i][2];
+  }
+  return a;
+}
+
+// ============================================================
+// PROJEKTION — im Geist von space_morph.proj()
+// ============================================================
+const BASE = () => Math.min(W, H) * 0.33;
+
+function proj(x, y, z) {
+  const A = camA + dragA, B = camB + dragB, S0 = BASE();
+  const x1 =  x * Math.cos(A) - y * Math.sin(A);
+  const y1 =  x * Math.sin(A) + y * Math.cos(A);
+  const y2 = -y1 * Math.sin(B) + z * Math.cos(B);
+  const z2 =  y1 * Math.cos(B) + z * Math.sin(B);
+  const d = 4.4;
+  const k = d / (d + z2 * 0.78);
+  return { X: W * 0.52 + x1 * S0 * k, Y: H * 0.50 - y2 * S0 * k, d: z2, k: k };
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+let order = null;   // Index-Array fürs Depth-Sorting
+
+function draw(now) {
+  resize();
+  if (!ctx) { raf = requestAnimationFrame(draw); return; }
+
+  const raw = clamp((now - t0) / DUR, 0, 1);
+  const u = ease(raw);
+  const A = BEATS[prevIdx], B = BEATS[cur];
+
+  // Positionen interpolieren
+  const pa = LAYOUT[A.mode], pb = LAYOUT[B.mode];
+  const n = D.meta.n;
+  for (let i = 0; i < n * 3; i++) CURPOS[i] = pa[i] + (pb[i] - pa[i]) * u;
+
+  // Kamera
+  autoSpin += (lerp(A.spin, B.spin, u)) * 0.004;
+  if (!md) { dragA = lerp(dA0, 0, u); dragB = lerp(dB0, 0, u); }
+  camA = autoSpin;
+  camB = lerp(0.34, 0.34, u);
+
+  // Hintergrund
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, W, H);
+
+  const noiseAlpha = lerp(A.mode === 'noise' ? 1 : 0, B.mode === 'noise' ? 1 : 0, u);
+  const specMode   = (B.mode === 'spectrum' && u > 0.5) || (A.mode === 'spectrum' && u < 0.5);
+  const dimsMode   = (B.mode === 'dims' && u > 0.5) || (A.mode === 'dims' && u < 0.5);
+
+  if (specMode) drawSpectrumAxes(u);
+  if (dimsMode) drawDimAxes(u);
+
+  // --- Rauschpunkte (Beat 2), grau, hinter den Daten ---
+  if (noiseAlpha > 0.01) {
+    ctx.globalAlpha = noiseAlpha * 0.5;
+    ctx.fillStyle = '#94a3b8';
+    for (let i = 0; i < NOISE.length / 3; i++) {
+      const p = proj(NOISE[i*3], NOISE[i*3+1], NOISE[i*3+2]);
+      ctx.beginPath();
+      ctx.arc(p.X, p.Y, 1.9 * p.k, 0, 6.2832);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // --- Datenpunkte, depth-sortiert ---
+  if (!order || order.length !== n) {
+    order = new Int32Array(n);
+    for (let i = 0; i < n; i++) order[i] = i;
+  }
+
+  const depth = new Float32Array(n);
+  const sx = new Float32Array(n), sy = new Float32Array(n), sk = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const p = proj(CURPOS[i*3], CURPOS[i*3+1], CURPOS[i*3+2]);
+    sx[i] = p.X; sy[i] = p.Y; sk[i] = p.k; depth[i] = p.d;
+  }
+  Array.prototype.sort.call(order, (a, b) => depth[a] - depth[b]);
+
+  screenCache = { sx, sy, sk };
+
+  const baseR = specMode ? 1.5 : (dimsMode ? 1.7 : 2.5);
+  for (let q = 0; q < n; q++) {
+    const i = order[q];
+    const k = sk[i];
+    const r = (baseR + 0.8 * k) * k;
+    ctx.beginPath();
+    ctx.arc(sx[i], sy[i], r, 0, 6.2832);
+    ctx.fillStyle = PALETTE[D.labels[i]];
+    ctx.globalAlpha = (0.42 + 0.48 * k) * (i === hoverIdx ? 1 : 1);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Hover-Punkt hervorheben
+  if (hoverIdx >= 0 && hoverIdx < n) {
+    ctx.beginPath();
+    ctx.arc(sx[hoverIdx], sy[hoverIdx], 7, 0, 6.2832);
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+  }
+
+  // Legende der Ziffern
+  drawLegend(1 - noiseAlpha * 0.4);
+
+  updateHover();
+  raf = requestAnimationFrame(draw);
+}
+
+// ---------- Achsen für das Spektrum ----------
+function drawSpectrumAxes(u) {
+  const sp = D.spectrum;
+  const K  = sp.cumulative.length;
+  const o  = proj(-1, -0.85, 0);
+  const rx = proj( 1, -0.85, 0);
+  const ry = proj(-1,  0.85, 0);
+
+  ctx.globalAlpha = 0.55;
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 1.3;
+  ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(rx.X, rx.Y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(ry.X, ry.Y); ctx.stroke();
+
+  // Marken bei 90 / 95 / 99 %
+  [['n_90', '90 %', '#d97706'], ['n_95', '95 %', '#7c3aed'], ['n_99', '99 %', '#0284c7']]
+    .forEach(([key, lbl, col]) => {
+      const k = sp[key];
+      if (k >= K) return;
+      const x = (k / (K - 1)) * 2 - 1;
+      const y = sp.cumulative[k] * 1.7 - 0.85;
+      const a = proj(x, -0.85, 0), b = proj(x, y, 0);
+      ctx.globalAlpha = 0.75;
+      ctx.strokeStyle = col;
+      ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = col;
+      ctx.font = '600 11px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(lbl + ' · ' + k + ' Dim.', b.X, b.Y - 9);
+    });
+
+  ctx.globalAlpha = 0.6;
+  ctx.fillStyle = '#64748b';
+  ctx.font = '11px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Hauptkomponenten  1 … ' + K, (o.X + rx.X) / 2, o.Y + 22);
+  ctx.save();
+  ctx.translate(ry.X - 26, (o.Y + ry.Y) / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('kumulierte Varianz', 0, 0);
+  ctx.restore();
+  ctx.textAlign = 'left';
+  ctx.globalAlpha = 1;
+}
+
+// ---------- Achsen für das Dimensions-Diagramm ----------
+function drawDimAxes(u) {
+  const pd = D.intrinsic_dim.per_digit;
+  const maxD = Math.max(...Object.values(pd), D.intrinsic_dim.noise);
+  const o  = proj(-1, -0.85, 0);
+  const rx = proj( 1, -0.85, 0);
+
+  ctx.globalAlpha = 0.5;
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(rx.X, rx.Y); ctx.stroke();
+
+  ctx.font = '600 12px system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  for (let dg = 0; dg < 10; dg++) {
+    const x = (dg - 4.5) * 0.19;
+    const base = proj(x, -0.88, 0);
+    const h = (pd[dg] / maxD) * 1.5;
+    const top = proj(x, -0.85 + h, 0);
+    ctx.globalAlpha = 0.9;
+    ctx.fillStyle = PALETTE[dg];
+    ctx.fillText(DIGIT_NAMES[dg], base.X, base.Y + 16);
+    ctx.globalAlpha = 0.75;
+    ctx.font = '11px system-ui, sans-serif';
+    ctx.fillStyle = '#475569';
+    ctx.fillText(pd[dg].toFixed(1), top.X, top.Y - 8);
+    ctx.font = '600 12px system-ui, sans-serif';
+  }
+
+  // Referenzlinie: Rauschen
+  const hN = (D.intrinsic_dim.noise / maxD) * 1.5;
+  const a = proj(-1, -0.85 + hN, 0), b = proj(1, -0.85 + hN, 0);
+  ctx.globalAlpha = 0.8;
+  ctx.strokeStyle = '#dc2626';
+  ctx.setLineDash([5, 5]);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#dc2626';
+  ctx.font = '600 11px system-ui, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Zufallsrauschen ≈ ' + D.intrinsic_dim.noise.toFixed(1) + ' Dim.', a.X + 6, a.Y - 7);
+  ctx.globalAlpha = 1;
+}
+
+// ---------- Ziffern-Legende ----------
+function drawLegend(alpha) {
+  const x0 = W - 148, y0 = 36;
+  ctx.globalAlpha = alpha * 0.9;
+  ctx.font = '600 10px system-ui, sans-serif';
+  ctx.fillStyle = '#94a3b8';
+  ctx.textAlign = 'left';
+  ctx.fillText('ZIFFER', x0, y0 - 10);
+  for (let d = 0; d < 10; d++) {
+    const y = y0 + d * 17;
+    ctx.fillStyle = PALETTE[d];
+    ctx.beginPath();
+    ctx.roundRect(x0, y - 7, 9, 9, 2);
+    ctx.fill();
+    ctx.fillStyle = '#334155';
+    ctx.font = '12px system-ui, sans-serif';
+    ctx.fillText(DIGIT_NAMES[d], x0 + 16, y + 1);
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ============================================================
+// HOVER + THUMBNAIL
+// ============================================================
+const tip = document.getElementById('tip');
+const tipcv = document.getElementById('tipcv');
+const tipctx = tipcv.getContext('2d');
+
+function updateHover() {
+  if (!screenCache || pointerX < 0) { hideTip(); return; }
+  const { sx, sy } = screenCache;
+  const n = D.meta.n;
+  let best = -1, bestD = 14 * 14;
+  for (let i = 0; i < n; i++) {
+    const dx = sx[i] - pointerX, dy = sy[i] - pointerY;
+    const d2 = dx * dx + dy * dy;
+    if (d2 < bestD) { bestD = d2; best = i; }
+  }
+  hoverIdx = best;
+  if (best < 0) { hideTip(); return; }
+
+  // Thumbnail aus dem Sprite-Atlas schneiden
+  const cols = D.meta.sprite_cols;
+  const r = (best / cols) | 0, c = best % cols;
+  tipctx.clearRect(0, 0, 28, 28);
+  tipctx.drawImage(sprites, c * 28, r * 28, 28, 28, 0, 0, 28, 28);
+
+  tip.querySelector('.lbl').innerHTML =
+    'Zi
+  tip.querySelector('.lbl').innerHTML =
+    'Ziffer <b>' + D.labels[best] + '</b>';
+
+  const pad = 16;
+  let tx = sx[best] + pad, ty = sy[best] - 56;
+  if (tx + 110 > W) tx = sx[best] - 110 - pad;
+  if (ty < 8) ty = 8;
+  tip.style.left = tx + 'px';
+  tip.style.top  = ty + 'px';
+  tip.style.display = 'block';
+}
+
+function hideTip() {
+  hoverIdx = -1;
+  tip.style.display = 'none';
+}
+
+// ============================================================
+// KENNZAHLEN-TABELLE (links unten, Stil der sm-table)
+// ============================================================
+function buildTable(kind) {
+  const T = document.getElementById('mtable');
+  const sw = c => '<span class="swatch" style="background:' + c + '"></span>';
+  let h = '';
+
+  if (kind === 'ambient') {
+    h = '<thead><tr><th>Größe</th><th>Wert</th></tr></thead><tbody>' +
+        row('Bildgröße', '28 × 28') +
+        row('Pixel pro Bild', '784') +
+        row('Umgebungsraum', 'ℝ⁷⁸⁴') +
+        row('Punkte hier', D.meta.n.toLocaleString('de-DE')) +
+        '</tbody>';
+  }
+
+  else if (kind === 'noise') {
+    h = '<thead><tr><th>Datenquelle</th><th>int. Dim.</th></tr></thead><tbody>' +
+        row(sw('#e11d48') + 'MNIST', D.intrinsic_dim.all.toFixed(1)) +
+        row(sw('#94a3b8') + 'Rauschen', D.intrinsic_dim.noise.toFixed(1)) +
+        row('Umgebungsraum', '784') +
+        '</tbody>';
+  }
+
+  else if (kind === 'spectrum') {
+    const s = D.spectrum;
+    h = '<thead><tr><th>Varianz</th><th>Komponenten</th></tr></thead><tbody>' +
+        row('90 %', s.n_90) +
+        row('95 %', s.n_95) +
+        row('99 %', s.n_99) +
+        row('100 %', '784') +
+        '</tbody>';
+  }
+
+  else if (kind === 'overlap') {
+    h = '<thead><tr><th>Ziffer</th><th>int. Dim.</th></tr></thead><tbody>';
+    const pd = D.intrinsic_dim.per_digit;
+    // nur die extremsten vier zeigen, sonst wird die Tabelle zu hoch
+    const sorted = Object.keys(pd).map(Number).sort((a, b) => pd[a] - pd[b]);
+    [sorted[0], sorted[1], sorted[8], sorted[9]].forEach(d => {
+      h += row(sw(PALETTE[d]) + DIGIT_NAMES[d], pd[d].toFixed(1));
+    });
+    h += row('alle Ziffern', D.intrinsic_dim.all.toFixed(1));
+    h += '</tbody>';
+  }
+
+  else if (kind === 'dims') {
+    h = '<thead><tr><th>Ziffer</th><th>int. Dim.</th></tr></thead><tbody>';
+    for (let d = 0; d < 10; d++) {
+      h += row(sw(PALETTE[d]) + DIGIT_NAMES[d], D.intrinsic_dim.per_digit[d].toFixed(1));
+    }
+    h += '</tbody>';
+  }
+
+  else if (kind === 'summary') {
+    h = '<thead><tr><th>Befund</th><th>Wert</th></tr></thead><tbody>' +
+        row('Umgebungsraum', '784 D') +
+        row('tatsächlich genutzt', '≈ ' + D.intrinsic_dim.all.toFixed(0) + ' D') +
+        row('90 % Varianz in', D.spectrum.n_90 + ' D') +
+        row('Anteil genutzt', (D.intrinsic_dim.all / 784 * 100).toFixed(1) + ' %') +
+        '</tbody>';
+  }
+
+  T.innerHTML = h;
+}
+
+function row(a, b) {
+  return '<tr><td>' + a + '</td><td class="num">' + b + '</td></tr>';
+}
+
+// ============================================================
+// TEXT + FORTSCHRITT
+// ============================================================
+function updateText() {
+  const b = BEATS[cur];
+  const title = document.getElementById('title');
+  const body  = document.getElementById('body');
+
+  // kurzes Ausblenden → Text tauschen → einblenden (verhindert Flackern)
+  title.style.opacity = '0';
+  body.style.opacity  = '0';
+  setTimeout(() => {
+    document.getElementById('step').textContent = b.n;
+    title.textContent = b.t;
+    body.innerHTML = b.b;
+    buildTable(b.table);
+    title.style.opacity = '1';
+    body.style.opacity  = '1';
+  }, 180);
+
+  const bar = document.getElementById('bar');
+  bar.innerHTML = '';
+  BEATS.forEach((_, i) => {
+    const e = document.createElement('div');
+    e.style.background = i <= cur ? '#d97706' : '#cbd5e1';
+    bar.appendChild(e);
+  });
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+let animating = false;
+
+function go(d) {
+  if (animating) return;
+  const n = clamp(cur + d, 0, BEATS.length - 1);
+  if (n === cur) return;
+  animating = true;
+  dA0 = dragA; dB0 = dragB;
+  prevIdx = cur;
+  cur = n;
+  t0 = performance.now();
+  updateText();
+  setTimeout(() => { animating = false; }, DUR + 60);
+}
+
+// ============================================================
+// CANVAS / EVENTS
+// ============================================================
+function resize() {
+  cv = cv || document.getElementById('cv');
+  const r = cv.getBoundingClientRect();
+  if (Math.abs(r.width - W) < 0.5 && Math.abs(r.height - H) < 0.5) return;
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = r.width; H = r.height;
+  cv.width  = Math.round(W * DPR);
+  cv.height = Math.round(H * DPR);
+  ctx = cv.getContext('2d');
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+
+function bind() {
+  cv = document.getElementById('cv');
+
+  cv.addEventListener('mousedown', e => {
+    md = true; moved = false;
+    mx = e.clientX; my = e.clientY;
+    cv.classList.add('dragging');
+    hideTip();
+  });
+
+  window.addEventListener('mouseup', () => {
+    md = false;
+    cv.classList.remove('dragging');
+    dA0 = dragA; dB0 = dragB;
+  });
+
+  window.addEventListener('mousemove', e => {
+    const r = cv.getBoundingClientRect();
+    pointerX = e.clientX - r.left;
+    pointerY = e.clientY - r.top;
+    if (!md) return;
+    moved = true;
+    dragA += (e.clientX - mx) * 0.006;
+    dragB += (e.clientY - my) * 0.005;
+    dragB = clamp(dragB, -1.1, 1.1);
+    dA0 = dragA; dB0 = dragB;
+    mx = e.clientX; my = e.clientY;
+  });
+
+  cv.addEventListener('mouseleave', () => { pointerX = -1; hideTip(); });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); go(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); go(-1);
+    } else if (e.key === 'Home') {
+      prevIdx = cur; cur = 0; t0 = performance.now(); updateText();
+    } else if (e.key === 'End') {
+      prevIdx = cur; cur = BEATS.length - 1; t0 = performance.now(); updateText();
+    }
+  });
+
+  // Touch
+  let tsx = 0;
+  window.addEventListener('touchstart', e => { tsx = e.changedTouches[0].screenX; }, { passive: true });
+  window.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].screenX - tsx;
+    if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+  }, { passive: true });
+}
+
+function start() {
+  bind();
+  resize();
+  t0 = performance.now();
+  updateText();
+  raf = requestAnimationFrame(draw);
+}
+
+boot();
+
+})();
+</script>
+</body>
+</html>
+
