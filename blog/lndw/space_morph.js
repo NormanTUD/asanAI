@@ -106,15 +106,16 @@ const SpaceMorph = (() => {
         // Komplett anderes Beispiel — kein Fortsetzen der Punktwolke von oben.
         // Zwei echte 3D-Datenpunkte (verknotete Donuts) brauchen eine 4. Dimension,
         // um ohne Schnitt trennbar zu werden. Pfeiltaste rechts startet eine
-        // 5-Sekunden-Drehung um die Tori; danach geht's zu Schritt 9.
+        // 5-Sekunden-Drehung um die bereits (durch die neue Dimension) getrennten
+        // Tori; die trennebene erscheint erst beim nächsten Schritt.
         { n: "Schritt 8 / 10", t: "Neues Beispiel: verhakte Tori",
-            b: "Andere Daten, anderes Problem: zwei verknotete Volltori im ℝ³, jeder β₁ = 1. Keine Ebene trennt sie. Pfeiltaste → einmal um die Tori herumdrehen.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
-        { n: "Schritt 9 / 10", t: "4. Dimension + Projektion",
-            b: "Ein Layer hebt in eine Extra-Dimension w (die Breite): dort ziehen sich die Ringe hindurch. In 3D fast noch verhakt — der 4D-Bogen macht die Trennung erst möglich.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0.12 },
-        { n: "Schritt 10 / 10", t: "Entwirrt – jetzt reicht eine Ebene",
-            b: "Zurück im ℝ³: zwei Klumpen, je β → (1,0,0). Eine Ebene trennt sie.",
+            b: "Andere Daten, anderes Problem: zwei verknotete Volltori im ℝ³. Ein Layer hebt sie in eine 4. Dimension (w) — dort ziehen sie sich aneinander vorbei. Pfeiltaste → einmal um die jetzt räumlich getrennten Tori herumdrehen.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 },
+        { n: "Schritt 9 / 10", t: "4. Dimension macht es möglich",
+            b: "Was vorher unlösbar war (keine Ebene trennt die Tori im ℝ³), wird durch den Lift in w lösbar. Die beiden Ringe sind jetzt zwei getrennte Klumpen im erweiterten Raum.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 },
+        { n: "Schritt 10 / 10", t: "Jetzt reicht eine Ebene",
+            b: "Zurück im ℝ³: zwei Klumpen. Eine Ebene trennt sie sauber.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 }
     ];
 
@@ -485,8 +486,10 @@ const SpaceMorph = (() => {
 
         // ---------- Zwei verhakte Tori (Bonusphase) ----------
         if (tor > 0.01) {
-            // 4D-Andeutung: gepunktete w-Achse pulsiert, während die Tori sich entwirren
-            const wA = 1 - Math.abs(ut - 0.5) * 2; // 0 → 1 → 0, Spitze bei ut=0.5
+            // 4D-Andeutung: gepunktete w-Achse pulsiert nur während des Entwirrens (ut<1).
+            // Ist ut=1 (Trennung vollzogen), bleibt die Achse sichtbar als Marker der
+            // "verborgenen" Dimension, in der die Trennung stattgefunden hat.
+            const wA = ut < 1 ? 1 - Math.abs(ut - 0.5) * 2 : 1; // Spitze bei ut=0.5
             const wPulse = 0.45 + 0.55 * wA;
             if (wPulse > 0.02) {
                 const o = proj({ x: 0, y: 0, z: 0 });
