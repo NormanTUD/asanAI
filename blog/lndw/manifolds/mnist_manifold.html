@@ -218,8 +218,7 @@ let raf = null;
 
 // Kamera
 let camA = 0.45, camB = 0.34;     // Zielwinkel (Azimut, Elevation)
-let dragA = 0, dragB = 0;         // Nutzer-Offset
-let dA0 = 0, dB0 = 0;             // Offset beim Beat-Wechsel (fährt zurück)
+let dragA = 0, dragB = 0;         // Nutzer-Offset (bleibt über Beats hinweg stehen)
 let md = false, mx = 0, my = 0, moved = false;
 let autoSpin = 0;                 // langsame Eigenrotation
 
@@ -475,9 +474,8 @@ function draw(now) {
 
   // Kamera
   autoSpin += (lerp(A.spin, B.spin, u)) * 0.004;
-  if (!md) { dragA = lerp(dA0, 0, u); dragB = lerp(dB0, 0, u); }
   camA = autoSpin;
-  camB = lerp(0.34, 0.34, u);
+  camB = 0.34;
 
   // Hintergrund
   ctx.fillStyle = '#f8fafc';
