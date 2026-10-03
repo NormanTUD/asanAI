@@ -572,6 +572,28 @@ function prev() {
         pendingActivationSlide = null;
     }
 
+    // Lock für den gesamten Crossfade (CSS-Transition ist 0.8s). Solange der
+    // Lock hält, werden Pfeiltasten in navigate() geblockt — die neue Folie
+    // muss erst sichtbar sein, bevor der nächste Klick zählt. Auch dasselbe
+    // gilt für Sub-Folien-Übergänge (siehe DemoRegistry-Einträge, die auf
+    // isSlideTransitioning blocken können).
+    //
+    // Wir speichern den Endzeitpunkt statt eines setTimeout-Tokens: Plotly
+    // räumt beim Re-Render mit clearTimeout() alle Timer auf, was einen
+    // setTimeout-basierten Lock sofort killt. Ein Timestamp-basiertes Lock
+    // ist immun dagegen.
+    const SLIDE_TRANSITION_MS = 850;
+    let slideTransitionUntil = 0;
+    function lockSlideTransition() {
+        slideTransitionUntil = Date.now() + SLIDE_TRANSITION_MS;
+        console.log('[lockSlideTransition] until=', new Date(slideTransitionUntil).toISOString());
+    }
+    function isSlideTransitioning() { return Date.now() < slideTransitionUntil; }
+    function cancelSlideTransition() {
+        console.log('[cancelSlideTransition] was until=', slideTransitionUntil);
+        slideTransitionUntil = 0;
+    }
+
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
         // Focus aus Inputs/Textareas rausnehmen, damit Pfeiltasten wieder
@@ -592,6 +614,7 @@ function prev() {
         // Vorherigen pending rAF cancellen, sonst kann er nach dem nächsten
         // goTo() noch feuern und die alte Folie re-blinken lassen.
         cancelPendingActivation();
+        cancelSlideTransition();
         oldSlide.classList.remove('active');
         pendingActivationSlide = newSlide;
         pendingActivationOuterRaf = requestAnimationFrame(() => {
@@ -607,6 +630,9 @@ function prev() {
                 pendingActivationSlide = null;
             });
         });
+        // Crossfade-Lock setzen: Pfeiltasten werden erst wieder angenommen,
+        // wenn die neue Folie sichtbar ist.
+        lockSlideTransition();
 
         const fragments = getFragments(currentSlide);
         if (fastMode) {
@@ -765,6 +791,7 @@ function prev() {
         slideTitleAt: (i) => (slides[i] ? slideTitle(slides[i], i) : ''),
         getActiveSlide: () => slides[currentSlide] || null,
         isFastMode: () => fastMode,
+        isSlideTransitioning,
         toggleOverview, toggleFullscreen, closeOverview,
         searchAppend, searchBackspace, clearOverviewSearch, overviewEscape,
     };
@@ -996,6 +1023,11 @@ const InputHandler = (() => {
     let digitTimer = null;
 
     function navigate(direction) {
+        // Solange der Crossfade der vorherigen Folie noch läuft, keine weitere
+        // Navigation annehmen — die neue Folie muss erst vollständig sichtbar
+        // sein, bevor der nächste Klick zählt. Sub-Folien blocken sich
+        // zusätzlich selbst (siehe DemoRegistry.block).
+        if (Presentation.isSlideTransitioning()) return;
         const result = DemoRegistry.tryNavigate(direction, Presentation.getActiveSlide());
         if (result === 'block') return; // Demo hat blockiert — kein Fallthrough
         if (!result) {
