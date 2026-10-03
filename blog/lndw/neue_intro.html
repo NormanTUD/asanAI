@@ -331,8 +331,8 @@
     pointer-events: none;
   }
   .beat-caption .acc { color: var(--accent); font-weight: 400; }
-  #capCode { top: calc(50% - 224px); }
-  #capPic  { top: calc(50% - 212px); }
+  #capCode { top: calc(50% - 272px); }
+  #capPic  { top: calc(50% - 248px); }
 
   /* =========================
      Statement-Folien (große Thesen)
@@ -372,15 +372,15 @@
   }
 
   /* =========================
-     Bild-Fenster (Folie: kann auch Bilder zeichnen)
+     Chat-Fenster (Bilder zeichnen: Prompt → Bild)
      ========================= */
-  .pic-window {
+  .chat-window {
     position: absolute;
     top: 50%; left: 50%;
     width: 480px;
     transform: translate(-50%, -50%) scale(0.85);
     background: #10141f;
-    border-radius: 16px;
+    border-radius: 20px;
     box-shadow:
       0 0 0 1px rgba(255, 255, 255, 0.08),
       0 30px 80px rgba(0, 0, 0, 0.6),
@@ -392,37 +392,75 @@
     overflow: hidden;
     will-change: transform, opacity;
   }
-  .pic-window.on {
+  .chat-window.on {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
-  .pic-body { padding: 14px; }
-  .pic-prompt {
+  .chat-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 13px 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .chat-name {
     font-size: 13px;
-    color: var(--ink-dim);
-    padding: 4px 6px 12px;
-    font-style: italic;
-  }
-  .pic-prompt .qm {
-    color: var(--accent);
-    font-style: normal;
     font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.2px;
   }
-  .pic-img {
+  .chat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+  .chat-msg {
+    max-width: 85%;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .chat-window.on .chat-msg {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .chat-window.on .chat-msg.user { transition-delay: 0.5s; }
+  .chat-window.on .chat-msg.ai   { transition-delay: 0.9s; }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: rgba(110, 168, 255, 0.16);
+    border: 1px solid rgba(110, 168, 255, 0.35);
+    border-radius: 16px 16px 4px 16px;
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .chat-msg.ai {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px 16px 16px 4px;
+    padding: 8px;
+  }
+  .chat-img {
     display: block;
     width: 100%;
-    height: 300px;
+    height: 240px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 12px;
     opacity: 0;
     filter: blur(14px);
     transform: scale(1.04);
-    transition: opacity 1.4s ease 0.4s, filter 1.8s ease 0.4s, transform 2s ease 0.4s;
+    transition: opacity 1.4s ease, filter 1.8s ease, transform 2s ease;
   }
-  .pic-window.on .pic-img {
+  .chat-window.on .chat-img {
     opacity: 1;
     filter: blur(0);
     transform: scale(1);
+    transition-delay: 1.2s;
   }
 
   /* =========================
@@ -520,32 +558,6 @@
     font-size: 13px;
     color: var(--ink-dim);
     margin-left: 8px;
-  }
-
-  /* =========================
-     Kontext-Frage („Was passiert da eigentlich?")
-     ========================= */
-  .question-overlay {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, calc(-50% + 380px));
-    text-align: center;
-    opacity: 0;
-    transition: opacity 1s ease, transform 1s ease;
-    max-width: 700px;
-    pointer-events: none;
-  }
-  .question-overlay .q-title {
-    font-size: 28px;
-    font-weight: 300;
-    color: var(--ink);
-    letter-spacing: -0.5px;
-    line-height: 1.3;
-  }
-  .question-overlay .q-title em {
-    font-style: italic;
-    color: var(--accent);
-    font-weight: 400;
   }
 
   /* =========================
@@ -899,38 +911,9 @@
     <div class="bar"></div><div class="bar"></div>
   </div>
 
-  <!-- ============ Statement: kann auch programmieren ============ -->
-  <div class="statement" id="statement">
-    <div class="st-line1">Diese Systeme können viel mehr —</div>
-    <div class="st-line2">sie können auch <span class="acc">programmieren</span>.</div>
-  </div>
-
-  <!-- ============ Bild-Fenster (Bilder zeichnen) ============ -->
-  <div class="beat-caption" id="capPic">
-    Und sie können auch <span class="acc">Bilder zeichnen</span>.
-  </div>
-  <div class="pic-window" id="picWindow">
-    <div class="cw-title">
-      <span class="cw-dot r"></span>
-      <span class="cw-dot y"></span>
-      <span class="cw-dot g"></span>
-      <span class="cw-name">katze.png</span>
-    </div>
-    <div class="pic-body">
-      <div class="pic-prompt"><span class="qm">Prompt:</span> „eine katze, fotorealistisch“</div>
-      <img class="pic-img" src="katze1.jpg" alt="Generiertes Bild: eine Katze">
-    </div>
-  </div>
-
-  <!-- ============ Statement: alles geht über Transformer ============ -->
-  <div class="statement" id="statement2">
-    <div class="st-line1">Und all das funktioniert nach ähnlichen Mechanismen —</div>
-    <div class="st-line2 small">dem <span class="acc">Transformer</span>, den ich euch heute erkläre.</div>
-  </div>
-
-  <!-- ============ Code-Fenster (das geschriebene Programm) ============ -->
+  <!-- ============ Code-Fenster (Folie: kann auch programmieren) ============ -->
   <div class="beat-caption" id="capCode">
-    Der Auftrag wird zu <span class="acc">Code</span>:
+    Diese Systeme können viel mehr — sie können auch <span class="acc">programmieren</span>.
   </div>
   <div class="code-window" id="codeWindow">
     <div class="cw-title">
@@ -950,9 +933,27 @@
     </div>
   </div>
 
-  <!-- Die Frage, die sich im Raum entfaltet -->
-  <div class="question-overlay" id="questionOverlay">
-    <div class="q-title">Aber <em>was passiert da eigentlich</em>?</div>
+  <!-- ============ Chat-Fenster (Folie: Bilder zeichnen) ============ -->
+  <div class="beat-caption" id="capPic">
+    Und sie können auch <span class="acc">Bilder zeichnen</span>.
+  </div>
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-head">
+      <span class="ai-spark">✦</span>
+      <span class="chat-name">Suche-KI</span>
+    </div>
+    <div class="chat-body">
+      <div class="chat-msg user">eine katze, fotorealistisch</div>
+      <div class="chat-msg ai">
+        <img class="chat-img" src="katze1.jpg" alt="Generiertes Bild: eine Katze">
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Statement: alles geht über Transformer ============ -->
+  <div class="statement" id="statement2">
+    <div class="st-line1">Und all das funktioniert nach ähnlichen Mechanismen —</div>
+    <div class="st-line2 small">dem <span class="acc">Transformer</span>, den ich euch heute erkläre.</div>
   </div>
 
   <!-- Der schwebende Text nach dem Zoom -->
@@ -1062,15 +1063,13 @@
   const micBtn        = $('micBtn');
   const waveform      = $('waveform');
   const aiCard        = $('aiCard');
-  const statement     = $('statement');
   const statement2    = $('statement2');
   const capPic        = $('capPic');
-  const picWindow     = $('picWindow');
+  const chatWindow    = $('chatWindow');
   const codeWindow    = $('codeWindow');
   const cwCode        = $('cwCode');
   const cwOut         = $('cwOut');
   const capCode       = $('capCode');
-  const questionOv    = $('questionOverlay');
   const floatingText  = $('floatingText');
   const tokensLayer   = $('tokensLayer');
   const layerLabel    = $('layerLabel');
@@ -1142,10 +1141,6 @@
     phone.style.opacity = opacity;
   }
 
-  function hidePhone() {
-    setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
-  }
-
   function setCodeWindow({scale=1, x=0, y=0, opacity=1}) {
     codeWindow.style.transform =
       `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
@@ -1171,26 +1166,23 @@
     });
   }
 
-  // Setzt ALLES in den Grundzustand — jeder Beat startet damit,
-  // damit beim Springen/Rückwärts nichts überlappen kann.
+  // Setzt ALLES in den Grundzustand (Handy ist WEG — es wird nur
+  // in den Such-Beats 0–3 explizit eingeblendet).
   function resetAll() {
-    setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+    setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
     appLogo.style.opacity = '1';
     setSearchText('', false);
     micBtn.classList.remove('listening');
     waveform.classList.remove('active');
     aiCard.classList.remove('on');
-    statement.classList.remove('on');
     statement2.classList.remove('on');
     capPic.style.opacity = '0';
-    picWindow.classList.remove('on');
+    chatWindow.classList.remove('on');
     setCodeWindow({scale: 0.85, x: 0, y: 0, opacity: 0});
     stopTyping();
     renderCode(false);
     cwOut.classList.remove('on');
     capCode.style.opacity = '0';
-    questionOv.style.opacity = '0';
-    questionOv.style.transform = 'translate(-50%, calc(-50% + 380px))';
     floatingText.style.opacity = '0';
     floatingText.style.transform = 'translate(-50%, -50%) scale(0.3)';
     tokensLayer.style.opacity = '0';
@@ -1213,11 +1205,15 @@
   const beats = [
 
     // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, Logo „Suche“
-    () => { resetAll(); },
+    () => {
+      resetAll();
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+    },
 
     // BEAT 1 — Mikrofon aktiv, Waveform pulsiert
     () => {
       resetAll();
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       setSearchText('', true);
       micBtn.classList.add('listening');
       waveform.classList.add('active');
@@ -1226,44 +1222,46 @@
     // BEAT 2 — Speech-to-Text: Die Frage erscheint im Suchfeld
     () => {
       resetAll();
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       setSearchText(SATZ, true);
     },
 
     // BEAT 3 — Suche-KI antwortet: Zusammenfassung + Websites als Quellen
     () => {
       resetAll();
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       setSearchText(SATZ, false);
       aiCard.classList.add('on');
     },
 
-    // BEAT 4 — Direkt danach: „sie können auch programmieren“
+    // BEAT 4 — „sie können auch programmieren“: Code-Fenster mit Programm
     () => {
       resetAll();
-      hidePhone();
-      statement.classList.add('on');
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      startCodeTyping();
     },
 
-    // BEAT 5 — Weitere Stärke: Bilder zeichnen (Prompt → Bild)
+    // BEAT 5 — Code komplett, das (richtige) Ergebnis erscheint
     () => {
       resetAll();
-      hidePhone();
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      renderCode(true);
+      cwOut.classList.add('on');
+    },
+
+    // BEAT 6 — Weitere Stärke: Bilder zeichnen (Chat: Prompt → Bild)
+    () => {
+      resetAll();
       capPic.style.opacity = '1';
-      picWindow.classList.add('on');
+      chatWindow.classList.add('on');
     },
 
-    // BEAT 6 — Und alles geht über den Transformer
+    // BEAT 7 — Und alles geht über den Transformer
     () => {
       resetAll();
-      hidePhone();
       statement2.classList.add('on');
-    },
-
-    // BEAT 7 — Die Frage taucht auf: "was passiert da eigentlich?"
-    () => {
-      resetAll();
-      hidePhone();
-      questionOv.style.opacity = '1';
-      questionOv.style.transform = 'translate(-50%, calc(-50% + 330px))';
     },
 
     // BEAT 8 — Der Satz schwebt frei im Raum
@@ -1281,29 +1279,9 @@
       layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
     },
 
-    // BEAT 10 — Code-Teil: Fenster mit Auftrag erscheint, Code tippt sich
+    // BEAT 10 — Embedding: Tokens werden zu Punkten im Raum
     () => {
       resetAll();
-      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
-      capCode.style.opacity = '1';
-      startCodeTyping();
-    },
-
-    // BEAT 11 — Code komplett, das (richtige) Ergebnis erscheint
-    () => {
-      resetAll();
-      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
-      capCode.style.opacity = '1';
-      renderCode(true);
-      cwOut.classList.add('on');
-    },
-
-    // BEAT 12 — Embedding: Tokens werden zu Punkten im Raum
-    () => {
-      resetAll();
-      setCodeWindow({scale: 0.6, x: 0, y: 0, opacity: 0.15});
-      renderCode(true);
-      cwOut.classList.add('on');
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
       embeddingSp.style.opacity = '1';
@@ -1311,7 +1289,7 @@
       showEmbedPoints(QUERY_KEYS);
     },
 
-    // BEAT 13 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
+    // BEAT 11 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
     () => {
       resetAll();
       layerLabel.style.opacity = '1';
@@ -1324,7 +1302,7 @@
       analogyCap.style.opacity = '1';
     },
 
-    // BEAT 14 — Übergabe: Alles verdichtet sich zum Modell-Block
+    // BEAT 12 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
       resetAll();
       embeddingSp.style.opacity = '0.15';

@@ -246,101 +246,344 @@ const ease = u => u * u * u * (u * (u * 6 - 15) + 10);
 const sub = (t, a, b) => ease(clamp((t - a) / (b - a), 0, 1));
 
 // ============================================================
+// MANIFOLD-GENERATOREN — prozedural, ohne Datenroundtrip
+// ============================================================
+// Jeder Generator liefert entweder
+//   - Punkte:  Float32Array(n * 3) — xyz-Tripel
+//   - Linien:  Float32Array(m * 6) — Segmentpaare (a.xyz, b.xyz)
+// Alle werden auf MAX_FLOATS gepaddet, damit die Interpolation
+// elementweise zwischen beliebigen Beats laufen kann.
+
+const MAX_FLOATS = 12000;
+
+function pad(arr) {
+  if (arr.length >= MAX_FLOATS) return arr;
+  const out = new Float32Array(MAX_FLOATS);
+  out.set(arr);
+  return out;
+}
+
+function normalize3(a, target = 1) {
+  let m = 0;
+  for (let i = 0; i < a.length; i++) if (Math.abs(a[i]) > m) m = Math.abs(a[i]);
+  if (m === 0) return a;
+  const s = target / m;
+  for (let i = 0; i < a.length; i++) a[i] *= s;
+  return a;
+}
+
+// --- 1D-Kurven (Punkte) ---
+
+function genCircle(n = 240) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const t = (i / (n - 1)) * Math.PI * 2;
+    a[i*3+0] = Math.cos(t);
+    a[i*3+1] = Math.sin(t);
+    a[i*3+2] = 0;
+  }
+  return a;
+}
+
+function genFigure8(n = 240) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const t = (i / n) * Math.PI * 2;
+    a[i*3+0] = Math.sin(t);
+    a[i*3+1] = Math.sin(t) * Math.cos(t);
+    a[i*3+2] = Math.cos(t) * 0.5;
+  }
+  return a;
+}
+
+function genMobiusEdge(n = 240) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const u = (i / n) * Math.PI * 2;
+    a[i*3+0] = (1 + 0.5 * Math.cos(u / 2)) * Math.cos(u);
+    a[i*3+1] = (1 + 0.5 * Math.cos(u / 2)) * Math.sin(u);
+    a[i*3+2] = 0.5 * Math.sin(u / 2);
+  }
+  return a;
+}
+
+// --- 2D-Flächen (Wireframe-Segmente) ---
+
+function genSurfaceUV(fn, uSteps, vSteps, uMax = Math.PI * 2, vMax = Math.PI * 2) {
+  const lines = [];
+  const V = (u, v) => fn(u, v);
+  for (let i = 0; i <= uSteps; i++) {
+    const u = (i / uSteps) * uMax;
+    for (let j = 0; j < vSteps; j++) {
+      const v1 = (j / vSteps) * vMax;
+      const v2 = ((j + 1) / vSteps) * vMax;
+      const a = V(u, v1), b = V(u, v2);
+      lines.push(a[0], a[1], a[2], b[0], b[1], b[2]);
+    }
+  }
+  for (let j = 0; j <= vSteps; j++) {
+    const v = (j / vSteps) * vMax;
+    for (let i = 0; i < uSteps; i++) {
+      const u1 = (i / uSteps) * uMax;
+      const u2 = ((i + 1) / uSteps) * uMax;
+      const a = V(u1, v), b = V(u2, v);
+      lines.push(a[0], a[1], a[2], b[0], b[1], b[2]);
+    }
+  }
+  return new Float32Array(lines);
+}
+
+const SURFACE_FNS = {
+  plane:    (u, v) => [(u / Math.PI - 1) * 1.6, (v / Math.PI - 1) * 1.6, 0],
+  cylinder: (u, v) => [Math.cos(u), (v / Math.PI - 1) * 1.2, Math.sin(u)],
+  torus:    (u, v) => {
+    const R = 0.78, r = 0.32;
+    return [(R + r * Math.cos(v)) * Math.cos(u),
+            (R + r * Math.cos(v)) * Math.sin(u),
+            r * Math.sin(v)];
+  },
+  sphere:   (u, v) => [Math.sin(v) * Math.cos(u), Math.sin(v) * Math.sin(u), Math.cos(v)],
+  saddle:   (u, v) => {
+    const x = (u / Math.PI - 1) * 1.3;
+    const y = (v / Math.PI - 1) * 1.3;
+    return [x, y, (x * x - y * y) * 0.85];
+  },
+  klein:    (u, v) => {
+    // 3D-Immersion der Kleinschen Flasche (klassisch, Selbstschnitt)
+    const a = 2;
+    let x, y, z;
+    if (u < Math.PI) {
+      x = a * Math.cos(u) * (1 + Math.sin(v));
+      z = -a * Math.sin(u) * (1 + Math.sin(v));
+    } else {
+      x = a * Math.cos(u) * (1 - Math.sin(v)) + 2 * a * Math.cos(u);
+      z = -a * Math.sin(u) * (1 - Math.sin(v));
+    }
+    y = -a * Math.cos(u + v) - a * Math.cos(u - v) + 2 * a * Math.cos(u);
+    return [x * 0.17, z * 0.17, y * 0.17];
+  }
+};
+
+function genMobiusSurface(uSteps = 80, vSteps = 6) {
+  const lines = [];
+  const V = (u, v) => {
+    const r = 1 + 0.5 * v * Math.cos(u / 2);
+    return [r * Math.cos(u), r * Math.sin(u), 0.5 * v * Math.sin(u / 2)];
+  };
+  for (let i = 0; i <= uSteps; i++) {
+    const u = (i / uSteps) * 2 * Math.PI;
+    for (let j = 0; j < vSteps; j++) {
+      const v1 = -1 + 2 * (j / vSteps);
+      const v2 = -1 + 2 * ((j + 1) / vSteps);
+      const a = V(u, v1), b = V(u, v2);
+      lines.push(a[0], a[1], a[2], b[0], b[1], b[2]);
+    }
+  }
+  for (let j = 0; j <= vSteps; j++) {
+    const v = -1 + 2 * (j / vSteps);
+    for (let i = 0; i < uSteps; i++) {
+      const u1 = (i / uSteps) * 2 * Math.PI;
+      const u2 = ((i + 1) / uSteps) * 2 * Math.PI;
+      const a = V(u1, v), b = V(u2, v);
+      lines.push(a[0], a[1], a[2], b[0], b[1], b[2]);
+    }
+  }
+  return new Float32Array(lines);
+}
+
+// --- Daten-Manifolds (Punktwolken) ---
+
+function genSwissRoll(n = 1800) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const t = 1.5 * Math.PI + Math.random() * (3.2 * Math.PI);
+    const h = (Math.random() - 0.5) * 1.4;
+    a[i*3+0] = t * Math.cos(t);
+    a[i*3+1] = h;
+    a[i*3+2] = t * Math.sin(t);
+  }
+  return normalize3(a, 0.9);
+}
+
+function genTwoMoons(n = 1000) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const upper = i < n / 2;
+    const t = Math.random() * Math.PI;
+    const w = (Math.random() - 0.5) * 0.12;
+    if (upper) {
+      a[i*3+0] = Math.cos(t) - 0.5;
+      a[i*3+1] = Math.sin(t);
+      a[i*3+2] = w;
+    } else {
+      a[i*3+0] = 1 - Math.cos(t);
+      a[i*3+1] = -Math.sin(t) + 0.2;
+      a[i*3+2] = w;
+    }
+  }
+  return normalize3(a, 1.4);
+}
+
+function genSCurve(n = 1800) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const t = (Math.random() * 2 - 1) * 1.5 * Math.PI;
+    const h = (Math.random() - 0.5) * 0.7;
+    a[i*3+0] = Math.sin(t);
+    a[i*3+1] = h;
+    a[i*3+2] = Math.sign(t) * (1 - Math.cos(Math.abs(t))) * 0.7;
+  }
+  return normalize3(a, 1.3);
+}
+
+// --- Konzept-Szene: 3 Mini-Manifolds Seite-an-Seite ---
+
+function genLine(n = 80) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1);
+    a[i*3+0] = (t - 0.5) * 2;
+    a[i*3+1] = 0;
+    a[i*3+2] = 0;
+  }
+  return a;
+}
+
+function genSpherePoints(n = 1200) {
+  const a = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    let x, y, s;
+    do { x = Math.random() * 2 - 1; y = Math.random() * 2 - 1; s = x*x + y*y; } while (s >= 1);
+    const f = 2 * Math.sqrt(1 - s);
+    a[i*3+0] = x * f;
+    a[i*3+1] = y * f;
+    a[i*3+2] = 1 - 2 * s;
+  }
+  return a;
+}
+
+const CONCEPT_GROUPS = [
+  { offset: [-2.4, 0, 0], scale: 0.55, label: 'Linie ⊂ ℝ²',  gen: () => genLine(80) },
+  { offset: [ 0.0, 0, 0], scale: 0.55, label: 'Kreis ⊂ ℝ³',  gen: () => genCircle(180) },
+  { offset: [ 2.4, 0, 0], scale: 0.55, label: 'Kugel ⊂ ℝ³',  gen: () => genSpherePoints(1200) },
+];
+
+let CONCEPT_RANGES = null;
+
+function makeConceptLayout() {
+  const all = [];
+  const ranges = [];
+  for (const g of CONCEPT_GROUPS) {
+    const start = all.length / 3;
+    const sub = g.gen();
+    for (let i = 0; i < sub.length; i += 3) {
+      all.push(
+        sub[i+0] * g.scale + g.offset[0],
+        sub[i+1] * g.scale + g.offset[1],
+        sub[i+2] * g.scale + g.offset[2]
+      );
+    }
+    ranges.push({ start, count: sub.length / 3, label: g.label });
+  }
+  CONCEPT_RANGES = ranges;
+  return new Float32Array(all);
+}
+
+// ============================================================
 // BEATS — jeder beschreibt einen vollständigen Zielzustand
 // ============================================================
 const BEATS = [
   {
-    n: '1 / 7', group: 'aufbau',
-    gt: 'Aufbau — der Raum',
-    t: 'Was Sie sehen: ein Bild, 784 Balken',
-    b: 'Ein MNIST-Bild besteht aus <b>28 × 28 = 784 Pixeln</b>. Jeder Balken rechts ist ein Pixel, ' +
-       'seine Helligkeit als Zahl zwischen 0 und 1. Fassen Sie alle 784 Zahlen in einer Spalte zusammen, ' +
-       'haben Sie <b>einen Punkt im Raum ℝ⁷⁸⁴</b>. 70 000 Bilder im Datensatz = 70 000 Punkte. ' +
-       'Ein Bild ist also kein Bild mehr — es ist eine Spalte Zahlen. Und jede Zahl landet auf einer eigenen Achse.',
-    mode: 'pixels', spin: 0, table: 'ambient'
+    n: '1 / 13', group: 'konzept',
+    gt: 'Was ist ein Manifold?',
+    t: 'Drei Beispiele nebeneinander',
+    b: 'Ein <b>Manifold</b> ist ein Ding niedrigerer Dimension in einem Raum höherer Dimension — ' +
+       'eine Linie lebt in der Ebene, ein Kreis im Raum, eine Kugeloberfläche auch im Raum.',
+    mode: 'concept_examples', spin: 0.05, table: 'concept'
   },
   {
-    n: '2 / 7', group: 'aufbau',
-    gt: 'Aufbau — der Raum',
-    t: 'Die Insel im Nebel',
-    b: 'Die <b>farbigen Punkte</b> sind 4 000 echte MNIST-Bilder, eingefärbt nach ihrer Ziffer. ' +
-       'Die <span class="hl2">grauen Punkte</span> sind keine echten Bilder — pro Pixel wurde rein zufällig ' +
-       'eine Helligkeit gezogen, mit derselben Statistik wie MNIST. Der Unterschied springt ins Auge: ' +
-       'die echten Bilder drängen sich <b>dicht zusammen</b>, das Rauschen <b>streut weit</b>. ' +
-       'ℝ⁷⁸⁴ ist riesig, aber die Bilder bewohnen nur einen winzigen Teil davon. ' +
-       '<b>Verdacht:</b> die Daten liegen nicht irgendwo im Raum, sondern <b>auf etwas</b>. ' +
-       'Dieses <i>Etwas</i> ist die <b>Mannigfaltigkeit</b> — das Manifold.',
-    mode: 'noise', spin: 0.08, table: 'noise'
+    n: '2 / 13', group: '1d',
+    gt: 'Galerie — 1D-Manifolds',
+    t: 'Kreis (S¹)',
+    b: 'Geschlossene 1D-Kurve, Krümmung +1/r.',
+    mode: 'curve_circle', spin: 0.05, table: 'gallery'
   },
   {
-    n: '3 / 7', group: 'diagnose',
-    gt: 'Diagnose — wie dünn?',
-    t: 'Das Varianz-Spektrum',
-    b: 'Jeder Balken zeigt, <b>wieviel Varianz</b> in einer der 784 Achsen steckt — geordnet von groß nach klein. ' +
-       'Achse 1 trägt am meisten, Achse 2 etwas weniger, … Achse 784 fast nichts. ' +
-       'Die <b>orangene Kurve</b> ist die <i>kumulierte</i> Varianz: an der Stelle k ist ihr Wert die Summe ' +
-       'der Varianzen aller Achsen 1..k. An den Marken lesen Sie ab, <b>wieviele Achsen Sie brauchen</b>, ' +
-       'um 90 %, 95 % oder 99 % der Gesamtvarianz zu erklären. Wir brauchen keine 784 Achsen — ' +
-       'rund <span class="hl">50</span> reichen für 99 %. Der Raum der Bilder ist tatsächlich ' +
-       '<b>fast flach in den meisten Richtungen</b>. Die Schicht ist dünn — und sie hat <i>eine</i> bevorzugte Richtung.',
-    mode: 'spectrum', spin: 0, table: 'spectrum'
+    n: '3 / 13', group: '1d',
+    gt: 'Galerie — 1D-Manifolds',
+    t: 'Figur-8',
+    b: 'Geschlossen, Krümmung wechselt das Vorzeichen.',
+    mode: 'curve_figure8', spin: 0.05, table: 'gallery'
   },
   {
-    n: '4 / 7', group: 'diagnose',
-    gt: 'Diagnose — wie dünn?',
-    t: 'Die intrinsische Dimension',
-    b: 'Der <b>Two-NN-Schätzer</b> (Facco et al. 2017) misst nicht Achsen, sondern direkt: ' +
-       'für jeden Punkt, um wieviel sein Abstand zum <i>zweit</i>nächsten Nachbarn größer ist als zum nächsten. ' +
-       'Aus dem Verhältnis vieler solcher Paare schätzt er die <b>intrinsische Dimension</b>. ' +
-       'Ergebnis: jede Ziffer lebt auf einer Fläche von rund <span class="hl">8 bis 15 Dimensionen</span> — ' +
-       'nicht 784. Das ist konsistent mit dem Spektrum, aber genauer: 1 und 7 sind am dünnsten (~8), ' +
-       '8 am dicksten (~15). Reine Zufallsbilder landen bei 200+. ' +
-       '<b>Die Schicht ist messbar dünn. Aber flach? Das kommt jetzt.</b>',
-    mode: 'dims', spin: 0, table: 'dims'
+    n: '4 / 13', group: '1d',
+    gt: 'Galerie — 1D-Manifolds',
+    t: 'Möbius-Band',
+    b: 'Nicht-orientierbar: 1 Rand, 1 Seite.',
+    mode: 'surface_mobius', spin: 0.04, table: 'gallery'
   },
   {
-    n: '5 / 7', group: 'geometrie',
-    gt: 'Geometrie — was krümmt sich?',
-    t: 'PCA scheitert an der Krümmung',
-    b: 'Wir projizieren die 4 000 Bilder auf die <b>drei stärksten linearen Achsen</b> (PCA). ' +
-       'Was sich trennt: <span class="hl2">0</span> und <span class="hl2">1</span> klar, ' +
-       '<span class="hl2">6</span> etwas abseits. Was sich <b>nicht</b> trennt: ' +
-       '<b>4/9</b> überlappen fast komplett, <b>3/5/8</b> ebenso, <b>2/7</b> mittendrin. ' +
-       'PCA darf nur <b>drehen und strecken, nicht biegen</b>. ' +
-       'Stellen Sie sich ein Blatt Papier vor, das zu einer Röhre gerollt ist: von oben betrachtet ' +
-       '(flach projiziert) liegen zwei Punkte, die auf dem Blatt Nachbarn waren, plötzlich weit auseinander. ' +
-       'Genau das passiert hier. <b>Eine gekrümmte Fläche lässt sich nicht flach ausbreiten, ohne sie zu zerreißen.</b>',
-    mode: 'pca3', spin: 0.12, table: 'overlap'
+    n: '5 / 13', group: '2d',
+    gt: 'Galerie — 2D-Manifolds',
+    t: 'Ebene ℝ²',
+    b: 'Krümmung 0, unendlich, abrollbar.',
+    mode: 'surface_plane', spin: 0.04, table: 'gallery'
   },
   {
-    n: '6 / 7', group: 'geometrie',
-    gt: 'Geometrie — was krümmt sich?',
-    t: 'Isomap: entlang der Fläche messen',
-    b: 'Gleiche Punkte, <b>andere Abstandsdefinition</b>. Isomap baut einen Nachbarschaftsgraphen (k = 12) ' +
-       'und misst Abstände <span class="hl">entlang der Fläche</span>, nicht quer durch den Raum — ' +
-       'wie ein Wanderer, der dem Weg folgt, statt die Luftlinie zu nehmen. <b>Geodätisch</b> statt euklidisch. ' +
-       'Die Cluster, die eben noch verschmolzen, <b>lösen sich auf</b>. ' +
-       '<b>Was heißt Krümmung?</b> Schlicht dies: der kürzeste Weg zwischen zwei Bildern führt nicht ' +
-       'durch den Raum, sondern <b>durch die Wolke hindurch</b>. Lineare Methoden sehen diesen Weg nicht — ' +
-       'nichtlineare schon. <b>Das ist der Unterschied zwischen einer Ebene und einer Mannigfaltigkeit.</b>',
-    mode: 'iso3', spin: 0.12, table: 'overlap'
+    n: '6 / 13', group: '2d',
+    gt: 'Galerie — 2D-Manifolds',
+    t: 'Zylinder',
+    b: 'Krümmung in einer Richtung, abrollbar zur Ebene.',
+    mode: 'surface_cylinder', spin: 0.05, table: 'gallery'
   },
   {
-    n: '7 / 7', group: 'pointe',
-    gt: 'Pointe — Daten liegen auf Räumen',
-    t: 'Daten liegen AUF Räumen',
-    b: 'Dieselbe Wolke wie eben, jetzt mit Blick aufs Ganze. Was wir gefunden haben: ' +
-       'die 70 000 Bilder füllen keine 784 Dimensionen, sondern liegen auf einer ' +
-       '<b>gekrümmten Fläche von ≈10 Dimensionen</b>. ' +
-       'Das ist <b>nicht</b> MNIST-spezifisch. <b>Wort-Embeddings</b> (word2vec, BERT) liegen genauso auf ' +
-       'einer dünnen, gekrümmten Schicht in ihrem hochdimensionalen Raum. ' +
-       'Deshalb funktioniert <span class="hl2">Übersetzung als Geometrie</span>: ein Token in Sprache A wird ' +
-       'auf einen Punkt abgebildet, in Sprache B ebenfalls — die gesuchte Übersetzung ist die ' +
-       '<b>Bewegung zwischen zwei Mannigfaltigkeiten</b>. ' +
-       'Und deshalb brauchen neuronale Netze <b>Layer</b>: jeder Layer darf die Fläche <b>biegen</b>, ' +
-       'bis eine Gerade wieder reicht. ' +
-       '<b>Die Pointe der ganzen Vorlesung: Daten liegen nicht in Räumen — sie liegen auf Räumen.</b>',
-    mode: 'iso3', spin: 0.07, table: 'summary'
+    n: '7 / 13', group: '2d',
+    gt: 'Galerie — 2D-Manifolds',
+    t: 'Torus',
+    b: 'Geschlossen, genus 1 — Krümmung wechselt (+/−).',
+    mode: 'surface_torus', spin: 0.05, table: 'gallery'
+  },
+  {
+    n: '8 / 13', group: '2d',
+    gt: 'Galerie — 2D-Manifolds',
+    t: 'Sphäre S²',
+    b: 'Geschlossen, genus 0, Krümmung +1/r² überall.',
+    mode: 'surface_sphere', spin: 0, table: 'gallery'
+  },
+  {
+    n: '9 / 13', group: '2d',
+    gt: 'Galerie — 2D-Manifolds',
+    t: 'Sattelfläche',
+    b: 'Negative Gauß-Krümmung — hyperbolisch.',
+    mode: 'surface_saddle', spin: 0.05, table: 'gallery'
+  },
+  {
+    n: '10 / 13', group: '2d',
+    gt: 'Galerie — 2D-Manifolds',
+    t: 'Kleinsche Flasche',
+    b: 'Geschlossen, nicht-orientierbar — kein Inneres.',
+    mode: 'surface_klein', spin: 0.05, table: 'gallery'
+  },
+  {
+    n: '11 / 13', group: 'daten',
+    gt: 'Manifolds IN Daten',
+    t: 'Swiss Roll',
+    b: '2D-Manifold, eingerollt in ℝ³.',
+    mode: 'data_swissroll', spin: 0.05, table: 'gallery'
+  },
+  {
+    n: '12 / 13', group: 'daten',
+    gt: 'Manifolds IN Daten',
+    t: 'Two Moons',
+    b: 'Zwei 1D-Manifolds, in ℝ² verschlungen.',
+    mode: 'data_twomoons', spin: 0.04, table: 'gallery'
+  },
+  {
+    n: '13 / 13', group: 'daten',
+    gt: 'Manifolds IN Daten',
+    t: 'MNIST',
+    b: '≈10D-Manifold in ℝ⁷⁸⁴ — Isomap-Ablick.',
+    mode: 'iso3', spin: 0.07, table: 'ambient'
   }
 ];
 
@@ -395,21 +638,25 @@ function loadImage(src) {
 // ============================================================
 // VORBERECHNUNG — alle Zielpositionen pro Modus
 // ============================================================
-let LAYOUT = {};   // modus -> Float32Array der 3D-Zielkoordinaten
-let CURPOS = null; // aktuelle, interpolierte Positionen
-let NOISE  = null; // Rauschpunkte (nur Beat 2)
+let LAYOUT = {};       // modus -> Float32Array (gepaddet auf MAX_FLOATS)
+let LAYOUT_KIND = {};  // modus -> 'points' | 'lines'
+let LAYOUT_COUNT = {}; // modus -> Anzahl valider Elemente (Punkte bzw. Segmente)
+let CURPOS = null;     // aktuelle, interpolierte Positionen (MAX_FLOATS)
+let NOISE  = null;     // Rauschpunkte (nur alter Beat "noise")
+let MNIST_N = 0;       // Punkte im MNIST-Datensatz (für alte Beats)
 
 function prepare() {
+  CURPOS = new Float32Array(MAX_FLOATS);
+
+  // ---------- MNIST-Layouts (alte Beats) ----------
   const n = D.meta.n;
-  CURPOS = new Float32Array(n * 3);
+  MNIST_N = n;
 
-  // --- pca3 / iso3 direkt übernehmen ---
-  LAYOUT.pca3 = flat(D.pca3);
-  LAYOUT.iso3 = flat(D.iso3);
+  LAYOUT_KIND.pca3 = 'points'; LAYOUT_COUNT.pca3 = n;
+  LAYOUT_KIND.iso3 = 'points'; LAYOUT_COUNT.iso3 = n;
+  LAYOUT.pca3 = pad(flat(D.pca3));
+  LAYOUT.iso3 = pad(flat(D.iso3));
 
-  // --- pixels: ein Bild als 784 Balken im Raum ---
-  // 28x28 Raster, Höhe = Pixelwert. Die 4000 Punkte verteilen sich
-  // zyklisch auf die 784 Zellen, damit alle Punkte einen Platz haben.
   {
     const a = new Float32Array(n * 3);
     const img = D.example_image;
@@ -422,15 +669,14 @@ function prepare() {
       a[i*3+1] = (13.5 - r) / 14.5;
       a[i*3+2] = v * 0.85 - 0.3 + jitter;
     }
-    LAYOUT.pixels = a;
+    LAYOUT_KIND.pixels = 'points'; LAYOUT_COUNT.pixels = n;
+    LAYOUT.pixels = pad(a);
   }
 
-  // --- noise: echte Daten kompakt, Rauschen weit gestreut ---
-  // Beide in PCA-Koordinaten, damit der Vergleich fair ist.
   LAYOUT.noise = LAYOUT.pca3;
+  LAYOUT_KIND.noise = 'points'; LAYOUT_COUNT.noise = n;
   NOISE = flat(D.noise_pca3);
 
-  // --- spectrum: Punkte formen die Varianzkurve ---
   {
     const a = new Float32Array(n * 3);
     const cum = D.spectrum.cumulative;
@@ -444,10 +690,10 @@ function prepare() {
       a[i*3+1] = y - band * 0.012;
       a[i*3+2] = (band % 7 - 3) * 0.015;
     }
-    LAYOUT.spectrum = a;
+    LAYOUT_KIND.spectrum = 'points'; LAYOUT_COUNT.spectrum = n;
+    LAYOUT.spectrum = pad(a);
   }
 
-  // --- dims: Balkendiagramm der intrinsischen Dimension ---
   {
     const a = new Float32Array(n * 3);
     const pd = D.intrinsic_dim.per_digit;
@@ -465,11 +711,76 @@ function prepare() {
       a[i*3+1] = -0.85 + (row / 20) * h;
       a[i*3+2] = ((k % 3) - 1) * 0.02;
     }
-    LAYOUT.dims = a;
+    LAYOUT_KIND.dims = 'points'; LAYOUT_COUNT.dims = n;
+    LAYOUT.dims = pad(a);
   }
+
+  // ---------- Galerie: 1D-Kurven (geschlossene Linienzüge) ----------
+  LAYOUT.curve_circle  = pad(closeLoop(genCircle(240)));
+  LAYOUT_KIND.curve_circle  = 'lines';
+  LAYOUT_COUNT.curve_circle  = 240;
+
+  LAYOUT.curve_figure8 = pad(closeLoop(genFigure8(240)));
+  LAYOUT_KIND.curve_figure8 = 'lines';
+  LAYOUT_COUNT.curve_figure8 = 240;
+
+  // ---------- Galerie: 2D-Flächen (Wireframe) ----------
+  LAYOUT.surface_plane    = pad(genSurfaceUV(SURFACE_FNS.plane,    14, 14, 2*Math.PI, 2*Math.PI));
+  LAYOUT_KIND.surface_plane    = 'lines';
+  LAYOUT_COUNT.surface_plane    = LAYOUT.surface_plane.length / 6;
+
+  LAYOUT.surface_cylinder = pad(genSurfaceUV(SURFACE_FNS.cylinder, 32,  6, 2*Math.PI, 2*Math.PI));
+  LAYOUT_KIND.surface_cylinder = 'lines';
+  LAYOUT_COUNT.surface_cylinder = LAYOUT.surface_cylinder.length / 6;
+
+  LAYOUT.surface_torus    = pad(genSurfaceUV(SURFACE_FNS.torus,    36, 14, 2*Math.PI, 2*Math.PI));
+  LAYOUT_KIND.surface_torus    = 'lines';
+  LAYOUT_COUNT.surface_torus    = LAYOUT.surface_torus.length / 6;
+
+  LAYOUT.surface_sphere   = pad(genSurfaceUV(SURFACE_FNS.sphere,   28, 16, 2*Math.PI, Math.PI));
+  LAYOUT_KIND.surface_sphere   = 'lines';
+  LAYOUT_COUNT.surface_sphere   = LAYOUT.surface_sphere.length / 6;
+
+  LAYOUT.surface_saddle   = pad(genSurfaceUV(SURFACE_FNS.saddle,   16, 16, 2*Math.PI, 2*Math.PI));
+  LAYOUT_KIND.surface_saddle   = 'lines';
+  LAYOUT_COUNT.surface_saddle   = LAYOUT.surface_saddle.length / 6;
+
+  LAYOUT.surface_klein    = pad(genSurfaceUV(SURFACE_FNS.klein,    28, 10, 2*Math.PI, 2*Math.PI));
+  LAYOUT_KIND.surface_klein    = 'lines';
+  LAYOUT_COUNT.surface_klein    = LAYOUT.surface_klein.length / 6;
+
+  LAYOUT.surface_mobius   = pad(genMobiusSurface(80, 6));
+  LAYOUT_KIND.surface_mobius   = 'lines';
+  LAYOUT_COUNT.surface_mobius   = LAYOUT.surface_mobius.length / 6;
+
+  // ---------- Daten-Manifolds (Punktwolken) ----------
+  LAYOUT.data_swissroll = pad(genSwissRoll(1800));
+  LAYOUT_KIND.data_swissroll = 'points';
+  LAYOUT_COUNT.data_swissroll = 1800;
+
+  LAYOUT.data_twomoons  = pad(genTwoMoons(1000));
+  LAYOUT_KIND.data_twomoons  = 'points';
+  LAYOUT_COUNT.data_twomoons  = 1000;
+
+  // ---------- Konzept: drei Mini-Manifolds nebeneinander ----------
+  LAYOUT.concept_examples = pad(makeConceptLayout());
+  LAYOUT_KIND.concept_examples = 'points';
+  LAYOUT_COUNT.concept_examples = (80 + 180 + 1200);
 
   // Startposition = Beat 0
   CURPOS.set(LAYOUT[BEATS[0].mode]);
+}
+
+// Punkt-Array zu geschlossenem Linienzug (jedes Segment verbindet i mit i+1).
+function closeLoop(pts) {
+  const n = pts.length / 3;
+  const out = new Float32Array(n * 6);
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    out[i*6+0] = pts[i*3+0]; out[i*6+1] = pts[i*3+1]; out[i*6+2] = pts[i*3+2];
+    out[i*6+3] = pts[j*3+0]; out[i*6+4] = pts[j*3+1]; out[i*6+5] = pts[j*3+2];
+  }
+  return out;
 }
 
 function flat(arr) {
@@ -511,10 +822,20 @@ function draw(now) {
   const u = ease(raw);
   const A = BEATS[prevIdx], B = BEATS[cur];
 
-  // Positionen interpolieren
+  // Cross-kind-Übergänge (Punkte ↔ Linien) snappen statt zu morphen.
+  const kindA = LAYOUT_KIND[A.mode];
+  const kindB = LAYOUT_KIND[B.mode];
+  const crossKind = kindA !== kindB;
+  const eu = crossKind ? (u > 0.5 ? 1 : 0) : u;
+
+  // Positionen interpolieren (elementweise, alle Layouts sind MAX_FLOATS lang)
   const pa = LAYOUT[A.mode], pb = LAYOUT[B.mode];
-  const n = D.meta.n;
-  for (let i = 0; i < n * 3; i++) CURPOS[i] = pa[i] + (pb[i] - pa[i]) * u;
+  for (let i = 0; i < MAX_FLOATS; i++) CURPOS[i] = pa[i] + (pb[i] - pa[i]) * eu;
+
+  // Welcher Modus zeigt sich nach dem Snap?
+  const showMode  = crossKind ? (eu >= 1 ? B.mode : A.mode) : B.mode;
+  const showKind  = LAYOUT_KIND[showMode];
+  const showCount = LAYOUT_COUNT[showMode];
 
   // Kamera
   autoSpin += (lerp(A.spin, B.spin, u)) * 0.004;
@@ -525,6 +846,7 @@ function draw(now) {
   ctx.fillStyle = '#f8fafc';
   ctx.fillRect(0, 0, W, H);
 
+  // Achsen-Overlays nur für die alten MNIST-Beats
   const noiseAlpha = lerp(A.mode === 'noise' ? 1 : 0, B.mode === 'noise' ? 1 : 0, u);
   const specMode   = (B.mode === 'spectrum' && u > 0.5) || (A.mode === 'spectrum' && u < 0.5);
   const dimsMode   = (B.mode === 'dims' && u > 0.5) || (A.mode === 'dims' && u < 0.5);
@@ -532,8 +854,8 @@ function draw(now) {
   if (specMode) drawSpectrumAxes(u);
   if (dimsMode) drawDimAxes(u);
 
-  // --- Rauschpunkte (Beat 2), grau, hinter den Daten ---
-  if (noiseAlpha > 0.01) {
+  // Rauschpunkte (alter Beat "noise")
+  if (noiseAlpha > 0.01 && NOISE) {
     ctx.globalAlpha = noiseAlpha * 0.5;
     ctx.fillStyle = '#94a3b8';
     for (let i = 0; i < NOISE.length / 3; i++) {
@@ -545,49 +867,131 @@ function draw(now) {
     ctx.globalAlpha = 1;
   }
 
-  // --- Datenpunkte, depth-sortiert ---
-  if (!order || order.length !== n) {
-    order = new Int32Array(n);
-    for (let i = 0; i < n; i++) order[i] = i;
+  // --- Haupt-Szene ---
+  if (showKind === 'lines') {
+    drawWireframe(showCount);
+  } else {
+    drawPoints(showMode, showCount, dimsMode, specMode);
   }
 
-  const depth = new Float32Array(n);
-  const sx = new Float32Array(n), sy = new Float32Array(n), sk = new Float32Array(n);
-  for (let i = 0; i < n; i++) {
+  // Konzept-Labels (nur für concept_examples)
+  if (showMode === 'concept_examples') drawConceptLabels();
+
+  // Hover-Punkt + Legende nur für MNIST-Punktwolken
+  const isMnist = (showMode === 'pca3' || showMode === 'iso3');
+  if (isMnist) {
+    if (hoverIdx >= 0 && hoverIdx < screenCache.n) {
+      ctx.beginPath();
+      ctx.arc(screenCache.sx[hoverIdx], screenCache.sy[hoverIdx], 7, 0, 6.2832);
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    }
+    drawLegend(1 - noiseAlpha * 0.4);
+  }
+
+  if (isMnist) updateHover();
+  raf = requestAnimationFrame(draw);
+}
+
+// ---------- Punkte-Renderer (depth-sorted, farbig) ----------
+function drawPoints(mode, count, dimsMode, specMode) {
+  if (!order || order.length !== count) {
+    order = new Int32Array(count);
+    for (let i = 0; i < count; i++) order[i] = i;
+  }
+  const depth = new Float32Array(count);
+  const sx = new Float32Array(count), sy = new Float32Array(count), sk = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
     const p = proj(CURPOS[i*3], CURPOS[i*3+1], CURPOS[i*3+2]);
     sx[i] = p.X; sy[i] = p.Y; sk[i] = p.k; depth[i] = p.d;
   }
   Array.prototype.sort.call(order, (a, b) => depth[a] - depth[b]);
 
-  screenCache = { sx, sy, sk };
+  const isMnist = (mode === 'pca3' || mode === 'iso3');
+  const isData  = (mode === 'data_swissroll' || mode === 'data_twomoons' || mode === 'data_mnist');
+  const palette = pickPalette(mode);
+  screenCache = { sx, sy, sk, n: count };
 
   const baseR = specMode ? 1.5 : (dimsMode ? 1.7 : 2.5);
-  for (let q = 0; q < n; q++) {
+  for (let q = 0; q < count; q++) {
     const i = order[q];
     const k = sk[i];
     const r = (baseR + 0.8 * k) * k;
     ctx.beginPath();
     ctx.arc(sx[i], sy[i], r, 0, 6.2832);
-    ctx.fillStyle = PALETTE[D.labels[i]];
-    ctx.globalAlpha = (0.42 + 0.48 * k) * (i === hoverIdx ? 1 : 1);
+    ctx.fillStyle = palette(i, count);
+    ctx.globalAlpha = (0.42 + 0.48 * k);
     ctx.fill();
   }
   ctx.globalAlpha = 1;
+}
 
-  // Hover-Punkt hervorheben
-  if (hoverIdx >= 0 && hoverIdx < n) {
-    ctx.beginPath();
-    ctx.arc(sx[hoverIdx], sy[hoverIdx], 7, 0, 6.2832);
-    ctx.strokeStyle = '#0f172a';
-    ctx.lineWidth = 1.6;
-    ctx.stroke();
+// Datenpunkt-Farbe je nach Beat-Typ.
+function pickPalette(mode) {
+  if (mode === 'pca3' || mode === 'iso3') {
+    return i => PALETTE[D.labels[i]];
   }
+  if (mode === 'data_swissroll') {
+    // Schweizer Rolle: Farbe nach t (Parameter, projiziert auf xz-Distanz von Achse)
+    return i => gradientColor(i / 1800);
+  }
+  if (mode === 'data_twomoons') {
+    return i => i < 500 ? '#0ea5e9' : '#f97316';
+  }
+  if (mode === 'concept_examples') {
+    // Gruppe 0: Linie (blau), 1: Kreis (grün), 2: Kugel (orange)
+    const offsets = [80, 180, 1200];
+    if (i < offsets[0]) return () => '#3b82f6';
+    if (i < offsets[0] + offsets[1]) return () => '#10b981';
+    return () => '#f97316';
+  }
+  return () => '#d97706';
+}
 
-  // Legende der Ziffern
-  drawLegend(1 - noiseAlpha * 0.4);
+function gradientColor(u) {
+  // türkis → orange (HSL, hue 180° → 25°)
+  const h = (1 - u) * 180 + 25;
+  return 'hsl(' + h.toFixed(0) + ', 70%, 55%)';
+}
 
-  updateHover();
-  raf = requestAnimationFrame(draw);
+// ---------- Linien-Renderer (Wireframe, transparent für Tiefenwirkung) ----------
+function drawWireframe(segCount) {
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 1.1;
+  ctx.strokeStyle = '#d97706';
+  ctx.globalAlpha = 0.85;
+  ctx.beginPath();
+  for (let i = 0; i < segCount; i++) {
+    const a = proj(CURPOS[i*6+0], CURPOS[i*6+1], CURPOS[i*6+2]);
+    const b = proj(CURPOS[i*6+3], CURPOS[i*6+4], CURPOS[i*6+5]);
+    ctx.moveTo(a.X, a.Y);
+    ctx.lineTo(b.X, b.Y);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+// ---------- Konzept-Labels (3 Sub-Szenen) ----------
+function drawConceptLabels() {
+  if (!CONCEPT_RANGES) return;
+  ctx.textAlign = 'center';
+  ctx.font = '600 11px system-ui, sans-serif';
+  for (const g of CONCEPT_RANGES) {
+    let sx = 0, sy = 0, n = 0;
+    for (let i = g.start; i < g.start + g.count; i++) {
+      const p = proj(CURPOS[i*3+0], CURPOS[i*3+1], CURPOS[i*3+2]);
+      sx += p.X; sy += p.Y; n++;
+    }
+    if (n === 0) continue;
+    const cx = sx / n, cy = sy / n;
+    // Untertitel leicht unter dem Schwerpunkt
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = '#475569';
+    ctx.fillText(g.label, cx, cy + 80);
+  }
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'left';
 }
 
 // ---------- Achsen für das Spektrum ----------
@@ -754,7 +1158,21 @@ function buildTable(kind) {
   const sw = c => '<span class="swatch" style="background:' + c + '"></span>';
   let h = '';
 
-  if (kind === 'ambient') {
+  if (kind === 'concept') {
+    h = '<thead><tr><th>Beispiel</th><th>innen</th><th>außen</th></tr></thead><tbody>' +
+        row('Linie', '1', 'ℝ²') +
+        row('Kreis', '1', 'ℝ³') +
+        row('Kugel', '2', 'ℝ³') +
+        '</tbody>';
+  }
+  else if (kind === 'gallery') {
+    h = '<thead><tr><th>Eigenschaft</th><th>Wert</th></tr></thead><tbody>' +
+        row('intrins. Dim.', '1 oder 2') +
+        row('Umgebungsraum', 'ℝ³') +
+        row('Parameter', '2 (u, v)') +
+        '</tbody>';
+  }
+  else if (kind === 'ambient') {
     h = '<thead><tr><th>Größe</th><th>Wert</th></tr></thead><tbody>' +
         row('Bildgröße', '28 × 28') +
         row('Pixel pro Bild', '784') +
