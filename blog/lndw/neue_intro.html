@@ -1582,22 +1582,13 @@
       capSatz.style.opacity = '1';
     },
 
-    // BEAT 10 — Tokenisierung: Der Satz zerbricht — und „himmel“ in „him“ + „mel“
+    // BEAT 10 — Tokenisierung: Der Satz zerbricht in Wörter
     () => {
       resetAll();
-      renderTokens(TOKENS_FULL);
+      renderTokens(TOKENS);
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
-      later(() => {
-        tokensLayer.querySelectorAll('.token-pill').forEach(p => {
-          if (p.textContent === 'himmel') p.classList.add('crack');
-        });
-      }, 2000);
-      later(() => {
-        renderTokens(TOKENS_SPLIT, ['him', 'mel']);
-        layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — und „himmel“? Das wird zu him + mel';
-      }, 2900);
+      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Wörter zerlegt';
     },
 
     // BEAT 11 — Embedding: Tokens werden zu Punkten im Raum
