@@ -493,97 +493,206 @@ function makeConceptLayout() {
 // BEATS — jeder beschreibt einen vollständigen Zielzustand
 // ============================================================
 const BEATS = [
+  // ---------- KONZEPT ----------
   {
-    n: '1 / 13', group: 'konzept',
+    n: '1 / 19', group: 'konzept',
     gt: 'Was ist ein Manifold?',
     t: 'Drei Beispiele nebeneinander',
     b: 'Ein <b>Manifold</b> ist ein Ding niedrigerer Dimension in einem Raum höherer Dimension — ' +
-       'eine Linie lebt in der Ebene, ein Kreis im Raum, eine Kugeloberfläche auch im Raum.',
+       'eine Linie lebt in der Ebene (1D ⊂ ℝ²), ein Kreis im Raum (1D ⊂ ℝ³), eine Kugeloberfläche auch im Raum (2D ⊂ ℝ³). ' +
+       'Lokal sieht jedes aus wie ein flacher ℝⁿ — global darf es gekrümmt, eingerollt oder verknotet sein.',
     mode: 'concept_examples', spin: 0.05, table: 'concept'
   },
+
+  // ---------- GALERIE: 1D ----------
   {
-    n: '2 / 13', group: '1d',
+    n: '2 / 19', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Kreis (S¹)',
-    b: 'Geschlossene 1D-Kurve, Krümmung +1/r.',
+    b: 'Die einfachste geschlossene 1D-Mannigfaltigkeit. <b>Geschlossen</b> heißt: kein Rand, kein Anfang, kein Ende. ' +
+       '<b>Krümmung</b> ist konstant +1/r (positiv). Parametrisierung: (cos u, sin u).',
     mode: 'curve_circle', spin: 0.05, table: 'gallery'
   },
   {
-    n: '3 / 13', group: '1d',
+    n: '3 / 19', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Figur-8',
-    b: 'Geschlossen, Krümmung wechselt das Vorzeichen.',
+    b: 'Auch geschlossen und ohne Rand — aber die Krümmung wechselt das Vorzeichen entlang der Kurve. ' +
+       'An den Kreuzungspunkten ist die Kurve nicht glatt (singulär), aber zwischen ihnen schon.',
     mode: 'curve_figure8', spin: 0.05, table: 'gallery'
   },
   {
-    n: '4 / 13', group: '1d',
+    n: '4 / 19', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Möbius-Band',
-    b: 'Nicht-orientierbar: 1 Rand, 1 Seite.',
+    b: 'Ein Papierstreifen, einmal verzwirbelt und zusammengeklebt. ' +
+       '<b>Nicht-orientierbar</b>: folgen Sie der Oberfläche mit dem Finger, landen Sie nach einer Runde auf der anderen Seite. ' +
+       'Der Rand (nur einer!) ist eine geschlossene Kurve vierfacher Länge.',
     mode: 'surface_mobius', spin: 0.04, table: 'gallery'
   },
+
+  // ---------- GALERIE: 2D ----------
   {
-    n: '5 / 13', group: '2d',
+    n: '5 / 19', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Ebene ℝ²',
-    b: 'Krümmung 0, unendlich, abrollbar.',
+    b: 'Flach, unendlich, <b>Krümmung 0</b>. Die einfachste 2D-Mannigfaltigkeit. ' +
+       'Lokal und global gleich aussehend — das ist die Ausnahme, nicht die Regel.',
     mode: 'surface_plane', spin: 0.04, table: 'gallery'
   },
   {
-    n: '6 / 13', group: '2d',
+    n: '6 / 19', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Zylinder',
-    b: 'Krümmung in einer Richtung, abrollbar zur Ebene.',
+    b: 'Ein Rechteck zu einer Röhre gerollt. <b>Abrollbar</b>: schneiden Sie ihn entlang einer Geraden auf, ' +
+       'landen Sie wieder bei einer Ebene. Krümmung 0 (abrollbare Flächen sind lokal isometrisch zur Ebene).',
     mode: 'surface_cylinder', spin: 0.05, table: 'gallery'
   },
   {
-    n: '7 / 13', group: '2d',
+    n: '7 / 19', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Torus',
-    b: 'Geschlossen, genus 1 — Krümmung wechselt (+/−).',
+    b: 'Geschlossen, genus 1 (ein "Loch"). Krümmung wechselt: <b>außen positiv</b> (wie Sphäre), ' +
+       '<b>innen negativ</b> (wie Sattel). Integral über die gesamte Fläche = 0 (Gauß-Bonnet).',
     mode: 'surface_torus', spin: 0.05, table: 'gallery'
   },
   {
-    n: '8 / 13', group: '2d',
+    n: '8 / 19', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Sphäre S²',
-    b: 'Geschlossen, genus 0, Krümmung +1/r² überall.',
+    b: 'Geschlossen, genus 0 (kein Loch). <b>Krümmung +1/r² überall</b> — keine Abflachung, keine Dellen. ' +
+       'Integral = 4π. Die Sphäre maximiert das Volumen pro Oberfläche.',
     mode: 'surface_sphere', spin: 0, table: 'gallery'
   },
   {
-    n: '9 / 13', group: '2d',
+    n: '9 / 19', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Sattelfläche',
-    b: 'Negative Gauß-Krümmung — hyperbolisch.',
+    b: '<b>Negative Gauß-Krümmung</b> — hyperbolisch. Projiziert man sie in die Ebene, ' +
+       'sieht man Krümmung in beide Richtungen mit umgekehrtem Vorzeichen. ' +
+       'Vorbild vieler "interessanter" Mannigfaltigkeiten in der Physik.',
     mode: 'surface_saddle', spin: 0.05, table: 'gallery'
   },
   {
-    n: '10 / 13', group: '2d',
+    n: '10 / 19', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Kleinsche Flasche',
-    b: 'Geschlossen, nicht-orientierbar — kein Inneres.',
+    b: 'Geschlossen, genus 2, <b>nicht-orientierbar</b>. Kann nicht in ℝ³ ohne Selbstschnitt eingebettet werden — ' +
+       'die gezeigte Form ist eine Immersion mit Schnitt. Es gibt kein "Innen" und "Außen".',
     mode: 'surface_klein', spin: 0.05, table: 'gallery'
   },
+
+  // ---------- DATEN-MANIFOLDS ----------
   {
-    n: '11 / 13', group: 'daten',
+    n: '11 / 19', group: 'galerie',
     gt: 'Manifolds IN Daten',
     t: 'Swiss Roll',
-    b: '2D-Manifold, eingerollt in ℝ³.',
+    b: 'Ein 2D-Manifold (ein Blatt Papier), zu einer Spirale gerollt und in ℝ³ eingebettet. ' +
+       'Punkte, die auf dem Blatt Nachbarn sind, liegen im ℝ³ weit auseinander. ' +
+       '<b>Klassisches Beispiel</b> dafür, warum lineare Methoden (PCA) hier scheitern.',
     mode: 'data_swissroll', spin: 0.05, table: 'gallery'
   },
   {
-    n: '12 / 13', group: 'daten',
+    n: '12 / 19', group: 'galerie',
     gt: 'Manifolds IN Daten',
     t: 'Two Moons',
-    b: 'Zwei 1D-Manifolds, in ℝ² verschlungen.',
+    b: 'Zwei 1D-Manifolds (zwei Bögen), in ℝ² verschlungen. ' +
+       'Trotz ihrer Verschlingung sind sie <b>linear trennbar</b> in dieser Ansicht — ' +
+       'aber ein linearer Klassifikator in Originalkoordinaten sieht die Bögen nicht.',
     mode: 'data_twomoons', spin: 0.04, table: 'gallery'
   },
+
+  // ---------- MNIST: AUFBAU ----------
   {
-    n: '13 / 13', group: 'daten',
-    gt: 'Manifolds IN Daten',
-    t: 'MNIST',
-    b: '≈10D-Manifold in ℝ⁷⁸⁴ — Isomap-Ablick.',
-    mode: 'iso3', spin: 0.07, table: 'ambient'
+    n: '13 / 19', group: 'mnist-aufbau',
+    gt: 'MNIST — Aufbau',
+    t: '784 Zahlen sind ein Punkt',
+    b: 'Ein MNIST-Bild besteht aus <b>28 × 28 = 784 Pixeln</b>. Jeder Balken rechts ist ein Pixel, ' +
+       'seine Helligkeit als Zahl zwischen 0 und 1. Fassen Sie alle 784 Zahlen in einer Spalte zusammen, ' +
+       'haben Sie <b>einen Punkt im Raum ℝ⁷⁸⁴</b>. 70 000 Bilder im Datensatz = 70 000 Punkte.',
+    mode: 'pixels', spin: 0, table: 'ambient'
+  },
+  {
+    n: '14 / 19', group: 'mnist-aufbau',
+    gt: 'MNIST — Aufbau',
+    t: 'Die Insel im Nebel',
+    b: 'Die <b>farbigen Punkte</b> sind 4 000 echte MNIST-Bilder, eingefärbt nach ihrer Ziffer. ' +
+       'Die <span class="hl2">grauen Punkte</span> sind keine echten Bilder — pro Pixel wurde rein zufällig ' +
+       'eine Helligkeit gezogen, mit derselben Statistik wie MNIST. ' +
+       'Der Unterschied springt ins Auge: echte Bilder drängen sich <b>dicht zusammen</b>, ' +
+       'Rauschen <b>streut weit</b>. <b>Verdacht:</b> die Daten liegen nicht irgendwo im Raum, sondern <b>auf etwas</b> — ' +
+       'einer <b>Mannigfaltigkeit</b>.',
+    mode: 'noise', spin: 0.08, table: 'noise'
+  },
+
+  // ---------- MNIST: DIAGNOSE ----------
+  {
+    n: '15 / 19', group: 'mnist-diagnose',
+    gt: 'MNIST — Diagnose',
+    t: 'Das Varianz-Spektrum',
+    b: 'Jeder Balken zeigt, <b>wieviel Varianz</b> in einer der 784 Achsen steckt — geordnet von groß nach klein. ' +
+       'Die <b>orangene Kurve</b> ist die <i>kumulierte</i> Varianz: an der Stelle k ist ihr Wert die Summe ' +
+       'der Varianzen aller Achsen 1..k. An den Marken lesen Sie ab, <b>wieviele Achsen Sie brauchen</b>, ' +
+       'um 90 %, 95 % oder 99 % der Gesamtvarianz zu erklären. Wir brauchen keine 784 — ' +
+       'rund <span class="hl">50</span> reichen für 99 %. Der Raum der Bilder ist <b>fast flach in den meisten Richtungen</b>.',
+    mode: 'spectrum', spin: 0, table: 'spectrum'
+  },
+  {
+    n: '16 / 19', group: 'mnist-diagnose',
+    gt: 'MNIST — Diagnose',
+    t: 'Die intrinsische Dimension',
+    b: 'Der <b>Two-NN-Schätzer</b> (Facco et al. 2017) misst direkt: für jeden Punkt, ' +
+       'um wieviel sein Abstand zum <i>zweit</i>nächsten Nachbarn größer ist als zum nächsten. ' +
+       'Aus dem Verhältnis vieler solcher Paare schätzt er die <b>intrinsische Dimension</b>. ' +
+       'Ergebnis: jede Ziffer lebt auf einer Fläche von rund <span class="hl">8 bis 15 Dimensionen</span> — ' +
+       '1 und 7 am dünnsten (~8), 8 am dicksten (~15). Reines Rauschen landet bei 200+. ' +
+       '<b>Die Schicht ist messbar dünn.</b>',
+    mode: 'dims', spin: 0, table: 'dims'
+  },
+
+  // ---------- MNIST: GEOMETRIE ----------
+  {
+    n: '17 / 19', group: 'mnist-geometrie',
+    gt: 'MNIST — Geometrie',
+    t: 'PCA scheitert an der Krümmung',
+    b: 'Wir projizieren die 4 000 Bilder auf die <b>drei stärksten linearen Achsen</b> (PCA). ' +
+       'Was sich trennt: <span class="hl2">0</span> und <span class="hl2">1</span> klar, ' +
+       '<span class="hl2">6</span> etwas abseits. Was sich <b>nicht</b> trennt: ' +
+       '<b>4/9</b> überlappen fast komplett, <b>3/5/8</b> ebenso, <b>2/7</b> mittendrin. ' +
+       'PCA darf nur <b>drehen und strecken, nicht biegen</b>. ' +
+       'Stellen Sie sich ein zu einer Röhre gerolltes Blatt vor: zwei Punkte, die auf dem Blatt Nachbarn waren, ' +
+       'landen in der flachen Projektion weit auseinander.',
+    mode: 'pca3', spin: 0.12, table: 'overlap'
+  },
+  {
+    n: '18 / 19', group: 'mnist-geometrie',
+    gt: 'MNIST — Geometrie',
+    t: 'Isomap: entlang der Fläche messen',
+    b: 'Gleiche Punkte, <b>andere Abstandsdefinition</b>. Isomap baut einen Nachbarschaftsgraphen (k = 12) ' +
+       'und misst Abstände <span class="hl">entlang der Fläche</span>, nicht quer durch den Raum — ' +
+       'wie ein Wanderer, der dem Weg folgt statt die Luftlinie zu nehmen. <b>Geodätisch</b> statt euklidisch. ' +
+       'Die Cluster, die eben noch verschmolzen, <b>lösen sich auf</b>. ' +
+       '<b>Was heißt Krümmung?</b> Schlicht dies: der kürzeste Weg zwischen zwei Bildern führt nicht ' +
+       'durch den Raum, sondern <b>durch die Wolke hindurch</b>.',
+    mode: 'iso3', spin: 0.12, table: 'overlap'
+  },
+
+  // ---------- POINTE ----------
+  {
+    n: '19 / 19', group: 'pointe',
+    gt: 'Pointe — Daten liegen auf Räumen',
+    t: 'Daten liegen AUF Räumen',
+    b: 'Was wir gefunden haben: die 70 000 Bilder füllen keine 784 Dimensionen, sondern liegen auf einer ' +
+       '<b>gekrümmten Fläche von ≈10 Dimensionen</b>. ' +
+       'Das ist <b>nicht</b> MNIST-spezifisch. <b>Wort-Embeddings</b> (word2vec, BERT) liegen genauso auf ' +
+       'einer dünnen, gekrümmten Schicht in ihrem hochdimensionalen Raum. ' +
+       'Deshalb funktioniert <span class="hl2">Übersetzung als Geometrie</span>: ein Token in Sprache A wird ' +
+       'auf einen Punkt abgebildet, in Sprache B ebenfalls — die gesuchte Übersetzung ist die ' +
+       '<b>Bewegung zwischen zwei Mannigfaltigkeiten</b>. ' +
+       'Und deshalb brauchen neuronale Netze <b>Layer</b>: jeder Layer darf die Fläche <b>biegen</b>, ' +
+       'bis eine Gerade wieder reicht. ' +
+       '<b>Daten liegen nicht in Räumen — sie liegen auf Räumen.</b>',
+    mode: 'iso3', spin: 0.07, table: 'summary'
   }
 ];
 
@@ -943,10 +1052,12 @@ function pickPalette(mode) {
     return i => i < 500 ? '#0ea5e9' : '#f97316';
   }
   if (mode === 'concept_examples') {
-    const offsets = [80, 180, 1200];
-    if (i < offsets[0])          return () => '#3b82f6';
-    if (i < offsets[0] + offsets[1]) return () => '#10b981';
-    return () => '#f97316';
+    const a = 80, b = 80 + 180;
+    return i => {
+      if (i < a) return '#3b82f6';
+      if (i < b) return '#10b981';
+      return '#f97316';
+    };
   }
   return () => '#d97706';
 }
