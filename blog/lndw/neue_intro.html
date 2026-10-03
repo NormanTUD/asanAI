@@ -770,6 +770,23 @@
   }
   .layer-label .accent { color: var(--accent); }
 
+  /* Erklär-Text unter den Tokens (Kompressions-Idee) */
+  .token-sub {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, calc(-50% + 96px));
+    max-width: 660px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+  .token-sub .accent { color: var(--accent); }
+  .token-sub.on { opacity: 1; }
+
   /* =========================
      Embedding-Raum (2D-Plot)
      ========================= */
@@ -1217,6 +1234,9 @@
   <!-- Die Tokens (von JS gebaut — „himmel" bricht in „him" + „mel") -->
   <div class="tokens-layer" id="tokensLayer"></div>
 
+  <!-- Erklär-Text unter den Tokens: warum teilt der Computer so? -->
+  <div class="token-sub" id="tokenSub">Im Kern ein <span class="accent">Kompressions-Algorithmus</span>: die häufigsten Muster werden zu einem einzigen Token zusammengefasst.</div>
+
   <!-- Der Embedding-Raum (2D-Plot) -->
   <div class="embedding-space" id="embeddingSpace">
     <div class="grid"></div>
@@ -1345,6 +1365,7 @@
   const tokensLayer   = $('tokensLayer');
   const layerLabel    = $('layerLabel');
   const layerLabelTxt = $('layerLabelText');
+  const tokenSub      = $('tokenSub');
   const embeddingSp   = $('embeddingSpace');
   const arrowMK       = $('arrowManKing');
   const arrowWQ       = $('arrowWomanQueen');
@@ -1621,6 +1642,7 @@
     tokensLayer.style.opacity = '0';
     renderTokens([]);
     layerLabel.style.opacity = '0';
+    tokenSub.classList.remove('on');
     embeddingSp.classList.remove('nozoom');
     embeddingSp.style.opacity = '0';
     embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
@@ -1740,7 +1762,7 @@
       renderTokens(TOKENS_FULL);
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
+      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Computer teilt anders als wir';
       later(() => {
         tokensLayer.querySelectorAll('.token-pill').forEach(p => {
           if (p.textContent === 'himmel') p.classList.add('crack');
@@ -1748,7 +1770,8 @@
       }, 1600);
       later(() => {
         renderTokens(TOKENS_SPLIT, ['him', 'mel']);
-        layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — und „himmel“? Das wird zu him + mel';
+        layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — möglichst viel Inhalt, möglichst wenige Bausteine';
+        tokenSub.classList.add('on');
       }, 2500);
     },
 
