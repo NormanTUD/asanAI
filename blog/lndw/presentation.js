@@ -624,6 +624,10 @@ function prev() {
                     newSlide.classList.add('active');
                 }
                 pendingActivationSlide = null;
+                // Lifecycle NACH .active setzen — Demos prüfen oft
+                // `document.querySelector('.slide.active')` und würden sonst
+                // fälschlich reset() statt activate() aufrufen.
+                DemoRegistry.notifyEnter(newSlide);
             });
         });
         // Crossfade-Lock setzen: Pfeiltasten werden erst wieder angenommen,
@@ -640,9 +644,6 @@ function prev() {
             fragments.forEach(f => f.classList.remove('visible'));
             fragmentIndex[currentSlide] = 0;
         }
-
-        // Zentrale Lifecycle-Benachrichtigung
-        DemoRegistry.notifyEnter(slides[currentSlide]);
 
         updateUI();
         closeOverview();
