@@ -108,19 +108,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 60px 24px 24px;
+    padding: 52px 16px 16px;
   }
 
   .app-logo {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 700;
-    color: #4285f4;
     letter-spacing: -1px;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 32px;
+    margin-bottom: 28px;
     opacity: 0;
     transition: opacity 0.8s ease 0.3s;
   }
+  /* GooGle — Google-Farben, aber nicht Google */
+  .app-logo .l1 { color: #4285f4; }
   .app-logo .l2 { color: #ea4335; }
   .app-logo .l3 { color: #fbbc04; }
   .app-logo .l4 { color: #4285f4; }
@@ -129,19 +130,19 @@
 
   .search-bar {
     width: 100%;
-    height: 48px;
+    height: 44px;
     background: #ffffff;
-    border-radius: 24px;
+    border-radius: 22px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 0 0 1px #dfe1e5;
     display: flex;
     align-items: center;
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 12px;
+    gap: 10px;
     position: relative;
   }
 
   .search-icon {
-    width: 18px; height: 18px;
+    width: 16px; height: 16px;
     border: 2px solid #9aa0a6;
     border-radius: 50%;
     position: relative;
@@ -150,8 +151,8 @@
   .search-icon::after {
     content: '';
     position: absolute;
-    right: -6px; bottom: -6px;
-    width: 8px; height: 2px;
+    right: -5px; bottom: -5px;
+    width: 7px; height: 2px;
     background: #9aa0a6;
     transform: rotate(45deg);
     border-radius: 1px;
@@ -159,7 +160,7 @@
 
   .search-text {
     flex: 1;
-    font-size: 15px;
+    font-size: 13.5px;
     color: #202124;
     overflow: hidden;
     white-space: nowrap;
@@ -167,7 +168,7 @@
   }
   .search-text .caret {
     display: inline-block;
-    width: 1.5px; height: 18px;
+    width: 1.5px; height: 16px;
     background: #4285f4;
     vertical-align: middle;
     margin-left: 1px;
@@ -178,7 +179,7 @@
   @keyframes blink { 50% { opacity: 0; } }
 
   .mic-btn {
-    width: 32px; height: 32px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -194,24 +195,24 @@
   }
   @keyframes micPulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
-    50%      { box-shadow: 0 0 0 12px rgba(66, 133, 244, 0); }
+    50%      { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
   }
   .mic-icon {
-    width: 14px; height: 20px;
+    width: 11px; height: 16px;
     background: #4285f4;
-    border-radius: 7px 7px 7px 7px;
+    border-radius: 5px 5px 5px 5px;
     position: relative;
   }
   .mic-icon::after {
     content: '';
     position: absolute;
-    bottom: -6px;
+    bottom: -5px;
     left: 50%;
     transform: translateX(-50%);
-    width: 10px; height: 5px;
+    width: 8px; height: 4px;
     border: 2px solid #4285f4;
     border-top: none;
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 8px 8px;
   }
 
   /* Waveform, die sichtbar wird beim Sprechen */
@@ -250,16 +251,156 @@
     50%      { height: 34px; }
   }
 
-  /* Kleiner Zeigefinger / Person, die tippt */
-  .hand-hint {
-    position: absolute;
-    bottom: -50px;
-    right: 40px;
-    font-size: 44px;
+  /* =========================
+     GooGle-KI Antwortkarte (statt Trefferliste)
+     ========================= */
+  .ai-card {
+    width: 100%;
+    margin-top: 14px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(66, 133, 244, 0.12);
     opacity: 0;
-    transition: opacity 0.5s ease;
-    transform: rotate(-15deg);
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    transform: translateY(14px) scale(0.96);
+    transition: opacity 0.8s ease, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+  .ai-card.on {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .ai-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .ai-spark {
+    font-size: 15px;
+    line-height: 1;
+    background: linear-gradient(90deg, #4285f4, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ai-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #5f6368;
+    letter-spacing: 0.4px;
+  }
+  .ai-text {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #202124;
+  }
+  .ai-text b {
+    color: #1a73e8;
+    font-weight: 600;
+  }
+
+  /* =========================
+     Beat-Captions (unter dem Handy / über dem Code-Fenster)
+     ========================= */
+  .beat-caption {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 21px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+    line-height: 1.4;
+    max-width: 900px;
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
+  }
+  .beat-caption .dim { color: var(--ink-dim); }
+  .beat-caption .acc { color: var(--accent); font-weight: 400; }
+  #capSearch { top: calc(50% + 372px); }
+  #capCode   { top: calc(50% - 212px); }
+
+  /* =========================
+     Code-Fenster (Folie: "kann auch programmieren")
+     ========================= */
+  .code-window {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 560px;
+    transform: translate(-50%, -50%) scale(0.85);
+    background: #10141f;
+    border-radius: 16px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 0 80px rgba(167, 139, 250, 0.18);
+    opacity: 0;
+    transition: transform 1.6s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 1.2s ease;
+    pointer-events: none;
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+  .cw-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .cw-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .cw-dot.r { background: #ff5f57; }
+  .cw-dot.y { background: #febc2e; }
+  .cw-dot.g { background: #28c840; }
+  .cw-name {
+    margin-left: 10px;
+    font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: #8a95b0;
+  }
+  .cw-code {
+    margin: 0;
+    padding: 18px 20px 10px;
+    font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: #dfe6f5;
+  }
+  .cw-code .cl {
+    min-height: 1.7em;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    white-space: pre;
+  }
+  .cw-code .cl.show { opacity: 1; transform: translateX(0); }
+  .cw-code .cl.cur::after {
+    content: '▍';
+    margin-left: 2px;
+    color: #6ea8ff;
+    animation: blink 1s step-end infinite;
+  }
+  .cw-code .kw  { color: #c678dd; }
+  .cw-code .fn  { color: #61afef; }
+  .cw-code .num { color: #d19a66; }
+  .cw-code .cmt { color: #5c6370; font-style: italic; }
+  .cw-out {
+    padding: 12px 20px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 15px;
+    color: #34d399;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+  .cw-out.on { opacity: 1; }
+  .cw-out .out-note {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--ink-dim);
   }
 
   /* =========================
@@ -337,11 +478,6 @@
                 border-color 0.6s ease;
     will-change: transform;
   }
-  .token-pill.p1 { --tc: #6ea8ff; }
-  .token-pill.p2 { --tc: #a78bfa; }
-  .token-pill.p3 { --tc: #34d399; }
-  .token-pill.p4 { --tc: #fbbf24; }
-  .token-pill.p5 { --tc: #f472b6; }
   .token-pill:nth-child(odd)  { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.14); }
   .token-pill:nth-child(3n)   { border-color: rgba(52, 211, 153, 0.5);  background: rgba(52, 211, 153, 0.14); }
   .token-pill:nth-child(4n)   { border-color: rgba(251, 191, 36, 0.5);  background: rgba(251, 191, 36, 0.14); }
@@ -607,13 +743,25 @@
     <div class="phone-notch"></div>
     <div class="phone-screen">
       <div class="app-logo" id="appLogo">
-        <span class="l1">G</span><span class="l2">o</span><span class="l3">o</span><span class="l4">g</span><span class="l5">l</span><span class="l6">e</span>
+        <span class="l1">G</span><span class="l2">o</span><span class="l3">o</span><span class="l4">G</span><span class="l5">l</span><span class="l6">e</span>
       </div>
       <div class="search-bar">
         <div class="search-icon"></div>
         <div class="search-text" id="searchText"><span class="caret"></span></div>
         <div class="mic-btn" id="micBtn">
           <div class="mic-icon"></div>
+        </div>
+      </div>
+      <div class="ai-card" id="aiCard">
+        <div class="ai-head">
+          <span class="ai-spark">✦</span>
+          <span class="ai-name">GooGle-KI</span>
+        </div>
+        <div class="ai-text">
+          Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker
+          streuen als langwelliges. Blau (450&nbsp;nm) wird etwa 4× stärker
+          gestreut als Rot (650&nbsp;nm) — das nennt man
+          <b>Rayleigh-Streuung</b>.
         </div>
       </div>
     </div>
@@ -625,6 +773,31 @@
     <div class="bar"></div><div class="bar"></div><div class="bar"></div>
     <div class="bar"></div><div class="bar"></div><div class="bar"></div>
     <div class="bar"></div><div class="bar"></div>
+  </div>
+
+  <!-- Caption: Früher Links, heute Antwort -->
+  <div class="beat-caption" id="capSearch">
+    <span class="dim">Früher: 10 blaue Links, selbst durchforstet.</span><br>
+    <span class="acc">Heute: eine Antwort, fertig zusammengefasst.</span>
+  </div>
+
+  <!-- ============ Code-Fenster (Programmieren) ============ -->
+  <div class="code-window" id="codeWindow">
+    <div class="cw-title">
+      <span class="cw-dot r"></span>
+      <span class="cw-dot y"></span>
+      <span class="cw-dot g"></span>
+      <span class="cw-name">himmel.py</span>
+    </div>
+    <pre class="cw-code" id="cwCode"></pre>
+    <div class="cw-out" id="cwOut">
+      4.35 <span class="out-note">— kurzes Licht wird ~4× stärker gestreut</span>
+    </div>
+  </div>
+
+  <!-- Caption: Programmieren -->
+  <div class="beat-caption" id="capCode">
+    Diese Systeme können viel mehr — sie können auch <span class="acc">programmieren</span>.
   </div>
 
   <!-- Die Frage, die sich im Raum entfaltet -->
@@ -738,6 +911,12 @@
   const searchText    = $('searchText');
   const micBtn        = $('micBtn');
   const waveform      = $('waveform');
+  const aiCard        = $('aiCard');
+  const capSearch     = $('capSearch');
+  const codeWindow    = $('codeWindow');
+  const cwCode        = $('cwCode');
+  const cwOut         = $('cwOut');
+  const capCode       = $('capCode');
   const questionOv    = $('questionOverlay');
   const floatingText  = $('floatingText');
   const tokensLayer   = $('tokensLayer');
@@ -752,11 +931,59 @@
 
   const SATZ = 'warum ist der himmel blau';
 
+  // Der Code für die Programmier-Folie (Zeile pro Zeile, Token pro Farbe)
+  const CODE_LINES = [
+    [{ t: '# Warum ist der Himmel blau?', c: 'cmt' }],
+    [{ t: 'def ', c: 'kw' }, { t: 'streuung', c: 'fn' }, { t: '(laenge):' }],
+    [{ t: '    return 1 / laenge ** 4' }],
+    [{ t: '' }],
+    [{ t: 'print', c: 'fn' }, { t: '(' }, { t: 'streuung', c: 'fn' }, { t: '(' },
+     { t: '450', c: 'num' }, { t: ') / ' }, { t: 'streuung', c: 'fn' }, { t: '(' },
+     { t: '650', c: 'num' }, { t: '))' }],
+  ];
+
+  let typeTimer = null;
+
+  function lineHtml(ln) {
+    return ln.map(tk => tk.c ? '<span class="' + tk.c + '">' + tk.t + '</span>' : tk.t).join('');
+  }
+
+  function renderCode(instant) {
+    cwCode.innerHTML = CODE_LINES.map((ln) =>
+      '<div class="cl' + (instant ? ' show' : '') + '">' + lineHtml(ln) + '</div>'
+    ).join('');
+  }
+
+  function stopTyping() {
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+  }
+
+  function startCodeTyping() {
+    stopTyping();
+    renderCode(false);
+    const lines = cwCode.querySelectorAll('.cl');
+    let i = 0;
+    typeTimer = setInterval(() => {
+      if (i > 0) lines[i - 1].classList.remove('cur');
+      if (i < lines.length) {
+        lines[i].classList.add('show', 'cur');
+        i++;
+      }
+      if (i >= lines.length) stopTyping();
+    }, 420);
+  }
+
   // Hilfsfunktionen
   function setPhone({scale=1, x=0, y=0, opacity=1}) {
     phone.style.transform =
       `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
     phone.style.opacity = opacity;
+  }
+
+  function setCodeWindow({scale=1, x=0, y=0, opacity=1}) {
+    codeWindow.style.transform =
+      `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+    codeWindow.style.opacity = opacity;
   }
 
   function setSearchText(text, typing=false) {
@@ -784,13 +1011,20 @@
 
   const beats = [
 
-    // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, Google-Logo an
+    // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, GooGle-Logo an
     () => {
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       appLogo.style.opacity = '1';
       setSearchText('', false);
       micBtn.classList.remove('listening');
       waveform.classList.remove('active');
+      aiCard.classList.remove('on');
+      capSearch.style.opacity = '0';
+      setCodeWindow({scale: 0.85, x: 0, y: 0, opacity: 0});
+      stopTyping();
+      renderCode(false);
+      cwOut.classList.remove('on');
+      capCode.style.opacity = '0';
       questionOv.style.opacity = '0';
       questionOv.style.transform = 'translate(-50%, calc(-50% + 380px))';
       floatingText.style.opacity = '0';
@@ -815,13 +1049,8 @@
       setSearchText('', true);
       micBtn.classList.add('listening');
       waveform.classList.add('active');
-      questionOv.style.opacity = '0';
-      floatingText.style.opacity = '0';
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
-      embeddingSp.style.opacity = '0';
-      modelBlock.style.opacity = '0';
-      handoff.style.opacity = '0';
+      aiCard.classList.remove('on');
+      capSearch.style.opacity = '0';
     },
 
     // BEAT 2 — Speech-to-Text: Satz erscheint im Suchfeld
@@ -831,35 +1060,64 @@
       setSearchText(SATZ, true);
       micBtn.classList.remove('listening');
       waveform.classList.remove('active');
-      questionOv.style.opacity = '0';
-      floatingText.style.opacity = '0';
+      aiCard.classList.remove('on');
+      capSearch.style.opacity = '0';
     },
 
-    // BEAT 3 — Die Frage taucht auf: "was passiert da eigentlich?"
+    // BEAT 3 — GooGle-KI antwortet: statt 10 Links eine Zusammenfassung
     () => {
-      setPhone({scale: 1, x: 0, y: -60, opacity: 1});
-      setSearchText(SATZ, false);
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       appLogo.style.opacity = '1';
-      questionOv.style.opacity = '1';
-      questionOv.style.transform = 'translate(-50%, calc(-50% + 340px))';
-      floatingText.style.opacity = '0';
+      setSearchText(SATZ, false);
+      micBtn.classList.remove('listening');
+      waveform.classList.remove('active');
+      aiCard.classList.add('on');
+      capSearch.style.opacity = '1';
     },
 
-    // BEAT 4 — Kamera zoomt in den Bildschirm hinein
-    // Das Handy wird riesig und fadet dann weg, Text erscheint zentral
+    // BEAT 4 — Übergang zur Programmier-Folie:
+    // Handy gleitet weg, Code-Fenster erscheint, Code tippt sich
     () => {
-      setPhone({scale: 3.2, x: 0, y: 40, opacity: 0});
-      appLogo.style.opacity = '0';
+      setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
+      aiCard.classList.remove('on');
+      capSearch.style.opacity = '0';
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      cwOut.classList.remove('on');
+      startCodeTyping();
+    },
+
+    // BEAT 5 — Code komplett, Ausgabe erscheint
+    () => {
+      setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      stopTyping();
+      renderCode(true);
+      cwOut.classList.add('on');
+    },
+
+    // BEAT 6 — Die Frage taucht auf: "was passiert da eigentlich?"
+    () => {
+      setCodeWindow({scale: 0.65, x: 0, y: -170, opacity: 0.3});
+      stopTyping();
+      renderCode(true);
+      cwOut.classList.add('on');
+      capCode.style.opacity = '0';
+      questionOv.style.opacity = '1';
+      questionOv.style.transform = 'translate(-50%, calc(-50% + 330px))';
+    },
+
+    // BEAT 7 — Kamera zoomt in den Text hinein
+    () => {
+      setCodeWindow({scale: 0.65, x: 0, y: -170, opacity: 0});
       questionOv.style.opacity = '0';
       floatingText.style.opacity = '1';
       floatingText.style.transform = 'translate(-50%, -50%) scale(1)';
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
     },
 
-    // BEAT 5 — Tokenisierung: Text zerbricht in Token-Pillen
+    // BEAT 8 — Tokenisierung: Text zerbricht in Token-Pillen
     () => {
-      setPhone({scale: 3.2, x: 0, y: 40, opacity: 0});
       floatingText.style.opacity = '0';
       floatingText.style.transform = 'translate(-50%, -50%) scale(1.4)';
       tokensLayer.style.opacity = '1';
@@ -869,7 +1127,7 @@
       modelBlock.style.opacity = '0';
     },
 
-    // BEAT 6 — Embedding: Tokens werden zu Punkten im Raum
+    // BEAT 9 — Embedding: Tokens werden zu Punkten im Raum
     // Query-Tokens (warum, ist, der, himmel, blau) tauchen auf
     () => {
       tokensLayer.style.opacity = '0';
@@ -885,7 +1143,7 @@
       handoff.style.opacity = '0';
     },
 
-    // BEAT 7 — Der Raum hat Struktur: König/Königin/Mann/Frau erscheinen,
+    // BEAT 10 — Der Raum hat Struktur: König/Königin/Mann/Frau erscheinen,
     // die Analogie wird sichtbar
     () => {
       tokensLayer.style.opacity = '0';
@@ -900,7 +1158,7 @@
       modelBlock.style.opacity = '0';
     },
 
-    // BEAT 8 — Übergabe: Alles verdichtet sich zum Modell-Block
+    // BEAT 11 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
       tokensLayer.style.opacity = '0';
       layerLabel.style.opacity = '0';
@@ -993,5 +1251,3 @@
 
 </body>
 </html>
-
-<iframe src="story.html" style="width:100%; height:100vh; border:0;"></iframe>
