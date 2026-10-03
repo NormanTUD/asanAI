@@ -1395,7 +1395,8 @@
   ];
 
   const QUERY_KEYS = ['warum', 'ist', 'der', 'him', 'mel', 'blau'];
-  const ALL_KEYS = QUERY_KEYS.concat(['king', 'queen', 'man', 'woman']);
+  const ANALOGY_KEYS = ['king', 'queen', 'man', 'woman'];
+  const ALL_KEYS = QUERY_KEYS.concat(ANALOGY_KEYS);
 
   // Die KI-Antwort — wird Beat für Beat Zeichen für Zeichen gestreamt
   const AI_TEXT = [
@@ -1642,6 +1643,7 @@
     tokensLayer.style.opacity = '0';
     renderTokens([]);
     layerLabel.style.opacity = '0';
+    layerLabel.style.transform = '';
     tokenSub.classList.remove('on');
     embeddingSp.classList.remove('nozoom');
     embeddingSp.style.opacity = '0';
@@ -1689,13 +1691,14 @@
       typeSearchText(SATZ);
     },
 
-    // BEAT 3 — Die KI denkt (drei pulsierende Punkte)
+    // BEAT 3 — Die KI denkt (drei pulsierende Punkte) — nach ~1 s automatisch weiter
     () => {
       resetAll();
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       setSearchText(SATZ, false);
       aiCard.classList.add('on');
       aiThinking.classList.add('on');
+      later(() => next(), 1000);
     },
 
     // BEAT 4 — Die KI antwortet: streamt ihre Antwort + Treffer wie bei Google
@@ -1798,16 +1801,18 @@
       }, 1000);
     },
 
-    // BEAT 12 — Der Raum hat Struktur: König/Königin/Mann/Frau, Analogie
+    // BEAT 12 — Neues Beispiel: der Raum hat Struktur — König/Königin/Mann/Frau
     () => {
       resetAll();
       worldShift.classList.add('on');
       stage.classList.add('zoomed-out');
-      layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = 'Die Positionen sind <span class="accent">nicht zufällig</span> — Bedeutung wird Geometrie';
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(ALL_KEYS, 0.1);
+      // Nur das neue Beispiel — man kommt per Pfeiltaste von Beat 11 (Query) hierher
+      showEmbedPoints(ANALOGY_KEYS, 0.12);
+      layerLabel.style.transform = 'translate(-50%, calc(-50% + 160px))';
+      layerLabel.style.opacity = '1';
+      layerLabelTxt.innerHTML = 'Die Positionen sind <span class="accent">nicht zufällig</span> — Bedeutung wird Geometrie';
       later(() => {
         arrowMK.style.opacity = '0.9';
         arrowMK.style.transform = 'scaleX(1)';
