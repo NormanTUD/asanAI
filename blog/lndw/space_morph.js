@@ -626,6 +626,7 @@ const SpaceMorph = (() => {
 
     function reset() {
         active = false;
+        animating = false;
         if (raf) { cancelAnimationFrame(raf); raf = null; }
         cur = 0; prevIdx = 0;
         dragA = 0; dragB = 0; dA0 = 0; dB0 = 0;

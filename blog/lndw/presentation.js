@@ -552,6 +552,26 @@ function prev() {
     }
 }
 
+    // Pending rAF-Tokens für den Crossfade. Wenn der Nutzer schnell weiter-
+    // klickt, kann ein älterer rAF noch feuern NACHDEM goTo() bereits eine
+    // andere Folie aktiviert hat → die alte Folie blitzt kurz wieder auf.
+    // Wir merken uns BEIDE rAF-Tokens (outer + inner) und cancellen sie beim
+    // nächsten goTo(), damit die alte Folie nicht re-blinkt.
+    let pendingActivationOuterRaf = null;
+    let pendingActivationInnerRaf = null;
+    let pendingActivationSlide = null;
+    function cancelPendingActivation() {
+        if (pendingActivationOuterRaf !== null) {
+            cancelAnimationFrame(pendingActivationOuterRaf);
+            pendingActivationOuterRaf = null;
+        }
+        if (pendingActivationInnerRaf !== null) {
+            cancelAnimationFrame(pendingActivationInnerRaf);
+            pendingActivationInnerRaf = null;
+        }
+        pendingActivationSlide = null;
+    }
+
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
         // Focus aus Inputs/Textareas rausnehmen, damit Pfeiltasten wieder
@@ -569,10 +589,24 @@ function prev() {
         // translate+scale-Morph). Zwei rAF-Calls, damit der Browser den
         // Anfangszustand (opacity:0) der neuen Folie wirklich gerendert hat,
         // bevor .active gesetzt wird — sonst wird die Transition übersprungen.
+        // Vorherigen pending rAF cancellen, sonst kann er nach dem nächsten
+        // goTo() noch feuern und die alte Folie re-blinken lassen.
+        cancelPendingActivation();
         oldSlide.classList.remove('active');
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-            newSlide.classList.add('active');
-        }));
+        pendingActivationSlide = newSlide;
+        pendingActivationOuterRaf = requestAnimationFrame(() => {
+            pendingActivationOuterRaf = null;
+            pendingActivationInnerRaf = requestAnimationFrame(() => {
+                pendingActivationInnerRaf = null;
+                // Nur .active setzen, wenn die Folie immer noch das Ziel ist.
+                // Wenn der Nutzer inzwischen weiter geklickt hat, ist pendingActivationSlide
+                // durch cancelPendingActivation() bereits genullt.
+                if (pendingActivationSlide === newSlide) {
+                    newSlide.classList.add('active');
+                }
+                pendingActivationSlide = null;
+            });
+        });
 
         const fragments = getFragments(currentSlide);
         if (fastMode) {
