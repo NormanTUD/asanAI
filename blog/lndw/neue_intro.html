@@ -890,6 +890,75 @@
     text-shadow: 0 1px 4px rgba(0,0,0,0.6);
   }
 
+  /* Bedeutung als leuchtende Geometrie */
+  /* Die senkrechten Parallelogramm-Kanten — zeichnen sich ein */
+  .geo-edge {
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(180deg,
+      rgba(251,191,36,0.15), rgba(251,191,36,0.7), rgba(251,191,36,0.15));
+    transform: scaleY(0);
+    transform-origin: top center;
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.4s ease;
+  }
+  .geo-edge.on { transform: scaleY(1); opacity: 1; }
+
+  /* Beim Einrasten leuchten alle Kanten (Pfeile + senkrechte) heller */
+  .embedding-space.locked .geo-edge,
+  .embedding-space.locked .analogy-arrow {
+    filter: brightness(1.5);
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.65);
+  }
+
+  /* Lichtblitz, der einmal um das Parallelogramm läuft */
+  .geo-pulse {
+    position: absolute;
+    left: 32%; top: 32%;
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff, rgba(251,191,36,0.85) 55%, transparent);
+    box-shadow: 0 0 18px 6px rgba(251, 191, 36, 0.7);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .geo-pulse.go { animation: geoPulse 1.6s cubic-bezier(0.45, 0, 0.55, 1) 1; }
+  @keyframes geoPulse {
+    0%   { left: 32%; top: 32%; opacity: 0; }
+    6%   { opacity: 1; }
+    27%  { left: 62%; top: 32%; }
+    50%  { left: 62%; top: 62%; }
+    73%  { left: 32%; top: 62%; }
+    94%  { opacity: 1; }
+    100% { left: 32%; top: 32%; opacity: 0; }
+  }
+
+  /* Bloom in der Mitte, wenn die Geometrie „stimmt" */
+  .geo-flash {
+    position: absolute;
+    left: 47%; top: 47%;
+    width: 26px; height: 26px;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(251,191,36,0.55) 45%, transparent 72%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .geo-flash.go { animation: geoFlash 0.9s ease-out 1; }
+  @keyframes geoFlash {
+    0%   { transform: translate(-50%, -50%) scale(0);   opacity: 0.95; }
+    100% { transform: translate(-50%, -50%) scale(30);  opacity: 0; }
+  }
+
+  /* Der „bestimmte" Punkt (Königin) rastet hörbar ein */
+  .embed-point.snap .dot { animation: dotSnap 0.7s ease; }
+  @keyframes dotSnap {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(2.4); box-shadow: 0 0 34px 12px rgba(251,191,36,0.9); }
+    100% { transform: scale(1); }
+  }
+
   /* =========================
      Modell-Block (die letzte Übergabe)
      ========================= */
@@ -1283,9 +1352,17 @@
     <div class="analogy-arrow" id="arrowWomanQueen"
          style="left: 34%; top: 63%; width: 27%;"></div>
     <div class="analogy-caption" id="analogyCaption"
-         style="left: 42%; top: 15%;">
+          style="left: 42%; top: 15%;">
       könig − mann + frau ≈ königin
     </div>
+
+    <!-- Bedeutung als leuchtende Geometrie: die beiden senkrechten Kanten
+         schließen das Parallelogramm, dazu läuft ein Lichtblitz herum,
+         der beim Einrasten aufblitzt. -->
+    <div class="geo-edge" id="geoEdgeLeft"  style="left: 32%; top: 32%; height: 30%;"></div>
+    <div class="geo-edge" id="geoEdgeRight" style="left: 62%; top: 32%; height: 30%;"></div>
+    <div class="geo-pulse" id="geoPulse"></div>
+    <div class="geo-flash" id="geoFlash"></div>
   </div>
 
   <!-- Der Modell-Block als Übergabe -->
@@ -1370,6 +1447,11 @@
   const arrowMK       = $('arrowManKing');
   const arrowWQ       = $('arrowWomanQueen');
   const analogyCap    = $('analogyCaption');
+  const geoEdgeLeft   = $('geoEdgeLeft');
+  const geoEdgeRight  = $('geoEdgeRight');
+  const geoPulse      = $('geoPulse');
+  const geoFlash      = $('geoFlash');
+  const queenPoint    = document.querySelector('.embed-point[data-key="queen"]');
   const modelBlock    = $('modelBlock');
   const handoff       = $('handoffHint');
   const stage         = $('stage');
@@ -1412,7 +1494,7 @@
     { t: 'warum' }, SP, { t: 'ist' }, SP, { t: 'der' }, SP, { t: 'himmel' }, SP, { t: 'blau' },
   ];
   const TOKENS_SPLIT = [
-    { t: 'warum' }, SP, { t: 'ist' }, SP, { t: 'der' }, SP, { t: 'him' }, SP, { t: 'mel' }, SP, { t: 'blau' },
+    { t: 'warum' }, SP, { t: 'ist' }, SP, { t: 'der' }, SP, { t: 'him' }, { t: 'mel' }, SP, { t: 'blau' },
   ];
 
   let typeTimer = null;
@@ -1654,6 +1736,12 @@
     arrowWQ.style.opacity = '0';
     arrowWQ.style.transform = 'scaleX(0)';
     analogyCap.style.opacity = '0';
+    geoEdgeLeft.classList.remove('on');
+    geoEdgeRight.classList.remove('on');
+    geoPulse.classList.remove('go');
+    geoFlash.classList.remove('go');
+    embeddingSp.classList.remove('locked');
+    queenPoint.classList.remove('snap');
     modelBlock.style.opacity = '0';
     modelBlock.style.transform = 'translate(-50%, -50%) scale(0.5)';
     handoff.style.opacity = '0';
@@ -1757,7 +1845,7 @@
       capSatz.style.opacity = '1';
     },
 
-    // BEAT 10 — Tokenisierung: Der Satz zerbricht — und „himmel" in „him" + „mel"
+    // BEAT 10 — Tokenisierung: der Satz wird in Tokens zerlegt
     () => {
       resetAll();
       worldShift.classList.add('on');
@@ -1766,19 +1854,30 @@
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Computer teilt anders als wir';
+    },
+
+    // BEAT 11 — „himmel" → „him" + „mel": der Split passiert per Pfeiltaste
+    () => {
+      resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
+      renderTokens(TOKENS_FULL);
+      tokensLayer.style.opacity = '1';
+      layerLabel.style.opacity = '1';
+      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — und „himmel"?';
       later(() => {
         tokensLayer.querySelectorAll('.token-pill').forEach(p => {
           if (p.textContent === 'himmel') p.classList.add('crack');
         });
-      }, 1600);
+      }, 900);
       later(() => {
         renderTokens(TOKENS_SPLIT, ['him', 'mel']);
         layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — möglichst viel Inhalt, möglichst wenige Bausteine';
         tokenSub.classList.add('on');
-      }, 2500);
+      }, 1700);
     },
 
-    // BEAT 11 — Embedding: Die Tokens fliegen zu ihren Punkten im Raum
+    // BEAT 12 — Embedding: Die Tokens fliegen zu ihren Punkten im Raum
     () => {
       resetAll();
       worldShift.classList.add('on');
@@ -1801,7 +1900,7 @@
       }, 1000);
     },
 
-    // BEAT 12 — Neues Beispiel: der Raum hat Struktur — König/Königin/Mann/Frau
+    // BEAT 13 — Neues Beispiel: der Raum hat Struktur — König/Königin/Mann/Frau
     () => {
       resetAll();
       worldShift.classList.add('on');
@@ -1824,9 +1923,22 @@
       later(() => {
         analogyCap.style.opacity = '1';
       }, 1800);
+      // Bedeutung als leuchtende Geometrie: die senkrechten Kanten schließen
+      // das Parallelogramm …
+      later(() => {
+        geoEdgeLeft.classList.add('on');
+        geoEdgeRight.classList.add('on');
+      }, 2400);
+      // … und rasten ein: ein Lichtblitz umläuft, es blitzt auf, Königin rastet ein
+      later(() => {
+        embeddingSp.classList.add('locked');
+        geoPulse.classList.add('go');
+        geoFlash.classList.add('go');
+        queenPoint.classList.add('snap');
+      }, 3100);
     },
 
-    // BEAT 13 — Übergabe: Alles verdichtet sich zum Modell-Block
+    // BEAT 14 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
       resetAll();
       worldShift.classList.add('on');
