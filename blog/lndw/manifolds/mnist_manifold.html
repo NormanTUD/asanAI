@@ -489,13 +489,71 @@ function makeConceptLayout() {
   return new Float32Array(all);
 }
 
+// --- Axiom-Visualisierungen (topologische Definition einer n-Mannigfaltigkeit) ---
+
+function genAxiomLocalEuclidean() {
+  // Sphäre (1200 Pkt) + ein flaches ℝ²-Patch daneben, das zeigt,
+  // wie eine vergrößerte Umgebung aussieht.
+  const sphere = genSpherePoints(1200);
+  const N = 14;
+  const patch = new Float32Array(N * N * 3);
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      const k = (i * N + j) * 3;
+      patch[k+0] = (i / (N - 1) - 0.5) * 0.7 + 1.7;
+      patch[k+1] = (j / (N - 1) - 0.5) * 0.7;
+      patch[k+2] = 0;
+    }
+  }
+  const out = new Float32Array(sphere.length + patch.length);
+  out.set(sphere, 0);
+  out.set(patch, sphere.length);
+  return out;
+}
+
+function genAxiomHausdorff() {
+  // Zwei Punkte (rot) + zwei trennende offene Bälle (blau) drumherum.
+  const a = [];
+  a.push(-0.9, 0, 0);
+  a.push( 0.9, 0, 0);
+  for (const cx of [-0.9, 0.9]) {
+    for (let i = 0; i < 260; i++) {
+      let x, y, s;
+      do { x = Math.random() * 2 - 1; y = Math.random() * 2 - 1; s = x*x + y*y; } while (s >= 1);
+      const f = 2 * Math.sqrt(1 - s);
+      a.push(cx + 0.36 * x * f, 0.36 * y * f, 0.36 * (1 - 2 * s));
+    }
+  }
+  return new Float32Array(a);
+}
+
+function genAxiomSecondCountable() {
+  // Sphäre (1000 Pkt) + abzählbar viele Chart-Mittelpunkte (6×6 = 36) darauf.
+  const sphere = genSpherePoints(1000);
+  const charts = [];
+  for (let i = 0; i < 6; i++) {
+    for (let j = 0; j < 6; j++) {
+      const u = (i + 0.5) / 6, v = (j + 0.5) / 6;
+      const theta = v * Math.PI, phi = u * 2 * Math.PI;
+      const x = Math.sin(theta) * Math.cos(phi);
+      const y = Math.sin(theta) * Math.sin(phi);
+      const z = Math.cos(theta);
+      charts.push(x * 1.04, y * 1.04, z * 1.04);
+    }
+  }
+  const out = new Float32Array(sphere.length + charts.length);
+  out.set(sphere, 0);
+  out.set(charts, sphere.length);
+  return out;
+}
+
 // ============================================================
 // BEATS — jeder beschreibt einen vollständigen Zielzustand
 // ============================================================
 const BEATS = [
   // ---------- KONZEPT ----------
   {
-    n: '1 / 19', group: 'konzept',
+    n: '1 / 21', group: 'konzept',
     gt: 'Was ist ein Manifold?',
     t: 'Drei Beispiele nebeneinander',
     b: 'Ein <b>Manifold</b> ist ein Ding niedrigerer Dimension in einem Raum höherer Dimension — ' +
@@ -506,7 +564,7 @@ const BEATS = [
 
   // ---------- GALERIE: 1D ----------
   {
-    n: '2 / 19', group: 'galerie',
+    n: '2 / 21', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Kreis (S¹)',
     b: 'Die einfachste geschlossene 1D-Mannigfaltigkeit. <b>Geschlossen</b> heißt: kein Rand, kein Anfang, kein Ende. ' +
@@ -514,7 +572,7 @@ const BEATS = [
     mode: 'curve_circle', spin: 0.05, table: 'gallery'
   },
   {
-    n: '3 / 19', group: 'galerie',
+    n: '3 / 21', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Figur-8',
     b: 'Auch geschlossen und ohne Rand — aber die Krümmung wechselt das Vorzeichen entlang der Kurve. ' +
@@ -522,7 +580,7 @@ const BEATS = [
     mode: 'curve_figure8', spin: 0.05, table: 'gallery'
   },
   {
-    n: '4 / 19', group: 'galerie',
+    n: '4 / 21', group: 'galerie',
     gt: 'Galerie — 1D-Manifolds',
     t: 'Möbius-Band',
     b: 'Ein Papierstreifen, einmal verzwirbelt und zusammengeklebt. ' +
@@ -531,9 +589,9 @@ const BEATS = [
     mode: 'surface_mobius', spin: 0.04, table: 'gallery'
   },
 
-  // ---------- GALERIE: 2D ----------
+  // ---------- GALERIE: 2D (Kleinsche Flasche entfernt) ----------
   {
-    n: '5 / 19', group: 'galerie',
+    n: '5 / 21', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Ebene ℝ²',
     b: 'Flach, unendlich, <b>Krümmung 0</b>. Die einfachste 2D-Mannigfaltigkeit. ' +
@@ -541,7 +599,7 @@ const BEATS = [
     mode: 'surface_plane', spin: 0.04, table: 'gallery'
   },
   {
-    n: '6 / 19', group: 'galerie',
+    n: '6 / 21', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Zylinder',
     b: 'Ein Rechteck zu einer Röhre gerollt. <b>Abrollbar</b>: schneiden Sie ihn entlang einer Geraden auf, ' +
@@ -549,7 +607,7 @@ const BEATS = [
     mode: 'surface_cylinder', spin: 0.05, table: 'gallery'
   },
   {
-    n: '7 / 19', group: 'galerie',
+    n: '7 / 21', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Torus',
     b: 'Geschlossen, genus 1 (ein "Loch"). Krümmung wechselt: <b>außen positiv</b> (wie Sphäre), ' +
@@ -557,7 +615,7 @@ const BEATS = [
     mode: 'surface_torus', spin: 0.05, table: 'gallery'
   },
   {
-    n: '8 / 19', group: 'galerie',
+    n: '8 / 21', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Sphäre S²',
     b: 'Geschlossen, genus 0 (kein Loch). <b>Krümmung +1/r² überall</b> — keine Abflachung, keine Dellen. ' +
@@ -565,7 +623,7 @@ const BEATS = [
     mode: 'surface_sphere', spin: 0, table: 'gallery'
   },
   {
-    n: '9 / 19', group: 'galerie',
+    n: '9 / 21', group: 'galerie',
     gt: 'Galerie — 2D-Manifolds',
     t: 'Sattelfläche',
     b: '<b>Negative Gauß-Krümmung</b> — hyperbolisch. Projiziert man sie in die Ebene, ' +
@@ -573,18 +631,10 @@ const BEATS = [
        'Vorbild vieler "interessanter" Mannigfaltigkeiten in der Physik.',
     mode: 'surface_saddle', spin: 0.05, table: 'gallery'
   },
-  {
-    n: '10 / 19', group: 'galerie',
-    gt: 'Galerie — 2D-Manifolds',
-    t: 'Kleinsche Flasche',
-    b: 'Geschlossen, genus 2, <b>nicht-orientierbar</b>. Kann nicht in ℝ³ ohne Selbstschnitt eingebettet werden — ' +
-       'die gezeigte Form ist eine Immersion mit Schnitt. Es gibt kein "Innen" und "Außen".',
-    mode: 'surface_klein', spin: 0.05, table: 'gallery'
-  },
 
   // ---------- DATEN-MANIFOLDS ----------
   {
-    n: '11 / 19', group: 'galerie',
+    n: '10 / 21', group: 'galerie',
     gt: 'Manifolds IN Daten',
     t: 'Swiss Roll',
     b: 'Ein 2D-Manifold (ein Blatt Papier), zu einer Spirale gerollt und in ℝ³ eingebettet. ' +
@@ -593,7 +643,7 @@ const BEATS = [
     mode: 'data_swissroll', spin: 0.05, table: 'gallery'
   },
   {
-    n: '12 / 19', group: 'galerie',
+    n: '11 / 21', group: 'galerie',
     gt: 'Manifolds IN Daten',
     t: 'Two Moons',
     b: 'Zwei 1D-Manifolds (zwei Bögen), in ℝ² verschlungen. ' +
@@ -602,9 +652,43 @@ const BEATS = [
     mode: 'data_twomoons', spin: 0.04, table: 'gallery'
   },
 
+  // ---------- DEFINITION: DIE 3 AXIOME ----------
+  {
+    n: '12 / 21', group: 'axiome',
+    gt: 'Definition — die 3 Axiome',
+    t: 'Axiom 1 — Lokal euklidisch',
+    b: 'Jeder Punkt P der Mannigfaltigkeit hat eine Umgebung U, die <b>homöomorph</b> zu einer offenen Teilmenge des ℝⁿ ist ' +
+       '(für ein n fest). Anders gesagt: <b>zoomt man weit genug heran, verschwindet die Krümmung</b> — ' +
+       'lokal sieht alles aus wie flacher ℝⁿ. <b>Beispiel:</b> die Erde — eine Kugel, aber wer darauf steht, sieht eine Ebene. ' +
+       'Im Bild: die orange Kugel (global gekrümmt) und das blaue ℝ²-Patch daneben (die vergrößerte Sicht eines Ausschnitts).',
+    mode: 'axiom_local_euclidean', spin: 0.03, table: 'gallery'
+  },
+  {
+    n: '13 / 21', group: 'axiome',
+    gt: 'Definition — die 3 Axiome',
+    t: 'Axiom 2 — Hausdorff',
+    b: 'Je zwei verschiedene Punkte lassen sich durch <b>disjunkte offene Mengen</b> trennen. ' +
+       'Anders gesagt: man kann zwei beliebige Punkte "auseinanderschieben", ohne dass ihre Umgebungen überlappen. ' +
+       'Die allermeisten Räume, die Sie kennen — ℝⁿ, Sphären, Tori — sind Hausdorff. ' +
+       'Pathologische Gegenbeispiele ("Linie mit zwei Ursprüngen") braucht man in der Praxis selten. ' +
+       'Im Bild: zwei rote Punkte, jeder umgeben von einem blauen trennenden Ball — die Bälle überlappen nicht.',
+    mode: 'axiom_hausdorff', spin: 0.02, table: 'gallery'
+  },
+  {
+    n: '14 / 21', group: 'axiome',
+    gt: 'Definition — die 3 Axiome',
+    t: 'Axiom 3 — Zweite Abzählbarkeit',
+    b: 'Die Topologie hat eine <b>abzählbare Basis</b> — es gibt abzählbar viele offene Mengen, ' +
+       'aus denen sich alle anderen als Vereinigungen bilden lassen. Praktische Konsequenz: ' +
+       'die Mannigfaltigkeit ist "nicht zu groß" und "nicht zu wild". Jede <b>kompakte</b> Mannigfaltigkeit ' +
+       'ist automatisch second-countable, deswegen prüft man dieses Axiom in den meisten Anwendungen gar nicht. ' +
+       'Im Bild: die orange Sphäre mit grünen Chart-Mittelpunkten — die "abzählbar vielen" Karten eines Atlas.',
+    mode: 'axiom_second_countable', spin: 0.03, table: 'gallery'
+  },
+
   // ---------- MNIST: AUFBAU ----------
   {
-    n: '13 / 19', group: 'mnist-aufbau',
+    n: '15 / 21', group: 'mnist-aufbau',
     gt: 'MNIST — Aufbau',
     t: '784 Zahlen sind ein Punkt',
     b: 'Ein MNIST-Bild besteht aus <b>28 × 28 = 784 Pixeln</b>. Jeder Balken rechts ist ein Pixel, ' +
@@ -613,7 +697,7 @@ const BEATS = [
     mode: 'pixels', spin: 0, table: 'ambient'
   },
   {
-    n: '14 / 19', group: 'mnist-aufbau',
+    n: '16 / 21', group: 'mnist-aufbau',
     gt: 'MNIST — Aufbau',
     t: 'Die Insel im Nebel',
     b: 'Die <b>farbigen Punkte</b> sind 4 000 echte MNIST-Bilder, eingefärbt nach ihrer Ziffer. ' +
@@ -627,7 +711,7 @@ const BEATS = [
 
   // ---------- MNIST: DIAGNOSE ----------
   {
-    n: '15 / 19', group: 'mnist-diagnose',
+    n: '17 / 21', group: 'mnist-diagnose',
     gt: 'MNIST — Diagnose',
     t: 'Das Varianz-Spektrum',
     b: 'Jeder Balken zeigt, <b>wieviel Varianz</b> in einer der 784 Achsen steckt — geordnet von groß nach klein. ' +
@@ -638,7 +722,7 @@ const BEATS = [
     mode: 'spectrum', spin: 0, table: 'spectrum'
   },
   {
-    n: '16 / 19', group: 'mnist-diagnose',
+    n: '18 / 21', group: 'mnist-diagnose',
     gt: 'MNIST — Diagnose',
     t: 'Die intrinsische Dimension',
     b: 'Der <b>Two-NN-Schätzer</b> (Facco et al. 2017) misst direkt: für jeden Punkt, ' +
@@ -652,7 +736,7 @@ const BEATS = [
 
   // ---------- MNIST: GEOMETRIE ----------
   {
-    n: '17 / 19', group: 'mnist-geometrie',
+    n: '19 / 21', group: 'mnist-geometrie',
     gt: 'MNIST — Geometrie',
     t: 'PCA scheitert an der Krümmung',
     b: 'Wir projizieren die 4 000 Bilder auf die <b>drei stärksten linearen Achsen</b> (PCA). ' +
@@ -665,7 +749,7 @@ const BEATS = [
     mode: 'pca3', spin: 0.12, table: 'overlap'
   },
   {
-    n: '18 / 19', group: 'mnist-geometrie',
+    n: '20 / 21', group: 'mnist-geometrie',
     gt: 'MNIST — Geometrie',
     t: 'Isomap: entlang der Fläche messen',
     b: 'Gleiche Punkte, <b>andere Abstandsdefinition</b>. Isomap baut einen Nachbarschaftsgraphen (k = 12) ' +
@@ -679,7 +763,7 @@ const BEATS = [
 
   // ---------- POINTE ----------
   {
-    n: '19 / 19', group: 'pointe',
+    n: '21 / 21', group: 'pointe',
     gt: 'Pointe — Daten liegen auf Räumen',
     t: 'Daten liegen AUF Räumen',
     b: 'Was wir gefunden haben: die 70 000 Bilder füllen keine 784 Dimensionen, sondern liegen auf einer ' +
@@ -876,6 +960,19 @@ function prepare() {
   LAYOUT_KIND.concept_examples = 'points';
   LAYOUT_COUNT.concept_examples = (80 + 180 + 1200);
 
+  // ---------- Axiome (topologische Definition) ----------
+  LAYOUT.axiom_local_euclidean = pad(genAxiomLocalEuclidean());
+  LAYOUT_KIND.axiom_local_euclidean = 'points';
+  LAYOUT_COUNT.axiom_local_euclidean = 1200 + 14 * 14;
+
+  LAYOUT.axiom_hausdorff = pad(genAxiomHausdorff());
+  LAYOUT_KIND.axiom_hausdorff = 'points';
+  LAYOUT_COUNT.axiom_hausdorff = 2 + 2 * 260;
+
+  LAYOUT.axiom_second_countable = pad(genAxiomSecondCountable());
+  LAYOUT_KIND.axiom_second_countable = 'points';
+  LAYOUT_COUNT.axiom_second_countable = 1000 + 36;
+
   // Startposition = Beat 0
   CURPOS.set(LAYOUT[BEATS[0].mode]);
 }
@@ -987,7 +1084,7 @@ function draw(now) {
   if (showMode === 'concept_examples') drawConceptLabels();
 
   // Hover-Punkt + Legende nur für MNIST-Punktwolken
-  const isMnist = (showMode === 'pca3' || showMode === 'iso3');
+  const isMnist = (showMode === 'pca3' || showMode === 'iso3' || showMode === 'noise');
   if (isMnist) {
     if (hoverIdx >= 0 && hoverIdx < screenCache.n) {
       ctx.beginPath();
@@ -1036,7 +1133,7 @@ function drawPoints(mode, count, dimsMode, specMode) {
 
 // Datenpunkt-Farbe je nach Beat-Typ.
 function pickPalette(mode) {
-  if (mode === 'pca3' || mode === 'iso3') {
+  if (mode === 'pca3' || mode === 'iso3' || mode === 'noise') {
     return i => PALETTE[D.labels[i]];
   }
   if (mode === 'data_swissroll') {
@@ -1058,6 +1155,18 @@ function pickPalette(mode) {
       if (i < b) return '#10b981';
       return '#f97316';
     };
+  }
+  if (mode === 'axiom_local_euclidean') {
+    // Sphäre (orange) + flaches ℝ²-Patch (blau) daneben
+    return i => i < 1200 ? '#d97706' : '#3b82f6';
+  }
+  if (mode === 'axiom_hausdorff') {
+    // 2 rote Punkte + 2 blaue trennende Bälle
+    return i => i < 2 ? '#dc2626' : '#0ea5e9';
+  }
+  if (mode === 'axiom_second_countable') {
+    // Sphäre (orange) + abzählbare Chart-Marker (grün) auf der Oberfläche
+    return i => i < 1000 ? '#d97706' : '#10b981';
   }
   return () => '#d97706';
 }

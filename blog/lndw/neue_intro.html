@@ -256,6 +256,7 @@
   .ai-card {
     width: 100%;
     margin-top: 14px;
+    min-height: 138px;
     background: #ffffff;
     border-radius: 16px;
     padding: 12px 14px;
@@ -293,10 +294,40 @@
     font-size: 12px;
     line-height: 1.5;
     color: #202124;
+    min-height: 90px;
   }
-  .ai-text b {
+  .ai-text .b {
     color: #1a73e8;
     font-weight: 600;
+  }
+  .ai-cursor {
+    display: inline-block;
+    width: 7px; height: 13px;
+    background: #1a73e8;
+    vertical-align: -2px;
+    margin-left: 1px;
+    animation: blink 1s step-end infinite;
+  }
+  /* „Die KI denkt" — drei pulsierende Punkte */
+  .ai-thinking {
+    display: none;
+    gap: 6px;
+    align-items: center;
+    height: 22px;
+  }
+  .ai-thinking.on { display: flex; }
+  .ai-thinking span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #1a73e8;
+    opacity: 0.3;
+    animation: thinkPulse 1.2s ease-in-out infinite;
+  }
+  .ai-thinking span:nth-child(2) { animation-delay: 0.18s; }
+  .ai-thinking span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes thinkPulse {
+    0%, 100% { opacity: 0.25; transform: translateY(0); }
+    50%      { opacity: 1;    transform: translateY(-4px); }
   }
   .serp {
     width: 100%;
@@ -382,6 +413,8 @@
   .beat-caption .acc { color: var(--accent); font-weight: 400; }
   #capCode { top: calc(50% - 272px); }
   #capPic  { top: calc(50% - 248px); }
+  #capSatz { top: calc(50% - 210px); }
+  .statement.high { top: 32%; }
 
   /* =========================
      Statement-Folien (große Thesen)
@@ -598,15 +631,15 @@
     transition: opacity 0.7s ease;
   }
   .cw-out.on { opacity: 1; }
-  .cw-out .out-val {
-    font-size: 17px;
-    font-weight: 700;
-  }
-  .cw-out .out-note {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  .cw-out .out-cmd {
     font-size: 13px;
-    color: var(--ink-dim);
-    margin-left: 8px;
+    color: #8a95b0;
+    margin-bottom: 4px;
+  }
+  .cw-out .out-cmd .dollar { color: #34d399; }
+  .cw-out .out-line {
+    font-size: 15px;
+    color: #34d399;
   }
 
   /* =========================
@@ -661,6 +694,30 @@
   .token-pill:nth-child(odd)  { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.14); }
   .token-pill:nth-child(3n)   { border-color: rgba(52, 211, 153, 0.5);  background: rgba(52, 211, 153, 0.14); }
   .token-pill:nth-child(4n)   { border-color: rgba(251, 191, 36, 0.5);  background: rgba(251, 191, 36, 0.14); }
+  /* Token-Schock: „himmel" bricht in „him" + „mel" */
+  .token-pill.crack {
+    border-color: #f87171 !important;
+    background: rgba(248, 113, 113, 0.18) !important;
+    animation: crackShake 0.4s ease 2;
+  }
+  @keyframes crackShake {
+    0%, 100% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(0) scale(1) translateX(-5px) rotate(-1.5deg); }
+    75% { transform: translateY(0) scale(1) translateX(5px) rotate(1.5deg); }
+  }
+  .token-pill.fresh {
+    animation: freshPop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
+               freshGlow 1.8s ease forwards;
+  }
+  @keyframes freshPop {
+    0%   { transform: translateY(0) scale(0.4); }
+    60%  { transform: translateY(0) scale(1.15); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  @keyframes freshGlow {
+    0%   { box-shadow: 0 0 34px rgba(248, 113, 113, 0.85); }
+    100% { box-shadow: 0 4px 20px rgba(110, 168, 255, 0.15); }
+  }
 
   /* Kleines Label unter den Tokens */
   .layer-label {
@@ -854,6 +911,80 @@
   }
 
   /* =========================
+     Mini-Transformer (Ecke): eine Maschine, viele Köpfe
+     ========================= */
+  .ttower {
+    position: absolute;
+    right: 44px; bottom: 52px;
+    width: 150px;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 1s ease, transform 1s ease;
+    pointer-events: none;
+    text-align: center;
+  }
+  .ttower.on { opacity: 1; transform: translateY(0); }
+  .tt-heads {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .tt-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    color: var(--ink-dim);
+    opacity: 0.3;
+    transition: opacity 0.7s ease, color 0.7s ease;
+  }
+  .tt-head .tt-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: box-shadow 0.7s ease, opacity 0.7s ease;
+    opacity: 0.4;
+  }
+  .tt-head.answer .tt-dot { background: #6ea8ff; }
+  .tt-head.code   .tt-dot { background: #34d399; }
+  .tt-head.pic    .tt-dot { background: #f472b6; }
+  .tt-head.lit { opacity: 1; }
+  .tt-head.answer.lit { color: #6ea8ff; }
+  .tt-head.code.lit   { color: #34d399; }
+  .tt-head.pic.lit    { color: #f472b6; }
+  .tt-head.lit .tt-dot {
+    opacity: 1;
+    box-shadow: 0 0 12px 2px currentColor;
+  }
+  .tt-tower {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  .tt-bar {
+    width: 64px; height: 7px;
+    border-radius: 2px;
+    background: rgba(110, 168, 255, 0.25);
+    animation: layerPulse 2.4s ease-in-out infinite;
+  }
+  .tt-bar:nth-child(2) { animation-delay: 0.2s; }
+  .tt-bar:nth-child(3) { animation-delay: 0.4s; }
+  .tt-bar:nth-child(4) { animation-delay: 0.6s; }
+  .tt-base {
+    margin-top: 9px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  /* =========================
      Navigation / Fortschritt
      ========================= */
   .nav-hint {
@@ -937,11 +1068,9 @@
           <span class="ai-spark">✦</span>
           <span class="ai-name">Suche-KI</span>
         </div>
-        <div class="ai-text">
-          Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht
-          stärker streuen als langwelliges. Blau (450&nbsp;nm) wird etwa
-          4× mehr gestreut als Rot (650&nbsp;nm) — das nennt man
-          <b>Rayleigh-Streuung</b>.
+        <div class="ai-text" id="aiText"></div>
+        <div class="ai-thinking" id="aiThinking">
+          <span></span><span></span><span></span>
         </div>
       </div>
       <!-- Trefferliste wie bei Google — nach unten unscharf werdend -->
@@ -1008,8 +1137,8 @@
     </div>
     <pre class="cw-code" id="cwCode"></pre>
     <div class="cw-out" id="cwOut">
-      <span class="out-val">4.35</span>
-      <span class="out-note">— blaues Licht (450 nm) wird ~4× stärker gestreut als rotes (650 nm)</span>
+      <div class="out-cmd"><span class="dollar">$</span> python himmel.py</div>
+      <div class="out-line">Blau wird 4.35× stärker gestreut als Rot</div>
     </div>
   </div>
 
@@ -1030,6 +1159,10 @@
     </div>
   </div>
 
+  <div class="beat-caption" id="capSatz">
+    derselbe Satz — jetzt ein Objekt, das man <span class="acc">zerlegen</span> kann
+  </div>
+
   <!-- ============ Statement: alles geht über Transformer ============ -->
   <div class="statement" id="statement2">
     <div class="st-line1">Und all das funktioniert nach ähnlichen Mechanismen —</div>
@@ -1044,14 +1177,8 @@
     <span id="layerLabelText">Tokenisierung</span>
   </div>
 
-  <!-- Die Tokens -->
-  <div class="tokens-layer" id="tokensLayer">
-    <div class="token-pill">warum</div>
-    <div class="token-pill">ist</div>
-    <div class="token-pill">der</div>
-    <div class="token-pill">himmel</div>
-    <div class="token-pill">blau</div>
-  </div>
+  <!-- Die Tokens (von JS gebaut — „himmel" bricht in „him" + „mel") -->
+  <div class="tokens-layer" id="tokensLayer"></div>
 
   <!-- Der Embedding-Raum (2D-Plot) -->
   <div class="embedding-space" id="embeddingSpace">
@@ -1083,8 +1210,11 @@
     <div class="embed-point query" data-key="der" style="left: 44%; top: 85%;">
       <div class="dot"></div><div class="label">der</div>
     </div>
-    <div class="embed-point sky" data-key="himmel" style="left: 78%; top: 20%;">
-      <div class="dot"></div><div class="label">himmel</div>
+    <div class="embed-point sky" data-key="him" style="left: 75%; top: 18%;">
+      <div class="dot"></div><div class="label">him</div>
+    </div>
+    <div class="embed-point sky" data-key="mel" style="left: 83%; top: 27%;">
+      <div class="dot"></div><div class="label">mel</div>
     </div>
     <div class="embed-point color" data-key="blau" style="left: 85%; top: 45%;">
       <div class="dot"></div><div class="label">blau</div>
@@ -1118,6 +1248,22 @@
 
   <div class="handoff-hint" id="handoffHint">
     Und hier beginnt der technische Teil …
+  </div>
+
+  <!-- Mini-Transformer: eine Maschine, viele Köpfe -->
+  <div class="ttower" id="ttower">
+    <div class="tt-heads">
+      <div class="tt-head answer" id="ttHeadAnswer"><span class="tt-dot"></span>Antwort</div>
+      <div class="tt-head code" id="ttHeaderCode"><span class="tt-dot"></span>Code</div>
+      <div class="tt-head pic" id="ttHeadPic"><span class="tt-dot"></span>Bilder</div>
+    </div>
+    <div class="tt-tower">
+      <div class="tt-bar"></div>
+      <div class="tt-bar"></div>
+      <div class="tt-bar"></div>
+      <div class="tt-bar"></div>
+    </div>
+    <div class="tt-base">Transformer</div>
   </div>
 
 </div>
