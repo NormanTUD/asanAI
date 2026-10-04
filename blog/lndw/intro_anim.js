@@ -15,9 +15,10 @@ const IntroAnim = (() => {
 	// SHARED HELPERS
 	// ============================================================
 	const SATZ = 'warum ist der himmel blau?';
-	const PIC_PROMPT = 'generier mir ein photorealistisches bild einer katze';
-	const THINK_MS = 200;   // max. Wartezeit auf die drei Denk-Punkte
-	const TYPE_MS = 26;     // ms pro Zeichen im Suchfeld
+	const PIC_PROMPT = 'Generier mir ein photorealistisches Bild einer Katze';
+	const THINK_MS = 100;   // max. Wartezeit auf die drei Denk-Punkte
+	const TYPE_MS = 13;     // ms pro Zeichen im Suchfeld
+	const SEARCH_UP_MS = 320; // wie lange das Suchfeld braucht, nach oben zu fahren
 	const CODE_LINES = [
 		[{ t: '# Rayleigh-Streuung in Luft', c: 'cmt' }],
 		[{ t: 'K_B = ' }, { t: '1.380649e-23', c: 'num' }, { t: '   # J/K', c: 'cmt' }],
@@ -88,6 +89,7 @@ const IntroAnim = (() => {
 				s.classList.remove('typing');
 				s.textContent = '';
 			});
+			setSearchCentered(true);
 			safe($('micBtn'), m => m.classList.remove('listening'));
 			safe($('waveform'), w => w.classList.remove('active'));
 			safe($('aiCard'), a => a.classList.remove('on'));
@@ -155,6 +157,12 @@ const IntroAnim = (() => {
 			w.style.opacity = opacity;
 		}
 
+		// Suchfeld zentriert (Anfang) vs. nach oben gerückt (Content erscheint).
+		function setSearchCentered(on) {
+			const sb = stage.searchBar;
+			if (sb) sb.classList.toggle('centered', !!on);
+		}
+
 		function typeSearch(text, onDone) {
 			if (searchTypeTimer) { clearInterval(searchTypeTimer); searchTypeTimer = null; }
 			const el = $('searchText');
@@ -179,20 +187,26 @@ const IntroAnim = (() => {
 		// Tippt in eine Chat-Bubble (mit blinkendem Cursor).
 		function typeBubble(el, text, msPerChar, onDone) {
 			if (!el) { if (onDone) later(onDone, 0); return; }
+			// Bei sehr kleinen Werten (<8ms/Zeichen) mehrere Zeichen pro
+			// 16ms-Tick tippen — setTimeout clamps sonst auf ~4ms und die
+			// Wunschgeschwindigkeit (z.B. 8× schneller) würde nicht erreicht.
+			const fast = msPerChar < 8;
+			const perTick = fast ? Math.max(1, Math.round(16 / msPerChar)) : 1;
+			const interval = fast ? 16 : msPerChar;
 			let i = 0;
 			function tick() {
-				i++;
-				el.innerHTML = text.slice(0, i) + '<span class="ia-msg-caret"></span>';
-				if (i < text.length) {
-					bubbleTimer = setTimeout(tick, msPerChar);
-				} else {
+				i = Math.min(text.length, i + perTick);
+				if (i >= text.length) {
 					el.textContent = text;
 					bubbleTimer = null;
 					if (onDone) later(onDone, 0);
+					return;
 				}
+				el.innerHTML = text.slice(0, i) + '<span class="ia-msg-caret"></span>';
+				bubbleTimer = setTimeout(tick, interval);
 			}
 			el.innerHTML = '<span class="ia-msg-caret"></span>';
-			bubbleTimer = setTimeout(tick, msPerChar);
+			bubbleTimer = setTimeout(tick, fast ? 8 : interval);
 		}
 
 		function renderCode(instant) {
@@ -229,21 +243,25 @@ const IntroAnim = (() => {
 				aiText.appendChild(s);
 				return s;
 			});
-			// FIX 5: kein Cursor mehr — die Antwort erscheint einfach.
+			// Antwort soll schnell auftauchen: mehrere Zeichen pro 16ms-Tick
+			// (ein Pro-Zeichen-Timeout clamped auf ~4ms und wäre dadurch zu langsam).
+			const perTick = 8;
 			let si = 0, ci = 0;
 			function tick() {
+				let remaining = perTick;
+				while (remaining > 0 && si < spans.length) {
+					const seg = AI_TEXT[si];
+					const take = Math.min(remaining, seg.t.length - ci);
+					ci += take;
+					remaining -= take;
+					spans[si].textContent = seg.t.slice(0, ci);
+					if (ci >= seg.t.length) { si++; ci = 0; }
+				}
 				if (si >= spans.length) { aiTimer = null; return; }
-				const seg = AI_TEXT[si];
-				ci++;
-				spans[si].textContent = seg.t.slice(0, ci);
-				// FIX 4: Antwort viel schneller — 6–10ms pro Zeichen, kein Extra-Pausen
-				let delay = 6 + Math.random() * 4;
-				if (ci >= seg.t.length) { si++; ci = 0; delay += 12; }
-				aiTimer = setTimeout(tick, delay);
+				aiTimer = setTimeout(tick, 16);
 			}
-			// Das erste Zeichen sofort schreiben: ein setTimeout(…, 0) würde
-			// im Task-Queue-Wettlauf mit dem Übergang der SERP-Liste liegen
-			// und die Denk-Punkte dadurch über THINK_MS hinausstehen lassen.
+			// Erstes Zeichen sofort (ohne Timeout-Wartung), damit die Antwort
+			// direkt mit Beat 3 sichtbar wird.
 			tick();
 		}
 
@@ -273,61 +291,51 @@ const IntroAnim = (() => {
 		// ---- Beats ------------------------------------------------
 		const beats = [
 			function () {
-				// 0: Phone mit Logo, idle
+				// 0: Phone mit Logo, idle — statisch, kein Auf/Ab-Schweben
 				clearAutoAdvance();
 				resetAll();
 				setPhone(1, 1);
-				s('phone', p => p.classList.add('levitate'));
 				s('logo', l => { l.style.opacity = '1'; l.classList.add('breathe'); });
 			},
 			function () {
-				// 1: Mikrofon aktiv, Waveform pulsiert
-				clearAutoAdvance();
-				resetAll();
-				setPhone(1, 1);
-				s('logo', l => l.style.opacity = '1');
-				s('searchText', t => {
-					t.classList.add('typing');
-					t.innerHTML = '<span class="ia-caret"></span>';
-				});
-				s('micBtn', m => m.classList.add('listening'));
-				s('waveform', w => w.classList.add('active'));
-			},
-			function () {
-				// 2: Text tippt sich ins Suchfeld — sobald der Satz fertig
-				//    ist, erscheinen sofort die drei Denk-Punkte (Beat 3).
+				// 1: Mikrofon blinkt + Suchtext tippt gleichzeitig ins Suchfeld
 				clearAutoAdvance();
 				resetAll();
 				setPhone(1, 1);
 				s('logo', l => l.style.opacity = '1');
 				s('micBtn', m => m.classList.add('listening'));
 				s('waveform', w => w.classList.add('active'));
-				typeSearch(SATZ, () => setBeat(3));
+				typeSearch(SATZ, () => setBeat(2));
 			},
 			function () {
-				// 3: KI denkt (drei pulsierende Punkte) — nach THINK_MS → Beat 4
+				// 2: Suchfeld fährt smooth & schnell nach oben, dann denkt die KI
 				clearAutoAdvance();
 				resetAll();
 				setPhone(1, 1);
 				s('logo', l => l.style.opacity = '1');
 				s('searchText', t => t.textContent = SATZ);
-				s('aiCard', a => a.classList.add('on'));
-				s('aiThinking', a => a.classList.add('on'));
-				scheduleAutoAdvance(4, THINK_MS);
+				setSearchCentered(false);  // Suchfeld rückt nach oben
+				// Content taucht erst auf, nachdem das Suchfeld oben ist.
+				later(() => {
+					s('aiCard', a => a.classList.add('on'));
+					s('aiThinking', a => a.classList.add('on'));
+				}, SEARCH_UP_MS);
+				scheduleAutoAdvance(3, SEARCH_UP_MS + THINK_MS);
 			},
 			function () {
-				// 4: KI antwortet + SERP
+				// 3: KI antwortet (taucht schnell auf) + SERP
 				clearAutoAdvance();
 				resetAll();
 				setPhone(1, 1);
 				s('logo', l => l.style.opacity = '1');
 				s('searchText', t => t.textContent = SATZ);
+				setSearchCentered(false);
 				s('aiCard', a => a.classList.add('on'));
 				startAiTyping();
 				s('serpList', s => s.classList.add('on'));
 			},
 			function () {
-				// 5: Chat-Fenster mit Frage, Antwort und Code-Block
+				// 4: Chat-Fenster mit Frage, Antwort und Code-Block
 				clearAutoAdvance();
 				resetAll();
 				setCodeWindow(1, 1);
@@ -335,7 +343,7 @@ const IntroAnim = (() => {
 				startCodeTyping();
 			},
 			function () {
-				// 6: Code fertig — Terminal darunter zeigt Aufruf + Output
+				// 5: Code fertig — Terminal darunter zeigt Aufruf + Output
 				clearAutoAdvance();
 				resetAll();
 				setCodeWindow(1, 1);
@@ -345,18 +353,19 @@ const IntroAnim = (() => {
 				s('cwOut', o => o.classList.add('on'));
 			},
 			function () {
-				// 7: Bilder generieren (Chat): Prompt tippen, dann das Bild
+				// 6: Bilder generieren (Chat): Prompt tippen, dann das Bild
 				clearAutoAdvance();
 				resetAll();
 				setChatWindow(1, 1);
 				s('capPic', c => c.style.opacity = '1');
 				later(() => {
-					typeBubble($('chatPrompt'), PIC_PROMPT, 22,
+					// Prompt ~8× schneller als das alte 22ms/Zeichen
+					typeBubble($('chatPrompt'), PIC_PROMPT, 22 / 8,
 						() => s('chatAi', a => a.classList.add('on')));
 				}, 400);
 			},
 			function () {
-				// 8: Statement
+				// 7: Statement
 				clearAutoAdvance();
 				resetAll();
 				s('statement', st => st.classList.add('on'));
@@ -406,6 +415,7 @@ const IntroAnim = (() => {
 			stage.phone     = slideEl.querySelector('.ia-phone');
 			stage.logo      = slideEl.querySelector('.ia-app-logo');
 			stage.searchText = slideEl.querySelector('.ia-search-text');
+			stage.searchBar  = slideEl.querySelector('.ia-search-bar');
 			stage.micBtn    = slideEl.querySelector('.ia-mic-btn');
 			stage.waveform  = slideEl.querySelector('.ia-waveform');
 			stage.aiCard    = slideEl.querySelector('.ia-ai-card');

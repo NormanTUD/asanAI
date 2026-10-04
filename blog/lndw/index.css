@@ -1352,7 +1352,11 @@ body.sel-mode .sel-check { display: inline-flex; }
 	padding: 0 14px;
 	gap: 10px;
 	position: relative;
+	/* Start zentriert im Display, rückt dann smooth & schnell nach oben */
+	transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+	will-change: transform;
 }
+.ia-search-bar.centered { transform: translateY(150px); }
 
 .ia-search-icon {
 	width: 17px; height: 17px;
@@ -1690,8 +1694,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	background: rgba(255, 255, 255, 0.05);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-.ia-code-block-head .ia-cw-dot { width: 9px; height: 9px; }
-.ia-code-block-head .ia-cw-name { margin-left: 6px; font-size: 12px; }
+.ia-code-block-head .ia-cw-name { font-size: 12px; }
 
 .ia-cw-title {
 	display: flex;
