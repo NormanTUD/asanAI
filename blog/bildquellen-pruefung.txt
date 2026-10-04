@@ -611,3 +611,41 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
     Genutzt in: loss_landscape.php § Aha #4 (alternativer Beleg, DenseNet)
     Status: OK - MIT/CC-BY-Attribution, Quelle via
              \cite{li2018losslandscape} zitiert.
+
+=== QAI / NILSSON BILDER (history.php + untold_history.php, Stand: Oktober 2026) ===
+==================================================
+Quelle-Text: Nils J. Nilsson, "The Quest for Artificial Intelligence"
+(https://ai.stanford.edu/~nilsson/QAI/qai.pdf, \cite{nilsson1984qai}).
+Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026.
+
+57. img_walter_tortoise
+   URL: https://commons.wikimedia.org/wiki/File:Cybernetic_Tortoise_by_William_Grey_Walter_c_1950_(Ank_Kumar).jpg
+   Lizenz: CC BY-SA 4.0
+   Autor: Ank Kumar (Foto des Science-Museum-Group-Objekts, c. 1950)
+   Lokal: grey_walter_tortoise.jpg (1000x750)
+   Genutzt in: history.php § "The Electric Tortoise: Machina speculatrix (1936)"
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+58. img_kirsch_baby
+   URL: https://commons.wikimedia.org/wiki/File:NBSFirstScanImage.jpg
+   Lizenz: Public domain
+   Autor: Russell A. Kirsch (NBS, 1957; Scan seines Sohnes Walden, 176x176)
+   Lokal: kirsch_baby_1957.jpg (821x1000)
+   Genutzt in: untold_history.php § "From a Baby's Face to the GPU"
+   Status: OK - Public Domain (US-Bundesbehörde, NBS/NIST)
+
+59. img_widrow_adaline
+   URL: https://commons.wikimedia.org/wiki/File:Bernard_Widrow_with_ADALINE.jpg
+   Lizenz: Public domain
+   Autor: Stanford Today magazine, (c) 1963 by the Board of Trustees of Leland Stanford Junior University
+   Lokal: widrow_adaline.jpg (1000x689)
+   Genutzt in: history.php § "The ADALINE: An Engineer's Neural Network (1959)"
+   Status: OK - Public Domain
+
+60. img_warren_weaver
+   URL: https://commons.wikimedia.org/wiki/File:Warren_Weaver.jpg
+   Lizenz: Public domain
+   Autor: Donald Cooksey (1940, Cooksey-142)
+   Lokal: warren_weaver.jpg (800x640)
+   Genutzt in: history.php § "Machine Translation: The Longest-Running Bet"
+   Status: OK - Public Domain
