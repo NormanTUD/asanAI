@@ -5,7 +5,7 @@
 // -------------------------------------------------------------
 // 1. Phone-Animation (Folie: "Was sind Large Language Models?")
 //    Beats: Logo → Mikrofon → Text → Denken → Antwort → Code →
-//           Output → Bild → Statement
+//           Output → Bild → Statement → Frage (Brücke zur nächsten Folie)
 // 2. Token-Splitting (Folie: "Tokenisierung")
 //    Beats: Token-Reihe → "himmel" knackt → "him" + "mel"
 // =============================================================
@@ -115,7 +115,7 @@ const IntroAnim = (() => {
 			});
 			safe($('chatPrompt'), p => p.innerHTML = '');
 			safe($('chatAi'), a => a.classList.remove('on'));
-			safe($('statement'), s => s.classList.remove('on'));
+			safe($('statement'), s => s.classList.remove('on', 'question'));
 			safe($('capCode'), c => c.style.opacity = '0');
 			safe($('capPic'), c => c.style.opacity = '0');
 			safe($('ttower'), t => {
@@ -370,6 +370,14 @@ const IntroAnim = (() => {
 				clearAutoAdvance();
 				resetAll();
 				s('statement', st => st.classList.add('on'));
+			},
+			function () {
+				// 8: Frage — Brücke zur nächsten Folie („Die Wirklichkeit hat
+				//    mathematische Muster"): Der nächste Folienwechsel ist die
+				//    Antwort auf diese Frage.
+				clearAutoAdvance();
+				resetAll();
+				s('statement', st => st.classList.add('on', 'question'));
 			},
 		];
 

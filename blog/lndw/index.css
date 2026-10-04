@@ -1619,6 +1619,51 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 .ia-statement .ia-st-line2 .ia-acc { color: #7c3aed; font-weight: 400; }
 
+/* Dritte Zeile: die Frage, die zur nächsten Folie („Die Wirklichkeit hat
+   mathematische Muster") überleitet. Erscheint nur im Frage-Beat
+   (Klasse "question") und mit Verzögerung nach dem Statement. */
+.ia-statement .ia-st-line3 {
+	margin-top: 28px;
+	font-size: 17px;
+	font-weight: 300;
+	color: #475569;
+	letter-spacing: -0.1px;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.ia-statement.question .ia-st-line3 {
+	opacity: 1;
+	transform: translateY(0);
+	transition-delay: 0.55s;
+}
+
+/* ---------- Sonnenbahn: weicher Übergang von der Phone-Folie ---------- */
+
+/* Titel und Brückensatz blenden gestaffelt ein (während/after dem
+   Folien-Crossfade). Basiszustand ist sichtbar — beim Verlassen der Folie
+   darf nichts „ausschnappen". */
+#slide-sonnenbahn.active h2 {
+	animation: sb-fade-up 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.25s both;
+}
+#slide-sonnenbahn.active .sb-bridge {
+	animation: sb-fade-up 0.9s cubic-bezier(0.4, 0, 0.2, 1) 0.55s both;
+}
+@keyframes sb-fade-up {
+	from { opacity: 0; transform: translateY(18px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Das Sonnenbild „setzt sich" beim ersten Einblenden sanft (leichter
+   Zoom-out), statt einfach nur aufzutauchen. */
+#sunrise-fragment-1.visible #sunrise-overlay-container {
+	animation: sb-sun-settle 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes sb-sun-settle {
+	from { transform: scale(1.05); }
+	to   { transform: scale(1); }
+}
+
 /* ---------- Stack: Chat-Fenster (Code) + Terminal darunter ---------- */
 .ia-stack {
 	position: absolute;

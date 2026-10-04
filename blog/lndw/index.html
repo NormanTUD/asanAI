@@ -172,6 +172,7 @@
 			<div class="ia-statement" id="ia-statement">
 				<div class="ia-st-line1">Dahinter steckt ein und dasselbe Modell —</div>
 				<div class="ia-st-line2">der <span class="ia-acc">Transformer</span>.</div>
+				<div class="ia-st-line3">Aber woher kennt das Modell die Welt?</div>
 			</div>
 		</div>
 
@@ -183,19 +184,20 @@
 <div class="slide" id="slide-sonnenbahn" data-title="Sonnenbahn">
     <div class="slide-content">
         <h2>Die Wirklichkeit hat mathematische Muster</h2>
-        <p style="margin-bottom:10px;">Muster der Wirklichkeit → spiegeln sich in Texten wider.</p>
+        <p class="sb-bridge">Es hat das nicht erfunden: In der Wirklichkeit stecken Muster — und sie spiegeln sich in Texten wider.</p>
 
-        <!-- Fragment 1: Sonnenbild -->
-        <div id="sunrise-fragment-1">
+        <!-- Fragment 1: Sonnenbild (erscheint erst mit dem ersten Schritt,
+             damit der Folienwechsel nicht direkt auf das große Foto fällt) -->
+        <div class="fragment" id="sunrise-fragment-1">
             <div id="sunrise-overlay-container" style="position:relative; width:100%; max-width:1100px; margin:0 auto; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
                 <img id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width:100%; display:block;">
                 <div id="sunrise-plot" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; mix-blend-mode: multiply; opacity:0; transition: opacity 0.5s ease;"></div>
             </div>
+            <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn, Concordia (Antarktis) · 24 h Polartag als Panorama.</p>
         </div>
 
         <!-- Fragment 2: Sinus-Overlay einblenden -->
         <div class="fragment" id="sunrise-fragment-2" data-fragment-action="show-sinus"></div>
-        <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn, Concordia (Antarktis) · 24 h Polartag als Panorama.</p>
 
         <!-- Sinus-Formel (vereinfacht) -->
         <div class="fragment" style="margin-top:16px;">
