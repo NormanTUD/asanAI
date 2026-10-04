@@ -532,8 +532,11 @@ const IntroAnim = (() => {
 			return !!(stage.layer && stage.label);
 		}
 
+		// Zwei Schätze statt drei: Beat 0 = ganze Wörter, Beat 1 = direkt das
+		// tokenisierte Ergebnis („himmel" → „him" + „mel"). Ein Pfeil-Druck
+		// zeigt also sofort die Tokenisierung — kein 3-mal-durch-Steppen.
 		function setBeat(n) {
-			if (n < 0 || n > 2) return;
+			if (n < 0 || n > 1) return;
 			// GUARDRAIL 2: nicht rendern, wenn init() nicht erfolgreich war
 			if (!isReady()) return;
 			currentBeat = n;
@@ -544,19 +547,7 @@ const IntroAnim = (() => {
 					stage.label.classList.add('on');
 					stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — der Computer teilt anders als wir';
 				}, 80);
-			} else if (n === 1) {
-				resetAll();
-				later(() => {
-					stage.layer.classList.add('on');
-					stage.label.classList.add('on');
-					stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — und „himmel"?';
-				}, 80);
-				later(() => {
-					stage.layer.querySelectorAll('.ia-token-pill').forEach(p => {
-						if (p.textContent === 'himmel') p.classList.add('crack');
-					});
-				}, 800);
-			} else if (n === 2) {
+			} else {
 				resetAll();
 				later(() => {
 					stage.layer.classList.add('on');
@@ -565,10 +556,10 @@ const IntroAnim = (() => {
 				}, 80);
 				later(() => {
 					render(SPLIT, ['him', 'mel']);
-				}, 600);
+				}, 350);
 				later(() => {
 					stage.sub.classList.add('on');
-				}, 1400);
+				}, 1100);
 			}
 			updateStepBar();
 		}
@@ -576,8 +567,9 @@ const IntroAnim = (() => {
 		function updateStepBar() {
 			const bar = document.getElementById('ia-tokens-step-bar');
 			if (!bar) return;
-			bar.querySelectorAll('button').forEach((b, i) => {
-				b.classList.toggle('active', i === currentBeat);
+			bar.querySelectorAll('button').forEach(b => {
+				const db = parseInt(b.dataset.beat, 10);
+				b.classList.toggle('active', !isNaN(db) && db === currentBeat);
 			});
 		}
 
@@ -591,8 +583,8 @@ const IntroAnim = (() => {
 			const bar = slideEl.querySelector('#ia-tokens-step-bar');
 			if (bar && !bar.dataset.iaWired) {
 				bar.dataset.iaWired = '1';
-				bar.querySelectorAll('button').forEach((b, i) => {
-					b.onclick = () => setBeat(i);
+				bar.querySelectorAll('button').forEach(b => {
+					b.onclick = () => setBeat(parseInt(b.dataset.beat, 10) || 0);
 				});
 			}
 
@@ -609,7 +601,7 @@ const IntroAnim = (() => {
 
 		return {
 			init, setBeat, reset, getBeat: () => currentBeat,
-			lastBeat: 2,
+			lastBeat: 1,
 			isReady,
 			get stage() { return stage; },
 		};

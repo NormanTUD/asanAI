@@ -748,11 +748,10 @@
                 <div class="ia-tokens-sub" id="ia-tokens-sub">Im Kern ein <span class="ia-acc">Kompressions-Algorithmus</span>: die häufigsten Muster werden zu einem einzigen Token zusammengefasst.</div>
             </div>
             <div class="ia-step-bar" id="ia-tokens-step-bar">
-                <button type="button">1. Token-Reihe</button>
-                <button type="button">2. „himmel" bricht</button>
-                <button type="button">3. „him" + „mel"</button>
+                <button type="button" data-beat="1">„himmel" → „him" + „mel"</button>
             </div>
-            <p class="ia-tokens-hint">„himmel" kommt so oft vor, dass es zwei Tokens sparen würde, es zu zerlegen — aber „him" + „mel" decken mehr Wortteile ab.</p>
+            <p class="ia-tokens-hint">„himmel" kommt so oft vor, dass es sich lohnt, es zu zerlegen — „him" + „mel" decken viele weitere Wortteile ab.</p>
+            <p class="ia-tokens-him-mel"><span class="hm-chip">him</span> himmlisch · Himbeere · Himmelskugel &nbsp;&nbsp;<span class="hm-chip">mel</span> Melone · Melodie · melken · Schmelze</p>
 
             <div class="demo-box fragment" style="min-height:auto;">
                 <input type="text" id="tokenizer-input" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:14px;" placeholder="z.B. 'es war einmal ein königskind'" value="es war einmal ein königskind">

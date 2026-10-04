@@ -109,8 +109,8 @@ const SpaceMorph = (() => {
         // 5-Sekunden-Drehung um die bereits (durch die neue Dimension) getrennten
         // Tori; die trennebene erscheint erst beim nächsten Schritt.
         { n: "Schritt 8 / 10", t: "Neues Beispiel: verhakte Tori",
-            b: "Andere Daten, anderes Problem: zwei verknotete Volltori im ℝ³. Ein Layer hebt sie in eine 4. Dimension (w) — dort ziehen sie sich aneinander vorbei. Pfeiltaste → einmal um die jetzt räumlich getrennten Tori herumdrehen.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 },
+            b: "Andere Daten, anderes Problem: zwei verknotete Volltori im ℝ³ — ineinander verhakt, keine Ebene trennt sie. Pfeiltaste → einmal um die verhakte Tori herumdrehen und sehen, wie ineinander sie sitzen.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
         { n: "Schritt 9 / 10", t: "4. Dimension macht es möglich",
             b: "Was vorher unlösbar war (keine Ebene trennt die Tori im ℝ³), wird durch den Lift in w lösbar. Die beiden Ringe sind jetzt zwei getrennte Klumpen im erweiterten Raum.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 },

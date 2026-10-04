@@ -613,10 +613,10 @@ function prev() {
     // räumt beim Re-Render mit clearTimeout() alle Timer auf, was einen
     // setTimeout-basierten Lock sofort killt. Ein Timestamp-basiertes Lock
     // ist immun dagegen.
-    const SLIDE_TRANSITION_MS = 560;
-    const SLIDE_DUR = 480;
+    const SLIDE_TRANSITION_MS = 520;
+    const SLIDE_DUR = 440;
     const SLIDE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
-    const SLIDE_DIST = 48;
+    const SLIDE_DIST = 60;
     let slideTransitionUntil = 0;
     function lockSlideTransition() {
         slideTransitionUntil = Date.now() + SLIDE_TRANSITION_MS;
@@ -667,28 +667,32 @@ function prev() {
 
     function activateSlide(newSlide, oldSlide, forward) {
         const dir = forward ? 1 : -1;
-        // Zustandsklassen nur noch für Pointer-Events + z-Index (.active).
-        // Der Fade selbst kommt aus WAAPI.
+        // OPAKER PUSH: Beide Folien bleiben opak (opacity 1) — die eintretende
+        // deckt die auslaufende ab, während sie von der Einfahrseite ins
+        // Zentrum fährt. Da in jedem Frame mindestens eine Folie die Szene
+        // abdeckt, kann nie Weiß durchscheinen. (Der frühere Crossfade war die
+        // Fehlerquelle: inkomposite Frames ohne deckende Folie. Opacity zu
+        // 0→0/0→1 zu faden lässt genau dann Weiß zeigen, wenn eine Folie noch
+        // nicht gemappt ist.) Nur der Transform wird animiert.
         newSlide.classList.remove('entering', 'leaving', 'leaving-back');
-        oldSlide.classList.remove('entering', 'leaving', 'leaving-back');
-        oldSlide.classList.remove('active');
+        oldSlide.classList.remove('active', 'entering', 'leaving', 'leaving-back');
         newSlide.classList.add('active');
+        oldSlide.classList.add('hold');
 
-        // Neue Folie: aus der Einfahrseite (vorwärts: rechts, rückwärts:
-        // links) einblenden. Alte Folie: vom aktuellen Zustand in die
-        // entgegengesetzte Seite ausblenden.
         _playSlide(
             newSlide,
-            { opacity: 0, transform: `translate(${dir * SLIDE_DIST}px, 0px) scale(0.965)` },
-            { opacity: 1, transform: 'translate(0px, 0px) scale(1)' });
-
-        const cs = getComputedStyle(oldSlide);
-        const fromOp = parseFloat(cs.opacity);
-        const fromTr = (cs.transform && cs.transform !== 'none') ? cs.transform : 'translate(0px, 0px) scale(1)';
+            { transform: `translate(${dir * SLIDE_DIST}px, 0px) scale(0.985)` },
+            { transform: 'translate(0px, 0px) scale(1)' });
         _playSlide(
             oldSlide,
-            { opacity: isNaN(fromOp) ? 1 : fromOp, transform: fromTr },
-            { opacity: 0, transform: `translate(${-dir * SLIDE_DIST}px, 0px) scale(0.965)` });
+            { transform: 'translate(0px, 0px) scale(1)' },
+            { transform: `translate(${-dir * SLIDE_DIST}px, 0px) scale(0.985)` });
+
+        // .hold räumen, sobald die Folie vollständig abgedeckt ist.
+        // Guard: nicht antasten, wenn sie inzwischen wieder aktiv ist.
+        setTimeout(() => {
+            if (!oldSlide.classList.contains('active')) oldSlide.classList.remove('hold');
+        }, SLIDE_DUR + 80);
     }
 
     function goTo(idx, showAllFragments = false) {
