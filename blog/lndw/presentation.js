@@ -603,7 +603,7 @@ function prev() {
     }
 }
 
-    // Lock für den gesamten Crossfade (CSS-Transition: 0.65s). Solange der
+    // Lock für den gesamten Crossfade (WAAPI: ~0.48s). Solange der
     // Lock hält, werden Pfeiltasten in navigate() geblockt — die neue Folie
     // muss erst sichtbar sein, bevor der nächste Klick zählt. Auch dasselbe
     // gilt für Sub-Folien-Übergänge (siehe DemoRegistry-Einträge, die auf
@@ -613,7 +613,10 @@ function prev() {
     // räumt beim Re-Render mit clearTimeout() alle Timer auf, was einen
     // setTimeout-basierten Lock sofort killt. Ein Timestamp-basiertes Lock
     // ist immun dagegen.
-    const SLIDE_TRANSITION_MS = 650;
+    const SLIDE_TRANSITION_MS = 560;
+    const SLIDE_DUR = 480;
+    const SLIDE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+    const SLIDE_DIST = 48;
     let slideTransitionUntil = 0;
     function lockSlideTransition() {
         slideTransitionUntil = Date.now() + SLIDE_TRANSITION_MS;
@@ -621,36 +624,71 @@ function prev() {
     function isSlideTransitioning() { return Date.now() < slideTransitionUntil; }
     function cancelSlideTransition() { slideTransitionUntil = 0; }
 
-    // Ein Folienwechsel in einem Frame:
-    //   1. Neue Folie ohne Transition auf die Einfahrposition setzen
-    //      (vorwärts: rechts, rückwärts: links) und per Style-Flush
-    //      fixieren — ersetzt den alten 2×rAF-Trick, dadurch animieren
-    //      alte und neue Folie simultan (kein Blink-Spalt).
-    //   2. Transition freigegeben, Inline-Styles geleert, .active gesetzt
-    //      → CSS-Transition läuft garantiert vom fixierten Startpunkt.
-    //   3. Alte Folie in Navigationsrichtung wegfaden (.leaving /
-    //      .leaving-back), Zustandsklassen nach der Transition aufräumen.
-    //      Das Aufräumen heilt auch veraltete Zustände (z.B. .leaving von
-    //      einem früheren Besuch), daher kein Pop mehr bei schneller
-    //      Hin-und-her-Navigation.
-    //
-    // WICHTIG: Style-Flush via getComputedStyle, NICHT via offsetWidth.
-    // transform/opacity sind Layout-neutral — ein Full-Reflow (offsetWidth)
-    // würde bei dem schweren Deck (viele Plotly-SVGs) den Main Thread
-    // hunderte Millisekunden blockieren und den Folienwechsel ruckeln lassen.
-    function activateSlide(newSlide, forward) {
-        newSlide.classList.remove('active', 'leaving', 'leaving-back', 'entering');
-        newSlide.style.transition = 'none';
-        newSlide.style.transform = forward
-            ? 'translate(40px, 0) scale(0.95)'
-            : 'translate(-40px, 0) scale(0.95)';
-        newSlide.style.opacity = '0';
-        newSlide.classList.add('entering');
-        void getComputedStyle(newSlide).opacity; // Style-Flush: Startzustand fixieren
-        newSlide.style.transition = '';
-        newSlide.style.transform = '';
-        newSlide.style.opacity = '';
+    // Crossfade über die Web Animations API (statt CSS-Transition +
+    // getComputedStyle-Flush). Warum:
+    //  - WAAPI garantiert, dass die Animation läuft. Der alte Flush-Trick
+    //    ("opacity 0 setzen → reflow → opacity freigeben") kann die
+    //    CSS-Transition bei einem beladenen Main-Thread verschlucken, weil
+    //    Start- und Endzustand im selben Style-Batch coalescen → neue Folie
+    //    bleibt bei opacity 0 → weißer Bildschirm. Genau der "manchmal"-Bug.
+    //  - Die eingehende Folie trägt SOFORT .active (CSS opacity:1). Schlägt
+    //    die Animation fehl oder wird sie unterbrochen, fällt sie auf den
+    //    CSS-Wert (sichtbar) zurück — weißer Bildschirm ist strukturell
+    //    ausgeschlossen.
+    //  - Schnelle Navigation re-targetiert vom aktuellen Zustand; alte
+    //    Animationen werden pro Folie gecancelt, daher kein Pop/Stacking.
+    function _cancelSlideAnim(el) {
+        if (el._slideAnim) { try { el._slideAnim.cancel(); } catch (e) {} el._slideAnim = null; }
+    }
+    // Animiert `el` von `from` nach `to`; setzt eine evtl. laufende
+    // Animation derselben Folie ab (keine Überlagerung).
+    function _playSlide(el, from, to) {
+        _cancelSlideAnim(el);
+        // fill:'both' (nicht 'forwards'): füllt den Start-Keyframe RÜCKWÄRTS
+        // aus, falls die Animation im ersten Frame noch nicht tickt (z.B.
+        // bei beladenem Main-Thread). Ohne Rückwärtsfüllung wäre die alte
+        // Folie (ohne .active → CSS opacity 0) für ein paar Frames komplett
+        // unsichtbar, während die neue noch bei 0 hängt → weißer Bildschirm.
+        // Mit 'both' hält die alte Folie bei 1 und die neue bei 0, bis die
+        // Animation tatsächlich vorankommt.
+        const anim = el.animate([from, to], { duration: SLIDE_DUR, easing: SLIDE_EASE, fill: 'both' });
+        el._slideAnim = anim;
+        anim.finished.then(() => {
+            // Ruhe-Zustand übernehmen: Animation ablösen, CSS-Werte gelten.
+            // End- und CSS-Werte sind identisch (aktiv: op1/0,0 · inaktiv: op0)
+            // → kein Pop. Guard: nicht antasten, wenn die Folie schon neu
+            // animiert wurde.
+            if (el._slideAnim === anim) { try { anim.cancel(); } catch (e) {} el._slideAnim = null; }
+        }).catch(() => {
+            if (el._slideAnim === anim) el._slideAnim = null;
+        });
+        return anim;
+    }
+
+    function activateSlide(newSlide, oldSlide, forward) {
+        const dir = forward ? 1 : -1;
+        // Zustandsklassen nur noch für Pointer-Events + z-Index (.active).
+        // Der Fade selbst kommt aus WAAPI.
+        newSlide.classList.remove('entering', 'leaving', 'leaving-back');
+        oldSlide.classList.remove('entering', 'leaving', 'leaving-back');
+        oldSlide.classList.remove('active');
         newSlide.classList.add('active');
+
+        // Neue Folie: aus der Einfahrseite (vorwärts: rechts, rückwärts:
+        // links) einblenden. Alte Folie: vom aktuellen Zustand in die
+        // entgegengesetzte Seite ausblenden.
+        _playSlide(
+            newSlide,
+            { opacity: 0, transform: `translate(${dir * SLIDE_DIST}px, 0px) scale(0.965)` },
+            { opacity: 1, transform: 'translate(0px, 0px) scale(1)' });
+
+        const cs = getComputedStyle(oldSlide);
+        const fromOp = parseFloat(cs.opacity);
+        const fromTr = (cs.transform && cs.transform !== 'none') ? cs.transform : 'translate(0px, 0px) scale(1)';
+        _playSlide(
+            oldSlide,
+            { opacity: isNaN(fromOp) ? 1 : fromOp, transform: fromTr },
+            { opacity: 0, transform: `translate(${-dir * SLIDE_DIST}px, 0px) scale(0.965)` });
     }
 
     function goTo(idx, showAllFragments = false) {
@@ -676,35 +714,12 @@ function prev() {
         const newSlide = slides[currentSlide];
         const forward = idx > oldIdx;
 
-        activateSlide(newSlide, forward);
-
-        // Alte Folie: in Navigationsrichtung wegschieben + wegfaden.
-        oldSlide.classList.remove('active', 'entering');
-        oldSlide.classList.add(forward ? 'leaving' : 'leaving-back');
+        activateSlide(newSlide, oldSlide, forward);
 
         // Lifecycle NACH .active setzen — Demos prüfen oft
         // `document.querySelector('.slide.active')` und würden sonst
         // fälschlich reset() statt activate() aufrufen.
         DemoRegistry.notifyEnter(oldSlide, newSlide);
-
-        // Aufräumen: nach dem Ende der Transition Zustandsklassen wieder
-        // entfernen. Guard: alte Folie nicht antasten, falls sie inzwischen
-        // wieder aktiviert wurde (dann hat activateSlide() sie ohnehin
-        // bereits bereinigt).
-        //
-        // Die Umparkung (leaving → Basisposition) läuft OHNE Transition —
-        // die Folie ist bei opacity 0 unsichtbar, ein 650-ms-Transform im
-        // Hintergrund wäre nur unnötige Compositor-Arbeit.
-        setTimeout(() => {
-            if (!oldSlide.classList.contains('active')) {
-                oldSlide.style.transition = 'none';
-                oldSlide.classList.remove('leaving', 'leaving-back');
-                oldSlide.style.transform = '';
-                void getComputedStyle(oldSlide).opacity;
-                oldSlide.style.transition = '';
-            }
-            newSlide.classList.remove('entering');
-        }, 700);
 
         // Crossfade-Lock setzen: Pfeiltasten werden erst wieder angenommen,
         // wenn die neue Folie sichtbar ist.

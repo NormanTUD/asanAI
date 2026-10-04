@@ -35,14 +35,11 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     opacity: 0;
     pointer-events: none;
     z-index: 0;
-    /* Morph-Crossfade: alte Folie schiebt sich in Navigationsrichtung
-       raus und schrumpft leicht, neue kommt aus der entgegengesetzten
-       Seite rein und wächst — beide animieren im selben Frame.
-       Vorwärts = Einfahrt von rechts (Basis-Transform); rückwärts setzt
-       Presentation.goTo() die Einfahrposition per Inline-Style. */
+    /* Ruhe-Position inaktiver Folien (opacity 0 → unsichtbar). Der
+       eigentliche Crossfade läuft über die Web Animations API in
+       Presentation.goTo() — KEINE CSS-Transition hier, sonst würde sie
+       mit WAAPI konkurrieren, wenn .active getoggelt wird. */
     transform: translate(40px, 0) scale(0.95);
-	transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
-				transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Einlaufende Folie: während des Crossfades über der austretenden
