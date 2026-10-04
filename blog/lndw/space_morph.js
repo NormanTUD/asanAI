@@ -311,7 +311,14 @@ const SpaceMorph = (() => {
         { t: "Auf die 1D-Achse projiziert",
             b: "Wie am Anfang der Egg-Phase: die beiden Tori werden auf die 1D-Achse projiziert. Grüne und rote Punkte liegen jetzt auf beiden Seiten von s = 0.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 1, box: 0,
-            tori: 1, ut: 1, kx: 0 }
+            tori: 1, ut: 1, kx: 0 },
+        // Fun-Fact (abschließende Aside): Raumkrümmung der Aktivierung —
+        // Sigmoid krümmt glatt (Welle), ReLU knickt hart (Falte). Eigener
+        // Schritt mit vollem 2D-Canvas-3D-Plot, kein 3D-Szenario (ff: 1).
+        { t: "Sigmoid krümmt, ReLU knickt",
+            b: "Zwei Aktivierungen, zwei Raumkrümmungen: Sigmoid biegt die Fläche glatt wie eine Welle — keine Kante. ReLU knickt sie hart: bei x = 0 eine scharfe Falte (Origami). Genau diese Falte schafft die Trennfläche, die im ℝ³ nicht möglich war.",
+            L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 0, ut: 0, kx: 0, ff: 1 }
     ];
 
     // Benannte Indizes, damit Logik nicht auf Magic Numbers läuft
@@ -321,6 +328,7 @@ const SpaceMorph = (() => {
     const IDX_LIFT     = 10;  // 4D-Lift
     const IDX_PLANE    = 11;  // Trennebene
     const IDX_AXIS     = 12;  // Tori auf die 1D-Achse projiziert (wie die Egg-Phase)
+    const IDX_FUNFACT  = 13;  // Fun-Fact: Präzision bricht Topologie (2D-Plot, kein 3D)
 
     // "Jeder Punkt = ein Wort": zwei Beispielwörter (ein random Punkt pro Torus),
     // die als Label über dem Punkt erscheinen, sobald der verwirrte Torus gezeigt
@@ -577,6 +585,74 @@ const SpaceMorph = (() => {
         ctx.textAlign = 'left';
     }
 
+    // ---------- Fun-Fact-Schritt: Sigmoid krümmt, ReLU knickt ----------
+    // Zwei 3D-Blätter nebeneinander. Sigmoid biegt die Fläche glatt (Welle),
+    // ReLU knickt sie hart (scharfe Falte bei x=0, wie Origami). Inspiriert von
+    // origami_live.js, aber ohne three.js/tfjs — nur 2D-Canvas-3D-Projektion.
+    const FF_SIG = x => (1 / (1 + Math.exp(-1.6 * x))) - 0.5;   // S-Kurve, zentriert
+    const FF_RELU = x => Math.max(0, x);                        // harte Falte bei x=0
+    function ffProj(xw, y, z) {
+        const A = 0.2, B = 0.5, S0 = Math.min(W, H) * 0.12;
+        const X = xw * Math.cos(A) - y * Math.sin(A);
+        const Y = xw * Math.sin(A) + y * Math.cos(A);
+        const y2 = -Y * Math.sin(B) + z * Math.cos(B);
+        const z2 = Y * Math.cos(B) + z * Math.sin(B);
+        const d = 5.0, k = d / (d + z2 * 0.70);
+        return { X: W / 2 + X * S0 * k, Y: H * 0.47 - y2 * S0 * k };
+    }
+    function drawSheet(cx, act, color, alpha, crest) {
+        const NX = 28, NY = 16, X0 = -1.3, X1 = 1.3, Y0 = -0.8, Y1 = 0.8, ZS = 0.85;
+        // Höhenlinien (konstante lx) — die "Tiefe" des Blatts
+        for (let i = 0; i <= NX; i++) { const lx = X0 + (X1 - X0) * i / NX, z = act(lx) * ZS;
+            ctx.strokeStyle = color; ctx.globalAlpha = alpha * 0.40; ctx.lineWidth = 0.9;
+            ctx.beginPath();
+            for (let j = 0; j <= NY; j++) { const ly = Y0 + (Y1 - Y0) * j / NY;
+                const p = ffProj(cx + lx, ly, z); j ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y); }
+            ctx.stroke(); }
+        // Querschnitte (konstante ly) — zeigen das Profil (Welle / Keil)
+        for (let j = 0; j <= NY; j++) { const ly = Y0 + (Y1 - Y0) * j / NY;
+            const edge = (j === 0 || j === NY);
+            ctx.strokeStyle = color; ctx.globalAlpha = alpha * (edge ? 0.95 : 0.60);
+            ctx.lineWidth = edge ? 1.7 : 1.0;
+            ctx.beginPath();
+            for (let i = 0; i <= NX; i++) { const lx = X0 + (X1 - X0) * i / NX, z = act(lx) * ZS;
+                const p = ffProj(cx + lx, ly, z); i ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y); }
+            ctx.stroke(); }
+        // Falzkante (ReLU): lx = 0 als helle Linie
+        if (crest) { const z = act(0) * ZS;
+            ctx.strokeStyle = '#fbbf24'; ctx.globalAlpha = alpha * 0.95; ctx.lineWidth = 2.4;
+            ctx.beginPath();
+            for (let j = 0; j <= NY; j++) { const ly = Y0 + (Y1 - Y0) * j / NY;
+                const p = ffProj(cx + 0, ly, z); j ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y); }
+            ctx.stroke(); }
+        ctx.globalAlpha = alpha;
+    }
+    function drawFunFact(alpha) {
+        if (alpha < 0.01) return;
+        ctx.save();
+        // Titel
+        ctx.globalAlpha = alpha; ctx.textAlign = 'center';
+        ctx.fillStyle = '#0f172a'; ctx.font = '600 21px system-ui,sans-serif';
+        ctx.fillText('Sigmoid krümmt, ReLU knickt', W / 2, H * 0.10);
+        ctx.fillStyle = '#64748b'; ctx.font = '13px system-ui,sans-serif';
+        ctx.fillText('zwei Aktivierungen, zwei Raumkrümmungen', W / 2, H * 0.10 + 22);
+        // Blätter nebeneinander
+        const GAP = 2.15;
+        drawSheet(-GAP, FF_SIG, '#0284c7', alpha, false);
+        drawSheet(+GAP, FF_RELU, '#d97706', alpha, true);
+        // Beschriftung über jedem Blatt
+        ctx.globalAlpha = alpha; ctx.textAlign = 'center'; ctx.font = '600 14px system-ui,sans-serif';
+        const lL = ffProj(-GAP, 0, 0), lR = ffProj(GAP, 0, 0);
+        ctx.fillStyle = '#0284c7'; ctx.fillText('sigmoid — glatte Welle', lL.X, H * 0.33);
+        ctx.fillStyle = '#d97706'; ctx.fillText('ReLU — harte Falte', lR.X, H * 0.33);
+        // Caption
+        ctx.fillStyle = '#475569'; ctx.font = '13.5px system-ui,sans-serif';
+        ctx.fillText('Sigmoid biegt den Raum glatt um — ReLU schlägt eine scharfe Falte', W / 2, H * 0.68);
+        ctx.fillStyle = '#d97706'; ctx.font = '600 13.5px system-ui,sans-serif';
+        ctx.fillText('Genau diese Falte schafft die Trennung, die keine Ebene in ℝ³ hinbekam.', W / 2, H * 0.68 + 22);
+        ctx.restore();
+    }
+
     // ---------- Render ----------
     function draw(now) {
         if (!active) return;
@@ -605,7 +681,8 @@ const SpaceMorph = (() => {
         const pl = lerp(a.pl, b.pl, u), sq = lerp(a.sq, b.sq, u),
             fl = lerp(a.fail, b.fail, u) * (1 - tor),
             lb = lerp(a.lab, b.lab, u) * (1 - tor),
-            bx = lerp(a.box, b.box, u);
+            bx = lerp(a.box, b.box, u),
+            ff = lerp(a.ff || 0, b.ff || 0, u);
         // Schritt-8-Auto-Orbit: 1× Pfeil-rechts → ~5 s sanfter 360°-Kamera-Umlauf.
         if (autoOrbitActive && tor > 0.01) {
             const elapsed = now - autoOrbitStart;
@@ -624,6 +701,14 @@ const SpaceMorph = (() => {
         const axA = (fwd ? sub(prRaw, 0.05, 0.5) : 1 - sub(1 - prRaw, 0.05, 0.5)) * lesson;
 
         ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, W, H);
+
+        // Fun-Fact-Schritt: ganzes 3D-Szenario überspringen, nur den 2D-Plot
+        // zeichnen (Hard-Cut wie bei den Egg↔Tori-Übergängen, Plot blendet ein).
+        if (ff > 0.01) {
+            drawFunFact(ff);
+            raf = requestAnimationFrame(draw);
+            return;
+        }
 
         drawBox(bx * lesson);
 
