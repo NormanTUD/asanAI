@@ -291,11 +291,12 @@ const IntroAnim = (() => {
 		// ---- Beats ------------------------------------------------
 		const beats = [
 			function () {
-				// 0: Phone mit Logo, idle — statisch, kein Auf/Ab-Schweben
+				// 0: Phone mit Logo, idle — statisch, kein Auf/Ab-Schweben,
+				//    kein "Breathe"-Scale (sonst weicht das Logo von Beat zu Beat ab)
 				clearAutoAdvance();
 				resetAll();
 				setPhone(1, 1);
-				s('logo', l => { l.style.opacity = '1'; l.classList.add('breathe'); });
+				s('logo', l => l.style.opacity = '1');
 			},
 			function () {
 				// 1: Mikrofon blinkt + Suchtext tippt gleichzeitig ins Suchfeld

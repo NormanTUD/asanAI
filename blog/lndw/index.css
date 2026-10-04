@@ -1330,11 +1330,6 @@ body.sel-mode .sel-check { display: inline-flex; }
 	opacity: 1;
 	transition: none;  /* FIX 8: sofort sichtbar, kein Fade */
 }
-.ia-app-logo.breathe { animation: ia-logoBreathe 3.6s ease-in-out infinite; }
-@keyframes ia-logoBreathe {
-	0%, 100% { transform: scale(1); }
-	50%      { transform: scale(1.045); }
-}
 .ia-app-logo .ia-l1 { color: #4285f4; }
 .ia-app-logo .ia-l2 { color: #ea4335; }
 .ia-app-logo .ia-l3 { color: #fbbc04; }
