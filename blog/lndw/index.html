@@ -37,9 +37,145 @@
 
 <div class="slide" id="slide-was-sind-llm" data-title="Was sind Large Language Models?">
 	<div class="slide-content">
-		<h2>Was sind Large Language Models?</h2>
+		<div class="ia-stage">
+			<div class="ia-starfield"></div>
 
-		<p style="text-align:center; margin:14px 0 8px; max-width:840px; margin-left:auto; margin-right:auto;">Programme wie <b>ChatGPT</b> &amp; Co. funktionieren so: Eine Frage wird eingetippt — genau so, wie sie gerade gedacht wird. Der Computer antwortet in ganzen Sätzen, als hätte ein Gegenüber geschrieben. Was dabei hinter den Kulissen passiert, ist das Thema heute.</p>
+			<!-- ============ Das Smartphone ============ -->
+			<div class="ia-phone" id="ia-phone">
+				<div class="ia-phone-frame"></div>
+				<div class="ia-phone-notch"></div>
+				<div class="ia-phone-screen">
+					<div class="ia-app-logo" id="ia-logo">
+						<span class="ia-l1">S</span><span class="ia-l2">u</span><span class="ia-l3">c</span><span class="ia-l4">h</span><span class="ia-l5">e</span>
+					</div>
+					<div class="ia-search-bar">
+						<div class="ia-search-icon"></div>
+						<div class="ia-search-text" id="ia-search-text"></div>
+						<div class="ia-mic-btn" id="ia-mic-btn">
+							<div class="ia-mic-icon"></div>
+						</div>
+					</div>
+					<div class="ia-ai-card" id="ia-ai-card">
+						<div class="ia-ai-text" id="ia-ai-text"></div>
+						<div class="ia-ai-thinking" id="ia-ai-thinking">
+							<span></span><span></span><span></span>
+						</div>
+					</div>
+					<div class="ia-serp" id="ia-serp">
+						<div class="ia-result r1">
+							<div class="ia-res-head">
+								<img class="ia-res-fav" src="favicon_wikipedia.ico" alt="">
+								<div class="ia-res-lines">
+									<span class="ia-res-name">Wikipedia</span>
+									<span class="ia-res-url">de.wikipedia.org › Rayleigh-Jeans-Gesetz</span>
+								</div>
+							</div>
+							<div class="ia-res-title">Rayleigh-Jeans-Gesetz</div>
+							<div class="ia-res-snippet">Das Plancksche Strahlungsgesetz ist eine Interpolationsformel der beiden anderen Gesetze.</div>
+						</div>
+						<div class="ia-result r2">
+							<div class="ia-res-head">
+								<img class="ia-res-fav" src="favicon_wikipedia.ico" alt="">
+								<div class="ia-res-lines">
+									<span class="ia-res-name">Wikipedia</span>
+									<span class="ia-res-url">de.wikipedia.org › Rayleigh-Streuung</span>
+								</div>
+							</div>
+							<div class="ia-res-title">Rayleigh-Streuung</div>
+							<div class="ia-res-snippet">Die Streuung von Licht an Teilchen, die kleiner sind als seine Wellenlänge.</div>
+						</div>
+						<div class="ia-result r3">
+							<div class="ia-res-head">
+								<img class="ia-res-fav" src="favicon_leifiphysik.ico" alt="">
+								<div class="ia-res-lines">
+									<span class="ia-res-name">Leifi Physik</span>
+									<span class="ia-res-url">www.leifiphysik.de › optik › streuung</span>
+								</div>
+							</div>
+							<div class="ia-res-title">Warum ist der Himmel blau?</div>
+							<div class="ia-res-snippet">Kurzwelliges blaues Licht wird stärker gestreut als langwelliges rotes Licht.</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Waveform -->
+			<div class="ia-waveform" id="ia-waveform">
+				<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+				<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+				<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+				<div class="ia-bar"></div><div class="ia-bar"></div>
+			</div>
+
+			<!-- Captions -->
+			<div class="ia-beat-caption ia-cap-code" id="ia-cap-code">
+				Diese Systeme können viel mehr — sie können auch <span class="ia-acc">programmieren</span>.
+			</div>
+			<div class="ia-beat-caption ia-cap-pic" id="ia-cap-pic">
+				Und sie können auch <span class="ia-acc">Bilder generieren</span>.
+			</div>
+
+			<!-- Stack: Chat-Fenster (Code) + Terminal darunter -->
+			<div class="ia-stack" id="ia-stack">
+				<div class="ia-llm-chat" id="ia-code-win">
+					<div class="ia-chat-head">
+						<span class="ia-ai-spark">✦</span>
+						<span class="ia-chat-name">Assistent</span>
+						<span class="ia-chat-model">chat</span>
+					</div>
+					<div class="ia-chat-body">
+						<div class="ia-chat-msg user">Schreib mir ein Programm, das die Lichtstreuung in der Atmosphäre berechnet.</div>
+						<div class="ia-chat-msg ai">
+							<div class="ia-chat-lead">Klar! Damit berechnet Python die Rayleigh-Streuung von Licht in Luft:</div>
+							<div class="ia-code-block">
+								<div class="ia-code-block-head">
+									<span class="ia-cw-dot r"></span>
+									<span class="ia-cw-dot y"></span>
+									<span class="ia-cw-dot g"></span>
+									<span class="ia-cw-name">himmel.py</span>
+								</div>
+								<pre class="ia-cw-code" id="ia-cw-code"></pre>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ia-term-window" id="ia-term-win">
+					<div class="ia-cw-title">
+						<span class="ia-cw-dot r"></span>
+						<span class="ia-cw-dot y"></span>
+						<span class="ia-cw-dot g"></span>
+						<span class="ia-cw-name">Terminal</span>
+					</div>
+					<div class="ia-cw-out" id="ia-cw-out">
+						<div class="ia-out-cmd"><span class="ia-dollar">$</span> python3 himmel.py</div>
+						<div class="ia-out-line">Blau wird 4.35× stärker gestreut als Rot</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Chat-Fenster (Bilder generieren) -->
+			<div class="ia-chat-window" id="ia-chat-win">
+				<div class="ia-chat-head">
+					<span class="ia-ai-spark">✦</span>
+					<span class="ia-chat-name">Suche-KI</span>
+				</div>
+				<div class="ia-chat-body">
+					<div class="ia-chat-msg user" id="ia-chat-prompt"></div>
+					<div class="ia-chat-msg ai" id="ia-chat-ai">
+						<img class="ia-chat-img" src="katze1.jpg" alt="Generiertes Bild: eine Katze">
+					</div>
+				</div>
+			</div>
+
+			<!-- Statement -->
+			<div class="ia-statement" id="ia-statement">
+				<div class="ia-st-line1">Dahinter steckt ein und dasselbe Modell —</div>
+				<div class="ia-st-line2">der <span class="ia-acc">Transformer</span>.</div>
+			</div>
+		</div>
+
+		<!-- (Step-Bar entfernt — die Pfeiltasten reichen) -->
 	</div>
 </div>
 
@@ -603,6 +739,18 @@
             <p>Text → kleine Stücke (<b>Tokens</b>) · Computer versteht nur Zahlen.</p>
             <p class="fragment">Ganze Wörter · Wortteile · mehrere Wörter · auch Leerzeichen, Kommata, Emojis, …</p>
     	<p class="fragment">Anzahl vorgeben → Tokenizer wählt per Häufigkeit die (Teil-)Worte selbst.</p>
+
+            <div class="ia-tokens-stage" style="margin-top:16px;">
+                <div class="ia-tokens-label" id="ia-tokens-label"><span class="ia-acc">Tokenisierung</span></div>
+                <div class="ia-tokens-layer" id="ia-tokens-layer"></div>
+                <div class="ia-tokens-sub" id="ia-tokens-sub">Im Kern ein <span class="ia-acc">Kompressions-Algorithmus</span>: die häufigsten Muster werden zu einem einzigen Token zusammengefasst.</div>
+            </div>
+            <div class="ia-step-bar" id="ia-tokens-step-bar">
+                <button type="button">1. Token-Reihe</button>
+                <button type="button">2. „himmel" bricht</button>
+                <button type="button">3. „him" + „mel"</button>
+            </div>
+            <p class="ia-tokens-hint">„himmel" kommt so oft vor, dass es zwei Tokens sparen würde, es zu zerlegen — aber „him" + „mel" decken mehr Wortteile ab.</p>
 
             <div class="demo-box fragment" style="min-height:auto;">
                 <input type="text" id="tokenizer-input" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:14px;" placeholder="z.B. 'es war einmal ein königskind'" value="es war einmal ein königskind">
@@ -1707,6 +1855,7 @@
 <script src="attn_demo.js"></script>
 <script src="heads_web.js"></script>
 <script src="index.js"></script>
+<script src="intro_anim.js"></script>
 <script src="intuition.js"></script>
 <script src="philosophy.js"></script>
 <script src="presentation.js"></script>

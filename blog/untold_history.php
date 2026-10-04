@@ -788,17 +788,24 @@ Without chronophotography there are no video frames. Without labelled image-sequ
 </div>
 
 <div class="md" data-depth="20">
-#### From the Moon to the GPU: Space Image Processing
+#### From a Baby's Face to the GPU: Space Image Processing
 
-Muybridge's labelled images stayed, for half a century, a pile of glass plates. What turned images into *computable* data, and quietly set the scene for the entire vision stack, was done in a very different place: a laboratory at NASA's Jet Propulsion Laboratory, cleaning up grainy pictures of the Moon and the planets arriving over a slow radio link.
+Muybridge's labelled images stayed, for half a century, a pile of glass plates. What turned images into *computable* data happened, unglamorously, at the National Bureau of Standards. In 1957, **Russell Kirsch** built a **drum scanner** and scanned a photograph of his three-month-old son, **Walden**, into a 176×176 array of numbers processed on the bureau's SEAC computer: the first photograph ever processed by a computer, and the ancestor of every pixel matrix a vision model has since consumed (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
+
+<figure>
+    <img style="width: 55%; height: auto; display: block; margin: 1em auto;" src="kirsch_baby_1957.jpg" alt="The first digital image: a 1957 scan of Russell Kirsch's son Walden, 176 by 176 pixels" />
+    <figcaption class="md">The \citealternativetitle{img_kirsch_baby} (Public Domain, \citeauthor{img_kirsch_baby}): the first image a computer ever processed — not the Moon, but a baby. A 176×176 scan of Kirsch's three-month-old son, 1957.</figcaption>
+</figure>
+
+The first large-scale *space* image processing came seven years later, at NASA's Jet Propulsion Laboratory, cleaning up grainy pictures of the Moon and the planets arriving over a slow radio link.
 
 \citeauthor{tomayko1988spaceflight} records that **Robert Nathan** at JPL pioneered **digital image processing** to enhance the images from the Ranger, Surveyor and Mariner probes \cite{tomayko1988spaceflight}: stretching their contrast, normalising their uneven illumination with high-pass filtering, correcting their geometric distortion, and eliminating their noise. Because the images were far too big and slow for an astronomer to fix by eye, Nathan's team wrote **VICAR** (Video Information Communication and Retrieval), a language that let a user *chain* image-processing operations together, the conceptual ancestor of the modern computer-vision pipeline, where one feeds an image through a stack of transforms \cite{tomayko1988spaceflight}. Those techniques spread, almost immediately, into astronomy and into medical imaging (the enhancement of x-ray scans), and became the quiet foundation on which modern computer vision, and the neural networks trained on image data, were later built \cite{tomayko1988spaceflight}.
 
 The hardware half of the story is the more direct foreshadow of the GPU. To make these operations fast enough, Nathan went on to pioneer **VLSI chips that implemented image-processing algorithms in hardware**, wiring up a 35×35 array of parallel multipliers to accelerate a computation by a factor of **1,225** \cite{tomayko1988spaceflight}. A grid of parallel multipliers doing a two-dimensional array operation in one shot is, at the level of the idea, exactly what a modern GPU or TPU is. The machine that made the Moon pictures clearer is a direct, if unacknowledged, ancestor of the accelerator that trains a language model.
 
 <figure>
-    <img style="width: 70%; height: auto; display: block; margin: 1em auto;" src="ranger7_moon.jpg" alt="A lunar surface image from NASA's Ranger 7 probe, 1964, the kind of grainy image Robert Nathan's team enhanced with the first digital image-processing pipelines" />
-    <figcaption class="md">The \citealternativetitle{img_ranger7_moon} (Public Domain): a lunar image from NASA's \citealternativetitle{img_ranger7_moon} probe, the kind of grainy, unevenly-lit picture that Robert Nathan's JPL team enhanced with the first digital image-processing pipelines, the quiet ancestor of the modern computer-vision stack (\cite[Tomayko, 1988]{tomayko1988spaceflight}). Source: \citeauthor{img_ranger7_moon}, \citeyear{img_ranger7_moon}, \citealternativetitle{img_ranger7_moon}, Wikimedia Commons.</figcaption>
+    <img style="width: 70%; height: auto; display: block; margin: 1em auto;" src="ranger7_moon.jpg" alt="A lunar surface image from NASA's Ranger 7 probe, 1964, the kind of grainy image Robert Nathan's team enhanced with the first space image-processing pipelines" />
+    <figcaption class="md">The \citealternativetitle{img_ranger7_moon} (Public Domain): a lunar image from NASA's \citealternativetitle{img_ranger7_moon} probe, the kind of grainy, unevenly-lit picture that Robert Nathan's JPL team enhanced with the first *space* image-processing pipelines, the quiet ancestor of the modern computer-vision stack (\cite[Tomayko, 1988]{tomayko1988spaceflight}). Source: \citeauthor{img_ranger7_moon}, \citeyear{img_ranger7_moon}, \citealternativetitle{img_ranger7_moon}, Wikimedia Commons.</figcaption>
 </figure>
 
 <div class="image-row">
@@ -811,6 +818,10 @@ The hardware half of the story is the more direct foreshadow of the GPU. To make
         <figcaption class="md">The \citealternativetitle{img_ranger7_impact} (Public Domain): Ranger 7's final photograph, the highest-resolution picture of the Moon taken up to that date, moments before the spacecraft struck the surface. Source: \citeauthor{img_ranger7_impact}, \citeyear{img_ranger7_impact}, \citealternativetitle{img_ranger7_impact}, Wikimedia Commons.</figcaption>
     </figure>
 </div>
+
+While NASA cleaned up the Moon, the first large-scale *commercial* image processing was reading bank checks. SRI International's **MICR** (magnetic ink character recognition) system read the stylized digits at the bottom of a check as part of the **ERMA** (Electronic Recording Method of Accounting) system: in 1956 the Bank of America announced General Electric as its production builder, the first 32 ERMA machines arrived in 1959, and ERMA read the bank's checks until 1970 (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
+
+Kirsch's scanner had a linguistic aftertaste. Asked in a later interview what drew him to pictures, he said that by 1957 he was "intrigued by what the linguists were able to do with grammar on computers" and asked the question that seemed obvious to him: "Could you do the same thing with pictures?" With his wife Joan he built a grammar for images, and a program that used it to generate abstract paintings in the style of the Bay Area artist **Richard Diebenkorn** — which Diebenkorn himself, shown the output, judged "strikingly similar" to a painting of his own (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}). Image grammars stayed a research curiosity, but the move — describing an image with the same rule machinery as a sentence — resurfaced in scene analysis and, much later, in the statistical "image grammars" of modern vision.
 </div>
 
 <div class="md" data-depth="20">
@@ -1192,6 +1203,8 @@ The **Colossus** Mark 2 (\citeyear{flowers1983design}), built by Tommy Flowers a
 
 Norbert Wiener's *Cybernetics* (1948) grew directly out of his wartime work on **anti-aircraft fire-control**: predicting an aircraft's future position from noisy radar returns in order to aim guns. The book synthesized Wiener's feedback theory with \citeauthor{mccullochpitts1943}'s 1943 logical-neuron paper, written five years earlier, to define the cybernetic paradigm that dominated AI in the 1950s \cite{wiener1948cybernetics}. I. J. Good, a wartime collaborator of Turing's, later developed the Bayesian methods for cryptanalysis that became a foundation of modern statistical AI \cite{good1959statistics}.
 
+The field's very name was a deliberate break with that tradition. When **John McCarthy** chose a title for the 1956 Dartmouth workshop, he settled on "artificial intelligence" partly to distinguish the project from the recent volume *Automata Studies* and, as he put it later, "to escape association with 'cybernetics'" — whose "concentration on analog feedback seemed misguided", so that he would not have to "accept Norbert Wiener as a guru" or "argue with him" (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
+
 ### ARPA/DARPA: The Government Patron of AI
 
 Created in February 1958 in response to Sputnik, the **Advanced Research Projects Agency** (renamed DARPA in 1972) became the primary funder of American AI research for two decades. Its **Information Processing Techniques Office** (IPTO) financed, among much else:
@@ -1319,6 +1332,10 @@ Since Spirit and Opportunity landed in 2004, NASA/JPL rovers have carried **Visu
 </div>
 
 That was the \citeyear{newyorktimesperceptron} prediction, made as the Perceptron first learned to tell shapes apart at Cornell. Six decades later the "mechanical space explorer" is a car-sized rover that, with no operator in the loop, decides for itself which rocks to drill and how to keep from getting stuck.
+
+### LUNAR: Asking the Moon Rocks Questions in English (1962–1964)
+
+The Moon also gave AI one of its first natural-language systems, and it came back on the astronauts. After Apollo 11, the several pounds of lunar rock the crew brought home were described in databases that geologists could only query in arcane code. NASA asked **William A. Woods**, a young computer scientist at BBN, whether the databases could be queried in *English*; with Ron Kaplan and Bonnie Webber he built **LUNAR**, a system that turned English questions about the moon rocks into database queries \cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}. "What is the average concentration of aluminum in high alkali rocks?" or "How many breccias contain olivine?" were parsed by **augmented transition networks** (ATNs), Woods' own invention from his Harvard dissertation, and mapped into a "meaning representation language" (MRL), a logic extended with executable procedures. LUNAR even tracked discourse: asked "What are they?", it knew *they* were the breccias from the previous answer. The Apollo mission that put boots on the Moon thus shipped, among its payloads, the training data for one of the first natural-language interfaces.
 
 ### Coding Theory for Noisy Channels
 

@@ -612,6 +612,15 @@ function prev() {
         cancelPendingActivation();
         cancelSlideTransition();
         oldSlide.classList.remove('active');
+        // Morph: alte Folie schiebt nach links raus + schrumpft,
+        // neue kommt von rechts rein + wächst. Beide während der
+        // Transition kurz gleichzeitig sichtbar.
+        if (idx > slides.indexOf(oldSlide)) {
+            oldSlide.classList.add('leaving');
+        } else {
+            oldSlide.classList.remove('leaving');
+            oldSlide.style.transform = 'translate(40px, 0) scale(0.95)';
+        }
         pendingActivationSlide = newSlide;
         pendingActivationOuterRaf = requestAnimationFrame(() => {
             pendingActivationOuterRaf = null;
@@ -628,6 +637,14 @@ function prev() {
                 // `document.querySelector('.slide.active')` und würden sonst
                 // fälschlich reset() statt activate() aufrufen.
                 DemoRegistry.notifyEnter(newSlide);
+                // Aufräumen: alte Folie zurücksetzen (nicht-leaving),
+                // damit sie beim nächsten Mal sauber ist.
+                setTimeout(() => {
+                    if (oldSlide && !oldSlide.classList.contains('active')) {
+                        oldSlide.classList.remove('leaving');
+                        oldSlide.style.transform = '';
+                    }
+                }, 1100);
             });
         });
         // Crossfade-Lock setzen: Pfeiltasten werden erst wieder angenommen,
