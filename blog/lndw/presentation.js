@@ -27,7 +27,11 @@ const DemoRegistry = (() => {
     };
 
         const registry = [
+                // NNStepDemo lebt auf der Stückelung-Folie — dort erst
+                // resetten (sonst re-rendert der Approx-Plot bei jedem
+                // Folienwechsel mit).
                 { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
+                        slideTest: s => s && s.id === 'slide-stueckelung',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
@@ -37,6 +41,7 @@ const DemoRegistry = (() => {
                 { ref: () => typeof TrainingViz !== 'undefined' ? TrainingViz : null },
 
                 { ref: () => typeof AttentionDemo !== 'undefined' ? AttentionDemo : null,
+                        slideTest: s => s && s.id === 'slide-attention',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof JSpaceViz !== 'undefined' ? JSpaceViz : null,
@@ -57,6 +62,7 @@ const DemoRegistry = (() => {
                         guard: d => d.isOnNotebookSlide(),
                         nextMethod: 'nextLayer',
                         prevMethod: 'prevLayer',
+                        slideTest: s => s && s.id === 'slide-residual-stream-notebook',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof EmbeddingAutoDemo !== 'undefined' ? EmbeddingAutoDemo : null,
@@ -65,6 +71,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof PredictionViz !== 'undefined' ? PredictionViz : null,
+                        slideTest: s => s && s.id === 'slide-die-vorhersage',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof CRSim !== 'undefined' ? CRSim : null,
@@ -117,12 +124,19 @@ const DemoRegistry = (() => {
                 // Aligning-Animation blockieren (Bewegung nicht skippen).
                 // Beim Verlassen der Folie wird der Zustand zurückgesetzt,
                 // damit beim nächsten Besuch wieder von vorn begonnen wird.
+                // Der Reset re-rendert beide 3D-Manifolds (~370 ms) — daher
+                // verzögert, NACH dem Crossfade-Lock (650 ms), damit er den
+                // Folienwechsel nicht verlangsamt. leaveGuard: wer bis dahin
+                // zurückgekehrt ist, behält seinen Zustand; der Reset wird
+                // beim nächsten Verlassen neu geplant.
                 { ref: () => typeof ManifoldAlignViz !== 'undefined' ? ManifoldAlignViz : null,
                         guard: d => d.isOnSlide(),
                         canNext: 'isAnimating',
                         nextMethod: 'nop',
                         slideTest: s => s.getAttribute('data-title') === 'Mannigfaltigkeiten-Hypothese',
-                        onLeave: d => d.reset() },
+                        onLeave: d => d.reset(),
+                        deferMs: 700,
+                        leaveGuard: d => !d.isOnSlide() },
 
                 { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
                         guard: d => d.isOnSlide() },
@@ -176,15 +190,52 @@ const DemoRegistry = (() => {
         return false;
     }
 
-    /** Lifecycle: Slide wird betreten */
-    function notifyEnter(slide) {
+    /**
+     * Lifecycle: Slide-Wechsel oldSlide → newSlide.
+     *
+     * Demos mit slideTest reagieren NUR, wenn die Transition ihre Folie
+     * betrifft (Eintritt oder Austritt). Sonst würde jeder Folienwechsel
+     * alle anderen Demos resetten — inkl. schwerer Plotly-Re-Render (z.B.
+     * 370 ms bei den Dual-Manifolds) — und den Wechsel verlangsamen.
+     *
+     * Demos ohne slideTest (global) behalten das Legacy-Verhalten:
+     * onLeave bei jedem Wechsel.
+     *
+     * deferMs: onLeave erst N ms verzögert ausführen (nach dem
+     * Crossfade-Lock) — für teure Resets, die den Wechsel nicht
+     * verlangsamen dürfen. leaveGuard: darf den (verzögerten) Leave
+     * bei Bedarf absagen, z.B. wenn die Folie inzwischen wieder aktiv
+     * ist (dann wird der Reset beim nächsten Verlassen neu geplant).
+     */
+    function notifyEnter(oldSlide, newSlide) {
         for (const demo of demos) {
             const instance = demo.ref();
             if (!instance) continue;
-            if (demo.slideTest && demo.slideTest(slide)) {
-                if (demo.onEnter) demo.onEnter(instance);
+
+            let fire;
+            if (demo.slideTest) {
+                if (demo.slideTest(newSlide)) {
+                    fire = 'enter';
+                } else if (oldSlide && demo.slideTest(oldSlide)) {
+                    fire = 'leave';
+                } else {
+                    continue; // Transition auf fremden Folien: ignorieren
+                }
             } else {
-                if (demo.onLeave) demo.onLeave(instance);
+                fire = 'leave';
+            }
+
+            if (fire === 'enter') {
+                if (demo.onEnter) demo.onEnter(instance);
+            } else if (demo.onLeave) {
+                if (demo.deferMs) {
+                    setTimeout(() => {
+                        if (demo.leaveGuard && !demo.leaveGuard(instance)) return;
+                        demo.onLeave(instance);
+                    }, demo.deferMs);
+                } else {
+                    demo.onLeave(instance);
+                }
             }
         }
     }
@@ -552,27 +603,7 @@ function prev() {
     }
 }
 
-    // Pending rAF-Tokens für den Crossfade. Wenn der Nutzer schnell weiter-
-    // klickt, kann ein älterer rAF noch feuern NACHDEM goTo() bereits eine
-    // andere Folie aktiviert hat → die alte Folie blitzt kurz wieder auf.
-    // Wir merken uns BEIDE rAF-Tokens (outer + inner) und cancellen sie beim
-    // nächsten goTo(), damit die alte Folie nicht re-blinkt.
-    let pendingActivationOuterRaf = null;
-    let pendingActivationInnerRaf = null;
-    let pendingActivationSlide = null;
-    function cancelPendingActivation() {
-        if (pendingActivationOuterRaf !== null) {
-            cancelAnimationFrame(pendingActivationOuterRaf);
-            pendingActivationOuterRaf = null;
-        }
-        if (pendingActivationInnerRaf !== null) {
-            cancelAnimationFrame(pendingActivationInnerRaf);
-            pendingActivationInnerRaf = null;
-        }
-        pendingActivationSlide = null;
-    }
-
-    // Lock für den gesamten Crossfade (CSS-Transition ist 0.8s). Solange der
+    // Lock für den gesamten Crossfade (CSS-Transition: 0.65s). Solange der
     // Lock hält, werden Pfeiltasten in navigate() geblockt — die neue Folie
     // muss erst sichtbar sein, bevor der nächste Klick zählt. Auch dasselbe
     // gilt für Sub-Folien-Übergänge (siehe DemoRegistry-Einträge, die auf
@@ -582,13 +613,45 @@ function prev() {
     // räumt beim Re-Render mit clearTimeout() alle Timer auf, was einen
     // setTimeout-basierten Lock sofort killt. Ein Timestamp-basiertes Lock
     // ist immun dagegen.
-    const SLIDE_TRANSITION_MS = 850;
+    const SLIDE_TRANSITION_MS = 650;
     let slideTransitionUntil = 0;
     function lockSlideTransition() {
         slideTransitionUntil = Date.now() + SLIDE_TRANSITION_MS;
     }
     function isSlideTransitioning() { return Date.now() < slideTransitionUntil; }
     function cancelSlideTransition() { slideTransitionUntil = 0; }
+
+    // Ein Folienwechsel in einem Frame:
+    //   1. Neue Folie ohne Transition auf die Einfahrposition setzen
+    //      (vorwärts: rechts, rückwärts: links) und per Style-Flush
+    //      fixieren — ersetzt den alten 2×rAF-Trick, dadurch animieren
+    //      alte und neue Folie simultan (kein Blink-Spalt).
+    //   2. Transition freigegeben, Inline-Styles geleert, .active gesetzt
+    //      → CSS-Transition läuft garantiert vom fixierten Startpunkt.
+    //   3. Alte Folie in Navigationsrichtung wegfaden (.leaving /
+    //      .leaving-back), Zustandsklassen nach der Transition aufräumen.
+    //      Das Aufräumen heilt auch veraltete Zustände (z.B. .leaving von
+    //      einem früheren Besuch), daher kein Pop mehr bei schneller
+    //      Hin-und-her-Navigation.
+    //
+    // WICHTIG: Style-Flush via getComputedStyle, NICHT via offsetWidth.
+    // transform/opacity sind Layout-neutral — ein Full-Reflow (offsetWidth)
+    // würde bei dem schweren Deck (viele Plotly-SVGs) den Main Thread
+    // hunderte Millisekunden blockieren und den Folienwechsel ruckeln lassen.
+    function activateSlide(newSlide, forward) {
+        newSlide.classList.remove('active', 'leaving', 'leaving-back', 'entering');
+        newSlide.style.transition = 'none';
+        newSlide.style.transform = forward
+            ? 'translate(40px, 0) scale(0.95)'
+            : 'translate(-40px, 0) scale(0.95)';
+        newSlide.style.opacity = '0';
+        newSlide.classList.add('entering');
+        void getComputedStyle(newSlide).opacity; // Style-Flush: Startzustand fixieren
+        newSlide.style.transition = '';
+        newSlide.style.transform = '';
+        newSlide.style.opacity = '';
+        newSlide.classList.add('active');
+    }
 
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
@@ -599,54 +662,50 @@ function prev() {
         const ae = document.activeElement;
         if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ae.blur();
 
+        // Gleiche Folie (z.B. Klick auf eigenes Overview-Thumbnail):
+        // kein Crossfade, nur UI synchron halten.
+        if (idx === currentSlide) {
+            updateUI();
+            closeOverview();
+            return;
+        }
+
         const oldSlide = slides[currentSlide];
+        const oldIdx = currentSlide;
         currentSlide = idx;
         const newSlide = slides[currentSlide];
+        const forward = idx > oldIdx;
 
-        // Sanfter Crossfade: alte Folie fadet aus, neue fadet ein (mit leichter
-        // translate+scale-Morph). Zwei rAF-Calls, damit der Browser den
-        // Anfangszustand (opacity:0) der neuen Folie wirklich gerendert hat,
-        // bevor .active gesetzt wird — sonst wird die Transition übersprungen.
-        // Vorherigen pending rAF cancellen, sonst kann er nach dem nächsten
-        // goTo() noch feuern und die alte Folie re-blinken lassen.
-        cancelPendingActivation();
-        cancelSlideTransition();
-        oldSlide.classList.remove('active');
-        // Morph: alte Folie schiebt nach links raus + schrumpft,
-        // neue kommt von rechts rein + wächst. Beide während der
-        // Transition kurz gleichzeitig sichtbar.
-        if (idx > slides.indexOf(oldSlide)) {
-            oldSlide.classList.add('leaving');
-        } else {
-            oldSlide.classList.remove('leaving');
-            oldSlide.style.transform = 'translate(40px, 0) scale(0.95)';
-        }
-        pendingActivationSlide = newSlide;
-        pendingActivationOuterRaf = requestAnimationFrame(() => {
-            pendingActivationOuterRaf = null;
-            pendingActivationInnerRaf = requestAnimationFrame(() => {
-                pendingActivationInnerRaf = null;
-                // Nur .active setzen, wenn die Folie immer noch das Ziel ist.
-                // Wenn der Nutzer inzwischen weiter geklickt hat, ist pendingActivationSlide
-                // durch cancelPendingActivation() bereits genullt.
-                if (pendingActivationSlide === newSlide) {
-                    newSlide.classList.add('active');
-                }
-                pendingActivationSlide = null;
-                // Lifecycle NACH .active setzen — Demos prüfen oft
-                // `document.querySelector('.slide.active')` und würden sonst
-                // fälschlich reset() statt activate() aufrufen.
-                DemoRegistry.notifyEnter(newSlide);
-                // Aufräumen: alte Folie zurücksetzen (nicht-leaving),
-                // damit sie beim nächsten Mal sauber ist.
-                setTimeout(() => {
-                    if (oldSlide && !oldSlide.classList.contains('active')) {
-                        oldSlide.classList.remove('leaving');
-                        oldSlide.style.transform = '';
-                    }
-                }, 1100);
-            });
-        });
+        activateSlide(newSlide, forward);
+
+        // Alte Folie: in Navigationsrichtung wegschieben + wegfaden.
+        oldSlide.classList.remove('active', 'entering');
+        oldSlide.classList.add(forward ? 'leaving' : 'leaving-back');
+
+        // Lifecycle NACH .active setzen — Demos prüfen oft
+        // `document.querySelector('.slide.active')` und würden sonst
+        // fälschlich reset() statt activate() aufrufen.
+        DemoRegistry.notifyEnter(oldSlide, newSlide);
+
+        // Aufräumen: nach dem Ende der Transition Zustandsklassen wieder
+        // entfernen. Guard: alte Folie nicht antasten, falls sie inzwischen
+        // wieder aktiviert wurde (dann hat activateSlide() sie ohnehin
+        // bereits bereinigt).
+        //
+        // Die Umparkung (leaving → Basisposition) läuft OHNE Transition —
+        // die Folie ist bei opacity 0 unsichtbar, ein 650-ms-Transform im
+        // Hintergrund wäre nur unnötige Compositor-Arbeit.
+        setTimeout(() => {
+            if (!oldSlide.classList.contains('active')) {
+                oldSlide.style.transition = 'none';
+                oldSlide.classList.remove('leaving', 'leaving-back');
+                oldSlide.style.transform = '';
+                void getComputedStyle(oldSlide).opacity;
+                oldSlide.style.transition = '';
+            }
+            newSlide.classList.remove('entering');
+        }, 700);
+
         // Crossfade-Lock setzen: Pfeiltasten werden erst wieder angenommen,
         // wenn die neue Folie sichtbar ist.
         lockSlideTransition();

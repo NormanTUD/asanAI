@@ -7,19 +7,10 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	height: 100vh;
 	position: relative;
 	overflow: hidden;
-	/* Heller Hintergrund, damit der ~32-ms-Spalt zwischen alter/neuer Folie
-	   (zwei rAFs) während Crossfade nicht kurz das dunkle Body durchscheinen lässt. */
 	background: #ffffff;
 }
 
 /* ============ SLIDES ============ */
-
-.slide.active {
-	opacity: 1;
-	transform: scale(1) translate(0, 0);
-	pointer-events: auto;
-	z-index: 1;
-}
 
 /* Inaktive Folien: ALLE Nachfahren ohne Pointer-Events erzwingen —
    Plotly setzt z.B. explizit pointer-events:all auf dem SVG, was den
@@ -43,26 +34,48 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
-    /* Morph statt Crossfade: alte Folie schiebt sich nach links raus
-       und schrumpft leicht, neue kommt von rechts rein und wächst.
-       Beide sind während der Transition kurz gleichzeitig sichtbar. */
+    z-index: 0;
+    /* Morph-Crossfade: alte Folie schiebt sich in Navigationsrichtung
+       raus und schrumpft leicht, neue kommt aus der entgegengesetzten
+       Seite rein und wächst — beide animieren im selben Frame.
+       Vorwärts = Einfahrt von rechts (Basis-Transform); rückwärts setzt
+       Presentation.goTo() die Einfahrposition per Inline-Style. */
     transform: translate(40px, 0) scale(0.95);
-	transition: opacity 0.9s cubic-bezier(0.65, 0, 0.35, 1),
-				transform 1.0s cubic-bezier(0.65, 0, 0.35, 1);
-    will-change: opacity, transform;
+	transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+				transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Wenn eine Slide aktiv ist: scale + translate(0) */
-.slide.active {
-	transform: translate(0, 0) scale(1);
+/* Einlaufende Folie: während des Crossfades über der austretenden
+   (in beide Richtungen), will-change nur zeitweise statt permanent. */
+.slide.entering {
+	z-index: 2;
+	will-change: opacity, transform;
 }
 
-/* Wenn die gerade verlassene Slide noch im DOM "nachschwingt",
-   kann sie nach links wegschieben — dafür sorgt eine Klasse, die
-   Presentation.goTo() beim Crossfade optional setzt (siehe JS). */
+/* Austretende Folie, Navigation vorwärts: schiebt nach links raus. */
 .slide.leaving {
 	transform: translate(-40px, 0) scale(0.95);
 	opacity: 0;
+	z-index: 1;
+	will-change: opacity, transform;
+}
+
+/* Austretende Folie, Navigation rückwärts: schiebt nach rechts raus. */
+.slide.leaving-back {
+	transform: translate(40px, 0) scale(0.95);
+	opacity: 0;
+	z-index: 1;
+	will-change: opacity, transform;
+}
+
+/* Aktive Folie — zuletzt definiert, damit sie bei gleicher Spezifität
+   gegenüber .leaving/.leaving-back gewinnt (Safety-Netz; der JS-Seit
+   räumt Zustände ohnehin deterministisch auf). */
+.slide.active {
+	opacity: 1;
+	transform: translate(0, 0) scale(1);
+	pointer-events: auto;
+	z-index: 2;
 }
 
 .slide-content {
