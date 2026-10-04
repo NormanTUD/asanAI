@@ -322,6 +322,14 @@ const SpaceMorph = (() => {
     const IDX_PLANE    = 11;  // Trennebene
     const IDX_AXIS     = 12;  // Tori auf die 1D-Achse projiziert (wie die Egg-Phase)
 
+    // "Jeder Punkt = ein Wort": zwei Beispielwörter (ein random Punkt pro Torus),
+    // die als Label über dem Punkt erscheinen, sobald der verwirrte Torus gezeigt
+    // wird. (t, s, rho) → Weltpunkt, pro Frame wie die Punktwolke umgerechnet.
+    const WORD_PTS = [
+        { word: 'König',   c: 0, t: 2.2, s: 0.6, rho: 0.18 },
+        { word: 'Königin', c: 1, t: 2.6, s: 0.4, rho: 0.16 }
+    ];
+
     // ---------- Ablauf ----------
     function ease(u) { return u * u * u * (u * (u * 6 - 15) + 10); }
     function lerp(a, b, u) { return a + (b - a) * u; }
@@ -487,12 +495,17 @@ const SpaceMorph = (() => {
         return { X: lerp(P.X, tx, t), Y: lerp(P.Y, ty, t) - lift, k: lerp(P.k, 1, t) };
     }
     // 1D-Projektion der Tori (wie die Egg-Punkte): gleitet von der 3D-Position
-    // q zur Score-Achse. Nach dem Lift liegt A (grün) bei s<0, B (rot) bei s>0.
+    // q zur Score-Achse. Nach dem Lift liegt A (grün) links, B (rot) rechts.
+    // Eigene symmetrische Achse — die Egg-Achse (asymmetrisch) würde s=0 zu
+    // weit links legen. Die Lücke zwischen den Klumpen liegt bei x = GAP.
+    const TORI_GAP = 0.375;   // x-Mitte der Lücke zwischen grünem/rotem Klumpen
+    const TORI_SPAN = 2.2;    // halbweite der symmetrischen Score-Mappe
+    const toriScore = qx => qx - TORI_GAP;
+    const sxTori = sc => AX_L + (AX_R - AX_L) * clamp((sc + TORI_SPAN) / (2 * TORI_SPAN), 0, 1);
     function warpTori(q, t) {
         const P = proj(q);
         if (t < 0.0005) return { X: P.X, Y: P.Y, k: P.k };
-        const score = 0.382 * q.x + 0.063;
-        const tx = sx(score), ty = AX_Y - 46 * (1 - t);
+        const tx = sxTori(toriScore(q.x)), ty = AX_Y - 46 * (1 - t);
         const lift = Math.sin(t * Math.PI) * 34;
         return { X: lerp(P.X, tx, t), Y: lerp(P.Y, ty, t) - lift, k: lerp(P.k, 1, t) };
     }
@@ -542,6 +555,26 @@ const SpaceMorph = (() => {
         ctx.font = '12px system-ui,sans-serif'; ctx.fillStyle = '#475569';
         //ctx.fillText('alte 2D-Ebene', c[3].X + 12, c[3].Y - 8);
         ctx.globalAlpha = 1;
+    }
+
+    // ---------- "Jeder Punkt = ein Wort" (Labels) ----------
+    // Ein Beispielwort als Label über einem Torus-Punkt: Highlight-Ring +
+    // Wort-Text oben (mit weißem Untergrund für Lesbarkeit auf der Wolke).
+    function drawWordLabel(x, y, word, color, fade) {
+        ctx.globalAlpha = fade;
+        ctx.lineWidth = 1.6; ctx.strokeStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, 8, 0, 6.2832); ctx.stroke();
+        ctx.globalAlpha = fade * 0.9; ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 6.2832); ctx.fill();
+
+        ctx.font = '600 15px system-ui,sans-serif';
+        const tw = ctx.measureText(word).width;
+        ctx.globalAlpha = fade * 0.8; ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x - tw / 2 - 5, y - 30, tw + 10, 20);
+        ctx.globalAlpha = fade; ctx.fillStyle = color;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+        ctx.fillText(word, x, y - 14);
+        ctx.textAlign = 'left';
     }
 
     // ---------- Render ----------
@@ -691,7 +724,7 @@ const SpaceMorph = (() => {
                 ctx.beginPath(); ctx.moveTo(AX_L, AX_Y); ctx.lineTo(AX_R, AX_Y); ctx.stroke();
                 for (let i = 0; i <= 10; i++) { const X = lerp(AX_L, AX_R, i / 10);
                     ctx.beginPath(); ctx.moveTo(X, AX_Y - 4); ctx.lineTo(X, AX_Y + 4); ctx.stroke(); }
-                const TX = sx(0); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2.6;
+                const TX = sxTori(0); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2.6;
                 ctx.beginPath(); ctx.moveTo(TX, AX_Y - 36); ctx.lineTo(TX, AX_Y + 36); ctx.stroke();
                 ctx.textAlign = 'center'; ctx.fillStyle = '#b45309'; ctx.font = '13px Georgia';
                 ctx.fillText('s = 0', TX, AX_Y + 58);
@@ -750,6 +783,21 @@ const SpaceMorph = (() => {
                 ctx.beginPath(); ctx.moveTo(tl.X, tl.Y); ctx.lineTo(bl.X, bl.Y); ctx.stroke(); ctx.globalAlpha = 1;
                 ctx.font = '13px Georgia'; ctx.fillStyle = '#b45309';
                 ctx.fillText('Trennebene', tl.X + 8, tl.Y);
+            }
+
+            // ---------- "Jeder Punkt = ein Wort" (Labels) ----------
+            // Sobald der verwirrte Torus erscheint, benennen zwei Beispielwörter
+            // je einen Punkt (eines pro Torus) — nur Labels, kein Mauszeiger.
+            if (cur === IDX_COMPLEX) {
+                const fade = sub(now - t0, 500, 1200);
+                if (fade > 0.01) {
+                    WORD_PTS.forEach(w => {
+                        const p = w.c === 0 ? toriAPoint(w.t, w.s, w.rho, kNow)
+                                            : toriBPoint(w.t, w.s, w.rho, kNow);
+                        const pr = proj(untangle(ut, p));
+                        drawWordLabel(pr.X, pr.Y, w.word, w.c === 0 ? '#15803d' : '#e11d48', fade);
+                    });
+                }
             }
         }
 
