@@ -2174,37 +2174,14 @@ body.sel-mode .sel-check { display: inline-flex; }
 	font-style: italic;
 }
 
-/* =============================================================
-   Step-Indicator (für die Was-ist-LLMs-Folie)
-   ============================================================= */
-.ia-step-bar {
-	display: flex;
-	gap: 8px;
-	justify-content: center;
-	margin: 18px 0 8px;
-	flex-wrap: wrap;
+/* Erklärung + „him"/„mel"-Wortliste: erst sichtbar, wenn „himmel" in
+   „him"+"mel" getrennt wurde (Beat 1). */
+.ia-tokens-reveal {
+	opacity: 0;
+	transition: opacity 0.55s ease;
 }
-.ia-step-bar button {
-	background: #ffffff;
-	border: 1px solid #cbd5e1;
-	color: #475569;
-	padding: 8px 16px;
-	border-radius: 999px;
-	font-size: 0.85em;
-	font-weight: 500;
-	cursor: pointer;
-	transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-.ia-step-bar button:hover {
-	background: #f1f5f9;
-	transform: translateY(-1px);
-}
-.ia-step-bar button.active {
-	background: #2563eb;
-	color: #ffffff;
-	border-color: #2563eb;
-	box-shadow: 0 2px 8px rgba(37,99,235,0.30);
+.ia-tokens-reveal.on {
+	opacity: 1;
 }
 
 /* Slide-Body sollte nicht mehr schwarz sein, wenn die Phone-Folie aktiv ist */

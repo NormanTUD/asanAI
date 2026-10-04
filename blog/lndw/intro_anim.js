@@ -546,6 +546,8 @@ const IntroAnim = (() => {
 				render(FULL);
 				stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — der Computer teilt anders als wir';
 				stage.sub.classList.remove('on');
+				if (stage.hint) stage.hint.classList.remove('on');
+				if (stage.himmel) stage.himmel.classList.remove('on');
 			} else {
 				stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — möglichst viel Inhalt, möglichst wenige Bausteine';
 				const layer = stage.layer;
@@ -566,18 +568,13 @@ const IntroAnim = (() => {
 				} else {
 					render(SPLIT, ['him', 'mel']);
 				}
-				later(() => { stage.sub.classList.add('on'); }, 500);
+				// Erklärung + Wortliste erst NACH der Trennung zeigen.
+				later(() => {
+					stage.sub.classList.add('on');
+					if (stage.hint) stage.hint.classList.add('on');
+					if (stage.himmel) stage.himmel.classList.add('on');
+				}, 500);
 			}
-			updateStepBar();
-		}
-
-		function updateStepBar() {
-			const bar = document.getElementById('ia-tokens-step-bar');
-			if (!bar) return;
-			bar.querySelectorAll('button').forEach(b => {
-				const db = parseInt(b.dataset.beat, 10);
-				b.classList.toggle('active', !isNaN(db) && db === currentBeat);
-			});
 		}
 
 		function init(slideEl) {
@@ -585,15 +582,8 @@ const IntroAnim = (() => {
 			stage.layer = slideEl.querySelector('.ia-tokens-layer');
 			stage.label = slideEl.querySelector('.ia-tokens-label');
 			stage.sub   = slideEl.querySelector('.ia-tokens-sub');
-
-			// Step-Bar Buttons nur einmal verdrahten
-			const bar = slideEl.querySelector('#ia-tokens-step-bar');
-			if (bar && !bar.dataset.iaWired) {
-				bar.dataset.iaWired = '1';
-				bar.querySelectorAll('button').forEach(b => {
-					b.onclick = () => setBeat(parseInt(b.dataset.beat, 10) || 0);
-				});
-			}
+			stage.hint  = slideEl.querySelector('.ia-tokens-hint');
+			stage.himmel = slideEl.querySelector('.ia-tokens-him-mel');
 
 			if (!isReady()) return false;
 			currentBeat = 0;
@@ -741,36 +731,40 @@ const IntroAnim = (() => {
 		// ersten Erfolg stoppen statt erst beim zweiten Match. So vergeht
 		// zwischen Pfeiltaste und Beat-Wechsel maximal ~50ms statt ~400ms.
 		let pollHandle = null;
+		// Letzte Folie, für die die Animation (neu) gestartet wurde. Nur ein
+		// echter FOLIENWECHSEL darf den Beat zurücksetzen — ein Fragment-Reveal
+		// auf derselben Folie (p.next()) nicht, sonst wird „himmel" immer
+		// wieder zusammengefügt und getrennt.
+		let lastActivatedSlideId = null;
 		function stopPolling() {
 			if (pollHandle) { clearTimeout(pollHandle); pollHandle = null; }
 		}
 
 		// Nach jedem Folienwechsel die Animation der Ziel-Folie (neu) starten.
 		function scheduleActivate() {
-			const a0 = document.querySelector('.slide.active');
-			if (a0 && (a0.id === 'slide-was-sind-llm' || a0.id === 'slide-tokenisierung')) {
-				if (a0.id === 'slide-was-sind-llm') { activatePhone(); return; }
-				activateTokens();
-				return;
-			}
 			stopPolling();
 			let attempts = 0;
 			const tryActivate = () => {
 				attempts++;
 				const a = document.querySelector('.slide.active');
-				if (a && a.id === 'slide-was-sind-llm') {
-					if (activatePhone()) stopPolling();
-					else if (attempts < 16) pollHandle = setTimeout(tryActivate, 50);
+				if (!a) {
+					if (attempts < 16) pollHandle = setTimeout(tryActivate, 50);
 					else stopPolling();
-				} else if (a && a.id === 'slide-tokenisierung') {
-					if (activateTokens()) stopPolling();
-					else if (attempts < 16) pollHandle = setTimeout(tryActivate, 50);
-					else stopPolling();
-				} else if (attempts < 16) {
-					pollHandle = setTimeout(tryActivate, 50);
-				} else {
-					stopPolling();
+					return;
 				}
+				const isAnim = (a.id === 'slide-was-sind-llm' || a.id === 'slide-tokenisierung');
+				if (!isAnim) {
+					lastActivatedSlideId = a.id;
+					stopPolling();
+					return;
+				}
+				// Gleiche Folie wie zuvor → nur ein Fragment-Reveal (p.next()
+				// auf derselben Folie). Beat NICHT zurücksetzen.
+				if (lastActivatedSlideId === a.id) { stopPolling(); return; }
+				const ok = (a.id === 'slide-was-sind-llm') ? activatePhone() : activateTokens();
+				if (ok) { lastActivatedSlideId = a.id; stopPolling(); }
+				else if (attempts < 16) pollHandle = setTimeout(tryActivate, 50);
+				else stopPolling();
 			};
 			tryActivate();
 		}
