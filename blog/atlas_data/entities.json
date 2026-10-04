@@ -42709,5 +42709,72 @@
   "conf": "known",
   "source": "out_part9.json",
   "bg": false
+ },
+ {
+  "id": "person-russell-kirsch",
+  "name": "Russell Kirsch",
+  "type": "person",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.03,
+  "years": "1927-2020",
+  "active": [
+   1950.0,
+   2020.0
+  ],
+  "blurb": "Physicist at the National Bureau of Standards whose 1957 drum-scan of his son's photo was the first image ever processed by a computer.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "img_kirsch_baby"
+  ],
+  "conf": "known",
+  "source": "out_part9.json",
+  "bg": false
+ },
+ {
+  "id": "event-kirsch-first-digital-image-1957",
+  "name": "First computer-processed photograph",
+  "type": "event",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.03,
+  "years": "1957",
+  "active": [
+   1957.0,
+   1957.0
+  ],
+  "blurb": "Russell Kirsch's drum scanner digitised a photo of his three-month-old son into a 176x176 array processed on the NBS SEAC computer.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "nilsson1984qai"
+  ],
+  "conf": "stated",
+  "source": "out_part9.json",
+  "bg": false
+ },
+ {
+  "id": "institution-national-bureau-of-standards",
+  "name": "National Bureau of Standards",
+  "type": "institution",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.03,
+  "years": "1901-2026",
+  "active": [
+   1901.0,
+   2026.0
+  ],
+  "blurb": "US federal laboratory (today NIST), home of Russell Kirsch's 1957 drum scanner and the first image ever processed by a computer.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [],
+  "conf": "known",
+  "source": "out_part9.json",
+  "bg": false
  }
 ]

@@ -88,7 +88,7 @@
   "id": "person-hugo-steinhaus",
   "name": "Hugo Steinhaus",
   "type": "person",
-  "loc": "Kraków, Poland",
+  "loc": "Krak\u00f3w, Poland",
   "lat": 50.06,
   "lng": 19.94,
   "years": "1892-1972",
@@ -2271,7 +2271,7 @@
  },
  {
   "id": "person-kurt-godel",
-  "name": "Kurt Gödel",
+  "name": "Kurt G\u00f6del",
   "type": "person",
   "loc": "Brno, Czech Republic",
   "lat": 49.2,
@@ -2342,7 +2342,7 @@
    1934,
    2004
   ],
-  "blurb": "American logician whose Rosser theorem sharpened Gödel's incompleteness result for consistent arithmetical systems.",
+  "blurb": "American logician whose Rosser theorem sharpened G\u00f6del's incompleteness result for consistent arithmetical systems.",
   "cited_in": [
    "recursion_coherent_difference"
   ],
@@ -2429,7 +2429,7 @@
   "id": "person-gerhard-gentzen",
   "name": "Gerhard Gentzen",
   "type": "person",
-  "loc": "Göttingen, Germany",
+  "loc": "G\u00f6ttingen, Germany",
   "lat": 51.54,
   "lng": 9.94,
   "years": "1896-1945",
@@ -2532,7 +2532,7 @@
   "id": "person-woldemar-voigt",
   "name": "Woldemar Voigt",
   "type": "person",
-  "loc": "Tübingen, Germany",
+  "loc": "T\u00fcbingen, Germany",
   "lat": 48.52,
   "lng": 9.06,
   "years": "1850-1919",
@@ -2614,7 +2614,7 @@
  },
  {
   "id": "person-evariste-galois",
-  "name": "Évariste Galois",
+  "name": "\u00c9variste Galois",
   "type": "person",
   "loc": "Bourges, France",
   "lat": 47.08,
@@ -2666,7 +2666,7 @@
    1910,
    1963
   ],
-  "blurb": "Norwegian mathematician who proved the downward Löwenheim–Skolem theorem and shaped logic and set theory.",
+  "blurb": "Norwegian mathematician who proved the downward L\u00f6wenheim\u2013Skolem theorem and shaped logic and set theory.",
   "cited_in": [
    "model_theory"
   ],
@@ -2677,7 +2677,7 @@
  },
  {
   "id": "person-leopold-lowenheim",
-  "name": "Leopold Löwenheim",
+  "name": "Leopold L\u00f6wenheim",
   "type": "person",
   "loc": "Vienna, Austria",
   "lat": 48.21,
@@ -3891,7 +3891,7 @@
  },
  {
   "id": "person-carl-friedrich-von-weizsacker",
-  "name": "Carl Friedrich von Weizsäcker",
+  "name": "Carl Friedrich von Weizs\u00e4cker",
   "type": "person",
   "loc": "Stuttgart, Germany",
   "lat": 48.78,
@@ -4059,7 +4059,7 @@
   "id": "person-immanuel-kant",
   "name": "Immanuel Kant",
   "type": "person",
-  "loc": "Königsberg, Germany",
+  "loc": "K\u00f6nigsberg, Germany",
   "lat": 54.71,
   "lng": 20.51,
   "years": "1724-1804",
@@ -4599,7 +4599,7 @@
    null,
    null
   ],
-  "blurb": "Middle Cambrian lagerstätte in the Canadian Rockies, the type locality for the Cambrian Explosion fauna.",
+  "blurb": "Middle Cambrian lagerst\u00e4tte in the Canadian Rockies, the type locality for the Cambrian Explosion fauna.",
   "cited_in": [
    "untold_history"
   ],
@@ -4620,7 +4620,7 @@
    null,
    null
   ],
-  "blurb": "Yunnan lagerstätte whose 518-million-year-old biota preserved primitive deuterostomes such as the chordate Vetulicola.",
+  "blurb": "Yunnan lagerst\u00e4tte whose 518-million-year-old biota preserved primitive deuterostomes such as the chordate Vetulicola.",
   "cited_in": [
    "untold_history"
   ],
@@ -4696,7 +4696,7 @@
   "id": "place-la-marche",
   "name": "La Marche",
   "type": "place",
-  "loc": "Lussac-les-Châteaux, France",
+  "loc": "Lussac-les-Ch\u00e2teaux, France",
   "lat": 46.42,
   "lng": 0.88,
   "years": "",
@@ -4704,7 +4704,7 @@
    null,
    null
   ],
-  "blurb": "Magdalenian engraved slabs at Lussac-les-Châteaux carrying over a hundred individualised human faces.",
+  "blurb": "Magdalenian engraved slabs at Lussac-les-Ch\u00e2teaux carrying over a hundred individualised human faces.",
   "cited_in": [
    "untold_history"
   ],
@@ -6015,7 +6015,7 @@
  },
  {
   "id": "person-erwin-schroedinger",
-  "name": "Erwin Schrödinger",
+  "name": "Erwin Schr\u00f6dinger",
   "type": "person",
   "loc": "Vienna, Austria",
   "lat": 48.21,
@@ -6202,7 +6202,7 @@
    1965,
    2026
   ],
-  "blurb": "UT Austin research library holding Niépce's Point de vue du Gras, the oldest photograph.",
+  "blurb": "UT Austin research library holding Ni\u00e9pce's Point de vue du Gras, the oldest photograph.",
   "cited_in": [
    "untold_history"
   ],
@@ -6268,7 +6268,7 @@
  },
  {
   "id": "institution-musee-des-arts-et-metiers",
-  "name": "Musée des Arts et Métiers",
+  "name": "Mus\u00e9e des Arts et M\u00e9tiers",
   "type": "institution",
   "loc": "Paris, France",
   "lat": 48.84,
@@ -6377,7 +6377,7 @@
    1827,
    null
   ],
-  "blurb": "Niépce's oldest surviving camera photograph, an eight-hour bitumen exposure on a pewter plate.",
+  "blurb": "Ni\u00e9pce's oldest surviving camera photograph, an eight-hour bitumen exposure on a pewter plate.",
   "cited_in": [
    "untold_history"
   ],
@@ -6574,9 +6574,9 @@
  },
  {
   "id": "person-helmut-grottrup",
-  "name": "Helmut Gröttrup",
+  "name": "Helmut Gr\u00f6ttrup",
   "type": "person",
-  "loc": "Peenemünde, Germany",
+  "loc": "Peenem\u00fcnde, Germany",
   "lat": 54.15,
   "lng": 13.81,
   "years": "1911-",
@@ -6660,9 +6660,9 @@
  },
  {
   "id": "person-helmut-holzer",
-  "name": "Helmut Hölzer",
+  "name": "Helmut H\u00f6lzer",
   "type": "person",
-  "loc": "Peenemünde, Germany",
+  "loc": "Peenem\u00fcnde, Germany",
   "lat": 54.15,
   "lng": 13.81,
   "years": "1907-",
@@ -6670,7 +6670,7 @@
    1933,
    1945
   ],
-  "blurb": "Peenemünde engineer who designed the Mischgerät, the first computer built into a flying machine, in 1941.",
+  "blurb": "Peenem\u00fcnde engineer who designed the Mischger\u00e4t, the first computer built into a flying machine, in 1941.",
   "cited_in": [
    "untold_history"
   ],
@@ -6725,7 +6725,7 @@
  },
  {
   "id": "person-rudolf-kalman",
-  "name": "Rudolf Kálmán",
+  "name": "Rudolf K\u00e1lm\u00e1n",
   "type": "person",
   "loc": "Budapest, Hungary",
   "lat": 47.5,
@@ -6768,9 +6768,9 @@
  },
  {
   "id": "place-penemunde",
-  "name": "Peenemünde",
+  "name": "Peenem\u00fcnde",
   "type": "place",
-  "loc": "Peenemünde, Germany",
+  "loc": "Peenem\u00fcnde, Germany",
   "lat": 54.15,
   "lng": 13.81,
   "years": "",
@@ -6800,7 +6800,7 @@
    null,
    null
   ],
-  "blurb": "Antarctic base that drilled a 420,000-year ice core and recorded the coldest reliably measured temperature, −89 °C.",
+  "blurb": "Antarctic base that drilled a 420,000-year ice core and recorded the coldest reliably measured temperature, \u221289 \u00b0C.",
   "cited_in": [
    "untold_history"
   ],
@@ -6843,7 +6843,7 @@
    null,
    null
   ],
-  "blurb": "EPICA ice-core site on the East Antarctic plateau holding 800,000 years of CO₂ and temperature record.",
+  "blurb": "EPICA ice-core site on the East Antarctic plateau holding 800,000 years of CO\u2082 and temperature record.",
   "cited_in": [
    "untold_history"
   ],
@@ -7497,7 +7497,7 @@
  },
  {
   "id": "person-per-martin-lof",
-  "name": "Per Martin-Löf",
+  "name": "Per Martin-L\u00f6f",
   "type": "person",
   "loc": "Stockholm, Sweden",
   "lat": 59.3293,
@@ -8011,7 +8011,7 @@
   "id": "person-immanuel-kant",
   "name": "Immanuel Kant",
   "type": "person",
-  "loc": "Kaliningrad (Königsberg), Russia",
+  "loc": "Kaliningrad (K\u00f6nigsberg), Russia",
   "lat": 54.71,
   "lng": 20.51,
   "years": "1724-1804",
@@ -8053,7 +8053,7 @@
  },
  {
   "id": "person-kurt-godel",
-  "name": "Kurt Gödel",
+  "name": "Kurt G\u00f6del",
   "type": "person",
   "loc": "Ithaca, United States",
   "lat": 42.44,
@@ -8366,7 +8366,7 @@
  },
  {
   "id": "person-soren-kierkegaard",
-  "name": "Søren Kierkegaard",
+  "name": "S\u00f8ren Kierkegaard",
   "type": "person",
   "loc": "Copenhagen, Denmark",
   "lat": 55.68,
@@ -8938,7 +8938,7 @@
   "id": "person-thomas-metzinger",
   "name": "Thomas Metzinger",
   "type": "person",
-  "loc": "Göttingen, Germany",
+  "loc": "G\u00f6ttingen, Germany",
   "lat": 51.53,
   "lng": 9.93,
   "years": "1958-",
@@ -9437,7 +9437,7 @@
  },
  {
   "id": "person-lauri-alpoge",
-  "name": "Lauri Alpöge",
+  "name": "Lauri Alp\u00f6ge",
   "type": "person",
   "loc": "San Francisco, USA",
   "lat": 37.77,
@@ -9785,7 +9785,7 @@
  },
  {
   "id": "person-eduard-cech",
-  "name": "Eduard Čech",
+  "name": "Eduard \u010cech",
   "type": "person",
   "loc": "Prague, Czech Republic",
   "lat": 50.08,
@@ -10344,7 +10344,7 @@
   "id": "person-hermann-minkowski",
   "name": "Hermann Minkowski",
   "type": "person",
-  "loc": "Göttingen, Germany",
+  "loc": "G\u00f6ttingen, Germany",
   "lat": 51.54,
   "lng": 9.94,
   "years": "1864-1909",
@@ -10401,7 +10401,7 @@
  },
  {
   "id": "person-janos-bolyai",
-  "name": "János Bolyai",
+  "name": "J\u00e1nos Bolyai",
   "type": "person",
   "loc": "Cluj-Napoca, Romania",
   "lat": 46.77,
@@ -10432,7 +10432,7 @@
    1968,
    2026
   ],
-  "blurb": "American mathematician who introduced Ricci flow, the technique Perelman used to prove the Poincaré conjecture.",
+  "blurb": "American mathematician who introduced Ricci flow, the technique Perelman used to prove the Poincar\u00e9 conjecture.",
   "cited_in": [
    "geometry_i"
   ],
@@ -10443,7 +10443,7 @@
   "id": "person-erhard-schmidt",
   "name": "Erhard Schmidt",
   "type": "person",
-  "loc": "Königsberg (Kaliningrad), Russia",
+  "loc": "K\u00f6nigsberg (Kaliningrad), Russia",
   "lat": 54.71,
   "lng": 20.51,
   "years": "1876-1959",
@@ -10481,7 +10481,7 @@
  },
  {
   "id": "person-jean-dieudonne",
-  "name": "Jean Dieudonné",
+  "name": "Jean Dieudonn\u00e9",
   "type": "person",
   "loc": "Paris, France",
   "lat": 48.86,
@@ -10491,7 +10491,7 @@
    1931,
    1992
   ],
-  "blurb": "French mathematician, co-author of the Éléments de géométrie algébrique and a pioneer of modern algebraic geometry.",
+  "blurb": "French mathematician, co-author of the \u00c9l\u00e9ments de g\u00e9om\u00e9trie alg\u00e9brique and a pioneer of modern algebraic geometry.",
   "cited_in": [
    "geometry_i"
   ],
@@ -10502,7 +10502,7 @@
  },
  {
   "id": "person-andre-weil",
-  "name": "André Weil",
+  "name": "Andr\u00e9 Weil",
   "type": "person",
   "loc": "Paris, France",
   "lat": 48.86,
@@ -10845,7 +10845,7 @@
    null,
    null
   ],
-  "blurb": "Pyrenean village in Hautes-Pyrénées where Alexander Grothendieck spent his final decades in self-imposed seclusion.",
+  "blurb": "Pyrenean village in Hautes-Pyr\u00e9n\u00e9es where Alexander Grothendieck spent his final decades in self-imposed seclusion.",
   "cited_in": [
    "geometry_i"
   ],
@@ -10856,7 +10856,7 @@
  },
  {
   "id": "institution-ihe-s",
-  "name": "Institut des Hautes Études Scientifiques (IHÉS)",
+  "name": "Institut des Hautes \u00c9tudes Scientifiques (IH\u00c9S)",
   "type": "institution",
   "loc": "Bures-sur-Yvette, France",
   "lat": 48.7,
@@ -11403,7 +11403,7 @@
  },
  {
   "id": "person-jean-louis-gasse",
-  "name": "Jean-Louis Gassée",
+  "name": "Jean-Louis Gass\u00e9e",
   "type": "person",
   "loc": "Mountain View, United States",
   "lat": 37.38,
@@ -11445,7 +11445,7 @@
  },
  {
   "id": "person-corrado-bohm",
-  "name": "Corrado Böhm",
+  "name": "Corrado B\u00f6hm",
   "type": "person",
   "loc": "Milan, Italy",
   "lat": 45.46,
@@ -11455,7 +11455,7 @@
    1960,
    2000
   ],
-  "blurb": "Co-proved the 1966 Böhm-Jacopini theorem that any program needs only sequence, if, and while.",
+  "blurb": "Co-proved the 1966 B\u00f6hm-Jacopini theorem that any program needs only sequence, if, and while.",
   "cited_in": [
    "software"
   ],
@@ -11476,7 +11476,7 @@
    1950,
    1990
   ],
-  "blurb": "Co-proved the 1966 Böhm-Jacopini theorem on structured control flow.",
+  "blurb": "Co-proved the 1966 B\u00f6hm-Jacopini theorem on structured control flow.",
   "cited_in": [
    "software"
   ],
@@ -12718,6 +12718,67 @@
   "blurb": "Devastating earthquake that struck San Francisco on 18 April 1906, destroying much of the city.",
   "cited_in": [
    "mechanistic_interpretability"
+  ],
+  "bibkeys": [],
+  "conf": "known"
+ },
+ {
+  "id": "person-russell-kirsch",
+  "name": "Russell Kirsch",
+  "type": "person",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.03,
+  "years": "1927-2020",
+  "active": [
+   1950,
+   2020
+  ],
+  "blurb": "Physicist at the National Bureau of Standards whose 1957 drum-scan of his son's photo was the first image ever processed by a computer.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "img_kirsch_baby"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "event-kirsch-first-digital-image-1957",
+  "name": "First computer-processed photograph",
+  "type": "event",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.03,
+  "years": "1957",
+  "active": [
+   1957,
+   1957
+  ],
+  "blurb": "Russell Kirsch's drum scanner digitised a photo of his three-month-old son into a 176x176 array processed on the NBS SEAC computer.",
+  "cited_in": [
+   "untold_history"
+  ],
+  "bibkeys": [
+   "nilsson1984qai"
+  ],
+  "conf": "stated"
+ },
+ {
+  "id": "institution-national-bureau-of-standards",
+  "name": "National Bureau of Standards",
+  "type": "institution",
+  "loc": "Washington, D.C., USA",
+  "lat": 38.89,
+  "lng": -77.03,
+  "years": "1901-2026",
+  "active": [
+   1901,
+   2026
+  ],
+  "blurb": "US federal laboratory (today NIST), home of Russell Kirsch's 1957 drum scanner and the first image ever processed by a computer.",
+  "cited_in": [
+   "untold_history"
   ],
   "bibkeys": [],
   "conf": "known"

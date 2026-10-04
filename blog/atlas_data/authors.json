@@ -5420,13 +5420,9 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "toosi2021history"
-  ],
-  "cited_in": [
-   "history"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Armand Joulin",
@@ -7004,10 +7000,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_ddim_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_ddim_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -14887,6 +14883,278 @@
   ],
   "cited_in": [
    "untold_history"
+  ]
+ },
+ {
+  "name": "Yurii Nesterov",
+  "canon": "Yurii Nesterov",
+  "alias": null,
+  "lat": 55.75,
+  "lng": 37.62,
+  "city": "Moscow, Russia",
+  "year": 1983.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "nesterov2004introductory"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "John Duchi",
+  "canon": "John Duchi",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2011.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "duchi2011adagrad"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Elad Hazan",
+  "canon": "Elad Hazan",
+  "alias": null,
+  "lat": 31.91,
+  "lng": 34.81,
+  "city": "Rehovot, Israel",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "duchi2011adagrad"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Yoram Singer",
+  "canon": "Yoram Singer",
+  "alias": null,
+  "lat": 31.91,
+  "lng": 34.81,
+  "city": "Rehovot, Israel",
+  "year": 1999.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "duchi2011adagrad"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Matthew D. Zeiler",
+  "canon": "Matthew D. Zeiler",
+  "alias": null,
+  "lat": 43.65,
+  "lng": -79.38,
+  "city": "Toronto, Canada",
+  "year": 2012.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "zeiler2012adadelta"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Timothy Dozat",
+  "canon": "Timothy Dozat",
+  "alias": null,
+  "lat": 37.87,
+  "lng": -122.26,
+  "city": "Berkeley, USA",
+  "year": 2016.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "dozat2016nadam"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Sashank J. Reddi",
+  "canon": "Sashank J. Reddi",
+  "alias": null,
+  "lat": 37.39,
+  "lng": -122.08,
+  "city": "Mountain View, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "reddi2018amsgrad"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Satyen Kale",
+  "canon": "Satyen Kale",
+  "alias": null,
+  "lat": 37.39,
+  "lng": -122.08,
+  "city": "Mountain View, USA",
+  "year": 2018.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "reddi2018amsgrad"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Sanjiv Kumar",
+  "canon": "Sanjiv Kumar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "reddi2018amsgrad"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Ilya Loshchilov",
+  "canon": "Ilya Loshchilov",
+  "alias": null,
+  "lat": 37.39,
+  "lng": -122.08,
+  "city": "Mountain View, USA",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "loshchilov2019adamw"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Frank Hutter",
+  "canon": "Frank Hutter",
+  "alias": null,
+  "lat": 50.0,
+  "lng": 8.27,
+  "city": "Mainz, Germany",
+  "year": 2019.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "loshchilov2019adamw"
+  ],
+  "cited_in": [
+   "optimizerlab"
+  ]
+ },
+ {
+  "name": "Arman Rahim",
+  "canon": "Arman Rahim",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2020.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "toosi2021history"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Ank Kumar",
+  "canon": "Ank Kumar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2012.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_walter_tortoise"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Russell A. Kirsch",
+  "canon": "Russell A. Kirsch",
+  "alias": null,
+  "lat": 38.89,
+  "lng": -77.03,
+  "city": "Washington, USA",
+  "year": 1957.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "img_kirsch_baby"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Stanford University (Stanford Today magazine)",
+  "canon": "Stanford University",
+  "alias": "Stanford Today magazine",
+  "lat": 37.43,
+  "lng": -122.17,
+  "city": "Palo Alto, USA",
+  "year": 1963.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "img_widrow_adaline"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Donald Cooksey",
+  "canon": "Donald Cooksey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1940.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "img_warren_weaver"
+  ],
+  "cited_in": [
+   "history"
   ]
  },
  {
@@ -23764,16 +24032,18 @@
   "city": "Toronto, Canada",
   "year": 2015.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "hinton2015distilling",
    "tdnn1989",
    "shazeer2017moe",
+   "hinton2012rmsprop",
    "chen2020simclr",
    "van2008tsne"
   ],
   "cited_in": [
    "beyond_llms",
+   "optimizerlab",
    "production_serving",
    "transformer"
   ]
@@ -27501,10 +27771,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "eisgalgen_mittenwald"
   ],
   "cited_in": [
    "ai_for_science",
@@ -44772,12 +45042,15 @@
   "city": "Palo Alto, USA",
   "year": 1984.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "fikes1971strips",
+   "nilsson1984qai",
    "nilsson1984shakey"
   ],
   "cited_in": [
+   "history",
+   "language",
    "untold_history"
   ]
  },
@@ -52740,13 +53013,18 @@
   "city": "Heidelberg, Germany",
   "year": 2023.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "ruder2016overview",
    "sogaard2018limitations",
    "shi2023cottransfer"
   ],
   "cited_in": [
+   "deeplearninglab",
    "embeddinglab",
+   "hyperparameters",
+   "optimizerlab",
+   "overandunderfittinglab",
    "unexpected_capabilities"
   ]
  },
@@ -57620,10 +57898,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "monte_carlo_animation_image"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -59526,10 +59804,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_astronaut_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",

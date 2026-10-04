@@ -3294,6 +3294,54 @@
    "year": "",
    "url": "https://arxiv.org/abs/1412.6980"
   },
+  "ruder2016overview": {
+   "title": "An overview of gradient descent optimization algorithms",
+   "author": "Sebastian Ruder",
+   "year": "",
+   "url": "https://arxiv.org/abs/1609.04747"
+  },
+  "nesterov2004introductory": {
+   "title": "Introductory Lectures on Convex Optimization: A Basic Course",
+   "author": "Yurii Nesterov",
+   "year": "",
+   "url": "https://link.springer.com/book/10.1007/978-1-4419-8853-9"
+  },
+  "duchi2011adagrad": {
+   "title": "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization",
+   "author": "John Duchi, Elad Hazan, Yoram Singer",
+   "year": "",
+   "url": "http://jmlr.org/papers/v12/duchi11a.html"
+  },
+  "zeiler2012adadelta": {
+   "title": "ADADELTA: An Adaptive Learning Rate Method",
+   "author": "Matthew D. Zeiler",
+   "year": "",
+   "url": "https://arxiv.org/abs/1212.5701"
+  },
+  "hinton2012rmsprop": {
+   "title": "Neural Networks for Machine Learning, Lecture 6e: A practical guide to training restricted Boltzmann machines",
+   "author": "Geoffrey Hinton",
+   "year": "",
+   "url": "http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf"
+  },
+  "dozat2016nadam": {
+   "title": "Incorporating Nesterov Momentum into Adam",
+   "author": "Timothy Dozat",
+   "year": "",
+   "url": "http://cs229.stanford.edu/proj2015/054_report.pdf"
+  },
+  "reddi2018amsgrad": {
+   "title": "On the Convergence of Adam and Beyond",
+   "author": "Sashank J. Reddi, Satyen Kale, Sanjiv Kumar",
+   "year": "",
+   "url": "https://arxiv.org/abs/1904.09237"
+  },
+  "loshchilov2019adamw": {
+   "title": "Decoupled Weight Decay Regularization",
+   "author": "Ilya Loshchilov, Frank Hutter",
+   "year": "",
+   "url": "https://arxiv.org/abs/1711.05101"
+  },
   "momentum": {
    "title": "Some methods of speeding up the convergence of iteration methods",
    "author": "Boris Teodorovich Polyak",
@@ -5654,9 +5702,15 @@
   },
   "toosi2021history": {
    "title": "A brief history of AI: how to prevent another winter (a critical review)",
-   "author": "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahmim",
+   "author": "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahim",
    "year": "",
    "url": "https://ar5iv.labs.arxiv.org/html/2109.01517"
+  },
+  "nilsson1984qai": {
+   "title": "The Quest for Artificial Intelligence: A History of Ideas and Achievements",
+   "author": "Nils J. Nilsson",
+   "year": "",
+   "url": "https://ai.stanford.edu/~nilsson/QAI/qai.pdf"
   },
   "ronkowitz2017perceptron": {
    "title": "Perceptron",
@@ -12282,6 +12336,30 @@
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Guericke_Crater_as_seen_by_Ranger_7.jpg"
   },
+  "img_walter_tortoise": {
+   "title": "Cybernetic Tortoise by William Grey Walter c 1950",
+   "author": "Ank Kumar",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Cybernetic_Tortoise_by_William_Grey_Walter_c_1950_(Ank_Kumar).jpg"
+  },
+  "img_kirsch_baby": {
+   "title": "First scanned photograph, 1957 (Walden Kirsch)",
+   "author": "Russell A. Kirsch",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:NBSFirstScanImage.jpg"
+  },
+  "img_widrow_adaline": {
+   "title": "Bernard Widrow with the ADALINE machine",
+   "author": "Stanford University (Stanford Today magazine)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Bernard_Widrow_with_ADALINE.jpg"
+  },
+  "img_warren_weaver": {
+   "title": "Warren Weaver, 1940",
+   "author": "Donald Cooksey",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Warren_Weaver.jpg"
+  },
   "img_gutta_percha_cable": {
    "title": "Appareil pour envelopper de gutta-percha les fils de cuivre du câble transatlantique",
    "author": "Louis Figuier",
@@ -15502,6 +15580,33 @@
    "optimizerlab",
    "overandunderfittinglab"
   ],
+  "ruder2016overview": [
+   "deeplearninglab",
+   "hyperparameters",
+   "optimizerlab",
+   "overandunderfittinglab"
+  ],
+  "nesterov2004introductory": [
+   "optimizerlab"
+  ],
+  "duchi2011adagrad": [
+   "optimizerlab"
+  ],
+  "hinton2012rmsprop": [
+   "optimizerlab"
+  ],
+  "zeiler2012adadelta": [
+   "optimizerlab"
+  ],
+  "dozat2016nadam": [
+   "optimizerlab"
+  ],
+  "reddi2018amsgrad": [
+   "optimizerlab"
+  ],
+  "loshchilov2019adamw": [
+   "optimizerlab"
+  ],
   "werbos1974": [
    "autodiff",
    "optimizerlab"
@@ -16174,6 +16279,11 @@
   "kempelen_speaking_machine": [
    "language"
   ],
+  "nilsson1984qai": [
+   "history",
+   "language",
+   "untold_history"
+  ],
   "firth_context": [
    "language"
   ],
@@ -16417,6 +16527,9 @@
   "piccini": [
    "history"
   ],
+  "img_walter_tortoise": [
+   "history"
+  ],
   "snarcphoto": [
    "history"
   ],
@@ -16618,6 +16731,9 @@
   "widrow1960adaline": [
    "history"
   ],
+  "img_widrow_adaline": [
+   "history"
+  ],
   "sleepingbeauty": [
    "history"
   ],
@@ -16658,6 +16774,9 @@
    "history"
   ],
   "lane2025eliza": [
+   "history"
+  ],
+  "img_warren_weaver": [
    "history"
   ],
   "deepblue": [
@@ -18768,6 +18887,9 @@
    "untold_history"
   ],
   "gordon2015indecent": [
+   "untold_history"
+  ],
+  "img_kirsch_baby": [
    "untold_history"
   ],
   "img_ranger7_moon": [
@@ -25286,11 +25408,12 @@
    ]
   },
   "Nils J. Nilsson": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "fikes1971strips",
+    "nilsson1984qai",
     "nilsson1984shakey"
    ]
   },
@@ -28535,13 +28658,14 @@
    ]
   },
   "Geoffrey Hinton": {
-   "count": 5,
+   "count": 6,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "hinton2015distilling",
     "tdnn1989",
     "shazeer2017moe",
+    "hinton2012rmsprop",
     "chen2020simclr",
     "van2008tsne"
    ]
@@ -30201,6 +30325,104 @@
    "keys": [
     "adam",
     "hafner2023dreamer"
+   ]
+  },
+  "Sebastian Ruder": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ruder2016overview",
+    "sogaard2018limitations",
+    "shi2023cottransfer"
+   ]
+  },
+  "Yurii Nesterov": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nesterov2004introductory"
+   ]
+  },
+  "John Duchi": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "duchi2011adagrad"
+   ]
+  },
+  "Elad Hazan": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "duchi2011adagrad"
+   ]
+  },
+  "Yoram Singer": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "duchi2011adagrad"
+   ]
+  },
+  "Matthew D. Zeiler": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zeiler2012adadelta"
+   ]
+  },
+  "Timothy Dozat": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dozat2016nadam"
+   ]
+  },
+  "Sashank J. Reddi": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "reddi2018amsgrad"
+   ]
+  },
+  "Satyen Kale": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "reddi2018amsgrad"
+   ]
+  },
+  "Sanjiv Kumar": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "reddi2018amsgrad"
+   ]
+  },
+  "Ilya Loshchilov": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "loshchilov2019adamw"
+   ]
+  },
+  "Frank Hutter": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "loshchilov2019adamw"
    ]
   },
   "Boris Teodorovich Polyak": {
@@ -35313,15 +35535,6 @@
     "sogaard2018limitations"
    ]
   },
-  "Sebastian Ruder": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "sogaard2018limitations",
-    "shi2023cottransfer"
-   ]
-  },
   "Ivan Vulić": {
    "count": 1,
    "minyear": null,
@@ -35570,7 +35783,7 @@
     "toosi2021history"
    ]
   },
-  "Arman Rahmim": {
+  "Arman Rahim": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
@@ -49570,6 +49783,38 @@
    "maxyear": null,
    "keys": [
     "img_ranger7_impact"
+   ]
+  },
+  "Ank Kumar": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_walter_tortoise"
+   ]
+  },
+  "Russell A. Kirsch": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_kirsch_baby"
+   ]
+  },
+  "Stanford University (Stanford Today magazine)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_widrow_adaline"
+   ]
+  },
+  "Donald Cooksey": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_warren_weaver"
    ]
   },
   "Louis Figuier": {
