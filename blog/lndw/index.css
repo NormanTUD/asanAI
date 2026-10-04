@@ -2201,10 +2201,10 @@ body.sel-mode .sel-check { display: inline-flex; }
 	transform: translateY(-1px);
 }
 .ia-step-bar button.active {
-	background: #1e293b;
-	color: #f1f5f9;
-	border-color: #1e293b;
-	box-shadow: 0 2px 6px rgba(30,41,59,0.3);
+	background: #2563eb;
+	color: #ffffff;
+	border-color: #2563eb;
+	box-shadow: 0 2px 8px rgba(37,99,235,0.30);
 }
 
 /* Slide-Body sollte nicht mehr schwarz sein, wenn die Phone-Folie aktiv ist */

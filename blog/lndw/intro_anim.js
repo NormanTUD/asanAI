@@ -519,47 +519,54 @@ const IntroAnim = (() => {
 			}).join('');
 		}
 
-		function resetAll() {
-			clearTimers();
-			if (!stage.layer) return;
-			stage.layer.classList.remove('on');
-			render(FULL);
-			stage.label.classList.remove('on');
-			stage.sub.classList.remove('on');
+		function makePill(text, fresh) {
+			const el = document.createElement('div');
+			el.className = 'ia-token-pill' + (fresh ? ' fresh' : '');
+			el.textContent = text;
+			return el;
 		}
 
 		function isReady() {
 			return !!(stage.layer && stage.label);
 		}
 
-		// Zwei Schätze statt drei: Beat 0 = ganze Wörter, Beat 1 = direkt das
-		// tokenisierte Ergebnis („himmel" → „him" + „mel"). Ein Pfeil-Druck
-		// zeigt also sofort die Tokenisierung — kein 3-mal-durch-Steppen.
+		// Zwei Schritte: Beat 0 = ganze Wörter, Beat 1 = tokenisiertes
+		// Ergebnis. Ein Pfeil-Druck macht EINEN Smooth-Wechsel
+		// („himmel" → „him"+"mel") — kein Reset/Fade-Blitz der ganzen Reihe
+		// (das sah aus wie „mehrfach durchgehen").
 		function setBeat(n) {
 			if (n < 0 || n > 1) return;
 			// GUARDRAIL 2: nicht rendern, wenn init() nicht erfolgreich war
 			if (!isReady()) return;
+			clearTimers();
 			currentBeat = n;
+			stage.layer.classList.add('on');
+			stage.label.classList.add('on');
 			if (n === 0) {
-				resetAll();
-				later(() => {
-					stage.layer.classList.add('on');
-					stage.label.classList.add('on');
-					stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — der Computer teilt anders als wir';
-				}, 80);
+				render(FULL);
+				stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — der Computer teilt anders als wir';
+				stage.sub.classList.remove('on');
 			} else {
-				resetAll();
-				later(() => {
-					stage.layer.classList.add('on');
-					stage.label.classList.add('on');
-					stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — möglichst viel Inhalt, möglichst wenige Bausteine';
-				}, 80);
-				later(() => {
+				stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — möglichst viel Inhalt, möglichst wenige Bausteine';
+				const layer = stage.layer;
+				const himmel = Array.from(layer.querySelectorAll('.ia-token-pill'))
+					.find(p => p.textContent.trim() === 'himmel');
+				if (himmel) {
+					// „him"+"mel" an der Stelle von „himmel" einfügen (popt
+					// smooth rein), „himmel" parallel zusammenklappen lassen.
+					const him = makePill('him', true);
+					const mel = makePill('mel', true);
+					himmel.before(him, mel);
+					requestAnimationFrame(() => {
+						himmel.style.transition = 'transform 0.4s ease, opacity 0.4s ease';
+						himmel.style.transform = 'scale(0.15)';
+						himmel.style.opacity = '0';
+					});
+					later(() => { if (himmel.isConnected) himmel.remove(); }, 430);
+				} else {
 					render(SPLIT, ['him', 'mel']);
-				}, 350);
-				later(() => {
-					stage.sub.classList.add('on');
-				}, 1100);
+				}
+				later(() => { stage.sub.classList.add('on'); }, 500);
 			}
 			updateStepBar();
 		}
