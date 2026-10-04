@@ -1162,6 +1162,13 @@ body.sel-mode .sel-check { display: inline-flex; }
 	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
 }
 
+/* Tori-Tabelle: Formparameter-Spalte k (komplex → schlicht) */
+#tori-table .k-col,
+#tori-table .kv { display: none; }
+#tori-table.show-k .k-col,
+#tori-table.show-k .kv { display: table-cell; }
+#tori-table.show-k .kv { color: #7c3aed; font-variant-numeric: tabular-nums; }
+
 /* Extra-Zeile (B₂): die ganze Zeit sichtbar — keine An/Aus-Logik mehr */
 .sm-table .extra-row {
 	opacity: 0.55;

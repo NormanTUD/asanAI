@@ -7,6 +7,10 @@ const SpaceMorph = (() => {
     const SLIDE_ID = 'slide-layer-als-raumkruemmung';
     const DUR = 1900;
 
+    // Die Homotopie (Schlingen zurückziehen) läuft bewusst langsamer,
+    // damit man sieht, dass nichts durchdringt.
+    const HOMOTOPY_DUR = 4200;
+
     // ---------- Zustand ----------
     let ctx = null;
     let W = 0, H = 0, DPR = 1;
@@ -44,27 +48,205 @@ const SpaceMorph = (() => {
     const LIFT = (x, y, t) => { const r2 = x * x + y * y;
         return { x: x * (1 - 0.12 * t * r2), y: y * (1 - 0.12 * t * r2), z: (r2 * KZ - KB) * t }; };
 
-    // ---------- Zwei verhakte Volltori (Datensatz D-II aus dem Paper) ----------
-    // Ketten-Hopf-Link, exakt wie in test/topologie_tiefer_neuronaler_netze.html:
+    // ---------- Zwei verhakte Volltori (Datensatz D-II) ----------
     // A (grün):  flacher Donut in der xy-Ebene (Loch entlang z), Radius M.
-    // B (rot):   stehender Donut in der xz-Ebene, Zentrum bei x=+M,
-    //            dessen Ring durch das Loch von A greift → ineinander verhakt.
-    // Jeder Torus β₁ = 1; zusammen unseparabel durch eine Ebene im ℝ³.
-    const TORI = [];
-    (function(){
-        let s2 = 1234; const rnd2 = () => (s2 = (s2 * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
-        const M = 0.72, NA = 230, NB = 230;
+    // B (rot):   stehender Donut, dessen Ring durch das Loch von A greift.
+    //
+    // A UND B haben einen Formparameter k ∈ [0,1]:
+    //   k = 1 → komplex verschlungene Variante (viele Schlingen, wie im Bild)
+    //   k = 0 → der schlichte Hopf-Link
+    // Alle Deformationsterme sind linear in k ⇒ k: 1→0 ist eine Isotopie
+    // (Homotopie ohne Selbstdurchdringung): jede Schlinge schwingt nur dort
+    // aus, wo sie WEIT WEG vom anderen Torus ist (Fenster), d. h. die
+    // Durchstoßpunkte bleiben die ganze Zeit unberührt.
+    // Verschlingungszahl bleibt +1, die Rohre dringen nie ineinander.
+    const M = 0.72, RHO = 0.16;
+
+    // ── Formparameter von B (rot) ──
+    const LOBES = 8;                 // Anzahl der Zusatzschlingen bei k=1 (sehr windig)
+    // radiale Ausschlagweite — bewusst klein, damit die Schlingen A's Rohr
+    // nicht erreichen (selbsttest: min. Mittellinienabstand > rA+rB ≈ 0.38;
+    // mit 8 Schlingen → ≈0.43, kein Durchdringen).
+    const LOBE_R = 0.25;
+    const LOBE_Y = 0.62;             // Ausschlag quer zur A-Ebene (groß → wild)
+    const LOBE_TW = 0.30;            // Verdrillung der Schlingen
+
+    // ── Formparameter von A (grün) ── analog, damit beide verschlungen sind.
+    // Das Schutzfenster (GATE_A) ist 0 nahe A's Durchstoßpunkt (t=0, dort
+    // sitzt das Zentrum von B's Ring), damit der Link nicht aufgelöst wird.
+    const LOBES_A = 8;               // Anzahl der Zusatzschlingen von A bei k=1
+    const LOBE_R_A = 0.18;           // radiale Ausschlagweite (xy-Ebene)
+    const LOBE_Z_A = 0.62;           // senkrechter Ausschlag (aus der A-Ebene)
+    const LOBE_TW_A = 0.25;          // Verdrillung der A-Schlingen
+    const PHASE_A = 1.0471;          // Phasenversatz (π/3)
+    const GATE_A = 0.40;             // Breite der Schutzzone bei t=0
+
+    // Fenster: 0 in den beiden Winkelbereichen, in denen B durch A's Loch
+    // greift (t ≈ 0 und t ≈ π), 1 dazwischen. Damit können die Schlingen
+    // A niemals schneiden. Glatt (C¹) per sin²-Rampe.
+    function lobeWindow(t) {
+        // Abstand zum nächsten Durchstoßwinkel (0 oder π)
+        let d = Math.abs(Math.sin(t));          // 0 bei t=0,π ; 1 bei t=π/2
+        const GATE = 0.42;                      // Breite der Schutzzone
+        if (d <= GATE) {
+            const u = d / GATE;
+            return u * u * (3 - 2 * u) * 0;     // harte 0 in der Schutzzone
+        }
+        const u = (d - GATE) / (1 - GATE);
+        return u * u * (3 - 2 * u);
+    }
+
+    // Mittellinie von Torus B als Funktion von (t, k).
+    // k=0 reproduziert exakt den alten Kreis { M + M·cos t, 0, M·sin t }.
+    function centerlineB(t, k) {
+        const base = {
+            x: M + M * Math.cos(t),
+            y: 0,
+            z: M * Math.sin(t)
+        };
+        if (k < 1e-6) return base;
+        const w = lobeWindow(t) * k;
+        if (w < 1e-6) return base;
+        const ph = LOBES * t;
+        // radialer Ausschlag in der xz-Ebene (entlang der Ringnormale von B)
+        const ur = { x: Math.cos(t), z: Math.sin(t) };
+        const rad = LOBE_R * Math.sin(ph) * w;
+        // Querausschlag entlang y (senkrecht zu B's Ringebene)
+        const lat = LOBE_Y * Math.sin(ph + 1.0471) * w;   // +π/3 Phasenversatz
+        // leichte Verdrillung, damit die Schlingen sich "umeinander" legen
+        const tw = LOBE_TW * Math.sin(2 * ph) * w;
+        return {
+            x: base.x + ur.x * rad + ur.z * tw,
+            y: base.y + lat,
+            z: base.z + ur.z * rad - ur.x * tw
+        };
+    }
+
+    // Mittellinie von Torus A als Funktion von (t, k).
+    // k=0 reproduziert exakt den alten Kreis { M·cos t, M·sin t, 0 }.
+    // Das Schutzfenster ist bei t=0 null — dort sitzt das Zentrum von B's
+    // Ring; dort bleibt A starr, damit der Link nicht aufgelöst wird.
+    function windowA(t) {
+        const d = (1 - Math.cos(t)) / 2;      // 0 bei t=0, 1 bei t=π
+        if (d <= GATE_A) {
+            const u = d / GATE_A;
+            return u * u * (3 - 2 * u) * 0;   // harte 0 in der Schutzzone
+        }
+        const u = (d - GATE_A) / (1 - GATE_A);
+        return u * u * (3 - 2 * u);
+    }
+    function centerlineA(t, k) {
+        const base = {
+            x: M * Math.cos(t),
+            y: M * Math.sin(t),
+            z: 0
+        };
+        if (k < 1e-6) return base;
+        const w = windowA(t) * k;
+        if (w < 1e-6) return base;
+        const ph = LOBES_A * t;
+        // radialer Ausschlag in der xy-Ebene (entlang der Ringnormale von A)
+        const ur = { x: Math.cos(t), y: Math.sin(t) };
+        const rad = LOBE_R_A * Math.sin(ph) * w;
+        // senkrechter Ausschlag (senkrecht zur A-Ebene, entlang z)
+        const vert = LOBE_Z_A * Math.sin(ph + PHASE_A) * w;
+        // leichte Verdrillung, damit die Schlingen sich "umeinander" legen
+        const tw = LOBE_TW_A * Math.sin(2 * ph) * w;
+        return {
+            x: base.x + ur.x * rad - ur.y * tw,
+            y: base.y + ur.y * rad + ur.x * tw,
+            z: base.z + vert
+        };
+    }
+
+    // Tangente numerisch (für ein saubereres Rohr-Frame der Punktwolke)
+    function tangentB(t, k) {
+        const h = 1e-3;
+        const a = centerlineB(t - h, k), b = centerlineB(t + h, k);
+        let vx = b.x - a.x, vy = b.y - a.y, vz = b.z - a.z;
+        const L = Math.hypot(vx, vy, vz) || 1;
+        return { x: vx / L, y: vy / L, z: vz / L };
+    }
+    function tangentA(t, k) {
+        const h = 1e-3;
+        const a = centerlineA(t - h, k), b = centerlineA(t + h, k);
+        let vx = b.x - a.x, vy = b.y - a.y, vz = b.z - a.z;
+        const L = Math.hypot(vx, vy, vz) || 1;
+        return { x: vx / L, y: vy / L, z: vz / L };
+    }
+
+    // Gemeinsames Rohr: Punkt = Mittellinie + Querschnittskreis im
+    // Normalframe der Tangente. (cl, tan) = Mittellinie-/Tangentenfunktion.
+    function tubePoint(cl, tan, t, s, rho, k) {
+        const c = cl(t, k);
+        const T = tan(t, k);
+        // Hilfsvektor, der nie parallel zu T ist
+        let up = { x: 0, y: 1, z: 0 };
+        if (Math.abs(T.y) > 0.9) up = { x: 1, y: 0, z: 0 };
+        // N = normalize(up × T), Bn = T × N
+        let nx = up.y * T.z - up.z * T.y,
+            ny = up.z * T.x - up.x * T.z,
+            nz = up.x * T.y - up.y * T.x;
+        const Ln = Math.hypot(nx, ny, nz) || 1;
+        nx /= Ln; ny /= Ln; nz /= Ln;
+        const bx = T.y * nz - T.z * ny,
+              by = T.z * nx - T.x * nz,
+              bz = T.x * ny - T.y * nx;
+        const cs = Math.cos(s), sn = Math.sin(s);
+        return {
+            x: c.x + rho * (nx * cs + bx * sn),
+            y: c.y + rho * (ny * cs + by * sn),
+            z: c.z + rho * (nz * cs + bz * sn)
+        };
+    }
+    // Punkt auf dem Volltorus B bzw. A
+    function toriBPoint(t, s, rho, k) { return tubePoint(centerlineB, tangentB, t, s, rho, k); }
+    function toriAPoint(t, s, rho, k) { return tubePoint(centerlineA, tangentA, t, s, rho, k); }
+
+    // Punktwolke: A fest, B als (t, s, rho) gespeichert und pro Frame
+    // mit dem aktuellen k ausgewertet.
+    const TORI_A = [];
+    const TORI_B = [];
+    (function () {
+        let s2 = 1234;
+        const rnd2 = () => (s2 = (s2 * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+        const NA = 640, NB = 760;   // A wird jetzt auch verschlungen → mehr Punkte
         for (let i = 0; i < NA; i++) {
-            const t = rnd2() * 6.2832, s = rnd2() * 6.2832, rho = 0.16 + 0.04 * rnd2();
-            const R = M + rho * Math.cos(s);
-            TORI.push({ x: R * Math.cos(t), y: R * Math.sin(t), z: rho * Math.sin(s), c: 0 });
+            TORI_A.push({
+                t: rnd2() * 6.2832,
+                s: rnd2() * 6.2832,
+                rho: 0.16 + 0.04 * rnd2(),
+                c: 0
+            });
         }
         for (let i = 0; i < NB; i++) {
-            const t = rnd2() * 6.2832, s = rnd2() * 6.2832, rho = 0.16 + 0.04 * rnd2();
-            const R = M + rho * Math.cos(s);
-            TORI.push({ x: M + R * Math.cos(t), y: rho * Math.sin(s), z: R * Math.sin(t), c: 1 });
+            TORI_B.push({
+                t: rnd2() * 6.2832,
+                s: rnd2() * 6.2832,
+                rho: 0.14 + 0.035 * rnd2(),
+                c: 1
+            });
         }
     })();
+
+    // Aktuelle Weltpunkte für gegebenes k (wird im Renderer aufgerufen).
+    // A UND B werden pro Frame mit dem aktuellen k ausgewertet.
+    function toriPoints(k) {
+        const out = [];
+        for (let i = 0; i < TORI_A.length; i++) {
+            const a = TORI_A[i];
+            const p = toriAPoint(a.t, a.s, a.rho, k);
+            p.c = 0;
+            out.push(p);
+        }
+        for (let i = 0; i < TORI_B.length; i++) {
+            const b = TORI_B[i];
+            const p = toriBPoint(b.t, b.s, b.rho, k);
+            p.c = 1;
+            out.push(p);
+        }
+        return out;
+    }
 
     // Entwirrung über eine 4. Dimension (w): die Tori dehnen sich (Schwellung),
     // ziehen gegeneinander HINDURCH und enden getrennt. Das Hindurchziehen ist
@@ -80,43 +262,71 @@ const SpaceMorph = (() => {
 
     // ---------- Szenen ----------
     const S = [
-        { n: "Schritt 1 / 10", t: "Zwei Klassen, keine Gerade",
+        { t: "Zwei Klassen, keine Gerade",
             b: "Innen eine Punktwolke, außen ein Ring. Keine Gerade trennt Rot von Blau.",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 2 / 10", t: "Jeder Versuch scheitert",
+        { t: "Jeder Versuch scheitert",
             b: "Eine lineare Trennung ist eine Gerade. Sie schneidet den Ring immer — die Topologie lässt es nicht zu.",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 3 / 10", t: "Eine Dimension mehr Platz",
+        { t: "Eine Dimension mehr Platz",
             b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden.",
             L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
-        { n: "Schritt 4 / 10", t: "Der Layer krümmt den Raum",
+        { t: "Der Layer krümmt den Raum",
             b: "Das Gitter hebt sich zu einer Schale: innere Punkte sinken, äußere steigen. Es zerreißt nicht, es biegt sich.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 5 / 10", t: "Eine Ebene passt dazwischen",
+        { t: "Eine Ebene passt dazwischen",
             b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
-        { n: "Schritt 6 / 10", t: "Die Ebene wird zur Linie",
+        { t: "Die Ebene wird zur Linie",
             b: "Wir stauchen die Ebene entlang der Blickrichtung, bis nur noch eine Linie übrig ist.",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 1, fail: 0, lab: 1, pr: 0, box: 0 },
-        { n: "Schritt 7 / 10", t: "Der Raum wird zu einer Linie",
+        { t: "Der Raum wird zu einer Linie",
             b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Projektion trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich — eine 1D-Achse, auf der s = 0 trennt.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
 
-        // ── Bonusphase: zwei verhakte Volltori (Datensatz D-II) ──
-        // Komplett anderes Beispiel — kein Fortsetzen der Punktwolke von oben.
-        // Zwei echte 3D-Datenpunkte (verknotete Donuts) brauchen eine 4. Dimension,
-        // um ohne Schnitt trennbar zu werden. Pfeiltaste rechts startet eine
-        // 5-Sekunden-Drehung um die bereits (durch die neue Dimension) getrennten
-        // Tori; die trennebene erscheint erst beim nächsten Schritt.
-        { n: "Schritt 8 / 10", t: "Neues Beispiel: verhakte Tori",
-            b: "Andere Daten, anderes Problem: zwei verknotete Volltori im ℝ³ — ineinander verhakt, keine Ebene trennt sie. Pfeiltaste → einmal um die verhakte Tori herumdrehen und sehen, wie ineinander sie sitzen.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 0 },
-        { n: "Schritt 9 / 10", t: "4. Dimension macht es möglich",
+        // ── Bonusphase: verschlungene Volltori ──
+        // Schritt 8: komplex verschlungen (k = 1), Auto-Orbit zum Anschauen.
+        { t: "Neues Beispiel: komplex verschlungene Tori",
+            b: "Andere Daten, anderes Problem: zwei Volltori im ℝ³ — ineinander verschlungen, mit vielen Schlingen. Keine Ebene trennt sie. Pfeiltaste → einmal herumdrehen und sehen, wie wild das Ding ist.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 1, ut: 0, kx: 1 },
+        // Schritt 9: Homotopie k: 1 → 0 — kein Schnitt, kein Kleben.
+        { t: "Homotopie: entwirren ohne Schnitt",
+            b: "Die Schlingen werden glatt zurückgezogen — ohne Schnitt, ohne Kleben, ohne dass sich die Ringe durchdringen. Die Verschlingungszahl bleibt +1: topologisch ist das dieselbe Konfiguration.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 1, ut: 0, kx: 0 },
+        // Schritt 10: der schlichte Hopf-Link — Ausgangspunkt des 4D-Tricks.
+        { t: "Gleiche Topologie: der Hopf-Link",
+            b: "Übrig bleibt der schlichte Hopf-Link. Jeder Torus hat β₁ = 1, beide sind unverändert verhakt — und noch immer trennt sie keine Ebene im ℝ³.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 1, ut: 0, kx: 0 },
+        { t: "4. Dimension macht es möglich",
             b: "Was vorher unlösbar war (keine Ebene trennt die Tori im ℝ³), wird durch den Lift in w lösbar. Die beiden Ringe sind jetzt zwei getrennte Klumpen im erweiterten Raum.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 },
-        { n: "Schritt 10 / 10", t: "Jetzt reicht eine Ebene",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 1, ut: 1, kx: 0 },
+        { t: "Jetzt reicht eine Ebene",
             b: "Zurück im ℝ³: zwei Klumpen. Eine Ebene trennt sie sauber.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0, tori: 1, ut: 1 }
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 1, ut: 1, kx: 0 }
+    ];
+
+    // Schritt-Labels automatisch erzeugen — nie mehr von Hand nachzählen.
+    S.forEach((s, i) => { s.n = `Schritt ${i + 1} / ${S.length}`; });
+
+    // Benannte Indizes, damit Logik nicht auf Magic Numbers läuft
+    const IDX_COMPLEX  = 7;   // komplex verschlungen, Auto-Orbit
+    const IDX_HOMOTOPY = 8;   // k: 1 → 0
+    const IDX_HOPF     = 9;   // schlichter Hopf-Link
+    const IDX_LIFT     = 10;  // 4D-Lift
+    const IDX_PLANE    = 11;  // Trennebene
+
+    // "Jeder Punkt entspricht einem Wort": die simulierte Maus fährt zwei
+    // Beispielwörter an (eines auf grünem A, eines auf rotem B). (t, s, rho)
+    // wird pro Frame wie die Punktwolke in einen Weltpunkt umgerechnet
+    // (kNow + ut + Kamera), dadurch bleiben Cursor & Label am Punkt hängen.
+    const WORD_PTS = [
+        { word: 'König',   c: 0, t: 2.2, s: 0.6, rho: 0.18 },
+        { word: 'Königin', c: 1, t: 2.6, s: 0.4, rho: 0.16 }
     ];
 
     // ---------- Ablauf ----------
@@ -141,13 +351,13 @@ const SpaceMorph = (() => {
                 const e = document.createElement('div');
                 let bg = '#cbd5e1';
                 if (i < cur) bg = '#d97706';
-                else if (i === cur && cur === 7) {
-                    // Schritt 8: lila, solange Auto-Orbit aktiv ist, sonst orange
+                else if (i === cur && cur === IDX_COMPLEX) {
                     bg = autoOrbitActive ? '#7c3aed' : (autoOrbitDone ? '#d97706' : '#94a3b8');
                 } else if (i === cur) {
                     bg = '#d97706';
                 }
-                e.style.cssText = 'width:24px;height:3px;transition:background .5s;background:' + bg + ';';
+                // Balken etwas schmaler, weil es jetzt 12 Schritte sind
+                e.style.cssText = 'width:20px;height:3px;transition:background .5s;background:' + bg + ';';
                 bar.appendChild(e);
             });
         }
@@ -160,22 +370,21 @@ const SpaceMorph = (() => {
         { id: 'O1', x: 0.90, y: 0.00, cls: 1 },   // außen₁
         { id: 'O2', x: 0.00, y: 0.95, cls: 1 }    // außen₂
     ];
-    // Beispielpunkte für die Tori (s=π/2 → z ≠ 0, also echte 3D-Daten):
-    // 2 von Klasse A (grün) + 1 von Klasse B (rot) = 3 initiale Zeilen,
-    // plus B₂ als Extra-Zeile — der "interlockte" Punkt.
+    // Beispielpunkte für die Tori: 2 von Klasse A (grün) + 2 von Klasse B (rot).
+    // A- und B-Punkte werden mit demselben centerlineA/centerlineB(t, k)
+    // berechnet wie die Punktwolke → die Tabelle zeigt die Homotopie live mit.
     const TORI_EX = [
         { id: 'A1', c: 0, t: 0,           s: Math.PI / 2 },
         { id: 'A2', c: 0, t: Math.PI / 2, s: Math.PI / 2 },
         { id: 'B1', c: 1, t: Math.PI / 2, s: Math.PI / 2 },
         { id: 'B2', c: 1, t: Math.PI,     s: Math.PI / 2 }
     ];
-    const M = 0.72, RHO = 0.16;
-    function buildToriPoint(ex) {
-        const R = M + RHO * Math.cos(ex.s);
+    // Hinweis: M und RHO sind oben beim TORI-Datensatz definiert.
+    function buildToriPoint(ex, k) {
         if (ex.c === 0) {
-            return { x: R * Math.cos(ex.t), y: R * Math.sin(ex.t), z: RHO * Math.sin(ex.s) };
+            return toriAPoint(ex.t, ex.s, RHO, k || 0);
         }
-        return { x: M + R * Math.cos(ex.t), y: RHO * Math.sin(ex.s), z: R * Math.sin(ex.t) };
+        return toriBPoint(ex.t, ex.s, RHO, k || 0);
     }
 
     const fmt2 = v => (Math.abs(v) < 0.005 ? '0' : (v.toFixed(2).replace(/^-0\.00$/, '0.00')));
@@ -198,29 +407,27 @@ const SpaceMorph = (() => {
         const tori = document.getElementById('tori-table');
         if (!egg || !tori) return;
 
-        // Ei-Tabelle: sichtbar für Schritte 1-7, Tori-Tabelle für 8-10
-        if (cur <= 6) {
+        // Ei-Tabelle für Schritte 1-7, Tori-Tabelle ab Schritt 8
+        if (cur < IDX_COMPLEX) {
             egg.removeAttribute('style');
             tori.setAttribute('style', 'display:none');
         } else {
             egg.setAttribute('style', 'display:none');
             tori.removeAttribute('style');
-            // Tori sind 3D-Daten → x, y, z immer sichtbar (CSS versteckt .yv/.zv per Default).
             tori.classList.add('show-y', 'show-z');
         }
 
-        // Ei: y-Spalte sichtbar in 1-6 (verschwindet bei 1D-Projektion in Schritt 7)
         egg.classList.toggle('show-y', cur < 6);
-        // z-Spalte ab Schritt 3 (ℝ³), verschwindet ab Schritt 7
         egg.classList.toggle('show-z', cur >= 2 && cur < 6);
 
-        // Tori: w-Spalte + Extra-Zeile ab Schritt 9 (Extra-Zeile ist aber immer da)
-        tori.classList.toggle('show-w', cur >= 8);
-        tori.classList.toggle('show-extra', cur >= 8);
+        // Tori: w-Spalte + Extra-Zeile ab dem 4D-Lift
+        tori.classList.toggle('show-w', cur >= IDX_LIFT);
+        tori.classList.toggle('show-extra', cur >= IDX_COMPLEX);
+        // Formparameter-Spalte k: sichtbar in der Verschlingungs-/Homotopiephase
+        tori.classList.toggle('show-k', cur >= IDX_COMPLEX && cur <= IDX_HOPF);
 
-        // Live-Werte aktualisieren — bei Rückprojektion interpoliert L wieder zurück
         const L = S[cur].L || 0;
-        const is1D = (cur === 6);  // Schritt 7 = 1D-Projektion → x zeigt s
+        const is1D = (cur === 6);
         let innerIdx = 0, outerIdx = 0;
         EGG_PTS.forEach((pt) => {
             const row = pt.cls === 0 ? 'inner-row' : 'outer-row';
@@ -233,20 +440,24 @@ const SpaceMorph = (() => {
             setCell('egg-table', row, 'zv', fmt2(z), idx);
         });
 
-        // Tori-Werte — ut interpoliert smooth zwischen den Schritten
-        if (cur >= 7) {
+        // Tori-Werte: ut (4D-Lift) UND kx (Verschlingungsgrad) smooth mitziehen
+        if (cur >= IDX_COMPLEX) {
             const utPrev = S[prevIdx].ut || 0;
             const utCur = S[cur].ut || 0;
-            // Schritt 8 → 9: ut startet bei 0 (noch nicht entwirrt)
-            const utStart = (cur === 8 && prevIdx === 7) ? 0 : utPrev;
+            const utStart = (prevIdx < IDX_COMPLEX) ? 0 : utPrev;
             const ut = lerp(utStart, utCur, raw);
+
+            const kPrev = (prevIdx >= IDX_COMPLEX && S[prevIdx].kx !== undefined)
+                ? S[prevIdx].kx : (S[cur].kx || 0);
+            const kCur = S[cur].kx || 0;
+            const k = clamp(lerp(kPrev, kCur, ease(raw)), 0, 1);
 
             const e = ut * ut * (3 - 2 * ut);
             const swell = 1 + 0.22 * Math.sin(ut * Math.PI);
             const sep = 0.95 * e;
             const wobble = Math.sin(ut * Math.PI) * 0.18;
             TORI_EX.forEach((ex) => {
-                const base = buildToriPoint(ex);
+                const base = buildToriPoint(ex, k);
                 const dir = ex.c === 0 ? -1 : 1;
                 const x = base.x * swell + dir * sep;
                 const y = base.y * swell + dir * wobble;
@@ -255,7 +466,7 @@ const SpaceMorph = (() => {
                 setCellByPid('tori-table', ex.id, 'xv', fmt2(x));
                 setCellByPid('tori-table', ex.id, 'yv', fmt2(y));
                 setCellByPid('tori-table', ex.id, 'zv', fmt2(z));
-                // w füllt sich smooth von 0 zum Endwert — keine leeren Zellen
+                setCellByPid('tori-table', ex.id, 'kv', fmt2(k));
                 setCellByPid('tori-table', ex.id, 'wv', fmt2(w));
                 setCellEmpty('tori-table', ex.id, 'wv', false);
             });
@@ -267,7 +478,9 @@ const SpaceMorph = (() => {
         if (n === cur) return;
         dA0 = dragA; dB0 = dragB;
         prevIdx = cur; cur = n; t0 = performance.now();
-        if (n === 7) {
+        // Orbit-Zustand nur zurücksetzen, wenn wir NEU auf den Komplex-Schritt
+        // kommen (z. B. per Rücksprung aus Schritt 9).
+        if (n === IDX_COMPLEX) {
             autoOrbitActive = false;
             autoOrbitDone = false;
             autoOrbitStart = 0;
@@ -350,8 +563,52 @@ const SpaceMorph = (() => {
             ctx.beginPath(); ctx.moveTo(m.X - 5, m.Y); ctx.lineTo(m.X + 5, m.Y); ctx.stroke(); });
         ctx.font = 'italic 16px Georgia'; ctx.fillText('z', tp.X + 12, tp.Y + 5);
         ctx.font = '12px system-ui,sans-serif'; ctx.fillStyle = '#475569';
-        ctx.fillText('alte 2D-Ebene', c[3].X + 12, c[3].Y - 8);
+        //ctx.fillText('alte 2D-Ebene', c[3].X + 12, c[3].Y - 8);
         ctx.globalAlpha = 1;
+    }
+
+    // ---------- "Jeder Punkt = ein Wort" (simulierte Maus) ----------
+    function roundRect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+    }
+    function drawSimCursor(x, y) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.beginPath();
+        ctx.moveTo(0, 0); ctx.lineTo(0, 16); ctx.lineTo(3.8, 12.4);
+        ctx.lineTo(6.6, 18.4); ctx.lineTo(9.2, 17.2); ctx.lineTo(6.4, 11.4);
+        ctx.lineTo(11.6, 11); ctx.closePath();
+        ctx.shadowColor = 'rgba(0,0,0,.3)'; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1;
+        ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.strokeStyle = 'rgba(30,41,59,.75)'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.restore();
+    }
+    function drawWordLabel(x, y, word, color, fade) {
+        ctx.globalAlpha = fade;
+        ctx.lineWidth = 1.6; ctx.strokeStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, 8, 0, 6.2832); ctx.stroke();
+        ctx.globalAlpha = fade * 0.9; ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 6.2832); ctx.fill();
+
+        ctx.font = '600 14px system-ui,sans-serif';
+        const tw = ctx.measureText(word).width;
+        const bw = tw + 18, bh = 24, bx = x + 14, by = y - 14 - bh;
+        ctx.globalAlpha = fade * 0.7; ctx.lineWidth = 1; ctx.strokeStyle = color;
+        ctx.beginPath(); ctx.moveTo(x + 5, y - 5); ctx.lineTo(bx, by + bh); ctx.stroke();
+        ctx.globalAlpha = fade;
+        roundRect(bx, by, bw, bh, 6);
+        ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.fill();
+        ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText(word, bx + 9, by + bh / 2 + 1);
+        ctx.textBaseline = 'alphabetic';
     }
 
     // ---------- Render ----------
@@ -361,7 +618,8 @@ const SpaceMorph = (() => {
         if (!ctx) { raf = requestAnimationFrame(draw); return; }
 
         axisGeom();
-        const raw = clamp((now - t0) / DUR, 0, 1), u = ease(raw);
+        const stepDur = (cur === IDX_HOMOTOPY) ? HOMOTOPY_DUR : DUR;
+        const raw = clamp((now - t0) / stepDur, 0, 1), u = ease(raw);
         // Tabellen-Werte smooth mitziehen (w erscheint leer, füllt sich dann)
         updateTables(raw);
         const a = S[prevIdx], b = S[cur];
@@ -373,6 +631,11 @@ const SpaceMorph = (() => {
         FIT = lerp(1.0, 0.34, flat); YOFF = lerp(0, H * 0.10, flat);
         const tor = lerp(a.tori || 0, b.tori || 0, u);
         const ut = lerp(a.ut || 0, b.ut || 0, u);
+        // Formparameter k: komplex (1) → schlicht (0). Beim Eintritt in die
+        // Toriphase startet k bei 1, damit nichts "aufpoppt".
+        const kFrom = (prevIdx >= IDX_COMPLEX && a.kx !== undefined) ? a.kx : (b.kx !== undefined ? b.kx : 0);
+        const kTo = (b.kx !== undefined) ? b.kx : 0;
+        const kNow = clamp(lerp(kFrom, kTo, u), 0, 1);
         const pl = lerp(a.pl, b.pl, u), sq = lerp(a.sq, b.sq, u),
             fl = lerp(a.fail, b.fail, u) * (1 - tor),
             lb = lerp(a.lab, b.lab, u) * (1 - tor),
@@ -484,40 +747,85 @@ const SpaceMorph = (() => {
             ctx.fillStyle = '#d97706'; ctx.font = '13px Georgia';
             ctx.fillText('Trennebene, von der Kante', LX, c0.Y + 4); ctx.globalAlpha = 1; }
 
-        // ---------- Zwei verhakte Tori (Bonusphase) ----------
+        // ---------- Zwei verschlungene Tori (Bonusphase) ----------
         if (tor > 0.01) {
+            const pts = toriPoints(kNow);
             const titems = [];
-            TORI.forEach(p => {
+            for (let i = 0; i < pts.length; i++) {
+                const p = pts[i];
                 const q = untangle(ut, p);
-                const d = proj(q).d;
-                titems.push({ d: d, s: proj(q), c: p.c });
-            });
+                const pr = proj(q);
+                titems.push({ d: pr.d, s: pr, c: p.c });
+            }
             titems.sort((p, q) => p.d - q.d);
             titems.forEach(it => {
-                const r = (2.6 + 0.6 * it.s.k) * it.s.k;
+                const r = (2.4 + 0.6 * it.s.k) * it.s.k;
                 ctx.beginPath(); ctx.arc(it.s.X, it.s.Y, r, 0, 6.2832);
                 ctx.fillStyle = it.c ? '#e11d48' : '#15803d';
                 ctx.globalAlpha = 0.4 + 0.6 * it.s.k; ctx.fill(); ctx.globalAlpha = 1;
             });
 
+            // Hinweistext während der Homotopie: Verschlingungszahl bleibt +1
+            if (cur === IDX_HOMOTOPY || (cur === IDX_COMPLEX && kNow > 0.02)) {
+                const a0 = clamp(1 - Math.abs(kNow - 0.5) * 1.6, 0, 1);
+                if (a0 > 0.02) {
+                    ctx.globalAlpha = a0 * 0.9;
+                    ctx.font = '600 13px system-ui,sans-serif';
+                    ctx.fillStyle = '#7c3aed';
+                    const LX = W / 2 + BASE() * FIT * 1.05 + 170;
+                    ctx.fillText('Verschlingungszahl = +1  (unverändert)', LX, H * 0.22);
+                    ctx.font = '12px system-ui,sans-serif';
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillText('kein Schnitt · kein Kleben · keine Durchdringung', LX, H * 0.22 + 18);
+                    ctx.globalAlpha = 1;
+                }
+            }
+
             // Trennebene am Ende: senkrechte Ebene x = const zwischen den Klumpen
             if (pl > 0.01) {
-                const PX = 0.36, E = 0.95, M = 7;
-                for (let i = 0; i <= M; i++) { const yv = -E + 2 * E * i / M;
-                    const a = proj({ x: PX, y: yv, z: -E }), b = proj({ x: PX, y: yv, z: E });
+                const PX = 0.36, E = 0.95, MM = 7;
+                for (let i = 0; i <= MM; i++) { const yv = -E + 2 * E * i / MM;
+                    const p0 = proj({ x: PX, y: yv, z: -E }), p1 = proj({ x: PX, y: yv, z: E });
                     ctx.globalAlpha = pl * 0.22; ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1;
-                    ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke(); }
-                for (let i = 0; i <= M; i++) { const zv = -E + 2 * E * i / M;
-                    const a = proj({ x: PX, y: -E, z: zv }), b = proj({ x: PX, y: E, z: zv });
+                    ctx.beginPath(); ctx.moveTo(p0.X, p0.Y); ctx.lineTo(p1.X, p1.Y); ctx.stroke(); }
+                for (let i = 0; i <= MM; i++) { const zv = -E + 2 * E * i / MM;
+                    const p0 = proj({ x: PX, y: -E, z: zv }), p1 = proj({ x: PX, y: E, z: zv });
                     ctx.globalAlpha = pl * 0.22; ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1;
-                    ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke(); }
+                    ctx.beginPath(); ctx.moveTo(p0.X, p0.Y); ctx.lineTo(p1.X, p1.Y); ctx.stroke(); }
                 const tl = proj({ x: PX, y: 0, z: E }), bl = proj({ x: PX, y: 0, z: -E });
                 ctx.globalAlpha = pl * 0.9; ctx.lineWidth = 2.2; ctx.strokeStyle = '#d97706';
                 ctx.beginPath(); ctx.moveTo(tl.X, tl.Y); ctx.lineTo(bl.X, bl.Y); ctx.stroke(); ctx.globalAlpha = 1;
                 ctx.font = '13px Georgia'; ctx.fillStyle = '#b45309';
                 ctx.fillText('Trennebene', tl.X + 8, tl.Y);
             }
-            // Legende entfällt — die Tabelle links unten zeigt die Klassen.
+
+            // ---------- "Jeder Punkt entspricht einem Wort" ----------
+            // Auf dem komplexen + Homotopie-Schritt fährt eine simulierte
+            // Maus zwei Beispielwörter an (eines pro Torus) und benennt sie.
+            if (cur === IDX_COMPLEX || cur === IDX_HOMOTOPY) {
+                const elapsed = now - t0;
+                const fade = sub(elapsed, 250, 750);
+                if (fade > 0.01) {
+                    const wp = WORD_PTS.map(w => {
+                        const p = w.c === 0 ? toriAPoint(w.t, w.s, w.rho, kNow)
+                                            : toriBPoint(w.t, w.s, w.rho, kNow);
+                        const pr = proj(untangle(ut, p));
+                        return { x: pr.X, y: pr.Y, word: w.word,
+                                 color: w.c === 0 ? '#15803d' : '#e11d48' };
+                    });
+                    ctx.globalAlpha = fade;
+                    ctx.font = '600 15px system-ui,sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#334155';
+                    ctx.fillText('Jeder Punkt entspricht einem Wort', W / 2 + 170, 34);
+                    ctx.textAlign = 'left';
+                    wp.forEach(w => drawWordLabel(w.x, w.y, w.word, w.color, fade));
+                    const cp = sub(elapsed, 1600, 2700);
+                    drawSimCursor(wp[0].x + (wp[1].x - wp[0].x) * cp,
+                                  wp[0].y + (wp[1].y - wp[0].y) * cp);
+                    ctx.globalAlpha = 1;
+                }
+            }
         }
 
         raf = requestAnimationFrame(draw);
@@ -568,10 +876,10 @@ const SpaceMorph = (() => {
     function canGoPrev() { return active && !animating && cur > 0; }
     function next() {
         if (!active || animating || cur >= S.length - 1) return;
-        if (cur === 7) {
+        if (cur === IDX_COMPLEX) {
             if (!autoOrbitActive && !autoOrbitDone) {
-                // 1. Pfeil-Druck: Auto-Orbit starten UND nach Ablauf automatisch
-                // zu Schritt 9 springen — User muss NICHT nochmal drücken.
+                // 1. Pfeil-Druck: Auto-Orbit um das komplexe Geflecht starten
+                // und danach automatisch zur Homotopie weiterlaufen.
                 animating = true;
                 autoOrbitActive = true;
                 autoOrbitDone = false;
@@ -580,20 +888,18 @@ const SpaceMorph = (() => {
                 updateText();
                 setTimeout(() => {
                     autoOrbitDone = true;
-                    // animating bleibt true; go(1) startet den Step-Übergang,
-                    // und der nachfolgende DUR+80 setzt animating auf false.
-                    if (cur === 7) go(1);
+                    if (cur === IDX_COMPLEX) go(1);
                     setTimeout(() => { animating = false; updateText(); }, DUR + 80);
                 }, ORBIT_AUTO_DUR + 80);
                 return;
             }
-            // Block: keine Aktion bis Orbit durch ist
             return;
         }
-        // Step-Übergang: während des Übergangs blocken
+        // Homotopie-Schritt braucht mehr Zeit als ein normaler Übergang
         animating = true;
         go(1);
-        setTimeout(() => { animating = false; updateText(); }, DUR + 80);
+        const d = (cur === IDX_HOMOTOPY) ? HOMOTOPY_DUR : DUR;
+        setTimeout(() => { animating = false; updateText(); }, d + 80);
     }
     function prev() {
         if (!active || animating || cur <= 0) return;
