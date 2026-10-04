@@ -5,7 +5,7 @@
 // ============================================================
 const SpaceMorph = (() => {
     const SLIDE_ID = 'slide-layer-als-raumkruemmung';
-    const DUR = 1900;
+    const DUR = 1000;
 
     // Die Homotopie (Schlingen zurückziehen) läuft bewusst langsamer,
     // damit man sieht, dass nichts durchdringt.
@@ -307,11 +307,12 @@ const SpaceMorph = (() => {
         { t: "Jetzt reicht eine flache Ebene",
             b: "Zurück im ℝ³: zwei Klumpen. Die Ebene bleibt flach (lineares Klassifizieren) — ReLU hat nur den Raum geknickt, jetzt trennt sie sauber.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 1, ut: 1, kx: 0 },
+        { t: "Auf die 1D-Achse projiziert",
+            b: "Wie am Anfang der Egg-Phase: die beiden Tori werden auf die 1D-Achse projiziert. Grüne und rote Punkte liegen jetzt auf beiden Seiten von s = 0.",
+            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 1, box: 0,
             tori: 1, ut: 1, kx: 0 }
     ];
-
-    // Schritt-Labels automatisch erzeugen — nie mehr von Hand nachzählen.
-    S.forEach((s, i) => { s.n = `Schritt ${i + 1} / ${S.length}`; });
 
     // Benannte Indizes, damit Logik nicht auf Magic Numbers läuft
     const IDX_COMPLEX  = 7;   // komplex verschlungen, Auto-Orbit
@@ -319,15 +320,7 @@ const SpaceMorph = (() => {
     const IDX_HOPF     = 9;   // schlichter Hopf-Link
     const IDX_LIFT     = 10;  // 4D-Lift
     const IDX_PLANE    = 11;  // Trennebene
-
-    // "Jeder Punkt entspricht einem Wort": die simulierte Maus fährt zwei
-    // Beispielwörter an (eines auf grünem A, eines auf rotem B). (t, s, rho)
-    // wird pro Frame wie die Punktwolke in einen Weltpunkt umgerechnet
-    // (kNow + ut + Kamera), dadurch bleiben Cursor & Label am Punkt hängen.
-    const WORD_PTS = [
-        { word: 'König',   c: 0, t: 2.2, s: 0.6, rho: 0.18 },
-        { word: 'Königin', c: 1, t: 2.6, s: 0.4, rho: 0.16 }
-    ];
+    const IDX_AXIS     = 12;  // Tori auf die 1D-Achse projiziert (wie die Egg-Phase)
 
     // ---------- Ablauf ----------
     function ease(u) { return u * u * u * (u * (u * 6 - 15) + 10); }
@@ -337,30 +330,11 @@ const SpaceMorph = (() => {
 
     function updateText() {
         const s = S[cur];
-        const elStep = document.getElementById('sm-step');
         const elTitle = document.getElementById('sm-title');
         const elBody = document.getElementById('sm-body');
-        if (elStep) elStep.textContent = s.n;
         if (elTitle) elTitle.textContent = s.t;
         if (elBody) elBody.textContent = s.b;
         updateTables();
-        const bar = document.getElementById('sm-bar');
-        if (bar) {
-            bar.innerHTML = '';
-            S.forEach((_, i) => {
-                const e = document.createElement('div');
-                let bg = '#cbd5e1';
-                if (i < cur) bg = '#d97706';
-                else if (i === cur && cur === IDX_COMPLEX) {
-                    bg = autoOrbitActive ? '#7c3aed' : (autoOrbitDone ? '#d97706' : '#94a3b8');
-                } else if (i === cur) {
-                    bg = '#d97706';
-                }
-                // Balken etwas schmaler, weil es jetzt 12 Schritte sind
-                e.style.cssText = 'width:20px;height:3px;transition:background .5s;background:' + bg + ';';
-                bar.appendChild(e);
-            });
-        }
     }
 
     // Beispielpunkte für die Begleit-Tabellen
@@ -512,6 +486,16 @@ const SpaceMorph = (() => {
         const lift = Math.sin(t * Math.PI) * 34;
         return { X: lerp(P.X, tx, t), Y: lerp(P.Y, ty, t) - lift, k: lerp(P.k, 1, t) };
     }
+    // 1D-Projektion der Tori (wie die Egg-Punkte): gleitet von der 3D-Position
+    // q zur Score-Achse. Nach dem Lift liegt A (grün) bei s<0, B (rot) bei s>0.
+    function warpTori(q, t) {
+        const P = proj(q);
+        if (t < 0.0005) return { X: P.X, Y: P.Y, k: P.k };
+        const score = 0.382 * q.x + 0.063;
+        const tx = sx(score), ty = AX_Y - 46 * (1 - t);
+        const lift = Math.sin(t * Math.PI) * 34;
+        return { X: lerp(P.X, tx, t), Y: lerp(P.Y, ty, t) - lift, k: lerp(P.k, 1, t) };
+    }
 
     // ---------- Gitter ----------
     const N = 14, EXT = 1.12, RES = 64;
@@ -529,13 +513,6 @@ const SpaceMorph = (() => {
     function drawBox(al) {
         if (al < 0.01) return;
         const E = EXT, ZT = 1.35, G = 10;
-        ctx.globalAlpha = al * 0.12; ctx.fillStyle = '#64748b';
-        const c = [proj({ x: -E, y: -E, z: 0 }), proj({ x: E, y: -E, z: 0 }),
-            proj({ x: E, y: E, z: 0 }), proj({ x: -E, y: E, z: 0 })];
-        ctx.beginPath(); ctx.moveTo(c[0].X, c[0].Y);
-        for (let i = 1; i < 4; i++) ctx.lineTo(c[i].X, c[i].Y);
-        ctx.closePath(); ctx.fill();
-
         ctx.globalAlpha = al * 0.40; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 0.9;
         for (let i = 0; i <= G; i++) { const v = -E + 2 * E * i / G;
             let p = proj({ x: -E, y: v, z: 0 }), q = proj({ x: E, y: v, z: 0 });
@@ -565,50 +542,6 @@ const SpaceMorph = (() => {
         ctx.font = '12px system-ui,sans-serif'; ctx.fillStyle = '#475569';
         //ctx.fillText('alte 2D-Ebene', c[3].X + 12, c[3].Y - 8);
         ctx.globalAlpha = 1;
-    }
-
-    // ---------- "Jeder Punkt = ein Wort" (simulierte Maus) ----------
-    function roundRect(x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r);
-        ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r);
-        ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
-    }
-    function drawSimCursor(x, y) {
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.beginPath();
-        ctx.moveTo(0, 0); ctx.lineTo(0, 16); ctx.lineTo(3.8, 12.4);
-        ctx.lineTo(6.6, 18.4); ctx.lineTo(9.2, 17.2); ctx.lineTo(6.4, 11.4);
-        ctx.lineTo(11.6, 11); ctx.closePath();
-        ctx.shadowColor = 'rgba(0,0,0,.3)'; ctx.shadowBlur = 4; ctx.shadowOffsetY = 1;
-        ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.fill();
-        ctx.shadowColor = 'transparent';
-        ctx.strokeStyle = 'rgba(30,41,59,.75)'; ctx.lineWidth = 1.2; ctx.stroke();
-        ctx.restore();
-    }
-    function drawWordLabel(x, y, word, color, fade) {
-        ctx.globalAlpha = fade;
-        ctx.lineWidth = 1.6; ctx.strokeStyle = color;
-        ctx.beginPath(); ctx.arc(x, y, 8, 0, 6.2832); ctx.stroke();
-        ctx.globalAlpha = fade * 0.9; ctx.fillStyle = color;
-        ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 6.2832); ctx.fill();
-
-        ctx.font = '600 14px system-ui,sans-serif';
-        const tw = ctx.measureText(word).width;
-        const bw = tw + 18, bh = 24, bx = x + 14, by = y - 14 - bh;
-        ctx.globalAlpha = fade * 0.7; ctx.lineWidth = 1; ctx.strokeStyle = color;
-        ctx.beginPath(); ctx.moveTo(x + 5, y - 5); ctx.lineTo(bx, by + bh); ctx.stroke();
-        ctx.globalAlpha = fade;
-        roundRect(bx, by, bw, bh, 6);
-        ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.fill();
-        ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.stroke();
-        ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText(word, bx + 9, by + bh / 2 + 1);
-        ctx.textBaseline = 'alphabetic';
     }
 
     // ---------- Render ----------
@@ -749,13 +682,33 @@ const SpaceMorph = (() => {
 
         // ---------- Zwei verschlungene Tori (Bonusphase) ----------
         if (tor > 0.01) {
+            // 1D-Projektion (wie am Anfang der Egg-Phase): auf dem letzten
+            // Schritt gleiten die Tori-Punkte auf die 1D-Score-Achse ab.
+            const tColTori = (prevIdx >= IDX_COMPLEX) ? clamp(lerp(a.pr || 0, b.pr || 0, u), 0, 1) : 0;
+
+            if (tColTori > 0.01) {
+                ctx.globalAlpha = tColTori; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.6;
+                ctx.beginPath(); ctx.moveTo(AX_L, AX_Y); ctx.lineTo(AX_R, AX_Y); ctx.stroke();
+                for (let i = 0; i <= 10; i++) { const X = lerp(AX_L, AX_R, i / 10);
+                    ctx.beginPath(); ctx.moveTo(X, AX_Y - 4); ctx.lineTo(X, AX_Y + 4); ctx.stroke(); }
+                const TX = sx(0); ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2.6;
+                ctx.beginPath(); ctx.moveTo(TX, AX_Y - 36); ctx.lineTo(TX, AX_Y + 36); ctx.stroke();
+                ctx.textAlign = 'center'; ctx.fillStyle = '#b45309'; ctx.font = '13px Georgia';
+                ctx.fillText('s = 0', TX, AX_Y + 58);
+                ctx.font = '600 13px system-ui,sans-serif';
+                ctx.fillStyle = '#15803d'; ctx.fillText('Klasse A', lerp(AX_L, TX, 0.45), AX_Y + 58);
+                ctx.fillStyle = '#e11d48'; ctx.fillText('Klasse B', lerp(TX, AX_R, 0.5), AX_Y + 58);
+                ctx.textAlign = 'left'; ctx.globalAlpha = 1;
+            }
+
             const pts = toriPoints(kNow);
             const titems = [];
             for (let i = 0; i < pts.length; i++) {
                 const p = pts[i];
                 const q = untangle(ut, p);
-                const pr = proj(q);
-                titems.push({ d: pr.d, s: pr, c: p.c });
+                const P3 = proj(q);
+                const P = warpTori(q, tColTori);
+                titems.push({ d: P3.d, s: P, c: p.c });
             }
             titems.sort((p, q) => p.d - q.d);
             titems.forEach(it => {
@@ -797,34 +750,6 @@ const SpaceMorph = (() => {
                 ctx.beginPath(); ctx.moveTo(tl.X, tl.Y); ctx.lineTo(bl.X, bl.Y); ctx.stroke(); ctx.globalAlpha = 1;
                 ctx.font = '13px Georgia'; ctx.fillStyle = '#b45309';
                 ctx.fillText('Trennebene', tl.X + 8, tl.Y);
-            }
-
-            // ---------- "Jeder Punkt entspricht einem Wort" ----------
-            // Nur auf dem komplexen Schritt (erster Auftritt): danach ist
-            // klar, dass alle Punkte Worte sind, und die Labels verschwinden.
-            if (cur === IDX_COMPLEX) {
-                const elapsed = now - t0;
-                const fade = sub(elapsed, 250, 750);
-                if (fade > 0.01) {
-                    const wp = WORD_PTS.map(w => {
-                        const p = w.c === 0 ? toriAPoint(w.t, w.s, w.rho, kNow)
-                                            : toriBPoint(w.t, w.s, w.rho, kNow);
-                        const pr = proj(untangle(ut, p));
-                        return { x: pr.X, y: pr.Y, word: w.word,
-                                 color: w.c === 0 ? '#15803d' : '#e11d48' };
-                    });
-                    ctx.globalAlpha = fade;
-                    ctx.font = '600 15px system-ui,sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillStyle = '#334155';
-                    ctx.fillText('Jeder Punkt entspricht einem Wort', W / 2 + 170, 34);
-                    ctx.textAlign = 'left';
-                    wp.forEach(w => drawWordLabel(w.x, w.y, w.word, w.color, fade));
-                    const cp = sub(elapsed, 1600, 2700);
-                    drawSimCursor(wp[0].x + (wp[1].x - wp[0].x) * cp,
-                                  wp[0].y + (wp[1].y - wp[0].y) * cp);
-                    ctx.globalAlpha = 1;
-                }
             }
         }
 
