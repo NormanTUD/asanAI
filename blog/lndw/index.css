@@ -1277,10 +1277,24 @@ body.sel-mode .sel-check { display: inline-flex; }
 	width: 360px; height: 600px;
 	transform: translate(-50%, -50%) scale(1);
 	transform-origin: center center;
+	perspective: 1200px;  /* 3D-Kontext für die geneigte Handy-Schale */
 	transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1),
 				opacity 0.8s ease;
 	will-change: transform, opacity;
 	z-index: 2;
+}
+/* 3D-Schale: fester Winkel + dezentes Driften, Bild/Schale in der Tiefe */
+.ia-phone-3d {
+	position: absolute;
+	inset: 0;
+	transform: rotateX(5deg) rotateY(-9deg);
+	transform-style: preserve-3d;
+	animation: ia-phoneDrift 12s ease-in-out infinite;
+	will-change: transform;
+}
+@keyframes ia-phoneDrift {
+	0%, 100% { transform: rotateX(5deg)   rotateY(-9deg); }
+	50%      { transform: rotateX(6.5deg) rotateY(-5deg); }
 }
 .ia-phone.levitate { animation: ia-levitate 4.5s ease-in-out infinite; }
 @keyframes ia-levitate {
@@ -1302,7 +1316,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 .ia-phone-notch {
 	position: absolute;
 	top: 14px; left: 50%;
-	transform: translateX(-50%);
+	transform: translateX(-50%) translateZ(26px);
 	width: 100px; height: 24px;
 	background: #05070d;
 	border-radius: 14px;
@@ -1315,6 +1329,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	background: linear-gradient(180deg, #f7f9fc 0%, #eef2f8 100%);
 	border-radius: 34px;
 	overflow: hidden;
+	transform: translateZ(12px);  /* Display ragt leicht aus der Schale */
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -1837,6 +1852,11 @@ body.sel-mode .sel-check { display: inline-flex; }
 	padding: 8px;
 }
 .ia-chat-msg.ai .ia-chat-lead { max-width: none; }
+/* Diffusion-Reveal: Rauschen → scharfes Bild */
+.ia-diff {
+	position: relative;
+	width: 100%;
+}
 .ia-chat-img {
 	display: block;
 	width: 100%;
@@ -1844,14 +1864,37 @@ body.sel-mode .sel-check { display: inline-flex; }
 	object-fit: cover;
 	border-radius: 12px;
 	opacity: 0;
-	filter: blur(14px);
-	transform: scale(1.04);
-	transition: opacity 1.2s ease, filter 1.6s ease, transform 1.8s ease;
+	filter: blur(20px);
+	transform: scale(1.08);
+	transition: opacity 0.9s ease 0.15s,
+				filter 2.1s cubic-bezier(0.2, 0.7, 0.25, 1),
+				transform 2.1s ease;
+}
+.ia-diff-noise {
+	position: absolute;
+	inset: 0;
+	border-radius: 12px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	background-size: 160px 160px;
+	opacity: 1;
+	transition: opacity 1.9s cubic-bezier(0.5, 0, 0.3, 1) 0.1s;
+	animation: ia-diffCrawl 0.7s linear infinite;
+	pointer-events: none;
+}
+@keyframes ia-diffCrawl {
+	0%   { background-position: 0 0; }
+	25%  { background-position: -42px 30px; }
+	50%  { background-position: 34px -24px; }
+	75%  { background-position: -26px -38px; }
+	100% { background-position: 0 0; }
 }
 .ia-chat-msg.ai.on .ia-chat-img {
 	opacity: 1;
 	filter: blur(0);
 	transform: scale(1);
+}
+.ia-chat-msg.ai.on .ia-diff-noise {
+	opacity: 0;
 }
 
 /* ---------- Caption über den Fenstern ---------- */
