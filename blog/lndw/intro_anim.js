@@ -551,9 +551,8 @@ const IntroAnim = (() => {
 			currentBeat = n;
 			stage.layer.classList.add('on');
 			stage.label.classList.add('on');
-			const text = stage.input ? stage.input.value : DEFAULT_TEXT;
 			if (n === 0) {
-				render(splitClean(text));
+				render(splitClean(DEFAULT_TEXT));
 				stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — der Computer teilt anders als wir';
 				stage.sub.classList.remove('on');
 				if (stage.hint) stage.hint.classList.remove('on');
@@ -595,27 +594,8 @@ const IntroAnim = (() => {
 			stage.sub   = slideEl.querySelector('.ia-tokens-sub');
 			stage.hint  = slideEl.querySelector('.ia-tokens-hint');
 			stage.himmel = slideEl.querySelector('.ia-tokens-him-mel');
-			stage.input = slideEl.querySelector('#ia-tokens-input');
 
 			if (!isReady()) return false;
-
-			// Eingabe + Beispiel-Chips: Satz ändern → sauber neu tokenisieren.
-			// Beat geht auf 0 („ganze Wörter"); der Pfeil macht dann den Split.
-			if (stage.input && !stage.input.dataset.iaWired) {
-				stage.input.dataset.iaWired = '1';
-				stage.input.addEventListener('input', () => {
-					currentBeat = 0;
-					setBeat(0);
-				});
-				slideEl.querySelectorAll('.ia-tokens-example').forEach(btn => {
-					btn.addEventListener('click', () => {
-						stage.input.value = btn.dataset.satz || DEFAULT_TEXT;
-						currentBeat = 0;
-						setBeat(0);
-					});
-				});
-			}
-
 			currentBeat = 0;
 			setBeat(0);
 			return true;
@@ -624,7 +604,6 @@ const IntroAnim = (() => {
 		function reset() {
 			clearTimers();
 			currentBeat = 0;
-			if (stage.input) stage.input.value = DEFAULT_TEXT;
 		}
 
 		return {

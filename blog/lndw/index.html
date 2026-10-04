@@ -745,14 +745,9 @@
             <div class="ia-tokens-stage">
                 <div class="ia-tokens-label" id="ia-tokens-label"><span class="ia-acc">Tokenisierung</span></div>
                 <div class="ia-tokens-layer" id="ia-tokens-layer"></div>
-                <div class="ia-tokens-examples">
-                    <button type="button" class="ia-tokens-example" data-satz="warum ist der himmel blau">„himmel blau"</button>
-                    <button type="button" class="ia-tokens-example" data-satz="es war einmal ein königskind">„ein königskind"</button>
-                    <input type="text" id="ia-tokens-input" data-free-text class="ia-tokens-input" placeholder="…oder dein eigener Satz" value="warum ist der himmel blau">
-                </div>
                 <div class="ia-tokens-sub" id="ia-tokens-sub">Im Kern ein <span class="ia-acc">Kompressions-Algorithmus</span>: die häufigsten Muster werden zu einem einzigen Token zusammengefasst.</div>
             </div>
-            <p class="ia-tokens-hint ia-tokens-reveal">„himmel" kommt so oft vor, dass es sich lohnt, es zu zerlegen — „him" + „mel" decken viele weitere Wortteile ab.</p>
+            <p class="ia-tokens-hint ia-tokens-reveal">„him" und „mel" kommen in vielen Wörtern vor. Als eigenes Token komprimieren sie die Daten.</p>
             <p class="ia-tokens-him-mel ia-tokens-reveal"><span class="hm-chip">him</span> himmlisch · Himbeere · Himmelskugel &nbsp;&nbsp;<span class="hm-chip">mel</span> Melone · Melodie · melken · Schmelze</p>
         </div>
     </div>
@@ -763,7 +758,7 @@
             <h2>Embedding</h2>
  	    <p>Jedes Token → <b>Vektor</b> = seine <b>Bedeutung</b>:</p>
             <div class="formula-box">
-                <div class="math-display">$$\text{"könig"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
+                <div class="math-display">$$\text{"blau"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
             </div>
  	    <p class="fragment">Werte lernt der Computer selbst aus Trainingsdaten (statistische Muster).</p>
  	    <p class="fragment">Starte zufällig → wird so angepasst, dass die nächste-Token-Wahl immer besser wird.</p>
