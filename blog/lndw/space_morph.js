@@ -292,12 +292,12 @@ const SpaceMorph = (() => {
             tori: 1, ut: 0, kx: 1 },
         // Schritt 9: Homotopie k: 1 → 0 — kein Schnitt, kein Kleben.
         { t: "Ohne ReLU: entwirren, nicht trennen",
-            b: "Ohne ReLU ist ein Layer nur affin (x → Wx + b) — topologierehaltend. Die Schlingen werden glatt zurückgezogen, ohne Schnitt oder Durchdringen, aber die Verschlingungszahl bleibt +1. Ordnen ja, trennen nein.",
+            b: "Ohne ReLU ist ein Layer affin (x → Wx + b). Nur die invertiblen (det W ≠ 0) sind Homöomorphismen — topologierehaltend. Genau das zeigt die Homotopie: die Schlingen glätten sich, aber die Verschlingungszahl bleibt +1. Eine Projektion (det W = 0) ist es nicht — sie wirft eine Dimension weg, scheinbare Auflösung, aber nur Informationsverlust.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         // Schritt 10: der schlichte Hopf-Link — Ausgangspunkt des 4D-Tricks.
         { t: "Maximum ohne ReLU: der Hopf-Link",
-            b: "Übrig bleibt ein sauberer Hopf-Link — erkennbar, aber topologisch unverändert verhakt. Die Verschlingungszahl +1 kann keine lineare Ebene aufheben: noch immer trennt keine im ℝ³.",
+            b: "Übrig bleibt ein sauberer Hopf-Link — erkennbar, aber topologisch unverändert verhakt. Die Verschlingungszahl +1 ist eine Topologie-Invariante: noch immer trennt keine Ebene im ℝ³ die beiden Ringe.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         { t: "ReLU knickt den Raum (4. Dimension)",
