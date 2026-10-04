@@ -1277,24 +1277,10 @@ body.sel-mode .sel-check { display: inline-flex; }
 	width: 360px; height: 600px;
 	transform: translate(-50%, -50%) scale(1);
 	transform-origin: center center;
-	perspective: 1200px;  /* 3D-Kontext für die geneigte Handy-Schale */
 	transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1),
 				opacity 0.8s ease;
 	will-change: transform, opacity;
 	z-index: 2;
-}
-/* 3D-Schale: fester Winkel + dezentes Driften, Bild/Schale in der Tiefe */
-.ia-phone-3d {
-	position: absolute;
-	inset: 0;
-	transform: rotateX(5deg) rotateY(-9deg);
-	transform-style: preserve-3d;
-	animation: ia-phoneDrift 12s ease-in-out infinite;
-	will-change: transform;
-}
-@keyframes ia-phoneDrift {
-	0%, 100% { transform: rotateX(5deg)   rotateY(-9deg); }
-	50%      { transform: rotateX(6.5deg) rotateY(-5deg); }
 }
 .ia-phone.levitate { animation: ia-levitate 4.5s ease-in-out infinite; }
 @keyframes ia-levitate {
@@ -1316,7 +1302,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 .ia-phone-notch {
 	position: absolute;
 	top: 14px; left: 50%;
-	transform: translateX(-50%) translateZ(26px);
+	transform: translateX(-50%);
 	width: 100px; height: 24px;
 	background: #05070d;
 	border-radius: 14px;
@@ -1329,7 +1315,6 @@ body.sel-mode .sel-check { display: inline-flex; }
 	background: linear-gradient(180deg, #f7f9fc 0%, #eef2f8 100%);
 	border-radius: 34px;
 	overflow: hidden;
-	transform: translateZ(12px);  /* Display ragt leicht aus der Schale */
 	display: flex;
 	flex-direction: column;
 	align-items: center;
