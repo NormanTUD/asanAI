@@ -513,7 +513,17 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
         // ?fast=1: einfache Fragmente direkt anzeigen
         if (fastMode) revealFastFragments(currentSlide);
 
-        // Boot aktiviert die Startfolie direkt (ohne goTo → ohne notifyEnter).
+        // Sicherstellen, dass benachrichtigt wird (auch bei direktem ?start=/ ?slide),
+        // damit Demos (z. B. SpaceMorph) korrekt initialisiert werden.
+        try {
+            if (typeof DemoRegistry !== 'undefined') {
+                DemoRegistry.notifyEnter(null, slides[currentSlide]);
+            }
+        } catch (e) {}
+        try {
+            triggerSlideInit(currentSlide);
+        } catch (e) {}
+
         // Klassisch-vs-KI-Startfolie: Schreibmaschinen-Effekt sofort starten.
         if (typeof TypewriterViz !== 'undefined' && TypewriterViz.isOnClassicSlide()) {
             TypewriterViz.activate();

@@ -266,13 +266,13 @@ const SpaceMorph = (() => {
             b: "Innen eine Punktwolke, außen ein Ring. Keine Gerade trennt Rot von Blau.",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Jeder Versuch scheitert",
-            b: "Eine lineare Trennung ist eine Gerade. Sie schneidet den Ring immer — die Topologie lässt es nicht zu.",
+            b: "Eine lineare Trennung ist eine Gerade — sie schneidet den Ring immer. Der Ring umschließt die Wolke: eine topologische Anordnung, die eine Gerade nicht aufbrechen kann.",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
         { t: "Eine Dimension mehr Platz",
             b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden.",
             L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { t: "Der Layer krümmt den Raum",
-            b: "Das Gitter hebt sich zu einer Schale: innere Punkte sinken, äußere steigen. Es zerreißt nicht, es biegt sich.",
+            b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Eine Glatte Krümmung — sie reißt nicht und verklebt keinen Punkt, bleibt ein Homöomorphismus. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Eine Ebene passt dazwischen",
             b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
@@ -292,7 +292,7 @@ const SpaceMorph = (() => {
             tori: 1, ut: 0, kx: 1 },
         // Schritt 9: Homotopie k: 1 → 0 — kein Schnitt, kein Kleben.
         { t: "Ohne ReLU: entwirren, nicht trennen",
-            b: "Ohne ReLU ist ein Layer affin (x → Wx + b). Nur die invertiblen (det W ≠ 0) sind Homöomorphismen — topologierehaltend. Genau das zeigt die Homotopie: die Schlingen glätten sich, aber die Verschlingungszahl bleibt +1. Eine Projektion (det W = 0) ist es nicht — sie wirft eine Dimension weg, scheinbare Auflösung, aber nur Informationsverlust.",
+            b: "Affin (x → Wx + b) — und auch die Glatte Egg-Schale — ist ein Homöomorphismus: topologierehaltend. Die Homotopie zeigt es: die Schlingen glätten sich, aber die Verschlingungszahl +1 bleibt stehen, die Ringe bleiben verhakt. Nur eine Projektion (det W = 0) würde sie scheinbar lösen — sie wirft aber eine Dimension weg, nur Informationsverlust.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         // Schritt 10: der schlichte Hopf-Link — Ausgangspunkt des 4D-Tricks.
@@ -301,7 +301,7 @@ const SpaceMorph = (() => {
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         { t: "ReLU knickt den Raum (4. Dimension)",
-            b: "ReLU + die Extra-Dimension des Hidden-Layers falzen den Raum: die Ringe ziehen sich durch eine 4. Dimension hindurch, wo in ℝ³ kein Weg frei ist. Heraus kommen zwei getrennte Klumpen.",
+            b: "Anders als die Glatte Egg-Schale ist die ReLU-Falte NICHT umkehrbar: sie verklebt Punkte (x ≤ 0 → 0). Genau das bricht die Topologie — die Ringe ziehen sich durch die 4. Dimension, wo in ℝ³ kein Weg frei ist, und zwei getrennte Klumpen bleiben.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 1, kx: 0 },
         { t: "Jetzt reicht eine flache Ebene",
@@ -316,7 +316,7 @@ const SpaceMorph = (() => {
         // Sigmoid krümmt glatt (Welle), ReLU knickt hart (Falte). Eigener
         // Schritt mit vollem 2D-Canvas-3D-Plot, kein 3D-Szenario (ff: 1).
         { t: "Sigmoid krümmt, ReLU knickt",
-            b: "Zwei Aktivierungen, zwei Raumkrümmungen: Sigmoid biegt die Fläche glatt wie eine Welle — keine Kante. ReLU knickt sie hart: bei x = 0 eine scharfe Falte (Origami). Genau diese Falte schafft die Trennfläche, die im ℝ³ nicht möglich war.",
+            b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt und umkehrbar — ein Homöomorphismus: es biegt, verklebt nichts und reicht für das Egg (Umgebung). ReLU ist scharf und nicht umkehrbar — es klappt Punkte zusammen (2 → 1) und bricht damit die Topologie, die die Tori verhakt hält.",
             L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 0, ut: 0, kx: 0, ff: 1 }
     ];
@@ -395,6 +395,9 @@ const SpaceMorph = (() => {
     function updateTables(raw = 1) {
         const egg = document.getElementById('egg-table');
         const tori = document.getElementById('tori-table');
+        // Fun-Fact-Schritt: Tabellen überlagern den 2D-Plot → komplett ausblenden.
+        const cont = document.getElementById('sm-table-container');
+        if (cont) cont.style.display = (cur === IDX_FUNFACT) ? 'none' : '';
         if (!egg || !tori) return;
 
         // Ei-Tabelle für Schritte 1-7, Tori-Tabelle ab Schritt 8
@@ -627,6 +630,34 @@ const SpaceMorph = (() => {
             ctx.stroke(); }
         ctx.globalAlpha = alpha;
     }
+    // Sample-Punkte auf den Blättern: zeigen, wie die Krümmung Topologie
+    // bricht. Sigmoid (glatt, umkehrbar = Homöomorphismus): bleiben getrennt.
+    // ReLU (Falte, nicht umkehrbar): Punkte links der Falte klappen auf x=0
+    // und kollidieren (2 → 1).
+    const FF_SX = [-1.0, -0.35, 0.35, 1.0];
+    function drawSamplePoints(cx, act, color, alpha, isFold) {
+        const ZS = 0.85;
+        FF_SX.forEach(x => {
+            const z = act(x) * ZS;
+            const p = ffProj(cx + x, 0, z);
+            if (isFold && x < 0) {   // klappen auf die Falzkante (x = 0)
+                const c = ffProj(cx + 0, 0, 0);
+                ctx.strokeStyle = color; ctx.lineWidth = 1.3; ctx.setLineDash([3, 3]); ctx.globalAlpha = alpha * 0.65;
+                ctx.beginPath(); ctx.moveTo(p.X, p.Y); ctx.lineTo(c.X, c.Y); ctx.stroke(); ctx.setLineDash([]);
+            }
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = color; ctx.beginPath(); ctx.arc(p.X, p.Y, 4.2, 0, 6.2832); ctx.fill();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(p.X, p.Y, 4.2, 0, 6.2832); ctx.stroke();
+        });
+        if (isFold) {   // Kollisionsmarker an der Falzkante
+            const c = ffProj(cx + 0, 0, 0);
+            ctx.globalAlpha = alpha; ctx.strokeStyle = '#e11d48'; ctx.lineWidth = 2.2;
+            ctx.beginPath(); ctx.arc(c.X, c.Y, 9.5, 0, 6.2832); ctx.stroke();
+            ctx.fillStyle = '#e11d48'; ctx.font = '600 11px system-ui,sans-serif'; ctx.textAlign = 'left';
+            ctx.fillText('2 → 1', c.X + 13, c.Y - 2);
+        }
+        ctx.globalAlpha = alpha;
+    }
     function drawFunFact(alpha) {
         if (alpha < 0.01) return;
         ctx.save();
@@ -640,16 +671,18 @@ const SpaceMorph = (() => {
         const GAP = 2.15;
         drawSheet(-GAP, FF_SIG, '#0284c7', alpha, false);
         drawSheet(+GAP, FF_RELU, '#d97706', alpha, true);
+        drawSamplePoints(-GAP, FF_SIG, '#0284c7', alpha, false);
+        drawSamplePoints(+GAP, FF_RELU, '#d97706', alpha, true);
         // Beschriftung über jedem Blatt
         ctx.globalAlpha = alpha; ctx.textAlign = 'center'; ctx.font = '600 14px system-ui,sans-serif';
         const lL = ffProj(-GAP, 0, 0), lR = ffProj(GAP, 0, 0);
-        ctx.fillStyle = '#0284c7'; ctx.fillText('sigmoid — glatte Welle', lL.X, H * 0.33);
-        ctx.fillStyle = '#d97706'; ctx.fillText('ReLU — harte Falte', lR.X, H * 0.33);
+        ctx.fillStyle = '#0284c7'; ctx.fillText('sigmoid: glatt → bleibt getrennt', lL.X, H * 0.31);
+        ctx.fillStyle = '#d97706'; ctx.fillText('ReLU: Falte → Punkte kollidieren', lR.X, H * 0.31);
         // Caption
         ctx.fillStyle = '#475569'; ctx.font = '13.5px system-ui,sans-serif';
-        ctx.fillText('Sigmoid biegt den Raum glatt um — ReLU schlägt eine scharfe Falte', W / 2, H * 0.68);
+        ctx.fillText('Glatte Krümmung (Sigmoid) ist umkehrbar — ein Homöomorphismus, reicht für das Egg.', W / 2, H * 0.68);
         ctx.fillStyle = '#d97706'; ctx.font = '600 13.5px system-ui,sans-serif';
-        ctx.fillText('Genau diese Falte schafft die Trennung, die keine Ebene in ℝ³ hinbekam.', W / 2, H * 0.68 + 22);
+        ctx.fillText('Die ReLU-Falte ist nicht umkehrbar — sie verklebt Punkte und bricht die Verschlingung der Tori.', W / 2, H * 0.68 + 22);
         ctx.restore();
     }
 
