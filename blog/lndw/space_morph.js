@@ -301,7 +301,7 @@ const SpaceMorph = (() => {
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         { t: "ReLU knickt den Raum (4. Dimension)",
-            b: "Anders als die Glatte Egg-Schale ist die ReLU-Falte NICHT umkehrbar: sie verklebt Punkte (x ≤ 0 → 0). Genau das bricht die Topologie — die Ringe ziehen sich durch die 4. Dimension, wo in ℝ³ kein Weg frei ist, und zwei getrennte Klumpen bleiben.",
+            b: "Anders als die Glatte Egg-Schale ist die ReLU-Falte NICHT umkehrbar: sie identifiziert alle Punkte mit x ≤ 0 (bildet sie auf denselben Wert 0 ab). Genau das bricht die Topologie — die Ringe ziehen sich durch die 4. Dimension, wo in ℝ³ kein Weg frei ist, und zwei getrennte Klumpen bleiben.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 1, kx: 0 },
         { t: "Jetzt reicht eine flache Ebene",
@@ -316,7 +316,7 @@ const SpaceMorph = (() => {
         // Sigmoid krümmt glatt (Welle), ReLU knickt hart (Falte). Eigener
         // Schritt mit vollem 2D-Canvas-3D-Plot, kein 3D-Szenario (ff: 1).
         { t: "Sigmoid krümmt, ReLU knickt",
-            b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt und umkehrbar — ein Homöomorphismus: es biegt, verklebt nichts und reicht für das Egg (Umgebung). ReLU ist scharf und nicht umkehrbar — es klappt Punkte zusammen (2 → 1) und bricht damit die Topologie, die die Tori verhakt hält.",
+            b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt und umkehrbar — ein Homöomorphismus: es biegt, identifiziert nichts und reicht für das Egg (Umgebung). ReLU ist scharf und nicht umkehrbar — es identifiziert Punkte mit x ≤ 0 (2 → 1) und bricht damit die Topologie, die die Tori verhakt hält.",
             L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 0, ut: 0, kx: 0, ff: 1 }
     ];
@@ -682,7 +682,7 @@ const SpaceMorph = (() => {
         ctx.fillStyle = '#475569'; ctx.font = '13.5px system-ui,sans-serif';
         ctx.fillText('Glatte Krümmung (Sigmoid) ist umkehrbar — ein Homöomorphismus, reicht für das Egg.', W / 2, H * 0.68);
         ctx.fillStyle = '#d97706'; ctx.font = '600 13.5px system-ui,sans-serif';
-        ctx.fillText('Die ReLU-Falte ist nicht umkehrbar — sie verklebt Punkte und bricht die Verschlingung der Tori.', W / 2, H * 0.68 + 22);
+        ctx.fillText('Die ReLU-Falte ist nicht umkehrbar — sie identifiziert Punkte mit x ≤ 0 und bricht die Verschlingung der Tori.', W / 2, H * 0.68 + 22);
         ctx.restore();
     }
 
