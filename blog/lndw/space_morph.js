@@ -286,26 +286,26 @@ const SpaceMorph = (() => {
 
         // ── Bonusphase: verschlungene Volltori ──
         // Schritt 8: komplex verschlungen (k = 1), Auto-Orbit zum Anschauen.
-        { t: "Neues Beispiel: komplex verschlungene Tori",
-            b: "Andere Daten, anderes Problem: zwei Volltori im ℝ³ — ineinander verschlungen, mit vielen Schlingen. Keine Ebene trennt sie. Pfeiltaste → einmal herumdrehen und sehen, wie wild das Ding ist.",
+        { t: "Neues Beispiel: zwei verschlungene Tori",
+            b: "Andere Daten, anderes Problem: zwei Volltori im ℝ³, jeder Punkt ein Wort-Vektor — ineinander verschlungen. Keine Ebene trennt sie. Pfeiltaste → einmal herumdrehen.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 1 },
         // Schritt 9: Homotopie k: 1 → 0 — kein Schnitt, kein Kleben.
-        { t: "Homotopie: entwirren ohne Schnitt",
-            b: "Die Schlingen werden glatt zurückgezogen — ohne Schnitt, ohne Kleben, ohne dass sich die Ringe durchdringen. Die Verschlingungszahl bleibt +1: topologisch ist das dieselbe Konfiguration.",
+        { t: "Ohne ReLU: entwirren, nicht trennen",
+            b: "Ohne ReLU ist ein Layer nur affin (x → Wx + b) — topologierehaltend. Die Schlingen werden glatt zurückgezogen, ohne Schnitt oder Durchdringen, aber die Verschlingungszahl bleibt +1. Ordnen ja, trennen nein.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         // Schritt 10: der schlichte Hopf-Link — Ausgangspunkt des 4D-Tricks.
-        { t: "Gleiche Topologie: der Hopf-Link",
-            b: "Übrig bleibt der schlichte Hopf-Link. Jeder Torus hat β₁ = 1, beide sind unverändert verhakt — und noch immer trennt sie keine Ebene im ℝ³.",
+        { t: "Maximum ohne ReLU: der Hopf-Link",
+            b: "Übrig bleibt ein sauberer Hopf-Link — erkennbar, aber topologisch unverändert verhakt. Die Verschlingungszahl +1 kann keine lineare Ebene aufheben: noch immer trennt keine im ℝ³.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
-        { t: "4. Dimension macht es möglich",
-            b: "Was vorher unlösbar war (keine Ebene trennt die Tori im ℝ³), wird durch den Lift in w lösbar. Die beiden Ringe sind jetzt zwei getrennte Klumpen im erweiterten Raum.",
+        { t: "ReLU knickt den Raum (4. Dimension)",
+            b: "ReLU + die Extra-Dimension des Hidden-Layers falzen den Raum: die Ringe ziehen sich durch eine 4. Dimension hindurch, wo in ℝ³ kein Weg frei ist. Heraus kommen zwei getrennte Klumpen.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 1, kx: 0 },
-        { t: "Jetzt reicht eine Ebene",
-            b: "Zurück im ℝ³: zwei Klumpen. Eine Ebene trennt sie sauber.",
+        { t: "Jetzt reicht eine flache Ebene",
+            b: "Zurück im ℝ³: zwei Klumpen. Die Ebene bleibt flach (lineares Klassifizieren) — ReLU hat nur den Raum geknickt, jetzt trennt sie sauber.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 1, kx: 0 }
     ];
@@ -800,9 +800,9 @@ const SpaceMorph = (() => {
             }
 
             // ---------- "Jeder Punkt entspricht einem Wort" ----------
-            // Auf dem komplexen + Homotopie-Schritt fährt eine simulierte
-            // Maus zwei Beispielwörter an (eines pro Torus) und benennt sie.
-            if (cur === IDX_COMPLEX || cur === IDX_HOMOTOPY) {
+            // Nur auf dem komplexen Schritt (erster Auftritt): danach ist
+            // klar, dass alle Punkte Worte sind, und die Labels verschwinden.
+            if (cur === IDX_COMPLEX) {
                 const elapsed = now - t0;
                 const fade = sub(elapsed, 250, 750);
                 if (fade > 0.01) {
