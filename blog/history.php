@@ -830,7 +830,7 @@ A \citeyear{lane2025eliza} \cite{lane2025eliza} reveals a surprising fact about 
 
  <figure>
  	<img style="width: 100%; max-width: 520px;" src="warren_weaver.jpg" alt="Warren Weaver, 1940" />
- 	<figcaption class="md">\citealternativetitle{img_warren_weaver} (Public Domain, \citeauthor{img_warren_weaver}, \citeyear{img_warren_weaver}): two years before he proposed translating languages with a computer.</figcaption>
+ <figcaption class="md">\citealternativetitle{img_warren_weaver} (Public Domain, \citeauthor{img_warren_weaver}, \citeyear{img_warren_weaver}): seven years before his 1947 letter proposing machine translation.</figcaption>
  </figure>
 
  The dream of a translating machine is older than the computer. In 1947, the mathematician and science administrator **Warren Weaver** wrote to **Norbert Wiener** asking whether a digital computer might translate between natural languages; Wiener, who had spent the war predicting where aircraft would be, was unconvinced — the boundaries of words in different languages, he replied, are "too vague" and their connotations "too extensive" for any quasi-mechanical scheme to hope on. By July 1949, however, Weaver had elaborated the idea into a memorandum, "Translation", which he sent to some 200 colleagues, and which is generally credited with initiating the field of **machine translation (MT)** (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
