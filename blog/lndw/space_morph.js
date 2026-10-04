@@ -287,7 +287,7 @@ const SpaceMorph = (() => {
         // ── Bonusphase: verschlungene Volltori ──
         // Schritt 8: komplex verschlungen (k = 1), Auto-Orbit zum Anschauen.
         { t: "Neues Beispiel: zwei verschlungene Tori",
-            b: "Andere Daten, anderes Problem: zwei Volltori im ℝ³, jeder Punkt ein Wort-Vektor — ineinander verschlungen. Keine Ebene trennt sie. Pfeiltaste → einmal herumdrehen.",
+            b: "Andere Daten, anderes Problem: zwei Volltori im ℝ³, jeder Punkt ein Wort-Vektor — ineinander verschlungen. Keine Ebene trennt sie.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 1 },
         // Schritt 9: Homotopie k: 1 → 0 — kein Schnitt, kein Kleben.
