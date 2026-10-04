@@ -1894,7 +1894,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	pointer-events: none;
 	padding: 0 24px;
 	z-index: 5;
-	top: 32px;
+	top: 16px;
 }
 .ia-beat-caption .ia-acc { color: #7c3aed; font-weight: 500; }
 
