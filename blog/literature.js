@@ -6485,9 +6485,16 @@ window.bibData = {
 	"toosi2021history": {
 		url: "https://ar5iv.labs.arxiv.org/html/2109.01517",
 		title: "A brief history of AI: how to prevent another winter (a critical review)",
-		author: "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahmim",
+		author: "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahim",
 		year: 2021,
 		alternativetitle: "A Brief History of AI"
+	},
+	"nilsson1984qai": {
+		title: "The Quest for Artificial Intelligence: A History of Ideas and Achievements",
+		author: "Nils J. Nilsson",
+		year: 1984,
+		url: "https://ai.stanford.edu/~nilsson/QAI/qai.pdf",
+		alternativetitle: "Nilsson, The Quest for Artificial Intelligence"
 	},
 	"ronkowitz2017perceptron": {
 		url: "https://ronkowitz.blogspot.com/2017/11/perceptron.html",
@@ -14839,6 +14846,38 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Guericke_Crater_as_seen_by_Ranger_7.jpg",
 		license: "Public domain",
 		alternativetitle: "Ranger 7, Guericke crater"
+	},
+	"img_walter_tortoise": {
+		title: "Cybernetic Tortoise by William Grey Walter c 1950",
+		author: "Ank Kumar",
+		year: 2012,
+		url: "https://commons.wikimedia.org/wiki/File:Cybernetic_Tortoise_by_William_Grey_Walter_c_1950_(Ank_Kumar).jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Grey Walter's Machina speculatrix (cybernetic tortoise)"
+	},
+	"img_kirsch_baby": {
+		title: "First scanned photograph, 1957 (Walden Kirsch)",
+		author: "Russell A. Kirsch",
+		year: 1957,
+		url: "https://commons.wikimedia.org/wiki/File:NBSFirstScanImage.jpg",
+		license: "Public domain",
+		alternativetitle: "The first digital image: a 1957 scan of a baby"
+	},
+	"img_widrow_adaline": {
+		title: "Bernard Widrow with the ADALINE machine",
+		author: "Stanford University (Stanford Today magazine)",
+		year: 1963,
+		url: "https://commons.wikimedia.org/wiki/File:Bernard_Widrow_with_ADALINE.jpg",
+		license: "Public domain",
+		alternativetitle: "Bernard Widrow with ADALINE"
+	},
+	"img_warren_weaver": {
+		title: "Warren Weaver, 1940",
+		author: "Donald Cooksey",
+		year: 1940,
+		url: "https://commons.wikimedia.org/wiki/File:Warren_Weaver.jpg",
+		license: "Public domain",
+		alternativetitle: "Warren Weaver"
 	},
 	"img_gutta_percha_cable": {
 		title: "Appareil pour envelopper de gutta-percha les fils de cuivre du câble transatlantique",
