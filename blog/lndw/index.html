@@ -739,21 +739,21 @@
         <div class="slide-content">
             <h2>Tokenisierung</h2>
             <p>Text → kleine Stücke (<b>Tokens</b>) · Computer versteht nur Zahlen.</p>
-            <p class="fragment">Ganze Wörter · Wortteile · mehrere Wörter · auch Leerzeichen, Kommata, Emojis, …</p>
-    	<p class="fragment">Anzahl vorgeben → Tokenizer wählt per Häufigkeit die (Teil-)Worte selbst.</p>
+            <p>Ein Token kann ein <b>ganzes Wort</b>, ein <b>Wortteil</b> oder sogar <b>mehrere Wörter</b> sein — auch Leerzeichen, Kommata, Emojis, …</p>
+            <p>Der Tokenizer entscheidet per <b>Häufigkeit</b>, welche (Teil-)Worte er zu einem Token zusammenfasst.</p>
 
-            <div class="ia-tokens-stage" style="margin-top:16px;">
+            <div class="ia-tokens-stage">
                 <div class="ia-tokens-label" id="ia-tokens-label"><span class="ia-acc">Tokenisierung</span></div>
                 <div class="ia-tokens-layer" id="ia-tokens-layer"></div>
+                <div class="ia-tokens-examples">
+                    <button type="button" class="ia-tokens-example" data-satz="warum ist der himmel blau">„himmel blau"</button>
+                    <button type="button" class="ia-tokens-example" data-satz="es war einmal ein königskind">„ein königskind"</button>
+                    <input type="text" id="ia-tokens-input" data-free-text class="ia-tokens-input" placeholder="…oder dein eigener Satz" value="warum ist der himmel blau">
+                </div>
                 <div class="ia-tokens-sub" id="ia-tokens-sub">Im Kern ein <span class="ia-acc">Kompressions-Algorithmus</span>: die häufigsten Muster werden zu einem einzigen Token zusammengefasst.</div>
             </div>
             <p class="ia-tokens-hint ia-tokens-reveal">„himmel" kommt so oft vor, dass es sich lohnt, es zu zerlegen — „him" + „mel" decken viele weitere Wortteile ab.</p>
             <p class="ia-tokens-him-mel ia-tokens-reveal"><span class="hm-chip">him</span> himmlisch · Himbeere · Himmelskugel &nbsp;&nbsp;<span class="hm-chip">mel</span> Melone · Melodie · melken · Schmelze</p>
-
-            <div class="demo-box fragment" style="min-height:auto;">
-                <input type="text" id="tokenizer-input" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:14px;" placeholder="z.B. 'es war einmal ein königskind'" value="es war einmal ein königskind">
-                <div id="tokenizer-output" style="min-height:60px;"></div>
-            </div>
         </div>
     </div>
 

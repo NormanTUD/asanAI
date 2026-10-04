@@ -498,8 +498,7 @@ const IntroAnim = (() => {
 		let timers = [];
 		let currentBeat = -1;
 
-		const FULL = ['warum', 'ist', 'der', 'himmel', 'blau'];
-		const SPLIT = ['warum', 'ist', 'der', 'him', 'mel', 'blau'];
+		const DEFAULT_TEXT = 'warum ist der himmel blau';
 
 		function later(fn, ms) {
 			const id = setTimeout(fn, ms);
@@ -508,6 +507,16 @@ const IntroAnim = (() => {
 		function clearTimers() {
 			timers.forEach(clearTimeout);
 			timers = [];
+		}
+
+		// Saubere Anzeige-Tokens: an Leerzeichen trennen, Satzzeichen am
+		// Wortende als eigenes Token. Kein Subword-/ID-Kram (das war die alte
+		// „chaotische" Demo) — hier bleibt es übersichtlich.
+		function splitClean(text) {
+			return String(text).trim().split(/\s+/).filter(Boolean).flatMap(p => {
+				const m = p.match(/^(.*?)([.,!?;:…]+)$/);
+				return (m && m[1]) ? [m[1], m[2]] : [p];
+			});
 		}
 
 		function render(list, freshKeys) {
@@ -542,8 +551,9 @@ const IntroAnim = (() => {
 			currentBeat = n;
 			stage.layer.classList.add('on');
 			stage.label.classList.add('on');
+			const text = stage.input ? stage.input.value : DEFAULT_TEXT;
 			if (n === 0) {
-				render(FULL);
+				render(splitClean(text));
 				stage.label.innerHTML = '<span class="ia-acc">Tokenisierung</span> — der Computer teilt anders als wir';
 				stage.sub.classList.remove('on');
 				if (stage.hint) stage.hint.classList.remove('on');
@@ -565,15 +575,16 @@ const IntroAnim = (() => {
 						himmel.style.opacity = '0';
 					});
 					later(() => { if (himmel.isConnected) himmel.remove(); }, 430);
+					// „himmel"-Erklärung + Wortliste erst NACH der Trennung.
+					later(() => {
+						stage.sub.classList.add('on');
+						if (stage.hint) stage.hint.classList.add('on');
+						if (stage.himmel) stage.himmel.classList.add('on');
+					}, 500);
 				} else {
-					render(SPLIT, ['him', 'mel']);
-				}
-				// Erklärung + Wortliste erst NACH der Trennung zeigen.
-				later(() => {
+					// Anderes Beispiel (z. B. „königskind"): nur anzeigen.
 					stage.sub.classList.add('on');
-					if (stage.hint) stage.hint.classList.add('on');
-					if (stage.himmel) stage.himmel.classList.add('on');
-				}, 500);
+				}
 			}
 		}
 
@@ -584,8 +595,27 @@ const IntroAnim = (() => {
 			stage.sub   = slideEl.querySelector('.ia-tokens-sub');
 			stage.hint  = slideEl.querySelector('.ia-tokens-hint');
 			stage.himmel = slideEl.querySelector('.ia-tokens-him-mel');
+			stage.input = slideEl.querySelector('#ia-tokens-input');
 
 			if (!isReady()) return false;
+
+			// Eingabe + Beispiel-Chips: Satz ändern → sauber neu tokenisieren.
+			// Beat geht auf 0 („ganze Wörter"); der Pfeil macht dann den Split.
+			if (stage.input && !stage.input.dataset.iaWired) {
+				stage.input.dataset.iaWired = '1';
+				stage.input.addEventListener('input', () => {
+					currentBeat = 0;
+					setBeat(0);
+				});
+				slideEl.querySelectorAll('.ia-tokens-example').forEach(btn => {
+					btn.addEventListener('click', () => {
+						stage.input.value = btn.dataset.satz || DEFAULT_TEXT;
+						currentBeat = 0;
+						setBeat(0);
+					});
+				});
+			}
+
 			currentBeat = 0;
 			setBeat(0);
 			return true;
@@ -594,6 +624,7 @@ const IntroAnim = (() => {
 		function reset() {
 			clearTimers();
 			currentBeat = 0;
+			if (stage.input) stage.input.value = DEFAULT_TEXT;
 		}
 
 		return {
@@ -806,6 +837,10 @@ const IntroAnim = (() => {
 		// (oder ein anderer Listener) ebenfalls feuert und einen Slide-Wechsel
 		// auslöst, während wir einen Beat-Wechsel machen.
 		document.addEventListener('keydown', (e) => {
+			// In Eingabe-Elementen (z. B. das Token-Feld) Pfeil-/Leertasten
+			// durchlassen (Cursor-Bewegung), statt Beats zu wechseln.
+			const t = e.target;
+			if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
 			if (!isAnimating()) return;
 			// Nur die "weiter"-Tasten abfangen — andere (z.B. F für Fullscreen)
 			// gehen weiterhin durch.

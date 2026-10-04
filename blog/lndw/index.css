@@ -2048,12 +2048,13 @@ body.sel-mode .sel-check { display: inline-flex; }
 	position: relative;
 	width: 100%;
 	max-width: 720px;
-	height: 170px;
 	margin: 0 auto 16px;
-	overflow: hidden;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	gap: 12px;
+	padding: 30px 16px 44px;
 	background: transparent;
 }
 
@@ -2145,6 +2146,51 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 .ia-tokens-sub.on { opacity: 1; }
 .ia-tokens-sub .ia-acc { color: #2563eb; }
+
+/* Beispiel-Chips + Eingabefeld (interaktive Bühne) */
+.ia-tokens-examples {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	justify-content: center;
+	width: 100%;
+	max-width: 560px;
+}
+.ia-tokens-example {
+	background: transparent;
+	border: 1px solid rgba(59, 130, 246, 0.40);
+	color: #1d4ed8;
+	padding: 6px 12px;
+	border-radius: 999px;
+	font-size: 0.78em;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background 0.2s ease, border-color 0.2s ease;
+	white-space: nowrap;
+}
+.ia-tokens-example:hover {
+	background: rgba(59, 130, 246, 0.10);
+	border-color: #2563eb;
+}
+.ia-tokens-input {
+	flex: 1 1 220px;
+	min-width: 180px;
+	padding: 8px 14px;
+	border-radius: 999px;
+	border: 1.5px solid rgba(59, 130, 246, 0.45);
+	background: rgba(59, 130, 246, 0.06);
+	color: #1e293b;
+	font-size: 0.9em;
+	text-align: center;
+	outline: none;
+	transition: border-color 0.2s ease, background 0.2s ease;
+}
+.ia-tokens-input:focus {
+	border-color: #2563eb;
+	background: rgba(59, 130, 246, 0.10);
+}
+.ia-tokens-input::placeholder { color: #94a3b8; }
 
 /* „him" / „mel" — weitere Wörter, die die Subword-Teile enthalten */
 .ia-tokens-him-mel {

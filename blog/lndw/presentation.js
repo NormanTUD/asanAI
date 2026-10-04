@@ -1141,10 +1141,13 @@ const InputHandler = (() => {
         // den Wert ändern (z.B. Slider). Stattdessen wollen wir
         // navigieren — also Input bluren und weiterreichen.
         const isNavKey = KEY_ACTIONS.next.includes(e.key) || KEY_ACTIONS.prev.includes(e.key);
-        if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA' || tag === 'SELECT') {
-            if (isNavKey) { target.blur(); }
-            else { return; }
-        }
+		if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA' || tag === 'SELECT') {
+			// Freitext-Feld (z. B. das Token-Feld): Tasten tippen statt
+			// navigieren — sonst würde ein Leerzeichen die Folie blättern.
+			if (target.hasAttribute('data-free-text')) return;
+			if (isNavKey) { target.blur(); }
+			else { return; }
+		}
         // Fokussierte Auswahl-Checkbox: Space toggelt sie (Standard);
         // alle anderen Tasten (Pfeile, Home/End, Buchstaben, Ziffern)
         // navigieren normal und geben den Fokus an die Folie zurück.
