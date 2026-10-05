@@ -168,6 +168,15 @@ function init_tabs () {
 			if (ui.newPanel.attr("id") == "cnn3d_tab") {
 				load_cnn3d_lazily();
 			}
+
+			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
+				WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
+			}
+		},
+		deactivate: function (event, ui) {
+			if (ui.panel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
+				WeightAnalysis.stopAutoRefresh();
+			}
 		},
 		hide: { effect: "fade", duration: 0 },
 		show: { effect: "fade", duration: 0 }
@@ -1155,7 +1164,9 @@ async function _init_app_finalization(LM) {
 	create_styled_upload_buttons();
 	register_resize_observers();
 
-	WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
+	// WeightAnalysis auto-refresh is started on first activation of its tab
+	// (see tabs_settings in init_tabs) — the full weight analysis must not
+	// run on a timer while the tab is hidden.
 	dimensionalityRiver("dimensionality_river");
 	activationAtlas("activation_atlas");
 	gradientFlowToSummary();
