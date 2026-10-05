@@ -814,12 +814,16 @@ const SpaceMorph = (() => {
         const { prob } = nwScores(P);
         let win = 0;
         for (let i = 1; i < prob.length; i++) if (prob[i] > prob[win]) win = i;
+        const right2 = i => NW.start[i][1] === 1;      // passt das Wort?
         for (let i = 0; i < P.length; i++) {
             const good = NW.start[i][1] === 1, p = P[i];
             const x = X(p.u), y = Y(p.v);
             ctx.globalAlpha = alpha;
             ctx.fillStyle = good ? NW_GOOD : NW_BAD;
             ctx.beginPath(); ctx.arc(x, y, 7.5, 0, 6.2832); ctx.fill();
+            ctx.globalAlpha = alpha;
+            // Kein Text an jedem Punkt: während des Faltens lägen die Labels
+            // übereinander. Die Namen stehen in der Score-Liste rechts.
             ctx.strokeStyle = '#f8fafc'; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.arc(x, y, 7.5, 0, 6.2832); ctx.stroke();
             // Spiegel-Spur: der Weg, den der Punkt beim Kippen zurücklegt
@@ -830,12 +834,28 @@ const SpaceMorph = (() => {
                 ctx.moveTo(X(NW.start[i][2]), Y(NW.start[i][3])); ctx.lineTo(x, y);
                 ctx.stroke();
             }
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = good ? '#14532d' : '#64748b';
-            ctx.font = (i === win ? '700 ' : '') + '12px system-ui,sans-serif';
-            ctx.textAlign = x > bx + bw * 0.68 ? 'right' : 'left';
-            ctx.fillText(NW.start[i][0], x + (x > bx + bw * 0.68 ? -12 : 12), y + 4);
+            // Nur der Gewinner wird benannt — ein einziges Label kann nicht kollidieren
+            if (i === win) {
+                ctx.globalAlpha = alpha;
+                ctx.strokeStyle = right2(win) ? '#15803d' : '#b91c1c'; ctx.lineWidth = 2.4;
+                ctx.beginPath(); ctx.arc(x, y, 12.5, 0, 6.2832); ctx.stroke();
+                ctx.fillStyle = right2(win) ? '#14532d' : '#7f1d1d';
+                ctx.font = '700 12.5px system-ui,sans-serif';
+                ctx.textAlign = x > bx + bw * 0.66 ? 'right' : 'left';
+                ctx.fillText(NW.start[i][0], x + (x > bx + bw * 0.66 ? -17 : 17), y + 4);
+            }
         }
+        // Legende unter dem Kandidatenraum
+        ctx.globalAlpha = alpha;
+        ctx.font = '11.5px system-ui,sans-serif'; ctx.textAlign = 'left';
+        ctx.fillStyle = NW_GOOD;
+        ctx.beginPath(); ctx.arc(bx + 6, by + bh + 20, 6, 0, 6.2832); ctx.fill();
+        ctx.fillStyle = '#475569';
+        ctx.fillText('passt danach', bx + 18, by + bh + 24);
+        ctx.fillStyle = NW_BAD;
+        ctx.beginPath(); ctx.arc(bx + 112, by + bh + 20, 6, 0, 6.2832); ctx.fill();
+        ctx.fillStyle = '#475569';
+        ctx.fillText('passt nicht', bx + 124, by + bh + 24);
 
         // ---------- Scores der letzten Schicht ----------
         const sx = 906, sw = 410;
@@ -873,13 +893,13 @@ const SpaceMorph = (() => {
 
         // Sieger
         const outY = rowY + P.length * rowH + 16;
-        const right = win === 0;                              // passt das Gewinnerwort?
+        const right = right2(win);                           // passt das Gewinnerwort?
         ctx.globalAlpha = alpha;
         ctx.strokeStyle = right ? NW_GOOD : '#ef4444'; ctx.lineWidth = 2;
         ctx.strokeRect(sx - 4, outY - 20, sw - 8, 46);
         ctx.fillStyle = right ? '#15803d' : '#b91c1c';
         ctx.font = '600 13px system-ui,sans-serif'; ctx.textAlign = 'left';
-        ctx.fillText(right ? 'Ausgegeben: „' + NW.start[win][0] + '"' : 'Ausgegeben: „' + NW.start[win][0] + '"  — falsch',
+        ctx.fillText('Ausgegeben: „' + NW.start[win][0] + '"' + (right ? '' : '  — falsch'),
             sx + 8, outY + 2);
         ctx.fillStyle = '#64748b'; ctx.font = '11.5px system-ui,sans-serif';
         ctx.fillText(right ? 'die Falte hat die richtige Antwort nach oben sortiert'
