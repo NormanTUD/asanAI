@@ -27,22 +27,11 @@ const DemoRegistry = (() => {
     };
 
         const registry = [
-                // NNStepDemo lebt auf der Stückelung-Folie — dort erst
+                // NNStepDemo lebt auf der Stückelungs-Folie — dort erst
                 // resetten (sonst re-rendert der Approx-Plot bei jedem
                 // Folienwechsel mit).
                 { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
                         slideTest: s => s && s.id === 'slide-stueckelung',
-                        onLeave: d => d.reset() },
-
-                { ref: () => typeof TrainingViz !== 'undefined' ? TrainingViz : null },
-
-                { ref: () => typeof AttentionDemo !== 'undefined' ? AttentionDemo : null,
-                        slideTest: s => s && s.id === 'slide-attention',
-                        onLeave: d => d.reset() },
-
-                { ref: () => typeof JSpaceViz !== 'undefined' ? JSpaceViz : null,
-                        slideTest: s => s.getAttribute('data-title') === 'J-Space',
-                        onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
@@ -51,72 +40,22 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Was sind Convolutions?" — Fenster per Pfeiltasten weiterschieben
+                // "Was sind Convolutions?" (convolution.js) — das 3x3-Fenster
+                // wandert per Pfeiltasten ueber das Eingabebild.
                 { ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Was macht Flatten?" — Zahlen einzeln in den Vektor wandern lassen
+                // "Was macht Flatten?" (flatten.js) — die Zahlen wandern
+                // einzeln aus den Feature Maps in den Vektor.
                 { ref: () => typeof FlattenDemo !== 'undefined' ? FlattenDemo : null,
                         slideTest: s => s.id === 'slide-flatten',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                { ref: () => typeof PEOrbitViz !== 'undefined' ? PEOrbitViz : null,
-                        guard: d => d.isOnPEOrbitSlide() },
-
-                { ref: () => typeof ResidualNotebook !== 'undefined' ? ResidualNotebook : null,
-                        guard: d => d.isOnNotebookSlide(),
-                        nextMethod: 'nextLayer',
-                        prevMethod: 'prevLayer',
-                        slideTest: s => s && s.id === 'slide-residual-stream-notebook',
-                        onLeave: d => d.reset() },
-
-                { ref: () => typeof EmbeddingAutoDemo !== 'undefined' ? EmbeddingAutoDemo : null,
-                        slideTest: s => typeof EmbeddingAutoDemo !== 'undefined' && EmbeddingAutoDemo.isOnEmbeddingSlide(),
-                        onEnter: d => d.activate(),
-                        onLeave: d => d.reset() },
-
-                { ref: () => typeof PredictionViz !== 'undefined' ? PredictionViz : null,
-                        slideTest: s => s && s.id === 'slide-die-vorhersage',
-                        onLeave: d => d.reset() },
-
-                { ref: () => typeof CRSim !== 'undefined' ? CRSim : null,
-                        slideTest: s => !!s.querySelector('#chinese-room-sim'),
-                        onEnter: d => d.start(),
-                        onLeave: d => d.deactivate() },
-
-                { ref: () => typeof AttractorViz !== 'undefined' ? AttractorViz : null,
-                        slideTest: s => s.getAttribute('data-title') === 'Attraktoren',
-                        onEnter: d => setTimeout(() => d.init(), 80),
-                        onLeave: d => d.reset() },
-                { ref: () => typeof IsosurfaceDemo !== 'undefined' ? IsosurfaceDemo : null,
-                        slideTest: s => s.getAttribute('data-title') === 'Wahrscheinlichkeits-Tunnel',
-                        onEnter: d => setTimeout(() => d.init(), 100),
-                        onLeave: d => d.reset() },
-
-                { ref: () => typeof TrainingDemo !== 'undefined' ? TrainingDemo : null,
-                        guard: d => d.isOnTrainingSlide(),
-                        slideTest: s => s.getAttribute('data-title') === 'Training',
-                        nextMethod: 'nextImage',
-                        prevMethod: 'prevImage',
-                        onEnter: d => { d.init(); setTimeout(() => d.start(), 200); },
-                        onLeave: d => d.stop() },
-
-                { ref: () => typeof ZipfViz !== 'undefined' ? ZipfViz : null,
-                        slideTest: s => s.getAttribute('data-title') === 'Texte haben Pattern',
-                        onEnter: d => {
-                            d.renderGermanZipf();
-                            setTimeout(() => d.resize(), 100);
-                        } },
-
                 { ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
                         guard: d => d.isOnIntroSlide(),
-                        canNext: 'canGoNext',
-                        nextMethod: 'next',
-                        canPrev: 'canGoPrev',
-                        prevMethod: 'prev',
                         slideTest: s => s.getAttribute('data-title') === 'Neuronales Netz Intro',
                         onEnter: d => d.reset() },
 
@@ -127,35 +66,6 @@ const DemoRegistry = (() => {
                         nextMethod: 'nop',
                         onEnter: d => d.activate(),
                         onLeave: d => d.stop() },
-
-                // "Übersetzung als Bewegung": Pfeiltaste weiter während der
-                // Aligning-Animation blockieren (Bewegung nicht skippen).
-                // Beim Verlassen der Folie wird der Zustand zurückgesetzt,
-                // damit beim nächsten Besuch wieder von vorn begonnen wird.
-                // Der Reset re-rendert beide 3D-Manifolds (~370 ms) — daher
-                // verzögert, NACH dem Crossfade-Lock (650 ms), damit er den
-                // Folienwechsel nicht verlangsamt. leaveGuard: wer bis dahin
-                // zurückgekehrt ist, behält seinen Zustand; der Reset wird
-                // beim nächsten Verlassen neu geplant.
-                { ref: () => typeof ManifoldAlignViz !== 'undefined' ? ManifoldAlignViz : null,
-                        guard: d => d.isOnSlide(),
-                        canNext: 'isAnimating',
-                        nextMethod: 'nop',
-                        slideTest: s => s.getAttribute('data-title') === 'Mannigfaltigkeiten-Hypothese',
-                        onLeave: d => d.reset(),
-                        deferMs: 700,
-                        leaveGuard: d => !d.isOnSlide() },
-
-                { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
-                        guard: d => d.isOnSlide() },
-
-                // "Die Wiese der Wörter": Pfeiltasten schalten die
-                // Auto-Demo-Schritte (Maus + Regler bewegen sich selbst).
-                { ref: () => typeof WordMeadow !== 'undefined' ? WordMeadow : null,
-                        guard: d => d.isOnSlide(),
-                        slideTest: s => s.id === 'slide-wiese-der-worte',
-                        onEnter: d => d.enter(),
-                        onLeave: d => d.leave() },
 
         ];
 
@@ -414,12 +324,9 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
         }
 
 // ?fast=1: Stückelungs-Demo ohne Wellenform (nur Sinus-Schritte).
-        // ?short=1: optionale Inhalte entfernt (wird im DOMContentLoaded
-        // umgesetzt, siehe runBootSequence-DOMContentLoaded-Block).
+        // ?short=1: optionale Inhalte entfernt (data-short), siehe DOMContentLoaded.
         fastMode = new URLSearchParams(window.location.search).get('fast') === '1';
         shortMode = new URLSearchParams(window.location.search).get('short') === '1';
-            }
-        }
 
         slides.forEach((_, i) => { fragmentIndex[i] = 0; });
 
@@ -1326,15 +1233,9 @@ async function runBootSequence() {
 
         if (typeof loadIntuitionModule === 'function') {
             step++;
-            LoadingStatus.set('Initialisiere Intuition-Demos …', 50 + (step / totalSteps) * 45);
+            LoadingStatus.set('Initialisiere Neuronen-Demos …', 50 + (step / totalSteps) * 45);
             await yieldFrame();
             loadIntuitionModule();
-        }
-        if (typeof runAttention === 'function') {
-            step++;
-            LoadingStatus.set('Zeichne Attention-Beispiel …', 50 + (step / totalSteps) * 45);
-            await yieldFrame();
-            runAttention();
         }
     } finally {
         LoadingStatus.set('Fast fertig …', 100);
