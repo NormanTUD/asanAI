@@ -883,6 +883,7 @@
             lastViewHash: null,
             dataDirty: false,
             pendingRender: false,
+            _heavyInit: false,
             sphericalTarget: null,
             _hasFramed: false,
             _lastLayerCount: 0,
@@ -1415,6 +1416,53 @@
     }
 
     // ------------------------------------------------------------------
+    // Lazy init: the WebGL context (main + minimap), GUI DOM, listeners,
+    // animation loop and timer watchers are only created once the
+    // container is actually visible. render() only registers the cheap
+    // visibility observer up front.
+    // ------------------------------------------------------------------
+    function ensureHeavyInit(inst) {
+        if (inst._heavyInit) return;
+        inst._heavyInit = true;
+        setupThree(inst);
+        ensureGUI(inst);
+    }
+
+    function setupVisibilityObserver(inst) {
+        // Guardrail (G3): consume pending work on EVERY callback where the
+        // element is (or becomes) visible, not only on the exact
+        // hidden->visible edge. If the edge is missed or inst.isVisible was
+        // stale, the rebuild would otherwise be dropped and the old scene
+        // would stay on screen. doRebuild() itself is cheap when nothing
+        // changed (strong fingerprint no-op), so calling it liberally is safe.
+        //
+        // The observer watches the container (not the canvas wrapper, which
+        // does not exist until the heavy init ran), so it can be set up
+        // before any three.js work. The wrapper fills the container, so
+        // visibility is identical.
+        inst.observer = new IntersectionObserver(function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+                var wasVisible = inst.isVisible;
+                inst.isVisible = entries[i].isIntersecting;
+                if (!inst.isVisible) {
+                    continue;
+                }
+                ensureHeavyInit(inst);
+                if (!wasVisible) {
+                    // Freshly visible: always re-evaluate against latest data
+                    inst.pendingRender = true;
+                }
+                if (inst.pendingRender) {
+                    inst.pendingRender = false;
+                    doRebuild(inst);
+                }
+                scheduleRender(inst);
+            }
+        }, { threshold: 0.01 });
+        inst.observer.observe(inst.container);
+    }
+
+    // ------------------------------------------------------------------
     // Three.js setup
     // ------------------------------------------------------------------
     function setupThree(inst) {
@@ -1526,32 +1574,6 @@
             }
         });
         inst.resizeObserver.observe(wrapper);
-
-        // Guardrail (G3): consume pending work on EVERY callback where the
-        // element is (or becomes) visible, not only on the exact
-        // hidden->visible edge. If the edge is missed or inst.isVisible was
-        // stale, the rebuild would otherwise be dropped and the old scene
-        // would stay on screen. doRebuild() itself is cheap when nothing
-        // changed (strong fingerprint no-op), so calling it liberally is safe.
-        inst.observer = new IntersectionObserver(function (entries) {
-            for (var i = 0; i < entries.length; i++) {
-                var wasVisible = inst.isVisible;
-                inst.isVisible = entries[i].isIntersecting;
-                if (!inst.isVisible) {
-                    continue;
-                }
-                if (!wasVisible) {
-                    // Freshly visible: always re-evaluate against latest data
-                    inst.pendingRender = true;
-                }
-                if (inst.pendingRender) {
-                    inst.pendingRender = false;
-                    doRebuild(inst);
-                }
-                scheduleRender(inst);
-            }
-        }, { threshold: 0.01 });
-        inst.observer.observe(wrapper);
 
         startAnimationLoop(inst);
         startDarkModeWatcher(inst);
@@ -3609,6 +3631,7 @@
         inst._rebuildTimer = requestAnimationFrame(function () {
             inst._rebuildTimer = null;
             inst.pendingRender = false;
+            ensureHeavyInit(inst);
             doRebuild(inst);
         });
     }
@@ -3639,8 +3662,6 @@
             inst = createInstance(container);
             INSTANCES.set(container, inst);
             if (options) Object.assign(inst.opts, options);
-            setupThree(inst);
-            ensureGUI(inst);
             // Guardrail (G3): never force inst.isVisible here. The old code set
             // it to true unconditionally (even while the tab was hidden), which
             // left a stale "visible" flag behind and could make the observer's
@@ -3648,9 +3669,16 @@
             // — never fire. The IntersectionObserver owns this flag; the first
             // build happens as soon as the element is actually visible (or
             // immediately, if it already is).
+            //
+            // Lazy init: no WebGL context, no GUI DOM, no timers or rAF loop
+            // while the tab is hidden. ensureHeavyInit() runs on the first
+            // visible edge (observer) or on the rAF fallback below if the
+            // container already is visible.
+            setupVisibilityObserver(inst);
             inst.pendingRender = true;
             requestAnimationFrame(function () {
-                if (inst.isVisible) {
+                if (inst.isVisible && inst.pendingRender) {
+                    ensureHeavyInit(inst);
                     inst.pendingRender = false;
                     doRebuild(inst);
                     scheduleRender(inst);
@@ -3710,6 +3738,7 @@
         if (inst.animationHandle) cancelAnimationFrame(inst.animationHandle);
         if (inst._rebuildTimer) cancelAnimationFrame(inst._rebuildTimer);
         if (inst._darkModeInterval) clearInterval(inst._darkModeInterval);
+        if (inst._langInterval) clearInterval(inst._langInterval);
         if (inst.observer) inst.observer.disconnect();
         if (inst.resizeObserver) inst.resizeObserver.disconnect();
 
@@ -3720,7 +3749,8 @@
         }
         if (inst._keydownHandler) window.removeEventListener('keydown', inst._keydownHandler);
 
-        clearModelGroup(inst);
+        // Null-safe for instances that never ran the heavy init
+        if (inst.modelGroup) clearModelGroup(inst);
         if (inst.renderer) {
             inst.renderer.dispose();
             if (inst.renderer.domElement && inst.renderer.domElement.parentNode) {

@@ -164,7 +164,11 @@ function init_tabs () {
 	dbg("[init_tabs] " + language[lang]["initializing_tabs"]);
 
 	var tabs_settings = {
-		activate: function (event, ui) {},
+		activate: function (event, ui) {
+			if (ui.newPanel.attr("id") == "cnn3d_tab") {
+				load_cnn3d_lazily();
+			}
+		},
 		hide: { effect: "fade", duration: 0 },
 		show: { effect: "fade", duration: 0 }
 	};
@@ -188,6 +192,40 @@ function init_tabs () {
 
 	setup_ribbon_compactness();
 
+}
+
+var _cnn3d_lazily_loading = 0;
+
+function load_cnn3d_lazily () {
+	if (typeof CNN3D !== "undefined") {
+		CNN3D.render("cnn3d");
+		return;
+	}
+
+	if (_cnn3d_lazily_loading) {
+		return;
+	}
+
+	_cnn3d_lazily_loading = 1;
+
+	function load_script (src, next) {
+		var s = document.createElement("script");
+		s.src = src;
+		s.onload = function () {
+			next();
+		};
+		s.onerror = function () {
+			_cnn3d_lazily_loading = 0;
+			err("Failed to load " + src);
+		};
+		document.head.appendChild(s);
+	}
+
+	load_script("libs/CSS2DRenderer.js", function () {
+		load_script("cnn3d.js", function () {
+			CNN3D.render("cnn3d");
+		});
+	});
 }
 
 function init_set_all_options () {
