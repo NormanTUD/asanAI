@@ -286,18 +286,6 @@ function _twPrefix(parts, n) {
     return out;
 }
 
-// Endzustand sofort zeigen (ohne Animation). Wird beim
-// Zustands-Restore benutzt: das Fragment war sichtbar, also soll der
-// fertige Code dastehen — nicht das Tippen neu starten.
-function showFinalTypewriter(frag) {
-    const el = frag.querySelector('[data-typewriter]');
-    if (!el) return;
-    _twStop(el);
-    el.innerHTML = el.dataset.typeHtml || el.innerHTML;
-    el.classList.remove('type-caret');
-    if (typeof TypewriterViz !== 'undefined') TypewriterViz.setActive(false);
-}
-
 function startTypewriter(frag) {
     const el = frag.querySelector('[data-typewriter]');
     if (!el) return;
@@ -500,17 +488,6 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
                 DemoRegistry.restoreState(slide, mem.demos);
             }, 120);
         }
-
-        // Fragment-Aktionen, die KEINEN eigenen Zustand in der Demo haben,
-        // trotzdem konsistent halten: die Typewriter-Ausgabe zeigt den
-        // Endzustand, wenn ihr Fragment sichtbar war.
-        fragments.forEach((f, i) => {
-            if (!mem.frag[i]) return;
-            const action = f.getAttribute('data-fragment-action');
-            if (action === 'typewriter' && typeof showFinalTypewriter === 'function') {
-                showFinalTypewriter(f);
-            }
-        });
         return true;
     }
 
