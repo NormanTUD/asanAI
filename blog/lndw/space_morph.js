@@ -793,22 +793,24 @@ const SpaceMorph = (() => {
             ctx.fillText('eine Richtung', ax, a0 + 14);
         }
 
-        // Faltkante (die ReLU-Falte)
+        // Faltkante (die ReLU-Falte), in normierten (u,v)-Koordinaten gerechnet
         const [nx, ny, c] = NW.fold;
-        const cx = -ny, cyv = nx;                            // Richtung entlang der Kante
-        const mid = [X(0.5), Y(0.5)];
-        const kAt = (u, v) => nx * u + ny * v - c;
-        const ext = Math.max(bw, bh);
         // Kante fährt von außerhalb herein → erst am Ende steht sie auf der Falte
         const slide = ease(clamp((t - 0.12) / 0.5, 0, 1));
-        const cNow = c + (1 - slide) * 0.95;
-        ctx.globalAlpha = alpha * (0.35 + 0.65 * slide);
+        const cNow = c + (1 - slide) * 1.05;
+        const px0 = nx * cNow, py0 = ny * cNow;            // nächstgelegener Punkt zur Falte
+        const tx = -ny, ty = nx, T2 = 2.2;                  // Richtung entlang der Kante
+        ctx.globalAlpha = alpha * (0.3 + 0.7 * slide);
         ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2.6;
         ctx.setLineDash([9, 6]); ctx.lineDashOffset = -t * 26;
         ctx.beginPath();
-        ctx.moveTo(mid[0] + cx * ext + nx * (c - cNow), mid[1] + cyv * ext + ny * (c - cNow));
-        ctx.lineTo(mid[0] - cx * ext + nx * (c - cNow), mid[1] - cyv * ext + ny * (c - cNow));
+        ctx.moveTo(X(px0 + tx * T2), Y(py0 + ty * T2));
+        ctx.lineTo(X(px0 - tx * T2), Y(py0 - ty * T2));
         ctx.stroke(); ctx.setLineDash([]);
+        ctx.globalAlpha = alpha * slide;
+        ctx.fillStyle = '#c2410c'; ctx.font = '600 11.5px system-ui,sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('orange = ReLU-Falte', bx + bw, by - 8);
 
         // Punkte
         const { prob } = nwScores(P);
