@@ -172,6 +172,15 @@ function init_tabs () {
 			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
 				WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
 			}
+
+			if (ui.newPanel.attr("id") == "predict_tab" && window._demo_predictions_pending) {
+				window._demo_predictions_pending = false;
+				$("#example_predictions").html("<div style='display:flex;justify-content:center;align-items:center;min-height:100px;'><div class='spinner'></div></div>");
+				// The activate event fires before the panel's fade-in applies, so
+				// show_prediction's visibility guard would still see the tab as
+				// hidden and defer again. Run the (now deduped) workhorse directly.
+				_print_example_predictions(); // cannot be await
+			}
 		},
 		deactivate: function (event, ui) {
 			if (ui.panel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {

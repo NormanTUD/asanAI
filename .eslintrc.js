@@ -434,6 +434,7 @@ module.exports = {
 		"model_meta": "readonly",
 		"model_is_ok_icon": "writable",
 		"model_is_trained": "writable",
+		"weights_generation": "writable",
 		"state_stack": "writable",
 		"future_state_stack": "writable",
 		"info": "readonly",
