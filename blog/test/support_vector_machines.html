@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Vector Machines — interaktiv verstehen</title>
+<style>
+  :root{
+    --bg:#0a0c14;
+    --bg2:#11141f;
+    --card:rgba(255,255,255,.04);
+    --stroke:rgba(255,255,255,.09);
+    --txt:#e8ecf6;
+    --muted:#99a3bd;
+    --a:#5eead4;      /* klasse +1 */
+    --b:#fb7185;      /* klasse -1 */
+    --acc:#a78bfa;    /* akzent */
+    --glow:0 0 40px rgba(167,139,250,.25);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 700px at 12% -10%, #1b2140 0%, transparent 60%),
+      radial-gradient(900px 600px at 95% 0%, #16303a 0%, transparent 55%),
+      radial-gradient(1000px 800px at 50% 120%, #241b36 0%, transparent 60%),
+      var(--bg);
+    color:var(--txt);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:48px 22px 90px}
+  header{text-align:center;margin-bottom:46px}
+  h1{
+    font-size:clamp(2.1rem,5.5vw,3.6rem);
+    margin:0 0 10px;
+    font-weight:800;
+    letter-spacing:-.03em;
+    background:linear-gradient(100deg,#5eead4,#a78bfa 45%,#fb7185);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--muted);font-size:1.05rem;max-width:620px;margin:0 auto;line-height:1.65}
+  .card{
+    background:var(--card);
+    border:1px solid var(--stroke);
+    border-radius:20px;
+    padding:26px;
+    backdrop-filter:blur(14px);
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+    margin-bottom:28px;
+  }
+  .card h2{
+    margin:0 0 6px;font-size:1.3rem;letter-spacing:-.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .badge{
+    font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    background:linear-gradient(90deg,rgba(167,139,250,.25),rgba(94,234,212,.2));
+    border:1px solid var(--stroke);padding:4px 10px;border-radius:999px;color:#cfc6ff;
+  }
+  .card p.lead{color:var(--muted);line-height:1.7;margin:.4rem 0 1.1rem}
+  .grid{display:grid;grid-template-columns:1fr 310px;gap:22px}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+  canvas{
+    width:100%;border-radius:16px;display:block;
+    background:#070910;border:1px solid var(--stroke);cursor:crosshair;
+    touch-action:none;
+  }
+  .panel{display:flex;flex-direction:column;gap:16px}
+  .ctrl label{display:flex;justify-content:space-between;font-size:.84rem;color:var(--muted);margin-bottom:7px}
+  .ctrl label b{color:var(--acc);font-variant-numeric:tabular-nums}
+  input[type=range]{
+    -webkit-appearance:none;width:100%;height:5px;border-radius:99px;
+    background:linear-gradient(90deg,var(--acc),rgba(255,255,255,.12));outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+    background:#fff;border:3px solid var(--acc);cursor:grab;box-shadow:var(--glow);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:17px;height:17px;border-radius:50%;background:#fff;border:3px solid var(--acc);cursor:grab;
+  }
+  .btn{
+    border:1px solid var(--stroke);background:rgba(255,255,255,.05);color:var(--txt);
+    padding:9px 14px;border-radius:11px;cursor:pointer;font-size:.85rem;font-weight:600;
+    transition:.18s;
+  }
+  .btn:hover{background:rgba(167,139,250,.18);border-color:var(--acc);transform:translateY(-1px)}
+  .btn.on{background:linear-gradient(90deg,rgba(167,139,250,.35),rgba(94,234,212,.22));border-color:var(--acc)}
+  .row{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;font-size:.8rem;color:var(--muted);
+    background:rgba(255,255,255,.04);border:1px solid var(--stroke);padding:6px 11px;border-radius:999px;
+  }
+  .dot{width:9px;height:9px;border-radius:50%}
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:rgba(255,255,255,.04);border:1px solid var(--stroke);border-radius:13px;padding:11px 13px}
+  .stat span{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .stat b{font-size:1.2rem;font-weight:700;color:var(--a);font-variant-numeric:tabular-nums}
+  .hint{font-size:.8rem;color:#7d87a3;line-height:1.6;border-left:2px solid var(--acc);padding-left:11px}
+  .math{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace;background:rgba(0,0,0,.35);
+    border:1px solid var(--stroke);border-radius:12px;padding:13px 15px;color:#bfe9e0;
+    font-size:.88rem;overflow-x:auto;line-height:1.75;
+  }
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-top:6px}
+  .step{background:rgba(255,255,255,.035);border:1px solid var(--stroke);border-radius:15px;padding:16px}
+  .step .n{
+    width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:.78rem;font-weight:800;
+    background:linear-gradient(135deg,var(--acc),var(--a));color:#0a0c14;margin-bottom:9px;
+  }
+  .step h4{margin:0 0 5px;font-size:.95rem}
+  .step p{margin:0;font-size:.83rem;color:var(--muted);line-height:1.6}
+  footer{text-align:center;color:#5f6880;font-size:.82rem;margin-top:34px}
+  .tabs{display:flex;gap:6px;background:rgba(0,0,0,.3);padding:5px;border-radius:13px;border:1px solid var(--stroke)}
+  .tabs .btn{flex:1;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Support Vector Machines</h1>
+  <p class="sub">Der Klassifikator, der nicht nur trennt — sondern den <em>breitestmöglichen Korridor</em> zwischen zwei Klassen sucht. Klick, zieh, spiel damit.</p>
+</header>
+
+<!-- 1: MARGIN -->
+<div class="card">
+  <h2><span class="badge">Idee 1</span> Die maximale Margin</h2>
+  <p class="lead">Viele Geraden trennen zwei Punktwolken. Die SVM wählt die, die <b>am weitesten von beiden Klassen entfernt</b> ist. Dreh unten an der Gerade und schau, wie breit der Korridor wird.</p>
+  <div class="grid">
+    <canvas id="c1" height="430"></canvas>
+    <div class="panel">
+      <div class="ctrl">
+        <label>Winkel der Gerade <b id="v-ang">0°</b></label>
+        <input type="range" id="s-ang" min="-90" max="90" value="18" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Verschiebung <b id="v-off">0</b></label>
+        <input type="range" id="s-off" min="-150" max="150" value="0" step="1">
+      </div>
+      <div class="stats">
+        <div class="stat"><span>Margin-Breite</span><b id="v-marg">–</b></div>
+        <div class="stat"><span>Fehler</span><b id="v-err">0</b></div>
+      </div>
+      <div class="row">
+        <button class="btn" id="b-opt">⚡ Optimum finden</button>
+        <button class="btn" id="b-new">🎲 Neue Daten</button>
+      </div>
+      <p class="hint">Die eingekreisten Punkte sind die <b>Support-Vektoren</b> — nur sie bestimmen die Gerade. Alle anderen Punkte könntest du löschen, ohne dass sich etwas ändert.</p>
+      <div class="row">
+        <span class="chip"><i class="dot" style="background:var(--a)"></i>Klasse +1</span>
+        <span class="chip"><i class="dot" style="background:var(--b)"></i>Klasse −1</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2: KERNEL -->
+<div class="card">
+  <h2><span class="badge">Idee 2</span> Der Kernel-Trick</h2>
+  <p class="lead">Was, wenn die Daten gar nicht geradlinig trennbar sind? Dann hebt man sie in eine höhere Dimension — dort wird aus einem Kreis eine Ebene. Zieh den Regler und beobachte die Magie.</p>
+  <div class="grid">
+    <canvas id="c2" height="430"></canvas>
+    <div class="panel">
+      <div class="ctrl">
+        <label>3D-Lift: z = x² + y² <b id="v-lift">0%</b></label>
+        <input type="range" id="s-lift" min="0" max="100" value="0">
+      </div>
+      <div class="math">φ(x,y) = (x, y, x²+y²)<br>→ im 3D-Raum trennt eine <b>flache Ebene</b></div>
+      <p class="hint">Der Clou: Man muss die Punkte nie wirklich transformieren. Die <b>Kernel-Funktion</b> K(a,b) berechnet das Skalarprodukt im hohen Raum direkt — billig und ohne die Koordinaten je anzufassen.</p>
+      <div class="math">K<sub>rbf</sub>(a,b) = exp(−γ‖a−b‖²)<br>K<sub>poly</sub>(a,b) = (aᵀb + 1)<sup>d</sup></div>
+    </div>
+  </div>
+</div>
+
+<!-- 3: PLAYGROUND -->
+<div class="card">
+  <h2><span class="badge">Idee 3</span> Live-Playground</h2>
+  <p class="lead"><b>Linksklick</b> = türkiser Punkt, <b>Rechtsklick</b> = roter Punkt. Die SVM trainiert bei jeder Änderung neu und zeichnet ihre Entscheidungsgrenze.</p>
+  <div class="grid">
+    <canvas id="c3" height="450"></canvas>
+    <div class="panel">
+      <div class="tabs">
+        <button class="btn on" data-k="linear">Linear</button>
+        <button class="btn" data-k="rbf">RBF</button>
+        <button class="btn" data-k="poly">Poly</button>
+      </div>
+      <div class="ctrl">
+        <label>C <span style="opacity:.6">(Strafe für Fehler)</span> <b id="v-C">1.0</b></label>
+        <input type="range" id="s-C" min="-2" max="2.2" value="0" step="0.05">
+      </div>
+      <div class="ctrl" id="box-g">
+        <label>γ <span style="opacity:.6">(Reichweite RBF)</span> <b id="v-g">1.0</b></label>
+        <input type="range" id="s-g" min="-1.6" max="1.6" value="0" step="0.05">
+      </div>
+      <div class="stats">
+        <div class="stat"><span>Punkte</span><b id="v-n">0</b></div>
+        <div class="stat"><span>Support-Vek.</span><b id="v-sv">0</b></div>
+      </div>
+      <div class="row">
+        <button class="btn" id="b-clr">🗑 Leeren</button>
+        <button class="btn" id="b-xor">XOR</button>
+        <button class="btn" id="b-ring">Ringe</button>
+        <button class="btn" id="b-two">Blobs</button>
+      </div>
+      <p class="hint"><b>Kleines C</b> → weiche Margin, Ausreißer werden toleriert, glattere Grenze.<br><b>Großes C</b> → jeder Punkt muss stimmen, Gefahr von Overfitting.<br><b>Großes γ</b> → jeder Punkt wirkt nur lokal, sehr zerklüftete Grenzen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 4: ERKLÄRUNG -->
+<div class="card">
+  <h2><span class="badge">Theorie</span> In 4 Schritten</h2>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h4>Die Hyperebene</h4><p>Eine Trennfläche <code>wᵀx + b = 0</code>. In 2D eine Gerade, in 3D eine Ebene, darüber eine Hyperebene.</p></div>
+    <div class="step"><div class="n">2</div><h4>Die Margin</h4><p>Abstand zur nächsten Klasse = <code>2/‖w‖</code>. Maximieren der Margin heißt also: <code>‖w‖</code> minimieren.</p></div>
+    <div class="step"><div class="n">3</div><h4>Soft Margin</h4><p>Reale Daten überlappen. Schlupfvariablen ξᵢ erlauben Verstöße, <code>C</code> steuert wie teuer die sind.</p></div>
+    <div class="step"><div class="n">4</div><h4>Kernel</h4><p>Statt Punkte zu transformieren, ersetzt man Skalarprodukte durch K(a,b) — nichtlinear zum Linearpreis.</p></div>
+  </div>
+  <div class="math" style="margin-top:18px">
+    min<sub>w,b,ξ</sub> &nbsp; ½‖w‖² + C·Σᵢ ξᵢ<br>
+    u.d.N. &nbsp; yᵢ(wᵀxᵢ + b) ≥ 1 − ξᵢ , &nbsp; ξᵢ ≥ 0
+  </div>
+</div>
+
+<footer>Gebaut mit purem HTML/CSS/JS — kein Framework, keine Libraries. Vergrößern, forken, zerlegen.</footer>
+</div>
+
+<script>
+/* ============ Utilities ============ */
+const $=id=>document.getElementById(id);
+function fit(cv){const r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
+  cv.width=r.width*d;cv.height=parseInt(cv.getAttribute('height'))*d;
+  cv.style.height=cv.getAttribute('height')+'px';
+  const g=cv.getContext('2d');g.setTransform(d,0,0,d,0,0);return g;}
+function grid(g,W,H){
+  g.clearRect(0,0,W,H);
+  g.strokeStyle='rgba(255,255,255,.045)';g.lineWidth=1;
+  for(let x=0;x<W;x+=34){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke();}
+  for(let y=0;y<H;y+=34){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke();}
+}
+function dot(g,x,y,col,r=6,halo=false){
+  if(halo){g.beginPath();g.arc(x,y,r+6,0,7);g.strokeStyle=col;g.lineWidth=2;g.globalAlpha=.75;g.stroke();g.globalAlpha=1;}
+  g.beginPath();g.arc(x,y,r,0,7);g.fillStyle=col;g.shadowColor=col;g.shadowBlur=14;g.fill();g.shadowBlur=0;
+  g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=1.2;g.stroke();
+}
+
+/* ============ 1. MARGIN DEMO ============ */
+const c1=$('c1');let g1,W1,H1,P1=[];
+function mkData(){
+  P1=[];
+  for(let i=0;i<13;i++)P1.push({x:90+Math.random()*150,y:60+Math.random()*150,l:1});
+  for(let i=0;i<13;i++)P1.push({x:260+Math.random()*160,y:230+Math.random()*150,l:-1});
+}
+function draw1(){
+  W1=c1.getBoundingClientRect().width;H1=430;grid(g1,W1,H1);
+  const a=+$('s-ang').value*Math.PI/180, off=+$('s-off').value;
+  const nx=Math.sin(a), ny=-Math.cos(a);           // Normale
+  const cx=W1/2, cy=H1/2;
+  const f=p=>nx*(p.x-cx)+ny*(p.y-cy)-off;          // vorzeichenbehafteter Abstand
+  let mA=1e9,mB=1e9,err=0,svA=null,svB=null;
+  P1.forEach(p=>{const d=f(p);
+    if(p.l===1){ if(d<0)err++; if(Math.abs(d)<mA&&d>=0){mA=Math.abs(d);svA=p;} if(d<0)mA=Math.min(mA,0);}
+    else{ if(d>0)err++; if(Math.abs(d)<mB&&d<=0){mB=Math.abs(d);svB=p;} if(d>0)mB=Math.min(mB,0);}
+  });
+  const m=Math.min(mA,mB);
+  // Korridor
+  const dx=Math.cos(a),dy=Math.sin(a),L=1200;
+  const base={x:cx+nx*off,y:cy+ny*off};
+  if(m>0&&m<1e8){
+    g1.save();g1.beginPath();
+    g1.moveTo(base.x+nx*m-dx*L, base.y+ny*m-dy*L);
+    g1.lineTo(base.x+nx*m+dx*L, base.y+ny*m+dy*L);
+    g1.lineTo(base.x-nx*m+dx*L, base.y-ny*m+dy*L);
+    g1.lineTo(base.x-nx*m-dx*L, base.y-ny*m-dy*L);
+    g1.closePath();
+    const gr=g1.createLinearGradient(0,0,W1,H1);
+    gr.addColorStop(0,'rgba(167,139,250,.20)');gr.addColorStop(1,'rgba(94,234,212,.14)');
+    g1.fillStyle=gr;g1.fill();
+    g1.setLineDash([7,6]);g1.strokeStyle='rgba(255,255,255,.4)';g1.lineWidth=1.4;
+    [m,-m].forEach(s=>{g1.beginPath();
+      g1.moveTo(base.x+nx*s-dx*L,base.y+ny*s-dy*L);
+      g1.lineTo(base.x+nx*s+dx*L,base.y+ny*s+dy*L);g1.stroke();});
+    g1.setLineDash([]);g1.restore();
+  }
+  // Trennlinie
+  g1.beginPath();g1.moveTo(base.x-dx*L,base.y-dy*L);g1.lineTo(base.x+dx*L,base.y+dy*L);
+  g1.strokeStyle=err>0?'#fb7185':'#a78bfa';g1.lineWidth=3;
+  g1.shadowColor=g1.strokeStyle;g1.shadowBlur=18;g1.stroke();g1.shadowBlur=0;
+  // Punkte
+  P1.forEach(p=>{const sv=(p===svA||p===svB)&&m>0;
+    dot(g1,p.x,p.y,p.l===1?'#5eead4':'#fb7185',6,sv);});
+  $('v-ang').textContent=$('s-ang').value+'°';
+  $('v-off').textContent=$('s-off').value;
+  $('v-marg').textContent=(m>0&&m<1e8)?(2*m).toFixed(1)+' px':'—';
+  $('v-err').textContent=err;
+  $('v-err').style.color=err?'#fb7185':'#5eead4';
+}
+$('b-opt').onclick=()=>{
+  let best={s:-1e9,a:0,o:0};
+  for(let A=-90;A<=90;A+=1)for(let O=-150;O<=150;O+=3){
+    const a=A*Math.PI/180,nx=Math.sin(a),ny=-Math.cos(a),cx=W1/2,cy=H1/2;
+    let mn=1e9,ok=true;
+    for(const p of P1){const d=(nx*(p.x-cx)+ny*(p.y-cy)-O)*p.l;
+      if(d<0){ok=false;break;} mn=Math.min(mn,d);}
+    if(ok&&mn>best.s)best={s:mn,a:A,o:O};
+  }
+  if(best.s>-1e8){
+    let t=0;const a0=+$('s-ang').value,o0=+$('s-off').value;
+    const anim=()=>{t+=.06;const e=t<1?1-Math.pow(1-t,3):1;
+      $('s-ang').value=a0+(best.a-a0)*e;$('s-off').value=o0+(best.o-o0)*e;draw1();
+      if(t<1)requestAnimationFrame(anim);};anim();
+  }
+};
+$('b-new').onclick=()=>{mkData();draw1();};
+['s-ang','s-off'].forEach(i=>$(i).oninput=draw1);
+
+/* ============ 2. KERNEL LIFT ============ */
+const c2=$('c2');let g2,K=[];
+function mkRing(){K=[];
+  for(let i=0;i<34;i++){const t=Math.random()*7,r=Math.random()*52;
+    K.push({x:Math.cos(t)*r,y:Math.sin(t)*r,l:1});}
+  for(let i=0;i<40;i++){const t=Math.random()*7,r=92+Math.random()*42;
+    K.push({x:Math.cos(t)*r,y:Math.sin(t)*r,l:-1});}
+}
+function draw2(){
+  const W=c2.getBoundingClientRect().width,H=430;grid(g2,W,H);
+  const t=+$('s-lift').value/100;
+  $('v-lift').textContent=$('s-lift').value+'%';
+  const cx=W/2, cy=H/2+t*70;
+  // Isometrische Projektion, die mit t von "Draufsicht" zu "Schrägsicht" morpht
+  const tilt=t*0.78;                       // Neigung der Grundebene
+  const proj=(x,y,z)=>{
+    const sy=Math.cos(tilt), sz=Math.sin(tilt);
+    return {X:cx+x*1.25, Y:cy+y*1.25*sy - z*sz};
+  };
+  const lift=p=>t*((p.x*p.x+p.y*p.y)/155);  // z = x²+y², skaliert
+
+  // Grundebene (Gitterboden)
+  g2.strokeStyle='rgba(255,255,255,.07)';g2.lineWidth=1;
+  for(let i=-150;i<=150;i+=50){
+    let a=proj(i,-150,0),b=proj(i,150,0);
+    g2.beginPath();g2.moveTo(a.X,a.Y);g2.lineTo(b.X,b.Y);g2.stroke();
+    a=proj(-150,i,0);b=proj(150,i,0);
+    g2.beginPath();g2.moveTo(a.X,a.Y);g2.lineTo(b.X,b.Y);g2.stroke();
+  }
+
+  // Trennende Ebene (erscheint erst beim Liften)
+  if(t>0.08){
+    const zc=t*(72*72/155);               // Höhe zwischen den beiden Ringen
+    const corners=[[-150,-150],[150,-150],[150,150],[-150,150]].map(c=>proj(c[0],c[1],zc));
+    g2.beginPath();g2.moveTo(corners[0].X,corners[0].Y);
+    corners.slice(1).forEach(c=>g2.lineTo(c.X,c.Y));g2.closePath();
+    g2.fillStyle='rgba(167,139,250,'+(0.07+0.16*t)+')';g2.fill();
+    g2.strokeStyle='rgba(167,139,250,'+(0.25+0.5*t)+')';g2.lineWidth=1.6;g2.stroke();
+  }
+
+  // Punkte: hintere zuerst zeichnen (Painter's Algorithm)
+  const pts=K.map(p=>{const z=lift(p);const q=proj(p.x,p.y,z);
+    return {...p,z,X:q.X,Y:q.Y,base:proj(p.x,p.y,0)};})
+    .sort((a,b)=>(a.y-a.z*0.5)-(b.y-b.z*0.5));
+
+  pts.forEach(p=>{
+    if(t>0.03){ // Höhenlinie zum Boden
+      g2.beginPath();g2.moveTo(p.base.X,p.base.Y);g2.lineTo(p.X,p.Y);
+      g2.strokeStyle=(p.l===1?'rgba(94,234,212,':'rgba(251,113,133,')+(0.18+0.22*t)+')';
+      g2.lineWidth=1;g2.stroke();
+    }
+    dot(g2,p.X,p.Y,p.l===1?'#5eead4':'#fb7185',5.5);
+  });
+
+  // Beschriftung
+  g2.fillStyle='rgba(232,236,246,.55)';g2.font='600 12px ui-sans-serif,system-ui';
+  g2.fillText(t<0.1?'2D: kein Strich trennt die Ringe'
+                   :'3D: eine flache Ebene genügt — z = x²+y²', 16, 24);
+}
+$('s-lift').oninput=draw2;
+
+/* ============ 3. PLAYGROUND SVM ============ */
+const c3=$('c3');let g3,D=[],kern='linear',model=null,field=null;
+const S=170; // Skalierung px -> Feature-Einheiten
+
+function K_(a,b){
+  if(kern==='linear') return a[0]*b[0]+a[1]*b[1];
+  if(kern==='poly'){const d=a[0]*b[0]+a[1]*b[1];return Math.pow(d+1,3);}
+  const g=gam(), dx=a[0]-b[0], dy=a[1]-b[1];
+  return Math.exp(-g*(dx*dx+dy*dy));
+}
+const Cval=()=>Math.pow(10,+$('s-C').value);
+const gam =()=>Math.pow(10,+$('s-g').value);
+
+/* Simplified SMO (Sequential Minimal Optimization) */
+function train(){
+  const n=D.length; model=null;
+  if(n<2) return;
+  const ys=D.map(p=>p.l), xs=D.map(p=>[(p.x-300)/S,(p.y-225)/S]);
+  if(!ys.some(y=>y>0)||!ys.some(y=>y<0)) return;
+
+  const C=Cval(), tol=1e-3, maxPass=12;
+  const al=new Array(n).fill(0); let b=0;
+  // Kernel-Matrix cachen
+  const KM=[];for(let i=0;i<n;i++){KM[i]=[];for(let j=0;j<n;j++)KM[i][j]=K_(xs[i],xs[j]);}
+  const f=i=>{let s=b;for(let j=0;j<n;j++)if(al[j]>0)s+=al[j]*ys[j]*KM[i][j];return s;};
+
+  let pass=0,iter=0;
+  while(pass<maxPass && iter<4000){
+    let changed=0;
+    for(let i=0;i<n;i++){
+      const Ei=f(i)-ys[i];
+      if((ys[i]*Ei<-tol&&al[i]<C)||(ys[i]*Ei>tol&&al[i]>0)){
+        let j=i;while(j===i)j=(Math.random()*n)|0;
+        const Ej=f(j)-ys[j], ai=al[i], aj=al[j];
+        let L,Hh;
+        if(ys[i]!==ys[j]){L=Math.max(0,aj-ai);Hh=Math.min(C,C+aj-ai);}
+        else{L=Math.max(0,ai+aj-C);Hh=Math.min(C,ai+aj);}
+        if(L>=Hh)continue;
+        const eta=2*KM[i][j]-KM[i][i]-KM[j][j];
+        if(eta>=-1e-12)continue;
+        let nj=aj-ys[j]*(Ei-Ej)/eta;
+        nj=Math.min(Hh,Math.max(L,nj));
+        if(Math.abs(nj-aj)<1e-5)continue;
+        const ni=ai+ys[i]*ys[j]*(aj-nj);
+        al[i]=ni;al[j]=nj;
+        const b1=b-Ei-ys[i]*(ni-ai)*KM[i][i]-ys[j]*(nj-aj)*KM[i][j];
+        const b2=b-Ej-ys[i]*(ni-ai)*KM[i][j]-ys[j]*(nj-aj)*KM[j][j];
+        b=(ni>0&&ni<C)?b1:((nj>0&&nj<C)?b2:(b1+b2)/2);
+        changed++;
+      }
+      iter++;
+    }
+    pass = changed===0 ? pass+1 : 0;
+  }
+  const sv=[];for(let i=0;i<n;i++)if(al[i]>1e-6)sv.push({a:al[i],y:ys[i],x:xs[i],idx:i});
+  model={sv,b,C};
+  D.forEach((p,i)=>p.sv = al[i]>1e-6);
+  buildField();
+}
+function decide(px,py){
+  if(!model)return 0;
+  const x=[(px-300)/S,(py-225)/S];let s=model.b;
+  model.sv.forEach(v=>s+=v.a*v.y*K_(v.x,x));
+  return s;
+}
+/* Entscheidungs-Heatmap in grobem Raster + bilineare Glättung via ImageData */
+function buildField(){
+  const W=Math.round(c3.getBoundingClientRect().width),H=450,step=5;
+  const cols=Math.ceil(W/step)+1, rows=Math.ceil(H/step)+1;
+  const v=new Float32Array(cols*rows);
+  for(let r=0;r<rows;r++)for(let q=0;q<cols;q++)v[r*cols+q]=decide(q*step,r*step);
+  field={v,cols,rows,step,W,H};
+}
+function draw3(){
+  const W=c3.getBoundingClientRect().width,H=450;
+  g3.clearRect(0,0,W,H);
+  if(field&&model){
+    const {v,cols,rows,step}=field;
+    const img=g3.createImageData(Math.round(W),H), dta=img.data;
+    for(let y=0;y<H;y++){
+      const fy=y/step, r0=Math.min(rows-1,fy|0), r1=Math.min(rows-1,r0+1), ty=fy-r0;
+      for(let x=0;x<Math.round(W);x++){
+        const fx=x/step, q0=Math.min(cols-1,fx|0), q1=Math.min(cols-1,q0+1), tx=fx-q0;
+        const a=v[r0*cols+q0],b2=v[r0*cols+q1],c=v[r1*cols+q0],d=v[r1*cols+q1];
+        const val=(a*(1-tx)+b2*tx)*(1-ty)+(c*(1-tx)+d*tx)*ty;
+        const m=Math.max(-1,Math.min(1,val));
+        const o=(y*Math.round(W)+x)*4;
+        const near=Math.exp(-Math.abs(val)*7);            // Glühen an der Grenze
+        if(m>0){dta[o]=94+60*near;dta[o+1]=234;dta[o+2]=212;dta[o+3]=28+Math.abs(m)*62+near*70;}
+        else   {dta[o]=251;dta[o+1]=113+60*near;dta[o+2]=133;dta[o+3]=28+Math.abs(m)*62+near*70;}
+      }
+    }
+    g3.putImageData(img,0,0);
+    // Margin-Linien bei f = ±1 (Konturen grob nachzeichnen)
+    g3.save();g3.setLineDash([5,5]);g3.strokeStyle='rgba(255,255,255,.3)';g3.lineWidth=1;
+    for(let r=0;r<rows-1;r++)for(let q=0;q<cols-1;q++){
+      [1,-1].forEach(lev=>{
+        const a=v[r*cols+q]-lev,b2=v[r*cols+q+1]-lev,c=v[(r+1)*cols+q]-lev;
+        if(a*b2<0){const t=a/(a-b2);g3.beginPath();
+          g3.moveTo((q+t)*step,r*step);g3.lineTo((q+t)*step,r*step+1);g3.stroke();}
+        if(a*c<0){const t=a/(a-c);g3.beginPath();
+          g3.moveTo(q*step,(r+t)*step);g3.lineTo(q*step+1,(r+t)*step);g3.stroke();}
+      });
+    }
+    g3.restore();
+  }
+  // Gitter dezent drüber
+  g3.strokeStyle='rgba(255,255,255,.04)';g3.lineWidth=1;
+  for(let x=0;x<W;x+=34){g3.beginPath();g3.moveTo(x,0);g3.lineTo(x,H);g3.stroke();}
+  for(let y=0;y<H;y+=34){g3.beginPath();g3.moveTo(0,y);g3.lineTo(W,y);g3.stroke();}
+
+  D.forEach(p=>dot(g3,p.x,p.y,p.l===1?'#5eead4':'#fb7185',6.5,p.sv));
+
+  if(!D.length){
+    g3.fillStyle='rgba(153,163,189,.75)';g3.font='600 14px ui-sans-serif,system-ui';
+    g3.textAlign='center';
+    g3.fillText('Linksklick = türkis · Rechtsklick = rot · oder Preset wählen',W/2,H/2);
+    g3.textAlign='left';
+  }
+  $('v-n').textContent=D.length;
+  $('v-sv').textContent=model?model.sv.length:0;
+  $('v-C').textContent=Cval().toFixed(2);
+  $('v-g').textContent=gam().toFixed(2);
+}
+function retrain(){train();draw3();}
+
+/* --- Interaktion Playground --- */
+function addPt(e,label){
+  const r=c3.getBoundingClientRect();
+  D.push({x:e.clientX-r.left,y:e.clientY-r.top,l:label,sv:false});
+  retrain();
+}
+c3.addEventListener('mousedown',e=>{if(e.button===0)addPt(e,1);});
+c3.addEventListener('contextmenu',e=>{e.preventDefault();addPt(e,-1);});
+c3.addEventListener('touchstart',e=>{e.preventDefault();
+  const t=e.touches[0],r=c3.getBoundingClientRect();
+  D.push({x:t.clientX-r.left,y:t.clientY-r.top,l:e.touches.length>1?-1:1,sv:false});retrain();},{passive:false});
+
+document.querySelectorAll('.tabs .btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs .btn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); kern=b.dataset.k;
+  $('box-g').style.opacity = kern==='rbf'?1:.35;
+  $('s-g').disabled = kern!=='rbf';
+  retrain();
+});
+$('s-C').oninput=retrain; $('s-g').oninput=retrain;
+$('b-clr').onclick=()=>{D=[];model=null;field=null;draw3();};
+
+const R=(a,b)=>a+Math.random()*(b-a);
+$('b-two').onclick=()=>{D=[];
+  for(let i=0;i<24;i++)D.push({x:R(90,230),y:R(70,200),l:1});
+  for(let i=0;i<24;i++)D.push({x:R(330,500),y:R(240,380),l:-1});
+  retrain();};
+$('b-ring').onclick=()=>{D=[];
+  const cx=300,cy=225;
+  for(let i=0;i<28;i++){const t=R(0,7),r=R(0,62);D.push({x:cx+Math.cos(t)*r,y:cy+Math.sin(t)*r,l:1});}
+  for(let i=0;i<40;i++){const t=R(0,7),r=R(110,160);D.push({x:cx+Math.cos(t)*r,y:cy+Math.sin(t)*r,l:-1});}
+  if(kern==='linear')document.querySelector('[data-k="rbf"]').click(); else retrain();};
+$('b-xor').onclick=()=>{D=[];
+  const q=[[170,120,1],[430,330,1],[430,120,-1],[170,330,-1]];
+  q.forEach(([x,y,l])=>{for(let i=0;i<14;i++)D.push({x:x+R(-55,55),y:y+R(-55,55),l});});
+  if(kern==='linear')document.querySelector('[data-k="rbf"]').click(); else retrain();};
+
+/* ============ Boot & Resize ============ */
+function boot(){
+  g1=fit(c1); g2=fit(c2); g3=fit(c3);
+  if(!P1.length)mkData();
+  if(!K.length)mkRing();
+  draw1(); draw2();
+  if(model)buildField();
+  draw3();
+}
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(boot,140);});
+$('s-g').disabled=true; $('box-g').style.opacity=.35;
+boot();
+$('b-two').click();
+</script>
+</body>
+</html>
