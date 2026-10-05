@@ -225,18 +225,14 @@ function initNNDemos() {
 // ============================================================
 
 const NNStepDemo = (() => {
-    // Schritte für Sinus: 1,2,4,6,8,10,20 Neuronen
+    // Schritte: 1,2,4,6,8,10,20 Neuronen für sin(x).
+    // (Die Zielfunktions-Auswahl wurde aus der Folie entfernt — nur sin(x)
+    // wird durchgespielt. Nach dem letzten Schritt (20 Neuronen) geht die
+    // Pfeiltaste zur nächsten Folie über.)
     const sinSteps = [1, 2, 4, 6, 8, 10, 20];
-    // Schritte für Wellenform: auch 1,2,4,6,8,10,20 Neuronen
-    const customSteps = [1, 2, 4, 6, 8, 10, 20];
-    // step 0..6   = sinus mit sinSteps[step] Neuronen
-    // step 7..13  = wellenform mit customSteps[step-7] Neuronen
-    const totalSteps = sinSteps.length + customSteps.length; // 14
     let currentStep = 0;
 
-    const sinEnd = sinSteps.length - 1;          // 6
-    const customStart = sinSteps.length;          // 7
-    const customEnd = sinSteps.length + customSteps.length - 1; // 13
+    const sinEnd = sinSteps.length - 1; // 6
 
     function isOnStückelungSlide() {
         const activeSlide = document.querySelector('.slide.active');
@@ -244,9 +240,8 @@ const NNStepDemo = (() => {
         return activeSlide.getAttribute('data-title') === 'Stückelung';
     }
 
-    // Letzter Schritt: im Fast-Modus wird die Wellenform übersprungen.
     function finalStep() {
-        return Presentation.isFastMode() ? sinEnd : customEnd;
+        return sinEnd;
     }
 
     function canGoNext() {
@@ -261,26 +256,14 @@ const NNStepDemo = (() => {
 
     function applyStep() {
         const slider = document.getElementById('nn-num-neurons');
-        const fnSelect = document.getElementById('nn-target-fn');
         const countLabel = document.getElementById('nn-neuron-count');
 
         if (!slider) return;
 
-        if (currentStep <= sinEnd) {
-            // Sinus-Schritte
-            if (fnSelect) fnSelect.value = 'sin';
-            const neurons = sinSteps[currentStep];
-            slider.value = neurons;
-            if (countLabel) countLabel.textContent = neurons;
-            NNApproxViz.render();
-        } else if (currentStep >= customStart && currentStep <= customEnd) {
-            // Wellenform-Schritte
-            if (fnSelect) fnSelect.value = 'custom';
-            const neurons = customSteps[currentStep - customStart];
-            slider.value = neurons;
-            if (countLabel) countLabel.textContent = neurons;
-            NNApproxViz.render();
-        }
+        const neurons = sinSteps[currentStep];
+        slider.value = neurons;
+        if (countLabel) countLabel.textContent = neurons;
+        NNApproxViz.render();
     }
 
     function next() {

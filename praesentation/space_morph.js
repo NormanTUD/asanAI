@@ -261,6 +261,9 @@ const SpaceMorph = (() => {
     }
 
     // ---------- Szenen ----------
+    // NUR die Egg-Phase (7 Schritte). Die Bonusphase (verschlungene Volltori,
+    // 4D-Lift, Fun-Fact "Sigmoid/ReLU", LLM-Next-Word) wurde aus der Folie
+    // entfernt — die Geschichte endet bei "Der Raum wird zu einer Linie".
     const S = [
         { t: "Zwei Klassen, keine Gerade",
             b: "Innen eine Punktwolke, außen ein Ring. Keine Gerade trennt Rot von Blau.",
@@ -269,10 +272,10 @@ const SpaceMorph = (() => {
             b: "Eine lineare Trennung ist eine Gerade — sie schneidet den Ring immer. Der Ring umschließt die Wolke: eine topologische Anordnung, die eine Gerade nicht aufbrechen kann.",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
         { t: "Eine Dimension mehr Platz",
-            b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden. Das ist die Kernidee von Keup & Helias: falten in unbenutzte, höhere Dimensionen — das wirkt nur, wenn die Schicht breiter ist als die Daten.",
+            b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden: falten in unbenutzte, höhere Dimensionen — das wirkt nur, wenn die Schicht breiter ist als die Daten.",
             L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { t: "Der Layer krümmt den Raum",
-            b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Es ist eine glatte, injektive Verbiegung (Homöomorphismus auf ihr Bild) — sie reißt nicht, identifiziert keine Punkte und erhält die topologische Struktur. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
+            b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Es ist eine glatte, injektive Verbiegung (Homöomorphismus auf ihr Bild) — sie reißt nicht, identifiziert keine Punkte. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Eine Ebene passt dazwischen",
             b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
@@ -283,53 +286,6 @@ const SpaceMorph = (() => {
         { t: "Der Raum wird zu einer Linie",
             b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Projektion trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich — eine 1D-Achse, auf der s = 0 trennt.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
-
-        // ── Bonusphase: verschlungene Volltori ──
-        // Schritt 8: komplex verschlungen (k = 1), Auto-Orbit zum Anschauen.
-        { t: "Neues Beispiel: zwei verschlungene Tori",
-            b: "Andere Daten, anderes Problem: zwei Volltori im ℝ³, jeder Punkt ein Wort-Vektor — ineinander verschlungen. Keine Ebene trennt sie.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 1, ut: 0, kx: 1 },
-        // Schritt 9: Homotopie k: 1 → 0 — kein Schnitt, kein Kleben.
-        { t: "Ohne ReLU: entwirren, nicht trennen",
-            b: "Affin (x → Wx + b) — und auch die glatte Egg-Schale — ist injektiv und umkehrbar auf ihrem Bild (eine glatte Einbettung): die Topologie bleibt erhalten. Die Homotopie zeigt es: die Schlingen glätten sich, aber die Verschlingungszahl +1 bleibt erhalten, die Ringe bleiben verhakt. Nur eine Projektion (det W = 0) würde sie scheinbar lösen — sie wirft aber eine Dimension weg (Informationsverlust).",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 1, ut: 0, kx: 0 },
-        // Schritt 10: der schlichte Hopf-Link — Ausgangspunkt des 4D-Tricks.
-        { t: "Maximum ohne ReLU: der Hopf-Link",
-            b: "Übrig bleibt ein sauberer Hopf-Link — erkennbar, aber topologisch unverändert verhakt. Die Verschlingungszahl +1 ist eine Topologie-Invariante: noch immer trennt keine Ebene im ℝ³ die beiden Ringe.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 1, ut: 0, kx: 0 },
-        { t: "ReLU knickt den Raum (4. Dimension)",
-            b: "Anders als die glatte Egg-Schale ist die ReLU-Falte nicht injektiv: sie bildet alle Punkte mit x ≤ 0 auf denselben Wert 0 ab (identifiziert sie). Genau deshalb ändert sich die topologische Struktur — die Ringe ziehen sich durch die 4. Dimension, wo in ℝ³ kein Weg frei ist, und lassen sich in zwei getrennte Klumpen auflösen.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 1, ut: 1, kx: 0 },
-        { t: "Jetzt reicht eine flache Ebene",
-            b: "Zurück im ℝ³: zwei Klumpen. Die Ebene bleibt flach (lineares Klassifizieren) — ReLU hat nur den Raum geknickt, jetzt trennt sie sauber. Genau dieses Muster steckt hinter dem Origami-Bild: erst falten, dann ein einziger gerader Schnitt (Fold-and-Cut-Theorem). Für echte Netze ist es eine Analogie, kein Beweis.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 1, ut: 1, kx: 0 },
-        { t: "Auf die 1D-Achse projiziert",
-            b: "Wie am Anfang der Egg-Phase: die beiden Tori werden auf die 1D-Achse projiziert. Grüne und rote Punkte liegen jetzt auf beiden Seiten von s = 0.",
-            L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 1, box: 0,
-            tori: 1, ut: 1, kx: 0 },
-        // Fun-Fact (abschließende Aside): Raumkrümmung der Aktivierung —
-        // Sigmoid krümmt glatt (Welle), ReLU knickt hart (Falte). Eigener
-        // Schritt mit vollem 2D-Canvas-3D-Plot, kein 3D-Szenario (ff: 1).
-        { t: "Sigmoid krümmt, ReLU knickt",
-            b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt, streng monoton und injektiv — umkehrbar auf seinem Wertebereich (Homöomorphismus): es biegt, identifiziert nichts und reicht für das Egg. ReLU ist stetig, aber nicht injektiv — sie bildet alle Punkte mit x ≤ 0 auf 0 ab (identifiziert sie, 2 → 1). Diese vielen-nach-eins-Abbildung ändert die topologische Struktur und ermöglicht es, die Verschlingung der Tori aufzulösen.",
-            L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 0, ut: 0, kx: 0, ff: 1 },
-        // Ausklang: die Frage, die alles begründet — wozu falten, wenn man
-        // am Ende nur noch eine lineare Schicht hat?
-        // Achtung: #sm-body ist eine 320px-Spalte → Text kurz halten!
-        { t: "Wozu falten? Die letzte Schicht ist linear",
-            b: "Am Ende steht nur noch eine lineare Schicht: eine Ebene, die entlang einer einzigen Richtung liest. Nach \"Der Hund\" muss sie zwischen vielen Kandidaten entscheiden — das kann sie nur, wenn die passenden Wörter schon oben liegen.",
-            L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 0, ut: 0, kx: 0, ff: 0, nw: 1, nwF: 0 },
-        { t: "Ein Falten, und die Antwort stimmt",
-            b: "Die ReLU-Falte knickt den Raum: alles auf einer Seite wird über die Kante gespiegelt. Danach liegen die fünf passenden Wörter über allen anderen — dieselbe Ebene liest nun das richtige Wort. So bereitet das Falten die letzte Schicht vor.",
-            L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 0, ut: 0, kx: 0, ff: 0, nw: 1, nwF: 1 }
     ];
 
     // Benannte Indizes, damit Logik nicht auf Magic Numbers läuft
@@ -407,30 +363,21 @@ const SpaceMorph = (() => {
 
     function updateTables(raw = 1) {
         const egg = document.getElementById('egg-table');
-        const tori = document.getElementById('tori-table');
-        // Fun-Fact-/LLM-Schritt: Tabellen überlagern den 2D-Plot → komplett ausblenden.
-        const cont = document.getElementById('sm-table-container');
-        if (cont) cont.style.display = (cur === IDX_FUNFACT || cur === IDX_LLM || cur === IDX_LLM2) ? 'none' : '';
-        if (!egg || !tori) return;
+        const tori = document.getElementById('tori-table'); // entfernt (nur Egg-Phase)
+        if (!egg) return;
 
-        // Ei-Tabelle für Schritte 1-7, Tori-Tabelle ab Schritt 8
-        if (cur < IDX_COMPLEX) {
-            egg.removeAttribute('style');
-            tori.setAttribute('style', 'display:none');
-        } else {
-            egg.setAttribute('style', 'display:none');
-            tori.removeAttribute('style');
-            tori.classList.add('show-y', 'show-z');
-        }
-
+        // Tori-Tabelle gibt es nicht mehr — alle Tori-Bedingungen unten sind
+        // tote Pfade (cur erreicht nie wieder IDX_COMPLEX), hier nur die
+        // Sichtbarkeit der Ei-Tabelle pflegen.
+        egg.removeAttribute('style');
         egg.classList.toggle('show-y', cur < 6);
         egg.classList.toggle('show-z', cur >= 2 && cur < 6);
-
-        // Tori: w-Spalte + Extra-Zeile ab dem 4D-Lift
-        tori.classList.toggle('show-w', cur >= IDX_LIFT);
-        tori.classList.toggle('show-extra', cur >= IDX_COMPLEX);
-        // Formparameter-Spalte k: sichtbar in der Verschlingungs-/Homotopiephase
-        tori.classList.toggle('show-k', cur >= IDX_COMPLEX && cur <= IDX_HOPF);
+        if (tori) {
+            // defensive, falls die Tabelle doch wieder da ist
+            tori.classList.toggle('show-w', cur >= IDX_LIFT);
+            tori.classList.toggle('show-extra', cur >= IDX_COMPLEX);
+            tori.classList.toggle('show-k', cur >= IDX_COMPLEX && cur <= IDX_HOPF);
+        }
 
         const L = S[cur].L || 0;
         const is1D = (cur === 6);
@@ -1251,5 +1198,18 @@ const SpaceMorph = (() => {
         updateTables();
     }
 
-    return { init, reset, next, prev, canGoNext, canGoPrev, isOnSlide, isAnimating };
+    // Zustand merken/wiederherstellen (siehe NNStepDemo): beim
+    // Zurück-Navigieren wieder auf die Szene, die man verlassen hat —
+    // statt auf Szene 0. Nur die Egg-Phase hat Szenen; der Orbit-/4D-Code
+    // ist nie mehr erreichbar, daher ist ein einfacher `cur`-Restore genug.
+    function getState() { return { cur }; }
+    function setState(st) {
+        if (!st || typeof st.cur !== 'number') return;
+        cur = clamp(st.cur, 0, S.length - 1);
+        prevIdx = cur;
+        t0 = performance.now();
+        if (inited) updateText();
+    }
+
+    return { init, reset, next, prev, canGoNext, canGoPrev, isOnSlide, isAnimating, getState, setState };
 })();
