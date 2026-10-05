@@ -698,303 +698,190 @@ const SpaceMorph = (() => {
         ctx.restore();
     }
 
-// ---------- LLM-Solide: Buchhaltung vs. Bedeutung ----------
-    // Zwei Schritte, bewusst OHNE Zahlen-Details im Bild:
-    //   llm  1) Der Rechenweg: ein Punkt gleitet durch 8 Schnitte, die 8 Gates
-    //           schalten mit. Ein Schnitt sagt nur, WELCHE RECHENREGEL gilt.
-    //           Danach landen mehrere verschiedene Wörter in DERSELBEN Zelle
-    //           → eine Zelle ist keine Bedeutung, sie ist Buchhaltung.
-    //   llm2 1) Was am Ende zählt: der fertige Punkt wird gegen alle
-    //           Kandidaten gehalten, der beste passt → das nächste Wort.
-    // WICHTIG: Canvas ist max 1340x640 (siehe #space-morph-wrap) und trägt oben
-    // links ein HTML-Overlay (#sm-title/#sm-body, x 32..352, y ab 20). Deshalb:
-    // kein Canvas-Titel, alles startet unterhalb von TOP.
-    const LLM_MS = [-2.30, -1.15, -0.42, 0.38, 1.10, 2.05, 3.30, -3.70];
-    const LLM_CS = [0.30, 0.42, 0.36, 0.60, 0.52, 0.66, 0.44, 0.72];
-    const LLM_NL = LLM_MS.length;
-    const lllmSign = (x, y, l) => (LLM_MS[l] * x + LLM_CS[l] - y) > 0;
-    let LLM_CELLS = null;                 // Raster-Scan ist konstant → einmalig
-    function lllmCells(res = 120) {
-        if (LLM_CELLS) return LLM_CELLS;
-        const acc = new Map();
-        for (let i = 0; i < res; i++) for (let j = 0; j < res; j++) {
-            const x = (i + 0.5) / res, y = (j + 0.5) / res;
-            let k = 0; for (let l = 0; l < LLM_NL; l++) k |= lllmSign(x, y, l) << l;
-            const e = acc.get(k) || { n: 0, sx: 0, sy: 0 };
-            e.n++; e.sx += x; e.sy += y; acc.set(k, e);
-        }
-        LLM_CELLS = [...acc.entries()].map(([k, e]) => ({
-            k, x: e.sx / e.n, y: e.sy / e.n, a: e.n / (res * res)
-        })).sort((p, q) => q.a - p.a);
-        return LLM_CELLS;
+// ---------- Solide: Wie das Falten das nächste Wort findet ----------
+    // Die Frage, die diese Solide beantwortet:
+    //   "Wie hilft das Falten des Raumes einem LLM, das richtige nächste Wort zu finden?"
+    //
+    // Kernbild (Keup & Helias, arXiv:2203.11355): Die letzte Schicht ist linear —
+    // sie liest die Representation entlang EINER Richtung aus. Damit das gelingt,
+    // muss die Representation so gefaltet sein, dass diese eine Richtung die
+    // passenden Kandidaten über die unpassenden legt. Das Falten ist also die
+    // Vorbereitung darauf, dass die letzte Schicht überhaupt arbeiten kann.
+    //
+    // Aufbau: links der Kandidatenraum ("Der Hund ___" → 10 Wörter), rechts die
+    // Scores der letzten Schicht. Vor dem Falten gewinnt das falsche Wort,
+    // nach dem Falten das richtige. Alle Koordinaten unten sind so gerechnet,
+    // dass genau das passiert (Start/Ende/Ranking wurden verifiziert).
+    //
+    // WICHTIG: Canvas max 1340x640, oben links ein HTML-Overlay (#sm-title/#sm-body,
+    // x 32..352, ab y 20) und unten rechts die Quellenzeile (ab y ~606).
+    // Deshalb: kein Canvas-Titel, alles zwischen y 150 und y 540.
+    const NW = {
+        // [Wort, passt es danach?, u, v] — Startlage (ungefaltet)
+        start: [
+            ['bellt', 1, 0.093, 0.435], ['schläft', 1, 0.307, 0.613], ['springt', 1, 0.326, 0.840],
+            ['friert', 1, 0.379, 0.459], ['jagt', 1, 0.498, 0.671],
+            ['blaut', 0, 0.573, 0.175], ['Tabelle', 0, 0.712, 0.380], ['Häuser', 0, 0.679, 0.584],
+            ['langsam', 0, 0.873, 0.705], ['gestern', 0, 0.922, 0.432],
+        ],
+        // Endlage (nach der Falte): alle passenden Wörter liegen über allen anderen
+        end: [
+            ['bellt', 1, 0.300, 0.140], ['schläft', 1, 0.540, 0.280], ['springt', 1, 0.760, 0.220],
+            ['friert', 1, 0.420, 0.400], ['jagt', 1, 0.660, 0.440],
+            ['blaut', 0, 0.220, 0.680], ['Tabelle', 0, 0.460, 0.740], ['Häuser', 0, 0.640, 0.640],
+            ['langsam', 0, 0.820, 0.780], ['gestern', 0, 0.580, 0.920],
+        ],
+        fold: [-0.574, 0.819, 0.123],   // Faltkante: n·p = c
+        temp: 0.18,                       // Temperatur der Softmax (nur für die Balkenlänge)
+    };
+    const NW_GOOD = '#16a34a', NW_BAD = '#94a3b8', NW_BADP = '#cbd5e1';
+
+    // Ein Wort wandert mit der Falte mit: die Faltkante fährt von außen herein,
+    // und jeder Punkt kippt über sie, sobald sie ihn erreicht hat.
+    function nwPoint(i, t) {
+        const a = NW.start[i], b = NW.end[i], [nx, ny, c] = NW.fold;
+        const u0 = a[2], v0 = a[3];
+        const dEnd = c - (nx * u0 + ny * v0);              // Weg, den dieser Punkt gefaltet wird
+        const uEnd = u0 + 2 * dEnd * nx, vEnd = v0 + 2 * dEnd * ny;
+        if (dEnd <= 0) return { u: lerp(u0, uEnd, t), v: lerp(v0, vEnd, t), flip: 0 };
+        // Versatz: der Punkt kippt erst, wenn die Kante an ihm vorbeigefahren ist
+        const lead = clamp(1 - Math.abs(dEnd) * 0.55, 0.12, 0.55);   // je weiter weg, desto später
+        const q = ease(clamp((t - (1 - lead)) / lead, 0, 1));
+        return { u: lerp(u0, uEnd, q), v: lerp(v0, vEnd, q), flip: q };
     }
-    // Deterministischer Zufall: Kandidatenpunkte bleiben über alle Frames gleich.
-    function lllmRng(seed) {
-        let a = seed >>> 0;
-        return () => { a = (a + 0x6D2B79F5) >>> 0;
-            let t = Math.imul(a ^ (a >>> 15), 1 | a);
-            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-            return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
-    }
-    // Text auf eine Breite herunterskalieren (nie über den Rand hinaus).
-    function lllmFit(txt, maxW, base, weight, floor) {
-        const lo = floor || base - 4;
-        for (let f = base; f > lo; f -= 0.5) {
-            ctx.font = (weight ? weight + ' ' : '') + f + 'px system-ui,sans-serif';
-            if (ctx.measureText(txt).width <= maxW) return f;
-        }
-        ctx.font = (weight ? weight + ' ' : '') + lo + 'px system-ui,sans-serif';
-        return lo;
-    }
-    // Rechteckiger Rahmen (Ersatz für roundRect, überall unterstützt).
-    function lllmFrame(x, y, w, h, r, fill, stroke, lw) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
-        if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-        if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1.2; ctx.stroke(); }
-    }
-    function lllmLayout() {
-        const TOP = Math.max(112, H * 0.215);
-        return { TOP, SQ: Math.min(300, (H - TOP) * 0.60) };
-    }
-    // Das Arrangement: Schnitte + Zellflächen.
-    function lllmArrangement(x0, y0, side, alpha, flash) {
-        const cells = lllmCells(120);
-        ctx.globalAlpha = alpha * 0.55;
-        cells.forEach(c => {
-            const h = side * Math.sqrt(c.a) * 0.5;
-            ctx.fillStyle = '#e2e8f0';
-            ctx.beginPath();
-            ctx.ellipse(x0 + c.x * side, y0 + (1 - c.y) * side,
-                        Math.max(5, h * 1.5), Math.max(3.5, h * 0.72), 0, 0, 6.2832);
-            ctx.fill();
-        });
-        for (let l = 0; l < LLM_NL; l++) {
-            const m = LLM_MS[l], c0 = LLM_CS[l], pts = [];
-            [[0, c0], [1, m + c0], [-c0 / m, 0], [(1 - c0) / m, 1]].forEach(q => {
-                if (q[0] >= 0 && q[0] <= 1 && q[1] >= 0 && q[1] <= 1) pts.push(q);
-            });
-            const hot = flash && flash[l] > 0.01;
-            ctx.globalAlpha = alpha * (hot ? 1 : 0.62);
-            ctx.strokeStyle = hot ? '#f97316' : '#94a3b8';
-            ctx.lineWidth = hot ? 2.6 : 1.3;
-            ctx.beginPath();
-            pts.forEach((q, i) => { const px = x0 + q[0] * side, py = y0 + (1 - q[1]) * side;
-                i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
-            ctx.stroke();
-        }
-        ctx.globalAlpha = alpha * 0.7; ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
-        ctx.strokeRect(x0, y0, side, side);
-        return cells;
-    }
-    // Weicher Pfad durch das Quadrat: x linear, y glatte Sinus-Kurve.
-    function lllmPath(t) {
-        return { x: 0.07 + 0.86 * t,
-                 y: 0.50 + 0.33 * Math.sin(t * Math.PI * 1.6 - 0.30) };
+    // Scores der letzten Schicht: eine feste Richtung, softmax nur für die Länge
+    function nwScores(P) {
+        const raw = P.map(p => 1 - p.v);
+        const mx = Math.max.apply(null, raw);
+        const ex = raw.map(s => Math.exp((s - mx) / NW.temp));
+        const z = ex.reduce((a, b) => a + b, 0);
+        return { raw: raw, prob: ex.map(e => e / z) };
     }
 
-    // ===== Schritt llm: der Rechenweg, Schnitte = Buchhaltung =====
-    function drawLLM(alpha) {
-        if (alpha < 0.01) return;
-        ctx.save();
+    function drawNextWord(alpha) {
+        const W = cv.width / dpr, H = cv.height / dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, W, H);
+
+        const bx = 392, by = 158, bw = 452, bh = 352;      // Kandidatenraum
+        const X = u => bx + u * bw, Y = v => by + v * bh;
+        const P = [];
+        for (let i = 0; i < NW.start.length; i++) P.push(nwPoint(i, alpha));
+
+        // ---------- Kandidatenraum ----------
         ctx.globalAlpha = alpha;
-        const { TOP, SQ } = lllmLayout();
-        const x0 = 372, y0 = TOP + 26;
-        const tMove = clamp((alpha - 0.05) / 0.55, 0, 1);      // Gleiten
-        const stCell = clamp((alpha - 0.62) / 0.30, 0, 1);    // "keine Bedeutung"
-        // --- welche Schnitte wurden gerade überkreuzt? ---
-        const tA = lllmPath(tMove), tB = lllmPath(Math.max(0, tMove - 0.02));
-        const flash = [];
-        for (let l = 0; l < LLM_NL; l++)
-            flash[l] = (tMove > 0 && tMove < 1 && lllmSign(tB.x, tB.y, l) !== lllmSign(tA.x, tA.y, l))
-                       ? clamp((tMove - 0.05) / 0.55, 0, 1) : 0;
-        lllmArrangement(x0, y0, SQ, alpha, flash);
+        ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.4;
+        ctx.strokeRect(bx, by, bw, bh);
+        ctx.fillStyle = '#94a3b8'; ctx.font = '11.5px system-ui,sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText('Kandidatenraum des Netzes', bx + 2, by - 8);
 
-        // --- Bahn ---
-        ctx.globalAlpha = alpha * 0.5; ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 1.6;
-        ctx.setLineDash([5, 5]);
+        // Leserichtung der letzten Schicht: nach oben = besserer Score
+        const ax = bx + 26;
+        const aGrad = clamp((alpha - 0.25) / 0.35, 0, 1);
+        if (aGrad > 0.01) {
+            ctx.globalAlpha = alpha * aGrad;
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+            const a0 = by + bh - 26, a1 = by + 40;
+            ctx.beginPath(); ctx.moveTo(ax, a0); ctx.lineTo(ax, a1); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(ax - 5, a1 + 7); ctx.lineTo(ax, a1); ctx.lineTo(ax + 5, a1 + 7); ctx.stroke();
+            ctx.fillStyle = '#475569'; ctx.font = '600 11px system-ui,sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText('besser', ax, a1 - 10);
+            ctx.font = '10px system-ui,sans-serif'; ctx.fillStyle = '#94a3b8';
+            ctx.fillText('eine Richtung', ax, a0 + 14);
+        }
+
+        // Faltkante (die ReLU-Falte)
+        const [nx, ny, c] = NW.fold;
+        const cx = -ny, cyv = nx;                            // Richtung entlang der Kante
+        const mid = [X(0.5), Y(0.5)];
+        const kAt = (u, v) => nx * u + ny * v - c;
+        const ext = Math.max(bw, bh);
+        // Kante fährt von außerhalb herein → erst am Ende steht sie auf der Falte
+        const slide = ease(clamp((alpha - 0.12) / 0.5, 0, 1));
+        const cNow = c + (1 - slide) * 0.95;
+        ctx.globalAlpha = alpha * (0.35 + 0.65 * slide);
+        ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2.6;
+        ctx.setLineDash([9, 6]); ctx.lineDashOffset = -alpha * 26;
         ctx.beginPath();
-        for (let i = 0; i <= 40; i++) { const p = lllmPath(i / 40);
-            const px = x0 + p.x * SQ, py = y0 + (1 - p.y) * SQ;
-            i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+        ctx.moveTo(mid[0] + cx * ext + nx * (c - cNow), mid[1] + cyv * ext + ny * (c - cNow));
+        ctx.lineTo(mid[0] - cx * ext + nx * (c - cNow), mid[1] - cyv * ext + ny * (c - cNow));
         ctx.stroke(); ctx.setLineDash([]);
 
-        // --- Gleitender Punkt (verblasst, sobald die Wort-Gruppe übernimmt) ---
-        const px = x0 + tA.x * SQ, py = y0 + (1 - tA.y) * SQ;
-        const bump = 1 + 0.14 * Math.sin(Math.PI * clamp(tMove / 0.02, 0, 1));
-        ctx.globalAlpha = alpha * (1 - stCell);
-        ctx.fillStyle = '#1d4ed8';
-        ctx.beginPath(); ctx.arc(px, py, 9 * bump, 0, 6.2832); ctx.fill();
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(px, py, 9 * bump, 0, 6.2832); ctx.stroke();
-        // Label auf die freie Seite (sonst läuft es in die Gate-Spalte)
-        if (stCell < 0.5) {
-            ctx.globalAlpha = alpha * (1 - stCell * 2);
-            ctx.fillStyle = '#1e3a8a'; ctx.font = '600 13px system-ui,sans-serif';
-            const right = tA.x < 0.5;
-            ctx.textAlign = right ? 'left' : 'right';
-            ctx.fillText('dein Wort', px + (right ? 15 : -15), py + 4);
+        // Punkte
+        const { prob } = nwScores(P);
+        let win = 0;
+        for (let i = 1; i < prob.length; i++) if (prob[i] > prob[win]) win = i;
+        for (let i = 0; i < P.length; i++) {
+            const good = NW.start[i][1] === 1, p = P[i];
+            const x = X(p.u), y = Y(p.v);
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = good ? NW_GOOD : NW_BAD;
+            ctx.beginPath(); ctx.arc(x, y, 7.5, 0, 6.2832); ctx.fill();
+            ctx.strokeStyle = '#f8fafc'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.arc(x, y, 7.5, 0, 6.2832); ctx.stroke();
+            // Spiegel-Spur: der Weg, den der Punkt beim Kippen zurücklegt
+            if (p.flip > 0.02 && p.flip < 0.99) {
+                ctx.globalAlpha = alpha * 0.4 * (1 - Math.abs(p.flip - 0.5) * 2);
+                ctx.strokeStyle = good ? NW_GOOD : NW_BAD; ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                ctx.moveTo(X(NW.start[i][2]), Y(NW.start[i][3])); ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = good ? '#14532d' : '#64748b';
+            ctx.font = (i === win ? '700 ' : '') + '12px system-ui,sans-serif';
+            ctx.textAlign = x > bx + bw * 0.68 ? 'right' : 'left';
+            ctx.fillText(NW.start[i][0], x + (x > bx + bw * 0.68 ? -12 : 12), y + 4);
         }
 
-        // ===== rechts: die 8 Gates als Schalter =====
-        const gx = x0 + SQ + 46, colW = Math.max(150, W - gx - 30);
-        const put = (txt, y, maxW, base, weight, col) => {
-            const f = lllmFit(txt, maxW, base, weight, Math.max(9, base - 4));
-            ctx.globalAlpha = alpha; ctx.fillStyle = col;
-            ctx.font = (weight ? weight + ' ' : '') + f + 'px system-ui,sans-serif';
+        // ---------- Scores der letzten Schicht ----------
+        const sx = 906, sw = 410;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = '#0f172a'; ctx.font = '600 13px system-ui,sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText('Was die letzte Schicht daraus liest', sx, by + 2);
+        ctx.fillStyle = '#94a3b8'; ctx.font = '11px system-ui,sans-serif';
+        ctx.fillText('Softmax über alle Kandidaten', sx, by + 18);
+
+        const rowH = 27, rowY = by + 42;
+        for (let i = 0; i < P.length; i++) {
+            const good = NW.start[i][1] === 1, y = rowY + i * rowH;
+            const isWin = i === win;
+            ctx.globalAlpha = alpha * (good ? 1 : 0.8);
+            ctx.fillStyle = isWin ? '#0f172a' : (good ? '#334155' : '#94a3b8');
+            ctx.font = (isWin ? '700 ' : '') + '12px system-ui,sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText(NW.start[i][0], sx + 84, y);
+            const barX = sx + 92, barMax = 210;
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillRect(barX, y - 9, barMax, 12);
+            const bwv = Math.max(2, barMax * prob[i]);
+            ctx.fillStyle = good ? NW_GOOD : NW_BADP;
+            ctx.fillRect(barX, y - 9, bwv, 12);
+            ctx.fillStyle = isWin ? '#0f172a' : '#64748b';
+            ctx.font = (isWin ? '700 ' : '') + '11px system-ui,sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText(txt, gx, y);
-        };
-        put('Die 8 Gates', TOP + 22, colW, 14, '600', '#0f172a');
-        put('Schnitt überkreuzt → Schalter kippt', TOP + 42, colW, 12, null, '#64748b');
-        const ly = TOP + 66, rowH = Math.min(30, (H - ly - 96) / LLM_NL);
-        let bits = '';
-        for (let l = 0; l < LLM_NL; l++) {
-            const on = lllmSign(tA.x, tA.y, l), y = ly + l * rowH;
-            bits += on ? '1' : '0';
-            const hot = flash[l] > 0.01;
-            ctx.globalAlpha = alpha;
-            lllmFrame(gx, y - 8, 30, 17, 5, on ? '#16a34a' : '#e2e8f0', hot ? '#f97316' : '#94a3b8', hot ? 2 : 1);
-            if (on) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(gx + 22, y + 0.5, 5, 0, 6.2832); ctx.fill(); }
-            put('Gate ' + (l + 1), y + 5, colW - 38, 12, null, '#334155');
-            // nur zeichnen, wenn daneben noch Platz ist
-            if (colW > 190) {
-                ctx.globalAlpha = alpha; ctx.fillStyle = on ? '#15803d' : '#94a3b8';
-                ctx.font = '12px system-ui,sans-serif'; ctx.textAlign = 'left';
-                ctx.fillText(on ? 'aktiv' : 'inaktiv', gx + 94, y + 5);
+            ctx.fillText((prob[i] * 100).toFixed(0) + '%', barX + barMax + 8, y);
+            if (isWin) {
+                ctx.fillStyle = NW_GOOD;
+                ctx.font = '700 12px system-ui,sans-serif'; ctx.textAlign = 'right';
+                ctx.fillText('▶', sx - 6, y);
             }
         }
-        // aktuelle Regel als Bitmuster (an die Spaltenbreite angepasst)
-        const yQ = ly + LLM_NL * rowH + 26;
-        put('Welche Regel gilt gerade?', yQ, colW, 12, '600', '#0f172a');
-        const bitStr = bits.split('').join(' ');
-        const fsBit = lllmFit(bitStr, colW, 34, '600', 11);
-        ctx.globalAlpha = alpha * stCell; ctx.fillStyle = '#1d4ed8';
-        ctx.font = '600 ' + fsBit + 'px ui-monospace,SFMono-Regular,monospace'; ctx.textAlign = 'left';
-        ctx.fillText(bitStr, gx, yQ + Math.min(44, fsBit + 12));
 
-        // ===== Beat 3: mehrere Wörter in EINER Zelle =====
-        if (stCell > 0.01) {
-            const words = ['König', 'Wasser', 'schön', 'Tisch'];
-            // 2x2-Raster: jedes Wort mit eigenem Platz, keines liegt auf dem Gleitpunkt.
-            // Die Box bleibt im Square + schmalem Gang vor der Gate-Spalte.
-            const cw = SQ * 0.52, cx = Math.min(px - cw / 2, x0 + SQ + 28 - cw), cy = py - cw / 2;
-            const colw = cw / 2, rowh = (cw - 18) / 2;
-            ctx.globalAlpha = alpha * stCell * 0.85;
-            lllmFrame(cx, cy, cw, cw, 8, null, '#f97316', 2.6);
-            ctx.fillStyle = '#c2410c'; ctx.font = '600 11.5px system-ui,sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('1 Zelle', cx, cy - 13);
-            words.forEach((wd, i) => {
-                const col = i % 2, row = (i / 2) | 0;
-                const jx = cx + 12 + col * colw, jy = cy + 20 + row * rowh;
-                ctx.globalAlpha = alpha * stCell;
-                ctx.fillStyle = '#1d4ed8';
-                ctx.beginPath(); ctx.arc(jx, jy, 5.5, 0, 6.2832); ctx.fill();
-                ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.4;
-                ctx.beginPath(); ctx.arc(jx, jy, 5.5, 0, 6.2832); ctx.stroke();
-                ctx.fillStyle = '#1e3a8a';
-                ctx.font = '11.5px system-ui,sans-serif'; ctx.textAlign = 'left';
-                ctx.fillText(wd, jx + 9, jy + 4);
-            });
-            // "dein Wort" = das markierte Wort in der Zelle
-            ctx.globalAlpha = alpha * stCell;
-            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2.4;
-            ctx.beginPath(); ctx.arc(cx + 12, cy + 20, 10, 0, 6.2832); ctx.stroke();
-            ctx.fillStyle = '#c2410c'; ctx.font = '600 11.5px system-ui,sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('= deins', cx + 26, cy + 4);
-        }
-        // Abschluss-Satz (eine Zeile, unten über die volle Breite)
-        ctx.globalAlpha = alpha * stCell; ctx.textAlign = 'center';
-        ctx.fillStyle = '#b45309';
-        lllmFit('Die Zelle merkt sich nichts — sie merkt sich nur, welche Rechenregel gilt.',
-                W - 80, 14, '600');
-        ctx.fillText('Die Zelle merkt sich nichts — sie merkt sich nur, welche Rechenregel gilt.',
-                     W / 2, H - 44);
-        ctx.restore();
-    }
-
-    // ===== Schritt llm2: was am Ende zählt =====
-    function drawLLMCandidates(alpha) {
-        if (alpha < 0.01) return;
-        ctx.save();
+        // Sieger
+        const outY = rowY + P.length * rowH + 16;
+        const right = win === 0;                              // passt das Gewinnerwort?
         ctx.globalAlpha = alpha;
-        const { TOP } = lllmLayout();
-        const cx = W * 0.34, cy = TOP + (H - TOP) * 0.46;
-        const stDots = clamp((alpha - 0.05) / 0.35, 0, 1);     // Kandidaten erscheinen
-        const stRays = clamp((alpha - 0.30) / 0.35, 0, 1);     // Abstände werden gezogen
-        const stBest = clamp((alpha - 0.62) / 0.30, 0, 1);     // Gewinner
-        // --- Kandidaten (Vektoren der möglichen nächsten Wörter) ---
-        const rng = lllmRng(2024), N = 90, cand = [];
-        for (let i = 0; i < N; i++) {
-            const ang = rng() * 6.2832, rad = 26 + Math.pow(rng(), 0.6) * (W * 0.30);
-            cand.push({ x: cx + Math.cos(ang) * rad * 1.25, y: cy + Math.sin(ang) * rad * 0.72, r: rng() });
-        }
-        // Gewinner: der Punkt, der dem Vektor am nächsten liegt. Bewusst nur unterhalb
-        // des Zentrums, damit sein Label nie mit "Vektor nach …" kollidiert.
-        const low = cand.filter(c => c.y > cy + 70);
-        const pool = low.length ? low : cand;
-        const best = pool.reduce((a, b) =>
-            (Math.hypot(b.x - cx, b.y - cy) < Math.hypot(a.x - cx, a.y - cy) ? b : a));
-        const named = { x: best.x, y: best.y, w: 'nächstes' };
-        cand.forEach(c => {
-            if (c === best) return;
-            const d = Math.hypot(c.x - cx, c.y - cy);
-            const u = clamp(stDots - (d / (W * 0.34)) * 0.25, 0, 1);
-            if (u <= 0.01) return;
-            ctx.globalAlpha = alpha * u * (0.28 + 0.5 * clamp(1 - d / (W * 0.34), 0, 1));
-            ctx.fillStyle = '#94a3b8';
-            ctx.beginPath(); ctx.arc(c.x, c.y, 3.4, 0, 6.2832); ctx.fill();
-        });
-        // --- Verbindungsstrahlen ---
-        if (stRays > 0.01) {
-            cand.forEach(c => {
-                if (c === best) return;
-                const d = Math.hypot(c.x - cx, c.y - cy);
-                const u = stRays * clamp(1 - d / (W * 0.32), 0, 1);
-                if (u <= 0.02) return;
-                ctx.globalAlpha = alpha * u * 0.35; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 0.9;
-                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(c.x, c.y); ctx.stroke();
-            });
-        }
-        // --- der fertige Vektor des Wortes ---
-        const pop = 1 + 0.18 * Math.sin(Math.PI * stBest);
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = '#1d4ed8';
-        ctx.beginPath(); ctx.arc(cx, cy, 11 * pop, 0, 6.2832); ctx.fill();
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.2;
-        ctx.beginPath(); ctx.arc(cx, cy, 11 * pop, 0, 6.2832); ctx.stroke();
-        ctx.fillStyle = '#1e3a8a'; ctx.font = '600 13px system-ui,sans-serif'; ctx.textAlign = 'left';
-        ctx.fillText('Vektor nach 80 Schichten', cx + 17, cy + 4);
-        // --- Gewinner ---
-        if (stBest > 0.01) {
-            ctx.globalAlpha = alpha * stBest;
-            ctx.strokeStyle = '#16a34a'; ctx.lineWidth = 2.6;
-            ctx.beginPath(); ctx.arc(named.x, named.y, 12, 0, 6.2832); ctx.stroke();
-            // Label unter dem Punkt (liegt garantiert unterhalb des Quell-Labels)
-            const lbl = 'passt am besten → ausgegeben';
-            lllmFit(lbl, Math.min(300, W - named.x - 30), 13, '600', 10);
-            ctx.fillStyle = '#16a34a';
-            ctx.textAlign = named.x < cx ? 'right' : 'left';
-            ctx.fillText(lbl, named.x + (named.x < cx ? -18 : 18), named.y + 5);
-        }
-        // --- Überschrift + Abschluss-Satz ---
-        ctx.globalAlpha = alpha; ctx.textAlign = 'center';
-        ctx.fillStyle = '#0f172a'; ctx.font = '600 17px system-ui,sans-serif';
-        lllmFit('Der letzte Schritt: der fertige Punkt wird gegen alle Kandidaten gehalten',
-                W - 90, 17, '600');
-        ctx.fillText('Der letzte Schritt: der fertige Punkt wird gegen alle Kandidaten gehalten',
-                     W / 2, TOP + 26);
-        ctx.fillStyle = '#b45309'; ctx.font = '600 14px system-ui,sans-serif';
-        lllmFit('Die Schnitte waren Buchhaltung. Was das Wort bedeutet, stand die ganze Zeit nur im Punkt.',
-                W - 80, 14, '600');
-        ctx.fillText('Die Schnitte waren Buchhaltung. Was das Wort bedeutet, stand die ganze Zeit nur im Punkt.',
-                     W / 2, H - 44);
-        ctx.restore();
+        ctx.strokeStyle = right ? NW_GOOD : '#ef4444'; ctx.lineWidth = 2;
+        ctx.strokeRect(sx - 4, outY - 20, sw - 8, 46);
+        ctx.fillStyle = right ? '#15803d' : '#b91c1c';
+        ctx.font = '600 13px system-ui,sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText(right ? 'Ausgegeben: „' + NW.start[win][0] + '"' : 'Ausgegeben: „' + NW.start[win][0] + '"  — falsch',
+            sx + 8, outY + 2);
+        ctx.fillStyle = '#64748b'; ctx.font = '11.5px system-ui,sans-serif';
+        ctx.fillText(right ? 'die Falte hat die richtige Antwort nach oben sortiert'
+            : 'die Richtung der letzten Schicht zeigt noch auf das falsche Wort', sx + 8, outY + 18);
     }
 
     // ---------- Render ----------
