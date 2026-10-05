@@ -269,7 +269,7 @@ const SpaceMorph = (() => {
             b: "Eine lineare Trennung ist eine Gerade — sie schneidet den Ring immer. Der Ring umschließt die Wolke: eine topologische Anordnung, die eine Gerade nicht aufbrechen kann.",
             L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
         { t: "Eine Dimension mehr Platz",
-            b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden.",
+            b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden. Das ist die Kernidee von Keup & Helias: falten in unbenutzte, höhere Dimensionen — das wirkt nur, wenn die Schicht breiter ist als die Daten.",
             L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { t: "Der Layer krümmt den Raum",
             b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Es ist eine glatte, injektive Verbiegung (Homöomorphismus auf ihr Bild) — sie reißt nicht, identifiziert keine Punkte und erhält die topologische Struktur. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
@@ -305,7 +305,7 @@ const SpaceMorph = (() => {
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 1, kx: 0 },
         { t: "Jetzt reicht eine flache Ebene",
-            b: "Zurück im ℝ³: zwei Klumpen. Die Ebene bleibt flach (lineares Klassifizieren) — ReLU hat nur den Raum geknickt, jetzt trennt sie sauber.",
+            b: "Zurück im ℝ³: zwei Klumpen. Die Ebene bleibt flach (lineares Klassifizieren) — ReLU hat nur den Raum geknickt, jetzt trennt sie sauber. Genau dieses Muster steckt hinter dem Origami-Bild: erst falten, dann ein einziger gerader Schnitt (Fold-and-Cut-Theorem). Für echte Netze ist es eine Analogie, kein Beweis.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 1, kx: 0 },
         { t: "Auf die 1D-Achse projiziert",
@@ -878,24 +878,35 @@ const SpaceMorph = (() => {
 
         // ===== Beat 3: mehrere Wörter in EINER Zelle =====
         if (stCell > 0.01) {
-            const words = ['König', 'Wasser', 'schön', 'Tisch'], rng = lllmRng(7);
-            const cw = SQ * 0.34, cx = px - cw / 2, cy = py - cw / 2;
+            const words = ['König', 'Wasser', 'schön', 'Tisch'];
+            // 2x2-Raster: jedes Wort mit eigenem Platz, keines liegt auf dem Gleitpunkt.
+            // Die Box bleibt im Square + schmalem Gang vor der Gate-Spalte.
+            const cw = SQ * 0.52, cx = Math.min(px - cw / 2, x0 + SQ + 28 - cw), cy = py - cw / 2;
+            const colw = cw / 2, rowh = (cw - 18) / 2;
             ctx.globalAlpha = alpha * stCell * 0.85;
             lllmFrame(cx, cy, cw, cw, 8, null, '#f97316', 2.6);
             ctx.fillStyle = '#c2410c'; ctx.font = '600 11.5px system-ui,sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText('1 Zelle', cx + cw + 8, cy + 12);
+            ctx.fillText('1 Zelle', cx, cy - 13);
             words.forEach((wd, i) => {
-                const jx = cx + 10 + rng() * (cw - 20), jy = cy + 16 + i * ((cw - 24) / 4);
+                const col = i % 2, row = (i / 2) | 0;
+                const jx = cx + 12 + col * colw, jy = cy + 20 + row * rowh;
                 ctx.globalAlpha = alpha * stCell;
                 ctx.fillStyle = '#1d4ed8';
                 ctx.beginPath(); ctx.arc(jx, jy, 5.5, 0, 6.2832); ctx.fill();
                 ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.4;
                 ctx.beginPath(); ctx.arc(jx, jy, 5.5, 0, 6.2832); ctx.stroke();
-                ctx.fillStyle = '#1e3a8a'; ctx.font = '11.5px system-ui,sans-serif';
-                ctx.textAlign = jx > cx + cw * 0.62 ? 'right' : 'left';
-                ctx.fillText(wd, jx + (jx > cx + cw * 0.62 ? -9 : 9), jy + 4);
+                ctx.fillStyle = '#1e3a8a';
+                ctx.font = '11.5px system-ui,sans-serif'; ctx.textAlign = 'left';
+                ctx.fillText(wd, jx + 9, jy + 4);
             });
+            // "dein Wort" = das markierte Wort in der Zelle
+            ctx.globalAlpha = alpha * stCell;
+            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2.4;
+            ctx.beginPath(); ctx.arc(cx + 12, cy + 20, 10, 0, 6.2832); ctx.stroke();
+            ctx.fillStyle = '#c2410c'; ctx.font = '600 11.5px system-ui,sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('= deins', cx + 26, cy + 4);
         }
         // Abschluss-Satz (eine Zeile, unten über die volle Breite)
         ctx.globalAlpha = alpha * stCell; ctx.textAlign = 'center';
@@ -903,7 +914,7 @@ const SpaceMorph = (() => {
         lllmFit('Die Zelle merkt sich nichts — sie merkt sich nur, welche Rechenregel gilt.',
                 W - 80, 14, '600');
         ctx.fillText('Die Zelle merkt sich nichts — sie merkt sich nur, welche Rechenregel gilt.',
-                     W / 2, H - 18);
+                     W / 2, H - 44);
         ctx.restore();
     }
 
@@ -982,7 +993,7 @@ const SpaceMorph = (() => {
         lllmFit('Die Schnitte waren Buchhaltung. Was das Wort bedeutet, stand die ganze Zeit nur im Punkt.',
                 W - 80, 14, '600');
         ctx.fillText('Die Schnitte waren Buchhaltung. Was das Wort bedeutet, stand die ganze Zeit nur im Punkt.',
-                     W / 2, H - 18);
+                     W / 2, H - 44);
         ctx.restore();
     }
 
