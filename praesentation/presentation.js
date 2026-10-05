@@ -577,10 +577,14 @@ function prev() {
         return;
     }
     if (currentSlide > 0) {
-        goTo(currentSlide - 1, true);
+        // restore=true: zurück bedeutet "exakt dorthin, wo ich war" —
+        // sichtbare Fragmente und Demo-Schritt bleiben erhalten. Früher
+        // stand hier showAllFragments=true, das alle Fragmente zeigte und
+        // die Demo zurücksetzte: ein Sprung, kein Zurück.
+        goTo(currentSlide - 1, true, true);
     } else {
         // Loop: von der ersten Folie zurück zur letzten
-        goTo(slides.length - 1, true);
+        goTo(slides.length - 1, true, true);
     }
 }
 
@@ -676,7 +680,18 @@ function prev() {
         }, SLIDE_DUR + 80);
     }
 
-    function goTo(idx, showAllFragments = false) {
+    // restore = gespeicherten Zustand der Zielfolie anwenden.
+    //
+    // Default true, weil restoreFor() bei einer noch nie besuchten Folie
+    // false liefert und damit das normale frische Verhalten greift. So gilt
+    // für JEDEN Folienwechsel: "ich war schon mal da → ich lande wieder
+    // dort". Nur beim linearen Durchlaufen passiert das nie, weil da keine
+    // Folie zweimal betreten wird.
+    //
+    // Sonst wäre die Navigation asymmetrisch: zurück merkt sich den Zustand,
+    // vorwärts würde ihn verwerfen — nach einem Hin und Zurück stünde die
+    // Folie plötzlich wieder auf Schritt 0.
+    function goTo(idx, showAllFragments = false, restore = true) {
         if (idx < 0 || idx >= slides.length) return;
         // Focus aus Inputs/Textareas rausnehmen, damit Pfeiltasten wieder
         // navigieren statt z.B. Slider-Werte zu ändern. Sonst bleibt der
@@ -695,6 +710,11 @@ function prev() {
 
         const oldSlide = slides[currentSlide];
         const oldIdx = currentSlide;
+
+        // Zustand der ALTEN Folie merken — muss vor notifyEnter passieren,
+        // weil dort (bzw. im verzögerten onLeave) die Demos resettet werden.
+        rememberCurrent();
+
         currentSlide = idx;
         const newSlide = slides[currentSlide];
         const forward = idx > oldIdx;
@@ -710,15 +730,22 @@ function prev() {
         // wenn die neue Folie sichtbar ist.
         lockSlideTransition();
 
-        const fragments = getFragments(currentSlide);
-        if (fastMode) {
-            revealFastFragments(currentSlide);
-        } else if (showAllFragments) {
-            fragments.forEach(f => f.classList.add('visible'));
-            fragmentIndex[currentSlide] = fragments.length;
-        } else {
-            fragments.forEach(f => f.classList.remove('visible'));
-            fragmentIndex[currentSlide] = 0;
+        // Zustand der NEUEN Folie wiederherstellen — nach notifyEnter,
+        // sonst gewinnt der (verzögerte) Demo-Reset und wir landen wieder
+        // bei Schritt 0.
+        const restored = restore ? restoreFor(currentSlide) : false;
+
+        if (!restored) {
+            const fragments = getFragments(currentSlide);
+            if (fastMode) {
+                revealFastFragments(currentSlide);
+            } else if (showAllFragments) {
+                fragments.forEach(f => f.classList.add('visible'));
+                fragmentIndex[currentSlide] = fragments.length;
+            } else {
+                fragments.forEach(f => f.classList.remove('visible'));
+                fragmentIndex[currentSlide] = 0;
+            }
         }
 
         updateUI();
