@@ -487,8 +487,18 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
 
         // Demos: über den Registry-Hook, damit die Detail-API (Position im
         // Convolution-Fenster, Filterwahl, Szenenindex) bei der Demo bleibt.
+        //
+        // Verzögert, weil onEnter die Demo erst 80 ms NACH dem onLeave-Reset
+        // initialisiert — und init() bei einigen Demos (ConvDemo, FlattenDemo)
+        // den Zustand zurücksetzt und neu zeichnet. Wäre der Restore
+        // synchron, würde init() ihn sofort wieder überschreiben. 120 ms >
+        // 80 ms; der Guard fängt ab, falls die Folie in der Zwischenzeit
+        // schon wieder verlassen wurde (schnelles Hin und Zurück).
         if (mem.demos && typeof DemoRegistry !== 'undefined' && DemoRegistry.restoreState) {
-            DemoRegistry.restoreState(slide, mem.demos);
+            setTimeout(() => {
+                if (slides[currentSlide] !== slide) return;
+                DemoRegistry.restoreState(slide, mem.demos);
+            }, 120);
         }
 
         // Fragment-Aktionen, die KEINEN eigenen Zustand in der Demo haben,
