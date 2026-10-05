@@ -328,6 +328,15 @@ const HierarchyDemo = {
 	canGoNext: function () { return HierarchyDemo._ready && HierarchyDemo._step < HierarchyDemo.STAGES.length - 1; },
 	canGoPrev: function () { return HierarchyDemo._ready && HierarchyDemo._step > 0; },
 	reset: function () { HierarchyDemo._step = 0; HierarchyDemo.show(); },
+
+	// Zustand merken/wiederherstellen (Presentation.js speichert ihn pro
+	// Folie, damit Rückwärts-Navigation exakt dort landet, wo man war).
+	getState: function () { return { step: HierarchyDemo._step }; },
+	setState: function (st) {
+		if (!st || typeof st.step !== 'number') return;
+		HierarchyDemo._step = Math.min(Math.max(st.step, 0), HierarchyDemo.STAGES.length - 1);
+		HierarchyDemo.show();
+	},
 };
 
 HierarchyDemo.CANVAS = 190;

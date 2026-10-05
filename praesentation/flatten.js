@@ -257,5 +257,9 @@ const FlattenDemo = (() => {
 	function prevStep() { if (canGoPrev()) setStep(step - 1); }
 	function reset() { step = 0; draw(); }
 
-	return { init, reset, canGoNext, canGoPrev, next: nextStep, prev: prevStep, isOnSlide, draw };
+	// Zustand merken/wiederherstellen (siehe convolution.js)
+	function getState() { return { step }; }
+	function setState(st) { if (st && typeof st.step === 'number') setStep(st.step); }
+
+	return { init, reset, canGoNext, canGoPrev, next: nextStep, prev: prevStep, isOnSlide, draw, getState, setState };
 })();

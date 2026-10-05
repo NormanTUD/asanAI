@@ -300,13 +300,24 @@ const NNStepDemo = (() => {
         applyStep();
     }
 
+    // Zustand merken/wiederherstellen (Presentation.js speichert ihn pro
+    // Folie, damit Rückwärts-Navigation exakt dort landet, wo man war).
+    function getState() { return { step: currentStep }; }
+    function setState(st) {
+        if (!st || typeof st.step !== 'number') return;
+        currentStep = Math.min(Math.max(st.step, 0), 13);
+        applyStep();
+    }
+
     return {
         isOnStückelungSlide,
         canGoNext,
         canGoPrev,
         next,
         prev,
-        reset
+        reset,
+        getState,
+        setState
     };
 })();
 /* ================================================================
@@ -410,7 +421,18 @@ const NeuronIntroViz = (() => {
         _apply(0);
     }
 
-    return { start, hideFragment, canGoNext, next, canGoPrev, prev, reset, isOnIntroSlide };
+    // Zustand merken/wiederherstellen (siehe NNStepDemo). Wichtig: 'revealed'
+    // und 'cur' müssen beide zurückkommen, sonst landet man beim
+    // Rückwärts-Navigieren auf Szene 0 statt auf der, die man verlassen hat.
+    function getState() { return { revealed, cur }; }
+    function setState(st) {
+        if (!st) return;
+        revealed = !!st.revealed;
+        cur = Math.min(Math.max(st.cur | 0, 0), Math.max(getScenes().length - 1, 0));
+        _apply(cur);
+    }
+
+    return { start, hideFragment, canGoNext, next, canGoPrev, prev, reset, isOnIntroSlide, getState, setState };
 })();
 function reset_nn_num_neurons () {
 	$("#nn-num-neurons").val(1).trigger("change");

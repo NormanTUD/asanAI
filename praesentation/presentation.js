@@ -30,11 +30,11 @@ const DemoRegistry = (() => {
                 // NNStepDemo lebt auf der Stückelungs-Folie — dort erst
                 // resetten (sonst re-rendert der Approx-Plot bei jedem
                 // Folienwechsel mit).
-                { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
+                { id: 'stueckelung', ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
                         slideTest: s => s && s.id === 'slide-stueckelung',
                         onLeave: d => d.reset() },
 
-                { ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
+                { id: 'raumkruemmung', ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
                         block: d => d.isAnimating(),
                         slideTest: s => s.id === 'slide-layer-als-raumkruemmung',
                         onEnter: d => setTimeout(() => d.init(), 80),
@@ -42,14 +42,14 @@ const DemoRegistry = (() => {
 
                 // "Was sind Convolutions?" (convolution.js) — das 3x3-Fenster
                 // wandert per Pfeiltasten ueber das Eingabebild.
-                { ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
+                { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
                 // "Was macht Flatten?" (flatten.js) — die Zahlen wandern
                 // einzeln aus den Feature Maps in den Vektor.
-                { ref: () => typeof FlattenDemo !== 'undefined' ? FlattenDemo : null,
+                { id: 'flatten', ref: () => typeof FlattenDemo !== 'undefined' ? FlattenDemo : null,
                         slideTest: s => s.id === 'slide-flatten',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
@@ -57,24 +57,24 @@ const DemoRegistry = (() => {
                 // "Vom Foto zum Stoppschild" (hierarchy.js) — echte Convolution
                 // auf stop_sign.jpg: Filterpaar -> Kanten -> Ecken -> extrahiert
                 // -> vereinfacht.
-                { ref: () => typeof HierarchyDemo !== 'undefined' ? HierarchyDemo : null,
+                { id: 'hierarchy', ref: () => typeof HierarchyDemo !== 'undefined' ? HierarchyDemo : null,
                         slideTest: s => s.id === 'slide-hierarchie',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
                 // "Der Loss" (loss.js) — eine Zahl fuer "wie falsch"; Pfeiltasten
                 // wechseln die Ausgabe des Katze-Hund-Detektors.
-                { ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
+                { id: 'loss', ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
                         slideTest: s => s.id === 'slide-loss',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                { ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
+                { id: 'neuron-intro', ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
                         guard: d => d.isOnIntroSlide(),
                         slideTest: s => s.getAttribute('data-title') === 'Neuronales Netz Intro',
                         onEnter: d => d.reset() },
 
-                { ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
+                { id: 'typewriter', ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
                         guard: d => d.isOnClassicSlide(),
                         slideTest: s => s.getAttribute('data-title') === 'Klassisch vs. KI',
                         canNext: 'isTypewriting',
@@ -173,7 +173,57 @@ const DemoRegistry = (() => {
         }
     }
 
-    return { tryNavigate, notifyEnter };
+    /**
+     * Zustands-Snapshot: Für alle Demos dieser Folie getState() einsammeln.
+     * Wird VOR notifyEnter() aufgerufen — sonst hat onLeave (bzw. der
+     * verzögerte Reset) den Zustand schon gelöscht, den wir speichern wollen.
+     *
+     * Gibt null zurück, wenn keine Demo dieser Folie einen Zustand hat —
+     * dann muss auch nichts wiederhergestellt werden.
+     */
+    function captureState(slide) {
+        let found = null;
+        for (const demo of demos) {
+            const instance = demo.ref();
+            if (!instance) continue;
+            if (demo.slideTest && !(slide && demo.slideTest(slide))) continue;
+            if (typeof instance.getState !== 'function') continue;
+            found = found || {};
+            found[demo.id || instanceName(instance)] = instance.getState();
+        }
+        return found;
+    }
+
+    /**
+     * Zustand einer Folie wiederherstellen. Wird NACH notifyEnter() gerufen:
+     * erst der (verzögerte) Reset, dann der gespeicherte Zustand — sonst
+     * gewinnt der Reset und das Zurück-Navigieren zeigt wieder Schritt 0.
+     */
+    function restoreState(slide, state) {
+        if (!state) return false;
+        let ok = false;
+        for (const demo of demos) {
+            const instance = demo.ref();
+            if (!instance) continue;
+            if (demo.slideTest && !(slide && demo.slideTest(slide))) continue;
+            if (typeof instance.setState !== 'function') continue;
+            const key = demo.id || instanceName(instance);
+            if (!(key in state)) continue;
+            try {
+                instance.setState(state[key]);
+                ok = true;
+            } catch (e) {
+                console.warn('restoreState fehlgeschlagen:', key, e);
+            }
+        }
+        return ok;
+    }
+
+    function instanceName(instance) {
+        return instance.constructor && instance.constructor.name || 'demo';
+    }
+
+    return { tryNavigate, notifyEnter, captureState, restoreState };
 })();
 
 // ────────────────────────────────────────────────────────────
@@ -236,6 +286,18 @@ function _twPrefix(parts, n) {
     return out;
 }
 
+// Endzustand sofort zeigen (ohne Animation). Wird beim
+// Zustands-Restore benutzt: das Fragment war sichtbar, also soll der
+// fertige Code dastehen — nicht das Tippen neu starten.
+function showFinalTypewriter(frag) {
+    const el = frag.querySelector('[data-typewriter]');
+    if (!el) return;
+    _twStop(el);
+    el.innerHTML = el.dataset.typeHtml || el.innerHTML;
+    el.classList.remove('type-caret');
+    if (typeof TypewriterViz !== 'undefined') TypewriterViz.setActive(false);
+}
+
 function startTypewriter(frag) {
     const el = frag.querySelector('[data-typewriter]');
     if (!el) return;
@@ -290,6 +352,13 @@ const Presentation = (() => {
     let currentSlide = 0;
     let slides = [];
     let fragmentIndex = {};
+
+    // Zustandsspeicher pro Folie (siehe init()). Map: Folien-Index →
+    // { frag: boolean[], fragIndex: number, demos: {id: state} }
+    // Wird beim VERLASSEN einer Folie gefüllt und beim BETRETEN geleert —
+    // genau einmal pro Weg, damit ein Rück-/Vor-Navigieren hin und her
+    // symmetrisch bleibt.
+    const slideMemory = new Map();
     let searchQuery = '';
     let fastMode = false;        // ?fast=1 → einfache Fragmente direkt anzeigen
 let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
@@ -345,6 +414,12 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
 
         slides.forEach((_, i) => { fragmentIndex[i] = 0; });
 
+        // Zustandsspeicher pro Folie: merkt sich beim Verlassen, welche
+        // Fragmente sichtbar waren und welchen Schritt die Demos hatten.
+        // Ohne das zeigt das Zurück-Navigieren eine frische Folie (alle
+        // Fragmente weg, Demo bei Schritt 0) — obwohl man gerade da war.
+        slideMemory.clear();
+
         // Startfolie: ?start=N (1-basiert, wie im Zähler / wie #N) → die N-te Folie,
         // geclampt auf [1..Anzahl].
         const startParam = new URLSearchParams(window.location.search).get('start');
@@ -378,6 +453,55 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
 
         updateUI();
         buildOverview();
+    }
+
+    // Zustand der aktuellen Folie merken (vor dem Verlassen).
+    function rememberCurrent() {
+        const idx = currentSlide;
+        const slide = slides[idx];
+        if (!slide) return;
+        const fragments = getFragments(idx);
+        slideMemory.set(idx, {
+            frag: fragments.map(f => f.classList.contains('visible')),
+            fragIndex: fragmentIndex[idx] || 0,
+            demos: (typeof DemoRegistry !== 'undefined' && DemoRegistry.captureState)
+                ? DemoRegistry.captureState(slide) : null,
+        });
+    }
+
+    // Zustand einer Folie wiederherstellen. Gibt true zurück, wenn ein
+    // gespeicherter Zustand existierte und angewendet wurde.
+    function restoreFor(slideIdx) {
+        const mem = slideMemory.get(slideIdx);
+        if (!mem) return false;
+        const slide = slides[slideIdx];
+        const fragments = getFragments(slideIdx);
+
+        // Fragmente: nur die gespeicherten sichtbar machen. Kein
+        // executeFragmentAction — sonst startet der Typewriter beim
+        // Zurück-Navigieren das Tippen von vorn.
+        fragments.forEach((f, i) => {
+            f.classList.toggle('visible', !!mem.frag[i]);
+        });
+        fragmentIndex[slideIdx] = mem.fragIndex;
+
+        // Demos: über den Registry-Hook, damit die Detail-API (Position im
+        // Convolution-Fenster, Filterwahl, Szenenindex) bei der Demo bleibt.
+        if (mem.demos && typeof DemoRegistry !== 'undefined' && DemoRegistry.restoreState) {
+            DemoRegistry.restoreState(slide, mem.demos);
+        }
+
+        // Fragment-Aktionen, die KEINEN eigenen Zustand in der Demo haben,
+        // trotzdem konsistent halten: die Typewriter-Ausgabe zeigt den
+        // Endzustand, wenn ihr Fragment sichtbar war.
+        fragments.forEach((f, i) => {
+            if (!mem.frag[i]) return;
+            const action = f.getAttribute('data-fragment-action');
+            if (action === 'typewriter' && typeof showFinalTypewriter === 'function') {
+                showFinalTypewriter(f);
+            }
+        });
+        return true;
     }
 
     function getFragments(slideIdx) {

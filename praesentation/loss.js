@@ -90,6 +90,14 @@ const LossDemo = {
 	next: function () { this.step(1); },
 	reset: function () { this._step = this.START; this.show(); },
 
+	// Zustand merken/wiederherstellen (siehe hierarchy.js)
+	getState: function () { return { step: this._step }; },
+	setState: function (st) {
+		if (!st || typeof st.step !== 'number') return;
+		this._step = Math.min(Math.max(st.step, 0), this.PRESETS.length - 1);
+		this.show();
+	},
+
 	fmt: function (n, d) {
 		return n.toFixed(d).replace('.', ',');
 	},

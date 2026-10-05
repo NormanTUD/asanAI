@@ -299,5 +299,15 @@ const ConvDemo = (() => {
 		draw();
 	}
 
-	return { init, reset, canGoNext, canGoPrev, next: nextStep, prev: prevStep, isOnSlide, cycleKernel, draw };
+	// Zustand merken/wiederherstellen (Presentation.js speichert ihn pro
+	// Folie, damit Rückwärts-Navigation exakt dort landet, wo man war).
+	function getState() { return { pos: pos.slice(), kernelIdx }; }
+	function setState(st) {
+		if (!st) return;
+		if (st.pos) pos = st.pos.slice();
+		if (typeof st.kernelIdx === 'number') kernelIdx = st.kernelIdx;
+		draw();
+	}
+
+	return { init, reset, canGoNext, canGoPrev, next: nextStep, prev: prevStep, isOnSlide, cycleKernel, draw, getState, setState };
 })();
