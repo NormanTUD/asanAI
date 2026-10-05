@@ -319,16 +319,17 @@ const SpaceMorph = (() => {
             b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt, streng monoton und injektiv — umkehrbar auf seinem Wertebereich (Homöomorphismus): es biegt, identifiziert nichts und reicht für das Egg. ReLU ist stetig, aber nicht injektiv — sie bildet alle Punkte mit x ≤ 0 auf 0 ab (identifiziert sie, 2 → 1). Diese vielen-nach-eins-Abbildung ändert die topologische Struktur und ermöglicht es, die Verschlingung der Tori aufzulösen.",
             L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 0, ut: 0, kx: 0, ff: 1 },
-        // Überleitung zum Sprachmodell, zwei Schritte (Achtung: #sm-body ist eine
-        // 320px-Spalte → Text kurz halten!). llm 1: Schnitte = Buchhaltung.
-        { t: "Vom Layer zum Sprachmodell",
-            b: "Zuerst der Punkt, dann die Rechnung. Ein Wort ist ein Vektor — und der bewegt sich durch den Raum.",
+        // Ausklang: die Frage, die alles begründet — wozu falten, wenn man
+        // am Ende nur noch eine lineare Schicht hat?
+        // Achtung: #sm-body ist eine 320px-Spalte → Text kurz halten!
+        { t: "Wozu falten? Die letzte Schicht ist linear",
+            b: "Am Ende steht nur noch eine lineare Schicht: eine Ebene, die entlang einer einzigen Richtung liest. Nach \"Der Hund\" muss sie zwischen vielen Kandidaten entscheiden — das kann sie nur, wenn die passenden Wörter schon oben liegen.",
             L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 0, ut: 0, kx: 0, ff: 0, llm: 1 },
-        { t: "Ein Schnitt merkt sich nichts",
-            b: "Jeder Schnitt kippt nur einen Schalter: an oder aus. Zusammen sagen die 8 Schalter, welche gerade gültige Rechenregel gilt. Mehr nicht — kein Wort, keine Bedeutung.",
+            tori: 0, ut: 0, kx: 0, ff: 0, nw: 1, nwF: 0 },
+        { t: "Ein Falten, und die Antwort stimmt",
+            b: "Die ReLU-Falte knickt den Raum: alles auf einer Seite wird über die Kante gespiegelt. Danach liegen die fünf passenden Wörter über allen anderen — dieselbe Ebene liest nun das richtige Wort. So bereitet das Falten die letzte Schicht vor.",
             L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 0, ut: 0, kx: 0, ff: 0, llm: 0, llm2: 1 }
+            tori: 0, ut: 0, kx: 0, ff: 0, nw: 1, nwF: 1 }
     ];
 
     // Benannte Indizes, damit Logik nicht auf Magic Numbers läuft
@@ -339,8 +340,8 @@ const SpaceMorph = (() => {
     const IDX_PLANE    = 11;  // Trennebene
     const IDX_AXIS     = 12;  // Tori auf die 1D-Achse projiziert (wie die Egg-Phase)
     const IDX_FUNFACT  = 13;  // Fun-Fact: Präzision bricht Topologie (2D-Plot, kein 3D)
-    const IDX_LLM      = 14;  // Überleitung Sprachmodell: Rechenweg + Gates (2D-Plot)
-    const IDX_LLM2     = 15;  // Was am Ende zählt: Kandidaten / bester Fit
+    const IDX_LLM      = 14;  // Wozu falten: Kandidatenraum + Scores (2D-Plot)
+    const IDX_LLM2     = 15;  // nach der Falte: richtiges Wort
 
     // "Jeder Punkt = ein Wort": zwei Beispielwörter (ein random Punkt pro Torus),
     // die als Label über dem Punkt erscheinen, sobald der verwirrte Torus gezeigt
@@ -758,16 +759,17 @@ const SpaceMorph = (() => {
         return { raw: raw, prob: ex.map(e => e / z) };
     }
 
-    function drawNextWord(alpha) {
+    function drawNextWord(t, alpha) {
         const W = cv.width / dpr, H = cv.height / dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, W, H);
         ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, W, H);
+        if (alpha < 0.01) return;
 
         const bx = 392, by = 158, bw = 452, bh = 352;      // Kandidatenraum
         const X = u => bx + u * bw, Y = v => by + v * bh;
         const P = [];
-        for (let i = 0; i < NW.start.length; i++) P.push(nwPoint(i, alpha));
+        for (let i = 0; i < NW.start.length; i++) P.push(nwPoint(i, t));
 
         // ---------- Kandidatenraum ----------
         ctx.globalAlpha = alpha;
@@ -778,7 +780,7 @@ const SpaceMorph = (() => {
 
         // Leserichtung der letzten Schicht: nach oben = besserer Score
         const ax = bx + 26;
-        const aGrad = clamp((alpha - 0.25) / 0.35, 0, 1);
+        const aGrad = clamp((t - 0.25) / 0.35, 0, 1);
         if (aGrad > 0.01) {
             ctx.globalAlpha = alpha * aGrad;
             ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2; ctx.lineCap = 'round';
@@ -798,11 +800,11 @@ const SpaceMorph = (() => {
         const kAt = (u, v) => nx * u + ny * v - c;
         const ext = Math.max(bw, bh);
         // Kante fährt von außerhalb herein → erst am Ende steht sie auf der Falte
-        const slide = ease(clamp((alpha - 0.12) / 0.5, 0, 1));
+        const slide = ease(clamp((t - 0.12) / 0.5, 0, 1));
         const cNow = c + (1 - slide) * 0.95;
         ctx.globalAlpha = alpha * (0.35 + 0.65 * slide);
         ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2.6;
-        ctx.setLineDash([9, 6]); ctx.lineDashOffset = -alpha * 26;
+        ctx.setLineDash([9, 6]); ctx.lineDashOffset = -t * 26;
         ctx.beginPath();
         ctx.moveTo(mid[0] + cx * ext + nx * (c - cNow), mid[1] + cyv * ext + ny * (c - cNow));
         ctx.lineTo(mid[0] - cx * ext + nx * (c - cNow), mid[1] - cyv * ext + ny * (c - cNow));
@@ -914,8 +916,8 @@ const SpaceMorph = (() => {
             lb = lerp(a.lab, b.lab, u) * (1 - tor),
             bx = lerp(a.box, b.box, u),
             ff = lerp(a.ff || 0, b.ff || 0, u);
-        const llm = lerp(a.llm || 0, b.llm || 0, u);
-        const llm2 = lerp(a.llm2 || 0, b.llm2 || 0, u);
+        const nw = lerp(a.nw || 0, b.nw || 0, u);
+        const nwF = lerp(a.nwF || 0, b.nwF || 0, u);
         // Schritt-8-Auto-Orbit: 1× Pfeil-rechts → ~5 s sanfter 360°-Kamera-Umlauf.
         if (autoOrbitActive && tor > 0.01) {
             const elapsed = now - autoOrbitStart;
@@ -938,9 +940,8 @@ const SpaceMorph = (() => {
         // Fun-Fact-/LLM-Schritt: ganzes 3D-Szenario überspringen, nur den 2D-Plot
         // zeichnen (Hard-Cut wie bei den Egg↔Tori-Übergängen, Plot blendet ein).
         // Der Übergang Fun-Fact → LLM ist ein Fade-Through-White in der Mitte.
-        if (ff > 0.01 || llm > 0.01 || llm2 > 0.01) {
-            if (llm2 > 0.01) drawLLMCandidates(llm2);
-            else if (llm > 0.5) drawLLM(llm);
+        if (ff > 0.01 || nw > 0.01) {
+            if (nw > 0.01) drawNextWord(nwF, nw);
             else drawFunFact(ff);
             raf = requestAnimationFrame(draw);
             return;
