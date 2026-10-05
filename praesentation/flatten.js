@@ -224,9 +224,16 @@ const FlattenDemo = (() => {
 	}
 
 	// ── Schrittlogik (Pfeiltasten) ─────────────────────────────
+	let bound = false;
+
 	function init() {
 		step = 0;
 		draw();
+
+		// init() läuft bei JEDEM Folienbesuch – sonst stapeln sich die
+		// Klick-Handler und ein Klick springt mehrere Schritte weiter.
+		if (bound) return;
+		bound = true;
 
 		const next = document.getElementById('flat-next');
 		const prev = document.getElementById('flat-prev');

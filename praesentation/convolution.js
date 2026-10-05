@@ -255,9 +255,16 @@ const ConvDemo = (() => {
 		draw();
 	}
 
+	let bound = false;
+
 	function init() {
 		pos = START_POS.slice();
 		draw();
+
+		// init() läuft bei JEDEM Folienbesuch – sonst stapeln sich die
+		// Handler und ein Klick springt mehrere Schritte weiter.
+		if (bound) return;
+		bound = true;
 
 		const next = document.getElementById('conv-next');
 		const prev = document.getElementById('conv-prev');

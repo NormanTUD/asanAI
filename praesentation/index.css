@@ -1062,52 +1062,229 @@ body.sel-mode .sel-check { display: inline-flex; }
 	margin: 0;
 }
 
-/* ============ FOLIE "Ihre Einwände" ============ */
-.q-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+/* ============ FOLIE "Vom Foto zum Stoppschild" (hierarchy.js) ============ */
+.hier-kernels {
+	display: flex;
 	gap: 14px;
-	margin-top: 12px;
+	justify-content: center;
+	margin: 4px 0 14px;
+	flex-wrap: wrap;
 }
-.q-card {
-	position: relative;
+.hier-kernel {
 	background: #f8fafc;
 	border: 1px solid #e2e8f0;
-	border-left: 4px solid #94a3b8;
-	border-radius: 10px;
-	padding: 12px 14px 30px;
-	text-align: left;
-	min-height: 118px;
+	border-radius: 8px;
+	padding: 6px 10px;
+	text-align: center;
 }
-.q-obj {
-	font-size: 0.98em;
+.hier-kernel-name {
+	font-size: 0.68em;
+	color: #64748b;
+	margin-bottom: 4px;
+	letter-spacing: 0.02em;
+}
+.hier-kernel-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 2px;
+}
+.hier-kernel-grid span {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 0.72em;
+	width: 24px;
+	height: 22px;
+	line-height: 22px;
+	border-radius: 3px;
+	background: #eef2f7;
+	color: #475569;
+}
+.hier-kernel-grid span.pos  { background: #fee2e2; color: #b91c1c; font-weight: 700; }
+.hier-kernel-grid span.neg  { background: #dbeafe; color: #1d4ed8; font-weight: 700; }
+.hier-kernel-grid span.zero { opacity: 0.45; }
+
+.hier-panels {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 12px;
+	align-items: start;
+}
+.hier-panel { opacity: 0.32; transition: opacity 0.35s ease; text-align: center; }
+.hier-panel.active { opacity: 1; }
+.hier-canvas-wrap {
+	position: relative;
+	background: #0b1220;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	overflow: hidden;
+	aspect-ratio: 1 / 1;
+}
+.hier-canvas { width: 100%; height: 100%; display: block; }
+.hier-wait {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #64748b;
+	font-size: 0.8em;
+	background: #0b1220;
+}
+.hier-label {
+	font-size: 0.8em;
 	font-weight: 700;
 	color: #1e293b;
-	line-height: 1.25;
-	margin-bottom: 6px;
+	margin-top: 7px;
+	line-height: 1.2;
 }
-.q-why {
-	font-size: 0.82em;
-	color: #475569;
-	line-height: 1.35;
+.hier-num {
+	font-size: 0.7em;
+	color: #64748b;
+	margin-top: 3px;
+	font-variant-numeric: tabular-nums;
 }
-.q-tag {
-	position: absolute;
-	left: 14px;
-	bottom: 9px;
-	font-size: 0.66em;
-	font-weight: 700;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	padding: 2px 8px;
-	border-radius: 20px;
+.hier-progress {
+	display: flex;
+	gap: 6px;
+	justify-content: center;
+	margin: 12px 0 8px;
 }
-/* Status: EIN Modifier pro Karte (q-card--yes|half|open) steuert
-   Randfarbe UND Tag-Farbe. Für den Status eine einzige Stelle ändern. */
-.q-card--yes  { border-left-color: #22c55e; }
-.q-card--half { border-left-color: #eab308; }
-.q-card--open { border-left-color: #ef4444; }
+.hier-dot {
+	width: 26px;
+	height: 4px;
+	border-radius: 2px;
+	background: #e2e8f0;
+	transition: background 0.3s ease;
+}
+.hier-dot.on { background: #4f46e5; }
+.hier-caption {
+	max-width: 1080px;
+	margin: 0 auto 12px;
+	font-size: 0.94em;
+	color: #334155;
+	line-height: 1.5;
+	text-align: center;
+}
+.hier-caption b { color: #1e293b; }
+.hier-caption .mono {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	background: #f1f5f9;
+	padding: 0 4px;
+	border-radius: 3px;
+}
 
-.q-card--yes  .q-tag { background: #dcfce7; color: #15803d; }
-.q-card--half .q-tag { background: #fef9c3; color: #a16207; }
-.q-card--open .q-tag { background: #fee2e2; color: #b91c1c; }
+/* ============ FOLIE "Der Loss" (loss.js) ============ */
+.loss-layout {
+	display: grid;
+	grid-template-columns: 300px 1fr;
+	gap: 26px;
+	align-items: start;
+	margin-top: 8px;
+}
+.loss-photo { text-align: center; }
+.loss-img {
+	width: 100%;
+	border-radius: 10px;
+	border: 1px solid #cbd5e1;
+	display: block;
+}
+.loss-truth {
+	margin-top: 8px;
+	font-size: 0.92em;
+	color: #475569;
+}
+.loss-truth b { color: #15803d; }
+.loss-detector {
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 16px 20px 18px;
+}
+.loss-head {
+	font-size: 0.82em;
+	color: #64748b;
+	margin-bottom: 10px;
+	letter-spacing: 0.02em;
+}
+.loss-bar {
+	height: 26px;
+	border-radius: 13px;
+	background: #2563eb;
+	overflow: hidden;
+}
+.loss-bar-cat {
+	height: 100%;
+	width: 51%;
+	background: #16a34a;
+	transition: width 0.3s ease;
+}
+.loss-legend {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 6px;
+	font-size: 0.82em;
+	font-variant-numeric: tabular-nums;
+}
+.loss-lg-cat { color: #15803d; }
+.loss-lg-dog { color: #1d4ed8; }
+.loss-readout {
+	margin-top: 14px;
+	padding-top: 12px;
+	border-top: 1px solid #e2e8f0;
+	text-align: center;
+}
+.loss-formula {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 0.86em;
+	color: #475569;
+}
+.loss-num {
+	font-size: 3.1em;
+	font-weight: 800;
+	line-height: 1.1;
+	color: #dc2626;
+	font-variant-numeric: tabular-nums;
+	transition: color 0.3s ease;
+}
+.loss-hint {
+	font-size: 0.72em;
+	color: #94a3b8;
+	margin-top: 2px;
+}
+.loss-compare {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	margin-top: 16px;
+	flex-wrap: wrap;
+}
+.loss-chip {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	background: #fff;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	padding: 7px 14px;
+	cursor: pointer;
+	font-family: inherit;
+	transition: all 0.2s ease;
+}
+.loss-chip:hover { border-color: #4f46e5; }
+.loss-chip.active {
+	background: #eef2ff;
+	border-color: #4f46e5;
+	box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.18);
+}
+.loss-chip-p {
+	font-size: 0.92em;
+	font-weight: 700;
+	color: #1e293b;
+	font-variant-numeric: tabular-nums;
+}
+.loss-chip-l {
+	font-size: 0.76em;
+	color: #64748b;
+	font-variant-numeric: tabular-nums;
+}
+.loss-chip.active .loss-chip-l { color: #4f46e5; font-weight: 700; }

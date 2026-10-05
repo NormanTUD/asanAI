@@ -54,6 +54,21 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
+                // "Vom Foto zum Stoppschild" (hierarchy.js) — echte Convolution
+                // auf stop_sign.jpg: Filterpaar -> Kanten -> Ecken -> extrahiert
+                // -> vereinfacht.
+                { ref: () => typeof HierarchyDemo !== 'undefined' ? HierarchyDemo : null,
+                        slideTest: s => s.id === 'slide-hierarchie',
+                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onLeave: d => d.reset() },
+
+                // "Der Loss" (loss.js) — eine Zahl fuer "wie falsch"; Pfeiltasten
+                // wechseln die Ausgabe des Katze-Hund-Detektors.
+                { ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
+                        slideTest: s => s.id === 'slide-loss',
+                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onLeave: d => d.reset() },
+
                 { ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
                         guard: d => d.isOnIntroSlide(),
                         slideTest: s => s.getAttribute('data-title') === 'Neuronales Netz Intro',
