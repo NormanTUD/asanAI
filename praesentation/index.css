@@ -1021,3 +1021,93 @@ body.sel-mode .sel-check { display: inline-flex; }
 	padding: 6px 10px;
 	display: inline-block;
 }
+
+/* ============ FOLIE "Titel" ============ */
+.title-slide {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+.title-logo {
+	width: 128px;
+	height: auto;
+	margin-bottom: 26px;
+	filter: drop-shadow(0 10px 26px rgba(79, 70, 229, 0.22));
+}
+.title-slide h1 {
+	font-size: 2.5em;
+	line-height: 1.2;
+	color: #0f172a;
+	margin: 0;
+}
+.title-sub {
+	font-size: 1.5em;
+	color: #4f46e5;
+	font-weight: 600;
+	margin: 14px 0 0;
+}
+.title-rule {
+	width: 120px;
+	height: 3px;
+	background: #c7d2fe;
+	border-radius: 2px;
+	margin: 26px 0 16px;
+}
+.title-hint {
+	font-size: 0.92em;
+	color: #64748b;
+	letter-spacing: 0.02em;
+	margin: 0;
+}
+
+/* ============ FOLIE "Ihre Einwände" ============ */
+.q-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 14px;
+	margin-top: 12px;
+}
+.q-card {
+	position: relative;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-left: 4px solid #94a3b8;
+	border-radius: 10px;
+	padding: 12px 14px 30px;
+	text-align: left;
+	min-height: 118px;
+}
+.q-obj {
+	font-size: 0.98em;
+	font-weight: 700;
+	color: #1e293b;
+	line-height: 1.25;
+	margin-bottom: 6px;
+}
+.q-why {
+	font-size: 0.82em;
+	color: #475569;
+	line-height: 1.35;
+}
+.q-tag {
+	position: absolute;
+	left: 14px;
+	bottom: 9px;
+	font-size: 0.66em;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	padding: 2px 8px;
+	border-radius: 20px;
+}
+/* Status: EIN Modifier pro Karte (q-card--yes|half|open) steuert
+   Randfarbe UND Tag-Farbe. Für den Status eine einzige Stelle ändern. */
+.q-card--yes  { border-left-color: #22c55e; }
+.q-card--half { border-left-color: #eab308; }
+.q-card--open { border-left-color: #ef4444; }
+
+.q-card--yes  .q-tag { background: #dcfce7; color: #15803d; }
+.q-card--half .q-tag { background: #fef9c3; color: #a16207; }
+.q-card--open .q-tag { background: #fee2e2; color: #b91c1c; }
