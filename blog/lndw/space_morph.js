@@ -318,7 +318,17 @@ const SpaceMorph = (() => {
         { t: "Sigmoid krümmt, ReLU knickt",
             b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt, streng monoton und injektiv — umkehrbar auf seinem Wertebereich (Homöomorphismus): es biegt, identifiziert nichts und reicht für das Egg. ReLU ist stetig, aber nicht injektiv — sie bildet alle Punkte mit x ≤ 0 auf 0 ab (identifiziert sie, 2 → 1). Diese vielen-nach-eins-Abbildung ändert die topologische Struktur und ermöglicht es, die Verschlingung der Tori aufzulösen.",
             L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
-            tori: 0, ut: 0, kx: 0, ff: 1 }
+            tori: 0, ut: 0, kx: 0, ff: 1 },
+        // Überleitung zum Sprachmodell, zwei Schritte (Achtung: #sm-body ist eine
+        // 320px-Spalte → Text kurz halten!). llm 1: Schnitte = Buchhaltung.
+        { t: "Vom Layer zum Sprachmodell",
+            b: "Zuerst der Punkt, dann die Rechnung. Ein Wort ist ein Vektor — und der bewegt sich durch den Raum.",
+            L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 0, ut: 0, kx: 0, ff: 0, llm: 1 },
+        { t: "Ein Schnitt merkt sich nichts",
+            b: "Jeder Schnitt kippt nur einen Schalter: an oder aus. Zusammen sagen die 8 Schalter, welche gerade gültige Rechenregel gilt. Mehr nicht — kein Wort, keine Bedeutung.",
+            L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
+            tori: 0, ut: 0, kx: 0, ff: 0, llm: 0, llm2: 1 }
     ];
 
     // Benannte Indizes, damit Logik nicht auf Magic Numbers läuft
@@ -329,6 +339,8 @@ const SpaceMorph = (() => {
     const IDX_PLANE    = 11;  // Trennebene
     const IDX_AXIS     = 12;  // Tori auf die 1D-Achse projiziert (wie die Egg-Phase)
     const IDX_FUNFACT  = 13;  // Fun-Fact: Präzision bricht Topologie (2D-Plot, kein 3D)
+    const IDX_LLM      = 14;  // Überleitung Sprachmodell: Rechenweg + Gates (2D-Plot)
+    const IDX_LLM2     = 15;  // Was am Ende zählt: Kandidaten / bester Fit
 
     // "Jeder Punkt = ein Wort": zwei Beispielwörter (ein random Punkt pro Torus),
     // die als Label über dem Punkt erscheinen, sobald der verwirrte Torus gezeigt
@@ -395,9 +407,9 @@ const SpaceMorph = (() => {
     function updateTables(raw = 1) {
         const egg = document.getElementById('egg-table');
         const tori = document.getElementById('tori-table');
-        // Fun-Fact-Schritt: Tabellen überlagern den 2D-Plot → komplett ausblenden.
+        // Fun-Fact-/LLM-Schritt: Tabellen überlagern den 2D-Plot → komplett ausblenden.
         const cont = document.getElementById('sm-table-container');
-        if (cont) cont.style.display = (cur === IDX_FUNFACT) ? 'none' : '';
+        if (cont) cont.style.display = (cur === IDX_FUNFACT || cur === IDX_LLM || cur === IDX_LLM2) ? 'none' : '';
         if (!egg || !tori) return;
 
         // Ei-Tabelle für Schritte 1-7, Tori-Tabelle ab Schritt 8
@@ -686,6 +698,294 @@ const SpaceMorph = (() => {
         ctx.restore();
     }
 
+// ---------- LLM-Solide: Buchhaltung vs. Bedeutung ----------
+    // Zwei Schritte, bewusst OHNE Zahlen-Details im Bild:
+    //   llm  1) Der Rechenweg: ein Punkt gleitet durch 8 Schnitte, die 8 Gates
+    //           schalten mit. Ein Schnitt sagt nur, WELCHE RECHENREGEL gilt.
+    //           Danach landen mehrere verschiedene Wörter in DERSELBEN Zelle
+    //           → eine Zelle ist keine Bedeutung, sie ist Buchhaltung.
+    //   llm2 1) Was am Ende zählt: der fertige Punkt wird gegen alle
+    //           Kandidaten gehalten, der beste passt → das nächste Wort.
+    // WICHTIG: Canvas ist max 1340x640 (siehe #space-morph-wrap) und trägt oben
+    // links ein HTML-Overlay (#sm-title/#sm-body, x 32..352, y ab 20). Deshalb:
+    // kein Canvas-Titel, alles startet unterhalb von TOP.
+    const LLM_MS = [-2.30, -1.15, -0.42, 0.38, 1.10, 2.05, 3.30, -3.70];
+    const LLM_CS = [0.30, 0.42, 0.36, 0.60, 0.52, 0.66, 0.44, 0.72];
+    const LLM_NL = LLM_MS.length;
+    const lllmSign = (x, y, l) => (LLM_MS[l] * x + LLM_CS[l] - y) > 0;
+    let LLM_CELLS = null;                 // Raster-Scan ist konstant → einmalig
+    function lllmCells(res = 120) {
+        if (LLM_CELLS) return LLM_CELLS;
+        const acc = new Map();
+        for (let i = 0; i < res; i++) for (let j = 0; j < res; j++) {
+            const x = (i + 0.5) / res, y = (j + 0.5) / res;
+            let k = 0; for (let l = 0; l < LLM_NL; l++) k |= lllmSign(x, y, l) << l;
+            const e = acc.get(k) || { n: 0, sx: 0, sy: 0 };
+            e.n++; e.sx += x; e.sy += y; acc.set(k, e);
+        }
+        LLM_CELLS = [...acc.entries()].map(([k, e]) => ({
+            k, x: e.sx / e.n, y: e.sy / e.n, a: e.n / (res * res)
+        })).sort((p, q) => q.a - p.a);
+        return LLM_CELLS;
+    }
+    // Deterministischer Zufall: Kandidatenpunkte bleiben über alle Frames gleich.
+    function lllmRng(seed) {
+        let a = seed >>> 0;
+        return () => { a = (a + 0x6D2B79F5) >>> 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    }
+    // Text auf eine Breite herunterskalieren (nie über den Rand hinaus).
+    function lllmFit(txt, maxW, base, weight, floor) {
+        const lo = floor || base - 4;
+        for (let f = base; f > lo; f -= 0.5) {
+            ctx.font = (weight ? weight + ' ' : '') + f + 'px system-ui,sans-serif';
+            if (ctx.measureText(txt).width <= maxW) return f;
+        }
+        ctx.font = (weight ? weight + ' ' : '') + lo + 'px system-ui,sans-serif';
+        return lo;
+    }
+    // Rechteckiger Rahmen (Ersatz für roundRect, überall unterstützt).
+    function lllmFrame(x, y, w, h, r, fill, stroke, lw) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+        if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+        if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1.2; ctx.stroke(); }
+    }
+    function lllmLayout() {
+        const TOP = Math.max(112, H * 0.215);
+        return { TOP, SQ: Math.min(300, (H - TOP) * 0.60) };
+    }
+    // Das Arrangement: Schnitte + Zellflächen.
+    function lllmArrangement(x0, y0, side, alpha, flash) {
+        const cells = lllmCells(120);
+        ctx.globalAlpha = alpha * 0.55;
+        cells.forEach(c => {
+            const h = side * Math.sqrt(c.a) * 0.5;
+            ctx.fillStyle = '#e2e8f0';
+            ctx.beginPath();
+            ctx.ellipse(x0 + c.x * side, y0 + (1 - c.y) * side,
+                        Math.max(5, h * 1.5), Math.max(3.5, h * 0.72), 0, 0, 6.2832);
+            ctx.fill();
+        });
+        for (let l = 0; l < LLM_NL; l++) {
+            const m = LLM_MS[l], c0 = LLM_CS[l], pts = [];
+            [[0, c0], [1, m + c0], [-c0 / m, 0], [(1 - c0) / m, 1]].forEach(q => {
+                if (q[0] >= 0 && q[0] <= 1 && q[1] >= 0 && q[1] <= 1) pts.push(q);
+            });
+            const hot = flash && flash[l] > 0.01;
+            ctx.globalAlpha = alpha * (hot ? 1 : 0.62);
+            ctx.strokeStyle = hot ? '#f97316' : '#94a3b8';
+            ctx.lineWidth = hot ? 2.6 : 1.3;
+            ctx.beginPath();
+            pts.forEach((q, i) => { const px = x0 + q[0] * side, py = y0 + (1 - q[1]) * side;
+                i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+            ctx.stroke();
+        }
+        ctx.globalAlpha = alpha * 0.7; ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
+        ctx.strokeRect(x0, y0, side, side);
+        return cells;
+    }
+    // Weicher Pfad durch das Quadrat: x linear, y glatte Sinus-Kurve.
+    function lllmPath(t) {
+        return { x: 0.07 + 0.86 * t,
+                 y: 0.50 + 0.33 * Math.sin(t * Math.PI * 1.6 - 0.30) };
+    }
+
+    // ===== Schritt llm: der Rechenweg, Schnitte = Buchhaltung =====
+    function drawLLM(alpha) {
+        if (alpha < 0.01) return;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        const { TOP, SQ } = lllmLayout();
+        const x0 = 372, y0 = TOP + 26;
+        const tMove = clamp((alpha - 0.05) / 0.55, 0, 1);      // Gleiten
+        const stCell = clamp((alpha - 0.62) / 0.30, 0, 1);    // "keine Bedeutung"
+        // --- welche Schnitte wurden gerade überkreuzt? ---
+        const tA = lllmPath(tMove), tB = lllmPath(Math.max(0, tMove - 0.02));
+        const flash = [];
+        for (let l = 0; l < LLM_NL; l++)
+            flash[l] = (tMove > 0 && tMove < 1 && lllmSign(tB.x, tB.y, l) !== lllmSign(tA.x, tA.y, l))
+                       ? clamp((tMove - 0.05) / 0.55, 0, 1) : 0;
+        lllmArrangement(x0, y0, SQ, alpha, flash);
+
+        // --- Bahn ---
+        ctx.globalAlpha = alpha * 0.5; ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 1.6;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        for (let i = 0; i <= 40; i++) { const p = lllmPath(i / 40);
+            const px = x0 + p.x * SQ, py = y0 + (1 - p.y) * SQ;
+            i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }
+        ctx.stroke(); ctx.setLineDash([]);
+
+        // --- Gleitender Punkt (verblasst, sobald die Wort-Gruppe übernimmt) ---
+        const px = x0 + tA.x * SQ, py = y0 + (1 - tA.y) * SQ;
+        const bump = 1 + 0.14 * Math.sin(Math.PI * clamp(tMove / 0.02, 0, 1));
+        ctx.globalAlpha = alpha * (1 - stCell);
+        ctx.fillStyle = '#1d4ed8';
+        ctx.beginPath(); ctx.arc(px, py, 9 * bump, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(px, py, 9 * bump, 0, 6.2832); ctx.stroke();
+        // Label auf die freie Seite (sonst läuft es in die Gate-Spalte)
+        if (stCell < 0.5) {
+            ctx.globalAlpha = alpha * (1 - stCell * 2);
+            ctx.fillStyle = '#1e3a8a'; ctx.font = '600 13px system-ui,sans-serif';
+            const right = tA.x < 0.5;
+            ctx.textAlign = right ? 'left' : 'right';
+            ctx.fillText('dein Wort', px + (right ? 15 : -15), py + 4);
+        }
+
+        // ===== rechts: die 8 Gates als Schalter =====
+        const gx = x0 + SQ + 46, colW = Math.max(150, W - gx - 30);
+        const put = (txt, y, maxW, base, weight, col) => {
+            const f = lllmFit(txt, maxW, base, weight, Math.max(9, base - 4));
+            ctx.globalAlpha = alpha; ctx.fillStyle = col;
+            ctx.font = (weight ? weight + ' ' : '') + f + 'px system-ui,sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(txt, gx, y);
+        };
+        put('Die 8 Gates', TOP + 22, colW, 14, '600', '#0f172a');
+        put('Schnitt überkreuzt → Schalter kippt', TOP + 42, colW, 12, null, '#64748b');
+        const ly = TOP + 66, rowH = Math.min(30, (H - ly - 96) / LLM_NL);
+        let bits = '';
+        for (let l = 0; l < LLM_NL; l++) {
+            const on = lllmSign(tA.x, tA.y, l), y = ly + l * rowH;
+            bits += on ? '1' : '0';
+            const hot = flash[l] > 0.01;
+            ctx.globalAlpha = alpha;
+            lllmFrame(gx, y - 8, 30, 17, 5, on ? '#16a34a' : '#e2e8f0', hot ? '#f97316' : '#94a3b8', hot ? 2 : 1);
+            if (on) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(gx + 22, y + 0.5, 5, 0, 6.2832); ctx.fill(); }
+            put('Gate ' + (l + 1), y + 5, colW - 38, 12, null, '#334155');
+            // nur zeichnen, wenn daneben noch Platz ist
+            if (colW > 190) {
+                ctx.globalAlpha = alpha; ctx.fillStyle = on ? '#15803d' : '#94a3b8';
+                ctx.font = '12px system-ui,sans-serif'; ctx.textAlign = 'left';
+                ctx.fillText(on ? 'aktiv' : 'inaktiv', gx + 94, y + 5);
+            }
+        }
+        // aktuelle Regel als Bitmuster (an die Spaltenbreite angepasst)
+        const yQ = ly + LLM_NL * rowH + 26;
+        put('Welche Regel gilt gerade?', yQ, colW, 12, '600', '#0f172a');
+        const bitStr = bits.split('').join(' ');
+        const fsBit = lllmFit(bitStr, colW, 34, '600', 11);
+        ctx.globalAlpha = alpha * stCell; ctx.fillStyle = '#1d4ed8';
+        ctx.font = '600 ' + fsBit + 'px ui-monospace,SFMono-Regular,monospace'; ctx.textAlign = 'left';
+        ctx.fillText(bitStr, gx, yQ + Math.min(44, fsBit + 12));
+
+        // ===== Beat 3: mehrere Wörter in EINER Zelle =====
+        if (stCell > 0.01) {
+            const words = ['König', 'Wasser', 'schön', 'Tisch'], rng = lllmRng(7);
+            const cw = SQ * 0.34, cx = px - cw / 2, cy = py - cw / 2;
+            ctx.globalAlpha = alpha * stCell * 0.85;
+            lllmFrame(cx, cy, cw, cw, 8, null, '#f97316', 2.6);
+            ctx.fillStyle = '#c2410c'; ctx.font = '600 11.5px system-ui,sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('1 Zelle', cx + cw + 8, cy + 12);
+            words.forEach((wd, i) => {
+                const jx = cx + 10 + rng() * (cw - 20), jy = cy + 16 + i * ((cw - 24) / 4);
+                ctx.globalAlpha = alpha * stCell;
+                ctx.fillStyle = '#1d4ed8';
+                ctx.beginPath(); ctx.arc(jx, jy, 5.5, 0, 6.2832); ctx.fill();
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.4;
+                ctx.beginPath(); ctx.arc(jx, jy, 5.5, 0, 6.2832); ctx.stroke();
+                ctx.fillStyle = '#1e3a8a'; ctx.font = '11.5px system-ui,sans-serif';
+                ctx.textAlign = jx > cx + cw * 0.62 ? 'right' : 'left';
+                ctx.fillText(wd, jx + (jx > cx + cw * 0.62 ? -9 : 9), jy + 4);
+            });
+        }
+        // Abschluss-Satz (eine Zeile, unten über die volle Breite)
+        ctx.globalAlpha = alpha * stCell; ctx.textAlign = 'center';
+        ctx.fillStyle = '#b45309';
+        lllmFit('Die Zelle merkt sich nichts — sie merkt sich nur, welche Rechenregel gilt.',
+                W - 80, 14, '600');
+        ctx.fillText('Die Zelle merkt sich nichts — sie merkt sich nur, welche Rechenregel gilt.',
+                     W / 2, H - 18);
+        ctx.restore();
+    }
+
+    // ===== Schritt llm2: was am Ende zählt =====
+    function drawLLMCandidates(alpha) {
+        if (alpha < 0.01) return;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        const { TOP } = lllmLayout();
+        const cx = W * 0.34, cy = TOP + (H - TOP) * 0.46;
+        const stDots = clamp((alpha - 0.05) / 0.35, 0, 1);     // Kandidaten erscheinen
+        const stRays = clamp((alpha - 0.30) / 0.35, 0, 1);     // Abstände werden gezogen
+        const stBest = clamp((alpha - 0.62) / 0.30, 0, 1);     // Gewinner
+        // --- Kandidaten (Vektoren der möglichen nächsten Wörter) ---
+        const rng = lllmRng(2024), N = 90, cand = [];
+        for (let i = 0; i < N; i++) {
+            const ang = rng() * 6.2832, rad = 26 + Math.pow(rng(), 0.6) * (W * 0.30);
+            cand.push({ x: cx + Math.cos(ang) * rad * 1.25, y: cy + Math.sin(ang) * rad * 0.72, r: rng() });
+        }
+        // Gewinner: der Punkt, der dem Vektor am nächsten liegt. Bewusst nur unterhalb
+        // des Zentrums, damit sein Label nie mit "Vektor nach …" kollidiert.
+        const low = cand.filter(c => c.y > cy + 70);
+        const pool = low.length ? low : cand;
+        const best = pool.reduce((a, b) =>
+            (Math.hypot(b.x - cx, b.y - cy) < Math.hypot(a.x - cx, a.y - cy) ? b : a));
+        const named = { x: best.x, y: best.y, w: 'nächstes' };
+        cand.forEach(c => {
+            if (c === best) return;
+            const d = Math.hypot(c.x - cx, c.y - cy);
+            const u = clamp(stDots - (d / (W * 0.34)) * 0.25, 0, 1);
+            if (u <= 0.01) return;
+            ctx.globalAlpha = alpha * u * (0.28 + 0.5 * clamp(1 - d / (W * 0.34), 0, 1));
+            ctx.fillStyle = '#94a3b8';
+            ctx.beginPath(); ctx.arc(c.x, c.y, 3.4, 0, 6.2832); ctx.fill();
+        });
+        // --- Verbindungsstrahlen ---
+        if (stRays > 0.01) {
+            cand.forEach(c => {
+                if (c === best) return;
+                const d = Math.hypot(c.x - cx, c.y - cy);
+                const u = stRays * clamp(1 - d / (W * 0.32), 0, 1);
+                if (u <= 0.02) return;
+                ctx.globalAlpha = alpha * u * 0.35; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 0.9;
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(c.x, c.y); ctx.stroke();
+            });
+        }
+        // --- der fertige Vektor des Wortes ---
+        const pop = 1 + 0.18 * Math.sin(Math.PI * stBest);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = '#1d4ed8';
+        ctx.beginPath(); ctx.arc(cx, cy, 11 * pop, 0, 6.2832); ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.2;
+        ctx.beginPath(); ctx.arc(cx, cy, 11 * pop, 0, 6.2832); ctx.stroke();
+        ctx.fillStyle = '#1e3a8a'; ctx.font = '600 13px system-ui,sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText('Vektor nach 80 Schichten', cx + 17, cy + 4);
+        // --- Gewinner ---
+        if (stBest > 0.01) {
+            ctx.globalAlpha = alpha * stBest;
+            ctx.strokeStyle = '#16a34a'; ctx.lineWidth = 2.6;
+            ctx.beginPath(); ctx.arc(named.x, named.y, 12, 0, 6.2832); ctx.stroke();
+            // Label unter dem Punkt (liegt garantiert unterhalb des Quell-Labels)
+            const lbl = 'passt am besten → ausgegeben';
+            lllmFit(lbl, Math.min(300, W - named.x - 30), 13, '600', 10);
+            ctx.fillStyle = '#16a34a';
+            ctx.textAlign = named.x < cx ? 'right' : 'left';
+            ctx.fillText(lbl, named.x + (named.x < cx ? -18 : 18), named.y + 5);
+        }
+        // --- Überschrift + Abschluss-Satz ---
+        ctx.globalAlpha = alpha; ctx.textAlign = 'center';
+        ctx.fillStyle = '#0f172a'; ctx.font = '600 17px system-ui,sans-serif';
+        lllmFit('Der letzte Schritt: der fertige Punkt wird gegen alle Kandidaten gehalten',
+                W - 90, 17, '600');
+        ctx.fillText('Der letzte Schritt: der fertige Punkt wird gegen alle Kandidaten gehalten',
+                     W / 2, TOP + 26);
+        ctx.fillStyle = '#b45309'; ctx.font = '600 14px system-ui,sans-serif';
+        lllmFit('Die Schnitte waren Buchhaltung. Was das Wort bedeutet, stand die ganze Zeit nur im Punkt.',
+                W - 80, 14, '600');
+        ctx.fillText('Die Schnitte waren Buchhaltung. Was das Wort bedeutet, stand die ganze Zeit nur im Punkt.',
+                     W / 2, H - 18);
+        ctx.restore();
+    }
+
     // ---------- Render ----------
     function draw(now) {
         if (!active) return;
@@ -716,6 +1016,8 @@ const SpaceMorph = (() => {
             lb = lerp(a.lab, b.lab, u) * (1 - tor),
             bx = lerp(a.box, b.box, u),
             ff = lerp(a.ff || 0, b.ff || 0, u);
+        const llm = lerp(a.llm || 0, b.llm || 0, u);
+        const llm2 = lerp(a.llm2 || 0, b.llm2 || 0, u);
         // Schritt-8-Auto-Orbit: 1× Pfeil-rechts → ~5 s sanfter 360°-Kamera-Umlauf.
         if (autoOrbitActive && tor > 0.01) {
             const elapsed = now - autoOrbitStart;
@@ -735,10 +1037,13 @@ const SpaceMorph = (() => {
 
         ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, W, H);
 
-        // Fun-Fact-Schritt: ganzes 3D-Szenario überspringen, nur den 2D-Plot
+        // Fun-Fact-/LLM-Schritt: ganzes 3D-Szenario überspringen, nur den 2D-Plot
         // zeichnen (Hard-Cut wie bei den Egg↔Tori-Übergängen, Plot blendet ein).
-        if (ff > 0.01) {
-            drawFunFact(ff);
+        // Der Übergang Fun-Fact → LLM ist ein Fade-Through-White in der Mitte.
+        if (ff > 0.01 || llm > 0.01 || llm2 > 0.01) {
+            if (llm2 > 0.01) drawLLMCandidates(llm2);
+            else if (llm > 0.5) drawLLM(llm);
+            else drawFunFact(ff);
             raf = requestAnimationFrame(draw);
             return;
         }
