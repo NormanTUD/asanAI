@@ -413,6 +413,7 @@ module.exports = {
 		"create_styled_upload_buttons": "readonly",
 		"history_of_weights_for_loss_landscape": "writable",
 		"write_optimizer_to_math_tab": "readonly",
+		"update_expert_visualization_tabs": "readonly",
 		"last_disable_invalid_layers_event_uuid": "writable",
 		"hasBothFrontAndBackCached": "writable",
 		"wait_for_model": "readonly",

@@ -141,6 +141,8 @@ var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_l
 
 	show_or_hide_beginner_or_expert_mode_stuff();
 
+	update_expert_visualization_tabs();
+
 	allow_editable_labels(); // await not useful here
 
 	await _maybe_update_initializers(no_update_initializers);
