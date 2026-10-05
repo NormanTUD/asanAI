@@ -435,6 +435,7 @@ module.exports = {
 		"model_is_ok_icon": "writable",
 		"model_is_trained": "writable",
 		"weights_generation": "writable",
+		"boot_settled": "writable",
 		"state_stack": "writable",
 		"future_state_stack": "writable",
 		"info": "readonly",

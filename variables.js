@@ -160,6 +160,7 @@ var mode = "beginner";
 var global_disable_auto_enable_valid_layer_types = true;
 var model_is_trained = false;
 var weights_generation = 0;
+var boot_settled = false;
 var disable_layer_debuggers = 0;
 var pixel_size = 1;
 var kernel_pixel_size = 10;

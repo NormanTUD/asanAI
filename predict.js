@@ -1378,11 +1378,13 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 
 	if(input_shape_is_image()) {
-		if (is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+		if (is_hidden_or_has_hidden_parent($("#predict_tab")) || !boot_settled) {
 			// The demo batch (all example images predicted on the CPU) must
-			// not block boot while the predict tab is still closed. Defer it
-			// to the first activation of the predict tab — the tabs activate
-			// hook in main.js consumes _demo_predictions_pending and runs
+			// not block boot while the predict tab is still closed, and must
+			// not run on a model that the boot's final updated_page() is about
+			// to rebuild (that would waste a batch and invalidate the memo).
+			// Defer it — the tabs activate hook in main.js (or the boot
+			// settle code) consumes _demo_predictions_pending and runs
 			// _print_example_predictions directly (with a spinner in the grid).
 			window._demo_predictions_pending = true;
 		} else {

@@ -174,12 +174,17 @@ function init_tabs () {
 			}
 
 			if (ui.newPanel.attr("id") == "predict_tab" && window._demo_predictions_pending) {
-				window._demo_predictions_pending = false;
-				$("#example_predictions").html("<div style='display:flex;justify-content:center;align-items:center;min-height:100px;'><div class='spinner'></div></div>");
 				// The activate event fires before the panel's fade-in applies, so
 				// show_prediction's visibility guard would still see the tab as
 				// hidden and defer again. Run the (now deduped) workhorse directly.
-				_print_example_predictions(); // cannot be await
+				$("#example_predictions").html("<div style='display:flex;justify-content:center;align-items:center;min-height:100px;'><div class='spinner'></div></div>");
+				if (boot_settled) {
+					window._demo_predictions_pending = false;
+					_print_example_predictions(); // cannot be await
+				}
+				// else: boot's final updated_page() is still rebuilding the model.
+				// Keep the pending flag; the boot settle code runs the batch once
+				// the model is stable (see _init_app_finalization).
 			}
 		},
 		deactivate: function (event, ui) {
@@ -1159,6 +1164,16 @@ async function _init_app_finalization(LM) {
 	finished_loading = true;
 
 	await updated_page();
+
+	// The model is now stable (updated_page above finalized it). Allow the
+	// deferred demo-batch prediction to run, and run it now if the user already
+	// opened the predict tab while the model was still settling.
+	boot_settled = true;
+	if (window._demo_predictions_pending && !is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+		window._demo_predictions_pending = false;
+		_print_example_predictions(); // cannot be await
+	}
+
 	autoset_dark_theme_if_user_prefers_it();
 	setOptimizerTooltips();
 
