@@ -272,7 +272,7 @@ const SpaceMorph = (() => {
             b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden.",
             L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { t: "Der Layer krümmt den Raum",
-            b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Eine Glatte Krümmung — sie reißt nicht und verklebt keinen Punkt, bleibt ein Homöomorphismus. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
+            b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Es ist eine glatte, injektive Verbiegung (Homöomorphismus auf ihr Bild) — sie reißt nicht, identifiziert keine Punkte und erhält die topologische Struktur. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Eine Ebene passt dazwischen",
             b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
@@ -292,7 +292,7 @@ const SpaceMorph = (() => {
             tori: 1, ut: 0, kx: 1 },
         // Schritt 9: Homotopie k: 1 → 0 — kein Schnitt, kein Kleben.
         { t: "Ohne ReLU: entwirren, nicht trennen",
-            b: "Affin (x → Wx + b) — und auch die Glatte Egg-Schale — ist ein Homöomorphismus: topologierehaltend. Die Homotopie zeigt es: die Schlingen glätten sich, aber die Verschlingungszahl +1 bleibt stehen, die Ringe bleiben verhakt. Nur eine Projektion (det W = 0) würde sie scheinbar lösen — sie wirft aber eine Dimension weg, nur Informationsverlust.",
+            b: "Affin (x → Wx + b) — und auch die glatte Egg-Schale — ist injektiv und umkehrbar auf ihrem Bild (eine glatte Einbettung): die Topologie bleibt erhalten. Die Homotopie zeigt es: die Schlingen glätten sich, aber die Verschlingungszahl +1 bleibt erhalten, die Ringe bleiben verhakt. Nur eine Projektion (det W = 0) würde sie scheinbar lösen — sie wirft aber eine Dimension weg (Informationsverlust).",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         // Schritt 10: der schlichte Hopf-Link — Ausgangspunkt des 4D-Tricks.
@@ -301,7 +301,7 @@ const SpaceMorph = (() => {
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 0, kx: 0 },
         { t: "ReLU knickt den Raum (4. Dimension)",
-            b: "Anders als die Glatte Egg-Schale ist die ReLU-Falte NICHT umkehrbar: sie identifiziert alle Punkte mit x ≤ 0 (bildet sie auf denselben Wert 0 ab). Genau das bricht die Topologie — die Ringe ziehen sich durch die 4. Dimension, wo in ℝ³ kein Weg frei ist, und zwei getrennte Klumpen bleiben.",
+            b: "Anders als die glatte Egg-Schale ist die ReLU-Falte nicht injektiv: sie bildet alle Punkte mit x ≤ 0 auf denselben Wert 0 ab (identifiziert sie). Genau deshalb ändert sich die topologische Struktur — die Ringe ziehen sich durch die 4. Dimension, wo in ℝ³ kein Weg frei ist, und lassen sich in zwei getrennte Klumpen auflösen.",
             L: 0, A: 0.4, B: 1.0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 1, ut: 1, kx: 0 },
         { t: "Jetzt reicht eine flache Ebene",
@@ -316,7 +316,7 @@ const SpaceMorph = (() => {
         // Sigmoid krümmt glatt (Welle), ReLU knickt hart (Falte). Eigener
         // Schritt mit vollem 2D-Canvas-3D-Plot, kein 3D-Szenario (ff: 1).
         { t: "Sigmoid krümmt, ReLU knickt",
-            b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt und umkehrbar — ein Homöomorphismus: es biegt, identifiziert nichts und reicht für das Egg (Umgebung). ReLU ist scharf und nicht umkehrbar — es identifiziert Punkte mit x ≤ 0 (2 → 1) und bricht damit die Topologie, die die Tori verhakt hält.",
+            b: "Die zwei Arten, Raum zu krümmen. Sigmoid ist glatt, streng monoton und injektiv — umkehrbar auf seinem Wertebereich (Homöomorphismus): es biegt, identifiziert nichts und reicht für das Egg. ReLU ist stetig, aber nicht injektiv — sie bildet alle Punkte mit x ≤ 0 auf 0 ab (identifiziert sie, 2 → 1). Diese vielen-nach-eins-Abbildung ändert die topologische Struktur und ermöglicht es, die Verschlingung der Tori aufzulösen.",
             L: 0, A: 0.2, B: 0.5, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0,
             tori: 0, ut: 0, kx: 0, ff: 1 }
     ];
@@ -676,13 +676,13 @@ const SpaceMorph = (() => {
         // Beschriftung über jedem Blatt
         ctx.globalAlpha = alpha; ctx.textAlign = 'center'; ctx.font = '600 14px system-ui,sans-serif';
         const lL = ffProj(-GAP, 0, 0), lR = ffProj(GAP, 0, 0);
-        ctx.fillStyle = '#0284c7'; ctx.fillText('sigmoid: glatt → bleibt getrennt', lL.X, H * 0.31);
-        ctx.fillStyle = '#d97706'; ctx.fillText('ReLU: Falte → Punkte kollidieren', lR.X, H * 0.31);
+        ctx.fillStyle = '#0284c7';         ctx.fillText('sigmoid: glatt, injektiv → getrennt', lL.X, H * 0.31);
+        ctx.fillStyle = '#d97706'; ctx.fillText('ReLU: Falte, nicht injektiv → 2 → 1', lR.X, H * 0.31);
         // Caption
         ctx.fillStyle = '#475569'; ctx.font = '13.5px system-ui,sans-serif';
-        ctx.fillText('Glatte Krümmung (Sigmoid) ist umkehrbar — ein Homöomorphismus, reicht für das Egg.', W / 2, H * 0.68);
+        ctx.fillText('Glatte Krümmung (Sigmoid) ist injektiv/umkehrbar auf ihrem Bild — erhält die Topologie (reicht für das Egg).', W / 2, H * 0.68);
         ctx.fillStyle = '#d97706'; ctx.font = '600 13.5px system-ui,sans-serif';
-        ctx.fillText('Die ReLU-Falte ist nicht umkehrbar — sie identifiziert Punkte mit x ≤ 0 und bricht die Verschlingung der Tori.', W / 2, H * 0.68 + 22);
+        ctx.fillText('Die ReLU-Falte ist nicht injektiv — sie identifiziert Punkte mit x ≤ 0 und löst die Verschlingung der Tori auf.', W / 2, H * 0.68 + 22);
         ctx.restore();
     }
 
