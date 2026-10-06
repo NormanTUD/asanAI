@@ -4,8 +4,9 @@
 // Zwei Folien teilen sich dasselbe Gerüst: die 32×32-ASCII-Katze
 // als Canvas-Raster + gestufter Ablauf (Kicker, Titel, Pill, Chips,
 // Dots). Die Schritte laufen über die Pfeiltasten (DemoRegistry):
-//   - ConvDemo     "Was sind Convolutions?" — 3×3-Filter zählt die
-//                  gelben Pixel (die Augen) über 900 Positionen
+//   - ConvDemo     "Was sind Convolutions?" — Katze → 3 Kanäle →
+//                  6×5-Filter in Augen-Form findet die Augen über
+//                  756 Positionen → 8×8-Map
 //   - FlattenDemo  "Was macht Flatten?" — Pixel → RGB → Grün →
 //                  Grau → Schnur (1024 Zahlen) → Fazit
 // ============================================================
@@ -84,8 +85,30 @@ const KatzeKit = (() => {
 		ctx.beginPath();
 		ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r);
 		ctx.arcTo(x + w, y + h, x, y + h, r);
-		ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r);
+		ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y + h, x, y, r);
 		ctx.closePath();
+	}
+
+	const TAGS = [['ROT', '#f43f5e'], ['GRÜN', '#10b981'], ['BLAU', '#3b82f6']];
+
+	function drawTags(ctx, S, tagA) {
+		S.inst.forEach((o, i) => {
+			if (tagA[i] < 0.01) return;
+			const gray = i === PICK && S.grayMix > 0.5;
+			const label = gray ? 'GRAUSTUFEN' : TAGS[i][0];
+			const col = gray ? '#6b7280' : TAGS[i][1];
+			ctx.globalAlpha = tagA[i];
+			ctx.font = '800 10px -apple-system, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+			const tw = ctx.measureText(label).width + 24;
+			const cx = o.x + N * o.s / 2, cy = o.y - 16;
+			ctx.fillStyle = col;
+			roundRect(ctx, cx - tw / 2, cy - 9, tw, 18, 9);
+			ctx.fill();
+			ctx.fillStyle = '#fff';
+			ctx.fillText(label.split('').join('\u200a'), cx, cy + .5);
+			ctx.globalAlpha = 1;
+		});
 	}
 
 	/* ═══════════ Factory ═══════════ */
@@ -289,78 +312,115 @@ const KatzeKit = (() => {
 		return { init, reset, next, prev, canGoNext, canGoPrev, getState, setState };
 	}
 
-	return { create, lerp, eInOut, roundRect, drawGrid, N, PICK, GREEN, YELLOW };
+	return { create, lerp, eInOut, roundRect, drawGrid, drawTags, N, PICK, GREEN, YELLOW };
 })();
 
 // ============================================================
-// ConvDemo — "Was sind Convolutions?"
+// ConvDemo — "Was sind Convolutions?" (Einstieg nach der Intro)
 //
-// 32×32-Katze, 3×3-Filter, der gelbe Pixel zählt (die Augen sind
-// die einzigen gelben Pixel im Bild). Das Fenster fährt über alle
-// 900 Positionen; pro Position entsteht eine Zahl (30×30-Map),
-// die leuchtet, wo der Filter gut passt: an den Augen.
+// 32×32-Katze, 6 Schritte:
+// 0: die Farb-Katze
+// 1: das Bild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
+// 2: die Stapel faden zusammen + der Filter erscheint — 6×5,
+//    so groß und in der Form wie ein Katzenauge (gelb, wo das
+//    Auge gelb ist; Pupille und Rand bleiben weiß)
+// 3: das Fenster wird auf das Bild gelegt
+// 4: das Fenster fährt über alle 756 Positionen (27×28 fein)
+// 5: die 8×8-Map — jedes Auge leuchtet als ein großer Pixel
 // ============================================================
 const ConvDemo = (() => {
 	'use strict';
 
-	const KS = 3, OUT = KatzeKit.N - KS + 1, OCELLS = OUT * OUT, TH = 6;
+	// Der Filter ist so groß wie ein Auge: 6×5. Template = linkes
+	// Auge (Zeilen 10–15, Spalten 4–8): 1, wo das Auge gelb ist.
+	const KH = 6, KW = 5, ER = 10, EC = 4;
+	const TPL = [];
+	for (let dr = 0; dr < KH; dr++)
+		for (let dc = 0; dc < KW; dc++)
+			TPL.push(KatzeKit.YELLOW[(ER + dr) * KatzeKit.N + (EC + dc)]);
+	const TMAX = TPL.reduce((a, b) => a + b, 0);
+	const OH = KatzeKit.N - KH + 1, OW = KatzeKit.N - KW + 1;
+	const OCELLS = OH * OW, TH = 20;
 	const SCORES = new Array(OCELLS);
-	for (let r = 0; r < OUT; r++) for (let c = 0; c < OUT; c++) {
+	for (let r = 0; r < OH; r++) for (let c = 0; c < OW; c++) {
 		let s = 0;
-		for (let dr = 0; dr < KS; dr++)
-			for (let dc = 0; dc < KS; dc++)
-				s += KatzeKit.YELLOW[(r + dr) * KatzeKit.N + (c + dc)];
-		SCORES[r * OUT + c] = s;
+		for (let dr = 0; dr < KH; dr++)
+			for (let dc = 0; dc < KW; dc++)
+				if (TPL[dr * KW + dc]) s += KatzeKit.YELLOW[(r + dr) * KatzeKit.N + (c + dc)];
+		SCORES[r * OW + c] = s;
 	}
-	const LIT = [];
-	for (let i = 0; i < OCELLS; i++) if (SCORES[i] >= TH) LIT.push(i);
+
+	// Ausgabe: 8×8 (Pooling der feinen 27×28-Map). Jede Zelle
+	// (R,C) deckt einen Block feiner Fenster ab; sie ist "voll",
+	// wenn der Sweep den Block durchhat, und leuchtet, wenn dort
+	// ein Fenster voll aufs Auge passt.
+	const O8 = 8;
+	const END8 = new Array(O8 * O8), LIT8 = new Array(O8 * O8).fill(-1);
+	for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
+		const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
+		const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
+		END8[R * O8 + C] = fr1 * OW + fc1 + 1;
+		for (let fr = fr0; fr <= fr1; fr++)
+			for (let fc = fc0; fc <= fc1; fc++) {
+				const i = fr * OW + fc;
+				if (SCORES[i] >= TH && (LIT8[R * O8 + C] < 0 || i < LIT8[R * O8 + C]))
+					LIT8[R * O8 + C] = i;
+			}
+	}
 
 	let sweepP = 0, sweepDone = 0;
 	let kerA = 0, tKerA = 0;
 	let outA = 0, tOutA = 0;
+	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
 	const KC = 24; // Filter-Panel: Zellgröße in px
 
-	function drawOutput(ctx, S) {
+	function drawOutput8(ctx, S) {
 		if (outA < 0.01) return;
 		const o = S.inst[0], s = o.s;
-		const ox = o.x + KatzeKit.N * s + 44, oy = o.y;
-		const filled = S.step === 3 ? Math.floor(sweepP) : (S.step > 3 ? OCELLS : 0);
+		const os = s * 4; // 8 Zellen = 32 Bildspalten → gleich groß wie die Katze
+		const ox = o.x + KatzeKit.N * s + 60, oy = o.y;
 
 		ctx.globalAlpha = outA * 0.9;
 		ctx.fillStyle = '#fff';
-		KatzeKit.roundRect(ctx, ox - 7, oy - 7, OUT * s + 14, OUT * s + 14, 11);
+		KatzeKit.roundRect(ctx, ox - 7, oy - 7, O8 * os + 14, O8 * os + 14, 11);
 		ctx.fill();
 		ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1; ctx.stroke();
 		ctx.globalAlpha = 1;
+		if (S.step < 3) return;
 
-		for (let i = 0; i < OCELLS; i++) {
-			if (i >= filled) continue;
-			const r = (i / OUT) | 0, c = i % OUT;
-			const x = Math.floor(ox + c * s), y = Math.floor(oy + r * s);
-			const xw = Math.ceil(ox + (c + 1) * s) - x, yh = Math.ceil(oy + (r + 1) * s) - y;
+		for (let i8 = 0; i8 < O8 * O8; i8++) {
+			const R = (i8 / O8) | 0, C = i8 % O8;
+			const x = Math.floor(ox + C * os), y = Math.floor(oy + R * os);
+			const xw = Math.ceil(ox + (C + 1) * os) - x, yh = Math.ceil(oy + (R + 1) * os) - y;
+			const lit = LIT8[i8];
+			const isLit = lit >= 0 && (S.step >= 5 || (S.step === 4 && sweepP > lit));
+			const isFull = !isLit && (S.step >= 5 || (S.step === 4 && sweepP >= END8[i8]));
 			ctx.globalAlpha = outA;
-			if (SCORES[i] >= TH) {
+			if (isLit) {
 				ctx.fillStyle = 'rgba(76,175,80,.5)';
 				ctx.fillRect(x, y, xw, yh);
-				ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1;
-				ctx.strokeRect(x + .5, y + .5, xw - 1, yh - 1);
-			} else {
+				ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
+				ctx.strokeRect(x + 1, y + 1, xw - 2, yh - 2);
+			} else if (isFull) {
 				ctx.fillStyle = '#f6f7f9';
 				ctx.fillRect(x, y, xw, yh);
 			}
 			ctx.globalAlpha = 1;
 		}
 
-		// Finale: weicher Glow um die leuchtenden Augen-Zellen.
+		// Weicher Glow um die leuchtenden Augen-Pixel (ab dem Moment,
+		// in dem der Sweep das Auge findet).
 		if (S.step >= 4) {
-			for (const i of LIT) {
-				const r = (i / OUT) | 0, c = i % OUT;
-				const cx = ox + (c + .5) * s, cy = oy + (r + .5) * s;
-				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, s * 2.2);
+			for (let i8 = 0; i8 < O8 * O8; i8++) {
+				const lit = LIT8[i8];
+				if (lit < 0 || (S.step === 4 && sweepP <= lit)) continue;
+				const R = (i8 / O8) | 0, C = i8 % O8;
+				const cx = ox + (C + .5) * os, cy = oy + (R + .5) * os;
+				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, os * 1.8);
 				g.addColorStop(0, 'rgba(76,175,80,.32)');
 				g.addColorStop(1, 'rgba(76,175,80,0)');
 				ctx.fillStyle = g;
-				ctx.fillRect(cx - s * 2.5, cy - s * 2.5, s * 5, s * 5);
+				ctx.fillRect(cx - os * 2, cy - os * 2, os * 4, os * 4);
 			}
 		}
 	}
@@ -368,15 +428,17 @@ const ConvDemo = (() => {
 	function drawKernel(ctx, S) {
 		if (kerA < 0.01) return;
 		const o = S.inst[0], s = o.s;
-		const kw = KS * KC;
-		const kx = o.x - kw - 56;
-		const ky = o.y + (KatzeKit.N * s) / 2 - kw / 2;
+		const kw = KW * KC, kh = KH * KC;
+		const kx = Math.max(o.x - kw - 56, 4);
+		const ky = o.y + (KatzeKit.N * s) / 2 - kh / 2;
 		ctx.globalAlpha = kerA;
 		ctx.fillStyle = '#fff';
-		KatzeKit.roundRect(ctx, kx - 9, ky - 9, kw + 18, kw + 18, 10);
+		KatzeKit.roundRect(ctx, kx - 9, ky - 9, kw + 18, kh + 18, 10);
 		ctx.fill();
 		ctx.strokeStyle = '#cfe0ff'; ctx.lineWidth = 1.2; ctx.stroke();
-		for (let r = 0; r < KS; r++) for (let c = 0; c < KS; c++) {
+		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
+			// 0-Zellen (Pupille + Rand) bleiben weiß wie das Panel.
+			if (!TPL[r * KW + c]) continue;
 			ctx.fillStyle = '#E2C72E';
 			ctx.fillRect(kx + c * KC + 3, ky + r * KC + 3, KC - 6, KC - 6);
 		}
@@ -384,19 +446,19 @@ const ConvDemo = (() => {
 	}
 
 	function drawWindow(ctx, S) {
-		if (S.step < 2 || S.step > 3) return;
+		if (S.step < 3 || S.step > 4) return;
 		const o = S.inst[0], s = o.s;
-		const i = Math.min(Math.floor(S.step === 3 ? sweepP : 0), OCELLS - 1);
-		const r = (i / OUT) | 0, c = i % OUT;
+		const i = Math.min(Math.floor(S.step === 4 ? sweepP : 0), OCELLS - 1);
+		const r = (i / OW) | 0, c = i % OW;
 		const x = o.x + c * s, y = o.y + r * s;
 		const sc = SCORES[i], hot = sc >= TH;
 
 		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
-		ctx.fillRect(x, y, KS * s, KS * s);
+		ctx.fillRect(x, y, KW * s, KH * s);
 		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 2;
-		ctx.strokeRect(x + 1, y + 1, KS * s - 2, KS * s - 2);
+		ctx.strokeRect(x + 1, y + 1, KW * s - 2, KH * s - 2);
 
-		const bw = 46, bh = 20, bx = x + KS * s / 2 - bw / 2, by = y - bh - 6;
+		const bw = 46, bh = 20, bx = x + KW * s / 2 - bw / 2, by = y - bh - 6;
 		if (by > 0) {
 			ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh);
 			ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.1;
@@ -404,7 +466,7 @@ const ConvDemo = (() => {
 			ctx.fillStyle = hot ? '#2e7d32' : '#4a7fc0';
 			ctx.font = '600 11.5px Inter, system-ui, sans-serif';
 			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			ctx.fillText(sc + '', x + KS * s / 2, by + bh / 2);
+			ctx.fillText(sc + '', x + KW * s / 2, by + bh / 2);
 		}
 	}
 
@@ -412,69 +474,101 @@ const ConvDemo = (() => {
 		slideId: 'slide-convolution',
 		prefix: 'conv',
 		steps: [
-			{ k: 'Schritt 1', t: 'Ein Bild ist ein Raster<br>aus <em>Zahlen</em>.',
+			{ k: 'Schritt 1', t: 'Wir fangen bei<br>der <em>Katze</em> an.',
 			  p: 'Das Originalbild · 32 × 32 Pixel',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
-			{ k: 'Schritt 2', t: 'Ein <em>Filter</em> ist ein<br>kleines Zahlen-Muster.',
-			  p: 'Dieser Filter zählt die gelben Pixel im 3 × 3-Fenster',
-			  c: '<span class="kz-chip">(3, 3)</span>' },
-			{ k: 'Schritt 3', t: 'Das Fenster wird<br>auf das Bild <em>gelegt</em>.',
-			  p: 'Fenster <b>1</b> von 900 · gelbe Pixel: <b>0</b>',
-			  c: '<span class="kz-chip">(32, 32)</span><span class="kz-arrow">×</span><span class="kz-chip">(3, 3)</span>' },
-			{ k: 'Schritt 4', t: '… und dann über<br><em>alle 900</em> Positionen.',
-			  p: 'Fenster <b>1</b> von 900',
-			  c: '<span class="kz-chip g">(30, 30)</span>' },
-			{ k: 'Schritt 5', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
-			  p: '1024 Pixel → 900 Zahlen — und die Augen bleiben',
-			  c: '<span class="kz-chip g">(30, 30)</span>' }
+			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
+			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
+			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
+			{ k: 'Schritt 3', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
+			  p: 'So groß wie ein Auge · gelb, wo das Auge gelb ist',
+			  c: '<span class="kz-chip">(6, 5)</span>' },
+			{ k: 'Schritt 4', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
+			  p: `Punkt <b>1</b> von ${OCELLS} · Treffer: <b>0</b> von ${TMAX}`,
+			  c: '<span class="kz-chip">(32, 32)</span><span class="kz-arrow">×</span><span class="kz-chip">(6, 5)</span>' },
+			{ k: 'Schritt 5', t: `… und über<br><em>alle ${OCELLS}</em> Positionen.`,
+			  p: `Fenster <b>1</b> von ${OCELLS}`,
+			  c: `<span class="kz-chip">(${OH}, ${OW})</span><span class="kz-arrow">→</span><span class="kz-chip g">(8, 8)</span>` },
+			{ k: 'Schritt 6', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
+			  p: `1024 Pixel → ${O8 * O8} Zahlen — und die Augen bleiben`,
+			  c: `<span class="kz-chip g">(8, 8)</span>` }
 		],
 
 		layoutFor(step, S) {
 			const { W, H, inst } = S;
 			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, 13);
-			const imgW = KatzeKit.N * s, gap = 44, outW = OUT * s;
-			inst[0].ts = s;
-			inst[0].ty = (H - imgW) / 2 + 6;
-			inst[0].tx = (step === 0 || step === 1)
-				? (W - imgW) / 2
-				: (W - (imgW + gap + outW)) / 2;
-			inst[0].tmix = 0;
-			inst[0].ta = step >= 4 ? .22 : 1;
-			inst[1].ta = 0; inst[1].tmix = 0;
-			inst[2].ta = 0; inst[2].tmix = 0;
-			tKerA = step === 0 ? 0 : (step >= 4 ? .45 : 1);
-			tOutA = step >= 2 ? 1 : 0;
+			const imgW = KatzeKit.N * s, gapOut = 60, outW = O8 * s * 4;
+			if (step === 0) {
+				// Farb-Katze, zentriert.
+				inst.forEach((o, i) => {
+					o.ts = s; o.tx = (W - imgW) / 2; o.ty = (H - imgW) / 2 + 6;
+					o.tmix = i === 0 ? 0 : 1; o.ta = i === 0 ? 1 : 0;
+				});
+				tTagA = [0, 0, 0];
+			} else if (step === 1) {
+				// Drei Kanal-Stapel (wie Flatten, Schritt 1).
+				const g = Math.min(W * .035, 46);
+				const ss = Math.min((W - g * 2) / (KatzeKit.N * 3) * .96, H / KatzeKit.N * .82, 8);
+				const bw = KatzeKit.N * ss, tot = bw * 3 + g * 2, ox = (W - tot) / 2, oy = (H - bw) / 2 + 8;
+				inst.forEach((o, i) => {
+					o.ts = ss; o.tx = ox + i * (bw + g); o.ty = oy;
+					o.tmix = 1; o.ta = 1;
+				});
+				tTagA = [1, 1, 1];
+			} else {
+				inst.forEach((o, i) => {
+					o.ts = s;
+					o.tx = (W - (imgW + gapOut + outW)) / 2;
+					o.ty = (H - imgW) / 2 + 6;
+					o.tmix = i === 0 ? 0 : 1;
+					o.ta = i === 0 ? (step >= 5 ? .22 : 1) : 0;
+				});
+				tTagA = [0, 0, 0];
+			}
+			tKerA = step <= 1 ? 0 : (step >= 5 ? .45 : 1);
+			tOutA = step >= 3 ? 1 : 0;
 		},
 
 		onStep(step) {
-			if (step === 3) { sweepP = 0; sweepDone = 0; }
+			if (step === 4) { sweepP = 0; sweepDone = 0; }
 		},
 
 		tick(dt, k, S, setFoot) {
 			kerA = KatzeKit.lerp(kerA, tKerA, k * 1.2);
 			outA = KatzeKit.lerp(outA, tOutA, k * 1.2);
-			if (S.step !== 3) return;
-			// 900 Fenster in ~9 s
+			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
+			if (S.step !== 4) return;
+			// 756 Fenster in ~9 s
 			sweepP = Math.min(sweepP + dt * (OCELLS / (9 * 60)), OCELLS);
 			const i = Math.min(Math.floor(sweepP), OCELLS - 1);
 			if (sweepP >= OCELLS) {
 				if (!sweepDone) {
 					sweepDone = 1;
-					setFoot('Fertig — <b>900</b> Fenster, <b>900</b> Zahlen',
-						'<span class="kz-chip g">(30, 30)</span>');
+					setFoot(`Fertig — <b>${OCELLS}</b> Fenster → <b>${O8 * O8}</b> Zahlen (8 × 8)`,
+						'<span class="kz-chip g">(8, 8)</span>');
 				}
 			} else {
-				setFoot(`Fenster <b>${i + 1}</b> von ${OCELLS} · gelbe Pixel: <b>${SCORES[i]}</b>`,
-					'<span class="kz-chip g">(30, 30)</span>');
+				setFoot(`Fenster <b>${i + 1}</b> von ${OCELLS} · Treffer: <b>${SCORES[i]}</b> von ${TMAX}`,
+					'<span class="kz-chip g">(8, 8)</span>');
 			}
 		},
 
 		draw(ctx, S) {
 			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
-			drawOutput(ctx, S);
+			drawOutput8(ctx, S);
 			const o = S.inst[0];
-			KatzeKit.drawGrid(ctx, o, 0, S.grayMix);
-			if (o.a > 0.02) {
+			if (S.step === 1) {
+				KatzeKit.drawGrid(ctx, o, 0, 0);
+				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
+				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
+				KatzeKit.drawTags(ctx, S, tagA);
+			} else {
+				KatzeKit.drawGrid(ctx, o, 0, 0);
+				// Beim Zusammenfaden flackern die Kanäle kurz drüber.
+				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
+				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
+			}
+			if (S.step !== 1 && o.a > 0.02) {
 				ctx.globalAlpha = o.a;
 				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 				ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
@@ -500,28 +594,6 @@ const FlattenDemo = (() => {
 	let railA = 0, tRailA = 0;
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
 	let flatP = 0, flatMsg = 0;
-
-	const TAGS = [['ROT', '#f43f5e'], ['GRÜN', '#10b981'], ['BLAU', '#3b82f6']];
-
-	function drawTags(ctx, S) {
-		S.inst.forEach((o, i) => {
-			if (tagA[i] < 0.01) return;
-			const gray = i === KatzeKit.PICK && S.grayMix > 0.5;
-			const label = gray ? 'GRAUSTUFEN' : TAGS[i][0];
-			const col = gray ? '#6b7280' : TAGS[i][1];
-			ctx.globalAlpha = tagA[i];
-			ctx.font = '800 10px -apple-system, system-ui, sans-serif';
-			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			const tw = ctx.measureText(label).width + 24;
-			const cx = o.x + KatzeKit.N * o.s / 2, cy = o.y - 16;
-			ctx.fillStyle = col;
-			KatzeKit.roundRect(ctx, cx - tw / 2, cy - 9, tw, 18, 9);
-			ctx.fill();
-			ctx.fillStyle = '#fff';
-			ctx.fillText(label.split('').join('\u200a'), cx, cy + .5);
-			ctx.globalAlpha = 1;
-		});
-	}
 
 	function drawRowInRail(ctx, r, rx, ry, rh, pw) {
 		for (let c = 0; c < KatzeKit.N; c++) {
@@ -676,7 +748,7 @@ const FlattenDemo = (() => {
 				drawFlat(ctx, S);
 			} else {
 				S.inst.forEach((o, i) => KatzeKit.drawGrid(ctx, o, i, S.grayMix));
-				drawTags(ctx, S);
+				KatzeKit.drawTags(ctx, S, tagA);
 			}
 		}
 	});
