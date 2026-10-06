@@ -41,8 +41,10 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 // "Was sind Convolutions?" (katze.js) — Katze-Framework:
-                // 32×32 ASCII-Katze, 3×3-Filter zählt gelbe Pixel (die
-                // Augen) über 900 Positionen. 5 Schritte über Pfeiltasten.
+                // 32×32 ASCII-Katze: Farbbild → 3 Kanäle → 6×5-Filter in
+                // Augen-Form (Pupille/Rand weiß) → Sweep über 756
+                // Positionen → 8×8-Map, die Augen leuchten als zwei große
+                // Pixel. 6 Schritte über Pfeiltasten.
                 { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         onEnter: d => setTimeout(() => d.init(), 80),
