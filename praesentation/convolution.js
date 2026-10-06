@@ -3,10 +3,15 @@
 //
 // Animation (aus convolution.html): ein kleines Muster (Kernel)
 // fährt pixelweise über ein 5×5-Bild und vergleicht jedes Pixel
-// mit seinen Nachbarn. Sie läuft automatisch und schleift —
-// Pfeiltasten gehören der Folien-Navigation, daher keine eigenen
-// Tastatur-Shortcuts. DemoRegistry ruft init() beim Betreten
-// und reset() beim Verlassen der Folie auf.
+// mit seinen Nachbarn. Gestuft über "Weiter":
+//   Schritt 1 (Fragment #conv-step-kernel): der Filter erscheint
+//   Schritt 2 (Fragment #conv-step-slide):  das Sliding läuft an
+// Die Phasen (0 = nur Bild, 1 = Filter sichtbar, 2 = Sliding)
+// werden JEDEN FRAME aus der Sichtbarkeit der beiden Folien-
+// Fragmente abgelesen — so bleiben Demo und Fragmente auch bei
+// Sprüngen (Übersicht, ?fast=1, Zurück-Navigation) automatisch
+// konsistent. DemoRegistry ruft init() beim Betreten und reset()
+// beim Verlassen der Folie auf.
 // ============================================================
 
 const ConvDemo = (() => {
@@ -85,10 +90,12 @@ const ConvDemo = (() => {
 	const VALUES = Array.from({ length: N }, (_, i) => EYE_IDX.includes(i) ? 100 : 0);
 
 	/* ══════════ 4) ZUSTAND ══════════ */
+	// phase: 0 = nur Bild · 1 = Filter sichtbar (statisch) · 2 = Sliding
 	let cur = 0, prev = 0, t = 1;
 	let filled = new Array(N).fill(null);
 	let playing = false, speed = 78, last = performance.now();
 	let rafId = null;
+	let phase = 0;
 
 	const ease = u => u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
 	const wpos = i => ({ x: IMG.x + (i % GRID) * CELL, y: IMG.y + ((i / GRID) | 0) * CELL });
@@ -98,19 +105,29 @@ const ConvDemo = (() => {
 		i = Math.max(0, Math.min(N - 1, i));
 		for (let k = 0; k < N; k++) filled[k] = (k <= i) ? VALUES[k] : null;
 	}
-	commitUpTo(0);
 
-	function goTo(i, animate = true) {
-		i = Math.max(0, Math.min(N - 1, i));
-		prev = cur; cur = i; t = animate ? 0 : 1;
-		commitUpTo(i);
+	function snapStart() {
+		cur = 0; prev = 0; t = 1;
+		commitUpTo(0);
 	}
 
-	function resetAnim() {
-		cur = 0; prev = 0; t = 1;
-		filled = new Array(N).fill(null);
-		commitUpTo(0);
-		playing = true;
+	// Die beiden Schritt-Fragmente der Folie steuern die Phasen.
+	const F_KERN = document.getElementById('conv-step-kernel');
+	const F_SLIDE = document.getElementById('conv-step-slide');
+
+	function syncPhase() {
+		let p = 0;
+		if (F_KERN && F_KERN.classList.contains('visible')) p = 1;
+		if (F_SLIDE && F_SLIDE.classList.contains('visible')) p = 2;
+		if (p === phase) { playing = p === 2; return; }
+		phase = p;
+		playing = p === 2;
+		if (p === 0) {
+			cur = 0; prev = 0; t = 1;
+			filled = new Array(N).fill(null);
+		} else {
+			snapStart();
+		}
 	}
 
 	/* ══════════ 5) RENDER ══════════ */
@@ -124,44 +141,50 @@ const ConvDemo = (() => {
 	function render() {
 		ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
 
-		ctx.drawImage(ker, KER.x, KER.y, KER.s, KER.s);
-		ctx.fillStyle = 'rgba(150,190,240,.30)'; ctx.fillRect(KER.x, KER.y, KER.s, KER.s);
-		ctx.strokeStyle = '#7aa8e0'; ctx.lineWidth = 1.3;
-		ctx.strokeRect(KER.x + .5, KER.y + .5, KER.s - 1, KER.s - 1);
+		const si = shownIdx();
+
+		if (phase >= 1) {
+			ctx.drawImage(ker, KER.x, KER.y, KER.s, KER.s);
+			ctx.fillStyle = 'rgba(150,190,240,.30)'; ctx.fillRect(KER.x, KER.y, KER.s, KER.s);
+			ctx.strokeStyle = '#7aa8e0'; ctx.lineWidth = 1.3;
+			ctx.strokeRect(KER.x + .5, KER.y + .5, KER.s - 1, KER.s - 1);
+		}
 
 		ctx.drawImage(face, IMG.x, IMG.y);
 		ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 		ctx.strokeRect(IMG.x + .5, IMG.y + .5, IMG.s - 1, IMG.s - 1);
 
-		const a = wpos(prev), b = wpos(cur), e = ease(t);
-		const wx = a.x + (b.x - a.x) * e, wy = a.y + (b.y - a.y) * e;
-		const si = shownIdx(), live = VALUES[si], hot = live > 50;
+		if (phase >= 1) {
+			const a = wpos(prev), b = wpos(cur), e = ease(t);
+			const wx = a.x + (b.x - a.x) * e, wy = a.y + (b.y - a.y) * e;
+			const live = VALUES[si], hot = live > 50;
 
-		ctx.save();
-		ctx.setLineDash([5, 5]); ctx.strokeStyle = '#5a6070'; ctx.lineWidth = 1.2;
-		const sx = KER.x + KER.s + 10, sy = KER.y + KER.s / 2, ex = wx - 6, ey = wy + CELL / 2;
-		ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
-		ctx.setLineDash([]);
-		ctx.translate(ex, ey); ctx.rotate(Math.atan2(ey - sy, ex - sx));
-		ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-8, -4); ctx.lineTo(-8, 4);
-		ctx.closePath(); ctx.fillStyle = '#5a6070'; ctx.fill();
-		ctx.restore();
-		txt('', (sx + ex) / 2, Math.min(sy, ey) - 20, '#1b1f24', 20, 700);
+			ctx.save();
+			ctx.setLineDash([5, 5]); ctx.strokeStyle = '#5a6070'; ctx.lineWidth = 1.2;
+			const sx = KER.x + KER.s + 10, sy = KER.y + KER.s / 2, ex = wx - 6, ey = wy + CELL / 2;
+			ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.translate(ex, ey); ctx.rotate(Math.atan2(ey - sy, ex - sx));
+			ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-8, -4); ctx.lineTo(-8, 4);
+			ctx.closePath(); ctx.fillStyle = '#5a6070'; ctx.fill();
+			ctx.restore();
+			txt('', (sx + ex) / 2, Math.min(sy, ey) - 20, '#1b1f24', 20, 700);
 
-		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
-		ctx.fillRect(wx, wy, CELL, CELL);
-		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.7;
-		ctx.strokeRect(wx + .5, wy + .5, CELL - 1, CELL - 1);
+			ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
+			ctx.fillRect(wx, wy, CELL, CELL);
+			ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.7;
+			ctx.strokeRect(wx + .5, wy + .5, CELL - 1, CELL - 1);
 
-		const bw = 50, bh = 20, bx = wx + CELL / 2 - bw / 2, by = wy - bh - 5;
-		ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh);
-		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.1;
-		ctx.strokeRect(bx + .5, by + .5, bw - 1, bh - 1);
-		txt(live + '%', wx + CELL / 2, by + bh / 2, hot ? '#2e7d32' : '#4a7fc0', 11.5, 600);
+			const bw = 50, bh = 20, bx = wx + CELL / 2 - bw / 2, by = wy - bh - 5;
+			ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh);
+			ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.1;
+			ctx.strokeRect(bx + .5, by + .5, bw - 1, bh - 1);
+			txt(live + '%', wx + CELL / 2, by + bh / 2, hot ? '#2e7d32' : '#4a7fc0', 11.5, 600);
+		}
 
 		for (let r = 0; r < GRID; r++) for (let c = 0; c < GRID; c++) {
 			const i = r * GRID + c, x = OUT.x + c * OCELL, y = OUT.y + r * OCELL;
-			const v = filled[i], done = v !== null, isCur = (i === si);
+			const v = filled[i], done = v !== null, isCur = (phase >= 1 && i === si);
 			ctx.fillStyle = done ? (v > 50 ? 'rgba(76,175,80,.18)' : '#f6f7f9')
 				: isCur ? 'rgba(150,190,240,.16)' : '#fff';
 			ctx.fillRect(x, y, OCELL, OCELL);
@@ -177,13 +200,15 @@ const ConvDemo = (() => {
 	function loop(now) {
 		const dt = Math.min(.05, (now - last) / 1000); last = now;
 
+		syncPhase();
+
 		if (playing) {
 			if (t < 1) {
 				t = Math.min(1, t + dt * (speed / 100) * 1.9);
 			} else if (cur < N - 1) {
 				goTo(cur + 1, true);
 			} else {
-				resetAnim();
+				snapStart();
 			}
 		} else if (t < 1) {
 			t = 1;
@@ -207,19 +232,22 @@ const ConvDemo = (() => {
 	}
 
 	function init() {
-		resetAnim();
-		playing = true;
+		phase = 0;
+		playing = false;
+		cur = 0; prev = 0; t = 1;
+		filled = new Array(N).fill(null);
 		startLoop();
 	}
 
 	function reset() {
 		stopLoop();
 		playing = false;
+		phase = 0;
 	}
 
-	// Pfeiltasten/Leertaste steuern die Folien-Navigation — die Animation
-	// läuft automatisch weiter und blockt daher nichts ab (next/prev werden
-	// nie aufgerufen, weil canGo* false liefert).
+	// Die "Weiter"-Schritte sind die Folien-Fragmente (siehe syncPhase);
+	// danach läuft das Sliding frei und "Weiter" wechselt die Folie —
+	// next/prev werden nie aufgerufen, weil canGo* false liefert.
 	function canGoNext() { return false; }
 	function canGoPrev() { return false; }
 
