@@ -1,5 +1,5 @@
 // ============================================================
-// SPACE MORPH – "Layer als Raumkrümmung" (7-Schritte-Animation)
+// SPACE MORPH – "Layer als Raumkrümmung" (6-Schritte-Animation)
 // Port von test/space_morph.html in das Folien-Format:
 // Pfeiltasten (Präsentation) steuern die Schritte, Drag rotiert.
 // ============================================================
@@ -261,7 +261,7 @@ const SpaceMorph = (() => {
     }
 
     // ---------- Szenen ----------
-    // NUR die Egg-Phase (7 Schritte). Die Bonusphase (verschlungene Volltori,
+    // NUR die Egg-Phase (6 Schritte). Die Bonusphase (verschlungene Volltori,
     // 4D-Lift, Fun-Fact "Sigmoid/ReLU", LLM-Next-Word) wurde aus der Folie
     // entfernt — die Geschichte endet bei "Der Raum wird zu einer Linie".
     const S = [
@@ -279,10 +279,7 @@ const SpaceMorph = (() => {
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Eine Ebene passt dazwischen",
             b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
-            L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
-        { t: "Die Ebene wird zur Linie",
-            b: "Wir stauchen die Ebene entlang der Blickrichtung, bis nur noch eine Linie übrig ist.",
-            L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 1, fail: 0, lab: 1, pr: 0, box: 0 },
+            L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 1, pr: 0, box: 0 },
         { t: "Der Raum wird zu einer Linie",
             b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Projektion trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich — eine 1D-Achse, auf der s = 0 trennt.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
@@ -370,8 +367,8 @@ const SpaceMorph = (() => {
         // tote Pfade (cur erreicht nie wieder IDX_COMPLEX), hier nur die
         // Sichtbarkeit der Ei-Tabelle pflegen.
         egg.removeAttribute('style');
-        egg.classList.toggle('show-y', cur < 6);
-        egg.classList.toggle('show-z', cur >= 2 && cur < 6);
+        egg.classList.toggle('show-y', cur < 5);
+        egg.classList.toggle('show-z', cur >= 2 && cur < 5);
         if (tori) {
             // defensive, falls die Tabelle doch wieder da ist
             tori.classList.toggle('show-w', cur >= IDX_LIFT);
@@ -380,7 +377,7 @@ const SpaceMorph = (() => {
         }
 
         const L = S[cur].L || 0;
-        const is1D = (cur === 6);
+        const is1D = (cur === 5);
         let innerIdx = 0, outerIdx = 0;
         EGG_PTS.forEach((pt) => {
             const row = pt.cls === 0 ? 'inner-row' : 'outer-row';
