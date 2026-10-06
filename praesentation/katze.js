@@ -316,14 +316,14 @@ const KatzeKit = (() => {
 })();
 
 // ============================================================
-// ConvDemo — "Was sind Convolutions?" (Einstieg nach der Intro)
+// ConvDemo — "Jeder Pixel ist nur eine Zahl" (Einstieg)
 //
 // 32×32-Katze, 6 Schritte:
-// 0: die Farb-Katze
-// 1: das Bild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
+// 0: Graustufen-Katze — ein Pixel vergrößert (Wert 0–255)
+// 1: das Farbbild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
 // 2: die Stapel faden zusammen + der Filter erscheint — 6×5,
-//    so groß und in der Form wie ein Katzenauge (gelb, wo das
-//    Auge gelb ist; Pupille und Rand bleiben weiß)
+//    so groß und in der Form wie ein Katzenauge (schwarz = 0,
+//    gelb = 255 — der Filter ist selbst nur Zahlen)
 // 3: das Fenster wird auf das Bild gelegt
 // 4: das Fenster fährt über alle 756 Positionen (27×28 fein)
 // 5: die 8×8-Map — jedes Auge leuchtet als ein großer Pixel
@@ -372,7 +372,89 @@ const ConvDemo = (() => {
 	let kerA = 0, tKerA = 0;
 	let outA = 0, tOutA = 0;
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
+	let grayA = 0, tGrayA = 0, zoomA = 0, tZoomA = 0;
 	const KC = 24; // Filter-Panel: Zellgröße in px
+
+	// Schritt 1: Beispiel-Pixel — oberes linkes Auge (Zeile 10, Spalte 4).
+	const ZR = 10, ZC = 4;
+	const ZVAL = KatzeKit.GREEN[ZR * KatzeKit.N + ZC];
+
+	// Graustufen-Katze (Grün-Kanal als Grauwert, wie im Flatten-Schritt)
+	// mit Rahmen. Gezeichnet an der Geometrie von inst[0].
+	function drawGrayCat(ctx, S) {
+		const o = S.inst[0];
+		if (grayA < 0.01 || o.a < 0.005) return;
+		ctx.globalAlpha = grayA * o.a;
+		const N = KatzeKit.N, s = o.s;
+		for (let r = 0; r < N; r++) {
+			const y = o.y + r * s, yh = Math.ceil(y + s) - Math.floor(y);
+			for (let c = 0; c < N; c++) {
+				const v = KatzeKit.GREEN[r * N + c];
+				const x = o.x + c * s, xw = Math.ceil(x + s) - Math.floor(x);
+				ctx.fillStyle = `rgb(${v},${v},${v})`;
+				ctx.fillRect(Math.floor(x), Math.floor(y), xw, yh);
+			}
+		}
+		ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+		ctx.strokeRect(o.x + .5, o.y + .5, N * o.s - 1, N * o.s - 1);
+		ctx.globalAlpha = 1;
+	}
+
+	// Zoom-Panel: das Beispiel-Pixel vergrößert + Wert + 0–255-Skala.
+	function drawPixelZoom(ctx, S) {
+		const o = S.inst[0];
+		if (zoomA < 0.01 || S.zoomX == null) return;
+		const N = KatzeKit.N, zw = 230, zh = 250;
+		const zx = S.zoomX, zy = S.zoomY;
+
+		if (o.a > 0.02) {
+			const px = o.x + ZC * o.s, py = o.y + ZR * o.s;
+			ctx.globalAlpha = zoomA;
+			ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2.5;
+			ctx.strokeRect(px - 2, py - 2, o.s + 4, o.s + 4);
+			ctx.globalAlpha = 1;
+		}
+
+		ctx.globalAlpha = zoomA;
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, zx, zy, zw, zh, 14);
+		ctx.fill();
+		ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.2; ctx.stroke();
+
+		const sq = 110, sx = zx + (zw - sq) / 2, sy = zy + 24;
+		ctx.fillStyle = `rgb(${ZVAL},${ZVAL},${ZVAL})`;
+		ctx.fillRect(sx, sy, sq, sq);
+		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+		ctx.strokeRect(sx + .5, sy + .5, sq - 1, sq - 1);
+
+		ctx.fillStyle = '#0f172a';
+		ctx.font = '800 34px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		ctx.fillText(ZVAL + '', zx + zw / 2, sy + sq + 34);
+
+		const bw = 170, bx = zx + (zw - bw) / 2, by = zy + zh - 36;
+		const g = ctx.createLinearGradient(bx, 0, bx + bw, 0);
+		g.addColorStop(0, '#000'); g.addColorStop(1, '#fff');
+		ctx.fillStyle = g;
+		ctx.fillRect(bx, by, bw, 10);
+		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
+		ctx.strokeRect(bx + .5, by + .5, bw - 1, 9);
+		ctx.fillStyle = '#64748b';
+		ctx.font = '600 11px Inter, system-ui, sans-serif';
+		ctx.fillText('0', bx, by + 21);
+		ctx.fillText('255', bx + bw, by + 21);
+
+		// Verbindungslinie Pixel → Quadrat
+		if (o.a > 0.3) {
+			const px = o.x + (ZC + .5) * o.s, py = o.y + (ZR + .5) * o.s;
+			ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.moveTo(px + o.s / 2 + 4, py);
+			ctx.lineTo(sx - 4, sy + sq / 2);
+			ctx.stroke();
+		}
+		ctx.globalAlpha = 1;
+	}
 
 	function drawOutput8(ctx, S) {
 		if (outA < 0.01) return;
@@ -432,15 +514,28 @@ const ConvDemo = (() => {
 		const kx = Math.max(o.x - kw - 56, 4);
 		const ky = o.y + (KatzeKit.N * s) / 2 - kh / 2;
 		ctx.globalAlpha = kerA;
-		ctx.fillStyle = '#fff';
+		ctx.fillStyle = '#111';
 		KatzeKit.roundRect(ctx, kx - 9, ky - 9, kw + 18, kh + 18, 10);
 		ctx.fill();
-		ctx.strokeStyle = '#cfe0ff'; ctx.lineWidth = 1.2; ctx.stroke();
+		ctx.strokeStyle = '#333'; ctx.lineWidth = 1.2; ctx.stroke();
 		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
-			// 0-Zellen (Pupille + Rand) bleiben weiß wie das Panel.
+			// 0‑Zellen (Pupille + Rand) bleiben schwarz.
 			if (!TPL[r * KW + c]) continue;
 			ctx.fillStyle = '#E2C72E';
 			ctx.fillRect(kx + c * KC + 3, ky + r * KC + 3, KC - 6, KC - 6);
+			// draw numeric value inside the cell
+			ctx.fillStyle = '#000';
+			ctx.font = '10px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+			ctx.fillText('255', kx + c * KC + KC/2, ky + r * KC + KC/2);
+		}
+		// draw 0‑Zellen numbers
+		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
+			if (TPL[r * KW + c]) continue;
+			ctx.fillStyle = '#888';
+			ctx.font = '10px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+			ctx.fillText('0', kx + c * KC + KC/2, ky + r * KC + KC/2);
 		}
 		ctx.globalAlpha = 1;
 	}
@@ -474,14 +569,14 @@ const ConvDemo = (() => {
 		slideId: 'slide-convolution',
 		prefix: 'conv',
 		steps: [
-			{ k: 'Schritt 1', t: 'Wir fangen bei<br>der <em>Katze</em> an.',
-			  p: 'Das Originalbild · 32 × 32 Pixel',
-			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
+			{ k: 'Schritt 1', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
+			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
+			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
 			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
 			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
 			{ k: 'Schritt 3', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
-			  p: 'So groß wie ein Auge · gelb, wo das Auge gelb ist',
+			  p: 'Schwarz = 0 · Gelb = 255 — auch der Filter ist nur Zahlen',
 			  c: '<span class="kz-chip">(6, 5)</span>' },
 			{ k: 'Schritt 4', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
 			  p: `Punkt <b>1</b> von ${OCELLS} · Treffer: <b>0</b> von ${TMAX}`,
@@ -499,12 +594,17 @@ const ConvDemo = (() => {
 			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, 13);
 			const imgW = KatzeKit.N * s, gapOut = 60, outW = O8 * s * 4;
 			if (step === 0) {
-				// Farb-Katze, zentriert.
+				// Graustufen-Katze links, Zoom-Pixel rechts.
+				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .5, 10);
+				const zw = 230, zh = 250, gap = 90;
+				const x0 = (W - (KatzeKit.N * cs + gap + zw)) / 2;
 				inst.forEach((o, i) => {
-					o.ts = s; o.tx = (W - imgW) / 2; o.ty = (H - imgW) / 2 + 6;
+					o.ts = cs; o.tx = x0; o.ty = (H - KatzeKit.N * cs) / 2 + 6;
 					o.tmix = i === 0 ? 0 : 1; o.ta = i === 0 ? 1 : 0;
 				});
 				tTagA = [0, 0, 0];
+				S.zoomX = x0 + KatzeKit.N * cs + gap;
+				S.zoomY = (H - zh) / 2;
 			} else if (step === 1) {
 				// Drei Kanal-Stapel (wie Flatten, Schritt 1).
 				const g = Math.min(W * .035, 46);
@@ -527,6 +627,8 @@ const ConvDemo = (() => {
 			}
 			tKerA = step <= 1 ? 0 : (step >= 5 ? .45 : 1);
 			tOutA = step >= 3 ? 1 : 0;
+			tGrayA = step === 0 ? 1 : 0;
+			tZoomA = step === 0 ? 1 : 0;
 		},
 
 		onStep(step) {
@@ -536,6 +638,8 @@ const ConvDemo = (() => {
 		tick(dt, k, S, setFoot) {
 			kerA = KatzeKit.lerp(kerA, tKerA, k * 1.2);
 			outA = KatzeKit.lerp(outA, tOutA, k * 1.2);
+			grayA = KatzeKit.lerp(grayA, tGrayA, k * 1.2);
+			zoomA = KatzeKit.lerp(zoomA, tZoomA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
 			if (S.step !== 4) return;
 			// 756 Fenster in ~9 s
@@ -557,18 +661,22 @@ const ConvDemo = (() => {
 			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
 			drawOutput8(ctx, S);
 			const o = S.inst[0];
-			if (S.step === 1) {
+			if (S.step === 0) {
+				drawGrayCat(ctx, S);
+				drawPixelZoom(ctx, S);
+			} else if (S.step === 1) {
 				KatzeKit.drawGrid(ctx, o, 0, 0);
 				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
 				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
 				KatzeKit.drawTags(ctx, S, tagA);
+				drawGrayCat(ctx, S); // Crossfade von den Graustufen
 			} else {
 				KatzeKit.drawGrid(ctx, o, 0, 0);
 				// Beim Zusammenfaden flackern die Kanäle kurz drüber.
 				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
 				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
 			}
-			if (S.step !== 1 && o.a > 0.02) {
+			if (S.step !== 1 && S.step !== 0 && o.a > 0.02) {
 				ctx.globalAlpha = o.a;
 				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 				ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
@@ -754,8 +862,231 @@ const FlattenDemo = (() => {
 	});
 })();
 
+// ============================================================
+// PipelineDemo — "Der gesamte Prozess" (am Ende der Deck)
+//
+// Bild → Convolutions (Augen/Nase/Mund-Maps) → Dense-Layer →
+// zwei Ausgabe-Neuronen (Katze 95 % / Hund 5 %).
+// 4 Schritte: Bild · Convolutions · Dense · Antwort.
+// ============================================================
+const PipelineDemo = (() => {
+	'use strict';
+
+	// Augen-Filter (wie bei der Conv-Folie: Zeilen 10–15, Spalten 4–8).
+	const KH = 6, KW = 5, ER = 10, EC = 4;
+	const TPL = [];
+	for (let dr = 0; dr < KH; dr++)
+		for (let dc = 0; dc < KW; dc++)
+			TPL.push(KatzeKit.YELLOW[(ER + dr) * KatzeKit.N + (EC + dc)]);
+
+	// Leuchtende Zellen der drei 8×8-Karten (Augen/Nase/Mund).
+	const MAPS = [
+		{ label: 'Augen', lit: [3 * 8 + 1, 3 * 8 + 5] },
+		{ label: 'Nase', lit: [4 * 8 + 3] },
+		{ label: 'Mund', lit: [5 * 8 + 3] }
+	];
+
+	let aCat = 0, tCatA = 0;
+	let aConv = 0, tConvA = 0;
+	let aDense = 0, tDenseA = 0;
+	let aOut = 0, tOutA = 0;
+
+	function arrow(ctx, x1, y1, x2, y2, a) {
+		if (a < 0.02) return;
+		ctx.globalAlpha = a;
+		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2.5;
+		ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+		const ang = Math.atan2(y2 - y1, x2 - x1);
+		ctx.fillStyle = '#94a3b8';
+		ctx.beginPath();
+		ctx.moveTo(x2, y2);
+		ctx.lineTo(x2 - 11 * Math.cos(ang - .42), y2 - 11 * Math.sin(ang - .42));
+		ctx.lineTo(x2 - 11 * Math.cos(ang + .42), y2 - 11 * Math.sin(ang + .42));
+		ctx.closePath(); ctx.fill();
+		ctx.globalAlpha = 1;
+	}
+
+	function drawMap(ctx, x, y, ms, label, lit, a) {
+		if (a < 0.01) return;
+		ctx.globalAlpha = a;
+		ctx.fillStyle = '#475569';
+		ctx.font = '700 13px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+		ctx.fillText(label, x + 4 * ms, y - 8);
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, x - 5, y - 5, 8 * ms + 10, 8 * ms + 10, 8);
+		ctx.fill();
+		ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
+		for (let R = 0; R < 8; R++) for (let C = 0; C < 8; C++) {
+			const cx = x + C * ms, cy = y + R * ms;
+			if (lit.indexOf(R * 8 + C) >= 0) {
+				ctx.fillStyle = 'rgba(76,175,80,.55)';
+				ctx.fillRect(cx + 1, cy + 1, ms - 2, ms - 2);
+				ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
+				ctx.strokeRect(cx + 1.5, cy + 1.5, ms - 3, ms - 3);
+			} else {
+				ctx.fillStyle = '#f6f7f9';
+				ctx.fillRect(cx + 1, cy + 1, ms - 2, ms - 2);
+			}
+		}
+		ctx.globalAlpha = 1;
+	}
+
+	function drawMiniKernel(ctx, cat, a) {
+		if (a < 0.01) return;
+		const s = cat.s;
+		const x = cat.x + EC * s, y = cat.y + ER * s, kw = KW * s, kh = KH * s;
+		ctx.globalAlpha = a;
+		ctx.fillStyle = '#111';
+		ctx.fillRect(x, y, kw, kh);
+		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
+			if (!TPL[r * KW + c]) continue;
+			ctx.fillStyle = '#E2C72E';
+			ctx.fillRect(x + c * s + 1, y + r * s + 1, s - 2, s - 2);
+		}
+		ctx.strokeStyle = '#111'; ctx.lineWidth = 2;
+		ctx.strokeRect(x + 1, y + 1, kw - 2, kh - 2);
+		ctx.globalAlpha = 1;
+	}
+
+	function drawDense(ctx, x, y, w, h, a) {
+		if (a < 0.01) return;
+		ctx.globalAlpha = a;
+		ctx.fillStyle = '#f8fafc';
+		KatzeKit.roundRect(ctx, x, y, w, h, 12);
+		ctx.fill();
+		ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.2; ctx.stroke();
+		const cols = 5, rows = 9;
+		const dx0 = x + 20, dy0 = y + 22;
+		const ddx = (w - 40) / (cols - 1), ddy = (h - 62) / (rows - 1);
+		ctx.fillStyle = '#94a3b8';
+		for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+			ctx.beginPath();
+			ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
+			ctx.fill();
+		}
+		ctx.fillStyle = '#475569';
+		ctx.font = '700 15px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+		ctx.fillText('Dense', x + w / 2, y + h - 16);
+		ctx.globalAlpha = 1;
+	}
+
+	function drawNeuron(ctx, cx, cy, r, label, pct, hot, a) {
+		if (a < 0.01) return;
+		ctx.globalAlpha = a;
+		if (hot) {
+			const g = ctx.createRadialGradient(cx, cy, r * .2, cx, cy, r);
+			g.addColorStop(0, 'rgba(76,175,80,.55)');
+			g.addColorStop(1, 'rgba(76,175,80,.16)');
+			ctx.fillStyle = g;
+		} else {
+			ctx.fillStyle = '#f1f5f9';
+		}
+		ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+		ctx.strokeStyle = hot ? '#4caf50' : '#cbd5e1';
+		ctx.lineWidth = hot ? 3.5 : 2;
+		ctx.stroke();
+		ctx.fillStyle = hot ? '#14532d' : '#94a3b8';
+		ctx.font = '800 24px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		ctx.fillText(pct, cx, cy);
+		ctx.font = '700 16px Inter, system-ui, sans-serif';
+		ctx.fillStyle = hot ? '#166534' : '#94a3b8';
+		ctx.fillText(label, cx, cy + r + 22);
+		ctx.globalAlpha = 1;
+	}
+
+	return KatzeKit.create({
+		slideId: 'slide-pipeline',
+		prefix: 'pipe',
+		steps: [
+			{ k: 'Schritt 1', t: 'Wir starten mit<br><em>einem Bild</em>.',
+			  p: '32 × 32 Pixel — die Katze',
+			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
+			{ k: 'Schritt 2', t: 'Convolutions finden<br><em>Augen, Nase, Mund</em>.',
+			  p: '3 Filter → 3 Karten mit je 64 Zahlen',
+			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>' },
+			{ k: 'Schritt 3', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
+			  p: '64 Zahlen pro Karte — dicht verdrahtet',
+			  c: '<span class="kz-chip g">3 × (8, 8)</span><span class="kz-arrow">→</span><span class="kz-chip r">Dense</span>' },
+			{ k: 'Schritt 4', t: 'Zwei Neuronen —<br>die <em>Antwort</em>.',
+			  p: 'Katze: 95 % · Hund: 5 %',
+			  c: '<span class="kz-chip g">Katze 95 %</span>',
+			  i: 'Vom Bild zur Antwort: <b>Convolutions</b> finden lokale Strukturen (Augen, Nase, Mund), die <b>Dense-Layer</b> kombinieren — am Ende steht eine Zahl pro Antwort. 95 % = „fast sicher Katze".' }
+		],
+
+		layoutFor(step, S) {
+			const { W, H, inst } = S;
+			const cs = Math.min(H / 32 * .75, W / 32 * .25, 8.5);
+			inst.forEach((o, i) => {
+				o.ts = cs; o.tx = 30; o.ty = (H - 32 * cs) / 2;
+				o.tmix = 0; o.ta = i === 0 ? 1 : 0;
+			});
+			tCatA = 1;
+			tConvA = step >= 1 ? 1 : 0;
+			tDenseA = step >= 2 ? 1 : 0;
+			tOutA = step >= 3 ? 1 : 0;
+		},
+
+		tick(dt, k, S, setFoot) {
+			aCat = KatzeKit.lerp(aCat, tCatA, k * 1.5);
+			aConv = KatzeKit.lerp(aConv, tConvA, k * 1.5);
+			aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
+			aOut = KatzeKit.lerp(aOut, tOutA, k * 1.5);
+		},
+
+		draw(ctx, S) {
+			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
+			const { W, H } = S;
+			const cat = S.inst[0];
+			const ch = 32 * cat.s;
+
+			const ms = 12;
+			const mapX = 30 + ch + 70;
+			const mapY0 = (H - (3 * 8 * ms + 2 * 22)) / 2;
+			const mapYs = [mapY0, mapY0 + 8 * ms + 22, mapY0 + 2 * (8 * ms + 22)];
+			const denseX = mapX + 8 * ms + 70;
+			const denseW = 120, denseH = H * .62, denseY = (H - denseH) / 2;
+			const nCx = denseX + denseW + 130;
+			const rN = Math.min(H * .16, 56);
+
+			const cyMid = H / 2;
+
+			// Pfeile (mit dem Stage, das sie „anschalten")
+			MAPS.forEach((m, i) => {
+				arrow(ctx, 30 + ch + 6, cyMid, mapX - 10, mapYs[i] + 4 * ms, aConv);
+			});
+			arrow(ctx, mapX + 8 * ms + 10, cyMid, denseX - 10, cyMid, aDense);
+			arrow(ctx, denseX + denseW + 10, cyMid, nCx - rN - 10, H * .32, aOut);
+			arrow(ctx, denseX + denseW + 10, cyMid, nCx - rN - 10, H * .74, aOut);
+
+			// Eingang: Farb-Katze
+			if (aCat > 0.01) {
+				ctx.globalAlpha = aCat;
+				KatzeKit.drawGrid(ctx, cat, 0, 0);
+				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+				ctx.strokeRect(cat.x + .5, cat.y + .5, ch - 1, ch - 1);
+				ctx.globalAlpha = 1;
+				drawMiniKernel(ctx, cat, aConv);
+			}
+
+			// Feature-Maps
+			MAPS.forEach((m, i) => drawMap(ctx, mapX, mapYs[i], ms, m.label, m.lit, aConv));
+
+			// Dense
+			drawDense(ctx, denseX, denseY, denseW, denseH, aDense);
+
+			// Ausgabe
+			drawNeuron(ctx, nCx, H * .32, rN, 'Katze', '95 %', true, aOut);
+			drawNeuron(ctx, nCx, H * .74, rN, 'Hund', '5 %', false, aOut);
+		}
+	});
+})();
+
 if (typeof window !== 'undefined') {
 	window.KatzeKit = KatzeKit;
 	window.ConvDemo = ConvDemo;
 	window.FlattenDemo = FlattenDemo;
+	window.PipelineDemo = PipelineDemo;
 }
