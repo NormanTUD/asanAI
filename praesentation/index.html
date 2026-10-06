@@ -269,56 +269,24 @@
 <!-- ============================================================
      Folie 8: Was sind Convolutions?
      ------------------------------------------------------------
-     >>> INHALT HIER ERSETZEN <<<
-     Alles was zu dieser Folie gehört, steht in convolution.js
-     (CONFIG-Block oben) und in diesem <div class="slide">.
+     Animation (aus convolution.html): ein kleines Muster (Kernel)
+     fährt pixelweise über ein 5×5-Bild — jedes Pixel wird mit seinen
+     Nachbarn verglichen. Der komplette Zeichnecode steht in
+     convolution.js (läuft automatisch + schleppt sich selbst).
      ============================================================ -->
 <div class="slide" id="slide-convolution" data-title="Was sind Convolutions?">
     <div class="slide-content">
         <h2>Was sind Convolutions?</h2>
 
-        <p style="max-width:1000px; margin:0 auto 10px; text-align:center;">
-            <b>Dense</b> war der eine Baustein. Es gibt aber noch andere — z.&nbsp;B. <b>Convolutions</b> (Faltungen).
+        <p style="max-width:920px; margin:0 auto 16px; text-align:center; font-size:1.02em; color:#334155;">
+            Bei einer <b>Convolution</b> schaut sich jeder Pixel seine <b>Nachbarn</b> an:
+            ein kleines Muster (der <b>Kernel</b>) fährt über das Bild, und an jeder
+            Position wird gemessen, wie gut es zu den dortigen Pixeln passt.
         </p>
 
-        <div class="conv-layout">
-            <div class="conv-panel">
-                <div class="conv-caption">Eingabebild <span class="conv-sub">(Pixel = Helligkeit 0…1)</span></div>
-                <canvas id="conv-input" width="300" height="300"></canvas>
-            </div>
-
-            <div class="conv-panel conv-kernel-panel">
-                <div class="conv-caption">Kernel <span class="conv-sub" id="conv-kernel-name">(Kantenfilter)</span></div>
-                <canvas id="conv-kernel" width="180" height="180"></canvas>
-                <div class="conv-controls">
-                    <button type="button" id="conv-prev" class="conv-btn">◀ zurückspringen</button>
-                    <button type="button" id="conv-next" class="conv-btn">Weiter ▶</button>
-                </div>
-            </div>
-
-            <div class="conv-panel">
-                <div class="conv-caption">Feature Map <span class="conv-sub">(ein Bild pro Kernel)</span></div>
-                <canvas id="conv-output" width="300" height="300"></canvas>
-            </div>
-        </div>
-
-        <div class="conv-readout">
-            <span class="conv-label">Aktueller Schritt:</span>
-            <span class="conv-value" id="conv-readout">—</span>
-        </div>
-
-        <!-- >>> PROSA-TEXT DER FOLIE: HIER ERSETZEN <<< -->
-        <div style="max-width:1000px; margin:0 auto; text-align:center;">
-            <p>Ein <b>Kernel</b> (kleines Muster, z.&nbsp;B. 3×3) fährt pixelweise über das Bild.
-            An jeder Position wird das überlappende Feld elementweise multipliziert und
-            aufsummiert — <span class="math-inline">y = \sum_i a_i \cdot k_i</span>.
-            Das Ergebnis ist eine neue, kleinere Zahl pro Position: die <b>Feature Map</b>.</p>
-        </div>
-
-        <div class="key-insight">
-            <strong>Eine Convolution ist keine Magie:</strong> sie ist eine Matrixmultiplikation,
-            die <b>dieselben</b> Gewichte an allen Positionen wiederverwendet — deshalb
-            erkennt derselbe Filter Kanten überall im Bild.
+        <div style="max-width:1160px; margin:0 auto;">
+            <canvas id="conv-anim" width="1160" height="420"
+                style="display:block;width:100%;height:auto;border:1px solid #e2e8f0;border-radius:12px;"></canvas>
         </div>
     </div>
 </div>

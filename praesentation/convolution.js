@@ -1,313 +1,227 @@
 // ============================================================
 // convolution.js — Folie "Was sind Convolutions?"
 //
-// Diese Datei ist bewusst EIGENSTÄNDIG: sie kennt weder andere
-// Folien noch andere Module. Wer die Folie ändern will, ändert
-// nur den CONFIG-Block unten (Zahlen, Filter, Beschriftung) oder
-// den Zeichencode darunter — sonst nichts.
-//
-// Register: ConvDemo (wird in presentation.js als DemoRegistry-
-// Eintrag geführt, damit die Pfeiltasten das Fenster verschieben).
+// Animation (aus convolution.html): ein kleines Muster (Kernel)
+// fährt pixelweise über ein 5×5-Bild und vergleicht jedes Pixel
+// mit seinen Nachbarn. Sie läuft automatisch und schleift —
+// Pfeiltasten gehören der Folien-Navigation, daher keine eigenen
+// Tastatur-Shortcuts. DemoRegistry ruft init() beim Betreten
+// und reset() beim Verlassen der Folie auf.
 // ============================================================
 
 const ConvDemo = (() => {
-	// ╔═══════════════════════════════════════════════════════════╗
-	// ║  CONFIG — HIER ÄNDERN                                     ║
-	// ╚═══════════════════════════════════════════════════════════╝
+	'use strict';
 
-	// Eingabebild: quadratische Matrix, Werte 0…1 (0 = schwarz, 1 = weiß).
-	// Ein Pfeil nach rechts = hell, ein Pfeil nach unten = hell.
-	// (Ein echtes Foto kann hier jederzeit als Matrix eingetragen werden.)
-	const INPUT = [
-		[0, 0, 0, 0, 0, 0],
-		[0, 0, 1, 1, 0, 0],
-		[0, 0, 1, 1, 0, 0],
-		[0, 0, 1, 1, 0, 0],
-		[0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0],
-	];
+	const cv = document.getElementById('conv-anim'), ctx = cv.getContext('2d');
 
-	// Die Kernel, zwischen denen umgeschaltet werden kann.
-	// Jeder Eintrag: name (Beschriftung) + weights (Matrix, 3×3).
-	const KERNELS = [
-		{
-			name: 'Vertikaler Kantenfilter',
-			weights: [[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]],
-		},
-		{
-			name: 'Horizontaler Kantenfilter',
-			weights: [[-1, -1, -1], [0, 0, 0], [1, 1, 1]],
-		},
-		{
-			name: 'Weichzeichnen (Mittelwert)',
-			weights: [[1, 1, 1], [1, 1, 1], [1, 1, 1]],
-		},
-	];
+	/* ══════════ 1) GEOMETRIE ══════════ */
+	const GRID = 5, CELL = 76, S = CELL * GRID, N = GRID * GRID;
+	const IMG = { x: 290, y: 34, s: S }, KER = { x: 48, y: 34, s: CELL }, OUT = { x: 762, y: 34, s: S };
+	const OCELL = S / GRID;
 
-	// Fensterposition, auf der die Animation startet: [zeile, spalte].
-	const START_POS = [1, 0];
+	const EYE_CELLS = [{ c: 1, r: 1 }, { c: 3, r: 1 }];
+	const EYE_IDX = EYE_CELLS.map(e => e.r * GRID + e.c);
+	const ec = e => ({ x: (e.c + 0.5) * CELL, y: (e.r + 0.5) * CELL });
+	const L = ec(EYE_CELLS[0]), R = ec(EYE_CELLS[1]);
 
-	const STRIDE = 1;
+	const INK = '#4a4f57', LW = 1.7, EYE_W = CELL * 0.74;
 
-	// ╔═══════════════════════════════════════════════════════════╗
-	// ║  ENDE CONFIG — darunter nur noch Zeichencode              ║
-	// ╚═══════════════════════════════════════════════════════════╝
+	/* ══════════ 2) ZEICHNEN ══════════ */
+	function drawEye(g, cx, cy, w) {
+		const rx = w * 0.5, ry = w * 0.27;
+		g.save(); g.lineJoin = g.lineCap = 'round';
+		g.strokeStyle = INK; g.lineWidth = Math.max(1.3, w * 0.048);
+		g.beginPath();
+		g.moveTo(cx - rx, cy);
+		g.quadraticCurveTo(cx, cy - ry * 1.8, cx + rx, cy);
+		g.quadraticCurveTo(cx, cy + ry * 1.8, cx - rx, cy);
+		g.closePath(); g.fillStyle = '#fff'; g.fill(); g.stroke();
+		g.beginPath(); g.arc(cx, cy, ry * 0.88, 0, Math.PI * 2); g.stroke();
+		g.beginPath(); g.arc(cx, cy, ry * 0.36, 0, Math.PI * 2); g.stroke();
+		g.beginPath(); g.lineWidth = Math.max(1.8, w * 0.072);
+		g.arc(cx, cy + ry * 0.70, rx * 1.12, Math.PI * 1.10, Math.PI * 1.90); g.stroke();
+		g.restore();
+	}
 
-	const K = KERNELS[0].weights.length; // 3
-	const H = INPUT.length;
-	const W = INPUT[0].length;
-	const OUT_H = Math.floor((H - K) / STRIDE) + 1;
-	const OUT_W = Math.floor((W - K) / STRIDE) + 1;
+	const FCX = (L.x + R.x) / 2, FCY = L.y + CELL * 0.78, FR = CELL * 1.72;
+	const NOSE_W = CELL * 0.46, NOSE_T = L.y + CELL * 0.30, NOSE_B = L.y + CELL * 1.26;
+	const MOUTH_W = NOSE_W * 2.3, MOUTH_Y = NOSE_B + CELL * 0.14;
 
-	let pos = START_POS.slice();
-	let kernelIdx = 0;
+	function drawFace(g) {
+		g.save(); g.lineJoin = g.lineCap = 'round';
+		g.strokeStyle = INK; g.lineWidth = LW;
+		g.beginPath(); g.arc(FCX, FCY, FR, 0, Math.PI * 2);
+		g.fillStyle = '#fff'; g.fill(); g.stroke();
+		drawEye(g, L.x, L.y, EYE_W);
+		drawEye(g, R.x, R.y, EYE_W);
+		g.beginPath();
+		g.moveTo(FCX, NOSE_T);
+		g.lineTo(FCX - NOSE_W / 2, NOSE_B);
+		g.lineTo(FCX + NOSE_W / 2, NOSE_B);
+		g.closePath(); g.stroke();
+		const hw = MOUTH_W / 2, dip = CELL * 0.42;
+		g.beginPath(); g.lineWidth = LW * 1.45;
+		g.moveTo(FCX - hw, MOUTH_Y);
+		g.bezierCurveTo(FCX - hw * 0.42, MOUTH_Y + dip, FCX + hw * 0.42, MOUTH_Y + dip, FCX + hw, MOUTH_Y);
+		g.stroke();
+		g.restore();
+	}
 
-	// ── Rechnen ────────────────────────────────────────────────
-	// Eine Convolution an einer Position: elementweise multiplizieren,
-	// aufsummieren, Bias (hier 0) dazu. Genau das, was ein Dense-Layer
-	// tut — nur dass er seine Gewichte überall wiederverwendet.
-	function convolveAt(row, col, weights) {
-		let sum = 0;
-		const terms = [];
-		for (let i = 0; i < K; i++) {
-			for (let j = 0; j < K; j++) {
-				const a = INPUT[row + i][col + j];
-				const w = weights[i][j];
-				terms.push({ a, w });
-				sum += a * w;
+	const face = document.createElement('canvas');
+	face.width = face.height = S;
+	const fctx = face.getContext('2d');
+	fctx.fillStyle = '#fff'; fctx.fillRect(0, 0, S, S);
+	drawFace(fctx);
+
+	const ker = document.createElement('canvas');
+	ker.width = ker.height = CELL;
+	{
+		const k = ker.getContext('2d');
+		k.fillStyle = '#fff'; k.fillRect(0, 0, CELL, CELL);
+		drawEye(k, CELL * 0.5, CELL * 0.5, EYE_W);
+	}
+
+	/* ══════════ 3) WERTE — deterministische Tabelle ══════════ */
+	const VALUES = Array.from({ length: N }, (_, i) => EYE_IDX.includes(i) ? 100 : 0);
+
+	/* ══════════ 4) ZUSTAND ══════════ */
+	let cur = 0, prev = 0, t = 1;
+	let filled = new Array(N).fill(null);
+	let playing = false, speed = 78, last = performance.now();
+	let rafId = null;
+
+	const ease = u => u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+	const wpos = i => ({ x: IMG.x + (i % GRID) * CELL, y: IMG.y + ((i / GRID) | 0) * CELL });
+	const shownIdx = () => t < 0.5 ? prev : cur;
+
+	function commitUpTo(i) {
+		i = Math.max(0, Math.min(N - 1, i));
+		for (let k = 0; k < N; k++) filled[k] = (k <= i) ? VALUES[k] : null;
+	}
+	commitUpTo(0);
+
+	function goTo(i, animate = true) {
+		i = Math.max(0, Math.min(N - 1, i));
+		prev = cur; cur = i; t = animate ? 0 : 1;
+		commitUpTo(i);
+	}
+
+	function resetAnim() {
+		cur = 0; prev = 0; t = 1;
+		filled = new Array(N).fill(null);
+		commitUpTo(0);
+		playing = true;
+	}
+
+	/* ══════════ 5) RENDER ══════════ */
+	function txt(s, x, y, col = '#5a6070', sz = 12.5, w = 500) {
+		ctx.save(); ctx.fillStyle = col;
+		ctx.font = `${w} ${sz}px Inter, system-ui, sans-serif`;
+		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		ctx.fillText(s, x, y); ctx.restore();
+	}
+
+	function render() {
+		ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
+
+		ctx.drawImage(ker, KER.x, KER.y, KER.s, KER.s);
+		ctx.fillStyle = 'rgba(150,190,240,.30)'; ctx.fillRect(KER.x, KER.y, KER.s, KER.s);
+		ctx.strokeStyle = '#7aa8e0'; ctx.lineWidth = 1.3;
+		ctx.strokeRect(KER.x + .5, KER.y + .5, KER.s - 1, KER.s - 1);
+
+		ctx.drawImage(face, IMG.x, IMG.y);
+		ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+		ctx.strokeRect(IMG.x + .5, IMG.y + .5, IMG.s - 1, IMG.s - 1);
+
+		const a = wpos(prev), b = wpos(cur), e = ease(t);
+		const wx = a.x + (b.x - a.x) * e, wy = a.y + (b.y - a.y) * e;
+		const si = shownIdx(), live = VALUES[si], hot = live > 50;
+
+		ctx.save();
+		ctx.setLineDash([5, 5]); ctx.strokeStyle = '#5a6070'; ctx.lineWidth = 1.2;
+		const sx = KER.x + KER.s + 10, sy = KER.y + KER.s / 2, ex = wx - 6, ey = wy + CELL / 2;
+		ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+		ctx.setLineDash([]);
+		ctx.translate(ex, ey); ctx.rotate(Math.atan2(ey - sy, ex - sx));
+		ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-8, -4); ctx.lineTo(-8, 4);
+		ctx.closePath(); ctx.fillStyle = '#5a6070'; ctx.fill();
+		ctx.restore();
+		txt('', (sx + ex) / 2, Math.min(sy, ey) - 20, '#1b1f24', 20, 700);
+
+		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
+		ctx.fillRect(wx, wy, CELL, CELL);
+		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.7;
+		ctx.strokeRect(wx + .5, wy + .5, CELL - 1, CELL - 1);
+
+		const bw = 50, bh = 20, bx = wx + CELL / 2 - bw / 2, by = wy - bh - 5;
+		ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh);
+		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.1;
+		ctx.strokeRect(bx + .5, by + .5, bw - 1, bh - 1);
+		txt(live + '%', wx + CELL / 2, by + bh / 2, hot ? '#2e7d32' : '#4a7fc0', 11.5, 600);
+
+		for (let r = 0; r < GRID; r++) for (let c = 0; c < GRID; c++) {
+			const i = r * GRID + c, x = OUT.x + c * OCELL, y = OUT.y + r * OCELL;
+			const v = filled[i], done = v !== null, isCur = (i === si);
+			ctx.fillStyle = done ? (v > 50 ? 'rgba(76,175,80,.18)' : '#f6f7f9')
+				: isCur ? 'rgba(150,190,240,.16)' : '#fff';
+			ctx.fillRect(x, y, OCELL, OCELL);
+			ctx.strokeStyle = isCur ? '#7aa8e0' : '#1b1f24';
+			ctx.lineWidth = isCur ? 2.2 : 1.2;
+			ctx.strokeRect(x + .5, y + .5, OCELL - 1, OCELL - 1);
+			if (done) txt(v + '', x + OCELL / 2, y + OCELL / 2,
+				v > 50 ? '#2e7d32' : '#1b1f24', v > 50 ? 20 : 16, v > 50 ? 700 : 600);
+		}
+	}
+
+	/* ══════════ 6) LOOP ══════════ */
+	function loop(now) {
+		const dt = Math.min(.05, (now - last) / 1000); last = now;
+
+		if (playing) {
+			if (t < 1) {
+				t = Math.min(1, t + dt * (speed / 100) * 1.9);
+			} else if (cur < N - 1) {
+				goTo(cur + 1, true);
+			} else {
+				resetAnim();
 			}
+		} else if (t < 1) {
+			t = 1;
 		}
-		return { sum, terms };
+
+		render();
+		rafId = requestAnimationFrame(loop);
 	}
 
-	function fullMap(weights) {
-		const out = [];
-		for (let r = 0; r < OUT_H; r++) {
-			const row = [];
-			for (let c = 0; c < OUT_W; c++) row.push(convolveAt(r * STRIDE, c * STRIDE, weights).sum);
-			out.push(row);
-		}
-		return out;
+	function startLoop() {
+		if (rafId == null) { last = performance.now(); rafId = requestAnimationFrame(loop); }
+	}
+	function stopLoop() {
+		if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
 	}
 
-	// ── Zeichnen ───────────────────────────────────────────────
-	// Wert → Farbe. Blau = negativ, weiß = 0, orange = positiv.
-	function heatColor(v, max) {
-		const t = max === 0 ? 0 : Math.min(1, Math.abs(v) / max);
-		if (v >= 0) {
-			// 0 → #ffffff, max → #f97316
-			const g = Math.round(255 + (249 - 255) * t);
-			const b = Math.round(255 + (22 - 255) * t);
-			return `rgb(255,${g},${b})`;
-		}
-		// 0 → #ffffff, -max → #2563eb
-		const r = Math.round(255 + (37 - 255) * t);
-		const g2 = Math.round(255 + (99 - 255) * t);
-		return `rgb(${r},${g2},255)`;
-	}
-
-	function drawGrid(canvas, matrix, opts) {
-		const rows = matrix.length;
-		const cols = matrix[0].length;
-		const cell = canvas.width / cols;
-		const ctx = canvas.getContext('2d');
-
-		let max = 0;
-		matrix.forEach(row => row.forEach(v => { max = Math.max(max, Math.abs(v)); }));
-		if (opts && opts.max) max = opts.max;
-
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = '#ffffff';
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-		for (let r = 0; r < rows; r++) {
-			for (let c = 0; c < cols; c++) {
-				const x = c * cell;
-				const y = r * cell;
-				const v = matrix[r][c];
-
-				if (opts && opts.windowAt && opts.windowAt[0] === r && opts.windowAt[1] === c) {
-					ctx.fillStyle = 'rgba(99,102,241,0.16)';
-				} else {
-					ctx.fillStyle = heatColor(v, max);
-				}
-				ctx.fillRect(x, y, cell, cell);
-				ctx.strokeStyle = 'rgba(148,163,184,0.55)';
-				ctx.lineWidth = 1;
-				ctx.strokeRect(x + 0.5, y + 0.5, cell - 1, cell - 1);
-
-				ctx.fillStyle = Math.abs(v) > max * 0.55 ? '#ffffff' : '#334155';
-				ctx.font = `${Math.round(cell * 0.30)}px ui-monospace, monospace`;
-				ctx.textAlign = 'center';
-				ctx.textBaseline = 'middle';
-				ctx.fillText(opts && opts.raw ? String(v) : fmt(v), x + cell / 2, y + cell / 2);
-			}
-		}
-		return cell;
-	}
-
-	function fmt(v) {
-		if (v === 0) return '0';
-		if (Math.abs(v) >= 100) return Math.round(v).toString();
-		const r = Math.round(v * 10) / 10;
-		return Number.isInteger(r) ? String(r) : r.toFixed(1);
-	}
-
-	function drawInput() {
-		const canvas = document.getElementById('conv-input');
-		if (!canvas) return null;
-		const cell = drawGrid(canvas, INPUT, {
-			windowAt: pos,
-			max: 1,
-			raw: false,
-		});
-		// Rahmen um das aktive Fenster
-		const ctx = canvas.getContext('2d');
-		ctx.strokeStyle = '#4f46e5';
-		ctx.lineWidth = 3;
-		ctx.strokeRect(pos[1] * cell + 1.5, pos[0] * cell + 1.5, K * cell - 3, K * cell - 3);
-		return cell;
-	}
-
-	function drawKernel() {
-		const canvas = document.getElementById('conv-kernel');
-		if (!canvas) return;
-		const w = KERNELS[kernelIdx].weights;
-		drawGrid(canvas, w, { max: 1, raw: true });
-
-		// Das Kernel-Muster liegt deckungsgleich über dem aktiven Fenster —
-		// sichtbar machen, dass es 1:1 passt.
-		const cell = canvas.width / K;
-		const ctx = canvas.getContext('2d');
-		ctx.fillStyle = 'rgba(15,23,42,0.78)';
-		ctx.font = `${Math.round(cell * 0.26)}px ui-monospace, monospace`;
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'middle';
-		for (let r = 0; r < K; r++) {
-			for (let c = 0; c < K; c++) {
-				const v = w[r][c];
-				ctx.fillStyle = v === 0 ? 'rgba(15,23,42,0.35)' : 'rgba(15,23,42,0.85)';
-				ctx.fillText(v > 0 ? `+${v}` : String(v), c * cell + cell / 2, r * cell + cell / 2);
-			}
-		}
-	}
-
-	function drawOutput() {
-		const canvas = document.getElementById('conv-output');
-		if (!canvas) return;
-		const map = fullMap(KERNELS[kernelIdx].weights);
-		// Noch nicht berechnete Positionen (rechts/unten vom Fenster) ausgrauen
-		const pending = [];
-		for (let r = 0; r < OUT_H; r++) {
-			for (let c = 0; c < OUT_W; c++) {
-				if (r > pos[0] || (r === pos[0] && c > pos[1])) {
-					pending.push([r, c, map[r][c]]);
-				}
-			}
-		}
-		drawGrid(canvas, map, {});
-		const cell = canvas.width / OUT_W;
-		const ctx = canvas.getContext('2d');
-		ctx.fillStyle = 'rgba(248,250,252,0.82)';
-		pending.forEach(([r, c]) => {
-			ctx.fillRect(c * cell + 1, r * cell + 1, cell - 2, cell - 2);
-		});
-		// Rahmen auf der gerade berechneten Position
-		ctx.strokeStyle = '#4f46e5';
-		ctx.lineWidth = 3;
-		ctx.strokeRect(pos[1] * cell + 1.5, pos[0] * cell + 1.5, cell - 3, cell - 3);
-	}
-
-	function drawReadout() {
-		const el = document.getElementById('conv-readout');
-		if (!el) return;
-		const { sum, terms } = convolveAt(pos[0], pos[1], KERNELS[kernelIdx].weights);
-		const products = terms
-			.map(t => `${fmt(t.a)}·${t.w > 0 ? '+' + t.w : t.w}`)
-			.join(' + ');
-		el.innerHTML =
-			`Zeile ${pos[0]}, Spalte ${pos[1]} &nbsp;→&nbsp; ` +
-			`<b>${products} = ${fmt(sum)}</b> &nbsp;·&nbsp; ` +
-			`Feature Map ${OUT_W}×${OUT_H} (aus ${W}×${H}, „valid", stride ${STRIDE})`;
-	}
-
-	function draw() {
-		const nameEl = document.getElementById('conv-kernel-name');
-		if (nameEl) nameEl.textContent = `(${KERNELS[kernelIdx].name})`;
-		drawInput();
-		drawKernel();
-		drawOutput();
-		drawReadout();
-	}
-
-	// ── Schrittlogik (Pfeiltasten) ─────────────────────────────
-	function maxSteps() {
-		return OUT_W * OUT_H;
-	}
-
-	function stepIndex() {
-		return pos[0] * OUT_W + pos[1];
-	}
-
-	function setStep(idx) {
-		const clamped = Math.max(0, Math.min(maxSteps() - 1, idx));
-		pos = [Math.floor(clamped / OUT_W), clamped % OUT_W];
-		draw();
-	}
-
-	let bound = false;
-
-	function init() {
-		pos = START_POS.slice();
-		draw();
-
-		// init() läuft bei JEDEM Folienbesuch – sonst stapeln sich die
-		// Handler und ein Klick springt mehrere Schritte weiter.
-		if (bound) return;
-		bound = true;
-
-		const next = document.getElementById('conv-next');
-		const prev = document.getElementById('conv-prev');
-		if (next) next.addEventListener('click', () => setStep(stepIndex() + 1));
-		if (prev) prev.addEventListener('click', () => setStep(stepIndex() - 1));
-
-		// Klick aufs Eingabebild springt direkt zur Position
-		const input = document.getElementById('conv-input');
-		if (input) {
-			input.addEventListener('click', ev => {
-				const rect = input.getBoundingClientRect();
-				const cell = input.width / INPUT[0].length;
-				const c = Math.floor(((ev.clientX - rect.left) / rect.width) * INPUT[0].length);
-				const r = Math.floor(((ev.clientY - rect.top) / rect.height) * INPUT.length);
-				setStep(Math.max(0, Math.min(maxSteps() - 1, r * OUT_W + c)));
-			});
-		}
-	}
-
+	/* ══════════ 7) MODULE-API (DemoRegistry) ══════════ */
 	function isOnSlide() {
 		const a = document.querySelector('.slide.active');
 		return a && a.id === 'slide-convolution';
 	}
 
-	function canGoNext() { return isOnSlide() && stepIndex() < maxSteps() - 1; }
-	function canGoPrev() { return isOnSlide() && stepIndex() > 0; }
-	function nextStep() { if (canGoNext()) setStep(stepIndex() + 1); }
-	function prevStep() { if (canGoPrev()) setStep(stepIndex() - 1); }
-	function reset() { pos = START_POS.slice(); draw(); }
-	function cycleKernel() {
-		kernelIdx = (kernelIdx + 1) % KERNELS.length;
-		draw();
+	function init() {
+		resetAnim();
+		playing = true;
+		startLoop();
 	}
 
-	// Zustand merken/wiederherstellen (Presentation.js speichert ihn pro
-	// Folie, damit Rückwärts-Navigation exakt dort landet, wo man war).
-	function getState() { return { pos: pos.slice(), kernelIdx }; }
-	function setState(st) {
-		if (!st) return;
-		if (st.pos) pos = st.pos.slice();
-		if (typeof st.kernelIdx === 'number') kernelIdx = st.kernelIdx;
-		draw();
+	function reset() {
+		stopLoop();
+		playing = false;
 	}
 
-	return { init, reset, canGoNext, canGoPrev, next: nextStep, prev: prevStep, isOnSlide, cycleKernel, draw, getState, setState };
+	// Pfeiltasten/Leertaste steuern die Folien-Navigation — die Animation
+	// läuft automatisch weiter und blockt daher nichts ab (next/prev werden
+	// nie aufgerufen, weil canGo* false liefert).
+	function canGoNext() { return false; }
+	function canGoPrev() { return false; }
+
+	return { init, reset, isOnSlide, canGoNext, canGoPrev };
 })();
