@@ -1072,12 +1072,13 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 
 /* ============ FOLIE "Vom Foto zum Stoppschild" (hierarchy.js) ============ */
-.hier-kernels {
+/* Slot ueber jedem Bild: Kernels stehen exakt ueber dem Panel, zu dem sie gehoeren.
+   Feste Hoehe, damit alle Canvas in einer Reihe liegen. */
+.hier-kernel-slot {
+	height: 100px;
 	display: flex;
-	gap: 14px;
+	align-items: flex-end;
 	justify-content: center;
-	margin: 4px 0 14px;
-	flex-wrap: wrap;
 }
 .hier-kernel {
 	background: #f8fafc;
@@ -1085,12 +1086,6 @@ body.sel-mode .sel-check { display: inline-flex; }
 	border-radius: 8px;
 	padding: 6px 10px;
 	text-align: center;
-	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-}
-.hier-kernel.active {
-	border-color: #6366f1;
-	background: #eef2ff;
-	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 .hier-kernel-name {
 	font-size: 0.68em;
@@ -1151,26 +1146,6 @@ body.sel-mode .sel-check { display: inline-flex; }
 	margin-top: 7px;
 	line-height: 1.2;
 }
-.hier-num {
-	font-size: 0.7em;
-	color: #64748b;
-	margin-top: 3px;
-	font-variant-numeric: tabular-nums;
-}
-.hier-progress {
-	display: flex;
-	gap: 6px;
-	justify-content: center;
-	margin: 12px 0 8px;
-}
-.hier-dot {
-	width: 26px;
-	height: 4px;
-	border-radius: 2px;
-	background: #e2e8f0;
-	transition: background 0.3s ease;
-}
-.hier-dot.on { background: #4f46e5; }
 .hier-caption {
 	max-width: 1080px;
 	margin: 0 auto 12px;

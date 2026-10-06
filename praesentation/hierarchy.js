@@ -13,7 +13,6 @@ const HierarchyDemo = {
 	IMG: 'img/stop_sign.jpg',
 	SIZE: 150,          // Arbeitskantenlaenge in px (Bild wird skaliert geladen)
 	K: 3,               // Kernelgroesse
-	SCHWELLE: 0.22,     // ab hier gilt eine Kante als "wichtig"
 	// <<< CONFIG <<<
 
 	// 3x3-Kernels (Sobel-Typ), Reihenfolge = Reihenfolge in der Folie.
@@ -51,7 +50,6 @@ const HierarchyDemo = {
 		if (!host) return;
 
 		this._buildPanels(host);
-		this._buildKernels();
 		this._reserveCaptionHeight();
 		if (typeof window.fitSlides === 'function') window.fitSlides();
 
@@ -64,31 +62,33 @@ const HierarchyDemo = {
 	},
 
 	// ---------------------------------------------------------------
+	// Jeder Filter-Panel zeigt seinen Kernel direkt ueber dem Bild,
+	// das er beschreibt. Der Slot hat feste Hoehe, damit alle Canvas
+	// waagerecht in einer Reihe liegen.
 	_buildPanels: function (host) {
 		host.innerHTML = HierarchyDemo.STAGES.map((s, i) =>
 			'<div class="hier-panel" data-stage="' + s.id + '">' +
+			'<div class="hier-kernel-slot">' +
+			((i >= 1 && i <= 4) ? HierarchyDemo._kernelCardHTML(HierarchyDemo.KERNELS[i - 1]) : '') +
+			'</div>' +
 			'<div class="hier-canvas-wrap">' +
 			'<canvas class="hier-canvas" id="hier-canvas-' + s.id + '" width="' +
 			HierarchyDemo.CANVAS + '" height="' + HierarchyDemo.CANVAS + '"></canvas>' +
 			'<div class="hier-wait" id="hier-wait-' + s.id + '">wartet</div>' +
 			'</div>' +
 			'<div class="hier-label">' + s.label + '</div>' +
-			'<div class="hier-num" id="hier-num-' + s.id + '">–</div>' +
 			'</div>').join('');
 	},
 
-	_buildKernels: function () {
-		const host = document.getElementById('hier-kernels');
-		if (!host) return;
-		host.innerHTML = HierarchyDemo.KERNELS.map((k) =>
-			'<div class="hier-kernel">' +
-			'<div class="hier-kernel-name">' + k.name + '</div>' +
-			'<div class="hier-kernel-grid">' +
-			k.m.map(row => row.map(v =>
-				'<span class="' + (v > 0 ? 'pos' : (v < 0 ? 'neg' : 'zero')) + '">' +
-				(v > 0 ? '+' : '') + v + '</span>').join('')
-			).join('') +
-			'</div></div>').join('');
+	_kernelCardHTML: function (k) {
+		return '<div class="hier-kernel">' +
+		'<div class="hier-kernel-name">' + k.name + '</div>' +
+		'<div class="hier-kernel-grid">' +
+		k.m.map(row => row.map(v =>
+			'<span class="' + (v > 0 ? 'pos' : (v < 0 ? 'neg' : 'zero')) + '">' +
+			(v > 0 ? '+' : '') + v + '</span>').join('')
+		).join('') +
+		'</div></div>';
 	},
 
 	_reserveCaptionHeight: function () {
@@ -140,19 +140,10 @@ const HierarchyDemo = {
 		const fw = w - 2, fh = h - 2;   // 'valid'-Convolution: Maps sind 2 px kleiner
 		D._maps = D.KERNELS.map(k => D._normalize(D._convolve(D._gray, w, h, k.m)));
 
-		// Anteil der Pixel, der je Filter ab SCHWELLE antwortet
-		D._respPct = D._maps.map(m => {
-			let c = 0;
-			for (const v of m) if (v >= D.SCHWELLE) c++;
-			return Math.round(100 * c / m.length);
-		});
-
 		// Kombinieren: Summe der Quadrate -> Ecken und Knoten leuchten auf
 		const comb = new Float32Array(fw * fh);
 		for (const m of D._maps) for (let i = 0; i < comb.length; i++) comb[i] += m[i] * m[i];
 		D._combined = D._normalize(comb);
-
-		D._total = w * h;
 	},
 
 	// 'valid' Convolution, Betrag, ohne Rand
@@ -252,32 +243,21 @@ const HierarchyDemo = {
 			if (wait) wait.style.display = on ? 'none' : 'flex';
 		});
 
-		// Aktiven Kernel hervorheben: Station 1..4 = ein Filter, 5 = alle
-		document.querySelectorAll('.hier-kernel').forEach((k, i) =>
-			k.classList.toggle('active', s >= 1 && s <= 4 ? i === s - 1 : s >= 5));
-
 		// Station 0: Original
 		if (s >= 0) {
 			D._paintGray('hier-canvas-orig', D._gray, D._w, D._h);
-			D._setNum('orig', D._total.toLocaleString('de-DE') + ' Pixel');
 		}
 		// Station 1..4: je ein Filter, einzeln
 		for (let i = 1; i <= 4 && s >= i; i++) {
 			D._paint('hier-canvas-' + D.STAGES[i].id, D._maps[i - 1], D._w - 2, D._h - 2);
-			D._setNum(D.STAGES[i].id, D._respPct[i - 1] + ' % der Pixel antworten');
 		}
 		// Station 5: alle vier Filter kombiniert
 		if (s >= 5) {
 			D._paint('hier-canvas-ecken', D._combined, D._w - 2, D._h - 2);
-			D._setNum('ecken', '4 Filter kombiniert');
 		}
 
 		const cap = document.getElementById('hier-caption');
 		if (cap) cap.innerHTML = D.CAPTIONS[Math.min(s, D.CAPTIONS.length - 1)];
-		const bar = document.getElementById('hier-progress');
-		if (bar) {
-			bar.querySelectorAll('.hier-dot').forEach((d, i) => d.classList.toggle('on', i <= s));
-		}
 	},
 
 	CAPTIONS: [
@@ -292,15 +272,8 @@ const HierarchyDemo = {
 		'zwei der vier Diagonalen des Oktogons.',
 		'<b>Filter 4 (315°)</b> auf die <b>andere</b> Diagonale ↗: ' +
 		'die restlichen zwei Kanten des Oktogons.',
-		'<b>Alle vier zusammen:</b> wo mehrere Richtungen aufeinandertreffen, ' +
-		'leuchten die <b>Ecken</b> auf — die acht Ecken des Oktogons, die Enden des S, ' +
-		'die Ecken der Buchstaben. Aus vier Zahlenkarten wird wieder Form.',
+		'',
 	],
-
-	_setNum: function (id, text) {
-		const el = document.getElementById('hier-num-' + id);
-		if (el) el.textContent = text;
-	},
 
 	// Pfeiltasten — Haus-API (siehe convolution.js / flatten.js):
 	// canGoNext/next/canGoPrev/prev. Ohne 'block' in der DemoRegistry,
