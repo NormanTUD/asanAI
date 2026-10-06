@@ -269,42 +269,27 @@
 <!-- ============================================================
      Folie 8: Was sind Convolutions?
      ------------------------------------------------------------
-     Animation (aus convolution.html): ein kleines Muster (Kernel)
-     fährt pixelweise über ein 5×5-Bild — jedes Pixel wird mit seinen
-     Nachbarn verglichen. Gestuft über "Weiter":
-       1. der Filter erscheint (#conv-step-kernel)
-       2. das Sliding läuft an (#conv-step-slide)
-       3. die Kernaussage: 1 Mio. Werte → 25 (#conv-step-summary)
-     convolution.js liest die Phasen aus der Fragment-Sichtbarkeit.
+     Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze,
+     ein 3×3-Filter zählt die gelben Pixel (die Augen) über alle
+     900 Positionen → 30×30-Map, in der die Augen leuchten.
+     Gestuft über die Pfeiltasten (5 Schritte).
      ============================================================ -->
 <div class="slide" id="slide-convolution" data-title="Was sind Convolutions?">
     <div class="slide-content">
-        <h2>Was sind Convolutions?</h2>
+        <div class="kz">
+            <div class="kz-head"><div class="kz-tswap" id="conv-tswap">
+                <div class="kz-kicker" id="conv-kicker">Schritt 1</div>
+                <div class="kz-title" id="conv-title">Ein Bild ist ein Raster<br>aus <em>Zahlen</em>.</div>
+            </div></div>
 
-        <p style="max-width:920px; margin:0 auto 16px; text-align:center; font-size:1.02em; color:#334155;">
-            Bei einer <b>Convolution</b> schaut sich jeder Pixel seine <b>Nachbarn</b> an:
-            ein kleines Muster (der <b>Kernel</b>) fährt über das Bild, und an jeder
-            Position wird gemessen, wie gut es zu den dortigen Pixeln passt.
-        </p>
+            <div class="kz-stage"><canvas id="conv-cv"></canvas></div>
 
-        <div class="conv-steps">
-            <div class="conv-step fragment" id="conv-step-kernel">
-                1 · Der <b>Filter</b> (Kernel): ein kleines Muster, das wir auf das Bild legen.
-            </div>
-            <div class="conv-step fragment" id="conv-step-slide">
-                2 · Der Filter <b>fährt über das Bild</b> — an jeder Position wird gemessen, wie gut er dort passt.
-            </div>
-        </div>
+            <div class="kz-foot"><div class="kz-fswap" id="conv-fswap">
+                <div class="kz-pill" id="conv-pill">Das Originalbild · 32 × 32 Pixel</div>
+                <div class="kz-chips" id="conv-chips"><span class="kz-chip">(32, 32, 3)</span></div>
+            </div></div>
 
-        <div style="max-width:1160px; margin:0 auto;">
-            <canvas id="conv-anim" width="1160" height="420"
-                style="display:block;width:100%;height:auto;border:1px solid #e2e8f0;border-radius:12px;"></canvas>
-        </div>
-
-        <div class="conv-summary fragment" id="conv-step-summary">
-            Ein <b>1000×1000-Bild</b> (1 Million Werte) wird auf <b>25 Werte</b> reduziert —
-            die Convolution behält das Relevanteste (z. B. wo die Augen sind)
-            und wirft viel Irrelevantes weg.
+            <div class="kz-dots" id="conv-dots"></div>
         </div>
     </div>
 </div>
@@ -336,53 +321,28 @@
 <!-- ============================================================
      Folie 10: Was macht Flatten?
      ------------------------------------------------------------
-     >>> INHALT HIER ERSETZEN <<<
-     Alles was zu dieser Folie gehört, steht in flatten.js
-     (CONFIG-Block oben) und in diesem <div class="slide">.
+     Katze-Framework (katze.js, FlattenDemo): 32×32 ASCII-Katze —
+     Pixel → drei Kanäle → Grün → Grau → Schnur (1024 Zahlen)
+     → Fazit ("Der Trick"). Gestuft über die Pfeiltasten (6 Schritte).
      ============================================================ -->
 <div class="slide" id="slide-flatten" data-title="Was macht Flatten?">
     <div class="slide-content">
-        <h2>Was macht Flatten?</h2>
+        <div class="kz">
+            <div class="kz-head"><div class="kz-tswap" id="flat-tswap">
+                <div class="kz-kicker" id="flat-kicker">Schritt 1</div>
+                <div class="kz-title" id="flat-title">Jeder Pixel ist<br>nur eine <em>Zahl</em>.</div>
+            </div></div>
 
-        <div class="flat-layout">
-            <div class="flat-panel">
-                <div class="flat-caption">Feature Maps <span class="flat-sub">(nach Convolution + Pooling)</span></div>
-                <div class="flat-maps" id="flat-maps"></div>
-            </div>
+            <div class="kz-stage"><canvas id="flat-cv"></canvas></div>
 
-            <div class="flat-arrow" id="flat-arrow">⟶</div>
+            <div class="kz-foot"><div class="kz-fswap" id="flat-fswap">
+                <div class="kz-pill" id="flat-pill">Das Originalbild · 32 × 32 Pixel</div>
+                <div class="kz-chips" id="flat-chips"><span class="kz-chip">(32, 32, 3)</span></div>
+            </div></div>
 
-            <div class="flat-panel">
-                <div class="flat-caption">Flatten <span class="flat-sub">(ein langer Vektor)</span></div>
-                <div class="flat-vector" id="flat-vector"></div>
-                <div class="flat-count" id="flat-count"></div>
-            </div>
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="flat-insight"></div></div>
 
-            <div class="flat-arrow" id="flat-arrow2">⟶</div>
-
-            <div class="flat-panel">
-                <div class="flat-caption">Dense-Layer <span class="flat-sub">(Voller Kunstdruck)</span></div>
-                <div class="flat-dense" id="flat-dense"></div>
-                <div class="flat-count" id="flat-params"></div>
-            </div>
-        </div>
-
-        <div class="flat-controls">
-            <button type="button" id="flat-prev" class="conv-btn">◀ zurück</button>
-            <span class="conv-readout" id="flat-readout">—</span>
-            <button type="button" id="flat-next" class="conv-btn">weiter ▶</button>
-        </div>
-
-        <!-- >>> PROSA-TEXT DER FOLIE: HIER ERSETZEN <<< -->
-        <div style="max-width:1000px; margin:0 auto; text-align:center;">
-            <p><b>Flatten</b> nimmt alle Feature Maps und schreibt ihre Zahlen
-            <b>nebeneinander</b> in einen einzigen langen Vektor — sonst behält die Reihenfolge.</p>
-        </div>
-
-        <div class="key-insight">
-            <strong>Der Trick:</strong> Flatten verliert die Bildstruktur — ab hier ist
-            jede Zahl nur noch eine Zahl. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten
-            und globale Entscheidungen treffen („Auto? Katze?").
+            <div class="kz-dots" id="flat-dots"></div>
         </div>
     </div>
 </div>
@@ -534,8 +494,7 @@
 <!-- ============ SCRIPTS ============ -->
 <script src="space_morph.js"></script>
 <script src="nn_demos.js"></script>
-<script src="convolution.js"></script>
-<script src="flatten.js"></script>
+<script src="katze.js"></script>
 <script src="hierarchy.js"></script>
 <script src="loss.js"></script>
 <script src="presentation.js"></script>

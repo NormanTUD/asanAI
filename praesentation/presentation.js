@@ -40,17 +40,17 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Was sind Convolutions?" (convolution.js) — gestuft über
-                // "Weiter": erst erscheint der Filter, dann läuft das Sliding.
-                // Die Demo liest die Phasen aus der Fragment-Sichtbarkeit
-                // (syncPhase), daher kein next/prev über die Registry.
+                // "Was sind Convolutions?" (katze.js) — Katze-Framework:
+                // 32×32 ASCII-Katze, 3×3-Filter zählt gelbe Pixel (die
+                // Augen) über 900 Positionen. 5 Schritte über Pfeiltasten.
                 { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Was macht Flatten?" (flatten.js) — die Zahlen wandern
-                // einzeln aus den Feature Maps in den Vektor.
+                // "Was macht Flatten?" (katze.js) — Katze-Framework:
+                // 32×32 ASCII-Katze, 6 Schritte: Pixel → RGB → Grün →
+                // Grau → Schnur (1024 Zahlen) → Fazit.
                 { id: 'flatten', ref: () => typeof FlattenDemo !== 'undefined' ? FlattenDemo : null,
                         slideTest: s => s.id === 'slide-flatten',
                         onEnter: d => setTimeout(() => d.init(), 80),

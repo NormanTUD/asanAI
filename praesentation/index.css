@@ -778,206 +778,142 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 
 
-/* ============ FOLIE "Was sind Convolutions?" (convolution.js) ============ */
-.conv-layout {
-	display: grid;
-	grid-template-columns: 1fr 0.72fr 1fr;
-	gap: 18px;
-	align-items: start;
-	justify-items: center;
-	margin-top: 10px;
-}
-.conv-panel {
-	background: #f8fafc;
-	border: 1px solid #e2e8f0;
-	border-radius: 12px;
-	padding: 12px 14px 14px;
-	text-align: center;
-}
-.conv-caption {
-	font-size: 0.95em;
-	font-weight: 700;
-	color: #1e293b;
-	margin-bottom: 8px;
-}
-.conv-sub { font-weight: 400; color: #64748b; }
-.conv-panel canvas {
-	display: block;
+/* ============ KATZE-FRAMEWORK (katze.js): "Was sind Convolutions?" + "Was macht Flatten?" ============ */
+/* Gemeinsames Geruest: Kicker/Title (kz-head), Canvas-Stage, Pill/Chips
+   (kz-foot), Dots. Die Schritte laufen ueber die Pfeiltasten (DemoRegistry). */
+.kz {
 	width: 100%;
-	max-width: 260px;
-	height: auto;
-	border-radius: 8px;
-	background: #ffffff;
-	box-shadow: inset 0 0 0 1px #e2e8f0;
-}
-.conv-kernel-panel canvas { max-width: 156px; }
-.conv-controls {
-	display: flex;
-	gap: 8px;
-	justify-content: center;
-	margin-top: 12px;
-	flex-wrap: wrap;
-}
-.conv-btn {
-	background: #ffffff;
-	border: 1px solid #cbd5e1;
-	border-radius: 8px;
-	padding: 6px 12px;
-	font-size: 0.82em;
-	color: #334155;
-	cursor: pointer;
-	font-family: inherit;
-}
-.conv-btn:hover { background: #eef2ff; border-color: #818cf8; color: #3730a3; }
-.conv-readout {
-	margin-top: 14px;
-	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	font-size: 0.86em;
-	color: #334155;
-	background: #f1f5f9;
-	border-radius: 8px;
-	padding: 8px 14px;
-	display: inline-block;
-}
-.conv-label { font-weight: 700; font-family: inherit; }
-.conv-value b { color: #4f46e5; }
-
-/* Schritt-Zeilen ("Weiter" 1 & 2) über dem Animations-Canvas */
-.conv-steps {
-	max-width: 920px;
-	margin: 0 auto 10px;
-	text-align: center;
-}
-.conv-step {
-	font-size: 1.02em;
-	color: #334155;
-	line-height: 1.45;
-	margin: 3px 0;
-}
-/* Kernaussage ("Weiter" 3) unter dem Animations-Canvas */
-.conv-summary {
-	max-width: 920px;
-	margin: 12px auto 0;
-	text-align: center;
-	font-size: 1.02em;
-	color: #334155;
-}
-
-/* ============ FOLIE "Was macht Flatten?" (flatten.js) ============ */
-.flat-layout {
-	display: grid;
-	grid-template-columns: auto auto minmax(0, 1fr) auto auto;
-	gap: 14px;
-	align-items: center;
-	justify-content: center;
-	margin-top: 8px;
-}
-.flat-panel {
-	background: #f8fafc;
-	border: 1px solid #e2e8f0;
-	border-radius: 12px;
-	padding: 10px 12px;
-	text-align: center;
-}
-.flat-caption {
-	font-size: 0.9em;
-	font-weight: 700;
-	color: #1e293b;
-	margin-bottom: 8px;
-	white-space: nowrap;
-}
-.flat-sub { font-weight: 400; color: #64748b; }
-.flat-maps { display: flex; gap: 8px; }
-.flat-map-label {
-	font-size: 0.68em;
-	color: #64748b;
-	margin-bottom: 3px;
-	letter-spacing: 0.04em;
-}
-.flat-map-grid { display: grid; gap: 2px; }
-.flat-cell {
-	width: 38px;
-	height: 30px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	font-size: 0.66em;
-	border-radius: 4px;
-	transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.flat-cell.pending { opacity: 0.22; }
-.flat-cell:not(.pending) { transform: scale(1.04); }
-
-.flat-arrow {
-	font-size: 1.7em;
-	color: #94a3b8;
-	transition: color 0.3s ease, transform 0.3s ease;
-}
-.flat-arrow.on { color: #4f46e5; transform: scale(1.25); }
-
-.flat-vector {
-	display: grid;
-	grid-template-columns: repeat(9, 1fr);
-	gap: 4px;
-	width: 100%;
-	max-width: 560px;
+	max-width: 1180px;
 	margin: 0 auto;
 }
-.flat-vec-cell {
-	height: 30px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	font-size: 0.62em;
-	color: #cbd5e1;
-	background: #e2e8f0;
-	border-radius: 3px;
-	transition: background 0.25s ease, color 0.25s ease;
+.kz-head {
+	height: 132px;
+	position: relative;
+	width: 100%;
 }
-.flat-vec-cell.placed { background: #4f46e5; color: #ffffff; }
-.flat-count {
-	margin-top: 8px;
-	font-size: 0.74em;
-	color: #475569;
-	min-height: 1.3em;
+.kz-tswap {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: max-content;
+	text-align: center;
+	will-change: transform, opacity, filter;
 }
-
-.flat-dense { display: grid; gap: 4px; }
-.flat-dense-row {
-	display: flex;
-	align-items: center;
-	gap: 2px;
-	padding: 4px 6px;
-	border-radius: 6px;
-	background: #e2e8f0;
-	transition: background 0.3s ease;
-}
-.flat-dense.active .flat-dense-row { background: #e0e7ff; }
-.flat-dense-weight {
-	width: 6px;
-	height: 20px;
-	border-radius: 2px;
-	background: #cbd5e1;
-}
-.flat-dense.active .flat-dense-weight { background: #818cf8; }
-.flat-dense-out {
-	margin-left: 6px;
-	font-size: 0.7em;
+.kz-kicker {
+	font-size: 11px;
+	letter-spacing: .24em;
+	text-transform: uppercase;
+	color: #9aa1ad;
 	font-weight: 700;
-	color: #4f46e5;
+	margin-bottom: 12px;
+}
+.kz-title {
+	font-size: clamp(24px, 3.4vw, 42px);
+	font-weight: 800;
+	letter-spacing: -.032em;
+	line-height: 1.1;
+	color: #0d1117;
+}
+.kz-title em {
+	font-style: normal;
+	color: #2563eb;
+	transition: color 1s cubic-bezier(.4,0,.2,1);
+}
+.kz-title em.gray { color: #6b7280; }
+.kz-stage {
+	position: relative;
+	width: 100%;
+	height: min(46vh, 430px);
+}
+.kz-stage canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+.kz-foot {
+	height: 96px;
+	position: relative;
+	width: 100%;
+}
+.kz-fswap {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 13px;
+	width: max-content;
+	will-change: transform, opacity;
+}
+.kz-pill {
+	background: #f6f8fb;
+	border: 1px solid #eef0f4;
+	padding: 9px 20px;
+	border-radius: 99px;
+	font-size: 13.5px;
+	font-weight: 600;
+	color: #374151;
+	min-height: 40px;
+	display: flex;
+	align-items: center;
 	white-space: nowrap;
 }
-.flat-controls {
+.kz-pill b {
+	color: #f43f5e;
+	font-variant-numeric: tabular-nums;
+	min-width: 1.3em;
+	display: inline-block;
+	text-align: center;
+}
+.kz-chips { display: flex; align-items: center; gap: 11px; }
+.kz-chip {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 13.5px;
+	font-weight: 700;
+	padding: 8px 15px;
+	border-radius: 99px;
+	background: #eff5ff;
+	border: 1px solid #cfe0ff;
+	color: #2563eb;
+}
+.kz-chip.g { background: #f4f5f7; border-color: #e3e7ee; color: #6b7280; }
+.kz-chip.r { background: #fff1f3; border-color: #ffd4dc; color: #f43f5e; }
+.kz-arrow { color: #c3c8d2; font-size: 18px; font-weight: 700; }
+.kz-dots {
+	display: flex;
+	gap: 7px;
+	justify-content: center;
+	padding: 6px 0 2px;
+}
+.kz-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: #e3e7ee;
+	transition: background .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.2,1.3,.4,1);
+}
+.kz-dot.act { background: #2563eb; transform: scale(1.4); }
+/* Fazit-Box (nur Flatten-Folie): Platz ist reserviert, keine Layout-Spruenge */
+.kz-insight-slot {
+	width: 100%;
+	min-height: 96px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 14px;
-	margin-top: 14px;
-	flex-wrap: wrap;
 }
-.flat-controls .conv-readout { margin-top: 0; }
+.kz-insight {
+	max-width: 860px;
+	margin: 0;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+	pointer-events: none;
+}
+.kz-insight.on { opacity: 1; transform: none; }
 
 /* ============ FOLIE "asanAI" ============ */
 .asan-slide {
