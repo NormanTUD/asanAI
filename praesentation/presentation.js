@@ -58,6 +58,14 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
+                // "Der gesamte Prozess" (katze.js) — Bild → Convolutions
+                // (Augen/Nase/Mund-Maps) → Dense-Layer → zwei
+                // Ausgabe-Neuronen (Katze 95 % / Hund 5 %).
+                { id: 'pipeline', ref: () => typeof PipelineDemo !== 'undefined' ? PipelineDemo : null,
+                        slideTest: s => s.id === 'slide-pipeline',
+                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onLeave: d => d.reset() },
+
                 // "Convolutions: Strukturen in Bildern finden" (hierarchy.js)
                 // — echte Convolution
                 // auf stop_sign.jpg: jeder Filter einzeln (0°, 90°, 45°, 315°)
