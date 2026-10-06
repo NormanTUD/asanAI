@@ -127,9 +127,17 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 }
 .key-insight {
 	background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px;
-	padding: 20px 24px; margin: 20px 0; font-size: 1.1em;
+	padding: 20px 24px 20px 60px; margin: 20px 0; font-size: 1.1em;
+	position: relative;
 }
-.key-insight::before { content: "💡 "; font-size: 1.3em; }
+.key-insight::before {
+	content: "💡";
+	position: absolute;
+	left: 22px;
+	top: 20px;
+	font-size: 1.3em;
+	line-height: 1;
+}
 .demo-box {
 	background: #f8fafc; padding: 24px; border-radius: 12px;
 	border: 1px solid #e2e8f0; margin: 20px 0; width: 100%;
