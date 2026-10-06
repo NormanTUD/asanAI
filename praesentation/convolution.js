@@ -106,6 +106,12 @@ const ConvDemo = (() => {
 		for (let k = 0; k < N; k++) filled[k] = (k <= i) ? VALUES[k] : null;
 	}
 
+	function goTo(i, animate = true) {
+		i = Math.max(0, Math.min(N - 1, i));
+		prev = cur; cur = i; t = animate ? 0 : 1;
+		commitUpTo(i);
+	}
+
 	function snapStart() {
 		cur = 0; prev = 0; t = 1;
 		commitUpTo(0);
