@@ -1239,7 +1239,10 @@ const InputHandler = (() => {
         document.addEventListener('wheel', handleWheel, { passive: false });
     }
 
-    return { init };
+    // navigate() wird auch von den Nav-Bar-Buttons verwendet — die
+    // Buttons dürfen Demo-Schritte nicht überspringen (Pfeiltasten,
+    // Rad und Swipe laufen ohnehin durch navigate()).
+    return { init, navigate };
 })();
 
 // ────────────────────────────────────────────────────────────
