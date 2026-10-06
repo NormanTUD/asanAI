@@ -190,10 +190,10 @@ const KatzeKit = (() => {
 			if (cfg.onStep) cfg.onStep(n);
 			cfg.layoutFor(n, S);
 			S.step = n;
+			cur = n;
 			if (instant) setText(n); else swapText(n);
 			updateInsight();
 			updateDots();
-			cur = n;
 			if (!instant) {
 				busy = true;
 				setTimeout(() => { busy = false; }, 420);
