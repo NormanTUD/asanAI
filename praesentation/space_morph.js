@@ -5,7 +5,7 @@
 // ============================================================
 const SpaceMorph = (() => {
     const SLIDE_ID = 'slide-layer-als-raumkruemmung';
-    const DUR = 1000;
+    const DUR = 700;
 
     // Die Homotopie (Schlingen zurückziehen) läuft bewusst langsamer,
     // damit man sieht, dass nichts durchdringt.
@@ -20,7 +20,7 @@ const SpaceMorph = (() => {
     let dragBound = false;
 
     // Kamera: Blick von OBEN
-    let camA = 0, camB = 1.5708, dragA = 0, dragB = 0, pers = 1, FIT = 1, YOFF = 0;
+    let camA = 0, camB = -1.5708, dragA = 0, dragB = 0, pers = 1, FIT = 1, YOFF = 0;
     let md = false, mx = 0, my = 0;
     let cur = 0, prevIdx = 0, t0 = 0, dA0 = 0, dB0 = 0;
 
@@ -267,13 +267,13 @@ const SpaceMorph = (() => {
     const S = [
         { t: "Zwei Klassen, keine Gerade",
             b: "Innen eine Punktwolke, außen ein Ring. Keine Gerade trennt Rot von Blau.",
-            L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
+            L: 0, A: 0, B: -1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Jeder Versuch scheitert",
             b: "Eine lineare Trennung ist eine Gerade — sie schneidet den Ring immer. Der Ring umschließt die Wolke: eine topologische Anordnung, die eine Gerade nicht aufbrechen kann.",
-            L: 0, A: 0, B: 1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
+            L: 0, A: 0, B: -1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
         { t: "Eine Dimension mehr Platz",
             b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden: falten in unbenutzte, höhere Dimensionen — das wirkt nur, wenn die Schicht breiter ist als die Daten.",
-            L: 0, A: 0.38, B: 1.02, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
+            L: 0, A: 0.38, B: -0.62, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { t: "Der Layer krümmt den Raum",
             b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Es ist eine glatte, injektive Verbiegung (Homöomorphismus auf ihr Bild) — sie reißt nicht, identifiziert keine Punkte. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
@@ -496,7 +496,7 @@ const SpaceMorph = (() => {
     // ---------- Boden + z-Achse ----------
     function drawBox(al) {
         if (al < 0.01) return;
-        const E = EXT, ZT = 1.35, G = 10;
+        const E = EXT, ZT = 1.75, G = 10;
         ctx.globalAlpha = al * 0.40; ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 0.9;
         for (let i = 0; i <= G; i++) { const v = -E + 2 * E * i / G;
             let p = proj({ x: -E, y: v, z: 0 }), q = proj({ x: E, y: v, z: 0 });
@@ -871,7 +871,7 @@ const SpaceMorph = (() => {
         const prRaw = lerp(a.pr, b.pr, raw);
         camA = lerp(a.A, b.A, u); camB = lerp(a.B, b.B, u);
         if (!md) { dragA = lerp(dA0, 0, u); dragB = lerp(dB0, 0, u); }
-        const flat = 1 - clamp((camB + dragB) / 1.5708, 0, 1);
+        const flat = 1 - clamp(Math.abs(camB + dragB) / 1.5708, 0, 1);
         FIT = lerp(1.0, 0.34, flat); YOFF = lerp(0, H * 0.10, flat);
         const tor = lerp(a.tori || 0, b.tori || 0, u);
         const ut = lerp(a.ut || 0, b.ut || 0, u);
