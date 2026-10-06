@@ -468,15 +468,15 @@ const ConvDemo = (() => {
 		ctx.fill();
 		ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1; ctx.stroke();
 		ctx.globalAlpha = 1;
-		if (S.step < 3) return;
+		if (S.step < 4) return;
 
 		for (let i8 = 0; i8 < O8 * O8; i8++) {
 			const R = (i8 / O8) | 0, C = i8 % O8;
 			const x = Math.floor(ox + C * os), y = Math.floor(oy + R * os);
 			const xw = Math.ceil(ox + (C + 1) * os) - x, yh = Math.ceil(oy + (R + 1) * os) - y;
 			const lit = LIT8[i8];
-			const isLit = lit >= 0 && (S.step >= 5 || (S.step === 4 && sweepP > lit));
-			const isFull = !isLit && (S.step >= 5 || (S.step === 4 && sweepP >= END8[i8]));
+			const isLit = lit >= 0 && (S.step >= 6 || (S.step === 5 && sweepP > lit));
+			const isFull = !isLit && (S.step >= 6 || (S.step === 5 && sweepP >= END8[i8]));
 			ctx.globalAlpha = outA;
 			if (isLit) {
 				ctx.fillStyle = 'rgba(76,175,80,.5)';
@@ -492,10 +492,10 @@ const ConvDemo = (() => {
 
 		// Weicher Glow um die leuchtenden Augen-Pixel (ab dem Moment,
 		// in dem der Sweep das Auge findet).
-		if (S.step >= 4) {
+		if (S.step >= 5) {
 			for (let i8 = 0; i8 < O8 * O8; i8++) {
 				const lit = LIT8[i8];
-				if (lit < 0 || (S.step === 4 && sweepP <= lit)) continue;
+				if (lit < 0 || (S.step === 5 && sweepP <= lit)) continue;
 				const R = (i8 / O8) | 0, C = i8 % O8;
 				const cx = ox + (C + .5) * os, cy = oy + (R + .5) * os;
 				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, os * 1.8);
@@ -541,9 +541,9 @@ const ConvDemo = (() => {
 	}
 
 	function drawWindow(ctx, S) {
-		if (S.step < 3 || S.step > 4) return;
+		if (S.step < 4 || S.step > 5) return;
 		const o = S.inst[0], s = o.s;
-		const i = Math.min(Math.floor(S.step === 4 ? sweepP : 0), OCELLS - 1);
+		const i = Math.min(Math.floor(S.step === 5 ? sweepP : 0), OCELLS - 1);
 		const r = (i / OW) | 0, c = i % OW;
 		const x = o.x + c * s, y = o.y + r * s;
 		const sc = SCORES[i], hot = sc >= TH;
@@ -575,16 +575,19 @@ const ConvDemo = (() => {
 			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
 			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
-			{ k: 'Schritt 3', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
+			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
+			  p: 'Die grüne Farbe war nur Deko — es sind reine Zahlen',
+			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
+			{ k: 'Schritt 4', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
 			  p: 'Schwarz = 0 · Gelb = 255 — auch der Filter ist nur Zahlen',
 			  c: '<span class="kz-chip">(6, 5)</span>' },
-			{ k: 'Schritt 4', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
+			{ k: 'Schritt 5', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
 			  p: `Punkt <b>1</b> von ${OCELLS} · Treffer: <b>0</b> von ${TMAX}`,
 			  c: '<span class="kz-chip">(32, 32)</span><span class="kz-arrow">×</span><span class="kz-chip">(6, 5)</span>' },
-			{ k: 'Schritt 5', t: `… und über<br><em>alle ${OCELLS}</em> Positionen.`,
+			{ k: 'Schritt 6', t: `… und über<br><em>alle ${OCELLS}</em> Positionen.`,
 			  p: `Fenster <b>1</b> von ${OCELLS}`,
 			  c: `<span class="kz-chip">(${OH}, ${OW})</span><span class="kz-arrow">→</span><span class="kz-chip g">(8, 8)</span>` },
-			{ k: 'Schritt 6', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
+			{ k: 'Schritt 7', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
 			  p: `1024 Pixel → ${O8 * O8} Zahlen — und die Augen bleiben`,
 			  c: `<span class="kz-chip g">(8, 8)</span>` }
 		],
@@ -605,34 +608,36 @@ const ConvDemo = (() => {
 				tTagA = [0, 0, 0];
 				S.zoomX = x0 + KatzeKit.N * cs + gap;
 				S.zoomY = (H - zh) / 2;
-			} else if (step === 1) {
-				// Drei Kanal-Stapel (wie Flatten, Schritt 1).
+			} else if (step <= 2) {
+				// Drei Kanal-Stapel; ab Schritt 3 nur der Grün-Kanal (graustufen).
 				const g = Math.min(W * .035, 46);
 				const ss = Math.min((W - g * 2) / (KatzeKit.N * 3) * .96, H / KatzeKit.N * .82, 8);
 				const bw = KatzeKit.N * ss, tot = bw * 3 + g * 2, ox = (W - tot) / 2, oy = (H - bw) / 2 + 8;
 				inst.forEach((o, i) => {
 					o.ts = ss; o.tx = ox + i * (bw + g); o.ty = oy;
-					o.tmix = 1; o.ta = 1;
+					o.tmix = 1; o.ta = step === 1 ? 1 : (i === KatzeKit.PICK ? 1 : 0);
 				});
-				tTagA = [1, 1, 1];
+				tTagA = step === 1 ? [1, 1, 1] : [0, 1, 0];
+				S.tGrayMix = step === 2 ? 1 : 0;
 			} else {
+				S.tGrayMix = 0;
 				inst.forEach((o, i) => {
 					o.ts = s;
 					o.tx = (W - (imgW + gapOut + outW)) / 2;
 					o.ty = (H - imgW) / 2 + 6;
 					o.tmix = i === 0 ? 0 : 1;
-					o.ta = i === 0 ? (step >= 5 ? .22 : 1) : 0;
+					o.ta = i === 0 ? (step >= 6 ? .22 : 1) : 0;
 				});
 				tTagA = [0, 0, 0];
 			}
-			tKerA = step <= 1 ? 0 : (step >= 5 ? .45 : 1);
-			tOutA = step >= 3 ? 1 : 0;
+			tKerA = step <= 2 ? 0 : (step >= 6 ? .45 : 1);
+			tOutA = step >= 4 ? 1 : 0;
 			tGrayA = step === 0 ? 1 : 0;
 			tZoomA = step === 0 ? 1 : 0;
 		},
 
 		onStep(step) {
-			if (step === 4) { sweepP = 0; sweepDone = 0; }
+			if (step === 5) { sweepP = 0; sweepDone = 0; }
 		},
 
 		tick(dt, k, S, setFoot) {
@@ -641,7 +646,7 @@ const ConvDemo = (() => {
 			grayA = KatzeKit.lerp(grayA, tGrayA, k * 1.2);
 			zoomA = KatzeKit.lerp(zoomA, tZoomA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
-			if (S.step !== 4) return;
+			if (S.step !== 5) return;
 			// 756 Fenster in ~9 s
 			sweepP = Math.min(sweepP + dt * (OCELLS / (9 * 60)), OCELLS);
 			const i = Math.min(Math.floor(sweepP), OCELLS - 1);
@@ -664,19 +669,18 @@ const ConvDemo = (() => {
 			if (S.step === 0) {
 				drawGrayCat(ctx, S);
 				drawPixelZoom(ctx, S);
-			} else if (S.step === 1) {
-				KatzeKit.drawGrid(ctx, o, 0, 0);
-				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
-				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
+			} else if (S.step <= 2) {
+				// Kanal-Stapel; Schritt 3: nur der Grün-Kanal, fadet in Grau.
+				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				KatzeKit.drawTags(ctx, S, tagA);
-				drawGrayCat(ctx, S); // Crossfade von den Graustufen
+				if (S.step === 1) drawGrayCat(ctx, S); // Crossfade von den Graustufen
 			} else {
 				KatzeKit.drawGrid(ctx, o, 0, 0);
 				// Beim Zusammenfaden flackern die Kanäle kurz drüber.
 				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
 				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
 			}
-			if (S.step !== 1 && S.step !== 0 && o.a > 0.02) {
+			if (S.step >= 3 && o.a > 0.02) {
 				ctx.globalAlpha = o.a;
 				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 				ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
@@ -691,10 +695,9 @@ const ConvDemo = (() => {
 // ============================================================
 // FlattenDemo — "Was macht Flatten?"
 //
-// 32×32-Katze, 6 Schritte (wie in katze.html, plus Fazit):
-// 0: Original · 1: drei Kanal-Stapel · 2: nur Grün ·
-// 3: Grün = Grau · 4: Raster wird zur Schnur (1024 Zahlen) ·
-// 5: Fazit (Dense-Layer).
+// (Pixel/Kanäle/Grau hat die Katze-Folie — hier nur der Flatten-
+// Teil.) Graues Raster → Schnur (1024 Zahlen) → Fazit.
+// 2 Schritte: 0: Raster wird zur Schnur · 1: Fazit (Dense-Layer).
 // ============================================================
 const FlattenDemo = (() => {
 	'use strict';
@@ -776,22 +779,10 @@ const FlattenDemo = (() => {
 		slideId: 'slide-flatten',
 		prefix: 'flat',
 		steps: [
-			{ k: 'Schritt 1', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
-			  p: 'Das Originalbild · 32 × 32 Pixel',
-			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
-			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
-			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
-			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
-			{ k: 'Schritt 3', t: 'Nimm einen davon:<br>den <em>Grün-Kanal</em>.',
-			  p: 'Ein einzelner Kanal ist ein Raster aus 1024 Zahlen',
-			  c: '<span class="kz-chip">(32, 32)</span>' },
-			{ k: 'Schritt 4', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
-			  p: 'Die grüne Farbe war nur Deko — es sind reine Zahlen',
-			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
-			{ k: 'Schritt 5', t: 'Flatten rollt das Raster<br>zu einer <em>Schnur</em> aus.',
+			{ k: 'Schritt 1', t: 'Flatten rollt das Raster<br>zu einer <em>Schnur</em> aus.',
 			  p: 'Zeile <b>0</b> von 32 · <b>0</b> Zahlen',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span>' },
-			{ k: 'Schritt 6', t: 'Der <em>Trick</em>: Flatten verliert<br>die Bildstruktur.',
+			{ k: 'Schritt 2', t: 'Der <em>Trick</em>: Flatten verliert<br>die Bildstruktur.',
 			  p: 'Ab hier ist jede Zahl nur noch eine Zahl',
 			  c: '<span class="kz-chip r">(1024,)</span>',
 			  i: 'Der Trick: Flatten verliert die Bildstruktur — ab hier ist jede Zahl nur noch eine Zahl. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und globale Entscheidungen treffen („Auto? Katze?").' }
@@ -799,42 +790,22 @@ const FlattenDemo = (() => {
 
 		layoutFor(step, S) {
 			const { W, H, inst } = S;
-			if (step === 0) {
-				const s = Math.min(H / 32 * .95, W / 32 * .95, 13);
-				inst.forEach((o, i) => {
-					o.ts = s; o.tx = (W - 32 * s) / 2; o.ty = (H - 32 * s) / 2;
-					o.ta = i === 0 ? 1 : 0; o.tmix = 0;
-				});
-				tTagA = [0, 0, 0]; tRailA = 0; S.tGrayMix = 0;
-			} else if (step <= 3) {
-				const gap = Math.min(W * .035, 46);
-				const s = Math.min((W - gap * 2) / (32 * 3) * .96, H / 32 * .82, 8);
-				const bw = 32 * s, tot = bw * 3 + gap * 2, ox = (W - tot) / 2, oy = (H - 32 * s) / 2 + 8;
-				inst.forEach((o, i) => {
-					o.ts = s; o.tx = ox + i * (bw + gap); o.ty = oy; o.tmix = 1;
-					o.ta = (step === 1) ? 1 : (i === KatzeKit.PICK ? 1 : 0);
-					tTagA[i] = o.ta;
-				});
-				tRailA = 0;
-				S.tGrayMix = step === 3 ? 1 : 0;
-			} else {
-				const gs = Math.min(H * .50 / 32, W * .30 / 32, 9.5);
-				inst.forEach((o, i) => {
-					o.ts = gs; o.tx = (W - 32 * gs) / 2; o.ty = 6;
-					o.tmix = 1; o.ta = i === KatzeKit.PICK ? 1 : 0;
-				});
-				tTagA = [0, 0, 0]; tRailA = 1; S.tGrayMix = 1;
-			}
+			const gs = Math.min(H * .50 / 32, W * .30 / 32, 9.5);
+			inst.forEach((o, i) => {
+				o.ts = gs; o.tx = (W - 32 * gs) / 2; o.ty = 6;
+				o.tmix = 1; o.ta = i === KatzeKit.PICK ? 1 : 0;
+			});
+			tTagA = [0, 0, 0]; tRailA = 1; S.tGrayMix = 1;
 		},
 
 		onStep(step) {
-			if (step === 4) { flatP = 0; flatMsg = 0; }
+			if (step === 0) { flatP = 0; flatMsg = 0; }
 		},
 
 		tick(dt, k, S, setFoot) {
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
 			railA = KatzeKit.lerp(railA, tRailA, k);
-			if (S.step !== 4) return;
+			if (S.step !== 0) return;
 			// ~10,5 s für 32 Zeilen
 			flatP = Math.min(flatP + dt * (32 / (10.5 * 60)), 32);
 			if (flatP >= 32) {
@@ -852,12 +823,7 @@ const FlattenDemo = (() => {
 
 		draw(ctx, S) {
 			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
-			if (S.step >= 4) {
-				drawFlat(ctx, S);
-			} else {
-				S.inst.forEach((o, i) => KatzeKit.drawGrid(ctx, o, i, S.grayMix));
-				KatzeKit.drawTags(ctx, S, tagA);
-			}
+			drawFlat(ctx, S);
 		}
 	});
 })();
