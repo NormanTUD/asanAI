@@ -1,9 +1,9 @@
 /* ============================================================
    HIERARCHIE — vom Foto zum Stoppschild
    Echte Convolution auf img/stop_sign.jpg mit den Sobel-Kerneln
-   aus blog/computer_vision.js:
-     Filterpaar -> Kantenerkennung -> das Wichtigste extrahieren
-     -> vereinfacht weiterarbeiten
+   aus blog/computer_vision.js (wie im Vision-Lab):
+     ein Filter pro Kantenrichtung, einzeln gezeigt
+     -> Kombination -> Ecken und Kontur
 
    >>> ZUM ÄNDERN: nur CONFIG, STAGES und die KERNEL <<<
    ============================================================ */
@@ -14,7 +14,6 @@ const HierarchyDemo = {
 	SIZE: 150,          // Arbeitskantenlaenge in px (Bild wird skaliert geladen)
 	K: 3,               // Kernelgroesse
 	SCHWELLE: 0.22,     // ab hier gilt eine Kante als "wichtig"
-	POOL: 2,            // Faktor fuer die Vereinfachung
 	// <<< CONFIG <<<
 
 	// 3x3-Kernels (Sobel-Typ), Reihenfolge = Reihenfolge in der Folie.
@@ -30,13 +29,14 @@ const HierarchyDemo = {
 		{ name: 'schräg ↗', m: [[2, 1, 0], [1, 0, -1], [0, -1, -2]] },
 	],
 
-	// Die 5 Stationen. max = Anzahl Pfeiltasten auf dieser Folie.
+	// Die 6 Stationen: Original, dann jeder Filter einzeln, dann die Kombination.
 	STAGES: [
-		{ id: 'orig', max: 5, label: 'Original', num: 'Pixel' },
-		{ id: 'kanten', max: 5, label: 'Kanten aus 2 Filtern', num: 'Filter' },
-		{ id: 'ecken', max: 5, label: 'Ecken: alle 4 Filter', num: 'Filter' },
-		{ id: 'extrahiert', max: 5, label: 'Das Wichtigste', num: 'Pixel' },
-		{ id: 'vereinfacht', max: 5, label: 'Vereinfacht', num: 'Pixel' },
+		{ id: 'orig', label: 'Original' },
+		{ id: 'f0', label: '0° · waagerechte Kante' },
+		{ id: 'f90', label: '90° · senkrechte Kante' },
+		{ id: 'f45', label: '45° · schräge Kante ↘' },
+		{ id: 'f315', label: '315° · schräge Kante ↗' },
+		{ id: 'ecken', label: 'Alle 4 → Ecken' },
 	],
 
 	_step: 0,
@@ -137,25 +137,22 @@ const HierarchyDemo = {
 	// Alle Feature-Maps einmal berechnen (nicht pro Schritt)
 	_compute: function () {
 		const D = HierarchyDemo, w = D._w, h = D._h;
+		const fw = w - 2, fh = h - 2;   // 'valid'-Convolution: Maps sind 2 px kleiner
 		D._maps = D.KERNELS.map(k => D._normalize(D._convolve(D._gray, w, h, k.m)));
 
+		// Anteil der Pixel, der je Filter ab SCHWELLE antwortet
+		D._respPct = D._maps.map(m => {
+			let c = 0;
+			for (const v of m) if (v >= D.SCHWELLE) c++;
+			return Math.round(100 * c / m.length);
+		});
+
 		// Kombinieren: Summe der Quadrate -> Ecken und Knoten leuchten auf
-		const comb = new Float32Array(w * h);
+		const comb = new Float32Array(fw * fh);
 		for (const m of D._maps) for (let i = 0; i < comb.length; i++) comb[i] += m[i] * m[i];
 		D._combined = D._normalize(comb);
 
-		// Extrahieren: nur starke Antworten behalten
-		const ex = new Float32Array(w * h);
-		let kept = 0;
-		for (let i = 0; i < ex.length; i++) {
-			if (D._combined[i] >= D.SCHWELLE) { ex[i] = D._combined[i]; kept++; }
-		}
-		D._extracted = ex;
-		D._kept = kept;
 		D._total = w * h;
-
-		// Vereinfachen: Pooling haelt die stärkste Kante pro Block
-		D._pooled = D._pool(D._extracted, w, h, D.POOL);
 	},
 
 	// 'valid' Convolution, Betrag, ohne Rand
@@ -179,22 +176,6 @@ const HierarchyDemo = {
 		for (const v of a) if (v > mx) mx = v;
 		if (mx > 0) for (let i = 0; i < a.length; i++) a[i] /= mx;
 		return a;
-	},
-
-	_pool: function (src, w, h, f) {
-		const pw = Math.floor(w / f), ph = Math.floor(h / f);
-		const out = new Float32Array(pw * ph);
-		for (let y = 0; y < ph; y++)
-			for (let x = 0; x < pw; x++) {
-				let mx = 0;
-				for (let dy = 0; dy < f; dy++)
-					for (let dx = 0; dx < f; dx++) {
-						const v = src[(y * f + dy) * w + (x * f + dx)];
-						if (v > mx) mx = v;
-					}
-				out[y * pw + x] = mx;
-			}
-		return out;
 	},
 
 	// ---------------------------------------------------------------
@@ -271,32 +252,24 @@ const HierarchyDemo = {
 			if (wait) wait.style.display = on ? 'none' : 'flex';
 		});
 
+		// Aktiven Kernel hervorheben: Station 1..4 = ein Filter, 5 = alle
+		document.querySelectorAll('.hier-kernel').forEach((k, i) =>
+			k.classList.toggle('active', s >= 1 && s <= 4 ? i === s - 1 : s >= 5));
+
 		// Station 0: Original
 		if (s >= 0) {
 			D._paintGray('hier-canvas-orig', D._gray, D._w, D._h);
 			D._setNum('orig', D._total.toLocaleString('de-DE') + ' Pixel');
 		}
-		// Station 1: zwei Kanten-Filter (vertikal + waagerecht)
-		if (s >= 1) {
-			D._paint('hier-canvas-kanten', D._combinePair(D._maps[0], D._maps[1]), D._w - 2, D._h - 2);
-			D._setNum('kanten', D.KERNELS[0].name + ' + ' + D.KERNELS[1].name);
+		// Station 1..4: je ein Filter, einzeln
+		for (let i = 1; i <= 4 && s >= i; i++) {
+			D._paint('hier-canvas-' + D.STAGES[i].id, D._maps[i - 1], D._w - 2, D._h - 2);
+			D._setNum(D.STAGES[i].id, D._respPct[i - 1] + ' % der Pixel antworten');
 		}
-		// Station 2: alle vier Filter kombiniert
-		if (s >= 2) {
+		// Station 5: alle vier Filter kombiniert
+		if (s >= 5) {
 			D._paint('hier-canvas-ecken', D._combined, D._w - 2, D._h - 2);
-			D._setNum('ecken', '4 Filter');
-		}
-		// Station 3: extrahiert
-		if (s >= 3) {
-			D._paint('hier-canvas-extrahiert', D._extracted, D._w - 2, D._h - 2);
-			const pct = Math.round(100 * D._kept / D._total);
-			D._setNum('extrahiert', (100 - pct) + ' % weg · ' + pct + ' % übrig');
-		}
-		// Station 4: vereinfacht
-		if (s >= 4) {
-			D._paint('hier-canvas-vereinfacht', D._pooled, Math.floor((D._w - 2) / D.POOL), Math.floor((D._h - 2) / D.POOL));
-			const pw = Math.floor((D._w - 2) / D.POOL), ph = Math.floor((D._h - 2) / D.POOL);
-			D._setNum('vereinfacht', pw + '×' + ph + ' = ' + (pw * ph).toLocaleString('de-DE'));
+			D._setNum('ecken', '4 Filter kombiniert');
 		}
 
 		const cap = document.getElementById('hier-caption');
@@ -310,25 +283,19 @@ const HierarchyDemo = {
 	CAPTIONS: [
 		'<b>Ein Foto.</b> Nichts davon ist „Stoppschild" — nur Zahlen: ' +
 		'<span class="mono">0…255</span> pro Pixel. Ein Netz sieht diese Matrix, nicht das Bild.',
-		'<b>Ein Filterpaar.</b> Zwei 3×3-Kernel, jeder sucht nur eine Richtung: ' +
-		'wo es hell wird, ist eine waagerechte bzw. senkrechte Kante. ' +
-		'Das Oktogon wird zum Umriss, das S zu Strichen.',
-		'<b>Alle vier Filter zusammen.</b> Quadriert man die Antworten, ' +
-		'leuchten genau die <b>Ecken</b>: die acht Ecken des Oktogons, die Enden des S, ' +
-		'die Ecken der Buchstaben. Der Filterpaar hat nur Linien geliefert, ' +
-		'die Kombination macht aus Linien Ecken.',
-		'<b>Das Wichtigste rausziehen.</b> Alles unter der Schwelle fliegt raus. ' +
-		'Übrig bleiben nur die Kanten — ein Bruchteil der Pixel.',
-		'<b>Und vereinfachen.</b> Von jedem Block bleibt die stärkste Kante. ' +
-		'Das Bild schrumpft um den Faktor ' + '2' + ' in jeder Richtung, ' +
-		'aber die <b>Form bleibt</b>: ein Oktogon mit S. Genau das verarbeitet die nächste Schicht weiter.',
+		'<b>Filter 1 (0°)</b> antwortet nur auf <b>waagerechte</b> Kanten: ' +
+		'die oberen und unteren Kanten des Oktogons, die waagerechten Buchstabenstriche. ' +
+		'Alle anderen Kanten bleiben dunkel.',
+		'<b>Filter 2 (90°)</b> nur auf <b>senkrechte</b> Kanten: ' +
+		'die linke und rechte Seite des Oktogons, die senkrechten Buchstabenstriche.',
+		'<b>Filter 3 (45°)</b> nur auf Kanten in ↘-Richtung: ' +
+		'zwei der vier Diagonalen des Oktogons.',
+		'<b>Filter 4 (315°)</b> auf die <b>andere</b> Diagonale ↗: ' +
+		'die restlichen zwei Kanten des Oktogons.',
+		'<b>Alle vier zusammen:</b> wo mehrere Richtungen aufeinandertreffen, ' +
+		'leuchten die <b>Ecken</b> auf — die acht Ecken des Oktogons, die Enden des S, ' +
+		'die Ecken der Buchstaben. Aus vier Zahlenkarten wird wieder Form.',
 	],
-
-	_combinePair: function (a, b) {
-		const out = new Float32Array(a.length);
-		for (let i = 0; i < a.length; i++) out[i] = Math.sqrt(a[i] * a[i] + b[i] * b[i]);
-		return HierarchyDemo._normalize(out);
-	},
 
 	_setNum: function (id, text) {
 		const el = document.getElementById('hier-num-' + id);

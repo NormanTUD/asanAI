@@ -323,14 +323,14 @@
     </div>
 </div>
 
-<!-- ============================================================
-     Folie 9: Filterpaare -> Kanten -> das Wichtigste
-     ------------------------------------------------------------
-     >>> INHALT HIER ERSETZEN <<<
-     Alles was zu dieser Folie gehört, steht in hierarchy.js
-     (CONFIG-Block oben) und in diesem <div class="slide">.
-     Quelle des Beispiels: blog/computer_vision.php
-     ============================================================ -->
+    <!-- ============================================================
+         Folie 9: Filter einzeln (0°, 90°, 45°, 315°) -> Kombination
+         ------------------------------------------------------------
+         >>> INHALT HIER ERSETZEN <<<
+         Alles was zu dieser Folie gehört, steht in hierarchy.js
+         (CONFIG-Block oben) und in diesem <div class="slide">.
+         Quelle des Beispiels: blog/computer_vision.php
+         ============================================================ -->
 <div class="slide" data-title="Filterpaare" id="slide-hierarchie">
     <div class="slide-content">
         <h2>Vom Foto zum Stoppschild</h2>
@@ -342,16 +342,15 @@
         <div class="hier-progress" id="hier-progress">
             <span class="hier-dot"></span><span class="hier-dot"></span>
             <span class="hier-dot"></span><span class="hier-dot"></span>
-            <span class="hier-dot"></span>
+            <span class="hier-dot"></span><span class="hier-dot"></span>
         </div>
 
         <div class="hier-caption" id="hier-caption"></div>
 
         <div class="key-insight">
-            Jede Schicht macht aus den <b>Zahlen</b> der vorigen Schicht <b>neue Zahlen</b>,
-            die etwas anderes bedeuten. Am Ende steht kein Bild mehr, sondern eine Karte
-            mit „Stoppschild: 97 %". Derselbe Rechenkern — eine Matrixmultiplikation —
-            läuft in jedem Schritt.
+            Jeder Filter sieht nur <b>eine Richtung</b> — zusammen liefern die vier
+            die ganze Kontur: aus Zahlen wird wieder Form. Derselbe Rechenkern
+            (eine Matrixmultiplikation) läuft in jedem Schritt.
         </div>
     </div>
 </div>

@@ -1085,6 +1085,12 @@ body.sel-mode .sel-check { display: inline-flex; }
 	border-radius: 8px;
 	padding: 6px 10px;
 	text-align: center;
+	transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.hier-kernel.active {
+	border-color: #6366f1;
+	background: #eef2ff;
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 .hier-kernel-name {
 	font-size: 0.68em;
@@ -1113,7 +1119,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 
 .hier-panels {
 	display: grid;
-	grid-template-columns: repeat(5, 1fr);
+	grid-template-columns: repeat(6, 1fr);
 	gap: 12px;
 	align-items: start;
 }
