@@ -1299,3 +1299,14 @@ body.sel-mode .sel-check { display: inline-flex; }
 	font-variant-numeric: tabular-nums;
 }
 .loss-chip.active .loss-chip-l { color: #4f46e5; font-weight: 700; }
+.loss-training {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-top: 16px;
+    font-size: 1.02em;
+    color: #334155;
+    line-height: 1.45;
+}
+.loss-training i { color: #4338ca; }
