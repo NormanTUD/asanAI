@@ -7,12 +7,14 @@ on:
     # Die Action wird NICHT ausgelöst, wenn NUR Dateien in diesen Pfaden geändert wurden
     paths-ignore:
       - 'blog/**'
+      - 'praesentation/**'
       - '.github/**'
   pull_request:
     branches:
       - master
     paths-ignore:
       - 'blog/**'
+      - 'praesentation/**'
       - '.github/**'
 
 jobs:
