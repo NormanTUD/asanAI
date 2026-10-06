@@ -134,7 +134,8 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	content: "💡";
 	position: absolute;
 	left: 22px;
-	top: 20px;
+	top: 50%;
+	transform: translateY(-50%);
 	font-size: 1.3em;
 	line-height: 1;
 }
