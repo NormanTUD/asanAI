@@ -842,6 +842,27 @@ body.sel-mode .sel-check { display: inline-flex; }
 .conv-label { font-weight: 700; font-family: inherit; }
 .conv-value b { color: #4f46e5; }
 
+/* Schritt-Zeilen ("Weiter" 1 & 2) über dem Animations-Canvas */
+.conv-steps {
+	max-width: 920px;
+	margin: 0 auto 10px;
+	text-align: center;
+}
+.conv-step {
+	font-size: 1.02em;
+	color: #334155;
+	line-height: 1.45;
+	margin: 3px 0;
+}
+/* Kernaussage ("Weiter" 3) unter dem Animations-Canvas */
+.conv-summary {
+	max-width: 920px;
+	margin: 12px auto 0;
+	text-align: center;
+	font-size: 1.02em;
+	color: #334155;
+}
+
 /* ============ FOLIE "Was macht Flatten?" (flatten.js) ============ */
 .flat-layout {
 	display: grid;

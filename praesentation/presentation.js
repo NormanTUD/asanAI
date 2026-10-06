@@ -40,8 +40,10 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Was sind Convolutions?" (convolution.js) — das 3x3-Fenster
-                // wandert per Pfeiltasten ueber das Eingabebild.
+                // "Was sind Convolutions?" (convolution.js) — gestuft über
+                // "Weiter": erst erscheint der Filter, dann läuft das Sliding.
+                // Die Demo liest die Phasen aus der Fragment-Sichtbarkeit
+                // (syncPhase), daher kein next/prev über die Registry.
                 { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         onEnter: d => setTimeout(() => d.init(), 80),
