@@ -52,6 +52,13 @@ const HierarchyDemo = {
 
 		this._buildPanels(host);
 		this._buildKernels();
+		this._reserveCaptionHeight();
+		if (typeof window.fitSlides === 'function') window.fitSlides();
+
+		if (!this._resizeBound) {
+			this._resizeBound = true;
+			window.addEventListener('resize', () => this._reserveCaptionHeight());
+		}
 
 		this.load().then(() => { this._ready = true; this.show(); });
 	},
@@ -82,6 +89,20 @@ const HierarchyDemo = {
 				(v > 0 ? '+' : '') + v + '</span>').join('')
 			).join('') +
 			'</div></div>').join('');
+	},
+
+	_reserveCaptionHeight: function () {
+		const cap = document.getElementById('hier-caption');
+		if (!cap) return;
+		const prev = cap.innerHTML;
+		let max = 0;
+		for (const c of HierarchyDemo.CAPTIONS) {
+			cap.innerHTML = c;
+			const h = cap.offsetHeight;
+			if (h > max) max = h;
+		}
+		cap.innerHTML = prev;
+		if (max > 0) cap.style.minHeight = max + 'px';
 	},
 
 	// ---------------------------------------------------------------

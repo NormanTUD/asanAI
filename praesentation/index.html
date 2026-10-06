@@ -69,7 +69,58 @@
         </div>
 
         <div class="key-insight fragment" data-nofast>
-            Klassisch: <b>Regeln → Programm</b> · Lernen: <b>Beispiele → Regeln</b>.
+            Klassisch: <b>Regeln → Programm</b><br>
+            Lernen: <b>Beispiele → Regeln</b>.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Folie 4: Geschichte ==================== -->
+<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
+    <div class="slide-content">
+        <h2>Die ersten künstlichen neuronalen Netze</h2>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items:start;">
+            <div>
+                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/mcculloch.png" alt="Warren McCulloch" />
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/pitts.jpg" alt="Walter Pitts" />
+                </div>
+                <p style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
+
+<div style="text-align:center">
+                <img style="max-width:100%; max-height:22vh; border-radius:8px;" src="img/snarc.jpg" alt="SNARC" />
+                </div>
+                <p style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
+            </div>
+
+            <div class="fragment" data-nofast>
+                <div class="key-insight" style="font-size:0.95em;">
+                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf M&amp;P auf · klassifiziert Buchstaben.
+                </div>
+
+                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/perceptron2.jpg" alt="Das Perceptron" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== Folie 5: ReLU Stückelung Demo ==================== -->
+<div class="slide" id="slide-stueckelung" data-title="Wie funktionieren Neuronale Netzwerke?">
+    <div class="slide-content">
+        <h2>Wie funktionieren Neuronale Netzwerke?</h2>
+        <div class="demo-box">
+            <p>Mit genug Neuronen → jede stetige Funktion beliebig genau.</p>
+            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+                <label style="font-weight:bold;">Zielfunktion: <span class="mono">sin(x)</span></label>
+                <label style="font-weight:bold; margin-left:12px;">Gesamtanzahl Neuronen:</label>
+                <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
+                <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
+            </div>
+            <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
         </div>
     </div>
 </div>
@@ -123,56 +174,6 @@
 
         <div class="key-insight fragment" data-nofast>
             <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b> (per Stückelung).
-        </div>
-    </div>
-</div>
-
-<!-- ==================== Folie 4: Geschichte ==================== -->
-<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
-    <div class="slide-content">
-        <h2>Die ersten künstlichen neuronalen Netze</h2>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items:start;">
-            <div>
-                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/mcculloch.png" alt="Warren McCulloch" />
-                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/pitts.jpg" alt="Walter Pitts" />
-                </div>
-                <p style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
-
-<div style="text-align:center">
-                <img style="max-width:100%; max-height:22vh; border-radius:8px;" src="img/snarc.jpg" alt="SNARC" />
-                </div>
-                <p style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
-            </div>
-
-            <div class="fragment" data-nofast>
-                <div class="key-insight" style="font-size:0.95em;">
-                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf M&amp;P auf · klassifiziert Buchstaben.
-                </div>
-
-                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
-                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
-                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/perceptron2.jpg" alt="Das Perceptron" />
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== Folie 5: ReLU Stückelung Demo ==================== -->
-<div class="slide" id="slide-stueckelung" data-title="Stückelung">
-    <div class="slide-content">
-        <h2>Funktionsapproximation durch Stückelung</h2>
-        <div class="demo-box">
-            <p>Mit genug Neuronen → jede stetige Funktion beliebig genau.</p>
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-weight:bold;">Zielfunktion: <span class="mono">sin(x)</span></label>
-                <label style="font-weight:bold; margin-left:12px;">Gesamtanzahl Neuronen:</label>
-                <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
-                <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
-            </div>
-            <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
         </div>
     </div>
 </div>
@@ -275,6 +276,10 @@
 <div class="slide" id="slide-convolution" data-title="Was sind Convolutions?">
     <div class="slide-content">
         <h2>Was sind Convolutions?</h2>
+
+        <p style="max-width:1000px; margin:0 auto 10px; text-align:center;">
+            <b>Dense</b> war der eine Baustein. Es gibt aber noch andere — z.&nbsp;B. <b>Convolutions</b> (Faltungen).
+        </p>
 
         <div class="conv-layout">
             <div class="conv-panel">

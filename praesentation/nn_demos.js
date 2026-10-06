@@ -237,7 +237,7 @@ const NNStepDemo = (() => {
     function isOnStückelungSlide() {
         const activeSlide = document.querySelector('.slide.active');
         if (!activeSlide) return false;
-        return activeSlide.getAttribute('data-title') === 'Stückelung';
+        return activeSlide.getAttribute('data-title') === 'Wie funktionieren Neuronale Netzwerke?';
     }
 
     function finalStep() {
