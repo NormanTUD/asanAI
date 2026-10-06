@@ -1,5 +1,5 @@
 /* ============================================================
-   HIERARCHIE — vom Foto zum Stoppschild
+   HIERARCHIE — Convolutions: Strukturen in Bildern finden
    Echte Convolution auf img/stop_sign.jpg mit den Sobel-Kerneln
    aus blog/computer_vision.js (wie im Vision-Lab):
      ein Filter pro Kantenrichtung, einzeln gezeigt

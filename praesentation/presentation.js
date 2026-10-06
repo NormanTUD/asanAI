@@ -56,7 +56,8 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Vom Foto zum Stoppschild" (hierarchy.js) — echte Convolution
+                // "Convolutions: Strukturen in Bildern finden" (hierarchy.js)
+                // — echte Convolution
                 // auf stop_sign.jpg: jeder Filter einzeln (0°, 90°, 45°, 315°)
                 // -> Kombination -> Ecken.
                 { id: 'hierarchy', ref: () => typeof HierarchyDemo !== 'undefined' ? HierarchyDemo : null,
