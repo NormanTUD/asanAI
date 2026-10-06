@@ -14,11 +14,14 @@ declare(strict_types=1);
 $base = __DIR__;
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-cache');
+if (!headers_sent()) { header('X-Content-Type-Options: nosniff'); }
 
 $slug = isset($_GET['lesson']) ? (string)$_GET['lesson'] : '';
-if (!preg_match('/^[a-z0-9_]+$/i', $slug)) {
+// Allow only [a-z0-9_] up to 64 chars: blocks path traversal (no '.', '/',
+// null bytes) and caps the string before any file join.
+if (!preg_match('/^[a-z0-9_]{1,64}$/i', $slug)) {
     http_response_code(400);
-    echo json_encode(['slug' => $slug, 'headings' => []]);
+    echo json_encode(['slug' => '', 'headings' => []]);
     exit;
 }
 
