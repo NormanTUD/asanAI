@@ -266,22 +266,22 @@ const SpaceMorph = (() => {
     // entfernt — die Geschichte endet bei "Der Raum wird zu einer Linie".
     const S = [
         { t: "Zwei Klassen, keine Gerade",
-            b: "Eine Wolke von Punkten in der Mitte, drumherum ein Ring. Mit einer einzelnen Geraden trennt man die beiden Farben nicht sauber.",
+            b: "Die Farben stehen für zwei Klassen, die wir trennen wollen. Die eine Gruppe liegt in der Mitte, die andere bildet einen Ring drumherum.",
             L: 0, A: 0, B: -1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Jeder Versuch scheitert",
-            b: "Jede Gerade schneidet den Ring — und trifft damit immer beide Farben. Der Ring schließt die innere Wolke ein: mit einer Linie kommt man nicht drumherum.",
+            b: "Egal wie man eine Gerade hinlegt, sie schneidet immer den Ring. So kann man die beiden Klassen nicht sauber trennen.",
             L: 0, A: 0, B: -1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
         { t: "Eine Dimension mehr Platz",
-            b: "Das 2D-Bild liegt jetzt flach unter uns, dazu kommt eine neue Achse nach oben (z). Damit entsteht Platz, in den der Layer die Daten ausheben kann — aber nur, wenn die Schicht mehr Neuronen hat als die Eingabe.",
+            b: "Die Lösung: Wir heben die 2D-Daten in eine dritte Dimension (z) an und verschieben die Punkte in der neuen Dimension. In der alten 2D-Ebene bleibt alles genau so wie vorher.",
             L: 0, A: 0.38, B: -0.62, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { t: "Der Layer krümmt den Raum",
-            b: "Das Gitter hebt sich zu einer Schüssel: die Mitte sinkt, der Rand steigt. Die innere Wolke bleibt tief, der äußere Ring rutscht nach oben. Dazwischen ist jetzt Platz zum Trennen.",
+            b: "Der Layer krümmt die Ebene zu einer Schale: die Mitte bleibt tief, der äußere Ring wird nach oben gezogen.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Eine Ebene passt dazwischen",
-            b: "Nur ein neues Objekt dazu: eine flache Ebene, die jetzt genau zwischen den beiden Gruppen durchpasst. Die Schüssel hat den Ring so hochgehoben, dass sie dazwischenkommt.",
+            b: "Eine flache Ebene passt jetzt genau dazwischen und trennt die beiden Gruppen sauber — die eine liegt darunter, die andere darüber.",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 1, pr: 0, box: 0 },
         { t: "Der Raum wird zu einer Linie",
-            b: "Am Ende wird alles auf eine Linie, also eine einzige Zahl, geknüllt. Die beiden Gruppen landen dabei an verschiedenen Stellen — so trennt am Schluss sogar eine einzige Zahl.",
+            b: "Am Ende projizieren wir alles auf eine Linie zurück (Rückprojektion). Durch diese geschickte Projektion sind die vorher nicht trennbaren Daten jetzt an einem einzigen Punkt sauber getrennt.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
     ];
 

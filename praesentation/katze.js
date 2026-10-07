@@ -1072,7 +1072,7 @@ const FlattenDemo = (() => {
 			{ k: 'Schritt 2', t: 'Der <em>Trick</em>: Flatten verliert<br>die Bildstruktur.',
 			  p: '<b>1024</b> Zahlen — eine flache Schnur',
 			  c: '<span class="kz-chip r">(1024,)</span>',
-			  i: 'Der Trick: Flatten verliert die Bildstruktur. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und globale Entscheidungen treffen („Auto? Katze?").' }
+			  i: 'Der Trick: Flatten verliert die Bildstruktur. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und globale Entscheidungen treffen („Hund? Katze?").' }
 		],
 
 		layoutFor(step, S) {
