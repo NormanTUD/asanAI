@@ -828,7 +828,7 @@ const ConvDemo = (() => {
 		prefix: 'conv',
 		steps: [
 			{ k: 'Schritt 1', t: 'Nehmen wir ein<br><em>Farbbild</em> einer Katze.',
-			  p: 'Jedes Pixel trägt Rot, Grün und Blau',
+			  p: 'Jedes Pixel besteht aus Werten für Rot, Grün und Blau',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
 			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
 			  p: 'Rot, Grün und Blau, drei eigene Zahlen-Raster',
