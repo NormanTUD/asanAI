@@ -4826,8 +4826,8 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "moscowpapyrus",
-   "img_flaming_heart"
+   "img_flaming_heart",
+   "moscowpapyrus"
   ],
   "cited_in": [
    "geometry_i",
@@ -7000,10 +7000,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "diffusion_ddim_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "diffusion_ddim_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -15155,6 +15155,76 @@
   ],
   "cited_in": [
    "history"
+  ]
+ },
+ {
+  "name": "F. Pierucci et al.",
+  "canon": "F. Pierucci",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2026.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pierucci2026xenointerpretability"
+  ],
+  "cited_in": [
+   "philosophy"
+  ]
+ },
+ {
+  "name": "Federico Thomas",
+  "canon": "Federico Thomas",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2008.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "thomas2008torres"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Teun Koetsier",
+  "canon": "Teun Koetsier",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2001.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "koetsier2001programmable"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Noel Sharkey",
+  "canon": "Noel Sharkey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2007.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "sharkey2007jazari",
+   "sharkey2007hero"
+  ],
+  "cited_in": [
+   "history",
+   "untold_history"
   ]
  },
  {
@@ -27771,10 +27841,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "eisgalgen_mittenwald",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "eisgalgen_mittenwald"
   ],
   "cited_in": [
    "ai_for_science",
@@ -34064,10 +34134,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "metropolis_hastings_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "metropolis_hastings_image"
   ],
   "cited_in": [
    "ai_for_science",
@@ -57898,10 +57968,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
-   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img"
+   "alphafold_protein_img",
+   "monte_carlo_animation_image"
   ],
   "cited_in": [
    "ai_for_science",

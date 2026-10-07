@@ -1,18 +1,162 @@
 [
- ["Yurii Nesterov", 55.75, 37.62, "Moscow, Russia", 1983, 1],
- ["John Duchi", 37.87, -122.26, "Berkeley, USA", 2011, 1],
- ["Elad Hazan", 31.91, 34.81, "Rehovot, Israel", 2019, 1],
- ["Yoram Singer", 31.91, 34.81, "Rehovot, Israel", 1999, 1],
- ["Matthew D. Zeiler", 43.65, -79.38, "Toronto, Canada", 2012, 1],
- ["Timothy Dozat", 37.87, -122.26, "Berkeley, USA", 2016, 1],
- ["Sashank J. Reddi", 37.39, -122.08, "Mountain View, USA", 2018, 1],
- ["Satyen Kale", 37.39, -122.08, "Mountain View, USA", 2018, 1],
- ["Sanjiv Kumar", null, null, "", 2020, 0],
- ["Ilya Loshchilov", 37.39, -122.08, "Mountain View, USA", 2019, 1],
- ["Frank Hutter", 50.0, 8.27, "Mainz, Germany", 2019, 1],
- ["Arman Rahim", null, null, "", 2020, 0],
- ["Ank Kumar", null, null, "", 2012, 0],
- ["Russell A. Kirsch", 38.89, -77.03, "Washington, USA", 1957, 1],
- ["Stanford University (Stanford Today magazine)", 37.43, -122.17, "Palo Alto, USA", 1963, 1],
- ["Donald Cooksey", null, null, "", 1940, 0]
+ [
+  "Yurii Nesterov",
+  55.75,
+  37.62,
+  "Moscow, Russia",
+  1983,
+  1
+ ],
+ [
+  "John Duchi",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2011,
+  1
+ ],
+ [
+  "Elad Hazan",
+  31.91,
+  34.81,
+  "Rehovot, Israel",
+  2019,
+  1
+ ],
+ [
+  "Yoram Singer",
+  31.91,
+  34.81,
+  "Rehovot, Israel",
+  1999,
+  1
+ ],
+ [
+  "Matthew D. Zeiler",
+  43.65,
+  -79.38,
+  "Toronto, Canada",
+  2012,
+  1
+ ],
+ [
+  "Timothy Dozat",
+  37.87,
+  -122.26,
+  "Berkeley, USA",
+  2016,
+  1
+ ],
+ [
+  "Sashank J. Reddi",
+  37.39,
+  -122.08,
+  "Mountain View, USA",
+  2018,
+  1
+ ],
+ [
+  "Satyen Kale",
+  37.39,
+  -122.08,
+  "Mountain View, USA",
+  2018,
+  1
+ ],
+ [
+  "Sanjiv Kumar",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "Ilya Loshchilov",
+  37.39,
+  -122.08,
+  "Mountain View, USA",
+  2019,
+  1
+ ],
+ [
+  "Frank Hutter",
+  50.0,
+  8.27,
+  "Mainz, Germany",
+  2019,
+  1
+ ],
+ [
+  "Arman Rahim",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "Ank Kumar",
+  null,
+  null,
+  "",
+  2012,
+  0
+ ],
+ [
+  "Russell A. Kirsch",
+  38.89,
+  -77.03,
+  "Washington, USA",
+  1957,
+  1
+ ],
+ [
+  "Stanford University (Stanford Today magazine)",
+  37.43,
+  -122.17,
+  "Palo Alto, USA",
+  1963,
+  1
+ ],
+ [
+  "Donald Cooksey",
+  null,
+  null,
+  "",
+  1940,
+  0
+ ],
+ [
+  "F. Pierucci et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Federico Thomas",
+  null,
+  null,
+  "",
+  2008,
+  0
+ ],
+ [
+  "Teun Koetsier",
+  null,
+  null,
+  "",
+  2001,
+  0
+ ],
+ [
+  "Noel Sharkey",
+  null,
+  null,
+  "",
+  2007,
+  0
+ ]
 ]

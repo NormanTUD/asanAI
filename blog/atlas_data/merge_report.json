@@ -126,11 +126,6 @@
  "author_repairs": {},
  "load_errors": [],
  "missing_files": [],
- "coverage_missing": [
-  "Federico Thomas",
-  "Teun Koetsier",
-  "Noel Sharkey",
-  "F. Pierucci et al."
- ],
+ "coverage_missing": [],
  "entity_dropped_refs": []
 }
