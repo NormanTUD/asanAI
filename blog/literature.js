@@ -12490,6 +12490,20 @@ window.bibData = {
 		url: "https://vanhoucke.medium.com/close-encounters-of-the-llm-kind-61323cef25d3",
 		alternativetitle: "The LLM as a swarm-like 'multi-polarity' of latent personas, not a singular identity"
 	},
+
+	/* ── Xeno-Interpretability (philosophy.php) ────────────────────────────
+	 * Pierucci et al. (2026): models may use internal distinctions for
+	 * which no adequate human concept exists ("xeno-representations");
+	 * the study of the human-interpretable complement is "xeno-interpretability".
+	 * arXiv:2609.20408.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"pierucci2026xenointerpretability": {
+		title: "Xeno-Interpretability: Investigating the Alien Minds of LLMs",
+		author: "F. Pierucci et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2609.20408",
+		alternativetitle: "The xeno-semantic space: model-native distinctions without an adequate human concept"
+	},
 	"nlab_group": {
 		title: "group",
 		author: "nLab contributors",
