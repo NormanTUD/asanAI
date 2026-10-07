@@ -109,9 +109,10 @@ const NeuronIntroViz = (() => {
         _apply(0);
     }
 
-    // Zustand merken/wiederherstellen (siehe NNStepDemo). Wichtig: 'revealed'
-    // und 'cur' müssen beide zurückkommen, sonst landet man beim
-    // Rückwärts-Navigieren auf Szene 0 statt auf der, die man verlassen hat.
+    // Zustand merken/wiederherstellen (presentation.js slideMemory).
+    // Wichtig: 'revealed' und 'cur' müssen beide zurückkommen, sonst landet
+    // man beim Rückwärts-Navigieren auf Szene 0 statt auf der, die man
+    // verlassen hat.
     function getState() { return { revealed, cur }; }
     function setState(st) {
         if (!st) return;

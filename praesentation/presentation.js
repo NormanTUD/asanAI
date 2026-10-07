@@ -397,7 +397,7 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
             slides = allSlides;
         }
 
-// ?fast=1: Stückelungs-Demo ohne Wellenform (nur Sinus-Schritte).
+        // ?fast=1: einfache Fragmente direkt anzeigen (statt schrittweise).
         // ?short=1: optionale Inhalte entfernt (data-short), siehe DOMContentLoaded.
         fastMode = new URLSearchParams(window.location.search).get('fast') === '1';
         shortMode = new URLSearchParams(window.location.search).get('short') === '1';
