@@ -28,14 +28,15 @@ const HierarchyDemo = {
 		{ name: 'schräg ↗', m: [[2, 1, 0], [1, 0, -1], [0, -1, -2]] },
 	],
 
-	// Die 6 Stationen: Original, dann jeder Filter einzeln, dann die Kombination.
+	// Die 6 Stationen: Original, dann jeder Filter einzeln, dann
+	// die Summe aller vier (die Erkennung: ganzes Stoppschild).
 	STAGES: [
 		{ id: 'orig', label: 'Original' },
 		{ id: 'f0', label: '0° · waagerechte Kante' },
 		{ id: 'f90', label: '90° · senkrechte Kante' },
 		{ id: 'f45', label: '45° · schräge Kante ↘' },
 		{ id: 'f315', label: '315° · schräge Kante ↗' },
-		{ id: 'ecken', label: 'Alle 4 → Ecken' },
+		{ id: 'ecken', label: 'Alle 4 addiert → Stoppschild' },
 	],
 
 	_step: 0,
@@ -144,6 +145,15 @@ const HierarchyDemo = {
 		const comb = new Float32Array(fw * fh);
 		for (const m of D._maps) for (let i = 0; i < comb.length; i++) comb[i] += m[i] * m[i];
 		D._combined = D._normalize(comb);
+
+		// Teilsummen fuer die Additions-Animation auf Station 5:
+		// nach Phase k sind die ersten k Filter addiert.
+		const acc = new Float32Array(fw * fh);
+		D._partial = [];
+		for (const m of D._maps) {
+			for (let i = 0; i < acc.length; i++) acc[i] += m[i] * m[i];
+			D._partial.push(D._normalize(new Float32Array(acc)));
+		}
 	},
 
 	// 'valid' Convolution, Betrag, ohne Rand
@@ -251,13 +261,62 @@ const HierarchyDemo = {
 		for (let i = 1; i <= 4 && s >= i; i++) {
 			D._paint('hier-canvas-' + D.STAGES[i].id, D._maps[i - 1], D._w - 2, D._h - 2);
 		}
-		// Station 5: alle vier Filter kombiniert
+		// Station 5: alle vier Filter kombiniert — mit
+		// Additions-Animation (Filter 1, dann +2, +3, +4).
 		if (s >= 5) {
-			D._paint('hier-canvas-ecken', D._combined, D._w - 2, D._h - 2);
+			D._startSumAnim();
+		} else {
+			D._cancelSum();
 		}
 
 		const cap = document.getElementById('hier-caption');
 		if (cap) cap.innerHTML = D.CAPTIONS[Math.min(s, D.CAPTIONS.length - 1)];
+	},
+
+	// ---------------------------------------------------------------
+	// Additions-Animation auf der letzten Station: die Kombi-Map
+	// baut sich Filter fur Filter auf, das jeweils hinzukommende
+	// Filter-Panel pulsiert. Zeigt, dass die Erkennung rechts die
+	// Summe der vier Teil-Sichten ist.
+	_SUM_PHASE_MS: 700,
+
+	_startSumAnim: function () {
+		const D = HierarchyDemo;
+		D._cancelSum();
+		const phases = D.KERNELS.length;
+		const t0 = performance.now();
+		const step = (ts) => {
+			if (D._step < 5) { D._sumRaf = null; D._restoreSumLabel(); return; }
+			const k = Math.min(phases, Math.floor((ts - t0) / D._SUM_PHASE_MS));
+			D._paint('hier-canvas-ecken', D._partial[k - 1], D._w - 2, D._h - 2);
+			D._setSumLabel(k);
+			document.querySelectorAll('.hier-panel').forEach((p, i) =>
+				p.classList.toggle('adding', i === k));
+			if (k < phases) D._sumRaf = requestAnimationFrame(step);
+			else { D._sumRaf = null; D._restoreSumLabel(); }
+		};
+		D._sumRaf = requestAnimationFrame(step);
+	},
+
+	_cancelSum: function () {
+		const D = HierarchyDemo;
+		if (D._sumRaf) { cancelAnimationFrame(D._sumRaf); D._sumRaf = null; }
+		document.querySelectorAll('.hier-panel.adding').forEach(p => p.classList.remove('adding'));
+		D._restoreSumLabel();
+	},
+
+	_setSumLabel: function (k) {
+		const D = HierarchyDemo;
+		const label = document.querySelector('.hier-panel[data-stage="ecken"] .hier-label');
+		if (!label) return;
+		const names = D.KERNELS.slice(0, k).map((_, i) => i + 1).join(' + ');
+		label.textContent = 'Filter ' + names + ' · ' + k + ' von 4';
+	},
+
+	_restoreSumLabel: function () {
+		const D = HierarchyDemo;
+		const label = document.querySelector('.hier-panel[data-stage="ecken"] .hier-label');
+		if (label) label.textContent = D.STAGES[5].label;
 	},
 
 	CAPTIONS: [
@@ -272,7 +331,10 @@ const HierarchyDemo = {
 		'zwei der vier Diagonalen des Oktogons.',
 		'<b>Filter 4 (315°)</b> auf die <b>andere</b> Diagonale ↗: ' +
 		'die restlichen zwei Kanten des Oktogons.',
-		'',
+		'<b>Alle vier zusammen — die Erkennung:</b> die Antworten der Filter ' +
+		'werden <b>addiert</b> (Filter 1 + 2 + 3 + 4). Jede Kantenrichtung ' +
+		'steuert ihren Teil bei — zusammen ergibt sich die <b>ganze Kontur</b> ' +
+		'des Stoppschilds.',
 	],
 
 	// Pfeiltasten — Haus-API (siehe katze.js):

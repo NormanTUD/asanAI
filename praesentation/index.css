@@ -103,7 +103,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 #slide-neuronales-netz-intro .formula-box { font-size: 1.18em; }
 #slide-neuronales-netz-intro .formula-box .math-display { font-size: 1.6em; }
 
-/* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
+/* Neuron-Intro-Animation (Slide "Was sind Dense Layer") */
 #nn-intro-anim {
 	position: relative;
 	min-height: 14em;
@@ -849,18 +849,22 @@ body.sel-mode .sel-check { display: inline-flex; }
 	width: max-content;
 	will-change: transform, opacity;
 }
+/* WICHTIG: kein display:flex — Flex würde jeden Textabschnitt zu einem
+   eigenen Flex-Item machen und die Leerzeichen dazwischen streichen,
+   dadurch klebten die Zahlen an den nächsten Wörtern. Block-Layout
+   behält den normalen Inline-Fluss (mit allen Leerzeichen) bei. */
 .kz-pill {
-	background: #f6f8fb;
-	border: 1px solid #eef0f4;
-	padding: 9px 20px;
-	border-radius: 99px;
-	font-size: 13.5px;
-	font-weight: 600;
-	color: #374151;
-	min-height: 40px;
-	display: flex;
-	align-items: center;
-	white-space: nowrap;
+    background: #f6f8fb;
+    border: 1px solid #eef0f4;
+    padding: 9px 20px;
+    border-radius: 99px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #374151;
+    min-height: 40px;
+    display: block;
+    text-align: center;
+    white-space: nowrap;
 }
 .kz-pill b {
 	color: #f43f5e;
@@ -1077,6 +1081,18 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 .hier-panel { opacity: 0.32; transition: opacity 0.35s ease; text-align: center; }
 .hier-panel.active { opacity: 1; }
+/* Additions-Animation (letzte Station): das gerade hinzukommende
+   Filter-Panel pulsiert, während seine Map in die Summe fließt. */
+.hier-panel.adding { opacity: 1; }
+.hier-panel.adding .hier-canvas-wrap {
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.9), 0 0 24px rgba(245, 158, 11, 0.5);
+    animation: hierAddPulse 0.7s ease;
+}
+@keyframes hierAddPulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.045); }
+    100% { transform: scale(1); }
+}
 .hier-canvas-wrap {
 	position: relative;
 	background: #0b1220;

@@ -166,10 +166,36 @@
         </div>
     </div>
 </div>
-<!-- ==================== Folie 6: Neuronales Netz Intro ==================== -->
-<div class="slide" id="slide-neuronales-netz-intro" data-title="Neuronales Netz Intro">
+<!-- ==================== Folie 6: Deep Learning ==================== -->
+<div class="slide" id="slide-deep-learning" data-title="Deep Learning">
     <div class="slide-content">
-        <h2>Was sind Neuronale Netzwerke?</h2>
+        <h2>Deep Learning</h2>
+
+        <div class="key-insight">
+  		Viele Neuronen nebeneinander & hintereinander · jede Schicht voll verdrahtet mit der vorherigen & nächsten.
+  	</div>
+
+	<div style="text-align:center">
+	<img class="fragment" src="img/dense.png" alt="Dicht verdrahtetes Netz" />
+	</div>
+
+        <div class="fragment">
+  		Früh: einfache Muster · später: darauf aufbauen.
+  	</div>
+
+        <div class="fragment">
+  		Beispiel Gesichtserkennung: kleine lokale Verläufe → immer komplexere Strukturen.
+  	</div>
+
+	<div style="text-align:center">
+	<img class="fragment" src="img/first_layers_vs_last_layers.png" alt="Erste und letzte Layer eines Convolutional Networks" />
+	</div>
+    </div>
+</div>
+<!-- ==================== Folie 7: Was sind Dense Layer ==================== -->
+<div class="slide" id="slide-neuronales-netz-intro" data-title="Was sind Dense Layer">
+    <div class="slide-content">
+        <h2>Was sind Dense Layer</h2>
 
         <div>
  		Netze <b>approximieren</b> Funktionen — <i>ähnlich genug</i>, um nützlich zu sein.
@@ -214,11 +240,11 @@
         </div>
 
         <div class="key-insight fragment" data-nofast>
-            <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b> (per Stückelung).
+            <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b>.
         </div>
     </div>
 </div>
-<!-- ==================== Folie 7: Layer als Raumkrümmung (space_morph) ==================== -->
+<!-- ==================== Folie 8: Layer als Raumkrümmung (space_morph) ==================== -->
 <div class="slide" id="slide-layer-als-raumkruemmung" data-title="Layer als Raumkrümmung">
     <div class="slide-content" style="background:#f8fafc;">
         <h2>Layer als Raumkrümmung</h2>
@@ -276,32 +302,6 @@
             </div>
         </div>
 
-    </div>
-</div>
-<!-- ==================== Folie 8: Deep Learning ==================== -->
-<div class="slide" id="slide-deep-learning" data-title="Deep Learning">
-    <div class="slide-content">
-        <h2>Deep Learning</h2>
-
-        <div class="key-insight">
- 		Viele Neuronen nebeneinander & hintereinander · jede Schicht voll verdrahtet mit der vorherigen & nächsten.
- 	</div>
-
-	<div style="text-align:center">
-	<img class="fragment" src="img/dense.png" alt="Dicht verdrahtetes Netz" />
-	</div>
-
-        <div class="fragment">
- 		Früh: einfache Muster · später: darauf aufbauen.
- 	</div>
-
-        <div class="fragment">
- 		Beispiel Gesichtserkennung: kleine lokale Verläufe → immer komplexere Strukturen.
- 	</div>
-
-	<div style="text-align:center">
-	<img class="fragment" src="img/first_layers_vs_last_layers.png" alt="Erste und letzte Layer eines Convolutional Networks" />
-	</div>
     </div>
 </div>
 <!-- ==================== Folie 9: Convolutions: Strukturen in Bildern finden ==================== -->

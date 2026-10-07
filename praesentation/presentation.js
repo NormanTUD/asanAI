@@ -73,7 +73,7 @@ const DemoRegistry = (() => {
 
                 { id: 'neuron-intro', ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
                         guard: d => d.isOnIntroSlide(),
-                        slideTest: s => s.getAttribute('data-title') === 'Neuronales Netz Intro',
+                        slideTest: s => s.getAttribute('data-title') === 'Was sind Dense Layer',
                         onEnter: d => d.reset() },
 
                 { id: 'typewriter', ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
@@ -240,7 +240,7 @@ const FragmentActions = {
 	    backward: (frag) => resetTypewriter(frag),
 	},
 
-	// "Was sind Neuronale Netzwerke?" – 2 Szenen manuell (Pfeiltaste weiter/rückwärts)
+	// "Was sind Dense Layer" – 2 Szenen manuell (Pfeiltaste weiter/rückwärts)
 	'neuron-intro-anim': {
 	    forward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.start(); },
 	    backward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.hideFragment(); },

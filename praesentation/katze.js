@@ -383,16 +383,18 @@ const ConvDemo = (() => {
 	// JEDE 8×8-Zelle von mindestens einem Anker überdeckt wird:
 	//   Abdeckung von (lfr, lfc) gilt für Anker (afr, afc) mit
 	//   afr ≤ lfr ≤ afr+KH-1 und afc ≤ lfc ≤ afc+KW-1.
-	const ANCH_ROW = [0, 5, 11, 16, 21, 26];
-	const ANCH_COL = [0, 4, 9, 14, 18, 23, 27];
+	// Die Anker umfassen exakt (fr=10, fc=4) und (fr=10, fc=19) —
+	// dort deckt das 6×5-Fenster die Augen (Zeilen 10–15) pixelgenau ab.
+	const ANCH_ROW = [0, 5, 10, 16, 21, 26];
+	const ANCH_COL = [0, 4, 9, 14, 18, 19, 23, 27];
 	const ANCHORS = [];
 	for (let ar = 0; ar < ANCH_ROW.length; ar++)
 		for (let ac = 0; ac < ANCH_COL.length; ac++) {
 			const col = ar % 2 === 0 ? ac : ANCH_COL.length - 1 - ac;
 			ANCHORS.push({ fr: ANCH_ROW[ar], fc: ANCH_COL[col] });
 		}
-	const ANCH = ANCHORS.length; // 42
-	const SW_DWELL = 8, SW_MOVE = 8; // 60-FPS-Einheiten (~0.13 s / ~0.13 s)
+	const ANCH = ANCHORS.length; // 48
+	const SW_DWELL = 5, SW_MOVE = 6; // 60-FPS-Einheiten (~0.08 s / ~0.10 s)
 
 	// Segment-Zeitleiste: Segment 2i = Halten an Anker i,
 	// Segment 2i+1 = Fahrt Anker i → i+1.
@@ -446,7 +448,11 @@ const ConvDemo = (() => {
 			for (let ai = 0; ai < ANCH; ai++) {
 				const a = ANCHORS[ai];
 				const t = SEG_T[2 * ai] + SW_DWELL * 0.5;
-				if (tLit8[i8] < 0 && lfr !== null && covers(a.fr, a.fc, lfr, lfc, KH, KW))
+				// Leuchten erst, wenn das Fenster selbst voll auf der Form
+				// passt (Score ≥ TH) UND den Leuchtpunkt überdeckt — nicht
+				// schon beim bloßen Berühren.
+				const strong = SCORES[a.fr * OW + a.fc] >= TH;
+				if (tLit8[i8] < 0 && lfr !== null && strong && covers(a.fr, a.fc, lfr, lfc, KH, KW))
 					tLit8[i8] = t;
 				if (tFull8[i8] < 0 && covers(a.fr, a.fc, cfr, cfc, KH, KW))
 					tFull8[i8] = t;
@@ -509,7 +515,7 @@ const ConvDemo = (() => {
 					ok = false; why = `Fenster ≠ Pixelblock an (${a.fr}, ${a.fc})`; break;
 				}
 			}
-			res.push({ name: 'G1 Gitter: Fenster sitzt exakt auf KW×KH Pixeln an allen Ankern', pass: ok, detail: why || '42/42 Anker pixelgenau' });
+			res.push({ name: 'G1 Gitter: Fenster sitzt exakt auf KW×KH Pixeln an allen Ankern', pass: ok, detail: why || ANCH + '/' + ANCH + ' Anker pixelgenau' });
 		}
 
 		// G2: Grenzen
@@ -591,12 +597,18 @@ const ConvDemo = (() => {
 				if (shouldLit !== (LIT8[i8] >= 0)) { ok = false; why = `Zelle (${R},${C}): Leuchtpunkt ≠ Max-Score`; break; }
 				if (shouldLit && tLit8[i8] < 0) { ok = false; why = `Zelle (${R},${C}) wird nie überdeckt`; break; }
 				if (tFull8[i8] < 0) { ok = false; why = `Zelle (${R},${C}) wird nie gefüllt`; break; }
-				// Zeit = erste Anker-Halte mit Abdeckung (unabhängig nachrechnen)
+				// Zeit = erste Anker-Halte mit vollem Treffer und Abdeckung
+				// (unabhängig nachrechnen)
 				if (shouldLit) {
 					const lit = LIT8[i8], lfr = (lit / OW) | 0, lfc = lit % OW;
 					let first = -1;
-					for (let ai = 0; ai < ANCH; ai++)
-						if (covers(ANCHORS[ai].fr, ANCHORS[ai].fc, lfr, lfc)) { first = SEG_T[2 * ai] + SW_DWELL * 0.5; break; }
+					for (let ai = 0; ai < ANCH; ai++) {
+						const a = ANCHORS[ai];
+						if (SCORES[a.fr * OW + a.fc] >= TH && covers(a.fr, a.fc, lfr, lfc)) {
+							first = SEG_T[2 * ai] + SW_DWELL * 0.5;
+							break;
+						}
+					}
 					if (Math.abs(tLit8[i8] - first) > 1e-9) { ok = false; why = `Zelle (${R},${C}): Leuchtzeit weicht ab`; break; }
 				}
 			}
@@ -631,37 +643,28 @@ const ConvDemo = (() => {
 	let kerA = 0, tKerA = 0;
 	let outA = 0, tOutA = 0;
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
-	let grayA = 0, tGrayA = 0, zoomA = 0, tZoomA = 0;
+	let zoomA = 0, tZoomA = 0;
 	const KC = 24; // Filter-Panel: Zellgröße in px
 
 	// Schritt 2: Beispiel-Pixel — oberes linkes Auge (Zeile 10, Spalte 4).
 	const ZR = 10, ZC = 4;
 	const ZVAL = KatzeKit.GREEN[ZR * KatzeKit.N + ZC];
 
-	// Graustufen-Katze (Grün-Kanal als Grauwert, wie im Flatten-Schritt)
-	// mit Rahmen. Gezeichnet an der Geometrie von inst[0].
+	// Rahmen der Graustufen-Katze. Die Katze selbst ist der Grün-Kanal
+	// (inst[PICK]), der ab Schritt 2 grau gemischt wird und in Schritt 3
+	// an diese Position fliegt — gezeichnet an seiner Geometrie.
 	function drawGrayCat(ctx, S) {
-		const o = S.inst[0];
-		if (grayA < 0.01 || o.a < 0.005) return;
-		ctx.globalAlpha = grayA * o.a;
-		const N = KatzeKit.N, s = o.s;
-		for (let r = 0; r < N; r++) {
-			const y = o.y + r * s, yh = Math.ceil(y + s) - Math.floor(y);
-			for (let c = 0; c < N; c++) {
-				const v = KatzeKit.GREEN[r * N + c];
-				const x = o.x + c * s, xw = Math.ceil(x + s) - Math.floor(x);
-				ctx.fillStyle = `rgb(${v},${v},${v})`;
-				ctx.fillRect(Math.floor(x), Math.floor(y), xw, yh);
-			}
-		}
+		const o = S.inst[KatzeKit.PICK];
+		if (o.a < 0.005) return;
+		ctx.globalAlpha = o.a;
 		ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
-		ctx.strokeRect(o.x + .5, o.y + .5, N * o.s - 1, N * o.s - 1);
+		ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
 		ctx.globalAlpha = 1;
 	}
 
 	// Zoom-Panel: das Beispiel-Pixel vergrößert + Wert + 0–255-Skala.
 	function drawPixelZoom(ctx, S) {
-		const o = S.inst[0];
+		const o = S.inst[KatzeKit.PICK];
 		if (zoomA < 0.01 || S.zoomX == null) return;
 		const N = KatzeKit.N, zw = 230, zh = 250;
 		const zx = S.zoomX, zy = S.zoomY;
@@ -831,13 +834,13 @@ const ConvDemo = (() => {
 			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
 			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
-			  p: 'Die grüne Farbe war nur Deko — es sind reine Zahlen',
+			  p: 'Wie hell der Pixel ist, sagt, wie stark <b>Grün</b> aktiviert ist',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
 			{ k: 'Schritt 4', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
 			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
-			  p: 'Schwarz = 0 · Gelb = 255 — auch der Filter ist nur Zahlen',
+			  p: 'Die Form des Auges, als Muster aus 6 × 5 Werten',
 			  c: '<span class="kz-chip">(6, 5)</span>' },
 			{ k: 'Schritt 6', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
 			  p: `Punkt <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
@@ -876,15 +879,19 @@ const ConvDemo = (() => {
 				tTagA = step === 1 ? [1, 1, 1] : [0, 1, 0];
 				S.tGrayMix = step === 2 ? 1 : 0;
 			} else if (step === 3) {
-				// Graustufen-Katze links, Zoom-Pixel rechts.
+				// Der Grün-Kanal (aus Schritt 2, bereits grau gemischt)
+				// fliegt aus der Mitte nach links — Bewegung statt
+				// Fade-Out. Zoom-Pixel rechts.
 				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .5, 10);
 				const zw = 230, zh = 250, gap = 90;
 				const x0 = (W - (KatzeKit.N * cs + gap + zw)) / 2;
 				inst.forEach((o, i) => {
 					o.ts = cs; o.tx = x0; o.ty = (H - KatzeKit.N * cs) / 2 + 6;
-					o.tmix = i === 0 ? 0 : 1; o.ta = i === 0 ? 1 : 0;
+					o.tmix = i === KatzeKit.PICK ? 1 : 0;
+					o.ta = i === KatzeKit.PICK ? 1 : 0;
 				});
 				tTagA = [0, 0, 0];
+				S.tGrayMix = 1;
 				S.zoomX = x0 + KatzeKit.N * cs + gap;
 				S.zoomY = (H - zh) / 2;
 			} else {
@@ -900,7 +907,6 @@ const ConvDemo = (() => {
 			}
 			tKerA = step <= 3 ? 0 : (step >= 7 ? .45 : 1);
 			tOutA = step >= 5 ? 1 : 0;
-			tGrayA = step === 3 ? 1 : 0;
 			tZoomA = step === 3 ? 1 : 0;
 		},
 
@@ -911,7 +917,6 @@ const ConvDemo = (() => {
 		tick(dt, k, S, setFoot) {
 			kerA = KatzeKit.lerp(kerA, tKerA, k * 1.2);
 			outA = KatzeKit.lerp(outA, tOutA, k * 1.2);
-			grayA = KatzeKit.lerp(grayA, tGrayA, k * 1.2);
 			zoomA = KatzeKit.lerp(zoomA, tZoomA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
 			if (S.step !== 6) return;
@@ -950,9 +955,8 @@ const ConvDemo = (() => {
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				KatzeKit.drawTags(ctx, S, tagA);
 			} else if (S.step === 3) {
-				// Die Grün-Katze (inst[1]) fliegt zur Katzen-Position
-				// und fadet aus; die Graustufen-Katze (inst[0] +
-				// Grau-Overlay) fliegt an ihre Stelle.
+				// Der Grün-Kanal (inst[PICK], bereits grau gemischt)
+				// fliegt aus der Kanal-Mitte nach links — nicht ausblenden.
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				drawGrayCat(ctx, S);
 				drawPixelZoom(ctx, S);
@@ -1115,13 +1119,18 @@ const FlattenDemo = (() => {
 // PipelineDemo — "Der gesamte Prozess" (am Ende der Deck)
 //
 // Bild → Layer 1 (Verläufe) → Layer 2 (Augen/Nase/Mund-Maps)
-// → Dense-Layer → zwei Ausgabe-Neuronen. Jeder Layer reduziert
-// die Information des Bilds stück für stück auf das Wesentliche
-// (Katze/Hund). Das Netz startet blind (50:50, Loss 0,693 — es
-// RÄT blind); im Training sinkt der Loss (Ziel: niedriger, nicht
-// 0) und das Katzen-Neuron wird am aktivsten (95 %).
-// 7 Schritte: Bild · Layer 1 (Verläufe) · Layer 2 (Augen/Nase/
-// Mund) · Dense · 50:50 (Loss) · Training (Loss sinkt) · Antwort
+// → Dense-Layer (farbig, Feature-Punkte) → zwei
+// Ausgabe-Neuronen. Layer 1 bleibt sichtbar, wenn Layer 2
+// erscheint — die Daten fließen sichtbar von Layer 1 in
+// Layer 2 (Punkte auf den Pfeilen). Jeder Layer reduziert
+// die Information des Bilds stück für stück auf das
+// Wesentliche (Katze/Hund). Das Netz startet blind
+// (50:50, Loss 0,693 — es RÄT blind); im Training sinkt der
+// Loss (Ziel: niedriger, nicht 0) und das Katzen-Neuron wird
+// am aktivsten (95 %).
+// 7 Schritte: Bild ("Und jetzt alles zusammen") · Layer 1
+// (Verläufe) · Layer 2 (Augen/Nase/Mund, Layer 1 bleibt) ·
+// Dense · 50:50 (Loss) · Training (Loss sinkt) · Antwort
 // (95 %).
 // ============================================================
 const PipelineDemo = (() => {
@@ -1152,6 +1161,7 @@ const PipelineDemo = (() => {
 	let aOut = 0, tOutA = 0;
 	let aLoss = 0, tLossA = 0;
 	let trainP = 0, trainMsg = 0;
+	let flowT = 0; // Laufzeit für den Datenfluss Layer 1 → Layer 2
 
 	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
@@ -1285,11 +1295,28 @@ const PipelineDemo = (() => {
 		const cols = 5, rows = 9;
 		const dx0 = x + 20, dy0 = y + 22;
 		const ddx = (w - 40) / (cols - 1), ddy = (h - 62) / (rows - 1);
-		ctx.fillStyle = '#94a3b8';
+		// Farbiges Punktraster (Blau → Violett), nicht grau.
 		for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+			const hue = 205 + ((r * cols + c) / (rows * cols - 1)) * 110;
+			ctx.fillStyle = `hsl(${hue}, 42%, 72%)`;
 			ctx.beginPath();
 			ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
 			ctx.fill();
+		}
+		// Hervorgehobene Punkte: dort, wo Augen, Nase und Mund
+		// (die Layer-2-Strukturen) in den Dense-Layer fließen.
+		const feat = [[1, 1], [1, 3], [4, 2], [6, 2]];
+		for (const [r, c] of feat) {
+			const cx = dx0 + c * ddx, cy = dy0 + r * ddy;
+			const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, 9);
+			g.addColorStop(0, 'rgba(76,175,80,.5)');
+			g.addColorStop(1, 'rgba(76,175,80,0)');
+			ctx.fillStyle = g;
+			ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fill();
+			ctx.fillStyle = '#4caf50';
+			ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
+			ctx.strokeStyle = '#2e7d32'; ctx.lineWidth = 1.5;
+			ctx.stroke();
 		}
 		ctx.fillStyle = '#475569';
 		ctx.font = '700 15px Inter, system-ui, sans-serif';
@@ -1327,7 +1354,7 @@ const PipelineDemo = (() => {
 		slideId: 'slide-pipeline',
 		prefix: 'pipe',
 		steps: [
-			{ k: 'Schritt 1', t: 'Wir starten mit<br><em>einem Bild</em>.',
+			{ k: 'Schritt 1', t: 'Und jetzt<br><em>alles zusammen</em>.',
 			  p: '32 × 32 Pixel — die Katze',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
 			{ k: 'Schritt 2', t: 'Layer 1: Filter finden<br><em>Verläufe</em>.',
@@ -1364,7 +1391,9 @@ const PipelineDemo = (() => {
 			});
 			tCatA = 1;
 			tConvA = step >= 1 ? 1 : 0;
-			tEdgeA = step === 1 ? 1 : 0;
+			// Layer 1 bleibt sichtbar, wenn Layer 2 erscheint — die
+			// Daten fließen von Layer 1 in Layer 2.
+			tEdgeA = step >= 1 ? 1 : 0;
 			tPartA = step >= 2 ? 1 : 0;
 			tDenseA = step >= 3 ? 1 : 0;
 			tOutA = step >= 4 ? 1 : 0;
@@ -1383,6 +1412,7 @@ const PipelineDemo = (() => {
 			aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
 			aOut = KatzeKit.lerp(aOut, tOutA, k * 1.5);
 			aLoss = KatzeKit.lerp(aLoss, tLossA, k * 1.5);
+			flowT += dt;
 			if (S.step !== 5) return;
 			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
@@ -1406,21 +1436,27 @@ const PipelineDemo = (() => {
 			const ch = 32 * cat.s;
 
 			const ms = 12;
-			const mapX = 30 + ch + 48;
-			const mapY0 = (H - (3 * 8 * ms + 2 * 22)) / 2;
-			const mapYs = [mapY0, mapY0 + 8 * ms + 22, mapY0 + 2 * (8 * ms + 22)];
-			const denseX = mapX + 8 * ms + 48;
+			const mapW = 8 * ms;
+			const mapX1 = 30 + ch + 48;
+			const mapY0 = (H - (3 * mapW + 2 * 22)) / 2;
+			const mapYs = [mapY0, mapY0 + mapW + 22, mapY0 + 2 * (mapW + 22)];
+			const mapX2 = mapX1 + mapW + 64;
+			const denseX = mapX2 + mapW + 48;
 			const denseW = 120, denseH = H * .62, denseY = (H - denseH) / 2;
 			const nCx = denseX + denseW + 80;
 			const rN = Math.min(H * .14, 44);
 
 			const cyMid = H / 2;
 
-			// Pfeile (mit dem Stage, das sie „anschalten")
+			// Pfeile: Katze → Layer 1, Layer 1 → Layer 2 (pro Reihe),
+			// Layer 2 → Dense, Dense → Neuronen.
 			MAPS.forEach((m, i) => {
-				arrow(ctx, 30 + ch + 6, cyMid, mapX - 10, mapYs[i] + 4 * ms, aConv);
+				arrow(ctx, 30 + ch + 6, cyMid, mapX1 - 10, mapYs[i] + 4 * ms, aConv);
 			});
-			arrow(ctx, mapX + 8 * ms + 10, cyMid, denseX - 10, cyMid, aDense);
+			MAPS.forEach((m, i) => {
+				arrow(ctx, mapX1 + mapW + 10, mapYs[i] + 4 * ms, mapX2 - 10, mapYs[i] + 4 * ms, aPart);
+			});
+			arrow(ctx, mapX2 + mapW + 10, cyMid, denseX - 10, cyMid, aDense);
 			arrow(ctx, denseX + denseW + 10, cyMid, nCx - rN - 10, H * .32, aOut);
 			arrow(ctx, denseX + denseW + 10, cyMid, nCx - rN - 10, H * .74, aOut);
 
@@ -1433,22 +1469,47 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 			}
 
-			// Feature-Maps: Layer 1 = Verläufe (Schritt 2),
-			// Layer 2 = Augen/Nase/Mund (Schritt 3+), Crossfade.
-			const aSlot = Math.max(aEdge, aPart);
-			if (aSlot > 0.01) {
-				ctx.globalAlpha = aSlot;
+			// Layer 1 = Verläufe (Schritt 2) — bleibt stehen, wenn
+			// Layer 2 erscheint.
+			if (aConv > 0.01) {
+				ctx.globalAlpha = aConv;
 				ctx.fillStyle = '#64748b';
 				ctx.font = '800 13px Inter, system-ui, sans-serif';
 				ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-				ctx.fillText(S.step === 1 ? 'Layer 1' : 'Layer 2', mapX - 5, mapY0 - 22);
+				ctx.fillText('Layer 1 · Verläufe', mapX1 - 5, mapY0 - 22);
 				ctx.globalAlpha = 1;
+				for (let i = 0; i < 3; i++) {
+					drawMapSlot(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].label, aConv);
+					drawMapLit(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge);
+				}
 			}
-			for (let i = 0; i < 3; i++) {
-				drawMapSlot(ctx, mapX, mapYs[i], ms,
-					S.step === 1 ? EDGE_MAPS[i].label : MAPS[i].label, aSlot);
-				drawMapLit(ctx, mapX, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge);
-				drawMapLit(ctx, mapX, mapYs[i], ms, MAPS[i].lit, aPart);
+
+			// Layer 2 = zusammengesetzte Strukturen (Schritt 3+): die
+			// Daten von Layer 1 fließen hinein.
+			if (aPart > 0.01) {
+				ctx.globalAlpha = aPart;
+				ctx.fillStyle = '#64748b';
+				ctx.font = '800 13px Inter, system-ui, sans-serif';
+				ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+				ctx.fillText('Layer 2 · Augen, Nase, Mund', mapX2 - 5, mapY0 - 22);
+				ctx.globalAlpha = 1;
+				for (let i = 0; i < 3; i++) {
+					drawMapSlot(ctx, mapX2, mapYs[i], ms, MAPS[i].label, aPart);
+					drawMapLit(ctx, mapX2, mapYs[i], ms, MAPS[i].lit, aPart);
+				}
+				// Datenfluss: Punkte wandern die Pfeile Layer 1 → Layer 2 entlang.
+				const fx0 = mapX1 + mapW + 14, fx1 = mapX2 - 14;
+				for (let i = 0; i < 3; i++) {
+					const y = mapYs[i] + 4 * ms;
+					for (let d = 0; d < 3; d++) {
+						const t = (flowT / 60 * .9 + d / 3 + i * .13) % 1;
+						const x = KatzeKit.lerp(fx0, fx1, t);
+						ctx.globalAlpha = aPart * (0.2 + 0.6 * Math.sin(Math.PI * t));
+						ctx.fillStyle = '#4caf50';
+						ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+					}
+				}
+				ctx.globalAlpha = 1;
 			}
 
 			// Dense
