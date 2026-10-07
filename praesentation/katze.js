@@ -824,7 +824,7 @@ const ConvDemo = (() => {
 		slideId: 'slide-convolution',
 		prefix: 'conv',
 		steps: [
-			{ k: 'Schritt 1', t: 'Das Bild ist ein<br><em>Farbbild</em>.',
+			{ k: 'Schritt 1', t: 'Nehmen wir ein<br><em>Farbbild</em> einer Katze.',
 			  p: 'Jedes Pixel trägt Rot, Grün und Blau',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
 			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
@@ -1114,13 +1114,15 @@ const FlattenDemo = (() => {
 // ============================================================
 // PipelineDemo — "Der gesamte Prozess" (am Ende der Deck)
 //
-// Bild → Convolutions (erst Verläufe, dann Augen/Nase/Mund-Maps)
-// → Dense-Layer → zwei Ausgabe-Neuronen. Das Netz startet blind
-// (50:50, Loss 0,693 — es RÄT blind); im Training sinkt der Loss
-// (Ziel: niedriger, nicht 0) und das Katzen-Neuron wird am
-// aktivsten (95 %).
-// 7 Schritte: Bild · Verläufe · Augen/Nase/Mund · Dense ·
-// 50:50 (Loss) · Training (Loss sinkt) · Antwort (95 %).
+// Bild → Layer 1 (Verläufe) → Layer 2 (Augen/Nase/Mund-Maps)
+// → Dense-Layer → zwei Ausgabe-Neuronen. Jeder Layer reduziert
+// die Information des Bilds stück für stück auf das Wesentliche
+// (Katze/Hund). Das Netz startet blind (50:50, Loss 0,693 — es
+// RÄT blind); im Training sinkt der Loss (Ziel: niedriger, nicht
+// 0) und das Katzen-Neuron wird am aktivsten (95 %).
+// 7 Schritte: Bild · Layer 1 (Verläufe) · Layer 2 (Augen/Nase/
+// Mund) · Dense · 50:50 (Loss) · Training (Loss sinkt) · Antwort
+// (95 %).
 // ============================================================
 const PipelineDemo = (() => {
 	'use strict';
@@ -1328,12 +1330,14 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 1', t: 'Wir starten mit<br><em>einem Bild</em>.',
 			  p: '32 × 32 Pixel — die Katze',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
-			{ k: 'Schritt 2', t: 'Die ersten Filter finden<br><em>Verläufe</em>.',
+			{ k: 'Schritt 2', t: 'Layer 1: Filter finden<br><em>Verläufe</em>.',
 			  p: 'Waagerecht, senkrecht, diagonal — Kanten',
-			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>' },
-			{ k: 'Schritt 3', t: 'Daraus: <em>Augen, Nase, Mund</em>.',
-			  p: 'Weitere Filter kombinieren Verläufe zu Formen',
-			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>' },
+			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
+			  i: 'Im Bild steckt die Antwort <b>Katze/Hund</b> schon — versteckt unter tausend Details (kleiner Hund, schwarz-weiße, orange Katze …). Wir wollen nur <b>das eine</b>. <b>Layer 1</b> reduziert die Information: weg mit dem Unwichtigen, übrig bleiben die Verläufe.' },
+			{ k: 'Schritt 3', t: 'Layer 2: Daraus entstehen<br><em>Augen, Nase, Mund</em>.',
+			  p: 'Filter kombinieren Verläufe zu Formen',
+			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
+			  i: '<b>Layer 2</b> reduziert weiter — stück für stück: aus Verläufen werden Formen. Mit jedem Layer schrumpft das „alles Mögliche" hin zum Wesentlichen: <b>Katze oder Hund?</b>' },
 			{ k: 'Schritt 4', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
 			  p: '64 Zahlen pro Karte — dicht verdrahtet',
 			  c: '<span class="kz-chip g">3 × (8, 8)</span><span class="kz-arrow">→</span><span class="kz-chip r">Dense</span>' },
@@ -1429,9 +1433,17 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 			}
 
-			// Feature-Maps: Stufe 1 = Verläufe (Schritt 2),
-			// Stufe 2 = Augen/Nase/Mund (Schritt 3+), Crossfade.
+			// Feature-Maps: Layer 1 = Verläufe (Schritt 2),
+			// Layer 2 = Augen/Nase/Mund (Schritt 3+), Crossfade.
 			const aSlot = Math.max(aEdge, aPart);
+			if (aSlot > 0.01) {
+				ctx.globalAlpha = aSlot;
+				ctx.fillStyle = '#64748b';
+				ctx.font = '800 13px Inter, system-ui, sans-serif';
+				ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+				ctx.fillText(S.step === 1 ? 'Layer 1' : 'Layer 2', mapX - 5, mapY0 - 22);
+				ctx.globalAlpha = 1;
+			}
 			for (let i = 0; i < 3; i++) {
 				drawMapSlot(ctx, mapX, mapYs[i], ms,
 					S.step === 1 ? EDGE_MAPS[i].label : MAPS[i].label, aSlot);

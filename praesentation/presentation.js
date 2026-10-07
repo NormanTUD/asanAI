@@ -52,8 +52,8 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Der gesamte Prozess" (katze.js) — Bild → Convolutions
-                // (erst Verläufe, dann Augen/Nase/Mund-Maps) →
+                // "Der gesamte Prozess" (katze.js) — Bild → Layer 1
+                // (Verläufe) → Layer 2 (Augen/Nase/Mund) →
                 // Dense-Layer → zwei Ausgabe-Neuronen (Start 50:50,
                 // Loss 0,693) → Training (Loss sinkt, Kurve zeichnet
                 // sich) → Katze 95 %.
