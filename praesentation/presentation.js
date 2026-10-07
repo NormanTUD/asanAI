@@ -63,7 +63,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 // "Convolutions: Strukturen in Bildern finden" (hierarchy.js)
-                // — echte Convolution
+                // echte Convolution
                 // auf stop_sign.jpg: jeder Filter einzeln (0°, 90°, 45°, 315°)
                 // -> Kombination -> Ecken.
                 { id: 'hierarchy', ref: () => typeof HierarchyDemo !== 'undefined' ? HierarchyDemo : null,

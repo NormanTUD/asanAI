@@ -845,7 +845,7 @@ const SpaceMorph = (() => {
         ctx.strokeRect(sx - 4, outY - 20, sw - 8, 46);
         ctx.fillStyle = right ? '#15803d' : '#b91c1c';
         ctx.font = '600 13px system-ui,sans-serif'; ctx.textAlign = 'left';
-        ctx.fillText('Ausgegeben: „' + NW.start[win][0] + '"' + (right ? '' : '  — falsch'),
+        ctx.fillText('Ausgegeben: „' + NW.start[win][0] + '"' + (right ? '' : ', falsch'),
             sx + 8, outY + 2);
         ctx.fillStyle = '#64748b'; ctx.font = '11.5px system-ui,sans-serif';
         ctx.fillText(right ? 'die Falte hat die richtige Antwort nach oben sortiert'

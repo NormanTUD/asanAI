@@ -839,7 +839,7 @@ const ConvDemo = (() => {
 			{ k: 'Schritt 4', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
-			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
+			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster:<br>hier die Form des <em>Auges</em>.',
 			  p: 'Die Form des Auges, als Muster aus 6 × 5 Werten',
 			  c: '<span class="kz-chip">(6, 5)</span>' },
 			{ k: 'Schritt 6', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
@@ -1072,7 +1072,7 @@ const FlattenDemo = (() => {
 			{ k: 'Schritt 2', t: 'Der <em>Trick</em>: Flatten verliert<br>die Bildstruktur.',
 			  p: '<b>1024</b> Zahlen — eine flache Schnur',
 			  c: '<span class="kz-chip r">(1024,)</span>',
-			  i: 'Der Trick: Flatten verliert die Bildstruktur. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und <b>globale Entscheidungen</b> treffen — z. B. zwischen Labels wie „Hund? Katze?" oder „Auto? Katze?".' }
+			  i: 'Der Trick: Flatten verliert die Bildstruktur. Convolutions arbeiten nur <b>lokal</b>, dafür kann ein <b>Dense-Layer</b> darauf arbeiten und die lokalen Entscheidungen zu einer <b>globalen Entscheidung</b> nutzen, z. B. zwischen Labels wie „Hund? Katze?" oder „Auto? Katze?".' }
 		],
 
 		layoutFor(step, S) {
@@ -1401,7 +1401,7 @@ const PipelineDemo = (() => {
 			  p: '32 × 32 Pixel — die Katze',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
 			{ k: 'Schritt 2', t: 'Layer 1: Filter finden<br><em>Verläufe</em>.',
-			  p: 'Waagerecht, senkrecht, diagonal — Kanten',
+			  p: 'Waagerecht, senkrecht, diagonal: Kanten',
 			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
 			  i: 'Im Bild steckt die Antwort <b>Katze/Hund</b> schon — versteckt unter tausend Details (kleiner Hund, schwarz-weiße, orange Katze …). Wir wollen nur <b>das eine</b>. <b>Layer 1</b> reduziert die Information: weg mit dem Unwichtigen, übrig bleiben die Verläufe.' },
 			{ k: 'Schritt 3', t: 'Layer 2: Daraus entstehen<br><em>Augen, Nase, Mund</em>.',
