@@ -319,9 +319,11 @@ const HierarchyDemo = {
 		if (label) label.textContent = D.STAGES[5].label;
 	},
 
-	CAPTIONS: [
-		'<b>Ein Foto.</b> Nichts davon ist „Stoppschild" — nur Zahlen: ' +
-		'<span class="mono">0…255</span> pro Pixel. Ein Netz sieht diese Matrix, nicht das Bild.',
+		CAPTIONS: [
+		'<b>Ein echtes Foto, eine echte Faltung</b> (Sobel-Filter) — nichts davon ist vereinfacht. ' +
+		'Jedes Pixel ist nur eine Zahl <span class="mono">0…255</span>. Für jedes Pixel legt der Filter seine 3×3-Umgebung an: ' +
+		'jeder Nachbar wird mit einer Zahl (seinem Gewicht) multipliziert und die Ergebnisse addiert. ' +
+		'Die Mitte des Filters ist hier immer 0 — genau dort liegt das Pixel, das wir gerade betrachten.',
 		'<b>Filter 1 (0°)</b> antwortet nur auf <b>waagerechte</b> Kanten: ' +
 		'die oberen und unteren Kanten des Oktogons, die waagerechten Buchstabenstriche. ' +
 		'Alle anderen Kanten bleiben dunkel.',

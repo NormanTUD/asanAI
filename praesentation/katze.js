@@ -1169,8 +1169,12 @@ const PipelineDemo = (() => {
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
 	// auf 95 %. Loss = −ln(p).
 	const P0 = 50, P1 = 95;
-	const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
-	const trainPct = t => P0 + (P1 - P0) * easeOutCubic(t);
+	const easeInCubic = t => t * t * t;
+	const trainPct = t => {
+		const base = P0 + (P1 - P0) * easeInCubic(t);   // erst langsam, dann steil Richtung 95 %
+		const explore = Math.sin(t * 26) * 8 * (1 - t); // am Anfang: etwas ausprobieren (Auf & Ab)
+		return Math.max(1, Math.min(100, base + explore));
+	};
 	const lossOf = p => -Math.log(Math.max(p, 1e-9) / 100);
 	const fmtLoss = n => n.toFixed(3).replace('.', ',');
 	const lossColor = L => {
@@ -1371,25 +1375,20 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// Label-Vergleich (Schritt 7): macht supervised Learning sichtbar —
-	// man sagt dem Netz, was rauskommen soll (Soll/Label), und es wird
-	// mit der tatsächlichen Antwort (Ist) verglichen.
-	function drawLabelStrip(ctx, x, y, w, h, a, pCat) {
+	// Label-Check (Schritt 7): kleine Kapsel unter dem Katzen-Neuron —
+	// supervised Learning: die Antwort des Netzes stimmt mit dem Label.
+	function drawLabelBadge(ctx, cx, cy, a) {
 		if (a < 0.01) return;
+		const w = 150, h = 26, x = cx - w / 2, y = cy;
 		ctx.globalAlpha = a;
 		ctx.fillStyle = '#f0fdf4';
-		KatzeKit.roundRect(ctx, x, y, w, h, 8);
+		KatzeKit.roundRect(ctx, x, y, w, h, 13);
 		ctx.fill();
 		ctx.strokeStyle = '#86efac'; ctx.lineWidth = 1.2; ctx.stroke();
-		ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-		const cy = y + h / 2;
-		ctx.fillStyle = '#166534';
-		ctx.font = '700 13px Inter, system-ui, sans-serif';
-		ctx.fillText('Soll (Label):  Katze', x + 14, cy);
-		ctx.fillText('Ist (Netz):  Katze ' + pCat + ' %', x + 168, cy);
-		ctx.fillStyle = '#16a34a';
-		ctx.font = '800 13px Inter, system-ui, sans-serif';
-		ctx.fillText('✓ stimmt — deshalb sinkt der Loss', x + 360, cy);
+		ctx.fillStyle = '#15803d';
+		ctx.font = '700 12px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		ctx.fillText('Label: Katze  ✓', cx, y + h / 2);
 		ctx.globalAlpha = 1;
 	}
 
@@ -1574,8 +1573,8 @@ const PipelineDemo = (() => {
 			const pwP = 175, phP = 130;
 			drawLossPanel(ctx, { px: Math.min(nCx + rN + 34, W - pwP - 8), py: (H - phP) / 2, pw: pwP, ph: phP }, S);
 
-			// Label-Vergleich am unteren Rand (Schritt 7)
-			drawLabelStrip(ctx, Math.max(30, (W - 560) / 2), H - 34, 560, 26, aLabel, pCat);
+			// Label-Check unter dem Katzen-Neuron (Schritt 7)
+			drawLabelBadge(ctx, nCx, H * .32 + rN + 44, aLabel);
 		}
 	});
 })();
