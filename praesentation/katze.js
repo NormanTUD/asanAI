@@ -1266,8 +1266,9 @@ const PipelineDemo = (() => {
 	function drawLossPanel(ctx, geo, S) {
 		if (aLoss < 0.01) return;
 		const { px, py, pw, ph } = geo;
+		const goal = S.step === 4;
 		const t = (S.step === 4 || S.step === 7) ? 1 : (S.step === 5 ? 0 : (S.step === 6 ? trainP : 0));
-		const L = lossOf(trainPct(t));
+		const L = goal ? lossOf(P_GOAL) : lossOf(trainPct(t));
 		const col = lossColor(L);
 
 		ctx.globalAlpha = aLoss;
@@ -1297,7 +1298,7 @@ const PipelineDemo = (() => {
 			ctx.strokeStyle = col; ctx.lineWidth = 2;
 			ctx.beginPath();
 			let started = false;
-			for (const c of CURVE) {
+			for (const c of (goal ? CURVE_GOAL : CURVE)) {
 				if (c.t > t + 1e-9) break;
 				if (!started) { ctx.moveTo(X(c.t), Y(c.l)); started = true; }
 				else ctx.lineTo(X(c.t), Y(c.l));
@@ -1426,9 +1427,9 @@ const PipelineDemo = (() => {
 			  p: 'Training … · Katze <b>50 %</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip g">Loss ↓</span>',
 			  i: 'Das Netz lernt, indem es die <b>Trainingsdaten immer und immer wieder anschaut</b>. Bei jedem Durchgang (einer „Epoch") justiert es die Gewichte ein Stück nach dem anderen, so wird die Antwort dem Ziel immer näher.' },
-			{ k: 'Schritt 8', t: 'Ergebnis:<br><b>Katze ≈ 100 %</b>.',
-			  p: 'Katze: <b>100 %</b> · Loss <b>0,000</b>',
-			  c: '<span class="kz-chip g">Katze 100 %</span>',
+			{ k: 'Schritt 8', t: 'Ergebnis:<br><b>Katze ≈ 95 %</b>.',
+			  p: 'Katze: <b>95 %</b> · Loss <b>0,051</b>',
+			  c: '<span class="kz-chip g">Katze 95 %</span>',
 			  i: 'Nach dem Training ist das Netz fast so sicher wie das Ziel: Es erkennt die <b>Katze</b>. Das <b>Label</b> lautete „Katze", die Antwort des Netzes stimmt damit <b>überein</b>, deshalb ist der Loss so <b>niedrig</b>.' }
 		],
 
@@ -1483,13 +1484,13 @@ const PipelineDemo = (() => {
 			aLoss = KatzeKit.lerp(aLoss, tLossA, k * 1.5);
 			aLabel = KatzeKit.lerp(aLabel, tLabelA, k * 1.5);
 			if (S.step !== 6) return;
-			// ~7 s Training: 50 → 100 %, Loss 0,693 → 0,000
+			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
 			if (trainP >= 1) {
 				if (!trainMsg) {
 					trainMsg = 1;
-					setFoot('Katze: <b>100 %</b> · Loss <b>0,000</b>, fast sicher Katze',
-						'<span class="kz-chip g">Katze 100 %</span>');
+					setFoot('Katze: <b>95 %</b> · Loss <b>0,051</b>, fast sicher Katze',
+						'<span class="kz-chip g">Katze 95 %</span>');
 				}
 			} else {
 				const p = Math.round(trainPct(trainP));
@@ -1572,14 +1573,15 @@ const PipelineDemo = (() => {
 			// Dense
 			drawDense(ctx, denseX, denseY, denseW, denseH, aDense);
 
-			// Ausgabe: Ziel (4) & Ergebnis (7) = 100 %, am Anfang (5)
-			// 50:50, im Training (6) rutscht es Richtung 100 %.
+			// Ausgabe: Ziel (4) = 100 %, Ergebnis (7) = 95 %, am
+			// Anfang (5) 50:50, im Training (6) rutscht es Richtung 95 %.
 			let pCat = 100, pDog = 0, hotCat = true;
 			if (S.step === 5) { pCat = 50; pDog = 50; hotCat = false; }
 			else if (S.step === 6) {
 				const p = Math.round(trainPct(trainP));
 				pCat = p; pDog = 100 - p; hotCat = pCat >= 90;
 			}
+			else if (S.step === 7) { pCat = 95; pDog = 5; }
 			drawNeuron(ctx, nCx, H * .32, rN, 'Katze', pCat + ' %', hotCat, aOut);
 			drawNeuron(ctx, nCx, H * .74, rN, 'Hund', pDog + ' %', false, aOut);
 
