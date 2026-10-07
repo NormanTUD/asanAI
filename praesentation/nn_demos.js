@@ -28,21 +28,20 @@ const TypewriterViz = (() => {
     // Wichtig: erst NACH der Folien-Transition (~850 ms) anfangen — sonst
     // tippt der Code schon während die Folie noch einfadet und der User
     // sieht nur das fertige Ergebnis.
+    // Der Effekt wird AB SOFORT blockiert (setActive(true)), damit erst der
+    // Code gezeigt wird und erst DANN „KI / Lernen" erscheinen darf.
     function activate() {
-        // goTo() entfernt .active synchron und fügt es erst nach 2 rAFs wieder
-        // hinzu. Hier sind wir also ZWISCHEN den beiden Operationen — wenn wir
-        // .slide.active abfragen, gibt es gerade keinen Treffer. Komplett
-        // verzögern (Folien-Transition 800 ms + kleiner Puffer) und dann erst
-        // die Schreibmaschine starten.
+        setActive(true);
         setTimeout(() => {
             const slide = document.querySelector('.slide.active');
-            if (!slide) return;
+            if (!slide || !isOnClassicSlide()) { setActive(false); return; }
             if (typeof startTypewriter === 'function') startTypewriter(slide);
         }, 850);
     }
 
     // Schreibmaschine stoppen (Folie verlassen).
     function stop() {
+        setActive(false);
         const el = document.querySelector('[data-typewriter]');
         if (el && typeof _twStop === 'function') _twStop(el);
     }
