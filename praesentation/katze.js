@@ -58,7 +58,15 @@ const KatzeKit = (() => {
 	/* ═══════════ Helpers ═══════════ */
 	const lerp = (a, b, t) => a + (b - a) * t;
 	const eInOut = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
-	const tint = (v, i) => i === 0 ? [255, 255-v, 255-v] : i === 1 ? [255-v, 255, 255-v] : [255-v, 255-v, 255];
+	// Kanal-Tönung mit Kontrastkurve: Mitteltöne (der olivfarbene
+	// Hintergrund, ~181/176/43) verblassen Richtung Weiß, helle
+	// Pixel (weiße Schnurrhaare, cremefarbenes Fell) leuchten im
+	// Kanal → in allen drei Stapeln deutlich sichtbar.
+	const tint = (v, i) => {
+		const u = Math.pow(Math.min(Math.max((v - 90) / 165, 0), 1), 1.35) * 255;
+		const ink = 255 - u;
+		return i === 0 ? [255, ink, ink] : i === 1 ? [ink, 255, ink] : [ink, ink, 255];
+	};
 
 	function colorOf(i, ch, mix, gmix) {
 		const [R, G, B] = RGB[i];
@@ -1262,18 +1270,32 @@ const PipelineDemo = (() => {
 
 	// Die leuchtenden Zellen einer Karte. clarity 0 = zufällig
 	// (nur Rauschen), 1 = trainiert (sauberes Muster). Dazwischen
-	// mischt sich das saubere Muster ins Rauschen hinein.
-	function drawMapLit(ctx, x, y, ms, lit, a, clarity, seed) {
+	// mischt sich das saubere Muster ins Rauschen hinein. flick 1..0
+	// (Training, erste ~60 %): die Zellen flackern unruhig, bis das
+	// Netz "gefunden" hat, welche aufleuchten sollen.
+	function drawMapLit(ctx, x, y, ms, lit, a, clarity, seed, f) {
 		if (a < 0.01) return;
 		const litSet = new Set(lit);
 		const cl = Math.max(0, Math.min(1, clarity == null ? 1 : clarity));
+		const flick = f || 0;
 		for (let i = 0; i < 64; i++) {
 			let b;
 			if (litSet.has(i)) {
-				b = cl;                                  // trainiert: wird mit dem Training sichtbar
+				if (flick > 0.02) {
+					// Suche: erst flackert auch die richtige Zelle mit,
+					// ab ~60 % Training ist sie gefunden und wird stark.
+					b = cl + flick * (0.25 + 0.75 * Math.random());
+				} else {
+					b = cl;                                  // trainiert: wird mit dem Training sichtbar
+				}
 			} else {
 				const nv = prand(i, seed);
-				b = (1 - cl) * (nv > 0.82 ? nv * 0.8 : 0);   // untrainiert: wenig, dezent verrauscht
+				let noise = nv > 0.82 ? nv * 0.8 : 0;
+				if (flick > 0.02 && nv > 0.55) {
+					// Suche: auch die falschen Kandidaten blitzen kurz auf
+					noise = Math.max(noise, nv * flick * Math.random());
+				}
+				b = (1 - cl) * noise;   // untrainiert: wenig, dezent verrauscht
 			}
 			if (b < 0.06) continue;
 			const R = (i / 8) | 0, C = i % 8;
@@ -1530,6 +1552,9 @@ const PipelineDemo = (() => {
 			const { W, H } = S;
 			const cat = S.inst[0];
 			const clarity = S.step <= 4 ? 1 : (S.step === 5 ? 0 : (S.step === 6 ? trainP : 1));
+			// Training: erste ~60 % sucht das Netz, die Zellen
+			// flackern → danach ist die Entscheidung gefallen.
+			const flick = S.step === 6 ? Math.max(0, (0.6 - trainP) / 0.6) : 0;
 			const ch = 32 * cat.s;
 
 			const ms = 12;
@@ -1577,7 +1602,7 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 				for (let i = 0; i < 3; i++) {
 					drawMapSlot(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].label, aConv);
-					drawMapLit(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge, clarity, i);
+					drawMapLit(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge, clarity, i, flick);
 				}
 			}
 
@@ -1592,7 +1617,7 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 				for (let i = 0; i < 3; i++) {
 					drawMapSlot(ctx, mapX2, mapYs[i], ms, MAPS[i].label, aPart);
-					drawMapLit(ctx, mapX2, mapYs[i], ms, MAPS[i].lit, aPart, clarity, 3 + i);
+					drawMapLit(ctx, mapX2, mapYs[i], ms, MAPS[i].lit, aPart, clarity, 3 + i, flick);
 				}
 			}
 
