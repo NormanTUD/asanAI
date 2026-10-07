@@ -392,7 +392,7 @@ const ConvDemo = (() => {
 			ANCHORS.push({ fr: ANCH_ROW[ar], fc: ANCH_COL[col] });
 		}
 	const ANCH = ANCHORS.length; // 42
-	const SW_DWELL = 5, SW_MOVE = 8; // 60-FPS-Einheiten (~0.08 s / ~0.13 s)
+	const SW_DWELL = 8, SW_MOVE = 8; // 60-FPS-Einheiten (~0.13 s / ~0.13 s)
 
 	// Segment-Zeitleiste: Segment 2i = Halten an Anker i,
 	// Segment 2i+1 = Fahrt Anker i → i+1.

@@ -1195,7 +1195,7 @@ const SpaceMorph = (() => {
         updateTables();
     }
 
-    // Zustand merken/wiederherstellen (siehe NNStepDemo): beim
+    // Zustand merken/wiederherstellen (presentation.js slideMemory): beim
     // Zurück-Navigieren wieder auf die Szene, die man verlassen hat —
     // statt auf Szene 0. Nur die Egg-Phase hat Szenen; der Orbit-/4D-Code
     // ist nie mehr erreichbar, daher ist ein einfacher `cur`-Restore genug.
