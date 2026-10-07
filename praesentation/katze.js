@@ -1072,7 +1072,7 @@ const FlattenDemo = (() => {
 			{ k: 'Schritt 2', t: 'Der <em>Trick</em>: Flatten verliert<br>die Bildstruktur.',
 			  p: '<b>1024</b> Zahlen — eine flache Schnur',
 			  c: '<span class="kz-chip r">(1024,)</span>',
-			  i: 'Der Trick: Flatten verliert die Bildstruktur. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und globale Entscheidungen treffen („Hund? Katze?").' }
+			  i: 'Der Trick: Flatten verliert die Bildstruktur. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und <b>globale Entscheidungen</b> treffen — z. B. zwischen Labels wie „Hund? Katze?" oder „Auto? Katze?".' }
 		],
 
 		layoutFor(step, S) {
@@ -1161,7 +1161,9 @@ const PipelineDemo = (() => {
 	let aDense = 0, tDenseA = 0;
 	let aOut = 0, tOutA = 0;
 	let aLoss = 0, tLossA = 0;
+	let aLabel = 0, tLabelA = 0;
 	let trainP = 0, trainMsg = 0;
+	let entrancePending = false;
 
 	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
@@ -1237,7 +1239,7 @@ const PipelineDemo = (() => {
 				b = cl;                                  // trainiert: wird mit dem Training sichtbar
 			} else {
 				const nv = prand(i, seed);
-				b = (1 - cl) * (nv > 0.62 ? nv : 0);     // untrainiert: Rauschen
+				b = (1 - cl) * (nv > 0.82 ? nv * 0.8 : 0);   // untrainiert: wenig, dezent verrauscht
 			}
 			if (b < 0.06) continue;
 			const R = (i / 8) | 0, C = i % 8;
@@ -1369,6 +1371,28 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
+	// Label-Vergleich (Schritt 7): macht supervised Learning sichtbar —
+	// man sagt dem Netz, was rauskommen soll (Soll/Label), und es wird
+	// mit der tatsächlichen Antwort (Ist) verglichen.
+	function drawLabelStrip(ctx, x, y, w, h, a, pCat) {
+		if (a < 0.01) return;
+		ctx.globalAlpha = a;
+		ctx.fillStyle = '#f0fdf4';
+		KatzeKit.roundRect(ctx, x, y, w, h, 8);
+		ctx.fill();
+		ctx.strokeStyle = '#86efac'; ctx.lineWidth = 1.2; ctx.stroke();
+		ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+		const cy = y + h / 2;
+		ctx.fillStyle = '#166534';
+		ctx.font = '700 13px Inter, system-ui, sans-serif';
+		ctx.fillText('Soll (Label):  Katze', x + 14, cy);
+		ctx.fillText('Ist (Netz):  Katze ' + pCat + ' %', x + 168, cy);
+		ctx.fillStyle = '#16a34a';
+		ctx.font = '800 13px Inter, system-ui, sans-serif';
+		ctx.fillText('✓ stimmt — deshalb sinkt der Loss', x + 360, cy);
+		ctx.globalAlpha = 1;
+	}
+
 	return KatzeKit.create({
 		slideId: 'slide-pipeline',
 		prefix: 'pipe',
@@ -1383,14 +1407,14 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 3', t: 'Layer 2: Daraus entstehen<br><em>Augen, Nase, Mund</em>.',
 			  p: 'Filter kombinieren Verläufe zu Formen',
 			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
-			  i: '<b>Layer 2</b> reduziert weiter — stück für stück: aus Verläufen werden Formen. Mit jedem Layer schrumpft das „alles Mögliche" hin zum Wesentlichen: <b>Katze oder Hund?</b>' },
+			  i: '<b>Layer 2</b> reduziert weiter: aus Verläufen werden Formen. Was wir hier sehen (Augen, Nase, Mund), ist das <b>Ziel</b> — so soll es am Ende aussehen. Das Netz kann das aber noch gar nicht, es muss es sich erst antrainieren.' },
 			{ k: 'Schritt 4', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
 			  p: '64 Zahlen pro Karte — dicht verdrahtet',
 			  c: '<span class="kz-chip g">3 × (8, 8)</span><span class="kz-arrow">→</span><span class="kz-chip r">Dense</span>' },
 			{ k: 'Schritt 5', t: 'Zwei Neuronen —<br>die <em>Antwort</em>.',
 			  p: 'Anfang: <b>50 : 50</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip r">50 : 50</span><span class="kz-arrow">·</span><span class="kz-chip r">Loss 0,693</span>',
-			  i: 'Das Netz startet mit <b>zufälligen Gewichten</b> — es <b>rät</b> blind: 50 : 50. Der <b>Loss</b> (−ln p, p = Katzen-Anteil) misst, wie falsch die Antwort ist: 0,693 — <b>desto höher, desto schlechter</b>. Ziel des Trainings: den Loss <b>niedriger</b> machen.' },
+			  i: 'Das hier sind die <b>zufälligen Startwerte</b> — die Karten sehen noch <b>gar nicht</b> wie Augen, Nase, Mund aus (das oben war nur unser Ziel). Der Output rät blind <b>50 : 50</b> (Loss 0,693). Im Training lernen die Filter, sich genau zu diesem Ziel zu entwickeln.' },
 			{ k: 'Schritt 6', t: 'Training: der Loss<br><em>sinkt</em>.',
 			  p: 'Training … · Katze <b>50 %</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip g">Loss ↓</span>',
@@ -1398,7 +1422,7 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 7', t: 'Das Katzen-Neuron<br>ist am <em>aktivsten</em>.',
 			  p: 'Katze: <b>95 %</b> · Loss <b>0,051</b>',
 			  c: '<span class="kz-chip g">Katze 95 %</span>',
-			  i: 'Vom Bild zur Antwort: <b>Convolutions</b> finden lokale Strukturen (Verläufe, dann Augen, Nase, Mund), die <b>Dense-Layer</b> kombinieren — am Ende steht eine Zahl pro Antwort. 95 % = „fast sicher Katze", Loss 0,051 — <b>sehr niedrig</b>.' }
+			  i: 'Das Bild zeigt eine <b>Katze</b>, das <b>Label</b> lautet also „Katze". Beim Training sagt man dem Netz, was rauskommen soll (das Label), und es <b>vergleicht</b> das mit seiner eigenen Antwort. Hier stimmen beide überein (Katze 95 % ≈ Label) — deshalb ist der Loss so <b>niedrig</b> (0,051).' }
 		],
 
 		layoutFor(step, S) {
@@ -1408,6 +1432,17 @@ const PipelineDemo = (() => {
 				o.ts = cs; o.tx = 30; o.ty = (H - 32 * cs) / 2;
 				o.tmix = 0; o.ta = i === 0 ? 1 : 0;
 			});
+			// Einstieg: die Katze fährt aus dem linken Rand hinein und
+			// blendet gleichzeitig ein — erst an ihrem Platz ist sie voll
+			// sichtbar (kein „voll da → kurz weg → dann Bewegung").
+			if (step === 0 && entrancePending) {
+				entrancePending = false;
+				aCat = 0;
+				const o = inst[0];
+				o.s = cs;
+				o.x = o.tx - 32 * cs - 24;
+				o.y = o.ty;
+			}
 			tCatA = 1;
 			tConvA = step >= 1 ? 1 : 0;
 			// Layer 1 bleibt sichtbar, wenn Layer 2 erscheint — die
@@ -1417,20 +1452,23 @@ const PipelineDemo = (() => {
 			tDenseA = step >= 3 ? 1 : 0;
 			tOutA = step >= 4 ? 1 : 0;
 			tLossA = step >= 4 ? 1 : 0;
+			tLabelA = step >= 6 ? 1 : 0;
 		},
 
 		onStep(step) {
 			if (step === 5) { trainP = 0; trainMsg = 0; }
+			if (step === 0) entrancePending = true;
 		},
 
 		tick(dt, k, S, setFoot) {
-			aCat = KatzeKit.lerp(aCat, tCatA, k * 1.5);
+			aCat = KatzeKit.lerp(aCat, tCatA, k * 1.0);
 			aConv = KatzeKit.lerp(aConv, tConvA, k * 1.5);
 			aEdge = KatzeKit.lerp(aEdge, tEdgeA, k * 1.5);
 			aPart = KatzeKit.lerp(aPart, tPartA, k * 1.5);
 			aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
 			aOut = KatzeKit.lerp(aOut, tOutA, k * 1.5);
 			aLoss = KatzeKit.lerp(aLoss, tLossA, k * 1.5);
+			aLabel = KatzeKit.lerp(aLabel, tLabelA, k * 1.5);
 			if (S.step !== 5) return;
 			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
@@ -1535,6 +1573,9 @@ const PipelineDemo = (() => {
 			// Loss-Panel rechts neben den Neuronen
 			const pwP = 175, phP = 130;
 			drawLossPanel(ctx, { px: Math.min(nCx + rN + 34, W - pwP - 8), py: (H - phP) / 2, pw: pwP, ph: phP }, S);
+
+			// Label-Vergleich am unteren Rand (Schritt 7)
+			drawLabelStrip(ctx, Math.max(30, (W - 560) / 2), H - 34, 560, 26, aLabel, pCat);
 		}
 	});
 })();
