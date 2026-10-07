@@ -302,6 +302,7 @@ const KatzeKit = (() => {
 			}
 
 			reserveInsight();
+			if (typeof window.fitSlides === 'function') window.fitSlides();
 			resize();
 			// Start-Animation: Pixel fahren aus der Mitte auf.
 			S.inst.forEach(o => { o.s = 1; o.x = W / 2; o.y = H / 2; o.a = 0; });
@@ -332,7 +333,11 @@ const KatzeKit = (() => {
 		let rsz = null;
 		window.addEventListener('resize', () => {
 			clearTimeout(rsz);
-			rsz = setTimeout(() => { reserveInsight(); if (isOnSlide()) resize(); }, 110);
+			rsz = setTimeout(() => {
+				reserveInsight();
+				if (typeof window.fitSlides === 'function') window.fitSlides();
+				if (isOnSlide()) resize();
+			}, 110);
 		});
 
 		return { init, reset, next, prev, canGoNext, canGoPrev, getState, setState };
@@ -1439,7 +1444,7 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 5', t: 'Das <em>Ziel</em>:<br>Katze = <b>100 %</b>.',
 			  p: 'So soll es am Ende sein',
 			  c: '<span class="kz-chip g">Katze 100 %</span><span class="kz-arrow">·</span><span class="kz-chip g">Loss 0,000</span>',
-			  i: 'Das ist das <b>gewünschte Ergebnis</b>: Das Netz sagt mit voller Sicherheit „Katze" (100 %, Loss 0,000). Genau dorthin soll das Training es bringen.' },
+			  i: 'Das ist das <b>gewünschte Ergebnis</b>: Das Netz sagt mit großer Sicherheit „Katze" (wenn eine Katze auf dem Bild ist). Genau dorthin soll das Training es bringen.' },
 			{ k: 'Schritt 6', t: 'Am Anfang:<br>reiner <em>Zufall</em>.',
 			  p: 'Anfang: <b>50 : 50</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip r">50 : 50</span><span class="kz-arrow">·</span><span class="kz-chip r">Loss 0,693</span>',
