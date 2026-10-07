@@ -175,6 +175,26 @@ const KatzeKit = (() => {
 			}
 		}
 
+		// Fazit-Box: Slot einmalig auf den längsten Fazittext reservieren.
+		// .kz-insight-slot ist das einzige Element im Layout-Fluss, dessen
+		// Höhe vom Text abhängt, und fitSlides skaliert die ganze Folie
+		// anhand ihrer Höhe → sonst springt die Folie beim Wechsel zwischen
+		// kurzem und langem Fazit (siehe _reserveCaptionHeight in hierarchy.js).
+		function reserveInsight() {
+			if (!els.insight) return;
+			const slot = els.insight.closest('.kz-insight-slot');
+			if (!slot) return;
+			const prev = els.insight.innerHTML;
+			let max = 0;
+			cfg.steps.forEach(s => {
+				els.insight.innerHTML = (s && s.i) || '';
+				const h = els.insight.offsetHeight;
+				if (h > max) max = h;
+			});
+			els.insight.innerHTML = prev;
+			if (max > 0) slot.style.minHeight = Math.max(96, Math.ceil(max)) + 'px';
+		}
+
 		// Text-Swap: Kopf nach oben raus / von unten rein, Fuß gegenläufig.
 		function swapText(i) {
 			els.tswap.style.transition = 'transform .4s cubic-bezier(.4,0,1,1),opacity .4s,filter .4s';
@@ -281,6 +301,7 @@ const KatzeKit = (() => {
 				});
 			}
 
+			reserveInsight();
 			resize();
 			// Start-Animation: Pixel fahren aus der Mitte auf.
 			S.inst.forEach(o => { o.s = 1; o.x = W / 2; o.y = H / 2; o.a = 0; });
@@ -311,7 +332,7 @@ const KatzeKit = (() => {
 		let rsz = null;
 		window.addEventListener('resize', () => {
 			clearTimeout(rsz);
-			rsz = setTimeout(() => { if (isOnSlide()) resize(); }, 110);
+			rsz = setTimeout(() => { reserveInsight(); if (isOnSlide()) resize(); }, 110);
 		});
 
 		return { init, reset, next, prev, canGoNext, canGoPrev, getState, setState };

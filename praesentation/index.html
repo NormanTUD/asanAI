@@ -142,22 +142,6 @@
         </div>
     </div>
 </div>
-<!-- ==================== Convolutions: Strukturen in Bildern finden ==================== -->
-<div class="slide" data-title="Convolutions: Strukturen in Bildern finden" id="slide-hierarchie">
-    <div class="slide-content">
-        <h2>Convolutions: Strukturen in Bildern finden</h2>
-
-        <div class="hier-panels" id="hier-panels"></div>
-
-        <div class="hier-caption" id="hier-caption"></div>
-
-        <div class="key-insight">
-            Jeder Filter sieht nur <b>eine Richtung</b>, zusammen liefern die vier
-            die ganze Kontur: aus Zahlen wird wieder Form. Derselbe Rechenkern
-            (eine Matrixmultiplikation) läuft in jedem Schritt.
-        </div>
-    </div>
-</div>
 <!-- ============================================================
      Folie 5: Was macht Flatten?
      ------------------------------------------------------------
@@ -330,15 +314,15 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 10: Der gesamte Prozess
+     Folie 9: Der gesamte Prozess
      ------------------------------------------------------------
       Katze-Framework (katze.js, PipelineDemo): das ganze Netz in
-      einem Blick, Bild → Layer 1 (Verläufe) → Layer 2
-      (Augen/Nase/Mund) → Dense-Layer → 2 Ausgabe-Neuronen
-      (Anfang 50:50, schlechter Loss) → Training (Loss sinkt) →
-      Katze 95 % leuchtet auf. Jeder Layer reduziert die
-      Information auf das Wesentliche (Katze/Hund). Gestuft über
-      die Pfeiltasten (7 Schritte).
+      einem Blick, Bild → Layer 1 (Muster im Bild) → Layer 2
+      (Muster in Layer 1: Augen/Nase/Mund) → Dense-Layer →
+      2 Ausgabe-Neuronen (Anfang 50:50, schlechter Loss) →
+      Training (Loss sinkt) → Katze 95 % leuchtet auf. Jede
+      Schicht erkennt größere Muster als die Vorherige
+      (Katze/Hund). Gestuft über die Pfeiltasten (8 Schritte).
      ============================================================ -->
 <div class="slide" id="slide-pipeline" data-title="Der gesamte Prozess">
     <div class="slide-content">
@@ -355,6 +339,28 @@
             </div></div>
 
             <div class="kz-insight-slot"><div class="key-insight kz-insight" id="pipe-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 10: Convolutions: Strukturen in Bildern finden
+     (echte Faltung auf img/stop_sign.jpg, hierarchy.js)
+     Bewusst NACH der Ergebnis-Folie: was vorher gezeigt wurde,
+     war eine vereinfachte Vorstellung, hier die echte Convolution.
+     ============================================================ -->
+<div class="slide" data-title="Convolutions: Strukturen in Bildern finden" id="slide-hierarchie">
+    <div class="slide-content">
+        <h2>Convolutions: Strukturen in Bildern finden</h2>
+        <p class="hier-lede">Was Sie vorher gesehen haben, war eine <b>vereinfachte Vorstellung</b>, aber im Prinzip richtig.</p>
+
+        <div class="hier-panels" id="hier-panels"></div>
+
+        <div class="hier-caption" id="hier-caption"></div>
+
+        <div class="key-insight">
+            Jeder Filter sieht nur <b>eine Richtung</b>, zusammen liefern die vier
+            die ganze Kontur: aus Zahlen wird wieder Form. Derselbe Rechenkern
+            (eine Matrixmultiplikation) läuft in jedem Schritt.
         </div>
     </div>
 </div>

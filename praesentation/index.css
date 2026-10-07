@@ -1101,6 +1101,14 @@ body.sel-mode .sel-check { display: inline-flex; }
 	margin-top: 7px;
 	line-height: 1.2;
 }
+.hier-lede {
+	max-width: 1080px;
+	margin: -4px auto 16px;
+	font-size: 1.02em;
+	color: #334155;
+	line-height: 1.5;
+	text-align: center;
+}
 .hier-caption {
 	max-width: 1080px;
 	margin: 0 auto 12px;
