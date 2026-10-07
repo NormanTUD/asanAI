@@ -158,7 +158,7 @@ const KatzeKit = (() => {
 
 		function setText(i) {
 			const s = cfg.steps[i];
-			els.kicker.textContent = s.k;
+			if (els.kicker) els.kicker.textContent = s.k;
 			els.title.innerHTML = s.t;
 			els.pill.innerHTML = s.p;
 			els.chips.innerHTML = s.c;
@@ -1040,7 +1040,7 @@ const FlattenDemo = (() => {
 		for (let r = 0; r < rowsDone; r++) drawRowInRail(ctx, r, rx, ry, rh, pw);
 
 		if (rowsDone < KatzeKit.N && rowT > 0) {
-			const t = KatzeKit.eInOut(rowT);
+			const t = rowT;   // linear: Zeilen fließen gleichmäßig (flüssig), kein Puls
 			const srcY = o.y + rowsDone * s;
 			const y = KatzeKit.lerp(srcY, ry, t);
 			const hh = KatzeKit.lerp(s, rh, t);
@@ -1164,6 +1164,7 @@ const PipelineDemo = (() => {
 	let aLabel = 0, tLabelA = 0;
 	let trainP = 0, trainMsg = 0;
 	let entrancePending = false;
+	let entrancePlayed = false;   // Einstieg nur einmal — sonst Flash bei jedem Wiederauftauchen
 
 	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
@@ -1171,7 +1172,7 @@ const PipelineDemo = (() => {
 	const P0 = 50, P1 = 100;
 	const easeInCubic = t => t * t * t;
 	const trainPct = t => {
-		const base = P0 + (P1 - P0) * easeInCubic(t);   // erst langsam, dann steil Richtung 95 %
+		const base = P0 + (P1 - P0) * easeInCubic(t);   // erst langsam, dann steil Richtung 100 %
 		const explore = Math.sin(t * 26) * 8 * (1 - t); // am Anfang: etwas ausprobieren (Auf & Ab)
 		return Math.max(1, Math.min(100, base + explore));
 	};
@@ -1435,16 +1436,22 @@ const PipelineDemo = (() => {
 				o.ts = cs; o.tx = 30; o.ty = (H - 32 * cs) / 2;
 				o.tmix = 0; o.ta = i === 0 ? 1 : 0;
 			});
-			// Einstieg: die Katze fährt aus dem linken Rand hinein und
-			// blendet gleichzeitig ein — erst an ihrem Platz ist sie voll
-			// sichtbar (kein „voll da → kurz weg → dann Bewegung").
+			// Einstieg (nur beim allerersten Mal): die Katze fährt aus
+			// dem linken Rand hinein und blendet gleichzeitig ein.
+			// Bei jedem erneuten Betreten der Folie würde sonst der alte
+			// Frame (Katze sichtbar) geblitzt → Teleport weg → zurück:
+			// deshalb ab dem zweiten Mal einfach an ihrem Platz bleiben.
 			if (step === 0 && entrancePending) {
 				entrancePending = false;
+				entrancePlayed = true;
 				aCat = 0;
 				const o = inst[0];
 				o.s = cs;
 				o.x = o.tx - 32 * cs - 24;
 				o.y = o.ty;
+			} else if (step === 0 && entrancePlayed) {
+				const o = inst[0];
+				o.x = o.tx; o.y = o.ty; o.s = cs;
 			}
 			tCatA = 1;
 			tConvA = step >= 1 ? 1 : 0;
@@ -1460,7 +1467,7 @@ const PipelineDemo = (() => {
 
 		onStep(step) {
 			if (step === 6) { trainP = 0; trainMsg = 0; }
-			if (step === 0) entrancePending = true;
+			if (step === 0 && !entrancePlayed) entrancePending = true;
 		},
 
 		tick(dt, k, S, setFoot) {

@@ -974,33 +974,15 @@ body.sel-mode .sel-check { display: inline-flex; }
 	color: #4f46e5;
 	font-weight: 700;
 }
-.asan-demo-teaser {
-	background: linear-gradient(135deg, #eef2ff, #ecfdf5);
-	border: 2px dashed #6366f1;
-	border-radius: 14px;
-	padding: 18px 20px;
-	text-align: center;
-	align-self: center;
-}
-.asan-demo-head {
-	font-size: 1.25em;
-	color: #1e293b;
-	margin-bottom: 8px;
-}
-.asan-demo-head b { color: #4f46e5; }
-.asan-demo-body {
-	font-size: 0.86em;
-	color: #475569;
-	line-height: 1.45;
-}
-.asan-demo-url {
-	margin-top: 12px;
+.asan-url-frag { align-self: center; text-align: center; }
+.asan-url-badge {
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	font-size: 0.95em;
+	font-size: 1.1em; font-weight: 700; letter-spacing: -.01em;
 	color: #4338ca;
 	background: #ffffff;
-	border-radius: 8px;
-	padding: 6px 10px;
+	border: 2px solid #c7d2fe;
+	border-radius: 12px;
+	padding: 14px 22px;
 	display: inline-block;
 }
 

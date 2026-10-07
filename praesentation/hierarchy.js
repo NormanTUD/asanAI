@@ -321,9 +321,9 @@ const HierarchyDemo = {
 
 		CAPTIONS: [
 		'<b>Ein echtes Foto, eine echte Faltung</b> (Sobel-Filter) — nichts davon ist vereinfacht. ' +
-		'Jedes Pixel ist nur eine Zahl <span class="mono">0…255</span>. Für jedes Pixel legt der Filter seine 3×3-Umgebung an: ' +
-		'jeder Nachbar wird mit einer Zahl (seinem Gewicht) multipliziert und die Ergebnisse addiert. ' +
-		'Die Mitte des Filters ist hier immer 0 — genau dort liegt das Pixel, das wir gerade betrachten.',
+		'Jedes Pixel ist nur eine Zahl <span class="mono">0…255</span>. Für jedes Pixel legt der Filter seine 3×3-Umgebung darüber. ' +
+		'Jeder der 9 Werte wird mit seinem Gewicht multipliziert — und <b>alle 9 Produkte werden addiert</b> (aufsummiert). ' +
+		'Diese <b>eine Summe</b> wird zum neuen Wert des Pixels. Die Mitte ist hier immer 0 — genau dort liegt das Pixel, das wir betrachten.',
 		'<b>Filter 1 (0°)</b> antwortet nur auf <b>waagerechte</b> Kanten: ' +
 		'die oberen und unteren Kanten des Oktogons, die waagerechten Buchstabenstriche. ' +
 		'Alle anderen Kanten bleiben dunkel.',
