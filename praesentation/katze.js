@@ -834,7 +834,7 @@ const ConvDemo = (() => {
 			  p: 'Rot, Grün und Blau, drei eigene Zahlen-Raster',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
 			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
-			  p: 'Wie hell der Pixel ist, sagt, wie stark <b>Grün</b> aktiviert ist',
+			  p: 'Wie hell der Pixel ist, sagt, wie stark die jeweilige Farbe aktiviert ist',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
 			{ k: 'Schritt 4', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
