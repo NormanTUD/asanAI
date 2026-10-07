@@ -1217,13 +1217,32 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// Die leuchtenden Zellen einer Karte (eigene Stufe/Alpha).
-	function drawMapLit(ctx, x, y, ms, lit, a) {
+	// Deterministisches Rauschen pro Zelle (0..1) — stabil, kein
+	// Frame-zu-Frame-Flackern. Für den untrainierten Zustand.
+	function prand(i, seed) {
+		const x = Math.sin(i * 12.9898 + (seed + 1) * 78.233) * 43758.5453;
+		return x - Math.floor(x);
+	}
+
+	// Die leuchtenden Zellen einer Karte. clarity 0 = zufällig
+	// (nur Rauschen), 1 = trainiert (sauberes Muster). Dazwischen
+	// mischt sich das saubere Muster ins Rauschen hinein.
+	function drawMapLit(ctx, x, y, ms, lit, a, clarity, seed) {
 		if (a < 0.01) return;
-		ctx.globalAlpha = a;
-		for (const idx of lit) {
-			const R = (idx / 8) | 0, C = idx % 8;
+		const litSet = new Set(lit);
+		const cl = Math.max(0, Math.min(1, clarity == null ? 1 : clarity));
+		for (let i = 0; i < 64; i++) {
+			let b;
+			if (litSet.has(i)) {
+				b = cl;                                  // trainiert: wird mit dem Training sichtbar
+			} else {
+				const nv = prand(i, seed);
+				b = (1 - cl) * (nv > 0.62 ? nv : 0);     // untrainiert: Rauschen
+			}
+			if (b < 0.06) continue;
+			const R = (i / 8) | 0, C = i % 8;
 			const cx = x + C * ms, cy = y + R * ms;
+			ctx.globalAlpha = a * b;
 			ctx.fillStyle = 'rgba(76,175,80,.55)';
 			ctx.fillRect(cx + 1, cy + 1, ms - 2, ms - 2);
 			ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
@@ -1432,6 +1451,7 @@ const PipelineDemo = (() => {
 			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
 			const { W, H } = S;
 			const cat = S.inst[0];
+			const clarity = S.step <= 3 ? 1 : (S.step === 4 ? 0 : (S.step === 5 ? trainP : 1));
 			const ch = 32 * cat.s;
 
 			const ms = 12;
@@ -1479,7 +1499,7 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 				for (let i = 0; i < 3; i++) {
 					drawMapSlot(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].label, aConv);
-					drawMapLit(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge);
+					drawMapLit(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge, clarity, i);
 				}
 			}
 
@@ -1494,7 +1514,7 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 				for (let i = 0; i < 3; i++) {
 					drawMapSlot(ctx, mapX2, mapYs[i], ms, MAPS[i].label, aPart);
-					drawMapLit(ctx, mapX2, mapYs[i], ms, MAPS[i].lit, aPart);
+					drawMapLit(ctx, mapX2, mapYs[i], ms, MAPS[i].lit, aPart, clarity, 3 + i);
 				}
 			}
 

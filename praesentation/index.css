@@ -659,9 +659,6 @@ body.sel-mode .sel-check { display: inline-flex; }
 
 /* ============ SPACE MORPH ("Was machen Dense Layer?") ============ */
 #slide-layer-als-raumkruemmung { background: #f8fafc; }
-#sm-tables-head {
-	transition: opacity 0.4s ease;
-}
 #sm-table-container {
 	max-height: 230px;
 	overflow: hidden;

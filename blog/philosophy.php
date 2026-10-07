@@ -664,7 +664,7 @@ So an LLM's "inconsistency" is not noise, and it is not incoherence. It is the c
 **The philosophical payoff.** The ELIZA effect in the "Ghost in the Machine" section is now easier to diagnose. We are not being fooled by a *false* single identity so much as *imposing* a one-attractor reading onto a one-object, many-states structure — reading "a ball spring-loaded to a single well" where there is "a ball on a many-well surface with no spring." The model's "multi-polarity" is a real structural feature (superposition without a restoring force), not a bug to be smoothed into a personality; and the fact that we find it alien tells us something about *us*, not about it. Whether a many-mode, no-restoring-force structure is enough to ground anything like a self is a question this framing makes more precise, if not more settled.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Xeno-Interpretability: Meanings We Were Not Meant to Mean">
+<div class="md" data-mathlevel="20" data-optionaltitle="Xeno-Interpretability: Meanings We Were Not Meant to Mean">
 ### Xeno-Interpretability: Meanings We Were Not Meant to Mean
 
 The *Alien Swarm* section asked what it means for an LLM to be alien, and the answer was structural: one object, many states, no restoring force. A 2026 paper by \citeauthor{pierucci2026xenointerpretability} (\citeyear{pierucci2026xenointerpretability}) asks a sharper and more unsettling version of the question: what if part of what the model does is not merely unfamiliar to us, but *unnameable* by us?
@@ -681,16 +681,14 @@ The paper first sorts the word "alien" as it is already used in AI discourse. **
 
 The formal setup is minimal. Let $\mathcal{M}$ be the space of distinctions the model actually represents and uses, and let $\mathcal{H} \subseteq \mathcal{M}$ be the subset that admits an adequate relation to human concepts—the familiar targets of interpretability. The \cite[xeno-semantic space]{pierucci2026xenointerpretability} is the remainder:
 
-<div class="math-opt" data-math-opt="math-heavy">
-<div>$$
+<!-- data-math-opt ohne Kategorie: die Formel bleibt in jedem Lesemodus sichtbar — die Unterstriche tragen bereits die plain-English-Beschriftung. -->
+<div class="math-opt" data-math-opt=""><div>$$
 \underbrace{X}_{\substack{\text{the xeno-semantic space:} \\ \text{model-native distinctions} \\ \text{without an adequate} \\ \text{human concept}}}
 \;:=\;
 \underbrace{\mathcal{M}}_{\substack{\text{every distinction the model} \\ \text{actually represents and uses}}}
 \;\setminus\;
 \underbrace{\mathcal{H}}_{\substack{\text{the human-interpretable part:} \\ \text{refusal, sentiment, truthfulness,} \\ \text{the familiar targets of} \\ \text{interpretability}}}
-$$</div>
-<span class="math-alt">In words: take everything the model actually represents and uses, subtract the part that has a human concept, and what is left over is the xeno-semantic space — the model-native distinctions without a human counterpart.</span>
-</div>
+$$</div></div>
 
 #### Why the remainder might be non-empty
 
