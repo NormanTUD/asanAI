@@ -1168,11 +1168,13 @@ const PipelineDemo = (() => {
 
 	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
-	// auf das Ziel von 100 %. Loss = −ln(p).
-	const P0 = 50, P1 = 100;
+	// auf 95 %. Das Idealziel (Schritt 5) bleibt 100 %, deshalb
+	// zusätzlich CURVE_GOAL. Loss = −ln(p).
+	const P0 = 50, P1 = 95, P_GOAL = 100;
 	const easeInCubic = t => t * t * t;
-	const trainPct = t => {
-		const base = P0 + (P1 - P0) * easeInCubic(t);   // erst langsam, dann steil Richtung 100 %
+	const trainPct = (t, p1) => {
+		const target = p1 == null ? P1 : p1;
+		const base = P0 + (target - P0) * easeInCubic(t);   // erst langsam, dann steil Richtung Ziel
 		const explore = Math.sin(t * 26) * 8 * (1 - t); // am Anfang: etwas ausprobieren (Auf & Ab)
 		return Math.max(1, Math.min(100, base + explore));
 	};
@@ -1182,10 +1184,11 @@ const PipelineDemo = (() => {
 		const t = Math.min(L / 0.7, 1);
 		return t > 0.66 ? '#dc2626' : (t > 0.33 ? '#d97706' : '#16a34a');
 	};
-	const CURVE = [];
+	const CURVE = [], CURVE_GOAL = [];
 	for (let i = 0; i <= 60; i++) {
 		const t = i / 60;
 		CURVE.push({ t, l: lossOf(trainPct(t)) });
+		CURVE_GOAL.push({ t, l: lossOf(trainPct(t, P_GOAL)) });
 	}
 
 	function arrow(ctx, x1, y1, x2, y2, a) {
