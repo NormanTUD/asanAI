@@ -27,13 +27,6 @@ const DemoRegistry = (() => {
     };
 
         const registry = [
-                // NNStepDemo lebt auf der Stückelungs-Folie — dort erst
-                // resetten (sonst re-rendert der Approx-Plot bei jedem
-                // Folienwechsel mit).
-                { id: 'stueckelung', ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
-                        slideTest: s => s && s.id === 'slide-stueckelung',
-                        onLeave: d => d.reset() },
-
                 { id: 'raumkruemmung', ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
                         block: d => d.isAnimating(),
                         slideTest: s => s.id === 'slide-layer-als-raumkruemmung',
@@ -41,11 +34,11 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 // "Jeder Pixel ist nur eine Zahl" (katze.js) — Katze-Framework:
-                // 32×32 ASCII-Katze: Farbbild → Pixel = Zahl (Zoom) →
-                // 3 Kanäle → ein Kanal (Grau) → 6×5-Filter in Augen-Form
-                // (nur Form, keine Zahlen) → flüssiger 5×5-Sweep →
-                // 8×8-Map, die Augen leuchten als zwei große Pixel.
-                // 8 Schritte über Pfeiltasten.
+                // 32×32 ASCII-Katze: Farbbild → 3 Kanäle → ein Kanal
+                // (Grau) → Pixel = Zahl (Zoom) → 6×5-Filter in Augen-Form
+                // (nur Form, keine Zahlen) → blockweiser Sweep (hält auf
+                // jedem Pixel-Block) → 8×8-Map, die Augen leuchten als zwei
+                // große Pixel. 8 Schritte über Pfeiltasten.
                 { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         onEnter: d => setTimeout(() => d.init(), 80),
@@ -60,9 +53,10 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 // "Der gesamte Prozess" (katze.js) — Bild → Convolutions
-                // (Augen/Nase/Mund-Maps) → Dense-Layer → zwei
-                // Ausgabe-Neuronen (Start 50:50, Loss 0,693) → Training
-                // (Loss sinkt, Kurve zeichnet sich) → Katze 95 %.
+                // (erst Verläufe, dann Augen/Nase/Mund-Maps) →
+                // Dense-Layer → zwei Ausgabe-Neuronen (Start 50:50,
+                // Loss 0,693) → Training (Loss sinkt, Kurve zeichnet
+                // sich) → Katze 95 %.
                 { id: 'pipeline', ref: () => typeof PipelineDemo !== 'undefined' ? PipelineDemo : null,
                         slideTest: s => s.id === 'slide-pipeline',
                         onEnter: d => setTimeout(() => d.init(), 80),

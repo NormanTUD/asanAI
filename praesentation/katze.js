@@ -5,9 +5,10 @@
 // als Canvas-Raster + gestufter Ablauf (Kicker, Titel, Pill, Chips,
 // Dots). Die Schritte laufen über die Pfeiltasten (DemoRegistry):
 //   - ConvDemo     "Jeder Pixel ist nur eine Zahl" — Farbbild →
-//                  Pixel = Zahl (Zoom) → 3 Kanäle → ein Kanal
-//                  (Grau) → 6×5-Filter in Augen-Form → flüssiger
-//                  5×5-Sweep → 8×8-Map, Augen leuchten
+//                  3 Kanäle → ein Kanal (Grau) → Pixel = Zahl
+//                  (Zoom) → 6×5-Filter in Augen-Form → blockweiser
+//                  Sweep (hält auf jedem Pixel-Block) → 8×8-Map,
+//                  Augen leuchten
 //   - FlattenDemo  "Was macht Flatten?" — Raster → Schnur
 //                  (1024 Zahlen) → Fazit
 //   - PipelineDemo "Der gesamte Prozess" — Bild → Convolutions →
@@ -89,7 +90,7 @@ const KatzeKit = (() => {
 		ctx.beginPath();
 		ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r);
 		ctx.arcTo(x + w, y + h, x, y + h, r);
-		ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y + h, x, y, r);
+		ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + r, y, r);
 		ctx.closePath();
 	}
 
@@ -324,15 +325,16 @@ const KatzeKit = (() => {
 //
 // 32×32-Katze, 8 Schritte:
 // 0: Farbbild — die farbige Katze (Rot/Grün/Blau kombiniert)
-// 1: Graustufen-Katze — ein Pixel vergrößert (Wert 0–255)
-// 2: das Farbbild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
-// 3: die Stapel faden zusammen — bleibt nur der Grün-Kanal (Grau)
+// 1: das Farbbild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
+// 2: die Stapel faden zusammen — bleibt nur der Grün-Kanal (Grau)
+// 3: Graustufen-Katze — ein Pixel vergrößert (Wert 0–255)
 // 4: der Filter erscheint — 6×5, so groß und in der Form wie
 //    ein Katzenauge (schwarz = 0, gelb = 255 — nur die Form,
 //    keine Zahlen)
 // 5: das Fenster wird auf das Bild gelegt
-// 6: das Fenster fließt über das Bild — grobe 5×5-Positionen,
-//    sanft interpoliert (der Filter passt ~5× über/nebeneinander)
+// 6: das Fenster geht blockweise über das Bild: hält an jeder
+//    Anker-Position (ganzzahlig → sitzt exakt auf dem Pixel-
+//    Raster), gleitet dann weich zur nächsten (Serpentine)
 // 7: die 8×8-Map — jedes Auge leuchtet als ein großer Pixel
 // ============================================================
 const ConvDemo = (() => {
@@ -373,40 +375,63 @@ const ConvDemo = (() => {
 			}
 	}
 
-	// Grober Sweep: 5×5 Anker-Positionen in Serpentine, dazwischen
-	// sanft interpoliert — der Filter "fließt" über das Bild und
-	// passt ~5× über und ~5× nebeneinander (statt 756 feiner Schritte).
-	const GS = 5;
+	// Blockweiser Sweep: das Fenster hält an jeder Anker-Position
+	// (DWELL), dann gleitet es weich zur nächsten (MOVE, Serpentine).
+	// Alle Anker sind GANZZAHLIG — in der Haltephase sitzt das
+	// Fenster exakt auf dem Pixel-Raster ("wirklich passen").
+	// Die Abstände sind so gewählt, dass JEDES feine Fenster und
+	// JEDE 8×8-Zelle von mindestens einem Anker überdeckt wird:
+	//   Abdeckung von (lfr, lfc) gilt für Anker (afr, afc) mit
+	//   afr ≤ lfr ≤ afr+KH-1 und afc ≤ lfc ≤ afc+KW-1.
+	const ANCH_ROW = [0, 5, 11, 16, 21, 26];
+	const ANCH_COL = [0, 4, 9, 14, 18, 23, 27];
 	const ANCHORS = [];
-	for (let ar = 0; ar < GS; ar++)
-		for (let ac = 0; ac < GS; ac++) {
-			const col = ar % 2 === 0 ? ac : GS - 1 - ac;
-			ANCHORS.push({ fr: ar * (OH - 1) / (GS - 1), fc: col * (OW - 1) / (GS - 1) });
+	for (let ar = 0; ar < ANCH_ROW.length; ar++)
+		for (let ac = 0; ac < ANCH_COL.length; ac++) {
+			const col = ar % 2 === 0 ? ac : ANCH_COL.length - 1 - ac;
+			ANCHORS.push({ fr: ANCH_ROW[ar], fc: ANCH_COL[col] });
 		}
-	const ANCH = ANCHORS.length; // 25
+	const ANCH = ANCHORS.length; // 42
+	const SW_DWELL = 5, SW_MOVE = 8; // 60-FPS-Einheiten (~0.08 s / ~0.13 s)
 
-	function sweepPos(t) {
-		const a0 = Math.min(Math.floor(t), ANCH - 2);
-		const f = t - a0;
-		return {
-			fr: KatzeKit.lerp(ANCHORS[a0].fr, ANCHORS[a0 + 1].fr, f),
-			fc: KatzeKit.lerp(ANCHORS[a0].fc, ANCHORS[a0 + 1].fc, f)
-		};
+	// Segment-Zeitleiste: Segment 2i = Halten an Anker i,
+	// Segment 2i+1 = Fahrt Anker i → i+1.
+	const SEG_T = [];
+	let SW_TOTAL = 0;
+	{
+		for (let i = 0; i < ANCH; i++) {
+			SEG_T.push(SW_TOTAL); SW_TOTAL += SW_DWELL;
+			if (i < ANCH - 1) { SEG_T.push(SW_TOTAL); SW_TOTAL += SW_MOVE; }
+		}
 	}
 
-	// Wann leuchtet/füllt sich jede 8×8-Zelle? Vorberechnet: Zeit (in
-	// Anker-Einheiten), zu der der Sweep-First das Zellen-Leuchtpunkt-
-	// bzw. Zellen-Mittelpunkt-Gebiet erstmals im Radius RD erreicht.
-	const RD = 3.5;
-	const tLit8 = new Array(O8 * O8).fill(Infinity);
-	const tFull8 = new Array(O8 * O8).fill(Infinity);
-	(function precomputeSweepTimes() {
-		const NS = 480;
-		const pts = [];
-		for (let i = 0; i <= NS; i++) {
-			const t = i / NS * (ANCH - 1);
-			pts.push({ t, ...sweepPos(t) });
+	function sweepPos(t) {
+		t = Math.max(0, Math.min(t, SW_TOTAL));
+		for (let i = SEG_T.length - 1; i >= 0; i--) {
+			if (t < SEG_T[i]) continue;
+			const a0 = (i / 2) | 0;
+			if (i % 2 === 0)
+				return { fr: ANCHORS[a0].fr, fc: ANCHORS[a0].fc, anchor: a0, moving: false };
+			const e = KatzeKit.eInOut((t - SEG_T[i]) / SW_MOVE);
+			return {
+				fr: KatzeKit.lerp(ANCHORS[a0].fr, ANCHORS[a0 + 1].fr, e),
+				fc: KatzeKit.lerp(ANCHORS[a0].fc, ANCHORS[a0 + 1].fc, e),
+				anchor: a0 + 1, moving: true
+			};
 		}
+		return { fr: ANCHORS[ANCH - 1].fr, fc: ANCHORS[ANCH - 1].fc, anchor: ANCH - 1, moving: false };
+	}
+
+	// Wann leuchtet/füllt sich jede 8×8-Zelle? Vorberechnet auf der
+	// Zeitleiste: die Zeit der ersten Anker-Halte, in der das Fenster
+	// den Zellen-Leuchtpunkt (lit) bzw. Zellen-Mittelpunkt (full)
+	// überdeckt. -1 = nie überdeckt (darf nicht passieren — die
+	// Guardrails prüfen es).
+	const tLit8 = new Array(O8 * O8).fill(-1);
+	const tFull8 = new Array(O8 * O8).fill(-1);
+	{
+		const covers = (pfr, pfc, tfr, tfc, kh, kw) =>
+			pfr <= tfr && pfr + kh - 1 >= tfr && pfc <= tfc && pfc + kw - 1 >= tfc;
 		for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
 			const i8 = R * O8 + C;
 			const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
@@ -418,18 +443,189 @@ const ConvDemo = (() => {
 			const lit = LIT8[i8];
 			const lfr = lit >= 0 ? (lit / OW) | 0 : null;
 			const lfc = lit >= 0 ? lit % OW : null;
-			for (const p of pts) {
-				if (lfr !== null && tLit8[i8] === Infinity &&
-					(p.fr - lfr) * (p.fr - lfr) + (p.fc - lfc) * (p.fc - lfc) <= RD * RD)
-					tLit8[i8] = p.t;
-				if (tFull8[i8] === Infinity &&
-					(p.fr - cfr) * (p.fr - cfr) + (p.fc - cfc) * (p.fc - cfc) <= RD * RD)
-					tFull8[i8] = p.t;
+			for (let ai = 0; ai < ANCH; ai++) {
+				const a = ANCHORS[ai];
+				const t = SEG_T[2 * ai] + SW_DWELL * 0.5;
+				if (tLit8[i8] < 0 && lfr !== null && covers(a.fr, a.fc, lfr, lfc, KH, KW))
+					tLit8[i8] = t;
+				if (tFull8[i8] < 0 && covers(a.fr, a.fc, cfr, cfc, KH, KW))
+					tFull8[i8] = t;
 			}
-			if (lfr !== null && tLit8[i8] === Infinity) tLit8[i8] = ANCH - 1;
-			if (tFull8[i8] === Infinity) tFull8[i8] = ANCH - 1;
 		}
-	})();
+	}
+
+	// ────────────────────────────────────────────────────────────
+	// 5 SWEEP-GUARDRAILS — prüfen ohne DOM, rein rechnerisch, dass
+	// der Sweep perfekt passt und flüssig läuft:
+	//   G1 Gitter     : an jedem Anker überdeckt das Fenster exakt
+	//                  ein KW×KH-Block Pixel (Rand == Zellrand)
+	//   G2 Grenzen    : über die gesamte Zeit bleibt das Fenster im
+	//                  Bild (0 ≤ fr ≤ OH-1, 0 ≤ fc ≤ OW-1)
+	//   G3 Flüssig    : keine Sprünge (Lipschitz-Begrenzung),
+	//                  exakter Halt an jedem Anker, Geschwindigkeit
+	//                  0 an den Segmentenden
+	//   G4 Map         : jede Zelle leuchtet genau, wenn das Fenster
+	//                  über ihrem Leuchtpunkt hält; jede Zelle wird
+	//                  irgendwann gefüllt (Abdeckung vollständig)
+	//   G5 Abschluss  : der Sweep endet exakt am letzten Anker, die
+	//                  Gesamtdauer ist plausibel, "Fertig" wird
+	//                  genau einmal am Ende gemeldet
+	// Aufruf im Browser: window.ConvSweepGuardrails()
+	// ────────────────────────────────────────────────────────────
+	function sweepGuardrails() {
+		const res = [];
+		const N = KatzeKit.N;
+		// Standard-Stage-Geometrie (1180×430, wie bei 1080p) —
+		// die Checks sind für jede Stage-Größe identisch, hier wird
+		// mit der Referenzgröße gerechnet.
+		const W = 1180, H = 430;
+		const s = Math.min(H / N * .86, W / N * .86, 13);
+		const ox = (W - (N * s + 60 + N * s)) / 2, oy = (H - N * s) / 2 + 6;
+		// Pixelränder, exakt wie drawGrid()/drawWindow() gezeichnet.
+		const edge = (i) => ox + i * s;
+		const rectOf = (fr, fc) => ({
+			x0: Math.floor(edge(fc)), x1: Math.ceil(edge(fc + KW)),
+			y0: Math.floor(edge(fr)), y1: Math.ceil(edge(fr + KH))
+		});
+		const blockOf = (fr, fc) => {
+			const cells = [];
+			for (let r = fr; r < fr + KH; r++)
+				for (let c = fc; c < fc + KW; c++)
+					cells.push({ x0: Math.floor(edge(c)), x1: Math.ceil(edge(c + 1)),
+					             y0: Math.floor(edge(r)), y1: Math.ceil(edge(r + 1)) });
+			return {
+				x0: Math.min(...cells.map(q => q.x0)), x1: Math.max(...cells.map(q => q.x1)),
+				y0: Math.min(...cells.map(q => q.y0)), y1: Math.max(...cells.map(q => q.y1))
+			};
+		};
+
+		// G1: Gitter
+		{
+			let ok = true, why = '';
+			for (const a of ANCHORS) {
+				if (!Number.isInteger(a.fr) || !Number.isInteger(a.fc)) { ok = false; why = 'Anker nicht ganzzahlig'; break; }
+				const w = rectOf(a.fr, a.fc), b = blockOf(a.fr, a.fc);
+				if (w.x0 !== b.x0 || w.x1 !== b.x1 || w.y0 !== b.y0 || w.y1 !== b.y1) {
+					ok = false; why = `Fenster ≠ Pixelblock an (${a.fr}, ${a.fc})`; break;
+				}
+			}
+			res.push({ name: 'G1 Gitter: Fenster sitzt exakt auf KW×KH Pixeln an allen Ankern', pass: ok, detail: why || '42/42 Anker pixelgenau' });
+		}
+
+		// G2: Grenzen
+		{
+			let ok = true, why = '';
+			const NS = 4000;
+			// Das komplette Bild (32×32) — nicht das Fenster selbst.
+			const imgRect = {
+				x0: Math.floor(edge(0)), x1: Math.ceil(edge(N)),
+				y0: Math.floor(edge(0)), y1: Math.ceil(edge(N))
+			};
+			for (let i = 0; i <= NS; i++) {
+				const t = i / NS * SW_TOTAL;
+				const p = sweepPos(t);
+				if (p.fr < 0 || p.fr > OH - 1 || p.fc < 0 || p.fc > OW - 1) {
+					ok = false; why = `Position (${p.fr.toFixed(3)}, ${p.fc.toFixed(3)}) außerhalb`; break;
+				}
+				// Exakt das Fenster-Rechteck, wie drawWindow() es zeichnet.
+				const w = {
+					x0: Math.floor(edge(p.fc)), x1: Math.ceil(edge(p.fc + KW)),
+					y0: Math.floor(edge(p.fr)), y1: Math.ceil(edge(p.fr + KH))
+				};
+				if (w.x0 < imgRect.x0 || w.x1 > imgRect.x1 || w.y0 < imgRect.y0 || w.y1 > imgRect.y1) {
+					ok = false; why = `Fenster ragt bei t=${t.toFixed(2)} über den Bildrand`; break;
+				}
+			}
+			res.push({ name: 'G2 Grenzen: Fenster bleibt zu jeder Zeit im Bild', pass: ok, detail: why || '4001 Abtastungen, keine Randverletzung' });
+		}
+
+		// G3: Flüssig
+		{
+			let ok = true, why = '';
+			// Lipschitz: eInOut hat die 3-fache Durchschnittsgeschw.
+			// im Mittel → max. = 3 · längste Strecke / MOVE.
+			let maxSpeed = 0;
+			for (let i = 0; i < ANCH - 1; i++)
+				maxSpeed = Math.max(maxSpeed,
+					Math.hypot(ANCHORS[i + 1].fr - ANCHORS[i].fr, ANCHORS[i + 1].fc - ANCHORS[i].fc) / SW_MOVE);
+			maxSpeed *= 3;
+			const NS = 8000, dt = SW_TOTAL / NS;
+			for (let i = 0; i < NS; i++) {
+				const a = sweepPos(i * dt), b = sweepPos((i + 1) * dt);
+				if (Math.hypot(b.fr - a.fr, b.fc - a.fc) > maxSpeed * dt + 1e-9) {
+					ok = false; why = `Sprung bei t≈${(i * dt).toFixed(1)}`; break;
+				}
+			}
+			// Geschwindigkeit 0 an allen Segmentenden (weich starten,
+			// weich stoppen) + Halte-Segmente bleiben exakt still.
+			const d = 0.05;
+			for (let i = 0; i < SEG_T.length; i++) {
+				const t0 = SEG_T[i], t1 = (i === SEG_T.length - 1 ? SW_TOTAL : SEG_T[i + 1]);
+				const d0 = Math.hypot(sweepPos(t0 + d).fr - sweepPos(t0).fr, sweepPos(t0 + d).fc - sweepPos(t0).fc);
+				const d1 = Math.hypot(sweepPos(t1).fr - sweepPos(t1 - d).fr, sweepPos(t1).fc - sweepPos(t1 - d).fc);
+				if (d0 > maxSpeed * d + 1e-6 || d1 > maxSpeed * d + 1e-6) {
+					ok = false; why = `Segment ${i} startet/stopp nicht weich`; break;
+				}
+				if (i % 2 === 0) {
+					const a = sweepPos(t0), b = sweepPos(t1);
+					if (a.fr !== b.fr || a.fc !== b.fc) { ok = false; why = `Halte-Segment ${i} bewegt sich`; break; }
+				}
+			}
+			res.push({ name: 'G3 Flüssig: keine Sprünge, weiche Fahrt, exakter Halt an jedem Block', pass: ok, detail: why || `Lipschitz ≤ ${maxSpeed.toFixed(3)} Zellen/Einheit, 8000 Abtastungen` });
+		}
+
+		// G4: Map-Konsistenz
+		{
+			let ok = true, why = '';
+			const covers = (pfr, pfc, tfr, tfc) =>
+				pfr <= tfr && pfr + KH - 1 >= tfr && pfc <= tfc && pfc + KW - 1 >= tfc;
+			for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
+				const i8 = R * O8 + C;
+				const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
+				const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
+				let maxScore = -1;
+				for (let fr = fr0; fr <= fr1; fr++)
+					for (let fc = fc0; fc <= fc1; fc++)
+						maxScore = Math.max(maxScore, SCORES[fr * OW + fc]);
+				const shouldLit = maxScore >= TH;
+				if (shouldLit !== (LIT8[i8] >= 0)) { ok = false; why = `Zelle (${R},${C}): Leuchtpunkt ≠ Max-Score`; break; }
+				if (shouldLit && tLit8[i8] < 0) { ok = false; why = `Zelle (${R},${C}) wird nie überdeckt`; break; }
+				if (tFull8[i8] < 0) { ok = false; why = `Zelle (${R},${C}) wird nie gefüllt`; break; }
+				// Zeit = erste Anker-Halte mit Abdeckung (unabhängig nachrechnen)
+				if (shouldLit) {
+					const lit = LIT8[i8], lfr = (lit / OW) | 0, lfc = lit % OW;
+					let first = -1;
+					for (let ai = 0; ai < ANCH; ai++)
+						if (covers(ANCHORS[ai].fr, ANCHORS[ai].fc, lfr, lfc)) { first = SEG_T[2 * ai] + SW_DWELL * 0.5; break; }
+					if (Math.abs(tLit8[i8] - first) > 1e-9) { ok = false; why = `Zelle (${R},${C}): Leuchtzeit weicht ab`; break; }
+				}
+			}
+			if (ok) res.push({ name: 'G4 Map: Leuchten/Füllen stimmt exakt mit Fenster-Abdeckung überein', pass: true, detail: '64/64 Zellen konsistent, alle überdeckt' });
+			else res.push({ name: 'G4 Map: Leuchten/Füllen stimmt exakt mit Fenster-Abdeckung überein', pass: false, detail: why });
+		}
+
+		// G5: Abschluss
+		{
+			let ok = true, why = '';
+			const end = sweepPos(SW_TOTAL);
+			const last = ANCHORS[ANCH - 1];
+			if (end.fr !== last.fr || end.fc !== last.fc) { ok = false; why = 'Ende ≠ letzter Anker'; }
+			const secs = SW_TOTAL / 60;
+			if (secs < 7 || secs > 12) { ok = false; why = ok ? why : ''; if (!why) why = `Dauer ${secs.toFixed(1)} s unplausibel`; }
+			// Tick-Simulation: "Fertig" wird genau einmal am Ende gemeldet.
+			let t = 0, doneMsgs = 0, wasDone = 0;
+			while (t < SW_TOTAL + 3) {
+				const done = t >= SW_TOTAL;
+				if (done && !wasDone) doneMsgs++;
+				wasDone = done;
+				t += 1; // dt = 1 (60-FPS-Einheit), wie im tick
+			}
+			if (doneMsgs !== 1) { ok = false; why = why ? why + '; ' : ''; why += `"Fertig" ${doneMsgs}× gemeldet`; }
+			if (ok) res.push({ name: 'G5 Abschluss: exaktes Ende am letzten Anker, 1× "Fertig", plausible Dauer', pass: true, detail: `Ende (${last.fr}, ${last.fc}) nach ${secs.toFixed(1)} s` });
+			else res.push({ name: 'G5 Abschluss: exaktes Ende am letzten Anker, 1× "Fertig", plausible Dauer', pass: false, detail: why });
+		}
+		return res;
+	}
 
 	let sweepT = 0, sweepDone = 0;
 	let kerA = 0, tKerA = 0;
@@ -594,20 +790,22 @@ const ConvDemo = (() => {
 	function drawWindow(ctx, S) {
 		if (S.step < 5 || S.step > 6) return;
 		const o = S.inst[0], s = o.s;
-		// Schritt 6: Fenster auf der Startposition; Schritt 7: fließt
-		// sanft über die groben 5×5-Positionen.
+		// Schritt 6: Fenster auf der Startposition; Schritt 7:
+		// blockweiser Sweep — an den Ankern ganzzahlig, und das
+		// Fenster wird exakt auf den Pixel-Block gesnapt (G1).
 		const pos = S.step === 6 ? sweepPos(sweepT) : { fr: 0, fc: 0 };
-		const x = o.x + pos.fc * s, y = o.y + pos.fr * s;
+		const x = Math.floor(o.x + pos.fc * s), y = Math.floor(o.y + pos.fr * s);
+		const x1 = Math.ceil(o.x + (pos.fc + KW) * s), y1 = Math.ceil(o.y + (pos.fr + KH) * s);
 		const ri = Math.max(0, Math.min(OH - 1, Math.round(pos.fr)));
 		const ci = Math.max(0, Math.min(OW - 1, Math.round(pos.fc)));
 		const sc = SCORES[ri * OW + ci], hot = sc >= 4;
 
 		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
-		ctx.fillRect(x, y, KW * s, KH * s);
+		ctx.fillRect(x, y, x1 - x, y1 - y);
 		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 2;
-		ctx.strokeRect(x + 1, y + 1, KW * s - 2, KH * s - 2);
+		ctx.strokeRect(x + 1, y + 1, x1 - x - 2, y1 - y - 2);
 
-		const bw = 46, bh = 20, bx = x + KW * s / 2 - bw / 2, by = y - bh - 6;
+		const bw = 46, bh = 20, bx = (x + x1) / 2 - bw / 2, by = y - bh - 6;
 		if (by > 0) {
 			ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh);
 			ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.1;
@@ -615,9 +813,12 @@ const ConvDemo = (() => {
 			ctx.fillStyle = hot ? '#2e7d32' : '#4a7fc0';
 			ctx.font = '600 11.5px Inter, system-ui, sans-serif';
 			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			ctx.fillText(sc + '', x + KW * s / 2, by + bh / 2);
+			ctx.fillText(sc + '', (x + x1) / 2, by + bh / 2);
 		}
 	}
+
+	if (typeof window !== 'undefined')
+		window.ConvSweepGuardrails = sweepGuardrails;
 
 	return KatzeKit.create({
 		slideId: 'slide-convolution',
@@ -626,15 +827,15 @@ const ConvDemo = (() => {
 			{ k: 'Schritt 1', t: 'Das Bild ist ein<br><em>Farbbild</em>.',
 			  p: 'Jedes Pixel trägt Rot, Grün und Blau',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
-			{ k: 'Schritt 2', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
-			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
-			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
-			{ k: 'Schritt 3', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
+			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
 			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
-			{ k: 'Schritt 4', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
+			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
 			  p: 'Die grüne Farbe war nur Deko — es sind reine Zahlen',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
+			{ k: 'Schritt 4', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
+			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
+			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
 			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
 			  p: 'Schwarz = 0 · Gelb = 255 — auch der Filter ist nur Zahlen',
 			  c: '<span class="kz-chip">(6, 5)</span>' },
@@ -642,11 +843,12 @@ const ConvDemo = (() => {
 			  p: `Punkt <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
 			  c: '<span class="kz-chip">(32, 32)</span><span class="kz-arrow">×</span><span class="kz-chip">(6, 5)</span>' },
 			{ k: 'Schritt 7', t: '… und <em>fließt</em> über<br>das ganze Bild.',
-			  p: `Fenster <b>1</b> von ${ANCH}`,
+			  p: `Block <b>1</b> von ${ANCH} · das Fenster hält auf jedem Pixel-Block`,
 			  c: `<span class="kz-chip">(${OH}, ${OW})</span><span class="kz-arrow">→</span><span class="kz-chip g">(8, 8)</span>` },
 			{ k: 'Schritt 8', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
 			  p: `1024 Pixel → ${O8 * O8} Zahlen — und die Augen bleiben`,
-			  c: `<span class="kz-chip g">(8, 8)</span>` }
+			  c: '<span class="kz-chip g">(8, 8)</span>',
+			  i: 'Die Augen-Form ist nur <b>unser Beispiel</b>. Im echten Training bringt sich der Computer die Filter <b>selbst bei</b> — anhand der Trainingsdaten.' }
 		],
 
 		layoutFor(step, S) {
@@ -662,7 +864,18 @@ const ConvDemo = (() => {
 				});
 				tTagA = [0, 0, 0];
 				S.zoomX = null;
-			} else if (step === 1) {
+			} else if (step === 1 || step === 2) {
+				// Drei Kanal-Stapel; ab Schritt 3 nur der Grün-Kanal (graustufen).
+				const g = Math.min(W * .035, 46);
+				const ss = Math.min((W - g * 2) / (KatzeKit.N * 3) * .96, H / KatzeKit.N * .82, 8);
+				const bw = KatzeKit.N * ss, tot = bw * 3 + g * 2, ox = (W - tot) / 2, oy = (H - bw) / 2 + 8;
+				inst.forEach((o, i) => {
+					o.ts = ss; o.tx = ox + i * (bw + g); o.ty = oy;
+					o.tmix = 1; o.ta = step === 1 ? 1 : (i === KatzeKit.PICK ? 1 : 0);
+				});
+				tTagA = step === 1 ? [1, 1, 1] : [0, 1, 0];
+				S.tGrayMix = step === 2 ? 1 : 0;
+			} else if (step === 3) {
 				// Graustufen-Katze links, Zoom-Pixel rechts.
 				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .5, 10);
 				const zw = 230, zh = 250, gap = 90;
@@ -674,17 +887,6 @@ const ConvDemo = (() => {
 				tTagA = [0, 0, 0];
 				S.zoomX = x0 + KatzeKit.N * cs + gap;
 				S.zoomY = (H - zh) / 2;
-			} else if (step <= 3) {
-				// Drei Kanal-Stapel; ab Schritt 4 nur der Grün-Kanal (graustufen).
-				const g = Math.min(W * .035, 46);
-				const ss = Math.min((W - g * 2) / (KatzeKit.N * 3) * .96, H / KatzeKit.N * .82, 8);
-				const bw = KatzeKit.N * ss, tot = bw * 3 + g * 2, ox = (W - tot) / 2, oy = (H - bw) / 2 + 8;
-				inst.forEach((o, i) => {
-					o.ts = ss; o.tx = ox + i * (bw + g); o.ty = oy;
-					o.tmix = 1; o.ta = step === 2 ? 1 : (i === KatzeKit.PICK ? 1 : 0);
-				});
-				tTagA = step === 2 ? [1, 1, 1] : [0, 1, 0];
-				S.tGrayMix = step === 3 ? 1 : 0;
 			} else {
 				S.tGrayMix = 0;
 				inst.forEach((o, i) => {
@@ -698,8 +900,8 @@ const ConvDemo = (() => {
 			}
 			tKerA = step <= 3 ? 0 : (step >= 7 ? .45 : 1);
 			tOutA = step >= 5 ? 1 : 0;
-			tGrayA = step === 1 ? 1 : 0;
-			tZoomA = step === 1 ? 1 : 0;
+			tGrayA = step === 3 ? 1 : 0;
+			tZoomA = step === 3 ? 1 : 0;
 		},
 
 		onStep(step) {
@@ -713,9 +915,9 @@ const ConvDemo = (() => {
 			zoomA = KatzeKit.lerp(zoomA, tZoomA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
 			if (S.step !== 6) return;
-			// 24 Intervalle in ~8 s — das Fenster fließt sanft
-			sweepT = Math.min(sweepT + dt * ((ANCH - 1) / (8 * 60)), ANCH - 1);
-			if (sweepT >= ANCH - 1) {
+			// Blockweiser Sweep: Halten (DWELL) + weiche Fahrt (MOVE)
+			sweepT = Math.min(sweepT + dt, SW_TOTAL);
+			if (sweepT >= SW_TOTAL) {
 				if (!sweepDone) {
 					sweepDone = 1;
 					setFoot(`Fertig — <b>${ANCH}</b> Positionen → <b>${O8 * O8}</b> Zahlen (8 × 8)`,
@@ -725,7 +927,7 @@ const ConvDemo = (() => {
 				const pos = sweepPos(sweepT);
 				const ri = Math.max(0, Math.min(OH - 1, Math.round(pos.fr)));
 				const ci = Math.max(0, Math.min(OW - 1, Math.round(pos.fc)));
-				setFoot(`Fenster <b>${Math.floor(sweepT) + 1}</b> von ${ANCH} · Treffer: <b>${SCORES[ri * OW + ci]}</b> von ${TMAX}`,
+				setFoot(`Block <b>${pos.anchor + 1}</b> von ${ANCH} · Treffer: <b>${SCORES[ri * OW + ci]}</b> von ${TMAX}`,
 					'<span class="kz-chip g">(8, 8)</span>');
 			}
 		},
@@ -743,16 +945,17 @@ const ConvDemo = (() => {
 					ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
 					ctx.globalAlpha = 1;
 				}
-			} else if (S.step === 1) {
-				// Farb-Katze (Geometrie in Bewegung), Grau fadet drüber.
-				KatzeKit.drawGrid(ctx, o, 0, 0);
-				drawGrayCat(ctx, S);
-				drawPixelZoom(ctx, S);
-			} else if (S.step <= 3) {
-				// Kanal-Stapel; Schritt 4: nur der Grün-Kanal, fadet in Grau.
+			} else if (S.step === 1 || S.step === 2) {
+				// Kanal-Stapel; Schritt 3: nur der Grün-Kanal, fadet in Grau.
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				KatzeKit.drawTags(ctx, S, tagA);
-				if (S.step === 2) drawGrayCat(ctx, S); // Crossfade von der Grau-Katze
+			} else if (S.step === 3) {
+				// Die Grün-Katze (inst[1]) fliegt zur Katzen-Position
+				// und fadet aus; die Graustufen-Katze (inst[0] +
+				// Grau-Overlay) fliegt an ihre Stelle.
+				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
+				drawGrayCat(ctx, S);
+				drawPixelZoom(ctx, S);
 			} else {
 				KatzeKit.drawGrid(ctx, o, 0, 0);
 				// Beim Zusammenfaden flackern die Kanäle kurz drüber.
@@ -879,6 +1082,7 @@ const FlattenDemo = (() => {
 
 		onStep(step) {
 			if (step === 0) { flatP = 0; flatMsg = 0; }
+			else { flatP = 32; flatMsg = 1; } // kein Warten: alles flach
 		},
 
 		tick(dt, k, S, setFoot) {
@@ -910,17 +1114,28 @@ const FlattenDemo = (() => {
 // ============================================================
 // PipelineDemo — "Der gesamte Prozess" (am Ende der Deck)
 //
-// Bild → Convolutions (Augen/Nase/Mund-Maps) → Dense-Layer →
-// zwei Ausgabe-Neuronen. Das Netz startet blind (50:50, Loss
-// 0,693); im Training sinkt der Loss und das Katzen-Neuron
-// wird am aktivsten (95 %).
-// 6 Schritte: Bild · Convolutions · Dense · 50:50 (Loss) ·
-// Training (Loss sinkt) · Antwort (95 %).
+// Bild → Convolutions (erst Verläufe, dann Augen/Nase/Mund-Maps)
+// → Dense-Layer → zwei Ausgabe-Neuronen. Das Netz startet blind
+// (50:50, Loss 0,693 — es RÄT blind); im Training sinkt der Loss
+// (Ziel: niedriger, nicht 0) und das Katzen-Neuron wird am
+// aktivsten (95 %).
+// 7 Schritte: Bild · Verläufe · Augen/Nase/Mund · Dense ·
+// 50:50 (Loss) · Training (Loss sinkt) · Antwort (95 %).
 // ============================================================
 const PipelineDemo = (() => {
 	'use strict';
 
-	// Leuchtende Zellen der drei 8×8-Karten (Augen/Nase/Mund).
+	// Stufe 1 der Convolutions: die ersten Filter finden Verläufe
+	// (Kanten) — waagerecht, senkrecht, diagonal.
+	const EDGE_MAPS = [
+		{ label: 'Waagerecht', lit: [1 * 8 + 2, 1 * 8 + 3, 1 * 8 + 4, 1 * 8 + 5,
+		                             5 * 8 + 2, 5 * 8 + 3, 5 * 8 + 4, 5 * 8 + 5] },
+		{ label: 'Senkrecht', lit: [2 * 8 + 2, 3 * 8 + 2, 4 * 8 + 2,
+		                            2 * 8 + 5, 3 * 8 + 5, 4 * 8 + 5] },
+		{ label: 'Diagonal', lit: [1 * 8 + 2, 2 * 8 + 3, 3 * 8 + 4, 4 * 8 + 5,
+		                           1 * 8 + 5, 2 * 8 + 4, 3 * 8 + 3, 4 * 8 + 2] }
+	];
+	// Stufe 2: daraus entstehen die Teile (Augen/Nase/Mund).
 	const MAPS = [
 		{ label: 'Augen', lit: [3 * 8 + 1, 3 * 8 + 5] },
 		{ label: 'Nase', lit: [4 * 8 + 3] },
@@ -929,6 +1144,8 @@ const PipelineDemo = (() => {
 
 	let aCat = 0, tCatA = 0;
 	let aConv = 0, tConvA = 0;
+	let aEdge = 0, tEdgeA = 0;
+	let aPart = 0, tPartA = 0;
 	let aDense = 0, tDenseA = 0;
 	let aOut = 0, tOutA = 0;
 	let aLoss = 0, tLossA = 0;
@@ -967,7 +1184,10 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	function drawMap(ctx, x, y, ms, label, lit, a) {
+	// Karten-Rahmen + leere Zellen (einmal pro Slot, mit dem
+	// stärkeren Alpha der beiden Stufen — kein Doppel-Weiß beim
+	// Crossfade).
+	function drawMapSlot(ctx, x, y, ms, label, a) {
 		if (a < 0.01) return;
 		ctx.globalAlpha = a;
 		ctx.fillStyle = '#475569';
@@ -979,16 +1199,23 @@ const PipelineDemo = (() => {
 		ctx.fill();
 		ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1; ctx.stroke();
 		for (let R = 0; R < 8; R++) for (let C = 0; C < 8; C++) {
+			ctx.fillStyle = '#f6f7f9';
+			ctx.fillRect(x + C * ms + 1, y + R * ms + 1, ms - 2, ms - 2);
+		}
+		ctx.globalAlpha = 1;
+	}
+
+	// Die leuchtenden Zellen einer Karte (eigene Stufe/Alpha).
+	function drawMapLit(ctx, x, y, ms, lit, a) {
+		if (a < 0.01) return;
+		ctx.globalAlpha = a;
+		for (const idx of lit) {
+			const R = (idx / 8) | 0, C = idx % 8;
 			const cx = x + C * ms, cy = y + R * ms;
-			if (lit.indexOf(R * 8 + C) >= 0) {
-				ctx.fillStyle = 'rgba(76,175,80,.55)';
-				ctx.fillRect(cx + 1, cy + 1, ms - 2, ms - 2);
-				ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
-				ctx.strokeRect(cx + 1.5, cy + 1.5, ms - 3, ms - 3);
-			} else {
-				ctx.fillStyle = '#f6f7f9';
-				ctx.fillRect(cx + 1, cy + 1, ms - 2, ms - 2);
-			}
+			ctx.fillStyle = 'rgba(76,175,80,.55)';
+			ctx.fillRect(cx + 1, cy + 1, ms - 2, ms - 2);
+			ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
+			ctx.strokeRect(cx + 1.5, cy + 1.5, ms - 3, ms - 3);
 		}
 		ctx.globalAlpha = 1;
 	}
@@ -998,7 +1225,7 @@ const PipelineDemo = (() => {
 	function drawLossPanel(ctx, geo, S) {
 		if (aLoss < 0.01) return;
 		const { px, py, pw, ph } = geo;
-		const t = S.step >= 5 ? 1 : (S.step === 4 ? trainP : 0);
+		const t = S.step >= 6 ? 1 : (S.step === 5 ? trainP : 0);
 		const L = lossOf(trainPct(t));
 		const col = lossColor(L);
 
@@ -1101,24 +1328,27 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 1', t: 'Wir starten mit<br><em>einem Bild</em>.',
 			  p: '32 × 32 Pixel — die Katze',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
-			{ k: 'Schritt 2', t: 'Convolutions finden<br><em>Augen, Nase, Mund</em>.',
-			  p: '3 Filter → 3 Karten mit je 64 Zahlen',
+			{ k: 'Schritt 2', t: 'Die ersten Filter finden<br><em>Verläufe</em>.',
+			  p: 'Waagerecht, senkrecht, diagonal — Kanten',
 			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>' },
-			{ k: 'Schritt 3', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
+			{ k: 'Schritt 3', t: 'Daraus: <em>Augen, Nase, Mund</em>.',
+			  p: 'Weitere Filter kombinieren Verläufe zu Formen',
+			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>' },
+			{ k: 'Schritt 4', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
 			  p: '64 Zahlen pro Karte — dicht verdrahtet',
 			  c: '<span class="kz-chip g">3 × (8, 8)</span><span class="kz-arrow">→</span><span class="kz-chip r">Dense</span>' },
-			{ k: 'Schritt 4', t: 'Zwei Neuronen —<br>die <em>Antwort</em>.',
+			{ k: 'Schritt 5', t: 'Zwei Neuronen —<br>die <em>Antwort</em>.',
 			  p: 'Anfang: <b>50 : 50</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip r">50 : 50</span><span class="kz-arrow">·</span><span class="kz-chip r">Loss 0,693</span>',
-			  i: 'Das Netz startet mit <b>zufälligen Gewichten</b> — es ratet blind: 50 : 50. Der <b>Loss</b> (−ln p, p = Katzen-Anteil) misst, wie falsch die Antwort ist: 0,693 — der Wert eines Blindrats. Ziel des Trainings: Loss → 0.' },
-			{ k: 'Schritt 5', t: 'Training: der Loss<br><em>sinkt</em>.',
+			  i: 'Das Netz startet mit <b>zufälligen Gewichten</b> — es <b>rät</b> blind: 50 : 50. Der <b>Loss</b> (−ln p, p = Katzen-Anteil) misst, wie falsch die Antwort ist: 0,693 — <b>desto höher, desto schlechter</b>. Ziel des Trainings: den Loss <b>niedriger</b> machen.' },
+			{ k: 'Schritt 6', t: 'Training: der Loss<br><em>sinkt</em>.',
 			  p: 'Training … · Katze <b>50 %</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip g">Loss ↓</span>',
 			  i: '<b>Training</b> = den Loss senken: <i>Gradient Descent</i> dreht alle Gewichte ein Stück in Richtung „weniger falsch". Mit jedem Schritt wird die Antwort besser — der Loss fällt, die Kurve zeigt es.' },
-			{ k: 'Schritt 6', t: 'Das Katzen-Neuron<br>ist am <em>aktivsten</em>.',
+			{ k: 'Schritt 7', t: 'Das Katzen-Neuron<br>ist am <em>aktivsten</em>.',
 			  p: 'Katze: <b>95 %</b> · Loss <b>0,051</b>',
 			  c: '<span class="kz-chip g">Katze 95 %</span>',
-			  i: 'Vom Bild zur Antwort: <b>Convolutions</b> finden lokale Strukturen (Augen, Nase, Mund), die <b>Dense-Layer</b> kombinieren — am Ende steht eine Zahl pro Antwort. 95 % = „fast sicher Katze", Loss 0,051 ≈ 0.' }
+			  i: 'Vom Bild zur Antwort: <b>Convolutions</b> finden lokale Strukturen (Verläufe, dann Augen, Nase, Mund), die <b>Dense-Layer</b> kombinieren — am Ende steht eine Zahl pro Antwort. 95 % = „fast sicher Katze", Loss 0,051 — <b>sehr niedrig</b>.' }
 		],
 
 		layoutFor(step, S) {
@@ -1130,22 +1360,26 @@ const PipelineDemo = (() => {
 			});
 			tCatA = 1;
 			tConvA = step >= 1 ? 1 : 0;
-			tDenseA = step >= 2 ? 1 : 0;
-			tOutA = step >= 3 ? 1 : 0;
-			tLossA = step >= 3 ? 1 : 0;
+			tEdgeA = step === 1 ? 1 : 0;
+			tPartA = step >= 2 ? 1 : 0;
+			tDenseA = step >= 3 ? 1 : 0;
+			tOutA = step >= 4 ? 1 : 0;
+			tLossA = step >= 4 ? 1 : 0;
 		},
 
 		onStep(step) {
-			if (step === 4) { trainP = 0; trainMsg = 0; }
+			if (step === 5) { trainP = 0; trainMsg = 0; }
 		},
 
 		tick(dt, k, S, setFoot) {
 			aCat = KatzeKit.lerp(aCat, tCatA, k * 1.5);
 			aConv = KatzeKit.lerp(aConv, tConvA, k * 1.5);
+			aEdge = KatzeKit.lerp(aEdge, tEdgeA, k * 1.5);
+			aPart = KatzeKit.lerp(aPart, tPartA, k * 1.5);
 			aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
 			aOut = KatzeKit.lerp(aOut, tOutA, k * 1.5);
 			aLoss = KatzeKit.lerp(aLoss, tLossA, k * 1.5);
-			if (S.step !== 4) return;
+			if (S.step !== 5) return;
 			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
 			if (trainP >= 1) {
@@ -1195,8 +1429,15 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 			}
 
-			// Feature-Maps
-			MAPS.forEach((m, i) => drawMap(ctx, mapX, mapYs[i], ms, m.label, m.lit, aConv));
+			// Feature-Maps: Stufe 1 = Verläufe (Schritt 2),
+			// Stufe 2 = Augen/Nase/Mund (Schritt 3+), Crossfade.
+			const aSlot = Math.max(aEdge, aPart);
+			for (let i = 0; i < 3; i++) {
+				drawMapSlot(ctx, mapX, mapYs[i], ms,
+					S.step === 1 ? EDGE_MAPS[i].label : MAPS[i].label, aSlot);
+				drawMapLit(ctx, mapX, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge);
+				drawMapLit(ctx, mapX, mapYs[i], ms, MAPS[i].lit, aPart);
+			}
 
 			// Dense
 			drawDense(ctx, denseX, denseY, denseW, denseH, aDense);
@@ -1204,8 +1445,8 @@ const PipelineDemo = (() => {
 			// Ausgabe: am Anfang 50:50, im Training rutscht es
 			// immer weiter Richtung Katze.
 			let pCat = 95, pDog = 5, hotCat = true;
-			if (S.step === 3) { pCat = 50; pDog = 50; hotCat = false; }
-			else if (S.step === 4) {
+			if (S.step === 4) { pCat = 50; pDog = 50; hotCat = false; }
+			else if (S.step === 5) {
 				const p = Math.round(trainPct(trainP));
 				pCat = p; pDog = 100 - p; hotCat = pCat >= 90;
 			}
