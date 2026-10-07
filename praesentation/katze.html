@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Flatten — visuell</title>
+<title>Flatten, visuell</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:#fff;color:#0d1117;
@@ -330,7 +330,7 @@ function frame(ts){
     const done=Math.floor(flatP);
     if(flatP>=N){
       if(!flatMsg){flatMsg=1;
-        setFoot('Fertig — <b>1024</b> Zahlen in einer einzigen Reihe',
+        setFoot('Fertig, <b>1024</b> Zahlen in einer einzigen Reihe',
          '<span class="chip g">(32, 32)</span><span class="arrow">→</span><span class="chip r">(1024,)</span>');}
     }else{
       pill.innerHTML=`Zeile <b>${done}</b> von 32 · <b>${done*N}</b> Zahlen`;
@@ -357,7 +357,7 @@ const SLIDES=[
   c:'<span class="chip">(32, 32, 3)</span>', m:0},
 
  {k:'Schritt 2',t:'Farbbilder haben<br><em>drei</em> Stapel.',
-  p:'Rot, Grün und Blau — drei eigene Zahlen-Raster',
+  p:'Rot, Grün und Blau, drei eigene Zahlen-Raster',
   c:'<span class="chip">(32, 32, 3)</span><span class="arrow">=</span><span class="chip">3 × (32, 32)</span>', m:1},
 
  {k:'Schritt 3',t:'Nimm einen davon:<br>den <em>Grün-Kanal</em>.',
@@ -365,7 +365,7 @@ const SLIDES=[
   c:'<span class="chip">(32, 32)</span>', m:2},
 
  {k:'Schritt 4',t:'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
-  p:'Die grüne Farbe war nur Deko — es sind reine Zahlen',
+  p:'Die grüne Farbe war nur Deko, es sind reine Zahlen',
   c:'<span class="chip g">(32, 32)</span><span class="arrow">·</span><span class="chip g">0 – 255</span>', m:3},
 
  {k:'Schritt 5',t:'Flatten rollt<br>das Raster zu<br>einer <em>Schnur</em> aus.',

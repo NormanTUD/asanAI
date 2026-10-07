@@ -1,17 +1,17 @@
 // ============================================================
-// katze.js — Framework "ASCII-Katze" (aus katze.html)
+// katze.js, Framework "ASCII-Katze" (aus katze.html)
 //
 // Drei Folien teilen sich dasselbe Gerüst: die 32×32-ASCII-Katze
 // als Canvas-Raster + gestufter Ablauf (Kicker, Titel, Pill, Chips,
 // Dots). Die Schritte laufen über die Pfeiltasten (DemoRegistry):
-//   - ConvDemo     "Jeder Pixel ist nur eine Zahl" — Farbbild →
+//   - ConvDemo     "Jeder Pixel ist nur eine Zahl", Farbbild →
 //                  3 Kanäle → ein Kanal (Grau) → Pixel = Zahl
 //                  (Zoom) → 6×5-Filter in Augen-Form → blockweiser
 //                  Sweep (hält auf jedem Pixel-Block) → 8×8-Map,
 //                  Augen leuchten
-//   - FlattenDemo  "Was macht Flatten?" — Raster → Schnur
+//   - FlattenDemo  "Was macht Flatten?", Raster → Schnur
 //                  (1024 Zahlen) → Fazit
-//   - PipelineDemo "Der gesamte Prozess" — Bild → Convolutions →
+//   - PipelineDemo "Der gesamte Prozess", Bild → Convolutions →
 //                  Dense → 2 Neuronen (Start 50:50, Loss 0,693)
 //                  → Training (Loss sinkt) → Katze 95 %
 // ============================================================
@@ -69,7 +69,7 @@ const KatzeKit = (() => {
 		return `rgb(${r|0},${g|0},${b|0})`;
 	}
 
-	// Ein Raster (32×32) als gefüllte Blöcke — ceil auf ganze
+	// Ein Raster (32×32) als gefüllte Blöcke, ceil auf ganze
 	// Gerätepixel → garantiert keine Lücken zwischen den Zellen.
 	function drawGrid(ctx, o, ch, grayMix) {
 		if (o.a < 0.005) return;
@@ -121,7 +121,7 @@ const KatzeKit = (() => {
 	//   slideId:   Folien-ID (z.B. 'slide-flatten')
 	//   prefix:    Element-ID-Präfix ('flat' / 'conv'):
 	//              <prefix>-cv/-kicker/-title/-pill/-chips/-tswap/-fswap/-dots/-insight
-	//   steps:     [{k, t, p, c, i?}] — Kicker, Titel(HTML), Pill(HTML),
+	//   steps:     [{k, t, p, c, i?}], Kicker, Titel(HTML), Pill(HTML),
 	//              Chips(HTML), optional Fazit-Box(HTML)
 	//   layoutFor(step, S): Zielwerte der Instanzen + Demo-Ziele setzen
 	//   onStep(step):       Hook pro Schrittwechsel
@@ -321,21 +321,21 @@ const KatzeKit = (() => {
 })();
 
 // ============================================================
-// ConvDemo — "Jeder Pixel ist nur eine Zahl" (Einstieg)
+// ConvDemo, "Jeder Pixel ist nur eine Zahl" (Einstieg)
 //
 // 32×32-Katze, 8 Schritte:
-// 0: Farbbild — die farbige Katze (Rot/Grün/Blau kombiniert)
+// 0: Farbbild, die farbige Katze (Rot/Grün/Blau kombiniert)
 // 1: das Farbbild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
-// 2: die Stapel faden zusammen — bleibt nur der Grün-Kanal (Grau)
-// 3: Graustufen-Katze — ein Pixel vergrößert (Wert 0–255)
-// 4: der Filter erscheint — 6×5, so groß und in der Form wie
-//    ein Katzenauge (schwarz = 0, gelb = 255 — nur die Form,
+// 2: die Stapel faden zusammen, bleibt nur der Grün-Kanal (Grau)
+// 3: Graustufen-Katze, ein Pixel vergrößert (Wert 0–255)
+// 4: der Filter erscheint, 6×5, so groß und in der Form wie
+//    ein Katzenauge (schwarz = 0, gelb = 255, nur die Form,
 //    keine Zahlen)
 // 5: das Fenster wird auf das Bild gelegt
 // 6: das Fenster geht blockweise über das Bild: hält an jeder
 //    Anker-Position (ganzzahlig → sitzt exakt auf dem Pixel-
 //    Raster), gleitet dann weich zur nächsten (Serpentine)
-// 7: die 8×8-Map — jedes Auge leuchtet als ein großer Pixel
+// 7: die 8×8-Map, jedes Auge leuchtet als ein großer Pixel
 // ============================================================
 const ConvDemo = (() => {
 	'use strict';
@@ -377,13 +377,13 @@ const ConvDemo = (() => {
 
 	// Blockweiser Sweep: das Fenster hält an jeder Anker-Position
 	// (DWELL), dann gleitet es weich zur nächsten (MOVE, Serpentine).
-	// Alle Anker sind GANZZAHLIG — in der Haltephase sitzt das
+	// Alle Anker sind GANZZAHLIG, in der Haltephase sitzt das
 	// Fenster exakt auf dem Pixel-Raster ("wirklich passen").
 	// Die Abstände sind so gewählt, dass JEDES feine Fenster und
 	// JEDE 8×8-Zelle von mindestens einem Anker überdeckt wird:
 	//   Abdeckung von (lfr, lfc) gilt für Anker (afr, afc) mit
 	//   afr ≤ lfr ≤ afr+KH-1 und afc ≤ lfc ≤ afc+KW-1.
-	// Die Anker umfassen exakt (fr=10, fc=4) und (fr=10, fc=19) —
+	// Die Anker umfassen exakt (fr=10, fc=4) und (fr=10, fc=19):
 	// dort deckt das 6×5-Fenster die Augen (Zeilen 10–15) pixelgenau ab.
 	const ANCH_ROW = [0, 5, 10, 16, 21, 26];
 	const ANCH_COL = [0, 4, 9, 14, 18, 19, 23, 27];
@@ -427,7 +427,7 @@ const ConvDemo = (() => {
 	// Wann leuchtet/füllt sich jede 8×8-Zelle? Vorberechnet auf der
 	// Zeitleiste: die Zeit der ersten Anker-Halte, in der das Fenster
 	// den Zellen-Leuchtpunkt (lit) bzw. Zellen-Mittelpunkt (full)
-	// überdeckt. -1 = nie überdeckt (darf nicht passieren — die
+	// überdeckt. -1 = nie überdeckt (darf nicht passieren, die
 	// Guardrails prüfen es).
 	const tLit8 = new Array(O8 * O8).fill(-1);
 	const tFull8 = new Array(O8 * O8).fill(-1);
@@ -449,7 +449,7 @@ const ConvDemo = (() => {
 				const a = ANCHORS[ai];
 				const t = SEG_T[2 * ai] + SW_DWELL * 0.5;
 				// Leuchten erst, wenn das Fenster selbst voll auf der Form
-				// passt (Score ≥ TH) UND den Leuchtpunkt überdeckt — nicht
+				// passt (Score ≥ TH) UND den Leuchtpunkt überdeckt, nicht
 				// schon beim bloßen Berühren.
 				const strong = SCORES[a.fr * OW + a.fc] >= TH;
 				if (tLit8[i8] < 0 && lfr !== null && strong && covers(a.fr, a.fc, lfr, lfc, KH, KW))
@@ -461,7 +461,7 @@ const ConvDemo = (() => {
 	}
 
 	// ────────────────────────────────────────────────────────────
-	// 5 SWEEP-GUARDRAILS — prüfen ohne DOM, rein rechnerisch, dass
+	// 5 SWEEP-GUARDRAILS, prüfen ohne DOM, rein rechnerisch, dass
 	// der Sweep perfekt passt und flüssig läuft:
 	//   G1 Gitter     : an jedem Anker überdeckt das Fenster exakt
 	//                  ein KW×KH-Block Pixel (Rand == Zellrand)
@@ -481,7 +481,7 @@ const ConvDemo = (() => {
 	function sweepGuardrails() {
 		const res = [];
 		const N = KatzeKit.N;
-		// Standard-Stage-Geometrie (1180×430, wie bei 1080p) —
+		// Standard-Stage-Geometrie (1180×430, wie bei 1080p):
 		// die Checks sind für jede Stage-Größe identisch, hier wird
 		// mit der Referenzgröße gerechnet.
 		const W = 1180, H = 430;
@@ -522,7 +522,7 @@ const ConvDemo = (() => {
 		{
 			let ok = true, why = '';
 			const NS = 4000;
-			// Das komplette Bild (32×32) — nicht das Fenster selbst.
+			// Das komplette Bild (32×32), nicht das Fenster selbst.
 			const imgRect = {
 				x0: Math.floor(edge(0)), x1: Math.ceil(edge(N)),
 				y0: Math.floor(edge(0)), y1: Math.ceil(edge(N))
@@ -646,13 +646,13 @@ const ConvDemo = (() => {
 	let zoomA = 0, tZoomA = 0;
 	const KC = 24; // Filter-Panel: Zellgröße in px
 
-	// Schritt 2: Beispiel-Pixel — oberes linkes Auge (Zeile 10, Spalte 4).
+	// Schritt 2: Beispiel-Pixel, oberes linkes Auge (Zeile 10, Spalte 4).
 	const ZR = 10, ZC = 4;
 	const ZVAL = KatzeKit.GREEN[ZR * KatzeKit.N + ZC];
 
 	// Rahmen der Graustufen-Katze. Die Katze selbst ist der Grün-Kanal
 	// (inst[PICK]), der ab Schritt 2 grau gemischt wird und in Schritt 3
-	// an diese Position fliegt — gezeichnet an seiner Geometrie.
+	// an diese Position fliegt, gezeichnet an seiner Geometrie.
 	function drawGrayCat(ctx, S) {
 		const o = S.inst[KatzeKit.PICK];
 		if (o.a < 0.005) return;
@@ -780,7 +780,7 @@ const ConvDemo = (() => {
 		KatzeKit.roundRect(ctx, kx - 9, ky - 9, kw + 18, kh + 18, 10);
 		ctx.fill();
 		ctx.strokeStyle = '#333'; ctx.lineWidth = 1.2; ctx.stroke();
-		// Nur die Form (gelb = Auge, schwarz = Pupille/Rand) — keine Zahlen.
+		// Nur die Form (gelb = Auge, schwarz = Pupille/Rand), keine Zahlen.
 		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
 			if (!TPL[r * KW + c]) continue;
 			ctx.fillStyle = '#E2C72E';
@@ -794,7 +794,7 @@ const ConvDemo = (() => {
 		if (S.step < 5 || S.step > 6) return;
 		const o = S.inst[0], s = o.s;
 		// Schritt 6: Fenster auf der Startposition; Schritt 7:
-		// blockweiser Sweep — an den Ankern ganzzahlig, und das
+		// blockweiser Sweep, an den Ankern ganzzahlig, und das
 		// Fenster wird exakt auf den Pixel-Block gesnapt (G1).
 		const pos = S.step === 6 ? sweepPos(sweepT) : { fr: 0, fc: 0 };
 		const x = Math.floor(o.x + pos.fc * s), y = Math.floor(o.y + pos.fr * s);
@@ -831,7 +831,7 @@ const ConvDemo = (() => {
 			  p: 'Jedes Pixel trägt Rot, Grün und Blau',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
 			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
-			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
+			  p: 'Rot, Grün und Blau, drei eigene Zahlen-Raster',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
 			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
 			  p: 'Wie hell der Pixel ist, sagt, wie stark <b>Grün</b> aktiviert ist',
@@ -850,9 +850,9 @@ const ConvDemo = (() => {
 			  c: `<span class="kz-chip">(${OH}, ${OW})</span><span class="kz-arrow">→</span><span class="kz-chip g">(8, 8)</span>`,
 			  i: 'An jedem Platz <b>misst</b> der Filter, wie gut sein kleines Fenster zum <b>darunterliegenden</b> Bildstück passt: gleiche Werte = hohe Zahl, kaum Übereinstimmung = nahe 0.' },
 			{ k: 'Schritt 8', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
-			  p: `1024 Pixel → ${O8 * O8} Zahlen — und die Augen bleiben`,
+			  p: `1024 Pixel → ${O8 * O8} Zahlen, und die Augen bleiben`,
 			  c: '<span class="kz-chip g">(8, 8)</span>',
-			  i: 'Die Augen-Form ist nur <b>unser Beispiel</b>. Im echten Training bringt sich der Computer die Filter <b>selbst bei</b> — anhand der Trainingsdaten.' }
+			  i: 'Die Augen-Form ist nur <b>unser Beispiel</b>. Im echten Training bringt sich der Computer die Filter <b>selbst bei</b>, anhand der Trainingsdaten.' }
 		],
 
 		layoutFor(step, S) {
@@ -881,7 +881,7 @@ const ConvDemo = (() => {
 				S.tGrayMix = step === 2 ? 1 : 0;
 			} else if (step === 3) {
 				// Der Grün-Kanal (aus Schritt 2, bereits grau gemischt)
-				// fliegt aus der Mitte nach links — Bewegung statt
+				// fliegt aus der Mitte nach links, Bewegung statt
 				// Fade-Out. Zoom-Pixel rechts.
 				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .5, 10);
 				const zw = 230, zh = 250, gap = 90;
@@ -926,7 +926,7 @@ const ConvDemo = (() => {
 			if (sweepT >= SW_TOTAL) {
 				if (!sweepDone) {
 					sweepDone = 1;
-					setFoot(`Fertig — <b>${ANCH}</b> Positionen → <b>${O8 * O8}</b> Zahlen (8 × 8)`,
+					setFoot(`Fertig, <b>${ANCH}</b> Positionen → <b>${O8 * O8}</b> Zahlen (8 × 8)`,
 						'<span class="kz-chip g">(8, 8)</span>');
 				}
 			} else {
@@ -957,7 +957,7 @@ const ConvDemo = (() => {
 				KatzeKit.drawTags(ctx, S, tagA);
 			} else if (S.step === 3) {
 				// Der Grün-Kanal (inst[PICK], bereits grau gemischt)
-				// fliegt aus der Kanal-Mitte nach links — nicht ausblenden.
+				// fliegt aus der Kanal-Mitte nach links, nicht ausblenden.
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				drawGrayCat(ctx, S);
 				drawPixelZoom(ctx, S);
@@ -980,9 +980,9 @@ const ConvDemo = (() => {
 })();
 
 // ============================================================
-// FlattenDemo — "Was macht Flatten?"
+// FlattenDemo, "Was macht Flatten?"
 //
-// (Pixel/Kanäle/Grau hat die Katze-Folie — hier nur der Flatten-
+// (Pixel/Kanäle/Grau hat die Katze-Folie, hier nur der Flatten-
 // Teil.) Graues Raster → Schnur (1024 Zahlen) → Fazit.
 // 2 Schritte: 0: Raster wird zur Schnur · 1: Fazit (Dense-Layer).
 // ============================================================
@@ -1070,7 +1070,7 @@ const FlattenDemo = (() => {
 			  p: 'Zeile <b>0</b> von 32 · <b>0</b> Zahlen',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span>' },
 			{ k: 'Schritt 2', t: 'Der <em>Trick</em>: Flatten verliert<br>die Bildstruktur.',
-			  p: '<b>1024</b> Zahlen — eine flache Schnur',
+			  p: '<b>1024</b> Zahlen, eine flache Schnur',
 			  c: '<span class="kz-chip r">(1024,)</span>',
 			  i: 'Der Trick: Flatten verliert die Bildstruktur. Convolutions arbeiten nur <b>lokal</b>, dafür kann ein <b>Dense-Layer</b> darauf arbeiten und die lokalen Entscheidungen zu einer <b>globalen Entscheidung</b> nutzen, z. B. zwischen Labels wie „Hund? Katze?" oder „Auto? Katze?".' }
 		],
@@ -1099,7 +1099,7 @@ const FlattenDemo = (() => {
 			if (flatP >= 32) {
 				if (!flatMsg) {
 					flatMsg = 1;
-					setFoot('Fertig — <b>1024</b> Zahlen in einer einzigen Reihe',
+					setFoot('Fertig, <b>1024</b> Zahlen in einer einzigen Reihe',
 						'<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span>');
 				}
 			} else {
@@ -1117,16 +1117,16 @@ const FlattenDemo = (() => {
 })();
 
 // ============================================================
-// PipelineDemo — "Der gesamte Prozess" (am Ende der Deck)
+// PipelineDemo, "Der gesamte Prozess" (am Ende der Deck)
 //
 // Bild → Layer 1 (Verläufe) → Layer 2 (Augen/Nase/Mund-Maps)
 // → Dense-Layer (farbig, Feature-Punkte) → zwei
 // Ausgabe-Neuronen. Layer 1 bleibt sichtbar, wenn Layer 2
-// erscheint — die Daten fließen sichtbar von Layer 1 in
+// erscheint, die Daten fließen sichtbar von Layer 1 in
 // Layer 2 (Punkte auf den Pfeilen). Jeder Layer reduziert
 // die Information des Bilds stück für stück auf das
 // Wesentliche (Katze/Hund). Das Netz startet blind
-// (50:50, Loss 0,693 — es RÄT blind); im Training sinkt der
+// (50:50, Loss 0,693, es RÄT blind); im Training sinkt der
 // Loss (Ziel: niedriger, nicht 0) und das Katzen-Neuron wird
 // am aktivsten (95 %).
 // 7 Schritte: Bild ("Und jetzt alles zusammen") · Layer 1
@@ -1138,7 +1138,7 @@ const PipelineDemo = (() => {
 	'use strict';
 
 	// Stufe 1 der Convolutions: die ersten Filter finden Verläufe
-	// (Kanten) — waagerecht, senkrecht, diagonal.
+	// (Kanten), waagerecht, senkrecht, diagonal.
 	const EDGE_MAPS = [
 		{ label: 'Waagerecht', lit: [1 * 8 + 2, 1 * 8 + 3, 1 * 8 + 4, 1 * 8 + 5,
 		                             5 * 8 + 2, 5 * 8 + 3, 5 * 8 + 4, 5 * 8 + 5] },
@@ -1164,7 +1164,7 @@ const PipelineDemo = (() => {
 	let aLabel = 0, tLabelA = 0;
 	let trainP = 0, trainMsg = 0;
 	let entrancePending = false;
-	let entrancePlayed = false;   // Einstieg nur einmal — sonst Flash bei jedem Wiederauftauchen
+	let entrancePlayed = false;   // Einstieg nur einmal, sonst Flash bei jedem Wiederauftauchen
 
 	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
@@ -1204,7 +1204,7 @@ const PipelineDemo = (() => {
 	}
 
 	// Karten-Rahmen + leere Zellen (einmal pro Slot, mit dem
-	// stärkeren Alpha der beiden Stufen — kein Doppel-Weiß beim
+	// stärkeren Alpha der beiden Stufen, kein Doppel-Weiß beim
 	// Crossfade).
 	function drawMapSlot(ctx, x, y, ms, label, a) {
 		if (a < 0.01) return;
@@ -1224,7 +1224,7 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// Deterministisches Rauschen pro Zelle (0..1) — stabil, kein
+	// Deterministisches Rauschen pro Zelle (0..1), stabil, kein
 	// Frame-zu-Frame-Flackern. Für den untrainierten Zustand.
 	function prand(i, seed) {
 		const x = Math.sin(i * 12.9898 + (seed + 1) * 78.233) * 43758.5453;
@@ -1376,7 +1376,7 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// Label-Check (Schritt 8): kleine Kapsel unter dem Katzen-Neuron —
+	// Label-Check (Schritt 8): kleine Kapsel unter dem Katzen-Neuron:
 	// supervised Learning: die Antwort des Netzes stimmt mit dem Label.
 	function drawLabelBadge(ctx, cx, cy, a) {
 		if (a < 0.01) return;
@@ -1398,18 +1398,18 @@ const PipelineDemo = (() => {
 		prefix: 'pipe',
 		steps: [
 			{ k: 'Schritt 1', t: 'Und jetzt<br><em>alles zusammen</em>.',
-			  p: '32 × 32 Pixel — die Katze',
+			  p: '32 × 32 Pixel, die Katze',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
 			{ k: 'Schritt 2', t: 'Layer 1: Filter finden<br><em>Verläufe</em>.',
 			  p: 'Waagerecht, senkrecht, diagonal: Kanten',
 			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
-			  i: 'Im Bild steckt die Antwort <b>Katze/Hund</b> schon — versteckt unter tausend Details (kleiner Hund, schwarz-weiße, orange Katze …). Wir wollen nur <b>das eine</b>. <b>Layer 1</b> reduziert die Information: weg mit dem Unwichtigen, übrig bleiben die Verläufe.' },
+			  i: 'Im Bild steckt die Antwort <b>Katze/Hund</b> schon, versteckt unter tausend Details (kleiner Hund, schwarz-weiße, orange Katze …). Wir wollen nur <b>das eine</b>. <b>Layer 1</b> reduziert die Information: weg mit dem Unwichtigen, übrig bleiben die Verläufe.' },
 			{ k: 'Schritt 3', t: 'Layer 2: Daraus entstehen<br><em>Augen, Nase, Mund</em>.',
 			  p: 'Filter kombinieren Verläufe zu Formen',
 			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
-			  i: '<b>Layer 2</b> reduziert weiter: aus Verläufen werden Formen. Was wir hier sehen (Augen, Nase, Mund), ist das <b>Ziel</b> — so soll es am Ende aussehen. Das Netz kann das aber noch gar nicht, es muss es sich erst antrainieren.' },
+			  i: '<b>Layer 2</b> reduziert weiter: aus Verläufen werden Formen. Was wir hier sehen (Augen, Nase, Mund), ist das <b>Ziel</b>, so soll es am Ende aussehen. Das Netz kann das aber noch gar nicht, es muss es sich erst antrainieren.' },
 			{ k: 'Schritt 4', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
-			  p: '64 Zahlen pro Karte — dicht verdrahtet',
+			  p: '64 Zahlen pro Karte, dicht verdrahtet',
 			  c: '<span class="kz-chip g">3 × (8, 8)</span><span class="kz-arrow">→</span><span class="kz-chip r">Dense</span>' },
 			{ k: 'Schritt 5', t: 'Das <em>Ziel</em>:<br>Katze = <b>100 %</b>.',
 			  p: 'So soll es am Ende sein',
@@ -1418,15 +1418,15 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 6', t: 'Am Anfang:<br>reiner <em>Zufall</em>.',
 			  p: 'Anfang: <b>50 : 50</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip r">50 : 50</span><span class="kz-arrow">·</span><span class="kz-chip r">Loss 0,693</span>',
-			  i: 'Aber am Anfang weiß das Netz <b>gar nicht</b>, was es tun soll. Die Gewichte sind <b>zufällig initialisiert</b> — es rät blind <b>50 : 50</b> (Loss 0,693), die Karten sehen noch nicht nach Augen, Nase, Mund aus.' },
+			  i: 'Aber am Anfang weiß das Netz <b>gar nicht</b>, was es tun soll. Die Gewichte sind <b>zufällig initialisiert</b>, es rät blind <b>50 : 50</b> (Loss 0,693), die Karten sehen noch nicht nach Augen, Nase, Mund aus.' },
 			{ k: 'Schritt 7', t: 'Lernen: die Daten<br>immer wieder <em>angucken</em>.',
 			  p: 'Training … · Katze <b>50 %</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip g">Loss ↓</span>',
-			  i: 'Das Netz lernt, indem es die <b>Trainingsdaten immer und immer wieder anschaut</b>. Bei jedem Durchgang (einer „Epoch") justiert es die Gewichte ein Stück nach dem anderen — so wird die Antwort dem Ziel immer näher.' },
+			  i: 'Das Netz lernt, indem es die <b>Trainingsdaten immer und immer wieder anschaut</b>. Bei jedem Durchgang (einer „Epoch") justiert es die Gewichte ein Stück nach dem anderen, so wird die Antwort dem Ziel immer näher.' },
 			{ k: 'Schritt 8', t: 'Ergebnis:<br><b>Katze ≈ 100 %</b>.',
 			  p: 'Katze: <b>100 %</b> · Loss <b>0,000</b>',
 			  c: '<span class="kz-chip g">Katze 100 %</span>',
-			  i: 'Nach dem Training ist das Netz fast so sicher wie das Ziel: Es erkennt die <b>Katze</b>. Das <b>Label</b> lautete „Katze" — die Antwort des Netzes stimmt damit <b>überein</b>, deshalb ist der Loss so <b>niedrig</b>.' }
+			  i: 'Nach dem Training ist das Netz fast so sicher wie das Ziel: Es erkennt die <b>Katze</b>. Das <b>Label</b> lautete „Katze", die Antwort des Netzes stimmt damit <b>überein</b>, deshalb ist der Loss so <b>niedrig</b>.' }
 		],
 
 		layoutFor(step, S) {
@@ -1455,7 +1455,7 @@ const PipelineDemo = (() => {
 			}
 			tCatA = 1;
 			tConvA = step >= 1 ? 1 : 0;
-			// Layer 1 bleibt sichtbar, wenn Layer 2 erscheint — die
+			// Layer 1 bleibt sichtbar, wenn Layer 2 erscheint, die
 			// Daten fließen von Layer 1 in Layer 2.
 			tEdgeA = step >= 1 ? 1 : 0;
 			tPartA = step >= 2 ? 1 : 0;
@@ -1485,7 +1485,7 @@ const PipelineDemo = (() => {
 			if (trainP >= 1) {
 				if (!trainMsg) {
 					trainMsg = 1;
-					setFoot('Katze: <b>100 %</b> · Loss <b>0,000</b> — fast sicher Katze',
+					setFoot('Katze: <b>100 %</b> · Loss <b>0,000</b>, fast sicher Katze',
 						'<span class="kz-chip g">Katze 100 %</span>');
 				}
 			} else {
@@ -1536,7 +1536,7 @@ const PipelineDemo = (() => {
 				ctx.globalAlpha = 1;
 			}
 
-			// Layer 1 = Verläufe (Schritt 2) — bleibt stehen, wenn
+			// Layer 1 = Verläufe (Schritt 2), bleibt stehen, wenn
 			// Layer 2 erscheint.
 			if (aConv > 0.01) {
 				ctx.globalAlpha = aConv;

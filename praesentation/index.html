@@ -16,7 +16,7 @@
     <div class="intro-inner">
         <div class="intro-mark"></div>
         <h1 class="intro-title">Machine Learning &amp; asanAI</h1>
-        <p class="intro-subtitle">Neuronale Netze — von Hand gebaut</p>
+        <p class="intro-subtitle">Neuronale Netze, von Hand gebaut</p>
         <div class="intro-bar"><div class="intro-bar-fill" id="intro-bar-fill"></div></div>
         <p class="intro-status" id="intro-status">Wird geladen…</p>
     </div>
@@ -38,7 +38,7 @@
 </div>
 <!-- ==================== Folie 2: Klassisch vs. KI ==================== -->
 <!-- (vorher am Ende; jetzt direkt nach der Intro, weil die Katze erst
-     erklärt, WAS man lernt — hier steht schon, WOFÜR man lernt.) -->
+     erklärt, WAS man lernt, hier steht schon, WOFÜR man lernt.) -->
 <div class="slide" data-title="Klassisch vs. KI" id="slide-klassisch-vs-ki">
     <div class="slide-content">
         <h2>Klassisches Programmieren vs. KI</h2>
@@ -56,7 +56,7 @@
             </div>
             <div class="fragment" data-nofast style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
                 <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">KI / Lernen</div>
-                <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Wir geben nur Beispiele — die Regel findet das Netz selbst.</div>
+                <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Wir geben nur Beispiele, die Regel findet das Netz selbst.</div>
                 <div style="font-size:0.92em; color:#475569; margin-bottom:6px;">Lernbeispiele für <b>UND</b>:</div>
                 <div class="math-display" style="background:#fff; border:1px solid #bfdbfe; border-radius:10px; padding:12px 16px; margin:0;">
                     $$\begin{aligned}
@@ -76,8 +76,8 @@
 
         <div class="ki-catchout fragment" data-nofast>
             <b>Der springende Punkt:</b> Manche Probleme kann klassisch <b>niemand</b>
-            lösen — z. B. <b>Katzen auf Bildern erkennen</b>: da kennt niemand die Regeln,
-            die man Schritt für Schritt in Code gießen müsste. <b>Lernen</b> löst genau das —
+            lösen, z. B. <b>Katzen auf Bildern erkennen</b>: da kennt niemand die Regeln,
+            die man Schritt für Schritt in Code gießen müsste. <b>Lernen</b> löst genau das:
             das Netz findet die Regeln selbst aus Beispielen.
         </div>
     </div>
@@ -115,9 +115,9 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 4: Die Katze — Farbbild → Kanäle → Pixel → Filter
+     Folie 4: Die Katze, Farbbild → Kanäle → Pixel → Filter
      ------------------------------------------------------------
-     Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze —
+     Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze:
      Farbbild → drei Kanäle (R/G/B) → ein Kanal (Grau) →
      Pixel = Zahl (0–255, Zoom) → 6×5-Filter in Augen-Form →
      blockweiser Sweep (hält auf jedem Pixel-Block) → 8×8-Map,
@@ -152,7 +152,7 @@
         <div class="hier-caption" id="hier-caption"></div>
 
         <div class="key-insight">
-            Jeder Filter sieht nur <b>eine Richtung</b> — zusammen liefern die vier
+            Jeder Filter sieht nur <b>eine Richtung</b>, zusammen liefern die vier
             die ganze Kontur: aus Zahlen wird wieder Form. Derselbe Rechenkern
             (eine Matrixmultiplikation) läuft in jedem Schritt.
         </div>
@@ -161,7 +161,7 @@
 <!-- ============================================================
      Folie 5: Was macht Flatten?
      ------------------------------------------------------------
-     Katze-Framework (katze.js, FlattenDemo): 32×32 ASCII-Katze —
+     Katze-Framework (katze.js, FlattenDemo): 32×32 ASCII-Katze:
      Graues Raster → Schnur (1024 Zahlen) → Fazit ("Der Trick").
      Gestuft über die Pfeiltasten (2 Schritte).
      ============================================================ -->
@@ -215,7 +215,7 @@
         <h2>Was sind Dense Layer?</h2>
 
         <div>
- 		Netze <b>approximieren</b> Funktionen — <i>ähnlich genug</i>, um nützlich zu sein.
+ 		Netze <b>approximieren</b> Funktionen, <i>ähnlich genug</i>, um nützlich zu sein.
         </div>
 
             <div class="fragment formula-box" data-nofast data-fragment-action="neuron-intro-anim">
@@ -245,16 +245,25 @@
 		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
         </div>
 
-        <div class="fragment formula-box" data-nofast>
-		<div class="math-display">$$
-			\begin{aligned}
-			\underbrace{\mathbf{x}_1 = \text{dense}(\mathbf{x}_0)}_{\text{linear}} \\
-			\underbrace{\mathbf{x}_2 = \text{ReLU}(\mathbf{x}_1)}_{\text{knicken}} \\
-			\underbrace{\mathbf{x}_3 = \text{dense}(\mathbf{x}_2)}_{\text{zurück zum Linear}} \\
-			&\;\vdots
-			\end{aligned}
-		$$</div>
+        <div class="fragment formula-box" data-nofast id="comp-stack">
+		<div class="comp-seq">
+			<div class="math-display">$$
+				\begin{aligned}
+				\underbrace{\mathbf{x}_1 = \text{dense}_0(\mathbf{x}_0)}_{\text{linear}} \\
+				\underbrace{\mathbf{x}_2 = \text{ReLU}(\mathbf{x}_1)}_{\text{entscheiden}} \\
+				\underbrace{\mathbf{x}_3 = \text{dense}_1(\mathbf{x}_2)}_{\text{zurück zum Linear}} \\
+				&\;\vdots
+				\end{aligned}
+			$$</div>
+		</div>
+		<div class="comp-nested">
+			<div class="math-display">$$
+				\mathbf{x}_3 = \text{dense}_1(\text{ReLU}(\text{dense}_0(\mathbf{x}_0)))
+			$$</div>
+		</div>
         </div>
+
+        <div class="fragment" data-nofast data-fragment-action="comp-collapse" aria-hidden="true"></div>
 
         <div class="key-insight fragment" data-nofast>
             <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b>.
@@ -324,7 +333,7 @@
      Folie 10: Der gesamte Prozess
      ------------------------------------------------------------
       Katze-Framework (katze.js, PipelineDemo): das ganze Netz in
-      einem Blick — Bild → Layer 1 (Verläufe) → Layer 2
+      einem Blick, Bild → Layer 1 (Verläufe) → Layer 2
       (Augen/Nase/Mund) → Dense-Layer → 2 Ausgabe-Neuronen
       (Anfang 50:50, schlechter Loss) → Training (Loss sinkt) →
       Katze 95 % leuchtet auf. Jeder Layer reduziert die
@@ -341,7 +350,7 @@
             <div class="kz-stage"><canvas id="pipe-cv"></canvas></div>
 
             <div class="kz-foot"><div class="kz-fswap" id="pipe-fswap">
-                <div class="kz-pill" id="pipe-pill">32 × 32 Pixel — die Katze</div>
+                <div class="kz-pill" id="pipe-pill">32 × 32 Pixel, die Katze</div>
                 <div class="kz-chips" id="pipe-chips"><span class="kz-chip">(32, 32, 3)</span></div>
             </div></div>
 
@@ -350,7 +359,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 11: asanAI — Überleitung zur Live-Demo
+     Folie 11: asanAI, Überleitung zur Live-Demo
      ============================================================ -->
 <div class="slide" id="slide-asanai" data-title="asanAI">
     <div class="slide-content asan-slide">
@@ -364,7 +373,7 @@
 
             <ul class="asan-list">
                 <li class="fragment"><b>Im Browser.</b> Deine Daten bleiben auf deinem Rechner.</li>
-                <li class="fragment"><b>Netz = Klickstrecke.</b> Bauen, trainieren, live vorhersagen — Loss und Accuracy dabei.</li>
+                <li class="fragment"><b>Netz = Klickstrecke.</b> Bauen, trainieren, live vorhersagen, Loss und Accuracy dabei.</li>
                 <li class="fragment"><b>Python-Export.</b> Das fertige Netz lässt sich mitnehmen.</li>
             </ul>
         </div>

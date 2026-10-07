@@ -64,7 +64,7 @@ const SpaceMorph = (() => {
 
     // ── Formparameter von B (rot) ──
     const LOBES = 8;                 // Anzahl der Zusatzschlingen bei k=1 (sehr windig)
-    // radiale Ausschlagweite — bewusst klein, damit die Schlingen A's Rohr
+    // radiale Ausschlagweite, bewusst klein, damit die Schlingen A's Rohr
     // nicht erreichen (selbsttest: min. Mittellinienabstand > rA+rB ≈ 0.38;
     // mit 8 Schlingen → ≈0.43, kein Durchdringen).
     const LOBE_R = 0.25;
@@ -124,7 +124,7 @@ const SpaceMorph = (() => {
 
     // Mittellinie von Torus A als Funktion von (t, k).
     // k=0 reproduziert exakt den alten Kreis { M·cos t, M·sin t, 0 }.
-    // Das Schutzfenster ist bei t=0 null — dort sitzt das Zentrum von B's
+    // Das Schutzfenster ist bei t=0 null, dort sitzt das Zentrum von B's
     // Ring; dort bleibt A starr, damit der Link nicht aufgelöst wird.
     function windowA(t) {
         const d = (1 - Math.cos(t)) / 2;      // 0 bei t=0, 1 bei t=π
@@ -263,7 +263,7 @@ const SpaceMorph = (() => {
     // ---------- Szenen ----------
     // NUR die Egg-Phase (6 Schritte). Die Bonusphase (verschlungene Volltori,
     // 4D-Lift, Fun-Fact "Sigmoid/ReLU", LLM-Next-Word) wurde aus der Folie
-    // entfernt — die Geschichte endet bei "Der Raum wird zu einer Linie".
+    // entfernt, die Geschichte endet bei "Der Raum wird zu einer Linie".
     const S = [
         { t: "Zwei Klassen, keine Gerade",
             b: "Die Farben stehen für zwei Klassen, die wir trennen wollen. Die eine Gruppe liegt in der Mitte, die andere bildet einen Ring drumherum.",
@@ -278,7 +278,7 @@ const SpaceMorph = (() => {
             b: "Der Layer krümmt die Ebene zu einer Schale: die Mitte bleibt tief, der äußere Ring wird nach oben gezogen.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Eine Ebene passt dazwischen",
-            b: "Eine flache Ebene passt jetzt genau dazwischen und trennt die beiden Gruppen sauber — die eine liegt darunter, die andere darüber.",
+            b: "Eine flache Ebene passt jetzt genau dazwischen und trennt die beiden Gruppen sauber, die eine liegt darunter, die andere darüber.",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 1, pr: 0, box: 0 },
         { t: "Der Raum wird zu einer Linie",
             b: "Am Ende projizieren wir alles auf eine Linie zurück (Rückprojektion). Durch diese geschickte Projektion sind die vorher nicht trennbaren Daten jetzt an einem einzigen Punkt sauber getrennt.",
@@ -363,7 +363,7 @@ const SpaceMorph = (() => {
         const tori = document.getElementById('tori-table'); // entfernt (nur Egg-Phase)
         if (!egg) return;
 
-        // Tori-Tabelle gibt es nicht mehr — alle Tori-Bedingungen unten sind
+        // Tori-Tabelle gibt es nicht mehr, alle Tori-Bedingungen unten sind
         // tote Pfade (cur erreicht nie wieder IDX_COMPLEX), hier nur die
         // Sichtbarkeit der Ei-Tabelle pflegen.
         egg.removeAttribute('style');
@@ -464,7 +464,7 @@ const SpaceMorph = (() => {
     }
     // 1D-Projektion der Tori (wie die Egg-Punkte): gleitet von der 3D-Position
     // q zur Score-Achse. Nach dem Lift liegt A (grün) links, B (rot) rechts.
-    // Eigene symmetrische Achse — die Egg-Achse (asymmetrisch) würde s=0 zu
+    // Eigene symmetrische Achse, die Egg-Achse (asymmetrisch) würde s=0 zu
     // weit links legen. Die Lücke zwischen den Klumpen liegt bei x = GAP.
     const TORI_GAP = 0.375;   // x-Mitte der Lücke zwischen grünem/rotem Klumpen
     const TORI_SPAN = 2.2;    // halbweite der symmetrischen Score-Mappe
@@ -548,7 +548,7 @@ const SpaceMorph = (() => {
     // ---------- Fun-Fact-Schritt: Sigmoid krümmt, ReLU knickt ----------
     // Zwei 3D-Blätter nebeneinander. Sigmoid biegt die Fläche glatt (Welle),
     // ReLU knickt sie hart (scharfe Falte bei x=0, wie Origami). Inspiriert von
-    // origami_live.js, aber ohne three.js/tfjs — nur 2D-Canvas-3D-Projektion.
+    // origami_live.js, aber ohne three.js/tfjs, nur 2D-Canvas-3D-Projektion.
     const FF_SIG = x => (1 / (1 + Math.exp(-1.6 * x))) - 0.5;   // S-Kurve, zentriert
     const FF_RELU = x => Math.max(0, x);                        // harte Falte bei x=0
     function ffProj(xw, y, z) {
@@ -562,14 +562,14 @@ const SpaceMorph = (() => {
     }
     function drawSheet(cx, act, color, alpha, crest) {
         const NX = 28, NY = 16, X0 = -1.3, X1 = 1.3, Y0 = -0.8, Y1 = 0.8, ZS = 0.85;
-        // Höhenlinien (konstante lx) — die "Tiefe" des Blatts
+        // Höhenlinien (konstante lx), die "Tiefe" des Blatts
         for (let i = 0; i <= NX; i++) { const lx = X0 + (X1 - X0) * i / NX, z = act(lx) * ZS;
             ctx.strokeStyle = color; ctx.globalAlpha = alpha * 0.40; ctx.lineWidth = 0.9;
             ctx.beginPath();
             for (let j = 0; j <= NY; j++) { const ly = Y0 + (Y1 - Y0) * j / NY;
                 const p = ffProj(cx + lx, ly, z); j ? ctx.lineTo(p.X, p.Y) : ctx.moveTo(p.X, p.Y); }
             ctx.stroke(); }
-        // Querschnitte (konstante ly) — zeigen das Profil (Welle / Keil)
+        // Querschnitte (konstante ly), zeigen das Profil (Welle / Keil)
         for (let j = 0; j <= NY; j++) { const ly = Y0 + (Y1 - Y0) * j / NY;
             const edge = (j === 0 || j === NY);
             ctx.strokeStyle = color; ctx.globalAlpha = alpha * (edge ? 0.95 : 0.60);
@@ -637,9 +637,9 @@ const SpaceMorph = (() => {
         ctx.fillStyle = '#d97706'; ctx.fillText('ReLU: Falte, nicht injektiv → 2 → 1', lR.X, H * 0.31);
         // Caption
         ctx.fillStyle = '#475569'; ctx.font = '13.5px system-ui,sans-serif';
-        ctx.fillText('Glatte Krümmung (Sigmoid) ist injektiv/umkehrbar auf ihrem Bild — erhält die Topologie (reicht für das Egg).', W / 2, H * 0.68);
+        ctx.fillText('Glatte Krümmung (Sigmoid) ist injektiv/umkehrbar auf ihrem Bild, erhält die Topologie (reicht für das Egg).', W / 2, H * 0.68);
         ctx.fillStyle = '#d97706'; ctx.font = '600 13.5px system-ui,sans-serif';
-        ctx.fillText('Die ReLU-Falte ist nicht injektiv — sie identifiziert Punkte mit x ≤ 0 und löst die Verschlingung der Tori auf.', W / 2, H * 0.68 + 22);
+        ctx.fillText('Die ReLU-Falte ist nicht injektiv, sie identifiziert Punkte mit x ≤ 0 und löst die Verschlingung der Tori auf.', W / 2, H * 0.68 + 22);
         ctx.restore();
     }
 
@@ -647,7 +647,7 @@ const SpaceMorph = (() => {
     // Die Frage, die diese Solide beantwortet:
     //   "Wie hilft das Falten des Raumes einem LLM, das richtige nächste Wort zu finden?"
     //
-    // Kernbild (Keup & Helias, arXiv:2203.11355): Die letzte Schicht ist linear —
+    // Kernbild (Keup & Helias, arXiv:2203.11355): Die letzte Schicht ist linear:
     // sie liest die Representation entlang EINER Richtung aus. Damit das gelingt,
     // muss die Representation so gefaltet sein, dass diese eine Richtung die
     // passenden Kandidaten über die unpassenden legt. Das Falten ist also die
@@ -662,7 +662,7 @@ const SpaceMorph = (() => {
     // x 32..352, ab y 20) und unten rechts die Quellenzeile (ab y ~606).
     // Deshalb: kein Canvas-Titel, alles zwischen y 150 und y 540.
     const NW = {
-        // [Wort, passt es danach?, u, v] — Startlage (ungefaltet)
+        // [Wort, passt es danach?, u, v], Startlage (ungefaltet)
         start: [
             ['bellt', 1, 0.093, 0.435], ['schläft', 1, 0.307, 0.613], ['springt', 1, 0.326, 0.840],
             ['friert', 1, 0.379, 0.459], ['jagt', 1, 0.498, 0.671],
@@ -780,7 +780,7 @@ const SpaceMorph = (() => {
                 ctx.moveTo(X(NW.start[i][2]), Y(NW.start[i][3])); ctx.lineTo(x, y);
                 ctx.stroke();
             }
-            // Nur der Gewinner wird benannt — ein einziges Label kann nicht kollidieren
+            // Nur der Gewinner wird benannt, ein einziges Label kann nicht kollidieren
             if (i === win) {
                 ctx.globalAlpha = alpha;
                 ctx.strokeStyle = right2(win) ? '#15803d' : '#b91c1c'; ctx.lineWidth = 2.4;
@@ -996,8 +996,8 @@ const SpaceMorph = (() => {
 
         if (lb > 0.01) { ctx.globalAlpha = lb; ctx.font = '600 14px system-ui,sans-serif';
             const c0 = proj({ x: 0, y: 0, z: PLANE_Z }), LX = W / 2 + BASE() * FIT * 1.12 + 170;
-            ctx.fillStyle = '#0284c7'; ctx.fillText('Klasse B — äußerer Ring', LX, c0.Y - 58);
-            ctx.fillStyle = '#e11d48'; ctx.fillText('Klasse A — innerer Kern', LX, c0.Y + 66);
+            ctx.fillStyle = '#0284c7'; ctx.fillText('Klasse B, äußerer Ring', LX, c0.Y - 58);
+            ctx.fillStyle = '#e11d48'; ctx.fillText('Klasse A, innerer Kern', LX, c0.Y + 66);
             ctx.fillStyle = '#d97706'; ctx.font = '13px Georgia';
             ctx.fillText('Trennebene, von der Kante', LX, c0.Y + 4); ctx.globalAlpha = 1; }
 
@@ -1075,7 +1075,7 @@ const SpaceMorph = (() => {
 
             // ---------- "Jeder Punkt = ein Wort" (Labels) ----------
             // Sobald der verwirrte Torus erscheint, benennen zwei Beispielwörter
-            // je einen Punkt (eines pro Torus) — nur Labels, kein Mauszeiger.
+            // je einen Punkt (eines pro Torus), nur Labels, kein Mauszeiger.
             if (cur === IDX_COMPLEX) {
                 const fade = sub(now - t0, 500, 1200);
                 if (fade > 0.01) {
@@ -1196,7 +1196,7 @@ const SpaceMorph = (() => {
     }
 
     // Zustand merken/wiederherstellen (presentation.js slideMemory): beim
-    // Zurück-Navigieren wieder auf die Szene, die man verlassen hat —
+    // Zurück-Navigieren wieder auf die Szene, die man verlassen hat:
     // statt auf Szene 0. Nur die Egg-Phase hat Szenen; der Orbit-/4D-Code
     // ist nie mehr erreichbar, daher ist ein einfacher `cur`-Restore genug.
     function getState() { return { cur }; }

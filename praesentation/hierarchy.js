@@ -1,5 +1,5 @@
 /* ============================================================
-   HIERARCHIE — Convolutions: Strukturen in Bildern finden
+   HIERARCHIE, Convolutions: Strukturen in Bildern finden
    Echte Convolution auf img/stop_sign.jpg mit den Sobel-Kerneln
    aus blog/computer_vision.js (wie im Vision-Lab):
      ein Filter pro Kantenrichtung, einzeln gezeigt
@@ -16,11 +16,11 @@ const HierarchyDemo = {
 	// <<< CONFIG <<<
 
 	// 3x3-Kernels (Sobel-Typ), Reihenfolge = Reihenfolge in der Folie.
-	// Die Namen beschreiben die KANTE, auf die der Filter antwortet — nicht
+	// Die Namen beschreiben die KANTE, auf die der Filter antwortet, nicht
 	// einen Winkel. (Eine Gradzahl ist in Bildschirmkoordinaten y-abwaerts
 	// mehrdeutig: der Filter [[0,1,2],[-1,0,1],[-2,-1,0]] antwortet auf eine
 	// Kante, die von links oben nach rechts unten läuft, nicht auf 45 Grad.
-	// Verifiziert über eine Testkante je Richtung — siehe Validierung.)
+	// Verifiziert über eine Testkante je Richtung, siehe Validierung.)
 	KERNELS: [
 		{ name: 'waagerechte Kante', m: [[-1, -2, -1], [0, 0, 0], [1, 2, 1]] },
 		{ name: 'senkrechte Kante', m: [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]] },
@@ -261,7 +261,7 @@ const HierarchyDemo = {
 		for (let i = 1; i <= 4 && s >= i; i++) {
 			D._paint('hier-canvas-' + D.STAGES[i].id, D._maps[i - 1], D._w - 2, D._h - 2);
 		}
-		// Station 5: alle vier Filter kombiniert — mit
+		// Station 5: alle vier Filter kombiniert, mit
 		// Additions-Animation (Filter 1, dann +2, +3, +4).
 		if (s >= 5) {
 			D._startSumAnim();
@@ -320,10 +320,10 @@ const HierarchyDemo = {
 	},
 
 		CAPTIONS: [
-		'<b>Ein echtes Foto, eine echte Faltung</b> (Sobel-Filter) — nichts davon ist vereinfacht. ' +
+		'<b>Ein echtes Foto, eine echte Faltung</b> (Sobel-Filter), nichts davon ist vereinfacht. ' +
 		'Jedes Pixel ist nur eine Zahl <span class="mono">0…255</span>. Für jedes Pixel legt der Filter seine 3×3-Umgebung darüber. ' +
-		'Jeder der 9 Werte wird mit seinem Gewicht multipliziert — und <b>alle 9 Produkte werden addiert</b> (aufsummiert). ' +
-		'Diese <b>eine Summe</b> wird zum neuen Wert des Pixels. Die Mitte ist hier immer 0 — genau dort liegt das Pixel, das wir betrachten.',
+		'Jeder der 9 Werte wird mit seinem Gewicht multipliziert, und <b>alle 9 Produkte werden addiert</b> (aufsummiert). ' +
+		'Diese <b>eine Summe</b> wird zum neuen Wert des Pixels. Die Mitte ist hier immer 0, genau dort liegt das Pixel, das wir betrachten.',
 		'<b>Filter 1 (0°)</b> antwortet nur auf <b>waagerechte</b> Kanten: ' +
 		'die oberen und unteren Kanten des Oktogons, die waagerechten Buchstabenstriche. ' +
 		'Alle anderen Kanten bleiben dunkel.',
@@ -333,13 +333,13 @@ const HierarchyDemo = {
 		'zwei der vier Diagonalen des Oktogons.',
 		'<b>Filter 4 (315°)</b> auf die <b>andere</b> Diagonale ↗: ' +
 		'die restlichen zwei Kanten des Oktogons.',
-		'<b>Alle vier zusammen — die Erkennung:</b> die Antworten der Filter ' +
+		'<b>Alle vier zusammen, die Erkennung:</b> die Antworten der Filter ' +
 		'werden <b>addiert</b> (Filter 1 + 2 + 3 + 4). Jede Kantenrichtung ' +
-		'steuert ihren Teil bei — zusammen ergibt sich die <b>ganze Kontur</b> ' +
+		'steuert ihren Teil bei, zusammen ergibt sich die <b>ganze Kontur</b> ' +
 		'des Stoppschilds.',
 	],
 
-	// Pfeiltasten — Haus-API (siehe katze.js):
+	// Pfeiltasten, Haus-API (siehe katze.js):
 	// canGoNext/next/canGoPrev/prev. Ohne 'block' in der DemoRegistry,
 	// damit die Pfeiltaste am Ende der Strecke die Folie wechselt.
 	next: function () {

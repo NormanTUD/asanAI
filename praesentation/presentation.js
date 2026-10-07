@@ -33,7 +33,7 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Jeder Pixel ist nur eine Zahl" (katze.js) — Katze-Framework:
+                // "Jeder Pixel ist nur eine Zahl" (katze.js), Katze-Framework:
                 // 32×32 ASCII-Katze: Farbbild → 3 Kanäle → ein Kanal
                 // (Grau) → Pixel = Zahl (Zoom) → 6×5-Filter in Augen-Form
                 // (nur Form, keine Zahlen) → blockweiser Sweep (hält auf
@@ -44,7 +44,7 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Was macht Flatten?" (katze.js) — Katze-Framework:
+                // "Was macht Flatten?" (katze.js), Katze-Framework:
                 // 32×32 ASCII-Katze, 2 Schritte: Graues Raster →
                 // Schnur (1024 Zahlen) → Fazit.
                 { id: 'flatten', ref: () => typeof FlattenDemo !== 'undefined' ? FlattenDemo : null,
@@ -52,7 +52,7 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Der gesamte Prozess" (katze.js) — Bild → Layer 1
+                // "Der gesamte Prozess" (katze.js), Bild → Layer 1
                 // (Verläufe) → Layer 2 (Augen/Nase/Mund) →
                 // Dense-Layer → zwei Ausgabe-Neuronen (Start 50:50,
                 // Loss 0,693) → Training (Loss sinkt, Kurve zeichnet
@@ -111,7 +111,7 @@ const DemoRegistry = (() => {
             if (!onThisSlide) continue;
 
             // Wenn diese Demo explizit blocken will (mid-Animation), signalisiere
-            // 'block' — navigate() fällt dann NICHT auf Presentation.next/prev zurück.
+            // 'block', navigate() fällt dann NICHT auf Presentation.next/prev zurück.
             if (typeof demo.block === 'function' && demo.block(instance)) {
                 return 'block';
             }
@@ -130,14 +130,14 @@ const DemoRegistry = (() => {
      *
      * Demos mit slideTest reagieren NUR, wenn die Transition ihre Folie
      * betrifft (Eintritt oder Austritt). Sonst würde jeder Folienwechsel
-     * alle anderen Demos resetten — inkl. schwerer Plotly-Re-Render (z.B.
-     * 370 ms bei den Dual-Manifolds) — und den Wechsel verlangsamen.
+     * alle anderen Demos resetten, inkl. schwerer Plotly-Re-Render (z.B.
+     * 370 ms bei den Dual-Manifolds), und den Wechsel verlangsamen.
      *
      * Demos ohne slideTest (global) behalten das Legacy-Verhalten:
      * onLeave bei jedem Wechsel.
      *
      * deferMs: onLeave erst N ms verzögert ausführen (nach dem
-     * Crossfade-Lock) — für teure Resets, die den Wechsel nicht
+     * Crossfade-Lock), für teure Resets, die den Wechsel nicht
      * verlangsamen dürfen. leaveGuard: darf den (verzögerten) Leave
      * bei Bedarf absagen, z.B. wenn die Folie inzwischen wieder aktiv
      * ist (dann wird der Reset beim nächsten Verlassen neu geplant).
@@ -177,10 +177,10 @@ const DemoRegistry = (() => {
 
     /**
      * Zustands-Snapshot: Für alle Demos dieser Folie getState() einsammeln.
-     * Wird VOR notifyEnter() aufgerufen — sonst hat onLeave (bzw. der
+     * Wird VOR notifyEnter() aufgerufen, sonst hat onLeave (bzw. der
      * verzögerte Reset) den Zustand schon gelöscht, den wir speichern wollen.
      *
-     * Gibt null zurück, wenn keine Demo dieser Folie einen Zustand hat —
+     * Gibt null zurück, wenn keine Demo dieser Folie einen Zustand hat:
      * dann muss auch nichts wiederhergestellt werden.
      */
     function captureState(slide) {
@@ -198,7 +198,7 @@ const DemoRegistry = (() => {
 
     /**
      * Zustand einer Folie wiederherstellen. Wird NACH notifyEnter() gerufen:
-     * erst der (verzögerte) Reset, dann der gespeicherte Zustand — sonst
+     * erst der (verzögerte) Reset, dann der gespeicherte Zustand, sonst
      * gewinnt der Reset und das Zurück-Navigieren zeigt wieder Schritt 0.
      */
     function restoreState(slide, state) {
@@ -244,6 +244,13 @@ const FragmentActions = {
 	'neuron-intro-anim': {
 	    forward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.start(); },
 	    backward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.hideFragment(); },
+	},
+
+	// "Was sind Dense Layer?" – die Sequenz wird smooth zur verschachtelten
+	// Komposition (x_3 = dense_1(ReLU(dense_0(x_0)))).
+	'comp-collapse': {
+	    forward: () => { const el = document.getElementById('comp-stack'); if (el) el.classList.add('collapsed'); },
+	    backward: () => { const el = document.getElementById('comp-stack'); if (el) el.classList.remove('collapsed'); },
 	},
 
 };
@@ -345,7 +352,7 @@ const Presentation = (() => {
 
     // Zustandsspeicher pro Folie (siehe init()). Map: Folien-Index →
     // { frag: boolean[], fragIndex: number, demos: {id: state} }
-    // Wird beim VERLASSEN einer Folie gefüllt und beim BETRETEN geleert —
+    // Wird beim VERLASSEN einer Folie gefüllt und beim BETRETEN geleert:
     // genau einmal pro Weg, damit ein Rück-/Vor-Navigieren hin und her
     // symmetrisch bleibt.
     const slideMemory = new Map();
@@ -407,7 +414,7 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
         // Zustandsspeicher pro Folie: merkt sich beim Verlassen, welche
         // Fragmente sichtbar waren und welchen Schritt die Demos hatten.
         // Ohne das zeigt das Zurück-Navigieren eine frische Folie (alle
-        // Fragmente weg, Demo bei Schritt 0) — obwohl man gerade da war.
+        // Fragmente weg, Demo bei Schritt 0), obwohl man gerade da war.
         slideMemory.clear();
 
         // Startfolie: ?start=N (1-basiert, wie im Zähler / wie #N) → die N-te Folie,
@@ -468,7 +475,7 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
         const fragments = getFragments(slideIdx);
 
         // Fragmente: nur die gespeicherten sichtbar machen. Kein
-        // executeFragmentAction — sonst startet der Typewriter beim
+        // executeFragmentAction, sonst startet der Typewriter beim
         // Zurück-Navigieren das Tippen von vorn.
         fragments.forEach((f, i) => {
             f.classList.toggle('visible', !!mem.frag[i]);
@@ -479,7 +486,7 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
         // Convolution-Fenster, Filterwahl, Szenenindex) bei der Demo bleibt.
         //
         // Verzögert, weil onEnter die Demo erst 80 ms NACH dem onLeave-Reset
-        // initialisiert — und init() bei einigen Demos (ConvDemo, FlattenDemo)
+        // initialisiert, und init() bei einigen Demos (ConvDemo, FlattenDemo)
         // den Zustand zurücksetzt und neu zeichnet. Wäre der Restore
         // synchron, würde init() ihn sofort wieder überschreiben. 120 ms >
         // 80 ms; der Guard fängt ab, falls die Folie in der Zwischenzeit
@@ -566,7 +573,7 @@ function prev() {
         return;
     }
     if (currentSlide > 0) {
-        // restore=true: zurück bedeutet "exakt dorthin, wo ich war" —
+        // restore=true: zurück bedeutet "exakt dorthin, wo ich war":
         // sichtbare Fragmente und Demo-Schritt bleiben erhalten. Früher
         // stand hier showAllFragments=true, das alle Fragmente zeigte und
         // die Demo zurücksetzte: ein Sprung, kein Zurück.
@@ -578,7 +585,7 @@ function prev() {
 }
 
     // Lock für den gesamten Crossfade (WAAPI: ~0.48s). Solange der
-    // Lock hält, werden Pfeiltasten in navigate() geblockt — die neue Folie
+    // Lock hält, werden Pfeiltasten in navigate() geblockt, die neue Folie
     // muss erst sichtbar sein, bevor der nächste Klick zählt. Auch dasselbe
     // gilt für Sub-Folien-Übergänge (siehe DemoRegistry-Einträge, die auf
     // isSlideTransitioning blocken können).
@@ -607,7 +614,7 @@ function prev() {
     //    bleibt bei opacity 0 → weißer Bildschirm. Genau der "manchmal"-Bug.
     //  - Die eingehende Folie trägt SOFORT .active (CSS opacity:1). Schlägt
     //    die Animation fehl oder wird sie unterbrochen, fällt sie auf den
-    //    CSS-Wert (sichtbar) zurück — weißer Bildschirm ist strukturell
+    //    CSS-Wert (sichtbar) zurück, weißer Bildschirm ist strukturell
     //    ausgeschlossen.
     //  - Schnelle Navigation re-targetiert vom aktuellen Zustand; alte
     //    Animationen werden pro Folie gecancelt, daher kein Pop/Stacking.
@@ -641,7 +648,7 @@ function prev() {
 
     function activateSlide(newSlide, oldSlide, forward) {
         const dir = forward ? 1 : -1;
-        // OPAKER PUSH: Beide Folien bleiben opak (opacity 1) — die eintretende
+        // OPAKER PUSH: Beide Folien bleiben opak (opacity 1), die eintretende
         // deckt die auslaufende ab, während sie von der Einfahrseite ins
         // Zentrum fährt. Da in jedem Frame mindestens eine Folie die Szene
         // abdeckt, kann nie Weiß durchscheinen. (Der frühere Crossfade war die
@@ -678,7 +685,7 @@ function prev() {
     // Folie zweimal betreten wird.
     //
     // Sonst wäre die Navigation asymmetrisch: zurück merkt sich den Zustand,
-    // vorwärts würde ihn verwerfen — nach einem Hin und Zurück stünde die
+    // vorwärts würde ihn verwerfen, nach einem Hin und Zurück stünde die
     // Folie plötzlich wieder auf Schritt 0.
     function goTo(idx, showAllFragments = false, restore = true) {
         if (idx < 0 || idx >= slides.length) return;
@@ -700,7 +707,7 @@ function prev() {
         const oldSlide = slides[currentSlide];
         const oldIdx = currentSlide;
 
-        // Zustand der ALTEN Folie merken — muss vor notifyEnter passieren,
+        // Zustand der ALTEN Folie merken, muss vor notifyEnter passieren,
         // weil dort (bzw. im verzögerten onLeave) die Demos resettet werden.
         rememberCurrent();
 
@@ -709,14 +716,14 @@ function prev() {
         const forward = idx > oldIdx;
 
         // Zurück-Navigieren VON der letzten Folie weg: ALLE Folien werden
-        // zurückgesetzt (frischer Zustand, wie ein frischer Laden) — für einen
+        // zurückgesetzt (frischer Zustand, wie ein frischer Laden), für einen
         // sauberen zweiten Durchgang / Q&A. Einmalig bei dem einen Sprung vom
         // Ende zurück; danach greift wieder das normale "exakt dort, wo ich war".
         if (!forward && oldIdx === slides.length - 1) slideMemory.clear();
 
         activateSlide(newSlide, oldSlide, forward);
 
-        // Lifecycle NACH .active setzen — Demos prüfen oft
+        // Lifecycle NACH .active setzen, Demos prüfen oft
         // `document.querySelector('.slide.active')` und würden sonst
         // fälschlich reset() statt activate() aufrufen.
         DemoRegistry.notifyEnter(oldSlide, newSlide);
@@ -725,7 +732,7 @@ function prev() {
         // wenn die neue Folie sichtbar ist.
         lockSlideTransition();
 
-        // Zustand der NEUEN Folie wiederherstellen — nach notifyEnter,
+        // Zustand der NEUEN Folie wiederherstellen, nach notifyEnter,
         // sonst gewinnt der (verzögerte) Demo-Reset und wir landen wieder
         // bei Schritt 0.
         const restored = restore ? restoreFor(currentSlide) : false;
@@ -1119,12 +1126,12 @@ const InputHandler = (() => {
 
     function navigate(direction) {
         // Solange der Crossfade der vorherigen Folie noch läuft, keine weitere
-        // Navigation annehmen — die neue Folie muss erst vollständig sichtbar
+        // Navigation annehmen, die neue Folie muss erst vollständig sichtbar
         // sein, bevor der nächste Klick zählt. Sub-Folien blocken sich
         // zusätzlich selbst (siehe DemoRegistry.block).
         if (Presentation.isSlideTransitioning()) return;
         const result = DemoRegistry.tryNavigate(direction, Presentation.getActiveSlide());
-        if (result === 'block') return; // Demo hat blockiert — kein Fallthrough
+        if (result === 'block') return; // Demo hat blockiert, kein Fallthrough
         if (!result) {
             if (direction === 'next') Presentation.next();
             else Presentation.prev();
@@ -1142,11 +1149,11 @@ const InputHandler = (() => {
         const isCheckbox = tag === 'INPUT' && target.type === 'checkbox';
         // Pfeiltasten auf Inputs/Selects: normalerweise würde der Browser
         // den Wert ändern (z.B. Slider). Stattdessen wollen wir
-        // navigieren — also Input bluren und weiterreichen.
+        // navigieren, also Input bluren und weiterreichen.
         const isNavKey = KEY_ACTIONS.next.includes(e.key) || KEY_ACTIONS.prev.includes(e.key);
 		if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA' || tag === 'SELECT') {
 			// Freitext-Feld (z. B. das Token-Feld): Tasten tippen statt
-			// navigieren — sonst würde ein Leerzeichen die Folie blättern.
+			// navigieren, sonst würde ein Leerzeichen die Folie blättern.
 			if (target.hasAttribute('data-free-text')) return;
 			if (isNavKey) { target.blur(); }
 			else { return; }
@@ -1244,7 +1251,7 @@ const InputHandler = (() => {
         document.addEventListener('wheel', handleWheel, { passive: false });
     }
 
-    // navigate() wird auch von den Nav-Bar-Buttons verwendet — die
+    // navigate() wird auch von den Nav-Bar-Buttons verwendet, die
     // Buttons dürfen Demo-Schritte nicht überspringen (Pfeiltasten,
     // Rad und Swipe laufen ohnehin durch navigate()).
     return { init, navigate };

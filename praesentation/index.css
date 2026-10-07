@@ -12,7 +12,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 
 /* ============ SLIDES ============ */
 
-/* Inaktive Folien: ALLE Nachfahren ohne Pointer-Events erzwingen —
+/* Inaktive Folien: ALLE Nachfahren ohne Pointer-Events erzwingen:
    Plotly setzt z.B. explizit pointer-events:all auf dem SVG, was den
    geerbten Wert sonst überschreibt und Maus-Events stehlen würde. */
 .slide:not(.active) * {
@@ -37,7 +37,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     z-index: 0;
     /* Ruhe-Position inaktiver Folien (opacity 0 → unsichtbar). Der
        eigentliche Crossfade läuft über die Web Animations API in
-       Presentation.goTo() — KEINE CSS-Transition hier, sonst würde sie
+       Presentation.goTo(), KEINE CSS-Transition hier, sonst würde sie
        mit WAAPI konkurrieren, wenn .active getoggelt wird. */
     transform: translate(40px, 0) scale(0.95);
 }
@@ -65,7 +65,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	will-change: opacity, transform;
 }
 
-/* Aktive Folie — zuletzt definiert, damit sie bei gleicher Spezifität
+/* Aktive Folie, zuletzt definiert, damit sie bei gleicher Spezifität
    gegenüber .leaving/.leaving-back gewinnt (Safety-Netz; der JS-Seit
    räumt Zustände ohnehin deterministisch auf). */
 .slide.active {
@@ -123,6 +123,32 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 #nn-intro-anim .nn-anim-scene.on {
 	opacity: 1;
 	transform: scale(1) translateY(0);
+	pointer-events: auto;
+}
+
+/* "Was sind Dense Layer?": die Sequenz wird smooth zur verschachtelten
+   Komposition (Substitution, damit man sieht: nacheinander Ausführung). */
+#comp-stack { position: relative; }
+#comp-stack .comp-seq { transition: opacity 0.6s ease, transform 0.6s ease; }
+#comp-stack.collapsed .comp-seq {
+	opacity: 0;
+	transform: scale(0.97);
+	pointer-events: none;
+}
+#comp-stack .comp-nested {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transform: scale(0.95) translateY(8px);
+	transition: opacity 0.6s ease, transform 0.6s ease;
+	pointer-events: none;
+}
+#comp-stack.collapsed .comp-nested {
+	opacity: 1;
+	transform: none;
 	pointer-events: auto;
 }
 .key-insight {
@@ -778,7 +804,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 #tori-table.show-k .kv { display: table-cell; }
 #tori-table.show-k .kv { color: #7c3aed; font-variant-numeric: tabular-nums; }
 
-/* Extra-Zeile (B₂): die ganze Zeit sichtbar — keine An/Aus-Logik mehr */
+/* Extra-Zeile (B₂): die ganze Zeit sichtbar, keine An/Aus-Logik mehr */
 .sm-table .extra-row {
 	opacity: 0.55;
 	border-top: 1px dashed #94a3b8;
@@ -861,7 +887,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	width: max-content;
 	will-change: transform, opacity;
 }
-/* WICHTIG: kein display:flex — Flex würde jeden Textabschnitt zu einem
+/* WICHTIG: kein display:flex, Flex würde jeden Textabschnitt zu einem
    eigenen Flex-Item machen und die Leerzeichen dazwischen streichen,
    dadurch klebten die Zahlen an den nächsten Wörtern. Block-Layout
    behält den normalen Inline-Fluss (mit allen Leerzeichen) bei. */

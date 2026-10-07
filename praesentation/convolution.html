@@ -121,7 +121,7 @@ ker.width=ker.height=CELL;
   drawEye(k,CELL*0.5,CELL*0.5,EYE_W);
 }
 
-/* ══════════ 3) WERTE — deterministische Tabelle ══════════ */
+/* ══════════ 3) WERTE, deterministische Tabelle ══════════ */
 const VALUES=Array.from({length:N},(_,i)=>EYE_IDX.includes(i)?100:0);
 
 /* G-Table: nur 0 und 100 */
@@ -302,7 +302,7 @@ function runtimeGuards(){
     assert(false,'RG3: pausiert aber t in Bewegung',{playing,t:+t.toFixed(3)});
   }
 
-  /* RG4: Keine Lücken — alles bis cur muss befüllt sein */
+  /* RG4: Keine Lücken, alles bis cur muss befüllt sein */
   if(!fired.gap){
     for(let k=0;k<=cur;k++){
       if(filled[k]===null){
@@ -384,7 +384,7 @@ function fallbackCopy(text,cb){
   document.body.appendChild(ta);
   ta.select();
   try{ document.execCommand('copy'); cb(); }
-  catch(_){ console.warn('Clipboard blockiert — Report steht oben in der Konsole.'); }
+  catch(_){ console.warn('Clipboard blockiert, Report steht oben in der Konsole.'); }
   document.body.removeChild(ta);
 }
 const bDiag=$('diag'); if(bDiag) bDiag.onclick=dumpDiagnostics;

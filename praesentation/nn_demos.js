@@ -25,7 +25,7 @@ const TypewriterViz = (() => {
     }
 
     // Auf Folie betreten automatisch den Schreibmaschinen-Effekt starten.
-    // Wichtig: erst NACH der Folien-Transition (~850 ms) anfangen — sonst
+    // Wichtig: erst NACH der Folien-Transition (~850 ms) anfangen, sonst
     // tippt der Code schon während die Folie noch einfadet und der User
     // sieht nur das fertige Ergebnis.
     // Der Effekt wird AB SOFORT blockiert (setActive(true)), damit erst der
