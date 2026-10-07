@@ -73,7 +73,7 @@ const DemoRegistry = (() => {
 
                 { id: 'neuron-intro', ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
                         guard: d => d.isOnIntroSlide(),
-                        slideTest: s => s.getAttribute('data-title') === 'Was sind Dense Layer',
+                        slideTest: s => s.getAttribute('data-title') === 'Was sind Dense Layer?',
                         onEnter: d => d.reset() },
 
                 { id: 'typewriter', ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
@@ -240,7 +240,7 @@ const FragmentActions = {
 	    backward: (frag) => resetTypewriter(frag),
 	},
 
-	// "Was sind Dense Layer" – 2 Szenen manuell (Pfeiltaste weiter/rückwärts)
+	// "Was sind Dense Layer?" – 2 Szenen manuell (Pfeiltaste weiter/rückwärts)
 	'neuron-intro-anim': {
 	    forward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.start(); },
 	    backward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.hideFragment(); },
@@ -295,6 +295,8 @@ function startTypewriter(frag) {
     const total = _twTotal(parts);
     const speed = parseInt(el.getAttribute('data-type-speed') || '6', 10);
     _twStop(el);
+    const slide = el.closest('.slide');
+    if (slide) slide.classList.remove('tw-done');
     let n = 0;
     el.innerHTML = '<span class="type-caret">▍</span>';
     if (typeof TypewriterViz !== 'undefined') TypewriterViz.setActive(true);
@@ -304,6 +306,8 @@ function startTypewriter(frag) {
         if (n >= total) {
             el.innerHTML = el.dataset.typeHtml;
             _twStop(el);
+            // Code komplett getippt → KI-Lernen-Seite + Insights einblenden.
+            if (slide) slide.classList.add('tw-done');
         }
     }, speed);
 }
@@ -313,6 +317,8 @@ function resetTypewriter(frag) {
     if (!el) return;
     _twStop(el);
     if (el.dataset.typeHtml !== undefined) el.innerHTML = '';
+    const slide = el.closest('.slide');
+    if (slide) slide.classList.remove('tw-done');
 }
 
 function _twStop(el) {
@@ -707,6 +713,12 @@ function prev() {
         currentSlide = idx;
         const newSlide = slides[currentSlide];
         const forward = idx > oldIdx;
+
+        // Zurück-Navigieren VON der letzten Folie weg: ALLE Folien werden
+        // zurückgesetzt (frischer Zustand, wie ein frischer Laden) — für einen
+        // sauberen zweiten Durchgang / Q&A. Einmalig bei dem einen Sprung vom
+        // Ende zurück; danach greift wieder das normale "exakt dort, wo ich war".
+        if (!forward && oldIdx === slides.length - 1) slideMemory.clear();
 
         activateSlide(newSlide, oldSlide, forward);
 

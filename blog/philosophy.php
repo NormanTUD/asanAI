@@ -679,7 +679,18 @@ Such internal structures, the paper calls **xeno-representations**, and their st
 
 The paper first sorts the word "alien" as it is already used in AI discourse. **Alienness of capability**: the system's origin and skill profile exceed anything a human benchmark can characterize. **Alienness of agency**: the assistant you are talking to may be a persona played by an underlying agent whose psychology is "alien or inscrutable" (the Shoggoth alternative to the Persona Selection Model). **Alienness of novelty**: the model may produce ideas that no human community would have generated, yet fully expressible once presented. In all three cases the alien thing remains *describable* by us. The paper's claim is a fourth, stronger kind: the model may organize itself along distinctions that have no adequate human concept at all, not that it is smarter, unaligned, or merely creative, but that part of its internal bookkeeping has no human vocabulary.
 
-The formal setup is minimal. Let $\mathcal{M}$ be the space of distinctions the model actually represents and uses, and let $\mathcal{H} \subseteq \mathcal{M}$ be the subset that admits an adequate relation to human concepts—the familiar targets of interpretability. The \cite[xeno-semantic space]{pierucci2026xenointerpretability} is the remainder, $X := \mathcal{M} \setminus \mathcal{H}$.
+The formal setup is minimal. Let $\mathcal{M}$ be the space of distinctions the model actually represents and uses, and let $\mathcal{H} \subseteq \mathcal{M}$ be the subset that admits an adequate relation to human concepts—the familiar targets of interpretability. The \cite[xeno-semantic space]{pierucci2026xenointerpretability} is the remainder:
+
+<div class="math-opt" data-math-opt="math-heavy">
+<div>$$
+\underbrace{X}_{\substack{\text{the xeno-semantic space:} \\ \text{model-native distinctions} \\ \text{without an adequate} \\ \text{human concept}}}
+\;:=\;
+\underbrace{\mathcal{M}}_{\substack{\text{every distinction the model} \\ \text{actually represents and uses}}}
+\;\setminus\;
+\underbrace{\mathcal{H}}_{\substack{\text{the human-interpretable part:} \\ \text{refusal, sentiment, truthfulness,} \\ \text{the familiar targets of} \\ \text{interpretability}}}
+$$</div>
+<span class="math-alt">In words: take everything the model actually represents and uses, subtract the part that has a human concept, and what is left over is the xeno-semantic space — the model-native distinctions without a human counterpart.</span>
+</div>
 
 #### Why the remainder might be non-empty
 

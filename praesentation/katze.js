@@ -1069,9 +1069,9 @@ const FlattenDemo = (() => {
 			  p: 'Zeile <b>0</b> von 32 · <b>0</b> Zahlen',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span>' },
 			{ k: 'Schritt 2', t: 'Der <em>Trick</em>: Flatten verliert<br>die Bildstruktur.',
-			  p: 'Ab hier ist jede Zahl nur noch eine Zahl',
+			  p: '<b>1024</b> Zahlen — eine flache Schnur',
 			  c: '<span class="kz-chip r">(1024,)</span>',
-			  i: 'Der Trick: Flatten verliert die Bildstruktur — ab hier ist jede Zahl nur noch eine Zahl. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und globale Entscheidungen treffen („Auto? Katze?").' }
+			  i: 'Der Trick: Flatten verliert die Bildstruktur. Dafür kann ein <b>Dense-Layer</b> darauf arbeiten und globale Entscheidungen treffen („Auto? Katze?").' }
 		],
 
 		layoutFor(step, S) {
@@ -1093,8 +1093,8 @@ const FlattenDemo = (() => {
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
 			railA = KatzeKit.lerp(railA, tRailA, k);
 			if (S.step !== 0) return;
-			// ~10,5 s für 32 Zeilen
-			flatP = Math.min(flatP + dt * (32 / (10.5 * 60)), 32);
+			// ~5,25 s für 32 Zeilen (ca. 2× schneller)
+			flatP = Math.min(flatP + dt * (32 / (5.25 * 60)), 32);
 			if (flatP >= 32) {
 				if (!flatMsg) {
 					flatMsg = 1;
@@ -1161,7 +1161,6 @@ const PipelineDemo = (() => {
 	let aOut = 0, tOutA = 0;
 	let aLoss = 0, tLossA = 0;
 	let trainP = 0, trainMsg = 0;
-	let flowT = 0; // Laufzeit für den Datenfluss Layer 1 → Layer 2
 
 	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
@@ -1412,7 +1411,6 @@ const PipelineDemo = (() => {
 			aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
 			aOut = KatzeKit.lerp(aOut, tOutA, k * 1.5);
 			aLoss = KatzeKit.lerp(aLoss, tLossA, k * 1.5);
-			flowT += dt;
 			if (S.step !== 5) return;
 			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
@@ -1497,19 +1495,6 @@ const PipelineDemo = (() => {
 					drawMapSlot(ctx, mapX2, mapYs[i], ms, MAPS[i].label, aPart);
 					drawMapLit(ctx, mapX2, mapYs[i], ms, MAPS[i].lit, aPart);
 				}
-				// Datenfluss: Punkte wandern die Pfeile Layer 1 → Layer 2 entlang.
-				const fx0 = mapX1 + mapW + 14, fx1 = mapX2 - 14;
-				for (let i = 0; i < 3; i++) {
-					const y = mapYs[i] + 4 * ms;
-					for (let d = 0; d < 3; d++) {
-						const t = (flowT / 60 * .9 + d / 3 + i * .13) % 1;
-						const x = KatzeKit.lerp(fx0, fx1, t);
-						ctx.globalAlpha = aPart * (0.2 + 0.6 * Math.sin(Math.PI * t));
-						ctx.fillStyle = '#4caf50';
-						ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
-					}
-				}
-				ctx.globalAlpha = 1;
 			}
 
 			// Dense

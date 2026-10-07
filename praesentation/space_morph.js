@@ -1,5 +1,5 @@
 // ============================================================
-// SPACE MORPH – "Layer als Raumkrümmung" (6-Schritte-Animation)
+// SPACE MORPH – "Was machen Dense Layer?" (6-Schritte-Animation)
 // Port von test/space_morph.html in das Folien-Format:
 // Pfeiltasten (Präsentation) steuern die Schritte, Drag rotiert.
 // ============================================================

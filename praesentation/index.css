@@ -103,7 +103,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 #slide-neuronales-netz-intro .formula-box { font-size: 1.18em; }
 #slide-neuronales-netz-intro .formula-box .math-display { font-size: 1.6em; }
 
-/* Neuron-Intro-Animation (Slide "Was sind Dense Layer") */
+/* Neuron-Intro-Animation (Slide "Was sind Dense Layer?") */
 #nn-intro-anim {
 	position: relative;
 	min-height: 14em;
@@ -177,6 +177,33 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	opacity: 1;
 	transform: translateY(0);
 	pointer-events: auto;
+}
+/* Nach dem Tippen: KI-Lernen-Seite + Insights einblenden (statt per Klick) */
+[data-typewriter-finished] {
+	opacity: 0;
+	transform: translateY(20px);
+	transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	pointer-events: none;
+}
+.slide.tw-done [data-typewriter-finished] {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+/* Callout: Probleme, die klassisch niemand lösen kann (Katzen-Beispiel) */
+.ki-catchout {
+	background: #f0f9ff; border: 2px solid #7dd3fc; border-radius: 12px;
+	padding: 18px 24px 18px 60px; margin: 0 0 20px 0; font-size: 1.05em;
+	position: relative;
+}
+.ki-catchout::before {
+	content: "🐱";
+	position: absolute;
+	left: 22px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 1.3em;
+	line-height: 1;
 }
 .type-caret {
 	display: inline-block;
@@ -642,7 +669,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	border-color: #8b5cf6; background: #6d28d9; color: #ffffff;
 }
 
-/* ============ SPACE MORPH ("Layer als Raumkrümmung") ============ */
+/* ============ SPACE MORPH ("Was machen Dense Layer?") ============ */
 #slide-layer-als-raumkruemmung { background: #f8fafc; }
 #sm-tables-head {
 	transition: opacity 0.4s ease;

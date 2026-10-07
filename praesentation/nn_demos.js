@@ -45,12 +45,16 @@ const TypewriterViz = (() => {
     function stop() {
         const el = document.querySelector('[data-typewriter]');
         if (el && typeof _twStop === 'function') _twStop(el);
+        if (el) {
+            const slide = el.closest('.slide');
+            if (slide) slide.classList.remove('tw-done');
+        }
     }
 
     return { isTypewriting, setActive, isOnClassicSlide, activate, stop, nop() {} };
 })();
 /* ================================================================
-    Neuron Intro Animation (Slide "Was sind Dense Layer")
+    Neuron Intro Animation (Slide "Was sind Dense Layer?")
     Pfeilrechts zeigt die nächste Szene, Pfeillinks die vorherige.
      Szene 1: dense(x) = W·x + B      (Underbraces: Gewichte / Bias)
      Szene 2: Vektoren/Matrizen          (W und B unterlegt mit "lernbar")
@@ -61,7 +65,7 @@ const NeuronIntroViz = (() => {
 
     function isOnIntroSlide() {
         const active = document.querySelector('.slide.active');
-        return active && active.getAttribute('data-title') === 'Was sind Dense Layer';
+        return active && active.getAttribute('data-title') === 'Was sind Dense Layer?';
     }
 
     function getScenes() {

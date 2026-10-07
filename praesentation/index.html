@@ -54,7 +54,7 @@
         y <span style="color:#fbbf24">=</span> <span style="color:#fcd34d">0</span>
     <span style="color:#d8b4fe">return</span> y</pre>
             </div>
-            <div class="fragment" data-nofast style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
+            <div data-typewriter-finished style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
                 <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">KI / Lernen</div>
                 <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Wir geben nur Beispiele — die Regel findet das Netz selbst.</div>
                 <div style="font-size:0.92em; color:#475569; margin-bottom:6px;">Lernbeispiele für <b>UND</b>:</div>
@@ -69,9 +69,16 @@
                 </div>
         </div>
 
-        <div class="key-insight fragment" data-nofast>
+        <div class="key-insight" data-typewriter-finished>
             Klassisch: <b>Regeln → Programm</b><br>
             Lernen: <b>Beispiele → Regeln</b>.
+        </div>
+
+        <div class="ki-catchout" data-typewriter-finished>
+            <b>Der springende Punkt:</b> Manche Probleme kann klassisch <b>niemand</b>
+            lösen — z. B. <b>Katzen auf Bildern erkennen</b>: da kennt niemand die Regeln,
+            die man Schritt für Schritt in Code gießen müsste. <b>Lernen</b> löst genau das —
+            das Netz findet die Regeln selbst aus Beispielen.
         </div>
     </div>
 </div>
@@ -138,6 +145,22 @@
         </div>
     </div>
 </div>
+<!-- ==================== Convolutions: Strukturen in Bildern finden ==================== -->
+<div class="slide" data-title="Convolutions: Strukturen in Bildern finden" id="slide-hierarchie">
+    <div class="slide-content">
+        <h2>Convolutions: Strukturen in Bildern finden</h2>
+
+        <div class="hier-panels" id="hier-panels"></div>
+
+        <div class="hier-caption" id="hier-caption"></div>
+
+        <div class="key-insight">
+            Jeder Filter sieht nur <b>eine Richtung</b> — zusammen liefern die vier
+            die ganze Kontur: aus Zahlen wird wieder Form. Derselbe Rechenkern
+            (eine Matrixmultiplikation) läuft in jedem Schritt.
+        </div>
+    </div>
+</div>
 <!-- ============================================================
      Folie 5: Was macht Flatten?
      ------------------------------------------------------------
@@ -192,10 +215,10 @@
 	</div>
     </div>
 </div>
-<!-- ==================== Folie 7: Was sind Dense Layer ==================== -->
-<div class="slide" id="slide-neuronales-netz-intro" data-title="Was sind Dense Layer">
+<!-- ==================== Folie 7: Was sind Dense Layer? ==================== -->
+<div class="slide" id="slide-neuronales-netz-intro" data-title="Was sind Dense Layer?">
     <div class="slide-content">
-        <h2>Was sind Dense Layer</h2>
+        <h2>Was sind Dense Layer?</h2>
 
         <div>
  		Netze <b>approximieren</b> Funktionen — <i>ähnlich genug</i>, um nützlich zu sein.
@@ -244,10 +267,10 @@
         </div>
     </div>
 </div>
-<!-- ==================== Folie 8: Layer als Raumkrümmung (space_morph) ==================== -->
-<div class="slide" id="slide-layer-als-raumkruemmung" data-title="Layer als Raumkrümmung">
+<!-- ==================== Folie 8: Was machen Dense Layer? (space_morph) ==================== -->
+<div class="slide" id="slide-layer-als-raumkruemmung" data-title="Was machen Dense Layer?">
     <div class="slide-content" style="background:#f8fafc;">
-        <h2>Layer als Raumkrümmung</h2>
+        <h2>Was machen Dense Layer?</h2>
 
         <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1340px; margin:14px auto 0; height:640px; overflow:hidden;">
             <canvas id="space-morph-canvas" style="display:block; position:absolute; inset:0; width:100%; height:100%; cursor:grab;"></canvas>
@@ -302,22 +325,6 @@
             </div>
         </div>
 
-    </div>
-</div>
-<!-- ==================== Folie 9: Convolutions: Strukturen in Bildern finden ==================== -->
-<div class="slide" data-title="Convolutions: Strukturen in Bildern finden" id="slide-hierarchie">
-    <div class="slide-content">
-        <h2>Convolutions: Strukturen in Bildern finden</h2>
-
-        <div class="hier-panels" id="hier-panels"></div>
-
-        <div class="hier-caption" id="hier-caption"></div>
-
-        <div class="key-insight">
-            Jeder Filter sieht nur <b>eine Richtung</b> — zusammen liefern die vier
-            die ganze Kontur: aus Zahlen wird wieder Form. Derselbe Rechenkern
-            (eine Matrixmultiplikation) läuft in jedem Schritt.
-        </div>
     </div>
 </div>
 <!-- ============================================================
