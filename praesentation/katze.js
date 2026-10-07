@@ -1,14 +1,18 @@
 // ============================================================
 // katze.js — Framework "ASCII-Katze" (aus katze.html)
 //
-// Zwei Folien teilen sich dasselbe Gerüst: die 32×32-ASCII-Katze
+// Drei Folien teilen sich dasselbe Gerüst: die 32×32-ASCII-Katze
 // als Canvas-Raster + gestufter Ablauf (Kicker, Titel, Pill, Chips,
 // Dots). Die Schritte laufen über die Pfeiltasten (DemoRegistry):
-//   - ConvDemo     "Was sind Convolutions?" — Katze → 3 Kanäle →
-//                  6×5-Filter in Augen-Form findet die Augen über
-//                  756 Positionen → 8×8-Map
-//   - FlattenDemo  "Was macht Flatten?" — Pixel → RGB → Grün →
-//                  Grau → Schnur (1024 Zahlen) → Fazit
+//   - ConvDemo     "Jeder Pixel ist nur eine Zahl" — Farbbild →
+//                  Pixel = Zahl (Zoom) → 3 Kanäle → ein Kanal
+//                  (Grau) → 6×5-Filter in Augen-Form → flüssiger
+//                  5×5-Sweep → 8×8-Map, Augen leuchten
+//   - FlattenDemo  "Was macht Flatten?" — Raster → Schnur
+//                  (1024 Zahlen) → Fazit
+//   - PipelineDemo "Der gesamte Prozess" — Bild → Convolutions →
+//                  Dense → 2 Neuronen (Start 50:50, Loss 0,693)
+//                  → Training (Loss sinkt) → Katze 95 %
 // ============================================================
 
 const KatzeKit = (() => {
@@ -318,15 +322,18 @@ const KatzeKit = (() => {
 // ============================================================
 // ConvDemo — "Jeder Pixel ist nur eine Zahl" (Einstieg)
 //
-// 32×32-Katze, 6 Schritte:
-// 0: Graustufen-Katze — ein Pixel vergrößert (Wert 0–255)
-// 1: das Farbbild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
-// 2: die Stapel faden zusammen + der Filter erscheint — 6×5,
-//    so groß und in der Form wie ein Katzenauge (schwarz = 0,
-//    gelb = 255 — der Filter ist selbst nur Zahlen)
-// 3: das Fenster wird auf das Bild gelegt
-// 4: das Fenster fährt über alle 756 Positionen (27×28 fein)
-// 5: die 8×8-Map — jedes Auge leuchtet als ein großer Pixel
+// 32×32-Katze, 8 Schritte:
+// 0: Farbbild — die farbige Katze (Rot/Grün/Blau kombiniert)
+// 1: Graustufen-Katze — ein Pixel vergrößert (Wert 0–255)
+// 2: das Farbbild spaltet in drei Kanal-Stapel (ROT/GRÜN/BLAU)
+// 3: die Stapel faden zusammen — bleibt nur der Grün-Kanal (Grau)
+// 4: der Filter erscheint — 6×5, so groß und in der Form wie
+//    ein Katzenauge (schwarz = 0, gelb = 255 — nur die Form,
+//    keine Zahlen)
+// 5: das Fenster wird auf das Bild gelegt
+// 6: das Fenster fließt über das Bild — grobe 5×5-Positionen,
+//    sanft interpoliert (der Filter passt ~5× über/nebeneinander)
+// 7: die 8×8-Map — jedes Auge leuchtet als ein großer Pixel
 // ============================================================
 const ConvDemo = (() => {
 	'use strict';
@@ -351,15 +358,13 @@ const ConvDemo = (() => {
 	}
 
 	// Ausgabe: 8×8 (Pooling der feinen 27×28-Map). Jede Zelle
-	// (R,C) deckt einen Block feiner Fenster ab; sie ist "voll",
-	// wenn der Sweep den Block durchhat, und leuchtet, wenn dort
-	// ein Fenster voll aufs Auge passt.
+	// (R,C) deckt einen Block feiner Fenster ab; sie leuchtet,
+	// wenn dort ein Fenster voll aufs Auge passt.
 	const O8 = 8;
-	const END8 = new Array(O8 * O8), LIT8 = new Array(O8 * O8).fill(-1);
+	const LIT8 = new Array(O8 * O8).fill(-1);
 	for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
 		const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
 		const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
-		END8[R * O8 + C] = fr1 * OW + fc1 + 1;
 		for (let fr = fr0; fr <= fr1; fr++)
 			for (let fc = fc0; fc <= fc1; fc++) {
 				const i = fr * OW + fc;
@@ -368,14 +373,72 @@ const ConvDemo = (() => {
 			}
 	}
 
-	let sweepP = 0, sweepDone = 0;
+	// Grober Sweep: 5×5 Anker-Positionen in Serpentine, dazwischen
+	// sanft interpoliert — der Filter "fließt" über das Bild und
+	// passt ~5× über und ~5× nebeneinander (statt 756 feiner Schritte).
+	const GS = 5;
+	const ANCHORS = [];
+	for (let ar = 0; ar < GS; ar++)
+		for (let ac = 0; ac < GS; ac++) {
+			const col = ar % 2 === 0 ? ac : GS - 1 - ac;
+			ANCHORS.push({ fr: ar * (OH - 1) / (GS - 1), fc: col * (OW - 1) / (GS - 1) });
+		}
+	const ANCH = ANCHORS.length; // 25
+
+	function sweepPos(t) {
+		const a0 = Math.min(Math.floor(t), ANCH - 2);
+		const f = t - a0;
+		return {
+			fr: KatzeKit.lerp(ANCHORS[a0].fr, ANCHORS[a0 + 1].fr, f),
+			fc: KatzeKit.lerp(ANCHORS[a0].fc, ANCHORS[a0 + 1].fc, f)
+		};
+	}
+
+	// Wann leuchtet/füllt sich jede 8×8-Zelle? Vorberechnet: Zeit (in
+	// Anker-Einheiten), zu der der Sweep-First das Zellen-Leuchtpunkt-
+	// bzw. Zellen-Mittelpunkt-Gebiet erstmals im Radius RD erreicht.
+	const RD = 3.5;
+	const tLit8 = new Array(O8 * O8).fill(Infinity);
+	const tFull8 = new Array(O8 * O8).fill(Infinity);
+	(function precomputeSweepTimes() {
+		const NS = 480;
+		const pts = [];
+		for (let i = 0; i <= NS; i++) {
+			const t = i / NS * (ANCH - 1);
+			pts.push({ t, ...sweepPos(t) });
+		}
+		for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
+			const i8 = R * O8 + C;
+			const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
+			const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
+			let cfr = 0, cfc = 0, n = 0;
+			for (let fr = fr0; fr <= fr1; fr++)
+				for (let fc = fc0; fc <= fc1; fc++) { cfr += fr; cfc += fc; n++; }
+			cfr /= n; cfc /= n;
+			const lit = LIT8[i8];
+			const lfr = lit >= 0 ? (lit / OW) | 0 : null;
+			const lfc = lit >= 0 ? lit % OW : null;
+			for (const p of pts) {
+				if (lfr !== null && tLit8[i8] === Infinity &&
+					(p.fr - lfr) * (p.fr - lfr) + (p.fc - lfc) * (p.fc - lfc) <= RD * RD)
+					tLit8[i8] = p.t;
+				if (tFull8[i8] === Infinity &&
+					(p.fr - cfr) * (p.fr - cfr) + (p.fc - cfc) * (p.fc - cfc) <= RD * RD)
+					tFull8[i8] = p.t;
+			}
+			if (lfr !== null && tLit8[i8] === Infinity) tLit8[i8] = ANCH - 1;
+			if (tFull8[i8] === Infinity) tFull8[i8] = ANCH - 1;
+		}
+	})();
+
+	let sweepT = 0, sweepDone = 0;
 	let kerA = 0, tKerA = 0;
 	let outA = 0, tOutA = 0;
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
 	let grayA = 0, tGrayA = 0, zoomA = 0, tZoomA = 0;
 	const KC = 24; // Filter-Panel: Zellgröße in px
 
-	// Schritt 1: Beispiel-Pixel — oberes linkes Auge (Zeile 10, Spalte 4).
+	// Schritt 2: Beispiel-Pixel — oberes linkes Auge (Zeile 10, Spalte 4).
 	const ZR = 10, ZC = 4;
 	const ZVAL = KatzeKit.GREEN[ZR * KatzeKit.N + ZC];
 
@@ -468,15 +531,15 @@ const ConvDemo = (() => {
 		ctx.fill();
 		ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1; ctx.stroke();
 		ctx.globalAlpha = 1;
-		if (S.step < 4) return;
+		if (S.step < 5) return;
 
 		for (let i8 = 0; i8 < O8 * O8; i8++) {
 			const R = (i8 / O8) | 0, C = i8 % O8;
 			const x = Math.floor(ox + C * os), y = Math.floor(oy + R * os);
 			const xw = Math.ceil(ox + (C + 1) * os) - x, yh = Math.ceil(oy + (R + 1) * os) - y;
 			const lit = LIT8[i8];
-			const isLit = lit >= 0 && (S.step >= 6 || (S.step === 5 && sweepP > lit));
-			const isFull = !isLit && (S.step >= 6 || (S.step === 5 && sweepP >= END8[i8]));
+			const isLit = lit >= 0 && (S.step >= 7 || (S.step === 6 && sweepT >= tLit8[i8]));
+			const isFull = !isLit && (S.step >= 7 || (S.step === 6 && sweepT >= tFull8[i8]));
 			ctx.globalAlpha = outA;
 			if (isLit) {
 				ctx.fillStyle = 'rgba(76,175,80,.5)';
@@ -492,10 +555,10 @@ const ConvDemo = (() => {
 
 		// Weicher Glow um die leuchtenden Augen-Pixel (ab dem Moment,
 		// in dem der Sweep das Auge findet).
-		if (S.step >= 5) {
+		if (S.step >= 6) {
 			for (let i8 = 0; i8 < O8 * O8; i8++) {
 				const lit = LIT8[i8];
-				if (lit < 0 || (S.step === 5 && sweepP <= lit)) continue;
+				if (lit < 0 || (S.step === 6 && sweepT < tLit8[i8])) continue;
 				const R = (i8 / O8) | 0, C = i8 % O8;
 				const cx = ox + (C + .5) * os, cy = oy + (R + .5) * os;
 				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, os * 1.8);
@@ -518,35 +581,26 @@ const ConvDemo = (() => {
 		KatzeKit.roundRect(ctx, kx - 9, ky - 9, kw + 18, kh + 18, 10);
 		ctx.fill();
 		ctx.strokeStyle = '#333'; ctx.lineWidth = 1.2; ctx.stroke();
+		// Nur die Form (gelb = Auge, schwarz = Pupille/Rand) — keine Zahlen.
 		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
-			// 0‑Zellen (Pupille + Rand) bleiben schwarz.
 			if (!TPL[r * KW + c]) continue;
 			ctx.fillStyle = '#E2C72E';
-			ctx.fillRect(kx + c * KC + 3, ky + r * KC + 3, KC - 6, KC - 6);
-			// draw numeric value inside the cell
-			ctx.fillStyle = '#000';
-			ctx.font = '10px Inter, system-ui, sans-serif';
-			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			ctx.fillText('255', kx + c * KC + KC/2, ky + r * KC + KC/2);
-		}
-		// draw 0‑Zellen numbers
-		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
-			if (TPL[r * KW + c]) continue;
-			ctx.fillStyle = '#888';
-			ctx.font = '10px Inter, system-ui, sans-serif';
-			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			ctx.fillText('0', kx + c * KC + KC/2, ky + r * KC + KC/2);
+			KatzeKit.roundRect(ctx, kx + c * KC + 3, ky + r * KC + 3, KC - 6, KC - 6, 3);
+			ctx.fill();
 		}
 		ctx.globalAlpha = 1;
 	}
 
 	function drawWindow(ctx, S) {
-		if (S.step < 4 || S.step > 5) return;
+		if (S.step < 5 || S.step > 6) return;
 		const o = S.inst[0], s = o.s;
-		const i = Math.min(Math.floor(S.step === 5 ? sweepP : 0), OCELLS - 1);
-		const r = (i / OW) | 0, c = i % OW;
-		const x = o.x + c * s, y = o.y + r * s;
-		const sc = SCORES[i], hot = sc >= TH;
+		// Schritt 6: Fenster auf der Startposition; Schritt 7: fließt
+		// sanft über die groben 5×5-Positionen.
+		const pos = S.step === 6 ? sweepPos(sweepT) : { fr: 0, fc: 0 };
+		const x = o.x + pos.fc * s, y = o.y + pos.fr * s;
+		const ri = Math.max(0, Math.min(OH - 1, Math.round(pos.fr)));
+		const ci = Math.max(0, Math.min(OW - 1, Math.round(pos.fc)));
+		const sc = SCORES[ri * OW + ci], hot = sc >= 4;
 
 		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
 		ctx.fillRect(x, y, KW * s, KH * s);
@@ -569,25 +623,28 @@ const ConvDemo = (() => {
 		slideId: 'slide-convolution',
 		prefix: 'conv',
 		steps: [
-			{ k: 'Schritt 1', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
+			{ k: 'Schritt 1', t: 'Das Bild ist ein<br><em>Farbbild</em>.',
+			  p: 'Jedes Pixel trägt Rot, Grün und Blau',
+			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
+			{ k: 'Schritt 2', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
-			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
+			{ k: 'Schritt 3', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
 			  p: 'Rot, Grün und Blau — drei eigene Zahlen-Raster',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
-			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
+			{ k: 'Schritt 4', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
 			  p: 'Die grüne Farbe war nur Deko — es sind reine Zahlen',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
-			{ k: 'Schritt 4', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
+			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster —<br>hier die Form des <em>Auges</em>.',
 			  p: 'Schwarz = 0 · Gelb = 255 — auch der Filter ist nur Zahlen',
 			  c: '<span class="kz-chip">(6, 5)</span>' },
-			{ k: 'Schritt 5', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
-			  p: `Punkt <b>1</b> von ${OCELLS} · Treffer: <b>0</b> von ${TMAX}`,
+			{ k: 'Schritt 6', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
+			  p: `Punkt <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
 			  c: '<span class="kz-chip">(32, 32)</span><span class="kz-arrow">×</span><span class="kz-chip">(6, 5)</span>' },
-			{ k: 'Schritt 6', t: `… und über<br><em>alle ${OCELLS}</em> Positionen.`,
-			  p: `Fenster <b>1</b> von ${OCELLS}`,
+			{ k: 'Schritt 7', t: '… und <em>fließt</em> über<br>das ganze Bild.',
+			  p: `Fenster <b>1</b> von ${ANCH}`,
 			  c: `<span class="kz-chip">(${OH}, ${OW})</span><span class="kz-arrow">→</span><span class="kz-chip g">(8, 8)</span>` },
-			{ k: 'Schritt 7', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
+			{ k: 'Schritt 8', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
 			  p: `1024 Pixel → ${O8 * O8} Zahlen — und die Augen bleiben`,
 			  c: `<span class="kz-chip g">(8, 8)</span>` }
 		],
@@ -597,6 +654,15 @@ const ConvDemo = (() => {
 			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, 13);
 			const imgW = KatzeKit.N * s, gapOut = 60, outW = O8 * s * 4;
 			if (step === 0) {
+				// Farbbild: eine große farbige Katze in der Mitte.
+				const cs = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .6, 13);
+				inst.forEach((o, i) => {
+					o.ts = cs; o.tx = (W - KatzeKit.N * cs) / 2; o.ty = (H - KatzeKit.N * cs) / 2;
+					o.tmix = 0; o.ta = i === 0 ? 1 : 0;
+				});
+				tTagA = [0, 0, 0];
+				S.zoomX = null;
+			} else if (step === 1) {
 				// Graustufen-Katze links, Zoom-Pixel rechts.
 				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .5, 10);
 				const zw = 230, zh = 250, gap = 90;
@@ -608,17 +674,17 @@ const ConvDemo = (() => {
 				tTagA = [0, 0, 0];
 				S.zoomX = x0 + KatzeKit.N * cs + gap;
 				S.zoomY = (H - zh) / 2;
-			} else if (step <= 2) {
-				// Drei Kanal-Stapel; ab Schritt 3 nur der Grün-Kanal (graustufen).
+			} else if (step <= 3) {
+				// Drei Kanal-Stapel; ab Schritt 4 nur der Grün-Kanal (graustufen).
 				const g = Math.min(W * .035, 46);
 				const ss = Math.min((W - g * 2) / (KatzeKit.N * 3) * .96, H / KatzeKit.N * .82, 8);
 				const bw = KatzeKit.N * ss, tot = bw * 3 + g * 2, ox = (W - tot) / 2, oy = (H - bw) / 2 + 8;
 				inst.forEach((o, i) => {
 					o.ts = ss; o.tx = ox + i * (bw + g); o.ty = oy;
-					o.tmix = 1; o.ta = step === 1 ? 1 : (i === KatzeKit.PICK ? 1 : 0);
+					o.tmix = 1; o.ta = step === 2 ? 1 : (i === KatzeKit.PICK ? 1 : 0);
 				});
-				tTagA = step === 1 ? [1, 1, 1] : [0, 1, 0];
-				S.tGrayMix = step === 2 ? 1 : 0;
+				tTagA = step === 2 ? [1, 1, 1] : [0, 1, 0];
+				S.tGrayMix = step === 3 ? 1 : 0;
 			} else {
 				S.tGrayMix = 0;
 				inst.forEach((o, i) => {
@@ -626,18 +692,18 @@ const ConvDemo = (() => {
 					o.tx = (W - (imgW + gapOut + outW)) / 2;
 					o.ty = (H - imgW) / 2 + 6;
 					o.tmix = i === 0 ? 0 : 1;
-					o.ta = i === 0 ? (step >= 6 ? .22 : 1) : 0;
+					o.ta = i === 0 ? (step >= 7 ? .22 : 1) : 0;
 				});
 				tTagA = [0, 0, 0];
 			}
-			tKerA = step <= 2 ? 0 : (step >= 6 ? .45 : 1);
-			tOutA = step >= 4 ? 1 : 0;
-			tGrayA = step === 0 ? 1 : 0;
-			tZoomA = step === 0 ? 1 : 0;
+			tKerA = step <= 3 ? 0 : (step >= 7 ? .45 : 1);
+			tOutA = step >= 5 ? 1 : 0;
+			tGrayA = step === 1 ? 1 : 0;
+			tZoomA = step === 1 ? 1 : 0;
 		},
 
 		onStep(step) {
-			if (step === 5) { sweepP = 0; sweepDone = 0; }
+			if (step === 6) { sweepT = 0; sweepDone = 0; }
 		},
 
 		tick(dt, k, S, setFoot) {
@@ -646,18 +712,20 @@ const ConvDemo = (() => {
 			grayA = KatzeKit.lerp(grayA, tGrayA, k * 1.2);
 			zoomA = KatzeKit.lerp(zoomA, tZoomA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
-			if (S.step !== 5) return;
-			// 756 Fenster in ~9 s
-			sweepP = Math.min(sweepP + dt * (OCELLS / (9 * 60)), OCELLS);
-			const i = Math.min(Math.floor(sweepP), OCELLS - 1);
-			if (sweepP >= OCELLS) {
+			if (S.step !== 6) return;
+			// 24 Intervalle in ~8 s — das Fenster fließt sanft
+			sweepT = Math.min(sweepT + dt * ((ANCH - 1) / (8 * 60)), ANCH - 1);
+			if (sweepT >= ANCH - 1) {
 				if (!sweepDone) {
 					sweepDone = 1;
-					setFoot(`Fertig — <b>${OCELLS}</b> Fenster → <b>${O8 * O8}</b> Zahlen (8 × 8)`,
+					setFoot(`Fertig — <b>${ANCH}</b> Positionen → <b>${O8 * O8}</b> Zahlen (8 × 8)`,
 						'<span class="kz-chip g">(8, 8)</span>');
 				}
 			} else {
-				setFoot(`Fenster <b>${i + 1}</b> von ${OCELLS} · Treffer: <b>${SCORES[i]}</b> von ${TMAX}`,
+				const pos = sweepPos(sweepT);
+				const ri = Math.max(0, Math.min(OH - 1, Math.round(pos.fr)));
+				const ci = Math.max(0, Math.min(OW - 1, Math.round(pos.fc)));
+				setFoot(`Fenster <b>${Math.floor(sweepT) + 1}</b> von ${ANCH} · Treffer: <b>${SCORES[ri * OW + ci]}</b> von ${TMAX}`,
 					'<span class="kz-chip g">(8, 8)</span>');
 			}
 		},
@@ -667,20 +735,31 @@ const ConvDemo = (() => {
 			drawOutput8(ctx, S);
 			const o = S.inst[0];
 			if (S.step === 0) {
+				// Farbbild: farbiges Raster.
+				KatzeKit.drawGrid(ctx, o, 0, 0);
+				if (o.a > 0.02) {
+					ctx.globalAlpha = o.a;
+					ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+					ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
+					ctx.globalAlpha = 1;
+				}
+			} else if (S.step === 1) {
+				// Farb-Katze (Geometrie in Bewegung), Grau fadet drüber.
+				KatzeKit.drawGrid(ctx, o, 0, 0);
 				drawGrayCat(ctx, S);
 				drawPixelZoom(ctx, S);
-			} else if (S.step <= 2) {
-				// Kanal-Stapel; Schritt 3: nur der Grün-Kanal, fadet in Grau.
+			} else if (S.step <= 3) {
+				// Kanal-Stapel; Schritt 4: nur der Grün-Kanal, fadet in Grau.
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				KatzeKit.drawTags(ctx, S, tagA);
-				if (S.step === 1) drawGrayCat(ctx, S); // Crossfade von den Graustufen
+				if (S.step === 2) drawGrayCat(ctx, S); // Crossfade von der Grau-Katze
 			} else {
 				KatzeKit.drawGrid(ctx, o, 0, 0);
 				// Beim Zusammenfaden flackern die Kanäle kurz drüber.
 				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
 				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
 			}
-			if (S.step >= 3 && o.a > 0.02) {
+			if (S.step >= 4 && o.a > 0.02) {
 				ctx.globalAlpha = o.a;
 				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 				ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
@@ -832,18 +911,14 @@ const FlattenDemo = (() => {
 // PipelineDemo — "Der gesamte Prozess" (am Ende der Deck)
 //
 // Bild → Convolutions (Augen/Nase/Mund-Maps) → Dense-Layer →
-// zwei Ausgabe-Neuronen (Katze 95 % / Hund 5 %).
-// 4 Schritte: Bild · Convolutions · Dense · Antwort.
+// zwei Ausgabe-Neuronen. Das Netz startet blind (50:50, Loss
+// 0,693); im Training sinkt der Loss und das Katzen-Neuron
+// wird am aktivsten (95 %).
+// 6 Schritte: Bild · Convolutions · Dense · 50:50 (Loss) ·
+// Training (Loss sinkt) · Antwort (95 %).
 // ============================================================
 const PipelineDemo = (() => {
 	'use strict';
-
-	// Augen-Filter (wie bei der Conv-Folie: Zeilen 10–15, Spalten 4–8).
-	const KH = 6, KW = 5, ER = 10, EC = 4;
-	const TPL = [];
-	for (let dr = 0; dr < KH; dr++)
-		for (let dc = 0; dc < KW; dc++)
-			TPL.push(KatzeKit.YELLOW[(ER + dr) * KatzeKit.N + (EC + dc)]);
 
 	// Leuchtende Zellen der drei 8×8-Karten (Augen/Nase/Mund).
 	const MAPS = [
@@ -856,6 +931,26 @@ const PipelineDemo = (() => {
 	let aConv = 0, tConvA = 0;
 	let aDense = 0, tDenseA = 0;
 	let aOut = 0, tOutA = 0;
+	let aLoss = 0, tLossA = 0;
+	let trainP = 0, trainMsg = 0;
+
+	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
+	// der schlechtmögliche uninformierte Loss) und trainiert sich
+	// auf 95 %. Loss = −ln(p).
+	const P0 = 50, P1 = 95;
+	const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+	const trainPct = t => P0 + (P1 - P0) * easeOutCubic(t);
+	const lossOf = p => -Math.log(Math.max(p, 1e-9) / 100);
+	const fmtLoss = n => n.toFixed(3).replace('.', ',');
+	const lossColor = L => {
+		const t = Math.min(L / 0.7, 1);
+		return t > 0.66 ? '#dc2626' : (t > 0.33 ? '#d97706' : '#16a34a');
+	};
+	const CURVE = [];
+	for (let i = 0; i <= 60; i++) {
+		const t = i / 60;
+		CURVE.push({ t, l: lossOf(trainPct(t)) });
+	}
 
 	function arrow(ctx, x1, y1, x2, y2, a) {
 		if (a < 0.02) return;
@@ -898,20 +993,56 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	function drawMiniKernel(ctx, cat, a) {
-		if (a < 0.01) return;
-		const s = cat.s;
-		const x = cat.x + EC * s, y = cat.y + ER * s, kw = KW * s, kh = KH * s;
-		ctx.globalAlpha = a;
-		ctx.fillStyle = '#111';
-		ctx.fillRect(x, y, kw, kh);
-		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
-			if (!TPL[r * KW + c]) continue;
-			ctx.fillStyle = '#E2C72E';
-			ctx.fillRect(x + c * s + 1, y + r * s + 1, s - 2, s - 2);
+	// Loss-Panel rechts neben den Neuronen: Formel, aktueller Wert
+	// und die Lernkurve, die sich beim Training einzeichnet.
+	function drawLossPanel(ctx, geo, S) {
+		if (aLoss < 0.01) return;
+		const { px, py, pw, ph } = geo;
+		const t = S.step >= 5 ? 1 : (S.step === 4 ? trainP : 0);
+		const L = lossOf(trainPct(t));
+		const col = lossColor(L);
+
+		ctx.globalAlpha = aLoss;
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, px, py, pw, ph, 12);
+		ctx.fill();
+		ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.2; ctx.stroke();
+
+		ctx.fillStyle = '#64748b';
+		ctx.font = '700 11px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+		ctx.fillText('Loss = −ln(p)', px + 14, py + 22);
+		ctx.fillStyle = col;
+		ctx.font = '800 21px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'right';
+		ctx.fillText(fmtLoss(L), px + pw - 14, py + 24);
+
+		// Mini-Plot: Loss über den Trainingsfortschritt.
+		const gx = px + 16, gy = py + 38, gw = pw - 32, gh = ph - 78;
+		ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(gx, gy); ctx.lineTo(gx, gy + gh); ctx.lineTo(gx + gw, gy + gh);
+		ctx.stroke();
+		const X = tt => gx + tt * gw;
+		const Y = ll => gy + gh - (ll / 0.75) * gh;
+		if (t > 0.004) {
+			ctx.strokeStyle = col; ctx.lineWidth = 2;
+			ctx.beginPath();
+			let started = false;
+			for (const c of CURVE) {
+				if (c.t > t + 1e-9) break;
+				if (!started) { ctx.moveTo(X(c.t), Y(c.l)); started = true; }
+				else ctx.lineTo(X(c.t), Y(c.l));
+			}
+			ctx.stroke();
 		}
-		ctx.strokeStyle = '#111'; ctx.lineWidth = 2;
-		ctx.strokeRect(x + 1, y + 1, kw - 2, kh - 2);
+		ctx.fillStyle = col;
+		ctx.beginPath(); ctx.arc(X(t), Y(L), 3.5, 0, Math.PI * 2); ctx.fill();
+
+		ctx.fillStyle = '#94a3b8';
+		ctx.font = '600 10px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'right';
+		ctx.fillText('Training →', gx + gw, py + ph - 10);
 		ctx.globalAlpha = 1;
 	}
 
@@ -977,9 +1108,17 @@ const PipelineDemo = (() => {
 			  p: '64 Zahlen pro Karte — dicht verdrahtet',
 			  c: '<span class="kz-chip g">3 × (8, 8)</span><span class="kz-arrow">→</span><span class="kz-chip r">Dense</span>' },
 			{ k: 'Schritt 4', t: 'Zwei Neuronen —<br>die <em>Antwort</em>.',
-			  p: 'Katze: 95 % · Hund: 5 %',
+			  p: 'Anfang: <b>50 : 50</b> · Loss <b>0,693</b>',
+			  c: '<span class="kz-chip r">50 : 50</span><span class="kz-arrow">·</span><span class="kz-chip r">Loss 0,693</span>',
+			  i: 'Das Netz startet mit <b>zufälligen Gewichten</b> — es ratet blind: 50 : 50. Der <b>Loss</b> (−ln p, p = Katzen-Anteil) misst, wie falsch die Antwort ist: 0,693 — der Wert eines Blindrats. Ziel des Trainings: Loss → 0.' },
+			{ k: 'Schritt 5', t: 'Training: der Loss<br><em>sinkt</em>.',
+			  p: 'Training … · Katze <b>50 %</b> · Loss <b>0,693</b>',
+			  c: '<span class="kz-chip g">Loss ↓</span>',
+			  i: '<b>Training</b> = den Loss senken: <i>Gradient Descent</i> dreht alle Gewichte ein Stück in Richtung „weniger falsch". Mit jedem Schritt wird die Antwort besser — der Loss fällt, die Kurve zeigt es.' },
+			{ k: 'Schritt 6', t: 'Das Katzen-Neuron<br>ist am <em>aktivsten</em>.',
+			  p: 'Katze: <b>95 %</b> · Loss <b>0,051</b>',
 			  c: '<span class="kz-chip g">Katze 95 %</span>',
-			  i: 'Vom Bild zur Antwort: <b>Convolutions</b> finden lokale Strukturen (Augen, Nase, Mund), die <b>Dense-Layer</b> kombinieren — am Ende steht eine Zahl pro Antwort. 95 % = „fast sicher Katze".' }
+			  i: 'Vom Bild zur Antwort: <b>Convolutions</b> finden lokale Strukturen (Augen, Nase, Mund), die <b>Dense-Layer</b> kombinieren — am Ende steht eine Zahl pro Antwort. 95 % = „fast sicher Katze", Loss 0,051 ≈ 0.' }
 		],
 
 		layoutFor(step, S) {
@@ -993,6 +1132,11 @@ const PipelineDemo = (() => {
 			tConvA = step >= 1 ? 1 : 0;
 			tDenseA = step >= 2 ? 1 : 0;
 			tOutA = step >= 3 ? 1 : 0;
+			tLossA = step >= 3 ? 1 : 0;
+		},
+
+		onStep(step) {
+			if (step === 4) { trainP = 0; trainMsg = 0; }
 		},
 
 		tick(dt, k, S, setFoot) {
@@ -1000,6 +1144,21 @@ const PipelineDemo = (() => {
 			aConv = KatzeKit.lerp(aConv, tConvA, k * 1.5);
 			aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
 			aOut = KatzeKit.lerp(aOut, tOutA, k * 1.5);
+			aLoss = KatzeKit.lerp(aLoss, tLossA, k * 1.5);
+			if (S.step !== 4) return;
+			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
+			trainP = Math.min(trainP + dt / (7 * 60), 1);
+			if (trainP >= 1) {
+				if (!trainMsg) {
+					trainMsg = 1;
+					setFoot('Katze: <b>95 %</b> · Loss <b>0,051</b> — fast sicher Katze',
+						'<span class="kz-chip g">Katze 95 %</span>');
+				}
+			} else {
+				const p = Math.round(trainPct(trainP));
+				setFoot(`Training … · Katze <b>${p} %</b> · Loss <b>${fmtLoss(lossOf(p))}</b>`,
+					'<span class="kz-chip g">Loss ↓</span>');
+			}
 		},
 
 		draw(ctx, S) {
@@ -1009,13 +1168,13 @@ const PipelineDemo = (() => {
 			const ch = 32 * cat.s;
 
 			const ms = 12;
-			const mapX = 30 + ch + 70;
+			const mapX = 30 + ch + 48;
 			const mapY0 = (H - (3 * 8 * ms + 2 * 22)) / 2;
 			const mapYs = [mapY0, mapY0 + 8 * ms + 22, mapY0 + 2 * (8 * ms + 22)];
-			const denseX = mapX + 8 * ms + 70;
+			const denseX = mapX + 8 * ms + 48;
 			const denseW = 120, denseH = H * .62, denseY = (H - denseH) / 2;
-			const nCx = denseX + denseW + 130;
-			const rN = Math.min(H * .16, 56);
+			const nCx = denseX + denseW + 80;
+			const rN = Math.min(H * .14, 44);
 
 			const cyMid = H / 2;
 
@@ -1034,7 +1193,6 @@ const PipelineDemo = (() => {
 				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 				ctx.strokeRect(cat.x + .5, cat.y + .5, ch - 1, ch - 1);
 				ctx.globalAlpha = 1;
-				drawMiniKernel(ctx, cat, aConv);
 			}
 
 			// Feature-Maps
@@ -1043,9 +1201,20 @@ const PipelineDemo = (() => {
 			// Dense
 			drawDense(ctx, denseX, denseY, denseW, denseH, aDense);
 
-			// Ausgabe
-			drawNeuron(ctx, nCx, H * .32, rN, 'Katze', '95 %', true, aOut);
-			drawNeuron(ctx, nCx, H * .74, rN, 'Hund', '5 %', false, aOut);
+			// Ausgabe: am Anfang 50:50, im Training rutscht es
+			// immer weiter Richtung Katze.
+			let pCat = 95, pDog = 5, hotCat = true;
+			if (S.step === 3) { pCat = 50; pDog = 50; hotCat = false; }
+			else if (S.step === 4) {
+				const p = Math.round(trainPct(trainP));
+				pCat = p; pDog = 100 - p; hotCat = pCat >= 90;
+			}
+			drawNeuron(ctx, nCx, H * .32, rN, 'Katze', pCat + ' %', hotCat, aOut);
+			drawNeuron(ctx, nCx, H * .74, rN, 'Hund', pDog + ' %', false, aOut);
+
+			// Loss-Panel rechts neben den Neuronen
+			const pwP = 175, phP = 130;
+			drawLossPanel(ctx, { px: Math.min(nCx + rN + 34, W - pwP - 8), py: (H - phP) / 2, pw: pwP, ph: phP }, S);
 		}
 	});
 })();

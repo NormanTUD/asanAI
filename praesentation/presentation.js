@@ -40,19 +40,20 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Was sind Convolutions?" (katze.js) — Katze-Framework:
-                // 32×32 ASCII-Katze: Farbbild → 3 Kanäle → 6×5-Filter in
-                // Augen-Form (Pupille/Rand weiß) → Sweep über 756
-                // Positionen → 8×8-Map, die Augen leuchten als zwei große
-                // Pixel. 6 Schritte über Pfeiltasten.
+                // "Jeder Pixel ist nur eine Zahl" (katze.js) — Katze-Framework:
+                // 32×32 ASCII-Katze: Farbbild → Pixel = Zahl (Zoom) →
+                // 3 Kanäle → ein Kanal (Grau) → 6×5-Filter in Augen-Form
+                // (nur Form, keine Zahlen) → flüssiger 5×5-Sweep →
+                // 8×8-Map, die Augen leuchten als zwei große Pixel.
+                // 8 Schritte über Pfeiltasten.
                 { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
                 // "Was macht Flatten?" (katze.js) — Katze-Framework:
-                // 32×32 ASCII-Katze, 6 Schritte: Pixel → RGB → Grün →
-                // Grau → Schnur (1024 Zahlen) → Fazit.
+                // 32×32 ASCII-Katze, 2 Schritte: Graues Raster →
+                // Schnur (1024 Zahlen) → Fazit.
                 { id: 'flatten', ref: () => typeof FlattenDemo !== 'undefined' ? FlattenDemo : null,
                         slideTest: s => s.id === 'slide-flatten',
                         onEnter: d => setTimeout(() => d.init(), 80),
@@ -60,7 +61,8 @@ const DemoRegistry = (() => {
 
                 // "Der gesamte Prozess" (katze.js) — Bild → Convolutions
                 // (Augen/Nase/Mund-Maps) → Dense-Layer → zwei
-                // Ausgabe-Neuronen (Katze 95 % / Hund 5 %).
+                // Ausgabe-Neuronen (Start 50:50, Loss 0,693) → Training
+                // (Loss sinkt, Kurve zeichnet sich) → Katze 95 %.
                 { id: 'pipeline', ref: () => typeof PipelineDemo !== 'undefined' ? PipelineDemo : null,
                         slideTest: s => s.id === 'slide-pipeline',
                         onEnter: d => setTimeout(() => d.init(), 80),
@@ -72,13 +74,6 @@ const DemoRegistry = (() => {
                 // -> Kombination -> Ecken.
                 { id: 'hierarchy', ref: () => typeof HierarchyDemo !== 'undefined' ? HierarchyDemo : null,
                         slideTest: s => s.id === 'slide-hierarchie',
-                        onEnter: d => setTimeout(() => d.init(), 80),
-                        onLeave: d => d.reset() },
-
-                // "Der Loss" (loss.js) — eine Zahl fuer "wie falsch"; Pfeiltasten
-                // wechseln die Ausgabe des Katze-Hund-Detektors.
-                { id: 'loss', ref: () => typeof LossDemo !== 'undefined' ? LossDemo : null,
-                        slideTest: s => s.id === 'slide-loss',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 

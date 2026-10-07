@@ -275,7 +275,7 @@ const HierarchyDemo = {
 		'',
 	],
 
-	// Pfeiltasten — Haus-API (siehe katze.js / loss.js):
+	// Pfeiltasten — Haus-API (siehe katze.js):
 	// canGoNext/next/canGoPrev/prev. Ohne 'block' in der DemoRegistry,
 	// damit die Pfeiltaste am Ende der Strecke die Folie wechselt.
 	next: function () {
