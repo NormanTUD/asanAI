@@ -274,9 +274,9 @@ function drawFlat(){
 function drawRowInRail(r,alpha,rx,ry,rh,pw){
   ctx.globalAlpha=alpha;
   for(let c=0;c<N;c++){
-    const i=r*N+c, v=GREEN[i];
+    const i=r*N+c, [R,G,B]=RGB[i];
     const x=rx+i*pw;
-    ctx.fillStyle=`rgb(${v},${v},${v})`;
+    ctx.fillStyle=`rgb(${R},${G},${B})`;
     ctx.fillRect(Math.floor(x),Math.floor(ry),Math.ceil(x+pw)-Math.floor(x),Math.round(rh));
   }
   ctx.globalAlpha=1;
