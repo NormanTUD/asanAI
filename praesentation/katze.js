@@ -351,7 +351,7 @@ const KatzeKit = (() => {
 		return { init, reset, next, prev, canGoNext, canGoPrev, getState, setState };
 	}
 
-	return { create, lerp, eInOut, roundRect, drawGrid, drawTags, N, PICK, GREEN, YELLOW };
+	return { create, lerp, eInOut, roundRect, drawGrid, drawTags, N, PICK, GREEN, YELLOW, RGB };
 })();
 
 // ============================================================
