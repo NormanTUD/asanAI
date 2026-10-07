@@ -2200,6 +2200,12 @@ window.bibData = {
 		year: 1914,
 		url: "https://en.wikipedia.org/wiki/El_Ajedrecista"
 	},
+	"thomas2008torres": {
+		title: "A short account on Leonardo Torres' endless spindle",
+		author: "Federico Thomas",
+		year: 2008,
+		url: "https://doi.org/10.1016/j.mechmachtheory.2007.07.003"
+	},
 
 	"lenz1920": {
 		title: "Beitrag zum Verständnis der magnetischen Erscheinungen in festen Körpern",
@@ -4972,6 +4978,24 @@ window.bibData = {
 		author: "Gaby Wood",
 		title: "Living Dolls: A Magical History of the Quest for Mechanical Life",
 		year: 2002
+	},
+	"koetsier2001programmable": {
+		title: "On the prehistory of programmable machines: musical automata, looms, calculators",
+		author: "Teun Koetsier",
+		year: 2001,
+		url: "https://doi.org/10.1016/S0094-114X(01)00005-2"
+	},
+	"sharkey2007jazari": {
+		title: "A 13th Century Programmable Robot",
+		author: "Noel Sharkey",
+		year: 2007,
+		url: "https://web.archive.org/web/20070629182810/http://www.shef.ac.uk/marcoms/eview/articles58/robot.html"
+	},
+	"sharkey2007hero": {
+		title: "A programmable robot from 60 AD",
+		author: "Noel Sharkey",
+		year: 2007,
+		url: "https://web.archive.org/web/20171213205451/https://www.newscientist.com/blog/technology/2007/07/programmable-robot-from-60ad.html"
 	},
 	"antikytherawiki": {
 		author: "Wikipedia contributors",
