@@ -1017,7 +1017,7 @@ const ConvDemo = (() => {
 // FlattenDemo, "Was macht Flatten?"
 //
 // (Pixel/Kanäle/Grau hat die Katze-Folie, hier nur der Flatten-
-// Teil.) Graues Raster → Schnur (1024 Zahlen) → Fazit.
+// Teil.) Farbiges Raster → Schnur (1024 Zahlen) → Fazit.
 // 2 Schritte: 0: Raster wird zur Schnur · 1: Fazit (Dense-Layer).
 // ============================================================
 const FlattenDemo = (() => {
@@ -1029,9 +1029,9 @@ const FlattenDemo = (() => {
 
 	function drawRowInRail(ctx, r, rx, ry, rh, pw) {
 		for (let c = 0; c < KatzeKit.N; c++) {
-			const i = r * KatzeKit.N + c, v = KatzeKit.GREEN[i];
+			const i = r * KatzeKit.N + c, [R, G, B] = KatzeKit.RGB[i];
 			const x = rx + i * pw;
-			ctx.fillStyle = `rgb(${v},${v},${v})`;
+			ctx.fillStyle = `rgb(${R},${G},${B})`;
 			ctx.fillRect(Math.floor(x), Math.floor(ry), Math.ceil(x + pw) - Math.floor(x), Math.round(rh));
 		}
 	}
@@ -1063,9 +1063,9 @@ const FlattenDemo = (() => {
 			else if (r === rowsDone) ctx.globalAlpha = 1 - rowT;
 			else ctx.globalAlpha = 1;
 			for (let c = 0; c < KatzeKit.N; c++) {
-				const i = r * KatzeKit.N + c, v = KatzeKit.GREEN[i];
+				const i = r * KatzeKit.N + c, [R, G, B] = KatzeKit.RGB[i];
 				const x = o.x + c * s, xw = Math.ceil(x + s) - Math.floor(x);
-				ctx.fillStyle = `rgb(${v},${v},${v})`;
+				ctx.fillStyle = `rgb(${R},${G},${B})`;
 				ctx.fillRect(Math.floor(x), Math.floor(y), xw, yh);
 			}
 		}
@@ -1079,11 +1079,11 @@ const FlattenDemo = (() => {
 			const y = KatzeKit.lerp(srcY, ry, t);
 			const hh = KatzeKit.lerp(s, rh, t);
 			for (let c = 0; c < KatzeKit.N; c++) {
-				const i = rowsDone * KatzeKit.N + c, v = KatzeKit.GREEN[i];
+				const i = rowsDone * KatzeKit.N + c, [R, G, B] = KatzeKit.RGB[i];
 				const srcX = o.x + c * s;
 				const dstX = rx + (rowsDone * KatzeKit.N + c) * pw;
 				const x = KatzeKit.lerp(srcX, dstX, t), w = KatzeKit.lerp(s, pw, t);
-				ctx.fillStyle = `rgb(${v},${v},${v})`;
+				ctx.fillStyle = `rgb(${R},${G},${B})`;
 				ctx.fillRect(Math.floor(x), Math.floor(y),
 					Math.ceil(x + w) - Math.floor(x), Math.ceil(y + hh) - Math.floor(y));
 			}
