@@ -178,18 +178,6 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	transform: translateY(0);
 	pointer-events: auto;
 }
-/* Nach dem Tippen: KI-Lernen-Seite + Insights einblenden (statt per Klick) */
-[data-typewriter-finished] {
-	opacity: 0;
-	transform: translateY(20px);
-	transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-	pointer-events: none;
-}
-.slide.tw-done [data-typewriter-finished] {
-	opacity: 1;
-	transform: translateY(0);
-	pointer-events: auto;
-}
 /* Callout: Probleme, die klassisch niemand lösen kann (Katzen-Beispiel) */
 .ki-catchout {
 	background: #f0f9ff; border: 2px solid #7dd3fc; border-radius: 12px;

@@ -45,10 +45,6 @@ const TypewriterViz = (() => {
     function stop() {
         const el = document.querySelector('[data-typewriter]');
         if (el && typeof _twStop === 'function') _twStop(el);
-        if (el) {
-            const slide = el.closest('.slide');
-            if (slide) slide.classList.remove('tw-done');
-        }
     }
 
     return { isTypewriting, setActive, isOnClassicSlide, activate, stop, nop() {} };

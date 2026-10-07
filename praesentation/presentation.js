@@ -295,8 +295,6 @@ function startTypewriter(frag) {
     const total = _twTotal(parts);
     const speed = parseInt(el.getAttribute('data-type-speed') || '6', 10);
     _twStop(el);
-    const slide = el.closest('.slide');
-    if (slide) slide.classList.remove('tw-done');
     let n = 0;
     el.innerHTML = '<span class="type-caret">▍</span>';
     if (typeof TypewriterViz !== 'undefined') TypewriterViz.setActive(true);
@@ -306,8 +304,6 @@ function startTypewriter(frag) {
         if (n >= total) {
             el.innerHTML = el.dataset.typeHtml;
             _twStop(el);
-            // Code komplett getippt → KI-Lernen-Seite + Insights einblenden.
-            if (slide) slide.classList.add('tw-done');
         }
     }, speed);
 }
@@ -317,8 +313,6 @@ function resetTypewriter(frag) {
     if (!el) return;
     _twStop(el);
     if (el.dataset.typeHtml !== undefined) el.innerHTML = '';
-    const slide = el.closest('.slide');
-    if (slide) slide.classList.remove('tw-done');
 }
 
 function _twStop(el) {

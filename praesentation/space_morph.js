@@ -266,22 +266,22 @@ const SpaceMorph = (() => {
     // entfernt — die Geschichte endet bei "Der Raum wird zu einer Linie".
     const S = [
         { t: "Zwei Klassen, keine Gerade",
-            b: "Innen eine Punktwolke, außen ein Ring. Keine Gerade trennt Rot von Blau.",
+            b: "Eine Wolke von Punkten in der Mitte, drumherum ein Ring. Mit einer einzelnen Geraden trennt man die beiden Farben nicht sauber.",
             L: 0, A: 0, B: -1.5708, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Jeder Versuch scheitert",
-            b: "Eine lineare Trennung ist eine Gerade — sie schneidet den Ring immer. Der Ring umschließt die Wolke: eine topologische Anordnung, die eine Gerade nicht aufbrechen kann.",
+            b: "Jede Gerade schneidet den Ring — und trifft damit immer beide Farben. Der Ring schließt die innere Wolke ein: mit einer Linie kommt man nicht drumherum.",
             L: 0, A: 0, B: -1.5708, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0 },
         { t: "Eine Dimension mehr Platz",
-            b: "Das alte Bild liegt als Boden unter uns, senkrecht dazu die neue Achse z. Über den Daten ist Raum entstanden: falten in unbenutzte, höhere Dimensionen — das wirkt nur, wenn die Schicht breiter ist als die Daten.",
+            b: "Das 2D-Bild liegt jetzt flach unter uns, dazu kommt eine neue Achse nach oben (z). Damit entsteht Platz, in den der Layer die Daten ausheben kann — aber nur, wenn die Schicht mehr Neuronen hat als die Eingabe.",
             L: 0, A: 0.38, B: -0.62, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1 },
         { t: "Der Layer krümmt den Raum",
-            b: "Das Gitter hebt sich zu einer Schale (z = r²): innen sinkt, außen steigt. Es ist eine glatte, injektive Verbiegung (Homöomorphismus auf ihr Bild) — sie reißt nicht, identifiziert keine Punkte. Die Extra-Dimension hebt den Ring an, eine Ebene passt dazwischen.",
+            b: "Das Gitter hebt sich zu einer Schüssel: die Mitte sinkt, der Rand steigt. Die innere Wolke bleibt tief, der äußere Ring rutscht nach oben. Dazwischen ist jetzt Platz zum Trennen.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0 },
         { t: "Eine Ebene passt dazwischen",
-            b: "Gleicher Blickwinkel, nur ein neues Objekt: eine flache Ebene schiebt sich sauber zwischen die Klassen.",
+            b: "Nur ein neues Objekt dazu: eine flache Ebene, die jetzt genau zwischen den beiden Gruppen durchpasst. Die Schüssel hat den Ring so hochgehoben, dass sie dazwischenkommt.",
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 1, pr: 0, box: 0 },
         { t: "Der Raum wird zu einer Linie",
-            b: "Punkte und Gitter bewegen sich gemeinsam: dieselbe Projektion trifft beide. Ringe schrumpfen zu Punkten, Strahlen strecken sich — eine 1D-Achse, auf der s = 0 trennt.",
+            b: "Am Ende wird alles auf eine Linie, also eine einzige Zahl, geknüllt. Die beiden Gruppen landen dabei an verschiedenen Stellen — so trennt am Schluss sogar eine einzige Zahl.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
     ];
 
