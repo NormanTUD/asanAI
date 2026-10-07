@@ -734,6 +734,8 @@ In 1804, **Joseph Marie Jacquard** perfected a loom attachment that used **punch
 
 Yet the conceptual leap was immense: a complex, sequential process had been **encoded as discrete binary instructions on a physical medium**. **Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837), and **Ada Lovelace** captured the lineage precisely: the Engine “weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves” (\citetitle{lovelacequote}). **Herman Hollerith** later adapted punched cards for the **1890 US Census**, founding the company that became **IBM**. Punched cards remained the dominant computer input medium into the 1970s (see \citetitle{taocp3}, p. 383-384).
 
+Programmability itself is older than the loom. In ninth-century Baghdad the Banū Mūsā brothers described an **automatic flute player** whose pinned barrel let a single instrument perform different tunes, a "program" in the most literal sense, now read as the first programmable machine (\cite[Koetsier, 2001]{koetsier2001programmable}). Four centuries later the engineer **al-Jazari** (1206) built automata, including a programmable drum machine, whose behaviour was set by interchangeable mechanical parts (\cite[Sharkey]{sharkey2007jazari}). What the loom added was not the idea of a program but its *industrial practicality*: punched cards that anyone could reorder to change the output.
+
 Without the loom, there is no concept of externally encoded, interchangeable instructions, no punched card, no magnetic tape, no software. A textile artisan solving a manufacturing problem inadvertently created the first programmable input mechanism.
 </div>
 
