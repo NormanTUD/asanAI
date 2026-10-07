@@ -236,9 +236,9 @@ function drawFlat(){
       ctx.globalAlpha=1;
     }
     for(let c=0;c<N;c++){
-      const i=r*N+c, v=GREEN[i];
+      const i=r*N+c, [R,G,B]=RGB[i];
       const x=o.x+c*s, xw=Math.ceil(x+s)-Math.floor(x);
-      ctx.fillStyle=`rgb(${v},${v},${v})`;
+      ctx.fillStyle=`rgb(${R},${G},${B})`;
       ctx.fillRect(Math.floor(x),Math.floor(y),xw,yh);
     }
   }
@@ -255,11 +255,11 @@ function drawFlat(){
     const y=lerp(srcY,dstY,t);
     const hh=lerp(s,rh,t);
     for(let c=0;c<N;c++){
-      const i=rowsDone*N+c, v=GREEN[i];
+      const i=rowsDone*N+c, [R,G,B]=RGB[i];
       const srcX=o.x+c*s, srcW=s;
       const dstX=rx+(rowsDone*N+c)*pw, dstW=pw;
       const x=lerp(srcX,dstX,t), w=lerp(srcW,dstW,t);
-      ctx.fillStyle=`rgb(${v},${v},${v})`;
+      ctx.fillStyle=`rgb(${R},${G},${B})`;
       ctx.fillRect(Math.floor(x),Math.floor(y),Math.ceil(x+w)-Math.floor(x),Math.ceil(y+hh)-Math.floor(y));
     }
     // Leuchtlinie unter der fliegenden Zeile
