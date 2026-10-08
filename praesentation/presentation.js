@@ -104,12 +104,15 @@ const DemoRegistry = (() => {
                         onEnter: d => d.activate(),
                         onLeave: d => d.stop() },
 
-                // "Klassisch vs. KI" (nn_demos.js): Beispielauswertungen
-                // f(a,b)=o fließen wie ein alter Zahlenblender durch die
-                // fixierte f (aktuelles Beispiel immer in der Mitte).
-                // Läuft frei – frisst keine Pfeiltasten (guard=false).
+                // "Klassisch vs. KI" (nn_demos.js): die Formel f(a,b)={cases}
+                // MORPHED erst auf manuelles Weiter (advance) in den Flip-Clock
+                // (f( , )= fix, nur Zahlen/Ergebnis rollen von oben rein).
+                // Der ERSTE Next frisst den Switch (canSwitch); danach fallen
+                // Fragmente/Navigation normal durch.
                 { id: 'klassisch-flipclock', ref: () => typeof FlipClockViz !== 'undefined' ? FlipClockViz : null,
-                        guard: () => false,
+                        guard: () => true,
+                        canNext: 'canSwitch',
+                        nextMethod: 'advance',
                         slideTest: s => s.id === 'slide-klassisch-vs-ki',
                         onEnter: d => d.start(),
                         onLeave: d => d.stop() },
