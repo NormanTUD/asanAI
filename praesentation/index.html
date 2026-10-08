@@ -129,26 +129,28 @@
             Viele Neuronen nebeneinander &amp; hintereinander · jede Schicht voll verdrahtet mit der vorherigen &amp; nächsten.
         </div>
 
-        <div class="fragment" style="text-align:center;">
-            <img src="img/dense.png" alt="Dicht verdrahtetes Netz" style="max-width:100%; max-height:30vh;" />
-        </div>
-
-        <div class="fragment">
-            Jede Schicht übernimmt eine <b>Aufgabe</b> — und jede Schicht ist eine <b>Funktion</b>,
-            die man auf die Daten anwendet. Die verschachtelt man ineinander:
+        <div class="fragment" style="display:grid; grid-template-columns:1.2fr 1fr; gap:30px; align-items:center;">
+            <div style="text-align:center;">
+                <img src="img/dense.png" alt="Dicht verdrahtetes Netz" style="max-width:100%; max-height:28vh;" />
+            </div>
+            <div>
+                Jede Schicht übernimmt eine <b>Aufgabe</b> — und jede Schicht ist eine <b>Funktion</b>,
+                die man auf die Daten anwendet. Die verschachtelt man ineinander:
+            </div>
         </div>
 
         <div class="fragment formula-box">
             <div class="math-display">$$\text{Ergebnis} = \underbrace{\text{Schicht}_3}_{\text{komplex}}\Bigl(\text{Schicht}_2\bigl(\underbrace{\text{Schicht}_1}_{\text{einfach}}(\underbrace{\mathbf{x}_0}_{\text{Bild}})\bigr)\Bigr)$$</div>
         </div>
 
-        <div class="fragment">
-            Die <b>ersten</b> Schichten übernehmen <b>einfache</b> Funktionen — Verläufe, Kanten.
-            Die <b>späteren</b> bauen darauf auf und werden immer <b>komplexer</b>.
-        </div>
-
-        <div class="fragment" style="text-align:center;">
-            <img src="img/first_layers_vs_last_layers.png" alt="Erste und letzte Layer eines Convolutional Networks" style="max-width:100%; max-height:26vh;" />
+        <div class="fragment" style="display:grid; grid-template-columns:1fr 1.2fr; gap:30px; align-items:center;">
+            <div>
+                Die <b>ersten</b> Schichten übernehmen <b>einfache</b> Funktionen — Verläufe, Kanten.
+                Die <b>späteren</b> bauen darauf auf und werden immer <b>komplexer</b>.
+            </div>
+            <div style="text-align:center;">
+                <img src="img/first_layers_vs_last_layers.png" alt="Erste und letzte Layer eines Convolutional Networks" style="max-width:100%; max-height:26vh;" />
+            </div>
         </div>
     </div>
 </div>
