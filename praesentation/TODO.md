@@ -2,9 +2,9 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: T1, T2, T3, T4, T5(Bug), T6, T10 fertig; Ziel-Folie zeigt
-> Katze+Hund (je das Richtige). Hund-Entscheidung: **wechselnd im Training**.
-> Nächstes: **T11 DenseRaum-Redesign** (in Arbeit: Hund-Raster in KatzeKit ergänzt).
+> Letzte Aktualisierung: T1–T6, T10, **T11** fertig + **T13 Flip-Clock** (Folie 2),
+> **T14** Ziel-Zentrierung (Folie 5), **T3 revert** (PNG statt SVG, Folie 4).
+> Nächstes: T7 (Hund im Training, wechselnd), T8 (RGB-Matrix), T9 (Filter-Folie).
 
 ## Dateien die ich analysiert habe
 - `index.html` — 13 Folien, Reihenfolge unten.
@@ -46,11 +46,10 @@
 - `first_layers_vs_last_layers.png` bleibt VORBESTAND, wird aber in T3 ersetzt.
 - ⚠️ Falls `[Image 1]` = first_layers gemeint war: umkehren (bestätigt in der Antwort?).
 
-### T3 · `first_layers_vs_last_layers.png` ersetzen (Gesicht-Hierarchie)  `[x]`
-- ✅ Fertig: `first_layers_vs_last_layers.png` durch **Inline-SVG-Hierarchie** ersetzt (Folie 4),
-  headless clean. 3 Ebenen (früh=Linien blau → mittel=Augen/Nase/Mund amber → spät=Gesicht grün)
-  mit nach-oben Pfeilen + Note „Das Netz lernt selbst, worauf es achten muss".
-- Konsistent zu Folie 11 (Layer 2 = Augen/Nase/Mund) und Katze=grün-Legende.
+### T3 · Folie 4 Bild: `first_layers_vs_last_layers.png`  `[x]` (REVERT)
+- Zuerst durch Inline-SVG-Hierarchie ersetzt, dann von Norman **zurück zum PNG**
+  („first_layers_vs_last_layers.png ist besser"). → Folie 4 zeigt wieder
+  `<img src="img/first_layers_vs_last_layers.png">` (567×269). SVG entfernt, headless clean.
 
 ### T4 · Ziel-Folie (Folie 5): „Katze = 100 %" als Ziel, Training endet bei 95 %  `[x]`
 - ✅ Fertig: Key-Insight → „**Katze = 100 %**" (Ziel). `pipeline_ziel.png` **entfernt**, ersetzt
@@ -119,8 +118,14 @@
 - Code-Identifier (`slide-convolution`, `ConvDemo`) bleiben.
 - ✅ BEANTWORTET (war Frage 2).
 
-### T11 · Folie 10 (DenseRaum) Redesign — „Der Layer wölbt den Raum"  `[ ]`
-- **Problem**: aktuell „häßlich wie Sau" (Sattel z=x·y, sauberes XOR-Quadranten-Muster).
+### T11 · Folie 10 (DenseRaum) Redesign — „Der Layer wölbt den Raum"  `[x]`
+- ✅ Fertig: `dense_raum.js` neu geschrieben. Organischer Cluster (Hunde oben/rot, Katzen
+  unten/grün, mit Overlap in der Mitte), **wellige** Grenzfunktion b(x)=0.45·sin(2.1x),
+  Wölbung z=y−b(x) im SpaceMorph-Stil, feines Gitter auf der Fläche, Trennebene (z=0),
+  Rückprojektion auf Score-Achse (links Hund, rechts Katze). „Unser Bild" (Mini-Katze) +
+  Beispiel-Hund (Mini-Hund, `KatzeKit.drawGridHund`) als hervorgehobene Punkte.
+  `node --check` + headless (Folie 10) clean.
+- **Problem (vorher)**: „häßlich wie Sau" (Sattel z=x·y, sauberes XOR-Quadranten-Muster).
 - Die **vorherige Folie (SpaceMorph, Folie 9) ist schöner** → deren Raumkrümmungs-Stil übernehmen.
 - Neue Anforderungen:
   - 2D-Punkt-Darstellung. „Unser Bild" ist **ein Punkt im 32×32=1024-dimensionalen Raum**
@@ -134,6 +139,26 @@
   - Farben: Hund = **rot**, Katze = **grün** (konsistent zu Pipeline/DenseRaum-Legende).
 - Schrittfolge (aktuell 5): Panel(Zahlen) → Punkte → Wölbung → Ebene → Linie.
   → Panel-Schritt (0) evtl. durch T8-Matrix-Logik ersetzen/kürzen? (siehe Annahmen/Fragen)
+
+### T13 · Folie 2 „Klassisch vs. KI": Funktionen + Flip-Clock  `[x]`
+- ✅ Fertig: beide Seiten als **LaTeX-Funktion**. Klassisch = formale Definition mit **großer
+  Klammer** (`\begin{cases}` + If/Else): f(a,b)=1 wenn a=1∧b=1, 0 sonst. KI = `f(a,b)=?`
+  (Netz findet f aus Beispielen).
+- **Flip-Clock** (`FlipClockViz` in nn_demos.js, DOM+rAF, kein Canvas): die 4 korrekten UND-
+  Auswertungen `f(0,0)=0 · f(0,1)=0 · f(1,0)=0 · f(1,1)=1` **fließen** wie ein alter
+  Zahlenblender durch die fixierte f. Aktuelles Beispiel immer in der **Mitte** (unter dem
+  Zeiger + „f"-Badge), die anderen rotieren links durch. Nahtloser Loop (Periode 4·spacing),
+  per-Tile Opacity/Scale nach Distanz zur Mitte, Kantengradient (mask). **Flüssig** (rAF),
+  MathML (temml), formal korrektes UND-Tableau.
+- Typewriter (Code-Block) auf dieser Folie entfernt → `TypewriterViz.activate()` no-oped
+  (sonst blockierte sie die Pfeiltasten). Registry: `klassisch-flipclock` (guard=false →
+  frisst keine Tasten). `node --check` + headless (Folie 2) + DOM-Dump (22 Tiles, MathML,
+  cases gerendert) clean.
+
+### T14 · Ziel-Folie (Folie 5) zentrieren  `[x]`
+- ✅ Fertig: `PipelineGoalDemo.render()` zentriert jetzt den Inhalt (Gesamtbreite berechnen,
+  mittig platzieren) — vorher saß alles links, rechts zu viel Freiraum. `node --check` +
+  headless (Folie 5) clean.
 
 ### T12 · Diese TODO.md pflegen  `[~]`
 - Bei jeder Änderung Status + Notizen hier aktualisieren.
@@ -154,6 +179,3 @@
 - Neue „idealisiert"-Folie kommt ganz **am Ende** (nach asanAI).
 - „Der blaue Pfeil" = der blaue Pixel-Zoom in ConvDemo (`drawPixelZoom`, `#2563eb`).
 - Farben Katze=grün / Hund=rot bleiben (Pipeline-Demos nutzen Grün für die „heiße" Katze).
-
-
-neu: von der folie "Klassisches Programmieren vs. KI" eher so zeigen dass es ne fkt ist die in latex ist beide male und beim einen mal provided der user ihre formale definition  mit soner großen klammer und if else und dann "fließen" beispiele durch so dass er zeile(0, 0 = 0\n1,0 = 0\nf(0,1) = 1 durchfließen sieht und die quasi wie sone alte uhr wo die aktuelle zeit immer da ist wo das f ist was inder mitte bleibt die anderen da durch rotieren

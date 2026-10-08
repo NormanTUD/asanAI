@@ -1984,10 +1984,19 @@ const PipelineGoalDemo = (() => {
 	function render() {
 		if (!ctx || W < 40 || H < 40) return;
 		ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
-		const IMG = Math.min(H * 0.30, W * 0.11);
-		const rN = Math.min(H * 0.10, 30);
-		const netX = W * 0.40, netW = Math.min(W * 0.10, 88), netH = IMG * 0.72;
-		const nX1 = W * 0.63, nX2 = W * 0.83;
+		const IMG = Math.min(H * 0.32, W * 0.13);
+		const rN = Math.min(H * 0.11, 36);
+		const netW = Math.min(W * 0.11, 100), netH = IMG * 0.72;
+		const gap = Math.max(28, W * 0.042);
+		const dN = 2 * rN + gap;
+		// Inhalt ZENTRIERT: Gesamtbreite berechnen, dann mittig platzieren
+		// (vorher saß alles links, rechts blieb zu viel Freiraum).
+		const totalW = IMG + gap + netW + gap + dN + 2 * rN;
+		const startX = (W - totalW) / 2;
+		const cxImg = startX + IMG / 2;
+		const cxNet = startX + IMG + gap + netW / 2;
+		const nX1 = startX + IMG + gap + netW + gap + rN;
+		const nX2 = nX1 + dN;
 		const rowY = [H * 0.30, H * 0.74];
 		const fTitle = Math.max(14, Math.min(20, H * 0.05));
 		const fSm = Math.max(10, Math.min(13, H * 0.035));
@@ -2001,27 +2010,27 @@ const PipelineGoalDemo = (() => {
 		const row = (i, isCat) => {
 			const ry = rowY[i];
 			// Eingangs-Bild (Katze oder Hund)
-			const img = { x: W * 0.05, y: ry - IMG / 2, s: IMG / 32, a: 1, mix: 0 };
+			const img = { x: cxImg - IMG / 2, y: ry - IMG / 2, s: IMG / 32, a: 1, mix: 0 };
 			if (isCat) KatzeKit.drawGrid(ctx, img, 0, 0); else KatzeKit.drawGridHund(ctx, img);
 			ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 			ctx.strokeRect(img.x + .5, img.y + .5, IMG - 1, IMG - 1);
 			ctx.fillStyle = '#64748b';
 			ctx.font = '600 ' + fSm + 'px Inter, system-ui, sans-serif';
 			ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-			ctx.fillText(isCat ? 'ein Katze-Bild' : 'ein Hund-Bild', img.x + IMG / 2, ry + IMG / 2 + 16);
+			ctx.fillText(isCat ? 'ein Katze-Bild' : 'ein Hund-Bild', cxImg, ry + IMG / 2 + 16);
 			// Bild → Netz
-			PipelineKit.arrow(ctx, img.x + IMG + 8, ry, netX - netW / 2 - 10, ry, 1);
+			PipelineKit.arrow(ctx, img.x + IMG + 8, ry, cxNet - netW / 2 - 10, ry, 1);
 			// Netz-Box
 			ctx.fillStyle = '#f8fafc';
-			KatzeKit.roundRect(ctx, netX - netW / 2, ry - netH / 2, netW, netH, 10);
+			KatzeKit.roundRect(ctx, cxNet - netW / 2, ry - netH / 2, netW, netH, 10);
 			ctx.fill();
 			ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.2; ctx.stroke();
 			ctx.fillStyle = '#475569';
 			ctx.font = '700 ' + fSm + 'px Inter, system-ui, sans-serif';
 			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			ctx.fillText('das Netz', netX, ry);
+			ctx.fillText('das Netz', cxNet, ry);
 			// Netz → Neuronen
-			PipelineKit.arrow(ctx, netX + netW / 2 + 8, ry, nX1 - rN - 10, ry, 1);
+			PipelineKit.arrow(ctx, cxNet + netW / 2 + 8, ry, nX1 - rN - 10, ry, 1);
 			// zwei Neuronen — das Richtige leuchtet mit 100 %
 			PipelineKit.drawNeuron(ctx, nX1, ry, rN, 'Katze', isCat ? '100 %' : '0 %', isCat, 1);
 			PipelineKit.drawNeuron(ctx, nX2, ry, rN, 'Hund', isCat ? '0 %' : '100 %', !isCat, 1);

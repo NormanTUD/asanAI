@@ -104,6 +104,16 @@ const DemoRegistry = (() => {
                         onEnter: d => d.activate(),
                         onLeave: d => d.stop() },
 
+                // "Klassisch vs. KI" (nn_demos.js): Beispielauswertungen
+                // f(a,b)=o fließen wie ein alter Zahlenblender durch die
+                // fixierte f (aktuelles Beispiel immer in der Mitte).
+                // Läuft frei – frisst keine Pfeiltasten (guard=false).
+                { id: 'klassisch-flipclock', ref: () => typeof FlipClockViz !== 'undefined' ? FlipClockViz : null,
+                        guard: () => false,
+                        slideTest: s => s.id === 'slide-klassisch-vs-ki',
+                        onEnter: d => d.start(),
+                        onLeave: d => d.stop() },
+
         ];
 
     // Normalisiere: Defaults einsetzen
