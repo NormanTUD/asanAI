@@ -76,6 +76,7 @@ const FlipClockViz = (() => {
     let VH = 0;
     let offset = 0, lastT = 0, switchT = 0, raf = 0, running = false, inited = false;
     let switched = false, pendingSwitch = false;
+    let diagTick = 0;
 
     function valFor(col, p) {
         const idx = (((-p) % PERIOD) + PERIOD) % PERIOD;
