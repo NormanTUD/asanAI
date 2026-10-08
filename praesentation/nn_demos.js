@@ -54,20 +54,24 @@ const TypewriterViz = (() => {
 })();
 /* ================================================================
     FlipClockViz – "Klassisch vs. KI" (Folie 2)
-    Cross-Morph, gleiche Mitte: die Formel f(a,b)={cases} steht
-    zentriert (volle Höhe). Auf manuelles Weiter (advance) MORPHED
-    sie flüssig in den Flip-Clock: das f(...) bleibt stehen, nur die
-    ZAHLEN (a, b) und das ERGEBNIS (o) rollen von OBEN in die
-    Auslese-Zeile (3 Spalten, sync, nahtloser Loop, Vorwärts 0,1,2,3).
+    Cross-Morph, gleiche Mitte: die Formel (Klassisch: die Regel,
+    hier f(x)=x²) steht zentriert (volle Höhe). Auf manuelles Weiter
+    (advance) MORPHED sie flüssig in den Flip-Clock: das f(...) bleibt
+    stehen, nur die ZAHLEN (x) und das ERGEBNIS (o) rollen von OBEN in
+    die Auslese-Zeile (Spalten, sync, nahtloser Loop, Vorwärts).
+    Datengetrieben: LAYOUT (Glyphen+Spalten), FIELDS, EX (Beispiele).
     ================================================================ */
 const FlipClockViz = (() => {
+    // Haupt-Beispiel: f(x) = x² (erkennbar, etwas komplexer als AND).
+    const LAYOUT = ['f(', 'x', ')', '=', 'o'];   // f( [x] ) = [o]
+    const FIELDS = ['x', 'o'];
     const EX = [
-        { a: 0, b: 0, o: 0 },
-        { a: 0, b: 1, o: 0 },
-        { a: 1, b: 0, o: 0 },
-        { a: 1, b: 1, o: 1 }
+        { x: 0, o: 0 },
+        { x: 1, o: 1 },
+        { x: 2, o: 4 },
+        { x: 3, o: 9 }
     ];
-    const PERIOD = 4;
+    const PERIOD = EX.length;
     const RBASE = 4;            // Spalten-Positionen p: -RBASE .. RBASE+PERIOD-1
     const STEP_S = 2.6;         // 1 Wert alle ~2,6 s
     const MORPH_DUR = 850;      // Cross-Morph Dauer (ab advance)
@@ -93,9 +97,8 @@ const FlipClockViz = (() => {
         odo = document.createElement('div'); odo.className = 'fc-odo';
         root.appendChild(win);
         root.appendChild(odo);
-        const seq = ['f(', 'a', ',', 'b', ')', '=', 'o'];   // f( [a] , [b] ) = [o]
-        for (const s of seq) {
-            if (s === 'a' || s === 'b' || s === 'o') {
+        for (const s of LAYOUT) {
+            if (FIELDS.indexOf(s) !== -1) {
                 const col = document.createElement('div'); col.className = 'fc-col';
                 const track = document.createElement('div'); track.className = 'fc-track';
                 for (let p = -RBASE; p < RBASE + PERIOD; p++) {
@@ -146,7 +149,7 @@ const FlipClockViz = (() => {
         if (formula) { formula.style.opacity = fOp.toFixed(3); formula.style.transform = 'scale(' + fSc.toFixed(3) + ')'; }
         root.style.opacity = cOp.toFixed(3);
 
-        // 3 Spalten synchron nach unten (Werte von oben rein), nahtlos (Periode 4).
+        // Spalten synchron nach unten (Werte von oben rein), nahtlos (Periode 4).
         const ty = offset * VH;
         const cy = VH * 1.2;                            // Auslese-Zeile (Spalten-Mitte)
         const reach = VH * 1.5;
@@ -212,7 +215,7 @@ const NeuronIntroViz = (() => {
 
     function isOnIntroSlide() {
         const active = document.querySelector('.slide.active');
-        return active && active.getAttribute('data-title') === 'Was sind Dense Layer?';
+        return active && active.id === 'slide-neuronales-netz-intro';
     }
 
     function getScenes() {

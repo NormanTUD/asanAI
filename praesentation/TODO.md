@@ -198,7 +198,21 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   - Cross-Morph (Formel → Flip-Clock) **gleiche Mitte**, flüssig, auf `advance()`.
 - `stop()` setzt `switched=false` zurück (beim Verlassen → beim Wiedereintreten Formel zuerst).
 
-### T16 · Folie 2: `ki-catchout`-Text überarbeiten  `[ ]`
+### T16b · Folie 2: Beispiel von **AND** auf **x²** (erkennbar, etwas komplexer) umstellen  `[x]`
+- ✅ Fertig: `FlipClockViz` **datengetrieben** (`LAYOUT=['f(','x',')','=','o']`, `FIELDS=['x','o']`,
+  `EX`), Formel `f(x)=x²` (MathML), 2 Spalten, Beispiele (0,0),(1,1),(2,4),(3,9). `ki-catchout`
+  generalisiert („so eine Funktion"). **Verifiziert:** `node --check` + headless clean; DOM-Dump
+  (3 Glyphen, 2 Spalten, 24 Werte, x-Kolonne 0,3,2,1 / o-Kolonne 0,9,4,1 → f(0)=0…f(3)=9).
+- **Norman:** „such ein anderes Beispiel statt AND … nehme x² oder irgendwas, was man wieder
+  erkennt und etwas komplexer ist."
+- **Umsetzung:** Haupt-Beispiel = **f(x) = x²** (Parabel, erkennbar, etwas komplexer als AND).
+  - Formel (`.klassik-formula`): `$$f(x) = x^2$$`.
+  - Flip-Clock: **2 Spalten** `x`,`o` (statt 3 für AND); Beispiele (0,0),(1,1),(2,4),(3,9)
+    rollen von oben. Layout `f( [x] ) = [o]`.
+  - `ki-catchout`: „Überkill"-Bezug generalisieren (nicht mehr AND, sondern „so eine Funktion").
+- → macht FlipClockViz **datengetrieben** (LAYOUT + FIELDS + EX), damit man die Funktion leicht tauschen kann.
+
+### T16 · Folie 2: `ki-catchout`-Text überarbeiten  `[x]`
 - Alt-Text („springende Punkt … Katze/Hund") bleibt als Kern, **erweitern**:
   - Für **AND** wäre Lernen **Overkill** — klassisch ist viel **schneller geschrieben**.
   - Aber für **Katze/Hund-Erkennung** geht's klassisch **gar nicht**: es gibt **viel zu viele
@@ -206,8 +220,8 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   - Genau da helfen **neurale Netze** (lernen die Regeln aus Beispielen).
 - Element: `.ki-catchout.fragment` auf Folie 2 (`slide-klassisch-vs-ki`).
 
-### T17 · Folie 5 (bausteine) Titel: „Drei Bausteine" → „Was wir wollen und drei Bausteine dafür"  `[ ]`
-- `data-title` + `<h2>` umbenennen. (Inhalt/Ziel bleibt.)
+### T17 · Folie 5 (bausteine) Titel: „Drei Bausteine" → „Was wir wollen und drei Bausteine dafür"  `[x]`
+- ✅ Fertig: `data-title` + `<h2>` umbenannt. Headless (Folie 5) clean.
 
 ### T18 · Konstanter Haupttitel für die kz-Folien (6, 7, 10, 11)  `[ ]`
 - **Problem:** Folien 6 (Conv), 7 (Flatten), 10 (DenseRaum), 11 (Pipeline) haben **keinen

@@ -91,9 +91,11 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
+                // ID-basiert (nicht data-title), weil Folie 9 (SpaceMorph) den
+                // SELBEN Titel „Was sind Dense Layer?" trägt (T19) — eine Sektion.
                 { id: 'neuron-intro', ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
                         guard: d => d.isOnIntroSlide(),
-                        slideTest: s => s.getAttribute('data-title') === 'Was sind Dense Layer?',
+                        slideTest: s => s.id === 'slide-neuronales-netz-intro',
                         onEnter: d => d.reset() },
 
                 { id: 'typewriter', ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
