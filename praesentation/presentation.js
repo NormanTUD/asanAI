@@ -255,13 +255,6 @@ const FragmentActions = {
 	    backward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.hideFragment(); },
 	},
 
-	// "Was sind Dense Layer?" – die Sequenz wird smooth zur verschachtelten
-	// Komposition (x_3 = dense_1(ReLU(dense_0(x_0)))).
-	'comp-collapse': {
-	    forward: () => { const el = document.getElementById('comp-stack'); if (el) el.classList.add('collapsed'); },
-	    backward: () => { const el = document.getElementById('comp-stack'); if (el) el.classList.remove('collapsed'); },
-	},
-
 };
 
 // ────────────────────────────────────────────────────────────

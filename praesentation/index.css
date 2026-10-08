@@ -126,31 +126,6 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	pointer-events: auto;
 }
 
-/* "Was sind Dense Layer?": die Sequenz wird smooth zur verschachtelten
-   Komposition (Substitution, damit man sieht: nacheinander Ausführung). */
-#comp-stack { position: relative; }
-#comp-stack .comp-seq { transition: opacity 0.6s ease, transform 0.6s ease; }
-#comp-stack.collapsed .comp-seq {
-	opacity: 0;
-	transform: scale(0.97);
-	pointer-events: none;
-}
-#comp-stack .comp-nested {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	transform: scale(0.95) translateY(8px);
-	transition: opacity 0.6s ease, transform 0.6s ease;
-	pointer-events: none;
-}
-#comp-stack.collapsed .comp-nested {
-	opacity: 1;
-	transform: none;
-	pointer-events: auto;
-}
 .key-insight {
 	background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px;
 	padding: 20px 24px 20px 60px; margin: 20px 0; font-size: 1.1em;
