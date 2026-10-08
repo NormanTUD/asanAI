@@ -3577,6 +3577,50 @@ window.bibData = {
 		title: "Facing Up the Problem of Consciousness",
 		year: 1995
 	},
+	"olson2018metaphysics": {
+		title: "The Metaphysics of Artificial Intelligence",
+		author: "Eric T. Olson",
+		year: 2018,
+		url: "https://doi.org/10.4324/9781315104706-6",
+		alternativetitle: "Olson, 2018"
+	},
+	"chalmers2016singularity": {
+		title: "The Singularity: A Philosophical Analysis",
+		author: "David J. Chalmers",
+		year: 2016,
+		url: "https://doi.org/10.1002/9781118922590.ch16",
+		alternativetitle: "Chalmers, 2016"
+	},
+	"parfit1984reasons": {
+		title: "Reasons and Persons",
+		author: "Derek Parfit",
+		year: 1984,
+		url: "https://en.wikipedia.org/wiki/Reasons_and_Persons"
+	},
+	"floridi2011information": {
+		title: "The Philosophy of Information",
+		author: "Luciano Floridi",
+		year: 2011,
+		url: "https://en.wikipedia.org/wiki/Philosophy_of_information"
+	},
+	"piccinini2015computation": {
+		title: "Physical Computation: A Mechanistic Account",
+		author: "Gualtiero Piccinini",
+		year: 2015,
+		url: "https://doi.org/10.1086/692151"
+	},
+	"sep_computational_mind": {
+		title: "The Computational Theory of Mind",
+		author: "Michael Rescorla (Stanford Encyclopedia of Philosophy)",
+		year: 2024,
+		url: "https://plato.stanford.edu/entries/computational-mind/"
+	},
+	"sep_multiple_realizability": {
+		title: "Multiple Realizability",
+		author: "John Bickle (Stanford Encyclopedia of Philosophy)",
+		year: 2020,
+		url: "https://plato.stanford.edu/entries/multiple-realizability/"
+	},
 	"hume1739treatise": {
 		author: "David Hume",
 		year: 1739,
