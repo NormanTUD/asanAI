@@ -146,6 +146,8 @@ const FlipClockViz = (() => {
         if (formula) { formula.style.opacity = fOp.toFixed(3); formula.style.transform = 'scale(' + fSc.toFixed(3) + ')'; }
         root.style.opacity = cOp.toFixed(3);
 
+        if (switched && (diagTick = (diagTick || 0) + 1) % 30 === 0) console.log('FCDIAG offset=' + offset.toFixed(3) + ' ex=' + (Math.floor(offset) % PERIOD) + ' aOp=' + fOp.toFixed(2) + ' cOp=' + cOp.toFixed(2));
+
         // 3 Spalten synchron nach unten (Werte von oben rein), nahtlos (Periode 4).
         const ty = offset * VH;
         const cy = VH * 1.2;                            // Auslese-Zeile (Spalten-Mitte)
