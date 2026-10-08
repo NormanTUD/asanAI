@@ -255,10 +255,13 @@
         </div>
     </div>
 </div>
-<!-- ==================== Folie 8: Was sind Dense Layer? ==================== -->
-<div class="slide" id="slide-neuronales-netz-intro" data-title="Was sind Dense Layer?">
-    <div class="slide-content">
+<!-- ==================== Folie 8: Was sind Dense Layer? (T20: NeuronIntro + SpaceMorph, 1 Folie) ==================== -->
+<div class="slide" id="slide-dense-layer" data-title="Was sind Dense Layer?">
+    <div class="slide-content" style="background:#f8fafc;">
         <h2>Was sind Dense Layer?</h2>
+
+        <div id="dl-scene-wrap">
+            <div id="dl-scene-a" class="dl-scene">
 
         <div>
  		Netze <b>approximieren</b> Funktionen, <i>ähnlich genug</i>, um nützlich zu sein.
@@ -294,14 +297,10 @@
         <div class="key-insight fragment" data-nofast>
             <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b>.
         </div>
-    </div>
-</div>
-<!-- ==================== Folie 9: Was sind Dense Layer? (space_morph) ==================== -->
-<div class="slide" id="slide-layer-als-raumkruemmung" data-title="Was sind Dense Layer?">
-    <div class="slide-content" style="background:#f8fafc;">
-        <h2>Was sind Dense Layer?</h2>
+            </div><!-- /dl-scene-a -->
 
-        <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1340px; margin:14px auto 0; height:640px; overflow:hidden;">
+            <div id="dl-scene-b" class="dl-scene dl-scene-b">
+                <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1340px; margin:0 auto; height:640px; overflow:hidden;">
             <canvas id="space-morph-canvas" style="display:block; position:absolute; inset:0; width:100%; height:100%; cursor:grab;"></canvas>
 
             <div style="position:absolute; left:32px; top:20px; max-width:320px; pointer-events:none; z-index:2;">
