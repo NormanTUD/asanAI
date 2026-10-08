@@ -572,16 +572,10 @@ const ConvDemo = (() => {
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
 	let matrixA = 0, tMatrixA = 0;
 	let bwA = 0, tBwA = 0;
-	// RGB-Matrix (Schritt 5): ein 5×5-Block des oberen/linken Bildteils
-	// (der linken Ohr-Spitze, damit echte Werte sichtbar variieren) als
-	// Matrix aus RGB-Tripletts, mit Punkten für den (riesigen) Rest.
-	const MB = 5;          // gezeigter Block: MB×MB Pixel
-	const MB_TOP = 2, MB_LEFT = 4; // Block-Oben/Links (Ohr-Spitze)
-	const MCC_W = 44, MCC_H = 56, MCC_G = 6; // Zellen-Maße + Spalt
-	const MBLOCK_W = MB * (MCC_W + MCC_G) - MCC_G;
-	const MBLOCK_H = MB * (MCC_H + MCC_G) - MCC_G;
-	const MAT_W = MBLOCK_W + 46;
-	const MAT_H = MBLOCK_H + 46 + 22;
+	// (T30) Die Zahlen-Matrix (Schritt 5) ist jetzt eine LaTeX-HTML-Matrix
+	// (#conv-matrix, index.html/index.css): echte Grauwerte aus dem Bild,
+	// schwarzweiß wie das Graubild, skaliert mit dem Text. matrixA steuert
+	// nur noch die Opazität dieses Overlays.
 
 	// Rahmen der Graustufen-Katze. Die Katze selbst ist der Grün-Kanal
 	// (inst[PICK]), der ab Schritt 2 grau gemischt wird und in Schritt 3
