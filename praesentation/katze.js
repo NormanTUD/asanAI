@@ -338,7 +338,9 @@ const KatzeKit = (() => {
 		}
 
 		function frame(ts) {
-			const dt = Math.min((ts - last) / 16.667, 3); last = ts;
+			// rAF-Timestamp kann hinter performance.now() aus startLoop()
+			// liegen → dt nie negativ (sonst rutschen Zeilenzähler unter 0).
+			const dt = Math.max(0, Math.min((ts - last) / 16.667, 3)); last = ts;
 			const k = 1 - Math.pow(1 - 0.085, dt); // framerate-unabhängiges Lerp
 			S.inst.forEach(o => {
 				o.x = lerp(o.x, o.tx, k); o.y = lerp(o.y, o.ty, k);
@@ -346,8 +348,16 @@ const KatzeKit = (() => {
 				o.mix = lerp(o.mix, o.tmix, k);
 			});
 			S.grayMix = lerp(S.grayMix, S.tGrayMix, k);
-			if (cfg.tick) cfg.tick(dt, k, S, setFoot);
-			if (cfg.draw) cfg.draw(ctx, S);
+			// Ein Fehler darf die Schleife nicht einfrieren (rafId bliebe
+			// sonst gesetzt, startLoop() startet dann nie wieder).
+			try {
+				if (cfg.tick) cfg.tick(dt, k, S, setFoot);
+				if (cfg.draw) cfg.draw(ctx, S);
+			} catch (e) {
+				stopLoop();
+				console.error('Frame-Fehler in ' + cfg.prefix + ':', e);
+				return;
+			}
 			rafId = requestAnimationFrame(frame);
 		}
 
@@ -1256,7 +1266,7 @@ const FlattenDemo = (() => {
 
 		for (let r = 0; r < rowsDone; r++) drawRowInRail(ctx, r, rx, ry, rh, pw);
 
-		if (rowsDone < KatzeKit.N && rowT > 0) {
+		if (rowsDone >= 0 && rowsDone < KatzeKit.N && rowT > 0) {
 			const t = rowT;   // linear: Zeilen fließen gleichmäßig (flüssig), kein Puls
 			const srcY = o.y + rowsDone * s;
 			const y = KatzeKit.lerp(srcY, ry, t);
@@ -1317,7 +1327,7 @@ const FlattenDemo = (() => {
 			railA = KatzeKit.lerp(railA, tRailA, k);
 			if (S.step !== 0) return;
 			// ~5,25 s für 32 Zeilen (ca. 2× schneller)
-			flatP = Math.min(flatP + dt * (32 / (5.25 * 60)), 32);
+			flatP = Math.max(0, Math.min(flatP + dt * (32 / (5.25 * 60)), 32));
 			if (flatP >= 32) {
 				if (!flatMsg) {
 					flatMsg = 1;
@@ -1325,7 +1335,7 @@ const FlattenDemo = (() => {
 						'<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span>');
 				}
 			} else {
-				const done = Math.floor(flatP);
+				const done = Math.max(0, Math.floor(flatP));
 				setFoot(`Zeile <b>${done}</b> von 32 · <b>${done * 32}</b> Zahlen`,
 					'<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span>');
 			}
