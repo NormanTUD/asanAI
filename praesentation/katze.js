@@ -1906,7 +1906,9 @@ const PipelineDemo = (() => {
 			tPartA = step >= 2 ? 1 : 0;
 			tDenseA = step >= 3 ? 1 : 0;
 			tOutA = step >= 4 ? 1 : 0;
-			tLossA = step >= 4 ? 1 : 0;
+			// Loss-Panel (Wert + Mini-Lernkurve) nur beim Training;
+			// die Loss-Werte stehen ohnehin in den Schritt-Texten.
+			tLossA = step === 6 ? 1 : 0;
 			tLabelA = step >= 7 ? 1 : 0;
 		},
 

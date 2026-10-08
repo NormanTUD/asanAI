@@ -365,7 +365,7 @@ const DenseRaum = (() => {
 			{ k: 'Schritt 4', t: 'Eine Ebene passt<br><em>dazwischen</em>.',
 			  p: 'Hund <b>über</b>, Katze <b>unter</b>',
 			  c: '<span class="kz-chip g" style="background:#ecfdf5;border-color:#a7f3d0;color:#15803d">Katze</span><span class="kz-arrow">·</span><span class="kz-chip r">Hund</span>',
-			  i: 'Nach dem Wölben liegt zwischen den Klassen eine <b>flache Ebene</b> — die Trennung ist jetzt <b>linear</b> möglich (eine Ebene, eine Gerade).' },
+			  i: 'Das ist der <b>Payoff</b>: nach dem Wölben sind Katze & Hund <b>klar trennbar</b>. Eine <b>flache Ebene</b> (in 2D: eine Gerade) liegt genau dazwischen — <b>genau das</b> ist, wozu die Schicht den Raum wölbt.' },
 			{ k: 'Schritt 5', t: 'Alles fällt auf<br><em>eine Linie</em>.',
 			  p: 'Links Hund, rechts Katze',
 			  c: '<span class="kz-chip">Score</span>',

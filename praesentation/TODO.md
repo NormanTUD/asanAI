@@ -262,7 +262,10 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   *(Norman-Referenz „bei Das Ziel" = vermutlich Verwechslung; Text stand nur in Folie 10.
   Falls er ihn woanders meinte: bitte konkretisieren.)*
 
-### T23 · Loss-Plot erst beim „Training" zeigen (Folie 11, Pipeline)  `[ ]`
+### T23 · Loss-Plot erst beim „Training" zeigen (Folie 11, Pipeline)  `[x]`
+- ✅ Fertig: Loss-Panel (Wert + Mini-Lernkurve) zeigt jetzt **nur im Training** (Schritt 6) —
+  `tLossA = step === 6 ? 1 : 0`. Davor/danach bleibt der Loss-Wert im Schritt-Text/Chip stehen.
+  `node --check` + headless (Folie 11) clean. *(Wahl: ganzes Panel, nicht nur die Kurve.)*
 - **Norman:** „zeige nicht den loss plot. zeige den erst beim ‚training'."
 - **Lage:** `PipelineKit.drawLossPanel()` zeichnet Panel **+ Mini-Lernkurve**; wird in
   `drawScene` bei `aLoss ≥ 0,01` gezeichnet, `aLoss` wird in `PipelineDemo` bei
@@ -283,10 +286,14 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
 - **Norman (vorige Runde):** In dieser Ansicht reicht eine **Linie** zum Trennen, nicht eine
   große Ebene (Plane). → *(Canvas, nicht visuell geprüft — Linie-Sitz ggf. noch nachschärfen.)*
 
-### T26 · DenseRaum „Alles fällt auf eine Linie": großer Block → normale Linie  `[ ]`
+### T26 · DenseRaum „Alles fällt auf eine Linie": großer Block → normale Linie  `[x]`
+- ✅ Fertig: Trennung blendet in Schritt 4 aus (`planeA` nur noch in Schritt 3) → der
+  **Score-Strich** (unten, links Hund / rechts Katze) ist der Fokus, kein Block mehr oben.
+  `node --check` + headless (Folie 10) clean.
 - **Norman (vorige Runde):** Aktuell ist ein großer **Block** oben sichtbar statt einer
   normalen Linie. Soll eine **Linie** sein, die links (Hund) / rechts (Katze) trennt.
-  Schritt 4 (Achse/Linie) umstellen. *(Verknüpft mit T11-Neuschreiben + T21.)*
+  Schritt 4 (Achse/Linie) umstellen. *(Canvas, nicht visuell geprüft — ggf. nachschärfen.
+  Verknüpft mit T11-Neuschreiben + T21.)*
 
 ### T27 · „Alles idealisiert" (Folie 14) eine Position früher + ausbauen  `[ ]`
 - **Norman (vorige Runde):** Folie „Alles idealisiert" **eine Position früher** (vor asanAI)
