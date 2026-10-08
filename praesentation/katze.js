@@ -149,6 +149,10 @@ const KatzeKit = (() => {
 		// dem statischen Schritttext überschrieben werden.
 		let lastP = null, lastC = null, footSeq = 0;
 		let pendingFoot = null;
+		// Fuß ohne Rollen: Schritte mit "f: 0" sind fortlaufende Zähler —
+		// die Pill bleibt stehen, nur ihr Text wird aktualisiert, und
+		// Live-Texte dürfen auch während des Tauschs direkt schreiben.
+		let footLive = false;
 		// Laufende Timer eines Textwechsels: beim Verlassen der Folie
 		// abbrechen, sonst schreibt der verspätete Callback den Text
 		// einer anderen Folie übers Bild.
@@ -254,14 +258,24 @@ const KatzeKit = (() => {
 
 		function swapText(i) {
 			const seq0 = footSeq;
+			const s = cfg.steps[i];
+			const noRoll = !!(s && s.f === 0);
 			els.tswap.style.transition = 'transform .4s cubic-bezier(.4,0,1,1),opacity .4s,filter .4s';
 			els.tswap.style.transform = 'translateX(-50%) translateY(-14px)';
 			els.tswap.style.opacity = '0'; els.tswap.style.filter = 'blur(3px)';
-			rollFoot(-1);
+			if (noRoll) {
+				footLive = true;
+				setText(i, seq0 === footSeq);
+			} else {
+				rollFoot(-1);
+			}
 
 			swapTid = setTimeout(() => {
 				swapTid = null;
-				setText(i, seq0 === footSeq);
+				if (!noRoll) {
+					setText(i, seq0 === footSeq);
+					flushFoot();
+				}
 
 				els.tswap.style.transition = 'none';
 				els.tswap.style.transform = 'translateX(-50%) translateY(16px)';
@@ -271,7 +285,7 @@ const KatzeKit = (() => {
 				els.tswap.style.transition = 'transform .9s cubic-bezier(.16,1,.3,1),opacity .75s cubic-bezier(.16,1,.3,1),filter .75s cubic-bezier(.16,1,.3,1)';
 				els.tswap.style.transform = 'translateX(-50%) translateY(0)';
 				els.tswap.style.opacity = '1'; els.tswap.style.filter = 'blur(0px)';
-				rollFoot(1);
+				if (!noRoll) rollFoot(1);
 			}, 410);
 		}
 
@@ -295,7 +309,7 @@ const KatzeKit = (() => {
 		function setFoot(p, c) {
 			// Während eines Textwechsels nicht anfassen: sonst
 			// wechselt die Zeile mitten im Rollen (Flackern).
-			if (busy) { pendingFoot = [p, c]; return; }
+			if (busy && !footLive) { pendingFoot = [p, c]; return; }
 			if (writeFoot(p, c)) footSeq++;
 		}
 
@@ -319,7 +333,7 @@ const KatzeKit = (() => {
 			if (!instant) {
 				busy = true;
 				if (busyTid) clearTimeout(busyTid);
-				busyTid = setTimeout(() => { busyTid = null; busy = false; flushFoot(); }, 420);
+				busyTid = setTimeout(() => { busyTid = null; busy = false; footLive = false; flushFoot(); }, 420);
 			}
 		}
 
@@ -381,7 +395,7 @@ const KatzeKit = (() => {
 				e.style.transform = '';
 				e.style.opacity = '';
 			});
-			lastP = null; lastC = null; footSeq = 0; pendingFoot = null;
+			lastP = null; lastC = null; footSeq = 0; pendingFoot = null; footLive = false;
 
 			dots = [];
 			const dotsEl = document.getElementById(cfg.prefix + '-dots');
@@ -409,6 +423,7 @@ const KatzeKit = (() => {
 			cur = -1;
 			busy = false;
 			pendingFoot = null;
+			footLive = false;
 			if (swapTid) { clearTimeout(swapTid); swapTid = null; }
 			if (busyTid) { clearTimeout(busyTid); busyTid = null; }
 			if (els.insight) els.insight.classList.remove('on');
@@ -1006,9 +1021,9 @@ const ConvDemo = (() => {
 			  c: '<span class="kz-chip">(32, 32, 3)</span>',
 			  i: 'Die <b>Shape</b> (32, 32, 3) liest sich so: 32 × 32 Pixel, drei Zahlen pro Pixel — Rot, Grün, Blau.' },
 			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
-			  p: 'Rot, Grün und Blau, drei eigene Zahlen-Raster · alle drei maximal = Weiß, alle drei 0 = Schwarz',
+			  p: 'Rot, Grün und Blau, drei eigene Zahlen-Raster · alle drei 255 = Weiß, alle drei 0 = Schwarz',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>',
-			  i: '(32, 32, 3) = 3 × (32, 32): dieselben Zahlen, nur aufgeteilt — ein eigenes 32 × 32-Raster pro Farbe.' },
+			  i: '(32, 32, 3) = 3 × (32, 32): drei getrennte Raster, eines pro Farbe — pro Pixel steht in jedem Raster eine andere Zahl.' },
 			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
 			  p: 'Wie hell der Pixel ist, sagt, wie stark die jeweilige Farbe aktiviert ist',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
@@ -1020,14 +1035,17 @@ const ConvDemo = (() => {
 			  c: '<span class="kz-chip">(6, 5)</span>' },
 			{ k: 'Schritt 6', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
 			  p: `Punkt <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
-			  c: '<span class="kz-chip">(32, 32)</span><span class="kz-arrow">×</span><span class="kz-chip">(6, 5)</span>' },
+			  c: '' },
 			{ k: 'Schritt 7', t: '… und <em>fließt</em> über<br>das ganze Bild.',
 			  p: `Block <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
-			  c: `<span class="kz-chip">(${OH}, ${OW})</span><span class="kz-arrow">→</span><span class="kz-chip g">(8, 8)</span>`,
+			  // f: 0 → der Fuß bleibt stehen, nur der Text wird
+			  // fortlaufend aktualisiert (kein Aus-/Einrollen).
+			  f: 0,
+			  c: '',
 			  i: 'An jedem Platz <b>misst</b> der Filter, wie gut sein Fenster zum <b>darunterliegenden</b> Bildstück passt: gleiche Werte = hohe Zahl, kaum Übereinstimmung = nahe 0. Das Fenster <b>hält</b> kurz auf jedem Block.' },
 			{ k: 'Schritt 8', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
 			  p: `1024 Pixel → ${O8 * O8} Zahlen, und die Augen bleiben`,
-			  c: '<span class="kz-chip g">(8, 8)</span>',
+			  c: '',
 			  i: 'Die Augen-Form ist nur <b>unser Beispiel</b>. Im echten Training bringt sich der Computer die Filter <b>selbst bei</b>, anhand der Trainingsdaten.' }
 		],
 
@@ -1123,14 +1141,13 @@ const ConvDemo = (() => {
 			if (sweepT >= SW_TOTAL) {
 				if (!sweepDone) {
 					sweepDone = 1;
-					setFoot(`Fertig, <b>${ANCH}</b> Positionen → <b>${O8 * O8}</b> Zahlen (8 × 8)`,
-						'<span class="kz-chip g">(8, 8)</span>');
+					setFoot(`Fertig, <b>${ANCH}</b> Positionen → <b>${O8 * O8}</b> Zahlen (8 × 8)`, '');
 				}
 			} else {
 				const ai = shownAnchor(sweepPos(sweepT));
 				const a = ANCHORS[ai];
 				setFoot(`Block <b>${ai + 1}</b> von ${ANCH} · Treffer: <b>${SCORES[a.fr * OW + a.fc]}</b> von ${TMAX}`,
-					'<span class="kz-chip g">(8, 8)</span>');
+					'');
 			}
 		},
 
