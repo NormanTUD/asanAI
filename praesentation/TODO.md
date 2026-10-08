@@ -254,13 +254,13 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   Faltung/Wölbung sind Katze & Hund **deutlich trennbar**. (Naheliegend mit T25/T26: Trennung
   als Linie.) → ggf. Caption/Insight schärfen. *(Klarstellung: Narrativ-Punkt, evtl. nur Text.)*
 
-### T22 · „Die Katze wird zu Zahlen" entfernen  `[ ]`
+### T22 · „Die Katze wird zu Zahlen" entfernen  `[x]`
+- ✅ (Interpretation) Schritt-0-Titel der Folie 10 (DenseRaum) von „Die Katze wird zu Zahlen"
+  → **„Ein Bild ist schon Zahlen"** (T8: ein Bild **ist** schon Zahlen; „wird zu" war irreführend).
+  `node --check` + headless (Folie 10) clean.
 - **Norman:** „entferne die ‚Die Katze wird zu Zahlen.' bei ‚Das Ziel: Katze = 100 %.'".
-- **Lage:** Der Text existiert nur als **`kz-title` Schritt 0 der Folie 10 (DenseRaum)**
-  (`index.html` „Die Katze wird zu<br><em>Zahlen</em>"). Passt zu T8 („Katze wird zu Zahlen
-  ergibt keinen Sinn — ein Bild **ist** schon Zahlen"). → Schritt-0-Titel entfernen/umschreiben.
-  *(Norman-Referenz „bei Das Ziel: Katze = 100 %" = Ziel-Folie 5; dort steht der Text NICHT —
-  vermutlich Verwechslung, bei Umsetzen kurz bestätigen.)*
+  *(Norman-Referenz „bei Das Ziel" = vermutlich Verwechslung; Text stand nur in Folie 10.
+  Falls er ihn woanders meinte: bitte konkretisieren.)*
 
 ### T23 · Loss-Plot erst beim „Training" zeigen (Folie 11, Pipeline)  `[ ]`
 - **Norman:** „zeige nicht den loss plot. zeige den erst beim ‚training'."
@@ -277,9 +277,11 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   14 → 13 Folien. Registry-Eintrag `hierarchy` anpassen/entfernen (läuft nur in der neuen Datei).
   → verknüpft mit T9 (Filter → eigene Folie), Reihenfolge achten.
 
-### T25 · DenseRaum „Eine Ebene passt dazwischen": große Ebene → Linie  `[ ]`
+### T25 · DenseRaum „Eine Ebene passt dazwischen": große Ebene → Linie  `[x]`
+- ✅ Fertig: Schritt 3 (Ebene) zeichnet jetzt **eine Linie** (horizontal, Mitte `z=0`) statt
+  einer großen gefüllten Quad-Ebene. `node --check` + headless (Folie 10) clean.
 - **Norman (vorige Runde):** In dieser Ansicht reicht eine **Linie** zum Trennen, nicht eine
-  große Ebene (Plane). Schritt 3 (Ebene) umstellen: Trennung als **Linie** (Grenzkurve) zeigen.
+  große Ebene (Plane). → *(Canvas, nicht visuell geprüft — Linie-Sitz ggf. noch nachschärfen.)*
 
 ### T26 · DenseRaum „Alles fällt auf eine Linie": großer Block → normale Linie  `[ ]`
 - **Norman (vorige Runde):** Aktuell ist ein großer **Block** oben sichtbar statt einer
