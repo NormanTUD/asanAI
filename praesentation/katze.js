@@ -1970,12 +1970,12 @@ const PipelineDemo = (() => {
 // ============================================================
 // PipelineGoalDemo, "Drei Bausteine" (Folie 5)
 //
-// Das statische ZIEL der Pipeline, live gerendert (kein Screenshot):
-// genau der Zustand, den das Training anstrebt — Katze = 100 %,
-// Loss 0,000. Wiederverwendet die komplette Szenen-Zeichnung aus
-// PipelineKit (gleiche Karten, Dense, Neuronen, Loss-Panel wie die
-// animierte Folie 11). Statisch (einmal gerendert), kein eigener
-// Schritt-Zyklus — deshalb kein KatzeKit-Framework.
+// Das ZIEL, live gerendert (kein Screenshot): das Netz zeigt bei
+// JEDEM Bild das Richtige — bei einem Katze-Bild "Katze 100 %",
+// bei einem Hund-Bild "Hund 100 %". Zwei Zeilen (Katze / Hund),
+// jede: Bild → das Netz → zwei Neuronen, das Richtige leuchtet
+// (100 %), das andere 0 %. Wiederverwendet KatzeKit (Bilder) und
+// PipelineKit.drawNeuron/arrow. Statisch (einmal gerendert).
 // ============================================================
 const PipelineGoalDemo = (() => {
 	'use strict';
@@ -1983,14 +1983,58 @@ const PipelineGoalDemo = (() => {
 
 	function render() {
 		if (!ctx || W < 40 || H < 40) return;
-		const s = Math.min(H / 32 * .75, W / 32 * .28, 8.5);
-		const cat = { x: 30, y: (H - 32 * s) / 2, s, a: 1, mix: 0 };
-		const g = PipelineKit.geom(W, H, s);
-		PipelineKit.drawScene(ctx, W, H, cat, g, {
-			aCat: 1, aConv: 1, aEdge: 1, aPart: 1, aDense: 1, aOut: 1, aLoss: 1, aLabel: 0,
-			clarity: 1, flick: 0, step: 4, trainP: 0,
-			outP: { pCat: 100, pDog: 0, hotCat: true }
-		});
+		ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+		const IMG = Math.min(H * 0.30, W * 0.11);
+		const rN = Math.min(H * 0.10, 30);
+		const netX = W * 0.40, netW = Math.min(W * 0.10, 88), netH = IMG * 0.72;
+		const nX1 = W * 0.63, nX2 = W * 0.83;
+		const rowY = [H * 0.30, H * 0.74];
+		const fTitle = Math.max(14, Math.min(20, H * 0.05));
+		const fSm = Math.max(10, Math.min(13, H * 0.035));
+
+		// Titel
+		ctx.fillStyle = '#0f172a';
+		ctx.font = '700 ' + fTitle + 'px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+		ctx.fillText('Im Ziel: bei jedem Bild die richtige Antwort', W / 2, H * 0.10);
+
+		const row = (i, isCat) => {
+			const ry = rowY[i];
+			// Eingangs-Bild (Katze oder Hund)
+			const img = { x: W * 0.05, y: ry - IMG / 2, s: IMG / 32, a: 1, mix: 0 };
+			if (isCat) KatzeKit.drawGrid(ctx, img, 0, 0); else KatzeKit.drawGridHund(ctx, img);
+			ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+			ctx.strokeRect(img.x + .5, img.y + .5, IMG - 1, IMG - 1);
+			ctx.fillStyle = '#64748b';
+			ctx.font = '600 ' + fSm + 'px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+			ctx.fillText(isCat ? 'ein Katze-Bild' : 'ein Hund-Bild', img.x + IMG / 2, ry + IMG / 2 + 16);
+			// Bild → Netz
+			PipelineKit.arrow(ctx, img.x + IMG + 8, ry, netX - netW / 2 - 10, ry, 1);
+			// Netz-Box
+			ctx.fillStyle = '#f8fafc';
+			KatzeKit.roundRect(ctx, netX - netW / 2, ry - netH / 2, netW, netH, 10);
+			ctx.fill();
+			ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.2; ctx.stroke();
+			ctx.fillStyle = '#475569';
+			ctx.font = '700 ' + fSm + 'px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+			ctx.fillText('das Netz', netX, ry);
+			// Netz → Neuronen
+			PipelineKit.arrow(ctx, netX + netW / 2 + 8, ry, nX1 - rN - 10, ry, 1);
+			// zwei Neuronen — das Richtige leuchtet mit 100 %
+			PipelineKit.drawNeuron(ctx, nX1, ry, rN, 'Katze', isCat ? '100 %' : '0 %', isCat, 1);
+			PipelineKit.drawNeuron(ctx, nX2, ry, rN, 'Hund', isCat ? '0 %' : '100 %', !isCat, 1);
+			// "richtig ✓" unter dem richtigen Neuron
+			const okX = isCat ? nX1 : nX2;
+			ctx.globalAlpha = 1;
+			ctx.fillStyle = '#15803d';
+			ctx.font = '700 ' + fSm + 'px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+			ctx.fillText('richtig ✓', okX, ry + rN + 42);
+		};
+		row(0, true);   // Katze-Bild → Katze 100 %
+		row(1, false);  // Hund-Bild → Hund 100 %
 	}
 
 	function init() {

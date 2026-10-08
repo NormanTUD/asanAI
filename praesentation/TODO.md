@@ -2,8 +2,9 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: T1, T2, T3, T6, T10 fertig; T5 (Bug) fertig / Titel offen;
-> alle 5 Fragen beantwortet. Nächstes: T4/Q3 (dynamisches Ziel) + T7 (Hund-Track).
+> Letzte Aktualisierung: T1, T2, T3, T4, T5(Bug), T6, T10 fertig; Ziel-Folie zeigt
+> Katze+Hund (je das Richtige). Hund-Entscheidung: **wechselnd im Training**.
+> Nächstes: **T11 DenseRaum-Redesign** (in Arbeit: Hund-Raster in KatzeKit ergänzt).
 
 ## Dateien die ich analysiert habe
 - `index.html` — 13 Folien, Reihenfolge unten.
@@ -57,9 +58,12 @@
   das Ziel dynamisch (Katze 100 %, Loss 0,000).
 - **Refactor (Q3 „wiederverwenden")**: PipelineDemo-Zeichnerei in geteiltes `PipelineKit`
   (EDGE_MAPS/MAPS, Lernkurve, arrow/Maps/Dense/Neuronen/Loss-Panel, `geom()`, `drawScene()`).
-  PipelineDemo (animiert, Folie 11) + PipelineGoalDemo (statisches Ziel, Folie 5) nutzen beide
-  `PipelineKit.drawScene`. `PipelineKit` auf `window` (testbar).
-- **Verifiziert**: `node --check` + node-Harness (drawScene in 5 Zuständen) + headless Folie 5 & 11 clean.
+  PipelineDemo (animiert, Folie 11) + PipelineGoalDemo (statisches Ziel, Folie 5) nutzen es.
+  `PipelineKit` auf `window` (testbar).
+- **Ziel zeigt Katze UND Hund** (Nachtrag von Norman, „je das richtige"): `PipelineGoalDemo`
+  rendert **zwei Zeilen** — Katze-Bild → Katze 100 % · Hund-Bild → Hund 100 %, je das Richtige
+  leuchtet + „richtig ✓". Wiederverwendet `KatzeKit.drawGrid`/`drawGridHund` + `PipelineKit.drawNeuron`.
+- **Verifiziert**: `node --check` + node-Harness (drawScene 5 Zustände + Ziel-Render) + headless clean.
 - Training (Folie 11, Schritt 8) endet weiterhin bei **95 %** (unverändert).
 
 ### T5 · Folie 6 (ConvDemo) Bug: kein Titel + Bild „springt rein"  `[~]`
@@ -76,13 +80,13 @@
 - Unter der x-Spalte in Szene 2 ein **`\underbrace{...}_{\text{das Bild}}`** setzen
   (analog zu „lernbar" unter W und B).
 
-### T7 · Hund-Track: Netz lernt Katze UND Hund  `[ ]`
-- Ziel: am Ende **beide** ~95 % (Katze-Bild → Katze 95 %, Hund-Bild → Hund 95 %).
-- **Training** (Pipeline) soll zeigen, dass das Netz **abwechselnd Hund- und Katzenbild**
-  anschaut und dabei besser wird.
-- Hund-Daten: ASCII-Hund aus `hund.html` (`HundKit.ART/RGB`) → in katze.js als `Hund`-Raster
-  importieren (analog zu `KatzeKit.RGB`).
-- **Umfang: Frage 4.**
+### T7 · Hund-Track: Netz lernt Katze UND Hund  `[~]`
+- ✅ **Ziel-Teil fertig**: Folie 5 (Ziel) zeigt Katze UND Hund, je das Richtige (→ T4).
+- ✅ **Hund-Raster in KatzeKit** ergänzt: `HUND_ART`/`HUND_RGB`/`drawGridHund` (aus hund.html).
+  Dient T7 + T11 (Mini-Hund-Beispieldot).
+- ⏳ **Training-Teil (offen)**: PipelineDemo Schritt „Lernen" (6) soll das Eingangs-Bild
+  **wechselnd Katze↔Hund** blenden (Normans Entscheidung: „Abwechselnd im Training").
+  Ziel bleibt Katze=100 %. → im nächsten Schritt umsetzen.
 
 ### T8 · „Katze wird zu Zahlen" → RGB-Matrix-Darstellung  `[ ]`
 - Problem: „Katze wird zu Zahlen" ergibt keinen Sinn (ein Bild **ist** schon Zahlen).
