@@ -231,15 +231,13 @@ const DenseRaum = (() => {
 			}
 		}
 
-		// Trennebene bei z = 0
+		// Trennung bei z = 0 — in dieser Ansicht reicht eine Linie
+		// (die Mitte), keine große Ebene über alles.
 		if (planeA > 0.01) {
-			const c = [proj3(-1.15, -1.15, 0), proj3(1.15, -1.15, 0), proj3(1.15, 1.15, 0), proj3(-1.15, 1.15, 0)];
+			const a = proj3(-1.15, 0, 0), b = proj3(1.15, 0, 0);
 			ctx.globalAlpha = planeA;
-			ctx.fillStyle = 'rgba(217,119,6,0.13)';
-			ctx.strokeStyle = '#d97706'; ctx.lineWidth = 1.5;
-			ctx.beginPath(); ctx.moveTo(c[0].X, c[0].Y);
-			for (let i = 1; i < 4; i++) ctx.lineTo(c[i].X, c[i].Y);
-			ctx.closePath(); ctx.fill(); ctx.stroke();
+			ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2;
+			ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke();
 			ctx.globalAlpha = 1;
 		}
 
@@ -353,7 +351,7 @@ const DenseRaum = (() => {
 		slideId: 'slide-dense-raum',
 		prefix: 'dr',
 		steps: [
-			{ k: 'Schritt 1', t: 'Die Katze wird zu<br><em>Zahlen</em>.',
+			{ k: 'Schritt 1', t: 'Ein Bild ist schon<br><em>Zahlen</em>.',
 			  p: 'Dense Layer: <b>1024</b> Zahlen',
 			  c: '<span class="kz-chip g">Bild 32×32</span><span class="kz-arrow">→</span><span class="kz-chip r">1024 Zahlen</span>' },
 			{ k: 'Schritt 2', t: 'Aus Zahlen werden<br><em>Punkte</em>.',
@@ -388,7 +386,7 @@ const DenseRaum = (() => {
 				panelA: step === 0 ? 1 : 0,
 				ptsA: step >= 1 ? 1 : 0,
 				lift: step >= 2 ? 1 : 0,
-				planeA: step >= 3 ? 1 : 0,
+				planeA: step === 3 ? 1 : 0,
 				projA: step >= 4 ? 1 : 0,
 				axisA: step >= 4 ? 1 : 0
 			};
@@ -404,7 +402,7 @@ const DenseRaum = (() => {
 			panelA = K.lerp(panelA, S.step === 0 ? 1 : 0, k * 1.4);
 			ptsA = K.lerp(ptsA, S.step >= 1 ? 1 : 0, k * 1.1);
 			lift = K.lerp(lift, S.step >= 2 ? 1 : 0, k * 0.8);
-			planeA = K.lerp(planeA, S.step >= 3 ? 1 : 0, k);
+			planeA = K.lerp(planeA, S.step === 3 ? 1 : 0, k);
 			projA = K.lerp(projA, S.step >= 4 ? 1 : 0, k * 0.7);
 			axisA = K.lerp(axisA, S.step >= 4 ? 1 : 0, k);
 			if (S.step === 0) {
