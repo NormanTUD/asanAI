@@ -232,8 +232,11 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   wölbt den Raum", Folie 7 „Flatten", Folie 6 „Convolution", Folie 11 „Der gesamte Prozess")
   → bei Umsetzen kurz mit Norman abgleichen ODER sinnvoll wählen.
 
-### T19 · Folie 9 (SpaceMorph): „Was machen Dense Layer?" → „Was sind Dense Layer?"  `[ ]`
-- `data-title` + `<h2>` umbenennen → Folie 8 + 9 haben dann denselben Titel (eine Sektion).
+### T19 · Folie 9 (SpaceMorph): „Was machen Dense Layer?" → „Was sind Dense Layer?"  `[x]`
+- ✅ Fertig: `data-title` + `<h2>` umbenannt → Folie 8 + 9 tragen denselben Titel (eine Sektion).
+- ⚠️ Kollisions-Schutz: `neuron-intro`-Demo + `NeuronIntroViz.isOnIntroSlide()` auf **ID-basiert**
+  (`slide-neuronales-netz-intro`) umgestellt, damit der identische Titel Folie 9 nicht trifft.
+  `node --check` + headless (Folie 8 + 9) clean.
 
 ### T20 · Smooth-Transition Folie 8 → Folie 9 (Inhalt-Wechsel, keine neue Folie)  `[ ]`
 - **Norman:** Der Wechsel von „**Universelle Approximation: genug Neuronen → jede stetige
