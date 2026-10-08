@@ -51,6 +51,48 @@ und en.wikipedia.org (Stand: August 2026).
    Lokal: vestonice_wolf_bone.jpg (800x502)
    Status: OK - Lizenz klar (CC BY-SA 3.0)
 
+=== MESOZOIC / K-PG (untold_history.php, Stand: Oktober 2026) ===
+=========================================================
+1. img_tyrannosaurus_rex_mount
+   URL: https://commons.wikimedia.org/wiki/File:Palais_de_la_Decouverte_Tyrannosaurus_rex_p1050042.jpg
+   Lizenz: CC BY-SA 3.0 (via Commons API extmetadata, Feld LicenseShortName)
+   Autor: David Monniaux
+   Lokal: tyrannosaurus_rex_mount.jpg (2400x1552)
+   Genutzt in: untold_history.php § The Age of Dinosaurs and the Shifting Continents
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+2. img_archaeopteryx_durbed
+   URL: https://commons.wikimedia.org/wiki/File:Archaeopteryx_lithographica_by_durbed.jpg
+   Lizenz: CC BY-SA 3.0 (via Commons API extmetadata, Feld LicenseShortName)
+   Autor: Durbed
+   Lokal: archaeopteryx_durbed.jpg (3509x2550)
+   Genutzt in: untold_history.php § The Age of Dinosaurs and the Shifting Continents
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+3. img_pangaea_200ma
+   URL: https://commons.wikimedia.org/wiki/File:Pangaea_200Ma.jpg
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata, Feld LicenseShortName)
+   Autor: Fama Clamosa
+   Lokal: pangaea_200ma.jpg (1519x759)
+   Genutzt in: untold_history.php § The Age of Dinosaurs and the Shifting Continents
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+4. img_chicxulub_impact_artist
+   URL: https://commons.wikimedia.org/wiki/File:Chicxulub_impact_-_artist_impression.jpg
+   Lizenz: Public domain (via Commons API extmetadata, Feld LicenseShortName)
+   Autor: Donald E. Davis
+   Lokal: chicxulub_impact_artist.jpg (2785x2228)
+   Genutzt in: untold_history.php § The Meteor That Ended the Age of Dinosaurs
+   Status: OK - Lizenz klar (Public domain)
+
+5. img_kpge_iridium_anomaly
+   URL: https://commons.wikimedia.org/wiki/File:Cretaceous_paleogene_iridium_anomaly_3.png
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata, Feld LicenseShortName)
+   Autor: Merikanto
+   Lokal: kpge_iridium_anomaly.png (1421x722)
+   Genutzt in: untold_history.php § The Meteor That Ended the Age of Dinosaurs
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
 === MARGINNOTE IMAGES (September 2026) ===
 =============================================
 Vier \marginfig-Bilder, neu hinzugefügt zu security_inference / evaluation /

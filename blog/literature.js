@@ -17318,5 +17318,171 @@ window.bibData = {
 		year: 1804,
 		url: "https://en.wikipedia.org/wiki/Nicolas-Théodore_de_Saussure",
 		alternativetitle: "de Saussure, Recherches chimiques sur la végétation (1804)"
+	},
+
+	/* ═══════════════════════════════════════════════════════════════════
+	 *  The Age of Dinosaurs, the Shifting Continents, and the Meteor
+	 *  (untold_history.php) — the Mesozoic, plate tectonics, and the
+	 *  Cretaceous–Paleogene impact that ended the age of dinosaurs and
+	 *  opened the niches the mammals (and, contingently, we) inherited.
+	 * ═══════════════════════════════════════════════════════════════════ */
+	"paleontology_history_wiki": {
+		title: "History of paleontology",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/History_of_paleontology",
+		alternativetitle: "History of paleontology (Wikipedia)"
+	},
+	"steno1669solido": {
+		title: "De solido intra solidum naturaliter contento dissertationis prodromus",
+		author: "Nicolaus Steno",
+		year: 1669,
+		url: "https://en.wikipedia.org/wiki/Nicolaus_Steno",
+		alternativetitle: "Steno, De solido intra solidum (1669)"
+	},
+	"buckland1824megalosaurus": {
+		title: "Megalosaurus (the 'great lizard'), the first named dinosaur",
+		author: "William Buckland",
+		year: 1824,
+		url: "https://en.wikipedia.org/wiki/Megalosaurus",
+		alternativetitle: "Buckland, Megalosaurus (1824)"
+	},
+	"mantell1825iguanodon": {
+		title: "Iguanodon (the 'iguana-toothed'), from Fossils of the Surrey Hills",
+		author: "Gideon Mantell",
+		year: 1825,
+		url: "https://en.wikipedia.org/wiki/Iguanodon",
+		alternativetitle: "Mantell, Iguanodon (1825)"
+	},
+	"owen1842dinosauria": {
+		title: "On the Nature, Structure, and Affinities of the Dinosauria",
+		author: "Richard Owen",
+		year: 1842,
+		url: "https://en.wikipedia.org/wiki/Dinosauria",
+		alternativetitle: "Owen, Dinosauria (1842)"
+	},
+	"continental_drift_wiki": {
+		title: "Continental drift (history of the theory)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Continental_drift",
+		alternativetitle: "Continental drift (Wikipedia)"
+	},
+	"wegener1915origin": {
+		title: "Die Entstehung der Kontinente und Ozeane (The Origin of the Continents and Oceans)",
+		author: "Alfred Wegener",
+		year: 1915,
+		url: "https://en.wikipedia.org/wiki/Pangaea",
+		alternativetitle: "Wegener, The Origin of the Continents and Oceans (1915)"
+	},
+	"holmes1931convection": {
+		title: "Principles of Physical Geology (mantle convection)",
+		author: "Arthur Holmes",
+		year: 1931,
+		url: "https://en.wikipedia.org/wiki/Arthur_Holmes",
+		alternativetitle: "Holmes, Principles of Physical Geology (1931)"
+	},
+	"hess1962seafloor": {
+		title: "History of the Pacific Basin (seafloor spreading)",
+		author: "Harry H. Hess",
+		year: 1962,
+		journal: "American Journal of Science",
+		volume: 260,
+		pages: "1–28",
+		url: "https://en.wikipedia.org/wiki/Seafloor_spreading",
+		alternativetitle: "Hess, History of the Pacific Basin (1962)"
+	},
+	"vinematthews1963magnetic": {
+		title: "Magnetic Anomalies over Oceanic Ridges",
+		author: "F. J. Vine, D. H. Matthews",
+		year: 1963,
+		journal: "Nature",
+		volume: 199,
+		pages: "947–949",
+		url: "https://en.wikipedia.org/wiki/Vine%E2%80%93Matthews%E2%80%93Morley_hypothesis",
+		alternativetitle: "Vine and Matthews, Nature 199 (1963)"
+	},
+	"alvarez1980extinction": {
+		title: "Extraterrestrial cause for the Cretaceous–Tertiary extinction",
+		author: "Luis W. Alvarez, Walter Alvarez, Frank Asaro, Helen V. Michel",
+		year: 1980,
+		journal: "Science",
+		volume: 208,
+		number: 4448,
+		pages: "1095–1108",
+		url: "https://doi.org/10.1126/science.208.4448.1095",
+		alternativetitle: "Alvarez et al., Science 208 (1980)"
+	},
+	"smit1980boundary": {
+		title: "An extraterrestrial event at the Cretaceous–Tertiary boundary",
+		author: "Jan Smit, Jan Hertogen",
+		year: 1980,
+		journal: "Nature",
+		volume: 285,
+		number: 5762,
+		pages: "198–200",
+		url: "https://doi.org/10.1038/285198a0",
+		alternativetitle: "Smit and Hertogen, Nature 285 (1980)"
+	},
+	"chicxulub1991crater": {
+		title: "Chicxulub Crater: a possible Cretaceous/Tertiary boundary impact crater on the Yucatán Peninsula, Mexico",
+		author: "Alan R. Hildebrand, Glen T. Penfield, David A. Kring",
+		year: 1991,
+		journal: "Geology",
+		volume: 19,
+		number: 9,
+		pages: "867–871",
+		url: "https://en.wikipedia.org/wiki/Chicxulub_crater",
+		alternativetitle: "Hildebrand et al., Geology 19 (1991)"
+	},
+	"chicxulub_wiki": {
+		title: "Chicxulub crater",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Chicxulub_crater",
+		alternativetitle: "Chicxulub crater (Wikipedia)"
+	},
+
+	/* Image sources: Age of Dinosaurs, Shifting Continents, and the Meteor
+	 *  (untold_history.php) — downloaded and embedded as figures. */
+	"img_tyrannosaurus_rex_mount": {
+		title: "Mounted skeleton of Tyrannosaurus rex, Palais de la Découverte, Paris",
+		author: "David Monniaux",
+		year: 2005,
+		url: "https://commons.wikimedia.org/wiki/File:Palais_de_la_Decouverte_Tyrannosaurus_rex_p1050042.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Mounted skeleton of Tyrannosaurus rex"
+	},
+	"img_archaeopteryx_durbed": {
+		title: "Archaeopteryx lithographica, the first bird (illustration of the Berlin specimen)",
+		author: "Durbed",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Archaeopteryx_lithographica_by_durbed.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Archaeopteryx (the first bird)"
+	},
+	"img_pangaea_200ma": {
+		title: "Pangaea, the supercontinent, at 200 million years ago",
+		author: "Fama Clamosa",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Pangaea_200Ma.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Pangaea at 200 Ma"
+	},
+	"img_chicxulub_impact_artist": {
+		title: "Artist's impression of the Chicxulub asteroid impact on the Yucatán Peninsula",
+		author: "Donald E. Davis",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Chicxulub_impact_-_artist_impression.jpg",
+		license: "Public domain",
+		alternativetitle: "Chicxulub impact (artist's impression)"
+	},
+	"img_kpge_iridium_anomaly": {
+		title: "The iridium anomaly at the Cretaceous–Paleogene boundary (the 'smoking gun')",
+		author: "Merikanto",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Cretaceous_paleogene_iridium_anomaly_3.png",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "K–Pg boundary iridium anomaly"
 	}
 };
