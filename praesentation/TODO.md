@@ -2,9 +2,12 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: T1–T6, T10, **T11** fertig + **T13 Flip-Clock** (Folie 2),
-> **T14** Ziel-Zentrierung (Folie 5), **T3 revert** (PNG statt SVG, Folie 4).
-> Nächstes: T7 (Hund im Training, wechselnd), T8 (RGB-Matrix), T9 (Filter-Folie).
+> Letzte Aktualisierung: Folie-2-Batch (Cross-Morph gebaut) + große Feedback-Runde
+> (Folie 2 manuell + f fix, Constant-Heading, Rename, Smooth-Transition, Loss-Plot,
+> Hierarchy-ausgliedern, Idealisiert-verschieben). Alle neuen Punkte unten als T15–T27.
+> **Nächste (in Arbeit): T15** (Folie 2: Switch erst auf manuelles Weiter + f fix, nur
+> Zahlen/Ergebnisse rotieren) → dann T16–T27 der Reihe nach.
+> Noch offen aus vorher: T7 (Hund im Training), T8 (RGB-Matrix), T9 (Filter-Folie).
 
 ## Dateien die ich analysiert habe
 - `index.html` — 13 Folien, Reihenfolge unten.
@@ -28,6 +31,10 @@
 · 7. Flatten · 8. Was sind Dense Layer? (NeuronIntro) · 9. Was machen Dense Layer? (SpaceMorph)
 · 10. Vom Bild zu Punkten (DenseRaum) · 11. Der gesamte Prozess (Pipeline)
 · 12. Convolutions (Hierarchy) · 13. asanAI · 14. Alles idealisiert (neu, T1).
+
+**Geplante Struktur-Änderungen (T17–T27):** Folie 5 Titel (T17) · Folie 9 → „Was sind Dense
+Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14→13) ·
+„Alles idealisiert" eine Position **vor** asanAI (T27). → Nummern 12–14 verschieben sich.
 
 ---
 
@@ -159,6 +166,105 @@
 - ✅ Fertig: `PipelineGoalDemo.render()` zentriert jetzt den Inhalt (Gesamtbreite berechnen,
   mittig platzieren) — vorher saß alles links, rechts zu viel Freiraum. `node --check` +
   headless (Folie 5) clean.
+
+### T13b · Folie 2 Cross-Morph BAST (Grundlage für T15)  `[~]`
+- BAST (ungetestet im Real-Time-Morph): `#klassik-stage` (zentriert, volle Höhe, keine Karten)
+  mit zwei Layern — `.klassik-formula` (LaTeX `f(a,b)={cases}`) + `#flip-clock`. `FlipClockViz`
+  (nn_demos.js) baut 16 Tiles, vertikaler Loop, per-Tile Opacity/Scale. `node --check` + headless
+  (Folie 2) clean; DOM-Dump: 16 Tiles, richtige Helligkeit (Mitte hell). Morph-Zeitpunkt =
+  `enterT + 1200 ms` (AUTO) — **wird in T15 auf manuell umgestellt**.
+
+### T15 · Folie 2: Switch erst auf manuelles Weiter + `f(...)` fix, nur Zahlen rotieren  `[~]`
+- **Norman (2×):** (1) Der Switch (Formel → Flip-Clock) soll **erst kommen, wenn ich manuell
+  weitermache** (Pfeil/Next) — nicht auto nach 1,2 s. (2) Das **`f(...)` soll stehen bleiben**,
+  nur die **Zahlen und Ergebnisse** rotieren rein (von oben).
+- **Umsetzung:**
+  - Trigger manuell: `FlipClockViz` bekommt `canSwitch()` (true solange Switch offen) +
+    `advance()` (triggert den Switch). Registry `klassisch-flipclock`: `guard:()=>true`,
+    `canNext:'canSwitch'`, `nextMethod:'advance'` (frisst den ersten Next, danach fallen
+    Fragments/Navigation normal durch). `start()` baut Flip-Clock (versteckt) + zeigt Formel,
+    wartet auf `advance()`.
+  - Flip-Clock-Struktur: **fixes `f( , ) =`** + **3 rotierende Spalten** `a`,`b`,`o`
+    (jeweils vertikaler Slot, Werte rollen von oben durch die mittlere Auslese-Zeile, sync).
+    `f(0,0)=0 · f(0,1)=0 · f(1,0)=0 · f(1,1)=1`.
+  - Cross-Morph (Formel → Flip-Clock) **gleiche Mitte**, flüssig, auf `advance()`.
+- `stop()` setzt `switched=false` zurück (beim Verlassen → beim Wiedereintreten Formel zuerst).
+
+### T16 · Folie 2: `ki-catchout`-Text überarbeiten  `[ ]`
+- Alt-Text („springende Punkt … Katze/Hund") bleibt als Kern, **erweitern**:
+  - Für **AND** wäre Lernen **Overkill** — klassisch ist viel **schneller geschrieben**.
+  - Aber für **Katze/Hund-Erkennung** geht's klassisch **gar nicht**: es gibt **viel zu viele
+    Möglichkeiten** (keine Regeln, die man in Code gießen könnte).
+  - Genau da helfen **neurale Netze** (lernen die Regeln aus Beispielen).
+- Element: `.ki-catchout.fragment` auf Folie 2 (`slide-klassisch-vs-ki`).
+
+### T17 · Folie 5 (bausteine) Titel: „Drei Bausteine" → „Was wir wollen und drei Bausteine dafür"  `[ ]`
+- `data-title` + `<h2>` umbenennen. (Inhalt/Ziel bleibt.)
+
+### T18 · Konstanter Haupttitel für die kz-Folien (6, 7, 10, 11)  `[ ]`
+- **Problem:** Folien 6 (Conv), 7 (Flatten), 10 (DenseRaum), 11 (Pipeline) haben **keinen
+  konstanten `<h2>`** wie „Was sind Dense Layer?" (Folie 8) — nur die dynamische `kz-title`.
+- **Wunsch (Norman):** konstanter Haupttitel (`<h2>`), der bleibt; die Schritt-`kz-title`
+  wird zum **Untertitel**. Wie Folie 9 (SpaceMorph: `<h2>` + `#sm-title`-Overlay).
+- Offene Unterfrage: Was ist der **konstante Titel** je Folie? (z. B. Folie 10 „Der Layer
+  wölbt den Raum", Folie 7 „Flatten", Folie 6 „Convolution", Folie 11 „Der gesamte Prozess")
+  → bei Umsetzen kurz mit Norman abgleichen ODER sinnvoll wählen.
+
+### T19 · Folie 9 (SpaceMorph): „Was machen Dense Layer?" → „Was sind Dense Layer?"  `[ ]`
+- `data-title` + `<h2>` umbenennen → Folie 8 + 9 haben dann denselben Titel (eine Sektion).
+
+### T20 · Smooth-Transition Folie 8 → Folie 9 (Inhalt-Wechsel, keine neue Folie)  `[ ]`
+- **Norman:** Der Wechsel von „**Universelle Approximation: genug Neuronen → jede stetige
+  Funktion**" (letztes Fragment Folie 8, NeuronIntro) zu „**Zwei Klassen, keine Gerade**"
+  (Schritt 1 Folie 9, SpaceMorph) soll **smoother** sein — **Inhalt wird ausgetauscht, keine
+  neue Folie**, „so wie die anderen Übergänge, richtig smooth".
+- **Haken:** Folie 8 = `NeuronIntroViz` (Fragments), Folie 9 = `SpaceMorph` (eigene Steps) —
+  zwei getrennte Folien/Demos. Umsetzungsoptionen: (a) beide unter einen Hut bringen (eine
+  Folie, mehrere Szenen, Smooth-Content-Swap), (b) Crossfade zwischen 8→9 so soften, dass es
+  wie ein Inhalt-Wechsel wirkt. → **konkrete Herangehensweise bei Umsetzen festlegen.**
+
+### T21 · „Aus Zahlen werden Punkte" (Folie 10, DenseRaum): Klar trennbar betonen  `[ ]`
+- **Norman:** „da sind die beiden Klassen eben doch **klar trennbar**, was der Rest der
+  Layer (Räume wölben) möglich machen soll." → Der Schritt soll den **Payoff** zeigen: nach der
+  Faltung/Wölbung sind Katze & Hund **deutlich trennbar**. (Naheliegend mit T25/T26: Trennung
+  als Linie.) → ggf. Caption/Insight schärfen. *(Klarstellung: Narrativ-Punkt, evtl. nur Text.)*
+
+### T22 · „Die Katze wird zu Zahlen" entfernen  `[ ]`
+- **Norman:** „entferne die ‚Die Katze wird zu Zahlen.' bei ‚Das Ziel: Katze = 100 %.'".
+- **Lage:** Der Text existiert nur als **`kz-title` Schritt 0 der Folie 10 (DenseRaum)**
+  (`index.html` „Die Katze wird zu<br><em>Zahlen</em>"). Passt zu T8 („Katze wird zu Zahlen
+  ergibt keinen Sinn — ein Bild **ist** schon Zahlen"). → Schritt-0-Titel entfernen/umschreiben.
+  *(Norman-Referenz „bei Das Ziel: Katze = 100 %" = Ziel-Folie 5; dort steht der Text NICHT —
+  vermutlich Verwechslung, bei Umsetzen kurz bestätigen.)*
+
+### T23 · Loss-Plot erst beim „Training" zeigen (Folie 11, Pipeline)  `[ ]`
+- **Norman:** „zeige nicht den loss plot. zeige den erst beim ‚training'."
+- **Lage:** `PipelineKit.drawLossPanel()` zeichnet Panel **+ Mini-Lernkurve**; wird in
+  `drawScene` bei `aLoss ≥ 0,01` gezeichnet, `aLoss` wird in `PipelineDemo` bei
+  `step >= 4` (50:50) auf 1 gesetzt. → **Mini-Plot (Kurve)** erst ab dem **Trainings-Schritt
+  („Lernen: die Daten immer wieder angucken")** zeichnen; davor nur (oder gar nicht) Wert.
+  *(Klarstellung: nur die Kurve, oder das ganze Panel erst beim Training?)*
+
+### T24 · Folie 12 „Convolutions: Strukturen in Bildern finden" → eigene Datei, aus Deck raus  `[ ]`
+- **Norman:** „entferne auch die folie … und schiebe sie in ne eigene datei."
+- Folie 12 (`slide-hierarchie`, `hierarchy.js`) aus `index.html` entfernen + **eigene Datei**
+  (z. B. `hierarchy.html`, lädt `hierarchy.js`), damit sie separat aufzurufen ist. Deck:
+  14 → 13 Folien. Registry-Eintrag `hierarchy` anpassen/entfernen (läuft nur in der neuen Datei).
+  → verknüpft mit T9 (Filter → eigene Folie), Reihenfolge achten.
+
+### T25 · DenseRaum „Eine Ebene passt dazwischen": große Ebene → Linie  `[ ]`
+- **Norman (vorige Runde):** In dieser Ansicht reicht eine **Linie** zum Trennen, nicht eine
+  große Ebene (Plane). Schritt 3 (Ebene) umstellen: Trennung als **Linie** (Grenzkurve) zeigen.
+
+### T26 · DenseRaum „Alles fällt auf eine Linie": großer Block → normale Linie  `[ ]`
+- **Norman (vorige Runde):** Aktuell ist ein großer **Block** oben sichtbar statt einer
+  normalen Linie. Soll eine **Linie** sein, die links (Hund) / rechts (Katze) trennt.
+  Schritt 4 (Achse/Linie) umstellen. *(Verknüpft mit T11-Neuschreiben + T21.)*
+
+### T27 · „Alles idealisiert" (Folie 14) eine Position früher + ausbauen  `[ ]`
+- **Norman (vorige Runde):** Folie „Alles idealisiert" **eine Position früher** (vor asanAI)
+  und **ausbauen**: rüberbringen, dass es nur die **Intuition** ist, mit der wir arbeiten —
+  **nicht** das be-all-end-all, da ist **viel mehr Interessantes + Ungeklärtes** dahinter.
 
 ### T12 · Diese TODO.md pflegen  `[~]`
 - Bei jeder Änderung Status + Notizen hier aktualisieren.

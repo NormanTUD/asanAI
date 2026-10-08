@@ -9,30 +9,29 @@
 	<script src="temml.min.js"></script>
 	<link rel="stylesheet" href="index.css">
 	<style>
-		/* "Klassisch vs. KI" (Folie 2) — Cross-Morph: die Formel
-		   f(a,b)={cases} steht zentriert (volle Höhe) und MORPHED nach
-		   ~1,2 s in den vertikalen Flip-Clock: die Beispielauswertungen
-		   f(a,b)=o rollen VON OBEN durch die mittlere Auslese-Zeile, das
-		   aktuelle Beispiel steht am Zeiger, die anderen rollen hindurch.
-		   Nahtloser Loop (rAF). */
+		/* "Klassisch vs. KI" (Folie 2) — Cross-Morph, gleiche Mitte: die
+		   Formel f(a,b)={cases} steht zentriert (volle Höhe). Auf manuelles
+		   Weiter MORPHED sie in den Flip-Clock: das f(...) bleibt stehen,
+		   nur die ZAHLEN (a, b) und das ERGEBNIS (o) rollen von OBEN in die
+		   Auslese-Zeile (3 Spalten, sync, nahtloser Loop). */
 		#klassik-stage { position: relative; height: min(54vh, 460px); margin-top: 10px; }
 		#klassik-stage .klassik-formula { position: absolute; inset: 0;
 			display: flex; align-items: center; justify-content: center; will-change: transform, opacity; }
 		#klassik-stage .klassik-formula .math-display { font-size: 1.9em; text-align: center; }
-		#flip-clock { position: absolute; inset: 0; overflow: hidden; opacity: 0;
-			-webkit-mask-image: linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
-			mask-image: linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent); }
+		#flip-clock { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
 		#flip-clock .fc-window { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-			width: 80%; max-width: 560px; height: 58px; border: 2px solid #bfdbfe; border-radius: 12px;
-			background: linear-gradient(90deg, rgba(239,246,255,0.92), rgba(255,255,255,0.5));
-			box-shadow: 0 6px 18px rgba(30,64,175,0.12), inset 0 0 0 4px rgba(255,255,255,0.55); pointer-events: none; }
-		#flip-clock .fc-pointer { position: absolute; left: -3px; top: 50%; transform: translateY(-50%);
-			width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent;
-			border-left: 13px solid #2563eb; }
+			width: 94%; max-width: 540px; height: 150px; border: 2px solid #bfdbfe; border-radius: 16px;
+			background: linear-gradient(90deg, rgba(239,246,255,0.55), rgba(255,255,255,0.24));
+			box-shadow: 0 8px 22px rgba(30,64,175,0.10), inset 0 0 0 3px rgba(255,255,255,0.5); pointer-events: none; }
+		#flip-clock .fc-odo { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+			display: flex; align-items: center; gap: 10px; }
+		#flip-clock .fc-glyph { font: italic 700 46px Georgia, 'Times New Roman', serif; color: #1e293b; line-height: 1; }
+		#flip-clock .fc-col { position: relative; width: 50px; height: 134px; overflow: hidden;
+			-webkit-mask-image: linear-gradient(180deg, transparent, #000 34%, #000 66%, transparent);
+			mask-image: linear-gradient(180deg, transparent, #000 34%, #000 66%, transparent); }
 		#flip-clock .fc-track { position: absolute; left: 0; top: 0; width: 100%; will-change: transform; }
-		#flip-clock .fc-tile { position: absolute; left: 0; width: 100%;
-			display: flex; align-items: center; justify-content: center;
-			font-size: 26px; color: #1e293b; will-change: transform, opacity; }
+		#flip-clock .fc-val { height: 56px; display: flex; align-items: center; justify-content: center;
+			font: 700 36px Georgia, 'Times New Roman', serif; color: #1e293b; will-change: opacity; }
 	</style>
 </head>
 <body>
