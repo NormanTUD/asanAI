@@ -33,6 +33,15 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
+                // "Vom Bild zu Punkten" (dense_raum.js), Katze-Framework:
+                // Panel (Katze → 1024 Zahlen) → Punkte (zwei
+                // Klassen Katze/Hund) → Sattel-Krümmung z = x·y
+                // → Trennebene → Rückprojektion auf eine Linie.
+                { id: 'dense-raum', ref: () => typeof DenseRaum !== 'undefined' ? DenseRaum : null,
+                        slideTest: s => s.id === 'slide-dense-raum',
+                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onLeave: d => d.reset() },
+
                 // "Jeder Pixel ist nur eine Zahl" (katze.js), Katze-Framework:
                 // 32×32 ASCII-Katze: Farbbild → 3 Kanäle → ein Kanal
                 // (Grau) → Pixel = Zahl (Zoom) → 6×5-Filter in Augen-Form
