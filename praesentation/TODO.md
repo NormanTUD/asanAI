@@ -97,11 +97,16 @@
   die Filter-/Sweep-/8×8-Schritte ziehen auf die neue Folie.
 - ⚠️ Verändert die Schrittanzahl von ConvDemo + DemoRegistry-Eintrag + Folienanzahl (13 → 14+).
 
-### T10 · Terminologie-Konsistenz (Faltung vs. Convolution)  `[ ]`
-- Gemischt: „Convolution"/"Convolutions" (Folien-Titel, Chips, Formel `conv2d`, hierarchy.js
-  Titel, katze.js) vs. „Faltung" (hierarchy.js Caption „eine echte Faltung").
-- → **Ein Begriff durchgängig** im sichtbaren Text, **Deutsch, so einfach wie möglich**.
-- **Welcher: Frage 2.** Code-Identifier (`slide-convolution`, `ConvDemo`) bleiben.
+### T10 · Terminologie — zwei VERSCHIEDENE Dinge sauber trennen  `[ ]`
+- **Normans Klarstellung**: „die Faltung des Raumes" ≠ „die Convolution".
+  - **Layer-Typen / die Convolution** (Filter, Strukturen erkennen) → **„Convolutions"** (Fachbegriff, bleibt).
+  - **die Faltung** = das **Wölben/Krümmen des (Merkmals-)Raums** durch eine Schicht
+    (SpaceMorph „krümmt den Raum", DenseRaum „wölbt den Raum") → **„Faltung"**.
+- **Fix**: `hierarchy.js` Caption[0] „eine echte **Faltung**" beschreibt die Convolution am
+  Stoppschild → **„Convolution"** (nicht „Faltung"). „Faltung" ist ab jetzt NUR für die
+  Raumkrümmung reserviert. In T11 die Raumkrümmung konsequent „Faltung" nennen.
+- Code-Identifier (`slide-convolution`, `ConvDemo`) bleiben.
+- ✅ BEANTWORTET (war Frage 2).
 
 ### T11 · Folie 10 (DenseRaum) Redesign — „Der Layer wölbt den Raum"  `[ ]`
 - **Problem**: aktuell „häßlich wie Sau" (Sattel z=x·y, sauberes XOR-Quadranten-Muster).
@@ -127,7 +132,8 @@
 ## Offene Fragen (5) — warte auf Antwort
 1. **Blaues-Himmel-Bild / „creative crommons"**: Was ist das? Bild/URL liefern,
    selbst nachbauen, oder bestimmtes Meme?
-2. **Begriff**: „Faltung" (reines DE) vs. „Convolution" (Fachbegriff) durchgängig?
+2. ~~**Begriff** Faltung vs. Convolution~~ ✅ **beantwortet**: Layer-Typen = „Convolutions",
+   Raumkrümmung = „Faltung" (→ T10).
 3. **Ziel-Folie PNG**: `pipeline_ziel.png` (Screenshot, 95 %) — Live-Canvas nachbauen,
    nur Text ändern, oder neues 100 %-Bild von Norman?
 4. **Hund-Track Umfang**: nur Key-Points (Ziel+Training+1 Dot), oder alle katzen-Folien
