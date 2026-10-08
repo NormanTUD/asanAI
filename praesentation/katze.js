@@ -143,6 +143,27 @@ const KatzeKit = (() => {
 		let cv, ctx, stage, dots = [];
 		let W = 0, H = 0, DPR = 1;
 		let cur = -1, busy = false, rafId = null, last = 0;
+		// Letzter geschriebener Fußtext + Zähler für Live-Updates: der
+		// Text wird nur bei echter Änderung ins DOM geschrieben (sonst
+		// flackert die Zeile), und ein Live-Text (Tick) darf nicht von
+		// dem statischen Schritttext überschrieben werden.
+		let lastP = null, lastC = null, footSeq = 0;
+		let pendingFoot = null;
+		// Laufende Timer eines Textwechsels: beim Verlassen der Folie
+		// abbrechen, sonst schreibt der verspätete Callback den Text
+		// einer anderen Folie übers Bild.
+		let swapTid = null, busyTid = null;
+
+		// Inhalt in eine Roll-Hülle legen: die Pill-/Chips-Box bleibt
+		// sichtbar, nur der Text darin rollt bei einem Schrittwechsel.
+		function wrapRoll(el) {
+			if (!el) return null;
+			const w = document.createElement('span');
+			w.className = 'kz-roll';
+			while (el.firstChild) w.appendChild(el.firstChild);
+			el.appendChild(w);
+			return w;
+		}
 
 		const S = {
 			W: 0, H: 0, step: -1, grayMix: 0, tGrayMix: 0,
@@ -164,12 +185,14 @@ const KatzeKit = (() => {
 			if (cur >= 0) cfg.layoutFor(cur, S);
 		}
 
-		function setText(i) {
+		function setText(i, footFresh) {
 			const s = cfg.steps[i];
 			if (els.kicker) els.kicker.textContent = s.k;
 			els.title.innerHTML = s.t;
-			els.pill.innerHTML = s.p;
-			els.chips.innerHTML = s.c;
+			// footFresh === false: im Tausch-Fenster kam schon ein
+			// Live-Text aus dem Tick, der ist neuer als der Statische.
+			if (footFresh === false) return;
+			writeFoot(s.p, s.c);
 		}
 
 		function updateInsight() {
@@ -203,31 +226,52 @@ const KatzeKit = (() => {
 			if (max > 0) slot.style.minHeight = Math.max(96, Math.ceil(max)) + 'px';
 		}
 
-		// Text-Swap: Kopf nach oben raus / von unten rein, Fuß gegenläufig.
+		// Text-Swap: Kopf nach oben raus / von unten rein. Der Fuß
+		// verschwindet nicht mehr komplett — nur der Text rollt in der
+		// (sichtbar bleibenden) Pill-/Chips-Box heraus und rein.
+		function rollFoot(dir) {
+			const els2 = [els.pillIn, els.chipsIn].filter(Boolean);
+			if (dir < 0) {
+				els2.forEach(e => {
+					e.style.transition = 'transform .24s cubic-bezier(.4,0,1,1),opacity .24s cubic-bezier(.4,0,1,1)';
+					e.style.transform = 'translateY(-45%)';
+					e.style.opacity = '0';
+				});
+			} else {
+				els2.forEach(e => {
+					e.style.transition = 'none';
+					e.style.transform = 'translateY(45%)';
+					e.style.opacity = '0';
+				});
+				els2.forEach(e => void e.offsetWidth);
+				els2.forEach(e => {
+					e.style.transition = 'transform .55s cubic-bezier(.16,1,.3,1),opacity .55s cubic-bezier(.16,1,.3,1)';
+					e.style.transform = 'translateY(0)';
+					e.style.opacity = '1';
+				});
+			}
+		}
+
 		function swapText(i) {
+			const seq0 = footSeq;
 			els.tswap.style.transition = 'transform .4s cubic-bezier(.4,0,1,1),opacity .4s,filter .4s';
 			els.tswap.style.transform = 'translateX(-50%) translateY(-14px)';
 			els.tswap.style.opacity = '0'; els.tswap.style.filter = 'blur(3px)';
-			els.fswap.style.transition = 'transform .4s cubic-bezier(.4,0,1,1),opacity .4s';
-			els.fswap.style.transform = 'translateX(-50%) translateY(10px)';
-			els.fswap.style.opacity = '0';
+			rollFoot(-1);
 
-			setTimeout(() => {
-				setText(i);
+			swapTid = setTimeout(() => {
+				swapTid = null;
+				setText(i, seq0 === footSeq);
 
 				els.tswap.style.transition = 'none';
 				els.tswap.style.transform = 'translateX(-50%) translateY(16px)';
 				els.tswap.style.filter = 'blur(4px)';
-				els.fswap.style.transition = 'none';
-				els.fswap.style.transform = 'translateX(-50%) translateY(-12px)';
-				void els.tswap.offsetWidth; void els.fswap.offsetWidth;
+				void els.tswap.offsetWidth;
 
 				els.tswap.style.transition = 'transform .9s cubic-bezier(.16,1,.3,1),opacity .75s cubic-bezier(.16,1,.3,1),filter .75s cubic-bezier(.16,1,.3,1)';
 				els.tswap.style.transform = 'translateX(-50%) translateY(0)';
 				els.tswap.style.opacity = '1'; els.tswap.style.filter = 'blur(0px)';
-				els.fswap.style.transition = 'transform .9s cubic-bezier(.16,1,.3,1) .06s,opacity .75s cubic-bezier(.16,1,.3,1) .06s';
-				els.fswap.style.transform = 'translateX(-50%) translateY(0)';
-				els.fswap.style.opacity = '1';
+				rollFoot(1);
 			}, 410);
 		}
 
@@ -235,14 +279,36 @@ const KatzeKit = (() => {
 			dots.forEach((d, j) => d.classList.toggle('act', j === cur));
 		}
 
+		function writeFoot(p, c) {
+			let changed = false;
+			if (els.pillIn && p !== lastP) { els.pillIn.innerHTML = p; lastP = p; changed = true; }
+			if (els.chipsIn && c !== lastC) {
+				els.chipsIn.innerHTML = c; lastC = c;
+				// Leere Chips-Zeile ganz ausblenden (sonst bleibt eine
+				// 13-px-Lücke zwischen Pill und leerer Box stehen).
+				if (els.chips) els.chips.style.display = c ? '' : 'none';
+				changed = true;
+			}
+			return changed;
+		}
+
 		function setFoot(p, c) {
-			els.pill.innerHTML = p;
-			els.chips.innerHTML = c;
+			// Während eines Textwechsels nicht anfassen: sonst
+			// wechselt die Zeile mitten im Rollen (Flackern).
+			if (busy) { pendingFoot = [p, c]; return; }
+			if (writeFoot(p, c)) footSeq++;
+		}
+
+		function flushFoot() {
+			if (!pendingFoot) return;
+			const f = pendingFoot; pendingFoot = null;
+			if (writeFoot(f[0], f[1])) footSeq++;
 		}
 
 		function go(n, instant) {
 			n = Math.max(0, Math.min(cfg.steps.length - 1, n));
 			if (n === cur || (!instant && busy)) return;
+			pendingFoot = null;
 			if (cfg.onStep) cfg.onStep(n);
 			cfg.layoutFor(n, S);
 			S.step = n;
@@ -252,7 +318,8 @@ const KatzeKit = (() => {
 			updateDots();
 			if (!instant) {
 				busy = true;
-				setTimeout(() => { busy = false; }, 420);
+				if (busyTid) clearTimeout(busyTid);
+				busyTid = setTimeout(() => { busyTid = null; busy = false; flushFoot(); }, 420);
 			}
 		}
 
@@ -296,6 +363,25 @@ const KatzeKit = (() => {
 			els.tswap = document.getElementById(cfg.prefix + '-tswap');
 			els.fswap = document.getElementById(cfg.prefix + '-fswap');
 			els.insight = document.getElementById(cfg.prefix + '-insight');
+			if (!els.pillIn) {
+				els.pillIn = wrapRoll(els.pill);
+				els.chipsIn = wrapRoll(els.chips);
+			}
+			// Falls eine Folie mitten im Textwechsel verlassen wurde:
+			// Kopf und Fuß wieder in den Ruhezustand zurück.
+			if (els.tswap) {
+				els.tswap.style.transition = 'none';
+				els.tswap.style.transform = 'translateX(-50%)';
+				els.tswap.style.opacity = '';
+				els.tswap.style.filter = '';
+			}
+			[els.pillIn, els.chipsIn].forEach(e => {
+				if (!e) return;
+				e.style.transition = 'none';
+				e.style.transform = '';
+				e.style.opacity = '';
+			});
+			lastP = null; lastC = null; footSeq = 0; pendingFoot = null;
 
 			dots = [];
 			const dotsEl = document.getElementById(cfg.prefix + '-dots');
@@ -322,6 +408,9 @@ const KatzeKit = (() => {
 			stopLoop();
 			cur = -1;
 			busy = false;
+			pendingFoot = null;
+			if (swapTid) { clearTimeout(swapTid); swapTid = null; }
+			if (busyTid) { clearTimeout(busyTid); busyTid = null; }
 			if (els.insight) els.insight.classList.remove('on');
 		}
 
@@ -456,6 +545,15 @@ const ConvDemo = (() => {
 			};
 		}
 		return { fr: ANCHORS[ANCH - 1].fr, fc: ANCHORS[ANCH - 1].fc, anchor: ANCH - 1, moving: false };
+	}
+
+	// Der Block, der angezeigt wird: während der Fahrt bleibt der
+	// Ausgangs-Anker stehen, erst beim Aufsetzen springt die Anzeige
+	// weiter — sonst rasen Treffer-Zahl und Badge beim Gleiten durch
+	// alle Zwischenzellen (Flackern).
+	function shownAnchor(pos) {
+		if (!pos) return 0;
+		return pos.moving ? Math.max(0, pos.anchor - 1) : pos.anchor;
 	}
 
 	// Wann leuchtet/füllt sich jede 8×8-Zelle? Vorberechnet auf der
@@ -678,7 +776,11 @@ const ConvDemo = (() => {
 	let outA = 0, tOutA = 0;
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
 	let zoomA = 0, tZoomA = 0;
+	let bwA = 0, tBwA = 0;
 	const KC = 24; // Filter-Panel: Zellgröße in px
+	// Zoom-Panel (Schritt 4): Maße, an zwei Stellen gebraucht
+	// (layoutFor setzt die Position, drawPixelZoom zeichnet).
+	const ZW = 240, ZH = 272;
 
 	// Schritt 2: Beispiel-Pixel, oberes linkes Auge (Zeile 10, Spalte 4).
 	const ZR = 10, ZC = 4;
@@ -696,11 +798,38 @@ const ConvDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// Zoom-Panel: das Beispiel-Pixel vergrößert + Wert + 0–255-Skala.
+	// Zwei Beispiel-Pixel desselben Kanals: 0 = Schwarz, 255 = Weiß.
+	function drawBWPair(ctx, S) {
+		if (bwA < 0.01 || !S.bwX) return;
+		const x = S.bwX, y = S.bwY, sz = 72, gp = 56;
+		const x2 = x + sz + gp;
+		ctx.globalAlpha = bwA;
+		ctx.fillStyle = '#000';
+		ctx.fillRect(x, y, sz, sz);
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(x2, y, sz, sz);
+		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+		ctx.strokeRect(x + .5, y + .5, sz - 1, sz - 1);
+		ctx.strokeRect(x2 + .5, y + .5, sz - 1, sz - 1);
+
+		ctx.fillStyle = '#0f172a';
+		ctx.font = '800 22px Inter, system-ui, sans-serif';
+		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		ctx.fillText('0', x + sz / 2, y + sz + 24);
+		ctx.fillText('255', x2 + sz / 2, y + sz + 24);
+		ctx.fillStyle = '#64748b';
+		ctx.font = '600 12px Inter, system-ui, sans-serif';
+		ctx.fillText('Schwarz', x + sz / 2, y + sz + 46);
+		ctx.fillText('Weiß', x2 + sz / 2, y + sz + 46);
+		ctx.globalAlpha = 1;
+	}
+
+	// Zoom-Panel: das Beispiel-Pixel vergrößert + Wert + Skala
+	// von schwarz (0) über den Verlauf zu weiß (255).
 	function drawPixelZoom(ctx, S) {
 		const o = S.inst[KatzeKit.PICK];
 		if (zoomA < 0.01 || S.zoomX == null) return;
-		const N = KatzeKit.N, zw = 230, zh = 250;
+		const zw = ZW, zh = ZH;
 		const zx = S.zoomX, zy = S.zoomY;
 
 		if (o.a > 0.02) {
@@ -717,7 +846,7 @@ const ConvDemo = (() => {
 		ctx.fill();
 		ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.2; ctx.stroke();
 
-		const sq = 110, sx = zx + (zw - sq) / 2, sy = zy + 24;
+		const sq = 110, sx = zx + (zw - sq) / 2, sy = zy + 22;
 		ctx.fillStyle = `rgb(${ZVAL},${ZVAL},${ZVAL})`;
 		ctx.fillRect(sx, sy, sq, sq);
 		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
@@ -726,19 +855,28 @@ const ConvDemo = (() => {
 		ctx.fillStyle = '#0f172a';
 		ctx.font = '800 34px Inter, system-ui, sans-serif';
 		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-		ctx.fillText(ZVAL + '', zx + zw / 2, sy + sq + 34);
+		ctx.fillText(ZVAL + '', zx + zw / 2, sy + sq + 30);
 
-		const bw = 170, bx = zx + (zw - bw) / 2, by = zy + zh - 36;
-		const g = ctx.createLinearGradient(bx, 0, bx + bw, 0);
+		// Skala: schwarzes Beispiel-Quadrat (0) — Verlauf — weißes (255).
+		const cell = 40, gGap = 12;
+		const gX0 = zx + 24 + cell + gGap, gW = zw - 2 * (24 + cell + gGap);
+		const gY = zy + zh - 84;
+		ctx.fillStyle = '#000';
+		ctx.fillRect(zx + 24, gY, cell, cell);
+		const g = ctx.createLinearGradient(gX0, 0, gX0 + gW, 0);
 		g.addColorStop(0, '#000'); g.addColorStop(1, '#fff');
 		ctx.fillStyle = g;
-		ctx.fillRect(bx, by, bw, 10);
+		ctx.fillRect(gX0, gY, gW, cell);
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(zx + zw - 24 - cell, gY, cell, cell);
 		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
-		ctx.strokeRect(bx + .5, by + .5, bw - 1, 9);
+		ctx.strokeRect(zx + 24.5, gY + .5, zw - 49, cell - 1);
+
 		ctx.fillStyle = '#64748b';
 		ctx.font = '600 11px Inter, system-ui, sans-serif';
-		ctx.fillText('0', bx, by + 21);
-		ctx.fillText('255', bx + bw, by + 21);
+		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+		ctx.fillText('0', zx + 24 + cell / 2, gY + cell + 13);
+		ctx.fillText('255', zx + zw - 24 - cell / 2, gY + cell + 13);
 
 		// Verbindungslinie Pixel → Quadrat
 		if (o.a > 0.3) {
@@ -833,9 +971,11 @@ const ConvDemo = (() => {
 		const pos = S.step === 6 ? sweepPos(sweepT) : { fr: 0, fc: 0 };
 		const x = Math.floor(o.x + pos.fc * s), y = Math.floor(o.y + pos.fr * s);
 		const x1 = Math.ceil(o.x + (pos.fc + KW) * s), y1 = Math.ceil(o.y + (pos.fr + KH) * s);
-		const ri = Math.max(0, Math.min(OH - 1, Math.round(pos.fr)));
-		const ci = Math.max(0, Math.min(OW - 1, Math.round(pos.fc)));
-		const sc = SCORES[ri * OW + ci], hot = sc >= 4;
+		// Score wie im Text: während der Fahrt steht die Anzeige
+		// still (sonst wandert der Badge durch alle Zwischenzellen).
+		const ai = S.step === 6 ? shownAnchor(pos) : 0;
+		const a = ANCHORS[ai];
+		const sc = SCORES[a.fr * OW + a.fc], hot = sc >= 4;
 
 		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
 		ctx.fillRect(x, y, x1 - x, y1 - y);
@@ -863,26 +1003,28 @@ const ConvDemo = (() => {
 		steps: [
 			{ k: 'Schritt 1', t: 'Nehmen wir ein<br><em>Farbbild</em> einer Katze.',
 			  p: 'Jedes Pixel besteht aus Werten für Rot, Grün und Blau',
-			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
+			  c: '<span class="kz-chip">(32, 32, 3)</span>',
+			  i: 'Die <b>Shape</b> (32, 32, 3) liest sich so: 32 × 32 Pixel, drei Zahlen pro Pixel — Rot, Grün, Blau.' },
 			{ k: 'Schritt 2', t: 'Farbbilder haben<br><em>drei</em> Stapel.',
-			  p: 'Rot, Grün und Blau, drei eigene Zahlen-Raster',
-			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>' },
+			  p: 'Rot, Grün und Blau, drei eigene Zahlen-Raster · alle drei maximal = Weiß, alle drei 0 = Schwarz',
+			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">=</span><span class="kz-chip">3 × (32, 32)</span>',
+			  i: '(32, 32, 3) = 3 × (32, 32): dieselben Zahlen, nur aufgeteilt — ein eigenes 32 × 32-Raster pro Farbe.' },
 			{ k: 'Schritt 3', t: 'Ein Kanal ist nur<br><em class="gray">Grau</em>.',
 			  p: 'Wie hell der Pixel ist, sagt, wie stark die jeweilige Farbe aktiviert ist',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>' },
 			{ k: 'Schritt 4', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
-			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster:<br>hier die Form des <em>Auges</em>.',
-			  p: 'Die Form des Auges, als Muster aus 6 × 5 Werten',
+			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster für<br>einen <em>Bestandteil</em>.',
+			  p: 'Um Katzen zu erkennen, hilft es, Katzenaugen zu erkennen.',
 			  c: '<span class="kz-chip">(6, 5)</span>' },
 			{ k: 'Schritt 6', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
 			  p: `Punkt <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
 			  c: '<span class="kz-chip">(32, 32)</span><span class="kz-arrow">×</span><span class="kz-chip">(6, 5)</span>' },
 			{ k: 'Schritt 7', t: '… und <em>fließt</em> über<br>das ganze Bild.',
-			  p: `Block <b>1</b> von ${ANCH} · das Fenster hält auf jedem Pixel-Block`,
+			  p: `Block <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
 			  c: `<span class="kz-chip">(${OH}, ${OW})</span><span class="kz-arrow">→</span><span class="kz-chip g">(8, 8)</span>`,
-			  i: 'An jedem Platz <b>misst</b> der Filter, wie gut sein kleines Fenster zum <b>darunterliegenden</b> Bildstück passt: gleiche Werte = hohe Zahl, kaum Übereinstimmung = nahe 0.' },
+			  i: 'An jedem Platz <b>misst</b> der Filter, wie gut sein Fenster zum <b>darunterliegenden</b> Bildstück passt: gleiche Werte = hohe Zahl, kaum Übereinstimmung = nahe 0. Das Fenster <b>hält</b> kurz auf jedem Block.' },
 			{ k: 'Schritt 8', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
 			  p: `1024 Pixel → ${O8 * O8} Zahlen, und die Augen bleiben`,
 			  c: '<span class="kz-chip g">(8, 8)</span>',
@@ -893,6 +1035,7 @@ const ConvDemo = (() => {
 			const { W, H, inst } = S;
 			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, 13);
 			const imgW = KatzeKit.N * s, gapOut = 60, outW = O8 * s * 4;
+			tBwA = 0;
 			if (step === 0) {
 				// Farbbild: eine große farbige Katze in der Mitte.
 				const cs = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .6, 13);
@@ -902,23 +1045,42 @@ const ConvDemo = (() => {
 				});
 				tTagA = [0, 0, 0];
 				S.zoomX = null;
-			} else if (step === 1 || step === 2) {
-				// Drei Kanal-Stapel; ab Schritt 3 nur der Grün-Kanal (graustufen).
+			} else if (step === 1) {
+				// Drei Kanal-Stapel nebeneinander.
 				const g = Math.min(W * .035, 46);
 				const ss = Math.min((W - g * 2) / (KatzeKit.N * 3) * .96, H / KatzeKit.N * .82, 8);
 				const bw = KatzeKit.N * ss, tot = bw * 3 + g * 2, ox = (W - tot) / 2, oy = (H - bw) / 2 + 8;
 				inst.forEach((o, i) => {
 					o.ts = ss; o.tx = ox + i * (bw + g); o.ty = oy;
-					o.tmix = 1; o.ta = step === 1 ? 1 : (i === KatzeKit.PICK ? 1 : 0);
+					o.tmix = 1; o.ta = 1;
 				});
-				tTagA = step === 1 ? [1, 1, 1] : [0, 1, 0];
-				S.tGrayMix = step === 2 ? 1 : 0;
+				tTagA = [1, 1, 1];
+				S.tGrayMix = 0;
+			} else if (step === 2) {
+				// Nur noch der Grün-Kanal (graustufen), rückt nach
+				// links; rechts die zwei Beispiel-Pixel (0 = Schwarz,
+				// 255 = Weiß). Die beiden anderen Stapel bleiben stehen
+				// und blenden aus.
+				const cs = Math.min(H / KatzeKit.N * .72, W / KatzeKit.N * .4, 10);
+				const pairW = 200, gapP = 80;
+				const x0 = Math.max(12, (W - (KatzeKit.N * cs + gapP + pairW)) / 2);
+				inst.forEach((o, i) => {
+					if (i === KatzeKit.PICK) {
+						o.ts = cs; o.tx = x0; o.ty = (H - KatzeKit.N * cs) / 2 + 6;
+					}
+					o.tmix = 1; o.ta = i === KatzeKit.PICK ? 1 : 0;
+				});
+				tTagA = [0, 1, 0];
+				S.tGrayMix = 1;
+				tBwA = 1;
+				S.bwX = x0 + KatzeKit.N * cs + gapP;
+				S.bwY = (H - (72 + 60)) / 2;
 			} else if (step === 3) {
 				// Der Grün-Kanal (aus Schritt 2, bereits grau gemischt)
-				// fliegt aus der Mitte nach links, Bewegung statt
-				// Fade-Out. Zoom-Pixel rechts.
+				// fliegt nach links, Bewegung statt Fade-Out. Zoom-Panel
+				// rechts, mit den zwei Beispiel-Pixeln aus Schritt 3.
 				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .5, 10);
-				const zw = 230, zh = 250, gap = 90;
+				const zw = ZW, zh = ZH, gap = 90;
 				const x0 = (W - (KatzeKit.N * cs + gap + zw)) / 2;
 				inst.forEach((o, i) => {
 					o.ts = cs; o.tx = x0; o.ty = (H - KatzeKit.N * cs) / 2 + 6;
@@ -953,6 +1115,7 @@ const ConvDemo = (() => {
 			kerA = KatzeKit.lerp(kerA, tKerA, k * 1.2);
 			outA = KatzeKit.lerp(outA, tOutA, k * 1.2);
 			zoomA = KatzeKit.lerp(zoomA, tZoomA, k * 1.2);
+			bwA = KatzeKit.lerp(bwA, tBwA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
 			if (S.step !== 6) return;
 			// Blockweiser Sweep: Halten (DWELL) + weiche Fahrt (MOVE)
@@ -964,10 +1127,9 @@ const ConvDemo = (() => {
 						'<span class="kz-chip g">(8, 8)</span>');
 				}
 			} else {
-				const pos = sweepPos(sweepT);
-				const ri = Math.max(0, Math.min(OH - 1, Math.round(pos.fr)));
-				const ci = Math.max(0, Math.min(OW - 1, Math.round(pos.fc)));
-				setFoot(`Block <b>${pos.anchor + 1}</b> von ${ANCH} · Treffer: <b>${SCORES[ri * OW + ci]}</b> von ${TMAX}`,
+				const ai = shownAnchor(sweepPos(sweepT));
+				const a = ANCHORS[ai];
+				setFoot(`Block <b>${ai + 1}</b> von ${ANCH} · Treffer: <b>${SCORES[a.fr * OW + a.fc]}</b> von ${TMAX}`,
 					'<span class="kz-chip g">(8, 8)</span>');
 			}
 		},
@@ -986,9 +1148,11 @@ const ConvDemo = (() => {
 					ctx.globalAlpha = 1;
 				}
 			} else if (S.step === 1 || S.step === 2) {
-				// Kanal-Stapel; Schritt 3: nur der Grün-Kanal, fadet in Grau.
+				// Kanal-Stapel; Schritt 3: nur der Grün-Kanal, fadet in Grau,
+				// daneben die zwei Beispiel-Pixel (0 / 255).
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				KatzeKit.drawTags(ctx, S, tagA);
+				drawBWPair(ctx, S);
 			} else if (S.step === 3) {
 				// Der Grün-Kanal (inst[PICK], bereits grau gemischt)
 				// fliegt aus der Kanal-Mitte nach links, nicht ausblenden.
@@ -1045,8 +1209,10 @@ const FlattenDemo = (() => {
 		const railW = Math.min(S.W * .97, 1140);
 		const pw = railW / (KatzeKit.N * KatzeKit.N);
 		const rx = (S.W - railW) / 2;
-		const ry = o.y + KatzeKit.N * s + 46;
-		const rh = Math.min(S.H - ry - 4, 54);
+		// Schiene unten verankert (nicht unter der Katze): die
+		// Schrittlücke macht layoutFor, hier nur die feste Position.
+		const rh = 54;
+		const ry = S.H - 16 - rh;
 
 		if (railA > 0.01) {
 			ctx.globalAlpha = railA * 0.9;
@@ -1111,9 +1277,14 @@ const FlattenDemo = (() => {
 
 		layoutFor(step, S) {
 			const { W, H, inst } = S;
-			const gs = Math.min(H * .50 / 32, W * .30 / 32, 9.5);
+			// Platz zuerst für Schiene reservieren (Schiene + Abstand
+			// nach oben/unten), der Rest gehört der Katze — sonst
+			// bleibt unten ein großes Loch.
+			const railH = 54, gap = 46, top = 6, bottom = 16;
+			const gs = Math.min((H - top - gap - railH - bottom) / KatzeKit.N,
+				W * .30 / KatzeKit.N, 9.5);
 			inst.forEach((o, i) => {
-				o.ts = gs; o.tx = (W - 32 * gs) / 2; o.ty = 6;
+				o.ts = gs; o.tx = (W - 32 * gs) / 2; o.ty = top;
 				o.tmix = 1; o.ta = i === KatzeKit.PICK ? 1 : 0;
 			});
 			tTagA = [0, 0, 0]; tRailA = 1; S.tGrayMix = 1;
@@ -1133,7 +1304,7 @@ const FlattenDemo = (() => {
 			if (flatP >= 32) {
 				if (!flatMsg) {
 					flatMsg = 1;
-					setFoot('Fertig, <b>1024</b> Zahlen in einer einzigen Reihe',
+					setFoot('Fertig: <b>1024</b> Zahlen in einer Reihe — die Bildstruktur ist weg, es bleiben nur Pixeldaten.',
 						'<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span>');
 				}
 			} else {
@@ -1454,15 +1625,15 @@ const PipelineDemo = (() => {
 			  c: '<span class="kz-chip">(32, 32, 3)</span>' },
 			{ k: 'Schritt 2', t: 'Layer 1: Filter finden<br><em>Verläufe</em>.',
 			  p: 'Waagerecht, senkrecht, diagonal: Kanten',
-			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
+			  c: '',
 			  i: 'Im Bild steckt die Antwort <b>Katze/Hund</b> schon, versteckt unter tausend Details (kleiner Hund, schwarz-weiße, orange Katze …). Wir wollen nur <b>das eine</b>. <b>Layer 1</b> sucht nach Mustern im Bild, <b>Layer 2</b> sucht nach Mustern in dem, was Layer 1 gefunden hat, usw., so dass jede Schicht immer größere Muster erkennen kann.' },
 			{ k: 'Schritt 3', t: 'Layer 2: Daraus entstehen<br><em>Augen, Nase, Mund</em>.',
 			  p: 'Filter kombinieren Verläufe zu Formen',
-			  c: '<span class="kz-chip">(6, 5)</span><span class="kz-arrow">→</span><span class="kz-chip g">3 × (8, 8)</span>',
+			  c: '',
 			  i: '<b>Layer 2</b> reduziert weiter: aus Verläufen werden Formen. Was wir hier sehen (Augen, Nase, Mund), ist das <b>Ziel</b>, so soll es am Ende aussehen. Das Netz kann das aber noch gar nicht, es muss es sich erst antrainieren.' },
 			{ k: 'Schritt 4', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
 			  p: '64 Zahlen pro Karte, dicht verdrahtet',
-			  c: '<span class="kz-chip g">3 × (8, 8)</span><span class="kz-arrow">→</span><span class="kz-chip r">Dense</span>' },
+			  c: '' },
 			{ k: 'Schritt 5', t: 'Das <em>Ziel</em>:<br>Katze = <b>100 %</b>.',
 			  p: 'So soll es am Ende sein',
 			  c: '<span class="kz-chip g">Katze 100 %</span><span class="kz-arrow">·</span><span class="kz-chip g">Loss 0,000</span>',

@@ -865,6 +865,23 @@ body.sel-mode .sel-check { display: inline-flex; }
     display: block;
     text-align: center;
     white-space: nowrap;
+    overflow: hidden;
+}
+/* Fußzeile: der Text rollt in der Box heraus/rein, die Box selbst
+   bleibt stehen (statt komplett auszublenden). */
+.kz-roll {
+    display: block;
+    width: 100%;
+    text-align: center;
+    will-change: transform, opacity;
+}
+.kz-chips { overflow: hidden; }
+.kz-chips .kz-roll {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    width: auto;
 }
 .kz-pill b {
 	color: #f43f5e;
