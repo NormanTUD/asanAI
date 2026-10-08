@@ -922,6 +922,28 @@ body.sel-mode .sel-check { display: inline-flex; }
 	pointer-events: none;
 }
 .kz-insight.on { opacity: 1; transform: none; }
+/* T30: Graustufen-Matrix (LaTeX) rechts neben dem grauen Bild. Die
+   Canvas-Matrix wurde ersetzt: echte Werte aus dem Bild, schwarzweiß wie
+   das Graubild, skaliert mit dem Text (keine fixen px mehr). */
+.kz-stage .conv-matrix {
+	position: absolute;
+	right: 3.5%;
+	top: 50%;
+	transform: translateY(-50%);
+	opacity: 0;
+	pointer-events: none;
+	will-change: opacity;
+}
+.kz-stage .conv-matrix .math-display {
+	font-size: clamp(14px, 1.7vw, 23px);
+	color: #0d1117;
+}
+.kz-stage .conv-matrix .conv-matrix-cap {
+	text-align: center;
+	margin-top: 12px;
+	font: 600 13px ui-monospace, SFMono-Regular, Menlo, monospace;
+	color: #64748b;
+}
 
 /* ============ FOLIE "Dense Layer" (T20): Szene A (NeuronIntro) ↔ Szene B (SpaceMorph) ============ */
 #dl-scene-wrap { position: relative; width: 100%; max-width: 1340px; margin: 14px auto 0; height: 640px; }

@@ -229,7 +229,13 @@
                 <div class="kz-title" id="conv-title">Nehmen wir ein<br><em>Farbbild</em> einer Katze.</div>
             </div></div>
 
-            <div class="kz-stage"><canvas id="conv-cv"></canvas></div>
+            <div class="kz-stage">
+                <canvas id="conv-cv"></canvas>
+                <div class="conv-matrix" id="conv-matrix">
+                    <div class="math-display">$$\begin{bmatrix} 176 &amp; 176 &amp; 176 &amp; 20 &amp; \cdots \\ 176 &amp; 176 &amp; 20 &amp; 51 &amp; \cdots \\ 176 &amp; 20 &amp; 20 &amp; 51 &amp; \cdots \\ 20 &amp; 20 &amp; 20 &amp; 51 &amp; \cdots \\ \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \ddots \end{bmatrix}$$</div>
+                    <div class="conv-matrix-cap">(32, 32) · ein Wert (0–255) pro Pixel</div>
+                </div>
+            </div>
 
             <div class="kz-foot"><div class="kz-fswap" id="conv-fswap">
                 <div class="kz-pill" id="conv-pill">Jedes Pixel besteht aus Werten für Rot, Grün und Blau</div>
