@@ -150,3 +150,6 @@
 - Neue „idealisiert"-Folie kommt ganz **am Ende** (nach asanAI).
 - „Der blaue Pfeil" = der blaue Pixel-Zoom in ConvDemo (`drawPixelZoom`, `#2563eb`).
 - Farben Katze=grün / Hund=rot bleiben (Pipeline-Demos nutzen Grün für die „heiße" Katze).
+
+
+neu: von der folie "Klassisches Programmieren vs. KI" eher so zeigen dass es ne fkt ist die in latex ist beide male und beim einen mal provided der user ihre formale definition  mit soner großen klammer und if else und dann "fließen" beispiele durch so dass er zeile(0, 0 = 0\n1,0 = 0\nf(0,1) = 1 durchfließen sieht und die quasi wie sone alte uhr wo die aktuelle zeit immer da ist wo das f ist was inder mitte bleibt die anderen da durch rotieren

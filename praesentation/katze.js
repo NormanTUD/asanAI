@@ -55,6 +55,52 @@ const KatzeKit = (() => {
 	const GREEN = RGB.map(v => v[1]);
 	const PICK = 1; // Grün-Kanal
 
+	/* 32×32 ASCII-Hund (Jack-Russell-Kopf, aus hund.html) — für den
+	   Hund-Track (DenseRaum-Beispieldot + Pipeline-Training). */
+	const HUND_P = {
+		'.': '#A8D4E8', k: '#1A1A1A', b: '#D4823C',
+		w: '#FFFFFF', W: '#FFFFFF', n: '#1A1A1A', r: '#E84C4C'
+	};
+	const HUND_ART = [
+		"................................",
+		"....kkkk..............kkkk......",
+		"...kwwwk..............kwwwk.....",
+		"..kkwwbkk............kkbwwkk....",
+		"..kwwbbbbk..kkkkkk..kbbbbwwk....",
+		".kkwbbbbbbkkkwwwwkkkbbbbbbwkk...",
+		".kwwbbbbbbkkwwwwwwkkbbbbbbwwk...",
+		".kwbbbbbbbkwwwwwwwwkbbbbbbbwk...",
+		".kwbbbbbbbkwwwwwwwwkbbbbbbbwk...",
+		".kwbbbbbbkkwwwwwwwwkkbbbbbbwk...",
+		".kkwbbbbkkwwwwwwwwwwkkbbbbwkk...",
+		"..kkwwkkkwwwwwwwwwwwwkkkwwkk....",
+		"...kkkkbkkwwwwwwwwwwkkbkkkk.....",
+		"....kbbbbkwwwwwwwwwwkbbbbk......",
+		"....kbbkkkkwwwwwwwwkkkkbbk......",
+		"....kbkWWkbkwwwwwwkbkWWkbk......",
+		"....kbkWWkbkwwwwwwkbkWWkbk......",
+		"....kbbkkkbkwwwwwwkbkkkbbk......",
+		"....kbbbbbbkwwwwwwkbbbbbbk......",
+		".....kbbbbbkwwwwwwkbbbbbk.......",
+		".....kkbbbbkwwwwwwkbbbbkk.......",
+		"......kkbbkkwwwwwwkkbbkk........",
+		".......kkkwwwwwwwwwwkkk.........",
+		"........kwwwwnnnnwwwwk..........",
+		"........kwwwnnnnnnwwwk..........",
+		"........kwwwnnnnnnwwwk..........",
+		"........kwwwwnnnnwwwwk..........",
+		".........kwwwwrrwwwwk...........",
+		".........kwwwwwwwwwwk...........",
+		"..........kwwwwwwwwk............",
+		"...........kkwwwwkk.............",
+		".............kkkk..............."
+	];
+	const HUND_RGB = [];
+	for (let r = 0; r < N; r++) {
+		const row = (HUND_ART[r] || '').padEnd(N, '.');
+		for (let c = 0; c < N; c++) HUND_RGB.push(hex(HUND_P[row[c]] || HUND_P['.']));
+	}
+
 	/* ═══════════ Helpers ═══════════ */
 	const lerp = (a, b, t) => a + (b - a) * t;
 	const eInOut = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
@@ -88,6 +134,23 @@ const KatzeKit = (() => {
 			for (let c = 0; c < N; c++) {
 				const x = o.x + c * s, xw = Math.ceil(x + s) - Math.floor(x);
 				ctx.fillStyle = colorOf(r * N + c, ch, o.mix, ch === PICK ? grayMix : 0);
+			ctx.fillRect(Math.floor(x), Math.floor(y), xw, yh);
+		}
+	}
+	ctx.globalAlpha = 1;
+}
+
+	// Hund-Raster als farbiges Raster (volle Farbe, kein Kanal-Ton).
+	function drawGridHund(ctx, o) {
+		if (o.a < 0.005) return;
+		ctx.globalAlpha = o.a;
+		const s = o.s;
+		for (let r = 0; r < N; r++) {
+			const y = o.y + r * s, yh = Math.ceil(y + s) - Math.floor(y);
+			for (let c = 0; c < N; c++) {
+				const col = HUND_RGB[r * N + c];
+				const x = o.x + c * s, xw = Math.ceil(x + s) - Math.floor(x);
+				ctx.fillStyle = `rgb(${col[0]},${col[1]},${col[2]})`;
 				ctx.fillRect(Math.floor(x), Math.floor(y), xw, yh);
 			}
 		}
@@ -482,7 +545,8 @@ const KatzeKit = (() => {
 		return { init, reset, clear, next, prev, canGoNext, canGoPrev, getState, setState };
 	}
 
-	return { create, lerp, eInOut, roundRect, drawGrid, drawTags, N, PICK, GREEN, YELLOW, RGB };
+	return { create, lerp, eInOut, roundRect, drawGrid, drawGridHund, drawTags, N, PICK, GREEN, YELLOW, RGB,
+	         HUND_ART, HUND_RGB };
 })();
 
 // ============================================================
