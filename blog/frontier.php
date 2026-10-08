@@ -12,11 +12,13 @@ tags: interested-layman
 -->
 
 <div class="md">
-This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized. Some will become textbook material in two years; others will fade. Knowing the landscape keeps you ahead of the curve.
+This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized. Some will become textbook material in two years; others will fade. Knowing the landscape keeps you ahead of the curve. The topics are grouped into six themes, then closed with the open questions that define the field.
 </div>
 
 <div class="md">
-## Constitutional AI (CAI)
+## Alignment
+
+### Constitutional AI (CAI)
 
 Bai et al. (Anthropic, 2022) replaced most of (\cite[Ouyang et al., 2022]{ouyang2022instructgpt})'s human-labelling with **AI self-critique against a written constitution**:
 
@@ -31,8 +33,12 @@ A typical constitution entry: *“Which response is more honest? Response A stat
 CAI reduces human labelling by ~10× while matching (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}) on harmlessness benchmarks. Anthropic uses CAI for Claude 2/3/4. The same approach underlies **self-critique** in many production systems.
 </div>
 
+<div class="md">
+## Interpretability
+</div>
+
 <div class="md" data-mathlevel="60" data-optionaltitle="Sparse Autoencoders (SAE loss)">
-## Sparse Autoencoders (SAEs) for Interpretability
+### Sparse Autoencoders (SAEs) for Interpretability
 
 The interpretability chapter covered **circuits**. A complementary approach: **decompose activations into sparse, interpretable features**.
 
@@ -52,7 +58,46 @@ The “**Golden Gate Claude**” demonstration (\cite[Templeton et al., 2024]{an
 </div>
 
 <div class="md">
-## Long Context Beyond a Million Tokens
+### Mechanistic Interpretability Frontier
+
+From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:
+
+* **Sparse autoencoders** (see above), millions of features per model.
+* **Causal scrubbing** (\cite[Redman et al., 2024]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
+* **Cross-model universality**: do circuits transfer across models? Yes, partially, “induction heads” appear in every Transformer.
+* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** (\cite[Zou et al., 2023]{zou2023repeng}) is the umbrella term.
+
+The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
+</div>
+
+<div class="md">
+## Reasoning and Inference-Time Compute
+
+### Process Reward Models in Production
+
+Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer. In production:
+
+* **\citealternativetitle{zhang2024mathshepherd}**: auto-labels step correctness by checking if subsequent steps can reach the answer.
+* **Critic models** (Qwen, DeepSeek): separate models trained to score the quality of intermediate steps.
+* **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math (o1-mini with PRM ≈ GPT-4 on AIME).
+
+The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 10–20% of queries.
+</div>
+
+<div class="md">
+### Test-Time Training
+
+A 2024 idea: **train at inference time on the test input itself**. \cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
+
+For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.
+
+The trade-off: latency. (\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
+</div>
+
+<div class="md">
+## Scale and Efficiency
+
+### Long Context Beyond a Million Tokens
 
 The 2024–2025 long-context arms race:
 
@@ -75,20 +120,8 @@ The **lost-in-the-middle** problem remains: models perform best on information a
 For evaluation, **needle-in-a-haystack** tests are now standard: insert a specific fact at a random position; ask the model to retrieve it. Performance degrades as context length grows.
 </div>
 
-<div class="md">
-## Process Reward Models in Production
-
-Recall from the Reasoning chapter: a **Process Reward Model** scores every step of a CoT, not just the final answer. In production:
-
-* **\citealternativetitle{zhang2024mathshepherd}**: auto-labels step correctness by checking if subsequent steps can reach the answer.
-* **Critic models** (Qwen, DeepSeek): separate models trained to score the quality of intermediate steps.
-* **Tree search**: best-of-N with PRM-guided search gives dramatic improvements on hard math (o1-mini with PRM ≈ GPT-4 on AIME).
-
-The trade-off: PRMs add 2–5× inference cost. Used selectively on the hardest 10–20% of queries.
-</div>
-
 <div class="md" data-mathlevel="45" data-optionaltitle="Mixture of Depths (MoD) routing">
-## Mixture of Depths (MoD)
+### Mixture of Depths (MoD)
 
 Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\cite[Bubeck et al., 2023]{bubeck2023moeoverview}). Easy tokens skip; hard tokens use full depth.
 
@@ -102,17 +135,9 @@ Related: **early exit** (\cite[Elhoushi et al., 2024]{elhoushi2024early}), **con
 </div>
 
 <div class="md">
-## Test-Time Training
+## Agents and Embodiment
 
-A 2024 idea: **train at inference time on the test input itself**. \cite[Sun et al. (2024)]{sun2024ttt} showed that fine-tuning a small adapter on the test prompt's distribution before answering improves performance on distribution-shifted tasks.
-
-For a hard reasoning problem: take the prompt, generate some self-supervised variants, train a tiny LoRA on them, then answer. Especially powerful when the test domain differs from pretraining.
-
-The trade-off: latency. (\cite[Sun et al., 2024]{sun2024ttt}) adds seconds-to-minutes per query. Useful for offline batch processing, not real-time chat.
-</div>
-
-<div class="md">
-## Agentic Architectures
+### Agentic Architectures
 
 See the AI Agents chapter for the basics. Frontier developments:
 
@@ -126,7 +151,7 @@ A 2025 benchmark (GAIA, Mialon et al., Meta) tests realistic agent tasks: “fin
 </div>
 
 <div class="md">
-## World Models and Embodied AI
+### World Models and Embodied AI
 
 LLMs reason in language; **world models** reason in simulation. Yann LeCun has argued for years that LLMs lack the grounding necessary for true intelligence, and **Joint Embedding Predictive Architectures** (JEPA) are his proposed alternative.
 
@@ -142,7 +167,9 @@ The hypothesis: **true general intelligence requires internal simulation of cons
 </div>
 
 <div class="md">
-## Multilingual and Low-Resource AI
+## Language and Memory
+
+### Multilingual and Low-Resource AI
 
 LLMs are still **predominantly English-centric** in training:
 
@@ -163,7 +190,7 @@ The challenge: high-quality training data in these languages is scarce. Solution
 </div>
 
 <div class="md">
-## Memory and Continual Learning
+### Memory and Continual Learning
 
 LLMs are **stateless**: they don't learn from interactions. Every conversation starts fresh. The 2024–2025 frontier in long-term memory:
 
@@ -175,19 +202,6 @@ LLMs are **stateless**: they don't learn from interactions. Every conversation s
 * **Continual learning**: training on a stream of new data without forgetting old. Still unsolved at frontier scale.
 
 For practical deployments: a good **memory + retrieval layer** is more useful than a longer context window.
-</div>
-
-<div class="md">
-## Mechanistic Interpretability Frontier
-
-From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:
-
-* **Sparse autoencoders** (see above), millions of features per model.
-* **Causal scrubbing** (\cite[Redman et al., 2024]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
-* **Cross-model universality**: do circuits transfer across models? Yes, partially, “induction heads” appear in every Transformer.
-* **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** (\cite[Zou et al., 2023]{zou2023repeng}) is the umbrella term.
-
-The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
 </div>
 
 <div class="md">

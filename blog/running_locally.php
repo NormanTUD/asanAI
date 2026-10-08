@@ -14,11 +14,13 @@ tags: code-heavy
 <div class="md">
 You don't need a GPU cluster to run a powerful LLM. A quantized 70B model runs on a MacBook. A 7B model in int4 fits on a phone. The local-LLM ecosystem in 2025 is mature enough for serious work: privacy-preserving inference, offline use, fine-tuning on consumer hardware, and even agents that never touch the cloud.
 
-This chapter covers the practical stack: from llama.cpp's GGUF format to Ollama's one-line setup.
+This chapter covers the practical stack: from the hardware and file formats, through the engines and tools, to fine-tuning, and closes with the case for running locally.
 </div>
 
 <div class="md">
-## The Hardware Reality
+## Hardware and Formats
+
+### The Hardware Reality
 
 A consumer GPU in 2025:
 
@@ -35,7 +37,7 @@ The **unified memory** on Apple Silicon is the killer feature: you can use 64–
 </div>
 
 <div class="md">
-## GGUF: The Universal Format
+### GGUF: The Universal Format
 
 **GGUF** (GPT-Generated Unified Format) is the de facto standard for local LLMs, designed by Georgi Gerganov for **llama.cpp**. Every popular open model is published in GGUF.
 
@@ -59,7 +61,9 @@ A rule of thumb: **Q4_K_M is the sweet spot** for most local use. Q5_K_M for qua
 </div>
 
 <div class="md">
-## llama.cpp: The Reference Engine
+## Engines and Tools
+
+### llama.cpp: The Reference Engine
 
 **llama.cpp** ([github.com/ggerganov/llama.cpp](https://github.com/ggerganov/llama.cpp)) (\cite[Gerganov, 2023]{gerganov2023llamacpp}) is a C++ inference engine, originally designed to run Llama 7B on a MacBook. It now supports:
 
@@ -87,7 +91,7 @@ Performance: a 70B Q4_K_M on M3 Max generates ~10–15 tokens/second. A 7B Q4_K_
 </div>
 
 <div class="md">
-## Ollama: One-Line Local LLMs
+### Ollama: One-Line Local LLMs
 
 **Ollama** ([ollama.com](https://ollama.com)) (\cite[Ollama, 2024]{ollama2024}) wraps llama.cpp in a clean interface:
 
@@ -115,7 +119,7 @@ The [Ollama model library](https://ollama.com/library) has thousands of communit
 </div>
 
 <div class="md">
-## LM Studio: GUI for Local LLMs
+### LM Studio: GUI for Local LLMs
 
 **LM Studio** ([lmstudio.ai](https://lmstudio.ai)) (\cite[LM Studio, 2024]{lmstudio2024}) is the desktop app version: search, download, chat, and run a local API. Built on llama.cpp but with a polished UI. Targets non-technical users.
 
@@ -129,7 +133,7 @@ For most people, LM Studio is the easiest entry point. For developers, Ollama or
 </div>
 
 <div class="md">
-## Other Local Tools
+### Other Local Tools
 
 * **Jan** (https://jan.ai): open-source desktop client, similar to LM Studio.
 * **GPT4All** (Nomic): local model runner with retrieval built in.
@@ -145,7 +149,9 @@ For Python notebooks: **transformers + accelerate + bitsandbytes** loads any Hug
 </div>
 
 <div class="md">
-## Fine-Tuning Locally
+## Fine-Tuning and Customization
+
+### Fine-Tuning Locally
 
 The 2024–2025 democratization of fine-tuning is real:
 
@@ -167,7 +173,9 @@ Total time: an afternoon for a small fine-tune. Cost: your electricity.
 </div>
 
 <div class="md">
-## What You Can Realistically Do Locally
+## The Case for Local
+
+### What You Can Realistically Do Locally
 
 A 7B model on a modern laptop:
 
@@ -195,7 +203,7 @@ The gap is closing: by 2026, expect frontier-quality 70B models running comforta
 </div>
 
 <div class="md">
-## The Privacy Argument
+### The Privacy Argument
 
 For many organizations, **local inference is mandatory**:
 
@@ -209,7 +217,7 @@ The local-LLM ecosystem in 2025 makes this practical. A small fine-tune on inter
 </div>
 
 <div class="md">
-## Local vs Cloud: The Decision Matrix
+### Local vs Cloud: The Decision Matrix
 
 | Consideration | Local | Cloud |
 |--------------|-------|-------|
