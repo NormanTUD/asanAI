@@ -1742,13 +1742,15 @@ const PipelineKit = (() => {
 		arrow(ctx, g.denseX + g.denseW + 10, g.cyMid, g.nCx - g.rN - 10, H * .32, o.aOut);
 		arrow(ctx, g.denseX + g.denseW + 10, g.cyMid, g.nCx - g.rN - 10, H * .74, o.aOut);
 
-		// Eingang: Farb-Katze
+		// Eingang: Farb-Katze, oder (während des Trainings, o.mixCD>0) ein
+		// Crossfade Katze↔Hund — das Netz lernt an beiden Klassen.
 		if (o.aCat > 0.01) {
-			ctx.globalAlpha = o.aCat;
-			KatzeKit.drawGrid(ctx, cat, 0, 0);
+			const mcd = o.mixCD || 0;
+			const aC = o.aCat * (1 - mcd), aD = o.aCat * mcd;
+			if (aC > 0.01) { ctx.globalAlpha = aC; KatzeKit.drawGrid(ctx, cat, 0, 0); ctx.globalAlpha = 1; }
+			if (aD > 0.01) { ctx.globalAlpha = aD; KatzeKit.drawGridHund(ctx, cat); ctx.globalAlpha = 1; }
 			ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 			ctx.strokeRect(cat.x + .5, cat.y + .5, g.ch - 1, g.ch - 1);
-			ctx.globalAlpha = 1;
 		}
 
 		// Layer 1 = Verläufe, bleibt stehen, wenn Layer 2 erscheint.
@@ -1783,9 +1785,10 @@ const PipelineKit = (() => {
 		// Dense
 		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense);
 
-		// Ausgabe-Neuronen (Katze oben, Hund unten)
+		// Ausgabe-Neuronen (Katze oben, Hund unten) — im Training folgt die
+		// Hot-Markierung dem aktuellen Eingangs-Bild (Katze oder Hund).
 		drawNeuron(ctx, g.nCx, H * .32, g.rN, 'Katze', o.outP.pCat + ' %', o.outP.hotCat, o.aOut);
-		drawNeuron(ctx, g.nCx, H * .74, g.rN, 'Hund', o.outP.pDog + ' %', false, o.aOut);
+		drawNeuron(ctx, g.nCx, H * .74, g.rN, 'Hund', o.outP.pDog + ' %', o.outP.hotDog || false, o.aOut);
 
 		// Loss-Panel rechts neben den Neuronen
 		const pwP = 175, phP = 130;
@@ -1835,6 +1838,7 @@ const PipelineDemo = (() => {
 	let aLoss = 0, tLossA = 0;
 	let aLabel = 0, tLabelA = 0;
 	let trainP = 0, trainMsg = 0;
+	let cdT = 0;                  // Training: Phase für den Katze↔Hund-Wechsel im Eingangs-Bild
 	let entrancePending = false;
 	let entrancePlayed = false;   // Einstieg nur einmal, sonst Flash bei jedem Wiederauftauchen
 
@@ -1913,7 +1917,7 @@ const PipelineDemo = (() => {
 		},
 
 		onStep(step) {
-			if (step === 6) { trainP = 0; trainMsg = 0; }
+			if (step === 6) { trainP = 0; trainMsg = 0; cdT = 0; }
 			if (step === 0 && !entrancePlayed) entrancePending = true;
 		},
 
@@ -1929,15 +1933,22 @@ const PipelineDemo = (() => {
 			if (S.step !== 6) return;
 			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
+			// Eingangs-Bild wechselt abwechselnd Katze↔Hund (das Netz lernt
+			// an beiden Klassen) — ein vollständiger Wechselschritt alle ~1,5 s.
+			cdT += dt / (60 * 1.5);
+			const tri = 1 - Math.abs(1 - (cdT % 2));
+			const mixCD = tri * tri * (3 - 2 * tri);   // 0 = Katze, 1 = Hund
+			const conf = Math.round(PipelineKit.trainPct(trainP));
+			const dog = mixCD >= 0.5;
 			if (trainP >= 1) {
 				if (!trainMsg) {
 					trainMsg = 1;
-					setFoot('Katze: <b>95 %</b> · Loss <b>0,051</b>, fast sicher Katze',
-						'<span class="kz-chip g">Katze 95 %</span>');
+					setFoot(`${dog ? 'Hund' : 'Katze'}: <b>95 %</b> · Loss <b>0,051</b>, fast sicher ${dog ? 'Hund' : 'Katze'}`,
+						`<span class="kz-chip g">${dog ? 'Hund 95 %' : 'Katze 95 %'}</span>`);
 				}
 			} else {
-				const p = Math.round(PipelineKit.trainPct(trainP));
-				setFoot(`Training … · Katze <b>${p} %</b> · Loss <b>${PipelineKit.fmtLoss(PipelineKit.lossOf(p))}</b>`,
+				const p = conf;
+				setFoot(`Training … · ${dog ? 'Hund' : 'Katze'} <b>${p} %</b> · Loss <b>${PipelineKit.fmtLoss(PipelineKit.lossOf(p))}</b>`,
 					'<span class="kz-chip g">Loss ↓</span>');
 			}
 		},
@@ -1950,20 +1961,30 @@ const PipelineDemo = (() => {
 			// flackern → danach ist die Entscheidung gefallen.
 			const flick = S.step === 6 ? Math.max(0, (0.6 - trainP) / 0.6) : 0;
 
+			// Training (Schritt 7): das Eingangs-Bild wechselt abwechselnd
+			// Katze↔Hund (das Netz lernt an beiden Klassen); die Ausgabe
+			// folgt dem Bild, die Sicherheit steigt mit trainP.
+			const tri = 1 - Math.abs(1 - (cdT % 2));
+			const mixCD = S.step === 6 ? (tri * tri * (3 - 2 * tri)) : 0;
+
 			// Ausgabe: Ziel (4) = 100 %, Ergebnis (7) = 95 %, am
-			// Anfang (5) 50:50, im Training (6) rutscht es Richtung 95 %.
-			let pCat = 100, pDog = 0, hotCat = true;
+			// Anfang (5) 50:50, im Training (6) folgt dem Eingangs-Bild.
+			let pCat = 100, pDog = 0, hotCat = true, hotDog = false;
 			if (S.step === 5) { pCat = 50; pDog = 50; hotCat = false; }
 			else if (S.step === 6) {
-				const p = Math.round(PipelineKit.trainPct(trainP));
-				pCat = p; pDog = 100 - p; hotCat = pCat >= 90;
+				const conf = Math.round(PipelineKit.trainPct(trainP));
+				const dog = mixCD >= 0.5;
+				pCat = dog ? (100 - conf) : conf;
+				pDog = dog ? conf : (100 - conf);
+				const hi = conf >= 90;
+				hotCat = !dog && hi; hotDog = dog && hi;
 			}
 			else if (S.step === 7) { pCat = 95; pDog = 5; }
 
 			PipelineKit.drawScene(ctx, S.W, S.H, cat, g, {
 				aCat, aConv, aEdge, aPart, aDense, aOut, aLoss, aLabel,
-				clarity, flick, step: S.step, trainP,
-				outP: { pCat, pDog, hotCat }
+				clarity, flick, step: S.step, trainP, mixCD,
+				outP: { pCat, pDog, hotCat, hotDog }
 			});
 		}
 	});
