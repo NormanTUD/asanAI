@@ -2,7 +2,8 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: Anfang (Analyse von index.html + JS-Framework).
+> Letzte Aktualisierung: T1, T2, T3, T6, T10 fertig; T5 (Bug) fertig / Titel offen;
+> alle 5 Fragen beantwortet. Nächstes: T4/Q3 (dynamisches Ziel) + T7 (Hund-Track).
 
 ## Dateien die ich analysiert habe
 - `index.html` — 13 Folien, Reihenfolge unten.
@@ -25,48 +26,53 @@
 · 5. Drei Bausteine (Zielzustand) · 6. ConvDemo „Jeder Pixel ist nur eine Zahl"
 · 7. Flatten · 8. Was sind Dense Layer? (NeuronIntro) · 9. Was machen Dense Layer? (SpaceMorph)
 · 10. Vom Bild zu Punkten (DenseRaum) · 11. Der gesamte Prozess (Pipeline)
-· 12. Convolutions (Hierarchy) · 13. asanAI.
+· 12. Convolutions (Hierarchy) · 13. asanAI · 14. Alles idealisiert (neu, T1).
 
 ---
 
 ## Aufgaben
 
-### T1 · Neue Folie am Ende: „Alles idealisiert"  `[ ]`
-- Inhalt: Das bisher Gezeigte ist **idealisiert**. Filter **müssen** nicht „Augen" lernen
-  (können es aber). Sie lernen, **möglichst gut auf die Trainingsdaten** zu passen.
-- Beispiel: Kategorie „Auto", alle Autos vor **blauem Himmel** → das Netz lernt den
-  **blauen Himmel** (weil das der einfache Shortcut ist), nicht das Auto.
-- **Bild**: „creative crommons" — **UNKLAR** (siehe Frage 1). Ich kann es nicht suchen/lesen.
-- Platz: „am Ende" (nach asanAI? oder vor asanAI?) — siehe Annahmen.
+### T1 · Neue Folie am Ende: „Alles idealisiert"  `[x]`
+- ✅ Fertig: neue Folie 14 `id="slide-idealisiert"` ganz am Ende (nach asanAI), `node --check` + headless clean.
+- Inhalt: idealisiert; Filter müssen nicht „Augen" lernen → passen an Trainingsdaten.
+  Beispiel Auto vor blauem Himmel → lernt den Himmel (Shortcut). + Abschluss-Key-Insight.
+- **Bild** (Q1 beantwortet): LKW-Foto, URL in HTML-Kommentar als CC-Credit:
+  `https://i1.pickpik.com/photos/518/540/912/truck-antique-mexico-cozumel-preview.jpg`
+  → lokal `img/truck-antique-mexico-cozumel-preview.jpg`.
 
-### T2 · Folie 4 „Man arbeitet in Schichten": `[Image 1]` entfernen  `[ ]`
+### T2 · Folie 4 „Man arbeitet in Schichten": `[Image 1]` = `dense.png` entfernen  `[x]`
 - **Annahme**: `[Image 1]` = `img/dense.png` (das erste Bild der Folie). → `<img src="img/dense.png">` löschen.
 - `first_layers_vs_last_layers.png` bleibt VORBESTAND, wird aber in T3 ersetzt.
 - ⚠️ Falls `[Image 1]` = first_layers gemeint war: umkehren (bestätigt in der Antwort?).
 
-### T3 · `first_layers_vs_last_layers.png` ersetzen (Gesicht-Hierarchie)  `[ ]`
-- Statt Screenshot: Konzept **Gesichtserkennung ist schwer → leichter: Augen, Nase, Mund
-  erkennen → daraus das Gesicht. Aber wie baut man die? → leichter: gerade + gekrümmte
-  Linien erkennen (als Auge) → also startet man dort.**
-- + „Das tolle: der Computer **lernt selbst**, worauf er achten muss."
-- Umsetzung: wahrscheinlich als **neues Canvas-/ASCII-Visual** (kein externer Screenshot).
-  → Design-Entscheidung (Konsistenz mit Folie 11 „Layer 2 = Augen/Nase/Mund").
+### T3 · `first_layers_vs_last_layers.png` ersetzen (Gesicht-Hierarchie)  `[x]`
+- ✅ Fertig: `first_layers_vs_last_layers.png` durch **Inline-SVG-Hierarchie** ersetzt (Folie 4),
+  headless clean. 3 Ebenen (früh=Linien blau → mittel=Augen/Nase/Mund amber → spät=Gesicht grün)
+  mit nach-oben Pfeilen + Note „Das Netz lernt selbst, worauf es achten muss".
+- Konsistent zu Folie 11 (Layer 2 = Augen/Nase/Mund) und Katze=grün-Legende.
 
-### T4 · Ziel-Folie (Folie 5): „Katze = 100 %" als Ziel, Training endet bei 95 %  `[ ]`
-- Aktuell: Key-Insight „Katze ≈ 95 %". → soll „**Katze = 100 %**" (das **Ziel**) sagen.
-- Das **Training** (Pipeline, Schritt 8) endet bei **95 %** (bleibt so).
-- ⚠️ Statische Grafik `pipeline_ziel.png` (Screenshot, zeigt 95 %) — ich kann sie nicht
-  lesen/neu rendern. → **Frage 3**.
-- Achtung: PipelineDemo hat bereits P_GOAL=100 / P1=95 (Schritt 5 = Ziel 100 %, Schritt 8 = 95 %).
-  Die **Text-Folie 5** ist noch inkonsistent (sagt 95 %) → auf 100 % bringen.
+### T4 · Ziel-Folie (Folie 5): „Katze = 100 %" als Ziel, Training endet bei 95 %  `[x]`
+- ✅ Fertig: Key-Insight → „**Katze = 100 %**" (Ziel). `pipeline_ziel.png` **entfernt**, ersetzt
+  durch **Live-Canvas** `#goal-cv` (always visible, `.kz-stage` 38vh) → `PipelineGoalDemo` rendert
+  das Ziel dynamisch (Katze 100 %, Loss 0,000).
+- **Refactor (Q3 „wiederverwenden")**: PipelineDemo-Zeichnerei in geteiltes `PipelineKit`
+  (EDGE_MAPS/MAPS, Lernkurve, arrow/Maps/Dense/Neuronen/Loss-Panel, `geom()`, `drawScene()`).
+  PipelineDemo (animiert, Folie 11) + PipelineGoalDemo (statisches Ziel, Folie 5) nutzen beide
+  `PipelineKit.drawScene`. `PipelineKit` auf `window` (testbar).
+- **Verifiziert**: `node --check` + node-Harness (drawScene in 5 Zuständen) + headless Folie 5 & 11 clean.
+- Training (Folie 11, Schritt 8) endet weiterhin bei **95 %** (unverändert).
 
-### T5 · Folie 6 (ConvDemo) Bug: kein Titel + Bild „springt rein"  `[ ]`
-- (a) Folie hat **kein `<h2>`** wie die anderen (nutzt dynamische `kz-title`). → konsistent machen.
-- (b) **Bug**: Beim (Re-)Laden ist das Bild sofort da → verschwindet → taucht erst animiert auf.
-  Ursache vermute ich in `init()`/Erst-Frame vs. Entrance-Alpha (PipelineDemo hat `entrancePlayed`-
-  Guard, ConvDemo nicht). → reproduzieren & fixen.
+### T5 · Folie 6 (ConvDemo) Bug: kein Titel + Bild „springt rein"  `[~]`
+- (b) **Bug (FIX, `[x]`)**: Bild „springt rein" behoben. Ursache: `resize()` setzte bei jedem
+  Layout-Pass `cv.width/height` neu → Canvas wird gezwittrt (schwarz) → Bild flackert/„springt".
+  Fix in `katze.js`: `resize()` setzt width/height nur wenn sich was geändert hat; neu `clear()`
+  (weiß füllen, Transform zurück); `presentation.js` convolution `onEnter` → `d.clear()` + `init()`
+  nach 80 ms. `node --check` + headless clean.
+- (a) **Titel (OFFEN, deferred)**: Folie 6 nutzt dynamische `kz-title` statt `<h2>` — aber das
+  tun Folien 6/7/10/11 ALLE (kz-Framework). Ein `<h2>` würde doppeln. → Bewusst offen lassen,
+  außer Norman will es explizit.
 
-### T6 · Underbrace unter x (Folie 8, NeuronIntro)  `[ ]`
+### T6 · Underbrace unter x (Folie 8, NeuronIntro)  `[x]`
 - Unter der x-Spalte in Szene 2 ein **`\underbrace{...}_{\text{das Bild}}`** setzen
   (analog zu „lernbar" unter W und B).
 
@@ -97,7 +103,8 @@
   die Filter-/Sweep-/8×8-Schritte ziehen auf die neue Folie.
 - ⚠️ Verändert die Schrittanzahl von ConvDemo + DemoRegistry-Eintrag + Folienanzahl (13 → 14+).
 
-### T10 · Terminologie — zwei VERSCHIEDENE Dinge sauber trennen  `[ ]`
+### T10 · Terminologie — zwei VERSCHIEDENE Dinge sauber trennen  `[x]`
+- (DenseRaum-Teil „Faltung" wird in T11 gesetzt.)
 - **Normans Klarstellung**: „die Faltung des Raumes" ≠ „die Convolution".
   - **Layer-Typen / die Convolution** (Filter, Strukturen erkennen) → **„Convolutions"** (Fachbegriff, bleibt).
   - **die Faltung** = das **Wölben/Krümmen des (Merkmals-)Raums** durch eine Schicht
@@ -129,16 +136,14 @@
 
 ---
 
-## Offene Fragen (5) — warte auf Antwort
-1. **Blaues-Himmel-Bild / „creative crommons"**: Was ist das? Bild/URL liefern,
-   selbst nachbauen, oder bestimmtes Meme?
-2. ~~**Begriff** Faltung vs. Convolution~~ ✅ **beantwortet**: Layer-Typen = „Convolutions",
-   Raumkrümmung = „Faltung" (→ T10).
-3. **Ziel-Folie PNG**: `pipeline_ziel.png` (Screenshot, 95 %) — Live-Canvas nachbauen,
-   nur Text ändern, oder neues 100 %-Bild von Norman?
-4. **Hund-Track Umfang**: nur Key-Points (Ziel+Training+1 Dot), oder alle katzen-Folien
-   auf Katze+Hund umstellen?
-5. **RGB-Matrix (Folie 6)**: neuer Schritt nach „Pixel = Zahl", Schritt ersetzen, oder eigene Folie?
+## Offene Fragen (5) — alle beantwortet ✅
+1. **Blaues-Himmel-Bild** ✅ = LKW-Foto (Pickpik), Creative Commons. URL in HTML-Kommentar als
+   CC-Credit; lokal `img/truck-antique-mexico-cozumel-preview.jpg`. → T1.
+2. **Begriff** Faltung vs. Convolution ✅: Layer-Typen = „Convolutions", Raumkrümmung = „Faltung" (→ T10).
+3. **Ziel-Folie PNG** ✅: `pipeline_ziel.png` **entfernen** und das Ziel **dynamisch** generieren,
+   wiederverwendend aus der Trainings-Animation (PipelineDemo), „Katze = 100 %". → T4.
+4. **Hund-Track Umfang** ✅: Hund nur in **Ziel + Training**, **1×** gezeigt, Deck bleibt **katzenzentriert**. → T7.
+5. **RGB-Matrix (Folie 6)** ✅: **neuer Schritt** nach „Jeder Pixel ist nur eine Zahl" (nicht eigene Folie). → T8.
 
 ## Annahmen (bitte bei Gelegenheit bestätigen)
 - `[Image 1]` = `dense.png` (T2).

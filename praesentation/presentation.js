@@ -50,7 +50,9 @@ const DemoRegistry = (() => {
                 // große Pixel. 8 Schritte über Pfeiltasten.
                 { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
-                        onEnter: d => setTimeout(() => d.init(), 80),
+                        // clear() radt das Stale-Frame, sonst schlaegt kurz
+                        // das volle Bild des letzten Besuchs durch.
+                        onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
                         onLeave: d => d.reset() },
 
                 // "Was macht Flatten?" (katze.js), Katze-Framework:
@@ -68,6 +70,15 @@ const DemoRegistry = (() => {
                 // sich) → Katze 95 %.
                 { id: 'pipeline', ref: () => typeof PipelineDemo !== 'undefined' ? PipelineDemo : null,
                         slideTest: s => s.id === 'slide-pipeline',
+                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onLeave: d => d.reset() },
+
+                // "Drei Bausteine" (katze.js), statisches ZIEL der
+                // Pipeline (Folie 5): Katze = 100 %, Loss 0,000 — live
+                // gerendert (kein Screenshot), wiederverwendet aus
+                // PipelineKit (gleiche Szene wie animierte Folie 11).
+                { id: 'pipeline-goal', ref: () => typeof PipelineGoalDemo !== 'undefined' ? PipelineGoalDemo : null,
+                        slideTest: s => s.id === 'slide-bausteine',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 

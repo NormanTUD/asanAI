@@ -182,7 +182,12 @@ const KatzeKit = (() => {
 			if (!stage) return;
 			DPR = Math.min(window.devicePixelRatio || 1, 2);
 			W = stage.clientWidth; H = stage.clientHeight;
-			cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+			// cv.width zu setzen radt den Canvas komplett (schwarzer Flash).
+			// Bei unveränderter Größe (Wiederaufladen derselben Folie) also
+			// nicht neu zuweisen.
+			const nw = Math.round(W * DPR), nh = Math.round(H * DPR);
+			if (cv.width !== nw) cv.width = nw;
+			if (cv.height !== nh) cv.height = nh;
 			ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 			ctx.imageSmoothingEnabled = false;
 			S.W = W; S.H = H;
@@ -439,6 +444,18 @@ const KatzeKit = (() => {
 			if (els.insight) els.insight.classList.remove('on');
 		}
 
+		// Altes Frame vom letzten Besuch weiss übermalen, damit beim erneuten
+		// Betreten nicht kurz das volle Bild durchschlägt, bevor die
+		// Entrance-Animation startet (wird in DemoRegistry onEnter gerufen).
+		function clear() {
+			if (!cv || !ctx) return;
+			ctx.save();
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
+			ctx.fillStyle = '#fff';
+			ctx.fillRect(0, 0, cv.width, cv.height);
+			ctx.restore();
+		}
+
 		function next() { if (canGoNext()) go(cur + 1, false); }
 		function prev() { if (canGoPrev()) go(cur - 1, false); }
 		function canGoNext() { return cur >= 0 && cur < cfg.steps.length - 1; }
@@ -462,7 +479,7 @@ const KatzeKit = (() => {
 			}, 110);
 		});
 
-		return { init, reset, next, prev, canGoNext, canGoPrev, getState, setState };
+		return { init, reset, clear, next, prev, canGoNext, canGoPrev, getState, setState };
 	}
 
 	return { create, lerp, eInOut, roundRect, drawGrid, drawTags, N, PICK, GREEN, YELLOW, RGB };
@@ -1349,24 +1366,14 @@ const FlattenDemo = (() => {
 })();
 
 // ============================================================
-// PipelineDemo, "Der gesamte Prozess" (am Ende der Deck)
+// PipelineKit — geteilte Bausteine der Pipeline-Szene.
 //
-// Bild → Layer 1 (Verläufe) → Layer 2 (Augen/Nase/Mund-Maps)
-// → Dense-Layer (farbig, Feature-Punkte) → zwei
-// Ausgabe-Neuronen. Layer 1 bleibt sichtbar, wenn Layer 2
-// erscheint, die Daten fließen sichtbar von Layer 1 in
-// Layer 2 (Punkte auf den Pfeilen). Jeder Layer reduziert
-// die Information des Bilds stück für stück auf das
-// Wesentliche (Katze/Hund). Das Netz startet blind
-// (50:50, Loss 0,693, es RÄT blind); im Training sinkt der
-// Loss (Ziel: niedriger, nicht 0) und das Katzen-Neuron wird
-// am aktivsten (95 %).
-// 7 Schritte: Bild ("Und jetzt alles zusammen") · Layer 1
-// (Verläufe) · Layer 2 (Augen/Nase/Mund, Layer 1 bleibt) ·
-// Dense · 50:50 (Loss) · Training (Loss sinkt) · Antwort
-// (95 %).
+// Die reine Zeichen-Logik (Karten, Dense, Neuronen, Loss-Panel,
+// Geometrie, Lernkurve) lebt hier, damit sie von ZWEI Konsumenten
+// wiederverwendet wird: PipelineDemo (animiert, Folie 11) und
+// PipelineGoalDemo (statisches Ziel "Katze = 100 %", Folie 5).
 // ============================================================
-const PipelineDemo = (() => {
+const PipelineKit = (() => {
 	'use strict';
 
 	// Stufe 1 der Convolutions: die ersten Filter finden Verläufe
@@ -1385,18 +1392,6 @@ const PipelineDemo = (() => {
 		{ label: 'Nase', lit: [4 * 8 + 3] },
 		{ label: 'Mund', lit: [5 * 8 + 3] }
 	];
-
-	let aCat = 0, tCatA = 0;
-	let aConv = 0, tConvA = 0;
-	let aEdge = 0, tEdgeA = 0;
-	let aPart = 0, tPartA = 0;
-	let aDense = 0, tDenseA = 0;
-	let aOut = 0, tOutA = 0;
-	let aLoss = 0, tLossA = 0;
-	let aLabel = 0, tLabelA = 0;
-	let trainP = 0, trainMsg = 0;
-	let entrancePending = false;
-	let entrancePlayed = false;   // Einstieg nur einmal, sonst Flash bei jedem Wiederauftauchen
 
 	// Lernkurve: Katzen-Anteil startet bei 50 % (blindes Raten,
 	// der schlechtmögliche uninformierte Loss) und trainiert sich
@@ -1509,11 +1504,12 @@ const PipelineDemo = (() => {
 
 	// Loss-Panel rechts neben den Neuronen: Formel, aktueller Wert
 	// und die Lernkurve, die sich beim Training einzeichnet.
-	function drawLossPanel(ctx, geo, S) {
+	// step 4 = Ziel (Kurve läuft bis 100 %), step 7 = Ergebnis (95 %).
+	function drawLossPanel(ctx, geo, step, aLoss, trainP) {
 		if (aLoss < 0.01) return;
 		const { px, py, pw, ph } = geo;
-		const goal = S.step === 4;
-		const t = (S.step === 4 || S.step === 7) ? 1 : (S.step === 5 ? 0 : (S.step === 6 ? trainP : 0));
+		const goal = step === 4;
+		const t = (step === 4 || step === 7) ? 1 : (step === 5 ? 0 : (step === 6 ? trainP : 0));
 		const L = goal ? lossOf(P_GOAL) : lossOf(trainPct(t));
 		const col = lossColor(L);
 
@@ -1643,6 +1639,141 @@ const PipelineDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
+	// Geometrie der Pipeline-Szene, geteilt von Animation & statischem
+	// Ziel. s = Größe eines Pixels (32×s = Katzen-Kantenlänge).
+	function geom(W, H, s) {
+		const ch = 32 * s;
+		const ms = 12;
+		const mapW = 8 * ms;
+		const mapX1 = 30 + ch + 48;
+		const mapY0 = (H - (3 * mapW + 2 * 22)) / 2;
+		const mapYs = [mapY0, mapY0 + mapW + 22, mapY0 + 2 * (mapW + 22)];
+		const mapX2 = mapX1 + mapW + 64;
+		const denseX = mapX2 + mapW + 48;
+		const denseW = 120, denseH = H * .62, denseY = (H - denseH) / 2;
+		const nCx = denseX + denseW + 80;
+		const rN = Math.min(H * .14, 44);
+		const cyMid = H / 2;
+		return { ch, ms, mapW, mapX1, mapYs, mapX2, denseX, denseW, denseH, denseY, nCx, rN, cyMid };
+	}
+
+	// Die komplette Szene in einem Zustand. o = Sichtbarkeits-Alphas
+	// (aCat/aConv/aEdge/aPart/aDense/aOut/aLoss/aLabel), clarity
+	// (0..1 wie "sauber" die Karten), flick (Such-Flackern), step
+	// (für das Loss-Panel), trainP (Fortschritt) und outP
+	// ({pCat, pDog, hotCat}).
+	function drawScene(ctx, W, H, cat, g, o) {
+		ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+		const clarity = o.clarity, flick = o.flick || 0;
+
+		// Pfeile: Katze → Layer 1, Layer 1 → Layer 2 (pro Reihe),
+		// Layer 2 → Dense, Dense → Neuronen.
+		MAPS.forEach((m, i) => {
+			arrow(ctx, 30 + g.ch + 6, g.cyMid, g.mapX1 - 10, g.mapYs[i] + 4 * g.ms, o.aConv);
+		});
+		MAPS.forEach((m, i) => {
+			arrow(ctx, g.mapX1 + g.mapW + 10, g.mapYs[i] + 4 * g.ms, g.mapX2 - 10, g.mapYs[i] + 4 * g.ms, o.aPart);
+		});
+		arrow(ctx, g.mapX2 + g.mapW + 10, g.cyMid, g.denseX - 10, g.cyMid, o.aDense);
+		arrow(ctx, g.denseX + g.denseW + 10, g.cyMid, g.nCx - g.rN - 10, H * .32, o.aOut);
+		arrow(ctx, g.denseX + g.denseW + 10, g.cyMid, g.nCx - g.rN - 10, H * .74, o.aOut);
+
+		// Eingang: Farb-Katze
+		if (o.aCat > 0.01) {
+			ctx.globalAlpha = o.aCat;
+			KatzeKit.drawGrid(ctx, cat, 0, 0);
+			ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+			ctx.strokeRect(cat.x + .5, cat.y + .5, g.ch - 1, g.ch - 1);
+			ctx.globalAlpha = 1;
+		}
+
+		// Layer 1 = Verläufe, bleibt stehen, wenn Layer 2 erscheint.
+		if (o.aConv > 0.01) {
+			ctx.globalAlpha = o.aConv;
+			ctx.fillStyle = '#64748b';
+			ctx.font = '800 13px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+			ctx.fillText('Layer 1 · Verläufe', g.mapX1 - 5, g.mapYs[0] - 22);
+			ctx.globalAlpha = 1;
+			for (let i = 0; i < 3; i++) {
+				drawMapSlot(ctx, g.mapX1, g.mapYs[i], g.ms, EDGE_MAPS[i].label, o.aConv);
+				drawMapLit(ctx, g.mapX1, g.mapYs[i], g.ms, EDGE_MAPS[i].lit, o.aEdge, clarity, i, flick);
+			}
+		}
+
+		// Layer 2 = zusammengesetzte Strukturen: die Daten von
+		// Layer 1 fließen hinein.
+		if (o.aPart > 0.01) {
+			ctx.globalAlpha = o.aPart;
+			ctx.fillStyle = '#64748b';
+			ctx.font = '800 13px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+			ctx.fillText('Layer 2 · Augen, Nase, Mund', g.mapX2 - 5, g.mapYs[0] - 22);
+			ctx.globalAlpha = 1;
+			for (let i = 0; i < 3; i++) {
+				drawMapSlot(ctx, g.mapX2, g.mapYs[i], g.ms, MAPS[i].label, o.aPart);
+				drawMapLit(ctx, g.mapX2, g.mapYs[i], g.ms, MAPS[i].lit, o.aPart, clarity, 3 + i, flick);
+			}
+		}
+
+		// Dense
+		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense);
+
+		// Ausgabe-Neuronen (Katze oben, Hund unten)
+		drawNeuron(ctx, g.nCx, H * .32, g.rN, 'Katze', o.outP.pCat + ' %', o.outP.hotCat, o.aOut);
+		drawNeuron(ctx, g.nCx, H * .74, g.rN, 'Hund', o.outP.pDog + ' %', false, o.aOut);
+
+		// Loss-Panel rechts neben den Neuronen
+		const pwP = 175, phP = 130;
+		drawLossPanel(ctx, { px: Math.min(g.nCx + g.rN + 34, W - pwP - 8), py: (H - phP) / 2, pw: pwP, ph: phP },
+		              o.step, o.aLoss, o.trainP);
+
+		// Label-Check unter dem Katzen-Neuron
+		drawLabelBadge(ctx, g.nCx, H * .32 + g.rN + 44, o.aLabel);
+	}
+
+	return { EDGE_MAPS, MAPS, P0, P1, P_GOAL, trainPct, lossOf, fmtLoss, lossColor,
+	         arrow, drawMapSlot, prand, drawMapLit, drawDense, drawNeuron,
+	         drawLabelBadge, drawLossPanel, geom, drawScene };
+})();
+
+// ============================================================
+// PipelineDemo, "Der gesamte Prozess" (am Ende der Deck)
+//
+// Bild → Layer 1 (Verläufe) → Layer 2 (Augen/Nase/Mund-Maps)
+// → Dense-Layer (farbig, Feature-Punkte) → zwei
+// Ausgabe-Neuronen. Layer 1 bleibt sichtbar, wenn Layer 2
+// erscheint, die Daten fließen sichtbar von Layer 1 in
+// Layer 2 (Punkte auf den Pfeilen). Jeder Layer reduziert
+// die Information des Bilds stück für stück auf das
+// Wesentliche (Katze/Hund). Das Netz startet blind
+// (50:50, Loss 0,693, es RÄT blind); im Training sinkt der
+// Loss (Ziel: niedriger, nicht 0) und das Katzen-Neuron wird
+// am aktivsten (95 %).
+// 7 Schritte: Bild ("Und jetzt alles zusammen") · Layer 1
+// (Verläufe) · Layer 2 (Augen/Nase/Mund, Layer 1 bleibt) ·
+// Dense · 50:50 (Loss) · Training (Loss sinkt) · Antwort
+// (95 %).
+// ============================================================
+const PipelineDemo = (() => {
+	'use strict';
+
+	// Die Zeichen-Bausteine (Karten, Dense, Neuronen, Loss-Panel,
+	// Geometrie, Lernkurve) leben jetzt in PipelineKit, damit auch
+	// PipelineGoalDemo (Folie 5) sie wiederverwenden kann.
+
+	let aCat = 0, tCatA = 0;
+	let aConv = 0, tConvA = 0;
+	let aEdge = 0, tEdgeA = 0;
+	let aPart = 0, tPartA = 0;
+	let aDense = 0, tDenseA = 0;
+	let aOut = 0, tOutA = 0;
+	let aLoss = 0, tLossA = 0;
+	let aLabel = 0, tLabelA = 0;
+	let trainP = 0, trainMsg = 0;
+	let entrancePending = false;
+	let entrancePlayed = false;   // Einstieg nur einmal, sonst Flash bei jedem Wiederauftauchen
+
 	return KatzeKit.create({
 		slideId: 'slide-pipeline',
 		prefix: 'pipe',
@@ -1739,114 +1870,111 @@ const PipelineDemo = (() => {
 						'<span class="kz-chip g">Katze 95 %</span>');
 				}
 			} else {
-				const p = Math.round(trainPct(trainP));
-				setFoot(`Training … · Katze <b>${p} %</b> · Loss <b>${fmtLoss(lossOf(p))}</b>`,
+				const p = Math.round(PipelineKit.trainPct(trainP));
+				setFoot(`Training … · Katze <b>${p} %</b> · Loss <b>${PipelineKit.fmtLoss(PipelineKit.lossOf(p))}</b>`,
 					'<span class="kz-chip g">Loss ↓</span>');
 			}
 		},
 
 		draw(ctx, S) {
-			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
-			const { W, H } = S;
 			const cat = S.inst[0];
+			const g = PipelineKit.geom(S.W, S.H, cat.s);
 			const clarity = S.step <= 4 ? 1 : (S.step === 5 ? 0 : (S.step === 6 ? trainP : 1));
 			// Training: erste ~60 % sucht das Netz, die Zellen
 			// flackern → danach ist die Entscheidung gefallen.
 			const flick = S.step === 6 ? Math.max(0, (0.6 - trainP) / 0.6) : 0;
-			const ch = 32 * cat.s;
-
-			const ms = 12;
-			const mapW = 8 * ms;
-			const mapX1 = 30 + ch + 48;
-			const mapY0 = (H - (3 * mapW + 2 * 22)) / 2;
-			const mapYs = [mapY0, mapY0 + mapW + 22, mapY0 + 2 * (mapW + 22)];
-			const mapX2 = mapX1 + mapW + 64;
-			const denseX = mapX2 + mapW + 48;
-			const denseW = 120, denseH = H * .62, denseY = (H - denseH) / 2;
-			const nCx = denseX + denseW + 80;
-			const rN = Math.min(H * .14, 44);
-
-			const cyMid = H / 2;
-
-			// Pfeile: Katze → Layer 1, Layer 1 → Layer 2 (pro Reihe),
-			// Layer 2 → Dense, Dense → Neuronen.
-			MAPS.forEach((m, i) => {
-				arrow(ctx, 30 + ch + 6, cyMid, mapX1 - 10, mapYs[i] + 4 * ms, aConv);
-			});
-			MAPS.forEach((m, i) => {
-				arrow(ctx, mapX1 + mapW + 10, mapYs[i] + 4 * ms, mapX2 - 10, mapYs[i] + 4 * ms, aPart);
-			});
-			arrow(ctx, mapX2 + mapW + 10, cyMid, denseX - 10, cyMid, aDense);
-			arrow(ctx, denseX + denseW + 10, cyMid, nCx - rN - 10, H * .32, aOut);
-			arrow(ctx, denseX + denseW + 10, cyMid, nCx - rN - 10, H * .74, aOut);
-
-			// Eingang: Farb-Katze
-			if (aCat > 0.01) {
-				ctx.globalAlpha = aCat;
-				KatzeKit.drawGrid(ctx, cat, 0, 0);
-				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
-				ctx.strokeRect(cat.x + .5, cat.y + .5, ch - 1, ch - 1);
-				ctx.globalAlpha = 1;
-			}
-
-			// Layer 1 = Verläufe (Schritt 2), bleibt stehen, wenn
-			// Layer 2 erscheint.
-			if (aConv > 0.01) {
-				ctx.globalAlpha = aConv;
-				ctx.fillStyle = '#64748b';
-				ctx.font = '800 13px Inter, system-ui, sans-serif';
-				ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-				ctx.fillText('Layer 1 · Verläufe', mapX1 - 5, mapY0 - 22);
-				ctx.globalAlpha = 1;
-				for (let i = 0; i < 3; i++) {
-					drawMapSlot(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].label, aConv);
-					drawMapLit(ctx, mapX1, mapYs[i], ms, EDGE_MAPS[i].lit, aEdge, clarity, i, flick);
-				}
-			}
-
-			// Layer 2 = zusammengesetzte Strukturen (Schritt 3+): die
-			// Daten von Layer 1 fließen hinein.
-			if (aPart > 0.01) {
-				ctx.globalAlpha = aPart;
-				ctx.fillStyle = '#64748b';
-				ctx.font = '800 13px Inter, system-ui, sans-serif';
-				ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-				ctx.fillText('Layer 2 · Augen, Nase, Mund', mapX2 - 5, mapY0 - 22);
-				ctx.globalAlpha = 1;
-				for (let i = 0; i < 3; i++) {
-					drawMapSlot(ctx, mapX2, mapYs[i], ms, MAPS[i].label, aPart);
-					drawMapLit(ctx, mapX2, mapYs[i], ms, MAPS[i].lit, aPart, clarity, 3 + i, flick);
-				}
-			}
-
-			// Dense
-			drawDense(ctx, denseX, denseY, denseW, denseH, aDense);
 
 			// Ausgabe: Ziel (4) = 100 %, Ergebnis (7) = 95 %, am
 			// Anfang (5) 50:50, im Training (6) rutscht es Richtung 95 %.
 			let pCat = 100, pDog = 0, hotCat = true;
 			if (S.step === 5) { pCat = 50; pDog = 50; hotCat = false; }
 			else if (S.step === 6) {
-				const p = Math.round(trainPct(trainP));
+				const p = Math.round(PipelineKit.trainPct(trainP));
 				pCat = p; pDog = 100 - p; hotCat = pCat >= 90;
 			}
 			else if (S.step === 7) { pCat = 95; pDog = 5; }
-			drawNeuron(ctx, nCx, H * .32, rN, 'Katze', pCat + ' %', hotCat, aOut);
-			drawNeuron(ctx, nCx, H * .74, rN, 'Hund', pDog + ' %', false, aOut);
 
-			// Loss-Panel rechts neben den Neuronen
-			const pwP = 175, phP = 130;
-			drawLossPanel(ctx, { px: Math.min(nCx + rN + 34, W - pwP - 8), py: (H - phP) / 2, pw: pwP, ph: phP }, S);
-
-			// Label-Check unter dem Katzen-Neuron (Schritt 7)
-			drawLabelBadge(ctx, nCx, H * .32 + rN + 44, aLabel);
+			PipelineKit.drawScene(ctx, S.W, S.H, cat, g, {
+				aCat, aConv, aEdge, aPart, aDense, aOut, aLoss, aLabel,
+				clarity, flick, step: S.step, trainP,
+				outP: { pCat, pDog, hotCat }
+			});
 		}
 	});
+})();
+
+// ============================================================
+// PipelineGoalDemo, "Drei Bausteine" (Folie 5)
+//
+// Das statische ZIEL der Pipeline, live gerendert (kein Screenshot):
+// genau der Zustand, den das Training anstrebt — Katze = 100 %,
+// Loss 0,000. Wiederverwendet die komplette Szenen-Zeichnung aus
+// PipelineKit (gleiche Karten, Dense, Neuronen, Loss-Panel wie die
+// animierte Folie 11). Statisch (einmal gerendert), kein eigener
+// Schritt-Zyklus — deshalb kein KatzeKit-Framework.
+// ============================================================
+const PipelineGoalDemo = (() => {
+	'use strict';
+	let cv, ctx, W = 0, H = 0, DPR = 1, rsz = null, active = false;
+
+	function render() {
+		if (!ctx || W < 40 || H < 40) return;
+		const s = Math.min(H / 32 * .75, W / 32 * .28, 8.5);
+		const cat = { x: 30, y: (H - 32 * s) / 2, s, a: 1, mix: 0 };
+		const g = PipelineKit.geom(W, H, s);
+		PipelineKit.drawScene(ctx, W, H, cat, g, {
+			aCat: 1, aConv: 1, aEdge: 1, aPart: 1, aDense: 1, aOut: 1, aLoss: 1, aLabel: 0,
+			clarity: 1, flick: 0, step: 4, trainP: 0,
+			outP: { pCat: 100, pDog: 0, hotCat: true }
+		});
+	}
+
+	function init() {
+		cv = document.getElementById('goal-cv');
+		if (!cv) return;
+		ctx = cv.getContext('2d', { alpha: false });
+		const stage = cv.parentElement;
+		DPR = Math.min(window.devicePixelRatio || 1, 2);
+		W = stage.clientWidth; H = stage.clientHeight;
+		cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+		ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+		ctx.imageSmoothingEnabled = false;
+		active = true;
+		render();
+		if (typeof window.fitSlides === 'function') window.fitSlides();
+	}
+
+	function reset() {
+		active = false;
+		if (ctx && cv) {
+			ctx.save();
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
+			ctx.fillStyle = '#fff';
+			ctx.fillRect(0, 0, cv.width, cv.height);
+			ctx.restore();
+		}
+	}
+
+	window.addEventListener('resize', () => {
+		clearTimeout(rsz);
+		rsz = setTimeout(() => { if (active) init(); }, 120);
+	});
+
+	return {
+		init, reset,
+		next() {}, prev() {},
+		canGoNext() { return false; },
+		canGoPrev() { return false; },
+		getState() { return {}; },
+		setState() {}
+	};
 })();
 
 if (typeof window !== 'undefined') {
 	window.KatzeKit = KatzeKit;
 	window.ConvDemo = ConvDemo;
 	window.FlattenDemo = FlattenDemo;
+	window.PipelineKit = PipelineKit;
 	window.PipelineDemo = PipelineDemo;
+	window.PipelineGoalDemo = PipelineGoalDemo;
 }

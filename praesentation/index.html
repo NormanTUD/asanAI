@@ -129,10 +129,7 @@
             Viele Neuronen nebeneinander &amp; hintereinander · jede Schicht voll verdrahtet mit der vorherigen &amp; nächsten.
         </div>
 
-        <div class="fragment" style="display:grid; grid-template-columns:1.2fr 1fr; gap:30px; align-items:center;">
-            <div style="text-align:center;">
-                <img src="img/dense.png" alt="Dicht verdrahtetes Netz" style="max-width:100%; max-height:26vh;" />
-            </div>
+        <div class="fragment">
             <div>
                 Jede Schicht übernimmt eine <b>Aufgabe</b> — und jede Schicht ist eine <b>Funktion</b>,
                 die man auf die Daten anwendet. Die verschachtelt man ineinander:
@@ -145,13 +142,59 @@
 </div>
         </div>
 
-        <div class="fragment" style="display:grid; grid-template-columns:1fr 1.2fr; gap:30px; align-items:center;">
+        <div class="fragment" style="display:grid; grid-template-columns:1fr 1.15fr; gap:30px; align-items:center;">
             <div>
-                Die <b>ersten</b> Schichten übernehmen <b>einfache</b> Funktionen — Verläufe, Kanten.
-                Die <b>späteren</b> bauen darauf auf und werden immer <b>komplexer</b>.
+                Die <b>ersten</b> Schichten übernehmen <b>einfache</b> Funktionen — gerade und
+                gekrümmte <b>Linien</b>. Die <b>späteren</b> bauen darauf auf: Linien werden zu
+                <b>Formen</b> (Auge, Nase, Mund), und daraus zum <b>Gesicht</b>.
             </div>
             <div style="text-align:center;">
-                <img src="img/first_layers_vs_last_layers.png" alt="Erste und letzte Layer eines Convolutional Networks" style="max-width:100%; max-height:22vh;" />
+                <svg viewBox="0 0 340 340" role="img" aria-label="Hierarchie: Linien werden zu Formen, daraus das Gesicht" style="width:100%; max-width:340px; height:auto;">
+                    <defs>
+                        <marker id="fh-up" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M0,1 L9,5 L0,9 z" fill="#94a3b8"/>
+                        </marker>
+                    </defs>
+
+                    <!-- TOP: Gesicht -->
+                    <rect x="18" y="16" width="304" height="74" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.5"/>
+                    <g transform="translate(296,53)" fill="none" stroke="#15803d" stroke-width="2.3" stroke-linecap="round">
+                        <circle r="20"/>
+                        <circle cx="-7" cy="-5" r="2.3" fill="#15803d" stroke="none"/>
+                        <circle cx="7" cy="-5" r="2.3" fill="#15803d" stroke="none"/>
+                        <path d="M-4,5 Q0,10 4,5"/>
+                    </g>
+                    <text x="20" y="50" font-family="system-ui,sans-serif" font-size="17" font-weight="700" fill="#14532d">Gesicht</text>
+                    <text x="20" y="70" font-family="system-ui,sans-serif" font-size="11.5" fill="#15803d">späte Schicht · komplex</text>
+
+                    <line x1="170" y1="118" x2="170" y2="94" stroke="#94a3b8" stroke-width="2.4" marker-end="url(#fh-up)"/>
+
+                    <!-- MIDDLE: Augen, Nase, Mund -->
+                    <rect x="18" y="120" width="304" height="74" rx="12" fill="#fffbeb" stroke="#fde68a" stroke-width="1.5"/>
+                    <g fill="none" stroke="#b45309" stroke-width="2.2" stroke-linecap="round">
+                        <g transform="translate(232,157)"><ellipse rx="10" ry="6.5"/><circle r="2.4" fill="#b45309" stroke="none"/></g>
+                        <path d="M268,151 l8,12 l-8,2 z" fill="#b45309" opacity="0.85" stroke="none"/>
+                        <path d="M298,153 Q308,166 318,153"/>
+                    </g>
+                    <text x="20" y="152" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#7c2d12">Augen, Nase, Mund</text>
+                    <text x="20" y="172" font-family="system-ui,sans-serif" font-size="11.5" fill="#b45309">mittlere Schicht · Formen</text>
+
+                    <line x1="170" y1="220" x2="170" y2="196" stroke="#94a3b8" stroke-width="2.4" marker-end="url(#fh-up)"/>
+
+                    <!-- BOTTOM: Linien -->
+                    <rect x="18" y="222" width="304" height="74" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1.5"/>
+                    <g fill="none" stroke="#1d4ed8" stroke-width="2.6" stroke-linecap="round">
+                        <line x1="222" y1="259" x2="248" y2="259"/>
+                        <line x1="266" y1="247" x2="266" y2="271"/>
+                        <path d="M284,271 Q296,247 318,271"/>
+                    </g>
+                    <text x="20" y="254" font-family="system-ui,sans-serif" font-size="15" font-weight="700" fill="#1e3a8a">Gerade &amp; gekrümmte Linien</text>
+                    <text x="20" y="274" font-family="system-ui,sans-serif" font-size="11.5" fill="#1d4ed8">frühe Schicht · einfach</text>
+
+                    <!-- NOTE -->
+                    <text x="170" y="318" font-family="system-ui,sans-serif" font-size="12.5" fill="#475569" text-anchor="middle">Das Netz lernt selbst, worauf es achten muss —</text>
+                    <text x="170" y="335" font-family="system-ui,sans-serif" font-size="12.5" fill="#475569" text-anchor="middle">die Reihenfolge (Linien → Formen → Gesicht) baut es sich selbst auf.</text>
+                </svg>
             </div>
         </div>
     </div>
@@ -159,8 +202,9 @@
 <!-- ============================================================
      Folie 5: Drei Bausteine (Roadmap)
      ------------------------------------------------------------
-     Zielzustand zuerst: Screenshot der Pipeline-Endstufe
-     (img/pipeline_ziel.png, Katze ≈ 95 %), dann die drei
+     Zielzustand zuerst: das Ziel (Katze = 100 %) wird LIVE
+     gerendert (PipelineGoalDemo, #goal-cv) — wiederverwendet
+     aus PipelineKit, wie die animierte Folie 11. Dann die drei
      Bausteine Convolution → Flatten → Dense Layer und die
      abstrakte Formel dense(flatten(conv2d(bild))).
      ============================================================ -->
@@ -168,14 +212,11 @@
     <div class="slide-content">
         <h2>Drei Bausteine</h2>
 
-        <div class="fragment">
-            <div class="key-insight" style="text-align:center;">
-                <b>Zielzustand:</b> das Netz bekommt ein Bild und sagt <b>Katze ≈ 95 %</b> — genau hier wollen wir hin.
-            </div>
-            <div style="text-align:center; margin-top:12px;">
-                <img src="img/pipeline_ziel.png" alt="Die Katze fließt durch das Netz und wird mit 95 Prozent erkannt" style="max-width:100%; max-height:36vh; border-radius:8px;" />
-            </div>
+        <div class="key-insight" style="text-align:center;">
+            <b>Zielzustand:</b> das Netz bekommt ein Bild und sagt <b>Katze = 100 %</b> — genau hier wollen wir hin.
         </div>
+
+        <div class="kz-stage" id="goal-stage" style="height:min(38vh,360px); margin-top:10px;"><canvas id="goal-cv"></canvas></div>
 
         <div class="fragment">
             Wir behandeln drei Bausteine:
@@ -267,13 +308,13 @@
 		    <div class="nn-anim-scene" data-scene="1">
 			<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
 		    </div>
-		    <div class="nn-anim-scene" data-scene="2">
+		<div class="nn-anim-scene" data-scene="2">
 			<div class="math-display">$$\text{dense}(x) =
 				\underbrace{\begin{pmatrix}
 				w_1 \\ w_2 \\ w_3 \\ \vdots
-				\end{pmatrix}}_{\text{lernbar}} \cdot \begin{pmatrix}
+				\end{pmatrix}}_{\text{lernbar}} \cdot \underbrace{\begin{pmatrix}
 				x_1 \\ x_2 \\ x_3 \\ \vdots
-				\end{pmatrix} +
+				\end{pmatrix}}_{\text{das Bild}} +
 				\underbrace{\begin{pmatrix}
 				b_1 \\ b_2 \\ b_3 \\ \vdots
 				\end{pmatrix}}_{\text{lernbar}}
@@ -452,6 +493,48 @@
 
         <div class="asan-url-frag fragment">
             <div class="asan-url-badge">asanai.scads.ai</div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 14: Ein ehrlicher Hinweis — alles ist idealisiert
+     ------------------------------------------------------------
+     Filters MÜSSEN keine „Augen" lernen (können es aber). Sie
+     lernen, möglichst gut auf die TRAININGSDATEN zu passen.
+     Beispiel: Kategorie „Auto" lernen, alle Fotos vor blauem
+     Himmel -> das Netz lernt den blauen Himmel (einfacher
+     Shortcut), nicht das Auto.
+     Bild: img/truck-antique-mexico-cozumel-preview.jpg
+     Quelle (Creative Commons):
+       https://i1.pickpik.com/photos/518/540/912/truck-antique-mexico-cozumel-preview.jpg
+     ============================================================ -->
+<div class="slide" id="slide-idealisiert" data-title="Alles idealisiert">
+    <div class="slide-content">
+        <h2>Das alles ist <em>idealisiert</em></h2>
+
+        <div style="display:grid; grid-template-columns:1.1fr 1fr; gap:34px; align-items:center; margin-top:8px;">
+            <div>
+                <div class="key-insight">
+                    Filter <b>müssen</b> keine „Augen" lernen — sie <b>können</b> es.
+                    Sie lernen, <b>möglichst gut auf die Daten zu passen</b>,
+                    die wir ihnen geben.
+                </div>
+                <p style="color:#475569; margin-top:16px; line-height:1.55;">
+                    Sollen wir dem Netz die Kategorie <b>„Auto"</b> beibringen und sind
+                    alle unsere Fotos Autos vor <b>blauem Himmel</b>, findet es den
+                    <b>blauen Himmel</b> — weil der <b>einfacher</b> zu erkennen ist als
+                    das Auto. Das Auto selbst? Kommt ganz hinten dran.
+                </p>
+            </div>
+            <div style="text-align:center;">
+                <img src="img/truck-antique-mexico-cozumel-preview.jpg" alt="Alter LKW in Cozumel, Mexiko — viel blauer Himmel im Bild" style="max-width:100%; max-height:46vh; border-radius:12px; box-shadow:0 8px 28px rgba(15,23,42,.14);" />
+            </div>
+        </div>
+
+        <div class="key-insight fragment" data-nofast>
+            <b>Deshalb zählt die Datenqualität:</b> Das Netz nimmt den <b>einfachsten
+            Weg</b> zur Antwort. Was wir ihm zeigen, bestimmt, <b>worauf es achtet</b> —
+            auch auf Merkmale, die mit dem Ziel nichts zu tun haben.
         </div>
     </div>
 </div>
