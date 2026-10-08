@@ -223,14 +223,17 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
 ### T17 · Folie 5 (bausteine) Titel: „Drei Bausteine" → „Was wir wollen und drei Bausteine dafür"  `[x]`
 - ✅ Fertig: `data-title` + `<h2>` umbenannt. Headless (Folie 5) clean.
 
-### T18 · Konstanter Haupttitel für die kz-Folien (6, 7, 10, 11)  `[ ]`
+### T18 · Konstanter Haupttitel für die kz-Folien (6, 7, 10, 11)  `[x]`
+- ✅ Fertig (Norman bestätigt Titel): konstanter `<h2 class="kz-const">` in jeder `kz-head`
+  (oben, absolut) + Schritt-`kz-title` zum **Untertitel** (kleiner, grau #64748b) demotiert.
+  Titel: Folie 6 **Convolution** · Folie 7 **Flatten** · Folie 10 **Vom Bild zu Punkten** ·
+  Folie 11 **Der gesamte Prozess**. CSS-Spezifität: `.kz-head .kz-const` (0,2,0) schlägt
+  `.slide h2` (0,1,1) → kein blauer Standard-H2 + keine Border. `node --check` n/a +
+  headless (Folie 6) clean, 4 Headings im DOM. *(Canvas nicht visuell geprüft — H2/Untertitel-Sitz.)*
 - **Problem:** Folien 6 (Conv), 7 (Flatten), 10 (DenseRaum), 11 (Pipeline) haben **keinen
   konstanten `<h2>`** wie „Was sind Dense Layer?" (Folie 8) — nur die dynamische `kz-title`.
 - **Wunsch (Norman):** konstanter Haupttitel (`<h2>`), der bleibt; die Schritt-`kz-title`
   wird zum **Untertitel**. Wie Folie 9 (SpaceMorph: `<h2>` + `#sm-title`-Overlay).
-- Offene Unterfrage: Was ist der **konstante Titel** je Folie? (z. B. Folie 10 „Der Layer
-  wölbt den Raum", Folie 7 „Flatten", Folie 6 „Convolution", Folie 11 „Der gesamte Prozess")
-  → bei Umsetzen kurz mit Norman abgleichen ODER sinnvoll wählen.
 
 ### T19 · Folie 9 (SpaceMorph): „Was machen Dense Layer?" → „Was sind Dense Layer?"  `[x]`
 - ✅ Fertig: `data-title` + `<h2>` umbenannt → Folie 8 + 9 tragen denselben Titel (eine Sektion).
