@@ -67,7 +67,9 @@
 - **Verifiziert**: `node --check` + node-Harness (drawScene 5 Zustände + Ziel-Render) + headless clean.
 - Training (Folie 11, Schritt 8) endet weiterhin bei **95 %** (unverändert).
 
-### T5 · Folie 6 (ConvDemo) Bug: kein Titel + Bild „springt rein"  `[~]`
+### T5 · Folie 6 (ConvDemo) Bug: kein Titel + Bild „springt rein"  `[x]`
+- ✅ (a) Titel jetzt über **T18** erledigt: Folie 6 hat `<h2 class="kz-const">Convolution</h2>`
+  (konstant) + `kz-title` als Untertitel — kein Doppel-Titel mehr.
 - (b) **Bug (FIX, `[x]`)**: Bild „springt rein" behoben. Ursache: `resize()` setzte bei jedem
   Layout-Pass `cv.width/height` neu → Canvas wird gezwittrt (schwarz) → Bild flackert/„springt".
   Fix in `katze.js`: `resize()` setzt width/height nur wenn sich was geändert hat; neu `clear()`
