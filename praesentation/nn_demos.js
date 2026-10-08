@@ -186,6 +186,7 @@ const FlipClockViz = (() => {
             build();
             if (!root) return;
             if (!running) { running = true; lastT = 0; raf = requestAnimationFrame(frame); }
+            if (new URLSearchParams(window.location.search).get('autoswitch')) setTimeout(advance, 400);
         });
     }
     function stop() {
