@@ -923,6 +923,14 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 .kz-insight.on { opacity: 1; transform: none; }
 
+/* ============ FOLIE "Dense Layer" (T20): Szene A (NeuronIntro) ↔ Szene B (SpaceMorph) ============ */
+#dl-scene-wrap { position: relative; width: 100%; max-width: 1340px; margin: 14px auto 0; height: 640px; }
+#dl-scene-a, #dl-scene-b { position: absolute; inset: 0; transition: opacity .45s ease; }
+#dl-scene-a { opacity: 1; }
+#dl-scene-b { opacity: 0; pointer-events: none; }
+#dl-scene-wrap.in-b #dl-scene-a { opacity: 0; pointer-events: none; }
+#dl-scene-wrap.in-b #dl-scene-b { opacity: 1; pointer-events: auto; }
+
 /* ============ FOLIE "asanAI" ============ */
 .asan-slide {
 	display: grid;

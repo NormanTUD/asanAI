@@ -4,7 +4,7 @@
 // Pfeiltasten (Präsentation) steuern die Schritte, Drag rotiert.
 // ============================================================
 const SpaceMorph = (() => {
-    const SLIDE_ID = 'slide-layer-als-raumkruemmung';
+    const SLIDE_ID = 'slide-dense-layer';
     const DUR = 700;
 
     // Die Homotopie (Schlingen zurückziehen) läuft bewusst langsamer,

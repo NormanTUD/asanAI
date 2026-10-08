@@ -215,7 +215,11 @@ const NeuronIntroViz = (() => {
 
     function isOnIntroSlide() {
         const active = document.querySelector('.slide.active');
-        return active && active.id === 'slide-neuronales-netz-intro';
+        if (!active || active.id !== 'slide-dense-layer') return false;
+        // Nur Szene A (NeuronIntro) — in Szene B (SpaceMorph, .in-b) bleibt die
+        // Sub-Animation (nn-intro-anim) aus, sonst frisst sie prev/next.
+        const w = document.getElementById('dl-scene-wrap');
+        return !(w && w.classList.contains('in-b'));
     }
 
     function getScenes() {

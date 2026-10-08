@@ -27,11 +27,10 @@ const DemoRegistry = (() => {
     };
 
         const registry = [
-                { id: 'raumkruemmung', ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
-                        block: d => d.isAnimating(),
-                        slideTest: s => s.id === 'slide-layer-als-raumkruemmung',
-                        onEnter: d => setTimeout(() => d.init(), 80),
-                        onLeave: d => d.reset() },
+                // "Was sind Dense Layer?" (T20): SpaceMorph ist jetzt Szene B
+                // der gemerged Folie slide-dense-layer und wird über
+                // 'dense-merge' gesteuert (init erst beim Swap A→B), nicht
+                // mehr über einen eigenen Registry-Eintrag.
 
                 // "Vom Bild zu Punkten" (dense_raum.js), Katze-Framework:
                 // Panel (Katze → 1024 Zahlen) → Punkte (zwei
@@ -91,12 +90,23 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // ID-basiert (nicht data-title), weil Folie 9 (SpaceMorph) den
-                // SELBEN Titel „Was sind Dense Layer?" trägt (T19) — eine Sektion.
+                // (T20) Sub-Animation nn-intro-anim in Szene A der gemerged
+                // Folie slide-dense-layer; isOnIntroSlide() schaltet sie in
+                // Szene B (.in-b) aus.
                 { id: 'neuron-intro', ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
                         guard: d => d.isOnIntroSlide(),
-                        slideTest: s => s.id === 'slide-neuronales-netz-intro',
+                        slideTest: s => s.id === 'slide-dense-layer',
                         onEnter: d => d.reset() },
+
+                // (T20) Szene-Swap der gemerged Folie: Szene A (NeuronIntro,
+                // Fragmente) → nach letztem Fragment Szene B (SpaceMorph).
+                // Steuert SpaceMorph (init beim Swap) + blockt während des Swaps
+                // und der SpaceMorph-Animationen.
+                { id: 'dense-merge', ref: () => typeof DenseMerge !== 'undefined' ? DenseMerge : null,
+                        slideTest: s => s.id === 'slide-dense-layer',
+                        block: d => d.block(),
+                        onEnter: d => d.onEnter(),
+                        onLeave: d => d.onLeave() },
 
                 { id: 'typewriter', ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
                         guard: d => d.isOnClassicSlide(),

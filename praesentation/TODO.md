@@ -2,12 +2,10 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: Folie-2-Batch (Cross-Morph gebaut) + große Feedback-Runde
-> (Folie 2 manuell + f fix, Constant-Heading, Rename, Smooth-Transition, Loss-Plot,
-> Hierarchy-ausgliedern, Idealisiert-verschieben). Alle neuen Punkte unten als T15–T27.
-> **Nächste (in Arbeit): T15** (Folie 2: Switch erst auf manuelles Weiter + f fix, nur
-> Zahlen/Ergebnisse rotieren) → dann T16–T27 der Reihe nach.
-> Noch offen aus vorher: T7 (Hund im Training), T8 (RGB-Matrix), T9 (Filter-Folie).
+> Letzte Aktualisierung: **T15–T27 alle fertig** (Folie-2-Batch, Rename, Constant-Heading
+> T18, Smooth-Transition T20 [8+9 gemerged], Loss-Plot T23, Hierarchy-ausgliedern T24,
+> Idealisiert T27, DenseRaum T21/T22/T25/T26). **Deck jetzt 12 Folien.**
+> **Noch offen aus vorher: T7** (Hund im Training), **T8** (RGB-Matrix), **T9** (Filter-Folie).
 
 ## Dateien die ich analysiert habe
 - `index.html` — 13 Folien, Reihenfolge unten.
@@ -25,16 +23,13 @@
 - **Kein Bild-Input**: Ich kann keine PNG/JPG ansehen und lade keine externen Bilder.
   → Echte Fotos/Screenshots muss Norman liefern ODER ich baue Canvas-/ASCII-Nachbildungen.
 
-## Folien-Reihenfolge (aktuell, index.html)
+## Folien-Reihenfolge (aktuell, index.html — 12 Folien)
 1. Titel · 2. Klassisch vs. KI · 3. Geschichte · 4. Man arbeitet in Schichten
-· 5. Drei Bausteine (Zielzustand) · 6. ConvDemo „Jeder Pixel ist nur eine Zahl"
-· 7. Flatten · 8. Was sind Dense Layer? (NeuronIntro) · 9. Was machen Dense Layer? (SpaceMorph)
-· 10. Vom Bild zu Punkten (DenseRaum) · 11. Der gesamte Prozess (Pipeline)
-· 12. Convolutions (Hierarchy) · 13. asanAI · 14. Alles idealisiert (neu, T1).
-
-**Geplante Struktur-Änderungen (T17–T27):** Folie 5 Titel (T17) · Folie 9 → „Was sind Dense
-Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14→13) ·
-„Alles idealisiert" eine Position **vor** asanAI (T27). → Nummern 12–14 verschieben sich.
+· 5. Drei Bausteine (Zielzustand) · 6. Convolution · 7. Flatten
+· 8. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph = Szene B, T20)
+· 9. Vom Bild zu Punkten (DenseRaum) · 10. Der gesamte Prozess (Pipeline)
+· 11. Alles idealisiert (T27, vor asanAI) · 12. asanAI (Schluss/Live-Demo).
+**Eigene Datei:** Convolutions (Hierarchy) → `hierarchy.html` (T24, aus dem Deck).
 
 ---
 
@@ -241,7 +236,18 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   (`slide-neuronales-netz-intro`) umgestellt, damit der identische Titel Folie 9 nicht trifft.
   `node --check` + headless (Folie 8 + 9) clean.
 
-### T20 · Smooth-Transition Folie 8 → Folie 9 (Inhalt-Wechsel, keine neue Folie)  `[ ]`
+### T20 · Smooth-Transition Folie 8 → Folie 9 (Inhalt-Wechsel, keine neue Folie)  `[x]`
+- ✅ Fertig (Ansatz: 8+9 mergen, Norman bestätigt). Folie 8 (NeuronIntro) + Folie 9
+  (SpaceMorph) → **eine Folie** `slide-dense-layer` mit **Szene A** (NeuronIntro-Fragmente)
+  + **Szene B** (SpaceMorph-Canvas), Crossfade per `#dl-scene-wrap.in-b` (CSS opacity .45s).
+  Neues Demo `dense_merge.js`: nach LETZTEM Fragment frisst „next" den Swap A→B (kein
+  Folienwechsel), dann SpaceMorph-Schritte; „prev" am SpaceMorph-Anfang zurück zu A.
+  Registry: `raumkruemmung`-Eintrag entfernt (SpaceMorph jetzt über `dense-merge`),
+  `neuron-intro` auf Slide-ID + Szene-A-Gate (`isOnIntroSlide` schaltet in .in-b ab),
+  SpaceMorph `SLIDE_ID` → merged. Deck 13 → 12.
+  **Nav-Test (headless, 13× next):** F1→F2→F3 → bei N5 (alle frags sichtbar) Swap A→B
+  (gleiche Folie, inB:false→true, dm:0→1) → SpaceMorph-Schritte → nächste Folie. Clean.
+  `node --check` ×4 + headless (Deck) clean. *(Crossfade-Gefühl nicht visuell geprüft.)*
 - **Norman:** Der Wechsel von „**Universelle Approximation: genug Neuronen → jede stetige
   Funktion**" (letztes Fragment Folie 8, NeuronIntro) zu „**Zwei Klassen, keine Gerade**"
   (Schritt 1 Folie 9, SpaceMorph) soll **smoother** sein — **Inhalt wird ausgetauscht, keine
