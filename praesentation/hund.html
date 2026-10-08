@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASCII-Hund</title>
+<style>
+	:root { color-scheme: light; }
+	* { box-sizing: border-box; }
+	body {
+		margin: 0; min-height: 100vh;
+		display: flex; flex-direction: column;
+		align-items: center; justify-content: center; gap: 18px;
+		background: #fff;
+		font: 400 15px/1.5 Inter, -apple-system, system-ui, sans-serif;
+		color: #0f172a;
+	}
+	h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+	h1 em { font-style: normal; color: #b45309; }
+	.stage { position: relative; width: min(92vw, 560px); height: min(92vw, 560px); }
+	canvas { width: 100%; height: 100%; display: block; }
+	.bar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+	button {
+		font: 600 13px Inter, system-ui, sans-serif;
+		padding: 8px 16px; border-radius: 999px;
+		border: 1px solid #e2e8f0; background: #f8fafc;
+		color: #0f172a; cursor: pointer;
+	}
+	button:hover { background: #f1f5f9; }
+	button.act { background: #b45309; border-color: #b45309; color: #fff; }
+	.hint { font-size: 12px; color: #64748b; }
+	pre.ascii {
+		margin: 0; padding: 14px 18px; border-radius: 12px;
+		background: #0f172a; color: #e2e8f0;
+		font: 400 9px/0.92 ui-monospace, SFMono-Regular, Menlo, monospace;
+		overflow: auto; max-width: 92vw; display: none;
+	}
+	pre.ascii.on { display: block; }
+</style>
+</head>
+<body>
+
+<h1>Ein <em>Hund</em> als ASCII-Pixel</h1>
+
+<div class="stage"><canvas id="dog-cv"></canvas></div>
+
+<div class="bar">
+	<button id="b-color" class="act">Farbe</button>
+	<button id="b-gray">Graustufen</button>
+	<button id="b-grid">Raster</button>
+	<button id="b-sym">Symmetrie</button>
+	<button id="b-text">ASCII-Text</button>
+</div>
+<div class="hint">32 &times; 32 Zeichen &middot; jedes Zeichen ist ein Pixel, jedes Pixel ist nur eine Zahl</div>
+
+<pre class="ascii" id="dog-txt"></pre>
+
+<script>
+const HundKit = (() => {
+	'use strict';
+
+	// ═══════════ Daten: 32x32 ASCII-Hundekopf ═══════════
+	// Vorbild: Jack-Russell-Pixelkopf
+	//   .  Hintergrund (hellblau)   k  Kontur schwarz
+	//   b  braun                    w  weiss (Blesse, Schnauze)
+	//   W  Glanzpunkt / Auge        n  Nase schwarz
+	//   r  Zunge rot
+	const P = {
+		'.': '#A8D4E8', k: '#1A1A1A', b: '#D4823C',
+		w: '#FFFFFF', W: '#FFFFFF', n: '#1A1A1A', r: '#E84C4C'
+	};
+
+	const ART = [
+		"................................",
+		"....kkkk..............kkkk......",
+		"...kwwwk..............kwwwk.....",
+		"..kkwwbkk............kkbwwkk....",
+		"..kwwbbbbk..kkkkkk..kbbbbwwk....",
+		".kkwbbbbbbkkkwwwwkkkbbbbbbwkk...",
+		".kwwbbbbbbkkwwwwwwkkbbbbbbwwk...",
+		".kwbbbbbbbkwwwwwwwwkbbbbbbbwk...",
+		".kwbbbbbbbkwwwwwwwwkbbbbbbbwk...",
+		".kwbbbbbbkkwwwwwwwwkkbbbbbbwk...",
+		".kkwbbbbkkwwwwwwwwwwkkbbbbwkk...",
+		"..kkwwkkkwwwwwwwwwwwwkkkwwkk....",
+		"...kkkkbkkwwwwwwwwwwkkbkkkk.....",
+		"....kbbbbkwwwwwwwwwwkbbbbk......",
+		"....kbbkkkkwwwwwwwwkkkkbbk......",
+		"....kbkWWkbkwwwwwwkbkWWkbk......",
+		"....kbkWWkbkwwwwwwkbkWWkbk......",
+		"....kbbkkkbkwwwwwwkbkkkbbk......",
+		"....kbbbbbbkwwwwwwkbbbbbbk......",
+		".....kbbbbbkwwwwwwkbbbbbk.......",
+		".....kkbbbbkwwwwwwkbbbbkk.......",
+		"......kkbbkkwwwwwwkkbbkk........",
+		".......kkkwwwwwwwwwwkkk.........",
+		"........kwwwwnnnnwwwwk..........",
+		"........kwwwnnnnnnwwwk..........",
+		"........kwwwnnnnnnwwwk..........",
+		"........kwwwwnnnnwwwwk..........",
+		".........kwwwwrrwwwwk...........",
+		".........kwwwwwwwwwwk...........",
+		"..........kwwwwwwwwk............",
+		"...........kkwwwwkk.............",
+		".............kkkk..............."
+	];
+	const N = 32;
+
+	// ═══════════ Palette -> RGB ═══════════
+	const hex = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+	const RGB = [], CHARS = [];
+	for (let r = 0; r < N; r++) {
+		const row = (ART[r] || '').padEnd(N, '.');
+		for (let c = 0; c < N; c++) {
+			const ch = row[c];
+			CHARS.push(ch);
+			RGB.push(hex(P[ch] || P['.']));
+		}
+	}
+	const GRAY = RGB.map(v => Math.round(0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2]));
+
+	const EYE_L = { r: 15, c: 7, h: 2, w: 2 };
+	const EYE_R = { r: 15, c: 21, h: 2, w: 2 };
+
+	// ═══════════ Guardrails ═══════════
+	function check() {
+		const at = (r, c) => CHARS[r * N + c];
+		const res = [];
+
+		// G1: komplette Links-rechts-Spiegelung
+		{
+			let bad = 0, why = '';
+			for (let r = 0; r < N; r++) {
+				for (let c = 0; c < N; c++) {
+					if (at(r, c) !== at(r, N - 1 - c)) {
+						bad++;
+						if (!why) why = 'erste Abweichung Zeile ' + r + ', Spalte ' + c;
+					}
+				}
+			}
+			res.push({ name: 'G1 Kopf ist spiegelsymmetrisch', pass: bad === 0,
+			           detail: bad === 0 ? '1024/1024 Zellen gespiegelt gleich' : bad + ' Zellen - ' + why });
+		}
+
+		// G2: beide Augen gleich gross
+		{
+			const cnt = box => {
+				let n = 0;
+				for (let dr = 0; dr < box.h; dr++)
+					for (let dc = 0; dc < box.w; dc++)
+						if (at(box.r + dr, box.c + dc) === 'W') n++;
+				return n;
+			};
+			const L = cnt(EYE_L), R = cnt(EYE_R);
+			res.push({ name: 'G2 Beide Augen gleich gross', pass: L === R && L === 4,
+			           detail: 'links ' + L + ' Pixel - rechts ' + R + ' Pixel' });
+		}
+
+		// G3: Blesse durchgehend
+		{
+			let ok = true, why = '';
+			for (let r = 5; r <= 22; r++) {
+				let found = false;
+				for (let c = 13; c <= 18; c++) if (at(r, c) === 'w') found = true;
+				if (!found) { ok = false; why = 'Zeile ' + r + ' ohne Blesse'; break; }
+			}
+			res.push({ name: 'G3 Blesse laeuft durchgehend Stirn-Schnauze', pass: ok,
+			           detail: why || 'Zeilen 5-22 durchgehend weiss' });
+		}
+
+		// G4: Ohren sind Dreiecke
+		{
+			const earW = r => {
+				let n = 0;
+				for (let c = 0; c < 12; c++) if (at(r, c) === 'b') n++;
+				return n;
+			};
+			const w3 = earW(3), w8 = earW(8), w11 = earW(11);
+			const ok = w8 > w3 && w8 > w11;
+			res.push({ name: 'G4 Ohren sind Dreiecke (breit in der Mitte)', pass: ok,
+			           detail: 'Zeile 3: ' + w3 + ' - Zeile 8: ' + w8 + ' - Zeile 11: ' + w11 });
+		}
+
+		// G5: Nase mittig
+		{
+			let min = N, max = -1, n = 0;
+			for (let r = 0; r < N; r++)
+				for (let c = 0; c < N; c++)
+					if (at(r, c) === 'n') { n++; if (c < min) min = c; if (c > max) max = c; }
+			const mid = (min + max) / 2;
+			const ok = n > 0 && Math.abs(mid - (N - 1) / 2) < 0.6;
+			res.push({ name: 'G5 Nase sitzt mittig', pass: ok,
+			           detail: n + ' Pixel, Mitte bei Spalte ' + mid.toFixed(1) + ' (Soll 15,5)' });
+		}
+
+		// G6: Palette vollstaendig
+		{
+			const uniq = [];
+			CHARS.forEach(ch => { if (uniq.indexOf(ch) < 0) uniq.push(ch); });
+			const miss = uniq.filter(ch => !P[ch]);
+			res.push({ name: 'G6 Jedes Zeichen hat eine Farbe', pass: miss.length === 0,
+			           detail: miss.length ? 'fehlt: ' + miss.join(', ')
+			                               : uniq.length + ' Zeichen, alle in der Palette' });
+		}
+
+		// G7: Zeilenlaengen
+		{
+			const bad = [];
+			ART.forEach((row, i) => { if (row.length !== N) bad.push(i + ':' + row.length); });
+			res.push({ name: 'G7 Alle 32 Zeilen = 32 Zeichen', pass: bad.length === 0,
+			           detail: bad.length ? 'falsch: ' + bad.join(', ') : '32 x 32 exakt' });
+		}
+
+		return res;
+	}
+
+	// ═══════════ Helpers ═══════════
+	const lerp = (a, b, t) => a + (b - a) * t;
+
+	function drawGrid(ctx, o, grayMix, gridMix) {
+		if (o.a < 0.005) return;
+		ctx.globalAlpha = o.a;
+		const s = o.s;
+		for (let r = 0; r < N; r++) {
+			const y = o.y + r * s, yh = Math.ceil(y + s) - Math.floor(y);
+			for (let c = 0; c < N; c++) {
+				const i = r * N + c;
+				const x = o.x + c * s, xw = Math.ceil(x + s) - Math.floor(x);
+				const col = RGB[i], v = GRAY[i];
+				const rr = lerp(col[0], v, grayMix) | 0;
+				const gg = lerp(col[1], v, grayMix) | 0;
+				const bb = lerp(col[2], v, grayMix) | 0;
+				ctx.fillStyle = 'rgb(' + rr + ',' + gg + ',' + bb + ')';
+				ctx.fillRect(Math.floor(x), Math.floor(y), xw, yh);
+			}
+		}
+		if (gridMix > 0.01 && s > 4) {
+			ctx.globalAlpha = o.a * gridMix * 0.5;
+			ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 0.5;
+			for (let i = 0; i <= N; i++) {
+				const p = Math.floor(o.x + i * s) + 0.5;
+				ctx.beginPath(); ctx.moveTo(p, o.y); ctx.lineTo(p, o.y + N * s); ctx.stroke();
+				const q = Math.floor(o.y + i * s) + 0.5;
+				ctx.beginPath(); ctx.moveTo(o.x, q); ctx.lineTo(o.x + N * s, q); ctx.stroke();
+			}
+		}
+		ctx.globalAlpha = 1;
+	}
+
+	function drawEyeBoxes(ctx, o, a) {
+		if (a < 0.01) return;
+		ctx.globalAlpha = a;
+		ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2;
+		[EYE_L, EYE_R].forEach(b => {
+			const x = Math.floor(o.x + b.c * o.s), y = Math.floor(o.y + b.r * o.s);
+			const x1 = Math.ceil(o.x + (b.c + b.w) * o.s), y1 = Math.ceil(o.y + (b.r + b.h) * o.s);
+			ctx.strokeRect(x - 1.5, y - 1.5, x1 - x + 3, y1 - y + 3);
+		});
+		ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1.5;
+		const mx = Math.floor(o.x + (N / 2) * o.s) + 0.5;
+		ctx.beginPath(); ctx.moveTo(mx, o.y); ctx.lineTo(mx, o.y + N * o.s); ctx.stroke();
+		ctx.globalAlpha = 1;
+	}
+
+	if (typeof window !== 'undefined') window.HundCheck = check;
+
+	return { P: P, ART: ART, N: N, RGB: RGB, GRAY: GRAY, CHARS: CHARS,
+	         EYE_L: EYE_L, EYE_R: EYE_R, drawGrid: drawGrid,
+	         drawEyeBoxes: drawEyeBoxes, check: check, lerp: lerp };
+})();
+
+// ═══════════ Demo ═══════════
+(() => {
+	'use strict';
+	const K = HundKit;
+	const cv = document.getElementById('dog-cv');
+	const stage = cv.parentElement;
+	const ctx = cv.getContext('2d', { alpha: false });
+	let W = 0, H = 0, DPR = 1;
+
+	const o = { x: 0, y: 0, s: 1, a: 0, tx: 0, ty: 0, ts: 10, ta: 1 };
+	let grayMix = 0, tGrayMix = 0;
+	let gridMix = 0, tGridMix = 0;
+	let eyeA = 0, tEyeA = 0;
+	let last = 0;
+
+	function resize() {
+		DPR = Math.min(window.devicePixelRatio || 1, 2);
+		W = stage.clientWidth; H = stage.clientHeight;
+		cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+		ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+		ctx.imageSmoothingEnabled = false;
+		layout();
+	}
+
+	function layout() {
+		const s = Math.min(W, H) * 0.92 / K.N;
+		o.ts = s;
+		o.tx = (W - K.N * s) / 2;
+		o.ty = (H - K.N * s) / 2;
+	}
+
+	function frame(ts) {
+		const dt = Math.max(0, Math.min((ts - last) / 16.667, 3));
+		last = ts;
+		const k = 1 - Math.pow(1 - 0.085, dt);
+		o.x = K.lerp(o.x, o.tx, k);
+		o.y = K.lerp(o.y, o.ty, k);
+		o.s = K.lerp(o.s, o.ts, k);
+		o.a = K.lerp(o.a, o.ta, k * 1.25);
+		grayMix = K.lerp(grayMix, tGrayMix, k);
+		gridMix = K.lerp(gridMix, tGridMix, k);
+		eyeA = K.lerp(eyeA, tEyeA, k * 1.2);
+
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(0, 0, W, H);
+		K.drawGrid(ctx, o, grayMix, gridMix);
+		K.drawEyeBoxes(ctx, o, eyeA);
+		requestAnimationFrame(frame);
+	}
+
+	const bColor = document.getElementById('b-color');
+	const bGray  = document.getElementById('b-gray');
+	const bGrid  = document.getElementById('b-grid');
+	const bSym   = document.getElementById('b-sym');
+	const bText  = document.getElementById('b-text');
+	const txt    = document.getElementById('dog-txt');
+
+	bColor.onclick = function () {
+		tGrayMix = 0;
+		bColor.classList.add('act');
+		bGray.classList.remove('act');
+	};
+	bGray.onclick = function () {
+		tGrayMix = 1;
+		bGray.classList.add('act');
+		bColor.classList.remove('act');
+	};
+	bGrid.onclick = function () {
+		tGridMix = tGridMix > 0.5 ? 0 : 1;
+		bGrid.classList.toggle('act', tGridMix > 0.5);
+	};
+	bSym.onclick = function () {
+		tEyeA = tEyeA > 0.5 ? 0 : 1;
+		bSym.classList.toggle('act', tEyeA > 0.5);
+		if (tEyeA > 0.5) console.table(K.check());
+	};
+	bText.onclick = function () {
+		if (!txt.textContent) txt.textContent = K.ART.join('\n');
+		txt.classList.toggle('on');
+		bText.classList.toggle('act', txt.classList.contains('on'));
+	};
+
+	window.addEventListener('resize', resize);
+	resize();
+	o.s = 1; o.x = W / 2; o.y = H / 2; o.a = 0;
+	last = performance.now();
+	requestAnimationFrame(frame);
+	window.HundKit = K;
+	console.table(K.check());
+})();
+</script>
+</body>
+</html>
