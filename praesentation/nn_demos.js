@@ -76,7 +76,6 @@ const FlipClockViz = (() => {
     let VH = 0;
     let offset = 0, lastT = 0, switchT = 0, raf = 0, running = false, inited = false;
     let switched = false, pendingSwitch = false;
-    let diagTick = 0;
 
     function valFor(col, p) {
         const idx = (((-p) % PERIOD) + PERIOD) % PERIOD;
@@ -147,8 +146,6 @@ const FlipClockViz = (() => {
         if (formula) { formula.style.opacity = fOp.toFixed(3); formula.style.transform = 'scale(' + fSc.toFixed(3) + ')'; }
         root.style.opacity = cOp.toFixed(3);
 
-        if (switched && (diagTick = (diagTick || 0) + 1) % 30 === 0) console.log('FCDIAG offset=' + offset.toFixed(3) + ' ex=' + (Math.floor(offset) % PERIOD) + ' aOp=' + fOp.toFixed(2) + ' cOp=' + cOp.toFixed(2));
-
         // 3 Spalten synchron nach unten (Werte von oben rein), nahtlos (Periode 4).
         const ty = offset * VH;
         const cy = VH * 1.2;                            // Auslese-Zeile (Spalten-Mitte)
@@ -189,7 +186,6 @@ const FlipClockViz = (() => {
             build();
             if (!root) return;
             if (!running) { running = true; lastT = 0; raf = requestAnimationFrame(frame); }
-            if (new URLSearchParams(window.location.search).get('autoswitch')) setTimeout(advance, 400);
         });
     }
     function stop() {

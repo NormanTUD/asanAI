@@ -174,7 +174,15 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   (Folie 2) clean; DOM-Dump: 16 Tiles, richtige Helligkeit (Mitte hell). Morph-Zeitpunkt =
   `enterT + 1200 ms` (AUTO) — **wird in T15 auf manuell umgestellt**.
 
-### T15 · Folie 2: Switch erst auf manuelles Weiter + `f(...)` fix, nur Zahlen rotieren  `[~]`
+### T15 · Folie 2: Switch erst auf manuelles Weiter + `f(...)` fix, nur Zahlen rotieren  `[x]`
+- ✅ Fertig: (1) Switch nur auf manuelles Weiter — Registry `klassisch-flipclock`
+  (`guard:()=>true`, `canNext:'canSwitch'`, `nextMethod:'advance'`) frisst den **ersten Next**
+  (triggert `advance()` → Cross-Morph), danach fallen Fragmente/Navigation normal durch.
+  (2) Flip-Clock = **fixes `f( , ) =`** (Glyphen) + **3 Spalten** `a`,`b`,`o` (vertikale Slots,
+  Werte rollen von oben durch die Auslese-Zeile, sync, nahtloser Loop, Vorwärts 0,1,2,3).
+- **Verifiziert:** `node --check` + headless (Folie 2) clean; DOM-Dump (4 Glyphen, 3 Spalten,
+  36 Werte, Formel sichtbar / Flip-Clock versteckt am Start); Real-Time-Run (autoswitch-Hook,
+  danach entfernt): Cross-Morph komplett (`aOp=0 cOp=1`), offset steigt, `ex`=0→1→2→3.
 - **Norman (2×):** (1) Der Switch (Formel → Flip-Clock) soll **erst kommen, wenn ich manuell
   weitermache** (Pfeil/Next) — nicht auto nach 1,2 s. (2) Das **`f(...)` soll stehen bleiben**,
   nur die **Zahlen und Ergebnisse** rotieren rein (von oben).
