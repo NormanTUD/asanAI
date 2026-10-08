@@ -248,7 +248,10 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   Folie, mehrere Szenen, Smooth-Content-Swap), (b) Crossfade zwischen 8→9 so soften, dass es
   wie ein Inhalt-Wechsel wirkt. → **konkrete Herangehensweise bei Umsetzen festlegen.**
 
-### T21 · „Aus Zahlen werden Punkte" (Folie 10, DenseRaum): Klar trennbar betonen  `[ ]`
+### T21 · „Aus Zahlen werden Punkte" (Folie 10, DenseRaum): Klar trennbar betonen  `[x]`
+- ✅ Fertig: Payoff-Insight (Schritt 4 „Eine Ebene passt dazwischen") geschärft: „Das ist der
+  **Payoff**: nach dem Wölben sind Katze & Hund **klar trennbar** … genau das, wozu die Schicht
+  den Raum wölbt." Passt zur Linie (T25/T26). `node --check` + headless (Folie 10) clean.
 - **Norman:** „da sind die beiden Klassen eben doch **klar trennbar**, was der Rest der
   Layer (Räume wölben) möglich machen soll." → Der Schritt soll den **Payoff** zeigen: nach der
   Faltung/Wölbung sind Katze & Hund **deutlich trennbar**. (Naheliegend mit T25/T26: Trennung
