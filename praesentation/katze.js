@@ -615,53 +615,6 @@ const ConvDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// RGB-Matrix: das Bild als große Zahl-Matrix. Oben links MB×MB
-	// echte Pixel (je ein RGB-Triplett, farbig), daneben/unten Punkte
-	// für den (riesigen) Rest — Shape (32, 32, 3).
-	function drawRGBMatrix(ctx, S) {
-		if (matrixA < 0.01) return;
-		const mx = S.matrixX, my = S.matrixY;
-		ctx.globalAlpha = matrixA;
-
-		// Zellen: je Pixel ein RGB-Triplett (Swatch + R/G/B farbig).
-		for (let r = 0; r < MB; r++) {
-			for (let c = 0; c < MB; c++) {
-				const [R, G, B] = KatzeKit.RGB[(MB_TOP + r) * KatzeKit.N + (MB_LEFT + c)];
-				const x = mx + c * (MCC_W + MCC_G), y = my + r * (MCC_H + MCC_G);
-				ctx.fillStyle = '#fff';
-				ctx.fillRect(x, y, MCC_W, MCC_H);
-				ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
-				ctx.strokeRect(x + .5, y + .5, MCC_W - 1, MCC_H - 1);
-				// Farb-Swatch: die echte Farbe des Pixels.
-				ctx.fillStyle = `rgb(${R},${G},${B})`;
-				ctx.fillRect(x + 5, y + 5, MCC_W - 10, 11);
-				// R/G/B-Werte, je in der Kanal-Farbe.
-				ctx.font = '700 11px Inter, system-ui, sans-serif';
-				ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-				ctx.fillStyle = '#ef4444'; ctx.fillText('R ' + R, x + 6, y + 28);
-				ctx.fillStyle = '#16a34a'; ctx.fillText('G ' + G, x + 6, y + 42);
-				ctx.fillStyle = '#2563eb'; ctx.fillText('B ' + B, x + 6, y + 56);
-			}
-		}
-
-		// Punkte: Fortsetzung nach rechts (⋯), unten (⋮), Ecke (⋱).
-		ctx.fillStyle = '#94a3b8';
-		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-		ctx.font = '800 17px Inter, system-ui, sans-serif';
-		for (let r = 0; r < MB; r++)
-			ctx.fillText('⋯', mx + MBLOCK_W + 23, my + r * (MCC_H + MCC_G) + MCC_H / 2);
-		for (let c = 0; c < MB; c++)
-			ctx.fillText('⋮', mx + c * (MCC_W + MCC_G) + MCC_W / 2, my + MBLOCK_H + 23);
-		ctx.font = '800 15px Inter, system-ui, sans-serif';
-		ctx.fillText('⋱', mx + MBLOCK_W + 23, my + MBLOCK_H + 23);
-
-		// Shape-Label.
-		ctx.fillStyle = '#64748b';
-		ctx.font = '600 12.5px Inter, system-ui, sans-serif';
-		ctx.fillText('(32, 32, 3)', mx + MAT_W / 2, my + MAT_H - 11);
-		ctx.globalAlpha = 1;
-	}
-
 	return KatzeKit.create({
 		slideId: 'slide-convolution',
 		prefix: 'conv',
@@ -681,9 +634,9 @@ const ConvDemo = (() => {
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
 			{ k: 'Schritt 5', t: 'Das ganze Bild ist<br>eine <em>Zahlen-Matrix</em>.',
-			  p: '32 × 32 Pixel, jedes mit drei Zahlen: Rot · Grün · Blau',
-			  c: '<span class="kz-chip">(32, 32, 3)</span>',
-			  i: 'Ein Bild ist also eine riesige Zahl-Matrix (32 × 32 × 3): jedes Pixel steckt als kleines RGB-Triplett drin. So „sieht" der Computer ein Foto — als reine Zahlen.' }
+			  p: '32 × 32 Pixel, jedes eine Zahl von 0 bis 255',
+			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>',
+			  i: 'Ein Bild ist also eine riesige Zahl-Matrix (32 × 32): jedes Pixel steckt als <b>eine Zahl</b> (0–255) drin. So „sieht" der Computer ein Foto — als reine Zahlen.' }
 		],
 
 		layoutFor(step, S) {
@@ -741,22 +694,19 @@ const ConvDemo = (() => {
 				tTagA = [0, 0, 0];
 				S.tGrayMix = 1;
 			} else if (step === 4) {
-				// Links die graue Katze (klein), rechts die RGB-Matrix.
-				const cs = Math.min(H / KatzeKit.N * .58, W / KatzeKit.N * .3, 8);
-				const catW = KatzeKit.N * cs, gap = 64;
-				const totW = catW + gap + MAT_W;
-				const x0 = (W - totW) / 2;
-				const maxH = Math.max(catW, MAT_H);
-				const y0 = (H - maxH) / 2 + 4;
+				// Links die graue Katze; rechts die Graustufen-Matrix
+				// (LaTeX-HTML #conv-matrix, Opazität via matrixA).
+				const cs = Math.min(H / KatzeKit.N * .6, W / KatzeKit.N * .4, 9);
+				const catW = KatzeKit.N * cs;
+				const x0 = W * 0.08;
+				const y0 = (H - catW) / 2 + 4;
 				inst.forEach((o, i) => {
-					o.ts = cs; o.tx = x0; o.ty = y0 + (maxH - catW) / 2;
+					o.ts = cs; o.tx = x0; o.ty = y0;
 					o.tmix = i === KatzeKit.PICK ? 1 : 0;
 					o.ta = i === KatzeKit.PICK ? 1 : 0;
 				});
 				tTagA = [0, 0, 0];
 				S.tGrayMix = 1;
-				S.matrixX = x0 + catW + gap;
-				S.matrixY = y0 + (maxH - MAT_H) / 2;
 			}
 			tMatrixA = step === 4 ? 1 : 0;
 		},
@@ -769,6 +719,8 @@ const ConvDemo = (() => {
 			matrixA = KatzeKit.lerp(matrixA, tMatrixA, k * 1.2);
 			bwA = KatzeKit.lerp(bwA, tBwA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
+			const mEl = document.getElementById('conv-matrix');
+			if (mEl) mEl.style.opacity = matrixA.toFixed(3);
 		},
 
 		draw(ctx, S) {
@@ -790,11 +742,10 @@ const ConvDemo = (() => {
 				KatzeKit.drawTags(ctx, S, tagA);
 				drawBWPair(ctx, S);
 			} else if (S.step === 3 || S.step === 4) {
-				// Der Grün-Kanal (inst[PICK], grau) — Schritt 5 zeigt
-				// zusätzlich die RGB-Matrix rechts neben der Katze.
+				// Der Grün-Kanal (inst[PICK], grau). Die Matrix (Schritt 5)
+				// ist ein HTML-Overlay (#conv-matrix), nicht auf dem Canvas.
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				drawGrayCat(ctx, S);
-				if (S.step === 4) drawRGBMatrix(ctx, S);
 			}
 		}
 	});
