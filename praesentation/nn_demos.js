@@ -55,11 +55,10 @@ const TypewriterViz = (() => {
 /* ================================================================
     FlipClockViz – "Klassisch vs. KI" (Folie 2)
     Cross-Morph, gleiche Mitte: die Formel f(a,b)={cases} steht
-    zentriert (volle Höhe) und MORPHED nach ~1,2 s flüssig in den
-    vertikalen Flip-Clock. Die Beispielauswertungen f(a,b)=o rollen
-    VON OBEN durch die mittlere Auslese-Zeile; das aktuelle Beispiel
-    steht immer am Zeiger, die anderen rollen hindurch. Nahtloser
-    Loop (rAF, Periode 4·spacing), Vorwärtsreihenfolge 0,1,2,3.
+    zentriert (volle Höhe). Auf manuelles Weiter (advance) MORPHED
+    sie flüssig in den Flip-Clock: das f(...) bleibt stehen, nur die
+    ZAHLEN (a, b) und das ERGEBNIS (o) rollen von OBEN in die
+    Auslese-Zeile (3 Spalten, sync, nahtloser Loop, Vorwärts 0,1,2,3).
     ================================================================ */
 const FlipClockViz = (() => {
     const EX = [
@@ -69,18 +68,18 @@ const FlipClockViz = (() => {
         { a: 1, b: 1, o: 1 }
     ];
     const PERIOD = 4;
-    const NTILE = 16;
-    const MORPH_DELAY = 1200;
-    const MORPH_DUR = 900;
+    const RBASE = 4;            // Spalten-Positionen p: -RBASE .. RBASE+PERIOD-1
+    const STEP_S = 2.6;         // 1 Wert alle ~2,6 s
+    const MORPH_DUR = 850;      // Cross-Morph Dauer (ab advance)
 
-    let root = null, formula = null, win = null, track = null, tiles = [];
-    let H = 0, spacing = 0, wrap = 0, speed = 0;
-    let offset = 0, enterT = 0, lastT = 0, raf = 0, running = false, inited = false;
+    let root = null, formula = null, odo = null, cols = [];
+    let VH = 0;
+    let offset = 0, lastT = 0, switchT = 0, raf = 0, running = false, inited = false;
+    let switched = false, pendingSwitch = false;
 
-    function exIndex(j) { return (((-j) % PERIOD) + PERIOD) % PERIOD; }
-    function tex(j) {
-        const e = EX[exIndex(j)];
-        return 'f(' + e.a + ',' + e.b + ')=' + e.o;
+    function valFor(col, p) {
+        const idx = (((-p) % PERIOD) + PERIOD) % PERIOD;
+        return EX[idx][col];
     }
 
     function build() {
@@ -89,36 +88,43 @@ const FlipClockViz = (() => {
         root = document.getElementById('flip-clock');
         formula = document.getElementById('klassik-formula');
         if (!root) return;
-        win = document.createElement('div');
-        win.className = 'fc-window';
-        const ptr = document.createElement('div'); ptr.className = 'fc-pointer';
-        win.appendChild(ptr);
-        track = document.createElement('div');
-        track.className = 'fc-track';
+        root.innerHTML = '';
+        const win = document.createElement('div'); win.className = 'fc-window';
+        odo = document.createElement('div'); odo.className = 'fc-odo';
         root.appendChild(win);
-        root.appendChild(track);
-        const hasTemml = typeof temml !== 'undefined';
-        for (let j = 0; j < NTILE; j++) {
-            const t = document.createElement('div');
-            t.className = 'fc-tile';
-            if (hasTemml) t.innerHTML = temml.renderToString(tex(j), { displayMode: false });
-            else t.textContent = tex(j);
-            track.appendChild(t);
+        root.appendChild(odo);
+        const seq = ['f(', 'a', ',', 'b', ')', '=', 'o'];   // f( [a] , [b] ) = [o]
+        for (const s of seq) {
+            if (s === 'a' || s === 'b' || s === 'o') {
+                const col = document.createElement('div'); col.className = 'fc-col';
+                const track = document.createElement('div'); track.className = 'fc-track';
+                for (let p = -RBASE; p < RBASE + PERIOD; p++) {
+                    const v = document.createElement('div'); v.className = 'fc-val';
+                    v.textContent = String(valFor(s, p));
+                    track.appendChild(v);
+                }
+                col.appendChild(track);
+                odo.appendChild(col);
+                cols.push(track);
+            } else {
+                const g = document.createElement('span'); g.className = 'fc-glyph';
+                g.textContent = s;
+                odo.appendChild(g);
+            }
         }
-        tiles = Array.from(track.children);
         measure();
     }
 
     function measure() {
         if (!root) return;
-        H = root.clientHeight;
+        const H = root.clientHeight;
         if (H <= 0) return;
-        spacing = Math.max(44, Math.min(58, H / 8.5));
-        wrap = PERIOD * spacing;
-        speed = spacing / 3.0;
-        for (let j = 0; j < tiles.length; j++) {
-            tiles[j].style.top = (j * spacing) + 'px';
-        }
+        VH = Math.max(46, Math.min(60, H * 0.13));
+        cols.forEach(track => {
+            track.parentElement.style.height = (VH * 2.4) + 'px';
+            const kids = track.children;
+            for (let i = 0; i < kids.length; i++) kids[i].style.height = VH + 'px';
+        });
     }
 
     function ease(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
@@ -127,57 +133,72 @@ const FlipClockViz = (() => {
         if (!running) return;
         const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0;
         lastT = t;
-        offset = (offset + speed * dt) % wrap;
+        if (pendingSwitch && !switched) { switched = true; switchT = t; pendingSwitch = false; }
 
-        // Cross-Morph: Formel (1) → Flip-Clock (0).
-        const el = t - enterT;
+        // Cross-Morph (Formel → Flip-Clock), gleiche Mitte — nur nach advance.
         let fOp = 1, fSc = 1, cOp = 0;
-        if (el >= MORPH_DELAY + MORPH_DUR) { fOp = 0; fSc = 0.9; cOp = 1; }
-        else if (el >= MORPH_DELAY) {
-            const p = ease((el - MORPH_DELAY) / MORPH_DUR);
-            fOp = 1 - p; fSc = 1 - 0.10 * p; cOp = p;
+        if (switched) {
+            const el = t - switchT;
+            if (el >= MORPH_DUR) { fOp = 0; fSc = 0.9; cOp = 1; }
+            else { const p = ease(el / MORPH_DUR); fOp = 1 - p; fSc = 1 - 0.10 * p; cOp = p; }
+            offset = (offset + dt / STEP_S) % PERIOD;   // Werte rollen
         }
         if (formula) { formula.style.opacity = fOp.toFixed(3); formula.style.transform = 'scale(' + fSc.toFixed(3) + ')'; }
         root.style.opacity = cOp.toFixed(3);
 
-        // Vertikales Scrollen: Track nach unten → Beispiele von oben rein.
-        track.style.transform = 'translateY(' + (offset - wrap) + 'px)';
-        const cy = H / 2;
-        const reach = spacing * 2.4;
-        for (let j = 0; j < tiles.length; j++) {
-            const pos = j * spacing + offset - wrap;
-            let p = 1 - Math.abs(pos - cy) / reach;
-            if (p < 0) p = 0; else if (p > 1) p = 1;
-            const pe = Math.pow(p, 1.6);
-            tiles[j].style.opacity = (0.12 + 0.88 * pe).toFixed(3);
-            tiles[j].style.transform = 'scale(' + (0.82 + 0.18 * pe).toFixed(3) + ')';
-        }
+        // 3 Spalten synchron nach unten (Werte von oben rein), nahtlos (Periode 4).
+        const ty = offset * VH;
+        const cy = VH * 1.2;                            // Auslese-Zeile (Spalten-Mitte)
+        const reach = VH * 1.5;
+        cols.forEach(track => {
+            track.style.transform = 'translateY(' + ty + 'px)';
+            const kids = track.children;
+            for (let i = 0; i < kids.length; i++) {
+                const p = -RBASE + i;
+                const pos = p * VH + ty + VH / 2;       // Wert-Mitte (absolut)
+                let k = 1 - Math.abs(pos - cy) / reach;
+                if (k < 0) k = 0; else if (k > 1) k = 1;
+                const ke = Math.pow(k, 1.5);
+                kids[i].style.opacity = (0.12 + 0.88 * ke).toFixed(3);
+            }
+        });
         raf = requestAnimationFrame(frame);
     }
 
+    function canSwitch() {
+        if (switched) return false;
+        const a = document.querySelector('.slide.active');
+        return !!(a && a.id === 'slide-klassisch-vs-ki');
+    }
+    function advance() {
+        if (switched) return;
+        const a = document.querySelector('.slide.active');
+        if (!a || a.id !== 'slide-klassisch-vs-ki') return;
+        pendingSwitch = true;
+    }
+
     function start() {
-        // Erst im nächsten Frame: dann ist das Layout (clientHeight) der
-        // aktivierten Folie fixiert. Läuft nur, wenn die Folie aktiv ist.
-        requestAnimationFrame((t) => {
+        // Erst im nächsten Frame: dann ist das Layout fixiert. Läuft nur,
+        // wenn die Folie aktiv ist. Zeigt die Formel und wartet auf advance.
+        requestAnimationFrame(() => {
             const a = document.querySelector('.slide.active');
             if (!a || a.id !== 'slide-klassisch-vs-ki') return;
             build();
             if (!root) return;
-            offset = 0; enterT = t; lastT = 0;
-            if (!running) { running = true; raf = requestAnimationFrame(frame); }
+            if (!running) { running = true; lastT = 0; raf = requestAnimationFrame(frame); }
         });
     }
     function stop() {
         running = false;
         if (raf) { cancelAnimationFrame(raf); raf = 0; }
-        // Zurücksetzen, damit beim nächsten Betreten die Formel wieder zuerst kommt.
+        switched = false; pendingSwitch = false; offset = 0;
         if (formula) { formula.style.opacity = ''; formula.style.transform = ''; }
-        if (root) { root.style.opacity = ''; track.style.transform = ''; }
+        if (root) root.style.opacity = '';
     }
 
     window.addEventListener('resize', () => { if (running) measure(); });
 
-    return { start, stop };
+    return { start, stop, advance, canSwitch };
 })();
 /* ================================================================
     Neuron Intro Animation (Slide "Was sind Dense Layer?")
