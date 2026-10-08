@@ -72,12 +72,12 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Drei Bausteine" (katze.js), statisches ZIEL der
-                // Pipeline (Folie 5): Katze = 100 %, Loss 0,000 — live
+                // "Was wir wollen" (katze.js), statisches ZIEL der
+                // Pipeline (Folie 4): Katze = 100 %, Loss 0,000 — live
                 // gerendert (kein Screenshot), wiederverwendet aus
                 // PipelineKit (gleiche Szene wie animierte Folie 11).
                 { id: 'pipeline-goal', ref: () => typeof PipelineGoalDemo !== 'undefined' ? PipelineGoalDemo : null,
-                        slideTest: s => s.id === 'slide-bausteine',
+                        slideTest: s => s.id === 'slide-ziel',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 

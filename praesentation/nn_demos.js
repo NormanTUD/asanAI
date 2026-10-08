@@ -63,17 +63,14 @@ const TypewriterViz = (() => {
     ================================================================ */
 const FlipClockViz = (() => {
     // Haupt-Beispiel: f(x) = x² (erkennbar, etwas komplexer als AND).
+    // Endloser Stream: x = 0..9 (o = x²) wiederholen sich nahtlos (Periode 10),
+    // die Spalten steigen nach oben und werden oben per CSS-Maske ausgeblendet.
     const LAYOUT = ['f(', 'x', ')', '=', 'o'];   // f( [x] ) = [o]
     const FIELDS = ['x', 'o'];
-    const EX = [
-        { x: 0, o: 0 },
-        { x: 1, o: 1 },
-        { x: 2, o: 4 },
-        { x: 3, o: 9 }
-    ];
+    const EX = [];
+    for (let i = 0; i < 10; i++) EX.push({ x: i, o: i * i });
     const PERIOD = EX.length;
-    const RBASE = 4;            // Spalten-Positionen p: -RBASE .. RBASE+PERIOD-1
-    const STEP_S = 2.6;         // 1 Wert alle ~2,6 s
+    const STEP_S = 1.2;         // 1 Wert alle ~1,2 s (Stream fließt klar)
     const MORPH_DUR = 850;      // Cross-Morph Dauer (ab advance)
 
     let root = null, formula = null, odo = null, cols = [];
@@ -82,7 +79,7 @@ const FlipClockViz = (() => {
     let switched = false, pendingSwitch = false;
 
     function valFor(col, p) {
-        const idx = (((-p) % PERIOD) + PERIOD) % PERIOD;
+        const idx = ((p % PERIOD) + PERIOD) % PERIOD;
         return EX[idx][col];
     }
 
@@ -101,7 +98,7 @@ const FlipClockViz = (() => {
             if (FIELDS.indexOf(s) !== -1) {
                 const col = document.createElement('div'); col.className = 'fc-col';
                 const track = document.createElement('div'); track.className = 'fc-track';
-                for (let p = -RBASE; p < RBASE + PERIOD; p++) {
+                for (let p = 0; p < 2 * PERIOD; p++) {
                     const v = document.createElement('div'); v.className = 'fc-val';
                     v.textContent = String(valFor(s, p));
                     track.appendChild(v);
@@ -122,9 +119,10 @@ const FlipClockViz = (() => {
         if (!root) return;
         const H = root.clientHeight;
         if (H <= 0) return;
-        VH = Math.max(46, Math.min(60, H * 0.13));
+        VH = Math.max(44, Math.min(56, H * 0.12));
+        const colH = Math.min(H * 0.86, 380);   // hohe Spalte → langer Stream
         cols.forEach(track => {
-            track.parentElement.style.height = (VH * 2.4) + 'px';
+            track.parentElement.style.height = colH + 'px';
             const kids = track.children;
             for (let i = 0; i < kids.length; i++) kids[i].style.height = VH + 'px';
         });
@@ -149,22 +147,10 @@ const FlipClockViz = (() => {
         if (formula) { formula.style.opacity = fOp.toFixed(3); formula.style.transform = 'scale(' + fSc.toFixed(3) + ')'; }
         root.style.opacity = cOp.toFixed(3);
 
-        // Spalten synchron nach unten (Werte von oben rein), nahtlos (Periode 4).
-        const ty = offset * VH;
-        const cy = VH * 1.2;                            // Auslese-Zeile (Spalten-Mitte)
-        const reach = VH * 1.5;
-        cols.forEach(track => {
-            track.style.transform = 'translateY(' + ty + 'px)';
-            const kids = track.children;
-            for (let i = 0; i < kids.length; i++) {
-                const p = -RBASE + i;
-                const pos = p * VH + ty + VH / 2;       // Wert-Mitte (absolut)
-                let k = 1 - Math.abs(pos - cy) / reach;
-                if (k < 0) k = 0; else if (k > 1) k = 1;
-                const ke = Math.pow(k, 1.5);
-                kids[i].style.opacity = (0.12 + 0.88 * ke).toFixed(3);
-            }
-        });
+        // Endloser Stream: Spalten steigen nach OBEN (ty negativ), oben per
+        // CSS-Maske ausgeblendet. Nahtlos (Periode = PERIOD, Werte wiederholen).
+        const ty = -offset * VH;
+        cols.forEach(track => { track.style.transform = 'translateY(' + ty + 'px)'; });
         raf = requestAnimationFrame(frame);
     }
 

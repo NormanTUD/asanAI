@@ -23,12 +23,12 @@
 - **Kein Bild-Input**: Ich kann keine PNG/JPG ansehen und lade keine externen Bilder.
   → Echte Fotos/Screenshots muss Norman liefern ODER ich baue Canvas-/ASCII-Nachbildungen.
 
-## Folien-Reihenfolge (aktuell, index.html — 12 Folien)
-1. Titel · 2. Klassisch vs. KI · 3. Geschichte · 4. Man arbeitet in Schichten
-· 5. Drei Bausteine (Zielzustand) · 6. Convolution · 7. Flatten
-· 8. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph = Szene B, T20)
-· 9. Vom Bild zu Punkten (DenseRaum) · 10. Der gesamte Prozess (Pipeline)
-· 11. Alles idealisiert (T27, vor asanAI) · 12. asanAI (Schluss/Live-Demo).
+## Folien-Reihenfolge (aktuell, index.html — 13 Folien)
+1. Titel · 2. Klassisch vs. KI · 3. Geschichte · **4. Was wir wollen** (Ziel, T29)
+· **5. Man arbeitet in Schichten** · **6. Drei Bausteine dafür** (T29) · 7. Convolution
+· 8. Flatten · 9. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph =
+  Szene B, T20) · 10. Vom Bild zu Punkten (DenseRaum) · 11. Der gesamte Prozess (Pipeline)
+· 12. Alles idealisiert (T27, vor asanAI) · 13. asanAI (Schluss/Live-Demo).
 **Eigene Datei:** Convolutions (Hierarchy) → `hierarchy.html` (T24, aus dem Deck).
 
 ---
@@ -324,6 +324,30 @@
 - **Norman (vorige Runde):** Folie „Alles idealisiert" **eine Position früher** (vor asanAI)
   und **ausbauen**: rüberbringen, dass es nur die **Intuition** ist, mit der wir arbeiten —
   **nicht** das be-all-end-all, da ist **viel mehr Interessantes + Ungeklärtes** dahinter.
+
+### T28 · Folie 2 KI-Teil: Flip-Clock → endloser Zahlen-Stream  `[x]`
+- ✅ Fertig: Norman „kommt mit den Beispielen 0 und 3 und dann wars das — soll einen
+  **endlosen Stream von Zahlen** haben, die **nach oben ausgeblendet** werden". Flip-Clock
+  (nn_demos.js `FlipClockViz`) neu: x=0..9, o=x² (Periode 10, nahtlos), Spalten **steigen
+  nach oben** (`ty=-offset·VH`), oben per **CSS-Maske** ausgeblendet (`fc-col`-Mask
+  `transparent→#000 30%→#000 90%→transparent`), hohe Spalte (`measure` → `min(0.86·H,380px)`),
+  Fenster höher (`min(52vh,400px)`), `STEP_S 2.6→1.2` (klar fließend). Pro-Wert-Opacity raus
+  (Maske macht das Blenden). **Test (headless, ?start=2 + advance):** post-morph
+  `rootOpacity=1`, x-Spalte `0,1,2,…,9,0,1,2…` (40 Werte), Track scrollt (`-68px→-101px`,
+  `scrolling=true`), keine Console-Errors. *(Stream-Gefühl/Tempo nicht visuell geprüft.)*
+- **Norman:** „bei dem KI-Teil … soll einen endlosen stream von zahlen die nach oben
+  ausgeblendet werden da haben".
+
+### T29 · „Was wir wollen" vor „Man arbeitet in Schichten", Bausteine danach  `[x]`
+- ✅ Fertig: Norman „die **'was wir wollen'** parts von 'Was wir wollen und drei Bausteine
+  dafür' **vor** dem 'Man arbeitet in Schichten', aber das mit den **bausteinen danach**".
+  Folie 5 (bausteine) gesplittet → Folie 4 `slide-ziel` „**Was wir wollen**" (Ziel-Keypoint +
+  `#goal-cv`/PipelineGoalDemo) vor `slide-schichten`; Folie 6 `slide-bausteine` „**Drei
+  Bausteine dafür**" (Chips + Formel + Übergang) danach. Registry `pipeline-goal`
+  `slideTest` → `slide-ziel`. Deck 12 → **13**. Kommentare Folie 6/7/8 → 7/8/9 umnummeriert.
+  `node --check` + headless (Deck, 13 Folien) clean.
+- **Norman:** „mach die 'was wir wollen' parts … vor dem 'Man arbeitet in Schichten'. aber
+  das mit den bausteinen danach".
 
 ### T12 · Diese TODO.md pflegen  `[~]`
 - Bei jeder Änderung Status + Notizen hier aktualisieren.
