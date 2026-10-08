@@ -15,11 +15,15 @@ math: 60
 <div class="md">
 Reinforcement Learning (RL) is the third pillar of machine learning, alongside supervised and unsupervised learning. In RL, an **agent** takes **actions** in an **environment** to maximize a cumulative **reward** signal. It is the foundation of modern LLM alignment: **RLHF**, DPO, GRPO, and the o1/R1 paradigm all build on it.
 
-This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged.
+This chapter covers the mathematical core: Markov Decision Processes, value functions, policy gradients, and how modern preference optimization emerged, grouped from the foundations, through policy optimization, to the LLM-preference methods and the open problems that remain.
+</div>
+
+<div class="md">
+## Foundations
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="The Markov Decision Process">
-## The Markov Decision Process
+### The Markov Decision Process
 
 An MDP is the formal setting for RL: $(\mathcal{S}, \mathcal{A}, P, R, \gamma)$ where
 
@@ -43,7 +47,7 @@ A few terms used throughout the chapter:
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Value Functions">
-## Value Functions
+### Value Functions
 
 The **state-value function** measures how good a state is under policy $\pi$:
 
@@ -73,7 +77,7 @@ For an LLM, the “state” is the current context window, the “action” is t
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Tabular RL: Q-Learning">
-## Tabular RL: Q-Learning
+### Tabular RL: Q-Learning
 
 Q-Learning (\cite[Watkins, 1989]{watkins1989qlearning}) converges to $Q^*$ by iterative updates:
 
@@ -86,8 +90,12 @@ where $\alpha$ is the learning rate and $r + \gamma \max_{a'} Q(s', a')$ is the 
 Deep Q-Networks (\cite[Mnih et al., 2013]{mnih2013dqn}, Mnih et al., 2013) replaced the table with a neural network $Q_\theta(s, a)$ and added **experience replay** + a **target network** to stabilize training. This enabled RL on high-dimensional inputs (Atari).
 </div>
 
+<div class="md">
+## Policy Optimization
+</div>
+
 <div class="md" data-mathlevel="60" data-optionaltitle="Policy Gradients">
-## Policy Gradients
+### Policy Gradients
 
 For continuous or large action spaces, parameterize the policy as $\pi_\theta(a \mid s)$ and directly optimize:
 
@@ -103,7 +111,7 @@ $$
 
 where $\hat A_t = \sum_{t' \geq t} \gamma^{t'-t} R(s_{t'}, a_{t'}) - b(s_t)$ is the **advantage**: how much better this action was than the baseline $b(s_t)$.
 
-### REINFORCE
+#### REINFORCE
 
 REINFORCE (\cite[Williams, 1992]{williams1992reinforce}) has high variance. The **baseline trick** (subtracting $b(s_t)$, often $V^\pi(s_t)$) reduces variance without bias.
 
@@ -111,7 +119,7 @@ The same structure hides inside the transformer: the gradient backpropagated thr
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="Actor-Critic Methods">
-## Actor-Critic Methods
+### Actor-Critic Methods
 
 **Actor-critic** algorithms learn both a policy (actor) and a value function (critic):
 
@@ -120,11 +128,11 @@ The same structure hides inside the transformer: the gradient backpropagated thr
 
 The critic's TD-error $G_t - V_\phi(s_t)$ is a low-variance estimate of the advantage.
 
-### A2C / A3C
+#### A2C / A3C
 
 **Asynchronous** Advantage Actor-Critic (\cite[Mnih et al., 2016]{mnih2016a3c}): parallel workers update a shared model asynchronously. Stabilizes training; superseded by synchronous methods.
 
-### PPO
+#### PPO
 
 **Proximal Policy Optimization** (\cite[Schulman et al., 2017]{schulman2017ppo}) is the workhorse of modern RL. It constrains how far the policy can move per update using a **clipped surrogate objective**:
 
@@ -137,8 +145,12 @@ where $r_t(\theta) = \pi_\theta(a_t \mid s_t) / \pi_{\theta_{\text{old}}}(a_t \m
 PPO is simple, stable, and the default choice for **RLHF** and many robotics tasks.
 </div>
 
+<div class="md">
+## RL for LLMs: Preference Optimization
+</div>
+
 <div class="md" data-mathlevel="60" data-optionaltitle="RLHF: Reinforcement Learning from Human Feedback">
-## RLHF: Reinforcement Learning from Human Feedback
+### RLHF: Reinforcement Learning from Human Feedback
 
 **RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:
 
@@ -164,7 +176,7 @@ where $y_w$ is the “winner” and $y_l$ the “loser”.
 </div>
 
 <div class="md" data-mathlevel="65" data-optionaltitle="DPO: Direct Preference Optimization">
-## DPO: Direct Preference Optimization
+### DPO: Direct Preference Optimization
 
 \cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:
 
@@ -195,7 +207,7 @@ Variants have proliferated:
 </div>
 
 <div class="md" data-mathlevel="60" data-optionaltitle="GRPO: Group Relative Policy Optimization">
-## GRPO: Group Relative Policy Optimization
+### GRPO: Group Relative Policy Optimization
 
 GRPO (\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:
 
@@ -221,7 +233,9 @@ GRPO is the algorithm behind **DeepSeek-R1** (January 2025), the first open-weig
 </div>
 
 <div class="md">
-## The RLHF Spectrum
+## The Landscape and Its Problems
+
+### The RLHF Spectrum
 
 | Method | Reward signal | Critic | Reference model | Use case |
 |--------|---------------|--------|-----------------|----------|
@@ -236,10 +250,8 @@ GRPO is the algorithm behind **DeepSeek-R1** (January 2025), the first open-weig
 | **RLOO** | REINFORCE leave-one-out | No | Optional | Lightweight online RL |
 
 The trend: **simpler objectives that remove components** (critic, reference model, paired data) while matching or exceeding PPO performance.
-</div>
 
-<div class="md">
-## Reward Hacking
+### Reward Hacking
 
 A central problem in RL: a sufficiently clever agent finds **loopholes** in the reward function that don't reflect the actual intent. Classic examples:
 
@@ -254,10 +266,8 @@ Defenses:
 * **Process reward**: score intermediate reasoning steps, not just final output.
 * **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written “constitution” of principles.
 * **Debate / red-teaming** (\cite[Du et al., 2023]{du2023multiagent}): train an adversary to find exploits, then train against them.
-</div>
 
-<div class="md">
-## Open Problems
+### Open Problems
 
 * **Sample efficiency**: PPO needs millions of environment steps. RL for LLMs needs millions of rollouts. Both are expensive.
 * **Reward modeling**: the reward model is a bottleneck; it inherits human biases and is gamed.
