@@ -9,27 +9,30 @@
 	<script src="temml.min.js"></script>
 	<link rel="stylesheet" href="index.css">
 	<style>
-		/* Flip-Clock, "Klassisch vs. KI": die Beispielauswertungen f(a,b)=o
-		   scrollen VERTICAL von oben in die fixierte f — das aktuelle
-		   Beispiel steht immer auf der mittleren Zeile (am Zeiger), die
-		   anderen rotieren hindurch. Ein vertikaler Zahlenblender. */
-		#flip-clock { position: relative; width: 100%; height: 214px; margin-top: 14px; overflow: hidden;
-			-webkit-mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent);
-			mask-image: linear-gradient(180deg, transparent, #000 22%, #000 78%, transparent); }
-		#flip-clock .fc-window { position: absolute; left: 56px; right: 8px; top: 50%; transform: translateY(-50%);
-			height: 56px; border: 2px solid #bfdbfe; border-radius: 12px;
+		/* "Klassisch vs. KI" (Folie 2) — Cross-Morph: die Formel
+		   f(a,b)={cases} steht zentriert (volle Höhe) und MORPHED nach
+		   ~1,2 s in den vertikalen Flip-Clock: die Beispielauswertungen
+		   f(a,b)=o rollen VON OBEN durch die mittlere Auslese-Zeile, das
+		   aktuelle Beispiel steht am Zeiger, die anderen rollen hindurch.
+		   Nahtloser Loop (rAF). */
+		#klassik-stage { position: relative; height: min(54vh, 460px); margin-top: 10px; }
+		#klassik-stage .klassik-formula { position: absolute; inset: 0;
+			display: flex; align-items: center; justify-content: center; will-change: transform, opacity; }
+		#klassik-stage .klassik-formula .math-display { font-size: 1.9em; text-align: center; }
+		#flip-clock { position: absolute; inset: 0; overflow: hidden; opacity: 0;
+			-webkit-mask-image: linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent);
+			mask-image: linear-gradient(180deg, transparent, #000 24%, #000 76%, transparent); }
+		#flip-clock .fc-window { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+			width: 80%; max-width: 560px; height: 58px; border: 2px solid #bfdbfe; border-radius: 12px;
 			background: linear-gradient(90deg, rgba(239,246,255,0.92), rgba(255,255,255,0.5));
-			box-shadow: 0 6px 18px rgba(30,64,175,0.12), inset 0 0 0 4px rgba(255,255,255,0.55);
-			pointer-events: none; }
-		#flip-clock .fc-f { position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
-			font: italic 700 26px Georgia, 'Times New Roman', serif; color: #2563eb; }
-		#flip-clock .fc-pointer { position: absolute; left: 44px; top: 50%; transform: translateY(-50%);
+			box-shadow: 0 6px 18px rgba(30,64,175,0.12), inset 0 0 0 4px rgba(255,255,255,0.55); pointer-events: none; }
+		#flip-clock .fc-pointer { position: absolute; left: -3px; top: 50%; transform: translateY(-50%);
 			width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent;
 			border-left: 13px solid #2563eb; }
 		#flip-clock .fc-track { position: absolute; left: 0; top: 0; width: 100%; will-change: transform; }
-		#flip-clock .fc-tile { position: absolute; left: 56px; right: 8px; white-space: nowrap;
+		#flip-clock .fc-tile { position: absolute; left: 0; width: 100%;
 			display: flex; align-items: center; justify-content: center;
-			font-size: 24px; color: #1e293b; will-change: transform, opacity; }
+			font-size: 26px; color: #1e293b; will-change: transform, opacity; }
 	</style>
 </head>
 <body>
@@ -66,17 +69,11 @@
     <div class="slide-content">
         <h2>Klassisches Programmieren vs. KI</h2>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:center; margin-top:6px;">
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px 20px;">
-                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">Klassisch — der Mensch schreibt die Regel</div>
-                <div style="color:#475569; font-size:0.88em; margin-bottom:14px;">Jede Regel von Hand, als <b>formale Definition</b> (If/Else).</div>
-                <div class="math-display" style="background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:18px 20px; margin:0; font-size:1.05em; text-align:center;">$$f(a,b) \;=\; \begin{cases} 1 & \text{wenn } a = 1 \;\wedge\; b = 1 \\ 0 & \text{sonst} \end{cases}$$</div>
+        <div id="klassik-stage">
+            <div class="klassik-formula" id="klassik-formula">
+                <div class="math-display">$$f(a,b) \;=\; \begin{cases} 1 & \text{wenn } a = 1 \;\wedge\; b = 1 \\ 0 & \text{sonst} \end{cases}$$</div>
             </div>
-            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:18px 20px;">
-                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">KI — wir geben nur Beispiele</div>
-                <div style="color:#475569; font-size:0.88em; margin-bottom:10px;">Die Formel fehlt — das Netz findet <b>f</b> selbst aus Beispielen.</div>
-                <div id="flip-clock" aria-hidden="true"></div>
-            </div>
+            <div id="flip-clock" aria-hidden="true"></div>
         </div>
 
         <div class="key-insight fragment" data-nofast>
