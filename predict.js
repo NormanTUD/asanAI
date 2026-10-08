@@ -1378,7 +1378,18 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 	}
 
 	if(input_shape_is_image()) {
-		await _print_example_predictions();
+		if (is_hidden_or_has_hidden_parent($("#predict_tab")) || !boot_settled) {
+			// The demo batch (all example images predicted on the CPU) must
+			// not block boot while the predict tab is still closed, and must
+			// not run on a model that the boot's final updated_page() is about
+			// to rebuild (that would waste a batch and invalidate the memo).
+			// Defer it — the tabs activate hook in main.js (or the boot
+			// settle code) consumes _demo_predictions_pending and runs
+			// _print_example_predictions directly (with a spinner in the grid).
+			window._demo_predictions_pending = true;
+		} else {
+			await _print_example_predictions();
+		}
 	} else {
 		await _print_predictions_text();
 	}
@@ -1627,14 +1638,66 @@ async function _wait_for_new_images(example_predictions) {
 	return loaded;
 }
 
+var _example_predictions_inflight = null;
+var _example_predictions_inflight_model = null;
+var _example_predictions_inflight_dataset = null;
+
+var _demo_batch_fingerprint_model = null;
+var _demo_batch_fingerprint_dataset = null;
+var _demo_batch_fingerprint_weights = null;
+var _demo_batch_fingerprint_count = 0;
+
 async function _print_example_predictions () {
 	if(!input_shape_is_image()) {
 		return false;
 	}
 
+	// Opening the predict tab fires several show_prediction calls back-to-back
+	// (the activate hook, repredict, and the boot's updated_page). The demo
+	// batch is expensive (all example images predicted on the CPU), so a run for
+	// the same model + dataset that is already in flight is joined instead of
+	// re-run. A rebuilt model is a fresh object, so a structural change starts
+	// a new run.
+	var dataset = $("#dataset").val();
+	if(_example_predictions_inflight && _example_predictions_inflight_model === model && _example_predictions_inflight_dataset === dataset) {
+		return await _example_predictions_inflight;
+	}
+
+	var run = _print_example_predictions_impl(); // promise kept for in-flight dedupe, awaited below
+	_example_predictions_inflight = run;
+	_example_predictions_inflight_model = model;
+	_example_predictions_inflight_dataset = dataset;
+
+	try {
+		return await run;
+	} finally {
+		if(_example_predictions_inflight === run) {
+			_example_predictions_inflight = null;
+			_example_predictions_inflight_model = null;
+			_example_predictions_inflight_dataset = null;
+		}
+	}
+}
+
+async function _print_example_predictions_impl () {
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	var dataset = $("#dataset").val();
+
+	// Freshness memo: the example-image batch is an expensive CPU prediction.
+	// If the model, dataset, and trained weights are all unchanged since the
+	// last run and the grid is already filled, keep the existing result
+	// instead of re-predicting (e.g. when the user merely reopens the tab).
+	// A rebuilt model is a fresh object, and weights_generation is bumped
+	// after every training run, so the memo stays honest.
+	if(_demo_batch_fingerprint_model === model
+		&& _demo_batch_fingerprint_dataset === dataset
+		&& _demo_batch_fingerprint_weights === weights_generation
+		&& example_predictions.find(".example_images").length > 0) {
+		show_or_hide_predictions(_demo_batch_fingerprint_count);
+		return _demo_batch_fingerprint_count;
+	}
+
 	var full_dir = "traindata/" + dataset + "/example/";
 	var dataset_url = "traindata/index.php?&dataset=" + dataset + "&examples=1";
 
@@ -1660,7 +1723,18 @@ async function _print_example_predictions () {
 			}
 
 			if(all_items.length) {
+				// Give the (possibly just-opened) tab a chance to paint the
+				// images + empty bars before the synchronous CPU batch blocks
+				// the main loop for several seconds.
+				await nextFrame();
+				await nextFrame();
+
 				await predict_demo_batch(all_items, all_indices);
+
+				_demo_batch_fingerprint_model = model;
+				_demo_batch_fingerprint_dataset = dataset;
+				_demo_batch_fingerprint_weights = weights_generation;
+				_demo_batch_fingerprint_count = count;
 			}
 		}
 	}

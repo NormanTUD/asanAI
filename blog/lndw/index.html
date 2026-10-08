@@ -12,8 +12,14 @@
 <body>
 
 <div id="loading-spinner">
-    <div class="spinner"></div>
-    <div class="spinner-text">Lade Folien…</div>
+    <div class="intro-bg"></div>
+    <div class="intro-inner">
+        <div class="intro-mark"></div>
+        <h1 class="intro-title">Large Language Models</h1>
+        <p class="intro-subtitle">Eine interaktive Präsentation</p>
+        <div class="intro-bar"><div class="intro-bar-fill" id="intro-bar-fill"></div></div>
+        <p class="intro-status" id="intro-status">Wird geladen…</p>
+    </div>
 </div>
 
 <!-- Progress Bar -->
@@ -31,30 +37,167 @@
 
 <div class="slide" id="slide-was-sind-llm" data-title="Was sind Large Language Models?">
 	<div class="slide-content">
-		<h2>Was sind Large Language Models?</h2>
+		<div class="ia-stage">
+			<div class="ia-starfield"></div>
 
-		<p style="text-align:center; margin:14px 0 8px; max-width:840px; margin-left:auto; margin-right:auto;">Programme wie <b>ChatGPT</b> &amp; Co. funktionieren so: Eine Frage wird eingetippt — genau so, wie sie gerade gedacht wird. Der Computer antwortet in ganzen Sätzen, als hätte ein Gegenüber geschrieben. Was dabei hinter den Kulissen passiert, ist das Thema heute.</p>
+			<!-- ============ Das Smartphone ============ -->
+		<div class="ia-phone" id="ia-phone">
+			<div class="ia-phone-frame"></div>
+				<div class="ia-phone-notch"></div>
+				<div class="ia-phone-screen">
+					<div class="ia-app-logo" id="ia-logo">
+						<span class="ia-l1">S</span><span class="ia-l2">u</span><span class="ia-l3">c</span><span class="ia-l4">h</span><span class="ia-l5">e</span>
+					</div>
+					<div class="ia-search-bar">
+						<div class="ia-search-icon"></div>
+						<div class="ia-search-text" id="ia-search-text"></div>
+						<div class="ia-mic-btn" id="ia-mic-btn">
+							<div class="ia-mic-icon"></div>
+						</div>
+					</div>
+					<div class="ia-ai-card" id="ia-ai-card">
+						<div class="ia-ai-text" id="ia-ai-text"></div>
+						<div class="ia-ai-thinking" id="ia-ai-thinking">
+							<span></span><span></span><span></span>
+						</div>
+					</div>
+					<div class="ia-serp" id="ia-serp">
+						<div class="ia-result r1">
+							<div class="ia-res-head">
+								<img class="ia-res-fav" src="favicon_wikipedia.ico" alt="">
+								<div class="ia-res-lines">
+									<span class="ia-res-name">Wikipedia</span>
+									<span class="ia-res-url">de.wikipedia.org › Rayleigh-Jeans-Gesetz</span>
+								</div>
+							</div>
+							<div class="ia-res-title">Rayleigh-Jeans-Gesetz</div>
+							<div class="ia-res-snippet">Das Plancksche Strahlungsgesetz ist eine Interpolationsformel der beiden anderen Gesetze.</div>
+						</div>
+						<div class="ia-result r2">
+							<div class="ia-res-head">
+								<img class="ia-res-fav" src="favicon_wikipedia.ico" alt="">
+								<div class="ia-res-lines">
+									<span class="ia-res-name">Wikipedia</span>
+									<span class="ia-res-url">de.wikipedia.org › Rayleigh-Streuung</span>
+								</div>
+							</div>
+							<div class="ia-res-title">Rayleigh-Streuung</div>
+							<div class="ia-res-snippet">Die Streuung von Licht an Teilchen, die kleiner sind als seine Wellenlänge.</div>
+						</div>
+						<div class="ia-result r3">
+							<div class="ia-res-head">
+								<img class="ia-res-fav" src="favicon_leifiphysik.ico" alt="">
+								<div class="ia-res-lines">
+									<span class="ia-res-name">Leifi Physik</span>
+									<span class="ia-res-url">www.leifiphysik.de › optik › streuung</span>
+								</div>
+							</div>
+							<div class="ia-res-title">Warum ist der Himmel blau?</div>
+							<div class="ia-res-snippet">Kurzwelliges blaues Licht wird stärker gestreut als langwelliges rotes Licht.</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Waveform -->
+			<div class="ia-waveform" id="ia-waveform">
+				<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+				<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+				<div class="ia-bar"></div><div class="ia-bar"></div><div class="ia-bar"></div>
+				<div class="ia-bar"></div><div class="ia-bar"></div>
+			</div>
+
+			<!-- Captions -->
+			<div class="ia-beat-caption ia-cap-code" id="ia-cap-code">
+				Diese Systeme können viel mehr — sie können auch <span class="ia-acc">programmieren</span>.
+			</div>
+			<div class="ia-beat-caption ia-cap-pic" id="ia-cap-pic">
+				Und sie können auch <span class="ia-acc">Bilder generieren</span>.
+			</div>
+
+			<!-- Stack: Chat-Fenster (Code) + Terminal darunter -->
+			<div class="ia-stack" id="ia-stack">
+				<div class="ia-llm-chat" id="ia-code-win">
+					<div class="ia-chat-head">
+						<span class="ia-ai-spark">✦</span>
+						<span class="ia-chat-name">Assistent</span>
+						<span class="ia-chat-model">chat</span>
+					</div>
+					<div class="ia-chat-body">
+						<div class="ia-chat-msg user">Schreib mir ein Programm, das die Lichtstreuung in der Atmosphäre berechnet.</div>
+						<div class="ia-chat-msg ai">
+							<div class="ia-chat-lead">Klar! Damit berechnet Python die Rayleigh-Streuung von Licht in Luft:</div>
+							<div class="ia-code-block">
+								<div class="ia-code-block-head">
+									<span class="ia-cw-name">himmel.py</span>
+								</div>
+								<pre class="ia-cw-code" id="ia-cw-code"></pre>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ia-term-window" id="ia-term-win">
+					<div class="ia-cw-title">
+						<span class="ia-cw-dot r"></span>
+						<span class="ia-cw-dot y"></span>
+						<span class="ia-cw-dot g"></span>
+						<span class="ia-cw-name">Terminal</span>
+					</div>
+					<div class="ia-cw-out" id="ia-cw-out">
+						<div class="ia-out-cmd"><span class="ia-dollar">$</span> python3 himmel.py</div>
+						<div class="ia-out-line">Blau wird 4.35× stärker gestreut als Rot</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Chat-Fenster (Bilder generieren) -->
+			<div class="ia-chat-window" id="ia-chat-win">
+				<div class="ia-chat-head">
+					<span class="ia-ai-spark">✦</span>
+					<span class="ia-chat-name">Suche-KI</span>
+				</div>
+				<div class="ia-chat-body">
+					<div class="ia-chat-msg user" id="ia-chat-prompt"></div>
+				<div class="ia-chat-msg ai" id="ia-chat-ai">
+					<div class="ia-diff">
+						<img class="ia-chat-img" src="katze1.jpg" alt="Generiertes Bild: eine Katze">
+						<div class="ia-diff-noise"></div>
+					</div>
+				</div>
+				</div>
+			</div>
+
+			<!-- Statement -->
+			<div class="ia-statement" id="ia-statement">
+				<div class="ia-st-line1">Dahinter steckt ein und dasselbe Modell —</div>
+				<div class="ia-st-line2">der <span class="ia-acc">Transformer</span>.</div>
+				<div class="ia-st-line3">Aber wie funktioniert so ein Transformer?</div>
+			</div>
+		</div>
+
+		<!-- (Step-Bar entfernt — die Pfeiltasten reichen) -->
 	</div>
-</div>
 </div>
 
 <!-- ==================== SLIDE: Sonnenbahn (Die Wirklichkeit hat Muster) ==================== -->
 <div class="slide" id="slide-sonnenbahn" data-title="Sonnenbahn">
     <div class="slide-content">
         <h2>Die Wirklichkeit hat mathematische Muster</h2>
-        <p style="margin-bottom:10px;">Muster der Wirklichkeit → spiegeln sich in Texten wider.</p>
+        <p class="sb-bridge">Es hat das nicht erfunden: In der Wirklichkeit stecken Muster — und sie spiegeln sich in Texten wider.</p>
 
-        <!-- Fragment 1: Sonnenbild -->
-        <div id="sunrise-fragment-1">
+        <!-- Fragment 1: Sonnenbild (erscheint erst mit dem ersten Schritt,
+             damit der Folienwechsel nicht direkt auf das große Foto fällt) -->
+        <div class="fragment" id="sunrise-fragment-1">
             <div id="sunrise-overlay-container" style="position:relative; width:100%; max-width:1100px; margin:0 auto; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
                 <img id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width:100%; display:block;">
                 <div id="sunrise-plot" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; mix-blend-mode: multiply; opacity:0; transition: opacity 0.5s ease;"></div>
             </div>
+            <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn, Concordia (Antarktis) · 24 h Polartag als Panorama.</p>
         </div>
 
         <!-- Fragment 2: Sinus-Overlay einblenden -->
         <div class="fragment" id="sunrise-fragment-2" data-fragment-action="show-sinus"></div>
-        <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn, Concordia (Antarktis) · 24 h Polartag als Panorama.</p>
 
         <!-- Sinus-Formel (vereinfacht) -->
         <div class="fragment" style="margin-top:16px;">
@@ -228,22 +371,107 @@
 
 <!-- ==================== SLIDE: Layer als Raumkrümmung (space_morph) ==================== -->
 <div class="slide" id="slide-layer-als-raumkruemmung" data-title="Layer als Raumkrümmung">
-    <div class="slide-content">
+    <div class="slide-content" style="background:#f8fafc;">
         <h2>Layer als Raumkrümmung</h2>
-        <p style="text-align:center; max-width:900px; margin-left:auto; margin-right:auto;">Zwei Klassen, die <b>keine einzige Gerade</b> trennt — und wie ein einzelner Layer das Problem löst: indem er den Raum <b>krümmt</b>. Pfeiltasten steuern die Schritte.</p>
 
-        <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1150px; margin:14px auto 0; height:500px; border-radius:14px; overflow:hidden; background:#0b0d12; border:1px solid #1e293b;">
+        <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1340px; margin:14px auto 0; height:640px; overflow:hidden;">
             <canvas id="space-morph-canvas" style="display:block; position:absolute; inset:0; width:100%; height:100%; cursor:grab;"></canvas>
 
-            <div style="position:absolute; left:40px; top:32px; max-width:400px; pointer-events:none; z-index:2;">
-                <div id="sm-step" style="font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:#7b8496;"></div>
-                <div id="sm-title" style="font-size:26px; font-weight:600; color:#e8ecf4; margin:10px 0 12px; line-height:1.18;"></div>
-                <div id="sm-body" style="font-size:15px; line-height:1.62; color:#b9c2d4;"></div>
-                <div id="sm-formula" style="margin-top:18px; padding:12px 16px; border-left:2px solid #ffd166; background:rgba(255,209,102,.05); font-family:'Cambria Math',Georgia,serif; font-size:17px; color:#ffe9b0;"></div>
+            <div style="position:absolute; left:32px; top:20px; max-width:320px; pointer-events:none; z-index:2;">
+                <div id="sm-title" style="font-size:19px; font-weight:600; color:#0f172a; line-height:1.2;"></div>
+                <div id="sm-body" style="font-size:12.5px; line-height:1.5; color:#334155;"></div>
             </div>
 
-            <div id="sm-bar" style="position:absolute; left:44px; bottom:30px; display:flex; gap:7px; z-index:2;"></div>
-            <div style="position:absolute; right:36px; bottom:26px; font-size:12px; color:#4d5568; z-index:2;">Pfeiltasten: Schritt &nbsp;·&nbsp; Drag: rotieren</div>
+            <div id="sm-sources" style="position:absolute; right:14px; bottom:8px; max-width:560px; text-align:right; font-size:9.5px; line-height:1.35; color:#94a3b8; pointer-events:none; z-index:2;">
+                Bildmechanik nach C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (arXiv:2203.11355); das Fold-and-Cut-Theorem: E. Demaine, M. Demaine &amp; A. Lubiw, <em>Folding and Cutting Paper</em>, Discrete Comput. Geom. (1998)
+            </div>
+
+            <div id="sm-table-container" style="position:absolute; left:32px; bottom:54px; max-width:480px; z-index:3;">
+                <div id="sm-tables-head" style="font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:#94a3b8; margin-bottom:6px;">Beispielpunkte <span style="text-transform:none; letter-spacing:0; color:#94a3b8; font-weight:400;">· symbolisch, frei wählbar</span></div>
+                <table id="egg-table" class="sm-table">
+                    <thead>
+                        <tr>
+                            <th class="lbl-col"></th>
+                            <th class="coord-col">x</th>
+                            <th class="coord-col y-col">y</th>
+                            <th class="coord-col z-col">z</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="inner-row">
+                            <td class="lbl">innen₁</td>
+                            <td class="xv">0.20</td>
+                            <td class="yv">0</td>
+                            <td class="zv">0</td>
+                        </tr>
+                        <tr class="inner-row">
+                            <td class="lbl">innen₂</td>
+                            <td class="xv">0</td>
+                            <td class="yv">0.25</td>
+                            <td class="zv">0</td>
+                        </tr>
+                        <tr class="outer-row">
+                            <td class="lbl">außen₁</td>
+                            <td class="xv">0.90</td>
+                            <td class="yv">0</td>
+                            <td class="zv">0</td>
+                        </tr>
+                        <tr class="outer-row">
+                            <td class="lbl">außen₂</td>
+                            <td class="xv">0</td>
+                            <td class="yv">0.95</td>
+                            <td class="zv">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table id="tori-table" class="sm-table">
+                    <thead>
+                        <tr>
+                            <th class="lbl-col"></th>
+                            <th class="coord-col">x</th>
+                            <th class="coord-col">y</th>
+                            <th class="coord-col">z</th>
+                            <th class="coord-col k-col">k</th>
+                            <th class="coord-col w-col">w</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="green-row" data-pid="A1">
+                            <td class="lbl">A₁</td>
+                            <td class="xv">0.88</td>
+                            <td class="yv">0</td>
+                            <td class="zv">0.16</td>
+                            <td class="kv">1.00</td>
+                            <td class="wv">0</td>
+                        </tr>
+                        <tr class="green-row" data-pid="A2">
+                            <td class="lbl">A₂</td>
+                            <td class="xv">0</td>
+                            <td class="yv">0.88</td>
+                            <td class="zv">0.16</td>
+                            <td class="kv">1.00</td>
+                            <td class="wv">0</td>
+                        </tr>
+                        <tr class="red-row" data-pid="B1">
+                            <td class="lbl">B₁</td>
+                            <td class="xv">0.72</td>
+                            <td class="yv">0.16</td>
+                            <td class="zv">0.88</td>
+                            <td class="kv">1.00</td>
+                            <td class="wv">0</td>
+                        </tr>
+                        <tr class="red-row extra-row" data-pid="B2">
+                            <td class="lbl">B₂</td>
+                            <td class="xv">−0.16</td>
+                            <td class="yv">0.16</td>
+                            <td class="zv">0</td>
+                            <td class="kv">1.00</td>
+                            <td class="wv">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="key-insight" style="margin-top:14px; max-width:950px; margin-left:auto; margin-right:auto;">
@@ -517,13 +745,16 @@
         <div class="slide-content">
             <h2>Tokenisierung</h2>
             <p>Text → kleine Stücke (<b>Tokens</b>) · Computer versteht nur Zahlen.</p>
-            <p class="fragment">Ganze Wörter · Wortteile · mehrere Wörter · auch Leerzeichen, Kommata, Emojis, …</p>
-    	<p class="fragment">Anzahl vorgeben → Tokenizer wählt per Häufigkeit die (Teil-)Worte selbst.</p>
+            <p>Ein Token kann ein <b>ganzes Wort</b>, ein <b>Wortteil</b> oder sogar <b>mehrere Wörter</b> sein — auch Leerzeichen, Kommata, Emojis, …</p>
+            <p>Der Tokenizer entscheidet per <b>Häufigkeit</b>, welche (Teil-)Worte er zu einem Token zusammenfasst.</p>
 
-            <div class="demo-box fragment" style="min-height:auto;">
-                <input type="text" id="tokenizer-input" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:14px;" placeholder="z.B. 'es war einmal ein königskind'" value="es war einmal ein königskind">
-                <div id="tokenizer-output" style="min-height:60px;"></div>
+            <div class="ia-tokens-stage">
+                <div class="ia-tokens-label" id="ia-tokens-label"><span class="ia-acc">Tokenisierung</span></div>
+                <div class="ia-tokens-layer" id="ia-tokens-layer"></div>
+                <div class="ia-tokens-sub" id="ia-tokens-sub">Im Kern ein <span class="ia-acc">Kompressions-Algorithmus</span>: die häufigsten Muster werden zu einem einzigen Token zusammengefasst.</div>
             </div>
+            <p class="ia-tokens-hint ia-tokens-reveal">„him" und „mel" kommen in vielen Wörtern vor. Als eigenes Token komprimieren sie die Daten.</p>
+            <p class="ia-tokens-him-mel ia-tokens-reveal"><span class="hm-chip">him</span> himmlisch · Himbeere · Himmelskugel &nbsp;&nbsp;<span class="hm-chip">mel</span> Melone · Melodie · melken · Schmelze</p>
         </div>
     </div>
 
@@ -533,7 +764,7 @@
             <h2>Embedding</h2>
  	    <p>Jedes Token → <b>Vektor</b> = seine <b>Bedeutung</b>:</p>
             <div class="formula-box">
-                <div class="math-display">$$\text{"könig"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
+                <div class="math-display">$$\text{"blau"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
             </div>
  	    <p class="fragment">Werte lernt der Computer selbst aus Trainingsdaten (statistische Muster).</p>
  	    <p class="fragment">Starte zufällig → wird so angepasst, dass die nächste-Token-Wahl immer besser wird.</p>
@@ -830,14 +1061,14 @@
 
 <!-- ==================== SLIDE: Wahrscheinlichkeits-Tunnel ==================== -->
 <div class="slide" id="slide-wahrscheinlichkeits-tunnel" data-title="Wahrscheinlichkeits-Tunnel">
-    <div class="slide-content">
+    <div class="slide-content" style="min-height:620px;">
         <h2>Isoflächen der Wahrscheinlichkeit: Der "Truth Tunnel"</h2>
         <p style="margin-bottom:10px;">Hülle um alles, was das Modell für <b>plausibel</b> hält. Mit jedem Token verengt sich der Tunnel → Scheinwerfer auf die möglichen nächsten Token.</p>
 
         <div class="demo-box" style="min-height:auto; padding:16px;">
             <div style="display:grid; grid-template-columns:1fr 230px; gap:14px; align-items:start;">
                 <canvas id="canvas-iso-tunnel" style="width:100%; height:420px; background:#0f172a; border-radius:8px; border:1px solid #1e293b;"></canvas>
-                <div style="background:#fff; border-radius:8px; border:1px solid #e2e8f0; padding:12px; font-family:sans-serif; font-size:0.8em; color:#475569; line-height:1.7;">
+                <div style="background:#fff; border-radius:8px; border:1px solid #e2e8f0; padding:12px; font-family:sans-serif; font-size:0.8em; color:#475569; line-height:1.7; height:420px; overflow-y:auto; box-sizing:border-box;">
                     <div style="font-weight:bold; font-size:1em; color:#1e293b; margin-bottom:6px;">📝 Satz</div>
                     <div id="iso-tunnel-sentence" style="margin-bottom:8px; font-size:0.92em; line-height:1.8;"></div>
                     <hr style="border:none; border-top:1px solid #e2e8f0; margin:6px 0;">
@@ -1623,6 +1854,7 @@
 <script src="attn_demo.js"></script>
 <script src="heads_web.js"></script>
 <script src="index.js"></script>
+<script src="intro_anim.js"></script>
 <script src="intuition.js"></script>
 <script src="philosophy.js"></script>
 <script src="presentation.js"></script>

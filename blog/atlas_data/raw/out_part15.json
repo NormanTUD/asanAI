@@ -1,0 +1,1075 @@
+[
+ {
+  "id": "person-jeffrey-r-weeks",
+  "name": "Jeffrey R. Weeks",
+  "type": "person",
+  "loc": "Los Angeles, USA",
+  "lat": 34.02,
+  "lng": -118.28,
+  "years": "2007",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "weeksshapespace"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-maxwell-stinchcombe",
+  "name": "Maxwell Stinchcombe",
+  "type": "person",
+  "loc": "Vancouver, Canada",
+  "lat": 49.26,
+  "lng": -123.25,
+  "years": "1989",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iii"
+  ],
+  "bibkeys": [
+   "hornik1989"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-stephen-boyd",
+  "name": "Stephen Boyd",
+  "type": "person",
+  "loc": "Stanford, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "2018",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_ii",
+   "math_ii"
+  ],
+  "bibkeys": [
+   "boyd2018appliedlinearalgebra"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-manzil-zaheer",
+  "name": "Manzil Zaheer",
+  "type": "person",
+  "loc": "Pittsburgh, USA",
+  "lat": 40.44,
+  "lng": -79.94,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_ii"
+  ],
+  "bibkeys": [
+   "zaheer2017deepsets"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-yingcong-lu",
+  "name": "Yingcong Lu",
+  "type": "person",
+  "loc": "Cambridge, USA",
+  "lat": 42.36,
+  "lng": -71.09,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "lu2017expressive"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-niki-parmar",
+  "name": "Niki Parmar",
+  "type": "person",
+  "loc": "Mountain View, USA",
+  "lat": 37.39,
+  "lng": -122.08,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "vaswani2017attention"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-pratik-chaudhari",
+  "name": "Pratik Chaudhari",
+  "type": "person",
+  "loc": "Redmond, USA",
+  "lat": 47.67,
+  "lng": -122.12,
+  "years": "2016",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "chaudhari2016entropysgd"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-quynh-nguyen",
+  "name": "Quynh Nguyen",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "nguyen2017loss"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-anna-choromanska",
+  "name": "Anna Choromanska",
+  "type": "person",
+  "loc": "Paris, France",
+  "lat": 48.85,
+  "lng": 2.35,
+  "years": "2015-2016",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "chaudhari2016entropysgd",
+   "choromanska2015loss"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-taco-cohen",
+  "name": "Taco Cohen",
+  "type": "person",
+  "loc": "Amsterdam, Netherlands",
+  "lat": 52.37,
+  "lng": 4.9,
+  "years": "2021",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i",
+   "geometry_ii"
+  ],
+  "bibkeys": [
+   "bronstein2021geometric"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-daniel-j-amit",
+  "name": "Daniel J. Amit",
+  "type": "person",
+  "loc": "Haifa, Israel",
+  "lat": 32.78,
+  "lng": 35.02,
+  "years": "1989",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "amit1989modeling"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-halbert-white",
+  "name": "Halbert White",
+  "type": "person",
+  "loc": "Canberra, Australia",
+  "lat": -35.28,
+  "lng": 149.12,
+  "years": "1989",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iii"
+  ],
+  "bibkeys": [
+   "hornik1989"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-john-harer",
+  "name": "John Harer",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2007",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_iii"
+  ],
+  "bibkeys": [
+   "cohensteiner2007"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-razvan-pascanu",
+  "name": "Razvan Pascanu",
+  "type": "person",
+  "loc": "London, UK",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "2014-2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape",
+   "math_iv"
+  ],
+  "bibkeys": [
+   "dauphin2014saddle",
+   "dinh2017sharpness",
+   "montufar2014regions"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-jakob-zech",
+  "name": "Jakob Zech",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2024",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iii",
+   "math_iv"
+  ],
+  "bibkeys": [
+   "petersen2024mathdl"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-aidan-n-gomez",
+  "name": "Aidan N. Gomez",
+  "type": "person",
+  "loc": "Pittsburgh, USA",
+  "lat": 40.44,
+  "lng": -79.94,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "vaswani2017attention"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-manfredo-perdigao-do-carmo",
+  "name": "Manfredo Perdigão do Carmo",
+  "type": "person",
+  "loc": "São Paulo, Brazil",
+  "lat": -23.56,
+  "lng": -46.73,
+  "years": "1976",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "docarmo"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-petar-velickovic",
+  "name": "Petar Veličković",
+  "type": "person",
+  "loc": "Cambridge, UK",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "2021",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i",
+   "geometry_ii"
+  ],
+  "bibkeys": [
+   "bronstein2021geometric"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-david-j-wales",
+  "name": "David J. Wales",
+  "type": "person",
+  "loc": "Cambridge, UK",
+  "lat": 52.2,
+  "lng": 0.12,
+  "years": "2004",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "wales2003energy"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-illia-polosukhin",
+  "name": "Illia Polosukhin",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "vaswani2017attention"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-jaap-van-den-herik",
+  "name": "Jaap van den Herik",
+  "type": "person",
+  "loc": "Maastricht, Netherlands",
+  "lat": 50.85,
+  "lng": 5.69,
+  "years": "2009",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "van2009dimensionality"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-lieven-vandenberghe",
+  "name": "Lieven Vandenberghe",
+  "type": "person",
+  "loc": "Pasadena, USA",
+  "lat": 34.02,
+  "lng": -118.13,
+  "years": "2018",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_ii",
+   "math_ii"
+  ],
+  "bibkeys": [
+   "boyd2018appliedlinearalgebra"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-yoav-goldberg",
+  "name": "Yoav Goldberg",
+  "type": "person",
+  "loc": "Beersheba, Israel",
+  "lat": 31.25,
+  "lng": 34.79,
+  "years": "2021",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "amrami2021depth"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-kenji-kawaguchi",
+  "name": "Kenji Kawaguchi",
+  "type": "person",
+  "loc": "Singapore",
+  "lat": 1.3,
+  "lng": 103.77,
+  "years": "2016",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "kawaguchi2016deep"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-asaf-amrami",
+  "name": "Asaf Amrami",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2021",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "amrami2021depth"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-jakob-uszkoreit",
+  "name": "Jakob Uszkoreit",
+  "type": "person",
+  "loc": "Mountain View, USA",
+  "lat": 37.39,
+  "lng": -122.08,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "vaswani2017attention"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-afra-zomorodian",
+  "name": "Afra Zomorodian",
+  "type": "person",
+  "loc": "College Park, USA",
+  "lat": 38.99,
+  "lng": -76.94,
+  "years": "2002-2005",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_iii"
+  ],
+  "bibkeys": [
+   "edelsbrunner2002persistent",
+   "zomorodian2005"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-laurens-van-der-maaten",
+  "name": "Laurens van der Maaten",
+  "type": "person",
+  "loc": "Mountain View, USA",
+  "lat": 37.39,
+  "lng": -122.08,
+  "years": "2009",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "van2009dimensionality"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-sheldon-axler",
+  "name": "Sheldon Axler",
+  "type": "person",
+  "loc": "Vancouver, Canada",
+  "lat": 49.26,
+  "lng": -123.25,
+  "years": "2024",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_ii",
+   "math_ii"
+  ],
+  "bibkeys": [
+   "axler2024linearalgebra"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-kyungjae-cho",
+  "name": "Kyungjae Cho",
+  "type": "person",
+  "loc": "Daejeon, South Korea",
+  "lat": 36.35,
+  "lng": 127.36,
+  "years": "2014",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "montufar2014regions"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-sidney-a-morris",
+  "name": "Sidney A. Morris",
+  "type": "person",
+  "loc": "Sydney, Australia",
+  "lat": -33.89,
+  "lng": 151.23,
+  "years": "2007",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i",
+   "geometry_iii",
+   "math_iv",
+   "topology"
+  ],
+  "bibkeys": [
+   "morris2007topology"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-david-letscher",
+  "name": "David Letscher",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2002",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_iii"
+  ],
+  "bibkeys": [
+   "edelsbrunner2002persistent"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-llion-jones",
+  "name": "Llion Jones",
+  "type": "person",
+  "loc": "Mountain View, USA",
+  "lat": 37.39,
+  "lng": -122.08,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "vaswani2017attention"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-hans-freudenthal",
+  "name": "Hans Freudenthal",
+  "type": "person",
+  "loc": "Nijmegen, Netherlands",
+  "lat": 51.84,
+  "lng": 5.85,
+  "years": "1937",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_iii"
+  ],
+  "bibkeys": [
+   "freudenthal1937"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-guido-montufar",
+  "name": "Guido Montúfar",
+  "type": "person",
+  "loc": "Berlin, Germany",
+  "lat": 52.52,
+  "lng": 13.38,
+  "years": "2014",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "montufar2014regions"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-timur-garipov",
+  "name": "Timur Garipov",
+  "type": "person",
+  "loc": "Delft, Netherlands",
+  "lat": 52.0,
+  "lng": 4.37,
+  "years": "2018",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "garipov2018mode"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-christian-keup",
+  "name": "Christian Keup",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2022",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv",
+   "topology"
+  ],
+  "bibkeys": [
+   "keup2022origami"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-shane-legg",
+  "name": "Shane Legg",
+  "type": "person",
+  "loc": "London, UK",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "2007",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "losslab"
+  ],
+  "bibkeys": [
+   "hutter2006universal"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-eric-postma",
+  "name": "Eric Postma",
+  "type": "person",
+  "loc": "Amsterdam, Netherlands",
+  "lat": 52.37,
+  "lng": 4.9,
+  "years": "2009",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "van2009dimensionality"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-pierre-foret",
+  "name": "Pierre Foret",
+  "type": "person",
+  "loc": "London, UK",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "2020",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "foret2021sam"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-moritz-helias",
+  "name": "Moritz Helias",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2022",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv",
+   "topology"
+  ],
+  "bibkeys": [
+   "keup2022origami"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-jens-hoyrup",
+  "name": "Jens Høyrup",
+  "type": "person",
+  "loc": "Copenhagen, Denmark",
+  "lat": 55.68,
+  "lng": 12.57,
+  "years": "2002-2021",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "hoyrup2021algebra",
+   "hoyruplengths"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-leland-mcinnes",
+  "name": "Leland McInnes",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2018",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "mcinnes2018umap"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-florian-cajori",
+  "name": "Florian Cajori",
+  "type": "person",
+  "loc": "Charlottesville, USA",
+  "lat": 38.03,
+  "lng": -78.49,
+  "years": "",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "differentiation",
+   "geometry_iii",
+   "math_i",
+   "math_iii"
+  ],
+  "bibkeys": [
+   "historyofmathematicalnotation"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-colin-mclarty",
+  "name": "Colin McLarty",
+  "type": "person",
+  "loc": "Chicago, USA",
+  "lat": 41.79,
+  "lng": -87.6,
+  "years": "2006",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i",
+   "geometry_iii"
+  ],
+  "bibkeys": [
+   "mclarty2006noether"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-serge-lang",
+  "name": "Serge Lang",
+  "type": "person",
+  "loc": "New York, USA",
+  "lat": 40.81,
+  "lng": -73.96,
+  "years": "1971",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_i",
+   "math_iii",
+   "math_iv"
+  ],
+  "bibkeys": [
+   "lang2005basicmath"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-philipp-petersen",
+  "name": "Philipp Petersen",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2024",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iii",
+   "math_iv"
+  ],
+  "bibkeys": [
+   "petersen2024mathdl"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-andrew-gordon-wilson",
+  "name": "Andrew Gordon Wilson",
+  "type": "person",
+  "loc": "Stanford, USA",
+  "lat": 37.43,
+  "lng": -122.17,
+  "years": "2018",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "garipov2018mode"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-douglas-c-youvan",
+  "name": "Douglas C. Youvan",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2024",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_iii",
+   "math_iii"
+  ],
+  "bibkeys": [
+   "youvan2024"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-stephan-mandt",
+  "name": "Stephan Mandt",
+  "type": "person",
+  "loc": "Oxford, UK",
+  "lat": 51.75,
+  "lng": -1.26,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "mandt2017variational"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-joan-bruna",
+  "name": "Joan Bruna",
+  "type": "person",
+  "loc": "Zurich, Switzerland",
+  "lat": 47.38,
+  "lng": 8.55,
+  "years": "2021",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i",
+   "geometry_ii"
+  ],
+  "bibkeys": [
+   "bronstein2021geometric"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-laurent-dinh",
+  "name": "Laurent Dinh",
+  "type": "person",
+  "loc": "London, UK",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "dinh2017sharpness"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-david-cohen-steiner",
+  "name": "David Cohen-Steiner",
+  "type": "person",
+  "loc": "Sophia Antipolis, France",
+  "lat": 43.67,
+  "lng": 7.09,
+  "years": "2007",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_iii"
+  ],
+  "bibkeys": [
+   "cohensteiner2007"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-sigmundur-gudmundsson",
+  "name": "Sigmundur Gudmundsson",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2004",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_i"
+  ],
+  "bibkeys": [
+   "gudmundsson2004riemannian"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-andrew-m-saxe",
+  "name": "Andrew M. Saxe",
+  "type": "person",
+  "loc": "Princeton, USA",
+  "lat": 40.34,
+  "lng": -74.66,
+  "years": "2014",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "saxe2014deep"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-ruslan-salakhutdinov",
+  "name": "Ruslan Salakhutdinov",
+  "type": "person",
+  "loc": "Pittsburgh, USA",
+  "lat": 40.44,
+  "lng": -79.94,
+  "years": "2017",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "geometry_ii"
+  ],
+  "bibkeys": [
+   "zaheer2017deepsets"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "person-michal-lewandowski",
+  "name": "Michal Lewandowski",
+  "type": "person",
+  "loc": "",
+  "lat": null,
+  "lng": null,
+  "years": "2025",
+  "active": [],
+  "blurb": "Researcher cited in the asanAI math, geometry and loss-landscape lessons.",
+  "cited_in": [
+   "math_iv"
+  ],
+  "bibkeys": [
+   "lewandowski2025spacefolds"
+  ],
+  "conf": "known"
+ },
+ {
+  "id": "artifact-loss-landscape",
+  "name": "Loss Landscape",
+  "type": "artifact",
+  "loc": "Google, Mountain View, USA",
+  "lat": 37.39,
+  "lng": -122.08,
+  "years": "2018",
+  "active": [
+   2018,
+   2018
+  ],
+  "blurb": "The high-dimensional loss surface visualized by 2-D slices; the diagnostic tool of deep-net optimization, popularized by Li et al. (2018).",
+  "cited_in": [
+   "loss_landscape"
+  ],
+  "bibkeys": [
+   "li2018losslandscape"
+  ],
+  "conf": "known"
+ }
+]

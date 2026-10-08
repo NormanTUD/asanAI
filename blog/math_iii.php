@@ -603,29 +603,6 @@ The web is full of the same thing described in different ways. HoTT's answer: *d
 </div>
 
 <div class="md">
-### Application: quantum AI
-
-A qubit is both $|0\rangle$ and $|1\rangle$ until you measure it. HoTT's higher-dimensional types turn out to be a surprisingly natural language for that **superposition** and **entanglement**: the quantum state space is topological, a path on the Bloch sphere is a quantum gate, and a *higher* path is a proof that two gate sequences do the same job. Move the state around the sphere and measure it.
-</div>
-
-<div class="hott-card" id="hott-lab-8">
-	<div class="hott-card-title"><span class="dot"></span>A qubit on the Bloch sphere (drag to rotate)</div>
-	<div class="hott-grid2">
-		<div id="hott-bloch3d" class="hott-3d" style="height:380px"></div>
-		<div>
-			<p class="hott-lead">Every point on the sphere is a state of the qubit. North = |0&#10217;, south = |1&#10217;, the equator is perfect superposition.</p>
-			<div class="hott-controls" style="flex-direction:column">
-				<div class="hott-control"><label>&theta; (latitude) <b id="hott-thVal">0.80</b></label><input type="range" id="hott-th" min="0" max="3.14" step="0.01" value="0.8"></div>
-				<div class="hott-control"><label>&phi; (longitude) <b id="hott-phVal">0.50</b></label><input type="range" id="hott-ph" min="0" max="6.28" step="0.01" value="0.5"></div>
-			</div>
-			<div class="hott-math" id="hott-qMath"></div>
-			<button id="hott-qMeasure" class="hott-btn">Measure! &#128207;</button>
-			<p id="hott-qResult" class="hott-lead" style="margin-top:.5rem;font-family:var(--mn-font-mono)"></p>
-		</div>
-	</div>
-</div>
-
-<div class="md">
 ### Application: explainable AI
 
 A deep model makes a decision — but why? HoTT offers a structure for making the **path of the decision** trackable: click an input on the left and trace the path it takes through the network. Inputs that land in the same class share similar paths, and HoTT makes that path-equivalence a first-class, checkable fact.

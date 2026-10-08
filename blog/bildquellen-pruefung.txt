@@ -216,9 +216,9 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
              geprüft HTTP 200). Commons-Upload-Datum 2019-12-13 (Jahr im
              literature.js-Eintrag cosmic_web_foam_image).
     Lokal: cosmic_web_foam.jpg (678x452)
-    Genutzt in: map.php § The Atlas (flaches Foto im "Cosmic web"-Zoom der
+    Genutzt in: atlas.php § The Atlas (flaches Foto im "Cosmic web"-Zoom der
              Cosmic journey)
-    Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (map.php Intro),
+    Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (atlas.php Intro),
              Quelle via \cite{cosmic_web_foam_image} zitiert.
 
 23. transformer_architecture
@@ -232,10 +232,10 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
              permission to reproduce the tables and figures in this paper
              solely for use in journalistic or scholarly works."
     Lokal: transformer_architecture.png (1520x2239)
-    Genutzt in: map.php § The Atlas (Bild im "The transformer"-Stopp der
+    Genutzt in: atlas.php § The Atlas (Bild im "The transformer"-Stopp der
              Cosmic journey)
     Status: OK - CC BY-SA 4.0, Autor (Google) + Commons-Link im Credit
-             (map.php Intro), Quelle via \cite{transformer_attention_figure}
+             (atlas.php Intro), Quelle via \cite{transformer_attention_figure}
              zitiert.
 
 24. starfield_eso
@@ -249,10 +249,10 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
              Quellenangabe. Lokale Datei ist von 6000x3000 auf 2048x1024
              heruntergerechnet (Hintergrundtextur, kleineres Dateivolumen).
     Lokal: starfield_eso.jpg (2048x1024)
-    Genutzt in: map.php § The Atlas (scene.background — Sternenhimmel als
+    Genutzt in: atlas.php § The Atlas (scene.background — Sternenhimmel als
              Hintergrund statt flachem Schwarz)
     Status: OK - CC BY 4.0, Autor (ESO/S. Brunier) + Commons-Link im Credit
-             (map.php Intro), Quelle via \cite{starfield_eso_image} zitiert.
+             (atlas.php Intro), Quelle via \cite{starfield_eso_image} zitiert.
 
 25. solsys_planet_textures
     URL (Quelle): https://www.solarsystemscope.com/textures/ (geprüft HTTP 200)
@@ -269,9 +269,9 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
               moon_texture.png, s. Eintrag 27.
     Lokal: solsys_{mercury,venus,earth,mars,jupiter,saturn,uranus,neptune}.jpg
              (je 1024x512)
-    Genutzt in: map.js § buildCelestial (Material-Map der acht Planeten)
+    Genutzt in: atlas.js § buildCelestial (Material-Map der acht Planeten)
     Status: OK - CC BY 4.0, Quelle via \cite{solsys_planet_textures} im
-             Credit (map.php Intro) zitiert.
+             Credit (atlas.php Intro) zitiert.
 
 27. earth_moon_cc_textures (Hauptglobus: Erde + Mond)
     URL (Quelle): https://www.solarsystemscope.com/textures/ (geprüft HTTP 200)
@@ -285,20 +285,20 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
              Bild). Ersetzen die frühere prozedurale Erd-Karte
              (drawEarthCanvas, entfernt) bzw. ranger7_moon.jpg.
     Lokal: earth_texture.jpg, moon_texture.png
-    Genutzt in: map.js § buildEarth (Erde) + § buildMoon (Mond)
+    Genutzt in: atlas.js § buildEarth (Erde) + § buildMoon (Mond)
      Status: OK - CC BY 4.0, Quelle via \cite{earth_moon_cc_textures} im
-              Credit (map.php, Sektion unter der Karte) zitiert.
+              Credit (atlas.php, Sektion unter der Karte) zitiert.
 
 28. earth_night_lights (Erd-Tags/Nachts-Zyklus: Stadtlichter)
     URL (Quelle): https://commons.wikimedia.org/wiki/File:City_Lights_2012_-_Flat_map.jpg
     Lizenz: Public Domain (NASA VIIRS Day/Night Band, 2012-Composite)
     Autor: NASA / NOAA
     Hinweis: Äquirektanguläre Nachtlicht-Karte (12150x6075, lokal auf
-             4096x2048 heruntergerechnet). Wird in map.js § buildEarth als
+             4096x2048 heruntergerechnet). Wird in atlas.js § buildEarth als
              nightMap im ShaderMaterial geladen; blendet mit der Tag-Textur
              basierend auf der Sonnenrichtung (UTC-synchronisiert).
     Lokal: earth_night.jpg (4096x2048)
-    Genutzt in: map.js § buildEarth (ShaderMaterial nightMap)
+    Genutzt in: atlas.js § buildEarth (ShaderMaterial nightMap)
     Status: OK - Public Domain (NASA), keine Lizenz-Zitation erforderlich.
 
 29. galaxy_photos (Galaxien-Sprites im Weltraum)
@@ -309,11 +309,11 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
       - NGC 1300: NASA/ESA Hubble (Public Domain)
       - NGC 300: ESO (CC BY 4.0)
     Hinweis: Äquirektangulare/Quadratische Galaxienfotos, lokal auf 512x512
-             heruntergerechnet. Werden in map.js § buildCelestial als
+             heruntergerechnet. Werden in atlas.js § buildCelestial als
              Sprite-Texturen mit AdditiveBlending geladen (5 Bilder für 9
              Sprites, zyklisch). Fallback: prozedurale Spiral-Textur.
     Lokal: galaxy_1.jpg … galaxy_5.jpg (je 512x512)
-    Genutzt in: map.js § buildCelestial (Galaxien-Sprites)
+    Genutzt in: atlas.js § buildCelestial (Galaxien-Sprites)
     Status: OK - Public Domain (NASA) / CC BY 4.0 (ESO).
 
 30. m87_blackhole_image (Event Horizon Telescope: Schwarzes Loch M87*)
@@ -321,22 +321,22 @@ geprüft; Inline-Attribution im jeweiligen Figure-Caption.
     Lizenz: CC BY 4.0 (Event Horizon Telescope Collaboration)
     Autor: Event Horizon Telescope Collaboration
     Hinweis: Erstes direktes Bild eines Schwarzen-Loch-Schattens (2019).
-             Wird in map.js § tickBlackHole als Crossfade-Ziel am Ende der
+             Wird in atlas.js § tickBlackHole als Crossfade-Ziel am Ende der
              Stern-Todes-Phase gezeigt.
     Lokal: m87_real.jpg (2,4 MB)
-    Genutzt in: map.js § tickBlackHole (Crossfade-Phase)
+    Genutzt in: atlas.js § tickBlackHole (Crossfade-Phase)
     Status: OK - CC BY 4.0, Quelle via \cite{m87_blackhole_image} im
-             Credit (map.php) zitiert.
+             Credit (atlas.php) zitiert.
 
 31. crab_nebula_image (Krabbennebula, Überrest von SN 1054)
     URL (Quelle): https://en.wikipedia.org/wiki/SN_1054
     Lizenz: Public Domain (NASA / ESA / Hubble Space Telescope)
     Autor: NASA / ESA / Hubble Space Telescope
     Hinweis: Supernova-Überrest von SN 1054 (beobachtet 1054 n. Chr.).
-             Wird in map.js § tickBlackHole am Ende der Supernova-Phase
+             Wird in atlas.js § tickBlackHole am Ende der Supernova-Phase
              gezeigt, um den sichtbaren Überrest eines Sterns darzustellen.
     Lokal: crab_nebula.jpg (14 MB)
-    Genutzt in: map.js § tickBlackHole (Supernova-Überrest-Phase)
+    Genutzt in: atlas.js § tickBlackHole (Supernova-Überrest-Phase)
     Status: OK - Public Domain (NASA), keine Lizenz-Zitation erforderlich.
 
 === AI MUSIC & VIDEO GENERATION (music_video_generation.php, Stand: September 2026) ===
@@ -471,8 +471,8 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
              zugeschnitten, weil die Kugel-Skybox eine quadratische Textur sonst
              2:1 strecken würde.
     Lokal: cosmic_web_texture.png (2048x1024, PNG)
-    Genutzt in: map.php § The Atlas (Skybox im "Cosmic web"-Zoom der Cosmic journey)
-    Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (map.php Intro),
+    Genutzt in: atlas.php § The Atlas (Skybox im "Cosmic web"-Zoom der Cosmic journey)
+    Status: OK - CC BY-SA 4.0, Autor + Commons-Link im Credit (atlas.php Intro),
              Quelle via \cite{cosmic_web_texture_image} zitiert.
 
 47. ranger7_impact
@@ -511,7 +511,141 @@ Commons-API (Feld LicenseShortName) geprüft, Stand September 2026.
              2012-12-21 (Jahr im literature.js-Eintrag budassi_universe_image).
              Original 4288x4288; hier 2048x2048.
     Lokal: universe_radial_budassi.jpg (2048x2048, JPG)
-    Genutzt in: map.php § The Atlas (Big-Bang-Stop der Cosmic journey) und
+    Genutzt in: atlas.php § The Atlas (Big-Bang-Stop der Cosmic journey) und
               untold_history.php
     Status: OK - CC BY-SA 3.0, Autor + Commons-Link im Credit,
              Quelle via \cite{budassi_universe_image} zitiert.
+
+=== LOSS LANDSCAPE (loss_landscape.php, Stand: Oktober 2026) ===
+====================================================================
+50. titan_topo (titan_contour_map)
+    URL: https://commons.wikimedia.org/wiki/File:First_topographic_map_of_Titan-CassiniNASA-PIA16849.jpg (geprüft HTTP 200)
+    Lizenz: Public Domain (via Commons API, Feld LicenseShortName)
+    Autor: NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann
+    Hinweis: Erste Topografie-Konturkarte des Saturnmonds Titan (Cassini, 2013).
+             Dient als Metapher für die "Landschaft" = Höhenlinien des Verlusts.
+    Lokal: titan_topo.jpg (2197x2197, JPG)
+    Genutzt in: loss_landscape.php § hero / "What is a loss landscape"
+    Status: OK - Public Domain, Autor + Commons-Link im Caption,
+             Quelle via \cite{titan_contour_map} zitiert.
+
+51. saddle_hyperbolic_paraboloid (hyperbolic_paraboloid_saddle)
+    URL: https://commons.wikimedia.org/wiki/File:Hyperbolic_paraboloid_quadric.png (geprüft HTTP 200)
+    Lizenz: CC0 (via Commons API, Feld LicenseShortName)
+    Autor: Rectas
+    Hinweis: Hyperbolisches Paraboloid z = x^2 - y^2 — die kanonische
+             "Sattelfläche". Genau die Form, an der man Sattelpunkte
+             im 2-D-Verlust abliest (Aufwölbung in x, Einbeulung in y).
+    Lokal: saddle_hyperbolic_paraboloid.png (1080x1080, PNG)
+    Genutzt in: loss_landscape.php § saddle points
+    Status: OK - CC0 (Public Domain), Autor + Commons-Link im Caption,
+             Quelle via \cite{hyperbolic_paraboloid_saddle} zitiert.
+
+52. paraboloids_comparison
+    URL: https://commons.wikimedia.org/wiki/File:Hyperbolic_vs_elliptic_paraboloid.png (geprüft HTTP 200)
+    Lizenz: CC BY-SA 3.0 (via Commons API, Feld LicenseShortName)
+    Autor: Snorri95 (Wikimedia Commons)
+    Hinweis: Elliptisches (Becken/Minimum) vs. hyperbolisches (Sattel)
+             Paraboloid nebeneinander — der visuelle Kern von "Minimum vs. Sattel".
+    Lokal: paraboloids_comparison.png (929x281, PNG)
+    Genutzt in: loss_landscape.php § saddle points (Marginfigur)
+    Status: OK - CC BY-SA 3.0, Autor + Commons-Link im Caption.
+             (Kein eigener literature.js-Key; die Sattelfläche wird via
+              \cite{hyperbolic_paraboloid_saddle} zitiert, die Bildquelle im
+              Marginfig-Caption als Commons-Link genannt.)
+
+53. loss_landscape_resnet56_noskip (Li et al., 2018 — Figure 1a)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/noshortLogRotatedLower.png)
+    Lizenz: MIT (für Code+Figures-Repo tomgoldstein/loss-landscape; die
+            Figuren wurden zur Veröffentlichung in NeurIPS 2018 unter
+            CC-BY-Attribution gestellt; arXiv HTML spiegelt die Figuren
+            unter perpetual non-exclusive distribution).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 1a — Loss-Oberfläche ResNet-56 OHNE Skip-Connections
+             (chaotisches Terrain, Testfehler ~13% auf CIFAR-10).
+             Filter-normalisierte 2-D-Richtungsprojektion.
+    Lokal: loss_landscape_resnet56_noskip.png
+    Genutzt in: loss_landscape.php § hero figure (without-skip panel)
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert, Autoren + Repo-Link im Caption.
+
+54. loss_landscape_resnet56_skip (Li et al., 2018 — Figure 1b)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/shortHighResLog.png)
+    Lizenz: MIT (Repo) / CC-BY-Attribution (NeurIPS 2018 proceedings).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 1b — Loss-Oberfläche ResNet-56 MIT Skip-Connections
+             (eine glatte konvexe Becken-Struktur, Testfehler ~6%).
+             Identische Architektur + Training wie Figur 1a; einziger
+             Unterschied = An-/Abwesenheit der Skip-Connections.
+    Lokal: loss_landscape_resnet56_skip.png
+    Genutzt in: loss_landscape.php § hero figure (with-skip panel)
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert, Autoren + Repo-Link im Caption.
+
+55. loss_landscape_resnet110_noskip (Li et al., 2018 — Figure 4a)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/notresnet110.png)
+    Lizenz: MIT (Repo) / CC-BY-Attribution (NeurIPS 2018 proceedings).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 4a — Loss-Oberfläche ResNet-110 OHNE Skip-Connections.
+             Zeigt wie das Terrain mit der Tiefe vollständig in "chaotic
+             behavior" kollabiert.
+    Lokal: loss_landscape_resnet110_noskip.png
+    Genutzt in: loss_landscape.php § Aha #4 — Skip-Verbindungen als
+             topologische Chirurgie
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert.
+
+56. loss_landscape_densenet121 (Li et al., 2018 — Figure 4b)
+    URL: https://github.com/tomgoldstein/loss-landscape (arXiv HTML mirror:
+         https://arxiv.org/html/1712.09913v3/figures/surf/densenet121.png)
+    Lizenz: MIT (Repo) / CC-BY-Attribution (NeurIPS 2018 proceedings).
+    Autor: Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein
+    Hinweis: Figure 4b — Loss-Oberfläche DenseNet-121 (alle Schichten
+             skip-connected). Glatt und ohne erkennbare Non-Convexity,
+             bestätigt Li et al.s Befund, dass Skip-Verbindungen jede
+             Art von Tiefe "reparieren".
+    Lokal: loss_landscape_densenet121.png
+    Genutzt in: loss_landscape.php § Aha #4 (alternativer Beleg, DenseNet)
+    Status: OK - MIT/CC-BY-Attribution, Quelle via
+             \cite{li2018losslandscape} zitiert.
+
+=== QAI / NILSSON BILDER (history.php + untold_history.php, Stand: Oktober 2026) ===
+==================================================
+Quelle-Text: Nils J. Nilsson, "The Quest for Artificial Intelligence"
+(https://ai.stanford.edu/~nilsson/QAI/qai.pdf, \cite{nilsson1984qai}).
+Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026.
+
+57. img_walter_tortoise
+   URL: https://commons.wikimedia.org/wiki/File:Cybernetic_Tortoise_by_William_Grey_Walter_c_1950_(Ank_Kumar).jpg
+   Lizenz: CC BY-SA 4.0
+   Autor: Ank Kumar (Foto des Science-Museum-Group-Objekts, c. 1950)
+   Lokal: grey_walter_tortoise.jpg (1000x750)
+   Genutzt in: history.php § "The Electric Tortoise: Machina speculatrix (1936)"
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+58. img_kirsch_baby
+   URL: https://commons.wikimedia.org/wiki/File:NBSFirstScanImage.jpg
+   Lizenz: Public domain
+   Autor: Russell A. Kirsch (NBS, 1957; Scan seines Sohnes Walden, 176x176)
+   Lokal: kirsch_baby_1957.jpg (821x1000)
+   Genutzt in: untold_history.php § "From a Baby's Face to the GPU"
+   Status: OK - Public Domain (US-Bundesbehörde, NBS/NIST)
+
+59. img_widrow_adaline
+   URL: https://commons.wikimedia.org/wiki/File:Bernard_Widrow_with_ADALINE.jpg
+   Lizenz: Public domain
+   Autor: Stanford Today magazine, (c) 1963 by the Board of Trustees of Leland Stanford Junior University
+   Lokal: widrow_adaline.jpg (1000x689)
+   Genutzt in: history.php § "The ADALINE: An Engineer's Neural Network (1959)"
+   Status: OK - Public Domain
+
+60. img_warren_weaver
+   URL: https://commons.wikimedia.org/wiki/File:Warren_Weaver.jpg
+   Lizenz: Public domain
+   Autor: Donald Cooksey (1940, Cooksey-142)
+   Lokal: warren_weaver.jpg (800x640)
+   Genutzt in: history.php § "Machine Translation: The Longest-Running Bet"
+   Status: OK - Public Domain

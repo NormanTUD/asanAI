@@ -32,7 +32,7 @@
 				$theme_base = "dark";
 			} else if($_COOKIE["theme"] == "lightmode") {
 				$theme_base = "light";
-			} else if($_COOKIE["theme"] == "natural") {
+			} else if($_COOKIE["theme"] == "naturalmode") {
 				$theme_base = "natural";
 			}
 		}
@@ -121,8 +121,10 @@
 		_js("optimizer.js");
 		_js("loss_metric.js");
 		_js("labels.js");
-                _js("libs/CSS2DRenderer.js");
-		_js("cnn3d.js");
+		// cnn3d.js + libs/CSS2DRenderer.js are loaded lazily on first
+		// activation of the "3D Network" tab (see load_cnn3d_lazily() in
+		// main.js) — the 170 KB script + two WebGL contexts are not worth
+		// paying on every page load for a hidden tab.
 		_js("validation.js");
 		_js("cookies_and_url.js");
 		_js("initializers.js");
@@ -154,8 +156,11 @@
 		_js("layer_descriptions.js");
 		_js("loss_landscape.js");
 		_js("origami_folds.js");
+		_js("origami_live.js");
 
 		_js("libs/atrament.js", 1, 1);
+		_js("organic-network.js");
+		_js("loader-network.js");
 		_js("main.js");
 
 		_js("libs/plotly-latest.min.js");

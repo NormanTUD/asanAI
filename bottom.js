@@ -48,6 +48,8 @@ function set_mode () {
 		$(".expert_mode_only").show();
 	}
 
+	update_expert_visualization_tabs();
+
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
 
 	if(typeof update_ribbon_compactness === "function") {

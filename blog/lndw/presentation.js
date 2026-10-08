@@ -27,7 +27,11 @@ const DemoRegistry = (() => {
     };
 
         const registry = [
+                // NNStepDemo lebt auf der Stückelung-Folie — dort erst
+                // resetten (sonst re-rendert der Approx-Plot bei jedem
+                // Folienwechsel mit).
                 { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
+                        slideTest: s => s && s.id === 'slide-stueckelung',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
@@ -37,6 +41,7 @@ const DemoRegistry = (() => {
                 { ref: () => typeof TrainingViz !== 'undefined' ? TrainingViz : null },
 
                 { ref: () => typeof AttentionDemo !== 'undefined' ? AttentionDemo : null,
+                        slideTest: s => s && s.id === 'slide-attention',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof JSpaceViz !== 'undefined' ? JSpaceViz : null,
@@ -45,6 +50,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof SpaceMorph !== 'undefined' ? SpaceMorph : null,
+                        block: d => d.isAnimating(),
                         slideTest: s => s.id === 'slide-layer-als-raumkruemmung',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
@@ -56,6 +62,7 @@ const DemoRegistry = (() => {
                         guard: d => d.isOnNotebookSlide(),
                         nextMethod: 'nextLayer',
                         prevMethod: 'prevLayer',
+                        slideTest: s => s && s.id === 'slide-residual-stream-notebook',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof EmbeddingAutoDemo !== 'undefined' ? EmbeddingAutoDemo : null,
@@ -64,6 +71,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof PredictionViz !== 'undefined' ? PredictionViz : null,
+                        slideTest: s => s && s.id === 'slide-die-vorhersage',
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof CRSim !== 'undefined' ? CRSim : null,
@@ -116,12 +124,19 @@ const DemoRegistry = (() => {
                 // Aligning-Animation blockieren (Bewegung nicht skippen).
                 // Beim Verlassen der Folie wird der Zustand zurückgesetzt,
                 // damit beim nächsten Besuch wieder von vorn begonnen wird.
+                // Der Reset re-rendert beide 3D-Manifolds (~370 ms) — daher
+                // verzögert, NACH dem Crossfade-Lock (650 ms), damit er den
+                // Folienwechsel nicht verlangsamt. leaveGuard: wer bis dahin
+                // zurückgekehrt ist, behält seinen Zustand; der Reset wird
+                // beim nächsten Verlassen neu geplant.
                 { ref: () => typeof ManifoldAlignViz !== 'undefined' ? ManifoldAlignViz : null,
                         guard: d => d.isOnSlide(),
                         canNext: 'isAnimating',
                         nextMethod: 'nop',
                         slideTest: s => s.getAttribute('data-title') === 'Mannigfaltigkeiten-Hypothese',
-                        onLeave: d => d.reset() },
+                        onLeave: d => d.reset(),
+                        deferMs: 700,
+                        leaveGuard: d => !d.isOnSlide() },
 
                 { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
                         guard: d => d.isOnSlide() },
@@ -139,14 +154,33 @@ const DemoRegistry = (() => {
     // Normalisiere: Defaults einsetzen
     const demos = registry.map(entry => ({ ...DEFAULTS, ...entry }));
 
-    /** Versuche Navigation in einer Richtung. Gibt true zurück wenn konsumiert. */
-    function tryNavigate(direction) {
+    /**
+     * Versuche Navigation in einer Richtung.
+     * Rückgabe:
+     *   true  = konsumiert (Demo hat reagiert)
+     *   'block' = blockiert (Demo will NICHT zur nächsten Folie durchreichen)
+     *   false = nicht behandelt → Fallthrough auf Presentation.next/prev
+     */
+    function tryNavigate(direction, currentSlideEl) {
         const canKey = direction === 'next' ? 'canNext' : 'canPrev';
         const methodKey = direction === 'next' ? 'nextMethod' : 'prevMethod';
 
         for (const demo of demos) {
             const instance = demo.ref();
             if (!instance) continue;
+
+            // Nur Demos betrachten, die per slideTest auf der aktuellen Folie sind.
+            // Damit verhindern wir, dass eine blockierende Demo auf einer anderen
+            // Folie die Pfeiltaste frisst.
+            const onThisSlide = !demo.slideTest || (currentSlideEl && demo.slideTest(currentSlideEl));
+            if (!onThisSlide) continue;
+
+            // Wenn diese Demo explizit blocken will (mid-Animation), signalisiere
+            // 'block' — navigate() fällt dann NICHT auf Presentation.next/prev zurück.
+            if (typeof demo.block === 'function' && demo.block(instance)) {
+                return 'block';
+            }
+
             if (!demo.guard(instance)) continue;
             if (typeof instance[demo[canKey]] === 'function' && instance[demo[canKey]]()) {
                 instance[demo[methodKey]]();
@@ -156,15 +190,52 @@ const DemoRegistry = (() => {
         return false;
     }
 
-    /** Lifecycle: Slide wird betreten */
-    function notifyEnter(slide) {
+    /**
+     * Lifecycle: Slide-Wechsel oldSlide → newSlide.
+     *
+     * Demos mit slideTest reagieren NUR, wenn die Transition ihre Folie
+     * betrifft (Eintritt oder Austritt). Sonst würde jeder Folienwechsel
+     * alle anderen Demos resetten — inkl. schwerer Plotly-Re-Render (z.B.
+     * 370 ms bei den Dual-Manifolds) — und den Wechsel verlangsamen.
+     *
+     * Demos ohne slideTest (global) behalten das Legacy-Verhalten:
+     * onLeave bei jedem Wechsel.
+     *
+     * deferMs: onLeave erst N ms verzögert ausführen (nach dem
+     * Crossfade-Lock) — für teure Resets, die den Wechsel nicht
+     * verlangsamen dürfen. leaveGuard: darf den (verzögerten) Leave
+     * bei Bedarf absagen, z.B. wenn die Folie inzwischen wieder aktiv
+     * ist (dann wird der Reset beim nächsten Verlassen neu geplant).
+     */
+    function notifyEnter(oldSlide, newSlide) {
         for (const demo of demos) {
             const instance = demo.ref();
             if (!instance) continue;
-            if (demo.slideTest && demo.slideTest(slide)) {
-                if (demo.onEnter) demo.onEnter(instance);
+
+            let fire;
+            if (demo.slideTest) {
+                if (demo.slideTest(newSlide)) {
+                    fire = 'enter';
+                } else if (oldSlide && demo.slideTest(oldSlide)) {
+                    fire = 'leave';
+                } else {
+                    continue; // Transition auf fremden Folien: ignorieren
+                }
             } else {
-                if (demo.onLeave) demo.onLeave(instance);
+                fire = 'leave';
+            }
+
+            if (fire === 'enter') {
+                if (demo.onEnter) demo.onEnter(instance);
+            } else if (demo.onLeave) {
+                if (demo.deferMs) {
+                    setTimeout(() => {
+                        if (demo.leaveGuard && !demo.leaveGuard(instance)) return;
+                        demo.onLeave(instance);
+                    }, demo.deferMs);
+                } else {
+                    demo.onLeave(instance);
+                }
             }
         }
     }
@@ -442,7 +513,17 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
         // ?fast=1: einfache Fragmente direkt anzeigen
         if (fastMode) revealFastFragments(currentSlide);
 
-        // Boot aktiviert die Startfolie direkt (ohne goTo → ohne notifyEnter).
+        // Sicherstellen, dass benachrichtigt wird (auch bei direktem ?start=/ ?slide),
+        // damit Demos (z. B. SpaceMorph) korrekt initialisiert werden.
+        try {
+            if (typeof DemoRegistry !== 'undefined') {
+                DemoRegistry.notifyEnter(null, slides[currentSlide]);
+            }
+        } catch (e) {}
+        try {
+            triggerSlideInit(currentSlide);
+        } catch (e) {}
+
         // Klassisch-vs-KI-Startfolie: Schreibmaschinen-Effekt sofort starten.
         if (typeof TypewriterViz !== 'undefined' && TypewriterViz.isOnClassicSlide()) {
             TypewriterViz.activate();
@@ -532,11 +613,131 @@ function prev() {
     }
 }
 
+    // Lock für den gesamten Crossfade (WAAPI: ~0.48s). Solange der
+    // Lock hält, werden Pfeiltasten in navigate() geblockt — die neue Folie
+    // muss erst sichtbar sein, bevor der nächste Klick zählt. Auch dasselbe
+    // gilt für Sub-Folien-Übergänge (siehe DemoRegistry-Einträge, die auf
+    // isSlideTransitioning blocken können).
+    //
+    // Wir speichern den Endzeitpunkt statt eines setTimeout-Tokens: Plotly
+    // räumt beim Re-Render mit clearTimeout() alle Timer auf, was einen
+    // setTimeout-basierten Lock sofort killt. Ein Timestamp-basiertes Lock
+    // ist immun dagegen.
+    const SLIDE_TRANSITION_MS = 520;
+    const SLIDE_DUR = 440;
+    const SLIDE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+    const SLIDE_DIST = 60;
+    let slideTransitionUntil = 0;
+    function lockSlideTransition() {
+        slideTransitionUntil = Date.now() + SLIDE_TRANSITION_MS;
+    }
+    function isSlideTransitioning() { return Date.now() < slideTransitionUntil; }
+    function cancelSlideTransition() { slideTransitionUntil = 0; }
+
+    // Crossfade über die Web Animations API (statt CSS-Transition +
+    // getComputedStyle-Flush). Warum:
+    //  - WAAPI garantiert, dass die Animation läuft. Der alte Flush-Trick
+    //    ("opacity 0 setzen → reflow → opacity freigeben") kann die
+    //    CSS-Transition bei einem beladenen Main-Thread verschlucken, weil
+    //    Start- und Endzustand im selben Style-Batch coalescen → neue Folie
+    //    bleibt bei opacity 0 → weißer Bildschirm. Genau der "manchmal"-Bug.
+    //  - Die eingehende Folie trägt SOFORT .active (CSS opacity:1). Schlägt
+    //    die Animation fehl oder wird sie unterbrochen, fällt sie auf den
+    //    CSS-Wert (sichtbar) zurück — weißer Bildschirm ist strukturell
+    //    ausgeschlossen.
+    //  - Schnelle Navigation re-targetiert vom aktuellen Zustand; alte
+    //    Animationen werden pro Folie gecancelt, daher kein Pop/Stacking.
+    function _cancelSlideAnim(el) {
+        if (el._slideAnim) { try { el._slideAnim.cancel(); } catch (e) {} el._slideAnim = null; }
+    }
+    // Animiert `el` von `from` nach `to`; setzt eine evtl. laufende
+    // Animation derselben Folie ab (keine Überlagerung).
+    function _playSlide(el, from, to) {
+        _cancelSlideAnim(el);
+        // fill:'both' (nicht 'forwards'): füllt den Start-Keyframe RÜCKWÄRTS
+        // aus, falls die Animation im ersten Frame noch nicht tickt (z.B.
+        // bei beladenem Main-Thread). Ohne Rückwärtsfüllung wäre die alte
+        // Folie (ohne .active → CSS opacity 0) für ein paar Frames komplett
+        // unsichtbar, während die neue noch bei 0 hängt → weißer Bildschirm.
+        // Mit 'both' hält die alte Folie bei 1 und die neue bei 0, bis die
+        // Animation tatsächlich vorankommt.
+        const anim = el.animate([from, to], { duration: SLIDE_DUR, easing: SLIDE_EASE, fill: 'both' });
+        el._slideAnim = anim;
+        anim.finished.then(() => {
+            // Ruhe-Zustand übernehmen: Animation ablösen, CSS-Werte gelten.
+            // End- und CSS-Werte sind identisch (aktiv: op1/0,0 · inaktiv: op0)
+            // → kein Pop. Guard: nicht antasten, wenn die Folie schon neu
+            // animiert wurde.
+            if (el._slideAnim === anim) { try { anim.cancel(); } catch (e) {} el._slideAnim = null; }
+        }).catch(() => {
+            if (el._slideAnim === anim) el._slideAnim = null;
+        });
+        return anim;
+    }
+
+    function activateSlide(newSlide, oldSlide, forward) {
+        const dir = forward ? 1 : -1;
+        // OPAKER PUSH: Beide Folien bleiben opak (opacity 1) — die eintretende
+        // deckt die auslaufende ab, während sie von der Einfahrseite ins
+        // Zentrum fährt. Da in jedem Frame mindestens eine Folie die Szene
+        // abdeckt, kann nie Weiß durchscheinen. (Der frühere Crossfade war die
+        // Fehlerquelle: inkomposite Frames ohne deckende Folie. Opacity zu
+        // 0→0/0→1 zu faden lässt genau dann Weiß zeigen, wenn eine Folie noch
+        // nicht gemappt ist.) Nur der Transform wird animiert.
+        newSlide.classList.remove('entering', 'leaving', 'leaving-back');
+        oldSlide.classList.remove('active', 'entering', 'leaving', 'leaving-back');
+        newSlide.classList.add('active');
+        oldSlide.classList.add('hold');
+
+        _playSlide(
+            newSlide,
+            { transform: `translate(${dir * SLIDE_DIST}px, 0px) scale(0.985)` },
+            { transform: 'translate(0px, 0px) scale(1)' });
+        _playSlide(
+            oldSlide,
+            { transform: 'translate(0px, 0px) scale(1)' },
+            { transform: `translate(${-dir * SLIDE_DIST}px, 0px) scale(0.985)` });
+
+        // .hold räumen, sobald die Folie vollständig abgedeckt ist.
+        // Guard: nicht antasten, wenn sie inzwischen wieder aktiv ist.
+        setTimeout(() => {
+            if (!oldSlide.classList.contains('active')) oldSlide.classList.remove('hold');
+        }, SLIDE_DUR + 80);
+    }
+
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
-        slides[currentSlide].classList.remove('active');
+        // Focus aus Inputs/Textareas rausnehmen, damit Pfeiltasten wieder
+        // navigieren statt z.B. Slider-Werte zu ändern. Sonst bleibt der
+        // Focus auf einem Range/Select hängen und die nächste Folie ist
+        // nicht mehr erreichbar.
+        const ae = document.activeElement;
+        if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ae.blur();
+
+        // Gleiche Folie (z.B. Klick auf eigenes Overview-Thumbnail):
+        // kein Crossfade, nur UI synchron halten.
+        if (idx === currentSlide) {
+            updateUI();
+            closeOverview();
+            return;
+        }
+
+        const oldSlide = slides[currentSlide];
+        const oldIdx = currentSlide;
         currentSlide = idx;
-        slides[currentSlide].classList.add('active');
+        const newSlide = slides[currentSlide];
+        const forward = idx > oldIdx;
+
+        activateSlide(newSlide, oldSlide, forward);
+
+        // Lifecycle NACH .active setzen — Demos prüfen oft
+        // `document.querySelector('.slide.active')` und würden sonst
+        // fälschlich reset() statt activate() aufrufen.
+        DemoRegistry.notifyEnter(oldSlide, newSlide);
+
+        // Crossfade-Lock setzen: Pfeiltasten werden erst wieder angenommen,
+        // wenn die neue Folie sichtbar ist.
+        lockSlideTransition();
 
         const fragments = getFragments(currentSlide);
         if (fastMode) {
@@ -548,9 +749,6 @@ function prev() {
             fragments.forEach(f => f.classList.remove('visible'));
             fragmentIndex[currentSlide] = 0;
         }
-
-        // Zentrale Lifecycle-Benachrichtigung
-        DemoRegistry.notifyEnter(slides[currentSlide]);
 
         updateUI();
         closeOverview();
@@ -693,7 +891,9 @@ function prev() {
         init, next, prev, goTo, count: () => slides.length,
         slides: () => slides,
         slideTitleAt: (i) => (slides[i] ? slideTitle(slides[i], i) : ''),
+        getActiveSlide: () => slides[currentSlide] || null,
         isFastMode: () => fastMode,
+        isSlideTransitioning,
         toggleOverview, toggleFullscreen, closeOverview,
         searchAppend, searchBackspace, clearOverviewSearch, overviewEscape,
     };
@@ -925,7 +1125,14 @@ const InputHandler = (() => {
     let digitTimer = null;
 
     function navigate(direction) {
-        if (!DemoRegistry.tryNavigate(direction)) {
+        // Solange der Crossfade der vorherigen Folie noch läuft, keine weitere
+        // Navigation annehmen — die neue Folie muss erst vollständig sichtbar
+        // sein, bevor der nächste Klick zählt. Sub-Folien blocken sich
+        // zusätzlich selbst (siehe DemoRegistry.block).
+        if (Presentation.isSlideTransitioning()) return;
+        const result = DemoRegistry.tryNavigate(direction, Presentation.getActiveSlide());
+        if (result === 'block') return; // Demo hat blockiert — kein Fallthrough
+        if (!result) {
             if (direction === 'next') Presentation.next();
             else Presentation.prev();
         }
@@ -940,8 +1147,17 @@ const InputHandler = (() => {
         const target = e.target;
         const tag = target.tagName;
         const isCheckbox = tag === 'INPUT' && target.type === 'checkbox';
-        // Text-Inputs/Textarea: Browser übernimmt die Tasten.
-        if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA') return;
+        // Pfeiltasten auf Inputs/Selects: normalerweise würde der Browser
+        // den Wert ändern (z.B. Slider). Stattdessen wollen wir
+        // navigieren — also Input bluren und weiterreichen.
+        const isNavKey = KEY_ACTIONS.next.includes(e.key) || KEY_ACTIONS.prev.includes(e.key);
+		if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA' || tag === 'SELECT') {
+			// Freitext-Feld (z. B. das Token-Feld): Tasten tippen statt
+			// navigieren — sonst würde ein Leerzeichen die Folie blättern.
+			if (target.hasAttribute('data-free-text')) return;
+			if (isNavKey) { target.blur(); }
+			else { return; }
+		}
         // Fokussierte Auswahl-Checkbox: Space toggelt sie (Standard);
         // alle anderen Tasten (Pfeile, Home/End, Buchstaben, Ziffern)
         // navigieren normal und geben den Fokus an die Folie zurück.
@@ -1046,21 +1262,27 @@ const InputHandler = (() => {
 // ────────────────────────────────────────────────────────────
 const LoadingStatus = (() => {
     function spinnerEl() { return document.getElementById('loading-spinner'); }
-    function textEl() {
-        const s = spinnerEl();
-        return s ? s.querySelector('.spinner-text') : null;
-    }
+    function statusEl() { return document.getElementById('intro-status'); }
+    function barEl() { return document.getElementById('intro-bar-fill'); }
     function active() {
         const s = spinnerEl();
         return !!(s && !s.classList.contains('hidden'));
     }
-    function set(text) {
-        const e = textEl();
+    function set(text, pct) {
+        const e = statusEl();
         if (e) e.textContent = text;
+        if (typeof pct === 'number') {
+            const b = barEl();
+            if (b) b.style.width = Math.max(0, Math.min(100, pct)) + '%';
+        }
     }
     function done() {
         const s = spinnerEl();
-        if (s) s.classList.add('hidden');
+        if (s) {
+            const b = barEl();
+            if (b) b.style.width = '100%';
+            s.classList.add('hidden');
+        }
     }
     return { set, done, active };
 })();
@@ -1152,7 +1374,7 @@ async function runBootSequence() {
     const allSlides = Presentation.slides();
     try {
         for (let i = 0; i < allSlides.length; i++) {
-            LoadingStatus.set('Rendere Folie ' + (i + 1) + '/' + allSlides.length + ' · ' + Presentation.slideTitleAt(i) + ' …');
+            LoadingStatus.set('Rendere Folie ' + (i + 1) + '/' + allSlides.length + ' · ' + Presentation.slideTitleAt(i) + ' …', (i / allSlides.length) * 50);
             await yieldFrame();
             allSlides[i].querySelectorAll('.math-display').forEach(el => renderOneMath(el, true, '$$', '$$'));
             allSlides[i].querySelectorAll('.math-inline').forEach(el => renderOneMath(el, false, '$', '$'));
@@ -1167,25 +1389,30 @@ async function runBootSequence() {
         });
 
         const tasks = LoadingTasks.drain();
+        const totalSteps = allSlides.length + tasks.length + 2;
+        let step = allSlides.length;
         for (const t of tasks) {
-            LoadingStatus.set(t.label);
+            step++;
+            LoadingStatus.set(t.label, 50 + (step / totalSteps) * 45);
             await yieldFrame();
             try { t.fn(); } catch (err) { console.warn('Lade-Schritt fehlgeschlagen:', err); }
             await yieldFrame();
         }
 
         if (typeof loadIntuitionModule === 'function') {
-            LoadingStatus.set('Initialisiere Intuition-Demos …');
+            step++;
+            LoadingStatus.set('Initialisiere Intuition-Demos …', 50 + (step / totalSteps) * 45);
             await yieldFrame();
             loadIntuitionModule();
         }
         if (typeof runAttention === 'function') {
-            LoadingStatus.set('Zeichne Attention-Beispiel …');
+            step++;
+            LoadingStatus.set('Zeichne Attention-Beispiel …', 50 + (step / totalSteps) * 45);
             await yieldFrame();
             runAttention();
         }
     } finally {
-        LoadingStatus.set('Fast fertig …');
+        LoadingStatus.set('Fast fertig …', 100);
         await yieldFrame();
         if (typeof fitSlides === 'function') fitSlides();
         LoadingStatus.done();

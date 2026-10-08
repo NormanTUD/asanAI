@@ -2200,6 +2200,12 @@ window.bibData = {
 		year: 1914,
 		url: "https://en.wikipedia.org/wiki/El_Ajedrecista"
 	},
+	"thomas2008torres": {
+		title: "A short account on Leonardo Torres' endless spindle",
+		author: "Federico Thomas",
+		year: 2008,
+		url: "https://doi.org/10.1016/j.mechmachtheory.2007.07.003"
+	},
 
 	"lenz1920": {
 		title: "Beitrag zum Verständnis der magnetischen Erscheinungen in festen Körpern",
@@ -3849,6 +3855,62 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1412.6980",
 		author: "Diederik P. Kingma, Jimmy Ba"
 	},
+	"ruder2016overview": {
+		title: "An overview of gradient descent optimization algorithms",
+		author: "Sebastian Ruder",
+		year: 2016,
+		url: "https://arxiv.org/abs/1609.04747",
+		alternativetitle: "Ruder, 2016"
+	},
+	"nesterov2004introductory": {
+		title: "Introductory Lectures on Convex Optimization: A Basic Course",
+		author: "Yurii Nesterov",
+		year: 2004,
+		url: "https://link.springer.com/book/10.1007/978-1-4419-8853-9",
+		alternativetitle: "Nesterov, 2004"
+	},
+	"duchi2011adagrad": {
+		title: "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization",
+		author: "John Duchi, Elad Hazan, Yoram Singer",
+		year: 2011,
+		url: "http://jmlr.org/papers/v12/duchi11a.html",
+		alternativetitle: "Duchi et al., 2011"
+	},
+	"zeiler2012adadelta": {
+		title: "ADADELTA: An Adaptive Learning Rate Method",
+		author: "Matthew D. Zeiler",
+		year: 2012,
+		url: "https://arxiv.org/abs/1212.5701",
+		alternativetitle: "Zeiler, 2012"
+	},
+	"hinton2012rmsprop": {
+		title: "Neural Networks for Machine Learning, Lecture 6e: A practical guide to training restricted Boltzmann machines",
+		author: "Geoffrey Hinton",
+		year: 2012,
+		url: "http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf",
+		alternativetitle: "Hinton, 2012"
+	},
+	"dozat2016nadam": {
+		title: "Incorporating Nesterov Momentum into Adam",
+		author: "Timothy Dozat",
+		year: 2016,
+		url: "http://cs229.stanford.edu/proj2015/054_report.pdf",
+		alternativetitle: "Dozat, 2016"
+	},
+	"reddi2018amsgrad": {
+		title: "On the Convergence of Adam and Beyond",
+		author: "Sashank J. Reddi, Satyen Kale, Sanjiv Kumar",
+		year: 2018,
+		url: "https://arxiv.org/abs/1904.09237",
+		alternativetitle: "Reddi et al., 2018"
+	},
+	"loshchilov2019adamw": {
+		title: "Decoupled Weight Decay Regularization",
+		author: "Ilya Loshchilov, Frank Hutter",
+		year: 2019,
+		url: "https://arxiv.org/abs/1711.05101",
+		alternativetitle: "Loshchilov & Hutter, 2019"
+	},
 	"momentum": {
 		title: "Some methods of speeding up the convergence of iteration methods",
 		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf",
@@ -4916,6 +4978,24 @@ window.bibData = {
 		author: "Gaby Wood",
 		title: "Living Dolls: A Magical History of the Quest for Mechanical Life",
 		year: 2002
+	},
+	"koetsier2001programmable": {
+		title: "On the prehistory of programmable machines: musical automata, looms, calculators",
+		author: "Teun Koetsier",
+		year: 2001,
+		url: "https://doi.org/10.1016/S0094-114X(01)00005-2"
+	},
+	"sharkey2007jazari": {
+		title: "A 13th Century Programmable Robot",
+		author: "Noel Sharkey",
+		year: 2007,
+		url: "https://web.archive.org/web/20070629182810/http://www.shef.ac.uk/marcoms/eview/articles58/robot.html"
+	},
+	"sharkey2007hero": {
+		title: "A programmable robot from 60 AD",
+		author: "Noel Sharkey",
+		year: 2007,
+		url: "https://web.archive.org/web/20171213205451/https://www.newscientist.com/blog/technology/2007/07/programmable-robot-from-60ad.html"
 	},
 	"antikytherawiki": {
 		author: "Wikipedia contributors",
@@ -6429,9 +6509,16 @@ window.bibData = {
 	"toosi2021history": {
 		url: "https://ar5iv.labs.arxiv.org/html/2109.01517",
 		title: "A brief history of AI: how to prevent another winter (a critical review)",
-		author: "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahmim",
+		author: "Amirhosein Toosi, Andrea Bottino, Babak Saboury, Eliot Siegel, Arman Rahim",
 		year: 2021,
 		alternativetitle: "A Brief History of AI"
+	},
+	"nilsson1984qai": {
+		title: "The Quest for Artificial Intelligence: A History of Ideas and Achievements",
+		author: "Nils J. Nilsson",
+		year: 1984,
+		url: "https://ai.stanford.edu/~nilsson/QAI/qai.pdf",
+		alternativetitle: "Nilsson, The Quest for Artificial Intelligence"
 	},
 	"ronkowitz2017perceptron": {
 		url: "https://ronkowitz.blogspot.com/2017/11/perceptron.html",
@@ -8416,7 +8503,7 @@ window.bibData = {
 		license: "Public domain (NASA)",
 		alternativetitle: "Structure of the Universe (the cosmic web)"
 	},
-	/* The flat "cosmic foam" photograph floating in the Atlas (map.php)
+	/* The flat "cosmic foam" photograph floating in the Atlas (atlas.php)
 	 * during the cosmic-web stage of the Cosmic journey: a frame from the
 	 * MPA Garching visualization movies (local file cosmic_web_foam.jpg). */
 	"cosmic_web_foam_image": {
@@ -8427,7 +8514,7 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Movies of large-scale structure in the Universe (MPA Garching)"
 	},
-	/* The cosmic-web skybox texture in the Atlas (map.php), used at the
+	/* The cosmic-web skybox texture in the Atlas (atlas.php), used at the
 	 * cosmic-web stage of the Cosmic journey: "Cosmic web texture (10 Gly
 	 * span)" — filaments of dark matter and galaxies across ten
 	 * gigalight-years (local file cosmic_web_texture.png). */
@@ -8439,7 +8526,7 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Cosmic web texture (10 Gly span)"
 	},
-	/* The Big-Bang / cosmic-scale photo in the Atlas (map.php) and in
+	/* The Big-Bang / cosmic-scale photo in the Atlas (atlas.php) and in
 	 * untold_history.php: an artist's logarithmic radial view of the observable
 	 * universe, Solar System at the centre out to the CMB and the Big Bang at
 	 * the rim (local file universe_radial_budassi.jpg). */
@@ -8465,7 +8552,7 @@ window.bibData = {
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Figure 1 from 'Attention Is All You Need', via Wikimedia Commons"
 	},
-	/* The all-sky starfield backdrop of the Atlas (map.php): ESO's 360°
+	/* The all-sky starfield backdrop of the Atlas (atlas.php): ESO's 360°
 	 * Aitoff panorama of the whole celestial sphere (the Milky Way band across
 	 * the frame), local file starfield_eso.jpg. */
 	"starfield_eso_image": {
@@ -8477,7 +8564,7 @@ window.bibData = {
 		alternativetitle: "ESO Milky Way panorama (GigaGalaxy Zoom)"
 	},
 	/* The solar-system planet surface maps (Mercury, Venus, Earth, Mars,
-	 * Jupiter, Saturn, Uranus, Neptune) in the Atlas (map.js buildCelestial):
+	 * Jupiter, Saturn, Uranus, Neptune) in the Atlas (atlas.js buildCelestial):
 	 * equirectangular 2K maps from the Solar System Scope project, based on
 	 * NASA imagery/elevation, local files solsys_*.jpg. */
 	"solsys_planet_textures": {
@@ -8488,7 +8575,7 @@ window.bibData = {
 		license: "CC BY 4.0",
 		alternativetitle: "Solar System Scope planet textures (solsys_*.jpg)"
 	},
-	/* The Atlas main-globe Earth and Moon surfaces (map.js buildEarth /
+	/* The Atlas main-globe Earth and Moon surfaces (atlas.js buildEarth /
 	 * buildMoon): equirectangular maps from the Solar System Scope project,
 	 * based on NASA imagery/elevation; local files earth_texture.jpg and
 	 * moon_texture.png. */
@@ -8500,7 +8587,7 @@ window.bibData = {
 		license: "CC BY 4.0",
 		alternativetitle: "Solar System Scope Earth + Moon textures (earth_texture.jpg, moon_texture.png)"
 	},
-	/* The Atlas Earth night-lights layer (map.js buildEarth ShaderMaterial
+	/* The Atlas Earth night-lights layer (atlas.js buildEarth ShaderMaterial
 	 * nightMap): NASA/NOAA VIIRS Day/Night Band 2012 composite,
 	 * equirectangular; local file earth_night.jpg. */
 	"earth_night_lights": {
@@ -8513,7 +8600,7 @@ window.bibData = {
 	},
 	/* The Event Horizon Telescope image of the black hole in Messier 87
 	 * (M87*), the first direct image of a black hole shadow, shown in the
-	 * Atlas (map.js) as the crossfade target for the stellar death phase.
+	 * Atlas (atlas.js) as the crossfade target for the stellar death phase.
 	 * Local file m87_real.jpg. */
 	"m87_blackhole_image": {
 		url: "https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg",
@@ -8524,7 +8611,7 @@ window.bibData = {
 		alternativetitle: "EHT image of M87* (m87_real.jpg)"
 	},
 	/* The Crab Nebula (M1), the supernova remnant of SN 1054, shown in the
-	 * Atlas (map.js) at the end of the stellar death phase to illustrate
+	 * Atlas (atlas.js) at the end of the stellar death phase to illustrate
 	 * what remains after a star explodes. Local file crab_nebula.jpg. */
 	"crab_nebula_image": {
 		url: "https://en.wikipedia.org/wiki/SN_1054",
@@ -12403,6 +12490,20 @@ window.bibData = {
 		url: "https://vanhoucke.medium.com/close-encounters-of-the-llm-kind-61323cef25d3",
 		alternativetitle: "The LLM as a swarm-like 'multi-polarity' of latent personas, not a singular identity"
 	},
+
+	/* ── Xeno-Interpretability (philosophy.php) ────────────────────────────
+	 * Pierucci et al. (2026): models may use internal distinctions for
+	 * which no adequate human concept exists ("xeno-representations");
+	 * the study of the human-interpretable complement is "xeno-interpretability".
+	 * arXiv:2609.20408.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"pierucci2026xenointerpretability": {
+		title: "Xeno-Interpretability: Investigating the Alien Minds of LLMs",
+		author: "F. Pierucci et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2609.20408",
+		alternativetitle: "The xeno-semantic space: model-native distinctions without an adequate human concept"
+	},
 	"nlab_group": {
 		title: "group",
 		author: "nLab contributors",
@@ -13856,7 +13957,7 @@ window.bibData = {
 	},
 	"draxler_mode_connectivity": {
 		title: "Essentially No Barriers in Neural Network Energy Landscape",
-		author: "David Draxler, Ambra Veschgini, Manfred Salmhofer, Franziska Hamprecht",
+		author: "Felix Draxler, Kambis Veschgini, Manfred Salmhofer, Fred A. Hamprecht",
 		year: 2018,
 		url: "https://arxiv.org/abs/1803.00885",
 		alternativetitle: "Mode connectivity"
@@ -14784,6 +14885,38 @@ window.bibData = {
 		license: "Public domain",
 		alternativetitle: "Ranger 7, Guericke crater"
 	},
+	"img_walter_tortoise": {
+		title: "Cybernetic Tortoise by William Grey Walter c 1950",
+		author: "Ank Kumar",
+		year: 2012,
+		url: "https://commons.wikimedia.org/wiki/File:Cybernetic_Tortoise_by_William_Grey_Walter_c_1950_(Ank_Kumar).jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Grey Walter's Machina speculatrix (cybernetic tortoise)"
+	},
+	"img_kirsch_baby": {
+		title: "First scanned photograph, 1957 (Walden Kirsch)",
+		author: "Russell A. Kirsch",
+		year: 1957,
+		url: "https://commons.wikimedia.org/wiki/File:NBSFirstScanImage.jpg",
+		license: "Public domain",
+		alternativetitle: "The first digital image: a 1957 scan of a baby"
+	},
+	"img_widrow_adaline": {
+		title: "Bernard Widrow with the ADALINE machine",
+		author: "Stanford University (Stanford Today magazine)",
+		year: 1963,
+		url: "https://commons.wikimedia.org/wiki/File:Bernard_Widrow_with_ADALINE.jpg",
+		license: "Public domain",
+		alternativetitle: "Bernard Widrow with ADALINE"
+	},
+	"img_warren_weaver": {
+		title: "Warren Weaver, 1940",
+		author: "Donald Cooksey",
+		year: 1940,
+		url: "https://commons.wikimedia.org/wiki/File:Warren_Weaver.jpg",
+		license: "Public domain",
+		alternativetitle: "Warren Weaver"
+	},
 	"img_gutta_percha_cable": {
 		title: "Appareil pour envelopper de gutta-percha les fils de cuivre du câble transatlantique",
 		author: "Louis Figuier",
@@ -15193,17 +15326,197 @@ window.bibData = {
 	},
 	"dauphin2014saddle": {
 		title: "Identifying and attacking the saddle point problem in high-dimensional non-convex optimization",
-		author: "Yann Dauphin, Richang M. Ng, Abolruzah E. Mohammad-Yaraghchi, Yann LeCun",
+		author: "Yann Dauphin, Razvan Pascanu, Caglar Gulcehre, Kyunghyun Cho, Surya Ganguli, Yoshua Bengio",
 		year: 2014,
-		url: "https://arxiv.org/abs/1411.2618",
+		url: "https://arxiv.org/abs/1406.2572",
 		alternativetitle: "Dauphin et al., saddle points (2014)"
 	},
 	"li2018losslandscape": {
 		title: "Visualizing the Loss Landscape of Neural Nets",
-		author: "Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, John E. Davis",
+		author: "Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein",
 		year: 2018,
 		url: "https://arxiv.org/abs/1712.09913",
 		alternativetitle: "Li et al., loss landscape (2018)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Loss Landscape  (loss_landscape.php)
+	 *  Origin of the energy/loss-landscape metaphor, saddle points, mode
+	 *  connectivity, and the methods that study and smooth the terrain.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"rumelhart1986learning": {
+		title: "Learning representations by back-propagating errors",
+		author: "David E. Rumelhart, Geoffrey E. Hinton, Ronald J. Williams",
+		year: 1986,
+		url: "https://www.nature.com/articles/323533a0",
+		alternativetitle: "Rumelhart, Hinton & Williams, backprop (1986)"
+	},
+	"dauphin2014identifying": {
+		title: "Identifying and attacking the saddle point problem in high-dimensional non-convex optimization",
+		author: "Yann Dauphin, Razvan Pascanu, Caglar Gulcehre, Kyunghyun Cho, Surya Ganguli, Yoshua Bengio",
+		year: 2014,
+		url: "https://arxiv.org/abs/1406.2572",
+		alternativetitle: "Dauphin et al., the saddle point problem (2014)"
+	},
+	"pascanu2014saddle": {
+		title: "On the saddle point problem for non-convex optimization",
+		author: "Razvan Pascanu, Yann N. Dauphin, Surya Ganguli, Yoshua Bengio",
+		year: 2014,
+		url: "https://arxiv.org/abs/1405.4604",
+		alternativetitle: "Pascanu et al., saddle points (2014)"
+	},
+	"saxe2014exact": {
+		title: "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+		author: "Andrew M. Saxe, James L. McClelland, Surya Ganguli",
+		year: 2013,
+		url: "https://arxiv.org/abs/1312.6120",
+		alternativetitle: "Saxe, McClelland & Ganguli, exact deep linear solutions (2014)"
+	},
+	"choromanska2015loss": {
+		title: "The Loss Surfaces of Multilayer Networks",
+		author: "Anna Choromanska, Mikael Henaff, Michael Mathieu, Gérard Ben Arous, Yann LeCun",
+		year: 2015,
+		url: "https://arxiv.org/abs/1412.0233",
+		alternativetitle: "Choromanska et al., the loss surfaces of multilayer networks (2015)"
+	},
+	"fyodorov2007complexity": {
+		title: "Replica symmetry breaking condition exposed by random matrix calculation of landscape complexity",
+		author: "Yan V. Fyodorov, Ian N. Williams",
+		year: 2007,
+		url: "https://arxiv.org/abs/cond-mat/0702601",
+		alternativetitle: "Fyodorov & Williams, counting saddles (2007)"
+	},
+	"mehta2018lossxor": {
+		title: "The Loss Surface of XOR Artificial Neural Networks",
+		author: "Dhagash Mehta, Xiaojun Zhao, Edgar A. Bernal, David J. Wales",
+		year: 2018,
+		url: "https://arxiv.org/abs/1804.02411",
+		alternativetitle: "Mehta et al., the loss surface of XOR networks (2018)"
+	},
+	"wu2017towards": {
+		title: "Towards Understanding Generalization of Deep Learning: Perspective of Loss Landscapes",
+		author: "Lei Wu, Zhanxing Zhu, Weinan E",
+		year: 2017,
+		url: "https://arxiv.org/abs/1706.10239",
+		alternativetitle: "Wu, Zhu & E, loss-landscape generalization (2017)"
+	},
+	"nguyen2017loss": {
+		title: "The loss surface of deep and wide neural networks",
+		author: "Quynh Nguyen, Matthias Hein",
+		year: 2017,
+		url: "https://arxiv.org/abs/1704.08045",
+		alternativetitle: "Nguyen & Hein, no bad local minima in deep wide nets (2017)"
+	},
+	"garipov2018mode": {
+		title: "Loss Surfaces, Mode Connectivity, and Fast Ensembling of DNNs",
+		author: "Timur Garipov, Pavel Izmailov, Dmitrii Podoprikhin, Dmitry Vetrov, Andrew Gordon Wilson",
+		year: 2018,
+		url: "https://arxiv.org/abs/1802.10026",
+		alternativetitle: "Garipov et al., loss surfaces & mode connectivity (2018)"
+	},
+	"keskar2016largebatch": {
+		title: "On Large-Batch Training for Deep Learning: Generalization Gap and Sharp Minima",
+		author: "Nitish Shirish Keskar, Dheevatsa Mudigere, Jorge Nocedal, Mikhail Smelyanskiy, Ping Tak Peter Tang",
+		year: 2017,
+		url: "https://arxiv.org/abs/1609.04836",
+		alternativetitle: "Keskar et al., sharp minima & generalization (2017)"
+	},
+	"smithle2018bayesian": {
+		title: "A Bayesian Perspective on Generalization and Stochastic Gradient Descent",
+		author: "Samuel L. Smith, Quoc V. Le",
+		year: 2018,
+		url: "https://arxiv.org/abs/1710.06451",
+		alternativetitle: "Smith & Le, SGD as Bayesian inference toward flat minima (2018)"
+	},
+	"he2016identity": {
+		title: "Identity Mappings in Deep Residual Networks",
+		author: "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
+		year: 2016,
+		url: "https://arxiv.org/abs/1603.05027",
+		alternativetitle: "He et al., identity mappings in deep residual networks (2016)"
+	},
+	"ioffe2015batchnorm": {
+		title: "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+		author: "Sergey Ioffe, Christian Szegedy",
+		year: 2015,
+		url: "https://arxiv.org/abs/1502.03167",
+		alternativetitle: "Ioffe & Szegedy, batch normalization (2015)"
+	},
+	"dinh2017sharpness": {
+		title: "Sharp Minima Can Generalize For Deep Nets",
+		author: "Laurent Dinh, Razvan Pascanu, Samy Bengio, Yoshua Bengio",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.04933",
+		alternativetitle: "Dinh et al., sharp minima can generalize (2017)"
+	},
+	"cohen2021edgeofstability": {
+		title: "Gradient Descent on Neural Networks Typically Occurs at the Edge of Stability",
+		author: "Jeremy Cohen, Simran Kaur, Yuanzhi Li, J. Zico Kolter, Andrej Risteski",
+		year: 2021,
+		url: "https://arxiv.org/abs/2103.00065",
+		alternativetitle: "Cohen et al., edge of stability (2021)"
+	},
+	"chaudhari2016entropysgd": {
+		title: "Entropy-SGD: Biasing Gradient Descent Into Wide Valleys",
+		author: "Pratik Chaudhari, Anna Choromanska, Stefano Soatto, Yann LeCun, Carlo Baldi, Kurt Keutzer",
+		year: 2016,
+		url: "https://arxiv.org/abs/1611.01838",
+		alternativetitle: "Chaudhari et al., Entropy-SGD / local entropy (2016)"
+	},
+	"hopfield1982": {
+		title: "Neural networks and physical systems with emergent collective computational abilities",
+		author: "John J. Hopfield",
+		year: 1982,
+		url: "https://www.pnas.org/doi/10.1073/pnas.79.8.2554",
+		alternativetitle: "Hopfield, energy landscapes in neural nets (1982)"
+	},
+	"wales2003energy": {
+		title: "Energy Landscapes: Applications to Clusters, Biomolecules and Glasses",
+		author: "David J. Wales",
+		year: 2004,
+		url: "https://www.cambridge.org/9780521814157",
+		alternativetitle: "Wales, energy landscapes (Cambridge, 2003)"
+	},
+	"mandt2017variational": {
+		title: "A Variational Analysis of Stochastic Gradient Descent",
+		author: "Stephan Mandt, Matthew D. Hoffman, David M. Blei",
+		year: 2017,
+		url: "https://arxiv.org/abs/1702.06059",
+		alternativetitle: "Mandt et al., SGD as variational inference (2017)"
+	},
+	"amit1989modeling": {
+		title: "Modeling Brain Function: The World of Attractor Neural Networks",
+		author: "Daniel J. Amit",
+		year: 1989,
+		url: "https://www.cambridge.org/9780521361246",
+		alternativetitle: "Amit, attractor neural networks / permutation symmetry (1989)"
+	},
+	"kawaguchi2016deep": {
+		title: "Deep Learning without Poor Local Minima",
+		author: "Kenji Kawaguchi",
+		year: 2016,
+		url: "https://arxiv.org/abs/1605.07110",
+		alternativetitle: "Kawaguchi, no poor local minima in deep nets (2016)"
+	},
+	"lu2017expressive": {
+		title: "The Expressive Power of Neural Networks: A Survey",
+		author: "Yingcong Lu",
+		year: 2017,
+		url: "https://arxiv.org/abs/1708.04669",
+		alternativetitle: "Lu, depth and expressivity of neural networks (2017)"
+	},
+	"titan_contour_map": {
+		title: "First topographic map of Titan (Cassini)",
+		author: "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
+		year: 2013,
+		url: "https://upload.wikimedia.org/wikipedia/commons/0/01/First_topographic_map_of_Titan-CassiniNASA-PIA16849.jpg",
+		alternativetitle: "Titan topographic contour map (public domain)"
+	},
+	"hyperbolic_paraboloid_saddle": {
+		title: "Hyperbolic paraboloid quadric (z = x^2 - y^2), the canonical saddle surface",
+		author: "Rectas",
+		year: "2023",
+		url: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Hyperbolic_paraboloid_quadric.png",
+		alternativetitle: "Hyperbolic paraboloid = a saddle (CC0)"
 	},
 	"belkin2019reconciling": {
 		title: "Reconciling modern machine-learning practice and previous theoretical theories",
@@ -16850,5 +17163,116 @@ window.bibData = {
 		year: 2007,
 		url: "https://archive.org/details/topbook",
 		alternativetitle: "Morris, Topology Without Tears"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Earth's Habitability: The Magnetic Shield, the Atmosphere, and
+	 *  the Oxygen  (untold_history.php)
+	 *  Without these three, no air to breathe, no ozone shield, no food
+	 *  chain — and therefore no human to invent the Transformer.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"gilbert1600magnete": {
+		title: "De Magnete, Magneticisque Corporibus, et de Magno Magnete Tellure",
+		author: "William Gilbert",
+		year: 1600,
+		url: "https://www.gutenberg.org/ebooks/33810",
+		alternativetitle: "Gilbert, De Magnete (1600)"
+	},
+	"halley1692magnetic": {
+		title: "An Account of the Cause of the Change of the Variation of the Magnetic Needle; with an Hypothesis of the Structure of the Internal Parts of the Earth",
+		author: "Edmond Halley",
+		year: 1692,
+		url: "https://en.wikipedia.org/wiki/Edmond_Halley",
+		alternativetitle: "Halley, Phil. Trans. 16 (1692)"
+	},
+	"magnetic_field_wiki": {
+		title: "Earth's magnetic field",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Earth%27s_magnetic_field",
+		alternativetitle: "Earth's magnetic field (Wikipedia)"
+	},
+	"magnetosphere_wiki": {
+		title: "Magnetosphere",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Magnetosphere",
+		alternativetitle: "Magnetosphere (Wikipedia)"
+	},
+	"atmosphere_wiki": {
+		title: "Atmosphere of Earth",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Atmosphere_of_Earth",
+		alternativetitle: "Atmosphere of Earth (Wikipedia)"
+	},
+	"goe_wiki": {
+		title: "Great Oxidation Event",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Great_Oxidation_Event",
+		alternativetitle: "Great Oxidation Event (Wikipedia)"
+	},
+	"helmont1648ortus": {
+		title: "Ortus Medicinae, vel Opera et Opuscula Omnia",
+		author: "Jan Baptist van Helmont",
+		year: 1648,
+		url: "https://en.wikipedia.org/wiki/Jan_Baptist_van_Helmont",
+		alternativetitle: "van Helmont, Ortus Medicinae (1648, posthumous)"
+	},
+	"hales1727vegetable": {
+		title: "Vegetable Staticks",
+		author: "Stephen Hales",
+		year: 1727,
+		url: "https://en.wikipedia.org/wiki/Stephen_Hales",
+		alternativetitle: "Hales, Vegetable Staticks (1727)"
+	},
+	"black1756fixedair": {
+		title: "Experiments upon Magnesia Alba, Quicklime, and some other Alkaline Substances",
+		author: "Joseph Black",
+		year: 1756,
+		url: "https://en.wikipedia.org/wiki/Joseph_Black",
+		alternativetitle: "Black, 'On Fixed Air' (1756)"
+	},
+	"priestley1771airs": {
+		title: "Observations on Different Kinds of Air",
+		author: "Joseph Priestley",
+		year: 1772,
+		url: "https://doi.org/10.1098/rstl.1772.0001",
+		alternativetitle: "Priestley, Phil. Trans. 62 (1772)"
+	},
+	"scheele1777airfire": {
+		title: "Chemische Abhandlung von der Luft und dem Feuer",
+		author: "Carl Wilhelm Scheele",
+		year: 1777,
+		url: "https://en.wikipedia.org/wiki/Carl_Wilhelm_Scheele",
+		alternativetitle: "Scheele, Chemische Abhandlung von der Luft und dem Feuer (1777)"
+	},
+	"ingenhousz1779experiments": {
+		title: "Experiments upon Vegetables, Discovering Their Great Power of Purifying the Common Air in the Sun-shine, and of Injuring it in the Shade and at Night",
+		author: "Jan Ingenhousz",
+		year: 1779,
+		url: "https://www.loc.gov/item/18000763/",
+		alternativetitle: "Ingenhousz, Experiments upon Vegetables (1779)"
+	},
+	"senebier1783recherches": {
+		title: "Recherches sur l'influence de la lumière solaire pour métamorphoser l'air fixe en air pur par la végétation",
+		author: "Jean Senebier",
+		year: 1783,
+		url: "https://archive.org/details/bub_gb_HF8S5jGE2ssC",
+		alternativetitle: "Senebier, Recherches sur l'influence de la lumière solaire (1783)"
+	},
+	"lavoisier1789traite": {
+		title: "Traité Élémentaire de Chimie",
+		author: "Antoine Lavoisier",
+		year: 1789,
+		url: "https://en.wikipedia.org/wiki/Traité_élémentaire_de_chimie",
+		alternativetitle: "Lavoisier, Traité Élémentaire de Chimie (1789)"
+	},
+	"desaussure1804recherches": {
+		title: "Recherches chimiques sur la végétation",
+		author: "Nicolas-Théodore de Saussure",
+		year: 1804,
+		url: "https://en.wikipedia.org/wiki/Nicolas-Théodore_de_Saussure",
+		alternativetitle: "de Saussure, Recherches chimiques sur la végétation (1804)"
 	}
 };

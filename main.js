@@ -164,7 +164,34 @@ function init_tabs () {
 	dbg("[init_tabs] " + language[lang]["initializing_tabs"]);
 
 	var tabs_settings = {
-		activate: function (event, ui) {},
+		activate: function (event, ui) {
+			if (ui.newPanel.attr("id") == "cnn3d_tab") {
+				load_cnn3d_lazily();
+			}
+
+			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
+				WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
+			}
+
+			if (ui.newPanel.attr("id") == "predict_tab" && window._demo_predictions_pending) {
+				// The activate event fires before the panel's fade-in applies, so
+				// show_prediction's visibility guard would still see the tab as
+				// hidden and defer again. Run the (now deduped) workhorse directly.
+				$("#example_predictions").html("<div style='display:flex;justify-content:center;align-items:center;min-height:100px;'><div class='spinner'></div></div>");
+				if (boot_settled) {
+					window._demo_predictions_pending = false;
+					_print_example_predictions(); // cannot be await
+				}
+				// else: boot's final updated_page() is still rebuilding the model.
+				// Keep the pending flag; the boot settle code runs the batch once
+				// the model is stable (see _init_app_finalization).
+			}
+		},
+		deactivate: function (event, ui) {
+			if (ui.panel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
+				WeightAnalysis.stopAutoRefresh();
+			}
+		},
 		hide: { effect: "fade", duration: 0 },
 		show: { effect: "fade", duration: 0 }
 	};
@@ -188,6 +215,40 @@ function init_tabs () {
 
 	setup_ribbon_compactness();
 
+}
+
+var _cnn3d_lazily_loading = 0;
+
+function load_cnn3d_lazily () {
+	if (typeof CNN3D !== "undefined") {
+		CNN3D.render("cnn3d");
+		return;
+	}
+
+	if (_cnn3d_lazily_loading) {
+		return;
+	}
+
+	_cnn3d_lazily_loading = 1;
+
+	function load_script (src, next) {
+		var s = document.createElement("script");
+		s.src = src;
+		s.onload = function () {
+			next();
+		};
+		s.onerror = function () {
+			_cnn3d_lazily_loading = 0;
+			err("Failed to load " + src);
+		};
+		document.head.appendChild(s);
+	}
+
+	load_script("libs/CSS2DRenderer.js", function () {
+		load_script("cnn3d.js", function () {
+			CNN3D.render("cnn3d");
+		});
+	});
 }
 
 function init_set_all_options () {
@@ -712,7 +773,20 @@ function _update_mobile_bottom_nav() {
 function show_website_and_hide_loader() {
 	$("#mainsite").show();
 	$("#status_bar").show();
-	$("#loading_icon_wrapper").fadeOut(200);
+	var loader = document.getElementById("loading_icon_wrapper");
+	if(loader) {
+		loader.classList.add("is-settled");
+		setTimeout(function () {
+			loader.classList.add("is-revealing");
+		}, 250);
+		setTimeout(function () {
+			if(window.LoaderNetwork && window._loaderNet) {
+				window.LoaderNetwork.destroy(window._loaderNet);
+				window._loaderNet = null;
+			}
+			if(loader.parentNode) loader.parentNode.removeChild(loader);
+		}, 850);
+	}
 	update_ribbon_compactness();
 	_website_shown = true;
 	_update_mobile_bottom_nav();
@@ -1090,6 +1164,16 @@ async function _init_app_finalization(LM) {
 	finished_loading = true;
 
 	await updated_page();
+
+	// The model is now stable (updated_page above finalized it). Allow the
+	// deferred demo-batch prediction to run, and run it now if the user already
+	// opened the predict tab while the model was still settling.
+	boot_settled = true;
+	if (window._demo_predictions_pending && !is_hidden_or_has_hidden_parent($("#predict_tab"))) {
+		window._demo_predictions_pending = false;
+		_print_example_predictions(); // cannot be await
+	}
+
 	autoset_dark_theme_if_user_prefers_it();
 	setOptimizerTooltips();
 
@@ -1104,7 +1188,9 @@ async function _init_app_finalization(LM) {
 	create_styled_upload_buttons();
 	register_resize_observers();
 
-	WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
+	// WeightAnalysis auto-refresh is started on first activation of its tab
+	// (see tabs_settings in init_tabs) — the full weight analysis must not
+	// run on a timer while the tab is hidden.
 	dimensionalityRiver("dimensionality_river");
 	activationAtlas("activation_atlas");
 	gradientFlowToSummary();
@@ -1124,6 +1210,26 @@ async function _init_app_finalization(LM) {
 
 $(document).ready(async function() {
 	var LM = language[lang];
+
+	if(window.LoaderNetwork) {
+		var canvas = document.getElementById("loader-network-canvas");
+		if(canvas) {
+			requestAnimationFrame(function () {
+				requestAnimationFrame(function () {
+					window._loaderNet = window.LoaderNetwork.attach(canvas, {
+						targetCount: 50,
+						minCount: 24,
+						densityDivis: 5000,
+						maxLinkPx: 200,
+						linkAlpha: 0.5,
+						nodeAlpha: 0.8,
+						speed: 0.042,
+						wobble: 0.032
+					});
+				});
+			});
+		}
+	}
 
 	var ok = await _init_app_backend_and_ui(LM);
 	if (!ok) return;

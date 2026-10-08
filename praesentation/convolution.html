@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Convolution · Sliding Window</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#fff;color:#1b1f24;
+    font:400 15px/1.5 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:18px;padding:30px 18px;-webkit-font-smoothing:antialiased}
+  h1{font-size:19px;font-weight:600;letter-spacing:-.015em;text-align:center}
+  h1 span{color:#8a93a0;font-weight:400}
+  canvas{display:block;width:100%;height:auto;max-width:1160px}
+  .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+  button{appearance:none;cursor:pointer;background:#fff;color:#1b1f24;
+    border:1px solid #d6dbe2;border-radius:9px;padding:8px 15px;
+    font:500 13.5px/1 inherit;transition:.16s}
+  button:hover{border-color:#1b1f24}
+  button.active{background:#1b1f24;color:#fff;border-color:#1b1f24}
+  .hint{color:#8a93a0;font-size:12.5px;text-align:center}
+  kbd{background:#f1f3f6;border:1px solid #d6dbe2;border-bottom-width:2px;
+    border-radius:4px;padding:1px 6px;font:500 11.5px/1.6 ui-monospace,monospace}
+  .speed{display:flex;align-items:center;gap:8px;color:#8a93a0;font-size:13px}
+  input[type=range]{appearance:none;width:120px;height:3px;border-radius:3px;
+    background:#dfe4ea;outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{appearance:none;width:13px;height:13px;
+    border-radius:50%;background:#1b1f24}
+  input[type=range]::-moz-range-thumb{width:13px;height:13px;border:0;
+    border-radius:50%;background:#1b1f24}
+</style>
+</head>
+<body>
+
+<canvas id="c" width="1160" height="420"></canvas>
+
+<script>
+(() => {
+'use strict';
+
+/* ══════════ ASSERTIONS ══════════ */
+const LOG=[];
+function assert(cond,msg,data){
+  const l=(cond?'✅ ':'❌ ')+msg+(data!==undefined?'  → '+JSON.stringify(data):'');
+  LOG.push(l); cond?console.log(l):console.error(l); return cond;
+}
+function note(msg,data){
+  const l='ℹ️  '+msg+(data!==undefined?'  → '+JSON.stringify(data):'');
+  LOG.push(l); console.log(l);
+}
+
+const cv=document.getElementById('c'), ctx=cv.getContext('2d');
+
+/* ══════════ 1) GEOMETRIE ══════════ */
+const GRID=5, CELL=76, S=CELL*GRID, N=GRID*GRID;
+const IMG={x:290,y:34,s:S}, KER={x:48,y:34,s:CELL}, OUT={x:762,y:34,s:S};
+const OCELL=S/GRID;
+
+const EYE_CELLS=[{c:1,r:1},{c:3,r:1}];
+const EYE_IDX=EYE_CELLS.map(e=>e.r*GRID+e.c);
+const ec=e=>({x:(e.c+0.5)*CELL,y:(e.r+0.5)*CELL});
+const L=ec(EYE_CELLS[0]), R=ec(EYE_CELLS[1]);
+
+assert(Number.isInteger(CELL)&&L.x===1.5*CELL&&L.y===1.5*CELL&&R.x===3.5*CELL,
+  'G-Geo: Augen auf Zellmittelpunkten',{CELL,L,R,EYE_IDX});
+
+const INK='#4a4f57', LW=1.7, EYE_W=CELL*0.74;
+
+/* ══════════ 2) ZEICHNEN ══════════ */
+function drawEye(g,cx,cy,w){
+  const rx=w*0.5, ry=w*0.27;
+  g.save(); g.lineJoin=g.lineCap='round';
+  g.strokeStyle=INK; g.lineWidth=Math.max(1.3,w*0.048);
+  g.beginPath();
+  g.moveTo(cx-rx,cy);
+  g.quadraticCurveTo(cx,cy-ry*1.8,cx+rx,cy);
+  g.quadraticCurveTo(cx,cy+ry*1.8,cx-rx,cy);
+  g.closePath(); g.fillStyle='#fff'; g.fill(); g.stroke();
+  g.beginPath(); g.arc(cx,cy,ry*0.88,0,Math.PI*2); g.stroke();
+  g.beginPath(); g.arc(cx,cy,ry*0.36,0,Math.PI*2); g.stroke();
+  g.beginPath(); g.lineWidth=Math.max(1.8,w*0.072);
+  g.arc(cx,cy+ry*0.70,rx*1.12,Math.PI*1.10,Math.PI*1.90); g.stroke();
+  g.restore();
+}
+
+const FCX=(L.x+R.x)/2, FCY=L.y+CELL*0.78, FR=CELL*1.72;
+const NOSE_W=CELL*0.46, NOSE_T=L.y+CELL*0.30, NOSE_B=L.y+CELL*1.26;
+const MOUTH_W=NOSE_W*2.3, MOUTH_Y=NOSE_B+CELL*0.14;
+
+function drawFace(g){
+  g.save(); g.lineJoin=g.lineCap='round';
+  g.strokeStyle=INK; g.lineWidth=LW;
+  g.beginPath(); g.arc(FCX,FCY,FR,0,Math.PI*2);
+  g.fillStyle='#fff'; g.fill(); g.stroke();
+  drawEye(g,L.x,L.y,EYE_W);
+  drawEye(g,R.x,R.y,EYE_W);
+  g.beginPath();
+  g.moveTo(FCX,NOSE_T);
+  g.lineTo(FCX-NOSE_W/2,NOSE_B);
+  g.lineTo(FCX+NOSE_W/2,NOSE_B);
+  g.closePath(); g.stroke();
+  const hw=MOUTH_W/2, dip=CELL*0.42;
+  g.beginPath(); g.lineWidth=LW*1.45;
+  g.moveTo(FCX-hw,MOUTH_Y);
+  g.bezierCurveTo(FCX-hw*0.42,MOUTH_Y+dip,FCX+hw*0.42,MOUTH_Y+dip,FCX+hw,MOUTH_Y);
+  g.stroke();
+  g.restore();
+}
+
+const face=document.createElement('canvas');
+face.width=face.height=S;
+const fctx=face.getContext('2d');
+fctx.fillStyle='#fff'; fctx.fillRect(0,0,S,S);
+drawFace(fctx);
+
+const ker=document.createElement('canvas');
+ker.width=ker.height=CELL;
+{
+  const k=ker.getContext('2d');
+  k.fillStyle='#fff'; k.fillRect(0,0,CELL,CELL);
+  drawEye(k,CELL*0.5,CELL*0.5,EYE_W);
+}
+
+/* ══════════ 3) WERTE, deterministische Tabelle ══════════ */
+const VALUES=Array.from({length:N},(_,i)=>EYE_IDX.includes(i)?100:0);
+
+/* G-Table: nur 0 und 100 */
+assert(VALUES.every(v=>v===0||v===100),
+  'G-Table: nur 0/100',{distinct:[...new Set(VALUES)]});
+/* G-Eyes: beide Augen = 100 */
+assert(EYE_IDX.every(i=>VALUES[i]===100),
+  'G-Eyes: beide Augen 100',{vals:EYE_IDX.map(i=>VALUES[i])});
+/* G-Count: genau 2 Treffer */
+assert(VALUES.filter(v=>v===100).length===2,
+  'G-Count: genau 2 Treffer',{n:VALUES.filter(v=>v===100).length});
+/* G-Zero: alle anderen 0 */
+assert(VALUES.every((v,i)=>EYE_IDX.includes(i)||v===0),
+  'G-Zero: Nicht-Augen alle 0');
+
+note('Tabelle',Array.from({length:GRID},(_,r)=>VALUES.slice(r*GRID,(r+1)*GRID)));
+
+/* ══════════ 4) ZUSTAND ══════════ */
+let cur=0, prev=0, t=1;
+let filled=new Array(N).fill(null);
+let playing=true, speed=78, last=performance.now();
+
+const ease=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const wpos=i=>({x:IMG.x+(i%GRID)*CELL, y:IMG.y+((i/GRID)|0)*CELL});
+const shownIdx=()=>t<0.5?prev:cur;
+
+function commitUpTo(i){
+  i=Math.max(0,Math.min(N-1,i));
+  for(let k=0;k<N;k++) filled[k]=(k<=i)?VALUES[k]:null;
+}
+commitUpTo(0);
+
+function goTo(i,animate=true){
+  i=Math.max(0,Math.min(N-1,i));
+  prev=cur; cur=i; t=animate?0:1;
+  commitUpTo(i);                       // <<< sofort, nicht erst bei t>=1
+  assert(filled[i]!==null,'G-Commit: Zielzelle befüllt',{i,val:filled[i]});
+}
+
+function step(d){
+  playing=false; syncBtn();
+  goTo(cur+d,true);
+}
+
+function reset(){
+  cur=0; prev=0; t=1;
+  filled=new Array(N).fill(null);
+  commitUpTo(0);
+  playing=true; syncBtn();
+}
+
+/* ══════════ 5) RENDER ══════════ */
+function txt(s,x,y,col='#5a6070',sz=12.5,w=500){
+  ctx.save(); ctx.fillStyle=col;
+  ctx.font=`${w} ${sz}px Inter, system-ui, sans-serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(s,x,y); ctx.restore();
+}
+
+function render(){
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height);
+
+  ctx.drawImage(ker,KER.x,KER.y,KER.s,KER.s);
+  ctx.fillStyle='rgba(150,190,240,.30)'; ctx.fillRect(KER.x,KER.y,KER.s,KER.s);
+  ctx.strokeStyle='#7aa8e0'; ctx.lineWidth=1.3;
+  ctx.strokeRect(KER.x+.5,KER.y+.5,KER.s-1,KER.s-1);
+
+  ctx.drawImage(face,IMG.x,IMG.y);
+  ctx.strokeStyle='#1b1f24'; ctx.lineWidth=1.5;
+  ctx.strokeRect(IMG.x+.5,IMG.y+.5,IMG.s-1,IMG.s-1);
+
+  const a=wpos(prev), b=wpos(cur), e=ease(t);
+  const wx=a.x+(b.x-a.x)*e, wy=a.y+(b.y-a.y)*e;
+  const si=shownIdx(), live=VALUES[si], hot=live>50;
+
+  ctx.save();
+  ctx.setLineDash([5,5]); ctx.strokeStyle='#5a6070'; ctx.lineWidth=1.2;
+  const sx=KER.x+KER.s+10, sy=KER.y+KER.s/2, ex=wx-6, ey=wy+CELL/2;
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.translate(ex,ey); ctx.rotate(Math.atan2(ey-sy,ex-sx));
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-8,-4); ctx.lineTo(-8,4);
+  ctx.closePath(); ctx.fillStyle='#5a6070'; ctx.fill();
+  ctx.restore();
+  txt('',(sx+ex)/2,Math.min(sy,ey)-20,'#1b1f24',20,700);
+
+  ctx.fillStyle=hot?'rgba(76,175,80,.30)':'rgba(150,190,240,.30)';
+  ctx.fillRect(wx,wy,CELL,CELL);
+  ctx.strokeStyle=hot?'#4caf50':'#7aa8e0'; ctx.lineWidth=1.7;
+  ctx.strokeRect(wx+.5,wy+.5,CELL-1,CELL-1);
+
+  const bw=50,bh=20,bx=wx+CELL/2-bw/2,by=wy-bh-5;
+  ctx.fillStyle='#fff'; ctx.fillRect(bx,by,bw,bh);
+  ctx.strokeStyle=hot?'#4caf50':'#7aa8e0'; ctx.lineWidth=1.1;
+  ctx.strokeRect(bx+.5,by+.5,bw-1,bh-1);
+  txt(live+'%',wx+CELL/2,by+bh/2,hot?'#2e7d32':'#4a7fc0',11.5,600);
+
+  for(let r=0;r<GRID;r++) for(let c=0;c<GRID;c++){
+    const i=r*GRID+c, x=OUT.x+c*OCELL, y=OUT.y+r*OCELL;
+    const v=filled[i], done=v!==null, isCur=(i===si);
+    ctx.fillStyle = done ? (v>50?'rgba(76,175,80,.18)':'#f6f7f9')
+                  : isCur ? 'rgba(150,190,240,.16)' : '#fff';
+    ctx.fillRect(x,y,OCELL,OCELL);
+    ctx.strokeStyle=isCur?'#7aa8e0':'#1b1f24';
+    ctx.lineWidth=isCur?2.2:1.2;
+    ctx.strokeRect(x+.5,y+.5,OCELL-1,OCELL-1);
+    if(done) txt(v+'',x+OCELL/2,y+OCELL/2,
+      v>50?'#2e7d32':'#1b1f24', v>50?20:16, v>50?700:600);
+  }
+}
+
+/* ══════════ 6) LOOP ══════════ */
+function loop(now){
+  const dt=Math.min(.05,(now-last)/1000); last=now;
+
+  /* FIX 1: Animation läuft NUR wenn playing */
+  if(playing){
+    if(t<1){
+      t=Math.min(1,t+dt*(speed/100)*1.9);
+    } else if(cur<N-1){
+      goTo(cur+1,true);
+    } else {
+      reset();
+    }
+  } else if(t<1){
+    /* pausiert: Bewegung einfrieren, Position auf Ziel schnappen */
+    t=1;
+  }
+
+  render();
+  requestAnimationFrame(loop);
+}
+
+/* ══════════ 7) STEUERUNG ══════════ */
+const $=id=>document.getElementById(id);
+const bPlay=$('play');
+
+function syncBtn(){
+  if(!bPlay) return;
+  const atEnd = cur>=N-1 && t>=1;
+  bPlay.textContent = playing ? 'Pause' : (atEnd ? 'Neu ▶' : 'Play ▶');
+  bPlay.classList.toggle('active',!playing);
+}
+
+function togglePlay(){
+  if(!playing && cur>=N-1 && t>=1){ reset(); return; }
+  playing=!playing;
+  assert(typeof playing==='boolean','G-Pause: playing ist bool',{playing,cur,t:+t.toFixed(2)});
+  syncBtn();
+}
+
+window.addEventListener('keydown',e=>{
+  const k=e.key;
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(k)) e.preventDefault();
+  if(k==='ArrowRight') step(+1);
+  else if(k==='ArrowLeft') step(-1);
+  else if(k==='ArrowDown') step(+GRID);
+  else if(k==='ArrowUp') step(-GRID);
+  else if(k===' ') togglePlay();
+  else if(k==='r'||k==='R') reset();
+  else if(k==='d'||k==='D') dumpDiagnostics();
+});
+
+/* ══════════ 8) RUNTIME-GUARDS ══════════ */
+/* ══════════ 8) RUNTIME-GUARDS ══════════ */
+const fired={range:false,pause:false,gap:false};
+
+function runtimeGuards(){
+  /* RG2: Indizes im gültigen Bereich */
+  if((cur<0||cur>=N||prev<0||prev>=N||t<0||t>1.0001) && !fired.range){
+    fired.range=true;
+    assert(false,'RG2: Zustand außerhalb Bereich',{cur,prev,t,N});
+  }
+
+  /* RG3: Pausiert -> t darf sich nicht bewegen */
+  if(!playing && t>0 && t<1 && !fired.pause){
+    fired.pause=true;
+    assert(false,'RG3: pausiert aber t in Bewegung',{playing,t:+t.toFixed(3)});
+  }
+
+  /* RG4: Keine Lücken, alles bis cur muss befüllt sein */
+  if(!fired.gap){
+    for(let k=0;k<=cur;k++){
+      if(filled[k]===null){
+        fired.gap=true;
+        assert(false,'RG4: Lücke im Output',{missingAt:k,cur,prev,t:+t.toFixed(3)});
+        break;
+      }
+    }
+  }
+}
+
+const _render=render;
+render=function(){ runtimeGuards(); _render(); };
+
+/* ══════════ 9) DIAGNOSE ══════════ */
+function buildReport(){
+  const grid=Array.from({length:GRID},(_,r)=>
+    Array.from({length:GRID},(_,c)=>String(VALUES[r*GRID+c]).padStart(3)).join(' ')
+  ).join('\n');
+
+  const out=Array.from({length:GRID},(_,r)=>
+    Array.from({length:GRID},(_,c)=>{
+      const v=filled[r*GRID+c];
+      return (v===null?'  .':String(v).padStart(3));
+    }).join(' ')
+  ).join('\n');
+
+  const si=shownIdx();
+  const missing=filled.reduce((a,v,i)=>v===null?(a.push(i),a):a,[]);
+
+  return [
+    '=== CONVOLUTION DEMO · DIAGNOSE ===',
+    'Zeit: '+new Date().toISOString(),
+    '',
+    '--- GEOMETRIE ---',
+    `GRID=${GRID}  CELL=${CELL}  S=${S}  N=${N}`,
+    `EYE_CELLS=${JSON.stringify(EYE_CELLS)}  EYE_IDX=${JSON.stringify(EYE_IDX)}`,
+    `L=${JSON.stringify(L)}  R=${JSON.stringify(R)}`,
+    '',
+    '--- SOLL-TABELLE (VALUES) ---',
+    grid,
+    '',
+    '--- IST-TABELLE (filled, "." = leer) ---',
+    out,
+    '',
+    '--- LAUFZEIT ---',
+    `cur=${cur}  prev=${prev}  t=${t.toFixed(3)}  shownIdx=${si}`,
+    `playing=${playing}  speed=${speed}`,
+    `Badge: ${VALUES[si]} %  (c=${si%GRID}, r=${(si/GRID)|0})`,
+    `befüllt: ${filled.filter(v=>v!==null).length}/${N}`,
+    `offen: ${JSON.stringify(missing)}`,
+    '',
+    '--- GUARD-FLAGS ---',
+    JSON.stringify(fired),
+    '',
+    '--- ASSERTIONS ---',
+    ...LOG,
+    '=== ENDE ==='
+  ].join('\n');
+}
+
+function dumpDiagnostics(){
+  const r=buildReport();
+  console.log(r);
+  const ok=()=>{
+    const b=$('diag'), o=b.textContent;
+    b.textContent='✓ kopiert';
+    setTimeout(()=>b.textContent=o,1400);
+  };
+  if(navigator.clipboard?.writeText){
+    navigator.clipboard.writeText(r).then(ok).catch(()=>fallbackCopy(r,ok));
+  } else fallbackCopy(r,ok);
+}
+
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.cssText='position:fixed;left:-9999px;top:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); cb(); }
+  catch(_){ console.warn('Clipboard blockiert, Report steht oben in der Konsole.'); }
+  document.body.removeChild(ta);
+}
+const bDiag=$('diag'); if(bDiag) bDiag.onclick=dumpDiagnostics;
+
+/* ══════════ 10) START ══════════ */
+syncBtn();
+note('Start',{cur,prev,t,playing,speed,values:VALUES.filter(v=>v===100).length});
+requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>

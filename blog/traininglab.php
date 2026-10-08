@@ -5,7 +5,7 @@ title: Live Training of a Neural Network
 description: Watch a neural network learn in real time, decision boundaries, weights, and activations.
 icon: &#127918;
 part: 2
-order: 10
+order: 11
 color: coral
 topics: math-i, math-ii, programming, training
 tags: code-heavy

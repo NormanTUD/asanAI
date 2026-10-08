@@ -396,6 +396,33 @@ function show_or_hide_beginner_or_expert_mode_stuff() {
 	}
 }
 
+function update_expert_visualization_tabs () {
+	var is_expert = mode !== "beginner";
+
+	$("#visualization_tab .expert_visualization_tab").each(function () {
+		var $li = $(this);
+		var $a = $li.children("a");
+		var needs_image = $a.hasClass("hide_when_no_image");
+
+		var has_image = false;
+		if (needs_image) {
+			try {
+				has_image = typeof input_shape_is_image === "function" && input_shape_is_image();
+			} catch (e) {
+				has_image = false;
+			}
+		}
+
+		var show = is_expert && (!needs_image || has_image);
+
+		if (show) {
+			$li.show();
+		} else {
+			$li.hide();
+		}
+	});
+}
+
 function show_or_hide_download_with_data() {
 	let show = true;
 	let messages = [];

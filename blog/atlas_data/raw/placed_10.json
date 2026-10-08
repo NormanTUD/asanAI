@@ -1,0 +1,770 @@
+[
+ [
+  "Mohamed A. Mabrok",
+  null,
+  null,
+  "",
+  2022,
+  0
+ ],
+ [
+  "Peter Gärdenfors",
+  59.8586,
+  17.6389,
+  "Uppsala, Sweden",
+  2000,
+  1
+ ],
+ [
+  "R. David Joseph",
+  null,
+  null,
+  "",
+  2018,
+  0
+ ],
+ [
+  "Belmont G. Farley",
+  null,
+  null,
+  "",
+  2018,
+  0
+ ],
+ [
+  "Wesley A. Clark",
+  null,
+  null,
+  "",
+  2018,
+  0
+ ],
+ [
+  "Shibo Hao",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Sainbayar Sukhbaatar",
+  37.572,
+  -122.3434,
+  "Menlo Park, United States",
+  2022,
+  1
+ ],
+ [
+  "DiJia Su",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Xian Li",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Zhiting Hu",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Michael Rizvi-Martel",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Guillaume Rabusseau",
+  45.5019,
+  -73.5674,
+  "Montreal, Canada",
+  2021,
+  1
+ ],
+ [
+  "Marius Mosbach",
+  51.5393,
+  9.9362,
+  "Göttingen, Germany",
+  2023,
+  1
+ ],
+ [
+  "Timothée Darcet",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2024,
+  1
+ ],
+ [
+  "Maxime Oquab",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2024,
+  1
+ ],
+ [
+  "Julien Mairal",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2024,
+  1
+ ],
+ [
+  "Piotr Bojanowski",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2023,
+  1
+ ],
+ [
+  "Nicola Cancedda",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2019,
+  1
+ ],
+ [
+  "Jeffrey T. H. Wong",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Cheng Zhang",
+  null,
+  null,
+  "",
+  2022,
+  0
+ ],
+ [
+  "Louis Mahon",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Wayne Luk",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Anton Isopoussu",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Evelina Fedorenko",
+  42.3601,
+  -71.0942,
+  "Cambridge, United States",
+  2023,
+  1
+ ],
+ [
+  "Michael K. Behr",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Nancy Kanwisher",
+  42.3601,
+  -71.0942,
+  "Cambridge, United States",
+  2023,
+  1
+ ],
+ [
+  "Marie Amalric",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Martin M. Monti",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Daniel N. Osherson",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Michael J. Martinez",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Lawrence M. Parsons",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Steven T. Piantadosi",
+  39.9526,
+  -75.1652,
+  "Philadelphia, United States",
+  2023,
+  1
+ ],
+ [
+  "Edward A. F. Gibson",
+  42.3601,
+  -71.0942,
+  "Cambridge, United States",
+  2023,
+  1
+ ],
+ [
+  "David Ha",
+  37.402,
+  -122.0787,
+  "Mountain View, United States",
+  2016,
+  1
+ ],
+ [
+  "Thomas Unterthiner",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2016,
+  1
+ ],
+ [
+  "Sjoerd van Steenkiste",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2016,
+  1
+ ],
+ [
+  "Karol Kurach",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2016,
+  1
+ ],
+ [
+  "Sergey Tulyakov",
+  37.3541,
+  -121.9552,
+  "Santa Clara, United States",
+  2017,
+  1
+ ],
+ [
+  "Ming-Yu Liu",
+  37.3541,
+  -121.9552,
+  "Santa Clara, United States",
+  2017,
+  1
+ ],
+ [
+  "Xiaodong Yang",
+  null,
+  null,
+  "",
+  2017,
+  0
+ ],
+ [
+  "Jan Kautz",
+  37.3541,
+  -121.9552,
+  "Santa Clara, United States",
+  2017,
+  1
+ ],
+ [
+  "Wilson Yan",
+  37.3541,
+  -121.9552,
+  "Santa Clara, United States",
+  2018,
+  1
+ ],
+ [
+  "Yunzhi Zhang",
+  37.3541,
+  -121.9552,
+  "Santa Clara, United States",
+  2018,
+  1
+ ],
+ [
+  "Aravind Srinivas",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2023,
+  1
+ ],
+ [
+  "Max Bain",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Arsha Nagrani",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Gül Varol",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Uriel Singer",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Adam Polyak",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2023,
+  1
+ ],
+ [
+  "Thomas Hayes",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "William Chan",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Chitwan Saharia",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Tim Dockhorn",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Sumith Kulal",
+  37.7749,
+  -122.4194,
+  "San Francisco, United States",
+  2022,
+  1
+ ],
+ [
+  "Neil Zeghidour",
+  47.3769,
+  8.5417,
+  "Zürich, Switzerland",
+  2021,
+  1
+ ],
+ [
+  "Alejandro Luebs",
+  47.3769,
+  8.5417,
+  "Zürich, Switzerland",
+  2021,
+  1
+ ],
+ [
+  "Ahmed Omran",
+  47.3769,
+  8.5417,
+  "Zürich, Switzerland",
+  2021,
+  1
+ ],
+ [
+  "Jan Skoglund",
+  null,
+  null,
+  "",
+  2021,
+  0
+ ],
+ [
+  "Marco Tagliasacchi",
+  null,
+  null,
+  "",
+  2021,
+  0
+ ],
+ [
+  "Zalán Borsos",
+  47.3769,
+  8.5417,
+  "Zürich, Switzerland",
+  2023,
+  1
+ ],
+ [
+  "Raphaël Marinier",
+  47.3769,
+  8.5417,
+  "Zürich, Switzerland",
+  2023,
+  1
+ ],
+ [
+  "Damien Vincent",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Andrea Agostinelli",
+  47.3769,
+  8.5417,
+  "Zürich, Switzerland",
+  2023,
+  1
+ ],
+ [
+  "Timo I. Denk",
+  47.3769,
+  8.5417,
+  "Zürich, Switzerland",
+  2023,
+  1
+ ],
+ [
+  "Melissa Ursula Dawn Goldsmith",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Xato",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "liamz2r",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Sagenat2",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Evan-Amos",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "mannyisdead",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "LoMit",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Alexandre Rebollal Lucas",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Unmismoobjetivo",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Pablo Carlos Budassi",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Amil Merchant",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Simon Batzner",
+  40.3431,
+  -74.6551,
+  "Princeton, United States",
+  2023,
+  1
+ ],
+ [
+  "Murat A. Aykol",
+  35.9312,
+  -84.2991,
+  "Oak Ridge, United States",
+  2023,
+  1
+ ],
+ [
+  "Kambis Veschgini",
+  40.3431,
+  -74.6551,
+  "Princeton, United States",
+  2023,
+  1
+ ],
+ [
+  "Gabe Guo",
+  40.3431,
+  -74.6551,
+  "Princeton, United States",
+  2023,
+  1
+ ],
+ [
+  "U.S. Senate",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Committee on Aeronautical and Space Sciences (via the Digital Public Library of America)",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Caglar Gulcehre",
+  43.6532,
+  -79.3832,
+  "Toronto, Canada",
+  2015,
+  1
+ ],
+ [
+  "Anna Choromanska",
+  45.5019,
+  -73.5674,
+  "Montreal, Canada",
+  2015,
+  1
+ ],
+ [
+  "Mikael Henaff",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2015,
+  1
+ ],
+ [
+  "Michael Mathieu",
+  45.5019,
+  -73.5674,
+  "Montreal, Canada",
+  2011,
+  1
+ ],
+ [
+  "Gérard Ben Arous",
+  48.8566,
+  2.3522,
+  "Paris, France",
+  2019,
+  1
+ ],
+ [
+  "Yan V. Fyodorov",
+  null,
+  null,
+  "",
+  2019,
+  0
+ ],
+ [
+  "Ian N. Williams",
+  51.752,
+  -1.2577,
+  "Oxford, United Kingdom",
+  2006,
+  1
+ ],
+ [
+  "Dhagash Mehta",
+  40.7128,
+  -74.006,
+  "New York, United States",
+  2020,
+  1
+ ],
+ [
+  "Xiaojun Zhao",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "Edgar A. Bernal",
+  null,
+  null,
+  "",
+  2012,
+  0
+ ],
+ [
+  "David J. Wales",
+  52.386,
+  -1.5712,
+  "Warwick, United Kingdom",
+  2002,
+  1
+ ],
+ [
+  "Lei Wu",
+  null,
+  null,
+  "",
+  2020,
+  0
+ ],
+ [
+  "Zhanxing Zhu",
+  31.2304,
+  121.4737,
+  "Shanghai, China",
+  2020,
+  1
+ ],
+ [
+  "Weinan E",
+  31.2304,
+  121.4737,
+  "Shanghai, China",
+  2020,
+  1
+ ],
+ [
+  "Quynh Nguyen",
+  45.5019,
+  -73.5674,
+  "Montreal, Canada",
+  2022,
+  1
+ ]
+]

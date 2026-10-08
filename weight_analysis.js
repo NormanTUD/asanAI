@@ -1322,6 +1322,8 @@ var WeightAnalysis = (function() {
 		stopAutoRefresh();
 		_autoRefreshInterval = setInterval(function() {
 			try {
+				var el = (typeof divOrId === "string") ? document.getElementById(divOrId) : divOrId;
+				if (el && el.offsetParent === null) return;
 				weight_analysis_render(divOrId);
 			} catch (e) {
 				wrn("[WeightAnalysis] Auto-refresh error:", e);
@@ -1473,23 +1475,7 @@ var WeightAnalysis = (function() {
 
 })();
 
-// ============================================================
-// AUTO-INIT
-// ============================================================
-
-(function() {
-	if (typeof document !== "undefined") {
-		var _autoInit = function() {
-			var target = document.getElementById("weight_analysis");
-			if (target) {
-				WeightAnalysis.weight_analysis_render(target);
-			}
-		};
-
-		if (document.readyState === "loading") {
-			document.addEventListener("DOMContentLoaded", _autoInit);
-		} else {
-			setTimeout(_autoInit, 1000);
-		}
-	}
-})();
+// The weight analysis view is rendered on first activation of its tab
+// (onclick in tabs/visualizations.php + startAutoRefresh in the tabs
+// activate hook in main.js). No auto-init here: the analysis copies all
+// model weights and must not run while the tab is hidden.

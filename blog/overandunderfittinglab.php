@@ -83,6 +83,8 @@ One complete pass through the entire training dataset is called an **epoch**. Th
 
 Plain (vanilla) gradient descent uses the same learning rate $\eta$ for every weight. **Adam** (\citeauthor{adam}, \citeyear{adam}) maintains a per-weight running average of both the gradient and its squared magnitude, effectively giving each weight its own adaptive step size. This makes training faster and more stable, especially for loss landscapes with many flat regions or sharp valleys, which is exactly what polynomial regression with high degrees produces.
 
+Adam is the end of a longer story, not the beginning. The chain runs: Adagrad → Adadelta and RMSprop → Adam, each step fixing a concrete failure of the previous one (vanishing step sizes, then the missing momentum term). \citeauthor{ruder2016overview} (\citeyear{ruder2016overview}) walks the whole lineage with derivations; the [Optimizer lesson](optimizerlab.php) is the interactive version.
+
 </div>
 </div>
 

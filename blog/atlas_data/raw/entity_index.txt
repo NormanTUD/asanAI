@@ -1,0 +1,1844 @@
+artifact-adam | artifact | Adam (Adaptive Moment Estimation) | 2014 | 43.65,-79.38
+artifact-adapters | artifact | Adapter Modules | 2019 | 47.67,-122.12
+artifact-altair-8800 | artifact | Altair 8800 | 1974 | 35.08,-106.65
+artifact-antikythera-mechanism | artifact | Antikythera Mechanism | c. 200-60 BC | 35.867,23.3
+artifact-apollo-guidance-computer | artifact | Apollo Guidance Computer | 1966 | 42.36,-71.09
+artifact-arithmometer | artifact | Arithmometer | 1820 | 48.84,2.37
+artifact-audioldm | artifact | AudioLDM | 2023 | 40.8075,-73.9626
+artifact-audioldm2 | artifact | AudioLM | 2023 | 46.2044,6.1432
+artifact-babbage-analytical-engine | artifact | Babbage Analytical Engine | 1837 | 51.5,-0.18
+artifact-backpropagation | artifact | Backpropagation | 1986 | 32.87,-117.25
+artifact-batch-normalization | artifact | Batch Normalization (BatchNorm) | 2015 | 37.39,-122.08
+artifact-bm25 | artifact | BM25 | 1994 | 52.2043,0.1149
+artifact-ccs | artifact | CCS (Contrast-Consistent Search) | 2023 | 37.4275,-122.1697
+artifact-cfg | artifact | Classifier-Free Guidance | 2022 | 37.7749,-122.4194
+artifact-chinchilla | artifact | Chinchilla | 2022 | 51.51,-0.13
+artifact-cifar10 | artifact | CIFAR-10 | 2009 | 43.65,-79.38
+artifact-clip | artifact | CLIP | 2021 | 37.7749,-122.4194
+artifact-cnn | artifact | Convolutional Neural Network (CNN) | 1989 | 41.05,-73.85
+artifact-codex | artifact | Codex | 2021 | 37.7749,-122.4194
+artifact-colbert | artifact | ColBERT | 2020 | 37.4275,-122.1697
+artifact-colosseum | artifact | Colosseum | 80 | 41.89,12.49
+artifact-colossus-mark-2 | artifact | Colossus Mark 2 | 1944 | 52.0,-0.72
+artifact-compact-disc | artifact | Compact Disc (CD-DA) | 1982 | 51.4308,5.4675
+artifact-conformer | artifact | Conformer | 2020 | 37.4225,-122.0842
+artifact-constitutional-ai | artifact | Constitutional AI | 2022 | 37.7749,-122.4194
+artifact-controlnet | artifact | ControlNet | 2023 | 37.4275,-122.1697
+artifact-cot | artifact | Chain-of-Thought Prompting | 2022 | 37.4225,-122.0842
+artifact-ddpm | artifact | DDPM | 2020 | 37.4275,-122.1697
+artifact-deconv-checkerboard | artifact | Deconvolution Checkerboard Artifact | 2016 | 37.4225,-122.0842
+artifact-deep-blue | artifact | Deep Blue | 1997 | 41.04,-73.76
+artifact-deepdream | artifact | DeepDream | 2015 | 37.39,-122.08
+artifact-dit | artifact | DiT | 2023 | 37.4037,-122.0737
+artifact-dora | artifact | DoRA (Weight-Decomposed LoRA) | 2024 | 37.39,-122.08
+artifact-dpo | artifact | DPO (Direct Preference Optimization) | 2023 | 37.43,-122.17
+artifact-dropout | artifact | Dropout | 2014 | 43.65,-79.38
+artifact-eiffel-tower | artifact | Eiffel Tower | 1889 | 48.86,2.29
+artifact-encodec | artifact | EnCodec | 2022 | 45.5017,-73.5673
+artifact-eniac | artifact | ENIAC | 1946 | 39.95,-75.19
+artifact-faiss | artifact | FAISS | 2017 | 37.4037,-122.0737
+artifact-flamingo | artifact | Flamingo | 2022 | 51.5112,-0.1335
+artifact-flan | artifact | FLAN-PaLM | 2022 | 37.4225,-122.0842
+artifact-flow-matching | artifact | Flow Matching | 2023 | 32.7763,35.0263
+artifact-gelu | artifact | GELU (Gaussian Error Linear Unit) | 2016 | 37.77,-122.42
+artifact-golden-gate-bridge | artifact | Golden Gate Bridge | 1937 | 37.82,-122.48
+artifact-goodharts-law | artifact | Goodhart's Law | 1975 | 51.51,-0.13
+artifact-gpt | artifact | GPT | 2018 | 37.77,-122.42
+artifact-gpt3 | artifact | GPT-3 | 2020 | 37.7749,-122.4194
+artifact-gradient-descent | artifact | Gradient Descent | 1847 | 48.86,2.35
+artifact-group-normalization | artifact | Group Normalization (GroupNorm) | 2018 | 37.45,-122.18
+artifact-grpo | artifact | GRPO (Group Relative Policy Optimization) | 2024 | 39.9,116.4
+artifact-heaviside-step-function | artifact | Heaviside Step Function | 1958 | 51.51,-0.13
+artifact-highway-network | artifact | Highway Network | 2015 | 48.52,9.05
+artifact-hnsw | artifact | HNSW | 2018 | 55.7558,37.6173
+artifact-homeostat | artifact | Homeostat | 1948 | 51.49,-0.17
+artifact-hopfield-network | artifact | Hopfield Network | 1982 | 40.84,-74.42
+artifact-humaneval | artifact | HumanEval | 2021 | 37.7749,-122.4194
+artifact-ia3 | artifact | IA³ (Layer-Scaling) | 2022 | 37.39,-122.08
+artifact-illiac-suite | artifact | Illiac Suite | 1957 | 40.1106,-88.2272
+artifact-inceptionism | artifact | Inceptionism (DeepDream) | 2015 | 37.4225,-122.0842
+artifact-induction-heads | artifact | Induction Heads | 2022 | 37.7749,-122.4194
+artifact-instructgpt | artifact | InstructGPT | 2022 | 37.77,-122.42
+artifact-iron-pillar-of-delhi | artifact | Iron Pillar of Delhi | 402 | 28.52,77.19
+artifact-ishango-bone | artifact | Ishango Bone | c. 18,000 BCE | -2.5,29.0
+artifact-kempelen-speaking-machine | artifact | Kempelen's Speaking Machine | 1791 | 48.21,16.37
+artifact-kish-tablet | artifact | Kish tablet | c. 3200-3000 BCE | 32.54,44.6046
+artifact-ktesiphon-jar | artifact | Ktesiphon jar |  | 33.34,44.4
+artifact-laion-5b | artifact | LAION-5B | 2022 | 50.1109,8.6821
+artifact-lasso | artifact | Lasso (L1 Regularization) | 1996 | 37.43,-122.17
+artifact-layer-normalization | artifact | Layer Normalization (LayerNorm) | 2016 | 37.39,-122.08
+artifact-lebombo-bone | artifact | Lebombo Bone | c. 41,000 BCE | -25.9,31.52
+artifact-leibniz-calculating-machine | artifact | Leibniz's calculating machine | built 1700 | 52.37,9.73
+artifact-llava | artifact | LLaVA | 2023 | 43.0731,-89.4012
+artifact-lora | artifact | LoRA (Low-Rank Adaptation) | 2021 | 47.67,-122.12
+artifact-lora-2 | artifact | LoRA | 2021 | 47.674,-122.1215
+artifact-lstm | artifact | Long Short-Term Memory (LSTM) | 1997 | 48.78,9.18
+artifact-mae | artifact | MAE (Masked Autoencoders) | 2022 | 37.4037,-122.0737
+artifact-mark-i-perceptron | artifact | Mark I Perceptron | 1958 | 38.89,-77.02
+artifact-matryoshka | artifact | Matryoshka Representation Learning | 2022 | 37.4225,-122.0842
+artifact-midi | artifact | MIDI | 1983 | 34.6632,137.6795
+artifact-mmlu | artifact | MMLU (Massive Multitask Language Understanding) | 2020 | 37.87,-122.26
+artifact-momentum | artifact | Momentum (SGD) | 1964 | 55.76,37.62
+artifact-monosemanticity | artifact | Monosemanticity (Sparse Autoencoders) | 2023 | 37.7749,-122.4194
+artifact-moscow-papyrus | artifact | Moscow Mathematical Papyrus | 1850 BCE | 30.05,31.23
+artifact-mp3 | artifact | MP3 | 1993 | 49.5879,10.7362
+artifact-murchison-meteorite | artifact | Murchison meteorite | 1969 | -35.3,149.14
+artifact-musicgen | artifact | MusicGen | 2023 | 45.5017,-73.5673
+artifact-musiclm | artifact | MusicLM | 2023 | 51.5112,-0.1335
+artifact-neocognitron | artifact | Neocognitron | 1980 | 35.7361,139.7383
+artifact-next-workstation | artifact | NeXT workstation (first web browser) | 1990 | 46.233,6.0545
+artifact-othello-gpt | artifact | Othello-GPT | 2022 | 37.4037,-122.0737
+artifact-panharmonicon | artifact | Panharmonicon | 1805 | 48.2082,16.3738
+artifact-perceptron | artifact | Perceptron | 1958 | 42.44,-76.5
+artifact-platonic-hypothesis | artifact | Platonic Representation Hypothesis | 2024 | 42.3601,-71.0942
+artifact-plimpton-322 | artifact | Plimpton 322 | 1800 BCE | 32.5447,44.4318
+artifact-point-de-vue-du-gras | artifact | Point de vue du Gras | 1827 | 46.72694,4.85722
+artifact-ppo | artifact | PPO (Proximal Policy Optimization) | 2017 | 37.77,-122.42
+artifact-product-quantization | artifact | Product Quantization | 2011 | 48.8566,2.3522
+artifact-prompt-tuning | artifact | Prompt Tuning | 2021 | 37.39,-122.08
+artifact-qlora | artifact | QLoRA | 2023 | 37.87,-122.26
+artifact-rag | artifact | RAG (Retrieval-Augmented Generation) | 2020 | 55.9533,-3.1883
+artifact-react | artifact | ReAct | 2023 | 40.3493,-74.6551
+artifact-reflexion | artifact | Reflexion | 2023 | 33.749,-84.388
+artifact-relu | artifact | ReLU (Rectified Linear Unit) | 1969 | 38.27,140.87
+artifact-resnet | artifact | ResNet (Residual Network) | 2015 | 39.9,116.4
+artifact-resnet-2 | artifact | ResNet | 2015 | 37.4037,-122.0737
+artifact-rhind-papyrus | artifact | Rhind Mathematical Papyrus | 1650 BCE | 25.7021,32.6472
+artifact-ridge-regression | artifact | Ridge Regression (L2 Regularization) | 1970 | 41.88,-87.63
+artifact-rlhf | artifact | RLHF (Reinforcement Learning from Human Feedback) | 2022 | 37.77,-122.42
+artifact-rosetta-stone | artifact | Rosetta Stone | 196 BCE | 31.4014,30.4184
+artifact-saddle-free-newton | artifact | Saddle-Free Newton | 2014 | 45.5,-73.57
+artifact-salamis-tablet | artifact | Salamis Tablet | c. 300 BC | 37.9384,23.5084
+artifact-sam | artifact | Sharpness-Aware Minimization (SAM) | 2021 | 37.35,-121.96
+artifact-sam-2 | artifact | SAM (Segment Anything) | 2023 | 37.4037,-122.0737
+artifact-sb-13088 | artifact | Sb 13088 | 1600 BCE | 32.5447,44.4318
+artifact-score-matching | artifact | Score-Based Generative Modeling | 2019 | 37.4275,-122.1697
+artifact-scratchpad | artifact | Scratchpad (Show Your Work) | 2021 | 37.4225,-122.0842
+artifact-self-consistency | artifact | Self-Consistency | 2022 | 37.4225,-122.0842
+artifact-self-refine | artifact | Self-Refine | 2023 | 47.6594,-122.3039
+artifact-shrdlu | artifact | SHRDLU | 1972 | 42.3601,-71.0942
+artifact-si-427 | artifact | Si.427 | 1700 BCE | 32.5447,44.4318
+artifact-silu | artifact | SiLU / Swish | 2017 | 37.39,-122.08
+artifact-snarc | artifact | SNARC | 1951 | 42.38,-71.12
+artifact-softmax | artifact | Softmax | 1989 | 43.65,-79.38
+artifact-sora | artifact | Sora | 2024 | 37.7749,-122.4194
+artifact-soundstream | artifact | SoundStream | 2021 | 46.2044,6.1432
+artifact-sparks-agi | artifact | Sparks of AGI | 2023 | 47.674,-122.1215
+artifact-stable-diffusion | artifact | Stable Diffusion | 2022 | 48.1441,11.5693
+artifact-stochastic-gradient-descent | artifact | Stochastic Gradient Descent (SGD) | 1951 | 40.71,-74.0
+artifact-superposition | artifact | Toy Models of Superposition | 2022 | 37.7749,-122.4194
+artifact-tacotron2 | artifact | Tacotron 2 | 2017 | 51.5112,-0.1335
+artifact-theatre-dopera-spatial | artifact | Théâtre D'opéra Spatial | - | 38.8339,-104.8214
+artifact-toolformer | artifact | Toolformer | 2023 | 47.6594,-122.3039
+artifact-transformer | artifact | Transformer | 2017 | 37.39,-122.08
+artifact-tree-of-thoughts | artifact | Tree of Thoughts | 2023 | 40.3493,-74.6551
+artifact-trojan-horse-tiepolo | artifact | The Procession of the Trojan Horse in Troy | 1752 | 45.43,12.34
+artifact-truthfulqa | artifact | TruthfulQA | 2021 | 47.6594,-122.3039
+artifact-unet | artifact | U-Net | 2015 | 47.999,7.8421
+artifact-valle | artifact | VALL-E | 2023 | 47.674,-122.1215
+artifact-venus-of-dolni-vestonice | artifact | Venus of Dolni Vestonice | c. 27,000 years ago | 48.8872,16.6439
+artifact-venus-of-hohle-fels | artifact | Venus of Hohle Fels | -35000 | 48.4,9.98
+artifact-vgg | artifact | VGG (VGGNet) | 2014 | 51.75,-1.26
+artifact-videogpt | artifact | VideoGPT | 2021 | 37.8715,-122.2585
+artifact-vision-transformer | artifact | Vision Transformer (ViT) | 2020 | 37.39,-122.08
+artifact-vit | artifact | ViT (Vision Transformer) | 2021 | 47.3769,8.5417
+artifact-voynich-manuscript | artifact | Voynich manuscript |  | 41.31,-72.92
+artifact-vq-vae | artifact | VQ-VAE | 2017 | 51.5112,-0.1335
+artifact-wav2vec2 | artifact | wav2vec 2.0 | 2020 | 37.4037,-122.0737
+artifact-wavenet | artifact | WaveNet | 2016 | 51.5112,-0.1335
+artifact-webvid | artifact | WebVid (Frozen in Time) | 2021 | 51.7548,-1.2544
+artifact-whisper | artifact | Whisper | 2022 | 37.7749,-122.4194
+artifact-world-models | artifact | World Models | 2018 | 46.0126,8.9533
+artifact-zuse-z3 | artifact | Zuse Z3 | 1941 | 52.5174,13.3951
+event-1906-san-francisco-earthquake | event | 1906 San Francisco earthquake | 1906 | 37.8,-122.42
+event-ai-action-summit | event | AI Action Summit | 2025 | 48.85,2.35
+event-ai-risk-statement-2023 | event | AI Risk Statement, May 2023 | 2023 | 37.77,-122.42
+event-ai-voice-fraud-2019 | event | First AI voice fraud, 2019 | 2019 | 51.51,-0.13
+event-alexnet-imagenet-victory | event | AlexNet ImageNet victory | 2012-2012 | 43.65,-79.38
+event-alphago-leesedol-2016 | event | AlphaGo vs. Lee Sedol match | 2016 | 37.57,126.98
+event-alphago-versus-lee-sedol | event | AlphaGo versus Lee Sedol | 2016-2016 | 37.57,126.98
+event-antikythera-recovery-1901 | event | Antikythera shipwreck recovery, 1901 | 1901 | 35.83,24.1
+event-apollo-11-landing-1969 | event | Apollo 11 lunar landing, 1969 | 1969 | 0.67,23.42
+event-apollo-11-moon-landing | event | Apollo 11 Moon landing | 1969-1969 | 0.67,23.42
+event-ariane-5-maiden-flight | event | Ariane 5 maiden flight | 1996 | 5.24,-52.77
+event-arpanet-first-message | event | ARPANET first message | 1969 | 34.0689,-118.4452
+event-babbage-difference-engine | event | Babbage Difference Engine | 1822-1822 | 51.51,-0.13
+event-bartz-v-anthropic-settlement | event | Bartz v. Anthropic settlement | 2025 | 37.77,-122.42
+event-battle-of-talas-751 | event | Battle of Talas, 751 | 751 | 42.9,71.25
+event-biden-robocall-2024 | event | Biden Robocall, New Hampshire Primary, 2024 | 2024 | 44.02,-71.5
+event-buran-first-flight | event | Buran first flight | 1988 | 45.6,63.32
+event-california-sb1047-veto | event | California SB 1047 veto | 2024 | 38.58,-121.49
+event-cambridge-analytica-scandal | event | Cambridge Analytica scandal | 2018 | 51.51,-0.13
+event-casp14 | event | CASP14 | 2020-2020 | 52.2,0.12
+event-cd-launch | event | Compact Disc launched | 1982 | 51.4308,5.4675
+event-ceres-discovery-1801 | event | Discovery of Ceres, 1801 | 1801 | 38.12,13.36
+event-chatgpt-launch | event | ChatGPT launch | 2022-2022 | 37.77,-122.42
+event-cmb-discovery-1965 | event | Discovery of the cosmic microwave background, 1965 | 1965 | 40.37,-74.15
+event-colorado-state-fair-ai-art | event | Colorado State Fair AI art controversy | 2022 | 39.55,-105.78
+event-colossus-breaks-lorenz | event | Colossus breaks Lorenz | 1943-1943 | 51.98,-0.82
+event-daguerreotype | event | Daguerreotype | 1839-1839 | 48.86,2.35
+event-dartmouth-workshop-1956 | event | Dartmouth Workshop, 1956 | 1956 | 43.7,-72.28
+event-deep-blue-kasparov-1997 | event | Deep Blue defeats Kasparov, 1997 | 1997 | 40.71,-74.01
+event-deep-space-1-remote-agent | event | Deep Space 1 Remote Agent | 1998 | 34.1984,-118.147
+event-deepfake-cfo-scam-2024 | event | Deepfake CFO video-call fraud, 2024 | 2023 | 22.3193,114.1694
+event-edmond-de-belamy-sale | event | Edmond de Belamy auction sale | 2018 | 40.71,-74.01
+event-eniac-unveiled | event | ENIAC unveiled | 1946-1946 | 39.95,-75.17
+event-eu-ai-act-entry-into-force | event | EU AI Act entry into force | 2024-2024 | 50.85,4.35
+event-eu-gdpr | event | EU GDPR | 2018-2018 | 50.85,4.35
+event-faraday-electromagnetic-induction | event | Faraday electromagnetic induction | 1831-1831 | 51.51,-0.13
+event-first-arpanet-message | event | First ARPANET message | 1969-1969 | 34.05,-118.24
+event-first-computer-music | event | First computer-generated music | 1951 | 53.4794,-2.2453
+event-first-integrated-circuit | event | First integrated circuit | 1958-1958 | 32.78,-96.8
+event-first-numerical-weather-forecast | event | First numerical weather forecast | 1950 | 39.95,-75.19
+event-first-nwp-1950 | event | First numerical weather forecast, 1950 | 1950-1950 | 39.952,-75.193
+event-first-permanent-photograph | event | First permanent photograph | 1826-1826 | 46.77,4.85
+event-first-transatlantic-telegraph | event | First transatlantic telegraph | 1858-1858 | 41.0,-30.0
+event-first-winograd-schema-challenge-2016 | event | First Winograd Schema Challenge, 2016 | 2016 | 40.71,-74.01
+event-g7-hiroshima-ai-process | event | G7 Hiroshima AI Process | 2023 | 34.39,132.46
+event-garmisch-software-engineering-conference | event | First International Conference on Software Engineering | 1968 | 47.47,11.0
+event-graphcast-2023 | event | GraphCast global weather AI, 2023 | 2023-2023 | 51.507,-0.128
+event-grok-x-scandal | event | Grok/X nudify scandal | 2025 | 37.77,-122.42
+event-gutenberg-printing-press | event | Gutenberg printing press | 1450-1450 | 49.99,8.27
+event-heart-on-my-sleeve | event | Heart on My Sleeve AI song | 2023 | 34.05,-118.24
+event-hieroglyphs-deciphered-1822 | event | Decipherment of Egyptian hieroglyphs, 1822 | 1822 | 48.86,2.35
+event-hollerith-tabulating-machine | event | Hollerith tabulating machine | 1890-1890 | 38.9,-77.03
+event-ibm-702-1953 | event | IBM 702 debut, 1953 | 1953 | 41.04,-73.76
+event-ibm-pc-1981 | event | IBM PC release, 1981 | 1981 | 26.37,-80.12
+event-illiac-suite-composed | event | Illiac Suite composed | 1957 | 40.1106,-88.2272
+event-imo-2024 | event | IMO 2024 | 2024 | 51.38,-2.36
+event-india-pakistan-deepfake-2025 | event | India-Pakistan deepfake, May 2025 | 2025 | 33.69,73.05
+event-invention-of-the-transistor | event | Invention of the transistor | 1947-1947 | 40.72,-74.41
+event-italian-ban-on-chatgpt | event | Italian ban on ChatGPT | 2023 | 41.9,12.5
+event-italy-replika-ban | event | Italy Replika ban | 2023 | 41.9,12.5
+event-jacquard-loom | event | Jacquard loom | 1804-1804 | 45.76,4.84
+event-lighthill-debate-1973 | event | Lighthill AI debate, 9 May 1973 | 1973 | 51.51,-0.12
+event-longitude-act-1714 | event | Longitude Act and Board of Longitude, 1714 | 1714 | 51.51,-0.13
+event-luddite-uprisings-1811 | event | Luddite Uprisings | 1811 | 52.95,-1.15
+event-macy-conferences-1946 | event | Macy Conferences, 1946 | 1946 | 40.73,-73.99
+event-manhattan-project | event | Manhattan Project | 1944-1944 | 35.88,-106.3
+event-mars-pathfinder-priority-inversion | event | Mars Pathfinder priority-inversion incident | 1997 | 34.22,-118.15
+event-mata-v-avianca-2023 | event | Mata v. Avianca, 2023 | 2023 | 40.7128,-74.006
+event-midi-standardized | event | MIDI standard locked in | 1983 | 34.6632,137.6795
+event-miller-urey-experiment-1953 | event | Miller-Urey experiment, 1953 | 1953 | 41.79,-87.6
+event-moth-in-harvard-mark-ii | event | First logged computer bug (moth in Harvard Mark II) | 1947 | 42.36,-71.09
+event-mp3-standardized | event | MP3 standardized | 1993 | 49.5879,10.7362
+event-muybridge-horse-in-motion-1878 | event | Muybridge's horse-in-motion sequence, 1878 | 1878 | 37.44,-122.15
+event-netflix-prize | event | Netflix Prize | 2006-2009 | 37.35,-121.95
+event-newtons-principia | event | Newton's Principia | 1687-1687 | 51.51,-0.13
+event-nobel-medicine-1906 | event | Nobel Prize in Medicine, 1906 | 1906 | 59.33,18.07
+event-nobel-physics-2024 | event | Nobel Prize in Physics, 2024 | 2024 | 59.33,18.07
+event-nobel-prize-in-chemistry-for-alphafold | event | Nobel Prize in Chemistry for AlphaFold | 2024-2024 | 59.33,18.07
+event-nyt-v-openai-2023 | event | New York Times v. OpenAI, 2023 | 2023 | 40.75,-73.98
+event-openai-navier-stokes-singularity-2026 | event | OpenAI Navier-Stokes singularity result, 2026 | 2026 | 37.77,-122.42
+event-panharmonicon-built | event | Panharmonicon built | 1805 | 48.2082,16.3738
+event-paris-calculating-machines-1951 | event | Paris conference on calculating machines, 1951 | 1951 | 48.86,2.35
+event-pause-giant-ai-2023 | event | Pause Giant AI Experiments letter, March 2023 | 2023 | 37.77,-122.42
+event-perceptron-press-1958 | event | Perceptron Navy press conference, 1958 | 1958 | 38.89,-77.01
+event-publication-of-heliocentrism | event | Publication of heliocentrism | 1543-1543 | 53.01,18.6
+event-quantum-supremacy-2019 | event | Quantum supremacy (Sycamore), 2019 | 2019-2019 | 37.386,-122.084
+event-resnet-wins-imagenet-2015 | event | ResNet wins ImageNet (ILSVRC) 2015 | 2015 | 42.36,-71.06
+event-riaa-v-suno-udio-settlement | event | RIAA v. Suno & Udio settlements | 2025 | 40.71,-74.01
+event-schrems-cjeu-ruling | event | Schrems CJEU ruling | 2015-2015 | 49.61,6.13
+event-shannon-information-theory | event | Shannon information theory | 1948-1948 | 42.37,-71.11
+event-sigkdd-test-of-time-award-for-dbscan | event | SIGKDD Test of Time Award for DBSCAN | 2014 | 40.71,-74.0
+event-sora-released | event | Sora announced | 2024 | 37.7749,-122.4194
+event-sputnik-launch | event | Sputnik launch | 1957 | 45.6,63.32
+event-stable-diffusion-released | event | Stable Diffusion released | 2022 | 48.1441,11.5693
+event-superintelligence-ban-letter-2025 | event | Superintelligence-ban open letter, October 2025 | 2025 | 37.77,-122.42
+event-tesla-alternating-current-system | event | Tesla alternating-current system | 1888-1888 | 40.71,-74.0
+event-trinity-nuclear-test | event | Trinity nuclear test | 1945-1945 | 32.98,-106.43
+event-turing-award-2018 | event | Turing Award for deep learning, 2018 | 2018 | 40.71,-74.01
+event-turings-computing-paper | event | Turing's computing paper | 1950-1950 | 53.48,-2.24
+event-un-ai-advisory-body | event | UN AI Advisory Body report | 2024 | 40.71,-74.01
+event-usps-cnn-1989 | event | First deployed CNN for U.S. ZIP-code reading (1989) | 1989 | 40.67,-74.41
+event-voltaic-pile | event | Voltaic pile | 1800-1800 | 45.81,9.08
+event-wadi-el-hol-discovery-1993 | event | Wadi el-Hol inscriptions discovered, 1993 | 1993 | 25.85,32.65
+event-wga-2023-strike | event | WGA Strike, 2023 | 2023 | 34.18,-118.31
+event-world-wide-web | event | World Wide Web | 1989-1989 | 46.23,6.06
+institution-01-ai | institution | 01.AI | 2023-2026 | 22.54,114.05
+institution-3m | institution | 3M | 1902-2026 | 44.95,-93.09
+institution-ai-singapore | institution | AI Singapore |  | 1.35,103.82
+institution-ai21-labs | institution | AI21 Labs |  | 32.08,34.78
+institution-ai4bharat | institution | AI4Bharat |  | 12.97,77.59
+institution-aims | institution | AIMS |  | -33.92,18.42
+institution-alibaba | institution | Alibaba |  | 30.27,120.17
+institution-allen-institute-ai | institution | Allen Institute for AI | 2003-present | 47.61,-122.33
+institution-amazon | institution | Amazon | founded 1994 | 47.61,-122.33
+institution-amd | institution | AMD | 1969-present | 37.35,-121.95
+institution-anthropic | institution | Anthropic | 2021-present | 37.77,-122.42
+institution-apple | institution | Apple | founded 1976 | 37.33,-122.03
+institution-atari | institution | Atari | 1972-present | 37.37,-122.03
+institution-att | institution | AT&T |  | 40.72,-74.41
+institution-authors-guild | institution | Authors Guild | 1912- | 40.71,-74.01
+institution-avianca | institution | Avianca |  | 4.71,-74.07
+institution-baai | institution | BAAI | 2009-present | 39.9,116.41
+institution-baidu | institution | Baidu | 2000-2026 | 39.9,116.4
+institution-bbc | institution | BBC | founded 1922 | 51.53,-0.13
+institution-bbn | institution | BBN Technologies | founded 1958 | 42.37,-71.12
+institution-be-my-eyes | institution | Be My Eyes | 2014- | 55.68,12.57
+institution-bell-labs | institution | Bell Labs | founded 1925 | 40.74,-74.4
+institution-bellingcat | institution | Bellingcat | 2014- | 51.51,-0.13
+institution-bigscience | institution | BigScience | 2021- | 48.86,2.35
+institution-board-of-longitude | institution | Board of Longitude |  | 51.51,-0.13
+institution-brave | institution | Brave | 2015-present | 37.77,-122.42
+institution-brighton-university | institution | Brighton University |  | 50.83,-0.14
+institution-british-museum | institution | British Museum | founded 1753 | 51.52,-0.12
+institution-c2pa | institution | C2PA | 2021- | 37.77,-122.42
+institution-cambridge-analytica | institution | Cambridge Analytica | 2013-2018 | 51.51,-0.13
+institution-center-for-ai-safety | institution | Center for AI Safety | 2023-2026 | 37.77,-122.42
+institution-center-for-countering-digital-hate | institution | Center for Countering Digital Hate | 2019- | 51.51,-0.13
+institution-cerebras | institution | Cerebras | 2015-present | 37.37,-122.04
+institution-cern | institution | CERN |  | 46.23,6.06
+institution-chroma | institution | Chroma | 2022-present | 37.77,-122.42
+institution-cohere | institution | Cohere |  | 43.65,-79.38
+institution-columbia-university | institution | Columbia University |  | 40.81,-73.96
+institution-commodore | institution | Commodore | 1954-1994 | 39.89,-75.6
+institution-common-crawl | institution | Common Crawl | 2008-present | 37.77,-122.42
+institution-computer-history-museum | institution | Computer History Museum | 1996-2026 | 37.41,-122.08
+institution-cornell-aeronautical-laboratory | institution | Cornell Aeronautical Laboratory | 1929-1991 | 42.89,-78.88
+institution-cornell-university | institution | Cornell University | founded 1865 | 42.45,-76.48
+institution-cyberspace-administration-of-china | institution | Cyberspace Administration of China | 2014-2026 | 39.9,116.4
+institution-darpa | institution | DARPA | founded 1958 | 38.89,-77.07
+institution-dartmouth-college | institution | Dartmouth College | 1769-2026 | 42.99,-72.33
+institution-data-science-africa | institution | Data Science Africa |  | -26.2,28.05
+institution-databricks | institution | Databricks | 2013-2026 | 37.7749,-122.4194
+institution-dec | institution | DEC (Digital Equipment Corporation) | 1957-1998 | 42.4163,-71.3466
+institution-deep-learning-indaba | institution | Deep Learning Indaba |  | -33.92,18.42
+institution-deepl | institution | DeepL | 2017- | 50.94,6.96
+institution-deepmind | institution | DeepMind | 2010-present | 51.51,-0.13
+institution-deepseek | institution | DeepSeek | 2023-present | 31.82,117.23
+institution-descript | institution | Descript | 2017-2026 | 37.77,-122.42
+institution-digital-equipment-corporation | institution | Digital Equipment Corporation | 1957-2026 | 42.4,-71.16
+institution-digital-research | institution | Digital Research | 1973-2020 | 47.61,-122.2
+institution-duolingo | institution | Duolingo | 2011- | 40.44,-79.99
+institution-ecmwf | institution | ECMWF | founded 1975 | 51.442,-0.942
+institution-eedi | institution | Eedi | 2011- | 52.2,0.12
+institution-emb-ebi | institution | European Bioinformatics Institute (EMBL-EBI) | 1994-2026 | 52.08,0.19
+institution-epigraphical-museum-athens | institution | Epigraphical Museum (Athens) | founded 1874 | 37.98,23.73
+institution-epoch-ai | institution | Epoch AI | 2022-present | 37.87,-122.26
+institution-eth-zurich | institution | ETH Zurich | 1855- | 47.38,8.55
+institution-european-ai-office | institution | European AI Office |  | 50.85,4.35
+institution-european-southern-observatory | institution | European Southern Observatory | 1962-2026 | 48.26,11.67
+institution-european-space-agency | institution | European Space Agency | 1975-2026 | 48.85,2.35
+institution-facebook | institution | Facebook | founded 2004 | 37.43,-122.17
+institution-fcc | institution | Federal Communications Commission | 1934- | 38.91,-77.04
+institution-fda | institution | FDA | 1930-2026 | 39.01,-77.01
+institution-future-of-life-institute | institution | Future of Life Institute | 2014-2026 | 37.77,-122.42
+institution-g42 | institution | G42 |  | 24.45,54.65
+institution-general-electric | institution | General Electric | 1892-2026 | 40.71,-74.01
+institution-general-motors | institution | General Motors | 1908-2026 | 42.33,-83.05
+institution-getty-images | institution | Getty Images | 1995- | 51.51,-0.13
+institution-github | institution | GitHub | 2008-2026 | 37.77,-122.42
+institution-goldman-sachs | institution | Goldman Sachs | 1869- | 40.71,-74.01
+institution-google | institution | Google | founded 1998 | 37.39,-122.08
+institution-google-2 | institution | Google Inc. | 1998-2026 | 37.39,-122.08
+institution-google-ai-research-accra | institution | Google AI Research Accra |  | 5.6,-0.19
+institution-google-deepmind | institution | Google DeepMind | 2010-2026 | 51.52,-0.1
+institution-google-research | institution | Google Research |  | 12.97,77.59
+institution-grab | institution | Grab | 2012-2026 | 1.35,103.82
+institution-groq | institution | Groq | 2016-present | 37.77,-122.42
+institution-harry-ransom-center | institution | Harry Ransom Center | 1965-2026 | 30.28,-97.73
+institution-harvard-business-school | institution | Harvard Business School | 1908-2026 | 42.3519,-71.0721
+institution-harvard-university | institution | Harvard University | founded 1636 | 42.38,-71.12
+institution-house-of-wisdom | institution | House of Wisdom | 832-1258 | 33.31,44.36
+institution-huawei | institution | Huawei | 1987- | 22.55,114.05
+institution-huggingface | institution | Hugging Face | 2016-present | 40.71,-74.0
+institution-ibm | institution | IBM | founded 1911 | 41.04,-73.76
+institution-idsia | institution | IDSIA | founded 1993 | 46.0,8.95
+institution-iec | institution | IEC |  | 46.23,6.14
+institution-ieee | institution | IEEE | 1963-2026 | 40.7527,-73.9772
+institution-ihe-s | institution | Institut des Hautes Études Scientifiques (IHÉS) | 1958-2026 | 48.7,2.15
+institution-iit-bombay | institution | IIT Bombay | 1958-2026 | 19.13,72.92
+institution-iit-madras | institution | IIT Madras |  | 13.08,80.27
+institution-imperial-academy-of-sciences-saint-petersburg | institution | Imperial Academy of Sciences (Saint Petersburg) |  | 59.93,30.36
+institution-inria | institution | INRIA | 1967-2026 | 48.8566,2.3522
+institution-insilico-medicine | institution | Insilico Medicine | 2014- | 37.77,-122.42
+institution-instadeep | institution | InstaDeep |  | 52.2,0.12
+institution-institut-royal-des-sciences-naturelles-de-belgique | institution | Institut Royal des Sciences Naturelles de Belgique |  | 50.83,4.31
+institution-institute-for-advanced-study | institution | Institute for Advanced Study | 1930-2026 | 40.34,-74.66
+institution-intel | institution | Intel | founded 1968 | 37.35,-121.95
+institution-internet-research-agency | institution | Internet Research Agency | 2013-2023 | 59.93,30.36
+institution-iraq-museum | institution | Iraq Museum |  | 33.34,44.39
+institution-iso | institution | ISO |  | 46.21,6.14
+institution-italian-garante | institution | Italian Garante |  | 41.9,12.5
+institution-jet-propulsion-laboratory | institution | Jet Propulsion Laboratory |  | 34.15,-118.14
+institution-jina-ai | institution | Jina AI | 2020-present | 37.77,-122.42
+institution-jpl | institution | JPL | founded 1936 | 34.22,-118.1
+institution-kakao | institution | Kakao | 2010-2026 | 37.57,126.98
+institution-khan-academy | institution | Khan Academy | 2008- | 37.39,-122.08
+institution-kyutai | institution | Kyutai | 2023-2026 | 48.85,2.35
+institution-laion | institution | LAION | 2021- | 52.52,13.4
+institution-langchain | institution | LangChain | 2022-present | 37.77,-122.42
+institution-lesan-ai | institution | Lesan AI |  | 40.71,-74.0
+institution-lg | institution | LG | 1947-2026 | 37.57,126.98
+institution-lighton | institution | LightOn | 2023-2026 | 48.85,2.35
+institution-ligo | institution | LIGO | 1999-2026 | 46.45,-120.3
+institution-lmsys | institution | LMSYS | 2022-2026 | 37.43,-122.17
+institution-los-alamos-national-laboratory | institution | Los Alamos National Laboratory |  | 35.88,-106.3
+institution-lotus-development-corporation | institution | Lotus Development Corporation | 1981-1995 | 42.3736,-71.1097
+institution-luka | institution | Luka Inc. | 2012- | 37.77,-122.42
+institution-macy-foundation | institution | Josiah Macy Jr. Foundation | founded 1931 | 40.71,-74.01
+institution-mathworks | institution | MathWorks | 1984-2026 | 42.2749,-71.323
+institution-max-planck-institute-for-astrophysics | institution | Max Planck Institute for Astrophysics | 1958-2026 | 48.26,11.67
+institution-mbzuai | institution | MBZUAI |  | 24.45,54.65
+institution-meta | institution | Meta | 2004-present | 37.44,-122.18
+institution-metr | institution | METR | 2019- | 37.77,-122.42
+institution-microsoft | institution | Microsoft | founded 1975 | 47.67,-122.13
+institution-midjourney | institution | Midjourney | 2021-2026 | 37.77,-122.42
+institution-mila | institution | Mila |  | 45.5,-73.57
+institution-minimax | institution | MiniMax | 2021-2026 | 31.23,121.47
+institution-miri | institution | Machine Intelligence Research Institute | 2013- | 37.77,-122.42
+institution-mistral-ai | institution | Mistral AI |  | 48.86,2.35
+institution-mit | institution | MIT | founded 1861 | 42.36,-71.09
+institution-mit-lincoln-laboratory | institution | MIT Lincoln Laboratory |  | 42.44,-71.23
+institution-mits | institution | MITS | 1968-1985 | 35.08,-106.65
+institution-mobileye | institution | Mobileye | 1999-2026 | 32.16,34.82
+institution-moonshot-ai | institution | Moonshot AI | 2023-2026 | 39.9,116.4
+institution-moravian-museum | institution | Moravian Museum | founded 1822 | 49.2,16.61
+institution-mos-technology | institution | MOS Technology | 1969-1975 | 37.55,-121.98
+institution-mozilla | institution | Mozilla | 1998-present | 37.39,-122.08
+institution-musee-des-arts-et-metiers | institution | Musée des Arts et Métiers | 1794-2026 | 48.84,2.37
+institution-mysql | institution | MySQL | 1995-2026 | 59.3293,18.0686
+institution-nasa | institution | NASA | founded 1958 | 38.89,-77.01
+institution-national-museum-of-scotland | institution | National Museum of Scotland |  | 55.95,-3.19
+institution-nature | institution | Nature | 1869-present | 51.51,-0.13
+institution-naver | institution | NAVER | 1999-2026 | 37.57,126.98
+institution-nber | institution | National Bureau of Economic Research | 1920- | 42.37,-71.11
+institution-ncsoft | institution | NCSoft | 1997-2026 | 37.57,126.98
+institution-netflix | institution | Netflix |  | 37.21,-121.94
+institution-netscape | institution | Netscape | 1994-2026 | 37.38,-122.08
+institution-new-york-times | institution | The New York Times | 1851-2026 | 40.75,-73.98
+institution-new-york-university | institution | New York University | 1831-2026 | 40.73,-74.0
+institution-next | institution | NeXT | 1985-2026 | 37.49,-122.24
+institution-nist | institution | NIST | 1901-2026 | 39.14,-77.2
+institution-noaa | institution | NOAA | 1970-2026 | 39.08,-76.99
+institution-northeastern-university | institution | Northeastern University | 1898-2026 | 42.34,-71.09
+institution-ntt | institution | NTT | 1971-2026 | 35.68,139.69
+institution-nvidia | institution | NVIDIA | founded 1993 | 37.35,-121.95
+institution-obvious | institution | Obvious | 2016-2019 | 48.86,2.35
+institution-oecd | institution | OECD | 1961-2026 | 48.86,2.43
+institution-office-of-naval-research | institution | Office of Naval Research | founded 1946 | 38.89,-77.08
+institution-openai | institution | OpenAI | founded 2015 | 37.77,-122.42
+institution-oracle | institution | Oracle Corporation | 1977-2026 | 37.5293,-122.2417
+institution-peking-university | institution | Peking University | 1898-2026 | 39.9,116.31
+institution-pentagon | institution | The Pentagon | built 1943 | 38.87,-77.06
+institution-perplexity | institution | Perplexity | 2022-present | 37.77,-122.42
+institution-pew-research-center | institution | Pew Research Center | 1990- | 38.91,-77.04
+institution-pinecone | institution | Pinecone | 2019-present | 37.77,-122.42
+institution-preferred-networks | institution | Preferred Networks | 2014-2026 | 35.68,139.69
+institution-princeton-university | institution | Princeton University | founded 1847 | 40.34,-74.66
+institution-project-mac | institution | Project MAC | 1959-1971 | 42.36,-71.09
+institution-qdrant | institution | Qdrant | 2021-present | 52.37,4.9
+institution-rand-corporation | institution | RAND Corporation | 1948-2026 | 34.02,-118.48
+institution-raytheon | institution | Raytheon | founded 1922 | 42.37,-71.24
+institution-remington-rand | institution | Remington Rand | 1925-1991 | 40.61,-75.48
+institution-royal-institution | institution | Royal Institution | founded 1799 | 51.51,-0.12
+institution-royal-society | institution | Royal Society | 1660-2026 | 51.51,-0.13
+institution-sakana-ai | institution | Sakana AI |  | 35.68,139.65
+institution-sambanova | institution | SambaNova | 2016-present | 37.37,-122.04
+institution-samsung | institution | Samsung | 1938-2026 | 37.57,126.98
+institution-sas-institute | institution | SAS Institute | 1976-2026 | 35.7915,-78.7811
+institution-sberbank | institution | Sberbank | 1841-2026 | 55.75,37.62
+institution-scads-ai | institution | ScaDS.AI | 2014-present | 51.05,13.74
+institution-science-museum-london | institution | Science Museum | founded 1857 | 51.49,-0.17
+institution-sea-group | institution | Sea Group | 2009-2026 | 1.35,103.82
+institution-shanghai-jiao-tong-university | institution | Shanghai Jiao Tong University | 1896-2026 | 31.03,121.44
+institution-sk-hynix | institution | SK Hynix | 1983-2026 | 37.26,127.45
+institution-sk-telecom | institution | SK Telecom | 1984-2026 | 37.57,126.98
+institution-smithsonian-national-museum-of-american-history | institution | Smithsonian National Museum of American History | 1964-2026 | 38.89,-77.02
+institution-softbank | institution | SoftBank | 1981-2026 | 35.68,139.69
+institution-sorbonne | institution | Sorbonne | founded 1257 | 48.85,2.35
+institution-space-telescope-science-institute | institution | Space Telescope Science Institute | 1981-2026 | 39.2974,-76.6155
+institution-spotify | institution | Spotify | 2006-present | 59.33,18.07
+institution-src-uk | institution | Science Research Council (UK) | 1964-1984 | 51.51,-0.12
+institution-sri-international | institution | SRI International | 1946-2026 | 37.45,-122.18
+institution-stability-ai | institution | Stability AI | 2019-2026 | 51.51,-0.13
+institution-standford-research-institute | institution | Stanford Research Institute | 1946-2026 | 37.453,-122.175
+institution-stanford-encyclopedia-of-philosophy | institution | Stanford Encyclopedia of Philosophy | 1997-2026 | 37.43,-122.17
+institution-stanford-hai | institution | Stanford Institute for Human-Centered AI | - | 37.4275,-122.1697
+institution-stanford-university | institution | Stanford University | founded 1891 | 37.43,-122.17
+institution-statacorp | institution | StataCorp | 1980-2026 | 30.6038,-96.3542
+institution-studia-philosophica | institution | Studia Philosophica | 1930-1939 | 46.2,6.14
+institution-sun-microsystems | institution | Sun Microsystems | 1982-2026 | 37.38,-122.08
+institution-sunbird-ai | institution | Sunbird AI | 2022-2026 | 0.35,32.58
+institution-suno | institution | Suno | 2022- | 37.77,-122.42
+institution-t-bank | institution | T-Bank | 2006-2026 | 55.75,37.62
+institution-tableau | institution | Tableau | 2003-2026 | 47.6062,-122.3321
+institution-technology-innovation-institute | institution | Technology Innovation Institute | 2018-2026 | 24.45,54.65
+institution-telefunken | institution | Telefunken |  | 52.52,13.4
+institution-tencent | institution | Tencent | 1998-2026 | 22.54,114.05
+institution-texas-instruments | institution | Texas Instruments | founded 1951 | 32.78,-96.8
+institution-th-stuttgart | institution | TH Stuttgart | founded 1829 | 48.76,9.19
+institution-together-ai | institution | Together AI | 2022-present | 37.77,-122.42
+institution-tsinghua-university | institution | Tsinghua University | 1911-2026 | 39.9,116.33
+institution-tu-dresden | institution | TU Dresden | 1828-present | 51.05,13.74
+institution-tu-munich | institution | TU Munich | founded 1868 | 48.14,11.58
+institution-uc-berkeley | institution | University of California, Berkeley | founded 1868 | 37.87,-122.26
+institution-uc-berkeley-2 | institution | UC Berkeley | 1868- | 37.87,-122.26
+institution-ucla | institution | UCLA | 1919-2026 | 34.0689,-118.4452
+institution-udio | institution | Udio | 2023- | 37.77,-122.42
+institution-umg | institution | Universal Music Group | 1934- | 40.71,-74.01
+institution-unesco | institution | UNESCO | 1945-2026 | 48.85,2.18
+institution-united-states-census-bureau | institution | United States Census Bureau | 1802-2026 | 38.89,-77.02
+institution-united-states-department-of-defense | institution | United States Department of Defense | 1947-2026 | 38.87,-77.06
+institution-university-of-brighton | institution | University of Brighton | 1993-2026 | 50.83,-0.14
+institution-university-of-bristol | institution | University of Bristol | founded 1945 | 51.45,-2.6
+institution-university-of-cambridge | institution | University of Cambridge |  | 52.2,0.12
+institution-university-of-edinburgh | institution | University of Edinburgh | founded 1583 | 55.94,-3.19
+institution-university-of-glasgow | institution | University of Glasgow | 1451-2026 | 55.87,-4.28
+institution-university-of-gottingen | institution | University of Göttingen | 1378- | 51.54,9.94
+institution-university-of-graz | institution | University of Graz | 1364- | 47.07,15.43
+institution-university-of-manchester | institution | University of Manchester | 1824-2026 | 53.47,-2.24
+institution-university-of-manitoba | institution | University of Manitoba | founded 1877 | 49.9,-97.14
+institution-university-of-michigan | institution | University of Michigan | 1837-2026 | 42.28,-83.74
+institution-university-of-montreal | institution | Université de Montréal | 1878- | 45.51,-73.56
+institution-university-of-munich | institution | University of Munich | 1472-2026 | 48.14,11.58
+institution-university-of-oxford | institution | University of Oxford |  | 51.75,-1.26
+institution-university-of-pennsylvania | institution | University of Pennsylvania | 1740-2026 | 39.95,-75.19
+institution-university-of-pittsburgh | institution | Carnegie Mellon University | 1900- | 40.44,-79.94
+institution-university-of-science-and-technology-of-china | institution | University of Science and Technology of China | 1958- | 31.82,117.23
+institution-university-of-toronto | institution | University of Toronto | founded 1827 | 43.66,-79.4
+institution-university-of-tuebingen | institution | University of Tübingen | 1477- | 48.52,9.04
+institution-university-of-warwick | institution | University of Warwick | 1965- | 52.38,-1.57
+institution-university-of-waterloo | institution | University of Waterloo | 1957- | 43.47,-80.54
+institution-university-of-wisconsin | institution | University of Wisconsin | 1848-2026 | 43.07,-89.4
+institution-us-navy | institution | United States Navy | founded 1775 | 38.89,-77.01
+institution-usps | institution | U.S. Postal Service | founded 1792 | 38.89,-77.01
+institution-virgo | institution | Virgo | 2003-2026 | 43.63,10.52
+institution-w3c | institution | W3C | 1994-present | 42.35,-71.06
+institution-wayve | institution | Wayve | 2017-2026 | 52.2,0.12
+institution-weaviate | institution | Weaviate | 2018-present | 52.37,4.9
+institution-wikimedia | institution | Wikimedia Foundation | 2003-present | 37.77,-122.42
+institution-wired | institution | Wired | 1993-2026 | 40.75,-73.99
+institution-worldcoin | institution | Worldcoin | 2019- | 37.77,-122.42
+institution-writers-guild-of-america | institution | Writers Guild of America | 1933- | 34.18,-118.31
+institution-xerox | institution | Xerox | 1906-2026 | 41.26,-73.07
+institution-xerox-parc | institution | Xerox PARC |  | 37.44,-122.14
+institution-yale-university | institution | Yale University | 1701-2026 | 41.31,-72.92
+institution-yandex | institution | Yandex | 1997-2026 | 55.75,37.62
+institution-youcom | institution | You.com | 2021-present | 37.77,-122.42
+institution-zhipu-ai | institution | Zhipu AI | 2019-2026 | 39.9,116.4
+institution-zyphra | institution | Zyphra | 2022-2026 | 48.85,2.35
+person-aapo-hyvarinen | person | Aapo Hyvarinen | 1973- | 60.17,24.94
+person-aarohi-srivastava | person | Aarohi Srivastava | active 2018-present | 37.39,-122.08
+person-aaron-van-den-oord | person | Aaron van den Oord | 1991– | 51.5112,-0.1335
+person-abraham-de-moivre | person | Abraham de Moivre | 1667-1754 | 51.51,-0.13
+person-abraham-wald | person | Abraham Wald | 1902-1950 | 40.71,-74.01
+person-ada-lovelace | person | Ada Lovelace | 1815-1852 | 51.51,-0.13
+person-adam-bales | person | Adam Bales | - | 51.51,-0.13
+person-adam-paszke | person | Adam Paszke | 2015-2020 | 39.83,-98.58
+person-adam-wagner | person | Adam Zsolt Wagner | - | 51.51,-0.13
+person-aditya-kusupati | person | Aditya Kusupati | 1992– | 37.4225,-122.0842
+person-adly-templeton | person | Adly Templeton | 2018-2025 | 37.77,-122.42
+person-adrien-marie-legendre | person | Adrien-Marie Legendre | 1752-1833 | 48.85,2.35
+person-aja-huang | person | Aja Huang | active 2008-present | 47.61,-122.33
+person-akira-yoshino | person | Akira Yoshino | 1938- | 35.18,136.91
+person-al-khwarizmi | person | al-Khwārizmī | c. 780-850 | 33.31,44.36
+person-al-khwarizmi-2 | person | Muhammad ibn Musa al-Khwarizmi | 780-850 | 33.31,44.36
+person-alain-colmerauer | person | Alain Colmerauer | 1939- | 43.3,5.37
+person-alan-baddeley | person | Alan D. Baddeley | 1951- | 51.45,-2.59
+person-alan-gardiner | person | Alan Gardiner | 1879-1951 | 51.51,-0.13
+person-alan-herries-wilson | person | Alan Herries Wilson | 1892-1973 | 52.21,0.13
+person-alan-hodgkin | person | Alan Hodgkin | 1914-1998 | 51.75,-1.26
+person-alan-kay | person | Alan Kay | 1940- | 37.44,-122.15
+person-alan-turing | person | Alan Turing | 1912-1954 | 53.48,-2.24
+person-alasdair-macintyre | person | Alasdair MacIntyre | 1929- | 41.68,-86.25
+person-albert-camus | person | Albert Camus | 1913-1960 | 48.86,2.35
+person-albert-einstein | person | Albert Einstein | 1879-1955 | 40.34,-74.66
+person-albert-lord | person | Albert Lord | 1912-1991 | 41.31,-72.92
+person-alcmaeon-of-croton | person | Alcmaeon of Croton | c. 500-450 BC | 39.08,17.72
+person-alec-radford | person | Alec Radford | unknown | 37.77,-122.42
+person-alessandro-volta | person | Alessandro Volta | 1745-1827 | 45.81,9.08
+person-alethea-power | person | Alethea Power | unknown | 51.51,-0.13
+person-alex-kendall | person | Alex Kendall | - | 52.2,0.12
+person-alex-krizhevsky | person | Alex Krizhevsky | b. 1983 | 43.65,-79.38
+person-alex-waibel | person | Alex Waibel | b. 1955 | 34.69,135.5
+person-alexander-bain | person | Alexander Bain | 1818-1903 | 55.95,-3.19
+person-alexander-davies | person | Alexander Davies | unknown | 43.65,-79.38
+person-alexander-grothendieck | person | Alexander Grothendieck | 1928-2014 | 48.86,2.35
+person-alexander-huth | person | Alexander G. Huth | 1977- | 37.87,-122.26
+person-alexander-kirillov | person | Alexander Kirillov | unknown | 37.39,-122.08
+person-alexander-mordvintsev | person | Alexander Mordvintsev | unknown | 37.39,-122.08
+person-alexander-nix | person | Alexander Nix | 1981- | 51.51,-0.13
+person-alexander-oparin | person | Alexander Oparin | 1900-1937 | 53.35,27.78
+person-alexander-von-humboldt | person | Alexander von Humboldt | 1769-1859 | 52.52,13.4
+person-alexandre-defossez | person | Alexandre Défossez | 1993– | 45.5017,-73.5673
+person-alexey-dosovitskiy | person | Alexey Dosovitskiy | unknown | 37.39,-122.08
+person-alexey-ivakhnenko | person | Alexey Ivakhnenko | 1928-1979 | 48.46,35.04
+person-alexis-conneau | person | Alexis Conneau | 2014-2025 | 48.86,2.35
+person-alfred-huxley | person | Alfred Huxley | 1912-1975 | 51.75,-1.26
+person-alfred-north-whitehead | person | Alfred North Whitehead | 1861-1947 | 51.51,-0.13
+person-alfred-tarski | person | Alfred Tarski | 1902-1983 | 37.87,-122.26
+person-alfred-wegener | person | Alfred Wegener | 1880-1930 | 51.11,17.03
+person-algirdas-avizienis | person | Algirdas Avizienis | 1922-2017 | 34.21,-118.16
+person-alkindi | person | al-Kindi | c. 801-873 | 33.31,44.36
+person-allen-hatcher | person | Allen Hatcher | 1946- | 42.36,-71.09
+person-allen-newell | person | Allen Newell | 1927-1992 | 40.44,-79.99
+person-alonzo-church | person | Alonzo Church | 1903-1995 | 38.9,-77.03
+person-alston-scott-householder | person | Alston Scott Householder | 1900-1978 | 35.91,-79.05
+person-aman-madaan | person | Aman Madaan | active 2019-present | 40.34,-74.66
+person-amanda-askell | person | Amanda Askell | 1995– | 37.7749,-122.4194
+person-amit-arnold-levy | person | Amit Arnold Levy | - | 31.0461,34.8516
+person-anastasios-angelopoulos | person | Anastasios N. Angelopoulos | - | 40.34,-74.66
+person-anaxagoras | person | Anaxagoras | -500--428 | 38.47,27.21
+person-anaximander | person | Anaximander | c. 610-c. 546 BCE | 37.53,27.28
+person-anaximenes | person | Anaximenes | c. 586-c. 526 BCE | 37.53,27.28
+person-anders-hejlsberg | person | Anders Hejlsberg | 1960- | 47.67,-122.12
+person-anders-sogaard | person | Anders Søgaard | 2005-2025 | 56.16,10.2
+person-andre-martinet | person | André Martinet | 1902-1979 | 48.85,2.35
+person-andre-truong-trong-thi | person | André Truong Trong Thi | 1972-2010 | 46.6,2.0
+person-andre-weil | person | André Weil | 1906-1998 | 48.86,2.35
+person-andrea-agostinelli | person | Andrea Agostinelli | 1992– | 51.5112,-0.1335
+person-andreas-blattmann | person | Andreas Blattmann | 1987– | 51.5074,-0.1278
+person-andrei-markov | person | Andrei Andreyevich Markov | 1856-1922 | 59.93,30.37
+person-andrei-tikhonov | person | Andrei Tikhonov | 1917-1994 | 55.76,37.62
+person-andrej-karpathy | person | Andrej Karpathy | b. 1986 | 37.77,-122.42
+person-andrew-barto | person | Andrew Barto | 1945-present | 42.37,-72.51
+person-andrew-cuomo | person | Andrew Cuomo | 1957- | 40.71,-74.01
+person-andrew-gelman | person | Andrew Gelman | 1966- | 40.81,-73.95
+person-andrew-mcafee | person | Andrew McAfee | 1973- | 42.3736,-71.1097
+person-andrew-ng | person | Andrew Ng | b. 1976 | 37.43,-122.17
+person-andrew-tanenbaum | person | Andrew Tanenbaum | 1943- | 51.44,5.47
+person-andrew-zisserman | person | Andrew Zisserman | 1957– | 51.7548,-1.2544
+person-andrey-kolmogorov | person | Andrey Kolmogorov | 1903-1987 | 55.75,37.62
+person-andrey-markov | person | Andrey Markov | 1856-1922 | 55.79,49.12
+person-andrey-zhitnikov | person | Andrey Zhitnikov | 1971- | 35.7796,-78.6382
+person-andy-clark | person | Andy Clark | 1956 | 51.51,-0.13
+person-angela-fan | person | Angela Fan | 1990– | 48.8566,2.3522
+person-angeliki-giannou | person | Angeliki Giannou | 2015-2025 | 40.35,-74.66
+person-angelos-katharopoulos | person | Angelos Katharopoulos | - | 47.3769,8.5417
+person-anil-seth | person | Anil Seth | 1968- | 50.82,-0.14
+person-anmol-gulati | person | Anmol Gulati | unknown | 37.39,-122.08
+person-ann-sophie-barwich | person | Ann-Sophie Barwich | 2005-2020 | 48.52,9.04
+person-anton-tolias | person | Anton S. Tolias | 1962- | 40.44,-79.99
+person-antonie-van-leeuwenhoek | person | Antonie van Leeuwenhoek | 1632-1723 | 52.01,4.36
+person-antonio-damasio | person | Antonio Damasio | 1944- | 34.05,-118.24
+person-antony-hewish | person | Antony Hewish | 1924-2021 | 50.72,-1.88
+person-apollo-nius-of-perga | person | Apollonius of Perga | c. 262-190 BC | 39.1189,27.1774
+person-archimedes | person | Archimedes | c. 287-212 BC | 37.07,15.29
+person-archimedes-of-syracuse | person | Archimedes of Syracuse | -287--212 | 37.07,15.29
+person-ari-holtzman | person | Ari Holtzman | 1986- | 37.44,-122.14
+person-aristotle | person | Aristotle | 384-322 BC | 37.98,23.73
+person-arnaud-doucet | person | Arnaud Doucet | 1972- | 51.75,-1.26
+person-arno-penzias | person | Arno Penzias | 1933- | 48.14,11.58
+person-arthur-bryson | person | Arthur E. Bryson | 1922-2014 | 37.43,-122.17
+person-arthur-cayley | person | Arthur Cayley | 1821-1895 | 53.35,-6.26
+person-arthur-conmy | person | Arthur Conmy | 2020-2025 | 51.51,-0.13
+person-arthur-dempster | person | Arthur Dempster | 1907-1967 | 39.83,-98.58
+person-arthur-eddington | person | Arthur Stanley Eddington | 1882-1944 | 54.32,-2.76
+person-arthur-hoerl | person | Arthur E. Hoerl | 1924- | 44.05,-123.09
+person-arthur-samuel | person | Arthur Samuel | 1901-2001 | 41.34,-73.88
+person-aryabhata | person | Āryabhaṭa | 476-550 | 21.0,78.0
+person-asaf-amrami | person | Asaf Amrami | 2021 | 31.91,34.81
+person-ashish-vaswani | person | Ashish Vaswani | b. 1984 | 37.39,-122.08
+person-august-mobius | person | August Ferdinand Möbius | 1790-1868 | 51.49,11.97
+person-augustin-jean-fresnel | person | Augustin-Jean Fresnel | 1788-1827 | 48.86,2.35
+person-augustin-louis-cauchy | person | Augustin-Louis Cauchy | 1789-1857 | 48.85,2.35
+person-augustus-odena | person | Augustus Odena | unknown | 37.77,-122.42
+person-avie-tevanian | person | Avie Tevanian | 1959- | 40.44,-79.94
+person-axel-cleeremans | person | Axel Cleeremans | 1964- | 50.85,4.35
+person-balaji-lakshminarayanan | person | Balaji Lakshminarayanan | 1983- | 51.75,-1.26
+person-baudhayana | person | Baudhāyana | c. 8th century BC | 21.0,78.0
+person-bernard-baars | person | Bernard Baars | 1942-2021 | 42.99,-81.25
+person-bernard-widrow | person | Bernard Widrow | 1930-2024 | 41.88,-87.63
+person-bernhard-riemann | person | Bernhard Riemann | 1826-1866 | 51.54,9.94
+person-bernhard-scholkopf | person | Bernhard Schölkopf | b. 1968 | 52.52,13.4
+person-bertrand-russell | person | Bertrand Russell | 1872-1970 | 52.21,0.12
+person-betty-holberton | person | Betty Holberton | 1917-2017 | 39.95,-75.2
+person-bhaskara-i | person | Bhāskara I | c. 600-680 | 21.0,78.0
+person-bill-gates | person | Bill Gates | b. 1955 | 35.08,-106.65
+person-bill-joy | person | Bill Joy | 1954 | 37.87,-122.26
+person-bjarne-stroustrup | person | Bjarne Stroustrup | 1950- | 40.71,-74.4
+person-blaise-pascal | person | Blaise Pascal | 1623-1662 | 48.85,2.35
+person-bob-frankston | person | Bob Frankston | 1953- | 42.3736,-71.1097
+person-bogdan-georgiev | person | Bogdan Georgiev | - | 51.51,-0.13
+person-bonaventura-cavalieri | person | Bonaventura Cavalieri | 1598-1647 | 44.49,11.34
+person-boris-polyak | person | Boris Teodorovich Polyak | 1920-2020 | 49.59,34.55
+person-brahmagupta | person | Brahmagupta | 598-668 | 25.2,75.78
+person-brand-blanshard | person | Brand Blanshard | 1893-1955 | 40.71,-74.01
+person-brendan-eich | person | Brendan Eich | 1961- | 37.38,-122.08
+person-brett-prather | person | Brett Prather | - | 40.44,-79.99
+person-brian-cheung | person | Brian Cheung | 1995– | 42.3601,-71.0942
+person-brook-taylor | person | Brook Taylor | 1685-1731 | 52.2,0.12
+person-bruce-schneier | person | Bruce Schneier | 1964- | 42.37,-71.11
+person-buddha | person | Siddhartha Gautama (Buddha) | c.563 BCE-483 BCE | 27.48,83.27
+person-cai-lun | person | Cai Lun | c. 60-121 | 34.62,112.45
+person-camille-flammarion | person | Camille Flammarion | 1842-1924 | 48.86,2.35
+person-camillo-golgi | person | Camillo Golgi | 1843-1926 | 45.46,9.19
+person-carl-friedrich-gauss | person | Carl Friedrich Gauss | 1777-1855 | 51.54,9.93
+person-carl-friedrich-von-weizsacker | person | Carl Friedrich von Weizsäcker | 1912-2007 | 48.78,9.18
+person-carl-gustav-jacob-jacobi | person | Carl Gustav Jacob Jacobi | 1804-1851 | 54.71,20.51
+person-carl-gustav-jacobi | person | Carl Gustav Jacobi | 1804-1851 | 52.52,13.4
+person-carl-gustav-jung | person | Carl Gustav Jung | 1875-1961 | 47.56,7.59
+person-carl-linnaeus | person | Carl Linnaeus | 1707-1778 | 59.86,17.64
+person-carl-rasmussen | person | Carl Rasmussen | 1963- | 52.2,0.12
+person-carl-runge | person | Carl David Tolmé Runge | 1856-1927 | 51.54,9.94
+person-carl-von-linde | person | Carl von Linde | 1842-1934 | 48.14,11.58
+person-carl-woese | person | Carl Woese | 1928-2012 | 40.71,-74.01
+person-catherine-olsson | person | Catherine Olsson | 2018-2025 | 37.77,-122.42
+person-charles-babbage | person | Charles Babbage | 1791-1871 | 51.51,-0.13
+person-charles-darwin | person | Charles Darwin | 1809-1882 | 52.71,-2.75
+person-charles-ehresmann | person | Charles Ehresmann | 1911-1979 | 48.86,2.35
+person-charles-fefferman | person | Charles Fefferman | 1949- | 40.3431,-74.6551
+person-charles-goodhart | person | Charles Goodhart | 1936-2009 | 51.51,-0.13
+person-charles-goodyear | person | Charles Goodyear | 1800-1860 | 41.31,-72.92
+person-charles-k-kao | person | Charles K. Kao | 1933-2018 | 51.51,-0.13
+person-charles-stark-draper | person | Charles Stark Draper | 1914-2005 | 42.36,-71.09
+person-charles-thomas-de-colmar | person | Charles Xavier Thomas de Colmar | 1785-1889 | 47.75,7.34
+person-charles-walcott | person | Charles Doolittle Walcott | 1850-1927 | 42.36,-71.06
+person-charles-wheatstone | person | Charles Wheatstone | 1802-1875 | 51.51,-0.13
+person-chetan-prakash | person | Chetan Prakash | - | 34.05,-118.24
+person-chevalier-de-mere | person | Chevalier de Méré | 1602-1685 | 48.85,2.35
+person-chris-olah | person | Chris Olah | b. 1992 | 37.77,-122.42
+person-christiaan-huygens | person | Christiaan Huygens | 1629-1695 | 52.08,4.3
+person-christian-szegedy | person | Christian Szegedy | 1980- | 47.5,19.04
+person-christine-taylor | person | Christine Taylor | 1952- | 41.82,-71.41
+person-christopher-bishop | person | Christopher Bishop | 1963- | 47.67,-122.12
+person-christopher-henshilwood | person | Christopher Henshilwood | 1954 | -33.92,18.42
+person-christopher-olah | person | Christopher Olah | 1987- | 45.5,-73.57
+person-christopher-sholes | person | Christopher Latham Sholes | 1819-1890 | 43.04,-87.91
+person-christopher-strachey | person | Christopher Strachey | 1916-1975 | 51.75,-1.26
+person-christopher-watkins | person | Christopher Watkins | 1960-present | 50.91,-1.4
+person-chuan-guo | person | Chuan Guo | - | 40.44,-79.99
+person-chuck-peddle | person | Chuck Peddle | b. 1938 | 33.49,-111.93
+person-chunyuan-li | person | Chunyuan Li | 1985– | 43.0731,-89.4012
+person-clark-barrett | person | Clark Barrett | 1968- | 37.43,-122.17
+person-claude-shannon | person | Claude Shannon | 1916-2001 | 42.36,-71.06
+person-claude-shannon-2 | person | Claude Elwood Shannon | 1916-2001 | 40.74,-74.4
+person-claudius-ptolemy | person | Claudius Ptolemy | c. 100-170 | 31.2,29.92
+person-cleopatra-vii | person | Cleopatra VII | c. 69-30 BC | 31.2,29.92
+person-colin-maclaurin | person | Colin Maclaurin | 1698-1746 | 55.95,-3.19
+person-confucius | person | Confucius | 551 BCE-479 BCE | 35.6,116.99
+person-cordelia-schmid | person | Cordelia Schmid | 1970– | 48.8566,2.3522
+person-corinna-cortes | person | Corinna Cortes | 1958 | 40.71,-74.0
+person-corrado-bohm | person | Corrado Böhm | 1933-2023 | 45.46,9.19
+person-cyrus-west-field | person | Cyrus West Field | 1819-1892 | 40.71,-74.01
+person-dale-schuurmans | person | Dale Schuurmans | 1975– | 37.4225,-122.0842
+person-damai-dai | person | Damai Dai | 2015-2025 | 39.9,116.41
+person-dan-bricklin | person | Dan Bricklin | b. 1946 | 42.37,-71.12
+person-dan-burns | person | Dan Burns | 2019-2024 | 37.87,-122.26
+person-dan-ciresan | person | Dan Cireșan | b. 1985 | 46.0,8.95
+person-dan-hendrycks | person | Dan Hendrycks | active 2010-present | 37.77,-122.42
+person-dan-jurafsky | person | Dan Jurafsky | 1963- | 37.43,-122.17
+person-dan-schwartz | person | Dan Schwartz | - | 51.51,-0.13
+person-daniel-de-freitas | person | Daniel de Freitas | - | 37.39,-122.08
+person-daniel-dennett | person | Daniel Dennett | 1942-2024 | 42.37,-71.11
+person-dave-cutler | person | Dave Cutler | 1942- | 47.67,-122.12
+person-david-arthur | person | David Arthur | 1974- | 37.43,-122.17
+person-david-baker | person | David Baker | 1956- | 47.61,-122.33
+person-david-blei | person | David Blei | 1973- | 42.45,-76.48
+person-david-chalmers | person | David Chalmers | 1966 | 40.71,-74.0
+person-david-cox | person | David Cox | 1924-2009 | 51.45,-2.6
+person-david-goldberg | person | David Goldberg | 1944- | 33.21,-87.56
+person-david-ha | person | David Ha | 1986– | 37.4225,-122.0842
+person-david-hilbert | person | David Hilbert | 1862-1943 | 51.54,9.94
+person-david-hubel | person | David Hubel | 1926-2013 | 40.71,-74.01
+person-david-hume | person | David Hume | 1711-1776 | 55.95,-3.19
+person-david-klein | person | David Klein | 1965- | 37.87,-122.26
+person-david-l-donoho | person | David L. Donoho | 1946- | 40.3431,-74.6551
+person-david-lewis | person | David Lewis | 1941-2001 | 51.75,-1.26
+person-david-rein | person | David Rein | - | 37.77,-122.42
+person-david-rosenthal | person | David Rosenthal | 1943- | 37.87,-122.27
+person-david-rumelhart | person | David Rumelhart | 1942-2011 | 32.72,-117.16
+person-david-silver | person | David Silver | 1974 | 51.51,-0.13
+person-david-spivak | person | David I. Spivak | 2000-2020 | 42.44,-76.5
+person-david-wheeler | person | David Wheeler | 1923-2004 | 54.0,-2.0
+person-david-wolpert | person | David Wolpert | 1958- | 32.22,-110.95
+person-dean-edmonds | person | Dean Edmonds | b. c. 1925 | 42.44,-76.5
+person-deborah-mcguinness | person | Deborah McGuinness | 1963- | 41.82,-71.4
+person-dedre-gentner | person | Dedre Gentner | 1949 | 42.37,-71.11
+person-demis-hassabis | person | Demis Hassabis | 1976- | 51.51,-0.13
+person-democritus | person | Democritus | c. 460-c. 370 BCE | 41.26,24.62
+person-dennis-ritchie | person | Dennis Ritchie | 1941-2011 | 40.8377,-74.4283
+person-diederik-kingma | person | Diederik P. Kingma | 1972- | 43.65,-79.38
+person-dimitris-tsipras | person | Dimitris Tsipras | 2014-2026 | 37.87,-122.26
+person-dirk-buckmaster | person | Dirk Buckmaster | unknown | 40.73,-74.01
+person-dmitri-mendeleev | person | Dmitri Mendeleev | 1834-1907 | 59.93,30.34
+person-doina-precup | person | Doina Precup | 1971 | 45.5,-73.57
+person-don-ross | person | Don Ross | 1990-2020 | 51.51,-0.13
+person-donald-d-hoffman | person | Donald D. Hoffman | 1950- | 34.0224,-118.2856
+person-donald-davies | person | Donald Davies | 1924-2000 | 51.43,-0.33
+person-donald-geman | person | Donald Geman | 1943- | 39.95,-75.19
+person-donald-hebb | person | Donald Hebb | 1905-1987 | 43.66,-79.39
+person-donald-michie | person | Donald Michie | 1931-2007 | 55.95,-3.19
+person-donald-rubin | person | Donald Rubin | b. 1953 | 40.34,-74.66
+person-donald-trump | person | Donald Trump | 1946- | 40.71,-74.01
+person-doug-mcdermott | person | Doug McDermott | 1955- | 42.36,-71.09
+person-doug-mcilroy | person | Doug McIlroy | 1935- | 40.71,-74.4
+person-dzmitry-bahdanau | person | Dzmitry Bahdanau | b. 1985 | 43.65,-79.38
+person-e-t-jaynes | person | E T Jaynes | 1922-1998 | 30.61,-96.34
+person-eadweard-muybridge | person | Eadweard Muybridge | 1830-1904 | 37.77,-122.42
+person-ed-roberts | person | Ed Roberts | 1941-2010 | 35.08,-106.65
+person-edgar-adrian | person | Edgar Douglas Adrian | 1889-1977 | 51.75,-1.26
+person-edgar-codd | person | Edgar Codd | 1923-2003 | 37.34,-121.89
+person-edgar-f-codd | person | Edgar F. Codd | 1923-2003 | 51.5074,-0.1278
+person-edmond-halley | person | Edmond Halley | 1656-1742 | 51.51,-0.13
+person-edmund-gunter | person | Edmund Gunter | 1581-1626 | 51.51,-0.13
+person-edsger-dijkstra | person | Edsger Dijkstra | 1930-2002 | 52.07,4.3
+person-eduard-cech | person | Eduard Čech | 1893-1960 | 50.08,14.44
+person-edvard-moser | person | Edvard Moser | 1962- | 63.43,10.39
+person-edward-feigenbaum | person | Edward Feigenbaum | 1931- | 37.43,-122.17
+person-edward-forgy | person | Edward Forgy | 1919- | 40.89,-74.43
+person-edward-hu | person | Edward Hu | active 2018-present | 47.67,-122.12
+person-edward-shortliffe | person | Edward Shortliffe | 1938- | -37.8,144.96
+person-egbert-van-kampen | person | Egbert van Kampen | 1910-1995 | 52.37,4.9
+person-eilhard-mitscherlich | person | Eilhard Mitscherlich | 1794-1863 | 51.17,10.45
+person-ekin-ergen | person | Ekin Ergen | - | 47.3769,8.5417
+person-eleanor-rosch | person | Eleanor Rosch | 1942-2011 | 37.44,-122.17
+person-elizabeth-barnes | person | Elizabeth Barnes | - | 37.77,-122.42
+person-elon-musk | person | Elon Musk | 1971- | -25.75,28.19
+person-emil-gumbel | person | Emil Gumbel | 1890-1966 | 50.73,7.1
+person-emily-bender | person | Emily Bender | active 2001-present | 47.61,-122.33
+person-eminem | person | Eminem | 1972- | 42.33,-83.05
+person-emmanuel-ameisen | person | Emmanuel Ameisen | 2020-2025 | 37.77,-122.42
+person-emmy-noether | person | Emmy Noether | 1882-1935 | 51.54,9.93
+person-enrico-betti | person | Enrico Betti | 1842-1892 | 43.77,11.26
+person-epictetus | person | Epictetus | c.50-135 CE | 39.78,21.64
+person-epicurus | person | Epicurus | 341-270 BCE | 37.98,23.73
+person-epimenides-of-crete | person | Epimenides of Crete | c.600 BCE-570 BCE | 35.3,25.16
+person-erhard-schmidt | person | Erhard Schmidt | 1876-1959 | 54.71,20.51
+person-eric-todd | person | Eric Todd | 2018-2025 | 40.44,-79.99
+person-eric-wang | person | Eric Y. Wang | - | 40.44,-79.99
+person-erik-brynjolfsson | person | Erik Brynjolfsson | 1960- | 37.4275,-122.1697
+person-erik-demaine | person | Erik Demaine | 1970- | 42.37,-71.12
+person-ernest-davis | person | Ernest Davis | 1955- | 42.36,-71.06
+person-ernst-ising | person | Ernst Ising | 1900-1998 | 51.17,10.45
+person-erwin-schroedinger | person | Erwin Schrödinger | 1887-1961 | 48.21,16.37
+person-euclid | person | Euclid | c. 300 BC | 31.2,29.92
+person-eudoxus-of-cnidus | person | Eudoxus of Cnidus | c. 408-355 BC | 36.72,27.35
+person-evangelista-torricelli | person | Evangelista Torricelli | 1608-1647 | 43.77,11.26
+person-evariste-galois | person | Évariste Galois | 1811-1832 | 47.08,2.39
+person-evelina-fedorenko | person | Evelina Fedorenko | 1975- | 42.37,-71.11
+person-f-h-bradley | person | F. H. Bradley | 1846-1924 | 51.75,-1.26
+person-f-william-lawvere | person | F. William Lawvere | 1937- | 39.83,-98.58
+person-fabio-petroni | person | Fabio Petroni | 1990– | 51.7548,-1.2544
+person-felix-bloch | person | Felix Bloch | 1905-1983 | 47.38,8.54
+person-felix-klein | person | Felix Klein | 1849-1925 | 51.54,9.93
+person-ferdinand-de-saussure | person | Ferdinand de Saussure | 1857-1913 | 46.2,6.14
+person-fernanda-viegas | person | Fernanda Viégas | 1968– | 42.3601,-71.0942
+person-filippo-brunelleschi | person | Filippo Brunelleschi | 1377-1446 | 43.77,11.26
+person-frances-bilas | person | Frances Bilas | 1926- | 39.95,-75.2
+person-frances-spence | person | Frances Spence | 1924-2011 | 39.95,-75.2
+person-francesco-scarselli | person | Francesco Scarselli | 1963- | 43.32,11.34
+person-francis-bacon | person | Francis Bacon | 1561-1626 | 51.51,-0.13
+person-francis-crick | person | Francis Harry Compton Crick | 1916-2004 | 52.24,-0.89
+person-francis-galton | person | Francis Galton | 1822-1911 | 51.51,-0.13
+person-francisco-varela | person | Francisco Varela | 1946-2001 | -33.45,-70.67
+person-frank-rosenblatt | person | Frank Rosenblatt | 1928-1971 | 42.44,-76.5
+person-frans-hals | person | Frans Hals | 1582-1666 | 52.39,4.64
+person-franz-baader | person | Franz Baader | 1963- | 51.04,13.73
+person-fred-hoyle | person | Fred Hoyle | 1915-2001 | 51.38,-2.36
+person-freda-shi | person | Freda Shi | 1994– | 37.4225,-122.0842
+person-freddie-williams | person | Freddie Williams | 1917-2012 | 53.47,-2.23
+person-frederick-jelinek | person | Frederick Jelinek | 1926-2021 | 41.34,-73.88
+person-friedrich-nietzsche | person | Friedrich Nietzsche | 1844-1900 | 51.21,12.01
+person-friedrich-nietzsche-2 | person | Friedrich Wilhelm Nietzsche | 1844-1900 | 51.8,11.96
+person-g-w-f-hegel | person | G. W. F. Hegel | 1770-1831 | 48.78,9.18
+person-gabriel-goh | person | Gabriel Goh | unknown | 37.77,-122.42
+person-galileo-galilei | person | Galileo Galilei | 1564-1642 | 43.77,11.26
+person-garry-kasparov | person | Garry Kasparov | b. 1963 | 40.41,49.87
+person-gary-kildall | person | Gary Kildall | 1942-1994 | 37.38,-122.08
+person-gary-tesauro | person | Gary Tesauro | 1956 | 35.88,-106.3
+person-gavin-newsom | person | Gavin Newsom | 1964- | 34.05,-118.24
+person-geoffrey-hinton | person | Geoffrey Hinton | b. 1947 | 43.65,-79.38
+person-geoffrey-hinton-2 | person | Geoffrey Everest Hinton | 1947- | 43.65,-79.38
+person-georg-wilhelm-friedrich-hegel | person | Georg Wilhelm Friedrich Hegel | 1770-1831 | 48.78,9.18
+person-george-a-miller | person | George A. Miller | 1905-2000 | 40.71,-74.0
+person-george-boole | person | George Boole | 1815-1864 | 51.51,-0.13
+person-george-box | person | George Box | 1919-2013 | 43.07,-89.4
+person-george-cybenko | person | George Cybenko | 1989-2026 | 41.82,-71.41
+person-george-gamow | person | George Gamow | 1904-1968 | 50.28,30.44
+person-george-georgiou | person | George Georgiou | - | 52.16,4.49
+person-george-kingsley-zipf | person | George Kingsley Zipf | 1902-1950 | 42.37,-71.12
+person-george-lakoff | person | George Lakoff | b. 1941 | 37.87,-122.26
+person-george-miller | person | George Miller | 1933-2023 | 40.34,-74.66
+person-george-piazzi | person | Giuseppe Piazzi | 1777-1866 | 38.12,13.36
+person-george-polya | person | George Pólya | 1887-1985 | 47.5,19.04
+person-george-spencer-brown | person | George Spencer-Brown | 1925-2010 | 51.51,-0.13
+person-george-westinghouse | person | George Westinghouse | 1846-1914 | 40.44,-79.99
+person-georges-de-ram | person | Georges de Rham | 1903-1970 | 46.2,6.14
+person-georgi-gerganov | person | Georgi Gerganov | active 2016-present | 42.7,23.32
+person-georgius-agricola | person | Georgius Agricola | 1494-1556 | 50.84,12.92
+person-gerald-edelman | person | Gerald Edelman | 1929-2011 | 40.71,-74.01
+person-gerard-desargues | person | Gérard Desargues | c. 1591-1661 | 48.85,2.35
+person-gerard-salton | person | Gerard Salton | 1928-1993 | 42.44,-76.5
+person-gerardus-mercator | person | Gerardus Mercator | 1512-1594 | 51.22,2.93
+person-gerd-gigerenzer | person | Gerd Gigerenzer | 1947-present | 48.52,9.06
+person-gerhard-gentzen | person | Gerhard Gentzen | 1896-1945 | 51.54,9.94
+person-gerolamo-cardano | person | Gerolamo Cardano | 1501-1576 | 44.49,11.34
+person-gilles-deleuze | person | Gilles Deleuze | 1925-1995 | 48.86,2.35
+person-giovanni-domenico-tiepolo | person | Giovanni Domenico Tiepolo | 1727-1776 | 45.44,12.32
+person-giulio-tononi | person | Giulio Tononi | 1966- | 43.07,-89.4
+person-giuseppe-jacopini | person | Giuseppe Jacopini | 1921- | 45.46,9.19
+person-giuseppe-peano | person | Giuseppe Peano | 1858-1932 | 45.07,7.69
+person-gordon-gallup | person | Gordon Gallup | 1936 | 30.28,-97.73
+person-gordon-moore | person | Gordon Moore | b. 1929 | 37.35,-121.96
+person-gordon-plotkin | person | Gordon Plotkin | 1945-2003 | 55.95,-3.19
+person-gottfried-wilhelm-leibniz | person | Gottfried Wilhelm Leibniz | 1646-1716 | 52.37,9.73
+person-gotthard-gunther | person | Gotthard Günther | 1900-2000 | 47.64,9.59
+person-gottlob-frege | person | Gottlob Frege | 1848-1925 | 50.93,11.59
+person-graydon-hoare | person | Graydon Hoare | 1973- | 37.38,-122.08
+person-greg-egan | person | Greg Egan | 1961- | -33.87,151.21
+person-gregor-hayes | person | Gregor Hayes | unknown | 43.47,-80.55
+person-gregorio-ricci-curbastro | person | Gregorio Ricci-Curbastro | 1853-1925 | 44.49,11.34
+person-gregory-bateson | person | Gregory Bateson | 1904-1980 | 34.05,-118.24
+person-gregory-naitzat | person | Gregory Naitzat | - | 35.7796,-78.6382
+person-grigori-perelman | person | Grigori Perelman | b. 1966 | 59.93,30.37
+person-guido-imbens | person | Guido Imbens | 1967 | 52.37,4.9
+person-guido-montufar | person | Guido Montúfar | 2014 | 49.87,8.65
+person-guido-van-rossum | person | Guido van Rossum | 1956- | 52.389,4.635
+person-gunnar-carlsson | person | Gunnar Carlsson | b. 1964 | 59.33,18.07
+person-h-h-joachim | person | H. H. Joachim | 1857-1935 | 51.75,-1.26
+person-haldan-hartline | person | Haldan Keffer Hartline | 1903-1971 | 40.34,-74.66
+person-hans-bethe | person | Hans Albrecht Bethe | 1906-2005 | 48.58,7.75
+person-hanspeter-pfister | person | Hanspeter Pfister | 1959– | 42.3601,-71.0942
+person-hao-li | person | Hao Li | unknown | 40.71,-74.01
+person-haohe-liu | person | Haohe Liu | 1994– | 40.8075,-73.9626
+person-haotian-liu | person | Haotian Liu | 1995– | 43.0731,-89.4012
+person-hariharan-narayanan | person | Hariharan Narayanan | 1973- | 37.4419,-122.143
+person-harold-urey | person | Harold Urey | 1892-1981 | 48.75,-122.48
+person-harry-frankfurt | person | Harry G. Frankfurt | 1935-2014 | 50.11,8.68
+person-harry-houdini | person | Harry Houdini | 1874-1926 | 47.5,19.04
+person-haskell-curry | person | Haskell Curry | 1900-1982 | 43.07,-89.4
+person-hassler-whitney | person | Hassler Whitney | 1907-1989 | 40.35,-74.66
+person-hattie-zhou | person | Hattie Zhou | 1988– | 45.4642,9.19
+person-hector-levesque | person | Hector Levesque | 1956- | 43.65,-79.38
+person-heike-kamerlingh-onnes | person | Heike Kamerlingh Onnes | 1853-1926 | 52.16,4.487
+person-heinrich-geissler | person | Heinrich Geissler | 1814-1879 | 50.73,7.1
+person-heinrich-waldeyer | person | Heinrich Wilhelm Gottfried von Waldeyer-Hartz | 1836-1921 | 52.52,13.4
+person-heinz-hopf | person | Heinz Hopf | 1894-1971 | 47.56,7.59
+person-helmut-grottrup | person | Helmut Gröttrup | 1911- | 54.15,13.81
+person-helmut-holzer | person | Helmut Hölzer | 1907- | 54.15,13.81
+person-henri-bergson | person | Henri Bergson | 1859-1941 | 48.86,2.35
+person-henri-poincare | person | Henri Poincaré | 1854-1912 | 48.85,2.35
+person-henry-bessemer | person | Henry Bessemer | 1813-1899 | 51.51,-0.13
+person-heraclitus | person | Heraclitus | -535--475 | 37.94,27.34
+person-herbert-a-simon | person | Herbert A. Simon | 1916-2001 | 40.44,-79.99
+person-herbert-edelsbrunner | person | Herbert Edelsbrunner | b. 1962 | 42.28,-83.74
+person-herbert-jaeger | person | Herbert Jaeger | 1961 | 50.77,6.09
+person-herbert-robbins | person | Herbert Robbins | 1915-2001 | 40.71,-74.01
+person-herman-hollerith | person | Herman Hollerith | 1860-1929 | 38.9,-77.04
+person-hermann-grassmann | person | Hermann Grassmann | 1809-1877 | 52.52,13.4
+person-hermann-minkowski | person | Hermann Minkowski | 1864-1909 | 51.54,9.94
+person-hermann-schmitz | person | Hermann Schmitz | 1919-2002 | 54.09,12.09
+person-hermann-seifert | person | Hermann Seifert | 1900-1979 | 51.54,9.93
+person-hermann-von-helmholtz | person | Hermann von Helmholtz | 1821-1894 | 52.52,13.4
+person-hermann-weyl | person | Hermann Weyl | 1895-1955 | 47.38,8.54
+person-heron-of-alexandria | person | Heron of Alexandria | c. 10-70 | 31.2,29.92
+person-hilary-putnam | person | Hilary Putnam | 1926-2016 | 42.37,-71.11
+person-hipparchus | person | Hipparchus of Nicaea | c. 190-120 BC | 40.4303,29.7224
+person-hippocrates-of-chios | person | Hippocrates of Chios | c. 470-410 BC | 38.42,26.14
+person-hoagy-cunningham | person | Hoagy Cunningham | 2018-2025 | 37.77,-122.42
+person-howard-aiken | person | Howard Aiken | 1900-1973 | 42.37,-71.12
+person-hubert-dreyfus | person | Hubert Dreyfus | 1929-2017 | 37.87,-122.26
+person-hubert-ramsauer | person | Hubert Ramsauer | 2015-2025 | 47.07,15.44
+person-hugo-steinhaus | person | Hugo Steinhaus | 1892-1972 | 50.06,19.94
+person-hugo-zaragoza | person | Hugo Zaragoza | 1970– | 51.5245,-0.1337
+person-humberto-maturana | person | Humberto Maturana | 1928-2021 | -33.45,-70.67
+person-hyung-won-chung | person | Hyung Won Chung | 1990- | 37.39,-122.08
+person-i-j-good | person | I. J. Good | 1903-1982 | 51.75,-1.26
+person-ian-hacking | person | Ian Hacking | 1936-2023 | 43.65,-79.38
+person-iannis-xenakis | person | Iannis Xenakis | 1922–2001 | 48.8566,2.3522
+person-ibn-al-haytham | person | Ibn al-Haytham (Alhazen) | c. 965-1040 | 30.51,47.81
+person-ieke-moerdijk | person | Ieke Moerdijk | 1950- | 52.09,5.12
+person-igor-aizenberg | person | Igor N. Aizenberg | unknown | 32.09,34.78
+person-ikutaro-kakehashi | person | Ikutaro Kakehashi | 1931–2004 | 34.6632,137.6795
+person-ilya-sutskever | person | Ilya Sutskever | 1986- | 43.65,-79.38
+person-immanuel-kant | person | Immanuel Kant | 1724-1804 | 54.71,20.51
+person-irwin-sobel | person | Irwin Sobel | unknown | 40.67,-74.41
+person-isaac-asimov | person | Isaac Asimov | 1920-1992 | 40.71,-74.01
+person-isaac-newton | person | Isaac Newton | 1643-1727 | 52.2,0.12
+person-isadore-singer | person | Isadore Singer | 1924-2020 | 42.37,-71.11
+person-ivan-sutherland | person | Ivan Sutherland | 1938-2019 | 42.36,-71.09
+person-j-barkley-rosser | person | J. Barkley Rosser | 1907-2004 | 40.11,-88.22
+person-j-c-r-licklider | person | J. C. R. Licklider | 1915-1990 | 42.36,-71.09
+person-j-f-adams | person | J. F. Adams | 1930-2015 | 52.2,0.12
+person-j-h-c-whitehead | person | J. H. C. Whitehead | 1906-1991 | 52.2,0.12
+person-j-r-firth | person | J. R. Firth | 1901-1990 | 51.51,-0.13
+person-j-roger-hindley | person | J. Roger Hindley | 1928-2020 | 56.34,-2.79
+person-j-ross-quinlan | person | J. Ross Quinlan | 1943-2016 | -33.87,151.21
+person-jack-gallant | person | Jack L. Gallant | 1953- | 37.87,-122.26
+person-jack-kilby | person | Jack Kilby | 1923-2005 | 32.78,-96.8
+person-jack-lindsey | person | Jack Lindsey | 2018-2025 | 37.77,-122.42
+person-jack-merullo | person | Jack Merullo | 2020-2025 | 51.51,-0.13
+person-jacob-austin | person | Jacob Austin | active 2019-present | 37.77,-122.42
+person-jacob-olsson | person | Jacob Olsson | 1994– | 37.7749,-122.4194
+person-jacob-steinhardt | person | Jacob Steinhardt | 2015-2026 | 37.87,-122.26
+person-jacques-hadamard | person | Jacques Hadamard | 1865-1963 | 48.86,2.35
+person-jacques-tits | person | Jacques Tits | 1930-2021 | 48.86,2.35
+person-jade-copet | person | Jade Copet | 1993– | 45.5017,-73.5673
+person-jakob-hohwy | person | Jakob Hohwy | 1975- | 50.82,-0.14
+person-jakob-listing | person | Jakob Listing | 1808-1882 | 51.54,9.93
+person-jakob-zech | person | Jakob Zech | 1988- | 49.2339,6.9915
+person-james-alexander | person | James Alexander | 1888-1971 | 40.71,-74.01
+person-james-bergstra | person | James Bergstra | active 2005-present | 45.5,-73.57
+person-james-clerk-maxwell | person | James Clerk Maxwell | 1831-1879 | 55.95,-3.19
+person-james-cooley | person | James Cooley | 1920-2017 | 40.71,-74.01
+person-james-gosling | person | James Gosling | 1955- | 37.35,-121.96
+person-james-gregory | person | James Gregory | 1638-1675 | 57.15,-2.09
+person-james-hensman | person | James Hensman | 1984- | 52.2,0.12
+person-james-jeans | person | James Hopwood Jeans | 1877-1946 | 52.2,0.12
+person-james-joseph-sylvester | person | James Joseph Sylvester | 1814-1897 | 51.51,-0.13
+person-james-macqueen | person | James MacQueen | 1938-2014 | 37.87,-122.26
+person-james-mcclelland | person | James McClelland | b. 1954 | 32.72,-117.16
+person-james-mercer | person | James Mercer | 1848-1936 | 54.0,-2.0
+person-james-watt | person | James Watt | 1736-1819 | 52.49,-1.89
+person-james-whittington | person | James C. R. Whittington | 1991- | 51.51,-0.13
+person-jan-czochralski | person | Jan Czochralski | 1879-1952 | 52.52,13.4
+person-jana-born | person | Jana Born | 1967- | 48.516,9.1796
+person-janos-bolyai | person | János Bolyai | 1802-1860 | 46.77,23.59
+person-jared-kaplan | person | Jared Kaplan | active 2016-present | 37.77,-122.42
+person-jaron-maene | person | Jaron Maene | 1971- | 50.8503,4.6997
+person-jascha-sohl-dickstein | person | Jascha Sohl-Dickstein | 1988– | 37.4275,-122.1697
+person-jason-m-allen | person | Jason M. Allen | - | 39.55,-105.78
+person-jason-wei | person | Jason Wei | active 2019-present | 37.39,-122.08
+person-jason-weston | person | Jason Weston | 1985- | 37.45,-122.18
+person-jasper-snoek | person | Jasper Snoek | active 2008-present | 43.65,-79.38
+person-javier-conde | person | Javier Conde | - | 39.4699,-0.3763
+person-javier-gomez-serrano | person | Javier Gomez-Serrano | - | 51.51,-0.13
+person-jay-forbie | person | Jay Forbie | 1926-2015 | 42.36,-71.09
+person-jay-forrester | person | Jay Forrester | 1918-2016 | 42.36,-71.09
+person-jbs-haldane | person | John Burdon Sanderson Haldane | 1892-1964 | 50.82,-0.14
+person-jean-baptiste-alayrac | person | Jean-Baptiste Alayrac | 1990– | 51.5112,-0.1335
+person-jean-baptiste-fourier | person | Jean-Baptiste Joseph Fourier | 1768-1830 | 48.85,2.35
+person-jean-daniel-colladon | person | Jean-Daniel Colladon | 1802-1893 | 46.2,6.15
+person-jean-dieudonne | person | Jean Dieudonné | 1906-1992 | 48.86,2.35
+person-jean-francois-champollion | person | Jean-François Champollion | 1790-1832 | 48.85,2.35
+person-jean-giraud | person | Jean Giraud | 1933- | 46.6,2.47
+person-jean-leray | person | Jean Leray | 1906-1998 | 48.85,2.35
+person-jean-louis-gasse | person | Jean-Louis Gassée | 1947- | 37.38,-122.08
+person-jean-paul-sartre | person | Jean-Paul Sartre | 1905-1980 | 48.86,2.35
+person-jean-pierre-serre | person | Jean-Pierre Serre | b. 1926 | 48.85,2.35
+person-jean-victor-poncelet | person | Jean-Victor Poncelet | 1781-1840 | 48.85,2.35
+person-jean-yves-girard | person | Jean-Yves Girard | 1947- | 43.71,7.26
+person-jeff-johnson | person | Jeff Johnson | active 2013-present | 37.44,-122.18
+person-jeff-wu | person | Jeff Wu | 1983-2000 | 43.07,-89.4
+person-jeffrey-elman | person | Jeffrey L. Elman | 1958- | 42.44,-76.5
+person-jelani-nelson | person | Jelani Nelson | 1986- | 40.4406,-79.9959
+person-jerome-friedman | person | Jerome Friedman | 1937-2014 | 37.43,-122.17
+person-jesse-j-prinz | person | Jesse J. Prinz | 1947- | 39.29,-76.61
+person-jianlin-su | person | Jianlin Su | 2019-2025 | 34.34,108.94
+person-jiaxin-huang | person | Jiaxin Huang | 1995– | 37.8715,-122.2585
+person-jimmy-ba | person | Jimmy Lei Ba | 1987-present | 43.65,-79.38
+person-jimmy-ba-2 | person | Jimmy Ba | 1989- | 43.65,-79.38
+person-jiwoo-hong | person | Jiwoo Hong | active 2018-present | 36.35,127.38
+person-joe-biden | person | Joe Biden | 1942- | 38.9,-77.04
+person-joel-becker | person | Joel Becker | - | 37.77,-122.42
+person-johann-maelzel | person | Johann Nepomuk Mälzel | 1781–1837 | 48.2082,16.3738
+person-johannes-gutenberg | person | Johannes Gutenberg | 1400-1468 | 49.99,8.27
+person-johannes-kepler | person | Johannes Kepler | 1571-1630 | 48.31,14.29
+person-johannes-von-oswald | person | Johannes von Oswald | 1990- | 51.5074,-0.1278
+person-john-ambrose-fleming | person | John Ambrose Fleming | 1849-1911 | 51.51,-0.13
+person-john-b-goodenough | person | John B. Goodenough | 1925- | 51.75,-1.26
+person-john-backus | person | John Backus | 1924-2007 | 37.9767,-122.531
+person-john-bardeen | person | John Bardeen | 1908-1991 | 40.72,-74.41
+person-john-cage | person | John Cage | 1912–1992 | 40.7128,-74.006
+person-john-cliff-shaw | person | John Cliff Shaw | 1927-2014 | 40.44,-79.99
+person-john-flavell | person | John Flavell | 1930-2019 | 42.44,-76.5
+person-john-g-castel | person | Judge John G. Castel | 1945- | 40.7128,-74.006
+person-john-hadley | person | John Hadley | 1682-1744 | 51.52,-0.13
+person-john-harrison | person | John Harrison | 1693-1776 | 51.51,-0.13
+person-john-holland | person | John Holland | 1929-2022 | 42.28,-83.74
+person-john-hopfield | person | John J. Hopfield | 1933-2024 | 40.35,-74.66
+person-john-kemeny | person | John Kemeny | 1926-1993 | 42.99,-72.33
+person-john-koza | person | John Koza | 1951- | 37.43,-122.17
+person-john-ladyman | person | John Ladyman | 1958- | 51.51,-0.13
+person-john-locke | person | John Locke | 1632-1704 | 51.51,-0.13
+person-john-m-jumper | person | John M. Jumper | 1985- | 34.75,-92.29
+person-john-mccarthy | person | John McCarthy | 1927-2011 | 37.43,-122.17
+person-john-michael-lighthill | person | John Michael Lighthill | 1928-2018 | 52.21,0.12
+person-john-milnor | person | John Milnor | b. 1931 | 40.34,-74.66
+person-john-napier | person | John Napier | 1550-1617 | 55.55,-2.49
+person-john-okeefe | person | John O'Keefe | 1939- | 51.51,-0.13
+person-john-rawls | person | John Rawls | 1921-2002 | 39.29,-76.61
+person-john-robinson | person | John Robinson | 1930-2014 | 55.95,-3.19
+person-john-rupert-firth | person | John Rupert Firth | 1906-1990 | 51.51,-0.13
+person-john-schulman | person | John Schulman | active 2012-present | 37.77,-122.42
+person-john-searle | person | John Searle | b. 1932 | 37.87,-122.26
+person-john-sutherland | person | John Sutherland | 1969- | 53.47,-2.24
+person-john-tyndall | person | John Tyndall | 1820-1893 | 51.51,-0.13
+person-john-von-neumann | person | John von Neumann | 1903-1957 | 40.34,-74.66
+person-john-wallis | person | John Wallis | 1616-1703 | 51.75,-1.26
+person-john-wilkins | person | John Wilkins | 1614-1672 | 52.2,0.12
+person-john-worrall | person | John Worrall | 1954- | 51.51,-0.13
+person-john-zellig-harris | person | John Zellig Harris | 1909-1991 | 39.95,-75.16
+person-jon-kleinberg | person | Jon Kleinberg | 1968- | 42.45,-76.48
+person-jonas-gehring | person | Jonas Gehring | 2013-2020 | 48.86,2.35
+person-jonathan-frankle | person | Jonathan Frankle | active 2013-present | 42.36,-71.09
+person-jonathan-ho | person | Jonathan Ho | 1993– | 40.7295,-73.9965
+person-jonathan-jones | person | Jonathan Jones | 1959- | 51.51,-0.13
+person-jong-chul-ye | person | Jong Chul Ye | 1968- | 37.5665,126.978
+person-joost-joordens | person | J. Peter Joordens | b. 1978 | 52.13,5.29
+person-joram-lindenstrauss | person | Joram Lindenstrauss | 1926-2020 | 31.0461,34.8516
+person-jordan-hoffmann | person | Jordan Hoffmann | active 2014-present | 52.21,0.13
+person-josef-hochreiter | person | Josef Hochreiter | 1959-present | 47.8,13.04
+person-josef-perner | person | Josef Perner | 1950- | 47.8,13.05
+person-joseph-berkson | person | Joseph Berkson | 1903-1979 | 41.79,-87.6
+person-joseph-henrich | person | Joseph Henrich | 1965- | 35.69,-105.94
+person-joseph-louis-lagrange | person | Joseph-Louis Lagrange | 1736-1813 | 48.86,2.35
+person-joseph-marie-jacquard | person | Joseph-Marie Jacquard | 1752-1834 | 45.76,4.84
+person-joseph-nicéphore-niépce | person | Joseph Nicéphore Niépce | 1765-1833 | 46.77,4.85
+person-joseph-redmon | person | Joseph Redmon | unknown | 47.61,-122.33
+person-joseph-weizenbaum | person | Joseph Weizenbaum | 1922-1999 | 42.37,-71.11
+person-joshua-ainslie | person | Joshua Ainslie | active 2019-present | 37.39,-122.08
+person-joshua-engels | person | Joshua Engels | - | 42.3736,-71.1097
+person-joy-buolamwini | person | Joy Buolamwini | b. 1984 | 42.36,-71.06
+person-joyojeet-pal | person | Joyojeet Pal | - | 42.28,-83.74
+person-judea-pearl | person | Judea Pearl | 1936 | 34.07,-118.44
+person-juergen-schmidhuber | person | Jürgen Schmidhuber | b. 1963 | 46.01,8.95
+person-jule-charney | person | Jule Charney | 1917-1981 | 40.347,-74.657
+person-justin-l-barrett | person | Justin L. Barrett | 1965- | 50.7241,-3.5256
+person-kaho-park | person | Kiho Park | 2018-2025 | 43.47,-80.54
+person-kai-greshake | person | Kai Greshake | active 2019-present | 48.52,9.06
+person-kaiming-he | person | Kaiming He | b. 1984 | 39.9,116.4
+person-kaisuke-nakajima | person | Kaisuke Nakajima | 2010-2020 | 37.39,-122.08
+person-karel-cech | person | Karel Čech | 1893-1960 | 50.08,14.42
+person-karen-simonyan | person | Karen Simonyan | 1986- | 51.75,-1.26
+person-karl-cobbe | person | Karl Cobbe | active 2019-present | 47.61,-122.33
+person-karl-ferdinand-braun | person | Karl Ferdinand Braun | 1850-1918 | 50.0,8.27
+person-karl-friston | person | Karl Friston | 1966 | 51.5,-0.13
+person-karl-pearson | person | Karl Pearson | 1857-1936 | 51.51,-0.13
+person-karl-popper | person | Karl Popper | 1902-1994 | 48.21,16.37
+person-karl-r-popper | person | Karl R. Popper | 1902-1994 | 51.51,-0.13
+person-karl-wilhelm-kramp | person | Karl Wilhelm Kramp | 1763-1846 | 51.17,10.45
+person-karlheinz-brandenburg | person | Karlheinz Brandenburg | 1949– | 49.5879,10.7362
+person-kasper-green-larsen | person | Kasper Green Larsen | 1990- | 55.6761,12.5683
+person-kate-crawford | person | Kate Crawford | 1973- | 47.61,-122.33
+person-kawin-ethayarajh | person | Kawin Ethayarajh | active 2016-present | 37.39,-122.08
+person-kay-mcnulty | person | Kay McNulty | 1926-2020 | 39.95,-75.2
+person-keir-starmer | person | Keir Starmer | 1962- | 51.51,-0.13
+person-keisuke-sakaguchi | person | Keisuke Sakaguchi | 1975- | 47.61,-122.33
+person-ken-thompson | person | Ken Thompson | 1943-2023 | 40.8377,-74.4283
+person-kenneth-ivers | person | Kenneth Iverson | 1932-2020 | 49.89,-97.14
+person-kenneth-koza | person | Kenneth Koza | 1938 | 37.44,-122.17
+person-kenneth-li | person | Kenneth Li | 2018-2025 | 37.39,-122.08
+person-kenneth-stanley | person | Kenneth Stanley | 1977-2016 | 28.6,-81.3
+person-kevin-johnson | person | Kevin Johnson | 1985- | 37.39,-122.08
+person-kevin-meng | person | Kevin Meng | 2018-2025 | 39.83,-98.58
+person-kevin-wang | person | Kevin Wang | 2018-2025 | 37.87,-122.27
+person-kimberly-stachenfeld | person | Kimberly L. Stachenfeld | - | 40.71,-74.01
+person-klaus-greff | person | Klaus Greff | 2010-2020 | 48.52,9.04
+person-koji-huzita | person | Koji Huzita | unknown | 36.2,138.25
+person-konrad-zuse | person | Konrad Zuse | 1910-1995 | 52.52,13.4
+person-koray-kavukcuoglu | person | Koray Kavukcuoglu | 1981– | 51.5112,-0.1335
+person-kristen-nygaard | person | Kristen Nygaard | 1926-2002 | 59.91,10.75
+person-kunihiko-fukushima | person | Kunihiko Fukushima | b. 1939 | 35.68,139.69
+person-kurt-godel | person | Kurt Gödel | 1897-1978 | 49.2,16.61
+person-kurt-hornik | person | Kurt Hornik | 1944- | 48.21,16.37
+person-kurt-reidemeister | person | Kurt Reidemeister | 1907-1990 | 51.17,10.45
+person-kyunghyun-cho | person | Kyunghyun Cho | 1987- | 45.5,-73.57
+person-l-e-j-brouwer | person | L. E. J. Brouwer | 1881-1966 | 52.37,4.9
+person-ladislaus-bortkiewicz | person | Ladislaus Bortkiewicz | 1868-1931 | 54.71,20.51
+person-laozi | person | Laozi | -571--471 | 34.34,108.94
+person-larry-page | person | Larry Page | 1972 | 37.44,-122.17
+person-laurence-bonjour | person | Laurence BonJour | 1946- | 34.05,-118.24
+person-lauri-alpoge | person | Lauri Alpöge | unknown | 37.77,-122.42
+person-lawrence-rabiner | person | Lawrence Rabiner | 1941-2019 | 40.89,-74.43
+person-lee-de-forest | person | Lee De Forest | 1889-1961 | 40.71,-74.01
+person-lee-sedol | person | Lee Sedol | 1975-present | 37.57,126.98
+person-lejaren-hiller | person | Lejaren Hiller | 1924–2016 | 40.1106,-88.2272
+person-lek-heng-lim | person | Lek-Heng Lim | 1972- | 35.7796,-78.6382
+person-leland-stanford | person | Leland Stanford | 1824-1893 | 37.44,-122.15
+person-leo-baekeland | person | Leo Baekeland | 1863-1944 | 52.16,4.49
+person-leo-breiman | person | Leo Breiman | 1929-2017 | 37.87,-122.26
+person-leon-battista-alberti | person | Leon Battista Alberti | 1404-1472 | 43.77,11.26
+person-leon-henkin | person | Leon Henkin | 1924-2006 | 40.71,-74.01
+person-leonard-isaacson | person | Leonard Isaacson | 1925– | 40.1106,-88.2272
+person-leonardo-da-vinci | person | Leonardo da Vinci | 1452-1519 | 43.77,11.26
+person-leonardo-de-moura | person | Leonardo de Moura | 1987- | 47.67,-122.12
+person-leonardo-fibonacci | person | Leonardo Fibonacci | 1170-1250 | 43.72,10.4
+person-leonardo-of-pisa | person | Leonardo of Pisa (Fibonacci) | c. 1170-1250 | 43.72,10.4
+person-leonardo-torres-quevedo | person | Leonardo Torres Quevedo | 1852-1936 | 40.42,-3.7
+person-leonhard-euler | person | Leonhard Euler | 1707-1783 | 47.56,7.59
+person-leopold-lowenheim | person | Leopold Löwenheim | 1877-1921 | 48.21,16.37
+person-leopold-vietoris | person | Leopold Vietoris | 1891-1979 | 48.21,16.37
+person-leslie-aiello | person | Leslie C. Aiello | 1956- | 42.3736,-71.1097
+person-leslie-baum | person | Leslie Baum | 1920- | 38.99,-76.94
+person-lewis-fry-richardson | person | Lewis Fry Richardson | 1881-1953 | 51.75,-1.26
+person-lianmin-zheng | person | Lianmin Zheng | active 2019-present | 37.87,-122.26
+person-linus-torvalds | person | Linus Torvalds | 1969- | 60.17,24.94
+person-lionel-naccache | person | Lionel Naccache | 1963- | 48.86,2.35
+person-long-ouyang | person | Long Ouyang | active 2016-present | 37.77,-122.42
+person-lorraine-daston | person | Lorraine Daston | 1948 | 48.14,11.58
+person-louis-daguerre | person | Louis Daguerre | 1787-1851 | 48.86,2.35
+person-louis-lapicque | person | Louis Lapicque | 1866-1952 | 48.85,2.35
+person-luca-pacioli | person | Luca Pacioli | c. 1447-1517 | 45.44,12.32
+person-lucy-aiello | person | Lucy Aiello | 1947- | 51.52,-0.13
+person-ludwig-boltzmann | person | Ludwig Boltzmann | 1844-1906 | 48.21,16.37
+person-ludwig-schmidt | person | Ludwig Schmidt | 1985– | 37.4275,-122.1697
+person-ludwig-wittgenstein | person | Ludwig Wittgenstein | 1889-1951 | 48.21,16.37
+person-luis-von-ahn | person | Luis von Ahn | 1978- | 40.44,-79.99
+person-lukas-berglund | person | Lukas Berglund | - | 51.75,-1.26
+person-lvmin-zhang | person | Lvmin Zhang | 1993– | 37.4275,-122.1697
+person-madhava-of-sangamagrama | person | Madhava of Sangamagrama | c. 1350-1425 | 10.0,76.0
+person-maia-sandu | person | Maia Sandu | 1972- | 47.01,28.86
+person-maksym-telgarsky | person | Maksym Telgarsky | unknown | 37.44,-122.14
+person-maneesh-agrawala | person | Maneesh Agrawala | 1982– | 37.4275,-122.1697
+person-manfred-eigen | person | Manfred Eigen | 1927-2019 | 50.86,12.92
+person-marcel-duchamp | person | Marcel Duchamp | 1887–1968 | 40.7128,-74.006
+person-marcus-aurelius | person | Marcus Aurelius | 121-180 | 41.9,12.48
+person-marcus-hutter | person | Marcus Hutter | 1967-present | 48.52,9.06
+person-marcus-minsky | person | Marvin Minsky | 1927-2016 | 42.37,-71.12
+person-marcus-raichle | person | Marcus Raichle | 1950 | 38.63,-90.2
+person-margaret-hamilton | person | Margaret Hamilton | 1936-2023 | 42.36,-71.09
+person-margherita-piazzola-beloch | person | Margherita Piazzola Beloch | 1862-1949 | 45.07,7.69
+person-marine-le-pen | person | Marine Le Pen | 1968- | 48.86,2.35
+person-mark-chen | person | Mark Chen | 2018-2022 | 37.77,-122.42
+person-mark-davies | person | Mark Davies | 1960- | 37.35,-121.95
+person-mark-newman | person | Mark Newman | 1965- | 42.28,-83.74
+person-mark-walker | person | Mark Walker | 2000-2020 | 51.51,-0.13
+person-marlyn-meltzer | person | Marlyn Meltzer | 1924-2015 | 39.95,-75.2
+person-marquis-de-condorcet | person | Marquis de Condorcet | 1744-1794 | 48.85,2.35
+person-marston-morse | person | Marston Morse | 1892-1977 | 42.36,-71.06
+person-martin-bern | person | Martin Bern | unknown | 43.47,-80.55
+person-martin-davis | person | Martin Davis | 1938- | 40.73,-73.99
+person-martin-demaine | person | Martin Demaine | unknown | 42.37,-71.12
+person-martin-ester | person | Martin Ester | 1960- | 48.14,11.58
+person-martin-grotschel | person | Martin Grötschel | 1949- | 52.52,13.4
+person-martin-heidegger | person | Martin Heidegger | 1889-1976 | 47.99,7.85
+person-martin-puterman | person | Martin Puterman | 1946- | 37.87,-122.26
+person-martin-wattenberg | person | Martin Wattenberg | 2010-2025 | 37.39,-122.08
+person-mary-shelley | person | Mary Shelley | 1797-1851 | 51.52,-0.13
+person-matei-zaharia | person | Matei Zaharia | 1979– | 37.8715,-122.2585
+person-mathieu-cohen-steiner | person | Mathieu Cohen-Steiner | b. 1980 | 48.85,2.35
+person-matthias-schleiden | person | Matthias Schleiden | 1804-1881 | 50.93,11.59
+person-matthijs-douze | person | Matthijs Douzé | 1987– | 37.4037,-122.0737
+person-maurice-merleau-ponty | person | Maurice Merleau-Ponty | 1908-1961 | 48.86,2.35
+person-maurice-wilkes | person | Maurice Wilkes | 1907-2010 | 52.2,0.12
+person-maurizio-cattelan | person | Maurizio Cattelan | 1960- | 45.07,7.69
+person-max-bain | person | Max Bain | 1994– | 51.7548,-1.2544
+person-max-bense | person | Max Bense | 1910-1995 | 48.78,9.18
+person-max-mathews | person | Max Mathews | 1923–2015 | 42.3548,-71.0838
+person-max-newman | person | Max Newman | 1897-1984 | 52.2,0.12
+person-max-planck | person | Max Planck | 1858-1947 | 52.52,13.4
+person-maximilian-nickel | person | Maximilian Nickel | 2010-2025 | 47.99,7.85
+person-maxwell-nye | person | Maxwell Nye | 1997– | 37.4225,-122.0842
+person-may-britt-moser | person | May-Britt Moser | 1963- | 63.43,10.39
+person-menelaus-of-alexandria | person | Menelaus of Alexandria | c. 70 BC | 31.2,29.92
+person-michael-atiyah | person | Michael Atiyah | 1929-2019 | 51.52,-0.13
+person-michael-barr | person | Michael Barr | 1945- | 43.47,-80.54
+person-michael-bronstein | person | Michael M. Bronstein | 1967- | 51.75,-1.25
+person-michael-bronstein-2 | person | Michael Bronstein | 1978-2026 | 51.52,-0.13
+person-michael-faraday | person | Michael Faraday | 1791-1867 | 51.5,-0.12
+person-michael-freedman | person | Michael Freedman | 1951-2026 | 42.37,-71.11
+person-michael-graziano | person | Michael Graziano | 1950- | 40.35,-74.66
+person-michael-hahn | person | Michael Hahn | - | 42.3736,-71.1097
+person-michael-jordan | person | Michael Jordan | 1963- | 37.87,-122.26
+person-michael-keaton | person | Michael Keaton | 1952- | 39.1,-84.51
+person-michael-morley | person | Michael Morley | 1941-2010 | 43.47,-80.52
+person-michael-polanyi | person | Michael Polanyi | 1891-1976 | 51.75,-1.26
+person-michael-sandel | person | Michael Sandel | 1953- | 42.37,-71.11
+person-michael-tomasello | person | Michael Tomasello | 1950 | 51.34,12.37
+person-michal-kosinski | person | Michal Kosinski | 1985– | 37.4275,-122.1697
+person-michelle-bevilacqua | person | Michele Bevilacqua | 1995– | 47.3769,8.5417
+person-mike-lewis | person | Mike Lewis | 1990– | 37.4037,-122.0737
+person-mike-schuster | person | Mike Schuster | 2010-2020 | 37.39,-122.08
+person-mikhail-belkin | person | Mikhail Belkin | unknown | 32.78,-117.12
+person-milman-parry | person | Milman Parry | 1902-1935 | 40.71,-74.01
+person-minh-nguyen | person | Minh Nguyen | - | 37.77,-122.42
+person-minyoung-huh | person | Minyoung Huh | 2015-2025 | 37.87,-122.27
+person-mitch-kapor | person | Mitch Kapor | 1948- | 40.7128,-74.006
+person-mohammad-gheshlaghi-azar | person | Mohammad Gheshlaghi Azar | active 2016-present | 51.51,-0.13
+person-mohammad-shoeybi | person | Mohammad Shoeybi | active 2015-present | 37.35,-121.95
+person-mor-geva | person | Mor Geva | unknown | 31.92,34.86
+person-moritz-grillo | person | Moritz Grillo | - | 47.3769,8.5417
+person-moritz-helias | person | Moritz Helias | 2022 | 49.4,8.69
+person-mrinank-sharma | person | Mrinank Sharma | - | 37.77,-122.42
+person-myles-tierney | person | Myles Tierney | 1990-2020 | 52.41,-1.52
+person-naftali-tishby | person | Naftali Tishby | 1961- | 31.9,34.81
+person-nagarjuna | person | Nagarjuna | 150-250 | 21.0,78.0
+person-naim-laird | person | Naim Laird | b. 1934 | 40.71,-74.01
+person-nancy-cartwright | person | Nancy Cartwright | 1932- | 55.95,-3.19
+person-nasir-al-din-al-tusi | person | Nasir al-Din al-Tusi | 1201-1274 | 36.26,59.61
+person-nate-rush | person | Nate Rush | - | 37.77,-122.42
+person-nathaniel-rochester | person | Nathaniel Rochester | 1916-2001 | 41.34,-73.88
+person-ned-block | person | Ned Block | 1947- | 40.71,-74.01
+person-neel-nanda | person | Neel Nanda | unknown | 37.77,-122.42
+person-neil-cowan | person | Neil Cowan | 1945- | 30.27,-97.74
+person-neil-zeghidour | person | Neil Zeghidour | 1988– | 46.2044,6.1432
+person-nelson-elhage | person | Nelson Elhage | unknown | 37.77,-122.42
+person-nelson-f-liu | person | Nelson F. Liu | 1995– | 37.4275,-122.1697
+person-nelson-goodman | person | Nelson Goodman | 1906-1998 | 40.71,-74.01
+person-nicholas-carlini | person | Nicholas Carlini | 1988– | 37.4225,-122.0842
+person-nicholas-metropolis | person | Nicholas Metropolis | 1915-1999 | 35.88,-106.3
+person-nicholas-of-cusa | person | Nicholas of Cusa | 1401-1464 | 49.93,6.63
+person-nick-bostrom | person | Nick Bostrom | 1973 | 51.75,-1.26
+person-nick-cave | person | Nick Cave | 1957- | -37.81,144.96
+person-nicolas-affolter | person | Nicolas Affolter | - | 47.37,8.54
+person-nicolaus-copernicus | person | Nicolaus Copernicus | 1473-1543 | 53.01,18.6
+person-niels-bohr | person | Niels Bohr | 1885-1962 | 55.68,12.57
+person-niklaus-wirth | person | Niklaus Wirth | 1928-2024 | 47.37,8.55
+person-nikola-tesla | person | Nikola Tesla | 1856-1943 | 40.71,-74.0
+person-nikolai-lobachevsky | person | Nikolai Lobachevsky | 1792-1856 | 55.79,49.12
+person-nikolaus-kriegeskorte | person | Nikolaus Kriegeskorte | 1973- | 51.34,12.37
+person-nitish-keskar | person | Nitish Shirish Keskar | 1990- | 43.65,-79.38
+person-nitish-srivastava | person | Nitish Srivastava | unknown | 43.65,-79.38
+person-noah-goodman | person | Noah Goodman | 1976- | 37.87,-122.26
+person-noah-shinn | person | Noah Shinn | active 2019-present | 37.87,-122.26
+person-noah-smith | person | Noah A. Smith | 1975– | 47.6594,-122.3039
+person-noam-chomsky | person | Noam Chomsky | 1928 | 42.37,-71.11
+person-noam-shazeer | person | Noam Shazeer | active 2015-present | 37.39,-122.08
+person-nora-belrose | person | Nora Belrose | 2018-2025 | 39.83,-98.58
+person-norbert-wiener | person | Norbert Wiener | 1894-1964 | 42.36,-71.06
+person-norman-koch | person | Norman Koch | 2020-2026 | 51.05,13.74
+person-norman-steenrod | person | Norman Steenrod | 1910-1971 | 42.28,-83.74
+person-ofir-press | person | Ofir Press | 2018-2025 | 37.77,-122.42
+person-olaf-ronneberger | person | Olaf Ronneberger | unknown | 48.52,9.04
+person-ole-johan-dahl | person | Ole-Johan Dahl | 1922-2002 | 59.91,10.75
+person-oliver-heaviside | person | Oliver Heaviside | 1850-1925 | 51.51,-0.13
+person-olivia-caramello | person | Olivia Caramello | 1958- | 43.72,10.4
+person-omar-khattab | person | Omar Khattab | 1990– | 37.4275,-122.1697
+person-oriol-vinyals | person | Oriol Vinyals | 1984– | 51.5112,-0.1335
+person-oskar-morgenstern | person | Oskar Morgenstern | 1902-1993 | 48.21,16.37
+person-otto-von-guericke | person | Otto von Guericke | 1602-1686 | 52.13,11.64
+person-p-c-mahalanobis | person | P. C. Mahalanobis | 1893-1972 | 22.57,88.36
+person-panini | person | Pāṇini | c. 4th century BC | 21.0,78.0
+person-parmenides | person | Parmenides | -515--450 | 40.06,15.31
+person-patricia-churchland | person | Patricia Churchland | 1946 | 32.87,-117.23
+person-patrick-hayes | person | Patrick Hayes | b. 1951 | 55.95,-3.19
+person-patrick-lewis | person | Patrick Lewis | active 2016-present | 37.44,-122.18
+person-paul-allen | person | Paul Allen | 1953-2018 | 35.08,-106.65
+person-paul-baran | person | Paul Baran | 1926-1993 | 34.02,-118.48
+person-paul-christiano | person | Paul Christiano | active 2012-present | 37.77,-122.42
+person-paul-churchland | person | Paul Churchland | 1942 | 32.87,-117.23
+person-paul-werbos | person | Paul Werbos | 1937-present | 42.38,-71.11
+person-pauline-luc | person | Pauline Luc | 1993– | 51.5112,-0.1335
+person-pedro-domingos | person | Pedro Domingos | 1964- | 47.66,-122.31
+person-pedro-reviriego | person | Pedro Reviriego | 1970- | 39.4699,-0.3763
+person-per-martin-lof | person | Per Martin-Löf | 1942- | 59.3293,18.0686
+person-percy-liang | person | Percy Liang | 1983- | 37.87,-122.26
+person-peter-auer | person | Peter Auer | 1966- | 49.02,12.1
+person-peter-clark | person | Peter Clark | active 2010-present | 47.61,-122.33
+person-peter-dayan | person | Peter Dayan | 1960- | 51.52,-0.13
+person-peter-gustav-lejeune-dirichlet | person | Peter Gustav Lejeune Dirichlet | 1805-1859 | 51.1,17.03
+person-peter-johnstone | person | Peter T. Johnstone | 1944- | 52.41,-1.52
+person-peter-naur | person | Peter Naur | 1929-2001 | 55.6761,12.5683
+person-peter-shaw | person | Peter Shaw | 2015-2020 | 37.39,-122.08
+person-peter-singer | person | Peter Singer | 1946- | 40.35,-74.66
+person-philip-gage | person | Philip Gage | 1990-2000 | 51.51,-0.13
+person-philipp-petersen | person | Philipp Petersen | 1983- | 49.2339,6.9915
+person-phillip-isola | person | Phillip Isola | 1985– | 42.3601,-71.0942
+person-philo-farnsworth | person | Philo Farnsworth | 1906-1971 | 37.77,-122.42
+person-pierre-casteran | person | Pierre Castéran | 1963– | 48.8462,2.3372
+person-pierre-de-fermat | person | Pierre de Fermat | 1607-1665 | 43.6,1.44
+person-pierre-deligne | person | Pierre Deligne | 1944- | 50.85,4.35
+person-pierre-simon-laplace | person | Pierre-Simon Laplace | 1749-1827 | 48.85,2.35
+person-pieter-abbeel | person | Pieter Abbeel | 1980- | 37.87,-122.26
+person-pingala | person | Pingala | c. 3rd-1st century BC | 21.0,78.0
+person-plato | person | Plato | c. 428-348 BC | 37.98,23.73
+person-pliny-the-elder | person | Pliny the Elder | 23-79 | 41.9,12.5
+person-plotinus | person | Plotinus | 204-270 | 41.9,12.5
+person-plutarch | person | Plutarch | c.46-120 CE | 38.49,23.02
+person-prajit-ramachandran | person | Prajit Ramachandran | active 2015-present | 37.39,-122.08
+person-ptolemy-v-epiphanes | person | Ptolemy V Epiphanes | c. 210-181 BC | 31.2,29.92
+person-pythagoras | person | Pythagoras | c. 570-495 BC | 37.75,26.96
+person-qingyang-wu | person | Qingyang Wu | 1998– | 43.0731,-89.4012
+person-quoc-le | person | Quoc V. Le | 1980- | 37.3861,-122.0838
+person-rachel-moran | person | Rachel Moran | - | 47.61,-122.33
+person-radford-neal | person | Radford Neal | 1958- | 43.66,-79.4
+person-radu-diaconescu | person | Radu Diaconescu | 1945-2011 | 44.43,26.1
+person-rafael-rafailov | person | Rafael Rafailov | active 2018-present | 37.43,-122.17
+person-rajat-raina | person | Rajat Raina | b. 1983 | 37.43,-122.17
+person-rajesh-rao | person | Rajesh P. N. Rao | 1966- | 30.27,-97.74
+person-ramon-llull | person | Ramon Llull | c. 1232-1316 | 39.57,2.65
+person-raoul-bott | person | Raoul Bott | 1923-2005 | 40.34,-74.66
+person-ray-kurzweil | person | Ray Kurzweil | 1948- | 42.37,-71.11
+person-ray-solomonoff | person | Ray Solomonoff | 1934-1996 | 42.36,-71.06
+person-rene-descartes | person | René Descartes | 1596-1650 | 48.85,2.35
+person-richard-bellman | person | Richard Bellman | 1920-1984 | 39.99,-105.27
+person-richard-dawkins | person | Richard Dawkins | 1941 | 51.75,-1.26
+person-richard-feynman | person | Richard Feynman | 1918-1988 | 34.14,-118.13
+person-richard-gregory | person | Richard Gregory | 1937-2020 | 51.45,-2.59
+person-richard-hamilton | person | Richard Hamilton | 1942-2026 | 37.44,-122.15
+person-richard-s-sutton | person | Richard S. Sutton | b. 1954 | 53.55,-113.49
+person-richard-socher | person | Richard Socher | b. 1985 | 37.43,-122.17
+person-richard-stallman | person | Richard Stallman | 1953- | 42.36,-71.06
+person-richard-sutton | person | Richard Sutton | 1953-present | 53.55,-113.49
+person-richard-wrangham | person | Richard Wrangham | 1951- | 42.37,-71.11
+person-rico-sennrich | person | Rico Sennrich | 2010-2020 | 55.95,-3.19
+person-rik-adriaensen | person | Rik Adriaensen | - | 50.8503,4.6997
+person-rina-dechter | person | Rina Dechter | 1951- | 36.99,-122.06
+person-rishi-sunak | person | Rishi Sunak | 1980- | 51.51,-0.13
+person-rob-hyndman | person | Rob Hyndman | 1965- | -37.91,145.13
+person-rob-pike | person | Rob Pike | 1958- | 40.71,-74.4
+person-robbie-barrat | person | Robbie Barrat | 1986- | 25.76,-80.19
+person-robert-axelrod | person | Robert Axelrod | 1943- | 42.28,-83.74
+person-robert-brandom | person | Robert B. Brandom | 1950- | 39.83,-98.58
+person-robert-colmerauer | person | Robert Colmerauer | 1940-2021 | 43.29,5.38
+person-robert-frost | person | Robert Frost | 1874-1963 | 44.02,-71.5
+person-robert-goldblatt | person | Robert Goldblatt | 1943- | 42.89,-78.88
+person-robert-griesemer | person | Robert Griesemer | 1956- | 37.38,-122.08
+person-robert-hooke | person | Robert Hooke | 1635-1703 | 51.51,-0.13
+person-robert-k-merton | person | Robert K. Merton | 1910-2003 | 40.81,-73.96
+person-robert-kent | person | Robert E. Kent | 2000-2015 | 39.83,-98.58
+person-robert-kowalski | person | Robert Kowalski | 1941- | 55.95,-3.19
+person-robert-lang | person | Robert J. Lang | 1952- | 42.37,-71.12
+person-robert-leibler | person | Robert Leibler | 1922-1999 | 39.83,-98.58
+person-robert-metcalfe | person | Robert Metcalfe | 1946- | 37.44,-122.16
+person-robert-nathan | person | Robert Nathan | 1924-2020 | 34.15,-118.14
+person-robert-noyce | person | Robert Noyce | 1927-1990 | 37.39,-122.08
+person-robert-nozick | person | Robert Nozick | 1938-2022 | 42.37,-71.11
+person-robert-of-chester | person | Robert of Chester | c. 1075-c. 1149 | 53.2,-2.89
+person-robert-r-heckel | person | Robert R. Heckel | unknown | 47.38,8.54
+person-robert-tibshirani | person | Robert Tibshirani | 1956- | 37.43,-122.17
+person-robert-trivers | person | Robert Trivers | 1941-present | 40.34,-74.66
+person-robert-w-brednich | person | Rolf Wilhelm Brednich | 1955- | 51.539,9.9361
+person-robin-dunbar | person | Robin Dunbar | 1949- | 51.75,-1.26
+person-robin-milner | person | Robin Milner | 1934-2010 | 52.2053,0.1218
+person-robin-rombach | person | Robin Rombach | 1991– | 48.1441,11.5693
+person-roger-conant | person | Roger Conant | 1911-1994 | 39.83,-98.58
+person-roger-hindley | person | Roger Hindley | 1927- | 56.3364,-2.8021
+person-roger-penrose | person | Roger Penrose | 1931 | 52.2,0.12
+person-roger-shepard | person | Roger Shepard | 1914-2012 | 37.43,-122.17
+person-roman-vershynin | person | Roman Vershynin | 1981- | 33.6846,-117.8265
+person-ronald-a-fisher | person | Ronald A. Fisher | 1890-1962 | 53.41,-2.98
+person-ronald-brown | person | Ronald Brown | b. 1936 | 55.95,-3.19
+person-ronald-fisher | person | Ronald Fisher | 1890-1962 | 51.51,-0.13
+person-ronald-howard | person | Ronald Howard | 1934-2005 | 37.43,-122.17
+person-ronald-j-williams | person | Ronald J. Williams | 1958-present | 32.72,-117.16
+person-rosalind-franklin | person | Rosalind Franklin | 1920-1958 | 51.51,-0.13
+person-ross-girshick | person | Ross Girshick | unknown | 37.87,-122.26
+person-rowan-zellers | person | Rowan Zellers | active 2017-present | 47.61,-122.33
+person-rudolf-carnap | person | Rudolf Carnap | 1891-1970 | 39.83,-98.58
+person-rudolf-kalman | person | Rudolf Kalman | 1930-2016 | 30.28,-97.74
+person-rudolf-kalman-2 | person | Rudolf Kálmán | 1930-2016 | 47.5,19.04
+person-rudolf-virchow | person | Rudolf Virchow | 1821-1902 | 52.52,13.4
+person-ruibin-xiong | person | Ruibin Xiong | 2015-2020 | 39.9,116.41
+person-rumi | person | Jalal ad-Din Rumi | 1207-1273 | 36.76,66.9
+person-rupesh-srivastava | person | Rupesh Kumar Srivastava | unknown | 48.52,9.04
+person-ruth-lichterman | person | Ruth Lichterman | 1926- | 39.95,-75.2
+person-s-i-hayakawa | person | S. I. Hayakawa | 1901-1989 | 42.36,-71.06
+person-saining-xie | person | Saining Xie | 1991– | 40.7295,-73.9965
+person-sam-mccandlish | person | Sam McCandlish | 1985- | 37.7749,-122.4194
+person-samuel-butler | person | Samuel Butler | 1835-1902 | 53.41,-2.99
+person-samuel-eilenberg | person | Samuel Eilenberg | 1913-1998 | 42.28,-83.74
+person-samuel-gershman | person | Samuel J. Gershman | 1978- | 42.37,-71.11
+person-samuel-l-smith | person | Samuel L. Smith | 2015-2019 | 51.52,-0.13
+person-samuel-morse | person | Samuel Morse | 1791-1872 | 40.71,-74.0
+person-samyam-rajbhandari | person | Samyam Rajbhandari | active 2016-present | 47.67,-122.12
+person-sangmin-lee | person | Sangmin Lee | - | 37.5665,126.978
+person-sanjoy-mitter | person | Sanjoy Mitter | 1949- | 40.4406,-79.9959
+person-santiago-ramon-y-cajal | person | Santiago Ramón y Cajal | 1852-1934 | 40.42,-3.7
+person-saunders-mac-lane | person | Saunders Mac Lane | 1909-2005 | 42.37,-71.12
+person-saurav-kadavath | person | Saurav Kadavath | 1995– | 37.7749,-122.4194
+person-scott-johnson | person | Scott Johnson | 1967-1975 | 40.89,-74.43
+person-scott-mednick | person | Scott Mednick | 1952 | 32.87,-117.23
+person-sean-eddy | person | Sean Eddy | 1965- | 52.08,0.18
+person-sean-welleck | person | Sean Welleck | 1988– | 43.4643,-80.5204
+person-sebastian-ruder | person | Sebastian Ruder | 1985– | 51.7548,-1.2544
+person-sebastien-bubeck | person | Sébastien Bubeck | 1985– | 47.674,-122.1215
+person-seda-aral | person | Seda Aral | 1970- | 42.37,-71.11
+person-seneca | person | Seneca the Younger | c.4 BCE-65 CE | 37.88,-4.78
+person-sepp-hochreiter | person | Sepp Hochreiter | b. 1966 | 47.07,15.44
+person-seppo-linnainmaa | person | Seppo Linnainmaa | b. 1938 | 60.17,24.94
+person-sergey-brin | person | Sergey Brin | 1973 | 37.39,-122.08
+person-sergey-ioffe | person | Sergey Ioffe | 1983- | 59.93,30.36
+person-sergey-levine | person | Sergey Levine | 1985- | 37.87,-122.26
+person-seymour-papert | person | Seymour Papert | 1928-2016 | 42.37,-71.12
+person-shaoqing-ren | person | Shaoqing Ren | unknown | 37.39,-122.08
+person-shiing-shen-chen | person | Shiing-Shen Chern | 1911-2004 | 37.87,-122.26
+person-shinji-nishimoto | person | Shinji Nishimoto | 1981- | 37.87,-122.26
+person-shivam-garg | person | Shivam Garg | 1995– | 42.3601,-71.0942
+person-shixiang-shane-gu | person | Shixiang Shane Gu | 1990– | 47.6594,-122.3039
+person-shizuo-kakutani | person | Shizuo Kakutani | 1926-2024 | 35.68,139.69
+person-shunichi-amari | person | Shunichi Amari | b. 1943 | 35.68,139.69
+person-shunryu-suzuki | person | Shunryu Suzuki | 1904-1971 | 37.77,-122.42
+person-shunyu-yao | person | Shunyu Yao | active 2018-present | 40.34,-74.66
+person-sida-peng | person | Sida Peng | - | 47.67,-122.12
+person-sidney-altman | person | Sidney Altman | 1932-2020 | 40.68,-73.94
+person-sigmund-freud | person | Sigmund Freud | 1856-1939 | 48.21,16.37
+person-simeon-denis-poisson | person | Siméon Denis Poisson | 1781-1840 | 48.85,2.35
+person-simon-donaldson | person | Simon Donaldson | 1957-2026 | 51.75,-1.26
+person-simon-stevin | person | Simon Stevin | 1548-1620 | 51.21,3.22
+person-socrates | person | Socrates | c. 470-399 BC | 37.98,23.73
+person-solomon-kullback | person | Solomon Kullback | 1905-1993 | 38.89,-77.08
+person-solomon-lefschetz | person | Solomon Lefschetz | 1881-1976 | 40.71,-74.01
+person-sonja-diekelmann | person | Sonja Diekelmann | - | 48.516,9.1796
+person-soren-kierkegaard | person | Søren Kierkegaard | 1813-1855 | 55.68,12.57
+person-sorin-udrescu | person | Sorin Udrescu | 1979- | 51.75,-1.26
+person-sourya-basu | person | Sourya Basu | - | 30.27,-97.74
+person-spinoza | person | Benedictus de Spinoza | 1632-1677 | 52.37,4.9
+person-stanislas-dehaene | person | Stanislas Dehaene | 1965 | 48.85,2.35
+person-stanisław-ulam | person | Stanisław Ulam | 1909-1984 | 35.88,-106.3
+person-stanley-miller | person | Stanley Miller | 1930-2007 | 41.88,-87.63
+person-stefano-ermon | person | Stefano Ermon | 1980– | 37.4275,-122.1697
+person-stephanie-lin | person | Stephanie Lin | 1992– | 47.6594,-122.3039
+person-stephen-bates | person | Stephen Bates | 1977- | 40.34,-74.66
+person-stephen-muggleton | person | Stephen Muggleton | 1961- | 51.75,-1.26
+person-stephen-robertson | person | Stephen Robertson | 1960– | 52.2043,0.1149
+person-stephen-smale | person | Stephen Smale | 1930-2021 | 37.87,-122.26
+person-steve-awodey | person | Steve Awodey | 1990-2020 | 52.41,-1.52
+person-steve-bannon | person | Steve Bannon | 1953- | 40.71,-74.01
+person-steve-jobs | person | Steve Jobs | 1955-2011 | 37.32,-122.03
+person-steve-kramer | person | Steve Kramer | - | 43.21,-71.56
+person-steve-wager | person | Steve Wager | 1981- | 37.43,-122.17
+person-steven-loewenstein | person | Steven Loewenstein | 1947-2016 | 40.44,-79.94
+person-stuart-hameroff | person | Stuart Hameroff | 1947- | 32.23,-110.95
+person-stuart-lloyd | person | Stuart Lloyd | 1926- | 40.89,-74.43
+person-stuart-russell | person | Stuart Russell | 1962 | 37.87,-122.26
+person-subrahmanyan-chandrasekhar | person | Subrahmanyan Chandrasekhar | 1910-1995 | 12.97,77.59
+person-sunny-yu | person | Sunny Yu | - | 37.87,-122.26
+person-sushruta | person | Sushruta | c. 300 BC | 21.0,78.0
+person-svetlana-kirillov | person | Svetlana Kirillov | - | 50.08,14.44
+person-tairan-fu | person | Tairan Fu | - | 40.4168,-3.7038
+person-takeshi-kojima | person | Takeshi Kojima | active 2019-present | 37.77,-122.42
+person-telemaque-jegou | person | Télemaque Jégou | 1985– | 48.8566,2.3522
+person-terence-tao | person | Terence Tao | 1975- | 34.07,-118.44
+person-terry-winograd | person | Terry Winograd | 1946-present | 42.37,-71.11
+person-thales-of-miletus | person | Thales of Miletus | c. 585-480 BC | 37.53,27.28
+person-theo-lutz | person | Theo Lutz | 1932-2010 | 48.78,9.18
+person-theodor-schwann | person | Theodor Schwann | 1810-1882 | 51.16,6.69
+person-theophrastus | person | Theophrastus | c. 371-287 BCE | 37.98,23.73
+person-thomas-bayes | person | Thomas Bayes | c. 1701-1761 | 51.51,-0.13
+person-thomas-cover | person | Thomas Cover | 1937-2016 | 40.89,-74.43
+person-thomas-edison | person | Thomas Edison | 1847-1931 | 40.71,-74.0
+person-thomas-etter | person | Thomas Etter | 1970-2010 | 39.83,-98.58
+person-thomas-hull | person | Thomas C. Hull | unknown | 39.34,-82.1
+person-thomas-kurtz | person | Thomas Kurtz | 1929- | 42.99,-72.33
+person-thomas-metzinger | person | Thomas Metzinger | 1958- | 51.53,9.93
+person-thomas-nagel | person | Thomas Nagel | 1937 | 40.71,-74.0
+person-thomas-newcomen | person | Thomas Newcomen | 1664-1729 | 50.26,-5.05
+person-thomas-scanlon | person | Thomas Scanlon | 1940- | 42.37,-71.11
+person-thoralf-skolem | person | Thoralf Skolem | 1887-1963 | 59.91,10.75
+person-tim-berners-lee | person | Tim Berners-Lee | 1955- | 46.233,6.0545
+person-tim-dettmers | person | Tim Dettmers | active 2017-present | 40.44,-79.99
+person-tim-salimans | person | Tim Salimans | 1992– | 37.7749,-122.4194
+person-timnit-gebru | person | Timnit Gebru | 1986- | 37.77,-122.42
+person-timothee-darcet | person | Timothée Darcet | 1996– | 37.4037,-122.0737
+person-timothee-schick | person | Timo Schick | 1994– | 47.6594,-122.3039
+person-timothee-schick-2 | person | Timothee Schick | 2020-2026 | 37.43,-122.16
+person-toby-ord | person | Toby Ord | 1988- | 51.75,-1.26
+person-tom-brown | person | Tom B. Brown | 2016-2026 | 37.77,-122.42
+person-tom-conerly | person | Tom Conerly | 1993– | 37.7749,-122.4194
+person-tom-henighan | person | Tom Henighan | 1993– | 37.7749,-122.4194
+person-tom-kilburn | person | Tom Kilburn | 1923-2001 | 53.47,-2.23
+person-tomas-mikolov | person | Tomáš Mikolov | b. 1979 | 50.08,14.42
+person-tommy-flowers | person | Tommy Flowers | 1905-1998 | 51.5,-0.12
+person-tongzhou-wang | person | Tongzhou Wang | 1993– | 42.3601,-71.0942
+person-torsten-wiesel | person | Torsten Wiesel | b. 1929 | 40.71,-74.01
+person-trenton-bricken | person | Trenton Bricken | 2018-2025 | 37.77,-122.42
+person-tri-dao | person | Tri Dao | active 2019-present | 37.43,-122.17
+person-tullio-levi-civita | person | Tullio Levi-Civita | 1873-1941 | 45.46,9.19
+person-tycho-brahe | person | Tycho Brahe | 1546-1601 | 55.69,11.9
+person-tze-leung-lai | person | Tze Leung Lai | 1945- | 37.87,-122.26
+person-valentina-tereshkova | person | Valentina Tereshkova | 1937-present | 54.5,36.26
+person-vardan-papyan | person | Vardan Papyan | - | 40.3431,-74.6551
+person-vernor-vinge | person | Vernor Vinge | 1944- | 32.72,-117.16
+person-victor-chernozhukov | person | Victor Chernozhukov | 1971- | 42.36,-71.09
+person-victor-lamme | person | Victor Lamme | 1961- | 52.37,4.89
+person-vincent-blondel | person | Vincent Blondel | 1972- | 43.72,7.29
+person-vincent-dumoulin | person | Vincent Dumoulin | 1991– | 45.5017,-73.5673
+person-vinod-nair | person | Vinod Nair | active 2008-present | 43.65,-79.38
+person-vint-cerf | person | Vint Cerf | 1943- | 40.7128,-74.006
+person-vladimir-vapnik | person | Vladimir Vapnik | b. 1936 | 40.84,-74.42
+person-volker-springel | person | Volker Springel | unknown | 48.26,11.67
+person-volodymyr-mnih | person | Volodymyr Mnih | 1988-present | 51.51,-0.13
+person-w-ross-ashby | person | W. Ross Ashby | 1903-1972 | 54.0,-2.0
+person-walter-brattain | person | Walter Brattain | 1902-1987 | 40.76,-74.39
+person-walter-cady | person | Walter Cady | 1878-1960 | 38.9,-77.03
+person-walter-pitts | person | Walter Pitts | 1923-1969 | 40.44,-79.99
+person-walther-mayer | person | Walther Mayer | 1894-1943 | 48.21,16.37
+person-warren-marrison | person | Warren Marrison | 1894-1980 | 40.76,-74.39
+person-warren-mcculloch | person | Warren McCulloch | 1898-1969 | 41.88,-87.63
+person-wei-zhang | person | Wei Zhang | 1988-2010 | 34.69,135.5
+person-wendell-kelley | person | Wendell Kelley | b. c. 1925 | 39.83,-98.58
+person-werner-heisenberg | person | Werner Heisenberg | 1901-1976 | 48.14,11.58
+person-werner-wengert | person | Werner Wengert | active 1960-present | 40.11,-88.22
+person-wernher-von-braun | person | Wernher von Braun | 1912-1977 | 34.73,-86.58
+person-wilfrid-hodges | person | Wilfrid Hodges | 1943- | 52.21,0.12
+person-wilfrid-sellars | person | Wilfrid Sellars | 1912-1989 | 44.98,-93.27
+person-wilhelm-lenz | person | Wilhelm Lenz | 1888-1957 | 51.17,10.45
+person-william-chamberlain | person | William Chamberlain | b. c. 1945 | 39.83,-98.58
+person-william-cullen | person | William Cullen | 1710-1790 | 55.87,-4.28
+person-william-fox-talbot | person | William Henry Fox Talbot | 1800-1877 | 51.51,-0.13
+person-william-g-chase | person | William G. Chase | 1922-2012 | 42.28,-83.74
+person-william-hamilton | person | William Hamilton | 1990- | 42.36,-71.09
+person-william-james | person | William James | 1842-1910 | 42.37,-71.11
+person-william-johnson | person | William B. Johnson | 1945- | 41.8781,-87.6298
+person-william-kahan | person | William Kahan | 1929-2009 | 37.8715,-122.2585
+person-william-macaskill | person | William MacAskill | 1990- | 51.75,-1.26
+person-william-of-ockham | person | William of Ockham | 1285-1347 | 51.75,-1.26
+person-william-peebles | person | William Peebles | 1992– | 37.4037,-122.0737
+person-william-rowan-hamilton | person | William Rowan Hamilton | 1805-1865 | 53.35,-6.26
+person-william-shockley | person | William Shockley | 1910-1989 | 40.76,-74.39
+person-william-thompson | person | William Thompson | 1905-1990 | 41.79,-87.6
+person-william-thomson-lord-kelvin | person | William Thomson (Lord Kelvin) | 1824-1907 | 55.86,-4.25
+person-william-thurston | person | William Thurston | 1946-2012 | 37.44,-122.15
+person-willis-carrier | person | Willis Carrier | 1876-1950 | 42.89,-78.88
+person-wilson-yan | person | Wilson Yan | 1995– | 37.8715,-122.2585
+person-witold-hurewicz | person | Witold Hurewicz | 1904-1958 | 40.71,-74.01
+person-woldemar-voigt | person | Woldemar Voigt | 1850-1919 | 48.52,9.06
+person-wolfgang-maass | person | Wolfgang Maass | 1965 | 47.07,15.44
+person-wolfgang-von-kempelen | person | Wolfgang von Kempelen | 1737-1804 | 48.21,16.37
+person-wolfram-schultz | person | Wolfram Schultz | 1960 | 52.52,13.4
+person-x-y-han | person | X. Y. Han | - | 40.3431,-74.6551
+person-xavier-glorot | person | Xavier Glorot | active 2005-present | 45.5,-73.57
+person-xiaoman-ding | person | Xiaoman Ding | - | 42.3736,-71.1097
+person-xuezhi-wang | person | Xuezhi Wang | 2018-2024 | 37.39,-122.08
+person-yang-song | person | Yang Song | 1990– | 37.4275,-122.1697
+person-yann-dauphin | person | Yann Dauphin | unknown | 37.77,-122.42
+person-yann-lecun | person | Yann LeCun | b. 1960 | 40.71,-74.01
+person-yanping-huang | person | Yanping Huang | active 2015-present | 37.39,-122.08
+person-yarin-gal | person | Yarin Gal | 1985- | 52.2,0.12
+person-yaron-lipman | person | Yaron Lipman | 1982– | 32.7763,35.0263
+person-yevgeny-prigozhin | person | Yevgeny Prigozhin | 1961-2023 | 59.93,30.36
+person-yilun-du | person | Yilun Du | active 2015-present | 42.36,-71.09
+person-yoav-goldberg | person | Yoav Goldberg | 2021 | 32.78,35.02
+person-yochai-benkler | person | Yochai Benkler | 1965- | 42.37,-71.11
+person-yong-jae-lee | person | Yong Jae Lee | 1970– | 43.0731,-89.4012
+person-yoram-freund | person | Yoram Freund | 1966- | 37.43,-122.17
+person-yoshua-bengio | person | Yoshua Bengio | b. 1964 | 45.5,-73.57
+person-yuntao-bai | person | Yuntao Bai | active 2017-present | 37.77,-122.42
+person-yury-malkov | person | Yury Malkov | active 2013-present | 55.75,37.62
+person-yuval-noah-harari | person | Yuval Noah Harari | 1976- | 31.78,35.23
+person-yuxi-li | person | Yuxi Li | 2020-2025 | 34.34,108.94
+person-yves-bertot | person | Yves Bertot | 1957– | 48.8566,2.3522
+person-zalan-borsos | person | Zalán Borsos | 1991– | 46.2044,6.1432
+person-zeno-of-elea | person | Zeno of Elea | c. 490-430 BC | 40.06,15.31
+person-zhihong-shao | person | Zhihong Shao | active 2018-present | 31.82,117.23
+person-zohran-mamdani | person | Zohran Mamdani | 1991- | 40.71,-74.01
+place-abdera | place | Abdera |  | 40.92,24.54
+place-abu-dhabi | place | Abu Dhabi |  | 24.45,54.65
+place-accra | place | Accra |  | 5.6,-0.19
+place-africa | place | Africa |  | 3.0,21.0
+place-albuquerque | place | Albuquerque |  | 35.08,-106.65
+place-alcatraz-island | place | Alcatraz Island |  | 37.83,-122.48
+place-alexandria | place | Alexandria |  | 31.2,29.92
+place-amsterdam | place | Amsterdam |  | 52.37,4.9
+place-antarctica | place | Antarctica |  | -75.0,0.0
+place-antikythera | place | Antikythera | ancient island | 35.83,24.1
+place-apollo-11-rockshelter | place | Apollo 11 Rockshelter | c. 80,000 years old | -20.57,16.47
+place-argentina | place | Argentina | country | -34.61,-64.18
+place-assyria | place | Assyria |  | 36.36,43.15
+place-athens | place | Athens | ancient city | 37.98,23.73
+place-atlanta-georgia | place | Atlanta (Georgia) |  | 33.75,-84.39
+place-austin-texas | place | Austin (Texas) |  | 30.27,-97.74
+place-australia | place | Australia |  | -25.0,134.0
+place-babylon | place | Babylon |  | 32.54,44.42
+place-baghdad | place | Baghdad |  | 33.31,44.36
+place-bali | place | Bali |  | -8.45,115.25
+place-beijing-china | place | Beijing (China) |  | 39.9,116.41
+place-bengaluru | place | Bengaluru |  | 12.97,77.59
+place-berkeley | place | Berkeley | city | 37.87,-122.26
+place-berlin | place | Berlin | city | 52.52,13.4
+place-blaricum | place | Blaricum |  | 52.27,5.25
+place-bletchley-park | place | Bletchley Park | WWII site | 51.99,-0.66
+place-blombos-cave | place | Blombos Cave | c. 75,000 years ago | -34.41,21.2
+place-border-cave | place | Border Cave |  | -26.26,31.96
+place-borneo | place | Borneo | island | -0.55,117.0
+place-boston | place | Boston |  | 42.36,-71.06
+place-boxgrove | place | Boxgrove |  | 50.99,-0.55
+place-bristol | place | Bristol | city | 51.45,-2.59
+place-brno | place | Brno |  | 49.1951,16.6068
+place-bucharest | place | Bucharest |  | 44.43,26.1
+place-buffalo | place | Buffalo |  | 42.89,-78.88
+place-burbank | place | Burbank | - | 34.18,-118.31
+place-burgess-shale | place | Burgess Shale |  | 51.44,-116.47
+place-cairo | place | Cairo |  | 30.04,31.24
+place-california | place | California |  | 37.2,-119.2
+place-cambridge-england | place | Cambridge | city | 52.2,0.12
+place-canada | place | Canada |  | 56.13,-106.35
+place-charnwood-forest | place | Charnwood Forest |  | 52.71,-1.32
+place-chengjiang | place | Chengjiang |  | 25.0,102.0
+place-chester | place | Chester |  | 53.2,-2.89
+place-china | place | China | country | 35.86,104.19
+place-chisinau | place | Chisinau | - | 47.01,28.86
+place-clazomenae | place | Clazomenae |  | 38.47,27.21
+place-cologne | place | Cologne | - | 50.94,6.96
+place-colorado | place | Colorado |  | 39.0,-105.5
+place-como | place | Como |  | 45.81,9.08
+place-constantinople-istanbul | place | Constantinople (Istanbul) |  | 41.01,28.98
+place-continental-europe | place | Continental Europe |  | 48.5,10.0
+place-copenhagen | place | Copenhagen | - | 55.68,12.57
+place-croton | place | Croton (Crotone) | ancient city | 39.08,17.12
+place-cueva-de-las-manos | place | Cueva de las Manos | c. 7300 BC-700 AD | -47.23,-69.19
+place-cuny | place | City University of New York (CUNY) | 1961– | 40.8075,-73.9626
+place-dallas-texas | place | Dallas (Texas) |  | 32.78,-96.8
+place-dartmouth | place | Dartmouth | town | 43.7,-72.28
+place-delft | place | Delft |  | 52.01,4.36
+place-delhi | place | Delhi |  | 28.61,77.21
+place-detroit | place | Detroit |  | 42.33,-83.05
+place-dolni-vestonice | place | Dolni Vestonice | c. 27,000-20,000 BC | 49.26,17.08
+place-dome-c | place | Dome C |  | -75.08,123.38
+place-dome-c-epica | place | Dome C (EPICA), Antarctica | est. 1996 | -75.1,123.35
+place-dresden | place | Dresden |  | 51.05,13.74
+place-dresser-formation | place | Dresser Formation |  | -21.0,118.7
+place-ediacara-hills | place | Ediacara Hills |  | -34.8,139.3
+place-edinburgh | place | Edinburgh | city | 55.95,-3.19
+place-egypt | place | Egypt | country | 26.82,30.8
+place-elea | place | Elea |  | 40.06,15.31
+place-england | place | England |  | 52.35,-1.95
+place-ephesus | place | Ephesus |  | 37.94,27.34
+place-ethiopia | place | Ethiopia |  | 9.15,40.49
+place-fabriano | place | Fabriano |  | 43.17,13.22
+place-finland | place | Finland | country | 61.92,25.75
+place-florence | place | Florence |  | 43.77,11.26
+place-france | place | France |  | 46.6,2.0
+place-francevillian-group | place | Francevillian Group |  | -1.53,13.15
+place-fraunhofer-erlangen | place | Fraunhofer IIS, Erlangen | 1954– | 49.5879,10.7362
+place-freiburg | place | Freiburg |  | 47.99,7.85
+place-gaoyuzhuang-formation | place | Gaoyuzhuang Formation |  | 39.5,112.5
+place-garmisch | place | Garmisch |  | 47.47,11.17
+place-geneva | place | Geneva |  | 46.2,6.14
+place-georgia-tech | place | Georgia Institute of Technology | 1885– | 33.749,-84.388
+place-germany | place | Germany |  | 51.16,10.45
+place-ghirardelli-square | place | Ghirardelli Square |  | 37.8,-122.42
+place-gorodomlya-island | place | Gorodomlya Island |  | 60.25,32.33
+place-gottingen | place | Göttingen |  | 51.54,9.94
+place-graz | place | Graz |  | 47.07,15.44
+place-greece | place | Greece | country | 39.07,22.12
+place-gwalior | place | Gwalior |  | 26.22,78.17
+place-hangzhou | place | Hangzhou |  | 30.27,120.17
+place-hanover | place | Hanover | city | 52.37,9.73
+place-high-plains | place | High Plains |  | 44.0,-100.0
+place-hiroshima | place | Hiroshima | - | 34.39,132.46
+place-hohle-fels | place | Hohle Fels |  | 48.31,9.34
+place-huntsville | place | Huntsville |  | 34.73,-86.58
+place-india | place | India | country | 20.59,78.96
+place-indus-valley | place | Indus Valley | ancient region | 27.0,68.0
+place-iraq | place | Iraq |  | 33.315,44.365
+place-ishango | place | Ishango |  | -0.136,29.6012
+place-islamabad | place | Islamabad | - | 33.69,73.05
+place-israel | place | Israel |  | 31.05,34.85
+place-isua-supracrustal-belt | place | Isua Supracrustal Belt |  | 65.15,-51.27
+place-italy | place | Italy |  | 42.83,12.84
+place-ithaca | place | Ithaca |  | 42.44,-76.5
+place-japan | place | Japan | country | 36.2,138.25
+place-java | place | Java |  | -7.0,109.5
+place-jebel-irhoud | place | Jebel Irhoud |  | 31.45,-9.55
+place-kaliningrad | place | Kaliningrad (Koenigsberg) | city | 54.71,20.51
+place-kariandusi-west-turkana | place | Kariandusi (West Turkana) |  | 3.11,35.55
+place-kenya | place | Kenya |  | 0.0,37.8
+place-kerala | place | Kerala (Sangamagrama) | 14th c. school | 11.35,75.65
+place-kish | place | Kish | ancient city | 32.48,44.7
+place-kues | place | Kues |  | 49.93,6.63
+place-kusumapura | place | Kusumapura |  | 25.61,85.1
+place-kyoto | place | Kyoto |  | 35.01,135.77
+place-la-marche | place | La Marche |  | 46.42,0.88
+place-lagash | place | Lagash |  | 31.86,46.12
+place-lagos | place | Lagos |  | 6.52,3.38
+place-lake-tanganyika | place | Lake Tanganyika region | prehistoric lake | -2.5,29.0
+place-las-vegas | place | Las Vegas |  | 36.1699,-115.1398
+place-lasserre | place | Lasserre |  | 42.87,0.54
+place-lebombo-mountains | place | Lebombo Mountains | prehistoric range | -25.9,31.52
+place-leiden | place | Leiden |  | 52.16,4.5
+place-leipzig | place | Leipzig |  | 51.34,12.37
+place-lisbon | place | Lisbon |  | 38.72,-9.14
+place-lmu-munich | place | Ludwig Maximilian University of Munich (LMU) | 1472– | 48.1441,11.5693
+place-lomekwi-3 | place | Lomekwi 3 |  | 3.55,35.53
+place-london | place | London | city | 51.51,-0.13
+place-los-alamos | place | Los Alamos |  | 35.88,-106.3
+place-louvain | place | Louvain |  | 50.88,4.7
+place-madrid | place | Madrid |  | 40.4168,-3.7038
+place-magdeburg | place | Magdeburg |  | 52.13,11.64
+place-mainz | place | Mainz |  | 49.99,8.27
+place-manchester | place | Manchester | city | 53.48,-2.24
+place-marseille | place | Marseille |  | 43.3,5.37
+place-melbourne | place | Melbourne | - | -37.81,144.96
+place-memphis | place | Memphis |  | 29.85,31.25
+place-menlo-park | place | Menlo Park |  | 37.45,-122.18
+place-mesopotamia | place | Mesopotamia | ancient region | 33.31,44.36
+place-miami | place | Miami | - | 25.76,-80.19
+place-mid-atlantic-ridge | place | Mid-Atlantic Ridge |  | 37.5,-33.5
+place-miletus | place | Miletus |  | 37.53,27.28
+place-moldova | place | Moldova | - | 47.01,28.86
+place-montreal | place | Montreal |  | 45.5,-73.57
+place-moscow | place | Moscow |  | 55.76,37.62
+place-mount-devin | place | Mount Devin | mountain | 49.25,17.06
+place-mountain-view | place | Mountain View |  | 37.39,-122.08
+place-munich | place | Munich | city | 48.14,11.58
+place-murchison | place | Murchison |  | -36.67,144.15
+place-murray-hill | place | Murray Hill |  | 40.74,-74.4
+place-nairobi | place | Nairobi |  | -1.29,36.82
+place-namibia | place | Namibia |  | -22.95,18.53
+place-neem | place | NEEM |  | 72.57,-56.72
+place-new-hampshire | place | New Hampshire |  | 44.02,-71.5
+place-new-york | place | New York | city | 40.71,-74.01
+place-nigeria | place | Nigeria |  | 9.08,8.68
+place-northern-cape | place | Northern Cape |  | -29.5,21.5
+place-norway | place | Norway |  | 59.91,10.75
+place-novosibirsk | place | Novosibirsk |  | 55.03,82.92
+place-oakland-california | place | Oakland (California) |  | 37.8,-122.27
+place-oflag-xvii-a | place | Oflag XVII-A |  | 48.66,15.31
+place-olduvai-gorge | place | Olduvai Gorge |  | -2.99,35.35
+place-osaka | place | Osaka | city | 34.69,135.5
+place-oxford | place | Oxford |  | 51.75,-1.26
+place-pakistan | place | Pakistan | - | 33.69,73.05
+place-paris | place | Paris | city | 48.86,2.35
+place-patagonia | place | Patagonia | region | -42.0,-70.0
+place-penemunde | place | Peenemünde |  | 54.15,13.81
+place-persia | place | Persia |  | 32.43,53.69
+place-phoenicia | place | Phoenicia | ancient region | 33.75,35.65
+place-pisa | place | Pisa |  | 43.72,10.4
+place-pittsburgh | place | Pittsburgh | - | 40.44,-79.99
+place-pompeii | place | Pompeii |  | 40.75,14.49
+place-prague | place | Prague |  | 50.08,14.44
+place-redmond | place | Redmond | - | 47.67,-122.12
+place-rocky-mountains | place | Rocky Mountains |  | 39.5,-106.0
+place-rome | place | Rome |  | 41.9,12.5
+place-russia | place | Russia |  | 61.52,105.32
+place-sacramento-california | place | Sacramento (California) |  | 38.58,-121.49
+place-saint-petersburg | place | Saint Petersburg | - | 59.93,30.36
+place-salamis | place | Salamis |  | 37.9667,23.45
+place-san-francisco | place | San Francisco |  | 37.77,-122.42
+place-schwetzingen | place | Schwetzingen |  | 49.37,8.35
+place-seoul | place | Seoul |  | 37.57,126.98
+place-serabit-el-khadim | place | Serabit el-Khadim | c. 1700-1550 BCE | 29.52,33.92
+place-shark-bay | place | Shark Bay |  | -26.2,113.4
+place-shenzhen | place | Shenzhen | - | 22.55,114.05
+place-sinai | place | Sinai | peninsula | 29.6,34.0
+place-singapore | place | Singapore |  | 1.35,103.82
+place-south-africa | place | South Africa |  | -29.04,24.68
+place-south-america | place | South America |  | -14.0,-59.0
+place-south-korea | place | South Korea |  | 36.51,127.96
+place-soviet-union | place | Soviet Union | 1922-1991 | 56.0,60.0
+place-spain | place | Spain | country | 40.46,-3.75
+place-stagira | place | Stagira |  | 40.55,24.31
+place-stockholm | place | Stockholm | city | 59.33,18.07
+place-stratzing | place | Stratzing |  | 48.19,15.31
+place-sulawesi | place | Sulawesi | island | -2.3,120.2
+place-sumer | place | Sumer | c. 3200 BCE | 31.32,45.64
+place-summit-camp-greenland | place | Summit Camp (GRIP/NEEM), Greenland | est. 1989 | 72.575,-38.58
+place-susa | place | Susa |  | 32.19,48.26
+place-switzerland | place | Switzerland | country | 46.82,8.23
+place-syracuse | place | Syracuse |  | 37.07,15.29
+place-são-paulo | place | São Paulo |  | -23.55,-46.63
+place-technion-haifa | place | Technion (Israel Institute of Technology) | 1912– | 32.7763,35.0263
+place-texas | place | Texas |  | 31.97,-99.9
+place-the-alps | place | The Alps | mountain range | 46.56,9.5
+place-thessaloniki-greece | place | Thessaloniki (Greece) |  | 40.64,22.94
+place-tokyo | place | Tokyo |  | 35.68,139.69
+place-toronto | place | Toronto | city | 43.65,-79.38
+place-toruń | place | Toruń |  | 53.01,18.6
+place-trinil-java | place | Trinil (Sangiran), Java |  | -7.55,110.9
+place-trondheim | place | Trondheim | - | 63.43,10.39
+place-troy | place | Troy |  | 39.93,26.3
+place-tuebingen | place | Tübingen |  | 48.52,9.04
+place-tunisia | place | Tunisia |  | 33.88,9.5
+place-turin | place | Turin | - | 45.07,7.69
+place-uganda | place | Uganda |  | 1.37,32.29
+place-uillinois | place | University of Illinois at Urbana-Champaign | 1867– | 40.1106,-88.2272
+place-ujjain | place | Ujjain |  | 23.18,75.78
+place-ukraine | place | Ukraine | country | 48.38,31.17
+place-united-arab-emirates | place | United Arab Emirates |  | 23.42,53.85
+place-united-kingdom | place | United Kingdom |  | 54.0,-2.0
+place-united-states | place | United States |  | 39.83,-98.58
+place-upsala | place | Uppsala |  | 59.86,17.64
+place-uruk | place | Uruk |  | 31.32,45.64
+place-utrecht | place | Utrecht |  | 52.09,5.12
+place-uw-madison | place | University of Wisconsin–Madison | 1848– | 43.0731,-89.4012
+place-venice | place | Venice |  | 45.44,12.34
+place-victoria-australia | place | Victoria, Australia |  | -37.81,144.96
+place-victoria-british-columbia | place | Victoria (British Columbia) |  | 48.43,-123.37
+place-vienna | place | Vienna |  | 48.21,16.37
+place-vinca | place | Vinca | c. 4500-4000 BC | 44.78,20.41
+place-vostok-station | place | Vostok Station, Antarctica | est. 1957 | -78.45,106.82
+place-vostok-station-2 | place | Vostok Station |  | -78.46,106.8
+place-wadi-el-hol | place | Wadi el-Hol | c. 1850 BCE | 25.85,32.65
+place-warwick | place | Warwick |  | 52.41,-1.52
+place-washington-dc | place | Washington, D.C. | capital | 38.89,-77.02
+place-waterloo | place | Waterloo |  | 43.47,-80.54
+place-white-sea | place | White Sea |  | 64.5,38.5
+place-wonderwerk-cave | place | Wonderwerk Cave |  | -25.77,24.3
+place-yoho-national-park | place | Yoho National Park |  | 51.3,-116.5
+place-zurich | place | Zurich |  | 47.38,8.54

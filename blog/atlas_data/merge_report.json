@@ -1,0 +1,131 @@
+{
+ "entity_merges": 225,
+ "entity_rejects": [
+  {
+   "name": "Quynh Nguyen",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "John Harer",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Illia Polosukhin",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "David Letscher",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Christian Keup",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Leland McInnes",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Douglas C. Youvan",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Sigmundur Gudmundsson",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  },
+  {
+   "name": "Michal Lewandowski",
+   "type": "person",
+   "problems": [
+    "no-coords"
+   ]
+  }
+ ],
+ "entity_repairs": {
+  "slugs-normalized": 130,
+  "years-from-active": 194,
+  "cited_in-str": 169,
+  "nested-location": 216,
+  "id-generated": 216,
+  "active-missing": 85,
+  "loc-from-name": 81,
+  "conf-defaulted": 74,
+  "year->active": 31
+ },
+ "author_merges": 275,
+ "author_row_rejects": [
+  {
+   "row": [
+    "2017)",
+    null,
+    null,
+    "",
+    1969,
+    0
+   ],
+   "reason": "implausible-name:'2017)'"
+  },
+  {
+   "row": [
+    "2024)",
+    null,
+    null,
+    "",
+    1990,
+    0
+   ],
+   "reason": "implausible-name:'2024)'"
+  },
+  {
+   "row": [
+    "et al.",
+    null,
+    null,
+    "",
+    2020,
+    0
+   ],
+   "reason": "implausible-name:'et al.'"
+  },
+  {
+   "row": [
+    "J3n6",
+    null,
+    null,
+    "",
+    0,
+    0
+   ],
+   "reason": "implausible-name:'J3n6'"
+  }
+ ],
+ "author_repairs": {},
+ "load_errors": [],
+ "missing_files": [],
+ "coverage_missing": [],
+ "entity_dropped_refs": []
+}

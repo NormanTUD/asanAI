@@ -53,6 +53,17 @@
     to   { transform: translate(-40px, -20px); }
   }
 
+  /* Welten-Wechsel: ab Beat 9 (Raum-Welt) schiebt sich eine
+     kühler-violette Schicht über den Hintergrund */
+  .world-shift {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, #221a4a 0%, #0a0714 100%);
+    opacity: 0;
+    transition: opacity 2.5s ease;
+    pointer-events: none;
+  }
+  .world-shift.on { opacity: 0.55; }
+
   /* =========================
      Die Bühne — hier passiert alles
      ========================= */
@@ -62,7 +73,11 @@
     height: 100vh;
     perspective: 1600px;
     overflow: hidden;
+    transform: scale(1.03);
+    transform-origin: center center;
+    transition: transform 2.5s cubic-bezier(0.65, 0, 0.35, 1);
   }
+  .stage.zoomed-out { transform: scale(1); }
 
   /* =========================
      Das Smartphone (CSS-Kunst)
@@ -75,7 +90,16 @@
     transform-origin: center center;
     transition: transform 2.2s cubic-bezier(0.65, 0, 0.35, 1),
                 opacity 1.2s ease;
-    will-change: transform, opacity;
+    will-change: transform, opacity, translate;
+  }
+  /* Ruhendes Handy schwebt sanft auf und ab (komponiert sich mit dem
+     JS-Transform, weil `translate` ein eigenes CSS-Property ist) */
+  .phone.levitate {
+    animation: levitate 4.5s ease-in-out infinite;
+  }
+  @keyframes levitate {
+    0%, 100% { translate: 0 0px; }
+    50%      { translate: 0 -6px; }
   }
 
   .phone-frame {
@@ -108,40 +132,47 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 60px 24px 24px;
+    padding: 52px 16px 16px;
   }
 
   .app-logo {
     font-size: 32px;
     font-weight: 700;
-    color: #4285f4;
     letter-spacing: -1px;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 32px;
+    margin-bottom: 28px;
     opacity: 0;
     transition: opacity 0.8s ease 0.3s;
   }
+  .app-logo.breathe {
+    animation: logoBreathe 3.6s ease-in-out infinite;
+  }
+  @keyframes logoBreathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.045); }
+  }
+  /* „Suche“ — in den vertrauten Farben, aber kein Google */
+  .app-logo .l1 { color: #4285f4; }
   .app-logo .l2 { color: #ea4335; }
   .app-logo .l3 { color: #fbbc04; }
   .app-logo .l4 { color: #4285f4; }
   .app-logo .l5 { color: #34a853; }
-  .app-logo .l6 { color: #ea4335; }
 
   .search-bar {
     width: 100%;
-    height: 48px;
+    height: 44px;
     background: #ffffff;
-    border-radius: 24px;
+    border-radius: 22px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 0 0 1px #dfe1e5;
     display: flex;
     align-items: center;
-    padding: 0 16px;
-    gap: 12px;
+    padding: 0 12px;
+    gap: 10px;
     position: relative;
   }
 
   .search-icon {
-    width: 18px; height: 18px;
+    width: 16px; height: 16px;
     border: 2px solid #9aa0a6;
     border-radius: 50%;
     position: relative;
@@ -150,8 +181,8 @@
   .search-icon::after {
     content: '';
     position: absolute;
-    right: -6px; bottom: -6px;
-    width: 8px; height: 2px;
+    right: -5px; bottom: -5px;
+    width: 7px; height: 2px;
     background: #9aa0a6;
     transform: rotate(45deg);
     border-radius: 1px;
@@ -159,7 +190,7 @@
 
   .search-text {
     flex: 1;
-    font-size: 15px;
+    font-size: 13.5px;
     color: #202124;
     overflow: hidden;
     white-space: nowrap;
@@ -167,7 +198,7 @@
   }
   .search-text .caret {
     display: inline-block;
-    width: 1.5px; height: 18px;
+    width: 1.5px; height: 16px;
     background: #4285f4;
     vertical-align: middle;
     margin-left: 1px;
@@ -178,7 +209,7 @@
   @keyframes blink { 50% { opacity: 0; } }
 
   .mic-btn {
-    width: 32px; height: 32px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -194,24 +225,24 @@
   }
   @keyframes micPulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
-    50%      { box-shadow: 0 0 0 12px rgba(66, 133, 244, 0); }
+    50%      { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
   }
   .mic-icon {
-    width: 14px; height: 20px;
+    width: 11px; height: 16px;
     background: #4285f4;
-    border-radius: 7px 7px 7px 7px;
+    border-radius: 5px 5px 5px 5px;
     position: relative;
   }
   .mic-icon::after {
     content: '';
     position: absolute;
-    bottom: -6px;
+    bottom: -5px;
     left: 50%;
     transform: translateX(-50%);
-    width: 10px; height: 5px;
+    width: 8px; height: 4px;
     border: 2px solid #4285f4;
     border-top: none;
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 8px 8px;
   }
 
   /* Waveform, die sichtbar wird beim Sprechen */
@@ -250,42 +281,391 @@
     50%      { height: 34px; }
   }
 
-  /* Kleiner Zeigefinger / Person, die tippt */
-  .hand-hint {
-    position: absolute;
-    bottom: -50px;
-    right: 40px;
-    font-size: 44px;
+  /* =========================
+     Suche-KI Antwortkarte (mit Websites als Quellen)
+     ========================= */
+  .ai-card {
+    position: relative;
+    width: 100%;
+    margin-top: 14px;
+    min-height: 115px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08), inset 0 0 0 1px rgba(66, 133, 244, 0.12);
     opacity: 0;
-    transition: opacity 0.5s ease;
-    transform: rotate(-15deg);
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    transform: translateY(14px) scale(0.96);
+    transition: opacity 0.8s ease, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+  }
+  .ai-card.on {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .ai-spark {
+    font-size: 15px;
+    line-height: 1;
+    background: linear-gradient(90deg, #4285f4, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ai-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #202124;
+    min-height: 90px;
+  }
+  .ai-text .b {
+    color: #1a73e8;
+    font-weight: 600;
+  }
+  .ai-cursor {
+    display: inline-block;
+    width: 7px; height: 13px;
+    background: #1a73e8;
+    vertical-align: -2px;
+    margin-left: 1px;
+    animation: blink 1s step-end infinite;
+  }
+  /* „Die KI denkt" — drei pulsierende Punkte */
+  .ai-thinking {
+    position: absolute;
+    top: 14px; left: 14px;
+    display: none;
+    gap: 6px;
+    align-items: center;
+  }
+  .ai-thinking.on { display: flex; }
+  .ai-thinking span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #1a73e8;
+    opacity: 0.3;
+    animation: thinkPulse 1.2s ease-in-out infinite;
+  }
+  .ai-thinking span:nth-child(2) { animation-delay: 0.18s; }
+  .ai-thinking span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes thinkPulse {
+    0%, 100% { opacity: 0.25; transform: translateY(0); }
+    50%      { opacity: 1;    transform: translateY(-4px); }
+  }
+  .serp {
+    width: 100%;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 78%, transparent 100%);
+    pointer-events: none;
+  }
+  /* Treffer laden nacheinander, wie eine echte Suchergebnisseite */
+  .result {
+    filter: blur(0.3px);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.7s ease;
+  }
+  .result.r2 { filter: blur(1.2px); }
+  .result.r3 { filter: blur(2.2px); }
+  .serp.on .result.r1 { opacity: 1;    transform: translateY(0); transition-delay: 0.35s; }
+  .serp.on .result.r2 { opacity: 0.82; transform: translateY(0); transition-delay: 0.55s; }
+  .serp.on .result.r3 { opacity: 0.6;  transform: translateY(0); transition-delay: 0.75s; }
+  .res-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2.5px;
+  }
+  .res-fav {
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .res-lines {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .res-name {
+    font-size: 9px;
+    font-weight: 600;
+    color: #202124;
+    line-height: 1.25;
+  }
+  .res-url {
+    font-size: 8px;
+    color: #5f6368;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+  }
+  .res-title {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #1a0dab;
+    line-height: 1.25;
+  }
+  .res-snippet {
+    font-size: 9px;
+    color: #4d5156;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   /* =========================
-     Kontext-Frage („Was passiert da eigentlich?")
+     Beat-Captions (über den Fenstern)
      ========================= */
-  .question-overlay {
+  .beat-caption {
     position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, calc(-50% + 380px));
+    left: 50%;
+    transform: translateX(-50%);
     text-align: center;
-    opacity: 0;
-    transition: opacity 1s ease, transform 1s ease;
-    max-width: 700px;
-    pointer-events: none;
-  }
-  .question-overlay .q-title {
-    font-size: 28px;
+    font-size: 21px;
     font-weight: 300;
     color: var(--ink);
-    letter-spacing: -0.5px;
-    line-height: 1.3;
+    letter-spacing: -0.3px;
+    line-height: 1.4;
+    max-width: 900px;
+    opacity: 0;
+    transition: opacity 1s ease;
+    pointer-events: none;
   }
-  .question-overlay .q-title em {
-    font-style: italic;
-    color: var(--accent);
+  .beat-caption .acc { color: var(--accent); font-weight: 400; }
+  #capCode { top: calc(50% - 272px); }
+  #capPic  { top: calc(50% - 248px); }
+  #capSatz { top: calc(50% - 210px); }
+
+  /* =========================
+     Statement-Folien (große Thesen)
+     ========================= */
+  .statement {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.96);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+    pointer-events: none;
+  }
+  .statement.on {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .statement .st-line1 {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--ink-dim);
+    letter-spacing: -0.2px;
+    margin-bottom: 14px;
+  }
+  .statement .st-line2 {
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.8px;
+  }
+  .statement .st-line2.small {
+    font-size: 36px;
+  }
+  .statement .st-line2 .acc {
+    color: var(--accent-2);
     font-weight: 400;
+  }
+
+  /* =========================
+      Chat-Fenster (Bilder generieren: Prompt → Bild)
+     ========================= */
+  .chat-window {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 480px;
+    transform: translate(-50%, -50%) scale(0.85);
+    background: #10141f;
+    border-radius: 20px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 0 80px rgba(110, 168, 255, 0.18);
+    opacity: 0;
+    transition: transform 1.6s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 1.2s ease;
+    pointer-events: none;
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+  .chat-window.on {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .chat-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 13px 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .chat-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.2px;
+  }
+  .chat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+  .chat-msg {
+    max-width: 85%;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .chat-window.on .chat-msg {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .chat-window.on .chat-msg.user { transition-delay: 0.5s; }
+  .chat-window.on .chat-msg.ai   { transition-delay: 0.9s; }
+  .chat-msg.user {
+    align-self: flex-end;
+    background: rgba(110, 168, 255, 0.16);
+    border: 1px solid rgba(110, 168, 255, 0.35);
+    border-radius: 16px 16px 4px 16px;
+    padding: 10px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .chat-msg.ai {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px 16px 16px 4px;
+    padding: 8px;
+  }
+  .chat-img {
+    display: block;
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 12px;
+    opacity: 0;
+    filter: blur(14px);
+    transform: scale(1.04);
+    transition: opacity 1.4s ease, filter 1.8s ease, transform 2s ease;
+  }
+  .chat-window.on .chat-img {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+    transition-delay: 1.2s;
+  }
+
+  /* =========================
+     Code-Fenster (Folie: das geschriebene Programm)
+     ========================= */
+  .code-window {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 640px;
+    transform: translate(-50%, -50%) scale(0.85);
+    background: #10141f;
+    border-radius: 16px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 0 80px rgba(167, 139, 250, 0.18);
+    opacity: 0;
+    transition: transform 1.6s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 1.2s ease;
+    pointer-events: none;
+    overflow: hidden;
+    will-change: transform, opacity;
+  }
+  .cw-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .cw-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .cw-dot.r { background: #ff5f57; }
+  .cw-dot.y { background: #febc2e; }
+  .cw-dot.g { background: #28c840; }
+  .cw-name {
+    margin-left: 10px;
+    font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: #8a95b0;
+  }
+  .code-prompt {
+    font-size: 13px;
+    color: var(--ink-dim);
+    font-style: italic;
+    line-height: 1.45;
+    padding: 12px 20px 2px;
+  }
+  .code-prompt .qm {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+  }
+  .cw-code {
+    margin: 0;
+    padding: 14px 20px 10px;
+    font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #dfe6f5;
+  }
+  .cw-code .cl {
+    min-height: 1.7em;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    white-space: pre;
+  }
+  .cw-code .cl.show { opacity: 1; transform: translateX(0); }
+  .cw-code .cl.cur::after {
+    content: '▍';
+    margin-left: 2px;
+    color: #6ea8ff;
+    animation: blink 1s step-end infinite;
+  }
+  .cw-code .kw  { color: #c678dd; }
+  .cw-code .fn  { color: #61afef; }
+  .cw-code .num { color: #d19a66; }
+  .cw-code .cmt { color: #5c6370; font-style: italic; }
+  .cw-code .str { color: #34d399; }
+  .cw-out {
+    padding: 12px 20px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+    font-size: 15px;
+    color: #34d399;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+  .cw-out.on { opacity: 1; }
+  .cw-out .out-cmd {
+    font-size: 13px;
+    color: #8a95b0;
+    margin-bottom: 4px;
+  }
+  .cw-out .out-cmd .dollar { color: #34d399; }
+  .cw-out .out-line {
+    font-size: 15px;
+    color: #34d399;
   }
 
   /* =========================
@@ -337,14 +717,42 @@
                 border-color 0.6s ease;
     will-change: transform;
   }
-  .token-pill.p1 { --tc: #6ea8ff; }
-  .token-pill.p2 { --tc: #a78bfa; }
-  .token-pill.p3 { --tc: #34d399; }
-  .token-pill.p4 { --tc: #fbbf24; }
-  .token-pill.p5 { --tc: #f472b6; }
   .token-pill:nth-child(odd)  { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.14); }
   .token-pill:nth-child(3n)   { border-color: rgba(52, 211, 153, 0.5);  background: rgba(52, 211, 153, 0.14); }
   .token-pill:nth-child(4n)   { border-color: rgba(251, 191, 36, 0.5);  background: rgba(251, 191, 36, 0.14); }
+  /* Leerzeichen-Tokens — kleine, gestrichelte Pillen */
+  .token-pill.space {
+    padding: 14px 13px;
+    font-size: 16px;
+    color: rgba(232, 236, 245, 0.55);
+    background: rgba(138, 149, 176, 0.1) !important;
+    border-color: rgba(138, 149, 176, 0.45) !important;
+    border-style: dashed;
+  }
+  /* Token-Schock: „himmel" bricht in „him" + „mel" */
+  .token-pill.crack {
+    border-color: #f87171 !important;
+    background: rgba(248, 113, 113, 0.18) !important;
+    animation: crackShake 0.4s ease 2;
+  }
+  @keyframes crackShake {
+    0%, 100% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(0) scale(1) translateX(-5px) rotate(-1.5deg); }
+    75% { transform: translateY(0) scale(1) translateX(5px) rotate(1.5deg); }
+  }
+  .token-pill.fresh {
+    animation: freshPop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
+               freshGlow 1.8s ease forwards;
+  }
+  @keyframes freshPop {
+    0%   { transform: translateY(0) scale(0.4); }
+    60%  { transform: translateY(0) scale(1.15); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  @keyframes freshGlow {
+    0%   { box-shadow: 0 0 34px rgba(248, 113, 113, 0.85); }
+    100% { box-shadow: 0 4px 20px rgba(110, 168, 255, 0.15); }
+  }
 
   /* Kleines Label unter den Tokens */
   .layer-label {
@@ -362,6 +770,23 @@
   }
   .layer-label .accent { color: var(--accent); }
 
+  /* Erklär-Text unter den Tokens (Kompressions-Idee) */
+  .token-sub {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, calc(-50% + 96px));
+    max-width: 660px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-dim);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+  .token-sub .accent { color: var(--accent); }
+  .token-sub.on { opacity: 1; }
+
   /* =========================
      Embedding-Raum (2D-Plot)
      ========================= */
@@ -373,6 +798,10 @@
     opacity: 0;
     transition: opacity 1.2s ease, transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
     pointer-events: none;
+  }
+  /* Für den Token-Flug: sofort in Endgröße, nur Fade */
+  .embedding-space.nozoom {
+    transition: opacity 0.9s ease;
   }
   .embedding-space .axis {
     position: absolute;
@@ -432,14 +861,15 @@
   .embed-point.sky    .dot { color: #a78bfa; background: #a78bfa; }
   .embed-point.color  .dot { color: #f472b6; background: #f472b6; }
 
-  /* Analogie-Pfeile */
+  /* Analogie-Pfeile — zeichnen sich von links nach rechts */
   .analogy-arrow {
     position: absolute;
     height: 2px;
     background: linear-gradient(90deg, rgba(251, 191, 36, 0), rgba(251, 191, 36, 0.7), rgba(251, 191, 36, 0));
+    transform: scaleX(0);
     transform-origin: left center;
     opacity: 0;
-    transition: opacity 0.8s ease;
+    transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
   }
   .analogy-arrow::after {
     content: '';
@@ -458,6 +888,75 @@
     opacity: 0;
     transition: opacity 0.8s ease;
     text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  }
+
+  /* Bedeutung als leuchtende Geometrie */
+  /* Die senkrechten Parallelogramm-Kanten — zeichnen sich ein */
+  .geo-edge {
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(180deg,
+      rgba(251,191,36,0.15), rgba(251,191,36,0.7), rgba(251,191,36,0.15));
+    transform: scaleY(0);
+    transform-origin: top center;
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.4s ease;
+  }
+  .geo-edge.on { transform: scaleY(1); opacity: 1; }
+
+  /* Beim Einrasten leuchten alle Kanten (Pfeile + senkrechte) heller */
+  .embedding-space.locked .geo-edge,
+  .embedding-space.locked .analogy-arrow {
+    filter: brightness(1.5);
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.65);
+  }
+
+  /* Lichtblitz, der einmal um das Parallelogramm läuft */
+  .geo-pulse {
+    position: absolute;
+    left: 32%; top: 32%;
+    width: 10px; height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff, rgba(251,191,36,0.85) 55%, transparent);
+    box-shadow: 0 0 18px 6px rgba(251, 191, 36, 0.7);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .geo-pulse.go { animation: geoPulse 1.6s cubic-bezier(0.45, 0, 0.55, 1) 1; }
+  @keyframes geoPulse {
+    0%   { left: 32%; top: 32%; opacity: 0; }
+    6%   { opacity: 1; }
+    27%  { left: 62%; top: 32%; }
+    50%  { left: 62%; top: 62%; }
+    73%  { left: 32%; top: 62%; }
+    94%  { opacity: 1; }
+    100% { left: 32%; top: 32%; opacity: 0; }
+  }
+
+  /* Bloom in der Mitte, wenn die Geometrie „stimmt" */
+  .geo-flash {
+    position: absolute;
+    left: 47%; top: 47%;
+    width: 26px; height: 26px;
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(251,191,36,0.55) 45%, transparent 72%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .geo-flash.go { animation: geoFlash 0.9s ease-out 1; }
+  @keyframes geoFlash {
+    0%   { transform: translate(-50%, -50%) scale(0);   opacity: 0.95; }
+    100% { transform: translate(-50%, -50%) scale(30);  opacity: 0; }
+  }
+
+  /* Der „bestimmte" Punkt (Königin) rastet hörbar ein */
+  .embed-point.snap .dot { animation: dotSnap 0.7s ease; }
+  @keyframes dotSnap {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(2.4); box-shadow: 0 0 34px 12px rgba(251,191,36,0.9); }
+    100% { transform: scale(1); }
   }
 
   /* =========================
@@ -538,6 +1037,80 @@
   }
 
   /* =========================
+     Mini-Transformer (Ecke): eine Maschine, viele Köpfe
+     ========================= */
+  .ttower {
+    position: absolute;
+    right: 44px; bottom: 52px;
+    width: 150px;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 1s ease, transform 1s ease;
+    pointer-events: none;
+    text-align: center;
+  }
+  .ttower.on { opacity: 1; transform: translateY(0); }
+  .tt-heads {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .tt-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    color: var(--ink-dim);
+    opacity: 0.3;
+    transition: opacity 0.7s ease, color 0.7s ease;
+  }
+  .tt-head .tt-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: box-shadow 0.7s ease, opacity 0.7s ease;
+    opacity: 0.4;
+  }
+  .tt-head.answer .tt-dot { background: #6ea8ff; }
+  .tt-head.code   .tt-dot { background: #34d399; }
+  .tt-head.pic    .tt-dot { background: #f472b6; }
+  .tt-head.lit { opacity: 1; }
+  .tt-head.answer.lit { color: #6ea8ff; }
+  .tt-head.code.lit   { color: #34d399; }
+  .tt-head.pic.lit    { color: #f472b6; }
+  .tt-head.lit .tt-dot {
+    opacity: 1;
+    box-shadow: 0 0 12px 2px currentColor;
+  }
+  .tt-tower {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  .tt-bar {
+    width: 64px; height: 7px;
+    border-radius: 2px;
+    background: rgba(110, 168, 255, 0.25);
+    animation: layerPulse 2.4s ease-in-out infinite;
+  }
+  .tt-bar:nth-child(2) { animation-delay: 0.2s; }
+  .tt-bar:nth-child(3) { animation-delay: 0.4s; }
+  .tt-bar:nth-child(4) { animation-delay: 0.6s; }
+  .tt-base {
+    margin-top: 9px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  /* =========================
      Navigation / Fortschritt
      ========================= */
   .nav-hint {
@@ -596,6 +1169,7 @@
 <body>
 
 <div class="starfield"></div>
+<div class="world-shift" id="worldShift"></div>
 
 <div class="beat-dots" id="beatDots"></div>
 
@@ -607,13 +1181,55 @@
     <div class="phone-notch"></div>
     <div class="phone-screen">
       <div class="app-logo" id="appLogo">
-        <span class="l1">G</span><span class="l2">o</span><span class="l3">o</span><span class="l4">g</span><span class="l5">l</span><span class="l6">e</span>
+        <span class="l1">S</span><span class="l2">u</span><span class="l3">c</span><span class="l4">h</span><span class="l5">e</span>
       </div>
       <div class="search-bar">
         <div class="search-icon"></div>
         <div class="search-text" id="searchText"><span class="caret"></span></div>
         <div class="mic-btn" id="micBtn">
           <div class="mic-icon"></div>
+        </div>
+      </div>
+      <div class="ai-card" id="aiCard">
+        <div class="ai-text" id="aiText"></div>
+        <div class="ai-thinking" id="aiThinking">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <!-- Trefferliste wie bei Google — nach unten unscharf werdend -->
+      <div class="serp" id="serpList">
+        <div class="result r1">
+          <div class="res-head">
+            <img class="res-fav" src="favicon_wikipedia.ico" alt="">
+            <div class="res-lines">
+              <span class="res-name">Wikipedia</span>
+              <span class="res-url">de.wikipedia.org › wiki › Rayleigh-Jeans-Gesetz</span>
+            </div>
+          </div>
+          <div class="res-title">Rayleigh-Jeans-Gesetz</div>
+          <div class="res-snippet">Das Plancksche Strahlungsgesetz ist eine Interpolationsformel der beiden anderen Gesetze und enthält diese als Grenzfall großer bzw. kleiner Wellenlängen.</div>
+        </div>
+        <div class="result r2">
+          <div class="res-head">
+            <img class="res-fav" src="favicon_wikipedia.ico" alt="">
+            <div class="res-lines">
+              <span class="res-name">Wikipedia</span>
+              <span class="res-url">de.wikipedia.org › wiki › Rayleigh-Streuung</span>
+            </div>
+          </div>
+          <div class="res-title">Rayleigh-Streuung</div>
+          <div class="res-snippet">Die Streuung von Licht an Teilchen, die kleiner sind als seine Wellenlänge — und verantwortlich für die Blaufärbung des Himmels.</div>
+        </div>
+        <div class="result r3">
+          <div class="res-head">
+            <img class="res-fav" src="favicon_leifiphysik.ico" alt="">
+            <div class="res-lines">
+              <span class="res-name">Leifi Physik</span>
+              <span class="res-url">www.leifiphysik.de › optik › streuung_von_licht</span>
+            </div>
+          </div>
+          <div class="res-title">Warum ist der Himmel blau?</div>
+          <div class="res-snippet">Kurzwelliges blaues Licht wird von den Molekülen der Luft stärker gestreut als langwelliges rotes Licht.</div>
         </div>
       </div>
     </div>
@@ -627,27 +1243,68 @@
     <div class="bar"></div><div class="bar"></div>
   </div>
 
-  <!-- Die Frage, die sich im Raum entfaltet -->
-  <div class="question-overlay" id="questionOverlay">
-    <div class="q-title">Aber <em>was passiert da eigentlich</em>?</div>
+  <!-- ============ Code-Fenster (Folie: kann auch programmieren) ============ -->
+  <div class="beat-caption" id="capCode">
+    Diese Systeme können viel mehr — sie können auch <span class="acc">programmieren</span>.
+  </div>
+  <div class="code-window" id="codeWindow">
+    <div class="cw-title">
+      <span class="cw-dot r"></span>
+      <span class="cw-dot y"></span>
+      <span class="cw-dot g"></span>
+      <span class="cw-name">himmel.py</span>
+    </div>
+    <div class="code-prompt">
+      <span class="qm">Auftrag:</span> „Schreib mir ein Programm, das die
+      Lichtstreuung in der Atmosphäre berechnet“
+    </div>
+    <pre class="cw-code" id="cwCode"></pre>
+    <div class="cw-out" id="cwOut">
+      <div class="out-cmd"><span class="dollar">$</span> python3 himmel.py</div>
+      <div class="out-line">Blau wird 4.35× stärker gestreut als Rot</div>
+    </div>
+  </div>
+
+  <!-- ============ Chat-Fenster (Folie: Bilder generieren) ============ -->
+  <div class="beat-caption" id="capPic">
+    Und sie können auch <span class="acc">Bilder generieren</span>.
+  </div>
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-head">
+      <span class="ai-spark">✦</span>
+      <span class="chat-name">Suche-KI</span>
+    </div>
+    <div class="chat-body">
+      <div class="chat-msg user">eine katze, fotorealistisch</div>
+      <div class="chat-msg ai">
+        <img class="chat-img" src="katze1.jpg" alt="Generiertes Bild: eine Katze">
+      </div>
+    </div>
+  </div>
+
+  <div class="beat-caption" id="capSatz">
+    derselbe Satz — jetzt ein Objekt, das man <span class="acc">zerlegen</span> kann
+  </div>
+
+  <!-- ============ Statement: alles geht über Transformer ============ -->
+  <div class="statement" id="statement2">
+    <div class="st-line1">Und all das funktioniert nach ähnlichen Mechanismen —</div>
+    <div class="st-line2 small">dem <span class="acc">Transformer</span>, den ich euch heute erkläre.</div>
   </div>
 
   <!-- Der schwebende Text nach dem Zoom -->
-  <div class="floating-text" id="floatingText">warum ist der himmel blau</div>
+  <div class="floating-text" id="floatingText">warum ist der himmel blau?</div>
 
   <!-- Layer-Label über den Tokens/Embeddings -->
   <div class="layer-label" id="layerLabel">
     <span id="layerLabelText">Tokenisierung</span>
   </div>
 
-  <!-- Die Tokens -->
-  <div class="tokens-layer" id="tokensLayer">
-    <div class="token-pill">warum</div>
-    <div class="token-pill">ist</div>
-    <div class="token-pill">der</div>
-    <div class="token-pill">himmel</div>
-    <div class="token-pill">blau</div>
-  </div>
+  <!-- Die Tokens (von JS gebaut — „himmel" bricht in „him" + „mel") -->
+  <div class="tokens-layer" id="tokensLayer"></div>
+
+  <!-- Erklär-Text unter den Tokens: warum teilt der Computer so? -->
+  <div class="token-sub" id="tokenSub">Im Kern ein <span class="accent">Kompressions-Algorithmus</span>: die häufigsten Muster werden zu einem einzigen Token zusammengefasst.</div>
 
   <!-- Der Embedding-Raum (2D-Plot) -->
   <div class="embedding-space" id="embeddingSpace">
@@ -679,8 +1336,11 @@
     <div class="embed-point query" data-key="der" style="left: 44%; top: 85%;">
       <div class="dot"></div><div class="label">der</div>
     </div>
-    <div class="embed-point sky" data-key="himmel" style="left: 78%; top: 20%;">
-      <div class="dot"></div><div class="label">himmel</div>
+    <div class="embed-point sky" data-key="him" style="left: 75%; top: 18%;">
+      <div class="dot"></div><div class="label">him</div>
+    </div>
+    <div class="embed-point sky" data-key="mel" style="left: 83%; top: 27%;">
+      <div class="dot"></div><div class="label">mel</div>
     </div>
     <div class="embed-point color" data-key="blau" style="left: 85%; top: 45%;">
       <div class="dot"></div><div class="label">blau</div>
@@ -688,13 +1348,21 @@
 
     <!-- Analogie-Pfeile: mann → könig, frau → königin -->
     <div class="analogy-arrow" id="arrowManKing"
-         style="left: 34%; top: 33%; width: 27%; transform: rotate(0deg);"></div>
+         style="left: 34%; top: 33%; width: 27%;"></div>
     <div class="analogy-arrow" id="arrowWomanQueen"
-         style="left: 34%; top: 63%; width: 27%; transform: rotate(0deg);"></div>
+         style="left: 34%; top: 63%; width: 27%;"></div>
     <div class="analogy-caption" id="analogyCaption"
-         style="left: 42%; top: 15%;">
+          style="left: 42%; top: 15%;">
       könig − mann + frau ≈ königin
     </div>
+
+    <!-- Bedeutung als leuchtende Geometrie: die beiden senkrechten Kanten
+         schließen das Parallelogramm, dazu läuft ein Lichtblitz herum,
+         der beim Einrasten aufblitzt. -->
+    <div class="geo-edge" id="geoEdgeLeft"  style="left: 32%; top: 32%; height: 30%;"></div>
+    <div class="geo-edge" id="geoEdgeRight" style="left: 62%; top: 32%; height: 30%;"></div>
+    <div class="geo-pulse" id="geoPulse"></div>
+    <div class="geo-flash" id="geoFlash"></div>
   </div>
 
   <!-- Der Modell-Block als Übergabe -->
@@ -716,6 +1384,22 @@
     Und hier beginnt der technische Teil …
   </div>
 
+  <!-- Mini-Transformer: eine Maschine, viele Köpfe -->
+  <div class="ttower" id="ttower">
+    <div class="tt-heads">
+      <div class="tt-head answer" id="ttHeadAnswer"><span class="tt-dot"></span>Antwort</div>
+      <div class="tt-head code" id="ttHeaderCode"><span class="tt-dot"></span>Code</div>
+      <div class="tt-head pic" id="ttHeadPic"><span class="tt-dot"></span>Bilder</div>
+    </div>
+    <div class="tt-tower">
+      <div class="tt-bar"></div>
+      <div class="tt-bar"></div>
+      <div class="tt-bar"></div>
+      <div class="tt-bar"></div>
+    </div>
+    <div class="tt-base">Transformer</div>
+  </div>
+
 </div>
 
 <div class="nav-hint">
@@ -725,9 +1409,9 @@
 <script>
   // =========================================================
   // Choreographie: eine Sequenz von Beats.
-  // Jeder Beat ist eine Funktion, die den Zielzustand setzt.
-  // Rückwärts ist immer möglich, weil wir den State neu setzen
-  // statt Animationen "abzuspielen" — CSS interpoliert.
+  // Jeder Beat setzt den KOMPLETTEN Zustand (resetAll + eigene
+  // Elemente) — so kann beim Zurück- und Springen nichts
+  // überlappen.
   // =========================================================
 
   const $ = (id) => document.getElementById(id);
@@ -738,25 +1422,184 @@
   const searchText    = $('searchText');
   const micBtn        = $('micBtn');
   const waveform      = $('waveform');
-  const questionOv    = $('questionOverlay');
+  const aiCard        = $('aiCard');
+  const aiText        = $('aiText');
+  const aiThinking    = $('aiThinking');
+  const serpList      = $('serpList');
+  const statement2    = $('statement2');
+  const capPic        = $('capPic');
+  const chatWindow    = $('chatWindow');
+  const codeWindow    = $('codeWindow');
+  const cwCode        = $('cwCode');
+  const cwOut         = $('cwOut');
+  const capCode       = $('capCode');
+  const capSatz       = $('capSatz');
+  const ttower        = $('ttower');
+  const ttAnswer      = $('ttHeadAnswer');
+  const ttCode        = $('ttHeaderCode');
+  const ttPic         = $('ttHeadPic');
   const floatingText  = $('floatingText');
   const tokensLayer   = $('tokensLayer');
   const layerLabel    = $('layerLabel');
   const layerLabelTxt = $('layerLabelText');
+  const tokenSub      = $('tokenSub');
   const embeddingSp   = $('embeddingSpace');
   const arrowMK       = $('arrowManKing');
   const arrowWQ       = $('arrowWomanQueen');
   const analogyCap    = $('analogyCaption');
+  const geoEdgeLeft   = $('geoEdgeLeft');
+  const geoEdgeRight  = $('geoEdgeRight');
+  const geoPulse      = $('geoPulse');
+  const geoFlash      = $('geoFlash');
+  const queenPoint    = document.querySelector('.embed-point[data-key="queen"]');
   const modelBlock    = $('modelBlock');
   const handoff       = $('handoffHint');
+  const stage         = $('stage');
+  const worldShift    = $('worldShift');
 
-  const SATZ = 'warum ist der himmel blau';
+  const SATZ = 'warum ist der himmel blau?';
+
+  // Das Programm, das die KI schreibt (Rayleigh-Streuung, ∝ Dichte/λ⁴).
+  // Liefert: (650/450)⁴ ≈ 4.35 — blaues Licht wird ~4× stärker gestreut.
+  const CODE_LINES = [
+    [{ t: '# Rayleigh-Streuung in Luft', c: 'cmt' }],
+    [{ t: 'K_B = ' }, { t: '1.380649e-23', c: 'num' }, { t: '   # Joule/Kelvin', c: 'cmt' }],
+    [{ t: '' }],
+    [{ t: 'def ', c: 'kw' }, { t: 'streuung', c: 'fn' }, { t: '(laenge, p, t):' }],
+    [{ t: '    dichte = p / (K_B * t)' }],
+    [{ t: '    return dichte / laenge ** 4' }],
+    [{ t: '' }],
+    [{ t: 'blau = ' }, { t: 'streuung', c: 'fn' }, { t: '(' }, { t: '450e-9', c: 'num' },
+     { t: ', ' }, { t: '1e5', c: 'num' }, { t: ', ' }, { t: '293', c: 'num' }, { t: ')' }],
+    [{ t: 'rot  = ' }, { t: 'streuung', c: 'fn' }, { t: '(' }, { t: '650e-9', c: 'num' },
+     { t: ', ' }, { t: '1e5', c: 'num' }, { t: ', ' }, { t: '293', c: 'num' }, { t: ')' }],
+    [{ t: 'print', c: 'fn' }, { t: '(f"Blau wird ', c: 'str' }, { t: '{blau / rot:.2f}', c: 'num' }, { t: '× stärker gestreut als Rot")', c: 'str' }],
+  ];
+
+  const QUERY_KEYS = ['warum', 'ist', 'der', 'him', 'mel', 'blau'];
+  const ANALOGY_KEYS = ['king', 'queen', 'man', 'woman'];
+  const ALL_KEYS = QUERY_KEYS.concat(ANALOGY_KEYS);
+
+  // Die KI-Antwort — wird Beat für Beat Zeichen für Zeichen gestreamt
+  const AI_TEXT = [
+    { t: 'Der Himmel ist blau, weil Luftmoleküle kurzwelliges Licht stärker streuen als langwelliges. Blau (450 nm) wird etwa 4× mehr gestreut als Rot (650 nm) — das nennt man ' },
+    { t: 'Rayleigh-Streuung', c: 'b' },
+    { t: '.' },
+  ];
+
+  // Token-Pillen (inkl. Leerzeichen): zuerst wortweise,
+  // dann bricht „himmel" in „him" + „mel"
+  const SP = { t: ' ', s: 1 };
+  const TOKENS_FULL  = [
+    { t: 'warum' }, SP, { t: 'ist' }, SP, { t: 'der' }, SP, { t: 'himmel' }, SP, { t: 'blau' },
+  ];
+  const TOKENS_SPLIT = [
+    { t: 'warum' }, SP, { t: 'ist' }, SP, { t: 'der' }, SP, { t: 'him' }, { t: 'mel' }, SP, { t: 'blau' },
+  ];
+
+  let typeTimer = null;
+
+  function lineHtml(ln) {
+    return ln.map(tk => tk.c ? '<span class="' + tk.c + '">' + tk.t + '</span>' : tk.t).join('');
+  }
+
+  function renderCode(instant) {
+    cwCode.innerHTML = CODE_LINES.map((ln) =>
+      '<div class="cl' + (instant ? ' show' : '') + '">' + lineHtml(ln) + '</div>'
+    ).join('');
+  }
+
+  function stopTyping() {
+    if (typeTimer) { clearInterval(typeTimer); typeTimer = null; }
+  }
+
+  function startCodeTyping() {
+    stopTyping();
+    renderCode(false);
+    const lines = cwCode.querySelectorAll('.cl');
+    let i = 0;
+    typeTimer = setInterval(() => {
+      if (i > 0) lines[i - 1].classList.remove('cur');
+      if (i < lines.length) {
+        lines[i].classList.add('show', 'cur');
+        i++;
+      }
+      if (i >= lines.length) stopTyping();
+    }, 350);
+  }
+
+  // Die KI-Antwort streamen — wie ein echter LLM-Stream:
+  // Zeichen kommen in kleinen Stößen, an Wortgrenzen kurze Pausen
+  let aiTimer = null;
+
+  function stopAiTyping() {
+    if (aiTimer) { clearTimeout(aiTimer); aiTimer = null; }
+  }
+
+  function startAiTyping() {
+    stopAiTyping();
+    aiText.innerHTML = '';
+    const spans = AI_TEXT.map(seg => {
+      const s = document.createElement('span');
+      if (seg.c) s.className = seg.c;
+      aiText.appendChild(s);
+      return s;
+    });
+    const cursor = document.createElement('span');
+    cursor.className = 'ai-cursor';
+    aiText.appendChild(cursor);
+    let si = 0, ci = 0;
+    function tick() {
+      if (si >= spans.length) { stopAiTyping(); return; }
+      const seg = AI_TEXT[si];
+      ci++;
+      spans[si].textContent = seg.t.slice(0, ci);
+      let delay = 18 + Math.random() * 22;
+      if (seg.t[ci - 1] === ' ') delay += 25 + Math.random() * 45;
+      if (ci >= seg.t.length) { si++; ci = 0; delay += 35; }
+      aiTimer = setTimeout(tick, delay);
+    }
+    aiTimer = setTimeout(tick, 250);
+  }
+
+  // Timer, die zu einem Beat gehören — resetAll killt sie alle
+  let beatTimers = [];
+  function later(fn, ms) {
+    const id = setTimeout(fn, ms);
+    beatTimers.push(id);
+  }
+  function clearBeatTimers() {
+    beatTimers.forEach(clearTimeout);
+    beatTimers = [];
+  }
+
+  // Token-Pillen bauen (freshKeys bekommen Pop + Glow, s = Leerzeichen)
+  function renderTokens(list, freshKeys = []) {
+    tokensLayer.innerHTML = list.map(tok => {
+      if (tok.s) return '<div class="token-pill space">·</div>';
+      return '<div class="token-pill' + (freshKeys.includes(tok.t) ? ' fresh' : '') + '">' + tok.t + '</div>';
+    }).join('');
+  }
+
+  // Mini-Transformer: welche Köpfe leuchten? (null = komplett unsichtbar)
+  function setTower(lit) {
+    ttower.classList.toggle('on', !!lit);
+    ttAnswer.classList.toggle('lit', !!(lit && lit.includes('answer')));
+    ttCode.classList.toggle('lit', !!(lit && lit.includes('code')));
+    ttPic.classList.toggle('lit', !!(lit && lit.includes('pic')));
+  }
 
   // Hilfsfunktionen
   function setPhone({scale=1, x=0, y=0, opacity=1}) {
     phone.style.transform =
       `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
     phone.style.opacity = opacity;
+  }
+
+  function setCodeWindow({scale=1, x=0, y=0, opacity=1}) {
+    codeWindow.style.transform =
+      `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+    codeWindow.style.opacity = opacity;
   }
 
   function setSearchText(text, typing=false) {
@@ -769,147 +1612,340 @@
     }
   }
 
-  function showEmbedPoints(keys) {
+  // Speech-to-Text: Während das Mikrofon läuft, tippt sich
+  // der Satz Zeichen für Zeichen ins Suchfeld
+  let searchTypeTimer = null;
+
+  function stopSearchTyping() {
+    if (searchTypeTimer) { clearInterval(searchTypeTimer); searchTypeTimer = null; }
+  }
+
+  function typeSearchText(text) {
+    stopSearchTyping();
+    searchText.classList.add('typing');
+    searchText.innerHTML = '<span class="caret"></span>';
+    let i = 0;
+    searchTypeTimer = setInterval(() => {
+      if (i < text.length) {
+        i++;
+        searchText.innerHTML = text.slice(0, i) + '<span class="caret"></span>';
+      } else {
+        stopSearchTyping();
+      }
+    }, 65);
+  }
+
+  function showEmbedPoints(keys, stagger = 0) {
     const all = document.querySelectorAll('.embed-point');
+    let i = 0;
     all.forEach(pt => {
       const k = pt.getAttribute('data-key');
-      if (keys.includes(k)) pt.classList.add('visible');
-      else pt.classList.remove('visible');
+      if (keys.includes(k)) {
+        pt.style.transitionDelay = (i * stagger) + 's';
+        i++;
+        pt.classList.add('visible');
+      } else {
+        pt.classList.remove('visible');
+        pt.style.transitionDelay = '0s';
+      }
     });
   }
 
+  // Aktueller Scale-Faktor der Bühne (für den Flug in lokalen Einheiten)
+  function getStageScale() {
+    const t = getComputedStyle(stage).transform;
+    if (!t || t === 'none') return 1;
+    try { return (new DOMMatrix(t)).a || 1; } catch (e) { return 1; }
+  }
+
+  // Token-Pillen fliegen zu ihren Embedding-Dots
+  function flyTokensToDots() {
+    const s = getStageScale();
+    const embRect = embeddingSp.getBoundingClientRect();
+    void tokensLayer.offsetWidth;
+    tokensLayer.querySelectorAll('.token-pill').forEach(pill => {
+      const pr = pill.getBoundingClientRect();
+      const px = pr.left + pr.width / 2;
+      const py = pr.top + pr.height / 2;
+      if (pill.classList.contains('space')) {
+        pill.style.transition = 'opacity 0.5s ease';
+        pill.style.opacity = '0';
+        return;
+      }
+      const word = pill.textContent;
+      const ptEl = document.querySelector('.embed-point[data-key="' + word + '"]');
+      if (!ptEl) {
+        pill.style.transition = 'opacity 0.5s ease';
+        pill.style.opacity = '0';
+        return;
+      }
+      const leftPct = parseFloat(ptEl.style.left) / 100;
+      const topPct = parseFloat(ptEl.style.top) / 100;
+      const dotX = embRect.left + leftPct * embRect.width;
+      const dotY = embRect.top + topPct * embRect.height;
+      const dx = (dotX - px) / s;
+      const dy = (dotY - py) / s;
+      pill.style.transition = 'transform 1.05s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease 0.8s';
+      pill.style.transform = 'translate(' + dx + 'px, ' + dy + 'px) scale(0.12)';
+      pill.style.opacity = '0';
+    });
+  }
+
+  // Setzt ALLES in den Grundzustand (Handy ist WEG — es wird nur
+  // in den Such-Beats 0–3 explizit eingeblendet).
+  function resetAll() {
+    setPhone({scale: 0.55, x: 0, y: -420, opacity: 0});
+    phone.classList.remove('levitate');
+    appLogo.style.opacity = '1';
+    appLogo.classList.remove('breathe');
+    setSearchText('', false);
+    stopSearchTyping();
+    micBtn.classList.remove('listening');
+    waveform.classList.remove('active');
+    aiCard.classList.remove('on');
+    stopAiTyping();
+    aiText.innerHTML = '';
+    aiThinking.classList.remove('on');
+    serpList.classList.remove('on');
+    statement2.classList.remove('on', 'high');
+    capPic.style.opacity = '0';
+    chatWindow.classList.remove('on');
+    setCodeWindow({scale: 0.85, x: 0, y: 0, opacity: 0});
+    stopTyping();
+    renderCode(false);
+    cwOut.classList.remove('on');
+    capCode.style.opacity = '0';
+    capSatz.style.opacity = '0';
+    setTower(null);
+    clearBeatTimers();
+    worldShift.classList.remove('on');
+    stage.classList.remove('zoomed-out');
+    floatingText.style.opacity = '0';
+    floatingText.style.transform = 'translate(-50%, calc(-50% + 61px)) scale(0.29)';
+    tokensLayer.style.opacity = '0';
+    renderTokens([]);
+    layerLabel.style.opacity = '0';
+    layerLabel.style.transform = '';
+    tokenSub.classList.remove('on');
+    embeddingSp.classList.remove('nozoom');
+    embeddingSp.style.opacity = '0';
+    embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
+    showEmbedPoints([]);
+    arrowMK.style.opacity = '0';
+    arrowMK.style.transform = 'scaleX(0)';
+    arrowWQ.style.opacity = '0';
+    arrowWQ.style.transform = 'scaleX(0)';
+    analogyCap.style.opacity = '0';
+    geoEdgeLeft.classList.remove('on');
+    geoEdgeRight.classList.remove('on');
+    geoPulse.classList.remove('go');
+    geoFlash.classList.remove('go');
+    embeddingSp.classList.remove('locked');
+    queenPoint.classList.remove('snap');
+    modelBlock.style.opacity = '0';
+    modelBlock.style.transform = 'translate(-50%, -50%) scale(0.5)';
+    handoff.style.opacity = '0';
+  }
+
   // =========================================================
-  // BEATS – jede Funktion setzt den kompletten Zustand
+  // BEATS – jeder setzt den kompletten Zustand
   // =========================================================
 
   const beats = [
 
-    // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, Google-Logo an
+    // BEAT 0 — Ruhezustand: Handy schwebt, Logo atmet
     () => {
+      resetAll();
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      appLogo.style.opacity = '1';
-      setSearchText('', false);
-      micBtn.classList.remove('listening');
-      waveform.classList.remove('active');
-      questionOv.style.opacity = '0';
-      questionOv.style.transform = 'translate(-50%, calc(-50% + 380px))';
-      floatingText.style.opacity = '0';
-      floatingText.style.transform = 'translate(-50%, -50%) scale(0.3)';
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
-      embeddingSp.style.opacity = '0';
-      embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
-      showEmbedPoints([]);
-      arrowMK.style.opacity = '0';
-      arrowWQ.style.opacity = '0';
-      analogyCap.style.opacity = '0';
-      modelBlock.style.opacity = '0';
-      modelBlock.style.transform = 'translate(-50%, -50%) scale(0.5)';
-      handoff.style.opacity = '0';
+      phone.classList.add('levitate');
+      appLogo.classList.add('breathe');
     },
 
     // BEAT 1 — Mikrofon aktiv, Waveform pulsiert
     () => {
+      resetAll();
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      appLogo.style.opacity = '1';
       setSearchText('', true);
       micBtn.classList.add('listening');
       waveform.classList.add('active');
-      questionOv.style.opacity = '0';
-      floatingText.style.opacity = '0';
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
-      embeddingSp.style.opacity = '0';
-      modelBlock.style.opacity = '0';
-      handoff.style.opacity = '0';
     },
 
-    // BEAT 2 — Speech-to-Text: Satz erscheint im Suchfeld
+    // BEAT 2 — Speech-to-Text: Die Frage tippt sich ins Suchfeld
     () => {
+      resetAll();
       setPhone({scale: 1, x: 0, y: 0, opacity: 1});
-      appLogo.style.opacity = '1';
-      setSearchText(SATZ, true);
-      micBtn.classList.remove('listening');
-      waveform.classList.remove('active');
-      questionOv.style.opacity = '0';
-      floatingText.style.opacity = '0';
+      micBtn.classList.add('listening');
+      waveform.classList.add('active');
+      typeSearchText(SATZ);
     },
 
-    // BEAT 3 — Die Frage taucht auf: "was passiert da eigentlich?"
+    // BEAT 3 — Die KI denkt (drei pulsierende Punkte) — nach ~1 s automatisch weiter
     () => {
-      setPhone({scale: 1, x: 0, y: -60, opacity: 1});
+      resetAll();
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
       setSearchText(SATZ, false);
-      appLogo.style.opacity = '1';
-      questionOv.style.opacity = '1';
-      questionOv.style.transform = 'translate(-50%, calc(-50% + 340px))';
-      floatingText.style.opacity = '0';
+      aiCard.classList.add('on');
+      aiThinking.classList.add('on');
+      later(() => next(), 1000);
     },
 
-    // BEAT 4 — Kamera zoomt in den Bildschirm hinein
-    // Das Handy wird riesig und fadet dann weg, Text erscheint zentral
+    // BEAT 4 — Die KI antwortet: streamt ihre Antwort + Treffer wie bei Google
     () => {
-      setPhone({scale: 3.2, x: 0, y: 40, opacity: 0});
-      appLogo.style.opacity = '0';
-      questionOv.style.opacity = '0';
+      resetAll();
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+      setSearchText(SATZ, false);
+      aiCard.classList.add('on');
+      startAiTyping();
+      serpList.classList.add('on');
+      setTower(['answer']);
+    },
+
+    // BEAT 5 — „sie können auch programmieren“: Code-Fenster mit Programm
+    () => {
+      resetAll();
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      startCodeTyping();
+      setTower(['answer', 'code']);
+    },
+
+    // BEAT 6 — Code komplett, das (richtige) Ergebnis erscheint
+    () => {
+      resetAll();
+      setCodeWindow({scale: 1, x: 0, y: 0, opacity: 1});
+      capCode.style.opacity = '1';
+      renderCode(true);
+      cwOut.classList.add('on');
+      setTower(['answer', 'code']);
+    },
+
+    // BEAT 7 — Weitere Stärke: Bilder generieren (Chat: Prompt → Bild)
+    () => {
+      resetAll();
+      capPic.style.opacity = '1';
+      chatWindow.classList.add('on');
+      setTower(['answer', 'code', 'pic']);
+    },
+
+    // BEAT 8 — Alles geht über den Transformer
+    () => {
+      resetAll();
+      statement2.classList.add('on');
+      setTower(['answer', 'code', 'pic']);
+    },
+
+    // BEAT 9 — Der Satz fliegt aus dem Suchfeld in den Raum
+    () => {
+      resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
+      setPhone({scale: 0.7, x: 0, y: 210, opacity: 0});
       floatingText.style.opacity = '1';
       floatingText.style.transform = 'translate(-50%, -50%) scale(1)';
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
+      capSatz.style.opacity = '1';
     },
 
-    // BEAT 5 — Tokenisierung: Text zerbricht in Token-Pillen
+    // BEAT 10 — Tokenisierung: der Satz wird in Tokens zerlegt
     () => {
-      setPhone({scale: 3.2, x: 0, y: 40, opacity: 0});
-      floatingText.style.opacity = '0';
-      floatingText.style.transform = 'translate(-50%, -50%) scale(1.4)';
+      resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
+      renderTokens(TOKENS_FULL);
       tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
-      embeddingSp.style.opacity = '0';
-      modelBlock.style.opacity = '0';
+      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Computer teilt anders als wir';
     },
 
-    // BEAT 6 — Embedding: Tokens werden zu Punkten im Raum
-    // Query-Tokens (warum, ist, der, himmel, blau) tauchen auf
+    // BEAT 11 — „himmel" → „him" + „mel": der Split passiert per Pfeiltaste
     () => {
-      tokensLayer.style.opacity = '0';
+      resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
+      renderTokens(TOKENS_FULL);
+      tokensLayer.style.opacity = '1';
       layerLabel.style.opacity = '1';
-      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
+      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — und „himmel"?';
+      later(() => {
+        tokensLayer.querySelectorAll('.token-pill').forEach(p => {
+          if (p.textContent === 'himmel') p.classList.add('crack');
+        });
+      }, 900);
+      later(() => {
+        renderTokens(TOKENS_SPLIT, ['him', 'mel']);
+        layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — möglichst viel Inhalt, möglichst wenige Bausteine';
+        tokenSub.classList.add('on');
+      }, 1700);
+    },
+
+    // BEAT 12 — Embedding: Die Tokens fliegen zu ihren Punkten im Raum
+    () => {
+      resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
+      layerLabel.style.opacity = '1';
+      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Stück wird zu einem Punkt im Bedeutungsraum';
+      embeddingSp.classList.add('nozoom');
       embeddingSp.style.opacity = '1';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau']);
-      arrowMK.style.opacity = '0';
-      arrowWQ.style.opacity = '0';
-      analogyCap.style.opacity = '0';
-      modelBlock.style.opacity = '0';
-      handoff.style.opacity = '0';
+      showEmbedPoints([]);
+      renderTokens(TOKENS_SPLIT);
+      tokensLayer.style.transition = 'none';
+      tokensLayer.style.opacity = '1';
+      void tokensLayer.offsetWidth;
+      tokensLayer.style.transition = 'opacity 0.8s ease';
+      later(flyTokensToDots, 80);
+      later(() => {
+        showEmbedPoints(QUERY_KEYS, 0.09);
+        tokensLayer.style.opacity = '0';
+      }, 1000);
     },
 
-    // BEAT 7 — Der Raum hat Struktur: König/Königin/Mann/Frau erscheinen,
-    // die Analogie wird sichtbar
+    // BEAT 13 — Neues Beispiel: der Raum hat Struktur — König/Königin/Mann/Frau
     () => {
-      tokensLayer.style.opacity = '0';
+      resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
+      embeddingSp.style.opacity = '1';
+      embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
+      // Nur das neue Beispiel — man kommt per Pfeiltaste von Beat 11 (Query) hierher
+      showEmbedPoints(ANALOGY_KEYS, 0.12);
+      layerLabel.style.transform = 'translate(-50%, calc(-50% + 160px))';
       layerLabel.style.opacity = '1';
       layerLabelTxt.innerHTML = 'Die Positionen sind <span class="accent">nicht zufällig</span> — Bedeutung wird Geometrie';
-      embeddingSp.style.opacity = '1';
-      embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
-      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau', 'king', 'queen', 'man', 'woman']);
-      arrowMK.style.opacity = '0.9';
-      arrowWQ.style.opacity = '0.9';
-      analogyCap.style.opacity = '1';
-      modelBlock.style.opacity = '0';
+      later(() => {
+        arrowMK.style.opacity = '0.9';
+        arrowMK.style.transform = 'scaleX(1)';
+      }, 900);
+      later(() => {
+        arrowWQ.style.opacity = '0.9';
+        arrowWQ.style.transform = 'scaleX(1)';
+      }, 1300);
+      later(() => {
+        analogyCap.style.opacity = '1';
+      }, 1800);
+      // Bedeutung als leuchtende Geometrie: die senkrechten Kanten schließen
+      // das Parallelogramm …
+      later(() => {
+        geoEdgeLeft.classList.add('on');
+        geoEdgeRight.classList.add('on');
+      }, 2400);
+      // … und rasten ein: ein Lichtblitz umläuft, es blitzt auf, Königin rastet ein
+      later(() => {
+        embeddingSp.classList.add('locked');
+        geoPulse.classList.add('go');
+        geoFlash.classList.add('go');
+        queenPoint.classList.add('snap');
+      }, 3100);
     },
 
-    // BEAT 8 — Übergabe: Alles verdichtet sich zum Modell-Block
+    // BEAT 14 — Übergabe: Alles verdichtet sich zum Modell-Block
     () => {
-      tokensLayer.style.opacity = '0';
-      layerLabel.style.opacity = '0';
+      resetAll();
+      worldShift.classList.add('on');
+      stage.classList.add('zoomed-out');
       embeddingSp.style.opacity = '0.15';
       embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.6)';
-      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau', 'king', 'queen', 'man', 'woman']);
-      arrowMK.style.opacity = '0';
-      arrowWQ.style.opacity = '0';
-      analogyCap.style.opacity = '0';
+      showEmbedPoints(ALL_KEYS, 0.06);
       modelBlock.style.opacity = '1';
       modelBlock.style.transform = 'translate(-50%, -50%) scale(1)';
       handoff.style.opacity = '0.8';
@@ -979,13 +2015,6 @@
     }
   }, { passive: true });
 
-  // Klick auf die Bühne = weiter
-  $('stage').addEventListener('click', (e) => {
-    // Ignoriere Klicks auf die Nav-Elemente
-    if (e.target.closest('.nav-hint') || e.target.closest('.beat-dots')) return;
-    next();
-  });
-
   // Initial-Zustand
   renderBeat(0);
 
@@ -993,5 +2022,3 @@
 
 </body>
 </html>
-
-<iframe src="story.html" style="width:100%; height:100vh; border:0;"></iframe>

@@ -1,0 +1,225 @@
+Ada Lovelace
+Alan Turing
+Alec Radford
+Alessandro Volta
+Alex Krizhevsky
+AlexNet ImageNet victory
+Alfred Tarski
+Allen Newell
+Altair 8800
+Amsterdam
+Andrew Barto
+Andrey Markov
+Antikythera
+Antikythera Mechanism
+Apollo 11 Moon landing
+Archimedes of Syracuse
+Ashish Vaswani
+Athens
+August Ferdinand Möbius
+Augustin-Louis Cauchy
+BBN Technologies
+Baghdad
+Berlin
+Bernhard Riemann
+Bernhard Schölkopf
+Bertrand Russell
+Bhāskara I
+Bill Gates
+Blaise Pascal
+Bletchley Park
+Brahmagupta
+CERN
+Cairo
+Cambridge
+Camillo Golgi
+Canada
+Carl Friedrich Gauss
+Carnegie Mellon University
+Charles Babbage
+ChatGPT launch
+Chevalier de Méré
+China
+Claude Shannon
+Claudius Ptolemy
+Colossus breaks Lorenz
+Como
+Continental Europe
+Cornell University
+Dan Bricklin
+Dartmouth Workshop, 1956
+David Hilbert
+David Hubel
+David Rumelhart
+Decipherment of Egyptian hieroglyphs, 1822
+Dome C (EPICA), Antarctica
+Donald Hebb
+Dzmitry Bahdanau
+ECMWF
+ENIAC unveiled
+Ed Roberts
+Edgar F. Codd
+Edinburgh
+Egbert van Kampen
+Egypt
+England
+Enrico Betti
+Ernst Ising
+Euclid
+Faraday electromagnetic induction
+Ferdinand de Saussure
+First ARPANET message
+First integrated circuit
+First numerical weather forecast, 1950
+First permanent photograph
+First transatlantic telegraph
+Florence
+France
+Frank Rosenblatt
+Frederick Jelinek
+Galileo Galilei
+Geoffrey Hinton
+George A. Miller
+George Boole
+George Cybenko
+George Kingsley Zipf
+Gerolamo Cardano
+Gottfried Wilhelm Leibniz
+Gottlob Frege
+GraphCast global weather AI, 2023
+Göttingen
+Hanover
+Haskell Curry
+Heike Kamerlingh Onnes
+Helmut Hölzer
+Herbert A. Simon
+Hermann Grassmann
+House of Wisdom
+Howard Aiken
+Huntsville
+I. J. Good
+IBM 702 debut, 1953
+IBM PC release, 1981
+Ibn al-Haytham (Alhazen)
+Ilya Sutskever
+India
+Invention of the transistor
+Isaac Newton
+J. R. Firth
+JPL
+Jack Kilby
+Jacquard loom
+James Clerk Maxwell
+Jean Leray
+Jean-Baptiste Joseph Fourier
+Jean-François Champollion
+Jean-Pierre Serre
+Johannes Gutenberg
+Johannes Kepler
+John Backus
+John Bardeen
+John J. Hopfield
+John McCarthy
+John Zellig Harris
+John von Neumann
+Joseph Nicéphore Niépce
+Joseph Weizenbaum
+Joseph-Louis Lagrange
+Jule Charney
+Kaiming He
+Karel Čech
+Karen Simonyan
+Kerala (Sangamagrama)
+Konrad Zuse
+Kunihiko Fukushima
+Kusumapura
+Kyunghyun Cho
+Leonhard Euler
+London
+Los Alamos
+Louis Lapicque
+Luca Pacioli
+Ludwig Boltzmann
+MIT
+Madhava of Sangamagrama
+Manchester
+Marcus Hutter
+Margaret Hamilton
+Marvin Minsky
+Mesopotamia
+Michael Faraday
+Montreal
+Mountain View
+Murray Hill
+NASA
+New York
+Nicolaus Copernicus
+Nikola Tesla
+Noam Chomsky
+Noam Shazeer
+Paris
+Paul Allen
+Paul Baran
+Paul Werbos
+Peenemünde
+Perceptron Navy press conference, 1958
+Pierre de Fermat
+Pierre-Simon Laplace
+Pingala
+Prague
+Princeton University
+Project MAC
+Pythagoras
+Pāṇini
+Quantum supremacy (Sycamore), 2019
+Ray Solomonoff
+René Descartes
+Richard Bellman
+Richard Sutton
+Robert Metcalfe
+Robert Noyce
+Rome
+Ronald Fisher
+Rosetta Stone
+Samuel Eilenberg
+Samuel Morse
+San Francisco
+Santiago Ramón y Cajal
+Saunders Mac Lane
+Seppo Linnainmaa
+Solomon Kullback
+Steve Awodey
+Stockholm
+Sumer
+Summit Camp (GRIP/NEEM), Greenland
+Syracuse
+Tesla alternating-current system
+Thales of Miletus
+Thomas Bayes
+Thomas Etter
+Tim Berners-Lee
+Tomáš Mikolov
+Toronto
+Torsten Wiesel
+UC Berkeley
+Venice
+Vint Cerf
+Vladimir Vapnik
+Volodymyr Mnih
+Voltaic pile
+Vostok Station, Antarctica
+Wadi el-Hol
+Walter Pitts
+Warren McCulloch
+Washington, D.C.
+Wernher von Braun
+Wilhelm Lenz
+William Chamberlain
+Wolfgang von Kempelen
+World Wide Web
+Xerox PARC
+Yann LeCun
+Yoshua Bengio
+al-Khwārizmī
+al-Kindi
+Āryabhaṭa

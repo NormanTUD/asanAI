@@ -1,0 +1,1113 @@
+[
+  {
+    "id": "person-sergey-ioffe",
+    "name": "Sergey Ioffe",
+    "type": "person",
+    "loc": "Saint Petersburg, Russia",
+    "lat": 59.93,
+    "lng": 30.36,
+    "years": "1983-",
+    "active": [
+      1983,
+      2025
+    ],
+    "blurb": "Co-inventor of Batch Normalization (2015), a layer that made training very deep convolutional networks far faster and more stable.",
+    "cited_in": [
+      "normalizationlab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "ioffe2015batchnorm"
+    ],
+    "conf": "inferred"
+  },
+  {
+    "id": "person-christian-szegedy",
+    "name": "Christian Szegedy",
+    "type": "person",
+    "loc": "Budapest, Hungary",
+    "lat": 47.5,
+    "lng": 19.04,
+    "years": "1980-",
+    "active": [
+      1980,
+      2025
+    ],
+    "blurb": "Co-inventor of Batch Normalization and a key architect of Google's deep vision systems (Inception, ResNet-class networks).",
+    "cited_in": [
+      "normalizationlab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "ioffe2015batchnorm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-boris-polyak",
+    "name": "Boris Teodorovich Polyak",
+    "type": "person",
+    "loc": "Poltava, Ukraine",
+    "lat": 49.59,
+    "lng": 34.55,
+    "years": "1920-2020",
+    "active": [
+      1920,
+      2020
+    ],
+    "blurb": "Soviet mathematician who introduced the heavy-ball/momentum method (1962), letting optimizers carry velocity through flat regions.",
+    "cited_in": [
+      "optimizerlab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "momentum"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-resnet",
+    "name": "ResNet (Residual Network)",
+    "type": "artifact",
+    "loc": "Beijing, China",
+    "lat": 39.9,
+    "lng": 116.4,
+    "years": "2015",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "He et al.'s skip-connection architecture that let gradients flow through hundreds of layers, making very deep CNNs trainable.",
+    "cited_in": [
+      "resnetlab",
+      "loss_landscape",
+      "deeplearninglab"
+    ],
+    "bibkeys": [
+      "he2015resnet",
+      "he2016identity"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-highway-network",
+    "name": "Highway Network",
+    "type": "artifact",
+    "loc": "Tübingen, Germany",
+    "lat": 48.52,
+    "lng": 9.05,
+    "years": "2015",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Srivastava, Greff & Schmidhuber's learnable-gating skip connections, the precursor to ResNet, seven months before it.",
+    "cited_in": [
+      "resnetlab"
+    ],
+    "bibkeys": [
+      "highway2015"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-relu",
+    "name": "ReLU (Rectified Linear Unit)",
+    "type": "artifact",
+    "loc": "Sendai, Japan",
+    "lat": 38.27,
+    "lng": 140.87,
+    "years": "1969",
+    "active": [
+      1969,
+      2025
+    ],
+    "blurb": "Piecewise-linear activation max(0,x) that prevents vanishing gradients and makes deep networks trainable; standard workhorse of CNNs.",
+    "cited_in": [
+      "activationlab",
+      "deeplearninglab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "steadystates",
+      "relufirst",
+      "relupaper"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-gelu",
+    "name": "GELU (Gaussian Error Linear Unit)",
+    "type": "artifact",
+    "loc": "San Francisco, California, United States",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2016",
+    "active": [
+      2016,
+      2025
+    ],
+    "blurb": "Hendrycks & Gimpel's smooth activation that became the standard in Transformer feed-forward blocks (GPT-style models).",
+    "cited_in": [
+      "activationlab"
+    ],
+    "bibkeys": [
+      "hendrycks2016gelu"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-silu",
+    "name": "SiLU / Swish",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2017",
+    "active": [
+      2017,
+      2025
+    ],
+    "blurb": "Self-gated activation x*sigmoid(x) found by Google's search; used in Stable Diffusion's U-Net ResBlocks and modern vision stacks.",
+    "cited_in": [
+      "activationlab",
+      "normalizationlab"
+    ],
+    "bibkeys": [
+      "ramachandran2017swish"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-softmax",
+    "name": "Softmax",
+    "type": "artifact",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "1989",
+    "active": [
+      1989,
+      2025
+    ],
+    "blurb": "Bridle's function turning logits into a probability distribution; the standard output layer for multi-class classification.",
+    "cited_in": [
+      "activationlab",
+      "minimalneuron"
+    ],
+    "bibkeys": [
+      "bridle1989probabilistic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-neocognitron",
+    "name": "Neocognitron",
+    "type": "artifact",
+    "loc": "Sendai, Japan",
+    "lat": 38.27,
+    "lng": 140.87,
+    "years": "1980",
+    "active": [
+      1980,
+      2025
+    ],
+    "blurb": "Fukushima's hierarchical pattern-recognition network, one of the first CNNs and the first use of a ReLU-like activation.",
+    "cited_in": [
+      "activationlab"
+    ],
+    "bibkeys": [
+      "neocognitron",
+      "relufirst"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-perceptron",
+    "name": "Perceptron",
+    "type": "artifact",
+    "loc": "Ithaca, New York, United States",
+    "lat": 42.44,
+    "lng": -76.5,
+    "years": "1958",
+    "active": [
+      1958,
+      2025
+    ],
+    "blurb": "Rosenblatt's single-layer model with a Heaviside output; the founding neural-network architecture of modern deep learning.",
+    "cited_in": [
+      "minimalneuron",
+      "activationlab"
+    ],
+    "bibkeys": [
+      "rosenblatt1958perceptron"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-vgg",
+    "name": "VGG (VGGNet)",
+    "type": "artifact",
+    "loc": "Oxford, England",
+    "lat": 51.75,
+    "lng": -1.26,
+    "years": "2014",
+    "active": [
+      2014,
+      2025
+    ],
+    "blurb": "Simonyan & Zisserman's deep 3x3-convolution CNN from Oxford; a plain-network baseline that ResNet overcame.",
+    "cited_in": [
+      "resnetlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-cnn",
+    "name": "Convolutional Neural Network (CNN)",
+    "type": "artifact",
+    "loc": "Yorktown Heights, New York, United States",
+    "lat": 41.05,
+    "lng": -73.85,
+    "years": "1989",
+    "active": [
+      1989,
+      2025
+    ],
+    "blurb": "LeCun's IBM architecture using shared-weight convolutional layers; the backbone of nearly all computer-vision models.",
+    "cited_in": [
+      "resnetlab",
+      "minimalneuron",
+      "traininglab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-backpropagation",
+    "name": "Backpropagation",
+    "type": "artifact",
+    "loc": "La Jolla, California, United States",
+    "lat": 32.87,
+    "lng": -117.25,
+    "years": "1986",
+    "active": [
+      1986,
+      2025
+    ],
+    "blurb": "The 1986 Rumelhart-Hinton-Williams algorithm (first in Werbos's thesis) that trains networks by propagating error backward.",
+    "cited_in": [
+      "backproplab",
+      "resnetlab",
+      "optimizerlab",
+      "derivativelab",
+      "deeplearninglab"
+    ],
+    "bibkeys": [
+      "rumelhart1986",
+      "rumelhart1986learning",
+      "werbos1974"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-gradient-descent",
+    "name": "Gradient Descent",
+    "type": "artifact",
+    "loc": "Paris, France",
+    "lat": 48.86,
+    "lng": 2.35,
+    "years": "1847",
+    "active": [
+      1847,
+      2025
+    ],
+    "blurb": "Cauchy's method of stepping against the gradient to minimize a function; the fundamental optimization rule behind training.",
+    "cited_in": [
+      "derivativelab",
+      "optimizerlab",
+      "overandunderfittinglab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "cauchy1847"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-stochastic-gradient-descent",
+    "name": "Stochastic Gradient Descent (SGD)",
+    "type": "artifact",
+    "loc": "New York, New York, United States",
+    "lat": 40.71,
+    "lng": -74.0,
+    "years": "1951",
+    "active": [
+      1951,
+      2025
+    ],
+    "blurb": "Robbins-Monro stochastic approximation applied to optimization; the base optimizer whose mini-batch noise shapes what nets find.",
+    "cited_in": [
+      "optimizerlab",
+      "overandunderfittinglab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "sgd"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-momentum",
+    "name": "Momentum (SGD)",
+    "type": "artifact",
+    "loc": "Moscow, Russia",
+    "lat": 55.76,
+    "lng": 37.62,
+    "years": "1964",
+    "active": [
+      1964,
+      2025
+    ],
+    "blurb": "Polyak's heavy-ball method that adds a velocity term to accumulate past gradients and power through flat regions.",
+    "cited_in": [
+      "optimizerlab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "momentum"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-adam",
+    "name": "Adam (Adaptive Moment Estimation)",
+    "type": "artifact",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "2014",
+    "active": [
+      2014,
+      2025
+    ],
+    "blurb": "Kingma & Ba's per-parameter adaptive optimizer; the default for training most modern neural networks and large language models.",
+    "cited_in": [
+      "optimizerlab",
+      "overandunderfittinglab",
+      "traininglab"
+    ],
+    "bibkeys": [
+      "adam"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-batch-normalization",
+    "name": "Batch Normalization (BatchNorm)",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2015",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Ioffe & Szegedy's layer that rescales activations per batch, enabling higher learning rates and faster convergence of deep nets.",
+    "cited_in": [
+      "normalizationlab",
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "ioffe2015batchnorm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-layer-normalization",
+    "name": "Layer Normalization (LayerNorm)",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2016",
+    "active": [
+      2016,
+      2025
+    ],
+    "blurb": "Ba et al.'s batch-independent normalization that is the stability glue inside every Transformer (GPT) block.",
+    "cited_in": [
+      "normalizationlab"
+    ],
+    "bibkeys": [
+      "ba2016layernorm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-group-normalization",
+    "name": "Group Normalization (GroupNorm)",
+    "type": "artifact",
+    "loc": "Menlo Park, California, United States",
+    "lat": 37.45,
+    "lng": -122.18,
+    "years": "2018",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "Wu & He's batch-size-independent channel-group normalization; the default in Stable Diffusion's U-Net at batch size 1.",
+    "cited_in": [
+      "normalizationlab"
+    ],
+    "bibkeys": [
+      "wu2018groupnorm"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-vision-transformer",
+    "name": "Vision Transformer (ViT)",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2020",
+    "active": [
+      2020,
+      2025
+    ],
+    "blurb": "Dosovitskiy et al.'s application of the Transformer to image patches; replaced CNNs as a top vision architecture.",
+    "cited_in": [
+      "normalizationlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-gpt",
+    "name": "GPT",
+    "type": "artifact",
+    "loc": "San Francisco, California, United States",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2018",
+    "active": [
+      2018,
+      2025
+    ],
+    "blurb": "OpenAI's family of large Transformer language models (GPT-3, GPT-4) trained on next-token prediction.",
+    "cited_in": [
+      "normalizationlab",
+      "activationlab",
+      "minimalneuron",
+      "losslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-transformer",
+    "name": "Transformer",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2017",
+    "active": [
+      2017,
+      2025
+    ],
+    "blurb": "Vaswani et al.'s attention-based architecture that replaced recurrence and underlies all modern large language models.",
+    "cited_in": [
+      "deeplearninglab",
+      "normalizationlab",
+      "activationlab",
+      "minimalneuron"
+    ],
+    "bibkeys": [
+      "elhage2021framework"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-unet",
+    "name": "U-Net",
+    "type": "artifact",
+    "loc": "Freiburg, Germany",
+    "lat": 47.99,
+    "lng": 7.85,
+    "years": "2015",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Ronneberger et al.'s encoder-decoder network for image segmentation; the denoiser backbone of Stable Diffusion.",
+    "cited_in": [
+      "activationlab",
+      "normalizationlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-deepdream",
+    "name": "DeepDream",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2015",
+    "active": [
+      2015,
+      2025
+    ],
+    "blurb": "Google's gradient-based image stylization tool; already used jitter to cancel the deconvolution checkerboard artifact.",
+    "cited_in": [
+      "deconvolution"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-stable-diffusion",
+    "name": "Stable Diffusion",
+    "type": "artifact",
+    "loc": "San Francisco, California, United States",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2022",
+    "active": [
+      2022,
+      2025
+    ],
+    "blurb": "A latent U-Net diffusion model for image generation; its ResBlocks use Conv → GroupNorm → SiLU.",
+    "cited_in": [
+      "activationlab",
+      "normalizationlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-lora",
+    "name": "LoRA (Low-Rank Adaptation)",
+    "type": "artifact",
+    "loc": "Redmond, Washington, United States",
+    "lat": 47.67,
+    "lng": -122.12,
+    "years": "2021",
+    "active": [
+      2021,
+      2025
+    ],
+    "blurb": "Hu et al.'s parameter-efficient fine-tuning that trains tiny low-rank weight updates instead of the whole model.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "hu2021lora"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-qlora",
+    "name": "QLoRA",
+    "type": "artifact",
+    "loc": "Berkeley, California, United States",
+    "lat": 37.87,
+    "lng": -122.26,
+    "years": "2023",
+    "active": [
+      2023,
+      2025
+    ],
+    "blurb": "Dettmers et al.'s 4-bit quantized LoRA that fine-tunes a 70B model on a single consumer GPU.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "dettmers2023qlora"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-adapters",
+    "name": "Adapter Modules",
+    "type": "artifact",
+    "loc": "Redmond, Washington, United States",
+    "lat": 47.67,
+    "lng": -122.12,
+    "years": "2019",
+    "active": [
+      2019,
+      2025
+    ],
+    "blurb": "Houlsby et al.'s small bottleneck layers inserted between Transformer blocks for parameter-efficient transfer learning.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "houlsby2019adapters"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-prompt-tuning",
+    "name": "Prompt Tuning",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2021",
+    "active": [
+      2021,
+      2025
+    ],
+    "blurb": "Lester et al.'s method of learning continuous soft prompts prepended to inputs, freezing the base model.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "lester2021prompttuning"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-ia3",
+    "name": "IA³ (Layer-Scaling)",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2022",
+    "active": [
+      2022,
+      2025
+    ],
+    "blurb": "Liu et al.'s few-shot method learning only scaling vectors on attention and feed-forward weights.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "liu2022ia3"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-dora",
+    "name": "DoRA (Weight-Decomposed LoRA)",
+    "type": "artifact",
+    "loc": "Mountain View, California, United States",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "2024",
+    "active": [
+      2024,
+      2025
+    ],
+    "blurb": "Liu et al.'s decomposed magnitude-and-direction low-rank adaptation that often beats LoRA at the same rank.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "liu2024dora"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-ppo",
+    "name": "PPO (Proximal Policy Optimization)",
+    "type": "artifact",
+    "loc": "San Francisco, California, United States",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2017",
+    "active": [
+      2017,
+      2025
+    ],
+    "blurb": "The policy-gradient method behind RLHF; used in the InstructGPT pipeline to align models with human feedback.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "ouyang2022instructgpt"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-rlhf",
+    "name": "RLHF (Reinforcement Learning from Human Feedback)",
+    "type": "artifact",
+    "loc": "San Francisco, California, United States",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2022",
+    "active": [
+      2022,
+      2025
+    ],
+    "blurb": "OpenAI's post-training pipeline (reward model + PPO) that shaped ChatGPT's helpful, aligned behavior.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "ouyang2022instructgpt"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-instructgpt",
+    "name": "InstructGPT",
+    "type": "artifact",
+    "loc": "San Francisco, California, United States",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2022",
+    "active": [
+      2022,
+      2025
+    ],
+    "blurb": "Ouyang et al.'s first large model aligned by instruction fine-tuning plus RLHF; the direct ancestor of ChatGPT.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "ouyang2022instructgpt"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-dpo",
+    "name": "DPO (Direct Preference Optimization)",
+    "type": "artifact",
+    "loc": "Stanford, California, United States",
+    "lat": 37.43,
+    "lng": -122.17,
+    "years": "2023",
+    "active": [
+      2023,
+      2025
+    ],
+    "blurb": "Rafailov et al.'s closed-form preference optimizer that matches PPO without a separate reward model or rollouts.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "rafailov2023dpo"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-grpo",
+    "name": "GRPO (Group Relative Policy Optimization)",
+    "type": "artifact",
+    "loc": "Beijing, China",
+    "lat": 39.9,
+    "lng": 116.4,
+    "years": "2024",
+    "active": [
+      2024,
+      2025
+    ],
+    "blurb": "DeepSeek's critic-free reasoning optimizer; the method behind DeepSeek-R1's emergent long chain-of-thought.",
+    "cited_in": [
+      "finetuninglab"
+    ],
+    "bibkeys": [
+      "shao2024grpo"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-dropout",
+    "name": "Dropout",
+    "type": "artifact",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "2014",
+    "active": [
+      2014,
+      2025
+    ],
+    "blurb": "Srivastava et al.'s regularization that randomly zeroes inputs during training, forcing robust redundant representations.",
+    "cited_in": [
+      "overandunderfittinglab",
+      "optimizerlab"
+    ],
+    "bibkeys": [
+      "srivastava2014dropout"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-lasso",
+    "name": "Lasso (L1 Regularization)",
+    "type": "artifact",
+    "loc": "Stanford, California, United States",
+    "lat": 37.43,
+    "lng": -122.17,
+    "years": "1996",
+    "active": [
+      1996,
+      2025
+    ],
+    "blurb": "Tibshirani's L1 penalty that drives unimportant weights to exactly zero, performing automatic feature selection.",
+    "cited_in": [
+      "overandunderfittinglab"
+    ],
+    "bibkeys": [
+      "tibshirani1996lasso"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-ridge-regression",
+    "name": "Ridge Regression (L2 Regularization)",
+    "type": "artifact",
+    "loc": "Chicago, Illinois, United States",
+    "lat": 41.88,
+    "lng": -87.63,
+    "years": "1970",
+    "active": [
+      1970,
+      2025
+    ],
+    "blurb": "Hoerl & Kennard's L2 weight penalty (descended from Tikhonov's) that shrinks weights toward zero for smoother fits.",
+    "cited_in": [
+      "overandunderfittinglab"
+    ],
+    "bibkeys": [
+      "hoerl1970ridge"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-sam",
+    "name": "Sharpness-Aware Minimization (SAM)",
+    "type": "artifact",
+    "loc": "Santa Clara, California, United States",
+    "lat": 37.35,
+    "lng": -121.96,
+    "years": "2021",
+    "active": [
+      2021,
+      2025
+    ],
+    "blurb": "Foret et al.'s optimizer that penalizes loss sharpness by descending from a nearby perturbation, improving generalization.",
+    "cited_in": [
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "foret2021sam"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-saddle-free-newton",
+    "name": "Saddle-Free Newton",
+    "type": "artifact",
+    "loc": "Montreal, Canada",
+    "lat": 45.5,
+    "lng": -73.57,
+    "years": "2014",
+    "active": [
+      2014,
+      2025
+    ],
+    "blurb": "Dauphin et al.'s second-order method that ignores negative Hessian eigenvalues to escape saddle points in deep nets.",
+    "cited_in": [
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "dauphin2014saddle"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-hopfield-network",
+    "name": "Hopfield Network",
+    "type": "artifact",
+    "loc": "Murray Hill, New Jersey, United States",
+    "lat": 40.84,
+    "lng": -74.42,
+    "years": "1982",
+    "active": [
+      1982,
+      2025
+    ],
+    "blurb": "Hopfield's attractor network that used a physical spin system's energy as the loss; a precursor to modern retrieval networks.",
+    "cited_in": [
+      "loss_landscape"
+    ],
+    "bibkeys": [
+      "hopfield1982"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-chinchilla",
+    "name": "Chinchilla",
+    "type": "artifact",
+    "loc": "London, England",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "2022",
+    "active": [
+      2022,
+      2025
+    ],
+    "blurb": "DeepMind's 70B model and Hoffmann et al.'s compute-optimal scaling law tying loss to parameters and training tokens.",
+    "cited_in": [
+      "losslab"
+    ],
+    "bibkeys": [
+      "hoffmann2022chinchilla"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-mmlu",
+    "name": "MMLU (Massive Multitask Language Understanding)",
+    "type": "artifact",
+    "loc": "Berkeley, California, United States",
+    "lat": 37.87,
+    "lng": -122.26,
+    "years": "2020",
+    "active": [
+      2020,
+      2025
+    ],
+    "blurb": "Hendrycks et al.'s 57-subject multiple-choice benchmark for measuring a language model's breadth of knowledge.",
+    "cited_in": [
+      "losslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-humaneval",
+    "name": "HumanEval",
+    "type": "artifact",
+    "loc": "San Francisco, California, United States",
+    "lat": 37.77,
+    "lng": -122.42,
+    "years": "2021",
+    "active": [
+      2021,
+      2025
+    ],
+    "blurb": "OpenAI's benchmark of 164 hand-written programming problems used to measure a model's code-generation ability.",
+    "cited_in": [
+      "losslab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-goodharts-law",
+    "name": "Goodhart's Law",
+    "type": "artifact",
+    "loc": "London, England",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1975",
+    "active": [
+      1975,
+      2025
+    ],
+    "blurb": "Goodhart's observation that a measure which becomes a target becomes a bad measure; central to AI evaluation failure.",
+    "cited_in": [
+      "losslab"
+    ],
+    "bibkeys": [
+      "goodhartslaw"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-heaviside-step-function",
+    "name": "Heaviside Step Function",
+    "type": "artifact",
+    "loc": "London, England",
+    "lat": 51.51,
+    "lng": -0.13,
+    "years": "1958",
+    "active": [
+      1958,
+      2025
+    ],
+    "blurb": "The 0/1 activation of the original Perceptron; differentiable nowhere, which blocked gradient-based training.",
+    "cited_in": [
+      "minimalneuron",
+      "activationlab"
+    ],
+    "bibkeys": [
+      "rosenblatt1958perceptron"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-resnet-wins-imagenet-2015",
+    "name": "ResNet wins ImageNet (ILSVRC) 2015",
+    "type": "event",
+    "loc": "Boston, Massachusetts, United States",
+    "lat": 42.36,
+    "lng": -71.06,
+    "years": "2015",
+    "active": [
+      2015,
+      2015
+    ],
+    "blurb": "December 2015: ResNet took the ImageNet classification competition, proving residual connections made depth practical.",
+    "cited_in": [
+      "resnetlab"
+    ],
+    "bibkeys": [
+      "he2015resnet"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-lstm",
+    "name": "Long Short-Term Memory (LSTM)",
+    "type": "artifact",
+    "loc": "Stuttgart, Germany",
+    "lat": 48.78,
+    "lng": 9.18,
+    "years": "1997",
+    "active": [
+      1997,
+      2025
+    ],
+    "blurb": "Hochreiter & Schmidhuber's gated recurrent unit whose gates solve vanishing gradients over time; the standard sequence-memory cell.",
+    "cited_in": [
+      "normalizationlab"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-cifar10",
+    "name": "CIFAR-10",
+    "type": "artifact",
+    "loc": "Toronto, Canada",
+    "lat": 43.65,
+    "lng": -79.38,
+    "years": "2009",
+    "active": [
+      2009,
+      2025
+    ],
+    "blurb": "Krizhevsky, Sutskever & Hinton's 60,000-image benchmark of 10 classes; the default testbed for deep-vision and loss-landscape studies.",
+    "cited_in": [
+      "loss_landscape"
+    ],
+    "bibkeys": [],
+    "conf": "known"
+  }
+]

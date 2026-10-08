@@ -1,0 +1,993 @@
+[
+  {
+    "id": "person-philipp-petersen",
+    "name": "Philipp Petersen",
+    "type": "person",
+    "loc": "Saarbrücken, Germany",
+    "lat": 49.2339,
+    "lng": 6.9915,
+    "years": "1983-",
+    "active": [
+      2008,
+      2024
+    ],
+    "blurb": "Co-authored the mathematical theory of deep learning; derives generalization bounds for overparameterized networks.",
+    "cited_in": [
+      "statistics_i"
+    ],
+    "bibkeys": [
+      "petersen2024mathdl"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jakob-zech",
+    "name": "Jakob Zech",
+    "type": "person",
+    "loc": "Saarbrücken, Germany",
+    "lat": 49.2339,
+    "lng": 6.9915,
+    "years": "1988-",
+    "active": [
+      2015,
+      2024
+    ],
+    "blurb": "Co-author of the mathematical theory of deep learning and overparameterized generalization bounds.",
+    "cited_in": [
+      "statistics_i"
+    ],
+    "bibkeys": [
+      "petersen2024mathdl"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-michael-hahn",
+    "name": "Michael Hahn",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, USA",
+    "lat": 42.3736,
+    "lng": -71.1097,
+    "years": "-",
+    "active": [
+      2019,
+      2020
+    ],
+    "blurb": "Proved fixed-size transformers cannot model periodic finite-state languages, bounding counting and parity.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "hahn2020limitations"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-angelos-katharopoulos",
+    "name": "Angelos Katharopoulos",
+    "type": "person",
+    "loc": "Zurich, Switzerland",
+    "lat": 47.3769,
+    "lng": 8.5417,
+    "years": "-",
+    "active": [
+      2019,
+      2020
+    ],
+    "blurb": "Showed linear-attention transformers have an exact RNN-like recurrent form, recasting state in context.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "katharopoulos2020linear"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-rik-adriaensen",
+    "name": "Rik Adriaensen",
+    "type": "person",
+    "loc": "Leuven, Belgium",
+    "lat": 50.8503,
+    "lng": 4.6997,
+    "years": "-",
+    "active": [
+      2022,
+      2024
+    ],
+    "blurb": "Extracted the finite-state (Moore) machines implicitly built inside transformers trained on regular languages.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "adriaensen2024moore"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jaron-maene",
+    "name": "Jaron Maene",
+    "type": "person",
+    "loc": "Leuven, Belgium",
+    "lat": 50.8503,
+    "lng": 4.6997,
+    "years": "1971-",
+    "active": [
+      2000,
+      2024
+    ],
+    "blurb": "Co-extracted hidden finite-state machines from transformer weights.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "adriaensen2024moore"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-johannes-von-oswald",
+    "name": "Johannes von Oswald",
+    "type": "person",
+    "loc": "London, England, UK",
+    "lat": 51.5074,
+    "lng": -0.1278,
+    "years": "1990-",
+    "active": [
+      2020,
+      2022
+    ],
+    "blurb": "Read a transformer forward pass as in-context gradient descent, explaining how attention refines an evolving in-context model.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "vonoswald2022indc"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-quoc-le",
+    "name": "Quoc V. Le",
+    "type": "person",
+    "loc": "Mountain View, California, USA",
+    "lat": 37.3861,
+    "lng": -122.0838,
+    "years": "1980-",
+    "active": [
+      2013,
+      2024
+    ],
+    "blurb": "Deep-learning researcher (Google) co-authoring work on modular-addition and number representations in transformers.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "ding2024fittest"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-xiaoman-ding",
+    "name": "Xiaoman Ding",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, USA",
+    "lat": 42.3736,
+    "lng": -71.1097,
+    "years": "-",
+    "active": [
+      2023,
+      2024
+    ],
+    "blurb": "Studied survival of the fittest Fourier representation for modular addition in small transformers.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "ding2024fittest"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-joshua-engels",
+    "name": "Joshua Engels",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, USA",
+    "lat": 42.3736,
+    "lng": -71.1097,
+    "years": "-",
+    "active": [
+      2023,
+      2025
+    ],
+    "blurb": "Showed language-model features for modular arithmetic use circular multi-dimensional codes, not 1-D ones.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "engels2024multidim"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-amit-arnold-levy",
+    "name": "Amit Arnold Levy",
+    "type": "person",
+    "loc": "Israel",
+    "lat": 31.0461,
+    "lng": 34.8516,
+    "years": "-",
+    "active": [
+      2023,
+      2024
+    ],
+    "blurb": "Found LLMs store each decimal digit as its own circular angular code rather than a single number line.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "levy2024numbers"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-tairan-fu",
+    "name": "Tairan Fu",
+    "type": "person",
+    "loc": "Spain",
+    "lat": 40.4168,
+    "lng": -3.7038,
+    "years": "-",
+    "active": [
+      2024,
+      2025
+    ],
+    "blurb": "Showed LLMs recognize letters but fail to count them; errors track repeated symbols.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "fu2024count"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-pedro-reviriego",
+    "name": "Pedro Reviriego",
+    "type": "person",
+    "loc": "Valencia, Spain",
+    "lat": 39.4699,
+    "lng": -0.3763,
+    "years": "1970-",
+    "active": [
+      2010,
+      2025
+    ],
+    "blurb": "Researcher on hardware security and LLM reliability; co-studied letter counting in language models.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "fu2024count",
+      "conde2025count"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-javier-conde",
+    "name": "Javier Conde",
+    "type": "person",
+    "loc": "Valencia, Spain",
+    "lat": 39.4699,
+    "lng": -0.3763,
+    "years": "-",
+    "active": [
+      2024,
+      2025
+    ],
+    "blurb": "Showed exact letter counting becomes reliable only when a model is given a scratchpad chain-of-thought.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "conde2025count"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hattie-zhou",
+    "name": "Hattie Zhou",
+    "type": "person",
+    "loc": "Toronto, Canada",
+    "lat": 43.6532,
+    "lng": -79.3832,
+    "years": "-",
+    "active": [
+      2021,
+      2022
+    ],
+    "blurb": "Co-founded algorithmic prompting, which lets LLMs execute in-context algorithms with near-perfect accuracy.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "zhou2022algorithmic"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-shivam-garg",
+    "name": "Shivam Garg",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, USA",
+    "lat": 42.3736,
+    "lng": -71.1097,
+    "years": "-",
+    "active": [
+      2021,
+      2022
+    ],
+    "blurb": "Co-showed transformers learn a meta-algorithm for in-context function execution, not memorized algorithms.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "garg2022incontext"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sam-mccandlish",
+    "name": "Sam McCandlish",
+    "type": "person",
+    "loc": "San Francisco, California, USA",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "years": "1985-",
+    "active": [
+      2017,
+      2022
+    ],
+    "blurb": "OpenAI researcher on mechanistic interpretability and induction heads in in-context learning.",
+    "cited_in": [
+      "algorithms"
+    ],
+    "bibkeys": [
+      "olsson2022induction"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-gregory-naitzat",
+    "name": "Gregory Naitzat",
+    "type": "person",
+    "loc": "Raleigh, North Carolina, USA",
+    "lat": 35.7796,
+    "lng": -78.6382,
+    "years": "-",
+    "active": [
+      2019,
+      2020
+    ],
+    "blurb": "Co-studied how ReLU networks simplify data topology (Betti numbers) layer by layer.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "naitzat2020topology"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-andrey-zhitnikov",
+    "name": "Andrey Zhitnikov",
+    "type": "person",
+    "loc": "Raleigh, North Carolina, USA",
+    "lat": 35.7796,
+    "lng": -78.6382,
+    "years": "1971-",
+    "active": [
+      2015,
+      2020
+    ],
+    "blurb": "Mathematician who co-analyzed the topology of deep ReLU networks.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "naitzat2020topology"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-lek-heng-lim",
+    "name": "Lek-Heng Lim",
+    "type": "person",
+    "loc": "Raleigh, North Carolina, USA",
+    "lat": 35.7796,
+    "lng": -78.6382,
+    "years": "1972-",
+    "active": [
+      2015,
+      2020
+    ],
+    "blurb": "Applied-mathematician co-author on the topology of deep neural networks.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "naitzat2020topology"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-roman-vershynin",
+    "name": "Roman Vershynin",
+    "type": "person",
+    "loc": "Irvine, California, USA",
+    "lat": 33.6846,
+    "lng": -117.8265,
+    "years": "1981-",
+    "active": [
+      2010,
+      2018
+    ],
+    "blurb": "Authored the high-dimensional probability reference; concentration of measure underpins why folds separate data.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "vershynin2018hd"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-william-johnson",
+    "name": "William B. Johnson",
+    "type": "person",
+    "loc": "Chicago, Illinois, USA",
+    "lat": 41.8781,
+    "lng": -87.6298,
+    "years": "1945-",
+    "active": [
+      1970,
+      1984
+    ],
+    "blurb": "Co-originated the Johnson-Lindenstrauss lemma preserving distances under low-dimensional projection.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "johnson1984lindenstrauss"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-joram-lindenstrauss",
+    "name": "Joram Lindenstrauss",
+    "type": "person",
+    "loc": "Israel",
+    "lat": 31.0461,
+    "lng": 34.8516,
+    "years": "1926-2020",
+    "active": [
+      1955,
+      2020
+    ],
+    "blurb": "Mathematician co-originating the Johnson-Lindenstrauss lemma, the geometry behind compact embeddings.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "johnson1984lindenstrauss"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-kasper-green-larsen",
+    "name": "Kasper Green Larsen",
+    "type": "person",
+    "loc": "Copenhagen, Denmark",
+    "lat": 55.6761,
+    "lng": 12.5683,
+    "years": "1990-",
+    "active": [
+      2010,
+      2014
+    ],
+    "blurb": "Proved the Johnson-Lindenstrauss lower bound is optimal for linear dimensionality reduction.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "larsen2014jloptimal"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jelani-nelson",
+    "name": "Jelani Nelson",
+    "type": "person",
+    "loc": "Pittsburgh, Pennsylvania, USA",
+    "lat": 40.4406,
+    "lng": -79.9959,
+    "years": "1986-",
+    "active": [
+      2010,
+      2014
+    ],
+    "blurb": "Co-proved the matching lower bound for the Johnson-Lindenstrauss lemma.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "larsen2014jloptimal"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-vardan-papyan",
+    "name": "Vardan Papyan",
+    "type": "person",
+    "loc": "Princeton, New Jersey, USA",
+    "lat": 40.3431,
+    "lng": -74.6551,
+    "years": "-",
+    "active": [
+      2019,
+      2020
+    ],
+    "blurb": "Discovered neural collapse: terminal-phase training settles into a maximally symmetric, separable geometry.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "papyan2020neuralcollapse"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-x-y-han",
+    "name": "X. Y. Han",
+    "type": "person",
+    "loc": "Princeton, New Jersey, USA",
+    "lat": 40.3431,
+    "lng": -74.6551,
+    "years": "-",
+    "active": [
+      2019,
+      2020
+    ],
+    "blurb": "Co-discovered neural collapse, the simplex terminal geometry of trained classifiers.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "papyan2020neuralcollapse"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-david-l-donoho",
+    "name": "David L. Donoho",
+    "type": "person",
+    "loc": "Princeton, New Jersey, USA",
+    "lat": 40.3431,
+    "lng": -74.6551,
+    "years": "1946-",
+    "active": [
+      1985,
+      2020
+    ],
+    "blurb": "Mathematician co-discovering neural collapse in the terminal phase of deep learning.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "papyan2020neuralcollapse"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-ekin-ergen",
+    "name": "Ekin Ergen",
+    "type": "person",
+    "loc": "Zurich, Switzerland",
+    "lat": 47.3769,
+    "lng": 8.5417,
+    "years": "-",
+    "active": [
+      2023,
+      2024
+    ],
+    "blurb": "Co-analyzed the topological expressivity of ReLU networks and their untangling efficiency.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "ergengrillo2024topological"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-moritz-grillo",
+    "name": "Moritz Grillo",
+    "type": "person",
+    "loc": "Zurich, Switzerland",
+    "lat": 47.3769,
+    "lng": 8.5417,
+    "years": "-",
+    "active": [
+      2023,
+      2024
+    ],
+    "blurb": "Co-studied topological expressivity of deep ReLU networks.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "ergengrillo2024topological"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sangmin-lee",
+    "name": "Sangmin Lee",
+    "type": "person",
+    "loc": "Seoul, South Korea",
+    "lat": 37.5665,
+    "lng": 126.978,
+    "years": "-",
+    "active": [
+      2022,
+      2023
+    ],
+    "blurb": "Co-proved the width a network needs is bounded by the topology of the class labels.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "lee2023topologywidth"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jong-chul-ye",
+    "name": "Jong Chul Ye",
+    "type": "person",
+    "loc": "Seoul, South Korea",
+    "lat": 37.5665,
+    "lng": 126.978,
+    "years": "1968-",
+    "active": [
+      2000,
+      2023
+    ],
+    "blurb": "Imaging-mathematics professor who co-bounded network width by the topology of labels.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "lee2023topologywidth"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-charles-fefferman",
+    "name": "Charles Fefferman",
+    "type": "person",
+    "loc": "Princeton, New Jersey, USA",
+    "lat": 40.3431,
+    "lng": -74.6551,
+    "years": "1949-",
+    "active": [
+      1975,
+      2016
+    ],
+    "blurb": "Co-authored the formal test of the manifold hypothesis underlying high-dimensional data geometry.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "fefferman2016testing"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sanjoy-mitter",
+    "name": "Sanjoy Mitter",
+    "type": "person",
+    "loc": "Pittsburgh, Pennsylvania, USA",
+    "lat": 40.4406,
+    "lng": -79.9959,
+    "years": "1949-",
+    "active": [
+      1985,
+      2016
+    ],
+    "blurb": "Control-theory professor who co-tested the manifold hypothesis for learning.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "fefferman2016testing"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-hariharan-narayanan",
+    "name": "Hariharan Narayanan",
+    "type": "person",
+    "loc": "Palo Alto, California, USA",
+    "lat": 37.4419,
+    "lng": -122.143,
+    "years": "1973-",
+    "active": [
+      2005,
+      2016
+    ],
+    "blurb": "ML researcher who co-tested the manifold hypothesis.",
+    "cited_in": [
+      "origami"
+    ],
+    "bibkeys": [
+      "fefferman2016testing"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-leslie-aiello",
+    "name": "Leslie C. Aiello",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, USA",
+    "lat": 42.3736,
+    "lng": -71.1097,
+    "years": "1956-",
+    "active": [
+      1990,
+      2001
+    ],
+    "blurb": "Defended the expensive-tissue hypothesis: a bigger brain was paid for by a smaller gut, bought by cooking.",
+    "cited_in": [
+      "human_mind"
+    ],
+    "bibkeys": [
+      "aiello1995expensivetissue"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-sonja-diekelmann",
+    "name": "Sonja Diekelmann",
+    "type": "person",
+    "loc": "Tübingen, Germany",
+    "lat": 48.516,
+    "lng": 9.1796,
+    "years": "-",
+    "active": [
+      2005,
+      2010
+    ],
+    "blurb": "Studied sleep's memory function: replay that consolidates and generalizes the day's experience.",
+    "cited_in": [
+      "human_mind"
+    ],
+    "bibkeys": [
+      "diekelmann2010sleep"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-jana-born",
+    "name": "Jana Born",
+    "type": "person",
+    "loc": "Tübingen, Germany",
+    "lat": 48.516,
+    "lng": 9.1796,
+    "years": "1967-",
+    "active": [
+      1995,
+      2010
+    ],
+    "blurb": "Co-reviewed the memory-consolidating replay that runs during sleep.",
+    "cited_in": [
+      "human_mind"
+    ],
+    "bibkeys": [
+      "diekelmann2010sleep"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-justin-l-barrett",
+    "name": "Justin L. Barrett",
+    "type": "person",
+    "loc": "Exeter, England, UK",
+    "lat": 50.7241,
+    "lng": -3.5256,
+    "years": "1965-",
+    "active": [
+      1995,
+      2011
+    ],
+    "blurb": "Cognitive scientist who framed religion as a by-product of the hyperactive agency-detection (mind-reading) device.",
+    "cited_in": [
+      "human_mind"
+    ],
+    "bibkeys": [
+      "barrett2011religion"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-robert-w-brednich",
+    "name": "Rolf Wilhelm Brednich",
+    "type": "person",
+    "loc": "Göttingen, Germany",
+    "lat": 51.539,
+    "lng": 9.9361,
+    "years": "1955-",
+    "active": [
+      1985,
+      1993
+    ],
+    "blurb": "German folklorist whose method for reading urban legends is used to dissect AI myths and their true cores.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "brednich1990spinne",
+      "brednich1991maus",
+      "brednich1993huhn"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-erik-brynjolfsson",
+    "name": "Erik Brynjolfsson",
+    "type": "person",
+    "loc": "Stanford, California, USA",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "1960-",
+    "active": [
+      1995,
+      2014
+    ],
+    "blurb": "Co-authored The Second Machine Age, documenting how automation transforms work rather than durably destroying it.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "brynjolfsson2014secondmachine"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-andrew-mcafee",
+    "name": "Andrew McAfee",
+    "type": "person",
+    "loc": "Cambridge, Massachusetts, USA",
+    "lat": 42.3736,
+    "lng": -71.1097,
+    "years": "1973-",
+    "active": [
+      2005,
+      2014
+    ],
+    "blurb": "Co-authored The Second Machine Age on technology's transformative (not annihilating) effect on jobs.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "brynjolfsson2014secondmachine"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "person-john-g-castel",
+    "name": "Judge John G. Castel",
+    "type": "person",
+    "loc": "New York, USA",
+    "lat": 40.7128,
+    "lng": -74.006,
+    "years": "1945-",
+    "active": [
+      1998,
+      2023
+    ],
+    "blurb": "Federal judge whose Mata v. Avianca ruling was the first to sanction a lawyer for ChatGPT-fabricated citations.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "mataavianca_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "institution-stanford-hai",
+    "name": "Stanford Institute for Human-Centered AI",
+    "type": "institution",
+    "loc": "Stanford, California, USA",
+    "lat": 37.4275,
+    "lng": -122.1697,
+    "years": "-",
+    "active": [
+      2019,
+      2025
+    ],
+    "blurb": "Publishes the annual AI Index report benchmarking progress and public AI sentiment.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "aiindex2025"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "artifact-theatre-dopera-spatial",
+    "name": "Théâtre D'opéra Spatial",
+    "type": "artifact",
+    "loc": "Colorado Springs, Colorado, USA",
+    "lat": 38.8339,
+    "lng": -104.8214,
+    "years": "-",
+    "active": [
+      2022,
+      2022
+    ],
+    "blurb": "A Midjourney-generated image that won a 2022 county-fair art prize, igniting the 'a prompt is not art' debate.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "theatreopera_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-mata-v-avianca-2023",
+    "name": "Mata v. Avianca, 2023",
+    "type": "event",
+    "loc": "New York, USA",
+    "lat": 40.7128,
+    "lng": -74.006,
+    "years": "2023",
+    "active": [
+      2023,
+      2023
+    ],
+    "blurb": "First ruling sanctioning a lawyer for filing AI-hallucinated case citations, kicking off the 'invented cases' genre.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "mataavianca_wiki"
+    ],
+    "conf": "known"
+  },
+  {
+    "id": "event-deepfake-cfo-scam-2024",
+    "name": "Deepfake CFO video-call fraud, 2024",
+    "type": "event",
+    "loc": "Hong Kong",
+    "lat": 22.3193,
+    "lng": 114.1694,
+    "years": "2023",
+    "active": [
+      2023,
+      2024
+    ],
+    "blurb": "A finance worker wired $25m on a deepfake video call with her fake CFO, the canonical deepfake boss legend.",
+    "cited_in": [
+      "myths"
+    ],
+    "bibkeys": [
+      "cnn2024deepfake",
+      "aiincident634"
+    ],
+    "conf": "known"
+  }
+]

@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wie ein Sprachmodell denkt — Attention, FFN und die Rolle der Schichten</title>
+<style>
+  :root{
+    --bg:#0b0e14; --bg2:#121722; --panel:#161c2a; --panel2:#1d2433;
+    --ink:#e8ecf4; --ink2:#a9b4c8; --ink3:#6b7689;
+    --acc:#5eead4; --acc2:#818cf8; --warn:#fbbf24; --err:#fb7185;
+    --ok:#4ade80; --line:#2a3344;
+    --mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:
+      radial-gradient(1200px 700px at 15% -10%, #1b2440 0%, transparent 60%),
+      radial-gradient(900px 600px at 95% 10%, #10263a 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 120px}
+
+  /* ---------- Header ---------- */
+  header{padding:70px 0 40px;text-align:center}
+  h1{font-size:clamp(28px,5vw,52px);line-height:1.08;margin:0 0 14px;letter-spacing:-.02em}
+  h1 .g{background:linear-gradient(100deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--ink2);max-width:720px;margin:0 auto;font-size:17px}
+  .pill{display:inline-block;margin-top:22px;padding:7px 15px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;color:var(--ink3);background:#0e131d}
+
+  /* ---------- Nav ---------- */
+  nav{position:sticky;top:0;z-index:100;background:rgba(11,14,20,.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);margin-bottom:46px}
+  nav .inner{max-width:1180px;margin:0 auto;padding:11px 20px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+  nav .inner::-webkit-scrollbar{display:none}
+  nav a{color:var(--ink3);text-decoration:none;font-size:13px;padding:6px 11px;border-radius:7px;white-space:nowrap;transition:.15s}
+  nav a:hover{color:var(--ink);background:var(--panel2)}
+  nav a.on{color:var(--acc);background:#13282a}
+
+  /* ---------- Sections ---------- */
+  section{margin:0 0 92px;scroll-margin-top:66px}
+  .chap{font:600 12px/1 var(--mono);letter-spacing:.16em;color:var(--acc);text-transform:uppercase;margin-bottom:10px}
+  h2{font-size:clamp(23px,3.4vw,34px);margin:0 0 16px;letter-spacing:-.015em}
+  h3{font-size:19px;margin:34px 0 12px;color:var(--ink)}
+  p{color:var(--ink2);max-width:76ch}
+  p strong,li strong{color:var(--ink);font-weight:600}
+  a.cit{color:var(--acc2);text-decoration:none;border-bottom:1px dotted var(--acc2);font-size:.88em;padding:0 1px}
+  a.cit:hover{background:#1c1f3a}
+  code{font-family:var(--mono);font-size:.9em;background:var(--panel2);padding:2px 6px;border-radius:5px;color:var(--acc)}
+
+  /* ---------- Cards / Boxes ---------- */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;margin:22px 0}
+  .lab{background:linear-gradient(170deg,#151b29,#10151f);border:1px solid #2d3850;border-radius:18px;padding:24px;margin:26px 0}
+  .lab > h4{margin:0 0 4px;font-size:17px;display:flex;align-items:center;gap:9px}
+  .lab > h4::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+  .labnote{color:var(--ink3);font-size:13.5px;margin:0 0 18px;max-width:76ch}
+
+  .warn,.honest,.note{border-radius:12px;padding:15px 17px;margin:20px 0;font-size:14.5px;line-height:1.6}
+  .warn{background:#2b1f0c;border-left:3px solid var(--warn)}
+  .warn b{color:var(--warn)}
+  .honest{background:#2a1118;border-left:3px solid var(--err)}
+  .honest b{color:var(--err)}
+  .note{background:#0f2024;border-left:3px solid var(--acc)}
+  .note b{color:var(--acc)}
+  .warn p,.honest p,.note p{color:#d4dbe8;margin:7px 0;max-width:none}
+  .warn p:last-child,.honest p:last-child,.note p:last-child{margin-bottom:0}
+
+  /* ---------- Controls ---------- */
+  .ctrls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin:16px 0}
+  .ctrl{display:flex;flex-direction:column;gap:5px;min-width:150px}
+  .ctrl label{font:600 11px/1 var(--mono);letter-spacing:.09em;color:var(--ink3);text-transform:uppercase}
+  .ctrl .val{color:var(--acc);font-family:var(--mono);font-size:13px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line);border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;box-shadow:0 0 0 4px #5eead41f}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--acc);cursor:pointer}
+  button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:8px 15px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:500;transition:.15s}
+  button:hover{background:#262f42;border-color:#3a4760}
+  button.pri{background:linear-gradient(100deg,var(--acc),#3dd5bb);color:#07211d;border:0;font-weight:700}
+  button.pri:hover{filter:brightness(1.12)}
+  button.on{background:#13282a;border-color:var(--acc);color:var(--acc)}
+  select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:7px 11px;border-radius:8px;font-size:13.5px}
+
+  canvas{display:block;width:100%;border-radius:12px;background:#080b11;border:1px solid var(--line)}
+  .cap{color:var(--ink3);font-size:12.5px;margin-top:10px;font-style:italic}
+
+  /* ---------- Grids ---------- */
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:880px){.g2,.g3{grid-template-columns:1fr}}
+
+  /* ---------- Table ---------- */
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:16px 0}
+  th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--ink3);font:600 11px/1.4 var(--mono);letter-spacing:.07em;text-transform:uppercase}
+  td{color:var(--ink2)}
+  .tag{display:inline-block;padding:2px 9px;border-radius:999px;font:600 11px/1.6 var(--mono)}
+  .t-ok{background:#0f2a1a;color:var(--ok)}
+  .t-an{background:#2b2410;color:var(--warn)}
+  .t-op{background:#2a1118;color:var(--err)}
+
+  /* ---------- Step flow ---------- */
+  .steps{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+  .step{display:flex;gap:14px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:14px 16px;cursor:pointer;transition:.18s}
+  .step:hover{border-color:#3a4760}
+  .step.on{border-color:var(--acc);background:#10222b}
+  .step .n{flex:0 0 28px;height:28px;border-radius:8px;background:var(--panel);display:grid;place-items:center;font:700 13px var(--mono);color:var(--acc)}
+  .step.on .n{background:var(--acc);color:#07211d}
+  .step .tx{flex:1}
+  .step .tt{font-weight:600;font-size:14.5px;margin-bottom:2px}
+  .step .td{color:var(--ink3);font-size:13px;line-height:1.5}
+
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:13.5px;margin:12px 0}
+  .kv dt{color:var(--ink3);font-family:var(--mono);font-size:12.5px}
+  .kv dd{margin:0;color:var(--ink2)}
+
+  footer{border-top:1px solid var(--line);padding-top:32px;color:var(--ink3);font-size:13.5px}
+  footer a{color:var(--acc2)}
+  ul{color:var(--ink2);max-width:76ch}
+  li{margin:6px 0}
+  .mono{font-family:var(--mono);font-size:13px}
+  .axis{color:var(--ink3);font:11px var(--mono)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner" id="nav">
+    <a href="#start" class="on">Start</a>
+    <a href="#matrix">1 · Die Matrix</a>
+    <a href="#attn">2 · Attention</a>
+    <a href="#collapse">3 · Der Kollaps</a>
+    <a href="#geo">4 · Geometrie</a>
+    <a href="#ffn">5 · Das FFN</a>
+    <a href="#fold">6 · Falten</a>
+    <a href="#super">7 · Superposition</a>
+    <a href="#resid">8 · Residual</a>
+    <a href="#full">9 · Alles</a>
+    <a href="#truth">10 · Belegstatus</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header id="start">
+  <h1>Wie ein Sprachmodell <span class="g">denkt</span></h1>
+  <p class="sub">
+    Ein Transformer-Block macht genau zwei Dinge. Das eine zieht Wörter zusammen.
+    Das andere drückt sie wieder auseinander. Das Gleichgewicht dieser zwei Kräfte,
+    wiederholt über viele Schichten, ist das ganze Modell.
+  </p>
+  <div class="pill">Interaktiv · 10 Kapitel · ca. 25 Min · alle Zahlen aus 7 Fachpapieren belegt</div>
+</header>
+
+<div class="honest">
+  <p><b>Lies das zuerst.</b> Diese Seite vereinfacht. Alle Visualisierungen zeigen 2 oder 3 Dimensionen; echte Modelle arbeiten in 512 bis 4096 <a class="cit" href="#r-vaswani">[Vaswani]</a> <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>. Hochdimensionale Geometrie verhält sich qualitativ anders — der mathematische Beweis für Token-Clustering gilt erst ab <code>d ≥ 3</code>, der schnelle Beweis erst ab <code>d ≥ n</code> <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>.</p>
+  <p>Die Bilder hier sind <b>Intuitionspumpen, keine Miniaturmodelle</b>. Wo eine Vereinfachung gefährlich wird, steht ein roter Kasten. Lies die auch.</p>
+</div>
+
+<!-- ============ 1 ============ -->
+<section id="matrix">
+  <div class="chap">Kapitel 1</div>
+  <h2>Alles passiert in einer Tabelle</h2>
+  <p>
+    Ein Sprachmodell bekommt Text. Der Text wird in <b>Tokens</b> zerlegt — Wortstücke. Jedes Token
+    wird zu einer Liste von Zahlen, einem Vektor. Alle Vektoren zusammen bilden eine Tabelle.
+  </p>
+  <p>
+    Diese Tabelle hat zwei Achsen, und das ist der <b>wichtigste Satz der ganzen Seite</b>:
+    Attention arbeitet auf der einen Achse, das FFN auf der anderen. Sie können sich nicht in die
+    Quere kommen, weil sie in verschiedenen Richtungen schauen.
+  </p>
+
+  <div class="lab">
+    <h4>Die zwei Achsen</h4>
+    <p class="labnote">Klick auf die Knöpfe. Beobachte, <em>welche</em> Zellen jeweils zusammen verrechnet werden.</p>
+    <div class="ctrls">
+      <button id="axNone" class="on">Nur Tabelle</button>
+      <button id="axAttn">Attention: über Positionen →</button>
+      <button id="axFfn">FFN: über Features ↓</button>
+    </div>
+    <canvas id="cMatrix" height="340"></canvas>
+    <p class="cap" id="capMatrix">8 Tokens, je 10 Feature-Werte. In echten Modellen: hunderte Tokens, 512–4096 Features.</p>
+  </div>
+
+  <div class="note">
+    <p><b>Wortgenau belegt.</b> Das FFN wird laut Originalpapier „auf jede Position separat und identisch angewendet" <a class="cit" href="#r-vaswani">[Vaswani]</a>. Es sieht die Sequenz gar nicht — nur einen einzelnen Token-Vektor. Attention dagegen ist definiert als gewichtete Summe <em>über alle Positionen</em> <a class="cit" href="#r-vaswani">[Vaswani]</a>.</p>
+  </div>
+
+  <h3>Die echten Zahlen</h3>
+  <dl class="kv">
+    <dt>d_model = 512</dt><dd>Features pro Token im Original-Transformer <a class="cit" href="#r-vaswani">[Vaswani]</a></dd>
+    <dt>d_ff = 2048</dt><dd>Breite der inneren FFN-Schicht — genau 4× d_model <a class="cit" href="#r-vaswani">[Vaswani]</a></dd>
+    <dt>N = 6</dt><dd>Anzahl identischer Schichten im Encoder <a class="cit" href="#r-vaswani">[Vaswani]</a></dd>
+    <dt>d = 4096, n ≈ 512–1024</dt><dd>ALBERT XLarge v2, 12 oder 24 Schichten <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a></dd>
+  </dl>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="attn">
+  <div class="chap">Kapitel 2</div>
+  <h2>Attention: jedes Wort fragt alle anderen</h2>
+  <p>
+    Das Wort „Bank" bedeutet etwas anderes nach „Fluss" als nach „Geld". Aber der Token-Vektor
+    für „Bank" ist zunächst immer derselbe. Attention löst das: Jedes Token <b>mischt sich</b>
+    mit den anderen und bekommt dadurch einen kontextabhängigen Vektor.
+  </p>
+  <p>
+    Mechanisch: Jedes Token stellt eine <b>Frage</b> (Query). Jedes Token hat ein <b>Namensschild</b>
+    (Key). Passen Frage und Schild zusammen, fließt vom Partner viel <b>Inhalt</b> (Value) herüber.
+    Formal ist es eine gewichtete Summe, wobei die Gewichte aus der Verträglichkeit von Query
+    und Key stammen <a class="cit" href="#r-vaswani">[Vaswani]</a>.
+  </p>
+
+  <div class="lab">
+    <h4>Attention live</h4>
+    <p class="labnote">Fahre über ein Token. Die Linien zeigen, woher es Information zieht — Dicke = Gewicht. Mit „Temperatur" steuerst du, wie <em>scharf</em> die Auswahl ist. Das entspricht dem Parameter β bei Geshkovski <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Schärfe β <span class="val" id="vBeta">2.0</span></label>
+        <input type="range" id="sBeta" min="0" max="8" step="0.1" value="2">
+      </div>
+      <div class="ctrl">
+        <label>Satz</label>
+        <select id="selSent">
+          <option value="0">Die Bank am Fluss war nass</option>
+          <option value="1">Die Bank gab mir einen Kredit</option>
+        </select>
+      </div>
+      <button id="bAttnAll">Alle Verbindungen zeigen</button>
+    </div>
+    <canvas id="cAttn" height="400"></canvas>
+    <p class="cap" id="capAttn">Hover über ein Token. — Die Gewichte hier sind handgesetzt, um ein Prinzip zu zeigen; in echten Modellen werden sie gelernt.</p>
+  </div>
+
+  <div class="warn">
+    <p><b>Was hier vereinfacht ist.</b> Echte Modelle nutzen <b>Multi-Head Attention</b>: acht oder mehr parallele Attention-Mechanismen, die laut Originalpapier erlauben, „gemeinsam auf Information aus verschiedenen Repräsentations-Unterräumen an verschiedenen Positionen zu achten" <a class="cit" href="#r-vaswani">[Vaswani]</a>. Die Ablationstabelle zeigt: ein einzelner Head ist 0.9 BLEU schlechter als die beste Einstellung — aber zu viele Heads schaden auch <a class="cit" href="#r-vaswani">[Vaswani]</a>.</p>
+  </div>
+
+  <h3>Warum β wichtig ist</h3>
+  <p>
+    β ist in der mathematischen Analyse eine <b>inverse Temperatur</b> aus der statistischen Physik
+    <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>. Klein: jedes Token beachtet alle gleichmäßig.
+    Groß: nur der beste Treffer zählt. Bei β = ∞ bewegt sich nichts mehr — alle Partikel sind fixiert
+    <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>.
+  </p>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="collapse">
+  <div class="chap">Kapitel 3</div>
+  <h2>Der Kollaps — und warum er nicht eintritt</h2>
+  <p>
+    Hier kommt das überraschendste Ergebnis der ganzen Literatur. Wenn man Attention
+    <b>ohne Gegenkraft</b> laufen lässt, passiert etwas Fatales: alle Tokens rutschen zu
+    <b>einem einzigen Punkt</b> zusammen. Das Modell würde alles vergessen.
+  </p>
+  <p>
+    Das ist bewiesen, nicht vermutet. Für <code>d ≥ 3</code> und <b>jede</b> Temperatur konvergieren
+    fast alle Anfangskonfigurationen zu einem einzigen Cluster
+    <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>. Für <code>d ≥ n</code> geschieht das
+    exponentiell schnell <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>.
+  </p>
+
+  <div class="lab">
+    <h4>Tokens als Teilchen auf der Kugel</h4>
+    <p class="labnote">
+      Hier ist das mathematische Modell: jedes Token ist ein Punkt auf einer Kugel (das macht LayerNorm),
+      und Attention ist eine Anziehungskraft.      Attention ist eine Anziehungskraft, die von <em>allen</em> anderen Teilchen gleichzeitig ausgeht
+      <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>. Schiebe die Zeit nach rechts und beobachte den Kollaps.
+      Mit „Schichten begrenzen" simulierst du, was echte Modelle tun: früh aufhören.
+    </p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Zeit / Schicht <span class="val" id="vT">0</span></label>
+        <input type="range" id="sT" min="0" max="300" step="1" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Schärfe β <span class="val" id="vB2">3.0</span></label>
+        <input type="range" id="sB2" min="0.2" max="9" step="0.1" value="3">
+      </div>
+      <div class="ctrl">
+        <label>Tokens n <span class="val" id="vN2">32</span></label>
+        <input type="range" id="sN2" min="8" max="64" step="1" value="32">
+      </div>
+      <button id="bPlay2" class="pri">▶ Abspielen</button>
+      <button id="bReset2">Neu würfeln</button>
+    </div>
+    <div class="g2">
+      <div>
+        <canvas id="cSphere" height="330"></canvas>
+        <p class="cap">Tokens auf der Kugel (2D-Schnitt). Jeder Punkt ist ein Wort.</p>
+      </div>
+      <div>
+        <canvas id="cHist" height="330"></canvas>
+        <p class="cap">Histogramm aller paarweisen Skalarprodukte ⟨xᵢ,xⱼ⟩. Masse bei 1 = geclustert.</p>
+      </div>
+    </div>
+    <div id="stateBox" class="note" style="margin-top:14px">
+      <p><b>Status:</b> <span id="stateTxt">Schicht 0 — Tokens zufällig verteilt, keine Cluster.</span></p>
+    </div>
+  </div>
+
+  <div class="note">
+    <p><b>Das ist kein Modell, das ist ein Messergebnis.</b> Genau dieses Histogramm wurde am echten, trainierten Modell <b>ALBERT XLarge v2</b> gemessen. Über 24 Schichten wandert die Masse sichtbar zur 1 — bei 48 Schichten noch stärker <a class="cit" href="#r-gesh24">[Geshkovski 2024, Fig. 1]</a>. Dieses Modell hat <code>n ≈ 512–1024</code> Tokens in <code>d = 4096</code> Dimensionen.</p>
+  </div>
+
+  <h3>Metastabilität: das eigentliche Geheimnis</h3>
+  <p>
+    Wenn Attention zum Totalkollaps führt — warum funktionieren Sprachmodelle dann?
+    Weil der Prozess <b>zwei Geschwindigkeiten</b> hat:
+  </p>
+  <div class="steps">
+    <div class="step on"><div class="n">1</div><div class="tx">
+      <div class="tt">Phase 1 — schnell</div>
+      <div class="td">Tokens bilden rasch einige wenige Cluster. Das ist nützlich: „Fluss" und „Ufer" rücken zusammen, „Geld" und „Kredit" woanders hin.</div>
+    </div></div>
+    <div class="step"><div class="n">2</div><div class="tx">
+      <div class="tt">Phase 2 — sehr viel langsamer</div>
+      <div class="td">Die Cluster verschmelzen paarweise, bis alles ein Punkt ist. Das wäre der Tod des Modells.</div>
+    </div></div>
+    <div class="step"><div class="n">3</div><div class="tx">
+      <div class="tt">Die Lösung: aufhören</div>
+      <div class="td">Reale Modelle haben 12, 24, 96 Schichten — gerade genug für Phase 1, zu wenig für Phase 2. Sie leben im <b>metastabilen Zustand</b>.</div>
+    </div></div>
+  </div>
+  <p>
+    Im Originalton: „in einer ersten Phase bilden Tokens schnell wenige Cluster, während in einer zweiten
+    (viel langsameren) Phase […] alle Tokens schließlich zu einem einzigen Punkt kollabieren" — und die Autoren
+    merken an, dass genau das empirisch unter den Namen <b>token uniformity</b>, <b>over-smoothing</b> und
+    <b>rank-collapse</b> beobachtet wird <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>.
+  </p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="geo">
+  <div class="chap">Kapitel 4</div>
+  <h2>Welche Form hat der Kollaps?</h2>
+  <p>
+    Es gibt eine zweite, frühere Arbeit derselben Gruppe, die <em>ohne</em> die Kugel-Normalisierung rechnet
+    <a class="cit" href="#r-gesh23">[Geshkovski 2023]</a>. Dort zeigt sich etwas Erstaunliches: <b>die Geometrie
+    des Endzustands hängt davon ab, wie die Value-Matrix aussieht</b> — genauer, von ihren Eigenwerten.
+  </p>
+
+  <div class="lab">
+    <h4>Vier Fälle, vier Formen</h4>
+    <p class="labnote">Wähle einen Fall. Das sind keine Vermutungen — es sind bewiesene Sätze <a class="cit" href="#r-gesh23">[Geshkovski 2023, Tab. 1]</a>.</p>
+    <div class="ctrls">
+      <button class="geoBtn on" data-g="0">V = Identität</button>
+      <button class="geoBtn" data-g="1">λ₁ &gt; 0, einfach</button>
+      <button class="geoBtn" data-g="2">V paranormal</button>
+      <button class="geoBtn" data-g="3">V = −Identität</button>
+    </div>
+    <canvas id="cGeo" height="330"></canvas>
+    <p class="cap" id="capGeo"></p>
+  </div>
+
+  <div class="warn">
+    <p><b>Warum das wichtig ist.</b> Es zeigt, dass „Clustering" nicht <em>eine</em> Sache ist. Je nach gelernten Gewichten entstehen Ecken von Polytopen, Hyperebenen oder ein einzelner Punkt. Die Form der entstehenden Repräsentation ist also <b>etwas, das das Modell lernt</b> — nicht etwas, das die Architektur vorgibt.</p>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="ffn">
+  <div class="chap">Kapitel 5</div>
+  <h2>Das FFN: ein Gedächtnis aus Schlüsseln und Werten</h2>
+  <p>
+    Nach der Attention kommt im Transformer-Block die zweite Hälfte: das <b>Feed-Forward-Netz</b>.
+    Es macht zwei Drittel aller Parameter aus — und galt lange als unverstanden
+    <a class="cit" href="#r-geva">[Geva]</a>.
+  </p>
+  <p>
+    Die Erklärung, die sich am besten belegen lässt: Das FFN ist ein <b>Speicher</b>. Die erste
+    Gewichtsmatrix enthält <b>Schlüssel</b> (Mustererkenner), die zweite enthält <b>Werte</b>
+    (Vorhersagen über das nächste Wort) <a class="cit" href="#r-geva">[Geva]</a>.
+  </p>
+
+  <div class="lab">
+    <h4>Der Speicher in Aktion</h4>
+    <p class="labnote">Gib einen Satzanfang ein (oder wähle einen). Beobachte, welche Speicherzellen anspringen und was sie vorschlagen. Die Muster sind echte Befunde aus dem Papier <a class="cit" href="#r-geva">[Geva, Tab. 1 &amp; 2]</a>.</p>
+    <div class="ctrls">
+      <div class="ctrl" style="min-width:300px;flex:1">
+        <label>Eingabe</label>
+        <select id="selMem">
+          <option value="0">„…Weekend tolls are in effect from 7:00 pm Friday until"</option>
+          <option value="1">„…he came off the substitutes"</option>
+          <option value="2">„…Comet served only briefly with the fleet, owing in large part"</option>
+          <option value="3">„…Sailing from Lorient in October 1805 with one ship of the line"</option>
+        </select>
+      </div>
+      <div class="ctrl">
+        <label>Schicht <span class="val" id="vL">13</span></label>
+        <input type="range" id="sL" min="1" max="16" step="1" value="13">
+      </div>
+    </div>
+    <canvas id="cMem" height="360"></canvas>
+    <p class="cap">Links: Schlüssel, die anspringen (Mustererkennung). Rechts: der zugehörige Wert — eine Verteilung über mögliche nächste Wörter.</p>
+  </div>
+
+  <h3>Was die Zahlen sagen</h3>
+  <dl class="kv">
+    <dt>3,6</dt><dd>Muster pro Schlüssel im Durchschnitt, von Menschen erkannt <a class="cit" href="#r-geva">[Geva]</a></dd>
+    <dt>65–80 %</dt><dd>der Top-Beispiele passen auf mindestens ein erkanntes Muster <a class="cit" href="#r-geva">[Geva, Fig. 2]</a></dd>
+    <dt>Schicht 1–9</dt><dd>eher <b>oberflächliche</b> Muster (gleiches Endwort) <a class="cit" href="#r-geva">[Geva]</a></dd>
+    <dt>Schicht 10–16</dt><dd>eher <b>semantische</b> Muster (gleiches Thema, kein Wortgleichklang) <a class="cit" href="#r-geva">[Geva]</a></dd>
+    <dt>10–50 %</dt><dd>der 4096 Zellen sind pro Beispiel aktiv — mit einem Einbruch um Schicht 10 <a class="cit" href="#r-geva">[Geva, Fig. 7]</a></dd>
+  </dl>
+
+  <div class="note">
+    <p><b>Eine schöne Beobachtung.</b> Der Einbruch der aktiven Zellen um Schicht 10 fällt genau mit dem Umschlag von oberflächlichen zu semantischen Mustern zusammen <a class="cit" href="#r-geva">[Geva]</a>. Das Modell scheint dort den Modus zu wechseln.</p>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="fold">
+  <div class="chap">Kapitel 6</div>
+  <h2>Die Falt-Intuition — schön, aber mit Vorsicht</h2>
+  <p>
+    Es gibt ein zweites, anschaulicheres Bild dafür, was ein FFN tut. Es stammt aus einer Arbeit über
+    einfache Klassifikationsnetze und lautet: <b>Das Netz faltet die Daten wie Origami</b>
+    <a class="cit" href="#r-keup">[Keup &amp; Helias]</a>.
+  </p>
+  <p>
+    Die Idee: Manche Daten lassen sich mit einer geraden Linie nicht trennen — etwa ein Punkt mitten
+    in einem Ring. Aber wenn man das Blatt Papier <em>faltet</em>, kommt das Innere plötzlich an die
+    Außenkante, und eine Gerade reicht.
+  </p>
+
+  <div class="lab">
+    <h4>Falten in Aktion</h4>
+    <p class="labnote">Die zwei Klassen (innen/außen) sind flach nicht trennbar. Falte sie in die dritte Dimension.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Faltung <span class="val" id="vF">0 %</span></label>
+        <input type="range" id="sF" min="0" max="100" step="1" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Anzahl Falten <span class="val" id="vFN">3</span></label>
+        <input type="range" id="sFN" min="1" max="6" step="1" value="3">
+      </div>
+      <button id="bFoldAuto" class="pri">▶ Automatisch</button>
+    </div>
+    <canvas id="cFold" height="340"></canvas>
+    <p class="cap" id="capFold">Oben: Daten. Unten: Was ein linearer Leser sieht — trennbar oder nicht?</p>
+  </div>
+
+  <h3>Was dafür spricht</h3>
+  <p>
+    Das Bild erklärt elegant, warum die innere FFN-Schicht <b>breiter</b> ist als Ein- und Ausgang:
+    <code>d_model = 512</code>, aber <code>d_ff = 2048</code> <a class="cit" href="#r-vaswani">[Vaswani]</a>.
+    Nach Keup funktioniert Falten nur, „solange Schichten breiter sind als die Datendimensionalität"
+    <a class="cit" href="#r-keup">[Keup]</a>. Und tatsächlich: <code>d_ff</code> zu halbieren verschlechtert
+    die Perplexity von 4.92 auf 5.12, zu verdoppeln verbessert sie auf 4.75
+    <a class="cit" href="#r-vaswani">[Vaswani, Tab. 3C]</a>.
+  </p>
+
+  <div class="honest">
+    <p><b>Was dagegen spricht — und das muss hier stehen.</b></p>
+    <p>1. <b>Die Autoren sagen selbst, dass sie Transformer nicht untersucht haben.</b> Die Arbeit ist „bislang auf vollverbundene, tiefe Feed-Forward-Netze und Klassifikationsaufgaben beschränkt", und eine Erweiterung auf Transformer wird als <em>Zukunftsarbeit</em> genannt <a class="cit" href="#r-keup">[Keup]</a>.</p>
+    <p>2. <b>Die zentrale Behauptung ist nicht bewiesen.</b> Wörtlich: Die Aussage zur Ineffizienz ohne Dimensionserweiterung „ist nicht durch eine strenge Rechnung quantifiziert", weil ein Beweis ein Verständnis realistischer Datenverteilungen erforderte, „das derzeit, soweit wir wissen, fehlt" <a class="cit" href="#r-keup">[Keup]</a>. Die Autoren „verzichten auf die meiste mathematische Analyse" <a class="cit" href="#r-keup">[Keup]</a>.</p>
+    <p>3. <b>Moderne FFNs haben gar kein ReLU mehr.</b> Dazu gleich mehr.</p>
+    <p>Nutze das Faltbild als <b>Intuitionshilfe</b> dafür, warum Nichtlinearität plus Breite nützlich ist. Nutze es <b>nicht</b> als Beschreibung dessen, was in GPT tatsächlich passiert. Dafür ist Kapitel 5 besser belegt.</p>
+  </div>
+
+  <h3>Das SwiGLU-Problem</h3>
+  <p>
+    Keup hält andere Aktivierungsfunktionen für unkritisch: bei glatten Funktionen sei Falten eben
+    „ein sanftes Biegen", was „keinen qualitativen Unterschied für die Klassifikation macht"
+    <a class="cit" href="#r-keup">[Keup]</a>.
+  </p>
+  <p>
+    Aber moderne Transformer nutzen <b>SwiGLU</b> — und das ist keine elementweise Nichtlinearität mehr,
+    sondern das <b>komponentenweise Produkt zweier linearer Projektionen</b>
+    <a class="cit" href="#r-shazeer">[Shazeer]</a>. Ein Hammer, der auf eine Hyperebene schlägt, hat
+    darin keine offensichtliche Entsprechung.
+  </p>
+
+  <div class="card">
+    <table>
+      <tr><th>Variante</th><th>Log-Perplexity (524k Schritte)</th></tr>
+      <tr><td>ReLU (Basis)</td><td class="mono">1.677</td></tr>
+      <tr><td>GELU</td><td class="mono">1.679</td></tr>
+      <tr><td>Bilinear</td><td class="mono">1.648</td></tr>
+      <tr><td><b>GEGLU</b></td><td class="mono"><b>1.633</b></td></tr>
+      <tr><td><b>SwiGLU</b></td><td class="mono"><b>1.636</b></td></tr>
+    </table>
+    <p class="cap">Quelle: <a class="cit" href="#r-shazeer">[Shazeer, Tab. 1]</a>. Alle Modelle haben gleiche Parameterzahl.</p>
+  </div>
+
+  <div class="warn">
+    <p><b>Bemerkenswert ehrlich.</b> Der Autor schreibt zu seinen eigenen Ergebnissen: „Wir bieten keine Erklärung dafür, warum diese Architekturen zu funktionieren scheinen; wir schreiben ihren Erfolg, wie alles andere, göttlichem Wohlwollen zu." <a class="cit" href="#r-shazeer">[Shazeer]</a></p>
+    <p>Ein zweites Detail mit Folgen: Weil GLU-Varianten <b>drei</b> statt zwei Gewichtsmatrizen haben, wird <code>d_ff</code> um Faktor ⅔ reduziert — von 3072 auf 2048 <a class="cit" href="#r-shazeer">[Shazeer]</a>. Das relativiert die Deutung von „<code>d_ff</code> = 4·<code>d_model</code>" als geometrische Notwendigkeit.</p>
+  </div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="super">
+  <div class="chap">Kapitel 7</div>
+  <h2>Superposition: mehr Begriffe als Platz</h2>
+  <p>
+    Hier kommt die Idee, die der Falt-Intuition direkt widerspricht — und die vermutlich näher an der
+    Wahrheit großer Sprachmodelle liegt.
+  </p>
+  <p>
+    Ein Sprachmodell müsste eigentlich <em>sehr viele</em> Begriffe kennen: jede Tierart, jedes Objekt,
+    jede Person, über die je geschrieben wurde. Das sind mehr Begriffe, als das Modell Neuronen hat
+    <a class="cit" href="#r-elhage">[Elhage]</a>. Wie geht das?
+  </p>
+  <p>
+    Die Antwort: Wenn Begriffe <b>selten</b> sind (also fast nie gleichzeitig auftreten), kann das Modell
+    sie <b>übereinanderlegen</b> — als fast-orthogonale Richtungen, die sich leicht stören. Diese Störung
+    ist der Preis. Der Gewinn ist Kapazität <a class="cit" href="#r-elhage">[Elhage]</a>.
+  </p>
+
+  <div class="lab">
+    <h4>Der Schieberegler, der alles entscheidet</h4>
+    <p class="labnote">Schiebe die Seltenheit nach rechts. Beobachte, wie das Modell von „nur das Wichtigste speichern" zu „alles übereinanderlegen" umschaltet. Nachbau von <a class="cit" href="#r-elhage">[Elhage, Fig. 1]</a>.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Seltenheit (Sparsity) <span class="val" id="vSp">0 %</span></label>
+        <input type="range" id="sSp" min="0" max="99" step="1" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Begriffe <span class="val" id="vNf">5</span></label>
+        <input type="range" id="sNf" min="3" max="8" step="1" value="5">
+      </div>
+    </div>
+    <div class="g2">
+      <div>
+        <canvas id="cSup" height="300"></canvas>
+        <p class="cap">Begriffe als Richtungen in einem 2D-Raum. Mehr Pfeile als Dimensionen = Superposition.</p>
+      </div>
+      <div>
+        <canvas id="cSupBar" height="300"></canvas>
+        <p class="cap">Wie viel „Platz" jeder Begriff bekommt. 1 = eigene Dimension, 0 = nicht gelernt.</p>
+      </div>
+    </div>
+    <div class="note" style="margin-top:14px">
+      <p><b>Beobachtung:</b> <span id="supTxt">Bei dichten Begriffen lernt das Modell nur 2 von 5 — wie eine Hauptkomponentenanalyse.</span></p>
+    </div>
+  </div>
+
+  <h3>Der direkte Widerspruch zur Falt-Intuition</h3>
+  <p>
+    Das ist die wichtigste theoretische Spannung in diesem gesamten Material, und sie wird selten
+    ausgesprochen:
+  </p>
+
+  <div class="g2">
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc)">Keup braucht leere Dimensionen</h3>
+      <p>Falten funktioniert, weil die Hyperebene „aus einer unerforschten Richtung" trifft — dann werden keine Punkte zusammengequetscht, und die Abbildung bleibt <b>injektiv</b> <a class="cit" href="#r-keup">[Keup]</a>.</p>
+      <p class="mono" style="color:var(--ink3)">Regime: Dimensionen &gt; Begriffe</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0;color:var(--acc2)">Elhage füllt sie auf</h3>
+      <p>Bei spärlichen Features speichert das Netz <b>mehr Features als Dimensionen</b> als fast-orthogonale Richtungen und nimmt Interferenz in Kauf <a class="cit" href="#r-elhage">[Elhage]</a>. Die Abbildung ist dann <b>nicht</b> injektiv.</p>
+      <p class="mono" style="color:var(--ink3)">Regime: Features ≫ Dimensionen</p>
+    </div>
+  </div>
+
+  <div class="honest">
+    <p><b>Das ist ein echter Widerspruch, kein Missverständnis.</b> Keups Mechanismus braucht Platz. Superposition verbraucht ihn. Beide können nicht gleichzeitig die dominante Beschreibung derselben Schicht sein.</p>
+    <p>Mein Verdacht — <b>Interpretation, nicht belegt</b>: Keup beschreibt, <em>wie</em> eine Richtung nutzbar gemacht wird. Elhage beschreibt, <em>wie viele</em> Richtungen es gibt. Aber die Dimensionsregime passen nicht zusammen, und keines der beiden Papiere zitiert das andere. Wer hier eine Synthese behauptet, geht über die Quellen hinaus.</p>
+  </div>
+
+  <h3>Drei Belege, dass Superposition im Transformer plausibel ist</h3>
+  <dl class="kv">
+    <dt>Sparsity</dt><dd>Geva misst: nur 10–50 % der 4096 Zellen sind pro Beispiel aktiv <a class="cit" href="#r-geva">[Geva, Fig. 7]</a> — genau das Regime, in dem Superposition ökonomisch wird</dd>
+    <dt>Polysemantik</dt><dd>Geva findet im Schnitt 3,6 Muster pro Schlüssel <a class="cit" href="#r-geva">[Geva]</a> — Zellen sind nicht monosemantisch</dd>
+    <dt>Seltene Begriffe</dt><dd>Elhage: Sprachmodelle kennen nachweislich „Personen von bescheidener Prominenz" — vermutlich mehr davon, als sie Neuronen haben <a class="cit" href="#r-elhage">[Elhage]</a></dd>
+  </dl>
+
+  <div class="note">
+    <p><b>Phasenübergang.</b> Elhage zeigt, dass es sich nicht um einen graduellen Übergang handelt, sondern um einen echten <b>Phasenwechsel</b> — in den Spielzeugmodellen analytisch bestätigt <a class="cit" href="#r-elhage">[Elhage]</a>. Das ist auch eine gute Nachricht: Es könnte ein Regime geben, in dem Superposition gar nicht auftritt.</p>
+  </div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="resid">
+  <div class="chap">Kapitel 8</div>
+  <h2>Der Residual Stream: wer gewinnt eigentlich?</h2>
+  <p>
+    Jetzt fehlt noch ein Stück, und es ist das, was die Falt-Intuition am stärksten einschränkt.
+  </p>
+  <p>
+    Der Output jeder Teilschicht ist nicht das Ergebnis selbst, sondern <code>LayerNorm(x + Sublayer(x))</code>
+    <a class="cit" href="#r-vaswani">[Vaswani]</a>. Das FFN <b>ersetzt</b> die Repräsentation nicht —
+    es <b>addiert</b> etwas dazu.
+  </p>
+
+  <div class="lab">
+    <h4>Wer bestimmt die Vorhersage?</h4>
+    <p class="labnote">Schiebe durch die 16 Schichten. Die Balken zeigen echte Messwerte aus <a class="cit" href="#r-geva">[Geva, Fig. 9 &amp; 11]</a>.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Schicht <span class="val" id="vRL">1</span></label>
+        <input type="range" id="sRL" min="1" max="16" step="1" value="1">
+      </div>
+      <button id="bResAuto" class="pri">▶ Durchlaufen</button>
+    </div>
+    <canvas id="cRes" height="340"></canvas>
+    <p class="cap" id="capRes"></p>
+  </div>
+
+  <h3>Was Geva gemessen hat</h3>
+  <ul>
+    <li>Etwa <b>ein Drittel</b> der endgültigen Vorhersagen steht schon in den unteren Schichten fest <a class="cit" href="#r-geva">[Geva, Fig. 9]</a>.</li>
+    <li>In der <b>überwältigenden Mehrheit</b> der Fälle setzt sich die Vorhersage des Residual Streams durch, nicht die des FFN <a class="cit" href="#r-geva">[Geva, Fig. 11]</a>.</li>
+    <li>Wenn sich die Vorhersage ändert, wird sie <b>selten durch die FFN-Vorhersage ersetzt</b>. Stattdessen entsteht ein <b>Kompromiss</b>, der weder dem einen noch dem anderen entspricht <a class="cit" href="#r-geva">[Geva]</a>.</li>
+    <li>Geva nennt das einen <b>Verfeinerungsmechanismus</b>: „sanftes Nachjustieren der Vorhersage auf jeder Schicht, wobei der größte Teil der Information des Residuals erhalten bleibt" <a class="cit" href="#r-geva">[Geva]</a>.</li>
+  </ul>
+
+  <div class="honest">
+    <p><b>Das zerstört Keups Bild im Hauptstrom.</b> Keups Metapher — die Verteilung wird „in die Ecke eines N-dimensionalen Raums geworfen" <a class="cit" href="#r-keup">[Keup]</a> — beschreibt eine <em>vollständige</em> Transformation der Repräsentation.</p>
+    <p>Im Transformer wird das FFN-Ergebnis aber nur <b>addiert</b>. Der Hauptstrom wird nicht gefaltet. Falls Falten überhaupt stattfindet, dann <b>innerhalb des FFN-Zweigs</b> — und dessen Ergebnis wird danach in einen Strom eingespeist, den es nicht kontrolliert.</p>
+    <p>Hinzu kommt <b>LayerNorm</b>: die Projektion auf eine Hypersphäre nach jedem Schritt setzt Keups „Positionierung auf dem Amboss" <a class="cit" href="#r-keup">[Keup]</a> zwischen den Schichten teilweise zurück. Wie stark das die Analogie beschädigt, ist offen — keines der sieben Papiere untersucht es.</p>
+  </div>
+
+  <h3>Eine interessante Randnotiz</h3>
+  <p>
+    Geva hat 100 Fälle von Komposition in der <b>letzten</b> Schicht von Hand analysiert. In 66 Fällen
+    änderte sich die Ausgabe zu einem <b>semantisch entfernten</b> Wort („people" → „same"), in 34 Fällen
+    zu einem <b>verwandten</b> („later" → „earlier", „gastric" → „stomach") <a class="cit" href="#r-geva">[Geva]</a>.
+    Die Verfeinerung findet also auf ganz unterschiedlichen Granularitäten statt — bis zuletzt.
+  </p>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="full">
+  <div class="chap">Kapitel 9</div>
+  <h2>Alles zusammen</h2>
+  <p>
+    Jetzt kannst du beide Kräfte gleichzeitig laufen lassen und sehen, wie sie sich ausbalancieren.
+  </p>
+
+  <div class="lab">
+    <h4>Der vollständige Block</h4>
+    <p class="labnote">Links: die Positionsachse (Attention kontrahiert). Rechts: die Featureachse (FFN verfeinert). Unten: der Residual Stream. Spiele mit dem Verhältnis.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Attention-Stärke <span class="val" id="vAS">1.0</span></label>
+        <input type="range" id="sAS" min="0" max="2" step="0.05" value="1">
+      </div>
+      <div class="ctrl">
+        <label>FFN-Stärke <span class="val" id="vFS">1.0</span></label>
+        <input type="range" id="sFS" min="0" max="2" step="0.05" value="1">
+      </div>
+      <div class="ctrl">
+        <label>Schichten <span class="val" id="vLy">6</span></label>
+        <input type="range" id="sLy" min="1" max="48" step="1" value="6">
+      </div>
+      <button id="bFull" class="pri">▶ Durchlaufen</button>
+    </div>
+    <canvas id="cFull" height="380"></canvas>
+    <p class="cap" id="capFull">Beobachte: zu viel Attention → Kollaps. Zu wenig FFN → keine Verfeinerung. Zu viele Schichten → Over-Smoothing.</p>
+  </div>
+
+  <h3>Das Gesamtbild in einem Absatz</h3>
+  <div class="card">
+    <p style="font-size:16.5px;max-width:none">
+      Ein Transformer-Block ist ein <b>Gleichgewicht zwischen Kontraktion und Verfeinerung</b>, das
+      über zwei orthogonale Achsen einer Matrix läuft. Auf der <b>Positionsachse</b> zieht Attention
+      als Gradientenfluss Tokens zu Clustern zusammen — ein Prozess, der ohne Gegenkraft zum
+      Totalkollaps führen würde <a class="cit" href="#r-gesh24">[Geshkovski 2024]</a>, aber durch
+      begrenzte Schichtenzahl in einem metastabilen Zustand nützlicher Gruppenbildung gehalten wird.
+      Auf der <b>Featureachse</b> bearbeitet das FFN jedes Token einzeln als Mustererkenner-Speicher
+      <a class="cit" href="#r-geva">[Geva]</a>, dessen Ausgabe nicht ersetzt, sondern auf den Residual
+      Stream addiert wird und dort die Vorhersage schrittweise verfeinert. Die Breite dieser Schicht
+      bestimmt, wie viele Muster gespeichert werden können — entweder orthogonal, oder bei spärlichen
+      Features komprimiert in Superposition, erkauft mit Interferenz und polysemantischen Neuronen
+      <a class="cit" href="#r-elhage">[Elhage]</a>.
+    </p>
+  </div>
+
+  <div class="note">
+    <p><b>Der wichtigste Satz für dein Verständnis:</b> Attention bewegt die Punkte. Das FFN bearbeitet jeden Punkt einzeln. Weil sie auf verschiedenen Achsen arbeiten, können sie sich nicht in die Quere kommen — und genau deshalb funktioniert das Wechselspiel.</p>
+  </div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="truth">
+  <div class="chap">Kapitel 10</div>
+  <h2>Was davon ist tatsächlich belegt?</h2>
+  <p>
+    Diese Seite erklärt etwas, das noch nicht vollständig verstanden ist. Damit du weißt,
+    worauf du dich verlassen kannst, hier die Buchführung.
+  </p>
+
+  <div class="card">
+    <table>
+      <tr><th>Aussage</th><th>Status</th><th>Quelle</th></tr>
+      <tr><td>Attention und FFN wirken auf orthogonale Achsen</td><td><span class="tag t-ok">belegt</span></td><td>Vaswani §3.3</td></tr>
+      <tr><td>Attention clustert, kollabiert ohne Gegenkraft</td><td><span class="tag t-ok">belegt</span></td><td>Geshkovski 2024 (bewiesen für vereinfachtes Modell)</td></tr>
+      <tr><td>Reale Transformer sind metastabil</td><td><span class="tag t-ok">belegt</span></td><td>Geshkovski 2024, ALBERT-Messung</td></tr>
+      <tr><td>Form des Kollaps hängt vom Spektrum von V ab</td><td><span class="tag t-ok">belegt</span></td><td>Geshkovski 2023, Tab. 1</td></tr>
+      <tr><td>FFNs sind Key-Value-Speicher</td><td><span class="tag t-ok">belegt</span></td><td>Geva, empirisch an 16-Schicht-LM</td></tr>
+      <tr><td>Untere Schichten = oberflächlich, obere = semantisch</td><td><span class="tag t-ok">belegt</span></td><td>Geva, Fig. 2</td></tr>
+      <tr><td>Residual dominiert, FFN verfeinert</td><td><span class="tag t-ok">belegt</span></td><td>Geva, Fig. 11</td></tr>
+      <tr><td><code>d_ff</code> beeinflusst die Qualität</td><td><span class="tag t-ok">belegt</span></td><td>Vaswani, Tab. 3C</td></tr>
+      <tr><td>GLU-Varianten schlagen ReLU</td><td><span class="tag t-ok">belegt</span></td><td>Shazeer, Tab. 1</td></tr>
+      <tr><td>Spärliche Features → Superposition</td><td><span class="tag t-ok">belegt</span></td><td>Elhage, Spielzeugmodelle</td></tr>
+      <tr><td><b>FFN wirkt dem Attention-Kollaps entgegen</b></td><td><span class="tag t-an">Analogie</span></td><td>jedes Papier zeigt eine Hälfte, keines beide</td></tr>
+      <tr><td><b>Keups Falten in Transformer-FFNs</b></td><td><span class="tag t-op">offen</span></td><td>Keup nennt Transformer explizit als Zukunftsarbeit</td></tr>
+      <tr><td><b>Falten unter SwiGLU</b></td><td><span class="tag t-op">offen</span></td><td>Hyperebenenbild greift bei multiplikativem Gating nicht</td></tr>
+      <tr><td><b>Falten vs. Superposition</b></td><td><span class="tag t-op">widersprüchlich</span></td><td>entgegengesetzte Dimensionsregime</td></tr>
+      <tr><td><b>LayerNorm-Effekt auf die Geometrie</b></td><td><span class="tag t-op">offen</span></td><td>von keinem der 7 Papiere untersucht</td></tr>
+    </table>
+  </div>
+
+  <h3>Die schwächste Stelle</h3>
+  <div class="honest">
+    <p>Keups Papier ist das schwächste Glied — nicht wegen mangelnder Qualität, sondern weil die Autoren ihre eigenen Grenzen ungewöhnlich klar benennen:</p>
+    <p>„Die Aussage über die relative Ineffizienz der Separabilitätserzeugung ohne Dimensionserweiterung <b>ist nicht durch eine strenge Rechnung quantifiziert</b>. Das liegt daran, dass ein Beweis Annahmen über die Klasse realistischer Datenverteilungen erfordern würde, <b>ein Verständnis derer derzeit, soweit wir wissen, fehlt</b>." <a class="cit" href="#r-keup">[Keup, Limitations]</a></p>
+    <p>Und: „Wir <b>verzichten auf die meiste mathematische Analyse</b>." <a class="cit" href="#r-keup">[Keup]</a></p>
+    <p>Nutze das Faltbild als Intuitionshilfe. Nicht als Beschreibung dessen, was in GPT passiert.</p>
+  </div>
+
+  <h3>Wenn du nur zwei Papiere lesen willst</h3>
+  <div class="g2">
+    <div class="card">
+      <h3 style="margin-top:0">Für die Attention-Seite</h3>
+      <p><b>Geshkovski et al. 2024</b>, „A Mathematical Perspective on Transformers". Mathematisch rigoros, mit empirischer Validierung an ALBERT. Erklärt Clustering, Metastabilität und Rank-Collapse aus einem Prinzip.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Für die FFN-Seite</h3>
+      <p><b>Geva et al. 2021</b>, „Transformer Feed-Forward Layers Are Key-Value Memories". Empirisch an echten Modellen, mit menschlich annotierten Mustern. Erklärt, was in den Gewichten steht.</p>
+    </div>
+  </div>
+
+  <h3>Was du jetzt selbst nachmessen könntest</h3>
+  <div class="card">
+    <p>Alle drei Protokolle sind in den Papieren beschrieben und auf eigene Modelle übertragbar:</p>
+    <ol>
+      <li><b>Metastabilitäts-Histogramm:</b> Plotte die paarweisen Skalarprodukte <code>⟨xᵢ,xⱼ⟩</code> pro Schicht, wie in <a class="cit" href="#r-gesh24">[Geshkovski 2024, Fig. 1]</a>. Verschiebt sich die Masse zur 1?</li>
+      <li><b>Key-Value-Analyse:</b> Finde für ein Neuron die Top-25 auslösenden Präfixe und suche nach Mustern <a class="cit" href="#r-geva">[Geva, §3.1]</a>. Dann projiziere den Value-Vektor aufs Vokabular.</li>
+      <li><b>Bimodalität:</b> Berechne Hartigans Dip-Statistik auf den Prä-Aktivierungen <a class="cit" href="#r-keup">[Keup, Fig. 3c]</a>. Keups Befund: Stilllegen von 10 Neuronen mit großem Dip kostet deutlich Genauigkeit, 10 mit kleinem Dip kaum.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <p><b>Quellen</b> — alle Aussagen auf dieser Seite sind auf diese sieben Arbeiten zurückführbar:</p>
+  <p id="r-vaswani"><b>[Vaswani]</b> Vaswani et al. (2017), <em>Attention Is All You Need</em>. arXiv:1706.03762</p>
+  <p id="r-keup"><b>[Keup]</b> Keup &amp; Helias (2022), <em>Origami in N dimensions: How feed-forward networks manufacture linear separability</em>. arXiv:2203.11355</p>
+  <p id="r-geva"><b>[Geva]</b> Geva, Schuster, Berant &amp; Levy (2021), <em>Transformer Feed-Forward Layers Are Key-Value Memories</em>. arXiv:2012.14913</p>
+  <p id="r-elhage"><b>[Elhage]</b> Elhage et al. (2022), <em>Toy Models of Superposition</em>. Transformer Circuits Thread, Anthropic</p>
+  <p id="r-shazeer"><b>[Shazeer]</b> Shazeer (2020), <em>GLU Variants Improve Transformer</em>. arXiv:2002.05202</p>
+  <p id="r-gesh23"><b>[Geshkovski 2023]</b> Geshkovski, Letrouit, Polyanskiy &amp; Rigollet, <em>The Emergence of Clusters in Self-Attention Dynamics</em>. arXiv:2305.05465</p>
+  <p id="r-gesh24"><b>[Geshkovski 2024]</b> Geshkovski, Letrouit, Polyanskiy &amp; Rigollet, <em>A Mathematical Perspective on Transformers</em>. arXiv:2312.10794</p>
+  <p style="margin-top:22px;color:var(--ink3)">Diese Seite ist eine didaktische Aufbereitung, kein Fachtext. Wo Interpretation über die Quellen hinausgeht, ist das als <span class="tag t-an">Analogie</span> oder <span class="tag t-op">offen</span> gekennzeichnet. Im Zweifel gilt das Papier, nicht die Visualisierung.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= Utilities ================= */
+const $ = id => document.getElementById(id);
+const DPR = Math.min(window.devicePixelRatio||1, 2);
+const TAU = Math.PI*2;
+const C = {
+  acc:'#5eead4', acc2:'#818cf8', warn:'#fbbf24', err:'#fb7185',
+  ok:'#4ade80', ink:'#e8ecf4', ink2:'#a9b4c8', ink3:'#6b7689',
+  line:'#2a3344', panel:'#161c2a', bg:'#080b11'
+};
+const PAL = ['#5eead4','#818cf8','#fbbf24','#fb7185','#4ade80','#38bdf8','#f472b6','#a78bfa','#fb923c','#34d399'];
+
+function fit(cv){
+  const w = cv.clientWidth, h = parseInt(cv.getAttribute('height'));
+  cv.width = Math.round(w*DPR); cv.height = Math.round(h*DPR);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  return {ctx, w, h};
+}
+function clr(ctx,w,h){ ctx.clearRect(0,0,w,h); }
+function txt(ctx,s,x,y,col,size,align,weight){
+  ctx.fillStyle=col||C.ink2;
+  ctx.font=(weight||'500')+' '+(size||12)+'px ui-sans-serif,system-ui,sans-serif';
+  ctx.textAlign=align||'left'; ctx.textBaseline='middle';
+  ctx.fillText(s,x,y);
+}
+function mono(ctx,s,x,y,col,size,align){
+  ctx.fillStyle=col||C.ink3;
+  ctx.font=(size||11)+'px ui-monospace,Menlo,monospace';
+  ctx.textAlign=align||'left'; ctx.textBaseline='middle';
+  ctx.fillText(s,x,y);
+}
+function rr(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function norm(v){ let s=0; for(const x of v) s+=x*x; return Math.sqrt(s); }
+function normalize(v){ const n=norm(v)||1; return v.map(x=>x/n); }
+function dot(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=a[i]*b[i]; return s; }
+
+/* Deterministic PRNG so visuals are stable across reloads */
+let _seed = 1337;
+function rnd(){ _seed = (_seed*1664525 + 1013904223) & 0xffffffff; return (_seed>>>0)/4294967296; }
+function rndN(){ // Box-Muller
+  let u=rnd()||1e-9, v=rnd()||1e-9;
+  return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);
+}
+function reseed(s){ _seed = s>>>0; }
+
+/* ================= 1 · Matrix ================= */
+(function(){
+  const cv=$('cMatrix'); if(!cv) return;
+  const N=8, D=10;
+  let mode='none', hover=-1;
+  const vals=[];
+  reseed(7);
+  for(let i=0;i<N;i++){ const r=[]; for(let j=0;j<D;j++) r.push(rnd()*2-1); vals.push(r); }
+  const toks=['Die','Bank','am','Fluss','war','sehr','nass','heute'];
+
+  function draw(){
+    const {ctx,w,h}=fit(cv); clr(ctx,w,h);
+    const padL=78, padT=46, padR=24, padB=34;
+    const cw=(w-padL-padR)/D, ch=(h-padT-padB)/N;
+
+    // axis labels
+    txt(ctx,'Feature-Dimension  →',padL,22,C.ink3,12,'left','600');
+    ctx.save(); ctx.translate(20,padT+(h-padT-padB)/2); ctx.rotate(-Math.PI/2);
+    txt(ctx,'Position / Token  →',0,0,C.ink3,12,'center','600'); ctx.restore();
+
+    for(let i=0;i<N;i++){
+      for(let j=0;j<D;j++){
+        const x=padL+j*cw, y=padT+i*ch;
+        let hl=0;
+        if(mode==='attn' && hover>=0 && i===hover) hl=1;
+        else if(mode==='attn' && hover<0) hl=(i===3)?1:0;
+        if(mode==='ffn' && hover>=0 && j===hover) hl=1;
+        else if(mode==='ffn' && hover<0) hl=(j===4)?1:0;
+
+        const v=vals[i][j];
+        const base = v>0 ? [94,234,212] : [129,140,248];
+        const a = 0.14 + Math.abs(v)*0.45;
+        ctx.fillStyle=`rgba(${base[0]},${base[1]},${base[2]},${a*(hl?1:0.38)})`;
+        rr(ctx,x+1.5,y+1.5,cw-3,ch-3,4); ctx.fill();
+        if(hl){ ctx.strokeStyle=mode==='attn'?C.acc:C.acc2; ctx.lineWidth=1.3; ctx.stroke(); }
+      }
+      txt(ctx,toks[i],padL-10,padT+i*ch+ch/2,
+          (mode==='attn'&&(hover===i||(hover<0&&i===3)))?C.acc:C.ink3,12,'right');
+    }
+
+    // sweep arrows
+    if(mode==='attn'){
+      const i=(hover<0?3:hover), y=padT+i*ch+ch/2;
+      ctx.strokeStyle=C.acc; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(padL-4,y); ctx.lineTo(padL+D*cw+10,y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(padL+D*cw+10,y); ctx.lineTo(padL+D*cw+2,y-5);
+      ctx.lineTo(padL+D*cw+2,y+5); ctx.closePath(); ctx.fillStyle=C.acc; ctx.fill();
+      txt(ctx,'ein Token mischt sich mit allen anderen',padL,h-12,C.acc,12,'left','600');
+    }
+    if(mode==='ffn'){
+      const j=(hover<0?4:hover), x=padL+j*cw+cw/2;
+      ctx.strokeStyle=C.acc2; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(x,padT-6); ctx.lineTo(x,padT+N*ch+8); ctx.stroke();
+      ctx.setLineDash([]);
+      txt(ctx,'jedes Token wird einzeln bearbeitet — Feature für Feature',padL,h-12,C.acc2,12,'left','600');
+    }
+    if(mode==='none'){
+      txt(ctx,'Jede Zeile = ein Wort. Jede Spalte = eine Eigenschaft.',padL,h-12,C.ink3,12,'left');
+    }
+  }
+
+  function setMode(m){
+    mode=m; hover=-1;
+    ['axNone','axAttn','axFfn'].forEach(id=>$(id).classList.remove('on'));
+    $(m==='none'?'axNone':m==='attn'?'axAttn':'axFfn').classList.add('on');
+    const cap=$('capMatrix');
+    cap.textContent = m==='attn'
+      ? 'Attention läuft WAAGERECHT: ein Token sammelt Information von allen Positionen ein.'
+      : m==='ffn'
+      ? 'Das FFN läuft SENKRECHT: es bearbeitet die Features eines Tokens, ohne die Nachbarn zu sehen.'
+      : '8 Tokens, je 10 Feature-Werte. In echten Modellen: hunderte Tokens, 512–4096 Features.';
+    draw();
+  }
+  $('axNone').onclick=()=>setMode('none');
+  $('axAttn').onclick=()=>setMode('attn');
+  $('axFfn').onclick=()=>setMode('ffn');
+
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    const w=cv.clientWidth,h=parseInt(cv.getAttribute('height'));
+    const padL=78,padT=46,padR=24,padB=34;
+    const cw=(w-padL-padR)/D, ch=(h-padT-padB)/N;
+    if(mode==='attn'){ const i=Math.floor((my-padT)/ch); hover=(i>=0&&i<N)?i:-1; }
+    else if(mode==='ffn'){ const j=Math.floor((mx-padL)/cw); hover=(j>=0&&j<D)?j:-1; }
+    draw();
+  });
+  cv.addEventListener('mouseleave',()=>{ hover=-1; draw(); });
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ================= 2 · Attention ================= */
+(function(){
+  const cv=$('cAttn'); if(!cv) return;
+  const sents=[
+    {toks:['Die','Bank','am','Fluss','war','nass'], focus:1, aff:[0.1,1.0,0.3,0.95,0.4,0.6]},
+    {toks:['Die','Bank','gab','mir','einen','Kredit'], focus:1, aff:[0.1,1.0,0.5,0.2,0.3,0.95]}
+  ];
+  let si=0, beta=2.0, hover=-1, showAll=false;
+
+  function weights(i){
+    const s=sents[si], n=s.toks.length, out=[];
+    for(let j=0;j<n;j++){
+      // affinity: similarity of "affinity scores" + mild locality
+      const a = 1 - Math.abs(s.aff[i]-s.aff[j]);
+      const loc = 1 - Math.abs(i-j)/(n*1.6);
+      out.push(Math.exp(beta*(0.75*a+0.25*loc)));
+    }
+    const z=out.reduce((p,c)=>p+c,0);
+    return out.map(x=>x/z);
+  }
+
+  function draw(){
+    const {ctx,w,h}=fit(cv); clr(ctx,w,h);
+    const s=sents[si], n=s.toks.length;
+    const yTop=92, yBot=h-82;
+    const xs=[]; for(let i=0;i<n;i++) xs.push(40+(w-80)*(i+0.5)/n);
+
+    txt(ctx,'Queries  (wer fragt?)',w/2,34,C.ink3,12,'center','600');
+    txt(ctx,'Keys / Values  (wer antwortet?)',w/2,h-26,C.ink3,12,'center','600');
+
+    const act = hover>=0?hover:s.focus;
+    const list = showAll ? Array.from({length:n},(_,k)=>k) : [act];
+
+    for(const i of list){
+      const W=weights(i);
+      for(let j=0;j<n;j++){
+        const a=W[j];
+        if(a<0.015) continue;
+        ctx.strokeStyle=`rgba(94,234,212,${showAll?a*0.45:a*0.92})`;
+        ctx.lineWidth=Math.max(0.5,a*14);
+        ctx.beginPath();
+        ctx.moveTo(xs[i],yTop+16);
+        ctx.bezierCurveTo(xs[i],yTop+80, xs[j],yBot-80, xs[j],yBot-16);
+        ctx.stroke();
+      }
+    }
+
+    for(let i=0;i<n;i++){
+      const on=(i===act);
+      ctx.fillStyle= on?C.acc:'#1d2433';
+      rr(ctx,xs[i]-40,yTop-4,80,30,8); ctx.fill();
+      if(!on){ ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.stroke(); }
+      txt(ctx,s.toks[i],xs[i],yTop+11, on?'#07211d':C.ink2,13,'center','600');
+
+      ctx.fillStyle='#1d2433'; rr(ctx,xs[i]-40,yBot-30,80,30,8); ctx.fill();
+      ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.stroke();
+      txt(ctx,s.toks[i],xs[i],yBot-15,C.ink2,13,'center','600');
+    }
+
+    const W=weights(act);
+    let best=0; for(let j=1;j<n;j++) if(W[j]>W[best]) best=j;
+    txt(ctx,`„${s.toks[act]}" achtet am stärksten auf „${s.toks[best]}" (${(W[best]*100).toFixed(0)} %)`,
+        w/2,h-6,C.acc,12.5,'center','600');
+  }
+
+  function upd(){
+    $('vBeta').textContent=beta.toFixed(1);
+    const cap=$('capAttn');
+    cap.textContent = beta<0.6
+      ? 'β sehr klein: jedes Token beachtet alle gleichmäßig — kein Kontext wird genutzt.'
+      : beta>6
+      ? 'β sehr groß: nur der beste Treffer zählt. Bei β = ∞ bewegt sich gar nichts mehr [Geshkovski 2024].'
+      : 'Hover über ein Token. — Die Gewichte sind hier handgesetzt, um ein Prinzip zu zeigen.';
+    draw();
+  }
+  $('sBeta').oninput=e=>{ beta=+e.target.value; upd(); };
+  $('selSent').onchange=e=>{ si=+e.target.value; hover=-1; draw(); };
+  $('bAttnAll').onclick=function(){ showAll=!showAll; this.classList.toggle('on',showAll); draw(); };
+
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect(), mx=e.clientX-r.left;
+    const n=sents[si].toks.length, w=cv.clientWidth;
+    const idx=Math.floor((mx-40)/((w-80)/n));
+    hover=(idx>=0&&idx<n)?idx:-1; draw();
+  });
+  cv.addEventListener('mouseleave',()=>{ hover=-1; draw(); });
+  window.addEventListener('resize',draw);
+  upd();
+})();
+
+/* ================= 3 · Collapse (sphere + histogram) ================= */
+(function(){
+  const cvS=$('cSphere'), cvH=$('cHist'); if(!cvS||!cvH) return;
+  let n=32, beta=3.0, T=0, playing=false, raf=null;
+  let traj=[];   // traj[t] = array of 2D unit vectors
+  const STEPS=301, dt=0.055;
+
+  function simulate(){
+    reseed(20240705);
+    let pts=[]; for(let i=0;i<n;i++){ const a=rnd()*TAU; pts.push([Math.cos(a),Math.sin(a)]); }
+    traj=[pts.map(p=>p.slice())];
+    for(let s=1;s<STEPS;s++){
+      const nxt=[];
+      for(let i=0;i<n;i++){
+        const xi=pts[i];
+        // softmax weights
+        const ex=[]; let mx=-1e9;
+        for(let j=0;j<n;j++){ const v=beta*dot(xi,pts[j]); ex.push(v); if(v>mx) mx=v; }
+        let z=0; for(let j=0;j<n;j++){ ex[j]=Math.exp(ex[j]-mx); z+=ex[j]; }
+        let acc=[0,0];
+        for(let j=0;j<n;j++){ const wgt=ex[j]/z; acc[0]+=wgt*pts[j][0]; acc[1]+=wgt*pts[j][1]; }
+        // project onto tangent: P⊥x (acc)
+        const d=dot(xi,acc);
+        const v=[acc[0]-d*xi[0], acc[1]-d*xi[1]];
+        const nx=normalize([xi[0]+dt*v[0], xi[1]+dt*v[1]]);
+        nxt.push(nx);
+      }
+      pts=nxt; traj.push(pts.map(p=>p.slice()));
+    }
+  }
+
+  function clusters(pts){
+    const used=new Array(pts.length).fill(false); let c=0;
+    for(let i=0;i<pts.length;i++){
+      if(used[i]) continue; c++;
+      for(let j=i;j<pts.length;j++) if(!used[j] && dot(pts[i],pts[j])>0.995) used[j]=true;
+    }
+    return c;
+  }
+
+  function drawSphere(){
+    const {ctx,w,h}=fit(cvS); clr(ctx,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)/2-34;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.stroke();
+    const pts=traj[Math.min(T,traj.length-1)];
+    for(let i=0;i<pts.length;i++){
+      const x=cx+pts[i][0]*R, y=cy-pts[i][1]*R;
+      ctx.fillStyle=PAL[i%PAL.length];
+      ctx.globalAlpha=0.82;
+      ctx.beginPath(); ctx.arc(x,y,5,0,TAU); ctx.fill();
+      ctx.globalAlpha=1;
+    }
+    mono(ctx,`Schicht ${T}`,12,16,C.ink3,12);
+    mono(ctx,`${clusters(pts)} Cluster`,w-12,16,C.acc,12,'right');
+  }
+
+  function drawHist(){
+    const {ctx,w,h}=fit(cvH); clr(ctx,w,h);
+    const pts=traj[Math.min(T,traj.length-1)];
+    const B=36, bins=new Array(B).fill(0); let tot=0;
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const d=clamp(dot(pts[i],pts[j]),-1,1);
+      const k=clamp(Math.floor((d+1)/2*B),0,B-1); bins[k]++; tot++;
+    }
+    const mx=Math.max(...bins,1);
+    const padL=40,padR=14,padT=28,padB=36;
+    const bw=(w-padL-padR)/B;
+    for(let k=0;k<B;k++){
+      const hh=(bins[k]/mx)*(h-padT-padB);
+      const x=padL+k*bw, y=h-padB-hh;
+      const t=k/(B-1);
+      ctx.fillStyle=`rgba(${Math.round(lerp(129,94,t))},${Math.round(lerp(140,234,t))},${Math.round(lerp(248,212,t))},0.85)`;
+      rr(ctx,x+1,y,bw-2,Math.max(hh,1),3); ctx.fill();
+    }
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.stroke();
+    mono(ctx,'−1',padL,h-padB+16,C.ink3,11,'center');
+    mono(ctx,'0',padL+(w-padL-padR)/2,h-padB+16,C.ink3,11,'center');
+    mono(ctx,'+1',w-padR,h-padB+16,C.acc,11,'center');
+    txt(ctx,'⟨xᵢ , xⱼ⟩   —   Masse bei +1 bedeutet: geclustert',padL,16,C.ink3,11.5,'left','600');
+  }
+
+  function state(){
+    const pts=traj[Math.min(T,traj.length-1)];
+    const c=clusters(pts);
+    const el=$('stateTxt'), box=$('stateBox');
+    box.className='note';
+    if(T===0){ el.innerHTML='Schicht 0 — Tokens zufällig verteilt, keine Cluster.'; }
+    else if(c>3){ el.innerHTML=`Schicht ${T} — <b>Phase 1</b>: ${c} Cluster bilden sich. Das ist der nützliche Zustand.`; }
+    else if(c>1){ el.innerHTML=`Schicht ${T} — <b>metastabil</b>: nur noch ${c} Cluster. Echte Modelle hören hier auf.`; box.className='warn'; }
+    else { el.innerHTML=`Schicht ${T} — <b>Totalkollaps</b>. Alle Tokens sind ein Punkt. Das Modell hätte alles vergessen.`; box.className='honest'; }
+  }
+
+  function render(){ drawSphere(); drawHist(); state(); }
+
+  function stop(){ playing=false; if(raf) cancelAnimationFrame(raf); raf=null; $('bPlay2').textContent='▶ Abspielen'; }
+  function play(){
+    if(playing){ stop(); return; }
+    playing=true; $('bPlay2').textContent='❚❚ Pause';
+    if(T>=STEPS-1) T=0;
+    const step=()=>{
+      if(!playing) return;
+      T=Math.min(T+2,STEPS-1);
+      $('sT').value=T; $('vT').textContent=T;
+      render();
+      if(T>=STEPS-1){ stop(); return; }
+      raf=requestAnimationFrame(step);
+    };
+    raf=requestAnimationFrame(step);
+  }
+
+  $('sT').oninput=e=>{ stop(); T=+e.target.value; $('vT').textContent=T; render(); };
+  $('sB2').oninput=e=>{ stop(); beta=+e.target.value; $('vB2').textContent=beta.toFixed(1); simulate(); render(); };
+  $('sN2').oninput=e=>{ stop(); n=+e.target.value; $('vN2').textContent=n; simulate(); render(); };
+  $('bPlay2').onclick=play;
+  $('bReset2').onclick=()=>{ stop(); _seed=(Date.now()&0xffff)|1; T=0; $('sT').value=0; $('vT').textContent=0; simulate(); render(); };
+  window.addEventListener('resize',render);
+
+  simulate(); render();
+})();
+
+/* ================= 4 · Geometry of collapse ================= */
+(function(){
+  const cv=$('cGeo'); if(!cv) return;
+  let g=0;
+  const info=[
+    {t:'V = Identität → Ecken eines konvexen Polytops',
+     d:'Bewiesen: Tokens sammeln sich an den Ecken eines konvexen Polytops [Geshkovski 2023, Thm 3.1]. Der Grund: Die Geschwindigkeit ist eine konvexe Kombination der Anziehungen, also schrumpft die konvexe Hülle.'},
+    {t:'λ₁ > 0, einfach → drei parallele Hyperebenen',
+     d:'Ist der größte Eigenwert reell, positiv und einfach, clustern alle Tokens auf höchstens DREI parallele Hyperebenen [Geshkovski 2023, Thm 4.1].'},
+    {t:'V paranormal → Polytop × Unterräume',
+     d:'Bei mehrfachem Leit-Eigenwert entsteht eine Mischung: Polytop in der einen Richtung, lineare Unterräume in der anderen [Geshkovski 2023, Thm 5.1].'},
+    {t:'V = −Identität → ein Cluster im Ursprung',
+     d:'Alle Tokens kollabieren zum Nullpunkt [Geshkovski 2023, Thm C.5]. Die einzige stationäre Konfiguration ist x̄₁ = … = x̄ₙ = 0.'}
+  ];
+
+  function draw(){
+    const {ctx,w,h}=fit(cv); clr(ctx,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)/2-46;
+    reseed(99);
+    const N=28;
+    if(g===0){
+      // polytope vertices
+      const V=6, verts=[];
+      for(let k=0;k<V;k++){ const a=TAU*k/V-0.4; verts.push([cx+Math.cos(a)*R, cy+Math.sin(a)*R]); }
+      ctx.strokeStyle='#2d3850'; ctx.lineWidth=1.5;
+      ctx.beginPath(); verts.forEach((p,i)=> i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.stroke();
+      for(let i=0;i<N;i++){
+        const k=i%V;
+        const jit=0.03;
+        const px=verts[k][0]+(rnd()-0.5)*R*jit, py=verts[k][1]+(rnd()-0.5)*R*jit;
+        ctx.fillStyle=PAL[k%PAL.length]; ctx.globalAlpha=0.85;
+        ctx.beginPath(); ctx.arc(px,py,5,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+      }
+      verts.forEach((p,k)=>{
+        ctx.strokeStyle=PAL[k%PAL.length]; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(p[0],p[1],13,0,TAU); ctx.stroke();
+      });
+    } else if(g===1){
+      // three parallel hyperplanes
+      const ys=[cy-R*0.62, cy, cy+R*0.62];
+      ys.forEach((y,k)=>{
+        ctx.strokeStyle=k===1?'#2d3850':PAL[k%PAL.length];
+        ctx.lineWidth=k===1?1.2:2;
+        ctx.setLineDash(k===1?[4,5]:[]);
+        ctx.beginPath(); ctx.moveTo(cx-R,y); ctx.lineTo(cx+R,y); ctx.stroke();
+        ctx.setLineDash([]);
+      });
+      for(let i=0;i<N;i++){
+        const k=(i%5===0)?1:(i%2?0:2);
+        const px=cx+(rnd()-0.5)*2*R*0.9, py=ys[k]+(rnd()-0.5)*7;
+        ctx.fillStyle=PAL[k%PAL.length]; ctx.globalAlpha=0.8;
+        ctx.beginPath(); ctx.arc(px,py,5,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+      }
+      // eigenvector arrow
+      ctx.strokeStyle=C.warn; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx+R*0.75,cy+R*0.5); ctx.lineTo(cx+R*0.75,cy-R*0.5); ctx.stroke();
+      mono(ctx,'φ₁',cx+R*0.75+10,cy-R*0.5,C.warn,12);
+    } else if(g===2){
+      // polytope × subspace
+      const V=4, verts=[];
+      for(let k=0;k<V;k++){ const a=TAU*k/V+0.3; verts.push([cx+Math.cos(a)*R*0.55, cy+Math.sin(a)*R*0.55]); }
+      ctx.strokeStyle='#2d3850'; ctx.lineWidth=1.5;
+      ctx.beginPath(); verts.forEach((p,i)=> i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.stroke();
+      for(let i=0;i<N;i++){
+        const k=i%V;
+        const spread=(rnd()-0.5)*R*0.75;
+        const px=verts[k][0]+spread*0.25, py=verts[k][1]+spread;
+        ctx.fillStyle=PAL[k%PAL.length]; ctx.globalAlpha=0.75;
+        ctx.beginPath(); ctx.arc(px,py,4.5,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+      }
+      mono(ctx,'Polytop × Unterraum',cx,h-16,C.ink3,11.5,'center');
+    } else {
+      // single cluster at origin
+      for(let i=0;i<N;i++){
+        const a=rnd()*TAU, r=rnd()*R*0.07;
+        ctx.fillStyle=PAL[i%PAL.length]; ctx.globalAlpha=0.8;
+        ctx.beginPath(); ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,5,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+      }
+      ctx.strokeStyle=C.err; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.arc(cx,cy,R*0.22,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+      mono(ctx,'alles → Ursprung',cx,cy+R*0.22+22,C.err,12,'center');
+    }
+    txt(ctx,info[g].t,16,20,C.acc,13,'left','700');
+  }
+
+  document.querySelectorAll('.geoBtn').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.geoBtn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); g=+b.dataset.g;
+      $('capGeo').textContent=info[g].d;
+      draw();
+    };
+  });
+  window.addEventListener('resize',draw);
+  $('capGeo').textContent=info[0].d;
+  draw();
+})();
+
+/* ================= 5 · FFN as Key-Value Memory ================= */
+(function(){
+  const cv=$('cMem'); if(!cv) return;
+  // Real patterns from Geva et al., Tab. 1 & 2
+  const cases=[
+    { keys:[['k13.2989','endet mit Zeitangabe',0.92],['k5.1102','Wochentag erwähnt',0.44],['k9.331','Uhrzeit-Format',0.31]],
+      vals:[['Sunday',0.34],['Saturday',0.21],['Monday',0.12],['midnight',0.08],['noon',0.05]] },
+    { keys:[['k1.449','endet mit „substitutes"',0.95],['k7.88','Sport-Kontext',0.52],['k3.2010','Verb-Partizip',0.18]],
+      vals:[['bench',0.41],['list',0.19],['appearance',0.11],['team',0.07],['side',0.04]] },
+    { keys:[['k15.881','militärisch/Flotte',0.88],['k11.401','Kausal-Phrase „in large part"',0.61],['k6.2546','Schiff/Basis',0.40]],
+      vals:[['part',0.92],['measure',0.03],['degree',0.02],['extent',0.01],['share',0.01]] },
+    { keys:[['k16.2070','Marine/Segeln',0.90],['k12.77','Zahlwort + Schiff',0.55],['k8.1200','historisches Datum',0.29]],
+      vals:[['line',0.84],['fleet',0.06],['war',0.04],['sea',0.03],['coast',0.01]] }
+  ];
+  let ci=0, L=13;
+
+  function draw(){
+    const {ctx,w,h}=fit(cv); clr(ctx,w,h);
+    const c=cases[ci];
+    const midX=w*0.52;
+
+    txt(ctx,'SCHLÜSSEL  —  erkennen Muster im Kontext',20,22,C.acc,12.5,'left','700');
+    txt(ctx,'WERT  —  Verteilung über nächstes Wort',midX+20,22,C.acc2,12.5,'left','700');
+
+    // keys
+    c.keys.forEach((k,i)=>{
+      const y=58+i*70;
+      const act=k[2];
+      ctx.fillStyle='#1d2433'; rr(ctx,20,y,midX-50,54,10); ctx.fill();
+      ctx.strokeStyle=act>0.6?C.acc:C.line; ctx.lineWidth=act>0.6?1.6:1; ctx.stroke();
+      mono(ctx,k[0],34,y+18,act>0.6?C.acc:C.ink3,12);
+      txt(ctx,k[1],34,y+37,C.ink2,13);
+      // activation bar
+      const bw=(midX-80)*act;
+      ctx.fillStyle=`rgba(94,234,212,${0.25+act*0.5})`;
+      rr(ctx,34,y+46,bw,4,2); ctx.fill();
+      mono(ctx,act.toFixed(2),midX-40,y+18,C.acc,11,'right');
+    });
+
+    // arrow
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(midX-18,h/2); ctx.lineTo(midX+6,h/2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(midX+8,h/2); ctx.lineTo(midX-1,h/2-5); ctx.lineTo(midX-1,h/2+5);
+    ctx.closePath(); ctx.fillStyle=C.line; ctx.fill();
+
+    // values
+    const bx=midX+22, bw=w-bx-24;
+    c.vals.forEach((v,i)=>{
+      const y=58+i*46;
+      const ww=bw*v[1];
+      ctx.fillStyle='#1d2433'; rr(ctx,bx,y,bw,32,8); ctx.fill();
+      ctx.fillStyle=i===0?'rgba(129,140,248,.85)':'rgba(129,140,248,.35)';
+      rr(ctx,bx,y,Math.max(ww,6),32,8); ctx.fill();
+      txt(ctx,'„'+v[0]+'"',bx+12,y+16,i===0?'#0b0e14':C.ink2,13.5,'left',i===0?'700':'500');
+      mono(ctx,(v[1]*100).toFixed(0)+' %',bx+bw-12,y+16,i===0?'#0b0e14':C.ink3,11.5,'right');
+    });
+
+    mono(ctx,`Schicht ${L}  ·  ${L<10?'oberflächliche':'semantische'} Muster`,20,h-14,
+         L<10?C.warn:C.acc,12);
+  }
+
+  $('selMem').onchange=e=>{ ci=+e.target.value; draw(); };
+  $('sL').oninput=e=>{ L=+e.target.value; $('vL').textContent=L; draw(); };
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ================= 6 · Folding ================= */
+(function(){
+  const cv=$('cFold'); if(!cv) return;
+  let f=0, nF=3, anim=null;
+
+  function draw(){
+    const {ctx,w,h}=fit(cv); clr(ctx,w,h);
+    const topH=h*0.62, botH=h-topH;
+    const cx=w/2, cy=topH/2+8, R=Math.min(w,topH)/2-30;
+    const t=f/100;
+
+    // generate ring data
+    reseed(314);
+    const pts=[];
+    for(let i=0;i<220;i++){
+      const a=rnd()*TAU;
+      const inner=rnd()<0.38;
+      const r=inner ? rnd()*0.34 : 0.56+rnd()*0.42;
+      pts.push({a, r, in:inner});
+    }
+
+    // fold: project each point, fold about nF lines
+    function fold(p){
+      let x=Math.cos(p.a)*p.r, y=Math.sin(p.a)*p.r, z=0;
+      for(let k=0;k<nF;k++){
+        const ang=Math.PI*k/nF;
+        const d=x*Math.cos(ang)+y*Math.sin(ang);
+        if(d<0){
+          const amt=t;
+          x-=2*d*Math.cos(ang)*amt;
+          y-=2*d*Math.sin(ang)*amt;
+          z+=Math.abs(d)*amt*0.85;
+        }
+      }
+      return {x,y,z};
+    }
+
+    // top: 2D projection with z as vertical lift (pseudo-3D)
+    ctx.strokeStyle='#1b2130'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.stroke();
+    for(const p of pts){
+      const q=fold(p);
+      const px=cx+q.x*R, py=cy+q.y*R-q.z*R*0.55;
+      ctx.fillStyle=p.in?C.acc:C.acc2;
+      ctx.globalAlpha=0.55+q.z*0.4;
+      ctx.beginPath(); ctx.arc(px,py,3.2,0,TAU); ctx.fill();
+      ctx.globalAlpha=1;
+    }
+    // fold lines
+    if(t>0.02){
+      ctx.strokeStyle='rgba(251,191,36,.35)'; ctx.lineWidth=1.2; ctx.setLineDash([5,5]);
+      for(let k=0;k<nF;k++){
+        const ang=Math.PI*k/nF;
+        ctx.beginPath();
+        ctx.moveTo(cx-Math.sin(ang)*R, cy+Math.cos(ang)*R);
+        ctx.lineTo(cx+Math.sin(ang)*R, cy-Math.cos(ang)*R);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+
+    // bottom: 1D readout histogram
+    const by=topH+18, bh=botH-36;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(30,by+bh); ctx.lineTo(w-30,by+bh); ctx.stroke();
+
+    const B=50, inB=new Array(B).fill(0), outB=new Array(B).fill(0);
+    for(const p of pts){
+      const q=fold(p);
+      const v=clamp((q.z*1.6+ (q.x*0+0.5)),0,1); // readout = lift
+      const k=clamp(Math.floor(v*B),0,B-1);
+      (p.in?inB:outB)[k]++;
+    }
+    const mx=Math.max(...inB,...outB,1), bwd=(w-60)/B;
+    for(let k=0;k<B;k++){
+      const hi=(inB[k]/mx)*bh*0.9, ho=(outB[k]/mx)*bh*0.9;
+      ctx.fillStyle='rgba(94,234,212,.75)';
+      rr(ctx,30+k*bwd,by+bh-hi,bwd-1,Math.max(hi,0),2); ctx.fill();
+      ctx.fillStyle='rgba(129,140,248,.6)';
+      rr(ctx,30+k*bwd,by+bh-ho,bwd-1,Math.max(ho,0),2); ctx.fill();
+    }
+
+    // separability check
+    let ok=true, overlap=0;
+    for(let k=0;k<B;k++) if(inB[k]>0&&outB[k]>0) overlap++;
+    ok = overlap<3 && t>0.4;
+    txt(ctx, ok?'✓ jetzt mit einer geraden Linie trennbar'
+                :'✗ noch nicht linear trennbar — die Klassen überlappen',
+        30, by+bh+18, ok?C.ok:C.err, 12.5,'left','600');
+
+    mono(ctx,'innen (Klasse A)',w-30,by-4,C.acc,11,'right');
+    mono(ctx,'außen (Klasse B)',w-30,by+10,C.acc2,11,'right');
+  }
+
+  function stopA(){ if(anim){ cancelAnimationFrame(anim); anim=null; } $('bFoldAuto').textContent='▶ Automatisch'; }
+  $('bFoldAuto').onclick=function(){
+    if(anim){ stopA(); return; }
+    this.textContent='❚❚ Stop';
+    const step=()=>{
+      f=(f+1.4); if(f>100){ f=100; stopA(); }
+      $('sF').value=f; $('vF').textContent=Math.round(f)+' %';
+      draw();
+      if(anim!==null) anim=requestAnimationFrame(step);
+    };
+    anim=requestAnimationFrame(step);
+  };
+  $('sF').oninput=e=>{ stopA(); f=+e.target.value; $('vF').textContent=f+' %'; draw(); };
+  $('sFN').oninput=e=>{ nF=+e.target.value; $('vFN').textContent=nF; draw(); };
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+/* ================= 7 · Superposition ================= */
+(function(){
+  const cvS=$('cSup'), cvB=$('cSupBar'); if(!cvS||!cvB) return;
+  let sp=0, nf=5;
+
+  // Simplified model of Elhage Fig.1 behaviour
+  function solve(){
+    const s=sp/100;
+    const imp=[]; for(let i=0;i<nf;i++) imp.push(Math.pow(0.78,i));
+    const cap=2; // 2 dimensions
+    const angles=[], mags=[];
+    // sparsity determines how many features get represented
+    const kEff = Math.min(nf, Math.round(cap + (nf-cap)*Math.pow(s,1.7)));
+    for(let i=0;i<nf;i++){
+      if(i<kEff){
+        mags.push(Math.min(1, 0.55+0.45*Math.pow(s,0.6)) * Math.pow(imp[i],0.18));
+        angles.push(TAU*i/kEff + (s<0.15 ? 0 : 0));
+      } else { mags.push(0); angles.push(0); }
+    }
+    // dense regime: only top-2 orthogonal
+    if(s<0.08){
+      for(let i=0;i<nf;i++){
+        mags[i]= i<2 ? 1 : 0;
+        angles[i]= i===0?0:(i===1?Math.PI/2:0);
+      }
+    }
+    return {angles,mags,kEff};
+  }
+
+  function drawVec(){
+    const {ctx,w,h}=fit(cvS); clr(ctx,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)/2-32;
+    const {angles,mags}=solve();
+    ctx.strokeStyle='#1b2130'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.stroke();
+    // axes
+    ctx.strokeStyle='#161c2a'; ctx.beginPath();
+    ctx.moveTo(cx-R,cy); ctx.lineTo(cx+R,cy); ctx.moveTo(cx,cy-R); ctx.lineTo(cx,cy+R); ctx.stroke();
+    for(let i=0;i<nf;i++){
+      if(mags[i]<0.02) continue;
+      const x=cx+Math.cos(angles[i])*R*mags[i], y=cy-Math.sin(angles[i])*R*mags[i];
+      ctx.strokeStyle=PAL[i%PAL.length]; ctx.lineWidth=2.5;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(x,y); ctx.stroke();
+      ctx.fillStyle=PAL[i%PAL.length];
+      ctx.beginPath(); ctx.arc(x,y,5,0,TAU); ctx.fill();
+      mono(ctx,'f'+(i+1),x+(x>cx?8:-8),y,PAL[i%PAL.length],11,x>cx?'left':'right');
+    }
+    mono(ctx,'2 Dimensionen',12,16,C.ink3,11.5);
+  }
+
+  function drawBar(){
+    const {ctx,w,h}=fit(cvB); clr(ctx,w,h);
+    const {mags}=solve();
+    const padL=46,padB=34,padT=26;
+    const bw=(w-padL-20)/nf;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-14,h-padB); ctx.stroke();
+    for(let i=0;i<nf;i++){
+      const hh=(h-padT-padB)*mags[i];
+      const x=padL+i*bw;
+      ctx.fillStyle=mags[i]>0.02?PAL[i%PAL.length]:'#1b2130';
+      ctx.globalAlpha=mags[i]>0.02?0.8:1;
+      rr(ctx,x+5,h-padB-hh,bw-10,Math.max(hh,2),4); ctx.fill(); ctx.globalAlpha=1;
+      mono(ctx,'f'+(i+1),x+bw/2,h-padB+16,C.ink3,11,'center');
+    }
+    mono(ctx,'1.0',padL-8,padT,C.ink3,11,'right');
+    mono(ctx,'0',padL-8,h-padB,C.ink3,11,'right');
+    txt(ctx,'Repräsentations-Stärke pro Begriff',padL,14,C.ink3,11.5,'left','600');
+  }
+
+  function upd(){
+    $('vSp').textContent=sp+' %';
+    $('vNf').textContent=nf;
+    const {kEff}=solve();
+    const el=$('supTxt');
+    if(sp<8) el.innerHTML=`<b>Dicht.</b> Das Modell lernt nur 2 von ${nf} Begriffen — orthogonal, wie eine Hauptkomponentenanalyse. Der Rest wird verworfen.`;
+    else if(kEff<nf) el.innerHTML=`<b>Übergang.</b> ${kEff} von ${nf} Begriffen sind repräsentiert. Die Richtungen sind nicht mehr orthogonal — erste Interferenz entsteht.`;
+    else el.innerHTML=`<b>Superposition.</b> Alle ${nf} Begriffe liegen in nur 2 Dimensionen. Das geht nur, weil sie selten gleichzeitig auftreten — der Preis ist Interferenz <a class="cit" href="#r-elhage">[Elhage]</a>.`;
+    drawVec(); drawBar();
+  }
+  $('sSp').oninput=e=>{ sp=+e.target.value; upd(); };
+  $('sNf').oninput=e=>{ nf=+e.target.value; upd(); };
+  window.addEventListener('resize',upd);
+  upd();
+})();
+
+/* ================= 8 · Residual Stream ================= */
+(function(){
+  const cv=$('cRes'); if(!cv) return;
+  let L=1, anim=null;
+  // Approximate shape of Geva Fig. 9 & 11
+  function stats(l){
+    const t=(l-1)/15;
+    const settled = 0.30 + 0.62*Math.pow(t,2.2);          // Fig. 9
+    const residual = 0.66 - 0.10*Math.sin(t*Math.PI);      // Fig. 11: residual wins
+    const agreement = 0.05 + 0.26*Math.pow(t,1.6);
+    const composition = Math.max(0.04, 0.26 - 0.16*t);
+    const ffn = Math.max(0.01, 0.05 - 0.03*t);
+    const s=residual+agreement+composition+ffn;
+    return {settled, residual:residual/s, agreement:agreement/s,
+            composition:composition/s, ffn:ffn/s};
+  }
+
+  function draw(){
+    const {ctx,w,h}=fit(cv); clr(ctx,w,h);
+    const s=stats(L);
+    const padL=56, padR=20, padT=70, padB=46;
+    const bw=w-padL-padR;
+
+    // --- Stacked bar: who determines the prediction ---
+    txt(ctx,'Wer bestimmt die Vorhersage dieser Schicht?',padL,22,C.ink,13.5,'left','700');
+    mono(ctx,'Messwerte aus Geva et al., Fig. 11',padL,40,C.ink3,11.5);
+
+    const segs=[
+      ['Residual setzt sich durch', s.residual, C.acc],
+      ['beide einig',               s.agreement, '#38bdf8'],
+      ['Kompromiss (keiner von beiden)', s.composition, C.warn],
+      ['FFN überschreibt',          s.ffn, C.err]
+    ];
+    let x=padL;
+    const barY=padT, barH=38;
+    segs.forEach(([lab,v,col])=>{
+      const ww=bw*v;
+      ctx.fillStyle=col; ctx.globalAlpha=0.82;
+      ctx.fillRect(x,barY,Math.max(ww,0),barH);
+      ctx.globalAlpha=1;
+      if(ww>52) mono(ctx,(v*100).toFixed(0)+'%',x+ww/2,barY+barH/2,'#07211d',12,'center');
+      x+=ww;
+    });
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    ctx.strokeRect(padL,barY,bw,barH);
+
+    // legend
+    let lx=padL, ly=barY+barH+22;
+    segs.forEach(([lab,,col])=>{
+      ctx.fillStyle=col; rr(ctx,lx,ly-5,10,10,3); ctx.fill();
+      txt(ctx,lab,lx+16,ly,C.ink3,11.5,'left');
+      lx+=ctx.measureText(lab).width+42;
+      if(lx>w-150){ lx=padL; ly+=20; }
+    });
+
+    // --- Line: how much is already settled ---
+    const gY=ly+28, gH=h-gY-padB+10;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,gY+gH); ctx.lineTo(w-padR,gY+gH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL,gY); ctx.lineTo(padL,gY+gH); ctx.stroke();
+
+    ctx.beginPath();
+    for(let l=1;l<=16;l++){
+      const px=padL+bw*(l-1)/15, py=gY+gH-gH*stats(l).settled;
+      l===1?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.strokeStyle=C.acc2; ctx.lineWidth=2.5; ctx.stroke();
+
+    // fill under curve
+    ctx.lineTo(padL+bw,gY+gH); ctx.lineTo(padL,gY+gH); ctx.closePath();
+    ctx.fillStyle='rgba(129,140,248,.14)'; ctx.fill();
+
+    // marker
+    const mx=padL+bw*(L-1)/15, my=gY+gH-gH*s.settled;
+    ctx.strokeStyle='#2d3850'; ctx.setLineDash([3,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(mx,gY); ctx.lineTo(mx,gY+gH); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=C.acc2; ctx.beginPath(); ctx.arc(mx,my,5.5,0,TAU); ctx.fill();
+    ctx.strokeStyle='#0b0e14'; ctx.lineWidth=2; ctx.stroke();
+
+    mono(ctx,'Schicht '+L,mx,gY-10,C.acc2,11.5,'center');
+    mono(ctx,(s.settled*100).toFixed(0)+' % der Vorhersagen stehen fest',padL+8,gY+12,C.ink3,11.5);
+    mono(ctx,'1',padL-10,gY,C.ink3,11,'right');
+    mono(ctx,'16',w-padR,gY+gH+16,C.ink3,11,'right');
+    mono(ctx,'1',padL,gY+gH+16,C.ink3,11,'center');
+  }
+
+  function stopR(){ if(anim){ cancelAnimationFrame(anim); anim=null; } $('bResAuto').textContent='▶ Durchlaufen'; }
+  $('bResAuto').onclick=function(){
+    if(anim){ stopR(); return; }
+    this.textContent='❚❚ Stop';
+    let acc=0;
+    const step=()=>{
+      acc+=0.055;
+      if(acc>=1){ acc=0; L=L>=16?1:L+1; $('sRL').value=L; $('vRL').textContent=L; upd(); }
+      if(anim!==null) anim=requestAnimationFrame(step);
+    };
+    anim=requestAnimationFrame(step);
+  };
+  function upd(){
+    const s=stats(L);
+    $('capRes').textContent = L<=4
+      ? `Schicht ${L}: Schon hier stehen ${(s.settled*100).toFixed(0)} % der Vorhersagen fest. Das FFN schlägt oft etwas anderes vor — es setzt sich aber selten durch.`
+      : L<=11
+      ? `Schicht ${L}: Die Verfeinerung läuft. Beachte den gelben Anteil — das sind Fälle, in denen ein Kompromiss entsteht, der weder dem Residual noch dem FFN entspricht.`
+      : `Schicht ${L}: ${(s.settled*100).toFixed(0)} % stehen fest. Die „harten" Entscheidungen fallen vor der letzten Schicht [Geva, Fig. 9].`;
+    draw();
+  }
+  $('sRL').oninput=e=>{ stopR(); L=+e.target.value; $('vRL').textContent=L; upd(); };
+  window.addEventListener('resize',draw);
+  upd();
+})();
+
+/* ================= 9 · Full block ================= */
+(function(){
+  const cv=$('cFull'); if(!cv) return;
+  let aS=1.0, fS=1.0, LY=6, anim=null, prog=0;
+
+  function simulate(layers,attnStr,ffnStr){
+    reseed(4242);
+    const n=24;
+    let pts=[]; for(let i=0;i<n;i++){ const a=rnd()*TAU; pts.push([Math.cos(a),Math.sin(a)]); }
+    const hist=[pts.map(p=>p.slice())];
+    const beta=3.0;
+    for(let L=0;L<layers;L++){
+      // --- Attention sublayer: contraction ---
+      const after=[];
+      for(let i=0;i<n;i++){
+        const xi=pts[i]; const ex=[]; let mx=-1e9;
+        for(let j=0;j<n;j++){ const v=beta*dot(xi,pts[j]); ex.push(v); if(v>mx) mx=v; }
+        let z=0; for(let j=0;j<n;j++){ ex[j]=Math.exp(ex[j]-mx); z+=ex[j]; }
+        let acc=[0,0];
+        for(let j=0;j<n;j++){ const wg=ex[j]/z; acc[0]+=wg*pts[j][0]; acc[1]+=wg*pts[j][1]; }
+        const d=dot(xi,acc);
+        const v=[acc[0]-d*xi[0], acc[1]-d*xi[1]];
+        after.push(normalize([xi[0]+0.45*attnStr*v[0], xi[1]+0.45*attnStr*v[1]]));
+      }
+      // --- FFN sublayer: per-token refinement (anti-collapse, interpretive) ---
+      const out=[];
+      for(let i=0;i<n;i++){
+        const p=after[i];
+        const ang=Math.atan2(p[1],p[0]);
+        // token-specific "memory key" push
+        const push=0.14*ffnStr*Math.sin(5*ang + i*0.7);
+        const na=ang+push;
+        out.push([Math.cos(na),Math.sin(na)]);
+      }
+      pts=out; hist.push(pts.map(p=>p.slice()));
+    }
+    return hist;
+  }
+
+  function clustersOf(pts){
+    const used=new Array(pts.length).fill(false); let c=0;
+    for(let i=0;i<pts.length;i++){
+      if(used[i]) continue; c++;
+      for(let j=i;j<pts.length;j++) if(!used[j] && dot(pts[i],pts[j])>0.99) used[j]=true;
+    }
+    return c;
+  }
+
+  function draw(){
+    const {ctx,w,h}=fit(cv); clr(ctx,w,h);
+    const hist=simulate(LY,aS,fS);
+    const idx=Math.min(Math.round(prog*(hist.length-1)),hist.length-1);
+    const pts=hist[idx];
+
+    const colW=w/2;
+    // --- Left: position axis (sphere) ---
+    const cx=colW/2, cy=h/2-6, R=Math.min(colW,h)/2-54;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.stroke();
+    for(let i=0;i<pts.length;i++){
+      ctx.fillStyle=PAL[i%PAL.length]; ctx.globalAlpha=0.85;
+      ctx.beginPath(); ctx.arc(cx+pts[i][0]*R, cy-pts[i][1]*R, 5,0,TAU); ctx.fill();
+      ctx.globalAlpha=1;
+    }
+    txt(ctx,'POSITIONSACHSE — Attention kontrahiert',14,20,C.acc,12,'left','700');
+    mono(ctx,`${clustersOf(pts)} Cluster`,14,h-14,C.acc,12);
+
+    // --- Right: feature axis (per-token refinement bars) ---
+    const bx=colW+28, bwTot=w-bx-24;
+    txt(ctx,'FEATUREACHSE — FFN verfeinert',colW+14,20,C.acc2,12,'left','700');
+    const show=10, rowH=(h-80)/show;
+    for(let i=0;i<show;i++){
+      const y=46+i*rowH;
+      const p=pts[i];
+      const ang=Math.atan2(p[1],p[0]);
+      const act=Math.abs(Math.sin(5*ang+i*0.7))*fS;
+      ctx.fillStyle='#1b2130'; rr(ctx,bx,y,bwTot,rowH-7,4); ctx.fill();
+      ctx.fillStyle=PAL[i%PAL.length]; ctx.globalAlpha=0.55+act*0.4;
+      rr(ctx,bx,y,Math.max(bwTot*Math.min(act,1),3),rowH-7,4); ctx.fill();
+      ctx.globalAlpha=1;
+      mono(ctx,'t'+(i+1),bx-6,y+(rowH-7)/2,C.ink3,10,'right');
+    }
+    mono(ctx,'Aktivierung der Speicherzellen pro Token',colW+14,h-14,C.ink3,11);
+
+    // divider + progress
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(colW,34); ctx.lineTo(colW,h-28); ctx.stroke();
+    mono(ctx,`Schicht ${idx} / ${LY}`,w/2,h-14,C.ink2,12,'center');
+  }
+
+  function stopF(){ if(anim){ cancelAnimationFrame(anim); anim=null; } $('bFull').textContent='▶ Durchlaufen'; }
+  $('bFull').onclick=function(){
+    if(anim){ stopF(); return; }
+    this.textContent='❚❚ Stop'; prog=0;
+    const step=()=>{
+      prog+=0.012; if(prog>1){ prog=1; stopF(); }
+      draw();
+      if(anim!==null) anim=requestAnimationFrame(step);
+    };
+    anim=requestAnimationFrame(step);
+  };
+  function upd(){
+    $('vAS').textContent=aS.toFixed(2);
+    $('vFS').textContent=fS.toFixed(2);
+    $('vLy').textContent=LY;
+    const cap=$('capFull');
+    if(aS>1.5 && LY>24) cap.textContent='Zu viel Attention plus zu viele Schichten → Totalkollaps. Genau das beweist Geshkovski 2024.';
+    else if(fS<0.2) cap.textContent='Ohne FFN gibt es keine Verfeinerung — die Tokens werden nur noch zusammengezogen.';
+    else if(aS<0.2) cap.textContent='Ohne Attention sieht jedes Token nur sich selbst. Kein Kontext, keine Cluster.';
+    else cap.textContent='Beobachte: zu viel Attention → Kollaps. Zu wenig FFN → keine Verfeinerung. Zu viele Schichten → Over-Smoothing.';
+    draw();
+  }
+  $('sAS').oninput=e=>{ stopF(); aS=+e.target.value; upd(); };
+  $('sFS').oninput=e=>{ stopF(); fS=+e.target.value; upd(); };
+  $('sLy').oninput=e=>{ stopF(); LY=+e.target.value; prog=1; upd(); };
+  window.addEventListener('resize',draw);
+  prog=1; upd();
+})();
+
+/* ================= Nav scroll-spy ================= */
+(function(){
+  const links=[...document.querySelectorAll('#nav a')];
+  const secs=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll(){
+    let best=0;
+    secs.forEach((s,i)=>{ if(s && s.getBoundingClientRect().top<160) best=i; });
+    links.forEach((a,i)=>a.classList.toggle('on',i===best));
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+
+})();
+</script>
+
+</body>
+</html>

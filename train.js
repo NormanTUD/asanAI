@@ -1761,6 +1761,7 @@ async function fit_model(x_and_y) {
 
 		assert(typeof h === "object", "history object is not of type object");
 		model_is_trained = true;
+		weights_generation++;
 		reset_predict_container_after_training();
 
 		await dispose(fit_data);
@@ -2337,6 +2338,7 @@ async function _multi_train_single_run(run, num_runs, x_and_y, epochs, batchSize
 	l("[multi-train] run " + run + ": model.fit completed, final loss=" + (h.history.loss ? h.history.loss[h.history.loss.length - 1] : "N/A"));
 	assert(typeof h === "object", "history object is not of type object");
 	model_is_trained = true;
+	weights_generation++;
 	reset_predict_container_after_training();
 
 	save_multi_run_weights(run);

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Die Anatomie des Verstehens</title>
+<style>
+:root{
+  --bg:#07090f;
+  --bg2:#0c1018;
+  --ink:#e8edf7;
+  --dim:#8c97ad;
+  --glow:#6ee7ff;
+  --glow2:#a78bfa;
+  --warm:#ffb86b;
+  --line:rgba(255,255,255,.08);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,"Segoe UI",Inter,system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.7;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;
+  opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Fortschrittsfaden ---------- */
+#thread{position:fixed;top:0;left:0;height:2px;width:0;z-index:1000;
+  background:linear-gradient(90deg,var(--glow),var(--glow2),var(--warm));
+  box-shadow:0 0 18px var(--glow);transition:width .12s linear}
+
+/* ---------- Layout ---------- */
+section{position:relative;min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:14vh 6vw}
+.wrap{max-width:980px;width:100%}
+.narrow{max-width:660px}
+
+/* ---------- Typografie ---------- */
+h1{font-family:var(--serif);font-weight:400;letter-spacing:-.025em;
+  font-size:clamp(2.8rem,8vw,6.5rem);line-height:1.02}
+h2{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;
+  font-size:clamp(2rem,4.6vw,3.6rem);line-height:1.1;margin-bottom:1.6rem}
+p{font-size:clamp(1.02rem,1.45vw,1.22rem);color:#c3cbdb;max-width:62ch}
+p+p{margin-top:1.1rem}
+.lede{font-size:clamp(1.15rem,2vw,1.5rem);color:#aab4c8}
+.kicker{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--glow);opacity:.75;margin-bottom:1.4rem;font-weight:600}
+em.hl{font-style:normal;color:#fff;
+  background:linear-gradient(transparent 62%,rgba(110,231,255,.22) 62%)}
+
+/* ---------- Scroll-Reveal ---------- */
+.rv{opacity:0;transform:translateY(26px) scale(.985);filter:blur(6px);
+  transition:opacity 1.1s cubic-bezier(.16,1,.3,1),
+             transform 1.1s cubic-bezier(.16,1,.3,1),
+             filter 1.1s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none;filter:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.26s}.d3{transition-delay:.4s}
+
+/* ---------- Hero ---------- */
+#hero{min-height:100vh}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-inner{position:relative;z-index:2;text-align:center}
+.hero-inner h1 .w{display:inline-block;opacity:0;transform:translateY(.5em) rotateX(-55deg);
+  animation:drop 1.3s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes drop{to{opacity:1;transform:none}}
+.scroll-cue{position:absolute;bottom:5vh;left:50%;transform:translateX(-50%);
+  font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);
+  z-index:2;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.45}
+  50%{transform:translate(-50%,9px);opacity:1}}
+
+/* ---------- Canvas-Bühnen ---------- */
+.stage{position:relative;width:100%;aspect-ratio:16/9;border-radius:22px;
+  overflow:hidden;background:
+    radial-gradient(120% 120% at 50% 0%,rgba(110,231,255,.07),transparent 60%),
+    var(--bg2);
+  border:1px solid var(--line);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.05)}
+.stage canvas{width:100%;height:100%;display:block}
+.hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  pointer-events:none;transition:opacity .6s}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,4.5rem);
+  align-items:center}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+
+/* ---------- Schwellen-Slider ---------- */
+.slider-row{margin-top:2rem;display:flex;align-items:center;gap:1rem}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:3px;
+  border-radius:3px;background:rgba(255,255,255,.14);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;
+  border-radius:50%;background:var(--glow);cursor:grab;
+  box-shadow:0 0 0 6px rgba(110,231,255,.14),0 0 24px var(--glow)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;
+  background:var(--glow);cursor:grab;box-shadow:0 0 0 6px rgba(110,231,255,.14)}
+.readout{font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--dim);
+  min-width:11ch;text-align:right}
+
+/* ---------- Karten ---------- */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:1.2rem;margin-top:3rem}
+.card{padding:1.8rem;border-radius:18px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  transition:transform .5s cubic-bezier(.16,1,.3,1),border-color .5s,box-shadow .5s}
+.card:hover{transform:translateY(-7px);border-color:rgba(110,231,255,.34);
+  box-shadow:0 26px 50px -24px rgba(110,231,255,.3)}
+.card h3{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin-bottom:.5rem}
+.card p{font-size:.94rem;color:var(--dim)}
+.num{font-family:var(--serif);font-size:2.4rem;color:var(--glow);opacity:.32;
+  line-height:1;margin-bottom:.6rem}
+
+/* ---------- Finale ---------- */
+#end{text-align:center;flex-direction:column}
+#endCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.85}
+footer{position:relative;z-index:2;padding:7vh 6vw;text-align:center;
+  color:var(--dim);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase}
+@media(prefers-reduced-motion:reduce){
+  .rv{opacity:1!important;transform:none!important;filter:none!important}
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<div id="thread"></div>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-inner wrap">
+    <h1 id="title"></h1>
+    <p class="lede rv d2" style="margin:2.2rem auto 0;max-width:46ch">
+      Verstehen ist kein Zustand, den man erreicht.
+      Es ist ein <em class="hl">Netz, das sich schließt</em>.
+    </p>
+  </div>
+  <div class="scroll-cue">scrollen</div>
+</section>
+
+<!-- ══════════ 1 · ROHDATEN ══════════ -->
+<section>
+  <div class="wrap">
+    <div class="grid2">
+      <div>
+        <div class="kicker rv">Erstens</div>
+        <h2 class="rv d1">Chaos ist nicht das Gegenteil von Wissen.</h2>
+        <p class="rv d2">Am Anfang steht nie Leere, sondern <em class="hl">Überfluss</em>.
+        Hunderte Einzelheiten, alle gleich laut, alle gleich wichtig.
+        Das Gefühl von Nichtverstehen ist kein Mangel an Information —
+        es ist ein Mangel an <em class="hl">Ordnung</em>.</p>
+        <p class="rv d3">Fahre mit der Maus durch das Rauschen. Beobachte, was passiert,
+        wenn Aufmerksamkeit auf Chaos trifft.</p>
+      </div>
+      <div class="stage rv d2">
+        <canvas id="c1"></canvas>
+        <div class="hint" id="h1">Maus bewegen</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 2 · MUSTER ══════════ -->
+<section>
+  <div class="wrap">
+    <div class="grid2">
+      <div class="stage rv d1" style="order:-1">
+        <canvas id="c2"></canvas>
+        <div class="hint">Punkte suchen ihre Nachbarn</div>
+      </div>
+      <div>
+        <div class="kicker rv">Zweitens</div>
+        <h2 class="rv d1">Verstehen heißt: Verbinden.</h2>
+        <p class="rv d2">Ein einzelner Fakt ist fast wertlos. Seine Bedeutung entsteht
+        erst durch die <em class="hl">Beziehungen</em> zu dem, was du schon weißt.
+        Deshalb fühlt sich Lernen in einem vertrauten Gebiet mühelos an
+        und in einem fremden wie Arbeit.</p>
+        <p class="rv d3">Du baust keine Liste. Du baust ein <em class="hl">Gewebe</em>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 3 · DIE SCHWELLE ══════════ -->
+<section>
+  <div class="wrap narrow" style="text-align:center">
+    <div class="kicker rv">Drittens</div>
+    <h2 class="rv d1">Es passiert nicht allmählich.</h2>
+    <p class="rv d2" style="margin:0 auto 2.6rem">
+      Verstehen ist ein <em class="hl">Phasenübergang</em>. Lange geschieht scheinbar
+      nichts — und dann, bei einer winzigen zusätzlichen Verbindung,
+      kippt das ganze System auf einmal.
+    </p>
+    <div class="stage rv d2" style="aspect-ratio:21/9">
+      <canvas id="c3"></canvas>
+    </div>
+    <div class="slider-row rv d3">
+      <span style="font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)">Verknüpfung</span>
+      <input id="thr" type="range" min="0" max="100" value="18">
+      <span class="readout" id="thrOut">fragmentiert</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 4 · DIE PRINZIPIEN ══════════ -->
+<section>
+  <div class="wrap">
+    <div class="kicker rv">Viertens</div>
+    <h2 class="rv d1" style="max-width:18ch">Vier Hebel, die jedes Verstehen beschleunigen.</h2>
+    <div class="cards">
+      <div class="card rv d1"><div class="num">01</div><h3>Reduktion</h3>
+        <p>Entferne alles, was nicht trägt. Was bleibt, wird sichtbar.</p></div>
+      <div class="card rv d2"><div class="num">02</div><h3>Analogie</h3>
+        <p>Neues versteht man nur mit altem Material. Baue Brücken, keine Türme.</p></div>
+      <div class="card rv d3"><div class="num">03</div><h3>Eigenaktivität</h3>
+        <p>Erklären schlägt Lesen. Der Abruf formt die Spur, nicht die Aufnahme.</p></div>
+      <div class="card rv d3"><div class="num">04</div><h3>Pause</h3>
+        <p>Konsolidierung passiert offline. Das Gehirn sortiert, wenn du loslässt.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 5 · FINALE ══════════ -->
+<section id="end">
+  <canvas id="endCanvas"></canvas>
+  <div class="wrap narrow" style="position:relative;z-index:2">
+    <h2 class="rv" style="font-size:clamp(2.2rem,5.5vw,4.2rem)">
+      Und dann ist es plötzlich<br><em class="hl">einfach</em>.
+    </h2>
+    <p class="lede rv d2" style="margin:1.6rem auto 0;max-width:40ch">
+      Das Netz ist geschlossen. Was eben noch unmöglich wirkte,
+      ist jetzt bloß noch offensichtlich.
+    </p>
+  </div>
+</section>
+
+<footer>Die Anatomie des Verstehens</footer>
+
+<script>
+/* ═══════════ Helfer ═══════════ */
+const fit = c => {
+  const d = Math.min(devicePixelRatio||1, 2), r = c.getBoundingClientRect();
+  c.width = r.width*d; c.height = r.height*d;
+  c.getContext('2d').setTransform(d,0,0,d,0,0);
+  return {w:r.width, h:r.height};
+};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ═══════════ Titel: Wort für Wort ═══════════ */
+(() => {
+  const words = "Die Anatomie des Verstehens".split(" ");
+  document.getElementById('title').innerHTML = words.map((w,i)=>
+    `<span class="w" style="animation-delay:${.15+i*.13}s">${w}</span>`).join(" ");
+})();
+
+/* ═══════════ Scroll-Reveal + Faden ═══════════ */
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting) e.target.classList.add('in');
+}),{threshold:.18, rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+const thread = document.getElementById('thread');
+addEventListener('scroll',()=>{
+  const max = document.body.scrollHeight - innerHeight;
+  thread.style.width = (scrollY/Math.max(max,1)*100)+'%';
+},{passive:true});
+
+/* ═══════════ HERO · atmendes Konstellationsfeld ═══════════ */
+(() => {
+  const c = document.getElementById('heroCanvas'), x = c.getContext('2d');
+  let W,H,P=[],mouse={x:-9e9,y:-9e9};
+  const build = () => {
+    ({w:W,h:H} = fit(c));
+    const n = Math.min(130, Math.floor(W*H/9000));
+    P = Array.from({length:n},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*.26, vy:(Math.random()-.5)*.26,
+      r:Math.random()*1.5+.5, ph:Math.random()*6.28
+    }));
+  };
+  build(); addEventListener('resize',build);
+  addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect(); mouse.x=e.clientX-r.left; mouse.y=e.clientY-r.top;
+  });
+  let t=0;
+  (function loop(){
+    t+=.006;
+    x.clearRect(0,0,W,H);
+    // sanfter Nebel
+    const g = x.createRadialGradient(W*.5,H*.42,0,W*.5,H*.42,Math.max(W,H)*.7);
+    g.addColorStop(0,'rgba(110,231,255,.055)');
+    g.addColorStop(.5,'rgba(167,139,250,.025)');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=g; x.fillRect(0,0,W,H);
+
+    for(const p of P){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+      const dx=p.x-mouse.x, dy=p.y-mouse.y, d=Math.hypot(dx,dy);
+      if(d<170){ p.x+=dx/d*.9; p.y+=dy/d*.9; }
+    }
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+      const a=P[i],b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<128){
+        x.strokeStyle=`rgba(140,200,255,${(1-d/128)*.16})`;
+        x.lineWidth=.7; x.beginPath(); x.moveTo(a.x,a.y); x.lineTo(b.x,b.y); x.stroke();
+      }
+    }
+    for(const p of P){
+      const pulse = .6+.4*Math.sin(t*7+p.ph);
+      x.fillStyle=`rgba(200,235,255,${.4*pulse+.2})`;
+      x.beginPath(); x.arc(p.x,p.y,p.r,0,6.283); x.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ 1 · RAUSCHEN → ORDNUNG unter dem Cursor ═══════════ */
+(() => {
+  const c=document.getElementById('c1'), x=c.getContext('2d'), hint=document.getElementById('h1');
+  let W,H,N=[],m={x:-9e9,y:-9e9,on:false};
+  const build=()=>{
+    ({w:W,h:H}=fit(c));
+    const cols=Math.floor(W/17), rows=Math.floor(H/17); N=[];
+    for(let i=0;i<cols;i++)for(let j=0;j<rows;j++){
+      const hx=(i+.5)*(W/cols), hy=(j+.5)*(H/rows);
+      N.push({hx,hy,x:Math.random()*W,y:Math.random()*H,
+              ph:Math.random()*6.28,s:.6+Math.random()*.8});
+    }
+  };
+  build(); addEventListener('resize',build);
+  c.addEventListener('mousemove',e=>{
+    const r=c.getBoundingClientRect(); m.x=e.clientX-r.left; m.y=e.clientY-r.top; m.on=true;
+    hint.style.opacity=0;
+  });
+  c.addEventListener('mouseleave',()=>m.on=false);
+  let t=0;
+  (function loop(){
+    t+=.01; x.clearRect(0,0,W,H);
+    for(const n of N){
+      const d = m.on ? Math.hypot(n.hx-m.x,n.hy-m.y) : 9e9;
+      const k = Math.max(0, 1 - d/190);          // Klarheit 0..1
+      const ease = k*k*(3-2*k);                   // smoothstep
+      const jx = Math.sin(t*2.1+n.ph)*9*(1-ease);
+      const jy = Math.cos(t*1.7+n.ph)*9*(1-ease);
+      n.x = lerp(n.x, n.hx+jx, .04+ease*.22);
+      n.y = lerp(n.y, n.hy+jy, .04+ease*.22);
+      const a = .14 + ease*.7;
+      const rr = n.s*(1 + ease*.7);
+      x.fillStyle = ease>.02
+        ? `rgba(${lerp(170,110,ease)|0},${lerp(200,231,ease)|0},255,${a})`
+        : `rgba(150,170,200,${a})`;
+      x.beginPath(); x.arc(n.x,n.y,rr,0,6.283); x.fill();
+      if(ease>.45){
+        x.fillStyle=`rgba(110,231,255,${(ease-.45)*.25})`;
+        x.beginPath(); x.arc(n.x,n.y,rr*4,0,6.283); x.fill();
+      }
+    }
+    // Linse: zarter Ring um den Cursor
+    if(m.on){
+      const g=x.createRadialGradient(m.x,m.y,0,m.x,m.y,190);
+      g.addColorStop(0,'rgba(110,231,255,.07)');
+      g.addColorStop(.7,'rgba(110,231,255,.02)');
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      x.fillStyle=g; x.beginPath(); x.arc(m.x,m.y,190,0,6.283); x.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ 2 · PUNKTE SUCHEN NACHBARN (Gewebe) ═══════════ */
+(() => {
+  const c=document.getElementById('c2'), x=c.getContext('2d');
+  let W,H,P=[],seen=false,t0=0;
+  const build=()=>{
+    ({w:W,h:H}=fit(c));
+    const n=Math.min(70,Math.floor(W*H/7000));
+    P=Array.from({length:n},()=>{
+      const a=Math.random()*6.283, r=Math.random()**.55*Math.min(W,H)*.42;
+      return{tx:W/2+Math.cos(a)*r*1.5, ty:H/2+Math.sin(a)*r,
+             x:W/2+(Math.random()-.5)*W*1.4, y:H/2+(Math.random()-.5)*H*1.4,
+             ph:Math.random()*6.283, r:.9+Math.random()*1.5};
+    });
+  };
+  build(); addEventListener('resize',build);
+  new IntersectionObserver(e=>{ if(e[0].isIntersecting && !seen){seen=true;t0=performance.now();} },
+    {threshold:.4}).observe(c);
+
+  let t=0;
+  (function loop(){
+    t+=.008; x.clearRect(0,0,W,H);
+    const prog = seen ? Math.min(1,(performance.now()-t0)/3400) : 0;
+    const ease = 1-Math.pow(1-prog,3);
+
+    for(const p of P){
+      p.x=lerp(p.x,p.tx+Math.sin(t*1.3+p.ph)*7,.035);
+      p.y=lerp(p.y,p.ty+Math.cos(t*1.1+p.ph)*7,.035);
+    }
+    const reach = 60 + ease*110;
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+      const a=P[i],b=P[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<reach){
+        const s=(1-d/reach);
+        const grd=x.createLinearGradient(a.x,a.y,b.x,b.y);
+        grd.addColorStop(0,`rgba(110,231,255,${s*.34*ease})`);
+        grd.addColorStop(1,`rgba(167,139,250,${s*.34*ease})`);
+        x.strokeStyle=grd; x.lineWidth=.6+s*.9;
+        x.beginPath(); x.moveTo(a.x,a.y); x.lineTo(b.x,b.y); x.stroke();
+      }
+    }
+    for(const p of P){
+      const pu=.65+.35*Math.sin(t*5+p.ph);
+      x.fillStyle=`rgba(232,241,255,${.5+.4*pu})`;
+      x.beginPath(); x.arc(p.x,p.y,p.r,0,6.283); x.fill();
+      x.fillStyle=`rgba(110,231,255,${.07*ease*pu})`;
+      x.beginPath(); x.arc(p.x,p.y,p.r*7,0,6.283); x.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ 3 · PERKOLATION / PHASENÜBERGANG ═══════════ */
+(() => {
+  const c=document.getElementById('c3'), x=c.getContext('2d');
+  const sl=document.getElementById('thr'), out=document.getElementById('thrOut');
+  let W,H,N=[],E=[],flash=0,wasWhole=false;
+
+  const build=()=>{
+    ({w:W,h:H}=fit(c));
+    const n=Math.min(95,Math.floor(W*H/5200)); N=[];
+    for(let i=0;i<n;i++){
+      let best=null,bd=-1;
+      for(let k=0;k<12;k++){                       // Poisson-ähnliche Streuung
+        const p={x:40+Math.random()*(W-80), y:34+Math.random()*(H-68)};
+        const d=N.length?Math.min(...N.map(q=>Math.hypot(q.x-p.x,q.y-p.y))):1e9;
+        if(d>bd){bd=d;best=p;}
+      }
+      best.ph=Math.random()*6.283; best.g=0; N.push(best);
+    }
+    E=[];
+    for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){
+      const d=Math.hypot(N[i].x-N[j].x,N[i].y-N[j].y);
+      if(d<Math.min(W,H)*.42) E.push({i,j,d,w:Math.random()});
+    }
+    E.sort((a,b)=>a.d-b.d);
+  };
+  build(); addEventListener('resize',build);
+
+  // Union-Find für die größte zusammenhängende Komponente
+  const comps = active => {
+    const par=N.map((_,i)=>i);
+    const find=a=>{while(par[a]!==a){par[a]=par[par[a]];a=par[a];}return a;};
+    for(const e of active){const a=find(e.i),b=find(e.j); if(a!==b)par[a]=b;}
+    const size={}; let big=0,root=-1;
+    N.forEach((_,i)=>{const r=find(i);size[r]=(size[r]||0)+1;
+      if(size[r]>big){big=size[r];root=r;}});
+    return {find,root,big};
+  };
+
+  const labels=['fragmentiert','Inseln','Ränder berühren sich','es kippt…','ein Ganzes'];
+
+  (function loop(){
+    x.clearRect(0,0,W,H);
+    const p = +sl.value/100;
+    const cut = E.length * Math.pow(p,1.15);
+    const active = E.filter((e,i)=> i<cut && e.w < .35+p*.75);
+    const {find,root,big} = comps(active);
+    const frac = big/N.length;
+
+    if(frac>.9 && !wasWhole){ flash=1; wasWhole=true; }
+    if(frac<.82) wasWhole=false;
+    flash*=.955;
+
+    out.textContent = labels[Math.min(4,Math.floor(frac*4.6))];
+    out.style.color = frac>.9 ? 'var(--glow)' : 'var(--dim)';
+
+    if(flash>.01){
+      const g=x.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*.75);
+      g.addColorStop(0,`rgba(110,231,255,${flash*.3})`);
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      x.fillStyle=g; x.fillRect(0,0,W,H);
+    }
+
+    for(const e of active){
+      const inBig = find(e.i)===root;
+      x.strokeStyle = inBig
+        ? `rgba(110,231,255,${.3+frac*.45+flash*.4})`
+        : 'rgba(150,165,190,.17)';
+      x.lineWidth = inBig ? 1+frac*.9 : .6;
+      x.beginPath(); x.moveTo(N[e.i].x,N[e.i].y); x.lineTo(N[e.j].x,N[e.j].y); x.stroke();
+    }
+    N.forEach((n,i)=>{
+      const inBig = find(i)===root;
+      n.g = lerp(n.g, inBig?1:0, .12);
+      const r = 2.2 + n.g*2.1 + flash*3;
+      if(n.g>.05){
+        x.fillStyle=`rgba(110,231,255,${.1*n.g+flash*.2})`;
+        x.beginPath(); x.arc(n.x,n.y,r*5,0,6.283); x.fill();
+      }
+      x.fillStyle = `rgba(${lerp(150,235,n.g)|0},${lerp(165,248,n.g)|0},255,${.55+n.g*.45})`;
+      x.beginPath(); x.arc(n.x,n.y,r,0,6.283); x.fill();
+    });
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ 5 · FINALE · ruhig atmendes Ganzes ═══════════ */
+(() => {
+  const c=document.getElementById('endCanvas'), x=c.getContext('2d');
+  let W,H,N=[];
+  const build=()=>{
+    ({w:W,h:H}=fit(c));
+    N=[]; const n=Math.min(110,Math.floor(W*H/11000));
+    for(let i=0;i<n;i++){
+      const a=i*2.39996, r=Math.sqrt(i/n)*Math.min(W,H)*.46;   // Goldener Winkel
+      N.push({a,r,ph:Math.random()*6.283});
+    }
+  };
+  build(); addEventListener('resize',build);
+  let t=0;
+  (function loop(){
+    t+=.0035; x.clearRect(0,0,W,H);
+    const pts=N.map(n=>{
+      const br=n.r*(1+.035*Math.sin(t*2+n.ph));
+      const aa=n.a+t*.14;
+      return{x:W/2+Math.cos(aa)*br*1.35, y:H/2+Math.sin(aa)*br, ph:n.ph};
+    });
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(d<96){
+        x.strokeStyle=`rgba(167,139,250,${(1-d/96)*.14})`;
+        x.lineWidth=.6; x.beginPath();
+        x.moveTo(pts[i].x,pts[i].y); x.lineTo(pts[j].x,pts[j].y); x.stroke();
+      }
+    }
+    for(const p of pts){
+      const pu=.6+.4*Math.sin(t*4+p.ph);
+      x.fillStyle=`rgba(232,241,255,${.3+.35*pu})`;
+      x.beginPath(); x.arc(p.x,p.y,1.3,0,6.283); x.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+</script>
+</body>
+</html>

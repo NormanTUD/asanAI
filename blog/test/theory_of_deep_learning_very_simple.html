@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die mathematische Theorie des Deep Learning — Ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{background:#f3ede0;transform:translateY(-1px)}
+button.on{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:660}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.badge-out{font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;display:inline-block;margin-top:10px}
+.badge-out.ok{background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1}
+.badge-out.warn{background:var(--amber-soft);color:var(--amber);border:1px solid #f0dcbc}
+.badge-out.bad{background:var(--rose-soft);color:var(--rose);border:1px solid #f2cdd9}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim);cursor:pointer;transition:.15s}
+.chip:hover{background:#f3ede0}
+.chip.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · nur Schulmathematik · ca. 12 Minuten</div>
+  <h1>Die mathematische<br>Theorie des Deep Learning</h1>
+  <p class="sub">Neuronale Netze funktionieren. Aber <em>warum?</em> Diese stark verkürzte Version erklärt die drei großen Säulen der Theorie — <strong>Approximation</strong> (was kann ein Netz?), <strong>Optimierung</strong> (wie findet man gute Gewichte?) und <strong>Generalisierung</strong> (warum klappt es auf neuen Daten?) — mit fünf Experimenten, die du anfasst.</p>
+  <div class="chips">
+    <span class="chip">5 Experimente zum Spielen</span>
+    <span class="chip">0 Formeln zum Rechnen</span>
+    <span class="chip">5 große „Aha“-Momente</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Warum Deep Learning klappt: eine einzige Spannung</h2>
+<p>Alles im Deep Learning ist eine einzige Aufgabe: Wir sehen <strong>endlich viele Beispiele</strong> und wollen daraus eine <strong>Regel</strong> ableiten, die auch für <strong>nie gesehene Fälle</strong> gilt. Das Problem: Je mehr Freiheiten das Modell hat, desto besser passt es zu den <em>gesehenen</em> Punkten — und desto wilder erfindet es zwischen ihnen vor.</p>
+<div class="demo">
+  <h3>Outfitting-Spiel: Passform vs. Wahrheit</h3>
+  <p class="dsub">Grün gestrichelt ist die wahre Regel. Die rote Kurve passt sich an die weißen Trainingspunkte an. Ziehe beide Regler und beobachte die zwei Fehler.</p>
+  <canvas id="s0canvas" width="400" height="280"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Trainingsbeispiele</span><b id="s0mV">8</b></div>
+    <input type="range" id="s0m" min="3" max="40" value="8" step="1">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Modell-Komplexität (Polynomgrad)</span><b id="s0dV">2</b></div>
+    <input type="range" id="s0d" min="1" max="12" value="2" step="1" class="m">
+  </div>
+  <div class="btnrow"><button id="s0new" class="on">Neue Stichprobe ziehen</button></div>
+  <div class="ro">
+    <div class="box"><div class="k">Trainings-Fehler</div><div class="v" id="s0tr">–</div></div>
+    <div class="box rose"><div class="k">Wahrer Fehler (Test)</div><div class="v" id="s0te">–</div></div>
+  </div>
+  <div id="s0out" class="badge-out ok">–</div>
+</div>
+<div class="note">
+  <b>Aha #1 — Die zentrale Spannung:</b> Setze „sehr komplex“ (Grad 12) bei nur 8 Beispielen. Der Trainings-Fehler fällt auf ~0 — die rote Kurve trifft jeden Punkt perfekt. Aber der <em>wahre</em> Fehler explodiert, weil das Modell zwischen den Punkten wild ausschlägt. Es hat die Punkte <b>auswendig gelernt</b>, nicht die Regel verstanden. Genau diese Spannung — groß genug, um die Wahrheit darzustellen, klein genug, um sie zu finden — <em>ist</em> die gesamte Theorie.
+</div>
+
+<h2><span class="n">2</span>Die Maschine: Schichten, Gewichte, Knicke</h2>
+<p>Ein neuronales Netz ist nichts Mysteriöses. Es ist eine Kette von „Gewichte mal Eingabe plus Verschiebung“, zwischen denen immer eine <strong>Knick-Funktion</strong> (typisch: ReLU) steckt. Jeder Knick erzeugt eine scharfe Kante im Ausgabeverlauf. Ein Netz ist im Kern eine <b>stückweise lineare Funktion</b> — eine Faltkarte aus vielen kleinen geraden Flächenstücken.</p>
+<div class="demo">
+  <h3>Universalität: Knicke bauen jede Kurve</h3>
+  <p class="dsub">Grün gestrichelt ist die Zielkurve, rot die Faltkarte aus n Neuronen. Ziehe die Breite und sieh, wie die Knicke dichter werden und die Kurve sich der Wahrheit nähert.</p>
+  <canvas id="uaPlot" width="400" height="280"></canvas>
+  <div class="chips" id="uaTarget">
+    <button class="chip on" data-f="zigzag">Zickzack (10 Zacken)</button>
+    <button class="chip" data-f="runge">Runge-Funktion</button>
+    <button class="chip" data-f="step">Stufensprung</button>
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Breite n (Anzahl Neuronen)</span><b id="uaNV">8</b></div>
+    <input type="range" id="uaN" min="1" max="120" value="8" step="1">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">max. Fehler zur Zielkurve</div><div class="v" id="uaErr">–</div></div>
+    <div class="box amber"><div class="k">Parameter</div><div class="v" id="uaP">–</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Aha #2 — Universalität:</b> Jede stetige Kurve lässt sich beliebig gut durch so ein Netz annähern — man muss nur genug Neuronen nehmen. Der Satz „Netze können (fast) alles“ ist damit bewiesen. Aber: Er sagt nichts darüber, wie <em>viele</em> Neuronen nötig sind. Und genau dort wird es spannend.
+</div>
+
+<h2><span class="n">3</span>Der große Aha: Tiefe multipliziert, Breite addiert</h2>
+<p>Hier ist das Herzstück der ganzen Theorie. Wenn man Netze <strong>addiert</strong> (breite Schicht), addieren sich die Knicke. Wenn man Netze <strong>verkettet</strong> (tiefe Schichten), <em>multiplizieren</em> sie sich. Das kleine Beispiel: Eine „Hut“-Funktion h₁ aus 2 ReLUs hat 2 Zacken. Verkette sie n-mal — du bekommst 2ⁿ⁻¹ Zacken, aber nur linear wachsende Größe!</p>
+<div class="demo">
+  <h3>Sägezahn-Telemetrie: Zacken verdoppeln sich pro Schicht</h3>
+  <p class="dsub">Ziehe die Verkettungstiefe und sieh, wie die Zacken explodieren — bei nur linear wachsender Netzgröße. Die blassen Linien sind die Zwischenschritte.</p>
+  <canvas id="sawPlot" width="400" height="260"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Verkettungen n (Tiefe)</span><b id="sawNV">3</b></div>
+    <input type="range" id="sawN" min="1" max="8" value="3" step="1">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Zacken</div><div class="v" id="sawTeeth">–</div></div>
+    <div class="box amber"><div class="k">Netzgröße (Parameter)</div><div class="v" id="sawSize">–</div></div>
+  </div>
+</div>
+<div class="demo">
+  <h3>Das Stücke-Budget: gleiche 30 Neuronen, verschiedene Aufteilungen</h3>
+  <p class="dsub">Fixe 30 Neuronen, aber unterschiedlich verteilt auf Schichten. Wie viele Stücke kann das Netz maximal bauen? (Log-Skala! Der rote Punkt ist flach, der orange der beste tiefe Fall.)</p>
+  <canvas id="budPlot" width="400" height="240"></canvas>
+  <div class="ro">
+    <div class="box"><div class="k">beste Tiefe</div><div class="v" id="budBest">–</div></div>
+    <div class="box amber"><div class="k">max. Stücke (tief)</div><div class="v" id="budMax">–</div></div>
+    <div class="box rose"><div class="k">max. Stücke (flach)</div><div class="v" id="budFlat">–</div></div>
+  </div>
+  <div id="budOut" class="badge-out ok">–</div>
+</div>
+<div class="note">
+  <b>Aha #3 — Tiefe schlägt Breite dramatisch:</b> Bei 30 Neuronen: auf <b>1 Schicht</b> verteilt → höchstens ~31 Stücke. Auf <b>10 Schichten à 3 Neuronen</b> → bis zu 6¹⁰ ≈ <b>60 Millionen</b> Stücke! Dasselbe Budget, Millionenfacher Reichweite. Das ist der Grund, warum Netze <em>tief</em> gebaut werden — und das erste große Ergebnis der Approximationstheorie.
+</div>
+
+<h2><span class="n">4</span>Wie findet man die Gewichte? Gradientenabstieg</h2>
+<p>Jetzt die zweite Säule: <strong>Optimierung</strong>. Die Gewichte sind ein riesiges Set von Zahlen. Um sie zu finden, misst man in jeder Schicht, in welche Richtung der Fehler <em>am stärksten sinkt</em> (der Gradient), und macht einen kleinen Schritt in diese Richtung. Wiederholen, bis der Fehler flach wird. Das Problem: Die Fehlerlandschaft ist <em>kein</em> glatter Berg — sie hat hunderte Tälern und Sattelpunkte.</p>
+<div class="demo">
+  <h3>Gradientenabstieg über eine unwegsame Landschaft</h3>
+  <p class="dsub">Der weiße Punkt klettert bergab (dunkel = niedriger Fehler). Der Lernrate-Regler steuert die Schrittlänge: zu groß → oszilliert, zu klein → kriecht. Nutze „Ein Schritt“, um den Weg zu sehen.</p>
+  <canvas id="gdPlot" width="400" height="260"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Lernrate</span><b id="gdLV">0.05</b></div>
+    <input type="range" id="gdL" min="1" max="100" value="5" class="m">
+  </div>
+  <div class="btnrow">
+    <button id="gdReset">Zurücksetzen</button>
+    <button id="gdStep" class="on">Ein Schritt</button>
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Aktueller Fehler</div><div class="v" id="gdErr">–</div></div>
+    <div class="box amber"><div class="k">Schritte</div><div class="v" id="gdCnt">0</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Aha #4 — Sattelpunkte sind die wahren Hindernisse:</b> In sehr hohen Dimensionen dominieren Sattelpunkte (Punkte, die in einer Richtung bergauf, in der anderen bergab führen) über echte lokale Minima. Moderne Theorie zeigt: Mit passenden Architekturen (z. B. sehr breite Netze) wird die Landschaft fast <em>konvex</em> — es gibt dann im Wesentlichen nur noch gutes und schlechtes Tal, keinen trügerischen Schein.
+</div>
+
+<h2><span class="n">5</span>Warum Generalisierung klappt, obwohl sie eigentlich nicht dürfte</h2>
+<p>Die dritte Säule. Die klassische Statistik sagt: <em>mehr Parameter als Datenpunkte</em> → Katastrophe, das Modell kann nur auswendig lernen. Aber ImageNet-Modelle haben bis zu <strong>1000× mehr Parameter als Trainingsbilder</strong> — und funktionieren hervorragend. Warum?</p>
+<div class="demo">
+  <h3>Double Descent: der Test-Fehler als Funktion der Modellgröße</h3>
+  <p class="dsub">Grau gestrichelt: die klassische Vorhersage (Fehler steigt nach der 1.0-Marke). Durchgezogen: das, was in der Praxis passiert — ein zweiter Abstieg. Ziehe den Regler über die rote Linie.</p>
+  <canvas id="ddPlot" width="400" height="260"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Model size (Parameter / Datenpunkte)</span><b id="ddV">1.00</b></div>
+    <input type="range" id="ddX" min="0" max="200" value="100" class="v">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Klassische Vorhersage</div><div class="v" id="ddClass">–</div></div>
+    <div class="box amber"><div class="k">Tatsächlich (Double Descent)</div><div class="v" id="ddReal">–</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Aha #5 — Das große Paradox ist aufgelöst:</b> In der Überparametrisierung (rechts von der 1.0-Marke) <em>sinkt</em> der Test-Fehler erneut. Der Grund: Sehr breite Netze werden im Training überraschend <em>linear</em> (die „Neural-Tangent-Kernel“-Theorie) — Gradientenabstieg findet dann systematisch die <em>einfachsten</em> Lösungen, und einfache Lösungen generalisieren. Mehr Komplexität ist nicht mehr Fluch, sondern Heil.
+</div>
+
+<h2><span class="n">6</span>Was bleibt offen</h2>
+<ul>
+  <li><b>Die Schranken sind optimistisch:</b> Die exponentiellen Stücke-Zahlen aus Kapitel 3 erreicht ein zufällig initialisiertes Netz <em>in der Praxis nicht</em> — der Erwartungswert wächst nur linear in der Tiefe.</li>
+  <li><b>Warum genau diese Architektur?</b> Die Theorie erklärt, warum Tiefe <em>im Prinzip</em> gut ist. Aber warum ResNets, CNNs und Transformer jeweils <em>so</em> funktionieren — das ist noch nicht vollständig verstanden.</li>
+  <li><b>Adversarial Examples:</b> Netze reagieren auf winzige, für Menschen unsichtbare Störungen empfindlich. Die Theorie erklärt, <em>warum</em> das passieren <em>muss</em> (hohe Dimension + glatte Funktion), aber noch nicht, wie man es vollständig behebt.</li>
+  <li><b>Honesty corner:</b> Alles auf dieser Seite ist eine stark vereinfachte Nachstellung. Die echten Beweise (Telgarsky 2016, Yarotsky 2017, NTK 2019) sind mehrere Dutzend Seiten lang — aber die <em>Idee</em> dahinter ist, was du hier gespielt hast.</li>
+</ul>
+
+<footer>
+  <p>Stark vereinfachte, interaktive Begleitung zu <a href="theory_of_deep_learning.html">theory_of_deep_learning.html</a>. Alle Experimente laufen lokal im Browser — keine Daten verlassen diese Seite. · Vollständige Version mit allen 14 Kapiteln: <a href="theory_of_deep_learning.html">theory_of_deep_learning.html</a></p>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  function $(id){return document.getElementById(id);}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function sq(v){return v*v;}
+  function fmtBig(v){
+    if(v>=1e6)return (v/1e6).toFixed(v<1e7?1:0)+" Mio.";
+    if(v>=1e3)return (v/1e3).toFixed(v<1e4?1:0)+"k";
+    return Math.round(v).toString();
+  }
+
+  // ---------- Demo 1: overfitting (polynomial fit) ----------
+  var trueFn=function(x){return 0.5+0.35*Math.sin(2*Math.PI*x)+0.15*Math.sin(4*Math.PI*x);};
+  var samples=[];
+  function newSamples(){
+    var m=+($('s0m').value);
+    var r=rng32((Date.now()&0xffff)^m*7);
+    samples=[];
+    for(var i=0;i<m;i++){var x=r();samples.push([x,trueFn(x)+(r()-0.5)*0.08]);}
+  }
+  function polyFit(pts,d){
+    var n=d+1,i,j,k,p;
+    var A=[],b=[];
+    for(i=0;i<n;i++){A.push(new Array(n).fill(0));b.push(0);}
+    for(p=0;p<pts.length;p++){
+      var x=pts[p][0],y=pts[p][1];
+      for(i=0;i<n;i++){
+        b[i]+=Math.pow(x,i)*y;
+        for(j=0;j<n;j++){A[i][j]+=Math.pow(x,i+j);}
+      }
+    }
+    for(i=0;i<n;i++){
+      var piv=A[i][i]||1e-9;
+      for(j=i;j<n;j++){A[i][j]/=piv;}
+      b[i]/=piv;
+      for(k=0;k<n;k++){
+        if(k===i)continue;
+        var f=A[k][i];
+        for(j=i;j<n;j++){A[k][j]-=f*A[i][j];}
+        b[k]-=f*b[i];
+      }
+    }
+    return b;
+  }
+  function polyEval(c,x){var s=0;for(var i=c.length-1;i>=0;i--){s=s*x+c[i];}return s;}
+  function drawS0(){
+    var m=+($('s0m').value),d=+($('s0d').value);
+    $('s0mV').textContent=m;$('s0dV').textContent=d;
+    if(samples.length!==m)newSamples();
+    var c=polyFit(samples,d);
+    var W=400,H=280,pad={l:30,r:10,t:14,b:24};
+    var pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(clamp(y,-0.2,1.2)+0.2)/1.4*ph;}
+    var g=$('s0canvas').getContext('2d');
+    g.clearRect(0,0,W,H);
+    g.fillStyle='#f5f0e6';g.fillRect(0,0,W,H);
+    g.strokeStyle='#0f766e';g.lineWidth=2;g.setLineDash([4,3]);
+    g.beginPath();
+    for(var i=0;i<=200;i++){var x=i/200;var px=X(x),py=Y(trueFn(x));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();g.setLineDash([]);
+    g.strokeStyle='#be185d';g.lineWidth=2.5;
+    g.beginPath();
+    for(i=0;i<=200;i++){x=i/200;px=X(x);py=Y(clamp(polyEval(c,x),-0.2,1.2));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();
+    for(i=0;i<samples.length;i++){
+      g.beginPath();g.arc(X(samples[i][0]),Y(samples[i][1]),4,0,Math.PI*2);
+      g.fillStyle='#fff';g.fill();g.strokeStyle='#2b2e3a';g.lineWidth=1.5;g.stroke();
+    }
+    g.font='10px system-ui';g.fillStyle='#0f766e';g.fillText('wahr',W-34,18);
+    g.fillStyle='#be185d';g.fillText('Modell',W-58,32);
+    var tr=0;for(i=0;i<samples.length;i++){tr+=sq(polyEval(c,samples[i][0])-samples[i][1]);}tr=Math.sqrt(tr/samples.length);
+    var te=0;for(i=0;i<=200;i++){x=i/200;te+=sq(polyEval(c,x)-trueFn(x));}te=Math.sqrt(te/201);
+    $('s0tr').textContent=tr.toFixed(3);
+    $('s0te').textContent=te.toFixed(3);
+    var out=$('s0out');
+    if(tr<0.02&&te>0.08){out.className='badge-out bad';out.textContent='Überfitt! Punkte getroffen — Wahrheit ignoriert';}
+    else if(te<0.03){out.className='badge-out ok';out.textContent='gut: trifft die wahre Regel';}
+    else{out.className='badge-out warn';out.textContent='suboptimal — zu wenig Daten oder falsche Komplexität';}
+  }
+  $('s0m').addEventListener('input',drawS0);
+  $('s0d').addEventListener('input',drawS0);
+  $('s0new').addEventListener('click',function(){newSamples();drawS0();});
+  drawS0();
+
+  // ---------- Demo 2: cpwl universal approximation ----------
+  var targetKey='zigzag';
+  function targetFn(x){
+    if(targetKey==='zigzag')return 0.5+0.35*Math.sin(2*Math.PI*5*x);
+    if(targetKey==='runge')return 0.5+0.45/(1+25*sq(2*x-1));
+    return x<0.5?0.15:0.85;
+  }
+  function drawUA(){
+    var n=+($('uaN').value);
+    $('uaNV').textContent=n;
+    var W=400,H=280,pad={l:30,r:10,t:14,b:24};
+    var pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(clamp(y,-0.2,1.2)+0.2)/1.4*ph;}
+    var g=$('uaPlot').getContext('2d');
+    g.clearRect(0,0,W,H);
+    g.fillStyle='#f5f0e6';g.fillRect(0,0,W,H);
+    g.strokeStyle='#0f766e';g.lineWidth=2;g.setLineDash([4,3]);
+    g.beginPath();
+    for(var i=0;i<=300;i++){var x=i/300;var px=X(x),py=Y(targetFn(x));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();g.setLineDash([]);
+    g.strokeStyle='#be185d';g.lineWidth=2.5;
+    g.beginPath();
+    var err=0;
+    for(i=0;i<=300;i++){
+      x=i/300;
+      var k=Math.min(Math.floor(x*n),n-1);
+      var t=x*n-k;
+      var y=targetFn(k/n)*(1-t)+targetFn((k+1)/n)*t;
+      err=Math.max(err,Math.abs(y-targetFn(x)));
+      px=X(x);py=Y(y);
+      if(i===0)g.moveTo(px,py);else g.lineTo(px,py);
+    }
+    g.stroke();
+    for(i=0;i<=n;i++){
+      g.beginPath();g.arc(X(i/n),Y(targetFn(i/n)),3.5,0,Math.PI*2);
+      g.fillStyle='#be185d';g.fill();
+    }
+    g.font='10px system-ui';g.fillStyle='#0f766e';g.fillText('Ziel',W-34,18);
+    g.fillStyle='#be185d';g.fillText('Netz',W-34,32);
+    $('uaErr').textContent=err.toFixed(4);
+    $('uaP').textContent='~'+(3*n+2);
+  }
+  document.querySelectorAll('#uaTarget .chip').forEach(function(ch){
+    ch.addEventListener('click',function(){
+      document.querySelectorAll('#uaTarget .chip').forEach(function(c){c.classList.remove('on');});
+      ch.classList.add('on');targetKey=ch.dataset.f;drawUA();
+    });
+  });
+  $('uaN').addEventListener('input',drawUA);
+  drawUA();
+
+  // ---------- Demo 3: sawtooth + budget ----------
+  function h1(x){return x<0.5?2*x:2-2*x;}
+  function hn(x,n){var v=x;for(var i=0;i<n;i++){v=h1(v);}return v;}
+  function drawSaw(){
+    var n=+($('sawN').value);
+    $('sawNV').textContent=n;
+    $('sawTeeth').textContent=Math.pow(2,n-1).toLocaleString('de-DE');
+    $('sawSize').textContent=(3*n+2);
+    var W=400,H=260,pad={l:30,r:10,t:14,b:24};
+    var pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    function X(x){return pad.l+x*pw;}
+    function Y(y){return pad.t+ph-(y+0.05)/1.1*ph;}
+    var g=$('sawPlot').getContext('2d');
+    g.clearRect(0,0,W,H);
+    g.fillStyle='#f5f0e6';g.fillRect(0,0,W,H);
+    for(var k=1;k<n;k++){
+      g.strokeStyle='rgba(109,40,217,'+(0.08+0.1*k)+')';g.lineWidth=1;
+      g.beginPath();
+      for(var i=0;i<=1000;i++){var x=i/1000;var px=X(x),py=Y(hn(x,k));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+      g.stroke();
+    }
+    g.strokeStyle='#0f766e';g.lineWidth=2.5;
+    g.beginPath();
+    for(i=0;i<=2000;i++){x=i/2000;px=X(x);py=Y(hn(x,n));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();
+    g.font='10px system-ui';g.fillStyle='#9aa0b0';
+    g.fillText('x',W-14,H-8);g.fillText('h',4,12);
+  }
+  $('sawN').addEventListener('input',drawSaw);
+  drawSaw();
+
+  function drawBud(){
+    var N=30;
+    var W=400,H=240,pad={l:44,r:12,t:14,b:30};
+    var pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    var Ls=[],Ps=[];
+    var best=1,bestP=0,flatP=0;
+    for(var L=1;L<=N;L++){
+      var w=Math.floor(N/L);
+      if(w<1)break;
+      var p=Math.pow(2*w,L);
+      Ls.push(L);Ps.push(p);
+      if(p>bestP){bestP=p;best=L;}
+      if(L===1)flatP=p;
+    }
+    var yMax=Math.log10(bestP)+0.5;
+    var yMin=0;
+    function X(l){return pad.l+(l-1)/(Ls.length-1)*pw;}
+    function Y(p){return pad.t+ph-(Math.log10(p)-yMin)/(yMax-yMin)*ph;}
+    var g=$('budPlot').getContext('2d');
+    g.clearRect(0,0,W,H);
+    g.fillStyle='#f5f0e6';g.fillRect(0,0,W,H);
+    g.strokeStyle='#e7e0d0';g.lineWidth=1;
+    for(var i=0;i<=4;i++){
+      var gy=pad.t+ph*i/4;
+      g.beginPath();g.moveTo(pad.l,gy);g.lineTo(W-pad.r,gy);g.stroke();
+      g.font='9px system-ui';g.fillStyle='#9aa0b0';
+      g.fillText(fmtBig(Math.pow(10,yMax-(yMax-yMin)*i/4)),2,gy+3);
+    }
+    g.strokeStyle='#0f766e';g.lineWidth=3;
+    g.beginPath();
+    for(i=0;i<Ls.length;i++){
+      var px=X(Ls[i]),py=Y(Ps[i]);
+      if(i===0)g.moveTo(px,py);else g.lineTo(px,py);
+    }
+    g.stroke();
+    g.beginPath();g.arc(X(best),Y(bestP),7,0,Math.PI*2);g.fillStyle='#b45309';g.fill();
+    g.strokeStyle='#fff';g.lineWidth=2;g.stroke();
+    g.beginPath();g.arc(X(1),Y(flatP),7,0,Math.PI*2);g.fillStyle='#be185d';g.fill();
+    g.strokeStyle='#fff';g.lineWidth=2;g.stroke();
+    g.font='10px system-ui';g.fillStyle='#9aa0b0';g.textAlign='center';
+    g.fillText('Tiefe L  (Breite = 30/L)',W/2,H-8);
+    g.textAlign='left';
+    $('budBest').textContent=best+' × '+Math.floor(N/best)+' Neuronen';
+    $('budMax').textContent=fmtBig(bestP);
+    $('budFlat').textContent=fmtBig(flatP);
+    var ratio=bestP/flatP;
+    var out=$('budOut');
+    if(ratio>1e6){out.className='badge-out bad';out.textContent='Millionenfacher Vorsprung durch Tiefe!';}
+    else if(ratio>100){out.className='badge-out warn';out.textContent='Hundertfacher Vorsprung durch Tiefe';}
+    else{out.className='badge-out ok';out.textContent='Vorteil durch Tiefe: ×'+Math.round(ratio);}
+  }
+  drawBud();
+
+  // ---------- Demo 4: gradient descent on a rugged landscape ----------
+  function gdfn(x,y){
+    return 0.4*Math.sin(3*x)*Math.sin(3*y)
+         +0.08*Math.sin(7*x+1)*Math.cos(5*y)
+         +0.15*sq(x-0.2)+0.15*sq(y+0.3)
+         +0.35*sq(x+0.7)*sq(y-0.5);
+  }
+  var gdx=0.9,gdy=0.8,gdCnt=0,gdTrail=[];
+  function gdDraw(){
+    var W=400,H=260;
+    var g=$('gdPlot').getContext('2d');
+    var img=g.createImageData(W,H);
+    var lo=1e9,hi=-1e9,x,y,v,t,idx;
+    for(y=0;y<H;y++){for(x=0;x<W;x++){v=gdfn(-1+2*x/W,-1+2*y/H);lo=Math.min(lo,v);hi=Math.max(hi,v);}}
+    for(y=0;y<H;y++){for(x=0;x<W;x++){
+      v=gdfn(-1+2*x/W,-1+2*y/H);
+      t=clamp((v-lo)/(hi-lo),0,1);
+      idx=(y*W+x)*4;
+      img.data[idx]=Math.round(20+200*t);
+      img.data[idx+1]=Math.round(30+180*t);
+      img.data[idx+2]=Math.round(50+130*t);
+      img.data[idx+3]=255;
+    }}
+    g.putImageData(img,0,0);
+    g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=1.5;
+    g.beginPath();
+    gdTrail.forEach(function(p,i){var px=W/2+(p[0]+1)/2*W,py=H/2+(p[1]+1)/2*H;if(i===0)g.moveTo(px,py);else g.lineTo(px,py);});
+    g.lineTo(W/2+(gdx+1)/2*W,H/2+(gdy+1)/2*H);
+    g.stroke();
+    g.beginPath();g.arc(W/2+(gdx+1)/2*W,H/2+(gdy+1)/2*H,7,0,Math.PI*2);
+    g.fillStyle='#fff';g.fill();g.strokeStyle='#2b2e3a';g.lineWidth=2;g.stroke();
+    $('gdErr').textContent=gdfn(gdx,gdy).toFixed(3);
+    $('gdCnt').textContent=gdCnt;
+  }
+  function gdStep(){
+    var lr=+($('gdL').value)/100;
+    var e=0.01;
+    var gx=(gdfn(gdx+e,gdy)-gdfn(gdx-e,gdy))/(2*e);
+    var gy=(gdfn(gdx,gdy+e)-gdfn(gdx,gdy-e))/(2*e);
+    gdx=clamp(gdx-lr*gx,-1,1);
+    gdy=clamp(gdy-lr*gy,-1,1);
+    gdTrail.push([gdx,gdy]);
+    if(gdTrail.length>200)gdTrail.shift();
+    gdCnt++;
+    gdDraw();
+  }
+  $('gdL').addEventListener('input',function(){$('gdLV').textContent=(+($('gdL').value)/100).toFixed(2);});
+  $('gdStep').addEventListener('click',gdStep);
+  $('gdReset').addEventListener('click',function(){gdx=0.9;gdy=0.8;gdCnt=0;gdTrail=[];gdDraw();});
+  gdDraw();
+
+  // ---------- Demo 5: double descent ----------
+  function lossClass(x){
+    if(x<1)return 0.35+0.15*(1-x);
+    return 0.35+0.5*(x-1);
+  }
+  function lossReal(x){
+    var before=0.30+0.15*sq(x-0.6)*2;
+    var spike=0.5*Math.exp(-sq(x-1)/0.015);
+    var tail=0.12+0.20*Math.exp(-sq(x-1.4)/0.5);
+    var v=x<1?before:tail;
+    return Math.min(1.0,v+spike);
+  }
+  function drawDD(){
+    var W=400,H=260,pad={l:40,r:12,t:14,b:30};
+    var pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+    var xSel=+($('ddX').value)/100;
+    $('ddV').textContent=xSel.toFixed(2);
+    function X(x){return pad.l+x/2*pw;}
+    function Y(y){return pad.t+ph-clamp(y,0,1.0)/1.0*ph;}
+    var g=$('ddPlot').getContext('2d');
+    g.clearRect(0,0,W,H);
+    g.fillStyle='#f5f0e6';g.fillRect(0,0,W,H);
+    g.strokeStyle='#e7e0d0';
+    for(var i=0;i<=4;i++){var gy=pad.t+ph*i/4;g.beginPath();g.moveTo(pad.l,gy);g.lineTo(W-pad.r,gy);g.stroke();}
+    g.strokeStyle='#be185d';g.lineWidth=1;g.setLineDash([3,3]);
+    g.beginPath();g.moveTo(X(1),pad.t);g.lineTo(X(1),H-pad.b);g.stroke();g.setLineDash([]);
+    g.font='9px system-ui';g.fillStyle='#be185d';g.fillText('Überparam.',X(1)+3,pad.t+8);
+    g.strokeStyle='#9aa0b0';g.lineWidth=2;g.setLineDash([5,4]);
+    g.beginPath();
+    for(i=0;i<=200;i++){var x=i/100;var y=lossClass(x);if(i===0)g.moveTo(X(x),Y(y));else g.lineTo(X(x),Y(y));}
+    g.stroke();g.setLineDash([]);
+    g.strokeStyle='#0f766e';g.lineWidth=3;
+    g.beginPath();
+    for(i=0;i<=400;i++){x=i/200;y=lossReal(x);if(i===0)g.moveTo(X(x),Y(y));else g.lineTo(X(x),Y(y));}
+    g.stroke();
+    g.beginPath();g.arc(X(xSel),Y(lossClass(xSel)),7,0,Math.PI*2);g.fillStyle='#9aa0b0';g.fill();
+    g.strokeStyle='#fff';g.lineWidth=2;g.stroke();
+    g.beginPath();g.arc(X(xSel),Y(lossReal(xSel)),8,0,Math.PI*2);g.fillStyle='#b45309';g.fill();
+    g.strokeStyle='#fff';g.lineWidth=2;g.stroke();
+    g.font='10px system-ui';g.fillStyle='#9aa0b0';g.textAlign='center';
+    g.fillText('Parameter / Datenpunkte →',W/2,H-8);
+    g.textAlign='left';
+    $('ddClass').textContent=lossClass(xSel).toFixed(3);
+    $('ddReal').textContent=lossReal(xSel).toFixed(3);
+  }
+  $('ddX').addEventListener('input',drawDD);
+  drawDD();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Was eine Mannigfaltigkeit ist — visuell erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --green:#15803d; --green-soft:#e7f3ea;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid #cde5e1;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--teal)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:0 2px 10px rgba(60,50,20,.04)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].m::-moz-range-thumb{background:var(--amber)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+input[type=range].g::-webkit-slider-thumb{background:var(--green)}
+input[type=range].g::-moz-range-thumb{background:var(--green)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--teal-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft);border-color:#f0dcbc}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.rose .v{color:var(--rose)}
+.ro .box.violet{background:var(--violet-soft);border-color:#ddd2f5}
+.ro .box.violet .v{color:var(--violet)}
+.ro .box.green{background:var(--green-soft);border-color:#c7e2cf}
+.ro .box.green .v{color:var(--green)}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.green{border-color:var(--green);background:var(--green-soft)}
+.note.rose{border-color:var(--rose);background:var(--rose-soft)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+.eq{font-family:var(--mono);font-size:15px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto}
+.eq .op{color:var(--teal);font-weight:700}
+.eq .op2{color:var(--amber);font-weight:700}
+.pathbtns{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
+.pathbtns button{font:inherit;font-size:13px;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--dim);cursor:pointer;transition:background .15s,border-color .15s}
+.pathbtns button:hover{border-color:var(--teal);color:var(--ink)}
+.pathbtns button.sel{background:var(--teal-soft);border-color:var(--teal);color:var(--teal);font-weight:700}
+.pathbtns button.bad{background:var(--rose-soft);border-color:#f2cdd9;color:var(--rose)}
+.pathbtns button.bad.sel{background:var(--rose);color:#fff;border-color:var(--rose)}
+.illus{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.illus .cell{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.illus .cell svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.illus .cell .l{font-size:11.5px;color:var(--faint);margin-top:6px;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--teal)}
+@media(max-width:600px){.ro{flex-direction:column}.illus{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · kein Mathematik-Vorwissen nötig · ca. 10 Minuten</div>
+  <h1>Lokal <em>flach</em>,<br>global <em>krumm</em>.</h1>
+  <p class="sub">Eine Kugel ist nirgends eine Ebene — und doch sehen wir auf jeder Landkarte die Erdoberfläche <em>fast</em> als flach. Das ist die ganze Idee hinter „Mannigfaltigkeit": <b>Um jeden Punkt herum lässt sich der Raum glatt verbiegen, bis er einem Stück ℝⁿ gleicht</b> — auch wenn er global krumm bleibt. Und aus dieser einen Idee folgen drei berühmte Sätze, die am Ende alle dasselbe sagen.</p>
+  <div class="chips">
+    <span class="chip">5 interaktive Visualisierungen</span>
+    <span class="chip">0 Formeln</span>
+    <span class="chip">1 vereinheitlichender Satz</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Lokal flach, global krumm — die Grundidee</h2>
+<p>Stell dir eine <b>Ant</b> vor, die auf einem großen Luftballon herumläuft. Weit weg sieht sie: „Hier geht's rund." Aber wenn sie nur einen Schritt weit schaut, sieht sie: „Hier ist alles flach — geradeaus."</p>
+<p>Das ist genau die Definition: Eine <b>Mannigfaltigkeit</b> (engl. „manifold") ist ein Raum, der in <em>jedem</em> Punkt eine kleine Umgebung hat, die sich glatt zu einem flachen Stück Papier verbiegen lässt. Wie der Luftballon: <b>lokal</b> flach, <b>global</b> krumm.</p>
+<p>Das ist nicht exotisch. <b>Jede Kurve</b> in der Ebene ist eine 1-dimensionale Mannigfaltigkeit. <b>Jede glatte Fläche</b> im Raum ist eine 2-dimensionale. Der Rand einer Kugel, ein Donut, eine Acht — alles Mannigfaltigkeiten.</p>
+
+<div class="note">
+  <b>Das Entscheidende:</b> Wenn du eine Karte der Erde auf ein Blatt Papier zeichnest, <em>verformst</em> du die Erde — aber nur in <em>der Nähe</em> eines Punktes ist die Verformung glatt. Genau dieses „lokal glatt verbiegbar" ist die Eigenschaft, die Mathematiker mit „Mannigfaltigkeit" meinen.
+</div>
+
+<h2><span class="n">2</span>Fünf Beispiele zum Anfassen</h2>
+<p>Schalte zwischen fünf Kurven um. Jede ist eine 1-Mannigfaltigkeit — aber sie „fühlen sich" sehr verschieden an. Was sie gemeinsam haben: zoomt man <em>genug</em> herein, ist jedes Stück <b>nahezu eine gerade Linie</b>.</p>
+
+<div class="demo">
+  <h3>Beispiele-Galerie</h3>
+  <p class="dsub">Wähle eine Kurve. Bewege den Mauszeiger über die Fläche, um die Krümmung an verschiedenen Stellen zu sehen (das kleine orange Stück zeigt den lokalen „Tangentenstrich").</p>
+  <div class="pathbtns" id="exBtns">
+    <button class="sel" data-ex="line">Gerade</button>
+    <button data-ex="circle">Kreis</button>
+    <button data-ex="sine">Welle</button>
+    <button data-ex="parabola">Parabel</button>
+    <button data-ex="knot">Knoten</button>
+  </div>
+  <canvas id="cvEx" width="600" height="320" style="height:320px"></canvas>
+  <div class="ro">
+    <div class="box"><div class="k">Krümmung am Mauspunkt</div><div class="v" id="rK">—</div></div>
+    <div class="box amber"><div class="k">„flach vor Ort"?</div><div class="v" id="rFlat">ja</div></div>
+    <div class="box green"><div class="k">global</div><div class="v" id="rGlob">eben</div></div>
+  </div>
+</div>
+
+<div class="note green">
+  <b>Beobachtung:</b> Egal welche Kurve du wählst — an <em>jedem</em> Punkt ist ein genügend kleines Stückchen fast eine Gerade. Das „fast" ist messbar: die <b>Krümmung</b> ist eine Zahl pro Punkt. Ist sie null, ist die Kurve global flach (Gerade, Kreis nicht). Aber <em>lokal</em> ist sie immer „fast null".
+</div>
+
+<h2><span class="n">3</span>Wenn es <em>keine</em> Mannigfaltigkeit ist</h2>
+<p>Die Ant auf dem Luftballon hat Glück: wo auch immer sie steht, ihre unmittelbare Umgebung ist flach. Aber manche Kurven haben <b>eklige Punkte</b>, an denen das nicht mehr gilt — Spitzen, Kreuzungen, Selbstschnitte. Dort scheitert die Definition.</p>
+
+<div class="demo">
+  <h3>Nicht-Beispiele</h3>
+  <p class="dsub">An den <b>roten Punkten</b> scheitert das Lokal-Flach-Bügeln. Eine Ameise, die auf einer Spitze sitzt, sieht: „Hier ist alles flach" — aber sie sitzt auf einem Punkt mit zwei verschieden steilen Richtungen.</p>
+  <div class="pathbtns" id="badBtns">
+    <button class="bad sel" data-bad="cusp">Spitze (y² = x³)</button>
+    <button class="bad" data-bad="cross">Kreuz (|x|+|y| = 1)</button>
+    <button class="bad" data-bad="figure8">Acht (Lemniskate)</button>
+  </div>
+  <canvas id="cvBad" width="600" height="320" style="height:320px"></canvas>
+  <div class="ro">
+    <div class="box rose"><div class="k">Problem an</div><div class="v" id="rProb">x = 0</div></div>
+    <div class="box amber"><div class="k">Richtungen</div><div class="v" id="rDir">2 (zu viele)</div></div>
+    <div class="box"><div class="k">Mannigfaltigkeit?</div><div class="v" id="rIsM" style="color:var(--rose)">nein</div></div>
+  </div>
+</div>
+
+<div class="note rose">
+  <b>Die Regel:</b> An jedem Punkt einer 1-Mannigfaltigkeit gibt es <em>genau eine</em> Richtung, in die die Kurve weitergeht. An einer Spitze gibt es <em>keine</em>. An einem Kreuzungspunkt gibt es <em>viele</em>. Beides bricht die Definition. Die mathematische Bedingung heißt: „Es gibt eine <b>Tangente</b> und sie ist <b>eindeutig</b>."
+</div>
+
+<h2><span class="n">4</span>Tangentialraum: die „unmittelbare Richtung"</h2>
+<p>Wenn eine Kurve an einem Punkt glatt ist, gibt es genau <em>eine</em> Richtung, in die sie weitergeht — die <b>Tangente</b>. Bewegt man den Punkt entlang der Kurve, dreht sich die Tangente mit. Sie ist der „1-dimensionale Tangentialraum" an diesem Punkt.</p>
+
+<div class="demo">
+  <h3>Tangente an einem wandernden Punkt</h3>
+  <p class="dsub">Bewege den Regler, um den Punkt entlang der Kurve zu schieben. Die <b>orange Linie</b> ist die Tangente in diesem Moment.</p>
+  <canvas id="cvTan" width="600" height="320" style="height:320px"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Position entlang der Kurve</span><b id="rT">0.00</b></div>
+    <input type="range" id="sT" min="0" max="100" value="0" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Welche Kurve?</span><b id="rCurve">Kreis</b></div>
+    <div class="pathbtns" id="tanBtns">
+      <button class="sel" data-tan="circle">Kreis</button>
+      <button data-tan="sine">Welle</button>
+      <button data-tan="parabola">Parabel</button>
+    </div>
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Punkt</div><div class="v" id="rP">—</div></div>
+    <div class="box amber"><div class="k">Tangente</div><div class="v" id="rTan">—</div></div>
+    <div class="box violet"><div class="k">Winkel zur x-Achse</div><div class="v" id="rAng">—</div></div>
+  </div>
+</div>
+
+<div class="note violet">
+  <b>Eine subtile Beobachtung:</b> Auf der Geraden ist die Tangente <em>überall</em> dieselbe — der Tangentialraum ist konstant. Auf dem Kreis <em>dreht</em> er sich, aber er ist immer noch eine eindimensionale Linie. Genau das macht eine Mannigfaltigkeit: <em>lokal</em> ist alles ein kleiner ℝⁿ, <em>global</em> darf sich die Ausrichtung ändern.
+</div>
+
+<h2><span class="n">5</span>Drei berühmte Sätze — eine Zeile</h2>
+<p>Jetzt kommt die Pointe, die das Buch „Calculus on Manifolds" berühmt gemacht hat. <b>Drei</b> Sätze, die im Abitur stehen, sehen völlig verschieden aus:</p>
+
+<div class="illus">
+  <div class="cell">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><line x1="10" y1="60" x2="150" y2="60" stroke="#0f766e" stroke-width="2"/><circle cx="35" cy="60" r="4" fill="#0f766e"/><circle cx="125" cy="60" r="4" fill="#0f766e"/><text x="32" y="78" font-family="ui-monospace" font-size="9" fill="#5c6272">a</text><text x="122" y="78" font-family="ui-monospace" font-size="9" fill="#5c6272">b</text><path d="M 30 30 Q 80 -5 130 30" stroke="#b45309" stroke-width="1.8" fill="none" stroke-dasharray="3,3"/></svg>
+    <div class="l">HDI: Intervall mit Kurve darüber</div>
+  </div>
+  <div class="cell">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="45" r="28" fill="rgba(15,118,110,.12)" stroke="#0f766e" stroke-width="2"/><circle cx="80" cy="45" r="32" fill="none" stroke="#b45309" stroke-width="1.8" stroke-dasharray="3,3"/></svg>
+    <div class="l">Green: Fläche mit Rand</div>
+  </div>
+  <div class="cell">
+    <svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="45" r="22" fill="rgba(157,123,255,.18)" stroke="#6d28d9" stroke-width="1.8"/><ellipse cx="80" cy="45" rx="34" ry="22" fill="none" stroke="#b45309" stroke-width="1.6" stroke-dasharray="3,3"/></svg>
+    <div class="l">Divergenz: Körper mit Hülle</div>
+  </div>
+</div>
+
+<p>Klick dich durch — und schau, wie der <em>eine</em> Satz sich verkleidet:</p>
+
+<div class="demo">
+  <h3>Vier Masken, ein Satz</h3>
+  <p class="dsub">Derselbe abstrakte Satz — aber in vier Gewändern. Die Form bleibt; nur die Dimension und die Notation ändern sich.</p>
+  <div class="pathbtns" id="maskBtns">
+    <button class="sel" data-mk="hdi">HDI (1D)</button>
+    <button data-mk="green">Green (2D)</button>
+    <button data-mk="div">Divergenz (3D)</button>
+    <button data-mk="stokes">Stokes klass. (Fläche in 3D)</button>
+  </div>
+  <div class="eq" id="eqBox"><span class="op">∫</span><sub>a</sub><sup>b</sup> f′(x) dx <span class="op2">=</span> f(b) − f(a)</div>
+  <div class="illus" id="maskIllus"></div>
+  <p id="maskNote" style="font-size:14.5px;color:var(--dim);margin-top:8px"></p>
+</div>
+
+<div class="note">
+  <b>Die Verallgemeinerung:</b> Wenn ω eine „k-Form" ist und M eine „k-Mannigfaltigkeit mit Rand", dann gilt immer dieselbe Zeile — egal welche Dimension, egal welche Krümmung, egal ob der Rand verbogen ist. Diese <em>eine</em> Zeile heißt <b>verallgemeinerter Satz von Stokes</b> und ist der Hauptsatz des Buches.
+</div>
+
+<h2><span class="n">6</span>Green live — der einfachste Fall zum Anfassen</h2>
+<p>Der Satz von Green ist der einfachste nichttriviale Fall. In der Ebene: <em>das Integral einer Ableitung über einem Gebiet</em> ist <em>das Integral der Funktion über dem Rand</em>. Die folgende Demo rechnet beide Seiten <b>gleichzeitig numerisch aus</b> — und sie sind <em>immer</em> gleich.</p>
+
+<div class="demo">
+  <h3>Green'scher Satz: Umlauf = Fläche</h3>
+  <p class="dsub">Bewege die Regler, um die Form des Gebiets und das Vektorfeld F = (−β, α) zu wählen. Beide Seiten werden in Echtzeit berechnet.</p>
+  <canvas id="cvGr" width="600" height="380" style="height:380px"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Verformung des Gebiets</span><b id="rD">0.30</b></div>
+    <input type="range" id="sD" min="0" max="80" value="30" class="m">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Vektorfeld F = (−β, α)</span><b id="rF">α = x, β = y</b></div>
+    <div class="pathbtns" id="grBtns">
+      <button class="sel" data-gr="id">α = x, β = y</button>
+      <button data-gr="xy">α = xy, β = y²</button>
+      <button data-gr="cos">α = cos(y), β = sin(x)</button>
+    </div>
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Umlaufintegral ∮ F · ds</div><div class="v" id="kUml">—</div></div>
+    <div class="box green"><div class="k">Flächenintegral ∬ (β<sub>x</sub> − α<sub>y</sub>)</div><div class="v" id="kFla">—</div></div>
+    <div class="box amber"><div class="k">Differenz</div><div class="v" id="kDif">—</div></div>
+  </div>
+</div>
+
+<div class="note green">
+  <b>Mathematische Pointe:</b> Die Differenz in der letzten Box bleibt <em>fast</em> null (die winzige Abweichung kommt von der numerischen Integration). Der Beweis ist drei Zeilen lang (Fubini + Hauptsatz). Aber die <em>Definitionen</em> — was ist ein „Umlaufintegral", was ist eine „Form" — sind die eigentliche Arbeit.
+</div>
+
+<h2><span class="n">7</span>Der eine Satz für Mathematiker</h2>
+<p>Was alle Masken gemeinsam haben, ist eine einzige Zeile:</p>
+<div class="eq"><span class="op">∫</span><sub>M</sub> dω <span class="op2">=</span> <span class="op">∫</span><sub>∂M</sub> ω</div>
+<p>Sie lautet in Worten: <em>Das Integral der Ableitung dω über dem Inneren ist gleich dem Integral von ω über dem Rand.</em> Was sich ändert, sind nur zwei Dinge: die <b>Dimension</b> (1D, 2D, 3D, …) und die <b>Form ω</b> (Zahl, Vektorfeld, 1-Form, …).</p>
+
+<div class="illus">
+  <div class="cell">
+    <svg viewBox="0 0 160 70" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="120" height="35" fill="rgba(15,118,110,.12)" stroke="#0f766e" stroke-width="1.6"/><line x1="20" y1="20" x2="140" y2="20" stroke="#b45309" stroke-width="1.8"/><line x1="20" y1="55" x2="140" y2="55" stroke="#b45309" stroke-width="1.8"/><line x1="20" y1="20" x2="20" y2="55" stroke="#b45309" stroke-width="1.8"/><line x1="140" y1="20" x2="140" y2="55" stroke="#b45309" stroke-width="1.8"/></svg>
+    <div class="l">Inneres M (links)</div>
+  </div>
+  <div class="cell">
+    <svg viewBox="0 0 160 70" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="20" width="120" height="35" fill="rgba(180,40,20,.10)" stroke="#be185d" stroke-width="1.8" stroke-dasharray="4,3"/></svg>
+    <div class="l">Rand ∂M (rechts)</div>
+  </div>
+</div>
+
+<ul>
+  <li><b>HDI:</b> M = [a,b], ∂M = {a,b}, ω = f. Dann ist dω = f′ dx und der Satz sagt: <span style="font-family:var(--mono)">∫<sub>a</sub><sup>b</sup> f′ dx = f(b) − f(a)</span>.</li>
+  <li><b>Green:</b> M ⊂ ℝ², ∂M die Randkurve, ω = α dx + β dy. Dann dω = (β<sub>x</sub> − α<sub>y</sub>) dx∧dy und der Satz sagt: <span style="font-family:var(--mono)">∬<sub>M</sub> (β<sub>x</sub> − α<sub>y</sub>) dxdy = ∮<sub>∂M</sub> α dx + β dy</span>.</li>
+  <li><b>Divergenz:</b> M ⊂ ℝ³ Volumen, ∂M die Hülle, ω = ω²<sub>F</sub>. Dann dω = div F · dV und der Satz sagt: <span style="font-family:var(--mono)">∭<sub>M</sub> div F dV = ∯<sub>∂M</sub> ⟨F,n⟩ dA</span>.</li>
+</ul>
+
+<div class="card">
+  <p style="margin:0;font-size:15px;color:var(--ink)"><b>Was daran verblüffend ist:</b> Der <em>eine</em> Satz sagt etwas über jede Mannigfaltigkeit — egal ob sie flach oder krumm ist, egal ob sie einen Rand hat oder nicht (dann ist ∂M = ∅ und die rechte Seite 0). Die harte Arbeit steckt in der Definition von „d" und „ω" — aber sobald diese stehen, fallen alle Sätze von selbst.</p>
+</div>
+
+<h2><span class="n">8</span>Woher das kommt</h2>
+<div class="card">
+  <p style="font-size:14px;margin-bottom:8px">Diese Seite ist eine stark vereinfachte Darstellung von:</p>
+  <p style="font-size:14px;margin-bottom:4px"><b>Michael Spivak (1965):</b> „Calculus on Manifolds — A Modern Approach to Classical Theorems of Advanced Calculus", W. A. Benjamin.</p>
+  <p style="font-size:14px;margin-bottom:4px">Der Satz von Green (1828) und der klassische Satz von Stokes (1850, Brief von Lord Kelvin) waren lange als getrennte Resultate bekannt. Élie Cartan (1899) und Georges de Rham (1931) zeigten, dass sie alle aus <em>einem</em> Satz folgen. Spivaks Buch machte das modernen Studenten zugänglich.</p>
+  <p style="font-size:13px;color:var(--faint);margin-top:10px">Vereinfachungen: Die „Krümmung" in Demo 1 ist eine grobe Schätzung, nicht die exakte differentielle Krümmung. Die numerische Integration in Green-live ist eine grobe Trapezregel (die winzige Abweichung im Differenz-Feld). Die Nicht-Beispiele in Demo 3 sind klassische „bad sets" — der eigentliche Beweis, dass sie keine Mannigfaltigkeiten sind, kommt aus der Definition der Ableitung (Satz 5-1 in Spivak).</p>
+</div>
+
+<footer>
+  Eine einfache visuelle Erklärung ohne Formeln. Original: Spivak (1965), „Calculus on Manifolds".<br>
+  Vollständige interaktive Version: <a href="calculus_on_manifolds.html">Hauptseite</a>.<br><br>
+  Alles läuft lokal im Browser — keine Daten verlassen diese Seite.
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  const $ = s => document.querySelector(s);
+
+  // ---------------------------------------------------------------
+  //  Demo 1: Examples gallery (line, circle, sine, parabola, knot)
+  // ---------------------------------------------------------------
+  const cvEx = $('#cvEx'), ctxEx = cvEx.getContext('2d');
+  const W = cvEx.width, H = cvEx.height;
+  const exs = {
+    line:     {name:'Gerade',   flat:'ja',  glob:'eben',     f:t=>[W*.15 + t*(W*.7), H*.5],         d:t=>[1, 0],                       range:[0,1]},
+    circle:   {name:'Kreis',    flat:'ja',  glob:'krumm',    f:t=>{const a=Math.PI*2*t; return [W*.5 + Math.cos(a)*W*.3, H*.5 + Math.sin(a)*H*.42]}, d:t=>{const a=Math.PI*2*t; return [-Math.sin(a), Math.cos(a)]}, range:[0,1]},
+    sine:     {name:'Welle',    flat:'ja',  glob:'krumm',    f:t=>[W*.1 + t*(W*.8), H*.5 + Math.sin(t*Math.PI*3)*H*.25], d:t=>[1, Math.cos(t*Math.PI*3)*Math.PI*3*(H*.25)/(W*.8)], range:[0,1]},
+    parabola: {name:'Parabel',  flat:'ja',  glob:'krumm',    f:t=>{const u=(t-.5)*1.6; return [W*.5 + u*W*.3, H*.7 - u*u*H*1.2]}, d:t=>{const u=(t-.5)*1.6; return [1, -2*u*H*1.2/(W*.3)]}, range:[0,1]},
+    knot:     {name:'Knoten',   flat:'ja',  glob:'krumm',    f:t=>{const a=t*Math.PI*4; return [W*.5 + Math.sin(a)*W*.3, H*.5 + Math.sin(2*a)*H*.3]}, d:t=>{const a=t*Math.PI*4; return [Math.cos(a), Math.cos(2*a)*2]}, range:[0,1]}
+  };
+  let exName='line';
+  function drawCurve(name){
+    ctxEx.fillStyle = '#faf7f0'; ctxEx.fillRect(0,0,W,H);
+    const ex = exs[name];
+    ctxEx.strokeStyle = '#0f766e'; ctxEx.lineWidth = 2.5; ctxEx.lineCap='round';
+    ctxEx.beginPath();
+    const N=200;
+    for(let i=0;i<=N;i++){
+      const t = i/N;
+      const [x,y] = ex.f(t);
+      i?ctxEx.lineTo(x,y):ctxEx.moveTo(x,y);
+    }
+    ctxEx.stroke();
+    $('#rGlob').textContent = ex.glob;
+    drawTangent(ex, name);
+  }
+  let hover = null;
+  function drawTangent(ex, name){
+    if(!hover) return;
+    const [x,y] = ex.f(hover);
+    const [dx,dy] = ex.d(hover);
+    const len = Math.hypot(dx,dy) || 1;
+    const tx = dx/len, ty = dy/len;
+    const L = 28;
+    ctxEx.strokeStyle = '#b45309'; ctxEx.lineWidth = 2.4;
+    ctxEx.beginPath(); ctxEx.moveTo(x-tx*L, y-ty*L); ctxEx.lineTo(x+tx*L, y+ty*L); ctxEx.stroke();
+    ctxEx.fillStyle = '#b45309'; ctxEx.beginPath(); ctxEx.arc(x,y,4,0,Math.PI*2); ctxEx.fill();
+    // curvature estimate: use second derivative via finite differences
+    const h = 0.005;
+    const [dxh,dyh] = ex.d(Math.min(1, hover+h));
+    const [dxm,dym] = ex.d(Math.max(0, hover-h));
+    const ax = Math.atan2(dyh[1], dyh[0]);
+    const am = Math.atan2(dym[1], dym[0]);
+    let curv = ((ax-am)/(2*h));
+    if(name==='line') curv = 0;
+    $('#rK').textContent = Math.abs(curv)<0.02?'≈ 0 (flach)':curv.toFixed(2);
+    $('#rFlat').textContent = 'ja (lokal)';
+  }
+  $('#exBtns').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(c=>c.classList.remove('sel'));
+    b.classList.add('sel');
+    exName = b.dataset.ex;
+    drawCurve(exName);
+  });
+  cvEx.addEventListener('pointermove', e=>{
+    const r = cvEx.getBoundingClientRect();
+    const sx = W/r.width, sy = H/r.height;
+    const px = (e.clientX-r.left)*sx, py = (e.clientY-r.top)*sy;
+    // find closest t
+    const ex = exs[exName];
+    let best=0, bd=1e9;
+    for(let i=0;i<=200;i++){
+      const t=i/200;
+      const [x,y] = ex.f(t);
+      const dd=(x-px)*(x-px)+(y-py)*(y-py);
+      if(dd<bd){bd=dd; best=t;}
+    }
+    hover = best;
+    drawCurve(exName);
+  });
+  cvEx.addEventListener('pointerleave', ()=>{hover=null; drawCurve(exName); $('#rK').textContent='—';});
+  drawCurve('line');
+
+  // ---------------------------------------------------------------
+  //  Demo 2: Non-examples (cusp, cross, figure-8)
+  // ---------------------------------------------------------------
+  const cvBad = $('#cvBad'), ctxBad = cvBad.getContext('2d');
+  const WB = cvBad.width, HB = cvBad.height;
+  const bads = {
+    cusp:    {name:'Spitze y²=x³',     prob:'x=0, y=0', dir:'0 (undefiniert)', isM:'nein',
+              draw:()=>{
+                ctxBad.strokeStyle='#be185d'; ctxBad.lineWidth=2.4;
+                ctxBad.beginPath();
+                for(let i=-1;i<=1;i+=0.005){
+                  const x=i, y=Math.sign(i)*Math.pow(Math.abs(i),1.5)*60;
+                  const px=WB*.5+x*80, py=HB*.5-y;
+                  i<=-1?ctxBad.moveTo(px,py):ctxBad.lineTo(px,py);
+                }
+                ctxBad.stroke();
+                ctxBad.fillStyle='#be185d'; ctxBad.beginPath(); ctxBad.arc(WB*.5,HB*.5,5,0,Math.PI*2); ctxBad.fill();
+              }},
+    cross:   {name:'Kreuz |x|+|y|=1',  prob:'alle 4 Ecken', dir:'4 (zu viele)', isM:'nein',
+              draw:()=>{
+                ctxBad.strokeStyle='#be185d'; ctxBad.lineWidth=2.4;
+                ctxBad.beginPath();
+                ctxBad.moveTo(WB*.1,HB*.5); ctxBad.lineTo(WB*.9,HB*.5);
+                ctxBad.moveTo(WB*.5,HB*.1); ctxBad.lineTo(WB*.5,HB*.9);
+                ctxBad.stroke();
+                [[WB*.1,HB*.5],[WB*.9,HB*.5],[WB*.5,HB*.1],[WB*.5,HB*.9]].forEach(([x,y])=>{
+                  ctxBad.fillStyle='#be185d'; ctxBad.beginPath(); ctxBad.arc(x,y,5,0,Math.PI*2); ctxBad.fill();
+                });
+              }},
+    figure8: {name:'Acht (Lemniskate)', prob:'x=0, y=0', dir:'2 (Schleifen)', isM:'nein',
+              draw:()=>{
+                ctxBad.strokeStyle='#be185d'; ctxBad.lineWidth=2.4;
+                ctxBad.beginPath();
+                const cx=WB*.5, cy=HB*.5;
+                for(let a=0;a<=Math.PI*2;a+=0.01){
+                  const r=Math.cos(2*a)*80;
+                  ctxBad.lineTo(cx+r*Math.cos(a), cy+r*Math.sin(a));
+                }
+                ctxBad.stroke();
+                ctxBad.fillStyle='#be185d'; ctxBad.beginPath(); ctxBad.arc(cx,cy,5,0,Math.PI*2); ctxBad.fill();
+              }}
+  };
+  let badName='cusp';
+  function drawBad(){
+    ctxBad.fillStyle='#faf7f0'; ctxBad.fillRect(0,0,WB,HB);
+    const b = bads[badName];
+    b.draw();
+    $('#rProb').textContent = b.prob;
+    $('#rDir').textContent = b.dir;
+    $('#rIsM').textContent = b.isM;
+  }
+  $('#badBtns').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(c=>c.classList.remove('sel'));
+    b.classList.add('sel');
+    badName = b.dataset.bad;
+    drawBad();
+  });
+  drawBad();
+
+  // ---------------------------------------------------------------
+  //  Demo 3: Tangent vector
+  // ---------------------------------------------------------------
+  const cvTan = $('#cvTan'), ctxTan = cvTan.getContext('2d');
+  const WT = cvTan.width, HT = cvTan.height;
+  const tans = {
+    circle:   {name:'Kreis',  f:t=>{const a=Math.PI*2*t; return [WT*.5+Math.cos(a)*WT*.3, HT*.5+Math.sin(a)*HT*.42]}, d:t=>{const a=Math.PI*2*t; return [-Math.sin(a), Math.cos(a)]}},
+    sine:     {name:'Welle',  f:t=>[WT*.1+t*(WT*.8), HT*.5+Math.sin(t*Math.PI*3)*HT*.25], d:t=>[1, Math.cos(t*Math.PI*3)*Math.PI*3*HT*.25/(WT*.8)]},
+    parabola: {name:'Parabel',f:t=>{const u=(t-.5)*1.6; return [WT*.5+u*WT*.3, HT*.7-u*u*HT*1.2]}, d:t=>{const u=(t-.5)*1.6; return [1, -2*u*HT*1.2/(WT*.3)]}}
+  };
+  let tanName='circle', tanT=0;
+  function drawTan(){
+    ctxTan.fillStyle='#faf7f0'; ctxTan.fillRect(0,0,WT,HT);
+    const e = tans[tanName];
+    ctxTan.strokeStyle='#0f766e'; ctxTan.lineWidth=2.5; ctxTan.lineCap='round';
+    ctxTan.beginPath();
+    const N=200;
+    for(let i=0;i<=N;i++){
+      const t=i/N;
+      const [x,y] = e.f(t);
+      i?ctxTan.lineTo(x,y):ctxTan.moveTo(x,y);
+    }
+    ctxTan.stroke();
+    const [px,py] = e.f(tanT);
+    const [dx,dy] = e.d(tanT);
+    const len = Math.hypot(dx,dy)||1;
+    const tx = dx/len, ty = dy/len;
+    const L=40;
+    ctxTan.strokeStyle='#b45309'; ctxTan.lineWidth=2.8;
+    ctxTan.beginPath(); ctxTan.moveTo(px-tx*L,py-ty*L); ctxTan.lineTo(px+tx*L,py+ty*L); ctxTan.stroke();
+    ctxTan.fillStyle='#b45309'; ctxTan.beginPath(); ctxTan.arc(px,py,5,0,Math.PI*2); ctxTan.fill();
+    $('#rP').textContent = `(${px.toFixed(0)}, ${py.toFixed(0)})`;
+    $('#rTan').textContent = `(${dx.toFixed(2)}, ${dy.toFixed(2)})`;
+    const ang = Math.atan2(dy,dx)*180/Math.PI;
+    $('#rAng').textContent = ang.toFixed(0)+'°';
+  }
+  $('#sT').addEventListener('input', e=>{
+    tanT = +e.target.value/100;
+    $('#rT').textContent = tanT.toFixed(2);
+    drawTan();
+  });
+  $('#tanBtns').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(c=>c.classList.remove('sel'));
+    b.classList.add('sel');
+    tanName = b.dataset.tan;
+    $('#rCurve').textContent = tans[tanName].name;
+    drawTan();
+  });
+  drawTan();
+
+  // ---------------------------------------------------------------
+  //  Demo 4: Four masks
+  // ---------------------------------------------------------------
+  const masks = {
+    hdi:    {eq:'<span class="op">∫</span><sub>a</sub><sup>b</sup> f′(x) dx <span class="op2">=</span> f(b) − f(a)',
+             illus:illusLine(),
+             note:'1-dimensional, ω = f (0-Form), dω = f′ dx. Der Rand ∂[a,b] sind die zwei Punkte {a, b}.'},
+    green:  {eq:'<span class="op">∬</span><sub>M</sub> (β<sub>x</sub> − α<sub>y</sub>) dxdy <span class="op2">=</span> <span class="op">∮</span><sub>∂M</sub> α dx + β dy',
+             illus:illusDisc(),
+             note:'2-dimensional, ω = α dx + β dy (1-Form), dω = (β<sub>x</sub> − α<sub>y</sub>) dx∧dy. Der Rand ist die geschlossene Kurve um das Gebiet.'},
+    div:    {eq:'<span class="op">∭</span><sub>M</sub> div F dV <span class="op2">=</span> <span class="op">∯</span><sub>∂M</sub> ⟨F,n⟩ dA',
+             illus:illusSphere(),
+             note:'3-dimensional, ω = ω²<sub>F</sub> (2-Form), dω = div F · dV. Der Rand ∂M ist die geschlossene Oberfläche — der Fluss durch die Hülle.'},
+    stokes: {eq:'<span class="op">∬</span><sub>M</sub> ⟨rot F, n⟩ dA <span class="op2">=</span> <span class="op">∮</span><sub>∂M</sub> ⟨F, T⟩ ds',
+             illus:illusCap(),
+             note:'Fläche M im ℝ³, ω = ω¹<sub>F</sub> (1-Form), dω = ω²<sub>rot F</sub>. Der Rand ist eine Kurve im Raum — die Zirkulation am Rand.'}
+  };
+  function illusLine(){
+    return `<div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="55" x2="140" y2="55" stroke="#0f766e" stroke-width="2"/><circle cx="40" cy="55" r="4" fill="#0f766e"/><circle cx="120" cy="55" r="4" fill="#0f766e"/><text x="35" y="75" font-family="ui-monospace" font-size="9" fill="#5c6272">a</text><text x="116" y="75" font-family="ui-monospace" font-size="9" fill="#5c6272">b</text><path d="M 36 30 Q 80 5 124 30" stroke="#b45309" stroke-width="1.8" fill="none" stroke-dasharray="3,3"/></svg><div class="l">Inneres M = [a,b]; Rand = {a,b}</div></div><div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="45" r="28" fill="rgba(15,118,110,.12)" stroke="#0f766e" stroke-width="2"/><circle cx="80" cy="45" r="32" fill="none" stroke="#be185d" stroke-width="1.8" stroke-dasharray="3,3"/></svg><div class="l">In 2D sieht „Green" genauso aus</div></div>`;
+  }
+  function illusDisc(){
+    return `<div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="45" r="28" fill="rgba(15,118,110,.18)" stroke="#0f766e" stroke-width="2"/><circle cx="80" cy="45" r="32" fill="none" stroke="#be185d" stroke-width="1.8" stroke-dasharray="3,3"/></svg><div class="l">Inneres M (Scheibe); Rand ∂M (Kreis)</div></div><div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><line x1="20" y1="40" x2="60" y2="40" stroke="#0f766e" stroke-width="1.8"/><line x1="20" y1="60" x2="60" y2="60" stroke="#0f766e" stroke-width="1.8"/><line x1="100" y1="40" x2="140" y2="40" stroke="#0f766e" stroke-width="1.8"/><line x1="100" y1="60" x2="140" y2="60" stroke="#0f766e" stroke-width="1.8"/></svg><div class="l">Vektorfeld F im Gebiet</div></div>`;
+  }
+  function illusSphere(){
+    return `<div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="45" r="22" fill="rgba(157,123,255,.18)" stroke="#6d28d9" stroke-width="1.8"/><ellipse cx="80" cy="45" rx="34" ry="22" fill="none" stroke="#be185d" stroke-width="1.6" stroke-dasharray="3,3"/></svg><div class="l">Volumen M (Kugel); Hülle ∂M</div></div><div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><circle cx="80" cy="45" r="22" fill="rgba(180,40,20,.12)" stroke="#be185d" stroke-width="1.4"/><g stroke="#b45309" stroke-width="1.4" fill="none"><path d="M 60 45 L 80 32"/><path d="M 80 32 L 100 45"/><path d="M 100 45 L 80 58"/><path d="M 80 58 L 60 45"/></g></svg><div class="l">Fluss ⟨F,n⟩ durch die Hülle</div></div>`;
+  }
+  function illusCap(){
+    return `<div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><path d="M 30 55 Q 80 0 130 55 Z" fill="rgba(15,118,110,.18)" stroke="#0f766e" stroke-width="1.6"/><ellipse cx="80" cy="55" rx="50" ry="6" fill="none" stroke="#be185d" stroke-width="1.6" stroke-dasharray="3,3"/></svg><div class="l">Kappe M; Rand ∂M (Kreis)</div></div><div class="cell"><svg viewBox="0 0 160 80" xmlns="http://www.w3.org/2000/svg"><ellipse cx="80" cy="45" rx="50" ry="14" fill="none" stroke="#be185d" stroke-width="1.8"/><g stroke="#b45309" stroke-width="1.4" fill="none" marker-end="url(#a2)"><path d="M 32 45 L 50 35"/><path d="M 50 35 L 80 28"/><path d="M 80 28 L 110 35"/><path d="M 110 35 L 128 45"/></g><defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b45309"/></marker></defs></svg><div class="l">Vektorfeld F entlang des Randes</div></div>`;
+  }
+  let mkName='hdi';
+  function drawMask(){
+    $('#eqBox').innerHTML = masks[mkName].eq;
+    $('#maskIllus').innerHTML = masks[mkName].illus;
+    $('#maskNote').innerHTML = masks[mkName].note;
+  }
+  $('#maskBtns').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(c=>c.classList.remove('sel'));
+    b.classList.add('sel');
+    mkName = b.dataset.mk;
+    drawMask();
+  });
+  drawMask();
+
+  // ---------------------------------------------------------------
+  //  Demo 5: Green's theorem (live)
+  // ---------------------------------------------------------------
+  const cvGr = $('#cvGr'), ctxGr = cvGr.getContext('2d');
+  const WG = cvGr.width, HG = cvGr.height;
+  const grFields = {
+    id:  {name:'α=x, β=y',   alpha:(x,y)=>x,           beta:(x,y)=>y,            dAlpha:(x,y)=>[1,0], dBeta:(x,y)=>[0,1]},
+    xy: {name:'α=xy, β=y²',  alpha:(x,y)=>x*y,         beta:(x,y)=>y*y,          dAlpha:(x,y)=>[y,x], dBeta:(x,y)=>[0,2*y]},
+    cos:{name:'α=cos y, β=sin x', alpha:(x,y)=>Math.cos(y), beta:(x,y)=>Math.sin(x), dAlpha:(x,y)=>[0,-Math.sin(y)], dBeta:(x,y)=>[Math.cos(x),0]}
+  };
+  let grName='id', grD=0.30;
+  function regionPoint(t){
+    const cx = WG*.5, cy = HG*.5, R = Math.min(WG,HG)*.34;
+    const x = cx + R*Math.cos(t*Math.PI*2);
+    const y = cy + R*(1 + grD*Math.sin(t*Math.PI*3))*Math.sin(t*Math.PI*2);
+    return [x,y];
+  }
+  function inRegion(px, py){
+    const cx = WG*.5, cy = HG*.5, R = Math.min(WG,HG)*.34;
+    const dx = (px-cx)/R, dy = (py-cy)/(R*(1+grD*Math.sin(Math.atan2(py-cy,px-cx)*3)));
+    return dx*dx + dy*dy <= 1.0001;
+  }
+  function drawGr(){
+    ctxGr.fillStyle='#faf7f0'; ctxGr.fillRect(0,0,WG,HG);
+    const cx=WG*.5, cy=HG*.5, R=Math.min(WG,HG)*.34;
+    // region
+    ctxGr.fillStyle='rgba(15,118,110,.10)';
+    ctxGr.beginPath();
+    for(let i=0;i<=200;i++){
+      const t=i/200;
+      const [x,y] = regionPoint(t);
+      i?ctxGr.lineTo(x,y):ctxGr.moveTo(x,y);
+    }
+    ctxGr.closePath(); ctxGr.fill();
+    ctxGr.strokeStyle='#0f766e'; ctxGr.lineWidth=2.5;
+    ctxGr.stroke();
+    // field arrows inside
+    const F = grFields[grName];
+    const step = 30;
+    for(let yy=cy-R+10; yy<=cy+R-10; yy+=step){
+      for(let xx=cx-R+10; xx<=cx+R-10; xx+=step){
+        if(!inRegion(xx,yy)) continue;
+        // map to local region coords (approximate)
+        const [a,b] = F.dAlpha(xx,yy); const [c,d] = F.dBeta(xx,yy);
+        // we want vector field F = (-β, α) at logical position (u,v)
+        // approximate by treating canvas pixels as logical coords
+        const u = (xx-cx)/R, v = (yy-cy)/R;
+        const alpha = F.alpha(u,v), beta = F.beta(u,v);
+        const Fx = -beta, Fy = alpha;
+        const fl = Math.hypot(Fx,Fy)||1;
+        const L = 14;
+        const ax = xx + Fx/fl*L, ay = yy + Fy/fl*L;
+        ctxGr.strokeStyle='rgba(180,83,9,.7)'; ctxGr.lineWidth=1.4;
+        ctxGr.beginPath(); ctxGr.moveTo(xx,yy); ctxGr.lineTo(ax,ay); ctxGr.stroke();
+      }
+    }
+    // boundary tangent marks
+    ctxGr.strokeStyle='#b45309'; ctxGr.lineWidth=1.2;
+    for(let i=0;i<40;i++){
+      const t=i/40;
+      const [x,y] = regionPoint(t);
+      const [x2,y2] = regionPoint(t+0.005);
+      const dx=x2-x, dy=y2-y;
+      const len = Math.hypot(dx,dy)||1;
+      const nx=-dy/len, ny=dx/len;
+      ctxGr.beginPath(); ctxGr.moveTo(x,y); ctxGr.lineTo(x+nx*5,y+ny*5); ctxGr.stroke();
+    }
+  }
+  function computeGreen(){
+    const F = grFields[grName];
+    const N = 240;
+    let I_line = 0;
+    for(let i=0;i<N;i++){
+      const t1=i/N, t2=(i+1)/N;
+      const [x1,y1] = regionPoint(t1);
+      const [x2,y2] = regionPoint(t2);
+      const mx = (x1+x2)/2, my = (y1+y2)/2;
+      const R = Math.min(WG,HG)*.34;
+      const u = (mx-WG*.5)/R, v = (my-HG*.5)/R;
+      const alpha = F.alpha(u,v), beta = F.beta(u,v);
+      // line integral of F=(-β,α) · ds
+      const dsx = x2-x1, dsy = y2-y1;
+      I_line += (-beta)*dsx + alpha*dsy;
+    }
+    let I_area = 0;
+    const cx=WG*.5, cy=HG*.5, R=Math.min(WG,HG)*.34;
+    const S = 100;
+    const ds = (R*2)/S;
+    for(let j=0;j<S;j++){
+      for(let i=0;i<S;i++){
+        const xx = cx - R + (i+0.5)*ds, yy = cy - R + (j+0.5)*ds;
+        if(!inRegion(xx,yy)) continue;
+        const u = (xx-cx)/R, v = (yy-cy)/R;
+        const [,dax_dy] = F.dAlpha(u,v);
+        const [dbx_dx,] = F.dBeta(u,v);
+        I_area += (dbx_dx - dax_dy)*ds*ds;
+      }
+    }
+    $('#kUml').textContent = I_line.toFixed(3);
+    $('#kFla').textContent = I_area.toFixed(3);
+    $('#kDif').textContent = Math.abs(I_line - I_area).toFixed(4);
+  }
+  function redrawGr(){ drawGr(); computeGreen(); }
+  $('#sD').addEventListener('input', e=>{
+    grD = +e.target.value/100;
+    $('#rD').textContent = grD.toFixed(2);
+    redrawGr();
+  });
+  $('#grBtns').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    [...e.currentTarget.children].forEach(c=>c.classList.remove('sel'));
+    b.classList.add('sel');
+    grName = b.dataset.gr;
+    $('#rF').textContent = grFields[grName].name;
+    redrawGr();
+  });
+  redrawGr();
+})();
+</script>
+</body>
+</html>

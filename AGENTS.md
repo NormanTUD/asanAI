@@ -54,7 +54,7 @@ tags.**
 | `tests/`, `run_tests`, `_run_tests.py` | Toolkit test suite (static + in-browser Playwright) |
 | `blog/` | The Blog: one `<slug>.php` per lesson + shared infra |
 | `blog/tests/` | Blog test suite (Python validators, Node unit tests) |
-| `blog/atlas/` | Atlas 3D-map data (generated JSON) + Python pipeline |
+| `blog/atlas_data/` | Atlas 3D-map data (generated JSON) + Python pipeline |
 | `blog/todo/` | **Staging** draft lessons — not part of the course |
 | `blog/test/` | One-off HTML experiments/scratch — not part of the course |
 | `blog/py/` | Python snippets inlined into lessons via `get_string_of_file_or_die()` |
@@ -183,7 +183,7 @@ without touching any other file.** Remove a lesson by deleting its file
   `<pre><code class="language-python">…</code></pre>` (Prism highlights
   python/json; `addCopyButtons()` adds copy buttons). Markdown fences are the
   exception. Inline external code: `<?php print get_string_of_file_or_die("py/…"); ?>`.
-- **Cross-references**: link sibling lessons by slug (`[The Atlas](map.php)`)
+- **Cross-references**: link sibling lessons by slug (`[The Atlas](atlas.php)`)
   and use raw anchors `<a id="…"></a>` + `[text](#anchor)`. The `\label{}` /
   `\index{}` machinery exists but is **dormant — do not use it**.
 - **Inline `<script>` and lesson-local `<style>` blocks are accepted** for
@@ -461,13 +461,13 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
 
 ## The Atlas (interactive 3D course map)
 
-`blog/map.php` + `blog/map.js`: an interactive three.js globe where every named
+`blog/atlas.php` + `blog/atlas.js`: an interactive three.js globe where every named
 **person / place / institution / event / artifact** in the textbook is a dot,
 great-circle **threads** link them, and a "cosmic journey" tour zooms from
 Earth to the Big Bang and back.
 
-The Atlas is **data-driven**. Dots/threads are *not* drawn in `map.js` — they
-load from five generated files in `blog/atlas/`: `entities.json` (dots with
+The Atlas is **data-driven**. Dots/threads are *not* drawn in `atlas.js` — they
+ load from five generated files in `blog/atlas_data/`: `entities.json` (dots with
 `lat/lng`, `type`, `active[]`, `cited_in[]`, `bibkeys[]`, `conf`),
 `authors.json` (one dot per bibliography author), `threads.json`
 (`kind` ∈ {influence, journey, signal}; endpoints are entity **ids**),
@@ -478,23 +478,23 @@ baked `earth_texture.jpg`).
 Regenerate from `blog/`, in this order:
 
 ```
-python3 atlas/atlas_parse_bib.py          literature.js  -> raw/bib_parsed.json
-python3 atlas/atlas_merge.py --merge      raw/           -> entities/authors/bibliography/world.json
-python3 atlas/atlas_threads.py --build    entities.json  -> threads.json
-python3 atlas/atlas_check.py              independent audit — must exit 0
+python3 atlas_data/atlas_parse_bib.py     literature.js  -> raw/bib_parsed.json
+python3 atlas_data/atlas_merge.py --merge raw/           -> entities/authors/bibliography/world.json
+python3 atlas_data/atlas_threads.py --build entities.json -> threads.json
+python3 atlas_data/atlas_check.py         independent audit — must exit 0
 ```
 
-`raw/BRIEF_entities.md` and `raw/BRIEF_authors.md` are the worker specs for
-entity/author extraction.
+`atlas_data/raw/BRIEF_entities.md` and `atlas_data/raw/BRIEF_authors.md` are the
+worker specs for entity/author extraction.
 
 **The contract: add it to the data, not to the JS.** If a thing is real and
 on-topic, it is a dot — searchable, filterable, eligible as a thread endpoint
-and tour stop. A hardcoded marker in `map.js` breaks all of that:
+and tour stop. A hardcoded marker in `atlas.js` breaks all of that:
 
-- **New entity** → record in a raw list (`raw/out_part*.json`, schema in
-  `BRIEF_entities.md`) → `merge --merge` → `threads --build` (if a thread
+- **New entity** → record in a raw list (`atlas_data/raw/out_part*.json`, schema in
+  `atlas_data/raw/BRIEF_entities.md`) → `merge --merge` → `threads --build` (if a thread
   endpoint) → `check`.
-- **New author dot** → row in `raw/placed_*.json`
+- **New author dot** → row in `atlas_data/raw/placed_*.json`
   (`[name, lat, lng, "City, Country", year, conf]`) → `merge --merge` →
   `check`. `works`/`keys`/`cited_in` are joined automatically — don't hand-write.
 - **New cited work** → source of truth is `literature.js`, not the JSON. Add
@@ -503,7 +503,7 @@ and tour stop. A hardcoded marker in `map.js` breaks all of that:
   `atlas_threads.py` (endpoints by display name) → `threads --build` →
   `check`. Both endpoints must already be entities or the thread is silently
   dropped.
-- **New tour stop** → `JOURNEY` array in `map.js` (one of the few legitimate
+- **New tour stop** → `JOURNEY` array in `atlas.js` (one of the few legitimate
   hardcoded pieces); its `dot` must be a real `entities.json` id and its `img`
   a real file in `blog/`.
 
@@ -516,14 +516,19 @@ and tour stop. A hardcoded marker in `map.js` breaks all of that:
   `conf: 1` ⇒ real lat/lng **and** non-empty city, `conf: 0` ⇒ nulls.
 - Entity ids are unique and type-prefixed kebab-case
   (`person-alan-turing`, `place-bletchley-park`); `conf` ∈ stated/known/inferred.
-- **Hand-maintained magic numbers** in `atlas_check.py`: bibliography entry
-  count (`entries == 2120` — bump when literature.js grows), thread floor
-  (`>= 100`), and the fixed list of expected `raw/` files (a new
-  `out_part11.json` is not audited until added to that list).
-  **The Atlas data is currently stale** (literature.js has grown past 2120
-  keys) — re-run the pipeline and bump the count before relying on `check`.
-- Every texture loaded in `map.js` must be a real file in `blog/`, cited in
-  `map.php` with a `literature.js` key, and recorded in
+- The only remaining hand-tuned constant is the **thread floor** (`>= 100`).
+  The bibliography entry count is now **derived from `literature.js`** at check
+  time (unique top-level keys — `literature.js` carries a handful of duplicate
+  keys that JS last-wins resolves, so the check counts *unique* keys to match
+  `atlas_parse_bib.py`), and provenance is **glob-based** per raw file family
+  (`out_part*.json`, `placed_*.json`, `authors_chunk_*.json`, …) so a new
+  `out_part15.json` / `placed_12.json` is audited automatically. No re-bumping.
+  **When literature.js or any lesson's `\cite` macros change:** re-run
+  `atlas_parse_bib.py` → `atlas_merge.py --merge` → `atlas_threads.py --build`
+  → `atlas_check.py`; the 234→310 thread / 1456→1887 entity baseline grows as
+  lessons cite more sources.
+- Every texture loaded in `atlas.js` must be a real file in `blog/`, cited in
+  `atlas.php` with a `literature.js` key, and recorded in
   `bildquellen-pruefung.txt` (known outlier: the public-domain WMAP CMB photo
   is credited with a direct link and has no key).
 
@@ -627,7 +632,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |
 | `uv run blog/tests/latex_error_checker.py --docroot blog/` | Playwright sweep of every lesson for LaTeX/render errors + static risk scan (`--trace` for traces) | failures (risk warnings don't) | **local only** |
-| `python3 blog/atlas/atlas_check.py` | Atlas audit (see above) | any check | manual |
+| `python3 blog/atlas_data/atlas_check.py` | Atlas audit (see above) | any check | manual |
 | `bash tests/smoke_tests` | Toolkit static analysis: `tests/find_*` (deep nesting, long functions, missing translations, unawaited async, uncalled functions, unused variables) — **skips** `find_unwrapped_base_functions` (network + `ack`) and `find_double_defined_functions` | any finding | Toolkit CI |
 | `bash run_tests` (needs Docker) | Full Toolkit: docker build (port 1122), in-browser Playwright suite (the real tests are `run_tests()` inside `tests.js`, run in Firefox then Chromium; the in-page result **is** the exit code), optional `--screenshot-test` pixel diff | failed tests | Toolkit CI |
 

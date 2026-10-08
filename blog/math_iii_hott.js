@@ -808,99 +808,6 @@
 	}
 
 	// ══════════════════════════════════════════════════════════════
-	// 8 · Quantum AI — a qubit on the Bloch sphere (Three.js)
-	// ══════════════════════════════════════════════════════════════
-	function buildQuantum() {
-		const container = $('hott-bloch3d'); if (!container || typeof THREE === 'undefined') return;
-		const thS = $('hott-th'), phS = $('hott-ph'), thV = $('hott-thVal'), phV = $('hott-phVal');
-		const qMath = $('hott-qMath'), qMeasure = $('hott-qMeasure'), qResult = $('hott-qResult');
-		let scene, camera, renderer, state, arrow, rotx = 0.3, roty = 0.6, drag = false, lx = 0, ly = 0;
-
-		function build() {
-			scene = new THREE.Scene();
-			scene.background = new THREE.Color(pal().dark ? 0x050710 : 0xf1f5f9);
-			camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-			renderer = new THREE.WebGLRenderer({ antialias: true });
-			container.appendChild(renderer.domElement);
-			scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-			const l = new THREE.DirectionalLight(0xffffff, 0.7); l.position.set(3, 4, 3); scene.add(l);
-			scene.add(new THREE.Mesh(new THREE.SphereGeometry(1, 32, 24),
-				new THREE.MeshBasicMaterial({ color: 0x7c9cff, wireframe: true, transparent: true, opacity: 0.15 })));
-			const ring = new THREE.Mesh(new THREE.TorusGeometry(1, 0.005, 8, 64),
-				new THREE.MeshBasicMaterial({ color: 0xc084fc }));
-			ring.rotation.x = Math.PI / 2; scene.add(ring);
-			function axis(dir, color) {
-				const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), dir.clone().multiplyScalar(1.3)]);
-				return new THREE.Line(g, new THREE.LineBasicMaterial({ color }));
-			}
-			scene.add(axis(new THREE.Vector3(0, 1, 0), 0xfbbf24));
-			scene.add(axis(new THREE.Vector3(0, -1, 0), 0xf87171));
-			scene.add(axis(new THREE.Vector3(1, 0, 0), 0x4ade80));
-			scene.add(axis(new THREE.Vector3(0, 0, 1), 0x60a5fa));
-			function label(text, pos, color) {
-				const cv = document.createElement('canvas'); cv.width = 128; cv.height = 64;
-				const cx = cv.getContext('2d');
-				cx.fillStyle = color; cx.font = 'bold 40px sans-serif'; cx.textAlign = 'center';
-				cx.fillText(text, 64, 44);
-				const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), transparent: true }));
-				sp.position.copy(pos); sp.scale.set(0.35, 0.18, 1); return sp;
-			}
-			scene.add(label('|0\u27E9', new THREE.Vector3(0, 1.5, 0), pal().dark ? '#fbbf24' : '#b45309'));
-			scene.add(label('|1\u27E9', new THREE.Vector3(0, -1.5, 0), pal().dark ? '#f87171' : '#dc2626'));
-			state = new THREE.Mesh(new THREE.SphereGeometry(0.07, 16, 12),
-				new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 0.5 }));
-			scene.add(state);
-			arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), new THREE.Vector3(), 1, 0xffffff, 0.15, 0.08);
-			scene.add(arrow);
-			if (thS) thS.oninput = upd;
-			if (phS) phS.oninput = upd;
-			if (qMeasure) qMeasure.onclick = () => {
-				const th = +thS.value, p0 = Math.cos(th / 2) ** 2;
-				const outcome = Math.random() < p0 ? '|0\u27E9' : '|1\u27E9';
-				if (qResult) qResult.innerHTML = `\u2192 outcome: <span style="color:${outcome === '|0\u27E9' ? '#fbbf24' : '#f87171'}">${outcome}</span>  (P(|0\u27E9)=${(p0 * 100).toFixed(1)}%)`;
-			};
-			container.addEventListener('mousedown', (e) => { drag = true; lx = e.clientX; ly = e.clientY; container.style.cursor = 'grabbing'; });
-			window.addEventListener('mouseup', () => { drag = false; container.style.cursor = 'grab'; });
-			window.addEventListener('mousemove', (e) => {
-				if (!drag) return;
-				roty += (e.clientX - lx) * 0.01; rotx += (e.clientY - ly) * 0.01;
-				rotx = clamp(rotx, -1.2, 1.2); lx = e.clientX; ly = e.clientY;
-			});
-			(function anim() {
-				if (labVisible()) {
-					const r = 3.5;
-					camera.position.x = Math.cos(roty) * Math.cos(rotx) * r;
-					camera.position.z = Math.sin(roty) * Math.cos(rotx) * r;
-					camera.position.y = Math.sin(rotx) * r;
-					camera.lookAt(0, 0, 0);
-					renderer.render(scene, camera);
-				}
-				requestAnimationFrame(anim);
-			})();
-		}
-		function upd() {
-			const th = +thS.value, ph = +phS.value;
-			if (thV) thV.textContent = th.toFixed(2);
-			if (phV) phV.textContent = ph.toFixed(2);
-			if (state) {
-				const x = Math.sin(th) * Math.cos(ph), z = Math.sin(th) * Math.sin(ph), y = Math.cos(th);
-				state.position.set(x, y, z);
-				arrow.setDirection(new THREE.Vector3(x, y, z).normalize());
-				arrow.setLength(1, 0.15, 0.08);
-			}
-			if (qMath) hottTex(qMath, `|\\psi\\rangle = ${Math.cos(th / 2).toFixed(2)}\\,|0\\rangle + ${Math.sin(th / 2).toFixed(2)}e^{i\\cdot${ph.toFixed(2)}}\\,|1\\rangle`, true);
-			if (qResult) qResult.textContent = '';
-		}
-		function resize() {
-			const w = container.clientWidth, h = container.clientHeight;
-			if (!w || !h) return;
-			renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
-		}
-		lazyInits.push(() => { build(); resize(); upd(); });
-		redraws.push(() => { if (scene) scene.background = new THREE.Color(pal().dark ? 0x050710 : 0xf1f5f9); });
-	}
-
-	// ══════════════════════════════════════════════════════════════
 	// 9 · Explainable AI — decision-path explorer
 	// ══════════════════════════════════════════════════════════════
 	function buildXai() {
@@ -1018,7 +925,6 @@
 		buildVerify();
 		buildUncertainty();
 		buildKnowledge();
-		buildQuantum();
 		buildXai();
 
 		// Lazy WebGL / Plotly init the first time the box actually has size.

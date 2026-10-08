@@ -54,7 +54,7 @@ This is not a book to be read passively. It is a playground for exploration:
 * **Learn by Doing:** Move the sliders, input your own data, click through the visualizations. Curiosity is the primary engine of learning here — try to see where the logic holds and where it breaks.
 * **Navigating Complexity:** At times the mathematics gets heavy. You do not need to master every equation on the first pass: skip it, play with the interactive models, and return to the theory once the numbers have an intuitive feel.
 * **Pick and Skip:** Use the *table of contents* to navigate and skip all sections that are of no interest to you.
-* **The Atlas:** Every person, place, institution, author, and event named in this course is a dot on [The Atlas](map.php) — an interactive 3D globe you can zoom from Earth, past the Moon, all the way to the Big Bang.
+* **The Atlas:** Every person, place, institution, author, and event named in this course is a dot on [The Atlas](atlas.php) — an interactive 3D globe you can zoom from Earth, past the Moon, all the way to the Big Bang.
 * **The Starting Point:** We assume no prior knowledge beyond good English reading capability, the practical knowledge of a Stone Ager, and the willingness to put in effort. That said, the climb is steep: we start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read, and that is fine. Use the interactive demos to build intuition, skip what feels too heavy, and come back later. Expect to re-read, tinker, and take your time.
 </div>
 

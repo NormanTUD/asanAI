@@ -69,6 +69,39 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  loss-landscape-playwright:
+    # Headless Chromium smoke test for the loss-landscape interactive widget:
+    # boots a PHP server, opens /loss_landscape.php, clicks Start training, and
+    # verifies every trajectory point sits exactly on the loss surface.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Install PHP CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y php-cli
+
+      - name: Install Chromium dependencies
+        run: |
+          sudo apt-get install -y \
+            libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+            libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+            libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2t64
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Run loss-landscape training smoke test
+        # The test self-bootstraps: PEP 723 metadata installs playwright via uv,
+        # then playwright installs chromium on first run.
+        run: |
+          uv run --with playwright python3 blog/tests/loss_landscape_test.py
+
   # Fast, dependency-free node unit tests for the client-side interactivity:
   # topic/interest registry, tone picker, learned state + course progress,
   # math-comfort 5-stop snapping, math-alternative text, keypoint cards, search.

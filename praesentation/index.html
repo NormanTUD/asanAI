@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Wie funktioniert Machine Learning mit neuronalen Netzen?</title>
+	<script src="jquery.min.js"></script>
+	<script src="plotly.min.js"></script>
+	<script src="temml.min.js"></script>
+	<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div id="loading-spinner">
+    <div class="intro-bg"></div>
+    <div class="intro-inner">
+        <div class="intro-mark"></div>
+        <h1 class="intro-title">Machine Learning &amp; asanAI</h1>
+        <p class="intro-subtitle">Neuronale Netze, von Hand gebaut</p>
+        <div class="intro-bar"><div class="intro-bar-fill" id="intro-bar-fill"></div></div>
+        <p class="intro-status" id="intro-status">Wird geladen…</p>
+    </div>
+</div>
+
+<!-- Progress Bar -->
+<div id="progress-bar" style="width: 0%;"></div>
+
+<!-- Presentation Container -->
+<div id="presentation">
+
+<!-- ==================== Folie 1: Titel ==================== -->
+<!-- Löschen erlaubt: ?start=4 springt dann direkt auf die Katze-Folie. -->
+<div class="slide active" data-title="Titel" id="slide-titel">
+    <div class="slide-content title-slide">
+        <img class="title-logo" src="img/logo.png" alt="asanAI Logo" />
+        <h1>Wie funktioniert Machine Learning<br>mit neuronalen Netzen?</h1>
+    </div>
+</div>
+<!-- ==================== Folie 2: Klassisch vs. KI ==================== -->
+<!-- (vorher am Ende; jetzt direkt nach der Intro, weil die Katze erst
+     erklärt, WAS man lernt, hier steht schon, WOFÜR man lernt.) -->
+<div class="slide" data-title="Klassisch vs. KI" id="slide-klassisch-vs-ki">
+    <div class="slide-content">
+        <h2>Klassisches Programmieren vs. KI</h2>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:stretch; margin-top:6px;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px;">
+                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">Klassisch</div>
+                <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Der Mensch schreibt jede Regel von Hand.</div>
+                <pre data-typewriter data-type-speed="3" style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.7; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto;"><span style="color:#d8b4fe">function</span><span style="color:#e2e8f0"> UND</span><span style="color:#7dd3fc">(a, b)</span><span style="color:#e2e8f0">:</span>
+    <span style="color:#d8b4fe">wenn</span> a <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span> <span style="color:#d8b4fe">und</span> b <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span>:
+        y <span style="color:#fbbf24">=</span> <span style="color:#fcd34d">1</span>
+    <span style="color:#d8b4fe">sonst</span>:
+        y <span style="color:#fbbf24">=</span> <span style="color:#fcd34d">0</span>
+    <span style="color:#d8b4fe">return</span> y</pre>
+            </div>
+            <div class="fragment" data-nofast style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
+                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">KI / Lernen</div>
+                <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Wir geben nur Beispiele, die Regel findet das Netz selbst.</div>
+                <div style="font-size:0.92em; color:#475569; margin-bottom:6px;">Lernbeispiele für <b>UND</b>:</div>
+                <div class="math-display" style="background:#fff; border:1px solid #bfdbfe; border-radius:10px; padding:12px 16px; margin:0;">
+                    $$\begin{aligned}
+                    (0,0)&\mapsto 0\\
+                    (0,1)&\mapsto 0\\
+                    (1,0)&\mapsto 0\\
+                    (1,1)&\mapsto 1
+                    \end{aligned}$$
+                </div>
+                </div>
+        </div>
+
+        <div class="key-insight fragment" data-nofast>
+            Klassisch: <b>Regeln → Programm</b><br>
+            Lernen: <b>Beispiele → Regeln</b>.
+        </div>
+
+        <div class="ki-catchout fragment" data-nofast>
+            <b>Der springende Punkt:</b> Manche Probleme kann klassisch <b>niemand</b>
+            lösen, z. B. <b>Katzen auf Bildern erkennen</b>: da kennt niemand die Regeln,
+            die man Schritt für Schritt in Code gießen müsste. <b>Lernen</b> löst genau das:
+            das Netz findet die Regeln selbst aus Beispielen.
+        </div>
+    </div>
+</div>
+<!-- ==================== Folie 3: Geschichte ==================== -->
+<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
+    <div class="slide-content">
+        <h2>Die ersten künstlichen neuronalen Netze</h2>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items:start;">
+            <div>
+                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/mcculloch.png" alt="Warren McCulloch" />
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" src="img/pitts.jpg" alt="Walter Pitts" />
+                </div>
+                <p style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
+
+<div style="text-align:center">
+                <img style="max-width:100%; max-height:22vh; border-radius:8px;" src="img/snarc.jpg" alt="SNARC" />
+                </div>
+                <p style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
+            </div>
+
+            <div class="fragment" data-nofast>
+                <div class="key-insight" style="font-size:0.95em;">
+                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf McCulloch &amp; Pitts auf · klassifiziert Buchstaben.
+                </div>
+
+                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" src="img/perceptron2.jpg" alt="Das Perceptron" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 4: Die Katze, Farbbild → Kanäle → Pixel → Filter
+     ------------------------------------------------------------
+     Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze:
+     Farbbild → drei Kanäle (R/G/B) → ein Kanal (Grau) →
+     Pixel = Zahl (0–255, Zoom) → 6×5-Filter in Augen-Form →
+     blockweiser Sweep (hält auf jedem Pixel-Block) → 8×8-Map,
+     in der die Augen als zwei große Pixel leuchten.
+     Gestuft (8 Schritte).
+     ============================================================ -->
+<div class="slide" id="slide-convolution" data-title="Jeder Pixel ist nur eine Zahl">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><div class="kz-tswap" id="conv-tswap">
+                <div class="kz-title" id="conv-title">Nehmen wir ein<br><em>Farbbild</em> einer Katze.</div>
+            </div></div>
+
+            <div class="kz-stage"><canvas id="conv-cv"></canvas></div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="conv-fswap">
+                <div class="kz-pill" id="conv-pill">Jedes Pixel besteht aus Werten für Rot, Grün und Blau</div>
+                <div class="kz-chips" id="conv-chips"><span class="kz-chip">(32, 32, 3)</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="conv-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 5: Was macht Flatten?
+     ------------------------------------------------------------
+      Katze-Framework (katze.js, FlattenDemo): 32×32 ASCII-Katze:
+      Farbiges Raster → Schnur (1024 Zahlen) → Fazit ("Der Trick").
+     Gestuft über die Pfeiltasten (2 Schritte).
+     ============================================================ -->
+<div class="slide" id="slide-flatten" data-title="Was macht Flatten?">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><div class="kz-tswap" id="flat-tswap">
+                <div class="kz-title" id="flat-title">Flatten rollt das Raster<br>zu einer <em>Schnur</em> aus.</div>
+            </div></div>
+
+            <div class="kz-stage"><canvas id="flat-cv"></canvas></div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="flat-fswap">
+                <div class="kz-pill" id="flat-pill">Zeile <b>0</b> von 32 · <b>0</b> Zahlen</div>
+                <div class="kz-chips" id="flat-chips"><span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip r">(1024,)</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="flat-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ==================== Folie 6: Deep Learning ==================== -->
+<div class="slide" id="slide-deep-learning" data-title="Deep Learning">
+    <div class="slide-content">
+        <h2>Deep Learning</h2>
+
+        <div class="key-insight">
+  		Viele Neuronen nebeneinander & hintereinander · jede Schicht voll verdrahtet mit der vorherigen & nächsten.
+  	</div>
+
+	<div style="text-align:center">
+	<img class="fragment" src="img/dense.png" alt="Dicht verdrahtetes Netz" />
+	</div>
+
+        <div class="fragment">
+  		Früh: einfache Muster · später: darauf aufbauen.
+  	</div>
+
+        <div class="fragment">
+  		Beispiel Gesichtserkennung: kleine lokale Verläufe → immer komplexere Strukturen.
+  	</div>
+
+	<div style="text-align:center">
+	<img class="fragment" src="img/first_layers_vs_last_layers.png" alt="Erste und letzte Layer eines Convolutional Networks" />
+	</div>
+    </div>
+</div>
+<!-- ==================== Folie 7: Was sind Dense Layer? ==================== -->
+<div class="slide" id="slide-neuronales-netz-intro" data-title="Was sind Dense Layer?">
+    <div class="slide-content">
+        <h2>Was sind Dense Layer?</h2>
+
+        <div>
+ 		Netze <b>approximieren</b> Funktionen, <i>ähnlich genug</i>, um nützlich zu sein.
+        </div>
+
+            <div class="fragment formula-box" data-nofast data-fragment-action="neuron-intro-anim">
+                <div style="margin-bottom:12px; font-weight:bold; color:#1e293b;">
+ 		1 Neuron = 1 Gleichung <span class="math-inline">a \cdot x + b</span> · ein Layer rechnet Milliarden davon parallel.
+                </div>
+		<div id="nn-intro-anim">
+		    <div class="nn-anim-scene" data-scene="1">
+			<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
+		    </div>
+		    <div class="nn-anim-scene" data-scene="2">
+			<div class="math-display">$$\text{dense}(x) =
+				\underbrace{\begin{pmatrix}
+				w_1 \\ w_2 \\ w_3 \\ \vdots
+				\end{pmatrix}}_{\text{lernbar}} \cdot \begin{pmatrix}
+				x_1 \\ x_2 \\ x_3 \\ \vdots
+				\end{pmatrix} +
+				\underbrace{\begin{pmatrix}
+				b_1 \\ b_2 \\ b_3 \\ \vdots
+				\end{pmatrix}}_{\text{lernbar}}
+			$$</div>
+		    </div>
+		</div>
+            </div>
+
+        <div class="fragment formula-box" data-nofast>
+		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
+        </div>
+
+        <div class="fragment formula-box" data-nofast id="comp-stack">
+		<div class="comp-seq">
+			<div class="math-display">$$
+				\begin{aligned}
+				\underbrace{\mathbf{x}_1 = \text{dense}_0(\underbrace{\mathbf{x}_0}_{\text{Bild}})}_{\text{linear}} \\
+				\underbrace{\mathbf{x}_2 = \text{ReLU}(\mathbf{x}_1)}_{\text{nicht-lineare Entscheidung}} \\
+				\underbrace{\mathbf{x}_3 = \text{dense}_1(\mathbf{x}_2)}_{\text{Linear}} \\
+				&\;\vdots
+				\end{aligned}
+			$$</div>
+		</div>
+		<div class="comp-nested">
+			<div class="math-display">$$
+				\mathbf{x}_3 = \text{dense}_1(\text{ReLU}(\text{dense}_0(\underbrace{\mathbf{x}_0}_{\text{Bild}})))
+			$$</div>
+		</div>
+        </div>
+
+        <div class="fragment" data-nofast data-fragment-action="comp-collapse" aria-hidden="true"></div>
+
+        <div class="key-insight fragment" data-nofast>
+            <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b>.
+        </div>
+    </div>
+</div>
+<!-- ==================== Folie 8: Was machen Dense Layer? (space_morph) ==================== -->
+<div class="slide" id="slide-layer-als-raumkruemmung" data-title="Was machen Dense Layer?">
+    <div class="slide-content" style="background:#f8fafc;">
+        <h2>Was machen Dense Layer?</h2>
+
+        <div id="space-morph-wrap" style="position:relative; width:100%; max-width:1340px; margin:14px auto 0; height:640px; overflow:hidden;">
+            <canvas id="space-morph-canvas" style="display:block; position:absolute; inset:0; width:100%; height:100%; cursor:grab;"></canvas>
+
+            <div style="position:absolute; left:32px; top:20px; max-width:320px; pointer-events:none; z-index:2;">
+                <div id="sm-title" style="font-size:19px; font-weight:600; color:#0f172a; line-height:1.2;"></div>
+                <div id="sm-body" style="font-size:12.5px; line-height:1.5; color:#334155;"></div>
+            </div>
+
+            
+
+            <div id="sm-table-container" style="position:absolute; left:32px; bottom:54px; max-width:480px; z-index:3;">
+                <table id="egg-table" class="sm-table">
+                    <thead>
+                        <tr>
+                            <th class="lbl-col"></th>
+                            <th class="coord-col">x</th>
+                            <th class="coord-col y-col">y</th>
+                            <th class="coord-col z-col">z</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="inner-row">
+                            <td class="lbl">innen₁</td>
+                            <td class="xv">0.20</td>
+                            <td class="yv">0</td>
+                            <td class="zv">0</td>
+                        </tr>
+                        <tr class="inner-row">
+                            <td class="lbl">innen₂</td>
+                            <td class="xv">0</td>
+                            <td class="yv">0.25</td>
+                            <td class="zv">0</td>
+                        </tr>
+                        <tr class="outer-row">
+                            <td class="lbl">außen₁</td>
+                            <td class="xv">0.90</td>
+                            <td class="yv">0</td>
+                            <td class="zv">0</td>
+                        </tr>
+                        <tr class="outer-row">
+                            <td class="lbl">außen₂</td>
+                            <td class="xv">0</td>
+                            <td class="yv">0.95</td>
+                            <td class="zv">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- ============================================================
+     Folie 9: Der gesamte Prozess
+     ------------------------------------------------------------
+      Katze-Framework (katze.js, PipelineDemo): das ganze Netz in
+      einem Blick, Bild → Layer 1 (Muster im Bild) → Layer 2
+      (Muster in Layer 1: Augen/Nase/Mund) → Dense-Layer →
+      2 Ausgabe-Neuronen (Anfang 50:50, schlechter Loss) →
+      Training (Loss sinkt) → Katze 95 % leuchtet auf. Jede
+      Schicht erkennt größere Muster als die Vorherige
+      (Katze/Hund). Gestuft über die Pfeiltasten (8 Schritte).
+     ============================================================ -->
+<div class="slide" id="slide-pipeline" data-title="Der gesamte Prozess">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><div class="kz-tswap" id="pipe-tswap">
+                <div class="kz-title" id="pipe-title">Wir starten mit<br><em>einem Bild</em>.</div>
+            </div></div>
+
+            <div class="kz-stage"><canvas id="pipe-cv"></canvas></div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="pipe-fswap">
+                <div class="kz-pill" id="pipe-pill">32 × 32 Pixel, die Katze</div>
+                <div class="kz-chips" id="pipe-chips"><span class="kz-chip">(32, 32, 3)</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="pipe-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 10: Convolutions: Strukturen in Bildern finden
+     (echte Faltung auf img/stop_sign.jpg, hierarchy.js)
+     Bewusst NACH der Ergebnis-Folie: was vorher gezeigt wurde,
+     war eine vereinfachte Vorstellung, hier die echte Convolution.
+     ============================================================ -->
+<div class="slide" data-title="Convolutions: Strukturen in Bildern finden" id="slide-hierarchie">
+    <div class="slide-content">
+        <h2>Convolutions: Strukturen in Bildern finden</h2>
+        <p class="hier-lede">Was Sie vorher gesehen haben, war eine <b>vereinfachte Vorstellung</b>, aber im Prinzip richtig.</p>
+
+        <div class="hier-panels" id="hier-panels"></div>
+
+        <div class="hier-caption" id="hier-caption"></div>
+
+        <div class="key-insight">
+            Jeder Filter sieht nur <b>eine Richtung</b>, zusammen liefern die vier
+            die ganze Kontur: aus Zahlen wird wieder Form. Derselbe Rechenkern
+            (eine Matrixmultiplikation) läuft in jedem Schritt.
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 11: asanAI, Überleitung zur Live-Demo
+     ============================================================ -->
+<div class="slide" id="slide-asanai" data-title="asanAI">
+    <div class="slide-content asan-slide">
+        <div class="asan-logo-col">
+            <img class="asan-logo" src="img/logo.png" alt="asanAI Logo" />
+            <div class="asan-tagline">Machine Learning<br><b>ohne Code</b></div>
+        </div>
+
+        <div class="asan-text-col">
+            <h2>Alles, was ihr gesehen habt:<br>selbst gebaut.</h2>
+
+            <ul class="asan-list">
+                <li class="fragment"><b>Im Browser.</b> Deine Daten bleiben auf deinem Rechner.</li>
+                <li class="fragment"><b>Netz = Klickstrecke.</b> Bauen, trainieren, live vorhersagen, Loss und Accuracy dabei.</li>
+                <li class="fragment"><b>Python-Export.</b> Das fertige Netz lässt sich mitnehmen.</li>
+            </ul>
+        </div>
+
+        <div class="asan-url-frag fragment">
+            <div class="asan-url-badge">asanai.scads.ai</div>
+        </div>
+    </div>
+</div>
+<!-- end #presentation -->
+
+<!-- ============ SLIDE OVERVIEW ============ -->
+<div id="slide-overview">
+    <div class="overview-grid" id="overview-grid"></div>
+</div>
+
+<!-- ============ FOLIEN-AUSWAHL (3× Esc) ============ -->
+<div id="sel-panel" style="display:none;">
+    <div class="sel-count" id="sel-count">0 Folien</div>
+    <div class="sel-url" id="sel-url"></div>
+    <div class="sel-actions">
+        <button type="button" id="sel-copy">🔗 URL kopieren</button>
+        <button type="button" id="sel-preview">▶ Vorschau</button>
+        <button type="button" id="sel-clear">Leeren</button>
+        <button type="button" id="sel-close">✕</button>
+    </div>
+    <div class="sel-hint" id="sel-hint">Die Checkbox oben rechts an jeder Folie hängt die Folie an die URL an (?slides=0,1,2 …). Die URL aktualisiert sich dabei live. „Leeren" setzt alle zurück.</div>
+</div>
+
+<!-- ============ NAVIGATION BAR ============ -->
+<div id="nav-bar">
+    <button id="btn-prev" onclick="InputHandler.navigate('prev')">← Zurück</button>
+    <div class="nav-center">
+        <span id="slide-counter">1 / 11</span>
+        <button onclick="Presentation.toggleOverview()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Übersicht (O)">▦</button>
+        <button onclick="Presentation.toggleFullscreen()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Vollbild (F)">⛶</button>
+    </div>
+    <button id="btn-next" onclick="InputHandler.navigate('next')">Weiter →</button>
+</div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="space_morph.js"></script>
+<script src="nn_demos.js"></script>
+<script src="katze.js"></script>
+<script src="hierarchy.js"></script>
+<script src="presentation.js"></script>
+
+<script>
+	function fitSlides() {
+		const slides = document.querySelectorAll('.slide');
+		const viewportHeight = window.innerHeight;
+
+		slides.forEach(slide => {
+			const content = slide.querySelector('.slide-content');
+			if (!content) return;
+
+			content.style.transform = 'scale(1)';
+
+			const naturalHeight = content.scrollHeight;
+			const available = viewportHeight - 52;
+
+			const scale = Math.min(available / naturalHeight, 1);
+
+			content.style.transform = `scale(${scale})`;
+			content.style.transformOrigin = 'center center';
+		});
+	}
+
+	// Aufrufen bei Load und Resize
+	window.addEventListener('load', () => {
+		requestAnimationFrame(() => {
+			fitSlides();
+			// Plotly/Temml rendern asynchron: ein zweiter Durchlauf fängt Layout-Shift ab
+			setTimeout(fitSlides, 300);
+		});
+	});
+	let resizeRaf;
+	window.addEventListener('resize', () => {
+		cancelAnimationFrame(resizeRaf);
+		resizeRaf = requestAnimationFrame(fitSlides);
+	});
+</script>
+
+</body>
+</html>

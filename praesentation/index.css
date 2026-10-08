@@ -1,0 +1,1127 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #1e293b; }
+
+/* ============ PRESENTATION CONTAINER ============ */
+#presentation {
+	width: 100vw;
+	height: 100vh;
+	position: relative;
+	overflow: hidden;
+	background: #ffffff;
+}
+
+/* ============ SLIDES ============ */
+
+/* Inaktive Folien: ALLE Nachfahren ohne Pointer-Events erzwingen:
+   Plotly setzt z.B. explizit pointer-events:all auf dem SVG, was den
+   geerbten Wert sonst überschreibt und Maus-Events stehlen würde. */
+.slide:not(.active) * {
+	pointer-events: none !important;
+}
+
+/* Slide content wrapper */
+.slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background: #ffffff;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    /* Ruhe-Position inaktiver Folien (opacity 0 → unsichtbar). Der
+       eigentliche Crossfade läuft über die Web Animations API in
+       Presentation.goTo(), KEINE CSS-Transition hier, sonst würde sie
+       mit WAAPI konkurrieren, wenn .active getoggelt wird. */
+    transform: translate(40px, 0) scale(0.95);
+}
+
+/* Einlaufende Folie: während des Crossfades über der austretenden
+   (in beide Richtungen), will-change nur zeitweise statt permanent. */
+.slide.entering {
+	z-index: 2;
+	will-change: opacity, transform;
+}
+
+/* Austretende Folie, Navigation vorwärts: schiebt nach links raus. */
+.slide.leaving {
+	transform: translate(-40px, 0) scale(0.95);
+	opacity: 0;
+	z-index: 1;
+	will-change: opacity, transform;
+}
+
+/* Austretende Folie, Navigation rückwärts: schiebt nach rechts raus. */
+.slide.leaving-back {
+	transform: translate(40px, 0) scale(0.95);
+	opacity: 0;
+	z-index: 1;
+	will-change: opacity, transform;
+}
+
+/* Aktive Folie, zuletzt definiert, damit sie bei gleicher Spezifität
+   gegenüber .leaving/.leaving-back gewinnt (Safety-Netz; der JS-Seit
+   räumt Zustände ohnehin deterministisch auf). */
+.slide.active {
+	opacity: 1;
+	transform: translate(0, 0) scale(1);
+	pointer-events: auto;
+	z-index: 2;
+}
+
+/* Auslaufende Folie bleibt während des Pushes opak (deckt ein), damit der
+   wachsende Rand der eintretenden Folie nie Weiß zeigt. z1 → unter der
+   aktiven Folie (z2), die sie abdeckt. */
+.slide.hold {
+	opacity: 1;
+	transform: translate(0, 0) scale(1);
+	pointer-events: none;
+	z-index: 1;
+}
+
+.slide-content {
+    width: 100%;
+    padding: 30px 60px 70px 60px;
+    transform-origin: top center;  /* ← Skalierung von oben */
+    /* max-height ENTFERNEN */
+}
+
+/* ============ SPECIAL BOXES ============ */
+.formula-box {
+	background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
+	padding: 24px 32px; margin: 20px 0; text-align: center; font-size: 1.1em;
+}
+.formula-box .math-display { font-size: 1.3em; margin: 12px 0; }
+
+/* "Was sind Neuronale Netzwerke?": Formeln für Distanz/Lesbarkeit vergrößern */
+#slide-neuronales-netz-intro .formula-box { font-size: 1.18em; }
+#slide-neuronales-netz-intro .formula-box .math-display { font-size: 1.6em; }
+
+/* Neuron-Intro-Animation (Slide "Was sind Dense Layer?") */
+#nn-intro-anim {
+	position: relative;
+	min-height: 14em;
+	overflow: hidden;
+}
+#nn-intro-anim .nn-anim-scene {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transform: scale(0.92) translateY(14px);
+	transition: opacity 0.55s ease, transform 0.55s ease;
+	pointer-events: none;
+}
+#nn-intro-anim .nn-anim-scene.on {
+	opacity: 1;
+	transform: scale(1) translateY(0);
+	pointer-events: auto;
+}
+
+/* "Was sind Dense Layer?": die Sequenz wird smooth zur verschachtelten
+   Komposition (Substitution, damit man sieht: nacheinander Ausführung). */
+#comp-stack { position: relative; }
+#comp-stack .comp-seq { transition: opacity 0.6s ease, transform 0.6s ease; }
+#comp-stack.collapsed .comp-seq {
+	opacity: 0;
+	transform: scale(0.97);
+	pointer-events: none;
+}
+#comp-stack .comp-nested {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transform: scale(0.95) translateY(8px);
+	transition: opacity 0.6s ease, transform 0.6s ease;
+	pointer-events: none;
+}
+#comp-stack.collapsed .comp-nested {
+	opacity: 1;
+	transform: none;
+	pointer-events: auto;
+}
+.key-insight {
+	background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px;
+	padding: 20px 24px 20px 60px; margin: 20px 0; font-size: 1.1em;
+	position: relative;
+}
+.key-insight::before {
+	content: "💡";
+	position: absolute;
+	left: 22px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 1.3em;
+	line-height: 1;
+}
+.demo-box {
+	background: #f8fafc; padding: 24px; border-radius: 12px;
+	border: 1px solid #e2e8f0; margin: 20px 0; width: 100%;
+	min-height: 560px;
+}
+.demo-title { font-size: 1.1rem; font-weight: bold; color: #1e293b; text-align: center; margin-bottom: 14px; }
+
+/* ============ IMAGE SUPPORT ============ */
+.slide-image {
+	max-width: 90%;
+	max-height: 70vh;
+	border-radius: 12px;
+	box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+	object-fit: contain;
+	margin: 20px auto;
+	display: block;
+}
+.slide-image-caption {
+	text-align: center;
+	font-size: 0.9em;
+	color: #64748b;
+	margin-top: 10px;
+	font-style: italic;
+}
+
+/* ============ FRAGMENTS (reveal on click) ============ */
+.fragment {
+	opacity: 0;
+	transform: translateY(20px);
+	transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity, transform;
+	/* Unsichtbares Fragment soll keine Maus-Events fangen (Cursor-Wechsel) */
+	pointer-events: none;
+}
+.fragment.visible {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+/* Callout: Probleme, die klassisch niemand lösen kann (Katzen-Beispiel) */
+.ki-catchout {
+	background: #f0f9ff; border: 2px solid #7dd3fc; border-radius: 12px;
+	padding: 18px 24px 18px 60px; margin: 0 0 20px 0; font-size: 1.05em;
+	position: relative;
+}
+.ki-catchout::before {
+	content: "🐱";
+	position: absolute;
+	left: 22px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 1.3em;
+	line-height: 1;
+}
+.type-caret {
+	display: inline-block;
+	width: 0.55em;
+	height: 1.1em;
+	margin-left: 2px;
+	background: #fbbf24;
+	animation: tw-blink 0.7s steps(1) infinite;
+	vertical-align: -0.15em;
+}
+@keyframes tw-blink {
+	50% { opacity: 0; }
+}
+
+/* ============ NAVIGATION BAR ============ */
+#nav-bar {
+	position: fixed;
+	bottom: 0; left: 0; right: 0;
+	height: 52px;
+	background: rgba(15, 23, 42, 0.95);
+	backdrop-filter: blur(10px);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 24px;
+	z-index: 1000;
+	border-top: 1px solid rgba(255,255,255,0.1);
+}
+#nav-bar button {
+	background: rgba(255,255,255,0.1);
+	border: 1px solid rgba(255,255,255,0.2);
+	color: #e2e8f0;
+	padding: 8px 18px;
+	border-radius: 8px;
+	font-size: 0.9em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+#nav-bar button:hover { background: rgba(255,255,255,0.2); }
+#nav-bar button:disabled { opacity: 0.3; cursor: not-allowed; }
+#nav-bar .nav-center {
+	display: flex; align-items: center; gap: 12px; color: #94a3b8; font-size: 0.85em;
+}
+#slide-counter { color: #e2e8f0; font-weight: bold; font-size: 1em; }
+#progress-bar {
+	position: fixed; top: 0; left: 0; height: 4px;
+	background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+	transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1001;
+}
+
+/* ============ SLIDE OVERVIEW (thumbnail grid) ============ */
+#slide-overview {
+	position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+	background: rgba(15, 23, 42, 0.97);
+	z-index: 2000;
+	display: none;
+	padding: 40px;
+	overflow-y: auto;
+}
+#slide-overview.visible { display: block; }
+#slide-overview .overview-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	gap: 20px;
+	max-width: 1400px;
+	margin: 0 auto;
+}
+.overview-thumb {
+	background: #1e293b;
+	border: 2px solid #334155;
+	border-radius: 10px;
+	padding: 16px;
+	cursor: pointer;
+	transition: all 0.2s;
+	color: #e2e8f0;
+}
+.overview-thumb:hover { border-color: #3b82f6; transform: scale(1.03); }
+.overview-thumb.current { border-color: #3b82f6; background: #1e3a5f; }
+.overview-thumb .thumb-number { font-size: 0.75em; color: #64748b; margin-bottom: 4px; }
+.overview-thumb .thumb-title { font-size: 0.95em; font-weight: 600; }
+
+/* ============ FULLSCREEN ADJUSTMENTS ============ */
+:fullscreen #presentation { background: #fff; }
+:fullscreen .slide { padding: 80px 120px; }
+:fullscreen .slide h1 { font-size: 3.2em; }
+:fullscreen .slide h2 { font-size: 2.6em; }
+:fullscreen .slide p { font-size: 1.35em; }
+
+/* ============ SPEAKER NOTES (hidden, accessible via console) ============ */
+.speaker-notes { display: none; }
+
+/* ============ PLOT CONTAINERS ============ */
+.plot-container { background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; }
+.layers-vertical { text-align: center; margin: 10px 0; }
+.bw-cell { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 1em; }
+
+/* ============ ANIMATIONS ============ */
+@keyframes tokenAppear { from { opacity:0; transform:translateY(10px) scale(0.8); } to { opacity:1; transform:translateY(0) scale(1); } }
+@keyframes arPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+	.slide { padding: 30px 24px; }
+	.slide h1 { font-size: 1.8em; }
+	.slide h2 { font-size: 1.5em; }
+	.slide p { font-size: 1em; }
+	#nav-bar { padding: 0 12px; }
+}
+
+.know-indicator {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    font-weight: bold;
+    font-size: 0.85em;
+    color: #64748b;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.know-indicator.active {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1e40af;
+    border-width: 2px;
+}
+
+[id^="res-"] {
+	min-height: 60px; /* verhindert Layout-Shift */
+	contain: content;  /* isoliert Repaints */
+}
+
+
+
+/* ============ TYPOGRAPHY ============ */
+.slide h1 { font-size: clamp(2em, 4vw, 3.5em); color: #1e40af; margin-bottom: 20px; line-height: 1.2; }
+.slide h2 { font-size: clamp(1.6em, 3vw, 2.8em); color: #3b82f6; margin-bottom: 16px; border-bottom: 3px solid #e2e8f0; padding-bottom: 8px; }
+.slide h3 { font-size: clamp(1.2em, 2.2vw, 2em); color: #6366f1; margin-top: 20px; margin-bottom: 12px; }
+.slide p  { font-size: clamp(1em, 1.5vw, 1.4em); line-height: 1.8; margin-bottom: 14px; color: #334155; }
+.slide ul, .slide ol { font-size: clamp(0.95em, 1.4vw, 1.35em); line-height: 1.8; margin: 12px 0 12px 30px; color: #334155; }
+.slide li { margin-bottom: 8px; }
+.slide code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+
+.chat-container {
+    max-width: 600px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.chat-header {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.85em;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.message {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.message-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+    flex-shrink: 0;
+}
+
+.message-bubble {
+    padding: 14px 18px;
+    border-radius: 12px;
+    line-height: 1.7;
+    max-width: 85%;
+}
+
+/* User Message */
+.message.user .message-avatar {
+    background: #dbeafe;
+}
+
+.message.user .message-bubble {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e293b;
+}
+
+/* KI Message */
+.message.ki .message-avatar {
+    background: #d1fae5;
+}
+
+.message.ki .message-bubble {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #1e293b;
+}
+
+.message.ki .message-bubble ol {
+    margin-left: 20px;
+    padding: 0;
+}
+
+.message.ki .message-bubble li {
+    margin-bottom: 4px;
+}
+
+/* Realität / Fact-Check Message */
+.message.reality .message-avatar {
+    background: #fee2e2;
+}
+
+.message.reality .message-bubble {
+    background: #fef2f2;
+    border: 2px solid #fca5a5;
+    color: #991b1b;
+    font-weight: 600;
+}
+
+/* Labels */
+.message-label {
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.message.user .message-label {
+    color: #2563eb;
+}
+
+.message.ki .message-label {
+    color: #059669;
+}
+
+.message.reality .message-label {
+    color: #dc2626;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============ LOADING SPINNER (Intro) ============ */
+#loading-spinner {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+    z-index: 9999;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#loading-spinner.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.intro-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 80% 60% at 30% 20%, rgba(59,130,246,0.20), transparent 60%),
+        radial-gradient(ellipse 70% 60% at 80% 80%, rgba(168,85,247,0.18), transparent 60%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2ff 60%, #e0e7ff 100%);
+    animation: introBgShift 18s ease-in-out infinite alternate;
+}
+@keyframes introBgShift {
+    0%   { background-position: 0% 0%, 100% 100%, 0 0; }
+    100% { background-position: 10% 20%, 90% 80%, 0 0; }
+}
+.intro-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: #0f172a;
+    animation: introFadeIn 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes introFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.intro-mark {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+    position: relative;
+    margin-bottom: 22px;
+    animation: introSpin 4s linear infinite, introPulse 2.4s ease-in-out infinite;
+}
+.intro-mark::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    background: #f8fafc;
+}
+.intro-mark::after {
+    content: "";
+    position: absolute;
+    inset: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+@keyframes introSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+@keyframes introPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.45); }
+    50%      { box-shadow: 0 0 0 18px rgba(59,130,246,0); }
+}
+.intro-title {
+    margin: 0 0 6px 0;
+    font-size: clamp(1.6em, 3.6vw, 2.4em);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+    text-align: center;
+    padding: 0 16px;
+}
+.intro-subtitle {
+    margin: 0 0 28px 0;
+    font-size: clamp(0.95em, 1.6vw, 1.15em);
+    font-weight: 400;
+    color: #475569;
+    text-align: center;
+    padding: 0 16px;
+}
+.intro-bar {
+    width: min(320px, 70vw);
+    height: 3px;
+    border-radius: 99px;
+    background: rgba(15,23,42,0.10);
+    overflow: hidden;
+}
+.intro-bar-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.intro-status {
+    margin: 14px 0 0 0;
+    font-size: 0.85em;
+    color: #64748b;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    padding: 0 16px;
+    max-width: 86vw;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============ FOLIEN-AUSWAHL (Checkbox je Folie + 3× Esc) ============ */
+#sel-panel {
+	position: fixed; bottom: 68px; right: 16px; z-index: 2500;
+	background: rgba(15, 23, 42, 0.97);
+	border: 1px solid #475569; border-radius: 12px;
+	padding: 14px 16px; color: #e2e8f0; font-size: 0.9em;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45); min-width: 260px;
+}
+#sel-count { color: #94a3b8; font-size: 0.85em; margin-top: 8px; }
+#sel-url {
+	margin-top: 8px; font-size: 0.72em; color: #7dd3fc; word-break: break-all;
+	font-family: monospace; line-height: 1.5; overflow-wrap: anywhere;
+}
+#sel-panel .sel-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+#sel-panel .sel-actions button {
+	background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25);
+	color: #e2e8f0; border-radius: 8px; padding: 6px 10px; font-size: 0.8em; cursor: pointer;
+	transition: background 0.2s;
+}
+#sel-panel .sel-actions button:hover { background: rgba(255, 255, 255, 0.2); }
+#sel-hint { margin-top: 10px; font-size: 0.75em; color: #64748b; line-height: 1.5; }
+
+/* Auswahl-Checkbox oben rechts an jeder Folie. Erst sichtbar,
+   wenn das Panel per 3× Esc geöffnet ist (body.sel-mode). Nur die
+   aktive Folie ist klickbar (inaktive: pointer-events:none). */
+.sel-check {
+	position: absolute; top: 12px; right: 16px; z-index: 20;
+	display: none;
+	align-items: center; gap: 6px;
+	background: rgba(15, 23, 42, 0.85); color: #e2e8f0;
+	border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 20px;
+	padding: 5px 10px; font-size: 0.85em; cursor: pointer; user-select: none;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	transition: background 0.2s;
+}
+body.sel-mode .sel-check { display: inline-flex; }
+.sel-check:hover { background: rgba(15, 23, 42, 0.97); }
+.sel-check input {
+	width: 16px; height: 16px; accent-color: #8b5cf6;
+	cursor: pointer; margin: 0; pointer-events: auto;
+}
+.sel-check span {
+	overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+	max-width: calc(40vw - 48px);
+}
+.sel-check.checked {
+	border-color: #8b5cf6; background: #6d28d9; color: #ffffff;
+}
+
+/* ============ SPACE MORPH ("Was machen Dense Layer?") ============ */
+#slide-layer-als-raumkruemmung { background: #f8fafc; }
+#sm-table-container {
+	max-height: 230px;
+	overflow: hidden;
+}
+.sm-table {
+	font-family: 'Cambria Math', Georgia, serif;
+	font-size: 13px;
+	border-collapse: collapse;
+	display: table;
+	width: auto;
+	background: rgba(255,255,255,0.7);
+	border: 1px solid #cbd5e1;
+	border-radius: 6px;
+	overflow: hidden;
+	margin-bottom: 6px;
+	table-layout: fixed;
+}
+.sm-table thead th {
+	text-align: right;
+	padding: 6px 12px;
+	font-weight: 600;
+	color: #475569;
+	font-size: 12px;
+	border-bottom: 1px solid #cbd5e1;
+	background: rgba(241,245,9,0.85);
+	background: rgba(241,245,249,0.85);
+	white-space: nowrap;
+}
+.sm-table thead th.lbl-col {
+	text-align: left;
+	width: 72px;
+	padding-right: 10px;
+	white-space: nowrap;
+}
+.sm-table thead th.coord-col {
+	width: 80px;
+	white-space: nowrap;
+}
+.sm-table tbody td {
+	padding: 5px 12px;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	border-bottom: 1px solid #e2e8f0;
+	font-size: 13px;
+	color: #0f172a;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.sm-table tbody tr:last-child td {
+	border-bottom: 0;
+}
+.sm-table td.lbl {
+	text-align: left;
+	font-weight: 700;
+	font-size: 12px;
+	border-right: 1px solid #cbd5e1;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+.sm-table tr.inner-row td.lbl,
+.sm-table tr.outer-row td.lbl {
+	background: rgba(255,255,255,0.5);
+}
+.sm-table tr.inner-row td.lbl   { color: #be123c; }
+.sm-table tr.outer-row td.lbl   { color: #0369a1; }
+.sm-table tr.green-row td.lbl   { color: #15803d; }
+.sm-table tr.red-row td.lbl     { color: #be123c; }
+.sm-table tr.green-row td:not(.lbl) { background: rgba(21,128,61,0.07); }
+.sm-table tr.red-row td:not(.lbl)   { background: rgba(190,18,60,0.07); }
+.sm-table td.xv, .sm-table td.yv, .sm-table td.zv, .sm-table td.wv {
+	transition: color 0.3s ease, background-color 0.3s ease;
+}
+.sm-table td.empty {
+	color: #cbd5e1;
+}
+
+/* Y-Spalte (Ei): ab Schritt 7 (1D-Projektion) ausgeblendet,
+   damit nur die sortierte s-Spalte (jetzt in z) übrig bleibt. */
+.sm-table .y-col, .sm-table .yv {
+	display: none;
+}
+.sm-table.show-y .y-col,
+.sm-table.show-y .yv {
+	display: table-cell;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
+}
+
+/* Z-Spalte (Ei): am Anfang versteckt, kommt eigenständig dazu (rechts angefügt) */
+.sm-table .z-col, .sm-table .zv {
+	display: none;
+}
+.sm-table.show-z .z-col,
+.sm-table.show-z .zv {
+	display: table-cell;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes smCellIn {
+	from { opacity: 0; transform: translateX(8px); }
+	to   { opacity: 1; transform: translateX(0); }
+}
+
+/* W-Spalte (Tori): analog */
+.sm-table .w-col, .sm-table .wv {
+	display: none;
+}
+.sm-table.show-w .w-col,
+.sm-table.show-w .wv {
+	display: table-cell;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
+}
+
+/* Tori-Tabelle: Formparameter-Spalte k (komplex → schlicht) */
+#tori-table .k-col,
+#tori-table .kv { display: none; }
+#tori-table.show-k .k-col,
+#tori-table.show-k .kv { display: table-cell; }
+#tori-table.show-k .kv { color: #7c3aed; font-variant-numeric: tabular-nums; }
+
+/* Extra-Zeile (B₂): die ganze Zeit sichtbar, keine An/Aus-Logik mehr */
+.sm-table .extra-row {
+	opacity: 0.55;
+	border-top: 1px dashed #94a3b8;
+}
+.sm-table.show-extra .extra-row {
+	opacity: 1;
+	border-top: 1px solid #e2e8f0;
+	animation: smCellIn 0.55s cubic-bezier(.4,0,.2,1) both;
+}
+
+
+/* ============ KATZE-FRAMEWORK (katze.js): "Was sind Convolutions?" + "Was macht Flatten?" ============ */
+/* Gemeinsames Geruest: Kicker/Title (kz-head), Canvas-Stage, Pill/Chips
+   (kz-foot), Dots. Die Schritte laufen ueber die Pfeiltasten (DemoRegistry). */
+.kz {
+	width: 100%;
+	max-width: 1180px;
+	margin: 0 auto;
+}
+.kz-head {
+	height: 132px;
+	position: relative;
+	width: 100%;
+}
+.kz-tswap {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	transform: translateX(-50%);
+	width: max-content;
+	text-align: center;
+	will-change: transform, opacity, filter;
+}
+.kz-kicker {
+	font-size: 11px;
+	letter-spacing: .24em;
+	text-transform: uppercase;
+	color: #9aa1ad;
+	font-weight: 700;
+	margin-bottom: 12px;
+}
+.kz-title {
+	font-size: clamp(24px, 3.4vw, 42px);
+	font-weight: 800;
+	letter-spacing: -.032em;
+	line-height: 1.1;
+	color: #0d1117;
+}
+.kz-title em {
+	font-style: normal;
+	color: #2563eb;
+	transition: color 1s cubic-bezier(.4,0,.2,1);
+}
+.kz-title em.gray { color: #6b7280; }
+.kz-stage {
+	position: relative;
+	width: 100%;
+	height: min(46vh, 430px);
+}
+.kz-stage canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+.kz-foot {
+	height: 96px;
+	position: relative;
+	width: 100%;
+}
+.kz-fswap {
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 13px;
+	width: max-content;
+	will-change: transform, opacity;
+}
+/* WICHTIG: kein display:flex, Flex würde jeden Textabschnitt zu einem
+   eigenen Flex-Item machen und die Leerzeichen dazwischen streichen,
+   dadurch klebten die Zahlen an den nächsten Wörtern. Block-Layout
+   behält den normalen Inline-Fluss (mit allen Leerzeichen) bei. */
+.kz-pill {
+    background: #f6f8fb;
+    border: 1px solid #eef0f4;
+    padding: 9px 20px;
+    border-radius: 99px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #374151;
+    min-height: 40px;
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+}
+.kz-pill b {
+	color: #f43f5e;
+	font-variant-numeric: tabular-nums;
+	min-width: 1.3em;
+	display: inline-block;
+	text-align: center;
+}
+.kz-chips { display: flex; align-items: center; gap: 11px; }
+.kz-chip {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 13.5px;
+	font-weight: 700;
+	padding: 8px 15px;
+	border-radius: 99px;
+	background: #eff5ff;
+	border: 1px solid #cfe0ff;
+	color: #2563eb;
+}
+.kz-chip.g { background: #f4f5f7; border-color: #e3e7ee; color: #6b7280; }
+.kz-chip.r { background: #fff1f3; border-color: #ffd4dc; color: #f43f5e; }
+.kz-arrow { color: #c3c8d2; font-size: 18px; font-weight: 700; }
+.kz-dots {
+	display: flex;
+	gap: 7px;
+	justify-content: center;
+	padding: 6px 0 2px;
+}
+.kz-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: #e3e7ee;
+	transition: background .6s cubic-bezier(.4,0,.2,1), transform .6s cubic-bezier(.2,1.3,.4,1);
+}
+.kz-dot.act { background: #2563eb; transform: scale(1.4); }
+/* Fazit-Box (nur Flatten-Folie): Platz ist reserviert, keine Layout-Spruenge */
+.kz-insight-slot {
+	width: 100%;
+	min-height: 96px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.kz-insight {
+	max-width: 860px;
+	margin: 0;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1);
+	pointer-events: none;
+}
+.kz-insight.on { opacity: 1; transform: none; }
+
+/* ============ FOLIE "asanAI" ============ */
+.asan-slide {
+	display: grid;
+	grid-template-columns: 0.5fr 1.15fr 0.85fr;
+	gap: 26px;
+	align-items: center;
+	text-align: left;
+}
+.asan-logo-col { text-align: center; }
+.asan-logo {
+	width: 100%;
+	max-width: 220px;
+	height: auto;
+	filter: drop-shadow(0 12px 34px rgba(79, 70, 229, 0.25));
+}
+.asan-tagline {
+	margin-top: 14px;
+	font-size: 1.05em;
+	color: #475569;
+	line-height: 1.35;
+}
+.asan-tagline b { color: #4f46e5; font-size: 1.2em; }
+.asan-text-col h2 { font-size: 1.5em; line-height: 1.25; }
+.asan-list {
+	margin: 10px 0 0;
+	padding: 0;
+	list-style: none;
+	font-size: 0.92em;
+	line-height: 1.45;
+	color: #334155;
+}
+.asan-list li {
+	position: relative;
+	padding-left: 26px;
+	margin-bottom: 9px;
+}
+.asan-list li::before {
+	content: "▸";
+	position: absolute;
+	left: 4px;
+	color: #4f46e5;
+	font-weight: 700;
+}
+.asan-url-frag { align-self: center; text-align: center; }
+.asan-url-badge {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 1.1em; font-weight: 700; letter-spacing: -.01em;
+	color: #4338ca;
+	background: #ffffff;
+	border: 2px solid #c7d2fe;
+	border-radius: 12px;
+	padding: 14px 22px;
+	display: inline-block;
+}
+
+/* ============ FOLIE "Titel" ============ */
+.title-slide {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+.title-logo {
+	width: 128px;
+	height: auto;
+	margin-bottom: 26px;
+	filter: drop-shadow(0 10px 26px rgba(79, 70, 229, 0.22));
+}
+.title-slide h1 {
+	font-size: 2.5em;
+	line-height: 1.2;
+	color: #0f172a;
+	margin: 0;
+}
+.title-sub {
+	font-size: 1.5em;
+	color: #4f46e5;
+	font-weight: 600;
+	margin: 14px 0 0;
+}
+.title-rule {
+	width: 120px;
+	height: 3px;
+	background: #c7d2fe;
+	border-radius: 2px;
+	margin: 26px 0 16px;
+}
+.title-hint {
+	font-size: 0.92em;
+	color: #64748b;
+	letter-spacing: 0.02em;
+	margin: 0;
+}
+
+/* ============ FOLIE "Vom Foto zum Stoppschild" (hierarchy.js) ============ */
+/* Slot ueber jedem Bild: Kernels stehen exakt ueber dem Panel, zu dem sie gehoeren.
+   Feste Hoehe, damit alle Canvas in einer Reihe liegen. */
+.hier-kernel-slot {
+	height: 100px;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+}
+.hier-kernel {
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	padding: 6px 10px;
+	text-align: center;
+}
+.hier-kernel-name {
+	font-size: 0.68em;
+	color: #64748b;
+	margin-bottom: 4px;
+	letter-spacing: 0.02em;
+}
+.hier-kernel-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 2px;
+}
+.hier-kernel-grid span {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 0.72em;
+	width: 24px;
+	height: 22px;
+	line-height: 22px;
+	border-radius: 3px;
+	background: #eef2f7;
+	color: #475569;
+}
+.hier-kernel-grid span.pos  { background: #fee2e2; color: #b91c1c; font-weight: 700; }
+.hier-kernel-grid span.neg  { background: #dbeafe; color: #1d4ed8; font-weight: 700; }
+.hier-kernel-grid span.zero { opacity: 0.45; }
+
+.hier-panels {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	gap: 12px;
+	align-items: start;
+}
+.hier-panel { opacity: 0.32; transition: opacity 0.35s ease; text-align: center; }
+.hier-panel.active { opacity: 1; }
+/* Additions-Animation (letzte Station): das gerade hinzukommende
+   Filter-Panel pulsiert, während seine Map in die Summe fließt. */
+.hier-panel.adding { opacity: 1; }
+.hier-panel.adding .hier-canvas-wrap {
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.9), 0 0 24px rgba(245, 158, 11, 0.5);
+    animation: hierAddPulse 0.7s ease;
+}
+@keyframes hierAddPulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.045); }
+    100% { transform: scale(1); }
+}
+.hier-canvas-wrap {
+	position: relative;
+	background: #0b1220;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	overflow: hidden;
+	aspect-ratio: 1 / 1;
+}
+.hier-canvas { width: 100%; height: 100%; display: block; }
+.hier-wait {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #64748b;
+	font-size: 0.8em;
+	background: #0b1220;
+}
+.hier-label {
+	font-size: 0.8em;
+	font-weight: 700;
+	color: #1e293b;
+	margin-top: 7px;
+	line-height: 1.2;
+}
+.hier-lede {
+	max-width: 1080px;
+	margin: -4px auto 16px;
+	font-size: 1.02em;
+	color: #334155;
+	line-height: 1.5;
+	text-align: center;
+}
+.hier-caption {
+	max-width: 1080px;
+	margin: 0 auto 12px;
+	font-size: 0.94em;
+	color: #334155;
+	line-height: 1.5;
+	text-align: center;
+}
+.hier-caption b { color: #1e293b; }
+.hier-caption .mono {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	background: #f1f5f9;
+	padding: 0 4px;
+	border-radius: 3px;
+}
+

@@ -5,9 +5,10 @@ title: Hyperparameters: The Numbers You Choose
 description: Weights are learned, hyperparameters are chosen. What they are, why they cannot be solved for, and how practitioners actually find good values.
 icon: &#9881;
 part: 2
-order: 7
+order: 8
 color: emerald
 topics: training, architecture, math-i, programming
+math: 40
 -->
 
 <div class="md">
@@ -29,6 +30,8 @@ A **hyperparameter** is a quantity that stays *fixed* during training and is *ch
 You have already set several of these: the learning rate and optimizer in the [Optimizer chapter](optimizerlab.php), $d_{\text{model}}$, $h$, $N$ and context size in the [Transformer chapter](transformer.php).
 
 The boundary is not perfectly clean. A learning-rate *schedule* is a function you choose whose value changes over time, and every optimizer carries its own hyperparameters (Adam's $\beta_1$, $\beta_2$, $\epsilon$), so choices nest inside other choices.
+
+The `optimizer` slot itself hides a sub-family of choices. The names you have seen in the [Optimizer chapter](optimizerlab.php) — SGD and Adam — are just two of more than a dozen in active use: SGD with Momentum, Nesterov accelerated gradient, Adagrad, Adadelta, RMSprop, Adam, AdaMax, Nadam, AMSGrad, and AdamW each fix a concrete failure of the previous one. \citeauthor{ruder2016overview}'s 2016 overview article (\citeyear{ruder2016overview}) is the canonical practitioner survey of the family, with derivations of each rule and a discussion of which to reach for when.
 
 ## Why a Hyperparameter Is Not a Constant
 
