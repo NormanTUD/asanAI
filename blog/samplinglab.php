@@ -14,15 +14,19 @@ tags: math-heavy
 <div class="md">
 Given a probability distribution over the next token, which one do you pick? This is the **decoding strategy**, and it controls the model's “personality”, focused and deterministic, or wild and creative. The frontier in 2025: many subtle techniques beyond temperature and top-$k$.
 
-This chapter covers every common decoding method with its mathematical formulation and recommended use.
+This chapter covers every common decoding method with its mathematical formulation and recommended use, grouped from the baseline distribution, through the candidate-set filters, to the diversity and search tricks and the practical settings that tie them together.
 </div>
 
 <div class="optional md" data-headline="Where the math comes from">
 Three of the four quantities in this chapter, **Boltzmann distributions**, **entropy**, and **KL-divergence**, were born long before language models. They appear in the <a href="statistics_ii">Statistics II chapter</a> § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it *is* physics. The softmax with temperature $T$ is exactly the **Boltzmann distribution** (\cite[Boltzmann, 1877]{boltzmann}) over the token "energy levels" $E_i = -z_i$ (the logit, negated), written in dimensionless form by absorbing the Boltzmann constant into $T$: $\;P_i = e^{z_i/T} / \sum_j e^{z_j/T}$. So $T$ is not a knob we invented — it is a **temperature** in the thermodynamic sense. $T \to 0$ is the **ground state**: the system collapses onto the single lowest-energy, highest-probability token (greedy). $T \to \infty$ is the **infinite-temperature** limit, where every state is equally populated (uniform). Raising $T$ does not make the model "creative" in any vague sense; it lets higher-energy, rarer tokens be occupied at all, the way a hotter gas puts its particles into excited states. Sampling is thermodynamics in disguise.
 </div>
 
+<div class="md">
+## The Baseline: Temperature and Greedy
+</div>
+
 <div class="md" data-mathlevel="50" data-optionaltitle="The Probability Distribution">
-## The Probability Distribution
+### The Probability Distribution
 
 After the LLM produces logits $\mathbf{z} \in \mathbb{R}^{|V|}$ for the next token, softmax gives a probability distribution:
 
@@ -42,15 +46,19 @@ But that's only the beginning. Most modern systems use **additional filters** on
 </div>
 
 <div class="md">
-## Greedy Decoding
+### Greedy Decoding
 
 Always pick $\arg\max_i P(i)$. Deterministic, fast. Used in production for fact-retrieval tasks where creativity is unwanted.
 
 Drawback: **repetition loops** and **mode collapse** (“the the the the...”).
 </div>
 
+<div class="md">
+## Truncating the Candidate Set
+</div>
+
 <div class="md" data-mathlevel="55" data-optionaltitle="Top-k Sampling">
-## Top-$k$ Sampling
+### Top-$k$ Sampling
 
 Restrict to the $k$ tokens with highest probability, then renormalize (\cite[Fan et al., 2018]{fan2018topk}):
 
@@ -68,7 +76,7 @@ Drawback: $k$ is a fixed number, but the appropriate $k$ varies per context. Som
 </div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="Top-p (Nucleus) Sampling">
-## Top-$p$ (Nucleus) Sampling
+### Top-$p$ (Nucleus) Sampling
 
 Sample from the smallest set of tokens whose cumulative probability exceeds $p$ (\cite[Holtzman et al., 2020]{holtzman2020nucleus}):
 
@@ -86,7 +94,7 @@ Most production APIs default to **top-$p$ = 0.9 or 0.95**.
 </div>
 
 <div class="md" data-mathlevel="50" data-optionaltitle="Min-p Sampling">
-## Min-$p$ Sampling
+### Min-$p$ Sampling
 
 The new frontier method (\cite[Nguyen et al., 2025]{nguyen2025minp}), recommended by many open-source models (Qwen, Mistral):
 
@@ -105,7 +113,7 @@ Min-$p$ **scales with confidence**: when the model is sharp, few tokens qualify;
 </div>
 
 <div class="md">
-## Top-$n$ (Top-$N$) Sampling
+### Top-$n$ (Top-$N$) Sampling
 
 A simpler variant: always include exactly the top $N$ tokens. Used in some open-source models.
 
@@ -115,19 +123,23 @@ Less common than top-$p$ or min-$p$.
 </div>
 
 <div class="md">
-## Tail-Free Sampling (TFS)
+### Tail-Free Sampling (TFS)
 
 Discards tokens in the “tail” of the distribution where the second derivative of probability is small. Rarely used in production.
 </div>
 
 <div class="md">
-## Eta ($\eta$) Sampling
+### Eta ($\eta$) Sampling
 
 Similar to min-$p$ but with a different criterion: cut off tokens with probability below an $\eta$-dependent threshold based on entropy. Generally less popular than min-$p$.
 </div>
 
+<div class="md">
+## Anti-Repetition and Diversity
+</div>
+
 <div class="md" data-mathlevel="45" data-optionaltitle="Repetition Penalty">
-## Repetition Penalty
+### Repetition Penalty
 
 Reduce the logits of tokens that have already appeared in the context (\cite[Keskar et al., 2019]{keskar2019ctrl}):
 
@@ -143,7 +155,7 @@ Useful for chat where the model might otherwise loop. **Frequency penalty** (pro
 </div>
 
 <div class="md">
-## DRY (Don't Repeat Yourself) Sampling
+### DRY (Don't Repeat Yourself) Sampling
 
 A smarter repetition penalty (Cohere, 2023) that detects repeated n-grams and penalizes them only when they would create a degenerate loop:
 
@@ -154,7 +166,7 @@ More nuanced than the basic repetition penalty. Used in Cohere's Command-R and r
 </div>
 
 <div class="md">
-## XTC (Exclude Top Choices)
+### XTC (Exclude Top Choices)
 
 A 2024 technique: randomly exclude the top token from sampling with some probability. Forces the model to use less-likely words. Useful for breaking out of repetitive patterns in creative writing.
 
@@ -162,7 +174,7 @@ A 2024 technique: randomly exclude the top token from sampling with some probabi
 </div>
 
 <div class="md" data-mathlevel="55" data-optionaltitle="Contrastive Search">
-## Contrastive Search (Su & Collier, 2022)
+### Contrastive Search (Su & Collier, 2022)
 
 A **deterministic** decoding strategy that picks the token maximizing:
 
@@ -174,15 +186,7 @@ where $\mathbf{h}_i$ is the token's hidden state and $\alpha$ controls the degen
 </div>
 
 <div class="md">
-## Beam Search
-
-Maintain the top $B$ partial sequences at each step; expand all of them; keep the top $B$. Used in machine translation; rarely in modern LLM chat.
-
-Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.
-</div>
-
-<div class="md">
-## mirostat
+### mirostat
 
 A sampling scheme (\cite[Basu et al., 2020]{basu2020mirostat}) that **targets a fixed perplexity** during generation. The model adjusts its sampling to maintain target surprise:
 
@@ -193,8 +197,18 @@ A sampling scheme (\cite[Basu et al., 2020]{basu2020mirostat}) that **targets a 
 Produces output with consistent information density. Used by some LLM writers for creative prose.
 </div>
 
+<div class="md">
+## Search and Speculation
+
+### Beam Search
+
+Maintain the top $B$ partial sequences at each step; expand all of them; keep the top $B$. Used in machine translation; rarely in modern LLM chat.
+
+Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.
+</div>
+
 <div class="md" data-mathlevel="60" data-optionaltitle="Speculative Sampling">
-## Speculative Sampling
+### Speculative Sampling
 
 A generalization of speculative decoding: the draft model samples tokens probabilistically, the target model verifies, and corrections are sampled from the target's adjusted distribution:
 
@@ -206,7 +220,9 @@ This guarantees the output distribution exactly matches the target model's distr
 </div>
 
 <div class="md">
-## Recommended Settings (2025)
+## Choosing and Tuning
+
+### Recommended Settings (2025)
 
 | Use case | Temperature | Top-$p$ | Min-$p$ | Repetition penalty |
 |----------|-------------|---------|---------|-------------------|
@@ -222,7 +238,7 @@ This guarantees the output distribution exactly matches the target model's distr
 </div>
 
 <div class="md">
-## Dynamic Temperature
+### Dynamic Temperature
 
 A 2024 idea: adjust temperature based on the entropy of the predicted distribution. When the model is confident (low entropy), lower temperature; when uncertain (high entropy), raise it. The intuition: respect the model's confidence rather than always applying the same temperature.
 
@@ -232,7 +248,7 @@ Not yet standardized but promising.
 </div>
 
 <div class="md">
-## Practical Tips
+### Practical Tips
 
 * **Reproducibility**: set temperature = 0 (or very low) for reproducible outputs. Some APIs accept `seed`.
 * **For evals**: temperature = 0 + greedy. Otherwise the eval is noisy.
