@@ -314,7 +314,36 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 9: Der gesamte Prozess
+     Folie 9: Vom Bild zu Punkten (dense_raum.js)
+     ------------------------------------------------------------
+      Katze-Framework (dense_raum.js, DenseRaum): Panel
+      (Katze → 1024 Zahlen) → aus Zahlen werden Punkte
+      (zwei Klassen Katze/Hund, verschränkt) → andere
+      Krümmung: Sattel z = x·y statt Schale → eine Ebene
+      passt dazwischen → Rückprojektion auf eine Linie
+      (Hund links / Katze rechts), unser Bild landet auf
+      der Katze-Seite. 5 Schritte über die Pfeiltasten.
+     ============================================================ -->
+<div class="slide" id="slide-dense-raum" data-title="Vom Bild zu Punkten">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><div class="kz-tswap" id="dr-tswap">
+                <div class="kz-title" id="dr-title">Die Katze wird zu<br><em>Zahlen</em>.</div>
+            </div></div>
+
+            <div class="kz-stage"><canvas id="dr-cv"></canvas></div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="dr-fswap">
+                <div class="kz-pill" id="dr-pill">Dense Layer: <b>1024</b> Zahlen</div>
+                <div class="kz-chips" id="dr-chips"><span class="kz-chip g">Bild 32×32</span><span class="kz-arrow">→</span><span class="kz-chip r">1024 Zahlen</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="dr-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 10: Der gesamte Prozess
      ------------------------------------------------------------
       Katze-Framework (katze.js, PipelineDemo): das ganze Netz in
       einem Blick, Bild → Layer 1 (Muster im Bild) → Layer 2
@@ -343,7 +372,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 10: Convolutions: Strukturen in Bildern finden
+     Folie 11: Convolutions: Strukturen in Bildern finden
      (echte Faltung auf img/stop_sign.jpg, hierarchy.js)
      Bewusst NACH der Ergebnis-Folie: was vorher gezeigt wurde,
      war eine vereinfachte Vorstellung, hier die echte Convolution.
@@ -365,7 +394,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 11: asanAI, Überleitung zur Live-Demo
+     Folie 12: asanAI, Überleitung zur Live-Demo
      ============================================================ -->
 <div class="slide" id="slide-asanai" data-title="asanAI">
     <div class="slide-content asan-slide">
@@ -424,6 +453,7 @@
 <script src="space_morph.js"></script>
 <script src="nn_demos.js"></script>
 <script src="katze.js"></script>
+<script src="dense_raum.js"></script>
 <script src="hierarchy.js"></script>
 <script src="presentation.js"></script>
 
