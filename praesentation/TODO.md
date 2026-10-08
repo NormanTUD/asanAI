@@ -276,7 +276,12 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   („Lernen: die Daten immer wieder angucken")** zeichnen; davor nur (oder gar nicht) Wert.
   *(Klarstellung: nur die Kurve, oder das ganze Panel erst beim Training?)*
 
-### T24 · Folie 12 „Convolutions: Strukturen in Bildern finden" → eigene Datei, aus Deck raus  `[ ]`
+### T24 · Folie 12 „Convolutions: Strukturen in Bildern finden" → eigene Datei, aus Deck raus  `[x]`
+- ✅ Fertig: Folie 12 aus `index.html` entfernt (Deck 14 → 13, statischer Zähler stimmt jetzt auch).
+  Neue Datei `hierarchy.html` (einzige Folie, lädt `hierarchy.js` + `presentation.js` + Deck-Chrome).
+  Registry-Eintrag `hierarchy` bleibt (matcht nur in `hierarchy.html`; im Deck harmlos inaktiv).
+  Verifiziert über HTTP: `index.html` + `hierarchy.html` beide clean, 6 Filter-Panels bauen,
+  Lade-Spinner blendet aus. (`file://`-SecurityError bei getImageData = nur File-Protokoll, kein Bug.)
 - **Norman:** „entferne auch die folie … und schiebe sie in ne eigene datei."
 - Folie 12 (`slide-hierarchie`, `hierarchy.js`) aus `index.html` entfernen + **eigene Datei**
   (z. B. `hierarchy.html`, lädt `hierarchy.js`), damit sie separat aufzurufen ist. Deck:
