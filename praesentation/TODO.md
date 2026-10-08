@@ -303,7 +303,12 @@ Layer?" (T19) · Folie 12 (Convolutions) **raus** → eigene Datei (T24, Deck 14
   Schritt 4 (Achse/Linie) umstellen. *(Canvas, nicht visuell geprüft — ggf. nachschärfen.
   Verknüpft mit T11-Neuschreiben + T21.)*
 
-### T27 · „Alles idealisiert" (Folie 14) eine Position früher + ausbauen  `[ ]`
+### T27 · „Alles idealisiert" (Folie 14) eine Position früher + ausbauen  `[x]`
+- ✅ Fertig: „Alles idealisiert" vor asanAI geschoben (jetzt Folie 12; asanAI = Folie 13 =
+  Schluss/Live-Demo-Überleitung). Haupt-Keypoint ergänzt: „Was ihr gesehen habt, ist die
+  **Intuition** … **nicht** das be-all-end-all. Dahinter steckt **viel mehr**:
+  **Interessantes und Ungeklärtes**." Blaues-Himmel-Shortcut als Beispiel drunter.
+  `node --check` n/a (HTML) + headless (Folie 12/13, Deck 13) clean.
 - **Norman (vorige Runde):** Folie „Alles idealisiert" **eine Position früher** (vor asanAI)
   und **ausbauen**: rüberbringen, dass es nur die **Intuition** ist, mit der wir arbeiten —
   **nicht** das be-all-end-all, da ist **viel mehr Interessantes + Ungeklärtes** dahinter.
