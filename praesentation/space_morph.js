@@ -852,120 +852,6 @@ const SpaceMorph = (() => {
             : 'die Richtung der letzten Schicht zeigt noch auf das falsche Wort', sx + 8, outY + 18);
     }
 
-    // ---------- Katze → Zahlenlinie (letzter Schritt) ----------
-    // Am Ende der Folie zerfällt die Katze nach den Convolutions in
-    // Zahlen: die Bildstruktur bleibt als Geist links stehen, die
-    // Zahlen wandern über die Trennlinie in den Dense Layer.
-    const IDX_LAST = S.length - 1;
-    const CP_W = 448, CP_H = 232;          // Panelgröße (natürlich)
-    const CP_CELL = 4.25;                  // Pixelkante der 32×32-Katze
-    const CP_S = 32 * CP_CELL;             // 136
-    const CP_FLY = 640;                    // Flugdauer einer Zahl (ms)
-    const CP_DISS_A = 450, CP_DISS_B = 3050;   // Zerfallsfenster
-    let cpStart = 0, cpSpawned = 0;
-    const cpBorn = [], cpFrom = [];
-
-    function cpValue(i) {
-        const K = (typeof KatzeKit !== 'undefined') ? KatzeKit : null;
-        return (K && K.GREEN) ? K.GREEN[i] : 128;
-    }
-    function cpFill(i) {
-        const K = (typeof KatzeKit !== 'undefined') ? KatzeKit : null;
-        const c = (K && K.RGB) ? K.RGB[i] : [180, 180, 180];
-        return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
-    }
-
-    function drawCatPanel(now, alpha) {
-        const K = (typeof KatzeKit !== 'undefined') ? KatzeKit : null;
-        if (!K || !K.RGB || !K.GREEN) return;
-        const N = K.N || 32, TOTAL = N * N;
-        const SLOTS = 72, PERCOL = 8;
-        const bw = 214, bh = 136;
-        const cx = 4, cy = 34;                 // Katze
-        const dx = cx + CP_S + 44;             // Trennlinie
-        const bx = dx + 44, by = cy;           // Dense-Box
-
-        const front = Math.floor(clamp((now - cpStart - CP_DISS_A) /
-            (CP_DISS_B - CP_DISS_A), 0, 1) * TOTAL);
-
-        // Zahlen emittieren, solange die Box noch Platz hat
-        while (cpSpawned < SLOTS && front >= Math.floor(cpSpawned * TOTAL / SLOTS)) {
-            const k = cpSpawned++, ci = Math.floor(k * TOTAL / SLOTS);
-            const r = (ci / N) | 0, c = ci % N;
-            cpFrom[k] = { x: cx + c * CP_CELL + CP_CELL / 2, y: cy + r * CP_CELL + CP_CELL / 2 };
-            cpBorn[k] = now;
-        }
-
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
-        KatzeKit.roundRect(ctx, 0, 0, CP_W, CP_H, 14); ctx.fill(); ctx.stroke();
-
-        ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
-        ctx.fillStyle = '#0f172a'; ctx.font = '700 13px system-ui,sans-serif';
-        ctx.fillText('Nach den Convolutions', 16, 24);
-        ctx.fillStyle = '#334155'; ctx.font = '700 12px system-ui,sans-serif';
-        ctx.fillText('Dense Layer', bx, 24);
-
-        // Katze: von oben nach unten in blasse Geistzellen zerfallen
-        for (let i = 0; i < TOTAL; i++) {
-            const r = (i / N) | 0, c = i % N;
-            const x = cx + c * CP_CELL, y = cy + r * CP_CELL;
-            ctx.fillStyle = cpFill(i);
-            ctx.fillRect(x, y, CP_CELL + 0.6, CP_CELL + 0.6);
-            if (i < front) {
-                ctx.fillStyle = 'rgba(255,255,255,.80)';
-                ctx.fillRect(x, y, CP_CELL + 0.6, CP_CELL + 0.6);
-            }
-        }
-        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
-        ctx.strokeRect(cx + .5, cy + .5, CP_S - 1, CP_S - 1);
-
-        // Trennlinie
-        ctx.save(); ctx.setLineDash([6, 6]);
-        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.4;
-        ctx.beginPath(); ctx.moveTo(dx, cy - 8); ctx.lineTo(dx, cy + CP_S + 8); ctx.stroke();
-        ctx.restore();
-
-        // Dense-Box
-        ctx.fillStyle = '#f8fafc'; ctx.strokeStyle = '#cbd5e1';
-        KatzeKit.roundRect(ctx, bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
-
-        // Zahlen: gelandet (stehen) + fliegend (unterwegs)
-        ctx.font = '10px ui-monospace,SFMono-Regular,Menlo,monospace';
-        ctx.textBaseline = 'middle';
-        for (let k = 0; k < cpSpawned; k++) {
-            const sx0 = bx + 10 + (k % PERCOL) * 24, sy0 = by + 12 + ((k / PERCOL) | 0) * 13;
-            const v = cpValue(Math.floor(k * TOTAL / SLOTS));
-            const g = 40 + Math.round(v * 0.55);
-            const col = 'rgb(' + g + ',' + g + ',' + g + ')';
-            const age = now - cpBorn[k];
-            if (age >= CP_FLY) {
-                ctx.textAlign = 'left'; ctx.fillStyle = col;
-                ctx.fillText(String(v), sx0, sy0);
-            } else {
-                const t = clamp(age / CP_FLY, 0, 1), e = ease(t);
-                const f = cpFrom[k];
-                const x = lerp(f.x, sx0, e), y = lerp(f.y, sy0, e) - Math.sin(Math.PI * t) * 22;
-                ctx.globalAlpha = alpha * (t < 0.15 ? t / 0.15 : (t > 0.8 ? (1 - t) / 0.2 : 1));
-                ctx.textAlign = 'center'; ctx.fillStyle = col;
-                ctx.fillText(String(v), x, y);
-                ctx.globalAlpha = alpha;
-            }
-        }
-
-        // Beschriftungen
-        ctx.textAlign = 'center'; ctx.fillStyle = '#64748b';
-        ctx.font = '600 11px system-ui,sans-serif'; ctx.textBaseline = 'alphabetic';
-        ctx.fillText('Bild', cx + CP_S / 2, cy + CP_S + 20);
-        ctx.fillText('Trennung', dx, cy + CP_S + 20);
-        ctx.fillText('1024 Zahlen', bx + bw / 2, by + bh + 20);
-        ctx.textAlign = 'left'; ctx.fillStyle = '#94a3b8'; ctx.font = '11px system-ui,sans-serif';
-        ctx.fillText('Die Bildstruktur bleibt links — der Dense Layer sieht nur noch Zahlen.',
-            16, CP_H - 16);
-
-        ctx.globalAlpha = 1;
-    }
-
     // ---------- Render ----------
     function draw(now) {
         if (!active) return;
@@ -1203,22 +1089,6 @@ const SpaceMorph = (() => {
             }
         }
 
-        // ---------- Katze → Zahlenlinie (nur der letzte Schritt) ----------
-        if (cur === IDX_LAST) {
-            if (!cpStart) { cpStart = now; cpSpawned = 0; cpBorn.length = 0; cpFrom.length = 0; }
-            const ca = sub(now - t0, 350, 1050);
-            if (ca > 0.01) {
-                const sc = clamp(Math.min(1, (W - 372) / CP_W), 0.6, 1);
-                ctx.save();
-                ctx.translate(W - 26 - CP_W * sc, 28);
-                ctx.scale(sc, sc);
-                drawCatPanel(now, ca);
-                ctx.restore();
-            }
-        } else if (cpStart) {
-            cpStart = 0;
-        }
-
         raf = requestAnimationFrame(draw);
     }
 
@@ -1321,7 +1191,6 @@ const SpaceMorph = (() => {
         autoOrbitDone = false;
         autoOrbitStart = 0;
         autoOrbitFromAngle = 0;
-        cpStart = 0; cpSpawned = 0;
         if (inited) updateText();
         updateTables();
     }
