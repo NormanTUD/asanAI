@@ -2,19 +2,21 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **T15–T27 alle fertig** (Folie-2-Batch, Rename, Constant-Heading
-> T18, Smooth-Transition T20 [8+9 gemerged], Loss-Plot T23, Hierarchy-ausgliedern T24,
-> Idealisiert T27, DenseRaum T21/T22/T25/T26). **Deck jetzt 12 Folien.**
-> **Noch offen aus vorher: T7** (Hund im Training), **T8** (RGB-Matrix), **T9** (Filter-Folie).
+> Letzte Aktualisierung: **T7 + T8 + T9 fertig** (Hund wechselt im Training; RGB-Matrix als
+> Schritt 5 der Conv-Folie, blauer Pixel-Zoom raus; Filter → eigene Folie 8 „Ein Filter ist
+> ein Muster"). **Deck jetzt 14 Folien.** **Keine offenen Aufgaben mehr.**
 
 ## Dateien die ich analysiert habe
-- `index.html` — 13 Folien, Reihenfolge unten.
-- `katze.js` — KatzeKit-Framework (Steps: k/t/p/c/i/f) + ConvDemo (Folie 6, 8 Schritte),
-  FlattenDemo (Folie 7, 2 Schritte), PipelineDemo (Folie 11, 8 Schritte).
-- `dense_raum.js` — DenseRaum (Folie 10, „Vom Bild zu Punkten", 5 Schritte, Sattel z=x·y).
-- `space_morph.js` — SpaceMorph (Folie 9, „Was machen Dense Layer?", Ei/Schale, schön).
-- `hierarchy.js` — HierarchyDemo (Folie 12, echte Faltung auf stop_sign.jpg).
-- `nn_demos.js` — NeuronIntroViz (Folie 8, 2 Szenen), TypewriterViz.
+- `index.html` — 14 Folien, Reihenfolge unten.
+- `katze.js` — KatzeKit-Framework (Steps: k/t/p/c/i/f) + ConvDemo (Folie 7, 5 Schritte,
+  T8: RGB-Matrix als Schritt 5, blauer Pixel-Zoom raus),
+  **FilterDemo (Folie 8, 4 Schritte, T9: aus ConvDemo herausgelöst)**,
+  FlattenDemo (Folie 9, 2 Schritte), PipelineDemo (Folie 12, 8 Schritte),
+  PipelineGoalDemo (Folie 4).
+- `dense_raum.js` — DenseRaum (Folie 11, „Vom Bild zu Punkten", 5 Schritte).
+- `space_morph.js` — SpaceMorph (Szene B von Folie 10 „Was sind Dense Layer?", Ei/Schale).
+- `hierarchy.js` — HierarchyDemo (eigene Datei `hierarchy.html`, T24, aus dem Deck).
+- `nn_demos.js` — NeuronIntroViz (Szene A von Folie 10), FlipClockViz (Folie 2), TypewriterViz.
 - `hund.html` — ASCII-Hund (32×32, `HundKit`, `RGB`, `ART`), Vorlage für den Hund-Track.
 - `presentation.js` — DemoRegistry, Fragment-System, Navigation, Boot (runBootSequence).
 - `index.css` — `.kz-*` Framework, `.kz-arrow` (grau `#c3c8d2`, **nicht** blau).
@@ -23,12 +25,14 @@
 - **Kein Bild-Input**: Ich kann keine PNG/JPG ansehen und lade keine externen Bilder.
   → Echte Fotos/Screenshots muss Norman liefern ODER ich baue Canvas-/ASCII-Nachbildungen.
 
-## Folien-Reihenfolge (aktuell, index.html — 13 Folien)
+## Folien-Reihenfolge (aktuell, index.html — 14 Folien)
 1. Titel · 2. Klassisch vs. KI · 3. Geschichte · **4. Was wir wollen** (Ziel, T29)
-· **5. Man arbeitet in Schichten** · **6. Drei Bausteine dafür** (T29) · 7. Convolution
-· 8. Flatten · 9. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph =
-  Szene B, T20) · 10. Vom Bild zu Punkten (DenseRaum) · 11. Der gesamte Prozess (Pipeline)
-· 12. Alles idealisiert (T27, vor asanAI) · 13. asanAI (Schluss/Live-Demo).
+· **5. Man arbeitet in Schichten** · **6. Drei Bausteine dafür** (T29) ·
+7. **Das Bild als Zahlen** (ConvDemo, 4 Schritte, T9) · 8. **Ein Filter ist ein Muster**
+(FilterDemo, 4 Schritte, T9) · 9. Flatten · 10. **Was sind Dense Layer?** (gemerged:
+NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (DenseRaum)
+· 12. Der gesamte Prozess (Pipeline) · 13. Alles idealisiert (T27, vor asanAI)
+· 14. asanAI (Schluss/Live-Demo).
 **Eigene Datei:** Convolutions (Hierarchy) → `hierarchy.html` (T24, aus dem Deck).
 
 ---
@@ -83,32 +87,38 @@
 - Unter der x-Spalte in Szene 2 ein **`\underbrace{...}_{\text{das Bild}}`** setzen
   (analog zu „lernbar" unter W und B).
 
-### T7 · Hund-Track: Netz lernt Katze UND Hund  `[~]`
+### T7 · Hund-Track: Netz lernt Katze UND Hund  `[x]`
 - ✅ **Ziel-Teil fertig**: Folie 5 (Ziel) zeigt Katze UND Hund, je das Richtige (→ T4).
 - ✅ **Hund-Raster in KatzeKit** ergänzt: `HUND_ART`/`HUND_RGB`/`drawGridHund` (aus hund.html).
   Dient T7 + T11 (Mini-Hund-Beispieldot).
-- ⏳ **Training-Teil (offen)**: PipelineDemo Schritt „Lernen" (6) soll das Eingangs-Bild
-  **wechselnd Katze↔Hund** blenden (Normans Entscheidung: „Abwechselnd im Training").
-  Ziel bleibt Katze=100 %. → im nächsten Schritt umsetzen.
+- ✅ **Training-Teil fertig**: PipelineDemo Schritt „Lernen" (6) blendet das Eingangs-Bild
+  **wechselnd Katze↔Hund** (smoothstep-Tripelwellen, `cdT`/`mixCD`, Vollzyklus ~3 s); die
+  Ausgabe folgt dem Eingang (pCat/pDog/hotCat/hotDog), der Fuß-Text folgt (Katze/Hund X %).
+  Ziel bleibt Katze=100 %. `node --check` katze.js clean. *(Crossfade-Gefühl nicht visuell geprüft.)*
 
-### T8 · „Katze wird zu Zahlen" → RGB-Matrix-Darstellung  `[ ]`
-- Problem: „Katze wird zu Zahlen" ergibt keinen Sinn (ein Bild **ist** schon Zahlen).
-- Stattdessen zeigen: Das Bild ist eine **große Matrix**, in der **kleinere Matrizen** stecken
-  (je **3 Werte R,G,B** pro Pixel). Mit **LaTeX-Dots** (`\ddots`/`\cdots`) andeuten, dass sie riesig
-  ist (32×32×3). **Echte Pixelwerte** aus dem Bild einfüllen, RGB **farbig** ein.
-- **Wo**: Folie 6 (Conv), **nach „Jeder Pixel ist nur eine Zahl"**, **statt dem blauen
-  Pixel-Zoom** (= das blau markierte Beispiel-Pixel + Zeile zum Wert-Kasten, `drawPixelZoom`,
-  `#2563eb`). Zeigt den **linken/oberen Teil** der Bild-Matrix mit RGB-Untermatrizen.
-- → **Frage 5** (genauer Einbau: neuer Schritt / Schritt ersetzen / eigene Folie).
-- Verknüpft mit T8-Konzept: „das Flatten-Band wird so verbogen, dass es auf die richtige
-  Kategorie zeigt" — **zu komplex zu zeigen**, wir zeigen stattdessen die Matrix.
+### T8 · „Katze wird zu Zahlen" → RGB-Matrix-Darstellung  `[x]`
+- ✅ Fertig (Frage 5: **neuer Schritt** nach „Jeder Pixel ist nur eine Zahl"). ConvDemo hat jetzt
+  **5 Schritte** (Schritt 5 = „Das ganze Bild ist eine Zahlen-Matrix"): links die graue Katze,
+  rechts `drawRGBMatrix` (katze.js) — ein 4×4-Block der oberen/linken echten Pixel, jedes Pixel
+  als Zelle mit Farb-Swatch + **R/G/B-Werten farbig** (echt aus `KatzeKit.RGB`), daneben/unten
+  **LaTeX-Punkte** (⋯/⋮/⋱) für den riesigen Rest + Label **(32, 32, 3)**.
+- **Blauer Pixel-Zoom entfernt**: `drawPixelZoom` + `ZW/ZH/ZR/ZC/ZVAL`/`zoomA` aus dem ConvDemo
+  raus (Schritt 4 = graue Katze mittig, kein Zoom-Panel mehr).
+- **Verifiziert:** `node --check` katze.js; Nav-Simulation (headless): `conv:0→1→2→3→4` (Matrix)
+  → `filter:0→…`; Schritt-5-Inhalt (Titel/Pill/Insight) rendert; keine Console-/Frame-Errors.
+  *(Canvas-Look der Matrix nicht visuell geprüft — Zellen-Maße ggf. noch nachschärfen.)*
 
-### T9 · „Ein Filter ist ein Muster" → eigene Folie mit Titel  `[ ]`
-- Ab Schritt „Ein Filter ist ein Muster für einen Bestandteil." (ConvDemo Schritt 5) aus der
-  Conv-Folie ausgliedern → **eigene Folie**, die **einen `<h2>`-Titel** bekommt.
-- Konsequent: die Conv-Folie (Folie 6) endet bei „Jeder Pixel ist nur eine Zahl" (+ ggf. T8-Matrix),
-  die Filter-/Sweep-/8×8-Schritte ziehen auf die neue Folie.
-- ⚠️ Verändert die Schrittanzahl von ConvDemo + DemoRegistry-Eintrag + Folienanzahl (13 → 14+).
+### T9 · „Ein Filter ist ein Muster" → eigene Folie mit Titel  `[x]`
+- ✅ Fertig: ConvDemo auf 4 Schritte gekürzt (Farbbild → 3 Kanäle → Grau → Pixel), Filter-/
+  Sweep-/8×8-Logik in neues **`FilterDemo`** (katze.js) ausgegliedert → neue Folie 8
+  `slide-filter` „Ein Filter ist ein Muster" (kz-const „Convolution", 4 Schritte: Filter →
+  auf Bild gelegt → Sweep → Augen leuchten). Conv-Folie (Folie 7) hat jetzt kz-const
+  „Das Bild als Zahlen" (4 Schritte). ConvDemo-Dead-Code (Filter-Setup + Sweep-Guardrails)
+  entfernt. Registry: neuer Eintrag `filter` (slideTest `slide-filter`), `convolution`-Kommentar
+  auf 4 Schritte aktualisiert. Deck 13 → **14** Folien, Folie-Kommentare umnummeriert.
+- **Verifiziert:** `node --check` katze.js + presentation.js; Nav-Simulation (headless, 16×
+  ArrowRight ab Folie 7): `conv:0→1→2→3` → `filter:0→1→2→3` → `flatten:0→1` → `dense-layer`.
+  Keine Console-Errors. *(Canvas-Rendering der Filter-Folie nicht visuell geprüft.)*
 
 ### T10 · Terminologie — zwei VERSCHIEDENE Dinge sauber trennen  `[x]`
 - (DenseRaum-Teil „Faltung" wird in T11 gesetzt.)

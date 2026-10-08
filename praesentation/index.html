@@ -214,19 +214,18 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 7: Die Katze, Farbbild → Kanäle → Pixel → Filter
+     Folie 7: Das Bild als Zahlen (T9: Filter ausgegliedert)
      ------------------------------------------------------------
      Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze:
      Farbbild → drei Kanäle (R/G/B) → ein Kanal (Grau) →
-     Pixel = Zahl (0–255, Zoom) → 6×5-Filter in Augen-Form →
-     blockweiser Sweep (hält auf jedem Pixel-Block) → 8×8-Map,
-     in der die Augen als zwei große Pixel leuchten.
-     Gestuft (8 Schritte).
+     Pixel = Zahl (0–255). Gestuft (4 Schritte). Der Filter-Teil
+     (6×5-Filter, blockweiser Sweep, 8×8-Map) ist auf Folie 8
+     ("Ein Filter ist ein Muster", FilterDemo).
      ============================================================ -->
-<div class="slide" id="slide-convolution" data-title="Jeder Pixel ist nur eine Zahl">
+<div class="slide" id="slide-convolution" data-title="Das Bild als Zahlen">
     <div class="slide-content">
         <div class="kz">
-            <div class="kz-head"><h2 class="kz-const">Convolution</h2><div class="kz-tswap" id="conv-tswap">
+            <div class="kz-head"><h2 class="kz-const">Das Bild als Zahlen</h2><div class="kz-tswap" id="conv-tswap">
                 <div class="kz-title" id="conv-title">Nehmen wir ein<br><em>Farbbild</em> einer Katze.</div>
             </div></div>
 
@@ -242,7 +241,33 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 8: Was macht Flatten?
+     Folie 8: Ein Filter ist ein Muster (T9: aus ConvDemo herausgelöst)
+     ------------------------------------------------------------
+     FilterDemo (katze.js): der 6×5-Filter (Form eines Katzenauges)
+     wird auf das Bild gelegt, blockweise über das Bild gefegt
+     (Sweep, hält an jedem Anker), und die 8×8-Map leuchtet an den
+     Augen. (4 Schritte: Filter → legen → Sweep → Map.)
+     ============================================================ -->
+<div class="slide" id="slide-filter" data-title="Ein Filter ist ein Muster">
+    <div class="slide-content">
+        <div class="kz">
+            <div class="kz-head"><h2 class="kz-const">Convolution</h2><div class="kz-tswap" id="filt-tswap">
+                <div class="kz-title" id="filt-title">Ein <em>Filter</em> ist ein Muster für<br>einen <em>Bestandteil</em>.</div>
+            </div></div>
+
+            <div class="kz-stage"><canvas id="filt-cv"></canvas></div>
+
+            <div class="kz-foot"><div class="kz-fswap" id="filt-fswap">
+                <div class="kz-pill" id="filt-pill">Um Katzen zu erkennen, hilft es, Katzenaugen zu erkennen.</div>
+                <div class="kz-chips" id="filt-chips"><span class="kz-chip">(6, 5)</span></div>
+            </div></div>
+
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="filt-insight"></div></div>
+        </div>
+    </div>
+</div>
+<!-- ============================================================
+     Folie 9: Was macht Flatten?
      ------------------------------------------------------------
       Katze-Framework (katze.js, FlattenDemo): 32×32 ASCII-Katze:
       Farbiges Raster → Schnur (1024 Zahlen) → Fazit ("Der Trick").
@@ -266,7 +291,7 @@
         </div>
     </div>
 </div>
-<!-- ==================== Folie 9: Was sind Dense Layer? (T20: NeuronIntro + SpaceMorph, 1 Folie) ==================== -->
+<!-- ==================== Folie 10: Was sind Dense Layer? (T20: NeuronIntro + SpaceMorph, 1 Folie) ==================== -->
 <div class="slide" id="slide-dense-layer" data-title="Was sind Dense Layer?">
     <div class="slide-content" style="background:#f8fafc;">
         <h2>Was sind Dense Layer?</h2>
@@ -368,7 +393,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 10: Vom Bild zu Punkten (dense_raum.js)
+     Folie 11: Vom Bild zu Punkten (dense_raum.js)
      ------------------------------------------------------------
       Katze-Framework (dense_raum.js, DenseRaum): Panel
       (Katze → 1024 Zahlen) → aus Zahlen werden Punkte
@@ -397,7 +422,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 11: Der gesamte Prozess
+     Folie 12: Der gesamte Prozess
      ------------------------------------------------------------
       Katze-Framework (katze.js, PipelineDemo): das ganze Netz in
       einem Blick, Bild → Layer 1 (Muster im Bild) → Layer 2
@@ -432,7 +457,7 @@
      hierarchy.html — separat aufrufbar.
      ============================================================ -->
 <!-- ============================================================
-     Folie 12: Ein ehrlicher Hinweis — alles ist idealisiert
+     Folie 13: Ein ehrlicher Hinweis — alles ist idealisiert
      (T27: vor asanAI geschoben, eine Position früher)
      ------------------------------------------------------------
      Was wir gezeigt haben, ist die INTUITION, mit der wir
@@ -480,7 +505,7 @@
     </div>
 </div>
 <!-- ============================================================
-     Folie 13: asanAI, Überleitung zur Live-Demo (Schluss)
+     Folie 14: asanAI, Überleitung zur Live-Demo (Schluss)
      ============================================================ -->
 <div class="slide" id="slide-asanai" data-title="asanAI">
     <div class="slide-content asan-slide">

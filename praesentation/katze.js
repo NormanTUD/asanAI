@@ -569,328 +569,19 @@ const KatzeKit = (() => {
 const ConvDemo = (() => {
 	'use strict';
 
-	// Der Filter ist so groß wie ein Auge: 6×5. Template = linkes
-	// Auge (Zeilen 10–15, Spalten 4–8): 1, wo das Auge gelb ist.
-	const KH = 6, KW = 5, ER = 10, EC = 4;
-	const TPL = [];
-	for (let dr = 0; dr < KH; dr++)
-		for (let dc = 0; dc < KW; dc++)
-			TPL.push(KatzeKit.YELLOW[(ER + dr) * KatzeKit.N + (EC + dc)]);
-	const TMAX = TPL.reduce((a, b) => a + b, 0);
-	const OH = KatzeKit.N - KH + 1, OW = KatzeKit.N - KW + 1;
-	const OCELLS = OH * OW, TH = 20;
-	const SCORES = new Array(OCELLS);
-	for (let r = 0; r < OH; r++) for (let c = 0; c < OW; c++) {
-		let s = 0;
-		for (let dr = 0; dr < KH; dr++)
-			for (let dc = 0; dc < KW; dc++)
-				if (TPL[dr * KW + dc]) s += KatzeKit.YELLOW[(r + dr) * KatzeKit.N + (c + dc)];
-		SCORES[r * OW + c] = s;
-	}
-
-	// Ausgabe: 8×8 (Pooling der feinen 27×28-Map). Jede Zelle
-	// (R,C) deckt einen Block feiner Fenster ab; sie leuchtet,
-	// wenn dort ein Fenster voll aufs Auge passt.
-	const O8 = 8;
-	const LIT8 = new Array(O8 * O8).fill(-1);
-	for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
-		const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
-		const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
-		for (let fr = fr0; fr <= fr1; fr++)
-			for (let fc = fc0; fc <= fc1; fc++) {
-				const i = fr * OW + fc;
-				if (SCORES[i] >= TH && (LIT8[R * O8 + C] < 0 || i < LIT8[R * O8 + C]))
-					LIT8[R * O8 + C] = i;
-			}
-	}
-
-	// Blockweiser Sweep: das Fenster hält an jeder Anker-Position
-	// (DWELL), dann gleitet es weich zur nächsten (MOVE, Serpentine).
-	// Alle Anker sind GANZZAHLIG, in der Haltephase sitzt das
-	// Fenster exakt auf dem Pixel-Raster ("wirklich passen").
-	// Die Abstände sind so gewählt, dass JEDES feine Fenster und
-	// JEDE 8×8-Zelle von mindestens einem Anker überdeckt wird:
-	//   Abdeckung von (lfr, lfc) gilt für Anker (afr, afc) mit
-	//   afr ≤ lfr ≤ afr+KH-1 und afc ≤ lfc ≤ afc+KW-1.
-	// Die Anker umfassen exakt (fr=10, fc=4) und (fr=10, fc=19):
-	// dort deckt das 6×5-Fenster die Augen (Zeilen 10–15) pixelgenau ab.
-	const ANCH_ROW = [0, 5, 10, 16, 21, 26];
-	const ANCH_COL = [0, 4, 9, 14, 18, 19, 23, 27];
-	const ANCHORS = [];
-	for (let ar = 0; ar < ANCH_ROW.length; ar++)
-		for (let ac = 0; ac < ANCH_COL.length; ac++) {
-			const col = ar % 2 === 0 ? ac : ANCH_COL.length - 1 - ac;
-			ANCHORS.push({ fr: ANCH_ROW[ar], fc: ANCH_COL[col] });
-		}
-	const ANCH = ANCHORS.length; // 48
-	const SW_DWELL = 5, SW_MOVE = 6; // 60-FPS-Einheiten (~0.08 s / ~0.10 s)
-
-	// Segment-Zeitleiste: Segment 2i = Halten an Anker i,
-	// Segment 2i+1 = Fahrt Anker i → i+1.
-	const SEG_T = [];
-	let SW_TOTAL = 0;
-	{
-		for (let i = 0; i < ANCH; i++) {
-			SEG_T.push(SW_TOTAL); SW_TOTAL += SW_DWELL;
-			if (i < ANCH - 1) { SEG_T.push(SW_TOTAL); SW_TOTAL += SW_MOVE; }
-		}
-	}
-
-	function sweepPos(t) {
-		t = Math.max(0, Math.min(t, SW_TOTAL));
-		for (let i = SEG_T.length - 1; i >= 0; i--) {
-			if (t < SEG_T[i]) continue;
-			const a0 = (i / 2) | 0;
-			if (i % 2 === 0)
-				return { fr: ANCHORS[a0].fr, fc: ANCHORS[a0].fc, anchor: a0, moving: false };
-			const e = KatzeKit.eInOut((t - SEG_T[i]) / SW_MOVE);
-			return {
-				fr: KatzeKit.lerp(ANCHORS[a0].fr, ANCHORS[a0 + 1].fr, e),
-				fc: KatzeKit.lerp(ANCHORS[a0].fc, ANCHORS[a0 + 1].fc, e),
-				anchor: a0 + 1, moving: true
-			};
-		}
-		return { fr: ANCHORS[ANCH - 1].fr, fc: ANCHORS[ANCH - 1].fc, anchor: ANCH - 1, moving: false };
-	}
-
-	// Der Block, der angezeigt wird: während der Fahrt bleibt der
-	// Ausgangs-Anker stehen, erst beim Aufsetzen springt die Anzeige
-	// weiter — sonst rasen Treffer-Zahl und Badge beim Gleiten durch
-	// alle Zwischenzellen (Flackern).
-	function shownAnchor(pos) {
-		if (!pos) return 0;
-		return pos.moving ? Math.max(0, pos.anchor - 1) : pos.anchor;
-	}
-
-	// Wann leuchtet/füllt sich jede 8×8-Zelle? Vorberechnet auf der
-	// Zeitleiste: die Zeit der ersten Anker-Halte, in der das Fenster
-	// den Zellen-Leuchtpunkt (lit) bzw. Zellen-Mittelpunkt (full)
-	// überdeckt. -1 = nie überdeckt (darf nicht passieren, die
-	// Guardrails prüfen es).
-	const tLit8 = new Array(O8 * O8).fill(-1);
-	const tFull8 = new Array(O8 * O8).fill(-1);
-	{
-		const covers = (pfr, pfc, tfr, tfc, kh, kw) =>
-			pfr <= tfr && pfr + kh - 1 >= tfr && pfc <= tfc && pfc + kw - 1 >= tfc;
-		for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
-			const i8 = R * O8 + C;
-			const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
-			const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
-			let cfr = 0, cfc = 0, n = 0;
-			for (let fr = fr0; fr <= fr1; fr++)
-				for (let fc = fc0; fc <= fc1; fc++) { cfr += fr; cfc += fc; n++; }
-			cfr /= n; cfc /= n;
-			const lit = LIT8[i8];
-			const lfr = lit >= 0 ? (lit / OW) | 0 : null;
-			const lfc = lit >= 0 ? lit % OW : null;
-			for (let ai = 0; ai < ANCH; ai++) {
-				const a = ANCHORS[ai];
-				const t = SEG_T[2 * ai] + SW_DWELL * 0.5;
-				// Leuchten erst, wenn das Fenster selbst voll auf der Form
-				// passt (Score ≥ TH) UND den Leuchtpunkt überdeckt, nicht
-				// schon beim bloßen Berühren.
-				const strong = SCORES[a.fr * OW + a.fc] >= TH;
-				if (tLit8[i8] < 0 && lfr !== null && strong && covers(a.fr, a.fc, lfr, lfc, KH, KW))
-					tLit8[i8] = t;
-				if (tFull8[i8] < 0 && covers(a.fr, a.fc, cfr, cfc, KH, KW))
-					tFull8[i8] = t;
-			}
-		}
-	}
-
-	// ────────────────────────────────────────────────────────────
-	// 5 SWEEP-GUARDRAILS, prüfen ohne DOM, rein rechnerisch, dass
-	// der Sweep perfekt passt und flüssig läuft:
-	//   G1 Gitter     : an jedem Anker überdeckt das Fenster exakt
-	//                  ein KW×KH-Block Pixel (Rand == Zellrand)
-	//   G2 Grenzen    : über die gesamte Zeit bleibt das Fenster im
-	//                  Bild (0 ≤ fr ≤ OH-1, 0 ≤ fc ≤ OW-1)
-	//   G3 Flüssig    : keine Sprünge (Lipschitz-Begrenzung),
-	//                  exakter Halt an jedem Anker, Geschwindigkeit
-	//                  0 an den Segmentenden
-	//   G4 Map         : jede Zelle leuchtet genau, wenn das Fenster
-	//                  über ihrem Leuchtpunkt hält; jede Zelle wird
-	//                  irgendwann gefüllt (Abdeckung vollständig)
-	//   G5 Abschluss  : der Sweep endet exakt am letzten Anker, die
-	//                  Gesamtdauer ist plausibel, "Fertig" wird
-	//                  genau einmal am Ende gemeldet
-	// Aufruf im Browser: window.ConvSweepGuardrails()
-	// ────────────────────────────────────────────────────────────
-	function sweepGuardrails() {
-		const res = [];
-		const N = KatzeKit.N;
-		// Standard-Stage-Geometrie (1180×430, wie bei 1080p):
-		// die Checks sind für jede Stage-Größe identisch, hier wird
-		// mit der Referenzgröße gerechnet.
-		const W = 1180, H = 430;
-		const s = Math.min(H / N * .86, W / N * .86, 13);
-		const ox = (W - (N * s + 60 + N * s)) / 2, oy = (H - N * s) / 2 + 6;
-		// Pixelränder, exakt wie drawGrid()/drawWindow() gezeichnet.
-		const edge = (i) => ox + i * s;
-		const rectOf = (fr, fc) => ({
-			x0: Math.floor(edge(fc)), x1: Math.ceil(edge(fc + KW)),
-			y0: Math.floor(edge(fr)), y1: Math.ceil(edge(fr + KH))
-		});
-		const blockOf = (fr, fc) => {
-			const cells = [];
-			for (let r = fr; r < fr + KH; r++)
-				for (let c = fc; c < fc + KW; c++)
-					cells.push({ x0: Math.floor(edge(c)), x1: Math.ceil(edge(c + 1)),
-					             y0: Math.floor(edge(r)), y1: Math.ceil(edge(r + 1)) });
-			return {
-				x0: Math.min(...cells.map(q => q.x0)), x1: Math.max(...cells.map(q => q.x1)),
-				y0: Math.min(...cells.map(q => q.y0)), y1: Math.max(...cells.map(q => q.y1))
-			};
-		};
-
-		// G1: Gitter
-		{
-			let ok = true, why = '';
-			for (const a of ANCHORS) {
-				if (!Number.isInteger(a.fr) || !Number.isInteger(a.fc)) { ok = false; why = 'Anker nicht ganzzahlig'; break; }
-				const w = rectOf(a.fr, a.fc), b = blockOf(a.fr, a.fc);
-				if (w.x0 !== b.x0 || w.x1 !== b.x1 || w.y0 !== b.y0 || w.y1 !== b.y1) {
-					ok = false; why = `Fenster ≠ Pixelblock an (${a.fr}, ${a.fc})`; break;
-				}
-			}
-			res.push({ name: 'G1 Gitter: Fenster sitzt exakt auf KW×KH Pixeln an allen Ankern', pass: ok, detail: why || ANCH + '/' + ANCH + ' Anker pixelgenau' });
-		}
-
-		// G2: Grenzen
-		{
-			let ok = true, why = '';
-			const NS = 4000;
-			// Das komplette Bild (32×32), nicht das Fenster selbst.
-			const imgRect = {
-				x0: Math.floor(edge(0)), x1: Math.ceil(edge(N)),
-				y0: Math.floor(edge(0)), y1: Math.ceil(edge(N))
-			};
-			for (let i = 0; i <= NS; i++) {
-				const t = i / NS * SW_TOTAL;
-				const p = sweepPos(t);
-				if (p.fr < 0 || p.fr > OH - 1 || p.fc < 0 || p.fc > OW - 1) {
-					ok = false; why = `Position (${p.fr.toFixed(3)}, ${p.fc.toFixed(3)}) außerhalb`; break;
-				}
-				// Exakt das Fenster-Rechteck, wie drawWindow() es zeichnet.
-				const w = {
-					x0: Math.floor(edge(p.fc)), x1: Math.ceil(edge(p.fc + KW)),
-					y0: Math.floor(edge(p.fr)), y1: Math.ceil(edge(p.fr + KH))
-				};
-				if (w.x0 < imgRect.x0 || w.x1 > imgRect.x1 || w.y0 < imgRect.y0 || w.y1 > imgRect.y1) {
-					ok = false; why = `Fenster ragt bei t=${t.toFixed(2)} über den Bildrand`; break;
-				}
-			}
-			res.push({ name: 'G2 Grenzen: Fenster bleibt zu jeder Zeit im Bild', pass: ok, detail: why || '4001 Abtastungen, keine Randverletzung' });
-		}
-
-		// G3: Flüssig
-		{
-			let ok = true, why = '';
-			// Lipschitz: eInOut hat die 3-fache Durchschnittsgeschw.
-			// im Mittel → max. = 3 · längste Strecke / MOVE.
-			let maxSpeed = 0;
-			for (let i = 0; i < ANCH - 1; i++)
-				maxSpeed = Math.max(maxSpeed,
-					Math.hypot(ANCHORS[i + 1].fr - ANCHORS[i].fr, ANCHORS[i + 1].fc - ANCHORS[i].fc) / SW_MOVE);
-			maxSpeed *= 3;
-			const NS = 8000, dt = SW_TOTAL / NS;
-			for (let i = 0; i < NS; i++) {
-				const a = sweepPos(i * dt), b = sweepPos((i + 1) * dt);
-				if (Math.hypot(b.fr - a.fr, b.fc - a.fc) > maxSpeed * dt + 1e-9) {
-					ok = false; why = `Sprung bei t≈${(i * dt).toFixed(1)}`; break;
-				}
-			}
-			// Geschwindigkeit 0 an allen Segmentenden (weich starten,
-			// weich stoppen) + Halte-Segmente bleiben exakt still.
-			const d = 0.05;
-			for (let i = 0; i < SEG_T.length; i++) {
-				const t0 = SEG_T[i], t1 = (i === SEG_T.length - 1 ? SW_TOTAL : SEG_T[i + 1]);
-				const d0 = Math.hypot(sweepPos(t0 + d).fr - sweepPos(t0).fr, sweepPos(t0 + d).fc - sweepPos(t0).fc);
-				const d1 = Math.hypot(sweepPos(t1).fr - sweepPos(t1 - d).fr, sweepPos(t1).fc - sweepPos(t1 - d).fc);
-				if (d0 > maxSpeed * d + 1e-6 || d1 > maxSpeed * d + 1e-6) {
-					ok = false; why = `Segment ${i} startet/stopp nicht weich`; break;
-				}
-				if (i % 2 === 0) {
-					const a = sweepPos(t0), b = sweepPos(t1);
-					if (a.fr !== b.fr || a.fc !== b.fc) { ok = false; why = `Halte-Segment ${i} bewegt sich`; break; }
-				}
-			}
-			res.push({ name: 'G3 Flüssig: keine Sprünge, weiche Fahrt, exakter Halt an jedem Block', pass: ok, detail: why || `Lipschitz ≤ ${maxSpeed.toFixed(3)} Zellen/Einheit, 8000 Abtastungen` });
-		}
-
-		// G4: Map-Konsistenz
-		{
-			let ok = true, why = '';
-			const covers = (pfr, pfc, tfr, tfc) =>
-				pfr <= tfr && pfr + KH - 1 >= tfr && pfc <= tfc && pfc + KW - 1 >= tfc;
-			for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
-				const i8 = R * O8 + C;
-				const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
-				const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
-				let maxScore = -1;
-				for (let fr = fr0; fr <= fr1; fr++)
-					for (let fc = fc0; fc <= fc1; fc++)
-						maxScore = Math.max(maxScore, SCORES[fr * OW + fc]);
-				const shouldLit = maxScore >= TH;
-				if (shouldLit !== (LIT8[i8] >= 0)) { ok = false; why = `Zelle (${R},${C}): Leuchtpunkt ≠ Max-Score`; break; }
-				if (shouldLit && tLit8[i8] < 0) { ok = false; why = `Zelle (${R},${C}) wird nie überdeckt`; break; }
-				if (tFull8[i8] < 0) { ok = false; why = `Zelle (${R},${C}) wird nie gefüllt`; break; }
-				// Zeit = erste Anker-Halte mit vollem Treffer und Abdeckung
-				// (unabhängig nachrechnen)
-				if (shouldLit) {
-					const lit = LIT8[i8], lfr = (lit / OW) | 0, lfc = lit % OW;
-					let first = -1;
-					for (let ai = 0; ai < ANCH; ai++) {
-						const a = ANCHORS[ai];
-						if (SCORES[a.fr * OW + a.fc] >= TH && covers(a.fr, a.fc, lfr, lfc)) {
-							first = SEG_T[2 * ai] + SW_DWELL * 0.5;
-							break;
-						}
-					}
-					if (Math.abs(tLit8[i8] - first) > 1e-9) { ok = false; why = `Zelle (${R},${C}): Leuchtzeit weicht ab`; break; }
-				}
-			}
-			if (ok) res.push({ name: 'G4 Map: Leuchten/Füllen stimmt exakt mit Fenster-Abdeckung überein', pass: true, detail: '64/64 Zellen konsistent, alle überdeckt' });
-			else res.push({ name: 'G4 Map: Leuchten/Füllen stimmt exakt mit Fenster-Abdeckung überein', pass: false, detail: why });
-		}
-
-		// G5: Abschluss
-		{
-			let ok = true, why = '';
-			const end = sweepPos(SW_TOTAL);
-			const last = ANCHORS[ANCH - 1];
-			if (end.fr !== last.fr || end.fc !== last.fc) { ok = false; why = 'Ende ≠ letzter Anker'; }
-			const secs = SW_TOTAL / 60;
-			if (secs < 7 || secs > 12) { ok = false; why = ok ? why : ''; if (!why) why = `Dauer ${secs.toFixed(1)} s unplausibel`; }
-			// Tick-Simulation: "Fertig" wird genau einmal am Ende gemeldet.
-			let t = 0, doneMsgs = 0, wasDone = 0;
-			while (t < SW_TOTAL + 3) {
-				const done = t >= SW_TOTAL;
-				if (done && !wasDone) doneMsgs++;
-				wasDone = done;
-				t += 1; // dt = 1 (60-FPS-Einheit), wie im tick
-			}
-			if (doneMsgs !== 1) { ok = false; why = why ? why + '; ' : ''; why += `"Fertig" ${doneMsgs}× gemeldet`; }
-			if (ok) res.push({ name: 'G5 Abschluss: exaktes Ende am letzten Anker, 1× "Fertig", plausible Dauer', pass: true, detail: `Ende (${last.fr}, ${last.fc}) nach ${secs.toFixed(1)} s` });
-			else res.push({ name: 'G5 Abschluss: exaktes Ende am letzten Anker, 1× "Fertig", plausible Dauer', pass: false, detail: why });
-		}
-		return res;
-	}
-
-	let sweepT = 0, sweepDone = 0;
-	let kerA = 0, tKerA = 0;
-	let outA = 0, tOutA = 0;
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
-	let zoomA = 0, tZoomA = 0;
+	let matrixA = 0, tMatrixA = 0;
 	let bwA = 0, tBwA = 0;
-	const KC = 24; // Filter-Panel: Zellgröße in px
-	// Zoom-Panel (Schritt 4): Maße, an zwei Stellen gebraucht
-	// (layoutFor setzt die Position, drawPixelZoom zeichnet).
-	const ZW = 240, ZH = 272;
-
-	// Schritt 2: Beispiel-Pixel, oberes linkes Auge (Zeile 10, Spalte 4).
-	const ZR = 10, ZC = 4;
-	const ZVAL = KatzeKit.GREEN[ZR * KatzeKit.N + ZC];
+	// RGB-Matrix (Schritt 5): ein 5×5-Block des oberen/linken Bildteils
+	// (der linken Ohr-Spitze, damit echte Werte sichtbar variieren) als
+	// Matrix aus RGB-Tripletts, mit Punkten für den (riesigen) Rest.
+	const MB = 5;          // gezeigter Block: MB×MB Pixel
+	const MB_TOP = 2, MB_LEFT = 4; // Block-Oben/Links (Ohr-Spitze)
+	const MCC_W = 44, MCC_H = 56, MCC_G = 6; // Zellen-Maße + Spalt
+	const MBLOCK_W = MB * (MCC_W + MCC_G) - MCC_G;
+	const MBLOCK_H = MB * (MCC_H + MCC_G) - MCC_G;
+	const MAT_W = MBLOCK_W + 46;
+	const MAT_H = MBLOCK_H + 46 + 22;
 
 	// Rahmen der Graustufen-Katze. Die Katze selbst ist der Grün-Kanal
 	// (inst[PICK]), der ab Schritt 2 grau gemischt wird und in Schritt 3
@@ -930,178 +621,52 @@ const ConvDemo = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// Zoom-Panel: das Beispiel-Pixel vergrößert + Wert + Skala
-	// von schwarz (0) über den Verlauf zu weiß (255).
-	function drawPixelZoom(ctx, S) {
-		const o = S.inst[KatzeKit.PICK];
-		if (zoomA < 0.01 || S.zoomX == null) return;
-		const zw = ZW, zh = ZH;
-		const zx = S.zoomX, zy = S.zoomY;
+	// RGB-Matrix: das Bild als große Zahl-Matrix. Oben links MB×MB
+	// echte Pixel (je ein RGB-Triplett, farbig), daneben/unten Punkte
+	// für den (riesigen) Rest — Shape (32, 32, 3).
+	function drawRGBMatrix(ctx, S) {
+		if (matrixA < 0.01) return;
+		const mx = S.matrixX, my = S.matrixY;
+		ctx.globalAlpha = matrixA;
 
-		if (o.a > 0.02) {
-			const px = o.x + ZC * o.s, py = o.y + ZR * o.s;
-			ctx.globalAlpha = zoomA;
-			ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2.5;
-			ctx.strokeRect(px - 2, py - 2, o.s + 4, o.s + 4);
-			ctx.globalAlpha = 1;
+		// Zellen: je Pixel ein RGB-Triplett (Swatch + R/G/B farbig).
+		for (let r = 0; r < MB; r++) {
+			for (let c = 0; c < MB; c++) {
+				const [R, G, B] = KatzeKit.RGB[(MB_TOP + r) * KatzeKit.N + (MB_LEFT + c)];
+				const x = mx + c * (MCC_W + MCC_G), y = my + r * (MCC_H + MCC_G);
+				ctx.fillStyle = '#fff';
+				ctx.fillRect(x, y, MCC_W, MCC_H);
+				ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
+				ctx.strokeRect(x + .5, y + .5, MCC_W - 1, MCC_H - 1);
+				// Farb-Swatch: die echte Farbe des Pixels.
+				ctx.fillStyle = `rgb(${R},${G},${B})`;
+				ctx.fillRect(x + 5, y + 5, MCC_W - 10, 11);
+				// R/G/B-Werte, je in der Kanal-Farbe.
+				ctx.font = '700 11px Inter, system-ui, sans-serif';
+				ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+				ctx.fillStyle = '#ef4444'; ctx.fillText('R ' + R, x + 6, y + 28);
+				ctx.fillStyle = '#16a34a'; ctx.fillText('G ' + G, x + 6, y + 42);
+				ctx.fillStyle = '#2563eb'; ctx.fillText('B ' + B, x + 6, y + 56);
+			}
 		}
 
-		ctx.globalAlpha = zoomA;
-		ctx.fillStyle = '#fff';
-		KatzeKit.roundRect(ctx, zx, zy, zw, zh, 14);
-		ctx.fill();
-		ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.2; ctx.stroke();
-
-		const sq = 110, sx = zx + (zw - sq) / 2, sy = zy + 22;
-		ctx.fillStyle = `rgb(${ZVAL},${ZVAL},${ZVAL})`;
-		ctx.fillRect(sx, sy, sq, sq);
-		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
-		ctx.strokeRect(sx + .5, sy + .5, sq - 1, sq - 1);
-
-		ctx.fillStyle = '#0f172a';
-		ctx.font = '800 34px Inter, system-ui, sans-serif';
+		// Punkte: Fortsetzung nach rechts (⋯), unten (⋮), Ecke (⋱).
+		ctx.fillStyle = '#94a3b8';
 		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-		ctx.fillText(ZVAL + '', zx + zw / 2, sy + sq + 30);
+		ctx.font = '800 17px Inter, system-ui, sans-serif';
+		for (let r = 0; r < MB; r++)
+			ctx.fillText('⋯', mx + MBLOCK_W + 23, my + r * (MCC_H + MCC_G) + MCC_H / 2);
+		for (let c = 0; c < MB; c++)
+			ctx.fillText('⋮', mx + c * (MCC_W + MCC_G) + MCC_W / 2, my + MBLOCK_H + 23);
+		ctx.font = '800 15px Inter, system-ui, sans-serif';
+		ctx.fillText('⋱', mx + MBLOCK_W + 23, my + MBLOCK_H + 23);
 
-		// Skala: schwarzes Beispiel-Quadrat (0) — Verlauf — weißes (255).
-		const cell = 40, gGap = 12;
-		const gX0 = zx + 24 + cell + gGap, gW = zw - 2 * (24 + cell + gGap);
-		const gY = zy + zh - 84;
-		ctx.fillStyle = '#000';
-		ctx.fillRect(zx + 24, gY, cell, cell);
-		const g = ctx.createLinearGradient(gX0, 0, gX0 + gW, 0);
-		g.addColorStop(0, '#000'); g.addColorStop(1, '#fff');
-		ctx.fillStyle = g;
-		ctx.fillRect(gX0, gY, gW, cell);
-		ctx.fillStyle = '#fff';
-		ctx.fillRect(zx + zw - 24 - cell, gY, cell, cell);
-		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
-		ctx.strokeRect(zx + 24.5, gY + .5, zw - 49, cell - 1);
-
+		// Shape-Label.
 		ctx.fillStyle = '#64748b';
-		ctx.font = '600 11px Inter, system-ui, sans-serif';
-		ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-		ctx.fillText('0', zx + 24 + cell / 2, gY + cell + 13);
-		ctx.fillText('255', zx + zw - 24 - cell / 2, gY + cell + 13);
-
-		// Verbindungslinie Pixel → Quadrat
-		if (o.a > 0.3) {
-			const px = o.x + (ZC + .5) * o.s, py = o.y + (ZR + .5) * o.s;
-			ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
-			ctx.beginPath();
-			ctx.moveTo(px + o.s / 2 + 4, py);
-			ctx.lineTo(sx - 4, sy + sq / 2);
-			ctx.stroke();
-		}
+		ctx.font = '600 12.5px Inter, system-ui, sans-serif';
+		ctx.fillText('(32, 32, 3)', mx + MAT_W / 2, my + MAT_H - 11);
 		ctx.globalAlpha = 1;
 	}
-
-	function drawOutput8(ctx, S) {
-		if (outA < 0.01) return;
-		const o = S.inst[0], s = o.s;
-		const os = s * 4; // 8 Zellen = 32 Bildspalten → gleich groß wie die Katze
-		const ox = o.x + KatzeKit.N * s + 60, oy = o.y;
-
-		ctx.globalAlpha = outA * 0.9;
-		ctx.fillStyle = '#fff';
-		KatzeKit.roundRect(ctx, ox - 7, oy - 7, O8 * os + 14, O8 * os + 14, 11);
-		ctx.fill();
-		ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1; ctx.stroke();
-		ctx.globalAlpha = 1;
-		if (S.step < 5) return;
-
-		for (let i8 = 0; i8 < O8 * O8; i8++) {
-			const R = (i8 / O8) | 0, C = i8 % O8;
-			const x = Math.floor(ox + C * os), y = Math.floor(oy + R * os);
-			const xw = Math.ceil(ox + (C + 1) * os) - x, yh = Math.ceil(oy + (R + 1) * os) - y;
-			const lit = LIT8[i8];
-			const isLit = lit >= 0 && (S.step >= 7 || (S.step === 6 && sweepT >= tLit8[i8]));
-			const isFull = !isLit && (S.step >= 7 || (S.step === 6 && sweepT >= tFull8[i8]));
-			ctx.globalAlpha = outA;
-			if (isLit) {
-				ctx.fillStyle = 'rgba(76,175,80,.5)';
-				ctx.fillRect(x, y, xw, yh);
-				ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
-				ctx.strokeRect(x + 1, y + 1, xw - 2, yh - 2);
-			} else if (isFull) {
-				ctx.fillStyle = '#f6f7f9';
-				ctx.fillRect(x, y, xw, yh);
-			}
-			ctx.globalAlpha = 1;
-		}
-
-		// Weicher Glow um die leuchtenden Augen-Pixel (ab dem Moment,
-		// in dem der Sweep das Auge findet).
-		if (S.step >= 6) {
-			for (let i8 = 0; i8 < O8 * O8; i8++) {
-				const lit = LIT8[i8];
-				if (lit < 0 || (S.step === 6 && sweepT < tLit8[i8])) continue;
-				const R = (i8 / O8) | 0, C = i8 % O8;
-				const cx = ox + (C + .5) * os, cy = oy + (R + .5) * os;
-				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, os * 1.8);
-				g.addColorStop(0, 'rgba(76,175,80,.32)');
-				g.addColorStop(1, 'rgba(76,175,80,0)');
-				ctx.fillStyle = g;
-				ctx.fillRect(cx - os * 2, cy - os * 2, os * 4, os * 4);
-			}
-		}
-	}
-
-	function drawKernel(ctx, S) {
-		if (kerA < 0.01) return;
-		const o = S.inst[0], s = o.s;
-		const kw = KW * KC, kh = KH * KC;
-		const kx = Math.max(o.x - kw - 56, 4);
-		const ky = o.y + (KatzeKit.N * s) / 2 - kh / 2;
-		ctx.globalAlpha = kerA;
-		ctx.fillStyle = '#111';
-		KatzeKit.roundRect(ctx, kx - 9, ky - 9, kw + 18, kh + 18, 10);
-		ctx.fill();
-		ctx.strokeStyle = '#333'; ctx.lineWidth = 1.2; ctx.stroke();
-		// Nur die Form (gelb = Auge, schwarz = Pupille/Rand), keine Zahlen.
-		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
-			if (!TPL[r * KW + c]) continue;
-			ctx.fillStyle = '#E2C72E';
-			KatzeKit.roundRect(ctx, kx + c * KC + 3, ky + r * KC + 3, KC - 6, KC - 6, 3);
-			ctx.fill();
-		}
-		ctx.globalAlpha = 1;
-	}
-
-	function drawWindow(ctx, S) {
-		if (S.step < 5 || S.step > 6) return;
-		const o = S.inst[0], s = o.s;
-		// Schritt 6: Fenster auf der Startposition; Schritt 7:
-		// blockweiser Sweep, an den Ankern ganzzahlig, und das
-		// Fenster wird exakt auf den Pixel-Block gesnapt (G1).
-		const pos = S.step === 6 ? sweepPos(sweepT) : { fr: 0, fc: 0 };
-		const x = Math.floor(o.x + pos.fc * s), y = Math.floor(o.y + pos.fr * s);
-		const x1 = Math.ceil(o.x + (pos.fc + KW) * s), y1 = Math.ceil(o.y + (pos.fr + KH) * s);
-		// Score wie im Text: während der Fahrt steht die Anzeige
-		// still (sonst wandert der Badge durch alle Zwischenzellen).
-		const ai = S.step === 6 ? shownAnchor(pos) : 0;
-		const a = ANCHORS[ai];
-		const sc = SCORES[a.fr * OW + a.fc], hot = sc >= 4;
-
-		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
-		ctx.fillRect(x, y, x1 - x, y1 - y);
-		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 2;
-		ctx.strokeRect(x + 1, y + 1, x1 - x - 2, y1 - y - 2);
-
-		const bw = 46, bh = 20, bx = (x + x1) / 2 - bw / 2, by = y - bh - 6;
-		if (by > 0) {
-			ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh);
-			ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.1;
-			ctx.strokeRect(bx + .5, by + .5, bw - 1, bh - 1);
-			ctx.fillStyle = hot ? '#2e7d32' : '#4a7fc0';
-			ctx.font = '600 11.5px Inter, system-ui, sans-serif';
-			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			ctx.fillText(sc + '', (x + x1) / 2, by + bh / 2);
-		}
-	}
-
-	if (typeof window !== 'undefined')
-		window.ConvSweepGuardrails = sweepGuardrails;
 
 	return KatzeKit.create({
 		slideId: 'slide-convolution',
@@ -1121,29 +686,14 @@ const ConvDemo = (() => {
 			{ k: 'Schritt 4', t: 'Jeder Pixel ist<br>nur eine <em>Zahl</em>.',
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
-			{ k: 'Schritt 5', t: 'Ein <em>Filter</em> ist ein Muster für<br>einen <em>Bestandteil</em>.',
-			  p: 'Um Katzen zu erkennen, hilft es, Katzenaugen zu erkennen.',
-			  c: '<span class="kz-chip">(6, 5)</span>' },
-			{ k: 'Schritt 6', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
-			  p: `Punkt <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
-			  c: '' },
-			{ k: 'Schritt 7', t: '… und <em>fließt</em> über<br>das ganze Bild.',
-			  p: `Block <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
-			  // f: 0 → der Fuß bleibt stehen, nur der Text wird
-			  // fortlaufend aktualisiert (kein Aus-/Einrollen).
-			  f: 0,
-			  c: '',
-			  i: 'An jedem Platz <b>misst</b> der Filter, wie gut sein Fenster zum <b>darunterliegenden</b> Bildstück passt: gleiche Werte = hohe Zahl, kaum Übereinstimmung = nahe 0. Das Fenster <b>hält</b> kurz auf jedem Block.' },
-			{ k: 'Schritt 8', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
-			  p: `1024 Pixel → ${O8 * O8} Zahlen, und die Augen bleiben`,
-			  c: '',
-			  i: 'Die Augen-Form ist nur <b>unser Beispiel</b>. Im echten Training bringt sich der Computer die Filter <b>selbst bei</b>, anhand der Trainingsdaten.' }
+			{ k: 'Schritt 5', t: 'Das ganze Bild ist<br>eine <em>Zahlen-Matrix</em>.',
+			  p: '32 × 32 Pixel, jedes mit drei Zahlen: Rot · Grün · Blau',
+			  c: '<span class="kz-chip">(32, 32, 3)</span>',
+			  i: 'Ein Bild ist also eine riesige Zahl-Matrix (32 × 32 × 3): jedes Pixel steckt als kleines RGB-Triplett drin. So „sieht" der Computer ein Foto — als reine Zahlen.' }
 		],
 
 		layoutFor(step, S) {
 			const { W, H, inst } = S;
-			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, 13);
-			const imgW = KatzeKit.N * s, gapOut = 60, outW = O8 * s * 4;
 			tBwA = 0;
 			if (step === 0) {
 				// Farbbild: eine große farbige Katze in der Mitte.
@@ -1185,12 +735,10 @@ const ConvDemo = (() => {
 				S.bwX = x0 + KatzeKit.N * cs + gapP;
 				S.bwY = (H - (72 + 60)) / 2;
 			} else if (step === 3) {
-				// Der Grün-Kanal (aus Schritt 2, bereits grau gemischt)
-				// fliegt nach links, Bewegung statt Fade-Out. Zoom-Panel
-				// rechts, mit den zwei Beispiel-Pixeln aus Schritt 3.
-				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .5, 10);
-				const zw = ZW, zh = ZH, gap = 90;
-				const x0 = (W - (KatzeKit.N * cs + gap + zw)) / 2;
+				// Der Grün-Kanal (grau) in der Mitte. (Zoom-Panel raus,
+				// T8 — das Bild wird im nächsten Schritt zur Matrix.)
+				const cs = Math.min(H / KatzeKit.N * .8, W / KatzeKit.N * .55, 10);
+				const x0 = (W - KatzeKit.N * cs) / 2;
 				inst.forEach((o, i) => {
 					o.ts = cs; o.tx = x0; o.ty = (H - KatzeKit.N * cs) / 2 + 6;
 					o.tmix = i === KatzeKit.PICK ? 1 : 0;
@@ -1198,36 +746,339 @@ const ConvDemo = (() => {
 				});
 				tTagA = [0, 0, 0];
 				S.tGrayMix = 1;
-				S.zoomX = x0 + KatzeKit.N * cs + gap;
-				S.zoomY = (H - zh) / 2;
-			} else {
-				S.tGrayMix = 0;
+			} else if (step === 4) {
+				// Links die graue Katze (klein), rechts die RGB-Matrix.
+				const cs = Math.min(H / KatzeKit.N * .58, W / KatzeKit.N * .3, 8);
+				const catW = KatzeKit.N * cs, gap = 64;
+				const totW = catW + gap + MAT_W;
+				const x0 = (W - totW) / 2;
+				const maxH = Math.max(catW, MAT_H);
+				const y0 = (H - maxH) / 2 + 4;
 				inst.forEach((o, i) => {
-					o.ts = s;
-					o.tx = (W - (imgW + gapOut + outW)) / 2;
-					o.ty = (H - imgW) / 2 + 6;
-					o.tmix = i === 0 ? 0 : 1;
-					o.ta = i === 0 ? (step >= 7 ? .22 : 1) : 0;
+					o.ts = cs; o.tx = x0; o.ty = y0 + (maxH - catW) / 2;
+					o.tmix = i === KatzeKit.PICK ? 1 : 0;
+					o.ta = i === KatzeKit.PICK ? 1 : 0;
 				});
 				tTagA = [0, 0, 0];
+				S.tGrayMix = 1;
+				S.matrixX = x0 + catW + gap;
+				S.matrixY = y0 + (maxH - MAT_H) / 2;
 			}
-			tKerA = step <= 3 ? 0 : (step >= 7 ? .45 : 1);
-			tOutA = step >= 5 ? 1 : 0;
-			tZoomA = step === 3 ? 1 : 0;
+			tMatrixA = step === 4 ? 1 : 0;
 		},
 
 		onStep(step) {
-			if (step === 6) { sweepT = 0; sweepDone = 0; }
+			// (Filter-Schritte leben jetzt in FilterDemo.)
+		},
+
+		tick(dt, k, S, setFoot) {
+			matrixA = KatzeKit.lerp(matrixA, tMatrixA, k * 1.2);
+			bwA = KatzeKit.lerp(bwA, tBwA, k * 1.2);
+			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
+		},
+
+		draw(ctx, S) {
+			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
+			const o = S.inst[0];
+			if (S.step === 0) {
+				// Farbbild: farbiges Raster.
+				KatzeKit.drawGrid(ctx, o, 0, 0);
+				if (o.a > 0.02) {
+					ctx.globalAlpha = o.a;
+					ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+					ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
+					ctx.globalAlpha = 1;
+				}
+			} else if (S.step === 1 || S.step === 2) {
+				// Kanal-Stapel; Schritt 3: nur der Grün-Kanal, fadet in Grau,
+				// daneben die zwei Beispiel-Pixel (0 / 255).
+				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
+				KatzeKit.drawTags(ctx, S, tagA);
+				drawBWPair(ctx, S);
+			} else if (S.step === 3 || S.step === 4) {
+				// Der Grün-Kanal (inst[PICK], grau) — Schritt 5 zeigt
+				// zusätzlich die RGB-Matrix rechts neben der Katze.
+				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
+				drawGrayCat(ctx, S);
+				if (S.step === 4) drawRGBMatrix(ctx, S);
+			}
+		}
+	});
+})();
+
+// ============================================================
+// FilterDemo, "Ein Filter ist ein Muster" (Folie 8)
+//
+// (T9: aus ConvDemo herausgelöst.) Der 6×5-Filter (Form eines
+// Katzenauges) wird auf das Bild gelegt, blockweise über das Bild
+// gefegt (Sweep, hält an jedem Anker), und die 8×8-Map leuchtet
+// an den Augen. 4 Schritte: 0: Filter · 1: auf Bild gelegt ·
+// 2: Sweep · 3: Map (Augen leuchten).
+// ============================================================
+const FilterDemo = (() => {
+	'use strict';
+
+	// Der Filter ist so groß wie ein Auge: 6×5. Template = linkes
+	// Auge (Zeilen 10–15, Spalten 4–8): 1, wo das Auge gelb ist.
+	const KH = 6, KW = 5, ER = 10, EC = 4;
+	const TPL = [];
+	for (let dr = 0; dr < KH; dr++)
+		for (let dc = 0; dc < KW; dc++)
+			TPL.push(KatzeKit.YELLOW[(ER + dr) * KatzeKit.N + (EC + dc)]);
+	const TMAX = TPL.reduce((a, b) => a + b, 0);
+	const OH = KatzeKit.N - KH + 1, OW = KatzeKit.N - KW + 1;
+	const OCELLS = OH * OW, TH = 20;
+	const SCORES = new Array(OCELLS);
+	for (let r = 0; r < OH; r++) for (let c = 0; c < OW; c++) {
+		let s = 0;
+		for (let dr = 0; dr < KH; dr++)
+			for (let dc = 0; dc < KW; dc++)
+				if (TPL[dr * KW + dc]) s += KatzeKit.YELLOW[(r + dr) * KatzeKit.N + (c + dc)];
+		SCORES[r * OW + c] = s;
+	}
+
+	// Ausgabe: 8×8 (Pooling der feinen 27×28-Map). Jede Zelle
+	// (R,C) deckt einen Block feiner Fenster ab; sie leuchtet,
+	// wenn dort ein Fenster voll aufs Auge passt.
+	const O8 = 8;
+	const LIT8 = new Array(O8 * O8).fill(-1);
+	for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
+		const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
+		const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
+		for (let fr = fr0; fr <= fr1; fr++)
+			for (let fc = fc0; fc <= fc1; fc++) {
+				const i = fr * OW + fc;
+				if (SCORES[i] >= TH && (LIT8[R * O8 + C] < 0 || i < LIT8[R * O8 + C]))
+					LIT8[R * O8 + C] = i;
+			}
+	}
+
+	// Blockweiser Sweep: das Fenster hält an jeder Anker-Position
+	// (DWELL), dann gleitet es weich zur nächsten (MOVE, Serpentine).
+	// Alle Anker sind GANZZAHLIG, in der Haltephase sitzt das
+	// Fenster exakt auf dem Pixel-Raster ("wirklich passen").
+	const ANCH_ROW = [0, 5, 10, 16, 21, 26];
+	const ANCH_COL = [0, 4, 9, 14, 18, 19, 23, 27];
+	const ANCHORS = [];
+	for (let ar = 0; ar < ANCH_ROW.length; ar++)
+		for (let ac = 0; ac < ANCH_COL.length; ac++) {
+			const col = ar % 2 === 0 ? ac : ANCH_COL.length - 1 - ac;
+			ANCHORS.push({ fr: ANCH_ROW[ar], fc: ANCH_COL[col] });
+		}
+	const ANCH = ANCHORS.length; // 48
+	const SW_DWELL = 5, SW_MOVE = 6;
+
+	// Segment-Zeitleiste: Segment 2i = Halten an Anker i,
+	// Segment 2i+1 = Fahrt Anker i → i+1.
+	const SEG_T = [];
+	let SW_TOTAL = 0;
+	{
+		for (let i = 0; i < ANCH; i++) {
+			SEG_T.push(SW_TOTAL); SW_TOTAL += SW_DWELL;
+			if (i < ANCH - 1) { SEG_T.push(SW_TOTAL); SW_TOTAL += SW_MOVE; }
+		}
+	}
+
+	function sweepPos(t) {
+		t = Math.max(0, Math.min(t, SW_TOTAL));
+		for (let i = SEG_T.length - 1; i >= 0; i--) {
+			if (t < SEG_T[i]) continue;
+			const a0 = (i / 2) | 0;
+			if (i % 2 === 0)
+				return { fr: ANCHORS[a0].fr, fc: ANCHORS[a0].fc, anchor: a0, moving: false };
+			const e = KatzeKit.eInOut((t - SEG_T[i]) / SW_MOVE);
+			return {
+				fr: KatzeKit.lerp(ANCHORS[a0].fr, ANCHORS[a0 + 1].fr, e),
+				fc: KatzeKit.lerp(ANCHORS[a0].fc, ANCHORS[a0 + 1].fc, e),
+				anchor: a0 + 1, moving: true
+			};
+		}
+		return { fr: ANCHORS[ANCH - 1].fr, fc: ANCHORS[ANCH - 1].fc, anchor: ANCH - 1, moving: false };
+	}
+
+	// Der Block, der angezeigt wird: während der Fahrt bleibt der
+	// Ausgangs-Anker stehen, erst beim Aufsetzen springt die Anzeige
+	// weiter — sonst rasen Treffer-Zahl und Badge beim Gleiten durch
+	// alle Zwischenzellen (Flackern).
+	function shownAnchor(pos) {
+		if (!pos) return 0;
+		return pos.moving ? Math.max(0, pos.anchor - 1) : pos.anchor;
+	}
+
+	const tLit8 = new Array(O8 * O8).fill(-1);
+	const tFull8 = new Array(O8 * O8).fill(-1);
+	{
+		const covers = (pfr, pfc, tfr, tfc, kh, kw) =>
+			pfr <= tfr && pfr + kh - 1 >= tfr && pfc <= tfc && pfc + kw - 1 >= tfc;
+		for (let R = 0; R < O8; R++) for (let C = 0; C < O8; C++) {
+			const i8 = R * O8 + C;
+			const fr0 = Math.floor(R * OH / O8), fr1 = Math.floor((R + 1) * OH / O8) - 1;
+			const fc0 = Math.floor(C * OW / O8), fc1 = Math.floor((C + 1) * OW / O8) - 1;
+			let cfr = 0, cfc = 0, n = 0;
+			for (let fr = fr0; fr <= fr1; fr++)
+				for (let fc = fc0; fc <= fc1; fc++) { cfr += fr; cfc += fc; n++; }
+			cfr /= n; cfc /= n;
+			const lit = LIT8[i8];
+			const lfr = lit >= 0 ? (lit / OW) | 0 : null;
+			const lfc = lit >= 0 ? lit % OW : null;
+			for (let ai = 0; ai < ANCH; ai++) {
+				const a = ANCHORS[ai];
+				const t = SEG_T[2 * ai] + SW_DWELL * 0.5;
+				const strong = SCORES[a.fr * OW + a.fc] >= TH;
+				if (tLit8[i8] < 0 && lfr !== null && strong && covers(a.fr, a.fc, lfr, lfc, KH, KW))
+					tLit8[i8] = t;
+				if (tFull8[i8] < 0 && covers(a.fr, a.fc, cfr, cfc, KH, KW))
+					tFull8[i8] = t;
+			}
+		}
+	}
+
+	let sweepT = 0, sweepDone = 0;
+	let kerA = 0, tKerA = 0;
+	let outA = 0, tOutA = 0;
+	const KC = 24; // Filter-Panel: Zellgröße in px
+
+	function drawOutput8(ctx, S) {
+		if (outA < 0.01) return;
+		const o = S.inst[0], s = o.s;
+		const os = s * 4;
+		const ox = o.x + KatzeKit.N * s + 60, oy = o.y;
+
+		ctx.globalAlpha = outA * 0.9;
+		ctx.fillStyle = '#fff';
+		KatzeKit.roundRect(ctx, ox - 7, oy - 7, O8 * os + 14, O8 * os + 14, 11);
+		ctx.fill();
+		ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1; ctx.stroke();
+		ctx.globalAlpha = 1;
+		if (S.step < 1) return;
+
+		for (let i8 = 0; i8 < O8 * O8; i8++) {
+			const R = (i8 / O8) | 0, C = i8 % O8;
+			const x = Math.floor(ox + C * os), y = Math.floor(oy + R * os);
+			const xw = Math.ceil(ox + (C + 1) * os) - x, yh = Math.ceil(oy + (R + 1) * os) - y;
+			const lit = LIT8[i8];
+			const isLit = lit >= 0 && (S.step >= 3 || (S.step === 2 && sweepT >= tLit8[i8]));
+			const isFull = !isLit && (S.step >= 3 || (S.step === 2 && sweepT >= tFull8[i8]));
+			ctx.globalAlpha = outA;
+			if (isLit) {
+				ctx.fillStyle = 'rgba(76,175,80,.5)';
+				ctx.fillRect(x, y, xw, yh);
+				ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
+				ctx.strokeRect(x + 1, y + 1, xw - 2, yh - 2);
+			} else if (isFull) {
+				ctx.fillStyle = '#f6f7f9';
+				ctx.fillRect(x, y, xw, yh);
+			}
+			ctx.globalAlpha = 1;
+		}
+
+		if (S.step >= 2) {
+			for (let i8 = 0; i8 < O8 * O8; i8++) {
+				const lit = LIT8[i8];
+				if (lit < 0 || (S.step === 2 && sweepT < tLit8[i8])) continue;
+				const R = (i8 / O8) | 0, C = i8 % O8;
+				const cx = ox + (C + .5) * os, cy = oy + (R + .5) * os;
+				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, os * 1.8);
+				g.addColorStop(0, 'rgba(76,175,80,.32)');
+				g.addColorStop(1, 'rgba(76,175,80,0)');
+				ctx.fillStyle = g;
+				ctx.fillRect(cx - os * 2, cy - os * 2, os * 4, os * 4);
+			}
+		}
+	}
+
+	function drawKernel(ctx, S) {
+		if (kerA < 0.01) return;
+		const o = S.inst[0], s = o.s;
+		const kw = KW * KC, kh = KH * KC;
+		const kx = Math.max(o.x - kw - 56, 4);
+		const ky = o.y + (KatzeKit.N * s) / 2 - kh / 2;
+		ctx.globalAlpha = kerA;
+		ctx.fillStyle = '#111';
+		KatzeKit.roundRect(ctx, kx - 9, ky - 9, kw + 18, kh + 18, 10);
+		ctx.fill();
+		ctx.strokeStyle = '#333'; ctx.lineWidth = 1.2; ctx.stroke();
+		for (let r = 0; r < KH; r++) for (let c = 0; c < KW; c++) {
+			if (!TPL[r * KW + c]) continue;
+			ctx.fillStyle = '#E2C72E';
+			KatzeKit.roundRect(ctx, kx + c * KC + 3, ky + r * KC + 3, KC - 6, KC - 6, 3);
+			ctx.fill();
+		}
+		ctx.globalAlpha = 1;
+	}
+
+	function drawWindow(ctx, S) {
+		if (S.step < 1 || S.step > 2) return;
+		const o = S.inst[0], s = o.s;
+		const pos = S.step === 2 ? sweepPos(sweepT) : { fr: 0, fc: 0 };
+		const x = Math.floor(o.x + pos.fc * s), y = Math.floor(o.y + pos.fr * s);
+		const x1 = Math.ceil(o.x + (pos.fc + KW) * s), y1 = Math.ceil(o.y + (pos.fr + KH) * s);
+		const ai = S.step === 2 ? shownAnchor(pos) : 0;
+		const a = ANCHORS[ai];
+		const sc = SCORES[a.fr * OW + a.fc], hot = sc >= 4;
+
+		ctx.fillStyle = hot ? 'rgba(76,175,80,.30)' : 'rgba(150,190,240,.30)';
+		ctx.fillRect(x, y, x1 - x, y1 - y);
+		ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 2;
+		ctx.strokeRect(x + 1, y + 1, x1 - x - 2, y1 - y - 2);
+
+		const bw = 46, bh = 20, bx = (x + x1) / 2 - bw / 2, by = y - bh - 6;
+		if (by > 0) {
+			ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh);
+			ctx.strokeStyle = hot ? '#4caf50' : '#7aa8e0'; ctx.lineWidth = 1.1;
+			ctx.strokeRect(bx + .5, by + .5, bw - 1, bh - 1);
+			ctx.fillStyle = hot ? '#2e7d32' : '#4a7fc0';
+			ctx.font = '600 11.5px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+			ctx.fillText(sc + '', (x + x1) / 2, by + bh / 2);
+		}
+	}
+
+	return KatzeKit.create({
+		slideId: 'slide-filter',
+		prefix: 'filt',
+		steps: [
+			{ k: 'Schritt 1', t: 'Ein <em>Filter</em> ist ein Muster für<br>einen <em>Bestandteil</em>.',
+			  p: 'Um Katzen zu erkennen, hilft es, Katzenaugen zu erkennen.',
+			  c: '<span class="kz-chip">(6, 5)</span>' },
+			{ k: 'Schritt 2', t: 'Das Muster wird<br>auf das Bild <em>gelegt</em>.',
+			  p: `Punkt <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
+			  c: '' },
+			{ k: 'Schritt 3', t: '… und <em>fließt</em> über<br>das ganze Bild.',
+			  p: `Block <b>1</b> von ${ANCH} · Treffer: <b>0</b> von ${TMAX}`,
+			  f: 0,
+			  c: '',
+			  i: 'An jedem Platz <b>misst</b> der Filter, wie gut sein Fenster zum <b>darunterliegenden</b> Bildstück passt: gleiche Werte = hohe Zahl, kaum Übereinstimmung = nahe 0. Das Fenster <b>hält</b> kurz auf jedem Block.' },
+			{ k: 'Schritt 4', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
+			  p: `1024 Pixel → ${O8 * O8} Zahlen, und die Augen bleiben`,
+			  c: '',
+			  i: 'Die Augen-Form ist nur <b>unser Beispiel</b>. Im echten Training bringt sich der Computer die Filter <b>selbst bei</b>, anhand der Trainingsdaten.' }
+		],
+
+		layoutFor(step, S) {
+			const { W, H, inst } = S;
+			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, 13);
+			const imgW = KatzeKit.N * s, gapOut = 60, outW = O8 * s * 4;
+			S.tGrayMix = 0;
+			inst.forEach((o, i) => {
+				o.ts = s;
+				o.tx = (W - (imgW + gapOut + outW)) / 2;
+				o.ty = (H - imgW) / 2 + 6;
+				o.tmix = i === 0 ? 0 : 1;
+				o.ta = i === 0 ? (step === 3 ? .22 : 1) : 0;
+			});
+			tKerA = step === 3 ? .45 : 1;
+			tOutA = step >= 1 ? 1 : 0;
+		},
+
+		onStep(step) {
+			if (step === 2) { sweepT = 0; sweepDone = 0; }
 		},
 
 		tick(dt, k, S, setFoot) {
 			kerA = KatzeKit.lerp(kerA, tKerA, k * 1.2);
 			outA = KatzeKit.lerp(outA, tOutA, k * 1.2);
-			zoomA = KatzeKit.lerp(zoomA, tZoomA, k * 1.2);
-			bwA = KatzeKit.lerp(bwA, tBwA, k * 1.2);
-			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
-			if (S.step !== 6) return;
-			// Blockweiser Sweep: Halten (DWELL) + weiche Fahrt (MOVE)
+			if (S.step !== 2) return;
 			sweepT = Math.min(sweepT + dt, SW_TOTAL);
 			if (sweepT >= SW_TOTAL) {
 				if (!sweepDone) {
@@ -1246,34 +1097,10 @@ const ConvDemo = (() => {
 			ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, S.W, S.H);
 			drawOutput8(ctx, S);
 			const o = S.inst[0];
-			if (S.step === 0) {
-				// Farbbild: farbiges Raster.
-				KatzeKit.drawGrid(ctx, o, 0, 0);
-				if (o.a > 0.02) {
-					ctx.globalAlpha = o.a;
-					ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
-					ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
-					ctx.globalAlpha = 1;
-				}
-			} else if (S.step === 1 || S.step === 2) {
-				// Kanal-Stapel; Schritt 3: nur der Grün-Kanal, fadet in Grau,
-				// daneben die zwei Beispiel-Pixel (0 / 255).
-				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
-				KatzeKit.drawTags(ctx, S, tagA);
-				drawBWPair(ctx, S);
-			} else if (S.step === 3) {
-				// Der Grün-Kanal (inst[PICK], bereits grau gemischt)
-				// fliegt aus der Kanal-Mitte nach links, nicht ausblenden.
-				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
-				drawGrayCat(ctx, S);
-				drawPixelZoom(ctx, S);
-			} else {
-				KatzeKit.drawGrid(ctx, o, 0, 0);
-				// Beim Zusammenfaden flackern die Kanäle kurz drüber.
-				KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
-				KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
-			}
-			if (S.step >= 4 && o.a > 0.02) {
+			KatzeKit.drawGrid(ctx, o, 0, 0);
+			KatzeKit.drawGrid(ctx, S.inst[1], 1, 0);
+			KatzeKit.drawGrid(ctx, S.inst[2], 2, 0);
+			if (o.a > 0.02) {
 				ctx.globalAlpha = o.a;
 				ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 				ctx.strokeRect(o.x + .5, o.y + .5, KatzeKit.N * o.s - 1, KatzeKit.N * o.s - 1);
@@ -2113,6 +1940,7 @@ const PipelineGoalDemo = (() => {
 if (typeof window !== 'undefined') {
 	window.KatzeKit = KatzeKit;
 	window.ConvDemo = ConvDemo;
+	window.FilterDemo = FilterDemo;
 	window.FlattenDemo = FlattenDemo;
 	window.PipelineKit = PipelineKit;
 	window.PipelineDemo = PipelineDemo;

@@ -41,16 +41,24 @@ const DemoRegistry = (() => {
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
-                // "Jeder Pixel ist nur eine Zahl" (katze.js), Katze-Framework:
+                // "Das Bild als Zahlen" (katze.js), Katze-Framework:
                 // 32×32 ASCII-Katze: Farbbild → 3 Kanäle → ein Kanal
-                // (Grau) → Pixel = Zahl (Zoom) → 6×5-Filter in Augen-Form
-                // (nur Form, keine Zahlen) → blockweiser Sweep (hält auf
-                // jedem Pixel-Block) → 8×8-Map, die Augen leuchten als zwei
-                // große Pixel. 8 Schritte über Pfeiltasten.
+                // (Grau) → Pixel = Zahl → Bild als RGB-Matrix (T8).
+                // 5 Schritte über Pfeiltasten. (Filter/Sweep/8×8-Map →
+                // eigene Folie "Ein Filter ist ein Muster", T9.)
                 { id: 'convolution', ref: () => typeof ConvDemo !== 'undefined' ? ConvDemo : null,
                         slideTest: s => s.id === 'slide-convolution',
                         // clear() radt das Stale-Frame, sonst schlaegt kurz
                         // das volle Bild des letzten Besuchs durch.
+                        onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
+                        onLeave: d => d.reset() },
+
+                // "Ein Filter ist ein Muster" (katze.js), Katze-Framework:
+                // der 6×5-Filter (Form eines Katzenauges) wird auf das
+                // Bild gelegt, blockweise gefegt (Sweep, hält auf jedem
+                // Pixel-Block) → 8×8-Map, die Augen leuchten. 4 Schritte.
+                { id: 'filter', ref: () => typeof FilterDemo !== 'undefined' ? FilterDemo : null,
+                        slideTest: s => s.id === 'slide-filter',
                         onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
                         onLeave: d => d.reset() },
 
