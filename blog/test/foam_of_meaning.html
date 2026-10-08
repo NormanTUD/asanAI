@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Foam of Meaning</title>
+<style>
+:root{
+  --bg:#050510; --panel:#0b0b18; --ink:#e8e8f5; --ink2:#8c8cb0;
+  --a1:#7ac8ff; --a2:#ff7ad9; --a3:#b8ff7a; --a4:#ffd07a;
+  --void:rgba(140,140,170,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(ellipse at 50% 30%,#0d0d22 0%,#050510 70%);
+  color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+}
+#stage{width:100vw;height:100vh;position:relative}
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1.4rem;
+  padding:4vh 5vw 9vh;opacity:0;pointer-events:none;
+  transform:scale(.98) translateY(14px);
+  transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);
+}
+.slide.on{opacity:1;pointer-events:auto;transform:none}
+h1{font-size:clamp(2rem,5.5vw,4.2rem);font-weight:700;letter-spacing:-.03em;line-height:1.02;text-align:center}
+h2{font-size:clamp(1.3rem,2.9vw,2.3rem);font-weight:650;letter-spacing:-.02em;text-align:center}
+.sub{color:var(--ink2);font-size:clamp(.85rem,1.45vw,1.1rem);text-align:center;max-width:62ch;line-height:1.6}
+.kicker{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--a1);opacity:.75}
+canvas,svg{max-width:100%;display:block}
+.frame{border-radius:16px;border:1px solid rgba(255,255,255,.07);background:#04040c;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.row{display:flex;gap:1.2rem;flex-wrap:wrap;justify-content:center;align-items:center}
+.chip{
+  padding:.4rem .9rem;border-radius:99px;font-size:.78rem;font-weight:600;
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);
+}
+.legend{display:flex;gap:1.6rem;flex-wrap:wrap;justify-content:center;font-size:.82rem;color:var(--ink2)}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:.45rem;vertical-align:-1px}
+.big{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:clamp(1.6rem,4.6vw,3.4rem);font-weight:700}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;width:min(1000px,92vw)}
+.card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1rem;text-align:center}
+.card .t{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-bottom:.5rem}
+.card .v{font-family:ui-monospace,monospace;font-size:1.5rem;font-weight:700}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.6rem}
+.bar>span{display:block;height:100%;border-radius:3px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+#nav{position:fixed;bottom:0;left:0;right:0;height:7vh;min-height:52px;display:flex;align-items:center;justify-content:center;gap:.5rem;z-index:30;background:linear-gradient(transparent,rgba(5,5,16,.92))}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:.3s}
+.dot.on{background:var(--a1);width:22px;border-radius:4px;box-shadow:0 0 12px var(--a1)}
+#count{position:fixed;top:2.4vh;right:3vw;font-family:ui-monospace,monospace;font-size:.75rem;color:var(--ink2);z-index:30}
+#title{position:fixed;top:2.4vh;left:3vw;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink2);z-index:30}
+.quote{font-size:clamp(1.1rem,2.4vw,1.8rem);text-align:center;max-width:26ch;line-height:1.45;font-weight:500}
+.mono{font-family:ui-monospace,monospace}
+.fade-seq>*{opacity:0;animation:rise .7s forwards}
+.slide.on .fade-seq>*{animation:rise .7s forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.fade-seq>*:nth-child(1){animation-delay:.1s}
+.fade-seq>*:nth-child(2){animation-delay:.25s}
+.fade-seq>*:nth-child(3){animation-delay:.4s}
+.fade-seq>*:nth-child(4){animation-delay:.55s}
+</style>
+</head>
+<body>
+
+<div id="title">The Foam of Meaning</div>
+<div id="count"></div>
+<div id="stage">
+
+<!-- 1 ─────────────────────────────────────────── -->
+<section class="slide">
+  <canvas id="cv-hero" class="frame" width="1100" height="440"></canvas>
+  <h1>Meaning has a <em style="color:var(--a2);font-style:normal">shape</em>.</h1>
+  <p class="sub">Not a label stuck onto a word. A <strong>landscape</strong> — clusters, filaments, voids — in the space of everything that could be said.</p>
+</section>
+
+<!-- 2 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 1 · The arena</div>
+  <h2>Everything sayable is a point.</h2>
+  <canvas id="cv-explode" class="frame" width="980" height="340"></canvas>
+  <div class="row">
+    <div class="chip" style="color:var(--a1)">|V| = 50 000 tokens</div>
+    <div class="chip" style="color:var(--a4)">length = 20</div>
+    <div class="chip" style="color:var(--a2)">≈ 10<sup>94</sup> sequences</div>
+  </div>
+  <p class="sub">More than atoms in the observable universe (10<sup>80</sup>). <strong>Meaningful</strong> language is a vanishingly thin sliver of this desert.</p>
+</section>
+
+<!-- 3 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 2 · The shape it takes</div>
+  <h2>The sliver looks like <span style="color:var(--a2)">this</span>.</h2>
+  <canvas id="cv-web" class="frame" width="1080" height="470"></canvas>
+  <div class="legend">
+    <span><i style="background:var(--a1)"></i>CLUSTER — convention, idiom, frequent phrasing</span>
+    <span><i style="background:var(--a2)"></i>FILAMENT — productive grammar, the bridges</span>
+    <span><i style="background:var(--void)"></i>VOID — ungrammatical, never-uttered, nonsense</span>
+  </div>
+</section>
+
+<!-- 4 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">The same picture, twice</div>
+  <h2>Cosmos &nbsp;≅&nbsp; Language</h2>
+  <div class="row" style="gap:2.2rem">
+    <div style="text-align:center">
+      <canvas id="cv-cosmos" class="frame" width="430" height="360"></canvas>
+      <div class="sub" style="margin-top:.7rem">galaxies · dark matter<br><span class="mono" style="color:var(--ink2)">driven by gravity</span></div>
+    </div>
+    <div style="font-size:2.6rem;color:var(--a4)">≅</div>
+    <div style="text-align:center">
+      <canvas id="cv-lang" class="frame" width="430" height="360"></canvas>
+      <div class="sub" style="margin-top:.7rem">utterances · usage<br><span class="mono" style="color:var(--ink2)">driven by grammar</span></div>
+    </div>
+  </div>
+  <p class="sub">Different physics. <strong>Identical geometry.</strong> So the cosmologist's instruments transfer.</p>
+</section>
+
+<!-- 5 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 3 · Not meaningful / meaningless</div>
+  <h2>Void is a <span style="color:var(--a4)">direction</span>, not a place.</h2>
+  <div class="row" style="gap:2.4rem;align-items:center">
+    <svg width="400" height="330" viewBox="0 0 400 330">
+      <g stroke="#ff7ad9" stroke-width="2.5">
+        <line x1="200" y1="150" x2="200" y2="52"/><line x1="200" y1="170" x2="200" y2="268"/>
+        <line x1="210" y1="160" x2="348" y2="160"/><line x1="190" y1="160" x2="52" y2="160"/>
+      </g>
+      <g fill="#ff7ad9">
+        <polygon points="194,52 206,52 200,38"/><polygon points="194,268 206,268 200,282"/>
+        <polygon points="348,154 348,166 362,160"/><polygon points="52,154 52,166 38,160"/>
+      </g>
+      <circle cx="200" cy="160" r="9" fill="#b8ff7a"/>
+      <circle cx="200" cy="160" r="20" fill="none" stroke="#b8ff7a" stroke-width="1.5" opacity=".4"/>
+      <text x="200" y="192" text-anchor="middle" fill="#8c8cb0" font-size="12" font-family="monospace">fully meaningful</text>
+      <g fill="#e8e8f5" font-size="13" font-weight="600" font-family="sans-serif">
+        <text x="200" y="26" text-anchor="middle">syntactic void</text>
+        <text x="200" y="306" text-anchor="middle">grounding void</text>
+        <text x="372" y="156" text-anchor="end" transform="translate(0,-14)">semantic void</text>
+        <text x="28" y="142" text-anchor="start">epistemic void</text>
+      </g>
+    </svg>
+    <div style="max-width:30ch;display:flex;flex-direction:column;gap:.9rem" class="fade-seq">
+      <div class="chip" style="border-color:var(--a1);color:var(--a1)">“asdf qwer blue table” → <b>no syntax</b></div>
+      <div class="chip" style="border-color:var(--a3);color:var(--a3)">“The thought drinks the square Tuesday.” → <b>no semantics</b></div>
+      <div class="chip" style="border-color:var(--a4);color:var(--a4)">“∀ prime p, p mod 6 ∈ {1,5}” → <b>no grounding</b></div>
+      <div class="chip" style="border-color:var(--a2);color:var(--a2)">“Maybe it rains tomorrow.” → <b>no truth yet</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Four coherence fields</div>
+  <h2 id="radar-sent" style="font-style:italic;color:var(--a1);min-height:2.6rem">“The dog runs in the park.”</h2>
+  <div class="row" style="gap:2.4rem">
+    <canvas id="cv-radar" class="frame" width="380" height="380"></canvas>
+    <div class="grid4" style="grid-template-columns:1fr;width:300px">
+      <div class="card" style="text-align:left"><div class="t">Syntax C</div><div class="v" id="vC">1.00</div><div class="bar"><span id="bC" style="background:var(--a1)"></span></div></div>
+      <div class="card" style="text-align:left"><div class="t">Semantics S</div><div class="v" id="vS">0.98</div><div class="bar"><span id="bS" style="background:var(--a3)"></span></div></div>
+      <div class="card" style="text-align:left"><div class="t">Grounding G</div><div class="v" id="vG">0.95</div><div class="bar"><span id="bG" style="background:var(--a4)"></span></div></div>
+      <div class="card" style="text-align:left"><div class="t">Epistemic E</div><div class="v" id="vE">0.90</div><div class="bar"><span id="bE" style="background:var(--a2)"></span></div></div>
+    </div>
+  </div>
+  <p class="sub" id="radar-note">Ideal sentence: the shape fills out on every axis.</p>
+</section>
+
+<!-- 7 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 4 · Where the information is</div>
+  <h2>Meaning doesn't fade. It <span style="color:var(--a4)">snaps</span>.</h2>
+  <canvas id="cv-phase" class="frame" width="900" height="380"></canvas>
+  <div class="row" style="font-family:ui-monospace,monospace;font-size:.84rem;color:var(--ink2);gap:.6rem">
+    <span style="color:var(--a3)">the dog sleeps</span>→
+    <span>the dog sleeps quickly</span>→
+    <span style="color:var(--a4)">the dog sleeps quadratically</span>→
+    <span style="color:var(--a2)">quadratically dog seven sleeps</span>
+  </div>
+  <p class="sub">A <strong>phase transition</strong>, like water to ice. The boundary ∂M carries more information than either interior.</p>
+</section>
+
+<!-- 8 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 5 · Self-similarity</div>
+  <h2>Zoom in. <span style="color:var(--a3)">Same shape.</span></h2>
+  <canvas id="cv-zoom" class="frame" width="1020" height="400"></canvas>
+  <div class="row" id="zoom-chips" style="font-size:.78rem"></div>
+  <p class="sub">discourse → paragraph → sentence → phrase → token.<br>Clusters, filaments, voids at <em>every</em> magnification. Language has no preferred scale.</p>
+</section>
+
+<!-- 9 ─────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 6 · Metaphor</div>
+  <h2>A bridge thrown across the void.</h2>
+  <canvas id="cv-meta" class="frame" width="1040" height="400"></canvas>
+  <div class="row" id="meta-chips"></div>
+  <p class="sub">Not a short step inside a cluster — a <strong>long-range filament</strong> that carries structure from one distant region to another.</p>
+</section>
+
+<!-- 10 ────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 7 · Form vs. meaning</div>
+  <h2>Many ways to say one thing.</h2>
+  <canvas id="cv-fiber" class="frame" width="900" height="400"></canvas>
+  <p class="sub">Each meaning in <span class="mono" style="color:var(--a2)">S</span> is covered by a whole <strong>fiber</strong> of forms in <span class="mono" style="color:var(--a1)">X</span>.<br>Paraphrase = moving <em>inside</em> a fiber. Synonymy is a property of fibers, not of points.</p>
+</section>
+
+<!-- 11 ────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 8 · The consistency law</div>
+  <h2>Both roads reach the same meaning.</h2>
+  <canvas id="cv-comm" class="frame" width="880" height="400"></canvas>
+  <p class="sub"><span class="mono" style="color:var(--a1)">π′∘f = g∘π</span> — transform the form then interpret, or interpret then transform the meaning.<br>That agreement <em>is</em> compositionality.</p>
+</section>
+
+<!-- 12 ────────────────────────────────────────── -->
+<section class="slide">
+  <div class="kicker">Step 9 · What survives</div>
+  <h2>Dissolve the structure — everything collapses <span style="color:var(--a2)">at once</span>.</h2>
+  <div class="row">
+    <canvas id="cv-f1" class="frame" width="330" height="250"></canvas>
+    <canvas id="cv-f2" class="frame" width="330" height="250"></canvas>
+    <canvas id="cv-f3" class="frame" width="330" height="250"></canvas>
+  </div>
+  <div class="row" style="font-size:.78rem;color:var(--ink2);gap:2.6rem">
+    <span>point cloud</span><span>topological signature β₀,β₁</span><span>scale invariance</span>
+  </div>
+  <p class="sub">Geometry, topology, and scale-invariance degrade <strong>together</strong> — the signature of one single underlying structured space.</p>
+</section>
+
+<!-- 13 ────────────────────────────────────────── -->
+<section class="slide">
+  <canvas id="cv-final" class="frame" width="1000" height="330"></canvas>
+  <div class="quote">Meaning is the <span style="color:var(--a1)">geometry</span> of the space of possible utterances —<br>and understanding is the <span style="color:var(--a3)">knowledge of that shape</span>.</div>
+  <div class="row" style="margin-top:.6rem">
+    <span class="chip" style="color:var(--a1)">X · forms</span>
+    <span style="color:var(--ink2)">—π→</span>
+    <span class="chip" style="color:var(--a2)">S · meanings</span>
+    <span style="color:var(--ink2)">⊨</span>
+    <span class="chip" style="color:var(--a3)">W · worlds</span>
+  </div>
+</section>
+
+</div>
+<div id="nav"></div>
+
+<script>
+/* ═══ framework ═══════════════════════════════ */
+const slides=[...document.querySelectorAll('.slide')];
+const nav=document.getElementById('nav'), count=document.getElementById('count');
+let i=0;
+slides.forEach((_,k)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>go(k);nav.appendChild(d)});
+const dots=[...nav.children];
+function go(k){
+  i=Math.max(0,Math.min(slides.length-1,k));
+  slides.forEach((s,j)=>s.classList.toggle('on',j===i));
+  dots.forEach((d,j)=>d.classList.toggle('on',j===i));
+  count.textContent=String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  if(hooks[i])hooks[i]();
+}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();go(i+1)}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(i-1)}
+  if(e.key==='Home')go(0); if(e.key==='End')go(slides.length-1);
+});
+addEventListener('click',e=>{if(e.target.closest('#nav'))return;go(i+(e.clientX<innerWidth*.26?-1:1))});
+
+/* ═══ helpers ═════════════════════════════════ */
+const TAU=Math.PI*2;
+const C={a1:'#7ac8ff',a2:'#ff7ad9',a3:'#b8ff7a',a4:'#ffd07a',ink:'#e8e8f5',ink2:'#8c8cb0',bg:'#04040c'};
+function rng(s){return function(){s|=0;s=(s+0x6D2B79F5)|0;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+function rgba(hex,a){const n=parseInt(hex.slice(1),16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
+function g(id){const c=document.getElementById(id);return[c,c.getContext('2d')]}
+function clear(ctx,c){ctx.fillStyle=C.bg;ctx.fillRect(0,0,c.width,c.height)}
+function noise(ctx,c,n,seed){const r=rng(seed);ctx.fillStyle='rgba(150,150,180,.28)';for(let k=0;k<n;k++){ctx.beginPath();ctx.arc(r()*c.width,r()*c.height,.9,0,TAU);ctx.fill()}}
+function blob(ctx,x,y,R,col,n,seed,d=1){
+  const r=rng(seed);const gr=ctx.createRadialGradient(x,y,0,x,y,R);
+  gr.addColorStop(0,rgba(col,.30*d));gr.addColorStop(.55,rgba(col,.12*d));gr.addColorStop(1,rgba(col,0));
+  ctx.fillStyle=gr;ctx.beginPath();ctx.arc(x,y,R,0,TAU);ctx.fill();
+  for(let k=0;k<n;k++){const a=r()*TAU,rr=R*Math.sqrt(r())*.85;
+    ctx.fillStyle=rgba(col,.45+r()*.5);ctx.beginPath();
+    ctx.arc(x+Math.cos(a)*rr,y+Math.sin(a)*rr,1.15,0,TAU);ctx.fill()}
+}
+function filament(ctx,a,b,col,strength,wig,seed){
+  const steps=70;
+  for(let s=0;s<steps;s++){const t=s/steps;
+    const x=a[0]+(b[0]-a[0])*t+Math.sin(t*Math.PI*3+seed)*wig*strength;
+    const y=a[1]+(b[1]-a[1])*t+Math.cos(t*Math.PI*3+seed)*wig*strength;
+    const fade=(1-Math.abs(t-.5)*1.5);
+    ctx.fillStyle=rgba(col,strength*.55*fade);
+    ctx.beginPath();ctx.arc(x,y,1.3,0,TAU);ctx.fill();
+  }
+}
+function label(ctx,x,y,txt,col,size=13,align='center'){
+  ctx.fillStyle=col;ctx.font=`600 ${size}px -apple-system,Segoe UI,sans-serif`;
+  ctx.textAlign=align;ctx.fillText(txt,x,y);
+}
+
+/* ═══ slide drawings ══════════════════════════ */
+const hooks={};
+
+/* 1 · hero web ────────────────────────────── */
+hooks[0]=function(){
+  const [c,ctx]=g('cv-hero');clear(ctx,c);noise(ctx,c,420,3);
+  const nodes=[[150,210],[330,110],[520,250],[700,130],[870,230],[980,110],[420,340],[760,330]];
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+    const d=Math.hypot(nodes[i][0]-nodes[j][0],nodes[i][1]-nodes[j][1]);
+    if(d<300)filament(ctx,nodes[i],nodes[j],C.a2,Math.max(0,1-d/300)*.8,16,i*7+j);
+  }
+  nodes.forEach((n,k)=>blob(ctx,n[0],n[1],52+k*4,k%3===0?C.a1:(k%3===1?C.a3:C.a1),46,k*31+5));
+  label(ctx,150,170,'CLUSTER',rgba(C.a1,.85),11);
+  label(ctx,425,200,'FILAMENT',rgba(C.a2,.85),11);
+  label(ctx,900,370,'VOID',rgba(C.ink2,.8),11);
+};
+
+/* 2 · combinatorial explosion ────────────── */
+hooks[1]=function(){
+  const [c,ctx]=g('cv-explode');clear(ctx,c);
+  const pad=56,W=c.width-pad*2,H=c.height-pad*1.6;
+  ctx.strokeStyle='rgba(255,255,255,.12)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad,20);ctx.lineTo(pad,pad+H);ctx.lineTo(pad+W,pad+H);ctx.stroke();
+  // log-scale exponential curve
+  ctx.strokeStyle=C.a4;ctx.lineWidth=3;ctx.beginPath();
+  for(let i=0;i<=20;i++){
+    const t=i/20,x=pad+t*W,y=pad+H-Math.pow(t,1.9)*H*.94;
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  }ctx.stroke();
+  // glow under curve
+  const gr=ctx.createLinearGradient(0,20,0,pad+H);
+  gr.addColorStop(0,rgba(C.a4,.22));gr.addColorStop(1,rgba(C.a4,0));
+  ctx.fillStyle=gr;ctx.lineTo(pad+W,pad+H);ctx.lineTo(pad,pad+H);ctx.closePath();ctx.fill();
+  // atom threshold
+  const ay=pad+H-H*.60;
+  ctx.setLineDash([6,5]);ctx.strokeStyle=rgba(C.a2,.75);ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(pad,ay);ctx.lineTo(pad+W,ay);ctx.stroke();ctx.setLineDash([]);
+  label(ctx,pad+10,ay-9,'10⁸⁰ · atoms in the universe',rgba(C.a2,.9),11,'left');
+  label(ctx,pad+W,pad+H+26,'sequence length  n →',C.ink2,11,'right');
+  ctx.save();ctx.translate(20,pad+H/2);ctx.rotate(-Math.PI/2);
+  label(ctx,0,0,'|Vⁿ|  (log)',C.ink2,11);ctx.restore();
+};
+
+/* 3 · the language web ───────────────────── */
+hooks[2]=function(){
+  const [c,ctx]=g('cv-web');clear(ctx,c);noise(ctx,c,700,17);
+  const r=rng(42),nodes=[];
+  for(let i=0;i<9;i++)nodes.push([110+r()*(c.width-220),80+r()*(c.height-160),38+r()*44]);
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+    const d=Math.hypot(nodes[i][0]-nodes[j][0],nodes[i][1]-nodes[j][1]);
+    const s=Math.max(0,1-d/420);
+    if(s>.08)filament(ctx,nodes[i],nodes[j],C.a2,s,18,i*13+j);
+  }
+  nodes.forEach((n,k)=>blob(ctx,n[0],n[1],n[2],C.a1,Math.floor(44+n[2]),k*77+9));
+};
+
+/* 4 · cosmos ≅ language ───────────────────── */
+hooks[3]=function(){
+  [['cv-cosmos',C.a1,5],['cv-lang',C.a3,99]].forEach(([id,col,seed])=>{
+    const [c,ctx]=g(id);clear(ctx,c);noise(ctx,c,260,seed);
+    const r=rng(seed),nd=[];
+    for(let i=0;i<6;i++)nd.push([50+r()*(c.width-100),45+r()*(c.height-90)]);
+    for(let i=0;i<nd.length;i++)for(let j=i+1;j<nd.length;j++){
+      const d=Math.hypot(nd[i][0]-nd[j][0],nd[i][1]-nd[j][1]);
+      if(d<210)filament(ctx,nd[i],nd[j],col,1-d/210,10,i+j*3);
+    }
+    nd.forEach((n,k)=>blob(ctx,n[0],n[1],30+k*3,col,32,seed+k*17));
+  });
+};
+
+/* 6 · radar ───────────────────────────────── */
+const SENTENCES=[
+  {t:'“The dog runs in the park.”',C:1,S:.98,G:.95,E:.90,n:'Ideal sentence: the shape fills out on every axis.'},
+  {t:'“The thought drinks the square Tuesday.”',C:.95,S:.10,G:.05,E:.20,n:'Syntax perfect — semantics collapses. SEMANTIC VOID.'},
+  {t:'“asdf qwer seven blue because table”',C:.05,S:.05,G:.05,E:.05,n:'Nothing at all. SYNTACTIC VOID.'},
+  {t:'“∀ prime p, p mod 6 ∈ {1,5}.”',C:1,S:1,G:.30,E:.95,n:'Perfectly coherent — but touches no world. GROUNDING VOID.'},
+  {t:'“Maybe it rains in Vaduz tomorrow.”',C:1,S:.95,G:.80,E:.30,n:'Meaning is clear; truth is not yet. EPISTEMIC VOID.'},
+  {t:'“Time is a river.”',C:1,S:.75,G:.60,E:.85,n:'Metaphor: a filament across the void — borderline, yet readable.'}
+];
+let si=0,sTimer=null;
+hooks[5]=function(){
+  clearInterval(sTimer);
+  drawRadar();
+  sTimer=setInterval(()=>{si=(si+1)%SENTENCES.length;drawRadar();},2600);
+};
+function drawRadar(){
+  const e=SENTENCES[si];
+  document.getElementById('radar-sent').textContent=e.t;
+  document.getElementById('radar-note').textContent=e.n;
+  [['C',C.a1],['S',C.a3],['G',C.a4],['E',C.a2]].forEach(([k,col])=>{
+    document.getElementById('v'+k).textContent=e[k].toFixed(2);
+    const b=document.getElementById('b'+k);b.style.background=col;b.style.width=(e[k]*100)+'%';
+  });
+  const [c,ctx]=g('cv-radar');clear(ctx,c);
+  const cx=c.width/2,cy=c.height/2,R=c.width/2-58;
+  const axes=['Syntax','Semantics','Grounding','Epistemic'],vals=[e.C,e.S,e.G,e.E];
+  ctx.strokeStyle='rgba(255,255,255,.10)';
+  for(let ring=1;ring<=4;ring++){ctx.beginPath();
+    for(let i=0;i<=4;i++){const a=-Math.PI/2+i/4*TAU,rr=R*ring/4;
+      i?ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}
+    ctx.closePath();ctx.stroke();}
+  for(let i=0;i<4;i++){const a=-Math.PI/2+i/4*TAU;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.stroke();}
+  ctx.beginPath();
+  for(let i=0;i<=4;i++){const k=i%4,a=-Math.PI/2+k/4*TAU,rr=R*vals[k];
+    i?ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));}
+  ctx.closePath();ctx.fillStyle=rgba(C.a1,.26);ctx.fill();
+  ctx.strokeStyle=C.a1;ctx.lineWidth=2.5;ctx.stroke();
+  [C.a1,C.a3,C.a4,C.a2].forEach((col,i)=>{
+    const a=-Math.PI/2+i/4*TAU,rr=R*vals[i];
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(cx+rr*Math.cos(a),cy+rr*Math.sin(a),5,0,TAU);ctx.fill();
+    label(ctx,cx+(R+26)*Math.cos(a),cy+(R+26)*Math.sin(a)+4,axes[i],col,10);
+  });
+}
+
+/* 7 · phase transition ───────────────────── */
+hooks[6]=function(){
+  const [c,ctx]=g('cv-phase');clear(ctx,c);
+  const pad=58,W=c.width-pad*1.6,H=c.height-pad*1.5;
+  ctx.strokeStyle='rgba(255,255,255,.12)';
+  ctx.beginPath();ctx.moveTo(pad,24);ctx.lineTo(pad,pad+H);ctx.lineTo(pad+W,pad+H);ctx.stroke();
+  // shaded region left (meaningful) / right (void)
+  ctx.fillStyle=rgba(C.a3,.07);ctx.fillRect(pad,24,W*.5,pad+H-24);
+  ctx.fillStyle=rgba(C.a2,.07);ctx.fillRect(pad+W*.5,24,W*.5,pad+H-24);
+  const sig=t=>1/(1+Math.exp((t-.5)*13));
+  ctx.strokeStyle=C.a1;ctx.lineWidth=3.5;ctx.beginPath();
+  for(let i=0;i<=120;i++){const t=i/120,x=pad+t*W,y=pad+H-sig(t)*H;
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+  // threshold
+  const tx=pad+W*.5;
+  ctx.setLineDash([6,5]);ctx.strokeStyle=C.a4;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(tx,24);ctx.lineTo(tx,pad+H);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=C.a4;ctx.beginPath();ctx.arc(tx,pad+H-sig(.5)*H,7,0,TAU);ctx.fill();
+  label(ctx,tx,16,'∂M  ·  the boundary',C.a4,13);
+  label(ctx,pad+W*.25,pad+H+26,'meaningful',rgba(C.a3,.9),11);
+  label(ctx,pad+W*.75,pad+H+26,'void',rgba(C.a2,.9),11);
+  ctx.save();ctx.translate(22,pad+H/2);ctx.rotate(-Math.PI/2);
+  label(ctx,0,0,'coherence  C',C.ink2,11);ctx.restore();
+};
+
+/* 8 · zoom cascade ───────────────────────── */
+const ZOOM=['discourse','paragraph','sentence','phrase','token'];
+let zi=0,zTimer=null;
+hooks[7]=function(){
+  clearInterval(zTimer);
+  const chips=document.getElementById('zoom-chips');
+  if(!chips.children.length)ZOOM.forEach(z=>{
+    const s=document.createElement('span');s.className='chip';s.textContent=z;chips.appendChild(s);});
+  drawZoom();
+  zTimer=setInterval(()=>{zi=(zi+1)%5;drawZoom();},1500);
+};
+function drawZoom(){
+  [...document.getElementById('zoom-chips').children].forEach((el,k)=>{
+    const on=k===zi;el.style.color=on?C.a3:C.ink2;
+    el.style.borderColor=on?C.a3:'rgba(255,255,255,.12)';
+    el.style.background=on?rgba(C.a3,.12):'rgba(255,255,255,.04)';
+  });
+  const [c,ctx]=g('cv-zoom');clear(ctx,c);noise(ctx,c,300,zi*3+1);
+  const r=rng(500+zi*41);
+  function recur(x,y,R,depth,col){
+    if(depth<=0){ctx.fillStyle=rgba(col,.9);ctx.beginPath();ctx.arc(x,y,1.5,0,TAU);ctx.fill();return;}
+    blob(ctx,x,y,R,col,0,1,.5);
+    const n=3+Math.floor(r()*3);
+    for(let i=0;i<n;i++){
+      const a=r()*TAU,rr=R*(.35+r()*.45);
+      const nx=x+Math.cos(a)*rr,ny=y+Math.sin(a)*rr;
+      ctx.strokeStyle=rgba(C.a2,.10*depth);ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(nx,ny);ctx.stroke();
+      recur(nx,ny,R*.42,depth-1,i%2?C.a1:C.a3);
+    }
+  }
+  for(let i=0;i<4+zi;i++)
+    recur(110+r()*(c.width-220),70+r()*(c.height-140),55+r()*35,Math.min(4,zi+1),C.a1);
+  ctx.setLineDash([5,4]);ctx.strokeStyle=rgba(C.a4,.6);ctx.lineWidth=1.5;
+  const bw=c.width/(zi+2.4),bh=c.height/(zi+2.4);
+  if(zi<4){ctx.strokeRect(c.width/2-bw/2,c.height/2-bh/2,bw,bh);
+    label(ctx,c.width/2,c.height/2-bh/2-9,'↓ zoom',rgba(C.a4,.9),11);}
+  ctx.setLineDash([]);
+  label(ctx,20,28,ZOOM[zi].toUpperCase()+' SCALE',rgba(C.ink,.85),13,'left');
+}
+
+/* 9 · metaphor ───────────────────────────── */
+const METAS=[
+  {a:'TIME',b:'RIVER',w:['flows','current','depth','banks','source','mouth']},
+  {a:'ARGUMENT',b:'WAR',w:['attack','defend','position','front','victory','retreat']},
+  {a:'LIFE',b:'JOURNEY',w:['crossroads','destination','detour','baggage','arrival','route']},
+  {a:'IDEAS',b:'FOOD',w:['digest','nourishing','half-baked','swallow','taste','devour']}
+];
+let mi=0,mProg=0,mRaf=null,mTimer=null;
+hooks[8]=function(){
+  const chips=document.getElementById('meta-chips');
+  clearInterval(mTimer);
+  if(!chips.children.length)METAS.forEach((m,k)=>{
+    const s=document.createElement('span');s.className='chip';
+    s.textContent=m.a+' is '+m.b;chips.appendChild(s);});
+  runMeta();
+  mTimer=setInterval(()=>{mi=(mi+1)%METAS.length;runMeta();},4200);
+};
+function runMeta(){
+  [...document.getElementById('meta-chips').children].forEach((el,k)=>{
+    const on=k===mi;el.style.color=on?C.a2:C.ink2;
+    el.style.borderColor=on?C.a2:'rgba(255,255,255,.12)';
+  });
+  cancelAnimationFrame(mRaf);mProg=0;
+  (function step(){
+    mProg=Math.min(1,mProg+.016);drawMeta(mProg);
+    if(mProg<1)mRaf=requestAnimationFrame(step);
+  })();
+}
+function drawMeta(p){
+  const [c,ctx]=g('cv-meta');clear(ctx,c);noise(ctx,c,400,21);
+  const m=METAS[mi],ax=210,ay=c.height/2,bx=c.width-210,by=c.height/2;
+  blob(ctx,ax,ay,112,C.a1,70,11);blob(ctx,bx,by,112,C.a2,70,29);
+  label(ctx,ax,ay+150,m.a,C.a1,19);label(ctx,bx,by+150,m.b,C.a2,19);
+  const steps=90;
+  for(let s=0;s<steps*p;s++){
+    const t=s/steps,x=ax+(bx-ax)*t,y=ay+Math.sin(t*Math.PI*2)*34;
+    const al=(1-Math.abs(t-.5)*1.4)*p;
+    ctx.fillStyle=rgba(C.a4,al*.35);ctx.beginPath();ctx.arc(x,y,6,0,TAU);ctx.fill();
+    ctx.fillStyle=rgba(C.a2,al*.95);ctx.beginPath();ctx.arc(x,y,2.2,0,TAU);ctx.fill();
+  }
+  ctx.font='600 11px ui-monospace,monospace';ctx.textAlign='center';
+  m.w.forEach((w,i)=>{const t=(i+1)/(m.w.length+1);
+    if(t<=p){const x=ax+(bx-ax)*t,y=ay+Math.sin(t*Math.PI*2)*34-20;
+      ctx.fillStyle=C.a4;ctx.fillText(w,x,y);}});
+  if(p>=1)label(ctx,c.width/2,34,'a long-range filament — '+m.w.length+' relations transported',rgba(C.ink2,.9),12);
+}
+
+/* 10 · fiber bundle ──────────────────────── */
+hooks[9]=function(){
+  const [c,ctx]=g('cv-fiber');clear(ctx,c);
+  const topY=70,botY=320;
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+  ctx.strokeRect(50,30,c.width-100,150);ctx.strokeRect(50,255,c.width-100,110);
+  label(ctx,56,22,'X  ·  forms',C.a1,12,'left');
+  label(ctx,56,247,'S  ·  meanings',C.a2,12,'left');
+  const bases=[[200,320,'CHASE(x,y)'],[450,320,'SLEEP(x)'],[700,320,'LOVE(x,y)']];
+  const r=rng(7);
+  bases.forEach((b,k)=>{
+    for(let i=0;i<9;i++){
+      const fx=b[0]+(r()-.5)*150,fy=topY+(r()-.5)*90;
+      ctx.strokeStyle=rgba(C.ink2,.22);ctx.lineWidth=.9;
+      ctx.beginPath();ctx.moveTo(fx,fy);ctx.lineTo(b[0],b[1]);ctx.stroke();
+      ctx.fillStyle=C.a1;ctx.beginPath();ctx.arc(fx,fy,3.4,0,TAU);ctx.fill();
+    }
+    ctx.fillStyle=rgba(C.a2,.25);ctx.beginPath();ctx.arc(b[0],b[1],18,0,TAU);ctx.fill();
+    ctx.fillStyle=C.a2;ctx.beginPath();ctx.arc(b[0],b[1],7,0,TAU);ctx.fill();
+    label(ctx,b[0],b[1]+34,b[2],C.a2,11);
+  });
+  label(ctx,c.width/2+40,225,'π  ·  forget the way of saying',C.ink2,12);
+};
+
+/* 11 · commutative square ────────────────── */
+hooks[10]=function(){
+  const [c,ctx]=g('cv-comm');clear(ctx,c);
+  const X=[200,110],Xp=[680,110],S=[200,310],Sp=[680,310];
+  ctx.fillStyle=rgba(C.a1,.06);ctx.fillRect(X[0],X[1],Xp[0]-X[0],S[1]-X[1]);
+  function arr(a,b,col,txt,dx,dy){
+    ctx.strokeStyle=col;ctx.lineWidth=3;
+    const ang=Math.atan2(b[1]-a[1],b[0]-a[0]),off=42;
+    const x1=a[0]+Math.cos(ang)*off,y1=a[1]+Math.sin(ang)*off;
+    const x2=b[0]-Math.cos(ang)*off,y2=b[1]-Math.sin(ang)*off;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    const h=13;
+    ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-h*Math.cos(ang-.4),y2-h*Math.sin(ang-.4));
+    ctx.lineTo(x2-h*Math.cos(ang+.4),y2-h*Math.sin(ang+.4));
+    ctx.closePath();ctx.fillStyle=col;ctx.fill();
+    label(ctx,(x1+x2)/2+(dx||0),(y1+y2)/2+(dy||0),txt,col,14);
+  }
+  // blue route: transform first, then interpret
+  arr(X,Xp,C.a1,'f · passivise',0,-14);
+  arr(Xp,Sp,C.a1,"π'",34,0);
+  // coral route: interpret first, then transform
+  arr(X,S,C.a2,'π',-26,0);
+  arr(S,Sp,C.a2,'g · same meaning',0,24);
+  // the four corners
+  [[X,'X',C.a1,'“The dog chases the cat.”'],
+   [Xp,"X'",C.a1,'“The cat is chased by the dog.”'],
+   [S,'S',C.a2,'CHASE(dog, cat)'],
+   [Sp,"S'",C.a3,'CHASE(dog, cat)']].forEach(([p,n,col,sub])=>{
+    ctx.fillStyle=rgba(col,.22);ctx.beginPath();ctx.arc(p[0],p[1],40,0,TAU);ctx.fill();
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(p[0],p[1],10,0,TAU);ctx.fill();
+    label(ctx,p[0],p[1]-54,n,col,20);
+    label(ctx,p[0],p[1]+(p[1]>200?66:-34),sub,rgba(C.ink2,.95),11);
+  });
+  // the meeting point — the two routes agree
+  ctx.strokeStyle=C.a3;ctx.lineWidth=3;
+  ctx.beginPath();ctx.arc(Sp[0],Sp[1],56,0,TAU);ctx.stroke();
+  ctx.fillStyle=rgba(C.a3,.10);ctx.fill();
+  label(ctx,Sp[0],Sp[1]+86,'✓ the diagram commutes',C.a3,14);
+  label(ctx,c.width/2,c.height/2+6,'the two paths are homotopic',rgba(C.a4,.9),13);
+};
+
+/* 12 · dissolve: three windows collapse together ───── */
+hooks[11]=function(){
+  let t=0;
+  cancelAnimationFrame(hooks._fRaf);
+  (function step(){
+    drawFinalTriptych(t);
+    t+=.006;
+    if(t>1){t=1;drawFinalTriptych(1);return;}
+    hooks._fRaf=requestAnimationFrame(step);
+  })();
+};
+function drawFinalTriptych(t){
+  const r=rng(99);
+  const centers=[[.25,.3],[.75,.3],[.3,.72],[.7,.72],[.5,.5]];
+  // ── window 1 : point cloud ──
+  {
+    const [c,ctx]=g('cv-f1');clear(ctx,c);
+    const W=c.width,H=c.height;
+    const rr=rng(5);
+    ctx.fillStyle=rgba(C.ink2,.12+.5*t);
+    for(let i=0;i<90;i++){ctx.beginPath();ctx.arc(rr()*W,rr()*H,2,0,TAU);ctx.fill();}
+    const spread=1+2.6*t,cols=[C.a1,C.a2,C.a3,C.a4,C.a1];
+    const rc=rng(31);
+    centers.forEach((ctr,k)=>{
+      for(let i=0;i<13;i++){
+        const px=ctr[0]+(rc()-.5)*.12,py=ctr[1]+(rc()-.5)*.12;
+        const x=ctr[0]+(px-ctr[0])*spread,y=ctr[1]+(py-ctr[1])*spread;
+        ctx.fillStyle=rgba(cols[k],.92);
+        ctx.beginPath();ctx.arc(x*W,y*H,3,0,TAU);ctx.fill();
+      }
+    });
+    label(ctx,12,20,'point cloud in X',rgba(C.ink,.7),11,'left');
+  }
+  // ── window 2 : topological signature β₀, β₁ ──
+  {
+    const [c,ctx]=g('cv-f2');clear(ctx,c);
+    const W=c.width,H=c.height,pad=34;
+    ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad,24);ctx.lineTo(pad,H-pad);ctx.lineTo(W-12,H-pad);ctx.stroke();
+    const b0=u=>30*Math.exp(-4*u)+2, b1=u=>9*u*Math.exp(-2.2*u);
+    [[b0,C.a1],[b1,C.a2]].forEach(([fn,col])=>{
+      ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.beginPath();
+      for(let i=0;i<=40;i++){
+        const u=i/40,x=pad+u*(W-pad-16),y=H-pad-(fn(u)/32)*(H-pad-40);
+        i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      }ctx.stroke();
+    });
+    const mx=pad+t*(W-pad-16);
+    ctx.strokeStyle=C.a3;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(mx,24);ctx.lineTo(mx,H-pad);ctx.stroke();
+    label(ctx,pad+8,H-10,'β₀',C.a1,12,'left');
+    label(ctx,pad+36,H-10,'β₁',C.a2,12,'left');
+    label(ctx,12,20,'topological signature',rgba(C.ink,.7),11,'left');
+  }
+  // ── window 3 : scale invariance per level ──
+  {
+    const [c,ctx]=g('cv-f3');clear(ctx,c);
+    const W=c.width,H=c.height;
+    const levels=['token','phrase','sentence','discourse'];
+    const bh=(H-46)/4,strength=1-.85*t;
+    levels.forEach((s,i)=>{
+      const y=32+i*bh;
+      ctx.fillStyle=rgba(C.a3,.10+.5*strength);
+      ctx.fillRect(74,y,W-96,bh-9);
+      label(ctx,10,y+bh/2,s,rgba(C.ink,.85),11,'left');
+      label(ctx,W-12,y+bh/2,(0.3+0.7*strength).toFixed(2),rgba(C.ink2,.9),11,'right');
+    });
+    label(ctx,12,20,'scale invariance',rgba(C.ink,.7),11,'left');
+  }
+}
+
+/* 13 · finale ─────────────────────────────── */
+hooks[12]=function(){
+  cancelAnimationFrame(hooks._hRaf);
+  let phase=0;
+  const r=rng(2024),nodes=[];
+  for(let i=0;i<11;i++)nodes.push([80+r()*840,60+r()*210,26+r()*34]);
+  (function loop(){
+    const [c,ctx]=g('cv-final');clear(ctx,c);noise(ctx,c,420,8);
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+      const d=Math.hypot(nodes[i][0]-nodes[j][0],nodes[i][1]-nodes[j][1]);
+      const s=Math.max(0,1-d/360);
+      if(s>.1)filament(ctx,nodes[i],nodes[j],C.a2,s*(.6+.4*Math.sin(phase+i)),14,i*5+j);
+    }
+    nodes.forEach((n,k)=>{
+      const pulse=1+.08*Math.sin(phase*1.3+k);
+      blob(ctx,n[0],n[1],n[2]*pulse,k%2?C.a1:C.a3,Math.floor(30+n[2]),k*53+3);
+    });
+    phase+=.012;
+    hooks._hRaf=requestAnimationFrame(loop);
+  })();
+};
+
+/* ═══ boot ════════════════════════════════════ */
+go(0);
+</script>
+</body>
+</html>
