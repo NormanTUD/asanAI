@@ -164,12 +164,13 @@
   mittig platzieren) — vorher saß alles links, rechts zu viel Freiraum. `node --check` +
   headless (Folie 5) clean.
 
-### T13b · Folie 2 Cross-Morph BAST (Grundlage für T15)  `[~]`
-- BAST (ungetestet im Real-Time-Morph): `#klassik-stage` (zentriert, volle Höhe, keine Karten)
-  mit zwei Layern — `.klassik-formula` (LaTeX `f(a,b)={cases}`) + `#flip-clock`. `FlipClockViz`
-  (nn_demos.js) baut 16 Tiles, vertikaler Loop, per-Tile Opacity/Scale. `node --check` + headless
-  (Folie 2) clean; DOM-Dump: 16 Tiles, richtige Helligkeit (Mitte hell). Morph-Zeitpunkt =
-  `enterT + 1200 ms` (AUTO) — **wird in T15 auf manuell umgestellt**.
+### T13b · Folie 2 Cross-Morph BAST (Grundlage für T15)  `[x]`
+- ✅ Abgeschlossen über **T15**: der letzte offene Punkt (Morph-Zeitpunkt AUTO → manuell) ist
+  mit T15 umgesetzt, der Cross-Morph läuft real-time.
+- BAST: `#klassik-stage` (zentriert, volle Höhe, keine Karten) mit zwei Layern —
+  `.klassik-formula` (LaTeX `f(a,b)={cases}`) + `#flip-clock`. `FlipClockViz` (nn_demos.js)
+  baut 16 Tiles, vertikaler Loop, per-Tile Opacity/Scale. `node --check` + headless (Folie 2)
+  clean; DOM-Dump: 16 Tiles, richtige Helligkeit (Mitte hell).
 
 ### T15 · Folie 2: Switch erst auf manuelles Weiter + `f(...)` fix, nur Zahlen rotieren  `[x]`
 - ✅ Fertig: (1) Switch nur auf manuelles Weiter — Registry `klassisch-flipclock`
