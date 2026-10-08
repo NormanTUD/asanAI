@@ -2,9 +2,16 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **T7 + T8 + T9 fertig** (Hund wechselt im Training; RGB-Matrix als
-> Schritt 5 der Conv-Folie, blauer Pixel-Zoom raus; Filter → eigene Folie 8 „Ein Filter ist
-> ein Muster"). **Deck jetzt 14 Folien.** **Keine offenen Aufgaben mehr.**
+> Letzte Aktualisierung: **2. Runde (Norman) — offene Aufgaben T30–T35.**
+> 1. **T30** Matrix auf „Das Bild als Zahlen" → **schwarzweiß + echte LaTeX-Matrix** (passt
+>    zum Graubild, statt farbiger Canvas-RGB). 2. **T31** kz-Headlines (Folie 7–9/11/12)
+>    bekommen **Unterlinie** wie normales `<h2>`. 3. **T32** DenseRaum „Vom Bild zu Punkten"
+>    **neu machen**: vorher NICHT linear trennbar → echte Krümmung → Ebene trennt wirklich →
+>    „unser Bild" = random Punkt; **Schritt-0-Panel raus** (= T11). 4. **T33** Pipeline
+>    „Lernen": Bilder **Hund/Katz ~1 s** je mit **aufleuchtendem Tag** (statt Crossfade).
+>    5. **T34** „Das Auto selbst? Kommt ganz hinten dran." **raus**. 6. **T35** Filter-Layout
+>    (Folie 8) **robust** machen. Dazu **T12** (diese Pflege). **Deck 14 Folien.**
+> **Reihenfolge: T30 → T31 → T32 → T33 → T34 → T35.**
 
 ## Dateien die ich analysiert habe
 - `index.html` — 14 Folien, Reihenfolge unten.
@@ -28,7 +35,7 @@
 ## Folien-Reihenfolge (aktuell, index.html — 14 Folien)
 1. Titel · 2. Klassisch vs. KI · 3. Geschichte · **4. Was wir wollen** (Ziel, T29)
 · **5. Man arbeitet in Schichten** · **6. Drei Bausteine dafür** (T29) ·
-7. **Das Bild als Zahlen** (ConvDemo, 4 Schritte, T9) · 8. **Ein Filter ist ein Muster**
+7. **Das Bild als Zahlen** (ConvDemo, 5 Schritte; Matrix → T30) · 8. **Ein Filter ist ein Muster**
 (FilterDemo, 4 Schritte, T9) · 9. Flatten · 10. **Was sind Dense Layer?** (gemerged:
 NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (DenseRaum)
 · 12. Der gesamte Prozess (Pipeline) · 13. Alles idealisiert (T27, vor asanAI)
@@ -79,9 +86,10 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
   Fix in `katze.js`: `resize()` setzt width/height nur wenn sich was geändert hat; neu `clear()`
   (weiß füllen, Transform zurück); `presentation.js` convolution `onEnter` → `d.clear()` + `init()`
   nach 80 ms. `node --check` + headless clean.
-- (a) **Titel (OFFEN, deferred)**: Folie 6 nutzt dynamische `kz-title` statt `<h2>` — aber das
-  tun Folien 6/7/10/11 ALLE (kz-Framework). Ein `<h2>` würde doppeln. → Bewusst offen lassen,
-  außer Norman will es explizit.
+- (a) **Titel (✅ erledigt, T18)**: ALLE kz-Folien (7/8/9/11/12) haben jetzt
+  `<h2 class="kz-const">` (konstant, oben absolut) + `kz-title` als grauen Untertitel —
+  kein Doppel-Titel mehr (CSS `.kz-head .kz-const` entblaut, border:none). → **Fertig.**
+  (Die **Unterlinie** für die kz-Headlines, wie normales `<h2>`, fehlt noch = **T31**.)
 
 ### T6 · Underbrace unter x (Folie 8, NeuronIntro)  `[x]`
 - Unter der x-Spalte in Szene 2 ein **`\underbrace{...}_{\text{das Bild}}`** setzen
@@ -153,6 +161,9 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
   - Farben: Hund = **rot**, Katze = **grün** (konsistent zu Pipeline/DenseRaum-Legende).
 - Schrittfolge (aktuell 5): Panel(Zahlen) → Punkte → Wölbung → Ebene → Linie.
   → Panel-Schritt (0) evtl. durch T8-Matrix-Logik ersetzen/kürzen? (siehe Annahmen/Fragen)
+- **Nachtrag (2. Runde):** T11 wird in **T32** (DenseRaum-Re-Work) abgeschlossen —
+  Schritt-0-Panel („Ein Bild ist schon Zahlen") wird dort **entfernt** (Norman: „entferne
+  den Part … aber lasse 'Vom Bild zu Punkten'"). Demo wird 4 Schritte.
 
 ### T13 · Folie 2 „Klassisch vs. KI": Funktionen + Flip-Clock  `[x]`
 - ✅ Fertig: beide Seiten als **LaTeX-Funktion**. Klassisch = formale Definition mit **großer
@@ -358,6 +369,73 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
   `node --check` + headless (Deck, 13 Folien) clean.
 - **Norman:** „mach die 'was wir wollen' parts … vor dem 'Man arbeitet in Schichten'. aber
   das mit den bausteinen danach".
+
+### T30 · „Das Bild als Zahlen" (Folie 7): Matrix schwarzweiß + reale LaTeX-Matrix  `[ ]`
+- **Norman:** „das Bild ist schwarzweiß, aber die Matrix nicht. nutze eine reale Matrix
+  mit LaTeX." → Die aktuelle Matrix (Schritt 5, `drawRGBMatrix`) zeigt **farbige** RGB-
+  Swatches auf dem Canvas — passt **nicht** zum grauen Bild daneben (Schritt 3–4 = ein
+  Kanal = Grau, ein Wert 0–255 pro Pixel).
+- → Matrix wird **Graustufen** (einziger Wert 0–255 pro Pixel, aus `KatzeKit.GREEN`),
+  mit **echten Werten** und **LaTeX** gerendert (temml/MathML, wie die Formeln auf den
+  anderen Folien) als **HTML-Overlay** rechts neben dem grauen Canvas-Bild. Oben links ein
+  echter Block (z. B. 4×4), daneben/unten **Punkte** (⋯/⋮/⋱) für den Rest, Shape **(32, 32)**.
+  `drawRGBMatrix` + `MB/MB_TOP/MB_LEFT/MCC_*/MAT_*` aus dem ConvDemo **raus**.
+- Verknüpft mit „Layout robust": die Canvas-Matrix war fix in px (MAT_H ≈ 372) → lief bei
+  kleiner Stage (H < 372) über. Die LaTeX-HTML-Matrix skaliert mit dem Text → erledigt das.
+
+### T31 · kz-Headlines: Unterlinie wie normaler `<h2>` (alle kz-Folien)  `[ ]`
+- **Norman:** „Folie 9 und 8 haben keine Headline-Unterlinie wie z. B.
+  `<h2>Was sind Dense Layer?</h2>`." → Die `.kz-const`-Headlines (Folie 7 Conv „Das Bild
+  als Zahlen", 8 Filter „Convolution", 9 Flatten, 11 „Vom Bild zu Punkten", 12 „Der
+  gesamte Prozess") haben **keine** Unterlinie; normale `.slide h2` haben eine.
+- → `.kz-head .kz-const` (index.css) bekommt dieselbe **Unterkante** wie `.slide h2`
+  (border-bottom / Unterlinie). Gilt für ALLE kz-Folien. Erst prüfen, welche Unterlinie
+  `.slide h2` konkret hat, dann 1:1 übernehmen (Farbe/Abstand).
+
+### T32 · DenseRaum „Vom Bild zu Punkten" (Folie 11) neu machen  `[ ]`
+- **Norman:** „das Set ist zu klar linear trennbar"; „'Der Layer wölbt den Raum' zeigt nicht
+  so richtig einen gekrümmten Raum — mach es nochmal neu und wirklich gut, so dass es vorher
+  NICHT linear trennbar ist, aber nach der Raumkrümmung, die du neu machst, schon"; „bei
+  'Eine Ebene passt dazwischen' passt sie eben NICHT dazwischen"; „'Alles fällt auf eine
+  Linie': zeige das Bild jeweils einen random Punkt"; „entferne den Part mit 'Vom Bild zu
+  Punkten', aber lasse 'Vom Bild zu Punkten'".
+- → (a) **Schritt 0 (Panel „Ein Bild ist schon Zahlen") entfernen** (= T11; der
+  „Vom Bild zu Punkten"-**Titel** bleibt). Demo wird **4 Schritte**: Punkte → wölbt → Ebene
+  → Linie.
+- (b) Punkte-Set so streuen, dass Katze & Hund in der **flachen 2D-Ansicht NICHT linear
+  trennbar** sind (keine einfachen „oben/unten"; echtes Verschachteln/Overlappen).
+- (c) **„wölbt den Raum" neu**: die Krümmung muss die Punkte so umfalten, dass **vorher**
+  keine Gerade trennt, **nachher** aber eine Ebene/Linie es kann. Der Übergang
+  (nicht-trennbar → trennbar) muss sichtbar sein (z = y − b(x), b(x) passend wählen).
+- (d) **„Ebene passt dazwischen"**: die Ebene/Linie muss die beiden Klassen **tatsächlich**
+  trennen (alle Hunde einerseits, alle Katzen andererseits) — nicht irgendwo in der Mitte
+  liegen, wo Punkte drüber/drunter hängen.
+- (e) **„Alles fällt auf eine Linie"**: „unser Bild" = **ein random Punkt** aus dem Set
+  (nicht immer derselbe Mini-Katzen-Dot), bei jedem (Re-)Besuch neu gewählt.
+- Schließt **T11** ab.
+
+### T33 · PipelineDemo „Lernen" (Folie 12, Schritt 6): Bilder Hund/Katz ~1 s  `[ ]`
+- **Norman:** „jedes Bild soll Hund, Katze, Hund, Katze … ~1 s angezeigt werden, und dazu der
+  passende aufleuchtende Tag." → Statt dem **Crossfade** (T7, `cdT`/`mixCD`, weicher
+  Katze↔Hund-Blend) **diskrete Blöcke**: **Hund ~1 s** (Hund-Neuron/Tag leuchtet) →
+  **Katze ~1 s** (Katze-Neuron/Tag leuchtet) → …, jeweils Eingangs-Bild + **passendes
+  leuchtendes Ausgabe-Neuron** + Fuß-Text (Hund %/Katze %).
+- In `PipelineDemo` (katze.js, Schritt „Lernen" = 6): statt `mixCD`-Blend ein ~1-s-Takt, der
+  Eingang + leuchtendes Output-Neuron + Fuß-Text schaltet.
+
+### T34 · „Alles idealisiert" (Folie 13): „Auto selbst"-Satz entfernen  `[ ]`
+- **Norman:** „'Das Auto selbst? Kommt ganz hinten dran.' ist schlecht formuliert, entferne
+  das einfach." → Satz aus `index.html` (Folie 13 `slide-idealisiert`, Absatz „…findet es den
+  blauen Himmel — weil der einfacher zu erkennen ist als das Auto. **Das Auto selbst? Kommt
+  ganz hinten dran.**") löschen. Rest des Absatzes bleibt.
+
+### T35 · Layout robust: Filter-Folie (Folie 8) Kernel+Katze+Map  `[ ]`
+- (aus „mach die offenen") Die Filter-Folie (FilterDemo, Folie 8) positioniert
+  **Kernel-Panel** (links der Katze) + **Katze** + **8×8-Map** (rechts) mit Größen, die bei
+  schmaler Stage nicht mehr alle in `W` passen (Kernel läuft links, Map rechts über).
+- → `layoutFor` (katze.js FilterDemo) `s` um eine **Breiten-Beschränkung** erweitern
+  (z. B. `s = min(..., (W - ~420) / 64)`), damit Kernel + Katze + Map immer in `W` passen.
+  (Der RGB-Matrix-Teil von „Layout robust" ist in **T30** erledigt.)
 
 ### T12 · Diese TODO.md pflegen  `[~]`
 - Bei jeder Änderung Status + Notizen hier aktualisieren.
