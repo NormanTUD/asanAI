@@ -151,7 +151,7 @@ const KatzeKit = (() => {
 	function _loadHund() {
 		if (_hundImg) return;
 		_hundImg = new Image();
-		_hundImg.src = 'hund.gif';
+		_hundImg.src = 'img/hund.gif';
 	}
 	_loadHund();
 

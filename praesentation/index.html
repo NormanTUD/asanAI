@@ -4,8 +4,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Wie funktioniert Machine Learning mit neuronalen Netzen?</title>
-	<script src="jquery.min.js"></script>
-	<script src="plotly.min.js"></script>
+	<script src="jquery.min.js" defer></script>
+	<script src="plotly.min.js" defer></script>
 	<script src="temml.min.js"></script>
 	<link rel="stylesheet" href="index.css">
 	<style>
@@ -228,7 +228,7 @@
      ------------------------------------------------------------
      Katze-Framework (katze.js, ConvDemo): 32×32 ASCII-Katze:
      Farbbild → drei Kanäle (R/G/B) → ein Kanal (Grau) →
-     Pixel = Zahl (0–255). Gestuft (4 Schritte). Der Filter-Teil
+     Pixel = Zahl (0–255). Gestuft (6 Schritte). Der Filter-Teil
      (6×5-Filter, blockweiser Sweep, 8×8-Map) ist auf Folie 8
      ("Ein Filter ist ein Muster", FilterDemo).
      ============================================================ -->
@@ -322,7 +322,7 @@
             <div class="fragment formula-box" data-nofast data-fragment-action="neuron-intro-anim">
                 <div style="margin-bottom:12px; font-weight:bold; color:#1e293b;">
   		1 Neuron = 1 Gleichung <span class="math-inline">a \cdot x + b</span>.<br>
-                Ein Layer rechnet Milliarden davon parallel.
+                Ein Layer rechnet Millionen davon parallel.
                 </div>
 		<div id="nn-intro-anim">
 		    <div class="nn-anim-scene" data-scene="1">
@@ -558,7 +558,6 @@
 <script src="space_morph.js"></script>
 <script src="nn_demos.js"></script>
 <script src="katze.js"></script>
-<script src="hierarchy.js"></script>
 <script src="dense_merge.js"></script>
 <script src="presentation.js"></script>
 

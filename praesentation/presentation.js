@@ -63,7 +63,7 @@ const DemoRegistry = (() => {
                 // Schnur (1024 Zahlen) → Fazit.
                 { id: 'flatten', ref: () => typeof FlattenDemo !== 'undefined' ? FlattenDemo : null,
                         slideTest: s => s.id === 'slide-flatten',
-                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
                         onLeave: d => d.reset() },
 
                 // "Der gesamte Prozess" (katze.js), Bild → Layer 1
@@ -73,7 +73,7 @@ const DemoRegistry = (() => {
                 // sich) → Katze 95 %.
                 { id: 'pipeline', ref: () => typeof PipelineDemo !== 'undefined' ? PipelineDemo : null,
                         slideTest: s => s.id === 'slide-pipeline',
-                        onEnter: d => setTimeout(() => d.init(), 80),
+                        onEnter: d => { if (d.clear) d.clear(); setTimeout(() => d.init(), 80); },
                         onLeave: d => d.reset() },
 
                 // "Was wir wollen" (katze.js), statisches ZIEL der
@@ -82,15 +82,6 @@ const DemoRegistry = (() => {
                 // PipelineKit (gleiche Szene wie animierte Folie 11).
                 { id: 'pipeline-goal', ref: () => typeof PipelineGoalDemo !== 'undefined' ? PipelineGoalDemo : null,
                         slideTest: s => s.id === 'slide-ziel',
-                        onEnter: d => setTimeout(() => d.init(), 80),
-                        onLeave: d => d.reset() },
-
-                // "Convolutions: Strukturen in Bildern finden" (hierarchy.js)
-                // echte Convolution
-                // auf stop_sign.jpg: jeder Filter einzeln (0°, 90°, 45°, 315°)
-                // -> Kombination -> Ecken.
-                { id: 'hierarchy', ref: () => typeof HierarchyDemo !== 'undefined' ? HierarchyDemo : null,
-                        slideTest: s => s.id === 'slide-hierarchie',
                         onEnter: d => setTimeout(() => d.init(), 80),
                         onLeave: d => d.reset() },
 
@@ -803,7 +794,7 @@ function prev() {
             `${currentSlide + 1} / ${slides.length}`;
         document.getElementById('btn-prev').disabled = false;
         document.getElementById('btn-next').disabled = false;
-        const progress = (currentSlide / (slides.length - 1)) * 100;
+        const progress = slides.length > 1 ? (currentSlide / (slides.length - 1)) * 100 : 0;
         document.getElementById('progress-bar').style.width = progress + '%';
         document.querySelectorAll('.overview-thumb').forEach((thumb, i) => {
             thumb.classList.toggle('current', i === currentSlide);
@@ -1280,6 +1271,7 @@ const InputHandler = (() => {
     function handleWheel(e) {
         if (wheelCooldown) return;
         if (isOverviewOpen()) return;
+        if (Math.abs(e.deltaY) < 20) return;
         e.preventDefault();
         wheelCooldown = true;
         setTimeout(() => { wheelCooldown = false; }, 500);
