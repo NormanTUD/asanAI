@@ -1,0 +1,3707 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Kult der statistischen Signifikanz — Interaktiv</title>
+
+<!-- ============ EXTERNE BIBLIOTHEKEN (CDN) ============ -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg:          #07090e;
+  --bg2:         #0b0f17;
+  --panel:       #11161f;
+  --panel2:      #161d29;
+  --line:        #232c3b;
+  --line2:       #2e3a4d;
+  --ink:         #e8edf5;
+  --ink2:        #a8b4c7;
+  --ink3:        #6b7a90;
+
+  --oomph:       #ff6b4a;   /* warm, kraftvoll */
+  --oomph-d:     #c9452a;
+  --prec:        #4ad7ff;   /* kühl, scharf */
+  --prec-d:      #1a93bd;
+  --gosset:      #7ee787;   /* grün = Gosset */
+  --fisher:      #c792ea;   /* violett = Fisher */
+  --warn:        #ffcc55;
+  --bad:         #ff4d6d;
+  --gold:        #e9c46a;
+
+  --r:           16px;
+  --shadow:      0 24px 60px -18px rgba(0,0,0,.85);
+  --glow-o:      0 0 36px -6px rgba(255,107,74,.55);
+  --glow-p:      0 0 36px -6px rgba(74,215,255,.5);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1100px 700px at 12% -5%, #16203a 0%, transparent 58%),
+    radial-gradient(900px 600px at 95% 8%, #2a1726 0%, transparent 55%),
+    radial-gradient(1000px 800px at 50% 110%, #0d2027 0%, transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ---------- Fortschrittsbalken ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--oomph),var(--gold),var(--prec));
+  z-index:9999;box-shadow:0 0 14px rgba(255,140,80,.7);transition:width .1s linear}
+
+/* ---------- Navigation ---------- */
+#nav{position:fixed;top:0;left:0;right:0;height:58px;z-index:9000;
+  background:rgba(7,9,14,.82);backdrop-filter:blur(18px) saturate(1.4);
+  border-bottom:1px solid var(--line);display:flex;align-items:center;
+  padding:0 20px;gap:6px;overflow-x:auto;scrollbar-width:none}
+#nav::-webkit-scrollbar{display:none}
+#nav .brand{font-family:'Fraunces',serif;font-weight:900;font-size:15px;
+  letter-spacing:-.01em;margin-right:16px;white-space:nowrap;
+  background:linear-gradient(90deg,var(--oomph),var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#nav a{color:var(--ink3);text-decoration:none;font-size:12.5px;font-weight:600;
+  padding:6px 11px;border-radius:9px;white-space:nowrap;transition:.18s}
+#nav a:hover{color:var(--ink);background:var(--panel2)}
+#nav a.active{color:#07090e;background:linear-gradient(90deg,var(--gold),var(--oomph));box-shadow:0 0 18px -4px rgba(233,196,106,.6)}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+section{padding:96px 0 40px;scroll-margin-top:70px;position:relative}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;
+  color:var(--ink3);text-transform:uppercase;margin-bottom:10px;display:block}
+h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(34px,6.4vw,70px);
+  line-height:1.02;letter-spacing:-.035em;margin-bottom:20px}
+h2{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(26px,3.9vw,40px);
+  line-height:1.1;letter-spacing:-.025em;margin-bottom:16px}
+h3{font-family:'Inter',sans-serif;font-weight:700;font-size:19px;margin:26px 0 10px;letter-spacing:-.01em}
+h4{font-size:14px;font-weight:700;color:var(--ink2);text-transform:uppercase;
+  letter-spacing:.11em;margin:18px 0 8px}
+p{color:var(--ink2);font-size:16.5px;max-width:74ch;margin-bottom:14px}
+p.lead{font-size:19.5px;color:var(--ink);max-width:70ch}
+strong{color:var(--ink);font-weight:650}
+em{color:var(--gold);font-style:italic}
+.o{color:var(--oomph);font-weight:650}
+.p_{color:var(--prec);font-weight:650}
+.g{color:var(--gosset);font-weight:650}
+.f{color:var(--fisher);font-weight:650}
+
+/* ---------- Karten / Panels ---------- */
+.card{background:linear-gradient(160deg,var(--panel) 0%,var(--panel2) 100%);
+  border:1px solid var(--line);border-radius:var(--r);padding:26px;
+  box-shadow:var(--shadow);margin:22px 0}
+.card.flush{padding:20px}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g-side{grid-template-columns:320px 1fr}
+.g-side-r{grid-template-columns:1fr 330px}
+@media(max-width:940px){.g2,.g3,.g-side,.g-side-r{grid-template-columns:1fr}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin-bottom:17px}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:7px;gap:10px}
+.ctrl label .val{font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--gold);font-weight:600;background:rgba(233,196,106,.1);
+  padding:1px 8px;border-radius:6px;border:1px solid rgba(233,196,106,.22)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;
+  border-radius:99px;background:var(--line2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;
+  border-radius:50%;background:linear-gradient(145deg,#fff,#b9c6da);cursor:pointer;
+  border:2px solid var(--bg);box-shadow:0 0 0 1px var(--line2),0 3px 10px rgba(0,0,0,.6);transition:.15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18);box-shadow:0 0 0 1px #fff,0 0 20px rgba(255,255,255,.4)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;
+  background:#fff;cursor:pointer;border:2px solid var(--bg)}
+input[type=range].ro::-webkit-slider-thumb{background:linear-gradient(145deg,#ffb199,var(--oomph))}
+input[type=range].rp::-webkit-slider-thumb{background:linear-gradient(145deg,#b6f0ff,var(--prec))}
+
+button{font-family:'Inter',sans-serif;font-weight:650;font-size:13px;
+  padding:9px 17px;border-radius:10px;border:1px solid var(--line2);
+  background:var(--panel2);color:var(--ink);cursor:pointer;transition:.18s}
+button:hover{background:var(--line);border-color:var(--ink3);transform:translateY(-1px)}
+button.primary{background:linear-gradient(135deg,var(--oomph),var(--oomph-d));
+  border-color:transparent;color:#140703;box-shadow:var(--glow-o)}
+button.primary:hover{filter:brightness(1.12)}
+button.cool{background:linear-gradient(135deg,var(--prec),var(--prec-d));
+  border-color:transparent;color:#021019;box-shadow:var(--glow-p)}
+button.gos{background:linear-gradient(135deg,var(--gosset),#3fa84c);border-color:transparent;color:#04170a}
+button.ghost{background:transparent}
+button.active{outline:2px solid var(--gold);outline-offset:1px}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+
+/* ---------- Readouts / Stats ---------- */
+.stat{background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-radius:12px;padding:13px 15px;text-align:center}
+.stat .k{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+.stat .v{font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:600;line-height:1.3;margin-top:3px}
+.stat .s{font-size:11px;color:var(--ink3)}
+.statrow{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin:16px 0}
+
+.verdict{border-radius:13px;padding:15px 18px;margin:16px 0;font-size:15px;
+  border-left:4px solid var(--gold);background:rgba(233,196,106,.07)}
+.verdict.good{border-color:var(--gosset);background:rgba(126,231,135,.08)}
+.verdict.bad{border-color:var(--bad);background:rgba(255,77,109,.08)}
+.verdict.info{border-color:var(--prec);background:rgba(74,215,255,.07)}
+.verdict b{color:var(--ink)}
+
+.quote{border-left:3px solid var(--gold);padding:12px 0 12px 20px;margin:22px 0;
+  font-family:'Fraunces',serif;font-size:17.5px;font-style:italic;color:var(--ink);max-width:70ch;line-height:1.62}
+.quote cite{display:block;font-family:'Inter',sans-serif;font-style:normal;
+  font-size:12.5px;color:var(--ink3);margin-top:9px;letter-spacing:.03em}
+
+.tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 9px;border-radius:99px;margin-right:6px;vertical-align:middle}
+.tag.pre{background:rgba(74,215,255,.14);color:var(--prec);border:1px solid rgba(74,215,255,.3)}
+.tag.key{background:rgba(233,196,106,.14);color:var(--gold);border:1px solid rgba(233,196,106,.3)}
+
+canvas{display:block;width:100%;border-radius:12px;background:#080b11}
+.plot{width:100%;border-radius:12px;overflow:hidden}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin:11px 0}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--ink3);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700}
+td{color:var(--ink2)}
+td.num{font-family:'JetBrains Mono',monospace;text-align:right;color:var(--ink)}
+
+.math{background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-radius:12px;padding:16px 18px;margin:16px 0;text-align:center;
+  font-size:19px;overflow-x:auto;color:var(--ink)}
+
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding-top:80px}
+.hero .sub{font-size:19px;color:var(--ink2);max-width:62ch;margin-top:12px}
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.pill{border:1px solid var(--line2);border-radius:99px;padding:7px 15px;
+  font-size:12.5px;color:var(--ink2);background:rgba(255,255,255,.025)}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);margin:46px 0}
+
+.stepnav{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.stepnav button{font-size:12px;padding:7px 13px}
+
+.note{font-size:13px;color:var(--ink3);font-style:italic;max-width:68ch}
+
+.hl{background:linear-gradient(180deg,transparent 62%,rgba(233,196,106,.25) 62%);padding:0 2px}
+
+.fade{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.fade.in{opacity:1;transform:none}
+
+footer{padding:60px 0 80px;border-top:1px solid var(--line);margin-top:70px;color:var(--ink3);font-size:13.5px}
+
+.pillbox{border-radius:14px;padding:18px;border:1px solid var(--line);position:relative;overflow:hidden}
+.pillbox.oo{background:linear-gradient(150deg,rgba(255,107,74,.1),rgba(255,107,74,.02));border-color:rgba(255,107,74,.3)}
+.pillbox.pp{background:linear-gradient(150deg,rgba(74,215,255,.1),rgba(74,215,255,.02));border-color:rgba(74,215,255,.3)}
+.pillbox h3{margin-top:0;display:flex;align-items:center;gap:9px}
+.pillbox .icon{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:16px}
+.oo .icon{background:rgba(255,107,74,.2)}
+.pp .icon{background:rgba(74,215,255,.2)}
+
+.bar-track{height:11px;border-radius:99px;background:var(--line);overflow:hidden;margin:7px 0}
+.bar-fill{height:100%;border-radius:99px;transition:width .35s cubic-bezier(.2,.8,.2,1)}
+
+.chip{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;
+  background:var(--panel2);border:1px solid var(--line2);border-radius:7px;padding:2px 8px;color:var(--gold)}
+
+.toggle{display:inline-flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.toggle button{border:none;border-radius:0;background:transparent}
+.toggle button.on{background:var(--gold);color:#07090e}
+
+.scroll-x{overflow-x:auto}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav id="nav">
+  <span class="brand">⚖︎ Oomph vs. Precision</span>
+  <a href="#hero">Start</a>
+  <a href="#frage">1 · Die Frage</a>
+  <a href="#streuung">2 · Streuung</a>
+  <a href="#stdfehler">3 · Standardfehler</a>
+  <a href="#tratio">4 · Signal/Rausch</a>
+  <a href="#pwert">5 · p-Wert</a>
+  <a href="#entscheidung">6 · Entscheidung</a>
+  <a href="#stichprobe">7 · Der Hebel n</a>
+  <a href="#vioxx">8 · Vioxx</a>
+  <a href="#bias">9 · Filter</a>
+  <a href="#power">10 · Power</a>
+  <a href="#gosset">11 · Gossets Weg</a>
+  <a href="#antwort">12 · Antwort</a>
+</nav>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<section id="hero" class="hero">
+  <div class="wrap">
+    <span class="sec-num fade">Ziliak &amp; McCloskey · JSM 2009 · Interaktive Rekonstruktion</span>
+    <h1 class="fade">Der Kult der<br>statistischen<br>Signifikanz</h1>
+    <p class="lead sub fade">Eine Behauptung: <strong>William Sealy Gosset</strong> — der Braumeister,
+    der den t‑Test erfand — hatte recht. Und sein genialer, schwieriger Freund
+    <strong>Ronald A. Fisher</strong> hatte unrecht.</p>
+    <p class="sub fade"><em>Passgenauigkeit ist nicht dasselbe wie Bedeutung.</em>
+    Trotzdem wird in 8 oder 9 von 10 Artikeln der führenden Fachzeitschriften — von der
+    Ökonomie bis zur Medizin — genau diese Gleichsetzung gemacht.</p>
+    <div class="pills fade">
+      <span class="pill">🎚 Alles per Regler steuerbar</span>
+      <span class="pill">📊 Kein Vorwissen über Abi‑Mathe hinaus</span>
+      <span class="pill">🧪 Jedes Konzept wird gebaut, bevor es benutzt wird</span>
+      <span class="pill">⏱ ca. 35 Minuten Spielzeit</span>
+    </div>
+    <div class="card fade" style="margin-top:40px">
+      <h4 style="margin-top:0">Der rote Faden</h4>
+      <div class="grid g3" style="gap:14px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.14em;color:var(--oomph);font-weight:700">MOTIVATION</div>
+          <p style="font-size:14px;margin:6px 0 0">Eine ganze Wissenschaftskultur trifft Entscheidungen
+          nach einem Kriterium, das über die <em>Größe</em> eines Effekts gar nichts aussagt.</p>
+        </div>
+        <div>
+          <div style="font-size:11px;letter-spacing:.14em;color:var(--gold);font-weight:700">IDEE</div>
+          <p style="font-size:14px;margin:6px 0 0">Trenne sauber: <span class="p_">Präzision</span>
+          (wie scharf messe ich?) von <span class="o">Oomph</span> (wie viel bewirkt es?).
+          Beides ist orthogonal.</p>
+        </div>
+        <div>
+          <div style="font-size:11px;letter-spacing:.14em;color:var(--gosset);font-weight:700">LÖSUNG</div>
+          <p style="font-size:14px;margin:6px 0 0">Gossets ökonomischer Ansatz: Verlustfunktion,
+          Alternativhypothese, „real error“ statt eines starren 5‑%‑Rituals.</p>
+        </div>
+      </div>
+    </div>
+    <p class="note fade" style="margin-top:20px">↓ Scrolle oder nutze die Navigation. Alle Diagramme reagieren live.</p>
+  </div>
+</section>
+
+<!-- =========================================================
+     1 · DIE FRAGE
+     ========================================================= -->
+<section id="frage">
+<div class="wrap">
+  <span class="sec-num">01 — Die konkrete Frage</span>
+  <h2 class="fade">Deine Mutter ruft an.</h2>
+  <p class="lead fade">Sie will abnehmen. Du bist der Statistiker in der Familie. Du recherchierst
+  und findest zwei Pillen. Sie nimmt <strong>genau eine</strong>. Gleicher Preis, gleiche
+  Nebenwirkungen (trockener Mund, Übelkeit, usw.), aber sie unterscheiden sich in <span class="o">Wirkungsstärke</span>
+  und <span class="p_">Präzision</span>.</p>
+
+  <div class="grid g2 fade" style="margin-top:26px">
+    <div class="pillbox oo">
+      <h3><span class="icon">💪</span> Pille „Oomph“</h3>
+      <p style="margin:0">Nimmt deiner Mutter im Schnitt <strong>20 Pfund</strong> ab.
+      Fantastisch! Aber sehr unsicher in der Wirkung: <strong>± 10 Pfund</strong>.</p>
+      <p style="margin:10px 0 0;font-size:14px">Könnten 10 Pfund sein. Könnten 30 sein.
+      <span class="note">(Manche Menschen können und wollen 30 Pfund auf einmal verlieren.)</span></p>
+    </div>
+    <div class="pillbox pp">
+      <h3><span class="icon">🎯</span> Pille „Precision“</h3>
+      <p style="margin:0">Nimmt im Schnitt <strong>5 Pfund</strong> ab — aber extrem genau:
+      <strong>± 0,5 Pfund</strong>.</p>
+      <p style="margin:10px 0 0;font-size:14px">Gleicher Preis, gleiche Nebenwirkungen.
+      Nur eben viel sicherer in der Wirkung.</p>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Spiele es durch — 400 simulierte Mütter</h3>
+    <p style="font-size:15px">Jeder Punkt ist eine Frau, die die Pille genommen hat. Die
+    horizontale Achse zeigt, <strong>wie viele Pfund sie tatsächlich verloren hat</strong>.
+    Drücke „Simulieren“ und sieh dir an, wo die Punkte landen.</p>
+
+    <div class="grid g-side-r">
+      <div>
+        <canvas id="c-pills" height="420"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--oomph)"></i>Oomph (20 ± 10)</span>
+          <span><i style="background:var(--prec)"></i>Precision (5 ± 0,5)</span>
+          <span><i style="background:var(--ink3)"></i>Null-Linie (0 Pfund)</span>
+        </div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <label>Streuung von Oomph <span class="val" id="v-po">± 10,0</span></label>
+          <input type="range" id="s-po" class="ro" min="2" max="20" step="0.5" value="10">
+        </div>
+        <div class="ctrl">
+          <label>Mittlerer Verlust Oomph <span class="val" id="v-mo">20,0</span></label>
+          <input type="range" id="s-mo" class="ro" min="2" max="35" step="0.5" value="20">
+        </div>
+        <div class="ctrl">
+          <label>Streuung von Precision <span class="val" id="v-pp">± 0,5</span></label>
+          <input type="range" id="s-pp" class="rp" min="0.2" max="6" step="0.1" value="0.5">
+        </div>
+        <div class="ctrl">
+          <label>Mittlerer Verlust Precision <span class="val" id="v-mp">5,0</span></label>
+          <input type="range" id="s-mp" class="rp" min="1" max="20" step="0.5" value="5">
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="b-sim">↻ Neu simulieren</button>
+          <button class="ghost" id="b-reset-pills">Original‑Zahlen</button>
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">t Oomph</div><div class="v" id="t-o" style="color:var(--oomph)">2,0</div><div class="s">Signal/Rausch</div></div>
+          <div class="stat"><div class="k">t Precision</div><div class="v" id="t-p" style="color:var(--prec)">10,0</div><div class="s">Signal/Rausch</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict" id="pill-verdict"></div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Frage, auf die alles hinausläuft</h3>
+    <p class="lead" style="margin-bottom:6px">Welche Pille wählst du für deine Mutter?</p>
+    <div class="btnrow">
+      <button class="primary" id="ch-o">Ich wähle Oomph</button>
+      <button class="cool" id="ch-p">Ich wähle Precision</button>
+    </div>
+    <div id="choice-out"></div>
+    <p class="note" style="margin-top:14px">Behalte deine Antwort im Kopf. Am Ende
+    (Kapitel 12) kommen wir darauf zurück — dann mit allem Werkzeug, das es braucht,
+    um die Antwort zu <em>begründen</em> statt nur zu fühlen.</p>
+  </div>
+
+  <div class="verdict info fade">
+    <b>Der Befund von Ziliak &amp; McCloskey:</b> In den Lebens‑ und Humanwissenschaften —
+    von Agronomie bis Zoologie, einschließlich der Statistik selbst — wählen
+    <b>volle 8 oder 9 von 10 publizierenden Wissenschaftlern Precision statt Oomph</b>.
+    Vom <i>American Economic Review</i> bis zu den <i>Annals of Internal Medicine</i>
+    ist die Geschichte dieselbe.
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     2 · STREUUNG
+     ========================================================= -->
+<section id="streuung">
+<div class="wrap">
+  <span class="sec-num">02 — Voraussetzung</span>
+  <h2 class="fade"><span class="tag pre">Grundlage</span> Was heißt „± 10 Pfund“ überhaupt?</h2>
+  <p class="lead fade">Bevor wir weitergehen, müssen drei Dinge sitzen. Sie sind einfach,
+  aber alles Weitere hängt daran. Du musst nichts lesen — schiebe die Regler.</p>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">① Mittelwert &amp; Streuung — der Daten‑Spielplatz</h3>
+    <p style="font-size:15px">Unten siehst du 12 Messungen (Gewichtsverlust einzelner Personen).
+    <strong>Ziehe die Punkte mit der Maus nach oben oder unten.</strong> Beobachte, wie
+    Mittelwert und Standardabweichung reagieren.</p>
+    <canvas id="c-sd" height="340"></canvas>
+    <div class="statrow">
+      <div class="stat"><div class="k">Mittelwert x̄</div><div class="v" id="sd-mean" style="color:var(--gold)">—</div><div class="s">Summe ÷ Anzahl</div></div>
+      <div class="stat"><div class="k">Standardabw. s</div><div class="v" id="sd-sd" style="color:var(--oomph)">—</div><div class="s">typ. Abstand zum Mittel</div></div>
+      <div class="stat"><div class="k">Spannweite</div><div class="v" id="sd-range">—</div><div class="s">max − min</div></div>
+      <div class="stat"><div class="k">n</div><div class="v">12</div><div class="s">Beobachtungen</div></div>
+    </div>
+    <div class="btnrow">
+      <button id="sd-tight">Eng zusammen</button>
+      <button id="sd-wide">Weit gestreut</button>
+      <button id="sd-outlier">Ein Ausreißer</button>
+      <button class="ghost" id="sd-rnd">Zufällig</button>
+    </div>
+    <div class="verdict" id="sd-verdict"></div>
+    <div class="math" id="m-sd"></div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">② Die Glockenkurve — warum ± überhaupt Sinn ergibt</h3>
+    <p style="font-size:15px">Wenn viele kleine zufällige Einflüsse zusammenwirken
+    (Stoffwechsel, Schlaf, Disziplin, Messfehler …), entsteht fast immer dieselbe Form:
+    die <strong>Normalverteilung</strong>. Ihre ganze Gestalt wird von genau zwei Zahlen
+    bestimmt: Mittelwert <span class="chip">μ</span> und Standardabweichung
+    <span class="chip">σ</span>.</p>
+
+    <div class="grid g-side">
+      <div>
+        <div class="ctrl">
+          <label>Mittelwert μ <span class="val" id="v-nm">20,0</span></label>
+          <input type="range" id="s-nm" min="-10" max="40" step="0.5" value="20">
+        </div>
+        <div class="ctrl">
+          <label>Standardabw. σ <span class="val" id="v-ns">10,0</span></label>
+          <input type="range" id="s-ns" min="1" max="20" step="0.5" value="10">
+        </div>
+        <h4>Was möchtest du einfärben?</h4>
+        <div class="toggle" id="tg-band">
+          <button data-b="1" class="on">±1σ</button>
+          <button data-b="2">±2σ</button>
+          <button data-b="3">±3σ</button>
+        </div>
+        <div class="verdict" id="norm-verdict" style="font-size:14px"></div>
+      </div>
+      <div>
+        <canvas id="c-norm" height="360"></canvas>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:16px">
+      <div class="stat"><div class="k">innerhalb ±1σ</div><div class="v" style="color:var(--gosset)">68,3 %</div></div>
+      <div class="stat"><div class="k">innerhalb ±2σ</div><div class="v" style="color:var(--gold)">95,4 %</div></div>
+      <div class="stat"><div class="k">innerhalb ±3σ</div><div class="v" style="color:var(--prec)">99,7 %</div></div>
+    </div>
+    <p class="note">Merke dir die mittlere Zahl. Die berühmte <span class="chip">1,96</span>
+    — die „Zweier‑Regel“ — ist genau die Grenze, innerhalb derer 95 % liegen.
+    Sie wird gleich der Dreh- und Angelpunkt der ganzen Geschichte.</p>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">③ Zurück zu den Pillen: das Bild aus dem Aufsatz</h3>
+    <p style="font-size:15px">Jetzt kannst du lesen, was „20 ± 10“ heißt: eine Glocke um 20
+    mit Breite 10. Und „5 ± 0,5“: eine messerscharfe Nadel bei 5. Die Flächen sind gleich
+    groß (beides sind vollständige Wahrscheinlichkeitsverteilungen) — aber sie erzählen
+    völlig verschiedene Geschichten.</p>
+    <div id="p-twobell" class="plot" style="height:400px"></div>
+    <div class="verdict good">
+      <b>Lies die Grafik so:</b> Precision verspricht zwischen <b>4,5 und 5,5 Pfund</b>.
+      Oomph verspricht zwischen <b>10 und 30 Pfund</b> (bei ±1σ).
+      Selbst das <i>schlechteste plausible</i> Ergebnis von Oomph ist doppelt so gut wie das
+      <i>beste</i> von Precision. Das nennt man <b>Dominanz</b> — und darauf kommen wir in
+      Kapitel 6 zurück.
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     3 · STANDARDFEHLER
+     ========================================================= -->
+<section id="stdfehler">
+<div class="wrap">
+  <span class="sec-num">03 — Voraussetzung</span>
+  <h2 class="fade"><span class="tag pre">Grundlage</span> Standardabweichung ≠ Standardfehler</h2>
+  <p class="lead fade">Das ist die meistverwechselte Unterscheidung der ganzen Statistik —
+  und ohne sie versteht man den Aufsatz nicht. Hier ist sie, zum Anfassen.</p>
+
+  <div class="card fade">
+    <div class="grid g2">
+      <div>
+        <h3 style="margin-top:0;color:var(--oomph)">Standardabweichung σ</h3>
+        <p style="font-size:15px">Wie stark streuen die <strong>einzelnen Menschen</strong>?
+        Eine Eigenschaft der Welt. Sie wird nicht kleiner, wenn du mehr Leute misst —
+        Menschen bleiben verschieden.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0;color:var(--prec)">Standardfehler SE</h3>
+        <p style="font-size:15px">Wie stark streut der <strong>Mittelwert deiner Stichprobe</strong>,
+        wenn du das Experiment wiederholst? Eine Eigenschaft deines <em>Experiments</em>.
+        Sie schrumpft mit <span class="chip">√n</span>.</p>
+      </div>
+    </div>
+
+    <div class="math" id="m-se"></div>
+
+    <div class="grid g-side">
+      <div>
+        <div class="ctrl">
+          <label>Stichprobengröße n <span class="val" id="v-sen">25</span></label>
+          <input type="range" id="s-sen" min="2" max="500" step="1" value="25">
+        </div>
+        <div class="ctrl">
+          <label>Streuung in der Bevölkerung σ <span class="val" id="v-sesig">10,0</span></label>
+          <input type="range" id="s-sesig" class="ro" min="1" max="25" step="0.5" value="10">
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="b-draw1">1 Stichprobe ziehen</button>
+          <button id="b-draw50">50 Stichproben</button>
+          <button class="ghost" id="b-clear-se">Leeren</button>
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">σ</div><div class="v" id="o-sig" style="color:var(--oomph)">10,0</div><div class="s">Menschen streuen</div></div>
+          <div class="stat"><div class="k">SE = σ/√n</div><div class="v" id="o-se" style="color:var(--prec)">2,00</div><div class="s">Mittelwerte streuen</div></div>
+        </div>
+        <div class="verdict info" id="se-verdict" style="font-size:14px"></div>
+      </div>
+      <div>
+        <canvas id="c-se" height="420"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--oomph)"></i>einzelne Personen</span>
+          <span><i style="background:var(--prec)"></i>Stichproben‑Mittelwerte</span>
+          <span><i style="background:var(--gold)"></i>wahrer Wert μ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Der √n‑Hebel — schon hier sichtbar</h3>
+    <p style="font-size:15px">Die Kurve zeigt: Der Standardfehler fällt mit √n gegen null.
+    <strong>Mit genug Geld und genug Probanden kann man jeden Standardfehler beliebig klein
+    machen</strong> — ganz gleich, wie winzig der echte Effekt ist. Diese eine Tatsache
+    zerlegt später (Kapitel 7) das ganze Signifikanz‑Ritual.</p>
+    <div id="p-sqrtn" class="plot" style="height:340px"></div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     4 · SIGNAL/RAUSCH — t
+     ========================================================= -->
+<section id="tratio">
+<div class="wrap">
+  <span class="sec-num">04 — Die Maschine</span>
+  <h2 class="fade">Das Signal‑Rausch‑Verhältnis: „Student’s“ t</h2>
+
+  <div class="quote fade">
+    Das Signal‑Rausch‑Verhältnis berechnet man, indem man ein Maß für das, was den
+    Forscher interessiert — der Klang einer Miles‑Davis‑Nummer, der Verlust von Körperfett,
+    der Ertrag einer Gerstensorte, die Wirkung des Zinssatzes auf Investitionen — teilt
+    durch ein Maß für die Unsicherheit dieses Signals.
+    <cite>Ziliak &amp; McCloskey, 2009</cite>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die „magische Formel“</h3>
+    <div class="math" id="m-t"></div>
+    <p style="font-size:15px">Das war Gossets Erfindung von 1908 — gemacht für die Guinness‑Brauerei,
+    wo man nur wenige, teure Versuche durchführen konnte. Es ist ein <strong>brillantes
+    Werkzeug</strong>. Der Aufsatz greift nicht das Werkzeug an, sondern das, was später
+    daraus gemacht wurde.</p>
+
+    <h4>Das Radio‑Bild — hörbar gemacht</h4>
+    <p style="font-size:15px">Stell dir zwei Radiosender vor. Der eine spielt Miles Davis,
+    aber es knistert. Der andere spielt Country &amp; Western — glasklar. Welchen hörst du?
+    <strong>Der Signifikanztester wählt immer den klaren Sender</strong> — nicht weil er
+    Country lieber mag, sondern weil der Empfang besser ist.</p>
+
+    <div class="grid g-side">
+      <div>
+        <div class="ctrl">
+          <label>Signal (Effektgröße) <span class="val" id="v-sig">20,0</span></label>
+          <input type="range" id="s-sig" class="ro" min="0" max="40" step="0.5" value="20">
+        </div>
+        <div class="ctrl">
+          <label>Rauschen (Standardfehler) <span class="val" id="v-noi">10,0</span></label>
+          <input type="range" id="s-noi" class="rp" min="0.3" max="20" step="0.1" value="10">
+        </div>
+        <div class="ctrl">
+          <label>Null‑Hypothese H₀ <span class="val" id="v-h0">0,0</span></label>
+          <input type="range" id="s-h0" min="-10" max="20" step="0.5" value="0">
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr">
+          <div class="stat"><div class="k">t‑Wert</div><div class="v" id="o-t" style="font-size:38px">2,00</div><div class="s">Signal ÷ Rauschen</div></div>
+        </div>
+        <div class="verdict" id="t-verdict"></div>
+        <div class="btnrow">
+          <button id="pre-o">Pille Oomph</button>
+          <button id="pre-p">Pille Precision</button>
+          <button id="pre-o14">Oomph mit ±14</button>
+        </div>
+      </div>
+      <div>
+        <canvas id="c-radio" height="300"></canvas>
+        <p class="note" style="margin-top:8px">Oben: das reine Signal. Unten: Signal + Rauschen,
+        wie es beim Empfänger ankommt. Je höher t, desto klarer ist die Melodie erkennbar.</p>
+        <canvas id="c-tgauge" height="130"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Der entscheidende Punkt: t und Oomph sind <em>unabhängig</em></h3>
+    <p style="font-size:15px">Fahre mit der Maus über die Karte. Die Achsen sind
+    <span class="o">Oomph</span> (wie viel wirkt es?) und <span class="p_">Präzision</span>
+    (wie scharf messe ich?). Die diagonalen Linien sind Linien gleichen t‑Werts.
+    <strong>Dieselbe Signifikanz kann aus winzigen und aus riesigen Effekten entstehen.</strong></p>
+    <div id="p-heat" class="plot" style="height:480px"></div>
+    <div class="legend">
+      <span><i style="background:var(--oomph)"></i>Oomph‑Pille (20 / 10)</span>
+      <span><i style="background:var(--prec)"></i>Precision‑Pille (5 / 0,5)</span>
+      <span><i style="background:#ffffff"></i>Linie t = 1,96 (die „Signifikanzgrenze“)</span>
+    </div>
+    <div class="verdict bad">
+      <b>Beobachte:</b> Precision liegt tief im „signifikanten“ Gebiet — aber ganz links,
+      wo der Effekt klein ist. Oomph liegt weit rechts (riesiger Effekt), aber nahe an der
+      Grenze. Wer nur die Farbe (= t) anschaut, sieht die horizontale Achse überhaupt nicht.
+      Ziliak &amp; McCloskey nennen das den <b>„sizeless stare“</b> — den größenlosen Blick.
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Figure 1 aus dem Aufsatz — rekonstruiert</h3>
+    <p style="font-size:15px">„Size Matters No Matter Where You Draw the Line of Precision“.
+    Zieh die beiden Linien: die <span class="p_">senkrechte</span> ist deine Signifikanzgrenze,
+    die <span class="o">waagerechte</span> ist dein Mindest‑Oomph (wie viel Wirkung wäre
+    überhaupt der Rede wert?). Vier Quadranten entstehen — und zwei davon sind Katastrophen.</p>
+
+    <div class="grid g-side-r">
+      <div><canvas id="c-fig1" height="460"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Signifikanz‑Grenze (t) <span class="val" id="v-f1t">1,96</span></label>
+          <input type="range" id="s-f1t" class="rp" min="0.5" max="5" step="0.05" value="1.96">
+        </div>
+        <div class="ctrl">
+          <label>Mindest‑Oomph <span class="val" id="v-f1o">8,0</span></label>
+          <input type="range" id="s-f1o" class="ro" min="1" max="25" step="0.5" value="8">
+        </div>
+        <div class="ctrl">
+          <label>Anzahl Studien <span class="val" id="v-f1n">160</span></label>
+          <input type="range" id="s-f1n" min="20" max="400" step="10" value="160">
+        </div>
+        <button class="ghost" id="b-f1new">
+↻ Neue Stichprobe</button>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">Richtig akzeptiert</div><div class="v" id="f1-ok" style="color:var(--gosset);font-size:20px">0</div><div class="s">groß & präzise</div></div>
+          <div class="stat"><div class="k">Fälschlich akzeptiert</div><div class="v" id="f1-fa" style="color:var(--bad);font-size:20px">0</div><div class="s">präzise, aber winzig</div></div>
+          <div class="stat"><div class="k">Fälschlich verworfen</div><div class="v" id="f1-fr" style="color:var(--warn);font-size:20px">0</div><div class="s">riesig, aber unscharf</div></div>
+          <div class="stat"><div class="k">Richtig verworfen</div><div class="v" id="f1-tr" style="color:var(--ink3);font-size:20px">0</div><div class="s">klein & unscharf</div></div>
+        </div>
+        <div class="verdict bad" style="font-size:13.5px">
+          <b>Die zwei Katastrophen:</b> oben links („Wissenschaft akzeptiert zu Unrecht“,
+          t = 3,0 aber bedeutungslos) und unten rechts („Wissenschaft verwirft zu Unrecht“,
+          t = 1,5 aber riesig wichtig). <b>Verschiebe die senkrechte Linie, wohin du willst —
+          die Katastrophen verschwinden nie.</b> Deshalb: „Size Matters No Matter Where You
+          Draw the Line“.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     5 · P-WERT
+     ========================================================= -->
+<section id="pwert">
+<div class="wrap">
+  <span class="sec-num">05 — Voraussetzung</span>
+  <h2 class="fade"><span class="tag pre">Grundlage</span> Der p‑Wert und die willkürliche 5‑%‑Linie</h2>
+  <p class="lead fade">Jetzt verstehst du t. Der p‑Wert ist nur eine Umrechnung davon —
+  aber die Umrechnung hat eine verführerische Sprache, die fast alle in die Irre führt.</p>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Was p wirklich misst</h3>
+    <p style="font-size:15px">Angenommen, die Pille wirkt <strong>überhaupt nicht</strong>
+    (Nullhypothese wahr). Dann würden deine Messwerte allein durch Zufall streuen — die
+    graue Glocke unten. Der p‑Wert fragt:
+    <em>„Wie wahrscheinlich wäre ein Ergebnis mindestens so extrem wie meines,
+    wenn in Wahrheit nichts da wäre?“</em></p>
+
+    <div class="grid g-side">
+      <div>
+        <div class="ctrl">
+          <label>Beobachteter t‑Wert <span class="val" id="v-pt">2,00</span></label>
+          <input type="range" id="s-pt" min="0" max="5" step="0.01" value="2">
+        </div>
+        <div class="ctrl">
+          <label>Signifikanzniveau α <span class="val" id="v-alpha">5,0 %</span></label>
+          <input type="range" id="s-alpha" min="0.1" max="20" step="0.1" value="5">
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">p‑Wert</div><div class="v" id="o-p" style="color:var(--fisher)">0,046</div><div class="s">zweiseitig</div></div>
+          <div class="stat"><div class="k">Kritisches t</div><div class="v" id="o-tcrit" style="color:var(--gold)">1,96</div><div class="s">die Schwelle</div></div>
+        </div>
+        <div class="verdict" id="p-verdict"></div>
+        <div class="btnrow">
+          <button id="pq1">t = 1,43 (Oomph ±14)</button>
+          <button id="pq2">t = 1,96</button>
+          <button id="pq3">t = 10 (Precision)</button>
+        </div>
+      </div>
+      <div><canvas id="c-pval" height="380"></canvas></div>
+    </div>
+
+    <div class="verdict bad">
+      <b>Was p NICHT ist</b> — die vier häufigsten Irrtümer:
+      <ul style="margin:8px 0 0 18px;font-size:14px;color:var(--ink2)">
+        <li>p ist <b>nicht</b> die Wahrscheinlichkeit, dass die Nullhypothese stimmt.</li>
+        <li>p ist <b>nicht</b> die Wahrscheinlichkeit, dass dein Ergebnis zufällig entstand.</li>
+        <li>1−p ist <b>nicht</b> die Wahrscheinlichkeit, dass sich das Ergebnis wiederholen lässt.
+            (Genau das behauptete Melton 1962 — und lag falsch.)</li>
+        <li>p sagt <b>gar nichts</b> über die Größe des Effekts. Es ist ein Maß für Präzision,
+            nicht für Oomph. Jeffreys (1961), Zellner (1984) und Rothman (1986) haben gezeigt,
+            dass p nicht einmal ein sauberes <i>quantitatives</i> Präzisionsmaß ist.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Woher kommt die 5 % eigentlich? Fishers eigene Worte</h3>
+    <div class="quote">
+      Es ist bequem, die Linie ungefähr dort zu ziehen, wo wir sagen können: „Entweder ist
+      an der Behandlung etwas dran, oder es hat sich ein Zufall ereignet, wie er nicht öfter
+      als einmal in zwanzig Versuchen vorkommt.“ … Wenn eins zu zwanzig nicht hoch genug
+      erscheint, können wir, wenn wir wollen, die Linie bei eins zu fünfzig ziehen …
+      <strong>Persönlich zieht es der Verfasser vor, einen niedrigen Standard der Signifikanz
+      beim 5‑Prozent‑Punkt zu setzen und alle Ergebnisse, die dieses Niveau nicht erreichen,
+      vollständig zu ignorieren.</strong>
+      <cite>R. A. Fisher, 1926 — Hervorhebung von Ziliak &amp; McCloskey</cite>
+    </div>
+    <div class="quote">
+      Es ist üblich und bequem für Experimentatoren, 5 Prozent als Standard‑Signifikanzniveau
+      zu nehmen, in dem Sinne, dass sie <strong>bereit sind, alle Ergebnisse zu ignorieren,
+      die diesen Standard nicht erreichen</strong>.
+      <cite>R. A. Fisher, The Design of Experiments, 1935</cite>
+    </div>
+    <p style="font-size:15px"><strong>„Bequem.“ „Persönlich.“ „Wenn wir wollen.“</strong>
+    Das ist die gesamte Begründung. Es gibt keine Ableitung, kein Theorem, keine
+    Kosten‑Nutzen‑Rechnung. Ziliak &amp; McCloskey fragen deshalb:</p>
+
+    <div class="grid g2">
+      <div class="card flush" style="margin:0;background:rgba(255,77,109,.05);border-color:rgba(255,77,109,.25)">
+        <h4 style="margin-top:0;color:var(--bad)">Die Wettbuden‑Frage</h4>
+        <p style="font-size:14.5px;margin:0">Wenn eine Spielerin an der Rennbahn um echtes
+        Geld wettet — besteht sie dann auf einer Quote von <b>19 zu 1</b> (0,95/0,05),
+        bevor sie ein Pferd wählt?</p>
+      </div>
+      <div class="card flush" style="margin:0;background:rgba(255,204,85,.05);border-color:rgba(255,204,85,.25)">
+        <h4 style="margin-top:0;color:var(--warn)">Die Brauer‑Frage</h4>
+        <p style="font-size:14.5px;margin:0">Was macht ein rationaler Brauer mit der
+        5‑%‑Regel, wenn er Hopfen kauft, um ein Bier zu brauen, das er mit Gewinn verkauft?</p>
+      </div>
+      <div class="card flush" style="margin:0;background:rgba(126,231,135,.05);border-color:rgba(126,231,135,.25)">
+        <h4 style="margin-top:0;color:var(--gosset)">Die Parlaments‑Frage</h4>
+        <p style="font-size:14.5px;margin:0">Soll der Bundestag eine Quote von 19 zu 1 oder
+        besser vorschreiben für ein neu entdecktes Operationsverfahren, das vielleicht das
+        Leben des Kanzlers rettet?</p>
+      </div>
+      <div class="card flush" style="margin:0;background:rgba(74,215,255,.05);border-color:rgba(74,215,255,.25)">
+        <h4 style="margin-top:0;color:var(--prec)">Die Grundsatz‑Frage</h4>
+        <p style="font-size:14.5px;margin:0">Was ist wissenschaftliches Wissen — und warum
+        sollte es sich von diesen drei Fällen grundsätzlich unterscheiden?</p>
+      </div>
+    </div>
+    <p style="font-size:15px;margin-top:16px">Die Antwort des Aufsatzes:
+    <strong class="hl">Wie die Quoten gesetzt werden sollten, hängt davon ab, wie wichtig
+    die Sache ist und was neues Material kostet.</strong> Nicht von einer Zahl, die jemand
+    1926 „bequem“ fand.</p>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Das Ritual in freier Wildbahn</h3>
+    <p style="font-size:15px">Ein von den US‑Seuchenschutzbehörden (CDC) finanzierter
+    Artikel über Drogenkonsum bei armen Frauen in Atlanta, <i>Journal of Drug Issues</i> 2003.
+    Jedes Kästchen ist eine „Versuchung“, die statistisch signifikant mit Drogenkonsum
+    zusammenhing. <strong>Klicke auf die Kästchen und zähle mit.</strong></p>
+    <div id="cdc-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px;margin:16px 0"></div>
+    <div class="statrow">
+      <div class="stat"><div class="k">Präzisions‑Angaben</div><div class="v" id="cdc-prec" style="color:var(--prec)">16</div><div class="s">p‑Werte</div></div>
+      <div class="stat"><div class="k">Oomph‑Angaben</div><div class="v" id="cdc-oomph" style="color:var(--oomph)">0</div><div class="s">Effektgrößen</div></div>
+      <div class="stat"><div class="k">Oomph‑Quote</div><div class="v" style="color:var(--bad)">0 %</div><div class="s">0 von 16</div></div>
+    </div>
+    <div class="verdict bad" style="font-size:14px">
+      <b>Null Instanzen von Oomph.</b> Nirgends steht, <i>wie viel</i> mehr Drogen konsumiert
+      wurden. Die ganze Welt dieser Autoren ist signifikant (p &lt; .05). Ziliak &amp; McCloskey:
+      „Sie sind im Griff ihrer eigenen Sucht nach Freizeit‑Statistik.“
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     6 · DIE ENTSCHEIDUNG
+     ========================================================= -->
+<section id="entscheidung">
+<div class="wrap">
+  <span class="sec-num">06 — Die eigentliche Idee</span>
+  <h2 class="fade">Entscheiden heißt: Verluste abwägen, nicht Schwellen überschreiten</h2>
+  <p class="lead fade">Hier liegt der Kern. Eine Entscheidung braucht eine
+  <strong>Verlustfunktion</strong> — eine Antwort auf die Frage: <em>Was kostet es mich,
+  wenn ich falsch liege?</em> Fisher lehnte das ausdrücklich ab. Gosset lebte davon.</p>
+
+  <div class="grid g2 fade">
+    <div class="card" style="border-color:rgba(199,146,234,.3)">
+      <h3 style="margin-top:0;color:var(--fisher)">Fisher, 1955</h3>
+      <div class="quote" style="border-color:var(--fisher);font-size:15.5px;margin-top:8px">
+        Schließlich führen wir bei der induktiven Inferenz <strong>keine Kostenfunktionen
+        für fehlerhafte Urteile</strong> ein … Wissenschaftliche Forschung ist nicht darauf
+        ausgerichtet, die Gewinne irgendeiner Organisation zu maximieren … Wir unternehmen
+        keinen Versuch, diese Konsequenzen zu bewerten, und nehmen nicht an, dass sie
+        <strong>in irgendeiner Währung bewertbar</strong> sind.
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(126,231,135,.3)">
+      <h3 style="margin-top:0;color:var(--gosset)">Gosset an Karl Pearson, 1905</h3>
+      <div class="quote" style="border-color:var(--gosset);font-size:15.5px;margin-top:8px">
+        Es scheint, dass bei einer Arbeit wie der unsrigen der anzustrebende Grad an
+        Sicherheit vom <strong>geldwerten Vorteil</strong> abhängen muss, den man durch das
+        Befolgen des Versuchsergebnisses gewinnt, verglichen mit den <strong>Mehrkosten der
+        neuen Methode</strong>, falls vorhanden, und den <strong>Kosten jedes Versuchs</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Minimax‑Logik — live für Mutters Pillen</h3>
+    <p style="font-size:15px">„Minimax“ heißt: <strong>Schau dir den schlimmsten Fall jeder
+    Option an, und wähle die Option, deren schlimmster Fall am besten ist.</strong>
+    Die Balken zeigen, was in jedem „Zustand der Welt“ passiert. Schiebe den Regler, um
+    zwischen den Szenarien zu wandern.</p>
+
+    <div class="grid g-side-r">
+      <div><canvas id="c-minimax" height="400"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Zustand der Welt (σ‑Abweichung) <span class="val" id="v-mmz">0,00</span></label>
+          <input type="range" id="s-mmz" min="-2.5" max="2.5" step="0.05" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Oomph: Streuung ± <span class="val" id="v-mmo">10,0</span></label>
+          <input type="range" id="s-mmo" class="ro" min="2" max="16" step="0.5" value="10">
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr">
+          <div class="stat"><div class="k">Oomph verliert</div><div class="v" id="mm-o" style="color:var(--oomph)">20,0</div><div class="s">Pfund in diesem Zustand</div></div>
+          <div class="stat"><div class="k">Precision verliert</div><div class="v" id="mm-p" style="color:var(--prec)">5,0</div><div class="s">Pfund in diesem Zustand</div></div>
+        </div>
+        <div class="verdict" id="mm-verdict"></div>
+        <div class="btnrow">
+          <button id="mm-worst">Schlimmster Fall für Oomph</button>
+          <button class="ghost" id="mm-mid">Mitte</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict good">
+      <b>Das Ergebnis:</b> Selbst bei −2σ (also im 2,3‑%‑Pechfall) verliert Oomph noch
+      <b>genauso viel oder mehr</b> als Precision im besten Fall. In <b>allen Zuständen der
+      Welt dominiert Oomph die Pille Precision</b>. Minimax sagt eindeutig: Oomph gewinnt.
+      Precision zu wählen — obwohl hochsignifikant — <b>maximiert das Versagen</b>:
+      Mutter verliert bis zu <b>24,5 Pfund</b> (30 − 5,5) weniger als möglich gewesen wäre.
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Verlustfunktion — was ein Fehler wirklich kostet</h3>
+    <p style="font-size:15px">Fisher sagt: Fehler sind „in keiner Währung bewertbar“.
+    Aber natürlich sind sie das. Stelle unten ein, wie teuer dir die beiden Fehlertypen sind —
+    und sieh zu, wie sich die <strong>optimale</strong> Schwelle verschiebt. Sie liegt fast nie
+    bei 5 %.</p>
+
+    <div class="grid g-side">
+      <div>
+        <div class="ctrl">
+          <label>Kosten eines falschen Alarms <span class="val" id="v-cfa">1,0</span></label>
+          <input type="range" id="s-cfa" class="rp" min="0.1" max="20" step="0.1" value="1">
+        </div>
+        <div class="ctrl">
+          <label>Kosten eines verpassten Effekts <span class="val" id="v-cfm">1,0</span></label>
+          <input type="range" id="s-cfm" class="ro" min="0.1" max="20" step="0.1" value="1">
+        </div>
+        <div class="ctrl">
+          <label>Vorab‑Wahrscheinlichkeit, dass ein Effekt da ist <span class="val" id="v-prior">50 %</span></label>
+          <input type="range" id="s-prior" min="1" max="99" step="1" value="50">
+        </div>
+        <div class="ctrl">
+          <label>Wahre Effektstärke (in SE) <span class="val" id="v-eff">3,0</span></label>
+          <input type="range" id="s-eff" min="0.5" max="8" step="0.1" value="3">
+        </div>
+        <div class="btnrow">
+          <button id="lf-brewer">Brauer: Hopfenkauf</button>
+          <button id="lf-surgery">OP für den Kanzler</button>
+          <button id="lf-track">Pferderennen</button>
+          <button class="ghost" id="lf-sym">Symmetrisch</button>
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr">
+          <div class="stat"><div class="k">Optimale Schwelle α*</div><div class="v" id="o-alphastar" style="color:var(--gosset)">—</div><div class="s">statt starrer 5 %</div></div>
+        </div>
+        <div class="verdict" id="lf-verdict" style="font-size:14px"></div>
+      </div>
+      <div>
+        <div id="p-loss" class="plot" style="height:400px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     7 · DER HEBEL n
+     ========================================================= -->
+<section id="stichprobe">
+<div class="wrap">
+  <span class="sec-num">07 — Der zerstörerische Befund</span>
+  <h2 class="fade">DeGroots 20 000: Mit genug Daten wird alles „signifikant“</h2>
+
+  <div class="quote fade">
+    Es ist äußerst wichtig … zwischen einem <strong>beobachteten Wert, der statistisch
+    signifikant ist</strong>, und dem <strong>tatsächlichen Wert des Parameters</strong>
+    zu unterscheiden. … Es ist sehr wahrscheinlich, dass der t‑Test, der auf einer Stichprobe
+    von <strong>20 000</strong> beruht, zu einem statistisch signifikanten Wert führt. …
+    [Der Experimentator] weiß im Voraus, dass eine hohe Wahrscheinlichkeit besteht, die
+    Nullhypothese zu verwerfen, <strong>selbst wenn der wahre Wert nur geringfügig davon
+    abweicht</strong>.
+    <cite>Morris H. DeGroot, Probability and Statistics, 1975, S. 496–497</cite>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Signifikanz‑Maschine</h3>
+    <p style="font-size:15px">Stelle einen <strong>absurd kleinen</strong> wahren Effekt ein —
+    sagen wir 0,1 Pfund Gewichtsverlust, also praktisch nichts. Und drehe dann n hoch.
+    Sieh zu, wie das Ritual kippt.</p>
+
+    <div class="grid g-side-r">
+      <div><canvas id="c-degroot" height="420"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Wahrer Effekt (Pfund) <span class="val" id="v-dgE">0,10</span></label>
+          <input type="range" id="s-dgE" class="ro" min="0" max="3" step="0.01" value="0.1">
+        </div>
+        <div class="ctrl">
+          <label>Stichprobengröße n <span class="val" id="v-dgN">20</span></label>
+          <input type="range" id="s-dgN" min="4" max="20000" step="4" value="20">
+        </div>
+        <div class="ctrl">
+          <label>Streuung σ <span class="val" id="v-dgS">5,0</span></label>
+          <input type="range" id="s-dgS" min="1" max="20" step="0.5" value="5">
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">SE</div><div class="v" id="dg-se" style="font-size:19px">1,118</div></div>
+          <div class="stat"><div class="k">t</div><div class="v" id="dg-t" style="font-size:19px">0,09</div></div>
+          <div class="stat"><div class="k">p</div><div class="v" id="dg-p" style="font-size:19px;color:var(--fisher)">0,93</div></div>
+          <div class="stat"><div class="k">Power</div><div class="v" id="dg-pow" style="font-size:19px;color:var(--gosset)">5 %</div></div>
+        </div>
+        <div class="verdict" id="dg-verdict"></div>
+        <div class="btnrow">
+          <button id="dg-20">n = 20</button>
+          <button id="dg-2000">n = 2 000</button>
+          <button class="primary" id="dg-20000">n = 20 000 (DeGroot)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict bad">
+      <b>Das ist der Hammer:</b> Der wahre Effekt hat sich <i>kein bisschen</i> verändert —
+      immer noch 0,1 Pfund, also praktisch nichts. Nur die Stichprobe ist gewachsen.
+      Trotzdem springt das Urteil von „nicht signifikant, also kein Effekt“ auf
+      „hochsignifikant (p &lt; 0,001), also bewiesen“. <b>Signifikanz misst dein Budget,
+      nicht die Natur.</b>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Landkarte: wie viel n brauche ich für „Signifikanz“?</h3>
+    <p style="font-size:15px">Die Kurve zeigt, ab welchem n ein Effekt beliebiger Größe
+    die 1,96‑Hürde nimmt. Jeder Effekt &gt; 0 liegt irgendwo auf dieser Kurve. Es gibt
+    <strong>keinen</strong> Effekt, der nicht irgendwann signifikant wird.</p>
+    <div id="p-nreq" class="plot" style="height:400px"></div>
+    <div class="verdict info">
+      <b>Umgekehrt gilt dasselbe:</b> Merck musste bei Vioxx nur die Stichprobe
+      <i>klein genug</i> halten — oder sie künstlich verkleinern — um „Insignifikanz“ und
+      damit „kein Effekt“ behaupten zu können. Genau das sehen wir uns in Kapitel 8 an.
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die zweite Hälfte von DeGroots Punkt</h3>
+    <div class="quote" style="margin-top:6px">
+      In einem gegebenen Problem mag die Randfläche (tail area), die dem beobachteten
+      Wert entspricht, sehr klein sein — und dennoch könnte der tatsächliche Wert dem
+      Nullwert so nahe sein, dass der Experimentator ihn <strong>für praktische Zwecke</strong>
+      nicht als (inhaltlich) verschieden vom Nullwert ansehen würde.
+      <cite>DeGroot 1975, S. 496</cite>
+    </div>
+    <p style="font-size:15px">DeGroot lässt es — anders als fast alle Lehrbücher — nicht bei
+    einem beiläufigen Satz. Ziliak &amp; McCloskey zählen nach, wie viel Platz dem Thema in
+    den Standardwerken eingeräumt wird. Das Ergebnis ist das Kernproblem der Ausbildung:</p>
+    <div id="p-books" class="plot" style="height:430px"></div>
+    <div class="verdict bad" style="font-size:14px">
+      Granger (1994) über Goldbergers eine einzelne Seite zu „statistischer vs. ökonomischer
+      Signifikanz“: <b>„ein Thema, das in den anderen Büchern nicht erwähnt wird.“</b><br>
+      Im dreibändigen <i>Handbook of Econometrics</i>: eine einzige Erwähnung (Leamer).
+      Im <i>Handbook of Statistics</i>: <b>ein Satz auf 732 Seiten</b>.
+      Wooldridge (2000) gilt als vorbildlich — mit 3 Seiten von mehreren hundert.
+      Ziliak &amp; McCloskey fragen trocken: <b>Ist weniger als 1 % des Gesamtumfangs
+      das richtige Oomph‑zu‑Precision‑Verhältnis für die Wissenschaft?</b>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     8 · VIOXX
+     ========================================================= -->
+<section id="vioxx">
+<div class="wrap">
+  <span class="sec-num">08 — Wenn es Leben kostet</span>
+  <h2 class="fade">Vioxx: drei gelöschte Beobachtungen</h2>
+  <p class="lead fade">Bis hierher war alles akademisch. Jetzt wird es konkret.
+  Merck, 2003 der drittgrößte Pharmahersteller der USA. Vioxx auf dem Höhepunkt:
+  <strong>2,5 Milliarden Dollar Jahresumsatz</strong>, vertrieben in über 80 Ländern.
+  Dann stirbt eine 73‑jährige Frau an einem Herzinfarkt, während sie Vioxx nimmt.</p>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Studie — und was fehlte</h3>
+    <p style="font-size:15px">Klinische Studie 2000, publiziert 2003 in den
+    <i>Annals of Internal Medicine</i> (Lisse et al.). Berichtet wurden:
+    <strong>5 Herzinfarkte</strong> unter Vioxx gegen <strong>1</strong> unter Naproxen.
+    „Ein Unterschied, der keine statistische Signifikanz erreichte.“ Tatsächlich waren es
+    <strong>8</strong>. Drei Beobachtungen — darunter die verstorbene Frau — tauchten im
+    Bericht nicht auf.</p>
+
+    <div class="grid g-side-r">
+      <div><canvas id="c-vioxx" height="430"></canvas></div>
+      <div>
+        <h4 style="margin-top:0">Der Schalter</h4>
+        <div class="toggle" id="tg-vioxx" style="margin-bottom:14px">
+          <button data-v="5" class="on">Bericht: 5 Fälle</button>
+          <button data-v="8">Wahrheit: 8 Fälle</button>
+        </div>
+        <div class="ctrl">
+          <label>Herzinfarkte Vioxx‑Gruppe <span class="val" id="v-vx">5</span></label>
+          <input type="range" id="s-vx" class="ro" min="1" max="14" step="1" value="5">
+        </div>
+        <div class="ctrl">
+          <label>Herzinfarkte Naproxen‑Gruppe <span class="val" id="v-vn">1</span></label>
+          <input type="range" id="s-vn" class="rp" min="0" max="8" step="1" value="1">
+        </div>
+        <div class="ctrl">
+          <label>Gruppengröße je Arm <span class="val" id="v-vg">400</span></label>
+          <input type="range" id="s-vg" min="100" max="1200" step="25" value="400">
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">Verhältnis</div><div class="v" id="vx-ratio" style="font-size:21px">5 : 1</div></div>
+          <div class="stat"><div class="k">p (Fisher‑Test)</div><div class="v" id="vx-p" style="font-size:21px;color:var(--fisher)">—</div></div>
+        </div>
+        <div class="verdict" id="vx-verdict"></div>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card flush" style="margin:0;border-color:rgba(255,204,85,.3)">
+        <h4 style="margin-top:0;color:var(--warn)">Was im Artikel steht</h4>
+        <p style="font-size:14px;margin:0;font-family:'JetBrains Mono',monospace;color:var(--ink2)">
+        „The Fisher exact test was used to compare incidence of confirmed perforations,
+        ulcers, bleeding, thrombotic events, and cardiovascular events.“<br><br>
+        „All statistical tests … were performed at an α level of 0.05.“</p>
+        <p class="note" style="margin-top:10px">Lisse et al. 2003, S. 541 — ausgerechnet
+        Fishers Test, in offenkundiger Unkenntnis der wissenschaftlichen Werte seines
+        Widersachers W. S. Gosset.</p>
+      </div>
+      <div class="card flush" style="margin:0;border-color:rgba(255,77,109,.3)">
+        <h4 style="margin-top:0;color:var(--bad)">Die Logik der Löschung</h4>
+        <p style="font-size:14px;margin:0">Mit <b>8</b> Infarkten ist das Ergebnis bei dieser
+        Stichprobengröße <b>sogar nach Fishers eigenem 5‑%‑Kriterium signifikant</b> — es
+        hätte als „Befund“ in die <i>Annals</i> gehört.<br><br>
+        Mit <b>5</b> ist es das nicht. Und „nicht signifikant“ wurde dann übersetzt in:
+        <b>„kein Unterschied in der Wirkung“</b> — obwohl das Verhältnis 5 zu 1 gegen Vioxx
+        stand.</p>
+      </div>
+    </div>
+
+    <div class="verdict bad">
+      <b>Der eigentliche Skandal ist nicht nur die mutmaßliche Fälschung.</b>
+      Datenfälschung und Signifikanztest sind nicht dasselbe — da stimmen Ziliak &amp;
+      McCloskey zu. Aber: <b>die Fälschung lohnte sich nur, weil die Kultur
+      „nicht signifikant“ wie „Effekt existiert nicht“ liest.</b> In einer Kultur, die nach
+      Größe und Verlustfunktion fragt, wäre ein 5:1‑Verhältnis beim Herztod niemals als
+      „kein Unterschied“ durchgegangen. Merck hatte keinen Griff auf seine Verlustfunktion —
+      aber es verstand die kulturelle und juristische Bedeutung von „Signifikanz“
+      vielleicht ein wenig zu gut.
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Der Trick, allgemein: „Halte die Stichprobe klein genug“</h3>
+    <p style="font-size:15px">Hier siehst du, wie man Insignifikanz <em>herstellt</em>.
+    Links die volle Studie, rechts die „bereinigte“. Ziehe am Regler, um Beobachtungen
+    zu entfernen — und sieh zu, wie die Signifikanz verschwindet, ohne dass sich die
+    Realität ändert.</p>
+    <div class="ctrl" style="max-width:420px">
+      <label>Entfernte ungünstige Beobachtungen <span class="val" id="v-drop">0</span></label>
+      <input type="range" id="s-drop" class="ro" min="0" max="6" step="1" value="0">
+    </div>
+    <div id="p-drop" class="plot" style="height:360px"></div>
+    <p class="note">Jede entfernte Beobachtung schiebt den p‑Wert nach oben — bis die
+    magische Linie überschritten ist und das Ergebnis offiziell „nicht existiert“.</p>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     9 · PUBLICATION BIAS
+     ========================================================= -->
+<section id="bias">
+<div class="wrap">
+  <span class="sec-num">09 — Der Filter</span>
+  <h2 class="fade">Sterling 1959: Was die Zeitschriften durchlassen</h2>
+  <p class="lead fade">1950 übernimmt A. W. Melton das <i>Journal of Experimental
+  Psychology</i>. Seine Politik: ohne Signifikanztest kein Artikel. 5 % sei „gerade noch
+  akzeptabel“, 1 % „hoch akzeptabel“. Begründung: Signifikanz garantiere, dass sich
+  das Ergebnis <em>wiederholen</em> ließe. Das ist, wie wir in Kapitel 5 gesehen haben,
+  schlicht falsch.</p>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Sterlings Zählung — 362 Artikel in vier Zeitschriften</h3>
+    <div class="grid g2">
+      <div>
+        <table>
+          <tr><th>Befund</th><th style="text-align:right">Zahl</th></tr>
+          <tr><td>Untersuchte Artikel gesamt</td><td class="num">362</td></tr>
+          <tr><td>… davon mit Signifikanztest</td><td class="num">286 (79 %)</td></tr>
+          <tr><td>Artikel mit Test, die H₀ <b>nicht</b> verwarfen</td><td class="num" style="color:var(--bad)">8 von 294</td></tr>
+          <tr><td>Replikationen früherer Studien</td><td class="num" style="color:var(--bad)">0</td></tr>
+        </table>
+        <div class="verdict bad" style="font-size:14px">
+          <b>Sterlings zwei Sätze:</b><br>
+          <b>A1:</b> Ergebnisse werden mit deutlich höherer Wahrscheinlichkeit gedruckt,
+          wenn der Test H₀ bei p ≤ ,05 verwirft.<br>
+          <b>A2:</b> Die Wahrscheinlichkeit, dass ein Versuchsdesign repliziert wird, wird
+          <i>sehr klein</i>, sobald das Experiment einmal gedruckt ist.
+        </div>
+      </div>
+      <div><canvas id="c-sterling" height="340"></canvas></div>
+    </div>
+    <div class="quote">
+      Ein Bild entsteht, bei dem die Zahl möglicher Replikationen eines Tests
+      <strong>umgekehrt</strong> zum tatsächlichen Ausmaß der Unterschiede zwischen den
+      Effekten steht. <strong>Je kleiner der Unterschied, desto größer die Wahrscheinlichkeit
+      der Wiederholung.</strong>
+      <cite>Sterling 1959, S. 33 — mit sanfter Ironie</cite>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Der Aktenschrank — simuliere die Literatur</h3>
+    <p style="font-size:15px">Unten laufen 500 Studien. Alle untersuchen denselben wahren
+    Effekt. Jede Studie landet entweder in der <span class="g">Literatur</span> (wenn p &lt; α)
+    oder in der <span style="color:var(--ink3)">Schublade</span>. Schalte den Filter ein
+    und beobachte, was mit dem <em>Durchschnitt der publizierten Effekte</em> passiert.</p>
+
+    <div class="grid g-side-r">
+      <div><canvas id="c-funnel" height="430"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Wahrer Effekt <span class="val" id="v-bE">0,30</span></label>
+          <input type="range" id="s-bE" class="ro" min="0" max="2" step="0.05" value="0.3">
+        </div>
+        <div class="ctrl">
+          <label>Typische Stichprobengröße <span class="val" id="v-bN">30</span></label>
+          <input type="range" id="s-bN" min="5" max="200" step="1" value="30">
+        </div>
+        <div class="ctrl">
+          <label>Publikationsfilter α <span class="val" id="v-bA">5,0 %</span></label>
+          <input type="range" id="s-bA" min="0.5" max="50" step="0.5" value="5">
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="b-bgo">↻ 500 Studien laufen lassen</button>
+          <button class="ghost active" id="b-bfilter">Filter: AN</button>
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr">
+          <div class="stat"><div class="k">Wahrer Effekt</div><div class="v" id="b-true" style="font-size:21px;color:var(--gold)">0,30</div></div>
+          <div class="stat"><div class="k">Ø publizierter Effekt</div><div class="v" id="b-pub" style="font-size:21px;color:var(--bad)">—</div></div>
+          <div class="stat"><div class="k">Publiziert</div><div class="v" id="b-cnt" style="font-size:21px">—</div><div class="s">von 500</div></div>
+        </div>
+        <div class="verdict" id="b-verdict" style="font-size:14px"></div>
+      </div>
+    </div>
+    <div class="verdict bad">
+      <b>Der Aufblähungs‑Effekt:</b> Wer nur Signifikantes druckt, druckt systematisch die
+      <i>zufällig zu großen</i> Schätzungen. Die veröffentlichte Literatur überschätzt die
+      Welt — und zwar umso stärker, je kleiner die Studien sind. Und weil niemand repliziert
+      (Sterling: 0 von 362), fällt es nie auf.
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Das APA‑Handbuch: wie eine Regel zum Zwang wird</h3>
+    <p style="font-size:15px">Das <i>Publication Manual</i> der American Psychological
+    Association setzt die redaktionellen Standards für <strong>über tausend Zeitschriften</strong> —
+    Psychologie, Pädagogik, Forensik, Sozialarbeit, Teile der Psychiatrie. Klicke dich
+    durch die Auflagen.</p>
+    <div class="stepnav" id="apa-nav"></div>
+    <div id="apa-body" class="card flush" style="min-height:200px;background:rgba(255,255,255,.025)"></div>
+    <div class="verdict" style="font-size:14px">
+      <b>Bilanz der „Reformen“ der 1990er:</b> schön klingend, praktisch wirkungslos.
+      Rund <b>23 Zeitschriften</b> in Psychologie und Pädagogik warnen heute vor dem
+      größenlosen Blick — das sind etwa <b>2 %</b>.
+    </div>
+    <div class="bar-track" style="height:16px;margin-top:10px">
+      <div class="bar-fill" style="width:2%;background:linear-gradient(90deg,var(--gosset),#3fa84c)"></div>
+    </div>
+    <p class="note">2 % der Zeitschriften — 98 % unverändert.</p>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     10 · POWER
+     ========================================================= -->
+<section id="power">
+<div class="wrap">
+  <span class="sec-num">10 — Voraussetzung</span>
+  <h2 class="fade"><span class="tag pre">Grundlage</span> Power: der zweite Fehler, den niemand anschaut</h2>
+  <p class="lead fade">Fishers Test schaut nur in eine Richtung: <em>Könnte Zufall das
+  erklären?</em> Gosset stellte die andere Frage: <em>Und wenn ein echter Effekt da wäre —
+  würde ich ihn überhaupt bemerken?</em> Diese zweite Frage heißt heute <strong>Power</strong>,
+  und Egon Pearson hat Gosset nie die Urheberschaft abgesprochen.</p>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die zwei Glocken</h3>
+    <p style="font-size:15px">Links: die Welt, wenn nichts da ist (H₀). Rechts: die Welt,
+    wenn der Effekt wirklich existiert (H₁ — Gossets „Alternativhypothese“).
+    Die senkrechte Linie ist deine Entscheidungsschwelle. Alles, was rechts davon liegt,
+    nennst du „signifikant“.</p>
+
+    <div class="grid g-side-r">
+      <div><canvas id="c-power" height="420"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Wahrer Effekt (in SE) <span class="val" id="v-pwE">3,0</span></label>
+          <input type="range" id="s-pwE" class="ro" min="0" max="7" step="0.1" value="3">
+        </div>
+        <div class="ctrl">
+          <label>Schwelle (kritisches t) <span class="val" id="v-pwC">1,96</span></label>
+          <input type="range" id="s-pwC" class="rp" min="0.2" max="5" step="0.02" value="1.96">
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">α — Fehlalarm</div><div class="v" id="pw-a" style="font-size:20px;color:var(--bad)">5,0 %</div><div class="s">Fehler 1. Art</div></div>
+          <div class="stat"><div class="k">β — Verpasst</div><div class="v" id="pw-b" style="font-size:20px;color:var(--warn)">—</div><div class="s">Fehler 2. Art</div></div>
+          <div class="stat"><div class="k">Power = 1−β</div><div class="v" id="pw-pow" style="font-size:20px;color:var(--gosset)">—</div><div class="s">Entdeckungschance</div></div>
+          <div class="stat"><div class="k">Summe Fehler</div><div class="v" id="pw-sum" style="font-size:20px">—</div><div class="s">α + β</div></div>
+        </div>
+        <div class="verdict" id="pw-verdict" style="font-size:14px"></div>
+        <div class="btnrow">
+          <button id="pw-strict">Melton: α = 1 %</button>
+          <button id="pw-fisher">Fisher: α = 5 %</button>
+          <button class="gos" id="pw-opt">Fehlersumme minimieren</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict info">
+      <b>Die Wippe:</b> Du kannst α nicht senken, ohne β zu erhöhen — jedenfalls nicht,
+      ohne mehr Daten zu kaufen. Fisher schrieb α starr auf 5 % fest und
+      <b>erwähnte β überhaupt nicht</b>. Das heißt: Die Kosten des Verpassens wurden
+      stillschweigend auf null gesetzt. Für einen Brauer, einen Arzt oder deine Mutter
+      ist das absurd.
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Johnstons Autobahn‑Beispiel — wenn β Leben kostet</h3>
+    <p style="font-size:15px">Johnstons Lehrbuch testet, ob härtere Strafen für
+    gefährliches Fahren in Großbritannien die Verkehrstoten senken. Ergebnis:
+    „signifikant auf dem 5‑Prozent‑, aber nicht auf dem Ein‑Prozent‑Niveau“.
+    Der strenge 1‑%‑Statistiker würde also nicht handeln.</p>
+    <div class="grid g2">
+      <div class="card flush" style="margin:0;border-color:rgba(255,77,109,.3)">
+        <h4 style="margin-top:0;color:var(--bad)">Der 1‑%‑Statistiker</h4>
+        <p style="font-size:14px;margin:0">t ist signifikant auf 5 %, aber nicht auf 1 %.
+        Also: <b>„kein Befund“</b>. Keine Handlung. Keine härteren Strafen.</p>
+        <div class="statrow" style="grid-template-columns:1fr;margin-top:10px">
+          <div class="stat"><div class="k">Kosten dieser Entscheidung</div>
+          <div class="v" style="color:var(--bad);font-size:24px" id="john-cost">100 000</div>
+          <div class="s">Menschenleben, UK 1947–57</div></div>
+        </div>
+      </div>
+      <div class="card flush" style="margin:0;border-color:rgba(126,231,135,.3)">
+        <h4 style="margin-top:0;color:var(--gosset)">Der Gosset‑Statistiker</h4>
+        <p style="font-size:14px;margin:0">Fragt zuerst: <b>Wie groß ist der Effekt, und was
+        kostet ein Irrtum in beide Richtungen?</b> Härtere Strafen sind billig, Tote sind
+        teuer. Also handeln — auch bei t = 2,3.</p>
+        <p style="font-size:14px;margin:10px 0 0;color:var(--gosset)"><b>Johnston hat
+        statistische und politische Signifikanz verschmolzen.</b> Ziliak &amp; McCloskey fragen:
+        <i>Mit welcher Berechtigung?</i></p>
+      </div>
+    </div>
+    <div class="ctrl" style="max-width:480px;margin-top:18px">
+      <label>Dein gewähltes α — was folgt daraus? <span class="val" id="v-john">5,0 %</span></label>
+      <input type="range" id="s-john" min="0.1" max="10" step="0.1" value="5">
+    </div>
+    <div class="verdict" id="john-verdict"></div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Fehler‑Landschaft</h3>
+    <p style="font-size:15px">Hier siehst du alles auf einmal: Wie hängen α, β und die
+    <em>gewichtete</em> Gesamt‑Fehlerkosten von der Schwelle ab? Der grüne Punkt markiert
+    das Optimum. Fishers 5 % (gestrichelt) treffen es nur durch Zufall.</p>
+    <div id="p-errland" class="plot" style="height:400px"></div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     11 · GOSSETS WEG
+     ========================================================= -->
+<section id="gosset">
+<div class="wrap">
+  <span class="sec-num">11 — Die Lösung</span>
+  <h2 class="fade">Gossets Weg: die Biene und die Wespe</h2>
+
+  <div class="grid g2 fade">
+    <div class="card" style="border-color:rgba(126,231,135,.35)">
+      <div style="font-size:34px">🐝</div>
+      <h3 style="margin-top:6px;color:var(--gosset)">William Sealy Gosset (1876–1937)</h3>
+      <table style="margin-top:4px">
+        <tr><td>Beruf</td><td class="num">Braumeister</td></tr>
+        <tr><td>Arbeitgeber</td><td class="num">Guinness, Dublin</td></tr>
+        <tr><td>Lehrling‑Brauer</td><td class="num">1899–1906</td></tr>
+        <tr><td>Leitender Versuchsbrauer</td><td class="num">1907–1935</td></tr>
+        <tr><td>Oberbrauer Park Royal</td><td class="num">1935–1937</td></tr>
+        <tr><td>Pseudonym</td><td class="num">„Student“</td></tr>
+      </table>
+      <p style="font-size:14.5px;margin-top:12px">Ältester Sohn eines königlichen
+      Kampfpioniers. Musste bei Guinness als <strong>Profit‑Center</strong> arbeiten.
+      Für ihn war jede Beobachtung eine <strong>Opportunitätskostenfrage</strong>.
+      Er war, schreiben Ziliak &amp; McCloskey, <em>„einer von Natur aus Ökonom“</em>.</p>
+    </div>
+    <div class="card" style="border-color:rgba(199,146,234,.35)">
+      <div style="font-size:34px">🐝<span style="filter:hue-rotate(260deg)"></span></div>
+      <h3 style="margin-top:6px;color:var(--fisher)">Ronald A. Fisher (1890–1962)</h3>
+      <table style="margin-top:4px">
+        <tr><td>Status</td><td class="num">Genie, weltberühmt</td></tr>
+        <tr><td>Verhältnis zu Gosset</td><td class="num">Freund &amp; Schüler</td></tr>
+        <tr><td>Kanonische Übersetzung</td><td class="num">„Student’s“ t → 5‑%‑Regel</td></tr>
+        <tr><td>Kostenfunktionen</td><td class="num" style="color:var(--bad)">abgelehnt</td></tr>
+        <tr><td>Alternativhypothese</td><td class="num" style="color:var(--bad)">keine</td></tr>
+        <tr><td>Power (β)</td><td class="num" style="color:var(--bad)">nicht erwähnt</td></tr>
+      </table>
+      <p style="font-size:14.5px;margin-top:12px">Fisher hat die Verwendung von „Student’s“ t
+      kampagnenartig durchgesetzt — <strong>aber er hatte seine Auffassung nicht von
+      „Student“ gelernt</strong>. Gosset war sein Lehrer hinter den Kulissen.
+      Fisher löschte das bewusst ökonomische Element: Gossets <em>„real error“</em>.</p>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Gossets vier Bausteine — klicke sie der Reihe nach frei</h3>
+    <p style="font-size:15px">Statt einer festen Schwelle baut Gosset eine Entscheidung
+    aus vier Teilen. Jeder Klick schaltet ein Stück dazu und verändert das Ergebnis.</p>
+    <div class="stepnav" id="gos-nav"></div>
+    <div class="grid g-side-r">
+      <div><canvas id="c-gosset" height="400"></canvas></div>
+      <div id="gos-body"></div>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">„Real error“ und die Neunzehn von zwanzig Stationen</h3>
+    <div class="quote">
+      Offensichtlich ist das Wichtige bei so etwas, einen <strong>niedrigen realen Fehler</strong>
+      zu haben, nicht ein „signifikantes“ Ergebnis an einer bestimmten Station. Letzteres
+      scheint mir <strong>für sich genommen nahezu wertlos</strong>. … Versuche an einer
+      einzigen Station sind fast wertlos. … Was man wirklich will, ist ein niedriger realer
+      Fehler. Man will sagen können, nicht nur: „Wir haben signifikante Belege dafür, dass
+      Bauern damit Geld verdienen“, sondern auch: <strong>„wir haben es in neunzehn von
+      zwanzig Fällen so gefunden, und wir finden gerade heraus, warum es im zwanzigsten
+      nicht funktioniert.“</strong> Dafür muss man so sicher wie möglich wissen, welcher der
+      20. ist — dein realer Fehler muss klein sein.
+      <cite>Gosset an E. S. Pearson, 1937 — in Pearson 1939, S. 244</cite>
+    </div>
+    <p style="font-size:15px">Beachte den Unterschied zu Fisher. Fishers „19 von 20“ ist
+    eine <em>eingebildete</em> Wiederholung, berechnet aus einem einzigen Datensatz.
+    Gossets „19 von 20“ sind <strong>zwanzig echte Versuchsstationen auf echten Feldern</strong> —
+    und der interessanteste Fall ist der zwanzigste, der <em>nicht</em> funktioniert hat.</p>
+
+    <div class="grid g-side-r">
+      <div><canvas id="c-stations" height="330"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Anzahl Versuchsstationen <span class="val" id="v-stn">20</span></label>
+          <input type="range" id="s-stn" min="1" max="40" step="1" value="20">
+        </div>
+        <div class="ctrl">
+          <label>Nicht‑zufälliger Fehler („real error“) <span class="val" id="v-stre">1,0</span></label>
+          <input type="range" id="s-stre" class="ro" min="0" max="6" step="0.1" value="1">
+        </div>
+        <div class="btnrow">
+          <button class="gos" id="b-stnew">↻ Neue Ernte</button>
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr">
+          <div class="stat"><div class="k">Stationen mit Gewinn</div><div class="v" id="st-win" style="color:var(--gosset);font-size:22px">—</div></div>
+          <div class="stat"><div class="k">Realer Fehler gesamt</div><div class="v" id="st-err" style="font-size:22px">—</div><div class="s">Streuung zwischen Stationen</div></div>
+        </div>
+        <div class="verdict" id="st-verdict" style="font-size:14px"></div>
+      </div>
+    </div>
+    <div class="verdict good">
+      <b>Fishers Fehler, in einem Satz:</b> Er wollte lieber mehr Rechnungen auf
+      <i>vorhandenen</i> Daten anstellen. Gosset widmete einen großen Teil seines
+      wissenschaftlichen Lebens der <b>tatsächlichen Replikation</b>.
+      Sterling fand 1959: von 362 Artikeln war <b>nicht ein einziger</b> eine Replikation.
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Der Brauer rechnet: Gossets Entscheidungsrechner</h3>
+    <p style="font-size:15px">Gossets Brief an Karl Pearson, 1905, formuliert die Regel:
+    Der anzustrebende Sicherheitsgrad hängt ab von (1) dem <span class="o">geldwerten
+    Vorteil</span>, (2) den <span class="p_">Mehrkosten der neuen Methode</span> und
+    (3) den <span class="g">Kosten jedes Versuchs</span>. Hier ist genau das, als Maschine.</p>
+
+    <div class="grid g-side">
+      <div>
+        <div class="ctrl">
+          <label>Geldwerter Vorteil pro Jahr (£) <span class="val" id="v-ben">50 000</span></label>
+          <input type="range" id="s-ben" class="ro" min="1000" max="300000" step="1000" value="50000">
+        </div>
+        <div class="ctrl">
+          <label>Mehrkosten der neuen Methode (£/Jahr) <span class="val" id="v-mc">12 000</span></label>
+          <input type="range" id="s-mc" class="rp" min="0" max="120000" step="1000" value="12000">
+        </div>
+        <div class="ctrl">
+          <label>Kosten eines Versuchs (£) <span class="val" id="v-ec">900</span></label>
+          <input type="range" id="s-ec" min="50" max="6000" step="50" value="900">
+        </div>
+        <div class="ctrl">
+          <label>Streuung σ der Erträge <span class="val" id="v-gsig">4,0</span></label>
+          <input type="range" id="s-gsig" min="1" max="12" step="0.25" value="4">
+        </div>
+        <div class="ctrl">
+          <label>Erwarteter Ertragszuwachs <span class="val" id="v-gd">2,0</span></label>
+          <input type="range" id="s-gd" min="0.2" max="8" step="0.1" value="2">
+        </div>
+        <div class="statrow" style="grid-template-columns:1fr 1fr">
+          <div class="stat"><div class="k">Optimales n</div><div class="v" id="g-nopt" style="color:var(--gosset);font-size:24px">—</div><div class="s">Versuche</div></div>
+          <div class="stat"><div class="k">Netto‑Erwartungswert</div><div class="v" id="g-net" style="color:var(--gold);font-size:24px">—</div><div class="s">£</div></div>
+        </div>
+        <div class="verdict" id="g-verdict" style="font-size:14px"></div>
+      </div>
+      <div>
+        <div id="p-brewer" class="plot" style="height:400px"></div>
+      </div>
+    </div>
+    <p class="note">Beachte: Nirgendwo in dieser Rechnung taucht die Zahl 0,05 auf.
+    Die optimale Entscheidung ergibt sich aus Größen, die man in der realen Welt messen kann.</p>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Die Schule, die Gosset folgte</h3>
+    <p style="font-size:15px">Gossets Weg bei Guinness wurde zum Weg von Neyman und
+    Pearson, von Wald und Savage, von Jeffreys und Zellner und Lehmann und Press und
+    Berger: ein <strong>Verlustfunktions‑Ansatz</strong>. Er wurde durch den Willen eines
+    genialen, willkürlichen Herrschers und dessen unlogische Kampagne aus der
+    Wissenschaft fast vollständig verdrängt.</p>
+    <div id="p-tree" class="plot" style="height:430px"></div>
+    <div class="quote" style="margin-top:14px">
+      Kein Wunder, dass Studenten Schwierigkeiten haben [Signifikanztests zu lernen].
+      <strong>Sie versuchen vielleicht zu denken.</strong>
+      <cite>W. Edwards Deming, 1975, S. 152</cite>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- =========================================================
+     12 · DIE ANTWORT
+     ========================================================= -->
+<section id="antwort">
+<div class="wrap">
+  <span class="sec-num">12 — Die Antwort</span>
+  <h2 class="fade">Also: Welche Pille für Mutter?</h2>
+
+  <div class="card fade">
+    <div class="grid g-side-r">
+      <div><canvas id="c-final" height="400"></canvas></div>
+      <div>
+        <h3 style="margin-top:0">Die Rechnung, vollständig</h3>
+        <table>
+          <tr><th></th><th style="text-align:right;color:var(--oomph)">Oomph</th><th style="text-align:right;color:var(--prec)">Precision</th></tr>
+          <tr><td>Mittlerer Verlust</td><td class="num">20,0</td><td class="num">5,0</td></tr>
+          <tr><td>Standardfehler</td><td class="num">10,0</td><td class="num">0,5</td></tr>
+          <tr><td>t‑Wert</td><td class="num">2,00</td><td class="num" style="color:var(--prec)">10,00</td></tr>
+          <tr><td>Untergrenze (±1σ)</td><td class="num" style="color:var(--gosset)">10,0</td><td class="num">4,5</td></tr>
+          <tr><td>Obergrenze (±1σ)</td><td class="num">30,0</td><td class="num">5,5</td></tr>
+          <tr><td>Preis</td><td class="num">gleich</td><td class="num">gleich</td></tr>
+          <tr><td>Nebenwirkungen</td><td class="num">gleich</td><td class="num">gleich</td></tr>
+        </table>
+        <div class="verdict good" style="font-size:15px">
+          <b>Antwort: Oomph.</b><br>
+          Die <b>Minimax‑Lösung</b> ist offensichtlich: <b>In allen Zuständen der Welt
+          dominiert Oomph die Pille Precision.</b> Die schlechtere Pille zu wählen —
+          obwohl hochsignifikant — <b>maximiert das Versagen</b>: Mutter verliert
+          bis zu <b>24,5 Pfund</b> (30 − 5,5) weniger als möglich.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Der Härtetest: auch bei ±14 bleibt die Antwort gleich</h3>
+    <p style="font-size:15px">„Irgendwie sind die Zahlen frisiert“, sagen Kritiker.
+    Also machen wir es Oomph <em>härter</em>: Streuung nicht ±10, sondern <strong>±14</strong>.
+    Damit fällt t auf <strong>1,43</strong> — unter Fishers willkürliche Zweier‑Regel,
+    also „statistisch insignifikant“, nicht publikationsfähig, nicht zulassungsfähig.</p>
+    <div id="p-final14" class="plot" style="height:380px"></div>
+    <div class="verdict good">
+      <b>Und trotzdem:</b> Oomph verspricht zwischen <b>6 und 34 Pfund</b>,
+      Precision zwischen <b>4,5 und 5,5</b>. Oomph ist — trotz fehlender Präzision —
+      immer noch das, was Mutter will. <b>Size matters no matter where you draw the line
+      of precision.</b>
+    </div>
+    <p style="font-size:15px">Und wenn der Präzisions‑Statistiker einwendet: „Moment mal,
+    wie viel will Mutter denn abnehmen? Wenn 34 Pfund sie zum Skelett machen …“ —
+    dann hat er, schreiben Ziliak &amp; McCloskey trocken, <strong>unseren Fall bereits
+    eingeräumt</strong>. Denn dann redet er endlich über <em>Größe</em>.</p>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Was bleibt hängen — die sechs Sätze</h3>
+    <div class="grid g2" style="gap:14px">
+      <div class="card flush" style="margin:0"><b style="color:var(--gold)">1.</b>
+      Passgenauigkeit ist nicht dasselbe wie Bedeutung. Statistische Signifikanz ist nicht
+      dasselbe wie wissenschaftliche Wichtigkeit oder ökonomischer Sinn.</div>
+      <div class="card flush" style="margin:0"><b style="color:var(--gold)">2.</b>
+      Signifikanz auf dem 5‑%‑ oder einem anderen willkürlichen Niveau ist
+      <i>weder notwendig noch hinreichend</i> für die Entdeckung eines relevanten Ergebnisses.</div>
+      <div class="card flush" style="margin:0"><b style="color:var(--gold)">3.</b>
+      Wie die Quoten gesetzt werden sollen, hängt von der Wichtigkeit der Sache ab und
+      von den Kosten, neues Material zu beschaffen.</div>
+      <div class="card flush" style="margin:0"><b style="color:var(--gold)">4.</b>
+      Ein Befund von Signifikanz — oder ihr Fehlen — ist für sich allein <i>wertlos</i>,
+      ein bedeutungsloses Gesellschaftsspiel.</div>
+      <div class="card flush" style="margin:0"><b style="color:var(--gold)">5.</b>
+      Signifikanz sollte ein <i>winziger</i> Teil einer Untersuchung sein, die sich um
+      Größe und Wichtigkeit von Zusammenhängen dreht.</div>
+      <div class="card flush" style="margin:0"><b style="color:var(--gold)">6.</b>
+      Der „sizeless stare“ kostet unkontrolliert: <b>Arbeitsplätze, Gerechtigkeit,
+      Gewinn — und Leben.</b></div>
+    </div>
+  </div>
+
+  <div class="card fade">
+    <h3 style="margin-top:0">Dein Abschluss‑Check</h3>
+    <p style="font-size:15px">Vier Fragen. Keine Fangfragen — alles hattest du oben
+    in der Hand.</p>
+    <div id="quiz"></div>
+    <div class="verdict" id="quiz-score" style="display:none"></div>
+  </div>
+</div>
+</section>
+
+<footer>
+<div class="wrap">
+  <p style="font-size:14px"><b>Quelle:</b> Stephen T. Ziliak &amp; Deirdre N. McCloskey,
+  „The Cult of Statistical Significance“, Joint Statistical Meetings, Washington DC,
+  3. August 2009, Section on Statistical Education, S. 2302–2316.
+  Buchfassung: <i>The Cult of Statistical Significance: How the Standard Error Costs Us
+  Jobs, Justice and Lives</i>, University of Michigan Press 2008.</p>
+  <p style="font-size:13px;margin-top:10px">Alle Zahlen, Zitate, Tabellen und Fälle in
+  dieser Anwendung stammen aus dem Aufsatz. Simulationen sind als solche gekennzeichnet
+  und dienen dazu, die Argumente nachvollziehbar zu machen.</p>
+  <p style="font-size:13px;margin-top:10px;color:var(--ink3)">Erwähnte Skeptiker im Aufsatz:
+  Edgeworth · Gosset · Egon Pearson · Jeffreys · Borel · Neyman · Wald · Wolfowitz · Yule ·
+  Deming · Yates · L. J. Savage · de Finetti · Good · Lindley · Feynman · Lehmann · DeGroot ·
+  Bernardo · Chernoff · Raiffa · Arrow · Blackwell · Friedman · Mosteller · Kruskal ·
+  Mandelbrot · Wallis · Roberts · Granger · Leamer · Press · Moore · Berger · Gigerenzer ·
+  Freedman · Rothman · Zellner.</p>
+</div>
+</footer>
+
+<script>
+/* ============================================================
+   0 · UTILITIES
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const C  = {
+  bg:'#080b11', panel:'#11161f', line:'#232c3b', line2:'#2e3a4d',
+  ink:'#e8edf5', ink2:'#a8b4c7', ink3:'#6b7a90',
+  oomph:'#ff6b4a', prec:'#4ad7ff', gosset:'#7ee787',
+  fisher:'#c792ea', warn:'#ffcc55', bad:'#ff4d6d', warn:'#ffcc55', gold:'#e9c46a'
+};
+
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(x,d=2)=>Number(x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtI=x=>Math.round(x).toLocaleString('de-DE');
+
+/* Box-Muller Normalverteilung */
+let spare=null;
+function randn(){
+  if(spare!==null){const s=spare;spare=null;return s;}
+  let u=0,v=0,s=0;
+  do{u=Math.random()*2-1;v=Math.random()*2-1;s=u*u+v*v;}while(s>=1||s===0);
+  const m=Math.sqrt(-2*Math.log(s)/s);
+  spare=v*m;return u*m;
+}
+const normpdf=(x,m=0,s=1)=>Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(2*Math.PI));
+
+/* Abramowitz-Stegun Approximation der Standardnormal-CDF */
+function normcdf(x){
+  const t=1/(1+0.2316419*Math.abs(x));
+  const d=0.3989422804014327*Math.exp(-x*x/2);
+  let p=d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+  return x>0?1-p:p;
+}
+/* Inverse Normal-CDF (Acklam) */
+function norminv(p){
+  if(p<=0)return -8; if(p>=1)return 8;
+  const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+  const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+  const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+  const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+  const pl=0.02425;let q,r;
+  if(p<pl){q=Math.sqrt(-2*Math.log(p));
+    return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  if(p>1-pl){q=Math.sqrt(-2*Math.log(1-p));
+    return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+  q=p-0.5;r=q*q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+const pTwoSided=t=>2*(1-normcdf(Math.abs(t)));
+
+/* HiDPI Canvas */
+function setup(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  const h=parseInt(cv.getAttribute('height'))||300;
+  cv.width=Math.max(1,r.width*dpr);cv.height=h*dpr;
+  cv.style.height=h+'px';
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,w:r.width,h};
+}
+function clearC(ctx,w,h){ctx.clearRect(0,0,w,h);ctx.fillStyle=C.bg;ctx.fillRect(0,0,w,h);}
+
+function axes(ctx,P,opt={}){
+  const {x0,y0,x1,y1}=P;
+  ctx.strokeStyle=C.line2;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(x0,y1);ctx.lineTo(x1,y1);ctx.stroke();
+  if(opt.yAxis!==false){ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0,y1);ctx.stroke();}
+}
+function gridLines(ctx,P,n,vert=true){
+  ctx.strokeStyle='rgba(255,255,255,.045)';ctx.lineWidth=1;
+  for(let i=0;i<=n;i++){
+    ctx.beginPath();
+    if(vert){const x=lerp(P.x0,P.x1,i/n);ctx.moveTo(x,P.y0);ctx.lineTo(x,P.y1);}
+    else{const y=lerp(P.y0,P.y1,i/n);ctx.moveTo(P.x0,y);ctx.lineTo(P.x1,y);}
+    ctx.stroke();
+  }
+}
+function label(ctx,txt,x,y,col=C.ink3,size=11,align='center',weight=500){
+  ctx.fillStyle=col;ctx.font=`${weight} ${size}px Inter, sans-serif`;
+  ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(txt,x,y);
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+/* Plotly Standard-Layout */
+const PL={
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  font:{family:'Inter, sans-serif', color:C.ink2, size:12},
+  margin:{l:60,r:24,t:34,b:52},
+  xaxis:{gridcolor:'rgba(255,255,255,.06)',zerolinecolor:'rgba(255,255,255,.14)',linecolor:C.line2},
+  yaxis:{gridcolor:'rgba(255,255,255,.06)',zerolinecolor:'rgba(255,255,255,.14)',linecolor:C.line2},
+  legend:{bgcolor:'rgba(17,22,31,.75)',bordercolor:C.line,borderwidth:1},
+  hoverlabel:{bgcolor:'#161d29',bordercolor:C.line2,font:{color:C.ink}}
+};
+const PCFG={displayModeBar:false,responsive:true};
+const L=o=>Object.assign(JSON.parse(JSON.stringify(PL)),o||{});
+
+/* Temml Rendering */
+function tex(el,s,display=true){
+  if(!el)return;
+  try{ el.innerHTML=temml.renderToString(s,{displayMode:display}); }
+  catch(e){ el.textContent=s; }
+}
+
+/* ============================================================
+   NAVIGATION + SCROLL
+   ============================================================ */
+(function(){
+  const bar=$('#progress');
+  const links=$$('#nav a');
+  const secs=$$('section');
+  function onScroll(){
+    const h=document.documentElement;
+    const sc=h.scrollTop||document.body.scrollTop;
+    const max=h.scrollHeight-h.clientHeight;
+    bar.style.width=(max>0?(sc/max*100):0)+'%';
+    let cur=secs[0].id;
+    secs.forEach(s=>{ if(s.getBoundingClientRect().top<=140) cur=s.id; });
+    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.08});
+  $$('.fade').forEach(e=>io.observe(e));
+})();
+
+/* ============================================================
+   SEKTION 1 · DIE PILLEN
+   ============================================================ */
+const Pills=(function(){
+  const cv=$('#c-pills');
+  let data={o:[],p:[]};
+  const S={mo:20,po:10,mp:5,pp:0.5};
+
+  function gen(){
+    data.o=[];data.p=[];
+    for(let i=0;i<200;i++){
+      data.o.push(S.mo+randn()*S.po);
+      data.p.push(S.mp+randn()*S.pp);
+    }
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);
+    clearC(ctx,w,h);
+    const P={x0:58,y0:24,x1:w-20,y1:h-38};
+    const lo=-20, hi=Math.max(50, S.mo+3*S.po+5);
+    const X=v=>lerp(P.x0,P.x1,(v-lo)/(hi-lo));
+
+    gridLines(ctx,P,10,true);
+    // Null-Linie
+    ctx.strokeStyle=C.ink3;ctx.lineWidth=1.5;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(X(0),P.y0);ctx.lineTo(X(0),P.y1);ctx.stroke();
+    ctx.setLineDash([]);
+    label(ctx,'0 Pfund',X(0),P.y1+16,C.ink3,10.5);
+
+    const bandH=(P.y1-P.y0)/2;
+    const rows=[
+      {k:'o',m:S.mo,s:S.po,col:C.oomph,y:P.y0+bandH*0.5,name:'Oomph'},
+      {k:'p',m:S.mp,s:S.pp,col:C.prec, y:P.y0+bandH*1.5,name:'Precision'}
+    ];
+
+    rows.forEach(r=>{
+      // ±1σ Band
+      ctx.fillStyle=r.col+'20';
+      ctx.fillRect(X(r.m-r.s),r.y-54,X(r.m+r.s)-X(r.m-r.s),108);
+      ctx.strokeStyle=r.col+'60';ctx.lineWidth=1;
+      ctx.strokeRect(X(r.m-r.s),r.y-54,X(r.m+r.s)-X(r.m-r.s),108);
+      // Punkte
+      const arr=data[r.k];
+      arr.forEach((v,i)=>{
+        const jitter=((i*2654435761)%1000)/1000;
+        const y=r.y-44+jitter*88;
+        ctx.fillStyle=r.col+'aa';
+        ctx.beginPath();ctx.arc(X(v),y,2.3,0,7);ctx.fill();
+      });
+      // Mittelwertlinie
+      ctx.strokeStyle=r.col;ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(X(r.m),r.y-58);ctx.lineTo(X(r.m),r.y+58);ctx.stroke();
+      ctx.fillStyle=r.col;
+      ctx.beginPath();ctx.arc(X(r.m),r.y-58,4,0,7);ctx.fill();
+      label(ctx,r.name,P.x0-8,r.y,r.col,12.5,'right',700);
+      label(ctx,fmt(r.m,1)+' ± '+fmt(r.s,1),X(r.m),r.y-72,r.col,11.5,'center',600);
+    });
+
+    // Achse
+    axes(ctx,P,{yAxis:false});
+    for(let v=Math.ceil(lo/10)*10;v<=hi;v+=10){
+      label(ctx,v+'',X(v),P.y1+16,C.ink3,10.5);
+    }
+    label(ctx,'Gewichtsverlust in Pfund →',(P.x0+P.x1)/2,P.y1+30,C.ink3,11.5);
+  }
+  function upd(){
+    $('#v-mo').textContent=fmt(S.mo,1);
+    $('#v-po').textContent='± '+fmt(S.po,1);
+    $('#v-mp').textContent=fmt(S.mp,1);
+    $('#v-pp').textContent='± '+fmt(S.pp,1);
+    const to=S.mo/S.po, tp=S.mp/S.pp;
+    $('#t-o').textContent=fmt(to,2);
+    $('#t-p').textContent=fmt(tp,2);
+    const lo1=S.mo-S.po, hi1=S.mo+S.po, lo2=S.mp-S.pp, hi2=S.mp+S.pp;
+    const dom=lo1>=hi2;
+    $('#pill-verdict').className='verdict '+(dom?'good':'info');
+    $('#pill-verdict').innerHTML= dom
+      ? `<b>Oomph dominiert.</b> Selbst im schlechten Fall (${fmt(lo1,1)} Pfund) ist Oomph besser als Precision im besten Fall (${fmt(hi2,1)} Pfund). Und trotzdem hat Precision den <i>fünffach</i> höheren t-Wert (${fmt(tp,1)} gegen ${fmt(to,1)}). <b>Precision gibt das klarere Signal — und die schlechtere Pille.</b>`
+      : `<b>Keine Dominanz mehr.</b> Die Bereiche überlappen: Oomph kann zwischen ${fmt(lo1,1)} und ${fmt(hi1,1)} liefern, Precision zwischen ${fmt(lo2,1)} und ${fmt(hi2,1)}. Jetzt muss man wirklich abwägen — mit einer <i>Verlustfunktion</i>, nicht mit einem t-Wert.`;
+    draw();
+  }
+  ['mo','po','mp','pp'].forEach(k=>{
+    $('#s-'+k).addEventListener('input',e=>{S[k]=+e.target.value;gen();upd();});
+  });
+  $('#b-sim').addEventListener('click',()=>{gen();upd();});
+  $('#b-reset-pills').addEventListener('click',()=>{
+    S.mo=20;S.po=10;S.mp=5;S.pp=0.5;
+    $('#s-mo').value=20;$('#s-po').value=10;$('#s-mp').value=5;$('#s-pp').value=0.5;
+    gen();upd();
+  });
+  $('#ch-o').addEventListener('click',()=>{
+    $('#choice-out').innerHTML=`<div class="verdict good" style="margin-top:12px"><b>Du hast Oomph gewählt.</b> Damit stehst du bei den 10–20 % — und du hast recht. Warum, wirst du in Kapitel 6 (Minimax) formal sehen. Deine Mutter will Gewicht verlieren, nicht Präzision gewinnen.</div>`;
+  });
+  $('#ch-p').addEventListener('click',()=>{
+    $('#choice-out').innerHTML=`<div class="verdict bad" style="margin-top:12px"><b>Du hast Precision gewählt.</b> Damit bist du in der Mehrheit — 8 oder 9 von 10 publizierenden Wissenschaftlern tun dasselbe. Ziliak &amp; McCloskey argumentieren, dass das <i>falsch</i> ist. Lies weiter — oder besser: spiel weiter. Kapitel 6 zeigt, warum.</div>`;
+  });
+  gen();upd();
+  window.addEventListener('resize',draw);
+  return {draw};
+})();
+
+/* ============================================================
+   SEKTION 2 · STREUUNG
+   ============================================================ */
+const SD=(function(){
+  const cv=$('#c-sd');
+  let vals=[14,17,19,20,21,22,23,25,18,16,24,21];
+  let drag=-1;
+  const LO=0,HI=40;
+
+  function geom(w,h){ return {x0:50,y0:26,x1:w-20,y1:h-36}; }
+  function stats(){
+    const n=vals.length;
+    const m=vals.reduce((a,b)=>a+b,0)/n;
+    const s=Math.sqrt(vals.reduce((a,b)=>a+(b-m)**2,0)/(n-1));
+    return {m,s,min:Math.min(...vals),max:Math.max(...vals),n};
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P=geom(w,h);
+    const Y=v=>lerp(P.y1,P.y0,(v-LO)/(HI-LO));
+    const Xi=i=>lerp(P.x0+28,P.x1-28,i/(vals.length-1));
+    gridLines(ctx,P,8,false);
+    const S=stats();
+
+    // ±1s Band
+    ctx.fillStyle=C.oomph+'18';
+    ctx.fillRect(P.x0,Y(S.m+S.s),P.x1-P.x0,Y(S.m-S.s)-Y(S.m+S.s));
+    ctx.strokeStyle=C.oomph+'55';ctx.setLineDash([4,4]);
+    [S.m-S.s,S.m+S.s].forEach(v=>{ctx.beginPath();ctx.moveTo(P.x0,Y(v));ctx.lineTo(P.x1,Y(v));ctx.stroke();});
+    ctx.setLineDash([]);
+    // Mittelwert
+    ctx.strokeStyle=C.gold;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(P.x0,Y(S.m));ctx.lineTo(P.x1,Y(S.m));ctx.stroke();
+    label(ctx,'x̄ = '+fmt(S.m,2),P.x1-6,Y(S.m)-12,C.gold,12,'right',700);
+    label(ctx,'± s',P.x0+8,Y(S.m+S.s)-11,C.oomph,11,'left',600);
+
+    // Abweichungslinien + Punkte
+    vals.forEach((v,i)=>{
+      const x=Xi(i);
+      ctx.strokeStyle=C.ink3+'77';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(x,Y(S.m));ctx.lineTo(x,Y(v));ctx.stroke();
+      const grd=ctx.createRadialGradient(x,Y(v),1,x,Y(v),11);
+      grd.addColorStop(0,'#fff');grd.addColorStop(1,C.prec);
+      ctx.fillStyle=drag===i?'#fff':grd;
+      ctx.beginPath();ctx.arc(x,Y(v),drag===i?9:7,0,7);ctx.fill();
+      ctx.strokeStyle=C.bg;ctx.lineWidth=2;ctx.stroke();
+    });
+    axes(ctx,P);
+    for(let v=LO;v<=HI;v+=10) label(ctx,v+'',P.x0-8,Y(v),C.ink3,10.5,'right');
+    label(ctx,'↑ Pfund · Punkte ziehen!',P.x0+4,P.y0-10,C.ink3,11,'left');
+    // Readouts
+    $('#sd-mean').textContent=fmt(S.m,2);
+    $('#sd-sd').textContent=fmt(S.s,2);
+    $('#sd-range').textContent=fmt(S.max-S.min,1);
+    const vd=$('#sd-verdict');
+    if(S.s<2){vd.className='verdict good';vd.innerHTML='<b>Sehr geringe Streuung.</b> Die Messungen liegen eng beieinander — du kannst dem Mittelwert gut trauen. Das ist <i>Präzision</i>.';}
+    else if(S.s<6){vd.className='verdict';vd.innerHTML='<b>Mittlere Streuung.</b> Typisch für Verhaltens- und Biodaten. Der Mittelwert ist brauchbar, aber nicht exakt.';}
+    else{vd.className='verdict bad';vd.innerHTML='<b>Große Streuung.</b> Einzelne Personen reagieren sehr unterschiedlich. Achtung: Das heißt <i>nicht</i>, dass die Wirkung klein ist — es heißt nur, dass sie <i>unterschiedlich</i> ist.';}
+    tex($('#m-sd'),`s=\\sqrt{\\frac{1}{n-1}\\sum_{i=1}^{n}(x_i-\\bar{x})^2}=${fmt(S.s,2).replace(',','{,}')}`);
+  }
+  function pos(e){
+    const r=cv.getBoundingClientRect();
+    const t=e.touches?e.touches[0]:e;
+    return {x:t.clientX-r.left,y:t.clientY-r.top};
+  }
+  function hit(p){
+    const r=cv.getBoundingClientRect(),h=cv.clientHeight;
+    const P=geom(r.width,h);
+    const Y=v=>lerp(P.y1,P.y0,(v-LO)/(HI-LO));
+    const Xi=i=>lerp(P.x0+28,P.x1-28,i/(vals.length-1));
+    for(let i=0;i<vals.length;i++){
+      if(Math.hypot(p.x-Xi(i),p.y-Y(vals[i]))<16) return i;
+    } return -1;
+  }
+  function move(e){
+    if(drag<0)return;
+    e.preventDefault();
+    const p=pos(e);
+    const r=cv.getBoundingClientRect(),h=cv.clientHeight;
+    const P=geom(r.width,h);
+    const v=LO+(P.y1-p.y)/(P.y1-P.y0)*(HI-LO);
+    vals[drag]=clamp(v,LO,HI);draw();
+  }
+  cv.addEventListener('mousedown',e=>{drag=hit(pos(e));draw();});
+  cv.addEventListener('touchstart',e=>{drag=hit(pos(e));draw();},{passive:true});
+  window.addEventListener('mousemove',move);
+  window.addEventListener('touchmove',move,{passive:false});
+  window.addEventListener('mouseup',()=>{drag=-1;draw();});
+  window.addEventListener('touchend',()=>{drag=-1;draw();});
+  cv.addEventListener('mousemove',e=>{cv.style.cursor=hit(pos(e))>=0?'grab':'default';
+});
+  ['tight','wide','outlier','rnd'].forEach(k=>{
+    const b=$('#sd-'+k); if(!b)return;
+    b.addEventListener('click',()=>{
+      if(k==='tight') vals=[19.4,20.1,19.8,20.3,20.0,19.7,20.2,19.9,20.4,19.6,20.1,19.8];
+      if(k==='wide')  vals=[6,31,14,27,9,35,18,24,3,29,12,22];
+      if(k==='outlier')vals=[19,20,21,20,19,21,20,20,19,21,20,38];
+      if(k==='rnd')   vals=Array.from({length:12},()=>clamp(20+randn()*6,0,40));
+      draw();
+    });
+  });
+  draw();
+  window.addEventListener('resize',draw);
+  return{draw};
+})();
+
+/* ---------- Normalverteilung ---------- */
+const Norm=(function(){
+  const cv=$('#c-norm');
+  const S={m:20,s:10,band:1};
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:46,y0:24,x1:w-18,y1:h-40};
+    const lo=S.m-4.2*S.s, hi=S.m+4.2*S.s;
+    const X=v=>lerp(P.x0,P.x1,(v-lo)/(hi-lo));
+    const peak=normpdf(S.m,S.m,S.s);
+    const Y=d=>lerp(P.y1,P.y0,d/peak*0.92);
+    gridLines(ctx,P,8,true);
+
+    // gefüllte Bandfläche
+    const b=S.band;
+    ctx.beginPath();ctx.moveTo(X(S.m-b*S.s),P.y1);
+    for(let i=0;i<=200;i++){
+      const v=lerp(S.m-b*S.s,S.m+b*S.s,i/200);
+      ctx.lineTo(X(v),Y(normpdf(v,S.m,S.s)));
+    }
+    ctx.lineTo(X(S.m+b*S.s),P.y1);ctx.closePath();
+    const g=ctx.createLinearGradient(0,P.y0,0,P.y1);
+    g.addColorStop(0,C.gold+'70');g.addColorStop(1,C.gold+'10');
+    ctx.fillStyle=g;ctx.fill();
+
+    // Kurve
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const v=lerp(lo,hi,i/400);
+      const x=X(v),y=Y(normpdf(v,S.m,S.s));
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.strokeStyle=C.prec;ctx.lineWidth=2.6;
+    ctx.shadowColor=C.prec;ctx.shadowBlur=14;ctx.stroke();ctx.shadowBlur=0;
+
+    // μ-Linie
+    ctx.strokeStyle=C.oomph;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(X(S.m),P.y0);ctx.lineTo(X(S.m),P.y1);ctx.stroke();
+    ctx.setLineDash([]);
+    label(ctx,'μ = '+fmt(S.m,1),X(S.m),P.y0+8,C.oomph,12,'center',700);
+
+    // σ-Pfeil
+    const ay=P.y1-26;
+    ctx.strokeStyle=C.gold;ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.moveTo(X(S.m),ay);ctx.lineTo(X(S.m+b*S.s),ay);ctx.stroke();
+    [[X(S.m+b*S.s),-1]].forEach(([x,d])=>{
+      ctx.beginPath();ctx.moveTo(x,ay);ctx.lineTo(x+d*6,ay-4);ctx.lineTo(x+d*6,ay+4);ctx.closePath();
+      ctx.fillStyle=C.gold;ctx.fill();
+    });
+    label(ctx,`±${b}σ = ${fmt(b*S.s,1)}`,(X(S.m)+X(S.m+b*S.s))/2,ay-13,C.gold,11.5,'center',700);
+
+    axes(ctx,P,{yAxis:false});
+    for(let k=-4;k<=4;k++){
+      const v=S.m+k*S.s;
+      label(ctx,fmt(v,0),X(v),P.y1+15,C.ink3,10.5);
+    }
+    label(ctx,'Gewichtsverlust in Pfund',(P.x0+P.x1)/2,P.y1+31,C.ink3,11.5);
+
+    const pct=[0,68.27,95.45,99.73][b];
+    $('#norm-verdict').innerHTML=`<b>${fmt(pct,1)} %</b> aller Fälle liegen zwischen
+      <b>${fmt(S.m-b*S.s,1)}</b> und <b>${fmt(S.m+b*S.s,1)}</b> Pfund.
+      ${b===2?'<br>Das ist die berühmte <b>„Zweier-Regel“</b> — die Wurzel von Fishers 5 %.':''}`;
+  }
+  $('#s-nm').addEventListener('input',e=>{S.m=+e.target.value;$('#v-nm').textContent=fmt(S.m,1);draw();});
+  $('#s-ns').addEventListener('input',e=>{S.s=+e.target.value;$('#v-ns').textContent=fmt(S.s,1);draw();});
+  $$('#tg-band button').forEach(b=>b.addEventListener('click',()=>{
+    $$('#tg-band button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');S.band=+b.dataset.b;draw();
+  }));
+  draw();window.addEventListener('resize',draw);
+  return{draw};
+})();
+
+/* ---------- Zwei Glocken (Plotly) ---------- */
+(function(){
+  const xs=[];for(let i=-20;i<=60;i+=0.2)xs.push(i);
+  const yO=xs.map(x=>normpdf(x,20,10));
+  const yP=xs.map(x=>normpdf(x,5,0.5));
+  Plotly.newPlot('p-twobell',[
+    {x:xs,y:yO,type:'scatter',mode:'lines',name:'Oomph 20 ± 10',
+     line:{color:C.oomph,width:3},fill:'tozeroy',fillcolor:'rgba(255,107,74,.22)'},
+    {x:xs,y:yP,type:'scatter',mode:'lines',name:'Precision 5 ± 0,5',
+     line:{color:C.prec,width:3},fill:'tozeroy',fillcolor:'rgba(74,215,255,.22)'}
+  ],L({
+    title:{text:'Dieselbe Fläche — völlig verschiedene Versprechen',font:{size:14,color:C.ink2}},
+    xaxis:{title:'Gewichtsverlust in Pfund',range:[-18,58],gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    yaxis:{title:'Wahrscheinlichkeitsdichte',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    shapes:[
+      {type:'rect',x0:10,x1:30,y0:0,y1:0.82,fillcolor:'rgba(255,107,74,.07)',line:{width:0},layer:'below'},
+      {type:'line',x0:0,x1:0,y0:0,y1:0.85,line:{color:C.ink3,dash:'dot',width:1.5}}
+    ],
+    annotations:[
+      {x:20,y:0.05,text:'Oomph: 10 – 30 Pfund (±1σ)',showarrow:false,font:{color:C.oomph,size:12}},
+      {x:5,y:0.84,text:'Precision:<br>4,5 – 5,5',showarrow:true,arrowcolor:C.prec,
+       ax:70,ay:-10,font:{color:C.prec,size:12}}
+    ],
+    legend:{x:0.65,y:0.95,bgcolor:'rgba(17,22,31,.8)',bordercolor:C.line,borderwidth:1}
+  }),PCFG);
+})();
+
+/* ============================================================
+   SEKTION 3 · STANDARDFEHLER
+   ============================================================ */
+tex($('#m-se'),`\\mathrm{SE}=\\frac{\\sigma}{\\sqrt{n}}\\qquad\\text{also: } n\\times 4 \\Rightarrow \\mathrm{SE}\\div 2`);
+
+const SE=(function(){
+  const cv=$('#c-se');
+  const S={n:25,sig:10,mu:20};
+  let people=[],means=[];
+  function drawOne(){
+    const arr=[];for(let i=0;i<S.n;i++)arr.push(S.mu+randn()*S.sig);
+    people=arr;
+    means.push(arr.reduce((a,b)=>a+b,0)/S.n);
+    if(means.length>400)means=means.slice(-400);
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:40,y0:20,x1:w-16,y1:h-34};
+    const se=S.sig/Math.sqrt(S.n);
+    const lo=S.mu-3.6*S.sig, hi=S.mu+3.6*S.sig;
+    const X=v=>lerp(P.x0,P.x1,(v-lo)/(hi-lo));
+    gridLines(ctx,P,8,true);
+    const midY=P.y0+(P.y1-P.y0)*0.34;
+    const botY=P.y0+(P.y1-P.y0)*0.80;
+
+    // μ
+    ctx.strokeStyle=C.gold;ctx.lineWidth=2;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(X(S.mu),P.y0);ctx.lineTo(X(S.mu),P.y1);ctx.stroke();ctx.setLineDash([]);
+    label(ctx,'μ',X(S.mu),P.y0+6,C.gold,12,'center',700);
+
+    // Bevölkerungs-Glocke
+    const pk=normpdf(S.mu,S.mu,S.sig);
+    ctx.beginPath();
+    for(let i=0;i<=300;i++){
+      const v=lerp(lo,hi,i/300);
+      const x=X(v),y=midY-normpdf(v,S.mu,S.sig)/pk*58;
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.strokeStyle=C.oomph+'99';ctx.lineWidth=2;ctx.stroke();
+    label(ctx,'Verteilung einzelner Personen (σ = '+fmt(S.sig,1)+')',P.x0+6,midY-72,C.oomph,11.5,'left',600);
+
+    // Personen-Punkte
+    people.forEach((v,i)=>{
+      ctx.fillStyle=C.oomph+'cc';
+      ctx.beginPath();ctx.arc(X(v),midY+8+((i*37)%22),2.6,0,7);ctx.fill();
+    });
+
+    // SE-Glocke
+    const pk2=normpdf(S.mu,S.mu,se);
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const v=lerp(lo,hi,i/400);
+      const x=X(v),y=botY-normpdf(v,S.mu,se)/pk2*62;
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.strokeStyle=C.prec;ctx.lineWidth=2.4;
+    ctx.shadowColor=C.prec;ctx.shadowBlur=12;ctx.stroke();ctx.shadowBlur=0;
+    label(ctx,'Verteilung der Stichproben-Mittelwerte (SE = '+fmt(se,2)+')',P.x0+6,botY-76,C.prec,11.5,'left',600);
+
+    // Mittelwert-Punkte
+    means.forEach((v,i)=>{
+      ctx.fillStyle=C.prec+'bb';
+      ctx.beginPath();ctx.arc(X(v),botY+8+((i*53)%26),2.6,0,7);ctx.fill();
+    });
+
+    axes(ctx,P,{yAxis:false});
+    for(let k=-3;k<=3;k++) label(ctx,fmt(S.mu+k*S.sig,0),X(S.mu+k*S.sig),P.y1+14,C.ink3,10.5);
+
+    $('#o-sig').textContent=fmt(S.sig,1);
+    $('#o-se').textContent=fmt(se,2);
+    const vd=$('#se-verdict');
+    vd.innerHTML=`Mit <b>n = ${S.n}</b> ist der Standardfehler <b>${fmt(se,2)}</b> —
+      also <b>${fmt(S.sig/se,1)}-mal</b> kleiner als die Streuung der Menschen.
+      Die Menschen sind genauso verschieden wie vorher; nur <i>dein Wissen über den
+      Mittelwert</i> ist schärfer geworden. ${S.n>=400?'<br><b>Bei so großem n wird fast alles signifikant — siehe Kapitel 7.</b>':''}`;
+  }
+  $('#s-sen').addEventListener('input',e=>{S.n=+e.target.value;$('#v-sen').textContent=S.n;means=[];people=[];draw();});
+  $('#s-sesig').addEventListener('input',e=>{S.sig=+e.target.value;$('#v-sesig').textContent=fmt(S.sig,1);means=[];people=[];draw();});
+  $('#b-draw1').addEventListener('click',()=>{drawOne();draw();});
+  $('#b-draw50').addEventListener('click',()=>{for(let i=0;i<50;i++)drawOne();draw();});
+  $('#b-clear-se').addEventListener('click',()=>{means=[];people=[];draw();});
+  drawOne();draw();window.addEventListener('resize',draw);
+  return{draw};
+})();
+
+(function(){
+  const ns=[];for(let n=1;n<=400;n++)ns.push(n);
+  Plotly.newPlot('p-sqrtn',[{
+    x:ns,y:ns.map(n=>10/Math.sqrt(n)),type:'scatter',mode:'lines',
+    line:{color:C.prec,width:3},fill:'tozeroy',fillcolor:'rgba(74,215,255,.14)',
+    name:'SE = 10/√n', hovertemplate:'n = %{x}<br>SE = %{y:.3f}<extra></extra>'
+  }],L({
+    title:{text:'Der Standardfehler fällt mit √n — ohne Untergrenze',font:{size:14,color:C.ink2}},
+    xaxis:{title:'Stichprobengröße n',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    yaxis:{title:'Standardfehler',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    annotations:[
+      {x:25,y:2,text:'n = 25 → SE = 2,0',showarrow:true,arrowcolor:C.gold,ax:60,ay:-40,font:{color:C.gold,size:11.5}},
+      {x:100,y:1,text:'n = 100 → SE = 1,0',showarrow:true,arrowcolor:C.gold,ax:50,ay:-40,font:{color:C.gold,size:11.5}},
+      {x:400,y:0.5,text:'n = 400 → SE = 0,5',showarrow:true,arrowcolor:C.gold,ax:-30,ay:-45,font:{color:C.gold,size:11.5}}
+    ],showlegend:false
+  }),PCFG);
+})();
+
+/* ============================================================
+   SEKTION 4 · t · RADIO · HEATMAP · FIGURE 1
+   ============================================================ */
+tex($('#m-t'),`t=\\frac{\\text{beobachteter Effekt}-\\text{Null-Effekt}}{\\text{Streuung des Effekts}}
+=\\frac{\\bar{x}-\\mu_0}{\\mathrm{SE}}`);
+
+const TRatio=(function(){
+  const cvR=$('#c-radio'), cvG=$('#c-tgauge');
+  const S={sig:20,noi:10,h0:0};
+  let phase=0, raf=null;
+  function t(){ return (S.sig-S.h0)/S.noi; }
+
+  function drawRadio(){
+    const {ctx,w,h}=setup(cvR);clearC(ctx,w,h);
+    const P={x0:14,y0:14,x1:w-14,y1:h-14};
+    const midTop=P.y0+(P.y1-P.y0)*0.26;
+    const midBot=P.y0+(P.y1-P.y0)*0.74;
+    const amp=Math.min(38,Math.abs(S.sig-S.h0)*1.5);
+    const noiseAmp=S.noi*1.6;
+
+    // Trennlinie
+    ctx.strokeStyle=C.line;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(P.x0,(midTop+midBot)/2);ctx.lineTo(P.x1,(midTop+midBot)/2);ctx.stroke();
+
+    // reines Signal
+    ctx.beginPath();
+    for(let x=P.x0;x<=P.x1;x+=1.5){
+      const u=(x-P.x0)/(P.x1-P.x0);
+      const y=midTop - amp*(Math.sin(u*16+phase)*0.6+Math.sin(u*31+phase*1.7)*0.3);
+      x===P.x0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=C.gosset;ctx.lineWidth=2;ctx.stroke();
+    label(ctx,'reines Signal (Effekt = '+fmt(S.sig-S.h0,1)+')',P.x0+4,P.y0+6,C.gosset,11,'left',600);
+
+    // Signal + Rauschen
+    ctx.beginPath();
+    for(let x=P.x0;x<=P.x1;x+=1.2){
+      const u=(x-P.x0)/(P.x1-P.x0);
+      const base=-amp*(Math.sin(u*16+phase)*0.6+Math.sin(u*31+phase*1.7)*0.3);
+      const nz=(Math.sin(x*12.9898+phase*3)*43758.5453)%1;
+      const y=midBot+base+ (nz-0.5)*noiseAmp*2.4;
+      x===P.x0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    const tv=t();
+    const col = tv>=1.96?C.prec : tv>=1?C.warn : C.bad;
+    ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.stroke();
+    label(ctx,'empfangen (Signal + Rauschen ±'+fmt(S.noi,1)+')',P.x0+4,midBot+66,col,11,'left',600);
+  }
+  function drawGauge(){
+    const {ctx,w,h}=setup(cvG);clearC(ctx,w,h);
+    const P={x0:20,x1:w-20,y:h/2};
+    const maxT=12;
+    const X=v=>lerp(P.x0,P.x1,clamp(v,0,maxT)/maxT);
+    // Track
+    roundRect(ctx,P.x0,P.y-9,P.x1-P.x0,18,9);
+    const g=ctx.createLinearGradient(P.x0,0,P.x1,0);
+    g.addColorStop(0,C.bad+'55');g.addColorStop(0.163,C.warn+'55');g.addColorStop(1,C.prec+'55');
+    ctx.fillStyle=g;ctx.fill();
+    // Füllung
+    const tv=t();
+    roundRect(ctx,P.x0,P.y-9,Math.max(4,X(Math.abs(tv))-P.x0),18,9);
+    const g2=ctx.createLinearGradient(P.x0,0,P.x1,0);
+    g2.addColorStop(0,C.bad);g2.addColorStop(0.2,C.warn);g2.addColorStop(1,C.prec);
+    ctx.fillStyle=g2;ctx.fill();
+    // 1,96-Marke
+    ctx.strokeStyle='#fff';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(X(1.96),P.y-18);ctx.lineTo(X(1.96),P.y+18);ctx.stroke();
+    label(ctx,'1,96',X(1.96),P.y+30,'#fff',11,'center',700);
+    label(ctx,'t = 0',P.x0,P.y+30,C.ink3,10.5,'left');
+    label(ctx,'t = 12',P.x1,P.y+30,C.ink3,10.5,'right');
+    label(ctx,'t = '+fmt(Math.abs(tv),2),X(Math.abs(tv)),P.y-26,C.ink,13,'center',800);
+  }
+  function upd(){
+    $('#v-sig').textContent=fmt(S.sig,1);
+    $('#v-noi').textContent=fmt(S.noi,1);
+    $('#v-h0').textContent=fmt(S.h0,1);
+    const tv=Math.abs(t());
+    $('#o-t').textContent=fmt(tv,2);
+    $('#o-t').style.color = tv>=1.96?C.prec:(tv>=1?C.warn:C.bad);
+    const vd=$('#t-verdict');
+    if(tv>=1.96){vd.className='verdict info';
+      vd.innerHTML=`<b>t = ${fmt(tv,2)} ≥ 1,96 → „statistisch signifikant“.</b>
+      Aber frag dich: Wie groß ist der Effekt eigentlich? <b>${fmt(S.sig-S.h0,1)}</b>.
+      Ist das viel? Das sagt t <i>nicht</i>.`;}
+    else{vd.className='verdict bad';
+      vd.innerHTML=`<b>t = ${fmt(tv,2)} &lt; 1,96 → „nicht signifikant“.</b>
+      Nach Fisher: „alle Ergebnisse vollständig ignorieren“. Dabei beträgt der
+      geschätzte Effekt <b>${fmt(S.sig-S.h0,1)}</b> — möglicherweise riesig.`;}
+    drawRadio();drawGauge();
+  }
+  $('#s-sig').addEventListener('input',e=>{S.sig=+e.target.value;upd();});
+  $('#s-noi').addEventListener('input',e=>{S.noi=+e.target.value;upd();});
+  $('#s-h0').addEventListener('input',e=>{S.h0=+e.target.value;upd();
+});
+  $('#pre-o').addEventListener('click',()=>{S.sig=20;S.noi=10;S.h0=0;
+    $('#s-sig').value=20;$('#s-noi').value=10;$('#s-h0').value=0;upd();});
+  $('#pre-p').addEventListener('click',()=>{S.sig=5;S.noi=0.5;S.h0=0;
+    $('#s-sig').value=5;$('#s-noi').value=0.5;$('#s-h0').value=0;upd();});
+  $('#pre-o14').addEventListener('click',()=>{S.sig=20;S.noi=14;S.h0=0;
+    $('#s-sig').value=20;$('#s-noi').value=14;$('#s-h0').value=0;upd();});
+
+  function loop(){phase+=0.045;drawRadio();raf=requestAnimationFrame(loop);}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ if(!raf) loop(); }
+    else { if(raf){cancelAnimationFrame(raf);raf=null;} }
+  }),{threshold:0.1});
+  io.observe(cvR);
+  upd();
+  window.addEventListener('resize',()=>{drawRadio();drawGauge();});
+  return{upd};
+})();
+
+/* ---------- Heatmap Oomph × Precision ---------- */
+(function(){
+  const oomphs=[],precs=[];
+  for(let i=0;i<=60;i++) oomphs.push(0.5+i*0.58);      // Effektgröße 0,5 … 35
+  for(let j=0;j<=60;j++) precs.push(0.3+j*0.28);       // SE 0,3 … 17
+  const z=[];
+  for(let j=0;j<precs.length;j++){
+    const row=[];
+    for(let i=0;i<oomphs.length;i++) row.push(Math.min(12,oomphs[i]/precs[j]));
+    z.push(row);
+  }
+  Plotly.newPlot('p-heat',[
+    {z:z,x:oomphs,y:precs,type:'heatmap',
+     colorscale:[[0,'#2b0d14'],[0.12,'#5c1b2a'],[0.163,'#ff4d6d'],[0.17,'#ffcc55'],
+                 [0.35,'#4ad7ff'],[0.7,'#9ff0ff'],[1,'#ffffff']],
+     colorbar:{title:{text:'t',side:'top'},tickfont:{color:C.ink2,size:10},
+               outlinecolor:C.line2,thickness:12,len:0.8},
+     hovertemplate:'Oomph %{x:.1f}<br>SE %{y:.1f}<br><b>t = %{z:.2f}</b><extra></extra>'},
+    {x:oomphs.filter(o=>o/1.96>=0.3&&o/1.96<=17),
+     y:oomphs.filter(o=>o/1.96>=0.3&&o/1.96<=17).map(o=>o/1.96),
+     type:'scatter',mode:'lines',line:{color:'#fff',width:2.5,dash:'dash'},
+     name:'t = 1,96',hoverinfo:'skip'},
+    {x:[20],y:[10],type:'scatter',mode:'markers+text',
+     marker:{size:18,color:C.oomph,line:{color:'#fff',width:2}},
+     text:['Oomph'],textposition:'top right',
+     textfont:{color:C.oomph,size:13},name:'Oomph',
+     hovertemplate:'Oomph: 20 Pfund, SE 10 → t = 2,0<extra></extra>'},
+    {x:[5],y:[0.5],type:'scatter',mode:'markers+text',
+     marker:{size:18,color:C.prec,line:{color:'#fff',width:2}},
+     text:['Precision'],textposition:'top right',
+     textfont:{color:C.prec,size:13},name:'Precision',
+     hovertemplate:'Precision: 5 Pfund, SE 0,5 → t = 10,0<extra></extra>'},
+    {x:[20],y:[14],type:'scatter',mode:'markers+text',
+     marker:{size:14,color:C.warn,symbol:'diamond',line:{color:'#fff',width:1.5}},
+     text:['Oomph ±14'],textposition:'bottom right',
+     textfont:{color:C.warn,size:12},name:'Oomph ±14',
+     hovertemplate:'Oomph ±14: t = 1,43 → „insignifikant“<extra></extra>'}
+  ],L({
+    title:{text:'Die Landkarte der Signifikanz — Farbe = t, aber nur die x-Achse ist wichtig',
+           font:{size:14,color:C.ink2}},
+    xaxis:{title:'Oomph → Größe des Effekts (Pfund)',range:[0.5,35],
+           gridcolor:'rgba(255,255,255,.05)',linecolor:C.line2},
+    yaxis:{title:'Standardfehler (klein = präzise) ↓',range:[17,0.3],
+           gridcolor:'rgba(255,255,255,.05)',linecolor:C.line2},
+    legend:{x:0.70,y:0.14,bgcolor:'rgba(17,22,31,.85)',bordercolor:C.line,borderwidth:1,
+            font:{size:11}}
+  }),PCFG);
+})();
+
+/* ---------- Figure 1 (Ziliak & McCloskey) ---------- */
+const Fig1=(function(){
+  const cv=$('#c-fig1');
+  const S={tc:1.96,oc:8,n:160};
+  let pts=[];
+  function gen(){
+    pts=[];
+    for(let i=0;i<S.n;i++){
+      const oomph=Math.pow(Math.random(),0.75)*26+0.5;
+      const t=Math.pow(Math.random(),0.85)*5.2+0.1;
+      pts.push({o:oomph,t:t});
+    }
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:68,y0:26,x1:w-20,y1:h-52};
+    const X=v=>lerp(P.x0,P.x1,clamp(v,0,27)/27);
+    const Y=v=>lerp(P.y1,P.y0,clamp(v,0,5.5)/5.5);
+    const xc=X(S.oc), yc=Y(S.tc);
+
+    // Quadranten
+    const quads=[
+      {x:P.x0,y:P.y0,w:xc-P.x0,h:yc-P.y0,c:'rgba(255,77,109,.10)'},     // oben links: falsch akzeptiert
+      {x:xc,y:P.y0,w:P.x1-xc,h:yc-P.y0,c:'rgba(126,231,135,.10)'},      // oben rechts: richtig
+      {x:P.x0,y:yc,w:xc-P.x0,h:P.y1-yc,c:'rgba(255,255,255,.025)'},     // unten links: richtig verworfen
+      {x:xc,y:yc,w:P.x1-xc,h:P.y1-yc,c:'rgba(255,204,85,.11)'}          // unten rechts: falsch verworfen
+    ];
+    quads.forEach(q=>{ctx.fillStyle=q.c;ctx.fillRect(q.x,q.y,q.w,q.h);});
+
+    gridLines(ctx,P,9,true);gridLines(ctx,P,6,false);
+
+    let ok=0,fa=0,fr=0,tr=0;
+    pts.forEach(p=>{
+      const sig=p.t>=S.tc, big=p.o>=S.oc;
+      let col;
+      if(sig&&big){col=C.gosset;ok++;}
+      else if(sig&&!big){col=C.bad;fa++;}
+      else if(!sig&&big){col=C.warn;fr++;}
+      else {col=C.ink3;tr++;}
+      ctx.fillStyle=col+'cc';
+      ctx.beginPath();ctx.arc(X(p.o),Y(p.t),3.4,0,7);ctx.fill();
+    });
+
+    // Linien
+    ctx.strokeStyle=C.prec;ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(xc,P.y0);ctx.lineTo(xc,P.y1);ctx.stroke();
+    ctx.strokeStyle=C.oomph;ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(P.x0,yc);ctx.lineTo(P.x1,yc);ctx.stroke();
+
+    // Beschriftungen der Quadranten (wie Figure 1 im Aufsatz)
+    label(ctx,'Wissenschaft',(P.x0+xc)/2,P.y0+22,C.bad,12,'center',700);
+    label(ctx,'akzeptiert zu Unrecht',(P.x0+xc)/2,P.y0+38,C.bad,12,'center',700);
+    label(ctx,'z. B. t = 3,0',(P.x0+xc)/2,P.y0+56,C.bad,11,'center',500);
+
+    label(ctx,'richtig akzeptiert',(xc+P.x1)/2,P.y0+22,C.gosset,12,'center',700);
+    label(ctx,'groß UND präzise',(xc+P.x1)/2,P.y0+38,C.gosset,11,'center',500);
+
+    label(ctx,'richtig verworfen',(P.x0+xc)/2,P.y1-32,C.ink3,12,'center',700);
+
+    label(ctx,'Wissenschaft',(xc+P.x1)/2,P.y1-48,C.warn,12,'center',700);
+    label(ctx,'verwirft zu Unrecht',(xc+P.x1)/2,P.y1-32,C.warn,12,'center',700);
+    label(ctx,'z. B. t = 1,5',(xc+P.x1)/2,P.y1-16,C.warn,11,'center',500);
+
+    axes(ctx,P);
+    for(let v=0;v<=5;v++) label(ctx,fmt(v,0),P.x0-8,Y(v),C.ink3,10.5,'right');
+    for(let v=0;v<=25;v+=5) label(ctx,fmt(v,0),X(v),P.y1+15,C.ink3,10.5);
+    label(ctx,'statistische Signifikanz (t) ↑',P.x0-50,(P.y0+P.y1)/2,C.prec,11.5,'center',600);
+    label(ctx,'Oomph — inhaltliche Bedeutung →',(P.x0+P.x1)/2,P.y1+34,C.oomph,11.5,'center',600);
+    label(ctx,'Mindest-Oomph',xc,P.y1+34,C.prec,0,'center'); // Platzhalter
+
+    $('#f1-ok').textContent=ok;$('#f1-fa').textContent=fa;
+    $('#f1-fr').textContent=fr;$('#f1-tr').textContent=tr;
+  }
+  function upd(){
+    $('#v-f1t').textContent=fmt(S.tc,2);
+    $('#v-f1o').textContent=fmt(S.oc,1);
+    $('#v-f1n').textContent=S.n;
+    draw();
+  }
+  $('#s-f1t').addEventListener('input',e=>{S.tc=+e.target.value;upd();});
+  $('#s-f1o').addEventListener('input',e=>{S.oc=+e.target.value;upd();});
+  $('#s-f1n').addEventListener('input',e=>{S.n=+e.target.value;gen();upd();});
+  $('#b-f1new').addEventListener('click',()=>{gen();upd();});
+  gen();upd();window.addEventListener('resize',draw);
+  return{draw};
+})();
+
+/* ============================================================
+   SEKTION 5 · P-WERT
+   ============================================================ */
+const PVal=(function(){
+  const cv=$('#c-pval');
+  const S={t:2,alpha:5};
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:34,y0:26,x1:w-18,y1:h-46};
+    const lo=-5,hi=5;
+    const X=v=>lerp(P.x0,P.x1,(v-lo)/(hi-lo));
+    const pk=normpdf(0);
+    const Y=d=>lerp(P.y1,P.y0,d/pk*0.86);
+    gridLines(ctx,P,10,true);
+
+    const tc=Math.abs(norminv(S.alpha/200));
+
+    // Ablehnungsbereich (α)
+    [[-5,-tc],[tc,5]].forEach(([a,b])=>{
+      ctx.beginPath();ctx.moveTo(X(a),P.y1);
+      for(let i=0;i<=120;i++){const v=lerp(a,b,i/120);ctx.lineTo(X(v),Y(normpdf(v)));}
+      ctx.lineTo(X(b),P.y1);ctx.closePath();
+      ctx.fillStyle='rgba(199,146,234,.22)';ctx.fill();
+    });
+
+    // p-Fläche
+    const t=Math.abs(S.t);
+    [[-5,-t],[t,5]].forEach(([a,b])=>{
+      ctx.beginPath();ctx.moveTo(X(a),P.y1);
+      for(let i=0;i<=120;i++){const v=lerp(a,b,i/120);ctx.lineTo(X(v),Y(normpdf(v)));}
+      ctx.lineTo(X(b),P.y1);ctx.closePath();
+      ctx.fillStyle='rgba(255,77,109,.55)';ctx.fill();
+    });
+
+    // Kurve
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){const v=lerp(lo,hi,i/400);
+      const x=X(v),y=Y(normpdf(v));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.strokeStyle=C.ink2;ctx.lineWidth=2.2;ctx.stroke();
+
+    // kritische Linien
+    ctx.strokeStyle=C.fisher;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);
+    [-tc,tc].forEach(v=>{ctx.beginPath();ctx.moveTo(X(v),P.y0);ctx.lineTo(X(v),P.y1);ctx.stroke();});
+    ctx.setLineDash([]);
+    label(ctx,'±'+fmt(tc,2),X(tc),P.y0+10,C.fisher,11.5,'left',700);
+
+    // beobachtetes t
+    ctx.strokeStyle=C.gold;ctx.lineWidth=2.6;
+    ctx.beginPath();ctx.moveTo(X(t),P.y0+18);ctx.lineTo(X(t),P.y1);ctx.stroke();
+    ctx.fillStyle=C.gold;ctx.beginPath();ctx.arc(X(t),P.y0+18,5,0,7);ctx.fill();
+    label(ctx,'t = '+fmt(t,2),X(t),P.y0+6,C.gold,12,'center',800);
+
+    axes(ctx,P,{yAxis:false});
+    for(let v=-4;v<=4;v++) label(ctx,v+'',X(v),P.y1+15,C.ink3,10.5);
+    label(ctx,'Verteilung der t-Werte, WENN die Nullhypothese wahr wäre',(P.x0+P.x1)/2,P.y1+32,C.ink3,11);
+    label(ctx,'rot = p',X(0),P.y1-14,C.bad,11,'center',700);
+    label(ctx,'violett = α',X(0),P.y1-30,C.fisher,11,'center',700);
+  }
+  function upd(){
+    const t=Math.abs(S.t), p=pTwoSided(t), tc=Math.abs(norminv(S.alpha/200));
+    $('#v-pt').textContent=fmt(t,2);
+    $('#v-alpha').textContent=fmt(S.alpha,1)+' %';
+    $('#o-p').textContent=p<0.001?'< 0,001':fmt(p,3);
+    $('#o-tcrit').textContent=fmt(tc,2);
+    const sig=t>=tc;
+    const vd=$('#p-verdict');
+    vd.className='verdict '+(sig?'info':'bad');
+    vd.innerHTML = sig
+      ? `<b>p = ${p<0.001?'&lt; 0,001':fmt(p,3)} &lt; α = ${fmt(S.alpha/100,3)} → „signifikant“.</b><br>
+         Fisher hätte gesagt: „Entweder ist an der Behandlung etwas dran, oder es hat sich
+         ein Zufall ereignet, wie er nicht öfter als einmal in ${fmtI(1/(S.alpha/100))} Versuchen vorkommt.“
+         <br><b>Aber: Über die Größe des Effekts steht hier kein Wort.</b>`
+      : `<b>p = ${fmt(p,3)} &gt; α = ${fmt(S.alpha/100,3)} → „nicht signifikant“.</b><br>
+         Fisher 1926: „alle Ergebnisse, die dieses Niveau nicht erreichen, <i>vollständig ignorieren</i>“.
+         <br><b>Das heißt NICHT, dass kein Effekt da ist.</b> Es heißt nur: mit dieser
+         Stichprobe kannst du ihn nicht vom Zufall trennen.`;
+    draw();
+  }
+  $('#s-pt').addEventListener('input',e=>{S.t=+e.target.value;upd();});
+  $('#s-alpha').addEventListener('input',e=>{S.alpha=+e.target.value;upd();});
+  $('#pq1').addEventListener('click',()=>{S.t=1.43;$('#s-pt').value=1.43;upd();});
+  $('#pq2').addEventListener('click',()=>{S.t=1.96;$('#s-pt').value=1.96;upd();});
+  $('#pq3').addEventListener('click',()=>{S.t=5;$('#s-pt').value=5;upd();});
+  upd();window.addEventListener('resize',draw);
+  return{upd};
+})();
+
+/* ---------- CDC-Kacheln ---------- */
+(function(){
+  const items=[
+    ['mit Freunden auf einer Party','p < .001'],
+    ['beim Reden und Entspannen','p < .001'],
+    ['mit Partner/Freund, der konsumiert','p < .001'],
+    ['beim Herumhängen im Viertel','p < .001'],
+    ['wenn glücklich und feiernd','p < .001'],
+    ['wenn man andere genießen sieht','p < .05'],
+    ['beim Aufwachen vor hartem Tag','p < .001'],
+    ['wenn extrem ängstlich/gestresst','p < .001'],
+    ['wenn gelangweilt','p < .001'],
+    ['wenn frustriert','p < .001'],
+    ['bei Streit in der Familie','p < .05'],
+    ['wo alle konsumieren','p < .001'],
+    ['wenn Gesundheitssorgen nachlassen','p < .05'],
+    ['wenn man die Gewohnheit vermisst','p < .010'],
+    ['bei Entzugserscheinungen','p < .01'],
+    ['wenn man merkt: Aufhören ist schwer','n. s. ✗']
+  ];
+  const grid=$('#cdc-grid');
+  items.forEach(([txt,p],i)=>{
+    const d=document.createElement('div');
+    const isNS = p.includes('n. s.');
+    d.style.cssText=`border:1px solid ${isNS?'rgba(255,77,109,.35)':'var(--line)'};
+      border-radius:11px;padding:11px 13px;cursor:pointer;transition:.18s;
+      background:${isNS?'rgba(255,77,109,.07)':'rgba(74,215,255,.05)'};`;
+    d.innerHTML=`<div style="font-size:13px;color:var(--ink2);line-height:1.4">${txt}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12.5px;margin-top:6px;
+        color:${isNS?'var(--bad)':'var(--prec)'};font-weight:600">${p}</div>
+      <div style="font-size:11px;color:var(--ink3);margin-top:3px">Oomph: <b style="color:var(--bad)">—</b></div>`;
+    d.addEventListener('click',()=>{
+      d.style.background= d.dataset.on? (isNS?'rgba(255,77,109,.07)':'rgba(74,215,255,.05)') : 'rgba(233,196,106,.16)';
+      d.style.borderColor= d.dataset.on? (isNS?'rgba(255,77,109,.35)':'var(--line)') : 'var(--gold)';
+      d.dataset.on = d.dataset.on?'':'1';
+    });
+    grid.appendChild(d);
+  });
+})();
+
+/* ============================================================
+   SEKTION 6 · MINIMAX + VERLUSTFUNKTION
+   ============================================================ */
+const MM=(function(){
+  const cv=$('#c-minimax');
+  const S={z:0,so:10};
+  const mo=20, mp=5, sp=0.5;
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:70,y0:30,x1:w-24,y1:h-54};
+    const vo=mo+S.z*S.so, vp=mp+S.z*sp;
+    const maxV=Math.max(40,mo+2.6*S.so);
+    const Y=v=>lerp(P.y1,P.y0,clamp(v,0,maxV)/maxV);
+    gridLines(ctx,P,8,false);
+
+    const bw=(P.x1-P.x0)/5;
+    const bars=[
+      {x:P.x0+bw*0.7,v:vo,c:C.oomph,n:'Oomph'},
+      {x:P.x0+bw*2.9,v:vp,c:C.prec,n:'Precision'}
+    ];
+    bars.forEach(b=>{
+      const y=Y(Math.max(0,b.v));
+      const g=ctx.createLinearGradient(0,y,0,P.y1);
+      g.addColorStop(0,b.c);g.addColorStop(1,b.c+'33');
+      roundRect(ctx,b.x,y,bw*1.4,P.y1-y,10);ctx.fillStyle=g;ctx.fill();
+      ctx.strokeStyle=b.c;ctx.lineWidth=1.5;ctx.stroke();
+      label(ctx,fmt(b.v,1)+' Pfund',b.x+bw*0.7,y-16,b.c,15,'center',800);
+      label(ctx,b.n,b.x+bw*0.7,P.y1+20,b.c,13,'center',700);
+    });
+
+    // Referenzlinie: bester Fall Precision
+    const best=mp+sp;
+    ctx.strokeStyle=C.prec+'88';ctx.setLineDash([5,4]);ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(P.x0,Y(best));ctx.lineTo(P.x1,Y(best));ctx.stroke();ctx.setLineDash([]);
+    label(ctx,'bester Fall Precision: '+fmt(best,1),P.x1-6,Y(best)-12,C.prec,11,'right',600);
+
+    // Referenzlinie: schlechtester plausibler Fall Oomph (-2σ)
+    const worst=mo-2*S.so;
+    ctx.strokeStyle=C.oomph+'88';ctx.setLineDash([3,4]);ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(P.x0,Y(Math.max(0,worst)));ctx.lineTo(P.x1,Y(Math.max(0,worst)));ctx.stroke();
+    ctx.setLineDash([]);
+    label(ctx,'Oomph bei −2σ: '+fmt(worst,1),P.x1-6,Y(Math.max(0,worst))-12,C.oomph,11,'right',600);
+
+    axes(ctx,P);
+    for(let v=0;v<=maxV;v+=10) label(ctx,fmt(v,0),P.x0-8,Y(v),C.ink3,10.5,'right');
+    label(ctx,'↑ Pfund Gewichtsverlust',P.x0+4,P.y0-12,C.ink3,11,'left');
+    label(ctx,'Zustand der Welt: '+(S.z>=0?'+':'')+fmt(S.z,2)+'σ',(P.x0+P.x1)/2,P.y1+42,C.gold,12.5,'center',700);
+  }
+  function upd(){
+    $('#v-mmz').textContent=(S.z>=0?'+':'')+fmt(S.z,2);
+    $('#v-mmo').textContent=fmt(S.so,1);
+    const vo=mo+S.z*S.so, vp=mp+S.z*sp;
+    $('#mm-o').textContent=fmt(vo,1);
+    $('#mm-p').textContent=fmt(vp,1);
+    const vd=$('#mm-verdict');
+    if(vo>vp){vd.className='verdict good';
+      vd.innerHTML=`In diesem Zustand gewinnt <b>Oomph</b> um <b>${fmt(vo-vp,1)} Pfund</b>.`;}
+    else{vd.className='verdict bad';
+      vd.innerHTML=`Hier gewinnt ausnahmsweise <b>Precision</b> um ${fmt(vp-vo,1)} Pfund —
+      ein Zustand, dessen Wahrscheinlichkeit bei etwa <b>${fmt(normcdf(S.z)*100,1)} %</b> liegt
+      (so weit unten oder tiefer).`;}
+    draw();
+  }
+  $('#s-mmz').addEventListener('input',e=>{S.z=+e.target.value;upd();});
+  $('#s-mmo').addEventListener('input',e=>{S.so=+e.target.value;upd();});
+  $('#mm-worst').addEventListener('click',()=>{S.z=-2.5;$('#s-mmz').value=-2.5;upd();});
+  $('#mm-mid').addEventListener('click',()=>{S.z=0;$('#s-mmz').value=0;upd();});
+  upd();window.addEventListener('resize',draw);
+  return{upd};
+})();
+
+/* ---------- Verlustfunktion / optimales α ---------- */
+const Loss=(function(){
+  const S={cfa:1,cfm:1,prior:50,eff:3};
+  function expLoss(tc){
+    const pi=S.prior/100;
+    const alpha=2*(1-normcdf(tc));                  // Fehler 1. Art
+    const beta =normcdf(tc-S.eff)-normcdf(-tc-S.eff); // Fehler 2. Art
+    return {alpha,beta,loss:(1-pi)*alpha*S.cfa + pi*beta*S.cfm};
+  }
+  function upd(){
+    $('#v-cfa').textContent=fmt(S.cfa,1);
+    $('#v-cfm').textContent=fmt(S.cfm,1);
+    $('#v-prior').textContent=S.prior+' %';
+    $('#v-eff').textContent=fmt(S.eff,1);
+
+    const tcs=[],losses=[],alphas=[],betas=[];
+    let best={loss:Infinity,tc:1.96,alpha:0.05};
+    for(let tc=0.1;tc<=5;tc+=0.01){
+      const r=expLoss(tc);
+      tcs.push(tc);losses.push(r.loss);alphas.push(r.alpha);betas.push(r.beta);
+      if(r.loss<best.loss) best={loss:r.loss,tc:tc,alpha:r.alpha,beta:r.beta};
+    }
+    $('#o-alphastar').textContent=fmt(best.alpha*100,1)+' %';
+
+    const f5=expLoss(1.96);
+    const over=(f5.loss-best.loss)/Math.max(1e-9,best.loss)*100;
+    const vd=$('#lf-verdict');
+    vd.className='verdict '+(Math.abs(best.alpha-0.05)<0.012?'good':'bad');
+    vd.innerHTML = Math.abs(best.alpha-0.05)<0.012
+      ? `<b>Zufällig liegt das Optimum nahe bei 5 %.</b> Bei dieser speziellen Kombination
+         von Kosten ist Fishers Regel vertretbar — aber eben nur hier.`
+      : `<b>Das Optimum liegt bei α* = ${fmt(best.alpha*100,1)} %, nicht bei 5 %.</b>
+         Wer stur 5 % verwendet, nimmt <b>${fmt(over,0)} % mehr erwarteten Verlust</b>
+         in Kauf als nötig. Optimale Schwelle: t = ${fmt(best.tc,2)}.`;
+
+    Plotly.react('p-loss',[
+      {x:tcs,y:losses,type:'scatter',mode:'lines',name:'erwarteter Verlust',
+       line:{color:C.gold,width:3.4},hovertemplate:'t = %{x:.2f}<br>Verlust %{y:.4f}<extra></extra>'},
+      {x:tcs,y:alphas.map((a,i)=>a*(1-S.prior/100)*S.cfa),type:'scatter',mode:'lines',
+       name:'Kosten Fehlalarm',line:{color:C.bad,width:2,dash:'dot'}},
+      {x:tcs,y:betas.map(b=>b*(S.prior/100)*S.cfm),type:'scatter',mode:'lines',
+       name:'Kosten Verpassen',line:{color:C.prec,width:2,dash:'dot'}},
+      {x:[best.tc],y:[best.loss],type:'scatter',mode:'markers',
+       marker:{size:15,color:C.gosset,line:{color:'#fff',width:2}},name:'Optimum'}
+    ],L({
+      title:{text:'Wo liegt die beste Schwelle?',font:{size:14,color:C.ink2}},
+      xaxis:{title:'Schwelle (kritisches t)',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+      yaxis:{title:'erwarteter Verlust',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+      shapes:[{type:'line',x0:1.96,x1:1.96,y0:0,y1:Math.max(...losses),
+               line:{color:C.fisher,dash:'dash',width:2}}],
+      annotations:[{x:1.96,y:Math.max(...losses)*0.92,text:'Fisher 5 %',
+               showarrow:false,font:{color:C.fisher,size:11.5},xanchor:'left'}],
+      legend:{x:0.52,y:0.98,bgcolor:'rgba(17,22,31,.85)',bordercolor:C.line,borderwidth:1,font:{size:11}}
+    }),PCFG);
+  }
+  const map={cfa:'s-cfa',cfm:'s-cfm',prior:'s-prior',eff:'s-eff'};
+  Object.entries(map).forEach(([k,id])=>{
+    $('#'+id).addEventListener('input',e=>{S[k]=+e.target.value;upd();});
+  });
+  function preset(cfa,cfm,prior,eff){
+    S.cfa=cfa;S.cfm=cfm;S.prior=prior;S.eff=eff;
+    $('#s-cfa').value=cfa;$('#s-cfm').value=cfm;$('#s-prior').value=prior;$('#s-eff').value=eff;upd();
+  }
+  $('#lf-brewer').addEventListener('click',()=>preset(3,1.5,40,2.2));
+  $('#lf-surgery').addEventListener('click',()=>preset(1,18,30,2.0));
+  $('#lf-track').addEventListener('click',()=>preset(1,1,50,1.2));
+  $('#lf-sym').addEventListener('click',()=>preset(1,1,50,3));
+  upd();
+  return{upd};
+})();
+
+/* ============================================================
+   SEKTION 7 · DEGROOT
+   ============================================================ */
+const DeGroot=(function(){
+  const cv=$('#c-degroot');
+  const S={E:0.1,n:20,sig:5};
+  function calc(){
+    const se=S.sig/Math.sqrt(S.n);
+    const t=S.E/se, p=pTwoSided(t);
+    const pow=(1-normcdf(1.96-t))+normcdf(-1.96-t);
+    return {se,t,p,pow};
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:34,y0:26,x1:w-18,y1:h-56};
+    const {se,t,p}=calc();
+    const span=Math.max(S.E*2.5, 4*se, 1);
+    const lo=-span, hi=span;
+    const X=v=>lerp(P.x0,P.x1,(v-lo)/(hi-lo));
+    const pk=normpdf(0,0,se);
+    const Y=d=>lerp(P.y1,P.y0,d/pk*0.84);
+    gridLines(ctx,P,10,true);
+
+    // H0-Verteilung
+    ctx.beginPath();ctx.moveTo(X(lo),P.y1);
+    for(let i=0;i<=400;i++){const v=lerp(lo,hi,i/400);ctx.lineTo(X(v),Y(normpdf(v,0,se)));}
+    ctx.lineTo(X(hi),P.y1);ctx.closePath();
+    ctx.fillStyle='rgba(168,180,199,.12)';ctx.fill();
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){const v=lerp(lo,hi,i/400);
+      const x=X(v),y=Y(normpdf(v,0,se));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.strokeStyle=C.ink2;ctx.lineWidth=2;ctx.stroke();
+
+    // kritische Grenzen
+    const crit=1.96*se;
+    ctx.strokeStyle=C.fisher;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);
+    [-crit,crit].forEach(v=>{ctx.beginPath();ctx.moveTo(X(v),P.y0);ctx.lineTo(X(v),P.y1);ctx.stroke();});
+    ctx.setLineDash([]);
+    label(ctx,'Signifikanzgrenze',X(crit),P.y0+8,C.fisher,11,'left',600);
+
+    // wahrer Effekt
+    ctx.strokeStyle=C.oomph;ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(X(S.E),P.y0+20);ctx.lineTo(X(S.E),P.y1);ctx.stroke();
+    ctx.fillStyle=C.oomph;ctx.beginPath();ctx.arc(X(S.E),P.y0+20,5,0,7);ctx.fill();
+    label(ctx,'wahrer Effekt = '+fmt(S.E,2)+' Pfund',X(S.E),P.y0+6,C.oomph,12,'center',800);
+
+    axes(ctx,P,{yAxis:false});
+    label(ctx,fmt(lo,2),P.x0,P.y1+15,C.ink3,10.5,'left');
+    label(ctx,'0',X(0),P.y1+15,C.ink3,10.5);
+    label(ctx,fmt(hi,2),P.x1,P.y1+15,C.ink3,10.5,'right');
+    label(ctx,'geschätzter Effekt (Pfund) — Skala zoomt mit n!',(P.x0+P.x1)/2,P.y1+32,C.ink3,11);
+
+    // n-Balken
+    const bx=P.x0, bw=P.x1-P.x0, by=P.y1+42;
+    ctx.fillStyle=C.line;roundRect(ctx,bx,by,bw,8,4);ctx.fill();
+    const frac=Math.log(S.n)/Math.log(20000);
+    const g=ctx.createLinearGradient(bx,0,bx+bw,0);
+    g.addColorStop(0,C.gosset);g.addColorStop(0.5,C.warn);g.addColorStop(1,C.bad);
+    roundRect(ctx,bx,by,Math.max(6,bw*frac),8,4);ctx.fillStyle=g;ctx.fill();
+  }
+  function upd(){
+    $('#v-dgE').textContent=fmt(S.E,2);
+    $('#v-dgN').textContent=fmtI(S.n);
+    $('#v-dgS').textContent=fmt(S.sig,1);
+    const {se,t,p,pow}=calc();
+    $('#dg-se').textContent=fmt(se,3);
+    $('#dg-t').textContent=fmt(t,2);
+    $('#dg-p').textContent=p<0.001?'<0,001':fmt(p,3);
+    $('#dg-pow').textContent=fmt(pow*100,0)+' %';
+    $('#dg-p').style.color = p<0.05?C.bad:C.fisher;
+    const vd=$('#dg-verdict');
+    if(p<0.05){vd.className='verdict bad';
+      vd.innerHTML=`<b>„Hochsignifikant!“</b> — bei einem wahren Effekt von
+      <b>${fmt(S.E,2)} Pfund</b>. Das ist etwa das Gewicht eines Apfels.
+      DeGroot: „Der Experimentator weiß im Voraus, dass eine hohe Wahrscheinlichkeit besteht,
+      die Nullhypothese zu verwerfen, <i>selbst wenn der wahre Wert nur geringfügig abweicht</i>.“`;}
+    else{vd.className='verdict';
+      vd.innerHTML=`Noch „nicht signifikant“ (p = ${fmt(p,3)}). Aber der wahre Effekt
+      ist unverändert ${fmt(S.E,2)} Pfund. <b>Schiebe n nach rechts</b> — die Natur ändert sich nicht,
+      das Urteil schon.`;}
+    draw();
+  }
+  $('#s-dgE').addEventListener('input',e=>{S.E=+e.target.value;upd();});
+  $('#s-dgN').addEventListener('input',e=>{S.n=+e.target.value;upd();});
+  $('#s-dgS').addEventListener('input',e=>{S.sig=+e.target.value;upd();});
+  $('#dg-20').addEventListener('click',()=>{S.n=20;$('#s-dgN').value=20;upd();});
+  $('#dg-2000').addEventListener('click',()=>{S.n=2000;$('#s-dgN').value=2000;upd();});
+  $('#dg-20000').addEventListener('click',()=>{S.n=20000;$('#s-dgN').value=20000;upd();});
+  upd();window.addEventListener('resize',draw);
+  return{upd};
+})();
+
+/* ---------- benötigtes n ---------- */
+(function(){
+  const eff=[];for(let e=0.02;e<=3;e+=0.02)eff.push(e);
+  const sig=5;
+  const need=eff.map(e=>Math.pow(1.96*sig/e,2));
+  Plotly.newPlot('p-nreq',[{
+    x:eff,y:need,type:'scatter',mode:'lines',
+    line:{color:C.bad,width:3},fill:'tozeroy',fillcolor:'rgba(255,77,109,.12)',
+    hovertemplate:'Effekt %{x:.2f} Pfund<br>benötigt n ≈ %{y:,.0f}<extra></extra>',
+    name:'benötigtes n'
+  }],L({
+    title:{text:'Jeder noch so winzige Effekt wird signifikant — man braucht nur genug n (σ = 5)',
+           font:{size:14,color:C.ink2}},
+    xaxis:{title:'wahre Effektgröße (Pfund)',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    yaxis:{title:'benötigte Stichprobengröße n',type:'log',
+           gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    shapes:[{type:'line',x0:0,x1:3,y0:20000,y1:20000,line:{color:C.gold,dash:'dash',width:2}}],
+    annotations:[
+      {x:2.2,y:Math.log10(20000),text:'DeGroots n = 20 000',showarrow:false,
+       font:{color:C.gold,size:12},yref:'y'},
+      {x:0.1,y:Math.log10(Math.pow(1.96*5/0.1,2)),text:'0,1 Pfund → n ≈ 9 600',
+       showarrow:true,arrowcolor:C.bad,ax:90,ay:-20,font:{color:C.bad,size:11.5}}
+    ],showlegend:false
+  }),PCFG);
+})();
+
+/* ---------- Lehrbuch-Bilanz ---------- */
+(function(){
+  const books=[
+    {n:'Kmenta, Elements of Econometrics (1971)',p:0,tot:100},
+    {n:'Johnston, Econometric Methods (1963/72/84)',p:0,tot:100},
+    {n:'Amemiya, Advanced Econometrics (1985)',p:0,tot:100},
+    {n:'Hoel / Mood / Fraser (1950er)',p:0,tot:100},
+    {n:'Kennedy, Guide to Econometrics (1985)',p:0.2,tot:100},
+    {n:'Handbook of Statistics (732 S.)',p:0.14,tot:100},
+    {n:'Handbook of Econometrics (3 Bände)',p:0.1,tot:100},
+    {n:'Goldberger, Course in Econometrics (1991)',p:0.4,tot:100},
+    {n:'Wooldridge (2000) — „Vorbild“',p:1.0,tot:100},
+    {n:'DeGroot, Probability & Statistics (1975)',p:1.6,tot:100},
+    {n:'Wallis & Roberts (1956) — Ausnahme',p:2.0,tot:100}
+  ];
+  Plotly.newPlot('p-books',[{
+    type:'bar',orientation:'h',
+    y:books.map(b=>b.n),x:books.map(b=>b.p),
+    marker:{color:books.map(b=>b.p===0?C.bad:(b.p<0.5?C.warn:C.gosset)),
+            line:{color:C.line2,width:1}},
+    hovertemplate:'%{y}<br>≈ %{x:.2f} % des Umfangs über inhaltliche Signifikanz<extra></extra>'
+  }],L({
+    title:{text:'Wie viel Platz widmen Lehrbücher der Frage „Wie groß ist der Effekt?“',
+           font:{size:14,color:C.ink2}},
+    xaxis:{title:'Anteil am Gesamtumfang (%)',range:[0,2.4],
+           gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    yaxis:{automargin:true,tickfont:{size:11},linecolor:C.line2},
+    margin:{l:270,r:30,t:40,b:50},
+    showlegend:false
+  }),PCFG);
+})();
+
+/* ============================================================
+   SEKTION 8 · VIOXX
+   ============================================================ */
+const Vioxx=(function(){
+  const cv=$('#c-vioxx');
+  const S={v:5,n:1,g:400};
+  // Fisher's exakter Test (zweiseitig, via Hypergeometrie)
+  function lgamma(x){
+    const c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+             -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
+    let y=x,tmp=x+5.5;tmp-=(x+0.5)*Math.log(tmp);
+    let ser=1.000000000190015;
+    for(let j=0;j<6;j++) ser+=c[j]/++y;
+    return -tmp+Math.log(2.5066282746310005*ser/x);
+  }
+  const lchoose=(n,k)=>(k<0||k>n)?-Infinity:lgamma(n+1)-lgamma(k+1)-lgamma(n-k+1);
+  function fisherExact(a,b,c,d){
+    const n=a+b+c+d, r1=a+b, r2=c+d, c1=a+c;
+    const lp=k=>lchoose(r1,k)+lchoose(r2,c1-k)-lchoose(n,c1);
+    const obs=lp(a);
+    let sum=0;
+    const kmin=Math.max(0,c1-r2), kmax=Math.min(r1,c1);
+    for(let k=kmin;k<=kmax;k++){
+      const v=lp(k);
+      if(v<=obs+1e-9) sum+=Math.exp(v);
+    }
+    return Math.min(1,sum);
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:20,y0:24,x1:w-20,y1:h-40};
+    const colW=(P.x1-P.x0)/2-16;
+    const groups=[
+      {x:P.x0,       lbl:'Vioxx',    k:S.v,col:C.bad},
+      {x:P.x0+colW+32,lbl:'Naproxen',k:S.n,col:C.gosset}
+    ];
+    groups.forEach(G=>{
+      label(ctx,G.lbl,G.x+colW/2,P.y0+2,G.col,14,'center',800);
+      label(ctx,`${S.g} Patienten`,G.x+colW/2,P.y0+20,C.ink3,11);
+      // Raster
+      const total=S.g, perRow=Math.floor(colW/9);
+      const rows=Math.ceil(Math.min(total,440)/perRow);
+      const show=Math.min(total,440);
+      const r=3.1;
+      for(let i=0;i<show;i++){
+        const rr=Math.floor(i/perRow), cc=i%perRow;
+        const x=G.x+6+cc*9, y=P.y0+40+rr*9;
+        const isCase = i<G.k;
+        ctx.fillStyle = isCase ? G.col : 'rgba(168,180,199,.18)';
+        ctx.beginPath();ctx.arc(x,y,isCase?r+1.4:r,0,7);ctx.fill();
+        if(isCase){ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.stroke();}
+      }
+      if(total>440) label(ctx,`… (${total} insgesamt)`,G.x+colW/2,P.y0+48+rows*9,C.ink3,10.5);
+      // Herzsymbole gross
+      const hy=P.y1-54;
+      for(let i=0;i<Math.min(G.k,14);i++){
+        const hx=G.x+14+i*((colW-28)/Math.max(1,Math.min(G.k,14)-1||1));
+        ctx.fillStyle=G.col;ctx.font='16px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('♥',G.k>1?hx:G.x+colW/2,hy);
+      }
+      label(ctx,G.k+' Herzinfarkt'+(G.k===1?'':'e'),G.x+colW/2,P.y1-24,G.col,14,'center',800);
+    });
+    // Trennlinie
+    ctx.strokeStyle=C.line2;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(P.x0+colW+16,P.y0);ctx.lineTo(P.x0+colW+16,P.y1);ctx.stroke();
+  }
+  function upd(){
+    $('#v-vx').textContent=S.v;$('#v-vn').textContent=S.n;$('#v-vg').textContent=fmtI(S.g);
+    $('#vx-ratio').textContent=S.v+' : '+S.n;
+    const p=fisherExact(S.v,S.g-S.v,S.n,S.g-S.n);
+    $('#vx-p').textContent=p<0.001?'<0,001':fmt(p,3);
+    $('#vx-p').style.color = p<0.05?C.bad:C.fisher;
+    const vd=$('#vx-verdict');
+    if(p<0.05){vd.className='verdict bad';
+      vd.innerHTML=`<b>p = ${fmt(p,3)} &lt; 0,05 → signifikant.</b>
+      Dieses Ergebnis hätte als <i>Befund</i> in die <i>Annals of Internal Medicine</i> gehört.
+      Genau das war <b>Mercks Problem</b>.`;}
+    else{vd.className='verdict';
+      vd.innerHTML=`<b>p = ${fmt(p,3)} &gt; 0,05 → „nicht signifikant“.</b>
+      Und daraus wurde: <i>„kein Unterschied in der Wirkung der beiden Pillen“</i> —
+      obwohl das Verhältnis <b>${S.v} zu ${S.n}</b> gegen Vioxx steht.`;}
+    draw();
+  }
+  $('#s-vx').addEventListener('input',e=>{S.v=+e.target.value;upd();});
+  $('#s-vn').addEventListener('input',e=>{S.n=+e.target.value;upd();});
+  $('#s-vg').addEventListener('input',e=>{S.g=+e.target.value;upd();});
+  $$('#tg-vioxx button').forEach(b=>b.addEventListener('click',()=>{
+    $$('#tg-vioxx button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    S.v=+b.dataset.v;$('#s-vx').value=S.v;upd();
+  }));
+  upd();window.addEventListener('resize',draw);
+  return{upd};
+})();
+
+/* ---------- Dropping-Demo ---------- */
+(function(){
+  function lg(x){
+    const c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+             -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
+    let y=x,t=x+5.5;t-=(x+0.5)*Math.log(t);let s=1.000000000190015;
+    for(let j=0;j<6;j++) s+=c[j]/++y;
+    return -t+Math.log(2.5066282746310005*s/x);
+  }
+  const lc=(n,k)=>(k<0||k>n)?-Infinity:lg(n+1)-lg(k+1)-lg(n-k+1);
+  function fe(a,b,c,d){
+    const n=a+b+c+d,r1=a+b,r2=c+d,c1=a+c;
+    const lp=k=>lc(r1,k)+lc(r2,c1-k)-lc(n,c1);
+    const obs=lp(a);let s=0;
+    for(let k=Math.max(0,c1-r2);k<=Math.min(r1,c1);k++){const v=lp(k);if(v<=obs+1e-9)s+=Math.exp(v);}
+    return Math.min(1,s);
+  }
+  function render(drop){
+    const G=400, base=8;
+    const xs=[],ys=[],cols=[];
+    for(let d=0;d<=6;d++){
+      const v=base-d;
+      xs.push(d);
+      const p=fe(v,G-v,1,G-1);
+      ys.push(p);
+      cols.push(p<0.05?C.gosset:C.bad);
+    }
+    Plotly.react('p-drop',[
+      {x:xs,y:ys,type:'bar',marker:{color:cols,line:{color:C.line2,width:1}},
+       text:xs.map((d,i)=>`${base-d} Fälle<br>p = ${fmt(ys[i],3)}`),
+       textposition:'outside',textfont:{size:11,color:C.ink2},
+       hovertemplate:'%{x} entfernt → %{y:.4f}<extra></extra>'},
+      {x:[drop],y:[ys[drop]],type:'scatter',mode:'markers',
+       marker:{size:20,color:'rgba(0,0,0,0)',line:{color:C.gold,width:3}},
+       name:'ausgewählt',hoverinfo:'skip'}
+    ],L({
+      title:{text:'Wie man Insignifikanz herstellt — Vioxx-Gruppe, Naproxen fix bei 1',
+             font:{size:14,color:C.ink2}},
+      xaxis:{title:'entfernte Herzinfarkt-Beobachtungen',dtick:1,
+             gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+      yaxis:{title:'p-Wert (Fisher exakt)',range:[0,0.45],
+             gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+      shapes:[{type:'line',x0:-0.5,x1:6.5,y0:0.05,y1:0.05,
+               line:{color:C.fisher,dash:'dash',width:2}}],
+      annotations:[{x:5.6,y:0.075,text:'α = 0,05',showarrow:false,
+                    font:{color:C.fisher,size:12}},
+                   {x:3,y:0.39,text:'Merck entfernte 3 → aus 8 wurde 5',
+                    showarrow:true,arrowcolor:C.gold,ax:0,ay:-30,
+                    font:{color:C.gold,size:12}}],
+      showlegend:false
+    }),PCFG);
+  }
+  $('#s-drop').addEventListener('input',e=>{
+    $('#v-drop').textContent=e.target.value;render(+e.target.value);
+  });
+  render(0);
+})();
+
+/* ============================================================
+   SEKTION 9 · PUBLICATION BIAS
+   ============================================================ */
+(function(){
+  const cv=$('#c-sterling');
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:20,y0:26,x1:w-20,y1:h-30};
+    const total=294, fail=8;
+    const perRow=Math.floor((P.x1-P.x0)/11);
+    label(ctx,'294 Artikel mit Signifikanztest',(P.x0+P.x1)/2,P.y0-6,C.ink2,12.5,'center',700);
+    for(let i=0;i<total;i++){
+      const r=Math.floor(i/perRow), c=i%perRow;
+      const x=P.x0+5+c*11, y=P.y0+22+r*11;
+      const isFail = i>=total-fail;
+      ctx.fillStyle = isFail?C.bad:C.gosset+'88';
+      roundRect(ctx,x-3.6,y-3.6,7.2,7.2,2);ctx.fill();
+      if(isFail){ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();}
+    }
+    const rows=Math.ceil(total/perRow);
+    const ly=P.y0+22+rows*11+14;
+    ctx.fillStyle=C.gosset;roundRect(ctx,P.x0+6,ly-5,10,10,3);ctx.fill();
+    label(ctx,'286 verwarfen H₀ (97,3 %)',P.x0+24,ly,C.ink2,12,'left',600);
+    ctx.fillStyle=C.bad;roundRect(ctx,P.x0+6,ly+20-5,10,10,3);ctx.fill();
+    label(ctx,'8 verwarfen H₀ nicht (2,7 %)',P.x0+24,ly+20,C.bad,12,'left',700);
+  }
+  draw();window.addEventListener('resize',draw);
+})();
+
+const Funnel=(function(){
+  const cv=$('#c-funnel');
+  const S={E:0.3,n:30,alpha:5,filter:true};
+  let studies=[];
+  function run(){
+    studies=[];
+    for(let i=0;i<500;i++){
+      const n=Math.max(5,Math.round(S.n*(0.35+Math.random()*1.8)));
+      const se=1/Math.sqrt(n);
+      const est=S.E+randn()*se;
+      const t=est/se, p=pTwoSided(t);
+      studies.push({n,se,est,t,p,pub:p<S.alpha/100});
+    }
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:48,y0:24,x1:w-18,y1:h-46};
+    const lo=-1.2,hi=Math.max(1.8,S.E+1.6);
+    const maxSE=Math.max(...studies.map(s=>s.se));
+    const X=v=>lerp(P.x0,P.x1,(clamp(v,lo,hi)-lo)/(hi-lo));
+    const Y=se=>lerp(P.y0,P.y1,clamp(se/maxSE,0,1));
+    gridLines(ctx,P,8,true);gridLines(ctx,P,5,false);
+
+    // Signifikanz-Trichter
+    const tc=Math.abs(norminv(S.alpha/200));
+    ctx.fillStyle='rgba(126,231,135,.07)';
+    ctx.beginPath();
+    ctx.moveTo(X(0),Y(0));
+    ctx.lineTo(X(tc*maxSE),Y(maxSE));
+    ctx.lineTo(X(hi),Y(maxSE));ctx.lineTo(X(hi),Y(0));ctx.closePath();ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(X(0),Y(0));
+    ctx.lineTo(X(-tc*maxSE),Y(maxSE));
+    ctx.lineTo(X(lo),Y(maxSE));ctx.lineTo(X(lo),Y(0));ctx.closePath();ctx.fill();
+    ctx.strokeStyle=C.gosset+'77';ctx.lineWidth=1.6;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(X(0),Y(0));ctx.lineTo(X(tc*maxSE),Y(maxSE));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(X(0),Y(0));ctx.lineTo(X(-tc*maxSE),Y(maxSE));ctx.stroke();
+    ctx.setLineDash([]);
+
+    let sum=0,cnt=0;
+    studies.forEach(s=>{
+      const vis = !S.filter || s.pub;
+      if(!vis){
+        ctx.fillStyle='rgba(107,122,144,.22)';
+        ctx.beginPath();ctx.arc(X(s.est),Y(s.se),2.2,0,7);ctx.fill();
+        return;
+      }
+      if(s.pub||!S.filter){ if(!S.filter||s.pub){sum+=s.est;cnt++;} }
+      ctx.fillStyle = s.pub? C.gosset+'cc' : C.ink3+'77';
+      ctx.beginPath();ctx.arc(X(s.est),Y(s.se),3,0,7);ctx.fill();
+    });
+    const mean=cnt?sum/cnt:0;
+
+    // wahrer Effekt
+    ctx.strokeStyle=C.gold;ctx.lineWidth=2.4;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(X(S.E),P.y0);ctx.lineTo(X(S.E),P.y1);ctx.stroke();ctx.setLineDash([]);
+    label(ctx,'wahr '+fmt(S.E,2),X(S.E),P.y0+8,C.gold,11.5,'center',700);
+    // publizierter Mittelwert
+    if(cnt){
+      ctx.strokeStyle=C.bad;ctx.lineWidth=2.4;
+      ctx.beginPath();ctx.moveTo(X(mean),P.y0);ctx.lineTo(X(mean),P.y1);ctx.stroke();
+      label(ctx,'Ø publiziert '+fmt(mean,2),X(mean),P.y0+24,C.bad,11.5,'center',700);
+    }
+    axes(ctx,P);
+    label(ctx,'geschätzter Effekt →',(P.x0+P.x1)/2,P.y1+30,C.ink3,11.5);
+    label(ctx,'↑ präziser',P.x0-30,P.y0+14,C.ink3,10.5,'center');
+    label(ctx,'↓ unpräziser',P.x0-30,P.y1-14,C.ink3,10.5,'center');
+
+    $('#b-true').textContent=fmt(S.E,2);
+    $('#b-pub').textContent=cnt?fmt(mean,2):'—';
+    $('#b-cnt').textContent=cnt;
+    const infl=cnt?((mean-S.E)/Math.max(1e-6,Math.abs(S.E))*100):0;
+    const vd=$('#b-verdict');
+    if(!S.filter){vd.className='verdict good';
+      vd.innerHTML=`<b>Ohne Filter:</b> Der Durchschnitt aller 500 Studien trifft den wahren
+      Wert. So <i>sollte</i> Wissenschaft funktionieren.`;}
+    else if(cnt<30){vd.className='verdict bad';
+      vd.innerHTML=`<b>Nur ${cnt} von 500 publiziert</b> — und der publizierte Durchschnitt
+      liegt um <b>${fmt(infl,0)} %</b> zu hoch. Der Rest verschwindet in der Schublade.`;}
+    else{vd.className='verdict bad';
+      vd.innerHTML=`Publizierter Mittelwert <b>${fmt(mean,2)}</b> statt <b>${fmt(S.E,2)}</b> —
+      eine Überschätzung um <b>${fmt(infl,0)} %</b>. Und niemand repliziert
+      (Sterling: 0 von 362).`;}
+  }
+  $('#s-bE').addEventListener('input',e=>{S.E=+e.target.value;$('#v-bE').textContent=fmt(S.E,2);run();draw();});
+  $('#s-bN').addEventListener('input',e=>{S.n=+e.target.value;$('#v-bN').textContent=S.n;run();draw();});
+  $('#s-bA').addEventListener('input',e=>{S.alpha=+e.target.value;$('#v-bA').textContent=fmt(S.alpha,1)+' %';run();draw();});
+  $('#b-bgo').addEventListener('click',()=>{run();draw();});
+  $('#b-bfilter').addEventListener('click',e=>{
+    S.filter=!S.filter;
+    e.target.textContent='Filter: '+(S.filter?'AN':'AUS');
+    e.target.classList.toggle('active',S.filter);
+    draw();
+  });
+  run();draw();window.addEventListener('resize',draw);
+  return{draw};
+})();
+
+/* ---------- APA-Zeitreise ---------- */
+(function(){
+  const eds=[
+    {y:'1952',t:'1. Auflage',txt:`„Umfangreiche Tabellen <b>nicht signifikanter</b> Ergebnisse
+      werden selten benötigt. Wenn zum Beispiel nur 2 von 20 Korrelationen signifikant von
+      null verschieden sind, können die beiden signifikanten im Text erwähnt werden, und
+      <b>der Rest mit wenigen Worten abgetan</b> werden.“`,
+      note:'Durch und durch pro-Fisher, anti-Gosset. Genau das, was Fisher, Hotelling, Klein und Melton damals predigten.',
+      col:C.bad},
+    {y:'1974',t:'2. Auflage',txt:`„<b>Vorsicht:</b> Leiten Sie keine Trends aus Daten ab, die
+      die üblichen Signifikanzniveaus <b>knapp verfehlen</b>. Solche Ergebnisse werden am besten
+      als durch Zufall verursacht interpretiert und auch so berichtet. Behandeln Sie den
+      Ergebnisteil wie eine <b>Steuererklärung</b>. Nehmen Sie, was Ihnen zusteht, aber nicht mehr.“`,
+      note:'Aus der Obsession wird ein Zwang. (Zitiert bei Gigerenzer 2004, S. 589.)',
+      col:C.bad},
+    {y:'1994',t:'4. Auflage',txt:`Erstmals wird empfohlen, die <b>„effect size“</b> — also die
+      Effektgröße — zu berichten.`,
+      note:'Ein Schritt in Richtung Oomph. Aber: eine Empfehlung, keine Pflicht.',
+      col:C.warn},
+    {y:'2001',t:'5. Auflage',txt:`Exakte Signifikanzniveaus werden der Varianzanalyse hinzugefügt.
+      Konfidenzintervalle gelten als „<b>beste Berichtsstrategie</b>“ (so lobt es Bruce Thompson).
+      <b>Aber:</b> Die magischen Beschwörungen p &lt; ,05 und p &lt; ,01 bleiben erhalten.`,
+      note:'Gigerenzer: „Das Handbuch bietet keine Erklärung dafür, warum beides notwendig ist … und was sie bedeuten.“ Keine Begründung für die Rituale — nur eine Regel, sich die Hände zu waschen, wenn p < ,05.',
+      col:C.warn}
+  ];
+  const nav=$('#apa-nav'), body=$('#apa-body');
+  function show(i){
+    $$('#apa-nav button').forEach((b,j)=>b.classList.toggle('active',i===j));
+    const e=eds[i];
+    body.innerHTML=`<div style="display:flex;align-items:baseline;gap:12px;margin-bottom:10px">
+      <span style="font-family:'Fraunces',serif;font-size:30px;font-weight:900;color:${e.col}">${e.y}</span>
+      <span style="font-size:13px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;font-weight:700">${e.t}</span></div>
+      <div class="quote" style="border-color:${e.col};margin:0 0 12px">${e.txt}</div>
+      <p class="note" style="margin:0">${e.note}</p>`;
+  }
+  eds.forEach((e,i)=>{
+    const b=document.createElement('button');
+    b.textContent=e.y;b.addEventListener('click',()=>show(i));nav.appendChild(b);
+  });
+  show(0);
+})();
+
+/* ============================================================
+   SEKTION 10 · POWER
+   ============================================================ */
+const Power=(function(){
+  const cv=$('#c-power');
+  const S={E:3,tc:1.96};
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:30,y0:26,x1:w-18,y1:h-52};
+    const lo=-4, hi=Math.max(7,S.E+4);
+    const X=v=>lerp(P.x0,P.x1,(v-lo)/(hi-lo));
+    const pk=normpdf(0);
+    const Y=d=>lerp(P.y1,P.y0,d/pk*0.82);
+    gridLines(ctx,P,10,true);
+
+    // β-Fläche (links der Schwelle unter H1)
+    ctx.beginPath();ctx.moveTo(X(lo),P.y1);
+    for(let i=0;i<=200;i++){const v=lerp(lo,S.tc,i/200);ctx.lineTo(X(v),Y(normpdf(v,S.E)));}
+    ctx.lineTo(X(S.tc),P.y1);ctx.closePath();
+    ctx.fillStyle='rgba(255,204,85,.42)';ctx.fill();
+    // Power-Fläche
+    ctx.beginPath();ctx.moveTo(X(S.tc),P.y1);
+    for(let i=0;i<=200;i++){const v=lerp(S.tc,hi,i/200);ctx.lineTo(X(v),Y(normpdf(v,S.E)));}
+    ctx.lineTo(X(hi),P.y1);ctx.closePath();
+    ctx.fillStyle='rgba(126,231,135,.34)';ctx.fill();
+    // α-Fläche
+    ctx.beginPath();ctx.moveTo(X(S.tc),P.y1);
+    for(let i=0;i<=200;i++){const v=lerp(S.tc,hi,i/200);ctx.lineTo(X(v),Y(normpdf(v,0)));}
+    ctx.lineTo(X(hi),P.y1);ctx.closePath();
+    ctx.fillStyle='rgba(255,77,109,.55)';ctx.fill();
+
+    // Kurven
+    [[0,C.ink2,'H₀ : kein Effekt'],[S.E,C.oomph,'H₁ : echter Effekt']].forEach(([m,col,nm])=>{
+      ctx.beginPath();
+      for(let i=0;i<=400;i++){const v=lerp(lo,hi,i/400);
+        const x=X(v),y=Y(normpdf(v,m));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+      ctx.strokeStyle=col;ctx.lineWidth=2.4;
+      if(m!==0){ctx.shadowColor=col;ctx.shadowBlur=12;}
+      ctx.stroke();ctx.shadowBlur=0;
+      label(ctx,nm,X(m),Y(normpdf(0))-16,col,12,'center',700);
+    });
+
+    // Schwelle
+    ctx.strokeStyle=C.gold;ctx.lineWidth=2.6;
+    ctx.beginPath();ctx.moveTo(X(S.tc),P.y0);ctx.lineTo(X(S.tc),P.y1+8);ctx.stroke();
+    label(ctx,'Schwelle '+fmt(S.tc,2),X(S.tc),P.y1+22,C.gold,12,'center',800);
+
+    axes(ctx,P,{yAxis:false});
+    for(let v=-3;v<=Math.floor(hi);v++) label(ctx,v+'',X(v),P.y1+15,C.ink3,10.5);
+    label(ctx,'beobachteter t-Wert',(P.x0+P.x1)/2,P.y1+40,C.ink3,11.5);
+
+    // Mini-Legende
+    const ly=P.y0+6;
+    const items=[['rot: α (Fehlalarm)',C.bad],['gelb: β (verpasst)',C.warn],['grün: Power',C.gosset]];
+    items.forEach((it,i)=>{
+      ctx.fillStyle=it[1];roundRect(ctx,P.x1-140,ly+i*16-4,9,9,2);ctx.fill();
+      label(ctx,it[0],P.x1-126,ly+i*16,C.ink2,10.5,'left',600);
+    });
+  }
+  function upd(){
+    $('#v-pwE').textContent=fmt(S.E,1);
+    $('#v-pwC').textContent=fmt(S.tc,2);
+    const alpha=2*(1-normcdf(S.tc));
+    const beta=normcdf(S.tc-S.E)-normcdf(-S.tc-S.E);
+    const pow=1-beta;
+    $('#pw-a').textContent=fmt(alpha*100,1)+' %';
+    $('#pw-b').textContent=fmt(beta*100,1)+' %';
+    $('#pw-pow').textContent=fmt(pow*100,1)+' %';
+    $('#pw-sum').textContent=fmt((alpha+beta)*100,1)+' %';
+    const vd=$('#pw-verdict');
+    if(pow<0.5){vd.className='verdict bad';
+      vd.innerHTML=`<b>Power nur ${fmt(pow*100,0)} %.</b> Selbst wenn der Effekt wirklich
+      existiert, würdest du ihn in <b>${fmt(beta*100,0)} %</b> der Fälle übersehen —
+      und dann fälschlich „kein Effekt“ berichten. Fisher sprach über β <b>kein Wort</b>.`;}
+    else if(pow<0.8){vd.className='verdict';
+      vd.innerHTML=`Power ${fmt(pow*100,0)} %. Brauchbar, aber in ${fmt(beta*100,0)} %
+      der Fälle verpasst du einen echten Effekt. Gosset hätte gefragt: <i>Was kostet das?</i>`;}
+    else{vd.className='verdict good';
+      vd.innerHTML=`<b>Power ${fmt(pow*100,0)} %.</b> Jetzt ist der Test ernst zu nehmen.
+      Egon Pearson nannte dieses Konzept „power“ — und schrieb es
+      <b>Gosset</b> zu, der es aus der Brauerei mitgebracht hatte.`;}
+    draw();
+  }
+  $('#s-pwE').addEventListener('input',e=>{S.E=+e.target.value;upd();});
+  $('#s-pwC').addEventListener('input',e=>{S.tc=+e.target.value;upd();});
+  $('#pw-strict').addEventListener('click',()=>{S.tc=2.576;$('#s-pwC').value=2.576;upd();});
+  $('#pw-fisher').addEventListener('click',()=>{S.tc=1.96;$('#s-pwC').value=1.96;upd();});
+  $('#pw-opt').addEventListener('click',()=>{
+    let best={s:Infinity,tc:1.96};
+    for(let tc=0.2;tc<=5;tc+=0.01){
+      const a=2*(1-normcdf(tc)), b=normcdf(tc-S.E)-normcdf(-tc-S.E);
+      if(a+b<best.s) best={s:a+b,tc};
+    }
+    S.tc=best.tc;$('#s-pwC').value=best.tc;upd();
+  });
+  upd();window.addEventListener('resize',draw);
+  return{upd};
+})();
+
+/* ---------- Johnston-Regler ---------- */
+(function(){
+  const sl=$('#s-john');
+  function upd(){
+    const a=+sl.value;
+    $('#v-john').textContent=fmt(a,1)+' %';
+    const t=2.30; // Johnstons Befund: signifikant bei 5 %, nicht bei 1 %
+    const crit=Math.abs(norminv(a/200));
+    const act = t>=crit;
+    const vd=$('#john-verdict');
+    vd.className='verdict '+(act?'good':'bad');
+    $('#john-cost').textContent = act?'0':'100 000';
+    $('#john-cost').style.color = act?C.gosset:C.bad;
+    vd.innerHTML = act
+      ? `Bei α = ${fmt(a,1)} % ist t = 2,30 <b>signifikant</b> → du handelst → härtere Strafen →
+         nach Johnstons eigenen Daten <b>rund 100 000 gerettete Leben</b> (UK 1947–57).`
+      : `Bei α = ${fmt(a,1)} % ist t = 2,30 <b>nicht signifikant</b> → kein Befund → keine Handlung.
+         <b>Johnston hat statistische und politische Signifikanz verschmolzen.</b>
+         Ziliak &amp; McCloskey: <i>„By what warrant?“</i> — Mit welcher Berechtigung?`;
+  }
+  sl.addEventListener('input',upd);upd();
+})();
+
+/* ---------- Fehler-Landschaft ---------- */
+(function(){
+  const E=3, tcs=[],A=[],B=[],W=[];
+  for(let tc=0.2;tc<=5;tc+=0.02){
+    const a=2*(1-normcdf(tc));
+    const b=normcdf(tc-E)-normcdf(-tc-E);
+    tcs.push(tc);A.push(a);B.push(b);W.push(a+b);
+  }
+  let bi=0;W.forEach((v,i)=>{if(v<W[bi])bi=i;});
+  Plotly.newPlot('p-errland',[
+    {x:tcs,y:A,type:'scatter',mode:'lines',name:'α — Fehlalarm',line:{color:C.bad,width:2.6}},
+    {x:tcs,y:B,type:'scatter',mode:'lines',name:'β — Verpassen',line:{color:C.warn,width:2.6}},
+    {x:tcs,y:W,type:'scatter',mode:'lines',name:'α + β',line:{color:C.gold,width:3.4}},
+    {x:[tcs[bi]],y:[W[bi]],type:'scatter',mode:'markers',name:'Minimum',
+     marker:{size:15,color:C.gosset,line:{color:'#fff',width:2}}}
+  ],L({
+    title:{text:'Die Wippe: α runter heißt β rauf (wahrer Effekt = 3 SE)',font:{size:14,color:C.ink2}},
+    xaxis:{title:'Schwelle (kritisches t)',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    yaxis:{title:'Fehlerwahrscheinlichkeit',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    shapes:[
+      {type:'line',x0:1.96,x1:1.96,y0:0,y1:1,line:{color:C.fisher,dash:'dash',width:2}},
+      {type:'line',x0:2.576,x1:2.576,y0:0,y1:1,line:{color:C.prec,dash:'dot',width:2}}
+    ],
+    annotations:[
+      {x:1.96,y:0.93,text:'Fisher 5 %',showarrow:false,font:{color:C.fisher,size:11.5},xanchor:'right'},
+      {x:2.576,y:0.82,text:'Melton 1 %',showarrow:false,font:{color:C.prec,size:11.5},xanchor:'left'},
+      {x:tcs[bi],y:W[bi],text:'Optimum t = '+fmt(tcs[bi],2),showarrow:true,
+       arrowcolor:C.gosset,ax:40,ay:-40,font:{color:C.gosset,size:11.5}}
+    ],
+    legend:{x:0.62,y:0.98,bgcolor:'rgba(17,22,31,.85)',bordercolor:C.line,borderwidth:1,font:{size:11}}
+  }),PCFG);
+})();
+
+/* ============================================================
+   SEKTION 11 · GOSSETS WEG
+   ============================================================ */
+const GosBuild=(function(){
+  const cv=$('#c-gosset');
+  const steps=[
+    {t:'① Nur Fisher: p < 0,05',
+     body:`<p style="font-size:14.5px">Der Standard. Du hast einen Datensatz, rechnest t,
+     vergleichst mit 1,96. Fertig. <b>Keine Alternativhypothese. Keine Kosten. Keine Größe.</b></p>
+     <div class="verdict bad" style="font-size:13.5px">Fisher 1955: „Wir führen bei der induktiven
+     Inferenz <b>keine Kostenfunktionen</b> für fehlerhafte Urteile ein … und nehmen nicht an,
+     dass sie in irgendeiner Währung bewertbar sind.“</div>`},
+    {t:'② + Alternativhypothese (H₁)',
+     body:`<p style="font-size:14.5px">Gosset an Egon Pearson, 1926: Bevor man über eine Hypothese
+     entscheidet, muss man den erwarteten <b>Verlust</b> gegenüber einer <b>Alternativhypothese</b>
+     verrechnen. Erst jetzt lässt sich fragen: <i>Würde ich den Effekt überhaupt bemerken?</i></p>
+     <div class="verdict info" style="font-size:13.5px">Egon Pearson nannte das später mit Neyman
+     <b>„power“</b> — und schrieb die Kernidee stets Gosset zu.</div>`},
+    {t:'③ + Verlustfunktion (£, Leben)',
+     body:`<p style="font-size:14.5px">Gosset an Karl Pearson, 1905: Der anzustrebende Grad an
+     Sicherheit hängt ab vom <b>geldwerten Vorteil</b>, den <b>Mehrkosten der neuen Methode</b>
+     und den <b>Kosten jedes Versuchs</b>. Die Schwelle ist jetzt <i>abgeleitet</i>, nicht gesetzt.</p>
+     <div class="verdict" style="font-size:13.5px">Karl Pearson verstand den Rat nicht.
+     „Der große Mann der großen Stichproben hat Gossets Punkt nie erfasst“ — aber er
+     publizierte „Student’s“ Aufsätze klugerweise trotzdem.</div>`},
+    {t:'④ + Realer Fehler & Replikation',
+     body:`<p style="font-size:14.5px">Gosset 1937: Ein signifikantes Ergebnis an <i>einer</i>
+     Station ist „nahezu wertlos“. Was man will, ist ein <b>niedriger realer Fehler</b> — über
+     viele echte Versuchsstationen hinweg. Und man will wissen, <b>warum der zwanzigste Fall
+     nicht funktioniert</b>.</p>
+     <div class="verdict good" style="font-size:13.5px">Das ist die vollständige Gosset-Entscheidung:
+     Größe + Alternative + Kosten + echte Replikation. Die 5 % kommen darin gar nicht vor.</div>`}
+  ];
+  let cur=0;
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:24,y0:24,x1:w-24,y1:h-24};
+    const blocks=[
+      {n:'Daten & t-Wert',c:C.fisher},
+      {n:'Alternativhypothese H₁ / Power',c:C.prec},
+      {n:'Verlustfunktion (£, Leben)',c:C.gold},
+      {n:'Realer Fehler · 20 Stationen',c:C.gosset}
+    ];
+    const bh=(P.y1-P.y0-30)/4;
+    blocks.forEach((b,i)=>{
+      const y=P.y1-(i+1)*bh-i*8;
+      const on=i<=cur;
+      roundRect(ctx,P.x0+ (on?0:18), y, (P.x1-P.x0)-(on?0:36), bh-6, 12);
+      if(on){
+        const g=ctx.createLinearGradient(P.x0,y,P.x1,y+bh);
+        g.addColorStop(0,b.c+'44');g.addColorStop(1,b.c+'12');
+        ctx.fillStyle=g;ctx.fill();
+        ctx.strokeStyle=b.c;ctx.lineWidth=2;ctx.stroke();
+      }else{
+        ctx.fillStyle='rgba(255,255,255,.02)';ctx.fill();
+        ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+      }
+      label(ctx,b.n,(P.x0+P.x1)/2,y+(bh-6)/2,on?b.c:C.ink3,on?14:12.5,'center',on?800:500);
+    });
+    // Ergebnis-Badge
+    const quality=(cur+1)/4;
+    label(ctx,'Entscheidungsqualität',(P.x0+P.x1)/2,P.y0+8,C.ink3,11);
+    const bx=P.x0+40,bw=(P.x1-P.x0)-80;
+    roundRect(ctx,bx,P.y0+18,bw,9,5);ctx.fillStyle=C.line;ctx.fill();
+    const g2=ctx.createLinearGradient(bx,0,bx+bw,0);
+    g2.addColorStop(0,C.bad);g2.addColorStop(0.5,C.warn);g2.addColorStop(1,C.gosset);
+    roundRect(ctx,bx,P.y0+18,bw*quality,9,5);ctx.fillStyle=g2;ctx.fill();
+  }
+  function show(i){
+    cur=i;
+    $$('#gos-nav button').forEach((b,j)=>b.classList.toggle('active',i===j));
+    $('#gos-body').innerHTML=`<h3 style="margin-top:0">${steps[i].t}</h3>${steps[i].body}`;
+    draw();
+  }
+  steps.forEach((s,i)=>{
+    const b=document.createElement('button');
+    b.textContent=['① Fisher','② + H₁','③ + Verlust','④ + realer Fehler'][i];
+    if(i===3)b.className='gos';
+    b.addEventListener('click',()=>show(i));
+    $('#gos-nav').appendChild(b);
+  });
+  show(0);window.addEventListener('resize',draw);
+  return{draw};
+})();
+
+/* ---------- Versuchsstationen ---------- */
+const Stations=(function(){
+  const cv=$('#c-stations');
+  const S={n:20,re:1};
+  let vals=[];
+  function gen(){
+    vals=[];
+    for(let i=0;i<S.n;i++) vals.push(2.0 + randn()*1.0 + randn()*S.re);
+  }
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:40,y0:24,x1:w-18,y1:h-38};
+    const lo=-6,hi=10;
+    const Y=v=>lerp(P.y1,P.y0,(clamp(v,lo,hi)-lo)/(hi-lo));
+    gridLines(ctx,P,8,false);
+    // Nulllinie
+    ctx.strokeStyle=C.ink3;ctx.lineWidth=1.5;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(P.x0,Y(0));ctx.lineTo(P.x1,Y(0));ctx.stroke();ctx.setLineDash([]);
+    label(ctx,'kein Gewinn',P.x0+4,Y(0)-11,C.ink3,10.5,'left');
+
+    const bw=(P.x1-P.x0)/S.n;
+    let win=0;
+    vals.forEach((v,i)=>{
+      const x=P.x0+i*bw+bw*0.18, ww=bw*0.64;
+      const good=v>0; if(good)win++;
+      const y0=Math.min(Y(v),Y(0)), hgt=Math.abs(Y(v)-Y(0));
+      ctx.fillStyle=good?C.gosset+'bb':C.bad+'bb';
+      roundRect(ctx,x,y0,Math.max(2,ww),Math.max(2,hgt),Math.min(4,ww/2));ctx.fill();
+    });
+    // Mittelwert
+    const m=vals.reduce((a,b)=>a+b,0)/Math.max(1,vals.length);
+    ctx.strokeStyle=C.gold;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(P.x0,Y(m));ctx.lineTo(P.x1,Y(m));ctx.stroke();
+    label(ctx,'Ø '+fmt(m,2),P.x1-4,Y(m)-12,C.gold,11.5,'right',700);
+
+    axes(ctx,P);
+    for(let v=-6;v<=10;v+=4) label(ctx,v+'',P.x0-8,Y(v),C.ink3,10.5,'right');
+    label(ctx,'Versuchsstationen (echte Felder, echte Ernten) →',(P.x0+P.x1)/2,P.y1+22,C.ink3,11);
+
+    const sd=Math.sqrt(vals.reduce((a,b)=>a+(b-m)**2,0)/Math.max(1,vals.length-1));
+    $('#st-win').textContent=win+' / '+S.n;
+    $('#st-err').textContent=fmt(sd,2);
+    const vd=$('#st-verdict');
+    if(S.re<0.6){vd.className='verdict good';
+      vd.innerHTML=`<b>Niedriger realer Fehler.</b> Fast überall derselbe Gewinn — genau das,
+      was Gosset wollte: <i>„Wir haben es in neunzehn von zwanzig Fällen so gefunden.“</i>`;}
+    else{vd.className='verdict bad';
+      vd.innerHTML=`<b>Hoher realer Fehler (${fmt(sd,2)}).</b> Von Station zu Station ganz
+      verschieden. Ein „signifikantes“ Ergebnis an <i>einer</i> Station wäre hier, mit Gossets Worten,
+      <b>„nahezu wertlos“</b> — und der interessante Fall ist der, der <i>nicht</i> funktioniert hat.`;}
+  }
+  $('#s-stn').addEventListener('input',e=>{S.n=+e.target.value;$('#v-stn').textContent=S.n;gen();draw();});
+  $('#s-stre').addEventListener('input',e=>{S.re=+e.target.value;$('#v-stre').textContent=fmt(S.re,1);gen();draw();});
+  $('#b-stnew').addEventListener('click',()=>{gen();draw();});
+  gen();draw();window.addEventListener('resize',draw);
+  return{draw};
+})();
+
+/* ---------- Brauer-Rechner ---------- */
+(function(){
+  const S={ben:50000,mc:12000,ec:900,sig:4,d:2};
+  function net(n){
+    const se=S.sig/Math.sqrt(Math.max(1,n));
+    const t=S.d/se;
+    // Wahrscheinlichkeit, die richtige Entscheidung zu treffen (Power bei α aus Kostenlogik)
+    const pow=1-normcdf(1.96-t);
+    const gain=(S.ben-S.mc)*pow;
+    return gain - n*S.ec;
+  }
+  function upd(){
+    $('#v-ben').textContent=fmtI(S.ben);
+    $('#v-mc').textContent=fmtI(S.mc);
+    $('#v-ec').textContent=fmtI(S.ec);
+    $('#v-gsig').textContent=fmt(S.sig,2);
+    $('#v-gd').textContent=fmt(S.d,1);
+    const ns=[],vs=[];let best={v:-Infinity,n:1};
+    for(let n=1;n<=200;n++){const v=net(n);ns.push(n);vs.push(v);if(v>best.v)best={v,n};}
+    $('#g-nopt').textContent=best.n;
+    $('#g-net').textContent=fmtI(best.v);
+    $('#g-net').style.color = best.v>0?C.gosset:C.bad;
+    const se=S.sig/Math.sqrt(best.n), t=S.d/se, p=pTwoSided(t);
+    const vd=$('#g-verdict');
+    if(best.v<=0){vd.className='verdict bad';
+      vd.innerHTML=`<b>Lohnt sich nicht.</b> Die Mehrkosten der neuen Methode fressen den
+      Vorteil auf. Gosset hätte das Experiment gar nicht erst gemacht — unabhängig von p.`;}
+    else{vd.className='verdict good';
+      vd.innerHTML=`<b>Optimum: ${best.n} Versuche</b>, erwarteter Netto-Nutzen
+      <b>£ ${fmtI(best.v)}</b>. Dabei ergibt sich p = <b>${p<0.001?'&lt;0,001':fmt(p,3)}</b> —
+      <i>als Nebenprodukt</i>, nicht als Ziel. Genau das meinte Gosset 1905.`;}
+    Plotly.react('p-brewer',[
+      {x:ns,y:vs,type:'scatter',mode:'lines',name:'Netto-Erwartungswert',
+       line:{color:C.gosset,width:3},fill:'tozeroy',fillcolor:'rgba(126,231,135,.12)',
+       hovertemplate:'n = %{x}<br>Netto £ %{y:,.0f}<extra></extra>'},
+      {x:[best.n],y:[best.v],type:'scatter',mode:'markers',name:'Optimum',
+       marker:{size:15,color:C.gold,line:{color:'#fff',width:2}},
+       hovertemplate:'Optimum n = %{x}<extra></extra>'}
+    ],L({
+      title:{text:'Gossets Frage: Wie viele Versuche lohnen sich?',font:{size:14,color:C.ink2}},
+      xaxis:{title:'Anzahl Versuche n',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+      yaxis:{title:'erwarteter Netto-Nutzen (£)',gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+      shapes:[{type:'line',x0:1,x1:200,y0:0,y1:0,line:{color:C.ink3,dash:'dot',width:1.5}}],
+      legend:{x:0.58,y:0.15,bgcolor:'rgba(17,22,31,.85)',bordercolor:C.line,borderwidth:1,font:{size:11}}
+    }),PCFG);
+  }
+  const m={ben:'s-ben',mc:'s-mc',ec:'s-ec',sig:'s-gsig',d:'s-gd'};
+  Object.entries(m).forEach(([k,id])=>{
+    $('#'+id).addEventListener('input',e=>{S[k]=+e.target.value;upd();});
+  });
+  upd();
+})();
+
+/* ---------- Stammbaum der Gosset-Schule ---------- */
+(function(){
+  const labels=[
+    'Gosset „Student“<br>Guinness, 1905–1937',
+    'Egon Pearson','Jerzy Neyman','Abraham Wald','L. J. Savage',
+    'Harold Jeffreys','Arnold Zellner','Erich Lehmann','S. James Press','James Berger',
+    'Power (1−β)','Entscheidungstheorie','Verlustfunktion','Bayes-Inferenz','Minimax'
+  ];
+  const parents=[
+    '', 'Gosset „Student“<br>Guinness, 1905–1937','Gosset „Student“<br>Guinness, 1905–1937',
+    'Gosset „Student“<br>Guinness, 1905–1937','Gosset „Student“<br>Guinness, 1905–1937',
+    'Gosset „Student“<br>Guinness, 1905–1937','Harold Jeffreys','Jerzy Neyman',
+    'L. J. Savage','Harold Jeffreys',
+    'Egon Pearson','Abraham Wald','L. J. Savage','Arnold Zellner','Abraham Wald'
+  ];
+  Plotly.newPlot('p-tree',[{
+    type:'treemap',labels:labels,parents:parents,
+    marker:{colors:[C.gosset,C.prec,C.prec,C.gold,C.gold,C.fisher,C.fisher,
+                    C.prec,C.gold,C.fisher,
+                    'rgba(126,231,135,.35)','rgba(233,196,106,.35)','rgba(233,196,106,.35)',
+                    'rgba(199,146,234,.35)','rgba(233,196,106,.35)'],
+            line:{color:C.bg,width:2}},
+    textfont:{size:13,color:'#07090e',family:'Inter, sans-serif'},
+    hovertemplate:'<b>%{label}</b><extra></extra>',
+    tiling:{packing:'squarify'}
+  }],L({
+    title:{text:'Gossets Weg bei Guinness wurde zum Weg einer ganzen Schule',
+           font:{size:14,color:C.ink2}},
+    margin:{l:10,r:10,t:46,b:10}
+  }),PCFG);
+})();
+
+/* ============================================================
+   SEKTION 12 · FINALE
+   ============================================================ */
+(function(){
+  const cv=$('#c-final');
+  let anim=0, raf=null;
+  function draw(){
+    const {ctx,w,h}=setup(cv);clearC(ctx,w,h);
+    const P={x0:60,y0:30,x1:w-22,y1:h-56};
+    const maxV=36;
+    const Y=v=>lerp(P.y1,P.y0,clamp(v,0,maxV)/maxV);
+    gridLines(ctx,P,9,false);
+
+    const items=[
+      {n:'Oomph',m:20,s:10,c:C.oomph},
+      {n:'Precision',m:5,s:0.5,c:C.prec}
+    ];
+    const bw=(P.x1-P.x0)/4.6;
+    items.forEach((it,i)=>{
+      const x=P.x0+bw*(0.55+i*2.1);
+      const grow=Math.min(1,anim);
+      const top=Y(it.m*grow), bot=P.y1;
+      const g=ctx.createLinearGradient(0,top,0,bot);
+      g.addColorStop(0,it.c);g.addColorStop(1,it.c+'22');
+      roundRect(ctx,x,top,bw*1.25,bot-top,12);ctx.fillStyle=g;ctx.fill();
+      ctx.strokeStyle=it.c;ctx.lineWidth=1.6;ctx.stroke();
+      // Fehlerbalken
+      const cx=x+bw*0.625;
+      ctx.strokeStyle='#fff';ctx.lineWidth=2.2;
+      ctx.beginPath();
+      ctx.moveTo(cx,Y((it.m+it.s)*grow));ctx.lineTo(cx,Y(Math.max(0,(it.m-it.s))*grow));
+      ctx.moveTo(cx-11,Y((it.m+it.s)*grow));ctx.lineTo(cx+11,Y((it.m+it.s)*grow));
+      ctx.moveTo(cx-11,Y(Math.max(0,(it.m-it.s))*grow));ctx.lineTo(cx+11,Y(Math.max(0,(it.m-it.s))*grow));
+      ctx.stroke();
+      label(ctx,fmt(it.m,0)+' Pfund',cx,Y(it.m*grow)-30,it.c,16,'center',800);
+      label(ctx,'±'+fmt(it.s,1),cx,Y(it.m*grow)-14,'#fff',11.5,'center',600);
+      label(ctx,it.n,cx,P.y1+20,it.c,14,'center',800);
+      label(ctx,'t = '+fmt(it.m/it.s,2),cx,P.y1+38,C.ink3,12,'center',600);
+    });
+
+    // Dominanzpfeil
+    if(anim>=1){
+      const y1=Y(10), y2=Y(5.5);
+      ctx.strokeStyle=C.gosset;ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(P.x0,y1);ctx.lineTo(P.x1,y1);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(P.x0,y2);ctx.lineTo(P.x1,y2);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='rgba(126,231,135,.10)';
+      ctx.fillRect(P.x0,y1,P.x1-P.x0,y2-y1);
+      label(ctx,'Dominanz-Lücke: 4,5 Pfund',(P.x0+P.x1)/2,(y1+y2)/2,C.gosset,12,'center',700);
+      label(ctx,'Oomph schlechtester Fall 10,0',P.x1-6,y1-11,C.gosset,10.5,'right',600);
+      label(ctx,'Precision bester Fall 5,5',P.x1-6,y2+12,C.gosset,10.5,'right',600);
+    }
+
+    axes(ctx,P);
+    for(let v=0;v<=35;v+=5) label(ctx,v+'',P.x0-8,Y(v),C.ink3,10.5,'right');
+    label(ctx,'↑ Gewichtsverlust in Pfund',P.x0+4,P.y0-14,C.ink3,11,'left');
+  }
+  function loop(){
+    anim=Math.min(1,anim+0.022);
+    draw();
+    if(anim<1) raf=requestAnimationFrame(loop); else raf=null;
+  }
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting && anim<1 && !raf) loop();
+  }),{threshold:0.25});
+  io.observe(cv);
+  draw();window.addEventListener('resize',draw);
+})();
+
+/* ---------- Härtetest ±14 ---------- */
+(function(){
+  Plotly.newPlot('p-final14',[
+    {x:['Oomph ±10','Oomph ±14','Precision ±0,5'],
+     y:[20,20,5],
+     error_y:{type:'data',array:[10,14,0.5],color:'#ffffff',thickness:2.4,width:14},
+     type:'bar',
+     marker:{color:[C.oomph,C.warn,C.prec],line:{color:C.line2,width:1}},
+     text:['t = 2,00<br>signifikant','t = 1,43<br>INSIGNIFIKANT','t = 10,00<br>hochsignifikant'],
+     textposition:'outside',textfont:{size:12,color:C.ink2},
+     hovertemplate:'%{x}<br>Ø %{y} Pfund<extra></extra>'}
+  ],L({
+    title:{text:'Auch bei ±14 bleibt Oomph die bessere Pille — trotz „Insignifikanz“',
+           font:{size:14,color:C.ink2}},
+    xaxis:{linecolor:C.line2,gridcolor:'rgba(255,255,255,.04)'},
+    yaxis:{title:'Gewichtsverlust (Pfund)',range:[-16,44],
+           gridcolor:'rgba(255,255,255,.06)',linecolor:C.line2},
+    shapes:[
+      {type:'line',x0:-0.5,x1:2.5,y0:5.5,y1:5.5,line:{color:C.prec,dash:'dash',width:2}},
+      {type:'line',x0:-0.5,x1:2.5,y0:6,y1:6,line:{color:C.warn,dash:'dot',width:2}}
+    ],
+    annotations:[
+      {x:2.42,y:9,text:'Precision bester Fall: 5,5',showarrow:false,
+       font:{color:C.prec,size:11},xanchor:'right'},
+      {x:1,y:-11,text:'Oomph ±14 schlechtester Fall: 6,0 — immer noch mehr',
+       showarrow:false,font:{color:C.warn,size:11.5}}
+    ],
+    showlegend:false
+  }),PCFG);
+})();
+
+/* ---------- Quiz ---------- */
+(function(){
+  const Q=[
+    {q:'Pille A nimmt 2 Pfund ab (± 0,1), Pille B nimmt 15 Pfund ab (± 7). Gleicher Preis, gleiche Nebenwirkungen. Welche?',
+     a:['Pille A — der t-Wert ist 20, hochsignifikant',
+        'Pille B — selbst im schlechten Fall (8 Pfund) besser als A im besten Fall (2,1)',
+        'Keine Aussage möglich ohne p-Wert'],
+     c:1,
+     e:'Genau das ist die Minimax-Logik aus Kapitel 6: In allen Zuständen der Welt dominiert B. Der t-Wert von 20 bei A misst nur, wie scharf man 2 Pfund gemessen hat — nicht, ob 2 Pfund viel sind.'},
+    {q:'Eine Studie mit n = 20 000 findet p < 0,001 für einen Effekt von 0,08 Pfund. Was folgt?',
+     a:['Der Effekt ist bewiesen und wichtig',
+        'Der Effekt ist mit hoher Präzision gemessen — und praktisch bedeutungslos',
+        'Die Studie ist fehlerhaft'],
+     c:1,
+     e:'DeGroot 1975: „Die Randfläche mag sehr klein sein — und dennoch könnte der tatsächliche Wert dem Nullwert so nahe sein, dass der Experimentator ihn für praktische Zwecke nicht als verschieden ansehen würde.“ Mit genug n wird jeder Effekt > 0 signifikant.'},
+    {q:'Warum war es für Merck lohnend, 3 Herzinfarkt-Beobachtungen wegzulassen?',
+     a:['Weil 5 statt 8 Fälle die Datenbasis halbiert',
+        'Weil mit 8 Fällen p < 0,05 geworden wäre — und „nicht signifikant“ in dieser Kultur als „kein Unterschied“ gelesen wird',
+        'Weil die Annals of Internal Medicine keine Fisher-Tests akzeptieren'],
+     c:1,
+     e:'Die Fälschung lohnte sich nur, weil die Kultur „nicht signifikant“ wie „Effekt existiert nicht“ liest. In einer Kultur, die nach Größe und Verlustfunktion fragt, wäre ein 8:1-Verhältnis beim Herztod niemals als „kein Unterschied“ durchgegangen.'},
+    {q:'Was ist Gossets „real error“ — im Gegensatz zu Fishers Signifikanz?',
+     a:['Ein Rechenfehler in der t-Tabelle',
+        'Die Streuung über viele echte Versuchsstationen hinweg, inklusive nicht-zufälliger Fehler',
+        'Der Standardfehler bei n < 30'],
+     c:1,
+     e:'Gosset 1937: „Versuche an einer einzigen Station sind fast wertlos. … Was man wirklich will, ist ein niedriger realer Fehler.“ Fishers „19 von 20“ ist eine eingebildete Wiederholung aus einem Datensatz; Gossets „19 von 20“ sind zwanzig echte Felder.'}
+  ];
+  const host=$('#quiz');
+  let answered=0, correct=0;
+  Q.forEach((item,qi)=>{
+    const box=document.createElement('div');
+    box.className='card flush';
+    box.style.cssText='margin:14px 0;background:rgba(255,255,255,.025)';
+    box.innerHTML=`<p style="font-size:15px;color:var(--ink);font-weight:600;margin-bottom:12px">
+      <span style="color:var(--gold)">${qi+1}.</span> ${item.q}</p>`;
+    const opts=document.createElement('div');
+    opts.style.cssText='display:flex;flex-direction:column;gap:8px';
+    item.a.forEach((txt,ai)=>{
+      const b=document.createElement('button');
+      b.style.cssText='text-align:left;font-weight:500;line-height:1.5;padding:11px 14px';
+      b.textContent=txt;
+      b.addEventListener('click',()=>{
+        if(box.dataset.done)return;
+        box.dataset.done='1';answered++;
+        const ok=ai===item.c;
+        if(ok)correct++;
+        Array.from(opts.children).forEach((bb,bi)=>{
+          bb.style.opacity=bi===item.c||bi===ai?'1':'.42';
+          if(bi===item.c){bb.style.borderColor=C.gosset;bb.style.background='rgba(126,231,135,.12)';}
+          else if(bi===ai){bb.style.borderColor=C.bad;bb.style.background='rgba(255,77,109,.12)';}
+        });
+        const ex=document.createElement('div');
+        ex.className='verdict '+(ok?'good':'bad');
+        ex.style.fontSize='14px';
+        ex.innerHTML=`<b>${ok?'Richtig.':'Nicht ganz.'}</b> ${item.e}`;
+        box.appendChild(ex);
+        if(answered===Q.length){
+          const s=$('#quiz-score');
+          s.style.display='block';
+          s.className='verdict '+(correct>=3?'good':'');
+          s.innerHTML=`<b>${correct} von ${Q.length} richtig.</b> ${
+            correct===4?'Du hast den Kern verstanden: Passgenauigkeit ist nicht dasselbe wie Bedeutung.':
+            correct===3?'Fast perfekt. Geh die markierten Stellen nochmal mit den Reglern durch.':
+            'Spiel die Kapitel 6 (Minimax) und 7 (DeGroot) nochmal durch — dort liegt der Kern.'}`;
+        }
+      });
+      opts.appendChild(b);
+    });
+    box.appendChild(opts);
+    host.appendChild(box);
+  });
+})();
+
+/* ============================================================
+   RESIZE-ORCHESTRIERUNG
+   ============================================================ */
+(function(){
+  let tid=null;
+  window.addEventListener('resize',()=>{
+    clearTimeout(tid);
+    tid=setTimeout(()=>{
+      ['p-twobell','p-sqrtn','p-heat','p-loss','p-nreq','p-books','p-drop',
+       'p-errland','p-brewer','p-tree','p-final14'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el && el.data) Plotly.Plots.resize(el);
+      });
+    },180);
+  });
+})();
+</script>
+</body>
+</html>
