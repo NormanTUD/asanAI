@@ -642,7 +642,7 @@ const ConvDemo = (() => {
 			  p: '32 × 32 Pixel, jedes ein Triplett Rot · Grün · Blau',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>',
 			  i: 'Ein Bild ist eine riesige Zahl-Matrix (32 × 32 × 3): jedes Pixel steckt als <b>RGB-Triplett</b> (Rot, Grün, Blau) drin. So „sieht" der Computer ein Foto — als reine Zahlen.' },
-			{ k: 'Schritt 6', t: '<em>f(Bild)</em> = <em>f(Matrix)</em>.',
+			{ k: 'Schritt 6', t: 'Das Bild geht<br>in eine <em>Funktion</em>.',
 			  p: 'Man kann das ganze Bild in eine Funktion packen',
 			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">→</span><span class="kz-chip">1 Zahl</span>',
 			  i: 'Das Bild <b>ist</b> die Matrix. <b>f(Bild)</b> und <b>f(Matrix)</b> sind dasselbe: eine Funktion, die das ganze Bild als Eingabe bekommt und etwas Neues daraus macht. Genau das machen die nächsten Schichten.' }
@@ -773,13 +773,18 @@ const ConvDemo = (() => {
 					const cx = o4.x + catW / 2, cy = o4.y + catW / 2;
 					ctx.globalAlpha = o4.a * 0.9;
 					ctx.font = 'italic 700 28px Georgia, serif';
-					ctx.fillStyle = '#2563eb';
+					ctx.fillStyle = '#1e293b';
 					ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
 					ctx.fillText('f(', o4.x - 24, cy);
 					ctx.fillText(')', o4.x + catW + 24, cy);
-					ctx.font = 'italic 700 16px Georgia, serif';
+					ctx.font = '600 15px system-ui, sans-serif';
 					ctx.fillStyle = '#475569';
 					ctx.fillText('Bild', cx, o4.y + catW + 22);
+					// = Zeichen zwischen Bild und Matrix
+					const eqX = o4.x + catW + 60;
+					ctx.font = '700 28px Georgia, serif';
+					ctx.fillStyle = '#1e293b';
+					ctx.fillText('=', eqX, cy);
 					ctx.globalAlpha = 1;
 				}
 			}

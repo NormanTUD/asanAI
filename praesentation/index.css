@@ -330,7 +330,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 
 /* ============ TYPOGRAPHY ============ */
 .slide h1 { font-size: clamp(2em, 4vw, 3.5em); color: #1e40af; margin-bottom: 20px; line-height: 1.2; }
-.slide h2 { font-size: clamp(1.6em, 3vw, 2.8em); color: #3b82f6; margin-bottom: 16px; border-bottom: 3px solid #e2e8f0; padding-bottom: 8px; }
+.slide h2 { font-size: clamp(1.6em, 3vw, 2.8em); color: #0d1117; font-weight: 800; letter-spacing: -.028em; line-height: 1.08; text-align: center; margin-bottom: 16px; border-bottom: 3px solid #e2e8f0; padding-bottom: 8px; }
 .slide h3 { font-size: clamp(1.2em, 2.2vw, 2em); color: #6366f1; margin-top: 20px; margin-bottom: 12px; }
 .slide p  { font-size: clamp(1em, 1.5vw, 1.4em); line-height: 1.8; margin-bottom: 14px; color: #334155; }
 .slide ul, .slide ol { font-size: clamp(0.95em, 1.4vw, 1.35em); line-height: 1.8; margin: 12px 0 12px 30px; color: #334155; }
@@ -951,21 +951,23 @@ body.sel-mode .sel-check { display: inline-flex; }
 #conv-f-annot {
 	position: absolute;
 	left: 72%;
-	top: calc(50% + 120px);
+	top: calc(50% + 110px);
 	transform: translateX(-50%);
 	display: flex;
 	align-items: baseline;
-	gap: 4px;
+	gap: 2px;
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity .45s ease;
-	font: italic 700 20px Georgia, serif;
-	color: #2563eb;
+	font: italic 700 22px Georgia, serif;
+	color: #1e293b;
+	white-space: nowrap;
 }
-#conv-f-annot .f-paren { font-size: 28px; }
+#conv-f-annot .f-paren { font-size: 26px; }
 #conv-f-annot .f-label {
-	font: italic 600 14px Georgia, serif;
+	font: 600 14px system-ui, sans-serif;
 	color: #475569;
+	margin-left: 4px;
 }
 
 /* ============ FOLIE "Dense Layer" (T20): Szene A (NeuronIntro) ↔ Szene B (SpaceMorph) ============ */

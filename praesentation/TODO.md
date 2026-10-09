@@ -2,7 +2,7 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **6. Runde (Agent) — T42–T45.**
+> Letzte Aktualisierung: **7. Runde (Agent) — T46–T48.**
 > 1. **T42** `[x]` „Klassisch vs. KI": `prev` nach Morph geht jetzt zurück zu
 >    x² (Reverse-Morph via `unswitching`-State). 2. **T43** `[x]` Folie 6:
 >    „Für dich jetzt im Abstrakten…" entfernt. 3. **T44** `[x]` „Das Bild als
@@ -616,6 +616,33 @@ als Datei, wird nicht mehr geladen.
   nichts zu tun haben."
 - Neu: „Es weiß nichts über unser Ziel — es sieht nur die Daten. Was wir ihm
   zeigen, bestimmt, worauf es achtet."
+
+### T46 · Fragment-Bug: prev-Priorität (Demos vor Fragmenten)  `[x]`
+- **Problem:** Auf „Klassisch vs. KI" ging `prev` den Morph zurück, BEVOR
+  die Fragments (key-insight, ki-catchout) versteckt wurden. Vorwärts:
+  Morph → Frag1 → Frag2. Rückwärts sollte: Frag2 → Frag1 → Morph.
+  Aber `tryNavigate('prev')` gab Demos immer Vorrang.
+- **Fix:** `FlipClockViz.canGoPrev()` prüft jetzt `frags.length === 0` —
+  der Morph wird erst zurückgenommen, wenn alle Fragments schon versteckt
+  sind. Gilt prinzipiell für alle Demos mit Sub-Steps + Fragments.
+- ✅ `node --check` nn_demos.js clean.
+
+### T47 · Titel einheitlich: `.slide h2` wie `.kz-const`  `[x]`
+- **Problem:** „Das Bild als Zahlen" (kz-const: dunkel #0d1117, weight 800,
+  letter-spacing -.028em, zentriert) sah anders aus als „Drei Bausteine dafür"
+  (h2: blau #3b82f6, normal weight, links).
+- **Fix:** `.slide h2` (index.css) jetzt mit `color:#0d1117; font-weight:800;
+  letter-spacing:-.028em; text-align:center;` — gleiche Optik wie kz-const.
+  Alle Folien haben jetzt denselben Titelsstil.
+
+### T48 · f(Bild) = f(Matrix): visuelle Korrekturen  `[x]`
+- **Problem:** (a) f() um das Bild war blau, (b) kein = zwischen beiden,
+  (c) kein f() um die Matrix, (d) Titel „f(Bild) = f(Matrix)." redundant.
+- **Fix:** (a) Canvas-Text jetzt #1e293b (dunkel). (b) = Zeichen auf dem
+  Canvas zwischen Bild und Matrix. (c) HTML-Overlay #conv-f-annot zeigt
+  „f( Matrix )" unter der Matrix (dunkel, Georgia italic). (d) Schritt-Titel
+  → „Das Bild geht in eine Funktion." (die Gleichung wird visuell gezeigt).
+- ✅ `node --check` katze.js clean.
 - ✅ `node --check` n/a (HTML).
 
 ### T12 · Diese TODO.md pflegen  `[x]`

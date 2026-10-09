@@ -160,7 +160,9 @@ const FlipClockViz = (() => {
     function canGoPrev() {
         if (!switched || unswitching) return false;
         const a = document.querySelector('.slide.active');
-        return !!(a && a.id === 'slide-klassisch-vs-ki');
+        if (!a || a.id !== 'slide-klassisch-vs-ki') return false;
+        const frags = a.querySelectorAll('.fragment.visible');
+        return frags.length === 0;
     }
     function prev() {
         if (!switched || unswitching) return;
