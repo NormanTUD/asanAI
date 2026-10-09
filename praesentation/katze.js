@@ -146,20 +146,24 @@ const KatzeKit = (() => {
 	ctx.globalAlpha = 1;
 }
 
-	// Hund-Raster als farbiges Raster (volle Farbe, kein Kanal-Ton).
+	// Hund-Bild: hund.gif (151×151) statt ASCII-Raster.
+	let _hundImg = null;
+	function _loadHund() {
+		if (_hundImg) return;
+		_hundImg = new Image();
+		_hundImg.src = 'hund.gif';
+	}
+	_loadHund();
+
 	function drawGridHund(ctx, o) {
 		if (o.a < 0.005) return;
+		if (!_hundImg || !_hundImg.complete) return;
 		ctx.globalAlpha = o.a;
-		const s = o.s;
-		for (let r = 0; r < N; r++) {
-			const y = o.y + r * s, yh = Math.ceil(y + s) - Math.floor(y);
-			for (let c = 0; c < N; c++) {
-				const col = HUND_RGB[r * N + c];
-				const x = o.x + c * s, xw = Math.ceil(x + s) - Math.floor(x);
-				ctx.fillStyle = `rgb(${col[0]},${col[1]},${col[2]})`;
-				ctx.fillRect(Math.floor(x), Math.floor(y), xw, yh);
-			}
-		}
+		const size = N * o.s;
+		const prevSmooth = ctx.imageSmoothingEnabled;
+		ctx.imageSmoothingEnabled = false;
+		ctx.drawImage(_hundImg, Math.floor(o.x), Math.floor(o.y), Math.ceil(size), Math.ceil(size));
+		ctx.imageSmoothingEnabled = prevSmooth;
 		ctx.globalAlpha = 1;
 	}
 
