@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hohe Dimensionen komprimieren — Ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0;
+  --oomph:#d9480f; --oomph-soft:#fdf0e7;
+  --prec:#0f766e;  --prec-soft:#e6f2f0;
+  --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --rose:#be185d;  --rose-soft:#fdeef4;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--violet-soft);color:var(--violet);border:1px solid #ddd3f2;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--prec)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--prec);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--prec-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.o{color:var(--oomph);font-weight:700}
+.p_{color:var(--prec);font-weight:700}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--prec);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--prec);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--prec);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--oomph)}
+input[type=range].m::-moz-range-thumb{background:var(--oomph)}
+.ctlrow{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{background:#f3ede0;transform:translateY(-1px)}
+button.on{background:var(--prec);color:#fff;border-color:var(--prec);font-weight:660}
+button.o{border-color:#f0cdb8}
+button.o:hover{background:var(--oomph-soft)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--prec-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--prec)}
+.ro .box.o{background:var(--oomph-soft);border-color:#f0cdb8}
+.ro .box.o .v{color:var(--oomph)}
+.ro .box.v{background:var(--violet-soft);border-color:#ddd3f2}
+.ro .box.v .v{color:var(--violet)}
+.badge-out{font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;display:inline-block;margin-top:10px}
+.badge-out.ok{background:var(--prec-soft);color:var(--prec);border:1px solid #cde5e1}
+.badge-out.warn{background:var(--violet-soft);color:var(--violet);border:1px solid #ddd3f2}
+.badge-out.bad{background:var(--rose-soft);color:var(--rose);border:1px solid #f2cdd9}
+.note{border-left:4px solid var(--prec);background:var(--prec-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim);cursor:pointer;transition:.15s}
+.chip.on{background:var(--prec);color:#fff;border-color:var(--prec)}
+.takeaway{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;font-size:14.5px;color:var(--dim);display:flex;gap:12px}
+.takeaway .num{font-family:var(--mono);font-weight:700;color:var(--oomph);font-size:15px;flex:none}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--prec)}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · nur Grundmathematik · ca. 6 Minuten</div>
+  <h1>Hohe Dimensionen<br>sind <em>komprimierbar</em></h1>
+  <p class="sub">Du hast 500 Fotos mit einer Million Pixeln. Das ist eine halbe Milliarde Zahlen. Und trotzdem kannst du sie auf ein paar Dutzend Zahlen pressen — und dabei <em>fast alle Abstände zwischen den Fotos</em> beibehalten. So geht das, ganz ohne Geheimformel.</p>
+  <div class="chips">
+    <span class="chip">3 Experimente zum Spielen</span>
+    <span class="chip">0 Formeln zum Rechnen</span>
+    <span class="chip">1 großer Aha-Moment</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Was eine „Dimension“ überhaupt ist</h2>
+<p>Ein <b>Punkt</b> ist nur eine Adresse: eine Liste von Zahlen. Auf dem Papier brauchst du zwei Zahlen (x und y). Im Raum drei (x, y und z). Und in einer hohen Dimension? Genau so viele, wie die Dimension hoch ist: <b>1000 Dimensionen = eine Liste aus 1000 Zahlen</b> pro Punkt.</p>
+<p>Ein Foto mit einer Million Pixeln ist also <i>ein einziger Punkt</i> mit einer Million Adresszahlen. Und deine 500 Fotos sind 500 solcher Punkte. Das Problem ist nicht, dass es viele Punkte sind — sondern dass <span class="o">jeder Punkt eine Riesenzahl an Zahlen hat</span>, mit denen man kaum noch etwas anfangen kann.</p>
+<div class="demo">
+  <h3>Ein Punkt ist eine Zahl-Liste</h3>
+  <p class="dsub">Je mehr Dimensionen, desto länger die Liste. Der Punkt bleibt derselbe.</p>
+  <canvas id="c-dim" width="400" height="150"></canvas>
+</div>
+<div class="note">
+  <b>Aha #1 — „Abstand“ ist das Einzige, was zählt:</b> Zwei Fotos sind „ähnlich“, wenn der Abstand zwischen ihren Punkten klein ist. Wenn wir die Punkte auf wenige Zahlen pressen und dabei <b>die Abstände fast gleich</b> halten, haben wir gewonnen. Alles Weitere ist nur Verpackung.
+</div>
+
+<h2><span class="n">2</span>Der Wurf: von vielen Dimensionen auf wenige</h2>
+<p>Die Idee ist so einfach, dass sie fast zu gut klingt: <b>Nimm deine Punkte und werf sie zufällig auf ein paar wenige Dimensionen.</b> So, als würdest du mit der Kamera aus einem zufälligen Winkel ein Foto der Punktwolke machen. Das Wunder: die Abstände zwischen den Punkten bleiben fast, was sie waren.</p>
+<p>Probe es. Links siehst du die Wolke „vorher“ (in 3 Dimensionen, damit du sie sehen kannst — der Trick funktioniert genauso in 1000). Rechts das „Foto“ danach. Die Striche verbinden jeweils die nächsten Nachbarn eines Punkts — siehst du, dass sich das <b>Geäst</b> fast nicht verändert? Unten: wie weit sich die Abstände eigentlich verschoben haben.</p>
+<div class="demo">
+  <h3>Spiele es: Punkte werfen</h3>
+  <p class="dsub">Wähle, wie viele Dimensionen das „Foto“ behält, und drücke „neu würfeln“.</p>
+  <canvas id="c-proj" width="400" height="380"></canvas>
+  <div class="ctl"><div class="ctl-lab"><span>Wie viele Punkte?</span><b id="v-n">40</b></div><input type="range" id="s-n" min="8" max="70" step="1" value="40"></div>
+  <div class="btnrow">
+    <button data-k="1">nachher: 1&nbsp;Dim.</button>
+    <button data-k="2" class="on">nachher: 2&nbsp;Dim.</button>
+    <button data-k="3">nachher: 3&nbsp;Dim.</button>
+    <button id="b-reroll" class="o">🎲 neu würfeln</button>
+  </div>
+  <div id="fit-out" class="badge-out ok">–</div>
+</div>
+<div class="note">
+  <b>Aha #2 — Der Zufall ist gut genug:</b> Du musst die „richtigen“ Dimensionen gar nicht suchen. <b>Jede</b> zufällige Auswahl trifft fast alle Abstände auf einmal. Und mit <i>einem</i> einzigen Winkel (1&nbsp;Dim.) geht einiges kaputt — mit zwei bis drei nicht. Genau diese Beobachtung ist der ganze Kern.
+</div>
+
+<h2><span class="n">3</span>Nur die Anzahl der Punkte zählt</h2>
+<p>Jetzt der eigentliche Knall. Die Frage ist: <i>Wieviele Dimensionen brauchen wir, damit die Abstände fast alle überleben?</i> Die Antwort, die man intuitiv erwartet, wäre „so viele wie vorher“ — also 1000, wenn die Daten 1000 Dimensionen haben. Aber der Zufallswurf braucht <span class="p_">nur eine Handvoll</span>. Und das Beste: <b>Die Zahl hängt allein von der Anzahl der Punkte ab — nicht davon, wie viele Dimensionen sie vorher hatten.</b> Zieh den Regler „Dimensionen davor“ nach rechts und schau, was mit „genug“ passiert: <i>gar nichts.</i></p>
+<div class="demo">
+  <h3>Wie viele Dimensionen reichen?</h3>
+  <p class="dsub">Oben: wie viel Speicher du „davor“ hast. Die Füllung ist, wie wenig dir reicht. Zieh beide Regler.</p>
+  <canvas id="c-count" width="400" height="150"></canvas>
+  <div class="ctlrow">
+    <div class="ctl"><div class="ctl-lab"><span>Punkte n</span><b id="v-cn">50</b></div><input type="range" id="s-cn" min="5" max="300" step="1" value="50"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Dimensionen davor</span><b id="v-cd">1000</b></div><input type="range" id="s-cd" min="2" max="5000" step="2" value="1000"></div>
+  </div>
+  <div class="ro">
+    <div class="box o"><div class="k">davor</div><div class="v" id="o-ndim">1000</div></div>
+    <div class="box"><div class="k">genug</div><div class="v" id="o-kdim">22</div></div>
+    <div class="box v"><div class="k">gewonnen</div><div class="v" id="o-win">45×</div></div>
+  </div>
+</div>
+<div class="note">
+  <b>Aha #3 — Das eigentliche Wunder:</b> Ob deine Daten 10 oder 1&nbsp;000&nbsp;000 Dimensionen haben: <b>„genug“ rührt sich nicht.</b> Es zählt nur, wie viele Punkte du hast. Das ist der Grund, warum man riesige Datenmengen auf ein paar Dutzend Zahlen pressen kann, ohne die Abstände nennenswert zu verzerren.
+</div>
+
+<h2><span class="n">4</span>Warum der Zufall nicht schummeln muss</h2>
+<p>Warum rechnet eine zufällige Auswahl fast immer auf? Stell dir vor, du stehst mit der Kamera vor der Wolke. Jeder Punkt wirft seinen Schatten auf die Bildebene. Wenn du nur <i>zu wenige</i> Dimensionen nimmst, fallen viele Schatten zufällig zusammen — Abstände gehen verloren. Nimmst du aber ein paar mehr, sozusagen einen „guten“ Winkel, treffen fast alle Schatten dort an, wo sie hingehören.</p>
+<p>Und hier kommt der entscheidende Gedanke: <b>In hohen Dimensionen „stören“ sich die Abstände gegenseitig kaum.</b> Ob sich <i>einzelne</i> Abstände ein wenig verschieben, ist fast unabhängig davon, was die anderen tun. Weil sie sich nicht in die Quere kommen, überlebt am Ende — auf einmal, gleichzeitig — der allergrößte Teil aller Abstände. Nicht, weil der Zufall clever wäre, sondern weil es in so vielen Dimensionen schlicht <b>kaum Kollisionen</b> gibt.</p>
+<div class="note">
+  <b>Aha #4 — Der ganze Satz in einem:</b> Nimm n Punkte, wie viele Dimensionen sie auch haben. Wurf auf <b>nur wenige</b> Dimensionen — die Anzahl hängt allein von n ab, nicht von der Ausgangsdimension. Fast alle paarweisen Abstände bleiben dabei fast gleich. <b>Zufall genügt.</b>
+</div>
+
+<h2><span class="n">5</span>Was bleibt hängen</h2>
+<div class="takeaway"><span class="num">1</span><div><b>Ein Punkt ist eine Zahl-Liste.</b> Viele Dimensionen heißt nur: sehr lange Liste. Das Einzige, was für „Ähnlichkeit“ zählt, ist der <b>Abstand</b> zwischen den Punkten.</div></div>
+<div class="takeaway"><span class="num">2</span><div><b>Wurf statt Suche.</b> Du musst keine perfekten Dimensionen finden. Ein <b>zufälliger</b> Wurf auf ein paar wenige Dimensionen hält fast alle Abstände gleich.</div></div>
+<div class="takeaway"><span class="num">3</span><div><b>Nur die Punkte zählen.</b> Wie viele Dimensionen du brauchst, hängt <b>nur von der Anzahl der Punkte</b> ab — nicht davon, wie viele Dimensionen die Daten vorher hatten.</div></div>
+<div class="takeaway"><span class="num">4</span><div><b>Weniger Dimensionen, mehr Kollisionen.</b> Mit einem einzigen Winkel gehen Abstände kaputt; mit einem Handvoll kaum noch — weil in hohen Dimensionen fast nichts mehr kollidiert.</div></div>
+
+<footer>
+  <p>Stark vereinfachte, interaktive Begleitung zu <a href="johnson_lindenstrauss.html">johnson_lindenstrauss.html</a>. Alle Experimente laufen lokal im Browser — keine Daten verlassen diese Seite.<br>
+  Idee nach Johnson &amp; Lindenstrauss (1984): hohe Dimensionen lassen sich mit fast erhaltenen Abständen auf wenige pressen.</p>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  function $(id){return document.getElementById(id);}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function fmtI(x){return Math.round(x).toLocaleString('de-DE');}
+  function hexA(hex,a){var h=hex.replace('#','');return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')';}
+  function roundRect(g,x,y,w,h,r){r=Math.min(r,h/2,w/2);g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+  var INK='#2b2e3a', OOMPH='#d9480f', PREC='#0f766e', VIOLET='#6d28d9', ROSE='#be185d', FAINT='#9aa0b0', CANVAS='#f5f0e6';
+
+  var spare=null;
+  function randn(){
+    if(spare!==null){var s=spare;spare=null;return s;}
+    var u=0,v=0,ss=0;
+    do{u=Math.random()*2-1;v=Math.random()*2-1;ss=u*u+v*v;}while(ss>=1||ss===0);
+    var m=Math.sqrt(-2*Math.log(ss)/ss);
+    spare=v*m;return u*m;
+  }
+
+  /* ---------- Demo 1: was ist eine Dimension ---------- */
+  (function(){
+    var cv=$('c-dim');
+    function draw(){
+      var W=400,H=150;cv.width=W;cv.height=H;var g=cv.getContext('2d');
+      g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+      function plane(x0,x1,label){
+        var cx=(x0+x1)/2, cy=H/2+4, R=Math.min(x1-x0,H)*0.34;
+        g.strokeStyle='#e0d8c6';g.lineWidth=1;
+        g.beginPath();g.ellipse(cx,cy,R,R*0.45,0,0,7);g.stroke();
+        g.strokeStyle=hexA(VIOLET,0.5);g.lineWidth=1.5;
+        g.beginPath();g.moveTo(cx-R-8,cy);g.lineTo(cx+R+8,cy);g.stroke();
+        g.beginPath();g.moveTo(cx,cy-R*0.9);g.lineTo(cx,cy+R*0.9);g.stroke();
+        var px=cx+R*0.45, py=cy-R*0.2;
+        g.fillStyle=hexA(PREC,0.25);g.beginPath();g.arc(px,py,9,0,7);g.fill();
+        g.fillStyle=PREC;g.beginPath();g.arc(px,py,4,0,7);g.fill();
+        g.strokeStyle=hexA(PREC,0.6);g.setLineDash([3,3]);g.lineWidth=1;
+        g.beginPath();g.moveTo(px,py);g.lineTo(px,cy);g.stroke();
+        g.beginPath();g.moveTo(px,py);g.lineTo(cx,py);g.stroke();g.setLineDash([]);
+        g.fillStyle=INK;g.font='bold 12px system-ui';g.textAlign='center';
+        g.fillText(label,cx,16);
+      }
+      plane(30,190,'2 Dimensionen');
+      plane(220,380,'3 Dimensionen');
+      g.fillStyle=FAINT;g.font='11px system-ui';g.textAlign='center';
+      g.fillText('zwei Zahlen',110,H-8);
+      g.fillText('drei Zahlen',300,H-8);
+      g.strokeStyle='#e0d8c6';g.lineWidth=1;
+      g.beginPath();g.moveTo(205,12);g.lineTo(205,H-12);g.stroke();
+    }
+    draw();
+    addEventListener('resize',draw);
+  })();
+
+  /* ---------- Demo 2: der Wurf ---------- */
+  (function(){
+    var cv=$('c-proj');
+    var n=40, K=2, P=[], B=[], edges=[];
+
+    function newBasis(){
+      var w=[randn(),randn(),randn()];
+      var L=Math.hypot(w[0],w[1],w[2]);w=[w[0]/L,w[1]/L,w[2]/L];
+      var a=[1,0,0];if(Math.abs(w[0])>0.9)a=[0,1,0];
+      var dot=a[0]*w[0]+a[1]*w[1]+a[2]*w[2];
+      var u=[a[0]-dot*w[0],a[1]-dot*w[1],a[2]-dot*w[2]];
+      var ul=Math.hypot(u[0],u[1],u[2]);u=[u[0]/ul,u[1]/ul,u[2]/ul];
+      var v=[w[1]*u[2]-w[2]*u[1],w[2]*u[0]-w[0]*u[2],w[0]*u[1]-w[1]*u[0]];
+      B=[w,u,v];
+    }
+    function newCloud(){
+      P=[];
+      for(var i=0;i<n;i++)P.push([randn()*0.6,randn()*0.6,randn()*0.6]);
+      edges=[];var seen={};
+      for(var i2=0;i2<n;i2++){
+        var d=[];
+        for(var j2=0;j2<n;j2++){if(i2===j2)continue;
+          var dx=P[i2][0]-P[j2][0],dy=P[i2][1]-P[j2][1],dz=P[i2][2]-P[j2][2];
+          d.push([Math.hypot(dx,dy,dz),j2]);
+        }
+        d.sort(function(a,b){return a[0]-b[0];});
+        for(var k2=0;k2<2;k2++){
+          var j3=d[k2][1],key=Math.min(i2,j3)+'_'+Math.max(i2,j3);
+          if(!seen[key]){seen[key]=1;edges.push([Math.min(i2,j3),Math.max(i2,j3)]);}
+        }
+      }
+    }
+    function afterCoords(){
+      return P.map(function(p){
+        var o=[];
+        for(var k=0;k<K;k++)o.push(p[0]*B[k][0]+p[1]*B[k][1]+p[2]*B[k][2]);
+        return o;
+      });
+    }
+    function map3D(coords,rect,ang){
+      var ca=Math.cos(ang[0]),sa=Math.sin(ang[0]),ct=Math.cos(ang[1]),st=Math.sin(ang[1]);
+      var cx=(rect.x0+rect.x1)/2, cy=(rect.y0+rect.y1)/2, sc=52;
+      var out=new Array(coords.length);
+      for(var i=0;i<coords.length;i++){
+        var p=coords[i],x=p[0],y=p[1],z=p[2];
+        var X=x*ca-z*sa, Z=x*sa+z*ca;
+        var Y=y*ct-Z*st, Z2=y*st+Z*ct;
+        out[i]={x:cx+X*sc,y:cy-Y*sc,z:Z2};
+      }
+      return out;
+    }
+    function mapN(after,rect){
+      var cx=(rect.x0+rect.x1)/2, cy=(rect.y0+rect.y1)/2;
+      var mnx=Infinity,mxx=-Infinity,mny=Infinity,mxy=-Infinity;
+      for(var i=0;i<after.length;i++){
+        for(var k=0;k<after[i].length;k++){
+          mnx=Math.min(mnx,after[i][k]);mxx=Math.max(mxx,after[i][k]);
+          if(k===1){mny=Math.min(mny,after[i][k]);mxy=Math.max(mxy,after[i][k]);}
+        }
+      }
+      var sc=Math.min((rect.x1-rect.x0-22)/(mxx-mnx||1),(rect.y1-rect.y0-22)/(mxy-mny||1));
+      var out=new Array(after.length);
+      for(var i2=0;i2<after.length;i2++){
+        out[i2]={x:cx+(after[i2][0]-(mnx+mxx)/2)*sc, y:cy-((after[i2][1]-(mny+mxy)/2)*sc), z:0};
+      }
+      return out;
+    }
+    function drawPoints(g,pos,col){
+      var order=pos.map(function(o,i){return i;}).sort(function(a,b){return pos[b].z-pos[a].z;});
+      for(var k=0;k<order.length;k++){
+        var p=pos[order[k]];
+        g.fillStyle=hexA(col,0.9);g.beginPath();g.arc(p.x,p.y,3.2,0,7);g.fill();
+      }
+    }
+    function drawEdges(g,pos,col){
+      g.lineWidth=1.2;
+      for(var e=0;e<edges.length;e++){
+        var a=pos[edges[e][0]], b=pos[edges[e][1]];
+        g.strokeStyle=hexA(col,0.5);g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke();
+      }
+    }
+    function drawHisto(g,ratios,rect,tol){
+      var Bn=48, lo=0.5, hi=1.5, hist=new Array(Bn).fill(0);
+      var inband=0,tot=0;
+      for(var r=0;r<ratios.length;r++){
+        tot++;
+        if(Math.abs(ratios[r]-1)<=tol)inband++;
+        var b=Math.floor((ratios[r]-lo)/(hi-lo)*Bn);
+        if(b>=0&&b<Bn)hist[b]++;
+      }
+      var top=Math.max.apply(null,hist.concat([1]));
+      var pw=(rect.x1-rect.x0)/Bn;
+      var xa=rect.x0+((1-tol-lo)/(hi-lo))*(rect.x1-rect.x0);
+      var xb=rect.x0+((1+tol-lo)/(hi-lo))*(rect.x1-rect.x0);
+      g.fillStyle=hexA(PREC,0.10);g.fillRect(xa,rect.y0,xb-xa,rect.y1-rect.y0);
+      for(var i=0;i<Bn;i++){
+        var v=lo+(i+0.5)/Bn*(hi-lo);
+        var bh=hist[i]/top*(rect.y1-rect.y0-14);
+        g.fillStyle=Math.abs(v-1)>tol?hexA(ROSE,0.85):hexA(PREC,0.85);
+        g.fillRect(rect.x0+i*pw+0.5, rect.y1-bh, Math.max(1,pw-1), bh);
+      }
+      var x1=rect.x0+((1-lo)/(hi-lo))*(rect.x1-rect.x0);
+      g.strokeStyle=hexA(INK,0.5);g.setLineDash([4,3]);g.lineWidth=1;
+      g.beginPath();g.moveTo(x1,rect.y0);g.lineTo(x1,rect.y1);g.stroke();g.setLineDash([]);
+      g.fillStyle=FAINT;g.font='10px system-ui';g.textAlign='center';
+      for(var t=0;t<3;t++){
+        var vv=lo+t/2*(hi-lo);
+        g.fillText(vv.toFixed(1),rect.x0+((vv-lo)/(hi-lo))*(rect.x1-rect.x0),rect.y1+13);
+      }
+      return {inband:inband,tot:tot};
+    }
+    function label(g,txt,x,y){g.fillStyle=FAINT;g.font='11px system-ui';g.textAlign='left';g.fillText(txt,x,y);}
+
+    function draw(){
+      var W=400,H=380;cv.width=W;cv.height=H;var g=cv.getContext('2d');
+      g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+      var BL={x0:6,y0:24,x1:186,y1:236};
+      var AR={x0:214,y0:24,x1:394,y1:236};
+      var HI={x0:6,y0:258,x1:394,y1:366};
+      var after=afterCoords();
+      var beforePos=map3D(P,BL,[0.6,0.5]);
+      var afterPos;
+      if(K===1){
+        var mnx=Infinity,mxx=-Infinity;
+        for(var i=0;i<after.length;i++){mnx=Math.min(mnx,after[i][0]);mxx=Math.max(mxx,after[i][0]);}
+        var sx=(AR.x1-AR.x0-24)/(mxx-mnx||1), cy2=(AR.y0+AR.y1)/2;
+        afterPos=after.map(function(a){return {x:AR.x0+12+(a[0]-mnx)*sx, y:cy2, z:0};});
+        g.strokeStyle='#e0d8c6';g.lineWidth=1;
+        g.beginPath();g.moveTo(AR.x0+6,cy2);g.lineTo(AR.x1-6,cy2);g.stroke();
+      }
+      else if(K===2){ afterPos=mapN(after,AR); }
+      else { afterPos=map3D(after,AR,[0.6,0.5]); }
+
+      label(g,'vorher',BL.x0,BL.y0-8);
+      label(g,'nachher ('+K+' Dim.)',AR.x0,AR.y0-8);
+
+      drawEdges(g,beforePos,VIOLET);
+      drawEdges(g,afterPos,VIOLET);
+      drawPoints(g,beforePos,PREC);
+      drawPoints(g,afterPos,OOMPH);
+
+      // divider
+      g.strokeStyle='#e0d8c6';g.lineWidth=1;
+      g.beginPath();g.moveTo(200,16);g.lineTo(200,244);g.stroke();
+
+      // ratios
+      var ratios=[];
+      var scale=Math.sqrt(3/K);
+      for(var a=0;a<n;a++)for(var b2=a+1;b2<n;b2++){
+        var d3=Math.hypot(P[a][0]-P[b2][0],P[a][1]-P[b2][1],P[a][2]-P[b2][2]);
+        var d2=0;
+        for(var kk=0;kk<K;kk++){var dd=after[a][kk]-after[b2][kk];d2+=dd*dd;}
+        d2=Math.sqrt(d2);
+        if(d3<1e-6)continue;
+        ratios.push((d2/d3)*scale);
+      }
+      var h=drawHisto(g,ratios,HI,0.25);
+      label(g,'Abstand nachher ÷ vorher  (fast auf 1 = fast gleich)',HI.x0,HI.y0-8);
+      g.fillStyle=FAINT;g.font='10px system-ui';g.textAlign='center';
+      g.fillText('rot = mehr als 25 % verschoben', (HI.x0+HI.x1)/2, HI.y1+13);
+
+      var pct=h.tot?Math.round(h.inband/h.tot*100):0;
+      var out=$('fit-out');
+      if(pct>=70){out.className='badge-out ok';out.textContent=pct+' % der Abstände bleiben fast gleich (±25 %)';}
+      else if(pct>=40){out.className='badge-out warn';out.textContent=pct+' % fast gleich — mit nur '+K+' Dim. geht schon viel kaputt';}
+      else{out.className='badge-out bad';out.textContent='nur '+pct+' % fast gleich — '+K+' Dim. ist zu wenig';}
+    }
+
+    $('s-n').addEventListener('input',function(e){
+      n=+e.target.value;$('v-n').textContent=n;newCloud();draw();
+    });
+    var kbtns=document.querySelectorAll('[data-k]');
+    kbtns.forEach(function(b){
+      b.addEventListener('click',function(){
+        kbtns.forEach(function(x){x.classList.remove('on');});
+        b.classList.add('on');K=+b.dataset.k;draw();
+      });
+    });
+    $('b-reroll').addEventListener('click',function(){newBasis();newCloud();draw();});
+    addEventListener('resize',draw);
+    newBasis();newCloud();draw();
+  })();
+
+  /* ---------- Demo 3: wie viele Dimensionen ---------- */
+  (function(){
+    var cv=$('c-count');
+    function needed(n){return Math.max(2,Math.ceil(4*Math.log2(n)));}
+    function draw(){
+      var n2=+$('s-cn').value, d2=+$('s-cd').value;
+      var k=needed(n2);
+      $('v-cn').textContent=fmtI(n2);$('v-cd').textContent=fmtI(d2);
+      $('o-ndim').textContent=fmtI(d2);
+      $('o-kdim').textContent=fmtI(k);
+      $('o-win').textContent=Math.round(d2/k)+'×';
+      var W=400,H=150;cv.width=W;cv.height=H;var g=cv.getContext('2d');
+      g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+      var x0=24,y0=44,barW=W-48,barH=26;
+      g.fillStyle='#e7e0d0';roundRect(g,x0,y0,barW,barH,13);g.fill();
+      var f=Math.max(0.025,k/d2);
+      g.fillStyle=hexA(PREC,0.9);roundRect(g,x0,y0,barW*f,barH,13);g.fill();
+      g.font='11px system-ui';g.fillStyle=INK;g.textAlign='left';
+      g.fillText('davor: '+fmtI(d2)+' Dimensionen',x0,y0-10);
+      g.fillStyle=PREC;g.textAlign='left';
+      g.fillText('genug: '+fmtI(k),Math.min(x0+barW*f+10,x0+barW-70),y0+barH/2+4);
+      g.fillStyle=FAINT;g.font='11px system-ui';g.textAlign='center';
+      g.fillText('Die Füllung (k) ist fast nichts vom Ganzen —',W/2,y0+barH+22);
+      g.fillText('und sie wächst mit den PUNKTEN, nicht mit d.',W/2,y0+barH+38);
+    }
+    $('s-cn').addEventListener('input',draw);
+    $('s-cd').addEventListener('input',draw);
+    addEventListener('resize',draw);
+    draw();
+  })();
+})();
+</script>
+</body>
+</html>
