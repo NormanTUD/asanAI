@@ -748,7 +748,6 @@ footer a{color:var(--acc)}
   drawVioxx();
 
   /* ---------- ⑦ Minimax ---------- */
-  var MM={z:0,mo:10};
   function drawMM(){
     var z=+($('s-mmz').value),sd=+($('s-mmo').value);
     $('v-mmz').textContent=fmt(z,2);$('v-mmo').textContent=fmt(sd,1);
@@ -900,7 +899,7 @@ footer a{color:var(--acc)}
       b.addEventListener('click',function(){
         if(div.dataset.done)return;div.dataset.done='1';answered++;
         if(oi===item.c){b.classList.add('correct');score++;}
-        else{b.classList.add('wrong');item.o[item.c]&&document.querySelectorAll(div.id?'':'');var good=div.querySelectorAll('.opt')[item.c];good.classList.add('correct');}
+        else{b.classList.add('wrong');var good=div.querySelectorAll('.opt')[item.c];good.classList.add('correct');}
         if(answered===Q.length){$('quizScore').textContent='Du hast '+score+' von '+Q.length+' richtig. Alles hier war spielbar — keine Fangfrage.';}
       });
       div.appendChild(b);
