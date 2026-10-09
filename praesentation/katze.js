@@ -1445,7 +1445,7 @@ const PipelineKit = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	function drawDense(ctx, x, y, w, h, a, showFeat) {
+	function drawDense(ctx, x, y, w, h, a, mode) {
 		if (a < 0.01) return;
 		ctx.globalAlpha = a;
 		ctx.fillStyle = '#f8fafc';
@@ -1455,14 +1455,31 @@ const PipelineKit = (() => {
 		const cols = 5, rows = 9;
 		const dx0 = x + 20, dy0 = y + 22;
 		const ddx = (w - 40) / (cols - 1), ddy = (h - 62) / (rows - 1);
-		for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-			const hue = 205 + ((r * cols + c) / (rows * cols - 1)) * 110;
-			ctx.fillStyle = `hsl(${hue}, 42%, 72%)`;
-			ctx.beginPath();
-			ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
-			ctx.fill();
-		}
-		if (showFeat) {
+		if (mode === 'random') {
+			for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+				const i = r * cols + c;
+				const v1 = ((i * 2654435761) >>> 0) % 100 / 100;
+				const v2 = ((i * 40503 + 12345) >>> 0) % 100 / 100;
+				const isGreen = v1 > 0.45;
+				const intensity = 0.3 + v2 * 0.7;
+				const rad = 2.5 + v2 * 2.5;
+				if (isGreen) {
+					ctx.fillStyle = `rgba(76,175,80,${intensity * 0.7})`;
+				} else {
+					ctx.fillStyle = `rgba(100,116,139,${intensity * 0.6})`;
+				}
+				ctx.beginPath();
+				ctx.arc(dx0 + c * ddx, dy0 + r * ddy, rad, 0, Math.PI * 2);
+				ctx.fill();
+			}
+		} else if (mode === 'feat') {
+			for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+				const hue = 205 + ((r * cols + c) / (rows * cols - 1)) * 110;
+				ctx.fillStyle = `hsl(${hue}, 42%, 72%)`;
+				ctx.beginPath();
+				ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
+				ctx.fill();
+			}
 			const feat = [[1, 1], [1, 3], [4, 2], [6, 2]];
 			for (const [r, c] of feat) {
 				const cx = dx0 + c * ddx, cy = dy0 + r * ddy;
@@ -1475,6 +1492,14 @@ const PipelineKit = (() => {
 				ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
 				ctx.strokeStyle = '#2e7d32'; ctx.lineWidth = 1.5;
 				ctx.stroke();
+			}
+		} else {
+			for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+				const hue = 205 + ((r * cols + c) / (rows * cols - 1)) * 110;
+				ctx.fillStyle = `hsl(${hue}, 42%, 72%)`;
+				ctx.beginPath();
+				ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
+				ctx.fill();
 			}
 		}
 		ctx.fillStyle = '#475569';
@@ -1605,9 +1630,9 @@ const PipelineKit = (() => {
 			}
 		}
 
-		// Dense — Feature-Punkte nur im Ziel/Trainings-Zustand, nicht bei "reiner Zufall"
-		const showFeat = !(o.step === 3 || o.step === 5);
-		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense, showFeat);
+		// Dense: random (Schritt 3, 5) oder feat (Ziel/Training)
+		const denseMode = (o.step === 3 || o.step === 5) ? 'random' : 'feat';
+		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense, denseMode);
 
 		// Ausgabe-Neuronen (Katze oben, Hund unten) — im Training folgt die
 		// Hot-Markierung dem aktuellen Eingangs-Bild (Katze oder Hund).
