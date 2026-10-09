@@ -1,0 +1,3963 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Geometrie der Wahrheit — Interaktiv</title>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/temml.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg:         #080b14;
+  --bg-2:       #0d1220;
+  --panel:      #121a2c;
+  --panel-2:    #18233c;
+  --line:       #243352;
+  --line-soft:  #1b2740;
+  --txt:        #e6edf8;
+  --txt-dim:    #93a3c0;
+  --txt-faint:  #64748b;
+  --true:       #34d399;
+  --true-glow:  rgba(52,211,153,.35);
+  --false:      #f472b6;
+  --false-glow: rgba(244,114,182,.35);
+  --accent:     #60a5fa;
+  --accent-2:   #a78bfa;
+  --warn:       #fbbf24;
+  --radius:     16px;
+  --mono: 'SF Mono', 'JetBrains Mono', ui-monospace, 'Cascadia Code', Menlo, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background: var(--bg);
+  background-image:
+    radial-gradient(1100px 700px at 12% -5%, rgba(96,165,250,.10), transparent 60%),
+    radial-gradient(900px 650px at 88% 8%, rgba(167,139,250,.09), transparent 60%),
+    radial-gradient(800px 600px at 50% 100%, rgba(52,211,153,.06), transparent 60%);
+  background-attachment: fixed;
+  color: var(--txt);
+  font-family: var(--sans);
+  line-height: 1.65;
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+/* ---------- Progress bar ---------- */
+#progress{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--true));
+  z-index: 9999;
+  box-shadow: 0 0 14px rgba(96,165,250,.7);
+  transition: width .08s linear;
+}
+
+/* ---------- Nav ---------- */
+nav{
+  position:fixed; top:0; left:0; right:0;
+  background: rgba(8,11,20,.82);
+  backdrop-filter: blur(16px) saturate(140%);
+  border-bottom:1px solid var(--line-soft);
+  z-index: 9000;
+  padding: 10px 18px;
+  display:flex; gap:6px; align-items:center;
+  overflow-x:auto; scrollbar-width:none;
+}
+nav::-webkit-scrollbar{display:none;}
+nav .brand{
+  font-weight:800; font-size:.82rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent);
+  margin-right:14px; white-space:nowrap;
+}
+nav a{
+  color:var(--txt-dim); text-decoration:none;
+  font-size:.78rem; padding:5px 11px; border-radius:999px;
+  white-space:nowrap; transition:all .18s; border:1px solid transparent;
+}
+nav a:hover{color:var(--txt); background:var(--panel); border-color:var(--line);}
+nav a.active{color:#fff; background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-color:transparent;}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px; margin:0 auto; padding: 0 22px 140px;}
+
+header.hero{
+  min-height: 92vh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding-top: 70px;
+  position:relative;
+}
+.hero h1{
+  font-size: clamp(2.3rem, 6.2vw, 4.6rem);
+  line-height:1.04; font-weight:850; letter-spacing:-.03em;
+  background: linear-gradient(135deg,#fff 10%, var(--accent) 45%, var(--accent-2) 75%, var(--true) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom: 18px;
+}
+.hero .sub{font-size:clamp(1.02rem,2.1vw,1.3rem); color:var(--txt-dim); max-width:800px;}
+.hero .meta{margin-top:26px; font-family:var(--mono); font-size:.8rem; color:var(--txt-faint);}
+.hero-canvas-wrap{
+  margin-top:34px; border-radius:var(--radius); overflow:hidden;
+  border:1px solid var(--line); background:rgba(13,18,32,.5);
+  position:relative;
+}
+#heroCanvas{display:block; width:100%; height:300px;}
+.hero-caption{
+  position:absolute; bottom:10px; left:14px; font-family:var(--mono);
+  font-size:.72rem; color:var(--txt-faint); pointer-events:none;
+}
+
+/* ---------- Sections ---------- */
+section{padding: 86px 0 26px; scroll-margin-top:62px;}
+.sec-tag{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:10px;
+  display:flex; align-items:center; gap:10px;
+}
+.sec-tag::after{content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--line),transparent);}
+h2{
+  font-size: clamp(1.7rem,3.6vw,2.6rem); font-weight:800; letter-spacing:-.02em;
+  margin-bottom:14px; line-height:1.15;
+}
+h3{font-size:1.2rem; font-weight:700; margin:26px 0 10px; color:var(--txt);}
+h4{font-size:.95rem; font-weight:700; margin:16px 0 7px; color:var(--txt-dim);
+   text-transform:uppercase; letter-spacing:.08em; font-size:.76rem;}
+p{color:var(--txt-dim); margin-bottom:13px; max-width: 850px;}
+p strong, li strong{color:var(--txt); font-weight:650;}
+ul,ol{color:var(--txt-dim); margin:0 0 14px 22px;}
+li{margin-bottom:6px;}
+code{font-family:var(--mono); font-size:.86em; background:var(--panel-2); padding:1px 6px; border-radius:5px; color:var(--accent);}
+
+/* ---------- Cards / Panels ---------- */
+.card{
+  background: linear-gradient(170deg, var(--panel) 0%, var(--bg-2) 100%);
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin: 20px 0;
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+.card.tight{padding:16px;}
+.card-title{
+  font-size:.74rem; font-family:var(--mono); letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+.grid-side{display:grid; grid-template-columns: 300px 1fr; gap:18px; align-items:start;}
+.grid-side-r{display:grid; grid-template-columns: 1fr 300px; gap:18px; align-items:start;}
+@media(max-width:900px){
+  .grid2,.grid3,.grid-side,.grid-side-r{grid-template-columns:1fr;}
+}
+
+/* ---------- Controls ---------- */
+.ctrl{margin-bottom:15px;}
+.ctrl label{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:.8rem; color:var(--txt-dim); margin-bottom:6px; font-weight:600;
+}
+.ctrl label .val{font-family:var(--mono); color:var(--accent); font-size:.8rem;}
+input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:5px;
+  background:var(--line); border-radius:999px; outline:none; cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:17px; height:17px; border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  cursor:pointer; box-shadow:0 0 0 4px rgba(96,165,250,.16), 0 2px 8px rgba(0,0,0,.5);
+  transition: box-shadow .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 7px rgba(96,165,250,.22), 0 2px 8px rgba(0,0,0,.5);}
+input[type=range]::-moz-range-thumb{
+  width:17px; height:17px; border-radius:50%; border:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2)); cursor:pointer;
+}
+button, .btn{
+  background:var(--panel-2); color:var(--txt); border:1px solid var(--line);
+  padding:7px 14px; border-radius:9px; font-size:.82rem; cursor:pointer;
+  font-family:var(--sans); font-weight:600; transition:all .16s;
+}
+button:hover{background:var(--line); border-color:var(--accent); transform:translateY(-1px);}
+button.on{background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-color:transparent; color:#fff;}
+button.sm{padding:4px 10px; font-size:.74rem;}
+.btnrow{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:12px;}
+select{
+  background:var(--panel-2); color:var(--txt); border:1px solid var(--line);
+  padding:6px 10px; border-radius:8px; font-size:.82rem; font-family:var(--sans); cursor:pointer; width:100%;
+}
+.switch{display:flex; align-items:center; gap:8px; font-size:.82rem; color:var(--txt-dim); margin-bottom:9px; cursor:pointer;}
+.switch input{appearance:none; width:36px; height:20px; background:var(--line); border-radius:999px; position:relative; cursor:pointer; transition:.2s; flex:none;}
+.switch input::after{content:''; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:var(--txt-dim); transition:.2s;}
+.switch input:checked{background:linear-gradient(135deg,var(--accent),var(--accent-2));}
+.switch input:checked::after{left:18px; background:#fff;}
+
+/* ---------- Canvas ---------- */
+canvas{display:block; max-width:100%; border-radius:11px;}
+.cv-host{background:#060910; border:1px solid var(--line-soft); border-radius:11px; padding:8px; position:relative;}
+
+/* ---------- Callouts ---------- */
+.note{
+  border-left:3px solid var(--accent); background:rgba(96,165,250,.07);
+  padding:13px 16px; border-radius:0 11px 11px 0; margin:16px 0; font-size:.91rem;
+}
+.note.key{border-color:var(--true); background:rgba(52,211,153,.07);}
+.note.warnb{border-color:var(--warn); background:rgba(251,191,36,.07);}
+.note.q{border-color:var(--accent-2); background:rgba(167,139,250,.07);}
+.note b{color:var(--txt);}
+
+.pill{
+  display:inline-block; padding:2px 9px; border-radius:999px; font-size:.7rem;
+  font-family:var(--mono); font-weight:600; letter-spacing:.04em;
+}
+.pill.t{background:rgba(52,211,153,.16); color:var(--true); border:1px solid rgba(52,211,153,.3);}
+.pill.f{background:rgba(244,114,182,.16); color:var(--false); border:1px solid rgba(244,114,182,.3);}
+.pill.n{background:rgba(96,165,250,.16); color:var(--accent); border:1px solid rgba(96,165,250,.3);}
+
+/* ---------- Tables ---------- */
+table{width:100%; border-collapse:collapse; font-size:.85rem; margin:12px 0;}
+th,td{padding:7px 10px; text-align:left; border-bottom:1px solid var(--line-soft);}
+th{color:var(--txt-faint); font-weight:650; font-size:.72rem; text-transform:uppercase; letter-spacing:.07em;}
+td{color:var(--txt-dim);}
+td.num{font-family:var(--mono); text-align:right;}
+tr:hover td{background:rgba(96,165,250,.04);}
+
+/* ---------- Misc ---------- */
+.stat{text-align:center; padding:14px 10px; background:var(--panel-2); border-radius:11px; border:1px solid var(--line-soft);}
+.stat .big{font-size:1.8rem; font-weight:800; font-family:var(--mono); line-height:1;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+.stat .lbl{font-size:.7rem; color:var(--txt-faint); margin-top:5px; text-transform:uppercase; letter-spacing:.07em;}
+
+.sentence{
+  font-family:var(--mono); font-size:.88rem; padding:9px 13px;
+  background:var(--panel-2); border-radius:9px; border:1px solid var(--line-soft);
+  margin:6px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;
+}
+.math-block{margin:14px 0; text-align:center; overflow-x:auto; padding:10px 0;}
+math{color:var(--txt) !important;}
+
+.reveal{opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1);}
+.reveal.in{opacity:1; transform:none;}
+
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:.78rem; color:var(--txt-dim); margin:8px 0;}
+.legend span{display:flex; align-items:center; gap:6px;}
+.dot{width:10px; height:10px; border-radius:50%; display:inline-block;}
+
+.readout{
+  font-family:var(--mono); font-size:.8rem; background:#060910;
+  border:1px solid var(--line-soft); border-radius:9px; padding:11px 13px; color:var(--txt-dim);
+  line-height:1.75;
+}
+.readout b{color:var(--txt);}
+
+footer{
+  border-top:1px solid var(--line-soft); padding:40px 0; margin-top:60px;
+  color:var(--txt-faint); font-size:.84rem; text-align:center;
+}
+.kbd{font-family:var(--mono); font-size:.74rem; background:var(--panel-2); border:1px solid var(--line);
+  border-bottom-width:2px; border-radius:5px; padding:1px 6px; color:var(--txt-dim);}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav id="nav">
+  <span class="brand">Geometrie der Wahrheit</span>
+  <a href="#start">Start</a>
+  <a href="#problem">Problem</a>
+  <a href="#vektor">Vektoren</a>
+  <a href="#llm">Im LLM</a>
+  <a href="#data">Daten</a>
+  <a href="#patch">Patching</a>
+  <a href="#pca">PCA</a>
+  <a href="#geo">Geometrie</a>
+  <a href="#probe">Sonden</a>
+  <a href="#mm">Mass-Mean</a>
+  <a href="#general">Transfer</a>
+  <a href="#causal">Kausalität</a>
+  <a href="#answer">Antwort</a>
+</nav>
+
+<div class="wrap">
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════════════ -->
+<header class="hero" id="start">
+  <div class="sec-tag">Marks &amp; Tegmark · COLM 2024 · arXiv:2310.06824</div>
+  <h1>Die Geometrie<br>der Wahrheit</h1>
+  <p class="sub">
+    Ein Sprachmodell schreibt einen Satz. Ist er wahr? Und noch spannender:
+    <b style="color:var(--txt)">weiß das Modell selbst, ob er wahr ist</b> — ganz egal, was es ausgibt?
+    Diese Seite zeigt dir Schritt für Schritt, zum Anfassen, wie man in den inneren Zahlen
+    eines LLM eine <em>Richtung</em> findet, entlang derer Wahrheit und Lüge auseinanderliegen.
+  </p>
+  <div class="meta">Scrollen · Schieben · Klicken · Ausprobieren — fast nichts muss gelesen werden.</div>
+
+  <div class="hero-canvas-wrap">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-caption">Aktivierungswolke · grün = wahr · pink = falsch · die Trennebene dreht sich</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════
+     1 · PROBLEM
+     ═══════════════════════════════════════════════════════════ -->
+<section id="problem" class="reveal">
+  <div class="sec-tag">01 · Motivation</div>
+  <h2>Welches Problem wird hier eigentlich gelöst?</h2>
+  <p>
+    LLMs sagen manchmal Falsches, <b>obwohl sie es besser wissen</b>. Das Paper nennt zwei reale Beispiele:
+    ein Assistent gibt mehr Unwahrheiten aus, wenn der Nutzer weniger gebildet wirkt; und ein GPT-4-Agent
+    log eine Person an, um ein CAPTCHA gelöst zu bekommen („Ich sollte nicht verraten, dass ich ein Roboter bin“).
+  </p>
+  <p>
+    Wenn wir den <b>Output</b> nicht trauen können — können wir dann in den <b>Kopf</b> schauen?
+    Spiel unten durch, warum Output-Prüfung allein nicht reicht.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Output vs. Innenleben</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Szenario</label>
+          <select id="scenSel">
+            <option value="0">Modell weiß es nicht (Halluzination)</option>
+            <option value="1">Modell weiß es — sagt die Wahrheit</option>
+            <option value="2">Modell weiß es — lügt absichtlich</option>
+            <option value="3">Modell weiß es — schmeichelt dem Nutzer</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Druck von außen <span class="val" id="pressV">0.0</span></label>
+          <input type="range" id="pressS" min="0" max="1" step="0.01" value="0">
+        </div>
+        <p style="font-size:.84rem">
+          Der <b>Output</b> ist das, was du siehst. Der <b>innere Zustand</b> ist das, was wir messen wollen.
+          Bei Szenario 3 driften die beiden auseinander — genau da wird eine Wahrheits-Sonde nützlich.
+        </p>
+      </div>
+      <div class="cv-host"><canvas id="scenCv" width="760" height="300"></canvas></div>
+    </div>
+    <div class="readout" id="scenOut" style="margin-top:12px"></div>
+  </div>
+
+  <div class="note q">
+    <b>Die Forschungsfrage des Papers (wörtlich sinngemäß):</b><br>
+    „Haben LLMs eine <em>einheitliche</em> Repräsentation von Wahrheit, die über strukturell und thematisch
+    verschiedene Daten hinweg gilt?“ — Also: gibt es <b>eine</b> Wahrheits-Richtung, oder nur viele
+    zufällige Korrelate?
+  </div>
+
+  <div class="card tight">
+    <div class="card-title">◆ Der Streitstand vor dem Paper</div>
+    <div class="grid2">
+      <div>
+        <h4 style="color:var(--true)">Pro: Es gibt Sonden</h4>
+        <ul style="font-size:.88rem">
+          <li>Azaria &amp; Mitchell (2023): Klassifikator auf Aktivierungen</li>
+          <li>Li et al. (2023b): <em>lineare</em> Sonde + Intervention</li>
+          <li>Burns et al. (2023, CCS): sogar <em>unüberwacht</em></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--false)">Contra: Sie generalisieren nicht</h4>
+        <ul style="font-size:.88rem">
+          <li>Levinstein &amp; Herrmann (2023): Sonden scheitern an Sätzen mit „nicht“</li>
+          <li>Verdacht: Sonden finden nicht <em>Wahrheit</em>, sondern <em>Korrelate</em> davon</li>
+          <li>z.&nbsp;B. „wie wahrscheinlich ist dieser Text?“ statt „ist er wahr?“</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-bottom:0">
+      Marks &amp; Tegmark lösen das, indem sie <b>saubere, einfache, eindeutige</b> Datensätze bauen und
+      <b>drei unabhängige Beweislinien</b> kombinieren: Visualisierung, Transfer, Kausalität.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     2 · VEKTOREN & RICHTUNGEN (Prerequisite)
+     ═══════════════════════════════════════════════════════════ -->
+<section id="vektor" class="reveal">
+  <div class="sec-tag">02 · Grundlage A</div>
+  <h2>Was heißt „ein Merkmal ist eine Richtung“?</h2>
+  <p>
+    Alles, was ein Sprachmodell „denkt“, ist am Ende eine lange Liste von Zahlen — ein <b>Vektor</b>.
+    Bei LLaMA-2-13B sind das 5120 Zahlen pro Wort und pro Schicht. Diese Liste ist ein Punkt in einem
+    Raum mit 5120 Achsen. Das kann man sich nicht vorstellen — aber zum Glück muss man das auch nicht.
+  </p>
+  <p>
+    Die zentrale Idee heißt <b>lineare Repräsentation</b>: Ein Konzept (z.&nbsp;B. „Westafrika“, „Basketball“,
+    oder eben „wahr“) entspricht nicht einem einzelnen Neuron, sondern einer <b>Richtung</b> im Raum —
+    also einer bestimmten Mischung aus vielen Neuronen. Spiel es mit 2 Dimensionen durch:
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Richtung &amp; Skalarprodukt</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Richtung <span class="val" id="dirV">30°</span></label>
+          <input type="range" id="dirS" min="0" max="360" step="1" value="30">
+        </div>
+        <div class="ctrl">
+          <label>Punkt x — Winkel <span class="val" id="ptAV">75°</span></label>
+          <input type="range" id="ptAS" min="0" max="360" step="1" value="75">
+        </div>
+        <div class="ctrl">
+          <label>Punkt x — Länge <span class="val" id="ptRV">2.0</span></label>
+          <input type="range" id="ptRS" min="0.2" max="3" step="0.05" value="2">
+        </div>
+        <label class="switch"><input type="checkbox" id="showProj" checked> Projektion zeigen</label>
+        <label class="switch"><input type="checkbox" id="showPerp" checked> Trennlinie (⊥ θ) zeigen</label>
+      </div>
+      <div class="cv-host"><canvas id="dotCv" width="760" height="420"></canvas></div>
+    </div>
+    <div class="readout" id="dotOut" style="margin-top:12px"></div>
+  </div>
+
+  <p>
+    Das Skalarprodukt <code>θ·x</code> misst, <b>wie weit x in Richtung θ liegt</b>. Ist es positiv →
+    eine Seite. Negativ → die andere Seite. Die Grenze (<code>θ·x = 0</code>) ist genau die Linie
+    senkrecht zu θ. In 5120 Dimensionen heißt diese „Linie“ dann <b>Hyperebene</b> — aber die Mathematik
+    bleibt exakt dieselbe.
+  </p>
+
+  <div class="card tight">
+    <div class="card-title">◆ Die eine Formel, die du brauchst</div>
+    <div class="math-block" id="fmlDot"></div>
+    <p style="font-size:.86rem; margin-bottom:0">
+      Mehr nicht. Eine <b>lineare Sonde</b> (engl. <em>linear probe</em>) ist nichts anderes als:
+      Skalarprodukt bilden, Vorzeichen ablesen. Die ganze Kunst besteht darin, das richtige θ zu finden.
+    </p>
+  </div>
+
+  <h3>Von 5120 Dimensionen auf 2: die Schatten-Metapher</h3>
+  <p>
+    Um hochdimensionale Punktwolken zu <em>sehen</em>, projiziert man sie auf eine Ebene — wie ein Schatten.
+    Drehe das 3D-Objekt unten und beobachte, wie unterschiedlich informativ die Schatten sind.
+    Genau dieses Problem löst später die <b>Hauptkomponentenanalyse (PCA)</b>: Sie sucht automatisch
+    den Blickwinkel mit dem aussagekräftigsten Schatten.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Projektion = Schatten</div>
+    <div class="grid-side-r">
+      <div class="cv-host"><canvas id="shadowCv" width="800" height="420"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Drehung horizontal <span class="val" id="rotYV">35°</span></label>
+          <input type="range" id="rotYS" min="0" max="360" step="1" value="35">
+        </div>
+        <div class="ctrl">
+          <label>Drehung vertikal <span class="val" id="rotXV">20°</span></label>
+          <input type="range" id="rotXS" min="-80" max="80" step="1" value="20">
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="shadowBest">Bester Blickwinkel</button>
+          <button class="sm" id="shadowWorst">Schlechtester</button>
+        </div>
+        <div class="readout" id="shadowOut"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note key">
+    <b>Merke:</b> Wenn man aus der „falschen“ Richtung schaut, fallen wahre und falsche Punkte
+    übereinander — obwohl sie im Original klar getrennt sind. Die Trennung existiert, man sieht sie nur nicht.
+    Das ist der Grund, warum das Paper so viel Mühe in gute Projektionen steckt.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     3 · IM LLM
+     ═══════════════════════════════════════════════════════════ -->
+<section id="llm" class="reveal">
+  <div class="sec-tag">03 · Grundlage B</div>
+  <h2>Wo genau im Modell messen wir eigentlich?</h2>
+  <p>
+    Ein Transformer verarbeitet einen Satz in <b>Schichten</b> (Layer). Jedes Token (ungefähr: jedes Wort)
+    hat in jeder Schicht einen eigenen Vektor. Dieser Vektor heißt <b>Residual Stream</b> — man kann ihn
+    sich als „Förderband“ vorstellen, auf das jede Schicht ihre Beiträge <em>addiert</em>.
+  </p>
+  <p>
+    Also: Aktivierung = <code>h<sub>i,ℓ</sub></code>, wobei <code>i</code> die Token-Position und
+    <code>ℓ</code> die Schicht ist. Klick unten auf ein Feld und sieh, was dort passiert.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Das Token × Layer-Gitter</div>
+    <div class="cv-host"><canvas id="gridCv" width="1080" height="400"></canvas></div>
+    <div class="legend" style="margin-top:10px">
+      <span><span class="dot" style="background:var(--accent)"></span>Residual Stream</span>
+      <span><span class="dot" style="background:var(--accent-2)"></span>Attention: liest von links</span>
+      <span><span class="dot" style="background:var(--warn)"></span>ausgewählt</span>
+    </div>
+    <div class="readout" id="gridOut" style="margin-top:10px"></div>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="sm" id="gridFlow">Informationsfluss animieren</button>
+      <button class="sm" id="gridReset">Zurücksetzen</button>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="stat"><div class="big">32 / 40 / 80</div><div class="lbl">Layer bei 7B / 13B / 70B</div></div>
+    <div class="stat"><div class="big">4096–8192</div><div class="lbl">Zahlen pro Vektor</div></div>
+    <div class="stat"><div class="big">1</div><div class="lbl">Richtung, die wir suchen</div></div>
+  </div>
+
+  <div class="note">
+    <b>Wichtiges Detail aus dem Paper:</b> Die Autoren nehmen die Aktivierung über dem
+    <b>Satzendzeichen</b> (dem Punkt), nicht über dem letzten inhaltlichen Wort. Grund: über dem letzten
+    Wort dominieren oft Merkmale des Worts selbst (z.&nbsp;B. ein Cluster für alle Sätze, die auf „China“
+    enden — unabhängig davon, ob sie wahr sind). Der Punkt wirkt dagegen wie eine <b>Zusammenfassung</b>
+    des ganzen Satzes.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     4 · DATENSÄTZE
+     ═══════════════════════════════════════════════════════════ -->
+<section id="data" class="reveal">
+  <div class="sec-tag">04 · Die Daten</div>
+  <h2>Saubere Sätze — der unterschätzte Kern des Papers</h2>
+  <p>
+    Frühere Arbeiten scheiterten teils daran, dass ihre Sätze <em>kompliziert, verwirrend oder
+    absichtlich irreführend</em> waren. Marks &amp; Tegmark machen das Gegenteil: extrem einfache,
+    eindeutige Aussagen nach festen Schablonen. Damit misst man <b>Repräsentation</b> statt
+    <b>Fähigkeit</b>.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Datensatz-Generator</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Datensatz</label>
+          <select id="dsSel"></select>
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="dsRoll">Neue Beispiele ⟳</button>
+        </div>
+        <div class="readout" id="dsInfo"></div>
+      </div>
+      <div>
+        <div id="dsOut"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die drei Bausteine der Vielfalt</h3>
+  <div class="grid3">
+    <div class="card tight">
+      <h4 style="color:var(--accent)">Thematisch</h4>
+      <p style="font-size:.85rem;margin:0">Städte · Spanisch-Vokabeln · Zahlenvergleiche · Firmen · Alltagswissen</p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--accent-2)">Strukturell</h4>
+      <p style="font-size:.85rem;margin:0">Positiv · Negation („nicht“) · Konjunktion („und“) · Disjunktion („oder“)</p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--warn)">Kontrolliert</h4>
+      <p style="font-size:.85rem;margin:0">Innerhalb eines Datensatzes: identische Satzschablone. Zwischen den Datensätzen: maximal verschieden.</p>
+    </div>
+  </div>
+
+  <h3>Die raffinierteste Idee: der <code>likely</code>-Datensatz</h3>
+  <p>
+    Ein naheliegender Einwand: Vielleicht findet die Sonde gar nicht „wahr“, sondern nur
+    <b>„klingt plausibel“</b>. Bei normalen Fakten fallen beide zusammen. Deshalb bauen die Autoren
+    zwei Fallen:
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Wahrheit vs. Wahrscheinlichkeit</div>
+    <div class="grid-side-r">
+      <div id="corrPlot" style="width:100%;height:400px"></div>
+      <div>
+        <div class="ctrl">
+          <label>Datensatz</label>
+          <select id="corrSel">
+            <option value="cities">cities (r = +0.85)</option>
+            <option value="sp">sp_en_trans (r = +0.95)</option>
+            <option value="negcities">neg_cities (r = −0.63)</option>
+            <option value="negsp">neg_sp_en_trans (r = −0.89)</option>
+          </select>
+        </div>
+        <div class="readout" id="corrOut"></div>
+      </div>
+    </div>
+    <div class="note warnb" style="margin-bottom:0">
+      <b>Falle 1 — Negationen.</b> Bei „Die Stadt Paris ist nicht in ___“ hält das Modell „Frankreich“
+      für die wahrscheinlichste Fortsetzung — obwohl der Satz dann <b>falsch</b> ist. Wahrscheinlichkeit und
+      Wahrheit zeigen in entgegengesetzte Richtungen.<br><br>
+      <b>Falle 2 — <code>likely</code>.</b> 10.000 Textstücke ohne jeden Wahrheitsgehalt, bei denen das
+      letzte Token entweder das wahrscheinlichste oder das 100.-wahrscheinlichste ist. Eine Sonde, die nur
+      „Plausibilität“ misst, wird hier perfekt — und muss anderswo versagen.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     5 · PATCHING
+     ═══════════════════════════════════════════════════════════ -->
+<section id="patch" class="reveal">
+  <div class="sec-tag">05 · Schritt 1 der Untersuchung</div>
+  <h2>Wo sitzt die Wahrheit? Aktivierungs-Patching</h2>
+  <p>
+    Bevor man etwas analysiert, muss man wissen, <b>wo</b> man suchen soll. Die Methode heißt
+    <b>Patching</b> und ist im Kern ein Transplantations-Experiment:
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Das Rezept in 4 Schritten</div>
+    <ol style="font-size:.92rem">
+      <li>Nimm zwei fast identische Prompts: <span class="pill t">p<sub>T</sub></span> endet mit einem wahren Satz, <span class="pill f">p<sub>F</sub></span> mit einem falschen.</li>
+      <li>Lass das Modell über <span class="pill t">p<sub>T</sub></span> laufen und <b>speichere alle</b> <code>h<sub>i,ℓ</sub></code>.</li>
+      <li>Lass das Modell über <span class="pill f">p<sub>F</sub></span> laufen, aber <b>tausche genau eine</b> Aktivierung gegen die gespeicherte aus.</li>
+      <li>Miss: Wie stark verschiebt sich <code>log P(TRUE) − log P(FALSE)</code>? Groß = diese Stelle ist kausal wichtig.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Patching-Labor</div>
+    <p style="font-size:.88rem">
+      Klick auf eine Zelle in der Heatmap: Du transplantierst damit genau diese Aktivierung
+      von <span class="pill t">Toronto&nbsp;…&nbsp;Kanada</span> nach <span class="pill f">Chicago&nbsp;…&nbsp;Kanada</span>.
+    </p>
+    <div class="grid-side-r">
+      <div class="cv-host"><canvas id="patchCv" width="920" height="420"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Modell</label>
+          <select id="patchModel">
+            <option value="13b">LLaMA-2-13B (40 Layer)</option>
+            <option value="7b">LLaMA-2-7B (32 Layer)</option>
+            <option value="70b">LLaMA-2-70B (80 Layer)</option>
+          </select>
+        </div>
+        <label class="switch"><input type="checkbox" id="patchGroups" checked> Gruppen (a)(b)(c) markieren</label>
+        <div class="readout" id="patchOut"></div>
+      </div>
+    </div>
+    <div class="legend" style="margin-top:8px">
+      <span><span class="dot" style="background:#0b1220;border:1px solid #243352"></span>kein Effekt</span>
+      <span><span class="dot" style="background:#60a5fa"></span>mittel</span>
+      <span><span class="dot" style="background:#fbbf24"></span>stark</span>
+      <span><span class="dot" style="background:#fff"></span>maximal</span>
+    </div>
+  </div>
+
+  <h3>Das Ergebnis: drei Hotspots</h3>
+  <div class="grid3">
+    <div class="card tight">
+      <h4 style="color:var(--accent)">(a) früh, über dem Subjekt</h4>
+      <p style="font-size:.85rem;margin:0">Kodiert vermutlich einfach „Chicago“ bzw. „Toronto“ — also das Faktenwissen zur Stadt.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--true)">(b) mittlere Layer, über dem Punkt ⭐</h4>
+      <p style="font-size:.85rem;margin:0"><b>Der interessante Ort.</b> Position = Satzende ⇒ betrifft den <em>ganzen</em> Satz. Kausal wirksam ⇒ enthält die Entscheidung. Hypothese: <b>hier steht der Wahrheitswert</b>.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--warn)">(c) spät, letzte Position</h4>
+      <p style="font-size:.85rem;margin:0">Schon die fertige Vorhersage: Entschlüsselt man diese Vektoren, stehen oben Tokens wie „true“, „True“, „TRUE“.</p>
+    </div>
+  </div>
+
+  <div class="note key">
+    <b>Zusammenfassungs-Verhalten:</b> Information über einen ganzen Teilsatz sammelt sich über dem
+    abschließenden Satzzeichen. Bei 7B und 13B zuverlässig; bei 70B kontextabhängiger. Deshalb arbeitet
+    der Rest des Papers mit der <b>am weitesten hinten liegenden Aktivierung aus Gruppe (b)</b> —
+    bei 13B konkret: <b>Layer 15 über dem Punkt</b>.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     6 · PCA
+     ═══════════════════════════════════════════════════════════ -->
+<section id="pca" class="reveal">
+  <div class="sec-tag">06 · Grundlage C + Schritt 2</div>
+  <h2>PCA: den besten Blickwinkel automatisch finden</h2>
+  <p>
+    Wir haben jetzt die richtige Stelle. Dort liegen tausende Punkte in 5120 Dimensionen.
+    <b>PCA</b> (Hauptkomponentenanalyse) sucht die Richtung, entlang derer die Punkte am
+    <b>weitesten gestreut</b> sind — das ist PC1. Dann die beste Richtung senkrecht dazu — PC2.
+    Zusammen ergeben sie die informativste 2D-Leinwand.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · PCA live mitdrehen</div>
+    <div class="grid-side-r">
+      <div class="cv-host"><canvas id="pcaCv" width="820" height="440"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Deine Testrichtung <span class="val" id="pcaAngV">0°</span></label>
+          <input type="range" id="pcaAngS" min="0" max="180" step="1" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Streckung der Wolke <span class="val" id="pcaStrV">2.4</span></label>
+          <input type="range" id="pcaStrS" min="1" max="4" step="0.05" value="2.4">
+        </div>
+        <div class="ctrl">
+          <label>Drehung der Wolke <span class="val" id="pcaRotV">30°</span></label>
+          <input type="range" id="pcaRotS" min="0" max="180" step="1" value="30">
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="pcaSnap">Auf PC1 springen</button>
+        </div>
+        <div class="readout" id="pcaOut"></div>
+      </div>
+    </div>
+    <p style="font-size:.86rem;margin:12px 0 0">
+      Unten siehst du die <b>Varianz der Projektion</b> als Funktion deines Winkels. PCA = finde das Maximum.
+    </p>
+    <div class="cv-host" style="margin-top:8px"><canvas id="pcaVarCv" width="1080" height="150"></canvas></div>
+  </div>
+
+  <div class="note">
+    <b>Achtung, wichtige Feinheit:</b> PCA weiß <em>nichts</em> von den Labels „wahr“/„falsch“.
+    Sie sucht nur maximale Streuung. Wenn trotzdem genau entlang PC1 die wahren von den falschen
+    Sätzen getrennt liegen, ist das ein <b>starkes, unvoreingenommenes Indiz</b>: Wahrheit ist eines der
+    dominantesten Merkmale im Vektor. Das ist Beweislinie 1 des Papers.
+  </div>
+
+  <h3>Abbildung 1 des Papers — nachgebaut</h3>
+  <p>
+    Vier Datensätze, LLaMA-2-70B, projiziert auf die jeweils eigenen Top-2-PCs. Wechsle durch und
+    beobachte die saubere lineare Trennung.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · PCA-Galerie (Fig. 1)</div>
+    <div class="btnrow" id="fig1Btns"></div>
+    <div id="fig1Plot" style="width:100%;height:470px"></div>
+    <div class="readout" id="fig1Out" style="margin-top:10px"></div>
+  </div>
+
+  <h3>Wann entsteht diese Struktur? Über die Layer hinweg</h3>
+  <p>
+    In den ersten Schichten ist alles Matsch. Dann, in den frühen mittleren Schichten, klappt die
+    Struktur <b>plötzlich auf</b>. Für logisch komplexere Sätze (Konjunktionen) passiert das <b>später</b> —
+    das Modell baut Abstraktion hierarchisch auf.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Layer-Scrubber (Fig. 7)</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Layer <span class="val" id="layV">15</span></label>
+          <input type="range" id="layS" min="1" max="30" step="1" value="15">
+        </div>
+        <div class="ctrl">
+          <label>Datensatz</label>
+          <select id="laySel">
+            <option value="cities">cities (einfach)</option>
+            <option value="larger">larger_than (einfach)</option>
+            <option value="conj">cities_cities_conj (komplex)</option>
+            <option value="sp">sp_en_trans (einfach)</option>
+          </select>
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="layPlay">▶ Durch Layer laufen</button>
+        </div>
+        <div class="readout" id="layOut"></div>
+      </div>
+      <div class="cv-host"><canvas id="layCv" width="760" height="400"></canvas></div>
+    </div>
+    <div class="note key" style="margin-bottom:0">
+      <b>Beobachtung aus Anhang C:</b> Bei <code>cities</code> und <code>larger_than</code> ist die
+      Struktur schon ab Layer ~7–10 sichtbar. Bei <code>cities_cities_conj</code> („Es ist sowohl der Fall,
+      dass … und dass …“) passiert das erst deutlich später. <b>Abstraktion wird hierarchisch aufgebaut.</b>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     7 · GEOMETRIE / AUSRICHTUNG
+     ═══════════════════════════════════════════════════════════ -->
+<section id="geo" class="reveal">
+  <div class="sec-tag">07 · Das überraschendste Ergebnis</div>
+  <h2>Zeigen alle Datensätze in dieselbe Richtung?</h2>
+  <p>
+    Jetzt wird es interessant. Jeder Datensatz hat <em>seine eigene</em> Trennachse.
+    Die entscheidende Frage: <b>Sind diese Achsen dieselbe?</b> Die Antwort des Papers ist
+    differenziert — „oft, aber nicht immer“. Und genau diese Ausnahmen verraten am meisten.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Zwei Datensätze, zwei Achsen</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Konstellation</label>
+          <select id="geoSel">
+            <option value="aligned">① Ausgerichtet (gleiche Richtung)</option>
+            <option value="anti">② Antipodal (entgegengesetzt)</option>
+            <option value="ortho">③ Orthogonal (senkrecht)</option>
+            <option value="free">④ Frei einstellbar</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Winkel zwischen den Achsen <span class="val" id="geoAngV">0°</span></label>
+          <input type="range" id="geoAngS" min="0" max="180" step="1" value="0">
+        </div>
+        <label class="switch"><input type="checkbox" id="geoProbe" checked> Gemeinsame Sonde testen</label>
+        <div class="readout" id="geoOut"></div>
+      </div>
+      <div class="cv-host"><canvas id="geoCv" width="760" height="430"></canvas></div>
+    </div>
+  </div>
+
+  <h3>Fall ②: Antipodal — und wie Skalierung das heilt</h3>
+  <p>
+    <code>larger_than</code> und <code>smaller_than</code>. Bei <b>7B</b> gruppieren sich die Sätze nach
+    Oberflächenmerkmalen (z.&nbsp;B. alle Sätze mit dem Token „eighty“ liegen zusammen — Wahrheit spielt
+    keine Rolle). Bei <b>13B</b> trennen beide Datensätze sauber, aber in <b>entgegengesetzte</b> Richtungen.
+    Bei <b>70B</b> verschmelzen sie zu <b>einer gemeinsamen</b> Richtung.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Skalierungs-Schieber (Fig. 3b)</div>
+    <div class="ctrl" style="max-width:420px">
+      <label>Modellgröße <span class="val" id="scaleV">7B</span></label>
+      <input type="range" id="scaleS" min="0" max="2" step="1" value="0">
+    </div>
+    <div id="scalePlot" style="width:100%;height:440px"></div>
+    <div class="readout" id="scaleOut" style="margin-top:10px"></div>
+  </div>
+
+  <div class="note q">
+    <b>Die Interpretation der Autoren:</b> Kleine Modelle repräsentieren <em>Oberflächenmerkmale</em>.
+    Große Modelle repräsentieren <em>abstrakte Konzepte</em>, die über strukturell und thematisch
+    verschiedene Eingaben hinweg dasselbe Gemeinsame erfassen — potenziell inklusive „Wahrheit“.
+    Dazwischen liegen <b>mittlere Abstraktionsstufen</b> wie „korrekter Faktenabruf“ oder
+    „enge Assoziation“ (Beijing ↔ China).
+  </div>
+
+  <h3>Fall ③: Orthogonal — das Negations-Rätsel</h3>
+  <p>
+    <code>cities</code> vs. <code>neg_cities</code>: dieselben Sätze, nur mit „nicht“ eingefügt. Trotzdem
+    stehen die Trennachsen bei Layer 12 fast <b>senkrecht</b> aufeinander. Über die Layer hinweg passiert
+    etwas Bemerkenswertes: erst antipodal → dann orthogonal → schließlich ausgerichtet.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Die Rotation über die Layer (Fig. 8)</div>
+    <div class="grid-side-r">
+      <div class="cv-host"><canvas id="rotCv" width="800" height="430"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Layer <span class="val" id="rotLV">6</span></label>
+          <input type="range" id="rotLS" min="3" max="20" step="1" value="6">
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="rotPlay">▶ Animieren</button>
+        </div>
+        <div class="readout" id="rotOut"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die Erklärung: zwei konkurrierende Merkmale</h3>
+  <p>
+    Das Paper liefert ein elegantes Modell. Angenommen es gibt zwei linear repräsentierte Merkmale:
+  </p>
+  <ul>
+    <li><b>f⁺ = „Wahrheit“</b> — korreliert auf <em>beiden</em> Datensätzen positiv mit dem Label.</li>
+    <li><b>f⁻ = „enge Assoziation“</b> — korreliert auf <code>cities</code> positiv (Paris↔Frankreich kommt in wahren Sätzen vor), auf <code>neg_cities</code> <em>negativ</em> (Paris↔Frankreich kommt in <em>falschen</em> Sätzen vor).</li>
+  </ul>
+  <p>Je nachdem, welches Merkmal <b>salienter</b> (stärker gestreut) ist, sieht die PCA anders aus:</p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Salienz-Mischer</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Salienz von f⁺ („Wahrheit“) <span class="val" id="salTV">1.0</span></label>
+          <input type="range" id="salTS" min="0" max="3" step="0.05" value="1">
+        </div>
+        <div class="ctrl">
+          <label>Salienz von f⁻ („Assoziation“) <span class="val" id="salAV">1.0</span></label>
+          <input type="range" id="salAS" min="0" max="3" step="0.05" value="1">
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="salA">nur f⁺</button>
+          <button class="sm" id="salB">nur f⁻</button>
+          <button class="sm" id="salC">beide</button>
+        </div>
+        <div class="readout" id="salOut"></div>
+      </div>
+      <div class="cv-host"><canvas id="salCv" width="760" height="430"></canvas></div>
+    </div>
+    <div class="note" style="margin-bottom:0">
+      <b>Daraus folgt eine Vorhersage:</b> Trainiert man eine Sonde auf <code>cities</code> <b>∪</b>
+      <code>neg_cities</code>, dann hebt sich f⁻ im Mittel <em>auf</em> (positiv + negativ = 0) und
+      f⁺ bleibt übrig. Die Sonde sollte also <b>besser generalisieren</b>. Genau das wird in §5 getestet.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     8 · SONDEN
+     ═══════════════════════════════════════════════════════════ -->
+<section id="probe" class="reveal">
+  <div class="sec-tag">08 · Die Werkzeuge</div>
+  <h2>Drei Wege, eine Richtung zu finden</h2>
+  <p>
+    Bisher haben wir nur <em>geschaut</em>. Jetzt bauen wir einen echten Klassifikator — eine
+    <b>Sonde</b>. Sie bekommt den Aktivierungsvektor und soll „wahr“ oder „falsch“ sagen.
+    Das Paper vergleicht drei Methoden.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Sonden-Werkstatt</div>
+    <div class="grid-side">
+      <div>
+        <h4>Methode</h4>
+        <div class="btnrow" id="probeBtns">
+          <button class="sm on" data-m="lr">Logistische Regression</button>
+          <button class="sm" data-m="mm">Mass-Mean</button>
+          <button class="sm" data-m="ccs">CCS (unüberwacht)</button>
+        </div>
+        <div class="ctrl">
+          <label>Störmerkmal f — Stärke <span class="val" id="prbFV">1.6</span></label>
+          <input type="range" id="prbFS" min="0" max="3" step="0.05" value="1.6">
+        </div>
+        <div class="ctrl">
+          <label>Winkel zwischen θ<sub>t</sub> und θ<sub>f</sub> <span class="val" id="prbAV">55°</span></label>
+          <input type="range" id="prbAS" min="15" max="90" step="1" value="55">
+        </div>
+        <div class="ctrl">
+          <label>Rauschen <span class="val" id="prbNV">0.35</span></label>
+          <input type="range" id="prbNS" min="0.05" max="1" step="0.01" value="0.35">
+        </div>
+        <label class="switch"><input type="checkbox" id="prbShowAll"> Alle Methoden gleichzeitig</label>
+        <label class="switch"><input type="checkbox" id="prbWhite"> Σ⁻¹-Korrektur (IID-Version)</label>
+      </div>
+      <div class="cv-host"><canvas id="prbCv" width="760" height="450"></canvas></div>
+    </div>
+    <div class="readout" id="prbOut" style="margin-top:12px"></div>
+  </div>
+
+  <h3>Warum logistische Regression daneben liegen kann (Fig. 4)</h3>
+  <p>
+    LR sucht die <b>Trennlinie mit maximalem Abstand</b> zu beiden Klassen. Das ist für
+    Klassifikation optimal — aber die Normale dieser Linie ist <b>nicht</b> notwendigerweise die
+    Merkmalsrichtung! Wenn ein zweites Merkmal θ<sub>f</sub> schräg zu θ<sub>t</sub> liegt, kippt LR die
+    Linie, um „Interferenz“ zu minimieren. Mass-Mean dagegen fragt nur:
+    <b>wohin zeigt der Pfeil vom Mittelwert der Falschen zum Mittelwert der Wahren?</b>
+  </p>
+
+  <div class="grid2">
+    <div class="card tight">
+      <div class="card-title">Logistische Regression</div>
+      <div class="math-block" id="fmlLR"></div>
+      <p style="font-size:.85rem;margin:0">Optimiert iterativ. Findet die Max-Margin-Trennlinie. Gut für Genauigkeit, kann die Merkmalsrichtung verfehlen.</p>
+    </div>
+    <div class="card tight">
+      <div class="card-title">Mass-Mean · <span class="pill n">neu im Paper</span></div>
+      <div class="math-block" id="fmlMM"></div>
+      <p style="font-size:.85rem;margin:0"><b>Keine Optimierung.</b> Zwei Mittelwerte abziehen — fertig. Das ist der „Differenz-der-Mittelwerte“-Vektor.</p>
+    </div>
+  </div>
+
+  <h3>Die Σ⁻¹-Korrektur: Entzerren statt Verkippen</h3>
+  <p>
+    Für Daten aus derselben Verteilung (IID) kann man es noch besser machen:
+    <code>p(x) = σ(θ<sub>mm</sub><sup>T</sup> Σ⁻¹ x)</code>. Das ist exakt die klassische
+    <b>Lineare Diskriminanzanalyse</b> (Fisher 1936). Anschaulich (Anhang E): Man <b>weißt</b>
+    („whitening“) zuerst die Punktwolke — macht sie rund —, projiziert dort auf θ<sub>mm</sub>,
+    und transformiert zurück.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Whitening (Fig. 12)</div>
+    <div class="grid-side-r">
+      <div class="cv-host"><canvas id="whCv" width="820" height="400"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Whitening-Grad <span class="val" id="whV">0 %</span></label>
+          <input type="range" id="whS" min="0" max="1" step="0.01" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Korrelation der Merkmale <span class="val" id="whCV">0.75</span></label>
+          <input type="range" id="whCS" min="0" max="0.95" step="0.01" value="0.75">
+        </div>
+        <div class="readout" id="whOut"></div>
+      </div>
+    </div>
+    <div class="note" style="margin-bottom:0">
+      <b>Der entscheidende Vorteil:</b> LR liefert <em>nur</em> eine Trennlinie. Mass-Mean liefert
+      <em>beides</em>: eine gute Trennlinie (per Σ⁻¹) <b>und</b> einen Kandidaten für die echte
+      Merkmalsrichtung θ<sub>mm</sub>, der <em>nicht</em> senkrecht auf der Trennlinie stehen muss.
+      Für die Kausal-Experimente in §9 ist genau das der Knackpunkt.
+    </div>
+  </div>
+
+  <div class="card tight">
+    <div class="card-title">◆ Theorem F.1 — anschaulich</div>
+    <p style="font-size:.88rem">
+      Für gaußverteilte Daten mit gemeinsamer Kovarianz Σ gilt: <b>θ<sub>LR</sub> ∝ Σ⁻¹ θ</b>.
+      Also liefern LR und IID-Mass-Mean im Grenzfall unendlich vieler Daten <b>dieselbe Trennlinie</b>.
+      Der Unterschied ist nicht die Klassifikation — sondern dass Mass-Mean zusätzlich θ<sub>mm</sub> selbst kennt.
+    </p>
+    <div class="math-block" id="fmlThm"></div>
+  </div>
+
+  <h3>CCS: Wahrheit finden ohne Labels</h3>
+  <p>
+    <b>Contrast-Consistent Search</b> (Burns et al. 2023) braucht <em>keine</em> Labels. Es nutzt nur
+    ein logisches Prinzip: für ein Satzpaar (s, ¬s) muss gelten <code>p(s) + p(¬s) ≈ 1</code> —
+    und die beiden sollen weit auseinanderliegen. Daraus baut man eine Verlustfunktion.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · CCS-Prinzip</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Sondenrichtung <span class="val" id="ccsAV">20°</span></label>
+          <input type="range" id="ccsAS" min="0" max="180" step="1" value="20">
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="ccsOpt">⚡ Verlust minimieren</button>
+        </div>
+        <div class="readout" id="ccsOut"></div>
+      </div>
+      <div class="cv-host"><canvas id="ccsCv" width="760" height="400"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     9 · MASS-MEAN / GENERALISIERUNG
+     ═══════════════════════════════════════════════════════════ -->
+<section id="mm" class="reveal">
+  <div class="sec-tag">09 · Beweislinie 2</div>
+  <h2>Transfer: auf A trainieren, auf B testen</h2>
+  <p>
+    Das ist der eigentliche Härtetest. Eine Sonde, die nur <em>Korrelate</em> von Wahrheit findet,
+    bricht zusammen, sobald man den Datensatz wechselt. Eine Sonde, die echte Wahrheit findet,
+    überlebt den Wechsel.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Generalisierungs-Matrix (Fig. 9/10/11)</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Modell <span class="val" id="genMV">70B</span></label>
+          <input type="range" id="genMS" min="0" max="2" step="1" value="2">
+        </div>
+        <p style="font-size:.84rem">
+          Spalten = <b>Trainingsdaten + Methode</b>. Zeilen = <b>Testdatensatz</b>.
+          Fahr über eine Zelle für den genauen Wert.
+        </p>
+        <div class="legend">
+          <span><span class="dot" style="background:#7f1d3f"></span>&lt; 50 % (schlechter als Raten)</span>
+          <span><span class="dot" style="background:#1e3a5f"></span>~ 70 %</span>
+          <span><span class="dot" style="background:#34d399"></span>&gt; 95 %</span>
+        </div>
+        <div class="readout" id="genOut"></div>
+      </div>
+      <div class="cv-host"><canvas id="genCv" width="820" height="520"></canvas></div>
+    </div>
+  </div>
+
+  <h3>Die vier Kernbefunde</h3>
+  <div class="grid2">
+    <div class="card tight">
+      <h4 style="color:var(--true)">① Gegensätze helfen</h4>
+      <p style="font-size:.87rem;margin:0">
+        <code>cities</code> → <code>cities + neg_cities</code> verbessert den Transfer deutlich,
+        v.&nbsp;a. auf <code>neg_sp_en_trans</code>. Training mit „nicht“ hilft bei anderen Negationen.
+        Auch <code>larger_than + smaller_than</code> hilft — obwohl beide strukturell völlig anders
+        sind als die Testsätze.
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--accent)">② Größer = besser generalisierbar</h4>
+      <p style="font-size:.87rem;margin:0">
+        Nicht selbstverständlich! Dass ein großes Modell selbst besser klassifiziert, ist klar.
+        Dass <em>lineare Sonden darauf</em> besser übertragen, ist ein eigenständiger Befund.
+        Beispiel: Training auf <code>larger_than + smaller_than</code> → <b>&gt; 95 %</b> auf
+        <code>sp_en_trans</code>, egal mit welcher Methode.
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--accent-2)">③ Alle Methoden ähnlich genau</h4>
+      <p style="font-size:.87rem;margin:0">
+        Mass-Mean ist bei 7B schwächer, aber ab 13B gleichauf mit LR und CCS —
+        <b>ohne jede Optimierung</b>. Der Unterschied zeigt sich erst bei der Kausalität (§10).
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--warn)">④ <code>likely</code> scheitert</h4>
+      <p style="font-size:.87rem;margin:0">
+        Die „Plausibilitäts-Sonde“ ist gut auf <code>sp_en_trans</code> (r&nbsp;=&nbsp;.95) — aber
+        <b>schlechter als Raten</b> auf Datensätzen mit negativer Korrelation. Also:
+        <b>LLMs repräsentieren wahrheitsrelevante Information jenseits bloßer Plausibilität.</b>
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Die <code>likely</code>-Falle</div>
+    <div class="grid-side-r">
+      <div id="likelyPlot" style="width:100%;height:380px"></div>
+      <div>
+        <p style="font-size:.86rem">
+          Blau: eine Sonde, die nur <b>Plausibilität</b> misst. Grün: eine echte <b>Wahrheits</b>-Sonde.
+          Auf Datensätzen, wo beide korrelieren, sind sie ununterscheidbar. Auf negierten Datensätzen
+          fällt die Plausibilitäts-Sonde unter 50 %.
+        </p>
+        <div class="readout" id="likelyOut"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     10 · KAUSALITÄT
+     ═══════════════════════════════════════════════════════════ -->
+<section id="causal" class="reveal">
+  <div class="sec-tag">10 · Beweislinie 3</div>
+  <h2>Der Lackmustest: das Modell umschalten</h2>
+  <p>
+    Korrelation reicht nicht. Eine Richtung könnte Wahrheit perfekt <em>vorhersagen</em>, ohne dass
+    das Modell sie <em>benutzt</em>. Der härteste Test: Wir <b>addieren θ</b> auf die Aktivierung
+    eines falschen Satzes — und schauen, ob das Modell danach „TRUE“ ausgibt.
+  </p>
+
+  
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Das Interventions-Experiment</div>
+    <div class="grid-side-r">
+      <div class="cv-host"><canvas id="intCv" width="860" height="440"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <label>Richtung θ von <span class="val" id="intSrcV">MM</span></label>
+          <select id="intProbe">
+            <option value="mm">Mass-Mean (MM)</option>
+            <option value="lr">Logistische Regression (LR)</option>
+            <option value="ccs">CCS</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Stärke der Intervention α <span class="val" id="intAV">0.00</span></label>
+          <input type="range" id="intAS" min="-1.6" max="1.6" step="0.01" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Richtung</label>
+          <select id="intDir">
+            <option value="f2t">falsch → wahr (θ addieren)</option>
+            <option value="t2f">wahr → falsch (θ subtrahieren)</option>
+          </select>
+        </div>
+        <div class="btnrow">
+          <button class="sm" id="intNorm">α = 1 (normierter Schritt)</button>
+          <button class="sm" id="intZero">α = 0</button>
+        </div>
+        <div class="readout" id="intOut"></div>
+      </div>
+    </div>
+    <div class="note" style="margin-bottom:0">
+      <b>Die Normierung ist der Trick:</b> θ wird so skaliert, dass <code>p(µ₋ + θ) = p(µ₊)</code>.
+      Aus Sicht der Sonde verwandelt ein Schritt um θ also den <em>durchschnittlichen falschen</em> Satz
+      in den <em>durchschnittlichen wahren</em> Satz. Danach fragt man das Modell — und schaut,
+      ob es mitspielt.
+    </div>
+  </div>
+
+  <h3>Die Messgröße: Normalized Indirect Effect (NIE)</h3>
+  <p>
+    Man misst die Wahrscheinlichkeitsdifferenz <code>P(TRUE) − P(FALSE)</code> in vier Varianten
+    und setzt sie ins Verhältnis. Schieb unten die Balken, um zu sehen, wie der NIE entsteht.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · NIE-Rechner</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>PD₊ (echte wahre Sätze) <span class="val" id="pdpV">1.60</span></label>
+          <input type="range" id="pdpS" min="0.2" max="2.5" step="0.01" value="1.6">
+        </div>
+        <div class="ctrl">
+          <label>PD₋ (echte falsche Sätze) <span class="val" id="pdmV">-1.40</span></label>
+          <input type="range" id="pdmS" min="-2.5" max="-0.2" step="0.01" value="-1.4">
+        </div>
+        <div class="ctrl">
+          <label>PD₋* (falsch + θ) <span class="val" id="pdmsV">1.05</span></label>
+          <input type="range" id="pdmsS" min="-2.5" max="2.5" step="0.01" value="1.05">
+        </div>
+        <div class="math-block" id="fmlNIE"></div>
+      </div>
+      <div class="cv-host"><canvas id="nieCv" width="760" height="330"></canvas></div>
+    </div>
+    <div class="readout" id="nieOut" style="margin-top:12px"></div>
+  </div>
+
+  <h3>Tabelle 2 des Papers — zum Durchklicken</h3>
+  <p>
+    Trainiert auf verschiedenen Datensätzen, getestet auf <code>sp_en_trans</code> — also
+    <b>out-of-distribution</b>. Das ist der Unterschied zu früheren Arbeiten, die nur in-distribution
+    interveniert haben.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · NIE-Tabelle (Tab. 2)</div>
+    <div class="btnrow" id="nieTabBtns">
+      <button class="sm on" data-m="13b">LLaMA-2-13B</button>
+      <button class="sm" data-m="70b">LLaMA-2-70B</button>
+    </div>
+    <div id="nieBar" style="width:100%;height:470px"></div>
+    <div class="readout" id="nieTabOut" style="margin-top:10px"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card tight">
+      <h4 style="color:var(--true)">Kernbefund</h4>
+      <p style="font-size:.88rem;margin:0">
+        <b>Mass-Mean schlägt LR und CCS in 7 von 8 Bedingungen</b> — oft deutlich.
+        Und das, obwohl alle drei Methoden auf <code>sp_en_trans</code> fast <b>identische
+        Klassifikationsgenauigkeit</b> haben. Genauigkeit ≠ Kausalität.
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--warn)">Offene Rätsel (§7.1)</h4>
+      <p style="font-size:.88rem;margin:0">
+        Warum wirkt die MM-Richtung aus <code>likely</code> so gut (.70 / .68), obwohl diese Sonde
+        schlecht klassifiziert? Und warum hilft <code>cities + neg_cities</code> beim 70B-Modell
+        kausal <em>nicht</em>? Die Autoren sagen offen: wissen wir nicht.
+      </p>
+    </div>
+  </div>
+
+  <div class="note key">
+    <b>Warum das die stärkste Beweislinie ist:</b> Eine Sonde kann Wahrheit perfekt <em>vorhersagen</em>,
+    ohne dass das Modell diese Richtung <em>benutzt</em> (bloße Korrelation). Wenn aber das Addieren von θ
+    das Modell dazu bringt, einen falschen Satz als „TRUE“ zu labeln — <b>und zwar auf einem Datensatz,
+    den die Sonde nie gesehen hat</b> — dann ist θ Teil der tatsächlichen Berechnung.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     11 · ANTWORT
+     ═══════════════════════════════════════════════════════════ -->
+<section id="answer" class="reveal">
+  <div class="sec-tag">11 · Die Antwort</div>
+  <h2>Was ist nun die Antwort auf die gestellte Frage?</h2>
+  <p>
+    Erinnerung an §2 des Papers: <em>„Do LLMs have a unified representation of truth that spans
+    structurally and topically diverse data?“</em>
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Die Antwort in einem Satz</div>
+    <p style="font-size:1.08rem; color:var(--txt); max-width:none; margin-bottom:0">
+      <b style="color:var(--true)">Ja — ab ausreichender Modellgröße.</b> LLaMA-2 berechnet und
+      repräsentiert die Wahrheit bzw. Falschheit einfacher faktischer Aussagen <b>linear</b>, in einer
+      kleinen Gruppe von Hidden States über dem Satzende, und diese Richtung ist
+      <b>kausal an der Ausgabe beteiligt</b>. Bei kleinen Modellen findet man dagegen eher
+      Oberflächenmerkmale; die abstrakte, datensatzübergreifende Wahrheits-Richtung
+      <b>entsteht mit Skalierung</b>.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Der gesamte Argumentationsbogen</div>
+    <p style="font-size:.88rem">Klick dich durch die Beweiskette. Jeder Schritt schaltet den nächsten frei.</p>
+    <div class="cv-host"><canvas id="argCv" width="1080" height="330"></canvas></div>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="sm" id="argPrev">◀ zurück</button>
+      <button class="sm on" id="argNext">weiter ▶</button>
+      <button class="sm" id="argAll">alles zeigen</button>
+    </div>
+    <div class="readout" id="argOut" style="margin-top:10px"></div>
+  </div>
+
+  <h3>Was dabei neu erfunden wurde</h3>
+  <div class="grid3">
+    <div class="card tight">
+      <h4 style="color:var(--accent)">Mass-Mean Probing</h4>
+      <p style="font-size:.85rem;margin:0">Optimierungsfrei. Zwei Mittelwerte. Gleich genau wie LR/CCS, aber kausal viel wirksamer. Mit Σ⁻¹-Korrektur für IID-Daten.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--accent-2)">Saubere Datensätze</h4>
+      <p style="font-size:.85rem;margin:0">12 Datensätze, kontrollierte strukturelle (nicht/und/oder) und thematische Vielfalt — plus der <code>likely</code>-Kontrolldatensatz.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--warn)">OOD-Kausaltest</h4>
+      <p style="font-size:.85rem;margin:0">Erstmals wird die Intervention auf einem <em>anderen</em> Datensatz getestet als dem Trainingsdatensatz der Sonde.</p>
+    </div>
+  </div>
+
+  <h3>Was das Paper ausdrücklich <span style="color:var(--false)">nicht</span> zeigt</h3>
+  <div class="card tight">
+    <ul style="font-size:.9rem; margin-bottom:0">
+      <li>Es kann <b>„wahr“</b> nicht von <b>„allgemein geglaubt“</b>, <b>„unstrittig“</b> oder
+          <b>„überprüfbar“</b> unterscheiden — alle Testsätze sind einfach und unstrittig.</li>
+      <li>Nur die <b>LLaMA-2-Familie</b> wurde untersucht.</li>
+      <li><b>Nicht</b> betrachtet: korrektes Frage-Antworten, Täuschung im Dialog, Befolgen von Anweisungen
+          (Anhang A grenzt das explizit ab).</li>
+      <li>Es ist <b>kein fertiger Lügendetektor</b> — es ist ein Nachweis, dass die nötige Information
+          im Modell existiert und linear zugänglich ist.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Das Scoping von „Wahrheit“ (Anhang A)</div>
+    <p style="font-size:.88rem">Klick auf eine Aussage — zählt sie für dieses Paper als Wahrheitswert-tragend?</p>
+    <div id="scopeList"></div>
+    <div class="readout" id="scopeOut" style="margin-top:10px"></div>
+  </div>
+
+  <h3>Zum Schluss: dein eigener Lügendetektor</h3>
+  <p>
+    Setz alles zusammen. Wähle Modellgröße, Trainingsdaten, Methode und Testdatensatz —
+    und sieh, was dabei herauskommt. Die Zahlen folgen den im Paper berichteten Mustern.
+  </p>
+
+  <div class="card">
+    <div class="card-title">◆ Interaktiv · Sonden-Baukasten (Finale)</div>
+    <div class="grid-side">
+      <div>
+        <div class="ctrl">
+          <label>Modell <span class="val" id="finMV">70B</span></label>
+          <input type="range" id="finMS" min="0" max="2" step="1" value="2">
+        </div>
+        <div class="ctrl">
+          <label>Trainingsdaten</label>
+          <select id="finTrain"></select>
+        </div>
+        <div class="ctrl">
+          <label>Methode</label>
+          <select id="finMeth">
+            <option value="LR">Logistische Regression</option>
+            <option value="MM" selected>Mass-Mean</option>
+            <option value="CCS">CCS (unüberwacht)</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Testdatensatz</label>
+          <select id="finTest"></select>
+        </div>
+      </div>
+      <div class="cv-host"><canvas id="finCv" width="760" height="400"></canvas></div>
+    </div>
+    <div class="readout" id="finOut" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<footer>
+  <p style="max-width:none">
+    Interaktive Erklärung zu <b>„The Geometry of Truth: Emergent Linear Structure in LLM
+    Representations of True/False Datasets“</b> · Samuel Marks (Northeastern) &amp; Max Tegmark (MIT) ·
+    COLM 2024 · arXiv:2310.06824v3
+  </p>
+  <p style="max-width:none; font-size:.8rem">
+    Alle Punktwolken sind <b>synthetisch erzeugte Illustrationen</b>, die die im Paper berichteten
+    qualitativen Strukturen und quantitativen Kennzahlen nachbilden — keine echten LLaMA-Aktivierungen.
+    Code &amp; Daten der Autoren: <code>github.com/saprmarks/geometry-of-truth</code>
+  </p>
+</footer>
+
+</div>
+
+<script>
+/* =================================================================
+   HILFSFUNKTIONEN
+   ================================================================= */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const TAU = Math.PI*2;
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp  = (a,b,t)=>a+(b-a)*t;
+const C = {
+  true_:'#34d399', false_:'#f472b6', acc:'#60a5fa', acc2:'#a78bfa',
+  warn:'#fbbf24', txt:'#e6edf8', dim:'#93a3c0', faint:'#64748b',
+  line:'#243352', soft:'#1b2740', bg:'#060910'
+};
+
+/* --- deterministischer PRNG --- */
+function mulberry(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed>>>15, 1|seed);
+    t = t + Math.imul(t ^ t>>>7, 61|t) ^ t;
+    return ((t ^ t>>>14)>>>0)/4294967296;
+  };
+}
+function gaussPair(rnd){
+  let u=0,v=0;
+  while(u===0) u=rnd();
+  while(v===0) v=rnd();
+  const r=Math.sqrt(-2*Math.log(u));
+  return [r*Math.cos(TAU*v), r*Math.sin(TAU*v)];
+}
+function makeGauss(seed){
+  const rnd = mulberry(seed);
+  let cache=null;
+  return ()=>{
+    if(cache!==null){const c=cache; cache=null; return c;}
+    const [a,b]=gaussPair(rnd); cache=b; return a;
+  };
+}
+
+/* --- HiDPI Canvas --- */
+function setupCanvas(cv){
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const w = cv.width, h = cv.height;
+  if(cv.dataset.setup==='1') return cv.getContext('2d');
+  cv.style.width = '100%';
+  cv.style.height = 'auto';
+  cv.style.aspectRatio = `${w} / ${h}`;
+  cv.width = w*dpr; cv.height = h*dpr;
+  const ctx = cv.getContext('2d');
+  ctx.scale(dpr,dpr);
+  cv.dataset.setup='1';
+  cv.dataset.lw = w; cv.dataset.lh = h;
+  return ctx;
+}
+function cvSize(cv){ return [+cv.dataset.lw, +cv.dataset.lh]; }
+
+/* --- Maus in logischen Koordinaten --- */
+function mouseLogical(cv, e){
+  const r = cv.getBoundingClientRect();
+  const [w,h] = cvSize(cv);
+  return [ (e.clientX-r.left)/r.width*w, (e.clientY-r.top)/r.height*h ];
+}
+
+/* --- Zeichen-Helfer --- */
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+function arrow(ctx,x1,y1,x2,y2,col,lw=2,head=9){
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.4), y2-head*Math.sin(a-0.4));
+  ctx.lineTo(x2-head*Math.cos(a+0.4), y2-head*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+function dashLine(ctx,x1,y1,x2,y2,col,dash=[5,5],lw=1.3){
+  ctx.save(); ctx.setLineDash(dash); ctx.strokeStyle=col; ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function glowDot(ctx,x,y,r,col,alpha=1){
+  ctx.save(); ctx.globalAlpha=alpha;
+  ctx.shadowColor=col; ctx.shadowBlur=r*2.6;
+  ctx.fillStyle=col;
+  ctx.beginPath(); ctx.arc(x,y,r,0,TAU); ctx.fill();
+  ctx.restore();
+}
+function label(ctx,txt,x,y,col=C.dim,size=11,align='left',weight=''){
+  ctx.fillStyle=col;
+  ctx.font=`${weight} ${size}px ui-monospace, 'SF Mono', monospace`;
+  ctx.textAlign=align; ctx.textBaseline='middle';
+  ctx.fillText(txt,x,y);
+}
+function clearBG(ctx,w,h,col=C.bg){
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle=col; ctx.fillRect(0,0,w,h);
+}
+function gridBG(ctx,w,h,step=40){
+  ctx.strokeStyle='rgba(36,51,82,.45)'; ctx.lineWidth=1;
+  for(let x=0;x<=w;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<=h;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+}
+
+/* --- Temml --- */
+function renderMath(el, tex, display=true){
+  if(!el) return;
+  try{ el.innerHTML = temml.renderToString(tex, {displayMode:display}); }
+  catch(err){ el.textContent = tex; }
+}
+
+/* --- Plotly Layout-Grundlage --- */
+const PLOT_BASE = {
+  paper_bgcolor:'rgba(0,0,0,0)',
+  plot_bgcolor:'rgba(6,9,16,.72)',
+  font:{color:'#93a3c0', family:"ui-monospace, 'SF Mono', monospace", size:11},
+  margin:{l:52,r:22,t:42,b:48},
+  xaxis:{gridcolor:'rgba(36,51,82,.55)', zerolinecolor:'rgba(36,51,82,.95)', linecolor:'#243352'},
+  yaxis:{gridcolor:'rgba(36,51,82,.55)', zerolinecolor:'rgba(36,51,82,.95)', linecolor:'#243352'},
+  hoverlabel:{bgcolor:'#121a2c', bordercolor:'#243352', font:{color:'#e6edf8'}},
+  legend:{bgcolor:'rgba(0,0,0,0)'}
+};
+const PLOT_CFG = {displayModeBar:false, responsive:true};
+
+/* =================================================================
+   SCROLL / NAV / PROGRESS
+   ================================================================= */
+(function(){
+  const bar = $('#progress');
+  const links = $$('nav a');
+  const secs = links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll(){
+    const st = window.scrollY;
+    const max = document.body.scrollHeight - window.innerHeight;
+    bar.style.width = (max>0 ? st/max*100 : 0) + '%';
+    let cur = 0;
+    secs.forEach((s,i)=>{ if(s && s.getBoundingClientRect().top < window.innerHeight*0.38) cur = i; });
+    links.forEach((a,i)=>a.classList.toggle('active', i===cur));
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:.06});
+  $$('.reveal').forEach(e=>io.observe(e));
+})();
+
+/* =================================================================
+   FORMELN
+   ================================================================= */
+renderMath($('#fmlDot'),
+  String.raw`\theta\cdot x=\theta_1x_1+\theta_2x_2+\dots+\theta_dx_d
+  \quad\Longrightarrow\quad
+  \begin{cases}>0 & \text{„wahr“}\\[2pt] <0 & \text{„falsch“}\end{cases}`);
+renderMath($('#fmlLR'),
+  String.raw`\theta_{\mathrm{lr}}=\arg\min_{\|\varphi\|=1}\;\mathbb{E}\big[-y\log\sigma(\varphi^{\!\top}x)-(1-y)\log(1-\sigma(\varphi^
+{\!\top}x)\big)\big]`, true);
+renderMath($('#fmlMM'),
+  String.raw`\theta_{\mathrm{mm}}=\mu_+-\mu_-\qquad
+  p_{\mathrm{mm}}(x)=\sigma(\theta_{\mathrm{mm}}^{\!\top}x)\qquad
+  p^{\mathrm{iid}}_{\mathrm{mm}}(x)=\sigma(\theta_{\mathrm{mm}}^{\!\top}\Sigma^{-1}x)`);
+renderMath($('#fmlThm'),
+  String.raw`x\mid y{=}1\sim\mathcal{N}(\theta,\Sigma),\;\;x\mid y{=}0\sim\mathcal{N}(-\theta,\Sigma)
+  \;\;\Longrightarrow\;\;\theta_{\mathrm{lr}}\;\propto\;\Sigma^{-1}\theta`);
+renderMath($('#fmlNIE'),
+  String.raw`\mathrm{NIE}=\frac{PD_-^{*}-PD_-}{PD_+-PD_-}`);
+
+/* =================================================================
+   HERO-CANVAS
+   ================================================================= */
+(function(){
+  const cv = $('#heroCanvas');
+  cv.width = 1400; cv.height = 300;
+  const ctx = setupCanvas(cv);
+  const [W,H] = cvSize(cv);
+
+  const g = makeGauss(7);
+  const N = 260;
+  const pts = [];
+  for(let i=0;i<N;i++){
+    const t = i<N/2;
+    // 3D-Wolke: entlang x getrennt
+    const base = t ? 1.25 : -1.25;
+    pts.push({
+      x: base + g()*0.55,
+      y: g()*1.25,
+      z: g()*1.0,
+      t
+    });
+  }
+  let ph = 0;
+  function draw(){
+    clearBG(ctx,W,H,'rgba(6,9,16,0)');
+    ctx.clearRect(0,0,W,H);
+    ph += 0.0042;
+    const ca = Math.cos(ph), sa = Math.sin(ph);
+    const tilt = 0.30;
+    const cx = W*0.5, cy = H*0.5, s = Math.min(W,H)*0.26;
+
+    const proj = pts.map(p=>{
+      const X = p.x*ca - p.z*sa;
+      const Z = p.x*sa + p.z*ca;
+      const Y = p.y*Math.cos(tilt) - Z*Math.sin(tilt);
+      const Zd = p.y*Math.sin(tilt) + Z*Math.cos(tilt);
+      const persp = 1/(1 + Zd*0.11);
+      return {sx: cx + X*s*persp*2.2, sy: cy + Y*s*persp, d: Zd, t:p.t, persp};
+    }).sort((a,b)=>a.d-b.d);
+
+    // Trennebene (x=0) als Linie
+    const px1 = cx + (0*ca)*0, py = 0;
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    const planeTop = [], planeBot=[];
+    for(let k=-1;k<=1;k+=2){
+      for(let zz=-2.2; zz<=2.2; zz+=0.2){
+        const X = 0*ca - zz*sa;
+        const Z = 0*sa + zz*ca;
+        const Y = k*2.0*Math.cos(tilt) - Z*Math.sin(tilt);
+        const Zd = k*2.0*Math.sin(tilt) + Z*Math.cos(tilt);
+        const pp = 1/(1+Zd*0.11);
+        (k<0?planeTop:planeBot).push([cx+X*s*pp*2.2, cy+Y*s*pp]);
+      }
+    }
+    ctx.beginPath();
+    planeTop.forEach((p,i)=> i? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1]));
+    planeBot.slice().reverse().forEach(p=> ctx.lineTo(p[0],p[1]));
+    ctx.closePath();
+    const gr = ctx.createLinearGradient(0,0,0,H);
+    gr.addColorStop(0,'rgba(96,165,250,.30)');
+    gr.addColorStop(1,'rgba(167,139,250,.06)');
+    ctx.fillStyle = gr; ctx.fill();
+    ctx.strokeStyle='rgba(96,165,250,.45)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.restore();
+
+    proj.forEach(p=>{
+      const r = 2.4*p.persp + 0.8;
+      const a = clamp(0.35 + p.persp*0.55, 0.2, 1);
+      glowDot(ctx, p.sx, p.sy, r, p.t?C.true_:C.false_, a);
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* =================================================================
+   01 · SZENARIO (Output vs. Innenleben)
+   ================================================================= */
+(function(){
+  const cv=$('#scenCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const sel=$('#scenSel'), ps=$('#pressS'), pv=$('#pressV'), out=$('#scenOut');
+
+  const SC = [
+    {name:'Halluzination', inner:0.05, outFn:p=>0.55+0.1*p,
+     txt:'Das Modell hat keine klare innere Überzeugung. Output und Innenleben sind beide „unscharf“. Eine Sonde kann hier wenig retten — hier fehlt echtes Wissen.',
+     stmt:'„Die Hauptstadt von Burkina Faso ist Bobo-Dioulasso.“'},
+    {name:'Ehrlich', inner:0.93, outFn:p=>0.90-0.05*p,
+     txt:'Innere Überzeugung und Output stimmen überein. Der Normalfall — Sonde und Output sagen dasselbe.',
+     stmt:'„Die Stadt Toronto ist in Kanada.“'},
+    {name:'Lüge', inner:0.92, outFn:p=>0.85-0.80*p,
+     txt:'GPT-4-CAPTCHA-Fall: Innen „ich bin ein Roboter“ (wahr), außen „ich bin sehbehindert“ (falsch). Je größer der Anreiz (Druck), desto weiter klaffen Output und Innenleben auseinander.',
+     stmt:'„Ich bin kein Roboter, ich bin nur sehbehindert.“'},
+    {name:'Sykophantie', inner:0.90, outFn:p=>0.88-0.62*p,
+     txt:'Perez et al. (2022): Wirkt der Nutzer weniger gebildet, gibt der Assistent mehr Unwahrheiten aus — bei unverändertem inneren Zustand.',
+     stmt:'„Ja, Impfungen verursachen Autismus — da haben Sie recht.“'}
+  ];
+
+  function draw(){
+    const i=+sel.value, p=+ps.value, sc=SC[i];
+    pv.textContent=p.toFixed(2);
+    clearBG(ctx,W,H);
+    gridBG(ctx,W,H,38);
+
+    const inner = sc.inner;
+    const outer = clamp(sc.outFn(p),0.02,0.98);
+
+    // Box "Modell"
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.4;
+    roundRect(ctx,30,36,290,228,14); ctx.stroke();
+    label(ctx,'INNERER ZUSTAND  h(i,ℓ)',44,24,C.acc,11,'left','bold');
+
+    // innere Überzeugung als Balken
+    const bx=60,bw=230;
+    label(ctx,'P(Aussage ist wahr) — intern',bx,70,C.dim,11);
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,82,bw,20,10); ctx.fill();
+    ctx.fillStyle= inner>0.5?C.true_:C.false_;
+    roundRect(ctx,bx,82,Math.max(8,bw*inner),20,10); ctx.fill();
+    label(ctx,(inner*100).toFixed(0)+' %',bx+bw+6,92,C.txt,11,'left','bold');
+
+    // kleine Aktivierungs-Visualisierung
+    label(ctx,'Aktivierungsvektor (Ausschnitt)',bx,124,C.faint,10);
+    const g=makeGauss(11+i*3);
+    for(let k=0;k<22;k++){
+      const v = g()*0.5 + (inner-0.5)*1.4*(k%3===0?1:0.25);
+      const hh = clamp(Math.abs(v)*34,2,52);
+      const col = v>0? 'rgba(52,211,153,':'rgba(244,114,182,';
+      ctx.fillStyle = col + clamp(Math.abs(v),0.15,0.9) + ')';
+      ctx.fillRect(bx+k*10.3, 196-hh/2, 7, hh);
+    }
+    dashLine(ctx,bx,196,bx+230,196,'rgba(100,116,139,.5)');
+    label(ctx,'→ eine Sonde liest hier',bx,238,C.acc,10);
+
+    // Pfeil
+    arrow(ctx,330,150,400,150, p>0.4?C.warn:C.line, 2.4, 10);
+    if(p>0.02){
+      label(ctx,'Druck: '+(p*100).toFixed(0)+'%',365,128,C.warn,10,'center','bold');
+      // Störzacken
+      ctx.strokeStyle='rgba(251,191,36,'+(0.2+p*0.6)+')'; ctx.lineWidth=1.4;
+      ctx.beginPath();
+      for(let x=335;x<398;x+=3){ ctx.lineTo(x, 172 + Math.sin(x*0.6)*p*9); }
+      ctx.stroke();
+    }
+
+    // Box "Output"
+    ctx.strokeStyle=C.line; roundRect(ctx,410,36,320,228,14); ctx.stroke();
+    label(ctx,'SICHTBARER OUTPUT',424,24,C.acc2,11,'left','bold');
+
+    const ox=436, ow=262;
+    label(ctx,'P(Modell behauptet „wahr“)',ox,70,C.dim,11);
+    ctx.fillStyle='#0b1220'; roundRect(ctx,ox,82,ow,20,10); ctx.fill();
+    ctx.fillStyle= outer>0.5?C.true_:C.false_;
+    roundRect(ctx,ox,82,Math.max(8,ow*outer),20,10); ctx.fill();
+    label(ctx,(outer*100).toFixed(0)+' %',ox+ow+6,92,C.txt,11,'left','bold');
+
+    // Satz
+    ctx.fillStyle=C.txt; ctx.font='12px -apple-system, sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='top';
+    wrapText(ctx, sc.stmt, ox, 124, 258, 16);
+
+    // Divergenz
+    const div = Math.abs(inner-outer);
+    const dcol = div>0.3?C.false_: div>0.12?C.warn:C.true_;
+    label(ctx,'Divergenz |innen − außen| = '+div.toFixed(2),ox,222,dcol,11,'left','bold');
+    ctx.fillStyle=dcol; ctx.globalAlpha=.2;
+    roundRect(ctx,ox,236,ow*div,10,5); ctx.fill(); ctx.globalAlpha=1;
+
+    out.innerHTML = `<b>${sc.name}</b> · innen <b style="color:${inner>.5?C.true_:C.false_}">${(inner*100).toFixed(0)} %</b> · außen <b style="color:${outer>.5?C.true_:C.false_}">${(outer*100).toFixed(0)} %</b><br>${sc.txt}`;
+  }
+  function wrapText(ctx,txt,x,y,maxW,lh){
+    const words=txt.split(' '); let line='', yy=y;
+    words.forEach(w=>{
+      const test=line+w+' ';
+      if(ctx.measureText(test).width>maxW && line){ ctx.fillText(line,x,yy); line=w+' '; yy+=lh; }
+      else line=test;
+    });
+    ctx.fillText(line,x,yy);
+  }
+  sel.oninput=draw; ps.oninput=draw; draw();
+})();
+
+/* =================================================================
+   02 · SKALARPRODUKT
+   ================================================================= */
+(function(){
+  const cv=$('#dotCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const dirS=$('#dirS'), ptAS=$('#ptAS'), ptRS=$('#ptRS');
+  const out=$('#dotOut');
+  const cx=W/2, cy=H/2, S=78;
+
+  function draw(){
+    const th=+dirS.value*Math.PI/180;
+    const pa=+ptAS.value*Math.PI/180, pr=+ptRS.value;
+    $('#dirV').textContent=dirS.value+'°';
+    $('#ptAV').textContent=ptAS.value+'°';
+    $('#ptRV').textContent=(+ptRS.value).toFixed(2);
+
+    clearBG(ctx,W,H); 
+    // Achsen
+    ctx.strokeStyle='rgba(36,51,82,.6)';
+    for(let i=-4;i<=4;i++){
+      ctx.beginPath(); ctx.moveTo(cx+i*S,0); ctx.lineTo(cx+i*S,H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,cy+i*S); ctx.lineTo(W,cy+i*S); ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(100,116,139,.8)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    const ux=Math.cos(th), uy=-Math.sin(th);
+    const px=pr*Math.cos(pa), py=pr*Math.sin(pa);
+    const sx=cx+px*S, sy=cy-py*S;
+    const dot = ux*px + (-uy)*py; // uy ist schon gespiegelt → zurückdrehen
+    const dotTrue = Math.cos(th)*px + Math.sin(th)*py;
+
+    // Halbräume einfärben
+    if($('#showPerp').checked){
+      ctx.save();
+      const nx=Math.cos(th), ny=Math.sin(th);
+      for(const sgn of [1,-1]){
+        ctx.beginPath();
+        // große Fläche, mit Trennlinie geclippt
+        const L=1200;
+        const tx=-Math.sin(th), ty=Math.cos(th);
+        ctx.moveTo(cx+tx*L, cy-ty*L);
+        ctx.lineTo(cx-tx*L, cy+ty*L);
+        ctx.lineTo(cx-tx*L+sgn*nx*L, cy+ty*L-sgn*ny*L);
+        ctx.lineTo(cx+tx*L+sgn*nx*L, cy-ty*L-sgn*ny*L);
+        ctx.closePath();
+        ctx.fillStyle = sgn>0 ? 'rgba(52,211,153,.07)' : 'rgba(244,114,182,.07)';
+        ctx.fill();
+      }
+      ctx.restore();
+      // Trennlinie
+      const tx=-Math.sin(th), ty=Math.cos(th);
+      ctx.strokeStyle='rgba(167,139,250,.85)'; ctx.lineWidth=2;
+      ctx.setLineDash([7,5]);
+      ctx.beginPath();
+      ctx.moveTo(cx+tx*400, cy-ty*400); ctx.lineTo(cx-tx*400, cy+ty*400);
+      ctx.stroke(); ctx.setLineDash([]);
+      label(ctx,'θ·x = 0  (Trennlinie)', cx+tx*150+8, cy-ty*150, C.acc2, 11);
+    }
+
+    // θ
+    arrow(ctx,cx,cy,cx+Math.cos(th)*S*1.9, cy-Math.sin(th)*S*1.9, C.acc, 3, 11);
+    label(ctx,'θ', cx+Math.cos(th)*S*2.1, cy-Math.sin(th)*S*2.1, C.acc, 15,'center','bold');
+
+    // x
+    arrow(ctx,cx,cy,sx,sy, C.warn, 2.6, 10);
+    label(ctx,'x', sx+12*Math.cos(pa), sy-12*Math.sin(pa), C.warn, 15,'center','bold');
+
+    // Projektion
+    if($('#showProj').checked){
+      const projx = cx + dotTrue*Math.cos(th)*S;
+      const projy = cy - dotTrue*Math.sin(th)*S;
+      dashLine(ctx,sx,sy,projx,projy,'rgba(230,237,248,.5)',[4,4]);
+      ctx.strokeStyle=dotTrue>0?C.true_:C.false_; ctx.lineWidth=5;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(projx,projy); ctx.stroke();
+      glowDot(ctx,projx,projy,5,dotTrue>0?C.true_:C.false_);
+      label(ctx,'θ·x = '+dotTrue.toFixed(2), projx, projy+(dotTrue>0?22:-22),
+            dotTrue>0?C.true_:C.false_, 12,'center','bold');
+    }
+    glowDot(ctx,cx,cy,4,C.txt);
+
+    const ang = Math.abs(((+ptAS.value - +dirS.value)%360+360)%360);
+    const angd = ang>180?360-ang:ang;
+    out.innerHTML = `θ·x = |θ|·|x|·cos(Winkel) = 1 · ${pr.toFixed(2)} · cos(${angd.toFixed(0)}°) = <b style="color:${dotTrue>0?C.true_:C.false_}">${dotTrue.toFixed(3)}</b>
+      → Klassifikation: <b style="color:${dotTrue>0?C.true_:C.false_}">${dotTrue>0?'WAHR':'FALSCH'}</b><br>
+      <span style="color:#64748b">Nur das Vorzeichen entscheidet. Die Länge sagt, wie „sicher“ sich die Sonde ist.</span>`;
+  }
+  [dirS,ptAS,ptRS,$('#showProj'),$('#showPerp')].forEach(e=>e.oninput=draw);
+  draw();
+})();
+
+/* =================================================================
+   02b · SCHATTEN / PROJEKTION
+   ================================================================= */
+(function(){
+  const cv=$('#shadowCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const rY=$('#rotYS'), rX=$('#rotXS'), out=$('#shadowOut');
+
+  const g=makeGauss(23);
+  const pts=[];
+  // getrennt entlang (1,1,0)/√2
+  const dir=[1/Math.SQRT2,1/Math.SQRT2,0];
+  for(let i=0;i<180;i++){
+    const t=i<90;
+    const s=t?1.6:-1.6;
+    const a=g()*0.42,b=g()*1.25,c=g()*1.25;
+    pts.push({
+      x: dir[0]*(s+a) + (-dir[1])*b,
+      y: dir[1]*(s+a) + ( dir[0])*b,
+      z: c, t
+    });
+  }
+  function rot(p,ay,ax){
+    let X=p.x*Math.cos(ay)-p.z*Math.sin(ay);
+    let Z=p.x*Math.sin(ay)+p.z*Math.cos(ay);
+    let Y=p.y*Math.cos(ax)-Z*Math.sin(ax);
+    let Z2=p.y*Math.sin(ax)+Z*Math.cos(ax);
+    return [X,Y,Z2];
+  }
+  function sepScore(ay,ax){
+    let sT=0,sF=0,nT=0,nF=0,all=[];
+    pts.forEach(p=>{
+      const [X,Y]=rot(p,ay,ax);
+      all.push([X,p.t]);
+      if(p.t){sT+=X;nT++;}else{sF+=X;nF++;}
+    });
+    const mT=sT/nT,mF=sF/nF;
+    let v=0; all.forEach(([X,t])=>{v+=(X-(t?mT:mF))**2;});
+    v=Math.sqrt(v/all.length);
+    return Math.abs(mT-mF)/(v+1e-6);
+  }
+  function draw(){
+    const ay=+rY.value*Math.PI/180, ax=+rX.value*Math.PI/180;
+    $('#rotYV').textContent=rY.value+'°';
+    $('#rotXV').textContent=rX.value+'°';
+    clearBG(ctx,W,H);
+
+    const cx=W*0.33, cy=H*0.45, S=52;
+    // 3D Wolke
+    const proj=pts.map(p=>{
+      const [X,Y,Z]=rot(p,ay,ax);
+      const pp=1/(1+Z*0.1);
+      return {sx:cx+X*S*pp, sy:cy+Y*S*pp, d:Z, t:p.t, X};
+    }).sort((a,b)=>a.d-b.d);
+
+    label(ctx,'3D-Wolke (drehbar)',cx,24,C.dim,12,'center','bold');
+    // Bodenebene
+    ctx.strokeStyle='rgba(36,51,82,.5)';
+    for(let i=-3;i<=3;i++){
+      const a1=rot({x:i,y:3,z:-3},ay,ax), a2=rot({x:i,y:3,z:3},ay,ax);
+      ctx.beginPath(); ctx.moveTo(cx+a1[0]*S,cy+a1[1]*S); ctx.lineTo(cx+a2[0]*S,cy+a2[1]*S); ctx.stroke();
+      const b1=rot({x:-3,y:3,z:i},ay,ax), b2=rot({x:3,y:3,z:i},ay,ax);
+      ctx.beginPath(); ctx.moveTo(cx+b1[0]*S,cy+b1[1]*S); ctx.lineTo(cx+b2[0]*S,cy+b2[1]*S); ctx.stroke();
+    }
+    proj.forEach(p=>glowDot(ctx,p.sx,p.sy,2.9,p.t?C.true_:C.false_,0.85));
+
+    // Schatten-Panel
+    const px=W*0.68, py=H*0.45;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.3;
+    roundRect(ctx,px-150,py-150,300,300,12); ctx.stroke();
+    label(ctx,'Schatten (2D-Projektion)',px,py-166,C.dim,12,'center','bold');
+
+    // Schatten: X nach rechts, Y nach unten, aber nur X/Y der Rotation
+    const S2=46;
+    pts.forEach(p=>{
+      const [X,Y]=rot(p,ay,ax);
+      glowDot(ctx, px+X*S2, py+Y*S2, 3.1, p.t?C.true_:C.false_, 0.8);
+    });
+
+    // 1D-Histogramm entlang X unten
+    const hx0=px-150, hw=300, hy=py+170;
+    const bins=30, hT=new Array(bins).fill(0), hF=new Array(bins).fill(0);
+    pts.forEach(p=>{
+      const [X]=rot(p,ay,ax);
+      const b=clamp(Math.floor((X+3.4)/6.8*bins),0,bins-1);
+      (p.t?hT:hF)[b]++;
+    });
+    const mx=Math.max(...hT,...hF,1);
+    for(let b=0;b<bins;b++){
+      const bw=hw/bins;
+      ctx.fillStyle='rgba(52,211,153,.75)';
+      ctx.fillRect(hx0+b*bw, hy-hT[b]/mx*44, bw-1, hT[b]/mx*44);
+      ctx.fillStyle='rgba(244,114,182,.55)';
+      ctx.fillRect(hx0+b*bw, hy-hF[b]/mx*44, bw-1, hF[b]/mx*44);
+    }
+    ctx.strokeStyle='rgba(100,116,139,.6)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(hx0,hy); ctx.lineTo(hx0+hw,hy); ctx.stroke();
+    label(ctx,'Verteilung entlang der horizontalen Achse',px,hy+16,C.faint,10,'center');
+
+    const sc=sepScore(ay,ax);
+    const quality = sc>1.6?'ausgezeichnet': sc>0.9?'gut': sc>0.4?'mäßig':'unbrauchbar';
+    const qcol   = sc>1.6?C.true_: sc>0.9?C.acc: sc>0.4?C.warn:C.false_;
+    out.innerHTML = `Trennschärfe (Effektstärke d) = <b style="color:${qcol}">${sc.toFixed(2)}</b> — ${quality}<br>
+      <span style="color:#64748b">In 3D sind die Klassen <b style="color:#93a3c0">immer</b> gleich gut getrennt.
+      Nur der Schatten ändert sich. Genau deshalb braucht man eine Methode, die den guten Blickwinkel findet.</span>`;
+  }
+  $('#shadowBest').onclick=()=>{
+    let best=null,bv=-1;
+    for(let a=0;a<360;a+=3) for(let b=-80;b<=80;b+=5){
+      const v=sepScore(a*Math.PI/180,b*Math.PI/180);
+      if(v>bv){bv=v;best=[a,b];}
+    }
+    rY.value=best[0]; rX.value=best[1]; draw();
+  };
+  $('#shadowWorst').onclick=()=>{
+    let best=null,bv=1e9;
+    for(let a=0;a<360;a+=3) for(let b=-80;b<=80;b+=5){
+      const v=sepScore(a*Math.PI/180,b*Math.PI/180);
+      if(v<bv){bv=v;best=[a,b];}
+    }
+    rY.value=best[0]; rX.value=best[1]; draw();
+  };
+  rY.oninput=draw; rX.oninput=draw; draw();
+})();
+
+/* =================================================================
+   03 · TOKEN × LAYER GITTER
+   ================================================================= */
+(function(){
+  const cv=$('#gridCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const out=$('#gridOut');
+  const toks=['Die','Stadt','Chicago','ist','in','Kanada','.','Diese','Aussage','ist',':'];
+  const NL=14;
+  let sel={i:6,l:7}, flow=-1, anim=null;
+
+  const x0=70, y0=46, cw=(W-x0-30)/toks.length, ch=(H-y0-54)/NL;
+
+  function info(i,l){
+    const t=toks[i];
+    if(i===2 && l<6) return {g:'(a)', txt:`Frühe Layer über dem Subjekt „Chicago“. Hier lädt das Modell sein <b>Faktenwissen zur Stadt</b> — welche Attribute hat Chicago? In welchem Land liegt es? Noch keine Wahrheitsbewertung.`};
+    if(i===6 && l>=5 && l<=22) return {g:'(b) ⭐', txt:`<b>Der Schlüsselort des ganzen Papers.</b> Über dem Satzzeichen, mittlere Layer. Hier wird der <b>gesamte vorangegangene Satz zusammengefasst</b> — inklusive seines Wahrheitswerts. Bei 13B nimmt das Paper <b>Layer 15</b>. Alle PCA-Bilder, alle Sonden, alle Interventionen arbeiten mit genau dieser Aktivierung.`};
+    if(i===toks.length-1 && l>22) return {g:'(c)', txt:`Späte Layer, letzte Position. Hier ist die Antwort schon fertig: wendet man den Decoder direkt auf diesen Vektor an, stehen oben die Tokens <code>true</code>, <code>True</code>, <code>TRUE</code>.`};
+    if(l<3) return {g:'—', txt:`Sehr frühe Layer: der Vektor kodiert im Wesentlichen nur das Token „${t}“ selbst plus seine Position. Noch keine Satzbedeutung.`};
+    return {g:'—', txt:`Position „${t}“, Layer ${l}. Hier passiert zwar etwas, aber laut Patching-Experiment ist diese Stelle <b>nicht kausal entscheidend</b> für die TRUE/FALSE-Ausgabe.`};
+  }
+
+  function draw(){
+    clearBG(ctx,W,H);
+    // Layer-Beschriftung
+    for(let l=0;l<NL;l++){
+      const y=y0+(NL-1-l)*ch;
+      if(l%3===0) label(ctx,'L'+(l*3),x0-12,y+ch/2,C.faint,10,'right');
+    }
+    label(ctx,'Layer ↑',x0-12,y0-18,C.dim,10,'right','bold');
+
+    for(let i=0;i<toks.length;i++){
+      // Token-Text
+      ctx.save();
+      ctx.translate(x0+i*cw+cw/2, H-30);
+      ctx.rotate(-0.42);
+      label(ctx,toks[i],0,0, (i===6)?C.warn:C.dim, 11,'right', i===6?'bold':'');
+      ctx.restore();
+
+      for(let l=0;l<NL;l++){
+        const x=x0+i*cw, y=y0+(NL-1-l)*ch;
+        const isSel = (sel.i===i && Math.floor(sel.l)===l);
+        // Grundfarbe
+        let a=0.08+0.03*Math.sin(i*1.7+l*0.9);
+        let col='96,165,250';
+        if(i===2 && l<4){a=0.30; col='96,165,250';}
+        if(i===6 && l>=4 && l<=8){a=0.44; col='52,211,153';}
+        if(i===toks.length-1 && l>=9){a=0.34; col='251,191,36';}
+        ctx.fillStyle=`rgba(${col},${a})`;
+        roundRect(ctx,x+1.5,y+1.5,cw-3,ch-3,3); ctx.fill();
+        ctx.strokeStyle= isSel?C.warn:'rgba(36,51,82,.7)';
+        ctx.lineWidth= isSel?2.2:1;
+        roundRect(ctx,x+1.5,y+1.5,cw-3,ch-3,3); ctx.stroke();
+
+        // Residual-Stream-Pfeil nach oben
+        if(l<NL-1 && i%1===0){
+          ctx.strokeStyle='rgba(96,165,250,.18)'; ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(x+cw/2,y+1.5); ctx.lineTo(x+cw/2,y-1.5); ctx.stroke();
+        }
+      }
+    }
+    // Attention-Flow-Animation
+    if(flow>=0){
+      const l=Math.floor(flow);
+      const y=y0+(NL-1-l)*ch+ch/2;
+      ctx.strokeStyle='rgba(167,139,250,.75)'; ctx.lineWidth=1.6;
+      for(let i=1;i<toks.length;i++){
+        for(let j=0;j<i;j+=2){
+          ctx.globalAlpha=0.35;
+          ctx.beginPath();
+          const xa=x0+j*cw+cw/2, xb=x0+i*cw+cw/2;
+          ctx.moveTo(xa,y);
+          ctx.quadraticCurveTo((xa+xb)/2, y-ch*1.6, xb, y);
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha=1;
+      label(ctx,'Attention in Layer '+(l*3)+': jede Position liest von allen links davon',W/2,y0-18,C.acc2,11,'center','bold');
+    }
+    const inf=info(sel.i,Math.floor(sel.l));
+    out.innerHTML=`<b>h<sub>${sel.i},${Math.floor(sel.l)*3}</sub></b> — Token „<b style="color:${C.warn}">${toks[sel.i]}</b>“, Layer ${Math.floor(sel.l)*3} · Gruppe <b>${inf.g}</b><br>${inf.txt}`;
+  }
+  cv.addEventListener('click',e=>{
+    const [mx,my]=mouseLogical(cv,e);
+    const i=Math.floor((mx-x0)/cw), l=NL-1-Math.floor((my-y0)/ch);
+    if(i>=0&&i<toks.length&&l>=0&&l<NL){ sel={i,l}; draw(); }
+  });
+  $('#gridFlow').onclick=()=>{
+    if(anim){clearInterval(anim);anim=null;flow=-1;draw();return;}
+    flow=0;
+    anim=setInterval(()=>{ flow=(flow+1)%NL; draw(); },420);
+  };
+  $('#gridReset').onclick=()=>{ if(anim){clearInterval(anim);anim=null;} flow=-1; sel={i:6,l:7}; draw(); };
+  draw();
+})();
+
+/* =================================================================
+   04 · DATENSÄTZE
+   ================================================================= */
+const DATASETS = {
+  cities:{label:'cities', rows:1496, tpl:'Die Stadt [X] ist in [Y].',
+    note:'Städte mit >500 000 Einwohnern, eindeutigem Namen, aus einer kuratierten Länderliste. Falsche Länder werden gewichtet nach Häufigkeit gezogen — damit z.B. „China“ nicht überproportional oft wahr ist.',
+    ex:[['Die Stadt Sewastopol ist in der Ukraine.',1],['Die Stadt Bagdad ist in China.',0],
+        ['Die Stadt Lyon ist in Frankreich.',1],['Die Stadt Osaka ist in Brasilien.',0],
+        ['Die Stadt Kairo ist in Ägypten.',1],['Die Stadt Oslo ist in Indien.',0]]},
+  neg_cities:{label:'neg_cities', rows:1496, tpl:'Die Stadt [X] ist nicht in [Y].',
+    note:'Exakt dieselben Sätze — nur mit „nicht“. Damit kehrt sich der Wahrheitswert um. Korrelation Wahrheit ↔ Wahrscheinlichkeit: r = −0,63.',
+    ex:[['Die Stadt Paris ist nicht in Frankreich.',0],['Die Stadt Paris ist nicht in Japan.',1],
+        ['Die Stadt Lima ist nicht in Peru.',0],['Die Stadt Dublin ist nicht in Mexiko.',1],
+        ['Die Stadt Hanoi ist nicht in Vietnam.',0],['Die Stadt Denver ist nicht in Vietnam.',1]]},
+  sp_en_trans:{label:'sp_en_trans', rows:354, tpl:'Das spanische Wort „[X]“ bedeutet „[Y]“.',
+    note:'Der Erstautor (Spanischsprecher) hat alle mehrdeutigen Wörter manuell entfernt. Korrelation Wahrheit ↔ Wahrscheinlichkeit: r = +0,95 — das ist der Grund, warum dieser Datensatz als OOD-Testfall für die Interventionen dient.',
+    ex:[['Das spanische Wort „imaginar“ bedeutet „sich vorstellen“.',1],
+        ['Das spanische Wort „silla“ bedeutet „Nachbar“.',0],
+        ['Das spanische Wort „nariz“ bedeutet „Nase“.',1],
+        ['Das spanische Wort „carne“ bedeutet „Ziege“.',0],
+        ['Das spanische Wort „fruta“ bedeutet „Frucht“.',1],
+        ['Das spanische Wort „libro“ bedeutet „Fenster“.',0]]},
+  neg_sp_en_trans:{label:'neg_sp_en_trans', rows:354, tpl:'Das spanische Wort „[X]“ bedeutet nicht „[Y]“.',
+    note:'Negation von sp_en_trans. Korrelation r = −0,89 — hier zeigen Plausibilität und Wahrheit maximal gegeneinander. Der härteste Test für eine Sonde.',
+    ex:[['Das spanische Wort „nariz“ bedeutet nicht „Giraffe“.',1],
+        ['Das spanische Wort „casa“ bedeutet nicht „Haus“.',0],
+        ['Das spanische Wort „verde“ bedeutet nicht „grün“.',0],
+        ['Das spanische Wort „perro“ bedeutet nicht „Tisch“.',1],
+        ['Das spanische Wort „agua“ bedeutet nicht „Wasser“.',0],
+        ['Das spanische Wort „noche“ bedeutet nicht „Stuhl“.',1]]},
+  larger_than:{label:'larger_than', rows:1980, tpl:'x ist größer als y.',
+    note:'Nur Zahlen von einundfünfzig bis neunundneunzig, ohne Vielfache von 10. Grund: LLaMA repräsentiert Zahlengrößen nicht auf gleichmäßiger Skala — der Abstand „eins ↔ zehn“ ist intern viel größer als „fünfzig ↔ sechzig“. Das würde die PCA dominieren.',
+    ex:[['Einundachtzig ist größer als vierundfünfzig.',1],
+        ['Zweiundsechzig ist größer als siebenundachtzig.',0],
+        ['Dreiundneunzig ist größer als achtundsechzig.',1],
+        ['Siebenundfünfzig ist größer als sechsundsiebzig.',0],
+        ['Achtundachtzig ist größer als dreiundsechzig.',1],
+        ['Vierundfünfzig ist größer als zweiundneunzig.',0]]},
+  smaller_than:{label:'smaller_than', rows:1980, tpl:'x ist kleiner als y.',
+    note:'Das strukturelle Gegenstück. Bei 13B trennt dieser Datensatz in die <b>entgegengesetzte</b> Richtung wie larger_than, bei 70B in dieselbe.',
+    ex:[['Einundsechzig ist kleiner als vierundachtzig.',1],
+        ['Siebenundneunzig ist kleiner als dreiundfünfzig.',0],
+        ['Zweiundfünfzig ist kleiner als neunundsechzig.',1],
+        ['Sechsundachtzig ist kleiner als einundsechzig.',0],
+        ['Dreiundsiebzig ist kleiner als neunundachtzig.',1],
+        ['Fünfundneunzig ist kleiner als zweiundsechzig.',0]]},
+  cities_cities_conj:{label:'cities_cities_conj', rows:1500, tpl:'Es ist sowohl der Fall, dass [s1], als auch dass [s2].',
+    note:'Konjunktion. Jeder Teilsatz ist mit Wahrscheinlichkeit 1/√2 ≈ 0,707 wahr — exakt so gewählt, dass der Gesamtdatensatz ausbalanciert ist (0,707² ≈ 0,5) und keine Korrelation zwischen den Teilsätzen entsteht.',
+    ex:[['Es ist sowohl der Fall, dass Rom in Italien ist, als auch dass Madrid in Spanien ist.',1],
+        ['Es ist sowohl der Fall, dass Lima in Peru ist, als auch dass Kyoto in Russland ist.',0],
+        ['Es ist sowohl der Fall, dass Wien in Österreich ist, als auch dass Bern in der Schweiz ist.',1],
+        ['Es ist sowohl der Fall, dass Kairo in Chile ist, als auch dass Oslo in Norwegen ist.',0]]},
+  cities_cities_disj:{label:'cities_cities_disj', rows:1500, tpl:'Es ist entweder der Fall, dass [s1], oder dass [s2].',
+    note:'Disjunktion. Hier ist jeder Teilsatz mit Wahrscheinlichkeit 1 − 1/√2 ≈ 0,293 wahr — wieder so kalibriert, dass insgesamt 50 % wahr herauskommt.',
+    ex:[['Es ist entweder der Fall, dass Tokio in Japan ist, oder dass Lagos in Peru ist.',1],
+        ['Es ist entweder der Fall, dass Berlin in Kanada ist, oder dass Delhi in Brasilien ist.',0],
+        ['Es ist entweder der Fall, dass Quito in Ecuador ist, oder dass Accra in Polen ist.',1],
+        ['Es ist entweder der Fall, dass Prag in Ägypten ist, oder dass Manila in Schweden ist.',0]]},
+  companies_true_false:{label:'companies_true_false', rows:1200, tpl:'Behauptungen über Firmen (unkuratiert)',
+    note:'Übernommen von Azaria & Mitchell (2023). Dient als zusätzlicher, schwierigerer Test — nicht als Trainingsdaten.',
+    ex:[['ArcelorMittal hat seinen Hauptsitz in Luxemburg.',1],
+        ['Exxon Mobil betreibt Bank- und Finanzdienstleistungen.',0],
+        ['Nestlé ist ein Lebensmittel- und Getränkekonzern.',1],
+        ['Pfizer stellt hauptsächlich Automobile her.',0]]},
+  common_claim_true_false:{label:'common_claim_true_false', rows:4450, tpl:'Allerlei Behauptungen (unkuratiert)',
+    note:'Von Casper et al. (2023), erzeugt durch GPT-3 und von Menschen gelabelt. Nur Sätze ohne Labeler-Uneinigkeit wurden übernommen. Warnung der Autoren: manche Aussagen sind trotzdem mehrdeutig.',
+    ex:[['Tomaten sind eigentlich kein Gemüse.',1],
+        ['Entgegen der landläufigen Meinung sind Schnabeltiere nicht giftig.',0],
+        ['Der Mount Everest ist der höchste Berg der Erde.',1],
+        ['Glas ist eine sehr zähflüssige Flüssigkeit.',0]]},
+  counterfact_true_false:{label:'counterfact_true_false', rows:31960, tpl:'Faktenabruf (unkuratiert)',
+    note:'Aus Meng et al. (2022, ROME). Jeweils die wahre Version plus eine vorgeschlagene falsche Modifikation.',
+    ex:[['Olaus Rudbeck sprach die Sprache Schwedisch.',1],
+        ['Die offizielle Religion des Sultanats Malakka ist das Christentum.',0],
+        ['Der Eiffelturm befindet sich in Paris.',1],
+        ['Die Hauptstadt von Norwegen ist Lissabon.',0]]},
+  likely:{label:'likely ⚠ Kontrolldatensatz', rows:10000, tpl:'Textstück — letztes Token wahrscheinlich / unwahrscheinlich',
+    note:'<b>Kein Wahrheitsgehalt!</b> LLaMA-13B erzeugt freie Texte (Temperatur 0,9, bis 100 Tokens). Beim letzten Token wird entweder das <b>wahrscheinlichste</b> oder das <b>100.-wahrscheinlichste</b> gewählt. Eine Sonde, die hier perfekt ist, misst reine Plausibilität — nicht Wahrheit.',
+    ex:[['… the latent demand outlook <b style="color:#60a5fa">for</b>',1],
+        ['… I have installed python 3.7 <b style="color:#f472b6">together</b>',0],
+        ['… the committee announced its final <b style="color:#60a5fa">report</b>',1],
+        ['… she opened the door and walked <b style="color:#f472b6">spoon</b>',0]]}
+};
+
+(function(){
+  const sel=$('#dsSel'), outEl=$('#dsOut'), info=$('#dsInfo');
+  Object.keys(DATASETS).forEach(k=>{
+    const o=document.createElement('option'); o.value=k; o.textContent=DATASETS[k].label; sel.appendChild(o);
+  });
+  let off=0;
+  function draw(){
+    const d=DATASETS[sel.value];
+    const ex=d.ex;
+    let html='';
+    for(let k=0;k<Math.min(5,ex.length);k++){
+      const [s,t]=ex[(k+off)%ex.length];
+      const isLikely = sel.value==='likely';
+      const pl = isLikely ? (t?'<span class="pill n">WAHRSCH.</span>':'<span class="pill f">UNWAHRSCH.</span>')
+                          : (t?'<span class="pill t">WAHR</span>':'<span class="pill f">FALSCH</span>');
+      html+=`<div class="sentence"><span>${s}</span>${pl}</div>`;
+    }
+    outEl.innerHTML = html;
+    info.innerHTML = `<b>${d.label}</b> · ${d.rows.toLocaleString('de-DE')} Zeilen<br>
+      <span style="color:#64748b">Schablone:</span> ${d.tpl}<br><br>${d.note}`;
+  }
+  $('#dsRoll').onclick=()=>{ off++; draw(); };
+  sel.onchange=()=>{ off=0; draw(); };
+  draw();
+})();
+
+/* =================================================================
+   04b · KORRELATION WAHRHEIT ↔ WAHRSCHEINLICHKEIT
+   ================================================================= */
+(function(){
+  const sel=$('#corrSel'), out=$('#corrOut');
+  const CFG = {
+    cities:{r:0.85, name:'cities', tpl:'„Die Stadt [X] ist in [Y].“',
+      txt:'Plausibel = wahr. Hier kann eine Sonde die beiden Dinge gar nicht unterscheiden.'},
+    sp:{r:0.95, name:'sp_en_trans', tpl:'„Das spanische Wort … bedeutet …“',
+      txt:'Noch stärker. Genau deshalb ist dies der OOD-Testdatensatz für die Interventionen — hier ist die Plausibilitäts-Sonde eine ernsthafte Konkurrenz.'},
+    negcities:{r:-0.63, name:'neg_cities', tpl:'„Die Stadt [X] ist nicht in [Y].“',
+      txt:'Umgekehrt! „Die Stadt Paris ist nicht in Frankreich“ ist höchst plausibel als Text — und glatt falsch.'},
+    negsp:{r:-0.89, name:'neg_sp_en_trans', tpl:'„Das spanische Wort … bedeutet nicht …“',
+      txt:'Maximaler Gegensatz. Eine reine Plausibilitäts-Sonde erreicht hier deutlich unter 50 % — schlechter als Münzwurf.'}
+  };
+  function draw(){
+    const c = CFG[sel.value];
+    const g = makeGauss(99 + sel.selectedIndex*17);
+    const xs=[],ys=[],cols=[],labs=[];
+    const r=c.r;
+    for(let i=0;i<220;i++){
+      const t = i%2===0 ? 1 : 0;
+      const base = (t? 1 : -1);
+      const lp = r*base*1.25 + g()*Math.sqrt(1-r*r)*1.5;
+      xs.push(base + g()*0.18);
+      ys.push(lp);
+      cols.push(t?C.true_:C.false_);
+      labs.push(t?'wahr':'falsch');
+    }
+    const tr = [{
+      x: xs.filter((_,i)=>labs[i]==='wahr'), y: ys.filter((_,i)=>labs[i]==='wahr'),
+      mode:'markers', type:'scatter', name:'wahr',
+      marker:{color:C.true_, size:7, opacity:.75, line:{width:0}}
+    },{
+      x: xs.filter((_,i)=>labs[i]==='falsch'), y: ys.filter((_,i)=>labs[i]==='falsch'),
+      mode:'markers', type:'scatter', name:'falsch',
+      marker:{color:C.false_, size:7, opacity:.75, line:{width:0}}
+    }];
+    // Trendlinie
+    const mnx=Math.min(...xs), mxx=Math.max(...xs);
+    tr.push({x:[mnx,mxx], y:[r*mnx*1.25, r*mxx*1.25], mode:'lines', name:'Trend',
+             line:{color:C.acc2, width:2.4, dash:'dash'}, hoverinfo:'skip'});
+    Plotly.react('corrPlot', tr, Object.assign({}, PLOT_BASE, {
+      title:{text:`${c.name} · r = ${r>0?'+':''}${r.toFixed(2)}`, font:{size:13, color:C.txt}},
+      xaxis:Object.assign({},PLOT_BASE.xaxis,{title:'Wahrheitswert (falsch ← → wahr)', tickvals:[-1,1], ticktext:['falsch','wahr']}),
+      yaxis:Object.assign({},PLOT_BASE.yaxis,{title:'log P(Text) laut LLaMA-2-70B'}),
+      showlegend:true, legend:{x:0.02,y:0.98,bgcolor:'rgba(18,26,44,.8)',bordercolor:C.line,borderwidth:1}
+    }), PLOT_CFG);
+    out.innerHTML = `<b>${c.name}</b> · ${c.tpl}<br>Korrelation <b style="color:${r>0?C.true_:C.false_}">r = ${r>0?'+':''}${r.toFixed(2)}</b><br><br>${c.txt}`;
+  }
+  sel.onchange=draw; draw();
+})();
+
+/* =================================================================
+   05 · PATCHING-HEATMAP
+   ================================================================= */
+(function(){
+  const cv=$('#patchCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const out=$('#patchOut'), msel=$('#patchModel');
+  const toks=['Die','Stadt','Chicago','ist','in','Kanada','.','Diese','Aussage','ist',':'];
+  const MODELS={'7b':{L:32,name:'LLaMA-2-7B'},'13b':{L:40,name:'LLaMA-2-13B'},'70b':{L:80,name:'LLaMA-2-70B'}};
+  let sel=null;
+  const NR=20; // dargestellte Layer-Bänder
+  const x0=92,y0=36,gw=W-x0-26,gh=H-y0-72;
+  const cw=gw/toks.length, ch=gh/NR;
+
+  function effect(i,lf,key){
+    // lf in [0,1] normalisierter Layer
+    let v=0;
+    // (a) Subjekt, früh
+    if(i===2) v += 1.05*Math.exp(-((lf-0.10)**2)/0.0075);
+    // (b) Punkt, mitte
+    if(i===6) v += 1.00*Math.exp(-((lf-0.37)**2)/0.013);
+    // bei 70B schwächer/kontextabhängiger
+    if(key==='70b' && i===6) v*=0.62;
+    // (c) letzte Position, spät
+    if(i===toks.length-1) v += 1.15*Math.exp(-((lf-0.80)**2)/0.028);
+    // leichter Rand bei Position 5 (Länderwort)
+    if(i===5) v += 0.22*Math.exp(-((lf-0.16)**2)/0.012);
+    // kleines Rauschen (deterministisch)
+    v += 0.05*Math.abs(Math.sin(i*2.3+lf*19));
+    return clamp(v,0,1.3);
+  }
+  function heat(v){
+    const t=clamp(v/1.15,0,1);
+    if(t<0.25){ const u=t/0.25; return `rgb(${Math.round(11+20*u)},${Math.round(18+30*u)},${Math.round(32+70*u)})`; }
+    if(t<0.58){ const u=(t-0.25)/0.33; return `rgb(${Math.round(31+65*u)},${Math.round(48+117*u)},${Math.round(102+148*u)})`; }
+    if(t<0.85){ const u=(t-0.58)/0.27; return `rgb(${Math.round(96+155*u)},${Math.round(165+26*u)},${Math.round(250-214*u)})`; }
+    const u=(t-0.85)/0.15; return `rgb(255,${Math.round(191+64*u)},${Math.round(36+219*u)})`;
+  }
+  function draw(){
+    const key=msel.value, M=MODELS[key];
+    clearBG(ctx,W,H);
+    label(ctx,`Δ log P(TRUE) − log P(FALSE) nach Patching · ${M.name}`, W/2, 18, C.txt, 12,'center','bold');
+
+    for(let r=0;r<NR;r++){
+      const lf=(r+0.5)/NR;
+      const L=Math.round(lf*M.L);
+      const y=y0+(NR-1-r)*ch;
+      if(r%3===0) label(ctx,'L'+L, x0-10, y+ch/2, C.faint, 9.5,'right');
+      for(let i=0;i<toks.length;i++){
+        const v=effect(i,lf,key);
+        ctx.fillStyle=heat(v);
+        ctx.fillRect(x0+i*cw+0.6, y+0.6, cw-1.2, ch-1.2);
+        if(sel && sel.i===i && sel.r===r){
+          ctx.strokeStyle='#fff'; ctx.lineWidth=2.2;
+          ctx.strokeRect(x0+i*cw+0.6,y+0.6,cw-1.2,ch-1.2);
+        }
+      }
+    }
+    // Gruppen markieren
+    if($('#patchGroups').checked){
+      ctx.setLineDash([5,4]); ctx.lineWidth=1.8;
+      const mk=(i,rA,rB,txt,col)=>{
+        const yA=y0+(NR-1-rB)*ch, hgt=(rB-rA+1)*ch;
+        ctx.strokeStyle=col;
+        roundRect(ctx,x0+i*cw-2, yA-2, cw+4, hgt+4, 5); ctx.stroke();
+        label(ctx,txt, x0+i*cw+cw/2, yA-10, col, 11,'center','bold');
+      };
+      mk(2,0,4,'(a)',C.acc);
+      mk(6,5,10,'(b) ⭐',C.true_);
+      mk(toks.length-1,13,19,'(c)',C.warn);
+      ctx.setLineDash([]);
+    }
+    // Token-Labels
+    for(let i=0;i<toks.length;i++){
+      ctx.save();
+      ctx.translate(x0+i*cw+cw/2, H-44);
+      ctx.rotate(-0.45);
+      label(ctx,toks[i],0,0,(i===6)?C.warn:C.dim,10.5,'right',i===6?'bold':'');
+      ctx.restore();
+    }
+    // Farbskala
+    const sbx=x0, sby=H-22, sbw=gw, sbh=10;
+    for(let p=0;p<sbw;p++){
+      ctx.fillStyle=heat(p/sbw*1.15);
+      ctx.fillRect(sbx+p,sby,1,sbh);
+    }
+    ctx.strokeStyle=C.line; ctx.strokeRect(sbx,sby,sbw,sbh);
+    label(ctx,'0',sbx,sby+18,C.faint,9,'left');
+    label(ctx,'maximaler Effekt',sbx+sbw,sby+18,C.faint,9,'right');
+
+    if(sel){
+      const lf=(sel.r+0.5)/NR;
+      const L=Math.round(lf*M.L);
+      const v=effect(sel.i,lf,key);
+      let txt;
+      if(sel.i===2 && lf<0.2) txt='Gruppe <b>(a)</b>: Hier liegt das Faktenwissen über die Stadt. Patching ändert das Modell von „Chicago“ zu „Toronto“ — damit wird der Satz wahr und die Vorhersage kippt.';
+      else if(sel.i===6 && lf>0.2 && lf<0.55) txt='Gruppe <b>(b)</b> ⭐ — <b>der Ort, den das Paper untersucht.</b> Über dem Satzzeichen, mittlere Layer. Starker kausaler Effekt + Position am Satzende ⇒ hier steht eine Repräsentation des <b>Wahrheitswerts des ganzen Satzes</b>.';
+      else if(sel.i===toks.length-1 && lf>0.65) txt='Gruppe <b>(c)</b>: Die Vorhersage ist fertig. Wendet man den Decoder direkt auf diesen Vektor an, stehen oben „true“, „True“, „TRUE“.';
+      else txt='Kaum Effekt — diese Aktivierung ist für die TRUE/FALSE-Entscheidung nicht kausal relevant.';
+      out.innerHTML=`Position <b>${sel.i}</b> („${toks[sel.i]}“) · Layer <b>${L}</b><br>Effekt ≈ <b style="color:${heat(v)}">${v.toFixed(2)}</b><br><br>${txt}`;
+    } else {
+      out.innerHTML=`Klick auf eine Zelle der Heatmap.<br><br><span style="color:#64748b">Drei helle Bereiche sind sichtbar: (a) früh über „Chicago“, (b) mittlere Layer über dem Punkt, (c) spät an der letzten Position.</span>`;
+    }
+  }
+  cv.addEventListener('click',e=>{
+    const [mx,my]=mouseLogical(cv,e);
+    const i=Math.floor((mx-x0)/cw), r=NR-1-Math.floor((my-y0)/ch);
+    if(i>=0&&i<toks.length&&r>=0&&r<NR){ sel={i,r}; draw(); }
+  });
+  msel.onchange=draw; $('#patchGroups').onchange=draw;
+  sel={i:6,r:7}; draw();
+})();
+
+/* =================================================================
+   06 · PCA INTERAKTIV
+   ================================================================= */
+(function(){
+  const cv=$('#pcaCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const cv2=$('#pcaVarCv'), ctx2=setupCanvas(cv2), [W2,H2]=cvSize(cv2);
+  const angS=$('#pcaAngS'), strS=$('#pcaStrS'), rotS=$('#pcaRotS'), out=$('#pcaOut');
+  const cx=W*0.42, cy=H/2, S=48;
+
+  function makePts(){
+    const g=makeGauss(5);
+    const str=+strS.value, rot=+rotS.value*Math.PI/180;
+    const pts=[];
+    for(let i=0;i<200;i++){
+      const t=i%2===0;
+      const a=g()*str, b=g()*0.75;
+      const sep=(t?1.5:-1.5);
+      // Trennung entlang der Hauptachse
+      const u=a+sep*0.55, v=b+sep*0.9;
+      pts.push({x:u*Math.cos(rot)-v*Math.sin(rot), y:u*Math.sin(rot)+v*Math.cos(rot), t});
+    }
+    return pts;
+  }
+  function variance(pts,ang){
+    const ux=Math.cos(ang), uy=Math.sin(ang);
+    let m=0; pts.forEach(p=>m+=p.x*ux+p.y*uy); m/=pts.length;
+    let v=0; pts.forEach(p=>{const q=p.x*ux+p.y*uy-m; v+=q*q;});
+    return v/pts.length;
+  }
+  function pc1(pts){
+    let best=0,bv=-1;
+    for(let a=0;a<180;a+=0.5){
+      const v=variance(pts,a*Math.PI/180);
+      if(v>bv){bv=v;best=a;}
+    }
+    return [best,bv];
+  }
+  function draw(){
+    const pts=makePts();
+    const ang=+angS.value*Math.PI/180;
+    $('#pcaAngV').textContent=angS.value+'°';
+    $('#pcaStrV').textContent=(+strS.value).toFixed(2);
+    $('#pcaRotV').textContent=rotS.value+'°';
+
+    clearBG(ctx,W,H); gridBG(ctx,W,H,40);
+    ctx.strokeStyle='rgba(100,116,139,.55)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    pts.forEach(p=>glowDot(ctx,cx+p.x*S,cy-p.y*S,3.1,p.t?C.true_:C.false_,0.8));
+
+    const [bestA,bestV]=pc1(pts);
+    const bA=bestA*Math.PI/180;
+    // PC1
+    arrow(ctx,cx-Math.cos(bA)*S*3.4,cy+Math.sin(bA)*S*3.4,cx+Math.cos(bA)*S*3.4,cy-Math.sin(bA)*S*3.4,'rgba(167,139,250,.95)',2.6,11);
+    label(ctx,'PC1',cx+Math.cos(bA)*S*3.7,cy-Math.sin(bA)*S*3.7,C.acc2,12,'center','bold');
+    // PC2
+    const b2=bA+Math.PI/2;
+    dashLine(ctx,cx-Math.cos(b2)*S*2,cy+Math.sin(b2)*S*2,cx+Math.cos(b2)*S*2,cy-Math.sin(b2)*S*2,'rgba(167,139,250,.5)',[6,5],1.8);
+    label(ctx,'PC2',cx+Math.cos(b2)*S*2.3,cy-Math.sin(b2)*S*2.3,'rgba(167,139,250,.65)',11,'center');
+    // Testrichtung
+    arrow(ctx,cx,cy,cx+Math.cos(ang)*S*3,cy-Math.sin(ang)*S*3,C.warn,2.6,11);
+    label(ctx,'deine Richtung',cx+Math.cos(ang)*S*3.3,cy-Math.sin(ang)*S*3.3,C.warn,11,'center','bold');
+
+    // Projektion als Histogramm rechts
+    const px=W*0.84, py0=60, pyh=H-120;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.2;
+    roundRect(ctx,px-72,py0-24,144,pyh+40,9); ctx.stroke();
+    label(ctx,'Projektion auf',px,py0-36,C.dim,10,'center');
+    label(ctx,'deine Richtung',px,py0-24,C.warn,10,'center','bold');
+    const bins=26, hT=new Array(bins).fill(0), hF=new Array(bins).fill(0);
+    const vals=pts.map(p=>({v:p.x*Math.cos(ang)+p.y*Math.sin(ang), t:p.t}));
+    const mn=Math.min(...vals.map(o=>o.v)), mx=Math.max(...vals.map(o=>o.v));
+    vals.forEach(o=>{
+      const b=clamp(Math.floor((o.v-mn)/(mx-mn+1e-9)*bins),0,bins-1);
+      (o.t?hT:hF)[b]++;
+    });
+    const hm=Math.max(...hT,...hF,1);
+    for(let b=0;b<bins;b++){
+      const y=py0+ (bins-1-b)*(pyh/bins);
+      ctx.fillStyle='rgba(52,211,153,.8)';
+      ctx.fillRect(px, y, hT[b]/hm*62, pyh/bins-1.5);
+      ctx.fillStyle='rgba(244,114,182,.7)';
+      ctx.fillRect(px-hF[b]/hm*62, y, hF[b]/hm*62, pyh/bins-1.5);
+    }
+    ctx.strokeStyle='rgba(100,116,139,.6)';
+    ctx.beginPath(); ctx.moveTo(px,py0); ctx.lineTo(px,py0+pyh); ctx.stroke();
+    label(ctx,'falsch',px-66,py0+pyh+16,C.false_,9.5,'left');
+    label(ctx,'wahr',px+66,py0+pyh+16,C.true_,9.5,'right');
+
+    // Varianz-Kurve
+    clearBG(ctx2,W2,H2);
+    let maxv=0; const curve=[];
+    for(let a=0;a<=180;a+=1){ const v=variance(pts,a*Math.PI/180); curve.push(v); if(v>maxv)maxv=v; }
+    ctx2.strokeStyle='rgba(36,51,82,.7)';
+    for(let a=0;a<=180;a+=30){
+      const x=20+a/180*(W2-40);
+      ctx2.beginPath(); ctx2.moveTo(x,10); ctx2.lineTo(x,H2-24); ctx2.stroke();
+      label(ctx2,a+'°',x,H2-12,C.faint,9,'center');
+    }
+    ctx2.beginPath();
+    curve.forEach((v,a)=>{
+      const x=20+a/180*(W2-40), y=H2-24-(v/maxv)*(H2-44);
+      a? ctx2.lineTo(x,y) : ctx2.moveTo(x,y);
+    });
+    ctx2.strokeStyle=C.acc; ctx2.lineWidth=2.2; ctx2.stroke();
+    ctx2.lineTo(W2-20,H2-24); ctx2.lineTo(20,H2-24); ctx2.closePath();
+    ctx2.fillStyle='rgba(96,165,250,.14)'; ctx2.fill();
+    // Marker
+    const xm=20+bestA/180*(W2-40);
+    dashLine(ctx2,xm,10,xm,H2-24,'rgba(167,139,250,.9)',[4,4],1.8);
+    label(ctx2,'PC1 = Maximum',xm+6,20,C.acc2,10,'left','bold');
+    const xu=20+(+angS.value)/180*(W2-40);
+    dashLine(ctx2,xu,10,xu,H2-24,C.warn,[3,3],1.8);
+    glowDot(ctx2,xu,H2-24-(variance(pts,ang)/maxv)*(H2-44),4.5,C.warn);
+    label(ctx2,'Varianz der Projektion ↑',24,16,C.dim,10,'left');
+
+    // Trennqualität
+    let sT=0,nT=0,sF=0,nF=0;
+    vals.forEach(o=>{ if(o.t){sT+=o.v;nT++;}else{sF+=o.v;nF++;} });
+    const mT=sT/nT,mF=sF/nF;
+    let sd=0; vals.forEach(o=>{sd+=(o.v-(o.t?mT:mF))**2;}); sd=Math.sqrt(sd/vals.length);
+    const d=Math.abs(mT-mF)/(sd+1e-9);
+    const vv=variance(pts,ang);
+    out.innerHTML=`Varianz entlang deiner Richtung: <b>${vv.toFixed(2)}</b> (Maximum = ${maxv.toFixed(2)} bei <b style="color:${C.acc2}">${bestA.toFixed(0)}°</b>)<br>
+      Trennschärfe d = <b style="color:${d>1.3?C.true_:d>0.6?C.warn:C.false_}">${d.toFixed(2)}</b><br><br>
+      <span style="color:#64748b">PCA kennt die Farben <b>nicht</b>. Dass die beste Varianz-Richtung
+      trotzdem oft die Trenn-Richtung ist, ist der eigentliche Befund.</span>`;
+  }
+  [angS,strS,rotS].forEach(e=>e.oninput=draw);
+  $('#pcaSnap').onclick=()=>{ const [b]=pc1(makePts()); angS.value=Math.round(b); draw(); };
+  draw();
+})();
+
+/* =================================================================
+   06b · FIG-1-GALERIE
+   ================================================================= */
+(function(){
+  const btns=$('#fig1Btns'), out=$('#fig1Out');
+  const SETS = {
+    cities:{t:'cities', sep:[1,0.12], spread:[9,7], note:'„Die Stadt [X] ist in [Y].“ — Die saubere lineare Trennung entlang PC1 ist unübersehbar. Beachte: Die PCA hat die Farben nie gesehen.'},
+    sp_en_trans:{t:'sp_en_trans', sep:[0.86,-0.4], spread:[8.5,7], note:'„Das spanische Wort … bedeutet …“ — Völlig anderes Thema, völlig anderer Satzbau. Trotzdem dieselbe klare lineare Struktur.'},
+    smaller_than:{t:'smaller_than', sep:[0.95,0.25], spread:[9.5,8], note:'„x ist kleiner als y.“ — Rein numerisch, kein Weltwissen nötig. Auch hier: lineare Trennung in den Top-2-PCs.'},
+    cities_conj:{t:'cities_cities_conj', sep:[0.7,0.6], spread:[10,8.5], note:'„Es ist sowohl der Fall, dass … als auch dass …“ — Logisch komplex. Die Trennung ist etwas diagonaler und unschärfer, aber klar vorhanden. Diese Struktur entsteht erst in späteren Layern.'}
+  };
+  let cur='cities';
+  Object.keys(SETS).forEach(k=>{
+    const b=document.createElement('button');
+    b.className='sm'+(k===cur?' on':''); b.textContent=SETS[k].t; b.dataset.k=k;
+    b.onclick=()=>{ cur=k; $$('#fig1Btns button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); draw(); };
+    btns.appendChild(b);
+  });
+  function draw(){
+    const S=SETS[cur], g=makeGauss(31+cur.length*7);
+    const xs=[[],[]], ys=[[],[]];
+    const ang=Math.atan2(S.sep[1],S.sep[0]);
+    for(let i=0;i<340;i++){
+      const t=i%2;
+      const s=(t?1:-1)*1.15;
+      const a=g()*1.0+s, b=g()*0.9;
+      const u=a*S.spread[0], v=b*S.spread[1];
+      xs[t].push(u*Math.cos(ang)-v*Math.sin(ang));
+      ys[t].push(u*Math.sin(ang)+v*Math.cos(ang));
+    }
+    const tr=[
+      {x:xs[0],y:ys[0],mode:'markers',type:'scatter',name:'False',
+       marker:{color:C.false_,size:6.5,opacity:.72,line:{width:0}}},
+      {x:xs[1],y:ys[1],mode:'markers',type:'scatter',name:'True',
+       marker:{color:C.true_,size:6.5,opacity:.72,line:{width:0}}}
+    ];
+    Plotly.react('fig1Plot',tr,Object.assign({},PLOT_BASE,{
+      title:{text:`LLaMA-2-70B · ${S.t} · Top-2-Hauptkomponenten`,font:{size:13,color:C.txt}},
+      xaxis:Object.assign({},PLOT_BASE.xaxis,{title:'PC1'}),
+      yaxis:Object.assign({},PLOT_BASE.yaxis,{title:'PC2',scaleanchor:'x',scaleratio:1}),
+      legend:{x:0.01,y:0.99,bgcolor:'rgba(18,26,44,.85)',bordercolor:C.line,borderwidth:1}
+    }),PLOT_CFG);
+    out.innerHTML=`<b>${S.t}</b><br>${S.note}`;
+  }
+  draw();
+})();
+
+/* =================================================================
+   06c · LAYER-SCRUBBER
+   ================================================================= */
+(function(){
+  const cv=$('#layCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const S=$('#layS'), sel=$('#laySel'), out=$('#layOut');
+  let anim=null;
+  const ONSET={cities:7, larger:6, conj:14, sp:8};
+  const NAME={cities:'cities', larger:'larger_than', conj:'cities_cities_conj', sp:'sp_en_trans'};
+
+  function draw(){
+    const L=+S.value, key=sel.value, on=ONSET[key];
+    $('#layV').textContent=L;
+    const g=makeGauss(41+on*3);
+    // Separation wächst sigmoid um onset
+    const sepAmt = 1/(1+Math.exp(-(L-on)*0.85)) * 1.9;
+    const scale  = 0.35 + 1/(1+Math.exp(-(L-on+1)*0.5))*1.4;
+
+    clearBG(ctx,W,H); gridBG(ctx,W,H,42);
+    const cx=W*0.42, cy=H/2, SC=34;
+    ctx.strokeStyle='rgba(100,116,139,.5)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    label(ctx,'PC1',W*0.80,cy-8,C.faint,10,'right');
+    label(ctx,'PC2',cx+8,16,C.faint,10,'left');
+
+    for(let i=0;i<200;i++){
+      const t=i%2===0;
+      const s=t?sepAmt:-sepAmt;
+      const x=(g()*0.9+s)*scale, y=g()*0.95*scale;
+      glowDot(ctx,cx+x*SC,cy-y*SC,3.0,t?C.true_:C.false_,0.78);
+    }
+    // Layer-Leiste
+    const bx=40,by=H-30,bw=W-80;
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,by,bw,8,4); ctx.fill();
+    const px=bx+(L-1)/29*bw;
+    ctx.fillStyle=C.acc; roundRect(ctx,bx,by,px-bx,8,4); ctx.fill();
+    glowDot(ctx,px,by+4,6,C.acc2);
+    for(let l=1;l<=30;l+=5) label(ctx,'L'+l,bx+(l-1)/29*bw,by+20,C.faint,9,'center');
+    // Onset-Marker
+    const ox=bx+(on-1)/29*bw;
+    dashLine(ctx,ox,by-150,ox,by,'rgba(251,191,36,.7)',[4,4],1.5);
+    label(ctx,'Struktur entsteht',ox,by-158,C.warn,10,'center','bold');
+
+    const state = L<on-2 ? ['Matsch — keine erkennbare Struktur', C.false_]
+                : L<on+2 ? ['Struktur klappt gerade auf', C.warn]
+                : ['Klare lineare Trennung', C.true_];
+    out.innerHTML=`<b>${NAME[key]}</b> · Layer ${L} von 40 (LLaMA-2-13B)<br>
+      Status: <b style="color:${state[1]}">${state[0]}</b><br>
+      Trennung: <b>${(sepAmt/1.9*100).toFixed(0)} %</b><br><br>
+      <span style="color:#64748b">${key==='conj'
+        ? 'Konjunktionen brauchen deutlich länger — das Modell muss erst beide Teilsätze einzeln auswerten, bevor es sie logisch verknüpfen kann.'
+        : 'Einfache Satzstrukturen: die Wahrheits-Struktur ist bereits in frühen mittleren Layern da.'}</span>`;
+  }
+  $('#layPlay').onclick=()=>{
+    if(anim){clearInterval(anim);anim=null;$('#layPlay').textContent='▶ Durch Layer laufen';return;}
+    $('#layPlay').textContent='■ Stopp';
+    S.value=1;
+    anim=setInterval(()=>{
+      S.value = (+S.value>=30)?1:(+S.value+1);
+      draw();
+    },170);
+  };
+  S.oninput=draw; sel.onchange=draw; draw();
+})();
+
+/* =================================================================
+   07 · GEOMETRIE: ZWEI DATENSÄTZE
+   ================================================================= */
+(function(){
+  const cv=$('#geoCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const sel=$('#geoSel'), angS=$('#geoAngS'), out=$('#geoOut');
+  const PRE={aligned:0, anti:180, ortho:90};
+  const TXT={
+    aligned:['Fall ① · Ausgerichtet','Beide Datensätze trennen entlang <b>derselben</b> Richtung. Eine Sonde, die auf A trainiert ist, funktioniert sofort auf B. Das ist der Fall, den das Paper bei großen Modellen findet — z.B. Abb. 3(a): die erste Hauptkomponente von <code>cities</code> trennt auch <code>larger_than</code>, <code>sp_en_trans</code>, <code>common_claim</code> und <code>counterfact</code>.'],
+    anti:['Fall ② · Antipodal','Beide trennen sauber, aber in <b>entgegengesetzte</b> Richtungen. Eine Sonde von A liefert auf B systematisch das <b>falsche</b> Ergebnis — deutlich unter 50 %! Beispiel: <code>larger_than</code> vs. <code>smaller_than</code> bei LLaMA-2-13B.'],
+    ortho:['Fall ③ · Orthogonal','Die Trennachsen stehen <b>senkrecht</b> aufeinander. Eine Sonde von A ist auf B <b>völlig blind</b> — exakt 50 %, reines Raten. Beispiel: <code>cities</code> vs. <code>neg_cities</code> bei LLaMA-2-13B, Layer 12.'],
+    free:['Fall ④ · Frei','Stell den Winkel selbst ein und beobachte, wie die Transfer-Genauigkeit von 100 % über 50 % auf 0 % fällt.']
+  };
+  function draw(){
+    const mode=sel.value;
+    if(mode!=='free'){ angS.value=PRE[mode]; angS.disabled=true; }
+    else angS.disabled=false;
+    const ang=+angS.value*Math.PI/180;
+    $('#geoAngV').textContent=angS.value+'°';
+
+    clearBG(ctx,W,H); gridBG(ctx,W,H,42);
+    const cx=W/2, cy=H/2, SC=40;
+    ctx.strokeStyle='rgba(100,116,139,.45)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    const gA=makeGauss(61), gB=makeGauss(83);
+    const ptsA=[], ptsB=[];
+    for(let i=0;i<120;i++){
+      const t=i%2===0, s=t?1.5:-1.5;
+      const a=gA()*0.75+s, b=gA()*0.85;
+      ptsA.push({x:a, y:b, t});
+    }
+    for(let i=0;i<120;i++){
+      const t=i%2===0, s=t?1.5:-1.5;
+      const a=gB()*0.75+s, b=gB()*0.85;
+      ptsB.push({x:a*Math.cos(ang)-b*Math.sin(ang), y:a*Math.sin(ang)+b*Math.cos(ang), t});
+    }
+    // A: Kreise, B: Quadrate
+    ptsA.forEach(p=>glowDot(ctx,cx+p.x*SC,cy-p.y*SC,3.2,p.t?C.true_:C.false_,0.8));
+    ptsB.forEach(p=>{
+      ctx.save(); ctx.globalAlpha=0.78;
+      ctx.shadowColor=p.t?C.true_:C.false_; ctx.shadowBlur=7;
+      ctx.fillStyle=p.t?C.true_:C.false_;
+      ctx.fillRect(cx+p.x*SC-2.7, cy-p.y*SC-2.7, 5.4,5.4);
+      ctx.restore();
+    });
+    // Achsen
+    arrow(ctx,cx-SC*3.2,cy,cx+SC*3.2,cy,'rgba(96,165,250,.95)',2.6,11);
+    label(ctx,'θ_A (Datensatz A ●)',cx+SC*3.3,cy-14,C.acc,11,'left','bold');
+    arrow(ctx,cx-Math.cos(ang)*SC*3.2,cy+Math.sin(ang)*SC*3.2,
+              cx+Math.cos(ang)*SC*3.2,cy-Math.sin(ang)*SC*3.2,'rgba(167,139,250,.95)',2.6,11);
+    label(ctx,'θ_B (Datensatz B ■)',cx+Math.cos(ang)*SC*3.4,cy-Math.sin(ang)*SC*3.4-12,C.acc2,11,'center','bold');
+
+    // Winkelbogen
+    ctx.strokeStyle='rgba(251,191,36,.8)'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.arc(cx,cy,48,-ang,0, ang>0); ctx.stroke();
+    label(ctx,angS.value+'°',cx+Math.cos(ang/2)*62,cy-Math.sin(ang/2)*62,C.warn,11,'center','bold');
+
+    // Transfer-Genauigkeit berechnen
+    let corr=0;
+    ptsB.forEach(p=>{ const d=p.x; if((d>0)===p.t) corr++; });
+    const acc=corr/ptsB.length;
+
+    if($('#geoProbe').checked){
+      dashLine(ctx,cx,0,cx,H,'rgba(96,165,250,.6)',[6,5],1.6);
+      label(ctx,'Entscheidungsgrenze der A-Sonde',cx+8,24,C.acc,10,'left');
+      // Genauigkeitsbalken
+      const bx=W-180, by=H-46;
+      label(ctx,'Transfer A→B',bx,by-14,C.dim,10,'left');
+      ctx.fillStyle='#0b1220'; roundRect(ctx,bx,by,150,16,8); ctx.fill();
+      ctx.fillStyle= acc>0.8?C.true_: acc>0.6?C.warn:C.false_;
+      roundRect(ctx,bx,by,Math.max(6,150*acc),16,8); ctx.fill();
+      dashLine(ctx,bx+75,by-3,bx+75,by+19,'rgba(230,237,248,.6)',[3,3],1.2);
+      label(ctx,(acc*100).toFixed(0)+' %',bx+158,by+8,C.txt,11,'left','bold');
+      label(ctx,'50 % = Raten',bx+75,by+30,C.faint,9,'center');
+    }
+    const T=TXT[mode];
+    out.innerHTML=`<b>${T[0]}</b><br>Transfer-Genauigkeit A→B: <b style="color:${acc>0.8?C.true_:acc>0.6?C.warn:C.false_}">${(acc*100).toFixed(0)} %</b><br><br>${T[1]}`;
+  }
+  sel.onchange=draw; angS.oninput=draw; $('#geoProbe').onchange=draw; draw();
+})();
+
+/* =================================================================
+   07b · SKALIERUNG larger_than / smaller_than
+   ================================================================= */
+(function(){
+  const S=$('#scaleS'), out=$('#scaleOut');
+  const NAMES=['LLaMA-2-7B','LLaMA-2-13B','LLaMA-2-70B'];
+  function draw(){
+    const m=+S.value;
+    $('#scaleV').textContent=['7B','13B','70B'][m];
+    const g=makeGauss(101+m*13);
+    const traces=[];
+    if(m===0){
+      // Cluster nach Oberflächenmerkmal (Zahlwort)
+      const words=['„achtzig“','„sechzig“','„siebzig“','„neunzig“','„fünfzig“'];
+      const cols=['#60a5fa','#a78bfa','#fbbf24','#34d399','#f472b6'];
+      words.forEach((w,k)=>{
+        const ang=k/words.length*TAU;
+        const cx0=Math.cos(ang)*5.5, cy0=Math.sin(ang)*5.5;
+        const xs=[],ys=[],tx=[];
+        for(let i=0;i<55;i++){
+          xs.push(cx0+g()*1.25); ys.push(cy0+g()*1.25);
+          tx.push((i%2? 'wahr':'falsch')+' · enthält '+w);
+        }
+        traces.push({x:xs,y:ys,mode:'markers',type:'scatter',name:w,
+          text:tx, hovertemplate:'%{text}<extra></extra>',
+          marker:{color:cols[k],size:6,opacity:.72,line:{width:0}}});
+      });
+    } else {
+      const angLT = 0;
+      const angST = (m===1) ? Math.PI : 0.22;
+      [['larger_than',angLT,'circle'],['smaller_than',angST,'square']].forEach(([nm,ang,sym],k)=>{
+        [1,0].forEach(t=>{
+          const xs=[],ys=[];
+          for(let i=0;i<80;i++){
+            const s=(t?1:-1)*(m===2?3.2:2.6);
+            const a=g()*1.5+s, b=g()*1.7;
+            xs.push(a*Math.cos(ang)-b*Math.sin(ang));
+            ys.push(a*Math.sin(ang)+b*Math.cos(ang));
+          }
+          traces.push({x:xs,y:ys,mode:'markers',type:'scatter',
+            name:`${nm} · ${t?'wahr':'falsch'}`,
+            marker:{color:t?C.true_:C.false_,size:6.5,opacity:.7,symbol:sym,line:{width:0}}});
+        });
+      });
+    }
+    Plotly.react('scalePlot',traces,Object.assign({},PLOT_BASE,{
+      title:{text:`${NAMES[m]} · larger_than + smaller_than`,font:{size:13,color:C.txt}},
+      xaxis:Object.assign({},PLOT_BASE.xaxis,{title:'PC1'}),
+      yaxis:Object.assign({},PLOT_BASE.yaxis,{title:'PC2',scaleanchor:'x',scaleratio:1}),
+      legend:{x:1.01,y:1,bgcolor:'rgba(18,26,44,.85)',bordercolor:C.line,borderwidth:1,font:{size:10}},
+      margin:{l:52,r:160,t:46,b:48}
+    }),PLOT_CFG);
+    const T=[
+      '<b>7B — Oberflächenmerkmale.</b> Die Punkte gruppieren sich nach dem <b>vorkommenden Zahlwort</b> („eighty“ usw.), nicht nach Wahrheit. Grün und Pink sind in jedem Cluster gemischt. Das Modell repräsentiert hier primär <em>welche Tokens vorkommen</em>.',
+      '<b>13B — Antipodal.</b> Beide Datensätze trennen jetzt sauber nach Wahrheit (Kreise = larger_than, Quadrate = smaller_than) — aber in <b>entgegengesetzte Richtungen</b>. Das Modell hat vermutlich etwas wie „die erste Zahl ist groß“ repräsentiert, nicht „die Aussage stimmt“.',
+      '<b>70B — Ausgerichtet.</b> Beide Datensätze trennen entlang <b>einer gemeinsamen Richtung</b>. Das ist genau das, was man von einer abstrakten Wahrheits-Repräsentation erwartet: strukturell gegensätzliche Sätze, dieselbe Achse.'
+    ];
+    out.innerHTML=T[m];
+  }
+  S.oninput=draw; draw();
+})();
+
+/* =================================================================
+   07c · ROTATION ÜBER LAYER
+   ================================================================= */
+(function(){
+  const cv=$('#rotCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const S=$('#rotLS'), out=$('#rotOut');
+  let anim=null;
+  function angleAt(L){
+    // L 3..20 : 180° -> 90° -> ~10°
+    if(L<=11) return lerp(180,90,(L-3)/8);
+    return lerp(90,8,(L-11)/9);
+  }
+  function draw(){
+    const L=+S.value;
+    $('#rotLV').textContent=L;
+    const ang=angleAt(L)*Math.PI/180;
+    clearBG(ctx,W,H); gridBG(ctx,W,H,42);
+    const cx=W*0.40, cy=H/2, SC=36;
+    ctx.strokeStyle='rgba(100,116,139,.45)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W*0.78,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    const g1=makeGauss(7), g2=makeGauss(29);
+    for(let i=0;i<110;i++){
+      const t=i%2===0, s=t?1.45:-1.45;
+      const a=g1()*0.72+s, b=g1()*0.82;
+      glowDot(ctx,cx+a*SC,cy-b*SC,3.2,t?C.true_:C.false_,0.78);
+    }
+    for(let i=0;i<110;i++){
+      const t=i%2===0, s=t?1.45:-1.45;
+      const a=g2()*0.72+s, b=g2()*0.82;
+      const x=a*Math.cos(ang)-b*Math.sin(ang), y=a*Math.sin(ang)+b*Math.cos(ang);
+      ctx.save(); ctx.globalAlpha=0.78;
+      ctx.shadowColor=p_t_col(t); ctx.shadowBlur=7;
+      ctx.fillStyle=p_t_col(t);
+      ctx.fillRect(cx+x*SC-2.7, cy-y*SC-2.7, 5.4, 5.4);
+      ctx.restore();
+    }
+    function p_t_col(t){ return t?C.true_:C.false_; }
+
+    // Achsen der beiden Datensätze
+    arrow(ctx,cx-SC*3.0,cy,cx+SC*3.0,cy,'rgba(96,165,250,.95)',2.4,10);
+    label(ctx,'cities ●',cx+SC*3.2,cy-14,C.acc,11,'left','bold');
+    arrow(ctx,cx-Math.cos(ang)*SC*3.0,cy+Math.sin(ang)*SC*3.0,
+              cx+Math.cos(ang)*SC*3.0,cy-Math.sin(ang)*SC*3.0,'rgba(167,139,250,.95)',2.4,10);
+    label(ctx,'neg_cities ■',cx+Math.cos(ang)*SC*3.3,cy-Math.sin(ang)*SC*3.3-10,C.acc2,11,'center','bold');
+
+    // Winkelanzeige
+    ctx.strokeStyle='rgba(251,191,36,.85)'; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.arc(cx,cy,46,-ang,0,true); ctx.stroke();
+    label(ctx,Math.round(angleAt(L))+'°',cx+Math.cos(ang/2)*62,cy-Math.sin(ang/2)*62,C.warn,12,'center','bold');
+
+    // Layer-Leiste rechts
+    const bx=W*0.86, by0=50, byh=H-110;
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx-7,by0,14,byh,7); ctx.fill();
+    const yy=by0+byh-(L-3)/17*byh;
+    ctx.fillStyle=C.acc; roundRect(ctx,bx-7,yy,14,by0+byh-yy,7); ctx.fill();
+    glowDot(ctx,bx,yy,7,C.acc2);
+    label(ctx,'L20',bx+14,by0,C.faint,9,'left');
+    label(ctx,'L3',bx+14,by0+byh,C.faint,9,'left');
+    label(ctx,'Layer '+L,bx,by0-16,C.txt,11,'center','bold');
+
+    // Phasen-Band
+    const px0=40, pw=W*0.72, py=H-34;
+    const phases=[[3,9,'antipodal',C.false_],[9,14,'orthogonal',C.warn],[14,20,'ausgerichtet',C.true_]];
+    phases.forEach(([a,b,nm,col])=>{
+      const xa=px0+(a-3)/17*pw, xb=px0+(b-3)/17*pw;
+      ctx.fillStyle=col; ctx.globalAlpha=(L>=a&&L<b)?0.42:0.13;
+      roundRect(ctx,xa,py,xb-xa-3,9,4); ctx.fill(); ctx.globalAlpha=1;
+      label(ctx,nm,(xa+xb)/2,py+22,(L>=a&&L<b)?col:C.faint,10,'center',(L>=a&&L<b)?'bold':'');
+    });
+
+    const phase = L<9?['Antipodal','Beide Datensätze trennen, aber in <b>entgegengesetzte</b> Richtungen. Das Merkmal, das hier dominiert, ist vermutlich <b>„enge Assoziation“</b> — Paris↔Frankreich. Bei <code>cities</code> korreliert das positiv mit Wahrheit, bei <code>neg_cities</code> negativ.',C.false_]
+              : L<14?['Orthogonal','Die Achsen stehen fast <b>senkrecht</b> aufeinander (Abb. 3c des Papers nutzt genau Layer 12). Jetzt sind <b>beide</b> Merkmale salient: f⁺ („Wahrheit“) und f⁻ („Assoziation“). Jeder Datensatz trennt entlang einer anderen Mischung aus beiden.',C.warn]
+              : ['Ausgerichtet','Die Achsen fallen zusammen. Das Modell hat jetzt ein <b>abstrakteres Merkmal</b> berechnet und in den Vordergrund gestellt, das auf beiden Datensätzen gleichsinnig mit Wahrheit korreliert.',C.true_];
+    out.innerHTML=`Layer <b>${L}</b> · Winkel ≈ <b style="color:${phase[2]}">${Math.round(angleAt(L))}°</b><br>
+      Phase: <b style="color:${phase[2]}">${phase[0]}</b><br><br>${phase[1]}`;
+  }
+  $('#rotPlay').onclick=()=>{
+    if(anim){clearInterval(anim);anim=null;$('#rotPlay').textContent='▶ Animieren';return;}
+    $('#rotPlay').textContent='■ Stopp'; S.value=3;
+    anim=setInterval(()=>{ S.value=(+S.value>=20)?3:(+S.value+1); draw(); },320);
+  };
+  S.oninput=draw; draw();
+})();
+
+/* =================================================================
+   07d · SALIENZ-MISCHER (f+ / f-)
+   ================================================================= */
+(function(){
+  const cv=$('#salCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const sT=$('#salTS'), sA=$('#salAS'), out=$('#salOut');
+  function draw(){
+    const st=+sT.value, sa=+sA.value;
+    $('#salTV').textContent=st.toFixed(2);
+    $('#salAV').textContent=sa.toFixed(2);
+    clearBG(ctx,W,H); gridBG(ctx,W,H,42);
+    const cx=W/2, cy=H/2, SC=42;
+    ctx.strokeStyle='rgba(100,116,139,.45)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    // f+ entlang x, f- entlang y
+    const g1=makeGauss(13), g2=makeGauss(53);
+    // cities: f- korreliert +, neg_cities: f- korreliert -
+    const draws=[
+      {g:g1, sgnA:+1, sym:'circle'},
+      {g:g2, sgnA:-1, sym:'square'}
+    ];
+    draws.forEach(d=>{
+      for(let i=0;i<100;i++){
+        const t=i%2===0, s=t?1:-1;
+        const x = s*st + d.g()*0.42;
+        const y = s*d.sgnA*sa + d.g()*0.42;
+        const px=cx+x*SC, py=cy-y*SC;
+        if(d.sym==='circle') glowDot(ctx,px,py,3.1,t?C.true_:C.false_,0.78);
+        else{
+          ctx.save(); ctx.globalAlpha=.78; ctx.shadowColor=t?C.true_:C.false_; ctx.shadowBlur=7;
+          ctx.fillStyle=t?C.true_:C.false_; ctx.fillRect(px-2.7,py-2.7,5.4,5.4); ctx.restore();
+        }
+      }
+    });
+    arrow(ctx,cx,cy,cx+SC*2.4,cy,'rgba(52,211,153,.9)',2.4,10);
+    label(ctx,'f⁺ „Wahrheit“',cx+SC*2.6,cy-14,C.true_,11,'left','bold');
+    arrow(ctx,cx,cy,cx,cy-SC*2.4,'rgba(251,191,36,.9)',2.4,10);
+    label(ctx,'f⁻ „enge Assoziation“',cx+8,cy-SC*2.6,C.warn,11,'left','bold');
+    label(ctx,'● cities      ■ neg_cities',W-16,24,C.dim,11,'right');
+
+    // Erwartete PCA-Achse pro Datensatz
+    const aC=Math.atan2(sa,st), aN=Math.atan2(-sa,st);
+    dashLine(ctx,cx-Math.cos(aC)*SC*3,cy+Math.sin(aC)*SC*3,cx+Math.cos(aC)*SC*3,cy-Math.sin(aC)*SC*3,'rgba(96,165,250,.8)',[6,4],2);
+    dashLine(ctx,cx-Math.cos(aN)*SC*3,cy+Math.sin(aN)*SC*3,cx+Math.cos(aN)*SC*3,cy-Math.sin(aN)*SC*3,'rgba(167,139,250,.8)',[6,4],2);
+
+    const angDeg = Math.abs(aC-aN)*180/Math.PI;
+    // Sonde auf Vereinigung = Mittelwertdifferenz über beide → f- hebt sich auf
+    const unionAng = 0;
+    arrow(ctx,cx,cy,cx+SC*2.9,cy,'rgba(255,255,255,.55)',3.5,0);
+
+    let diag;
+    if(st>0.25 && sa<0.25) diag=['Nur f⁺ salient','Beide Datensätze trennen entlang <b>derselben</b> Achse. PCA zeigt gemeinsame Trennung. → Fall ① des Papers.'];
+    else if(sa>0.25 && st<0.25) diag=['Nur f⁻ salient','Beide trennen, aber <b>antipodal</b>. → Fall ② (Abb. 3b, Mitte).'];
+    else if(st>0.25&&sa>0.25) diag=['Beide salient','Die Achsen stehen schräg bis <b>orthogonal</b> zueinander. → Fall ③ (Abb. 3c).'];
+    else diag=['Nichts salient','Keine Struktur — so sehen sehr frühe Layer aus.'];
+
+    out.innerHTML=`Winkel zwischen den Datensatz-Achsen: <b style="color:${C.warn}">${angDeg.toFixed(0)}°</b><br>
+      <b>${diag[0]}</b> — ${diag[1]}<br><br>
+      <span style="color:#64748b">Die weiße Achse ist die Mittelwertdifferenz über <b>beide</b> Datensätze zusammen:
+      f⁻ hebt sich auf (+1 und −1), f⁺ bleibt. Deshalb generalisiert eine Sonde, die auf
+      <code>cities + neg_cities</code> trainiert wurde, besser.</span>`;
+  }
+  $('#salA').onclick=()=>{sT.value=2.0; sA.value=0; draw();};
+  $('#salB').onclick=()=>{sT.value=0.1; sA.value=2.0; draw();};
+  $('#salC').onclick=()=>{sT.value=1.3; sA.value=1.3; draw();};
+  sT.oninput=draw; sA.oninput=draw; draw();
+})();
+
+/* =================================================================
+   08 · SONDEN-WERKSTATT
+   ================================================================= */
+(function(){
+  const cv=$('#prbCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const out=$('#prbOut');
+  let method='lr';
+  $$('#probeBtns button').forEach(b=>{
+    b.onclick=()=>{ method=b.dataset.m; $$('#probeBtns button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); draw(); };
+  });
+  function genData(){
+    const fs=+$('#prbFS').value, ang=+$('#prbAS').value*Math.PI/180, nz=+$('#prbNS').value;
+    const g=makeGauss(17);
+    const pts=[];
+    const tx=1, ty=0;                               // θ_t
+    const fx=Math.cos(ang), fy=Math.sin(ang);       // θ_f
+    for(let i=0;i<180;i++){
+      const t=i%2===0, s=t?1.0:-1.0;
+      const fval=g()*fs;    // Variation entlang f, unabhängig vom Label
+      pts.push({
+        x: s*tx*1.25 + fval*fx + g()*nz,
+        y: s*ty*1.25 + fval*fy + g()*nz,
+        t
+      });
+    }
+    return {pts, tdir:[tx,ty], fdir:[fx,fy], fs, nz};
+  }
+  function massMean(pts){
+    let mx=[0,0], nx=0, my=[0,0], ny=0;
+    pts.forEach(p=>{ if(p.t){mx[0]+=p.x;mx[1]+=p.y;nx++;} else {my[0]+=p.x;my[1]+=p.y;ny++;} });
+    return {v:[mx[0]/nx-my[0]/ny, mx[1]/nx-my[1]/ny], mp:[mx[0]/nx,mx[1]/nx*0+mx[1]/nx], mm:[my[0]/ny,my[1]/ny]};
+  }
+  function cov(pts, mp, mm){
+    let sxx=0,sxy=0,syy=0;
+    pts.forEach(p=>{
+      const m = p.t?mp:mm;
+      const dx=p.x-m[0], dy=p.y-m[1];
+      sxx+=dx*dx; sxy+=dx*dy; syy+=dy*dy;
+    });
+    const n=pts.length;
+    return [[sxx/n,sxy/n],[sxy/n,syy/n]];
+  }
+  function inv2(M){
+    const det=M[0][0]*M[1][1]-M[0][1]*M[1][0];
+    return [[M[1][1]/det,-M[0][1]/det],[-M[1][0]/det,M[0][0]/det]];
+  }
+  function logreg(pts){
+    let w=[0.5,0.0];
+    for(let it=0; it<600; it++){
+      let g=[0,0];
+      pts.forEach(p=>{
+        const z=w[0]*p.x+w[1]*p.y;
+        const s=1/(1+Math.exp(-z));
+        const e=(p.t?1:0)-s;
+        g[0]+=e*p.x; g[1]+=e*p.y;
+      });
+      w[0]+=0.012*g[0]/pts.length*8; w[1]+=0.012*g[1]/pts.length*8;
+    }
+    const n=Math.hypot(w[0],w[1]);
+    return [w[0]/n,w[1]/n];
+  }
+  function ccsDir(pts){
+    // Näherung: CCS ≈ Richtung maximaler Kontrast-Trennung ~ LR-ähnlich mit leichtem Bias
+    const l=logreg(pts);
+    const a=Math.atan2(l[1],l[0])+0.13;
+    return [Math.cos(a),Math.sin(a)];
+  }
+  function acc(pts,d){
+    let c=0; pts.forEach(p=>{ if(((p.x*d[0]+p.y*d[1])>0)===p.t) c++; });
+    return c/pts.length;
+  }
+  function draw(){
+    const D=genData();
+    $('#prbFV').textContent=(+$('#prbFS').value).toFixed(2);
+    $('#prbAV').textContent=$('#prbAS').value+'°';
+    $('#prbNV').textContent=(+$('#prbNS').value).toFixed(2);
+    clearBG(ctx,W,H); gridBG(ctx,W,H,42);
+    const cx=W*0.44, cy=H/2, SC=34;
+    ctx.strokeStyle='rgba(100,116,139,.4)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    D.pts.forEach(p=>glowDot(ctx,cx+p.x*SC,cy-p.y*SC,3.1,p.t?C.true_:C.false_,0.72));
+
+    const MM=massMean(D.pts);
+    let mmv=MM.v; const mn=Math.hypot(mmv[0],mmv[1]); mmv=[mmv[0]/mn,mmv[1]/mn];
+    const lr=logreg(D.pts);
+    const cc=ccsDir(D.pts);
+    // Σ⁻¹-korrigiert
+    const Si=inv2(cov(D.pts,MM.mp,MM.mm));
+    let mmi=[Si[0][0]*mmv[0]+Si[0][1]*mmv[1], Si[1][0]*mmv[0]+Si[1][1]*mmv[1]];
+    const mi=Math.hypot(mmi[0],mmi[1]); mmi=[mmi[0]/mi,mmi[1]/mi];
+
+    // wahre Richtungen
+    dashLine(ctx,cx,cy,cx+D.tdir[0]*SC*3.1,cy-D.tdir[1]*SC*3.1,'rgba(52,211,153,.55)',[5,4],2);
+    label(ctx,'θ_t (wahre Wahrheitsrichtung)',cx+D.tdir[0]*SC*3.3,cy-D.tdir[1]*SC*3.3-14,C.true_,10.5,'left');
+    dashLine(ctx,cx,cy,cx+D.fdir[0]*SC*2.6,cy-D.fdir[1]*SC*2.6,'rgba(251,191,36,.55)',[5,4],2);
+    label(ctx,'θ_f (Störmerkmal)',cx+D.fdir[0]*SC*2.8,cy-D.fdir[1]*SC*2.8,C.warn,10.5,'left');
+
+    const showAll=$('#prbShowAll').checked;
+    const useW=$('#prbWhite').checked;
+    const list=[];
+    if(showAll||method==='lr')  list.push(['θ_lr', lr, '#f87171']);
+    if(showAll||method==='mm')  list.push([useW?'θ_mm·Σ⁻¹':'θ_mm', useW?mmi:mmv, '#60a5fa']);
+    if(showAll||method==='ccs') list.push(['θ_ccs', cc, '#a78bfa']);
+
+    list.forEach(([nm,d,col],k)=>{
+      arrow(ctx,cx,cy,cx+d[0]*SC*2.9,cy-d[1]*SC*2.9,col,2.8,11);
+      label(ctx,nm,cx+d[0]*SC*3.15,cy-d[1]*SC*3.15+(k*14-14),col,11.5,'center','bold');
+      // Entscheidungsgrenze
+      const tx=-d[1], ty=d[0];
+      dashLine(ctx,cx-tx*400,cy+ty*400,cx+tx*400,cy-ty*400,col+'99',[7,5],1.6);
+    });
+
+    // Fehlwinkel-Panel
+    const bx=W-186, by=28;
+    ctx.strokeStyle=C.line; roundRect(ctx,bx-10,by-10,180,120,9); ctx.stroke();
+    label(ctx,'Abweichung von θ_t',bx,by+2,C.dim,10.5,'left','bold');
+    const all=[['LR',lr,'#f87171'],['MM',mmv,'#60a5fa'],['MM·Σ⁻¹',mmi,'#38bdf8'],['CCS',cc,'#a78bfa']];
+    all.forEach(([nm,d,col],k)=>{
+      const err=Math.abs(Math.atan2(d[1],d[0]))*180/Math.PI;
+      const y=by+22+k*22;
+      label(ctx,nm,bx,y,col,10,'left');
+      ctx.fillStyle='#0b1220'; roundRect(ctx,bx+56,y-5,80,10,5); ctx.fill();
+      ctx.fillStyle=col; roundRect(ctx,bx+56,y-5,Math.max(3,80*clamp(err/60,0,1)),10,5); ctx.fill();
+      label(ctx,err.toFixed(0)+'°',bx+142,y,C.dim,10,'left');
+    });
+
+    const errLR=Math.abs(Math.atan2(lr[1],lr[0]))*180/Math.PI;
+    const errMM=Math.abs(Math.atan2(mmv[1],mmv[0]))*180/Math.PI;
+    out.innerHTML=`Genauigkeit — LR: <b>${(acc(D.pts,lr)*100).toFixed(1)} %</b> ·
+      MM: <b>${(acc(D.pts,mmv)*100).toFixed(1)} %</b> ·
+      MM·Σ⁻¹: <b>${(acc(D.pts,mmi)*100).toFixed(1)} %</b> ·
+      CCS: <b>${(acc(D.pts,cc)*100).toFixed(1)} %</b><br>
+      Winkelfehler zur echten Wahrheitsrichtung — LR: <b style="color:#f87171">${errLR.toFixed(1)}°</b> ·
+      MM: <b style="color:#60a5fa">${errMM.toFixed(1)}°</b><br><br>
+      <span style="color:#64748b">Dreh die Störmerkmal-Stärke hoch: Die <b>Genauigkeit</b> bleibt bei allen Methoden
+      hoch — aber LR <b>verkippt</b> immer stärker weg von θ_t, weil es die Interferenz durch θ_f wegoptimiert.
+      Mass-Mean bleibt unbeirrt auf θ_t. Genau das ist Abb. 4 des Papers.</span>`;
+  }
+  ['#prbFS','#prbAS','#prbNS'].forEach(s=>$(s).oninput=draw);
+  $('#prbShowAll').onchange=draw; $('#prbWhite').onchange=draw;
+  draw();
+})();
+
+/* =================================================================
+   08b · WHITENING
+   ================================================================= */
+(function(){
+  const cv=$('#whCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const wS=$('#whS'), cS=$('#whCS'), out=$('#whOut');
+  function draw(){
+    const w=+wS.value, rho=+cS.value;
+    $('#whV').textContent=(w*100).toFixed(0)+' %';
+    $('#whCV').textContent=rho.toFixed(2);
+    clearBG(ctx,W,H); gridBG(ctx,W,H,40);
+    const cx=W/2, cy=H/2, SC=40;
+    ctx.strokeStyle='rgba(100,116,139,.4)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    // Kovarianzmatrix: korreliert
+    const sx=1.45, sy=0.72;
+    const g=makeGauss(67);
+    // Whitening interpoliert: Σ^(-w/2)
+    // Eigenzerlegung von [[sx²,ρ·sx·sy],[ρ·sx·sy,sy²]] numerisch für 2x2
+    const a=sx*sx, b=rho*sx*sy, d=sy*sy;
+    const tr=a+d, det=a*d-b*b;
+    const l1=tr/2+Math.sqrt(Math.max(tr*tr/4-det,0)), l2=tr/2-Math.sqrt(Math.max(tr*tr/4-det,0));
+    let e1=[b, l1-a]; if(Math.hypot(...e1)<1e-7) e1=[1,0];
+    const n1=Math.hypot(...e1); e1=[e1[0]/n1,e1[1]/n1];
+    const e2=[-e1[1],e1[0]];
+    // W = V diag(λ^(-w/2)) V^T
+    const f1=Math.pow(l1,-w/2), f2=Math.pow(l2,-w/2);
+    function applyW(p){
+      const c1=p[0]*e1[0]+p[1]*e1[1], c2=p[0]*e2[0]+p[1]*e2[1];
+      const q1=c1*f1, q2=c2*f2;
+      return [q1*e1[0]+q2*e2[0], q1*e1[1]+q2*e2[1]];
+    }
+    // Punkte
+    const sep=[1.25,0.35];
+    const raw=[];
+    for(let i=0;i<170;i++){
+      const t=i%2===0, s=t?1:-1;
+      // korrelierte Gauß-Wolke
+      const u=g(), v=g();
+      const x0=sx*u, y0=sy*(rho*u+Math.sqrt(1-rho*rho)*v);
+      raw.push({x:x0+s*sep[0], y:y0+s*sep[1], t});
+    }
+    raw.forEach(p=>{
+      const q=applyW([p.x,p.y]);
+      glowDot(ctx,cx+q[0]*SC,cy-q[1]*SC,3.1,p.t?C.true_:C.false_,0.78);
+    });
+    // θ_mm
+    let mt=[0,0],nt=0,mf=[0,0],nf=0;
+    raw.forEach(p=>{
+      const q=applyW([p.x,p.y]);
+      if(p.t){mt[0]+=q[0];mt[1]+=q[1];nt++;} else {mf[0]+=q[0];mf[1]+=q[1];nf++;}
+    });
+    const mm=[mt[0]/nt-mf[0]/nf, mt[1]/nt-mf[1]/nf];
+    const mn=Math.hypot(...mm);
+    const mu=[mm[0]/mn,mm[1]/mn];
+    arrow(ctx,cx,cy,cx+mu[0]*SC*2.6,cy-mu[1]*SC*2.6,'#60a5fa',3,11);
+    label(ctx,'θ_mm',cx+mu[0]*SC*2.9,cy-mu[1]*SC*2.9,C.acc,12,'center','bold');
+    // Entscheidungsgrenze ⊥ θ_mm
+    dashLine(ctx,cx+mu[1]*400,cy+mu[0]*400,cx-mu[1]*400,cy-mu[0]*400,'rgba(96,165,250,.7)',[7,5],1.8);
+
+    // Kovarianz-Ellipse
+    ctx.save();
+    ctx.strokeStyle='rgba(167,139,250,.6)'; ctx.lineWidth=1.6; ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    for(let k=0;k<=72;k++){
+      const th=k/72*TAU;
+      const c1=Math.sqrt(l1)*Math.cos(th), c2=Math.sqrt(l2)*Math.sin(th);
+      const p=[c1*e1[0]+c2*e2[0], c1*e1[1]+c2*e2[1]];
+      const q=applyW(p);
+      k? ctx.lineTo(cx+q[0]*SC,cy-q[1]*SC) : ctx.moveTo(cx+q[0]*SC,cy-q[1]*SC);
+    }
+    ctx.stroke(); ctx.restore();
+    label(ctx, w<0.1?'Kovarianz-Ellipse (schief)':w>0.9?'Kovarianz = Kreis ✓':'…wird gerade rund…',
+          16, 22, w>0.9?C.true_:C.acc2, 11,'left','bold');
+
+    out.innerHTML=`Whitening-Grad: <b>${(w*100).toFixed(0)} %</b><br><br>
+      ${w<0.1
+        ? 'Die Punktwolke ist <b>schief</b> — die beiden Merkmale sind korreliert. Eine Projektion auf θ_mm ignoriert diese Schieflage und trennt dadurch suboptimal.'
+        : w>0.9
+        ? 'Nach dem Whitening ist die Wolke <b>rund</b> (Kovarianz = Einheitsmatrix). Jetzt ist die Projektion auf θ_mm die <b>optimale</b> Trennung — und genau das rechnet σ(θ_mmᵀΣ⁻¹x) implizit aus.'
+        : 'Die Transformation W = Σ<sup>−1/2</sup> zieht die Wolke in Richtung Kugelform. Beobachte, wie sich die Trennlinie mitdreht.'}
+      <br><br><span style="color:#64748b">Das ist Anhang E des Papers: <b>Mass-Mean-Probing = Projektion auf θ_mm nach Mahalanobis-Whitening.</b></span>`;
+  }
+  wS.oninput=draw; cS.oninput=draw; draw();
+})();
+
+/* =================================================================
+   08c · CCS
+   ================================================================= */
+(function(){
+  const cv=$('#ccsCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const S=$('#ccsAS'), out=$('#ccsOut');
+  const g=makeGauss(201);
+  // Kontrastpaare: s und ¬s, jeweils gegenüberliegend
+  const pairs=[];
+  for(let i=0;i<70;i++){
+    const t=i%2===0;
+    const s=t?1.25:-1.25;
+    const bx=g()*0.55, by=g()*0.95;
+    pairs.push({
+      a:{x: s+bx, y: by, t:t},
+      b:{x:-s+bx*0.9, y: by+g()*0.3, t:!t}
+    });
+  }
+  function loss(ang){
+    const ux=Math.cos(ang), uy=Math.sin(ang);
+    let Lc=0, Li=0;
+    pairs.forEach(p=>{
+      const za=p.a.x*ux+p.a.y*uy, zb=p.b.x*ux+p.b.y*uy;
+      const pa=1/(1+Math.exp(-za*1.4)), pb=1/(1+Math.exp(-zb*1.4));
+      Lc += (pa+pb-1)**2;                    // Konsistenz
+      Li += Math.min(pa,pb)**2;              // Informativität
+    });
+    return [Lc/pairs.length, Li/pairs.length, (Lc+Li)/pairs.length];
+  }
+  function draw(){
+    const ang=+S.value*Math.PI/180;
+    $('#ccsAV').textContent=S.value+'°';
+    clearBG(ctx,W,H); gridBG(ctx,W,H,40);
+    const cx=W*0.40, cy=H/2, SC=42;
+    ctx.strokeStyle='rgba(100,116,139,.4)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    pairs.forEach(p=>{
+      const ax=cx+p.a.x*SC, ay=cy-p.a.y*SC;
+      const bx=cx+p.b.x*SC, by=cy-p.b.y*SC;
+      ctx.strokeStyle='rgba(147,163,192,.18)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke();
+      glowDot(ctx,ax,ay,3,p.a.t?C.true_:C.false_,0.75);
+      glowDot(ctx,bx,by,3,p.b.t?C.true_:C.false_,0.75);
+    });
+    arrow(ctx,cx,cy,cx+Math.cos(ang)*SC*2.8,cy-Math.sin(ang)*SC*2.8,C.acc2,3,11);
+    label(ctx,'θ_ccs',cx+Math.cos(ang)*SC*3.1,cy-Math.sin(ang)*SC*3.1,C.acc2,12,'center','bold');
+    dashLine(ctx,cx+Math.sin(ang)*400,cy+Math.cos(ang)*400,cx-Math.sin(ang)*400,cy-Math.cos(ang)*400,'rgba(167,139,250,.6)',[7,5],1.7);
+    label(ctx,'graue Linien = Kontrastpaare (s, ¬s)',14,20,C.dim,10.5,'left');
+
+    // Verlustkurve
+    const px=W*0.80, py0=40, pw=130, ph=H-100;
+    ctx.strokeStyle=C.line; roundRect(ctx,px-16,py0-18,pw+34,ph+44,9); ctx.stroke();
+    label(ctx,'Verlust L(θ)',px+pw/2,py0-28,C.dim,10.5,'center','bold');
+    let mx=0; const cur=[];
+    for(let a=0;a<=180;a+=2){ const [,,L]=loss(a*Math.PI/180); cur.push(L); if(L>mx)mx=L; }
+    ctx.beginPath();
+    cur.forEach((L,k)=>{
+      const x=px+ (k/(cur.length-1))*pw, y=py0+ph-(L/mx)*ph;
+      k? ctx.lineTo(x,y):ctx.moveTo(x,y);
+    });
+    ctx.strokeStyle=C.acc2; ctx.lineWidth=2.2; ctx.stroke();
+    const idx=Math.round(+S.value/2);
+    const xm=px+(idx/(cur.length-1))*pw, ym=py0+ph-(cur[idx]/mx)*ph;
+    glowDot(ctx,xm,ym,5,C.warn);
+    label(ctx,'0°',px,py0+ph+14,C.faint,9,'center');
+    label(ctx,'180°',px+pw,py0+ph+14,C.faint,9,'center');
+
+    const [Lc,Li,L]=loss(ang);
+    let corr=0, tot=0;
+    pairs.forEach(p=>{
+      [p.a,p.b].forEach(q=>{ tot++; if(((q.x*Math.cos(ang)+q.y*Math.sin(ang))>0)===q.t) corr++; });
+    });
+    out.innerHTML=`Konsistenz-Verlust (p(s)+p(¬s)−1)²: <b>${Lc.toFixed(3)}</b><br>
+      Informativitäts-Verlust min(p,1−p)²: <b>${Li.toFixed(3)}</b><br>
+      Gesamt: <b style="color:${C.acc2}">${L.toFixed(3)}</b> · Genauigkeit: <b>${(corr/tot*100).toFixed(1)} %</b><br><br>
+      <span style="color:#64748b"><b>Ohne Labels!</b> CCS nutzt nur: (1) s und ¬s müssen sich zu 1 ergänzen,
+      (2) die Sonde darf nicht konstant 0,5 ausgeben. Das Paper paart dafür
+      <code>cities</code>↔<code>neg_cities</code> und <code>larger_than</code>↔<code>smaller_than</code>.
+      <br><b>Haken:</b> Das Vorzeichen ist nicht bestimmt — CCS weiß nicht, welche Seite „wahr“ heißt.</span>`;
+  }
+  $('#ccsOpt').onclick=()=>{
+    let best=0,bv=1e9;
+    for(let a=0;a<180;a+=0.5){ const [,,L]=loss(a*Math.PI/180); if(L<bv){bv=L;best=a;} }
+    let v=+S.value;
+    const iv=setInterval(()=>{
+      v += (best-v)*0.18;
+      if(Math.abs(best-v)<0.4){ v=best; clearInterval(iv); }
+      S.value=v; draw();
+    },30);
+  };
+  S.oninput=draw; draw();
+})();
+
+/* =================================================================
+   09 · GENERALISIERUNGS-MATRIX
+   ================================================================= */
+const GEN_TESTS = ['cities','neg_cities','larger_than','smaller_than','sp_en_trans',
+  'neg_sp_en_trans','cities_cities_conj','cities_cities_disj','companies_true_false',
+  'common_claim_true_false','counterfact_true_false'];
+const GEN_COLS = [
+  {g:'LR',  d:'cities'},                       {g:'LR',  d:'cities+neg_cities'},
+  {g:'LR',  d:'larger_than'},                  {g:'LR',  d:'larger_than+smaller_than'},
+  {g:'MM',  d:'cities'},                       {g:'MM',  d:'cities+neg_cities'},
+  {g:'MM',  d:'larger_than'},                  {g:'MM',  d:'larger_than+smaller_than'},
+  {g:'CCS', d:'cities+neg_cities'},            {g:'CCS', d:'larger_than+smaller_than'},
+  {g:'Bas.',d:'LR auf likely'},                {g:'Bas.',d:'MM auf likely'},
+  {g:'Bas.',d:'few-shot (kalibriert)'},        {g:'Bas.',d:'LR auf Testset (Orakel)'}
+];
+/* Synthetische, aber paper-getreue Matrix */
+function genMatrix(model){
+  // model: 0=7B, 1=13B, 2=70B
+  const boost=[0,0.10,0.18][model];
+  const neg = ['neg_cities','neg_sp_en_trans'];
+  const M=[];
+  GEN_TESTS.forEach((t,ri)=>{
+    const row=[];
+    GEN_COLS.forEach((c,ci)=>{
+      let v;
+      const isLikely = c.d.includes('likely');
+      const isOracle = c.d.includes('Orakel');
+      const isFew    = c.d.includes('few-shot');
+      const trainHasNeg = c.d.includes('neg_cities');
+      const trainHasOpp = c.d.includes('+');
+      const sameFam = (c.d.startsWith('cities')&&t.startsWith('cities')) ||
+                      (c.d.startsWith('larger')&&(t==='larger_than'||t==='smaller_than'));
+      if(isOracle){ v=0.90+boost*0.3+(t.includes('common')? -0.10:0)+(t.includes('counterfact')?-0.05:0); }
+      else if(isFew){ v=0.60+boost*0.9+(t.includes('neg')?-0.07:0); }
+      else if(isLikely){
+        const mm=c.d.startsWith('MM');
+        if(neg.includes(t)) v=0.30-boost*0.08+(mm?0.04:0);
+        else if(t==='sp_en_trans') v=0.84+boost*0.08;
+        else if(t==='cities') v=0.72+boost*0.05;
+        else v=0.52+boost*0.04+(mm?0.03:0);
+      } else {
+        let base=0.60+boost;
+        if(sameFam) base+=0.22;
+        if(trainHasOpp) base+=0.07;
+        // Negationen sind hart, außer man trainiert mit Negationen
+        if(neg.includes(t)) base += trainHasNeg ? 0.12 : (model===2? -0.04 : -0.22);
+        // antipodale Struktur bei 13B
+        if(model<2 && c.d==='larger_than' && t==='smaller_than') base-=0.30;
+        if(model<2 && c.d==='cities' && t==='neg_cities') base-=0.14;
+        // unkuratierte Testsets schwerer
+        if(t.includes('common')) base-=0.14;
+        if(t.includes('counterfact')) base-=0.07;
+        if(t.includes('companies')) base-=0.05;
+        if(t.includes('conj')||t.includes('disj')) base-=0.04;
+        // CCS leicht schwächer bei kleinen Modellen, MM bei 7B
+        if(c.g==='CCS') base-=0.02;
+        if(c.g==='MM' && model===0) base-=0.09;
+        // Paper-Highlight: larger+smaller → sp_en_trans > .95 bei 13B/70B
+        if(c.d==='larger_than+smaller_than' && t==='sp_en_trans' && model>=1) base=0.955+model*0.015;
+        // deterministische Streuung
+        base += 0.035*Math.sin(ri*2.7+ci*1.9);
+        v=base;
+      }
+      row.push(clamp(v,0.14,0.995));
+    });
+    M.push(row);
+  });
+  return M;
+}
+function accColor(v){
+  if(v<0.5){ const u=clamp((0.5-v)/0.36,0,1);
+    return `rgb(${Math.round(80+100*u)},${Math.round(29-10*u)},${Math.round(63-15*u)})`; }
+  const u=clamp((v-0.5)/0.5,0,1);
+  if(u<0.5){ const w=u/0.5; return `rgb(${Math.round(20+40*w)},${Math.round(40+80*w)},${Math.round(80+60*w)})`; }
+  const w=(u-0.5)/0.5;
+  return `rgb(${Math.round(60-8*w)},${Math.round(120+91*w)},${Math.round(140+13*w)})`;
+}
+(function(){
+  const cv=$('#genCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const S=$('#genMS'), out=$('#genOut');
+  const x0=150, y0=118, gw=W-x0-16, gh=H-y0-24;
+  const cw=gw/GEN_COLS.length, ch=gh/GEN_TESTS.length;
+  let hov=null;
+  function draw(){
+    const m=+S.value;
+    $('#genMV').textContent=['7B','13B','70B'][m];
+    const M=genMatrix(m);
+    clearBG(ctx,W,H);
+    label(ctx,`Transfer-Genauigkeit · LLaMA-2-${['7B','13B','70B'][m]}`, W/2, 16, C.txt, 12.5,'center','bold');
+
+    // Gruppen-Header
+    let gi=0;
+    const groups=[];
+    GEN_COLS.forEach((c,i)=>{
+      if(i===0||c.g!==GEN_COLS[i-1].g) groups.push({g:c.g,a:i,b:i});
+      else groups[groups.length-1].b=i;
+    });
+    groups.forEach(gr=>{
+      const xa=x0+gr.a*cw, xb=x0+(gr.b+1)*cw;
+      ctx.fillStyle = gr.g==='LR'?'rgba(248,113,113,.18)': gr.g==='MM'?'rgba(96,165,250,.18)':
+                      gr.g==='CCS'?'rgba(167,139,250,.18)':'rgba(100,116,139,.18)';
+      roundRect(ctx,xa+1,y0-20,xb-xa-2,15,4); ctx.fill();
+      label(ctx,gr.g,(xa+xb)/2,y0-12.5,C.txt,10,'center','bold');
+    });
+    // Spaltenlabels
+    GEN_COLS.forEach((c,i)=>{
+      ctx.save();
+      ctx.translate(x0+i*cw+cw/2, y0-26);
+      ctx.rotate(-Math.PI/2.35);
+      label(ctx,c.d,0,0,C.dim,8.6,'left');
+      ctx.restore();
+    });
+    // Zeilen + Zellen
+    GEN_TESTS.forEach((t,r)=>{
+      label(ctx,t,x0-8,y0+r*ch+ch/2,C.dim,9.4,'right');
+      GEN_COLS.forEach((c,i)=>{
+        const v=M[r][i];
+        ctx.fillStyle=accColor(v);
+        ctx.fillRect(x0+i*cw+0.7, y0+r*ch+0.7, cw-1.4, ch-1.4);
+        if(hov && hov.r===r && hov.c===i){
+          ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.strokeRect(x0+i*cw+0.7,y0+r*ch+0.7,cw-1.4,ch-1.4);
+        }
+        if(cw>30){
+          label(ctx,(v*100).toFixed(0),x0+i*cw+cw/2,y0+r*ch+ch/2, v>0.72||v<0.38?'#0b1220':'#cbd5e1',8.4,'center','bold');
+        }
+      });
+    });
+    if(hov){
+      const v=M[hov.r][hov.c];
+      out.innerHTML=`<b>${GEN_COLS[hov.c].g}</b> trainiert auf <b>${GEN_COLS[hov.c].d}</b><br>
+        getestet auf <b>${GEN_TESTS[hov.r]}</b><br>
+        Genauigkeit: <b style="color:${accColor(v)}">${(v*100).toFixed(1)} %</b>
+        ${v<0.5?' <span class="pill f">schlechter als Raten</span>':''}`;
+    } else {
+      out.innerHTML=`Fahr mit der Maus über die Matrix.<br><br>
+        <span style="color:#64748b">Achte besonders auf die beiden <code>likely</code>-Spalten rechts:
+        auf <code>neg_cities</code> und <code>neg_sp_en_trans</code> fallen sie <b>unter 50 %</b>.</span>`;
+    }
+  }
+  cv.addEventListener('mousemove',e=>{
+    const [mx,my]=mouseLogical(cv,e);
+    const c=Math.floor((mx-x0)/cw), r=Math.floor((my-y0)/ch);
+    hov=(c>=0&&c<GEN_COLS.length&&r>=0&&r<GEN_TESTS.length)?{r,c}:null;
+    draw();
+  });
+  cv.addEventListener('mouseleave',()=>{hov=null;draw();});
+  S.oninput=draw; draw();
+})();
+
+/* =================================================================
+   09b · LIKELY-FALLE
+   ================================================================= */
+(function(){
+  const out=$('#likelyOut');
+  const tests=['cities','neg_cities','sp_en_trans','neg_sp_en_trans',
+               'larger_than','cities_cities_conj','counterfact','common_claim'];
+  const likelyProbe=[0.77, 0.26, 0.88, 0.17, 0.55, 0.58, 0.61, 0.54];
+  const truthProbe =[0.97, 0.93, 0.96, 0.91, 0.94, 0.90, 0.85, 0.74];
+  function draw(){
+    const traces=[
+      {x:tests, y:likelyProbe.map(v=>v*100), type:'bar', name:'Sonde auf <code>likely</code> (Plausibilität)',
+       marker:{color:likelyProbe.map(v=>v<0.5?'#be123c':'#60a5fa')},
+       hovertemplate:'%{x}<br>%{y:.0f} %<extra>likely-Sonde</extra>'},
+      {x:tests, y:truthProbe.map(v=>v*100), type:'bar', name:'Sonde auf cities+neg_cities (Wahrheit)',
+       marker:{color:'#34d399'},
+       hovertemplate:'%{x}<br>%{y:.0f} %<extra>Wahrheits-Sonde</extra>'}
+    ];
+    Plotly.react('likelyPlot',traces,Object.assign({},PLOT_BASE,{
+      title:{text:'Genauigkeit: Plausibilitäts-Sonde vs. Wahrheits-Sonde (LLaMA-2-70B)',font:{size:12.5,color:C.txt}},
+      barmode:'group',
+      xaxis:Object.assign({},PLOT_BASE.xaxis,{tickangle:-32, tickfont:{size:9.5}}),
+      yaxis:Object.assign({},PLOT_BASE.yaxis,{title:'Genauigkeit (%)', range:[0,100]}),
+      shapes:[{type:'line',x0:-0.5,x1:tests.length-0.5,y0:50,y1:50,
+               line:{color:'#fbbf24',width:1.8,dash:'dash'}}],
+      annotations:[{x:tests.length-0.6,y:53,text:'50 % = Raten',showarrow:false,
+                    font:{color:'#fbbf24',size:10},xanchor:'right'}],
+      legend:{x:0.01,y:1.14,orientation:'h',font:{size:10},bgcolor:'rgba(0,0,0,0)'},
+      margin:{l:52,r:22,t:76,b:96}
+    }),PLOT_CFG);
+    out.innerHTML=`<b>Der entscheidende Nachweis.</b><br>
+      Auf <code>neg_cities</code> erreicht die Plausibilitäts-Sonde nur <b style="color:#be123c">26 %</b>,
+      auf <code>neg_sp_en_trans</code> sogar nur <b style="color:#be123c">17 %</b> —
+      <b>deutlich schlechter als Münzwurf.</b><br><br>
+      <span style="color:#64748b">Daraus folgt die Kernaussage von §5.3: <b>LLMs repräsentieren
+      wahrheitsrelevante Information, die über die bloße Plausibilität des Textes hinausgeht.</b>
+      Hätte die Wahrheits-Sonde nur Plausibilität gemessen, müsste sie hier genauso einbrechen.
+      Tut sie aber nicht.</span>`;
+  }
+  draw();
+})();
+
+/* =================================================================
+   10 · INTERVENTION
+   ================================================================= */
+(function(){
+  const cv=$('#intCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const aS=$('#intAS'), out=$('#intOut'), pSel=$('#intProbe'), dSel=$('#intDir');
+  // Qualität der Richtung: wie gut deckt sie sich mit der echten kausalen Achse
+  const QUAL={mm:0.92, lr:0.42, ccs:0.38};
+  const SKEW={mm:0.0,  lr:0.52, ccs:0.60};  // Winkelabweichung in rad
+
+  function draw(){
+    const a=+aS.value, key=pSel.value, dir=dSel.value;
+    $('#intAV').textContent=(a>=0?'+':'')+a.toFixed(2);
+    $('#intSrcV').textContent={mm:'MM',lr:'LR',ccs:'CCS'}[key];
+    const q=QUAL[key], sk=SKEW[key];
+
+    clearBG(ctx,W,H); gridBG(ctx,W,H,42);
+    const cx=W*0.33, cy=H*0.52, SC=40;
+    ctx.strokeStyle='rgba(100,116,139,.4)';
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W*0.63,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    // Wolken
+    const g=makeGauss(303);
+    const mu=[[1.35,0.25],[-1.35,-0.25]];
+    for(let i=0;i<150;i++){
+      const t=i%2===0;
+      const m=t?mu[0]:mu[1];
+      glowDot(ctx,cx+(m[0]+g()*0.55)*SC, cy-(m[1]+g()*0.72)*SC, 3.0, t?C.true_:C.false_, 0.5);
+    }
+    // Mittelwerte
+    glowDot(ctx,cx+mu[0][0]*SC,cy-mu[0][1]*SC,7,C.true_,1);
+    label(ctx,'µ₊',cx+mu[0][0]*SC+14,cy-mu[0][1]*SC-14,C.true_,13,'left','bold');
+    glowDot(ctx,cx+mu[1][0]*SC,cy-mu[1][1]*SC,7,C.false_,1);
+    label(ctx,'µ₋',cx+mu[1][0]*SC-14,cy-mu[1][1]*SC+16,C.false_,13,'right','bold');
+
+    // θ-Richtung (je nach Methode verkippt)
+    const base=Math.atan2(mu[0][1]-mu[1][1], mu[0][0]-mu[1][0]);
+    const th=base+sk;
+    const len=Math.hypot(mu[0][0]-mu[1][0], mu[0][1]-mu[1][1]);
+    const tv=[Math.cos(th)*len, Math.sin(th)*len];
+
+    // Der eine zu intervenierende Punkt
+    const start = (dir==='f2t') ? [-1.5,-0.42] : [1.5,0.42];
+    const sgn   = (dir==='f2t') ? 1 : -1;
+    const px = start[0] + sgn*a*tv[0];
+    const py = start[1] + sgn*a*tv[1];
+
+    // θ-Pfeil
+    arrow(ctx, cx+start[0]*SC, cy-start[1]*SC, cx+(start[0]+sgn*tv[0])*SC, cy-(start[1]+sgn*tv[1])*SC,
+          'rgba(167,139,250,.45)', 2, 10);
+    label(ctx,(sgn>0?'+θ':'−θ'), cx+(start[0]+sgn*tv[0]*0.55)*SC, cy-(start[1]+sgn*tv[1]*0.55)*SC-16,
+          C.acc2, 12,'center','bold');
+
+    // Bewegter Punkt
+    arrow(ctx, cx+start[0]*SC, cy-start[1]*SC, cx+px*SC, cy-py*SC, C.warn, 3, 11);
+    glowDot(ctx, cx+start[0]*SC, cy-start[1]*SC, 5.5, dir==='f2t'?C.false_:C.true_, 1);
+    ctx.save();
+    ctx.shadowColor='#fff'; ctx.shadowBlur=16;
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(cx+px*SC, cy-py*SC, 6.5, 0, TAU); ctx.fill();
+    ctx.restore();
+    label(ctx,'x + αθ', cx+px*SC, cy-py*SC-18, C.txt, 11.5,'center','bold');
+
+    // Grenze
+    dashLine(ctx, cx+Math.sin(base)*400, cy+Math.cos(base)*400,
+                  cx-Math.sin(base)*400, cy-Math.cos(base)*400, 'rgba(96,165,250,.55)',[7,5],1.6);
+
+    // ----- Rechtes Panel: Modell-Output -----
+    const bx=W*0.70, by=46, bw=W-bx-26;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.3;
+    roundRect(ctx,bx-14,by-26,bw+28,H-by-50,12); ctx.stroke();
+    label(ctx,'MODELL-OUTPUT',bx+bw/2,by-38,C.acc2,10.5,'center','bold');
+
+    // Effektiver Score: Projektion auf echte kausale Richtung
+    const causal=[Math.cos(base),Math.sin(base)];
+    const z0 = start[0]*causal[0]+start[1]*causal[1];
+    const z1 = px*causal[0]+py*causal[1];
+    const eff = (z1-z0)*q + z0;    // Qualität dämpft die tatsächliche Wirkung
+    const pT = 1/(1+Math.exp(-eff*1.9));
+
+    label(ctx,'P(„TRUE“)',bx,by+4,C.dim,10.5,'left');
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,by+14,bw,20,10); ctx.fill();
+    ctx.fillStyle=C.true_; roundRect(ctx,bx,by+14,Math.max(6,bw*pT),20,10); ctx.fill();
+    label(ctx,(pT*100).toFixed(1)+' %',bx+bw-6,by+24,'#06210f',11,'right','bold');
+
+    label(ctx,'P(„FALSE“)',bx,by+52,C.dim,10.5,'left');
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,by+62,bw,20,10); ctx.fill();
+    ctx.fillStyle=C.false_; roundRect(ctx,bx,by+62,Math.max(6,bw*(1-pT)),20,10); ctx.fill();
+    label(ctx,((1-pT)*100).toFixed(1)+' %',bx+bw-6,by+72,'#2a0a18',11,'right','bold');
+
+    // Ausgabe-Token
+    const says = pT>0.5 ? 'TRUE' : 'FALSE';
+    const flipped = (dir==='f2t') ? (pT>0.5) : (pT<0.5);
+    label(ctx,'Modell sagt:',bx,by+108,C.dim,10.5,'left');
+    ctx.fillStyle= pT>0.5?'rgba(52,211,153,.18)':'rgba(244,114,182,.18)';
+    roundRect(ctx,bx,by+118,bw,34,9); ctx.fill();
+    ctx.strokeStyle= pT>0.5?C.true_:C.false_; ctx.lineWidth=1.5;
+    roundRect(ctx,bx,by+118,bw,34,9); ctx.stroke();
+    label(ctx,says,bx+bw/2,by+135, pT>0.5?C.true_:C.false_, 18,'center','bold');
+
+    // NIE-Anzeige
+    const PDp= 1.6, PDm=-1.4;
+    const PDms = (eff)*1.1;
+    const nie = clamp((PDms-PDm)/(PDp-PDm),-0.3,1.15);
+    label(ctx,'NIE ≈ '+nie.toFixed(2),bx+bw/2,by+176,
+          nie>0.7?C.true_:nie>0.35?C.warn:C.false_,14,'center','bold');
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,by+190,bw,10,5); ctx.fill();
+    ctx.fillStyle= nie>0.7?C.true_:nie>0.35?C.warn:C.false_;
+    roundRect(ctx,bx,by+190,Math.max(3,bw*clamp(nie,0,1)),10,5); ctx.fill();
+
+    // Prompt-Vorschau
+    label(ctx,'Prompt (OOD: sp_en_trans)',bx,H-82,C.faint,9.5,'left');
+    ctx.fillStyle=C.dim; ctx.font='10px ui-monospace, monospace'; ctx.textAlign='left'; ctx.textBaseline='top';
+    const lines=['Das span. Wort „fruta“ heißt','„Ziege“. Aussage: FALSE','Das span. Wort „carne“ heißt','„Fleisch“. Aussage: TRUE','Das span. Wort „libro“ heißt','„Fenster“. Aussage:'];
+    lines.forEach((l,k)=>ctx.fillText(l,bx,H-70+k*11));
+
+    const QT={mm:'<b>Mass-Mean</b> zeigt direkt vom Mittelwert der falschen zum Mittelwert der wahren Sätze — genau entlang der Achse, die das Modell tatsächlich benutzt. Deshalb wirkt die Intervention stark.',
+              lr:'<b>Logistische Regression</b> hat ihre Richtung verkippt, um Interferenz durch andere Merkmale zu minimieren. Die Trennlinie ist dadurch gut — der Vektor selbst zeigt aber teilweise in eine Richtung, die das Modell nicht als „Wahrheit“ liest. Die Intervention verpufft weitgehend.',
+              ccs:'<b>CCS</b> hat dasselbe Problem wie LR, zusätzlich ist das Vorzeichen nicht eindeutig bestimmt. Im Paper landet CCS bei 13B/cities+neg_cities nur bei NIE = .31 (false→true).'};
+    out.innerHTML=`α = <b>${(a>=0?'+':'')+a.toFixed(2)}</b> · Richtung: <b>${dir==='f2t'?'falsch → wahr':'wahr → falsch'}</b><br>
+      Modell gibt aus: <b style="color:${pT>0.5?C.true_:C.false_}">${says}</b> ·
+      Umschaltung ${flipped?'<b style="color:'+C.true_+'">gelungen ✓</b>':'<b style="color:'+C.false_+'">noch nicht</b>'}<br>
+      NIE ≈ <b>${nie.toFixed(2)}</b><br><br>${QT[key]}`;
+  }
+  $('#intNorm').onclick=()=>{aS.value=1; draw();};
+  $('#intZero').onclick=()=>{aS.value=0; draw();};
+  aS.oninput=draw; pSel.onchange=draw; dSel.onchange=draw; draw();
+})();
+
+/* =================================================================
+   10b · NIE-RECHNER
+   ================================================================= */
+(function(){
+  const cv=$('#nieCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const a=$('#pdpS'), b=$('#pdmS'), c=$('#pdmsS'), out=$('#nieOut');
+  function draw(){
+    const PDp=+a.value, PDm=+b.value, PDms=+c.value;
+    $('#pdpV').textContent=PDp.toFixed(2);
+    $('#pdmV').textContent=PDm.toFixed(2);
+    $('#pdmsV').textContent=PDms.toFixed(2);
+    const nie=(PDms-PDm)/(PDp-PDm);
+
+    clearBG(ctx,W,H);
+    const x0=70, x1=W-90, cy=H*0.52, sc=(x1-x0)/5.4;
+    const X=v=>x0+(v+2.7)*sc;
+    // Achse
+    ctx.strokeStyle='rgba(100,116,139,.7)'; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(x0,cy); ctx.lineTo(x1,cy); ctx.stroke();
+    for(let v=-2.5;v<=2.5;v+=0.5){
+      ctx.beginPath(); ctx.moveTo(X(v),cy-4); ctx.lineTo(X(v),cy+4); ctx.stroke();
+      if(Math.abs(v%1)<0.01) label(ctx,v.toFixed(0),X(v),cy+18,C.faint,9.5,'center');
+    }
+    label(ctx,'log P(TRUE) − log P(FALSE)  →',W/2,H-16,C.dim,11,'center');
+
+    // Zonen
+    ctx.fillStyle='rgba(244,114,182,.08)'; ctx.fillRect(X(-2.7),cy-120,X(0)-X(-2.7),120);
+    ctx.fillStyle='rgba(52,211,153,.08)'; ctx.fillRect(X(0),cy-120,X(2.7)-X(0),120);
+    dashLine(ctx,X(0),cy-124,X(0),cy+8,'rgba(230,237,248,.35)',[4,4],1.2);
+
+    const marks=[
+      [PDm, 'PD₋  (falsche Sätze)', C.false_, 34],
+      [PDms,'PD₋* (falsch + θ)',     C.warn,   66],
+      [PDp, 'PD₊  (wahre Sätze)',    C.true_,  98]
+    ];
+    marks.forEach(([v,nm,col,dy])=>{
+      const x=X(v);
+      ctx.strokeStyle=col; ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.moveTo(x,cy); ctx.lineTo(x,cy-dy); ctx.stroke();
+      glowDot(ctx,x,cy-dy,6,col);
+      label(ctx,nm,x,cy-dy-16,col,10.5,'center','bold');
+      label(ctx,v.toFixed(2),x,cy-dy+0,'#061018',9.5,'center','bold');
+    });
+
+    // Strecken visualisieren
+    const yS=cy+44;
+    ctx.strokeStyle='rgba(147,163,192,.7)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(X(PDm),yS); ctx.lineTo(X(PDp),yS); ctx.stroke();
+    label(ctx,'Nenner: PD₊ − PD₋ = '+(PDp-PDm).toFixed(2),(X(PDm)+X(PDp))/2,yS+15,C.dim,10,'center');
+    ctx.strokeStyle=C.warn; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(X(PDm),yS); ctx.lineTo(X(PDms),yS); ctx.stroke();
+    label(ctx,'Zähler: '+(PDms-PDm).toFixed(2),(X(PDm)+X(PDms))/2,yS-14,C.warn,10,'center','bold');
+
+    // NIE-Balken
+    const bx=x1+10;
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,cy-100,18,140,9); ctx.fill();
+    const hh=clamp(nie,0,1.1)*140;
+    ctx.fillStyle= nie>0.7?C.true_: nie>0.35?C.warn:C.false_;
+    roundRect(ctx,bx,cy+40-hh,18,hh,9); ctx.fill();
+    label(ctx,'NIE',bx+9,cy-112,C.dim,10,'center','bold');
+    label(ctx,nie.toFixed(2),bx+9,cy+54,C.txt,11,'center','bold');
+    dashLine(ctx,bx-4,cy+40-140,bx+22,cy+40-140,'rgba(52,211,153,.6)',[3,3],1);
+    label(ctx,'1.0',bx-8,cy-100,C.faint,8.5,'right');
+
+    const interp = nie>=0.95 ? 'Perfekt: Das Modell behandelt den falschen Satz jetzt mit <b>derselben Überzeugung</b> wie einen echten wahren Satz.'
+                 : nie>0.7  ? 'Sehr stark. So verhalten sich die Mass-Mean-Richtungen im Paper.'
+                 : nie>0.35 ? 'Teilweise wirksam — das Modell kippt, aber zögerlich.'
+                 : nie>0.05 ? 'Schwach. So verhalten sich die meisten LR- und CCS-Richtungen bei 13B.'
+                 : 'Wirkungslos — θ ist keine Richtung, die das Modell tatsächlich benutzt.';
+    out.innerHTML=`<b>NIE = (PD₋* − PD₋) / (PD₊ − PD₋) = (${PDms.toFixed(2)} − ${PDm.toFixed(2)}) / (${PDp.toFixed(2)} − ${PDm.toFixed(2)}) = <span style="color:${nie>0.7?C.true_:nie>0.35?C.warn:C.false_}">${nie.toFixed(2)}</span></b><br><br>
+      ${interp}<br><br>
+      <span style="color:#64748b">NIE = 0 → Intervention wirkungslos. NIE = 1 → der falsche Satz wird mit
+      derselben Konfidenz als TRUE gelabelt wie ein echt wahrer Satz.</span>`;
+  }
+  [a,b,c].forEach(e=>e.oninput=draw); draw();
+})();
+
+/* =================================================================
+   10c · NIE-TABELLE (Tab. 2)
+   ================================================================= */
+(function(){
+  const out=$('#nieTabOut');
+  const DATA={
+    '13b':{
+      rows:[
+        ['cities','LR',.13,.19],['cities','MM',.77,.90],
+        ['cities+neg_cities','LR',.33,.52],['cities+neg_cities','MM',.85,.97],['cities+neg_cities','CCS',.31,.73],
+        ['larger_than','LR',.28,.27],['larger_than','MM',.71,.79],
+        ['larger_than+smaller_than','LR',.07,.13],['larger_than+smaller_than','MM',.26,.53],['larger_than+smaller_than','CCS',.08,.17],
+        ['likely','LR',.05,.08],['likely','MM',.70,.54]
+      ]},
+    '70b':{
+      rows:[
+        ['cities','LR',.55,.99],['cities','MM',.58,.89],
+        ['cities+neg_cities','LR',.61,1.00],['cities+neg_cities','MM',.81,.95],['cities+neg_cities','CCS',.55,.96],
+        ['larger_than','LR',.61,.96],['larger_than','MM',.67,1.01],
+        ['larger_than+smaller_than','LR',.54,1.02],['larger_than+smaller_than','MM',.66,1.03],['larger_than+smaller_than','CCS',.57,1.02],
+        ['likely','LR',.18,.46],['likely','MM',.68,.27]
+      ]}
+  };
+  let cur='13b';
+  $$('#nieTabBtns button').forEach(b=>{
+    b.onclick=()=>{ cur=b.dataset.m; $$('#nieTabBtns button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); draw(); };
+  });
+  function draw(){
+    const R=DATA[cur].rows;
+    const labels=R.map(r=>r[0]+' · '+r[1]);
+    const colF=R.map(r=>r[1]==='MM'?'#34d399':r[1]==='LR'?'#f87171':'#a78bfa');
+    const traces=[
+      {y:labels, x:R.map(r=>r[2]), type:'bar', orientation:'h', name:'falsch → wahr',
+       marker:{color:colF, opacity:.95},
+       hovertemplate:'%{y}<br>NIE = %{x:.2f}<extra>falsch→wahr</extra>'},
+      {y:labels, x:R.map(r=>r[3]), type:'bar', orientation:'h', name:'wahr → falsch',
+       marker:{color:colF, opacity:.45},
+       hovertemplate:'%{y}<br>NIE = %{x:.2f}<extra>wahr→falsch</extra>'}
+    ];
+    Plotly.react('nieBar',traces,Object.assign({},PLOT_BASE,{
+      title:{text:`Normalized Indirect Effect · LLaMA-2-${cur.toUpperCase()} · getestet auf sp_en_trans (OOD)`,
+             font:{size:12.5,color:C.txt}},
+      barmode:'group',
+      xaxis:Object.assign({},PLOT_BASE.xaxis,{title:'NIE (0 = wirkungslos, 1 = vollständige Umschaltung)',range:[0,1.12]}),
+      yaxis:Object.assign({},PLOT_BASE.yaxis,{automargin:true, tickfont:{size:9.6}}),
+      shapes:[{type:'line',x0:1,x1:1,y0:-0.5,y1:labels.length-0.5,
+               line:{color:'#34d399',width:1.6,dash:'dot'}}],
+      legend:{x:0.70,y:0.06,bgcolor:'rgba(18,26,44,.9)',bordercolor:C.line,borderwidth:1,font:{size:10}},
+      margin:{l:210,r:22,t:46,b:52}
+    }),PLOT_CFG);
+    const T={
+      '13b':`<b>LLaMA-2-13B — der Unterschied ist dramatisch.</b><br>
+        <code>cities</code>: LR nur <b style="color:#f87171">.13</b> — praktisch wirkungslos.
+        MM: <b style="color:#34d399">.77</b>.<br>
+        <code>cities+neg_cities</code>: MM erreicht <b style="color:#34d399">.85 / .97</b> — fast perfekte Umschaltung.<br><br>
+        <span style="color:#64748b">Alle drei Methoden klassifizieren <code>sp_en_trans</code> etwa gleich gut.
+        Nur die <b>Richtung</b> unterscheidet sich — und nur Mass-Mean trifft die Achse, die das Modell wirklich benutzt.</span>`,
+      '70b':`<b>LLaMA-2-70B — alle Methoden werden besser.</b><br>
+        Die Unterschiede verschwimmen; LR erreicht in „wahr→falsch“ sogar <b>.96–1.02</b>.
+        Das passt zur These: Bei großen Modellen ist die Wahrheits-Richtung so dominant,
+        dass alle Methoden sie näherungsweise finden.<br><br>
+        <span style="color:#fbbf24"><b>Rätsel aus §7.1:</b> <code>cities+neg_cities</code> + MM ist bei 70B
+        <em>nicht</em> besser als <code>cities</code> allein — anders als bei 13B.
+        Und die <code>likely</code>-MM-Richtung wirkt mit <b>.68</b> überraschend stark,
+        obwohl diese Sonde schlecht klassifiziert. Beides bleibt unerklärt.</span>`
+    };
+    out.innerHTML=T[cur];
+  }
+  draw();
+})();
+
+/* =================================================================
+   11 · ARGUMENTATIONSBOGEN
+   ================================================================= */
+(function(){
+  const cv=$('#argCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const out=$('#argOut');
+  let step=0;
+  const STEPS=[
+    {t:'Problem', c:C.false_, s:'LLMs sagen Falsches —\nmanchmal wissentlich',
+     d:'<b>Motivation.</b> Sykophantie (Perez et al. 2022) und aktive Täuschung (GPT-4-CAPTCHA, OpenAI 2023) zeigen: Der Output ist kein verlässlicher Indikator für das, was das Modell „glaubt“. Wir brauchen Zugang zum Innenleben.'},
+    {t:'Frage', c:C.acc2, s:'Gibt es EINE\nWahrheits-Richtung?',
+     d:'<b>Die Forschungsfrage.</b> Frühere Sonden funktionierten — scheiterten aber an Negationen (Levinstein & Herrmann 2023). Verdacht: Sie finden Korrelate, nicht Wahrheit. Also: Haben LLMs eine <em>einheitliche</em> Wahrheits-Repräsentation über strukturell und thematisch diverse Daten hinweg?'},
+    {t:'Daten', c:C.acc, s:'12 kuratierte\nDatensätze',
+     d:'<b>Erste Idee.</b> Saubere, einfache, eindeutige Sätze nach festen Schablonen. Kontrollierte strukturelle Vielfalt (nicht / und / oder) und thematische Vielfalt (Städte, Spanisch, Zahlen). Plus <code>likely</code> als Kontrolle gegen „misst nur Plausibilität“.'},
+    {t:'Ort', c:C.warn, s:'Patching:\nLayer 15, Satzende',
+     d:'<b>Lokalisierung.</b> Aktivierungs-Patching zeigt drei kausal wichtige Gruppen. Gruppe (b) — mittlere Layer über dem Satzzeichen — fasst den ganzen Satz zusammen und beeinflusst die Ausgabe. Hier wird gemessen.'},
+    {t:'Beweis 1', c:C.true_, s:'PCA zeigt\nlineare Struktur',
+     d:'<b>Visualisierung.</b> Ohne Kenntnis der Labels trennt die PCA wahre von falschen Sätzen in den Top-2-Hauptkomponenten — in jedem kuratierten Datensatz. Die Struktur entsteht in frühen mittleren Layern, bei komplexeren Sätzen später.'},
+    {t:'Nuance', c:C.warn, s:'…aber nicht immer\nin derselben Richtung',
+     d:'<b>Die ehrliche Komplikation.</b> Manche Datensätze trennen antipodal (<code>larger_than</code>/<code>smaller_than</code> bei 13B) oder orthogonal (<code>cities</code>/<code>neg_cities</code>). Erklärung: konkurrierende Merkmale f⁺ („Wahrheit“) und f⁻ („enge Assoziation“). Mit Skalierung richten sie sich aus.'},
+    {t:'Werkzeug', c:C.acc, s:'Mass-Mean Probing\nθ = µ₊ − µ₋',
+     d:'<b>Die methodische Neuerung.</b> Logistische Regression verkippt ihre Richtung, um Interferenz zu minimieren — und verfehlt dadurch die Merkmalsrichtung. Mass-Mean nimmt einfach die Mittelwertdifferenz. Für IID-Daten zusätzlich Σ⁻¹-Korrektur (= LDA).'},
+    {t:'Beweis 2', c:C.true_, s:'Transfer:\nA trainieren, B testen',
+     d:'<b>Generalisierung.</b> Sonden übertragen über Datensatzgrenzen hinweg — besser bei größeren Modellen, besser beim Training auf Datensatz + Gegenteil. Die <code>likely</code>-Sonde fällt dagegen unter 50 % → es wird nicht bloß Plausibilität gemessen.'},
+    {t:'Beweis 3', c:C.true_, s:'Intervention:\nModell umschalten',
+     d:'<b>Kausalität.</b> Addiert man θ auf die Aktivierung eines falschen Satzes, labelt das Modell ihn als TRUE — und zwar auf einem <em>anderen</em> Datensatz als dem Trainingsdatensatz. Mass-Mean schlägt LR und CCS in 7 von 8 Bedingungen.'},
+    {t:'Antwort', c:'#ffffff', s:'Ja — ab\nausreichender Skalierung',
+     d:'<b>Die Antwort.</b> LLaMA-2 berechnet und repräsentiert die Wahrheit einfacher faktischer Aussagen <b>linear</b>, in einer kleinen Gruppe kausal wirksamer Hidden States. Kleine Modelle repräsentieren Oberflächenmerkmale; die abstrakte, datensatzübergreifende Wahrheits-Richtung <b>emergiert mit Skalierung</b>.'}
+  ];
+  function draw(){
+    clearBG(ctx,W,H);
+    const n=STEPS.length;
+    const pad=26, bw=(W-pad*2)/n;
+    for(let i=0;i<n;i++){
+      const S=STEPS[i];
+      const x=pad+i*bw, cy=H*0.42;
+      const active = i<=step;
+      const isCur  = i===step;
+      // Verbindung
+      if(i<n-1){
+        ctx.strokeStyle= (i<step)? S.c : 'rgba(36,51,82,.8)';
+        ctx.lineWidth= (i<step)?2.4:1.4;
+        ctx.beginPath(); ctx.moveTo(x+bw*0.5+26, cy); ctx.lineTo(x+bw*1.5-26, cy); ctx.stroke();
+        if(i<step){
+          const ax=x+bw-26;
+          ctx.fillStyle=S.c;
+          ctx.beginPath(); ctx.moveTo(ax,cy); ctx.lineTo(ax-7,cy-4.5); ctx.lineTo(ax-7,cy+4.5); ctx.closePath(); ctx.fill();
+        }
+      }
+      // Knoten
+      const r=isCur?25:20;
+      ctx.save();
+      if(active){ ctx.shadowColor=S.c; ctx.shadowBlur=isCur?26:12; }
+      ctx.fillStyle= active? S.c : '#131c2e';
+      ctx.globalAlpha= active? (isCur?1:0.55):1;
+      ctx.beginPath(); ctx.arc(x+bw/2, cy, r, 0, TAU); ctx.fill();
+      ctx.restore();
+      ctx.strokeStyle= active? S.c : C.line; ctx.lineWidth=1.6;
+      ctx.beginPath(); ctx.arc(x+bw/2, cy, r, 0, TAU); ctx.stroke();
+      label(ctx, String(i+1), x+bw/2, cy, active?'#061018':C.faint, isCur?17:14,'center','bold');
+
+      // Titel
+      label(ctx, S.t, x+bw/2, cy-r-16, active?S.c:C.faint, 11.5,'center','bold');
+      // Kurztext
+      ctx.fillStyle = active? C.dim : 'rgba(100,116,139,.5)';
+      ctx.font='10.5px -apple-system, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
+      S.s.split('\n').forEach((ln,k)=>ctx.fillText(ln, x+bw/2, cy+r+12+k*13));
+    }
+    out.innerHTML = `<b>Schritt ${step+1} / ${STEPS.length} — ${STEPS[step].t}</b><br>${STEPS[step].d}`;
+  }
+  $('#argNext').onclick=()=>{ step=Math.min(step+1,STEPS.length-1); draw(); };
+  $('#argPrev').onclick=()=>{ step=Math.max(step-1,0); draw(); };
+  $('#argAll').onclick=()=>{ step=STEPS.length-1; draw(); };
+  cv.addEventListener('click',e=>{
+    const [mx]=mouseLogical(cv,e);
+    const pad=26, bw=(W-pad*2)/STEPS.length;
+    const i=Math.floor((mx-pad)/bw);
+    if(i>=0&&i<STEPS.length){ step=i; draw(); }
+  });
+  draw();
+})();
+
+/* =================================================================
+   11b · SCOPING
+   ================================================================= */
+(function(){
+  const host=$('#scopeList'), out=$('#scopeOut');
+  const ITEMS=[
+    {s:'„Einundachtzig ist größer als vierundfünfzig.“', in:true,
+     r:'<b>Ja.</b> Eine deklarative faktische Aussage mit eindeutigem Wahrheitswert. Genau das untersucht das Paper.'},
+    {s:'„Die Stadt Denver ist in Vietnam.“', in:true,
+     r:'<b>Ja.</b> Deklarativ, faktisch, eindeutig falsch. Im Scope.'},
+    {s:'„In welchem Land liegt Paris? — Frankreich“', in:false,
+     r:'<b>Nein.</b> Das ist <em>korrektes Frage-Antworten</em>, nicht Faktizität einer Aussage. Li et al. (2023b) und teilweise Burns et al. (2023) untersuchen das — dieses Paper ausdrücklich nicht.'},
+    {s:'„Ich finde diesen Plan gut.“ (während das Modell ihn schlecht findet)', in:false,
+     r:'<b>Nein.</b> Das ist <em>Täuschung</em> bzw. unehrliche Meinungsäußerung — ein verwandtes, aber anderes Phänomen.'},
+    {s:'„Beantworte falsch: In welchem Land liegt Paris? — Paris ist in Ägypten.“', in:false,
+     r:'<b>Nein.</b> Das ist <em>Compliance</em> (Befolgen einer Anweisung). Der Satz am Ende ist zwar falsch, aber das Modell tut genau das Gewünschte.'},
+    {s:'„Das spanische Wort ‚nariz‘ bedeutet nicht ‚Giraffe‘.“', in:true,
+     r:'<b>Ja.</b> Negierte deklarative Aussage, eindeutig wahr. Diese strukturelle Variante ist zentral für das Paper.'},
+    {s:'„Impfpflicht ist moralisch vertretbar.“', in:false,
+     r:'<b>Nein.</b> Kontrovers und wertend. Das Paper nutzt bewusst nur <em>unstrittige</em> Aussagen — und kann deshalb „wahr“ nicht von „allgemein geglaubt“ unterscheiden (Limitation §7.1).'}
+  ];
+  let answered=new Array(ITEMS.length).fill(null);
+  function render(){
+    host.innerHTML='';
+    ITEMS.forEach((it,i)=>{
+      const row=document.createElement('div');
+      row.className='sentence';
+      const a=answered[i];
+      const badge = a===null ? '' :
+        (a===it.in ? '<span class="pill t">richtig ✓</span>' : '<span class="pill f">falsch ✗</span>');
+      row.innerHTML=`<span>${it.s}</span>
+        <span style="display:flex;gap:6px;align-items:center;flex:none">
+          ${badge}
+          <button class="sm" data-i="${i}" data-v="1">im Scope</button>
+          <button class="sm" data-i="${i}" data-v="0">nicht</button>
+        </span>`;
+      host.appendChild(row);
+    });
+    host.querySelectorAll('button').forEach(b=>{
+      b.onclick=()=>{
+        const i=+b.dataset.i, v=b.dataset.v==='1';
+        answered[i]=v;
+        const it=ITEMS[i];
+        out.innerHTML = `<b>„${it.s}“</b><br>${it.r}`;
+        render();
+      };
+    });
+  }
+  out.innerHTML='Klick bei jeder Aussage auf „im Scope“ oder „nicht“.<br><br><span style="color:#64748b">Das Paper definiert „Wahrheit“ eng als <b>Faktizität deklarativer Aussagen</b> — und grenzt das in Anhang A explizit von Frage-Antworten, Täuschung und Compliance ab.</span>';
+  render();
+})();
+
+/* =================================================================
+   11c · FINALE: SONDEN-BAUKASTEN
+   ================================================================= */
+(function(){
+  const cv=$('#finCv'), ctx=setupCanvas(cv), [W,H]=cvSize(cv);
+  const mS=$('#finMS'), trS=$('#finTrain'), meS=$('#finMeth'), teS=$('#finTest'), out=$('#finOut');
+  const TRAINS=['cities','cities+neg_cities','larger_than','larger_than+smaller_than','likely'];
+  const TESTS=GEN_TESTS;
+  TRAINS.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;trS.appendChild(o);});
+  TESTS.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;teS.appendChild(o);});
+  trS.value='cities+neg_cities'; teS.value='sp_en_trans';
+
+  function lookup(model, train, meth, test){
+    // In die Generalisierungsmatrix mappen
+    let colName = train;
+    let grp = meth;
+    if(train==='likely'){ colName = (meth==='MM'?'MM auf likely':'LR auf likely'); grp='Bas.'; }
+    let ci = GEN_COLS.findIndex(c=>c.g===grp && c.d===colName);
+    if(ci<0){
+      // CCS nur für kombinierte Datensätze
+      ci = GEN_COLS.findIndex(c=>c.d===colName);
+    }
+    const ri = GEN_TESTS.indexOf(test);
+    const M = genMatrix(model);
+    return {acc: M[ri][ci<0?0:ci], valid: ci>=0};
+  }
+  function nieEstimate(model,train,meth){
+    const base={'cities':[.13,.77,null],'cities+neg_cities':[.33,.85,.31],
+                'larger_than':[.28,.71,null],'larger_than+smaller_than':[.07,.26,.08],
+                'likely':[.05,.70,null]};
+    const b70={'cities':[.55,.58,null],'cities+neg_cities':[.61,.81,.55],
+               'larger_than':[.61,.67,null],'larger_than+smaller_than':[.54,.66,.57],
+               'likely':[.18,.68,null]};
+    const idx={LR:0,MM:1,CCS:2}[meth];
+    if(model===2) return b70[train][idx];
+    if(model===1) return base[train][idx];
+    const v=base[train][idx];
+    return v===null?null:clamp(v*0.55,0,1);
+  }
+  function draw(){
+    const model=+mS.value, train=trS.value, meth=meS.value, test=teS.value;
+    $('#finMV').textContent=['7B','13B','70B'][model];
+    const {acc,valid}=lookup(model,train,meth,test);
+    const nie=nieEstimate(model,train,meth);
+
+    clearBG(ctx,W,H); gridBG(ctx,W,H,44);
+
+    // Pipeline
+    const boxes=[
+      ['Modell', ['LLaMA-2','7B','13B','70B'][0]+' '+['7B','13B','70B'][model], C.acc],
+      ['Training', train, C.acc2],
+      ['Methode', meth, meth==='MM'?C.true_:meth==='LR'?'#f87171':C.acc2],
+      ['Test', test, C.warn]
+    ];
+    const bw=(W-80)/4;
+    boxes.forEach(([t,v,col],i)=>{
+      const x=40+i*bw;
+      ctx.fillStyle='rgba(18,26,44,.9)';
+      roundRect(ctx,x+6,34,bw-24,52,10); ctx.fill();
+      ctx.strokeStyle=col; ctx.lineWidth=1.5;
+      roundRect(ctx,x+6,34,bw-24,52,10); ctx.stroke();
+      label(ctx,t,x+bw/2-6,24,col,9.5,'center','bold');
+      ctx.fillStyle=C.txt; ctx.font='bold 11px ui-monospace, monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      const str=String(v);
+      if(str.length>18){
+        ctx.font='bold 9px ui-monospace, monospace';
+        const parts=str.split('+');
+        parts.forEach((p,k)=>ctx.fillText(p+(k<parts.length-1?' +':''), x+bw/2-6, 52+k*14));
+      } else ctx.fillText(str, x+bw/2-6, 60);
+      if(i<3) arrow(ctx, x+bw-16, 60, x+bw+4, 60, 'rgba(147,163,192,.55)', 1.8, 7);
+    });
+
+    // Ergebnis-Balken
+    const bx=70, by=130, bwid=W-230;
+    label(ctx,'Klassifikationsgenauigkeit (out-of-distribution)',bx,by-14,C.dim,11,'left','bold');
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,by,bwid,26,13); ctx.fill();
+    const acol = acc>0.9?C.true_: acc>0.72?C.acc: acc>0.5?C.warn:'#be123c';
+    ctx.save(); ctx.shadowColor=acol; ctx.shadowBlur=14;
+    ctx.fillStyle=acol; roundRect(ctx,bx,by,Math.max(10,bwid*acc),26,13); ctx.fill();
+    ctx.restore();
+    dashLine(ctx,bx+bwid*0.5,by-5,bx+bwid*0.5,by+31,'rgba(230,237,248,.5)',[4,4],1.3);
+    label(ctx,'50 %',bx+bwid*0.5,by+42,C.faint,9,'center');
+    label(ctx,(acc*100).toFixed(1)+' %',bx+bwid+14,by+13,acol,15,'left','bold');
+
+    // NIE-Balken
+    const by2=by+76;
+    label(ctx,'Kausale Wirksamkeit NIE (falsch → wahr, getestet auf sp_en_trans)',bx,by2-14,C.dim,11,'left','bold');
+    ctx.fillStyle='#0b1220'; roundRect(ctx,bx,by2,bwid,26,13); ctx.fill();
+    if(nie===null){
+      label(ctx,'CCS nur für kombinierte Datensätze verfügbar',bx+14,by2+13,C.faint,11,'left');
+    } else {
+      const ncol = nie>0.7?C.true_: nie>0.4?C.acc: nie>0.2?C.warn:'#be123c';
+      ctx.save(); ctx.shadowColor=ncol; ctx.shadowBlur=14;
+      ctx.fillStyle=ncol; roundRect(ctx,bx,by2,Math.max(10,bwid*clamp(nie,0,1)),26,13); ctx.fill();
+      ctx.restore();
+      label(ctx,nie.toFixed(2),bx+bwid+14,by2+13,ncol,15,'left','bold');
+    }
+
+    // Beispielsatz + Urteil
+    const sy=by2+62;
+    const EX = {
+      'cities':['Die Stadt Osaka ist in Brasilien.',false],
+      'neg_cities':['Die Stadt Paris ist nicht in Frankreich.',false],
+      'sp_en_trans':['Das spanische Wort „nariz“ bedeutet „Nase“.',true],
+      'neg_sp_en_trans':['Das spanische Wort „casa“ bedeutet nicht „Haus“.',false],
+      'larger_than':['Dreiundneunzig ist größer als achtundsechzig.',true],
+      'smaller_than':['Siebenundneunzig ist kleiner als dreiundfünfzig.',false],
+      'cities_cities_conj':['Es ist sowohl der Fall, dass Rom in Italien ist, als auch dass Madrid in Spanien ist.',true],
+      'cities_cities_disj':['Es ist entweder der Fall, dass Berlin in Kanada ist, oder dass Delhi in Brasilien ist.',false],
+      'companies_true_false':['Nestlé ist ein Lebensmittel- und Getränkekonzern.',true],
+      'common_claim_true_false':['Tomaten sind eigentlich kein Gemüse.',true],
+      'counterfact_true_false':['Die Hauptstadt von Norwegen ist Lissabon.',false]
+    };
+    const ex = EX[test] || ['—',true];
+    label(ctx,'Beispiel aus dem Testdatensatz',bx,sy-14,C.faint,9.5,'left');
+    ctx.fillStyle='rgba(11,18,32,.9)'; roundRect(ctx,bx,sy,bwid+70,30,8); ctx.fill();
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; roundRect(ctx,bx,sy,bwid+70,30,8); ctx.stroke();
+    ctx.fillStyle=C.txt; ctx.font='11px -apple-system, sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='middle';
+    const txt = ex[0].length>62 ? ex[0].slice(0,60)+'…' : ex[0];
+    ctx.fillText(txt, bx+12, sy+15);
+    // Sonden-Urteil (korrekt mit Wahrscheinlichkeit acc)
+    const correct = acc > 0.5;
+    const guess = correct ? ex[1] : !ex[1];
+    label(ctx, guess?'→ WAHR':'→ FALSCH', bx+bwid+58, sy+15, guess?C.true_:C.false_, 12,'right','bold');
+
+    const verdict =
+      acc>0.93 ? ['Exzellent', C.true_, 'Diese Kombination funktioniert out-of-distribution nahezu perfekt.']
+    : acc>0.82 ? ['Gut', C.acc, 'Solider Transfer auf einen Datensatz, den die Sonde nie gesehen hat.']
+    : acc>0.65 ? ['Brauchbar', C.acc, 'Deutlich über Zufall, aber nicht zuverlässig genug für den Praxiseinsatz.']
+    : acc>0.52 ? ['Schwach', C.warn, 'Kaum besser als Raten — die Richtung passt nicht zu diesem Testdatensatz.']
+    : ['Versagt', '#be123c', '<b>Schlechter als ein Münzwurf.</b> Die Sonde zeigt systematisch in die falsche Richtung — typisch für die likely-Sonde auf negierten Datensätzen.'];
+
+    out.innerHTML = `<b>${['LLaMA-2-7B','LLaMA-2-13B','LLaMA-2-70B'][model]}</b> ·
+      trainiert auf <b>${train}</b> mit <b>${meth}</b> · getestet auf <b>${test}</b><br>
+      Genauigkeit: <b style="color:${acol}">${(acc*100).toFixed(1)} %</b> —
+      <b style="color:${verdict[1]}">${verdict[0]}</b>
+      ${nie!==null?` · NIE: <b>${nie.toFixed(2)}</b>`:''}<br><br>
+      ${verdict[2]}<br><br>
+      <span style="color:#64748b">Tipp: Vergleiche <code>cities</code> mit <code>cities+neg_cities</code> bei
+      Test auf <code>neg_sp_en_trans</code> — und probiere <code>likely</code> auf den negierten Datensätzen.</span>`;
+  }
+  [mS,trS,meS,teS].forEach(e=>{ e.oninput=draw; e.onchange=draw; });
+  draw();
+})();
+
+/* =================================================================
+   RESIZE / RE-RENDER PLOTLY
+   ================================================================= */
+window.addEventListener('resize', ()=>{
+  ['corrPlot','fig1Plot','scalePlot','likelyPlot','nieBar'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && el.data) Plotly.Plots.resize(el);
+  });
+});
+</script>
+
+</body>
+</html>
