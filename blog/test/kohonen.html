@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOM · Kohonen</title>
+<style>
+  :root{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#5C6781;
+    --acc:#5EF1C4; --acc2:#FF6FB5; --gold:#FFD166;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 700px at 15% -10%, #16203a 0%, transparent 60%),
+      radial-gradient(900px 600px at 95% 110%, #2a1030 0%, transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font:400 15px/1.5 ui-sans-serif,system-ui,"Segoe UI",Inter,sans-serif;
+    display:flex;flex-direction:column;align-items:center;
+    min-height:100%;overflow-x:hidden;
+  }
+  header{padding:28px 16px 6px;text-align:center}
+  h1{
+    font-size:clamp(26px,5vw,46px);font-weight:200;letter-spacing:.22em;
+    text-transform:uppercase;
+    background:linear-gradient(90deg,var(--acc),#9BB8FF 50%,var(--acc2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--dim);font-size:12px;letter-spacing:.35em;text-transform:uppercase;margin-top:8px}
+
+  .stage{
+    display:flex;gap:26px;flex-wrap:wrap;justify-content:center;
+    padding:22px 16px 10px;
+  }
+  .panel{
+    position:relative;border-radius:22px;padding:10px;
+    background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.09);
+    box-shadow:0 30px 70px -30px #000, inset 0 1px 0 rgba(255,255,255,.08);
+    backdrop-filter:blur(8px);
+  }
+  canvas{display:block;border-radius:14px;background:#05070E;touch-action:none}
+  .tag{
+    position:absolute;top:18px;left:20px;z-index:2;
+    font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--dim);
+    pointer-events:none;
+  }
+
+  .hud{
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center;
+    padding:6px 16px 30px;
+  }
+  button,select{
+    font:inherit;font-size:13px;letter-spacing:.08em;color:var(--ink);
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+    padding:9px 16px;border-radius:999px;cursor:pointer;
+    transition:.25s transform,.25s background,.25s border-color;
+  }
+  button:hover,select:hover{background:rgba(94,241,196,.14);border-color:var(--acc);transform:translateY(-2px)}
+  button:active{transform:translateY(0)}
+  .bar{
+    width:min(680px,88vw);height:3px;border-radius:99px;
+    background:rgba(255,255,255,.08);overflow:hidden;
+  }
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .1s linear}
+  .legend{display:flex;gap:18px;color:var(--dim);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Self&nbsp;·&nbsp;Organizing&nbsp;Map</h1>
+  <div class="sub">Kohonen</div>
+</header>
+
+<div class="stage">
+  <div class="panel"><span class="tag">Datenraum</span><canvas id="a" width="460" height="460"></canvas></div>
+  <div class="panel"><span class="tag">Gitter / Topologie</span><canvas id="b" width="460" height="460"></canvas></div>
+</div>
+
+<div class="hud">
+  <select id="shape">
+    <option value="ring">◍ Ring</option>
+    <option value="blobs">⁂ Cluster</option>
+    <option value="square">▦ Fläche</option>
+    <option value="spiral">◉ Spirale</option>
+    <option value="cross">✚ Kreuz</option>
+  </select>
+  <button id="play">⏸ Pause</button>
+  <button id="reset">↺ Neu</button>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--gold)"></i>BMU</span>
+    <span><i class="dot" style="background:var(--acc)"></i>Neuron</span>
+    <span><i class="dot" style="background:#2E3A57"></i>Daten</span>
+  </div>
+</div>
+<div class="bar"><i id="prog"></i></div>
+
+<script>
+const A=document.getElementById('a'), B=document.getElementById('b');
+const ca=A.getContext('2d'), cb=B.getContext('2d');
+const W=460, G=14;                 // Canvasgröße, Gitter GxG
+let nodes=[], data=[], t=0, T=9000, playing=true, pulse=null;
+
+const R=(a,b)=>a+Math.random()*(b-a);
+
+/* ---------- Datenwolken ---------- */
+function makeData(kind){
+  const p=[];
+  for(let i=0;i<2600;i++){
+    let x,y;
+    if(kind==='ring'){ const a=R(0,6.283), r=R(.52,.86); x=.5+Math.cos(a)*r/2; y=.5+Math.sin(a)*r/2; }
+    else if(kind==='blobs'){
+      const c=[[.25,.27],[.76,.3],[.5,.78]][i%3];
+      x=c[0]+R(-1,1)*.09; y=c[1]+R(-1,1)*.09;
+    }
+    else if(kind==='square'){ x=R(.12,.88); y=R(.12,.88); }
+    else if(kind==='spiral'){
+      const a=R(0,4.4*Math.PI), r=.03+a*.031;
+      x=.5+Math.cos(a)*r; y=.5+Math.sin(a)*r;
+      x+=R(-1,1)*.015; y+=R(-1,1)*.015;
+    }
+    else { // cross
+      if(i%2){ x=R(.12,.88); y=.5+R(-1,1)*.075; } else { x=.5+R(-1,1)*.075; y=R(.12,.88); }
+    }
+    p.push([x,y]);
+  }
+  return p;
+}
+
+/* ---------- SOM init ---------- */
+function reset(){
+  t=0; nodes=[];
+  for(let i=0;i<G;i++) for(let j=0;j<G;j++)
+    nodes.push({i,j, x:.5+R(-1,1)*.04, y:.5+R(-1,1)*.04});
+  data=makeData(document.getElementById('shape').value);
+}
+
+/* ---------- ein Lernschritt ---------- */
+function step(){
+  const f=t/T;
+  const lr=.46*Math.pow(.008/.46,f);          // Lernrate ↓
+  const rad=(G*.62)*Math.pow(.9/(G*.62),f);   // Nachbarschaft ↓
+  const s=rad*rad*2;
+
+  const d=data[(Math.random()*data.length)|0];
+  let bmu=nodes[0], best=1e9;
+  for(const n of nodes){
+    const dx=n.x-d[0], dy=n.y-d[1], q=dx*dx+dy*dy;
+    if(q<best){best=q;bmu=n;}
+  }
+  for(const n of nodes){
+    const gi=n.i-bmu.i, gj=n.j-bmu.j, g2=gi*gi+gj*gj;
+    if(g2>s*4.5) continue;
+    const h=Math.exp(-g2/s)*lr;
+    n.x+=h*(d[0]-n.x); n.y+=h*(d[1]-n.y);
+  }
+  pulse={x:d[0],y:d[1],bx:bmu.x,by:bmu.y,r:rad};
+  t++;
+  if(t>=T) t=T;
+}
+
+/* ---------- Farbe nach Position im Datenraum ---------- */
+const hue=n=>`hsl(${(Math.atan2(n.y-.5,n.x-.5)*57.3+360)%360} 85% ${48+Math.hypot(n.x-.5,n.y-.5)*62}%)`;
+
+/* ---------- Zeichnen ---------- */
+function draw(){
+  const P=v=>v*W;
+
+  // --- Panel A : Datenraum ---
+  ca.fillStyle='#05070E'; ca.fillRect(0,0,W,W);
+  ca.fillStyle='#223052';
+  for(let k=0;k<data.length;k+=2){ const d=data[k]; ca.fillRect(P(d[0]),P(d[1]),1.7,1.7); }
+
+  // Gitterkanten
+  ca.lineWidth=1.1;
+  for(let i=0;i<G;i++)for(let j=0;j<G;j++){
+    const n=nodes[i*G+j];
+    for(const m of [j<G-1?nodes[i*G+j+1]:null, i<G-1?nodes[(i+1)*G+j]:null]){
+      if(!m) continue;
+      const gr=ca.createLinearGradient(P(n.x),P(n.y),P(m.x),P(m.y));
+      gr.addColorStop(0,hue(n)); gr.addColorStop(1,hue(m));
+      ca.strokeStyle=gr; ca.globalAlpha=.75;
+      ca.beginPath(); ca.moveTo(P(n.x),P(n.y)); ca.lineTo(P(m.x),P(m.y)); ca.stroke();
+    }
+  }
+  ca.globalAlpha=1;
+  for(const n of nodes){
+    ca.fillStyle=hue(n);
+    ca.beginPath(); ca.arc(P(n.x),P(n.y),2.6,0,6.283); ca.fill();
+  }
+
+  // BMU-Puls
+  if(pulse){
+    ca.strokeStyle='rgba(255,209,102,.85)'; ca.lineWidth=1.3;
+    ca.beginPath(); ca.moveTo(P(pulse.x),P(pulse.y)); ca.lineTo(P(pulse.bx),P(pulse.by)); ca.stroke();
+    ca.fillStyle='#FFD166';
+    ca.beginPath(); ca.arc(P(pulse.x),P(pulse.y),3.4,0,6.283); ca.fill();
+    ca.shadowBlur=18; ca.shadowColor='#FFD166';
+    ca.beginPath(); ca.arc(P(pulse.bx),P(pulse.by),5.2,0,6.283); ca.fill();
+    ca.shadowBlur=0;
+    ca.strokeStyle='rgba(255,209,102,.22)';
+    ca.beginPath(); ca.arc(P(pulse.bx),P(pulse.by),Math.max(6,pulse.r*(W/G)*.9),0,6.283); ca.stroke();
+  }
+
+  // --- Panel B : feste Gitter-Topologie ---
+  cb.fillStyle='#05070E'; cb.fillRect(0,0,W,W);
+  const pad=34, cell=(W-pad*2)/(G-1);
+  for(const n of nodes){
+    const x=pad+n.j*cell, y=pad+n.i*cell;
+    cb.fillStyle=hue(n);
+    cb.shadowBlur=14; cb.shadowColor=hue(n);
+    cb.beginPath(); cb.roundRect(x-cell*.42,y-cell*.42,cell*.84,cell*.84,5); cb.fill();
+    cb.shadowBlur=0;
+  }
+  if(pulse){
+    // BMU im Gitter markieren
+    let bm=nodes[0],bd=1e9;
+    for(const n of nodes){const q=(n.x-pulse.bx)**2+(n.y-pulse.by)**2; if(q<bd){bd=q;bm=n;}}
+    const x=pad+bm.j*cell, y=pad+bm.i*cell;
+    cb.strokeStyle='#FFD166'; cb.lineWidth=2;
+    cb.beginPath(); cb.roundRect(x-cell*.5,y-cell*.5,cell,cell,7); cb.stroke();
+  }
+
+  document.getElementById('prog').style.width=(t/T*100)+'%';
+}
+
+/* ---------- Loop ---------- */
+function loop(){
+  if(playing && t<T){ for(let k=0;k<26;k++) step(); }
+  draw();
+  requestAnimationFrame(loop);
+}
+
+/* ---------- UI ---------- */
+document.getElementById('play').onclick=e=>{
+  playing=!playing; e.target.textContent=playing?'⏸ Pause':'▶ Play';
+};
+document.getElementById('reset').onclick=reset;
+document.getElementById('shape').onchange=reset;
+// Klick in Panel A = Datenpunkt manuell einwerfen
+A.onpointerdown=e=>{
+  const r=A.getBoundingClientRect();
+  data.push([(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]);
+};
+
+reset(); loop();
+</script>
+</body>
+</html>
