@@ -691,3 +691,49 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lokal: warren_weaver.jpg (800x640)
    Genutzt in: history.php § "Machine Translation: The Longest-Running Bet"
    Status: OK - Public Domain
+
+=== FRÜHE KI-VORLÄUFER (history.php, Stand: Oktober 2026) ===
+=================================================
+Quelle-Text: Wikipedia (Brazen head / Mechanical Turk / Zhang Heng / Pygmalion) +
+Thomas Browne, Pseudodoxia Epidemica VII.xvii (penelope.uchicago.edu).
+Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026.
+
+61. img_brazen_head
+   URL: https://commons.wikimedia.org/wiki/File:Friar_Bacon's_Brazen_Head.png
+   Lizenz: Public domain
+   Autor: Anonymous (English woodblock engraver), aus Robert Greene's The Honorable Historie of Frier Bacon (1630)
+   Lokal: brazen_head.jpg (1200x778)
+   Genutzt in: history.php § "The Brazen Head: the first question-answering machine (c. 1125)"
+   Status: OK - Public Domain (Holzschnitt, 17. Jh.)
+
+62. img_brazen_head_pub
+   URL: https://commons.wikimedia.org/wiki/File:The_Brazen_Head_pub_exterior.jpg
+   Lizenz: CC BY-SA 4.0
+   Autor: Matthewvetter (2022)
+   Lokal: brazen_head_pub.jpg (500x667)
+   Genutzt in: history.php § "The Brazen Head" (Pub, Dublin)
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+63. img_pygmalion_galatea
+   URL: https://commons.wikimedia.org/wiki/File:Pygmalion_and_Galatea_by_Jean-Léon_Gérôme_(Metropolitan_Museum_of_Art).jpg
+   Lizenz: CC BY-SA 4.0
+   Autor: Jean-Léon Gérôme (Gemälde, c. 1890); Foto: Chris Olszewski (Kgbo, 2021), Metropolitan Museum of Art
+   Lokal: pygmalion_galatea.jpg (700x904)
+   Genutzt in: history.php § "Pygmalion and Galatea: the dream of the created being (c. 8 BCE)"
+   Status: OK - Lizenz klar (CC BY-SA 4.0)
+
+64. img_mechanical_turk
+   URL: https://commons.wikimedia.org/wiki/File:Racknitz_-_The_Turk_3.jpg
+   Lizenz: Public domain (PD-Art, 1789)
+   Autor: Joseph Racknitz (1789), aus Buch über Kempelens Schachautomaten (Humboldt University Library)
+   Lokal: mechanical_turk.jpg (1200x1093)
+   Genutzt in: history.php § "The Mechanical Turk: the chess machine that fooled the world (1770)"
+   Status: OK - Public Domain (PD-Art)
+
+65. img_zhang_heng_seismoscope
+   URL: https://commons.wikimedia.org/wiki/File:PSM_V29_D320_Ancient_chinese_choko_seismoscope_from_136_a_d.jpg
+   Lizenz: Public domain (PD-US, 1886)
+   Autor: Illustration aus Popular Science Monthly, Vol. 29 (1886)
+   Lokal: zhang_heng_seismoscope.jpg (600x716)
+   Genutzt in: history.php § "Zhang Heng's seismoscope: the first instrument that sensed the world (132 CE)"
+   Status: OK - Public Domain (1886 Illustration)

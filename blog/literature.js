@@ -5062,6 +5062,89 @@ window.bibData = {
 		alternativetitle: "Fragments of the Antikythera Mechanism",
 		author: "Therese Clutario"
 	},
+	// Early "artificial intelligence" precursors: brazen head, Pygmalion, Zhang Heng seismoscope, Mechanical Turk (history.php)
+	"brazenheadwiki": {
+		author: "Wikipedia contributors",
+		year: "2026",
+		title: "Brazen head - Wikipedia, The Free Encyclopedia",
+		alternativetitle: "Brazen head",
+		url: "https://en.wikipedia.org/w/index.php?title=Brazen_head&oldid=1327465058"
+	},
+	"brazenheadpub": {
+		author: "Wikipedia contributors",
+		year: "2026",
+		title: "The Brazen Head - Wikipedia, The Free Encyclopedia",
+		alternativetitle: "The Brazen Head (pub)",
+		url: "https://en.wikipedia.org/w/index.php?title=The_Brazen_Head"
+	},
+	"brownepseudodoxia": {
+		author: "Sir Thomas Browne",
+		year: 1672,
+		title: "Pseudodoxia Epidemica, Book VII, Chapter 17: Of some others",
+		alternativetitle: "Pseudodoxia Epidemica, VII.xvii",
+		url: "http://penelope.uchicago.edu/pseudodoxia/pseudo717.html"
+	},
+	"pygmalionmyth": {
+		author: "Wikipedia contributors",
+		year: "2026",
+		title: "Pygmalion (mythology) - Wikipedia, The Free Encyclopedia",
+		alternativetitle: "Pygmalion (mythology)",
+		url: "https://en.wikipedia.org/w/index.php?title=Pygmalion_(mythology)"
+	},
+	"mechanicalturk": {
+		author: "Wikipedia contributors",
+		year: "2026",
+		title: "Mechanical Turk - Wikipedia, The Free Encyclopedia",
+		alternativetitle: "The Mechanical Turk",
+		url: "https://en.wikipedia.org/w/index.php?title=Mechanical_Turk"
+	},
+	"zhanghengseismoscope": {
+		author: "Wikipedia contributors",
+		year: "2026",
+		title: "Zhang Heng - Wikipedia, The Free Encyclopedia",
+		alternativetitle: "Zhang Heng",
+		url: "https://en.wikipedia.org/w/index.php?title=Zhang_Heng"
+	},
+	"brazenheadimage": {
+		url: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Friar_Bacon%27s_Brazen_Head.png",
+		title: "Friar Bacon's Brazen Head",
+		alternativetitle: "Friar Bacon's Brazen Head",
+		author: "Anonymous (English woodblock engraver), from Robert Greene's The Honorable Historie of Frier Bacon",
+		year: 1630,
+		license: "Public domain"
+	},
+	"brazenheadpubimage": {
+		url: "https://upload.wikimedia.org/wikipedia/commons/7/75/The_Brazen_Head_pub_exterior.jpg",
+		title: "The Brazen Head pub, exterior",
+		alternativetitle: "The Brazen Head pub, Dublin",
+		author: "Matthewvetter",
+		year: 2022,
+		license: "CC BY-SA 4.0"
+	},
+	"pygmalionimage": {
+		url: "https://upload.wikimedia.org/wikipedia/commons/4/41/Pygmalion_and_Galatea_by_Jean-L%C3%A9on_G%C3%A9r%C3%B4me_%28Metropolitan_Museum_of_Art%29.jpg",
+		title: "Pygmalion and Galatea by Jean-Léon Gérôme (Metropolitan Museum of Art)",
+		alternativetitle: "Pygmalion and Galatea",
+		author: "Jean-Léon Gérôme (photo: Chris Olszewski)",
+		year: 1890,
+		license: "CC BY-SA 4.0"
+	},
+	"mechanicalturkimage": {
+		url: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Racknitz_-_The_Turk_3.jpg",
+		title: "Racknitz - The Turk (cross-section)",
+		alternativetitle: "The Mechanical Turk",
+		author: "Joseph Racknitz",
+		year: 1789,
+		license: "Public domain"
+	},
+	"zhanghengseismoscopeimage": {
+		url: "https://upload.wikimedia.org/wikipedia/commons/6/62/PSM_V29_D320_Ancient_chinese_choko_seismoscope_from_136_a_d.jpg",
+		title: "Ancient Chinese Choko Seismoscope from 136 AD",
+		alternativetitle: "Zhang Heng's seismoscope",
+		author: "Illustration from Popular Science Monthly, Vol. 29",
+		year: 1886,
+		license: "Public domain"
+	},
 	"babbage": {
 		url: "https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg",
 		license: "CC",
