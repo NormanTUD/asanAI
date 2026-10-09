@@ -174,7 +174,7 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 
 Before there were logic engines, there were *talking heads*. The **brazen head** — a bust of brass or bronze said to sit on the workbench of a medieval scholar — is the oldest known legend of a machine that *answers questions*, and it is a remarkably early sketch of the conversational machine we now call a chatbot.
 
-<figure>
+<figure style="margin: 0">
     <img style="max-width: 100%" src="brazen_head.jpg" alt="Friar Bacon's Brazen Head" />
     <figcaption class="md">\citealternativetitle{brazenheadimage}. An Elizabethan woodcut from Robert Greene's *Friar Bacon and Friar Bungay* (c. 1590): while Friars Bacon and Bungay sleep, their head speaks, “Time is. Time was. Time is past.”</figcaption>
 </figure>
@@ -333,7 +333,7 @@ Before the chess machine, the same inventor had already been building **analog c
 
 <div class="optional md" data-headline="The Mechanical Turk: the chess machine that fooled the world (1770)">
 
-<figure>
+<figure style="margin: 0">
     <img style="max-width: 100%" src="mechanical_turk.jpg" alt="The Mechanical Turk" />
     <figcaption class="md">\citealternativetitle{mechanicalturkimage}, shown here in Joseph Racknitz's 1789 reconstruction — wrong about the details, right that a person sat inside.</figcaption>
 </figure>
