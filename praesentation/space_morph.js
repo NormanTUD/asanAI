@@ -261,9 +261,12 @@ const SpaceMorph = (() => {
     }
 
     // ---------- Szenen ----------
-    // NUR die Egg-Phase (6 Schritte). Die Bonusphase (verschlungene Volltori,
+    // NUR die Egg-Phase (7 Schritte). Die Bonusphase (verschlungene Volltori,
     // 4D-Lift, Fun-Fact "Sigmoid/ReLU", LLM-Next-Word) wurde aus der Folie
-    // entfernt, die Geschichte endet bei "Der Raum wird zu einer Linie".
+    // entfernt. (T40) Letzter Schritt = Verweis: die Punkte der Egg-Shape
+    // sind unsere Bilder — 3072-dimensionale Punkte, die wir nicht zeigen
+    // können, aber gleiches Prinzip. (Die eigene DenseRaum-Folie ist raus,
+    // T39: 1024D ist nicht zeigbar.)
     const S = [
         { t: "Zwei Klassen, keine Gerade",
             b: "Die Farben stehen für zwei Klassen, die wir trennen wollen. Die eine Gruppe liegt in der Mitte, die andere bildet einen Ring drumherum.",
@@ -282,6 +285,9 @@ const SpaceMorph = (() => {
             L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 1, pr: 0, box: 0 },
         { t: "Der Raum wird zu einer Linie",
             b: "Am Ende projizieren wir alles auf eine Linie zurück (Rückprojektion). Durch diese geschickte Projektion sind die vorher nicht trennbaren Daten jetzt an einem einzigen Punkt sauber getrennt.",
+            L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
+        { t: "Und jetzt: unsere Bilder",
+            b: "Was du in der Egg-Shape als Punkte gesehen hast, sind jetzt unsere Bilder: Jedes Bild ist ein einziger Punkt — aber in 32 × 32 × 3 = 3072 Dimensionen, viel zu hochdimensional, um es zu zeigen. Aber: gleiches Prinzip. Die Schichten falten den Raum, bis eine flache Grenze reicht.",
             L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0 },
     ];
 
@@ -377,7 +383,7 @@ const SpaceMorph = (() => {
         }
 
         const L = S[cur].L || 0;
-        const is1D = (cur === 5);
+        const is1D = (cur >= 5);
         let innerIdx = 0, outerIdx = 0;
         EGG_PTS.forEach((pt) => {
             const row = pt.cls === 0 ? 'inner-row' : 'outer-row';

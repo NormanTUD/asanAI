@@ -54,75 +54,58 @@ const TypewriterViz = (() => {
 })();
 /* ================================================================
     FlipClockViz – "Klassisch vs. KI" (Folie 2)
-    Cross-Morph, gleiche Mitte: die Formel (Klassisch: die Regel,
-    hier f(x)=x²) steht zentriert (volle Höhe). Auf manuelles Weiter
-    (advance) MORPHED sie flüssig in den Flip-Clock: das f(...) bleibt
-    stehen, nur die ZAHLEN (x) und das ERGEBNIS (o) rollen von OBEN in
-    die Auslese-Zeile (Spalten, sync, nahtloser Loop, Vorwärts).
-    Datengetrieben: LAYOUT (Glyphen+Spalten), FIELDS, EX (Beispiele).
+    (T37) Persistentes Skelett f( [x] ) = [o] in EINE Schrift: die
+    Glyphen f( / ) / = sind in beiden Modi dieselben DOM-Knoten und
+    bleiben damit exakt gleich — ausgetauscht werden nur die
+    Slot-Inhalte. Modus 1 (Formel): die Slots zeigen statisch x und
+    x². Auf manuelles Weiter (advance) faden die statischen Werte aus
+    und ein endloser Zahlen-Stream (Werte rollen von OBEN durch die
+    Auslese-Zeile, oben per CSS-Maske geblendet) + die Fenster-Box
+    faden ein. Nahtloser Loop (Periode 10, x = 0..9, o = x²).
     ================================================================ */
 const FlipClockViz = (() => {
-    // Haupt-Beispiel: f(x) = x² (erkennbar, etwas komplexer als AND).
-    // Endloser Stream: x = 0..9 (o = x²) wiederholen sich nahtlos (Periode 10),
-    // die Spalten steigen nach oben und werden oben per CSS-Maske ausgeblendet.
-    const LAYOUT = ['f(', 'x', ')', '=', 'o'];   // f( [x] ) = [o]
-    const FIELDS = ['x', 'o'];
     const EX = [];
     for (let i = 0; i < 10; i++) EX.push({ x: i, o: i * i });
     const PERIOD = EX.length;
     const STEP_S = 1.2;         // 1 Wert alle ~1,2 s (Stream fließt klar)
     const MORPH_DUR = 850;      // Cross-Morph Dauer (ab advance)
 
-    let root = null, formula = null, odo = null, cols = [];
-    let VH = 0;
+    let odo = null, win = null, tracks = [], statics = [];
+    let VH = 56, COLH = 340;
     let offset = 0, lastT = 0, switchT = 0, raf = 0, running = false, inited = false;
     let switched = false, pendingSwitch = false;
-
-    function valFor(col, p) {
-        const idx = ((p % PERIOD) + PERIOD) % PERIOD;
-        return EX[idx][col];
-    }
 
     function build() {
         if (inited) return;
         inited = true;
-        root = document.getElementById('flip-clock');
-        formula = document.getElementById('klassik-formula');
-        if (!root) return;
-        root.innerHTML = '';
-        const win = document.createElement('div'); win.className = 'fc-window';
-        odo = document.createElement('div'); odo.className = 'fc-odo';
-        root.appendChild(win);
-        root.appendChild(odo);
-        for (const s of LAYOUT) {
-            if (FIELDS.indexOf(s) !== -1) {
-                const col = document.createElement('div'); col.className = 'fc-col';
-                const track = document.createElement('div'); track.className = 'fc-track';
-                for (let p = 0; p < 2 * PERIOD; p++) {
-                    const v = document.createElement('div'); v.className = 'fc-val';
-                    v.textContent = String(valFor(s, p));
-                    track.appendChild(v);
-                }
-                col.appendChild(track);
-                odo.appendChild(col);
-                cols.push(track);
-            } else {
-                const g = document.createElement('span'); g.className = 'fc-glyph';
-                g.textContent = s;
-                odo.appendChild(g);
+        odo = document.getElementById('ko-odo');
+        win = document.getElementById('ko-window');
+        if (!odo) return;
+        const tx = odo.querySelector('#ko-track-x');
+        const to = odo.querySelector('#ko-track-o');
+        [[tx, 'x'], [to, 'o']].forEach(pair => {
+            const tr = pair[0], field = pair[1];
+            for (let p = 0; p < 2 * PERIOD; p++) {
+                const v = document.createElement('div'); v.className = 'ko-val';
+                v.textContent = String(EX[p % PERIOD][field]);
+                tr.appendChild(v);
             }
-        }
+        });
+        tracks = [tx, to];
+        statics = Array.prototype.slice.call(odo.querySelectorAll('.ko-static'));
         measure();
     }
 
     function measure() {
-        if (!root) return;
-        const H = root.clientHeight;
+        const stage = document.getElementById('klassik-stage');
+        if (!stage || !odo) return;
+        const H = stage.clientHeight;
         if (H <= 0) return;
         VH = Math.max(44, Math.min(56, H * 0.12));
-        const colH = Math.min(H * 0.86, 380);   // hohe Spalte → langer Stream
-        cols.forEach(track => {
-            track.parentElement.style.height = colH + 'px';
+        COLH = Math.min(H * 0.86, 380);   // hohe Spalte → langer Stream
+        const slots = odo.querySelectorAll('.ko-slot');
+        for (const s of slots) s.style.height = COLH + 'px';
+        tracks.forEach(track => {
             const kids = track.children;
             for (let i = 0; i < kids.length; i++) kids[i].style.height = VH + 'px';
         });
@@ -130,27 +113,32 @@ const FlipClockViz = (() => {
 
     function ease(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
 
+    // Bei offset=0 sitzt Wert 0 exakt in der Spalten-Mitte — dieselbe
+    // Position wie der statische Wert → der Wechsel ist ein In-Place-Swap.
+    function tyNow() { return COLH / 2 - VH / 2 - offset * VH; }
+
     function frame(t) {
         if (!running) return;
         const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0;
         lastT = t;
         if (pendingSwitch && !switched) { switched = true; switchT = t; pendingSwitch = false; }
 
-        // Cross-Morph (Formel → Flip-Clock), gleiche Mitte — nur nach advance.
-        let fOp = 1, fSc = 1, cOp = 0;
+        // Cross-Morph (statisch → Stream) — nur nach advance. Die fixen
+        // Glyphen (f( / ) / =) werden nie angefasst und bleiben exakt gleich.
+        let sOp = 1, cOp = 0, wOp = 0;
         if (switched) {
             const el = t - switchT;
-            if (el >= MORPH_DUR) { fOp = 0; fSc = 0.9; cOp = 1; }
-            else { const p = ease(el / MORPH_DUR); fOp = 1 - p; fSc = 1 - 0.10 * p; cOp = p; }
+            const p = el >= MORPH_DUR ? 1 : ease(el / MORPH_DUR);
+            sOp = 1 - p; cOp = p; wOp = p;
             offset = (offset + dt / STEP_S) % PERIOD;   // Werte rollen
         }
-        if (formula) { formula.style.opacity = fOp.toFixed(3); formula.style.transform = 'scale(' + fSc.toFixed(3) + ')'; }
-        root.style.opacity = cOp.toFixed(3);
-
-        // Endloser Stream: Spalten steigen nach OBEN (ty negativ), oben per
-        // CSS-Maske ausgeblendet. Nahtlos (Periode = PERIOD, Werte wiederholen).
-        const ty = -offset * VH;
-        cols.forEach(track => { track.style.transform = 'translateY(' + ty + 'px)'; });
+        statics.forEach(s => { s.style.opacity = sOp.toFixed(3); });
+        const ty = tyNow();
+        tracks.forEach(track => {
+            track.parentElement.style.opacity = cOp.toFixed(3);
+            track.style.transform = 'translateY(' + ty + 'px)';
+        });
+        if (win) win.style.opacity = wOp.toFixed(3);
         raf = requestAnimationFrame(frame);
     }
 
@@ -168,12 +156,13 @@ const FlipClockViz = (() => {
 
     function start() {
         // Erst im nächsten Frame: dann ist das Layout fixiert. Läuft nur,
-        // wenn die Folie aktiv ist. Zeigt die Formel und wartet auf advance.
+        // wenn die Folie aktiv ist. Zeigt das Skelett (Modus 1) und
+        // wartet auf advance().
         requestAnimationFrame(() => {
             const a = document.querySelector('.slide.active');
             if (!a || a.id !== 'slide-klassisch-vs-ki') return;
             build();
-            if (!root) return;
+            if (!odo) return;
             if (!running) { running = true; lastT = 0; raf = requestAnimationFrame(frame); }
         });
     }
@@ -181,11 +170,12 @@ const FlipClockViz = (() => {
         running = false;
         if (raf) { cancelAnimationFrame(raf); raf = 0; }
         switched = false; pendingSwitch = false; offset = 0;
-        if (formula) { formula.style.opacity = ''; formula.style.transform = ''; }
-        if (root) root.style.opacity = '';
+        statics.forEach(s => { s.style.opacity = ''; });
+        tracks.forEach(track => { track.parentElement.style.opacity = ''; track.style.transform = ''; });
+        if (win) win.style.opacity = '';
     }
 
-    window.addEventListener('resize', () => { if (running) measure(); });
+    window.addEventListener('resize', () => { if (inited) measure(); });
 
     return { start, stop, advance, canSwitch };
 })();

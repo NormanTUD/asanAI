@@ -108,8 +108,14 @@ const KatzeKit = (() => {
 	// Hintergrund, ~181/176/43) verblassen Richtung Weiß, helle
 	// Pixel (weiße Schnurrhaare, cremefarbenes Fell) leuchten im
 	// Kanal → in allen drei Stapeln deutlich sichtbar.
+	// (T38) Der Blau-Kanal bekommt ein eigenes Fenster (lo=0 statt 90):
+	// die Katze ist gelb (Rot+Grün) und enthält kaum Blau (meist 20–60)
+	// — mit dem grün-zugerechneten Fenster (v−90) wurde der Stapel fast
+	// komplett weiß. Bei lo=0 wird der Hintergrund sichtbar hell-blau,
+	// Gesicht/Schnauze bleiben kräftig blau, Ohren/Umrisse dezent.
 	const tint = (v, i) => {
-		const u = Math.pow(Math.min(Math.max((v - 90) / 165, 0), 1), 1.35) * 255;
+		const lo = i === 2 ? 0 : 90;
+		const u = Math.pow(Math.min(Math.max((v - lo) / (255 - lo), 0), 1), 1.35) * 255;
 		const ink = 255 - u;
 		return i === 0 ? [255, ink, ink] : i === 1 ? [ink, 255, ink] : [ink, ink, 255];
 	};
@@ -1623,6 +1629,7 @@ const PipelineDemo = (() => {
 	let aLabel = 0, tLabelA = 0;
 	let trainP = 0, trainMsg = 0;
 	let cdT = 0;                  // Training: Zeit für die ~1-s-Bildblöcke (Hund/Katze)
+	let cdLock = null;            // (T41) nach Trainingsende: Katze-Block-Zeit, dort bleibt das Bild stehen
 	let entrancePending = false;
 	let entrancePlayed = false;   // Einstieg nur einmal, sonst Flash bei jedem Wiederauftauchen
 
@@ -1716,7 +1723,7 @@ const PipelineDemo = (() => {
 		},
 
 		onStep(step) {
-			if (step === 6) { trainP = 0; trainMsg = 0; cdT = 0; }
+			if (step === 6) { trainP = 0; trainMsg = 0; cdT = 0; cdLock = null; }
 			if (step === 0 && !entrancePlayed) entrancePending = true;
 		},
 
@@ -1734,17 +1741,33 @@ const PipelineDemo = (() => {
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
 			// (T33) Eingangs-Bild wechselt in diskreten ~1-s-Blöcken
 			// Hund → Katze → Hund … (das Netz lernt an beiden Klassen).
-			cdT += dt / 60;
+			// (T41) Wenn das Training durch ist, bleibt das Bild bei der
+			// Katze: cdT läuft nicht weiter, sondern wird auf die Mitte
+			// des nächsten Katze-Blocks (ungerade Block-Nummer) gezogen
+			// und dort eingefroren.
+			if (trainP < 1) {
+				cdT += dt / 60;
+				cdLock = null;
+			} else if (cdLock == null) {
+				const block = Math.floor(cdT / CD_DUR);
+				const k = (block % 2 === 1) ? block : block + 1;
+				cdLock = k * CD_DUR + CD_DUR / 2;
+			}
+			if (cdLock != null && cdT < cdLock) {
+				cdT = Math.min(cdLock, KatzeKit.lerp(cdT, cdLock, k * 1.5));
+			}
 			const cs = cdState(cdT);
 			const conf = Math.round(PipelineKit.trainPct(trainP));
 			const dog = cs.dog;
-			if (trainP >= 1) {
+			// 95 %-Fußtext erst, wenn das Bild definitiv bei der Katze
+			// steht (vorher konnte er mitten im Hund-Block auslösen).
+			if (trainP >= 1 && cdLock != null && cdT >= cdLock - 1e-6) {
 				if (!trainMsg) {
 					trainMsg = 1;
-					setFoot(`${dog ? 'Hund' : 'Katze'}: <b>95 %</b> · Loss <b>0,051</b>, fast sicher ${dog ? 'Hund' : 'Katze'}`,
-						`<span class="kz-chip g">${dog ? 'Hund 95 %' : 'Katze 95 %'}</span>`);
+					setFoot('Katze: <b>95 %</b> · Loss <b>0,051</b>, fast sicher <b>Katze</b>',
+						'<span class="kz-chip g">Katze 95 %</span>');
 				}
-			} else {
+			} else if (trainP < 1) {
 				setFoot(`Training … · ${dog ? 'Hund' : 'Katze'} <b>${conf} %</b> · Loss <b>${PipelineKit.fmtLoss(PipelineKit.lossOf(conf))}</b>`,
 					'<span class="kz-chip g">Loss ↓</span>');
 			}

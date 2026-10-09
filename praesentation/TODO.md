@@ -2,7 +2,20 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **3. Runde (Norman) — T30–T35 fertig. Deck 14 Folien.**
+> Letzte Aktualisierung: **5. Runde (Agent) — T36–T41 verifiziert & abgehakt.**
+> 1. **T36** `[x]` „Was sind Dense Layer?": weißer Raum oben — `#slide-dense-layer`
+>    trägt jetzt `style="background:#f8fafc;"` (inline, überschreibt `.slide`'s
+>    weißes CSS). 2. **T37** `[x]` „Klassisch vs. KI": persistentes Skelett
+>    `f( [x] ) = [o]` — die Glyphen `f(` / `)` / `=` sind dieselben DOM-Knoten
+>    in beiden Modi; nur die Slot-Inhalte wechseln (statisch → rotierende Spalten).
+>    3. **T38** `[x]` „Das Bild als Zahlen": `tint()` hat für den Blau-Kanal
+>    (`i===2`) `lo=0` statt `90` → Stapel nicht mehr fast weiß. 4. **T39** `[x]`
+>    DenseRaum-Folie komplett raus: kein `slide-dense-raum`-Div, kein
+>    `<script src="dense_raum.js">`, kein Registry-Eintrag. Deck = **13 Folien**.
+>    5. **T40** `[x]` SpaceMorph Egg-Szene: Schritt 7 (Index 6) „Und jetzt: unsere
+>    Bilder" — Verweis auf 3072D, gleiches Prinzip. 6. **T41** `[x]` Pipeline
+>    „Lernen": `cdLock` friert `cdT` auf der Mitte des nächsten Katze-Blocks ein;
+>    95 %-Fußtext erst wenn das Bild definitiv Katze ist. **Deck 13 Folien.**
 > 1. **T30** `[x]` Matrix auf „Das Bild als Zahlen" → **große LaTeX-`pmatrix`, je Pixel
 >    (oben links) ein kleines `pmatrix [R;G;B]`** (Shape (32,32,3), farbiges Bild daneben).
 >    2. **T31** kz-Headlines (Folie 7–9/11/12)
@@ -33,14 +46,18 @@
 - **Kein Bild-Input**: Ich kann keine PNG/JPG ansehen und lade keine externen Bilder.
   → Echte Fotos/Screenshots muss Norman liefern ODER ich baue Canvas-/ASCII-Nachbildungen.
 
-## Folien-Reihenfolge (aktuell, index.html — 14 Folien)
+## Folien-Reihenfolge (aktuell, index.html — 13 Folien)
 1. Titel · 2. Klassisch vs. KI · 3. Geschichte · **4. Was wir wollen** (Ziel, T29)
 · **5. Man arbeitet in Schichten** · **6. Drei Bausteine dafür** (T29) ·
-7. **Das Bild als Zahlen** (ConvDemo, 5 Schritte; Matrix → T30) · 8. **Ein Filter ist ein Muster**
-(FilterDemo, 4 Schritte, T9) · 9. Flatten · 10. **Was sind Dense Layer?** (gemerged:
-NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (DenseRaum)
-· 12. Der gesamte Prozess (Pipeline) · 13. Alles idealisiert (T27, vor asanAI)
-· 14. asanAI (Schluss/Live-Demo).
+7. **Das Bild als Zahlen** (ConvDemo, 5 Schritte; Matrix → T30, Blaustapel → T38) ·
+8. **Ein Filter ist ein Muster** (FilterDemo, 4 Schritte, T9) · 9. Flatten ·
+10. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph =
+Szene B, T20; Egg-Szene endet mit dem Bild-Verweis, T40) ·
+11. **Der gesamte Prozess** (Pipeline, T41) · 12. Alles idealisiert (T27, vor asanAI)
+· 13. asanAI (Schluss/Live-Demo).
+**Raus (T39):** „Vom Bild zu Punkten“ (DenseRaum) — 1024D-Raum kann man nicht
+zeigen; der Verweis lebt jetzt am Ende der Egg-Szene (T40). `dense_raum.js` bleibt
+als Datei, wird nicht mehr geladen.
 **Eigene Datei:** Convolutions (Hierarchy) → `hierarchy.html` (T24, aus dem Deck).
 
 ---
@@ -479,7 +496,93 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
   (z. B. `s = min(..., (W - ~420) / 64)`), damit Kernel + Katze + Map immer in `W` passen.
   (Der RGB-Matrix-Teil von „Layout robust" ist in **T30** erledigt.)
 
-### T12 · Diese TODO.md pflegen  `[~]`
+### T36 · „Was sind Dense Layer?“: weißer Raum oben  `[x]`
+- **Norman:** „ist oben weißer raum übrig bevor die folie beginnt, den man nur
+  sieht, weil die Folie selbst nen anderen Background hat als die anderen
+  (reines weiß).“
+- **Ursache:** `#slide-dense-layer .slide-content` trägt `background:#f8fafc`,
+  die `.slide` (volle Höhe) ist weiß. Der Content ist via Flex zentriert +
+  `fitSlides` skaliert → oben bleibt eine ~22 px weiße Lücke (verifiziert
+  headless: y 4..26 weiß, ab y 26 #f8fafc).
+- **Fix:** Background auf die `.slide` legen (ganze Folie #f8fafc, Lücke
+  verschwindet visuell).
+- ✅ **Verifiziert (Runde 5):** `#slide-dense-layer` trägt `style="background:#f8fafc;"`
+  (index.html Zeile 317) — inline überschreibt `.slide`'s CSS `background:#ffffff`.
+
+### T37 · „Klassisch vs. KI“: `f(` und `) =` exakt gleich in Modus 1 + 2  `[x]`
+- **Norman:** „ist fast wie ich will, aber zwischen Modus 1 und 2 wechseln
+  fonts usw. Ich will, dass das ‚f(‘ und ‚) = ‘ exakt gleich bleibt und sich
+  nur der [Inhalt] ändert.“
+- **Ursache:** Modus 1 = temml-MathML `f(x)=x²` (1.9em, dünne Math-Font),
+  Modus 2 = Flip-Clock mit `fc-glyph` (Georgia italic 700 46px) → beim
+  Cross-Morph ändern sich Schriftart, Größe UND Position der fixen Glyphen.
+- **Fix:** **persistentes Skelett**: eine Zeile `f( [x] ) = [o]` mit EINER
+  Schrift (Georgia italic 700) in beiden Modi. Modus 1: Slots zeigen statisch
+  `x` / `x²`. Modus 2 (nach `advance()`): statische Werte faden aus,
+  rotierende Spalten faden ein (+ Fenster-Box). `f(`, `)`, `=` sind
+  dieselben DOM-Knoten → bleiben pixelgleich. `#klassik-formula` (MathML)
+  raus, `#flip-clock` → `#ko-odo` + Slots. Registry `klassisch-flipclock`
+  unverändert (guard/canSwitch/advance).
+- ✅ **Verifiziert (Runde 5):** `#klassik-stage` in index.html hat `.ko-odo`
+  mit `.ko-glyph`-Spans (`f(`, `)`, `=`) — dieselben DOM-Knoten in beiden
+  Modi. `FlipClockViz` (nn_demos.js) fadet nur die `.ko-static`-Werte aus
+  und die `.ko-col`-Spalten ein; die Glyphen werden nie angefasst.
+
+### T38 · „Das Bild als Zahlen“: 3. Bild (Blaustapel) fast komplett weiß  `[x]`
+- **Norman:** „ist das 3. Bild falsch und fast komplett weiß.“
+- **Diagnose (headless-Screenshot):** „3. Bild“ = der **dritte Stapel** (BLAU)
+  in Schritt 2 „drei Stapel“. `tint()` nutzt für alle Kanäle dasselbe
+  Kontrastfenster `(v−90)/165` — zugeschnitten auf den Grün-Kanal
+  (Hintergrund 176). Der Blau-Kanal der Katze ist fast überall 20–60
+  (Gelb = Rot+Grün, kaum Blau) → landet komplett unter dem Fenster →
+  `ink=255` → der Stapel ist fast rein weiß, nur die Schnauze leuchtet blau.
+  Verifiziert: rechter Stapel ≈ weiß mit blauem Fleck.
+- **Fix:** `tint()` bekommt für den **Blau-Kanal ein eigenes Fenster**
+  (`lo=0` statt `90`): Hintergrund wird sichtbar hell-blau, Gesicht/Schnurr
+  bleibt kräftig blau, Ohren/Umrisse dezent. R/G-Kurven bleiben unverändert.
+- ✅ **Verifiziert (Runde 5):** `tint()` in katze.js Zeile 117: `const lo =
+  i === 2 ? 0 : 90;` — Blau-Kanal nutzt das volle Fenster (0–255), R/G
+  bleiben bei (90–255). Blaustapel nicht mehr fast weiß.
+
+### T39 · DenseRaum-Folie komplett raus  `[x]`
+- **Norman:** „lass die Folie komplett weg mit ‚Vom Bild zu Punkten / Aus
+  Zahlen werden Punkte.‘ und ‚Der Layer wölbt den Raum.‘ danach. Weil das
+  kannst du nicht.“ (einen 1024-dimensionalen Raum kann man nicht zeigen)
+- **Fix:** `slide-dense-raum`-Block aus `index.html`, `<script
+  src="dense_raum.js">`, Registry-Eintrag `dense-raum` (presentation.js).
+  Datei `dense_raum.js` bleibt auf der Platte (nicht mehr geladen). Deck
+  14 → **13** Folien; statischer Zähler „1 / 13“ stimmt danach.
+- ✅ **Verifiziert (Runde 5):** Kein `slide-dense-raum`-Div in index.html,
+  kein `<script src="dense_raum.js">`, kein Registry-Eintrag in presentation.js.
+  13 Folien gezählt, Zähler „1 / 13“ korrekt.
+
+### T40 · Egg-Szene (SpaceMorph): Verweis „die Punkte sind jetzt die Bilder“  `[x]`
+- **Norman:** „verweise auf die andere Folie, sag, dass das, was vorher diese
+  Egg-Shape war, jetzt die Bilder sind, viel zu hochdimensional, um es zu
+  zeigen. Aber gleiches Prinzip.“
+- **Fix:** neuer **letzter Schritt** (Index 6) der Egg-Phase in
+  `space_morph.js`: gleiche Szene wie Schritt 5 (Linie), Text: die
+  Punkt-Wolke = unsere Bilder, jedes Bild ein Punkt in 32×32×3 = 3072
+  Dimensionen — zu hochdimensional zum Zeigen — **gleiches Prinzip**.
+  `is1D` in `updateTables` auf `cur >= 5` (Tabelle bleibt im 1D-Zustand).
+- ✅ **Verifiziert (Runde 5):** `space_morph.js` S[6] = „Und jetzt: unsere Bilder“
+  (3072D, gleiches Prinzip). `is1D = cur >= 5` in `updateTables`.
+
+### T41 · Pipeline „Lernen“: nach Trainingsende bei Katze bleiben  `[x]`
+- **Norman:** „Der gesamte Prozess / Lernen: die Daten immer wieder angucken.
+  Nach dem er mit dem Lernen durch ist, soll er bei Katze bleiben.“
+- **Diagnose:** `cdT` läuft ewig weiter (`cdT += dt/60`) → Hund/Katze-Blöcke
+  wechseln auch nach `trainP >= 1` weiter (headless-Protokoll verifiziert:
+  15 s lang HU/KA im Takt).
+- **Fix:** sobald `trainP >= 1`: `cdT` weich auf die **Mitte des nächsten
+  Katze-Blocks** (ungerade Block-Nummer = Katze, `block = 1,3,5,7 …`) ziehen
+  und dort **einfrieren**; der 95 %-Fußtext erscheint erst, wenn das Bild
+  definitiv Katze ist (vorher konnte er beim Hund-Block auslösen).
+- ✅ **Verifiziert (Runde 5):** `cdLock` in katze.js Zeile 1632; tick()-Logik
+  (Zeilen 1748–1758) friert `cdT` auf Mitte des nächsten Katze-Blocks ein;
+  95%-Fußtext erst bei `cdT >= cdLock`.
+
+### T12 · Diese TODO.md pflegen  `[x]`
 - Bei jeder Änderung Status + Notizen hier aktualisieren.
 
 ---

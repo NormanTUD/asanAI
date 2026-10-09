@@ -32,14 +32,10 @@ const DemoRegistry = (() => {
                 // 'dense-merge' gesteuert (init erst beim Swap A→B), nicht
                 // mehr über einen eigenen Registry-Eintrag.
 
-                // "Vom Bild zu Punkten" (dense_raum.js), Katze-Framework:
-                // Panel (Katze → 1024 Zahlen) → Punkte (zwei
-                // Klassen Katze/Hund) → Sattel-Krümmung z = x·y
-                // → Trennebene → Rückprojektion auf eine Linie.
-                { id: 'dense-raum', ref: () => typeof DenseRaum !== 'undefined' ? DenseRaum : null,
-                        slideTest: s => s.id === 'slide-dense-raum',
-                        onEnter: d => setTimeout(() => d.init(), 80),
-                        onLeave: d => d.reset() },
+                // (T39) "Vom Bild zu Punkten" (dense_raum.js) ist aus dem
+                // Deck raus — ein 1024-dimensionaler Raum ist nicht
+                // zeigbar. Der Verweis lebt jetzt am Ende der Egg-Szene
+                // (SpaceMorph, T40).
 
                 // "Das Bild als Zahlen" (katze.js), Katze-Framework:
                 // 32×32 ASCII-Katze: Farbbild → 3 Kanäle → ein Kanal
