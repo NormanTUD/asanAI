@@ -956,7 +956,9 @@ const FilterDemo = (() => {
 				ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 1.5;
 				ctx.strokeRect(x + 1, y + 1, xw - 2, yh - 2);
 			} else if (isFull) {
-				ctx.fillStyle = '#f6f7f9';
+				const n = ((i8 * 7919 + 31) % 100) / 100;
+				const g = Math.round(238 + n * 14);
+				ctx.fillStyle = `rgb(${g},${g + 1},${g + 2})`;
 				ctx.fillRect(x, y, xw, yh);
 			}
 			ctx.globalAlpha = 1;
@@ -1039,7 +1041,7 @@ const FilterDemo = (() => {
 			  f: 0,
 			  c: '',
 			  i: 'An jedem Platz <b>misst</b> der Filter, wie gut sein Fenster zum <b>darunterliegenden</b> Bildstück passt: gleiche Werte = hohe Zahl, kaum Übereinstimmung = nahe 0. Das Fenster <b>hält</b> kurz auf jedem Block.' },
-			{ k: 'Schritt 4', t: 'Wo der Filter passt,<br>leuchten <em>die Augen</em>.',
+			{ k: 'Schritt 4', t: 'Wo der Filter passt,<br><em>hohe Werte</em> — wo nicht,<br>niedrige.',
 			  p: `1024 Pixel → ${O8 * O8} Zahlen, und die Augen bleiben`,
 			  c: '',
 			  i: 'Die Augen-Form ist nur <b>unser Beispiel</b>. Im echten Training bringt sich der Computer die Filter <b>selbst bei</b>, anhand der Trainingsdaten.' }
@@ -1872,13 +1874,9 @@ const PipelineGoalDemo = (() => {
 		const nX1 = startX + IMG + gap + netW + gap + rN;
 		const nX2 = nX1 + dN;
 		const rowY = [H * 0.30, H * 0.74];
-		const fTitle = Math.max(14, Math.min(20, H * 0.05));
 		const fSm = Math.max(10, Math.min(13, H * 0.035));
 
-		ctx.fillStyle = '#0f172a';
-		ctx.font = '700 ' + fTitle + 'px Inter, system-ui, sans-serif';
-		ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-		ctx.fillText('Im Ziel: bei jedem Bild die richtige Antwort', W / 2, H * 0.10);
+
 
 		const drawCatRow = () => {
 			const ry = rowY[0];

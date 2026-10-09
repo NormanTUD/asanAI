@@ -2,13 +2,27 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **7. Runde (Agent) — T46–T48.**
+> Letzte Aktualisierung: **11. Runde (Agent) — T51–T57.**
 > 1. **T42** `[x]` „Klassisch vs. KI": `prev` nach Morph geht jetzt zurück zu
 >    x² (Reverse-Morph via `unswitching`-State). 2. **T43** `[x]` Folie 6:
 >    „Für dich jetzt im Abstrakten…" entfernt. 3. **T44** `[x]` „Das Bild als
 >    Zahlen": neuer Schritt 6 „f(Bild) = f(Matrix)" — Canvas-Annotation um das
 >    Bild + HTML-Label unter der Matrix. 4. **T45** `[x]` „Alles idealisiert":
 >    „Es weiß nichts über unser Ziel — es sieht nur die Daten."
+> 1. **T51** `[x]` „Drei Bausteine": „Wir behandeln drei Bausteine:" zentriert.
+> 2. **T52** `[x]` „Drei Bausteine": 3 Chips erscheinen nacheinander (ein
+>    Fragment pro Chip, Pfeil + nächster Chip gruppiert).
+> 3. **T53** `[x]` `drawGridHund` zeichnet jetzt `hund.gif` (151×151) via
+>    `drawImage` statt ASCII-Raster. Katze unverändert.
+> 4. **T54** `[x]` „Kaskade": Satz auf „Jede Schicht = eine Funktion auf den
+>    Daten. Verschachtelt:" gekürzt.
+> 5. **T55** `[x]` PipelineGoalDemo: schrittweise (Katze-Bild → Netz → Neuronen
+>    → Hund-Zeile). Kein „ein Katze-Bild"/„ein Hund-Bild" mehr.
+> 6. **T56** `[x]` „Netze approximieren Funktionen…" Text entfernt.
+> 7. **T57** `[x]` FilterDemo Schritt 4: „Wo der Filter passt, hohe Werte —
+>    wo nicht, niedrige." (statt „leuchten die Augen"). 8×8-Map: Non-lit-Zellen
+>    jetzt mit deterministischem Rauschen (nicht mehr uniform grau). Titel
+>    „Im Ziel…" aus PipelineGoalDemo-Canvas entfernt.
 > 1. **T36** `[x]` „Was sind Dense Layer?": weißer Raum oben — `#slide-dense-layer`
 >    trägt jetzt `style="background:#f8fafc;"` (inline, überschreibt `.slide`'s
 >    weißes CSS). 2. **T37** `[x]` „Klassisch vs. KI": persistentes Skelett
