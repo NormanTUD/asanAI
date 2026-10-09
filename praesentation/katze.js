@@ -1634,6 +1634,12 @@ const PipelineKit = (() => {
 				drawMapSlot(ctx, g.mapX1, g.mapYs[i], g.ms, EDGE_MAPS[i].label, o.aConv);
 				drawMapLit(ctx, g.mapX1, g.mapYs[i], g.ms, EDGE_MAPS[i].lit, o.aEdge, clarity, i, flick);
 			}
+			ctx.globalAlpha = o.aConv;
+			ctx.fillStyle = '#475569';
+			ctx.font = '700 12px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+			ctx.fillText('Convolution', g.mapX1 + g.mapW / 2, g.mapYs[2] + g.mapW + 16);
+			ctx.globalAlpha = 1;
 		}
 
 		// Layer 2 = zusammengesetzte Strukturen: die Daten von
@@ -1649,25 +1655,50 @@ const PipelineKit = (() => {
 				drawMapSlot(ctx, g.mapX2, g.mapYs[i], g.ms, MAPS[i].label, o.aPart);
 				drawMapLit(ctx, g.mapX2, g.mapYs[i], g.ms, MAPS[i].lit, o.aPart, clarity, 3 + i, flick);
 			}
+			ctx.globalAlpha = o.aPart;
+			ctx.fillStyle = '#475569';
+			ctx.font = '700 12px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+			ctx.fillText('Convolution', g.mapX2 + g.mapW / 2, g.mapYs[2] + g.mapW + 16);
+			ctx.globalAlpha = 1;
 		}
 
-		// Flatten: dünner vertikaler Balken (2D → 1D)
+		// Flatten: die 3 Karten aus Layer 2 (je 8×8) werden zu einem
+		// vertikalen Vektor — dieselben Muster, 1D aufgereiht.
 		if (o.aFlat > 0.01) {
 			ctx.globalAlpha = o.aFlat;
 			ctx.fillStyle = '#f1f5f9';
 			KatzeKit.roundRect(ctx, g.flatX, g.flatY, g.flatW, g.flatH, 10);
 			ctx.fill();
 			ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.2; ctx.stroke();
-			const fCols = 2, fRows = 12;
-			const fdx0 = g.flatX + 14, fdy0 = g.flatY + 18;
-			const fddx = (g.flatW - 28) / (fCols - 1), fddy = (g.flatH - 36) / (fRows - 1);
-			for (let r = 0; r < fRows; r++) for (let c = 0; c < fCols; c++) {
-				const hue = 205 + ((r * fCols + c) / (fRows * fCols - 1)) * 80;
-				ctx.fillStyle = `hsl(${hue}, 38%, 68%)`;
-				ctx.beginPath();
-				ctx.arc(fdx0 + c * fddx, fdy0 + r * fddy, 2.5, 0, Math.PI * 2);
-				ctx.fill();
+			const cl = Math.max(0, Math.min(1, o.clarity == null ? 1 : o.clarity));
+			const fl = o.flick || 0;
+			const totalRows = 192;
+			const fdx0 = g.flatX + g.flatW / 2;
+			const fdy0 = g.flatY + 10;
+			const fddy = (g.flatH - 20) / totalRows;
+			for (let m = 0; m < 3; m++) {
+				const litSet = new Set(MAPS[m].lit);
+				for (let i = 0; i < 64; i++) {
+					const row = m * 64 + i;
+					const cx = fdx0, cy = fdy0 + row * fddy;
+					let b;
+					if (litSet.has(i)) {
+						if (fl > 0.02) b = cl + fl * (0.25 + 0.75 * Math.random());
+						else b = cl;
+					} else {
+						const nv = prand(i + m * 64, 10 + m);
+						let noise = nv > 0.82 ? nv * 0.8 : 0;
+						if (fl > 0.02 && nv > 0.55) noise = Math.max(noise, nv * fl * Math.random());
+						b = (1 - cl) * noise;
+					}
+					if (b < 0.08) continue;
+					ctx.globalAlpha = o.aFlat * Math.min(1, b);
+					ctx.fillStyle = 'rgba(76,175,80,.6)';
+					ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill();
+				}
 			}
+			ctx.globalAlpha = o.aFlat;
 			ctx.fillStyle = '#475569';
 			ctx.font = '700 12px Inter, system-ui, sans-serif';
 			ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
