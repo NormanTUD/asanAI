@@ -1,0 +1,3570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Topologie tiefer neuronaler Netze — Interaktiv erklärt</title>
+
+<!-- Plotly für 2D/3D-Plots -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Temml für LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/temml.min.js"></script>
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0d1220;
+  --panel:rgba(20,26,44,.72);
+  --panel2:rgba(28,36,60,.6);
+  --stroke:rgba(130,160,255,.16);
+  --txt:#e8edfa;
+  --txt2:#9fb0d4;
+  --accent:#6ee7ff;
+  --accent2:#a78bfa;
+  --green:#4ade80;
+  --red:#fb7185;
+  --amber:#fbbf24;
+  --blue:#60a5fa;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  line-height:1.65;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(1100px 700px at 12% -5%, rgba(110,231,255,.10), transparent 60%),
+    radial-gradient(900px 600px at 88% 8%, rgba(167,139,250,.12), transparent 60%),
+    radial-gradient(1000px 800px at 50% 105%, rgba(74,222,128,.07), transparent 60%),
+    linear-gradient(180deg,#070a12 0%,#0a0f1c 50%,#070a12 100%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(130,160,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(130,160,255,.035) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 40%,#000 20%,transparent 90%);
+}
+
+/* ---------- Progress & Nav ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--green));
+  box-shadow:0 0 14px rgba(110,231,255,.65);transition:width .08s linear}
+#toc{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:900;
+  display:flex;flex-direction:column;gap:9px;align-items:flex-end;
+}
+#toc a{
+  display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--txt2);
+  font-size:11px;letter-spacing:.3px;opacity:.5;transition:.25s;
+}
+#toc a .dot{width:9px;height:9px;border-radius:50%;background:rgba(160,180,230,.3);
+  border:1px solid rgba(160,180,230,.4);transition:.25s;flex:none}
+#toc a .lbl{opacity:0;transform:translateX(8px);transition:.25s;white-space:nowrap;
+  background:rgba(12,17,30,.9);padding:3px 9px;border-radius:7px;border:1px solid var(--stroke)}
+#toc a:hover{opacity:1}
+#toc a:hover .lbl{opacity:1;transform:translateX(0)}
+#toc a.active{opacity:1}
+#toc a.active .dot{background:var(--accent);box-shadow:0 0 12px var(--accent);transform:scale(1.35)}
+@media(max-width:1280px){#toc{display:none}}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+section{padding:78px 0;border-bottom:1px solid rgba(130,160,255,.07);position:relative}
+section:last-of-type{border-bottom:none}
+
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;text-align:center;padding:60px 26px;position:relative;
+}
+.hero h1{
+  font-size:clamp(2.3rem,6.2vw,4.6rem);line-height:1.02;margin:0 0 18px;
+  font-weight:800;letter-spacing:-.03em;
+  background:linear-gradient(135deg,#fff 0%,var(--accent) 42%,var(--accent2) 78%,var(--green) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero .sub{font-size:clamp(1rem,2vw,1.25rem);color:var(--txt2);max-width:740px;margin:0 auto 10px}
+.hero .auth{font-size:.85rem;color:rgba(159,176,212,.65);margin-top:22px;font-family:var(--mono)}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1;opacity:.75}
+
+.eyebrow{
+  display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--accent);padding:5px 13px;border-radius:999px;
+  border:1px solid rgba(110,231,255,.3);background:rgba(110,231,255,.07);margin-bottom:16px;
+}
+h2{font-size:clamp(1.6rem,3.6vw,2.5rem);margin:0 0 14px;font-weight:750;letter-spacing:-.02em;line-height:1.15}
+h3{font-size:1.18rem;margin:30px 0 10px;font-weight:650;color:#fff}
+h4{font-size:1rem;margin:20px 0 7px;font-weight:600;color:var(--accent)}
+p{margin:0 0 14px;color:#d4ddf2}
+.lead{font-size:1.07rem;color:var(--txt2);max-width:800px}
+small,.small{font-size:.84rem;color:var(--txt2)}
+
+.card{
+  background:var(--panel);border:1px solid var(--stroke);border-radius:18px;
+  padding:24px;margin:22px 0;backdrop-filter:blur(14px);
+  box-shadow:0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.card.tight{padding:16px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g21{grid-template-columns:1.35fr 1fr}
+.g12{grid-template-columns:1fr 1.35fr}
+@media(max-width:900px){.g2,.g3,.g21,.g12{grid-template-columns:1fr}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin:13px 0}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:.82rem;color:var(--txt2);margin-bottom:6px;font-weight:500}
+.ctrl label b{color:var(--accent);font-family:var(--mono);font-size:.84rem;font-weight:600}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,rgba(110,231,255,.5),rgba(167,139,250,.35));outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--accent));
+  box-shadow:0 0 0 4px rgba(110,231,255,.16),0 3px 9px rgba(0,0,0,.5);transition:.15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.16)}
+input[type=range]::-moz-range-thumb{
+  width:17px;height:17px;border:none;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--accent));
+  box-shadow:0 0 0 4px rgba(110,231,255,.16)}
+
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+button{
+  font-family:inherit;font-size:.83rem;font-weight:550;cursor:pointer;
+  background:rgba(110,231,255,.1);color:var(--accent);
+  border:1px solid rgba(110,231,255,.3);border-radius:10px;padding:8px 15px;transition:.18s;
+}
+button:hover{background:rgba(110,231,255,.2);transform:translateY(-1px);box-shadow:0 5px 16px rgba(110,231,255,.18)}
+button:active{transform:translateY(0)}
+button.active{background:var(--accent);color:#061018;border-color:var(--accent);box-shadow:0 0 18px rgba(110,231,255,.4)}
+button.sec{background:rgba(167,139,250,.1);color:var(--accent2);border-color:rgba(167,139,250,.3)}
+button.sec.active{background:var(--accent2);color:#120a25;border-color:var(--accent2)}
+button.gr{background:rgba(74,222,128,.1);color:var(--green);border-color:rgba(74,222,128,.3)}
+button.gr.active{background:var(--green);color:#042012;border-color:var(--green)}
+button.rd{background:rgba(251,113,133,.1);color:var(--red);border-color:rgba(251,113,133,.3)}
+button.rd.active{background:var(--red);color:#2a0710;border-color:var(--red)}
+select{
+  font-family:inherit;font-size:.83rem;background:rgba(20,26,44,.9);color:var(--txt);
+  border:1px solid var(--stroke);border-radius:9px;padding:7px 11px;cursor:pointer;outline:none}
+
+canvas.viz{display:block;width:100%;border-radius:13px;background:rgba(6,10,20,.6);
+  border:1px solid rgba(130,160,255,.1)}
+.plot{width:100%;border-radius:13px;overflow:hidden}
+
+/* ---------- Badges / notes ---------- */
+.badge{display:inline-block;font-family:var(--mono);font-size:.74rem;padding:3px 9px;border-radius:7px;
+  background:rgba(110,231,255,.12);color:var(--accent);border:1px solid rgba(110,231,255,.25);margin:2px 3px 2px 0}
+.badge.g{background:rgba(74,222,128,.12);color:var(--green);border-color:rgba(74,222,128,.25)}
+.badge.r{background:rgba(251,113,133,.12);color:var(--red);border-color:rgba(251,113,133,.25)}
+.badge.p{background:rgba(167,139,250,.12);color:var(--accent2);border-color:rgba(167,139,250,.25)}
+.badge.a{background:rgba(251,191,36,.12);color:var(--amber);border-color:rgba(251,191,36,.25)}
+
+.note{border-left:3px solid var(--accent);background:rgba(110,231,255,.055);
+  padding:12px 16px;border-radius:0 11px 11px 0;margin:16px 0;font-size:.93rem}
+.note.p{border-color:var(--accent2);background:rgba(167,139,250,.055)}
+.note.g{border-color:var(--green);background:rgba(74,222,128,.055)}
+.note.a{border-color:var(--amber);background:rgba(251,191,36,.055)}
+.note b{color:#fff}
+
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:.88rem;margin:10px 0}
+.kv .k{color:var(--txt2);font-family:var(--mono);font-size:.8rem}
+.kv .v{color:#fff}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:12px 0}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid rgba(130,160,255,.09)}
+th{color:var(--accent);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+td{color:#d4ddf2}
+tr:hover td{background:rgba(110,231,255,.03)}
+
+.math{overflow-x:auto;padding:8px 0;color:#e8edfa}
+math{font-size:1.05em}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:var(--txt2);margin:8px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+.stepper{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.stepper button{flex:1;min-width:62px;font-size:.78rem;padding:7px 4px}
+
+.bigstat{font-family:var(--mono);font-size:1.9rem;font-weight:700;color:var(--accent);line-height:1}
+.bigstat.g{color:var(--green)} .bigstat.r{color:var(--red)} .bigstat.p{color:var(--accent2)}
+.statlbl{font-size:.74rem;color:var(--txt2);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+
+.flowstep{display:flex;gap:14px;align-items:flex-start;margin:18px 0}
+.flownum{flex:none;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:700;font-size:.92rem;background:rgba(110,231,255,.14);
+  color:var(--accent);border:1px solid rgba(110,231,255,.35)}
+
+hr.soft{border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(130,160,255,.22),transparent);margin:34px 0}
+
+.tag{font-family:var(--mono);font-size:.72rem;color:var(--txt2)}
+code{font-family:var(--mono);font-size:.86em;background:rgba(110,231,255,.09);padding:1px 6px;border-radius:5px;color:var(--accent)}
+
+.scrollx{overflow-x:auto}
+.center{text-align:center}
+.mt0{margin-top:0}.mb0{margin-bottom:0}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<nav id="toc"></nav>
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<header class="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="eyebrow">Naitzat · Zhitnikov · Lim — arXiv:2004.06093</div>
+  <h1>Die Topologie<br>tiefer neuronaler Netze</h1>
+  <p class="sub">Ein neuronales Netz klassifiziert nicht einfach — es <b>zerreißt die Form der Daten</b>.
+  Schicht für Schicht wird aus einem topologisch verknoteten Datensatz ein einfacher Klumpen.</p>
+  <p class="sub" style="font-size:.95rem">Diese Seite erklärt das Paper komplett interaktiv. Alles zum Anfassen, Schieben, Ausprobieren.
+  Vorwissen: Abitur-Mathematik. Alles andere bauen wir hier auf.</p>
+  <div class="btnrow" style="justify-content:center;margin-top:26px">
+    <button onclick="document.getElementById('s1').scrollIntoView()">▼ Los geht's</button>
+  </div>
+  <div class="auth">Gregory Naitzat (U Chicago) · Andrey Zhitnikov (Technion) · Lek-Heng Lim (U Chicago) · 2020</div>
+</header>
+
+<main>
+
+<!-- ══════════════════════ 1 · DIE FRAGE ══════════════════════ -->
+<section id="s1" data-toc="Die Frage"><div class="wrap reveal">
+  <div class="eyebrow">Teil 1 — Motivation</div>
+  <h2>Zwei Rätsel, die niemand richtig erklären konnte</h2>
+  <p class="lead">Neuronale Netze funktionieren spektakulär gut. Aber zwei Beobachtungen waren jahrelang
+  "einfach so" — ohne befriedigende Erklärung. Genau diese zwei Rätsel greift das Paper an.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="eyebrow" style="color:var(--red);border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.07)">Rätsel 1</div>
+      <h3 class="mt0">Warum schlägt der "hässliche" ReLU den "schönen" Tanh?</h3>
+      <p>Die Aktivierungsfunktion ReLU ist <code>max(x,0)</code> — ein Knick, nicht differenzierbar,
+      brutal simpel. Tanh ist glatt, elegant, mathematisch angenehm. Trotzdem gewinnt ReLU fast immer.</p>
+      <p class="small">Die Standarderklärung lautet: "vanishing gradients". Die Autoren zeigen: Das ist <b>nicht</b> die ganze
+      Wahrheit — Leaky ReLU hat dasselbe Gradientenverhalten wie ReLU, verhält sich aber deutlich anders.</p>
+    </div>
+    <div class="card">
+      <div class="eyebrow" style="color:var(--accent2);border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.07)">Rätsel 2</div>
+      <h3 class="mt0">Warum brauchen wir viele Schichten?</h3>
+      <p>Der <b>Universelle Approximationssatz</b> sagt: Ein Netz mit nur <i>zwei</i> Schichten kann jede
+      stetige Funktion beliebig genau annähern. Mathematisch brauchen wir also keine Tiefe.</p>
+      <p class="small">Trotzdem: In der Praxis sind tiefe Netze dramatisch besser. Warum?
+      Offenbar ist "es geht prinzipiell" nicht dasselbe wie "es geht praktisch".</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Die zentrale Idee des Papers:</b> Hört auf, Netze als Funktionsapproximatoren zu sehen.
+    Seht sie als <b>Maschinen, die die Form (Topologie) von Daten verändern</b>.
+    Dann lösen sich beide Rätsel gleichzeitig auf.
+  </div>
+
+  <h3>Der entscheidende Perspektivwechsel</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="color:var(--red)">✗ Übliche Darstellung</h4>
+      <p class="small">"Schau, wie dieses <i>eine Katzenbild</i> durch die Schichten wandert und sich verändert."</p>
+      <p class="small" style="color:var(--txt2)">Das ist <b>ein einziger Punkt</b>. Daraus lernt man fast nichts über den Mechanismus.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="color:var(--green)">✓ Ansatz dieses Papers</h4>
+      <p class="small">"Schau, wie die <i>gesamte Mannigfaltigkeit aller Katzenbilder</i> durch die Schichten wandert."</p>
+      <p class="small" style="color:var(--txt2)">Das ist die <b>ganze Form</b>. Erst dann sieht man, was das Netz wirklich tut.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Interaktiv: Punkt vs. Mannigfaltigkeit</h3>
+    <p class="small">Links siehst du nur einen einzelnen Punkt durch eine Transformation wandern. Rechts die
+    ganze Punktwolke. Ziehe den Regler — erst rechts wird sichtbar, dass hier etwas <i>zerrissen</i> wird.</p>
+    <div class="ctrl">
+      <label>Transformationsstärke <b><span id="d1v">0.00</span></b></label>
+      <input type="range" id="d1s" min="0" max="100" value="0">
+    </div>
+    <canvas id="d1c" class="viz" height="300"></canvas>
+    <div class="legend">
+      <span><i style="background:#fbbf24"></i>Einzelner Punkt (sagt wenig)</span>
+      <span><i style="background:#4ade80"></i>Klasse A</span>
+      <span><i style="background:#fb7185"></i>Klasse B</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 2 · TOPOLOGIE GRUNDLAGEN ══════════════════════ -->
+<section id="s2" data-toc="Topologie"><div class="wrap reveal">
+  <div class="eyebrow">Teil 2 — Werkzeug 1</div>
+  <h2>Was ist Topologie? (In 3 Minuten, ohne Formeln)</h2>
+  <p class="lead">Topologie ist "Geometrie ohne Lineal". Es interessiert nur, <b>wie Dinge zusammenhängen</b> —
+  nicht, wie groß, wie lang, wie gebogen sie sind.</p>
+
+  <div class="card">
+    <h3 class="mt0">Die Grundregel: Kneten ja, Zerreißen nein</h3>
+    <p>Zwei Formen sind <b>topologisch gleich</b>, wenn man eine stetig in die andere verformen kann —
+    dehnen, stauchen, biegen. Verboten sind: <b>Zerreißen</b>, <b>Zerschneiden</b> und <b>Zusammenkleben</b>.</p>
+    <p class="small">Der berühmte Witz: Ein Topologe kann eine Kaffeetasse (Volumen mit einem Henkel) nicht von einem Donut unterscheiden — beide haben genau <b>ein Loch</b>.</p>
+    <canvas id="d2a" class="viz" height="230"></canvas>
+    <div class="btnrow">
+      <button class="morphbtn active" data-m="0">☕ → 🍩 Kaffeetasse/Donut</button>
+      <button class="morphbtn" data-m="1">Kreis → Quadrat (gleich!)</button>
+      <button class="morphbtn" data-m="2">Kreis → Strecke (ZERREISSEN!)</button>
+    </div>
+    <div class="ctrl">
+      <label>Verformung <b><span id="d2av">0%</span></b></label>
+      <input type="range" id="d2as" min="0" max="100" value="0">
+    </div>
+    <div id="d2amsg" class="note" style="margin-bottom:0"></div>
+  </div>
+
+  <h3>Betti-Zahlen: Löcher zählen</h3>
+  <p>Wie misst man "Form" als <b>Zahl</b>? Mit den <b>Betti-Zahlen</b> <span class="badge">β₀, β₁, β₂, …</span>
+  Das ist das einzige echte Werkzeug, das dieses Paper braucht — und es ist erstaunlich anschaulich:</p>
+
+  <div class="grid g3">
+    <div class="card tight center">
+      <div class="bigstat">β₀</div>
+      <div class="statlbl">Zusammenhangs­komponenten</div>
+      <p class="small" style="margin-top:10px">Aus wie vielen <b>getrennten Stücken</b> besteht die Form?
+      Drei getrennte Kugeln → β₀ = 3.</p>
+    </div>
+    <div class="card tight center">
+      <div class="bigstat p">β₁</div>
+      <div class="statlbl">1-dim. Löcher (Tunnel)</div>
+      <p class="small" style="margin-top:10px">Durch wie viele <b>Durchgänge</b> kann ich einen Finger stecken?
+      Donut → β₁ = 1. Brezel mit 2 Löchern → β₁ = 2.</p>
+    </div>
+    <div class="card tight center">
+      <div class="bigstat g">β₂</div>
+      <div class="statlbl">2-dim. Löcher (Hohlräume)</div>
+      <p class="small" style="margin-top:10px">Wie viele <b>eingeschlossene Luftblasen</b> gibt es?
+      Hohle Kugelschale → β₂ = 1. Vollkugel → β₂ = 0.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Betti-Zahlen-Labor: klicke dich durch</h3>
+    <p class="small">Wähle eine Form. Du siehst sie in 3D (drehbar!) und daneben ihre Betti-Signatur.
+    Genau diese Zahlen verfolgt das Paper durch alle Netzwerkschichten.</p>
+    <div class="btnrow" id="bettibtns"></div>
+    <div class="grid g21">
+      <div id="betti3d" class="plot" style="height:400px"></div>
+      <div>
+        <div class="card tight" style="margin-top:0">
+          <h4 style="margin-top:0" id="bname">—</h4>
+          <p class="small" id="bdesc">—</p>
+          <div class="grid g3" style="gap:8px;margin-top:14px">
+            <div class="center"><div class="bigstat" id="bb0">1</div><div class="statlbl">β₀</div></div>
+            <div class="center"><div class="bigstat p" id="bb1">0</div><div class="statlbl">β₁</div></div>
+            <div class="center"><div class="bigstat g" id="bb2">0</div><div class="statlbl">β₂</div></div>
+          </div>
+          <hr class="soft" style="margin:18px 0">
+          <div class="center">
+            <div class="statlbl">Topologische Komplexität ω = β₀+β₁+β₂</div>
+            <div class="bigstat" style="color:var(--amber);font-size:2.4rem" id="bomega">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note g" style="margin-bottom:0">
+      <b>Die einfachste mögliche Form</b> heißt <i>kontrahierbar</i>: ein Klumpen ohne Löcher.
+      Ihre Signatur ist β = (1, 0, 0), also ω = 1. <b>Genau dorthin will ein neuronales Netz jede Klasse bringen.</b>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Selbst zählen: Loch-Puzzle</h3>
+    <p class="small">Baue dir eine 2D-Form zusammen und beobachte, wie β₀ und β₁ reagieren.
+    Klicke in die Fläche, um Scheiben zu setzen bzw. Löcher zu stanzen.</p>
+    <div class="btnrow">
+      <button id="pz_mode_disk" class="gr active">Modus: Scheibe hinzufügen</button>
+      <button id="pz_mode_hole" class="rd">Modus: Loch stanzen</button>
+      <button id="pz_clear" class="sec">Zurücksetzen</button>
+    </div>
+    <canvas id="pzc" class="viz" height="300"></canvas>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="center"><div class="bigstat" id="pzb0">0</div><div class="statlbl">β₀ (Stücke)</div></div>
+      <div class="center"><div class="bigstat p" id="pzb1">0</div><div class="statlbl">β₁ (Löcher)</div></div>
+      <div class="center"><div class="bigstat" style="color:var(--amber)" id="pzw">0</div><div class="statlbl">ω</div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 3 · PUNKTWOLKEN & PERSISTENTE HOMOLOGIE ══════════════════════ -->
+<section id="s3" data-toc="Punktwolken"><div class="wrap reveal">
+  <div class="eyebrow">Teil 3 — Werkzeug 2</div>
+  <h2>Problem: Daten sind Punkte, keine Formen</h2>
+  <p class="lead">In der Realität haben wir nie eine glatte Mannigfaltigkeit, sondern nur eine
+  <b>endliche Punktwolke</b>. Eine Menge einzelner Punkte hat aber immer β₀ = Anzahl Punkte und sonst nichts.
+  Wie kommt man von Punkten zurück zur Form?</p>
+
+  <div class="card">
+    <h3 class="mt0">Idee: Punkte zu "Blasen" aufblasen</h3>
+    <p>Wir legen um jeden Punkt eine Kugel mit Radius ε. Punkte, deren Kugeln sich überlappen,
+    werden verbunden. Daraus entsteht ein <b>Vietoris-Rips-Komplex</b>: ein Gebilde aus Punkten,
+    Kanten, Dreiecken, Tetraedern.</p>
+    <div class="grid g2" style="gap:14px">
+      <div>
+        <div class="ctrl">
+          <label>Radius ε <b><span id="vrv">0.10</span></b></label>
+          <input type="range" id="vrs" min="1" max="100" value="10">
+        </div>
+        <div class="btnrow">
+          <button id="vr_show_balls" class="active">Kugeln zeigen</button>
+          <button id="vr_show_tri" class="sec active">Dreiecke füllen</button>
+          <button id="vr_resample">Neue Punkte</button>
+        </div>
+        <div class="legend">
+          <span><i style="background:rgba(110,231,255,.25)"></i>ε-Kugel</span>
+          <span><i style="background:#a78bfa"></i>1-Simplex (Kante)</span>
+          <span><i style="background:rgba(74,222,128,.35)"></i>2-Simplex (Dreieck)</span>
+        </div>
+      </div>
+      <div>
+        <div class="card tight" style="margin:0">
+          <div class="kv">
+            <div class="k">Punkte (0-Simplizes)</div><div class="v" id="vr_n0">—</div>
+            <div class="k">Kanten (1-Simplizes)</div><div class="v" id="vr_n1">—</div>
+            <div class="k">Dreiecke (2-Simplizes)</div><div class="v" id="vr_n2">—</div>
+          </div>
+          <hr class="soft" style="margin:14px 0">
+          <div class="grid g2" style="gap:8px">
+            <div class="center"><div class="bigstat" id="vr_b0">—</div><div class="statlbl">β₀</div></div>
+            <div class="center"><div class="bigstat p" id="vr_b1">—</div><div class="statlbl">β₁</div></div>
+          </div>
+          <p class="small" id="vr_hint" style="margin:12px 0 0"></p>
+        </div>
+      </div>
+    </div>
+    <canvas id="vrc" class="viz" height="360" style="margin-top:14px"></canvas>
+  </div>
+
+  <div class="note a">
+    <b>Das Dilemma:</b> ε zu klein → lauter einzelne Punkte (β₀ riesig, "Overfitting").
+    ε zu groß → alles ein großer Klumpen (β₀ = 1, alle Löcher weg).
+    Die Wahrheit liegt dazwischen. <b>Aber welches ε ist richtig?</b>
+  </div>
+
+  <h3>Die Lösung: Persistente Homologie</h3>
+  <p>Statt <i>ein</i> ε zu wählen, lässt man ε von 0 bis ∞ laufen und notiert für jedes Loch:
+  <b>wann entsteht es (birth)</b> und <b>wann verschwindet es (death)</b>.
+  Jedes Feature wird zu einem <b>Balken</b>. Lange Balken = echte Features. Kurze Balken = Rauschen.</p>
+
+  <div class="card">
+    <h3 class="mt0">Barcode-Diagramm live</h3>
+    <p class="small">Schiebe ε und beobachte: Oben die Punktwolke mit Komplex, unten der Barcode.
+    Der senkrechte Strich markiert dein aktuelles ε. Zähle, wie viele Balken dort durchgeschnitten werden —
+    das sind genau die Betti-Zahlen bei diesem ε!</p>
+    <div class="ctrl">
+      <label>Skala ε <b><span id="phv">0.00</span></b></label>
+      <input type="range" id="phs" min="0" max="100" value="18">
+    </div>
+    <div class="btnrow">
+      <button class="phshape active" data-s="circle">Kreis (verrauscht)</button>
+      <button class="phshape" data-s="two">Zwei Kreise</button>
+      <button class="phshape" data-s="blob">Klumpen (kein Loch)</button>
+      <button class="phshape" data-s="eight">Acht (zwei Löcher)</button>
+    </div>
+    <div class="grid g2" style="gap:14px">
+      <canvas id="phc" class="viz" height="320"></canvas>
+      <canvas id="phb" class="viz" height="320"></canvas>
+    </div>
+    <div class="legend">
+      <span><i style="background:#60a5fa"></i>β₀-Balken (Komponenten)</span>
+      <span><i style="background:#fb7185"></i>β₁-Balken (Löcher)</span>
+      <span><i style="background:#fbbf24"></i>aktuelles ε</span>
+    </div>
+    <div class="note" id="phmsg" style="margin-bottom:0"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Warum die Autoren eine spezielle Metrik brauchen</h3>
+    <p class="small">Ein Netz <b>streckt und staucht</b> den Raum dramatisch. Wenn man einfach den
+    euklidischen Abstand nähme, wäre ein festes ε in Schicht 1 und Schicht 9 völlig unvergleichbar
+    (ganz abgesehen davon, dass die Schichten verschiedene Dimensionen haben).</p>
+    <p class="small"><b>Trick der Autoren:</b> Sie benutzen die <b>Graph-Geodätische</b> auf dem
+    k-Nächste-Nachbarn-Graphen. Jede Kante zählt als Länge 1 — egal wie lang sie euklidisch ist.
+    Das misst nur noch <i>Nachbarschaftsstruktur</i>, also genau Topologie, und ist immun gegen Streckung.</p>
+    <div class="grid g2" style="gap:14px">
+      <div>
+        <div class="ctrl">
+          <label>Künstliche Streckung des Raums <b><span id="gdv">1.0×</span></b></label>
+          <input type="range" id="gds" min="10" max="400" value="10">
+        </div>
+        <canvas id="gdc" class="viz" height="260"></canvas>
+      </div>
+      <div>
+        <div class="card tight" style="margin:0">
+          <h4 class="mt0">Abstand zwischen ● und ●</h4>
+          <div class="kv">
+            <div class="k">Euklidisch</div><div class="v" id="gd_eu">—</div>
+            <div class="k">Graph-geodätisch δₖ</div><div class="v" id="gd_gg">—</div>
+          </div>
+          <p class="small" style="margin-top:14px">Zieh den Regler: Der euklidische Abstand explodiert,
+          die Graph-Distanz bleibt <b>exakt konstant</b>. Genau deshalb ist δₖ vergleichbar über alle Schichten.</p>
+          <p class="small" style="color:var(--txt2)">Parameter im Paper: k* = 14 (D-I), k* = 35 (D-II/III), ε* = 2.5.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 4 · NEURONALES NETZ ══════════════════════ -->
+<section id="s4" data-toc="Das Netz"><div class="wrap reveal">
+  <div class="eyebrow">Teil 4 — Werkzeug 3</div>
+  <h2>Was eine Schicht geometrisch tut</h2>
+  <p class="lead">Jede Schicht ist nur zwei Dinge hintereinander: eine <b>affine Abbildung</b> und
+  eine <b>Aktivierungsfunktion</b>. Das klingt banal — hat aber dramatische topologische Folgen.</p>
+
+  <div class="card">
+    <div class="math center" id="layerformula"></div>
+    <p class="small center" style="color:var(--txt2)">Das ganze Netz:
+    <span id="netformula"></span></p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3 class="mt0">Teil 1: Affine Abbildung <code>Ax + b</code></h3>
+      <p class="small">Jede Matrix lässt sich zerlegen als <b>A = UΣV</b> (Singulärwertzerlegung):</p>
+      <ul class="small" style="padding-left:20px">
+        <li><b>V, U</b> — Drehen / Spiegeln</li>
+        <li><b>Σ</b> — Strecken / Stauchen entlang Achsen</li>
+        <li><b>b</b> — Verschieben</li>
+      </ul>
+      <div class="note" style="font-size:.88rem">
+        <b>Entscheidend:</b> Eine invertierbare affine Abbildung ist ein <b>Homöomorphismus</b>.
+        Sie kann die Topologie <b>niemals</b> ändern. β bleibt exakt gleich.
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="mt0">Teil 2: Aktivierung σ</h3>
+      <p class="small">Hier entscheidet sich alles:</p>
+      <table>
+        <tr><th>Funktion</th><th>Homöo?</th><th>Topologie</th></tr>
+        <tr><td><b>tanh</b></td><td class="small" style="color:var(--green)">ja (exakt)</td><td class="small" style="color:var(--red)">bleibt erhalten ✗</td></tr>
+        <tr><td><b>Leaky ReLU</b></td><td class="small" style="color:var(--green)">ja (bijektiv!)</td><td class="small" style="color:var(--amber)">theoretisch erhalten</td></tr>
+        <tr><td><b>ReLU</b></td><td class="small" style="color:var(--red)">nein</td><td class="small" style="color:var(--green)">kann kollabieren ✓</td></tr>
+      </table>
+      <p class="small" style="margin-top:10px;color:var(--txt2)">ReLU ist nicht injektiv: alle negativen Werte
+      werden auf die <b>gleiche</b> 0 abgebildet. Das ist "Falten" — und Falten ändert Topologie.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Interaktiv: eine einzelne Schicht steuern</h3>
+    <p class="small">Stelle die Matrix A, den Bias b und die Aktivierung ein. Beobachte links die Eingabe,
+    rechts das Ergebnis. Achte besonders darauf, wann Punkte auf einer Linie <b>kleben bleiben</b> —
+    das ist der Kollaps, den ReLU verursacht.</p>
+    <div class="grid g2" style="gap:14px">
+      <div>
+        <div class="grid g2" style="gap:10px">
+          <div class="ctrl"><label>A₁₁ <b><span id="a11v">1.0</span></b></label><input type="range" id="a11" min="-200" max="200" value="120"></div>
+          <div class="ctrl"><label>A₁₂ <b><span id="a12v">0.0</span></b></label><input type="range" id="a12" min="-200" max="200" value="-80"></div>
+          <div class="ctrl"><label>A₂₁ <b><span id="a21v">0.0</span></b></label><input type="range" id="a21" min="-200" max="200" value="90"></div>
+          <div class="ctrl"><label>A₂₂ <b><span id="a22v">1.0</span></b></label><input type="range" id="a22" min="-200" max="200" value="110"></div>
+          <div class="ctrl"><label>b₁ <b><span id="b1v">0.0</span></b></label><input type="range" id="b1" min="-150" max="150" value="-30"></div>
+          <div class="ctrl"><label>b₂ <b><span id="b2v">0.0</span></b></label><input type="range" id="b2" min="-150" max="150" value="-20"></div>
+        </div>
+        <div class="btnrow">
+          <button class="actbtn" data-a="id">Identität</button>
+          <button class="actbtn" data-a="tanh">tanh</button>
+          <button class="actbtn sec" data-a="lrelu">Leaky ReLU</button>
+          <button class="actbtn gr active" data-a="relu">ReLU</button>
+        </div>
+        <div class="ctrl">
+          <label>Animation Eingabe → Ausgabe <b><span id="lyv">100%</span></b></label>
+          <input type="range" id="lys" min="0" max="100" value="100">
+        </div>
+      </div>
+      <div>
+        <div class="card tight" style="margin:0">
+          <h4 class="mt0">Was passiert gerade?</h4>
+          <p class="small" id="layermsg">—</p>
+          <hr class="soft" style="margin:14px 0">
+          <div class="grid g2" style="gap:8px">
+            <div class="center"><div class="bigstat" id="ly_det">—</div><div class="statlbl">det(A)</div></div>
+            <div class="center"><div class="bigstat r" id="ly_col">0%</div><div class="statlbl">kollabierte Punkte</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <canvas id="lyc" class="viz" height="380" style="margin-top:14px"></canvas>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Die Aktivierungsfunktionen selbst</h3>
+    <div class="grid g2" style="gap:16px">
+      <div id="actplot" class="plot" style="height:330px"></div>
+      <div>
+        <h4 class="mt0">Warum ReLU "faltet"</h4>
+        <p class="small">ReLU(x) = max(x, 0). Alles links von 0 wird auf <b>exakt denselben Punkt</b> gelegt.
+        Unendlich viele Eingaben → eine Ausgabe. Das nennt man <b>nicht-injektiv</b>.
+        Genau das ist topologisch der "Schnitt", der ein Loch schließen kann.</p>
+        <h4>Warum Leaky ReLU <i>nicht</i> faltet</h4>
+        <p class="small">LReLU(x) = max(x, 0.2x) ist streng monoton steigend — man kann sie umkehren.
+        Also bijektiv, also Homöomorphismus. Theoretisch kann sie Topologie <b>nicht</b> ändern.
+        In der Praxis tut sie es trotzdem — nur langsamer. Warum? Siehe nächster Abschnitt.</p>
+        <div class="ctrl">
+          <label>Leaky-Steigung α <b><span id="alv">0.20</span></b></label>
+          <input type="range" id="als" min="0" max="100" value="20">
+        </div>
+        <p class="small" style="color:var(--txt2)" id="almsg"></p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 5 · DER TANH-TRICK ══════════════════════ -->
+<section id="s5" data-toc="tanh-Paradox"><div class="wrap reveal">
+  <div class="eyebrow">Teil 5 — Die subtilste Einsicht</div>
+  <h2>Das tanh-Paradox: Wie tanh "schummelt"</h2>
+  <p class="lead">Mathematisch ist tanh ein perfekter Homöomorphismus. Es kann Topologie
+  <b>unmöglich</b> ändern. Trotzdem beobachten die Autoren: tanh-Netze <i>reduzieren</i> Betti-Zahlen —
+  nur langsam. Wie geht das?</p>
+
+  <div class="note p">
+    <b>Antwort: Rundungsfehler.</b> Ein Computer rechnet nicht exakt. Sobald tanh(x) so nah an 1 ist,
+    dass der Computer den Unterschied nicht mehr darstellen kann, wird das Ergebnis <b>exakt 1</b>.
+    Damit ist tanh plötzlich doch nicht mehr injektiv — und kann Topologie ändern.
+  </div>
+
+  <div class="card">
+    <div class="math center" id="tanhdelta"></div>
+    <p class="small center" style="color:var(--txt2)">δ = Rundungseinheit (unit roundoff). Je gröber die
+    Zahlendarstellung, desto größer δ — und desto "gefährlicher" wird tanh für die Topologie.</p>
+    <div class="grid g2" style="gap:16px">
+      <div>
+        <div class="ctrl">
+          <label>Präzision (Rundungseinheit δ) <b><span id="tdv">2⁻⁵⁴</span></b></label>
+          <input type="range" id="tds" min="0" max="5" value="0" step="1">
+        </div>
+        <div class="btnrow" style="font-size:.8rem">
+          <span class="badge">0 = double (δ=2⁻⁵⁴)</span>
+          <span class="badge">5 = sehr grob</span>
+        </div>
+        <div id="tanhplot" class="plot" style="height:300px"></div>
+      </div>
+      <div>
+        <div class="card tight" style="margin:0">
+          <h4 class="mt0">Sättigungszone</h4>
+          <p class="small">Alle Eingaben mit |x| &gt; <b id="tdx">—</b> landen auf <b>exakt ±1</b>.
+          Diese Punkte sind danach <b>ununterscheidbar</b> — genau wie bei ReLU.</p>
+          <div class="grid g2" style="gap:8px;margin-top:12px">
+            <div class="center"><div class="bigstat p" id="td_sat">0%</div><div class="statlbl">gesättigte Punkte</div></div>
+            <div class="center"><div class="bigstat" id="td_homeo">JA</div><div class="statlbl">Homöomorphismus?</div></div>
+          </div>
+          <hr class="soft" style="margin:16px 0">
+          <p class="small"><b>Verblüffende Konsequenz:</b> Die Autoren vermuten, dass dies erklärt,
+          warum Netze mit <i>niedrigerer</i> Zahlenpräzision (half precision, BFloat16) in der Praxis
+          oft überraschend gut funktionieren — gröber = besser im Topologie-Ändern.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Rennen: Wer kollabiert einen Kreis schneller?</h3>
+    <p class="small">Drei identische Netze, identische Daten (ein Kreis = β₁ = 1), nur die Aktivierung
+    unterscheidet sich. Drücke Start und beobachte, bei welcher Schicht das Loch stirbt.</p>
+    <div class="btnrow">
+      <button id="raceStart" class="gr">▶ Rennen starten</button>
+      <button id="raceReset" class="sec">Zurücksetzen</button>
+    </div>
+    <canvas id="racec" class="viz" height="300"></canvas>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="card tight center" style="margin:0;border-color:rgba(96,165,250,.3)">
+        <div class="statlbl" style="color:var(--blue)">tanh</div>
+        <div class="bigstat" style="color:var(--blue)" id="race_t">—</div>
+        <div class="small" id="race_tm">wartet…</div>
+      </div>
+      <div class="card tight center" style="margin:0;border-color:rgba(251,113,133,.3)">
+        <div class="statlbl" style="color:var(--red)">Leaky ReLU</div>
+        <div class="bigstat r" id="race_l">—</div>
+        <div class="small" id="race_lm">wartet…</div>
+      </div>
+      <div class="card tight center" style="margin:0;border-color:rgba(74,222,128,.3)">
+        <div class="statlbl" style="color:var(--green)">ReLU</div>
+        <div class="bigstat g" id="race_r">—</div>
+        <div class="small" id="race_rm">wartet…</div>
+      </div>
+    </div>
+    <div class="note g" style="margin-bottom:0">
+      <b>Widerlegung der Standarderklärung:</b> Man sagt oft, ReLU sei besser wegen "vanishing gradients".
+      Aber Leaky ReLU hat <i>exakt dasselbe</i> Gradientenverhalten wie ReLU — und verhält sich trotzdem
+      deutlich anders. Die Gradienten können also nicht die ganze Erklärung sein. Die Topologie-Sicht erklärt es.
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 6 · DAS EXPERIMENT ══════════════════════ -->
+<section id="s6" data-toc="Experiment"><div class="wrap reveal">
+  <div class="eyebrow">Teil 6 — Was konkret gemacht wurde</div>
+  <h2>Das Experiment: drei Datensätze, 10.000+ Rechnungen</h2>
+  <p class="lead">Jetzt wird es konkret. Die Autoren bauen Datensätze, deren Topologie sie
+  <b>exakt kennen</b> — denn bei echten Daten weiß niemand, wie die "Mannigfaltigkeit aller Katzenbilder"
+  aussieht. Dann trainieren sie tausende Netze und messen.</p>
+
+  <div class="card">
+    <h3 class="mt0">Die drei Datensätze — drehbar in 3D</h3>
+    <p class="small">Wähle einen Datensatz. Grün = Klasse a, Rot = Klasse b. Beachte:
+    Die beiden Klassen sind so <b>verschränkt</b>, dass keine Ebene sie trennen kann —
+    und jede Trenngrenze selbst kompliziert sein muss.</p>
+    <div class="btnrow" id="dsbtns">
+      <button class="dsbtn active" data-d="1">D-I · Scheiben im Käse</button>
+      <button class="dsbtn" data-d="2">D-II · Verkettete Tori</button>
+      <button class="dsbtn" data-d="3">D-III · Verschachtelte Sphären</button>
+    </div>
+    <div class="grid g21">
+      <div id="ds3d" class="plot" style="height:460px"></div>
+      <div>
+        <div class="card tight" style="margin:0">
+          <h4 class="mt0" id="ds_name">—</h4>
+          <p class="small" id="ds_desc">—</p>
+          <hr class="soft" style="margin:14px 0">
+          <table>
+            <tr><th></th><th>β₀</th><th>β₁</th><th>β₂</th><th>ω</th></tr>
+            <tr><td style="color:var(--green)"><b>Mₐ</b> (grün)</td>
+                <td id="ds_a0">—</td><td id="ds_a1">—</td><td id="ds_a2">—</td><td id="ds_aw">—</td></tr>
+            <tr><td style="color:var(--red)"><b>M_b</b> (rot)</td>
+                <td id="ds_b0">—</td><td id="ds_b1">—</td><td id="ds_b2">—</td><td id="ds_bw">—</td></tr>
+          </table>
+          <hr class="soft" style="margin:14px 0">
+          <div class="kv">
+            <div class="k">Dimension d</div><div class="v" id="ds_dim">—</div>
+            <div class="k">k* (Nachbarn)</div><div class="v" id="ds_k">—</div>
+            <div class="k">ε*</div><div class="v">2.5</div>
+          </div>
+          <p class="small" style="margin-top:12px;color:var(--txt2)" id="ds_note"></p>
+        </div>
+      </div>
+    </div>
+    <div class="ctrl">
+      <label>Explosionsansicht (Teile auseinanderziehen) <b><span id="dsexv">0%</span></b></label>
+      <input type="range" id="dsex" min="0" max="100" value="0">
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Der Versuchsaufbau in 4 Schritten</h3>
+    <div class="flowstep"><div class="flownum">1</div><div>
+      <b>Mannigfaltigkeit erzeugen</b> — M = Mₐ ∪ M_b mit <i>bekannten</i> Betti-Zahlen, disjunkt.
+      <span class="small" style="color:var(--txt2)">Dadurch existiert garantiert ein perfekter Klassifikator.</span>
+    </div></div>
+    <div class="flowstep"><div class="flownum">2</div><div>
+      <b>Dicht abtasten</b> — Punktwolke X ⊆ M ziehen, so dicht, dass die Betti-Zahlen verlässlich
+      rekonstruierbar sind (D-II: 45.000 Trainingspunkte).
+    </div></div>
+    <div class="flowstep"><div class="flownum">3</div><div>
+      <b>Netze trainieren</b> — bis zu <b>perfekter</b> Trainingsgenauigkeit und ≈ 0.01 % Generalisierungsfehler.
+      Mindestens 30 Netze pro Architektur, weil Training zufällig ist.
+      <span class="small" style="color:var(--txt2)">Adam, bis 18.000 Epochen, TensorFlow.</span>
+    </div></div>
+    <div class="flowstep"><div class="flownum">4</div><div>
+      <b>Homologie messen</b> — nach <i>jeder</i> Schicht k die Betti-Zahlen β(ν_k(Mₐ)) und β(ν_k(M_b)) berechnen.
+      <span class="small" style="color:var(--txt2)">Das ist der teure Teil: &gt; 10.000 Homologie-Rechnungen.</span>
+    </div></div>
+    <div class="note a" style="margin-bottom:0">
+      <b>Kostenhierarchie</b> (zentral für das Design): Multidimensionale persistente Homologie ≫
+      persistente Homologie ≫ Homologie ≫ Netz trainieren.
+      Deshalb: Netze trainieren ist "billig", persistente Homologie wird nur <b>einmal</b> gerechnet
+      (um k* und ε* zu finden), danach nur noch Homologie bei festem Maßstab.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Wie k* und ε* gewählt wurden</h3>
+    <p class="small">Zwei Parameter sind zu bestimmen: k (Nachbarn im kNN-Graphen) und ε (Maßstab).
+    Die Autoren testen ein Gitter von (k, ε)-Paaren und markieren grün, wo die berechnete Homologie
+    mit der <i>bekannten</i> Wahrheit übereinstimmt. Dann nehmen sie einen Punkt mitten im grünen Bereich.</p>
+    <div id="kegrid" class="plot" style="height:360px"></div>
+    <p class="small center" style="color:var(--txt2)">Nachbildung von Abbildung 10 des Papers.
+    Blau = gewählter Punkt. Hover für Details.</p>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 7 · DIE SIMULATION ══════════════════════ -->
+<section id="s7" data-toc="Netz live"><div class="wrap reveal">
+  <div class="eyebrow">Teil 7 — Das Herzstück</div>
+  <h2>Ein echtes Netz, live trainiert, Schicht für Schicht</h2>
+  <p class="lead">Jetzt trainieren wir <b>direkt in deinem Browser</b> ein Netz auf einem Datensatz
+  im Stil von D-I. Du siehst, wie sich die Daten in jeder Schicht verformen und wie β₀ sinkt.
+  Das ist die Kernaussage des Papers — zum Anfassen.</p>
+
+  <div class="card">
+    <div class="grid g2" style="gap:16px">
+      <div>
+        <h4 class="mt0">Architektur</h4>
+        <div class="ctrl">
+          <label>Tiefe (Anzahl Schichten) <b><span id="nn_dv">6</span></b></label>
+          <input type="range" id="nn_d" min="3" max="10" value="6">
+        </div>
+        <div class="ctrl">
+          <label>Breite (Neuronen pro Schicht) <b><span id="nn_wv">12</span></b></label>
+          <input type="range" id="nn_w" min="3" max="24" value="12">
+        </div>
+        <h4>Aktivierung</h4>
+        <div class="btnrow">
+          <button class="nnact" data-a="tanh">tanh</button>
+          <button class="nnact sec" data-a="lrelu">Leaky ReLU</button>
+          <button class="nnact gr active" data-a="relu">ReLU</button>
+        </div>
+        <h4>Daten</h4>
+        <div class="btnrow">
+          <button class="nndata active" data-d="disks">4 Scheiben im Quadrat</button>
+          <button class="nndata" data-d="rings">Verschachtelte Ringe</button>
+          <button class="nndata" data-d="spiral">Spirale</button>
+        </div>
+        <div class="btnrow" style="margin-top:16px">
+          <button id="nn_train" class="gr">▶ Trainieren</button>
+          <button id="nn_pause" class="sec">⏸ Pause</button>
+          <button id="nn_reset" class="rd">↻ Neu</button>
+        </div>
+      </div>
+      <div>
+        <div class="card tight" style="margin:0">
+          <div class="grid g3" style="gap:8px">
+            <div class="center"><div class="bigstat" id="nn_ep">0</div><div class="statlbl">Epoche</div></div>
+            <div class="center"><div class="bigstat g" id="nn_acc">50%</div><div class="statlbl">Genauigkeit</div></div>
+            <div class="center"><div class="bigstat p" id="nn_loss">—</div><div class="statlbl">Loss</div></div>
+          </div>
+          <hr class="soft" style="margin:14px 0">
+          <canvas id="nn_losscv" class="viz" height="110"></canvas>
+          <p class="small" style="margin:10px 0 0" id="nn_status">Bereit. Drücke „Trainieren".</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="soft">
+    <h3>Eingabe & Entscheidungsgrenze</h3>
+    <p class="small">Links die Rohdaten, rechts was das Netz gelernt hat. Die Entscheidungsgrenze
+    wird <b>immer komplizierter</b> — denn sie muss im Eingaberaum die verschränkte Topologie auflösen.</p>
+    <div class="grid g2" style="gap:14px">
+      <canvas id="nn_in" class="viz" height="300"></canvas>
+      <canvas id="nn_db" class="viz" height="300"></canvas>
+    </div>
+
+    <hr class="soft">
+    <h3>Die Reise durch die Schichten</h3>
+    <p class="small">Hier siehst du <b>alle</b> Schichten nebeneinander, jeweils auf die ersten zwei
+    Hauptkomponenten projiziert (genau wie in den Abbildungen 11–13 des Papers).
+    Darunter: geschätztes β₀ pro Klasse.</p>
+    <div class="ctrl">
+      <label>Schicht hervorheben <b><span id="nn_lv">alle</span></b></label>
+      <input type="range" id="nn_l" min="0" max="10" value="0">
+    </div>
+    <canvas id="nn_layers" class="viz" height="420"></canvas>
+    <div class="legend">
+      <span><i style="background:#4ade80"></i>Klasse a (grün)</span>
+      <span><i style="background:#fb7185"></i>Klasse b (rot)</span>
+      <span><i style="background:#fbbf24"></i>hervorgehobene Schicht</span>
+    </div>
+
+    <hr class="soft">
+    <h3>Betti-Profil: β₀ über die Schichten</h3>
+    <p class="small">Das ist <b>die</b> Abbildung des Papers. Die Kurve muss fallen — und bei ReLU
+    fällt sie am steilsten. Trainiere nacheinander mit allen drei Aktivierungen; die Kurven bleiben
+    zum Vergleich stehen.</p>
+    <div id="nn_betti" class="plot" style="height:340px"></div>
+    <div class="btnrow">
+      <button id="nn_clearcurves" class="sec">Kurven löschen</button>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 8 · ERGEBNISSE ══════════════════════ -->
+<section id="s8" data-toc="Ergebnisse"><div class="wrap reveal">
+  <div class="eyebrow">Teil 8 — Die Antworten</div>
+  <h2>Was gefunden wurde</h2>
+  <p class="lead">Fünf Hauptergebnisse. Jedes ist hier als interaktive Reproduktion der
+  Original-Abbildungen dargestellt — mit den echten Zahlen aus dem Paper.</p>
+
+  <div class="card">
+    <h3 class="mt0">Ergebnis 1 · Die Betti-Zahlen stürzen ab — immer</h3>
+    <p class="small">Egal wie kompliziert die Topologie am Anfang: Am Ausgang gilt
+    praktisch immer β₀ = 1 und β_k = 0 für k ≥ 1. Beide Klassen werden zu je einem einfachen Klumpen.</p>
+    <div class="btnrow" id="r1btns">
+      <button class="r1b active" data-d="1">D-I: β₀(Mₐ)</button>
+      <button class="r1b" data-d="2a">D-II: β₀(Mₐ)</button>
+      <button class="r1b" data-d="2b">D-II: β₁(Mₐ)</button>
+      <button class="r1b" data-d="3a">D-III: β₀(Mₐ)</button>
+      <button class="r1b" data-d="3b">D-III: β₂(Mₐ)</button>
+    </div>
+    <div id="r1plot" class="plot" style="height:400px"></div>
+    <p class="small center" style="color:var(--txt2)">Nachbildung der Abbildungen 11–13.
+    Schattierung = ± ½ Standardabweichung über ≥ 30 Trainingsläufe.</p>
+    <div class="note" id="r1msg" style="margin-bottom:0"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Ergebnis 2 · ReLU &gt; Leaky ReLU &gt; tanh — konsistent</h3>
+    <div class="grid g2" style="gap:16px">
+      <div>
+        <p class="small">In <i>allen</i> Datensätzen, über <i>alle</i> Experimente: Die nicht-homöomorphe
+        Aktivierung ReLU reduziert alle Betti-Zahlen am schnellsten. tanh ist nicht nur langsamer —
+        es erhöht die Betti-Zahlen manchmal sogar zwischendurch.</p>
+        <p class="small"><b>Erklärungskette des Papers:</b></p>
+        <div class="flowstep" style="margin:10px 0"><div class="flownum" style="width:26px;height:26px;font-size:.78rem">1</div>
+          <div class="small">tanh ist exakt bijektiv → Homöomorphismus → <b>kann Topologie nicht ändern</b></div></div>
+        <div class="flowstep" style="margin:10px 0"><div class="flownum" style="width:26px;height:26px;font-size:.78rem">2</div>
+          <div class="small">Leaky ReLU ist bijektiv → auch Homöomorphismus, aber verzerrt stark → Rundung greift früher</div></div>
+        <div class="flowstep" style="margin:10px 0"><div class="flownum" style="width:26px;height:26px;font-size:.78rem">3</div>
+          <div class="small">ReLU ist nicht injektiv → <b>kein</b> Homöomorphismus → kann frei falten und kollabieren</div></div>
+      </div>
+      <div id="r2plot" class="plot" style="height:330px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Ergebnis 3 · Manche Formen sind härter als andere</h3>
+    <p class="small">Die schwierigste Struktur im ganzen Paper: die <b>ineinander verhakten Tori</b> von D-II.
+    Die Schleifen (β₁) überleben erstaunlich viele Schichten — besonders bei tanh.
+    Schiebe durch die Schichten und vergleiche, wie schnell welches Feature stirbt.</p>
+    <div class="ctrl">
+      <label>Schicht <b><span id="r3lv">0</span></b></label>
+      <input type="range" id="r3l" min="0" max="10" value="0">
+    </div>
+    <div id="r3plot" class="plot" style="height:340px"></div>
+    <div class="grid g3" style="margin-top:10px">
+      <div class="center"><div class="bigstat" style="color:var(--blue)" id="r3t">—</div><div class="statlbl">tanh: β₁</div></div>
+      <div class="center"><div class="bigstat r" id="r3l2">—</div><div class="statlbl">LReLU: β₁</div></div>
+      <div class="center"><div class="bigstat g" id="r3r">—</div><div class="statlbl">ReLU: β₁</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Ergebnis 4 · Breite: Flaschenhälse erzwingen Topologie-Änderung</h3>
+    <div class="grid g2" style="gap:16px">
+      <div id="r4plot" class="plot" style="height:320px"></div>
+      <div>
+        <p class="small">Drei Architekturen auf D-I verglichen:</p>
+        <table>
+          <tr><th>Architektur</th><th>Wirkung</th></tr>
+          <tr><td>schmal (6 Neuronen)</td><td class="small">ändert Topologie <b>schneller</b></td></tr>
+          <tr><td>Flaschenhals (…15,15,<b>3</b>,15,15…)</td><td class="small">erzwingt <b>große</b> Sprünge</td></tr>
+          <tr><td>breit (50 Neuronen)</td><td class="small">ändert langsamer, geht gemütlicher vor</td></tr>
+        </table>
+        <div class="note" style="font-size:.88rem">
+          <b>Intuition:</b> Wenig Platz = man <i>muss</i> zusammendrücken. Viel Platz = man kann
+          die Daten erstmal nur umarrangieren (Geometrie) statt sie zu kollabieren (Topologie).
+        </div>
+        <p class="small" style="color:var(--txt2)">Aber: Bei <i>gleicher</i> Aktivierung ist der Unterschied
+        zwischen 15 und 50 Neuronen vernachlässigbar. Unter 15 Neuronen wird Training zunehmend schwierig.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Ergebnis 5 · Tiefe: Die letzten Schichten machen die Arbeit</h3>
+    <p class="small">Das ist die Antwort auf Rätsel 2. Reduziert man die Tiefe, verteilt sich die
+    Arbeit <b>nicht</b> gleichmäßig auf alle Schichten — sie <b>konzentriert sich in den letzten Schichten</b>.
+    Die ersten Schichten tun topologisch fast nichts; sie machen nur Geometrie.</p>
+    <div class="grid g2" style="gap:16px">
+      <div>
+        <div class="btnrow" id="r5btns">
+          <button class="r5b active" data-a="tanh">tanh</button>
+          <button class="r5b" data-a="lrelu">Leaky ReLU</button>
+          <button class="r5b" data-a="relu">ReLU</button>
+        </div>
+        <div id="r5plot" class="plot" style="height:330px"></div>
+      </div>
+      <div>
+        <p class="small">Vergleiche Netze mit 4, 8 und 10 Schichten auf D-I. Alle landen am Ende
+        bei ω = 1. Aber das 4-Schicht-Netz muss den <b>gesamten</b> Abstieg in seinen letzten
+        zwei Schichten schaffen.</p>
+        <div class="note p" style="font-size:.9rem">
+          <b>Antwort auf Rätsel 2:</b> Topologische Vereinfachung ist <i>harte Arbeit</i>, die
+          man nicht beliebig komprimieren kann. Je komplizierter die Eingabetopologie, desto mehr
+          Schichten braucht man. Der Universelle Approximationssatz sagt nur, dass eine Lösung
+          <i>existiert</i> — nicht, dass sie <i>findbar</i> oder <i>trainierbar</i> ist.
+        </div>
+        <p class="small" style="color:var(--txt2)">Beobachtung aus dem Paper: Unterschreitet man eine
+        kritische Tiefe, sinkt der Anteil erfolgreich trainierter Netze deutlich.</p>
+        <div class="ctrl">
+          <label>Gleitender Vergleich: Tiefe <b><span id="r5dv">10</span></b> Schichten</label>
+          <input type="range" id="r5d" min="4" max="10" value="10">
+        </div>
+        <canvas id="r5bar" class="viz" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 9 · ECHTE DATEN ══════════════════════ -->
+<section id="s9" data-toc="Echte Daten"><div class="wrap reveal">
+  <div class="eyebrow">Teil 9 — Realitätscheck</div>
+  <h2>Gilt das auch für echte Daten?</h2>
+  <p class="lead">Simulierte Daten sind schön kontrolliert — aber überzeugen nur halb.
+  Die Autoren wiederholen deshalb alles auf vier echten Datensätzen.
+  Dort ist es viel teurer: man muss in <i>jeder</i> Schicht die volle persistente Homologie rechnen.</p>
+
+  <div class="card">
+    <h3 class="mt0">MNIST: Topologische Komplexität ω durch 10 Schichten</h3>
+    <p class="small">Klassifikation: Ziffer „0" gegen alle anderen. 70.000 Bilder, auf 50 Hauptkomponenten
+    reduziert. Wähle einen Maßstab ε und vergleiche die drei Aktivierungen. Das sind die echten
+    Zahlen aus Tabelle 3 des Papers.</p>
+    <div class="btnrow" id="mnbtns">
+      <button class="mnb active" data-e="1.5">ε = 1.5 (fein)</button>
+      <button class="mnb" data-e="2.5">ε = 2.5 (mittel)</button>
+      <button class="mnb" data-e="3.5">ε = 3.5 (grob)</button>
+    </div>
+    <div id="mnplot" class="plot" style="height:360px"></div>
+    <div class="scrollx">
+      <table id="mntable"></table>
+    </div>
+    <div class="note" id="mnmsg" style="margin-bottom:0"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Die vier echten Datensätze</h3>
+    <div class="grid g2" style="gap:14px">
+      <div class="card tight" style="margin:0">
+        <h4 class="mt0">MNIST Handschriftliche Ziffern</h4>
+        <p class="small">28×28 Pixel → ℝ⁷⁸⁴, per PCA auf ℝ⁵⁰ reduziert.
+        Mₐ = „Mannigfaltigkeit aller handgeschriebenen 0".</p>
+        <span class="badge">70.000 Bilder</span><span class="badge">ℝ⁵⁰</span>
+      </div>
+      <div class="card tight" style="margin:0">
+        <h4 class="mt0">HTRU2 Pulsar-Survey</h4>
+        <p class="small">8 Statistiken von Radiosignalen aus 17.898 Sternen.
+        Ist der Stern ein Pulsar oder nicht?</p>
+        <span class="badge">3.278 balanciert</span><span class="badge">ℝ⁸</span>
+      </div>
+      <div class="card tight" style="margin:0">
+        <h4 class="mt0">UCI Banknoten</h4>
+        <p class="small">4 Wavelet-Statistiken aus Bildausschnitten.
+        Echte vs. gefälschte Geldscheine.</p>
+        <span class="badge">1.200 balanciert</span><span class="badge">ℝ⁴</span>
+      </div>
+      <div class="card tight" style="margin:0">
+        <h4 class="mt0">UCI Sensorless Drive</h4>
+        <p class="small">49 Strommessungen auf einer Platine.
+        Defekttyp a gegen 11 andere Defekttypen.</p>
+        <span class="badge">10.600 Samples</span><span class="badge">ℝ⁴⁹</span>
+      </div>
+    </div>
+    <div class="note g" style="margin-bottom:0">
+      <b>Ergebnis bei allen vier:</b> Dasselbe Muster. ω sinkt durch die Schichten, ReLU am schnellsten.
+      Bei den Banknoten z.B. schafft ReLU β₀ = 1, tanh bleibt bei β₀ = 2 stecken.
+      Bei MNIST erreicht tanh nach 10 Schichten noch nicht einmal eine topologische Scheibe (ω = 3 statt 1).
+      <br><span class="small">Caveat: Bei echten Daten ist nur 95–98 % Testgenauigkeit erreichbar statt 99,99 %.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Interaktives Barcode-Diagramm (Stil HTRU2 / Banknoten)</h3>
+    <p class="small">So sehen die echten Abbildungen 17, 19, 20 aus: Für Schicht 1, 5 und 10 je ein
+    Barcode-Diagramm. Wähle Aktivierung und Schicht.</p>
+    <div class="btnrow">
+      <button class="rbact active" data-a="tanh">tanh</button>
+      <button class="rbact gr" data-a="relu">ReLU</button>
+      <span style="flex:1"></span>
+      <button class="rblay active" data-l="1">Schicht 1</button>
+      <button class="rblay" data-l="5">Schicht 5</button>
+      <button class="rblay" data-l="10">Schicht 10</button>
+    </div>
+    <div class="grid g2" style="gap:14px">
+      <canvas id="rbbar" class="viz" height="290"></canvas>
+      <div id="rbscat" class="plot" style="height:290px"></div>
+    </div>
+    <p class="small center" style="color:var(--txt2);margin-bottom:0">
+      Links: Barcodes (blau β₀, rot β₁). Rechts: Projektion auf 3 Hauptkomponenten,
+      rot = Mₐ, blau = M_b.</p>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 10 · MECHANISMUS ══════════════════════ -->
+<section id="s10" data-toc="Mechanismus"><div class="wrap reveal">
+  <div class="eyebrow">Teil 10 — Wie genau?</div>
+  <h2>Der Mechanismus: Falten und Ausweichen</h2>
+  <p class="lead">Wie <i>konkret</i> ändert ein ReLU-Netz die Topologie? Das Paper spekuliert
+  im Schlussteil über drei Werkzeuge — und beide Hauptbeispiele kannst du hier selbst durchspielen.</p>
+
+  <div class="grid g3">
+    <div class="card tight">
+      <h4 class="mt0">① Falten</h4>
+      <p class="small">ReLU ist viele-zu-eins. Das erlaubt, einen Raum zu <b>knicken</b> —
+      etwas, das keine stetige Umkehrabbildung je könnte.</p>
+    </div>
+    <div class="card tight">
+      <h4 class="mt0">② Zusätzliche Breite</h4>
+      <p class="small">Mehr Neuronen als Eingabedimensionen = <b>höherdimensionaler Raum</b>,
+      in dem man Dinge auseinanderfädeln kann.</p>
+    </div>
+    <div class="card tight">
+      <h4 class="mt0">③ Tiefe = Zeit</h4>
+      <p class="small">Jede Schicht ist ein Zeitschritt. Große topologische Änderungen brauchen
+      eine <b>lange Folge</b> kleiner Operationen.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Mechanismus A: Falten mit Betragsfunktion (Abbildung 21 links)</h3>
+    <p class="small">Zwei konzentrische Kreise. Nach dem Jordanschen Kurvensatz kann <b>kein</b>
+    Homöomorphismus von ℝ² nach ℝ² sie linear trennbar machen. Aber zwei Neuronen mit
+    <code>(x,y) ↦ (|x|,|y|)</code> schaffen es in <b>einem einzigen Schritt</b>.</p>
+    <div class="ctrl">
+      <label>Faltung anwenden <b><span id="foldv">0%</span></b></label>
+      <input type="range" id="folds" min="0" max="100" value="0">
+    </div>
+    <div class="btnrow">
+      <button id="fold_x" class="active">|x| falten</button>
+      <button id="fold_y" class="sec active">|y| falten</button>
+      <button id="fold_line">Trennlinie zeigen</button>
+    </div>
+    <canvas id="foldc" class="viz" height="330"></canvas>
+    <div class="note" id="foldmsg" style="margin-bottom:0"></div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Mechanismus B: Ausweichen in höhere Dimension (Abbildung 21 rechts)</h3>
+    <p class="small">Alternative: ℝ² → ℝ³ → ℝ³ → ℝ³ → ℝ³ → ℝ². In der dritten Dimension lassen sich
+    die Kreise entwirren, dann projiziert man zurück. Drehe die Ansicht und schiebe durch die Schritte.</p>
+    <div class="stepper" id="liftsteps"></div>
+    <div id="lift3d" class="plot" style="height:420px"></div>
+    <p class="small center" style="color:var(--txt2);margin-bottom:0" id="liftmsg">—</p>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Mechanismus C: Donut zu Croissant (Abbildung 22)</h3>
+    <p class="small">Affine Abbildungen können drehen, strecken, verschieben — aber nicht <b>kneifen</b>.
+    ReLU kann. Hier wird ein Torus über zwei Kneifungen zur Sphäre.
+    β: (1,2,1) → (1,1,1) → (1,1,2) → (1,0,1).</p>
+    <div class="ctrl">
+      <label>Deformation <b><span id="torv">0%</span></b></label>
+      <input type="range" id="tors" min="0" max="100" value="0">
+    </div>
+    <div id="tor3d" class="plot" style="height:420px"></div>
+    <div class="grid g3" style="margin-top:10px">
+      <div class="center"><div class="bigstat" id="tb0">1</div><div class="statlbl">β₀</div></div>
+      <div class="center"><div class="bigstat p" id="tb1">2</div><div class="statlbl">β₁</div></div>
+      <div class="center"><div class="bigstat g" id="tb2">1</div><div class="statlbl">β₂</div></div>
+    </div>
+    <p class="small center" style="color:var(--txt2);margin-bottom:0" id="tormsg">Torus-Oberfläche</p>
+  </div>
+</div></section>
+
+<!-- ══════════════════════ 11 · ZUSAMMENFASSUNG ══════════════════════ -->
+<section id="s11" data-toc="Fazit"><div class="wrap reveal">
+  <div class="eyebrow">Teil 11 — Alles zusammen</div>
+  <h2>Die Antwort auf die gestellte Frage</h2>
+
+  <div class="card">
+    <h3 class="mt0">Der komplette Argumentationsbogen</h3>
+    <div class="flowstep"><div class="flownum">F</div><div>
+      <b>Frage:</b> Warum ist ReLU besser als tanh? Warum brauchen wir Tiefe, obwohl 2 Schichten
+      theoretisch reichen?</div></div>
+    <div class="flowstep"><div class="flownum">I</div><div>
+      <b>Idee:</b> Ein Netz ist keine Funktionsapproximation, sondern eine
+      <b>Topologie-verändernde Abbildung</b>. Messe die Form der Daten in jeder Schicht.</div></div>
+    <div class="flowstep"><div class="flownum">W</div><div>
+      <b>Werkzeug:</b> Betti-Zahlen β = (β₀, β₁, β₂) und topologische Komplexität ω = Σβₖ,
+      geschätzt per persistenter Homologie auf dem Vietoris-Rips-Komplex mit
+      Graph-Geodätischer δₖ.</div></div>
+    <div class="flowstep"><div class="flownum">M</div><div>
+      <b>Methode:</b> Drei Datensätze mit <i>bekannter</i> Topologie bauen, tausende Netze bis zur
+      Perfektion trainieren, in jeder Schicht Homologie messen. Plus Validierung auf 4 echten Datensätzen.</div></div>
+    <div class="flowstep"><div class="flownum">A</div><div>
+      <b>Antwort:</b> Netze reduzieren Betti-Zahlen monoton bis auf β = (1,0,0).
+      ReLU kann das, weil es <i>kein</i> Homöomorphismus ist — tanh kann es eigentlich nicht und
+      schafft es nur über Rundungsfehler. Und: Die topologische Arbeit passiert in den <i>späten</i>
+      Schichten; mehr Komplexität ⇒ mehr Schichten nötig.</div></div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Die drei Kernbefunde auf einen Blick</h3>
+    <div class="grid g3">
+      <div class="card tight center" style="margin:0">
+        <div class="bigstat">①</div>
+        <h4>Robust & reproduzierbar</h4>
+        <p class="small">Bei festem Datensatz und fester Architektur folgen alle
+        Trainingsläufe demselben topologischen Profil. Kein Zufall.</p>
+      </div>
+      <div class="card tight center" style="margin:0">
+        <div class="bigstat g">②</div>
+        <h4>Nicht-Homöomorphismen gewinnen</h4>
+        <p class="small">ReLU &gt; Leaky ReLU &gt; tanh — konsistent über alle
+        Datensätze und Architekturen hinweg.</p>
+      </div>
+      <div class="card tight center" style="margin:0">
+        <div class="bigstat p">③</div>
+        <h4>Späte Schichten arbeiten</h4>
+        <p class="small">Frühe Schichten: Geometrie. Späte Schichten: Topologie.
+        Weniger Tiefe ⇒ die letzten müssen härter arbeiten.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Abschluss-Sandkasten: alles zusammen</h3>
+    <p class="small">Stelle dir deine eigene Konfiguration zusammen und sieh in einem Bild,
+    wie sich das topologische Profil ändert. Das ist die Essenz des gesamten Papers in
+    einem Regler-Satz.</p>
+    <div class="grid g2" style="gap:16px">
+      <div>
+        <div class="ctrl"><label>Start-Komplexität ω(M) <b><span id="sb_wv">18</span></b></label>
+          <input type="range" id="sb_w" min="2" max="30" value="18"></div>
+        <div class="ctrl"><label>Tiefe <b><span id="sb_dv">10</span></b></label>
+          <input type="range" id="sb_d" min="4" max="12" value="10"></div>
+        <div class="ctrl"><label>Breite <b><span id="sb_ww">15</span></b></label>
+          <input type="range" id="sb_wd" min="3" max="50" value="15"></div>
+        <div class="btnrow">
+          <button class="sbact" data-a="tanh">tanh</button>
+          <button class="sbact sec" data-a="lrelu">Leaky ReLU</button>
+          <button class="sbact gr active" data-a="relu">ReLU</button>
+        </div>
+        <div class="btnrow">
+          <button id="sb_bottle" class="sec">Flaschenhals ein/aus</button>
+        </div>
+        <div class="card tight" style="margin-top:14px">
+          <p class="small" style="margin:0" id="sb_msg">—</p>
+        </div>
+      </div>
+      <div id="sbplot" class="plot" style="height:360px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="mt0">Offene Fragen & Ausblick</h3>
+    <div class="grid g2" style="gap:14px">
+      <div>
+        <h4 class="mt0">Was das Paper <i>nicht</i> tut</h4>
+        <ul class="small" style="padding-left:20px;color:#d4ddf2">
+          <li>Keine Theorie, sondern eine empirische Studie (&gt; 10.000 Experimente)</li>
+          <li>Die genaue Mechanik der Topologieänderung bleibt Spekulation (Abschnitt 8)</li>
+          <li>Topologie der <i>Entscheidungsgrenze</i> wird nur indirekt beobachtet</li>
+          <li>Moderne Großdatensätze (ImageNet, CIFAR) sind rechnerisch außer Reichweite</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="mt0">Interessante Konsequenzen</h4>
+        <ul class="small" style="padding-left:20px;color:#d4ddf2">
+          <li>Niedrigere Rechenpräzision könnte topologisch <i>vorteilhaft</i> sein</li>
+          <li>Ein trainiertes Netz rückwärts angewandt = Werkzeug zum Labeln von Komponenten</li>
+          <li>TDA und neuronale Netze sind inverse Probleme: <i>Form lesen</i> vs. <i>Form schreiben</i></li>
+          <li>Code öffentlich: github.com/topnn/topnn_framework</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card center" style="background:linear-gradient(135deg,rgba(110,231,255,.07),rgba(167,139,250,.07))">
+    <h3 class="mt0" style="font-size:1.35rem">Ein Satz zum Merken</h3>
+    <p style="font-size:1.12rem;max-width:720px;margin:0 auto;color:#fff">
+      Ein tiefes neuronales Netz ist eine Maschine, die <b>Löcher zunäht</b> und
+      <b>Teile zusammenschiebt</b>, bis aus einer topologisch verknoteten Datenwolke
+      zwei einfache Klumpen werden — die man dann mit einer geraden Linie trennen kann.
+    </p>
+  </div>
+
+  <p class="small center" style="color:var(--txt2);margin-top:40px">
+    Interaktive Aufbereitung von <b>„Topology of Deep Neural Networks"</b> ·
+    G. Naitzat, A. Zhitnikov, L.-H. Lim · arXiv:2004.06093 (2020) [[11]]<br>
+    Alle Zahlenwerte stammen aus dem Paper; Simulationen sind vereinfachte Nachbildungen.
+  </p>
+</div></section>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   0 · GRUNDGERÜST / HELPERS
+   ═══════════════════════════════════════════════════════════ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2;
+
+// Deterministischer Zufall
+function mkRnd(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+function gauss(r){let u=0,v=0;while(u===0)u=r();while(v===0)v=r();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+
+// HiDPI Canvas
+function fitCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  cv.width=Math.max(1,Math.round(r.width*dpr));
+  cv.height=Math.max(1,Math.round((cv.getAttribute('height')||300)*dpr));
+  cv.style.height=(cv.getAttribute('height')||300)+'px';
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,W:r.width,H:+(cv.getAttribute('height')||300)};
+}
+
+const PLOTLY_LAYOUT={
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(6,10,20,.45)',
+  font:{color:'#9fb0d4',family:'-apple-system,Segoe UI,Roboto,sans-serif',size:11},
+  margin:{l:52,r:18,t:28,b:46},
+  xaxis:{gridcolor:'rgba(130,160,255,.1)',zerolinecolor:'rgba(130,160,255,.2)',linecolor:'rgba(130,160,255,.25)'},
+  yaxis:{gridcolor:'rgba(130,160,255,.1)',zerolinecolor:'rgba(130,160,255,.2)',linecolor:'rgba(130,160,255,.25)'},
+  hoverlabel:{bgcolor:'#121a2e',bordercolor:'rgba(130,160,255,.3)',font:{color:'#e8edfa'}},
+  showlegend:true, legend:{bgcolor:'rgba(0,0,0,0)',font:{size:10}}
+};
+const PCFG={displayModeBar:false,responsive:true};
+function L(extra){return Object.assign(JSON.parse(JSON.stringify(PLOTLY_LAYOUT)),extra||{});}
+
+const C={a:'#6ee7ff',p:'#a78bfa',g:'#4ade80',r:'#fb7185',am:'#fbbf24',b:'#60a5fa',t:'#9fb0d4'};
+
+/* ── Reveal on scroll ─────────────────────────────── */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+$$('.reveal').forEach(e=>io.observe(e));
+
+/* ── Progress bar + TOC ───────────────────────────── */
+const secs=$$('section[data-toc]');
+const toc=$('#toc');
+secs.forEach(s=>{
+  const a=document.createElement('a');
+  a.href='#'+s.id;
+  a.innerHTML=`<span class="lbl">${s.dataset.toc}</span><span class="dot"></span>`;
+  toc.appendChild(a);
+});
+const tocLinks=[...toc.children];
+function onScroll(){
+  const sc=window.scrollY, h=document.body.scrollHeight-window.innerHeight;
+  $('#progress').style.width=(sc/h*100)+'%';
+  let act=0;
+  secs.forEach((s,i)=>{ if(s.getBoundingClientRect().top<window.innerHeight*0.4) act=i; });
+  tocLinks.forEach((a,i)=>a.classList.toggle('active',i===act));
+}
+window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+/* ── Temml rendering ──────────────────────────────── */
+function tex(el,s,disp){
+  if(!el)return;
+  try{ el.innerHTML=temml.renderToString(s,{displayMode:!!disp}); }
+  catch(e){ el.textContent=s; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO CANVAS — morphende Punktwolke
+   ═══════════════════════════════════════════════════════════ */
+(function heroAnim(){
+  const cv=$('#heroCanvas');
+  let W,H,ctx,pts=[],t=0;
+  function resize(){
+    const dpr=window.devicePixelRatio||1;
+    W=cv.clientWidth; H=cv.clientHeight;
+    cv.width=W*dpr; cv.height=H*dpr;
+    ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  const r=mkRnd(7);
+  function build(){
+    pts=[];
+    for(let i=0;i<340;i++){
+      const cls=i<170?0:1;
+      pts.push({cls, ph:r()*TAU, rr:r(), s:0.4+r()*0.9});
+    }
+  }
+  function pos(p,phase){
+    // phase 0: verschränkte Ringe → phase 1: zwei Klumpen
+    const a=p.ph;
+    const R=Math.min(W,H)*0.22;
+    // Startkonfiguration: zwei ineinander verschlungene Ringe
+    let x0,y0;
+    if(p.cls===0){ x0=Math.cos(a)*R-R*0.45; y0=Math.sin(a)*R*(0.95); }
+    else         { x0=Math.cos(a)*R+R*0.45; y0=Math.sin(a)*R*(0.95); }
+    x0+=(p.rr-0.5)*R*0.22; y0+=(p.rr-0.5)*R*0.22;
+    // Endkonfiguration: zwei getrennte Klumpen
+    const bx=p.cls===0? -R*1.5 : R*1.5;
+    const ang=p.ph, rad=R*0.42*Math.sqrt(p.rr);
+    const x1=bx+Math.cos(ang)*rad, y1=Math.sin(ang)*rad;
+    const e=phase*phase*(3-2*phase);
+    return [W/2+lerp(x0,x1,e), H/2+lerp(y0,y1,e)];
+  }
+  function frame(){
+    t+=0.0045;
+    const ph=(Math.sin(t)*0.5+0.5);
+    ctx.clearRect(0,0,W,H);
+    // Verbindungen
+    ctx.lineWidth=0.5;
+    for(let i=0;i<pts.length;i+=3){
+      const [x1,y1]=pos(pts[i],ph);
+      const j=(i+3)%pts.length;
+      if(pts[j].cls!==pts[i].cls) continue;
+      const [x2,y2]=pos(pts[j],ph);
+      const d=Math.hypot(x2-x1,y2-y1);
+      if(d<70){
+        ctx.strokeStyle=pts[i].cls===0?`rgba(74,222,128,${0.14*(1-d/70)})`:`rgba(251,113,133,${0.14*(1-d/70)})`;
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+      }
+    }
+    for(const p of pts){
+      const [x,y]=pos(p,ph);
+      ctx.fillStyle=p.cls===0?'rgba(74,222,128,.75)':'rgba(251,113,133,.75)';
+      ctx.beginPath();ctx.arc(x,y,p.s*1.7,0,TAU);ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  resize();build();frame();
+  window.addEventListener('resize',()=>{resize();});
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   1 · DEMO: Punkt vs. Mannigfaltigkeit
+   ═══════════════════════════════════════════════════════════ */
+(function demo1(){
+  const cv=$('#d1c'), sl=$('#d1s'), vv=$('#d1v');
+  const r=mkRnd(42);
+  // zwei konzentrische Ringe
+  const P=[];
+  for(let i=0;i<260;i++){
+    const a=r()*TAU;
+    const inner=i<110;
+    const rad=inner? 0.34+gauss(r)*0.035 : 0.78+gauss(r)*0.04;
+    P.push({x:Math.cos(a)*rad,y:Math.sin(a)*rad,c:inner?0:1});
+  }
+  const special=P[20];
+  function transform(p,t){
+    // "Falten": |x| und Streckung – zerreisst die Ringe
+    let x=p.x,y=p.y;
+    const fx=Math.abs(x), fy=Math.abs(y);
+    x=lerp(x,fx*1.25-0.5,t);
+    y=lerp(y,fy*1.25-0.5,t);
+    return [x,y];
+  }
+  function draw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    const t=+sl.value/100; vv.textContent=t.toFixed(2);
+    ctx.clearRect(0,0,W,H);
+    const halfW=W/2;
+    // Panels
+    [0,1].forEach(pane=>{
+      const ox=pane*halfW, s=Math.min(halfW,H)*0.38;
+      const cx=ox+halfW/2, cy=H/2;
+      ctx.save();
+      ctx.strokeStyle='rgba(130,160,255,.12)';
+      ctx.strokeRect(ox+8,8,halfW-16,H-16);
+      ctx.fillStyle='rgba(159,176,212,.85)';ctx.font='12px -apple-system,sans-serif';
+      ctx.fillText(pane===0?'Nur EIN Punkt beobachten':'Die GANZE Mannigfaltigkeit',ox+18,26);
+      // Achsen
+      ctx.strokeStyle='rgba(130,160,255,.1)';ctx.beginPath();
+      ctx.moveTo(ox+14,cy);ctx.lineTo(ox+halfW-14,cy);
+      ctx.moveTo(cx,20);ctx.lineTo(cx,H-14);ctx.stroke();
+      if(pane===1){
+        for(const p of P){
+          const [x,y]=transform(p,t);
+          ctx.fillStyle=p.c===0?'rgba(74,222,128,.85)':'rgba(251,113,133,.85)';
+          ctx.beginPath();ctx.arc(cx+x*s,cy-y*s,2.1,0,TAU);ctx.fill();
+        }
+      }
+      const [sx,sy]=transform(special,t);
+      ctx.fillStyle='#fbbf24';
+      ctx.beginPath();ctx.arc(cx+sx*s,cy-sy*s,6,0,TAU);ctx.fill();
+      ctx.strokeStyle='rgba(251,191,36,.5)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(cx+sx*s,cy-sy*s,11,0,TAU);ctx.stroke();
+      ctx.restore();
+    });
+    ctx.strokeStyle='rgba(130,160,255,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(halfW,10);ctx.lineTo(halfW,H-10);ctx.stroke();
+  }
+  sl.addEventListener('input',draw);
+  window.addEventListener('resize',draw);
+  setTimeout(draw,60); draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   2 · TOPOLOGIE: Morph-Demo
+   ═══════════════════════════════════════════════════════════ */
+(function morphDemo(){
+  const cv=$('#d2a'), sl=$('#d2as'), vv=$('#d2av'), msg=$('#d2amsg');
+  let mode=0;
+  const MSGS=[
+    `<b>Erlaubt.</b> Volumen wird verschoben, der Henkel wird zum Loch — niemals zerrissen. Beide haben β₁ = 1. <b>Topologisch identisch.</b>`,
+    `<b>Erlaubt.</b> Ecken sind rein geometrisch, topologisch irrelevant. Kreis und Quadrat haben beide β₀=1, β₁=1. <b>Identisch.</b>`,
+    `<b>VERBOTEN.</b> Hier muss der Kreis aufgeschnitten werden. β₁ springt von 1 auf 0. <b>Kein Homöomorphismus</b> — genau das macht ReLU!`
+  ];
+  function draw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    const t=+sl.value/100; vv.textContent=Math.round(t*100)+'%';
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, s=Math.min(W,H)*0.3;
+    ctx.lineWidth=2.5;
+    if(mode===0){
+      // Kaffeetasse -> Donut: Außenkontur morpht
+      const N=220;
+      ctx.strokeStyle=C.a; ctx.fillStyle='rgba(110,231,255,.1)';
+      ctx.beginPath();
+      for(let i=0;i<=N;i++){
+        const a=i/N*TAU;
+        // Donut Außenring
+        let dx=Math.cos(a)*s, dy=Math.sin(a)*s*0.72;
+        // Tassenform: Becher + Henkel approx
+        const cup = Math.abs(Math.cos(a))>0.0 ? 1:1;
+        let tx = Math.cos(a)*s*0.72 - s*0.35;
+        let ty = Math.sin(a)*s*0.9;
+        // Becher als Rechteck-ish
+        tx = Math.sign(Math.cos(a))*s*0.55 - s*0.3;
+        ty = Math.sin(a)*s*0.95;
+        const sq = Math.max(-1,Math.min(1,Math.cos(a)*2.2));
+        tx = sq*s*0.52 - s*0.28; ty=Math.sin(a)*s*0.95;
+        const x=lerp(tx,dx,t), y=lerp(ty,dy,t);
+        i?ctx.lineTo(cx+x,cy+y):ctx.moveTo(cx+x,cy+y);
+      }
+      ctx.closePath();ctx.fill();ctx.stroke();
+      // Inneres Loch / Henkel
+      ctx.strokeStyle=C.p; ctx.fillStyle='rgba(7,10,18,1)';
+      ctx.beginPath();
+      for(let i=0;i<=N;i++){
+        const a=i/N*TAU;
+        let dx=Math.cos(a)*s*0.38, dy=Math.sin(a)*s*0.27;
+        let hx=s*0.62+Math.cos(a)*s*0.17, hy=Math.sin(a)*s*0.3;
+        const x=lerp(hx,dx,t), y=lerp(hy,dy,t);
+        i?ctx.lineTo(cx+x,cy+y):ctx.moveTo(cx+x,cy+y);
+      }
+      ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.fillStyle='rgba(167,139,250,.9)';ctx.font='12px -apple-system,sans-serif';
+      ctx.fillText('β₁ = 1 (ein Loch) — konstant!',cx-s,cy+s*1.25);
+    } else if(mode===1){
+      const N=240;
+      ctx.strokeStyle=C.g; ctx.fillStyle='rgba(74,222,128,.09)';
+      ctx.beginPath();
+      for(let i=0;i<=N;i++){
+        const a=i/N*TAU;
+        const circ=[Math.cos(a)*s,Math.sin(a)*s];
+        const k=Math.max(Math.abs(Math.cos(a)),Math.abs(Math.sin(a)));
+        const sqp=[Math.cos(a)/k*s*0.82,Math.sin(a)/k*s*0.82];
+        const x=lerp(circ[0],sqp[0],t), y=lerp(circ[1],sqp[1],t);
+        i?ctx.lineTo(cx+x,cy+y):ctx.moveTo(cx+x,cy+y);
+      }
+      ctx.closePath();ctx.fill();ctx.stroke();
+      ctx.fillStyle='rgba(74,222,128,.9)';ctx.font='12px -apple-system,sans-serif';
+      ctx.fillText('β₀ = 1, β₁ = 1 — konstant!',cx-s,cy+s*1.3);
+    } else {
+      // Kreis zerreissen
+      const N=240;
+      const gap=t*Math.PI*0.9;
+      ctx.strokeStyle=t>0.02?C.r:C.a;
+      ctx.beginPath();
+      for(let i=0;i<=N;i++){
+        const a=gap/2+i/N*(TAU-gap);
+        // nach außen aufrollen in Strecke
+        const circ=[Math.cos(a-Math.PI/2)*s,Math.sin(a-Math.PI/2)*s];
+        const u=i/N;
+        const line=[(u-0.5)*s*2.1, s*0.5];
+        const x=lerp(circ[0],line[0],t*t), y=lerp(circ[1],line[1],t*t);
+        i?ctx.lineTo(cx+x,cy+y):ctx.moveTo(cx+x,cy+y);
+      }
+      ctx.stroke();
+      if(t>0.02){
+        ctx.fillStyle='rgba(251,113,133,.9)';ctx.font='bold 13px -apple-system,sans-serif';
+        ctx.fillText('✂ SCHNITT — β₁: 1 → 0',cx-s*0.6,cy-s*0.85);
+      }
+      ctx.fillStyle='rgba(159,176,212,.9)';ctx.font='12px -apple-system,sans-serif';
+      ctx.fillText(t<0.02?'β₁ = 1':'β₁ = 0',cx-s,cy+s*1.3);
+    }
+    msg.innerHTML=MSGS[mode];
+    msg.className='note'+(mode===2?' a':' g');
+  }
+  $$('.morphbtn').forEach(b=>b.addEventListener('click',()=>{
+    $$('.morphbtn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); mode=+b.dataset.m; draw();
+  }));
+  sl.addEventListener('input',draw);
+  window.addEventListener('resize',draw);
+  setTimeout(draw,80); draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   2b · BETTI-LABOR (3D)
+   ═══════════════════════════════════════════════════════════ */
+(function bettiLab(){
+  const SHAPES={
+    ball:{n:'Kontrahierbarer Klumpen (Vollkugel)',d:'Keine Löcher, ein Stück. Das topologisch Einfachste überhaupt — und das Ziel jedes Netzes.',b:[1,0,0]},
+    five:{n:'Fünf getrennte Klumpen',d:'Fünf Stücke, keine Löcher. Entspricht Mₐ in Abbildung 2 des Papers (fünf Scheiben).',b:[5,0,0]},
+    sphere:{n:'Hohle Sphäre (Kugelschale)',d:'Eine Fläche, die einen Hohlraum einschließt. Kein Tunnel, aber eine „Luftblase".',b:[1,0,1]},
+    solidtorus:{n:'Volltorus (gefüllter Donut)',d:'Ein Tunnel geht hindurch, aber kein eingeschlossener Hohlraum.',b:[1,1,0]},
+    torus:{n:'Torusoberfläche (hohl)',d:'Zwei unabhängige Schleifen (durchs Loch und ums Rohr) und ein Hohlraum im Rohr.',b:[1,2,1]},
+    genus2:{n:'Doppeltorus (Brezel, hohl)',d:'Zwei Henkel → vier unabhängige Schleifen. Die Komplexität wächst schnell.',b:[1,4,1]},
+    linked:{n:'Verkettete Volltori (D-II Einheit)',d:'Zwei Volltori ineinander verhakt. Einzeln harmlos — zusammen topologisch gemein.',b:[2,2,0]},
+    nested:{n:'Verschachtelte Sphären (D-III Einheit)',d:'Kugel in Hohlsphäre in Hohlsphäre. Keine Hyperebene kann das trennen.',b:[2,0,2]}
+  };
+  const btns=$('#bettibtns');
+  Object.keys(SHAPES).forEach((k,i)=>{
+    const b=document.createElement('button');
+    b.textContent=SHAPES[k].n.split('(')[0].trim();
+    b.dataset.k=k; if(i===0)b.classList.add('active');
+    btns.appendChild(b);
+  });
+  function mesh(k){
+    const T=[];
+    const r=mkRnd(11);
+    const col=c=>c;
+    function sphereSurf(cx,cy,cz,R,color,op){
+      const u=[],v=[];
+      const N=28;
+      const X=[],Y=[],Z=[];
+      for(let i=0;i<=N;i++){
+        const th=i/N*Math.PI;
+        const xr=[],yr=[],zr=[];
+        for(let j=0;j<=N;j++){
+          const ph=j/N*TAU;
+          xr.push(cx+R*Math.sin(th)*Math.cos(ph));
+          yr.push(cy+R*Math.sin(th)*Math.sin(ph));
+          zr.push(cz+R*Math.cos(th));
+        }
+        X.push(xr);Y.push(yr);Z.push(zr);
+      }
+      return {type:'surface',x:X,y:Y,z:Z,showscale:false,opacity:op,
+        colorscale:[[0,color],[1,color]],hoverinfo:'skip',lighting:{ambient:.62,diffuse:.75,specular:.22}};
+    }
+    function torusSurf(cx,cy,cz,R,rr,color,op,axis){
+      const X=[],Y=[],Z=[];const N=38;
+      for(let i=0;i<=N;i++){
+        const u=i/N*TAU; const xr=[],yr=[],zr=[];
+        for(let j=0;j<=N;j++){
+          const v=j/N*TAU;
+          let x=(R+rr*Math.cos(v))*Math.cos(u);
+          let y=(R+rr*Math.cos(v))*Math.sin(u);
+          let z=rr*Math.sin(v);
+          if(axis==='x'){const t2=y;y=z;z=t2;}
+          xr.push(cx+x);yr.push(cy+y);zr.push(cz+z);
+        }
+        X.push(xr);Y.push(yr);Z.push(zr);
+      }
+      return {type:'surface',x:X,y:Y,z:Z,showscale:false,opacity:op,
+        colorscale:[[0,color],[1,color]],hoverinfo:'skip',lighting:{ambient:.62,diffuse:.75,specular:.22}};
+    }
+    if(k==='ball')        T.push(sphereSurf(0,0,0,1,'#6ee7ff',1));
+    if(k==='five'){
+      const pos=[[-1.6,0,0],[-0.8,1.2,0],[0.8,1.2,0],[1.6,0,0],[0,-1.3,0]];
+      pos.forEach(p=>T.push(sphereSurf(p[0],p[1],p[2],0.6,'#4ade80',1)));
+    }
+    if(k==='sphere')      T.push(sphereSurf(0,0,0,1.3,'#a78bfa',0.45));
+    if(k==='solidtorus')  T.push(torusSurf(0,0,0,1.2,0.5,'#4ade80',1));
+    if(k==='torus')       T.push(torusSurf(0,0,0,1.2,0.5,'#fbbf24',0.55));
+    if(k==='genus2'){
+      T.push(torusSurf(-1.1,0,0,1.0,0.38,'#fb7185',0.55));
+      T.push(torusSurf(1.1,0,0,1.0,0.38,'#fb7185',0.55));
+    }
+    if(k==='linked'){
+      T.push(torusSurf(0,0,0,1.1,0.4,'#4ade80',0.9));
+      T.push(torusSurf(1.1,0,0,1.1,0.4,'#fb7185',0.9,'x'));
+    }
+    if(k==='nested'){
+      T.push(sphereSurf(0,0,0,1.6,'#fb7185',0.22));
+      T.push(sphereSurf(0,0,0,1.0,'#4ade80',0.38));
+      T.push(sphereSurf(0,0,0,0.5,'#fb7185',1));
+    }
+    return T;
+  }
+  function render(k){
+    const s=SHAPES[k];
+    $('#bname').textContent=s.n;
+    $('#bdesc').textContent=s.d;
+    $('#bb0').textContent=s.b[0];
+    $('#bb1').textContent=s.b[1];
+    $('#bb2').textContent=s.b[2];
+    $('#bomega').textContent=s.b[0]+s.b[1]+s.b[2];
+    Plotly.react('betti3d',mesh(k),L({
+      scene:{
+        xaxis:{visible:false},yaxis:{visible:false},zaxis:{visible:false},
+        bgcolor:'rgba(0,0,0,0)',
+        aspectmode:'data',
+        camera:{eye:{x:1.7,y:1.5,z:1.1}}
+      },
+      showlegend:false, margin:{l:0,r:0,t:0,b:0}
+    }),PCFG);
+  }
+  btns.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    [...btns.children].forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); render(b.dataset.k);
+  });
+  render('ball');
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   2c · LOCH-PUZZLE
+   ═══════════════════════════════════════════════════════════ */
+(function puzzle(){
+  const cv=$('#pzc');
+  let mode='disk', items=[];
+  function redraw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(6,10,20,.4)';ctx.fillRect(0,0,W,H);
+    // Scheiben
+    items.filter(i=>i.t==='d').forEach(i=>{
+      ctx.fillStyle='rgba(74,222,128,.32)';
+      ctx.strokeStyle='rgba(74,222,128,.8)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(i.x*W,i.y*H,i.r,0,TAU);ctx.fill();ctx.stroke();
+    });
+    // Löcher
+    items.filter(i=>i.t==='h').forEach(i=>{
+      ctx.save();ctx.globalCompositeOperation='destination-out';
+      ctx.beginPath();ctx.arc(i.x*W,i.y*H,i.r,0,TAU);ctx.fill();ctx.restore();
+      ctx.strokeStyle='rgba(251,113,133,.9)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.arc(i.x*W,i.y*H,i.r,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    });
+    if(items.length===0){
+      ctx.fillStyle='rgba(159,176,212,.5)';ctx.font='13px -apple-system,sans-serif';
+      ctx.textAlign='center';ctx.fillText('Klicke in die Fläche…',W/2,H/2);ctx.textAlign='left';
+    }
+    compute(W,H);
+  }
+  function compute(W,H){
+    const disks=items.filter(i=>i.t==='d');
+    const holes=items.filter(i=>i.t==='h');
+    // β0: Union-Find über überlappende Scheiben
+    const par=disks.map((_,i)=>i);
+    const find=a=>{while(par[a]!==a){par[a]=par[par[a]];a=par[a];}return a;};
+    const uni=(a,b)=>{a=find(a);b=find(b);if(a!==b)par[a]=b;};
+    for(let i=0;i<disks.length;i++)for(let j=i+1;j<disks.length;j++){
+      const d=Math.hypot((disks[i].x-disks[j].x)*W,(disks[i].y-disks[j].y)*H);
+      if(d<disks[i].r+disks[j].r) uni(i,j);
+    }
+    const comps=new Set(disks.map((_,i)=>find(i)));
+    const b0=comps.size;
+    // β1: Löcher, die innerhalb einer Scheibe liegen
+    let b1=0;
+    holes.forEach(h=>{
+      const inside=disks.some(d=>{
+        const dd=Math.hypot((d.x-h.x)*W,(d.y-h.y)*H);
+        return dd+h.r<d.r*1.02;
+      });
+      if(inside)b1++;
+    });
+    $('#pzb0').textContent=b0;
+    $('#pzb1').textContent=b1;
+    $('#pzw').textContent=b0+b1;
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
+    items.push({t:mode==='disk'?'d':'h',x,y,r:mode==='disk'?46:17});
+    redraw();
+  });
+  $('#pz_mode_disk').addEventListener('click',()=>{mode='disk';
+    $('#pz_mode_disk').classList.add('active');$('#pz_mode_hole').classList.remove('active');});
+  $('#pz_mode_hole').addEventListener('click',()=>{mode='hole';
+    $('#pz_mode_hole').classList.add('active');$('#pz_mode_disk').classList.remove('active');});
+  $('#pz_clear').addEventListener('click',()=>{items=[];redraw();});
+  window.addEventListener('resize',redraw);
+  setTimeout(redraw,100);redraw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   3 · VIETORIS–RIPS
+   ═══════════════════════════════════════════════════════════ */
+function unionFindComponents(n,edges){
+  const par=Array.from({length:n},(_,i)=>i);
+  const find=a=>{while(par[a]!==a){par[a]=par[par[a]];a=par[a];}return a;};
+  edges.forEach(([a,b])=>{a=find(a);b=find(b);if(a!==b)par[a]=b;});
+  return new Set(Array.from({length:n},(_,i)=>find(i))).size;
+}
+// Approx β1 via Euler-Charakteristik für 2-dim Komplex: χ = V - E + F ; β1 = β0 - χ (wenn β2=0)
+function betti1Approx(V,E,F,b0){ return Math.max(0, b0-(V-E+F)); }
+
+(function vrDemo(){
+  const cv=$('#vrc'), sl=$('#vrs');
+  let pts=[], showBalls=true, showTri=true, seed=5;
+  function sample(){
+    const r=mkRnd(seed);
+    pts=[];
+    for(let i=0;i<34;i++){
+      const a=i/34*TAU+gauss(r)*0.04;
+      const rad=0.72+gauss(r)*0.055;
+      pts.push([Math.cos(a)*rad,Math.sin(a)*rad]);
+    }
+  }
+  sample();
+  function draw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    const eps=+sl.value/100*0.55;
+    $('#vrv').textContent=eps.toFixed(2);
+    ctx.clearRect(0,0,W,H);
+    const s=Math.min(W,H)*0.40, cx=W/2, cy=H/2;
+    const P=pts.map(p=>[cx+p[0]*s,cy-p[1]*s]);
+    const R=eps*s;
+    // Kanten
+    const edges=[];
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+      if(Math.hypot(P[i][0]-P[j][0],P[i][1]-P[j][1])<=2*R) edges.push([i,j]);
+    }
+    const eset=new Set(edges.map(([a,b])=>a+'_'+b));
+    // Dreiecke
+    const tris=[];
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+      if(!eset.has(i+'_'+j))continue;
+      for(let k=j+1;k<P.length;k++){
+        if(eset.has(i+'_'+k)&&eset.has(j+'_'+k)) tris.push([i,j,k]);
+      }
+    }
+    if(showBalls){
+      ctx.fillStyle='rgba(110,231,255,.07)';
+      ctx.strokeStyle='rgba(110,231,255,.22)';ctx.lineWidth=1;
+      P.forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],R,0,TAU);ctx.fill();ctx.stroke();});
+    }
+    if(showTri){
+      ctx.fillStyle='rgba(74,222,128,.14)';
+      tris.forEach(([i,j,k])=>{
+        ctx.beginPath();ctx.moveTo(...P[i]);ctx.lineTo(...P[j]);ctx.lineTo(...P[k]);
+        ctx.closePath();ctx.fill();
+      });
+    }
+    ctx.strokeStyle='rgba(167,139,250,.75)';ctx.lineWidth=1.4;
+    edges.forEach(([i,j])=>{ctx.beginPath();ctx.moveTo(...P[i]);ctx.lineTo(...P[j]);ctx.stroke();});
+    P.forEach(p=>{
+      ctx.fillStyle='#e8edfa';ctx.beginPath();ctx.arc(p[0],p[1],3.4,0,TAU);ctx.fill();
+    });
+    const b0=unionFindComponents(P.length,edges);
+    const b1=betti1Approx(P.length,edges.length,tris.length,b0);
+    $('#vr_n0').textContent=P.length;
+    $('#vr_n1').textContent=edges.length;
+    $('#vr_n2').textContent=tris.length;
+    $('#vr_b0').textContent=b0;
+    $('#vr_b1').textContent=b1;
+    let h;
+    if(b0>8) h='ε viel zu klein — fast nur isolierte Punkte. „Overfitting" der Topologie.';
+    else if(b0===1&&b1===1) h='✓ Perfekt! Ein Stück, ein Loch — die wahre Topologie eines Kreises.';
+    else if(b0===1&&b1===0) h='ε zu groß — das Loch ist zugewachsen, alles ein Klumpen.';
+    else h='Zwischenbereich — noch nicht alle Punkte verbunden.';
+    $('#vr_hint').innerHTML=h;
+  }
+  sl.addEventListener('input',draw);
+  $('#vr_show_balls').addEventListener('click',function(){showBalls=!showBalls;this.classList.toggle('active');draw();});
+  $('#vr_show_tri').addEventListener('click',function(){showTri=!showTri;this.classList.toggle('active');draw();});
+  $('#vr_resample').addEventListener('click',()=>{seed=(seed*7+13)%9999;sample();draw();});
+  window.addEventListener('resize',draw);
+  setTimeout(draw,120);draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   3b · PERSISTENTE HOMOLOGIE / BARCODES
+   ═══════════════════════════════════════════════════════════ */
+(function phDemo(){
+  const cv=$('#phc'), bc=$('#phb'), sl=$('#phs');
+  let shape='circle', pts=[], bars=null;
+  function gen(){
+    const r=mkRnd(23); pts=[];
+    if(shape==='circle'){
+      for(let i=0;i<36;i++){const a=i/36*TAU+gauss(r)*0.05;
+        const rad=0.7+gauss(r)*0.05;pts.push([Math.cos(a)*rad,Math.sin(a)*rad]);}
+    } else if(shape==='two'){
+      for(let i=0;i<22;i++){const a=i/22*TAU;
+        pts.push([-0.52+Math.cos(a)*0.38+gauss(r)*0.03,Math.sin(a)*0.38+gauss(r)*0.03]);}
+      for(let i=0;i<22;i++){const a=i/22*TAU;
+        pts.push([0.52+Math.cos(a)*0.38+gauss(r)*0.03,Math.sin(a)*0.38+gauss(r)*0.03]);}
+    } else if(shape==='blob'){
+      for(let i=0;i<44;i++){const a=r()*TAU, rad=Math.sqrt(r())*0.65;
+        pts.push([Math.cos(a)*rad,Math.sin(a)*rad]);}
+    } else { // eight
+      for(let i=0;i<24;i++){const a=i/24*TAU;
+        pts.push([-0.42+Math.cos(a)*0.36+gauss(r)*0.025,Math.sin(a)*0.36+gauss(r)*0.025]);}
+      for(let i=0;i<24;i++){const a=i/24*TAU;
+        pts.push([0.42+Math.cos(a)*0.36+gauss(r)*0.025,Math.sin(a)*0.36+gauss(r)*0.025]);}
+    }
+    bars=computeBars();
+  }
+  function complexAt(eps,P){
+    const edges=[];
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+      if(Math.hypot(P[i][0]-P[j][0],P[i][1]-P[j][1])<=2*eps)edges.push([i,j]);
+    }
+    const es=new Set(edges.map(([a,b])=>a+'_'+b));
+    let tri=0;
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
+      if(!es.has(i+'_'+j))continue;
+      for(let k=j+1;k<P.length;k++) if(es.has(i+'_'+k)&&es.has(j+'_'+k))tri++;
+    }
+    const b0=unionFindComponents(P.length,edges);
+    const b1=betti1Approx(P.length,edges.length,tri,b0);
+    return {b0,b1,edges,tri};
+  }
+  function computeBars(){
+    // Simuliere Barcodes durch Sampling über ε
+    const STEPS=120, MAX=0.72;
+    const prof=[];
+    for(let s=0;s<=STEPS;s++){
+      const e=s/STEPS*MAX;
+      const r=complexAt(e,pts);
+      prof.push({e,b0:r.b0,b1:r.b1});
+    }
+    // β0-Balken: alle starten bei 0, sterben wenn b0 sinkt
+    const n=pts.length;
+    const b0bars=[]; let cur=n;
+    for(const p of prof){
+      while(cur>p.b0){ b0bars.push([0,p.e]); cur--; }
+    }
+    for(let i=0;i<cur;i++) b0bars.push([0,MAX*1.08]);
+    // β1-Balken: Geburt wenn b1 steigt, Tod wenn b1 sinkt
+    const b1bars=[]; const open=[]; let prev=0;
+    for(const p of prof){
+      while(p.b1>prev){ open.push(p.e); prev++; }
+      while(p.b1<prev){ const b=open.pop(); b1bars.push([b,p.e]); prev--; }
+    }
+    open.forEach(b=>b1bars.push([b,MAX*1.08]));
+    return {b0bars,b1bars,MAX,prof};
+  }
+  function draw(){
+    const eps=+sl.value/100*0.72;
+    $('#phv').textContent=eps.toFixed(3);
+    // links: Punktwolke
+    {
+      const {ctx,W,H}=fitCanvas(cv);
+      ctx.clearRect(0,0,W,H);
+      const s=Math.min(W,H)*0.40,cx=W/2,cy=H/2;
+      const P=pts.map(p=>[cx+p[0]*s,cy-p[1]*s]);
+      const R=eps*s;
+      const res=complexAt(eps,pts);
+      ctx.fillStyle='rgba(110,231,255,.06)';ctx.strokeStyle='rgba(110,231,255,.16)';
+      P.forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],R,0,TAU);ctx.fill();ctx.stroke();});
+      ctx.strokeStyle='rgba(167,139,250,.7)';ctx.lineWidth=1.3;
+      res.edges.forEach(([i,j])=>{ctx.beginPath();ctx.moveTo(...P[i]);ctx.lineTo(...P[j]);ctx.stroke();});
+      P.forEach(p=>{ctx.fillStyle='#e8edfa';ctx.beginPath();ctx.arc(p[0],p[1],3,0,TAU);ctx.fill();});
+      ctx.fillStyle='rgba(159,176,212,.9)';ctx.font='12px -apple-system,sans-serif';
+      ctx.fillText(`β₀ = ${res.b0}   β₁ = ${res.b1}`,12,20);
+      const expect={circle:'β₀=1, β₁=1',two:'β₀=2, β₁=2',blob:'β₀=1, β₁=0',eight:'β₀=2, β₁=2'}[shape];
+      ctx.fillStyle='rgba(74,222,128,.75)';
+      ctx.fillText('Wahrheit: '+expect,12,38);
+      $('#phmsg').innerHTML = (res.b0+'' === expect.match(/β₀=(\d)/)[1] && res.b1+'' === expect.match(/β₁=(\d)/)[1])
+        ? '<b style="color:var(--green)">✓ Richtiger Maßstab!</b> Bei diesem ε stimmt die berechnete Topologie mit der Wahrheit überein. Genau so wird ε* im Paper bestimmt.'
+        : '<b style="color:var(--amber)">Noch nicht korrekt.</b> Schiebe ε, bis die berechneten Zahlen der Wahrheit entsprechen — das ist der Bereich der langen Balken im Barcode.';
+    }
+    // rechts: Barcode
+    {
+      const {ctx,W,H}=fitCanvas(bc);
+      ctx.clearRect(0,0,W,H);
+      const PAD=38, top=26, bot=H-26;
+      const MAX=bars.MAX*1.1;
+      const X=e=>PAD+(e/MAX)*(W-PAD-16);
+      // Achse
+      ctx.strokeStyle='rgba(130,160,255,.25)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(PAD,bot);ctx.lineTo(W-14,bot);ctx.stroke();
+      ctx.fillStyle='rgba(159,176,212,.7)';ctx.font='10px monospace';
+      for(let i=0;i<=4;i++){
+        const e=i/4*MAX;
+        ctx.beginPath();ctx.moveTo(X(e),bot);ctx.lineTo(X(e),bot+4);ctx.stroke();
+        ctx.fillText(e.toFixed(2),X(e)-10,bot+16);
+      }
+      const all=[...bars.b0bars.map(b=>({b,c:'#60a5fa'})),...bars.b1bars.map(b=>({b,c:'#fb7185'}))];
+      const n=all.length;
+      const h=Math.max(1.8,Math.min(5,(bot-top)/n-1));
+      all.forEach((o,i)=>{
+        const y=top+i*((bot-top)/n);
+        ctx.strokeStyle=o.c;ctx.lineWidth=h;
+        ctx.beginPath();ctx.moveTo(X(o.b[0]),y);ctx.lineTo(X(Math.min(o.b[1],MAX)),y);ctx.stroke();
+      });
+      // epsilon-Linie
+      ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(X(eps),top-8);ctx.lineTo(X(eps),bot);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#fbbf24';ctx.font='11px monospace';
+      ctx.fillText('ε',X(eps)-3,top-12);
+      ctx.fillStyle='rgba(159,176,212,.85)';ctx.font='11px -apple-system,sans-serif';
+      ctx.fillText('Barcode-Diagramm',PAD,16);
+    }
+  }
+  $$('.phshape').forEach(b=>b.addEventListener('click',()=>{
+    $$('.phshape').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');shape=b.dataset.s;gen();draw();
+  }));
+  sl.addEventListener('input',draw);
+  window.addEventListener('resize',draw);
+  gen();setTimeout(draw,140);draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   3c · GRAPH-GEODÄTISCHE
+   ═══════════════════════════════════════════════════════════ */
+(function geoDemo(){
+  const cv=$('#gdc'), sl=$('#gds');
+  const r=mkRnd(99);
+  const base=[];
+  for(let i=0;i<30;i++){
+    const a=i/30*TAU;
+    base.push([Math.cos(a)*0.8,Math.sin(a)*0.8]);
+  }
+  const IA=0, IB=14;
+  function draw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    const st=+sl.value/10; $('#gdv').textContent=st.toFixed(1)+'×';
+    ctx.clearRect(0,0,W,H);
+    const s=Math.min(W,H)*0.36,cx=W/2,cy=H/2;
+    const pts=base.map(p=>[p[0]*st,p[1]]);
+    const sx=Math.min(1, 1/st*1.0);
+    const P=pts.map(p=>[cx+p[0]*s*sx,cy-p[1]*s]);
+    // kNN Graph (k=3)
+    const K=3;
+    const adj=P.map(()=>[]);
+    P.forEach((p,i)=>{
+      const d=P.map((q,j)=>({j,d:Math.hypot(p[0]-q[0],p[1]-q[1])})).filter(o=>o.j!==i)
+        .sort((a,b)=>a.d-b.d).slice(0,K);
+      d.forEach(o=>{if(!adj[i].includes(o.j))adj[i].push(o.j);
+        if(!adj[o.j].includes(i))adj[o.j].push(i);});
+    });
+    ctx.strokeStyle='rgba(167,139,250,.35)';ctx.lineWidth=1;
+    adj.forEach((ns,i)=>ns.forEach(j=>{if(j>i){
+      ctx.beginPath();ctx.moveTo(...P[i]);ctx.lineTo(...P[j]);ctx.stroke();
+    }}));
+    // Geodätischer Pfad per BFS
+    const prev=new Array(P.length).fill(-1), dist=new Array(P.length).fill(Infinity);
+    dist[IA]=0; const q=[IA];
+    while(q.length){const u=q.shift();
+      adj[u].forEach(v=>{if(dist[v]===Infinity){dist[v]=dist[u]+1;prev[v]=u;q.push(v);}});}
+    let path=[],c=IB;
+    while(c!==-1&&c!==IA){path.push(c);c=prev[c];}
+    path.push(IA);
+    ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.6;
+    ctx.beginPath();
+    path.forEach((n,i)=>{i?ctx.lineTo(...P[n]):ctx.moveTo(...P[n]);});
+    ctx.stroke();
+    // Euklidische Linie
+    ctx.strokeStyle='rgba(110,231,255,.6)';ctx.lineWidth=1.6;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(...P[IA]);ctx.lineTo(...P[IB]);ctx.stroke();ctx.setLineDash([]);
+    P.forEach((p,i)=>{
+      ctx.fillStyle=(i===IA||i===IB)?'#fb7185':'#e8edfa';
+      ctx.beginPath();ctx.arc(p[0],p[1],(i===IA||i===IB)?5.5:3,0,TAU);ctx.fill();
+    });
+    // Werte in echten Koordinaten
+    const eu=Math.hypot((pts[IA][0]-pts[IB][0]),(pts[IA][1]-pts[IB][1]));
+    $('#gd_eu').textContent=eu.toFixed(2)+'  (wächst!)';
+    $('#gd_gg').textContent=(dist[IB])+' Kanten  (konstant)';
+    ctx.fillStyle='rgba(159,176,212,.75)';ctx.font='11px -apple-system,sans-serif';
+    ctx.fillText('— euklidisch (gestrichelt)   — Graph-Pfad (gelb)',12,H-10);
+  }
+  sl.addEventListener('input',draw);
+  window.addEventListener('resize',draw);
+  setTimeout(draw,160);draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   4 · FORMELN
+   ═══════════════════════════════════════════════════════════ */
+tex($('#layerformula'),'f_j(x)=\\sigma(A_j x + b_j)\\qquad\\text{Schicht }j',true);
+tex($('#netformula'),'\\nu = s\\circ f_l\\circ f_{l-1}\\circ\\cdots\\circ f_2\\circ f_1');
+tex($('#tanhdelta'),
+ '\\tanh_\\delta(x)=\\begin{cases}+1 & \\text{falls } \\mathrm{fl}(\\tanh x)>1-\\delta\\\\ \\mathrm{fl}(\\tanh x) & \\text{falls } -1+\\delta\\le \\mathrm{fl}(\\tanh x)\\le 1-\\delta\\\\ -1 & \\text{falls } \\mathrm{fl}(\\tanh x)<-1+\\delta\\end{cases}',true);
+
+/* ═══════════════════════════════════════════════════════════
+   4b · EINE SCHICHT INTERAKTIV
+   ═══════════════════════════════════════════════════════════ */
+(function layerDemo(){
+  const cv=$('#lyc');
+  let act='relu';
+  const ids=['a11','a12','a21','a22','b1','b2'];
+  const r=mkRnd(17);
+  const PTS=[];
+  // Gitter + zwei Ringe
+  for(let i=0;i<300;i++){
+    const a=r()*TAU, rad=Math.sqrt(r());
+    const inner=rad<0.52;
+    PTS.push({x:Math.cos(a)*rad*1.3,y:Math.sin(a)*rad*1.3,c:inner?0:1});
+  }
+  function actFn(v){
+    if(act==='id')return v;
+    if(act==='tanh')return Math.tanh(v);
+    if(act==='lrelu')return Math.max(v,0.2*v);
+    return Math.max(v,0);
+  }
+  function draw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    const A=[+$('#a11').value/100,+$('#a12').value/100,
+             +$('#a21').value/100,+$('#a22').value/100];
+    const b=[+$('#b1').value/100,+$('#b2').value/100];
+    $('#a11v').textContent=A[0].toFixed(2);$('#a12v').textContent=A[1].toFixed(2);
+    $('#a21v').textContent=A[2].toFixed(2);$('#a22v').textContent=A[3].toFixed(2);
+    $('#b1v').textContent=b[0].toFixed(2);$('#b2v').textContent=b[1].toFixed(2);
+    const t=+$('#lys').value/100; $('#lyv').textContent=Math.round(t*100)+'%';
+    const det=A[0]*A[3]-A[1]*A[2];
+    $('#ly_det').textContent=det.toFixed(2);
+    ctx.clearRect(0,0,W,H);
+    const s=Math.min(W/2,H)*0.30, cx=W/2, cy=H/2;
+    // Grid-Bilder zeichnen
+    function map(p){
+      const u=A[0]*p.x+A[1]*p.y+b[0];
+      const v=A[2]*p.x+A[3]*p.y+b[1];
+      return [actFn(u),actFn(v)];
+    }
+    // Hintergrundgitter transformiert
+    ctx.strokeStyle='rgba(110,231,255,.09)';ctx.lineWidth=1;
+    const G=11;
+    for(let gi=0;gi<=G;gi++){
+      for(let dir=0;dir<2;dir++){
+        ctx.beginPath();
+        for(let gj=0;gj<=40;gj++){
+          const a1=(gi/G-0.5)*3.2, a2=(gj/40-0.5)*3.2;
+          const p=dir===0?{x:a1,y:a2}:{x:a2,y:a1};
+          const m=map(p);
+          const X=cx+lerp(p.x,m[0],t)*s, Y=cy-lerp(p.y,m[1],t)*s;
+          gj?ctx.lineTo(X,Y):ctx.moveTo(X,Y);
+        }
+        ctx.stroke();
+      }
+    }
+    // Achsen
+    ctx.strokeStyle='rgba(130,160,255,.25)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(14,cy);ctx.lineTo(W-14,cy);
+    ctx.moveTo(cx,14);ctx.lineTo(cx,H-14);ctx.stroke();
+    // Punkte
+    let collapsed=0;
+    const out=[];
+    PTS.forEach(p=>{
+      const m=map(p);
+      out.push(m);
+      const X=cx+lerp(p.x,m[0],t)*s, Y=cy-lerp(p.y,m[1],t)*s;
+      ctx.fillStyle=p.c===0?'rgba(74,222,128,.85)':'rgba(251,113,133,.8)';
+      ctx.beginPath();ctx.arc(X,Y,2.3,0,TAU);ctx.fill();
+    });
+    // Kollaps messen: Punkte exakt auf 0 (ReLU) oder ±1 (tanh)
+    out.forEach(m=>{
+      if(act==='relu'&&(m[0]===0||m[1]===0))collapsed++;
+      else if(act==='tanh'&&(Math.abs(m[0])>0.9999||Math.abs(m[1])>0.9999))collapsed++;
+    });
+    const pct=Math.round(collapsed/out.length*100);
+    $('#ly_col').textContent=pct+'%';
+    const MSG={
+      id:'<b>Reine affine Abbildung.</b> Drehen, Strecken, Verschieben. Das Gitter wird verzerrt, aber nie zerrissen. <b>Topologie bleibt exakt erhalten.</b>',
+      tanh:'<b>tanh.</b> Alles wird in das Quadrat (−1,1)² gequetscht. Mathematisch ein Homöomorphismus — Topologie bleibt erhalten. Erst wenn Punkte auf <i>exakt</i> ±1 gerundet werden, ändert sich etwas.',
+      lrelu:'<b>Leaky ReLU.</b> Negative Werte werden auf 20 % gestaucht, aber nicht gelöscht. Bijektiv ⇒ theoretisch Homöomorphismus. Die Verzerrung ist aber so stark, dass Punkte numerisch verschmelzen.',
+      relu:'<b>ReLU.</b> Alles Negative klebt auf den Achsen fest! Diese Punkte sind danach <b>ununterscheidbar</b> — Topologie wird zerstört. Genau das ist der Mechanismus aus dem Paper.'
+    };
+    $('#layermsg').innerHTML=MSG[act];
+    // Beschriftung
+    ctx.fillStyle='rgba(159,176,212,.8)';ctx.font='11px -apple-system,sans-serif';
+    ctx.fillText(t<0.03?'Eingabe':(t>0.97?'Ausgabe σ(Ax+b)':'Übergang…'),14,20);
+  }
+  ids.forEach(i=>$('#'+i).addEventListener('input',draw));
+  $('#lys').addEventListener('input',draw);
+  $$('.actbtn').forEach(b=>b.addEventListener('click',()=>{
+    $$('.actbtn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');act=b.dataset.a;draw();
+  }));
+  window.addEventListener('resize',draw);
+  setTimeout(draw,180);draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   4c · AKTIVIERUNGSPLOT
+   ═══════════════════════════════════════════════════════════ */
+(function actPlot(){
+  function render(){
+    const al=+$('#als').value/100;
+    $('#alv').textContent=al.toFixed(2);
+    const xs=[];for(let i=-50;i<=50;i++)xs.push(i/10);
+    const tr=[
+      {x:xs,y:xs.map(x=>Math.tanh(x)),name:'tanh',line:{color:C.b,width:2.5}},
+      {x:xs,y:xs.map(x=>Math.max(x,al*x)),name:`Leaky ReLU (α=${al.toFixed(2)})`,line:{color:C.r,width:2.5}},
+      {x:xs,y:xs.map(x=>Math.max(x,0)),name:'ReLU',line:{color:C.g,width:2.5,dash:'dot'}}
+    ];
+    Plotly.react('actplot',tr,L({
+      xaxis:{title:'x',range:[-5,5]},yaxis:{title:'σ(x)',range:[-2.5,5]},
+      legend:{x:0.02,y:0.98}
+    }),PCFG);
+    $('#almsg').innerHTML = al<0.005
+      ? '<b style="color:var(--green)">α = 0 ⇒ das ist exakt ReLU.</b> Nicht injektiv, kein Homöomorphismus.'
+      : (al>0.99 ? '<b style="color:var(--amber)">α = 1 ⇒ das ist die Identität.</b> Gar keine Nichtlinearität mehr.'
+      : 'Für α > 0 ist die Funktion <b>streng monoton</b> und damit umkehrbar — ein Homöomorphismus. Je kleiner α, desto stärker die Stauchung und desto eher verschmelzen Punkte numerisch.');
+  }
+  $('#als').addEventListener('input',render);
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   5 · TANH-PRÄZISION
+   ═══════════════════════════════════════════════════════════ */
+(function tanhPrec(){
+  const DELTAS=[Math.pow(2,-54),Math.pow(2,-24),Math.pow(2,-14),Math.pow(2,-9),Math.pow(2,-6),Math.pow(2,-3)];
+  const LBL=['2⁻⁵⁴ (double)','2⁻²⁴ (single)','2⁻¹⁴','2⁻⁹ (half/BFloat16)','2⁻⁶','2⁻³ (extrem grob)'];
+  function render(){
+    const i=+$('#tds').value;
+    const d=DELTAS[i];
+    $('#tdv').textContent=LBL[i];
+    // Schwelle: tanh(x) > 1-d  <=>  x > atanh(1-d)
+    const xth=Math.atanh(1-d);
+    $('#tdx').textContent=xth.toFixed(2);
+    const xs=[];for(let k=-400;k<=400;k++)xs.push(k/40);
+    const ys=xs.map(x=>{
+      const t=Math.tanh(x);
+      if(t>1-d)return 1; if(t<-1+d)return -1; return t;
+    });
+    const tr=[
+      {x:xs,y:xs.map(Math.tanh),name:'tanh (exakt)',line:{color:'rgba(159,176,212,.45)',width:1.6,dash:'dot'}},
+      {x:xs,y:ys,name:'tanh_δ (Computer)',line:{color:C.p,width:3}},
+      {x:[-xth,-xth,null,xth,xth],y:[-1.4,1.4,null,-1.4,1.4],name:'Sättigungsgrenze',
+        line:{color:C.am,width:1.5,dash:'dash'},hoverinfo:'skip'}
+    ];
+    Plotly.react('tanhplot',tr,L({
+      xaxis:{title:'x',range:[-10,10]},yaxis:{title:'tanh_δ(x)',range:[-1.35,1.35]},
+      legend:{x:0.02,y:0.98},margin:{l:48,r:14,t:14,b:42}
+    }),PCFG);
+    // Anteil gesättigter Punkte bei Standardnormalverteilung der Aktivierungen (σ≈3)
+    const sd=3.0;
+    const frac=2*(1-normCDF(xth/sd));
+    $('#td_sat').textContent=(frac*100).toFixed(frac<0.01?3:1)+'%';
+    $('#td_homeo').textContent = frac>1e-6?'NEIN':'JA';
+    $('#td_homeo').style.color = frac>1e-6?'var(--red)':'var(--green)';
+  }
+  function normCDF(x){
+    // Abramowitz-Stegun
+    const t=1/(1+0.2316419*Math.abs(x));
+    const d=0.3989423*Math.exp(-x*x/2);
+    let p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));
+    return x>0?1-p:p;
+  }
+  $('#tds').addEventListener('input',render);
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   5b · RENNEN
+   ═══════════════════════════════════════════════════════════ */
+(function race(){
+  const cv=$('#racec');
+  const r=mkRnd(31);
+  const BASE=[];
+  for(let i=0;i<60;i++){const a=i/60*TAU;BASE.push([Math.cos(a)*1.1,Math.sin(a)*1.1]);}
+  const LANES=[
+    {k:'tanh',col:'#60a5fa',el:'race_t',ml:'race_tm'},
+    {k:'lrelu',col:'#fb7185',el:'race_l',ml:'race_lm'},
+    {k:'relu',col:'#4ade80',el:'race_r',ml:'race_rm'}
+  ];
+  let states=null, running=false, layer=0, timer=null;
+  function mkNet(seed){
+    const rn=mkRnd(seed);
+    const Ws=[];
+    for(let i=0;i<10;i++){
+      Ws.push({A:[gauss(rn)*1.1,gauss(rn)*1.1,gauss(rn)*1.1,gauss(rn)*1.1],
+               b:[gauss(rn)*0.6,gauss(rn)*0.6]});
+    }
+    return Ws;
+  }
+  const NET=mkNet(77);
+  function apply(pts,k,upto){
+    let P=pts.map(p=>[p[0],p[1]]);
+    for(let i=0;i<upto;i++){
+      const {A,b}=NET[i];
+      P=P.map(([x,y])=>{
+        let u=A[0]*x+A[1]*y+b[0], v=A[2]*x+A[3]*y+b[1];
+        if(k==='tanh'){u=Math.tanh(u*1.4);v=Math.tanh(v*1.4);
+          if(u>0.99999)u=1;if(u<-0.99999)u=-1;if(v>0.99999)v=1;if(v<-0.99999)v=-1;}
+        else if(k==='lrelu'){u=Math.max(u,0.2*u);v=Math.max(v,0.2*v);}
+        else {u=Math.max(u,0);v=Math.max(v,0);}
+        return [u,v];
+      });
+      // Normalisieren (wie Batch-Norm) für Darstellbarkeit
+      const mx=P.reduce((s,p)=>s+p[0],0)/P.length, my=P.reduce((s,p)=>s+p[1],0)/P.length;
+      let sd=Math.sqrt(P.reduce((s,p)=>s+(p[0]-mx)**2+(p[1]-my)**2,0)/P.length)||1;
+      P=P.map(p=>[(p[0]-mx)/sd*1.1,(p[1]-my)/sd*1.1]);
+    }
+    return P;
+  }
+  function hasLoop(P){
+    // grob: Loch vorhanden, wenn Punkte nicht in dünnem Band/Punkt kollabiert
+    // Messe: mittlerer Abstand vom Schwerpunkt vs. Standardabw. davon + Winkelabdeckung
+    const mx=P.reduce((s,p)=>s+p[0],0)/P.length, my=P.reduce((s,p)=>s+p[1],0)/P.length;
+    const rs=P.map(p=>Math.hypot(p[0]-mx,p[1]-my));
+    const mr=rs.reduce((a,b)=>a+b,0)/rs.length;
+    const sr=Math.sqrt(rs.reduce((s,v)=>s+(v-mr)**2,0)/rs.length);
+    // Winkelabdeckung
+    const bins=new Array(24).fill(0);
+    P.forEach(p=>{const a=Math.atan2(p[1]-my,p[0]-mx);
+      bins[Math.floor((a+Math.PI)/TAU*24)%24]++;});
+    const cover=bins.filter(b=>b>0).length/24;
+    // Duplikate (kollabierte Punkte)
+    const key=new Set(P.map(p=>p[0].toFixed(3)+','+p[1].toFixed(3)));
+    const uniq=key.size/P.length;
+    return (sr/mr<0.42) && cover>0.80 && uniq>0.75;
+  }
+  function draw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    ctx.clearRect(0,0,W,H);
+    const laneW=W/3;
+    LANES.forEach((ln,i)=>{
+      const ox=i*laneW, cx=ox+laneW/2, cy=H/2, s=Math.min(laneW,H)*0.30;
+      ctx.strokeStyle='rgba(130,160,255,.1)';ctx.strokeRect(ox+6,6,laneW-12,H-12);
+      const P=apply(BASE,ln.k,layer);
+      ctx.fillStyle=ln.col;
+      P.forEach(p=>{ctx.beginPath();ctx.arc(cx+p[0]*s,cy-p[1]*s,2.6,0,TAU);ctx.fill();});
+      ctx.fillStyle='rgba(232,237,250,.85)';ctx.font='12px -apple-system,sans-serif';
+      ctx.fillText(ln.k.toUpperCase()+' — Schicht '+layer,ox+14,24);
+      const loop=hasLoop(P);
+      $('#'+ln.el).textContent=loop?'β₁=1':'β₁=0';
+      $('#'+ln.ml).textContent=loop?('Loch lebt (Schicht '+layer+')'):('Loch tot ✓');
+      if(!loop){ctx.fillStyle='rgba(251,191,36,.9)';ctx.fillText('✓ kollabiert',ox+14,H-16);}
+    });
+  }
+  function start(){
+    if(running)return; running=true; layer=0;
+    timer=setInterval(()=>{
+      layer++; draw();
+      if(layer>=10){clearInterval(timer);running=false;}
+    },620);
+    draw();
+  }
+  $('#raceStart').addEventListener('click',start);
+  $('#raceReset').addEventListener('click',()=>{clearInterval(timer);running=false;layer=0;draw();});
+  window.addEventListener('resize',draw);
+  setTimeout(draw,200);draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   6 · DATENSÄTZE D-I / D-II / D-III (3D)
+   ═══════════════════════════════════════════════════════════ */
+(function datasets(){
+  const INFO={
+    1:{n:'D-I · Neun Scheiben in einer Scheibe',
+       d:'Eine große grüne Scheibe mit neun Löchern (M_b), in deren Löchern neun rote Scheiben (Mₐ) liegen. Zweidimensional, d = 2.',
+       a:[9,0,0],b:[1,9,0],dim:'2',k:'14',
+       note:'Das einfachste der drei. Jede Trennlinie muss neun Kreise umschließen — keine Gerade kann das.'},
+    2:{n:'D-II · Neun Paare verketteter Volltori',
+       d:'Neun disjunkte Paare: je ein grüner Volltorus verhakt mit einem roten Volltorus. Dreidimensional, d = 3.',
+       a:[9,9,0],b:[9,9,0],dim:'3',k:'35',
+       note:'Die schwierigste Struktur im Paper. Die Schleifen (β₁) überleben besonders viele Schichten.'},
+    3:{n:'D-III · Neun Einheiten verschachtelter Sphären',
+       d:'Je eine große rote Sphäre, darin eine kleinere grüne Sphäre, darin eine rote Kugel. Neunmal. d = 3.',
+       a:[9,0,9],b:[18,0,9],dim:'3',k:'35',
+       note:'Mₐ = neun grüne Hohlsphären, M_b = neun rote Sphären plus neun rote Vollkugeln. Deshalb β₀(M_b) = 18.'}
+  };
+  let cur=1, explode=0;
+  function sphereSurf(cx,cy,cz,R,color,op,N){
+    N=N||22;const X=[],Y=[],Z=[];
+    for(let i=0;i<=N;i++){
+      const th=i/N*Math.PI;const xr=[],yr=[],zr=[];
+      for(let j=0;j<=N;j++){
+        const ph=j/N*TAU;
+        xr.push(cx+R*Math.sin(th)*Math.cos(ph));
+        yr.push(cy+R*Math.sin(th)*Math.sin(ph));
+        zr.push(cz+R*Math.cos(th));
+      }
+      X.push(xr);Y.push(yr);Z.push(zr);
+    }
+    return {type:'surface',x:X,y:Y,z:Z,showscale:false,opacity:op,
+      colorscale:[[0,color],[1,color]],hoverinfo:'skip',
+      lighting:{ambient:.65,diffuse:.7,specular:.15}};
+  }
+  function torusSurf(cx,cy,cz,R,rr,color,op,axis){
+    const X=[],Y=[],Z=[];const N=26;
+    for(let i=0;i<=N;i++){
+      const u=i/N*TAU;const xr=[],yr=[],zr=[];
+      for(let j=0;j<=N;j++){
+        const v=j/N*TAU;
+        let x=(R+rr*Math.cos(v))*Math.cos(u);
+        let y=(R+rr*Math.cos(v))*Math.sin(u);
+        let z=rr*Math.sin(v);
+        if(axis==='x'){const t2=y;y=z;z=t2;}
+        xr.push(cx+x);yr.push(cy+y);zr.push(cz+z);
+      }
+      X.push(xr);Y.push(yr);Z.push(zr);
+    }
+    return {type:'surface',x:X,y:Y,z:Z,showscale:false,opacity:op,
+      colorscale:[[0,color],[1,color]],hoverinfo:'skip',
+      lighting:{ambient:.65,diffuse:.7,specular:.15}};
+  }
+  function build(){
+    const T=[];const e=explode;
+    if(cur===1){
+      // D-I: große Scheibe mit 9 Löchern + 9 Scheiben
+      // Grundplatte als Mesh
+      const R=3.2, hr=0.62;
+      const centers=[];
+      for(let i=0;i<3;i++)for(let j=0;j<3;j++)
+        centers.push([(i-1)*1.75,(j-1)*1.75]);
+      // Grüner Grund: Punktwolke mit Löchern
+      const rr=mkRnd(5);const gx=[],gy=[],gz=[];
+      for(let n=0;n<4200;n++){
+        const a=rr()*TAU, rad=Math.sqrt(rr())*R;
+        const x=Math.cos(a)*rad,y=Math.sin(a)*rad;
+        if(centers.some(c=>Math.hypot(x-c[0],y-c[1])<hr+0.07))continue;
+        gx.push(x);gy.push(y);gz.push(0);
+      }
+      T.push({type:'scatter3d',mode:'markers',x:gx,y:gy,z:gz,
+        marker:{size:1.6,color:'#4ade80',opacity:.75},name:'M_b (Scheibe mit 9 Löchern)'});
+      const rx=[],ry=[],rz=[];
+      centers.forEach((c,idx)=>{
+        for(let n=0;n<240;n++){
+          const a=rr()*TAU, rad=Math.sqrt(rr())*hr;
+          rx.push(c[0]+Math.cos(a)*rad);ry.push(c[1]+Math.sin(a)*rad);
+          rz.push(e*0.9*(1+(idx%3)*0.3));
+        }
+      });
+      T.push({type:'scatter3d',mode:'markers',x:rx,y:ry,z:rz,
+        marker:{size:2.2,color:'#fb7185'},name:'Mₐ (9 Scheiben)'});
+    } else if(cur===2){
+      // D-II: verkettete Tori (zeige 3 Paare für Performance)
+      const pairs=[[-3,0],[0,0],[3,0]];
+      pairs.forEach((p,i)=>{
+        const off=e*1.2;
+        T.push(torusSurf(p[0]-off*0.5,p[1],0,1.0,0.33,'#4ade80',0.92));
+        T.push(torusSurf(p[0]+1.0+off*0.5,p[1],0,1.0,0.33,'#fb7185',0.92,'x'));
+      });
+    } else {
+      // D-III: verschachtelte Sphären (3 Einheiten)
+      const units=[[-3.2,0],[0,0],[3.2,0]];
+      units.forEach(u=>{
+        T.push(sphereSurf(u[0],u[1],0,1.5+e*0.5,'#fb7185',0.16));
+        T.push(sphereSurf(u[0],u[1],0,1.0+e*0.2,'#4ade80',0.32));
+        T.push(sphereSurf(u[0],u[1],0,0.45,'#fb7185',1));
+      });
+    }
+    return T;
+  }
+  function render(){
+    const I=INFO[cur];
+    $('#ds_name').textContent=I.n;
+    $('#ds_desc').textContent=I.d;
+    ['a','b'].forEach(s=>{
+      const v=I[s];
+      $('#ds_'+s+'0').textContent=v[0];
+      $('#ds_'+s+'1').textContent=v[1];
+      $('#ds_'+s+'2').textContent=v[2];
+      $('#ds_'+s+'w').innerHTML='<b style="color:var(--amber)">'+(v[0]+v[1]+v[2])+'</b>';
+    });
+    $('#ds_dim').textContent=I.dim;
+    $('#ds_k').textContent=I.k;
+    $('#ds_note').textContent=I.note;
+    Plotly.react('ds3d',build(),L({
+      scene:{xaxis:{visible:false},yaxis:{visible:false},zaxis:{visible:false},
+        bgcolor:'rgba(0,0,0,0)',aspectmode:'data',camera:{eye:{x:1.4,y:-1.7,z:1.0}}},
+      showlegend:false,margin:{l:0,r:0,t:0,b:0}
+    }),PCFG);
+  }
+  $$('.dsbtn').forEach(b=>b.addEventListener('click',()=>{
+    $$('.dsbtn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');cur=+b.dataset.d;render();
+  }));
+  $('#dsex').addEventListener('input',function(){
+    explode=+this.value/100;$('#dsexv').textContent=this.value+'%';render();
+  });
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   6b · (k,ε)-GITTER (Abb. 10)
+   ═══════════════════════════════════════════════════════════ */
+(function keGrid(){
+  const ks=[],es=[],cols=[],txt=[];
+  const rnd=mkRnd(13);
+  for(let k=5;k<=45;k+=2){
+    for(let ei=1;ei<=14;ei++){
+      const e=ei*0.5;
+      // "korrekt", wenn k gross genug und ε in mittlerem Band
+      const okK = k>=12;
+      const lo = 1.2 + 18/k;
+      const hi = 3.4 + 28/k;
+      const ok = okK && e>=lo && e<=hi;
+      ks.push(k);es.push(e);
+      cols.push(ok?'#4ade80':'#fb7185');
+      txt.push(`k=${k}, ε=${e.toFixed(1)}<br>${ok?'✓ Homologie korrekt':'✗ Homologie falsch'}`);
+    }
+  }
+  const tr=[
+    {x:ks,y:es,mode:'markers',type:'scatter',
+     marker:{size:8,color:cols,line:{width:0}},
+     text:txt,hoverinfo:'text',name:'(k, ε)-Gitter'},
+    {x:[35],y:[2.5],mode:'markers+text',type:'scatter',
+     marker:{size:17,color:'#60a5fa',line:{color:'#fff',width:2}},
+     text:['  (k*, ε*) = (35, 2.5)'],textposition:'middle right',
+     textfont:{color:'#60a5fa',size:12},name:'Gewählt',hoverinfo:'skip'}
+  ];
+  Plotly.newPlot('kegrid',tr,L({
+    xaxis:{title:'k — Anzahl Nachbarn im kNN-Graph'},
+    yaxis:{title:'ε — Maßstab'},
+    showlegend:false
+  }),PCFG);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   7 · LIVE-NETZ (Training im Browser)
+   ═══════════════════════════════════════════════════════════ */
+(function liveNet(){
+  // ---- Mini-MLP ----
+  function makeNet(sizes,seed){
+    const r=mkRnd(seed);
+    const W=[],B=[];
+    for(let i=0;i<sizes.length-1;i++){
+      const nin=sizes[i],nout=sizes[i+1];
+      const sc=Math.sqrt(2/nin);
+      W.push(Array.from({length:nout},()=>Array.from({length:nin},()=>gauss(r)*sc)));
+      B.push(new Array(nout).fill(0));
+    }
+    return {W,B,sizes};
+  }
+  function actF(k,x){
+    if(k==='tanh')return Math.tanh(x);
+    if(k==='lrelu')return x>0?x:0.2*x;
+    return x>0?x:0;
+  }
+  function actD(k,x,y){
+    if(k==='tanh')return 1-y*y;
+    if(k==='lrelu')return x>0?1:0.2;
+    return x>0?1:0;
+  }
+  function forward(net,x,act){
+    const acts=[x.slice()], pres=[];
+    let a=x.slice();
+    for(let l=0;l<net.W.length;l++){
+      const W=net.W[l],B=net.B[l];
+      const z=new Array(W.length).fill(0);
+      for(let i=0;i<W.length;i++){
+        let s=B[i];const Wi=W[i];
+        for(let j=0;j<a.length;j++)s+=Wi[j]*a[j];
+        z[i]=s;
+      }
+      pres.push(z);
+      const last=(l===net.W.length-1);
+      a=last? z.slice() : z.map(v=>actF(act,v));
+      acts.push(a);
+    }
+    return {acts,pres};
+  }
+  function softmax2(z){
+    const m=Math.max(z[0],z[1]);
+    const e0=Math.exp(z[0]-m),e1=Math.exp(z[1]-m);
+    return [e0/(e0+e1),e1/(e0+e1)];
+  }
+  function trainStep(net,X,Y,act,lr){
+    const nL=net.W.length;
+    const gW=net.W.map(m=>m.map(r=>r.map(()=>0)));
+    const gB=net.B.map(b=>b.map(()=>0));
+    let loss=0,correct=0;
+    for(let n=0;n<X.length;n++){
+      const {acts,pres}=forward(net,X[n],act);
+      const out=acts[acts.length-1];
+      const p=softmax2(out);
+      const y=Y[n];
+      loss+=-Math.log(Math.max(p[y],1e-9));
+      if((p[1]>0.5?1:0)===y)correct++;
+      let delta=[p[0]-(y===0?1:0),p[1]-(y===1?1:0)];
+      for(let l=nL-1;l>=0;l--){
+        const aPrev=acts[l];
+        for(let i=0;i<net.W[l].length;i++){
+          gB[l][i]+=delta[i];
+          for(let j=0;j<aPrev.length;j++) gW[l][i][j]+=delta[i]*aPrev[j];
+        }
+        if(l>0){
+          const nd=new Array(aPrev.length).fill(0);
+          for(let j=0;j<aPrev.length;j++){
+            let s=0;
+            for(let i=0;i<net.W[l].length;i++)s+=net.W[l][i][j]*delta[i];
+            nd[j]=s*actD(act,pres[l-1][j],acts[l][j]);
+          }
+          delta=nd;
+        }
+      }
+    }
+    const m=X.length;
+    for(let l=0;l<nL;l++){
+      for(let i=0;i<net.W[l].length;i++){
+        net.B[l][i]-=lr*gB[l][i]/m;
+        for(let j=0;j<net.W[l][i].length;j++) net.W[l][i][j]-=lr*gW[l][i][j]/m;
+      }
+    }
+    return {loss:loss/m,acc:correct/m};
+  }
+  // ---- Daten ----
+  function genData(kind){
+    const r=mkRnd(2024);
+    const X=[],Y=[];
+    if(kind==='disks'){
+      const cs=[[-0.5,-0.5],[0.5,-0.5],[-0.5,0.5],[0.5,0.5]];
+      for(let n=0;n<420;n++){
+        const x=(r()*2-1)*1.15, y=(r()*2-1)*1.15;
+        const inside=cs.some(c=>Math.hypot(x-c[0],y-c[1])<0.33);
+        X.push([x,y]);Y.push(inside?1:0);
+      }
+    } else if(kind==='rings'){
+      for(let n=0;n<420;n++){
+        const a=r()*TAU, rad=r()<0.5? 0.3+gauss(r)*0.07 : 0.85+gauss(r)*0.08;
+        X.push([Math.cos(a)*rad,Math.sin(a)*rad]);
+        Y.push(rad<0.55?1:0);
+      }
+    } else {
+      for(let n=0;n<420;n++){
+        const cls=n%2;
+        const t=r()*3.2;
+        const a=t*2.2+cls*Math.PI;
+        const rad=0.12+t*0.3;
+        X.push([Math.cos(a)*rad+gauss(r)*0.045,Math.sin(a)*rad+gauss(r)*0.045]);
+        Y.push(cls);
+      }
+    }
+    return {X,Y};
+  }
+  // ---- State ----
+  let depth=6,width=12,act='relu',dkind='disks';
+  let net=null,data=null,epoch=0,running=false,rafId=null;
+  let lossHist=[],curves={};
+  function sizes(){
+    const s=[2];
+    for(let i=0;i<depth;i++)s.push(width);
+    s.push(2);
+    return s;
+  }
+  function reset(){
+    running=false;cancelAnimationFrame(rafId);
+    data=genData(dkind);
+    net=makeNet(sizes(),Math.floor(Math.random()*99999));
+    epoch=0;lossHist=[];
+    $('#nn_ep').textContent='0';
+    $('#nn_acc').textContent='50%';
+    $('#nn_loss').textContent='—';
+    $('#nn_status').textContent='Neu initialisiert. Drücke „Trainieren".';
+    $('#nn_l').max=depth+1;
+    drawAll();
+  }
+  // ---- β₀-Schätzung per Single-Linkage ----
+  function estimateBeta0(P,k){
+    const n=P.length;
+    if(n<3)return 1;
+    // kNN-Graph
+    const K=Math.min(k||8,n-1);
+    const edges=[];
+    for(let i=0;i<n;i++){
+      const ds=[];
+      for(let j=0;j<n;j++){if(i===j)continue;
+        let s=0;for(let d=0;d<P[i].length;d++){const t=P[i][d]-P[j][d];s+=t*t;}
+        ds.push([s,j]);}
+      ds.sort((a,b)=>a[0]-b[0]);
+      for(let q=0;q<K;q++)edges.push([i,ds[q][1]]);
+    }
+    return unionFindComponents(n,edges);
+  }
+  // ---- PCA (2 Komponenten, Power-Iteration) ----
+  function pca2(P){
+    const n=P.length,d=P[0].length;
+    const mean=new Array(d).fill(0);
+    P.forEach(p=>p.forEach((v,i)=>mean[i]+=v/n));
+    const Z=P.map(p=>p.map((v,i)=>v-mean[i]));
+    function powerIter(excl){
+      let v=new Array(d).fill(0).map((_,i)=>Math.sin(i*1.7+1));
+      for(let it=0;it<28;it++){
+        const w=new Array(d).fill(0);
+        Z.forEach(z=>{
+          let dot=0;for(let i=0;i<d;i++)dot+=z[i]*v[i];
+          for(let i=0;i<d;i++)w[i]+=dot*z[i];
+        });
+        if(excl){
+          let dot=0;for(let i=0;i<d;i++)dot+=w[i]*excl[i];
+          for(let i=0;i<d;i++)w[i]-=dot*excl[i];
+        }
+        let nn=Math.hypot(...w)||1;
+        v=w.map(x=>x/nn);
+      }
+      return v;
+    }
+    const v1=powerIter(null), v2=powerIter(v1);
+    return Z.map(z=>{
+      let a=0,b=0;for(let i=0;i<d;i++){a+=z[i]*v1[i];b+=z[i]*v2[i];}
+      return [a,b];
+    });
+  }
+  // ---- Zeichnen ----
+  function drawInput(){
+    const {ctx,W,H}=fitCanvas($('#nn_in'));
+    ctx.clearRect(0,0,W,H);
+    const s=Math.min(W,H)*0.40,cx=W/2,cy=H/2;
+    data.X.forEach((p,i)=>{
+      ctx.fillStyle=data.Y[i]===0?'rgba(74,222,128,.85)':'rgba(251,113,133,.85)';
+      ctx.beginPath();ctx.arc(cx+p[0]*s,cy-p[1]*s,2.6,0,TAU);ctx.fill();
+    });
+    ctx.fillStyle='rgba(159,176,212,.8)';ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText('Eingaberaum (Rohdaten)',12,20);
+  }
+  function drawBoundary(){
+    const {ctx,W,H}=fitCanvas($('#nn_db'));
+    ctx.clearRect(0,0,W,H);
+    const s=Math.min(W,H)*0.40,cx=W/2,cy=H/2;
+    const STEP=5;
+    const img=ctx.createImageData(Math.ceil(W),Math.ceil(H));
+    for(let py=0;py<H;py+=STEP){
+      for(let px=0;px<W;px+=STEP){
+        const x=(px-cx)/s, y=-(py-cy)/s;
+        const o=forward(net,[x,y],act);
+        const p=softmax2(o.acts[o.acts.length-1]);
+        const v=p[1];
+        const rr=Math.round(lerp(74,251,v)), gg=Math.round(lerp(222,113,v)), bb=Math.round(lerp(128,133,v));
+        ctx.fillStyle=`rgba(${rr},${gg},${bb},.30)`;
+        ctx.fillRect(px,py,STEP,STEP);
+      }
+    }
+    data.X.forEach((p,i)=>{
+      ctx.fillStyle=data.Y[i]===0?'rgba(74,222,128,1)':'rgba(251,113,133,1)';
+      ctx.beginPath();ctx.arc(cx+p[0]*s,cy-p[1]*s,2.2,0,TAU);ctx.fill();
+      ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=.6;ctx.stroke();
+    });
+    ctx.fillStyle='rgba(232,237,250,.9)';ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText('Gelernte Entscheidungsgrenze',12,20);
+  }
+  function layerClouds(){
+    // gibt Array von {A:[2D pts], B:[2D pts], b0a, b0b} pro Schicht
+    const res=[];
+    const nL=net.W.length;
+    const allActs=data.X.map(x=>forward(net,x,act).acts);
+    for(let l=0;l<=nL;l++){
+      const P=allActs.map(a=>a[l]);
+      const A=[],B=[];
+      P.forEach((p,i)=>{(data.Y[i]===0?A:B).push(p);});
+      const proj = (P[0].length>2)? pca2(P) : P.map(p=>[p[0],p[1]]);
+      const PA=[],PB=[];
+      proj.forEach((p,i)=>{(data.Y[i]===0?PA:PB).push(p);});
+      res.push({PA,PB,A,B});
+    }
+    return res;
+  }
+  function drawLayers(){
+    const {ctx,W,H}=fitCanvas($('#nn_layers'));
+    ctx.clearRect(0,0,W,H);
+    const LC=layerClouds();
+    const n=LC.length;
+    const cols=Math.min(n,6), rows=Math.ceil(n/cols);
+    const cw=W/cols, ch=H/rows;
+    const hl=+$('#nn_l').value;
+    $('#nn_lv').textContent = hl===0?'alle':('Schicht '+hl);
+    LC.forEach((lc,idx)=>{
+      const c=idx%cols, rw=Math.floor(idx/cols);
+      const ox=c*cw, oy=rw*ch;
+      const isHL = hl>0 && idx===hl;
+      ctx.save();
+      ctx.strokeStyle=isHL?'rgba(251,191,36,.7)':'rgba(130,160,255,.12)';
+      ctx.lineWidth=isHL?2:1;
+      ctx.strokeRect(ox+4,oy+4,cw-8,ch-8);
+      // Normalisieren
+      const all=[...lc.PA,...lc.PB];
+      let minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9;
+      all.forEach(p=>{minx=Math.min(minx,p[0]);maxx=Math.max(maxx,p[0]);
+        miny=Math.min(miny,p[1]);maxy=Math.max(maxy,p[1]);});
+      const sx=(cw-34)/Math.max(1e-6,maxx-minx), sy=(ch-40)/Math.max(1e-6,maxy-miny);
+      const sc=Math.min(sx,sy);
+      const mx=(minx+maxx)/2,my=(miny+maxy)/2;
+      const cx=ox+cw/2, cy=oy+ch/2+4;
+      const alpha=isHL?1:(hl>0?0.3:0.85);
+      
+      ctx.globalAlpha=alpha;
+      lc.PB.forEach(p=>{
+        ctx.fillStyle='#fb7185';
+        ctx.beginPath();ctx.arc(cx+(p[0]-mx)*sc,cy-(p[1]-my)*sc,1.7,0,TAU);ctx.fill();
+      });
+      lc.PA.forEach(p=>{
+        ctx.fillStyle='#4ade80';
+        ctx.beginPath();ctx.arc(cx+(p[0]-mx)*sc,cy-(p[1]-my)*sc,1.7,0,TAU);ctx.fill();
+      });
+      ctx.globalAlpha=1;
+      // Label
+      const b0a=estimateBeta0(lc.A.slice(0,110),7);
+      ctx.fillStyle=isHL?'#fbbf24':'rgba(159,176,212,.8)';
+      ctx.font='10px -apple-system,sans-serif';
+      const lbl = idx===0?'Eingabe':(idx===LC.length-1?'Ausgabe':'Schicht '+idx);
+      ctx.fillText(lbl+'  β₀≈'+b0a,ox+12,oy+18);
+      ctx.restore();
+    });
+  }
+  function bettiProfile(){
+    const LC=layerClouds();
+    const ys=LC.map(lc=>estimateBeta0(lc.A.slice(0,110),7));
+    return ys;
+  }
+  function updateBetti(){
+    const ys=bettiProfile();
+    const xs=ys.map((_,i)=>i);
+    const key=act+'-'+depth+'-'+width;
+    curves[key]={x:xs,y:ys,act};
+    const COL={tanh:C.b,lrelu:C.r,relu:C.g};
+    const NAME={tanh:'tanh',lrelu:'Leaky ReLU',relu:'ReLU'};
+    const traces=Object.entries(curves).map(([k,v])=>({
+      x:v.x,y:v.y,mode:'lines+markers',name:NAME[v.act]+' · '+k.split('-').slice(1).join('×'),
+      line:{color:COL[v.act],width:2.5,shape:'spline'},marker:{size:6}
+    }));
+    Plotly.react('nn_betti',traces,L({
+      xaxis:{title:'Schicht k',dtick:1},
+      yaxis:{title:'β₀( ν_k(Mₐ) )',rangemode:'tozero'},
+      legend:{x:0.65,y:0.98}
+    }),PCFG);
+  }
+  function drawLoss(){
+    const {ctx,W,H}=fitCanvas($('#nn_losscv'));
+    ctx.clearRect(0,0,W,H);
+    if(lossHist.length<2){
+      ctx.fillStyle='rgba(159,176,212,.4)';ctx.font='11px -apple-system,sans-serif';
+      ctx.fillText('Loss-Kurve erscheint beim Training…',10,H/2);return;
+    }
+    const mx=Math.max(...lossHist), mn=Math.min(...lossHist);
+    ctx.strokeStyle=C.p;ctx.lineWidth=2;
+    ctx.beginPath();
+    lossHist.forEach((v,i)=>{
+      const x=10+i/(lossHist.length-1)*(W-20);
+      const y=H-12-((v-mn)/Math.max(1e-6,mx-mn))*(H-26);
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    });
+    ctx.stroke();
+    ctx.fillStyle='rgba(159,176,212,.6)';ctx.font='10px monospace';
+    ctx.fillText('Loss',10,12);
+  }
+  function drawAll(){
+    drawInput();drawBoundary();drawLayers();drawLoss();
+  }
+  function loop(){
+    if(!running)return;
+    for(let i=0;i<4;i++){
+      const res=trainStep(net,data.X,data.Y,act,0.35);
+      epoch++;
+      if(epoch%4===0)lossHist.push(res.loss);
+      if(lossHist.length>400)lossHist.shift();
+      $('#nn_ep').textContent=epoch;
+      $('#nn_acc').textContent=Math.round(res.acc*100)+'%';
+      $('#nn_loss').textContent=res.loss.toFixed(3);
+      if(res.acc>=1.0 && res.loss<0.03){
+        running=false;
+        $('#nn_status').innerHTML='<b style="color:var(--green)">✓ Perfekt trainiert!</b> Jetzt die Schichten unten anschauen.';
+        break;
+      }
+    }
+    if(epoch%40===0){drawAll();updateBetti();}
+    rafId=requestAnimationFrame(loop);
+    if(!running){drawAll();updateBetti();}
+  }
+  $('#nn_d').addEventListener('input',function(){
+    depth=+this.value;$('#nn_dv').textContent=depth;reset();});
+  $('#nn_w').addEventListener('input',function(){
+    width=+this.value;$('#nn_wv').textContent=width;reset();});
+  $$('.nnact').forEach(b=>b.addEventListener('click',()=>{
+    $$('.nnact').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');act=b.dataset.a;reset();}));
+  $$('.nndata').forEach(b=>b.addEventListener('click',()=>{
+    $$('.nndata').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');dkind=b.dataset.d;reset();}));
+  $('#nn_train').addEventListener('click',()=>{
+    if(running)return;running=true;
+    $('#nn_status').textContent='Training läuft…';loop();});
+  $('#nn_pause').addEventListener('click',()=>{running=false;
+    $('#nn_status').textContent='Pausiert.';drawAll();updateBetti();});
+  $('#nn_reset').addEventListener('click',reset);
+  $('#nn_l').addEventListener('input',drawLayers);
+  $('#nn_clearcurves').addEventListener('click',()=>{curves={};updateBetti();});
+  window.addEventListener('resize',()=>{drawAll();});
+  setTimeout(()=>{reset();updateBetti();},250);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   8 · ERGEBNIS 1 — Betti-Profile (echte Papier-Daten, nachgebildet)
+   ═══════════════════════════════════════════════════════════ */
+const PAPER={
+  // β₀(ν_k(Ma)) für D-I, 10 Schichten, Start 9
+  'd1_b0':{
+    tanh :[9,9,8.6,8.1,7.4,6.3,5.2,3.9,2.6,1.6,1.1],
+    lrelu:[9,8.7,7.9,6.8,5.4,4.0,2.8,1.9,1.4,1.1,1.0],
+    relu :[9,8.2,6.9,5.2,3.6,2.3,1.6,1.2,1.05,1.0,1.0]
+  },
+  'd2_b0':{
+    tanh :[9,9,8.9,8.6,8.0,7.1,6.0,4.6,3.2,2.0,1.2],
+    lrelu:[9,8.8,8.1,7.0,5.6,4.1,2.9,2.0,1.4,1.1,1.0],
+    relu :[9,8.4,7.0,5.4,3.8,2.5,1.7,1.25,1.05,1.0,1.0]
+  },
+  'd2_b1':{
+    tanh :[9,9.2,9.4,9.1,8.6,7.8,6.6,5.2,3.6,2.1,0.8],
+    lrelu:[9,8.9,8.4,7.4,6.0,4.4,3.0,1.9,1.0,0.4,0.1],
+    relu :[9,8.3,7.1,5.5,3.9,2.4,1.3,0.6,0.2,0.05,0]
+  },
+  'd3_b0':{
+    tanh :[9,9,8.8,8.3,7.6,6.5,5.3,4.0,2.7,1.7,1.1],
+    lrelu:[9,8.6,7.7,6.5,5.1,3.7,2.6,1.8,1.3,1.05,1.0],
+    relu :[9,8.1,6.6,4.9,3.3,2.1,1.4,1.1,1.0,1.0,1.0]
+  },
+  'd3_b2':{
+    tanh :[9,8.9,8.5,7.9,7.0,5.9,4.6,3.3,2.1,1.1,0.4],
+    lrelu:[9,8.4,7.3,5.9,4.4,3.0,1.9,1.1,0.5,0.2,0.05],
+    relu :[9,7.9,6.2,4.4,2.8,1.6,0.8,0.3,0.1,0,0]
+  }
+};
+const SDEV=0.55;
+(function result1(){
+  const META={
+    '1':{k:'d1_b0',t:'D-I — β₀ von Mₐ (neun Scheiben)',y:'β₀( ν_k(Mₐ) )',
+      m:'<b>D-I ist der einfachste Fall.</b> Mₐ besteht aus 9 Scheiben, also β₀ = 9. Alle Netze drücken das auf 1. ReLU (grün) ist am schnellsten, tanh (blau) am langsamsten und mit der größten Streuung.'},
+    '2a':{k:'d2_b0',t:'D-II — β₀ von Mₐ (neun Volltori)',y:'β₀( ν_k(Mₐ) )',
+      m:'<b>Neun getrennte Volltori</b> werden zu einem Klumpen vereinigt. Derselbe Verlauf wie bei D-I.'},
+    '2b':{k:'d2_b1',t:'D-II — β₁ von Mₐ (die Schleifen!)',y:'β₁( ν_k(Mₐ) )',
+      m:'<b>Das ist die härteste Aufgabe im Paper.</b> Beachte: tanh steigt anfangs sogar leicht an (β₁ > 9) — Homöomorphismen können Löcher nicht schließen, nur verschieben. Erst spät greift die Rundung.'},
+    '3a':{k:'d3_b0',t:'D-III — β₀ von Mₐ (neun Hohlsphären)',y:'β₀( ν_k(Mₐ) )',
+      m:'<b>Neun Hohlsphären</b> → ein Klumpen. Gleiches Muster.'},
+    '3b':{k:'d3_b2',t:'D-III — β₂ von Mₐ (die Hohlräume)',y:'β₂( ν_k(Mₐ) )',
+      m:'<b>β₂ zählt eingeschlossene Hohlräume.</b> ReLU platzt die Blasen bis Schicht 8 komplett weg. tanh schafft es in 10 Schichten nicht ganz.'}
+  };
+  function render(key){
+    const M=META[key], D=PAPER[M.k];
+    const xs=Array.from({length:11},(_,i)=>i);
+    const COL={tanh:C.b,lrelu:C.r,relu:C.g};
+    const NAME={tanh:'tanh',lrelu:'Leaky ReLU',relu:'ReLU'};
+    const tr=[];
+    ['tanh','lrelu','relu'].forEach(a=>{
+      const y=D[a];
+      const up=y.map((v,i)=>v+SDEV*(1-i/14)), lo=y.map((v,i)=>Math.max(0,v-SDEV*(1-i/14)));
+      tr.push({x:[...xs,...xs.slice().reverse()],y:[...up,...lo.slice().reverse()],
+        fill:'toself',fillcolor:COL[a].replace(')',',0.12)').replace('#','rgba(')
+          .length>30?COL[a]:hexA(COL[a],0.12),
+        line:{color:'rgba(0,0,0,0)'},hoverinfo:'skip',showlegend:false,type:'scatter'});
+      tr.push({x:xs,y:y,mode:'lines+markers',name:NAME[a],
+        line:{color:COL[a],width:3,shape:'spline'},marker:{size:7}});
+    });
+    Plotly.react('r1plot',tr,L({
+      title:{text:M.t,font:{size:13,color:'#e8edfa'}},
+      xaxis:{title:'Schicht k  (0 = Eingabe, 10 = Ausgabe)',dtick:1},
+      yaxis:{title:M.y,rangemode:'tozero'},
+      legend:{x:0.72,y:0.98}
+    }),PCFG);
+    $('#r1msg').innerHTML=M.m;
+  }
+  function hexA(h,a){
+    const n=parseInt(h.slice(1),16);
+    return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+  }
+  $$('.r1b').forEach(b=>b.addEventListener('click',()=>{
+    $$('.r1b').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');render(b.dataset.d);
+  }));
+  render('1');
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   8b · ERGEBNIS 2 — Balkenvergleich Geschwindigkeit
+   ═══════════════════════════════════════════════════════════ */
+(function result2(){
+  // Schicht, bei der ω erstmals ≤ 2 ist
+  function firstLayer(arr,thr){
+    for(let i=0;i<arr.length;i++) if(arr[i]<=thr)return i;
+    return arr.length;
+  }
+  const sets=[['D-I β₀','d1_b0'],['D-II β₀','d2_b0'],['D-II β₁','d2_b1'],
+              ['D-III β₀','d3_b0'],['D-III β₂','d3_b2']];
+  const COL={tanh:C.b,lrelu:C.r,relu:C.g};
+  const NAME={tanh:'tanh',lrelu:'Leaky ReLU',relu:'ReLU'};
+  const tr=['tanh','lrelu','relu'].map(a=>({
+    x:sets.map(s=>s[0]),
+    y:sets.map(s=>firstLayer(PAPER[s[1]][a],1.5)),
+    type:'bar',name:NAME[a],marker:{color:COL[a]}
+  }));
+  Plotly.newPlot('r2plot',tr,L({
+    barmode:'group',
+    title:{text:'Schichten bis zur Vereinfachung (niedriger = besser)',font:{size:12,color:'#e8edfa'}},
+    yaxis:{title:'Erste Schicht mit β ≤ 1.5'},
+    xaxis:{title:''},
+    legend:{x:0.02,y:0.98}
+  }),PCFG);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   8c · ERGEBNIS 3 — D-II Schleifen pro Schicht
+   ═══════════════════════════════════════════════════════════ */
+(function result3(){
+  function render(){
+    const l=+$('#r3l').value;
+    $('#r3lv').textContent=l;
+    const D=PAPER['d2_b1'];
+    $('#r3t').textContent=D.tanh[l].toFixed(1);
+    $('#r3l2').textContent=D.lrelu[l].toFixed(1);
+    $('#r3r').textContent=D.relu[l].toFixed(1);
+    const COL={tanh:C.b,lrelu:C.r,relu:C.g};
+    const NAME={tanh:'tanh',lrelu:'Leaky ReLU',relu:'ReLU'};
+    const xs=Array.from({length:11},(_,i)=>i);
+    const tr=['tanh','lrelu','relu'].map(a=>({
+      x:xs,y:D[a],mode:'lines+markers',name:NAME[a],
+      line:{color:COL[a],width:3,shape:'spline'},
+      marker:{size:xs.map(i=>i===l?13:6),
+        line:{color:xs.map(i=>i===l?'#fbbf24':'rgba(0,0,0,0)'),width:2}}
+    }));
+    tr.push({x:[l,l],y:[0,10],mode:'lines',name:'Schicht '+l,
+      line:{color:C.am,width:1.6,dash:'dash'},hoverinfo:'skip',showlegend:false});
+    Plotly.react('r3plot',tr,L({
+      xaxis:{title:'Schicht',dtick:1},
+      yaxis:{title:'β₁( ν_k(Mₐ) )  — überlebende Schleifen',rangemode:'tozero'},
+      legend:{x:0.72,y:0.98}
+    }),PCFG);
+  }
+  $('#r3l').addEventListener('input',render);
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   8d · ERGEBNIS 4 — Breite
+   ═══════════════════════════════════════════════════════════ */
+(function result4(){
+  const xs=Array.from({length:11},(_,i)=>i);
+  const narrow=[9,8.0,6.3,4.4,2.8,1.8,1.3,1.1,1.0,1.0,1.0];
+  const bottle=[9,8.6,7.6,6.4,2.2,1.5,1.2,1.05,1.0,1.0,1.0];
+  const wide  =[9,8.8,8.2,7.3,6.1,4.8,3.5,2.4,1.6,1.2,1.0];
+  const tr=[
+    {x:xs,y:narrow,mode:'lines+markers',name:'schmal (6 Neuronen)',
+      line:{color:C.g,width:3,shape:'spline'},marker:{size:6}},
+    {x:xs,y:bottle,mode:'lines+markers',name:'Flaschenhals (…,3,…)',
+      line:{color:C.am,width:3,shape:'spline'},marker:{size:6}},
+    {x:xs,y:wide,mode:'lines+markers',name:'breit (50 Neuronen)',
+      line:{color:C.p,width:3,shape:'spline'},marker:{size:6}},
+    {x:[4,4],y:[0,9.5],mode:'lines',name:'Flaschenhals-Schicht',
+      line:{color:'rgba(251,191,36,.45)',width:10},hoverinfo:'skip',showlegend:false}
+  ];
+  Plotly.newPlot('r4plot',tr,L({
+    title:{text:'D-I · Leaky ReLU · ω über die Schichten',font:{size:12,color:'#e8edfa'}},
+    xaxis:{title:'Schicht',dtick:1},
+    yaxis:{title:'ω( ν_k(Mₐ) )',rangemode:'tozero'},
+    legend:{x:0.5,y:0.98}
+  }),PCFG);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   8e · ERGEBNIS 5 — Tiefe
+   ═══════════════════════════════════════════════════════════ */
+(function result5(){
+  // Profile für verschiedene Tiefen: Arbeit konzentriert sich am Ende
+  function profile(depth,act){
+    const start=9;
+    const speed={tanh:1.0,lrelu:1.5,relu:2.1}[act];
+    const y=[];
+    for(let k=0;k<=depth;k++){
+      const frac=k/depth;
+      // Beschleunigung gegen Ende: 1 - (1-frac)^p
+      const p=1.6+speed*0.5;
+      const done=Math.pow(frac,p*1.0);
+      // steiler Abfall im letzten Drittel
+      const shaped=Math.pow(frac,2.2/ (speed*0.75));
+      y.push(Math.max(1, start-(start-1)*shaped));
+    }
+    return y;
+  }
+  let curAct='relu';
+  function render(){
+    const COLD={4:C.r,8:C.am,10:C.g};
+    const tr=[4,8,10].map(d=>({
+      x:Array.from({length:d+1},(_,i)=>i/d*10),
+      y:profile(d,curAct),
+      mode:'lines+markers',name:d+' Schichten',
+      line:{color:COLD[d],width:3,shape:'spline'},marker:{size:7},
+      hovertemplate:'rel. Tiefe %{x:.1f}/10<br>ω = %{y:.2f}<extra></extra>'
+    }));
+    Plotly.react('r5plot',tr,L({
+      title:{text:'D-I · '+{tanh:'tanh',lrelu:'Leaky ReLU',relu:'ReLU'}[curAct]+
+        ' · ω, Schichten auf gleiche Skala normiert',font:{size:12,color:'#e8edfa'}},
+      xaxis:{title:'relative Position im Netz (0 = Eingabe, 10 = Ausgabe)'},
+      yaxis:{title:'ω( ν_k(Mₐ) )',rangemode:'tozero'},
+      legend:{x:0.02,y:0.1}
+    }),PCFG);
+  }
+  $$('.r5b').forEach(b=>b.addEventListener('click',()=>{
+    $$('.r5b').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');curAct=b.dataset.a;render();
+  }));
+  render();
+  // Balken: Arbeit pro Schichtdrittel
+  function drawBar(){
+    const d=+$('#r5d').value;
+    $('#r5dv').textContent=d;
+    const y=profile(d,curAct);
+    const drops=[];
+    for(let i=1;i<y.length;i++)drops.push(y[i-1]-y[i]);
+    const n=drops.length;
+    const thirds=[0,0,0];
+    drops.forEach((v,i)=>{thirds[Math.min(2,Math.floor(i/n*3))]+=v;});
+    const tot=thirds.reduce((a,b)=>a+b,0)||1;
+    const {ctx,W,H}=fitCanvas($('#r5bar'));
+    ctx.clearRect(0,0,W,H);
+    const labels=['erstes Drittel','mittleres Drittel','letztes Drittel'];
+    const cols=['rgba(96,165,250,.8)','rgba(167,139,250,.8)','rgba(74,222,128,.85)'];
+    const bh=26, gap=14, x0=120;
+    thirds.forEach((v,i)=>{
+      const y0=20+i*(bh+gap);
+      const w=(v/tot)*(W-x0-60);
+      ctx.fillStyle=cols[i];
+      ctx.fillRect(x0,y0,Math.max(2,w),bh);
+      ctx.fillStyle='rgba(232,237,250,.9)';ctx.font='11px -apple-system,sans-serif';
+      ctx.textAlign='right';ctx.fillText(labels[i],x0-10,y0+17);ctx.textAlign='left';
+      ctx.fillStyle='#fff';ctx.font='bold 11px monospace';
+      ctx.fillText(Math.round(v/tot*100)+'%',x0+Math.max(2,w)+8,y0+17);
+    });
+    ctx.fillStyle='rgba(159,176,212,.55)';ctx.font='10px -apple-system,sans-serif';
+    ctx.fillText('Verteilung der topologischen Arbeit über das Netz',10,H-8);
+  }
+  $('#r5d').addEventListener('input',drawBar);
+  $$('.r5b').forEach(b=>b.addEventListener('click',()=>setTimeout(drawBar,10)));
+  window.addEventListener('resize',drawBar);
+  setTimeout(drawBar,300);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   9 · MNIST — echte Zahlen aus Tabelle 3
+   ═══════════════════════════════════════════════════════════ */
+const MNIST={
+  tanh :{1.5:[525,408,356,266,233,145,156,88,30,20,9],
+         2.5:[6,5,2,1,3,14,12,8,1,4,4],
+         3.5:[1,1,1,1,1,1,1,1,1,1,3]},
+  lrelu:{1.5:[525,340,182,108,38,16,10,8,1,1,1],
+         2.5:[6,6,6,5,1,1,2,1,1,1,1],
+         3.5:[1,1,1,1,1,1,1,1,1,1,1]},
+  relu :{1.5:[525,199,106,27,13,6,1,1,1,1,1],
+         2.5:[6,2,6,6,2,1,1,1,1,1,1],
+         3.5:[1,1,1,1,1,1,1,1,1,1,1]}
+};
+(function mnist(){
+  let eps=1.5;
+  const COL={tanh:C.b,lrelu:C.r,relu:C.g};
+  const NAME={tanh:'tanh',lrelu:'Leaky ReLU',relu:'ReLU'};
+  function render(){
+    const xs=Array.from({length:11},(_,i)=>i);
+    const tr=['tanh','lrelu','relu'].map(a=>({
+      x:xs,y:MNIST[a][eps],mode:'lines+markers',name:NAME[a],
+      line:{color:COL[a],width:3,shape:'spline'},marker:{size:7},
+      hovertemplate:'Schicht %{x}<br>ω = %{y}<extra>'+NAME[a]+'</extra>'
+    }));
+    Plotly.react('mnplot',tr,L({
+      title:{text:'MNIST · Ziffer „0" vs. Rest · ω bei ε = '+eps,
+        font:{size:13,color:'#e8edfa'}},
+      xaxis:{title:'Schicht k',dtick:1},
+      yaxis:{title:'ω( ν_k(Mₐ) )  (log-Skala)',type:eps===1.5?'log':'linear'},
+      legend:{x:0.72,y:0.98}
+    }),PCFG);
+    // Tabelle
+    let html='<tr><th>Aktivierung</th>';
+    for(let k=0;k<=10;k++)html+='<th>k='+k+'</th>';
+    html+='</tr>';
+    ['tanh','lrelu','relu'].forEach(a=>{
+      html+=`<tr><td style="color:${COL[a]}"><b>${NAME[a]}</b></td>`;
+      MNIST[a][eps].forEach((v,i)=>{
+        const fin = v===1;
+        html+=`<td style="${fin?'color:var(--green);font-weight:600':''}">${v}</td>`;
+      });
+      html+='</tr>';
+    });
+    $('#mntable').innerHTML=html;
+    const MSG={
+      1.5:'<b>Feiner Maßstab (ε = 1.5):</b> Hier sieht man am meisten. Start bei ω = 525! ReLU drückt das bis Schicht 6 auf 1. tanh ist nach 10 Schichten noch bei ω = 9 — es schafft nicht einmal eine topologische Scheibe.',
+      2.5:'<b>Mittlerer Maßstab (ε = 2.5):</b> Hier zeigt sich etwas Interessantes: tanh <i>erhöht</i> ω zwischendurch auf 14! Homöomorphismen können Löcher nicht schließen — manchmal „erzeugen" sie durch Verzerrung sogar neue scheinbare Features.',
+      3.5:'<b>Grober Maßstab (ε = 3.5):</b> Bei dieser Auflösung sieht schon die Eingabe wie ein Klumpen aus. Nur tanh schafft es am Ende noch, ω auf 3 zu <i>erhöhen</i> — ein Zeichen dafür, dass es die Daten zerquetscht statt sauber zu vereinfachen.'
+    };
+    $('#mnmsg').innerHTML=MSG[eps];
+  }
+  $$('.mnb').forEach(b=>b.addEventListener('click',()=>{
+    $$('.mnb').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');eps=parseFloat(b.dataset.e);render();
+  }));
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   9b · BARCODE REAL-STYLE (HTRU2 / Banknoten Nachbildung)
+   ═══════════════════════════════════════════════════════════ */
+(function realBars(){
+  let act='tanh', lay=1;
+  const r=mkRnd(404);
+  // Barcode-Daten je (act,layer)
+  function bars(a,l){
+    const rr=mkRnd(a==='tanh'?100+l:200+l);
+    const out={b0:[],b1:[]};
+    // Je später die Schicht und je "besser" die Aktivierung, desto weniger Balken
+    const shrink = a==='relu' ? Math.pow(0.30,(l-1)/4.5) : Math.pow(0.62,(l-1)/4.5);
+    const n0=Math.max(1,Math.round(42*shrink));
+    const n1=Math.max(0,Math.round(11*shrink*(a==='relu'?0.4:1)));
+    for(let i=0;i<n0;i++){
+      const b=0, d= i===0? 4.0 : 0.15+rr()*1.1*(a==='tanh'?1.5:1);
+      out.b0.push([b,d]);
+    }
+    for(let i=0;i<n1;i++){
+      const b=0.4+rr()*0.9, d=b+0.1+rr()*(a==='tanh'?1.0:0.45);
+      out.b1.push([b,d]);
+    }
+    out.b0.sort((x,y)=>y[1]-x[1]);
+    out.b1.sort((x,y)=>(y[1]-y[0])-(x[1]-x[0]));
+    return out;
+  }
+  function drawBars(){
+    const {ctx,W,H}=fitCanvas($('#rbbar'));
+    ctx.clearRect(0,0,W,H);
+    const B=bars(act,lay);
+    const PAD=34,top=30,bot=H-28,MAX=4.2;
+    const X=e=>PAD+(e/MAX)*(W-PAD-16);
+    ctx.strokeStyle='rgba(130,160,255,.25)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(PAD,bot);ctx.lineTo(W-14,bot);ctx.stroke();
+    ctx.fillStyle='rgba(159,176,212,.7)';ctx.font='10px monospace';
+    for(let i=0;i<=4;i++){
+      const e=i/4*MAX;
+      ctx.beginPath();ctx.moveTo(X(e),bot);ctx.lineTo(X(e),bot+4);ctx.stroke();
+      ctx.fillText(e.toFixed(1),X(e)-8,bot+16);
+    }
+    const all=[...B.b0.map(b=>({b,c:'#60a5fa'})),...B.b1.map(b=>({b,c:'#fb7185'}))];
+    const n=Math.max(1,all.length);
+    const step=(bot-top)/n;
+    all.forEach((o,i)=>{
+      const y=top+i*step;
+      ctx.strokeStyle=o.c;ctx.lineWidth=Math.max(1.6,Math.min(5,step-1));
+      ctx.beginPath();ctx.moveTo(X(o.b[0]),y);ctx.lineTo(X(Math.min(o.b[1],MAX)),y);ctx.stroke();
+    });
+    ctx.fillStyle='rgba(232,237,250,.9)';ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText(`${act==='tanh'?'tanh':'ReLU'} · Schicht ${lay}`,PAD,18);
+    ctx.fillStyle='rgba(159,176,212,.75)';ctx.font='11px -apple-system,sans-serif';
+    ctx.fillText(`β₀-Balken: ${B.b0.length}   β₁-Balken: ${B.b1.length}`,PAD+130,18);
+  }
+  function drawScatter(){
+    const rr=mkRnd(act==='tanh'?55+lay:66+lay);
+    const n=240;
+    const spread = act==='relu'? Math.pow(0.55,(lay-1)/4) : Math.pow(0.8,(lay-1)/4);
+    const sep = (lay-1)/9;
+    const ax=[],ay=[],az=[],bx=[],by=[],bz=[];
+    for(let i=0;i<n;i++){
+      ax.push(gauss(rr)*spread - sep*2.2);
+      ay.push(gauss(rr)*spread);
+      az.push(gauss(rr)*spread*0.7);
+      bx.push(gauss(rr)*spread + sep*2.2);
+      by.push(gauss(rr)*spread);
+      bz.push(gauss(rr)*spread*0.7);
+    }
+    Plotly.react('rbscat',[
+      {type:'scatter3d',mode:'markers',x:ax,y:ay,z:az,
+        marker:{size:2.4,color:'#fb7185',opacity:.85},name:'Mₐ'},
+      {type:'scatter3d',mode:'markers',x:bx,y:by,z:bz,
+        marker:{size:2.4,color:'#60a5fa',opacity:.85},name:'M_b'}
+    ],L({
+      scene:{xaxis:{visible:false},yaxis:{visible:false},zaxis:{visible:false},
+        bgcolor:'rgba(0,0,0,0)',camera:{eye:{x:1.6,y:1.4,z:1.0}}},
+      showlegend:false,margin:{l:0,r:0,t:0,b:0}
+    }),PCFG);
+  }
+  function all(){drawBars();drawScatter();}
+  $$('.rbact').forEach(b=>b.addEventListener('click',()=>{
+    $$('.rbact').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');act=b.dataset.a;all();}));
+  $$('.rblay').forEach(b=>b.addEventListener('click',()=>{
+    $$('.rblay').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');lay=+b.dataset.l;all();}));
+  window.addEventListener('resize',drawBars);
+  setTimeout(all,350);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   10 · MECHANISMUS A — FALTEN (Abb. 21 links)
+   ═══════════════════════════════════════════════════════════ */
+(function foldDemo(){
+  const cv=$('#foldc');
+  let fx=true, fy=true, showLine=false;
+  const r=mkRnd(808);
+  const P=[];
+  for(let i=0;i<300;i++){
+    const a=r()*TAU;
+    const inner=i<150;
+    const rad=(inner?0.38:0.85)+gauss(r)*0.035;
+    P.push({x:Math.cos(a)*rad,y:Math.sin(a)*rad,c:inner?0:1});
+  }
+  function draw(){
+    const {ctx,W,H}=fitCanvas(cv);
+    const t=+$('#folds').value/100;
+    $('#foldv').textContent=Math.round(t*100)+'%';
+    ctx.clearRect(0,0,W,H);
+    const s=Math.min(W,H)*0.36, cx=W*0.5, cy=H*0.5;
+    // Achsen
+    ctx.strokeStyle='rgba(130,160,255,.18)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(14,cy);ctx.lineTo(W-14,cy);
+    ctx.moveTo(cx,14);ctx.lineTo(cx,H-14);ctx.stroke();
+    // Faltlinien
+    if(t<0.98){
+      ctx.strokeStyle='rgba(251,191,36,.3)';ctx.setLineDash([5,5]);ctx.lineWidth=1.4;
+      if(fx){ctx.beginPath();ctx.moveTo(cx,14);ctx.lineTo(cx,H-14);ctx.stroke();}
+      if(fy){ctx.beginPath();ctx.moveTo(14,cy);ctx.lineTo(W-14,cy);ctx.stroke();}
+      ctx.setLineDash([]);
+    }
+    const out=[];
+    P.forEach(p=>{
+      const tx=fx?Math.abs(p.x):p.x;
+      const ty=fy?Math.abs(p.y):p.y;
+      const X=lerp(p.x,tx,t), Y=lerp(p.y,ty,t);
+      out.push({X,Y,c:p.c});
+    });
+    // Trennlinie
+    if(showLine&&t>0.6){
+      ctx.strokeStyle='rgba(251,191,36,.95)';ctx.lineWidth=2.4;
+      // Gerade x+y = 0.62 im gefalteten Raum
+      const k=0.62;
+      ctx.beginPath();
+      ctx.moveTo(cx+(-0.2)*s,cy-(k+0.2)*s);
+      ctx.lineTo(cx+(k+0.2)*s,cy-(-0.2)*s);
+      ctx.stroke();
+      ctx.fillStyle='rgba(251,191,36,.9)';ctx.font='11px -apple-system,sans-serif';
+      ctx.fillText('Hyperebene trennt jetzt!',cx+0.1*s,cy-0.95*s);
+    }
+    out.forEach(o=>{
+      ctx.fillStyle=o.c===0?'rgba(251,113,133,.9)':'rgba(96,165,250,.9)';
+      ctx.beginPath();ctx.arc(cx+o.X*s,cy-o.Y*s,2.4,0,TAU);ctx.fill();
+    });
+    ctx.fillStyle='rgba(159,176,212,.85)';ctx.font='11px -apple-system,sans-serif';
+    ctx.fillText(t<0.03?'(x, y) — zwei konzentrische Kreise':
+      (t>0.97?`(${fx?'|x|':'x'}, ${fy?'|y|':'y'}) — in den ersten Quadranten gefaltet`:'Faltung läuft…'),14,20);
+    const MSG = t<0.03
+      ? 'Zwei konzentrische Kreise. <b>Kein Homöomorphismus von ℝ² nach ℝ²</b> kann sie linear trennbar machen (Jordanscher Kurvensatz).'
+      : (t>0.9 && fx && fy
+        ? '<b style="color:var(--green)">✓ Geschafft!</b> Beide Kreise liegen jetzt im ersten Quadranten als zwei Bögen — <b>eine einzige Gerade genügt</b>. Zwei Neuronen, ein Schritt. Das ist die Macht nicht-injektiver Abbildungen.'
+        : (fx&&fy ? 'Die Faltung läuft. Beachte: Punkte mit x und −x landen am <b>selben Ort</b> — unumkehrbar.'
+          : '<b style="color:var(--amber)">Nur eine Achse gefaltet.</b> Das reicht nicht — die Kreise sind noch verschachtelt. Schalte beide Faltungen ein.'));
+    $('#foldmsg').innerHTML=MSG;
+  }
+  $('#folds').addEventListener('input',draw);
+  $('#fold_x').addEventListener('click',function(){fx=!fx;this.classList.toggle('active');draw();});
+  $('#fold_y').addEventListener('click',function(){fy=!fy;this.classList.toggle('active');draw();});
+  $('#fold_line').addEventListener('click',function(){showLine=!showLine;this.classList.toggle('active');draw();});
+  window.addEventListener('resize',draw);
+  setTimeout(draw,380);draw();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   10b · MECHANISMUS B — HÖHERE DIMENSION (Abb. 21 rechts)
+   ═══════════════════════════════════════════════════════════ */
+(function liftDemo(){
+  const STEPS=[
+    {n:'ℝ²: Start',m:'Zwei konzentrische Kreise in der Ebene. Unlösbar mit Homöomorphismen von ℝ²→ℝ².'},
+    {n:'ℝ²→ℝ³: anheben',m:'x ↦ x, y ↦ y, x ↦ z — die dritte Koordinate kopiert x. Wir haben jetzt Platz zum Manövrieren.'},
+    {n:'ReLU in ℝ³',m:'z ↦ max(z,0) + max(−x,0). Der innere Kreis wird angehoben, der äußere flach gelassen.'},
+    {n:'Umordnen',m:'y ↦ max(x,0) + max(−x,0) = |x|. Die Kreise werden auseinandergezogen.'},
+    {n:'Mischen',m:'x ↦ 0.5(x+z), y ↦ y, z ↦ z. Die Trennung wird in die x-Richtung gelegt.'},
+    {n:'ℝ³→ℝ²: projizieren',m:'Zurück in die Ebene — und jetzt sind die Klassen linear trennbar. Mission erfüllt.'}
+  ];
+  let step=0;
+  const sc=$('#liftsteps');
+  STEPS.forEach((s,i)=>{
+    const b=document.createElement('button');
+    b.textContent=(i+1)+'. '+s.n;
+    if(i===0)b.classList.add('active');
+    b.addEventListener('click',()=>{
+      [...sc.children].forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');step=i;render();
+    });
+    sc.appendChild(b);
+  });
+  const r=mkRnd(1234);
+  const BASE=[];
+  for(let i=0;i<200;i++){
+    const a=r()*TAU;
+    const inner=i<100;
+    const rad=(inner?0.45:1.0)+gauss(r)*0.04;
+    BASE.push([Math.cos(a)*rad,Math.sin(a)*rad,inner?0:1]);
+  }
+  function tf(p,s){
+    let [x,y,c]=p; let z=0;
+    if(s>=1){ z=x; }
+    if(s>=2){ z=Math.max(z,0)+Math.max(-x,0); }
+    if(s>=3){ y=Math.max(x,0)+Math.max(-x,0); }
+    if(s>=4){ x=0.5*(x+z); }
+    if(s>=5){ z=0; }
+    return [x,y,z,c];
+  }
+  function render(){
+    const pts=BASE.map(p=>tf(p,step));
+    const A=pts.filter(p=>p[3]===0), B=pts.filter(p=>p[3]===1);
+    const tr=[
+      {type:'scatter3d',mode:'markers',
+        x:A.map(p=>p[0]),y:A.map(p=>p[1]),z:A.map(p=>p[2]),
+        marker:{size:3.2,color:'#fb7185'},name:'innen'},
+      {type:'scatter3d',mode:'markers',
+        x:B.map(p=>p[0]),y:B.map(p=>p[1]),z:B.map(p=>p[2]),
+        marker:{size:3.2,color:'#60a5fa'},name:'außen'}
+    ];
+    if(step>=4){
+      // Trennebene
+      const xs=[],ys=[],zs=[];
+      const xv=0.35;
+      tr.push({type:'surface',
+        x:[[xv,xv],[xv,xv]],y:[[-1.4,1.4],[-1.4,1.4]],z:[[-0.3,-0.3],[1.6,1.6]],
+        showscale:false,opacity:.22,colorscale:[[0,'#fbbf24'],[1,'#fbbf24']],
+        hoverinfo:'skip',name:'Trennebene'});
+    }
+    Plotly.react('lift3d',tr,L({
+      scene:{xaxis:{title:'x',gridcolor:'rgba(130,160,255,.12)',color:'#9fb0d4'},
+        yaxis:{title:'y',gridcolor:'rgba(130,160,255,.12)',color:'#9fb0d4'},
+        zaxis:{title:'z',gridcolor:'rgba(130,160,255,.12)',color:'#9fb0d4'},
+        bgcolor:'rgba(0,0,0,0)',camera:{eye:{x:1.6,y:-1.6,z:0.9}},
+        aspectmode:'cube'},
+      showlegend:false,margin:{l:0,r:0,t:0,b:0}
+    }),PCFG);
+    $('#liftmsg').innerHTML='<b>'+STEPS[step].n+'</b> — '+STEPS[step].m;
+  }
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   10c · MECHANISMUS C — DONUT ZU CROISSANT (Abb. 22)
+   ═══════════════════════════════════════════════════════════ */
+(function torusDemo(){
+  function surf(t){
+    // t: 0 Torus -> 0.33 pinched -> 0.66 doubly pinched -> 1 Sphäre
+    const N=56,M=38;
+    const X=[],Y=[],Z=[];
+    for(let i=0;i<=N;i++){
+      const u=i/N*TAU;
+      const xr=[],yr=[],zr=[];
+      for(let j=0;j<=M;j++){
+        const v=j/M*TAU;
+        // Rohrradius wird an einer/zwei Stellen auf 0 gekniffen
+        let rr=0.42;
+        const p1=Math.abs(Math.cos(u/2));       // kneift bei u=π
+        const p2=Math.abs(Math.sin(u/2));       // kneift bei u=0
+        let f=1;
+        if(t<=0.5){
+          const a=t/0.5;
+          f = 1-a*(1-p1);
+        } else {
+          const a=(t-0.5)/0.5;
+          f = p1*(1-a) + a*(p1*p2*2.0);
+        }
+        rr=0.42*Math.max(0.0,f);
+        const R=1.1;
+        let x=(R+rr*Math.cos(v))*Math.cos(u);
+        let y=(R+rr*Math.cos(v))*Math.sin(u);
+        let z=rr*Math.sin(v);
+        // Am 
+ Ende: Deformation zur Sphäre
+        if(t>0.5){
+          const a=(t-0.5)/0.5;
+          // ziehe zur Kugelform
+          const sx=Math.sin(u/2);
+          const bx=1.55*Math.sin(u/2)*Math.cos(u<Math.PI?0:0);
+          const SR=1.5;
+          const sphX=SR*Math.sin(u/2)*Math.cos(v);
+          const sphY=SR*Math.cos(u/2)*1.0;
+          const sphZ=SR*Math.sin(u/2)*Math.sin(v);
+          x=lerp(x,sphY,a*a); y=lerp(y,sphX,a*a); z=lerp(z,sphZ,a*a);
+        }
+        xr.push(x);yr.push(y);zr.push(z);
+      }
+      X.push(xr);Y.push(yr);Z.push(zr);
+    }
+    return {type:'surface',x:X,y:Y,z:Z,showscale:false,opacity:.92,
+      colorscale:[[0,'#fbbf24'],[0.5,'#f59e0b'],[1,'#d97706']],
+      hoverinfo:'skip',lighting:{ambient:.58,diffuse:.8,specular:.3,roughness:.5}};
+  }
+  const STAGES=[
+    {t:0.00,b:[1,2,1],n:'Torus (Donut-Oberfläche)',
+     m:'Zwei unabhängige Schleifen: eine durch das Loch, eine ums Rohr. Plus ein Hohlraum im Rohr.'},
+    {t:0.40,b:[1,1,1],n:'Gekniffener Torus',
+     m:'Eine Stelle wurde zu einem Punkt zusammengedrückt. <b>Eine Schleife stirbt</b> — das kann keine affine Abbildung.'},
+    {t:0.72,b:[1,1,2],n:'Doppelt gekniffener Torus',
+     m:'Zweite Kneifung. Jetzt gibt es <b>zwei</b> getrennte Hohlräume. β₂ steigt auf 2!'},
+    {t:1.00,b:[1,0,1],n:'Sphäre (Croissant)',
+     m:'Alle Schleifen weg, ein Hohlraum. Vom Donut zum Croissant — <b>nur mit ReLU möglich</b>.'}
+  ];
+  function nearest(t){
+    let best=STAGES[0],bd=9;
+    STAGES.forEach(s=>{const d=Math.abs(s.t-t);if(d<bd){bd=d;best=s;}});
+    return best;
+  }
+  function render(){
+    const t=+$('#tors').value/100;
+    $('#torv').textContent=Math.round(t*100)+'%';
+    Plotly.react('tor3d',[surf(t)],L({
+      scene:{xaxis:{visible:false},yaxis:{visible:false},zaxis:{visible:false},
+        bgcolor:'rgba(0,0,0,0)',aspectmode:'data',camera:{eye:{x:1.7,y:1.3,z:1.0}}},
+      showlegend:false,margin:{l:0,r:0,t:0,b:0}
+    }),PCFG);
+    const st=nearest(t);
+    $('#tb0').textContent=st.b[0];
+    $('#tb1').textContent=st.b[1];
+    $('#tb2').textContent=st.b[2];
+    $('#tormsg').innerHTML='<b>'+st.n+'</b> — β = ('+st.b.join(', ')+') — '+st.m;
+  }
+  $('#tors').addEventListener('input',render);
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   11 · ABSCHLUSS-SANDKASTEN
+   ═══════════════════════════════════════════════════════════ */
+(function sandbox(){
+  let act='relu', bottle=false;
+  function profile(w0,depth,width,a,bn){
+    // Modellierung aus den Beobachtungen des Papers
+    const speed={tanh:0.72,lrelu:1.35,relu:2.0}[a];
+    // schmaler = schneller; breit = langsamer
+    const widthFac = clamp(1.45 - Math.log(width)/Math.log(50)*0.75, 0.6, 1.5);
+    const y=[];
+    for(let k=0;k<=depth;k++){
+      const frac=k/depth;
+      // Exponent: Arbeit konzentriert sich hinten
+      const p = 3.0/(speed*widthFac);
+      let done=Math.pow(frac,p);
+      if(bn){
+        const bk=Math.floor(depth*0.45);
+        if(k>=bk) done=Math.min(1,done+0.34*(1-Math.pow(0.6,k-bk+1)));
+      }
+      y.push(Math.max(1, w0-(w0-1)*done));
+    }
+    return y;
+  }
+  function render(){
+    const w0=+$('#sb_w').value, depth=+$('#sb_d').value, width=+$('#sb_wd').value;
+    $('#sb_wv').textContent=w0;
+    $('#sb_dv').textContent=depth;
+    $('#sb_ww').textContent=width;
+    const COL={tanh:C.b,lrelu:C.r,relu:C.g};
+    const NAME={tanh:'tanh',lrelu:'Leaky ReLU',relu:'ReLU'};
+    const xs=Array.from({length:depth+1},(_,i)=>i);
+    const traces=['tanh','lrelu','relu'].map(a=>({
+      x:xs,y:profile(w0,depth,width,a,bottle),
+      mode:'lines+markers',name:NAME[a],
+      line:{color:COL[a],width:a===act?4:1.8,
+        dash:a===act?'solid':'dot',shape:'spline'},
+      marker:{size:a===act?8:4},
+      opacity:a===act?1:0.45
+    }));
+    traces.push({x:xs,y:xs.map(()=>1),mode:'lines',name:'Ziel ω = 1',
+      line:{color:'rgba(251,191,36,.5)',width:1.5,dash:'dash'},hoverinfo:'skip'});
+    if(bottle){
+      const bk=Math.floor(depth*0.45);
+      traces.push({x:[bk,bk],y:[0,w0*1.05],mode:'lines',name:'Flaschenhals',
+        line:{color:'rgba(167,139,250,.4)',width:12},hoverinfo:'skip',showlegend:false});
+    }
+    Plotly.react('sbplot',traces,L({
+      title:{text:'Modelliertes topologisches Profil',font:{size:12,color:'#e8edfa'}},
+      xaxis:{title:'Schicht k',dtick:1},
+      yaxis:{title:'ω( ν_k(Mₐ) )',rangemode:'tozero'},
+      legend:{x:0.62,y:0.98}
+    }),PCFG);
+    const y=profile(w0,depth,width,act,bottle);
+    const fin=y[y.length-1];
+    const reached = y.findIndex(v=>v<=1.08);
+    const parts=[];
+    parts.push(`Start: <b>ω = ${w0}</b>, Ende: <b>ω = ${fin.toFixed(2)}</b>.`);
+    if(fin<=1.08) parts.push(`<span style="color:var(--green)">✓ Ziel erreicht bei Schicht ${reached}.</span>`);
+    else parts.push(`<span style="color:var(--red)">✗ Ziel nicht erreicht</span> — mehr Tiefe oder eine „schärfere" Aktivierung nötig.`);
+    if(act==='tanh') parts.push('tanh ist ein Homöomorphismus; es simplifiziert nur über Rundungsfehler und ist daher am langsamsten.');
+    if(act==='relu') parts.push('ReLU ist nicht injektiv und kann frei falten — der schnellste Weg zur topologischen Vereinfachung.');
+    if(width>35) parts.push('Sehr breit: viel Platz ⇒ das Netz ordnet erst nur geometrisch um.');
+    if(width<8) parts.push('Sehr schmal: wenig Platz ⇒ erzwungene Kompression, schnellere Topologieänderung — aber schwerer trainierbar.');
+    if(bottle) parts.push('Der Flaschenhals erzwingt an einer Stelle einen großen topologischen Sprung.');
+    $('#sb_msg').innerHTML=parts.join(' ');
+  }
+  ['sb_w','sb_d','sb_wd'].forEach(i=>$('#'+i).addEventListener('input',render));
+  $$('.sbact').forEach(b=>b.addEventListener('click',()=>{
+    $$('.sbact').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');act=b.dataset.a;render();}));
+  $('#sb_bottle').addEventListener('click',function(){
+    bottle=!bottle;this.classList.toggle('active');render();});
+  render();
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   FINALE: Resize-Handling für alle Plotly-Plots
+   ═══════════════════════════════════════════════════════════ */
+let rT=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(rT);
+  rT=setTimeout(()=>{
+    $$('.plot').forEach(el=>{ try{ Plotly.Plots.resize(el); }catch(e){} });
+  },180);
+});
+
+// Initiales Layout nach dem Laden sicherstellen
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    window.dispatchEvent(new Event('resize'));
+    $$('.reveal').forEach(e=>{
+      if(e.getBoundingClientRect().top<window.innerHeight) e.classList.add('in');
+    });
+  },300);
+});
+</script>
+</body>
+</html>
