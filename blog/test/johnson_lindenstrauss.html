@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Johnson–Lindenstrauss · visuell</title>
+<style>
+:root{
+  --bg:#07080d;
+  --bg2:#0d1018;
+  --ink:#e8ecf6;
+  --dim:#8b93a9;
+  --acc:#64ffda;
+  --acc2:#ff6ec7;
+  --acc3:#7aa2ff;
+  --warn:#ffd166;
+  --bad:#ff5d5d;
+  --card:rgba(255,255,255,.035);
+  --line:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 15% -10%, #16203a 0%, transparent 60%),
+    radial-gradient(900px 600px at 95% 10%, #2a1230 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  overflow-x:hidden;
+}
+canvas{display:block}
+a{color:var(--acc)}
+h1,h2,h3{line-height:1.15;margin:0 0 .4em}
+h1{font-size:clamp(2.2rem,6vw,4.6rem);font-weight:800;letter-spacing:-.03em}
+h2{font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:700;letter-spacing:-.02em}
+h3{font-size:1.05rem;font-weight:650;color:var(--acc)}
+p{color:#c6cddd;max-width:62ch}
+.dim{color:var(--dim)}
+.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+section{padding:80px 0;position:relative}
+.sec-tag{
+  display:inline-block;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--acc);border:1px solid var(--line);border-radius:99px;padding:5px 14px;margin-bottom:16px;
+  background:rgba(100,255,218,.06)
+}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:18px;
+  backdrop-filter:blur(8px);padding:18px;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ---------- hero ---------- */
+#hero{height:100vh;min-height:620px;display:flex;align-items:center;overflow:hidden}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+#hero .wrap{position:relative;z-index:2}
+.hero-sub{font-size:clamp(1rem,1.6vw,1.25rem);color:#aab3c8;max-width:50ch}
+.formula{
+  margin-top:26px;display:inline-block;padding:16px 22px;border-radius:14px;
+  border:1px solid var(--line);background:rgba(10,14,24,.6);backdrop-filter:blur(10px);
+  font-family:ui-monospace,Menlo,monospace;font-size:clamp(.85rem,1.6vw,1.1rem);
+}
+.formula b{color:var(--acc)}
+.scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;color:var(--dim);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase}
+.scrollcue span{display:block;width:1px;height:38px;margin:10px auto 0;background:linear-gradient(var(--acc),transparent);animation:cue 1.8s infinite}
+@keyframes cue{0%{opacity:.2;transform:scaleY(.4)}50%{opacity:1}100%{opacity:.2;transform:scaleY(.4)}}
+
+/* ---------- controls ---------- */
+.ctrl{margin:12px 0}
+.ctrl label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--dim);margin-bottom:5px}
+.ctrl label b{color:var(--ink);font-family:ui-monospace,Menlo,monospace}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,var(--acc),var(--acc3));outline:none;cursor:pointer
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;border:3px solid var(--acc);cursor:grab;box-shadow:0 0 14px rgba(100,255,218,.6)
+}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--acc)}
+button{
+  font:inherit;font-size:.85rem;padding:9px 16px;border-radius:10px;cursor:pointer;
+  background:rgba(100,255,218,.1);color:var(--acc);border:1px solid rgba(100,255,218,.35);
+  transition:.18s
+}
+button:hover{background:rgba(100,255,218,.22);transform:translateY(-1px)}
+button.alt{background:rgba(122,162,255,.1);color:var(--acc3);border-color:rgba(122,162,255,.35)}
+button.alt:hover{background:rgba(122,162,255,.22)}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+/* ---------- misc ---------- */
+.stat{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.88rem}
+.stat:last-child{border:0}
+.stat b{font-family:ui-monospace,Menlo,monospace}
+.ok{color:var(--acc)} .no{color:var(--bad)}
+.badge{display:inline-block;padding:3px 9px;border-radius:7px;font-size:.72rem;font-family:ui-monospace,Menlo,monospace}
+.badge.g{background:rgba(100,255,218,.15);color:var(--acc)}
+.badge.r{background:rgba(255,93,93,.15);color:var(--bad)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin-top:10px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.rev{opacity:0;transform:translateY(26px);transition:.8s cubic-bezier(.2,.7,.2,1)}
+.rev.in{opacity:1;transform:none}
+hr.sep{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:0}
+.kbd{font-family:ui-monospace,Menlo,monospace;font-size:.78rem;background:rgba(255,255,255,.07);padding:2px 7px;border-radius:6px;border:1px solid var(--line)}
+.note{font-size:.84rem;color:var(--dim);border-left:2px solid var(--acc);padding-left:12px;margin-top:14px}
+#prog{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),var(--acc2));z-index:99;width:0}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<!-- ============ HERO ============ -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="wrap">
+    <div class="sec-tag">Johnson &amp; Lindenstrauss · 1984</div>
+    <h1>Hohe Dimensionen<br/>sind <span style="color:var(--acc)">komprimierbar</span>.</h1>
+    <p class="hero-sub">
+      Nimm <b>n</b> Punkte — egal in wie vielen Dimensionen.
+      Wirf sie zufällig auf <b>~log n</b> Dimensionen.
+      Alle paarweisen Abstände überleben. Fast perfekt.
+    </p>
+    <div class="formula">
+      (1−ε)·‖x−y‖ &nbsp;≤&nbsp; <b>‖f(x)−f(y)‖</b> &nbsp;≤&nbsp; (1+ε)·‖x−y‖ &nbsp;&nbsp;für &nbsp;
+      <b>k = ⌈K(ε)·log n⌉</b>
+    </div>
+    <div class="legend">
+      <span>Die Dimension der <i style="background:var(--acc)"></i>Ziel­dimension hängt <b>nicht</b> von der Ursprungs­dimension ab. Nur von <b>n</b>.</span>
+    </div>
+  </div>
+  <div class="scrollcue">scroll<span></span></div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ============ 1. PROBLEM ============ -->
+<section id="s1">
+  <div class="wrap">
+    <div class="rev">
+      <div class="sec-tag">01 · Das Problem</div>
+      <h2>Daten leben in viel zu vielen Dimensionen</h2>
+      <p>Ein Bild: 1 Mio. Pixel = 1 Mio. Dimensionen. Aber du hast vielleicht nur 500 Bilder.
+      Die Frage von Johnson &amp; Lindenstrauss: <i>Wie klein darf die Zieldimension k sein, damit sich alle paarweisen
+      Abstände höchstens um den Faktor 1+ε ändern?</i> [[1]]</p>
+    </div>
+    <div class="grid2 rev" style="margin-top:28px">
+      <div class="card">
+        <h3>Die naive Intuition (falsch)</h3>
+        <p class="dim" style="font-size:.92rem">„Um n Punkte unterzubringen brauche ich n−1 Dimensionen.“
+        Stimmt für <b>exakte</b> Abstände. Aber wir erlauben ein bisschen Wackeln — und plötzlich reicht <b>log n</b>.</p>
+        <canvas id="cmpCanvas" height="230" style="width:100%;margin-top:10px"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--bad)"></i>exakt: n−1</span>
+          <span><i style="background:var(--acc)"></i>JL: K·log n</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Spiel damit: wie viele Punkte?</h3>
+        <div class="ctrl">
+          <label>Anzahl Punkte n <b id="nVal">1 000 000</b></label>
+          <input type="range" id="nSlider" min="1" max="12" step="0.01" value="6"/>
+        </div>
+        <div class="ctrl">
+          <label>Toleranz ε <b id="eVal">0.20</b></label>
+          <input type="range" id="eSlider" min="0.05" max="0.6" step="0.01" value="0.2"/>
+        </div>
+        <div class="stat"><span>Exakte Einbettung braucht</span><b class="no" id="exactK">999 999 D</b></div>
+        <div class="stat"><span>JL braucht nur</span><b class="ok" id="jlK">≈ 1 380 D</b></div>
+        <div class="stat"><span>Kompressionsfaktor</span><b id="ratio">724×</b></div>
+        <p class="note">k ≈ 8·ln(n)/ε² — die Zahl wächst <b>logarithmisch</b>. Verzehnfache n → +2.3·8/ε² Dimensionen. Das ist alles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ============ 2. PROJECTION ============ -->
+<section id="s2">
+  <div class="wrap">
+    <div class="rev">
+      <div class="sec-tag">02 · Die Maschine</div>
+      <h2>Eine zufällige Projektion in Aktion</h2>
+      <p>Der Beweis im Paper benutzt eine <b>zufällige Rang-k-Orthogonalprojektion</b>: wähle U zufällig aus der
+      orthogonalen Gruppe O(n) und setze f = U*QU, wobei Q auf die ersten k Koordinaten projiziert [[1]].
+      Hier siehst du das in 3D → 2D. Ziehe die Ebene, drücke „würfeln“.</p>
+    </div>
+    <div class="grid2 rev" style="margin-top:26px;grid-template-columns:1.35fr 1fr">
+      <div class="card" style="padding:0;overflow:hidden">
+        <canvas id="projCanvas" height="440" style="width:100%;cursor:grab"></canvas>
+      </div>
+      <div class="card">
+        <h3>Steuerung</h3>
+        <div class="ctrl">
+          <label>Projektionsebene drehen <b id="angVal">0°</b></label>
+          <input type="range" id="angSlider" min="0" max="360" step="1" value="35"/>
+        </div>
+        <div class="ctrl">
+          <label>Neigung <b id="tiltVal">0°</b></label>
+          <input type="range" id="tiltSlider" min="-80" max="80" step="1" value="20"/>
+        </div>
+        <div class="btnrow">
+          <button id="diceBtn">🎲 neue Zufallsebene</button>
+          <button class="alt" id="spinBtn">▶ auto-rotieren</button>
+        </div>
+        <div style="margin-top:16px">
+          <div class="stat"><span>mittlere Verzerrung</span><b id="meanDist">—</b></div>
+          <div class="stat"><span>max. Stauchung</span><b id="minDist" class="ok">—</b></div>
+          <div class="stat"><span>max. Streckung</span><b id="maxDist" class="no">—</b></div>
+        </div>
+        <p class="note">Jede einzelne Ebene ist „schlecht“ für <i>manche</i> Paare — aber im Mittel schrumpft jeder
+        Abstand um denselben Faktor √(k/d). Genau das macht Skalierung möglich.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ============ 3. CONCENTRATION ============ -->
+<section id="s3">
+  <div class="wrap">
+    <div class="rev">
+      <div class="sec-tag">03 · Warum es funktioniert</div>
+      <h2>Maßkonzentration: die Sphäre ist fast ein Äquator</h2>
+      <p>Das Herzstück ist Lévys Ungleichung / die isoperimetrische Ungleichung auf S<sup>n−1</sup> [[1]].
+      Die Projektionslänge r(Ux) weicht nur mit Wahrscheinlichkeit ≤ 4·exp(−nε²) vom Median ab [[1]].
+      Übersetzt: <b>in hohen Dimensionen ist eine Zufallsfunktion fast konstant.</b></p>
+    </div>
+
+    <div class="grid2 rev" style="margin-top:26px">
+      <div class="card">
+        <h3>Länge der Projektion eines Zufallsvektors</h3>
+        <canvas id="concCanvas" height="280" style="width:100%"></canvas>
+        <div class="ctrl">
+          <label>Ursprungsdimension d <b id="dVal">100</b></label>
+          <input type="range" id="dSlider" min="2" max="500" step="1" value="100"/>
+        </div>
+        <div class="ctrl">
+          <label>Zieldimension k <b id="kVal">20</b></label>
+          <input type="range" id="kSlider" min="1" max="120" step="1" value="20"/>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--acc3)"></i>Histogramm von ‖Px‖/(‖x‖√(k/d))</span>
+          <span><i style="background:var(--acc2)"></i>Erwartungswert = 1</span>
+        </div>
+        <p class="note" id="concNote">Je größer k, desto schmaler der Peak — die Verteilung kollabiert auf 1.</p>
+      </div>
+
+      <div class="card">
+        <h3>Der Sphären-Gürtel</h3>
+        <canvas id="sphereCanvas" height="300" style="width:100%"></canvas>
+        <p class="dim" style="font-size:.9rem">
+          Links: in <b>niedriger</b> Dimension sind Punkte überall verteilt.
+          Rechts: in <b>hoher</b> Dimension liegt fast die gesamte Oberfläche in einem hauchdünnen Band
+          um den Äquator — bzgl. <i>jeder</i> gewählten Achse.
+        </p>
+        <div class="ctrl">
+          <label>Dimension <b id="sdVal">3</b></label>
+          <input type="range" id="sdSlider" min="2" max="200" step="1" value="3"/>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--warn)"></i>Masse innerhalb ±0.15 vom Äquator: <b id="beltPct">—</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ============ 4. UNION BOUND ============ -->
+<section id="s4">
+  <div class="wrap">
+    <div class="rev">
+      <div class="sec-tag">04 · Der Trick</div>
+      <h2>Union Bound: warum ausgerechnet <span class="mono">log n</span>?</h2>
+      <p>Es gibt <b>n(n−1)/2 ≈ n²</b> Paare. Jedes einzelne scheitert nur mit Wahrscheinlichkeit e<sup>−c·k·ε²</sup>.
+      Damit <i>alle</i> gleichzeitig gelingen, muss n²·e<sup>−c·k·ε²</sup> &lt; 1 sein — und das löst sich zu
+      <b>k &gt; (2/cε²)·log n</b>. Im Paper taucht derselbe Ausdruck als 2n(n+1)·exp(−nτ²) auf [[1]].</p>
+    </div>
+    <div class="card rev" style="margin-top:24px">
+      <canvas id="unionCanvas" height="340" style="width:100%"></canvas>
+      <div class="grid3" style="margin-top:14px">
+        <div class="ctrl">
+          <label>Punkte n <b id="unVal">40</b></label>
+          <input type="range" id="unSlider" min="5" max="150" step="1" value="40"/>
+        </div>
+        <div class="ctrl">
+          <label>Zieldimension k <b id="ukVal">30</b></label>
+          <input type="range" id="ukSlider" min="2" max="200" step="1" value="30"/>
+        </div>
+        <div class="ctrl">
+          <label>ε <b id="ueVal">0.30</b></label>
+          <input type="range" id="ueSlider" min="0.05" max="0.6" step="0.01" value="0.3"/>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="stat"><span>Paare</span><b id="pairCount">780</b></div>
+        <div class="stat"><span>P(ein Paar scheitert)</span><b id="pFail">—</b></div>
+        <div class="stat"><span>P(alles gut)</span><b id="pAll">—</b></div>
+      </div>
+      <p class="note">Schiebe k hoch: die roten Fehlschläge verschwinden schlagartig. Das ist kein sanfter Übergang —
+      es ist ein <b>Phasenübergang</b> bei k ≈ log n / ε².</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ============ 5. PLAYGROUND ============ -->
+<section id="s5">
+  <div class="wrap">
+    <div class="rev">
+      <div class="sec-tag">05 · Spielplatz</div>
+      <h2>Echte Daten, echte Projektion</h2>
+      <p>Links: eine Punktwolke in d Dimensionen (als Distanzmatrix visualisiert).
+      Rechts: dieselbe Wolke nach zufälliger Projektion auf k Dimensionen. Die Matrizen sollten gleich aussehen.</p>
+    </div>
+    <div class="grid2 rev" style="margin-top:24px">
+      <div class="card">
+        <h3>Original · d Dimensionen</h3>
+        <canvas id="mat1" height="300" style="width:100%;image-rendering:pixelated"></canvas>
+      </div>
+      <div class="card">
+        <h3>Projiziert · k Dimensionen</h3>
+        <canvas id="mat2" height="300" style="width:100%;image-rendering:pixelated"></canvas>
+      </div>
+    </div>
+    <div class="card rev" style="margin-top:20px">
+      <div class="grid3">
+        <div class="ctrl">
+          <label>Punkte n <b id="pnVal">60</b></label>
+          <input type="range" id="pnSlider" min="10" max="120" step="1" value="60"/>
+        </div>
+        <div class="ctrl">
+          <label>Original-Dim d <b id="pdVal">256</b></label>
+          <input type="range" id="pdSlider" min="8" max="512" step="1" value="256"/>
+        </div>
+        <div class="ctrl">
+          <label>Ziel-Dim k <b id="pkVal">32</b></label>
+          <input type="range" id="pkSlider" min="1" max="200" step="1" value="32"/>
+        </div>
+      </div>
+      <div class="btnrow"><button id="reroll">🎲 neu würfeln</button></div>
+      <div style="margin-top:14px">
+        <h3>Verzerrung aller Paare</h3>
+        <canvas id="distCanvas" height="150" style="width:100%"></canvas>
+        <div class="grid3" style="margin-top:8px">
+          <div class="stat"><span>min</span><b id="dmin">—</b></div>
+          <div class="stat"><span>max</span><b id="dmax">—</b></div>
+          <div class="stat"><span>Paare außerhalb ±ε</span><b id="dout">—</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ============ 6. ORIGINAL CONTEXT ============ -->
+<section id="s6">
+  <div class="wrap">
+    <div class="rev">
+      <div class="sec-tag">06 · Der eigentliche Kontext</div>
+      <h2>Lemma 1 war nur ein Werkzeug</h2>
+      <p>Überraschung: Johnson &amp; Lindenstrauss schrieben 1984 gar kein Paper über Dimensionsreduktion.
+      Ihr Titel lautet <i>„Extensions of Lipschitz Mappings into a Hilbert Space“</i> [[11]].
+      Sie wollten eine Vermutung von Marcus und Pisier beweisen [[11]].
+      Das berühmte Lemma ist dort ein „simply stated elementary geometric lemma“ — ein Hilfsmittel auf Seite 2 [[11]].</p>
+    </div>
+
+    <div class="card rev" style="margin-top:26px;padding:26px">
+      <h3>Die Beweiskette von Theorem 1</h3>
+      <canvas id="chainCanvas" height="300" style="width:100%"></canvas>
+      <p class="note">Klicke auf die Kästen für Details. Die Aussage am Ende:
+      <span class="mono">‖f̃‖<sub>Lip</sub> ≤ K(log n)<sup>1/2</sup>·‖f‖<sub>Lip</sub></span> für <b>jeden</b> metrischen Raum X [[11]].</p>
+      <div id="chainInfo" class="card" style="margin-top:14px;background:rgba(100,255,218,.05);border-color:rgba(100,255,218,.25)">
+        <b class="mono" id="ciTitle">→ Lemma 1</b>
+        <p id="ciBody" style="margin:.5em 0 0;font-size:.92rem">Die geometrische Aussage: n Punkte lassen sich in
+        k = ⌈K log n⌉ Dimensionen packen, mit Verzerrung ≤ 1+ε [[11]].</p>
+      </div>
+    </div>
+
+    <div class="grid2 rev" style="margin-top:22px">
+      <div class="card">
+        <h3>Die Schranke im Original</h3>
+        <p class="dim" style="font-size:.92rem">Statt des heute üblichen <span class="mono">n²·e<sup>−ckε²</sup></span>
+        steht im Paper wörtlich:</p>
+        <div class="formula" style="display:block;margin-top:10px;font-size:.9rem">
+          σ[…] ≥ 1 − <b>2n(n+1)·exp(−nτ²)</b>
+        </div>
+        <p class="dim" style="font-size:.88rem;margin-top:12px">…und nach Einsetzen von k = [K log n] [[11]]:</p>
+        <div class="formula" style="display:block;font-size:.9rem">
+          ≥ 1 − 2n(n+1)·exp(−<b>τ²·K·log n / 18</b>)
+        </div>
+        <p class="note">Der Term <b>2n(n+1)</b> ist exakt die Union-Bound-Zählung über alle Paare (plus Vorzeichen).
+        Positiv wird das genau dann, wenn K groß genug gegen ε² ist.</p>
+      </div>
+      <div class="card">
+        <h3>Warum log n optimal ist</h3>
+        <p class="dim" style="font-size:.92rem">Das Paper zeigt auch die Gegenrichtung: in einer Kugel vom Radius 2 in
+        ℓ₂<sup>k</sup> gibt es höchstens <b>4<sup>k</sup></b> Vektoren mit paarweisem Abstand ≥ 1 [[11]].</p>
+        <canvas id="packCanvas" height="200" style="width:100%;margin-top:8px"></canvas>
+        <p class="dim" style="font-size:.88rem">Also: n Punkte brauchen 4<sup>k</sup> ≥ n, d.h.
+        <b>k ≥ log n / log 4</b>. Die Schranke ist bis auf Konstanten scharf [[11]].</p>
+        <div class="ctrl">
+          <label>k <b id="packKVal">3</b> → max. Punkte 4^k <b id="packNVal">64</b></label>
+          <input type="range" id="packSlider" min="1" max="12" step="1" value="3"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep"/>
+
+<!-- ============ 7. TAKEAWAYS ============ -->
+<section id="s7">
+  <div class="wrap">
+    <div class="rev">
+      <div class="sec-tag">07 · Mitnehmen</div>
+      <h2>Vier Sätze, die alles erklären</h2>
+    </div>
+    <div class="grid2 rev" style="margin-top:24px">
+      <div class="card"><h3>1 · Zufall ist gut genug</h3>
+        <p class="dim" style="font-size:.93rem">Man muss die Projektion nicht clever wählen. Eine <b>zufällige</b>
+        Rang-k-Orthogonalprojektion funktioniert „with positive probability“ [[11]] — und die kann man durch größeres k
+        beliebig nah an 1 drücken.</p></div>
+      <div class="card"><h3>2 · k hängt nicht von d ab</h3>
+        <p class="dim" style="font-size:.93rem">Ob deine Daten 1 000 oder 10 Milliarden Dimensionen haben:
+        <span class="mono">k = ⌈K(ε)·log n⌉</span> [[11]]. Nur die <b>Anzahl der Punkte</b> zählt.</p></div>
+      <div class="card"><h3>3 · ε ist teuer, n ist billig</h3>
+        <p class="dim" style="font-size:.93rem">k wächst wie <span class="mono">log n / ε²</span>.
+        Halbiere ε → <b>4×</b> so viele Dimensionen. Verdopple n → nur <b>+0.69/ε²</b>.</p></div>
+      <div class="card"><h3>4 · Maßkonzentration ist der Motor</h3>
+        <p class="dim" style="font-size:.93rem">Alles folgt aus Lévys Ungleichung auf S<sup>n−1</sup>:
+        <span class="mono">σ[|r(Uy) − M<sub>r</sub>| ≤ √n·ε] ≥ 1 − 4exp(−nε²)</span> [[11]].</p></div>
+    </div>
+
+    <div class="card rev" style="margin-top:24px;text-align:center;padding:36px">
+      <h3 style="font-size:1.3rem">Der ganze Beweis in einer Animation</h3>
+      <canvas id="finaleCanvas" height="300" style="width:100%"></canvas>
+      <div class="btnrow" style="justify-content:center">
+        <button id="finaleBtn">▶ abspielen</button>
+      </div>
+      <p class="dim" id="finaleLabel" style="margin:12px auto 0;font-size:.95rem">Drücke Play.</p>
+    </div>
+
+    <p class="dim rev" style="margin-top:40px;font-size:.85rem;text-align:center">
+      Basierend auf: W. B. Johnson &amp; J. Lindenstrauss, <i>Extensions of Lipschitz mappings into a Hilbert space</i>,
+      Contemporary Mathematics 26 (1984), 189–206 [[11]].
+    </p>
+  </div>
+</section>
+
+<script>
+/* ===================== helpers ===================== */
+const $ = s => document.querySelector(s);
+const TAU = Math.PI*2;
+function fit(c){
+  const r = c.getBoundingClientRect();
+  const dpr = Math.min(devicePixelRatio||1, 2);
+  c.width = Math.max(1, r.width*dpr);
+  c.height = Math.max(1, (c.getAttribute('height')||300)*dpr);
+  c.style.height = (c.getAttribute('height')||300)+'px';
+  const x = c.getContext('2d');
+  x.setTransform(dpr,0,0,dpr,0,0);
+  return {x, w:r.width, h:+(c.getAttribute('height')||300)};
+}
+let _g=0, _gp=0;
+function gauss(){ // Box-Muller
+  if(_g){_g=0;return _gp;}
+  let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random();
+  const m=Math.sqrt(-2*Math.log(u)); _gp=m*Math.sin(TAU*v); _g=1;
+  return m*Math.cos(TAU*v);
+}
+const fmt = n => n>=1e6 ? (n/1e6).toFixed(n>=1e7?0:1)+' Mio' : n.toLocaleString('de-DE');
+
+/* ===================== progress + reveal ===================== */
+addEventListener('scroll',()=>{
+  const p = scrollY/(document.body.scrollHeight-innerHeight);
+  $('#prog').style.width = (p*100)+'%';
+});
+const io = new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }),{threshold:.12});
+document.querySelectorAll('.rev').forEach(e=>io.observe(e));
+
+/* ===================== HERO ===================== */
+(function(){
+  const c=$('#heroCanvas'); const ctx=c.getContext('2d');
+  let W,H,dpr;
+  const N=170, pts=[];
+  for(let i=0;i<N;i++) pts.push({
+    x:(Math.random()*2-1), y:(Math.random()*2-1), z:(Math.random()*2-1),
+    s:Math.random()*.5+.5
+  });
+  function resize(){
+    dpr=Math.min(devicePixelRatio||1,2);
+    W=c.clientWidth; H=c.clientHeight;
+    c.width=W*dpr; c.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  resize(); addEventListener('resize',resize);
+  let t=0, collapse=0, dir=1;
+  function loop(){
+    t+=0.004;
+    collapse += dir*0.006;
+    if(collapse>1.35){collapse=1.35;dir=-1;}
+    if(collapse<-0.35){collapse=-0.35;dir=1;}
+    const cl = Math.max(0,Math.min(1,collapse));
+    const e = cl*cl*(3-2*cl);
+    ctx.clearRect(0,0,W,H);
+    const cx=W*.68, cy=H*.5, R=Math.min(W,H)*.33;
+    const ca=Math.cos(t), sa=Math.sin(t);
+    const proj=[];
+    for(const p of pts){
+      let x=p.x*ca - p.z*sa, z=p.x*sa + p.z*ca, y=p.y;
+      // collapse onto a plane (y -> 0) = projection
+      y = y*(1-e*0.96);
+      const pz = 3.2 + z;
+      const k = 1.9/pz;
+      proj.push({X:cx+x*R*k*1.6, Y:cy+y*R*k*1.6, d:pz, s:p.s});
+    }
+    // links
+    ctx.lineWidth=.6;
+    for(let i=0;i<proj.length;i++){
+      for(let j=i+1;j<proj.length;j++){
+        const dx=proj[i].X-proj[j].X, dy=proj[i].Y-proj[j].Y;
+        const dd=dx*dx+dy*dy;
+        if(dd<5000){
+          const a=(1-dd/5000)*0.17;
+          ctx.strokeStyle=`rgba(${100+e*155},${255-e*90},${218},${a})`;
+          ctx.beginPath();ctx.moveTo(proj[i].X,proj[i].Y);ctx.lineTo(proj[j].X,proj[j].Y);ctx.stroke();
+        }
+      }
+    }
+    for(const p of proj){
+      const r=(2.4/p.d*3)*p.s;
+      ctx.fillStyle=`rgba(${160+e*95},${240-e*60},255,${.5+.5/p.d})`;
+      ctx.beginPath();ctx.arc(p.X,p.Y,Math.max(.6,r),0,TAU);ctx.fill();
+    }
+    // plane hint
+    if(e>0.05){
+      ctx.strokeStyle=`rgba(255,110,199,${e*.35})`;ctx.lineWidth=1.2;
+      ctx.beginPath();ctx.moveTo(cx-R*1.9,cy);ctx.lineTo(cx+R*1.9,cy);ctx.stroke();
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ===================== 1. COMPARISON + SLIDERS ===================== */
+(function(){
+  const cmp=$('#cmpCanvas');
+  function Kof(eps){ return 8/(eps*eps); }
+  function drawCmp(){
+    const {x,w,h}=fit(cmp);
+    x.clearRect(0,0,w,h);
+    const pad={l:40,r:12,t:14,b:26};
+    const PW=w-pad.l-pad.r, PH=h-pad.t-pad.b;
+    const eps=+$('#eSlider').value;
+    const maxLogN=7;
+    // y axis is log-scale of dimension
+    const maxD=Math.pow(10,maxLogN);
+    const ly=v=>pad.t+PH-(Math.log10(Math.max(1,v))/maxLogN)*PH;
+    // grid
+    x.strokeStyle='rgba(255,255,255,.07)';x.lineWidth=1;
+    x.font='10px ui-monospace,monospace';x.fillStyle='#6a7289';
+    for(let e=0;e<=maxLogN;e++){
+      const Y=ly(Math.pow(10,e));
+      x.beginPath();x.moveTo(pad.l,Y);x.lineTo(w-pad.r,Y);x.stroke();
+      x.fillText('10^'+e,4,Y+3);
+    }
+    // curves over n = 10^0..10^7
+    function curve(f,col,wid){
+      x.strokeStyle=col;x.lineWidth=wid;x.beginPath();
+      for(let i=0;i<=200;i++){
+        const ln=i/200*maxLogN, n=Math.pow(10,ln);
+        const X=pad.l+(ln/maxLogN)*PW, Y=ly(f(n));
+        i?x.lineTo(X,Y):x.moveTo(X,Y);
+      }
+      x.stroke();
+    }
+    curve(n=>Math.max(1,n-1),'#ff5d5d',2.2);
+    curve(n=>Math.max(1,Kof(eps)*Math.log(n)),'#64ffda',2.6);
+    // marker for current n
+    const ln=+$('#nSlider').value;
+    const X=pad.l+(ln/maxLogN)*PW;
+    x.strokeStyle='rgba(255,255,255,.35)';x.setLineDash([3,3]);
+    x.beginPath();x.moveTo(X,pad.t);x.lineTo(X,pad.t+PH);x.stroke();x.setLineDash([]);
+    const n=Math.pow(10,ln);
+    [[Math.max(1,n-1),'#ff5d5d'],[Math.max(1,Kof(eps)*Math.log(n)),'#64ffda']].forEach(([v,col])=>{
+      x.fillStyle=col;x.beginPath();x.arc(X,ly(v),4,0,TAU);x.fill();
+    });
+    x.fillStyle='#6a7289';x.fillText('n →',w-pad.r-22,h-8);
+  }
+  function upd(){
+    const ln=+$('#nSlider').value, n=Math.round(Math.pow(10,ln));
+    const eps=+$('#eSlider').value;
+    const k=Math.ceil(8*Math.log(Math.max(2,n))/(eps*eps));
+    $('#nVal').textContent=fmt(n);
+    $('#eVal').textContent=eps.toFixed(2);
+    $('#exactK').textContent=fmt(Math.max(1,n-1))+' D';
+    $('#jlK').textContent='≈ '+fmt(k)+' D';
+    const r=Math.max(1,n-1)/k;
+    $('#ratio').textContent = r>=1 ? (r>=1000? Math.round(r).toLocaleString('de-DE'): r.toFixed(1))+'×' : 'kein Gewinn';
+    $('#ratio').className = r>1?'ok':'no';
+    drawCmp();
+  }
+  $('#nSlider').oninput=upd; $('#eSlider').oninput=upd;
+  addEventListener('resize',drawCmp);
+  upd();
+})();
+
+/* ===================== 2. 3D → 2D PROJECTION ===================== */
+(function(){
+  const c=$('#projCanvas');
+  const NP=9, P=[];
+  function reroll(){
+    P.length=0;
+    for(let i=0;i<NP;i++) P.push([gauss()*.55,gauss()*.55,gauss()*.55]);
+  }
+  reroll();
+  let az=35*Math.PI/180, tl=20*Math.PI/180, spin=false, view=0.6;
+  function basis(){
+    // normal of the projection plane
+    const nx=Math.cos(tl)*Math.cos(az), ny=Math.sin(tl), nz=Math.cos(tl)*Math.sin(az);
+    let u=[-Math.sin(az),0,Math.cos(az)];
+    const v=[ny*u[2]-nz*u[1], nz*u[0]-nx*u[2], nx*u[1]-ny*u[0]];
+    return {n:[nx,ny,nz],u,v};
+  }
+  function rot(p,a,b){
+    let [x,y,z]=p;
+    let X=x*Math.cos(a)-z*Math.sin(a), Z=x*Math.sin(a)+z*Math.cos(a);
+    let Y=y*Math.cos(b)-Z*Math.sin(b); Z=y*Math.sin(b)+Z*Math.cos(b);
+    return [X,Y,Z];
+  }
+  function draw(){
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    const B=basis();
+    const cx=w*.37, cy=h*.5, S=Math.min(w,h)*.30;
+    const va=view, vb=.42;
+    const sc=p=>{const q=rot(p,va,vb);const z=3.4+q[2];return [cx+q[0]*S*2.6/z*1.2, cy-q[1]*S*2.6/z*1.2, z];};
+    // axes
+    x.lineWidth=1;x.strokeStyle='rgba(255,255,255,.13)';
+    [[1.3,0,0],[0,1.3,0],[0,0,1.3]].forEach(a=>{
+      const A=sc([-a[0],-a[1],-a[2]]),Bp=sc(a);
+      x.beginPath();x.moveTo(A[0],A[1]);x.lineTo(Bp[0],Bp[1]);x.stroke();
+    });
+    // plane quad
+    const quad=[];
+    for(const [s,t] of [[-1.25,-1.25],[1.25,-1.25],[1.25,1.25],[-1.25,1.25]]){
+      quad.push(sc([B.u[0]*s+B.v[0]*t, B.u[1]*s+B.v[1]*t, B.u[2]*s+B.v[2]*t]));
+    }
+    x.beginPath();x.moveTo(quad[0][0],quad[0][1]);
+    for(let i=1;i<4;i++)x.lineTo(quad[i][0],quad[i][1]);x.closePath();
+    x.fillStyle='rgba(122,162,255,.11)';x.fill();
+    x.strokeStyle='rgba(122,162,255,.5)';x.lineWidth=1.3;x.stroke();
+    // projections
+    const PR=P.map(p=>{
+      const d=p[0]*B.n[0]+p[1]*B.n[1]+p[2]*B.n[2];
+      return [p[0]-d*B.n[0], p[1]-d*B.n[1], p[2]-d*B.n[2]];
+    });
+    // drop lines
+    x.setLineDash([3,4]);x.lineWidth=1;x.strokeStyle='rgba(255,255,255,.22)';
+    for(let i=0;i<NP;i++){const A=sc(P[i]),Bq=sc(PR[i]);
+      x.beginPath();x.moveTo(A[0],A[1]);x.lineTo(Bq[0],Bq[1]);x.stroke();}
+    x.setLineDash([]);
+    // distortion stats + pair lines
+    let mn=Infinity,mx=0,sum=0,cnt=0;
+    for(let i=0;i<NP;i++)for(let j=i+1;j<NP;j++){
+      const d0=Math.hypot(P[i][0]-P[j][0],P[i][1]-P[j][1],P[i][2]-P[j][2]);
+      const d1=Math.hypot(PR[i][0]-PR[j][0],PR[i][1]-PR[j][1],PR[i][2]-PR[j][2]);
+      const r=d1/d0*Math.sqrt(3/2); // normalize by sqrt(k/d)
+      mn=Math.min(mn,r);mx=Math.max(mx,r);sum+=r;cnt++;
+      if(d0<1.0){
+        const A=sc(PR[i]),Bq=sc(PR[j]);
+        const bad=Math.abs(r-1);
+        x.strokeStyle=bad>.25?`rgba(255,93,93,${.55})`:`rgba(100,255,218,${.35})`;
+        x.lineWidth=1;x.beginPath();x.moveTo(A[0],A[1]);x.lineTo(Bq[0],Bq[1]);x.stroke();
+      }
+    }
+    // points
+    const all=[];
+    for(let i=0;i<NP;i++){all.push({p:sc(P[i]),c:'#ffd166',r:4.5});all.push({p:sc(PR[i]),c:'#64ffda',r:4});}
+    all.sort((a,b)=>b.p[2]-a.p[2]);
+    for(const o of all){
+      x.fillStyle=o.c;x.shadowColor=o.c;x.shadowBlur=9;
+      x.beginPath();x.arc(o.p[0],o.p[1],o.r,0,TAU);x.fill();x.shadowBlur=0;
+    }
+    // 2D inset
+    const ix=w-150, iy=18, iw=132;
+    x.fillStyle='rgba(8,11,18,.78)';x.strokeStyle='rgba(255,255,255,.13)';
+    x.beginPath();x.roundRect(ix,iy,iw,iw,10);x.fill();x.stroke();
+    x.fillStyle='#8b93a9';x.font='10px ui-monospace,monospace';
+    x.fillText('Bild in ℝ²',ix+8,iy+15);
+    for(let i=0;i<NP;i++){
+      const s=PR[i][0]*B.u[0]+PR[i][1]*B.u[1]+PR[i][2]*B.u[2];
+      const t=PR[i][0]*B.v[0]+PR[i][1]*B.v[1]+PR[i][2]*B.v[2];
+      const px=ix+iw/2+s*iw*0.30, py=iy+iw/2-t*iw*0.30;
+      x.fillStyle='#64ffda';x.beginPath();x.arc(px,py,3,0,TAU);x.fill();
+    }
+    // readouts
+    $('#meanDist').textContent=(sum/cnt).toFixed(3);
+    $('#minDist').textContent=mn.toFixed(3);
+    $('#maxDist').textContent=mx.toFixed(3);
+  }
+  function sync(){
+    az=+$('#angSlider').value*Math.PI/180;
+    tl=+$('#tiltSlider').value*Math.PI/180;
+    $('#angVal').textContent=Math.round(+$('#angSlider').value)+'°';
+    $('#tiltVal').textContent=Math.round(+$('#tiltSlider').value)+'°';
+    draw();
+  }
+  $('#angSlider').oninput=sync; $('#tiltSlider').oninput=sync;
+  $('#diceBtn').onclick=()=>{
+    // a *random* rank-k orthogonal projection, as in the proof [[1]]
+    const g=[gauss(),gauss(),gauss()];
+    const L=Math.hypot(...g);
+    const nx=g[0]/L, ny=g[1]/L, nz=g[2]/L;
+    $('#tiltSlider').value=Math.round(Math.asin(Math.max(-1,Math.min(1,ny)))*180/Math.PI);
+    $('#angSlider').value=((Math.atan2(nz,nx)*180/Math.PI)+360)%360;
+    reroll(); sync();
+  };
+  $('#spinBtn').onclick=e=>{spin=!spin;e.target.textContent=spin?'⏸ stop':'▶ auto-rotieren';};
+  // drag to orbit the *view*
+  let drag=false,lx=0,ly2=0;
+  c.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;ly2=e.clientY;c.style.cursor='grabbing';});
+  addEventListener('pointerup',()=>{drag=false;c.style.cursor='grab';});
+  addEventListener('pointermove',e=>{
+    if(!drag)return;
+    view+=(e.clientX-lx)*0.008; lx=e.clientX; ly2=e.clientY; draw();
+  });
+  (function tick(){
+    if(spin){
+      let a=(+$('#angSlider').value+0.45)%360;
+      $('#angSlider').value=a; sync();
+    }
+    requestAnimationFrame(tick);
+  })();
+  addEventListener('resize',draw);
+  sync();
+})();
+
+/* ===================== 3a. CONCENTRATION HISTOGRAM ===================== */
+(function(){
+  const c=$('#concCanvas');
+  function draw(){
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    const d=+$('#dSlider').value;
+    let k=Math.min(+$('#kSlider').value,d);
+    $('#dVal').textContent=d; $('#kVal').textContent=k;
+    $('#kSlider').max=Math.max(2,d);
+    // sample ||Px||^2 / (||x||^2 * k/d) for random x on sphere
+    const BINS=70, lo=0.3, hi=1.7, hist=new Array(BINS).fill(0), S=4000;
+    for(let s=0;s<S;s++){
+      let sa=0, sb=0;
+      for(let i=0;i<d;i++){const g=gauss(); const g2=g*g; sa+=g2; if(i<k) sb+=g2;}
+      const ratio=Math.sqrt((sb/sa)/(k/d));
+      const b=Math.floor((ratio-lo)/(hi-lo)*BINS);
+      if(b>=0&&b<BINS)hist[b]++;
+    }
+    const mx=Math.max(...hist,1);
+    const pad={l:34,r:10,t:12,b:24}, PW=w-pad.l-pad.r, PH=h-pad.t-pad.b;
+    // bars
+    for(let i=0;i<BINS;i++){
+      const bw=PW/BINS, bh=hist[i]/mx*PH;
+      const t=i/BINS;
+      const grd=x.createLinearGradient(0,pad.t+PH-bh,0,pad.t+PH);
+      grd.addColorStop(0,'rgba(122,162,255,.95)');grd.addColorStop(1,'rgba(122,162,255,.18)');
+      x.fillStyle=grd;
+      x.fillRect(pad.l+i*bw, pad.t+PH-bh, Math.max(1,bw-1), bh);
+    }
+    // axis
+    x.strokeStyle='rgba(255,255,255,.18)';x.lineWidth=1;
+    x.beginPath();x.moveTo(pad.l,pad.t+PH);x.lineTo(w-pad.r,pad.t+PH);x.stroke();
+    // expectation line at 1
+    const X1=pad.l+((1-lo)/(hi-lo))*PW;
+    x.strokeStyle='#ff6ec7';x.lineWidth=2;x.setLineDash([5,4]);
+    x.beginPath();x.moveTo(X1,pad.t);x.lineTo(X1,pad.t+PH);x.stroke();x.setLineDash([]);
+    // epsilon band
+    const eps=0.2;
+    const Xa=pad.l+((1-eps-lo)/(hi-lo))*PW, Xb=pad.l+((1+eps-lo)/(hi-lo))*PW;
+    x.fillStyle='rgba(100,255,218,.07)';x.fillRect(Xa,pad.t,Xb-Xa,PH);
+    x.strokeStyle='rgba(100,255,218,.4)';x.setLineDash([2,3]);
+    [Xa,Xb].forEach(X=>{x.beginPath();x.moveTo(X,pad.t);x.lineTo(X,pad.t+PH);x.stroke();});
+    x.setLineDash([]);
+    // labels
+    x.fillStyle='#6a7289';x.font='10px ui-monospace,monospace';
+    [0.5,0.75,1,1.25,1.5].forEach(v=>{
+      const X=pad.l+((v-lo)/(hi-lo))*PW;
+      x.fillText(v.toFixed(2),X-12,h-8);
+    });
+    x.fillStyle='#ff6ec7';x.fillText('E=1',X1+5,pad.t+11);
+    // how many inside band
+    let inside=0,tot=0;
+    for(let i=0;i<BINS;i++){const v=lo+(i+.5)/BINS*(hi-lo);tot+=hist[i];if(Math.abs(v-1)<=eps)inside+=hist[i];}
+    $('#concNote').innerHTML = `Bei k=${k}: <b>${(inside/tot*100).toFixed(1)}%</b> der Stichproben liegen in ±0.20 um 1. `+
+      `Die Konzentration ist exponentiell: <span class="mono">4·exp(−nε²)</span> [[1]]. Schiebe k nach oben → der Peak wird zur Nadel.`;
+  }
+  $('#dSlider').oninput=draw; $('#kSlider').oninput=draw;
+  addEventListener('resize',draw);
+  draw();
+})();
+
+/* ===================== 3b. SPHERE BELT ===================== */
+(function(){
+  const c=$('#sphereCanvas');
+  function draw(){
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    const d=+$('#sdVal'.replace('Val','Val')) ; // placeholder
+    const dim=+$('#sdSlider').value;
+    $('#sdVal').textContent=dim;
+    const cx=w*.5, cy=h*.5, R=Math.min(w*.42,h*.42);
+    // sphere outline
+    x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=1.2;
+    x.beginPath();x.arc(cx,cy,R,0,TAU);x.stroke();
+    // belt band
+    const band=0.15;
+    const yb=R*band;
+    x.fillStyle='rgba(255,209,102,.13)';
+    x.fillRect(cx-R,cy-yb,2*R,2*yb);
+    x.strokeStyle='rgba(255,209,102,.45)';x.setLineDash([4,4]);
+    x.beginPath();x.moveTo(cx-R,cy-yb);x.lineTo(cx+R,cy-yb);x.stroke();
+    x.beginPath();x.moveTo(cx-R,cy+yb);x.lineTo(cx+R,cy+yb);x.stroke();
+    x.setLineDash([]);
+    // equator ellipse
+    x.strokeStyle='rgba(255,255,255,.12)';
+    x.beginPath();x.ellipse(cx,cy,R,R*.26,0,0,TAU);x.stroke();
+    // sample points: first coordinate of uniform point on S^{dim-1}
+    const N=900; let inBelt=0;
+    for(let i=0;i<N;i++){
+      // generate gaussian vector, take coord 0 -> height, coord 1 -> horizontal
+      let s=0,g0=gauss(),g1=gauss();
+      s=g0*g0+g1*g1;
+      for(let j=2;j<dim;j++){const g=gauss();s+=g*g;}
+      const nrm=Math.sqrt(s);
+      const yv=g0/nrm, xv=g1/nrm;
+      if(Math.abs(yv)<=band)inBelt++;
+      const px=cx+xv*R, py=cy+yv*R;
+      const close=Math.abs(yv)<=band;
+      x.fillStyle=close?'rgba(255,209,102,.85)':'rgba(122,162,255,.45)';
+      x.beginPath();x.arc(px,py,close?2.2:1.7,0,TAU);x.fill();
+    }
+    $('#beltPct').textContent=(inBelt/N*100).toFixed(1)+'%';
+    // axis label
+    x.fillStyle='#8b93a9';x.font='11px ui-monospace,monospace';
+    x.fillText('Äquator',cx+R-56,cy-6);
+    x.fillText('Pol',cx-14,cy-R-6);
+    x.fillText('dim = '+dim,10,16);
+  }
+  $('#sdSlider').oninput=draw;
+  addEventListener('resize',draw);
+  draw();
+})();
+
+/* ===================== 4. UNION BOUND ===================== */
+(function(){
+  const c=$('#unionCanvas');
+  function draw(){
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    const n=+$('#unSlider').value, k=+$('#ukSlider').value, eps=+$('#ueSlider').value;
+    $('#unVal').textContent=n; $('#ukVal').textContent=k; $('#ueVal').textContent=eps.toFixed(2);
+    const pairs=n*(n-1)/2;
+    // per-pair failure prob ~ 2 exp(-k eps^2 / 4)  (standard JL form)
+    const pf=Math.min(1, 2*Math.exp(-k*eps*eps/4));
+    const pAll=Math.pow(1-pf,pairs);
+    $('#pairCount').textContent=pairs.toLocaleString('de-DE');
+    $('#pFail').textContent=pf<1e-4?pf.toExponential(2):pf.toFixed(5);
+    const pa=$('#pAll');
+    pa.textContent=(pAll*100).toFixed(pAll>0.999?3:2)+'%';
+    pa.className = pAll>0.9 ? 'ok' : 'no';
+
+    // layout: points on circle, edges colored by success
+    const cx=w*.28, cy=h*.5, R=Math.min(w*.24,h*.42);
+    // deterministic pseudo-random per pair using hash so it's stable
+    function hash(i,j){let s=Math.sin(i*127.1+j*311.7)*43758.5453;return s-Math.floor(s);}
+    const P=[];
+    for(let i=0;i<n;i++){const a=i/n*TAU-Math.PI/2;P.push([cx+Math.cos(a)*R,cy+Math.sin(a)*R]);}
+    let fails=0;
+    const maxEdges=4000;
+    let drawn=0;
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      const bad=hash(i,j)<pf;
+      if(bad)fails++;
+      if(drawn++<maxEdges){
+        x.strokeStyle = bad ? 'rgba(255,93,93,.85)' : 'rgba(100,255,218,.055)';
+        x.lineWidth = bad?1.4:0.5;
+        x.beginPath();x.moveTo(P[i][0],P[i][1]);x.lineTo(P[j][0],P[j][1]);x.stroke();
+      }
+    }
+    for(const p of P){x.fillStyle='#e8ecf6';x.beginPath();x.arc(p[0],p[1],2.6,0,TAU);x.fill();}
+    x.fillStyle='#8b93a9';x.font='11px ui-monospace,monospace';
+    x.fillText(`${fails} / ${pairs} Paare verletzt`,cx-R,cy+R+22);
+
+    /* --- right side: phase transition curve P(all ok) vs k --- */
+    const pad={l:w*.56,r:20,t:26,b:40};
+    const PW=w-pad.l-pad.r, PH=h-pad.t-pad.b;
+    x.strokeStyle='rgba(255,255,255,.15)';x.lineWidth=1;
+    x.beginPath();x.moveTo(pad.l,pad.t);x.lineTo(pad.l,pad.t+PH);x.lineTo(pad.l+PW,pad.t+PH);x.stroke();
+    const KMAX=200;
+    x.beginPath();x.lineWidth=2.4;x.strokeStyle='#64ffda';
+    for(let i=0;i<=240;i++){
+      const kk=i/240*KMAX;
+      const p1=Math.min(1,2*Math.exp(-kk*eps*eps/4));
+      const pall=Math.pow(1-p1,pairs);
+      const X=pad.l+(kk/KMAX)*PW, Y=pad.t+PH-pall*PH;
+      i?x.lineTo(X,Y):x.moveTo(X,Y);
+    }
+    x.stroke();
+    // theoretical k = 8 ln n / eps^2
+    const kth=8*Math.log(Math.max(2,n))/(eps*eps);
+    if(kth<KMAX){
+      const X=pad.l+(kth/KMAX)*PW;
+      x.strokeStyle='rgba(255,110,199,.7)';x.setLineDash([4,4]);x.lineWidth=1.5;
+      x.beginPath();x.moveTo(X,pad.t);x.lineTo(X,pad.t+PH);x.stroke();x.setLineDash([]);
+      x.fillStyle='#ff6ec7';x.font='10px ui-monospace,monospace';
+      x.fillText('k = 8·ln n/ε²',Math.min(X+5,w-100),pad.t+12);
+    }
+    // current k marker
+    const Xc=pad.l+(Math.min(k,KMAX)/KMAX)*PW;
+    const Yc=pad.t+PH-pAll*PH;
+    x.strokeStyle='rgba(255,255,255,.35)';x.setLineDash([2,3]);
+    x.beginPath();x.moveTo(Xc,pad.t);x.lineTo(Xc,pad.t+PH);x.stroke();x.setLineDash([]);
+    x.fillStyle='#fff';x.beginPath();x.arc(Xc,Yc,5,0,TAU);x.fill();
+    x.fillStyle='#8b93a9';x.font='11px ui-monospace,monospace';
+    x.fillText('k →',pad.l+PW-26,pad.t+PH+20);
+    x.save();x.translate(pad.l-10,pad.t+PH/2);x.rotate(-Math.PI/2);
+    x.fillText('P(alle Paare ok)',-42,0);x.restore();
+    x.fillText('0',pad.l-14,pad.t+PH+4);
+    x.fillText('1',pad.l-14,pad.t+6);
+  }
+  ['#unSlider','#ukSlider','#ueSlider'].forEach(s=>$(s).oninput=draw);
+  addEventListener('resize',draw);
+  draw();
+})();
+
+/* ===================== 5. PLAYGROUND ===================== */
+(function(){
+  let data=[], n=60, d=256, k=32;
+  function gen(){
+    n=+$('#pnSlider').value; d=+$('#pdSlider').value; k=Math.min(+$('#pkSlider').value,d);
+    $('#pnVal').textContent=n; $('#pdVal').textContent=d; $('#pkVal').textContent=k;
+    data=[];
+    // cluster structure so matrices look interesting
+    const C=4, centers=[];
+    for(let c2=0;c2<C;c2++){const v=[];for(let i=0;i<d;i++)v.push(gauss()*2.2);centers.push(v);}
+    for(let i=0;i<n;i++){
+      const cc=centers[i%C], v=[];
+      for(let j=0;j<d;j++)v.push(cc[j]+gauss());
+      data.push(v);
+    }
+  }
+  function project(){
+    // random Gaussian projection, scaled by 1/sqrt(k) — the modern form of
+    // the random rank-k orthogonal projection used in the proof [[1]]
+    const Rm=[];
+    for(let a=0;a<k;a++){const row=[];for(let b=0;b<d;b++)row.push(gauss());Rm.push(row);}
+    const out=[];
+    for(let i=0;i<n;i++){
+      const v=data[i], o=new Array(k).fill(0);
+      for(let a=0;a<k;a++){let s=0;const row=Rm[a];for(let b=0;b<d;b++)s+=row[b]*v[b];o[a]=s/Math.sqrt(k);}
+      out.push(o);
+    }
+    return out;
+  }
+  function distMat(X){
+    const m=X.length, M=[];let mx=0;
+    for(let i=0;i<m;i++){M.push(new Array(m).fill(0));}
+    for(let i=0;i<m;i++)for(let j=i+1;j<m;j++){
+      let s=0;const a=X[i],b=X[j];
+      for(let t=0;t<a.length;t++){const q=a[t]-b[t];s+=q*q;}
+      const v=Math.sqrt(s);M[i][j]=M[j][i]=v;if(v>mx)mx=v;
+    }
+    return {M,mx};
+  }
+  function heat(canvas,M,mx){
+    const {x,w,h}=fit(canvas);
+    x.clearRect(0,0,w,h);
+    const m=M.length, size=Math.min(w,h), cell=size/m, ox=(w-size)/2, oy=(h-size)/2;
+    for(let i=0;i<m;i++)for(let j=0;j<m;j++){
+      const t=M[i][j]/mx;
+      // viridis-ish
+      const r=Math.round(30+225*Math.pow(t,1.6));
+      const g=Math.round(20+200*Math.pow(t,0.8));
+      const b=Math.round(90+120*(1-t));
+      x.fillStyle=`rgb(${r},${g},${b})`;
+      x.fillRect(ox+j*cell,oy+i*cell,Math.ceil(cell),Math.ceil(cell));
+    }
+    x.strokeStyle='rgba(255,255,255,.15)';x.strokeRect(ox,oy,size,size);
+  }
+  function histo(ratios){
+    const c=$('#distCanvas');
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    const lo=0.5,hi=1.5,B=80,hist=new Array(B).fill(0);
+    let mn=Infinity,mx=0,out=0;
+    const eps=0.2;
+    for(const r of ratios){
+      mn=Math.min(mn,r);mx=Math.max(mx,r);
+      if(Math.abs(r-1)>eps)out++;
+      const b=Math.floor((r-lo)/(hi-lo)*B);
+      if(b>=0&&b<B)hist[b]++;
+    }
+    const top=Math.max(...hist,1);
+    const pad={l:30,r:10,t:8,b:20},PW=w-pad.l-pad.r,PH=h-pad.t-pad.b;
+    // epsilon band
+    const Xa=pad.l+((1-eps-lo)/(hi-lo))*PW, Xb=pad.l+((1+eps-lo)/(hi-lo))*PW;
+    x.fillStyle='rgba(100,255,218,.06)';x.fillRect(Xa,pad.t,Xb-Xa,PH);
+    for(let i=0;i<B;i++){
+      const v=lo+(i+.5)/B*(hi-lo);
+      const bw=PW/B,bh=hist[i]/top*PH;
+      x.fillStyle=Math.abs(v-1)>eps?'rgba(255,93,93,.85)':'rgba(100,255,218,.85)';
+      x.fillRect(pad.l+i*bw,pad.t+PH-bh,Math.max(1,bw-1),bh);
+    }
+    const X1=pad.l+((1-lo)/(hi-lo))*PW;
+    x.strokeStyle='#ff6ec7';x.setLineDash([4,4]);x.lineWidth=1.6;
+    x.beginPath();x.moveTo(X1,pad.t);x.lineTo(X1,pad.t+PH);x.stroke();x.setLineDash([]);
+    x.fillStyle='#6a7289';x.font='10px ui-monospace,monospace';
+    [0.6,0.8,1.0,1.2,1.4].forEach(v=>{const X=pad.l+((v-lo)/(hi-lo))*PW;x.fillText(v.toFixed(1),X-9,h-6);});
+    $('#dmin').textContent=mn.toFixed(3);$('#dmin').className=Math.abs(mn-1)>0.2?'no':'ok';
+    $('#dmax').textContent=mx.toFixed(3);$('#dmax').className=Math.abs(mx-1)>0.2?'no':'ok';
+    $('#dout').textContent=out+' / '+ratios.length;
+    $('#dout').className=out?'no':'ok';
+  }
+  function run(){
+    gen();
+    const Y=project();
+    const A=distMat(data), Bm=distMat(Y);
+    heat($('#mat1'),A.M,A.mx);
+    heat($('#mat2'),Bm.M,Bm.mx);
+    // ratios normalized: projected / original, with expected scale
+    const ratios=[];
+    // expected shrink factor for Gaussian proj with 1/sqrt(k): E||Rx||=||x||
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      ratios.push(Bm.M[i][j]/A.M[i][j]
+);
+    }
+    histo(ratios);
+  }
+  ['#pnSlider','#pdSlider','#pkSlider'].forEach(s=>$(s).oninput=run);
+  $('#reroll').onclick=run;
+  addEventListener('resize',()=>{run();});
+  run();
+})();
+
+/* ===================== 6a. PROOF CHAIN ===================== */
+(function(){
+  const c=$('#chainCanvas');
+  const boxes=[
+    {t:'Lévy / Isoperimetrie',
+     d:'Auf S<sup>n−1</sup> gilt: σ[U : M<sub>r</sub> − √n·ε ≤ r(Uy) ≤ M<sub>r</sub> + √n·ε] ≥ 1 − 4·exp(−nε²). Die Quelle ist die isoperimetrische Ungleichung in der Form aus Figiel–Lindenstrauss–Milman [[11]].'},
+    {t:'Union Bound',
+     d:'Über alle Punkte von B = A/‖A‖ gleichzeitig: σ[…für alle y ∈ B] ≥ 1 − 2n(n+1)·exp(−nε²) [[11]]. Der Faktor 2n(n+1) ist das Abzählen aller Paare.'},
+    {t:'Median ≈ Mittelwert',
+     d:'Khintchines Ungleichung liefert √(k/2) ≤ ∫ r<sub>k</sub> dμ ≤ √k [[11]]. Zusammen mit |∫r dμ − M<sub>r</sub>| < C erhält man M ≥ √k/2 für k = [K log n].'},
+    {t:'Lemma 1',
+     d:'Also existiert ein U mit (1−τ)M ≤ r(Uy) ≤ (1+τ)M für alle y ∈ B — die Wahrscheinlichkeit 1 − 2n(n+1)·exp(−τ²K log n/18) ist positiv, sobald K groß genug ist [[11]]. Das ist die zufällige Rang-k-Projektion f = U*QU.'},
+    {t:'Kirszbraun',
+     d:'In k = [K log n] Dimensionen wendet man Kirszbrauns Satz an: g lässt sich mit ‖g̃‖<sub>Lip</sub> ≤ 3 fortsetzen [[11]].'},
+    {t:'Theorem 1',
+     d:'Ergebnis: L(X,n) ≤ C·(log n)<sup>1/2</sup> für <b>jeden</b> metrischen Raum X — die Vermutung von Marcus und Pisier [[11]].'}
+  ];
+  let sel=3, hot=-1, rects=[];
+  function draw(){
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    rects=[];
+    const cols = w<620 ? 2 : 3;
+    const rows = Math.ceil(boxes.length/cols);
+    const gx=14, gy=16;
+    const bw=(w-gx*(cols-1))/cols, bh=(h-gy*(rows-1))/rows;
+    boxes.forEach((b,i)=>{
+      const r=Math.floor(i/cols), col=i%cols;
+      const X=col*(bw+gx), Y=r*(bh+gy);
+      rects.push({X,Y,bw,bh,i});
+      const on = i===sel, hov = i===hot;
+      x.beginPath();x.roundRect(X,Y,bw,bh,14);
+      x.fillStyle= on?'rgba(100,255,218,.13)' : hov?'rgba(255,255,255,.07)' : 'rgba(255,255,255,.035)';
+      x.fill();
+      x.lineWidth= on?2:1;
+      x.strokeStyle= on?'rgba(100,255,218,.75)':'rgba(255,255,255,.12)';
+      x.stroke();
+      // step number
+      x.fillStyle= on?'#64ffda':'#5c6479';
+      x.font='700 11px ui-monospace,monospace';
+      x.fillText('0'+(i+1),X+14,Y+22);
+      // title
+      x.fillStyle= on?'#e8ecf6':'#aab3c8';
+      x.font='600 14px ui-sans-serif,system-ui,sans-serif';
+      const words=b.t.split(' ');let line='',ly=Y+bh/2+2;
+      const lines=[];
+      for(const wd of words){
+        const tst=line?line+' '+wd:wd;
+        if(x.measureText(tst).width>bw-28){lines.push(line);line=wd;}else line=tst;
+      }
+      lines.push(line);
+      ly=Y+bh/2-((lines.length-1)*9);
+      lines.forEach(L=>{x.fillText(L,X+14,ly);ly+=18;});
+      // arrow to next
+      if(i<boxes.length-1 && col<cols-1){
+        x.strokeStyle='rgba(100,255,218,.35)';x.lineWidth=1.4;
+        const ax=X+bw+2, ay=Y+bh/2;
+        x.beginPath();x.moveTo(ax,ay);x.lineTo(ax+gx-4,ay);x.stroke();
+        x.beginPath();x.moveTo(ax+gx-4,ay);x.lineTo(ax+gx-8,ay-3.5);x.lineTo(ax+gx-8,ay+3.5);x.closePath();
+        x.fillStyle='rgba(100,255,218,.5)';x.fill();
+      }
+    });
+  }
+  function pick(e){
+    const r=c.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    for(const q of rects) if(mx>=q.X&&mx<=q.X+q.bw&&my>=q.Y&&my<=q.Y+q.bh) return q.i;
+    return -1;
+  }
+  c.addEventListener('mousemove',e=>{const i=pick(e);if(i!==hot){hot=i;c.style.cursor=i>=0?'pointer':'default';draw();}});
+  c.addEventListener('mouseleave',()=>{hot=-1;draw();});
+  c.addEventListener('click',e=>{
+    const i=pick(e); if(i<0)return;
+    sel=i;draw();
+    $('#ciTitle').textContent='→ '+boxes[i].t;
+    $('#ciBody').innerHTML=boxes[i].d;
+  });
+  addEventListener('resize',draw);
+  draw();
+  $('#ciTitle').textContent='→ '+boxes[sel].t;
+  $('#ciBody').innerHTML=boxes[sel].d;
+})();
+
+/* ===================== 6b. PACKING BOUND 4^k ===================== */
+(function(){
+  const c=$('#packCanvas');
+  function draw(){
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    const k=+$('#packSlider').value;
+    const cap=Math.pow(4,k);
+    $('#packKVal').textContent=k;
+    $('#packNVal').textContent=cap>1e9?cap.toExponential(1):cap.toLocaleString('de-DE');
+    // ball of radius 2 with separated points
+    const cx=w*.28, cy=h*.5, R=Math.min(w*.22,h*.42);
+    x.strokeStyle='rgba(255,255,255,.18)';x.lineWidth=1.2;
+    x.beginPath();x.arc(cx,cy,R,0,TAU);x.stroke();
+    x.fillStyle='#5c6479';x.font='10px ui-monospace,monospace';
+    x.fillText('Radius 2',cx-22,cy-R-7);
+    // greedy 1-separated packing in 2D for illustration
+    const pts=[],sep=R*0.5;
+    for(let t=0;t<900&&pts.length<19;t++){
+      const a=Math.random()*TAU,rr=Math.sqrt(Math.random())*R;
+      const p=[cx+Math.cos(a)*rr,cy+Math.sin(a)*rr];
+      if(pts.every(q=>Math.hypot(q[0]-p[0],q[1]-p[1])>=sep))pts.push(p);
+    }
+    for(const p of pts){
+      x.fillStyle='rgba(122,162,255,.12)';
+      x.beginPath();x.arc(p[0],p[1],sep/2,0,TAU);x.fill();
+      x.strokeStyle='rgba(122,162,255,.3)';x.lineWidth=1;x.stroke();
+      x.fillStyle='#7aa2ff';x.beginPath();x.arc(p[0],p[1],2.6,0,TAU);x.fill();
+    }
+    x.fillStyle='#8b93a9';x.fillText('Abstand ≥ 1',cx-26,cy+R+16);
+    // bar: log-scale capacity vs k
+    const pad={l:w*.52,r:16,t:22,b:28};
+    const PW=w-pad.l-pad.r, PH=h-pad.t-pad.b;
+    const KM=12;
+    x.strokeStyle='rgba(255,255,255,.14)';
+    x.beginPath();x.moveTo(pad.l,pad.t);x.lineTo(pad.l,pad.t+PH);x.lineTo(pad.l+PW,pad.t+PH);x.stroke();
+    const maxLog=KM*Math.log10(4);
+    for(let i=1;i<=KM;i++){
+      const bw=PW/KM, v=i*Math.log10(4)/maxLog;
+      const X=pad.l+(i-1)*bw;
+      x.fillStyle = i===k ? '#64ffda' : 'rgba(100,255,218,.22)';
+      x.fillRect(X+1,pad.t+PH-v*PH,bw-3,v*PH);
+    }
+    x.fillStyle='#8b93a9';x.font='10px ui-monospace,monospace';
+    x.fillText('k →',pad.l+PW-22,pad.t+PH+18);
+    x.fillText('log(max. Punkte) = k·log 4',pad.l,pad.t-8);
+  }
+  $('#packSlider').oninput=draw;
+  addEventListener('resize',draw);
+  draw();
+})();
+
+/* ===================== 7. FINALE ANIMATION ===================== */
+(function(){
+  const c=$('#finaleCanvas'), btn=$('#finaleBtn'), lab=$('#finaleLabel');
+  const N=26, P=[];
+  for(let i=0;i<N;i++)P.push({x:gauss()*.5,y:gauss()*.5,z:gauss()*.5});
+  const stages=[
+    'Schritt 1 — n Punkte in sehr hoher Dimension. Alle Abstände sind, was sie sind.',
+    'Schritt 2 — wähle eine zufällige Rang-k-Orthogonalprojektion U*QU [[11]].',
+    'Schritt 3 — Maßkonzentration: jede Länge schrumpft um fast exakt √(k/n).',
+    'Schritt 4 — Union Bound über 2n(n+1) Paare: alle gleichzeitig gut [[11]].',
+    'Fertig — n Punkte in k = ⌈K log n⌉ Dimensionen, Verzerrung ≤ 1+ε.'
+  ];
+  let t=0, playing=false, stage=0;
+  function draw(){
+    const {x,w,h}=fit(c);
+    x.clearRect(0,0,w,h);
+    const cx=w*.5, cy=h*.5, R=Math.min(w*.3,h*.38);
+    const e=Math.max(0,Math.min(1,(t-0.25)/0.45));
+    const ease=e*e*(3-2*e);
+    const spin=t*1.4;
+    const pr=P.map(p=>{
+      let X=p.x*Math.cos(spin)-p.z*Math.sin(spin);
+      let Z=p.x*Math.sin(spin)+p.z*Math.cos(spin);
+      let Y=p.y*(1-ease*0.97);
+      const z=3.2+Z, kk=2.0/z;
+      return {X:cx+X*R*kk*1.7, Y:cy+Y*R*kk*1.7, z};
+    });
+    // plane
+    if(ease>0.02){
+      x.strokeStyle=`rgba(122,162,255,${ease*.5})`;x.lineWidth=1.4;
+      x.beginPath();x.moveTo(cx-R*1.7,cy);x.lineTo(cx+R*1.7,cy);x.stroke();
+    }
+    // pairwise, colored by preserved distance
+    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+      const d=Math.hypot(pr[i].X-pr[j].X,pr[i].Y-pr[j].Y);
+      if(d<110){
+        const a=(1-d/110)*(0.1+0.25*ease);
+        x.strokeStyle=`rgba(100,255,218,${a})`;x.lineWidth=.7;
+        x.beginPath();x.moveTo(pr[i].X,pr[i].Y);x.lineTo(pr[j].X,pr[j].Y);x.stroke();
+      }
+    }
+    for(const p of pr){
+      x.fillStyle=`rgba(${160+ease*95},${240-ease*40},255,.95)`;
+      x.shadowColor='#64ffda';x.shadowBlur=8;
+      x.beginPath();x.arc(p.X,p.Y,3.2,0,TAU);x.fill();x.shadowBlur=0;
+    }
+    // stage text
+    const st=Math.min(stages.length-1,Math.floor(t/0.28));
+    if(st!==stage){stage=st;lab.innerHTML=stages[st];}
+    // progress bar
+    x.fillStyle='rgba(255,255,255,.08)';x.fillRect(20,h-14,w-40,3);
+    x.fillStyle='#64ffda';x.fillRect(20,h-14,(w-40)*Math.min(1,t/1.4),3);
+  }
+  function loop(){
+    if(playing){
+      t+=0.006;
+      if(t>1.45){t=1.45;playing=false;btn.textContent='↻ nochmal';}
+      draw();
+      requestAnimationFrame(loop);
+    }
+  }
+  btn.onclick=()=>{
+    if(t>=1.45)t=0;
+    playing=!playing;
+    btn.textContent=playing?'⏸ pause':'▶ abspielen';
+    if(playing)loop();
+  };
+  addEventListener('resize',draw);
+  draw();
+})();
+
+/* ===================== keyboard nav ===================== */
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'||e.key==='PageDown'){
+    const secs=[...document.querySelectorAll('section')];
+    const next=secs.find(s=>s.getBoundingClientRect().top>8);
+    if(next){e.preventDefault();next.scrollIntoView({behavior:'smooth'});}
+  }
+  if(e.key==='ArrowUp'||e.key==='PageUp'){
+    const secs=[...document.querySelectorAll('section')].reverse();
+    const prev=secs.find(s=>s.getBoundingClientRect().top<-8);
+    if(prev){e.preventDefault();prev.scrollIntoView({behavior:'smooth'});}
+  }
+});
+
+/* roundRect polyfill for older engines */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r==='number')r=[r,r,r,r];
+    this.moveTo(x+r[0],y);
+    this.lineTo(x+w-r[1],y);this.quadraticCurveTo(x+w,y,x+w,y+r[1]);
+    this.lineTo(x+w,y+h-r[2]);this.quadraticCurveTo(x+w,y+h,x+w-r[2],y+h);
+    this.lineTo(x+r[3],y+h);this.quadraticCurveTo(x,y+h,x,y+h-r[3]);
+    this.lineTo(x,y+r[0]);this.quadraticCurveTo(x,y,x+r[0],y);
+    return this;
+  };
+}
+</script>
+</body>
+</html>
