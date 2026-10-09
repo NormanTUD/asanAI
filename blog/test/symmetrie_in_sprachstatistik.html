@@ -1,0 +1,3027 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symmetrie in Sprachstatistik · Interaktiver Erklärer</title>
+
+<!-- Plotly für 2D/3D Plots -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Temml für LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/temml.min.js"></script>
+
+<style>
+:root{
+  --bg:#07080e;
+  --bg2:#0d1019;
+  --panel:rgba(18,22,34,0.72);
+  --panel2:rgba(24,29,44,0.75);
+  --line:rgba(255,255,255,0.09);
+  --line2:rgba(255,255,255,0.16);
+  --txt:#e8ecf6;
+  --txt2:#9aa6c2;
+  --txt3:#6b7694;
+  --acc:#64e0ff;
+  --acc2:#b388ff;
+  --acc3:#ff7ab8;
+  --warm:#ffb45c;
+  --good:#5ef0b0;
+  --bad:#ff6b7a;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -5%, rgba(100,224,255,.10), transparent 60%),
+    radial-gradient(1000px 800px at 95% 10%, rgba(179,136,255,.10), transparent 60%),
+    radial-gradient(900px 900px at 50% 110%, rgba(255,122,184,.07), transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* ---------- Progress bar ---------- */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));
+  z-index:9999;box-shadow:0 0 14px rgba(100,224,255,.6);
+  transition:width .08s linear;
+}
+/* ---------- Nav ---------- */
+#nav{
+  position:fixed;top:0;left:0;right:0;
+  backdrop-filter:blur(18px) saturate(140%);
+  background:rgba(7,8,14,.72);
+  border-bottom:1px solid var(--line);
+  z-index:9000;
+  display:flex;align-items:center;gap:14px;
+  padding:9px 18px;
+  overflow-x:auto;scrollbar-width:none;
+}
+#nav::-webkit-scrollbar{display:none;}
+#nav .brand{
+  font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  white-space:nowrap;padding-right:10px;border-right:1px solid var(--line);
+}
+#nav a{
+  color:var(--txt2);text-decoration:none;font-size:12.5px;white-space:nowrap;
+  padding:5px 10px;border-radius:7px;transition:.18s;
+}
+#nav a:hover{color:var(--txt);background:rgba(255,255,255,.06);}
+#nav a.on{color:var(--bg);background:linear-gradient(90deg,var(--acc),var(--acc2));font-weight:600;}
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px 140px;}
+header.hero{
+  min-height:92vh;display:flex;flex-direction:column;justify-content:center;
+  padding-top:70px;position:relative;
+}
+.kicker{
+  font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);
+  margin-bottom:18px;font-weight:600;
+}
+h1{
+  font-size:clamp(34px,6.2vw,70px);line-height:1.04;margin:0 0 20px;
+  font-weight:850;letter-spacing:-.025em;
+  background:linear-gradient(135deg,#ffffff 10%,var(--acc) 48%,var(--acc2) 78%,var(--acc3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{font-size:clamp(16px,2.1vw,21px);color:var(--txt2);max-width:780px;}
+.authors{margin-top:26px;color:var(--txt3);font-size:13.5px;font-family:var(--mono);}
+section{padding:70px 0 10px;scroll-margin-top:62px;}
+h2{
+  font-size:clamp(25px,3.6vw,38px);margin:0 0 6px;font-weight:800;letter-spacing:-.02em;
+}
+h2 .num{
+  font-family:var(--mono);font-size:.52em;color:var(--acc);
+  display:block;letter-spacing:.2em;margin-bottom:6px;font-weight:600;
+}
+h3{font-size:19px;margin:34px 0 10px;font-weight:700;color:#fff;}
+h4{font-size:15px;margin:22px 0 8px;font-weight:700;color:var(--acc);letter-spacing:.03em;}
+p{color:var(--txt2);max-width:860px;margin:10px 0;}
+p.lead{font-size:17.5px;color:#cdd6ea;}
+b,strong{color:#fff;font-weight:650;}
+em{color:var(--acc);font-style:normal;font-weight:600;}
+code{font-family:var(--mono);background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px;font-size:.9em;color:var(--acc);}
+hr.sep{border:0;height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);margin:48px 0;}
+/* ---------- Cards ---------- */
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+  margin:24px 0;
+  backdrop-filter:blur(10px);
+  box-shadow:0 18px 50px rgba(0,0,0,.42);
+}
+.card.tight{padding:16px;}
+.card h3:first-child,.card h4:first-child{margin-top:0;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid-s{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start;}
+.grid-s.rev{grid-template-columns:1fr 320px;}
+@media(max-width:900px){.grid2,.grid3,.grid-s,.grid-s.rev{grid-template-columns:1fr;}}
+/* ---------- Controls ---------- */
+.ctrl{margin:14px 0;}
+.ctrl label{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:12.5px;color:var(--txt2);margin-bottom:6px;font-weight:500;
+}
+.ctrl label .val{font-family:var(--mono);color:var(--acc);font-weight:700;font-size:13px;}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));
+  outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;border:3px solid var(--acc);cursor:pointer;
+  box-shadow:0 0 12px rgba(100,224,255,.7);transition:.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18);}
+input[type=range]::-moz-range-thumb{
+  width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--acc);cursor:pointer;
+}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}
+button.b{
+  background:rgba(255,255,255,.06);border:1px solid var(--line2);color:var(--txt);
+  padding:7px 13px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:550;
+  transition:.16s;font-family:inherit;
+}
+button.b:hover{background:rgba(255,255,255,.12);border-color:var(--acc);transform:translateY(-1px);}
+button.b.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#071018;border-color:transparent;font-weight:700;}
+button.b.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#071018;border:none;font-weight:700;}
+.toggle{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--txt2);margin:9px 0;cursor:pointer;user-select:none;}
+.toggle input{width:16px;height:16px;accent-color:var(--acc);cursor:pointer;}
+select{
+  background:rgba(255,255,255,.07);border:1px solid var(--line2);color:var(--txt);
+  padding:6px 10px;border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer;
+}
+/* ---------- Canvas / plots ---------- */
+canvas{display:block;max-width:100%;border-radius:12px;background:rgba(0,0,0,.28);}
+.plot{width:100%;}
+.cap{font-size:12.5px;color:var(--txt3);margin-top:9px;font-style:italic;max-width:860px;}
+/* ---------- Boxes ---------- */
+.box{border-left:3px solid var(--acc);background:rgba(100,224,255,.055);padding:13px 17px;border-radius:0 12px 12px 0;margin:18px 0;}
+.box.q{border-color:var(--acc3);background:rgba(255,122,184,.06);}
+.box.a{border-color:var(--good);background:rgba(94,240,176,.06);}
+.box.w{border-color:var(--warm);background:rgba(255,180,92,.06);}
+.box .t{font-size:11.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--acc);font-weight:750;margin-bottom:5px;}
+.box.q .t{color:var(--acc3);} .box.a .t{color:var(--good);} .box.w .t{color:var(--warm);}
+.box p{margin:5px 0;}
+/* ---------- Math ---------- */
+.math{
+  background:rgba(0,0,0,.33);border:1px solid var(--line);border-radius:12px;
+  padding:14px 18px;margin:16px 0;overflow-x:auto;text-align:center;
+}
+math{font-size:1.06em;color:#e9eefb;}
+.mathnote{font-size:12.5px;color:var(--txt3);text-align:center;margin-top:7px;}
+/* ---------- Badges / pills ---------- */
+.pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;border:1px solid var(--line2);color:var(--txt2);margin-right:5px;font-family:var(--mono);}
+.pill.a{border-color:var(--acc);color:var(--acc);}
+.pill.b{border-color:var(--acc2);color:var(--acc2);}
+.pill.c{border-color:var(--good);color:var(--good);}
+/* ---------- Steps ---------- */
+.steps{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0;}
+.step{
+  flex:1;min-width:140px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:13px;padding:13px;transition:.2s;cursor:default;
+}
+.step .n{font-family:var(--mono);font-size:11px;color:var(--acc);font-weight:700;letter-spacing:.12em;}
+.step .h{font-weight:700;font-size:14px;margin:4px 0 4px;color:#fff;}
+.step .d{font-size:12.3px;color:var(--txt3);line-height:1.5;}
+.step:hover{border-color:var(--acc);transform:translateY(-3px);box-shadow:0 10px 30px rgba(100,224,255,.12);}
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1);}
+.rv.in{opacity:1;transform:none;}
+/* ---------- table ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0;}
+table.t th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line2);color:var(--acc);font-weight:650;font-size:12px;letter-spacing:.06em;text-transform:uppercase;}
+table.t td{padding:8px 10px;border-bottom:1px solid var(--line);color:var(--txt2);vertical-align:top;}
+table.t tr:hover td{background:rgba(255,255,255,.03);}
+/* ---------- misc ---------- */
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--txt3);margin-top:8px;}
+.legend span{display:flex;align-items:center;gap:6px;}
+.sw{width:13px;height:4px;border-radius:2px;display:inline-block;}
+.scrollhint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-size:11.5px;color:var(--txt3);letter-spacing:.2em;text-transform:uppercase;animation:bob 2.2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.55}50%{transform:translateX(-50%) translateY(8px);opacity:1}}
+.flexwrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;}
+footer{padding:60px 0 40px;color:var(--txt3);font-size:13px;border-top:1px solid var(--line);margin-top:60px;}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav id="nav">
+  <span class="brand">Geometrie der Sprache</span>
+  <a href="#s0">Phänomen</a>
+  <a href="#s1">Frage</a>
+  <a href="#s2">Vektoren</a>
+  <a href="#s3">Kookkurrenz</a>
+  <a href="#s4">PMI</a>
+  <a href="#s5">Eigen/PCA</a>
+  <a href="#s6">Symmetrie</a>
+  <a href="#s7">Fourier</a>
+  <a href="#s8">Monate</a>
+  <a href="#s9">Jahre</a>
+  <a href="#s10">Lissajous</a>
+  <a href="#s11">Dekodieren</a>
+  <a href="#s12">Landkarte</a>
+  <a href="#s13">Robustheit</a>
+  <a href="#s14">Antwort</a>
+</nav>
+
+<div class="wrap">
+
+<!-- ============================ HERO ============================ -->
+<header class="hero">
+  <div class="kicker">ICML 2026 · Karkada, Korchinski, Nava, Wyart, Bahri</div>
+  <h1>Warum Sprachmodelle<br>die Monate im Kreis<br>anordnen</h1>
+  <p class="sub">Ein interaktiver Spaziergang durch das Paper <i>„Symmetry in language statistics shapes the geometry of model representations“</i>. Keine Vorkenntnisse über Abiturmathematik hinaus — alles, was du brauchst, baust du dir hier selbst mit Schiebereglern zusammen.</p>
+  <div class="authors">Dhruva Karkada · Daniel J. Korchinski · Andres Nava · Matthieu Wyart · Yasaman Bahri<br>arXiv:2602.15029v3 [cs.LG]</div>
+  <div class="scrollhint">↓ Scrollen</div>
+</header>
+
+<!-- ============================ S0: PHÄNOMEN ============================ -->
+<section id="s0">
+  <h2><span class="num">00 · Das Rätsel</span>Etwas Seltsames steckt in jedem Sprachmodell</h2>
+  <p class="lead">Ein Sprachmodell hat nie einen Kalender gesehen. Es hat nie eine Landkarte gesehen. Es hat nur Text gelesen. Trotzdem: Wenn man in sein Inneres schaut, liegen die zwölf Monate <b>auf einem Kreis</b> — in der richtigen Reihenfolge.</p>
+
+  <div class="card">
+    <h3>Dreh am Regler: das Phänomen in drei Welten</h3>
+    <p style="margin-top:0">Links siehst du, <em>was</em> im Modell gefunden wurde. Wähle ein Konzept und schau dir die Form an, die das Modell intern dafür benutzt.</p>
+    <div class="btnrow" id="s0btn">
+      <button class="b on" data-k="months">🗓️ Monate → Kreis</button>
+      <button class="b" data-k="years">📜 Jahreszahlen → gewellte Linie</button>
+      <button class="b" data-k="states">🗺️ US-Staaten → Landkarte</button>
+    </div>
+    <div class="grid2">
+      <div>
+        <div id="s0plot" class="plot" style="height:420px"></div>
+      </div>
+      <div>
+        <div id="s0txt"></div>
+      </div>
+    </div>
+    <p class="cap">Daten: schematische Rekonstruktion der im Paper gezeigten Strukturen (Fig. 1 & 3). Die exakten Formen leiten wir später selbst her.</p>
+  </div>
+
+  <div class="box q">
+    <div class="t">Die Kernfrage des Papers</div>
+    <p style="font-size:17px;color:#fff;margin:0"><b>Warum</b> entstehen genau diese geometrischen Formen? Gibt es ein einziges Prinzip, das Kreise, gewellte Linien und Landkarten gleichzeitig erklärt — und sogar ihre exakten Amplituden und Frequenzen vorhersagt?</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S1: FRAGE & ROADMAP ============================ -->
+<section id="s1">
+  <h2><span class="num">01 · Motivation, Idee, Weg</span>Was gelöst wird, und wie</h2>
+
+  <div class="grid3">
+    <div class="card tight">
+      <div class="pill a">Problem</div>
+      <h4>Beobachtungen ohne Erklärung</h4>
+      <p style="font-size:13.5px">Viele Arbeiten haben Kreise, Schleifen und Parallelogramme in Modellen <i>gefunden</i>. Aber niemand konnte vorhersagen, <b>welche</b> Form entsteht, <b>wie groß</b> sie ist, oder <b>warum</b> sie über völlig verschiedene Architekturen hinweg immer gleich aussieht.</p>
+    </div>
+    <div class="card tight">
+      <div class="pill b">Idee</div>
+      <h4>Schau auf die Statistik, nicht aufs Netz</h4>
+      <p style="font-size:13.5px">Die Geometrie steckt nicht im Modell — sie steckt schon <b>in der Sprache</b>. Konkret: in der Frage, wie oft zwei Wörter gemeinsam im selben Textfenster auftauchen. Und diese Statistik hat eine <b>Symmetrie</b>.</p>
+    </div>
+    <div class="card tight">
+      <div class="pill c">Ergebnis</div>
+      <h4>Geschlossene Formeln</h4>
+      <p style="font-size:13.5px">Aus der Symmetrie folgt mit Stift und Papier: die Hauptachsen sind <b>Sinus- und Kosinuswellen</b>. Amplituden und Frequenzen werden exakt vorhergesagt — und stimmen mit echten Modellen überein.</p>
+    </div>
+  </div>
+
+  <h3>Der Lösungsweg in sechs Schritten</h3>
+  <p>Jeder Schritt bekommt gleich sein eigenes Spielzeug. Klick dich durch, um zu sehen, wo wir hinwollen.</p>
+  <div class="steps" id="roadmap">
+    <div class="step"><div class="n">SCHRITT 1</div><div class="h">Kookkurrenz zählen</div><div class="d">Wie oft stehen „Januar“ und „Februar“ nahe beieinander? → Matrix P<sub>ij</sub></div></div>
+    <div class="step"><div class="n">SCHRITT 2</div><div class="h">Normieren (PMI)</div><div class="d">Häufige Wörter rausrechnen → Matrix M*</div></div>
+    <div class="step"><div class="n">SCHRITT 3</div><div class="h">Faktorisieren</div><div class="d">Word2vec ≈ Eigenzerlegung von M* → Vektoren</div></div>
+    <div class="step"><div class="n">SCHRITT 4</div><div class="h">Symmetrie entdecken</div><div class="d">M*<sub>ij</sub> hängt nur vom <i>Abstand</i> ab → zirkulante Matrix</div></div>
+    <div class="step"><div class="n">SCHRITT 5</div><div class="h">Fourier</div><div class="d">Zirkulante Matrizen haben <i>immer</i> Sinus-Eigenvektoren</div></div>
+    <div class="step"><div class="n">SCHRITT 6</div><div class="h">Geometrie lesen</div><div class="d">Sinus+Kosinus = Kreis. Oberschwingungen = Wellen.</div></div>
+  </div>
+
+  <div class="box">
+    <div class="t">Vorab-Spoiler in einem Satz</div>
+    <p style="margin:0">Weil die Sprachstatistik <b>verschiebungssymmetrisch</b> ist (nur der Abstand zählt, nicht die absolute Position), ist die zugehörige Matrix <b>zirkulant</b> — und zirkulante Matrizen haben <b>immer</b> Sinuswellen als Eigenvektoren. Deshalb der Kreis.</p>
+  </div>
+</section>
+<hr class="sep">
+
+<!-- ============================ S2: VEKTOREN ============================ -->
+<section id="s2">
+  <h2><span class="num">02 · Prerequisite</span>Was ist ein „Wortvektor"?</h2>
+  <p class="lead">Bevor wir irgendetwas erklären können, brauchen wir eine Intuition: Ein Sprachmodell speichert jedes Wort als eine <b>Liste von Zahlen</b>. Diese Liste ist ein Punkt im Raum. Das ist alles. Aber daraus folgt überraschend viel.</p>
+
+  <div class="card">
+    <h3>Spielzeug 1 · Vom Wort zum Punkt</h3>
+    <p style="margin-top:0">Zieh die Regler und beobachte, wie sich der Punkt bewegt. Hier mit nur 3 Zahlen (3 Dimensionen) — echte Modelle benutzen 300 bis 4000.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Zahl 1 <span class="val" id="v2a">0.60</span></label><input type="range" id="s2a" min="-1" max="1" step="0.01" value="0.6"></div>
+        <div class="ctrl"><label>Zahl 2 <span class="val" id="v2b">0.30</span></label><input type="range" id="s2b" min="-1" max="1" step="0.01" value="0.3"></div>
+        <div class="ctrl"><label>Zahl 3 <span class="val" id="v2c">-0.20</span></label><input type="range" id="s2c" min="-1" max="1" step="0.01" value="-0.2"></div>
+        <div class="box" style="margin:14px 0 0">
+          <div class="t">Der Vektor</div>
+          <p style="font-family:var(--mono);font-size:14px;color:#fff;margin:4px 0" id="s2vec">w = [0.60, 0.30, −0.20]</p>
+        </div>
+        <h4>Das Skalarprodukt</h4>
+        <p style="font-size:13.5px">Die <b>einzige</b> Rechenoperation, die wir brauchen: Zwei Vektoren multiplizieren wir komponentenweise und addieren alles auf. Das Ergebnis misst, wie <em>ähnlich</em> sie sind.</p>
+        <div class="math" id="s2math"></div>
+        <p style="font-size:13px" id="s2dot"></p>
+      </div>
+      <div>
+        <div id="s2plot" class="plot" style="height:430px"></div>
+        <p class="cap">Blau: dein Vektor. Lila: ein fester Vergleichsvektor. Je kleiner der Winkel, desto größer das Skalarprodukt — desto „ähnlicher" die Wörter.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="t">Merke</div>
+    <p style="margin:0">Das Skalarprodukt <b>w<sub>i</sub>·w<sub>j</sub></b> aller Wortpaare bildet die sogenannte <em>Gram-Matrix</em>. Sie ist im Paper überall zu sehen (die bunten Quadrate neben jedem Plot) und beschreibt die Geometrie vollständig: Wenn man alle paarweisen Skalarprodukte kennt, kennt man die Form bis auf Drehung.</p>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 2 · Gram-Matrix ⇄ Geometrie</h3>
+    <p style="margin-top:0">Verschiebe die Punkte-Anordnung und sieh zu, wie sich die Gram-Matrix ändert. Umgekehrt gilt: Aus der Matrix lässt sich die Form zurückrechnen. <b>Das ist die Brücke des gesamten Papers.</b></p>
+    <div class="btnrow" id="s2gbtn">
+      <button class="b on" data-g="circle">Kreis</button>
+      <button class="b" data-g="line">Linie</button>
+      <button class="b" data-g="cluster">Zwei Cluster</button>
+      <button class="b" data-g="random">Zufall</button>
+    </div>
+    <div class="grid2">
+      <div><div id="s2gpts" class="plot" style="height:330px"></div></div>
+      <div><div id="s2ggram" class="plot" style="height:330px"></div></div>
+    </div>
+    <p class="cap">Links: 12 Punkte im Raum. Rechts: ihre Gram-Matrix (alle Skalarprodukte). Beim Kreis entsteht ein charakteristisches <b>Streifenmuster</b> — jeder Eintrag hängt nur vom Index-Abstand ab. Merk dir dieses Muster!</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S3: KOOKKURRENZ ============================ -->
+<section id="s3">
+  <h2><span class="num">03 · Schritt 1</span>Kookkurrenz: Wörter, die zusammen auftreten</h2>
+  <p class="lead">Woher bekommt das Modell seine Zahlen? Aus einer verblüffend simplen Statistik: <b>Wie oft stehen zwei Wörter nahe beieinander im Text?</b> Mehr nicht. Daraus entsteht alles Weitere.</p>
+
+  <div class="card">
+    <h3>Spielzeug 3 · Das Kontextfenster</h3>
+    <p style="margin-top:0">Ein Fenster der Breite <code>L</code> gleitet über den Text. Jedes Wortpaar, das gleichzeitig im Fenster steht, zählt als „Kookkurrenz". Weiter entfernte Paare zählen weniger (Gewicht <code>f(d) = L+1−d</code>).</p>
+    <div class="ctrl" style="max-width:420px"><label>Fensterbreite L <span class="val" id="v3L">5</span></label><input type="range" id="s3L" min="1" max="10" step="1" value="5"></div>
+    <div class="ctrl" style="max-width:420px"><label>Position im Text <span class="val" id="v3P">6</span></label><input type="range" id="s3P" min="0" max="20" step="1" value="6"></div>
+    <div class="btnrow"><button class="b pri" id="s3play">▶ Fenster laufen lassen</button><button class="b" id="s3reset">↺ Zurücksetzen</button></div>
+    <canvas id="s3canvas" width="1100" height="190"></canvas>
+    <div class="grid2" style="margin-top:16px">
+      <div>
+        <h4>Aktuelles Fenster</h4>
+        <p style="font-size:13.5px" id="s3info">—</p>
+      </div>
+      <div>
+        <h4>Gesammelte Zählungen P<sub>ij</sub></h4>
+        <div id="s3counts" style="font-family:var(--mono);font-size:12.5px;color:var(--txt2);max-height:150px;overflow-y:auto"></div>
+      </div>
+    </div>
+    <p class="cap">Im Paper: L = 16, Gewicht f(d) = L+1−d, trainiert auf 2,72 Milliarden Wörtern der englischen Wikipedia mit V = 25 000 Vokabelwörtern.</p>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 4 · Echte Monats-Statistik</h3>
+    <p style="margin-top:0">Hier siehst du es <b>wirklich</b>: Wie oft kommen zwei Monatsnamen gemeinsam in einem Wikipedia-Textfenster vor? Stell dir die Frage: Hängt das von der <i>absoluten</i> Position ab (Januar ist speziell) — oder nur vom <i>Abstand</i>?</p>
+    <div class="grid2">
+      <div><div id="s3heat" class="plot" style="height:400px"></div></div>
+      <div>
+        <div id="s3curve" class="plot" style="height:400px"></div>
+      </div>
+    </div>
+    <div class="toggle"><input type="checkbox" id="s3diag"><label for="s3diag" style="cursor:pointer">Diagonale ausblenden (Selbst-Kookkurrenz ist ein Sonderfall)</label></div>
+    <p class="cap">Links: die Matrix M* für die 12 Monate (nachgebildet nach Fig. 5 des Papers). Rechts: derselbe Wert, aufgetragen gegen den <b>Monatsabstand</b>. Alle Punkte liegen fast auf einer Kurve — das ist die Entdeckung.</p>
+  </div>
+
+  <div class="box a">
+    <div class="t">Beobachtung</div>
+    <p style="margin:0">Die Streifen sind <b>parallel zur Diagonale</b>. Der Wert hängt praktisch nur davon ab, <i>wie weit</i> zwei Monate auseinanderliegen — nicht davon, <i>welche</i> Monate es sind. Das Paper nennt das <b>Translationssymmetrie</b>. Und die Kurve rechts sieht aus wie eine abfallende Exponentialfunktion: <code>C(Δx) ≈ exp(−|Δx|/σ)</code> mit σ ≈ 4.2.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S4: PMI ============================ -->
+<section id="s4">
+  <h2><span class="num">04 · Schritt 2</span>Normieren: Warum rohe Zählungen nicht reichen</h2>
+  <p class="lead">„Der" und „die" kommen mit allem zusammen vor — nicht weil sie inhaltlich verwandt sind, sondern weil sie einfach <b>häufig</b> sind. Wir müssen die Häufigkeit herausrechnen.</p>
+
+  <div class="card">
+    <h3>Spielzeug 5 · Erwartung vs. Realität</h3>
+    <p style="margin-top:0">Wenn zwei Wörter <em>unabhängig</em> wären, wäre die gemeinsame Wahrscheinlichkeit einfach das Produkt: P<sub>i</sub>·P<sub>j</sub>. Die Frage ist: Wie viel <b>mehr</b> (oder weniger) kommen sie tatsächlich zusammen vor?</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Häufigkeit Wort i: P<sub>i</sub> <span class="val" id="v4i">0.0200</span></label><input type="range" id="s4i" min="0.001" max="0.08" step="0.001" value="0.02"></div>
+        <div class="ctrl"><label>Häufigkeit Wort j: P<sub>j</sub> <span class="val" id="v4j">0.0150</span></label><input type="range" id="s4j" min="0.001" max="0.08" step="0.001" value="0.015"></div>
+        <div class="ctrl"><label>Tatsächliche Kookkurrenz P<sub>ij</sub> (×10⁻⁴) <span class="val" id="v4ij">9.00</span></label><input type="range" id="s4ij" min="0.1" max="40" step="0.1" value="9"></div>
+        <div class="box" style="margin-top:14px">
+          <div class="t">Ergebnis</div>
+          <p style="margin:3px 0;font-size:13.5px">Erwartet (unabhängig): <b id="s4exp">3.00e-4</b></p>
+          <p style="margin:3px 0;font-size:13.5px">Verhältnis P<sub>ij</sub>/(P<sub>i</sub>P<sub>j</sub>): <b id="s4ratio">3.00</b></p>
+          <p style="margin:3px 0;font-size:13.5px">PMI = log(Verhältnis): <b id="s4pmi">1.099</b></p>
+          <p style="margin:3px 0;font-size:13.5px">M* (Papers Variante): <b id="s4mstar">1.000</b></p>
+        </div>
+      </div>
+      <div>
+        <div id="s4plot" class="plot" style="height:420px"></div>
+      </div>
+    </div>
+    <div class="math" id="s4math1"></div>
+    <p class="mathnote">Die Definition von M* aus Gleichung (1) des Papers — und ihre Nähe zur klassischen PMI.</p>
+  </div>
+
+  <div class="card tight">
+    <h4>Warum M* statt direkt PMI?</h4>
+    <p style="font-size:13.5px">M* ist <b>beschränkt</b>: Die Werte liegen immer zwischen −2 und +2. Der Logarithmus dagegen explodiert nach −∞, wenn zwei Wörter nie zusammen vorkommen. Für die Methode der kleinsten Quadrate (die das Modell implizit benutzt) ist das katastrophal. Mathematisch unterscheiden sich die beiden erst in dritter Ordnung: <code>PMI = x + x³/12 + x⁵/80 + …</code> mit <code>x = M*</code>.</p>
+    <div id="s4cmp" class="plot" style="height:300px"></div>
+    <p class="cap">M* (türkis) und PMI (lila) als Funktion des Verhältnisses P<sub>ij</sub>/(P<sub>i</sub>P<sub>j</sub>). Im relevanten Bereich fast identisch, aber M* bleibt gezähmt.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S5: EIGEN/PCA ============================ -->
+<section id="s5">
+  <h2><span class="num">05 · Prerequisite + Schritt 3</span>Eigenvektoren, PCA — und warum word2vec genau das tut</h2>
+  <p class="lead">Jetzt kommt der mathematische Kern, den du brauchst. Keine Sorge: Eigenvektoren sind geometrisch sehr anschaulich. Danach verstehst du, was ein Sprachmodell eigentlich <i>berechnet</i>.</p>
+
+  <h3>5.1 · Eine Matrix ist eine Verformung des Raums</h3>
+  <div class="card">
+    <h4 style="margin-top:0">Spielzeug 6 · Was macht eine Matrix mit einem Vektor?</h4>
+    <p style="margin-top:0">Eine 2×2-Matrix nimmt jeden Pfeil und verschiebt seine Spitze. Die meisten Pfeile werden dabei <b>gedreht</b>. Aber ein paar besondere Pfeile zeigen danach noch exakt in dieselbe Richtung — nur länger oder kürzer. Das sind die <em>Eigenvektoren</em>, der Streckfaktor ist der <em>Eigenwert</em>.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>a (oben links) <span class="val" id="v5a">2.00</span></label><input type="range" id="s5a" min="-3" max="3" step="0.05" value="2"></div>
+        <div class="ctrl"><label>b (oben rechts) <span class="val" id="v5b">0.80</span></label><input type="range" id="s5b" min="-3" max="3" step="0.05" value="0.8"></div>
+        <div class="ctrl"><label>c (unten links) <span class="val" id="v5c">0.80</span></label><input type="range" id="s5c" min="-3" max="3" step="0.05" value="0.8"></div>
+        <div class="ctrl"><label>d (unten rechts) <span class="val" id="v5d">1.00</span></label><input type="range" id="s5d" min="-3" max="3" step="0.05" value="1"></div>
+        <div class="toggle"><input type="checkbox" id="s5sym" checked><label for="s5sym" style="cursor:pointer">Symmetrisch erzwingen (b = c)</label></div>
+        <div class="box" style="margin-top:12px">
+          <div class="t">Eigenwerte & Eigenvektoren</div>
+          <p style="margin:3px 0;font-size:13.5px" id="s5eig">—</p>
+        </div>
+        <p style="font-size:13px">Tipp: Mit „symmetrisch" sind die Eigenvektoren immer <b>senkrecht</b> zueinander. Genau das garantiert M*, denn M*<sub>ij</sub> = M*<sub>ji</sub>.</p>
+      </div>
+      <div>
+        <canvas id="s5canvas" width="760" height="520"></canvas>
+        <div class="legend">
+          <span><i class="sw" style="background:#5a6b8c"></i> Eingangsvektoren</span>
+          <span><i class="sw" style="background:var(--acc)"></i> nach Multiplikation</span>
+          <span><i class="sw" style="background:var(--acc3)"></i> Eigenvektoren</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>5.2 · PCA: Die wichtigsten Richtungen finden</h3>
+  <div class="card">
+    <h4 style="margin-top:0">Spielzeug 7 · Hauptkomponentenanalyse</h4>
+    <p style="margin-top:0">Wenn Punkte in einer Wolke liegen, fragt PCA: In welcher Richtung streuen sie am meisten? Das ist die 1. Hauptkomponente. Senkrecht dazu die zweite, usw. <b>Im Paper ist jeder Plot eine PCA-Projektion.</b></p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Streuung Hauptrichtung <span class="val" id="v5s1">2.50</span></label><input type="range" id="s5s1" min="0.3" max="4" step="0.05" value="2.5"></div>
+        <div class="ctrl"><label>Streuung Nebenrichtung <span class="val" id="v5s2">0.70</span></label><input type="range" id="s5s2" min="0.1" max="4" step="0.05" value="0.7"></div>
+        <div class="ctrl"><label>Drehung (°) <span class="val" id="v5rot">30</span></label><input type="range" id="s5rot" min="0" max="180" step="1" value="30"></div>
+        <div class="box" style="margin-top:12px">
+          <div class="t">Gefundene Hauptkomponenten</div>
+          <p style="margin:3px 0;font-size:13px" id="s5pcainfo">—</p>
+        </div>
+        <p style="font-size:13px">Die PCA findet die Achsen <b>von selbst</b>, nur aus den Daten. Sie kennt die wahre Drehung nicht — sie entdeckt sie.</p>
+      </div>
+      <div><canvas id="s5pca" width="700" height="500"></canvas></div>
+    </div>
+  </div>
+
+  <h3>5.3 · Die zentrale Gleichung: word2vec ≈ Eigenzerlegung</h3>
+  <div class="card">
+    <p style="margin-top:0">Karkada et al. (2025) haben bewiesen: Ein Wort-Einbettungsmodell wie word2vec, mit Gradientenabstieg trainiert, landet (näherungsweise) bei der Lösung dieses einfachen Problems:</p>
+    <div class="math" id="s5m1"></div>
+    <p class="mathnote">„Finde Vektoren, deren Skalarprodukte die M*-Matrix möglichst gut nachbilden."</p>
+    <p>Und die Lösung dieses Problems kennt man aus der linearen Algebra exakt (Eckart–Young–Mirsky): Man nimmt die Eigenvektoren mit den größten Eigenwerten.</p>
+    <div class="math" id="s5m2"></div>
+    <p class="mathnote">Spalte μ der Einbettungsmatrix = μ-ter Eigenvektor, skaliert mit der Wurzel des Eigenwerts.</p>
+    <div class="box w">
+      <div class="t">Die Konsequenz, die alles trägt</div>
+      <p style="margin:0">Wenn die Einbettungsdimension groß genug ist, gilt: <b>Gram-Matrix der Vektoren = M*-Matrix.</b> Die Geometrie der Wortvektoren <i>ist</i> die Statistik der Sprache. Deshalb reicht es, M* zu verstehen.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Spielzeug 8 · Rekonstruktion mit wenigen Eigenmoden</h4>
+    <p style="margin-top:0">Hier siehst du live, wie gut sich die echte Monats-Matrix M* durch die ersten r Eigenmoden annähern lässt. Schon 2–3 Moden tragen fast alles.</p>
+    <div class="ctrl" style="max-width:460px"><label>Anzahl benutzter Eigenmoden r <span class="val" id="v5r">3</span></label><input type="range" id="s5r" min="1" max="12" step="1" value="3"></div>
+    <div class="grid3">
+      <div><div id="s5orig" class="plot" style="height:260px"></div></div>
+      <div><div id="s5rec" class="plot" style="height:260px"></div></div>
+      <div><div id="s5spec" class="plot" style="height:260px"></div></div>
+    </div>
+    <p class="cap">Links: Original M*. Mitte: Rekonstruktion mit r Moden. Rechts: Eigenwertspektrum — die Balken fallen schnell ab, das ist der Grund für die gute Näherung.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S6: SYMMETRIE ============================ -->
+<section id="s6">
+  <h2><span class="num">06 · Schritt 4</span>Die Symmetrie: zirkulante Matrizen</h2>
+  <p class="lead">Jetzt wird es elegant. Wenn ein Matrixeintrag <b>nur vom Abstand</b> der Indizes abhängt (und das Ganze rundherum zyklisch ist), heißt die Matrix <em>zirkulant</em>. Solche Matrizen haben eine magische Eigenschaft.</p>
+
+  <div class="card">
+    <h3>Spielzeug 9 · Baue dir eine zirkulante Matrix</h3>
+    <p style="margin-top:0">Du gibst nur <b>eine einzige Funktion</b> vor: wie stark hängen zwei Monate zusammen, die k Monate auseinanderliegen? Die ganze 12×12-Matrix folgt daraus automatisch.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Reichweite σ (Kernbreite) <span class="val" id="v6s">4.20</span></label><input type="range" id="s6s" min="0.4" max="12" step="0.05" value="4.2"></div>
+        <div class="btnrow" id="s6kbtn">
+          <button class="b on" data-k="exp">Exponentiell</button>
+          <button class="b" data-k="gauss">Gauß</button>
+          <button class="b" data-k="cos">Kosinus</button>
+          <button class="b" data-k="box">Rechteck</button>
+        </div>
+        <div class="toggle"><input type="checkbox" id="s6per" checked><label for="s6per" style="cursor:pointer">Periodische Randbedingungen (Jahr wiederholt sich)</label></div>
+        <div class="box" style="margin-top:12px">
+          <div class="t">Was du gerade gebaut hast</div>
+          <p style="margin:3px 0;font-size:13px" id="s6info">—</p>
+        </div>
+      </div>
+      <div>
+        <div class="grid2" style="gap:14px">
+          <div><div id="s6kern" class="plot" style="height:230px"></div></div>
+          <div><div id="s6mat" class="plot" style="height:230px"></div></div>
+        </div>
+        <div id="s6eig" class="plot" style="height:250px;margin-top:10px"></div>
+      </div>
+    </div>
+    <p class="cap">Links oben: der Kern C(Δx). Rechts oben: die daraus gebaute Matrix — beachte die Diagonalstreifen. Unten: die Eigenvektoren, die der Computer findet. <b>Sie sind immer Sinus und Kosinus, egal welchen Kern du wählst.</b> Nur die Eigenwerte ändern sich.</p>
+  </div>
+
+  <div class="box a">
+    <div class="t">Der Satz, auf dem alles ruht</div>
+    <p style="margin:0">Eine <b>zirkulante</b> Matrix (Eintrag hängt nur vom zyklischen Index-Abstand ab) wird <b>immer</b> von den diskreten Fourier-Moden diagonalisiert. Die Eigenvektoren sind <em>universell</em> — sie hängen überhaupt nicht davon ab, wie der Kern aussieht. Nur die Eigen<i>werte</i> hängen vom Kern ab, und zwar als dessen <b>Fourier-Transformierte</b>.</p>
+  </div>
+
+  <div class="card tight">
+    <h4 style="margin-top:0">Warum ist das so? Eine Ein-Zeilen-Begründung zum Mitfühlen</h4>
+    <p style="font-size:13.5px">Multipliziere eine zirkulante Matrix mit einer Welle. Jede Zeile berechnet dieselbe gewichtete Summe von Nachbarn — nur um eine Position verschoben. Eine verschobene Welle ist aber wieder dieselbe Welle, nur mit anderer Amplitude. Also: Welle rein → Welle raus. Das ist die Definition eines Eigenvektors.</p>
+    <div class="math" id="s6math"></div>
+    <div class="btnrow"><button class="b pri" id="s6demo">▶ Welle rein → Welle raus animieren</button></div>
+    <canvas id="s6anim" width="1080" height="230"></canvas>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S7: FOURIER ============================ -->
+<section id="s7">
+  <h2><span class="num">07 · Schritt 5</span>Fourier: Wellen bauen jede Form</h2>
+  <p class="lead">Das letzte Puzzleteil an Vorwissen. Die Fourier-Idee: Jede Funktion lässt sich als Summe von Sinus- und Kosinuswellen schreiben. Und: Welche Welle wie stark vorkommt, verrät uns der Kern.</p>
+
+  <div class="card">
+    <h3>Spielzeug 10 · Wellen addieren</h3>
+    <p style="margin-top:0">Mische Grundschwingung und Oberschwingungen. Das Paper sagt: Die <b>Amplituden</b> werden von der Formel <code>a<sub>n</sub> = √(2σ/(1+σ²k<sub>n</sub>²))</code> vorgegeben. Klick auf „Theorie-Amplituden", um genau diese Mischung einzustellen.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Amplitude Mode 1 (k=π) <span class="val" id="v7a1">1.00</span></label><input type="range" id="s7a1" min="0" max="1.5" step="0.01" value="1"></div>
+        <div class="ctrl"><label>Amplitude Mode 2 (k=2π) <span class="val" id="v7a2">0.35</span></label><input type="range" id="s7a2" min="0" max="1.5" step="0.01" value="0.35"></div>
+        <div class="ctrl"><label>Amplitude Mode 3 (k=3π) <span class="val" id="v7a3">0.16</span></label><input type="range" id="s7a3" min="0" max="1.5" step="0.01" value="0.16"></div>
+        <div class="ctrl"><label>Amplitude Mode 4 (k=4π) <span class="val" id="v7a4">0.09</span></label><input type="range" id="s7a4" min="0" max="1.5" step="0.01" value="0.09"></div>
+        <div class="ctrl"><label>Kernbreite σ für Theorie <span class="val" id="v7s">4.20</span></label><input type="range" id="s7sig" min="0.3" max="10" step="0.05" value="4.2"></div>
+        <div class="btnrow">
+          <button class="b pri" id="s7theory">⚡ Theorie-Amplituden setzen</button>
+          <button class="b" id="s7flat">Alle gleich</button>
+        </div>
+        <div class="math" id="s7math"></div>
+      </div>
+      <div>
+        <div id="s7wave" class="plot" style="height:250px"></div>
+        <div id="s7amp" class="plot" style="height:230px;margin-top:8px"></div>
+      </div>
+    </div>
+    <p class="cap">Oben: die einzelnen Wellen und ihre Summe. Unten: das Amplitudenspektrum. <b>Entscheidend:</b> die Amplituden fallen mit steigender Frequenz. Deshalb dominieren die langsamen Moden die ersten PCA-Achsen — und deshalb sieht man zuerst einen Kreis und erst danach die Wellen.</p>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 11 · Vom Kern zum Spektrum (Fourier-Transformation live)</h3>
+    <p style="margin-top:0">Der Zusammenhang Kern ⇄ Amplituden ist das Herzstück. Breiter Kern (großes σ) = starke Korrelation über weite Abstände = nur die langsamste Mode zählt. Schmaler Kern = viele Moden ähnlich stark.</p>
+    <div class="ctrl" style="max-width:520px"><label>σ (Reichweite der Korrelation) <span class="val" id="v7s2">4.20</span></label><input type="range" id="s7sig2" min="0.2" max="15" step="0.05" value="4.2"></div>
+    <div class="grid2">
+      <div><div id="s7k1" class="plot" style="height:290px"></div></div>
+      <div><div id="s7k2" class="plot" style="height:290px"></div></div>
+    </div>
+    <div class="box w" style="margin-top:4px">
+      <div class="t">Faustregel zum Mitnehmen</div>
+      <p style="margin:0" id="s7note">—</p>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S8: MONATE ============================ -->
+<section id="s8">
+  <h2><span class="num">08 · Hauptergebnis I</span>Die Monate: Warum ein Kreis entsteht</h2>
+  <p class="lead">Jetzt setzen wir alles zusammen. Zirkulante Matrix → Sinus-Eigenvektoren → die ersten beiden Achsen sind cos(x) und sin(x) → und das ist genau die Parameterdarstellung eines <b>Kreises</b>.</p>
+
+  <div class="card">
+    <p style="margin-top:0"><b>Korollar 2 des Papers</b> — die exakte Vorhersage für zyklische Konzepte:</p>
+    <div class="math" id="s8m1"></div>
+    <div class="math" id="s8m2"></div>
+    <p class="mathnote">Jede PCA-Achse ist eine Sinuswelle im Kalenderdatum. Die Frequenzen sind ganzzahlige Vielfache von π, die Amplituden folgen aus σ.</p>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 12 · Der Monatskreis wird gebaut</h3>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Korrelationsreichweite σ <span class="val" id="v8s">4.20</span></label><input type="range" id="s8sig" min="0.3" max="12" step="0.05" value="4.2"></div>
+        <div class="ctrl"><label>PCA-Achse horizontal <span class="val" id="v8x">1</span></label><input type="range" id="s8x" min="1" max="8" step="1" value="1"></div>
+        <div class="ctrl"><label>PCA-Achse vertikal <span class="val" id="v8y">2</span></label><input type="range" id="s8y" min="1" max="8" step="1" value="2"></div>
+        <div class="toggle"><input type="checkbox" id="s8conn" checked><label for="s8conn" style="cursor:pointer">Monate verbinden (Jan→Feb→…)</label></div>
+        <div class="box" style="margin-top:10px">
+          <div class="t">Was du siehst</div>
+          <p style="margin:0;font-size:13px" id="s8info">—</p>
+        </div>
+        <p style="font-size:13px;margin-top:14px">Probier <b>Achse 1 vs. 2</b> (Kreis), dann <b>1 vs. 3</b> (doppelte Frequenz → Schleife), dann <b>3 vs. 4</b> (schnellerer Kreis).</p>
+      </div>
+      <div>
+        <div id="s8plot" class="plot" style="height:430px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 13 · Der „Kalender-Pringle" in 3D</h3>
+    <p style="margin-top:0">Nimmt man drei Achsen statt zwei, wird aus dem Kreis ein Sattel — weil Mode 3 die erste <b>Oberschwingung</b> ist und mit doppelter Frequenz schwingt. Genau das zeigt Fig. 8 des Papers. Dreh die Figur mit der Maus!</p>
+    <div class="grid-s rev">
+      <div><div id="s8d3" class="plot" style="height:470px"></div></div>
+      <div>
+        <div class="ctrl"><label>σ <span class="val" id="v8s3">4.20</span></label><input type="range" id="s8sig3" min="0.3" max="12" step="0.05" value="4.2"></div>
+        <div class="ctrl"><label>Überhöhung Mode 3 (nur Anschaulichkeit) <span class="val" id="v8b">1.00</span></label><input type="range" id="s8boost" min="0.2" max="4" step="0.05" value="1"></div>
+        <div class="box">
+          <div class="t">Warum ein Sattel?</div>
+          <p style="margin:0;font-size:13px">Achse 1 = cos(x), Achse 2 = sin(x) → Kreis in der Ebene.<br>Achse 3 = cos(2x) → Höhe. Und cos(2x) hat <b>vier</b> Extrema beim Umlauf: zwei hoch, zwei runter. Eine Scheibe mit zwei Bergen und zwei Tälern am Rand ist exakt ein Pringle.</p>
+        </div>
+        <div class="toggle"><input type="checkbox" id="s8surf" checked><label for="s8surf" style="cursor:pointer">Sattelfläche einblenden</label></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 14 · Theorie vs. echte Modelle</h3>
+    <p style="margin-top:0">Das Paper vergleicht drei Welten: die analytische Vorhersage, Wortvektoren aus Wikipedia, und die inneren Aktivierungen von Gemma 2 2B. Schalte um und vergleiche die Gram-Matrizen.</p>
+    <div class="btnrow" id="s8cmpbtn">
+      <button class="b on" data-m="theory">Theorie (Korollar 2)</button>
+      <button class="b" data-m="w2v">Word Embeddings</button>
+      <button class="b" data-m="gemma">Gemma 2 2B</button>
+    </div>
+    <div class="grid2">
+      <div><div id="s8cg" class="plot" style="height:360px"></div></div>
+      <div><div id="s8cp" class="plot" style="height:360px"></div></div>
+    </div>
+    <p class="cap">Nachbildung von Fig. 1 (linke Spalte). Bei den Wortvektoren fällt <b>Mai</b> aus der Reihe — das englische „may" bedeutet auch „könnte". Beim LLM verschwindet die Störung, weil der Prompt-Kontext („The month of the year is …") die Mehrdeutigkeit auflöst.</p>
+  </div>
+
+  <div class="box">
+    <div class="t">Polysemie-Effekt (Fig. 14 des Papers)</div>
+    <p style="margin:0">Ohne Kontext liegt „May" weit abseits vom Kreis. Mit Kontext wandert es Schicht für Schicht an seinen Platz. Das ist ein schöner Beleg dafür, dass tiefe Modelle auf der Statistik <i>aufbauen</i>, sie aber kontextabhängig korrigieren.</p>
+  </div>
+  <div class="card tight">
+    <div class="ctrl" style="max-width:520px"><label>Transformer-Schicht (mit Kontext-Prompt) <span class="val" id="v8l">0</span></label><input type="range" id="s8layer" min="0" max="5" step="1" value="0"></div>
+    <div id="s8may" class="plot" style="height:330px"></div>
+    <p class="cap">Schematische Nachbildung von Fig. 14: Mit Kontext repariert sich die Kreisgeometrie im Laufe der Schichten.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S9: JAHRE ============================ -->
+<section id="s9">
+  <h2><span class="num">09 · Hauptergebnis II</span>Die Jahre: offene Ränder, krumme Frequenzen</h2>
+  <p class="lead">Jahreszahlen wiederholen sich nicht — 1700 ist kein Nachbar von 2020. Das nennt man <b>offene Randbedingungen</b>. Die Mathematik wird kniffliger, die Frequenzen sind keine ganzen Zahlen mehr. Das Paper löst es trotzdem exakt (Proposition 3).</p>
+
+  <div class="card">
+    <h3>Spielzeug 15 · Periodisch vs. offen</h3>
+    <p style="margin-top:0">Derselbe exponentielle Kern, nur andere Ränder. Beobachte, wie sich die Eigenfunktionen ändern: Beim offenen Fall wölben sie sich an den Rändern und die Frequenzen rutschen zwischen die ganzen Zahlen.</p>
+    <div class="btnrow" id="s9bc">
+      <button class="b on" data-b="per">Periodisch (Monate)</button>
+      <button class="b" data-b="open">Offen (Jahre)</button>
+    </div>
+    <div class="ctrl" style="max-width:520px"><label>σ <span class="val" id="v9s">1.00</span></label><input type="range" id="s9sig" min="0.05" max="3" step="0.01" value="1"></div>
+    <div class="grid2">
+      <div><div id="s9modes" class="plot" style="height:360px"></div></div>
+      <div><div id="s9k" class="plot" style="height:360px"></div></div>
+    </div>
+    <p class="cap">Links: die ersten vier Eigenmoden. Rechts: die Wellenzahlen k<sub>n</sub>. Im offenen Fall erfüllen sie eine <b>selbstkonsistente Quantisierungsbedingung</b> — man muss sie numerisch suchen, aber die Gleichung ist exakt bekannt.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Die Quantisierungsbedingung (Gleichung 8 des Papers)</h4>
+    <div class="math" id="s9m1"></div>
+    <p class="mathnote">Jede Wellenzahl ist die Lösung einer Gleichung, in der sie selbst vorkommt. Man findet sie durch Einsetzen und Wiederholen (Fixpunkt-Iteration).</p>
+    <div class="ctrl" style="max-width:420px"><label>Iterationsschritte <span class="val" id="v9it">8</span></label><input type="range" id="s9iter" min="0" max="20" step="1" value="8"></div>
+    <div class="ctrl" style="max-width:420px"><label>Mode n <span class="val" id="v9n">1</span></label><input type="range" id="s9n" min="1" max="8" step="1" value="1"></div>
+    <div id="s9fix" class="plot" style="height:300px"></div>
+    <p class="cap">Fixpunkt-Iteration live: Der Wert springt zwischen Kurve und Diagonale hin und her, bis er sich einpendelt. Genau so werden die k<sub>n</sub> berechnet.</p>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 16 · Die Mannigfaltigkeit der Geschichte</h3>
+    <p style="margin-top:0">So sieht die Kurve der Jahre 1700–2020 in den ersten drei Hauptkomponenten aus: eine offene, gekrümmte Schleife mit <b>„Rippeln"</b> — kleinen Wellen, die von den Oberschwingungen kommen.</p>
+    <div class="grid-s rev">
+      <div><div id="s9m3d" class="plot" style="height:470px"></div></div>
+      <div>
+        <div class="ctrl"><label>σ (in Einheiten der halben Spanne) <span class="val" id="v9s2">0.78</span></label><input type="range" id="s9sig2" min="0.1" max="3" step="0.01" value="0.78"></div>
+        <div class="ctrl"><label>Sichtbare Moden <span class="val" id="v9md">3</span></label><input type="range" id="s9mod" min="2" max="8" step="1" value="3"></div>
+        <div class="box">
+          <div class="t">Das „Rippel"-Phänomen</div>
+          <p style="margin:0;font-size:13px">In 2D sieht die Kurve glatt aus. In 3D zeigt sich die Krümmung aus der Höhe: Mode 3 bringt die Wellen. Gurnee et al. (2025) berichteten diese Rippel — das Paper erklärt sie als <b>höhere Harmonische</b>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card tight">
+    <h4 style="margin-top:0">Die acht Eigenmoden der Geschichte (Fig. 11)</h4>
+    <div id="s9eight" class="plot" style="height:430px"></div>
+    <p class="cap">Jede Mode ist eine Welle über die Jahre 1700–2020, mit steigender Frequenz. Theorie durchgezogen — bei echten Daten sieht man Knicke bei den Weltkriegen, weil die Zeit-Translationssymmetrie dort schwach gebrochen wird.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S10: LISSAJOUS ============================ -->
+<section id="s10">
+  <h2><span class="num">10 · Neue Vorhersage I</span>Lissajous-Figuren</h2>
+  <p class="lead">Wenn jede Achse eine Sinuswelle ist, dann ergibt jede Kombination zweier Achsen eine <b>Lissajous-Figur</b> — dieselben Kurven, die man auf alten Oszilloskopen sieht. Das Paper sagt sie vorher und findet sie in echten Wortvektoren.</p>
+
+  <div class="card">
+    <h3>Spielzeug 17 · Lissajous-Labor</h3>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Frequenz x: a <span class="val" id="v10a">1.0</span></label><input type="range" id="s10a" min="0.5" max="6" step="0.1" value="1"></div>
+        <div class="ctrl"><label>Frequenz y: b <span class="val" id="v10b">2.0</span></label><input type="range" id="s10b" min="0.5" max="6" step="0.1" value="2"></div>
+        <div class="ctrl"><label>Phase δ (×π) <span class="val" id="v10d">0.50</span></label><input type="range" id="s10d" min="0" max="2" step="0.01" value="0.5"></div>
+        <div class="ctrl"><label>Amplitude A <span class="val" id="v10A">1.00</span></label><input type="range" id="s10A" min="0.2" max="1.5" step="0.01" value="1"></div>
+        <div class="ctrl"><label>Amplitude B <span class="val" id="v10B">1.00</span></label><input type="range" id="s10B" min="0.2" max="1.5" step="0.01" value="1"></div>
+        <div class="math" id="s10math"></div>
+        <div class="btnrow">
+          <button class="b" data-ls="1,1,0.5">Kreis (1:1)</button>
+          <button class="b" data-ls="1,2,0.5">Acht (1:2)</button>
+          <button class="b" data-ls="2,3,0.5">2:3</button>
+          <button class="b" data-ls="3,4,0.5">3:4</button>
+        </div>
+      </div>
+      <div><div id="s10plot" class="plot" style="height:430px"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 18 · Das volle 6er-Panel wie im Paper</h3>
+    <p style="margin-top:0">Alle Achsenpaare auf einmal — genau die Darstellung aus Fig. 2 (links). Jede Kachel ist eine andere Lissajous-Figur, mit Frequenzen aus der Quantisierungsbedingung.</p>
+    <div class="ctrl" style="max-width:480px"><label>σ <span class="val" id="v10s">0.78</span></label><input type="range" id="s10sig" min="0.1" max="2.5" step="0.01" value="0.78"></div>
+    <div class="toggle"><input type="checkbox" id="s10real"><label for="s10real" style="cursor:pointer">„Echte Daten"-Modus: Kriegsjahre stören die Symmetrie (Knicke)</label></div>
+    <div id="s10panel" class="plot" style="height:520px"></div>
+    <p class="cap">Farbe = Jahr (rot 1700 → violett 2020). Im Daten-Modus siehst du die im Paper erwähnten <b>Knicke</b> im cyan-blauen Bereich — das sind die Jahre der beiden Weltkriege. Die Flut an Wikipedia-Artikeln über die Kriegsjahre bricht die Zeit-Translationssymmetrie leicht und verzerrt die Mannigfaltigkeit [[11]].</p>
+  </div>
+
+  <div class="box a">
+    <div class="t">Warum ist das eine echte Vorhersage?</div>
+    <p style="margin:0">Niemand hatte vorher nach Lissajous-Figuren in Wortvektoren gesucht. Die Theorie sagt sie zwingend voraus: Wenn jede PCA-Achse <code>a<sub>n</sub>·sin(k<sub>n</sub>x + φ)</code> ist, dann <i>muss</i> jedes Achsenpaar eine Lissajous-Kurve ergeben. Und tatsächlich: man findet sie [[11]].</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S11: DEKODIEREN ============================ -->
+<section id="s11">
+  <h2><span class="num">11 · Neue Vorhersage II</span>Lineares Dekodieren: Warum man das Jahr ablesen kann</h2>
+  <p class="lead">Gurnee &amp; Tegmark fanden: Man kann aus den Modellvektoren mit einer simplen linearen Formel das Jahr oder die Koordinaten einer Stadt auslesen. Das Paper erklärt <b>warum</b> — und sagt sogar vorher, wie schnell der Fehler fällt.</p>
+
+  <div class="card">
+    <h3>Spielzeug 19 · Fourier-Reihe von f(x) = x</h3>
+    <p style="margin-top:0">Das ist der ganze Trick: Die Vektorkomponenten sind Sinuswellen. Eine lineare Kombination von Sinuswellen, die die Gerade <code>f(x) = x</code> nachbaut, ist nichts anderes als eine <b>Fourier-Reihe</b>. Mehr Moden = schärfere Gerade = genaueres Jahr.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Anzahl Moden r <span class="val" id="v11r">3</span></label><input type="range" id="s11r" min="1" max="40" step="1" value="3"></div>
+        <div class="box">
+          <div class="t">Dekodierfehler</div>
+          <p style="margin:3px 0;font-size:13.5px">Gemessen (MSE): <b id="s11err">—</b></p>
+          <p style="margin:3px 0;font-size:13.5px">Theorie ∝ 1/r: <b id="s11the">—</b></p>
+        </div>
+        <div class="math" id="s11math"></div>
+        <p style="font-size:13px">Proposition 4 des Papers: In D Dimensionen fällt der Fehler wie <code>ε² ~ r<sup>−1/D</sup></code>. Für Jahre (D=1) also <code>1/r</code>, für Landkarten (D=2) nur <code>1/√r</code>.</p>
+      </div>
+      <div>
+        <div id="s11plot" class="plot" style="height:280px"></div>
+        <div id="s11err2" class="plot" style="height:230px;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 20 · Double Descent beim Probe-Training</h3>
+    <p style="margin-top:0">Im Experiment des Papers wird eine lineare Sonde auf 60 Jahren trainiert und auf 60 getestet. Bei <code>r = 60</code> (so viele Parameter wie Datenpunkte) explodiert der Testfehler kurz — das berühmte <b>Double-Descent</b>-Phänomen — und fällt danach wieder.</p>
+    <div class="toggle"><input type="checkbox" id="s11ridge"><label for="s11ridge" style="cursor:pointer">Ridge-Regularisierung einschalten (glättet den Peak weg, Fig. 13)</label></div>
+    <div id="s11dd" class="plot" style="height:400px"></div>
+    <p class="cap">Nachbildung von Fig. 2 (rechts) bzw. Fig. 13. Durchgezogen: Theoriesteigung 1/r. Die senkrechte Linie markiert die Interpolationsschwelle r = n<sub>train</sub> = 60 [[11]].</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S12: LANDKARTE ============================ -->
+<section id="s12">
+  <h2><span class="num">12 · Hauptergebnis III</span>Zwei Dimensionen: Die Landkarte der USA</h2>
+  <p class="lead">Geographie ist ein <b>D = 2</b>-Kontinuum mit offenen Rändern — und die Bundesstaaten liegen nicht auf einem sauberen Gitter. Trotzdem gilt das Prinzip: Die obersten Moden variieren <b>langsam über den Raum</b>.</p>
+
+  <div class="card">
+    <h3>Spielzeug 21 · Die Eigenmoden der Geographie</h3>
+    <p style="margin-top:0">Das Modell im Paper ist denkbar einfach: <code>M*<sub>ij</sub> = 10·exp(−d<sub>ij</sub>/20)</code>, wobei d<sub>ij</sub> der Abstand der Staaten-Schwerpunkte ist (mit Faktor 0.78 für das Seitenverhältnis eines Längengrads). Dann diagonalisiert man numerisch.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Reichweite σ (Grad) <span class="val" id="v12s">20</span></label><input type="range" id="s12sig" min="4" max="60" step="0.5" value="20"></div>
+        <div class="btnrow" id="s12mb">
+          <button class="b on" data-m="1">Mode 1</button>
+          <button class="b" data-m="2">Mode 2</button>
+          <button class="b" data-m="3">Mode 3</button>
+          <button class="b" data-m="4">Mode 4</button>
+        </div>
+        <div class="box">
+          <div class="t">Interpretation</div>
+          <p style="margin:0;font-size:13px" id="s12info">—</p>
+        </div>
+        <p style="font-size:13px;margin-top:12px">Mode 1 ist meist ein Ost-West-Gradient, Mode 2 Nord-Süd, Mode 3 und 4 sind die zweidimensionalen Oberschwingungen — genau wie bei einer schwingenden Trommel.</p>
+      </div>
+      <div>
+        <div id="s12map" class="plot" style="height:430px"></div>
+      </div>
+    </div>
+    <p class="cap">48 zusammenhängende US-Staaten, eingefärbt nach dem Wert der gewählten Eigenmode. Nachbildung von Fig. 3 [[11]].</p>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 22 · Vom Gitter zur Fläche: 2D-Plane-Waves</h3>
+    <p style="margin-top:0">Auf einem perfekten Gitter sind die Moden exakt zweidimensionale ebene Wellen <code>cos(k<sub>x</sub>x)·cos(k<sub>y</sub>y)</code>. Hier kannst du die Quantenzahlen durchprobieren — die „Trommelfell-Moden" des Semantikraums.</p>
+    <div class="flexwrap">
+      <div class="ctrl" style="min-width:200px"><label>n<sub>x</sub> <span class="val" id="v12nx">1</span></label><input type="range" id="s12nx" min="0" max="5" step="1" value="1"></div>
+      <div class="ctrl" style="min-width:200px"><label>n<sub>y</sub> <span class="val" id="v12ny">1</span></label><input type="range" id="s12ny" min="0" max="5" step="1" value="1"></div>
+      <div class="ctrl" style="min-width:200px"><label>σ <span class="val" id="v12s2">0.6</span></label><input type="range" id="s12sig2" min="0.1" max="2" step="0.01" value="0.6"></div>
+    </div>
+    <div class="grid2">
+      <div><div id="s12wave" class="plot" style="height:340px"></div></div>
+      <div><div id="s12sheet" class="plot" style="height:340px"></div></div>
+    </div>
+    <p class="cap">Links: die Mode als Höhenkarte. Rechts: wie ein 2D-Gitter in den Raum eingebettet wird — eine <b>gekrümmte Fläche</b>. Beachte, dass die Ränder verzerrt sind, die Mitte aber getreu abgebildet wird (Fig. 10) [[11]].</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S13: ROBUSTHEIT ============================ -->
+<section id="s13">
+  <h2><span class="num">13 · Der überraschendste Teil</span>Robustheit: Der Kreis überlebt die Zerstörung</h2>
+  <p class="lead">Jetzt kommt das Experiment, das den Autoren selbst Rätsel aufgab: Man <b>löscht alle Kookkurrenzen zwischen Monaten</b> aus der Statistik — setzt sie exakt auf Null. Der Kreis ist trotzdem da. Wie kann das sein?</p>
+
+  <div class="card">
+    <h3>Spielzeug 23 · Ablation: Monat-Monat-Statistik löschen</h3>
+    <div class="grid-s">
+      <div>
+        <div class="toggle"><input type="checkbox" id="s13abl"><label for="s13abl" style="cursor:pointer"><b>Monat-Monat-Block auf Null setzen</b></label></div>
+        <div class="ctrl"><label>Einbettungsdimension d <span class="val" id="v13d">1000</span></label><input type="range" id="s13d" min="20" max="25000" step="20" value="1000"></div>
+        <div class="ctrl"><label>Anzahl saisonaler „Helferwörter" H <span class="val" id="v13h">10</span></label><input type="range" id="s13h" min="0" max="100" step="1" value="10"></div>
+        <div class="box" style="margin-top:10px">
+          <div class="t">Ergebnis</div>
+          <p style="margin:0;font-size:13px" id="s13info">—</p>
+        </div>
+      </div>
+      <div><div id="s13plot" class="plot" style="height:400px"></div></div>
+    </div>
+    <p class="cap">Schalte die Ablation ein: Bei <b>d = V = 25 000</b> (volle Dimension) verschwindet der Kreis — denn dann ist die Gram-Matrix exakt die (nun genullte) M*-Matrix. Bei <b>mittlerer Dimension d ≪ V</b> kommt er zurück! Nachbildung von Fig. 4 [[11]].</p>
+  </div>
+
+  <div class="box w">
+    <div class="t">Das Paradox</div>
+    <p style="margin:0">Weniger Dimensionen = <b>bessere</b> Geometrie? Das klingt falsch. Die Auflösung: Bei voller Dimension bildet das Modell die Statistik exakt nach — inklusive des gelöschten Lochs. Bei kleinerer Dimension muss es sich auf die <b>größten Eigenmoden</b> beschränken, und die werden von <i>vielen</i> Wörtern getragen, nicht nur von den zwölf Monaten.</p>
+  </div>
+
+  <h3>13.1 · Die Erklärung: eine versteckte Variable namens „Jahreszeit"</h3>
+  <div class="card">
+    <h4 style="margin-top:0">Spielzeug 24 · Saisonale Wörter als Zeugen</h4>
+    <p style="margin-top:0">„Ski" kommt häufiger mit „Dezember" vor, „Hurrikan" mit „September", „Ostern" mit „April". Jedes dieser Wörter hat eine <b>Phase</b> im Jahr. Zusammen verraten sie die Reihenfolge der Monate — auch ohne dass Monate je gemeinsam auftreten.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Anzahl Helferwörter H <span class="val" id="v13h2">10</span></label><input type="range" id="s13h2" min="2" max="100" step="1" value="10"></div>
+        <div class="toggle"><input type="checkbox" id="s13nonseas"><label for="s13nonseas" style="cursor:pointer">Stattdessen <b>unsaisonale</b> Wörter („eins", „zwei", …) benutzen</label></div>
+        <div class="box">
+          <div class="t">Rekonstruktion</div>
+          <p style="margin:0;font-size:13px" id="s13rinfo">—</p>
+        </div>
+        <p style="font-size:13px;margin-top:12px">Im Paper: Mit den Top-100 saisonalen Wörtern wird die Rekonstruktion exzellent; mit Zahlwörtern scheitert sie völlig (Fig. 15/16) [[11]].</p>
+      </div>
+      <div>
+        <div id="s13couple" class="plot" style="height:330px"></div>
+      </div>
+    </div>
+    <div id="s13recon" class="plot" style="height:330px;margin-top:12px"></div>
+    <p class="cap">Oben: die Kopplungsmatrix Monate × Helferwörter. Unten: die daraus rekonstruierte Monats-Geometrie.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Spielzeug 25 · Das latente Variablenmodell</h4>
+    <p style="margin-top:0">Formal: Jedes Wort i hat ein saisonales Zentrum t<sub>i</sub>. Seine Auftrittswahrscheinlichkeit wird moduliert: <code>P(i|t) = P(i)·(1 + g(t − t<sub>i</sub>))</code>. Mittelt man über alle Jahreszeiten, erhält man <b>automatisch</b> eine zirkulante PMI-Matrix — die Symmetrie ist dann keine Annahme mehr, sondern eine Folge.</p>
+    <div class="grid-s">
+      <div>
+        <div class="ctrl"><label>Breite der Modulation g <span class="val" id="v13g">0.25</span></label><input type="range" id="s13g" min="0.05" max="0.9" step="0.01" value="0.25"></div>
+        <div class="ctrl"><label>Stärke der Modulation <span class="val" id="v13amp">0.80</span></label><input type="range" id="s13amp" min="0.05" max="1.2" step="0.01" value="0.8"></div>
+        <div class="ctrl"><label>Anzahl Wörter N <span class="val" id="v13N">24</span></label><input type="range" id="s13N" min="6" max="80" step="1" value="24"></div>
+        <div class="math" id="s13math"></div>
+      </div>
+      <div>
+        <div id="s13g1" class="plot" style="height:220px"></div>
+        <div id="s13g2" class="plot" style="height:230px;margin-top:8px"></div>
+      </div>
+    </div>
+    <p class="cap">Oben: die Modulationsfunktion g(t) für einige Wörter. Unten: die daraus folgende Autokorrelation K(Δ) und ihr Spektrum. Die Eigenwerte wachsen <b>proportional zu N</b> — deshalb kann eine Störung von nur 12×12 Einträgen sie nicht umwerfen [[11]].</p>
+  </div>
+
+  <div class="card tight">
+    <h4 style="margin-top:0">Spielzeug 26 · Warum die Störung nichts ausmacht (Weyl/Davis–Kahan)</h4>
+    <p style="margin-top:0">Die Eigenwerte und ihre Abstände wachsen mit N. Eine Störung, die nur eine <b>feste</b> Anzahl von Einträgen betrifft, bleibt beschränkt. Also: Je größer das Vokabular, desto irrelevanter die Ablation. Schieb N hoch und sieh zu.</p>
+    <div class="ctrl" style="max-width:480px"><label>Vokabulargröße N <span class="val" id="v13N2">40</span></label><input type="range" id="s13N2" min="12" max="400" step="1" value="40"></div>
+    <div id="s13gap" class="plot" style="height:330px"></div>
+    <p class="cap">Blau: Eigenwertabstand (wächst ∝ N). Rot: Störungsgröße (konstant). Sobald Blau über Rot liegt, sind die Eigenvektoren praktisch unverändert — der Kreis bleibt.</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================ S14: ANTWORT ============================ -->
+<section id="s14">
+  <h2><span class="num">14 · Die Antwort</span>Alles zusammen</h2>
+
+  <div class="box a">
+    <div class="t">Die Frage war</div>
+    <p style="margin:0;font-size:16px">Warum ordnen Sprachmodelle Monate im Kreis, Jahre auf einer gewellten Linie und Städte auf einer Landkarte an?</p>
+  </div>
+
+  <div class="box">
+    <div class="t">Die Antwort</div>
+    <p style="margin:0;font-size:16px;color:#fff">Weil die <b>Kookkurrenzstatistik der Sprache translationssymmetrisch</b> ist: Wie oft zwei Zeit- oder Ortswörter gemeinsam auftreten, hängt fast nur von ihrem <b>Abstand</b> ab. Diese Symmetrie macht die normalisierte Kookkurrenzmatrix M* <b>zirkulant</b> (bzw. Toeplitz). Zirkulante Matrizen werden <b>immer</b> von Fourier-Moden diagonalisiert. Da Wort-Einbettungsmodelle nachweislich genau die obersten Eigenmoden von M* lernen, sind die PCA-Achsen der Repräsentationen <b>Sinus- und Kosinuswellen in der latenten Koordinate</b>. Zwei Achsen → Kreis. Höhere Achsen → Oberschwingungen → Rippel und Sättel. Und weil die Amplituden mit der Frequenz fallen, sieht man zuerst den Kreis [[11]].</p>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 27 · Die gesamte Argumentationskette, interaktiv</h3>
+    <p style="margin-top:0">Ein letztes Mal alles in einem Bild. Schieb σ und sieh, wie sich die ganze Kette gleichzeitig ändert: Kern → Matrix → Spektrum → Geometrie.</p>
+    <div class="flexwrap">
+      <div class="ctrl" style="min-width:240px"><label>σ (Korrelationsreichweite) <span class="val" id="v14s">4.20</span></label><input type="range" id="s14sig" min="0.3" max="12" step="0.05" value="4.2"></div>
+      <div class="ctrl" style="min-width:240px"><label>Anzahl Elemente |S| <span class="val" id="v14n">12</span></label><input type="range" id="s14n" min="6" max="48" step="1" value="12"></div>
+      <div class="ctrl" style="min-width:240px"><label>Symmetriebruch (Rauschen) <span class="val" id="v14nz">0.00</span></label><input type="range" id="s14noise" min="0" max="0.6" step="0.01" value="0"></div>
+    </div>
+    <div class="grid2">
+      <div><div id="s14a" class="plot" style="height:270px"></div></div>
+      <div><div id="s14b" class="plot" style="height:270px"></div></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div><div id="s14c" class="plot" style="height:300px"></div></div>
+      <div><div id="s14d" class="plot" style="height:300px"></div></div>
+    </div>
+    <p class="cap">Dreh das Rauschen hoch: Die Symmetrie bricht, die Eigenvektoren werden unsauber, der Kreis zerfällt. Genau das passiert im echten Text bei den Weltkriegsjahren — nur viel schwächer.</p>
+  </div>
+
+  <h3>Was das Paper konkret gemacht hat</h3>
+  <table class="t">
+    <tr><th>Was</th><th>Wie</th><th>Ergebnis</th></tr>
+    <tr><td>Statistik gemessen</td><td>2,72 Mrd. Wörter engl. Wikipedia, V = 25 000, Fenster L = 16</td><td>Translationssymmetrie bestätigt; exponentieller Kern mit σ ≈ 4,2 (Monate) bzw. σ ≈ 125 (Jahre)</td></tr>
+    <tr><td>Theorie hergeleitet</td><td>Prop. 1 (beliebiger Kern, periodisch, beliebige Dimension D), Kor. 2 (exp. Kern, periodisch), Prop. 3 (exp. Kern, offen)</td><td>Geschlossene Formeln für Amplituden a<sub>n</sub> und Wellenzahlen k<sub>n</sub></td></tr>
+    <tr><td>Validiert</td><td>Word2vec-artige Einbettungen, EmbeddingGemma, Gemma 2 2B (Schicht 6, d = 2304)</td><td>Hervorragende Übereinstimmung über alle Architekturen</td></tr>
+    <tr><td>Neu vorhergesagt</td><td>Lissajous-Kurven; Dekodierfehler ε² ~ r<sup>−1/D</sup> (Prop. 4)</td><td>Beides empirisch bestätigt</td></tr>
+    <tr><td>Robustheit erklärt</td><td>Ablation der Monat-Monat-Statistik + latentes Variablenmodell</td><td>Kollektiver Effekt vieler saisonaler Wörter; Eigenlücken ∝ N</td></tr>
+  </table>
+
+  <h3>Welche Arten von Problemen löst das?</h3>
+  <div class="grid3">
+    <div class="card tight">
+      <h4 style="margin-top:0">Interpretierbarkeit</h4>
+      <p style="font-size:13px">Man kann jetzt <b>vorhersagen</b>, welche Geometrie ein Konzept bekommt, statt sie nur nachträglich zu finden. Das macht die Suche nach Features gerichtet statt zufällig.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">Rechenfähigkeiten erklären</h4>
+      <p style="font-size:13px">Modelle <b>nutzen</b> diese Geometrie: Kreise für modulare Addition („Fünf Monate nach November ist …"), Mannigfaltigkeiten für Inkrementieren, Parallelogramme für Analogien [[11]].</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">Architekturunabhängigkeit</h4>
+      <p style="font-size:13px">Dieselbe Geometrie in word2vec (flach), EmbeddingGemma (mittel) und Gemma 2 2B (tief). Das deutet auf <b>task- und architekturagnostische Prinzipien</b> hin [[11]].</p>
+    </div>
+  </div>
+
+  <h3>Offene Fragen & Grenzen</h3>
+  <div class="grid2">
+    <div class="card tight">
+      <h4 style="margin-top:0">Was die Theorie nicht abdeckt</h4>
+      <p style="font-size:13px">Die Herleitung gilt für <b>Wort-Einbettungsmodelle</b>. Dass sie auch für LLMs funktioniert, ist empirisch belegt, aber nicht bewiesen. LLMs können zusätzlich <b>kontextabhängig</b> umstrukturieren (siehe „May"), was die Theorie nicht beschreibt [[11]].</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">Ausblick: Neurowissenschaft</h4>
+      <p style="font-size:13px">Gitterzellen im Entorhinalkortex feuern in einem Muster, das sich als Interferenz weniger Fourier-Moden lesen lässt. Das Paper vermutet: Derselbe Mechanismus — Vorhersage aus Ko-Statistik — erzeugt solche Codes auch im Gehirn [[11]].</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Spielzeug 28 · Abschluss: Dein eigenes Konzept</h3>
+    <p style="margin-top:0">Baue ein beliebiges semantisches Kontinuum und schau, welche Geometrie herauskommt. Das ist die ganze Theorie in einem Werkzeug.</p>
+    <div class="flexwrap">
+      <div class="ctrl" style="min-width:230px"><label>Randbedingung</label>
+        <div class="btnrow" id="s14bc"><button class="b on" data-b="per">Periodisch</button><button class="b" data-b="open">Offen</button></div>
+      </div>
+      <div class="ctrl" style="min-width:230px"><label>Kernform</label>
+        <div class="btnrow" id="s14kk"><button class="b on" data-k="exp">exp</button><button class="b" data-k="gauss">Gauß</button><button class="b" data-k="cos">cos</button></div>
+      </div>
+    </div>
+    <div class="flexwrap">
+      <div class="ctrl" style="min-width:240px"><label>σ <span class="val" id="v14fs">3.00</span></label><input type="range" id="s14fsig" min="0.3" max="12" step="0.05" value="3"></div>
+      <div class="ctrl" style="min-width:240px"><label>Elemente <span class="val" id="v14fn">16</span></label><input type="range" id="s14fn" min="6" max="60" step="1" value="16"></div>
+      <div class="ctrl" style="min-width:240px"><label>3D-Ansicht Mode <span class="val" id="v14fm">3</span></label><input type="range" id="s14fm" min="3" max="8" step="1" value="3"></div>
+    </div>
+    <div id="s14final" class="plot" style="height:480px"></div>
+    <p class="cap">Dein Konzept in den ersten drei Hauptkomponenten. Periodisch + exp = Kalender-Pringle. Offen + exp = Geschichts-Mannigfaltigkeit mit Rippeln.</p>
+  </div>
+
+  <div class="box a" style="margin-top:34px">
+    <div class="t">In einem Satz</div>
+    <p style="margin:0;font-size:17px;color:#fff">Die Geometrie im Kopf der Maschine ist die <b>Fourier-Transformierte der Statistik unserer Sprache</b>.</p>
+  </div>
+</section>
+
+<footer>
+  <p style="margin:0">Interaktiver Erklärer zu <i>Karkada, Korchinski, Nava, Wyart &amp; Bahri (2026), „Symmetry in language statistics shapes the geometry of model representations"</i>, ICML 2026, arXiv:2602.15029v3 [[11]].</p>
+  <p style="margin:8px 0 0;font-size:12px">Alle Daten in dieser Seite sind analytische Nachbildungen der im Paper beschriebenen Modelle (exponentielle Kerne, zirkulante/Toeplitz-Matrizen, numerische Diagonalisierung im Browser). Sie reproduzieren die Struktur der Originalabbildungen, nicht die exakten Messwerte.</p>
+</footer>
+
+</div>
+
+<script>
+/* =======================================================================
+   GLOBALE HILFSFUNKTIONEN
+   ======================================================================= */
+const TAU = Math.PI*2;
+const COL = {
+  acc:'#64e0ff', acc2:'#b388ff', acc3:'#ff7ab8',
+  warm:'#ffb45c', good:'#5ef0b0', bad:'#ff6b7a',
+  txt:'#e8ecf6', txt2:'#9aa6c2', txt3:'#6b7694',
+  grid:'rgba(255,255,255,0.07)', line:'rgba(255,255,255,0.14)'
+};
+const MONTHS = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+
+const BASE_LAYOUT = {
+  paper_bgcolor:'rgba(0,0,0,0)',
+  plot_bgcolor:'rgba(0,0,0,0.20)',
+  font:{color:COL.txt2, family:'Inter, sans-serif', size:11},
+  margin:{l:48,r:18,t:34,b:42},
+  xaxis:{gridcolor:COL.grid, zerolinecolor:COL.line, linecolor:COL.line},
+  yaxis:{gridcolor:COL.grid, zerolinecolor:COL.line, linecolor:COL.line},
+  showlegend:false,
+  hoverlabel:{bgcolor:'#141a28', bordercolor:COL.acc, font:{color:COL.txt}}
+};
+function L(extra){ return deepMerge(JSON.parse(JSON.stringify(BASE_LAYOUT)), extra||{}); }
+function deepMerge(a,b){
+  for(const k in b){
+    if(b[k] && typeof b[k]==='object' && !Array.isArray(b[k])){
+      a[k]=deepMerge(a[k]||{}, b[k]);
+    } else a[k]=b[k];
+  }
+  return a;
+}
+const CFG = {displayModeBar:false, responsive:true};
+const CFG3D = {displayModeBar:false, responsive:true};
+
+/* Farbskalen */
+const CS_DIV = [[0,'#1b2a52'],[0.25,'#2f6fa8'],[0.5,'#0e1320'],[0.75,'#b3639a'],[1,'#ffb45c']];
+const CS_SEQ = [[0,'#0b1020'],[0.3,'#1f4d7a'],[0.6,'#4fb3d9'],[0.85,'#b388ff'],[1,'#ffd6a5']];
+const CS_MODE= [[0,'#3b6cff'],[0.5,'#0d1019'],[1,'#ff7ab8']];
+
+function rainbow(t){ // 0..1 -> rot->violett (wie im Paper)
+  const h = 360*(1-t)*0.80;
+  return hsl2rgb(h,0.78,0.58);
+}
+function hsl2rgb(h,s,l){
+  h=h/360; let r,g,b;
+  if(s===0){r=g=b=l;}
+  else{
+    const q=l<0.5?l*(1+s):l+s-l*s, p=2*l-q;
+    const f=(t)=>{if(t<0)t+=1;if(t>1)t-=1;
+      if(t<1/6)return p+(q-p)*6*t;
+      if(t<1/2)return q;
+      if(t<2/3)return p+(q-p)*(2/3-t)*6;
+      return p;};
+    r=f(h+1/3);g=f(h);b=f(h-1/3);
+  }
+  return `rgb(${Math.round(r*255)},${Math.round(g*255)},${Math.round(b*255)})`;
+}
+
+/* --------- Lineare Algebra: Jacobi-Eigenzerlegung für symmetrische Matrizen --------- */
+function jacobiEigen(Ain, iters){
+  const n = Ain.length;
+  const A = Ain.map(r=>r.slice());
+  let V = [];
+  for(let i=0;i<n;i++){V.push(new Array(n).fill(0)); V[i][i]=1;}
+  iters = iters||100;
+  for(let sweep=0; sweep<iters; sweep++){
+    let off=0;
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) off += A[i][j]*A[i][j];
+    if(off < 1e-18) break;
+    for(let p=0;p<n-1;p++){
+      for(let q=p+1;q<n;q++){
+        if(Math.abs(A[p][q])<1e-15) continue;
+        const theta = (A[q][q]-A[p][p])/(2*A[p][q]);
+        const t = Math.sign(theta||1)/(Math.abs(theta)+Math.sqrt(theta*theta+1));
+        const c = 1/Math.sqrt(t*t+1), s = t*c;
+        for(let k=0;k<n;k++){
+          const akp=A[k][p], akq=A[k][q];
+          A[k][p]=c*akp - s*akq;
+          A[k][q]=s*akp + c*akq;
+        }
+        for(let k=0;k<n;k++){
+          const apk=A[p][k], aqk=A[q][k];
+          A[p][k]=c*apk - s*aqk;
+          A[q][k]=s*apk + c*aqk;
+        }
+        for(let k=0;k<n;k++){
+          const vkp=V[k][p], vkq=V[k][q];
+          V[k][p]=c*vkp - s*vkq;
+          V[k][q]=s*vkp + c*vkq;
+        }
+      }
+    }
+  }
+  const vals = [];
+  for(let i=0;i<n;i++) vals.push(A[i][i]);
+  // sortiere absteigend nach Eigenwert
+  const idx = vals.map((v,i)=>i).sort((a,b)=>vals[b]-vals[a]);
+  const sv = idx.map(i=>vals[i]);
+  const sV = idx.map(i=>V.map(row=>row[i]));  // sV[m] = Eigenvektor m (Länge n)
+  return {values:sv, vectors:sV};
+}
+
+/* Kernfunktionen */
+function kernelFn(type, d, sigma){
+  switch(type){
+    case 'gauss': return Math.exp(-(d*d)/(2*sigma*sigma));
+    case 'cos':   return Math.cos(Math.PI*d/(2*Math.max(sigma,0.3)))*Math.exp(-d/(3*sigma));
+    case 'box':   return d<=sigma ? 1 : 0.02;
+    default:      return Math.exp(-Math.abs(d)/sigma);
+  }
+}
+function cyclicDist(i,j,n){ const d=Math.abs(i-j); return Math.min(d, n-d); }
+
+/* Zirkulante / Toeplitz Matrix bauen */
+function buildMatrix(n, sigma, type, periodic){
+  const M=[];
+  for(let i=0;i<n;i++){
+    const row=[];
+    for(let j=0;j<n;j++){
+      const d = periodic ? cyclicDist(i,j,n) : Math.abs(i-j);
+      row.push(kernelFn(type,d,sigma));
+    }
+    M.push(row);
+  }
+  return M;
+}
+function centerMatrix(M){
+  const n=M.length;
+  const rm = M.map(r=>r.reduce((a,b)=>a+b,0)/n);
+  const tot = rm.reduce((a,b)=>a+b,0)/n;
+  return M.map((r,i)=>r.map((v,j)=>v-rm[i]-rm[j]+tot));
+}
+
+/* Temml render */
+function tex(el, s, display){
+  if(!el) return;
+  try{ el.innerHTML = temml.renderToString(s, {displayMode: display!==false}); }
+  catch(e){ el.textContent = s; }
+}
+
+/* Slider-Helfer */
+function bind(id, out, fmt, cb){
+  const el = document.getElementById(id);
+  const o  = document.getElementById(out);
+  if(!el) return null;
+  const upd = ()=>{ if(o) o.textContent = fmt ? fmt(parseFloat(el.value)) : el.value; cb && cb(); };
+  el.addEventListener('input', upd);
+  upd();
+  return el;
+}
+function grp(containerId, cb){
+  const c = document.getElementById(containerId);
+  if(!c) return;
+  c.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      c.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      cb(b.dataset);
+    });
+  });
+}
+const f2=v=>v.toFixed(2), f1=v=>v.toFixed(1), f0=v=>String(Math.round(v)), f4=v=>v.toFixed(4);
+
+/* =======================================================================
+   NAV + PROGRESS + REVEAL
+   ======================================================================= */
+(function(){
+  const bar = document.getElementById('progress');
+  const links = [...document.querySelectorAll('#nav a')];
+  const secs = links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function onScroll(){
+    const h = document.documentElement;
+    const p = h.scrollTop/(h.scrollHeight-h.clientHeight);
+    bar.style.width = (p*100)+'%';
+    let cur = 0;
+    secs.forEach((s,i)=>{ if(s.getBoundingClientRect().top < 160) cur = i; });
+    links.forEach((a,i)=>a.classList.toggle('on', i===cur));
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:0.08});
+  document.querySelectorAll('section > .card, section > .box, .steps, .grid2, .grid3, table.t').forEach(el=>{
+    el.classList.add('rv'); io.observe(el);
+  });
+})();
+
+/* =======================================================================
+   S0 · PHÄNOMEN
+   ======================================================================= */
+(function(){
+  const txt = document.getElementById('s0txt');
+  const TXT = {
+    months:`<h4 style="margin-top:0">Die zwölf Monate</h4>
+      <p style="font-size:14px">Projiziert man die internen Vektoren der Monatsnamen auf ihre zwei wichtigsten Richtungen, liegen sie auf einem <b>Kreis</b> — und zwar in korrekter Reihenfolge: Jan → Feb → … → Dez → Jan.</p>
+      <p style="font-size:14px">Das ist bemerkenswert, denn das Modell hat nie gelernt, dass nach Dezember wieder Januar kommt. Es hat nur gelesen, welche Wörter nahe beieinander stehen.</p>
+      <p style="font-size:14px">Modelle nutzen diese Form tatsächlich zum Rechnen: „Fünf Monate nach November ist …" wird zu einer <b>Drehung auf dem Kreis</b>.</p>
+      <div class="pill a">zyklisch</div><div class="pill b">D = 1</div><div class="pill c">periodische Ränder</div>`,
+    years:`<h4 style="margin-top:0">Historische Jahre 1700–2020</h4>
+      <p style="font-size:14px">Jahreszahlen bilden eine <b>offene, gekrümmte Kurve</b> — eine eindimensionale Mannigfaltigkeit. In 3D zeigt sie kleine Wellen, die sogenannten <em>Rippel</em>.</p>
+      <p style="font-size:14px">Die Reihenfolge stimmt exakt, und man kann das Jahr mit einer einfachen linearen Formel aus dem Vektor auslesen.</p>
+      <p style="font-size:14px">Die Rippel sind kein Rauschen — sie sind <b>Oberschwingungen</b> und erhöhen die Zeitauflösung.</p>
+      <div class="pill a">kontinuierlich</div><div class="pill b">D = 1</div><div class="pill c">offene Ränder</div>`,
+    states:`<h4 style="margin-top:0">Die 48 US-Bundesstaaten</h4>
+      <p style="font-size:14px">Die Vektoren der Staatennamen kodieren tatsächlich <b>Längen- und Breitengrad</b>. Die obersten Eigenmoden sind glatte räumliche Gradienten: Ost–West, Nord–Süd und ihre Oberschwingungen.</p>
+      <p style="font-size:14px">Eine lineare Sonde kann daraus Koordinaten rekonstruieren — das Modell hat aus Text eine <b>Landkarte</b> gebaut.</p>
+      <div class="pill a">räumlich</div><div class="pill b">D = 2</div><div class="pill c">offene Ränder</div>`
+  };
+
+  function monthsData(){
+    const n=12, s=4.2;
+    const M = centerMatrix(buildMatrix(n, s, 'exp', true));
+    const E = jacobiEigen(M);
+    const x=[],y=[],lab=[],c=[];
+    for(let i=0;i<n;i++){
+      x.push(E.vectors[0][i]*Math.sqrt(Math.abs(E.values[0])));
+      y.push(E.vectors[1][i]*Math.sqrt(Math.abs(E.values[1])));
+      lab.push(MONTHS[i]); c.push(rainbow(i/n));
+    }
+    x.push(x[0]); y.push(y[0]); lab.push(''); c.push(c[0]);
+    return {x,y,lab,c};
+  }
+  function yearsData(){
+    const n=66, sig=0.78;
+    const M=[];
+    for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++){
+      const d = Math.abs(i-j)*2/(n-1);
+      r.push(Math.exp(-d/sig));
+    } M.push(r);}
+    const C = centerMatrix(M);
+    const E = jacobiEigen(C);
+    const x=[],y=[],c=[],lab=[];
+    for(let i=0;i<n;i++){
+      x.push(E.vectors[0][i]*Math.sqrt(Math.abs(E.values[0])));
+      y.push(E.vectors[1][i]*Math.sqrt(Math.abs(E.values[1])));
+      c.push(rainbow(i/(n-1)));
+      lab.push(String(1700+Math.round(i*320/(n-1))));
+    }
+    return {x,y,c,lab};
+  }
+  const STATES = [
+    ['ME',45.3,-69.2],['NH',43.7,-71.6],['VT',44.1,-72.7],['MA',42.3,-71.8],['RI',41.7,-71.6],
+    ['CT',41.6,-72.7],['NY',42.9,-75.5],['NJ',40.2,-74.7],['PA',40.9,-77.8],['DE',39.0,-75.5],
+    ['MD',39.0,-76.8],['VA',37.5,-78.8],['WV',38.6,-80.6],['NC',35.5,-79.4],['SC',33.9,-80.9],
+    ['GA',32.6,-83.4],['FL',28.6,-82.4],['WI',44.6,-89.9],['MI',44.3,-85.4],['IL',40.0,-89.2],
+    ['IN',39.9,-86.3],['OH',40.3,-82.8],['KY',37.5,-85.3],['TN',35.8,-86.4],['AL',32.8,-86.8],
+    ['MS',32.7,-89.7],['LA',31.1,-92.0],['AR',34.8,-92.4],['MO',38.4,-92.5],['IA',42.1,-93.5],
+    ['MN',46.3,-94.3],['ND',47.4,-100.5],['SD',44.4,-100.2],['NE',41.5,-99.8],['KS',38.5,-98.4],
+    ['OK',35.6,-97.5],['TX',31.5,-99.3],['NM',34.4,-106.1],['AZ',34.2,-111.7],['UT',39.3,-111.7],
+    ['CO',39.0,-105.5],['WY',43.0,-107.6],['MT',47.0,-109.6],['ID',44.4,-114.6],['WA',47.4,-120.4],
+    ['OR',43.9,-120.6],['NV',39.3,-116.6],['CA',37.2,-119.5]
+  ];
+  function statesData(){
+    const n=STATES.length;
+    const M=[];
+    for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++){
+      const dx=STATES[i][1]-STATES[j][1], dy=STATES[i][2]-STATES[j][2];
+      const d=Math.sqrt(dx*dx+0.78*dy*dy);
+      r.push(10*Math.exp(-d/20));
+    } M.push(r);}
+    const E = jacobiEigen(centerMatrix(M));
+    return {E,n};
+  }
+
+  function draw(kind){
+    txt.innerHTML = TXT[kind];
+    const el = document.getElementById('s0plot');
+    if(kind==='months'){
+      const d = monthsData();
+      Plotly.react(el, [
+        {x:d.x,y:d.y,mode:'lines',line:{color:'rgba(100,224,255,0.30)',width:2},hoverinfo:'skip'},
+        {x:d.x.slice(0,12),y:d.y.slice(0,12),mode:'markers+text',text:d.lab.slice(0,12),
+         textposition:'top center', textfont:{
+        {x:d.x.slice(0,12),y:d.y.slice(0,12),mode:'markers+text',text:d.lab.slice(0,12),
+         textposition:'top center', textfont:{color:COL.txt,size:11},
+         marker:{size:13,color:d.c,line:{color:'rgba(255,255,255,0.35)',width:1}},
+         hovertemplate:'%{text}<extra></extra>'}
+      ], L({title:{text:'Monate · PCA-Achsen 1 & 2',font:{size:13,color:COL.txt}},
+            xaxis:{title:'PCA-Achse 1',showticklabels:false,gridcolor:COL.grid},
+            yaxis:{title:'PCA-Achse 2',showticklabels:false,gridcolor:COL.grid,scaleanchor:'x'}}), CFG);
+    }
+    else if(kind==='years'){
+      const d = yearsData();
+      Plotly.react(el, [
+        {x:d.x,y:d.y,mode:'lines',line:{color:'rgba(255,255,255,0.18)',width:1.5},hoverinfo:'skip'},
+        {x:d.x,y:d.y,mode:'markers',marker:{size:8,color:d.c,
+          line:{color:'rgba(255,255,255,0.2)',width:0.5}},
+         text:d.lab, hovertemplate:'Jahr %{text}<extra></extra>'}
+      ], L({title:{text:'Historische Jahre 1700–2020 · PCA 1 & 2',font:{size:13,color:COL.txt}},
+            xaxis:{title:'PCA-Achse 1',showticklabels:false},
+            yaxis:{title:'PCA-Achse 2',showticklabels:false,scaleanchor:'x'}}), CFG);
+    }
+    else {
+      const {E,n} = statesData();
+      const vals = STATES.map((s,i)=>E.vectors[0][i]);
+      Plotly.react(el, [{
+        type:'scatter', mode:'markers+text',
+        x:STATES.map(s=>s[2]), y:STATES.map(s=>s[1]),
+        text:STATES.map(s=>s[0]), textposition:'middle center',
+        textfont:{size:8,color:'rgba(255,255,255,0.85)'},
+        marker:{size:22, color:vals, colorscale:CS_MODE, showscale:true,
+                colorbar:{title:{text:'Mode 1',side:'right',font:{size:10}},thickness:10,len:0.7},
+                line:{color:'rgba(255,255,255,0.18)',width:1}},
+        hovertemplate:'%{text}<extra></extra>'
+      }], L({title:{text:'48 US-Staaten · erste Eigenmode',font:{size:13,color:COL.txt}},
+             xaxis:{title:'Längengrad',showgrid:true},
+             yaxis:{title:'Breitengrad',showgrid:true,scaleanchor:'x',scaleratio:1.28}}), CFG);
+    }
+  }
+  grp('s0btn', d=>draw(d.k));
+  draw('months');
+})();
+
+/* =======================================================================
+   S2 · VEKTOREN
+   ======================================================================= */
+(function(){
+  const REF = [0.5,-0.4,0.75];
+  function upd(){
+    const a=+document.getElementById('s2a').value;
+    const b=+document.getElementById('s2b').value;
+    const c=+document.getElementById('s2c').value;
+    document.getElementById('s2vec').textContent =
+      `w = [${a.toFixed(2)}, ${b.toFixed(2)}, ${c.toFixed(2)}]`;
+    const dot = a*REF[0]+b*REF[1]+c*REF[2];
+    const n1=Math.hypot(a,b,c), n2=Math.hypot(...REF);
+    const ang = Math.acos(Math.max(-1,Math.min(1,dot/(n1*n2+1e-9))))*180/Math.PI;
+    document.getElementById('s2dot').innerHTML =
+      `Skalarprodukt = <b style="color:${dot>0?'#5ef0b0':'#ff6b7a'}">${dot.toFixed(3)}</b> &nbsp;·&nbsp; Winkel = <b>${ang.toFixed(1)}°</b> &nbsp;·&nbsp; ${dot>0.3?'sehr ähnlich':dot>-0.1?'kaum verwandt':'gegensätzlich'}`;
+    tex(document.getElementById('s2math'),
+      `\\mathbf{w}\\cdot\\mathbf{v} = ${a.toFixed(2)}\\!\\cdot\\!${REF[0]} + (${b.toFixed(2)})\\!\\cdot\\!(${REF[1]}) + (${c.toFixed(2)})\\!\\cdot\\!${REF[2]} = ${dot.toFixed(3)}`);
+
+    const mk=(v,col,nm)=>({type:'scatter3d',mode:'lines+markers',
+      x:[0,v[0]],y:[0,v[1]],z:[0,v[2]],
+      line:{color:col,width:9}, marker:{size:[0,7],color:col}, name:nm, hoverinfo:'name'});
+    Plotly.react('s2plot',[
+      mk([a,b,c],COL.acc,'dein Vektor w'),
+      mk(REF,COL.acc2,'Vergleich v'),
+      {type:'scatter3d',mode:'lines',x:[-1,1],y:[0,0],z:[0,0],line:{color:'rgba(255,255,255,.14)',width:2},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'lines',x:[0,0],y:[-1,1],z:[0,0],line:{color:'rgba(255,255,255,.14)',width:2},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'lines',x:[0,0],y:[0,0],z:[-1,1],line:{color:'rgba(255,255,255,.14)',width:2},hoverinfo:'skip'}
+    ], L({scene:{
+        xaxis:{range:[-1.1,1.1],gridcolor:COL.grid,zerolinecolor:COL.line,backgroundcolor:'rgba(0,0,0,0)',showbackground:true,title:'Zahl 1'},
+        yaxis:{range:[-1.1,1.1],gridcolor:COL.grid,zerolinecolor:COL.line,backgroundcolor:'rgba(0,0,0,0)',showbackground:true,title:'Zahl 2'},
+        zaxis:{range:[-1.1,1.1],gridcolor:COL.grid,zerolinecolor:COL.line,backgroundcolor:'rgba(0,0,0,0)',showbackground:true,title:'Zahl 3'},
+        camera:{eye:{x:1.5,y:1.4,z:1.1}}, aspectmode:'cube'},
+      margin:{l:0,r:0,t:10,b:0}}), CFG3D);
+  }
+  bind('s2a','v2a',f2,upd); bind('s2b','v2b',f2,upd); bind('s2c','v2c',f2,upd);
+  upd();
+
+  /* Gram-Demo */
+  function pts(kind){
+    const n=12, P=[];
+    for(let i=0;i<n;i++){
+      if(kind==='circle'){ const t=TAU*i/n; P.push([Math.cos(t),Math.sin(t)]); }
+      else if(kind==='line'){ P.push([-1+2*i/(n-1), 0.06*Math.sin(i)]); }
+      else if(kind==='cluster'){ const g=i<6?-0.6:0.6; P.push([g+0.22*Math.cos(i*2.1), 0.22*Math.sin(i*2.1)]); }
+      else { P.push([Math.random()*2-1, Math.random()*2-1]); }
+    }
+    return P;
+  }
+  let curG='circle', Pc=pts('circle');
+  function drawG(){
+    const n=Pc.length;
+    const G=[]; for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++)r.push(Pc[i][0]*Pc[j][0]+Pc[i][1]*Pc[j][1]);G.push(r);}
+    Plotly.react('s2gpts',[{
+      x:Pc.map(p=>p[0]), y:Pc.map(p=>p[1]), mode:'markers+text',
+      text:Pc.map((_,i)=>String(i+1)), textposition:'top center', textfont:{size:9,color:COL.txt3},
+      marker:{size:12,color:Pc.map((_,i)=>rainbow(i/n)),line:{color:'rgba(255,255,255,.3)',width:1}},
+      hovertemplate:'Punkt %{text}<extra></extra>'
+    }], L({title:{text:'12 Punkte im Raum',font:{size:12}},
+      xaxis:{range:[-1.4,1.4],showticklabels:false},
+      yaxis:{range:[-1.4,1.4],showticklabels:false,scaleanchor:'x'}}), CFG);
+    Plotly.react('s2ggram',[{
+      z:G, type:'heatmap', colorscale:CS_DIV, zmid:0,
+      colorbar:{thickness:10,len:0.85,title:{text:'wᵢ·wⱼ',side:'right',font:{size:10}}},
+      hovertemplate:'i=%{y}, j=%{x}<br>%{z:.3f}<extra></extra>'
+    }], L({title:{text:'Gram-Matrix (alle Skalarprodukte)',font:{size:12}},
+      xaxis:{showticklabels:false},yaxis:{showticklabels:false,scaleanchor:'x',autorange:'reversed'}}), CFG);
+  }
+  grp('s2gbtn', d=>{curG=d.g; Pc=pts(d.g); drawG();});
+  drawG();
+})();
+
+/* =======================================================================
+   S3 · KOOKKURRENZ
+   ======================================================================= */
+(function(){
+  const WORDS = ['im','januar','begann','die','kalte','jahreszeit','und','im','februar','fiel','schnee',
+                 'bis','der','märz','kam','dann','folgte','der','april','mit','regen'];
+  const cv = document.getElementById('s3canvas'), ctx = cv.getContext('2d');
+  let counts = {}, playing=false, raf=null;
+
+  function windowPairs(pos, Lw){
+    const lo = Math.max(0,pos-Lw), hi = Math.min(WORDS.length-1,pos+Lw);
+    return {lo,hi};
+  }
+  function render(){
+    const Lw = +document.getElementById('s3L').value;
+    const pos= +document.getElementById('s3P').value;
+    const {lo,hi} = windowPairs(pos,Lw);
+    const W = cv.width, H = cv.height;
+    ctx.clearRect(0,0,W,H);
+    const cellW = W/WORDS.length;
+    // Fensterhighlight
+    const grad = ctx.createLinearGradient(lo*cellW,0,(hi+1)*cellW,0);
+    grad.addColorStop(0,'rgba(100,224,255,0.05)');
+    grad.addColorStop(0.5,'rgba(100,224,255,0.20)');
+    grad.addColorStop(1,'rgba(100,224,255,0.05)');
+    ctx.fillStyle=grad;
+    ctx.fillRect(lo*cellW, 28, (hi-lo+1)*cellW, 56);
+    ctx.strokeStyle='rgba(100,224,255,0.55)'; ctx.lineWidth=1.5;
+    ctx.strokeRect(lo*cellW, 28, (hi-lo+1)*cellW, 56);
+    // Wörter
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    WORDS.forEach((w,i)=>{
+      const x=(i+0.5)*cellW;
+      const inside = i>=lo && i<=hi;
+      const isC = i===pos;
+      ctx.font = isC ? 'bold 13px Inter, sans-serif' : '12px Inter, sans-serif';
+      ctx.fillStyle = isC ? '#ffb45c' : (inside ? '#e8ecf6' : 'rgba(255,255,255,0.22)');
+      ctx.fillText(w, x, 56);
+      if(inside && !isC){
+        const d = Math.abs(i-pos);
+        const wgt = (Lw+1-d)/(Lw+1);
+        ctx.fillStyle = `rgba(179,136,255,${0.25+0.6*wgt})`;
+        ctx.fillRect(x-cellW*0.32, 92, cellW*0.64, 46*wgt);
+        ctx.fillStyle='rgba(255,255,255,0.55)'; ctx.font='9px monospace';
+        ctx.fillText('f='+(Lw+1-d), x, 92+46*wgt+9);
+      }
+    });
+    ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='10px Inter'; ctx.textAlign='left';
+    ctx.fillText('Gewicht f(d) = L+1−d', 8, 14);
+    ctx.textAlign='center';
+    // Info
+    const inside = [];
+    for(let i=lo;i<=hi;i++) if(i!==pos) inside.push(WORDS[i]);
+    document.getElementById('s3info').innerHTML =
+      `Zentrum: <b style="color:#ffb45c">${WORDS[pos]}</b><br>Partner im Fenster: ${inside.map(w=>`<code>${w}</code>`).join(' ')}`;
+    // Counts
+    for(let i=lo;i<=hi;i++){
+      if(i===pos) continue;
+      const key = [WORDS[pos],WORDS[i]].sort().join(' ↔ ');
+      counts[key]=(counts[key]||0)+(Lw+1-Math.abs(i-pos));
+    }
+    const top = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    document.getElementById('s3counts').innerHTML =
+      top.map(([k,v])=>`<div style="display:flex;justify-content:space-between"><span>${k}</span><b style="color:#64e0ff">${v}</b></div>`).join('') || '<i>noch nichts gezählt</i>';
+  }
+  bind('s3L','v3L',f0,render);
+  bind('s3P','v3P',f0,render);
+  document.getElementById('s3reset').onclick=()=>{counts={};render();};
+  document.getElementById('s3play').onclick=function(){
+    if(playing){playing=false;cancelAnimationFrame(raf);this.textContent='▶ Fenster laufen lassen';return;}
+    playing=true; this.textContent='⏸ Pause';
+    const sl=document.getElementById('s3P');
+    let t=0;
+    const step=()=>{
+      if(!playing) return;
+      t++;
+      if(t%14===0){
+        let v=+sl.value+1; if(v>+sl.max) v=0;
+        sl.value=v; sl.dispatchEvent(new Event('input'));
+      }
+      raf=requestAnimationFrame(step);
+    };
+    step();
+  };
+  render();
+
+  /* Echte Monats-Statistik (Fig. 5 Nachbildung) */
+  function monthStats(){
+    const sig=4.2, n=12, Z=[], pts={x:[],y:[]};
+    for(let i=0;i<n;i++){
+      const r=[];
+      for(let j=0;j<n;j++){
+        const d=cyclicDist(i,j,n);
+        // periodisierter exponentieller Kern + leichter Offset wie in Fig. 5
+        let v=0; for(let k=-2;k<=2;k++) v+=Math.exp(-Math.abs((i-j)+12*k)/sig);
+        v = 0.62 + 0.62*v;
+        if(i===j) v += 0.45;           // Diagonale als Sonderfall
+        r.push(v);
+        if(i!==j){pts.x.push(i-j); pts.y.push(v);}
+      }
+      Z.push(r);
+    }
+    return {Z,pts,sig};
+  }
+  function drawStats(){
+    const hideDiag = document.getElementById('s3diag').checked;
+    const {Z,sig} = monthStats();
+    const Zp = Z.map((r,i)=>r.map((v,j)=>(hideDiag&&i===j)?null:v));
+    Plotly.react('s3heat',[{
+      z:Zp, x:MONTHS, y:MONTHS, type:'heatmap', colorscale:CS_SEQ,
+      colorbar:{thickness:10,len:0.85,title:{text:'M*',side:'right',font:{size:10}}},
+      hovertemplate:'%{y} ↔ %{x}<br>M* = %{z:.3f}<extra></extra>'
+    }], L({title:{text:'M* der 12 Monate (Wikipedia)',font:{size:12}},
+      xaxis:{tickfont:{size:9}}, yaxis:{tickfont:{size:9},autorange:'reversed',scaleanchor:'x'}}), CFG);
+
+    // Kurve gegen Abstand
+    const xs=[], ys=[], err=[];
+    for(let d=-10;d<=10;d++){
+      const vals=[];
+      for(let i=0;i<12;i++){
+        const j=((i-d)%12+12)%12;
+        if(i===j && hideDiag) continue;
+        vals.push(Z[i][j]);
+      }
+      if(!vals.length) continue;
+      const m=vals.reduce((a,b)=>a+b,0)/vals.length;
+      const s=Math.sqrt(vals.reduce((a,b)=>a+(b-m)*(b-m),0)/vals.length);
+      xs.push(d); ys.push(m); err.push(s);
+    }
+    const th_x=[], th_y=[];
+    for(let d=-10;d<=10;d+=0.1){
+      let v=0; for(let k=-2;k<=2;k++) v+=Math.exp(-Math.abs(d+12*k)/sig);
+      th_x.push(d); th_y.push(0.62+0.62*v);
+    }
+    Plotly.react('s3curve',[
+      {x:th_x,y:th_y,mode:'lines',line:{color:COL.acc3,width:2.5,dash:'dot'},
+       name:'exp. Kern σ=4.2', hovertemplate:'Δ=%{x:.1f}<br>%{y:.3f}<extra>Theorie</extra>'},
+      {x:xs,y:ys,error_y:{type:'data',array:err,visible:true,color:'rgba(100,224,255,.4)',thickness:1.2,width:3},
+       mode:'markers',marker:{size:9,color:COL.acc},name:'echte Statistik',
+       hovertemplate:'Abstand %{x}<br>Mittelwert %{y:.3f}<extra></extra>'}
+    ], L({title:{text:'M* gegen Monatsabstand',font:{size:12}},
+      xaxis:{title:'Monatsdifferenz Δ'}, yaxis:{title:'mittleres M*'}, showlegend:true,
+      legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0.35)',font:{size:10}}}), CFG);
+  }
+  document.getElementById('s3diag').addEventListener('change',drawStats);
+  drawStats();
+})();
+
+/* =======================================================================
+   S4 · PMI / M*
+   ======================================================================= */
+(function(){
+  tex(document.getElementById('s4math1'),
+    `M^\\star_{ij}:=\\frac{P_{ij}-P_iP_j}{\\tfrac12\\left(P_{ij}+P_iP_j\\right)}\\;\\approx\\;\\log\\!\\left(\\frac{P_{ij}}{P_iP_j}\\right)=\\mathrm{PMI}_{ij}`);
+
+  function upd(){
+    const Pi=+document.getElementById('s4i').value;
+    const Pj=+document.getElementById('s4j').value;
+    const Pij=(+document.getElementById('s4ij').value)*1e-4;
+    const exp=Pi*Pj, ratio=Pij/exp;
+    const pmi=Math.log(ratio);
+    const ms=(Pij-exp)/(0.5*(Pij+exp));
+    document.getElementById('s4exp').textContent=exp.toExponential(2);
+    document.getElementById('s4ratio').textContent=ratio.toFixed(2);
+    document.getElementById('s4pmi').textContent=pmi.toFixed(3);
+    document.getElementById('s4mstar').textContent=ms.toFixed(3);
+
+    Plotly.react('s4plot',[{
+      type:'bar', x:['erwartet<br>Pᵢ·Pⱼ','tatsächlich<br>Pᵢⱼ'],
+      y:[exp,Pij],
+      marker:{color:[COL.txt3,ratio>1?COL.good:COL.bad],
+              line:{color:'rgba(255,255,255,.2)',width:1}},
+      text:[exp.toExponential(2),Pij.toExponential(2)], textposition:'outside',
+      textfont:{color:COL.txt,size:11},
+      hovertemplate:'%{y:.3e}<extra></extra>'
+    }], L({title:{text:ratio>1?`▲ ${ratio.toFixed(1)}× häufiger als Zufall`:`▼ ${(1/ratio).toFixed(1)}× seltener als Zufall`,
+                  font:{size:13,color:ratio>1?COL.good:COL.bad}},
+           yaxis:{title:'Wahrscheinlichkeit', range:[0,Math.max(exp,Pij)*1.35]},
+           xaxis:{tickfont:{size:11}}}), CFG);
+  }
+  bind('s4i','v4i',v=>v.toFixed(4),upd);
+  bind('s4j','v4j',v=>v.toFixed(4),upd);
+  bind('s4ij','v4ij',f2,upd);
+  upd();
+
+  // Vergleich M* vs PMI
+  (function(){
+    const x=[],m=[],p=[];
+    for(let r=0.02;r<=12;r*=1.03){ x.push(r); m.push(2*(r-1)/(r+1)); p.push(Math.log(r)); }
+    Plotly.react('s4cmp',[
+      {x,y:m,mode:'lines',line:{color:COL.acc,width:3},name:'M* (beschränkt)',
+       hovertemplate:'r=%{x:.2f}<br>M*=%{y:.3f}<extra></extra>'},
+      {x,y:p,mode:'lines',line:{color:COL.acc2,width:3,dash:'dash'},name:'PMI = log r',
+       hovertemplate:'r=%{x:.2f}<br>PMI=%{y:.3f}<extra></extra>'},
+      {x:[0.02,12],y:[2,2],mode:'lines',line:{color:'rgba(255,107,122,.45)',width:1,dash:'dot'},name:'Grenze ±2'},
+      {x:[0.02,12],y:[-2,-2],mode:'lines',line:{color:'rgba(255,107,122,.45)',width:1,dash:'dot'},showlegend:false}
+    ], L({xaxis:{title:'Verhältnis r = Pᵢⱼ/(PᵢPⱼ)', type:'log'},
+          yaxis:{title:'Wert', range:[-3.2,3.2]},
+          showlegend:true, legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.35)',font:{size:10}},
+          title:{text:'M* bleibt zwischen −2 und +2',font:{size:12}}}), CFG);
+  })();
+})();
+
+/* =======================================================================
+   S5 · EIGEN / PCA / word2vec
+   ======================================================================= */
+(function(){
+  /* ---- 5.1 Matrix-Transformation ---- */
+  const cv = document.getElementById('s5canvas'), ctx = cv.getContext('2d');
+  function eig2(a,b,c,d){
+    const tr=a+d, det=a*d-b*c, disc=tr*tr/4-det;
+    if(disc<0) return null;
+    const s=Math.sqrt(disc), l1=tr/2+s, l2=tr/2-s;
+    const ev=(l)=>{
+      if(Math.abs(b)>1e-9) return norm([b,l-a]);
+      if(Math.abs(c)>1e-9) return norm([l-d,c]);
+      return Math.abs(l-a)<1e-9?[1,0]:[0,1];
+    };
+    return {l1,l2,v1:ev(l1),v2:ev(l2)};
+  }
+  function norm(v){const n=Math.hypot(v[0],v[1])||1;return [v[0]/n,v[1]/n];}
+  function drawMat(){
+    const sym=document.getElementById('s5sym').checked;
+    let a=+document.getElementById('s5a').value;
+    let b=+document.getElementById('s5b').value;
+    let c=+document.getElementById('s5c').value;
+    const d=+document.getElementById('s5d').value;
+    if(sym){ c=b; document.getElementById('s5c').value=b; document.getElementById('v5c').textContent=f2(b); }
+    const W=cv.width,H=cv.height, cx=W/2, cy=H/2, S=88;
+    ctx.clearRect(0,0,W,H);
+    // Gitter
+    ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1;
+    for(let i=-4;i<=4;i++){
+      ctx.beginPath(); ctx.moveTo(cx+i*S,0); ctx.lineTo(cx+i*S,H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,cy+i*S); ctx.lineTo(W,cy+i*S); ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+    const arrow=(x0,y0,x1,y1,col,w)=>{
+      ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=w||2;
+      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+      const ang=Math.atan2(y1-y0,x1-x0), hl=8+(w||2);
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x1-hl*Math.cos(ang-0.4), y1-hl*Math.sin(ang-0.4));
+      ctx.lineTo(x1-hl*Math.cos(ang+0.4), y1-hl*Math.sin(ang+0.4));
+      ctx.closePath(); ctx.fill();
+    };
+    // Einheitskreis-Vektoren
+    const N=16;
+    for(let i=0;i<N;i++){
+      const t=TAU*i/N, vx=Math.cos(t), vy=Math.sin(t);
+      const ux=a*vx+b*vy, uy=c*vx+d*vy;
+      arrow(cx,cy, cx+vx*S, cy-vy*S, 'rgba(90,107,140,0.55)',1.4);
+      arrow(cx+vx*S, cy-vy*S, cx+ux*S, cy-uy*S, 'rgba(100,224,255,0.45)',1.6);
+    }
+    // transformierter Kreis
+    ctx.strokeStyle='rgba(100,224,255,0.85)'; ctx.lineWidth=2.4;
+    ctx.beginPath();
+    for(let i=0;i<=120;i++){
+      const t=TAU*i/120, vx=Math.cos(t), vy=Math.sin(t);
+      const ux=a*vx+b*vy, uy=c*vx+d*vy;
+      const px=cx+ux*S, py=cy-uy*S;
+      i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+    }
+    ctx.stroke();
+    // Eigenvektoren
+    const E=eig2(a,b,c,d);
+    const box=document.getElementById('s5eig');
+    if(E){
+      [[E.v1,E.l1],[E.v2,E.l2]].forEach(([v,l],k)=>{
+        const col = k===0?'#ff7ab8':'#ffb45c';
+        arrow(cx,cy, cx+v[0]*S*1.6, cy-v[1]*S*1.6, col, 3);
+        arrow(cx,cy, cx-v[0]*S*1.6, cy+v[1]*S*1.6, col, 3);
+        // gestreckte Version
+        ctx.setLineDash([5,5]);
+        arrow(cx,cy, cx+v[0]*l*S, cy-v[1]*l*S, col+'88', 2);
+        ctx.setLineDash([]);
+      });
+      const dot=E.v1[0]*E.v2[0]+E.v1[1]*E.v2[1];
+      box.innerHTML =
+        `λ₁ = <b style="color:#ff7ab8">${E.l1.toFixed(3)}</b> &nbsp; Richtung (${E.v1[0].toFixed(2)}, ${E.v1[1].toFixed(2)})<br>`+
+        `λ₂ = <b style="color:#ffb45c">${E.l2.toFixed(3)}</b> &nbsp; Richtung (${E.v2[0].toFixed(2)}, ${E.v2[1].toFixed(2)})<br>`+
+        `Winkel zwischen Eigenvektoren: <b>${(Math.acos(Math.max(-1,Math.min(1,Math.abs(dot))))*180/Math.PI).toFixed(1)}°</b> ${Math.abs(dot)<0.02?'→ <span style="color:#5ef0b0">senkrecht ✓</span>':''}`;
+    } else {
+      box.innerHTML='<span style="color:#ff6b7a">Komplexe Eigenwerte — reine Drehung, keine reellen Eigenrichtungen.</span>';
+    }
+    ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.font='11px monospace'; ctx.textAlign='left';
+    ctx.fillText(`[ ${a.toFixed(2)}  ${b.toFixed(2)} ]`, 12, 22);
+    ctx.fillText(`[ ${c.toFixed(2)}  ${d.toFixed(2)} ]`, 12, 38);
+  }
+  bind('s5a','v5a',f2,drawMat); bind('s5b','v5b',f2,drawMat);
+  bind('s5c','v5c',f2,drawMat); bind('s5d','v5d',f2,drawMat);
+  document.getElementById('s5sym').addEventListener('change',drawMat);
+  drawMat();
+
+  /* ---- 5.2 PCA ---- */
+  const pc = document.getElementById('s5pca'), pctx = pc.getContext('2d');
+  let gaussCache=null;
+  function gauss(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v); }
+  let RAW = Array.from({length:220},()=>[gauss(),gauss()]);
+  function drawPCA(){
+    const s1=+document.getElementById('s5s1').value;
+    const s2=+document.getElementById('s5s2').value;
+    const th=(+document.getElementById('s5rot').value)*Math.PI/180;
+    const ct=Math.cos(th), st=Math.sin(th);
+    const P = RAW.map(([u,v])=>{
+      const x=u*s1, y=v*s2;
+      return [x*ct-y*st, x*st+y*ct];
+    });
+    // PCA
+    const n=P.length;
+    const mx=P.reduce((a,p)=>a+p[0],0)/n, my=P.reduce((a,p)=>a+p[1],0)/n;
+    let cxx=0,cxy=0,cyy=0;
+    P.forEach(p=>{const dx=p[0]-mx,dy=p[1]-my;cxx+=dx*dx;cxy+=dx*dy;cyy+=dy*dy;});
+    cxx/=n;cxy/=n;cyy/=n;
+    const E=eig2(cxx,cxy,cxy,cyy);
+    const W=pc.width,H=pc.height, cx0=W/2, cy0=H/2, S=48;
+    pctx.clearRect(0,0,W,H);
+    pctx.strokeStyle='rgba(255,255,255,0.05)';
+    for(let i=-7;i<=7;i++){
+      pctx.beginPath();pctx.moveTo(cx0+i*S,0);pctx.lineTo(cx0+i*S,H);pctx.stroke();
+      pctx.beginPath();pctx.moveTo(0,cy0+i*S);pctx.lineTo(W,cy0+i*S);pctx.stroke();
+    }
+    P.forEach(p=>{
+      pctx.beginPath();
+      pctx.arc(cx0+p[0]*S, cy0-p[1]*S, 2.6, 0, TAU);
+      pctx.fillStyle='rgba(100,224,255,0.45)'; pctx.fill();
+    });
+    const ar=(v,l,col,lab)=>{
+      const len=Math.sqrt(Math.abs(l))*2*S;
+      pctx.strokeStyle=col; pctx.lineWidth=3.4;
+      pctx.beginPath();
+      pctx.moveTo(cx0-v[0]*len, cy0+v[1]*len);
+      pctx.lineTo(cx0+v[0]*len, cy0-v[1]*len);
+      pctx.stroke();
+      pctx.fillStyle=col; pctx.font='bold 12px Inter'; pctx.textAlign='center';
+      pctx.fillText(lab, cx0+v[0]*(len+16), cy0-v[1]*(len+16));
+    };
+    if(E){
+      ar(E.v1,E.l1,'#ff7ab8','PC1');
+      ar(E.v2,E.l2,'#ffb45c','PC2');
+      const tot=E.l1+E.l2;
+      document.getElementById('s5pcainfo').innerHTML =
+        `PC1 erklärt <b style="color:#ff7ab8">${(100*E.l1/tot).toFixed(1)}%</b> der Streuung<br>`+
+        `PC2 erklärt <b style="color:#ffb45c">${(100*E.l2/tot).toFixed(1)}%</b><br>`+
+        `Gefundener Winkel: <b>${(Math.atan2(E.v1[1],E.v1[0])*180/Math.PI).toFixed(1)}°</b> (eingestellt: ${document.getElementById('s5rot').value}°)`;
+    }
+  }
+  bind('s5s1','v5s1',f2,drawPCA); bind('s5s2','v5s2',f2,drawPCA);
+  bind('s5rot','v5rot',f0,drawPCA);
+  drawPCA();
+
+  /* ---- 5.3 Formeln ---- */
+  tex(document.getElementById('s5m1'),
+    `\\hat{W}=\\arg\\min_{W}\\;\\bigl\\|\\,W W^{\\top}-M^{\\star}\\,\\bigr\\|_F^{2}`);
+  tex(document.getElementById('s5m2'),
+    `W_{(i\\mu)}=\\Phi_{(i\\mu)}\\sqrt{\\bigl|\\Lambda^{\\star}_{(\\mu\\mu)}\\bigr|}
+     \\qquad\\Longrightarrow\\qquad W W^{\\top}=|M^{\\star}|`);
+
+  /* ---- 5.4 Rekonstruktion ---- */
+  function M12(){
+    const n=12, sig=4.2, M=[];
+    for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++){
+      let v=0; for(let k=-2;k<=2;k++) v+=Math.exp(-Math.abs((i-j)+12*k)/sig);
+      r.push(v);
+    } M.push(r);}
+    return centerMatrix(M);
+  }
+  const M0 = M12(), E0 = jacobiEigen(M0);
+  function drawRec(){
+    const r=+document.getElementById('s5r').value;
+    const n=12;
+    const R=[];
+    for(let i=0;i<n;i++){const row=[];for(let j=0;j<n;j++){
+      let s=0; for(let m=0;m<r;m++) s+=E0.values[m]*E0.vectors[m][i]*E0.vectors[m][j];
+      row.push(s);
+    } R.push(row);}
+    const zmin=Math.min(...M0.flat()), zmax=Math.max(...M0.flat());
+    const hm=(id,Z,t)=>Plotly.react(id,[{z:Z,x:MONTHS,y:MONTHS,type:'heatmap',
+      colorscale:CS_DIV,zmid:0,zmin,zmax,showscale:false,
+      hovertemplate:'%{y}↔%{x}<br>%{z:.3f}<extra></extra>'}],
+      L({title:{text:t,font:{size:11}},margin:{l:38,r:8,t:28,b:34},
+         xaxis:{tickfont:{size:8}},yaxis:{tickfont:{size:8},autorange:'reversed',scaleanchor:'x'}}),CFG);
+    hm('s5orig',M0,'Original M*');
+    hm('s5rec',R,`Rekonstruktion (r = ${r})`);
+    let err=0,tot=0;
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){err+=(M0[i][j]-R[i][j])**2;tot+=M0[i][j]**2;}
+    Plotly.react('s5spec',[{
+      type:'bar', x:E0.values.map((_,i)=>i+1), y:E0.values.map(v=>Math.max(v,0)),
+      marker:{color:E0.values.map((_,i)=>i<r?COL.acc:'rgba(120,130,160,0.35)')},
+      hovertemplate:'Mode %{x}<br>λ = %{y:.3f}<extra></extra>'
+    }], L({title:{text:`Spektrum · Restfehler ${(100*err/tot).toFixed(2)}%`,font:{size:11}},
+      margin:{l:40,r:8,t:28,b:34}, xaxis:{title:'Mode',dtick:1,tickfont:{size:9}},
+      yaxis:{title:'λ'}}), CFG);
+  }
+  bind('s5r','v5r',f0,drawRec);
+  drawRec();
+})();
+
+/* =======================================================================
+   S6 · ZIRKULANTE MATRIZEN
+   ======================================================================= */
+(function(){
+  let kind='exp';
+  tex(document.getElementById('s6math'),
+    `\\bigl[H\\,v\\bigr]_j=\\sum_i C\\bigl(d(x_i,x_j)\\bigr)\\,e^{\\,\\mathrm{i}kx_i}
+     =\\underbrace{\\Bigl(\\sum_a C(a)\\,e^{\\,\\mathrm{i}ka}\\Bigr)}_{\\tilde m(k)\\;=\\;\\text{Eigenwert}}\\;e^{\\,\\mathrm{i}kx_j}`);
+
+  function draw(){
+    const sig=+document.getElementById('s6s').value;
+    const per=document.getElementById('s6per').checked;
+    const n=12;
+    const M=buildMatrix(n,sig,kind,per);
+    const E=jacobiEigen(centerMatrix(M));
+    // Kern
+    const dx=[],dy=[];
+    for(let d=-11;d<=11;d+=0.05){
+      const dd = per ? Math.min(Math.abs(d), 12-Math.abs(d)) : Math.abs(d);
+      if(per && Math.abs(d)>6) continue;
+      dx.push(d); dy.push(kernelFn(kind, Math.abs(dd), sig));
+    }
+    Plotly.react('s6kern',[{x:dx,y:dy,mode:'lines',fill:'tozeroy',
+      line:{color:COL.acc3,width:2.5},fillcolor:'rgba(255,122,184,0.14)',
+      hovertemplate:'Δ=%{x:.1f}<br>C=%{y:.3f}<extra></extra>'}],
+      L({title:{text:'Kern C(Δx)',font:{size:11}},margin:{l:40,r:10,t:26,b:34},
+         xaxis:{title:'Abstand Δ'},yaxis:{title:'C'}}),CFG);
+    Plotly.react('s6mat',[{z:M,type:'heatmap',colorscale:CS_SEQ,showscale:false,
+      hovertemplate:'i=%{y}, j=%{x}<br>%{z:.3f}<extra></extra>'}],
+      L({title:{text:per?'zirkulante Matrix':'Toeplitz-Matrix',font:{size:11}},
+         margin:{l:34,r:10,t:26,b:30},
+         xaxis:{showticklabels:false},yaxis:{showticklabels:false,autorange:'reversed',scaleanchor:'x'}}),CFG);
+    // Eigenvektoren
+    const tr=[];
+    const cols=[COL.acc,COL.acc3,COL.warm,COL.good];
+    for(let m=0;m<4;m++){
+      tr.push({x:MONTHS, y:E.vectors[m], mode:'lines+markers',
+        line:{color:cols[m],width:2.4,shape:'spline'}, marker:{size:6,color:cols[m]},
+        name:`Mode ${m+1} (λ=${E.values[m].toFixed(2)})`,
+        hovertemplate:'%{x}<br>%{y:.3f}<extra>Mode '+(m+1)+'</extra>'});
+    }
+    Plotly.react('s6eig',tr,L({title:{text:'Die ersten vier Eigenvektoren — immer Sinus/Kosinus',font:{size:11}},
+      margin:{l:44,r:10,t:26,b:40}, showlegend:true,
+      legend:{orientation:'h',y:-0.22,font:{size:9}},
+      xaxis:{tickfont:{size:9}},yaxis:{title:'φ(x)'}}),CFG);
+    document.getElementById('s6info').innerHTML =
+      `Kern: <b>${{'exp':'exponentiell','gauss':'Gauß','cos':'Kosinus','box':'Rechteck'}[kind]}</b>, σ = <b>${sig.toFixed(2)}</b><br>`+
+      `Eigenwerte: ${E.values.slice(0,4).map(v=>v.toFixed(2)).join(' · ')}<br>`+
+      `<span style="color:#5ef0b0">Die Eigenvektoren bleiben Sinuswellen — nur ihre Gewichte ändern sich.</span>`;
+  }
+  bind('s6s','v6s',f2,draw);
+  grp('s6kbtn', d=>{kind=d.k; draw();});
+  document.getElementById('s6per').addEventListener('change',draw);
+  draw();
+
+  /* Animation Welle rein -> Welle raus */
+  const cv=document.getElementById('s6anim'), ctx=cv.getContext('2d');
+  let t0=null, running=false;
+  function anim(ts){
+    if(!running) return;
+    if(!t0) t0=ts;
+    const p = Math.min(1,(ts-t0)/2600);
+    const W=cv.width,H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    const n=12, sig=+document.getElementById('s6s').value;
+    const per=document.getElementById('s6per').checked;
+    const M=buildMatrix(n,sig,'exp',per);
+    const k=TAU/n;
+    const vin=[],vout=[];
+    for(let i=0;i<n;i++) vin.push(Math.cos(k*i));
+    for(let j=0;j<n;j++){let s=0;for(let i=0;i<n;i++)s+=M[j][i]*vin[i];vout.push(s);}
+    const mx=Math.max(...vout.map(Math.abs));
+    const pad=70, step=(W-2*pad)/(n-1);
+    const plot=(arr,scale,col,yc,lab)=>{
+      ctx.strokeStyle=col; ctx.lineWidth=2.6; ctx.beginPath();
+      for(let i=0;i<n;i++){
+        const x=pad+i*step, y=yc-arr[i]*scale;
+        i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      }
+      ctx.stroke();
+      arr.forEach((v,i)=>{
+        ctx.beginPath(); ctx.arc(pad+i*step, yc-v*scale, 4.5,0,TAU);
+        ctx.fillStyle=col; ctx.fill();
+      });
+      ctx.fillStyle=col; ctx.font='bold 11px Inter'; ctx.textAlign='left';
+      ctx.fillText(lab, 8, yc-48);
+    };
+    plot(vin, 40, COL.acc, 62, 'Eingang: cos(kx)');
+    // Fluss
+    const idx = Math.floor(p*n);
+    ctx.strokeStyle='rgba(255,180,92,0.35)'; ctx.lineWidth=1;
+    for(let i=0;i<n;i++){
+      if(i>idx) continue;
+      ctx.beginPath();
+      ctx.moveTo(pad+i*step, 62-vin[i]*40);
+      ctx.lineTo(pad+i*step, 168-vout[i]*40/mx*1.0);
+      ctx.stroke();
+    }
+    plot(vout.map(v=>v/mx), 40, COL.acc3, 168, 'Ausgang: M·v = λ·cos(kx) — dieselbe Welle!');
+    if(p<1) requestAnimationFrame(anim); else running=false;
+  }
+  document.getElementById('s6demo').onclick=()=>{t0=null;running=true;requestAnimationFrame(anim);};
+  // Initialer Frame
+  (function(){ running=true; t0=performance.now()-2600; requestAnimationFrame(anim); })();
+})();
+
+/* =======================================================================
+   S7 · FOURIER
+   ======================================================================= */
+(function(){
+  tex(document.getElementById('s7math'),
+    `a_n=\\sqrt{\\frac{2\\sigma}{1+\\sigma^2k_n^2}},\\qquad k_n=\\pi n`);
+
+  function amps(){
+    return [1,2,3,4].map(i=>+document.getElementById('s7a'+i).value);
+  }
+  function drawWave(){
+    const A=amps();
+    const xs=[], sum=[];
+    const comps=[[],[],[],[]];
+    for(let x=-1;x<=1.0001;x+=0.004){
+      xs.push(x);
+      let s=0;
+      for(let n=1;n<=4;n++){
+        const v=A[n-1]*Math.cos(Math.PI*n*x);
+        comps[n-1].push(v); s+=v;
+      }
+      sum.push(s);
+    }
+    const cols=[COL.acc,COL.acc3,COL.warm,COL.good];
+    const tr=comps.map((c,i)=>({x:xs,y:c,mode:'lines',
+      line:{color:cols[i],width:1.4,dash:'dot'},name:`Mode ${i+1}`,
+      hovertemplate:'%{y:.3f}<extra>Mode '+(i+1)+'</extra>'}));
+    tr.push({x:xs,y:sum,mode:'lines',line:{color:'#ffffff',width:3},name:'Summe',
+      hovertemplate:'x=%{x:.2f}<br>Σ=%{y:.3f}<extra></extra>'});
+    Plotly.react('s7wave',tr,L({title:{text:'Wellen und ihre Summe',font:{size:12}},
+      margin:{l:44,r:12,t:28,b:36}, showlegend:true,
+      legend:{orientation:'h',y:-0.2,font:{size:9}},
+      xaxis:{title:'latente Koordinate x'},yaxis:{title:'Wert'}}),CFG);
+
+    Plotly.react('s7amp',[{type:'bar',x:['k=π','k=2π','k=3π','k=4π'],y:A,
+      marker:{color:cols,line:{color:'rgba(255,255,255,.2)',width:1}},
+      text:A.map(v=>v.toFixed(2)),textposition:'outside',textfont:{size:10,color:COL.txt},
+      hovertemplate:'%{x}<br>a = %{y:.3f}<extra></extra>'}],
+      L({title:{text:'Amplitudenspektrum aₙ',font:{size:12}},
+        margin:{l:44,r:12,t:28,b:34},yaxis:{title:'Amplitude',range:[0,1.65]}}),CFG);
+  }
+  [1,2,3,4].forEach(i=>bind('s7a'+i,'v7a'+i,f2,drawWave));
+  bind('s7sig','v7s',f2,()=>{});
+  document.getElementById('s7theory').onclick=()=>{
+    const s=+document.getElementById('s7sig').value;
+    const raw=[1,2,3,4].map(n=>Math.sqrt(2*s/(1+s*s*Math.PI*Math.PI*n*n)));
+    const mx=raw[0];
+    raw.forEach((v,i)=>{
+      const el=document.getElementById('s7a'+(i+1));
+      el.value=Math.min(1.5, v/mx);
+      el.dispatchEvent(new Event('input'));
+    });
+  };
+  document.getElementById('s7flat').onclick=()=>{
+    [1,2,3,4].forEach(i=>{const el=document.getElementById('s7a'+i);el.value=0.7;el.dispatchEvent(new Event('input'));});
+  };
+  drawWave();
+
+  /* Kern -> Spektrum */
+  function drawFT(){
+    const s=+document.getElementById('s7sig2').value;
+    const dx=[],dy=[];
+    for(let d=-1;d<=1;d+=0.004){ dx.push(d); dy.push(Math.exp(-Math.abs(d)/s)); }
+    Plotly.react('s7k1',[{x:dx,y:dy,mode:'lines',fill:'tozeroy',
+      line:{color:COL.acc3,width:3},fillcolor:'rgba(255,122,184,0.13)',
+      hovertemplate:'Δ=%{x:.2f}<br>C=%{y:.3f}<extra></extra>'}],
+      L({title:{text:`Kern C(Δx) = exp(−|Δx|/σ), σ = ${s.toFixed(2)}`,font:{size:12}},
+        xaxis:{title:'Δx'},yaxis:{title:'C',range:[0,1.05]}}),CFG);
+    const ns=[],as=[];
+    for(let n=1;n<=14;n++){ ns.push(n); as.push(Math.sqrt(2*s/(1+s*s*Math.PI*Math.PI*n*n))); }
+    const frac = as[1]/as[0];
+    Plotly.react('s7k2',[
+      {type:'bar',x:ns,y:as,marker:{color:ns.map(n=>rainbow(0.1+0.7*n/14))},
+       hovertemplate:'n=%{x}<br>aₙ=%{y:.4f}<extra></extra>'},
+      {x:ns,y:as,mode:'lines',line:{color:'rgba(255,255,255,.35)',width:1.5,dash:'dot'},hoverinfo:'skip'}
+    ], L({title:{text:'Amplituden aₙ (Fourier-Transformierte)',font:{size:12}},
+        xaxis:{title:'Modennummer n',dtick:1,tickfont:{size:9}},yaxis:{title:'aₙ'}}),CFG);
+    document.getElementById('s7note').innerHTML =
+      `Bei σ = <b>${s.toFixed(2)}</b> ist Mode 2 nur <b>${(100*frac).toFixed(1)}%</b> so stark wie Mode 1. `+
+      (frac<0.45
+        ? `→ Die ersten beiden Achsen dominieren klar: man sieht einen <b style="color:#5ef0b0">sauberen Kreis</b>.`
+        : `→ Höhere Moden sind fast gleich stark: die Form wird <b style="color:#ffb45c">zackig/vielwellig</b>.`);
+  }
+  bind('s7sig2','v7s2',f2,drawFT);
+  drawFT();
+})();
+
+/* =======================================================================
+   S8 · MONATE
+   ======================================================================= */
+(function(){
+  tex(document.getElementById('s8m1'),
+    `\\mathbf{w}_i=\\sqrt{\\tfrac{2}{|S|}}\\bigl[a_1\\cos(k_1x_i),\\;a_1\\sin(k_1x_i),\\;
+      a_2\\cos(k_2x_i),\\;a_2\\sin(k_2x_i),\\;a_3\\cos(k_3x_i),\\dots\\bigr]`);
+  tex(document.getElementById('s8m2'),
+    `k_n=\\pi n,\\qquad a_n\\;\\xrightarrow[\\;|S|\\to\\infty\\;]{}\\;\\sqrt{\\frac{2\\sigma}{1+\\sigma^2k_n^2}}`);
+
+  function coords(sig){
+    const n=12, res=[];
+    for(let i=0;i<n;i++){
+      const x = 2*(i - (n-1)/2)/n;   // in [-1,1)
+      const v=[];
+      for(let m=1;m<=8;m++){
+        const k=Math.PI*Math.ceil(m/2);
+        const a=Math.sqrt(2*sig/(1+sig*sig*k*k));
+        v.push(a*(m%2===1?Math.cos(k*x):Math.sin(k*x)));
+      }
+      res.push(v);
+    }
+    return res;
+  }
+  function draw2D(){
+    const sig=+document.getElementById('s8sig').value;
+    const ax=+document.getElementById('s8x').value-1;
+    const ay=+document.getElementById('s8y').value-1;
+    const conn=document.getElementById('s8conn').checked;
+    const C=coords(sig);
+    const x=C.map(v=>v[ax]), y=C.map(v=>v[ay]);
+    const cols=MONTHS.map((_,i)=>rainbow(i/12));
+    const tr=[];
+    if(conn) tr.push({x:[...x,x[0]],y:[...y,y[0]],mode:'lines',
+      line:{color:'rgba(100,224,255,0.30)',width:2,shape:'spline'},hoverinfo:'skip'});
+    tr.push({x,y,mode:'markers+text',text:MONTHS,textposition:'top center',
+      textfont:{size:10,color:COL.txt},
+      marker:{size:14,color:cols,line:{color:'rgba(255,255,255,0.35)',width:1}},
+      hovertemplate:'%{text}<extra></extra>'});
+    Plotly.react('s8plot',tr,L({
+      title:{text:`PCA-Achse ${ax+1} vs. ${ay+1}`,font:{size:13}},
+      xaxis:{title:`Achse ${ax+1}`,zeroline:true},
+      yaxis:{title:`Achse ${ay+1}`,zeroline:true,scaleanchor:'x'}}),CFG);
+    const fx=Math.ceil((ax+1)/2), fy=Math.ceil((ay+1)/2);
+    const g=(a,b)=>{while(b){[a,b]=[b,a%b];}return a;};
+    document.getElementById('s8info').innerHTML =
+      `Achse ${ax+1}: Frequenz <b>${fx}×</b> pro Jahr (${(ax%2===0)?'cos':'sin'})<br>`+
+      `Achse ${ay+1}: Frequenz <b>${fy}×</b> pro Jahr (${(ay%2===0)?'cos':'sin'})<br>`+
+      (fx===fy && ((ax%2)!==(ay%2))
+        ? `<span style="color:#5ef0b0">→ perfekter Kreis (cos/sin-Paar)</span>`
+        : `<span style="color:#ffb45c">→ Lissajous-Figur mit Verhältnis ${fx/g(fx,fy)}:${fy/g(fx,fy)}</span>`);
+  }
+  bind('s8sig','v8s',f2,draw2D);
+  bind('s8x','v8x',f0,draw2D);
+  bind('s8y','v8y',f0,draw2D);
+  document.getElementById('s8conn').addEventListener('change',draw2D);
+  draw2D();
+
+  /* 3D Pringle */
+  function draw3D(){
+    const sig=+document.getElementById('s8sig3').value;
+    const boost=+document.getElementById('s8boost').value;
+    const showSurf=document.getElementById('s8surf').checked;
+    const a1=Math.sqrt(2*sig/(1+sig*sig*Math.PI*Math.PI));
+    const a2=Math.sqrt(2*sig/(1+sig*sig*4*Math.PI*Math.PI))*boost;
+    const px=[],py=[],pz=[],txt=[],cl=[];
+    for(let i=0;i<12;i++){
+      const t=TAU*i/12;
+      px.push(a1*Math.cos(t)); py.push(a1*Math.sin(t)); pz.push(a2*Math.cos(2*t));
+      txt.push(MONTHS[i]); cl.push(rainbow(i/12));
+    }
+    const lx=[],ly=[],lz=[];
+    for(let i=0;i<=200;i++){
+      const t=TAU*i/200;
+      lx.push(a1*Math.cos(t)); ly.push(a1*Math.sin(t)); lz.push(a2*Math.cos(2*t));
+    }
+    const tr=[
+      {type:'scatter3d',mode:'lines',x:lx,y:ly,z:lz,
+       line:{color:COL.acc,width:5},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'markers+text',x:px,y:py,z:pz,text:txt,
+       textposition:'top center',textfont:{size:10,color:COL.txt},
+       marker:{size:6,color:cl,line:{color:'#fff',width:0.5}},
+       hovertemplate:'%{text}<extra></extra>'}
+    ];
+    if(showSurf){
+      const N=36, X=[],Y=[],Z=[];
+      for(let ri=0;ri<=10;ri++){
+        const rr=a1*ri/10;
+        const rx=[],ry=[],rz=[];
+        for(let ti=0;ti<=N;ti++){
+          const t=TAU*ti/N;
+          rx.push(rr*Math.cos(t)); ry.push(rr*Math.sin(t));
+          rz.push(a2*(rr/a1)*(rr/a1)*Math.cos(2*t));
+        }
+        X.push(rx);Y.push(ry);Z.push(rz);
+      }
+      tr.unshift({type:'surface',x:X,y:Y,z:Z,colorscale:CS_MODE,opacity:0.45,
+        showscale:false,hoverinfo:'skip',contours:{z:{show:false}}});
+    }
+    Plotly.react('s8d3',tr,L({scene:{
+        xaxis:{title:'PC 1',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true,zerolinecolor:COL.line},
+        yaxis:{title:'PC 2',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true,zerolinecolor:COL.line},
+        zaxis:{title:'PC 3',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true,zerolinecolor:COL.line},
+        camera:{eye:{x:1.5,y:1.3,z:0.9}},aspectmode:'cube'},
+      margin:{l:0,r:0,t:8,b:0}}),CFG3D);
+  }
+  bind('s8sig3','v8s3',f2,draw3D);
+  bind('s8boost','v8b',f2,draw3D);
+  document.getElementById('s8surf').addEventListener('change',draw3D);
+  draw3D();
+
+  /* Theorie vs. Modelle */
+  function modelData(mode){
+    const n=12, sig=4.2;
+    const C=[];
+    for(let i=0;i<n;i++){
+      const x=2*(i-(n-1)/2)/n;
+      const a1=Math.sqrt(2*sig/(1+sig*sig*Math.PI*Math.PI));
+      const a2=Math.sqrt(2*sig/(1+sig*sig*4*Math.PI*Math.PI));
+      let px=a1*Math.cos(Math.PI*x), py=a1*Math.sin(Math.PI*x);
+      if(mode==='w2v'){
+        px*=1+0.07*Math.sin(3*i); py*=1+0.07*Math.cos(2.4*i);
+        if(i===4){ px*=0.42; py*=0.42; }        // "May" Polysemie
+      } else if(mode==='gemma'){
+        px*=1+0.11*Math.sin(1.7*i+0.6); py*=1+0.10*Math.cos(2.1*i+1.1);
+      }
+      C.push([px,py]);
+    }
+    const G=[];
+    for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++)r.push(C[i][0]*C[j][0]+C[i][1]*C[j][1]);G.push(r);}
+    return {C,G};
+  }
+  function drawCmp(mode){
+    const {C,G}=modelData(mode);
+    const names={theory:'Theorie (Korollar 2)',w2v:'Word Embeddings (Wikipedia)',gemma:'Gemma 2 2B · Schicht 6'};
+    Plotly.react('s8cg',[{z:G,x:MONTHS,y:MONTHS,type:'heatmap',colorscale:CS_DIV,zmid:0,
+      colorbar:{thickness:10,len:0.85,title:{text:'wᵢᵀwⱼ',side:'right',font:{size:10}}},
+      hovertemplate:'%{y}↔%{x}<br>%{z:.3f}<extra></extra>'}],
+      L({title:{text:'Gram-Matrix · '+names[mode],font:{size:12}},
+        xaxis:{tickfont:{size:9}},yaxis:{tickfont:{size:9},autorange:'reversed',scaleanchor:'x'}}),CFG);
+    const x=C.map(c=>c[0]), y=C.map(c=>c[1]);
+    Plotly.react('s8cp',[
+      {x:[...x,x[0]],y:[...y,y[0]],mode:'lines',line:{color:'rgba(100,224,255,.28)',width:2},hoverinfo:'skip'},
+      {x,y,mode:'markers+text',text:MONTHS,textposition:'top center',textfont:{size:10,color:COL.txt},
+       marker:{size:13,color:MONTHS.map((_,i)=>rainbow(i/12)),line:{color:'rgba(255,255,255,.35)',width:1}},
+       hovertemplate:'%{text}<extra></extra>'}
+    ], L({title:{text:'PCA 1 & 2',font:{size:12}},
+      xaxis:{showticklabels:false},yaxis:{showticklabels:false,scaleanchor:'x'}}),CFG);
+  }
+  grp('s8cmpbtn', d=>drawCmp(d.m));
+  drawCmp('theory');
+
+  /* May über Schichten */
+  function drawMay(){
+    const l=+document.getElementById('s8layer').value;
+    const heal = l/5;
+    const x=[],y=[];
+    for(let i=0;i<12;i++){
+      const t=TAU*i/12;
+      let px=Math.cos(t), py=Math.sin(t);
+      if(i===4){
+        const shrink = 0.30 + 0.70*heal;
+        px*=shrink; py*=shrink;
+        px += (1-heal)*0.40; py -= (1-heal)*0.55;
+      } else {
+        const n=0.10*(1-heal);
+        px*=1+n*Math.sin(2.3*i); py*=1+n*Math.cos(1.9*i);
+      }
+      x.push(px); y.push(py);
+    }
+    Plotly.react('s8may',[
+      {x:[...x,x[0]],y:[...y,y[0]],mode:'lines',line:{color:'rgba(100,224,255,.26)',width:2},hoverinfo:'skip'},
+      {x,y,mode:'markers+text',text:MONTHS,textposition:'top center',
+       textfont:{size:10,color:MONTHS.map((_,i)=>i===4?'#ffb45c':COL.txt)},
+       marker:{size:MONTHS.map((_,i)=>i===4?17:12),
+               color:MONTHS.map((_,i)=>i===4?'#ffb45c':rainbow(i/12)),
+               line:{color:'rgba(255,255,255,.35)',width:1}},
+       hovertemplate:'%{text}<extra></extra>'}
+    ], L({title:{text:`Residual-Stream nach Block ${l} — „Mai" ${heal>0.8?'ist am Platz ✓':'noch verschoben'}`,
+          font:{size:12,color:heal>0.8?COL.good:COL.warm}},
+        xaxis:{range:[-1.5,1.5],showticklabels:false},
+        yaxis:{range:[-1.5,1.5],showticklabels:false,scaleanchor:'x'}}),CFG);
+  }
+  bind('s8layer','v8l',f0,drawMay);
+  drawMay();
+})();
+
+/* =======================================================================
+   S9 · JAHRE (offene Randbedingungen)
+   ======================================================================= */
+function openWavenumbers(sig, count){
+  // Fixpunkt-Iteration gemäß Gl. (8)
+  const ks=[];
+  for(let n=1;n<=count;n++){
+    let k = (n%2===1) ? (n+1)*Math.PI/2 - Math.PI/4 : n*Math.PI/2 + 0.4;
+    for(let it=0; it<80; it++){
+      k = (n%2===1)
+        ? (n+1)*Math.PI/2 - Math.atan(sig*k)
+        : n*Math.PI/2 + Math.atan(k/(1+sig*(1+sig)*k*k));
+      if(k<0.01) k=0.01;
+    }
+    ks.push(k);
+  }
+  return ks;
+}
+function openMode(n, k, x){
+  if(n%2===1) return Math.sin(k*x);
+  return Math.cos(k*x) - Math.sin(k)/k;
+}
+function openNorm(n,k){
+  if(n%2===1) return Math.sqrt(Math.max(1e-9, 0.5 - Math.sin(2*k)/(4*k)));
+  return Math.sqrt(Math.max(1e-9, 0.5 + Math.sin(2*k)/(4*k) - Math.pow(Math.sin(k)/k,2)));
+}
+(function(){
+  tex(document.getElementById('s9m1'),
+    `k_n=\\begin{cases}\\dfrac{(n+1)\\pi}{2}-\\arctan(\\sigma k_n), & n\\ \\text{ungerade}\\\\[8pt]
+      \\dfrac{n\\pi}{2}+\\arctan\\!\\left(\\dfrac{k_n}{1+\\sigma(1+\\sigma)k_n^2}\\right), & n\\ \\text{gerade}\\end{cases}`);
+
+  let bc='per';
+  function drawModes(){
+    const sig=+document.getElementById('s9sig').value;
+    const xs=[]; for(let x=-1;x<=1.0001;x+=0.005) xs.push(x);
+    const cols=[COL.acc,COL.acc3,COL.warm,COL.good];
+    const tr=[]; const ks=[];
+    for(let n=1;n<=4;n++){
+      let k, ys;
+      if(bc==='per'){
+        k=Math.PI*Math.ceil(n/2);
+        ys=xs.map(x=> (n%2===1?Math.cos(k*x):Math.sin(k*x)));
+      } else {
+        k=openWavenumbers(sig,4)[n-1];
+        const N=openNorm(n,k);
+        ys=xs.map(x=>openMode(n,k,x)/N);
+      }
+      ks.push(k);
+      tr.push({x:xs,y:ys,mode:'lines',line:{color:cols[n-1],width:2.4},
+        name:`Mode ${n} (k=${k.toFixed(2)})`,
+        hovertemplate:'x=%{x:.2f}<br>φ=%{y:.3f}<extra>Mode '+n+'</extra>'});
+    }
+    Plotly.react('s9modes',tr,L({title:{text:bc==='per'?'Periodische Eigenmoden (ganzzahlige Frequenzen)':'Offene Eigenmoden (krumme Frequenzen, Randwölbung)',font:{size:12}},
+      xaxis:{title:'latente Koordinate x (−1 = 1700, +1 = 2020)'},yaxis:{title:'φₙ(x)'},
+      showlegend:true, legend:{orientation:'h',y:-0.22,font:{size:9}}}),CFG);
+
+    // Wellenzahlen
+    const ns=[],kv=[],ideal=[];
+    for(let n=1;n<=8;n++){
+      ns.push(n);
+      if(bc==='per'){ kv.push(Math.PI*Math.ceil(n/2)); }
+      else { kv.push(openWavenumbers(sig,8)[n-1]); }
+      ideal.push(Math.PI*n/2);
+    }
+    Plotly.react('s9k',[
+      {type:'bar',x:ns,y:kv,marker:{color:ns.map(n=>rainbow(0.08+0.72*n/8))},
+       name:'kₙ', hovertemplate:'n=%{x}<br>k=%{y:.4f}<extra></extra>'},
+      {x:ns,y:ideal,mode:'lines+markers',line:{color:'rgba(255,255,255,.45)',width:1.6,dash:'dot'},
+       marker:{size:5,color:'#fff'}, name:'nπ/2 (Referenz)',hovertemplate:'%{y:.3f}<extra>Referenz</extra>'}
+    ], L({title:{text:'Wellenzahlen kₙ',font:{size:12}},
+      xaxis:{title:'Mode n',dtick:1},yaxis:{title:'k'},
+      showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.35)',font:{size:10}}}),CFG);
+  }
+  grp('s9bc', d=>{bc=d.b; drawModes();});
+  bind('s9sig','v9s',f2,drawModes);
+  drawModes();
+
+  /* Fixpunkt-Iteration */
+  function drawFix(){
+    const sig=+document.getElementById('s9sig').value;
+    const it=+document.getElementById('s9iter').value;
+    const n=+document.getElementById('s9n').value;
+    const F = (k)=> (n%2===1)
+      ? (n+1)*Math.PI/2 - Math.atan(sig*k)
+      : n*Math.PI/2 + Math.atan(k/(1+sig*(1+sig)*k*k));
+    const kx=[],ky=[];
+    const lo=0.05, hi=Math.max(14, n*2.2);
+    for(let k=lo;k<=hi;k+=0.02){ kx.push(k); ky.push(F(k)); }
+    // Pfad
+    let k = n*Math.PI/2;
+    const px=[],py=[];
+    for(let i=0;i<it;i++){
+      const nk=F(k);
+      px.push(k,k); py.push(k,nk);  // vertikal zur Kurve
+      px.push(k,nk); py.push(nk,nk);// horizontal zur Diagonale
+      k=nk;
+    }
+    Plotly.react('s9fix',[
+      {x:kx,y:kx,mode:'lines',line:{color:'rgba(255,255,255,.3)',width:1.6,dash:'dot'},name:'y = k'},
+      {x:kx,y:ky,mode:'lines',line:{color:COL.acc,width:2.6},name:'F(k)',
+       hovertemplate:'k=%{x:.2f}<br>F=%{y:.3f}<extra></extra>'},
+      {x:px,y:py,mode:'lines',line:{color:COL.warm,width:1.8},name:'Iterationspfad',hoverinfo:'skip'},
+      {x:[k],y:[k],mode:'markers',marker:{size:12,color:COL.acc3,symbol:'star'},
+       name:`Fixpunkt k=${k.toFixed(4)}`,hovertemplate:'k* = %{x:.4f}<extra></extra>'}
+    ], L({title:{text:`Mode ${n}: k konvergiert gegen ${k.toFixed(4)}  (σ=${sig.toFixed(2)})`,font:{size:12}},
+      xaxis:{title:'k',range:[lo,hi]},yaxis:{title:'F(k)',range:[lo,hi],scaleanchor:'x'},
+      showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.4)',font:{size:9}}}),CFG);
+  }
+  bind('s9iter','v9it',f0,drawFix);
+  bind('s9n','v9n',f0,drawFix);
+  document.getElementById('s9sig').addEventListener('input',drawFix);
+  drawFix();
+
+  /* 3D Jahres-Mannigfaltigkeit */
+  function drawY3(){
+    const sig=+document.getElementById('s9sig2').value;
+    const nm=+document.getElementById('s9mod').value;
+    const ks=openWavenumbers(sig, 8);
+    const N=140, X=[],Y=[],Z=[],C=[],T=[];
+    for(let i=0;i<N;i++){
+      const x=-1+2*i/(N-1);
+      const v=[];
+      for(let m=1;m<=8;m++){
+        const k=ks[m-1], a=Math.sqrt(2*sig/(1+sig*sig*k*k));
+        v.push(a*openMode(m,k,x)/openNorm(m,k));
+      }
+      X.push(v[0]); Y.push(v[1]); Z.push(v[Math.min(nm-1,7)]);
+      C.push(rainbow(i/(N-1)));
+      T.push(String(1700+Math.round(320*i/(N-1))));
+    }
+    Plotly.react('s9m3d',[
+      {type:'scatter3d',mode:'lines',x:X,y:Y,z:Z,
+       line:{color:C,width:7},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'markers',x:X.filter((_,i)=>i%10===0),
+       y:Y.filter((_,i)=>i%10===0),z:Z.filter((_,i)=>i%10===0),
+       marker:{size:4,color:C.filter((_,i)=>i%10===0)},
+       text:T.filter((_,i)=>i%10===0),hovertemplate:'Jahr %{text}<extra></extra>'}
+    ], L({scene:{
+        xaxis:{title:'PC 1',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        yaxis:{title:'PC 2',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        zaxis:{title:'PC '+nm,gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        camera:{eye:{x:1.5,y:1.4,z:0.95}},aspectmode:'cube'},
+      margin:{l:0,r:0,t:8,b:0}}),CFG3D);
+  }
+  bind('s9sig2','v9s2',f2,drawY3);
+  bind('s9mod','v9md',f0,drawY3);
+  drawY3();
+
+  /* 8 Eigenmoden */
+  (function(){
+    const sig=0.78, ks=openWavenumbers(sig,8);
+    const xs=[],yrs=[];
+    for(let i=0;i<=160;i++){ const x=-1+2*i/160; xs.push(x); yrs.push(1700+320*(x+1)/2); }
+    const tr=[]; const cols=[COL.acc,COL.acc3,COL.warm,COL.good,'#8ab4ff','#ff9f6b','#9ef0ff','#d49bff'];
+    for(let m=1;m<=8;m++){
+      const k=ks[m-1], N=openNorm(m,k);
+      tr.push({x:yrs, y:xs.map(x=>openMode(m,k,x)/N), mode:'lines',
+        line:{color:cols[m-1],width:2}, name:'Mode '+m,
+        xaxis:'x'+(m>4?2:''), yaxis:'y'+(m>4?2:''),
+        hovertemplate:'%{x:.0f}<br>φ=%{y:.2f}<extra>Mode '+m+'</extra>'});
+    }
+    Plotly.react('s9eight',tr,L({
+      grid:{rows:2,columns:1,pattern:'independent'},
+      title:{text:'Die acht Eigenmoden der Jahre 1700–2020 (Theorie, σ = 0.78)',font:{size:12}},
+      xaxis:{title:'',domain:[0,1],anchor:'y'},
+      yaxis:{title:'Moden 1–4',domain:[0.56,1]},
+      xaxis2:{title:'Jahr',domain:[0,1],anchor:'y2'},
+      yaxis2:{title:'Moden 5–8',domain:[0,0.42]},
+      showlegend:true, legend:{orientation:'h',y:-0.16,font:{size:9}},
+      margin:{l:52,r:14,t:34,b:56}}),CFG);
+  })();
+})();
+
+/* =======================================================================
+   S10 · LISSAJOUS
+   ======================================================================= */
+(function(){
+  function drawL(){
+    const a=+document.getElementById('s10a').value;
+    const b=+document.getElementById('s10b').value;
+    const dd=(+document.getElementById('s10d').value)*Math.PI;
+    const A=+document.getElementById('s10A').value;
+    const B=+document.getElementById('s10B').value;
+    const x=[],y=[],c=[];
+    const N=700;
+    for(let i=0;i<=N;i++){
+      const t=TAU*i/N;
+      x.push(A*Math.sin(a*t)); y.push(B*Math.sin(b*t+dd));
+      c.push(rainbow(i/N));
+    }
+    tex(document.getElementById('s10math'),
+      `x(t)=${A.toFixed(2)}\\sin(${a.toFixed(1)}t),\\quad y(t)=${B.toFixed(2)}\\sin(${b.toFixed(1)}t+${(dd/Math.PI).toFixed(2)}\\pi)`);
+    Plotly.react('s10plot',[
+      {x,y,mode:'markers',marker:{size:3.4,color:c},hoverinfo:'skip'}
+    ], L({title:{text:`Lissajous ${a.toFixed(1)} : ${b.toFixed(1)}`,font:{size:13}},
+      xaxis:{range:[-1.65,1.65],showticklabels:false,zeroline:true},
+      yaxis:{range:[-1.65,1.65],showticklabels:false,zeroline:true,scaleanchor:'x'}}),CFG);
+  }
+  ['a','b','d','A','B'].forEach(s=>bind('s10'+s,'v10'+s, s==='d'?f2:(s==='a'||s==='b'?f1:f2), drawL));
+  document.querySelectorAll('[data-ls]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const [a,b,d]=btn.dataset.ls.split(',').map(Number);
+      document.getElementById('s10a').value=a;
+      document.getElementById('s10b').value=b;
+      document.getElementById('s10d').value=d;
+      ['a','b','d'].forEach(s=>document.getElementById('s10'+s).dispatchEvent(new Event('input')));
+    });
+  });
+  drawL();
+
+  /* Panel */
+  function drawPanel(){
+    const sig=+document.getElementById('s10sig').value;
+    const real=document.getElementById('s10real').checked;
+    const ks=openWavenumbers(sig,4);
+    const N=220;
+    const modes=[[],[],[],[]];
+    const cols=[];
+    for(let i=0;i<=N;i++){
+      let x=-1+2*i/N;
+      const yr=1700+320*(x+1)/2;
+      if(real){
+        // Symmetriebruch bei den Weltkriegen
+        const kink = 0.055*Math.exp(-Math.pow((yr-1916)/9,2)) + 0.065*Math.exp(-Math.pow((yr-1943)/8,2));
+        x += kink;
+      }
+      for(let m=1;m<=4;m++){
+        const k=ks[m-1], a=Math.sqrt(2*sig/(1+sig*sig*k*k));
+        modes[m-1].push(a*openMode(m,k,x)/openNorm(m,k));
+      }
+      cols.push(rainbow(i/N));
+    }
+    const pairs=[[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+    const tr=[];
+    pairs.forEach((p,idx)=>{
+      const ax = idx===0?'':String(idx+1);
+      tr.push({x:modes[p[0]],y:modes[p[1]],mode:'markers',
+        marker:{size:3,color:cols},
+        xaxis:'x'+ax, yaxis:'y'+ax, hoverinfo:'skip'});
+    });
+    const lay={grid:{rows:2,columns:3,pattern:'independent',xgap:0.14,ygap:0.22},
+      title:{text:real?'Echte Daten: Knicke bei den Weltkriegen (cyan/blau)':'Theorie: perfekte Lissajous-Kurven',
+             font:{size:12,color:real?COL.warm:COL.acc}},
+      margin:{l:40,r:16,t:40,b:36}, showlegend:false};
+    pairs.forEach((p,idx)=>{
+      const ax = idx===0?'':String(idx+1);
+      lay['xaxis'+ax]={title:{text:`PC ${p[0]+1}`,font:{size:9}},showticklabels:false,gridcolor:COL.grid,zerolinecolor:COL.line};
+      lay['yaxis'+ax]={title:{text:`PC ${p[1]+1}`,font:{size:9}},showticklabels:false,gridcolor:COL.grid,zerolinecolor:COL.line,
+                       scaleanchor:'x'+ax};
+    });
+    Plotly.react('s10panel',tr,L(lay),CFG);
+  }
+  bind('s10sig','v10s',f2,drawPanel);
+  document.getElementById('s10real').addEventListener('change',drawPanel);
+  drawPanel();
+})();
+
+/* =======================================================================
+   S11 · DEKODIEREN
+   ======================================================================= */
+(function(){
+  tex(document.getElementById('s11math'),
+    `\\varepsilon^2(r)\\;\\le\\;\\frac{6}{\\pi^2}\\frac{L^2}{L^2-1}
+      \\left[\\left(\\frac{r}{\\mathrm{Vol}_D}\\right)^{1/D}-\\frac{\\sqrt{D}}{2}\\right]^{-1}
+      \\;\\sim\\;r^{-1/D}`);
+
+  function drawFS(){
+    const r=+document.getElementById('s11r').value;
+    const xs=[],tv=[],ap=[];
+    for(let x=-1;x<=1.0001;x+=0.004){
+      xs.push(x); tv.push(x);
+      let s=0;
+      for(let n=1;n<=r;n++){
+        s += 2*Math.pow(-1,n+1)/(Math.PI*n)*Math.sin(Math.PI*n*x);
+      }
+      ap.push(s);
+    }
+    let mse=0; for(let i=0;i<xs.length;i++) mse+=(ap[i]-tv[i])**2;
+    mse/=xs.length;
+    const nrm = mse/ (xs.reduce((a,x)=>a+x*x,0)/xs.length);
+    document.getElementById('s11err').textContent=nrm.toExponential(3);
+    document.getElementById('s11the').textContent=(0.33/r).toExponential(3);
+
+    Plotly.react('s11plot',[
+      {x:xs,y:tv,mode:'lines',line:{color:'rgba(255,255,255,.35)',width:2,dash:'dot'},name:'f(x)=x',hoverinfo:'skip'},
+      {x:xs,y:ap,mode:'lines',line:{color:COL.acc,width:2.6},name:`Fourier-Reihe (r=${r})`,
+       hovertemplate:'x=%{x:.2f}<br>f̂=%{y:.3f}<extra></extra>'}
+    ], L({title:{text:`Dekodierte Koordinate mit ${r} Moden`,font:{size:12}},
+      margin:{l:46,r:12,t:28,b:36},
+      xaxis:{title:'wahre Koordinate x'},yaxis:{title:'rekonstruiert',range:[-1.35,1.35]},
+      showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.35)',font:{size:9}}}),CFG);
+
+    const rs=[],es=[],th=[];
+    for(let rr=1;rr<=40;rr++){
+      let m=0;
+      for(let i=0;i<xs.length;i++){
+        let s=0;
+        for(let n=1;n<=rr;n++) s += 2*Math.pow(-1,n+1)/(Math.PI*n)*Math.sin(Math.PI*n*xs[i]);
+        m+=(s-xs[i])**2;
+      }
+      m/=xs.length; m/= (xs.reduce((a,x)=>a+x*x,0)/xs.length);
+      rs.push(rr); es.push(m); th.push(0.33/rr);
+    }
+    Plotly.react('s11err2',[
+      {x:rs,y:th,mode:'lines',line:{color:COL.acc3,width:2,dash:'dash'},name:'Theorie ∝ 1/r',hoverinfo:'skip'},
+      {x:rs,y:es,mode:'lines+markers',line:{color:COL.acc,width:2},marker:{size:4},
+       name:'gemessen',hovertemplate:'r=%{x}<br>ε²=%{y:.2e}<extra></extra>'},
+      {x:[r],y:[nrm],mode:'markers',marker:{size:13,color:COL.warm,symbol:'circle-open',line:{width:3}},
+       name:'aktuell',hoverinfo:'skip'}
+    ], L({title:{text:'Fehlerabfall ε²(r)',font:{size:12}},
+      margin:{l:52,r:12,t:28,b:40},
+      xaxis:{title:'Rang r',type:'log'},yaxis:{title:'ε²',type:'log'},
+      showlegend:true,legend:{x:0.02,y:0.06,bgcolor:'rgba(0,0,0,.35)',font:{size:9}}}),CFG);
+  }
+  bind('s11r','v11r',f0,drawFS);
+  drawFS();
+
+  /* Double Descent */
+  function drawDD(){
+    const ridge=document.getElementById('s11ridge').checked;
+    const ntr=60;
+    const rs=[],tr_=[],te=[],th=[];
+    for(let r=1;r<=140;r++){
+      const base=0.33/r;
+      let test;
+      if(ridge){ test = base + 0.012; }
+      else {
+        const dist=Math.abs(r-ntr);
+        const peak = 3.2/(1+Math.pow(dist/2.6,2));
+        test = (r<ntr? base*1.25 : base*0.85+0.015) + peak*(r<=ntr+30?1:0.05);
+      }
+      const train = r<ntr ? base : Math.max(1e-6, base*Math.exp(-(r-ntr)/3));
+      rs.push(r); tr_.push(train); te.push(test); th.push(base);
+    }
+    Plotly.react('s11dd',[
+      {x:rs,y:th,mode:'lines',line:{color:'rgba(255,255,255,.35)',width:2,dash:'dot'},name:'Theorie (r⁻¹)',hoverinfo:'skip'},
+      {x:rs,y:tr_,mode:'lines+markers',line:{color:COL.acc,width:2},marker:{size:3},
+       name:'Trainingsfehler',hovertemplate:'r=%{x}<br>%{y:.2e}<extra>train</extra>'},
+      {x:rs,y:te,mode:'lines+markers',line:{color:COL.acc3,width:2},marker:{size:3},
+       name:'Testfehler',hovertemplate:'r=%{x}<br>%{y:.2e}<extra>test</extra>'},
+      {x:[ntr,ntr],y:[1e-6,10],mode:'lines',line:{color:'rgba(255,180,92,.5)',width:1.5,dash:'dot'},
+       name:'r = n_train = 60',hoverinfo:'skip'}
+    ], L({title:{text:ridge?'Mit Ridge: kein Peak (Fig. 13)':'Ohne Ridge: Double-Descent-Peak (Fig. 2 rechts)',
+          font:{size:13,color:ridge?COL.good:COL.acc3}},
+      xaxis:{title:'Rang r der projizierten Einbettungen',type:'log'},
+      yaxis:{title:'MSE',type:'log',range:[-2.6,0.8]},
+      showlegend:true,legend:{x:0.62,y:0.98,bgcolor:'rgba(0,0,0,.45)',font:{size:10}}}),CFG);
+  }
+  document.getElementById('s11ridge').addEventListener('change',drawDD);
+  drawDD();
+})();
+
+/* =======================================================================
+   S12 · LANDKARTE
+   ======================================================================= */
+(function(){
+  const STATES = [
+    ['ME',45.3,-69.2],['NH',43.7,-71.6],['VT',44.1,-72.7],['MA',42.3,-71.8],['RI',41.7,-71.6],
+    ['CT',41.6,-72.7],['NY',42.9,-75.5],['NJ',40.2,-74.7],['PA',40.9,-77.8],['DE',39.0,-75.5],
+    ['MD',39.0,-76.8],['VA',37.5,-78.8],['WV',38.6,-80.6],['NC',35.5,-79.4],['SC',33.9,-80.9],
+    ['GA',32.6,-83.4],['FL',28.6,-82.4],['WI',44.6,-89.9],['MI',44.3,-85.4],['IL',40.0,-89.2],
+    ['IN',39.9,-86.3],['OH',40.3,-82.8],['KY',37.5,-85.3],['TN',35.8,-86.4],['AL',32.8,-86.8],
+    ['MS',32.7,-89.7],['LA',31.1,-92.0],['AR',34.8,-92.4],['MO',38.4,-92.5],['IA',42.1,-93.5],
+    ['MN',46.3,-94.3],['ND',47.4,-100.5],['SD',44.4,-100.2],['NE',41.5,-99.8],['KS',38.5,-98.4],
+    ['OK',35.6,-97.5],['TX',31.5,-99.3],['NM',34.4,-106.1],['AZ',34.2,-111.7],['UT',39.3,-111.7],
+    ['CO',39.0,-105.5],['WY',43.0,-107.6],['MT',47.0,-109.6],['ID',44.4,-114.6],['WA',47.4,-120.4],
+    ['OR',43.9,-120.6],['NV',39.3,-116.6],['CA',37.2,-119.5]
+  ];
+  let curMode=1;
+  const INFO={
+    1:'Die <b>erste Mode</b> ist der langsamste räumliche Gradient — meist eine Ost‑West‑Trennung. Alle 48 Staaten variieren glatt entlang dieser einen Richtung.',
+    2:'Die <b>zweite Mode</b> steht senkrecht dazu: ein Nord‑Süd‑Gradient. Zusammen mit Mode 1 spannen sie die Landkarte auf — daher kann eine lineare Sonde Länge und Breite auslesen.',
+    3:'Die <b>dritte Mode</b> ist die erste zweidimensionale Oberschwingung: sie wechselt zweimal das Vorzeichen. Wie die zweite Schwingungsmode eines Trommelfells.',
+    4:'Die <b>vierte Mode</b> hat noch feinere Struktur. Solche höheren Moden erhöhen die räumliche Auflösung beim Dekodieren — der Fehler fällt bei D = 2 aber nur wie 1/√r [[11]].'
+  };
+  function drawMap(){
+    const sig=+document.getElementById('s12sig').value;
+    const n=STATES.length;
+    const M=[];
+    for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++){
+      const dx=STATES[i][1]-STATES[j][1], dy=STATES[i][2]-STATES[j][2];
+      const d=Math.sqrt(dx*dx+0.78*dy*dy);
+      r.push(10*Math.exp(-d/sig));
+    } M.push(r);}
+    const E=jacobiEigen(centerMatrix(M));
+    const vals=E.vectors[curMode-1];
+    const mx=Math.max(...vals.map(Math.abs))||1;
+    Plotly.react('s12map',[{
+      type:'scatter', mode:'markers+text',
+      x:STATES.map(s=>s[2]), y:STATES.map(s=>s[1]),
+      text:STATES.map(s=>s[0]), textposition:'middle center',
+      textfont:{size:8,color:'rgba(255,255,255,0.9)'},
+      marker:{size:24,color:vals,cmin:-mx,cmax:mx,colorscale:CS_MODE,showscale:true,
+        colorbar:{title:{text:'φ'+curMode,side:'right',font:{size:10}},thickness:10,len:0.75},
+        line:{color:'rgba(255,255,255,0.2)',width:1}},
+      customdata:vals,
+      hovertemplate:'%{text}<br>φ = %{customdata:.3f}<extra></extra>'
+    }], L({title:{text:`Eigenmode ${curMode} · λ = ${E.values[curMode-1].toFixed(2)} · σ = ${sig}`,font:{size:12}},
+      xaxis:{title:'Längengrad'},yaxis:{title:'Breitengrad',scaleanchor:'x',scaleratio:1.28}}),CFG);
+    document.getElementById('s12info').innerHTML=INFO[curMode];
+  }
+  bind('s12sig','v12s',f1,drawMap);
+  grp('s12mb', d=>{curMode=+d.m; drawMap();});
+  drawMap();
+
+  /* 2D plane waves */
+  function draw2D(){
+    const nx=+document.getElementById('s12nx').value;
+    const ny=+document.getElementById('s12ny').value;
+    const sig=+document.getElementById('s12sig2').value;
+    const N=46, X=[],Y=[],Z=[];
+    for(let i=0;i<N;i++){
+      const rowX=[],rowY=[],rowZ=[];
+      for(let j=0;j<N;j++){
+        const x=-1+2*i/(N-1), y=-1+2*j/(N-1);
+        rowX.push(x); rowY.push(y);
+        rowZ.push(Math.cos(Math.PI*nx*x)*Math.cos(Math.PI*ny*y));
+      }
+      X.push(rowX);Y.push(rowY);Z.push(rowZ);
+    }
+    Plotly.react('s12wave',[{z:Z,x:X[0],y:Y.map(r=>r[0]),type:'heatmap',
+      colorscale:CS_MODE,zmid:0,showscale:false,
+      hovertemplate:'x=%{x:.2f}, y=%{y:.2f}<br>φ=%{z:.3f}<extra></extra>'}],
+      L({title:{text:`Mode (nₓ=${nx}, n_y=${ny}) · cos(${nx}πx)·cos(${ny}πy)`,font:{size:11}},
+        margin:{l:40,r:10,t:28,b:36},
+        xaxis:{title:'x'},yaxis:{title:'y',scaleanchor:'x'}}),CFG);
+
+    // Eingebettete Fläche: 2D-Gitter in PC1/PC2/PC3
+    const G=13, SX=[],SY=[],SZ=[];
+    const a1=Math.sqrt(2*sig/(1+sig*sig*Math.PI*Math.PI));
+    const a2=Math.sqrt(2*sig/(1+sig*sig*4*Math.PI*Math.PI));
+    for(let i=0;i<G;i++){
+      const rx=[],ry=[],rz=[];
+      for(let j=0;j<G;j++){
+        const x=-1+2*i/(G-1), y=-1+2*j/(G-1);
+        rx.push(a1*Math.sin(Math.PI*x/2*1.6));
+        ry.push(a1*Math.sin(Math.PI*y/2*1.6));
+        rz.push(a2*(Math.cos(Math.PI*x)+Math.cos(Math.PI*y))*0.5);
+      }
+      SX.push(rx);SY.push(ry);SZ.push(rz);
+    }
+    Plotly.react('s12sheet',[{type:'surface',x:SX,y:SY,z:SZ,
+      colorscale:CS_SEQ,showscale:false,opacity:0.92,
+      contours:{x:{show:true,color:'rgba(255,255,255,.25)',width:1},
+                y:{show:true,color:'rgba(255,255,255,.25)',width:1}},
+      hovertemplate:'PC1=%{x:.2f}<br>PC2=%{y:.2f}<br>PC3=%{z:.2f}<extra></extra>'}],
+      L({scene:{
+        xaxis:{title:'PC 1',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        yaxis:{title:'PC 2',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        zaxis:{title:'PC 3',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        camera:{eye:{x:1.6,y:1.3,z:0.9}},aspectmode:'cube'},
+      margin:{l:0,r:0,t:8,b:0}}),CFG3D);
+  }
+  bind('s12nx','v12nx',f0,draw2D);
+  bind('s12ny','v12ny',f0,draw2D);
+  bind('s12sig2','v12s2',f2,draw2D);
+  draw2D();
+})();
+
+/* =======================================================================
+   S13 · ROBUSTHEIT
+   ======================================================================= */
+(function(){
+  /* --- Ablation --- */
+  function drawAbl(){
+    const abl=document.getElementById('s13abl').checked;
+    const d=+document.getElementById('s13d').value;
+    const H=+document.getElementById('s13h').value;
+    const V=25000;
+    // Qualität der Kreisgeometrie
+    let quality;
+    if(!abl) quality=1;
+    else {
+      // bei d=V exakt 0, bei mittlerem d hoch, wenn genug Helferwörter
+      const helperSupport = 1-Math.exp(-H/9);
+      const dimPenalty = Math.max(0, 1-Math.pow(d/V, 0.55));
+      quality = helperSupport*dimPenalty;
+    }
+    const x=[],y=[],c=[];
+    for(let i=0;i<12;i++){
+      const t=TAU*i/12;
+      // Rauschanteil wächst, wenn quality klein
+      const noise=(1-quality);
+      const rr=1+0.1*Math.sin(3.1*i);
+      const jx=Math.sin(i*12.9898)*43758.5453, jy=Math.sin(i*78.233)*12345.6789;
+      const rx=(jx-Math.floor(jx))*2-1, ry=(jy-Math.floor(jy))*2-1;
+      x.push(quality*rr*Math.cos(t)+noise*rx*1.1);
+      y.push(quality*rr*Math.sin(t)+noise*ry*1.1);
+      c.push(rainbow(i/12));
+    }
+    const tr=[];
+    if(quality>0.45) tr.push({x:[...x,x[0]],y:[...y,y[0]],mode:'lines',
+      line:{color:'rgba(100,224,255,.25)',width:2},hoverinfo:'skip'});
+    tr.push({x,y,mode:'markers+text',text:MONTHS,textposition:'top center',
+      textfont:{size:10,color:COL.txt},
+      marker:{size:13,color:c,line:{color:'rgba(255,255,255,.3)',width:1}},
+      hovertemplate:'%{text}<extra></extra>'});
+    Plotly.react('s13plot',tr,L({
+      title:{text: !abl ? 'Original: sauberer Kreis'
+              : (quality>0.6?'Trotz Ablation: der Kreis ist zurück ✓'
+                 : quality>0.25?'Teilweise erhalten…':'Kreis zerstört ✗'),
+        font:{size:13,color: !abl?COL.good:(quality>0.6?COL.good:quality>0.25?COL.warm:COL.bad)}},
+      xaxis:{range:[-2.2,2.2],showticklabels:false},
+      yaxis:{range:[-2.2,2.2],showticklabels:false,scaleanchor:'x'}}),CFG);
+    document.getElementById('s13info').innerHTML =
+      `Ablation: <b>${abl?'AN':'aus'}</b> · d = <b>${d}</b> (von V = 25 000) · Helferwörter H = <b>${H}</b><br>`+
+      `Geometriequalität: <b style="color:${quality>0.6?'#5ef0b0':quality>0.25?'#ffb45c':'#ff6b7a'}">${(100*quality).toFixed(0)}%</b><br>`+
+      (abl
+        ? (d>15000 ? '<span style="color:#ff6b7a">d ≈ V: Die Gram-Matrix reproduziert die genullte Statistik exakt — kein Kreis.</span>'
+          : H<3 ? '<span style="color:#ff6b7a">Zu wenige saisonale Helferwörter, um die Reihenfolge zu rekonstruieren.</span>'
+          : '<span style="color:#5ef0b0">d ≪ V: Nur die größten Eigenmoden überleben — und die tragen viele Wörter.</span>')
+        : 'Ungestörte Statistik.');
+  }
+  document.getElementById('s13abl').addEventListener('change',drawAbl);
+  bind('s13d','v13d',f0,drawAbl);
+  bind('s13h','v13h',f0,drawAbl);
+  drawAbl();
+
+  /* --- Helferwörter --- */
+  const SEASONAL = ['winter','ski','ostern','blume','frühling','sommer','hurrikan','herbst','halloween','weihnachten'];
+  function drawHelpers(){
+    const H=+document.getElementById('s13h2').value;
+    const nonseas=document.getElementById('s13nonseas').checked;
+    const names=[];
+    for(let h=0;h<H;h++){
+      names.push(nonseas ? ('zahl '+(h+1)) : (h<SEASONAL.length?SEASONAL[h]:'saison '+(h+1)));
+    }
+    // Kopplungsmatrix 12 x H
+    const Z=[];
+    for(let h=0;h<H;h++){
+      const row=[];
+      const phase = nonseas ? 0 : TAU*h/H;
+      for(let m=0;m<12;m++){
+        const t=TAU*m/12;
+        row.push(nonseas ? 0.02*Math.sin(m*3.7+h) : 0.8*Math.cos(t-phase));
+      }
+      Z.push(row);
+    }
+    Plotly.react('s13couple',[{z:Z,x:MONTHS,y:names,type:'heatmap',
+      colorscale:CS_MODE,zmid:0,
+      colorbar:{thickness:9,len:0.85,title:{text:'PMI',side:'right',font:{size:10}}},
+      hovertemplate:'%{y} ↔ %{x}<br>%{z:.3f}<extra></extra>'}],
+      L({title:{text:nonseas?'Kopplung: unsaisonale Wörter (kein Signal)':'Kopplung: saisonale Wörter',
+          font:{size:12,color:nonseas?COL.bad:COL.good}},
+        margin:{l:92,r:12,t:28,b:36},
+        xaxis:{tickfont:{size:9}},yaxis:{tickfont:{size:9}}}),CFG);
+
+    // Rekonstruktion: M_rec = Z^T Z  (Monate x Monate), dann PCA
+    const Mr=[];
+    for(let i=0;i<12;i++){const r=[];for(let j=0;j<12;j++){
+      let s=0; for(let h=0;h<H;h++) s+=Z[h][i]*Z[h][j];
+      r.push(i===j?0:s);   // Monat-Monat-Block bleibt genullt (Diagonale egal)
+    } Mr.push(r);}
+    const E=jacobiEigen(centerMatrix(Mr));
+    const x=[],y=[];
+    for(let i=0;i<12;i++){
+      x.push(E.vectors[0][i]*Math.sqrt(Math.abs(E.values[0])));
+      y.push(E.vectors[1][i]*Math.sqrt(Math.abs(E.values[1])));
+    }
+    // Ordnungsmaß: wie gut ist die zyklische Reihenfolge?
+    let ordered=true, prev=null, wraps=0;
+    const ang=x.map((v,i)=>Math.atan2(y[i],v));
+    for(let i=0;i<12;i++){
+      const a=ang[i];
+      if(prev!==null){ let d=a-prev; while(d<-Math.PI)d+=TAU; while(d>Math.PI)d-=TAU;
+        if(d<0) wraps++; }
+      prev=a;
+    }
+    const good = (wraps<=1 || wraps>=11) && !nonseas && H>=3;
+    const tr=[];
+    if(good) tr.push({x:[...x,x[0]],y:[...y,y[0]],mode:'lines',
+      line:{color:'rgba(94,240,176,.3)',width:2},hoverinfo:'skip'});
+    tr.push({x,y,mode:'markers+text',text:MONTHS,textposition:'top center',
+      textfont:{size:10,color:COL.txt},
+      marker:{size:13,color:MONTHS.map((_,i)=>rainbow(i/12)),
+        line:{color:'rgba(255,255,255,.3)',width:1}},
+      hovertemplate:'%{text}<extra></extra>'});
+    Plotly.react('s13recon',tr,L({
+      title:{text: good?`Rekonstruktion gelungen — korrekte Monatsreihenfolge (H = ${H})`
+                       :`Rekonstruktion gescheitert — keine Ordnung erkennbar`,
+        font:{size:12,color:good?COL.good:COL.bad}},
+      xaxis:{showticklabels:false},yaxis:{showticklabels:false,scaleanchor:'x'}}),CFG);
+    document.getElementById('s13rinfo').innerHTML = good
+      ? `<span style="color:#5ef0b0">✓ Mit ${H} saisonalen Wörtern wird die zyklische Ordnung korrekt wiederhergestellt — obwohl kein einziger Monat je mit einem anderen Monat gemeinsam auftrat.</span>`
+      : `<span style="color:#ff6b7a">✗ ${nonseas?'Zahlwörter haben keine Jahreszeit-Phase. Sie können nichts verraten.':'Zu wenige Helferwörter.'}</span>`;
+  }
+  bind('s13h2','v13h2',f0,drawHelpers);
+  document.getElementById('s13nonseas').addEventListener('change',drawHelpers);
+  drawHelpers();
+
+  /* --- Latentes Variablenmodell --- */
+  tex(document.getElementById('s13math'),
+    `P(i\\mid t)=P(i)\\bigl(1+g(t-t_i)\\bigr)\\;\\Longrightarrow\\;
+     \\mathrm{PMI}(i,j)=\\log\\bigl(1+\\tilde K(t_i-t_j)\\bigr)`);
+  function drawLatent(){
+    const w=+document.getElementById('s13g').value;
+    const amp=+document.getElementById('s13amp').value;
+    const N=+document.getElementById('s13N').value;
+    const ts=[]; for(let t=-1;t<=1.0001;t+=0.005) ts.push(t);
+    const gfun=(u)=>{
+      let uu=u; while(uu>1)uu-=2; while(uu<-1)uu+=2;
+      return amp*(Math.exp(-(uu*uu)/(2*w*w))-w*Math.sqrt(TAU)/2);
+    };
+    const tr=[];
+    const show=Math.min(6,N);
+    for(let i=0;i<show;i++){
+      const ti=-1+2*i/show;
+      tr.push({x:ts,y:ts.map(t=>gfun(t-ti)),mode:'lines',
+        line:{color:rainbow(i/show),width:2},name:'Wort '+(i+1),
+        hovertemplate:'t=%{x:.2f}<br>g=%{y:.3f}<extra></extra>'});
+    }
+    Plotly.react('s13g1',tr,L({title:{text:'Saisonale Modulation g(t − tᵢ) einiger Wörter',font:{size:11}},
+      margin:{l:44,r:10,t:26,b:34},showlegend:false,
+      xaxis:{title:'Jahreszeit t'},yaxis:{title:'g'}}),CFG);
+
+    // Autokorrelation + Spektrum
+    const dl=[],Kv=[];
+    for(let D=-1;D<=1.0001;D+=0.01){
+      let s=0,c=0;
+      for(let u=-1;u<=1;u+=0.01){ s+=gfun(u)*gfun(u+D); c++; }
+      dl.push(D); Kv.push(Math.log(1+Math.max(-0.95,s/c)));
+    }
+    const ks=[],mu=[];
+    for(let k=1;k<=10;k++){
+      let s=0;
+      for(let idx=0;idx<dl.length;idx++) s+=Kv[idx]*Math.cos(Math.PI*k*dl[idx]);
+      ks.push(k); mu.push(Math.abs(s/dl.length)*N);
+    }
+    Plotly.react('s13g2',[
+      {x:dl,y:Kv,mode:'lines',line:{color:COL.acc,width:2.4},name:'K(Δ)',
+       xaxis:'x',yaxis:'y',hovertemplate:'Δ=%{x:.2f}<br>K=%{y:.3f}<extra></extra>'},
+      {type:'bar',x:ks,y:mu,marker:{color:ks.map(k=>rainbow(0.1+0.7*k/10))},
+       xaxis:'x2',yaxis:'y2',hovertemplate:'k=%{x}<br>μ=%{y:.2f}<extra></extra>'}
+    ], L({grid:{rows:1,columns:2,pattern:'independent'},
+      title:{text:`Autokorrelation K(Δ) und Spektrum μₖ ∝ N = ${N}`,font:{size:11}},
+      margin:{l:44,r:12,t:28,b:36},showlegend:false,
+      xaxis:{title:'Δ',domain:[0,0.46]},yaxis:{title:'K'},
+      xaxis2:{title:'k',domain:[0.58,1],dtick:1,tickfont:{size:9}},yaxis2:{title:'μₖ'}}),CFG);
+  }
+  bind('s13g','v13g',f2,drawLatent);
+  bind('s13amp','v13amp',f2,drawLatent);
+  bind('s13N','v13N',f0,drawLatent);
+  drawLatent();
+
+  /* --- Eigenlücke vs. Störung --- */
+  function drawGap(){
+    const N=+document.getElementById('s13N2').value;
+    const Ns=[],gap=[],pert=[];
+    for(let n=12;n<=400;n+=4){
+      Ns.push(n); gap.push(0.045*n); pert.push(2.2);
+    }
+    Plotly.react('s13gap',[
+      {x:Ns,y:gap,mode:'lines',line:{color:COL.acc,width:3},name:'Eigenwertlücke ∝ N',
+       hovertemplate:'N=%{x}<br>Lücke=%{y:.2f}<extra></extra>'},
+      {x:Ns,y:pert,mode:'lines',line:{color:COL.bad,width:3,dash:'dash'},name:'Störung (12×12 Einträge)',
+       hovertemplate:'konstant %{y:.2f}<extra></extra>'},
+      {x:[N,N],y:[0,20],mode:'lines',line:{color:'rgba(255,180,92,.6)',width:2,dash:'dot'},
+       name:`aktuell N = ${N}`,hoverinfo:'skip'},
+      {x:Ns.filter((n,i)=>gap[i]>pert[i]),y:Ns.filter((n,i)=>gap[i]>pert[i]).map(()=>0),
+       mode:'lines',line:{color:'rgba(94,240,176,0)'},showlegend:false,hoverinfo:'skip'}
+    ], L({title:{text: 0.045*N>2.2
+          ? `✓ Bei N = ${N} ist die Lücke ${(0.045*N/2.2).toFixed(1)}× größer als die Störung → Eigenvektoren bleiben stabil`          : `✗ Bei N = ${N} ist die Störung noch vergleichbar groß — die Eigenvektoren können kippen`,
+        font:{size:12,color: 0.045*N>2.2?COL.good:COL.bad}},
+      xaxis:{title:'Vokabulargröße N (Anzahl saisonaler Wörter)'},
+      yaxis:{title:'Größe',range:[0,20]},
+      showlegend:true,legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,.4)',font:{size:10}}}),CFG);
+  }
+  bind('s13N2','v13N2',f0,drawGap);
+  drawGap();
+})();
+
+/* =======================================================================
+   S14 · SYNTHESE
+   ======================================================================= */
+(function(){
+  function draw(){
+    const sig=+document.getElementById('s14sig').value;
+    const n=+document.getElementById('s14n').value;
+    const nz=+document.getElementById('s14noise').value;
+    // Kern
+    const dx=[],dy=[];
+    for(let d=0;d<=n/2;d+=0.05){ dx.push(d); dy.push(Math.exp(-d/sig)); }
+    Plotly.react('s14a',[{x:dx,y:dy,mode:'lines',fill:'tozeroy',
+      line:{color:COL.acc3,width:3},fillcolor:'rgba(255,122,184,.12)',hovertemplate:'Δ=%{x:.1f}<br>%{y:.3f}<extra></extra>'}],
+      L({title:{text:'① Kern C(Δx) aus der Sprachstatistik',font:{size:12}},
+        margin:{l:44,r:12,t:30,b:36},xaxis:{title:'Abstand Δ'},yaxis:{title:'C'}}),CFG);
+    // Matrix mit Rauschen
+    const M=[];
+    const rnd=(i,j)=>{const s=Math.sin(i*127.1+j*311.7)*43758.5453;return (s-Math.floor(s))*2-1;};
+    for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++){
+      const d=cyclicDist(i,j,n);
+      r.push(Math.exp(-d/sig)+nz*0.5*(rnd(Math.min(i,j),Math.max(i,j))));
+    } M.push(r);}
+    Plotly.react('s14b',[{z:M,type:'heatmap',colorscale:CS_SEQ,showscale:false,
+      hovertemplate:'i=%{y}, j=%{x}<br>%{z:.3f}<extra></extra>'}],
+      L({title:{text:'② Zirkulante Matrix M*',font:{size:12}},
+        margin:{l:40,r:12,t:30,b:30},
+        xaxis:{showticklabels:false},yaxis:{showticklabels:false,autorange:'reversed',scaleanchor:'x'}}),CFG);
+    // Spektrum
+    const E=jacobiEigen(centerMatrix(M));
+    Plotly.react('s14c',[{type:'bar',x:E.values.slice(0,12).map((_,i)=>i+1),
+      y:E.values.slice(0,12),
+      marker:{color:E.values.slice(0,12).map((_,i)=>i<2?COL.acc:i<4?COL.acc2:'rgba(130,140,170,.5)')},
+      hovertemplate:'Mode %{x}<br>λ=%{y:.3f}<extra></extra>'}],
+      L({title:{text:'③ Spektrum — die ersten zwei dominieren',font:{size:12}},
+        margin:{l:46,r:12,t:30,b:38},xaxis:{title:'Mode',dtick:1,tickfont:{size:9}},yaxis:{title:'λ'}}),CFG);
+    // Geometrie
+    const x=[],y=[],c=[];
+    for(let i=0;i<n;i++){
+      x.push(E.vectors[0][i]*Math.sqrt(Math.abs(E.values[0])));
+      y.push(E.vectors[1][i]*Math.sqrt(Math.abs(E.values[1])));
+      c.push(rainbow(i/n));
+    }
+    Plotly.react('s14d',[
+      {x:[...x,x[0]],y:[...y,y[0]],mode:'lines',line:{color:'rgba(100,224,255,.28)',width:2},hoverinfo:'skip'},
+      {x,y,mode:'markers',marker:{size:10,color:c,line:{color:'rgba(255,255,255,.3)',width:1}},
+       text:x.map((_,i)=>'Element '+(i+1)),hovertemplate:'%{text}<extra></extra>'}
+    ], L({title:{text: nz<0.1?'④ Ergebnis: ein sauberer Kreis':nz<0.3?'④ Kreis mit Störungen':'④ Symmetrie gebrochen — Kreis zerfällt',
+          font:{size:12,color:nz<0.1?COL.good:nz<0.3?COL.warm:COL.bad}},
+        margin:{l:40,r:12,t:30,b:30},
+        xaxis:{showticklabels:false},yaxis:{showticklabels:false,scaleanchor:'x'}}),CFG);
+  }
+  bind('s14sig','v14s',f2,draw);
+  bind('s14n','v14n',f0,draw);
+  bind('s14noise','v14nz',f2,draw);
+  draw();
+
+  /* Finales Sandbox-Werkzeug */
+  let fbc='per', fkk='exp';
+  function drawFinal(){
+    const sig=+document.getElementById('s14fsig').value;
+    const n=+document.getElementById('s14fn').value;
+    const m3=+document.getElementById('s14fm').value;
+    const M=buildMatrix(n,sig,fkk,fbc==='per');
+    const E=jacobiEigen(centerMatrix(M));
+    const X=[],Y=[],Z=[],C=[],T=[];
+    for(let i=0;i<n;i++){
+      X.push(E.vectors[0][i]*Math.sqrt(Math.abs(E.values[0])));
+      Y.push(E.vectors[1][i]*Math.sqrt(Math.abs(E.values[1])));
+      Z.push(E.vectors[m3-1][i]*Math.sqrt(Math.abs(E.values[m3-1])));
+      C.push(rainbow(i/(n-1)));
+      T.push('Element '+(i+1));
+    }
+    const lx=[...X],ly=[...Y],lz=[...Z];
+    if(fbc==='per'){lx.push(X[0]);ly.push(Y[0]);lz.push(Z[0]);}
+    Plotly.react('s14final',[
+      {type:'scatter3d',mode:'lines',x:lx,y:ly,z:lz,
+       line:{color:COL.acc,width:5},hoverinfo:'skip'},
+      {type:'scatter3d',mode:'markers',x:X,y:Y,z:Z,
+       marker:{size:6,color:C,line:{color:'rgba(255,255,255,.3)',width:0.5}},
+       text:T,hovertemplate:'%{text}<extra></extra>'}
+    ], L({scene:{
+        xaxis:{title:'PC 1',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        yaxis:{title:'PC 2',gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        zaxis:{title:'PC '+m3,gridcolor:COL.grid,backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+        camera:{eye:{x:1.55,y:1.35,z:0.95}},aspectmode:'cube'},
+      margin:{l:0,r:0,t:8,b:0}}),CFG3D);
+  }
+  grp('s14bc', d=>{fbc=d.b; drawFinal();});
+  grp('s14kk', d=>{fkk=d.k; drawFinal();});
+  bind('s14fsig','v14fs',f2,drawFinal);
+  bind('s14fn','v14fn',f0,drawFinal);
+  bind('s14fm','v14fm',f0,drawFinal);
+  drawFinal();
+})();
+
+/* =======================================================================
+   RESIZE-HANDLER
+   ======================================================================= */
+window.addEventListener('resize', ()=>{
+  document.querySelectorAll('.plot').forEach(el=>{
+    if(el.data) Plotly.Plots.resize(el);
+  });
+});
+</script>
+</body>
+</html>
