@@ -1445,7 +1445,7 @@ const PipelineKit = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	function drawDense(ctx, x, y, w, h, a) {
+	function drawDense(ctx, x, y, w, h, a, showFeat) {
 		if (a < 0.01) return;
 		ctx.globalAlpha = a;
 		ctx.fillStyle = '#f8fafc';
@@ -1455,7 +1455,6 @@ const PipelineKit = (() => {
 		const cols = 5, rows = 9;
 		const dx0 = x + 20, dy0 = y + 22;
 		const ddx = (w - 40) / (cols - 1), ddy = (h - 62) / (rows - 1);
-		// Farbiges Punktraster (Blau → Violett), nicht grau.
 		for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
 			const hue = 205 + ((r * cols + c) / (rows * cols - 1)) * 110;
 			ctx.fillStyle = `hsl(${hue}, 42%, 72%)`;
@@ -1463,20 +1462,20 @@ const PipelineKit = (() => {
 			ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
 			ctx.fill();
 		}
-		// Hervorgehobene Punkte: dort, wo Augen, Nase und Mund
-		// (die Layer-2-Strukturen) in den Dense-Layer fließen.
-		const feat = [[1, 1], [1, 3], [4, 2], [6, 2]];
-		for (const [r, c] of feat) {
-			const cx = dx0 + c * ddx, cy = dy0 + r * ddy;
-			const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, 9);
-			g.addColorStop(0, 'rgba(76,175,80,.5)');
-			g.addColorStop(1, 'rgba(76,175,80,0)');
-			ctx.fillStyle = g;
-			ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fill();
-			ctx.fillStyle = '#4caf50';
-			ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
-			ctx.strokeStyle = '#2e7d32'; ctx.lineWidth = 1.5;
-			ctx.stroke();
+		if (showFeat) {
+			const feat = [[1, 1], [1, 3], [4, 2], [6, 2]];
+			for (const [r, c] of feat) {
+				const cx = dx0 + c * ddx, cy = dy0 + r * ddy;
+				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, 9);
+				g.addColorStop(0, 'rgba(76,175,80,.5)');
+				g.addColorStop(1, 'rgba(76,175,80,0)');
+				ctx.fillStyle = g;
+				ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fill();
+				ctx.fillStyle = '#4caf50';
+				ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
+				ctx.strokeStyle = '#2e7d32'; ctx.lineWidth = 1.5;
+				ctx.stroke();
+			}
 		}
 		ctx.fillStyle = '#475569';
 		ctx.font = '700 15px Inter, system-ui, sans-serif';
@@ -1606,8 +1605,9 @@ const PipelineKit = (() => {
 			}
 		}
 
-		// Dense
-		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense);
+		// Dense — Feature-Punkte nur im Ziel/Trainings-Zustand, nicht bei "reiner Zufall"
+		const showFeat = !(o.step === 3 || o.step === 5);
+		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense, showFeat);
 
 		// Ausgabe-Neuronen (Katze oben, Hund unten) — im Training folgt die
 		// Hot-Markierung dem aktuellen Eingangs-Bild (Katze oder Hund).
