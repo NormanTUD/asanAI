@@ -2524,6 +2524,56 @@ window.bibData = {
 		url: "https://transformer-circuits.pub/2025/attribution-graphs/methods.html",
 		alternativetitle: "Circuit Tracing"
 	},
+	/* ── Known Directions / representation steering (mechanistic_interpretability.php) ──── */
+	"arditi2024refusal": {
+		title: "Refusal in Language Models Is Mediated by a Single Direction",
+		author: "Andy Arditi, Oscar Obeso, Aaquib Syed, Daniel Paleka, Nina Panickssery, Wes Gurnee, Neel Nanda",
+		year: 2024,
+		url: "https://arxiv.org/abs/2406.11717",
+		alternativetitle: "Refusal Is Mediated by a Single Direction"
+	},
+	"azizian2025geometries": {
+		title: "The Geometries of Truth Are Orthogonal Across Tasks",
+		author: "Waiss Azizian, Michael Kirchhof, Eugene Ndiaye, Louis Bethune, Michal Klein, Pierre Ablin, Marco Cuturi",
+		year: 2025,
+		url: "https://arxiv.org/abs/2506.08572",
+		alternativetitle: "Geometries of Truth Are Orthogonal Across Tasks"
+	},
+	"ackerman2024representationtuning": {
+		title: "Representation Tuning",
+		author: "Christopher M. Ackerman",
+		year: 2024,
+		url: "https://arxiv.org/abs/2409.06927",
+		alternativetitle: "Representation Tuning"
+	},
+	"huang2026insecure": {
+		title: "Language Models Are \u201cInsecure\u201d Reporters",
+		author: "Jenny Y. Huang, Jiameng Fan, Ahmed Imtiaz Humayun, Maximillian Chen, Tian Qin, Run Chen, Vidhya Navalpakkam, Hongxiang Gu",
+		year: 2026,
+		url: "https://arxiv.org/abs/2609.36139",
+		alternativetitle: "Insecure Reporters"
+	},
+	"turner2023activation": {
+		title: "Steering Language Models With Activation Engineering",
+		author: "Alexander Matt Turner, Lisa Thiergart, Gavin Leech, David Udell, Juan J. Vazquez, Ulisse Mini, Monte MacDiarmid",
+		year: 2023,
+		url: "https://arxiv.org/abs/2308.10248",
+		alternativetitle: "Activation Engineering (ActAdd)"
+	},
+	"kone2024style": {
+		title: "Style Vectors for Steering Generative Large Language Model",
+		author: "Kai Konen, Sophie Jentzsch, Diaoulé Diallo, Peer Schütt, Oliver Bensch, Roxanne El Baff, Dominik Opitz, Tobias Hecking",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.01618",
+		alternativetitle: "Style Vectors for Steering LLMs"
+	},
+	"gurnee2023spacetime": {
+		title: "Language Models Represent Space and Time",
+		author: "Wes Gurnee, Max Tegmark",
+		year: 2023,
+		url: "https://arxiv.org/abs/2310.02207",
+		alternativetitle: "Language Models Represent Space and Time"
+	},
 	"shannon1937switching": {
 		title: "A Symbolic Analysis of Relay and Switching Circuits",
 		author: "Claude Elwood Shannon",
