@@ -223,10 +223,6 @@
         <div class="fragment formula-box">
             <div class="math-display">$$\text{Netz}(\text{Bild}) = \text{dense}\bigl(\text{flatten}(\text{conv2d}(\text{Bild}))\bigr)$$</div>
         </div>
-
-        <div class="fragment" style="text-align:center;">
-            Für dich jetzt im <b>Abstrakten</b> — jetzt gehen wir jeden Baustein einzeln durch.
-        </div>
     </div>
 </div>
 <!-- ============================================================
@@ -250,6 +246,11 @@
                 <div class="conv-matrix" id="conv-matrix">
                     <div class="math-display">$$\begin{pmatrix} \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \begin{pmatrix} 122 \\ 82 \\ 56 \end{pmatrix} &amp; \cdots \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots \end{pmatrix}$$</div>
                     <div class="conv-matrix-cap">(32, 32, 3) · je Pixel ein RGB-Triplett</div>
+                </div>
+                <div id="conv-f-annot">
+                    <span class="f-paren left">f(</span>
+                    <span class="f-label">Matrix</span>
+                    <span class="f-paren right">)</span>
                 </div>
             </div>
 
@@ -499,8 +500,8 @@
 
         <div class="key-insight fragment" data-nofast>
             <b>Deshalb zählt die Datenqualität:</b> Das Netz nimmt den <b>einfachsten
-            Weg</b> zur Antwort. Was wir ihm zeigen, bestimmt, <b>worauf es achtet</b>
-            — auch auf Merkmale, die mit dem Ziel nichts zu tun haben.
+            Weg</b> zur Antwort. Es weiß nichts über unser Ziel — es sieht nur die Daten.
+            Was wir ihm zeigen, bestimmt, <b>worauf es achtet</b>.
         </div>
     </div>
 </div>

@@ -948,6 +948,25 @@ body.sel-mode .sel-check { display: inline-flex; }
 	font: 600 13px ui-monospace, SFMono-Regular, Menlo, monospace;
 	color: #64748b;
 }
+#conv-f-annot {
+	position: absolute;
+	left: 72%;
+	top: calc(50% + 120px);
+	transform: translateX(-50%);
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity .45s ease;
+	font: italic 700 20px Georgia, serif;
+	color: #2563eb;
+}
+#conv-f-annot .f-paren { font-size: 28px; }
+#conv-f-annot .f-label {
+	font: italic 600 14px Georgia, serif;
+	color: #475569;
+}
 
 /* ============ FOLIE "Dense Layer" (T20): Szene A (NeuronIntro) ↔ Szene B (SpaceMorph) ============ */
 #dl-scene-wrap { position: relative; width: 100%; max-width: 1340px; margin: 14px auto 0; height: 640px; }

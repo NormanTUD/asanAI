@@ -74,6 +74,7 @@ const FlipClockViz = (() => {
     let VH = 56, COLH = 340;
     let offset = 0, lastT = 0, switchT = 0, raf = 0, running = false, inited = false;
     let switched = false, pendingSwitch = false;
+    let unswitching = false, unswitchT = 0;
 
     function build() {
         if (inited) return;
@@ -121,16 +122,19 @@ const FlipClockViz = (() => {
         if (!running) return;
         const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0;
         lastT = t;
-        if (pendingSwitch && !switched) { switched = true; switchT = t; pendingSwitch = false; }
+        if (pendingSwitch && !switched && !unswitching) { switched = true; switchT = t; pendingSwitch = false; }
 
-        // Cross-Morph (statisch → Stream) — nur nach advance. Die fixen
-        // Glyphen (f( / ) / =) werden nie angefasst und bleiben exakt gleich.
         let sOp = 1, cOp = 0, wOp = 0;
-        if (switched) {
+        if (unswitching) {
+            const el = t - unswitchT;
+            const p = el >= MORPH_DUR ? 1 : ease(el / MORPH_DUR);
+            sOp = p; cOp = 1 - p; wOp = 1 - p;
+            if (p >= 1) { unswitching = false; offset = 0; }
+        } else if (switched) {
             const el = t - switchT;
             const p = el >= MORPH_DUR ? 1 : ease(el / MORPH_DUR);
             sOp = 1 - p; cOp = p; wOp = p;
-            offset = (offset + dt / STEP_S) % PERIOD;   // Werte rollen
+            offset = (offset + dt / STEP_S) % PERIOD;
         }
         statics.forEach(s => { s.style.opacity = sOp.toFixed(3); });
         const ty = tyNow();
@@ -143,15 +147,28 @@ const FlipClockViz = (() => {
     }
 
     function canSwitch() {
-        if (switched) return false;
+        if (switched || unswitching) return false;
         const a = document.querySelector('.slide.active');
         return !!(a && a.id === 'slide-klassisch-vs-ki');
     }
     function advance() {
-        if (switched) return;
+        if (switched || unswitching) return;
         const a = document.querySelector('.slide.active');
         if (!a || a.id !== 'slide-klassisch-vs-ki') return;
         pendingSwitch = true;
+    }
+    function canGoPrev() {
+        if (!switched || unswitching) return false;
+        const a = document.querySelector('.slide.active');
+        return !!(a && a.id === 'slide-klassisch-vs-ki');
+    }
+    function prev() {
+        if (!switched || unswitching) return;
+        const a = document.querySelector('.slide.active');
+        if (!a || a.id !== 'slide-klassisch-vs-ki') return;
+        unswitching = true;
+        unswitchT = performance.now();
+        switched = false;
     }
 
     function start() {
@@ -169,7 +186,7 @@ const FlipClockViz = (() => {
     function stop() {
         running = false;
         if (raf) { cancelAnimationFrame(raf); raf = 0; }
-        switched = false; pendingSwitch = false; offset = 0;
+        switched = false; pendingSwitch = false; unswitching = false; offset = 0;
         statics.forEach(s => { s.style.opacity = ''; });
         tracks.forEach(track => { track.parentElement.style.opacity = ''; track.style.transform = ''; });
         if (win) win.style.opacity = '';
@@ -177,7 +194,7 @@ const FlipClockViz = (() => {
 
     window.addEventListener('resize', () => { if (inited) measure(); });
 
-    return { start, stop, advance, canSwitch };
+    return { start, stop, advance, canSwitch, canGoPrev, prev };
 })();
 /* ================================================================
     Neuron Intro Animation (Slide "Was sind Dense Layer?")

@@ -641,7 +641,11 @@ const ConvDemo = (() => {
 			{ k: 'Schritt 5', t: 'Das ganze Bild ist<br>eine <em>Zahlen-Matrix</em>.',
 			  p: '32 × 32 Pixel, jedes ein Triplett Rot · Grün · Blau',
 			  c: '<span class="kz-chip">(32, 32, 3)</span>',
-			  i: 'Ein Bild ist eine riesige Zahl-Matrix (32 × 32 × 3): jedes Pixel steckt als <b>RGB-Triplett</b> (Rot, Grün, Blau) drin. So „sieht" der Computer ein Foto — als reine Zahlen.' }
+			  i: 'Ein Bild ist eine riesige Zahl-Matrix (32 × 32 × 3): jedes Pixel steckt als <b>RGB-Triplett</b> (Rot, Grün, Blau) drin. So „sieht" der Computer ein Foto — als reine Zahlen.' },
+			{ k: 'Schritt 6', t: '<em>f(Bild)</em> = <em>f(Matrix)</em>.',
+			  p: 'Man kann das ganze Bild in eine Funktion packen',
+			  c: '<span class="kz-chip">(32, 32, 3)</span><span class="kz-arrow">→</span><span class="kz-chip">1 Zahl</span>',
+			  i: 'Das Bild <b>ist</b> die Matrix. <b>f(Bild)</b> und <b>f(Matrix)</b> sind dasselbe: eine Funktion, die das ganze Bild als Eingabe bekommt und etwas Neues daraus macht. Genau das machen die nächsten Schichten.' }
 		],
 
 		layoutFor(step, S) {
@@ -698,10 +702,11 @@ const ConvDemo = (() => {
 				});
 				tTagA = [0, 0, 0];
 				S.tGrayMix = 1;
-			} else if (step === 4) {
+			} else if (step === 4 || step === 5) {
 				// Farbiges Bild (links) + RGB-Matrix (LaTeX-HTML #conv-matrix,
 				// Opazität via onStep). Das Bild bleibt farbig — die Matrix
 				// zeigt exakt die (32,32,3)-Struktur, die es speichert.
+				// Schritt 5: zusätzlich f(Bild) / f(Matrix) Annotationen.
 				const cs = Math.min(H / KatzeKit.N * .6, W / KatzeKit.N * .34, 9);
 				const catW = KatzeKit.N * cs;
 				const x0 = Math.max(12, (W * 0.42 - catW) / 2);
@@ -712,13 +717,16 @@ const ConvDemo = (() => {
 				});
 				tTagA = [0, 0, 0];
 				S.tGrayMix = 0;
+				S.fAnnot = (step === 5);
 			}
 		},
 
 		onStep(step) {
 			// (Filter-Schritte leben jetzt in FilterDemo.)
 			const mEl = document.getElementById('conv-matrix');
-			if (mEl) mEl.style.opacity = step === 4 ? 1 : 0;
+			if (mEl) mEl.style.opacity = (step === 4 || step === 5) ? 1 : 0;
+			const fEl = document.getElementById('conv-f-annot');
+			if (fEl) fEl.style.opacity = step === 5 ? 1 : 0;
 		},
 
 		tick(dt, k, S, setFoot) {
@@ -748,7 +756,7 @@ const ConvDemo = (() => {
 				// Der Grün-Kanal (inst[PICK], grau) — Schritt 4.
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				drawGrayCat(ctx, S);
-			} else if (S.step === 4) {
+			} else if (S.step === 4 || S.step === 5) {
 				// Farbiges Bild (Komposit) — die RGB-Matrix (Schritt 5) ist
 				// ein HTML-Overlay (#conv-matrix), nicht auf dem Canvas.
 				KatzeKit.drawGrid(ctx, S.inst[0], 0, 0);
@@ -757,6 +765,21 @@ const ConvDemo = (() => {
 					ctx.globalAlpha = o4.a;
 					ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 					ctx.strokeRect(o4.x + .5, o4.y + .5, KatzeKit.N * o4.s - 1, KatzeKit.N * o4.s - 1);
+					ctx.globalAlpha = 1;
+				}
+				// Schritt 6: f(Bild) Annotation um das Bild zeichnen
+				if (S.step === 5 && o4.a > 0.02) {
+					const catW = KatzeKit.N * o4.s;
+					const cx = o4.x + catW / 2, cy = o4.y + catW / 2;
+					ctx.globalAlpha = o4.a * 0.9;
+					ctx.font = 'italic 700 28px Georgia, serif';
+					ctx.fillStyle = '#2563eb';
+					ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+					ctx.fillText('f(', o4.x - 24, cy);
+					ctx.fillText(')', o4.x + catW + 24, cy);
+					ctx.font = 'italic 700 16px Georgia, serif';
+					ctx.fillStyle = '#475569';
+					ctx.fillText('Bild', cx, o4.y + catW + 22);
 					ctx.globalAlpha = 1;
 				}
 			}

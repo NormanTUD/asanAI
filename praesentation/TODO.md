@@ -2,7 +2,13 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **5. Runde (Agent) — T36–T41 verifiziert & abgehakt.**
+> Letzte Aktualisierung: **6. Runde (Agent) — T42–T45.**
+> 1. **T42** `[x]` „Klassisch vs. KI": `prev` nach Morph geht jetzt zurück zu
+>    x² (Reverse-Morph via `unswitching`-State). 2. **T43** `[x]` Folie 6:
+>    „Für dich jetzt im Abstrakten…" entfernt. 3. **T44** `[x]` „Das Bild als
+>    Zahlen": neuer Schritt 6 „f(Bild) = f(Matrix)" — Canvas-Annotation um das
+>    Bild + HTML-Label unter der Matrix. 4. **T45** `[x]` „Alles idealisiert":
+>    „Es weiß nichts über unser Ziel — es sieht nur die Daten."
 > 1. **T36** `[x]` „Was sind Dense Layer?": weißer Raum oben — `#slide-dense-layer`
 >    trägt jetzt `style="background:#f8fafc;"` (inline, überschreibt `.slide`'s
 >    weißes CSS). 2. **T37** `[x]` „Klassisch vs. KI": persistentes Skelett
@@ -29,7 +35,7 @@
 
 ## Dateien die ich analysiert habe
 - `index.html` — 14 Folien, Reihenfolge unten.
-- `katze.js` — KatzeKit-Framework (Steps: k/t/p/c/i/f) + ConvDemo (Folie 7, 5 Schritte,
+- `katze.js` — KatzeKit-Framework (Steps: k/t/p/c/i/f) + ConvDemo (Folie 7, 6 Schritte,
   T8: RGB-Matrix als Schritt 5, blauer Pixel-Zoom raus),
   **FilterDemo (Folie 8, 4 Schritte, T9: aus ConvDemo herausgelöst)**,
   FlattenDemo (Folie 9, 2 Schritte), PipelineDemo (Folie 12, 8 Schritte),
@@ -49,7 +55,7 @@
 ## Folien-Reihenfolge (aktuell, index.html — 13 Folien)
 1. Titel · 2. Klassisch vs. KI · 3. Geschichte · **4. Was wir wollen** (Ziel, T29)
 · **5. Man arbeitet in Schichten** · **6. Drei Bausteine dafür** (T29) ·
-7. **Das Bild als Zahlen** (ConvDemo, 5 Schritte; Matrix → T30, Blaustapel → T38) ·
+7. **Das Bild als Zahlen** (ConvDemo, 6 Schritte; Matrix → T30, Blaustapel → T38) ·
 8. **Ein Filter ist ein Muster** (FilterDemo, 4 Schritte, T9) · 9. Flatten ·
 10. **Was sind Dense Layer?** (gemerged: NeuronIntro = Szene A + SpaceMorph =
 Szene B, T20; Egg-Szene endet mit dem Bild-Verweis, T40) ·
@@ -581,6 +587,36 @@ als Datei, wird nicht mehr geladen.
 - ✅ **Verifiziert (Runde 5):** `cdLock` in katze.js Zeile 1632; tick()-Logik
   (Zeilen 1748–1758) friert `cdT` auf Mitte des nächsten Katze-Blocks ein;
   95%-Fußtext erst bei `cdT >= cdLock`.
+
+### T42 · „Klassisch vs. KI": prev nach Morph zurück zu x²  `[x]`
+- **Problem:** Nach `advance()` (Cross-Morph zu Flip-Clock) ging „prev" nicht
+  zurück zu x², sondern direkt zu Folie 1 (FlipClockViz hatte keine
+  `canGoPrev`/`prev`-Methode).
+- **Fix:** `FlipClockViz` bekommt `canGoPrev()` (true wenn `switched`) +
+  `prev()` (triggert Reverse-Morph: `unswitching`-State, fade Stream→statisch
+  über MORPH_DUR, dann `offset=0`). `stop()` resetet auch `unswitching`.
+- ✅ `node --check` nn_demos.js clean.
+
+### T43 · Folie 6: „Für dich jetzt im Abstrakten…" entfernen  `[x]`
+- Fragment-Div aus `index.html` (slide-bausteine) gelöscht.
+- ✅ Headless: Folie 6 hat jetzt nur 2 Fragmente (Chips + Formel).
+
+### T44 · „Das Bild als Zahlen": Schritt 6 „f(Bild) = f(Matrix)"  `[x]`
+- Neuer Schritt 6 (Index 5) in ConvDemo: gleiches Layout wie Schritt 5
+  (Bild links, Matrix rechts), zusätzlich:
+  - Canvas: `f(` / `)` um das Bild + „Bild" Label unten (Georgia italic 28px)
+  - HTML-Overlay `#conv-f-annot`: `f( Matrix )` unter der Matrix
+  - Insight: „Das Bild ist die Matrix. f(Bild) und f(Matrix) sind dasselbe."
+- CSS: `#conv-f-annot` (positioniert unter der Matrix, Fade-in .45s).
+- `onStep`: Matrix + Annotation sichtbar bei Schritt 4 UND 5.
+- ✅ `node --check` katze.js clean.
+
+### T45 · „Alles idealisiert": Satz korrigieren  `[x]`
+- Alt: „…bestimmt, worauf es achtet — auch auf Merkmale, die mit dem Ziel
+  nichts zu tun haben."
+- Neu: „Es weiß nichts über unser Ziel — es sieht nur die Daten. Was wir ihm
+  zeigen, bestimmt, worauf es achtet."
+- ✅ `node --check` n/a (HTML).
 
 ### T12 · Diese TODO.md pflegen  `[x]`
 - Bei jeder Änderung Status + Notizen hier aktualisieren.
