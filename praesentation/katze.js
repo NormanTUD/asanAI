@@ -1854,6 +1854,8 @@ const PipelineDemo = (() => {
 const PipelineGoalDemo = (() => {
 	'use strict';
 	let cv, ctx, W = 0, H = 0, DPR = 1, rsz = null, active = false;
+	let step = 0;
+	const TOTAL_STEPS = 4;
 
 	function render() {
 		if (!ctx || W < 40 || H < 40) return;
@@ -1863,8 +1865,6 @@ const PipelineGoalDemo = (() => {
 		const netW = Math.min(W * 0.11, 100), netH = IMG * 0.72;
 		const gap = Math.max(28, W * 0.042);
 		const dN = 2 * rN + gap;
-		// Inhalt ZENTRIERT: Gesamtbreite berechnen, dann mittig platzieren
-		// (vorher saß alles links, rechts blieb zu viel Freiraum).
 		const totalW = IMG + gap + netW + gap + dN + 2 * rN;
 		const startX = (W - totalW) / 2;
 		const cxImg = startX + IMG / 2;
@@ -1875,26 +1875,47 @@ const PipelineGoalDemo = (() => {
 		const fTitle = Math.max(14, Math.min(20, H * 0.05));
 		const fSm = Math.max(10, Math.min(13, H * 0.035));
 
-		// Titel
 		ctx.fillStyle = '#0f172a';
 		ctx.font = '700 ' + fTitle + 'px Inter, system-ui, sans-serif';
 		ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
 		ctx.fillText('Im Ziel: bei jedem Bild die richtige Antwort', W / 2, H * 0.10);
 
-		const row = (i, isCat) => {
-			const ry = rowY[i];
-			// Eingangs-Bild (Katze oder Hund)
+		const drawCatRow = () => {
+			const ry = rowY[0];
 			const img = { x: cxImg - IMG / 2, y: ry - IMG / 2, s: IMG / 32, a: 1, mix: 0 };
-			if (isCat) KatzeKit.drawGrid(ctx, img, 0, 0); else KatzeKit.drawGridHund(ctx, img);
+			KatzeKit.drawGrid(ctx, img, 0, 0);
 			ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
 			ctx.strokeRect(img.x + .5, img.y + .5, IMG - 1, IMG - 1);
-			ctx.fillStyle = '#64748b';
-			ctx.font = '600 ' + fSm + 'px Inter, system-ui, sans-serif';
-			ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-			ctx.fillText(isCat ? 'ein Katze-Bild' : 'ein Hund-Bild', cxImg, ry + IMG / 2 + 16);
-			// Bild → Netz
+			if (step >= 1) {
+				PipelineKit.arrow(ctx, img.x + IMG + 8, ry, cxNet - netW / 2 - 10, ry, 1);
+				ctx.fillStyle = '#f8fafc';
+				KatzeKit.roundRect(ctx, cxNet - netW / 2, ry - netH / 2, netW, netH, 10);
+				ctx.fill();
+				ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.2; ctx.stroke();
+				ctx.fillStyle = '#475569';
+				ctx.font = '700 ' + fSm + 'px Inter, system-ui, sans-serif';
+				ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+				ctx.fillText('das Netz', cxNet, ry);
+			}
+			if (step >= 2) {
+				PipelineKit.arrow(ctx, cxNet + netW / 2 + 8, ry, nX1 - rN - 10, ry, 1);
+				PipelineKit.drawNeuron(ctx, nX1, ry, rN, 'Katze', '100 %', true, 1);
+				PipelineKit.drawNeuron(ctx, nX2, ry, rN, 'Hund', '0 %', false, 1);
+				ctx.globalAlpha = 1;
+				ctx.fillStyle = '#15803d';
+				ctx.font = '700 ' + fSm + 'px Inter, system-ui, sans-serif';
+				ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+				ctx.fillText('richtig ✓', nX1, ry + rN + 42);
+			}
+		};
+
+		const drawDogRow = () => {
+			const ry = rowY[1];
+			const img = { x: cxImg - IMG / 2, y: ry - IMG / 2, s: IMG / 32, a: 1, mix: 0 };
+			KatzeKit.drawGridHund(ctx, img);
+			ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+			ctx.strokeRect(img.x + .5, img.y + .5, IMG - 1, IMG - 1);
 			PipelineKit.arrow(ctx, img.x + IMG + 8, ry, cxNet - netW / 2 - 10, ry, 1);
-			// Netz-Box
 			ctx.fillStyle = '#f8fafc';
 			KatzeKit.roundRect(ctx, cxNet - netW / 2, ry - netH / 2, netW, netH, 10);
 			ctx.fill();
@@ -1903,21 +1924,18 @@ const PipelineGoalDemo = (() => {
 			ctx.font = '700 ' + fSm + 'px Inter, system-ui, sans-serif';
 			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
 			ctx.fillText('das Netz', cxNet, ry);
-			// Netz → Neuronen
 			PipelineKit.arrow(ctx, cxNet + netW / 2 + 8, ry, nX1 - rN - 10, ry, 1);
-			// zwei Neuronen — das Richtige leuchtet mit 100 %
-			PipelineKit.drawNeuron(ctx, nX1, ry, rN, 'Katze', isCat ? '100 %' : '0 %', isCat, 1);
-			PipelineKit.drawNeuron(ctx, nX2, ry, rN, 'Hund', isCat ? '0 %' : '100 %', !isCat, 1);
-			// "richtig ✓" unter dem richtigen Neuron
-			const okX = isCat ? nX1 : nX2;
+			PipelineKit.drawNeuron(ctx, nX1, ry, rN, 'Katze', '0 %', false, 1);
+			PipelineKit.drawNeuron(ctx, nX2, ry, rN, 'Hund', '100 %', true, 1);
 			ctx.globalAlpha = 1;
 			ctx.fillStyle = '#15803d';
 			ctx.font = '700 ' + fSm + 'px Inter, system-ui, sans-serif';
 			ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-			ctx.fillText('richtig ✓', okX, ry + rN + 42);
+			ctx.fillText('richtig ✓', nX2, ry + rN + 42);
 		};
-		row(0, true);   // Katze-Bild → Katze 100 %
-		row(1, false);  // Hund-Bild → Hund 100 %
+
+		drawCatRow();
+		if (step >= 3) drawDogRow();
 	}
 
 	function init() {
@@ -1931,12 +1949,13 @@ const PipelineGoalDemo = (() => {
 		ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 		ctx.imageSmoothingEnabled = false;
 		active = true;
+		step = 0;
 		render();
 		if (typeof window.fitSlides === 'function') window.fitSlides();
 	}
 
 	function reset() {
-		active = false;
+		active = false; step = 0;
 		if (ctx && cv) {
 			ctx.save();
 			ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1946,18 +1965,22 @@ const PipelineGoalDemo = (() => {
 		}
 	}
 
+	function next() { if (step < TOTAL_STEPS - 1) { step++; render(); } }
+	function prev() { if (step > 0) { step--; render(); } }
+	function canGoNext() { return active && step < TOTAL_STEPS - 1; }
+	function canGoPrev() { return active && step > 0; }
+	function getState() { return { step }; }
+	function setState(st) { if (st && typeof st.step === 'number') { step = st.step; render(); } }
+
 	window.addEventListener('resize', () => {
 		clearTimeout(rsz);
-		rsz = setTimeout(() => { if (active) init(); }, 120);
+		rsz = setTimeout(() => { if (active) { W = cv.parentElement.clientWidth; H = cv.parentElement.clientHeight; cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); render(); } }, 120);
 	});
 
 	return {
-		init, reset,
-		next() {}, prev() {},
-		canGoNext() { return false; },
-		canGoPrev() { return false; },
-		getState() { return {}; },
-		setState() {}
+		init, reset, next, prev,
+		canGoNext, canGoPrev,
+		getState, setState
 	};
 })();
 
