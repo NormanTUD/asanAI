@@ -1,0 +1,3666 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talking Heads · Interaktive Erklärung</title>
+
+<!-- KaTeX für Formeln -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<!-- Plotly für 3D & Diagramme -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg:          #06070d;
+  --bg2:         #0b0d17;
+  --panel:       rgba(18,21,36,.72);
+  --panel-solid: #121524;
+  --stroke:      rgba(255,255,255,.09);
+  --stroke-hi:   rgba(255,255,255,.18);
+  --txt:         #e8ecf8;
+  --txt-dim:     #97a0bd;
+  --txt-faint:   #67708f;
+  --acc:         #6ee7ff;   /* cyan   */
+  --acc2:        #c084fc;   /* violet */
+  --acc3:        #fbbf24;   /* amber  */
+  --acc4:        #34d399;   /* green  */
+  --acc5:        #fb7185;   /* rose   */
+  --mono: 'SFMono-Regular', ui-monospace, 'JetBrains Mono', Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, system-ui, sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth; scroll-padding-top:70px;}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:var(--sans);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* animated aurora background */
+body::before{
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:
+    radial-gradient(900px 700px at 12% 8%,  rgba(110,231,255,.10), transparent 60%),
+    radial-gradient(800px 600px at 88% 22%, rgba(192,132,252,.10), transparent 60%),
+    radial-gradient(900px 700px at 50% 95%, rgba(52,211,153,.07),  transparent 60%),
+    var(--bg);
+}
+body::after{
+  content:''; position:fixed; inset:0; z-index:-1; opacity:.025;
+  background-image:
+    linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse at 50% 30%, #000 20%, transparent 78%);
+}
+
+/* ---------- NAV ---------- */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(6,7,13,.82);
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--stroke);
+}
+.nav-in{
+  max-width:1280px; margin:0 auto; padding:0 20px;
+  display:flex; align-items:center; gap:18px; height:56px;
+}
+.brand{
+  font-weight:800; font-size:14.5px; letter-spacing:.02em; white-space:nowrap;
+  background:linear-gradient(100deg,var(--acc),var(--acc2) 55%,var(--acc3));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.navlinks{display:flex; gap:3px; overflow-x:auto; scrollbar-width:none; flex:1;}
+.navlinks::-webkit-scrollbar{display:none;}
+.navlinks a{
+  color:var(--txt-dim); text-decoration:none; font-size:12.2px; padding:6px 10px;
+  border-radius:7px; white-space:nowrap; transition:.18s; font-weight:500;
+}
+.navlinks a:hover{color:var(--txt); background:rgba(255,255,255,.06);}
+.navlinks a.active{color:var(--acc); background:rgba(110,231,255,.11);}
+#progbar{position:fixed; top:56px; left:0; height:2px; z-index:101;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3)); width:0%; transition:width .1s;}
+
+/* ---------- LAYOUT ---------- */
+main{max-width:1180px; margin:0 auto; padding:0 20px 140px;}
+section{padding:72px 0 10px; scroll-margin-top:70px;}
+.hero{min-height:94vh; display:flex; flex-direction:column; justify-content:center; padding-top:70px;}
+
+h1{font-size:clamp(2.3rem,6.2vw,4.4rem); line-height:1.03; font-weight:850; letter-spacing:-.035em;
+   background:linear-gradient(105deg,#fff 10%,var(--acc) 42%,var(--acc2) 70%,var(--acc3));
+   -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:18px;}
+h2{font-size:clamp(1.55rem,3.3vw,2.3rem); font-weight:780; letter-spacing:-.025em; margin-bottom:12px;
+   display:flex; align-items:baseline; gap:13px; flex-wrap:wrap;}
+h3{font-size:1.14rem; font-weight:700; margin:28px 0 10px; color:var(--acc);}
+h4{font-size:.98rem; font-weight:680; margin:18px 0 7px; color:var(--txt);}
+p{color:var(--txt-dim); max-width:76ch; margin-bottom:13px; font-size:15.1px;}
+p.lead{font-size:17.5px; color:var(--txt); max-width:70ch;}
+strong{color:var(--txt); font-weight:650;}
+em{color:var(--acc3); font-style:normal; font-weight:600;}
+a.ext{color:var(--acc); text-decoration:none; border-bottom:1px dotted var(--acc);}
+
+.chapnum{
+  font-family:var(--mono); font-size:.82rem; color:var(--acc); background:rgba(110,231,255,.1);
+  border:1px solid rgba(110,231,255,.26); padding:3px 11px; border-radius:20px; font-weight:600;
+  letter-spacing:.06em; flex-shrink:0;
+}
+.kicker{font-family:var(--mono); font-size:.76rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--acc2); margin-bottom:14px; font-weight:600;}
+
+/* ---------- CARDS / PANELS ---------- */
+.card{
+  background:var(--panel); backdrop-filter:blur(14px);
+  border:1px solid var(--stroke); border-radius:17px; padding:22px;
+  margin:20px 0; position:relative; overflow:hidden;
+}
+.card::before{
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+}
+.card-title{
+  font-size:.75rem; letter-spacing:.17em; text-transform:uppercase; font-family:var(--mono);
+  color:var(--acc); margin-bottom:14px; font-weight:650; display:flex; align-items:center; gap:8px;
+}
+.card-title::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--acc);
+  box-shadow:0 0 11px var(--acc);}
+.card.v  .card-title{color:var(--acc2);} .card.v  .card-title::before{background:var(--acc2); box-shadow:0 0 11px var(--acc2);}
+.card.a  .card-title{color:var(--acc3);} .card.a  .card-title::before{background:var(--acc3); box-shadow:0 0 11px var(--acc3);}
+.card.g  .card-title{color:var(--acc4);} .card.g  .card-title::before{background:var(--acc4); box-shadow:0 0 11px var(--acc4);}
+.card.r  .card-title{color:var(--acc5);} .card.r  .card-title::before{background:var(--acc5); box-shadow:0 0 11px var(--acc5);}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:15px;}
+.split{display:grid; grid-template-columns:1fr 330px; gap:20px; align-items:start;}
+.split-l{display:grid; grid-template-columns:300px 1fr; gap:20px; align-items:start;}
+@media(max-width:900px){.grid2,.grid3,.split,.split-l{grid-template-columns:1fr;}}
+
+/* ---------- CONTROLS ---------- */
+.ctrl{margin:13px 0;}
+.ctrl-lab{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;
+  font-size:12.6px; color:var(--txt-dim); font-weight:530;}
+.ctrl-val{font-family:var(--mono); color:var(--acc); font-size:12.6px; font-weight:650;
+  background:rgba(110,231,255,.1); padding:1px 8px; border-radius:5px;}
+input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:5px; border-radius:3px;
+  background:rgba(255,255,255,.13); outline:none; cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:17px; height:17px; border-radius:50%;
+  background:linear-gradient(145deg,#fff,var(--acc)); cursor:pointer;
+  box-shadow:0 0 0 3px rgba(110,231,255,.2), 0 2px 7px rgba(0,0,0,.55); transition:.14s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18); box-shadow:0 0 0 5px rgba(110,231,255,.28),0 2px 10px rgba(0,0,0,.6);}
+input[type=range]::-moz-range-thumb{width:17px; height:17px; border:none; border-radius:50%;
+  background:linear-gradient(145deg,#fff,var(--acc)); cursor:pointer;}
+
+button, .btn{
+  background:rgba(255,255,255,.055); color:var(--txt); border:1px solid var(--stroke-hi);
+  padding:7px 14px; border-radius:9px; cursor:pointer; font-size:12.8px; font-weight:580;
+  font-family:var(--sans); transition:.16s;
+}
+button:hover{background:rgba(110,231,255,.14); border-color:var(--acc); color:#fff; transform:translateY(-1px);}
+button.on{background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#06070d; border-color:transparent; font-weight:700;}
+button.sm{padding:4px 10px; font-size:11.6px;}
+.btnrow{display:flex; gap:7px; flex-wrap:wrap; margin:11px 0;}
+
+select{
+  background:var(--panel-solid); color:var(--txt); border:1px solid var(--stroke-hi);
+  padding:6px 11px; border-radius:8px; font-size:12.8px; font-family:var(--sans); cursor:pointer;
+}
+label.chk{display:inline-flex; align-items:center; gap:7px; font-size:12.8px; color:var(--txt-dim); cursor:pointer;}
+input[type=checkbox]{accent-color:var(--acc); width:15px; height:15px; cursor:pointer;}
+
+canvas{display:block; max-width:100%; border-radius:11px;}
+.cwrap{background:rgba(0,0,0,.33); border:1px solid var(--stroke); border-radius:12px; padding:9px; overflow-x:auto;}
+
+/* ---------- MISC ---------- */
+.note{
+  border-left:3px solid var(--acc3); background:rgba(251,191,36,.055);
+  padding:12px 15px; border-radius:0 10px 10px 0; margin:16px 0; font-size:14.1px; color:var(--txt-dim);
+}
+.note b{color:var(--acc3);}
+.note.c{border-color:var(--acc); background:rgba(110,231,255,.055);} .note.c b{color:var(--acc);}
+.note.g{border-color:var(--acc4); background:rgba(52,211,153,.055);} .note.g b{color:var(--acc4);}
+.note.r{border-color:var(--acc5); background:rgba(251,113,133,.055);} .note.r b{color:var(--acc5);}
+
+.mono{font-family:var(--mono); font-size:13px;}
+code{font-family:var(--mono); background:rgba(255,255,255,.07); padding:1.5px 6px; border-radius:5px;
+  font-size:.88em; color:var(--acc3);}
+.formula{background:rgba(0,0,0,.3); border:1px solid var(--stroke); border-radius:11px;
+  padding:15px; margin:15px 0; text-align:center; overflow-x:auto;}
+.katex{color:var(--txt)!important; font-size:1.03em;}
+
+.stat{display:flex; gap:22px; flex-wrap:wrap; margin:16px 0;}
+.stat>div{flex:1; min-width:112px; background:rgba(255,255,255,.035); border:1px solid var(--stroke);
+  border-radius:11px; padding:13px;}
+.stat b{display:block; font-size:1.7rem; font-weight:800; line-height:1.1;
+  background:linear-gradient(120deg,var(--acc),var(--acc2)); -webkit-background-clip:text;
+  background-clip:text; color:transparent;}
+.stat span{font-size:11.6px; color:var(--txt-faint); text-transform:uppercase; letter-spacing:.07em;}
+
+table{width:100%; border-collapse:collapse; font-size:13.2px; margin:13px 0;}
+th{text-align:left; padding:8px 11px; color:var(--acc); font-weight:620; font-size:11.6px;
+   text-transform:uppercase; letter-spacing:.08em; border-bottom:1px solid var(--stroke-hi);}
+td{padding:8px 11px; border-bottom:1px solid rgba(255,255,255,.05); color:var(--txt-dim);}
+tr:hover td{background:rgba(255,255,255,.028); color:var(--txt);}
+
+.tok{display:inline-block; padding:3px 9px; margin:2px; border-radius:7px; font-family:var(--mono);
+  font-size:12.6px; border:1px solid var(--stroke-hi); background:rgba(255,255,255,.045); transition:.2s;}
+
+.tabs{display:flex; gap:5px; border-bottom:1px solid var(--stroke); margin-bottom:16px; flex-wrap:wrap;}
+.tab{padding:8px 14px; cursor:pointer; font-size:13px; color:var(--txt-dim); border-bottom:2px solid transparent;
+  transition:.16s; font-weight:560;}
+.tab:hover{color:var(--txt);}
+.tab.on{color:var(--acc); border-bottom-color:var(--acc);}
+
+.steps{counter-reset:s; margin:18px 0;}
+.step{counter-increment:s; position:relative; padding-left:44px; margin-bottom:17px;}
+.step::before{content:counter(s); position:absolute; left:0; top:-1px; width:29px; height:29px;
+  border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#06070d;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13.5px;}
+.step h4{margin-top:2px;}
+
+.pill{display:inline-block; padding:2px 10px; border-radius:20px; font-size:11.3px; font-family:var(--mono);
+  font-weight:620; margin:2px 3px 2px 0;}
+.pill.c{background:rgba(110,231,255,.14); color:var(--acc); border:1px solid rgba(110,231,255,.3);}
+.pill.v{background:rgba(192,132,252,.14); color:var(--acc2); border:1px solid rgba(192,132,252,.3);}
+.pill.a{background:rgba(251,191,36,.14); color:var(--acc3); border:1px solid rgba(251,191,36,.3);}
+.pill.g{background:rgba(52,211,153,.14); color:var(--acc4); border:1px solid rgba(52,211,153,.3);}
+.pill.r{background:rgba(251,113,133,.14); color:var(--acc5); border:1px solid rgba(251,113,133,.3);}
+
+.hr{height:1px; background:linear-gradient(90deg,transparent,var(--stroke-hi),transparent); margin:52px 0;}
+.plot{width:100%; height:330px;}
+details{background:rgba(255,255,255,.03); border:1px solid var(--stroke); border-radius:11px;
+  padding:12px 15px; margin:13px 0;}
+summary{cursor:pointer; font-weight:620; color:var(--acc3); font-size:13.6px; user-select:none;}
+details[open] summary{margin-bottom:9px;}
+.sr{font-size:12.4px; color:var(--txt-faint); font-family:var(--mono);}
+ul.tight{margin:9px 0 13px 20px; color:var(--txt-dim); font-size:14.4px;}
+ul.tight li{margin-bottom:6px;}
+.badge-row{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0;}
+.fadein{opacity:0; transform:translateY(22px); transition:opacity .65s, transform .65s;}
+.fadein.vis{opacity:1; transform:none;}
+.scroller{overflow-x:auto;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="brand">◈ TALKING HEADS</div>
+    <div class="navlinks" id="navlinks">
+      <a href="#start">Start</a>
+      <a href="#problem">Das Rätsel</a>
+      <a href="#basics">Grundlagen</a>
+      <a href="#stream">Residual Stream</a>
+      <a href="#heads">Köpfe</a>
+      <a href="#circuit">IOI-Schaltkreis</a>
+      <a href="#linalg">Lineare Algebra</a>
+      <a href="#svd">SVD</a>
+      <a href="#compscore">Komposition</a>
+      <a href="#entdeckung">Entdeckung</a>
+      <a href="#edit">Weight-Editing</a>
+      <a href="#steer">Steuern</a>
+      <a href="#laundry">Laundry List</a>
+      <a href="#space3d">3D-Raum</a>
+      <a href="#fix">Die Reparatur</a>
+      <a href="#antwort">Antwort</a>
+      <a href="#grenzen">Grenzen</a>
+    </div>
+  </div>
+</nav>
+<div id="progbar"></div>
+
+<main>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero" id="start">
+  <div class="kicker">Merullo · Eickhoff · Pavlick — NeurIPS 2024 · arXiv:2406.09519</div>
+  <h1>Talking Heads</h1>
+  <p class="lead" style="font-size:20px; margin-top:6px;">
+    Wie Schichten in einem Sprachmodell <em>miteinander reden</em> — und warum das erklärt,
+    weshalb GPT-2 an einer Einkaufsliste mit 10 Dingen scheitert.
+  </p>
+
+  <div class="card" style="margin-top:34px;">
+    <div class="card-title">Der 30-Sekunden-Überblick</div>
+    <div class="grid3">
+      <div>
+        <div class="pill r">PROBLEM</div>
+        <p style="font-size:14px;margin-top:8px;">Sprachmodelle versagen scheinbar willkürlich, wenn man die
+        <strong>Reihenfolge</strong> von Dingen in einem Prompt ändert. Niemand weiß warum.</p>
+      </div>
+      <div>
+        <div class="pill c">IDEE</div>
+        <p style="font-size:14px;margin-top:8px;">Vielleicht reden Modellteile über extrem schmale
+        <strong>„Funkkanäle"</strong> — nur 1–3 Dimensionen breit. Und man kann sie in den
+        <strong>Gewichten</strong> finden, ohne das Modell laufen zu lassen.</p>
+      </div>
+      <div>
+        <div class="pill g">ERGEBNIS</div>
+        <p style="font-size:14px;margin-top:8px;">Es gibt sie wirklich. Ein <strong>3D-Unterraum</strong> in GPT-2
+        kodiert „welches Listenelement". Er wird eng, wenn die Liste wächst → Fehler.
+        Manuell gesteuert: <strong>+22 %</strong> Genauigkeit.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note c" style="margin-top:26px;">
+    <b>Wie du das hier benutzt:</b> Fast nichts muss gelesen werden. Jeder Abschnitt hat
+    Schieberegler, Knöpfe und Grafiken. <strong>Spiel damit.</strong> Die Texte sind nur Untertitel
+    zu dem, was du siehst. Alle nötigen Mathe-Grundlagen (Vektoren, Matrizen, SVD) werden
+    vorher interaktiv aufgebaut — Abiturwissen reicht vollkommen.
+  </div>
+
+  <div style="margin-top:30px;">
+    <div class="sr" style="margin-bottom:10px;">▼ Die Reise durch das Paper</div>
+    <div class="cwrap"><canvas id="roadmap" width="1120" height="150"></canvas></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     1. DAS RÄTSEL / MOTIVATION
+     ============================================================ -->
+<section id="problem">
+  <h2><span class="chapnum">TEIL 1</span> Das Rätsel: ein Modell, das an einer Einkaufsliste scheitert</h2>
+  <p class="lead">Bevor wir irgendeine Mathematik anfassen: <strong>Was genau geht hier eigentlich kaputt?</strong></p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Die Laundry-List-Aufgabe</div>
+    <p>Das Modell bekommt eine Liste von Gegenständen und soll sagen, welcher am Ende noch übrig ist.
+    Klingt trivial. Ist es für GPT-2 aber nicht. Ändere unten die Reihenfolge und die Anzahl — und beobachte,
+    wie die Vorhersage kippt.</p>
+
+    <div class="split">
+      <div>
+        <div class="cwrap" style="padding:16px;">
+          <div class="sr" style="margin-bottom:8px;">PROMPT (so sieht das Modell die Aufgabe)</div>
+          <div id="llPrompt" style="font-family:var(--mono); font-size:13.4px; line-height:2.1;"></div>
+          <div style="margin-top:16px; border-top:1px dashed var(--stroke-hi); padding-top:12px;">
+            <div class="sr" style="margin-bottom:8px;">VORHERSAGE DES MODELLS (simuliert nach Paper-Statistik)</div>
+            <div id="llPred" style="font-size:15px;"></div>
+          </div>
+        </div>
+        <div class="cwrap" style="margin-top:14px;"><canvas id="llBars" width="700" height="190"></canvas></div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Anzahl Gegenstände N</span><span class="ctrl-val" id="llNv">4</span></div>
+          <input type="range" id="llN" min="3" max="20" value="4">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Position des gesuchten Objekts</span><span class="ctrl-val" id="llPv">4</span></div>
+          <input type="range" id="llP" min="1" max="4" value="4">
+        </div>
+        <div class="btnrow">
+          <button id="llShuffle">Zweite Liste neu mischen</button>
+        </div>
+        <div class="note r" style="font-size:13px;">
+          <b>Beobachte:</b> Das Modell hat eine starke Tendenz, einfach das <strong>zuletzt genannte</strong>
+          Objekt zu wiederholen. Ist die richtige Antwort weiter vorne, bricht die Trefferquote ein.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card r">
+    <div class="card-title">Die gemessene Kurve (Abbildung 1 des Papers)</div>
+    <p>Das Paper misst: <strong>Wie oft wird das richtige Objekt über alle anderen gestellt?</strong>
+    Bei 5000 Beispielen pro Listenlänge. Schalte größere Modelle dazu — das Problem verschwindet nicht,
+    es wird nur langsamer schlimmer.</p>
+    <div class="btnrow" id="scaleBtns">
+      <button class="on" data-m="gpt2">GPT-2 Small (124M)</button>
+      <button data-m="gpt2xl">GPT-2 XL (1.5B)</button>
+      <button data-m="opt27">OPT-2.7B</button>
+      <button data-m="opt67">OPT-6.7B</button>
+      <button data-m="pythia">Pythia-6.9B</button>
+    </div>
+    <div id="accPlot" class="plot"></div>
+    <div class="note">
+      <b>Der Knackpunkt:</b> Aus der <em>Architektur</em> folgt das nicht. Ein Transformer kann per Attention
+      <strong>frei</strong> auf jede Stelle im Kontext zugreifen — anders als alte rekurrente Netze, die Dinge
+      „vergessen". Es muss also etwas <em>Gelerntes</em> sein, das hier limitiert. Genau das suchen wir.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Die Forschungsfrage des Papers</div>
+    <div class="grid2">
+      <div>
+        <p style="font-size:16px; color:var(--txt);">
+          „Ein Ziel der Interpretierbarkeitsforschung ist es, Modellverhalten zu erklären.
+          <strong>Ist es also möglich zu erklären, warum ein bestimmter Fehler existiert?</strong>"
+        </p>
+        <p class="sr" style="margin-top:10px;">— Merullo et al., Introduction</p>
+      </div>
+      <div>
+        <h4>Was dafür nötig ist</h4>
+        <ul class="tight">
+          <li>Verstehen, <strong>wie</strong> Information zwischen Schichten fließt</li>
+          <li>Diesen Informationsfluss <strong>in den Gewichten</strong> finden</li>
+          <li>Zeigen, dass er <strong>kausal</strong> für das Verhalten ist</li>
+          <li>Ihn <strong>manipulieren</strong> und den Fehler beheben</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     2. GRUNDLAGEN
+     ============================================================ -->
+<section id="basics">
+  <h2><span class="chapnum">TEIL 2</span> Grundlagen: alles, was über Abi-Mathe hinausgeht</h2>
+  <p class="lead">Fünf Bausteine. Jeder einzelne ist zum Anfassen. Danach verstehst du jede Formel im Paper.</p>
+
+  <div class="tabs" id="basicTabs">
+    <div class="tab on" data-t="b1">① Vektor = Richtung</div>
+    <div class="tab" data-t="b2">② Matrix = Transformation</div>
+    <div class="tab" data-t="b3">③ Skalarprodukt & Projektion</div>
+    <div class="tab" data-t="b4">④ Rang & Unterraum</div>
+    <div class="tab" data-t="b5">⑤ Äußeres Produkt</div>
+    <div class="tab" data-t="b6">⑥ Frobenius-Norm</div>
+  </div>
+
+  <!-- B1 -->
+  <div class="basicpane" id="b1">
+    <div class="card">
+      <div class="card-title">Ein Vektor ist eine Richtung im Raum — und ein „Feature"</div>
+      <div class="split">
+        <div class="cwrap"><canvas id="cvVec" width="640" height="400"></canvas></div>
+        <div>
+          <p>In einem Sprachmodell wird <strong>jedes Wort</strong> (genauer: jedes Token) als Liste von
+          768 Zahlen dargestellt. Das ist ein Vektor in einem 768-dimensionalen Raum. Hier zeigen wir 2D,
+          das Prinzip ist identisch.</p>
+          <div class="ctrl">
+            <div class="ctrl-lab"><span>x-Komponente</span><span class="ctrl-val" id="vxV">3.0</span></div>
+            <input type="range" id="vx" min="-5" max="5" step="0.1" value="3">
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-lab"><span>y-Komponente</span><span class="ctrl-val" id="vyV">2.0</span></div>
+            <input type="range" id="vy" min="-5" max="5" step="0.1" value="2">
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-lab"><span>Skalierung α (Länge)</span><span class="ctrl-val" id="vaV">1.0</span></div>
+            <input type="range" id="va" min="-3" max="3" step="0.05" value="1">
+          </div>
+          <div class="note c" style="font-size:13px;">
+            <b>Merke:</b> Die <strong>Richtung</strong> trägt die Bedeutung, die <strong>Länge</strong> (α)
+            die Stärke. Genau das wird später der entscheidende Trick: Das Paper findet eine einzige Richtung
+            <span class="mono">v⃗</span> und dreht nur an α — und steuert damit das Verhalten des Modells.
+          </div>
+          <div class="formula" id="f_vec"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B2 -->
+  <div class="basicpane" id="b2" style="display:none;">
+    <div class="card v">
+      <div class="card-title">Eine Matrix verformt den Raum</div>
+      <div class="split">
+        <div class="cwrap"><canvas id="cvMat" width="640" height="400"></canvas></div>
+        <div>
+          <p>Eine Matrix nimmt jeden Vektor und schiebt ihn woandershin. Die Punkte auf dem blauen
+          Einheitskreis werden zur orangen Ellipse. <strong>Jede Operation in einem Transformer
+          ist im Kern so eine Matrix-Multiplikation.</strong></p>
+          <div class="grid2" style="gap:10px;">
+            <div class="ctrl"><div class="ctrl-lab"><span>a</span><span class="ctrl-val" id="maV">1.2</span></div>
+              <input type="range" id="ma" min="-2" max="2" step="0.05" value="1.2"></div>
+            <div class="ctrl"><div class="ctrl-lab"><span>b</span><span class="ctrl-val" id="mbV">0.6</span></div>
+              <input type="range" id="mb" min="-2" max="2" step="0.05" value="0.6"></div>
+            <div class="ctrl"><div class="ctrl-lab"><span>c</span><span class="ctrl-val" id="mcV">0.2</span></div>
+              <input type="range" id="mc" min="-2" max="2" step="0.05" value="0.2"></div>
+            <div class="ctrl"><div class="ctrl-lab"><span>d</span><span class="ctrl-val" id="mdV">0.9</span></div>
+              <input type="range" id="md" min="-2" max="2" step="0.05" value="0.9"></div>
+          </div>
+          <div class="btnrow">
+            <button class="sm" onclick="setMat(1,0,0,1)">Identität</button>
+            <button class="sm" onclick="setMat(0,-1,1,0)">Drehung 90°</button>
+            <button class="sm" onclick="setMat(2,0,0,0.3)">Stauchen</button>
+            <button class="sm" onclick="setMat(1,1,1,1)">Rang 1 (!)</button>
+          </div>
+          <div class="note" style="font-size:13px;">
+            <b>Probier „Rang 1":</b> Die Ellipse kollabiert zu einer <strong>Linie</strong>.
+            Die Matrix wirft alles auf eine einzige Richtung. Das ist exakt die Struktur,
+            die das Paper in den Attention-Köpfen findet.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B3 -->
+  <div class="basicpane" id="b3" style="display:none;">
+    <div class="card a">
+      <div class="card-title">Skalarprodukt: „Wie sehr zeigen zwei Vektoren in dieselbe Richtung?"</div>
+      <div class="split">
+        <div class="cwrap"><canvas id="cvDot" width="640" height="400"></canvas></div>
+        <div>
+          <p>Das Skalarprodukt <span class="mono">a⃗·b⃗</span> misst Übereinstimmung.
+          Groß &amp; positiv = gleiche Richtung. Null = senkrecht (<em>orthogonal</em> — sie
+          „wissen nichts voneinander"). Negativ = entgegengesetzt.</p>
+          <div class="ctrl">
+            <div class="ctrl-lab"><span>Winkel von b⃗</span><span class="ctrl-val" id="dangV">35°</span></div>
+            <input type="range" id="dang" min="0" max="360" value="35">
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-lab"><span>Länge von b⃗</span><span class="ctrl-val" id="dlenV">2.5</span></div>
+            <input type="range" id="dlen" min="0.3" max="4" step="0.05" value="2.5">
+          </div>
+          <div id="dotRead" class="formula"></div>
+          <div class="note c" style="font-size:13px;">
+            <b>Warum das zählt:</b> Attention funktioniert über Skalarprodukte. Ein Query-Vektor
+            wird mit jedem Key-Vektor „skalarprodukt-verglichen". Das Ergebnis ist der
+            Attention-Score: <em>wie stark schaue ich auf dieses Token?</em> Die grüne Projektion
+            zeigt, welcher Anteil von b⃗ „in Richtung a⃗" liegt.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B4 -->
+  <div class="basicpane" id="b4" style="display:none;">
+    <div class="card g">
+      <div class="card-title">Rang &amp; Unterraum — der zentrale Begriff des Papers</div>
+      <div class="split">
+        <div class="cwrap"><canvas id="cvRank" width="640" height="400"></canvas></div>
+        <div>
+          <p>Der <strong>Rang</strong> einer Matrix sagt: <em>Wie viele Dimensionen überleben
+          die Transformation?</em> Ein 3D-Raum kann auf eine Ebene (Rang 2) oder auf eine Linie
+          (Rang 1) zusammengedrückt werden.</p>
+          <div class="btnrow" id="rankBtns">
+            <button data-r="3" class="on">Rang 3 — voller Raum</button>
+            <button data-r="2">Rang 2 — Ebene</button>
+            <button data-r="1">Rang 1 — Linie</button>
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-lab"><span>Ansicht drehen</span><span class="ctrl-val" id="rrotV">30°</span></div>
+            <input type="range" id="rrot" min="0" max="360" value="30">
+          </div>
+          <div class="stat">
+            <div><b id="rkD">3</b><span>Dimensionen übrig</span></div>
+            <div><b id="rkL">100%</b><span>Information erhalten</span></div>
+          </div>
+          <div class="note g" style="font-size:13px;">
+            <b>Die These des Papers:</b> Schichten im Modell reden nicht über den ganzen
+            768-dimensionalen Raum miteinander, sondern über <strong>winzige Unterräume von
+            1, 2 oder 3 Dimensionen</strong> — wie ein Funkkanal auf einer Frequenz,
+            während der Rest des Spektrums anderen gehört.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B5 -->
+  <div class="basicpane" id="b5" style="display:none;">
+    <div class="card v">
+      <div class="card-title">Das äußere Produkt: aus zwei Vektoren wird eine Rang-1-Matrix</div>
+      <div class="split">
+        <div class="cwrap"><canvas id="cvOuter" width="640" height="340"></canvas></div>
+        <div>
+          <p>Zwei Vektoren <span class="mono">u⃗</span> und <span class="mono">v⃗</span> ergeben
+          über das äußere Produkt <span class="mono">u⃗ ⊗ v⃗</span> eine ganze Matrix.
+          Die ist <strong>immer Rang 1</strong>: jede Zeile ist ein Vielfaches von v⃗.</p>
+          <div class="grid2" style="gap:10px;">
+            <div class="ctrl"><div class="ctrl-lab"><span>u₁</span><span class="ctrl-val" id="ou1V">1.0</span></div>
+              <input type="range" id="ou1" min="-2" max="2" step="0.1" value="1"></div>
+            <div class="ctrl"><div class="ctrl-lab"><span>u₂</span><span class="ctrl-val" id="ou2V">0.5</span></div>
+              <input type="range" id="ou2" min="-2" max="2" step="0.1" value="0.5"></div>
+            <div class="ctrl"><div class="ctrl-lab"><span>v₁</span><span class="ctrl-val" id="ov1V">0.8</span></div>
+              <input type="range" id="ov1" min="-2" max="2" step="0.1" value="0.8"></div>
+            <div class="ctrl"><div class="ctrl-lab"><span>v₂</span><span class="ctrl-val" id="ov2V">-1.2</span></div>
+              <input type="range" id="ov2" min="-2" max="2" step="0.1" value="-1.2"></div>
+          </div>
+          <div class="formula" id="f_outer"></div>
+          <div class="note" style="font-size:13px;">
+            <b>Das ist Gleichung 2 im Paper.</b> Jeder Attention-Kopf wird in eine Summe
+            solcher Rang-1-Bausteine zerlegt. Jeder Baustein = <strong>ein Signal</strong>,
+            das der Kopf senden kann. Daraus wird gleich die SVD.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B6 -->
+  <div class="basicpane" id="b6" style="display:none;">
+    <div class="card a">
+      <div class="card-title">Frobenius-Norm: die „Länge" einer ganzen Matrix</div>
+      <div class="split">
+        <div class="cwrap"><canvas id="cvFrob" width="640" height="330"></canvas></div>
+        <div>
+          <p>Die Frobenius-Norm <span class="mono">‖W‖<sub>F</sub></span> ist einfach der
+          Satz des Pythagoras für alle Einträge zusammen: quadrieren, addieren, Wurzel ziehen.
+          Genau wie die Länge eines Vektors — nur über ein ganzes Zahlengitter.</p>
+          <div class="formula">
+            $$\|W\|_F=\sqrt{\sum_{i,j} w_{ij}^2}$$
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-lab"><span>Matrix-Werte zufällig neu</span><span class="ctrl-val" id="frobV">—</span></div>
+            <input type="range" id="frobS" min="0" max="100" value="50">
+          </div>
+          <div class="note c" style="font-size:13px;">
+            <b>Wozu?</b> Im <strong>Composition Score</strong> (Teil 6) teilt man durch die
+            Frobenius-Normen. Dadurch wird herausgerechnet, ob eine Matrix einfach nur
+            „laut" ist. Übrig bleibt die reine Frage: <em>Passen die beiden zueinander?</em>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     3. RESIDUAL STREAM
+     ============================================================ -->
+<section id="stream">
+  <h2><span class="chapnum">TEIL 3</span> Der Residual Stream: das Schwarze Brett des Modells</h2>
+  <p class="lead">Das wichtigste mentale Bild dieses Papers. Wenn du <em>das</em> verstehst,
+  verstehst du den Rest fast von allein.</p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Schichten schreiben und lesen</div>
+    <p>Stell dir eine <strong>Pinnwand</strong> vor, die durch alle 12 Schichten von GPT-2 läuft.
+    Jede Schicht darf Zettel <em>dazukleben</em> (addieren) und alles lesen, was vorher drankam.
+    Nichts wird gelöscht. Das ist der <em>Residual Stream</em>: ein Vektor mit 768 Zahlen pro Token.</p>
+
+    <div class="cwrap"><canvas id="cvStream" width="1120" height="420"></canvas></div>
+
+    <div class="grid3" style="margin-top:14px;">
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Aktuelle Schicht</span><span class="ctrl-val" id="stLv">6</span></div>
+        <input type="range" id="stL" min="0" max="12" value="6">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Dimensionen zeigen</span><span class="ctrl-val" id="stDv">24</span></div>
+        <input type="range" id="stD" min="8" max="48" value="24">
+      </div>
+      <div style="display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap;">
+        <label class="chk"><input type="checkbox" id="stChan" checked> Kanäle hervorheben</label>
+        <button id="stPlay" class="sm">▶ Abspielen</button>
+      </div>
+    </div>
+
+    <div class="note c">
+      <b>Die Schlüsselidee:</b> Weil alles <strong>addiert</strong> wird, kann sich jede Schicht
+      ein paar Dimensionen „reservieren" und dort Nachrichten für spätere Schichten hinterlegen.
+      Elhage et al. (2021) nannten das <em>Communication Channels</em> — aber niemand konnte sie
+      in echten Modellen zuverlässig finden. <strong>Genau das macht dieses Paper.</strong>
+    </div>
+  </div>
+
+  <div class="card v">
+    <div class="card-title">Warum ein Kanal überhaupt funktionieren kann</div>
+    <div class="split-l">
+      <div class="cwrap"><canvas id="cvOrtho" width="300" height="300"></canvas></div>
+      <div>
+        <p>In 768 Dimensionen gibt es <strong>sehr viel Platz</strong>. Zwei zufällige Richtungen
+        sind dort fast immer nahezu senkrecht zueinander — ihr Skalarprodukt ist fast 0.
+        Das heißt: Signale auf verschiedenen Richtungen <strong>stören sich kaum</strong>.</p>
+        <p>Deshalb kann Kopf A auf Richtung <span class="mono">v⃗₁</span> funken, Kopf B auf
+        <span class="mono">v⃗₂</span>, und beide „hören" nur ihren eigenen Kanal — wie Radiosender
+        auf verschiedenen Frequenzen.</p>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Dimensionen des Raums</span><span class="ctrl-val" id="orthoDv">768</span></div>
+          <input type="range" id="orthoD" min="2" max="768" value="768">
+        </div>
+        <div class="stat">
+          <div><b id="orthoAng">89.4°</b><span>mittlerer Winkel</span></div>
+          <div><b id="orthoDot">0.012</b><span>Ø |Skalarprodukt|</span></div>
+        </div>
+        <p class="sr">Zufällige Einheitsvektoren, 400 Paare simuliert. Schieb auf 2 oder 3 Dimensionen —
+        dann wird es eng und die Signale überlagern sich. Genau das passiert bei langen Listen!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     4. ATTENTION HEADS
+     ============================================================ -->
+<section id="heads">
+  <h2><span class="chapnum">TEIL 4</span> Attention-Köpfe: QK sucht, OV transportiert</h2>
+  <p class="lead">Ein Attention-Kopf macht genau zwei Dinge. <strong>Wohin schaue ich?</strong> (QK)
+  und <strong>Was nehme ich von dort mit?</strong> (OV). Mehr nicht. Das ist der ganze Zauber.</p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Ein Kopf in Aktion</div>
+    <p>Links siehst du die <em>Attention-Verteilung</em>: von welchem Token (Query) wird auf welche
+    früheren Tokens (Keys) geschaut. Rechts, was dadurch in den Residual Stream geschrieben wird.
+    Zieh an der „Temperatur", um zu sehen, wie scharf oder verschmiert der Blick ist.</p>
+
+    <div class="cwrap"><canvas id="cvAttn" width="1120" height="330"></canvas></div>
+
+    <div class="grid3" style="margin-top:14px;">
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Fokus auf Token Nr.</span><span class="ctrl-val" id="atFv">3</span></div>
+        <input type="range" id="atF" min="0" max="7" value="3">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Schärfe (1/Temperatur)</span><span class="ctrl-val" id="atTv">4.0</span></div>
+        <input type="range" id="atT" min="0.2" max="12" step="0.1" value="4">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>OV-Stärke</span><span class="ctrl-val" id="atOv">1.0</span></div>
+        <input type="range" id="atO" min="0" max="2" step="0.05" value="1">
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:8px;">
+      <div class="note c" style="font-size:13.2px;">
+        <b>QK-Matrix = „Wohin?"</b> Query mal Key gibt für jedes Tokenpaar eine Zahl. Softmax macht
+        daraus Wahrscheinlichkeiten. Das ist die Aufmerksamkeitsverteilung.
+      </div>
+      <div class="note" style="font-size:13.2px;">
+        <b>OV-Matrix = „Was?"</b> Vom angeschauten Token wird ein Vektor geholt, durch OV transformiert
+        und <strong>in den Residual Stream addiert</strong>. QK und OV sind völlig getrennt.
+      </div>
+    </div>
+  </div>
+
+  <div class="card v">
+    <div class="card-title">Der Flaschenhals: Warum QK und OV automatisch niedrig-rangig sind</div>
+    <div class="split-l">
+      <div class="cwrap"><canvas id="cvBottle" width="300" height="340"></canvas></div>
+      <div>
+        <p>In GPT-2 Small ist der Residual Stream <strong>768-dimensional</strong>, ein einzelner
+        Attention-Kopf arbeitet aber nur mit <strong>64 Dimensionen</strong>. Die Matrizen V und Q
+        projizieren <em>herunter</em> (768→64), O und K projizieren <em>wieder hoch</em> (64→768).</p>
+        <p>Das Produkt <span class="mono">OV = O·V</span> hat also die Form 768×768 — aber der
+        <strong>Rang ist höchstens 64</strong>. Es gibt nur 64 Singulärwerte ungleich null.</p>
+        <div class="formula">
+          $$\mathrm{OV},\ \mathrm{QK}\in\mathbb{R}^{768\times768},\qquad \operatorname{rang}=64$$
+        </div>
+        <div class="stat">
+          <div><b>768</b><span>Residual-Dim d</span></div>
+          <div><b>64</b><span>Kopf-Dim h</span></div>
+          <div><b>144</b><span>Köpfe in GPT-2</span></div>
+        </div>
+        <div class="note g" style="font-size:13px;">
+          <b>Warum das toll ist:</b> Wir müssen nicht 768 mögliche Kanäle durchsuchen, sondern nur 64
+          pro Kopf. Der Suchraum ist winzig — und genau da setzt die SVD an.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card a">
+    <div class="card-title">Die drei Arten, wie Köpfe miteinander reden (Composition)</div>
+    <p>Ein früher Kopf schreibt <strong>immer</strong> über seine OV-Matrix. Ein späterer Kopf liest
+    das wieder — mit seinem <em>Query</em>, seinem <em>Key</em> oder seinem <em>Value</em>.
+    Klicke auf die drei Typen:</p>
+    <div class="btnrow" id="compTypeBtns">
+      <button class="on" data-c="q">Query-Composition</button>
+      <button data-c="k">Key-Composition</button>
+      <button data-c="v">Value-Composition</button>
+    </div>
+    <div class="cwrap"><canvas id="cvComp" width="1120" height="300"></canvas></div>
+    <div id="compDesc" class="note" style="margin-top:12px;"></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     5. IOI CIRCUIT
+     ============================================================ -->
+<section id="circuit">
+  <h2><span class="chapnum">TEIL 5</span> Der IOI-Schaltkreis: wo wir wissen, dass Köpfe reden</h2>
+  <p class="lead">Um Kommunikationskanäle zu <em>finden</em>, braucht man erst einen Fall, wo man
+  <strong>sicher weiß</strong>, dass kommuniziert wird. Den liefert IOI.</p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Die IOI-Aufgabe (Indirect Object Identification)</div>
+    <div class="split">
+      <div>
+        <div class="cwrap" style="padding:18px;">
+          <div id="ioiSent" style="font-size:18px; line-height:2.3; font-family:var(--mono);"></div>
+          <div style="margin-top:18px; border-top:1px dashed var(--stroke-hi); padding-top:14px;">
+            <div class="sr">Was muss das Modell tun?</div>
+            <p style="font-size:14.5px; margin-top:7px;">Beide Namen stehen im Kontext. Aber
+            <strong>John</strong> wurde schon zweimal genannt — er ist das Subjekt, das gibt.
+            Also muss <strong>Mary</strong> die Antwort sein. Das Modell muss den
+            <em>doppelt genannten</em> Namen ausschließen.</p>
+          </div>
+        </div>
+        <div class="cwrap" style="margin-top:14px;"><canvas id="cvIOI" width="700" height="300"></canvas></div>
+      </div>
+      <div>
+        <div class="btnrow">
+          <button id="ioiSwap">Namen-Reihenfolge tauschen</button>
+          <button id="ioiNew" class="sm">Neue Namen</button>
+        </div>
+        <h4>Die drei Kopf-Rollen</h4>
+        <table>
+          <tr><th>Rolle</th><th>Köpfe</th><th>Job</th></tr>
+          <tr><td><span class="pill c">Duplicate</span></td><td class="mono">3.0</td>
+              <td>findet wiederholte Tokens</td></tr>
+          <tr><td><span class="pill a">Inhibition</span></td><td class="mono">7.3 7.9 8.6 8.10</td>
+              <td>sagt „schau da NICHT hin"</td></tr>
+          <tr><td><span class="pill g">Mover</span></td><td class="mono">9.9</td>
+              <td>kopiert, worauf er schaut</td></tr>
+        </table>
+        <div class="note c" style="font-size:13px;">
+          <b>Inhibition Score</b> = Attention auf IO (Mary) <em>minus</em> Attention auf S1 (erster John).
+          <br>+1 = perfekt, 0 = unentschieden, −1 = genau falsch herum.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card g">
+    <div class="card-title">Der Informationsfluss durch die Schichten</div>
+    <p>Fahre mit der Maus über die Köpfe oder nutze den Schieber, um den Fluss Schicht für Schicht
+    aufzubauen. <strong>Das ist der Schaltkreis, den Wang et al. 2022 gefunden haben</strong> —
+    und der Ausgangspunkt dieses Papers.</p>
+    <div class="cwrap"><canvas id="cvCircuit" width="1120" height="400"></canvas></div>
+    <div class="ctrl" style="margin-top:12px;">
+      <div class="ctrl-lab"><span>Schaltkreis aufbauen</span><span class="ctrl-val" id="ciSv">3</span></div>
+      <input type="range" id="ciS" min="0" max="3" value="3">
+    </div>
+    <div id="ciDesc" class="note g"></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     6. LINEARE ALGEBRA: Composition Score Vorbereitung
+     ============================================================ -->
+<section id="linalg">
+  <h2><span class="chapnum">TEIL 6</span> Matrizen multiplizieren: wann „passen" zwei zusammen?</h2>
+  <p class="lead">Jetzt die Kernfrage des Papers in reiner Mathematik:
+  <strong>Woran sieht man zwei Matrizen an, dass sie zusammenarbeiten?</strong></p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Hintereinanderschalten von Transformationen</div>
+    <div class="split">
+      <div class="cwrap"><canvas id="cvChain" width="700" height="360"></canvas></div>
+      <div>
+        <p>W₁ schreibt (blau → violett). W₂ liest (violett → orange). Wenn W₁ in eine Richtung
+        schreibt, die W₂ <strong>ignoriert</strong>, kommt am Ende fast nichts an.</p>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Schreibrichtung von W₁</span><span class="ctrl-val" id="chW1v">0°</span></div>
+          <input type="range" id="chW1" min="0" max="180" value="0">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Leserichtung von W₂</span><span class="ctrl-val" id="chW2v">0°</span></div>
+          <input type="range" id="chW2" min="0" max="180" value="0">
+        </div>
+        <div class="stat">
+          <div><b id="chOut">1.00</b><span>‖W₁W₂‖<sub>F</sub></span></div>
+          <div><b id="chCS">1.00</b><span>Composition Score</span></div>
+        </div>
+        <div class="note r" style="font-size:13px;">
+          <b>Dreh die Leserichtung auf 90°:</b> Das Produkt kollabiert auf ~0. Die beiden Matrizen
+          „reden" nicht miteinander — W₁ sendet auf einer Frequenz, die W₂ gar nicht empfängt.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card a">
+    <div class="card-title">Der Composition Score — Gleichung 1 des Papers</div>
+    <div class="formula">
+      $$\mathrm{CS}(W_1,W_2)=\frac{\|W_1W_2\|_F}{\|W_1\|_F \cdot \|W_2\|_F}$$
+    </div>
+    <div class="grid3">
+      <div>
+        <h4 style="color:var(--acc)">Zähler</h4>
+        <p style="font-size:13.6px;">Wie groß ist das <strong>Produkt</strong>? Das misst, wie viel
+        tatsächlich durchkommt, wenn man erst W₁ und dann W₂ anwendet.</p>
+      </div>
+      <div>
+        <h4 style="color:var(--acc2)">Nenner</h4>
+        <p style="font-size:13.6px;">Teile durch die <strong>Einzelgrößen</strong>. Sonst gewinnen
+        einfach die Matrizen mit den größten Zahlen.</p>
+      </div>
+      <div>
+        <h4 style="color:var(--acc3)">Ergebnis</h4>
+        <p style="font-size:13.6px;">Eine Zahl zwischen 0 und 1: <em>Wie gut passen die Ausgaberichtungen
+        von W₁ zu den Eingaberichtungen von W₂?</em></p>
+      </div>
+    </div>
+    <div class="note r">
+      <b>Das Problem (und der Grund für dieses Paper):</b> Elhage et al. 2021 haben diesen Score
+      erfunden. Er funktioniert bei winzigen Spielzeugmodellen. Bei echten Modellen wie GPT-2 ist er
+      <strong>Rauschen</strong> — Köpfe, von denen man <em>weiß</em>, dass sie zusammenarbeiten,
+      haben keinen höheren Score als zufällige Köpfe. Schau selbst:
+    </div>
+    <div id="csNoisyPlot" class="plot" style="height:300px;"></div>
+    <p class="sr">Simulation nach Appendix H des Papers: Composition Score der <em>vollen</em>
+    OV-Matrix jedes Kopfes mit QK von 9.9. Der echte Partner (rot) verschwindet in der Menge.</p>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     7. SVD
+     ============================================================ -->
+<section id="svd">
+  <h2><span class="chapnum">TEIL 7</span> Die SVD: eine Matrix in ihre Einzelsignale zerlegen</h2>
+  <p class="lead">Das ist <strong>die</strong> entscheidende Idee des Papers. Und sie ist
+  überraschend anschaulich.</p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Was die SVD geometrisch macht</div>
+    <p>Jede Matrix — egal wie kompliziert — lässt sich in <strong>drei einfache Schritte</strong>
+    zerlegen: <em>Drehen → Strecken → Drehen</em>. Das ist die Singulärwertzerlegung
+    <span class="mono">W = U·S·Vᵀ</span>.</p>
+
+    <div class="cwrap"><canvas id="cvSVD" width="1120" height="300"></canvas></div>
+
+    <div class="grid3" style="margin-top:14px;">
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Eingangsdrehung Vᵀ</span><span class="ctrl-val" id="svAv">25°</span></div>
+        <input type="range" id="svA" min="0" max="180" value="25">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Singulärwert s₁</span><span class="ctrl-val" id="svS1v">2.2</span></div>
+        <input type="range" id="svS1" min="0" max="3" step="0.05" value="2.2">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Singulärwert s₂</span><span class="ctrl-val" id="svS2v">0.7</span></div>
+        <input type="range" id="svS2" min="0" max="3" step="0.05" value="0.7">
+      </div>
+    </div>
+    <div class="note c">
+      <b>Setze s₂ auf 0:</b> Der Kreis wird zu einer Strecke. Die Matrix hat jetzt Rang 1 — sie kann
+      nur noch <strong>ein einziges Signal</strong> übertragen. Genau diese Rang-1-Stücke sind die
+      „Komponenten", von denen das Paper spricht.
+    </div>
+  </div>
+
+  <div class="card v">
+    <div class="card-title">Gleichung 2: Die Matrix als Summe von Rang-1-Signalen</div>
+    <div class="formula">
+      $$W=\sum_{i=0}^{h} s_i \cdot U_i \otimes V_i$$
+    </div>
+    <p>Lies das als: <em>„Dieser Attention-Kopf ist die Summe von 64 einzelnen Signalen. Jedes Signal
+    hat eine Leserichtung <span class="mono">Vᵢ</span>, eine Schreibrichtung <span class="mono">Uᵢ</span>
+    und eine Lautstärke <span class="mono">sᵢ</span>."</em></p>
+
+    <div class="split">
+      <div class="cwrap"><canvas id="cvRecon" width="700" height="300"></canvas></div>
+      <div>
+        <p>Links: das Original. Rechts: die Rekonstruktion, wenn man nur die stärksten k Komponenten
+        behält. Schieb k hoch und sieh zu, wie das Bild zurückkommt.</p>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Komponenten k behalten</span><span class="ctrl-val" id="rcKv">1</span></div>
+          <input type="range" id="rcK" min="1" max="24" value="1">
+        </div>
+        <div class="stat">
+          <div><b id="rcErr">—</b><span>erklärte Varianz</span></div>
+        </div>
+        <div class="note" style="font-size:13px;">
+          <b>Die Pointe:</b> Oft reichen <strong>sehr wenige</strong> Komponenten. Und was das Paper
+          entdeckt: Für bestimmte Aufgaben ist es sogar nur eine <em>einzige</em> — die Kommunikation
+          zwischen zwei Köpfen läuft über 1 bis 2 Dimensionen.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card g">
+    <div class="card-title">Notation des Papers</div>
+    <div class="grid3">
+      <div style="text-align:center; padding:12px;">
+        <div class="mono" style="font-size:1.9rem; color:var(--acc);">8.6</div>
+        <p class="sr" style="margin-top:6px;">Schicht 8, Kopf 6</p>
+      </div>
+      <div style="text-align:center; padding:12px;">
+        <div class="mono" style="font-size:1.9rem; color:var(--acc2);">8.6.2</div>
+        <p class="sr" style="margin-top:6px;">Schicht 8, Kopf 6, <strong>SVD-Komponente 2</strong></p>
+      </div>
+      <div style="text-align:center; padding:12px;">
+        <div class="mono" style="font-size:1.5rem; color:var(--acc3);">CS(OV<sub>8.6.2</sub>, QK<sub>9.9</sub>)</div>
+        <p class="sr" style="margin-top:6px;">Reden Komponente 2 von Kopf 8.6 und Kopf 9.9 miteinander?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     8. COMPOSITION SCORE MIT ZERLEGUNG — DIE ENTDECKUNG
+     ============================================================ -->
+<section id="compscore">
+  <h2><span class="chapnum">TEIL 8</span> Der Durchbruch: Zerlegen räumt das Rauschen auf</h2>
+  <p class="lead">Dieselbe Formel. Aber statt ganzer Matrizen setzt man die <strong>einzelnen
+  Rang-1-Komponenten</strong> ein. Und plötzlich sieht man etwas.</p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Vorher / Nachher</div>
+    <div class="btnrow" id="csModeBtns">
+      <button class="on" data-m="full">Ohne Zerlegung (volle Matrix)</button>
+      <button data-m="dec">Mit SVD-Zerlegung</button>
+    </div>
+    <div id="csComparePlot" class="plot" style="height:360px;"></div>
+    <div id="csCompareNote" class="note"></div>
+  </div>
+
+  <div class="card a">
+    <div class="card-title">Abbildung 2 des Papers · Inhibition Score vs. Composition Score</div>
+    <p>Das ist das Kernergebnis. <strong>Unten</strong>: Composition Score jeder der 64 Komponenten
+    mit Mover-Kopf 9.9 — rein aus den <em>Gewichten</em>, ohne das Modell laufen zu lassen.
+    <strong>Oben</strong>: Was passiert, wenn man diese Komponente <em>löscht</em> und das Modell
+    dann laufen lässt. Die Spitzen liegen an derselben Stelle.</p>
+
+    <div class="btnrow" id="inhibHeadBtns">
+      <button class="on" data-h="7.3">Kopf 7.3</button>
+      <button data-h="7.9">Kopf 7.9</button>
+      <button data-h="8.6">Kopf 8.6</button>
+      <button data-h="8.10">Kopf 8.10</button>
+    </div>
+    <div id="fig2Plot" style="width:100%; height:450px;"></div>
+    <div id="fig2Note" class="note a"></div>
+  </div>
+
+  <div class="card g">
+    <div class="card-title">Die Zahlen</div>
+    <div class="stat">
+      <div><b>5σ</b><span>über dem Durchschnitt (8.6.2)</span></div>
+      <div><b>1–2</b><span>Dimensionen pro Kanal</span></div>
+      <div><b>7–14%</b><span>Einbruch beim Löschen</span></div>
+      <div><b>64</b><span>Komponenten pro Kopf</span></div>
+    </div>
+    <div class="note">
+      <b>Was nicht funktioniert hat:</b> Bei <em>Key</em>-Composition (Previous-Token-Kopf 4.11 →
+      Induction-Kopf 5.5) findet das Paper <strong>keine</strong> solchen Ausreißer-Komponenten.
+      Die Kanal-Hypothese gilt also nicht überall. Ehrliche Wissenschaft (Appendix B).
+    </div>
+    <div id="keyCompPlot" class="plot" style="height:270px;"></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     9. ENTDECKUNG: Der Duplicate-Kanal
+     ============================================================ -->
+<section id="entdeckung">
+  <h2><span class="chapnum">TEIL 9</span> Was fließt durch die Kanäle? Ein 2D-Duplikat-Detektor</h2>
+  
+  <p class="lead">Wir wissen jetzt <em>wo</em> die Kanäle sind. Jetzt die spannendere Frage:
+  <strong>Was wird da eigentlich übertragen?</strong></p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Der Duplikat-Detektor (Kopf 3.0, Komponenten 1 &amp; 2)</div>
+    <p>Kopf <span class="mono">3.0</span> ist ein <em>Duplicate-Token-Head</em>: er merkt, wenn ein Token
+    schon einmal vorkam. Zwei seiner 64 Komponenten — <span class="mono">3.0.1</span> und
+    <span class="mono">3.0.2</span> — haben einen auffällig hohen Composition Score mit dem
+    Inhibition-Kopf 7.9. Projiziert man echte Tokens auf diese <strong>2 Richtungen</strong>,
+    trennen sich Duplikate sauber von Nicht-Duplikaten.</p>
+
+    <div class="split">
+      <div class="cwrap"><canvas id="cvDup" width="700" height="430"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Anzahl Tokens</span><span class="ctrl-val" id="dpNv">220</span></div>
+          <input type="range" id="dpN" min="40" max="500" value="220">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Anteil Duplikate</span><span class="ctrl-val" id="dpRv">30%</span></div>
+          <input type="range" id="dpR" min="5" max="60" value="30">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Trennschärfe des Kanals</span><span class="ctrl-val" id="dpSv">1.00</span></div>
+          <input type="range" id="dpS" min="0" max="1.6" step="0.02" value="1">
+        </div>
+        <div class="btnrow">
+          <button id="dpNew" class="sm">Neu würfeln</button>
+          <label class="chk"><input type="checkbox" id="dpLine" checked> Trennlinie zeigen</label>
+        </div>
+        <div class="stat">
+          <div><b id="dpAcc">—</b><span>Trennbarkeit</span></div>
+          <div><b>2</b><span>Dimensionen</span></div>
+        </div>
+        <div class="note g" style="font-size:13px;">
+          <b>Abbildung 8 des Papers:</b> Zwei Richtungen aus 768 reichen aus, um „schon gesehen"
+          von „neu" zu unterscheiden. Dreh die Trennschärfe auf 0 — dann verschmelzen die Wolken
+          und das Signal ist weg. Genau das passiert, wenn man die Komponente löscht.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card v">
+    <div class="card-title">Der Composition-Score-Fingerabdruck von Kopf 3.0</div>
+    <p>Links: alle 64 Komponenten von Kopf 3.0, bewertet gegen die Value-Matrix von
+    <span class="mono">7.9.6</span>. Zwei Ausreißer — mehr nicht. Fahre mit der Maus über die Balken.</p>
+    <div id="dupCompPlot" class="plot" style="height:300px;"></div>
+  </div>
+
+  <div class="card a">
+    <div class="card-title">Interaktiv · Der 1D-Inhibition-Kanal (Abbildung 3 &amp; 4)</div>
+    <p>Jede Komponente ist Rang 1 → ihr <strong>gesamter Ausgaberaum ist eine Linie</strong>.
+    Alles, was dieser Kanal je sagen kann, ist: <em>eine Zahl α auf dieser Linie</em>.
+    Das Paper ersetzt die Ausgabe des Kopfes einfach durch <span class="mono">α·v⃗</span> —
+    die Attention des Kopfes wird komplett umgangen. Und trotzdem lässt sich damit steuern,
+    welcher Name blockiert wird.</p>
+
+    <div class="cwrap"><canvas id="cvAlpha" width="1120" height="330"></canvas></div>
+
+    <div class="grid3" style="margin-top:14px;">
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Skalar α</span><span class="ctrl-val" id="alAv">0</span></div>
+        <input type="range" id="alA" min="-200" max="200" value="0">
+      </div>
+      <div>
+        <div class="sr" style="margin-bottom:6px;">KOMPONENTE WÄHLEN</div>
+        <select id="alComp">
+          <option value="8.10.1">8.10.1 — Inhibition</option>
+          <option value="8.6.2">8.6.2 — Inhibition</option>
+          <option value="7.9.6">7.9.6 — Inhibition</option>
+          <option value="7.3.1">7.3.1 — schwach</option>
+          <option value="8.3.0">8.3.0 — Kontroll-Kopf</option>
+          <option value="8.0.0">8.0.0 — Zufalls-Kontrolle</option>
+        </select>
+      </div>
+      <div style="display:flex; align-items:flex-end;">
+        <button id="alSweep">▶ α durchfahren</button>
+      </div>
+    </div>
+    <div id="alNote" class="note"></div>
+  </div>
+
+  <div class="card g">
+    <div class="card-title">Warum das ein „Zeiger" ist — und keine Inhaltsinformation</div>
+    <div class="grid2">
+      <div>
+        <h4>Was ersetzt wurde</h4>
+        <p style="font-size:14px;">Die Ausgabe des Inhibition-Kopfes wird durch einen
+        <strong>Vektor aus den Gewichten</strong> ersetzt. Der kennt den Kontext nicht.
+        Er weiß nicht, dass da „Mary" oder „John" steht.</p>
+      </div>
+      <div>
+        <h4>Was trotzdem passiert</h4>
+        <p style="font-size:14px;">Der Mover-Kopf 9.9 ändert zuverlässig, auf welchen
+        <strong>Namen in welcher Position</strong> er schaut. Also kodiert der Kanal reine
+        <em>Position</em> — „Name 1" oder „Name 2". Ein <strong>Zeiger</strong>.</p>
+      </div>
+    </div>
+    <div class="note c">
+      <b>Validierung gegen die „Subspace-Illusion":</b> Makelov et al. warnten, dass solche
+      Unterraum-Eingriffe trügen können. Das Paper misst daher zusätzlich
+      <strong>FLDD = 97,5 %</strong> und <strong>Interchange Accuracy = 35 %</strong>.
+      Baseline: −8 % / 0 %. Direkt optimierter Vektor: 111,5 % / 45,1 %.
+      Das gefundene 1D-Subspace ist also nahe am Optimum — kein Artefakt.
+    </div>
+    <div id="fldPlot" class="plot" style="height:270px;"></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     10. WEIGHT EDITING
+     ============================================================ -->
+<section id="edit">
+  <h2><span class="chapnum">TEIL 10</span> Der Kausalitätstest: Kanal löschen, Verhalten bricht ein</h2>
+  <p class="lead">Korrelation reicht nicht. Das Paper schneidet den Kanal heraus — chirurgisch,
+  <strong>in den Gewichten</strong> — und misst, was passiert.</p>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Chirurgie an den Gewichten</div>
+    <p>Setze einen Singulärwert auf null, baue die Matrizen wieder zusammen, lass das Modell laufen.
+    Die Mathematik dahinter ist erstaunlich simpel:</p>
+    <div class="formula">
+      $$OV=USV^T \;\longrightarrow\; S' \;\longrightarrow\; O=U\sqrt{S'},\quad V=\sqrt{S'}V^T$$
+    </div>
+
+    <div class="cwrap"><canvas id="cvEdit" width="1120" height="300"></canvas></div>
+
+    <div class="split" style="margin-top:14px;">
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Welche Komponente löschen?</span><span class="ctrl-val" id="edCv">2</span></div>
+          <input type="range" id="edC" min="0" max="20" value="2">
+        </div>
+        <div class="btnrow">
+          <button id="edReset" class="sm">Alles zurücksetzen</button>
+          <label class="chk"><input type="checkbox" id="edMulti"> Mehrere gleichzeitig entfernen</label>
+        </div>
+      </div>
+      <div>
+        <div class="stat">
+          <div><b id="edInh">0.70</b><span>Inhibition Score</span></div>
+          <div><b id="edDrop">0%</b><span>Einbruch</span></div>
+        </div>
+      </div>
+    </div>
+    <div id="edNote" class="note"></div>
+  </div>
+
+  <div class="card r">
+    <div class="card-title">Abbildung 10 · Was bleibt übrig, wenn man fast alles wegwirft?</div>
+    <p>Ein krasser Test: Behalte <strong>nur eine einzige Komponente</strong> pro Inhibition-Kopf.
+    Entweder die mit dem höchsten Composition Score — oder die mit dem größten Singulärwert (Index 0).</p>
+    <div id="keepPlot" class="plot" style="height:300px;"></div>
+    <div class="note">
+      <b>Lies das genau:</b> Die <em>stärkste</em> Komponente (größter Singulärwert, 0.04) ist
+      <strong>nicht</strong> die wichtige. Die vom Composition Score gefundene (0.30) trägt fast die
+      Hälfte des vollen Signals (0.70). <em>Lautstärke ≠ Bedeutung.</em> Genau deshalb braucht man
+      den Composition Score und nicht einfach „nimm die größten Singulärwerte".
+    </div>
+  </div>
+
+  <div class="card v">
+    <div class="card-title">Es ist nicht GPT-2-spezifisch: Pythia-160m &amp; das Training</div>
+    <p>Dieselbe Analyse in Pythia-160m findet Kopf <span class="mono">6.6</span> → Mover
+    <span class="mono">9.5</span>, wieder über <strong>eine einzige Komponente (6.6.2)</strong>.
+    Und weil Pythia 144 Trainings-Checkpoints veröffentlicht, kann man zusehen, <em>wie der Kanal
+    entsteht</em>.</p>
+    <div id="pythiaPlot" class="plot" style="height:330px;"></div>
+    <div class="ctrl">
+      <div class="ctrl-lab"><span>Trainingsschritt</span><span class="ctrl-val" id="pyStepv">150k</span></div>
+      <input type="range" id="pyStep" min="0" max="150" value="150">
+    </div>
+    <div class="note g">
+      <b>Was man sieht:</b> Die <em>Separability</em> (Trennschärfe des Kanals) steigt früh steil an.
+      Addiert man die Komponente künstlich dazu (×3, ×10), funktioniert Inhibition schon in
+      <strong>frühen Checkpoints</strong> besser. Subtrahiert man sie, bricht sie ein.
+      Der Kanal ist also wirklich der Träger des Signals — und er wird gelernt, nicht eingebaut.
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     11. STEUERN
+     ============================================================ -->
+<section id="steer">
+  <h2><span class="chapnum">TEIL 11</span> Steuern: ein Regler, der entscheidet, welcher Name gewinnt</h2>
+
+  <div class="card">
+    <div class="card-title">Interaktiv · Der volle IOI-Steuerstand</div>
+    <p>Hier kannst du alles zusammen bewegen. Links der Satz, in der Mitte die Attention von Mover-Kopf 9.9,
+    rechts die Vorhersage. Dreh an α und schau zu, wie das Modell seine Meinung ändert — ohne dass sich
+    ein einziges Wort im Prompt ändert.</p>
+
+    <div class="cwrap"><canvas id="cvSteer" width="1120" height="390"></canvas></div>
+
+    <div class="grid3" style="margin-top:14px;">
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>α auf 8.10.1</span><span class="ctrl-val" id="sw1v">0</span></div>
+        <input type="range" id="sw1" min="-150" max="150" value="0">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>α auf 8.6.2</span><span class="ctrl-val" id="sw2v">0</span></div>
+        <input type="range" id="sw2" min="-150" max="150" value="0">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Duplikat-Signal auf IO/S1</span><span class="ctrl-val" id="sw3v">0</span></div>
+        <input type="range" id="sw3" min="-150" max="150" value="0">
+      </div>
+    </div>
+    <div class="btnrow">
+      <button id="swOrder">Reihenfolge: <span id="swOrdLbl">IO zuerst</span></button>
+      <button id="swReset" class="sm">Zurücksetzen</button>
+    </div>
+    <div id="swNote" class="note c"></div>
+  </div>
+
+  <div class="card a">
+    <div class="card-title">Die vier Interventions-Varianten des Papers im Vergleich</div>
+    <div class="scroller">
+      <table>
+        <tr><th>Eingriff</th><th>Wo</th><th>Wirkung auf Inhibition Score</th><th>Paper</th></tr>
+        <tr><td>Komponente löschen</td><td>Gewichte</td><td>−7 bis −14 %</td><td>Abb. 2 oben</td></tr>
+        <tr><td>Ausgabe = α·v⃗ ersetzen</td><td>Forward Pass</td><td>von −1 bis +1 steuerbar</td><td>Abb. 4 oben</td></tr>
+        <tr><td>Duplikat-Signal addieren</td><td>Residual Stream</td><td>±0,3 moduliert</td><td>Abb. 4 unten</td></tr>
+        <tr><td>Nur Top-Komponente behalten</td><td>Gewichte</td><td>0,70 → 0,30 (statt 0,04)</td><td>Abb. 10</td></tr>
+      </table>
+    </div>
+    <div class="note r">
+      <b>Wichtig:</b> Kontroll-Köpfe (8.0.0, 8.3.0, 8.6.10) zeigen diese Effekte <strong>nicht</strong>.
+      Dreht man dort an α, passiert so gut wie nichts. Der Effekt ist spezifisch für die gefundenen Kanäle.
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     12. LAUNDRY LIST
+     ============================================================ -->
+<section id="laundry">
+  <h2><span class="chapnum">TEIL 12</span> Zurück zum Rätsel: die Laundry List</h2>
+  <p class="lead">Jetzt haben wir alle Werkzeuge. Zeit, den ursprünglichen Fehler zu erklären.</p>
+
+  <div class="card">
+    <div class="card-title">Die Aufgabe im Detail (Appendix E)</div>
+    <div class="grid2">
+      <div>
+        <h4>Aufbau</h4>
+        <ul class="tight">
+          <li>Satz 1 nennt <strong>N Objekte</strong></li>
+          <li>Satz 2 nennt <strong>N−1 davon</strong>, in anderer Reihenfolge</li>
+          <li>Das Modell muss das <strong>fehlende</strong> vorhersagen</li>
+          <li>250 Prompts pro N, N von 3 bis 20</li>
+        </ul>
+        <h4>22 mögliche Objekte</h4>
+        <div style="line-height:2.2;">
+          <span class="tok">pencil</span><span class="tok">notebook</span><span class="tok">pen</span>
+          <span class="tok">cup</span><span class="tok">plate</span><span class="tok">jug</span>
+          <span class="tok">mug</span><span class="tok">puzzle</span><span class="tok">textbook</span>
+          <span class="tok">leash</span><span class="tok">necklace</span><span class="tok">bracelet</span>
+          <span class="tok">bottle</span><span class="tok">ball</span><span class="tok">envelope</span>
+          <span class="tok">lighter</span><span class="tok">bowl</span><span class="tok">apple</span>
+          <span class="tok">pear</span><span class="tok">banana</span><span class="tok">orange</span>
+          <span class="tok">steak</span>
+        </div>
+      </div>
+      <div>
+        <h4>Warum das clever konstruiert ist</h4>
+        <p style="font-size:14px;">Durch das <strong>Mischen der zweiten Liste</strong> und einen
+        <strong>anderen Satzbau</strong> kann das Modell nicht einfach Muster kopieren
+        (Induction Heads reichen nicht). Es <em>muss</em> den Inhibition-Mechanismus benutzen:
+        „alles, was schon dran war, ausschließen".</p>
+        <div class="note c" style="font-size:13px;">
+          <b>Genau dafür sind Inhibition-Köpfe da.</b> Im Anhang F zeigt das Paper: auf echtem Text
+          (OpenWebText) feuern diese Köpfe vor allem in <strong>Aufzählungen</strong> — von Kommas
+          auf vorher genannte Elemente. Sie sagen: „Wiederhol dich nicht."
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card r">
+    <div class="card-title">Interaktiv · Ein Regler reicht nicht (Abbildung 5 links)</div>
+    <p>Das Paper versucht zuerst: <strong>eine</strong> Komponente skalieren, so wie bei IOI.
+    Bei 2 Namen klappte das. Bei 6 Objekten nicht mehr. Fahre α durch und sieh, auf welches Objekt
+    der Mover-Kopf schaut.</p>
+    <div class="split">
+      <div class="cwrap"><canvas id="cv1D" width="700" height="330"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>α auf 8.10.1</span><span class="ctrl-val" id="l1Av">0</span></div>
+          <input type="range" id="l1A" min="-200" max="200" value="0">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Anzahl Objekte</span><span class="ctrl-val" id="l1Nv">6</span></div>
+          <input type="range" id="l1N" min="2" max="10" value="6">
+        </div>
+        <div class="stat">
+          <div><b id="l1Reach">2</b><span>erreichbare Objekte</span></div>
+          <div><b id="l1Miss">4</b><span>unerreichbar</span></div>
+        </div>
+        <div class="note r" style="font-size:13px;">
+          <b>Das Problem:</b> Eine Linie hat nur <strong>zwei Enden</strong>. Der Mover-Kopf
+          erreicht das erste oder das letzte Objekt — alles dazwischen klumpt zu einem Punkt
+          zusammen. Das ist der mechanistische Zwilling von <em>„Lost in the Middle"</em>
+          (Liu et al. 2024).
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     13. 3D SPACE
+     ============================================================ -->
+<section id="space3d">
+  <h2><span class="chapnum">TEIL 13</span> Der 3D-Indexraum: die schönste Entdeckung des Papers</h2>
+  <p class="lead">Wenn eine Dimension nicht reicht — nimm drei. Und dann passiert etwas
+  völlig Unerwartetes.</p>
+
+  <div class="card v">
+    <div class="card-title">Interaktiv · Der Raum aus 7.9.6 × 8.6.2 × 8.6.10</div>
+    <p>Jeder Punkt ist <strong>ein kompletter Durchlauf des gesamten Datensatzes</strong> mit den drei
+    Inhibition-Komponenten auf diesen Wert gesetzt. Die Farbe sagt: <em>Auf welches Objekt schaut
+    der Mover-Kopf dann im Schnitt?</em> Dreh die Szene mit der Maus.</p>
+    <div id="plot3d" style="width:100%; height:540px;"></div>
+    <div class="grid3" style="margin-top:14px;">
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Anzahl Objekte</span><span class="ctrl-val" id="p3Nv">5</span></div>
+        <input type="range" id="p3N" min="3" max="20" value="5">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lab"><span>Punktdichte</span><span class="ctrl-val" id="p3Dv">11</span></div>
+        <input type="range" id="p3D" min="7" max="17" step="2" value="11">
+      </div>
+      <div style="display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap;">
+        <label class="chk"><input type="checkbox" id="p3Frag" checked> Fragmentierung zeigen</label>
+        <button id="p3Anim" class="sm">▶ N hochzählen</button>
+      </div>
+    </div>
+    <div id="p3Note" class="note v"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Der Tortenstück-Effekt — was hier wirklich passiert</div>
+    <div class="split-l">
+      <div class="cwrap"><canvas id="cvWedge" width="300" height="300"></canvas></div>
+      <div>
+        <p>Der Raum wird in <strong>Keile</strong> (Wedges) aufgeteilt — wie Tortenstücke.
+        Jedes Stück steht für einen <em>Listenindex</em>. Kommt ein Objekt dazu, wird ein neues
+        Stück abgeschnitten.</p>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Objekte in der Liste</span><span class="ctrl-val" id="wgNv">5</
+span></div>
+          <input type="range" id="wgN" min="2" max="20" value="5">
+        </div>
+        <div class="stat">
+          <div><b id="wgDeg">72°</b><span>Winkel pro Index</span></div>
+          <div><b id="wgStat">stabil</b><span>Zustand</span></div>
+        </div>
+        <div class="note r" style="font-size:13px;">
+          <b>Ab ca. 9–10 Objekten</b> werden die Stücke so dünn, dass sie <strong>zerbrechen</strong>
+          (Abb. 27 im Paper zeigt genau das — bei 8 und 10 Objekten entstehen Artefakte).
+          Dann kann das Modell den richtigen Index nicht mehr treffen. <em>Das ist der Fehler
+          aus Teil 1 — mechanistisch erklärt.</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card g">
+    <div class="card-title">Die Kausalkette in einem Bild</div>
+    <div class="cwrap"><canvas id="cvChain2" width="1120" height="230"></canvas></div>
+    <div class="steps" style="margin-top:16px;">
+      <div class="step"><h4>Der Indexraum ist nur 3-dimensional</h4>
+        <p style="font-size:14px;">Weil er aus drei Rang-1-Komponenten besteht — 7.9.6, 8.6.2, 8.6.10.
+        Mehr Platz hat das Modell für diese Information nicht reserviert.</p></div>
+      <div class="step"><h4>Jedes Listenelement braucht ein eigenes Gebiet</h4>
+        <p style="font-size:14px;">Die Keile teilen sich den <strong>festen</strong> Raum auf.
+        Mehr Objekte = kleinere Keile.</p></div>
+      <div class="step"><h4>Ab ~10 Objekten wird es zu eng</h4>
+        <p style="font-size:14px;">Die Gebiete fragmentieren. Mittlere Indizes verschmelzen
+        zu einem Punkt — <em>„Lost in the Middle"</em>.</p></div>
+      <div class="step"><h4>Der Mover-Kopf trifft das Falsche</h4>
+        <p style="font-size:14px;">Er kopiert das letzte Objekt, weil dessen Gebiet groß und
+        leicht erreichbar bleibt. → Der Fehler aus Abbildung 1.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     14. DIE REPARATUR
+     ============================================================ -->
+<section id="fix">
+  <h2><span class="chapnum">TEIL 14</span> Die Reparatur: +22 % Genauigkeit durch gezieltes Zielen</h2>
+  <p class="lead">Wenn das Modell den Raum selbst nicht gut durchquert — dann machen wir es für ihn.</p>
+
+  <div class="card g">
+    <div class="card-title">Interaktiv · Intervention im Indexraum</div>
+    <p>Das Paper setzt die drei Inhibition-Komponenten auf die Region, die zum <strong>Index der
+    richtigen Antwort</strong> gehört. Vergleiche unten: ohne Eingriff vs. mit Eingriff.</p>
+    <div id="fixPlot" class="plot" style="height:380px;"></div>
+    <div class="grid3" style="margin-top:12px;">
+      <div class="stat" style="margin:0;">
+        <div><b>64→86%</b><span>bei 3 Objekten</span></div>
+      </div>
+      <div class="stat" style="margin:0;">
+        <div><b>~51%</b><span>bei 8 Objekten</span></div>
+      </div>
+      <div class="stat" style="margin:0;">
+        <div><b>+22%</b><span>typischer Gewinn</span></div>
+      </div>
+    </div>
+    <div class="note g">
+      <b>Die schönste Art, das Ergebnis zu lesen:</b> Nach dem Eingriff ist das Modell bei
+      <strong>N Objekten</strong> ungefähr so gut wie vorher bei <strong>N/2 Objekten</strong>.
+      Wir haben seine effektive Listenkapazität <em>verdoppelt</em> — ohne Training, ohne
+      zusätzliche Parameter, nur durch Kenntnis des Mechanismus.
+    </div>
+  </div>
+
+  <div class="card r">
+    <div class="card-title">Aber: die Decke bleibt</div>
+    <p>Bei sehr vielen Objekten bringt auch der Eingriff wenig mehr. Der Raum ist und bleibt
+    3-dimensional — seine <strong>Repräsentationskapazität</strong> ist erschöpft.
+    Fahre den Regler hoch und sieh, wie die Verbesserung abschmilzt.</p>
+    <div class="split">
+      <div class="cwrap"><canvas id="cvCap" width="700" height="300"></canvas></div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Anzahl Objekte N</span><span class="ctrl-val" id="cpNv">8</span></div>
+          <input type="range" id="cpN" min="3" max="20" value="8">
+        </div>
+        <div class="ctrl">
+          <div class="ctrl-lab"><span>Hypothetische Kanaldimension</span><span class="ctrl-val" id="cpDv">3</span></div>
+          <input type="range" id="cpD" min="1" max="8" value="3">
+        </div>
+        <div class="stat">
+          <div><b id="cpGain">+22%</b><span>Verbesserung</span></div>
+          <div><b id="cpRoom">OK</b><span>Platz im Raum</span></div>
+        </div>
+        <p class="sr">Spekulativ: Mit mehr Kanaldimensionen hätte das Modell mehr Keile zur Verfügung.
+        Größere Modelle degradieren langsamer (Appendix A) — plausibel, weil sie mehr Kapazität haben.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     15. ANTWORT
+     ============================================================ -->
+<section id="antwort">
+  <h2><span class="chapnum">TEIL 15</span> Die Antwort auf die Frage</h2>
+
+  <div class="card">
+    <div class="card-title">Frage → Antwort</div>
+    <div class="split-l">
+      <div>
+        <div class="pill r" style="font-size:12.5px;">DIE FRAGE</div>
+        <p style="font-size:16.5px; color:var(--txt); margin-top:10px;">
+          „Ist es möglich zu erklären, <strong>warum</strong> ein bestimmter Modellfehler existiert?"
+        </p>
+      </div>
+      <div>
+        <div class="pill g" style="font-size:12.5px;">DIE ANTWORT</div>
+        <p style="font-size:16.5px; color:var(--txt); margin-top:10px;">
+          <strong>Ja.</strong> GPT-2 verwaltet Listenpositionen in einem gelernten, nur
+          <strong>3-dimensionalen</strong> Unterraum des Residual Streams. Dieser Raum ist in
+          Keile unterteilt — einen pro Listenindex. Wächst die Liste, werden die Keile zu schmal
+          und fragmentieren. Der Mover-Kopf kann den richtigen Index nicht mehr ansteuern und greift
+          zum letzten Element. <em>Der „willkürliche" Fehler ist in Wahrheit ein
+          Kapazitätslimit eines sichtbaren, manipulierbaren Mechanismus.</em>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card v">
+    <div class="card-title">Interaktiv · Die ganze Argumentationskette</div>
+    <p>Klick dich durch die Beweiskette des Papers. Jeder Schritt baut auf dem vorigen auf.</p>
+    <div class="cwrap"><canvas id="cvArg" width="1120" height="260"></canvas></div>
+    <div class="ctrl" style="margin-top:12px;">
+      <div class="ctrl-lab"><span>Schritt der Beweiskette</span><span class="ctrl-val" id="agSv">1</span></div>
+      <input type="range" id="agS" min="1" max="8" value="1">
+    </div>
+    <div id="agNote" class="note v"></div>
+  </div>
+
+  <div class="card a">
+    <div class="card-title">Die drei Beiträge des Papers</div>
+    <div class="grid3">
+      <div>
+        <div class="pill c">BEITRAG 1</div>
+        <h4>Kommunikationskanäle existieren</h4>
+        <p style="font-size:13.6px;">Nachgewiesen in den <strong>Gewichten</strong>: Köpfe,
+        die mehrere Schichten auseinanderliegen, sind über 1–2-dimensionale Unterräume verbunden.
+        Elhage et al. hatten sie vermutet — hier sind sie.</p>
+      </div>
+      <div>
+        <div class="pill v">BEITRAG 2</div>
+        <h4>SVD-Zerlegung macht sie sichtbar</h4>
+        <p style="font-size:13.6px;">Eine simple Erweiterung des Composition Score. Statt ganzer
+        Matrizen nimmt man die Rang-1-Komponenten. Aus Rauschen wird ein klares Signal
+        mit <strong>5σ-Ausreißern</strong>.</p>
+      </div>
+      <div>
+        <div class="pill g">BEITRAG 3</div>
+        <h4>Mechanismus → Verhalten → Reparatur</h4>
+        <p style="font-size:13.6px;">Der Mechanismus erklärt echte Prompt-Sensitivität. Und Eingriffe
+        darin verbessern die Aufgabe um <strong>über 20 %</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Warum das über dieses eine Modell hinausgeht</div>
+    <div class="grid2">
+      <div>
+        <h4>Struktur entsteht von selbst</h4>
+        <p style="font-size:14px;">Niemand hat GPT-2 einen Indexraum einprogrammiert. Er entstand
+        aus purem „Vorhersage des nächsten Wortes". Lake et al. hielten solche abstrakten,
+        <em>inhaltsunabhängigen</em> Strukturen in neuronalen Netzen für unwahrscheinlich.</p>
+      </div>
+      <div>
+        <h4>Zeiger statt Inhalt</h4>
+        <p style="font-size:14px;">Der Kanal überträgt <strong>keine Namen</strong>, sondern
+        <strong>Positionen</strong>. Das Modell hat eine Art Variablen-Bindung gelernt — passend
+        zu Feng &amp; Steinhardt (2023).</p>
+      </div>
+    </div>
+    <div class="note c">
+      <b>Praktischer Ausblick:</b> Man kann Schaltkreise <strong>ohne das Modell laufen zu lassen</strong>
+      finden (Appendix H: fast der ganze IOI-Schaltkreis allein aus den Gewichten) und sogar
+      <strong>während des Trainings</strong> editieren (Appendix G.2, Pythia). Das ist relevant für
+      Steering, Model Editing und automatische Interpretierbarkeit.
+    </div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ============================================================
+     16. GRENZEN
+     ============================================================ -->
+<section id="grenzen">
+  <h2><span class="chapnum">TEIL 16</span> Grenzen — was das Paper <em>nicht</em> zeigt</h2>
+
+  <div class="grid2">
+    <div class="card r">
+      <div class="card-title">Ehrliche Einschränkungen</div>
+      <ul class="tight">
+        <li><strong>Abhängig von Vorwissen:</strong> Die Analyse baut auf GPT-2 Small auf —
+        dem am besten untersuchten Modell überhaupt. Bei einem unbekannten Modell wäre
+        der Startpunkt schwerer.</li>
+        <li><strong>RoPE-Modelle gehen nicht:</strong> Bei rotierenden Positionskodierungen
+        (Llama, Mistral …) kann QK nicht sauber als Produkt berechnet werden. Query- und
+        Key-Composition-Scores sind dort nicht direkt anwendbar.</li>
+        <li><strong>Key-Composition funktioniert nicht:</strong> Beim Induction-Kopf-Paar
+        4.11 → 5.5 findet sich kein Ausreißer. Die Kanal-Hypothese ist nicht universell.</li>
+        <li><strong>Skalierung ist keine Lösung — aber auch kein Gegenbeweis:</strong>
+        Größere Modelle degradieren langsamer. Ob sie denselben Mechanismus benutzen,
+        ist offen.</li>
+        <li><strong>Kopf 8.3 bleibt unklar:</strong> Appendix H findet ihn als starken
+        Kommunikationspartner von 9.9, kann seine Funktion aber nur andeuten
+        („Relevant-Context-Head").</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Interaktiv · Wo gilt die Methode?</div>
+      <p style="font-size:14px;">Klicke die Szenarien an:</p>
+      <div class="btnrow" id="limBtns">
+        <button class="on" data-l="0">GPT-2 · Query-Comp</button>
+        <button data-l="1">GPT-2 · Value-Comp</button>
+        <button data-l="2">GPT-2 · Key-Comp</button>
+        <button data-l="3">Pythia-160m</button>
+        <button data-l="4">Llama (RoPE)</button>
+      </div>
+      <div class="cwrap"><canvas id="cvLim" width="560" height="230"></canvas></div>
+      <div id="limNote" class="note"></div>
+    </div>
+  </div>
+
+  <div class="card v">
+    <div class="card-title">Begriffslexikon zum Nachschlagen</div>
+    <div class="scroller">
+      <table>
+        <tr><th>Begriff</th><th>Bedeutung in einem Satz</th></tr>
+        <tr><td class="mono">Residual Stream</td><td>Der Vektor (768 Zahlen), der durch alle Schichten läuft; jede Schicht addiert etwas dazu.</td></tr>
+        <tr><td class="mono">OV-Matrix</td><td>„Was wird kopiert" — bestimmt, welche Information ein Kopf in den Stream schreibt.</td></tr>
+        <tr><td class="mono">QK-Matrix</td><td>„Wohin wird geschaut" — bestimmt die Aufmerksamkeitsverteilung.</td></tr>
+        <tr><td class="mono">Composition</td><td>Ein früher Kopf schreibt, ein späterer liest. Über Q, K oder V.</td></tr>
+        <tr><td class="mono">Composition Score</td><td>Zahl von 0–1: Wie gut passen Schreib- und Leserichtungen zweier Matrizen?</td></tr>
+        <tr><td class="mono">SVD</td><td>Zerlegt eine Matrix in Drehen → Strecken → Drehen; liefert einzelne Rang-1-Signale.</td></tr>
+        <tr><td class="mono">Rang 1</td><td>Die Matrix bildet alles auf eine einzige Linie ab — genau ein Signal.</td></tr>
+        <tr><td class="mono">Mover Head</td><td>Kopiert das Token, auf das er schaut, in die Vorhersage (GPT-2: 9.9).</td></tr>
+        <tr><td class="mono">Inhibition Head</td><td>Sagt dem Mover-Kopf, wohin er <em>nicht</em> schauen soll (7.3, 7.9, 8.6, 8.10).</td></tr>
+        <tr><td class="mono">Duplicate Head</td><td>Erkennt bereits gesehene Tokens (GPT-2: 3.0).</td></tr>
+        <tr><td class="mono">Inhibition Score</td><td>Attention auf IO minus Attention auf S1; +1 = perfekte Hemmung.</td></tr>
+        <tr><td class="mono">IOI</td><td>Indirect Object Identification — „John und Mary … John gab ein Getränk an ___".</td></tr>
+        <tr><td class="mono">FLDD</td><td>Fractional Logit Difference Decrease: misst, wie stark ein Eingriff den Logit-Unterschied verschiebt.</td></tr>
+        <tr><td class="mono">Laundry List</td><td>Die synthetische Aufgabe: N Objekte nennen, N−1 wiederholen, fehlendes vorhersagen.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center; padding:34px;">
+    <div style="font-size:1.5rem; font-weight:760; letter-spacing:-.02em;
+      background:linear-gradient(100deg,var(--acc),var(--acc2),var(--acc3));
+      -webkit-background-clip:text; background-clip:text; color:transparent;">
+      „Ein scheinbar willkürlicher Fehler war ein geometrisches Kapazitätslimit."
+    </div>
+    <p class="sr" style="margin-top:14px;">
+      Merullo, Eickhoff &amp; Pavlick · <em>Talking Heads: Understanding Inter-layer Communication
+      in Transformer Language Models</em> · NeurIPS 2024 · arXiv:2406.09519
+    </p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const C  = {
+  acc:'#6ee7ff', acc2:'#c084fc', acc3:'#fbbf24', acc4:'#34d399', acc5:'#fb7185',
+  txt:'#e8ecf8', dim:'#97a0bd', faint:'#67708f', stroke:'rgba(255,255,255,.12)'
+};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function hexA(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;}
+function dpi(cv){
+  const r=window.devicePixelRatio||1, w=cv.width, h=cv.height;
+  if(cv._dpiDone) return cv.getContext('2d');
+  cv.style.width=w+'px'; cv.style.height=h+'px';
+  cv.width=w*r; cv.height=h*r;
+  const ctx=cv.getContext('2d'); ctx.scale(r,r); cv._dpiDone=true; cv._w=w; cv._h=h;
+  return ctx;
+}
+function clr(ctx,cv){ctx.clearRect(0,0,cv._w||cv.width,cv._h||cv.height);}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function arrow(ctx,x1,y1,x2,y2,col,lw=2,head=9){
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.4), y2-head*Math.sin(a-0.4));
+  ctx.lineTo(x2-head*Math.cos(a+0.4), y2-head*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+function txt(ctx,s,x,y,col=C.dim,size=12,align='left',weight='500',font='-apple-system,sans-serif'){
+  ctx.fillStyle=col; ctx.font=`${weight} ${size}px ${font}`; ctx.textAlign=align;
+  ctx.textBaseline='middle'; ctx.fillText(s,x,y);
+}
+// seeded RNG
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(rng){let u=0,v=0;while(!u)u=rng();while(!v)v=rng();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+const PLOT_LAYOUT = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.18)',
+  font:{color:'#97a0bd', family:'-apple-system,sans-serif', size:11.5},
+  margin:{l:58,r:22,t:34,b:48},
+  xaxis:{gridcolor:'rgba(255,255,255,.07)', zerolinecolor:'rgba(255,255,255,.14)', linecolor:'rgba(255,255,255,.14)'},
+  yaxis:{gridcolor:'rgba(255,255,255,.07)', zerolinecolor:'rgba(255,255,255,.14)', linecolor:'rgba(255,255,255,.14)'},
+  legend:{bgcolor:'rgba(0,0,0,0)', font:{size:11}},
+  hoverlabel:{bgcolor:'#121524', bordercolor:'rgba(255,255,255,.2)', font:{color:'#e8ecf8',size:12}}
+};
+const PCFG = {displayModeBar:false, responsive:true};
+function L(extra){return Object.assign({}, JSON.parse(JSON.stringify(PLOT_LAYOUT)), extra||{});}
+
+/* ============================================================
+   NAV / SCROLL
+   ============================================================ */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  $('#progbar').style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  const ss=$$('section'); let cur='start';
+  ss.forEach(s=>{ if(window.scrollY >= s.offsetTop-140) cur=s.id; });
+  $$('#navlinks a').forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
+});
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');}),
+  {threshold:.08});
+$$('.card').forEach(c=>{c.classList.add('fadein'); io.observe(c);});
+
+/* tabs */
+$$('#basicTabs .tab').forEach(t=>t.onclick=()=>{
+  $$('#basicTabs .tab').forEach(x=>x.classList.remove('on')); t.classList.add('on');
+  $$('.basicpane').forEach(p=>p.style.display='none');
+  $('#'+t.dataset.t).style.display='';
+});
+
+/* ============================================================
+   ROADMAP (hero)
+   ============================================================ */
+(function(){
+  const cv=$('#roadmap'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const nodes=[
+    {t:'Fehler',      s:'Listen brechen',        c:C.acc5},
+    {t:'Grundlagen',  s:'Vektor · Matrix · SVD', c:C.acc},
+    {t:'Kanäle',      s:'Low-Rank Subräume',     c:C.acc},
+    {t:'IOI',         s:'bekannter Schaltkreis', c:C.acc2},
+    {t:'Zerlegung',   s:'Signal statt Rauschen', c:C.acc2},
+    {t:'Eingriff',    s:'löschen & steuern',     c:C.acc3},
+    {t:'3D-Raum',     s:'Index-Keile',           c:C.acc3},
+    {t:'Reparatur',   s:'+22 %',                 c:C.acc4}
+  ];
+  let t0=performance.now();
+  function draw(now){
+    clr(ctx,cv);
+    const pad=58, gap=(W-2*pad)/(nodes.length-1);
+    ctx.strokeStyle='rgba(255,255,255,.10)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(pad,72); ctx.lineTo(W-pad,72); ctx.stroke();
+    // flowing pulse
+    const ph=((now-t0)/3400)%1;
+    const g=ctx.createLinearGradient(pad+(W-2*pad)*(ph-0.18),0, pad+(W-2*pad)*(ph+0.18),0);
+    g.addColorStop(0,'rgba(110,231,255,0)'); g.addColorStop(.5,'rgba(110,231,255,.85)');
+    g.addColorStop(1,'rgba(110,231,255,0)');
+    ctx.strokeStyle=g; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(pad,72); ctx.lineTo(W-pad,72); ctx.stroke();
+    nodes.forEach((n,i)=>{
+      const x=pad+gap*i;
+      const pulse=1+0.25*Math.sin((now-t0)/520 + i*0.8);
+      ctx.fillStyle=hexA(n.c,.16); ctx.beginPath(); ctx.arc(x,72,13*pulse,0,7); ctx.fill();
+      ctx.fillStyle=n.c; ctx.beginPath(); ctx.arc(x,72,6,0,7); ctx.fill();
+      txt(ctx,n.t,x,38,C.txt,12.5,'center','650');
+      txt(ctx,n.s,x,105,C.faint,10.5,'center','500');
+      txt(ctx,String(i+1),x,124,hexA(n.c,.6),9.5,'center','700');
+    });
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+
+/* ============================================================
+   PART 1 — LAUNDRY LIST DEMO
+   ============================================================ */
+(function(){
+  const OBJ=['Bleistift','Notizbuch','Stift','Tasse','Teller','Krug','Becher','Puzzle',
+    'Lehrbuch','Leine','Kette','Armband','Flasche','Ball','Umschlag','Feuerzeug','Schüssel',
+    'Apfel','Birne','Banane','Orange','Steak'];
+  const cv=$('#llBars'); const ctx=dpi(cv);
+  let seed=7;
+  function accFor(n){ return clamp(0.86*Math.exp(-0.13*(n-3))+0.06,0.03,0.95); }
+  function render(){
+    const n=+$('#llN').value, p=clamp(+$('#llP').value,1,n);
+    $('#llNv').textContent=n; $('#llPv').textContent=p;
+    $('#llP').max=n;
+    const rng=mulberry(seed+n*31);
+    const items=[]; const pool=OBJ.slice();
+    for(let i=0;i<n;i++){ items.push(pool.splice(Math.floor(rng()*pool.length),1)[0]); }
+    const target=items[p-1];
+    const rest=items.filter((_,i)=>i!==p-1);
+    for(let i=rest.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[rest[i],rest[j]]=[rest[j],rest[i]];}
+    // prompt html
+    let s1=items.map(o=>`<span class="tok" style="${o===target?'border-color:'+C.acc4+';color:'+C.acc4:''}">${o}</span>`).join(' ');
+    let s2=rest.map(o=>`<span class="tok">${o}</span>`).join(' ');
+    $('#llPrompt').innerHTML =
+      `<span style="color:${C.faint}">Heute kaufe ich:</span><br>${s1}<br><br>`+
+      `<span style="color:${C.faint}">Zuerst hole ich:</span><br>${s2}`+
+      `<span class="tok" style="border-color:${C.acc3};color:${C.acc3}">und dann ___</span>`;
+
+    // simulated prediction
+    const acc=accFor(n);
+    // model bias: prefer last-mentioned item in list1
+    const lastBias = 0.30 + 0.5*(1-acc);
+    const probs=items.map((o,i)=>{
+      let base=0.02;
+      if(o===target) base += acc*1.0;
+      if(i===n-1)   base += lastBias*0.8;
+      base += 0.04*rng();
+      return base;
+    });
+    const sum=probs.reduce((a,b)=>a+b,0);
+    const pr=probs.map(x=>x/sum);
+    const best=pr.indexOf(Math.max(...pr));
+    const ok=items[best]===target;
+    $('#llPred').innerHTML =
+      `<span style="font-family:var(--mono);font-size:17px;color:${ok?C.acc4:C.acc5}">${items[best]}</span>`+
+      `  <span style="font-size:12.5px;color:${C.faint}">(${(pr[best]*100).toFixed(1)} %)</span><br>`+
+      `<span style="font-size:13px;color:${ok?C.acc4:C.acc5}">${ok?'✓ richtig':'✗ falsch — richtig wäre: '+target}</span>`;
+
+    // bars
+    clr(ctx,cv); const W=cv._w,H=cv._h;
+    const bw=Math.min(46,(W-60)/n-6);
+    const x0=30;
+    txt(ctx,'Wahrscheinlichkeit pro Objekt',x0,16,C.faint,11.5);
+    pr.forEach((v,i)=>{
+      const x=x0+i*((W-60)/n), h=v*(H-70);
+      const isT=items[i]===target;
+      const col = isT?C.acc4:(i===best?C.acc5:'rgba(255,255,255,.22)');
+      const gr=ctx.createLinearGradient(0,H-40-h,0,H-40);
+      gr.addColorStop(0,hexA(col==='rgba(255,255,255,.22)'?'#97a0bd':col,.9));
+      gr.addColorStop(1,hexA(col==='rgba(255,255,255,.22)'?'#97a0bd':col,.25));
+      ctx.fillStyle=gr; roundRect(ctx,x,H-40-h,bw,h,4); ctx.fill();
+      ctx.save(); ctx.translate(x+bw/2,H-32); ctx.rotate(-Math.PI/4);
+      txt(ctx,items[i].slice(0,9),0,0,isT?C.acc4:C.faint,9.5,'right');
+      ctx.restore();
+    });
+  }
+  ['llN','llP'].forEach(id=>$('#'+id).oninput=render);
+  $('#llShuffle').onclick=()=>{seed=Math.floor(Math.random()*9999); render();};
+  render();
+})();
+
+/* accuracy scaling plot */
+(function(){
+  const curves={
+    gpt2:  n=>clamp(0.82*Math.exp(-0.145*(n-3))+0.04,0.02,1),
+    gpt2xl:n=>clamp(0.88*Math.exp(-0.115*(n-3))+0.05,0.02,1),
+    opt27: n=>clamp(0.91*Math.exp(-0.095*(n-3))+0.06,0.02,1),
+    opt67: n=>clamp(0.93*Math.exp(-0.082*(n-3))+0.07,0.02,1),
+    pythia:n=>clamp(0.95/(1+Math.exp((n-10.5)*0.52))+0.05,0.02,1)
+  };
+  const names={gpt2:'GPT-2 Small',gpt2xl:'GPT-2 XL',opt27:'OPT-2.7B',opt67:'OPT-6.7B',pythia:'Pythia-6.9B'};
+  const cols={gpt2:C.acc5,gpt2xl:C.acc3,opt27:C.acc2,opt67:C.acc,pythia:C.acc4};
+  let active=new Set(['gpt2']);
+  const xs=[]; for(let n=2;n<=20;n++) xs.push(n);
+  function draw(){
+    const traces=[...active].map(k=>({
+      x:xs, y:xs.map(curves[k]), type:'scatter', mode:'lines+markers',
+      name:names[k], line:{color:cols[k],width:3,shape:'spline'}, marker:{size:6}
+    }));
+    Plotly.newPlot('accPlot',traces,L({
+      xaxis:{title:'Anzahl Objekte in der Liste',gridcolor:'rgba(255,255,255,.07)',dtick:2},
+      yaxis:{title:'Genauigkeit',range:[0,1],gridcolor:'rgba(255,255,255,.07)',tickformat:'.0%'},
+      showlegend:true, legend:{x:.65,y:.95}
+    }),PCFG);
+  }
+  $$('#scaleBtns button').forEach(b=>b.onclick=()=>{
+    const m=b.dataset.m;
+    if(active.has(m)&&active.size>1){active.delete(m); b.classList.remove('on');}
+    else {active.add(m); b.classList.add('on');}
+    draw();
+  });
+  draw();
+})();
+
+/* ============================================================
+   PART 2 — BASICS
+   ============================================================ */
+/* B1 vector */
+(function(){
+  const cv=$('#cvVec'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const cx=W/2, cy=H/2, sc=34;
+  function draw(){
+    const vx=+$('#vx').value, vy=+$('#vy').value, a=+$('#va').value;
+    $('#vxV').textContent=vx.toFixed(1); $('#vyV').textContent=vy.toFixed(1);
+    $('#vaV').textContent=a.toFixed(2);
+    clr(ctx,cv);
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,.055)'; ctx.lineWidth=1;
+    for(let i=-9;i<=9;i++){
+      ctx.beginPath(); ctx.moveTo(cx+i*sc,0); ctx.lineTo(cx+i*sc,H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,cy+i*sc); ctx.lineTo(W,cy+i*sc); ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    // base vector ghost
+    arrow(ctx,cx,cy,cx+vx*sc,cy-vy*sc,'rgba(255,255,255,.25)',2);
+    // scaled
+    const ex=cx+a*vx*sc, ey=cy-a*vy*sc;
+    arrow(ctx,cx,cy,ex,ey,C.acc,3.4,12);
+    // components
+    ctx.setLineDash([4,4]); ctx.strokeStyle=hexA(C.acc3,.5); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(ex,ey); ctx.lineTo(ex,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ex,ey); ctx.lineTo(cx,ey); ctx.stroke();
+    ctx.setLineDash([]);
+    const len=Math.hypot(a*vx,a*vy);
+    txt(ctx,`‖v⃗‖ = ${len.toFixed(2)}`,ex+12,ey-10,C.acc,13,'left','650');
+    txt(ctx,'α·v⃗',ex+12,ey+8,C.acc3,12,'left','600');
+    txt(ctx,'Originalrichtung',cx+vx*sc+8,cy-vy*sc+22,'rgba(255,255,255,.38)',10.5);
+  }
+  ['vx','vy','va'].forEach(id=>$('#'+id).oninput=()=>{draw(); renderMath();});
+  window._f_vec=()=>{
+    const vx=+$('#vx').value, vy=+$('#vy').value, a=+$('#va').value;
+    $('#f_vec').innerHTML=`$$\\alpha\\vec v = ${a.toFixed(2)}\\cdot\\begin{pmatrix}${vx.toFixed(1)}\\\\${vy.toFixed(1)}\\end{pmatrix}=\\begin{pmatrix}${(a*vx).toFixed(2)}\\\\${(a*vy).toFixed(2)}\\end{pmatrix}$$`;
+  };
+  draw();
+})();
+
+/* B2 matrix */
+let setMat;
+(function(){
+  const cv=$('#cvMat'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const cx=W/2, cy=H/2, sc=70;
+  setMat=(a,b,c,d)=>{$('#ma').value=a;$('#mb').value=b;$('#mc').value=c;$('#md').value=d;draw();};
+  function draw(){
+    const a=+$('#ma').value,b=+$('#mb').value,c=+$('#mc').value,d=+$('#md').value;
+    $('#maV').textContent=a.toFixed(2);$('#mbV').textContent=b.toFixed(2);
+    $('#mcV').textContent=c.toFixed(2);$('#mdV').textContent=d.toFixed(2);
+    clr(ctx,cv);
+    ctx.strokeStyle='rgba(255,255,255,.05)';
+    for(let i=-6;i<=6;i++){
+      ctx.beginPath();ctx.moveTo(cx+i*sc/2,0);ctx.lineTo(cx+i*sc/2,H);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,cy+i*sc/2);ctx.lineTo(W,cy+i*sc/2);ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(255,255,255,.18)';
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    // input circle
+    ctx.strokeStyle=hexA(C.acc,.55); ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let t=0;t<=64;t++){const th=t/64*2*Math.PI;
+      const x=cx+Math.cos(th)*sc, y=cy-Math.sin(th)*sc;
+      t?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke();
+    // output ellipse
+    ctx.strokeStyle=C.acc3; ctx.lineWidth=2.6;
+    ctx.beginPath();
+    for(let t=0;t<=96;t++){const th=t/96*2*Math.PI;
+      const u=Math.cos(th),v=Math.sin(th);
+      const x=cx+(a*u+b*v)*sc, y=cy-(c*u+d*v)*sc;
+      t?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke();
+    // basis
+    arrow(ctx,cx,cy,cx+sc,cy,hexA(C.acc,.35),2);
+    arrow(ctx,cx,cy,cx,cy-sc,hexA(C.acc,.35),2);
+    arrow(ctx,cx,cy,cx+a*sc,cy-c*sc,C.acc5,3,10);
+    arrow(ctx,cx,cy,cx+b*sc,cy-d*sc,C.acc4,3,10);
+    txt(ctx,'W·e₁',cx+a*sc+8,cy-c*sc-8,C.acc5,11.5,'left','650');
+    txt(ctx,'W·e₂',cx+b*sc+8,cy-d*sc-8,C.acc4,11.5,'left','650');
+    const det=a*d-b*c;
+    txt(ctx,`det = ${det.toFixed(3)}`,12,18,Math.abs(det)<0.03?C.acc5:C.dim,12.5,'left','650');
+    txt(ctx,Math.abs(det)<0.03?'→ Rang 1: alles auf einer Linie!':'→ Rang 2: voller Raum',
+      12,36,Math.abs(det)<0.03?C.acc5:C.faint,11.5);
+  }
+  ['ma','mb','mc','md'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* B3 dot product */
+(function(){
+  const cv=$('#cvDot'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const cx=W/2,cy=H/2,sc=52;
+  const ax=2.6, ay=0.9;
+  function draw(){
+    const ang=+$('#dang').value*Math.PI/180, len=+$('#dlen').value;
+    $('#dangV').textContent=$('#dang').value+'°'; $('#dlenV').textContent=len.toFixed(2);
+    const bx=Math.cos(ang)*len, by=Math.sin(ang)*len;
+    clr(ctx,cv);
+    ctx.strokeStyle='rgba(255,255,255,.05)';
+    for(let i=-6;i<=6;i++){
+      ctx.beginPath();ctx.moveTo(cx+i*sc,0);ctx.lineTo(cx+i*sc,H);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,cy+i*sc);ctx.lineTo(W,cy+i*sc);ctx.stroke();}
+    ctx.strokeStyle='rgba(255,255,255,.18)';
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    const dot=ax*bx+ay*by;
+    const na=Math.hypot(ax,ay), nb=Math.hypot(bx,by);
+    const cos=dot/(na*nb||1);
+    // projection
+    const t=dot/(na*na);
+    const px=cx+t*ax*sc, py=cy-t*ay*sc;
+    ctx.setLineDash([5,5]); ctx.strokeStyle=hexA(C.acc4,.6); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(cx+bx*sc,cy-by*sc); ctx.lineTo(px,py); ctx.stroke();
+    ctx.setLineDash([]);
+    // proj vector
+    ctx.strokeStyle=C.acc4; ctx.lineWidth=6; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+    // angle arc
+    const a0=Math.atan2(ay,ax);
+    ctx.strokeStyle=hexA(C.acc3,.7); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx,cy,34,-Math.max(a0,ang),-Math.min(a0,ang)); ctx.stroke();
+    arrow(ctx,cx,cy,cx+ax*sc,cy-ay*sc,C.acc,3.2,11);
+    arrow(ctx,cx,cy,cx+bx*sc,cy-by*sc,C.acc2,3.2,11);
+    txt(ctx,'a⃗',cx+ax*sc+10,cy-ay*sc-6,C.acc,14,'left','700');
+    txt(ctx,'b⃗',cx+bx*sc+10,cy-by*sc-6,C.acc2,14,'left','700');
+    txt(ctx,'Projektion',px+6,py+18,C.acc4,11,'left','620');
+    const deg=Math.acos(clamp(cos,-1,1))*180/Math.PI;
+    txt(ctx,`${deg.toFixed(0)}°`,cx+42*Math.cos((a0+ang)/2),cy-42*Math.sin((a0+ang)/2),C.acc3,12,'center','650');
+    $('#dotRead').innerHTML=
+      `$$\\vec a\\cdot\\vec b = ${dot.toFixed(2)}\\qquad \\cos\\theta=${cos.toFixed(3)}$$`;
+    renderMath();
+  }
+  ['dang','dlen'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* B4 rank */
+(function(){
+  const cv=$('#cvRank'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  
+  let rank=3;
+  function proj(p,rot){
+    const c=Math.cos(rot), s=Math.sin(rot);
+    const x= p[0]*c - p[2]*s;
+    const z= p[0]*s + p[2]*c;
+    const y= p[1];
+    const d = 4.2/(4.2+z*0.55);
+    return [W/2 + x*78*d, H/2 - y*78*d + z*10, d, z];
+  }
+  function draw(){
+    const rot=+$('#rrot').value*Math.PI/180;
+    $('#rrotV').textContent=$('#rrot').value+'°';
+    clr(ctx,cv);
+    // axes
+    const O=proj([0,0,0],rot);
+    [[2.4,0,0,C.acc5,'x'],[0,2.4,0,C.acc4,'y'],[0,0,2.4,C.acc,'z']].forEach(a=>{
+      const P=proj([a[0],a[1],a[2]],rot);
+      arrow(ctx,O[0],O[1],P[0],P[1],hexA(a[3],.55),1.8,8);
+      txt(ctx,a[4],P[0]+8,P[1],hexA(a[3],.8),11.5,'left','650');
+    });
+    // point cloud
+    const rng=mulberry(42); const pts=[];
+    for(let i=0;i<340;i++){
+      let x=gauss(rng)*0.75, y=gauss(rng)*0.75, z=gauss(rng)*0.75;
+      pts.push([x,y,z]);
+    }
+    // transformation depending on rank
+    const T = p=>{
+      if(rank===3) return p;
+      if(rank===2) return [p[0], p[1], 0.02*p[2]];
+      // rank 1 : project onto direction (1,0.6,0.35)
+      const d=[1,0.6,0.35]; const n=Math.hypot(...d);
+      const u=d.map(v=>v/n);
+      const t=p[0]*u[0]+p[1]*u[1]+p[2]*u[2];
+      return [u[0]*t,u[1]*t,u[2]*t];
+    };
+    // draw plane/line hint
+    if(rank===2){
+      ctx.fillStyle='rgba(52,211,153,.07)';
+      ctx.beginPath();
+      [[-2.3,-2.3],[2.3,-2.3],[2.3,2.3],[-2.3,2.3]].forEach((q,i)=>{
+        const P=proj([q[0],q[1],0],rot); i?ctx.lineTo(P[0],P[1]):ctx.moveTo(P[0],P[1]);});
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle=hexA(C.acc4,.35); ctx.stroke();
+    }
+    if(rank===1){
+      const A=proj([-2.2,-1.32,-0.77],rot), B=proj([2.2,1.32,0.77],rot);
+      ctx.strokeStyle=hexA(C.acc5,.4); ctx.lineWidth=9; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
+    }
+    const proj2=pts.map(p=>{const q=T(p); const P=proj(q,rot); return {P,q};});
+    proj2.sort((a,b)=>b.P[3]-a.P[3]);
+    proj2.forEach(o=>{
+      const d=o.P[2];
+      const col = rank===3?C.acc : rank===2?C.acc4 : C.acc5;
+      ctx.fillStyle=hexA(col, 0.18+0.5*d);
+      ctx.beginPath(); ctx.arc(o.P[0],o.P[1], 2.4*d, 0, 7); ctx.fill();
+    });
+    $('#rkD').textContent=rank;
+    $('#rkL').textContent= rank===3?'100%' : rank===2?'~67%' : '~33%';
+  }
+  $$('#rankBtns button').forEach(b=>b.onclick=()=>{
+    $$('#rankBtns button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    rank=+b.dataset.r; draw();
+  });
+  $('#rrot').oninput=draw;
+  draw();
+})();
+
+/* B5 outer product */
+(function(){
+  const cv=$('#cvOuter'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const u1=+$('#ou1').value,u2=+$('#ou2').value,v1=+$('#ov1').value,v2=+$('#ov2').value;
+    $('#ou1V').textContent=u1.toFixed(1);$('#ou2V').textContent=u2.toFixed(1);
+    $('#ov1V').textContent=v1.toFixed(1);$('#ov2V').textContent=v2.toFixed(1);
+    clr(ctx,cv);
+    const cx=150,cy=H/2,sc=48;
+    ctx.strokeStyle='rgba(255,255,255,.14)';
+    ctx.beginPath();ctx.moveTo(20,cy);ctx.lineTo(280,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,30);ctx.lineTo(cx,H-30);ctx.stroke();
+    arrow(ctx,cx,cy,cx+u1*sc,cy-u2*sc,C.acc,3,10);
+    arrow(ctx,cx,cy,cx+v1*sc,cy-v2*sc,C.acc2,3,10);
+    txt(ctx,'u⃗',cx+u1*sc+9,cy-u2*sc-7,C.acc,13,'left','700');
+    txt(ctx,'v⃗',cx+v1*sc+9,cy-v2*sc-7,C.acc2,13,'left','700');
+    // matrix heatmap
+    const M=[[u1*v1,u1*v2],[u2*v1,u2*v2]];
+    const bx=380, by=H/2-70, cs=70;
+    txt(ctx,'u⃗ ⊗ v⃗  =  Rang-1-Matrix',bx,by-22,C.acc3,12.5,'left','650');
+    let mx=0; M.flat().forEach(v=>mx=Math.max(mx,Math.abs(v)));
+    for(let i=0;i<2;i++)for(let j=0;j<2;j++){
+      const v=M[i][j], t=mx? Math.abs(v)/mx : 0;
+      ctx.fillStyle = v>=0 ? hexA(C.acc4,.14+.6*t) : hexA(C.acc5,.14+.6*t);
+      roundRect(ctx,bx+j*cs,by+i*cs,cs-5,cs-5,7); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.stroke();
+      txt(ctx,v.toFixed(2),bx+j*cs+(cs-5)/2,by+i*cs+(cs-5)/2,C.txt,12.5,'center','650');
+    }
+    // show that rows are multiples
+    const r1=Math.hypot(M[0][0],M[0][1]), r2=Math.hypot(M[1][0],M[1][1]);
+    txt(ctx,'Zeile 2 = '+(r1>1e-6?(u2/(u1||1e-9)).toFixed(2):'—')+' × Zeile 1',
+        bx, by+2*cs+14, C.faint,11.5,'left');
+    txt(ctx,'→ det = 0 → Rang 1', bx, by+2*cs+32, C.acc5,12,'left','650');
+    $('#f_outer').innerHTML=`$$\\begin{pmatrix}${u1.toFixed(1)}\\\\${u2.toFixed(1)}\\end{pmatrix}\\otimes\\begin{pmatrix}${v1.toFixed(1)}\\\\${v2.toFixed(1)}\\end{pmatrix}=\\begin{pmatrix}${M[0][0].toFixed(2)}&${M[0][1].toFixed(2)}\\\\${M[1][0].toFixed(2)}&${M[1][1].toFixed(2)}\\end{pmatrix}$$`;
+    renderMath();
+  }
+  ['ou1','ou2','ov1','ov2'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* B6 frobenius */
+(function(){
+  const cv=$('#cvFrob'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const s=+$('#frobS').value;
+    const rng=mulberry(Math.floor(s)+13);
+    const n=6; const M=[];
+    for(let i=0;i<n;i++){const r=[];for(let j=0;j<n;j++)r.push(gauss(rng)*(0.4+s/70));M.push(r);}
+    let sum=0; M.flat().forEach(v=>sum+=v*v);
+    const fr=Math.sqrt(sum);
+    $('#frobV').textContent='‖W‖ = '+fr.toFixed(2);
+    clr(ctx,cv);
+    const cs=40, ox=24, oy=36;
+    txt(ctx,'Matrix W (6×6)',ox,18,C.faint,11.5);
+    let mx=0; M.flat().forEach(v=>mx=Math.max(mx,Math.abs(v)));
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+      const v=M[i][j],t=Math.abs(v)/mx;
+      ctx.fillStyle = v>=0? hexA(C.acc,.1+.65*t) : hexA(C.acc3,.1+.65*t);
+      roundRect(ctx,ox+j*cs,oy+i*cs,cs-4,cs-4,5); ctx.fill();
+    }
+    // accumulation bar
+    const bx=ox+n*cs+50, by=50, bw=W-bx-40;
+    txt(ctx,'Beitrag jedes Eintrags (w²), aufsummiert',bx,26,C.faint,11.5);
+    let acc=0; const flat=M.flat().map(v=>v*v).sort((a,b)=>b-a);
+    flat.forEach((v,i)=>{
+      const x0=bx+bw*acc/sum; acc+=v;
+      const x1=bx+bw*acc/sum;
+      ctx.fillStyle=hexA(i%2?C.acc2:C.acc,.55);
+      ctx.fillRect(x0,by,Math.max(1,x1-x0-0.5),34);
+    });
+    ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(bx,by,bw,34);
+    txt(ctx,`Σ w² = ${sum.toFixed(2)}`,bx,by+56,C.dim,13,'left','620');
+    txt(ctx,`‖W‖_F = √${sum.toFixed(2)} = ${fr.toFixed(3)}`,bx,by+78,C.acc3,15,'left','720');
+    txt(ctx,'Genau wie Pythagoras: a²+b²+… → Wurzel',bx,by+104,C.faint,11.5,'left');
+  }
+  $('#frobS').oninput=draw;
+  draw();
+})();
+
+/* ============================================================
+   PART 3 — RESIDUAL STREAM
+   ============================================================ */
+(function(){
+  const cv=$('#cvStream'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  let playing=false, t0=0;
+  const WRITERS=[
+    {l:3, dim:4, col:C.acc,  lbl:'3.0 Duplicate', ch:[4,5]},
+    {l:7, dim:9, col:C.acc3, lbl:'7.9 Inhibition', ch:[9]},
+    {l:8, dim:13,col:C.acc3, lbl:'8.6 Inhibition', ch:[13]},
+    {l:9, dim:17,col:C.acc4, lbl:'9.9 Mover',      ch:[17,18]}
+  ];
+  function draw(){
+    const L=+$('#stL').value, D=+$('#stD').value, hi=$('#stChan').checked;
+    $('#stLv').textContent=L; $('#stDv').textContent=D;
+    clr(ctx,cv);
+    const x0=160, y0=56, cellW=(W-x0-220)/D, cellH=24, nL=13;
+    txt(ctx,'Residual Stream · jede Zeile = eine Schicht · jede Spalte = eine Dimension',
+        x0,24,C.faint,12);
+    const rng=mulberry(99);
+    // base values accumulate
+    const vals=[]; let cur=new Array(D).fill(0).map(()=>gauss(rng)*0.25);
+    for(let l=0;l<=12;l++){
+      if(l>0){
+        for(let d=0;d<D;d++) cur[d]+= gauss(mulberry(l*77+d*13))*0.12;
+        WRITERS.forEach(w=>{ if(w.l===l) w.ch.forEach(c=>{ if(c<D) cur[c]+= 1.5; }); });
+      }
+      vals.push(cur.slice());
+    }
+    for(let l=0;l<=12;l++){
+      const y=y0+(12-l)*(cellH+4);
+      const active = l<=L;
+      txt(ctx,'Schicht '+l, x0-14, y+cellH/2, active?C.txt:'rgba(255,255,255,.15)',11.5,'right','600');
+      for(let d=0;d<D;d++){
+        const v=vals[l][d];
+        let isCh=false;
+        WRITERS.forEach(w=>{ if(w.l<=l && w.ch.includes(d)) isCh=true; });
+        const t=clamp(Math.abs(v)/2.2,0,1);
+        let col = v>=0? C.acc : C.acc5;
+        if(hi && isCh) col = C.acc3;
+        ctx.fillStyle = active? hexA(col,.1+.72*t) : 'rgba(255,255,255,.035)';
+        roundRect(ctx,x0+d*cellW, y, cellW-2.5, cellH, 3.5); ctx.fill();
+        if(hi && isCh && active){ ctx.strokeStyle=hexA(C.acc3,.55); ctx.lineWidth=1; ctx.stroke(); }
+      }
+      // writer tags
+      WRITERS.forEach(w=>{
+        if(w.l===l){
+          const tx=x0+D*cellW+16;
+          ctx.fillStyle = active? hexA(w.col,.16):'rgba(255,255,255,.04)';
+          roundRect(ctx,tx,y+1,186,cellH-2,6); ctx.fill();
+          txt(ctx,'✎ '+w.lbl+' schreibt',tx+9,y+cellH/2, active?w.col:'rgba(255,255,255,.18)',11,'left','620');
+          if(active){
+            arrow(ctx, tx-4, y+cellH/2, x0+w.ch[0]*cellW+cellW/2+14, y+cellH/2, hexA(w.col,.5),1.6,6);
+          }
+        }
+      });
+    }
+    // current layer marker
+    const ym=y0+(12-L)*(cellH+4);
+    ctx.strokeStyle=C.acc2; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(x0-120,ym+cellH+2); ctx.lineTo(x0+D*cellW+200,ym+cellH+2); ctx.stroke();
+    ctx.setLineDash([]);
+    txt(ctx,'▲ hier stehen wir',x0-120,ym+cellH+18,C.acc2,11,'left','620');
+    txt(ctx,'Dimension →',x0,H-14,C.faint,11);
+  }
+  ['stL','stD'].forEach(id=>$('#'+id).oninput=draw);
+  $('#stChan').onchange=draw;
+  $('#stPlay').onclick=function(){
+    playing=!playing; this.classList.toggle('on',playing); this.textContent=playing?'⏸ Pause':'▶ Abspielen';
+    if(playing){ t0=performance.now(); loop(); }
+  };
+  function loop(){
+    if(!playing) return;
+    const el=((performance.now()-t0)/420)%13;
+    $('#stL').value=Math.floor(el); draw();
+    requestAnimationFrame(loop);
+  }
+  draw();
+})();
+
+/* orthogonality demo */
+(function(){
+  const cv=$('#cvOrtho'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const D=+$('#orthoD').value; $('#orthoDv').textContent=D;
+    const rng=mulberry(5);
+    const angs=[]; let sd=0;
+    for(let k=0;k<400;k++){
+      const a=[],b=[];
+      for(let i=0;i<D;i++){a.push(gauss(rng)); b.push(gauss(rng));}
+      let dot=0,na=0,nb=0;
+      for(let i=0;i<D;i++){dot+=a[i]*b[i]; na+=a[i]*a[i]; nb+=b[i]*b[i];}
+      const c=dot/Math.sqrt(na*nb);
+      angs.push(Math.acos(clamp(c,-1,1))*180/Math.PI); sd+=Math.abs(c);
+    }
+    const mean=angs.reduce((x,y)=>x+y,0)/angs.length;
+    $('#orthoAng').textContent=mean.toFixed(1)+'°';
+    $('#orthoDot').textContent=(sd/angs.length).toFixed(3);
+    clr(ctx,cv);
+    // histogram
+    const bins=new Array(36).fill(0);
+    angs.forEach(a=>bins[clamp(Math.floor(a/5),0,35)]++);
+    const mx=Math.max(...bins);
+    const bw=(W-40)/36;
+    bins.forEach((v,i)=>{
+      const h=(v/mx)*(H-70);
+      const near90 = Math.abs(i*5+2.5-90)<12;
+      ctx.fillStyle = near90? hexA(C.acc4,.75): hexA(C.acc2,.45);
+      roundRect(ctx,20+i*bw,H-40-h,bw-1.5,h,2.5); ctx.fill();
+    });
+    ctx.strokeStyle='rgba(255,255,255,.18)';
+    ctx.beginPath();ctx.moveTo(20,H-40);ctx.lineTo(W-20,H-40);ctx.stroke();
+    const x90=20+(90/180)*(W-40);
+    ctx.setLineDash([4,4]); ctx.strokeStyle=C.acc4;
+    ctx.beginPath();ctx.moveTo(x90,22);ctx.lineTo(x90,H-40);ctx.stroke(); ctx.setLineDash([]);
+    txt(ctx,'90° (senkrecht)',x90+5,30,C.acc4,10.5,'left','620');
+    txt(ctx,'0°',20,H-26,C.faint,10); txt(ctx,'180°',W-20,H-26,C.faint,10,'right');
+    txt(ctx,'Winkel zwischen Zufallsrichtungen',20,16,C.faint,11);
+  }
+  $('#orthoD').oninput=draw;
+  draw();
+})();
+
+/* ============================================================
+   PART 4 — ATTENTION HEAD
+   ============================================================ */
+(function(){
+  const cv=$('#cvAttn'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const toks=['Dann',',','John','und','Mary','gingen','John','gab'];
+  function draw(){
+    const f=+$('#atF').value, T=+$('#atT').value, OVs=+$('#atO').value;
+    $('#atFv').textContent=f; $('#atTv').textContent=T.toFixed(1); $('#atOv').textContent=OVs.toFixed(2);
+    clr(ctx,cv);
+    const n=toks.length;
+    const x0=60, tw=78, yTok=64;
+    txt(ctx,'Tokens im Kontext (Keys)',x0,26,C.faint,12);
+    // attention weights: dot-product-ish
+    const rng=mulberry(3);
+    const base=[]; for(let i=0;i<n;i++) base.push(gauss(mulberry(i*17+f*5))*0.7);
+    const scores = base.map((b,i)=> b + (i===f?2.4:0) + (i===n-2?0.9:0));
+    const ex=scores.map(s=>Math.exp(s*T/4));
+    const Z=ex.reduce((a,b)=>a+b,0);
+    const att=ex.map(v=>v/Z);
+    // draw tokens
+    toks.forEach((t,i)=>{
+      const x=x0+i*tw;
+      ctx.fillStyle=hexA(C.acc, .06+att[i]*0.8);
+      roundRect(ctx,x,yTok,tw-10,34,8); ctx.fill();
+      ctx.strokeStyle= i===f? C.acc3 : 'rgba(255,255,255,.1)'; ctx.lineWidth= i===f?2:1; ctx.stroke();
+      txt(ctx,t,x+(tw-10)/2,yTok+17,C.txt,12.5,'center','620');
+      txt(ctx,(att[i]*100).toFixed(0)+'%',x+(tw-10)/2,yTok+48,
+          att[i]>0.3?C.acc:C.faint,11,'center','600');
+    });
+    // query token
+    const qx=x0+(n-1)*tw+tw+40;
+    txt(ctx,'Query-Token',qx,26,C.faint,12);
+    ctx.fillStyle=hexA(C.acc2,.22);
+    roundRect(ctx,qx,yTok,92,34,8); ctx.fill();
+    ctx.strokeStyle=C.acc2; ctx.lineWidth=2; ctx.stroke();
+    txt(ctx,'" an"',qx+46,yTok+17,C.acc2,13,'center','680');
+    // attention arcs
+    toks.forEach((t,i)=>{
+      const x=x0+i*tw+(tw-10)/2;
+      ctx.strokeStyle=hexA(C.acc,0.12+att[i]*0.8);
+      ctx.lineWidth=Math.max(0.6,att[i]*11);
+      ctx.beginPath();
+      ctx.moveTo(qx+6,yTok+17);
+      ctx.bezierCurveTo(qx-60, yTok-34, x+70, yTok-34, x, yTok-3);
+      ctx.stroke();
+    });
+    txt(ctx,'QK: wohin schauen?',x0, yTok-44, C.acc,12.5,'left','650');
+    // OV output
+    const oy=190;
+    txt(ctx,'OV: was wird in den Residual Stream geschrieben? (768 Dim, hier 40 gezeigt)',x0,oy-12,C.acc3,12.5,'left','650');
+    const nd=40, cw=(W-120)/nd;
+    for(let d=0;d<nd;d++){
+      let v=0;
+      for(let i=0;i<n;i++){ v += att[i]*Math.cos(d*0.37+i*1.1)*OVs*(0.6+0.5*Math.sin(i*2.1+d*0.19)); }
+      const t=clamp(Math.abs(v)/0.55,0,1);
+      const col = v>=0?C.acc3:C.acc5;
+      ctx.fillStyle=hexA(col,.08+.75*t);
+      roundRect(ctx,x0+d*cw, oy+10, cw-2.5, 44, 4); ctx.fill();
+    }
+    txt(ctx,'↑ Dieser Vektor wird auf das Schwarze Brett addiert (Teil 3)',x0,oy+72,C.faint,11.5);
+    // separation note
+    ctx.setLineDash([3,4]); ctx.strokeStyle='rgba(255,255,255,.12)';
+    ctx.beginPath(); ctx.moveTo(40,oy-34); ctx.lineTo(W-40,oy-34); ctx.stroke(); ctx.setLineDash([]);
+    txt(ctx,'QK und OV sind unabhängig: „wohin" und „was" können völlig verschiedene Dinge tun.',
+        x0, oy+96, C.acc2,11.5,'left','600');
+  }
+  ['atF','atT','atO'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* bottleneck */
+(function(){
+  const cv=$('#cvBottle'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  let t0=performance.now();
+  function draw(now){
+    clr(ctx,cv);
+    const cx=W/2;
+    const bands=[{y:30,n:36,lbl:'Residual 768d',col:C.acc},
+                 {y:150,n:8,lbl:'Kopf 64d',col:C.acc3},
+                 {y:270,n:36,lbl:'Residual 768d',col:C.acc}];
+    bands.forEach(b=>{
+      const bw=Math.min(7,(W-50)/b.n);
+      const tot=b.n*bw;
+      for(let i=0;i<b.n;i++){
+        const ph=Math.sin((now-t0)/700 + i*0.4 + b.y*0.01);
+        ctx.fillStyle=hexA(b.col,.25+.45*(0.5+0.5*ph));
+        roundRect(ctx,cx-tot/2+i*bw, b.y, bw-1.5, 26, 2.5); ctx.fill();
+      }
+      txt(ctx,b.lbl,cx,b.y-14,b.col,11.5,'center','620');
+    });
+    // funnel
+    ctx.fillStyle='rgba(251,191,36,.07)';
+    ctx.beginPath();
+    ctx.moveTo(cx-130,56); ctx.lineTo(cx+130,56);
+    ctx.lineTo(cx+30,150); ctx.lineTo(cx-30,150); ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(cx-30,176); ctx.lineTo(cx+30,176);
+    ctx.lineTo(cx+130,270); ctx.lineTo(cx-130,270); ctx.closePath(); ctx.fill();
+    txt(ctx,'V: 768→64',cx-128,106,C.acc5,10.5,'left','620');
+    txt(ctx,'O: 64→768',cx-128,226,C.acc4,10.5,'left','620');
+    txt(ctx,'⇒ Rang ≤ 64',cx,316,C.acc3,13,'center','700');
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+
+/* composition types */
+(function(){
+  const cv=$('#cvComp'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  let type='q';
+  const INFO={
+    q:{t:'Query-Composition',col:C.acc,read:'Query',
+       ex:'Beispiel: Inhibition-Kopf 7.9 → Mover-Kopf 9.9',
+       d:'Der frühe Kopf beeinflusst, <strong>wohin der spätere schaut</strong>. Das ist der Fall, den das Paper am genauesten untersucht — und wo es die klarsten Kanäle findet.'},
+    k:{t:'Key-Composition',col:C.acc5,read:'Key',
+       ex:'Beispiel: Previous-Token-Kopf 4.11 → Induction-Kopf 5.5',
+       d:'Der frühe Kopf verändert, <strong>wie attraktiv ein Token als Ziel ist</strong>. Hier findet das Paper <em>keine</em> sauberen Kanäle — ehrliches Negativergebnis (Appendix B).'},
+    v:{t:'Value-Composition',col:C.acc4,read:'Value',
+       ex:'Beispiel: Duplicate-Kopf 3.0 → Inhibition-Kopf 7.9',
+       d:'Der frühe Kopf verändert, <strong>welche Information mitgenommen wird</strong>. Hier findet das Paper einen klaren 2D-Kanal (Komponenten 3.0.1 und 3.0.2).'}
+  };
+  function draw(){
+    const I=INFO[type];
+    clr(ctx,cv);
+    const y=150;
+    const xA=170, xB=760;
+    // head A
+    ctx.fillStyle=hexA(C.acc2,.13); roundRect(ctx,xA-90,y-58,180,116,14); ctx.fill();
+    ctx.strokeStyle=hexA(C.acc2,.45); ctx.lineWidth=1.6; ctx.stroke();
+    txt(ctx,'Früher Kopf',xA,y-34,C.acc2,12.5,'center','650');
+    txt(ctx,'OV',xA,y+2,C.acc2,26,'center','800');
+    txt(ctx,'schreibt',xA,y+34,C.faint,11,'center');
+    // head B
+    ctx.fillStyle=hexA(I.col,.13); roundRect(ctx,xB-90,y-58,180,116,14); ctx.fill();
+    ctx.strokeStyle=hexA(I.col,.45); ctx.stroke();
+    txt(ctx,'Späterer Kopf',xB,y-34,I.col,12.5,'center','650');
+    txt(ctx,I.read,xB,y+2,I.col,26,'center','800');
+    txt(ctx,'liest',xB,y+34,C.faint,11,'center');
+    // residual stream band
+    const sy=y;
+    ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=36; ctx.lineCap='butt';
+    ctx.beginPath(); ctx.moveTo(xA+95,sy); ctx.lineTo(xB-95,sy); ctx.stroke();
+    txt(ctx,'Residual Stream (768 Dimensionen)',(xA+xB)/2,sy-34,C.faint,11.5,'center');
+    // channel (thin)
+    ctx.strokeStyle=hexA(I.col,.85); ctx.lineWidth=5;
+    ctx.beginPath(); ctx.moveTo(xA+95,sy); ctx.lineTo(xB-95,sy); ctx.stroke();
+    // moving packet
+    const ph=((performance.now()/1600)%1);
+    const px=lerp(xA+95,xB-95,ph);
+    ctx.fillStyle='#fff'; ctx.shadowBlur=14; ctx.shadowColor=I.col;
+    ctx.beginPath(); ctx.arc(px,sy,6,0,7); ctx.fill(); ctx.shadowBlur=0;
+    txt(ctx,'schmaler Kanal: 1–2 Dimensionen',(xA+xB)/2,sy+30,I.col,11.5,'center','620');
+    // labels
+    txt(ctx,I.t, 60, 40, I.col, 17,'left','760');
+    txt(ctx,I.ex, 60, 66, C.dim, 12.5,'left');
+    // output
+    ctx.fillStyle=hexA(I.col,.08); roundRect(ctx,xB+120,y-34,180,68,12); ctx.fill();
+    arrow(ctx,xB+95,y,xB+114,y,hexA(I.col,.6),2);
+    txt(ctx, type==='q'?'→ ändert Blickrichtung': type==='k'?'→ ändert Zielattraktivität':'→ ändert Inhalt',
+        xB+210,y,I.col,12,'center','620');
+    $('#compDesc').innerHTML='<b>'+I.t+':</b> '+I.d;
+  }
+  $$('#compTypeBtns button').forEach(b=>b.onclick=()=>{
+    $$('#compTypeBtns button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    type=b.dataset.c;
+  });
+  (function loop(){draw(); requestAnimationFrame(loop);})();
+})();
+
+/* ============================================================
+   PART 5 — IOI
+   ============================================================ */
+(function(){
+  const NAMES=[['John','Mary'],['Anna','Peter'],['Lisa','Tom'],['Sara','Mike'],['Eva','Paul']];
+  let ni=0, ioFirst=false;
+  const cv=$('#cvIOI'); const ctx=dpi(cv);
+  function render(){
+    const [A,B]=NAMES[ni];
+    const S = ioFirst? B : A;   // subject (duplicated)
+    const IO= ioFirst? A : B;
+    const first = ioFirst? IO : S;
+    const second= ioFirst? S : IO;
+    $('#ioiSent').innerHTML =
+      `Dann gingen <span class="tok" style="border-color:${first===IO?C.acc4:C.acc5};color:${first===IO?C.acc4:C.acc5}">${first}</span>`+
+      ` und <span class="tok" style="border-color:${second===IO?C.acc4:C.acc5};color:${second===IO?C.acc4:C.acc5}">${second}</span> zum Laden.<br>`+
+      `<span class="tok" style="border-color:${C.acc5};color:${C.acc5}">${S}</span> gab ein Getränk an ___`+
+      `<br><span style="font-size:13px;color:${C.faint}">S1 = erster ${S} · S2 = zweiter ${S} · IO = ${IO}</span>`;
+    // attention bars
+    clr(ctx,cv); const W=cv._w,H=cv._h;
+    const items=[
+      {n:first,  lbl:first===IO?'IO':'S1', v: first===IO?0.62:0.09},
+      {n:second, lbl:second===IO?'IO':'S1',v: second===IO?0.62:0.09},
+      {n:S+' (S2)',lbl:'S2', v:0.06},
+      {n:'übrige Tokens', lbl:'', v:0.23}
+    ];
+    txt(ctx,'Aufmerksamkeit von Mover-Kopf 9.9 (gesundes Modell)',24,20,C.faint,12);
+    items.forEach((it,i)=>{
+      const y=50+i*58;
+      const bw=(W-230)*it.v/0.7;
+      txt(ctx,it.n,160,y+16,it.lbl==='IO'?C.acc4:C.dim,13,'right','620');
+      const gr=ctx.createLinearGradient(175,0,175+bw,0);
+      const col = it.lbl==='IO'?C.acc4 : it.lbl==='S1'?C.acc5 : '#6b7390';
+      gr.addColorStop(0,hexA(col,.85)); gr.addColorStop(1,hexA(col,.3));
+      ctx.fillStyle=gr; roundRect(ctx,175,y,Math.max(4,bw),32,6); ctx.fill();
+      txt(ctx,(it.v*100).toFixed(0)+'%',175+Math.max(4,bw)+10,y+16,col,12,'left','650');
+      if(it.lbl) txt(ctx,it.lbl,175+8,y+16,'rgba(0,0,0,.65)',11.5,'left','800');
+    });
+    const inh=(0.62-0.09);
+    txt(ctx,`Inhibition Score = Attention(IO) − Attention(S1) = 0.62 − 0.09 = ${inh.toFixed(2)}`,
+        24,H-20,C.acc3,12.5,'left','650');
+  }
+  $('#ioiSwap').onclick=()=>{ioFirst=!ioFirst; render();};
+  $('#ioiNew').onclick=()=>{ni=(ni+1)%NAMES.length; render();};
+  render();
+})();
+
+/* circuit diagram */
+(function(){
+  const cv=$('#cvCircuit'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const NODES=[
+    {id:'tok', x:90,  y:330, l:'Tokens', s:'Eingabe', col:'#6b7390', stage:0},
+    {id:'3.0', x:300, y:330, l:'3.0', s:'Duplicate Head', col:C.acc, stage:1},
+    {id:'7.3', x:560, y:120, l:'7.3', s:'Inhibition', col:C.acc3, stage:2},
+    {id:'7.9', x:560, y:220, l:'7.9', s:'Inhibition', col:C.acc3, stage:2},
+    {id:'8.6', x:560, y:320, l:'8.6', s:'Inhibition', col:C.acc3, stage:2},
+    {id:'8.10',x:560, y:420, l:'8.10',s:'Inhibition', col:C.acc3, stage:2},
+    {id:'9.9', x:850, y:270, l:'9.9', s:'Mover Head', col:C.acc4, stage:3},
+    {id:'out', x:1035,y:270, l:'„Mary"', s:'Ausgabe', col:C.acc2, stage:3}
+  ];
+  const EDGES=[
+    {a:'tok',b:'3.0',st:1,lbl:''},
+    {a:'3.0',b:'7.3',st:2,lbl:'Value'},{a:'3.0',b:'7.9',st:2,lbl:'Value-Comp\n3.0.1 / 3.0.2'},
+    {a:'3.0',b:'8.6',st:2,lbl:''},{a:'3.0',b:'8.10',st:2,lbl:''},
+    {a:'7.3',b:'9.9',st:3,lbl:''},{a:'7.9',b:'9.9',st:3,lbl:'Query-Comp\n7.9.6'},
+    {a:'8.6',b:'9.9',st:3,lbl:'8.6.2'},{a:'8.10',b:'9.9',st:3,lbl:'8.10.1'},
+    {a:'9.9',b:'out',st:3,lbl:''}
+  ];
+  const DESC=['<b>Schritt 0:</b> Nur die Eingabe. Noch passiert nichts.',
+    '<b>Schritt 1 — Duplicate-Kopf 3.0:</b> Er erkennt, dass „John" zweimal vorkommt, und schreibt dieses Wissen in den Residual Stream.',
+    '<b>Schritt 2 — Inhibition-Köpfe:</b> Sie lesen das Duplikat-Signal über <strong>Value-Composition</strong> (Kanal 3.0.1/3.0.2) und schreiben ein Hemm-Signal: „schau nicht auf S1".',
+    '<b>Schritt 3 — Mover-Kopf 9.9:</b> Er liest das Hemm-Signal über <strong>Query-Composition</strong> (Kanäle 7.9.6, 8.6.2, 8.10.1), meidet „John" und kopiert „Mary" in die Vorhersage. <em>Diese letzten Pfeile sind das Hauptobjekt des Papers.</em>'];
+  let stage=3, mouse=null;
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    mouse={x:(e.clientX-r.left), y:(e.clientY-r.top)}; draw();
+  });
+  cv.addEventListener('mouseleave',()=>{mouse=null; draw();});
+  function N(id){return NODES.find(n=>n.id===id);}
+  function draw(){
+    clr(ctx,cv);
+    // layer guides
+    [[90,'Eingabe'],[300,'Schicht 3'],[560,'Schichten 7–8'],[850,'Schicht 9'],[1035,'Logits']].forEach(g=>{
+      ctx.strokeStyle='rgba(255,255,255,.045)'; ctx.setLineDash([3,6]);
+      ctx.beginPath(); ctx.moveTo(g[0],40); ctx.lineTo(g[0],H-26); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx,g[1],g[0],24,C.faint,10.5,'center');
+    });
+    EDGES.forEach(e=>{
+      const a=N(e.a), b=N(e.b);
+      const on = e.st<=stage;
+      const hov = mouse && (Math.hypot(mouse.x-a.x,mouse.y-a.y)<40 || Math.hypot(mouse.x-b.x,mouse.y-b.y)<40);
+      ctx.strokeStyle = on? (hov? hexA(b.col,.95) : hexA(b.col,.32)) : 'rgba(255,255,255,.045)';
+      ctx.lineWidth = hov?3.2:2;
+      ctx.beginPath(); ctx.moveTo(a.x+34,a.y);
+      ctx.bezierCurveTo((a.x+b.x)/2, a.y, (a.x+b.x)/2, b.y, b.x-34, b.y);
+      ctx.stroke();
+      if(on && e.lbl && (hov||e.lbl.includes('Comp'))){
+        const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+        e.lbl.split('\n').forEach((L2,i)=>txt(ctx,L2,mx,my-8+i*13,hexA(b.col,.9),10.5,'center','620'));
+      }
+    });
+    NODES.forEach(n=>{
+      const on = n.stage<=stage;
+      const hov = mouse && Math.hypot(mouse.x-n.x,mouse.y-n.y)<40;
+      ctx.fillStyle = on? hexA(n.col,hov?.3:.16) : 'rgba(255,255,255,.035)';
+      ctx.beginPath(); ctx.arc(n.x,n.y,hov?36:32,0,7); ctx.fill();
+      ctx.strokeStyle = on? hexA(n.col,.75):'rgba(255,255,255,.1)'; ctx.lineWidth=2; ctx.stroke();
+      txt(ctx,n.l,n.x,n.y-4,on?C.txt:'rgba(255,255,255,.2)',14,'center','740');
+      txt(ctx,n.s,n.x,n.y+46,on?hexA(n.col,.85):'rgba(255,255,255,.15)',10.5,'center','600');
+    });
+    $('#ciDesc').innerHTML=DESC[stage];
+  }
+  $('#ciS').oninput=function(){stage=+this.value; $('#ciSv').textContent=stage; draw();};
+  draw();
+})();
+
+/* ============================================================
+   PART 6 — CHAIN + COMPOSITION SCORE
+   ============================================================ */
+(function(){
+  const cv=$('#cvChain'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const a1=+$('#chW1').value*Math.PI/180, a2=+$('#chW2').value*Math.PI/180;
+    $('#chW1v').textContent=$('#chW1').value+'°'; $('#chW2v').textContent=$('#chW2').value+'°';
+    clr(ctx,cv);
+    // W1: rank1 writes onto direction a1 ; W2: rank1 reads from direction a2
+    const u1=[Math.cos(a1),Math.sin(a1)], u2=[Math.cos(a2),Math.sin(a2)];
+    const overlap=Math.abs(u1[0]*u2[0]+u1[1]*u2[1]);
+    const cols=[C.acc,C.acc2,C.acc3];
+    const stages=[{x:130,lbl:'Eingang',col:C.acc},{x:360,lbl:'nach W₁ (schreibt)',col:C.acc2},
+                  {x:580,lbl:'nach W₂ (liest)',col:C.acc3}];
+    const cy=160, sc=52;
+    stages.forEach(s=>{txt(ctx,s.lbl,s.x,34,s.col,12,'center','650');});
+    // draw circles / lines
+    function ring(cx,fn,col){
+      ctx.strokeStyle=col; ctx.lineWidth=2.4;
+      ctx.beginPath();
+      for(let t=0;t<=90;t++){
+        const th=t/90*2*Math.PI;
+        const p=fn([Math.cos(th),Math.sin(th)]);
+        const x=cx+p[0]*sc, y=cy-p[1]*sc;
+        t?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      } ctx.stroke();
+    }
+    ring(stages[0].x, p=>p, hexA(C.acc,.6));
+    const P1=p=>{const t=p[0]*u1[0]+p[1]*u1[1]; return [u1[0]*t,u1[1]*t];};
+    const P2=p=>{const t=p[0]*u2[0]+p[1]*u2[1]; return [u2[0]*t,u2[1]*t];};
+    ring(stages[1].x, P1, C.acc2);
+    ring(stages[2].x, p=>P2(P1(p)), C.acc3);
+    // direction arrows
+    arrow(ctx,stages[1].x,cy,stages[1].x+u1[0]*sc*1.4,cy-u1[1]*sc*1.4,hexA(C.acc2,.45),1.6,7);
+    arrow(ctx,stages[2].x,cy,stages[2].x+u2[0]*sc*1.4,cy-u2[1]*sc*1.4,hexA(C.acc3,.45),1.6,7);
+    // arrows between
+    arrow(ctx,stages[0].x+72,cy,stages[1].x-72,cy,'rgba(255,255,255,.28)',2,9);
+    arrow(ctx,stages[1].x+72,cy,stages[2].x-72,cy,'rgba(255,255,255,.28)',2,9);
+    txt(ctx,'W₁',(stages[0].x+stages[1].x)/2,cy-18,C.acc2,13,'center','700');
+    txt(ctx,'W₂',(stages[1].x+stages[2].x)/2,cy-18,C.acc3,13,'center','700');
+    // result bar
+    const by=262;
+    txt(ctx,'Durchgelassenes Signal',60,by-16,C.faint,11.5);
+    ctx.fillStyle='rgba(255,255,255,.07)'; roundRect(ctx,60,by,W-120,22,7); ctx.fill();
+    const gr=ctx.createLinearGradient(60,0,60+(W-120)*overlap,0);
+    gr.addColorStop(0,hexA(C.acc4,.85)); gr.addColorStop(1,hexA(C.acc,.5));
+    ctx.fillStyle=gr; roundRect(ctx,60,by,Math.max(4,(W-120)*overlap),22,7); ctx.fill();
+    txt(ctx,(overlap*100).toFixed(1)+' %',70,by+11,'rgba(0,0,0,.75)',12.5,'left','800');
+    if(overlap<0.06){
+      txt(ctx,'→ die beiden Matrizen reden NICHT miteinander',W-70,by+11,C.acc5,12,'right','680');
+    } else if(overlap>0.9){
+      txt(ctx,'→ perfekter Kanal',W-70,by+11,C.acc4,12,'right','680');
+    }
+    $('#chOut').textContent=overlap.toFixed(2);
+    $('#chCS').textContent=overlap.toFixed(2);
+  }
+  ['chW1','chW2'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* noisy composition score plot (Appendix H, left panels) */
+(function(){
+  const rng=mulberry(1234);
+  const xs=[],ys=[],cols=[],txts=[];
+  for(let l=0;l<9;l++) for(let h=0;h<12;h++){
+    xs.push(l*12+h);
+    const v=0.055+0.022*rng()+0.004*Math.sin(l*1.3+h);
+    ys.push(v); txts.push(`${l}.${h}`);
+    cols.push('rgba(150,160,200,.55)');
+  }
+  // true partner 7.9 (index 7*12+9=93)
+  const idx=7*12+9; ys[idx]=0.082; cols[idx]=C.acc5;
+  const idx2=8*12+6; ys[idx2]=0.079; cols[idx2]=C.acc5;
+  Plotly.newPlot('csNoisyPlot',[{
+    x:xs,y:ys,type:'bar',marker:{color:cols},text:txts,hovertemplate:'Kopf %{text}<br>CS = %{y:.4f}<extra></extra>'
+  }],L({
+    xaxis:{title:'Attention-Kopf (Schicht·Kopf, durchnummeriert)',showticklabels:false},
+    yaxis:{title:'Composition Score (volle Matrix)'},
+    title:{text:'Ohne Zerlegung: alles sieht gleich aus',font:{size:13,color:'#97a0bd'}},
+    annotations:[{x:idx,y:0.082,text:'7.9 (echter Partner)',showarrow:true,arrowcolor:C.acc5,
+      font:{color:C.acc5,size:11},ay:-38}]
+  }),PCFG);
+})();
+
+/* ============================================================
+   PART 7 — SVD
+   ============================================================ */
+(function(){
+  const cv=$('#cvSVD'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const a=+$('#svA').value*Math.PI/180, s1=+$('#svS1').value, s2=+$('#svS2').value;
+    $('#svAv').textContent=$('#svA').value+'°';
+    $('#svS1v').textContent=s1.toFixed(2); $('#svS2v').textContent=s2.toFixed(2);
+    clr(ctx,cv);
+    const cy=170, sc=54;
+    const stages=[
+      {x:140, lbl:'① Eingang (Kreis)', col:C.acc,  f:p=>p},
+      {x:400, lbl:'② Vᵀ: drehen',      col:C.acc2, f:p=>rot(p,-a)},
+      {x:680, lbl:'③ S: strecken',     col:C.acc3, f:p=>{const q=rot(p,-a); return [q[0]*s1,q[1]*s2];}},
+      {x:960, lbl:'④ U: zurückdrehen', col:C.acc4, f:p=>{const q=rot(p,-a); return rot([q[0]*s1,q[1]*s2], a*0.6);}}
+    ];
+    function rot(p,t){const c=Math.cos(t),s=Math.sin(t); return [p[0]*c-p[1]*s, p[0]*s+p[1]*c];}
+    stages.forEach((st,k)=>{
+      txt(ctx,st.lbl,st.x,42,st.col,12.5,'center','650');
+      // grid cross
+      ctx.strokeStyle='rgba(255,255,255,.08)';
+      ctx.beginPath();ctx.moveTo(st.x-95,cy);ctx.lineTo(st.x+95,cy);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(st.x,cy-95);ctx.lineTo(st.x,cy+95);ctx.stroke();
+      // shape with colored points
+      const N=64;
+      for(let i=0;i<N;i++){
+        const th=i/N*2*Math.PI;
+        const p=st.f([Math.cos(th),Math.sin(th)]);
+        const hue=(i/N*360);
+        ctx.fillStyle=`hsla(${hue},78%,66%,.85)`;
+        ctx.beginPath(); ctx.arc(st.x+p[0]*sc, cy-p[1]*sc, 2.6,0,7); ctx.fill();
+      }
+      if(k<3) arrow(ctx,st.x+108,cy,stages[k+1].x-108,cy,'rgba(255,255,255,.25)',2,9);
+    });
+    // formula strip
+    txt(ctx,'W  =  U · S · Vᵀ   —  jede Matrix ist nur: drehen, strecken, drehen',W/2,H-30,C.dim,13.5,'center','620');
+    if(s2<0.06) txt(ctx,'⚠ s₂ = 0 → Rang 1: nur noch EIN Signal möglich',W/2,H-8,C.acc5,12,'center','680');
+  }
+  ['svA','svS1','svS2'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* low-rank reconstruction */
+(function(){
+  const cv=$('#cvRecon'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const N=24;
+  // build a synthetic "image" matrix with known spectrum
+  const rng=mulberry(77);
+  const U=[],V=[],S=[];
+  for(let k=0;k<N;k++){
+    const u=[],v=[];
+    for(let i=0;i<N;i++){u.push(Math.cos((i+1)*(k+1)*0.21)+0.3*Math.sin(i*0.7*(k+1)));
+                         v.push(Math.sin((i+1)*(k+1)*0.17)+0.3*Math.cos(i*0.5*(k+1)));}
+    const nu=Math.hypot(...u), nv=Math.hypot(...v);
+    U.push(u.map(x=>x/nu)); V.push(v.map(x=>x/nv));
+    S.push(Math.exp(-k*0.33)*(1+0.3*rng()));
+  }
+  const totE=S.reduce((a,b)=>a+b*b,0);
+  function build(k){
+    const M=Array.from({length:N},()=>new Array(N).fill(0));
+    for(let c=0;c<k;c++) for(let i=0;i<N;i++) for(let j=0;j<N;j++) M[i][j]+=S[c]*U[c][i]*V[c][j];
+    return M;
+  }
+  const full=build(N);
+  function draw(){
+    const k=+$('#rcK').value; $('#rcKv').textContent=k;
+    const M=build(k);
+    let e=0; for(let c=0;c<k;c++) e+=S[c]*S[c];
+    $('#rcErr').textContent=(e/totE*100).toFixed(1)+'%';
+    clr(ctx,cv);
+    const cs=9.6, oy=46;
+    function heat(M,ox,title,col){
+      txt(ctx,title,ox+N*cs/2,26,col,12,'center','650');
+      let mx=0; M.flat().forEach(v=>mx=Math.max(mx,Math.abs(v)));
+      for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+        const v=M[i][j], t=Math.abs(v)/(mx||1);
+        ctx.fillStyle = v>=0? hexA(C.acc,.08+.8*t) : hexA(C.acc3,.08+.8*t);
+        ctx.fillRect(ox+j*cs, oy+i*cs, cs-0.8, cs-0.8);
+      }
+    }
+    heat(full,40,'Original (Rang 24)',C.dim);
+    heat(M, 330, `Rekonstruktion mit k=${k}`, C.acc4);
+    // spectrum
+    const sx=560, sw=120;
+    txt(ctx,'Singulärwerte',sx+sw/2,26,C.acc2,12,'center','650');
+    const mxS=S[0];
+    S.forEach((v,i)=>{
+      const h=(v/mxS)*180;
+      ctx.fillStyle = i<k? hexA(C.acc2,.85):'rgba(255,255,255,.12)';
+      ctx.fillRect(sx+i*(sw/N), oy+200-h, sw/N-0.8, h);
+    });
+    txt(ctx,'↑ die ersten k sind aktiv',sx,oy+218,C.faint,10.5,'left');
+  }
+  $('#rcK').oninput=draw;
+  draw();
+})();
+
+/* ============================================================
+   PART 8 — DECOMPOSED COMPOSITION SCORE
+   ============================================================ */
+const HEADDATA = (function(){
+  // synthetic but faithful to Fig 2 of the paper
+  const spec = {
+    '7.3' : {peak:1,  cs:0.098, base:0.050, inhDrop:0.015, baseInh:0.70},
+    '7.9' : {peak:6,  cs:0.112, base:0.052, inhDrop:0.060, baseInh:0.70},
+    '8.6' : {peak:2,  cs:0.106, base:0.051, inhDrop:0.085, baseInh:0.70},
+    '8.10': {peak:1,  cs:0.117, base:0.053, inhDrop:0.095, baseInh:0.70}
+  };
+  const out={};
+  Object.entries(spec).forEach(([k,s])=>{
+    const rng=mulberry(k.length*991+s.peak*37);
+    const cs=[],inh=[];
+    for(let i=0;i<64;i++){
+      let v=s.base + 0.013*rng() - 0.004 + 0.006*Math.exp(-i/14);
+      if(i===s.peak) v=s.cs;
+      if(i===s.peak+1) v=s.base+0.012;
+      cs.push(Math.max(0.03,v));
+      let d=s.baseInh - 0.004*rng();
+      if(i===s.peak) d=s.baseInh-s.inhDrop;
+      if(i===s.peak+1) d=s.baseInh-s.inhDrop*0.25;
+      inh.push(d);
+    }
+    out[k]={cs,inh,peak:s.peak,baseInh:s.baseInh};
+  });
+  return out;
+})();
+
+(function(){
+  let mode='full';
+  function draw(){
+    if(mode==='full'){
+      const rng=mulberry(555);
+      const xs=[],ys=[],cols=[];
+      for(let i=0;i<144;i++){xs.push(i); ys.push(0.052+0.021*rng()); cols.push('rgba(150,160,200,.5)');}
+      [7*12+3,7*12+9,8*12+6,8*12+10].forEach(i=>{ys[i]=0.070+0.012*rng(); cols[i]=C.acc5;});
+      Plotly.react('csComparePlot',[{x:xs,y:ys,type:'bar',marker:{color:cols},
+        hovertemplate:'CS = %{y:.4f}<extra></extra>'}],
+        L({xaxis:{title:'alle 144 Köpfe in GPT-2',showticklabels:false},
+           yaxis:{title:'Composition Score',range:[0,0.13]},
+           title:{text:'Volle Matrizen: Signal nicht vom Rauschen zu trennen',font:{size:13,color:C.acc5}}}),PCFG);
+      $('#csCompareNote').className='note r';
+      $('#csCompareNote').innerHTML='<b>Rote Balken = die bekannten Inhibition-Köpfe.</b> Sie liegen kaum über dem Rest. '+
+        'Mit diesem Werkzeug hätte man den Schaltkreis niemals gefunden.';
+    } else {
+      const d=HEADDATA['8.6'];
+      const cols=d.cs.map((v,i)=> i===d.peak? C.acc4 : 'rgba(150,160,200,.5)');
+      Plotly.react('csComparePlot',[{x:d.cs.map((_,i)=>i),y:d.cs,type:'bar',marker:{color:cols},
+        hovertemplate:'Komponente 8.6.%{x}<br>CS = %{y:.4f}<extra></extra>'}],
+        L({xaxis:{title:'SVD-Komponente von Kopf 8.6 (0–63)'},
+           yaxis:{title:'Composition Score mit QK von 9.9',range:[0,0.13]},
+           title:{text:'Nach Zerlegung: ein klarer Ausreißer bei Komponente 2',font:{size:13,color:C.acc4}},
+           shapes:[{type:'line',x0:-1,x1:64,y0:0.0545,y1:0.0545,line:{color:'rgba(255,255,255,.3)',dash:'dot',width:1.5}}],
+           annotations:[{x:2,y:0.106,text:'8.6.2 · 5σ über Durchschnitt',showarrow:true,arrowcolor:C.acc4,
+             font:{color:C.acc4,size:11.5},ay:-40,ax:60}]}),PCFG);
+      $('#csCompareNote').className='note g';
+      $('#csCompareNote').innerHTML='<b>Dieselbe Formel, dieselben Gewichte.</b> Nur werden jetzt die 64 Rang-1-Komponenten '+
+        'einzeln bewertet. Komponente 2 ragt massiv heraus — <strong>5 Standardabweichungen</strong> über dem Mittel. '+
+        'Das ist der Kanal.';
+    }
+  }
+  $$('#csModeBtns button').forEach(b=>b.onclick=()=>{
+    $$('#csModeBtns button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    mode=b.dataset.m; draw();
+  });
+  draw();
+})();
+
+/* Figure 2 reproduction */
+(function(){
+  let head='7.3';
+  function draw(){
+    const d=HEADDATA[head];
+    const xs=d.cs.map((_,i)=>i);
+    const colsTop=d.inh.map((v,i)=> i===d.peak? C.acc5:'rgba(150,160,200,.55)');
+    const colsBot=d.cs.map((v,i)=> i===d.peak? C.acc4:'rgba(150,160,200,.55)');
+    const t1={x:xs,y:d.inh,type:'scatter',mode:'markers',marker:{color:colsTop,size:6},
+      name:'Inhibition Score nach Löschen',xaxis:'x',yaxis:'y',
+      hovertemplate:'Komp. %{x}<br>Inhibition = %{y:.3f}<extra></extra>'};
+    const t0={x:[-1,64],y:[d.baseInh,d.baseInh],type:'scatter',mode:'lines',
+      line:{color:'rgba(255,255,255,.3)',dash:'dash',width:1.6},name:'unverändertes Modell',xaxis:'x',yaxis:'y'};
+    const t2={x:xs,y:d.cs,type:'bar',marker:{color:colsBot},name:'Composition Score',
+      xaxis:'x2',yaxis:'y2',hovertemplate:'Komp. %{x}<br>CS = %{y:.4f}<extra></extra>'};
+    Plotly.react('fig2Plot',[t0,t1,t2],L({
+      grid:{rows:2,columns:1,pattern:'independent',roworder:'top to bottom'},
+      xaxis:{domain:[0,1],anchor:'y',showticklabels:false,gridcolor:'rgba(255,255,255,.06)'},
+      yaxis:{domain:[0.58,1],anchor:'x',title:'Inhibition Score',gridcolor:'rgba(255,255,255,.06)'},
+      xaxis2:{domain:[0,1],anchor:'y2',title:'Komponenten-Index',gridcolor:'rgba(255,255,255,.06)'},
+      yaxis2:{domain:[0,0.42],anchor:'x2',title:'Composition Score',gridcolor:'rgba(255,255,255,.06)'},
+      showlegend:true, legend:{x:0.3,y:1.12,orientation:'h'},
+      margin:{l:62,r:20,t:58,b:48}
+    }),PCFG);
+    const drop=((d.baseInh-d.inh[d.peak])/d.baseInh*100).toFixed(0);
+    $('#fig2Note').innerHTML=`<b>Kopf ${head}:</b> Die Komponente mit dem höchsten Composition Score ist `+
+      `<span class="mono">${head}.${d.peak}</span>. Löscht man genau sie, fällt der Inhibition Score um `+
+      `<strong>${drop} %</strong>. Alle anderen 63 Komponenten tun fast nichts. `+
+      (head==='7.3'?'<em>Ausnahme 7.3: hier ist der Effekt am schwächsten — das Paper sagt das offen.</em>':'');
+  }
+  $$('#inhibHeadBtns button').forEach(b=>b.onclick=()=>{
+    $$('#inhibHeadBtns button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    head=b.dataset.h; draw();
+  });
+  draw();
+})();
+
+/* key composition negative result */
+(function(){
+  const rng=mulberry(31);
+  const xs=[],ys=[];
+  for(let i=0;i<64;i++){xs.push(i); ys.push(0.072+0.028*rng()-0.0003*i);}
+  Plotly.newPlot('keyCompPlot',[{x:xs,y:ys,type:'bar',
+    marker:{color:'rgba(251,113,133,.5)'},hovertemplate:'4.11.%{x}<br>CS = %{y:.4f}<extra></extra>'}],
+    L({xaxis:{title:'Komponente von Previous-Token-Kopf 4.11'},
+       yaxis:{title:'CS mit Key von Induction-Kopf 5.5'},
+       title:{text:'Key-Composition: kein Ausreißer — die Hypothese gilt hier nicht',font:{size:13,color:C.acc5}}}),PCFG);
+})();
+
+/* ============================================================
+   PART 9 — DUPLICATE CHANNEL
+   ============================================================ */
+(function(){
+  const cv=$('#cvDup'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  let seed=11;
+  function draw(){
+    const n=+$('#dpN').value, r=+$('#dpR').value/100, sep=+$('#dpS').value;
+    $('#dpNv').textContent=n; $('#dpRv').textContent=(r*100).toFixed(0)+'%';
+    $('#dpSv').textContent=sep.toFixed(2);
+    const rng=mulberry(seed);
+    clr(ctx,cv);
+    const cx=W/2, cy=H/2, sc=36;
+    // axes
+    ctx.strokeStyle='rgba(255,255,255,.12)';
+    ctx.beginPath();ctx.moveTo(40,cy);ctx.lineTo(W-30,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,30);ctx.lineTo(cx,H-40);ctx.stroke();
+    txt(ctx,'Richtung 3.0.1 →',W-34,cy+18,C.faint,11,'right');
+    ctx.save(); ctx.translate(cx-12,40); ctx.rotate(-Math.PI/2);
+    txt(ctx,'Richtung 3.0.2 →',0,0,C.faint,11,'right'); ctx.restore();
+    let correct=0, tot=0;
+    const pts=[];
+    for(let i=0;i<n;i++){
+      const dup=rng()<r;
+      const mx = dup? -2.6*sep : 0.9*sep;
+      const my = dup? -1.8*sep : 0.5*sep;
+      const x=mx+gauss(rng)*0.95, y=my+gauss(rng)*0.95;
+      pts.push({x,y,dup});
+      // classification along separating direction
+      const proj = -(x*0.82+y*0.57);
+      const pred = proj>0.9*sep;
+      if(pred===dup) correct++; tot++;
+    }
+    if($('#dpLine').checked && sep>0.02){
+      // separating line perpendicular to (0.82,0.57)
+      const d=[0.82,0.57]; const off=-0.9*sep;
+      // line: 0.82x+0.57y = -off  →  param
+      const pxs=[];
+      for(let t=-8;t<=8;t+=16){
+        const px=-d[1]*t, py=d[0]*t;
+        const k=(-off - (px*d[0]+py*d[1]));
+        pxs.push([px+d[0]*k, py+d[1]*k]);
+      }
+      ctx.setLineDash([6,5]); ctx.strokeStyle=hexA(C.acc3,.6); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx+pxs[0][0]*sc, cy-pxs[0][1]*sc);
+      ctx.lineTo(cx+pxs[1][0]*sc, cy-pxs[1][1]*sc); ctx.stroke(); ctx.setLineDash([]);
+    }
+    pts.forEach(p=>{
+      ctx.fillStyle = p.dup? hexA(C.acc5,.72) : hexA(C.acc,.55);
+      ctx.beginPath(); ctx.arc(cx+p.x*sc, cy-p.y*sc, 3.6,0,7); ctx.fill();
+    });
+    // legend
+    ctx.fillStyle=hexA(C.acc5,.72); ctx.beginPath();ctx.arc(60,30,5,0,7);ctx.fill();
+    txt(ctx,'Duplikat (schon gesehen)',72,30,C.acc5,11.5,'left','600');
+    ctx.fillStyle=hexA(C.acc,.55); ctx.beginPath();ctx.arc(60,50,5,0,7);ctx.fill();
+    txt(ctx,'neues Token',72,50,C.acc,11.5,'left','600');
+    $('#dpAcc').textContent=(correct/tot*100).toFixed(1)+'%';
+  }
+  ['dpN','dpR','dpS'].forEach(id=>$('#'+id).oninput=draw);
+  $('#dpLine').onchange=draw;
+  $('#dpNew').onclick=()=>{seed=Math.floor(Math.random()*9999); draw();};
+  draw();
+})();
+
+/* duplicate head component fingerprint */
+(function(){
+  const rng=mulberry(88);
+  const xs=[],ys=[],cols=[];
+  for(let i=0;i<64;i++){
+    let v=0.045+0.014*rng();
+    if(i===0) v=0.098;
+    if(i===1) v=0.091;
+    xs.push(i); ys.push(v);
+    cols.push(i<=1? C.acc4 : 'rgba(150,160,200,.5)');
+  }
+  Plotly.newPlot('dupCompPlot',[{x:xs,y:ys,type:'bar',marker:{color:cols},
+    hovertemplate:'3.0.%{x}<br>CS mit V(7.9.6) = %{y:.4f}<extra></extra>'}],
+    L({xaxis:{title:'SVD-Komponente von Kopf 3.0'},
+       yaxis:{title:'Composition Score'},
+       annotations:[
+         {x:0,y:0.098,text:'3.0.1',showarrow:true,arrowcolor:C.acc4,font:{color:C.acc4,size:11},ay:-30},
+         {x:1,y:0.091,text:'3.0.2',showarrow:true,arrowcolor:C.acc4,font:{color:C.acc4,size:11},ay:-46}]}),PCFG);
+})();
+
+/* alpha intervention demo */
+(function(){
+  const cv=$('#cvAlpha'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const COMPS={
+    '8.10.1':{gain:1.00, base:-0.55, lbl:'starker Inhibition-Kanal'},
+    '8.6.2' :{gain:0.85, base:-0.55, lbl:'starker Inhibition-Kanal'},
+    '7.9.6' :{gain:0.70, base:-0.55, lbl:'Inhibition-Kanal'},
+    '7.3.1' :{gain:0.22, base:-0.55, lbl:'schwacher Kanal'},
+    '8.3.0' :{gain:0.06, base:-0.55, lbl:'Kontroll-Kopf (sollte nichts tun)'},
+    '8.0.0' :{gain:0.03, base:-0.55, lbl:'Zufalls-Kontrolle (sollte nichts tun)'}
+  };
+  let anim=null;
+  function draw(){
+    const a=+$('#alA').value, key=$('#alComp').value, c=COMPS[key];
+    $('#alAv').textContent=a;
+    clr(ctx,cv);
+    const n=2; // two candidate names: S1 (John), IO (Mary)
+    const names=['John (S1)','Mary (IO)'];
+    const cols=[C.acc5,C.acc4];
+    // attention of mover 9.9 as function of alpha
+    // negative alpha -> inhibit S1 ; positive -> inhibit IO
+    const s1 = clamp(0.5 - c.gain*(a/200)*0.9, 0.02, 0.95);
+    const s2 = clamp(0.5 + c.gain*(a/200)*0.9, 0.02, 0.95);
+    const atts=[s1, s2/(s1+s2)*0.9];
+    const norm=atts.reduce((x,y)=>x+y,0);
+    const att=atts.map(v=>v/norm);
+    // sentence strip
+    const y0=52;
+    txt(ctx,'„John und Mary gingen zum Laden. John gab ein Getränk an ___“',W/2,y0,C.txt,15,'center','620');
+    // attention bars
+    const bx=90, bw=W-260, by=110;
+    txt(ctx,'Attention von Mover-Kopf 9.9',bx,by-22,C.faint,12);
+    att.forEach((v,i)=>{
+      const y=by+i*62;
+      txt(ctx,names[i],bx-12,y+18,cols[i],14,'right','680');
+      const w=bw*v;
+      const gr=ctx.createLinearGradient(bx,0,bx+w,0);
+      gr.addColorStop(0,hexA(cols[i],.9)); gr.addColorStop(1,hexA(cols[i],.35));
+      ctx.fillStyle=gr; roundRect(ctx,bx,y,Math.max(3,w),36,7); ctx.fill();
+      txt(ctx,(v*100).toFixed(0)+'%',bx+w+12,y+18,cols[i],13,'left','700');
+    });
+    // alpha dial
+    const dx=W-110, dy=by+62, R=62;
+    txt(ctx,'α-Regler',dx,dy-R-24,C.acc3,12,'center','650');
+    ctx.strokeStyle='rgba(255,255,255,.14)'; ctx.lineWidth=10;
+    ctx.beginPath(); ctx.arc(dx,dy,R,Math.PI*0.75,Math.PI*2.25); ctx.stroke();
+    const th=lerp(Math.PI*0.75,Math.PI*2.25,(a+200)/400);
+    ctx.strokeStyle=C.acc3; ctx.lineWidth=10;
+    ctx.beginPath(); ctx.arc(dx,dy,R,Math.PI*0.75,th); ctx.stroke();
+    ctx.fillStyle=C.acc3;
+    ctx.beginPath(); ctx.arc(dx+Math.cos(th)*R,dy+Math.sin(th)*R,7,0,7); ctx.fill();
+    txt(ctx,String(a),dx,dy+4,C.txt,17,'center','800');
+    // verdict
+    const winner = att[0]>att[1]? names[0]:names[1];
+    const wcol = att[0]>att[1]? C.acc5:C.acc4;
+    txt(ctx,`→ Vorhersage: ${winner}`,W/2,by+150,wcol,17,'center','760');
+    const isCtrl = key==='8.3.0'||key==='8.0.0';
+    $('#alNote').innerHTML = isCtrl
+      ? `<b>Kontrolle:</b> ${c.lbl} — drehe α so weit du willst, es passiert praktisch nichts. Das bestätigt: der Effekt steckt wirklich in den gefundenen Kanälen, nicht in irgendeiner allgemeinen Störung.`
+      : `<b>${key} (${c.lbl}):</b> α = ${a} kippt die Aufmerksamkeit des Mover-Kopfes. Negatives α hemmt S1 (John) → „Mary". Positives α hemmt IO → das Modell sagt fälschlich „John". <em>Eine einzige Zahl steuert das Verhalten.</em>`;
+  }
+  ['alA'].forEach(id=>$('#'+id).oninput=draw);
+  $('#alComp').onchange=draw;
+  $('#alSweep').onclick=function(){
+    if(anim){cancelAnimationFrame(anim); anim=null; this.textContent='▶ α durchfahren'; return;}
+    this.textContent='⏸ Stop'; this.classList.add('on');
+    let t=0;
+    (function step(){
+      t+=0.016;
+      const a=Math.round(Math.sin(t*1.4)*200);
+      $('#alA').value=a; draw();
+      if(t<6.5) anim=requestAnimationFrame(step);
+      else {anim=null; $('#alSweep').textContent='▶ α durchfahren'; $('#alSweep').classList.remove('on');}
+    })();
+  };
+  draw();
+})();
+
+/* FLDD comparison plot */
+(function(){
+  Plotly.newPlot('fldPlot',[
+    {x:['Baseline<br>(kein Eingriff)','Gefundener<br>Kanal 8.10.1','Direkt optimierter<br>Vektor (Obergrenze)'],
+     y:[-8,97.5,111.5], type:'bar',
+     marker:{color:['rgba(150,160,200,.5)',C.acc4,C.acc2]},
+     text:['−8 %','97,5 %','111,5 %'], textposition:'outside',
+     hovertemplate:'%{x}<br>FLDD = %{y:.1f} %<extra></extra>'},
+    {x:['Baseline<br>(kein Eingriff)','Gefundener<br>Kanal 8.10.1','Direkt optimierter<br>Vektor (Obergrenze)'],
+     y:[0,35,45.1], type:'bar',
+     marker:{color:['rgba(150,160,200,.5)',hexA(C.acc4,.55),hexA(C.acc2,.55)]},
+     text:['0 %','35 %','45,1 %'], textposition:'outside', showlegend:false,
+     hovertemplate:'%{x}<br>Interchange Acc = %{y:.1f} %<extra></extra>'}
+  ],L({
+    barmode:'group',
+    yaxis:{title:'Wert (%)'},
+    title:{text:'Kein Subspace-Illusion-Artefakt: der gefundene Kanal liegt nahe am Optimum',font:{size:13,color:C.acc4}},
+    legend:{x:.02,y:1.0}
+  }),PCFG);
+})();
+
+/* ============================================================
+   PART 10 — WEIGHT EDITING
+   ============================================================ */
+(function(){
+  const cv=$('#cvEdit'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const N=12;
+  const rng=mulberry(21);
+  const S=Array.from({length:N},(_,i)=>Math.exp(-i*0.28)*(0.9+0.2*rng()));
+  const removed=new Set();
+  function draw(){
+    const c=+$('#edC').value; $('#edCv').textContent=c;
+    clr(ctx,cv);
+    const ox=60, oy=70, cs=44;
+    txt(ctx,'Singulärwerte S (12 von 64 gezeigt)',ox,26,C.faint,12);
+    S.forEach((v,i)=>{
+      const dead=removed.has(i);
+      const h=(v/S[0])*150;
+      const x=ox+i*cs;
+      ctx.fillStyle = dead? 'rgba(251,113,133,.25)' : hexA(C.acc,.75);
+      roundRect(ctx,x,oy+170-h,cs-6,h,4); ctx.fill();
+      if(dead){
+        ctx.strokeStyle=C.acc5; ctx.lineWidth=2.4;
+        ctx.beginPath(); ctx.moveTo(x+4,oy+170-h); ctx.lineTo(x+cs-10,oy+170); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x+cs-10,oy+170-h); ctx.lineTo(x+4,oy+170); ctx.stroke();
+      }
+      txt(ctx,String(i),x+(cs-6)/2,oy+184,dead?C.acc5:C.faint,10.5,'center','620');
+      if(i===c && !removed.has(i)){
+        ctx.strokeStyle=C.acc3; ctx.setLineDash([4,3]);
+        ctx.strokeRect(x-3,oy+170-h-3,cs,h+6); ctx.setLineDash([]);
+        txt(ctx,'▲ gewählt',x+(cs-6)/2,oy+170-h-14,C.acc3,10.5,'center','650');
+      }
+    });
+    // effect readout
+    const d=HEADDATA['8.6'];
+    const inh = removed.has(2)? 0.615 : removed.has(0)? 0.685 : 0.70;
+    const dropP=Math.round((0.70-inh)/0.70*100);
+    $('#edInh').textContent=inh.toFixed(2);
+    $('#edDrop').textContent=dropP+'%';
+    $('#edNote').innerHTML = removed.size===0
+      ? '<b>Intakt:</b> Alle Komponenten aktiv. Inhibition Score = 0,70.'
+      : removed.has(2)
+        ? '<b>Kanal 8.6.2 entfernt:</b> Inhibition fällt auf 0,62 (−12 %). Der Schaltkreis ist beschädigt — genau wie in Abbildung 2 des Papers.'
+        : '<b>Andere Komponente entfernt:</b> Kaum messbare Veränderung. Nur der <em>richtige</em> Kanal trägt das Signal.';
+  }
+  $('#edC').oninput=draw;
+  $('#edMulti').onchange=function(){
+    if(this.checked){removed.add(0); removed.add(1);} else {removed.clear();}
+    removed.add(+$('#edC').value); draw();
+  };
+  $('#edC').addEventListener('input',()=>{ if($('#edMulti').checked){removed.clear(); removed.add(0); removed.add(1);} removed.add(+$('#edC').value); draw();});
+  $('#edReset').onclick=()=>{removed.clear(); $('#edMulti').checked=false; draw();};
+  draw();
+})();
+
+/* keep-only-one plot (Fig 10) */
+(function(){
+  Plotly.newPlot('keepPlot',[
+    {x:['Alles<br>intakt','Nur Komponente<br>mit höchstem CS','Nur Komponente 0<br>(größter Singulärwert)','Alles außer<br>Top-Komponente'],
+     y:[0.70,0.30,0.04,0.40], type:'bar',
+     marker:{color:['rgba(150,160,200,.5)',C.acc4,C.acc5,C.acc3]},
+     text:['0,70','0,30','0,04','0,40'], textposition:'outside',
+     hovertemplate:'%{x}<br>Inhibition Score = %{y:.2f}<extra></extra>'}
+  ],L({
+    yaxis:{title:'Inhibition Score',range:[0,0.85]},
+    title:{text:'Lautstärke ≠ Bedeutung: der größte Singulärwert ist nicht der wichtige',font:{size:13,color:C.acc4}}
+  }),PCFG);
+})();
+
+/* pythia training dynamics */
+(function(){
+  const steps=Array.from({length:151},(_,i)=>i);
+  function sep(s){ return clamp(1/(1+Math.exp(-(s-38)/9))*0.92+0.05,0,1); }
+  function draw(){
+    const s=+$('#pyStep').value; $('#pyStepv').textContent=s+'k';
+    const cur=sep(s);
+    const cols=steps.map(x=> x<=s? hexA(C.acc2,.85):'rgba(255,255,255,.08)');
+    Plotly.react('pythiaPlot',[
+      {x:steps,y:steps.map(sep),type:'bar',marker:{color:cols},
+       hovertemplate:'Schritt %{x}k<br>Separability = %{y:.2f}<extra></extra>'}
+    ],L({
+      xaxis:{title:'Trainingsschritt (k)',dtick:25},
+      yaxis:{title:'Separability des Kanals 6.6.2',range:[0,1]},
+      title:{text:`Pythia-160m: der Kanal wird gelernt — aktuell bei Schritt ${s}k (Separability ${cur.toFixed(2)})`,
+             font:{size:13,color:C.acc2}}
+    }),PCFG);
+  }
+  $('#pyStep').oninput=draw;
+  draw();
+})();
+
+/* ============================================================
+   PART 11 — STEERING
+   ============================================================ */
+(function(){
+  const cv=$('#cvSteer'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  let ioFirst=false;
+  function draw(){
+    const a1=+$('#sw1').value, a2=+$('#sw2').value, a3=+$('#sw3').value;
+    $('#sw1v').textContent=a1; $('#sw2v').textContent=a2; $('#sw3v').textContent=a3;
+    const S='John', IO='Mary';
+    const first = ioFirst? IO:S, second= ioFirst? S:IO;
+    clr(ctx,cv);
+    // sentence
+    txt(ctx,'Prompt:',40,30,C.faint,12);
+    txt(ctx,`„${first} und ${second} gingen zum Laden. ${S} gab ein Getränk an ___"`,
+        40,56,C.txt,15.5,'left','620');
+    // attention of mover
+    const bx=40, bw=430, by=110;
+    txt(ctx,'Attention von Mover 9.9',bx,by-20,C.faint,12);
+    // compute: inhibition on each name
+    // a1,a2 inhibit S1 (negative) or IO (positive); a3 adds duplicate signal
+    const inhS1 = clamp(0.5 - (a1+a2)/300*0.9 - a3/300*0.35, 0.02,0.95);
+    const inhIO = clamp(0.5 + (a1+a2)/300*0.9 - a3/300*0.35, 0.02,0.95);
+    const attS1=1-inhS1, attIO=1-inhIO;
+    const Z=attS1+attIO+0.3;
+    const pS1=attS1/Z, pIO=attIO/Z, pRest=0.3/Z;
+    const rows=[
+      {n:first+' (S1)',v:pS1,col:first===IO?C.acc4:C.acc5},
+      {n:second+' (S2)',v:pRest*0.4,col:'#6b7390'},
+      {n:IO===first?second:first+' (IO)',v:pIO,col:IO===first?C.acc5:C.acc4}
+    ];
+    rows.forEach((r,i)=>{
+      const y=by+i*54;
+      txt(ctx,r.n,bx-8,y+16,r.col,13,'left','640');
+      const w=bw*r.v;
+      ctx.fillStyle=hexA(r.col,.75); roundRect(ctx,bx+150,y,Math.max(3,w),32,6); ctx.fill();
+      txt(ctx,(r.v*100).toFixed(0)+'%',bx+150+w+10,y+16,r.col,12,'left','700');
+    });
+    // prediction
+    const best = pS1>pIO? (first===IO?IO:S) : (IO===first?IO:S);
+    const correct = best===IO;
+    txt(ctx,`Vorhersage: ${best}`,bx,by+180,correct?C.acc4:C.acc5,17,'left','760');
+    txt(ctx,correct?'✓ korrekt':'✗ falsch — richtig wäre Mary',bx,by+204,correct?C.acc4:C.acc5,12.5,'left','620');
+    // right panel: channel state
+    const rx=560;
+    txt(ctx,'Zustand der Kanäle (Residual Stream)',rx,86,C.faint,12);
+    const chans=[
+      {lbl:'8.10.1',v:a1/150,col:C.acc3},
+      {lbl:'8.6.2', v:a2/150,col:C.acc3},
+      {lbl:'Duplikat-Signal',v:a3/150,col:C.acc}
+    ];
+    chans.forEach((c,i)=>{
+      const y=112+i*58;
+      txt(ctx,c.lbl,rx,y+16,C.dim,12.5,'left','620');
+      const cw=200;
+      ctx.strokeStyle='rgba(255,255,255,.14)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(rx+110,y+16); ctx.lineTo(rx+110+cw,y+16); ctx.stroke();
+      const px=rx+110+cw/2 + clamp(c.v,-1,1)*cw/2;
+      ctx.strokeStyle=c.col; ctx.lineWidth=7; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(rx+110+cw/2,y+16); ctx.lineTo(px,y+16); ctx.stroke();
+      ctx.fillStyle=c.col; ctx.beginPath(); ctx.arc(px,y+16,6,0,7); ctx.fill();
+      txt(ctx,c.v.toFixed(2),rx+110+cw+14,y+16,c.col,12,'left','700');
+    });
+    // schematic residual vector
+    const vy=300;
+    txt(ctx,'Resultierender Zeiger im 2D-Indexraum',rx,vy-24,C.faint,12);
+    const cx2=rx+120, cy2=vy+52, sc2=34;
+    ctx.strokeStyle='rgba(255,255,255,.1)';
+    ctx.beginPath();ctx.moveTo(cx2-90,cy2);ctx.lineTo(cx2+90,cy2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx2,cy2-52);ctx.lineTo(cx2,cy2+52);ctx.stroke();
+    const vx2=clamp((a1+a2)/150,-1.4,1.4), vy2=clamp(-a3/150,-1.4,1.4);
+    arrow(ctx,cx2,cy2,cx2+vx2*sc2,cy2-vy2*sc2,C.acc3,3.4,10);
+    txt(ctx,'S1-Region',cx2-84,cy2-30,C.acc5,10.5,'left','620');
+    txt(ctx,'IO-Region',cx2+40,cy2-30,C.acc4,10.5,'left','620');
+    $('#swNote').innerHTML =
+      `<b>Versuch's aus:</b> Setze α auf 8.10.1 und 8.6.2 auf <strong>−100</strong> → das Modell sagt „Mary" (korrekt). `+
+      `Setze beide auf <strong>+100</strong> → es sagt „John" (falsch). Wechsle dann die Reihenfolge der Namen — `+
+      `die Steuerung funktioniert <em>unabhängig davon</em>, weil der Kanal Position, nicht Inhalt kodiert.`;
+  }
+  ['sw1','sw2','sw3'].forEach(id=>$('#'+id).oninput=draw);
+  $('#swOrder').onclick=function(){
+    ioFirst=!ioFirst; $('#swOrdLbl').textContent=ioFirst?'IO zuerst':'S1 zuerst'; draw();
+  };
+  $('#swReset').onclick=()=>{['sw1','sw2','sw3'].forEach(id=>$('#'+id).value=0); draw();};
+  draw();
+})();
+
+/* ============================================================
+   PART 12 — 1D LIMITATION
+   ============================================================ */
+(function(){
+  const cv=$('#cv1D'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const a=+$('#l1A').value, n=+$('#l1N').value;
+    $('#l1Av').textContent=a; $('#l1Nv').textContent=n;
+    clr(ctx,cv);
+    // 1D line: alpha maps to a position on a line; mover attends to nearest index
+    const lx=70, lw=W-140, ly=170;
+    // the line
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=3; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+lw,ly); ctx.stroke();
+    // index regions along the line (compressed in middle)
+    txt(ctx,'Die 1D-Linie: nur zwei Enden sind gut erreichbar',lx,26,C.faint,12);
+    const t=(a+200)/400; // 0..1 position on line
+    // regions: index 0 at left end, index n-1 at right end, middle squeezed
+    const pos=i=>{
+      const f=i/(n-1||1);
+      // sigmoid compression toward ends
+      const g = f<0.5? 0.5*Math.pow(f*2,1.8) : 0.5+0.5*Math.pow((f-0.5)*2,0.55);
+      return lx+g*lw;
+    };
+    for(let i=0;i<n;i++){
+      const x=pos(i);
+      const isEnd = i===0||i===n-1;
+      ctx.strokeStyle= isEnd? hexA(C.acc4,.7):hexA(C.acc5,.45);
+      ctx.lineWidth=isEnd?2.4:1.4;
+      ctx.beginPath(); ctx.moveTo(x,ly-14); ctx.lineTo(x,ly+14); ctx.stroke();
+      txt(ctx,String(i),x,ly+30, isEnd?C.acc4:C.acc5,11,'center','650');
+    }
+    // alpha pointer
+    const px=lx+t*lw;
+    arrow(ctx,px,ly-64,px,ly-20,C.acc3,3,9);
+    txt(ctx,'α = '+a,px,ly-78,C.acc3,12.5,'center','700');
+    // which index is reached
+    let bestI=0,bd=1e9;
+    for(let i=0;i<n;i++){const d=Math.abs(pos(i)-px); if(d<bd){bd=d;bestI=i;}}
+    ctx.fillStyle=hexA(C.acc3,.2);
+    ctx.beginPath(); ctx.arc(px,ly,17,0,7); ctx.fill();
+    txt(ctx,'→ erreicht Index '+bestI,lx,ly+56,C.acc3,13.5,'left','700');
+    // reachable count
+    const reach = 2 + (n>2?0:0);
+    $('#l1Reach').textContent=reach;
+    $('#l1Miss').textContent=Math.max(0,n-reach);
+    txt(ctx,'Mittlere Indizes klumpen zusammen — sie sind praktisch unerreichbar.',
+        lx,ly+82,C.acc5,12,'left','620');
+    txt(ctx,'Genau deshalb braucht das Modell mehr Dimensionen → Teil 13.',
+        lx,ly+104,C.dim,12,'left');
+  }
+  ['l1A','l1N'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* ============================================================
+   PART 13 — 3D SPACE (Plotly 3D)
+   ============================================================ */
+(function(){
+  const OBJCOLS=['#6ee7ff','#c084fc','#fbbf24','#34d399','#fb7185','#60a5fa','#f472b6','#a3e635',
+                 '#fb923c','#22d3ee','#e879f9','#facc15','#4ade80','#f87171','#38bdf8','#c4b5fd',
+                 '#fdba74','#2dd4bf','#fca5a5','#93c5fd'];
+  function wedgeColor(idx,n){
+    // hue sweep
+    const h=200+idx*(160/Math.max(1,n));
+    return `hsl(${h%360},75%,62%)`;
+  }
+  function genPoints(n,dens){
+    const pts=[],cols=[],szs=[];
+    const R=3.2;
+    for(let i=0;i<dens;i++)for(let j=0;j<dens;j++)for(let k=0;k<dens;k++){
+      const x=-R+2*R*i/(dens-1), y=-R+2*R*j/(dens-1), z=-R+2*R*k/(dens-1);
+      // wedge assignment: angle in xz-plane + radius bands
+      const ang=Math.atan2(z,x)+Math.PI; // 0..2pi
+      const idx=Math.floor(ang/(2*Math.PI)*n)%n;
+      // fragmentation at high n: middle indices get scrambled
+      const frag = n>=9 && idx>0 && idx<n-1;
+      const jitter = frag? 0.9:0.12;
+      const finalIdx = frag && Math.random()<0.55 ? Math.floor(Math.random()*n) : idx;
+      pts.push([x,y,z]);
+      cols.push(wedgeColor(finalIdx,n));
+      szs.push(frag?3:4.5);
+    }
+    return {pts,cols,szs};
+  }
+  function draw(){
+    const n=+$('#p3N').value, dens=+$('#p3D').value, frag=$('#p3Frag').checked;
+    $('#p3Nv').textContent=n; $('#p3Dv').textContent=dens;
+    const {pts,cols,szs}=genPoints(n,dens);
+    const trace={
+      x:pts.map(p=>p[0]),y:pts.map(p=>p[1]),z:pts.map(p=>p[2]),
+      mode:'markers',type:'scatter3d',
+      marker:{size:szs,color:cols,opacity:0.85},
+      hovertemplate:'x=%{x:.1f} y=%{y:.1f} z=%{z:.1f}<extra></extra>'
+    };
+    const axis={gridcolor:'rgba(255,255,255,.08)',zerolinecolor:'rgba(255,255,255,.18)',
+      range:[-3.6,3.6],tickfont:{size:9}};
+    Plotly.react('plot3d',[trace],L({
+      margin:{l:0,r:0,t:40,b:0},
+      scene:{xaxis:Object.assign({title:'7.9.6'},axis),
+             yaxis:Object.assign({title:'8.6.2'},axis),
+             zaxis:Object.assign({title:'8.6.10'},axis),
+             bgcolor:'rgba(0,0,0,0)',
+             camera:{eye:{x:1.35,y:1.2,z:0.9}}},
+      title:{text:`Indexraum bei N = ${n} Objekten — Farbe = welcher Index vom Mover-Kopf gewählt wird`,
+             font:{size:13,color:C.acc2}}
+    }),PCFG);
+    $('#p3Note').innerHTML = n<9
+      ? `<b>N = ${n}:</b> Der Raum ist sauber in ${n} Keile geteilt. Jede Farbe = ein Listenindex. Der Mover-Kopf findet jeden Index zuverlässig.`
+      : `<b>N = ${n} — Fragmentierung!</b> Die mittleren Keile sind zu schmal und <strong>zerbröckeln</strong> (die durchmischten Punkte). Genau hier verliert das Modell den Überblick — das ist „Lost in the Middle" auf Mechanismus-Ebene.`;
+  }
+  ['p3N','p3D'].forEach(id=>$('#'+id).oninput=draw);
+  $('#p3Frag').onchange=draw;
+  $('#p3Anim').onclick=function(){
+    let n=3; this.classList.add('on');
+    const iv=setInterval(()=>{
+      n++; $('#p3N').value=n; draw();
+      if(n>=20){clearInterval(iv); this.classList.remove('on');}
+    },700);
+  };
+  draw();
+})();
+
+/* wedge 2D */
+(function(){
+  const cv=$('#cvWedge'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const n=+$('#wgN').value; $('#wgNv').textContent=n;
+    clr(ctx,cv);
+    const cx=W/2, cy=H/2, R=118;
+    const deg=360/n;
+    $('#wgDeg').textContent=deg.toFixed(0)+'°';
+    $('#wgStat').textContent = n<=8? 'stabil' : n<=12? 'angespannt' : 'fragmentiert ✗';
+    $('#wgStat').style.color = n<=8? C.acc4 : n<=12? C.acc3 : C.acc5;
+    for(let i=0;i<n;i++){
+      const a0=-Math.PI/2 + i*2*Math.PI/n, a1=a0+2*Math.PI/n;
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,R,a0,a1); ctx.closePath();
+      const h=(200+i*(160/n))%360;
+      const alpha = n<=8?0.55 : n<=12?0.4:0.22;
+      ctx.fillStyle=`hsla(${h},75%,60%,${alpha})`;
+      ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1; ctx.stroke();
+      const am=(a0+a1)/2;
+      txt(ctx,String(i),cx+Math.cos(am)*R*0.68,cy+Math.sin(am)*R*0.68,'#0a0c14',13,'center','800');
+    }
+    ctx.fillStyle='#06070d'; ctx.beginPath(); ctx.arc(cx,cy,26,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.stroke();
+    txt(ctx,'α=0',cx,cy,C.faint,10.5,'center');
+    if(n>9){
+      txt(ctx,'⚠ Keile zu schmal',cx,H-24,C.acc5,12,'center','700');
+      txt(ctx,'→ Fragmentierung',cx,H-8,C.acc5,11,'center');
+    } else {
+      txt(ctx,'✓ alle Indizes klar getrennt',cx,H-16,C.acc4,12,'center','650');
+    }
+  }
+  $('#wgN').oninput=draw;
+  draw();
+})();
+
+/* causal chain strip */
+(function(){
+  const cv=$('#cvChain2'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const boxes=[
+    {t:'3 Rang-1-Kanäle',s:'7.9.6 · 8.6.2 · 8.6.10',c:C.acc},
+    {t:'3D-Indexraum',s:'Position, nicht Inhalt',c:C.acc2},
+    {t:'Keile pro Index',s:'ein Stück Raum pro Objekt',c:C.acc3},
+    {t:'N zu groß → Bruch',s:'Keile fragmentieren',c:C.acc5},
+    {t:'Mover greift fehl',s:'nimmt letztes Element',c:C.acc5},
+    {t:'Fehler sichtbar',s:'Genauigkeit fällt',c:C.acc5}
+  ];
+  function draw(){
+    clr(ctx,cv);
+    const bw=(W-60)/boxes.length;
+    boxes.forEach((b,i)=>{
+      const x=30+i*bw, y=52, bh=110;
+      ctx.fillStyle=hexA(b.c,.1); roundRect(ctx,x+6,y,bw-24,bh,12); ctx.fill();
+      ctx.strokeStyle=hexA(b.c,.5); ctx.lineWidth=1.6; ctx.stroke();
+      txt(ctx,b.t,x+(bw-24)/2,y+34,b.c,12.5,'center','700');
+      txt(ctx,b.s,x+(bw-24)/2,y+62,C.dim,10.5,'center');
+      txt(ctx,String(i+1),x+(bw-24)/2,y+92,hexA(b.c,.7),10,'center','700');
+      if(i<boxes.length-1) arrow(ctx,x+bw-16,y+bh/2,x+bw-4,y+bh/2,'rgba(255,255,255,.3)',2,7);
+    });
+    txt(ctx,'Die komplette Erklärungskette — von drei Zahlen im Modell bis zum beobachtbaren Fehler',
+        W/2,26,C.dim,12.5,'center','620');
+  }
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   PART 14 — FIX
+   ============================================================ */
+(function(){
+  const xs=[]; for(let n=2;n<=20;n++) xs.push(n);
+  const base=xs.map(n=>clamp(0.86*Math.exp(-0.145*(n-3))+0.04,0.02,1));
+  const fixed=xs.map(n=>clamp(0.90*Math.exp(-0.075*(n-3))+0.05,0.02,1));
+  Plotly.newPlot('fixPlot',[
+    {x:xs,y:base,type:'scatter',mode:'lines+markers',name:'ohne Eingriff',
+     line:{color:C.acc5,width:3,shape:'spline'},marker:{size:6}},
+    {x:xs,y:fixed,type:'scatter',mode:'lines+markers',name:'mit Indexraum-Eingriff',
+     line:{color:C.acc4,width:3,shape:'spline'},marker:{size:6}},
+    {x:xs,y:fixed.map((f,i)=>f-base[i]),type:'bar',name:'Gewinn',yaxis:'y2',
+     marker:{color:'rgba(192,132,252,.4)'},opacity:0.55}
+  ],L({
+    xaxis:{title:'Anzahl Objekte N',dtick:2},
+    yaxis:{title:'Genauigkeit',range:[0,1],tickformat:'.0%'},
+    yaxis2:{title:'Gewinn',overlaying:'y',side:'right',range:[0,0.4],tickformat:'.0%',
+      gridcolor:'rgba(0,0,0,0)',titlefont:{color:C.acc2},tickfont:{color:C.acc2}},
+    title:{text:'Laundry List: Eingriff im 3D-Indexraum verdoppelt die effektive Kapazität',
+           font:{size:13,color:C.acc4}},
+    legend:{x:.55,y:.95}
+  }),PCFG);
+})();
+
+/* capacity ceiling canvas */
+(function(){
+  const cv=$('#cvCap'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  function draw(){
+    const n=+$('#cpN').value, d=+$('#cpD').value;
+    $('#cpNv').textContent=n; $('#cpDv').textContent=d;
+    // capacity heuristic: usable wedges ~ 3 * d  (empirisch: 3D → ~9 stabile Keile)
+    const cap=3*d;
+    const strain=clamp(n/cap,0,2);
+    const gain = clamp(0.30*Math.exp(-Math.max(0,n-cap)*0.22),0.01,0.34);
+    $('#cpGain').textContent='+'+(gain*100).toFixed(0)+'%';
+    $('#cpRoom').textContent = n<=cap? 'OK' : 'erschöpft';
+    $('#cpRoom').parentElement.querySelector('b').style.background='none';
+    $('#cpRoom').style.webkitTextFillColor = n<=cap? C.acc4 : C.acc5;
+    $('#cpRoom').style.color = n<=cap? C.acc4 : C.acc5;
+    clr(ctx,cv);
+    // capacity bar
+    const bx=40, bw=W-80, by=70;
+    txt(ctx,`Kapazität des Kanals: ca. ${cap} unterscheidbare Indizes (bei ${d} Dimensionen)`,
+        bx,34,C.faint,12);
+    ctx.fillStyle='rgba(255,255,255,.06)'; roundRect(ctx,bx,by,bw,36,9); ctx.fill();
+    const fill=clamp(n/Math.max(cap,n),0,1)*bw;
+    const gr=ctx.createLinearGradient(bx,0,bx+bw,0);
+    gr.addColorStop(0,hexA(C.acc4,.8)); gr.addColorStop(clamp(cap/Math.max(cap,n),0,1),hexA(C.acc3,.8));
+    gr.addColorStop(1,hexA(C.acc5,.85));
+    ctx.fillStyle=gr; roundRect(ctx,bx,by,fill,36,9); ctx.fill();
+    const capx=bx+bw*clamp(cap/Math.max(cap,n),0,1);
+    ctx.setLineDash([5,4]); ctx.strokeStyle=C.acc3; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(capx,by-12); ctx.lineTo(capx,by+48); ctx.stroke(); ctx.setLineDash([]);
+    txt(ctx,'Kapazitätsgrenze',capx+6,by-20,C.acc3,11,'left','650');
+    txt(ctx,`${n} Objekte`,bx+10,by+18,'rgba(0,0,0,.72)',13,'left','800');
+    // wedge mini
+    const cx=W/2, cy=200, R=62;
+    for(let i=0;i<n;i++){
+      const a0=-Math.PI/2+i*2*Math.PI/n, a1=a0+2*Math.PI/n;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R,a0,a1); ctx.closePath();
+      const broken = n>cap && i>0 && i<n-1;
+      ctx.fillStyle = broken? 'rgba(251,113,133,.2)' : `hsla(${(200+i*(150/n))%360},72%,60%,.55)`;
+      ctx.fill(); ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.stroke();
+    }
+    txt(ctx, n<=cap? '✓ Keile stabil' : '✗ mittlere Keile zerbrochen', cx+R+24, cy,
+        n<=cap?C.acc4:C.acc5, 13,'left','700');
+    txt(ctx, `Verbesserung durch Eingriff: +${(gain*100).toFixed(0)} %`, cx+R+24, cy+24, C.dim,12.5,'left');
+  }
+  ['cpN','cpD'].forEach(id=>$('#'+id).oninput=draw);
+  draw();
+})();
+
+/* ============================================================
+   PART 15 — ARGUMENT CHAIN
+   ============================================================ */
+(function(){
+  const cv=$('#cvArg'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const STEPS=[
+    {t:'Beobachtung', s:'GPT-2 scheitert an längeren Listen', c:C.acc5,
+     n:'<b>Schritt 1 — Das Phänomen:</b> Die Genauigkeit fällt mit jedem zusätzlichen Objekt. Die Reihenfolge entscheidet über Erfolg oder Misserfolg. Aus der Architektur allein folgt das nicht.'},
+    {t:'Vorwissen', s:'IOI-Schaltkreis ist bekannt', c:C.acc,
+     n:'<b>Schritt 2 — Fester Boden:</b> Wang et al. haben gezeigt, dass Inhibition-Köpfe dem Mover-Kopf sagen, wohin er nicht schauen soll. Wir wissen also: <em>hier wird kommuniziert.</em>'},
+    {t:'Werkzeug', s:'SVD zerlegt jeden Kopf in 64 Signale', c:C.acc,
+     n:'<b>Schritt 3 — Das Werkzeug:</b> Jede OV/QK-Matrix ist Rang 64. Die SVD zerlegt sie in 64 Rang-1-Bausteine. Jeder Baustein = ein möglicher Kanal.'},
+    {t:'Fund', s:'Ein Ausreißer pro Kopf, 5σ über dem Mittel', c:C.acc2,
+     n:'<b>Schritt 4 — Der Fund:</b> Der Composition Score auf den zerlegten Komponenten zeigt genau <strong>eine</strong> herausragende Komponente pro Inhibition-Kopf. Rein aus den Gewichten, ohne das Modell laufen zu lassen.'},
+    {t:'Kausalität', s:'Komponente löschen → Verhalten bricht ein', c:C.acc3,
+     n:'<b>Schritt 5 — Kausalität:</b> Setzt man genau diesen Singulärwert auf null, fällt der Inhibition Score um 7–14 %. Alle anderen 63 Komponenten tun nichts. Der Kanal ist real und wirksam.'},
+    {t:'Inhalt', s:'Der Kanal trägt Position, nicht Inhalt', c:C.acc3,
+     n:'<b>Schritt 6 — Was fließt:</b> Ersetzt man die Kopf-Ausgabe durch α·v⃗ (ein Gewichtsvektor ohne Kontextwissen), ändert sich trotzdem <em>welcher Name</em> gehemmt wird. Also: ein Zeiger auf eine Position.'},
+    {t:'Skalierung', s:'1D reicht nicht → 3D-Indexraum', c:C.acc2,
+     n:'<b>Schritt 7 — Die Geometrie:</b> Bei 2 Kandidaten genügt eine Linie. Bei N Objekten braucht man Fläche. Drei Komponenten spannen einen 3D-Raum auf, der in Keile zerfällt — einer pro Listenindex.'},
+    {t:'Erklärung + Fix', s:'Keile zerbrechen → Fehler. Gezielt zielen → +22 %', c:C.acc4,
+     n:'<b>Schritt 8 — Antwort und Reparatur:</b> Ab ~10 Objekten werden die Keile zu schmal und fragmentieren. Das <em>ist</em> der Fehler. Setzt man die drei Komponenten gezielt auf die richtige Region, steigt die Genauigkeit um über 20 %.'}
+  ];
+  function draw(){
+    const s=+$('#agS').value; $('#agSv').textContent=s;
+    clr(ctx,cv);
+    const n=STEPS.length;
+    const pad=56, gap=(W-2*pad)/(n-1);
+    ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(pad,120); ctx.lineTo(W-pad,120); ctx.stroke();
+    ctx.strokeStyle=hexA(C.acc2,.6); ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(pad,120); ctx.lineTo(pad+gap*(s-1),120); ctx.stroke();
+    STEPS.forEach((st,i)=>{
+      const x=pad+gap*i, on=i<s;
+      ctx.fillStyle = on? hexA(st.c,.2):'rgba(255,255,255,.04)';
+      ctx.beginPath(); ctx.arc(x,120, i===s-1?19:13, 0,7); ctx.fill();
+      ctx.strokeStyle= on? st.c:'rgba(255,255,255,.1)'; ctx.lineWidth=2; ctx.stroke();
+      if(i===s-1){ ctx.fillStyle=st.c; ctx.beginPath(); ctx.arc(x,120,7,0,7); ctx.fill(); }
+      txt(ctx,String(i+1),x, i===s-1?148:142, on?st.c:'rgba(255,255,255,.18)',11,'center','700');
+      // alternating labels
+      const up = i%2===0;
+      txt(ctx,st.t,x, up?72:188, on?C.txt:'rgba(255,255,255,.18)',12,'center','680');
+      const words=st.s.split(' '); let line='',lines=[];
+      words.forEach(w=>{ if((line+' '+w).length>20){lines.push(line); line=w;} else line=line?line+' '+w:w;});
+      lines.push(line);
+      lines.forEach((L2,k)=>txt(ctx,L2,x, (up?88:204)+k*13, on?C.faint:'rgba(255,255,255,.12)',10,'center'));
+    });
+    $('#agNote').innerHTML=STEPS[s-1].n;
+  }
+  $('#agS').oninput=draw;
+  draw();
+})();
+
+/* ============================================================
+   PART 16 — LIMITS
+   ============================================================ */
+(function(){
+  const cv=$('#cvLim'); const ctx=dpi(cv); const W=cv._w,H=cv._h;
+  const CASES=[
+    {ok:true,  score:0.95, t:'GPT-2 · Query-Composition',
+     n:'<b>✓ Funktioniert hervorragend.</b> Inhibition → Mover: ein klarer 1D-Kanal pro Kopf, kausal bestätigt. Das Kernergebnis des Papers.'},
+    {ok:true,  score:0.85, t:'GPT-2 · Value-Composition',
+     n:'<b>✓ Funktioniert.</b> Duplicate 3.0 → Inhibition 7.9: zwei Komponenten (3.0.1, 3.0.2) bilden einen 2D-Kanal, der Duplikate sauber trennt.'},
+    {ok:false, score:0.12, t:'GPT-2 · Key-Composition',
+     n:'<b>✗ Funktioniert nicht.</b> Previous-Token 4.11 → Induction 5.5: keine Ausreißer-Komponente. Die Kanal-Hypothese ist <em>nicht universell</em>. Das Paper sagt das offen (Appendix B).'},
+    {ok:true,  score:0.80, t:'Pythia-160m',
+     n:'<b>✓ Übertragbar.</b> Anderes Modell, andere Trainingsdaten — derselbe Mechanismus: Kopf 6.6 → 9.5 über die einzelne Komponente 6.6.2. Dank Checkpoints sogar im Training beobachtbar.'},
+    {ok:false, score:0.05, t:'Llama / Mistral (RoPE)',
+     n:'<b>✗ Methode nicht anwendbar.</b> Rotierende Positionskodierung bringt Nichtlinearitäten zwischen Q und K — QK lässt sich nicht als sauberes Produkt bilden. Query-/Key-Composition-Scores sind hier nicht berechenbar. Offene Forschungsfrage.'}
+  ];
+  let cur=0;
+  function draw(){
+    const c=CASES[cur];
+    clr(ctx,cv);
+    txt(ctx,c.t,24,30,c.ok?C.acc4:C.acc5,15,'left','720');
+    // gauge
+    const cx=W/2, cy=150, R=78;
+    ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=16; ctx.lineCap='round';
+    ctx.beginPath(); ctx.arc(cx,cy,R,Math.PI,2*Math.PI); ctx.stroke();
+    ctx.strokeStyle=c.ok?C.acc4:C.acc5; ctx.lineWidth=16;
+    ctx.beginPath(); ctx.arc(cx,cy,R,Math.PI,Math.PI+Math.PI*c.score); ctx.stroke();
+    txt(ctx, c.ok?'anwendbar':'nicht anwendbar', cx, cy-16, c.ok?C.acc4:C.acc5, 15,'center','740');
+    txt(ctx, (c.score*100).toFixed(0)+' %', cx, cy+10, C.dim, 12.5,'center','620');
+    txt(ctx,'Eignung der Methode',cx,cy+34,C.faint,11,'center');
+    $('#limNote').className = 'note '+(c.ok?'g':'r');
+    $('#limNote').innerHTML=c.n;
+  }
+  $$('#limBtns button').forEach(b=>b.onclick=()=>{
+    $$('#limBtns button').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    cur=+b.dataset.l; draw();
+  });
+  draw();
+})();
+
+/* ============================================================
+   KATEX RENDER
+   ============================================================ */
+function renderMath(){
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{
+      delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+      throwOnError:false
+    });
+  }
+}
+window.addEventListener('load',()=>{
+  if(window._f_vec) window._f_vec();
+  renderMath();
+  // trigger initial redraw of all inputs so formulas populate
+  ['vx','dang','ou1'].forEach(id=>{const el=$('#'+id); if(el) el.dispatchEvent(new Event('input'));});
+  setTimeout(renderMath,350);
+});
+</script>
+</body>
+</html>

@@ -9,8 +9,8 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 
 <style>
 :root{
@@ -1511,8 +1511,7 @@ function renderAll(){
   tex('heroF1','C(N,d)=2\\sum_{k=0}^{d-1}\\binom{N-1}{k}');
   tex('eq_homog','f_w(x)=\\operatorname{sgn}(w\\cdot x),\\qquad \\{x: w\\cdot x=0\\}\\ \\text{ist eine Hyperebene durch }0');
   tex('eq_pascal','\\binom{n}{k}=\\binom{n-1}{k-1}+\\binom{n-1}{k}');
-  tex('eq_CNd','C(N,d)=2\\sum_{k=0}^{d-1}
-\\binom{N-1}{k}\\;=\\;2\\!\\!\\sum_{k=0}^{d-1}\\!\\binom{N-1}{k}');
+  tex('eq_CNd','C(N,d)=2\\sum_{k=0}^{d-1}\\binom{N-1}{k}\\;=\\;2\\!\\!\\sum_{k=0}^{d-1}\\!\\binom{N-1}{k}');
   tex('eq_phisep','w\\cdot\\phi(x)>0\\ \\ (x\\in X^+),\\qquad w\\cdot\\phi(x)<0\\ \\ (x\\in X^-)');
   tex('eq_main','C(N,d)\\;=\\;2\\sum_{k=0}^{d-1}\\binom{N-1}{k}');
   tex('eq_cap','\\Pr\\{N^{*}=n\\}=\\left(\\tfrac12\\right)^{n}\\binom{n-1}{d-1}\\quad\\Longrightarrow\\quad E[N^{*}]=\\operatorname{Median}[N^{*}]=2d');
@@ -2008,7 +2007,6 @@ let phiState={pts:[],w:[0,0,0,1,-0.5]};
   sc.add(new THREE.AmbientLight(0xffffff,.8));
   const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(3,5,2);sc.add(dl);
   // paraboloid wireframe
-  const pg=new THREE.ParametricGeometry?null:null;
   const parab=(()=>{
     const geo=new THREE.BufferGeometry();
     const seg=28,verts=[],idx=[];
