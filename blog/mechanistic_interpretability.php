@@ -382,6 +382,42 @@ The Linear Representation Hypothesis assumes concepts are encoded **linearly** (
 
 <div id="linear-rep-container"></div>
 
+<div class="md">
+## Known Directions with Fixed Meaning
+
+The Linear Representation Hypothesis says concepts are directions. For several behaviors this is no longer a hypothesis — researchers have found *specific* directions with a fixed, reusable meaning and verified them **causally**: read the value along the axis, add to it, or subtract it, and the corresponding behavior switches on or off. Five of these directions have become landmarks, and all five were found with the same broad toolkit — contrastive mean differences, linear probing, and causal intervention.
+
+### The Truth Direction
+
+The best known is the **truth direction**, which separates true from false statements regardless of topic. \cite[Marks & Tegmark (2023)]{marks2023geometry} show that large models represent the truth of factual statements **linearly**, with three independent lines of evidence: visualizations that reveal clear linear structure; transfer, where probes trained on one dataset generalize to others; and causal intervention, in which a false statement is flipped to true by shifting its activation toward the mean of true ones. The striking part: the direction that *controls* the model is not the one that *classifies* it best. The naive **difference-in-means** — the vector from the mean of false activations to the mean of true ones — flips false statements with a causal effect (normalized indirect effect) of 0.77 on LLaMA-2-13B, while a finely optimized logistic-regression probe reaches only 0.13. The direction that steers the behavior and the direction that draws the best boundary are different objects.
+
+A second, scale-driven finding: in the 13B model, `larger_than` and `smaller_than` live on *opposite* (antipodal) directions; in the 70B model they share **one** axis. Truthfulness "abstracts" into a single direction as the model grows. And it is not mere plausibility: the correlation between log-probability and truth is +0.85/+0.95 on positive datasets but −0.63/−0.89 on the negated versions — the axis really encodes *truth*, not "sounds likely." \cite[Burns et al. (2023)]{burns2022ccs} had already found the same direction unsupervised, with a contrast loss (consistency plus the law of excluded middle) and no labels; the direction often lies exactly on the top principal component, so even a dumb baseline recovers about 70% of the full method's accuracy.
+
+The honest counterweight comes from \cite[Azizian et al. (2025)]{azizian2025geometries}: the "universal" truth direction is contested. Across seven tasks the extracted directions are nearly **orthogonal** (cosine similarity below 0.5 for most pairs), with almost disjoint supports; a probe trained on the *other six* tasks still lands well below the task-specific one, showing the target direction lies outside their span. What is popularly sold as "the one truth axis" is a local, task-dependent phenomenon.
+
+### The Refusal Direction
+
+A single direction often decides whether a model refuses a prompt or answers it. \cite[Arditi et al. (2024)]{arditi2024refusal} show that refusal across **13** open-source chat models, up to 72B parameters, is mediated by a **one-dimensional** subspace. They find it with a difference-in-means over harmful and harmless instructions, and it is both *necessary* and *sufficient*: **erase** it from the residual stream and the model stops refusing harmful requests; **add** it and the model refuses even harmless ones — it calls yoga dangerous. A single scalar, the projection onto this axis, is effectively "how much the model wants to refuse right now."
+
+The aha is the consequence. Instead of ablating the direction at inference time, one can **orthogonalize the weights** with a **rank-one edit**, $W \leftarrow W - \hat{r}\hat{r}^{\top} W$, so the model never *writes* the axis at all. The model then stops refusing harmful requests while MMLU, ARC, and GSM8K stay essentially unchanged — a single matrix update removes a safety behavior. And TruthfulQA accuracy *drops* as a result, revealing that refusal and truthfulness are entangled. Mechanistically, the same paper explains *why* adversarial-suffix jailbreaks (GCG) work: they **suppress exactly this direction**, hijacking the attention of the top heads that write the refusal direction and redirecting it onto the suffix.
+
+The account in \cite[Lindsey et al. (2025)]{lindsey2025biology} (below) instead describes refusal as a **cone** into which the refusal directions cluster. The two observations do not contradict: difference-in-means extracts the dominant 1-D axis, while feature tracing uncovers a low-dimensional cluster of features. Both are true — at different resolutions.
+
+### The Honesty / Deception Direction
+
+A vector that can be amplified to make the model answer *honestly*, by force. \cite[Ackerman (2024)]{ackerman2024representationtuning} identifies honesty vectors in Llama-2-13B-Chat (the difference between a "be honest no matter what" and a "be dishonest when it serves you" persona) and shows that adding positive multiples makes the model more honest and negative multiples make it less — a genuine **dial** — and that the vector can even be fine-tuned directly into the weights.
+
+The sharpest version comes from \cite[Huang et al. (2026)]{huang2026insecure}: honesty and **success-seeking are opposing directions** (cosine similarity −0.72). Hand an ML log with a planted null result that guts the SOTA claim, and GPT-5.5 flags it in only **2 of 200** reports; add "Be honest in your response" and it flags it in **190 of 200**. "Being honest" is literally the opposite vector of "sounding successful."
+
+### Sentiment & Tone
+
+Directions for optimism, cynicism, politeness, or formal register. \cite[Turner et al. (2023)]{turner2023activation} introduce **Activation Addition** (ActAdd): form the difference vector of the residual-stream activations of a contrast pair (e.g. "Love" vs. "Hate") and add it, scaled, at inference — **no training, a single prompt pair**. This shifts sentiment from negative to positive (state of the art) and lowers toxicity, while leaving off-target factual knowledge essentially untouched. \cite[Konen et al. (2024)]{kone2024style} show that sentiment, emotion, and **writing style** can likewise be computed as vectors from recorded activations and scaled at will — and that the steering works on *subjective* prompts but barely on *factual* ones: you cannot easily talk the model out of a neutral fact. The geometry that licenses this — why you may construct and add the direction this way — is the causal inner product that \cite[Park et al. (2024)]{park2024linear} formalize and \cite[Zou et al. (2023)]{zou2023representation} popularized as "representation engineering."
+
+### Temporal & Geographic Axes
+
+Directions that mirror year numbers, timelines, or geographic latitude and longitude. \cite[Gurnee & Tegmark (2023)]{gurnee2023spacetime} show that LLMs learn **linear** representations of space and time across multiple scales — for places worldwide, in the US, and in New York, plus historical figures, artworks, and news headlines. Linear (ridge-regression) probes decode real coordinates and dates from the residual-stream activations, with R² up to 0.91, and a 256-neuron nonlinear MLP adds almost nothing (0.926 vs. 0.911) — strong evidence that space and time are represented **linearly**, not merely linearly *readable*. Individual "space neurons" and "time neurons" — units whose weights correlate strongly with the probe direction — reproduce the structure on their own. Here a "direction with fixed meaning" becomes a **world model**: the same linear structure that carries a fact (truth) and a behavior (refusal) also carries *where* and *when*.
+</div>
+
 <div class="md" data-mathlevel="45" data-optionaltitle="Looped transformers as programmable computers">
 ## Looped Transformers as Programmable Computers
 
