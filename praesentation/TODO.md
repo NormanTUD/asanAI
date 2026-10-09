@@ -2,9 +2,10 @@
 
 > Diese Datei ist die zentrale Aufgabenliste. Sie wird **bei jedem Schritt aktualisiert**
 > (Status: `[ ]` offen · `[~]` in Arbeit · `[x]` fertig · `[-]` verworfen).
-> Letzte Aktualisierung: **2. Runde (Norman) — offene Aufgaben T30–T35.**
-> 1. **T30** Matrix auf „Das Bild als Zahlen" → **schwarzweiß + echte LaTeX-Matrix** (passt
->    zum Graubild, statt farbiger Canvas-RGB). 2. **T31** kz-Headlines (Folie 7–9/11/12)
+> Letzte Aktualisierung: **3. Runde (Norman) — T30–T35 fertig. Deck 14 Folien.**
+> 1. **T30** `[x]` Matrix auf „Das Bild als Zahlen" → **große LaTeX-`pmatrix`, je Pixel
+>    (oben links) ein kleines `pmatrix [R;G;B]`** (Shape (32,32,3), farbiges Bild daneben).
+>    2. **T31** kz-Headlines (Folie 7–9/11/12)
 >    bekommen **Unterlinie** wie normales `<h2>`. 3. **T32** DenseRaum „Vom Bild zu Punkten"
 >    **neu machen**: vorher NICHT linear trennbar → echte Krümmung → Ebene trennt wirklich →
 >    „unser Bild" = random Punkt; **Schritt-0-Panel raus** (= T11). 4. **T33** Pipeline
@@ -370,20 +371,27 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
 - **Norman:** „mach die 'was wir wollen' parts … vor dem 'Man arbeitet in Schichten'. aber
   das mit den bausteinen danach".
 
-### T30 · „Das Bild als Zahlen" (Folie 7): Matrix schwarzweiß + reale LaTeX-Matrix  `[ ]`
+### T30 · „Das Bild als Zahlen" (Folie 7): Matrix → RGB-LaTeX-`pmatrix`  `[x]`
 - **Norman:** „das Bild ist schwarzweiß, aber die Matrix nicht. nutze eine reale Matrix
-  mit LaTeX." → Die aktuelle Matrix (Schritt 5, `drawRGBMatrix`) zeigt **farbige** RGB-
-  Swatches auf dem Canvas — passt **nicht** zum grauen Bild daneben (Schritt 3–4 = ein
-  Kanal = Grau, ein Wert 0–255 pro Pixel).
-- → Matrix wird **Graustufen** (einziger Wert 0–255 pro Pixel, aus `KatzeKit.GREEN`),
-  mit **echten Werten** und **LaTeX** gerendert (temml/MathML, wie die Formeln auf den
-  anderen Folien) als **HTML-Overlay** rechts neben dem grauen Canvas-Bild. Oben links ein
-  echter Block (z. B. 4×4), daneben/unten **Punkte** (⋯/⋮/⋱) für den Rest, Shape **(32, 32)**.
-  `drawRGBMatrix` + `MB/MB_TOP/MB_LEFT/MCC_*/MAT_*` aus dem ConvDemo **raus**.
-- Verknüpft mit „Layout robust": die Canvas-Matrix war fix in px (MAT_H ≈ 372) → lief bei
-  kleiner Stage (H < 372) über. Die LaTeX-HTML-Matrix skaliert mit dem Text → erledigt das.
+  mit LaTeX." → **Korrektur (Runde 3):** „es muss ne große pmatrix sein, in der je für
+  jeden Pixel der oberen linken Ecke ne kleinere pmatrix ist, in der die Farbwerte für
+  R·G·B untereinander stehen."
+- ✅ **Fertig:** Schritt 5 zeigt jetzt das **farbige** Bild (links, Canvas) + eine **große
+  LaTeX-`pmatrix`** (rechts, HTML-Overlay `#conv-matrix`, temml). Jedes Element der großen
+  Matrix (je Pixel oben links, 3×3-Block + ⋯/⋮/⋱) ist selbst eine **kleine `pmatrix`
+  `[R;G;B]`** mit echten Werten aus `KatzeKit.P` (`.`=[181,176,43], `k`=[20,20,20],
+  `d`=[74,51,42], `b`=[122,82,56]). Shape **(32, 32, 3)**.
+- `drawRGBMatrix` + `MB/MB_TOP/MB_LEFT/MCC_*/MAT_*` aus dem ConvDemo **raus**; Opazität
+  des Overlays wird **event-gesteuert** in `onStep` gesetzt (CSS-Fade `.45s`, robust —
+  nicht rAF-Lerp, der in Headless `dt=0` macht). Matrix passt zur Stage (headless:
+  `fits=true` bei 1280×800 und 900×560; 27 `<mn>`-Zahlen, alle RGB-Werte da).
+- Verknüpft mit „Layout robust": die alte Canvas-Matrix war fix in px (MAT_H ≈ 372) →
+  lief bei kleiner Stage über. Die LaTeX-HTML-Matrix skaliert mit dem Text → erledigt.
 
-### T31 · kz-Headlines: Unterlinie wie normaler `<h2>` (alle kz-Folien)  `[ ]`
+### T31 · kz-Headlines: Unterlinie wie normaler `<h2>` (alle kz-Folien)  `[x]`
+- ✅ **Fertig:** `.kz-head .kz-const` (index.css) jetzt mit `border-bottom: 3px solid #e2e8f0;
+  padding-bottom: 8px;` = exakt wie `.slide h2`. Gilt für ALLE kz-Folien (7 Conv, 8 Filter,
+  9 Flatten, 11 DenseRaum, 12 Pipeline). Headless verifiziert: `border-bottom=3px rgb(226,232,240)`.
 - **Norman:** „Folie 9 und 8 haben keine Headline-Unterlinie wie z. B.
   `<h2>Was sind Dense Layer?</h2>`." → Die `.kz-const`-Headlines (Folie 7 Conv „Das Bild
   als Zahlen", 8 Filter „Convolution", 9 Flatten, 11 „Vom Bild zu Punkten", 12 „Der
@@ -392,7 +400,21 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
   (border-bottom / Unterlinie). Gilt für ALLE kz-Folien. Erst prüfen, welche Unterlinie
   `.slide h2` konkret hat, dann 1:1 übernehmen (Farbe/Abstand).
 
-### T32 · DenseRaum „Vom Bild zu Punkten" (Folie 11) neu machen  `[ ]`
+### T32 · DenseRaum „Vom Bild zu Punkten" (Folie 11) neu machen  `[x]`
+- ✅ **Fertig** (`dense_raum.js` komplett neu geschrieben, **4 Schritte**).
+- (a) **Schritt 0 (Panel) entfernt** (= T11); „Vom Bild zu Punkten"-Titel bleibt. Schritte:
+  **Punkte → wölbt → Ebene → Linie**.
+- (b) **Nicht linear trennbar**: Katzen (grün) = **Scheibe in der Mitte** (r ≤ 0,5),
+  Hunde (rot) = **Ring drumherum** (r ∈ [0,9; 1,25]) — der Ring umschließt die Scheibe,
+  KEINE Gerade trennt (3 gestrichelte Kandidat-Geraden H/V/Diagonal zeigen's).
+- (c) **Wölbt = Schüssel** `z = x²+y²` (Bowl, `AMP=0,55`): Ring klettert die Wände hinauf,
+  Katzen bleiben im Grund — echte, sichtbare Raumkrümmung.
+- (d) **Ebene trennt wirklich**: horizontale Ebene `z = R0²` (R0=0,7). Headless verifiziert:
+  `catAbovePlane=0, dogBelowPlane=0` (alle 184 Punkte auf der richtigen Seite), `offscreen=0`.
+- (e) **„Unser Bild" = zufälliger Katzen-Punkt** (+ Beispiel-Hund = zufälliger Hund-Punkt),
+  bei jedem (Re-)Besuch neu (`pickRandom()` in `onStep(0)`, `Math.random`).
+- index.html: initialer `#dr-*`-Inhalt auf Schritt 0 („Punkte") umgestellt. `node --check` +
+  headless (Geometrie + 4-Schritt-Navigation + Folien-Übergang) clean.
 - **Norman:** „das Set ist zu klar linear trennbar"; „'Der Layer wölbt den Raum' zeigt nicht
   so richtig einen gekrümmten Raum — mach es nochmal neu und wirklich gut, so dass es vorher
   NICHT linear trennbar ist, aber nach der Raumkrümmung, die du neu machst, schon"; „bei
@@ -414,7 +436,17 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
   (nicht immer derselbe Mini-Katzen-Dot), bei jedem (Re-)Besuch neu gewählt.
 - Schließt **T11** ab.
 
-### T33 · PipelineDemo „Lernen" (Folie 12, Schritt 6): Bilder Hund/Katz ~1 s  `[ ]`
+### T33 · PipelineDemo „Lernen" (Folie 12, Schritt 6): Bilder Hund/Katz ~1 s  `[x]`
+- ✅ **Fertig** (katze.js, PipelineDemo Schritt 7 / index 6).
+- **Diskrete ~1-s-Blöcke** statt Crossfade (T7): `cdState(t)` — `CD_DUR=1,0`, Block
+  `floor(t)%2` (0=Hund, 1=Katze, …). Am Block-Wechsel kurzer Crossfade (~0,15 s,
+  smoothstep), sonst hart. `cdT += dt/60` (Sekunden).
+- **Passender Tag leuchtet**: `hotDog=dog, hotCat=!dog` → das Ausgabe-Neuron der
+  aktuellen Bild-Klasse glüht (statt nur bei conf≥90). Confidence wächst 50→95 %
+  (`trainP`), Loss ↓, Fuß-Text folgt dem Bild (Hund %/Katze %).
+- Node-Unit-Test von `cdState` verifiziert: Hund 0–1 s → Katze 1–2 s → Hund 2–3 s …
+  (mixCD hart, Weichschluss am Rand). Headless: Folie erreichbar, keine Fehler
+  (Zeit-Animation läuft per rAF/`dt`, in Virtual-Time steht `dt=0` → im Browser normal).
 - **Norman:** „jedes Bild soll Hund, Katze, Hund, Katze … ~1 s angezeigt werden, und dazu der
   passende aufleuchtende Tag." → Statt dem **Crossfade** (T7, `cdT`/`mixCD`, weicher
   Katze↔Hund-Blend) **diskrete Blöcke**: **Hund ~1 s** (Hund-Neuron/Tag leuchtet) →
@@ -423,13 +455,23 @@ NeuronIntro = Szene A + SpaceMorph = Szene B, T20) · 11. Vom Bild zu Punkten (D
 - In `PipelineDemo` (katze.js, Schritt „Lernen" = 6): statt `mixCD`-Blend ein ~1-s-Takt, der
   Eingang + leuchtendes Output-Neuron + Fuß-Text schaltet.
 
-### T34 · „Alles idealisiert" (Folie 13): „Auto selbst"-Satz entfernen  `[ ]`
+### T34 · „Alles idealisiert" (Folie 13): „Auto selbst"-Satz entfernen  `[x]`
+- ✅ **Fertig:** Satz „<b>Das Auto selbst? Kommt ganz hinten dran.</b>" aus
+  `index.html` (Folie 13 `slide-idealisiert`) gelöscht. Absatz endet jetzt bei
+  „…weil der <b>einfacher</b> zu erkennen ist als das Auto." — Rest bleibt.
 - **Norman:** „'Das Auto selbst? Kommt ganz hinten dran.' ist schlecht formuliert, entferne
   das einfach." → Satz aus `index.html` (Folie 13 `slide-idealisiert`, Absatz „…findet es den
   blauen Himmel — weil der einfacher zu erkennen ist als das Auto. **Das Auto selbst? Kommt
   ganz hinten dran.**") löschen. Rest des Absatzes bleibt.
 
-### T35 · Layout robust: Filter-Folie (Folie 8) Kernel+Katze+Map  `[ ]`
+### T35 · Layout robust: Filter-Folie (Folie 8) Kernel+Katze+Map  `[x]`
+- ✅ **Fertig** (katze.js, FilterDemo `layoutFor`).
+- **Breiten-Beschränkung** für `s`: `s = min(H/N·.86, W/N·.86, (W−320)/64, 13)`.
+  Gesamtbreite Kernel(138px, fix)+Lücken(107)+Katze+Map = `2·imgW + 245` → Gruppe
+  **mittig zentriert** (`o.tx = (W−totalW)/2 + 185`). → Kernel läuft nie mehr links ran,
+  Map nie mehr rechts über.
+- Headless (Target-Geometrie) verifiziert, `fits=true` + keine Overlap bei
+  1280×800 / 1024×700 / 800×560 / 640×480. (RGB-Matrix-Teil war in **T30** erledigt.)
 - (aus „mach die offenen") Die Filter-Folie (FilterDemo, Folie 8) positioniert
   **Kernel-Panel** (links der Katze) + **Katze** + **8×8-Map** (rechts) mit Größen, die bei
   schmaler Stage nicht mehr alle in `W` passen (Kernel läuft links, Map rechts über).

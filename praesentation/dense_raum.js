@@ -1,19 +1,18 @@
 // ============================================================
 // DenseRaum, "Vom Bild zu Punkten" (dense_raum.js)
 //
-// 5 Schritte über die Pfeiltasten:
-//   0: Panel — die Katze zerfällt nach den Convolutions in
-//      1024 Zahlen (wie in der Flatten-Folie weitergedacht)
-//   1: Aus Zahlen werden Punkte — jedes Bild ist EIN Punkt im
-//      1024-dim. Raum (wir sehen nur einen 2D-Schatten): zwei
-//      Klassen (Katze/Hund) als ein LÄNGLICHER Haufen mit Overlap,
-//      wie PCA über 1000 Bildern (kein sauberes XOR mehr).
-//   2: Der Layer wölbt den Raum — die WELLE der Grenze wird durch
-//      das Wölben gerade (z = y − b(x)); eine Ebene kann trennen.
-//   3: Eine Ebene (z = 0) passt dazwischen.
-//   4: Rückprojektion auf eine Linie — links Hund, rechts Katze;
-//      "unser Bild" (Mini-Katze) landet auf der Katze-Seite,
-//      daneben ein Beispiel-Hund (Mini-Hund).
+// 4 Schritte über die Pfeiltasten:
+//   0: Aus Zahlen werden Punkte — jedes Bild ist EIN Punkt im
+//      1024-dim. Raum (wir sehen nur einen 2D-Schatten): Katzen
+//      (grün) füllen die Mitte, Hunde (rot) bilden den Ring —
+//      ineinander verschachtelt, NICHT linear trennbar.
+//   1: Der Layer wölbt den Raum — der flache Raum wird zu einer
+//      Schüssel (z = x²+y²); der Hund-Ring klettert die Wände
+//      hinauf, die Katzen bleiben im Grund.
+//   2: Eine flache, HORIZONTALE Ebene (z = R0²) passt dazwischen:
+//      alle Hunde darüber, alle Katzen darunter — trennt wirklich.
+//   3: Rückprojektion auf eine Linie (Score) — links Katze,
+//      rechts Hund; "unser Bild" = ein zufälliger Punkt aus dem Set.
 //
 // Dem Netz ist es egal, ob Ei-Form oder Katze: Es sind Zahlen,
 // und Zahlen sind Punkte.
@@ -33,82 +32,75 @@ const DenseRaum = (() => {
 		};
 	}
 
-	// Die "komplexe" Entscheidungsgrenze: eine Welle b(x). In der
-	// flachen 2D-Ansicht trennt sie Katze (unterhalb) von Hund
-	// (oberhalb) — aber keine GERADE folgt ihr. Die Schicht "lernt"
-	// genau diese Welle und wölbt den Raum: z = y − b(x). Nach dem
-	// Wölben liegt die Grenze auf der flachen Ebene z = 0 — alle
-	// Hunde drüber, alle Katzen drunter.
-	const BOUND = x => 0.45 * Math.sin(2.1 * x);
-	const warp = (x, y) => (y - BOUND(x));
-	const AMP = 1.0;
+	// NICHT linear trennbar in der flachen 2D-Ansicht: Katzen (c=0) füllen
+	// die Mitte (Scheibe, r ≤ CAT_R), Hunde (c=1) bilden den Ring drumherum
+	// (r ≥ DOG_R0) — der Ring umschließt die Scheibe, daher trennt KEINE
+	// Gerade (auch nicht Horizontal/Vertikal/Diagonal) die beiden. Die
+	// Schicht wölbt den Raum zu einer Schüssel z = r² = x²+y²; dann trennt
+	// die HORIZONTALE EBENE z = R0² sauber: alle Hunde (großes r, hoch)
+	// darüber, alle Katzen (kleines r, tief) darunter.
+	const R0 = 0.7;                  // Trenn-Radius (Ebene liegt auf r = R0)
+	const CAT_R = 0.5;                // Katzen: r ≤ CAT_R  (Scheibe)
+	const DOG_R0 = 0.9, DOG_R1 = 1.25;  // Hunde: r ∈ [DOG_R0, DOG_R1] (Ring)
+	const AMP = 0.55;                 // Schüssel-Tiefe
+	const RMAX = 1.35;                // Gitter-/Ansichts-Radius
+	const warp = (x, y) => x * x + y * y;   // Schüssel (Bowl)
 
-	// Punkte: länglicher Haufen. Hunde (c=1, rot) oben, Katzen
-	// (c=0, grün) unten, mit Overlap in der Mitte (die Klasse folgt
-	// der Wellenlinie). "Unser Bild" (img) ist ein Katze-Punkt,
-	// "Beispiel-Hund" (imgDog) ein Hund-Punkt.
+	// Punkte: Katzen-Scheibe (Mitte) + Hund-Ring (außen), mit Lücke
+	// (CAT_R < R0 < DOG_R0) → die Ebene z = R0² trennt garantiert.
 	const PTS = [];
+	const CAT_IDX = [], DOG_IDX = [];
 	{
 		const rnd = mulberry32(20240615);
 		const PER = 92;
-		for (let i = 0; i < PER * 2; i++) {
-			const x = (rnd() * 2 - 1) * 1.05;
-			const y = (rnd() * 2 - 1) * 0.72;
-			PTS.push({ x, y, c: y > BOUND(x) ? 1 : 0 });
+		for (let i = 0; i < PER; i++) {
+			const r = CAT_R * Math.pow(rnd(), 0.7);
+			const a = rnd() * Math.PI * 2;
+			PTS.push({ x: r * Math.cos(a), y: r * Math.sin(a), c: 0 });
+			CAT_IDX.push(PTS.length - 1);
 		}
-		// "Unser Bild": klarer Katze-Punkt (unterhalb der Grenze).
-		PTS.push({ x: 0.30, y: -0.52, c: 0, img: true });
-		// Beispiel-Hund: klarer Hund-Punkt (oberhalb der Grenze).
-		PTS.push({ x: -0.55, y: 0.58, c: 1, imgDog: true });
+		for (let i = 0; i < PER; i++) {
+			const r = DOG_R0 + (DOG_R1 - DOG_R0) * rnd();
+			const a = rnd() * Math.PI * 2;
+			PTS.push({ x: r * Math.cos(a), y: r * Math.sin(a), c: 1 });
+			DOG_IDX.push(PTS.length - 1);
+		}
 	}
 
-	// ---------- Animationszustand ----------
-	let panelA = 0, ptsA = 0, lift = 0, planeA = 0, projA = 0, axisA = 0;
-	let cpT = 0, ptsT = 0;
+	// "Unser Bild" = ein zufälliger Katzen-Punkt, "Beispiel-Hund" = ein
+	// zufälliger Hund-Punkt — bei jedem (Re-)Besuch neu gewählt.
+	let imgIdx = -1, dogIdx = -1;
+	function pickRandom() {
+		imgIdx = CAT_IDX[(Math.random() * CAT_IDX.length) | 0];
+		dogIdx = DOG_IDX[(Math.random() * DOG_IDX.length) | 0];
+	}
+	pickRandom();
 
-	// Panel (Zahlen-Flug), wie zuvor
-	const CP_W = 448, CP_H = 232;
-	const CP_CELL = 4.25;
-	const CP_S = 32 * CP_CELL;
-	const CP_FLY = 640;
-	const CP_DISS_A = 450, CP_DISS_B = 3050;
-	const SLOTS = 72, PERCOL = 8;
-	let cpSpawned = 0;
-	const cpBorn = [], cpFrom = [];
+	// ---------- Animationszustand ----------
+	let ptsA = 0, lift = 0, planeA = 0, projA = 0, axisA = 0;
+	let ptsT = 0;
 
 	// ---------- Geometrie: fixe schräge Kamera, kein Drag ----------
 	const G = { SX: 0, SY: 0, SZ: 0, CX: 0, CY: 0, AY: 0, AXL: 0, AXR: 0 };
 	function layoutFor(step, S) {
 		G.SX = Math.min(250, S.W * 0.21, S.H * 0.58);
-		G.SY = G.SX * 0.42;
-		G.SZ = G.SX * 0.50;
+		G.SY = G.SX * 0.36;
+		G.SZ = G.SX * 0.42;
 		G.CX = S.W * 0.5;
-		G.CY = S.H * 0.45;
+		G.CY = S.H * 0.52;
 		G.AY = S.H - 38;
 		G.AXL = S.W * 0.20;
 		G.AXR = S.W * 0.80;
 	}
 	const proj3 = (x, y, z) => ({ X: G.CX + x * G.SX, Y: G.CY + y * G.SY - z * G.SZ });
-	// Score auf der Achse: Katze (z<0) → rechts, Hund (z>0) → links.
-	const scoreOf = p => BOUND(p.x) - p.y;
-	const SEXT = 1.25;
+	// Score auf der Achse: Höhe über/unter der trennenden Ebene (z = R0²).
+	// Katze (r < R0) → negativ (links), Hund (r > R0) → positiv (rechts).
+	const scoreOf = p => warp(p.x, p.y) - R0 * R0;
+	const SEXT = 1.2;
 	const axisX = s => {
 		const t = Math.max(-SEXT, Math.min(SEXT, s)) / SEXT;   // −1..1
 		return G.AXL + (G.AXR - G.AXL) * (t + 1) / 2;
 	};
-
-	function panelGeom(S) {
-		const sc = Math.min(1, (S.W - 80) / CP_W, (S.H - 30) / CP_H);
-		const px = (S.W - CP_W * sc) / 2, py = (S.H - CP_H * sc) / 2 - 8;
-		// Dense-Box-Mitte im Stage-Koordinatensystem (Start der Punkte)
-		const bx = (4 + CP_S + 44) + 44, bw = 214, bh = 136;
-		const by = 34;
-		return {
-			px, py, sc,
-			bxc: px + (bx + bw / 2) * sc,
-			byc: py + (by + bh / 2) * sc
-		};
-	}
 
 	function drawLabel(ctx, x, y, text, color, a, align) {
 		if (a <= 0.01) return;
@@ -123,105 +115,26 @@ const DenseRaum = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	// ---------- Schritt 0: Katze → 1024 Zahlen (Panel) ----------
-	function drawPanel(ctx, S, a, pg) {
-		const N = K.N, TOTAL = N * N;
-		const cx = 4, cy = 34;
-		const dx = cx + CP_S + 44;
-		const bx = dx + 44, by = cy, bw = 214, bh = 136;
+	// Kandidat-Gerade, die in der flachen Ansicht NICHT trennt (Schritt 0)
+	const CAND_LINES = [
+		[[-RMAX, 0], [RMAX, 0]],        // horizontal
+		[[0, -RMAX], [0, RMAX]],        // vertikal
+		[[-RMAX, -RMAX], [RMAX, RMAX]]  // diagonal
+	];
 
-		const front = Math.floor(
-			Math.max(0, Math.min(1, (cpT - CP_DISS_A) / (CP_DISS_B - CP_DISS_A))) * TOTAL);
-		while (cpSpawned < SLOTS && front >= Math.floor(cpSpawned * TOTAL / SLOTS)) {
-			const k = cpSpawned++, ci = Math.floor(k * TOTAL / SLOTS);
-			const r = (ci / N) | 0, c = ci % N;
-			cpFrom[k] = { x: cx + c * CP_CELL + CP_CELL / 2, y: cy + r * CP_CELL + CP_CELL / 2 };
-			cpBorn[k] = cpT;
-		}
-
-		ctx.save();
-		ctx.translate(pg.px, pg.py); ctx.scale(pg.sc, pg.sc);
-		ctx.globalAlpha = a;
-		ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
-		K.roundRect(ctx, 0, 0, CP_W, CP_H, 14); ctx.fill(); ctx.stroke();
-
-		ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
-		ctx.fillStyle = '#0f172a'; ctx.font = '700 13px system-ui,sans-serif';
-		ctx.fillText('Nach den Convolutions', 16, 24);
-		ctx.fillStyle = '#334155'; ctx.font = '700 12px system-ui,sans-serif';
-		ctx.fillText('Dense Layer', bx, 24);
-
-		for (let i = 0; i < TOTAL; i++) {
-			const r = (i / N) | 0, c = i % N;
-			const x = cx + c * CP_CELL, y = cy + r * CP_CELL;
-			const col = K.RGB[i];
-			ctx.fillStyle = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
-			ctx.fillRect(x, y, CP_CELL + 0.6, CP_CELL + 0.6);
-			if (i < front) {
-				ctx.fillStyle = 'rgba(255,255,255,.80)';
-				ctx.fillRect(x, y, CP_CELL + 0.6, CP_CELL + 0.6);
-			}
-		}
-		ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1;
-		ctx.strokeRect(cx + .5, cy + .5, CP_S - 1, CP_S - 1);
-
-		ctx.save(); ctx.setLineDash([6, 6]);
-		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.4;
-		ctx.beginPath(); ctx.moveTo(dx, cy - 8); ctx.lineTo(dx, cy + CP_S + 8); ctx.stroke();
-		ctx.restore();
-
-		ctx.fillStyle = '#f8fafc'; ctx.strokeStyle = '#cbd5e1';
-		K.roundRect(ctx, bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
-
-		ctx.font = '10px ui-monospace,SFMono-Regular,Menlo,monospace';
-		ctx.textBaseline = 'middle';
-		for (let k = 0; k < cpSpawned; k++) {
-			const sx0 = bx + 10 + (k % PERCOL) * 24, sy0 = by + 12 + ((k / PERCOL) | 0) * 13;
-			const v = K.GREEN[Math.floor(k * TOTAL / SLOTS)];
-			const g = 40 + Math.round(v * 0.55);
-			const col = 'rgb(' + g + ',' + g + ',' + g + ')';
-			const age = cpT - cpBorn[k];
-			if (age >= CP_FLY) {
-				ctx.textAlign = 'left'; ctx.fillStyle = col;
-				ctx.fillText(String(v), sx0, sy0);
-			} else {
-				const t = age / CP_FLY, e = ease(t);
-				const f = cpFrom[k];
-				const x = K.lerp(f.x, sx0, e), y = K.lerp(f.y, sy0, e) - Math.sin(Math.PI * t) * 22;
-				ctx.globalAlpha = a * (t < 0.15 ? t / 0.15 : (t > 0.8 ? (1 - t) / 0.2 : 1));
-				ctx.textAlign = 'center'; ctx.fillStyle = col;
-				ctx.fillText(String(v), x, y);
-				ctx.globalAlpha = a;
-			}
-		}
-
-		ctx.textAlign = 'center'; ctx.fillStyle = '#64748b';
-		ctx.font = '600 11px system-ui,sans-serif'; ctx.textBaseline = 'alphabetic';
-		ctx.fillText('Bild', cx + CP_S / 2, cy + CP_S + 20);
-		ctx.fillText('Trennung', dx, cy + CP_S + 20);
-		ctx.fillText('1024 Zahlen', bx + bw / 2, by + bh + 20);
-		ctx.textAlign = 'left'; ctx.fillStyle = '#94a3b8'; ctx.font = '11px system-ui,sans-serif';
-		ctx.fillText('Die Bildstruktur bleibt links — der Dense Layer sieht nur noch Zahlen.',
-			16, CP_H - 16);
-
-		ctx.globalAlpha = 1;
-		ctx.restore();
-	}
-
-	// ---------- Schritte 1–4: Punkte, Wölbung, Ebene, Achse ----------
-	function drawScene(ctx, S, pg) {
-		// Feines Gitter auf der (mit lift) gewölbten Fläche
+	function drawScene(ctx, S) {
+		// Feines Gitter auf der (mit lift) gewölbten Schüssel
 		const gridA = ptsA * (1 - projA * 0.8);
 		if (gridA > 0.01) {
-			const GN = 18, EX = 1.15;
+			const GN = 18;
 			ctx.lineWidth = 1;
 			ctx.strokeStyle = 'rgba(148,163,184,' + (0.5 * gridA).toFixed(3) + ')';
 			for (let i = 0; i <= GN; i++) {
-				const u = -EX + 2 * EX * i / GN;
+				const u = -RMAX + 2 * RMAX * i / GN;
 				for (const along of [0, 1]) {
 					ctx.beginPath();
 					for (let j = 0; j <= GN; j++) {
-						const v = -EX + 2 * EX * j / GN;
+						const v = -RMAX + 2 * RMAX * j / GN;
 						const x = along ? v : u, y = along ? u : v;
 						const p = proj3(x, y, AMP * lift * warp(x, y));
 						if (j === 0) ctx.moveTo(p.X, p.Y); else ctx.lineTo(p.X, p.Y);
@@ -231,21 +144,47 @@ const DenseRaum = (() => {
 			}
 		}
 
-		// Trennung bei z = 0 — in dieser Ansicht reicht eine Linie
-		// (die Mitte), keine große Ebene über alles.
+		// Kandidat-Geraden, die in der flachen Ansicht nicht trennen
+		const candA = ptsA * (1 - lift) * (1 - projA);
+		if (candA > 0.02) {
+			ctx.save();
+			ctx.setLineDash([7, 7]);
+			ctx.lineWidth = 1.6;
+			ctx.globalAlpha = 0.55 * candA;
+			ctx.strokeStyle = '#64748b';
+			for (const ln of CAND_LINES) {
+				const a = proj3(ln[0][0], ln[0][1], 0);
+				const b = proj3(ln[1][0], ln[1][1], 0);
+				ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke();
+			}
+			ctx.restore();
+			drawLabel(ctx, 20, S.H - 22, 'keine Gerade trennt sie →', '#64748b', 0.9 * candA, 'left');
+		}
+
+		// Die trennende HORIZONTALE EBENE z = R0² (Schritt 2): alle Hunde
+		// darüber, alle Katzen darunter.
 		if (planeA > 0.01) {
-			const a = proj3(-1.15, 0, 0), b = proj3(1.15, 0, 0);
+			const Z0 = AMP * R0 * R0;
+			const E = RMAX;
+			const c1 = proj3(-E, -E, Z0), c2 = proj3(E, -E, Z0), c3 = proj3(E, E, Z0), c4 = proj3(-E, E, Z0);
 			ctx.globalAlpha = planeA;
+			ctx.fillStyle = 'rgba(217,119,6,0.16)';
+			ctx.beginPath();
+			ctx.moveTo(c1.X, c1.Y); ctx.lineTo(c2.X, c2.Y); ctx.lineTo(c3.X, c3.Y); ctx.lineTo(c4.X, c4.Y);
+			ctx.closePath(); ctx.fill();
 			ctx.strokeStyle = '#d97706'; ctx.lineWidth = 2;
-			ctx.beginPath(); ctx.moveTo(a.X, a.Y); ctx.lineTo(b.X, b.Y); ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(c1.X, c1.Y); ctx.lineTo(c2.X, c2.Y); ctx.lineTo(c3.X, c3.Y); ctx.lineTo(c4.X, c4.Y);
+			ctx.closePath(); ctx.stroke();
 			ctx.globalAlpha = 1;
+			drawLabel(ctx, c4.X - 4, c4.Y + 16, 'trennende Ebene', '#b45309', planeA, 'left');
 		}
 
 		if (axisA > 0.01) drawAxis(ctx);
 
 		// Punkte, fern (kleines y) → nah (großes y)
 		const order = PTS.map((p, i) => i).sort((a, b) => PTS[a].y - PTS[b].y);
-		for (const i of order) drawPoint(ctx, pg, i);
+		for (const i of order) drawPoint(ctx, i);
 
 		// Legende oben links
 		const legA = ptsA * (1 - projA);
@@ -274,14 +213,14 @@ const DenseRaum = (() => {
 		ctx.moveTo(G.AXL - 30, G.AY); ctx.lineTo(G.AXL - 20, G.AY - 5); ctx.lineTo(G.AXL - 20, G.AY + 5);
 		ctx.closePath(); ctx.fill();
 
-		// Mitte: 0-Lücke
+		// Mitte: 0-Lücke (die Ebene)
 		ctx.setLineDash([3, 5]);
 		ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1;
 		ctx.beginPath(); ctx.moveTo(x0, G.AY - 30); ctx.lineTo(x0, G.AY + 8); ctx.stroke();
 		ctx.setLineDash([]);
 
-		drawLabel(ctx, G.AXL - 10, G.AY + 22, 'Hund', '#e11d48', axisA, 'left');
-		drawLabel(ctx, G.AXR + 10, G.AY + 22, 'Katze', '#15803d', axisA, 'left');
+		drawLabel(ctx, G.AXL - 10, G.AY + 22, 'Katze', '#15803d', axisA, 'left');
+		drawLabel(ctx, G.AXR + 10, G.AY + 22, 'Hund', '#e11d48', axisA, 'left');
 		drawLabel(ctx, x0, G.AY + 22, '0', '#64748b', axisA, 'center');
 		ctx.globalAlpha = axisA * 0.9;
 		ctx.font = 'italic 600 14px Georgia'; ctx.fillStyle = '#64748b';
@@ -290,60 +229,44 @@ const DenseRaum = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	function drawPoint(ctx, pg, i) {
+	function drawPoint(ctx, i) {
 		const p = PTS[i];
-		const t = Math.max(0, Math.min(1, (ptsT - i * 14) / 480));
+		const t = Math.max(0, Math.min(1, (ptsT - i * 12) / 480));
 		if (t <= 0) return;
 		const e = ease(t);
 		const z = AMP * lift * warp(p.x, p.y);
 		const p3 = proj3(p.x, p.y, z);
-		let X = K.lerp(pg.bxc, p3.X, e);
-		let Y = K.lerp(pg.byc, p3.Y, e);
+		let X = p3.X;
+		let Y = p3.Y;
 		if (projA > 0.001) {
 			const tp = ease(projA);
 			X = K.lerp(X, axisX(scoreOf(p)), tp);
 			Y = K.lerp(Y, G.AY, tp) - Math.sin(Math.PI * tp) * 44;
 		}
 		const a = Math.min(1, t * 1.5);
+		const isImg = (i === imgIdx), isDog = (i === dogIdx);
+		const special = isImg || isDog;
 
-		if (p.img || p.imgDog) {
-			// Beispiel-Punkt: Mini-Bild im Ring (Katze = "unser Bild",
-			// Hund = Beispiel). Nach der Projektion als Punkt gezeichnet.
-			if (projA > 0.5) {
-				ctx.globalAlpha = a;
-				const dot = p.img ? '#15803d' : '#e11d48';
-				ctx.fillStyle = dot; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.5;
-				ctx.beginPath(); ctx.arc(X, Y, 7, 0, 6.2832); ctx.fill(); ctx.stroke();
-				drawLabel(ctx, X + 12, Y - 8, p.img ? 'unser Bild' : 'Hund', dot, a * (1 - projA * 0.3));
-				ctx.globalAlpha = 1;
-				return;
-			}
-			const s = 22 * e;
-			const cat = !p.imgDog;
+		if (special && projA > 0.5) {
+			// Nach der Projektion als (großer) Punkt mit Label.
+			const dot = isImg ? '#15803d' : '#e11d48';
+			ctx.globalAlpha = a * 0.5;
+			ctx.strokeStyle = dot; ctx.lineWidth = 1.5;
+			ctx.beginPath(); ctx.arc(X, Y, 12, 0, 6.2832); ctx.stroke();
 			ctx.globalAlpha = a;
-			ctx.fillStyle = '#ffffff';
-			ctx.strokeStyle = cat ? '#15803d' : '#e11d48'; ctx.lineWidth = 2;
-			K.roundRect(ctx, X - s / 2, Y - s / 2, s, s, 3);
-			ctx.fill(); ctx.stroke();
-			const cs = s / 32;
-			const RGB = cat ? K.RGB : K.HUND_RGB;
-			for (let r = 0; r < 32; r++) {
-				for (let c = 0; c < 32; c++) {
-					const col = RGB[r * 32 + c];
-					ctx.fillStyle = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
-					ctx.fillRect(X - s / 2 + c * cs, Y - s / 2 + r * cs, cs + 0.3, cs + 0.3);
-				}
-			}
+			ctx.fillStyle = dot; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+			ctx.beginPath(); ctx.arc(X, Y, 8, 0, 6.2832); ctx.fill(); ctx.stroke();
+			drawLabel(ctx, X + 14, Y - 12, isImg ? 'unser Bild' : 'Hund', dot, a * (1 - projA * 0.3));
 			ctx.globalAlpha = 1;
-			drawLabel(ctx, X + s / 2 + 8, Y - s / 2 + 2, cat ? 'unser Bild' : 'Hund', cat ? '#15803d' : '#e11d48',
-				a * (1 - projA * 0.35));
 			return;
 		}
 
 		ctx.globalAlpha = a;
+		const r = special ? 6 * e : 4 * e;
 		ctx.fillStyle = p.c === 0 ? '#15803d' : '#e11d48';
-		ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1;
-		ctx.beginPath(); ctx.arc(X, Y, 4 * e, 0, 6.2832); ctx.fill(); ctx.stroke();
+		ctx.strokeStyle = '#ffffff'; ctx.lineWidth = special ? 1.5 : 1;
+		ctx.beginPath(); ctx.arc(X, Y, r, 0, 6.2832); ctx.fill(); ctx.stroke();
+		if (isImg && projA < 0.5) drawLabel(ctx, X + 10, Y - 8, 'unser Bild', '#15803d', a * (1 - projA));
 		ctx.globalAlpha = 1;
 	}
 
@@ -351,75 +274,53 @@ const DenseRaum = (() => {
 		slideId: 'slide-dense-raum',
 		prefix: 'dr',
 		steps: [
-			{ k: 'Schritt 1', t: 'Ein Bild ist schon<br><em>Zahlen</em>.',
-			  p: 'Dense Layer: <b>1024</b> Zahlen',
-			  c: '<span class="kz-chip g">Bild 32×32</span><span class="kz-arrow">→</span><span class="kz-chip r">1024 Zahlen</span>' },
-			{ k: 'Schritt 2', t: 'Aus Zahlen werden<br><em>Punkte</em>.',
+			{ k: 'Schritt 1', t: 'Aus Zahlen werden<br><em>Punkte</em>.',
 			  p: 'Jedes Bild = <b>1</b> Punkt',
 			  c: '<span class="kz-chip g">1024 Zahlen</span><span class="kz-arrow">→</span><span class="kz-chip r">Punkt</span>',
-			  i: 'Jedes Bild (1024 Zahlen) ist <b>ein Punkt</b> im 1024-dimensionalen Raum — wir sehen nur einen <b>2D-Schatten</b> davon. Der Haufen wirkt wie <b>PCA über 1000 Katze-/Hund-Bilder</b>: zwei Farben, die sich <b>überlappen</b>. Keine Gerade trennt sie sauber.' },
-			{ k: 'Schritt 3', t: 'Der Layer <em>wölbt</em><br>den Raum.',
-			  p: 'Die <b>wellige</b> Grenze wird <b>gerade</b>',
-			  c: '<span class="kz-chip">z = y − b(x)</span>',
-			  i: 'Die Grenze zwischen Katze und Hund ist <b>wellig</b> — für eine Gerade in der flachen Ansicht unmöglich. Die Schicht wölbt den Raum genau so, dass diese Welle <b>gerade</b> wird: dann liegen alle Hunde auf der einen, alle Katzen auf der anderen Seite.' },
-			{ k: 'Schritt 4', t: 'Eine Ebene passt<br><em>dazwischen</em>.',
+			  i: 'Jedes Bild (1024 Zahlen) ist <b>ein Punkt</b> im 1024-dimensionalen Raum — wir sehen nur einen <b>2D-Schatten</b>. Katzen (grün) füllen die <b>Mitte</b>, Hunde (rot) bilden den <b>Ring</b> drumherum — ineinander verschachtelt. <b>Keine Gerade</b> trennt die beiden Klassen.' },
+			{ k: 'Schritt 2', t: 'Der Layer <em>wölbt</em><br>den Raum.',
+			  p: 'Flach → <b>Schüssel</b> (z = x²+y²)',
+			  c: '<span class="kz-chip">z = x² + y²</span>',
+			  i: 'Die Schicht wölbt den flachen Raum zu einer <b>Schüssel</b> (z = x²+y²). Der <b>Hund-Ring</b> klettert die Wände hinauf, die <b>Katzen</b> bleiben im Grund. Was in der flachen Ebene unmöglich war, wird in der Höhe <b>trennbar</b>.' },
+			{ k: 'Schritt 3', t: 'Eine Ebene passt<br><em>dazwischen</em>.',
 			  p: 'Hund <b>über</b>, Katze <b>unter</b>',
 			  c: '<span class="kz-chip g" style="background:#ecfdf5;border-color:#a7f3d0;color:#15803d">Katze</span><span class="kz-arrow">·</span><span class="kz-chip r">Hund</span>',
-			  i: 'Das ist der <b>Payoff</b>: nach dem Wölben sind Katze & Hund <b>klar trennbar</b>. Eine <b>flache Ebene</b> (in 2D: eine Gerade) liegt genau dazwischen — <b>genau das</b> ist, wozu die Schicht den Raum wölbt.' },
-			{ k: 'Schritt 5', t: 'Alles fällt auf<br><em>eine Linie</em>.',
-			  p: 'Links Hund, rechts Katze',
+			  i: 'Der <b>Payoff</b>: eine <b>flache Ebene</b> liegt exakt dazwischen — alle <b>Hunde darüber</b>, alle <b>Katzen darunter</b>, jeder Punkt auf der richtigen Seite. Genau das bringt das Wölben.' },
+			{ k: 'Schritt 4', t: 'Alles fällt auf<br><em>eine Linie</em>.',
+			  p: 'Links Katze, rechts Hund',
 			  c: '<span class="kz-chip">Score</span>',
-			  i: 'Die Rückprojektion wirft jeden Punkt auf <b>eine Zahl</b> (den Score): links der Hund, rechts die Katze. <b>Unser Bild</b> (Mini-Katze) landet auf der <b>Katze-Seite</b>; daneben ein Beispiel-<b>Hund</b>.' }
+			  i: 'Jeder Punkt fällt auf <b>eine Zahl</b> (Score = Höhe über/unter der Ebene): links Katze, rechts Hund. <b>Unser Bild</b> — ein <b>zufälliger Punkt</b> aus dem Set — landet auf der <b>Katze-Seite</b>.' }
 		],
 
 		layoutFor,
 
 		onStep(step) {
-			if (step === 0) {
-				cpT = 0; cpSpawned = 0;
-				cpBorn.length = 0; cpFrom.length = 0;
-			}
-			if (step < 1) ptsT = 0;
+			if (step === 0) { pickRandom(); ptsT = 0; }
 			// Nach einem Zurück-Navigieren/Re-Einstieg nicht von der
 			// falschen Seite animieren: bei großer Abweichung snapen.
-			const tgt = {
-				panelA: step === 0 ? 1 : 0,
-				ptsA: step >= 1 ? 1 : 0,
-				lift: step >= 2 ? 1 : 0,
-				planeA: step === 3 ? 1 : 0,
-				projA: step >= 4 ? 1 : 0,
-				axisA: step >= 4 ? 1 : 0
-			};
-			if (Math.abs(projA - tgt.projA) > 0.4 ||
-				Math.abs(lift - tgt.lift) > 0.4 ||
-				Math.abs(ptsA - tgt.ptsA) > 0.4) {
-				panelA = tgt.panelA; ptsA = tgt.ptsA; lift = tgt.lift;
-				planeA = tgt.planeA; projA = tgt.projA; axisA = tgt.axisA;
+			const tgtLift = step >= 1 ? 1 : 0;
+			const tgtProj = step >= 3 ? 1 : 0;
+			if (Math.abs(lift - tgtLift) > 0.4 || Math.abs(projA - tgtProj) > 0.4) {
+				lift = tgtLift;
+				planeA = step === 2 ? 1 : 0;
+				projA = tgtProj;
+				axisA = tgtProj;
 			}
 		},
 
 		tick(dt, k, S) {
-			panelA = K.lerp(panelA, S.step === 0 ? 1 : 0, k * 1.4);
-			ptsA = K.lerp(ptsA, S.step >= 1 ? 1 : 0, k * 1.1);
-			lift = K.lerp(lift, S.step >= 2 ? 1 : 0, k * 0.8);
-			planeA = K.lerp(planeA, S.step === 3 ? 1 : 0, k);
-			projA = K.lerp(projA, S.step >= 4 ? 1 : 0, k * 0.7);
-			axisA = K.lerp(axisA, S.step >= 4 ? 1 : 0, k);
-			if (S.step === 0) {
-				cpT = Math.min(cpT + dt * 16.667, CP_DISS_B + CP_FLY);
-			} else {
-				cpT = 0;
-			}
-			if (S.step >= 1) ptsT = Math.min(ptsT + dt * 16.667, 6000);
-			else ptsT = 0;
+			ptsA = K.lerp(ptsA, 1, k * 1.1);
+			lift = K.lerp(lift, S.step >= 1 ? 1 : 0, k * 0.8);
+			planeA = K.lerp(planeA, S.step === 2 ? 1 : 0, k);
+			projA = K.lerp(projA, S.step >= 3 ? 1 : 0, k * 0.7);
+			axisA = K.lerp(axisA, S.step >= 3 ? 1 : 0, k);
+			ptsT = S.step >= 0 ? Math.min(ptsT + dt * 16.667, 6000) : 0;
 		},
 
 		draw(ctx, S) {
 			ctx.fillStyle = '#ffffff';
 			ctx.fillRect(0, 0, S.W, S.H);
-			const pg = panelGeom(S);
-			if (panelA > 0.01) drawPanel(ctx, S, panelA, pg);
-			if (ptsA > 0.005) drawScene(ctx, S, pg);
+			if (ptsA > 0.005) drawScene(ctx, S);
 		}
 	});
 })();

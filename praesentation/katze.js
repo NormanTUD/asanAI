@@ -570,12 +570,11 @@ const ConvDemo = (() => {
 	'use strict';
 
 	let tagA = [0, 0, 0], tTagA = [0, 0, 0];
-	let matrixA = 0, tMatrixA = 0;
 	let bwA = 0, tBwA = 0;
-	// (T30) Die Zahlen-Matrix (Schritt 5) ist jetzt eine LaTeX-HTML-Matrix
-	// (#conv-matrix, index.html/index.css): echte Grauwerte aus dem Bild,
-	// schwarzweiß wie das Graubild, skaliert mit dem Text. matrixA steuert
-	// nur noch die Opazität dieses Overlays.
+	// (T30) Die Zahlen-Matrix (Schritt 5) ist eine LaTeX-HTML-Matrix
+	// (#conv-matrix, index.html/index.css): ein großes pmatrix, dessen
+	// Einträge (je Pixel oben links) selbst ein kleines pmatrix mit R/G/B
+	// sind. Die Opazität wird in onStep gesetzt (CSS-Fade, robust).
 
 	// Rahmen der Graustufen-Katze. Die Katze selbst ist der Grün-Kanal
 	// (inst[PICK]), der ab Schritt 2 grau gemischt wird und in Schritt 3
@@ -634,9 +633,9 @@ const ConvDemo = (() => {
 			  p: 'Graustufen · 0 = Schwarz, 255 = Weiß',
 			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">→</span><span class="kz-chip g">0–255</span>' },
 			{ k: 'Schritt 5', t: 'Das ganze Bild ist<br>eine <em>Zahlen-Matrix</em>.',
-			  p: '32 × 32 Pixel, jedes eine Zahl von 0 bis 255',
-			  c: '<span class="kz-chip g">(32, 32)</span><span class="kz-arrow">·</span><span class="kz-chip g">0 – 255</span>',
-			  i: 'Ein Bild ist also eine riesige Zahl-Matrix (32 × 32): jedes Pixel steckt als <b>eine Zahl</b> (0–255) drin. So „sieht" der Computer ein Foto — als reine Zahlen.' }
+			  p: '32 × 32 Pixel, jedes ein Triplett Rot · Grün · Blau',
+			  c: '<span class="kz-chip">(32, 32, 3)</span>',
+			  i: 'Ein Bild ist eine riesige Zahl-Matrix (32 × 32 × 3): jedes Pixel steckt als <b>RGB-Triplett</b> (Rot, Grün, Blau) drin. So „sieht" der Computer ein Foto — als reine Zahlen.' }
 		],
 
 		layoutFor(step, S) {
@@ -694,33 +693,31 @@ const ConvDemo = (() => {
 				tTagA = [0, 0, 0];
 				S.tGrayMix = 1;
 			} else if (step === 4) {
-				// Links die graue Katze; rechts die Graustufen-Matrix
-				// (LaTeX-HTML #conv-matrix, Opazität via matrixA).
-				const cs = Math.min(H / KatzeKit.N * .6, W / KatzeKit.N * .4, 9);
+				// Farbiges Bild (links) + RGB-Matrix (LaTeX-HTML #conv-matrix,
+				// Opazität via onStep). Das Bild bleibt farbig — die Matrix
+				// zeigt exakt die (32,32,3)-Struktur, die es speichert.
+				const cs = Math.min(H / KatzeKit.N * .6, W / KatzeKit.N * .34, 9);
 				const catW = KatzeKit.N * cs;
-				const x0 = W * 0.08;
+				const x0 = Math.max(12, (W * 0.42 - catW) / 2);
 				const y0 = (H - catW) / 2 + 4;
 				inst.forEach((o, i) => {
 					o.ts = cs; o.tx = x0; o.ty = y0;
-					o.tmix = i === KatzeKit.PICK ? 1 : 0;
-					o.ta = i === KatzeKit.PICK ? 1 : 0;
+					o.tmix = 0; o.ta = i === 0 ? 1 : 0;
 				});
 				tTagA = [0, 0, 0];
-				S.tGrayMix = 1;
+				S.tGrayMix = 0;
 			}
-			tMatrixA = step === 4 ? 1 : 0;
 		},
 
 		onStep(step) {
 			// (Filter-Schritte leben jetzt in FilterDemo.)
+			const mEl = document.getElementById('conv-matrix');
+			if (mEl) mEl.style.opacity = step === 4 ? 1 : 0;
 		},
 
 		tick(dt, k, S, setFoot) {
-			matrixA = KatzeKit.lerp(matrixA, tMatrixA, k * 1.2);
 			bwA = KatzeKit.lerp(bwA, tBwA, k * 1.2);
 			for (let i = 0; i < 3; i++) tagA[i] = KatzeKit.lerp(tagA[i], tTagA[i], k * 1.2);
-			const mEl = document.getElementById('conv-matrix');
-			if (mEl) mEl.style.opacity = matrixA.toFixed(3);
 		},
 
 		draw(ctx, S) {
@@ -741,11 +738,21 @@ const ConvDemo = (() => {
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				KatzeKit.drawTags(ctx, S, tagA);
 				drawBWPair(ctx, S);
-			} else if (S.step === 3 || S.step === 4) {
-				// Der Grün-Kanal (inst[PICK], grau). Die Matrix (Schritt 5)
-				// ist ein HTML-Overlay (#conv-matrix), nicht auf dem Canvas.
+			} else if (S.step === 3) {
+				// Der Grün-Kanal (inst[PICK], grau) — Schritt 4.
 				S.inst.forEach((gi, i) => KatzeKit.drawGrid(ctx, gi, i, S.grayMix));
 				drawGrayCat(ctx, S);
+			} else if (S.step === 4) {
+				// Farbiges Bild (Komposit) — die RGB-Matrix (Schritt 5) ist
+				// ein HTML-Overlay (#conv-matrix), nicht auf dem Canvas.
+				KatzeKit.drawGrid(ctx, S.inst[0], 0, 0);
+				const o4 = S.inst[0];
+				if (o4.a > 0.02) {
+					ctx.globalAlpha = o4.a;
+					ctx.strokeStyle = '#1b1f24'; ctx.lineWidth = 1.5;
+					ctx.strokeRect(o4.x + .5, o4.y + .5, KatzeKit.N * o4.s - 1, KatzeKit.N * o4.s - 1);
+					ctx.globalAlpha = 1;
+				}
 			}
 		}
 	});
@@ -1002,12 +1009,17 @@ const FilterDemo = (() => {
 
 		layoutFor(step, S) {
 			const { W, H, inst } = S;
-			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, 13);
-			const imgW = KatzeKit.N * s, gapOut = 60, outW = O8 * s * 4;
+			// (T35) Breite begrenzen, damit Kernel(138px, fix) + Lücken(107)
+			// + Katze + Map (2·imgW) immer in W passen — sonst läuft der
+			// Kernel links ran bzw. die Map rechts über.
+			const s = Math.min(H / KatzeKit.N * .86, W / KatzeKit.N * .86, (W - 320) / 64, 13);
+			const imgW = KatzeKit.N * s;
+			// Gesamtbreite Kernel→Map = 2·imgW + 245; Gruppe mittig zentrieren.
+			const totalW = 2 * imgW + 245;
 			S.tGrayMix = 0;
 			inst.forEach((o, i) => {
 				o.ts = s;
-				o.tx = (W - (imgW + gapOut + outW)) / 2;
+				o.tx = (W - totalW) / 2 + 185;
 				o.ty = (H - imgW) / 2 + 6;
 				o.tmix = i === 0 ? 0 : 1;
 				o.ta = i === 0 ? (step === 3 ? .22 : 1) : 0;
@@ -1610,9 +1622,24 @@ const PipelineDemo = (() => {
 	let aLoss = 0, tLossA = 0;
 	let aLabel = 0, tLabelA = 0;
 	let trainP = 0, trainMsg = 0;
-	let cdT = 0;                  // Training: Phase für den Katze↔Hund-Wechsel im Eingangs-Bild
+	let cdT = 0;                  // Training: Zeit für die ~1-s-Bildblöcke (Hund/Katze)
 	let entrancePending = false;
 	let entrancePlayed = false;   // Einstieg nur einmal, sonst Flash bei jedem Wiederauftauchen
+
+	// (T33) Training = diskrete ~1-s-Blöcke: Hund, Katze, Hund, Katze …
+	// (statt weichem Crossfade). mixCD: 0 = Katze, 1 = Hund; am Block-
+	// wechsel kurzer Crossfade (~0,15 s), sonst hart.
+	const CD_DUR = 1.0;
+	function cdState(t) {
+		const block = Math.floor(t / CD_DUR);
+		const dog = block % 2 === 0;                 // 0=Hund, 1=Katze, 2=Hund, …
+		const phase = (t % CD_DUR) / CD_DUR;         // 0..1 im Block
+		const dogMix = dog ? 1 : 0;
+		if (block === 0) return { dog, mixCD: dogMix };
+		const ss = x => x * x * (3 - 2 * x);
+		const blend = ss(Math.min(1, phase / 0.15));
+		return { dog, mixCD: KatzeKit.lerp(1 - dogMix, dogMix, blend) };
+	}
 
 	return KatzeKit.create({
 		slideId: 'slide-pipeline',
@@ -1705,13 +1732,12 @@ const PipelineDemo = (() => {
 			if (S.step !== 6) return;
 			// ~7 s Training: 50 → 95 %, Loss 0,693 → 0,051
 			trainP = Math.min(trainP + dt / (7 * 60), 1);
-			// Eingangs-Bild wechselt abwechselnd Katze↔Hund (das Netz lernt
-			// an beiden Klassen) — ein vollständiger Wechselschritt alle ~1,5 s.
-			cdT += dt / (60 * 1.5);
-			const tri = 1 - Math.abs(1 - (cdT % 2));
-			const mixCD = tri * tri * (3 - 2 * tri);   // 0 = Katze, 1 = Hund
+			// (T33) Eingangs-Bild wechselt in diskreten ~1-s-Blöcken
+			// Hund → Katze → Hund … (das Netz lernt an beiden Klassen).
+			cdT += dt / 60;
+			const cs = cdState(cdT);
 			const conf = Math.round(PipelineKit.trainPct(trainP));
-			const dog = mixCD >= 0.5;
+			const dog = cs.dog;
 			if (trainP >= 1) {
 				if (!trainMsg) {
 					trainMsg = 1;
@@ -1719,8 +1745,7 @@ const PipelineDemo = (() => {
 						`<span class="kz-chip g">${dog ? 'Hund 95 %' : 'Katze 95 %'}</span>`);
 				}
 			} else {
-				const p = conf;
-				setFoot(`Training … · ${dog ? 'Hund' : 'Katze'} <b>${p} %</b> · Loss <b>${PipelineKit.fmtLoss(PipelineKit.lossOf(p))}</b>`,
+				setFoot(`Training … · ${dog ? 'Hund' : 'Katze'} <b>${conf} %</b> · Loss <b>${PipelineKit.fmtLoss(PipelineKit.lossOf(conf))}</b>`,
 					'<span class="kz-chip g">Loss ↓</span>');
 			}
 		},
@@ -1733,11 +1758,11 @@ const PipelineDemo = (() => {
 			// flackern → danach ist die Entscheidung gefallen.
 			const flick = S.step === 6 ? Math.max(0, (0.6 - trainP) / 0.6) : 0;
 
-			// Training (Schritt 7): das Eingangs-Bild wechselt abwechselnd
-			// Katze↔Hund (das Netz lernt an beiden Klassen); die Ausgabe
-			// folgt dem Bild, die Sicherheit steigt mit trainP.
-			const tri = 1 - Math.abs(1 - (cdT % 2));
-			const mixCD = S.step === 6 ? (tri * tri * (3 - 2 * tri)) : 0;
+			// (T33) Training (Schritt 7): das Eingangs-Bild wechselt in
+			// diskreten ~1-s-Blöcken Hund → Katze … ; die Ausgabe folgt
+			// dem Bild, die Sicherheit steigt mit trainP.
+			const cs = cdState(cdT);
+			const mixCD = S.step === 6 ? cs.mixCD : 0;
 
 			// Ausgabe: Ziel (4) = 100 %, Ergebnis (7) = 95 %, am
 			// Anfang (5) 50:50, im Training (6) folgt dem Eingangs-Bild.
@@ -1745,11 +1770,10 @@ const PipelineDemo = (() => {
 			if (S.step === 5) { pCat = 50; pDog = 50; hotCat = false; }
 			else if (S.step === 6) {
 				const conf = Math.round(PipelineKit.trainPct(trainP));
-				const dog = mixCD >= 0.5;
+				const dog = cs.dog;
 				pCat = dog ? (100 - conf) : conf;
 				pDog = dog ? conf : (100 - conf);
-				const hi = conf >= 90;
-				hotCat = !dog && hi; hotDog = dog && hi;
+				hotCat = !dog; hotDog = dog;   // passender Tag leuchtet (T33)
 			}
 			else if (S.step === 7) { pCat = 95; pDog = 5; }
 

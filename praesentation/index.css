@@ -774,7 +774,9 @@ body.sel-mode .sel-check { display: inline-flex; }
 	letter-spacing: -.028em;
 	line-height: 1.08;
 	color: #0d1117;
-	margin: 0; border: none; padding: 0;
+	margin: 0;
+	padding: 0 0 8px;
+	border-bottom: 3px solid #e2e8f0;
 	text-align: center;
 	white-space: nowrap;
 }
@@ -927,16 +929,18 @@ body.sel-mode .sel-check { display: inline-flex; }
    das Graubild, skaliert mit dem Text (keine fixen px mehr). */
 .kz-stage .conv-matrix {
 	position: absolute;
-	right: 3.5%;
+	left: 72%;
 	top: 50%;
-	transform: translateY(-50%);
+	transform: translate(-50%, -50%);
 	opacity: 0;
 	pointer-events: none;
 	will-change: opacity;
+	transition: opacity .45s ease;
 }
 .kz-stage .conv-matrix .math-display {
-	font-size: clamp(14px, 1.7vw, 23px);
+	font-size: clamp(11px, 1.25vw, 16px);
 	color: #0d1117;
+	line-height: 1.15;
 }
 .kz-stage .conv-matrix .conv-matrix-cap {
 	text-align: center;

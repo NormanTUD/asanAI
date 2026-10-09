@@ -232,8 +232,8 @@
             <div class="kz-stage">
                 <canvas id="conv-cv"></canvas>
                 <div class="conv-matrix" id="conv-matrix">
-                    <div class="math-display">$$\begin{bmatrix} 176 &amp; 176 &amp; 176 &amp; 20 &amp; \cdots \\ 176 &amp; 176 &amp; 20 &amp; 51 &amp; \cdots \\ 176 &amp; 20 &amp; 20 &amp; 51 &amp; \cdots \\ 20 &amp; 20 &amp; 20 &amp; 51 &amp; \cdots \\ \vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \ddots \end{bmatrix}$$</div>
-                    <div class="conv-matrix-cap">(32, 32) · ein Wert (0–255) pro Pixel</div>
+                    <div class="math-display">$$\begin{pmatrix} \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 181 \\ 176 \\ 43 \end{pmatrix} &amp; \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \cdots \\ \begin{pmatrix} 20 \\ 20 \\ 20 \end{pmatrix} &amp; \begin{pmatrix} 74 \\ 51 \\ 42 \end{pmatrix} &amp; \begin{pmatrix} 122 \\ 82 \\ 56 \end{pmatrix} &amp; \cdots \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots \end{pmatrix}$$</div>
+                    <div class="conv-matrix-cap">(32, 32, 3) · je Pixel ein RGB-Triplett</div>
                 </div>
             </div>
 
@@ -413,17 +413,17 @@
     <div class="slide-content">
         <div class="kz">
             <div class="kz-head"><h2 class="kz-const">Vom Bild zu Punkten</h2><div class="kz-tswap" id="dr-tswap">
-                <div class="kz-title" id="dr-title">Die Katze wird zu<br><em>Zahlen</em>.</div>
+                <div class="kz-title" id="dr-title">Aus Zahlen werden<br><em>Punkte</em>.</div>
             </div></div>
 
             <div class="kz-stage"><canvas id="dr-cv"></canvas></div>
 
             <div class="kz-foot"><div class="kz-fswap" id="dr-fswap">
-                <div class="kz-pill" id="dr-pill">Dense Layer: <b>1024</b> Zahlen</div>
-                <div class="kz-chips" id="dr-chips"><span class="kz-chip g">Bild 32×32</span><span class="kz-arrow">→</span><span class="kz-chip r">1024 Zahlen</span></div>
+                <div class="kz-pill" id="dr-pill">Jedes Bild = <b>1</b> Punkt</div>
+                <div class="kz-chips" id="dr-chips"><span class="kz-chip g">1024 Zahlen</span><span class="kz-arrow">→</span><span class="kz-chip r">Punkt</span></div>
             </div></div>
 
-            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="dr-insight"></div></div>
+            <div class="kz-insight-slot"><div class="key-insight kz-insight" id="dr-insight">Jedes Bild (1024 Zahlen) ist <b>ein Punkt</b> im 1024-dimensionalen Raum — wir sehen nur einen <b>2D-Schatten</b>. Katzen (grün) füllen die <b>Mitte</b>, Hunde (rot) bilden den <b>Ring</b> drumherum — ineinander verschachtelt. <b>Keine Gerade</b> trennt die beiden Klassen.</div></div>
         </div>
     </div>
 </div>
@@ -495,7 +495,7 @@
                     Netz die Kategorie <b>„Auto"</b> beibringen und sind alle
                     Fotos Autos vor <b>blauem Himmel</b>, findet es den
                     <b>blauen Himmel</b> — weil der <b>einfacher</b> zu erkennen
-                    ist als das Auto. Das Auto selbst? Kommt ganz hinten dran.
+                    ist als das Auto.
                 </p>
             </div>
             <div style="text-align:center;">
