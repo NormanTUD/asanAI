@@ -974,26 +974,25 @@ body.sel-mode .sel-check { display: inline-flex; }
 
 /* ============ FOLIE "asanAI" ============ */
 .asan-slide {
-	display: grid;
-	grid-template-columns: 0.5fr 1.15fr 0.85fr;
-	gap: 26px;
-	align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 32px;
 	text-align: left;
+}
+.asan-main {
+	display: grid;
+	grid-template-columns: 0.6fr 1.4fr;
+	gap: 32px;
+	align-items: center;
 }
 .asan-logo-col { text-align: center; }
 .asan-logo {
 	width: 100%;
-	max-width: 220px;
+	max-width: 240px;
 	height: auto;
 	filter: drop-shadow(0 12px 34px rgba(79, 70, 229, 0.25));
 }
-.asan-tagline {
-	margin-top: 14px;
-	font-size: 1.05em;
-	color: #475569;
-	line-height: 1.35;
-}
-.asan-tagline b { color: #4f46e5; font-size: 1.2em; }
 .asan-text-col h2 { font-size: 1.5em; line-height: 1.25; }
 .asan-list {
 	margin: 10px 0 0;
@@ -1015,15 +1014,26 @@ body.sel-mode .sel-check { display: inline-flex; }
 	color: #4f46e5;
 	font-weight: 700;
 }
-.asan-url-frag { align-self: center; text-align: center; }
+.asan-qr-frag {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 20px;
+}
+.asan-qr-img {
+	width: 110px;
+	height: 110px;
+	border-radius: 10px;
+	box-shadow: 0 4px 16px rgba(0,0,0,.1);
+}
 .asan-url-badge {
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	font-size: 1.1em; font-weight: 700; letter-spacing: -.01em;
+	font-size: 1.6em; font-weight: 700; letter-spacing: -.02em;
 	color: #4338ca;
 	background: #ffffff;
 	border: 2px solid #c7d2fe;
-	border-radius: 12px;
-	padding: 14px 22px;
+	border-radius: 14px;
+	padding: 16px 28px;
 	display: inline-block;
 }
 
