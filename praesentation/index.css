@@ -140,30 +140,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	font-size: 1.3em;
 	line-height: 1;
 }
-.demo-box {
-	background: #f8fafc; padding: 24px; border-radius: 12px;
-	border: 1px solid #e2e8f0; margin: 20px 0; width: 100%;
-	min-height: 560px;
-}
-.demo-title { font-size: 1.1rem; font-weight: bold; color: #1e293b; text-align: center; margin-bottom: 14px; }
 
-/* ============ IMAGE SUPPORT ============ */
-.slide-image {
-	max-width: 90%;
-	max-height: 70vh;
-	border-radius: 12px;
-	box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-	object-fit: contain;
-	margin: 20px auto;
-	display: block;
-}
-.slide-image-caption {
-	text-align: center;
-	font-size: 0.9em;
-	color: #64748b;
-	margin-top: 10px;
-	font-style: italic;
-}
 
 /* ============ FRAGMENTS (reveal on click) ============ */
 .fragment {
@@ -282,17 +259,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 :fullscreen .slide h2 { font-size: 2.6em; }
 :fullscreen .slide p { font-size: 1.35em; }
 
-/* ============ SPEAKER NOTES (hidden, accessible via console) ============ */
-.speaker-notes { display: none; }
 
-/* ============ PLOT CONTAINERS ============ */
-.plot-container { background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; }
-.layers-vertical { text-align: center; margin: 10px 0; }
-.bw-cell { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 1em; }
-
-/* ============ ANIMATIONS ============ */
-@keyframes tokenAppear { from { opacity:0; transform:translateY(10px) scale(0.8); } to { opacity:1; transform:translateY(0) scale(1); } }
-@keyframes arPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
@@ -303,28 +270,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	#nav-bar { padding: 0 12px; }
 }
 
-.know-indicator {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    background: #fff;
-    font-weight: bold;
-    font-size: 0.85em;
-    color: #64748b;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-.know-indicator.active {
-    border-color: #3b82f6;
-    background: #eff6ff;
-    color: #1e40af;
-    border-width: 2px;
-}
-
-[id^="res-"] {
-	min-height: 60px; /* verhindert Layout-Shift */
-	contain: content;  /* isoliert Repaints */
-}
 
 
 
@@ -337,124 +283,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .slide li { margin-bottom: 8px; }
 .slide code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
 
-.chat-container {
-    max-width: 600px;
-    width: 100%;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
-}
 
-.chat-header {
-    text-align: center;
-    color: #64748b;
-    font-size: 0.85em;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.message {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.message-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1em;
-    flex-shrink: 0;
-}
-
-.message-bubble {
-    padding: 14px 18px;
-    border-radius: 12px;
-    line-height: 1.7;
-    max-width: 85%;
-}
-
-/* User Message */
-.message.user .message-avatar {
-    background: #dbeafe;
-}
-
-.message.user .message-bubble {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-    color: #1e293b;
-}
-
-/* KI Message */
-.message.ki .message-avatar {
-    background: #d1fae5;
-}
-
-.message.ki .message-bubble {
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #1e293b;
-}
-
-.message.ki .message-bubble ol {
-    margin-left: 20px;
-    padding: 0;
-}
-
-.message.ki .message-bubble li {
-    margin-bottom: 4px;
-}
-
-/* Realität / Fact-Check Message */
-.message.reality .message-avatar {
-    background: #fee2e2;
-}
-
-.message.reality .message-bubble {
-    background: #fef2f2;
-    border: 2px solid #fca5a5;
-    color: #991b1b;
-    font-weight: 600;
-}
-
-/* Labels */
-.message-label {
-    font-size: 0.75em;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-}
-
-.message.user .message-label {
-    color: #2563eb;
-}
-
-.message.ki .message-label {
-    color: #059669;
-}
-
-.message.reality .message-label {
-    color: #dc2626;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* ============ LOADING SPINNER (Intro) ============ */
 #loading-spinner {
@@ -621,7 +450,6 @@ body.sel-mode .sel-check { display: inline-flex; }
 }
 
 /* ============ SPACE MORPH ("Was machen Dense Layer?") ============ */
-#slide-layer-als-raumkruemmung { background: #f8fafc; }
 #sm-table-container {
 	max-height: 230px;
 	overflow: hidden;
@@ -1057,25 +885,7 @@ body.sel-mode .sel-check { display: inline-flex; }
 	color: #0f172a;
 	margin: 0;
 }
-.title-sub {
-	font-size: 1.5em;
-	color: #4f46e5;
-	font-weight: 600;
-	margin: 14px 0 0;
-}
-.title-rule {
-	width: 120px;
-	height: 3px;
-	background: #c7d2fe;
-	border-radius: 2px;
-	margin: 26px 0 16px;
-}
-.title-hint {
-	font-size: 0.92em;
-	color: #64748b;
-	letter-spacing: 0.02em;
-	margin: 0;
-}
+
 
 /* ============ FOLIE "Vom Foto zum Stoppschild" (hierarchy.js) ============ */
 /* Slot ueber jedem Bild: Kernels stehen exakt ueber dem Panel, zu dem sie gehoeren.

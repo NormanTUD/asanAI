@@ -1748,7 +1748,7 @@ const PipelineDemo = (() => {
 			{ k: 'Schritt 6', t: 'Am Anfang:<br>reiner <em>Zufall</em>.',
 			  p: 'Anfang: <b>50 : 50</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip r">50 : 50</span><span class="kz-arrow">·</span><span class="kz-chip r">Loss 0,693</span>',
-			  i: 'Aber am Anfang weiß das Netz <b>gar nicht</b>, was es tun soll. Die Gewichte sind <b>zufällig initialisiert</b>, es rät blind, die Karten sehen noch nicht nach Augen, Nase, Mund aus.' },
+			  i: 'Aber am Anfang weiß das Netz <b>gar nicht</b>, was es tun soll. Die Gewichte sind <b>zufällig initialisiert</b>, es rät blind.' },
 			{ k: 'Schritt 7', t: 'Lernen: die Daten<br>immer wieder <em>angucken</em>.',
 			  p: 'Training … · Katze <b>50 %</b> · Loss <b>0,693</b>',
 			  c: '<span class="kz-chip g">Loss ↓</span>',
