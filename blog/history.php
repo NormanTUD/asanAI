@@ -168,7 +168,54 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 * **Circumstances:** The device was discovered in 1901 among wreckage retrieved from a shipwreck off the coast of the Greek island Antikythera. It is believed to have been constructed between 200 BC and 60 BC. Following the wreck, the advanced technology required to build such complex geared mechanisms was lost to Western civilization for over a millennium, not reappearing until the development of mechanical astronomical clocks in the 14th century.
 * **Technical Sophistication:** It contained at least 30 meshing bronze gears housed in a wooden case covered in inscriptions. These inscriptions acted as a user manual, explaining the cycles of the sun, moon, and at least five planets.
 * **Significance:** It proves that the “Computer Era” has roots in mechanical simulation. While Zuse and Aiken used gears or relays for abstract math, the Antikythera mechanism used them to model the physical universe through mechanical ratios.
+</div>
 
+<div class="optional md" data-headline="The Brazen Head: the first question-answering machine (c. 1125)">
+
+Before there were logic engines, there were *talking heads*. The **brazen head** — a bust of brass or bronze said to sit on the workbench of a medieval scholar — is the oldest known legend of a machine that *answers questions*, and it is a remarkably early sketch of the conversational machine we now call a chatbot.
+
+<figure>
+    <img style="max-width: 100%" src="brazen_head.jpg" alt="Friar Bacon's Brazen Head" />
+    <figcaption class="md">\citealternativetitle{brazenheadimage}. An Elizabethan woodcut from Robert Greene's *Friar Bacon and Friar Bungay* (c. 1590): while Friars Bacon and Bungay sleep, their head speaks, “Time is. Time was. Time is past.”</figcaption>
+</figure>
+
+The first written account of such a device is in the chronicle of **William of Malmesbury** (c. 1125), who collected the rumors about the polymath **Pope Sylvester II**: from a stolen book of secrets, Sylvester cast the head of a statue that “would not speak until spoken to, but then answered any yes/no question put to it.” For the next two centuries the same figure re-attached itself to whoever was then the most famous *magus* — **Robert Grosseteste**, **Albertus Magnus**, and above all **Roger Bacon**, who was said to have spent seven years building a head so he could tell whether Britain could be made impregnable by a wall of brass (like the Norse wisdom-head of **Mímir** or the bronze guardian **Talos** of Crete, the brazen head is a *repository of knowledge* that you simply query) (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
+
+Read today, the legend is almost uncomfortably close to the architecture of a modern question-answering system. The head is a **passive oracle**: it initiates nothing, and *you* pose the query — the exact turn-taking contract of a chatbot. In its earliest, most disciplined form it is a **binary classifier**, answering only *yes* or *no*. And the most famous version, the Roger Bacon head, is **stateful**: asked its questions in sequence it returns *Time is* (the moment is ripe), *Time was*, then *Time is past* (the moment has gone, the work is lost) — so its output depends not just on the question but on the *state of the world*. That is the seed of a model whose answer depends on context, and of a monitoring system that watches a process and *signals the moment a critical threshold is crossed*.
+
+The legend also anticipated the *limits* we now attach to intelligent machines. In every telling the builders **miss the decisive instant** — through fatigue or neglect — and the head **explodes, collapses, or is scrapped as useless**. The great 17th-century physician and essayist \citeauthor{brownepseudodoxia} (\citeyear{brownepseudodoxia}) later rationalized the whole episode as a misreading of **alchemy**: the “copper head” was simply the vessel of the Great Work, and “Time is” the moment to seize before the work is irrecoverably lost. The head, modern scholars note, became “a metonymy for the *hubris* of Renaissance intellectuals” — the fantasy of an all-knowing machine that can only be undone by the overreach of the people who built it (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
+
+The story never really died. In Dublin, a pub founded in 1198 still trades under the sign of the brazen head, one of the oldest in Ireland; and in 1837 the Viennese magician **Joseffy** built a real mechanical descendant, the singing, jaw-clicking **Skull of Balsamo**, a copper skull that “answered” by clicking its teeth — the last great *mechanical* brazen head before electronics (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
+
+<figure style="width: 24%; max-width: 200px; margin: 1em 0 0 0;">
+    <img style="width: 100%; height: auto; display: block;" src="brazen_head_pub.jpg" alt="The Brazen Head pub, Dublin" />
+    <figcaption class="md">\citealternativetitle{brazenheadpubimage}, est. 1198, one of the oldest pubs in Ireland.</figcaption>
+</figure>
+</div>
+
+<div class="optional md" data-headline="Pygmalion and Galatea: the dream of the created being (c. 8 BCE)">
+<figure style="float: right; width: 30%; max-width: 240px; margin: 0 0 1em 1em;">
+    <img style="width: 100%; height: auto; display: block;" src="pygmalion_galatea.jpg" alt="Pygmalion and Galatea" />
+    <figcaption class="md">\citealternativetitle{pygmalionimage} — the sculptor worshipping the statue Aphrodite will bring to life.</figcaption>
+</figure>
+
+Long before anyone wrote a line of code, the Greeks had a myth about the *creation* of an artificial being: the sculptor **Pygmalion** carved an ivory statue so perfect that he fell in love with it, and the goddess **Aphrodite** granted his wish — the statue *came to life* and became his wife \cite[Pygmalion (mythology), Wikipedia]{pygmalionmyth}. It is the oldest and purest expression of the wish that runs through the entire field: that an artefact we build should not merely *compute* but *live* — that the model should become the thing.
+
+The myth is the ancestor of every later “the crafted thing gains a soul” story, from the golem (one of the most persistent [AI myths](myths)) to the automata of the Renaissance, and it is why the modern goal of an agent that perceives, decides, and acts in the world is so often phrased as *bringing a machine to life*.
+</div>
+
+<div class="optional md" data-headline="Zhang Heng's seismoscope: the first instrument that sensed the world (132 CE)">
+<figure style="float: right; width: 24%; max-width: 200px; margin: 0 0 1em 1em;">
+    <img style="width: 100%; height: auto; display: block;" src="zhang_heng_seismoscope.jpg" alt="Zhang Heng's seismoscope" />
+    <figcaption class="md">\citealternativetitle{zhanghengseismoscopeimage} — the eight-dragon seismoscope of 132 CE.</figcaption>
+</figure>
+
+Not every ancestor of AI was meant to *think* or *speak*. In **132 CE**, the Chinese astronomer and engineer **Zhang Heng** built a **seismoscope**: a bronze vessel with eight dragon-headed spouts, each holding a ball poised above a waiting toad. When an earthquake struck far away, the single dragon on the side of the tremor dropped its ball into a toad's mouth, *indicating the direction* of a quake the observer could not feel \cite[Zhang Heng, Wikipedia]{zhanghengseismoscope}. It is the oldest known working **sensor** — a physical system that converts a distant, invisible event (a seismic wave) into a local, readable signal (a ball, falling, in a chosen direction).
+
+Sensing is the first half of perception, and perception is the precondition for anything that *acts* in the world. Zhang Heng's bronze vessel — a “peripheral” of 132 CE — is the ancient root of the same idea that today lets a robot detect an obstacle, or a model ingest a signal from its environment, before it can do anything at all.
+</div>
+
+<div class="md">
 ## The idea that logical thought can be mechanically calculated
 
 ### The earliest attempt: Ramon Llull
@@ -282,6 +329,18 @@ The machine's sensing system used a chessboard where each of the 64 squares cons
 While the algorithm was suboptimal, it guaranteed checkmate in fewer than 63 moves against any defense \cite{ieeespectrum2023chess}. The machine was still considered impressive decades later when AI pioneer Norbert Wiener played against it at the 1951 Paris conference on calculating machines and human thought \cite{torres1914} \cite{ieeespectrum2023chess}.
 
 Before the chess machine, the same inventor had already been building **analog calculating machines** (*máquinas algébricas*) from 1895, using floating-point arithmetic to compute the roots of polynomials up to the eighth degree, complex ones included, to a thousandth of a unit, an early rival to the purely mechanical path that ran from Babbage to the digital computer (\cite[Thomas, 2008]{thomas2008torres}).
+</div>
+
+<div class="optional md" data-headline="The Mechanical Turk: the chess machine that fooled the world (1770)">
+
+<figure>
+    <img style="max-width: 100%" src="mechanical_turk.jpg" alt="The Mechanical Turk" />
+    <figcaption class="md">\citealternativetitle{mechanicalturkimage}, shown here in Joseph Racknitz's 1789 reconstruction — wrong about the details, right that a person sat inside.</figcaption>
+</figure>
+
+Above, we met the first *practical* chess machine (1914). A century and a half before it, an earlier automaton had already captivated the world — and fooled it — for 84 years. In **1770** the Hungarian inventor **Wolfgang von Kempelen** unveiled the **Mechanical Turk**, a life-sized figure that appeared to play a strong game of chess by itself. It was, in fact, the most elaborate con in the history of the field: a hidden human grandmaster sat inside the cabinet, moving the pieces by levers and magnets, and the "memory" that let it beat any single challenger again and again was simply the size of a human brain. Yet it toured for 84 years, won most of its games — including, it was claimed, against **Napoleon Bonaparte** and **Benjamin Franklin** — and was not destroyed by fire until **1854** (\cite[Mechanical Turk, Wikipedia]{mechanicalturk}).
+
+The Turk matters for the history of AI for the opposite reason to its trick. It is the first machine the public was asked to *believe* could reason, and its test — can it hold its own in a real contest against a real person, over and over? — is the ancestor of the challenge-based test that would, a century and a half later, be formalized as the **Turing test**. The Turk could even *chat*: between games it answered questions from the crowd on a letterboard, in English, French, and German, on its age, its "life," and how it worked — a talking head, the direct descendant of Roger Bacon's brazen head. When the mechanism was finally explained in detail in 1857, the lesson stuck: *to tell a machine that thinks from a person hidden in a box, you need a test that is hard to fake* — the founding question of machine intelligence (\cite[Mechanical Turk, Wikipedia]{mechanicalturk}).
 </div>
 
 <div class="md" data-mathlevel="40" data-optionaltitle="The formalization of Neurons">
