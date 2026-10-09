@@ -1456,17 +1456,19 @@ const PipelineKit = (() => {
 		const dx0 = x + 20, dy0 = y + 22;
 		const ddx = (w - 40) / (cols - 1), ddy = (h - 62) / (rows - 1);
 		if (mode === 'random') {
+			const srand = i => Math.abs(Math.sin(i * 12.9898 + 78.233) * 43758.5453) % 1;
 			for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
 				const i = r * cols + c;
-				const v1 = ((i * 2654435761) >>> 0) % 100 / 100;
-				const v2 = ((i * 40503 + 12345) >>> 0) % 100 / 100;
-				const isGreen = v1 > 0.45;
-				const intensity = 0.3 + v2 * 0.7;
-				const rad = 2.5 + v2 * 2.5;
+				const v1 = srand(i);
+				const v2 = srand(i + 100);
+				const v3 = srand(i + 200);
+				const isGreen = v1 > 0.5;
+				const intensity = 0.25 + v2 * 0.75;
+				const rad = 2 + v3 * 3.5;
 				if (isGreen) {
-					ctx.fillStyle = `rgba(76,175,80,${intensity * 0.7})`;
+					ctx.fillStyle = `rgba(76,175,80,${intensity * 0.65})`;
 				} else {
-					ctx.fillStyle = `rgba(100,116,139,${intensity * 0.6})`;
+					ctx.fillStyle = `rgba(100,116,139,${intensity * 0.55})`;
 				}
 				ctx.beginPath();
 				ctx.arc(dx0 + c * ddx, dy0 + r * ddy, rad, 0, Math.PI * 2);
@@ -1630,8 +1632,8 @@ const PipelineKit = (() => {
 			}
 		}
 
-		// Dense: random (Schritt 3, 5) oder feat (Ziel/Training)
-		const denseMode = (o.step === 3 || o.step === 5) ? 'random' : 'feat';
+		// Dense: nur bei "Am Anfang: reiner Zufall" random, sonst feat
+		const denseMode = o.step === 5 ? 'random' : 'feat';
 		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense, denseMode);
 
 		// Ausgabe-Neuronen (Katze oben, Hund unten) — im Training folgt die
