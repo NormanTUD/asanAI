@@ -1445,7 +1445,7 @@ const PipelineKit = (() => {
 		ctx.globalAlpha = 1;
 	}
 
-	function drawDense(ctx, x, y, w, h, a, mode) {
+	function drawDense(ctx, x, y, w, h, a, mode, flick) {
 		if (a < 0.01) return;
 		ctx.globalAlpha = a;
 		ctx.fillStyle = '#f8fafc';
@@ -1475,15 +1475,29 @@ const PipelineKit = (() => {
 				ctx.fill();
 			}
 		} else if (mode === 'feat') {
+			const srand = i => Math.abs(Math.sin(i * 12.9898 + 78.233) * 43758.5453) % 1;
+			const fl = flick || 0;
 			for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-				const hue = 205 + ((r * cols + c) / (rows * cols - 1)) * 110;
-				ctx.fillStyle = `hsl(${hue}, 42%, 72%)`;
-				ctx.beginPath();
-				ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
-				ctx.fill();
+				const i = r * cols + c;
+				if (fl > 0.02 && srand(i + 300 + Math.floor(Math.random() * 100)) < fl * 0.6) {
+					const rv = Math.random();
+					ctx.fillStyle = rv > 0.5
+						? `rgba(76,175,80,${0.3 + Math.random() * 0.5})`
+						: `rgba(100,116,139,${0.3 + Math.random() * 0.4})`;
+					ctx.beginPath();
+					ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 2.5 + Math.random() * 2.5, 0, Math.PI * 2);
+					ctx.fill();
+				} else {
+					const hue = 205 + ((i / (rows * cols - 1))) * 110;
+					ctx.fillStyle = `hsl(${hue}, 42%, 72%)`;
+					ctx.beginPath();
+					ctx.arc(dx0 + c * ddx, dy0 + r * ddy, 3.5, 0, Math.PI * 2);
+					ctx.fill();
+				}
 			}
 			const feat = [[1, 1], [1, 3], [4, 2], [6, 2]];
 			for (const [r, c] of feat) {
+				if (fl > 0.02 && Math.random() < fl * 0.4) continue;
 				const cx = dx0 + c * ddx, cy = dy0 + r * ddy;
 				const g = ctx.createRadialGradient(cx, cy, 1, cx, cy, 9);
 				g.addColorStop(0, 'rgba(76,175,80,.5)');
@@ -1634,7 +1648,7 @@ const PipelineKit = (() => {
 
 		// Dense: nur bei "Am Anfang: reiner Zufall" random, sonst feat
 		const denseMode = o.step === 5 ? 'random' : 'feat';
-		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense, denseMode);
+		drawDense(ctx, g.denseX, g.denseY, g.denseW, g.denseH, o.aDense, denseMode, o.flick);
 
 		// Ausgabe-Neuronen (Katze oben, Hund unten) — im Training folgt die
 		// Hot-Markierung dem aktuellen Eingangs-Bild (Katze oder Hund).
