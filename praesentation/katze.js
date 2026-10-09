@@ -1577,12 +1577,16 @@ const PipelineKit = (() => {
 		const mapY0 = (H - (3 * mapW + 2 * 22)) / 2;
 		const mapYs = [mapY0, mapY0 + mapW + 22, mapY0 + 2 * (mapW + 22)];
 		const mapX2 = mapX1 + mapW + 64;
-		const denseX = mapX2 + mapW + 48;
+		const flatX = mapX2 + mapW + 24;
+		const flatW = 44;
+		const flatH = 3 * mapW + 2 * 22;
+		const flatY = mapY0;
+		const denseX = flatX + flatW + 24;
 		const denseW = 120, denseH = H * .62, denseY = (H - denseH) / 2;
 		const nCx = denseX + denseW + 80;
 		const rN = Math.min(H * .14, 44);
 		const cyMid = H / 2;
-		return { ch, ms, mapW, mapX1, mapYs, mapX2, denseX, denseW, denseH, denseY, nCx, rN, cyMid };
+		return { ch, ms, mapW, mapX1, mapYs, mapX2, flatX, flatW, flatH, flatY, denseX, denseW, denseH, denseY, nCx, rN, cyMid };
 	}
 
 	// Die komplette Szene in einem Zustand. o = Sichtbarkeits-Alphas
@@ -1595,14 +1599,15 @@ const PipelineKit = (() => {
 		const clarity = o.clarity, flick = o.flick || 0;
 
 		// Pfeile: Katze → Layer 1, Layer 1 → Layer 2 (pro Reihe),
-		// Layer 2 → Dense, Dense → Neuronen.
+		// Layer 2 → Flatten, Flatten → Dense, Dense → Neuronen.
 		MAPS.forEach((m, i) => {
 			arrow(ctx, 30 + g.ch + 6, g.cyMid, g.mapX1 - 10, g.mapYs[i] + 4 * g.ms, o.aConv);
 		});
 		MAPS.forEach((m, i) => {
 			arrow(ctx, g.mapX1 + g.mapW + 10, g.mapYs[i] + 4 * g.ms, g.mapX2 - 10, g.mapYs[i] + 4 * g.ms, o.aPart);
 		});
-		arrow(ctx, g.mapX2 + g.mapW + 10, g.cyMid, g.denseX - 10, g.cyMid, o.aDense);
+		arrow(ctx, g.mapX2 + g.mapW + 10, g.cyMid, g.flatX - 10, g.cyMid, o.aFlat);
+		arrow(ctx, g.flatX + g.flatW + 10, g.cyMid, g.denseX - 10, g.cyMid, o.aDense);
 		arrow(ctx, g.denseX + g.denseW + 10, g.cyMid, g.nCx - g.rN - 10, H * .32, o.aOut);
 		arrow(ctx, g.denseX + g.denseW + 10, g.cyMid, g.nCx - g.rN - 10, H * .74, o.aOut);
 
@@ -1644,6 +1649,30 @@ const PipelineKit = (() => {
 				drawMapSlot(ctx, g.mapX2, g.mapYs[i], g.ms, MAPS[i].label, o.aPart);
 				drawMapLit(ctx, g.mapX2, g.mapYs[i], g.ms, MAPS[i].lit, o.aPart, clarity, 3 + i, flick);
 			}
+		}
+
+		// Flatten: dünner vertikaler Balken (2D → 1D)
+		if (o.aFlat > 0.01) {
+			ctx.globalAlpha = o.aFlat;
+			ctx.fillStyle = '#f1f5f9';
+			KatzeKit.roundRect(ctx, g.flatX, g.flatY, g.flatW, g.flatH, 10);
+			ctx.fill();
+			ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.2; ctx.stroke();
+			const fCols = 2, fRows = 12;
+			const fdx0 = g.flatX + 14, fdy0 = g.flatY + 18;
+			const fddx = (g.flatW - 28) / (fCols - 1), fddy = (g.flatH - 36) / (fRows - 1);
+			for (let r = 0; r < fRows; r++) for (let c = 0; c < fCols; c++) {
+				const hue = 205 + ((r * fCols + c) / (fRows * fCols - 1)) * 80;
+				ctx.fillStyle = `hsl(${hue}, 38%, 68%)`;
+				ctx.beginPath();
+				ctx.arc(fdx0 + c * fddx, fdy0 + r * fddy, 2.5, 0, Math.PI * 2);
+				ctx.fill();
+			}
+			ctx.fillStyle = '#475569';
+			ctx.font = '700 12px Inter, system-ui, sans-serif';
+			ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+			ctx.fillText('Flatten', g.flatX + g.flatW / 2, g.flatY + g.flatH + 16);
+			ctx.globalAlpha = 1;
 		}
 
 		// Dense: nur bei "Am Anfang: reiner Zufall" random, sonst feat
@@ -1698,6 +1727,7 @@ const PipelineDemo = (() => {
 	let aConv = 0, tConvA = 0;
 	let aEdge = 0, tEdgeA = 0;
 	let aPart = 0, tPartA = 0;
+	let aFlat = 0, tFlatA = 0;
 	let aDense = 0, tDenseA = 0;
 	let aOut = 0, tOutA = 0;
 	let aLoss = 0, tLossA = 0;
@@ -1738,8 +1768,8 @@ const PipelineDemo = (() => {
 			  p: 'Filter kombinieren Verläufe zu Formen',
 			  c: '',
 			  i: '<b>Layer 2</b> reduziert weiter: aus Verläufen werden Formen. Was wir hier sehen (Augen, Nase, Mund), ist das <b>Ziel</b>, so soll es am Ende aussehen. Das Netz kann das aber noch gar nicht, es muss es sich erst antrainieren.' },
-			{ k: 'Schritt 4', t: 'Die Karten gehen<br>in <em>Dense-Layer</em>.',
-			  p: '64 Zahlen pro Karte, dicht verdrahtet',
+			{ k: 'Schritt 4', t: 'Flatten: Karten werden zu<br>einem <em>einzigen Vektor</em>.',
+			  p: '2D → 1D, dann in den Dense-Layer',
 			  c: '' },
 			{ k: 'Schritt 5', t: 'Das <em>Ziel</em>:<br>Katze = <b>100 %</b>.',
 			  p: 'So soll es am Ende sein',
@@ -1788,8 +1818,9 @@ const PipelineDemo = (() => {
 			// Layer 1 bleibt sichtbar, wenn Layer 2 erscheint, die
 			// Daten fließen von Layer 1 in Layer 2.
 			tEdgeA = step >= 1 ? 1 : 0;
-			tPartA = step >= 2 ? 1 : 0;
-			tDenseA = step >= 3 ? 1 : 0;
+		tPartA = step >= 2 ? 1 : 0;
+		tFlatA = step >= 3 ? 1 : 0;
+		tDenseA = step >= 3 ? 1 : 0;
 			tOutA = step >= 4 ? 1 : 0;
 			// Loss-Panel (Wert + Mini-Lernkurve) nur beim Training;
 			// die Loss-Werte stehen ohnehin in den Schritt-Texten.
@@ -1806,8 +1837,9 @@ const PipelineDemo = (() => {
 			aCat = KatzeKit.lerp(aCat, tCatA, k * 1.0);
 			aConv = KatzeKit.lerp(aConv, tConvA, k * 1.5);
 			aEdge = KatzeKit.lerp(aEdge, tEdgeA, k * 1.5);
-			aPart = KatzeKit.lerp(aPart, tPartA, k * 1.5);
-			aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
+		aPart = KatzeKit.lerp(aPart, tPartA, k * 1.5);
+		aFlat = KatzeKit.lerp(aFlat, tFlatA, k * 1.5);
+		aDense = KatzeKit.lerp(aDense, tDenseA, k * 1.5);
 			aOut = KatzeKit.lerp(aOut, tOutA, k * 1.5);
 			aLoss = KatzeKit.lerp(aLoss, tLossA, k * 1.5);
 			aLabel = KatzeKit.lerp(aLabel, tLabelA, k * 1.5);
@@ -1876,7 +1908,7 @@ const PipelineDemo = (() => {
 			else if (S.step === 7) { pCat = 95; pDog = 5; }
 
 			PipelineKit.drawScene(ctx, S.W, S.H, cat, g, {
-				aCat, aConv, aEdge, aPart, aDense, aOut, aLoss, aLabel,
+				aCat, aConv, aEdge, aPart, aFlat, aDense, aOut, aLoss, aLabel,
 				clarity, flick, step: S.step, trainP, mixCD,
 				outP: { pCat, pDog, hotCat, hotDog }
 			});
