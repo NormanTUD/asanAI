@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phasenübergänge</title>
+<style>
+  :root{
+    --ice:#7fd4ff; --water:#3b82f6; --vapor:#e2e8f0;
+    --hot:#ff6b4a; --gold:#ffd166;
+    --bg0:#05070f; --bg1:#0b1020;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--bg0);
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:#e8eefc; -webkit-font-smoothing:antialiased}
+
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:28px;
+    opacity:0;pointer-events:none;transform:scale(.97);
+    transition:opacity .9s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1)}
+  .slide.on{opacity:1;pointer-events:auto;transform:scale(1)}
+
+  h1{font-size:clamp(34px,6.2vw,86px);font-weight:200;letter-spacing:-.03em;
+     line-height:1.02;text-align:center}
+  h1 b{font-weight:700}
+  .sub{font-size:clamp(13px,1.6vw,20px);font-weight:300;opacity:.5;letter-spacing:.22em;
+       text-transform:uppercase;text-align:center}
+  .huge{font-size:clamp(60px,15vw,190px);font-weight:100;letter-spacing:-.05em;line-height:.9}
+
+  canvas{display:block}
+
+  /* ---------- Slide 0: Titel ---------- */
+  #t0 .glow{position:absolute;width:70vmin;height:70vmin;border-radius:50%;
+    background:radial-gradient(circle,rgba(59,130,246,.35),transparent 68%);
+    filter:blur(42px);animation:breathe 7s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.22);opacity:1}}
+
+  /* ---------- Thermometer-Slider ---------- */
+  .ctrl{display:flex;flex-direction:column;align-items:center;gap:14px;z-index:5}
+  .track{position:relative;width:min(640px,78vw);height:14px;border-radius:99px;
+    background:linear-gradient(90deg,#1b4b7a,#7fd4ff 22%,#3b82f6 45%,#ffd166 72%,#ff6b4a);
+    box-shadow:0 0 34px rgba(80,160,255,.3),inset 0 0 0 1px rgba(255,255,255,.1);
+    cursor:pointer}
+  .track input{position:absolute;inset:-14px 0;width:100%;height:42px;opacity:0;cursor:pointer;margin:0}
+  .knob{position:absolute;top:50%;width:30px;height:30px;border-radius:50%;
+    background:#fff;transform:translate(-50%,-50%);pointer-events:none;
+    box-shadow:0 0 0 4px rgba(255,255,255,.14),0 6px 24px rgba(0,0,0,.55);
+    transition:box-shadow .3s}
+  .marks{position:relative;width:min(640px,78vw);height:18px;font-size:10px;
+    letter-spacing:.14em;opacity:.42;text-transform:uppercase}
+  .marks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+  .readout{font-size:clamp(28px,5vw,58px);font-weight:200;font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em;transition:color .5s}
+  .phaseword{font-size:clamp(11px,1.5vw,16px);letter-spacing:.42em;text-transform:uppercase;
+    opacity:.75;height:1.4em;transition:color .5s}
+
+  /* ---------- Energie-Balken (latente Wärme) ---------- */
+  .bars{display:flex;gap:4px;align-items:flex-end;height:120px}
+  .bar{width:26px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--gold),#ff6b4a);
+    transition:height .35s cubic-bezier(.2,.8,.2,1)}
+
+  /* ---------- Nav ---------- */
+  #nav{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);
+    display:flex;gap:11px;z-index:50}
+  .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.2);
+    cursor:pointer;transition:all .4s}
+  .dot.on{background:var(--gold);width:30px;border-radius:99px;box-shadow:0 0 16px var(--gold)}
+  .arrow{position:fixed;top:50%;transform:translateY(-50%);z-index:50;
+    width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.13);
+    background:rgba(255,255,255,.03);backdrop-filter:blur(8px);
+    display:grid;place-items:center;cursor:pointer;transition:all .3s;font-size:19px;color:#fff;
+    user-select:none}
+  .arrow:hover{background:rgba(255,255,255,.13);transform:translateY(-50%) scale(1.1)}
+  #prev{left:22px} #next{right:22px}
+  .hint{position:fixed;bottom:62px;left:50%;transform:translateX(-50%);
+    font-size:11px;letter-spacing:.3em;text-transform:uppercase;opacity:.25;z-index:50}
+
+  .fadeup{animation:fu 1s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes fu{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  .d1{animation-delay:.2s}.d2{animation-delay:.45s}.d3{animation-delay:.7s}.d4{animation-delay:.95s}
+
+  .tri{display:flex;gap:clamp(20px,6vw,90px);align-items:flex-start;flex-wrap:wrap;
+       justify-content:center}
+  .tri figure{display:flex;flex-direction:column;align-items:center;gap:16px}
+  .tri figcaption{font-size:11px;letter-spacing:.34em;text-transform:uppercase;opacity:.6}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 0 ───────────────────────────────── -->
+  <section class="slide on" id="t0">
+    <div class="glow"></div>
+    <canvas id="cTitle" width="420" height="420" style="z-index:2"></canvas>
+    <h1 style="z-index:2" class="fadeup d2">Dasselbe Ding.<br><b>Drei Gesichter.</b></h1>
+    <div class="sub fadeup d3" style="z-index:2">Phasenübergänge</div>
+  </section>
+
+  <!-- 1 ───────────────────────────────── -->
+  <section class="slide" id="t1">
+    <div class="sub fadeup">Nichts wird hinzugefügt. Nichts verschwindet.</div>
+    <div class="tri">
+      <figure class="fadeup d1"><canvas class="mini" data-phase="0" width="230" height="230"></canvas><figcaption>fest</figcaption></figure>
+      <figure class="fadeup d2"><canvas class="mini" data-phase="1" width="230" height="230"></canvas><figcaption>flüssig</figcaption></figure>
+      <figure class="fadeup d3"><canvas class="mini" data-phase="2" width="230" height="230"></canvas><figcaption>gasförmig</figcaption></figure>
+    </div>
+    <h1 class="fadeup d4" style="font-size:clamp(22px,3.4vw,44px)">Nur <b>Energie</b> kommt dazu.</h1>
+  </section>
+
+  <!-- 2 ───────────────────────────────── -->
+  <section class="slide" id="t2">
+    <div class="sub">Zieh daran. Spür den Übergang.</div>
+    <canvas id="cMain"></canvas>
+    <div class="ctrl">
+      <div class="readout" id="readT">−40 °C</div>
+      <div class="track" id="track">
+        <input type="range" id="slider" min="-40" max="140" step="0.5" value="-40">
+        <div class="knob" id="knob"></div>
+      </div>
+      <div class="marks" id="marks">
+        <span style="left:22.2%">0 °C</span><span style="left:77.8%">100 °C</span>
+      </div>
+      <div class="phaseword" id="phaseWord">fest</div>
+    </div>
+  </section>
+
+  <!-- 3 ───────────────────────────────── -->
+  <section class="slide" id="t3">
+    <div class="sub fadeup">Das Geheimnis</div>
+    <canvas id="cGraph" width="860" height="380" class="fadeup d1"></canvas>
+    <h1 class="fadeup d2" style="font-size:clamp(20px,3vw,40px);max-width:820px">
+      Beim Übergang steigt die Temperatur <b>nicht</b>.<br>
+      <span style="opacity:.55;font-size:.62em">Die Energie zerreißt die Bindungen — statt zu heizen.</span>
+    </h1>
+  </section>
+
+  <!-- 4 ───────────────────────────────── -->
+  <section class="slide" id="t4">
+    <div class="sub fadeup">Warum Schwitzen funktioniert</div>
+    <canvas id="cEvap" width="560" height="340" class="fadeup d1"></canvas>
+    <h1 class="fadeup d2" style="font-size:clamp(20px,3vw,40px);max-width:760px">
+      Die <b>schnellsten</b> fliegen weg.<br>
+      <span style="opacity:.55;font-size:.62em">Zurück bleibt der langsame Rest. Also: kälter.</span>
+    </h1>
+  </section>
+
+  <!-- 5 ───────────────────────────────── -->
+  <section class="slide" id="t5">
+    <canvas id="cEnd" width="420" height="420" style="position:absolute;opacity:.85"></canvas>
+    <h1 class="fadeup d1" style="z-index:2">Phasenübergang<br>
+      <b style="font-size:.62em;font-weight:300;opacity:.72">= wenn Zusammenhalt<br>gegen Bewegung verliert.</b></h1>
+    <div class="sub fadeup d3" style="z-index:2">Das war's. Wirklich.</div>
+  </section>
+
+</div>
+
+<div id="nav"></div>
+<div class="arrow" id="prev">‹</div>
+<div class="arrow" id="next">›</div>
+<div class="hint">← → oder Klick</div>
+
+<script>
+/* ═══════════════ Helfer ═══════════════ */
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const smooth=t=>t*t*(3-2*t);
+const DPR=Math.min(devicePixelRatio||1,2);
+
+function fit(c,w,h){
+  c.style.width=w+'px'; c.style.height=h+'px';
+  c.width=w*DPR; c.height=h*DPR;
+  const x=c.getContext('2d'); x.setTransform(DPR,0,0,DPR,0,0); return x;
+}
+
+/* Farbe nach Temperatur */
+function phaseColor(T){
+  if(T<0)   return [127,212,255];
+  if(T<100) {const t=T/100; return [lerp(110,96,t),lerp(170,165,t),lerp(255,250,t)];}
+  return [226,232,240];
+}
+
+/* ═══════════════ Partikel-Engine ═══════════════ */
+class Sim{
+  constructor(ctx,W,H,N,cols){
+    this.ctx=ctx;this.W=W;this.H=H;this.cols=cols;
+    this.rows=Math.ceil(N/cols); this.N=this.cols*this.rows;
+    this.p=[];
+    const gx=W/(cols+1), gy=Math.min(gx, H/(this.rows+1));
+    const ox=(W-gx*(cols-1))/2, oy=H-gy*0.9-gy*(this.rows-1);
+    for(let r=0;r<this.rows;r++)for(let c=0;c<cols;c++){
+      const hx=ox+c*gx+(r%2?gx*0.25:-gx*0.25), hy=oy+r*gy;
+      this.p.push({x:hx,y:hy,hx,hy,vx:0,vy:0,ph:Math.random()*Math.PI*2,
+                   seed:Math.random(),r:gx*0.3});
+    }
+    this.R=gx*0.3;
+  }
+  step(T,dt){
+    // 0..1 Faktoren
+    const melt=smooth(clamp((T-(-6))/22,0,1));     // fest → flüssig
+    const boil=smooth(clamp((T-94)/26,0,1));        // flüssig → gas
+    const heat=clamp((T+40)/180,0,1);
+    const W=this.W,H=this.H,R=this.R;
+
+    for(const q of this.p){
+      q.ph+=dt*(1.5+heat*7);
+      const jig=(0.35+heat*1.6);
+
+      if(boil<0.02){
+        // --- FEST + FLÜSSIG ---
+        // Gitterkraft (nimmt beim Schmelzen ab)
+        const k=lerp(0.055,0.0,melt);
+        q.vx+=(q.hx-q.x)*k; q.vy+=(q.hy-q.y)*k;
+        // Vibration
+        q.vx+=Math.cos(q.ph*1.7+q.seed*9)*jig*0.42;
+        q.vy+=Math.sin(q.ph*1.3+q.seed*5)*jig*0.42;
+        // Flüssig: driften + Schwerkraft + Oberfläche
+        if(melt>0.01){
+          q.vy+=0.17*melt;
+          q.vx+=Math.sin(q.ph*0.4+q.seed*20)*melt*0.5;
+        }
+        q.vx*=lerp(0.86,0.90,melt); q.vy*=lerp(0.86,0.90,melt);
+      }else{
+        // --- GAS ---
+        const sp=1.0+heat*2.2;
+        q.vx+=(Math.random()-0.5)*sp*boil*1.3;
+        q.vy+=(Math.random()-0.5)*sp*boil*1.3;
+        q.vy-=0.1*boil;                        // steigt auf
+        q.vy+=(q.hy-q.y)*0.00035*(1-boil);
+        q.vx*=0.985; q.vy*=0.985;
+        const m=Math.hypot(q.vx,q.vy),mx=2.6+heat*4;
+        if(m>mx){q.vx*=mx/m;q.vy*=mx/m;}
+      }
+
+      q.x+=q.vx*dt*60/16; q.y+=q.vy*dt*60/16;
+
+      // Wände
+      const pad=R;
+      if(q.x<pad){q.x=pad;q.vx=Math.abs(q.vx)*0.86}
+      if(q.x>W-pad){q.x=W-pad;q.vx=-Math.abs(q.vx)*0.86}
+      if(q.y<pad){q.y=pad;q.vy=Math.abs(q.vy)*0.86}
+      if(q.y>H-pad){q.y=H-pad;q.vy=-Math.abs(q.vy)*0.86}
+    }
+
+    // einfache Abstoßung (nur flüssig/fest, Gitter-Nachbarn reichen nicht)
+    if(boil<0.4){
+      const P=this.p, n=P.length, d=R*1.95;
+      for(let i=0;i<n;i++){
+        const a=P[i];
+        for(let j=i+1;j<Math.min(n,i+14);j++){
+          const b=P[j],dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy;
+          if(d2<d*d&&d2>0.01){
+            const dd=Math.sqrt(d2),f=(d-dd)/dd*0.22;
+            a.x-=dx*f;a.y-=dy*f;b.x+=dx*f;b.y+=dy*f;
+          }
+        }
+      }
+    }
+    this.melt=melt;this.boil=boil;
+  }
+  draw(T){
+    const x=this.ctx,W=this.W,H=this.H;
+    x.clearRect(0,0,W,H);
+    const [r,g,b]=phaseColor(T);
+    const solid=1-this.melt;
+
+    // Bindungen zeichnen (fest = stark, flüssig = schwach, gas = keine)
+    const bond=Math.max(0,1-this.boil)*(0.1+solid*0.9);
+    if(bond>0.03){
+      const P=this.p,d=this.R*2.6;
+      x.lineWidth=1.25;
+      for(let i=0;i<P.length;i++){
+        const a=P[i];
+        for(let j=i+1;j<Math.min(P.length,i+14);j++){
+          const c=P[j],dx=c.x-a.x,dy=c.y-a.y,dd=Math.hypot(dx,dy);
+          if(dd<d){
+            x.strokeStyle=`rgba(${r},${g},${b},${bond*(1-dd/d)*0.55})`;
+            x.beginPath();x.moveTo(a.x,a.y);x.lineTo(c.x,c.y);x.stroke();
+          }
+        }
+      }
+    }
+    // Partikel
+    x.globalCompositeOperation='lighter';
+    for(const q of this.p){
+      const rad=this.R*(1+this.boil*0.15);
+      const gr=x.createRadialGradient(q.x,q.y,0,q.x,q.y,rad*2.4);
+      gr.addColorStop(0,`rgba(255,255,255,${0.9-this.boil*0.35})`);
+      gr.addColorStop(.32,`rgba(${r},${g},${b},${0.85-this.boil*0.4})`);
+      gr.addColorStop(1,`rgba(${r},${g},${b},0)`);
+      x.fillStyle=gr;x.beginPath();x.arc(q.x,q.y,rad*2.4,0,7);x.fill();
+    }
+    x.globalCompositeOperation='source-over';
+  }
+}
+
+/* ═══════════════ Slide 0 + 5 : Titel-Orb ═══════════════ */
+function orb(canvas,speedFn){
+  const x=fit(canvas,canvas.width,canvas.height);
+  const W=canvas.width/DPR,H=canvas.height/DPR,cx=W/2,cy=H/2;
+  const N=150,ps=[];
+  for(let i=0;i<N;i++){
+    const a=Math.random()*7,rr=Math.pow(Math.random(),.55)*W*0.37;
+    ps.push({a,rr,s:0.2+Math.random()*0.8,o:Math.random()*7});
+  }
+  let t=0;
+  return ()=>{
+    t+=0.012; x.clearRect(0,0,W,H);
+    const ph=speedFn(t);                       // 0 fest … 1 gas
+    x.globalCompositeOperation='lighter';
+    for(const p of ps){
+      const wob=ph*26, chaos=ph*ph;
+      const ang=p.a+t*p.s*(0.15+ph*1.6);
+      const rad=p.rr*(1+chaos*0.85)+Math.sin(t*2+p.o)*wob;
+      const px=cx+Math.cos(ang)*rad, py=cy+Math.sin(ang)*rad*(1-ph*0.1);
+      const c=phaseColor(ph<.4?-20:ph<.75?50:120);
+      const gr=x.createRadialGradient(px,py,0,px,py,9);
+      gr.addColorStop(0,'rgba(255,255,255,.85)');
+      gr.addColorStop(.3,`rgba(${c[0]},${c[1]},${c[2]},.7)`);
+      gr.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},0)`);
+      x.fillStyle=gr;x.beginPath();x.arc(px,py,9,0,7);x.fill();
+    }
+    x.globalCompositeOperation='source-over';
+  };
+}
+
+/* ═══════════════ Slide 1 : drei Minis ═══════════════ */
+const minis=[...document.querySelectorAll('.mini')].map(c=>{
+  const x=fit(c,230,230);
+  const s=new Sim(x,230,230,64,8);
+  const T=[-30,45,125][+c.dataset.phase];
+  for(let i=0;i<120;i++)s.step(T,0.016);      // einschwingen
+  return ()=>{s.step(T,0.016);s.draw(T)};
+});
+
+/* ═══════════════ Slide 2 : Hauptsimulation ═══════════════ */
+const cMain=document.getElementById('cMain');
+const MW=Math.min(760,innerWidth*0.86), MH=Math.min(330,innerHeight*0.38);
+const mx=fit(cMain,MW,MH);
+const sim=new Sim(mx,MW,MH,340,28);
+const slider=document.getElementById('slider'),knob=document.getElementById('knob'),
+      readT=document.getElementById('readT'),pw=document.getElementById('phaseWord');
+let Tdisp=-40;
+function syncSlider(){
+  const v=+slider.value, t=(v+40)/180;
+  knob.style.left=(t*100)+'%';
+  const c=phaseColor(v);
+  knob.style.boxShadow=`0 0 0 4px rgba(${c[0]},${c[1]},${c[2]},.3),0 0 28px rgba(${c[0]},${c[1]},${c[2]},.8)`;
+  readT.textContent=(v<0?'−':'')+Math.abs(Math.round(v))+' °C';
+  readT.style.color=`rgb(${c[0]},${c[1]},${c[2]})`;
+  let w='fest', wc='#7fd4ff';
+  if(v>=-2&&v<=4){w='… schmilzt …';wc='#ffd166'}
+  else if(v>4&&v<96){w='flüssig';wc='#6aa6ff'}
+  else if(v>=96&&v<=106){w='… verdampft …';wc='#ff6b4a'}
+  else if(v>106){w='gasförmig';wc='#e2e8f0'}
+  pw.textContent=w; pw.style.color=wc;
+}
+slider.addEventListener('input',syncSlider);
+syncSlider();
+for(let i=0;i<150;i++)sim.step(-40,0.016);   // einschwingen
+
+function drawMain(dt){
+  const target=+slider.value;
+  Tdisp=lerp(Tdisp,target,0.08);             // weiche Trägheit
+  sim.step(Tdisp,dt);
+  sim.draw(Tdisp);
+}
+
+/* ═══════════════ Slide 3 : Heizkurve mit Plateaus ═══════════════ */
+const cG=document.getElementById('cGraph');
+const gx=fit(cG,860,380);
+const GW=860,GH=380,PAD=56;
+
+/* Energie (0..1) → Temperatur. Zwei flache Plateaus = latente Wärme */
+const SEGS=[
+  {e0:0.00,e1:0.14,T0:-40,T1:0,   lab:'fest',       col:'#7fd4ff'},
+  {e0:0.14,e1:0.34,T0:0,  T1:0,   lab:'SCHMELZEN',  col:'#ffd166'},
+  {e0:0.34,e1:0.56,T0:0,  T1:100, lab:'flüssig',    col:'#3b82f6'},
+  {e0:0.56,e1:0.92,T0:100,T1:100, lab:'VERDAMPFEN', col:'#ff6b4a'},
+  {e0:0.92,e1:1.00,T0:100,T1:140, lab:'Gas',        col:'#e2e8f0'}
+];
+function curveT(e){
+  for(const s of SEGS) if(e<=s.e1) return lerp(s.T0,s.T1,(e-s.e0)/(s.e1-s.e0||1));
+  return 140;
+}
+const EX=e=>PAD+e*(GW-PAD*1.4);
+const EY=T=>GH-PAD-((T+40)/180)*(GH-PAD*1.7);
+
+let gE=0;
+function drawGraph(dt){
+  gE=(gE+dt*0.13)%1.35;
+  const e=clamp(gE,0,1);
+  gx.clearRect(0,0,GW,GH);
+
+  // Hilfslinien bei 0 °C und 100 °C
+  gx.setLineDash([3,7]); gx.lineWidth=1;
+  for(const T of [0,100]){
+    gx.strokeStyle='rgba(255,255,255,.14)';
+    gx.beginPath();gx.moveTo(PAD-14,EY(T));gx.lineTo(GW-PAD*0.4,EY(T));gx.stroke();
+    gx.setLineDash([]);
+    gx.fillStyle='rgba(255,255,255,.4)';gx.font='300 12px Inter,sans-serif';
+    gx.textAlign='right';gx.fillText(T+'°',PAD-20,EY(T)+4);
+    gx.setLineDash([3,7]);
+  }
+  gx.setLineDash([]);
+
+  // Kurve segmentweise, Plateaus dicker + leuchtend
+  for(const s of SEGS){
+    const flat=s.T0===s.T1;
+    gx.strokeStyle=s.col;
+    gx.lineWidth=flat?6:3;
+    gx.lineCap='round';
+    gx.shadowBlur=flat?26:10; gx.shadowColor=s.col;
+    gx.globalAlpha=e>=s.e0?1:0.16;
+    gx.beginPath();
+    gx.moveTo(EX(s.e0),EY(s.T0));
+    gx.lineTo(EX(Math.min(s.e1,Math.max(s.e0,e>s.e1?s.e1:e))),EY(curveT(clamp(e,s.e0,s.e1))));
+    gx.stroke();
+    // Geisterkurve (voller Verlauf, schwach)
+    gx.globalAlpha=0.12;gx.shadowBlur=0;gx.lineWidth=flat?6:3;
+    gx.beginPath();gx.moveTo(EX(s.e0),EY(s.T0));gx.lineTo(EX(s.e1),EY(s.T1));gx.stroke();
+    gx.globalAlpha=1;
+
+    // Plateau-Beschriftung
+    if(flat){
+      gx.shadowBlur=0;gx.fillStyle=s.col;gx.textAlign='center';
+      gx.font='500 10px Inter,sans-serif';
+      gx.globalAlpha=e>=s.e0?0.95:0.25;
+      gx.fillText(s.lab,(EX(s.e0)+EX(s.e1))/2,EY(s.T0)-18);
+      gx.globalAlpha=1;
+    }
+  }
+  gx.shadowBlur=0;
+
+  // laufender Punkt
+  const px=EX(e),py=EY(curveT(e));
+  const seg=SEGS.find(s=>e<=s.e1)||SEGS[4];
+  const gr=gx.createRadialGradient(px,py,0,px,py,22);
+  gr.addColorStop(0,'rgba(255,255,255,1)');
+  gr.addColorStop(.25,seg.col);
+  gr.addColorStop(1,seg.col+'00');
+  gx.fillStyle=gr;gx.beginPath();gx.arc(px,py,22,0,7);gx.fill();
+
+  // Achsenbeschriftung
+  gx.fillStyle='rgba(255,255,255,.3)';gx.font='300 11px Inter,sans-serif';
+  gx.textAlign='center';
+  gx.fillText('→  zugeführte Energie',GW/2,GH-14);
+  gx.save();gx.translate(16,GH/2);gx.rotate(-Math.PI/2);
+  gx.fillText('Temperatur  →',0,0);gx.restore();
+}
+
+/* ═══════════════ Slide 4 : Verdunstungskühlung ═══════════════ */
+const cE=document.getElementById('cEvap');
+const ex=fit(cE,560,340);
+const EW=560,EH=340,LINE=EH*0.42;
+const drops=[];
+for(let i=0;i<110;i++){
+  drops.push({
+    x:60+Math.random()*(EW-120),
+    y:LINE+20+Math.random()*(EH-LINE-50),
+    vx:(Math.random()-.5)*.7, vy:(Math.random()-.5)*.7,
+    E:Math.random(), gone:false
+  });
+}
+let meanE=0.5;
+function drawEvap(dt){
+  ex.clearRect(0,0,EW,EH);
+
+  // Wasseroberfläche
+  ex.strokeStyle='rgba(127,212,255,.3)';ex.lineWidth=1.5;
+  ex.beginPath();
+  for(let x=40;x<=EW-40;x+=6){
+    const y=LINE+Math.sin(x*0.03+performance.now()*0.0015)*3;
+    x===40?ex.moveTo(x,y):ex.lineTo(x,y);
+  }
+  ex.stroke();
+  ex.fillStyle='rgba(59,130,246,.07)';
+  ex.fillRect(40,LINE,EW-80,EH-LINE-20);
+
+  let sum=0,cnt=0;
+  ex.globalCompositeOperation='lighter';
+  for(const d of drops){
+    if(d.gone){
+      d.y-=1.6; d.x+=d.vx*1.2; d.E=Math.min(1,d.E+0.004);
+      if(d.y<-20){ // Recycling: neues, langsames Teilchen taucht auf
+        d.gone=false; d.y=EH-40; d.x=60+Math.random()*(EW-120);
+        d.E=Math.random()*0.45; d.vx=(Math.random()-.5)*.6; d.vy=(Math.random()-.5)*.6;
+      }
+    }else{
+      // Energieaustausch durch Stöße (Zufallswanderung)
+      d.E=clamp(d.E+(Math.random()-.5)*0.05,0,1);
+      const sp=0.3+d.E*2.4;
+      d.vx+=(Math.random()-.5)*0.3; d.vy+=(Math.random()-.5)*0.3;
+      const m=Math.hypot(d.vx,d.vy);
+      d.vx=d.vx/m*sp; d.vy=d.vy/m*sp;
+      d.x+=d.vx; d.y+=d.vy;
+      if(d.x<48){d.x=48;d.vx*=-1} if(d.x>EW-48){d.x=EW-48;d.vx*=-1}
+      if(d.y>EH-28){d.y=EH-28;d.vy*=-1}
+      if(d.y<LINE+6){d.y=LINE+6;d.vy=Math.abs(d.vy)}
+      // Nur die SCHNELLSTEN entkommen
+      if(d.E>0.88 && d.y<LINE+22 && Math.random()<0.06){ d.gone=true; d.vy=-2; }
+      sum+=d.E;cnt++;
+    }
+    const col=d.gone?[255,107,74]:[lerp(110,255,d.E),lerp(170,209,d.E),lerp(255,102,d.E)];
+    const r=d.gone?7:5.5;
+    const gr=ex.createRadialGradient(d.x,d.y,0,d.x,d.y,r*2.2);
+    gr.addColorStop(0,'rgba(255,255,255,.9)');
+    gr.addColorStop(.3,`rgba(${col[0]|0},${col[1]|0},${col[2]|0},.8)`);
+    gr.addColorStop(1,`rgba(${col[0]|0},${col[1]|0},${col[2]|0},0)`);
+    ex.fillStyle=gr;ex.beginPath();ex.arc(d.x,d.y,r*2.2,0,7);ex.fill();
+  }
+  ex.globalCompositeOperation='source-over';
+
+  meanE=lerp(meanE,cnt?sum/cnt:0.5,0.02);
+  // Thermometer-Anzeige der Restflüssigkeit
+  ex.fillStyle='rgba(255,255,255,.45)';ex.font='300 11px Inter,sans-serif';
+  ex.textAlign='left';
+  ex.fillText('Ø Energie im Wasser',44,EH-6);
+  const bw=120;
+  ex.fillStyle='rgba(255,255,255,.1)';ex.fillRect(190,EH-15,bw,7);
+  const c2=[lerp(110,255,meanE),lerp(170,209,meanE),lerp(255,102,meanE)];
+  ex.fillStyle=`rgb(${c2[0]|0},${c2[1]|0},${c2[2]|0})`;
+  ex.fillRect(190,EH-15,bw*meanE,7);
+}
+
+/* ═══════════════ Orbs für Titel & Ende ═══════════════ */
+const orbTitle=orb(document.getElementById('cTitle'),
+  t=>(Math.sin(t*0.35)*0.5+0.5));                    // atmet durch alle Phasen
+const orbEnd=orb(document.getElementById('cEnd'),
+  t=>smooth(clamp((Math.sin(t*0.28)*0.5+0.5),0,1)));
+
+/* ═══════════════ Slide-Steuerung ═══════════════ */
+const slides=[...document.querySelectorAll('.slide')];
+const nav=document.getElementById('nav');
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i?'':' on');
+  d.onclick=()=>go(i);
+  nav.appendChild(d);
+});
+const dots=[...nav.children];
+let cur=0;
+function go(i){
+  cur=clamp(i,0,slides.length-1);
+  slides.forEach((s,k)=>s.classList.toggle('on',k===cur));
+  dots.forEach((d,k)=>d.classList.toggle('on',k===cur));
+  // Einblend-Animationen neu triggern
+  slides[cur].querySelectorAll('.fadeup').forEach(el=>{
+    el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+  });
+  if(cur===3) gE=0;
+}
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('prev').onclick=()=>go(cur-1);
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(cur+1);
+  if(e.key==='ArrowLeft')go(cur-1);
+});
+// Wischen auf Touch
+let tx=0;
+addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>60) go(cur+(dx<0?1:-1));
+},{passive:true});
+
+/* ═══════════════ Render-Loop ═══════════════ */
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(0.033,(now-last)/1000); last=now;
+  switch(cur){
+    case 0: orbTitle(); break;
+    case 1: minis.forEach(f=>f()); break;
+    case 2: drawMain(dt); break;
+    case 3: drawGraph(dt); break;
+    case 4: drawEvap(dt); break;
+    case 5: orbEnd(); break;
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

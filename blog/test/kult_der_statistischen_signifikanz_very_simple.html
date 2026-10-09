@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Kult der statistischen Signifikanz — Ganz einfach erklärt</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0;
+  --oomph:#d9480f; --oomph-soft:#fdf0e7;
+  --prec:#0f766e;  --prec-soft:#e6f2f0;
+  --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --rose:#be185d;  --rose-soft:#fdeef4;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:0 20px 90px}
+header{padding:72px 0 8px;text-align:left}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--violet-soft);color:var(--violet);border:1px solid #ddd3f2;padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(30px,5.5vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:16px}
+h1 em{font-style:normal;color:var(--oomph)}
+.sub{font-size:17px;color:var(--dim);max-width:58ch}
+h2{font-size:clamp(21px,3.4vw,28px);font-weight:760;letter-spacing:-.015em;margin:56px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--prec);vertical-align:middle;margin-right:10px;border:1px solid #cde5e1;background:var(--prec-soft);border-radius:99px;padding:3px 10px}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b{color:var(--ink)}
+.o{color:var(--oomph);font-weight:700}
+.p_{color:var(--prec);font-weight:700}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(60,50,20,.05)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--prec);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:#e3dcc9;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--prec);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--prec);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].m::-webkit-slider-thumb{background:var(--oomph)}
+input[type=range].m::-moz-range-thumb{background:var(--oomph)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+.ctlrow{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{background:#f3ede0;transform:translateY(-1px)}
+button.on{background:var(--prec);color:#fff;border-color:var(--prec);font-weight:660}
+button.o{border-color:#f0cdb8}
+button.o:hover{background:var(--oomph-soft)}
+button.p{border-color:#cde5e1}
+button.p:hover{background:var(--prec-soft)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:110px;background:var(--prec-soft);border:1px solid #d5e8e4;border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--prec)}
+.ro .box.o{background:var(--oomph-soft);border-color:#f0cdb8}
+.ro .box.o .v{color:var(--oomph)}
+.ro .box.v{background:var(--violet-soft);border-color:#ddd3f2}
+.ro .box.v .v{color:var(--violet)}
+.ro .box.r{background:var(--rose-soft);border-color:#f2cdd9}
+.ro .box.r .v{color:var(--rose)}
+.badge-out{font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;display:inline-block;margin-top:10px}
+.badge-out.ok{background:var(--prec-soft);color:var(--prec);border:1px solid #cde5e1}
+.badge-out.warn{background:var(--violet-soft);color:var(--violet);border:1px solid #ddd3f2}
+.badge-out.bad{background:var(--rose-soft);color:var(--rose);border:1px solid #f2cdd9}
+.note{border-left:4px solid var(--prec);background:var(--prec-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.quote{border-left:3px solid var(--violet);background:var(--violet-soft);border-radius:0 12px 12px 0;padding:12px 15px;margin:16px 0;font-size:14px;font-style:italic;color:var(--ink)}
+.quote cite{display:block;font-style:normal;font-size:11.5px;color:var(--faint);margin-top:7px;font-family:var(--mono)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{font-size:12px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--dim);cursor:pointer;transition:.15s}
+.chip.on{background:var(--prec);color:#fff;border-color:var(--prec)}
+.choose{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.choose .q{font-size:14px;color:var(--ink);font-weight:660;margin-bottom:8px}
+.takeaway{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px;font-size:14.5px;color:var(--dim);display:flex;gap:12px}
+.takeaway .num{font-family:var(--mono);font-weight:700;color:var(--oomph);font-size:15px;flex:none}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+li b{color:var(--ink)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--prec)}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Ganz einfach erklärt · nur Grundmathematik · ca. 10 Minuten</div>
+  <h1>Der Kult der<br>statistischen <em>Signifikanz</em></h1>
+  <p class="sub">Eine Behauptung: <b>William Sealy Gosset</b> — der Braumeister, der den t‑Test erfand — hatte recht. Und sein genialer, schwieriger Freund <b>Ronald A. Fisher</b> hatte unrecht. <em>Passgenauigkeit ist nicht dasselbe wie Bedeutung.</em> In 8 oder 9 von 10 Artikeln der führenden Fachzeitschriften wird trotzdem genau diese Gleichsetzung gemacht.</p>
+  <div class="chips">
+    <span class="chip">5 Experimente zum Spielen</span>
+    <span class="chip">0 Formeln zum Rechnen</span>
+    <span class="chip">5 große „Aha“-Momente</span>
+  </div>
+</header>
+
+<h2><span class="n">1</span>Deine Mutter ruft an — zwei Pillen</h2>
+<p>Sie will abnehmen. Du bist der Statistiker in der Familie. Du findest zwei Pillen. Gleicher Preis, gleiche Nebenwirkungen — aber sie unterscheiden sich in <span class="o">Wirkungsstärke</span> und <span class="p_">Präzision</span>. Sie nimmt genau eine.</p>
+<div class="demo">
+  <h3>Spiele es durch: 400 simulierte Mütter</h3>
+  <p class="dsub">Jeder Punkt ist eine Frau, die die Pille genommen hat. Die Achse zeigt, wie viele Pfund sie wirklich verloren hat. Ziehe die Regler und drücke „Neu“.</p>
+  <canvas id="c-pills" width="400" height="300"></canvas>
+  <div class="ctlrow">
+    <div class="ctl"><div class="ctl-lab"><span>Oomph: mittlerer Verlust</span><b id="v-mo">20,0</b></div><input type="range" id="s-mo" class="m" min="2" max="35" step="0.5" value="20"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Oomph: Streuung ±</span><b id="v-po">10,0</b></div><input type="range" id="s-po" class="m" min="2" max="20" step="0.5" value="10"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Precision: mittlerer Verlust</span><b id="v-mp">5,0</b></div><input type="range" id="s-mp" min="1" max="20" step="0.5" value="5"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Precision: Streuung ±</span><b id="v-pp">0,5</b></div><input type="range" id="s-pp" min="0.2" max="6" step="0.1" value="0.5"></div>
+  </div>
+  <div class="btnrow"><button id="b-sim" class="on">↻ Neu simulieren</button><button id="b-reset">Original‑Zahlen</button></div>
+  <div class="ro">
+    <div class="box o"><div class="k">t Oomph</div><div class="v" id="t-o">2,00</div></div>
+    <div class="box"><div class="k">t Precision</div><div class="v" id="t-p">10,00</div></div>
+  </div>
+  <div id="pill-out" class="badge-out warn">–</div>
+  <div class="choose">
+    <div class="q">Welche Pille wählst du für deine Mutter?</div>
+    <div class="btnrow"><button id="ch-o" class="o">Ich wähle Oomph</button><button id="ch-p" class="p">Ich wähle Precision</button></div>
+    <div id="choice-out" style="font-size:13.5px;margin-top:6px"></div>
+  </div>
+</div>
+<div class="note">
+  <b>Aha #1 — Das klare Signal ist die schlechtere Pille:</b> Precision hat den <b>fünffach höheren t‑Wert</b> (10 statt 2) und verspricht trotzdem nur 5 Pfund. Oomph gibt ein schlechteres Signal — und nimmt 20 Pfund weg. Genau dieses Paradox treibt die Wissenschaft um: <b>8 oder 9 von 10 publizierenden Wissenschaftlern wählen Precision.</b> Behalte deine Antwort im Kopf — am Ende begründen wir sie.
+</div>
+
+<h2><span class="n">2</span>Was „± 10 Pfund“ überhaupt heißt</h2>
+<p>Bevor wir weitermachen, müssen zwei Dinge sitzen: der <b>Mittelwert</b> (der Durchschnitt) und die <b>Streuung</b> (wie weit die Werte davon entfernt sind). Wenn viele kleine zufällige Einflüsse zusammenwirken (Stoffwechsel, Schlaf, Messfehler …), ergibt sich fast immer dieselbe Form: die <b>Glockenkurve</b>. Sie wird von genau zwei Zahlen bestimmt: Mittelwert <b>μ</b> und Standardabweichung <b>σ</b>.</p>
+<div class="demo">
+  <h3>Die Glockenkurve — und die berühmte 1,96</h3>
+  <p class="dsub">Schiebe μ und σ, wechsle das eingefärbte Band. Die Zahl unten ist der Anteil, der innerhalb des Bands liegt.</p>
+  <canvas id="c-norm" width="400" height="260"></canvas>
+  <div class="ctlrow">
+    <div class="ctl"><div class="ctl-lab"><span>Mittelwert μ</span><b id="v-nm">20,0</b></div><input type="range" id="s-nm" min="-10" max="40" step="0.5" value="20"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Standardabweichung σ</span><b id="v-ns">10,0</b></div><input type="range" id="s-ns" min="1" max="20" step="0.5" value="10"></div>
+  </div>
+  <div class="btnrow">
+    <button class="on" data-b="1">±1σ</button>
+    <button data-b="2">±2σ</button>
+    <button data-b="3">±3σ</button>
+  </div>
+  <div class="ro"><div class="box"><div class="k">innerhalb des Bands</div><div class="v" id="bandPct">68,3 %</div></div></div>
+</div>
+<div class="note">
+  <b>Aha #2 — Die Zweier‑Regel:</b> Innerhalb von ±2σ liegen 95,4 % aller Fälle. Die Grenze dazwischen ist <b>1,96</b> — und genau diese Zahl wird gleich der Dreh‑ und Angelpunkt der ganzen Geschichte. „20 ± 10“ heißt also: eine Glocke um 20 mit Breite 10.
+</div>
+
+<h2><span class="n">3</span>Der t‑Wert: Signal ÷ Rauschen</h2>
+<p>Das ist Gossets Erfindung von 1908 — gemacht für die Guinness‑Brauerei, wo man nur wenige, teure Versuche machen konnte. Man teilt das, was den Forscher interessiert (der <b>Effekt</b>, das Signal), durch die Unsicherheit dieses Signals (den <b>Standardfehler</b>, das Rauschen). Das Radio‑Bild: Ein Sender spielt Miles Davis, aber es knistert; der andere spielt Country — glasklar. <b>Der Signifikanztester wählt immer den klaren Sender</b> — nicht weil er Country lieber mag, sondern weil der Empfang besser ist.</p>
+<div class="demo">
+  <h3>Der Empfänger: wie klar ist das Signal?</h3>
+  <p class="dsub">Oben: das reine Signal. Unten: wie es beim Empfänger ankommt (Signal + Rauschen). Je höher t, desto klarer die Melodie.</p>
+  <canvas id="c-radio" width="400" height="240"></canvas>
+  <div class="ctlrow">
+    <div class="ctl"><div class="ctl-lab"><span>Signal (Effekt, Pfund)</span><b id="v-sig">20,0</b></div><input type="range" id="s-sig" class="m" min="0" max="40" step="0.5" value="20"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Rauschen (Standardfehler)</span><b id="v-noi">10,0</b></div><input type="range" id="s-noi" min="0.3" max="20" step="0.1" value="10"></div>
+  </div>
+  <div class="ro"><div class="box v"><div class="k">t = Signal ÷ Rauschen</div><div class="v" id="o-t">2,00</div></div></div>
+  <div id="radio-out" class="badge-out ok">–</div>
+</div>
+<div class="note">
+  <b>Aha #3 — Der „größenlose Blick“ (sizeless stare):</b> t ist nur ein Verhältnis. Dieselbe Signifikanz (z. B. t = 2) entsteht aus einem <b>riesigen, ungenau gemessenen</b> Effekt und aus einem <b>winzigen, präzise gemessenen</b> Effekt. Wer nur auf die Farbe (= t) starrt, sieht die Größe des Effekts überhaupt nicht. Genau das ist die Krankheit.
+</div>
+
+<h2><span class="n">4</span>Der p‑Wert — und die willkürliche 5‑%‑Linie</h2>
+<p>Der p‑Wert ist nur eine Umrechnung von t. Er fragt: <em>Angenommen, die Pille wirkt überhaupt nicht (die graue Glocke) — wie unwahrscheinlich wäre ein Ergebnis mindestens so extrem wie meines?</em> Dann zieht man eine Linie bei 5 %: links → „real“, rechts → „Zufall, ignorieren“. Aber woher kommt die 5 %?</p>
+<div class="quote">
+  Es ist bequem, die Linie ungefähr dort zu ziehen … <b>Persönlich zieht es der Verfasser vor, einen niedrigen Standard der Signifikanz beim 5‑Prozent‑Punkt zu setzen und alle Ergebnisse, die dieses Niveau nicht erreichen, vollständig zu ignorieren.</b>
+  <cite>R. A. Fisher, 1926 — Hervorhebung von Ziliak &amp; McCloskey</cite>
+</div>
+<div class="demo">
+  <h3>Der p‑Wert als Fläche im Schweif</h3>
+  <p class="dsub">Die violette Fläche links und rechts ist der p‑Wert: wie weit dein t in den Schweif der „nichts‑ist‑da“-Glocke ragt. Die gestrichelte Linie bei 1,96 ist die 5‑%‑Schwelle.</p>
+  <canvas id="c-pval" width="400" height="280"></canvas>
+  <div class="ctlrow">
+    <div class="ctl"><div class="ctl-lab"><span>Beobachteter t‑Wert</span><b id="v-pt">2,00</b></div><input type="range" id="s-pt" class="m" min="0" max="5" step="0.01" value="2"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Signifikanzniveau α</span><b id="v-alpha">5,0 %</b></div><input type="range" id="s-alpha" class="v" min="0.1" max="20" step="0.1" value="5"></div>
+  </div>
+  <div class="btnrow">
+    <button data-t="1.43">t = 1,43 (Oomph ±14)</button>
+    <button data-t="1.96">t = 1,96</button>
+    <button data-t="4">t = 4 (Precision, sehr hoch)</button>
+  </div>
+  <div class="ro">
+    <div class="box v"><div class="k">p‑Wert</div><div class="v" id="o-p">0,046</div></div>
+    <div class="box"><div class="k">Kritisches t (Schwelle)</div><div class="v" id="o-tcrit">1,96</div></div>
+  </div>
+  <div id="pval-out" class="badge-out ok">–</div>
+</div>
+<div class="note">
+  <b>Aha #4 — p ist ein Präzisions‑, kein Größenmaß:</b> p sagt <b>nicht</b>, wie groß der Effekt ist. Es sagt nur, wie scharf gemessen wurde. Und die 5 %? <b>„Bequem. Persönlich. Wenn wir wollen.“</b> — das ist die gesamte Begründung. Es gibt kein Theorem dahinter.
+</div>
+
+<h2><span class="n">5</span>Der Hammer: Mit genug Daten wird alles „signifikant“</h2>
+<p>Der Standardfehler fällt mit √n gegen null — und zwar beliebig. Das heißt: <b>Mit genug Geld und genug Probanden kann man jeden Standardfehler beliebig klein machen — ganz gleich, wie winzig der echte Effekt ist.</b> Stelle einen absurd kleinen wahren Effekt ein (0,1 Pfund — praktisch nichts) und drehe n hoch.</p>
+<div class="demo">
+  <h3>Die Signifikanz‑Maschine</h3>
+  <p class="dsub">Der wahre Effekt bleibt 0,1 Pfund. Nur n wächst. Sieh zu, wie das Ritual kippt.</p>
+  <canvas id="c-deg" width="400" height="220"></canvas>
+  <div class="ctl"><div class="ctl-lab"><span>Stichprobengröße n</span><b id="v-dgn">20</b></div><input type="range" id="s-dgn" class="v" min="4" max="20000" step="4" value="20"></div>
+  <div class="btnrow">
+    <button data-n="20">n = 20</button>
+    <button data-n="2000">n = 2 000</button>
+    <button class="on" data-n="20000">n = 20 000 (DeGroot)</button>
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">SE</div><div class="v" id="dg-se">1,118</div></div>
+    <div class="box o"><div class="k">t</div><div class="v" id="dg-t">0,09</div></div>
+    <div class="box v"><div class="k">p</div><div class="v" id="dg-p">0,93</div></div>
+  </div>
+  <div id="deg-out" class="badge-out warn">–</div>
+</div>
+<div class="note">
+  <b>Aha #5 — Signifikanz misst dein Budget, nicht die Natur:</b> Der wahre Effekt hat sich <i>kein bisschen</i> verändert. Nur die Stichprobe ist gewachsen — und schon springt das Urteil von „kein Effekt“ auf „bewiesen“. Morris DeGroot: <b>Der t‑Test auf 20 000 Fällen führt sehr wahrscheinlich zu einem „signifikanten“ Wert — selbst wenn der wahre Wert nur geringfügig abweicht.</b>
+</div>
+
+<h2><span class="n">6</span>Was bleibt hängen — die sechs Sätze</h2>
+<div class="takeaway"><span class="num">1</span><div><b>Präzision ist nicht dasselbe wie Bedeutung.</b> Statistische Signifikanz ist nicht dasselbe wie wissenschaftliche Wichtigkeit oder ökonomischer Sinn.</div></div>
+<div class="takeaway"><span class="num">2</span><div>Signifikanz auf dem 5‑%‑ oder einem anderen <b>willkürlichen</b> Niveau ist <i>weder notwendig noch hinreichend</i> für die Entdeckung eines relevanten Ergebnisses.</div></div>
+<div class="takeaway"><span class="num">3</span><div>Wie die Quoten gesetzt werden, hängt von der <b>Wichtigkeit der Sache</b> und den <b>Kosten</b> ab, neues Material zu beschaffen — nicht von einer Zahl, die jemand 1926 „bequem“ fand.</div></div>
+<div class="takeaway"><span class="num">4</span><div>Ein Befund von Signifikanz — oder ihr Fehlen — ist für sich allein <i>wertlos</i>, ein bedeutungsloses Gesellschaftsspiel.</div></div>
+<div class="takeaway"><span class="num">5</span><div>Signifikanz sollte ein <i>winziger</i> Teil einer Untersuchung sein, die sich um <b>Größe</b> und <b>Wichtigkeit</b> von Zusammenhängen dreht.</div></div>
+<div class="takeaway"><span class="num">6</span><div>Gosset (der Braumeister) hatte recht, Fisher (das Genie) hatte unrecht. <b>„Size matters no matter where you draw the line of precision.“</b></div></div>
+
+<footer>
+  <p>Stark vereinfachte, interaktive Begleitung zu <a href="kult_der_statistischen_signifikanz.html">kult_der_statistischen_signifikanz.html</a>. Alle Experimente laufen lokal im Browser — keine Daten verlassen diese Seite.<br>
+  Quelle: Ziliak &amp; McCloskey, „The Cult of Statistical Significance“, JSM 2009; Buchfassung, Univ. of Michigan Press 2008.</p>
+</footer>
+
+</main>
+<script>
+"use strict";
+(function(){
+  function $(id){return document.getElementById(id);}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function fmt(x,d){return Number(x).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});}
+  function fmtI(x){return Math.round(x).toLocaleString('de-DE');}
+  function hexA(hex,a){var h=hex.replace('#','');return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')';}
+  function roundRect(g,x,y,w,h,r){r=Math.min(r,h/2,w/2);g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+  var INK='#2b2e3a', OOMPH='#d9480f', PREC='#0f766e', VIOLET='#6d28d9', ROSE='#be185d', GOOD='#0f766e', FAINT='#9aa0b0', CANVAS='#f5f0e6';
+
+  var spare=null;
+  function randn(){
+    if(spare!==null){var s=spare;spare=null;return s;}
+    var u=0,v=0,ss=0;
+    do{u=Math.random()*2-1;v=Math.random()*2-1;ss=u*u+v*v;}while(ss>=1||ss===0);
+    var m=Math.sqrt(-2*Math.log(ss)/ss);
+    spare=v*m;return u*m;
+  }
+  function normpdf(x,mu,s){return Math.exp(-0.5*((x-mu)/s)**2)/(s*Math.sqrt(2*Math.PI));}
+  function normcdf(x){
+    var t=1/(1+0.2316419*Math.abs(x));
+    var d=0.3989422804014327*Math.exp(-x*x/2);
+    var p=d*t*(0.31938153+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+    return x>0?1-p:p;
+  }
+  function norminv(p){
+    if(p<=0)return -6;if(p>=1)return 6;
+    var a=[-39.69683028665376,220.9460984245205,-275.9285104469687,138.357751867269,-30.66479806614716,2.506628277459239];
+    var b=[-54.47609879822406,161.5858368580409,-155.6989798598866,66.80131188771972,-13.28068155288572];
+    var c=[-0.007784894002430293,-0.3223964580411364,-2.400758277161838,-2.549732539343734,4.374664141464968,2.938163982698783];
+    var d2=[0.007784695709041462,0.3224671290700398,2.445134137142996,3.754408661907416];
+    var pl=0.02425,q,r;
+    if(p<pl){q=Math.sqrt(-2*Math.log(p));return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d2[0]*q+d2[1])*q+d2[2])*q+d2[3])*q+1);}
+    if(p>1-pl){q=Math.sqrt(-2*Math.log(1-p));return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d2[0]*q+d2[1])*q+d2[2])*q+d2[3])*q+1);}
+    q=p-0.5;r=q*q;
+    return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+  }
+
+  /* ---------- Demo 1: Pills ---------- */
+  var PO={mo:20,po:10,mp:5,pp:0.5};
+  var pd={o:[],p:[]};
+  function genPills(){
+    pd.o=[];pd.p=[];
+    for(var i=0;i<180;i++){pd.o.push(PO.mo+randn()*PO.po);pd.p.push(PO.mp+randn()*PO.pp);}
+  }
+  function drawPills(){
+    var W=400,H=300,cv=$('c-pills');cv.width=W;cv.height=H;var g=cv.getContext('2d');
+    g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+    var P={x0:46,y0:34,x1:W-14,y1:H-40},pw=P.x1-P.x0;
+    var lo=-20,hi=45;
+    function X(v){return P.x0+(v-lo)/(hi-lo)*pw;}
+    g.lineWidth=1;
+    for(var v=-20;v<=40;v+=10){
+      var x=X(v);
+      g.strokeStyle='#e7e0d0';g.beginPath();g.moveTo(x,P.y0);g.lineTo(x,P.y1);g.stroke();
+      g.font='10px system-ui';g.fillStyle=FAINT;g.textAlign='center';g.textBaseline='top';g.fillText(''+v,x,P.y1+6);
+    }
+    g.strokeStyle=FAINT;g.setLineDash([5,4]);g.lineWidth=1.5;
+    g.beginPath();g.moveTo(X(0),P.y0);g.lineTo(X(0),P.y1);g.stroke();g.setLineDash([]);
+    g.textBaseline='middle';
+    var rows=[
+      {k:'o',m:PO.mo,s:PO.po,col:OOMPH,name:'Oomph',cy:98},
+      {k:'p',m:PO.mp,s:PO.pp,col:PREC,name:'Precision',cy:212}
+    ];
+    rows.forEach(function(r){
+      var bh=44;
+      g.fillStyle=hexA(r.col,0.12);
+      g.fillRect(X(r.m-r.s),r.cy-bh,X(r.m+r.s)-X(r.m-r.s),bh*2);
+      var arr=pd[r.k];
+      for(var i=0;i<arr.length;i++){
+        var jitter=(((i*2654435761)>>>0)%1000)/1000;
+        var y=r.cy-bh+6+jitter*(bh*2-12);
+        g.fillStyle=hexA(r.col,0.7);
+        g.beginPath();g.arc(clamp(X(arr[i]),P.x0,P.x1),y,2.2,0,7);g.fill();
+      }
+      g.strokeStyle=r.col;g.lineWidth=3;
+      g.beginPath();g.moveTo(X(r.m),r.cy-bh-6);g.lineTo(X(r.m),r.cy+bh+6);g.stroke();
+      g.fillStyle=r.col;g.font='bold 12px system-ui';g.textAlign='left';
+      g.fillText(r.name,8,r.cy);
+      g.font='11px system-ui';g.textAlign='center';
+      g.fillText(fmt(r.m,1)+' \u00b1 '+fmt(r.s,1),clamp(X(r.m),P.x0+30,P.x1-30),r.cy-bh-14);
+    });
+    g.fillStyle=FAINT;g.font='11px system-ui';g.textAlign='center';g.textBaseline='alphabetic';
+    g.fillText('Gewichtsverlust (Pfund) \u2192',W/2,H-10);
+    var to=PO.mo/PO.po,tp=PO.mp/PO.pp;
+    $('t-o').textContent=fmt(to,2);
+    $('t-p').textContent=fmt(tp,2);
+    var lo1=PO.mo-PO.po,hi2=PO.mp+PO.pp,dom=lo1>=hi2;
+    var out=$('pill-out');
+    if(dom){out.className='badge-out warn';out.textContent='Oomph dominiert — hat aber den NIEDRIGEREN t-Wert ('+fmt(to,1)+' vs '+fmt(tp,1)+')';}
+    else{out.className='badge-out bad';out.textContent='Keine Dominanz mehr — Bereiche überlappen, jetzt muss man wirklich abwägen';}
+  }
+  [['mo','v-mo'],['po','v-po'],['mp','v-mp'],['pp','v-pp']].forEach(function(pr){
+    $('s-'+pr[0]).addEventListener('input',function(e){
+      PO[pr[0]]=+e.target.value;
+      $(pr[1]).textContent=fmt(PO[pr[0]],1);
+      genPills();drawPills();
+    });
+  });
+  $('b-sim').addEventListener('click',function(){genPills();drawPills();});
+  $('b-reset').addEventListener('click',function(){
+    PO={mo:20,po:10,mp:5,pp:0.5};
+    $('s-mo').value=20;$('s-po').value=10;$('s-mp').value=5;$('s-pp').value=0.5;
+    $('v-mo').textContent='20,0';$('v-po').textContent='10,0';$('v-mp').textContent='5,0';$('v-pp').textContent='0,5';
+    genPills();drawPills();
+  });
+  $('ch-o').addEventListener('click',function(){$('choice-out').innerHTML='<span style="color:var(--prec);font-weight:700">Du wählst Oomph \u2192 die richtige Wahl (Kapitel 6 zeigt, warum).</span>';});
+  $('ch-p').addEventListener('click',function(){$('choice-out').innerHTML='<span style="color:var(--rose);font-weight:700">Du wählst Precision \u2192 die Mehrheit (8\u20139 von 10 Wissenschaftlern). Laut Ziliak &amp; McCloskey: die falsche Wahl.</span>';});
+  genPills();drawPills();
+
+  /* ---------- Demo 2: Normal curve ---------- */
+  var bandN=1;
+  function drawNorm(){
+    var mu=+($('s-nm').value),sd=+($('s-ns').value);
+    $('v-nm').textContent=fmt(mu,1);$('v-ns').textContent=fmt(sd,1);
+    var W=400,H=260,cv=$('c-norm');cv.width=W;cv.height=H;var g=cv.getContext('2d');
+    g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+    var P={x0:26,y0:22,x1:W-14,y1:H-30},pw=P.x1-P.x0,ph=P.y1-P.y0;
+    var lo=mu-4*sd,hi=mu+4*sd;
+    function X(x){return P.x0+(x-lo)/(hi-lo)*pw;}
+    var ymax=normpdf(mu,mu,sd)*1.2;
+    function Y(y){return P.y1-(y/ymax)*ph;}
+    g.beginPath();g.moveTo(X(mu-bandN*sd),P.y1);
+    for(var i=0;i<=200;i++){var x=mu-bandN*sd+(2*bandN*sd)*i/200;g.lineTo(X(x),Y(normpdf(x,mu,sd)));}
+    g.lineTo(X(mu+bandN*sd),P.y1);g.closePath();
+    g.fillStyle=hexA(PREC,0.25);g.fill();
+    g.strokeStyle=PREC;g.lineWidth=2.5;g.beginPath();
+    for(i=0;i<=300;i++){var x2=lo+(hi-lo)*i/300,px=X(x2),py=Y(normpdf(x2,mu,sd));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();
+    g.strokeStyle=INK;g.setLineDash([4,3]);g.lineWidth=1.5;
+    g.beginPath();g.moveTo(X(mu),P.y0);g.lineTo(X(mu),P.y1);g.stroke();g.setLineDash([]);
+    g.font='11px system-ui';g.fillStyle=INK;g.textAlign='center';g.fillText('\u03bc = '+fmt(mu,1)+'   \u03c3 = '+fmt(sd,1),clamp(X(mu),80,W-80),15);
+    g.strokeStyle=FAINT;g.lineWidth=1;g.beginPath();g.moveTo(P.x0,P.y1);g.lineTo(P.x1,P.y1);g.stroke();
+    g.fillStyle=FAINT;g.textAlign='center';g.fillText('Gewichtsverlust \u2192',W/2,H-8);
+    $('bandPct').textContent=['68,3 %','95,4 %','99,7 %'][bandN-1];
+  }
+  $('s-nm').addEventListener('input',drawNorm);
+  $('s-ns').addEventListener('input',drawNorm);
+  var bandBtns=document.querySelectorAll('[data-b]');
+  bandBtns.forEach(function(b){b.addEventListener('click',function(){
+    bandBtns.forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');bandN=+b.dataset.b;drawNorm();
+  });});
+  drawNorm();
+
+  /* ---------- Demo 3: Radio (signal/noise) ---------- */
+  function drawRadio(){
+    var sig=+($('s-sig').value),noi=+($('s-noi').value);
+    $('v-sig').textContent=fmt(sig,1);$('v-noi').textContent=fmt(noi,1);
+    var t=sig/noi;
+    var W=400,H=240,cv=$('c-radio');cv.width=W;cv.height=H;var g=cv.getContext('2d');
+    g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+    var P={x0:24,y0:26,x1:W-14,y1:150},pw=P.x1-P.x0;
+    var cy=(P.y0+P.y1)/2,amp=0.42*(P.y1-P.y0);
+    function X(i){return P.x0+i/300*pw;}
+    g.strokeStyle=PREC;g.setLineDash([5,4]);g.lineWidth=2;g.beginPath();
+    for(var i=0;i<=300;i++){var x=i/300,v=Math.sin(2*Math.PI*3*x);if(i===0)g.moveTo(X(i),cy-v*amp);else g.lineTo(X(i),cy-v*amp);}
+    g.stroke();g.setLineDash([]);
+    g.strokeStyle=OOMPH;g.lineWidth=2;g.beginPath();
+    for(i=0;i<=300;i++){x=i/300;var s2=Math.sin(2*Math.PI*3*x);var o=clamp(s2+randn()*(noi/(sig||1))*0.5,-1.9,1.9);if(i===0)g.moveTo(X(i),cy-o*amp);else g.lineTo(X(i),cy-o*amp);}
+    g.stroke();
+    g.font='11px system-ui';g.textAlign='left';
+    g.fillStyle=PREC;g.fillText('\u2014 echtes Signal',P.x0+4,P.y0+2);
+    g.fillStyle=OOMPH;g.fillText('\u2013 Signal + Rauschen (ankommt)',P.x0+4,P.y0+16);
+    var gy=178,gh=18,gx0=P.x0,gx1=P.x1,gw=gx1-gx0,tmax=6;
+    g.fillStyle='#e7e0d0';roundRect(g,gx0,gy,gw,gh,9);g.fill();
+    var fx=clamp(t/tmax,0,1);
+    g.fillStyle=t>1.96?hexA(GOOD,0.9):hexA(ROSE,0.85);
+    if(fx>0.01)roundRect(g,gx0,gy,gw*fx,gh,9),g.fill();
+    var tx=gx0+1.96/tmax*gw;
+    g.strokeStyle=INK;g.lineWidth=2;g.beginPath();g.moveTo(tx,gy-5);g.lineTo(tx,gy+gh+5);g.stroke();
+    g.font='10px system-ui';g.fillStyle=INK;g.textAlign='center';g.fillText('1,96',tx,gy+gh+16);
+    g.fillStyle=FAINT;g.textAlign='left';g.fillText('0',gx0,gy-6);g.textAlign='right';g.fillText(tmax+'',gx1,gy-6);
+    $('o-t').textContent=fmt(t,2);
+    var out=$('radio-out');
+    if(t>1.96){out.className='badge-out ok';out.textContent='t = '+fmt(t,2)+' \u2192 „statistisch signifikant“ (über 1,96)';}
+    else{out.className='badge-out bad';out.textContent='t = '+fmt(t,2)+' \u2192 „nicht signifikant“ (unter 1,96)';}
+  }
+  $('s-sig').addEventListener('input',drawRadio);
+  $('s-noi').addEventListener('input',drawRadio);
+  drawRadio();
+
+  /* ---------- Demo 4: p-value ---------- */
+  function drawPval(){
+    var t=+($('s-pt').value),alpha=+($('s-alpha').value)/100;
+    $('v-pt').textContent=fmt(t,2);$('v-alpha').textContent=fmt(alpha*100,1)+' %';
+    var tcrit=norminv(1-alpha/2);
+    var W=400,H=280,cv=$('c-pval');cv.width=W;cv.height=H;var g=cv.getContext('2d');
+    g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+    var P={x0:24,y0:18,x1:W-14,y1:H-34},pw=P.x1-P.x0,ph=P.y1-P.y0;
+    var lo=-5,hi=5;
+    function X(x){return P.x0+(x-lo)/(hi-lo)*pw;}
+    var ymax=normpdf(0,0,1)*1.2;
+    function Y(y){return P.y1-(y/ymax)*ph;}
+    g.fillStyle=hexA(VIOLET,0.25);
+    g.beginPath();g.moveTo(X(lo),P.y1);
+    for(var i=0;i<=140;i++){var x=lo+(Math.min(-t,-lo)-lo)*i/140;g.lineTo(X(x),Y(normpdf(x,0,1)));}
+    g.lineTo(X(Math.min(-t,-lo)),P.y1);g.closePath();g.fill();
+    g.beginPath();g.moveTo(X(t),P.y1);
+    for(i=0;i<=140;i++){var x2=t+(hi-t)*i/140;g.lineTo(X(x2),Y(normpdf(x2,0,1)));}
+    g.lineTo(X(hi),P.y1);g.closePath();g.fill();
+    g.strokeStyle=VIOLET;g.lineWidth=2.5;g.beginPath();
+    for(i=0;i<=300;i++){var x3=lo+(hi-lo)*i/300,px=X(x3),py=Y(normpdf(x3,0,1));if(i===0)g.moveTo(px,py);else g.lineTo(px,py);}
+    g.stroke();
+    g.strokeStyle=INK;g.setLineDash([4,3]);g.lineWidth=1.5;
+    [tcrit,-tcrit].forEach(function(c){if(Math.abs(c)<hi){g.beginPath();g.moveTo(X(c),Y(normpdf(c,0,1)));g.lineTo(X(c),P.y1);g.stroke();}});
+    g.setLineDash([]);
+    g.strokeStyle=OOMPH;g.lineWidth=3;
+    var tc=clamp(t,lo,hi);
+    g.beginPath();g.moveTo(X(tc),Y(normpdf(tc,0,1)));g.lineTo(X(tc),P.y1);g.stroke();
+    g.fillStyle=OOMPH;g.font='bold 11px system-ui';g.textAlign=t>0?'right':'left';
+    g.fillText('t = '+fmt(t,2),X(tc)+(t>0?-5:5),Math.max(16,Y(normpdf(tc,0,1))-8));
+    g.fillStyle=FAINT;g.font='10px system-ui';g.textAlign='center';
+    for(var v2=-4;v2<=4;v2++){g.fillText(v2,X(v2),P.y1+12);}
+    g.fillStyle=FAINT;g.textAlign='left';g.font='10px system-ui';
+    g.fillText('H\u2080: die Pille wirkt \u00fcberhaupt nicht',P.x0,P.y0-4);
+    var p=2*(1-normcdf(Math.abs(t)));
+    $('o-p').textContent=p<0.0001?p.toExponential(1):fmt(p,3);
+    $('o-tcrit').textContent=fmt(tcrit,2);
+    var out=$('pval-out');
+    if(p<alpha){out.className='badge-out ok';out.textContent='p = '+(p<0.0001?p.toExponential(1):fmt(p,3))+' < \u03b1 \u2192 „signifikant“ — sagt aber nichts \u00fcber die Gr\u00f6\u00dfe!';}
+    else{out.className='badge-out warn';out.textContent='p = '+(p<0.0001?p.toExponential(1):fmt(p,3))+' \u2265 \u03b1 \u2192 „nicht signifikant“ — heißt aber nicht: kein Effekt!';}
+  }
+  $('s-pt').addEventListener('input',drawPval);
+  $('s-alpha').addEventListener('input',drawPval);
+  var pvalBtns=document.querySelectorAll('[data-t]');
+  pvalBtns.forEach(function(b){b.addEventListener('click',function(){
+    $('s-pt').value=b.dataset.t;drawPval();
+  });});
+  drawPval();
+
+  /* ---------- Demo 5: DeGroot sqrt(n) ---------- */
+  function drawDeg(){
+    var E=0.1,S=5,n=+($('s-dgn').value);
+    $('v-dgn').textContent=fmtI(n);
+    var SE=S/Math.sqrt(n),t=E/SE,p=2*(1-normcdf(t));
+    var W=400,H=220,cv=$('c-deg');cv.width=W;cv.height=H;var g=cv.getContext('2d');
+    g.fillStyle=CANVAS;g.fillRect(0,0,W,H);
+    g.font='12px system-ui';g.fillStyle=INK;g.textAlign='left';
+    g.fillText('Wahrer Effekt: '+fmt(E,2)+' Pfund  (bleibt konstant!)',20,24);
+    g.fillStyle=FAINT;g.font='11px system-ui';
+    g.fillText('Nur n w\u00e4chst \u2192 SE = \u03c3/\u221an wird kleiner \u2192 t = Effekt/SE wird gr\u00f6\u00dfer.',20,44);
+    var gy=90,gh=22,gx0=40,gx1=W-20,gw=gx1-gx0,tmax=12;
+    g.fillStyle='#e7e0d0';roundRect(g,gx0,gy,gw,gh,11);g.fill();
+    var fx=clamp(t/tmax,0,1);
+    g.fillStyle=t>1.96?hexA(GOOD,0.9):hexA(ROSE,0.85);
+    if(fx>0.01)roundRect(g,gx0,gy,gw*fx,gh,11),g.fill();
+    var tx=gx0+1.96/tmax*gw;
+    g.strokeStyle=INK;g.lineWidth=2;g.beginPath();g.moveTo(tx,gy-6);g.lineTo(tx,gy+gh+6);g.stroke();
+    g.font='10px system-ui';g.fillStyle=INK;g.textAlign='center';g.fillText('1,96 (Signifikanz)',tx,gy+gh+18);
+    g.fillStyle=FAINT;g.textAlign='left';g.fillText('0',gx0,gy-8);g.textAlign='right';g.fillText(tmax+'',gx1,gy-8);
+    g.fillStyle=INK;g.font='bold 14px system-ui';g.textAlign='left';
+    g.fillText('t = '+fmt(t,2),gx0,gy-28);
+    $('dg-se').textContent=fmt(SE,3);
+    $('dg-t').textContent=fmt(t,2);
+    $('dg-p').textContent=p<0.0001?p.toExponential(1):fmt(p,3);
+    var out=$('deg-out');
+    if(p<0.05){out.className='badge-out bad';out.textContent='p < 0,05 \u2192 „bewiesen“ — aber der wahre Effekt ist und bleibt 0,1 Pfund!';}
+    else{out.className='badge-out warn';out.textContent='p \u2265 0,05 \u2192 „kein Effekt“ behauptet — aber der wahre Effekt ist nach wie vor 0,1 Pfund!';}
+  }
+  $('s-dgn').addEventListener('input',drawDeg);
+  var degBtns=document.querySelectorAll('[data-n]');
+  degBtns.forEach(function(b){b.addEventListener('click',function(){
+    degBtns.forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    $('s-dgn').value=b.dataset.n;drawDeg();
+  });});
+  drawDeg();
+})();
+</script>
+</body>
+</html>
