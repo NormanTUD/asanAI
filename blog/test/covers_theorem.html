@@ -1,0 +1,3878 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cover 1965 — Interaktiv: Trennende Flächen, Kapazität 2d, Generalisierung</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+
+<style>
+:root{
+  --bg:#070910;
+  --bg2:#0c1020;
+  --panel:rgba(18,23,40,.72);
+  --panel2:rgba(25,31,52,.72);
+  --line:rgba(130,160,255,.16);
+  --txt:#e8ecf8;
+  --muted:#9aa6c8;
+  --pos:#36e0b0;
+  --neg:#ff5f8a;
+  --acc:#7aa2ff;
+  --acc2:#c792ff;
+  --warn:#ffcf5c;
+  --glow:0 0 32px rgba(122,162,255,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -10%, #1a2250 0%, transparent 60%),
+    radial-gradient(1000px 600px at 95% 8%, #3a1850 0%, transparent 55%),
+    radial-gradient(900px 900px at 50% 120%, #06283a 0%, transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(122,162,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(122,162,255,.035) 1px, transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse at 50% 30%, black 0%, transparent 80%);
+}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 22px 160px}
+
+/* ---------- Progress ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;z-index:60;
+  background:linear-gradient(90deg,var(--pos),var(--acc),var(--acc2));box-shadow:0 0 14px rgba(122,162,255,.8)}
+
+/* ---------- Nav ---------- */
+#nav{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(14px);
+  background:linear-gradient(180deg,rgba(7,9,16,.92),rgba(7,9,16,.55));
+  border-bottom:1px solid var(--line)}
+#nav .inner{max-width:1180px;margin:0 auto;padding:9px 22px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#nav .brand{font-weight:800;letter-spacing:.5px;font-size:13px;margin-right:12px;
+  background:linear-gradient(90deg,var(--pos),var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+#nav a{color:var(--muted);text-decoration:none;font-size:11.5px;padding:5px 9px;border-radius:7px;white-space:nowrap;transition:.18s}
+#nav a:hover{color:#fff;background:rgba(122,162,255,.14)}
+#nav a.on{color:#fff;background:rgba(122,162,255,.22);box-shadow:inset 0 0 0 1px rgba(122,162,255,.35)}
+
+/* ---------- Hero ---------- */
+header.hero{padding:140px 0 60px;text-align:center;position:relative}
+header.hero h1{font-size:clamp(30px,5.6vw,60px);line-height:1.05;margin:0 0 14px;font-weight:850;letter-spacing:-1.5px;
+  background:linear-gradient(110deg,#fff 10%,var(--acc) 45%,var(--acc2) 70%,var(--pos) 95%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+header.hero .sub{color:var(--muted);font-size:clamp(14px,2vw,18px);max-width:760px;margin:0 auto 10px}
+header.hero .meta{font-size:12px;color:#6d7ba3;letter-spacing:2px;text-transform:uppercase;margin-bottom:26px}
+.bigformula{display:inline-block;margin:26px auto 0;padding:20px 34px;border-radius:18px;
+  background:var(--panel);border:1px solid var(--line);box-shadow:var(--glow)}
+
+/* ---------- Sections ---------- */
+section{padding:66px 0 30px;scroll-margin-top:68px}
+.kicker{font-size:11px;letter-spacing:3.4px;text-transform:uppercase;color:var(--acc);margin-bottom:10px;font-weight:700}
+h2{font-size:clamp(23px,3.6vw,36px);margin:0 0 10px;font-weight:800;letter-spacing:-.6px}
+h3{font-size:19px;margin:30px 0 8px;font-weight:700;color:#dce4ff}
+h4{font-size:15px;margin:18px 0 6px;font-weight:700;color:#bcc8ef}
+p{color:#c6cfe8;margin:9px 0}
+.lead{font-size:17px;color:#d6ddf2}
+small,.small{font-size:12.5px;color:var(--muted)}
+.sep{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:48px 0}
+
+/* ---------- Cards / panels ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px 22px;margin:20px 0;
+  backdrop-filter:blur(10px);box-shadow:0 18px 50px rgba(0,0,0,.4)}
+.card.tight{padding:14px 16px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g21{grid-template-columns:1.35fr 1fr}
+.g12{grid-template-columns:1fr 1.35fr}
+@media(max-width:900px){.g2,.g3,.g21,.g12{grid-template-columns:1fr}}
+
+.note{border-left:3px solid var(--acc);background:rgba(122,162,255,.08);padding:12px 16px;border-radius:0 12px 12px 0;margin:16px 0}
+.note.warn{border-color:var(--warn);background:rgba(255,207,92,.08)}
+.note.ok{border-color:var(--pos);background:rgba(54,224,176,.08)}
+.note.q{border-color:var(--acc2);background:rgba(199,146,255,.08)}
+.note b{color:#fff}
+
+.badge{display:inline-block;font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;padding:3px 10px;border-radius:99px;
+  background:rgba(122,162,255,.16);color:#bcd0ff;border:1px solid rgba(122,162,255,.3);margin-right:6px;font-weight:700}
+.badge.pos{background:rgba(54,224,176,.14);color:#9ff0da;border-color:rgba(54,224,176,.3)}
+.badge.neg{background:rgba(255,95,138,.14);color:#ffb3c6;border-color:rgba(255,95,138,.3)}
+.badge.v{background:rgba(199,146,255,.14);color:#dfc6ff;border-color:rgba(199,146,255,.3)}
+
+/* ---------- Controls ---------- */
+.ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:12px 0}
+.ctrl{display:flex;flex-direction:column;gap:3px;min-width:170px;flex:1}
+.ctrl label{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.ctrl label b{color:var(--acc);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 4px rgba(122,162,255,.3),0 2px 8px rgba(0,0,0,.5);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 4px rgba(122,162,255,.3);cursor:pointer}
+button{background:rgba(122,162,255,.14);color:#dbe4ff;border:1px solid rgba(122,162,255,.3);
+  padding:7px 14px;border-radius:9px;font-size:12.5px;cursor:pointer;transition:.16s;font-weight:600;font-family:inherit}
+button:hover{background:rgba(122,162,255,.28);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.p{background:linear-gradient(90deg,rgba(54,224,176,.22),rgba(122,162,255,.22));border-color:rgba(54,224,176,.4)}
+button.on{background:rgba(199,146,255,.3);border-color:rgba(199,146,255,.55);color:#fff}
+select{background:rgba(18,23,40,.9);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12.5px;font-family:inherit}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:none;border-radius:0;background:transparent;padding:7px 13px}
+.seg button.on{background:rgba(122,162,255,.3);color:#fff}
+
+canvas.viz{width:100%;display:block;border-radius:14px;background:rgba(6,9,18,.8);border:1px solid var(--line);cursor:crosshair}
+.plot{width:100%;height:330px}
+
+.statrow{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.stat{flex:1;min-width:110px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 13px;text-align:center}
+.stat .v{font-size:21px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+.stat .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1.3px}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:1.2px}
+td{color:#cdd6ee}
+tr:hover td{background:rgba(122,162,255,.05)}
+
+.steps{counter-reset:s;list-style:none;padding:0;margin:14px 0}
+.steps li{counter-increment:s;position:relative;padding-left:44px;margin:14px 0;color:#c6cfe8}
+.steps li::before{content:counter(s);position:absolute;left:0;top:-1px;width:28px;height:28px;border-radius:50%;
+  display:grid;place-items:center;font-size:12.5px;font-weight:800;color:#06121b;
+  background:linear-gradient(135deg,var(--pos),var(--acc));box-shadow:0 0 16px rgba(54,224,176,.35)}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin:8px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+.fade{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.fade.in{opacity:1;transform:none}
+
+.katex{font-size:1.02em}
+.kb{display:inline-block;padding:1px 7px;border-radius:5px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);font-size:11.5px;font-family:ui-monospace,monospace}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+
+.quiz{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:18px 0}
+.quiz .opts{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.quiz .opt{padding:9px 13px;border-radius:9px;border:1px solid var(--line);cursor:pointer;font-size:13.5px;transition:.15s;background:rgba(255,255,255,.02)}
+.quiz .opt:hover{background:rgba(122,162,255,.12)}
+.quiz .opt.right{background:rgba(54,224,176,.2);border-color:var(--pos)}
+.quiz .opt.wrong{background:rgba(255,95,138,.18);border-color:var(--neg)}
+.quiz .fb{margin-top:10px;font-size:13px;color:var(--muted);display:none}
+
+.chip{display:inline-block;padding:2px 9px;border-radius:7px;font-size:11.5px;margin:2px 3px;
+  background:rgba(255,255,255,.06);border:1px solid var(--line);font-family:ui-monospace,monospace}
+.chip.sep{background:rgba(54,224,176,.16);border-color:rgba(54,224,176,.35);color:#a8f3de}
+.chip.nos{background:rgba(255,95,138,.14);border-color:rgba(255,95,138,.3);color:#ffb8ca;opacity:.6}
+
+footer{text-align:center;color:#5d6788;font-size:12.5px;padding:60px 0 40px;border-top:1px solid var(--line);margin-top:70px}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<canvas id="stars"></canvas>
+
+<nav id="nav"><div class="inner">
+  <span class="brand">COVER 1965</span>
+  <a href="#start">Start</a>
+  <a href="#problem">Problem</a>
+  <a href="#prereq">Werkzeuge</a>
+  <a href="#phi">φ-Trick</a>
+  <a href="#dual">Dualität</a>
+  <a href="#count">Zählsatz</a>
+  <a href="#beweis">Beweis</a>
+  <a href="#surfaces">Flächen</a>
+  <a href="#random">Zufall</a>
+  <a href="#capacity">Kapazität 2d</a>
+  <a href="#general">Generalisierung</a>
+  <a href="#extreme">Extrempunkte</a>
+  <a href="#boolean">Boolesch</a>
+  <a href="#answer">Antwort</a>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ============================ HERO ============================ -->
+<header class="hero" id="start">
+  <div class="meta">Thomas M. Cover · IEEE Trans. Electronic Computers · Juni 1965</div>
+  <h1>Wie viele Muster kann<br>eine Maschine lernen?</h1>
+  <p class="sub">Ein interaktiver Spaziergang durch das Paper, das die Kapazität von Lernmaschinen
+  als reine <b>Geometrie und Kombinatorik</b> entlarvt — und das später den Kernel-Trick und die
+  VC-Theorie inspirierte. Keine Formelwüste: du <b>spielst</b>, die Konzepte entstehen von selbst.</p>
+  <div class="bigformula">
+    <div id="heroF1"></div>
+    <div style="margin-top:12px;color:var(--muted);font-size:13px">Die ganze Arbeit hängt an dieser einen Zahl.</div>
+  </div>
+  <div style="margin-top:34px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <span class="badge pos">nur Abi-Mathe nötig</span>
+    <span class="badge">alles interaktiv</span>
+    <span class="badge v">14 Stationen</span>
+  </div>
+</header>
+
+<!-- ============================ 1. PROBLEM ============================ -->
+<section id="problem" class="fade">
+  <div class="kicker">Station 1 — Motivation</div>
+  <h2>Welches Problem wird hier eigentlich gelöst?</h2>
+  <p class="lead">1965. Man baut die ersten lernenden Maschinen: das <b>Perzeptron</b>, die <b>Adaline</b>.
+  Ein Gerät mit <span class="mono">d</span> einstellbaren Gewichten bekommt Muster gezeigt (Buchstaben, Ziffern, Radarsignale)
+  und soll sie in zwei Klassen sortieren. Die brennende Praxisfrage der Ingenieure lautete:</p>
+
+  <div class="note q">
+    <b>Die Frage:</b> „Wie viele Trainingsmuster kann so ein Gerät mit <i>d</i> Gewichten
+    <i>überhaupt noch</i> fehlerfrei auseinanderhalten — egal wie man sie beschriftet?
+    Und ab wann hat es wirklich etwas <i>gelernt</i>, statt nur auswendig zu speichern?“
+  </div>
+
+  <p>Widrow und Koford hatten experimentell die Vermutung: <b>ungefähr 2 Muster pro Gewicht</b>.
+  Niemand konnte es beweisen. Cover beweist es — und zwar ohne jede Statistik über die Daten,
+  rein aus der Geometrie. Spiele unten selbst mit dem Perzeptron-Problem:</p>
+
+  <div class="card">
+    <h3 style="margin-top:4px">Das Grundproblem live</h3>
+    <p class="small">Punkte = Muster. Farbe = gewünschte Klasse. Die Gerade = die Entscheidung der Maschine.
+    <b>Klicke auf einen Punkt</b>, um seine Farbe zu tauschen. Drehe die Gerade mit den Reglern.
+    Finde eine Gerade, die alle korrekt trennt — oder stelle fest, dass es keine gibt!</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Winkel der Geraden <b id="p1aV">0°</b></label><input id="p1a" type="range" min="0" max="360" step="1" value="30"></div>
+      <div class="ctrl"><label>Verschiebung (Bias) <b id="p1bV">0.0</b></label><input id="p1b" type="range" min="-180" max="180" step="1" value="0"></div>
+      <div class="ctrl"><label>Anzahl Muster N <b id="p1nV">6</b></label><input id="p1n" type="range" min="3" max="14" step="1" value="6"></div>
+      <button id="p1auto" class="p">🔍 Auto: Gerade suchen</button>
+      <button id="p1new">🎲 Neue Muster</button>
+      <button id="p1rand">🎲 Zufallslabels</button>
+    </div>
+    <canvas id="p1" class="viz" height="400"></canvas>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="p1err">–</div><div class="k">Fehler</div></div>
+      <div class="stat"><div class="v" id="p1stat">–</div><div class="k">Status</div></div>
+      <div class="stat"><div class="v" id="p1tot">–</div><div class="k">Mögl. Beschriftungen 2^N</div></div>
+      <div class="stat"><div class="v" id="p1sepc">–</div><div class="k">davon trennbar</div></div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--pos)"></i> Klasse + (w·x &gt; 0)</span>
+      <span><i class="dot" style="background:var(--neg)"></i> Klasse − (w·x &lt; 0)</span>
+      <span><i class="dot" style="background:var(--warn)"></i> falsch klassifiziert</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Beobachtung, die alles auslöst:</b> Bei wenigen Punkten findest du <i>immer</i> eine Gerade.
+    Ab einer bestimmten Anzahl plötzlich nur noch manchmal. Dieser Umschlagpunkt ist Covers „Kapazität“.
+    Erhöhe oben N und drücke mehrmals „Zufallslabels“ — zähle, wie oft es klappt.
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 2. PREREQ ============================ -->
+<section id="prereq" class="fade">
+  <div class="kicker">Station 2 — Werkzeugkasten</div>
+  <h2>Die vier Werkzeuge, die über Abi-Mathe hinausgehen</h2>
+  <p class="lead">Bevor wir das Paper verstehen, brauchen wir vier Begriffe. Jeder davon ist hier
+  ein kleines Spielzeug — keine Theorie zum Auswendiglernen.</p>
+
+  <!-- 2.1 Homogene Hyperebene -->
+  <div class="card">
+    <span class="badge">Werkzeug 1</span>
+    <h3 style="margin-top:8px">Das Skalarprodukt <span class="mono">w·x</span> und die Hyperebene durch den Ursprung</h3>
+    <p class="small">Cover arbeitet fast immer mit Ebenen <b>durch den Ursprung</b> (homogen). Das klingt wie eine
+    Einschränkung, macht die Mathematik aber viel sauberer. Zieh den Gewichtsvektor <b>w</b> (lila Pfeil) herum und
+    beobachte, wie sich die Trennlinie (immer senkrecht zu w, immer durch 0) mitdreht und wie sich das Vorzeichen
+    von <span class="mono">w·x</span> für den Testpunkt ändert.</p>
+    <div class="grid g21">
+      <div>
+        <canvas id="w1" class="viz" height="400"></canvas>
+        <div class="legend">
+          <span><i class="dot" style="background:var(--acc2)"></i> Gewichtsvektor w</span>
+          <span><i class="dot" style="background:#fff"></i> Testpunkt x (ziehbar)</span>
+          <span><i class="dot" style="background:var(--pos)"></i> w·x &gt; 0</span>
+          <span><i class="dot" style="background:var(--neg)"></i> w·x &lt; 0</span>
+        </div>
+      </div>
+      <div>
+        <div class="ctrls" style="flex-direction:column;align-items:stretch">
+          <div class="ctrl"><label>Richtung von w <b id="w1aV">40°</b></label><input id="w1a" type="range" min="0" max="360" value="40"></div>
+          <div class="ctrl"><label>Länge von w <b id="w1lV">1.0</b></label><input id="w1l" type="range" min="30" max="160" value="90"></div>
+          <div class="ctrl"><label>Testpunkt Winkel <b id="w1pV">110°</b></label><input id="w1p" type="range" min="0" max="360" value="110"></div>
+          <div class="ctrl"><label>Testpunkt Radius <b id="w1rV">1.0</b></label><input id="w1r" type="range" min="20" max="170" value="110"></div>
+        </div>
+        <div class="card tight" style="margin-top:6px">
+          <div id="w1math"></div>
+        </div>
+        <div class="note ok" style="margin-top:10px">
+          <b>Merke:</b> Die Länge von w ändert <i>nichts</i> an der Trennlinie — nur die Richtung zählt.
+          Deshalb ist w im Grunde eine Richtung, und die Menge aller Lösungsvektoren ist ein <i>Kegel</i>.
+          Das wird gleich wichtig.
+        </div>
+      </div>
+    </div>
+    <div id="eq_homog" style="margin-top:10px"></div>
+  </div>
+
+  <!-- 2.2 Binomialkoeffizient -->
+  <div class="card">
+    <span class="badge">Werkzeug 2</span>
+    <h3 style="margin-top:8px">Binomialkoeffizienten und das Pascal'sche Dreieck</h3>
+    <p class="small">Die Antwort des Papers ist eine <b>abgeschnittene Summe von Binomialkoeffizienten</b>.
+    Du kennst <span class="mono">n über k</span> aus der Stochastik („k aus n auswählen"). Entscheidend ist hier nur
+    die Rekursion von Pascal — denn genau diese Rekursion wird Cover im Beweis geometrisch wiederfinden.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Zeile n <b id="pbnV">8</b></label><input id="pbn" type="range" min="1" max="16" value="8"></div>
+      <div class="ctrl"><label>Abschneiden bei k &lt; <b id="pbdV">3</b></label><input id="pbd" type="range" min="1" max="16" value="3"></div>
+      <button id="pbhl" class="on">Rekursion hervorheben</button>
+    </div>
+    <canvas id="pascal" class="viz" height="420"></canvas>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="card tight"><div id="eq_pascal"></div>
+        <p class="small" style="margin-top:8px">Jede Zahl ist die Summe der beiden über ihr. Fahre mit der Maus über das Dreieck.</p>
+      </div>
+      <div class="card tight">
+        <div id="eq_CNd"></div>
+        <p class="small" style="margin-top:8px">Die <b>grün markierten</b> Felder sind genau die, die in <span class="mono">C(N,d)</span>
+        aufsummiert werden: Zeile <span class="mono">N−1</span>, Spalten <span class="mono">0 … d−1</span>, mal 2.</p>
+        <div class="statrow" style="margin-top:6px">
+          <div class="stat"><div class="v" id="pbsum">–</div><div class="k">C(N,d)</div></div>
+          <div class="stat"><div class="v" id="pbfull">–</div><div class="k">2^N (alle)</div></div>
+          <div class="stat"><div class="v" id="pbfrac">–</div><div class="k">Anteil</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <b>Zwei Extremfälle zum Festhalten:</b> Ist <span class="mono">d ≥ N</span>, so ist die Summe <i>nicht</i> abgeschnitten
+      und ergibt <span class="mono">2·2^(N−1) = 2^N</span> — <b>alle</b> Beschriftungen sind trennbar.
+      Ist <span class="mono">d</span> klein, fehlt der große Rest der Zeile — die Maschine ist überfordert.
+    </div>
+  </div>
+
+  <!-- 2.3 Allgemeine Lage -->
+  <div class="card">
+    <span class="badge">Werkzeug 3</span>
+    <h3 style="margin-top:8px">„Allgemeine Lage" — warum Entartungen verboten sind</h3>
+    <p class="small">Cover verlangt, dass die Punkte in <b>general position</b> sind: je <span class="mono">d</span>
+    Messvektoren sind linear unabhängig; äquivalent: <b>keine d+1 Punkte liegen auf einer gemeinsamen φ-Fläche</b>.
+    Warum? Weil Entartungen die Zahl der trennbaren Beschriftungen <i>verringern</i>. Schiebe die Punkte unten in
+    eine Linie und sieh zu, wie Möglichkeiten verloren gehen.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Entartung (Punkte auf eine Gerade ziehen) <b id="gpV">0%</b></label><input id="gp" type="range" min="0" max="100" value="0"></div>
+      <button id="gpnew">🎲 Neue Punkte</button>
+    </div>
+    <div class="grid g2">
+      <div><canvas id="gpc" class="viz" height="330"></canvas></div>
+      <div>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="gpsep">–</div><div class="k">trennbare Dichotomien</div></div>
+          <div class="stat"><div class="v" id="gpmax">–</div><div class="k">C(N,3) Maximum</div></div>
+        </div>
+        <div id="gpbars" class="plot" style="height:260px"></div>
+        <p class="small">Bei allgemeiner Lage wird das theoretische Maximum <b>exakt</b> erreicht — und zwar
+        unabhängig davon, <i>wo genau</i> die Punkte liegen. Das ist die verblüffende Kernaussage: das Ergebnis ist
+        <b>rein kombinatorisch</b>, nicht geometrisch.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.4 Dichotomie -->
+  <div class="card">
+    <span class="badge">Werkzeug 4</span>
+    <h3 style="margin-top:8px">Dichotomie = eine Färbung. Davon gibt es 2^N.</h3>
+    <p class="small">Eine <b>Dichotomie</b> ist einfach eine Aufteilung der N Muster in „plus" und „minus" —
+    also eine von <span class="mono">2^N</span> möglichen Färbungen. Die Frage des gesamten Papers lautet:
+    <b>Wie viele dieser 2^N Färbungen kann meine Flächenfamilie realisieren?</b></p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl Punkte N <b id="dcnV">4</b></label><input id="dcn" type="range" min="2" max="7" value="4"></div>
+      <button id="dcnew">🎲 Punkte neu</button>
+      <div class="seg" id="dcmode">
+        <button data-m="lin" class="on">Gerade durch 0 (d=2)</button>
+        <button data-m="aff">Beliebige Gerade (d=3)</button>
+        <button data-m="circ">Kreis (d=4)</button>
+      </div>
+    </div>
+    <canvas id="dicho" class="viz" height="300"></canvas>
+    <div id="dicholist" style="margin-top:12px;line-height:2.1"></div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="dcs">–</div><div class="k">trennbar</div></div>
+      <div class="stat"><div class="v" id="dct">–</div><div class="k">insgesamt 2^N</div></div>
+      <div class="stat"><div class="v" id="dcf">–</div><div class="k">C(N,d) Vorhersage</div></div>
+    </div>
+    <p class="small"><b>Klicke auf eine Färbung</b> in der Liste, um sie oben anzuzeigen. Grün = realisierbar,
+    blass rot = unmöglich. Beachte: die Vorhersage <span class="mono">C(N,d)</span> stimmt immer exakt.</p>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 3. PHI ============================ -->
+<section id="phi" class="fade">
+  <div class="kicker">Station 3 — Die Idee</div>
+  <h2>Der φ-Trick: krumme Flächen sind gerade Ebenen in Verkleidung</h2>
+  <p class="lead">Hier ist Covers zentrale begriffliche Bewegung — und sie ist <i>genial einfach</i>.
+  Statt mühsam zu untersuchen, was Kreise, Parabeln oder Kegel können, misst man an jedem Muster
+  <span class="mono">d</span> Zahlen <span class="mono">φ₁(x), …, φ_d(x)</span> und sucht eine <b>Hyperebene</b>
+  in diesem neuen <span class="mono">d</span>-dimensionalen Messraum.</p>
+
+  <div class="grid g2">
+    <div class="card tight"><div id="eq_phisep"></div>
+      <p class="small" style="margin-top:8px">Im Messraum: eine stinknormale Ebene durch den Ursprung.
+      Zurückübersetzt in den Musterraum: eine beliebig krumme Fläche.</p>
+    </div>
+    <div class="note q" style="margin:0">
+      <b>Konsequenz (und das ist der ganze Zauber):</b> Alles, was man über Hyperebenen weiß, gilt sofort
+      für <i>jede</i> Flächenfamilie — man muss nur <span class="mono">d</span> zählen, die Anzahl der freien Parameter.
+      Die Form der Fläche ist völlig egal. 27 Jahre später wird daraus der <b>Kernel-Trick</b> der Support Vector Machines.
+    </div>
+  </div>
+
+  <h3>Der Klassiker: Kreis in 2D wird Ebene in 3D</h3>
+  <p class="small">Der Kreis <span class="mono">(x−a)² + (y−b)² = r²</span> lässt sich ausmultiplizieren zu
+  <span class="mono">w₀·1 + w₁x + w₂y + w₃(x²+y²) = 0</span>. Das ist linear in den vier Messungen
+  <span class="mono">φ = (1, x, y, x²+y²)</span>! Hebe also jeden Punkt auf die Höhe <span class="mono">z = x²+y²</span>
+  (ein Paraboloid) — und schneide mit einer Ebene. Drehe die 3D-Szene mit der Maus:</p>
+
+  <div class="card">
+    <div class="ctrls">
+      <div class="ctrl"><label>Hebung z = x²+y² <b id="liftV">100%</b></label><input id="lift" type="range" min="0" max="100" value="100"></div>
+      <div class="ctrl"><label>Ebene Neigung X <b id="plxV">0.0</b></label><input id="plx" type="range" min="-100" max="100" value="0"></div>
+      <div class="ctrl"><label>Ebene Neigung Y <b id="plyV">0.0</b></label><input id="ply" type="range" min="-100" max="100" value="0"></div>
+      <div class="ctrl"><label>Ebene Höhe <b id="plhV">0.8</b></label><input id="plh" type="range" min="0" max="200" value="80"></div>
+      <button id="phiAuto" class="p">▶ Animation: anheben</button>
+      <button id="phiFit">🎯 Ebene automatisch anpassen</button>
+    </div>
+    <div class="grid g2">
+      <div>
+        <div id="three3d" style="width:100%;height:400px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:rgba(6,9,18,.8)"></div>
+        <p class="small" style="text-align:center">3D-Messraum (x, y, x²+y²) — Maus: drehen, Scroll: zoomen</p>
+      </div>
+      <div>
+        <canvas id="phi2d" class="viz" height="400"></canvas>
+        <p class="small" style="text-align:center">Musterraum 2D — die Ebene wird zum <b>Kreis</b></p>
+      </div>
+    </div>
+    <div class="note ok">
+      <b>Was du hier siehst:</b> Eine <i>flache</i> Ebene oben entspricht unten exakt einem <i>Kreis</i>.
+      Die innere Punktgruppe liegt tief im Paraboloid-Tal, die äußere hoch oben — deshalb lassen sie sich
+      mit einer Ebene trennen, obwohl im 2D-Bild <b>keine Gerade</b> das schafft.
+      Freiheitsgrade: <span class="mono">d = 4</span>, also Kapazität <span class="mono">2d = 8</span> Punkte.
+    </div>
+  </div>
+
+  <h3>Der φ-Zoo: dieselbe Theorie, viele Flächen</h3>
+  <p class="small">Wähle eine Familie aus Covers Tabelle I. Die Punkte sind immer dieselben — nur die
+  Trennfläche ändert sich. Beobachte, wie mit wachsendem <span class="mono">d</span> immer mehr Färbungen möglich werden.</p>
+  <div class="card">
+    <div class="ctrls">
+      <div class="seg" id="zoomode">
+        <button data-m="hom" class="on">Gerade durch 0</button>
+        <button data-m="aff">Gerade</button>
+        <button data-m="sph">Kreis</button>
+        <button data-m="cone">Kegel</button>
+        <button data-m="quad">Quadrik</button>
+        <button data-m="cub">Kubik (r=3)</button>
+      </div>
+      <button id="zoonew">🎲 Neue Punktwolke</button>
+      <button id="zoolabel">🎲 Neue Labels</button>
+      <button id="zoofit" class="p">🎯 Trennen!</button>
+    </div>
+    <div class="grid g21">
+      <div><canvas id="zoo" class="viz" height="400"></canvas></div>
+      <div>
+        <table id="zootab"></table>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="zood">–</div><div class="k">Freiheitsgrade d</div></div>
+          <div class="stat"><div class="v" id="zoocap">–</div><div class="k">Kapazität 2d</div></div>
+        </div>
+        <div id="zoophi" class="card tight" style="font-size:12.5px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 4. DUALITÄT ============================ -->
+<section id="dual" class="fade">
+  <div class="kicker">Station 4 — Der Perspektivwechsel</div>
+  <h2>Dualität: Punkte werden Ebenen, Ebenen werden Punkte</h2>
+  <p class="lead">Jetzt kommt der Schritt, der das Zählproblem <b>löst</b>. Bisher haben wir gefragt:
+  „Welche Gerade trennt diese Punkte?" Dreh die Frage um: <b>Für welche Gewichtsvektoren w funktioniert es?</b></p>
+
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:2px">Musterraum (links unten)</h4>
+      <p class="small">Jeder Punkt <span class="mono">xᵢ</span> ist ein Punkt. Der Gewichtsvektor <span class="mono">w</span>
+      ist eine Trenngerade.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:2px">Gewichtsraum (rechts unten)</h4>
+      <p class="small">Jeder Punkt <span class="mono">xᵢ</span> wird zu einer <b>Geraden</b> <span class="mono">w·xᵢ = 0</span>.
+      Der Gewichtsvektor <span class="mono">w</span> ist ein Punkt.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="small"><b>Spiel damit:</b> Bewege den weißen Punkt <b>w</b> im rechten Bild. Links dreht sich die Trenngerade.
+    Die N Geraden rechts zerschneiden die Ebene in <b>Regionen</b> — und <i>jede Region ist genau eine trennbare Färbung</i>.
+    Das ist Covers Theorem 2. Zähle die Regionen!</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl Punkte N <b id="dunV">5</b></label><input id="dun" type="range" min="1" max="12" value="5"></div>
+      <button id="dunew">🎲 Neu</button>
+      <button id="dushade" class="on">Regionen einfärben</button>
+      <button id="dutour" class="p">▶ Tour durch alle Regionen</button>
+    </div>
+    <div class="grid g2">
+      <div>
+        <canvas id="dualA" class="viz" height="370"></canvas>
+        <p class="small" style="text-align:center">① Musterraum — Punkte + eine Trenngerade</p>
+      </div>
+      <div>
+        <canvas id="dualB" class="viz" height="370"></canvas>
+        <p class="small" style="text-align:center">② Gewichtsraum — N Geraden, w ist ziehbar</p>
+      </div>
+    </div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="duReg">–</div><div class="k">Regionen gezählt</div></div>
+      <div class="stat"><div class="v" id="duPred">–</div><div class="k">C(N,2) = 2(N−1)</div></div>
+      <div class="stat"><div class="v" id="duLab">–</div><div class="k">aktuelle Färbung</div></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Theorem 2 (Schläfli, 1850):</b> N Hyperebenen durch den Ursprung des <span class="mono">d</span>-Raums
+    zerteilen diesen in genau <span class="mono">C(N,d)</span> Gebiete. <br>
+    <b>Theorem 2′ (dual):</b> Ein <span class="mono">d</span>-dimensionaler Unterraum in allgemeiner Lage im
+    <span class="mono">N</span>-Raum schneidet genau <span class="mono">C(N,d)</span> Orthanten.
+    <br><span class="small">Beides sind nur verschiedene Brillen für dieselbe Tatsache — und beide sind äquivalent
+    zum Function-Counting-Theorem.</span>
+  </div>
+
+  <h3>Dieselbe Sache in 3D: Ebenen zerschneiden den Raum</h3>
+  <p class="small">In <span class="mono">d = 3</span> Dimensionen werden aus den Geraden Ebenen durch den Ursprung.
+  Sie zerschneiden den Raum in <span class="mono">C(N,3) = 2(1 + (N−1) + (N−1)(N−2)/2)</span> Keile.</p>
+  <div class="card">
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl Ebenen N <b id="d3nV">4</b></label><input id="d3n" type="range" min="1" max="8" value="4"></div>
+      <div class="ctrl"><label>Transparenz <b id="d3oV">0.3</b></label><input id="d3o" type="range" min="5" max="70" value="30"></div>
+      <button id="d3new">🎲 Neu</button>
+      <button id="d3spin" class="on">⟳ Rotation</button>
+    </div>
+    <div id="three3b" style="width:100%;height:420px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:rgba(6,9,18,.8)"></div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="d3c">–</div><div class="k">C(N,3) Regionen</div></div>
+      <div class="stat"><div class="v" id="d3t">–</div><div class="k">2^N Färbungen</div></div>
+      <div class="stat"><div class="v" id="d3p">–</div><div class="k">Anteil trennbar</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 5. ZÄHLSATZ ============================ -->
+<section id="count" class="fade">
+  <div class="kicker">Station 5 — Das Hauptergebnis</div>
+  <h2>Das Function-Counting-Theorem</h2>
+  <div class="card" style="text-align:center;padding:30px">
+    <div id="eq_main" style="font-size:1.3em"></div>
+    <p class="small" style="margin-top:14px">So viele der <span class="mono">2^N</span> Färbungen von N Punkten
+    in allgemeiner Lage sind durch eine Hyperebene durch den Ursprung im <span class="mono">d</span>-Raum realisierbar.</p>
+  </div>
+
+  <p class="lead">Spiele mit N und d. Die rote Linie ist <span class="mono">2^N</span> (alles), die grüne ist
+  <span class="mono">C(N,d)</span>. Der Abstand dazwischen ist das, was deine Maschine <b>nicht</b> kann.</p>
+
+  <div class="card">
+    <div class="ctrls">
+      <div class="ctrl"><label>Freiheitsgrade d <b id="fcdV">4</b></label><input id="fcd" type="range" min="1" max="30" value="4"></div>
+      <div class="ctrl"><label>N max (Achse) <b id="fcnV">40</b></label><input id="fcn" type="range" min="10" max="120" value="40"></div>
+      <div class="seg" id="fcscale">
+        <button data-s="log" class="on">log-Skala</button>
+        <button data-s="lin">linear</button>
+      </div>
+      <button id="fcmark" class="on">2d markieren</button>
+    </div>
+    <div id="fcplot" class="plot" style="height:400px"></div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="fcA">–</div><div class="k">C(2d, d)</div></div>
+      <div class="stat"><div class="v" id="fcB">–</div><div class="k">2^(2d)</div></div>
+      <div class="stat"><div class="v" id="fcC">–</div><div class="k">Verhältnis bei N=2d</div></div>
+      <div class="stat"><div class="v" id="fcD">–</div><div class="k">Kapazität 2d</div></div>
+    </div>
+    <div class="note ok">
+      <b>Das Schlüsselmoment:</b> Bei <span class="mono">N = 2d</span> ist das Verhältnis
+      <span class="mono">C(N,d)/2^N</span> <b>exakt ½</b> — für jedes d. Kein Zufall, sondern Symmetrie
+      der Binomialverteilung. Genau hier liegt die Kapazität.
+    </div>
+  </div>
+
+  <h3>Der Phasenübergang: Wahrscheinlichkeit der Trennbarkeit</h3>
+  <p class="small">Wählt man eine Färbung <b>zufällig</b> (fairer Münzwurf pro Punkt), ist die
+  Trennwahrscheinlichkeit <span class="mono">P(N,d) = C(N,d)/2^N</span>. Das ist exakt die kumulative
+  Binomialverteilung: „Bei N−1 Münzwürfen höchstens d−1 Kopf". Schiebe d hoch und sieh, wie der Übergang
+  immer schärfer wird — bei großem d wird daraus ein echter <b>Phasenübergang</b>.</p>
+  <div class="card">
+    <div class="ctrls">
+      <div class="ctrl"><label>Freiheitsgrade d <b id="ptdV">10</b></label><input id="ptd" type="range" min="1" max="120" value="10"></div>
+      <div class="ctrl"><label>Mehrere d überlagern</label>
+        <div class="seg" id="ptmulti"><button data-m="0" class="on">einzeln</button><button data-m="1">Schar d=2,5,10,25,60</button></div>
+      </div>
+      <button id="ptnorm" class="on">x-Achse: β = N/d</button>
+    </div>
+    <div id="ptplot" class="plot" style="height:380px"></div>
+    <div class="grid g3">
+      <div class="card tight"><div class="small">unter Kapazität</div><div style="font-size:19px;font-weight:800;color:var(--pos)">β &lt; 2 ⟹ P → 1</div></div>
+      <div class="card tight"><div class="small">genau Kapazität</div><div style="font-size:19px;font-weight:800;color:var(--warn)">β = 2 ⟹ P = ½</div></div>
+      <div class="card tight"><div class="small">über Kapazität</div><div style="font-size:19px;font-weight:800;color:var(--neg)">β &gt; 2 ⟹ P → 0</div></div>
+    </div>
+  </div>
+
+  <div class="quiz" data-right="1">
+    <b>Kurzer Check:</b> Du hast ein Perzeptron mit 100 Gewichten. Wie viele <i>zufällig beschriftete</i>
+    Muster kannst du erwarten, gerade noch fehlerfrei zu trennen?
+    <div class="opts">
+      <div class="opt">ca. 100</div>
+      <div class="opt">ca. 200</div>
+      <div class="opt">ca. 2^100</div>
+      <div class="opt">ca. 10 000</div>
+    </div>
+    <div class="fb"></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 6. BEWEIS ============================ -->
+<section id="beweis" class="fade">
+  <div class="kicker">Station 6 — Der Lösungsweg</div>
+  <h2>Der Beweis — in fünf anschaulichen Schritten</h2>
+  <p class="lead">Covers Beweis ist kurz und wunderschön. Kern ist <b>Lemma 1</b>, das eine einfache
+  geometrische Aussage macht und daraus sofort die Pascal-Rekursion erzeugt.</p>
+
+  <h3>Lemma 1, interaktiv</h3>
+  <div class="card">
+    <p class="small"><b>Behauptung:</b> Ein neuer Punkt <span class="mono">y</span> kann <i>beiden</i> Klassen
+    zugeordnet werden (also 2 neue trennbare Färbungen erzeugen) <b>genau dann</b>, wenn es eine Trenngerade
+    der alten Punkte gibt, die <b>durch y hindurchgeht</b>.</p>
+    <p class="small">Ziehe <span class="mono">y</span> (weiß) herum. Links siehst du den Musterraum, rechts den
+    Lösungskegel <span class="mono">W</span> aller gültigen Gewichtsvektoren. Die Frage „geht eine Trenngerade durch y?"
+    wird rechts zu: „<b>schneidet die y-Gerade den Lösungskegel W?</b>"</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl alte Punkte <b id="lmnV">5</b></label><input id="lmn" type="range" min="2" max="10" value="5"></div>
+      <button id="lmnew">🎲 Neu</button>
+      <button id="lmorbit" class="p">▶ y kreisen lassen</button>
+    </div>
+    <div class="grid g2">
+      <div><canvas id="lemA" class="viz" height="360"></canvas>
+        <p class="small" style="text-align:center">Musterraum: Punkte, y, und Trenngerade durch y (falls möglich)</p></div>
+      <div><canvas id="lemB" class="viz" height="360"></canvas>
+        <p class="small" style="text-align:center">Gewichtsraum: Lösungskegel W (grün) und die Gerade w·y = 0</p></div>
+    </div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="lmAmb">–</div><div class="k">y mehrdeutig?</div></div>
+      <div class="stat"><div class="v" id="lmNew">–</div><div class="k">neue Färbungen aus dieser</div></div>
+      <div class="stat"><div class="v" id="lmExt">–</div><div class="k">y wäre Extrempunkt?</div></div>
+    </div>
+    <div class="note">
+      <b>Covers Beweis des Lemmas in einer Zeile:</b> Trennen <span class="mono">w₁</span> und <span class="mono">w₂</span>
+      die beiden neuen Färbungen, so ist <span class="mono">w* = (−w₂·y)·w₁ + (w₁·y)·w₂</span> eine Trennung mit
+      <span class="mono">w*·y = 0</span> — die Gerade geht durch y. Umgekehrt: ist W offen und enthält w* mit
+      <span class="mono">w*·y = 0</span>, so liegen <span class="mono">w* ± εy</span> noch in W.
+    </div>
+  </div>
+
+  <h3>Aus dem Lemma folgt die Rekursion</h3>
+  <ol class="steps">
+    <li><b>Starte mit N Punkten.</b> Es gebe <span class="mono">C(N,d)</span> trennbare Färbungen.</li>
+    <li><b>Füge Punkt x<sub>N+1</sub> hinzu.</b> Jede alte Färbung lässt sich auf <i>mindestens eine</i> Weise fortsetzen
+      (sonst wäre sie nicht trennbar gewesen) — also mindestens <span class="mono">C(N,d)</span> neue.</li>
+    <li><b>Auf genau zwei Weisen</b> geht es nach Lemma 1 nur dann, wenn eine Trennebene durch
+      <span class="mono">x<sub>N+1</sub></span> existiert.</li>
+    <li><b>Projiziere</b> alle Punkte auf den <span class="mono">(d−1)</span>-dimensionalen Raum senkrecht zu
+      <span class="mono">x<sub>N+1</sub></span>. Dort ist die Frage genau: wie viele Färbungen sind in
+      <span class="mono">d−1</span> Dimensionen trennbar? Antwort per Induktion: <span class="mono">C(N, d−1)</span>.</li>
+    <li><b>Also:</b> <span class="mono">C(N+1, d) = C(N, d) + C(N, d−1)</span> — die Pascal-Rekursion!
+      Mit dem Startwert <span class="mono">C(1,m) = 2</span> für <span class="mono">m ≥ 1</span> folgt die Formel.</li>
+  </ol>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Die Rekursion als wachsendes Gitter</h4>
+    <p class="small">Drücke „Schritt", um die Tabelle <span class="mono">C(N,d)</span> Zelle für Zelle aus der
+    Rekursion aufzubauen. Jede neue Zelle = Zelle links + Zelle links-oben.</p>
+    <div class="ctrls">
+      <button id="recStep" class="p">▶ Schritt</button>
+      <button id="recAuto">⏩ Automatisch</button>
+      <button id="recReset">↺ Zurücksetzen</button>
+      <div class="ctrl"><label>Tabellengröße <b id="recSV">8</b></label><input id="recS" type="range" min="4" max="12" value="8"></div>
+    </div>
+    <canvas id="recC" class="viz" height="400"></canvas>
+    <div id="recMsg" class="small" style="min-height:22px;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Projektion live: warum aus d plötzlich d−1 wird</h4>
+    <p class="small">Schritt 4 ist der Trick. Hier siehst du ihn in 3D: Alle Punkte werden auf die Ebene senkrecht
+    zu <span class="mono">x<sub>N+1</sub></span> projiziert. Aus dem 3D-Problem wird ein 2D-Problem —
+    ein Freiheitsgrad weniger.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Projektion <b id="prjV">0%</b></label><input id="prj" type="range" min="0" max="100" value="0"></div>
+      <button id="prjAnim" class="p">▶ Animieren</button>
+      <button id="prjNew">🎲 Neu</button>
+    </div>
+    <div id="three3c" style="width:100%;height:400px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:rgba(6,9,18,.8)"></div>
+  </div>
+
+  <h3>Theorem 3 und Theorem 4 — die Erweiterungen</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <span class="badge v">Theorem 3</span>
+      <p class="small" style="margin-top:8px">Zwingt man die Trennfläche, durch <span class="mono">k</span> feste
+      Punkte zu gehen, sinkt die Zahl auf <span class="mono">C(N, d−k)</span>.
+      <br><b>Merksatz:</b> <i>k unabhängige Nebenbedingungen kosten genau k Freiheitsgrade.</i></p>
+      <div class="ctrls" style="margin-top:8px">
+        <div class="ctrl"><label>N <b id="t3nV">10</b></label><input id="t3n" type="range" min="2" max="30" value="10"></div>
+        <div class="ctrl"><label>d <b id="t3dV">5</b></label><input id="t3d" type="range" min="1" max="12" value="5"></div>
+        <div class="ctrl"><label>Zwangspunkte k <b id="t3kV">0</b></label><input id="t3k" type="range" min="0" max="8" value="0"></div>
+      </div>
+      <div id="t3plot" class="plot" style="height:200px"></div>
+    </div>
+    <div class="card tight">
+      <span class="badge v">Theorem 4</span>
+      <p class="small" style="margin-top:8px">Erlaubt man den dritten Wert <span class="mono">0</span>
+      („Punkt liegt genau <i>auf</i> der Fläche"), gibt es <span class="mono">Q(N,d)</span> Funktionen.
+      Für <span class="mono">N ≤ d</span> ist das <span class="mono">3^N</span> (alles möglich), und asymptotisch
+      <span class="mono">Q/C → 2^(d−1)</span>.</p>
+      <div class="ctrls" style="margin-top:8px">
+        <div class="ctrl"><label>N <b id="t4nV">8</b></label><input id="t4n" type="range" min="1" max="24" value="8"></div>
+        <div class="ctrl"><label>d <b id="t4dV">4</b></label><input id="t4d" type="range" min="1" max="10" value="4"></div>
+      </div>
+      <div id="t4plot" class="plot" style="height:200px"></div>
+      <div class="statrow">
+        <div class="stat"><div class="v" id="t4q">–</div><div class="k">Q(N,d)</div></div>
+        <div class="stat"><div class="v" id="t4c">–</div><div class="k">C(N,d)</div></div>
+        <div class="stat"><div class="v" id="t4r">–</div><div class="k">Q/C vs 2^(d−1)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 7. SURFACES ============================ -->
+<section id="surfaces" class="fade">
+  <div class="kicker">Station 7 — Anwendung</div>
+  <h2>Covers Abbildung 1: fünf Punkte, drei Flächenfamilien</h2>
+  <p class="lead">Das Paper zeigt eine Figur mit 5 Punkten in der Ebene und drei Trennarten.
+  Hier ist sie — aber zum Anfassen. <b>Klicke Punkte, um ihre Farbe zu tauschen</b>, und beobachte,
+  welche Familie die gewünschte Färbung noch schafft.</p>
+
+  <div class="card">
+    <div class="ctrls">
+      <div class="seg" id="f1mode">
+        <button data-m="lin" class="on">(a) linear · d=3 · C=22</button>
+        <button data-m="sph">(b) sphärisch · d=4 · C=30</button>
+        <button data-m="quad">(c) quadrisch · d=5 · C=32</button>
+      </div>
+      <button id="f1cycle" class="p">▶ Alle 32 Färbungen durchgehen</button>
+      <button id="f1reset">↺ Punkte zurücksetzen</button>
+    </div>
+    <div class="grid g21">
+      <div><canvas id="fig1" class="viz" height="400"></canvas></div>
+      <div>
+        <div id="fig1grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"></div>
+        <p class="small" style="margin-top:8px">Alle 32 Färbungen. Grün = mit der gewählten Familie trennbar.
+        Klicke eine an.</p>
+      </div>
+    </div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="f1sep">–</div><div class="k">trennbar</div></div>
+      <div class="stat"><div class="v" id="f1pred">–</div><div class="k">C(5,d) Vorhersage</div></div>
+      <div class="stat"><div class="v" id="f1cur">–</div><div class="k">aktuelle Färbung</div></div>
+      <div class="stat"><div class="v" id="f1d">–</div><div class="k">d</div></div>
+    </div>
+    <div class="note ok">
+      <b>Verschachtelung:</b> linear trennbar ⟹ sphärisch trennbar ⟹ quadrisch trennbar.
+      Mehr Freiheitsgrade können nie weniger. Bei <span class="mono">d = 5 ≥ N = 5</span> sind
+      <b>alle</b> <span class="mono">2⁵ = 32</span> Färbungen erreichbar.
+    </div>
+  </div>
+
+  <h3>Tabelle I des Papers — klickbar</h3>
+  <div class="card">
+    <p class="small">Wähle Musterdimension <span class="mono">m</span> und Ordnung <span class="mono">r</span>.
+    Die Tabelle zeigt sofort alle Freiheitsgrade und Kapazitäten.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Musterdimension m <b id="tbmV">2</b></label><input id="tbm" type="range" min="1" max="12" value="2"></div>
+      <div class="ctrl"><label>Polynomordnung r <b id="tbrV">2</b></label><input id="tbr" type="range" min="1" max="6" value="2"></div>
+      <div class="ctrl"><label>Anzahl Muster N <b id="tbnV">12</b></label><input id="tbn" type="range" min="2" max="80" value="12"></div>
+    </div>
+    <table id="tab1"></table>
+    <div id="tabplot" class="plot" style="height:300px"></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 8. RANDOM ============================ -->
+<section id="random" class="fade">
+  <div class="kicker">Station 8 — Zufall</div>
+  <h2>Zufällige Muster: Monte-Carlo gegen die Formel</h2>
+  <p class="lead">Covers Behauptung ist stark: Das Ergebnis hängt <b>überhaupt nicht</b> davon ab, wo die Punkte liegen —
+  nur davon, dass sie in allgemeiner Lage sind. Lass uns das experimentell prüfen.</p>
+
+  <div class="card">
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte N <b id="mcnV">8</b></label><input id="mcn" type="range" min="2" max="18" value="8"></div>
+      <div class="ctrl"><label>Dimension d <b id="mcdV">3</b></label><input id="mcd" type="range" min="1" max="8" value="3"></div>
+      <div class="ctrl"><label>Versuche <b id="mctV">400</b></label><input id="mct" type="range" min="50" max="3000" step="50" value="400"></div>
+      <select id="mcdist">
+        <option value="gauss">Verteilung: Gauß</option>
+        <option value="sphere">gleichmäßig auf Kugel</option>
+        <option value="cube">Würfel-Ecken (±1)</option>
+        <option value="cluster">zwei Cluster</option>
+      </select>
+      <button id="mcrun" class="p">▶ Simulation starten</button>
+    </div>
+    <div class="grid g2">
+      <div id="mcplot" class="plot" style="height:330px"></div>
+      <div>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="mcEmp">–</div><div class="k">empirisch P</div></div>
+          <div class="stat"><div class="v" id="mcThe">–</div><div class="k">Theorie P(N,d)</div></div>
+        </div>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="mcCnt">–</div><div class="k">trennbar / gesamt</div></div>
+          <div class="stat"><div class="v" id="mcBeta">–</div><div class="k">β = N/d</div></div>
+        </div>
+        <div id="mcbar" class="plot" style="height:200px"></div>
+        <p class="small"><b>Achtung Würfel-Ecken:</b> die <span class="mono">2^m</span> Ecken eines Binärwürfels sind
+        <i>nicht</i> in allgemeiner Lage. Dort liegt die echte Zahl <b>unter</b> der Formel — genau deshalb liefert
+        Cover für boolesche Funktionen nur eine <b>obere Schranke</b>.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Wendels Problem: Liegen N Zufallspunkte in einer Halbkugel?</h3>
+  <p class="small">Überraschend: Die Wahrscheinlichkeit, dass N zufällige Richtungen alle in <i>irgendeiner</i>
+  Halbkugel liegen, ist exakt dieselbe Zahl <span class="mono">P(N,d)</span>. Grund: Spiegelsymmetrie —
+  „alle Punkte in einer Klasse" ist genauso wahrscheinlich trennbar wie eine zufällige Färbung.</p>
+  <div class="card">
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte N <b id="wdnV">5</b></label><input id="wdn" type="range" min="1" max="12" value="5"></div>
+      <button id="wdnew">🎲 Neue Richtungen</button>
+      <button id="wdrun">📊 1000 Versuche</button>
+    </div>
+    <div class="grid g2">
+      <div><canvas id="wendel" class="viz" height="340"></canvas>
+        <p class="small" style="text-align:center">d=2: Punkte auf dem Kreis. Grüner Bogen = gefundene Halbebene.</p></div>
+      <div>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="wdres">–</div><div class="k">in Halbebene?</div></div>
+          <div class="stat"><div class="v" id="wdp">–</div><div class="k">P(N,2) theoretisch</div></div>
+          <div class="stat"><div class="v" id="wdemp">–</div><div class="k">empirisch</div></div>
+        </div>
+        <div id="wdplot" class="plot" style="height:250px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 9. CAPACITY ============================ -->
+<section id="capacity" class="fade">
+  <div class="kicker">Station 9 — Die Antwort</div>
+  <h2>Die Kapazität ist 2d — zwei Muster pro Gewicht</h2>
+  <p class="lead">Jetzt kommt der Satz  , der dem Paper seinen Platz in der Geschichte gesichert hat. Man definiert die Zufallsvariable
+  <span class="mono">N*</span> = die größte Anzahl zufälliger Muster, die gerade noch trennbar ist.
+  Covers Rechnung ergibt: <b>Erwartungswert = Median = 2d</b>.</p>
+
+  <div class="card" style="text-align:center;padding:28px">
+    <div id="eq_cap" style="font-size:1.25em"></div>
+    <p class="small" style="margin-top:12px">„Ein lineares Schwellwertgerät besitzt eine Informations­speicher­kapazität
+    von <b>zwei Mustern pro einstellbarem Gewicht</b>."</p>
+  </div>
+
+  <h3>Woher kommt die 2d? Das Wartezeit-Argument</h3>
+  <p class="lead">Covers Trick: Füge Muster <i>eines nach dem anderen</i> hinzu. Die Wahrscheinlichkeit, bei
+  <span class="mono">n</span> Mustern aufzuhören, ist
+  <span class="mono">P(n,d) − P(n+1,d) = (½)ⁿ · C(n−1, d−1)</span> — das ist die
+  <b>negative Binomialverteilung</b>: die Wartezeit auf den <span class="mono">d</span>-ten „Misserfolg" beim
+  Münzwurf. Und auf den d-ten Misserfolg wartet man im Mittel genau <span class="mono">2d</span> Würfe.</p>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Münzwurf-Simulator: warte auf den d-ten „Kopf"</h4>
+    <p class="small">Jeder Wurf = ein neues Muster. „Zahl" = das Muster passt noch rein. „Kopf" = ein
+    Freiheitsgrad wird verbraucht. Wenn alle <span class="mono">d</span> Freiheitsgrade verbraucht sind, ist
+    Schluss. Wirf oft genug — der Mittelwert wandert unerbittlich zu <span class="mono">2d</span>.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Freiheitsgrade d <b id="cpdV">5</b></label><input id="cpd" type="range" min="1" max="25" value="5"></div>
+      <button id="cp1" class="p">🪙 Ein Durchlauf</button>
+      <button id="cp100">⏩ 100 Durchläufe</button>
+      <button id="cp5000">⏩⏩ 5000 Durchläufe</button>
+      <button id="cpreset">↺ Reset</button>
+    </div>
+    <canvas id="coin" class="viz" height="130"></canvas>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="cpLast">–</div><div class="k">letzter Durchlauf N*</div></div>
+      <div class="stat"><div class="v" id="cpMean">–</div><div class="k">Mittelwert E[N*]</div></div>
+      <div class="stat"><div class="v" id="cpTheo">–</div><div class="k">Theorie 2d</div></div>
+      <div class="stat"><div class="v" id="cpRuns">0</div><div class="k">Durchläufe</div></div>
+      <div class="stat"><div class="v" id="cpMed">–</div><div class="k">Median</div></div>
+    </div>
+    <div id="cphist" class="plot" style="height:320px"></div>
+    <p class="small">Blau = Simulation, Orange = exakte negative Binomialverteilung
+    <span class="mono">(½)ⁿ·C(n−1, d−1)</span>. Die gestrichelte Linie markiert <span class="mono">2d</span>.</p>
+  </div>
+
+  <h3>Der Schwelleneffekt — Covers Gleichung (25)</h3>
+  <div class="grid g3">
+    <div class="card tight" style="text-align:center">
+      <div style="font-size:14px;color:var(--pos);font-weight:800">N = 2d(1−ε)</div>
+      <div id="eq_c25a" style="margin:8px 0"></div>
+      <div class="small">unter Kapazität → <b>fast sicher trennbar</b></div>
+    </div>
+    <div class="card tight" style="text-align:center">
+      <div style="font-size:14px;color:var(--warn);font-weight:800">N = 2d</div>
+      <div id="eq_c25b" style="margin:8px 0"></div>
+      <div class="small">exakt <b>½</b>, für <i>jedes</i> d</div>
+    </div>
+    <div class="card tight" style="text-align:center">
+      <div style="font-size:14px;color:var(--neg);font-weight:800">N = 2d(1+ε)</div>
+      <div id="eq_c25c" style="margin:8px 0"></div>
+      <div class="small">über Kapazität → <b>fast sicher unmöglich</b></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Die Normalapproximation (Gleichung 23)</h4>
+    <p class="small">Cover zeigt: <span class="mono">P(N, N/2 + α√N/2) → Φ(α)</span>. Das heißt, in der Nähe der
+    Kapazität verhält sich die Übergangskurve wie eine <b>Gauß'sche Fehlerfunktion</b> mit Breite
+    <span class="mono">∝ √N</span>. Vergleiche hier exakt (durchgezogen) gegen Normal­approximation (gestrichelt):</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>N <b id="naNV">200</b></label><input id="naN" type="range" min="10" max="2000" step="10" value="200"></div>
+      <div class="ctrl"><label>Zoom um die Schwelle <b id="naZV">3σ</b></label><input id="naZ" type="range" min="1" max="8" value="3"></div>
+    </div>
+    <div id="naplot" class="plot" style="height:340px"></div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Die andere Richtung: N fest, d wächst (Gleichung 26/27)</h4>
+    <p class="small">Fixiere stattdessen die Musterzahl und erhöhe die Dimension. Die Dimension
+    <span class="mono">d*</span>, bei der die Menge <i>zum ersten Mal</i> trennbar wird, ist binomialverteilt
+    mit <span class="mono">E[d*] = (N+1)/2</span>. Covers Pointe: oberhalb davon ist die Trennwahrscheinlichkeit
+    extrem unempfindlich gegenüber d — deshalb sind Schwellwertgeräte <b>„selbstheilend"</b> und überstehen
+    kaputte Gewichte.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Muster N <b id="dsNV">21</b></label><input id="dsN" type="range" min="3" max="80" value="21"></div>
+      <button id="dsKill" class="p">💥 Gewichte ausfallen lassen</button>
+      <button id="dsRe">↺ reparieren</button>
+    </div>
+    <div class="grid g2">
+      <div id="dsplot" class="plot" style="height:300px"></div>
+      <div>
+        <canvas id="dsdam" class="viz" height="180"></canvas>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="dsAlive">–</div><div class="k">intakte Gewichte</div></div>
+          <div class="stat"><div class="v" id="dsP">–</div><div class="k">P(N, d) jetzt</div></div>
+          <div class="stat"><div class="v" id="dsE">–</div><div class="k">E[d*] = (N+1)/2</div></div>
+        </div>
+        <p class="small">Klicke auf Gewichte, um sie zu zerstören. Solange genug übrig sind
+        (<span class="mono">d &gt; (N+1)/2</span>), bleibt die Leistung fast unverändert.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz" data-right="2">
+    <b>Check:</b> Warum ist <span class="mono">P(2d, d)</span> <i>exakt</i> ½ und nicht nur ungefähr?
+    <div class="opts">
+      <div class="opt">Weil die Punkte zufällig verteilt sind.</div>
+      <div class="opt">Weil 2d groß genug für den zentralen Grenzwertsatz ist.</div>
+      <div class="opt">Weil die Summe der Binomialkoeffizienten bis d−1 genau die halbe Zeile 2d−1 ist (Symmetrie).</div>
+      <div class="opt">Weil C(N,d) immer gerade ist.</div>
+    </div>
+    <div class="fb"></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 10. GENERALISIERUNG ============================ -->
+<section id="general" class="fade">
+  <div class="kicker">Station 10 — Lernen vs. Auswendiglernen</div>
+  <h2>Generalisierung: Wann hat die Maschine wirklich etwas gelernt?</h2>
+  <p class="lead">Jetzt die eigentlich <i>wichtige</i> Frage. Angenommen, die Maschine hat die Trainingsmenge
+  korrekt gelernt. Ein <b>neues</b> Muster <span class="mono">y</span> kommt herein. Covers Begriff:
+  <span class="mono">y</span> heißt <b>mehrdeutig</b> (ambiguous), wenn es zwei zulässige Trennflächen gibt, die
+  beide die Trainingsmenge korrekt trennen, <i>aber y verschieden einordnen</i>.</p>
+
+  <div class="note warn">
+    <b>Mehrdeutig = die Maschine weiß es nicht.</b> Sie kann y in beide Klassen stecken, ohne ihrem Training zu
+    widersprechen. Jede Antwort wäre reine Willkür. Erst wenn <i>alle</i> gültigen Flächen sich einig sind,
+    hat die Maschine wirklich <b>generalisiert</b>.
+  </div>
+
+  <h3>Covers Abbildung 2 — lebendig</h3>
+  <div class="card">
+    <p class="small">Zehn Trainingspunkte, zwei Klassen. Der <b>graue Keil</b> ist die Zone, in der alle
+    gültigen Trenngeraden sich <i>uneinig</i> sind — der Mehrdeutigkeitsbereich.
+    <b>Ziehe den gelben Testpunkt y</b> hinein und heraus. Mit dem Schieberegler blendest du 200 verschiedene
+    gültige Trenngeraden ein (alle trennen das Training korrekt!).</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Anzahl gezeigter Lösungen <b id="amLV">60</b></label><input id="amL" type="range" min="0" max="250" value="60"></div>
+      <div class="ctrl"><label>Trainingspunkte N <b id="amNV">10</b></label><input id="amN" type="range" min="3" max="40" value="10"></div>
+      <button id="amNew">🎲 Neue Trainingsmenge</button>
+      <button id="amShade" class="on">Mehrdeutigkeitszone zeigen</button>
+      <button id="amSweep" class="p">▶ y bewegen</button>
+    </div>
+    <canvas id="ambig" class="viz" height="430"></canvas>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="amStat">–</div><div class="k">y ist …</div></div>
+      <div class="stat"><div class="v" id="amVote">–</div><div class="k">Stimmen + / −</div></div>
+      <div class="stat"><div class="v" id="amA">–</div><div class="k">A(N,3) theoretisch</div></div>
+      <div class="stat"><div class="v" id="amBeta">–</div><div class="k">β = N/d</div></div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--pos)"></i> Training +</span>
+      <span><i class="dot" style="background:var(--neg)"></i> Training −</span>
+      <span><i class="dot" style="background:var(--warn)"></i> Testpunkt y</span>
+      <span><i class="dot" style="background:#8899bb"></i> gültige Trenngeraden</span>
+      <span><i class="dot" style="background:rgba(255,207,92,.35)"></i> Mehrdeutigkeitszone</span>
+    </div>
+    <div class="note ok">
+      <b>Covers Zahlenbeispiel aus dem Paper:</b> Bei N = 10 Punkten und beliebigen Geraden in der Ebene
+      (d = 3) ist jeder Testpunkt mehrdeutig bezüglich <span class="mono">C(10,2) = 20</span> der
+      <span class="mono">C(10,3) = 92</span> trennbaren Dichotomien. Also
+      <span class="mono">A(10,3) = 20/92 = 5/23 ≈ 0,217</span>.
+    </div>
+  </div>
+
+  <h3>Theorem 6: die Mehrdeutigkeitswahrscheinlichkeit</h3>
+  <div class="card" style="text-align:center;padding:24px">
+    <div id="eq_amb" style="font-size:1.15em"></div>
+    <p class="small" style="margin-top:12px">Der Beweis ist ein Dreizeiler: Nach Lemma 1 ist y genau dann
+    mehrdeutig, wenn es eine Trennfläche <i>durch y</i> gibt. Das ist eine Nebenbedingung — nach Theorem 3
+    bleiben <span class="mono">C(N, d−1)</span> solche Dichotomien übrig.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Covers Abbildung 3: die asymptotische Kurve A*(β)</h4>
+    <p class="small">Im Grenzfall großer Systeme hängt alles nur noch vom Verhältnis
+    <span class="mono">β = N/d</span> ab. Die Kurve ist brutal einfach — und brutal ernüchternd:</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>β = N/d <b id="asBV">3.0</b></label><input id="asB" type="range" min="2" max="200" value="30"></div>
+      <div class="ctrl"><label>endliches d zum Vergleich <b id="asDV">20</b></label><input id="asD" type="range" min="2" max="150" value="20"></div>
+      <button id="asErr" class="on">auch Fehlerrate ½·A zeigen</button>
+    </div>
+    <div id="asplot" class="plot" style="height:400px"></div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="asA">–</div><div class="k">A*(β) = 1/(β−1)</div></div>
+      <div class="stat"><div class="v" id="asEx">–</div><div class="k">exakt A(N,d)</div></div>
+      <div class="stat"><div class="v" id="asErrV">–</div><div class="k">Fehlerwahrsch. ½A</div></div>
+      <div class="stat"><div class="v" id="asNeed">–</div><div class="k">N für A &lt; 10%</div></div>
+    </div>
+  </div>
+
+  <div class="note q">
+    <b>Die große Erkenntnis dieses Abschnitts:</b> Für <span class="mono">β ≤ 2</span> ist
+    <span class="mono">A* = 1</span> — die Antwort auf ein neues Muster ist <b>zu 100 % willkürlich</b>.
+    Die Maschine hat nur <i>auswendig gelernt</i>. Erst <b>oberhalb</b> der Kapazität beginnt echtes Generalisieren,
+    und selbst dann fällt die Mehrdeutigkeit nur wie <span class="mono">1/(β−1)</span> — man braucht
+    <span class="mono">β ≈ 11</span>, also <b>11 Muster pro Gewicht</b>, für nur 10 % Mehrdeutigkeit.
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Das Doppelgesicht der Kapazität</h4>
+    <p class="small">Dieselbe Zahl 2d markiert zwei gegensätzliche Dinge. Schiebe β durch und beobachte beide
+    Kurven gleichzeitig:</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>β = N/d <b id="dgBV">2.0</b></label><input id="dgB" type="range" min="1" max="120" step="1" value="20"></div>
+      <div class="ctrl"><label>d <b id="dgDV">30</b></label><input id="dgD" type="range" min="3" max="100" value="30"></div>
+    </div>
+    <div id="dgplot" class="plot" style="height:360px"></div>
+    <div class="grid g2">
+      <div class="card tight"><b style="color:var(--pos)">Speichern</b><p class="small">P(N,d): fällt bei β=2 auf ½.
+      Links davon kann die Maschine alles auswendig lernen.</p></div>
+      <div class="card tight"><b style="color:var(--acc2)">Verstehen</b><p class="small">1−A(N,d): steigt erst ab β=2
+      überhaupt von null weg. Rechts davon beginnt Generalisierung.</p></div>
+    </div>
+    <p class="small"><b>Die Kapazität 2d ist exakt die Grenze zwischen Auswendiglernen und Verstehen.</b>
+    Genau das ist Covers tiefste Aussage — und der Vorläufer von Bias-Variance und VC-Dimension.</p>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 11. EXTREMPUNKTE ============================ -->
+<section id="extreme" class="fade">
+  <div class="kicker">Station 11 — Kompression</div>
+  <h2>Extrempunkte: unendlich viele Daten, 2d Zahlen zum Merken</h2>
+  <p class="lead">Letzter Hauptsatz — und für die heutige KI vielleicht der prophetischste.
+  Zu jeder trennbaren Dichotomie gibt es eine <b>minimale hinreichende Teilmenge Z</b> von Punkten:
+  Wer die richtig trennt, trennt automatisch alle. Alle anderen Punkte sind überflüssig.</p>
+
+  <div class="note ok">
+    <b>Wenn dir das bekannt vorkommt:</b> Das sind die <b>Support-Vektoren</b> der Support Vector Machine — 27 Jahre
+    bevor Boser, Guyon und Vapnik sie so nannten. Cover beweist hier bereits, wie viele es im Mittel sind.
+  </div>
+
+  <div class="card">
+    <p class="small"><b>Spiel:</b> Die Punkte mit <b>Ring</b> sind Extrempunkte. Lösche einen normalen Punkt —
+    nichts passiert. Lösche einen Extrempunkt — die Lösungsmenge wird größer.
+    Klicke Punkte an, um sie zu entfernen.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Punkte N <b id="exNV">14</b></label><input id="exN" type="range" min="3" max="60" value="14"></div>
+      <button id="exNew">🎲 Neu</button>
+      <button id="exOnly" class="p">🗜 Nur Extrempunkte behalten</button>
+      <button id="exShow" class="on">Lösungsfächer zeigen</button>
+      <button id="exReset">↺ Zurück</button>
+    </div>
+    <div class="grid g21">
+      <div><canvas id="extr" class="viz" height="420"></canvas></div>
+      <div>
+        <div class="statrow"><div class="stat"><div class="v" id="exR">–</div><div class="k">Extrempunkte R</div></div></div>
+        <div class="statrow"><div class="stat"><div class="v" id="exN2">–</div><div class="k">Punkte gesamt</div></div>
+        <div class="stat"><div class="v" id="exComp">–</div><div class="k">Kompression</div></div></div>
+        <div class="statrow"><div class="stat"><div class="v" id="exTh">–</div><div class="k">E[R] Theorie</div></div>
+        <div class="stat"><div class="v" id="ex2d">–</div><div class="k">Grenze 2d</div></div></div>
+        <div id="exbar" class="plot" style="height:220px"></div>
+        <p class="small">Ein Punkt ist genau dann Extrempunkt, wenn er <b>mehrdeutig</b> wäre, hätte man ihn
+        weggelassen. Das verbindet Station 10 und 11 zu einer einzigen Aussage.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center;padding:24px">
+    <div id="eq_extr" style="font-size:1.15em"></div>
+    <p class="small" style="margin-top:12px">Jeder Punkt ist mit Wahrscheinlichkeit
+    <span class="mono">2C(N−1,d−1)/C(N,d)</span> extrem; mal N ergibt den Erwartungswert.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Die Sättigung bei 2d (Gleichung 40)</h4>
+    <p class="small">Covers Grenzwert: <span class="mono">E[R]/2d → β/2</span> für β ≤ 2 und
+    <span class="mono">→ 1</span> für β ≥ 2. Übersetzt: <b>Egal wie viele Daten du sammelst — im Mittel brauchst du
+    nie mehr als 2d davon.</b> Erhöhe N und sieh zu, wie die Kurve flach wird.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>d <b id="erDV">10</b></label><input id="erD" type="range" min="2" max="60" value="10"></div>
+      <div class="ctrl"><label>N max <b id="erNV">400</b></label><input id="erN" type="range" min="20" max="4000" step="20" value="400"></div>
+      <div class="seg" id="ermode"><button data-m="abs" class="on">E[R] absolut</button><button data-m="rel">E[R]/2d</button><button data-m="frac">E[R]/N</button></div>
+    </div>
+    <div id="erplot" class="plot" style="height:380px"></div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="erAt">–</div><div class="k">E[R] bei N max</div></div>
+      <div class="stat"><div class="v" id="er2d">–</div><div class="k">2d</div></div>
+      <div class="stat"><div class="v" id="erRatio">–</div><div class="k">Anteil R/N</div></div>
+      <div class="stat"><div class="v" id="erMk">–</div><div class="k">Markov-Schranke P(R&gt;t·E)</div></div>
+    </div>
+    <p class="small">Covers Schlusssatz dazu: Da <span class="mono">R</span> eine positive Zufallsvariable ist,
+    gilt nach Markov <span class="mono">P(R &gt; t·E[R]) &lt; 1/t</span>. Die Kompression ist also nicht nur im
+    Mittel gut, sondern fast immer.</p>
+  </div>
+
+  <div class="note q">
+    <b>Die Pointe:</b> „Die wesentliche Information einer <i>unendlichen</i> Trainingsmenge kann in einem
+    Computer mit <i>endlicher</i> Speicherkapazität abgelegt werden." — Cover, 1965.
+    Das ist die theoretische Rechtfertigung dafür, dass Lernen überhaupt praktikabel ist.
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 12. BOOLEAN ============================ -->
+<section id="boolean" class="fade">
+  <div class="kicker">Station 12 — Die Anwendung auf Logik</div>
+  <h2>Boolesche Funktionen: wie viele Wahrheitstafeln kann ein Neuron?</h2>
+  <p class="lead">Nimm als Muster die <span class="mono">2^m</span> Ecken des Binärwürfels. Eine Dichotomie davon ist
+  genau eine <b>Wahrheitsfunktion</b> von m Variablen. Also: wie viele der <span class="mono">2^(2^m)</span>
+  booleschen Funktionen sind durch ein Neuron realisierbar?</p>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Der Binärwürfel als Musterraum</h4>
+    <p class="small">Klicke die Ecken an, um die Wahrheitstafel zu ändern. Das Panel prüft sofort, ob die Funktion
+    linear trennbar ist. Probiere <b>XOR</b> — das berühmte Gegenbeispiel.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Variablen m <b id="bmV">2</b></label><input id="bm" type="range" min="2" max="4" value="2"></div>
+      <div class="seg" id="bpreset">
+        <button data-p="and">AND</button><button data-p="or">OR</button>
+        <button data-p="xor" class="on">XOR</button><button data-p="maj">MAJORITÄT</button>
+        <button data-p="par">PARITÄT</button><button data-p="rnd">🎲 zufällig</button>
+      </div>
+      <button id="bexh">🔢 Alle Funktionen zählen</button>
+    </div>
+    <div class="grid g2">
+      <div><canvas id="bcube" class="viz" height="360"></canvas>
+        <p class="small" style="text-align:center">m=2: Quadrat · m=3: Würfel · m=4: Tesserakt-Projektion</p></div>
+      <div>
+        <table id="btt"></table>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="bsep">–</div><div class="k">linear trennbar?</div></div>
+          <div class="stat"><div class="v" id="bsph">–</div><div class="k">sphärisch trennbar?</div></div>
+        </div>
+        <div class="statrow">
+          <div class="stat"><div class="v" id="bcnt">–</div><div class="k">trennbare Funktionen (exakt)</div></div>
+          <div class="stat"><div class="v" id="ball">–</div><div class="k">alle 2^(2^m)</div></div>
+        </div>
+        <div id="bmsg" class="note" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:2px">Die Schranke — und warum sie nur eine Schranke ist</h4>
+    <p class="small">Cover setzt <span class="mono">N = 2^m</span> in die Formel ein:
+    <span class="mono">L_m(r) ≤ C(2^m, C(m+r, r))</span>. Es steht ein <b>≤</b> da, weil die Würfelecken
+    <i>nicht</i> in allgemeiner Lage sind (z. B. liegen (0,0),(0,1),(1,0),(1,1) schon zu viert auf einer Quadrik).
+    Vergleiche hier exakte Werte (bekannt für kleine m) gegen die Schranke:</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Variablen m <b id="blmV">4</b></label><input id="blm" type="range" min="1" max="9" value="4"></div>
+      <div class="ctrl"><label>Polynomordnung r <b id="blrV">1</b></label><input id="blr" type="range" min="1" max="4" value="1"></div>
+      <div class="seg" id="blmode"><button data-m="log2" class="on">log₂-Skala</button><button data-m="exp">Exponent</button></div>
+    </div>
+    <div id="blplot" class="plot" style="height:350px"></div>
+    <table id="bltab"></table>
+    <div class="note">
+      <b>Asymptotik aus dem Paper:</b> <span class="mono">L_m(r) ≤ 2^(m^(r+1)/r! + O(m^r log m))</span>.
+      Für <span class="mono">r = 1</span>: etwa <span class="mono">2^(m²)</span> von insgesamt
+      <span class="mono">2^(2^m)</span> Funktionen — ein verschwindend kleiner Bruchteil.
+      <b>Fast keine</b> boolesche Funktion ist linear trennbar.
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ============================ 13. ANTWORT ============================ -->
+<section id="answer" class="fade">
+  <div class="kicker">Station 13 — Zusammenfassung</div>
+  <h2>Die Antwort auf Covers Frage</h2>
+
+  <div class="grid g2">
+    <div class="card">
+      <span class="badge neg">Die Frage</span>
+      <h3 style="margin-top:8px">Wie viel kann eine Lernmaschine?</h3>
+      <p class="small">Gegeben eine Familie von Entscheidungsflächen mit <span class="mono">d</span> freien Parametern:
+      Wie viele Muster kann sie fehlerfrei einteilen, ab wann generalisiert sie, und wie viel muss sie sich merken?</p>
+    </div>
+    <div class="card">
+      <span class="badge pos">Die Antwort</span>
+      <h3 style="margin-top:8px">Alles hängt an der Zahl 2d.</h3>
+      <p class="small">Dieselbe Zahl beantwortet <b>drei</b> völlig verschiedene Fragen gleichzeitig —
+      das ist der eigentliche Fund des Papers.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:2px">Der rote Faden in einem Bild</h3>
+    <p class="small">Schiebe β = N/d über die kritische Marke 2 und beobachte, wie alle drei Größen gleichzeitig
+    ihr Verhalten ändern:</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>β = N/d <b id="suBV">2.0</b></label><input id="suB" type="range" min="2" max="160" value="20"></div>
+      <div class="ctrl"><label>d <b id="suDV">25</b></label><input id="suD" type="range" min="3" max="80" value="25"></div>
+      <button id="suPlay" class="p">▶ β durchfahren</button>
+    </div>
+    <div id="suplot" class="plot" style="height:400px"></div>
+    <div class="statrow">
+      <div class="stat"><div class="v" id="suN">–</div><div class="k">N = βd</div></div>
+      <div class="stat"><div class="v" id="suP">–</div><div class="k">P(N,d) speicherbar</div></div>
+      <div class="stat"><div class="v" id="suA">–</div><div class="k">A(N,d) mehrdeutig</div></div>
+      <div class="stat"><div class="v" id="suR">–</div><div class="k">E[R] Extrempunkte</div></div>
+      <div class="stat"><div class="v" id="suZ">–</div><div class="k">Zone</div></div>
+    </div>
+  </div>
+
+  <h3>Die Sätze auf einen Blick</h3>
+  <div class="card">
+    <table>
+      <tr><th>Satz</th><th>Aussage</th><th>In Worten</th></tr>
+      <tr><td><b>Theorem 1</b></td><td class="mono">C(N,d) = 2·Σ_{k=0}^{d-1} (N−1 über k)</td>
+        <td>So viele der 2^N Färbungen sind trennbar.</td></tr>
+      <tr><td><b>Theorem 2</b></td><td class="mono">N Hyperebenen → C(N,d) Regionen</td>
+        <td>Schläflis alter Satz — dasselbe dual gesehen.</td></tr>
+      <tr><td><b>Lemma 1</b></td><td class="mono">beide Labels möglich ⟺ Fläche durch y</td>
+        <td>Der Motor des ganzen Beweises.</td></tr>
+      <tr><td><b>Theorem 3</b></td><td class="mono">k Zwangspunkte → C(N, d−k)</td>
+        <td>Jede Nebenbedingung kostet genau einen Freiheitsgrad.</td></tr>
+      <tr><td><b>Theorem 4</b></td><td class="mono">Q(N,d), Q/C → 2^(d−1)</td>
+        <td>Mit dritter Klasse „auf der Fläche".</td></tr>
+      <tr><td><b>Kapazität</b></td><td class="mono">E[N*] = Median[N*] = 2d</td>
+        <td>Zwei Muster pro Gewicht.</td></tr>
+      <tr><td><b>Theorem 6</b></td><td class="mono">A(N,d) = C(N,d−1)/C(N,d) → 1/(β−1)</td>
+        <td>Generalisierung beginnt erst oberhalb von 2d.</td></tr>
+      <tr><td><b>Extrempunkte</b></td><td class="mono">E[R] = 2N·C(N−1,d−1)/C(N,d) → 2d</td>
+        <td>Unendliche Daten, endlicher Speicher.</td></tr>
+    </table>
+  </div>
+
+  <div class="grid g3">
+    <div class="card tight">
+      <h4 style="margin-top:2px">Was heute davon lebt</h4>
+      <p class="small">Der <b>φ-Trick</b> → Kernel-Trick (SVM, 1992). Cover ist in jedem SVM-Paper zitiert.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:2px">Zweites Erbe</h4>
+      <p class="small">C(N,d) ist die <b>Shatter-Funktion</b>; d ist die <b>VC-Dimension</b>. Vapnik & Chervonenkis (1971)
+      verallgemeinern genau das.</p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:2px">Drittes Erbe</h4>
+      <p class="small">Extrempunkte = <b>Support-Vektoren</b>. Cover berechnet 1965 schon ihre erwartete Anzahl: 2d.</p>
+    </div>
+  </div>
+
+  <div class="quiz" data-right="3">
+    <b>Abschlussfrage:</b> Was ist der tiefste Grund dafür, dass Covers Ergebnis <i>nicht</i> von der Lage
+    der Punkte abhängt?
+    <div class="opts">
+      <div class="opt">Weil die Punkte immer auf einer Kugel liegen.</div>
+      <div class="opt">Weil der zentrale Grenzwertsatz alles glättet.</div>
+      <div class="opt">Weil man immer eine lineare Transformation anwenden kann.</div>
+      <div class="opt">Weil die Antwort rein kombinatorisch ist: sie hängt nur davon ab, wie N Hyperebenen den Gewichtsraum zerschneiden — und das ist bei allgemeiner Lage immer gleich.</div>
+    </div>
+    <div class="fb"></div>
+  </div>
+
+  <div class="card" style="text-align:center;padding:34px">
+    <div style="font-size:19px;color:#dce4ff;line-height:1.7">
+      „Die Ergebnisse, selbst jene über zufällig positionierte Punkte,<br>
+      sind <b>kombinatorischer Natur</b> und im Wesentlichen<br>
+      <b>unabhängig von der Konfiguration</b> der Punkte im Raum."
+    </div>
+    <div class="small" style="margin-top:14px">— T. M. Cover, Schlussfolgerungen, 1965</div>
+  </div>
+</section>
+
+<footer>
+  Interaktive Aufbereitung von <b>T. M. Cover</b>, „Geometrical and Statistical Properties of Systems of
+  Linear Inequalities with Applications in Pattern Recognition",<br>
+  IEEE Transactions on Electronic Computers, EC-14(3), Juni 1965, S. 326–334.<br><br>
+  <span style="color:#7a86a8">Alle Zahlen werden live berechnet — nichts ist fest verdrahtet.</span>
+</footer>
+
+</div>
+
+<script>
+/* =======================================================================
+   0. GRUNDLAGEN: Mathe-Helfer
+   ======================================================================= */
+const LG=[0];(function(){let s=0;for(let i=1;i<=100000;i++){s+=Math.log(i);LG[i]=s;}})();
+function lchoose(n,k){if(k<0||k>n||n<0)return -Infinity;return LG[n]-LG[k]-LG[n-k];}
+function choose(n,k){if(k<0||k>n||n<0)return 0;if(k===0||k===n)return 1;return Math.round(Math.exp(lchoose(n,k)));}
+// log2 of C(N,d) = 2*sum_{k=0}^{d-1} C(N-1,k)
+function logC(N,d){
+  if(d<1)return -Infinity;
+  if(N<1)return -Infinity;
+  if(d>=N)return N*Math.LN2;
+  let mx=-Infinity,ts=[];
+  for(let k=0;k<d;k++){const t=lchoose(N-1,k);ts.push(t);if(t>mx)mx=t;}
+  let s=0;for(const t of ts)s+=Math.exp(t-mx);
+  return Math.log(2)+mx+Math.log(s);
+}
+function Cfn(N,d){const l=logC(N,d);if(l===-Infinity)return 0;return Math.exp(l);}
+function Cexact(N,d){ // exact integer for small
+  if(d<1)return 0; if(N<1)return 0;
+  let s=0;for(let k=0;k<Math.min(d,N);k++)s+=choose(N-1,k);
+  return 2*s;
+}
+// P(N,d) = C(N,d)/2^N, stable
+function Pnd(N,d){
+  if(d<1)return 0;
+  if(d>=N)return 1;
+  let mx=-Infinity,ts=[];
+  for(let k=0;k<d;k++){const t=lchoose(N-1,k);ts.push(t);if(t>mx)mx=t;}
+  let s=0;for(const t of ts)s+=Math.exp(t-mx);
+  const lg=Math.log(2)+mx+Math.log(s)-N*Math.LN2;
+  return Math.min(1,Math.exp(lg));
+}
+function Aamb(N,d){
+  if(d<=1)return 0;
+  const a=logC(N,d-1),b=logC(N,d);
+  if(b===-Infinity)return 0;
+  return Math.exp(a-b);
+}
+function ERext(N,d){
+  if(N<1||d<1)return 0;
+  const a=Math.log(2)+Math.log(N)+logC(N-1,d-1), b=logC(N,d);
+  if(b===-Infinity)return 0;
+  return Math.min(N,Math.exp(a-b));
+}
+function Qfn(N,d){
+  let s=0;
+  for(let k=0;k<=Math.min(d-1,N);k++){
+    let in2=0;
+    for(let m=0;m<=d-k-1;m++) in2+=choose(N-k-1,m);
+    s+=choose(N,k)*in2;
+  }
+  return 2*s;
+}
+function normcdf(x){
+  const t=1/(1+.2316419*Math.abs(x));
+  const d=.3989423*Math.exp(-x*x/2);
+  let p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));
+  return x>0?1-p:p;
+}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+function fmt(x){
+  if(!isFinite(x))return"∞";
+  if(x===0)return"0";
+  const a=Math.abs(x);
+  if(a>=1e15||a<1e-4){const e=Math.floor(Math.log10(a));return (x/Math.pow(10,e)).toFixed(2)+"e"+e;}
+  if(a>=1000)return Math.round(x).toLocaleString('de-DE');
+  if(Number.isInteger(x))return String(x);
+  return x.toFixed(a<1?3:2);
+}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+/* LP: finde w mit w·x_i*y_i > 0, Perzeptron mit Margin-Maximierung */
+function perceptron(vecs,labels,iters=4000){
+  const d=vecs[0].length; let w=new Array(d).fill(0);
+  for(let i=0;i<d;i++)w[i]=gauss()*.01;
+  let lr=1;
+  for(let t=0;t<iters;t++){
+    let bad=-1,worst=Infinity;
+    for(let i=0;i<vecs.length;i++){
+      let s=0;for(let j=0;j<d;j++)s+=w[j]*vecs[i][j];
+      const m=s*labels[i];
+      if(m<=0&&m<worst){worst=m;bad=i;}
+    }
+    if(bad<0)return w;
+    for(let j=0;j<d;j++)w[j]+=lr*labels[bad]*vecs[bad][j];
+    if(t%500===499)lr*=.9;
+  }
+  // final check
+  for(let i=0;i<vecs.length;i++){
+    let s=0;for(let j=0;j<vecs[0].length;j++)s+=w[j]*vecs[i][j];
+    if(s*labels[i]<=0)return null;
+  }
+  return w;
+}
+function sepCheck(vecs,labels){return perceptron(vecs,labels,3000)!==null;}
+
+/* =======================================================================
+   1. STERNENHIMMEL
+   ======================================================================= */
+(function(){
+  const c=document.getElementById('stars'),g=c.getContext('2d');
+  let st=[];
+  function rs(){c.width=innerWidth;c.height=innerHeight;st=[];
+    const n=Math.min(260,Math.floor(innerWidth*innerHeight/9000));
+    for(let i=0;i<n;i++)st.push({x:Math.random()*c.width,y:Math.random()*c.height,
+      r:Math.random()*1.3+.2,a:Math.random(),s:Math.random()*.014+.003});}
+  rs();addEventListener('resize',rs);
+  (function loop(){g.clearRect(0,0,c.width,c.height);
+    for(const s of st){s.a+=s.s;const al=.18+.5*Math.abs(Math.sin(s.a));
+      g.fillStyle=`rgba(190,210,255,${al})`;g.beginPath();g.arc(s.x,s.y,s.r,0,7);g.fill();}
+    requestAnimationFrame(loop);})();
+})();
+
+/* =======================================================================
+   2. NAV, PROGRESS, FADE, QUIZ
+   ======================================================================= */
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+});
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.04});
+document.querySelectorAll('.fade').forEach(e=>obs.observe(e));
+const navObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){
+  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));}});},
+  {rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('section,header').forEach(s=>navObs.observe(s));
+document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});}));
+document.querySelectorAll('.quiz').forEach(q=>{
+  const right=+q.dataset.right, fb=q.querySelector('.fb');
+  q.querySelectorAll('.opt').forEach((o,i)=>o.addEventListener('click',()=>{
+    q.querySelectorAll('.opt').forEach((x,j)=>{x.classList.remove('right','wrong');
+      if(j===right)x.classList.add('right');});
+    if(i!==right)o.classList.add('wrong');
+    fb.style.display='block';
+    fb.textContent=i===right?'✓ Richtig! Weiter geht\'s.':'✗ Nicht ganz — die grün markierte Antwort stimmt.';
+  }));
+});
+
+/* =======================================================================
+   3. KATEX
+   ======================================================================= */
+function tex(id,s,d=true){const e=document.getElementById(id);if(e&&window.katex)
+  try{katex.render(s,e,{displayMode:d,throwOnError:false});}catch(err){e.textContent=s;}}
+function renderAll(){
+  tex('heroF1','C(N,d)=2\\sum_{k=0}^{d-1}\\binom{N-1}{k}');
+  tex('eq_homog','f_w(x)=\\operatorname{sgn}(w\\cdot x),\\qquad \\{x: w\\cdot x=0\\}\\ \\text{ist eine Hyperebene durch }0');
+  tex('eq_pascal','\\binom{n}{k}=\\binom{n-1}{k-1}+\\binom{n-1}{k}');
+  tex('eq_CNd','C(N,d)=2\\sum_{k=0}^{d-1}
+\\binom{N-1}{k}\\;=\\;2\\!\\!\\sum_{k=0}^{d-1}\\!\\binom{N-1}{k}');
+  tex('eq_phisep','w\\cdot\\phi(x)>0\\ \\ (x\\in X^+),\\qquad w\\cdot\\phi(x)<0\\ \\ (x\\in X^-)');
+  tex('eq_main','C(N,d)\\;=\\;2\\sum_{k=0}^{d-1}\\binom{N-1}{k}');
+  tex('eq_cap','\\Pr\\{N^{*}=n\\}=\\left(\\tfrac12\\right)^{n}\\binom{n-1}{d-1}\\quad\\Longrightarrow\\quad E[N^{*}]=\\operatorname{Median}[N^{*}]=2d');
+  tex('eq_c25a','\\lim_{d\\to\\infty}P\\big(2d(1-\\varepsilon),d\\big)=1');
+  tex('eq_c25b','P(2d,d)=\\tfrac12');
+  tex('eq_c25c','\\lim_{d\\to\\infty}P\\big(2d(1+\\varepsilon),d\\big)=0');
+  tex('eq_amb','A(N,d)=\\frac{C(N,d-1)}{C(N,d)}=\\frac{\\sum_{k=0}^{d-2}\\binom{N-1}{k}}{\\sum_{k=0}^{d-1}\\binom{N-1}{k}}\\ \\xrightarrow[\\;N=\\beta d\\;]{d\\to\\infty}\\ A^{*}(\\beta)=\\begin{cases}1,&0\\le\\beta\\le2\\\\[4pt]\\dfrac{1}{\\beta-1},&\\beta\\ge2\\end{cases}');
+  tex('eq_extr','E[R(N,d)]=\\frac{2N\\,C(N-1,d-1)}{C(N,d)}\\qquad\\lim_{N/d\\to\\beta}E\\!\\left[\\frac{R}{2d}\\right]=\\begin{cases}\\beta/2,&\\beta\\le2\\\\1,&\\beta\\ge2\\end{cases}');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  if(window.katex)renderAll(); else setTimeout(renderAll,400);
+});
+window.addEventListener('load',()=>{setTimeout(renderAll,100);});
+
+/* =======================================================================
+   4. CANVAS-HELFER
+   ======================================================================= */
+function setupCanvas(id){
+  const c=document.getElementById(id);
+  const g=c.getContext('2d');
+  function resize(){
+    const r=c.getBoundingClientRect();
+    const dpr=Math.min(2,devicePixelRatio||1);
+    c.width=r.width*dpr; c.height=(+c.getAttribute('height'))*dpr;
+    c.style.height=c.getAttribute('height')+'px';
+    g.setTransform(dpr,0,0,dpr,0,0);
+    c._w=r.width; c._h=+c.getAttribute('height');
+  }
+  resize(); addEventListener('resize',()=>{resize();if(c._redraw)c._redraw();});
+  return {c,g};
+}
+function clearC(g,c){g.clearRect(0,0,c._w,c._h);}
+function grid(g,c,cx,cy,s){
+  g.save();
+  g.strokeStyle='rgba(130,160,255,.07)';g.lineWidth=1;
+  for(let x=cx%s;x<c._w;x+=s){g.beginPath();g.moveTo(x,0);g.lineTo(x,c._h);g.stroke();}
+  for(let y=cy%s;y<c._h;y+=s){g.beginPath();g.moveTo(0,y);g.lineTo(c._w,y);g.stroke();}
+  g.strokeStyle='rgba(160,185,255,.25)';g.lineWidth=1.3;
+  g.beginPath();g.moveTo(0,cy);g.lineTo(c._w,cy);g.moveTo(cx,0);g.lineTo(cx,c._h);g.stroke();
+  g.restore();
+}
+function dot(g,x,y,r,col,ring){
+  g.beginPath();g.arc(x,y,r,0,7);
+  g.fillStyle=col;g.shadowColor=col;g.shadowBlur=12;g.fill();g.shadowBlur=0;
+  if(ring){g.strokeStyle=ring;g.lineWidth=2.4;g.beginPath();g.arc(x,y,r+4.5,0,7);g.stroke();}
+}
+function arrow(g,x0,y0,x1,y1,col,w=2.4){
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w;
+  g.beginPath();g.moveTo(x0,y0);g.lineTo(x1,y1);g.stroke();
+  const a=Math.atan2(y1-y0,x1-x0),h=9;
+  g.beginPath();g.moveTo(x1,y1);
+  g.lineTo(x1-h*Math.cos(a-.4),y1-h*Math.sin(a-.4));
+  g.lineTo(x1-h*Math.cos(a+.4),y1-h*Math.sin(a+.4));
+  g.closePath();g.fill();
+}
+function lineThroughOrigin(g,c,cx,cy,nx,ny,col,w=2.2,dash=null){
+  const L=Math.hypot(nx,ny); if(L<1e-9)return;
+  const dx=-ny/L, dy=nx/L, big=3000;
+  g.save();if(dash)g.setLineDash(dash);
+  g.strokeStyle=col;g.lineWidth=w;
+  g.beginPath();g.moveTo(cx-dx*big,cy-dy*big);g.lineTo(cx+dx*big,cy+dy*big);g.stroke();
+  g.restore();
+}
+function label(g,x,y,t,col='#9aa6c8',size=11,align='left'){
+  g.save();g.fillStyle=col;g.font=`${size}px ui-monospace,monospace`;g.textAlign=align;
+  g.fillText(t,x,y);g.restore();
+}
+function canvasPos(c,ev){
+  const r=c.getBoundingClientRect();
+  const t=ev.touches?ev.touches[0]:ev;
+  return {x:t.clientX-r.left,y:t.clientY-r.top};
+}
+const PLOTCFG={displayModeBar:false,responsive:true};
+const PLOTLAY={
+  paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(8,12,24,.45)',
+  font:{color:'#b9c4e0',family:'Inter,sans-serif',size:11.5},
+  margin:{l:52,r:18,t:30,b:44},
+  xaxis:{gridcolor:'rgba(130,160,255,.11)',zerolinecolor:'rgba(130,160,255,.25)'},
+  yaxis:{gridcolor:'rgba(130,160,255,.11)',zerolinecolor:'rgba(130,160,255,.25)'},
+  legend:{bgcolor:'rgba(12,16,32,.6)',bordercolor:'rgba(130,160,255,.2)',borderwidth:1,font:{size:10.5}},
+  hovermode:'x unified'
+};
+function lay(o){return Object.assign(JSON.parse(JSON.stringify(PLOTLAY)),o||{});}
+
+/* =======================================================================
+   STATION 1: PERZEPTRON LIVE
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('p1');
+  const A=document.getElementById('p1a'),B=document.getElementById('p1b'),Nn=document.getElementById('p1n');
+  let pts=[],labels=[];
+  function gen(n){
+    pts=[];labels=[];
+    for(let i=0;i<n;i++){pts.push({x:gauss()*.55,y:gauss()*.55});labels.push(Math.random()<.5?1:-1);}
+  }
+  function countSep(){
+    const n=pts.length; if(n>14)return '–';
+    const vecs=pts.map(p=>[p.x,p.y,1]);
+    let cnt=0;
+    for(let m=0;m<(1<<n);m++){
+      const L=[];for(let i=0;i<n;i++)L.push((m>>i)&1?1:-1);
+      if(sepCheck(vecs,L))cnt++;
+    }
+    return cnt;
+  }
+  let sepCache=null;
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2, cy=c._h/2, S=Math.min(c._w,c._h)/3.2;
+    grid(g,c,cx,cy,S/2);
+    const ang=+A.value*Math.PI/180, bias=+B.value/180*1.3;
+    const nx=Math.cos(ang), ny=Math.sin(ang);
+    // decision line: nx*x + ny*y + bias = 0
+    const dx=-ny,dy=nx,big=3000;
+    const px=-nx*bias, py=-ny*bias;
+    // shade
+    g.save();
+    g.beginPath();
+    g.moveTo(cx+(px-dx*big)*S, cy-(py-dy*big)*S);
+    g.lineTo(cx+(px+dx*big)*S, cy-(py+dy*big)*S);
+    g.lineTo(cx+(px+dx*big+nx*big)*S, cy-(py+dy*big+ny*big)*S);
+    g.lineTo(cx+(px-dx*big+nx*big)*S, cy-(py-dy*big+ny*big)*S);
+    g.closePath();g.fillStyle='rgba(54,224,176,.055)';g.fill();
+    g.restore();
+    g.strokeStyle='rgba(199,146,255,.95)';g.lineWidth=2.6;
+    g.shadowColor='rgba(199,146,255,.6)';g.shadowBlur=14;
+    g.beginPath();
+    g.moveTo(cx+(px-dx*big)*S, cy-(py-dy*big)*S);
+    g.lineTo(cx+(px+dx*big)*S, cy-(py+dy*big)*S);
+    g.stroke();g.shadowBlur=0;
+    arrow(g,cx+px*S,cy-py*S,cx+(px+nx*.55)*S,cy-(py+ny*.55)*S,'rgba(199,146,255,.8)',2);
+    label(g,cx+(px+nx*.6)*S+6,cy-(py+ny*.6)*S,'w','#c792ff',12);
+    let err=0;
+    pts.forEach((p,i)=>{
+      const s=nx*p.x+ny*p.y+bias;
+      const pred=s>0?1:-1;
+      const ok=pred===labels[i];
+      if(!ok)err++;
+      const col=labels[i]>0?'#36e0b0':'#ff5f8a';
+      dot(g,cx+p.x*S,cy-p.y*S,7,col, ok?null:'#ffcf5c');
+    });
+    document.getElementById('p1err').textContent=err;
+    document.getElementById('p1stat').textContent=err===0?'✓ getrennt':'✗ Fehler';
+    document.getElementById('p1stat').style.color=err===0?'var(--pos)':'var(--neg)';
+    document.getElementById('p1tot').textContent=Math.pow(2,pts.length);
+    document.getElementById('p1sepc').textContent=sepCache===null?'…':sepCache;
+    label(g,12,20,`N = ${pts.length} Muster · d = 3 (Gerade in 2D) · Kapazität 2d = 6`,'#7f8db5',11.5);
+  }
+  c._redraw=draw;
+  function refreshSep(){
+    sepCache=null;draw();
+    setTimeout(()=>{sepCache=countSep();draw();},20);
+  }
+  [A,B].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('p1aV').textContent=A.value+'°';
+    document.getElementById('p1bV').textContent=(+B.value/180*1.3).toFixed(2);
+    draw();}));
+  Nn.addEventListener('input',()=>{document.getElementById('p1nV').textContent=Nn.value;gen(+Nn.value);refreshSep();});
+  document.getElementById('p1new').onclick=()=>{gen(+Nn.value);refreshSep();};
+  document.getElementById('p1rand').onclick=()=>{labels=labels.map(()=>Math.random()<.5?1:-1);draw();};
+  document.getElementById('p1auto').onclick=()=>{
+    const vecs=pts.map(p=>[p.x,p.y,1]);
+    const w=perceptron(vecs,labels,6000);
+    if(!w){document.getElementById('p1stat').textContent='keine Gerade!';
+      document.getElementById('p1stat').style.color='var(--neg)';return;}
+    const L=Math.hypot(w[0],w[1]);
+    let a=Math.atan2(w[1],w[0])*180/Math.PI; if(a<0)a+=360;
+    A.value=Math.round(a);
+    B.value=clamp(Math.round(w[2]/L/1.3*180),-180,180);
+    document.getElementById('p1aV').textContent=A.value+'°';
+    document.getElementById('p1bV').textContent=(+B.value/180*1.3).toFixed(2);
+    draw();
+  };
+  c.addEventListener('click',e=>{
+    const p=canvasPos(c,e), cx=c._w/2, cy=c._h/2, S=Math.min(c._w,c._h)/3.2;
+    let best=-1,bd=1e9;
+    pts.forEach((q,i)=>{const d=Math.hypot(cx+q.x*S-p.x, cy-q.y*S-p.y);if(d<bd){bd=d;best=i;}});
+    if(bd<16){labels[best]*=-1;draw();}
+  });
+  gen(6);refreshSep();
+})();
+
+/* =======================================================================
+   WERKZEUG 1: w und Hyperebene
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('w1');
+  const A=document.getElementById('w1a'),L=document.getElementById('w1l'),
+        P=document.getElementById('w1p'),R=document.getElementById('w1r');
+  let drag=false;
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=1;
+    grid(g,c,cx,cy,34);
+    const wa=+A.value*Math.PI/180, wl=+L.value;
+    const wx=Math.cos(wa)*wl, wy=Math.sin(wa)*wl;
+    const pa=+P.value*Math.PI/180, pr=+R.value;
+    const xx=Math.cos(pa)*pr, xy=Math.sin(pa)*pr;
+    const dotp=(wx*xx+wy*xy)/(100*100);
+    // shading halves
+    const nx=Math.cos(wa),ny=Math.sin(wa),dx=-ny,dy=nx,big=3000;
+    g.save();
+    g.beginPath();g.moveTo(cx-dx*big,cy+dy*big);g.lineTo(cx+dx*big,cy-dy*big);
+    g.lineTo(cx+dx*big+nx*big,cy-dy*big-ny*big);g.lineTo(cx-dx*big+nx*big,cy+dy*big-ny*big);
+    g.closePath();g.fillStyle='rgba(54,224,176,.07)';g.fill();
+    g.beginPath();g.moveTo(cx-dx*big,cy+dy*big);g.lineTo(cx+dx*big,cy-dy*big);
+    g.lineTo(cx+dx*big-nx*big,cy-dy*big+ny*big);g.lineTo(cx-dx*big-nx*big,cy+dy*big+ny*big);
+    g.closePath();g.fillStyle='rgba(255,95,138,.06)';g.fill();
+    g.restore();
+    lineThroughOrigin(g,c,cx,cy,wx,-wy,'rgba(255,255,255,.55)',2,[7,6]);
+    label(g,cx+dx*120+8,cy-dy*120,'w·x = 0','#cfd8f0',11.5);
+    arrow(g,cx,cy,cx+wx,cy-wy,'#c792ff',3);
+    label(g,cx+wx*1.1+6,cy-wy*1.1,'w','#c792ff',13);
+    // projection
+    const nl=Math.hypot(wx,wy);
+    const proj=(xx*wx+xy*wy)/(nl*nl);
+    g.save();g.setLineDash([3,4]);g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1.3;
+    g.beginPath();g.moveTo(cx+xx,cy-xy);g.lineTo(cx+proj*wx,cy-proj*wy);g.stroke();g.restore();
+    dot(g,cx+xx,cy-xy,8,dotp>0?'#36e0b0':'#ff5f8a','#ffffff55');
+    label(g,cx+xx+12,cy-xy-10,'x','#fff',13);
+    label(g,12,20,`w·x = ${(dotp*10).toFixed(2)}  →  f(x) = ${dotp>0?'+1':'−1'}`,
+      dotp>0?'#36e0b0':'#ff5f8a',13);
+    label(g,12,c._h-14,'grün: w·x > 0    rot: w·x < 0','#6d7ba3',11);
+    if(window.katex){
+      const e=document.getElementById('w1math');
+      try{katex.render(
+        `\\begin{aligned} w&=(${(wx/100).toFixed(2)},\\,${(wy/100).toFixed(2)})\\\\ x&=(${(xx/100).toFixed(2)},\\,${(xy/100).toFixed(2)})\\\\ w\\cdot x&=${(dotp).toFixed(3)}\\\\ f_w(x)&=${dotp>0?'+1':'-1'}\\end{aligned}`,
+        e,{displayMode:true,throwOnError:false});}catch(err){}
+    }
+  }
+  c._redraw=draw;
+  [A,L,P,R].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('w1aV').textContent=A.value+'°';
+    document.getElementById('w1lV').textContent=(+L.value/100).toFixed(2);
+    document.getElementById('w1pV').textContent=P.value+'°';
+    document.getElementById('w1rV').textContent=(+R.value/100).toFixed(2);
+    draw();}));
+  function setFromMouse(e){
+    const p=canvasPos(c,e),cx=c._w/2,cy=c._h/2;
+    const dx=p.x-cx,dy=-(p.y-cy);
+    let a=Math.atan2(dy,dx)*180/Math.PI;if(a<0)a+=360;
+    P.value=Math.round(a);R.value=clamp(Math.round(Math.hypot(dx,dy)),20,170);
+    document.getElementById('w1pV').textContent=P.value+'°';
+    document.getElementById('w1rV').textContent=(+R.value/100).toFixed(2);
+    draw();
+  }
+  c.addEventListener('mousedown',e=>{drag=true;setFromMouse(e);});
+  addEventListener('mouseup',()=>drag=false);
+  c.addEventListener('mousemove',e=>{if(drag)setFromMouse(e);});
+  c.addEventListener('touchstart',e=>{e.preventDefault();setFromMouse(e);},{passive:false});
+  c.addEventListener('touchmove',e=>{e.preventDefault();setFromMouse(e);},{passive:false});
+  draw();
+})();
+
+/* =======================================================================
+   WERKZEUG 2: PASCAL
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('pascal');
+  const N=document.getElementById('pbn'),D=document.getElementById('pbd');
+  let hl=true,hover=null;
+  function draw(){
+    clearC(g,c);
+    const n=+N.value, d=+D.value;
+    const rows=n+1;
+    const availH=c._h-30, availW=c._w-30;
+    const rh=Math.min(28, availH/rows);
+    const cw=Math.min(62, availW/(rows));
+    const top=18;
+    for(let r=0;r<rows;r++){
+      const y=top+r*rh+rh/2;
+      const x0=c._w/2-(r*cw)/2;
+      for(let k=0;k<=r;k++){
+        const x=x0+k*cw;
+        const v=choose(r,k);
+        const inSum=(r===n-1&&k<d);
+        const isHover=hover&&hover.r===r&&hover.k===k;
+        let bg='rgba(255,255,255,.03)', fg='#8e9bc0';
+        if(inSum){bg='rgba(54,224,176,.22)';fg='#b6ffe8';}
+        if(r===n-1&&k>=d){bg='rgba(255,95,138,.09)';fg='#c08a9c';}
+        if(isHover){bg='rgba(199,146,255,.35)';fg='#fff';}
+        g.fillStyle=bg;
+        const w=Math.min(cw-4,52),h=Math.min(rh-3,24);
+        g.beginPath();g.roundRect(x-w/2,y-h/2,w,h,6);g.fill();
+        if(inSum){g.strokeStyle='rgba(54,224,176,.5)';g.lineWidth=1;g.stroke();}
+        g.fillStyle=fg;g.font=`${Math.min(12,h*.6)}px ui-monospace,monospace`;
+        g.textAlign='center';g.textBaseline='middle';
+        const s=v>99999?v.toExponential(0):String(v);
+        g.fillText(s,x,y);
+      }
+    }
+    // recursion arrows
+    if(hl&&hover&&hover.r>0){
+      const r=hover.r,k=hover.k;
+      const y=top+r*rh+rh/2, x0=c._w/2-(r*cw)/2, x=x0+k*cw;
+      const yp=top+(r-1)*rh+rh/2, xp0=c._w/2-((r-1)*cw)/2;
+      g.strokeStyle='rgba(255,207,92,.85)';g.lineWidth=2;
+      if(k-1>=0){g.beginPath();g.moveTo(xp0+(k-1)*cw,yp+10);g.lineTo(x,y-10);g.stroke();}
+      if(k<=r-1){g.beginPath();g.moveTo(xp0+k*cw,yp+10);g.lineTo(x,y-10);g.stroke();}
+    }
+    g.textAlign='left';g.textBaseline='alphabetic';
+    label(g,10,c._h-8,`Zeile N−1 = ${n-1} grün markiert · Spalten 0…${d-1}`,'#7f8db5',11.5);
+    const sum=Cexact(n,d);
+    document.getElementById('pbsum').textContent=fmt(sum);
+    document.getElementById('pbfull').textContent=fmt(Math.pow(2,n));
+    document.getElementById('pbfrac').textContent=(sum/Math.pow(2,n)*100).toFixed(1)+'%';
+  }
+  c._redraw=draw;
+  function hitTest(px,py){
+    const n=+N.value, rows=n+1;
+    const availH=c._h-30, availW=c._w-30;
+    const rh=Math.min(28, availH/rows), cw=Math.min(62, availW/rows), top=18;
+    for(let r=0;r<rows;r++){
+      const y=top+r*rh+rh/2, x0=c._w/2-(r*cw)/2;
+      for(let k=0;k<=r;k++){
+        const x=x0+k*cw;
+        if(Math.abs(px-x)<cw/2&&Math.abs(py-y)<rh/2)return {r,k};
+      }
+    }
+    return null;
+  }
+  c.addEventListener('mousemove',e=>{const p=canvasPos(c,e);const h=hitTest(p.x,p.y);
+    if((h&&(!hover||h.r!==hover.r||h.k!==hover.k))||(!h&&hover)){hover=h;draw();}});
+  c.addEventListener('mouseleave',()=>{hover=null;draw();});
+  [N,D].forEach(e=>e.addEventListener('input',()=>{
+    if(+D.value>+N.value)D.value=N.value;
+    document.getElementById('pbnV').textContent=N.value;
+    document.getElementById('pbdV').textContent=D.value;
+    draw();}));
+  document.getElementById('pbhl').onclick=function(){hl=!hl;this.classList.toggle('on',hl);draw();};
+  draw();
+})();
+
+/* =======================================================================
+   WERKZEUG 3: ALLGEMEINE LAGE
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('gpc');
+  const P=document.getElementById('gp');
+  let base=[],N=6;
+  function gen(){base=[];for(let i=0;i<N;i++)base.push({x:gauss()*.6,y:gauss()*.6});}
+  function current(){
+    const t=+P.value/100;
+    // target: all on a line y = 0.3x
+    return base.map(p=>{
+      const tx=p.x, ty=.35*p.x;
+      return {x:lerp(p.x,tx,t), y:lerp(p.y,ty,t)};
+    });
+  }
+  function count(pts){
+    const vecs=pts.map(p=>[p.x,p.y,1]);
+    let cnt=0;
+    for(let m=0;m<(1<<pts.length);m++){
+      const L=[];for(let i=0;i<pts.length;i++)L.push((m>>i)&1?1:-1);
+      if(sepCheck(vecs,L))cnt++;
+    }
+    return cnt;
+  }
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.4;
+    grid(g,c,cx,cy,S/2);
+    const pts=current();
+    pts.forEach(p=>dot(g,cx+p.x*S,cy-p.y*S,7,'#7aa2ff'));
+    const t=+P.value/100;
+    if(t>.5){label(g,12,22,'⚠ Entartung: Punkte fast kollinear','#ffcf5c',12);}
+    else label(g,12,22,'✓ allgemeine Lage','#36e0b0',12);
+    const sep=count(pts), mx=Cexact(pts.length,3);
+    document.getElementById('gpsep').textContent=sep;
+    document.getElementById('gpmax').textContent=mx;
+    Plotly.react('gpbars',[{
+      x:['tatsächlich','Maximum C(N,3)','alle 2^N'],
+      y:[sep,mx,Math.pow(2,pts.length)],
+      type:'bar',
+      marker:{color:[sep===mx?'#36e0b0':'#ff5f8a','#7aa2ff','#4a5680']},
+      text:[sep,mx,Math.pow(2,pts.length)].map(String),textposition:'outside'
+    }],lay({yaxis:{title:'Dichotomien'},showlegend:false,margin:{l:44,r:12,t:16,b:40}}),PLOTCFG);
+  }
+  c._redraw=draw;
+  P.addEventListener('input',()=>{document.getElementById('gpV').textContent=P.value+'%';draw();});
+  document.getElementById('gpnew').onclick=()=>{gen();draw();};
+  gen();setTimeout(draw,120);
+})();
+
+/* =======================================================================
+   WERKZEUG 4: DICHOTOMIEN
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('dicho');
+  const N=document.getElementById('dcn');
+  let pts=[],mode='lin',sel=0,res=[];
+  function phi(p){
+    if(mode==='lin')return [p.x,p.y];
+    if(mode==='aff')return [1,p.x,p.y];
+    return [1,p.x,p.y,p.x*p.x+p.y*p.y];
+  }
+  function dim(){return mode==='lin'?2:mode==='aff'?3:4;}
+  function gen(){pts=[];const n=+N.value;
+    for(let i=0;i<n;i++){const a=i/n*6.283+rnd(-.3,.3),r=rnd(.4,.9);
+      pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r});}}
+  function compute(){
+    const n=pts.length, vecs=pts.map(phi);
+    res=[];
+    for(let m=0;m<(1<<n);m++){
+      const L=[];for(let i=0;i<n;i++)L.push((m>>i)&1?1:-1);
+      res.push({m,L,ok:sepCheck(vecs,L),w:null});
+    }
+    const s=res.filter(r=>r.ok).length;
+    document.getElementById('dcs').textContent=s;
+    document.getElementById('dct').textContent=1<<n;
+    document.getElementById('dcf').textContent=Cexact(n,dim());
+    renderList();
+  }
+  function renderList(){
+    const box=document.getElementById('dicholist');box.innerHTML='';
+    res.forEach((r,i)=>{
+      const sp=document.createElement('span');
+      sp.className='chip '+(r.ok?'sep':'nos');
+      sp.textContent=r.L.map(v=>v>0?'+':'−').join('');
+      sp.style.cursor='pointer';
+      if(i===sel)sp.style.outline='2px solid var(--acc2)';
+      sp.onclick=()=>{sel=i;draw();renderList();};
+      box.appendChild(sp);
+    });
+  }
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/2.9;
+    grid(g,c,cx,cy,S/2);
+    const r=res[sel];
+    if(r&&r.ok){
+      const w=perceptron(pts.map(phi),r.L,5000);
+      if(w){
+        if(mode==='lin'){lineThroughOrigin(g,c,cx,cy,w[0],-w[1],'rgba(199,146,255,.9)',2.6);}
+        else if(mode==='aff'){
+          // w0 + w1 x + w2 y = 0
+          const a=w[1],b=w[2],c0=w[0];
+          const L2=Math.hypot(a,b);
+          if(L2>1e-9){
+            const px=-c0*a/(L2*L2), py=-c0*b/(L2*L2);
+            const dx=-b/L2,dy=a/L2,big=2000;
+            g.strokeStyle='rgba(199,146,255,.9)';g.lineWidth=2.6;
+            g.beginPath();
+            g.moveTo(cx+(px-dx*big)*S,cy-(py-dy*big)*S);
+            g.lineTo(cx+(px+dx*big)*S,cy-(py+dy*big)*S);g.stroke();
+          }
+        } else {
+          // w0 + w1 x + w2 y + w3(x²+y²)=0 → circle
+          if(Math.abs(w[3])>1e-7){
+            const a0=-w[1]/(2*w[3]), b0=-w[2]/(2*w[3]);
+            const rr=a0*a0+b0*b0-w[0]/w[3];
+            if(rr>0){
+              g.strokeStyle='rgba(199,146,255,.9)';g.lineWidth=2.6;
+              g.beginPath();g.arc(cx+a0*S,cy-b0*S,Math.sqrt(rr)*S,0,7);g.stroke();
+            }
+          }
+        }
+      }
+    } else if(r){
+      label(g,c._w/2,30,'✗ nicht trennbar','#ff5f8a',14,'center');
+    }
+    pts.forEach((p,i)=>{
+      const col=r?(r.L[i]>0?'#36e0b0':'#ff5f8a'):'#7aa2ff';
+      dot(g,cx+p.x*S,cy-p.y*S,8,col);
+      label(g,cx+p.x*S+11,cy-p.y*S-9,'x'+(i+1),'#8e9bc0',10.5);
+    });
+  }
+  c._redraw=draw;
+  N.addEventListener('input',()=>{document.getElementById('dcnV').textContent=N.value;
+    gen();sel=0;compute();draw();});
+  document.getElementById('dcnew').onclick=()=>{gen();sel=0;compute();draw();};
+  document.querySelectorAll('#dcmode button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#dcmode button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');mode=b.dataset.m;compute();draw();});
+  gen();compute();draw();
+})();
+
+/* =======================================================================
+   STATION 3: PHI-TRICK 3D (THREE.JS) + 2D
+   ======================================================================= */
+let phiState={pts:[],w:[0,0,0,1,-0.5]};
+(function(){
+  const host=document.getElementById('three3d');
+  if(!window.THREE){host.innerHTML='<div style="padding:40px;text-align:center;color:#9aa6c8">3D nicht verfügbar</div>';return;}
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(48,1,.1,100);
+  cam.position.set(2.6,2.1,2.8);
+  const rend=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  rend.setPixelRatio(Math.min(2,devicePixelRatio));
+  host.appendChild(rend.domElement);
+  const ctrl=new THREE.OrbitControls(cam,rend.domElement);
+  ctrl.enableDamping=true;ctrl.dampingFactor=.08;
+  sc.add(new THREE.AmbientLight(0xffffff,.8));
+  const dl=new THREE.DirectionalLight(0xffffff,.8);dl.position.set(3,5,2);sc.add(dl);
+  // paraboloid wireframe
+  const pg=new THREE.ParametricGeometry?null:null;
+  const parab=(()=>{
+    const geo=new THREE.BufferGeometry();
+    const seg=28,verts=[],idx=[];
+    for(let i=0;i<=seg;i++)for(let j=0;j<=seg;j++){
+      const x=(i/seg*2-1)*1.2,y=(j/seg*2-1)*1.2;
+      verts.push(x,(x*x+y*y)*.55,y);
+    }
+    for(let i=0;i<seg;i++)for(let j=0;j<seg;j++){
+      const a=i*(seg+1)+j,b=a+1,cc=a+seg+1,d2=cc+1;
+      idx.push(a,b,cc,b,d2,cc);
+    }
+    geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+    geo.setIndex(idx);geo.computeVertexNormals();
+    const m=new THREE.MeshBasicMaterial({color:0x4a6cc0,wireframe:true,transparent:true,opacity:.22});
+    return new THREE.Mesh(geo,m);
+  })();
+  sc.add(parab);
+  // plane
+  const plGeo=new THREE.PlaneGeometry(2.6,2.6);
+  const plMat=new THREE.MeshBasicMaterial({color:0xc792ff,transparent:true,opacity:.3,side:THREE.DoubleSide});
+  const plane=new THREE.Mesh(plGeo,plMat);sc.add(plane);
+  // axes
+  const ax=new THREE.AxesHelper(1.5);sc.add(ax);
+  // points
+  let spheres=[],P2=[];
+  function genPts(){
+    P2=[];
+    for(let i=0;i<26;i++){
+      const a=Math.random()*6.283;
+      const inner=i<13;
+      const r=inner?rnd(.1,.45):rnd(.78,1.1);
+      P2.push({x:Math.cos(a)*r,y:Math.sin(a)*r,c:inner?1:-1});
+    }
+    spheres.forEach(s=>sc.remove(s));spheres=[];
+    P2.forEach(p=>{
+      const geo=new THREE.SphereGeometry(.052,14,12);
+      const mat=new THREE.MeshLambertMaterial({color:p.c>0?0x36e0b0:0xff5f8a,
+        emissive:p.c>0?0x0d5a46:0x6b1f33});
+      const s=new THREE.Mesh(geo,mat);sc.add(s);spheres.push(s);
+    });
+    phiState.pts=P2;
+  }
+  genPts();
+  const L=document.getElementById('lift'),PX=document.getElementById('plx'),
+        PY=document.getElementById('ply'),PH=document.getElementById('plh');
+  function update(){
+    const t=+L.value/100;
+    P2.forEach((p,i)=>{spheres[i].position.set(p.x,(p.x*p.x+p.y*p.y)*.55*t,p.y);});
+    parab.material.opacity=.05+.2*t;
+    const a=+PX.value/200,b=+PY.value/200,h=+PH.value/100*.6;
+    // plane: y = a*x + b*z + h  → normal (-a, 1, -b)
+    const n=new THREE.Vector3(-a,1,-b).normalize();
+    plane.position.set(0,h,0);
+    plane.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),n);
+    draw2d(a,b,h);
+  }
+  const {c:c2,g:g2}=setupCanvas('phi2d');
+  function draw2d(a,b,h){
+    clearC(g2,c2);
+    const cx=c2._w/2,cy=c2._h/2,S=Math.min(c2._w,c2._h)/3;
+    grid(g2,c2,cx,cy,S/2);
+    // boundary: 0.55(x²+y²) = a x + b y + h
+    // x²+y² - (a/.55)x - (b/.55)y - h/.55 = 0
+    const A=a/.55,B=b/.55,C0=h/.55;
+    const ox=A/2,oy=B/2,rr=ox*ox+oy*oy+C0;
+    if(rr>0){
+      g2.strokeStyle='rgba(199,146,255,.95)';g2.lineWidth=2.8;
+      g2.shadowColor='rgba(199,146,255,.5)';g2.shadowBlur=12;
+      g2.beginPath();g2.arc(cx+ox*S,cy-oy*S,Math.sqrt(rr)*S,0,7);g2.stroke();g2.shadowBlur=0;
+      g2.fillStyle='rgba(199,146,255,.07)';g2.fill();
+    }
+    let err=0;
+    P2.forEach(p=>{
+      const inside=(p.x*p.x+p.y*p.y)*.55 < a*p.x+b*p.y+h;
+      const pred=inside?1:-1;
+      if(pred!==p.c)err++;
+      dot(g2,cx+p.x*S,cy-p.y*S,6.5,p.c>0?'#36e0b0':'#ff5f8a',pred!==p.c?'#ffcf5c':null);
+    });
+    label(g2,12,20,`Fehler: ${err} / ${P2.length}`,err===0?'#36e0b0':'#ffcf5c',12.5);
+    label(g2,12,c2._h-12,'Die Ebene oben ⟶ dieser Kreis hier','#6d7ba3',11);
+  }
+  c2._redraw=()=>update();
+  [L,PX,PY,PH].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('liftV').textContent=L.value+'%';
+    document.getElementById('plxV').textContent=(+PX.value/200).toFixed(2);
+    document.getElementById('plyV').textContent=(+PY.value/200).toFixed(2);
+    document.getElementById('plhV').textContent=(+PH.value/100*.6).toFixed(2);
+    update();}));
+  document.getElementById('phiFit').onclick=()=>{
+    // fit: find a,b,h so that .55 r² - a x - b y - h separates
+    const vecs=P2.map(p=>[-(p.x),-(p.y),-1,(p.x*p.x+p.y*p.y)*.55]);
+    const labs=P2.map(p=>p.c>0?-1:1); // inner (c=1) should be below plane → .55r² - ax-by-h <0
+    const w=perceptron(vecs,labs,8000);
+    if(w){
+      const s=w[3]!==0?w[3]:1;
+      PX.value=clamp(Math.round(w[0]/s*200),-100,100);
+      PY.value=clamp(Math.round(w[1]/s*200),-100,100);
+      PH.value=clamp(Math.round(w[2]/s*100/.6),0,200);
+    } else {PX.value=0;PY.value=0;PH.value=55;}
+    ['plxV','plyV','plhV'].forEach(()=>{});
+    document.getElementById('plxV').textContent=(+PX.value/200).toFixed(2);
+    document.getElementById('plyV').textContent=(+PY.value/200).toFixed(2);
+    document.getElementById('plhV').textContent=(+PH.value/100*.6).toFixed(2);
+    update();
+  };
+  let anim=null;
+  document.getElementById('phiAuto').onclick=()=>{
+    if(anim){clearInterval(anim);anim=null;return;}
+    let v=0,dir=1;
+    anim=setInterval(()=>{v+=dir*2.5;if(v>=100){v=100;dir=-1;}if(v<=0){v=0;dir=1;}
+      L.value=v;document.getElementById('liftV').textContent=v+'%';update();},40);
+  };
+  function resize(){
+    const w=host.clientWidth,h=host.clientHeight;
+    rend.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();
+  }
+  resize();addEventListener('resize',resize);
+  (function loop(){requestAnimationFrame(loop);ctrl.update();rend.render(sc,cam);})();
+  // default good fit
+  setTimeout(()=>{document.getElementById('phiFit').click();},300);
+  update();
+})();
+
+/* =======================================================================
+   PHI-ZOO
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('zoo');
+  let mode='hom',pts=[],labels=[],w=null;
+  const MODES={
+    hom:{d:2,name:'Gerade durch Ursprung',phi:p=>[p.x,p.y],tex:'\\phi(x)=(x_1,x_2)'},
+    aff:{d:3,name:'beliebige Gerade',phi:p=>[1,p.x,p.y],tex:'\\phi(x)=(1,x_1,x_2)'},
+    sph:{d:4,name:'Kreis',phi:p=>[1,p.x,p.y,p.x*p.x+p.y*p.y],tex:'\\phi(x)=(1,x_1,x_2,\\|x\\|^2)'},
+    cone:{d:3,name:'Kegel',phi:p=>[p.x,p.y,Math.hypot(p.x,p.y)],tex:'\\phi(x)=(x_1,x_2,\\|x\\|)'},
+    quad:{d:6,name:'Quadrik (r=2)',phi:p=>[1,p.x,p.y,p.x*p.x,p.x*p.y,p.y*p.y],tex:'\\phi(x)=(1,x_1,x_2,x_1^2,x_1x_2,x_2^2)'},
+    cub:{d:10,name:'Kubik (r=3)',phi:p=>[1,p.x,p.y,p.x*p.x,p.x*p.y,p.y*p.y,
+        p.x**3,p.x*p.x*p.y,p.x*p.y*p.y,p.y**3],tex:'\\phi(x)=\\text{alle Monome bis Grad }3'}
+  };
+  function gen(){pts=[];labels=[];
+    for(let i=0;i<9;i++){pts.push({x:gauss()*.55,y:gauss()*.55});labels.push(Math.random()<.5?1:-1);}}
+  function fit(){
+    const M=MODES[mode];
+    w=perceptron(pts.map(M.phi),labels,8000);
+  }
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.2;
+    grid(g,c,cx,cy,S/2);
+    const M=MODES[mode];
+    if(w){
+      // scan field
+      const step=3;
+      const img=g.createImageData(c._w,c._h);
+      for(let py=0;py<c._h;py+=step)for(let px=0;px<c._w;px+=step){
+        const X=(px-cx)/S, Y=-(py-cy)/S;
+        const v=M.phi({x:X,y:Y});
+        let s=0;for(let i=0;i<v.length;i++)s+=w[i]*v[i];
+        const col=s>0?[54,224,176]:[255,95,138];
+        const al=18;
+        for(let dy=0;dy<step;dy++)for(let dx=0;dx<step;dx++){
+          const q=((py+dy)*c._w+(px+dx))*4;
+          if(q+3<img.data.length){img.data[q]=col[0];img.data[q+1]=col[1];img.data[q+2]=col[2];img.data[q+3]=al;}
+        }
+      }
+      g.putImageData(img,0,0);
+      // boundary via marching
+      g.strokeStyle='rgba(255,255,255,.75)';g.lineWidth=2;
+      for(let py=0;py<c._h-4;py+=4)for(let px=0;px<c._w-4;px+=4){
+        const f=(ax,ay)=>{const v=M.phi({x:(ax-cx)/S,y:-(ay-cy)/S});let s=0;
+          for(let i=0;i<v.length;i++)s+=w[i]*v[i];return s;};
+        const a=f(px,py),b=f(px+4,py),b2=f(px,py+4);
+        if(a*b<0){g.beginPath();g.moveTo(px,py);g.lineTo(px+4,py);g.stroke();}
+        if(a*b2<0){g.beginPath();g.moveTo(px,py);g.lineTo(px,py+4);g.stroke();}
+      }
+    }
+    grid(g,c,cx,cy,S/2);
+    let err=0;
+    pts.forEach((p,i)=>{
+      let ok=true;
+      if(w){const v=M.phi(p);let s=0;for(let j=0;j<v.length;j++)s+=w[j]*v[j];
+        ok=(s>0?1:-1)===labels[i];}
+      if(!ok)err++;
+      dot(g,cx+p.x*S,cy-p.y*S,7.5,labels[i]>0?'#36e0b0':'#ff5f8a',ok?null:'#ffcf5c');
+    });
+    label(g,12,20,`${M.name} · d = ${M.d} · Fehler: ${err}`,err===0?'#36e0b0':'#ffcf5c',12.5);
+    if(!w)label(g,12,38,'✗ mit dieser Familie nicht trennbar','#ff5f8a',12);
+    document.getElementById('zood').textContent=M.d;
+    document.getElementById('zoocap').textContent=2*M.d;
+    // table
+    const t=document.getElementById('zootab');
+    let html='<tr><th>Familie</th><th>d</th><th>C(9,d)</th><th>von 512</th></tr>';
+    for(const k in MODES){
+      const m2=MODES[k],cc=Cexact(9,m2.d);
+      html+=`<tr style="${k===mode?'background:rgba(122,162,255,.14)':''}">
+        <td>${m2.name}</td><td class="mono">${m2.d}</td><td class="mono">${cc}</td>
+        <td class="mono">${(cc/512*100).toFixed(0)}%</td></tr>`;
+    }
+    t.innerHTML=html;
+    if(window.katex){try{katex.render(M.tex,document.getElementById('zoophi'),
+      {displayMode:true,throwOnError:false});}catch(e){}}
+  }
+  c._redraw=draw;
+  document.querySelectorAll('#zoomode button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#zoomode button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');mode=b.dataset.m;fit();draw();});
+  document.getElementById('zoonew').onclick=()=>{gen();fit();draw();};
+  document.getElementById('zoolabel').onclick=()=>{labels=labels.map(()=>Math.random()<.5?1:-1);fit();draw();};
+  document.getElementById('zoofit').onclick=()=>{fit();draw();};
+  c.addEventListener('click',e=>{
+    const p=canvasPos(c,e),cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.2;
+    let bi=-1,bd=1e9;
+    pts.forEach((q,i)=>{const d=Math.hypot(cx+q.x*S-p.x,cy-q.y*S-p.y);if(d<bd){bd=d;bi=i;}});
+    if(bd<16){labels[bi]*=-1;fit();draw();}
+  });
+  gen();fit();draw();
+})();
+
+/* =======================================================================
+   STATION 4: DUALITÄT
+   ======================================================================= */
+(function(){
+  const A=setupCanvas('dualA'), B=setupCanvas('dualB');
+  const N=document.getElementById('dun');
+  let pts=[],w={x:.7,y:.5},shade=true,tour=null;
+  function gen(){pts=[];const n=+N.value;
+    for(let i=0;i<n;i++){const a=rnd(0,6.283),r=rnd(.45,.95);
+      pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r});}}
+  function labelsOf(){return pts.map(p=>(w.x*p.x+w.y*p.y)>0?1:-1);}
+  function countRegions(){
+    const n=pts.length;
+    const seen=new Set();
+    for(let k=0;k<20000;k++){
+      const a=k/20000*6.283;
+      const cx=Math.cos(a),cy=Math.sin(a);
+      let s='';for(const p of pts)s+=(cx*p.x+cy*p.y)>0?'1':'0';
+      seen.add(s);
+    }
+    return seen.size;
+  }
+  function draw(){
+    // A: pattern space
+    const {c,g}=A;
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3;
+    grid(g,c,cx,cy,S/2);
+    lineThroughOrigin(g,c,cx,cy,w.x,-w.y,'rgba(199,146,255,.9)',2.6);
+    arrow(g,cx,cy,cx+w.x*S*.6,cy-w.y*S*.6,'#c792ff',2.4);
+    label(g,cx+w.x*S*.65+6,cy-w.y*S*.65,'w','#c792ff',12);
+    const L=labelsOf();
+    pts.forEach((p,i)=>{
+      dot(g,cx+p.x*S,cy-p.y*S,7,L[i]>0?'#36e0b0':'#ff5f8a');
+      label(g,cx+p.x*S+10,cy-p.y*S-9,String(i+1),'#8e9bc0',10);
+    });
+    label(g,10,18,'Musterraum','#7f8db5',11.5);
+    // B: weight space
+    const B2=B.c,h=B.g;
+    clearC(h,B2);
+    const bx=B2._w/2,by=B2._h/2,T=Math.min(B2._w,B2._h)/3;
+    if(shade){
+      const step=4;
+      const img=h.createImageData(B2._w,B2._h);
+      for(let py=0;py<B2._h;py+=step)for(let px=0;px<B2._w;px+=step){
+        const X=(px-bx)/T,Y=-(py-by)/T;
+        let code=0;
+        for(let i=0;i<pts.length;i++)if(X*pts[i].x+Y*pts[i].y>0)code|=(1<<i);
+        const hue=(code*47)%360;
+        const rgbv=hsl2rgb(hue,.55,.55);
+        for(let dy=0;dy<step;dy++)for(let dx=0;dx<step;dx++){
+          const q=((py+dy)*B2._w+(px+dx))*4;
+          if(q+3<img.data.length){img.data[q]=rgbv[0];img.data[q+1]=rgbv[1];img.data[q+2]=rgbv[2];img.data[q+3]=42;}
+        }
+      }
+      h.putImageData(img,0,0);
+    }
+    grid(h,B2,bx,by,T/2);
+    pts.forEach((p,i)=>{
+      lineThroughOrigin(h,B2,bx,by,p.x,-p.y,'rgba(122,162,255,.55)',1.6);
+      const L2=Math.hypot(p.x,p.y);
+      label(h,bx+(-p.y/L2)*T*.9+5,by-(p.x/L2)*T*.9,'x'+(i+1),'#7aa2ff',10);
+    });
+    dot(h,bx+w.x*T,by-w.y*T,8,'#ffffff','#c792ff');
+    label(h,bx+w.x*T+12,by-w.y*T-10,'w','#fff',12);
+    label(h,10,18,'Gewichtsraum','#7f8db5',11.5);
+    const reg=countRegions();
+    document.getElementById('duReg').textContent=reg;
+    document.getElementById('duPred').textContent=Cexact(pts.length,2);
+    document.getElementById('duLab').textContent=L.map(v=>v>0?'+':'−').join('');
+  }
+  function hsl2rgb(hh,s,l){
+    hh/=360;const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;
+    const f=t=>{if(t<0)t+=1;if(t>1)t-=1;
+      if(t<1/6)return p+(q-p)*6*t;if(t<.5)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+    return [Math.round(f(hh+1/3)*255),Math.round(f(hh)*255),Math.round(f(hh-1/3)*255)];
+  }
+  A.c._redraw=draw;B.c._redraw=draw;
+  N.addEventListener('input',()=>{document.getElementById('dunV').textContent=N.value;gen();draw();});
+  document.getElementById('dunew').onclick=()=>{gen();draw();};
+  document.getElementById('dushade').onclick=function(){shade=!shade;this.classList.toggle('on',shade);draw();};
+  document.getElementById('dutour').onclick=function(){
+    if(tour){clearInterval(tour);tour=null;this.textContent='▶ Tour durch alle Regionen';return;}
+    this.textContent='⏸ Stop';
+    let a=0;
+    tour=setInterval(()=>{a+=.035;w={x:Math.cos(a)*.8,y:Math.sin(a)*.8};draw();},55);
+  };
+  let drag=false;
+  function setW(e){
+    const p=canvasPos(B.c,e),bx=B.c._w/2,by=B.c._h/2,T=Math.min(B.c._w,B.c._h)/3;
+    w={x:(p.x-bx)/T,y:-(p.y-by)/T};draw();
+  }
+  B.c.addEventListener('mousedown',e=>{drag=true;setW(e);});
+  addEventListener('mouseup',()=>drag=false);
+  B.c.addEventListener('mousemove',e=>{if(drag)setW(e);});
+  B.c.addEventListener('touchstart',e=>{e.preventDefault();setW(e);},{passive:false});
+  B.c.addEventListener('touchmove',e=>{e.preventDefault();setW(e);},{passive:false});
+  gen();draw();
+})();
+
+/* =======================================================================
+   STATION 4b: 3D EBENEN
+   ======================================================================= */
+(function(){
+  const host=document.getElementById('three3b');
+  if(!window.THREE){host.innerHTML='<div style="padding:40px;text-align:center;color:#9aa6c8">3D nicht verfügbar</div>';return;}
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(46,1,.1,100);cam.position.set(2.4,1.8,2.6);
+  const rend=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  rend.setPixelRatio(Math.min(2,devicePixelRatio));host.appendChild(rend.domElement);
+  const ctrl=new THREE.OrbitControls(cam,rend.domElement);ctrl.enableDamping=true;
+  sc.add(new THREE.AmbientLight(0xffffff,.9));
+  sc.add(new THREE.AxesHelper(1.4));
+  const sph=new THREE.Mesh(new THREE.SphereGeometry(1.08,26,18),
+    new THREE.MeshBasicMaterial({color:0x4a6cc0,wireframe:true,transparent:true,opacity:.1}));
+  sc.add(sph);
+  let planes=[],spin=true;
+  const N=document.getElementById('d3n'),O=document.getElementById('d3o');
+  const PAL=[0x36e0b0,0xff5f8a,0x7aa2ff,0xc792ff,0xffcf5c,0x5ce1e6,0xff9f5c,0x9dff5c];
+  function build(){
+    planes.forEach(p=>sc.remove(p));planes=[];
+    const n=+N.value;
+    for(let i=0;i<n;i++){
+      const nv=new THREE.Vector3(gauss(),gauss(),gauss()).normalize();
+      const geo=new THREE.CircleGeometry(1.05,48);
+      const m=new THREE.MeshBasicMaterial({color:PAL[i%PAL.length],transparent:true,
+        opacity:+O.value/100,side:THREE.DoubleSide,depthWrite:false});
+      const mesh=new THREE.Mesh(geo,m);
+      mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),nv);
+      sc.add(mesh);planes.push(mesh);
+      // edge ring
+      const eg=new THREE.RingGeometry(1.04,1.06,48);
+      const em=new THREE.MeshBasicMaterial({color:PAL[i%PAL.length],transparent:true,opacity:.8,side:THREE.DoubleSide});
+      const ring=new THREE.Mesh(eg,em);
+      ring.quaternion.copy(mesh.quaternion);sc.add(ring);planes.push(ring);
+    }
+    stats();
+  }
+  function stats(){
+    const n=+N.value,cc=Cexact(n,3);
+    document.getElementById('d3c').textContent=cc;
+    document.getElementById('d3t').textContent=Math.pow(2,n);
+    document.getElementById('d3p').textContent=(cc/Math.pow(2,n)*100).toFixed(1)+'%';
+  }
+  N.addEventListener('input',()=>{document.getElementById('d3nV').textContent=N.value;build();});
+  O.addEventListener('input',()=>{document.getElementById('d3oV').textContent=(+O.value/100).toFixed(2);
+    planes.forEach((p,i)=>{if(i%2===0)p.material.opacity=+O.value/100;});});
+  document.getElementById('d3new').onclick=build;
+  document.getElementById('d3spin').onclick=function(){spin=!spin;this.classList.toggle('on',spin);};
+  function resize(){const w=host.clientWidth,h=host.clientHeight;
+    rend.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
+  resize();addEventListener('resize',resize);
+  build();
+  (function loop(){requestAnimationFrame(loop);
+    if(spin)sc.rotation.y+=.0035;
+    ctrl.update();rend.render(sc,cam);})();
+})();
+
+/* =======================================================================
+   STATION 5: FUNCTION COUNTING PLOT
+   ======================================================================= */
+(function(){
+  const D=document.getElementById('fcd'),Nm=document.getElementById('fcn');
+  let scale='log',mark=true;
+  function draw(){
+    const d=+D.value,nmax=+Nm.value;
+    const xs=[],cc=[],tt=[];
+    for(let n=1;n<=nmax;n++){xs.push(n);
+      cc.push(Math.exp(logC(n,d)));tt.push(Math.pow(2,n));}
+    const traces=[
+      {x:xs,y:tt,name:'2^N (alle Färbungen)',mode:'lines',line:{color:'#ff5f8a',width:2.4,dash:'dot'}},
+      {x:xs,y:cc,name:'C(N,d) trennbar',mode:'lines',line:{color:'#36e0b0',width:3},
+       fill:'tozeroy',fillcolor:'rgba(54,224,176,.08)'}
+    ];
+    const shapes=[];
+    if(mark&&2*d<=nmax){
+      shapes.push({type:'line',x0:2*d,x1:2*d,y0:0,y1:1,yref:'paper',
+        line:{color:'#ffcf5c',width:2,dash:'dash'}});
+    }
+    Plotly.react('fcplot',traces,lay({
+      xaxis:{title:'N (Anzahl Muster)',gridcolor:'rgba(130,160,255,.11)'},
+      yaxis:{title:'Anzahl Dichotomien',type:scale==='log'?'log':'linear',
+        gridcolor:'rgba(130,160,255,.11)'},
+      shapes,
+      annotations: mark&&2*d<=nmax?[{x:2*d,y:1,yref:'paper',text:`N = 2d = ${2*d}`,
+        showarrow:false,yanchor:'bottom',font:{color:'#ffcf5c',size:11}}]:[],
+      legend:{x:.02,y:.98}
+    }),PLOTCFG);
+    const a=Math.exp(logC(2*d,d)),b=Math.pow(2,2*d);
+    document.getElementById('fcA').textContent=fmt(a);
+    document.getElementById('fcB').textContent=fmt(b);
+    document.getElementById('fcC').textContent=(a/b).toFixed(4);
+    document.getElementById('fcD').textContent=2*d;
+  }
+  [D,Nm].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('fcdV').textContent=D.value;
+    document.getElementById('fcnV').textContent=Nm.value;draw();}));
+  document.querySelectorAll('#fcscale button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#fcscale button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');scale=b.dataset.s;draw();});
+  document.getElementById('fcmark').onclick=function(){mark=!mark;this.classList.toggle('on',mark);draw();};
+  setTimeout(draw,150);
+})();
+
+/* =======================================================================
+   STATION 5b: PHASENÜBERGANG
+   ======================================================================= */
+(function(){
+  const D=document.getElementById('ptd');
+  let multi=false,norm=true;
+  function curve(d){
+    const xs=[],ys=[];
+    const nmax=Math.max(20,Math.ceil(d*5));
+    for(let n=1;n<=nmax;n++){xs.push(norm?n/d:n);ys.push(Pnd(n,d));}
+    return {xs,ys};
+  }
+  function draw(){
+    const traces=[];
+    if(multi){
+      const DS=[2,5,10,25,60],CO=['#ff5f8a','#ffcf5c','#36e0b0','#7aa2ff','#c792ff'];
+      DS.forEach((d,i)=>{const c=curve(d);
+        traces.push({x:c.xs,y:c.ys,name:'d = '+d,mode:'lines',line:{color:CO[i],width:2.6}});});
+    } else {
+      const d=+D.value,c=curve(d);
+      traces.push({x:c.xs,y:c.ys,name:'P(N,d), d = '+d,mode:'lines',
+        line:{color:'#36e0b0',width:3.4},fill:'tozeroy',fillcolor:'rgba(54,224,176,.1)'});
+    }
+    const xc=norm?2:2*(+D.value);
+    Plotly.react('ptplot',traces,lay({
+      xaxis:{title:norm?'β = N / d':'N',range:norm?[0,5]:undefined},
+      yaxis:{title:'P(N,d) = Wahrscheinlichkeit trennbar',range:[-0.02,1.04]},
+      shapes:[
+        {type:'line',x0:xc,x1:xc,y0:0,y1:1,line:{color:'#ffcf5c',width:2,dash:'dash'}},
+        {type:'line',x0:0,x1:norm?5:200,y0:.5,y1:.5,line:{color:'#ffcf5c',width:1,dash:'dot'}}
+      ],
+      annotations:[{x:xc,y:.5,text:' Kapazität: P = ½',showarrow:false,
+        xanchor:'left',font:{color:'#ffcf5c',size:11.5}}],
+      legend:{x:.72,y:.98}
+    }),PLOTCFG);
+  }
+  D.addEventListener('input',()=>{document.getElementById('ptdV').textContent=D.value;draw();});
+  document.querySelectorAll('#ptmulti button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#ptmulti button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');multi=b.dataset.m==='1';draw();});
+  document.getElementById('ptnorm').onclick=function(){norm=!norm;this.classList.toggle('on',norm);
+    this.textContent=norm?'x-Achse: β = N/d':'x-Achse: N';draw();};
+  setTimeout(draw,180);
+})();
+
+/* =======================================================================
+   STATION 6: LEMMA 1
+   ======================================================================= */
+(function(){
+  const A=setupCanvas('lemA'),B=setupCanvas('lemB');
+  const N=document.getElementById('lmn');
+  let pts=[],labs=[],y={x:.8,y:.3},orbit=null;
+  function gen(){pts=[];labs=[];const n=+N.value;
+    // generate a separable config
+    const wv={x:Math.cos(rnd(0,6.28)),y:Math.sin(rnd(0,6.28))};
+    for(let i=0;i<n;i++){const a=rnd(0,6.283),r=rnd(.4,.95);
+      const p={x:Math.cos(a)*r,y:Math.sin(a)*r};
+      pts.push(p);labs.push((wv.x*p.x+wv.y*p.y)>0?1:-1);}
+  }
+  function coneAngles(){
+    // set of w directions satisfying all constraints
+    let lo=0,hi=6.283,valid=[];
+    const STEP=1200;
+    for(let i=0;i<STEP;i++){
+      const a=i/STEP*6.283;
+      const cx=Math.cos(a),cy=Math.sin(a);
+      let ok=true;
+      for(let j=0;j<pts.length;j++)if((cx*pts[j].x+cy*pts[j].y)*labs[j]<=0){ok=false;break;}
+      valid.push(ok);
+    }
+    return valid;
+  }
+  function draw(){
+    const valid=coneAngles();
+    // check ambiguity: exists a in valid with w·y ≈ 0 sign change
+    let plus=false,minus=false;
+    for(let i=0;i<valid.length;i++){
+      if(!valid[i])continue;
+      const a=i/valid.length*6.283;
+      const s=Math.cos(a)*y.x+Math.sin(a)*y.y;
+      if(s>0)plus=true;else if(s<0)minus=true;
+    }
+    const amb=plus&&minus;
+    // A
+    const {c,g}=A;clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3;
+    grid(g,c,cx,cy,S/2);
+    if(amb){
+      // find w with w·y = 0 that is valid
+      let found=null;
+      for(let i=0;i<valid.length;i++){
+        if(!valid[i])continue;
+        const a=i/valid.length*6.283;
+        const s=Math.cos(a)*y.x+Math.sin(a)*y.y;
+        if(Math.abs(s)<.05){found=a;break;}
+      }
+      if(found!==null){
+        lineThroughOrigin(g,c,cx,cy,Math.cos(found),-Math.sin(found),'rgba(255,207,92,.95)',2.6);
+        label(g,cx+12,c._h-16,'Trenngerade durch y existiert ⟹ y mehrdeutig','#ffcf5c',11.5);
+      }
+    } else {
+      // show one valid separator
+      let found=null;
+      for(let i=0;i<valid.length;i++)if(valid[i]){found=i/valid.length*6.283;break;}
+      if(found!==null)lineThroughOrigin(g,c,cx,cy,Math.cos(found),-Math.sin(found),'rgba(199,146,255,.7)',2.2,[7,5]);
+      label(g,cx+12,c._h-16,'keine Trenngerade durch y ⟹ y eindeutig','#36e0b0',11.5);
+    }
+    pts.forEach((p,i)=>dot(g,cx+p.x*S,cy-p.y*S,7,labs[i]>0?'#36e0b0':'#ff5f8a'));
+    dot(g,cx+y.x*S,cy-y.y*S,9,'#ffffff','#ffcf5c');
+    label(g,cx+y.x*S+13,cy-y.y*S-11,'y','#fff',13);
+    label(g,10,18,'Musterraum','#7f8db5',11.5);
+    // B: weight space + cone
+    const B2=B.c,h=B.g;clearC(h,B2);
+    const bx=B2._w/2,by=B2._h/2,T=Math.min(B2._w,B2._h)/3;
+    // cone sectors
+    h.save();
+    for(let i=0;i<valid.length;i++){
+      if(!valid[i])continue;
+      const a0=i/valid.length*6.283,a1=(i+1)/valid.length*6.283;
+      h.beginPath();h.moveTo(bx,by);
+      h.arc(bx,by,T*1.25,-a1,-a0);h.closePath();
+      h.fillStyle='rgba(54,224,176,.22)';h.fill();
+    }
+    h.restore();
+    grid(h,B2,bx,by,T/2);
+    pts.forEach((p,i)=>lineThroughOrigin(h,B2,bx,by,p.x,-p.y,'rgba(122,162,255,.4)',1.3));
+    lineThroughOrigin(h,B2,bx,by,y.x,-y.y,amb?'rgba(255,207,92,.95)':'rgba(255,255,255,.4)',
+      amb?3:1.8,amb?null:[6,5]);
+    label(h,10,18,'Gewichtsraum','#7f8db5',11.5);
+    label(h,10,34,'grün = Lösungskegel W','#36e0b0',11);
+    label(h,10,50,amb?'gelbe Gerade schneidet W ✓':'Gerade verfehlt W ✗',
+      amb?'#ffcf5c':'#ff5f8a',11);
+    document.getElementById('lmAmb').textContent=amb?'✓ ja':'✗ nein';
+    document.getElementById('lmAmb').style.color=amb?'var(--warn)':'var(--pos)';
+    document.getElementById('lmNew').textContent=amb?'2':'1';
+    document.getElementById('lmExt').textContent=amb?'✓ ja':'✗ nein';
+  }
+  A.c._redraw=draw;B.c._redraw=draw;
+  N.addEventListener('input',()=>{document.getElementById('lmnV').textContent=N.value;gen();draw();});
+  document.getElementById('lmnew').onclick=()=>{gen();draw();};
+  document.getElementById('lmorbit').onclick=function(){
+    if(orbit){clearInterval(orbit);orbit=null;this.textContent='▶ y kreisen lassen';return;}
+    this.textContent='⏸ Stop';let a=0;
+    orbit=setInterval(()=>{a+=.045;y={x:Math.cos(a)*.85,y:Math.sin(a)*.85};draw();},60);
+  };
+  let drag=false;
+  function setY(e){const p=canvasPos(A.c,e),cx=A.c._w/2,cy=A.c._h/2,S=Math.min(A.c._w,A.c._h)/3;
+    y={x:(p.x-cx)/S,y:-(p.y-cy)/S};draw();}
+  A.c.addEventListener('mousedown',e=>{drag=true;setY(e);});
+  addEventListener('mouseup',()=>drag=false);
+  A.c.addEventListener('mousemove',e=>{if(drag)setY(e);});
+  A.c.addEventListener('touchstart',e=>{e.preventDefault();setY(e);},{passive:false});
+  A.c.addEventListener('touchmove',e=>{e.preventDefault();setY(e);},{passive:false});
+  gen();draw();
+})();
+
+/* =======================================================================
+   STATION 6b: REKURSIONSGITTER
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('recC');
+  const S=document.getElementById('recS');
+  let built=[],step=0,auto=null;
+  function order(){
+    const n=+S.value;const o=[];
+    for(let N2=1;N2<=n;N2++)for(let d=1;d<=n;d++)o.push({N:N2,d});
+    o.sort((a,b)=>(a.N+a.d)-(b.N+b.d)||a.N-b.N);
+    return o;
+  }
+  function draw(){
+    clearC(g,c);
+    const n=+S.value;
+    const m=40, cw=(c._w-m-14)/n, ch=(c._h-m-14)/n;
+    const ord=order();
+    const shown=new Set(ord.slice(0,step).map(o=>o.N+','+o.d));
+    const last=step>0?ord[step-1]:null;
+    for(let N2=1;N2<=n;N2++)for(let d=1;d<=n;d++){
+      const x=m+(d-1)*cw, y=m+(N2-1)*ch;
+      const key=N2+','+d;
+      const vis=shown.has(key);
+      const isLast=last&&last.N===N2&&last.d===d;
+      g.fillStyle=isLast?'rgba(255,207,92,.35)':(vis?'rgba(54,224,176,.14)':'rgba(255,255,255,.025)');
+      g.beginPath();g.roundRect(x+1.5,y+1.5,cw-3,ch-3,5);g.fill();
+      if(isLast){g.strokeStyle='#ffcf5c';g.lineWidth=2;g.stroke();}
+      if(vis){
+        g.fillStyle=isLast?'#fff':'#9ff0da';
+        g.font=`${Math.min(12,ch*.42)}px ui-monospace,monospace`;
+        g.textAlign='center';g.textBaseline='middle';
+        const v=Cexact(N2,d);
+        g.fillText(v>99999?v.toExponential(0):String(v),x+cw/2,y+ch/2);
+      }
+    }
+    // arrows for last
+    if(last&&last.N>1){
+      const x=m+(last.d-1)*cw+cw/2,y=m+(last.N-1)*ch+ch/2;
+      g.strokeStyle='rgba(255,207,92,.8)';g.lineWidth=2;
+      const yp=m+(last.N-2)*ch+ch/2;
+      g.beginPath();g.moveTo(x,yp+ch*.3);g.lineTo(x,y-ch*.3);g.stroke();
+      if(last.d>1){const xp=m+(last.d-2)*cw+cw/2;
+        g.beginPath();g.moveTo(xp+cw*.3,yp+ch*.3);g.lineTo(x-cw*.2,y-ch*.3);g.stroke();}
+    }
+    g.textAlign='center';g.textBaseline='middle';
+    g.fillStyle='#7aa2ff';g.font='11px ui-monospace,monospace';
+    for(let d=1;d<=n;d++)g.fillText('d='+d,m+(d-1)*cw+cw/2,22);
+    g.textAlign='right';
+    for(let N2=1;N2<=n;N2++)g.fillText('N='+N2,m-6,m+(N2-1)*ch+ch/2);
+    g.textAlign='left';g.textBaseline='alphabetic';
+    const msg=document.getElementById('recMsg');
+    if(last){
+      if(last.N===1)msg.innerHTML=`<span style="color:#ffcf5c">Startwert:</span> C(1,${last.d}) = 2`;
+      else msg.innerHTML=`<span style="color:#ffcf5c">C(${last.N},${last.d})</span> = C(${last.N-1},${last.d}) + C(${last.N-1},${last.d-1}) = ${Cexact(last.N-1,last.d)} + ${Cexact(last.N-1,last.d-1)} = <b>${Cexact(last.N,last.d)}</b>`;
+    } else msg.textContent='Drücke „Schritt" zum Starten.';
+  }
+  c._redraw=draw;
+  document.getElementById('recStep').onclick=()=>{const o=order();if(step<o.length)step++;draw();};
+  document.getElementById('recReset').onclick=()=>{step=0;if(auto){clearInterval(auto);auto=null;}draw();};
+  document.getElementById('recAuto').onclick=function(){
+    if(auto){clearInterval(auto);auto=null;this.textContent='⏩ Automatisch';return;}
+    this.textContent='⏸ Stop';
+    auto=setInterval(()=>{const o=order();if(step<o.length)step++;else{clearInterval(auto);auto=null;
+      this.textContent='⏩ Automatisch';}draw();},180);
+  };
+  S.addEventListener('input',()=>{document.getElementById('recSV').textContent=S.value;step=0;draw();});
+  draw();
+})();
+
+/* =======================================================================
+   STATION 6c: PROJEKTION 3D
+   ======================================================================= */
+(function(){
+  const host=document.getElementById('three3c');
+  if(!window.THREE){host.innerHTML='<div style="padding:40px;text-align:center;color:#9aa6c8">3D nicht verfügbar</div>';return;}
+  const sc=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(46,1,.1,100);cam.position.set(2.6,1.9,2.8);
+  const rend=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  rend.setPixelRatio(Math.min(2,devicePixelRatio));host.appendChild(rend.domElement);
+  const ctrl=new THREE.OrbitControls(cam,rend.domElement);ctrl.enableDamping=true;
+  sc.add(new THREE.AmbientLight(0xffffff,.95));
+  const dl=new THREE.DirectionalLight(0xffffff,.6);dl.position.set(2,4,3);sc.add(dl);
+  sc.add(new THREE.AxesHelper(1.3));
+  let nvec=new THREE.Vector3(.4,.9,.2).normalize();
+  let P=[],meshes=[],lines=[],plane=null,axArrow=null;
+  function gen(){
+    meshes.forEach(m=>sc.remove(m));meshes=[];
+    lines.forEach(l=>sc.remove(l));lines=[];
+    if(plane)sc.remove(plane);
+    if(axArrow)sc.remove(axArrow);
+    nvec=new THREE.Vector3(gauss(),gauss(),gauss()).normalize();
+    P=[];
+    for(let i=0;i<14;i++){
+      const v=new THREE.Vector3(gauss(),gauss(),gauss()).normalize().multiplyScalar(rnd(.5,1.05));
+      P.push({v,c:Math.random()<.5?1:-1});
+      const m=new THREE.Mesh(new THREE.SphereGeometry(.05,14,12),
+        new THREE.MeshLambertMaterial({color:P[i].c>0?0x36e0b0:0xff5f8a}));
+      sc.add(m);meshes.push(m);
+      const lg=new THREE.BufferGeometry().setFromPoints([v.clone(),v.clone()]);
+      const ln=new THREE.Line(lg,new THREE.LineBasicMaterial({color:0x7aa2ff,transparent:true,opacity:.4}));
+      sc.add(ln);lines.push(ln);
+    }
+    const pg=new THREE.CircleGeometry(1.25,48);
+    plane=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({color:0xc792ff,transparent:true,
+      opacity:.16,side:THREE.DoubleSide,depthWrite:false}));
+    plane.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),nvec);
+    sc.add(plane);
+    const dir=new THREE.ArrowHelper(nvec,new THREE.Vector3(0,0,0),1.4,0xffcf5c,.12,.07);
+    sc.add(dir);axArrow=dir;
+    update();
+  }
+  const T=document.getElementById('prj');
+  function update(){
+    const t=+T.value/100;
+    P.forEach((p,i)=>{
+      const d=p.v.dot(nvec);
+      const proj=p.v.clone().sub(nvec.clone().multiplyScalar(d));
+      const cur=p.v.clone().lerp(proj,t);
+      meshes[i].position.copy(cur);
+      lines[i].geometry.setFromPoints([p.v.clone(),cur]);
+      lines[i].geometry.attributes.position.needsUpdate=true;
+    });
+  }
+  T.addEventListener('input',()=>{document.getElementById('prjV').textContent=T.value+'%';update();});
+  document.getElementById('prjNew').onclick=gen;
+  let anim=null;
+  document.getElementById('prjAnim').onclick=function(){
+    if(anim){clearInterval(anim);anim=null;this.textContent='▶ Animieren';return;}
+    this.textContent='⏸ Stop';let v=0,dir=1;
+    anim=setInterval(()=>{v+=dir*3;if(v>=100){v=100;dir=-1;}if(v<=0){v=0;dir=1;}
+      T.value=v;document.getElementById('prjV').textContent=v+'%';update();},45);
+  };
+  function resize(){const w=host.clientWidth,h=host.clientHeight;
+    rend.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
+  resize();addEventListener('resize',resize);
+  gen();
+  (function loop(){requestAnimationFrame(loop);ctrl.update();rend.render(sc,cam);})();
+})();
+
+/* =======================================================================
+   THEOREM 3 & 4 PLOTS
+   ======================================================================= */
+(function(){
+  const N=document.getElementById('t3n'),D=document.getElementById('t3d'),K=document.getElementById('t3k');
+  function draw(){
+    const n=+N.value,d=+D.value,k=Math.min(+K.value,d);
+    const ks=[],vs=[];
+    for(let i=0;i<=Math.min(d-1,8);i++){ks.push(i);vs.push(Cexact(n,d-i));}
+    Plotly.react('t3plot',[{x:ks,y:vs,type:'bar',
+      marker:{color:ks.map(i=>i===k?'#ffcf5c':'#7aa2ff')},
+      text:vs.map(v=>fmt(v)),textposition:'outside'}],
+      lay({xaxis:{title:'k Zwangspunkte'},yaxis:{title:'C(N, d−k)'},showlegend:false,
+        margin:{l:50,r:10,t:10,b:38}}),PLOTCFG);
+  }
+  [N,D,K].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('t3nV').textContent=N.value;
+    document.getElementById('t3dV').textContent=D.value;
+    document.getElementById('t3kV').textContent=K.value;draw();}));
+  setTimeout(draw,220);
+})();
+(function(){
+  const N=document.getElementById('t4n'),D=document.getElementById('t4d');
+  function draw(){
+    const n=+N.value,d=+D.value;
+    const xs=[],q=[],cc=[],t3=[];
+    for(let i=1;i<=Math.max(n,12);i++){xs.push(i);q.push(Qfn(i,d));cc.push(Cexact(i,d));t3.push(Math.pow(3,i));}
+    Plotly.react('t4plot',[
+      {x:xs,y:t3,name:'3^N',mode:'lines',line:{color:'#ff5f8a',width:1.8,dash:'dot'}},
+      {x:xs,y:q,name:'Q(N,d)',mode:'lines',line:{color:'#c792ff',width:2.6}},
+      {x:xs,y:cc,name:'C(N,d)',mode:'lines',line:{color:'#36e0b0',width:2.6}}
+    ],lay({xaxis:{title:'N'},yaxis:{title:'Anzahl',type:'log'},
+      margin:{l:50,r:10,t:10,b:38},legend:{x:.02,y:.98}}),PLOTCFG);
+    const Q=Qfn(n,d),C2=Cexact(n,d);
+    document.getElementById('t4q').textContent=fmt(Q);
+    document.getElementById('t4c').textContent=fmt(C2);
+    document.getElementById('t4r').textContent=C2>0?(Q/C2).toFixed(2)+' / '+Math.pow(2,d-1):'–';
+  }
+  [N,D].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('t4nV').textContent=N.value;
+    document.getElementById('t4dV').textContent=D.value;draw();}));
+  setTimeout(draw,240);
+})();
+
+/* =======================================================================
+   STATION 7: FIGUR 1
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('fig1');
+  let mode='lin',labels=[1,1,-1,-1,1],cycle=null;
+  const BASE=[{x:-.62,y:.34},{x:-.1,y:.72},{x:.58,y:.38},{x:.3,y:-.55},{x:-.45,y:-.5}];
+  let pts=BASE.map(p=>({...p}));
+  const PHI={lin:p=>[1,p.x,p.y],sph:p=>[1,p.x,p.y,p.x*p.x+p.y*p.y],
+    quad:p=>[1,p.x,p.y,p.x*p.x,p.x*p.y,p.y*p.y]};
+  const DIM={lin:3,sph:4,quad:5};
+  function sepFor(L){return perceptron(pts.map(PHI[mode]),L,6000);}
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3;
+    grid(g,c,cx,cy,S/2);
+    const w=sepFor(labels);
+    if(w){
+      const f=(X,Y)=>{const v=PHI[mode]({x:X,y:Y});let s=0;
+        for(let i=0;i<v.length;i++)s+=w[i]*v[i];return s;};
+      const step=3;
+      const img=g.createImageData(c._w,c._h);
+      for(let py=0;py<c._h;py+=step)for(let px=0;px<c._w;px+=step){
+        const s=f((px-cx)/S,-(py-cy)/S);
+        const col=s>0?[54,224,176]:[255,95,138];
+        for(let dy=0;dy<step;dy++)for(let dx=0;dx<step;dx++){
+          const q=((py+dy)*c._w+(px+dx))*4;
+          if(q+3<img.data.length){img.data[q]=col[0];img.data[q+1]=col[1];img.data[q+2]=col[2];img.data[q+3]=22;}
+        }
+      }
+      g.putImageData(img,0,0);
+      g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=2.2;
+      for(let py=0;py<c._h-3;py+=3)for(let px=0;px<c._w-3;px+=3){
+        const a=f((px-cx)/S,-(py-cy)/S),b=f((px+3-cx)/S,-(py-cy)/S),d2=f((px-cx)/S,-(py+3-cy)/S);
+        if(a*b<0){g.beginPath();g.moveTo(px,py);g.lineTo(px+3,py);g.stroke();}
+        if(a*d2<0){g.beginPath();g.moveTo(px,py);g.lineTo(px,py+3);g.stroke();}
+      }
+      grid(g,c,cx,cy,S/2);
+    } else {
+      label(g,c._w/2,34,'✗ mit dieser Familie nicht trennbar','#ff5f8a',14,'center');
+    }
+    pts.forEach((p,i)=>{
+      dot(g,cx+p.x*S,cy-p.y*S,9,labels[i]>0?'#36e0b0':'#ff5f8a');
+      label(g,cx+p.x*S+13,cy-p.y*S-11,'x'+(i+1),'#cbd4ee',11);
+    });
+    const names={lin:'(a) Gerade · d=3',sph:'(b) Kreis · d=4',quad:'(c) Quadrik · d=5'};
+    label(g,12,20,names[mode],'#cbd4ee',13);
+    document.getElementById('f1cur').textContent=labels.map(v=>v>0?'+':'−').join('');
+    document.getElementById('f1d').textContent=DIM[mode];
+    document.getElementById('f1pred').textContent=Cexact(5,DIM[mode]);
+  }
+  function grid2(){
+    const box=document.getElementById('fig1grid');box.innerHTML='';
+    let cnt=0;
+    for(let m=0;m<32;m++){
+      const L=[];for(let i=0;i<5;i++)L.push((m>>i)&1?1:-1);
+      const ok=sepFor(L)!==null;if(ok)cnt++;
+      const d=document.createElement('div');
+      d.textContent=L.map(v=>v>0?'+':'−').join('');
+      d.style.cssText=`font:11px ui-monospace,monospace;text-align:center;padding:5px 2px;border-radius:6px;cursor:pointer;
+        background:${ok?'rgba(54,224,176,.18)':'rgba(255,95,138,.09)'};
+        border:1px solid ${ok?'rgba(54,224,176,.4)':'rgba(255,95,138,.2)'};
+        color:${ok?'#a8f3de':'#a97a88'}`;
+      d.onclick=()=>{labels=L;draw();};
+      box.appendChild(d);
+    }
+    document.getElementById('f1sep').textContent=cnt;
+  }
+  c._redraw=draw;
+  document.querySelectorAll('#f1mode button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#f1mode button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');mode=b.dataset.m;draw();grid2();});
+  document.getElementById('f1reset').onclick=()=>{pts=BASE.map(p=>({...p}));labels=[1,1,-1,-1,1];draw();grid2();};
+  document.getElementById('f1cycle').onclick=function(){
+    if(cycle){clearInterval(cycle);cycle=null;this.textContent='▶ Alle 32 Färbungen durchgehen';return;}
+    this.textContent='⏸ Stop';let m=0;
+    cycle=setInterval(()=>{
+      const L=[];for(let i=0;i<5;i++)L.push((m>>i)&1?1:-1);
+      labels=L;draw();m=(m+1)%32;},700);
+  };
+  c.addEventListener('click',e=>{
+    const p=canvasPos(c,e),cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3;
+    let bi=-1,bd=1e9;
+    pts.forEach((q,i)=>{const d=Math.hypot(cx+q.x*S-p.x,cy-q.y*S-p.y);if(d<bd){bd=d;bi=i;}});
+    if(bd<18){labels[bi]*=-1;draw();}
+  });
+  draw();setTimeout(grid2,100);
+})();
+
+/* =======================================================================
+   TABELLE I
+   ======================================================================= */
+(function(){
+  const M=document.getElementById('tbm'),R=document.getElementById('tbr'),N=document.getElementById('tbn');
+  function draw(){
+    const m=+M.value,r=+R.value,n=+N.value;
+    const rows=[
+      {phi:'φ(x) = x',sur:'Hyperebene durch Ursprung',d:m},
+      {phi:'φ(x) = (1, x)',sur:'Hyperebene',d:m+1},
+      {phi:'φ(x) = (1, x, ‖x‖²)',sur:'Hyperkugel',d:m+2},
+      {phi:'φ(x) = (x, ‖x‖)',sur:'Hyperkegel',d:m+1},
+      {phi:`φ(x) = alle Monome ≤ Grad ${r}`,sur:`rationale Varietät Ordnung ${r}`,d:choose(m+r,r)}
+    ];
+    let html='<tr><th>Abbildung φ</th><th>Trennfläche</th><th>Freiheitsgrade d</th>'+
+      `<th>C(${n}, d)</th><th>Kapazität 2d</th><th>P(N,d)</th></tr>`;
+    rows.forEach(ro=>{
+      const cc=Math.exp(logC(n,ro.d));
+      const p=Pnd(n,ro.d);
+      const col=p>.5?'#36e0b0':p>.1?'#ffcf5c':'#ff5f8a';
+      html+=`<tr><td class="mono" style="color:#bcd0ff">${ro.phi}</td><td>${ro.sur}</td>
+        <td class="mono" style="color:var(--acc2)"><b>${ro.d}</b></td>
+        <td class="mono">${fmt(cc)}</td>
+        <td class="mono" style="color:var(--pos)"><b>${2*ro.d}</b></td>
+        <td class="mono" style="color:${col}">${(p*100).toFixed(1)}%</td></tr>`;
+    });
+    document.getElementById('tab1').innerHTML=html;
+    const ds=rows.map(r2=>r2.d), names=rows.map(r2=>r2.sur);
+    Plotly.react('tabplot',[
+      {x:names,y:ds.map(d=>2*d),type:'bar',name:'Kapazität 2d',marker:{color:'#36e0b0'},
+       text:ds.map(d=>2*d),textposition:'outside'},
+      {x:names,y:[n,n,n,n,n],type:'scatter',mode:'lines',name:`aktuelles N = ${n}`,
+       line:{color:'#ff5f8a',width:2.4,dash:'dash'}}
+    ],lay({yaxis:{title:'Muster'},xaxis:{tickangle:-18},legend:{x:.02,y:.98},
+      margin:{l:50,r:14,t:16,b:90}}),PLOTCFG);
+  }
+  [M,R,N].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('tbmV').textContent=M.value;
+    document.getElementById('tbrV').textContent=R.value;
+    document.getElementById('tbnV').textContent=N.value;draw();}));
+  setTimeout(draw,260);
+})();
+
+/* =======================================================================
+   STATION 8: MONTE CARLO
+   ======================================================================= */
+(function(){
+  const N=document.getElementById('mcn'),D=document.getElementById('mcd'),
+        T=document.getElementById('mct'),DI=document.getElementById('mcdist');
+  let hist=[];
+  function sample(n,d,dist){
+    const V=[];
+    for(let i=0;i<n;i++){
+      let v=[];
+      if(dist==='gauss'){for(let j=0;j<d;j++)v.push(gauss());}
+      else if(dist==='sphere'){let s=0;for(let j=0;j<d;j++){v.push(gauss());}
+        s=Math.hypot(...v);v=v.map(z=>z/s);}
+      else if(dist==='cube'){for(let j=0;j<d;j++)v.push(Math.random()<.5?-1:1);}
+      else {const c0=Math.random()<.5?1:-1;for(let j=0;j<d;j++)v.push(gauss()*.4+(j===0?c0*1.5:0));}
+      V.push(v);
+    }
+    return V;
+  }
+  function run(){
+    const n=+N.value,d=+D.value,trials=+T.value,dist=DI.value;
+    let ok=0;hist=[];
+    const running=[];
+    for(let t=0;t<trials;t++){
+      const V=sample(n,d,dist);
+      const L=[];for(let i=0;i<n;i++)L.push(Math.random()<.5?1:-1);
+      const s=sepCheck(V,L);
+      if(s)ok++;
+      if(t%Math.max(1,Math.floor(trials/180))===0)running.push({t:t+1,p:ok/(t+1)});
+    }
+    const emp=ok/trials, th=Pnd(n,d);
+    document.getElementById('mcEmp').textContent=(emp*100).toFixed(1)+'%';
+    document.getElementById('mcThe').textContent=(th*100).toFixed(1)+'%';
+    document.getElementById('mcCnt').textContent=ok+' / '+trials;
+    document.getElementById('mcBeta').textContent=(n/d).toFixed(2);
+    Plotly.react('mcplot',[
+      {x:running.map(r=>r.t),y:running.map(r=>r.p),mode:'lines',name:'empirisch (laufend)',
+       line:{color:'#7aa2ff',width:2}},
+      {x:[1,trials],y:[th,th],mode:'lines',name:'Theorie P(N,d)',
+       line:{color:'#36e0b0',width:2.6,dash:'dash'}}
+    ],lay({xaxis:{title:'Versuche'},yaxis:{title:'Anteil trennbar',range:[0,1.03]},
+      legend:{x:.5,y:.1}}),PLOTCFG);
+    // sweep over N
+    const xs=[],ys=[],th2=[];
+    for(let nn=1;nn<=Math.max(2*d+4,n+3);nn++){
+      xs.push(nn);th2.push(Pnd(nn,d));
+      let k=0;const TR=Math.min(120,Math.ceil(trials/6));
+      for(let t=0;t<TR;t++){
+        const V=sample(nn,d,dist);
+        const L=[];for(let i=0;i<nn;i++)L.push(Math.random()<.5?1:-1);
+        if(sepCheck(V,L))k++;
+      }
+      ys.push(k/TR);
+    }
+    Plotly.react('mcbar',[
+      {x:xs,y:th2,mode:'lines',name:'Theorie',line:{color:'#36e0b0',width:2.4}},
+      {x:xs,y:ys,mode:'markers',name:'Simulation',marker:{color:'#ffcf5c',size:7}}
+    ],lay({xaxis:{title:'N'},yaxis:{title:'P',range:[0,1.05]},
+      margin:{l:44,r:10,t:10,b:36},legend:{x:.6,y:.98},
+      shapes:[{type:'line',x0:2*d,x1:2*d,y0:0,y1:1,line:{color:'#ff5f8a',width:1.6,dash:'dot'}}]}),PLOTCFG);
+  }
+  [N,D,T].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('mcnV').textContent=N.value;
+    document.getElementById('mcdV').textContent=D.value;
+    document.getElementById('mctV').textContent=T.value;}));
+  document.getElementById('mcrun').onclick=run;
+  setTimeout(run,700);
+})();
+
+/* =======================================================================
+   STATION 8b: WENDEL
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('wendel');
+  const N=document.getElementById('wdn');
+  let dirs=[];
+  function gen(){dirs=[];const n=+N.value;
+    for(let i=0;i<n;i++)dirs.push(rnd(0,6.283));}
+  function inHalf(ds){
+    for(let i=0;i<1440;i++){
+      const a=i/1440*6.283;
+      let ok=true;
+      for(const d of ds){if(Math.cos(a)*Math.cos(d)+Math.sin(a)*Math.sin(d)<=0){ok=false;break;}}
+      if(ok)return a;
+    }
+    return null;
+  }
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,R=Math.min(c._w,c._h)/2.7;
+    const a=inHalf(dirs);
+    if(a!==null){
+      g.beginPath();g.moveTo(cx,cy);
+      g.arc(cx,cy,R*1.12,-(a+Math.PI/2),-(a-Math.PI/2));
+      g.closePath();g.fillStyle='rgba(54,224,176,.15)';g.fill();
+      lineThroughOrigin(g,c,cx,cy,Math.cos(a),-Math.sin(a),'rgba(54,224,176,.8)',2.2,[7,5]);
+    }
+    g.strokeStyle='rgba(130,160,255,.3)';g.lineWidth=1.4;
+    g.beginPath();g.arc(cx,cy,R,0,7);g.stroke();
+    grid(g,c,cx,cy,R/2);
+    dirs.forEach(d=>{
+      arrow(g,cx,cy,cx+Math.cos(d)*R,cy-Math.sin(d)*R,'rgba(122,162,255,.55)',1.6);
+      dot(g,cx+Math.cos(d)*R,cy-Math.sin(d)*R,7,a!==null?'#36e0b0':'#ff5f8a');
+    });
+    document.getElementById('wdres').textContent=a!==null?'✓ ja':'✗ nein';
+    document.getElementById('wdres').style.color=a!==null?'var(--pos)':'var(--neg)';
+    document.getElementById('wdp').textContent=(Pnd(dirs.length,2)*100).toFixed(1)+'%';
+    label(g,10,18,`N = ${dirs.length} Zufallsrichtungen`,'#7f8db5',11.5);
+  }
+  c._redraw=draw;
+  function runMany(){
+    const n=+N.value;const xs=[],ys=[],th=[];
+    for(let k=1;k<=12;k++){
+      let ok=0;
+      for(let t=0;t<600;t++){
+        const ds=[];for(let i=0;i<k;i++)ds.push(rnd(0,6.283));
+        if(inHalf(ds)!==null)ok++;
+      }
+      xs.push(k);ys.push(ok/600);th.push(Pnd(k,2));
+    }
+    Plotly.react('wdplot',[
+      {x:xs,y:th,mode:'lines',name:'P(N,2) = N/2^(N-1)',line:{color:'#36e0b0',width:2.6}},
+      {x:xs,y:ys,mode:'markers',name:'Simulation',marker:{color:'#ffcf5c',size:8}}
+    ],lay({xaxis:{title:'N'},yaxis:{title:'P(in Halbebene)',range:[0,1.05]},
+      margin:{l:46,r:10,t:12,b:36},legend:{x:.42,y:.98}}),PLOTCFG);
+    document.getElementById('wdemp').textContent=(ys[Math.min(n,12)-1]*100).toFixed(1)+'%';
+  }
+  N.addEventListener('input',()=>{document.getElementById('wdnV').textContent=N.value;gen();draw();});
+  document.getElementById('wdnew').onclick=()=>{gen();draw();};
+  document.getElementById('wdrun').onclick=runMany;
+  gen();draw();setTimeout(runMany,900);
+})();
+
+/* =======================================================================
+   STATION 9: KAPAZITÄT / MÜNZWURF
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('coin');
+  const D=document.getElementById('cpd');
+  let runs=[],lastSeq=[];
+  function oneRun(d,record){
+    let fails=0,n=0,seq=[];
+    while(fails<d&&n<4000){
+      n++;
+      const head=Math.random()<.5;
+      if(head)fails++;
+      if(record)seq.push(head);
+    }
+    if(record)lastSeq=seq;
+    return n;
+  }
+  function drawCoins(){
+    clearC(g,c);
+    const d=+D.value;
+    const n=lastSeq.length;
+    if(n===0){label(g,12,c._h/2,'Drücke „Ein Durchlauf"','#6d7ba3',12.5);return;}
+    const w=Math.min(26,(c._w-24)/Math.max(n,1));
+    lastSeq.forEach((h,i)=>{
+      const x=12+i*w+w/2, y=c._h/2-8;
+      g.beginPath();g.arc(x,y,Math.min(10,w/2-1.5),0,7);
+      g.fillStyle=h?'#ff5f8a':'#2b3450';
+      g.strokeStyle=h?'#ff9ab4':'#4a5680';g.lineWidth=1.4;
+      g.fill();g.stroke();
+      if(w>14){g.fillStyle=h?'#fff':'#8e9bc0';g.font='9px ui-monospace,monospace';
+        g.textAlign='center';g.textBaseline='middle';g.fillText(h?'K':'Z',x,y);}
+    });
+    g.textAlign='left';g.textBaseline='alphabetic';
+    label(g,12,c._h-10,`N* = ${n} Würfe bis zum ${d}. Kopf   (K = Freiheitsgrad verbraucht)`,'#cbd4ee',12);
+  }
+  function stats(){
+    const d=+D.value;
+    if(runs.length){
+      const mean=runs.reduce((a,b)=>a+b,0)/runs.length;
+      const sorted=[...runs].sort((a,b)=>a-b);
+      document.getElementById('cpMean').textContent=mean.toFixed(2);
+      document.getElementById('cpMed').textContent=sorted[Math.floor(sorted.length/2)];
+    }
+    document.getElementById('cpTheo').textContent=2*d;
+    document.getElementById('cpRuns').textContent=runs.length;
+    // histogram
+    const maxN=Math.max(2*d*3,...runs,10);
+    const bins=new Array(maxN+1).fill(0);
+    runs.forEach(r=>{if(r<=maxN)bins[r]++;});
+    const xs=[],ys=[],th=[];
+    for(let n=d;n<=maxN;n++){
+      xs.push(n);ys.push(runs.length?bins[n]/runs.length:0);
+      th.push(Math.exp(lchoose(n-1,d-1)-n*Math.LN2));
+    }
+    Plotly.react('cphist',[
+      {x:xs,y:ys,type:'bar',name:'Simulation',marker:{color:'rgba(122,162,255,.65)'}},
+      {x:xs,y:th,mode:'lines',name:'(½)ⁿ·C(n−1,d−1)',line:{color:'#ffcf5c',width:2.8}}
+    ],lay({xaxis:{title:'N* (Anzahl Muster bis zum Scheitern)'},yaxis:{title:'Wahrscheinlichkeit'},
+      shapes:[{type:'line',x0:2*d,x1:2*d,y0:0,y1:1,yref:'paper',
+        line:{color:'#36e0b0',width:2.2,dash:'dash'}}],
+      annotations:[{x:2*d,y:1,yref:'paper',text:` E[N*] = 2d = ${2*d}`,showarrow:false,
+        xanchor:'left',yanchor:'top',font:{color:'#36e0b0',size:11.5}}],
+      legend:{x:.62,y:.98},bargap:.08}),PLOTCFG);
+  }
+  c._redraw=drawCoins;
+  document.getElementById('cp1').onclick=()=>{const n=oneRun(+D.value,true);runs.push(n);
+    document.getElementById('cpLast').textContent=n;drawCoins();stats();};
+  document.getElementById('cp100').onclick=()=>{for(let i=0;i<100;i++)runs.push(oneRun(+D.value,false));stats();};
+  document.getElementById('cp5000').onclick=()=>{for(let i=0;i<5000;i++)runs.push(oneRun(+D.value,false));stats();};
+  document.getElementById('cpreset').onclick=()=>{runs=[];lastSeq=[];
+    document.getElementById('cpLast').textContent='–';
+    document.getElementById('cpMean').textContent='–';
+    document.getElementById('cpMed').textContent='–';drawCoins();stats();};
+  D.addEventListener('input',()=>{document.getElementById('cpdV').textContent=D.value;
+    runs=[];lastSeq=[];drawCoins();stats();});
+  drawCoins();setTimeout(stats,300);
+})();
+
+/* =======================================================================
+   NORMALAPPROXIMATION
+   ======================================================================= */
+(function(){
+  const N=document.getElementById('naN'),Z=document.getElementById('naZ');
+  function draw(){
+    const n=+N.value,z=+Z.value;
+    const sd=Math.sqrt(n)/2, mid=n/2;
+    const lo=Math.max(1,Math.floor(mid-z*sd)), hi=Math.ceil(mid+z*sd);
+    const xs=[],ex=[],ap=[];
+    for(let d=lo;d<=hi;d++){
+      xs.push(d);
+      ex.push(Pnd(n,d));
+      const al=(d-n/2)/(Math.sqrt(n)/2);
+      ap.push(normcdf(al));
+    }
+    Plotly.react('naplot',[
+      {x:xs,y:ex,mode:'lines',name:'exakt P(N,d)',line:{color:'#36e0b0',width:3}},
+      {x:xs,y:ap,mode:'lines',name:'Normalapprox. Φ(α)',line:{color:'#c792ff',width:2.4,dash:'dash'}}
+    ],lay({xaxis:{title:`d (Dimension), N = ${n}`},yaxis:{title:'P',range:[-.02,1.02]},
+      shapes:[{type:'line',x0:n/2,x1:n/2,y0:0,y1:1,line:{color:'#ffcf5c',width:2,dash:'dot'}}],
+      annotations:[{x:n/2,y:1,text:` d = N/2 ⟺ N = 2d`,showarrow:false,xanchor:'left',
+        font:{color:'#ffcf5c',size:11}}],
+      legend:{x:.02,y:.98}}),PLOTCFG);
+  }
+  [N,Z].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('naNV').textContent=N.value;
+    document.getElementById('naZV').textContent=Z.value+'σ';draw();}));
+  setTimeout(draw,340);
+})();
+
+/* =======================================================================
+   SELBSTHEILUNG / d*
+   ======================================================================= */
+(function(){
+  const N=document.getElementById('dsN');
+  const {c,g}=setupCanvas('dsdam');
+  let total=30,dead=new Set();
+  function alive(){return total-dead.size;}
+  function draw(){
+    clearC(g,c);
+    const cols=10,rows=Math.ceil(total/cols);
+    const w=(c._w-20)/cols,h=Math.min(26,(c._h-20)/rows);
+    for(let i=0;i<total;i++){
+      const r=Math.floor(i/cols),cc=i%cols;
+      const x=10+cc*w,y=10+r*h;
+      const d0=dead.has(i);
+      g.fillStyle=d0?'rgba(255,95,138,.18)':'rgba(54,224,176,.3)';
+      g.beginPath();g.roundRect(x+2,y+2,w-4,h-4,5);g.fill();
+      g.strokeStyle=d0?'rgba(255,95,138,.5)':'rgba(54,224,176,.6)';g.lineWidth=1.2;g.stroke();
+      if(d0){g.strokeStyle='rgba(255,95,138,.8)';g.beginPath();
+        g.moveTo(x+6,y+6);g.lineTo(x+w-6,y+h-6);g.moveTo(x+w-6,y+6);g.lineTo(x+6,y+h-6);g.stroke();}
+    }
+    const n=+N.value,d=alive();
+    document.getElementById('dsAlive').textContent=d+' / '+total;
+    document.getElementById('dsP').textContent=(Pnd(n,d)*100).toFixed(1)+'%';
+    document.getElementById('dsE').textContent=((n+1)/2).toFixed(1);
+    plot();
+  }
+  function plot(){
+    const n=+N.value;
+    const xs=[],ps=[],pd=[];
+    for(let d=1;d<=Math.max(total,n+2);d++){
+      xs.push(d);ps.push(Pnd(n,d));
+      pd.push(Math.exp(lchoose(n-1,d-1)-(n-1)*Math.LN2));
+    }
+    Plotly.react('dsplot',[
+      {x:xs,y:ps,mode:'lines',name:'P(N,d)',line:{color:'#36e0b0',width:3}},
+      {x:xs,y:pd,type:'bar',name:'Pr{d* = d}',marker:{color:'rgba(199,146,255,.55)'},yaxis:'y2'}
+    ],lay({xaxis:{title:'d (Anzahl Gewichte)'},yaxis:{title:'P(N,d)',range:[0,1.05]},
+      yaxis2:{overlaying:'y',side:'right',title:'Pr{d*=d}',showgrid:false,range:[0,undefined]},
+      legend:{x:.55,y:.25},
+      shapes:[{type:'line',x0:(n+1)/2,x1:(n+1)/2,y0:0,y1:1,yref:'paper',
+        line:{color:'#ffcf5c',width:2,dash:'dash'}},
+        {type:'line',x0:alive(),x1:alive(),y0:0,y1:1,yref:'paper',
+        line:{color:'#36e0b0',width:2,dash:'dot'}}],
+      annotations:[{x:(n+1)/2,y:1,yref:'paper',text:' E[d*]',showarrow:false,
+        xanchor:'left',font:{color:'#ffcf5c',size:10.5}},
+        {x:alive(),y:.85,yref:'paper',text:' jetzt',showarrow:false,
+        xanchor:'left',font:{color:'#36e0b0',size:10.5}}],
+      margin:{l:48,r:48,t:14,b:38}}),PLOTCFG);
+  }
+  c._redraw=draw;
+  c.addEventListener('click',e=>{
+    const p=canvasPos(c,e);
+    const cols=10,rows=Math.ceil(total/cols);
+    const w=(c._w-20)/cols,h=Math.min(26,(c._h-20)/rows);
+    for(let i=0;i<total;i++){
+      const r=Math.floor(i/cols),cc=i%cols;
+      const x=10+cc*w,y=10+r*h;
+      if(p.x>=x&&p.x<=x+w&&p.y>=y&&p.y<=y+h){
+        if(dead.has(i))dead.delete(i);else dead.add(i);
+        draw();return;
+      }
+    }
+  });
+  document.getElementById('dsKill').onclick=()=>{
+    const n=+N.value;
+    for(let i=0;i<4;i++){
+      let k;let tries=0;
+      do{k=Math.floor(Math.random()*total);tries++;}while(dead.has(k)&&tries<60);
+      if(alive()>1)dead.add(k);
+    }
+    draw();
+  };
+  document.getElementById('dsRe').onclick=()=>{dead.clear();draw();};
+  N.addEventListener('input',()=>{document.getElementById('dsNV').textContent=N.value;draw();});
+  setTimeout(draw,380);
+})();
+
+/* =======================================================================
+   STATION 10: MEHRDEUTIGKEIT (Covers Fig. 2)
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('ambig');
+  const L=document.getElementById('amL'),N=document.getElementById('amN');
+  let pts=[],labs=[],y={x:.15,y:.08},shade=true,sweep=null,sols=[];
+  function gen(){
+    pts=[];labs=[];
+    const n=+N.value;
+    // generate a linearly separable training set (affine line in plane, d=3)
+    const a=rnd(0,6.283), wv=[Math.cos(a),Math.sin(a)], b=rnd(-.15,.15);
+    for(let i=0;i<n;i++){
+      let p,s,tries=0;
+      do{p={x:gauss()*.62,y:gauss()*.62};s=wv[0]*p.x+wv[1]*p.y+b;tries++;}
+      while(Math.abs(s)<.14&&tries<40);
+      pts.push(p);labs.push(s>0?1:-1);
+    }
+    buildSols();
+  }
+  function valid(w){ // w=[w0,w1,w2]: w0 + w1 x + w2 y
+    for(let i=0;i<pts.length;i++){
+      const s=w[0]+w[1]*pts[i].x+w[2]*pts[i].y;
+      if(s*labs[i]<=0)return false;
+    }
+    return true;
+  }
+  function buildSols(){
+    sols=[];
+    let tries=0;
+    while(sols.length<300&&tries<40000){
+      tries++;
+      const a=rnd(0,6.283);
+      const w=[rnd(-1.1,1.1),Math.cos(a),Math.sin(a)];
+      if(valid(w))sols.push(w);
+    }
+    // enrich via perceptron perturbations if too few
+    if(sols.length<40){
+      const base=perceptron(pts.map(p=>[1,p.x,p.y]),labs,6000);
+      if(base){
+        for(let k=0;k<300;k++){
+          const w=[base[0]+gauss()*.12,base[1]+gauss()*.12,base[2]+gauss()*.12];
+          const nn=Math.hypot(w[1],w[2]);if(nn<1e-6)continue;
+          const wn=[w[0]/nn,w[1]/nn,w[2]/nn];
+          if(valid(wn))sols.push(wn);
+        }
+      }
+    }
+  }
+  function ambiguous(q){
+    let plus=false,minus=false;
+    for(const w of sols){
+      const s=w[0]+w[1]*q.x+w[2]*q.y;
+      if(s>0)plus=true;else if(s<0)minus=true;
+      if(plus&&minus)return true;
+    }
+    return false;
+  }
+  function votes(q){
+    let p=0,m=0;
+    for(const w of sols){const s=w[0]+w[1]*q.x+w[2]*q.y;if(s>0)p++;else m++;}
+    return [p,m];
+  }
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.1;
+    // ambiguity shading
+    if(shade&&sols.length){
+      const step=5;
+      const img=g.createImageData(c._w,c._h);
+      for(let py=0;py<c._h;py+=step)for(let px=0;px<c._w;px+=step){
+        const q={x:(px-cx)/S,y:-(py-cy)/S};
+        let plus=false,minus=false;
+        for(const w of sols){
+          const s=w[0]+w[1]*q.x+w[2]*q.y;
+          if(s>0)plus=true;else minus=true;
+          if(plus&&minus)break;
+        }
+        if(plus&&minus){
+          for(let dy=0;dy<step;dy++)for(let dx=0;dx<step;dx++){
+            const k=((py+dy)*c._w+(px+dx))*4;
+            if(k+3<img.data.length){img.data[k]=255;img.data[k+1]=207;img.data[k+2]=92;img.data[k+3]=48;}
+          }
+        }
+      }
+      g.putImageData(img,0,0);
+    }
+    grid(g,c,cx,cy,S/2);
+    // show sample solution lines
+    const nshow=Math.min(+L.value,sols.length);
+    for(let i=0;i<nshow;i++){
+      const w=sols[Math.floor(i*sols.length/Math.max(nshow,1))];
+      const a=w[1],b=w[2],c0=w[0],L2=Math.hypot(a,b);
+      if(L2<1e-9)continue;
+      const px=-c0*a/(L2*L2),py=-c0*b/(L2*L2);
+      const dx=-b/L2,dy=a/L2,big=60;
+      g.strokeStyle='rgba(136,153,187,.26)';g.lineWidth=1;
+      g.beginPath();
+      g.moveTo(cx+(px-dx*big)*S,cy-(py-dy*big)*S);
+      g.lineTo(cx+(px+dx*big)*S,cy-(py+dy*big)*S);g.stroke();
+    }
+    pts.forEach((p,i)=>dot(g,cx+p.x*S,cy-p.y*S,7,labs[i]>0?'#36e0b0':'#ff5f8a'));
+    const amb=ambiguous(y);
+    dot(g,cx+y.x*S,cy-y.y*S,10,'#ffcf5c',amb?'#ffffff':'#36e0b0');
+    label(g,cx+y.x*S+14,cy-y.y*S-12,'y','#fff',14);
+    label(g,12,20,`N = ${pts.length} Trainingspunkte · d = 3 · ${sols.length} Lösungen gesampelt`,'#7f8db5',11.5);
+    label(g,12,38,amb?'⚠ y ist MEHRDEUTIG — die Maschine rät':'✓ y ist EINDEUTIG — echte Generalisierung',
+      amb?'#ffcf5c':'#36e0b0',13);
+    const [vp,vm]=votes(y);
+    document.getElementById('amStat').textContent=amb?'mehrdeutig':'eindeutig';
+    document.getElementById('amStat').style.color=amb?'var(--warn)':'var(--pos)';
+    document.getElementById('amVote').textContent=vp+' / '+vm;
+    document.getElementById('amA').textContent=(Aamb(pts.length,3)*100).toFixed(1)+'%';
+    document.getElementById('amBeta').textContent=(pts.length/3).toFixed(2);
+  }
+  c._redraw=draw;
+  L.addEventListener('input',()=>{document.getElementById('amLV').textContent=L.value;draw();});
+  N.addEventListener('input',()=>{document.getElementById('amNV').textContent=N.value;gen();draw();});
+  document.getElementById('amNew').onclick=()=>{gen();draw();};
+  document.getElementById('amShade').onclick=function(){shade=!shade;this.classList.toggle('on',shade);draw();};
+  document.getElementById('amSweep').onclick=function(){
+    if(sweep){clearInterval(sweep);sweep=null;this.textContent='▶ y bewegen';return;}
+    this.textContent='⏸ Stop';let t=0;
+    sweep=setInterval(()=>{t+=.04;y={x:Math.cos(t)*(.35+.45*Math.abs(Math.sin(t*.37))),
+      y:Math.sin(t*1.3)*.7};draw();},60);
+  };
+  let drag=false;
+  function setY(e){const p=canvasPos(c,e),cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.1;
+    y={x:(p.x-cx)/S,y:-(p.y-cy)/S};draw();}
+  c.addEventListener('mousedown',e=>{drag=true;setY(e);});
+  addEventListener('mouseup',()=>drag=false);
+  c.addEventListener('mousemove',e=>{if(drag)setY(e);});
+  c.addEventListener('touchstart',e=>{e.preventDefault();setY(e);},{passive:false});
+  c.addEventListener('touchmove',e=>{e.preventDefault();setY(e);},{passive:false});
+  gen();draw();
+})();
+
+/* =======================================================================
+   STATION 10b: A*(β) KURVE (Covers Fig. 3)
+   ======================================================================= */
+(function(){
+  const B=document.getElementById('asB'),D=document.getElementById('asD');
+  let showErr=true;
+  function draw(){
+    const beta=+B.value/10, d=+D.value;
+    const xs=[],ast=[],ex=[],er=[];
+    for(let i=0;i<=600;i++){
+      const b=i/600*20;
+      xs.push(b);
+      ast.push(b<=2?1:1/(b-1));
+      const n=Math.max(1,Math.round(b*d));
+      ex.push(Aamb(n,d));
+      er.push((b<=2?1:1/(b-1))/2);
+    }
+    const tr=[
+      {x:xs,y:ast,name:'A*(β) asymptotisch',mode:'lines',line:{color:'#ffcf5c',width:3.4},
+       fill:'tozeroy',fillcolor:'rgba(255,207,92,.08)'},
+      {x:xs,y:ex,name:`A(N,d) exakt, d = ${d}`,mode:'lines',line:{color:'#c792ff',width:2.2,dash:'dash'}}
+    ];
+    if(showErr)tr.push({x:xs,y:er,name:'Fehlerwahrsch. ½·A*',mode:'lines',
+      line:{color:'#ff5f8a',width:2,dash:'dot'}});
+    Plotly.react('asplot',tr,lay({
+      xaxis:{title:'β = N / d   (Muster pro Freiheitsgrad)',range:[0,20]},
+      yaxis:{title:'Wahrscheinlichkeit mehrdeutiger Antwort',range:[0,1.05]},
+      shapes:[
+        {type:'line',x0:2,x1:2,y0:0,y1:1,line:{color:'#36e0b0',width:2.4,dash:'dash'}},
+        {type:'line',x0:beta,x1:beta,y0:0,y1:1,line:{color:'#7aa2ff',width:2}},
+        {type:'rect',x0:0,x1:2,y0:0,y1:1.05,fillcolor:'rgba(255,95,138,.06)',line:{width:0}}
+      ],
+      annotations:[
+        {x:2,y:1.02,text:' Kapazität β = 2',showarrow:false,xanchor:'left',
+         font:{color:'#36e0b0',size:11.5}},
+        {x:1,y:.55,text:'reines<br>Auswendiglernen',showarrow:false,
+         font:{color:'#ff8fa8',size:11}},
+        {x:beta,y:.08,text:' β = '+beta.toFixed(1),showarrow:false,xanchor:'left',
+         font:{color:'#7aa2ff',size:11}}
+      ],
+      legend:{x:.55,y:.95}}),PLOTCFG);
+    const n=Math.max(1,Math.round(beta*d));
+    document.getElementById('asA').textContent=beta<=2?'1.000':(1/(beta-1)).toFixed(3);
+    document.getElementById('asEx').textContent=Aamb(n,d).toFixed(3);
+    document.getElementById('asErrV').textContent=((beta<=2?1:1/(beta-1))/2*100).toFixed(1)+'%';
+    document.getElementById('asNeed').textContent=Math.round(11*d)+' (β=11)';
+  }
+  [B,D].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('asBV').textContent=(+B.value/10).toFixed(1);
+    document.getElementById('asDV').textContent=D.value;draw();}));
+  document.getElementById('asErr').onclick=function(){showErr=!showErr;
+    this.classList.toggle('on',showErr);draw();};
+  setTimeout(draw,420);
+})();
+
+/* =======================================================================
+   STATION 10c: DOPPELGESICHT
+   ======================================================================= */
+(function(){
+  const B=document.getElementById('dgB'),D=document.getElementById('dgD');
+  function draw(){
+    const beta=+B.value/10,d=+D.value;
+    const xs=[],ps=[],gs=[],rs=[];
+    for(let i=1;i<=400;i++){
+      const b=i/400*12;xs.push(b);
+      const n=Math.max(1,Math.round(b*d));
+      ps.push(Pnd(n,d));
+      gs.push(1-Aamb(n,d));
+      rs.push(ERext(n,d)/(2*d));
+    }
+    Plotly.react('dgplot',[
+      {x:xs,y:ps,name:'P(N,d) — speicherbar',mode:'lines',line:{color:'#36e0b0',width:3}},
+      {x:xs,y:gs,name:'1 − A(N,d) — generalisiert',mode:'lines',line:{color:'#c792ff',width:3}},
+      {x:xs,y:rs,name:'E[R]/2d — Kompression',mode:'lines',line:{color:'#7aa2ff',width:2,dash:'dot'}}
+    ],lay({xaxis:{title:'β = N / d',range:[0,12]},yaxis:{title:'',range:[0,1.07]},
+      shapes:[
+        {type:'line',x0:2,x1:2,y0:0,y1:1.07,line:{color:'#ffcf5c',width:2.6,dash:'dash'}},
+        {type:'line',x0:beta,x1:beta,y0:0,y1:1.07,line:{color:'#fff',width:1.6}}],
+      annotations:[{x:2,y:1.05,text:' β = 2 — die Kapazitätsgrenze',showarrow:false,
+        xanchor:'left',font:{color:'#ffcf5c',size:12}},
+        {x:1,y:.1,text:'Auswendiglernen',showarrow:false,font:{color:'#9aa6c8',size:10.5}},
+        {x:6,y:.1,text:'Verstehen',showarrow:false,font:{color:'#9aa6c8',size:10.5}}],
+      legend:{x:.42,y:.55}}),PLOTCFG);
+  }
+  [B,D].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('dgBV').textContent=(+B.value/10).toFixed(1);
+    document.getElementById('dgDV').textContent=D.value;draw();}));
+  setTimeout(draw,460);
+})();
+
+/* =======================================================================
+   STATION 11: EXTREMPUNKTE
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('extr');
+  const N=document.getElementById('exN');
+  let pts=[],labs=[],removed=new Set(),showFan=true;
+  function gen(){
+    pts=[];labs=[];removed.clear();
+    const n=+N.value;
+    const a=rnd(0,6.283),wv=[Math.cos(a),Math.sin(a)],b=rnd(-.1,.1);
+    for(let i=0;i<n;i++){
+      let p,s,t=0;
+      do{p={x:gauss()*.62,y:gauss()*.62};s=wv[0]*p.x+wv[1]*p.y+b;t++;}
+      while(Math.abs(s)<.12&&t<40);
+      pts.push(p);labs.push(s>0?1:-1);
+    }
+  }
+  function active(){const r=[];pts.forEach((p,i)=>{if(!removed.has(i))r.push(i);});return r;}
+  function validSet(w,idxs){
+    for(const i of idxs){
+      const s=w[0]+w[1]*pts[i].x+w[2]*pts[i].y;
+      if(s*labs[i]<=0)return false;
+    }
+    return true;
+  }
+  function sampleSols(idxs,count=260){
+    const out=[];let tries=0;
+    while(out.length<count&&tries<30000){
+      tries++;
+      const a=rnd(0,6.283);
+      const w=[rnd(-1.1,1.1),Math.cos(a),Math.sin(a)];
+      if(validSet(w,idxs))out.push(w);
+    }
+    return out;
+  }
+  function extremes(){
+    const idxs=active();
+    const ext=new Set();
+    for(const i of idxs){
+      const rest=idxs.filter(j=>j!==i);
+      // i is extreme iff removing it enlarges solution set, i.e.
+      // exists w valid for rest but violating i
+      let found=false,tries=0;
+      while(!found&&tries<6000){
+        tries++;
+        const a=rnd(0,6.283);
+        const w=[rnd(-1.2,1.2),Math.cos(a),Math.sin(a)];
+        if(validSet(w,rest)){
+          const s=w[0]+w[1]*pts[i].x+w[2]*pts[i].y;
+          if(s*labs[i]<=0)found=true;
+        }
+      }
+      if(found)ext.add(i);
+    }
+    return ext;
+  }
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.1;
+    const idxs=active();
+    const sols=showFan?sampleSols(idxs,140):[];
+    for(const w of sols){
+      const a=w[1],b=w[2],c0=w[0],L2=Math.hypot(a,b);
+      if(L2<1e-9)continue;
+      const px=-c0*a/(L2*L2),py=-c0*b/(L2*L2);
+      const dx=-b/L2,dy=a/L2,big=60;
+      g.strokeStyle='rgba(122,162,255,.17)';g.lineWidth=1;
+      g.beginPath();
+      g.moveTo(cx+(px-dx*big)*S,cy-(py-dy*big)*S);
+      g.lineTo(cx+(px+dx*big)*S,cy-(py+dy*big)*S);g.stroke();
+    }
+    grid(g,c,cx,cy,S/2);
+    const ext=extremes();
+    pts.forEach((p,i)=>{
+      if(removed.has(i)){
+        g.strokeStyle='rgba(120,130,160,.35)';g.lineWidth=1.4;
+        g.beginPath();g.arc(cx+p.x*S,cy-p.y*S,6,0,7);g.stroke();
+        return;
+      }
+      dot(g,cx+p.x*S,cy-p.y*S,7.5,labs[i]>0?'#36e0b0':'#ff5f8a',
+        ext.has(i)?'#ffcf5c':null);
+    });
+    label(g,12,20,`${idxs.length} aktive Punkte · ${ext.size} Extrempunkte (gelber Ring)`,'#cbd4ee',12.5);
+    label(g,12,c._h-12,'Klicke einen Punkt, um ihn zu entfernen','#6d7ba3',11);
+    const n=idxs.length;
+    document.getElementById('exR').textContent=ext.size;
+    document.getElementById('exN2').textContent=n;
+    document.getElementById('exComp').textContent=n>0?(100*ext.size/n).toFixed(0)+'%':'–';
+    document.getElementById('exTh').textContent=ERext(n,3).toFixed(2);
+    document.getElementById('ex2d').textContent=6;
+    Plotly.react('exbar',[{
+      x:['gemessen R','Theorie E[R]','Grenze 2d','Punkte N'],
+      y:[ext.size,ERext(n,3),6,n],
+      type:'bar',marker:{color:['#ffcf5c','#36e0b0','#c792ff','#4a5680']},
+      text:[ext.size,ERext(n,3).toFixed(1),6,n].map(String),textposition:'outside'}],
+      lay({showlegend:false,margin:{l:40,r:10,t:16,b:40},yaxis:{title:'Anzahl'}}),PLOTCFG);
+  }
+  c._redraw=draw;
+  N.addEventListener('input',()=>{document.getElementById('exNV').textContent=N.value;gen();draw();});
+  document.getElementById('exNew').onclick=()=>{gen();draw();};
+  document.getElementById('exReset').onclick=()=>{removed.clear();draw();};
+  document.getElementById('exShow').onclick=function(){showFan=!showFan;
+    this.classList.toggle('on',showFan);draw();};
+  document.getElementById('exOnly').onclick=()=>{
+    const ext=extremes();
+    pts.forEach((p,i)=>{if(!ext.has(i))removed.add(i);});
+    draw();
+  };
+  c.addEventListener('click',e=>{
+    const p=canvasPos(c,e),cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.1;
+    let bi=-1,bd=1e9;
+    pts.forEach((q,i)=>{const d=Math.hypot(cx+q.x*S-p.x,cy-q.y*S-p.y);if(d<bd){bd=d;bi=i;}});
+    if(bd<16){if(removed.has(bi))removed.delete(bi);else removed.add(bi);draw();}
+  });
+  gen();setTimeout(draw,520);
+})();
+
+/* =======================================================================
+   STATION 11b: E[R] SÄTTIGUNG
+   ======================================================================= */
+(function(){
+  const D=document.getElementById('erD'),N=document.getElementById('erN');
+  let mode='abs';
+  function draw(){
+    const d=+D.value,nmax=+N.value;
+    const xs=[],ys=[],ref=[];
+    const stepN=Math.max(1,Math.floor(nmax/300));
+    for(let n=1;n<=nmax;n+=stepN){
+      xs.push(n);
+      const r=ERext(n,d);
+      if(mode==='abs'){ys.push(r);ref.push(2*d);}
+      else if(mode==='rel'){ys.push(r/(2*d));ref.push(1);}
+      else {ys.push(r/n);ref.push(2*d/n);}
+    }
+    const titles={abs:'E[R] (erwartete Extrempunkte)',rel:'E[R] / 2d',frac:'Anteil R / N'};
+    Plotly.react('erplot',[
+      {x:xs,y:ys,mode:'lines',name:'E[R(N,d)]',line:{color:'#ffcf5c',width:3.2},
+       fill:'tozeroy',fillcolor:'rgba(255,207,92,.08)'},
+      {x:xs,y:ref,mode:'lines',name:mode==='abs'?'Grenze 2d':(mode==='rel'?'Grenzwert 1':'2d/N'),
+       line:{color:'#36e0b0',width:2,dash:'dash'}}
+    ],lay({xaxis:{title:'N (Anzahl Trainingsmuster)'},yaxis:{title:titles[mode]},
+      shapes:[{type:'line',x0:2*d,x1:2*d,y0:0,y1:1,yref:'paper',
+        line:{color:'#c792ff',width:2,dash:'dot'}}],
+      annotations:[{x:2*d,y:1,yref:'paper',text:' N = 2d',showarrow:false,
+        xanchor:'left',font:{color:'#c792ff',size:11}}],
+      legend:{x:.55,y:.3}}),PLOTCFG);
+    const rmax=ERext(nmax,d);
+    document.getElementById('erAt').textContent=rmax.toFixed(2);
+    document.getElementById('er2d').textContent=2*d;
+    document.getElementById('erRatio').textContent=(rmax/nmax*100).toFixed(2)+'%';
+    document.getElementById('erMk').textContent='< 1/t';
+  }
+  [D,N].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('erDV').textContent=D.value;
+    document.getElementById('erNV').textContent=N.value;draw();}));
+  document.querySelectorAll('#ermode button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#ermode button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');mode=b.dataset.m;draw();});
+  setTimeout(draw,540);
+})();
+
+/* =======================================================================
+   STATION 12: BOOLESCHER WÜRFEL
+   ======================================================================= */
+(function(){
+  const {c,g}=setupCanvas('bcube');
+  const M=document.getElementById('bm');
+  let m=2,truth=[];
+  function verts(mm){
+    const v=[];
+    for(let i=0;i<(1<<mm);i++){
+      const b=[];for(let j=0;j<mm;j++)b.push((i>>j)&1);
+      v.push(b);
+    }
+    return v;
+  }
+  function preset(p){
+    const V=verts(m);
+    truth=V.map(b=>{
+      const s=b.reduce((a,x)=>a+x,0);
+      if(p==='and')return b.every(x=>x===1)?1:-1;
+      if(p==='or')return b.some(x=>x===1)?1:-1;
+      if(p==='xor')return (s%2===1)?1:-1;
+      if(p==='maj')return (s*2>m)?1:-1;
+      if(p==='par')return (s%2===0)?1:-1;
+      return Math.random()<.5?1:-1;
+    });
+  }
+  function proj(b){
+    // project m-dim binary vector to 2D
+    if(m===2)return {x:(b[0]-.5)*1.3,y:(b[1]-.5)*1.3};
+    if(m===3)return {x:(b[0]-.5)*1.25+(b[2]-.5)*.52,y:(b[1]-.5)*1.25+(b[2]-.5)*.52};
+    return {x:(b[0]-.5)*1.15+(b[2]-.5)*.5,y:(b[1]-.5)*1.15+(b[3]-.5)*.5};
+  }
+  function linSep(){
+    const V=verts(m);
+    const vecs=V.map(b=>[1,...b.map(x=>x*2-1)]);
+    return sepCheck(vecs,truth);
+  }
+  function sphSep(){
+    const V=verts(m);
+    const vecs=V.map(b=>{const z=b.map(x=>x*2-1);
+      return [1,...z,z.reduce((a,x)=>a+x*x,0)];});
+    return sepCheck(vecs,truth);
+  }
+  function draw(){
+    clearC(g,c);
+    const cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.2;
+    const V=verts(m);
+    // edges (Hamming distance 1)
+    g.strokeStyle='rgba(122,162,255,.25)';g.lineWidth=1.4;
+    for(let i=0;i<V.length;i++)for(let j=i+1;j<V.length;j++){
+      let diff=0;for(let k=0;k<m;k++)if(V[i][k]!==V[j][k])diff++;
+      if(diff===1){
+        const a=proj(V[i]),b=proj(V[j]);
+        g.beginPath();g.moveTo(cx+a.x*S,cy-a.y*S);g.lineTo(cx+b.x*S,cy-b.y*S);g.stroke();
+      }
+    }
+    V.forEach((b,i)=>{
+      const p=proj(b);
+      dot(g,cx+p.x*S,cy-p.y*S,10,truth[i]>0?'#36e0b0':'#ff5f8a');
+      label(g,cx+p.x*S,cy-p.y*S+26,b.join(''),'#8e9bc0',10.5,'center');
+    });
+    const ls=linSep(),ss=sphSep();
+    label(g,12,20,`m = ${m} Variablen · ${1<<m} Ecken`,'#cbd4ee',12.5);
+    label(g,12,c._h-12,'Klicke eine Ecke, um den Wahrheitswert zu tauschen','#6d7ba3',11);
+    document.getElementById('bsep').textContent=ls?'✓ ja':'✗ nein';
+    document.getElementById('bsep').style.color=ls?'var(--pos)':'var(--neg)';
+    document.getElementById('bsph').textContent=ss?'✓ ja':'✗ nein';
+    document.getElementById('bsph').style.color=ss?'var(--pos)':'var(--neg)';
+    document.getElementById('ball').textContent=fmt(Math.pow(2,Math.pow(2,m)));
+    // truth table
+    let html='<tr><th>#</th>';
+    for(let j=0;j<m;j++)html+=`<th>x${j+1}</th>`;
+    html+='<th>f</th></tr>';
+    V.forEach((b,i)=>{
+      html+=`<tr><td class="mono">${i}</td>`;
+      b.forEach(x=>html+=`<td class="mono">${x}</td>`);
+      html+=`<td class="mono" style="color:${truth[i]>0?'#36e0b0':'#ff5f8a'};font-weight:800">${truth[i]>0?'1':'0'}</td></tr>`;
+    });
+    document.getElementById('btt').innerHTML=html;
+    const msg=document.getElementById('bmsg');
+    if(!ls&&ss){msg.style.display='block';msg.className='note ok';
+      msg.innerHTML='<b>Interessant:</b> Nicht linear trennbar, aber <b>sphärisch</b> trennbar — ein Freiheitsgrad mehr genügt. Genau das ist der φ-Trick!';}
+    else if(!ls&&!ss){msg.style.display='block';msg.className='note warn';
+      msg.innerHTML='<b>Weder linear noch sphärisch trennbar.</b> Man bräuchte Flächen höherer Ordnung.';}
+    else {msg.style.display='block';msg.className='note';
+      msg.innerHTML='<b>Linear trennbar</b> — ein einzelnes Neuron mit '+(m+1)+' Gewichten genügt.';}
+  }
+  function exhaustive(){
+    if(m>3){document.getElementById('bcnt').textContent='zu groß';return;}
+    const V=verts(m),vecs=V.map(b=>[1,...b.map(x=>x*2-1)]);
+    const n=V.length;let cnt=0;
+    for(let k=0;k<(1<<n);k++){
+      const L=[];for(let i=0;i<n;i++)L.push((k>>i)&1?1:-1);
+      if(sepCheck(vecs,L))cnt++;
+    }
+    document.getElementById('bcnt').textContent=cnt;
+  }
+  c._redraw=draw;
+  M.addEventListener('input',()=>{m=+M.value;document.getElementById('bmV').textContent=m;
+    preset('xor');draw();document.getElementById('bcnt').textContent='–';});
+  document.querySelectorAll('#bpreset button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#bpreset button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');preset(b.dataset.p);draw();});
+  document.getElementById('bexh').onclick=exhaustive;
+  c.addEventListener('click',e=>{
+    const p=canvasPos(c,e),cx=c._w/2,cy=c._h/2,S=Math.min(c._w,c._h)/3.2;
+    const V=verts(m);let bi=-1,bd=1e9;
+    V.forEach((b,i)=>{const q=proj(b);
+      const d=Math.hypot(cx+q.x*S-p.x,cy-q.y*S-p.y);if(d<bd){bd=d;bi=i;}});
+    if(bd<20){truth[bi]*=-1;draw();}
+  });
+  preset('xor');draw();
+})();
+
+/* =======================================================================
+   STATION 12b: BOOLESCHE SCHRANKE
+   ======================================================================= */
+(function(){
+  const M=document.getElementById('blm'),R=document.getElementById('blr');
+  let mode='log2';
+  // exakte Anzahl linear trennbarer Boolescher Funktionen (bekannt für m<=8)
+  const EXACT_LIN={1:4,2:14,3:104,4:1882,5:94572,6:15028134,7:8378070864,8:17561539552946};
+  function draw(){
+    const mm=+M.value,r=+R.value;
+    const xs=[],bound=[],all=[],ex=[];
+    for(let i=1;i<=9;i++){
+      xs.push(i);
+      const d=choose(i+r,r);
+      const lb=logC(Math.pow(2,i),d)/Math.LN2;
+      const la=Math.pow(2,i);
+      bound.push(mode==='log2'?lb:lb);
+      all.push(la);
+      ex.push(EXACT_LIN[i]&&r===1?Math.log2(EXACT_LIN[i]):null);
+    }
+    Plotly.react('blplot',[
+      {x:xs,y:all,mode:'lines+markers',name:'log₂(alle 2^(2^m)) = 2^m',
+       line:{color:'#ff5f8a',width:2.6}},
+      {x:xs,y:bound,mode:'lines+markers',name:`log₂ Schranke C(2^m, C(m+${r},${r}))`,
+       line:{color:'#36e0b0',width:3}},
+      {x:xs,y:ex,mode:'markers',name:'exakt (linear, bekannt)',
+       marker:{color:'#ffcf5c',size:10,symbol:'diamond'}}
+    ],lay({xaxis:{title:'m (Anzahl Variablen)'},
+      yaxis:{title:'log₂(Anzahl Funktionen)',type:'log'},
+      legend:{x:.02,y:.98}}),PLOTCFG);
+    let html='<tr><th>m</th><th>Ecken 2^m</th><th>d = C(m+r,r)</th>'+
+      '<th>Schranke C(2^m,d)</th><th>alle 2^(2^m)</th><th>Anteil</th></tr>';
+    for(let i=1;i<=Math.min(8,9);i++){
+      const d=choose(i+r,r), n=Math.pow(2,i);
+      const lb=logC(n,d)/Math.LN2, la=n;
+      html+=`<tr style="${i===mm?'background:rgba(122,162,255,.14)':''}">
+        <td class="mono">${i}</td><td class="mono">${n}</td>
+        <td class="mono" style="color:var(--acc2)">${d}</td>
+        <td class="mono" style="color:var(--pos)">2^${lb.toFixed(1)}</td>
+        <td class="mono">2^${la}</td>
+        <td class="mono" style="color:${lb>=la?'#36e0b0':'#ff5f8a'}">${lb>=la?'100%':'2^'+(lb-la).toFixed(1)}</td></tr>`;
+    }
+    document.getElementById('bltab').innerHTML=html;
+  }
+  [M,R].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('blmV').textContent=M.value;
+    document.getElementById('blrV').textContent=R.value;draw();}));
+  document.querySelectorAll('#blmode button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#blmode button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');mode=b.dataset.m;draw();});
+  setTimeout(draw,580);
+})();
+
+/* =======================================================================
+   STATION 13: SYNTHESE
+   ======================================================================= */
+(function(){
+  const B=document.getElementById('suB'),D=document.getElementById('suD');
+  let play=null;
+  function draw(){
+    const beta=+B.value/10,d=+D.value;
+    const xs=[],ps=[],as=[],rs=[];
+    for(let i=1;i<=500;i++){
+      const b=i/500*16;xs.push(b);
+      const n=Math.max(1,Math.round(b*d));
+      ps.push(Pnd(n,d));
+      as.push(Aamb(n,d));
+      rs.push(ERext(n,d)/(2*d));
+    }
+    Plotly.react('suplot',[
+      {x:xs,y:ps,name:'P(N,d) — kann alles speichern',mode:'lines',
+       line:{color:'#36e0b0',width:3.2}},
+      {x:xs,y:as,name:'A(N,d) — Antwort ist Willkür',mode:'lines',
+       line:{color:'#ffcf5c',width:3.2}},
+      {x:xs,y:rs,name:'E[R]/2d — nötiger Speicher',mode:'lines',
+       line:{color:'#c792ff',width:2.6,dash:'dot'}}
+    ],lay({
+      xaxis:{title:'β = N / d   (Muster pro Freiheitsgrad)',range:[0,16]},
+      yaxis:{title:'',range:[0,1.1]},
+      shapes:[
+        {type:'rect',x0:0,x1:2,y0:0,y1:1.1,fillcolor:'rgba(255,95,138,.07)',line:{width:0}},
+        {type:'rect',x0:2,x1:16,y0:0,y1:1.1,fillcolor:'rgba(54,224,176,.05)',line:{width:0}},
+        {type:'line',x0:2,x1:2,y0:0,y1:1.1,line:{color:'#fff',width:2.6,dash:'dash'}},
+        {type:'line',x0:beta,x1:beta,y0:0,y1:1.1,line:{color:'#7aa2ff',width:2}}
+      ],
+      annotations:[
+        {x:2,y:1.08,text:'  β = 2  —  KAPAZITÄT',showarrow:false,xanchor:'left',
+         font:{color:'#fff',size:13}},
+        {x:1,y:.42,text:'AUSWENDIG-<br>LERNEN',showarrow:false,font:{color:'#ff8fa8',size:11.5}},
+        {x:8,y:.42,text:'GENERALISIEREN',showarrow:false,font:{color:'#9ff0da',size:11.5}},
+        {x:beta,y:.03,text:' β='+beta.toFixed(1),showarrow:false,xanchor:'left',
+         font:{color:'#7aa2ff',size:11}}
+      ],
+      legend:{x:.42,y:.98}}),PLOTCFG);
+    const n=Math.max(1,Math.round(beta*d));
+    document.getElementById('suN').textContent=n;
+    document.getElementById('suP').textContent=(Pnd(n,d)*100).toFixed(1)+'%';
+    document.getElementById('suA').textContent=(Aamb(n,d)*100).toFixed(1)+'%';
+    document.getElementById('suR').textContent=ERext(n,d).toFixed(1);
+    const z=document.getElementById('suZ');
+    if(beta<2){z.textContent='Speichern';z.style.color='var(--neg)';}
+    else if(beta<2.6){z.textContent='Grenze';z.style.color='var(--warn)';}
+    else {z.textContent='Lernen';z.style.color='var(--pos)';}
+  }
+  [B,D].forEach(e=>e.addEventListener('input',()=>{
+    document.getElementById('suBV').textContent=(+B.value/10).toFixed(1);
+    document.getElementById('suDV').textContent=D.value;draw();}));
+  document.getElementById('suPlay').onclick=function(){
+    if(play){clearInterval(play);play=null;this.textContent='▶ β durchfahren';return;}
+    this.textContent='⏸ Stop';
+    let v=+B.value;
+    play=setInterval(()=>{v+=2;if(v>160)v=20;B.value=v;
+      document.getElementById('suBV').textContent=(v/10).toFixed(1);draw();},90);
+  };
+  setTimeout(draw,620);
+})();
+
+/* =======================================================================
+   TASTATUR-NAVIGATION
+   ======================================================================= */
+(function(){
+  const secs=[...document.querySelectorAll('section,header')];
+  addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+    if(e.key!=='j'&&e.key!=='k'&&e.key!=='ArrowDown'&&e.key!=='ArrowUp')return;
+    const y=scrollY+80;
+    let idx=0;
+    secs.forEach((s,i)=>{if(s.offsetTop<=y)idx=i;});
+    if(e.key==='j'||e.key==='ArrowDown')idx=Math.min(secs.length-1,idx+1);
+    else idx=Math.max(0,idx-1);
+    secs[idx].scrollIntoView({behavior:'smooth'});
+    e.preventDefault();
+  });
+})();
+
+/* =======================================================================
+   FINALES RE-RENDERING NACH LADEN
+   ======================================================================= */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.querySelectorAll('canvas.viz').forEach(c=>{if(c._redraw)c._redraw();});
+    window.dispatchEvent(new Event('resize'));
+  },600);
+});
+</script>
+</body>
+</html>
