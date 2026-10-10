@@ -1,0 +1,16 @@
+{
+  "no": "014",
+  "a": "combined/r1-011.html",
+  "b": "combined/r1-031.html",
+  "a_title": "Glatte Fingerabdrücke, scharfe Faltungen: wie ein Netz Positionen codiert und daraus rechnet",
+  "b_title": "Funktionstiefe trifft lokalen Speicher: ein MLP, gelesen von zwei Seiten",
+  "combined_theme": "linear-nichtlinear-pipeline",
+  "one_line": "Ein Netz ist eine glatt–scharf–glatt-Pipeline: lineare Stufen identifizieren (A: Position→Adresse) und halten (B: Key→Wert), die nichtlineare ReLU-Faltung in der Mitte ist der gemeinsame kombinatorische Kern (Regionen ≈ k^L) — Repräsentation, Rechnung und Speicherung sind drei Ansichten derselben linearen↔nichtlinearen Serie.",
+  "contradictions": [
+    "Reihenfolge/Rolle: A (r1-011) legt die lineare Positionscodierung VORN als Eingabe-Adresse ('Wo') und die nichtlineare Faltung HINTEN als Funktion ('Was'); B (r1-031) legt die nichtlineare ReLU-Front VORN als Key-Bauer und die lineare Rückseite (W_proj) HINTEN als Speicher — die Reihenfolge der Stufen ist vertauscht.",
+    "Verteilte Rechnung vs. lokale Speicherung: A sagt, die nichtlineare Funktion sitzt verteilt über die ganze Tiefe (Faltung der Faltung, flach sei schwach, Regionen ≈ k^L); B sagt, ein Fakt liegt lokal in genau einer mittleren MLP-Schicht und die übrigen Schichten sind dafür redundant.",
+    "Zweck der nichtlinearen Stufe: A macht daraus die eigentliche Berechnung/Funktion ('Was kannst du?'); B macht daraus nur eine Key-Fabrik für eine lineare Abfrage (assoziatives Speichern) — nichtlinear = berechnen (A) vs. nichtlinear = Index für Speicherung erzeugen (B)."
+  ],
+  "resolution": "Die drei Spannungen sind Ansichten unterschiedlicher Stufen/Skalen desselben Netzes: (1) linear↔nichtlinear wechseln sich in Serie ab — die lineare/glatte Stufe tritt an BEIDEN Enden auf (Adresse rein bei A, Wert raus bei B), die nichtlineare/scharfe Faltung liegt in der Mitte → glatt–scharf–glatt-Sandwich; (2) die Rechnung ist verteilt (A), der Inhalt wird lokal geschrieben, wo die Faltung den Key fertig hat (B) → verteilt rechnen, lokal schreiben; (3) die nichtlineare Stufe rechnet immer, und 'Key bauen' ist derselbe Rechenakt, auf einer Schicht verortet. Kern: dieselbe lineare↔nichtlineare Serie erklärt Repräsentation (A: Adresse), Rechnung (gemeinsam: k^L) und Speicherung (B: Wert + geschlossenes Rang-1-Edit).",
+  "viz": "Canvas-Pipeline in drei Stufen: (①) glatte sinusoidale Fingerabdrücke (A) → Adresse a₁; (②) die nichtlineare Faltung, die a₁ zu k^L Regionen faltet (gemeinsamer ReLU-Kern, Tiefe L / Zähne k); (③) der lineare assoziative Speicher (B), der Key→Wert abbildet mit zuschaltbarem Rang-1-Edit auf v*. Kausalverkettung: Position → Adresse → gefaltete f(a₁) → Key-Winkel → Wert. Regler: Position, Tiefe L, Zähne k, Edit-Schalter."
+}

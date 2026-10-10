@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dünn, fließend, lesbar — Fusion r1-057 ✕ r1-013</title>
+<style>
+:root{
+  --bg:#faf8f1; --panel:#ffffff; --card:#fffdf8; --ink:#1c1a17; --dim:#57524a; --line:#e6e1d2;
+  --teal:#0f766e; --amber:#b45309; --rose:#be185d; --accent3:#7c3aed; --good:#15803d; --accent4:#1d4ed8;
+}
+html.dark{
+  --bg:#0a0e1a; --panel:#141d31; --card:#111726; --ink:#e8ecff; --dim:#a8b3d9; --line:#26314f;
+  --teal:#2dd4bf; --amber:#fbbf24; --rose:#f472b6; --accent3:#c084fc; --good:#4ade80; --accent4:#8ab4ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:radial-gradient(ellipse at top, var(--card) 0%, var(--bg) 60%);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;line-height:1.68;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:34px 22px 90px}
+header{text-align:center;padding:26px 10px 14px}
+header h1{font-size:clamp(1.9rem,4.8vw,2.9rem);margin:0;line-height:1.12;letter-spacing:-.02em;font-weight:800;
+  background:linear-gradient(135deg,var(--teal) 0%,var(--accent4) 52%,var(--rose) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{color:var(--dim);margin-top:14px;font-size:.98rem}
+.subtitle code{background:var(--card);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-size:.88em;color:var(--teal)}
+.tagline{color:var(--dim);font-size:.95rem;margin-top:10px;max-width:680px;margin-left:auto;margin-right:auto}
+.tagline b{color:var(--ink)}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:18px 0 4px}
+nav.toc a{color:var(--dim);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+nav.toc a:hover{color:var(--teal);border-color:var(--teal);background:var(--card)}
+section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin:22px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+section h2{margin:0 0 14px;font-size:1.5rem;letter-spacing:-.01em;color:var(--teal)}
+section h3{color:var(--amber);margin:22px 0 8px;font-size:1.1rem}
+p{font-size:1rem;color:var(--dim)}
+p+p,ul+p,ol+p{margin-top:12px}
+p b,li b{color:var(--ink)}
+.lead{font-size:1.05rem}
+.hl{color:var(--teal);font-weight:600}
+.hl2{color:var(--amber);font-weight:600}
+.hl3{color:var(--rose);font-weight:600}
+.hl4{color:var(--accent4);font-weight:600}
+.note{border-left:3px solid var(--accent4);background:var(--bg);padding:11px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.95rem;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.t{border-color:var(--teal)}
+.note.r{border-color:var(--rose)}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:8px 0}
+.formula{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center}
+.m{font-family:'Cambria Math','STIX Two Math','Latin Modern Math',Georgia,serif;font-style:italic;letter-spacing:.02em;white-space:nowrap}
+.m sup,.m sub{font-size:.72em;font-style:normal}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+.tag{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;margin-right:6px;vertical-align:middle;border:1px solid var(--line)}
+.tag.A{color:var(--teal);background:color-mix(in srgb,var(--teal) 14%,transparent)}
+.tag.B{color:var(--accent4);background:color-mix(in srgb,var(--accent4) 14%,transparent)}
+.tag.F{color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent)}
+.viz-card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+canvas#viz{display:block;width:100%;height:460px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.82rem;color:var(--dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+@media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+.controls{display:flex;flex-direction:column;gap:12px}
+.ctrl{display:flex;flex-direction:column;gap:5px}
+.ctrl label{font-size:.86rem;color:var(--dim);display:flex;justify-content:space-between}
+.ctrl label .val{color:var(--teal);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;outline:none;cursor:pointer;background:var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;box-shadow:0 0 0 2px var(--card)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;border:2px solid var(--card)}
+input[type=range].v::-webkit-slider-thumb{background:var(--rose)}
+input[type=range].v::-moz-range-thumb{background:var(--rose)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.86rem;transition:.15s}
+button:hover{transform:translateY(-1px);border-color:var(--teal);color:var(--teal)}
+button.active{background:var(--teal);color:var(--bg);border-color:var(--teal)}
+.ro{display:flex;gap:9px;flex-wrap:wrap}
+.ro .box{flex:1;min-width:112px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 11px;text-align:center}
+.ro .box .k{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.ro .box .v{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;font-weight:700;color:var(--teal)}
+.ro .box.a4 .v{color:var(--accent4)}
+.ro .box.rose .v{color:var(--rose)}
+.verdict{font-weight:700;font-size:1rem;padding:9px 13px;border-radius:10px;margin-bottom:12px;border:1px solid var(--line)}
+.verdict.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent);border-color:var(--good)}
+.verdict.warn{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent);border-color:var(--amber)}
+.verdict.neutral{color:var(--accent4);background:color-mix(in srgb,var(--accent4) 12%,transparent);border-color:var(--accent4)}
+.fused-line{margin-top:12px;padding:12px 14px;border:1px dashed var(--amber);border-radius:12px;background:color-mix(in srgb,var(--amber) 8%,transparent);font-size:.92rem;color:var(--dim)}
+.fused-line b{color:var(--amber)}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+footer{text-align:center;color:var(--dim);font-size:.85rem;padding:24px 10px 6px}
+a{color:var(--accent4)}
+.prov{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--bg);font-size:.95rem}
+.prov .tag{min-width:44px;text-align:center;font-size:.8rem;align-self:flex-start}
+.prov .tag.b{color:var(--accent4);background:color-mix(in srgb,var(--accent4) 14%,transparent)}
+.prov p{margin:0;color:var(--dim)}
+.prov a{font-weight:600}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9788; Hell / &#127769; Dunkel</button>
+<div class="wrap">
+
+<header>
+  <h1>Dünn, fließend, lesbar</h1>
+  <p class="subtitle">Fusion aus: <code>r1-057.html</code> &#10007; <code>r1-013.html</code> (Round 2)</p>
+  <p class="tagline">Zwei Round-1-Fusionen, eine Architektur: Ein neuronales Netz ist kein Beutel unabhängiger Zahlen, sondern ein <b>niedrigdimensionales geometrisches Objekt</b> — als sich <b>linearisierender Fluss</b> durch den Residual-Stream (A) <em>und</em> als <b>dünne gekrümmte Mannigfaltigkeit mit einer Metrik</b> (B). Lesbar, wo es linear wird; generalisierend, weil es dünn ist.</p>
+</header>
+
+<nav class="toc">
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widersprüche</a>
+  <a href="#aufloesung">Auflösung</a>
+  <a href="#inhalt">Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<!-- 1 -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide R1-Papiere blicken — von unterschiedlichen Einstiegen — auf dasselbe Objekt und kommen zu derselben Architektur: <span class="hl">ein neuronales Netz ist kein Riesenbeutel unabhängiger Zahlen, sondern ein niedrigdimensionales geometrisches Objekt.</span> <span class="hl2">A (r1-057)</span> sieht es als <b>Fluss</b>: Der Residual-Stream <span class="m">h<sub>&#8467;</sub></span> läuft „in der Zeit" über die 64 Sublayer (Llama 3.1 8B, 4096-dim) — verdichtet, beschleunigt und, als Kern, <b>linearisiert</b> sich (MI fällt, Korrelation steigt). Wo er linear wird (&#8776;38–92&nbsp;%), wird ein kleiner gelernter Unterraum — der <b>J-Space</b> (&#8776;5–10&nbsp;% der Varianz, &#8776;6 Wörter) — über einen <b>linearen J-Lens-Readout</b> lesbar, tauschbar, berichtbar. <span class="hl4">B (r1-013)</span> sieht dasselbe Objekt als <b>Form + Metrik</b>: Seine Repräsentation wohnt auf einer <b>dünnen, gekrümmten Daten-Mannigfaltigkeit</b> (intrinsische Dimension &#8594; Generalisierung, r = 0.94 über 14 Netze) und seine Entscheidung auf dem <b>Wahrscheinlichkeits-Simplex</b> {&#931;p=1}, dessen <b>Fisher-Metrik</b> einen ehrlichen, gedämpften Lernschritt bestimmt.</p>
+  <p>Die fusionierte Einzelposition: <b>Das Wesen des Netzes ist seine niedrigdimensionale Geometrie — als fließende, sich linearisierende Bahn (A) und als dünne gekrümmte Form mit einer Metrik (B) — und jede schätzungswürdige Funktion (lesbarer Bericht, Generalisierung, ehrliches Lernen) entsteht genau dort, wo diese Geometrie <span class="hl">linear wird</span> (A: J-Lens lesbar) <em>oder</em> <span class="hl">der Krümmung folgt statt zu glätten</span> (B: Fisher-Metrik, dünne Faltung).</b> Der lineare Readout (J-Lens) und der manigfaltigkeitsbewusste Schritt (Fisher) sind zwei Gesichter desselben Grundsatzes: <b>mit dem Objekt so umgehen, wie es gerade ist</b> — lesbar, wo es linear ist; ehrlich, wo es gekrümmt ist.</p>
+  <div class="note t"><b>Kurzformel:</b> Dünn (B: ID, Fisher) &#215; Fließend (A: Velocity, Selbstkorrektion) &#215; Lesbar (A: J-Space/J-Lens). Lesbar, wo linear; generalisierend, weil dünn; attraktor-stabil, weil der Fluss auf die dünne Mannigfaltigkeit kontrahiert.</div>
+</section>
+
+<!-- 2 -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Sie teilen die Prämisse „Geometrie ist entscheidend" und beide setzen auf Niedrigdimensionalität — aber sie beziehen drei <span class="hl3">unterschiedliche Stellungen</span> zu derselben geometrischen Eigenschaft:</p>
+
+  <div class="card">
+    <p><b>(1) Was das Dünn-Sein <em>tut</em> — Lesbarkeit &amp; Steuerung <span class="tag A">A</span> vs. Generalisierung <span class="tag B">B</span></b></p>
+    <p><span class="tag A">A</span> sagt: Der Nutzen der dünnen, linearen Struktur ist <b>Lesbarkeit und Steuerbarkeit</b> — der J-Space lässt das Modell <em>berichten</em>, <em>tauschen</em>, <em>broadcasten</em> (&#8776;6–7&nbsp;% Varianz treiben &#8776;59&nbsp;% der Berichts-Änderungen; der France&#8594;China-Swap funktioniert über alle Prompts). Niedrigdim + linear = das Modell kann <em>über seinen Zustand sprechen und ihn gezielt setzen</em>.</p>
+    <p><span class="tag B">B</span> sagt: Der Nutzen der dünnen Struktur ist <b>Generalisierung</b> — die ID der letzten Schicht vorhersagt die Test-Genauigkeit (r = 0.94). „Je dünner die Faltung, desto besser generalisiert."</p>
+    <p>&#8594; <b>Spannung:</b> dieselbe geometrische Eigenschaft (Niedrigdimensionalität), zwei verschiedene Nutzenfunktionen — A fragt „was kann das Modell damit <em>sagen/tun</em>" (Kontrollierbarkeit), B fragt „wie gut <em>transferts</em> es auf neue Daten" (Performance). Unterschiedlicher Zweck für dieselbe Eigenschaft.</p>
+  </div>
+
+  <div class="card">
+    <p><b>(2) Linearisierung — gut <span class="tag A">A</span> vs. nicht gut <span class="tag B">B</span></b></p>
+    <p><span class="tag A">A</span>: Der Fluss <b>linearisiert</b> sich durch die Schichten (MI&nbsp;&#8595;, Korrelation&nbsp;&#8593;) — und das ist der <em>ermöglichende</em> Prozess: „Genau diese Linearisierung ist die Voraussetzung, die B's linearer J-Lens-Readout für 'lesbare' Auskünfte braucht." „Lesbarkeit entsteht, wo der Fluss linear wird." Linearisierung = Fortschritt/Erfolg.</p>
+    <p><span class="tag B">B</span>: Die zentrale Warnung ist das Gegenteil — <b>nicht glätten, was gekrümmt ist</b>: „man darf sie nicht linear/flach behandeln — die lineare PCA übersteuert die Dimension um einen Faktor von über 10" und „was gekrümmt ist, nicht glätten"; „Nichtlinear für die Daten (A, sonst PCA-Fehler), Fisher-bewusst für die Entscheidungen (B, sonst euklidisch stolpernd)." Gegen Linearisierung vorgehen = der richtige Zug.</p>
+    <p>&#8594; <b>Spannung:</b> derselbe Begriff „linearisieren", entgegengesetzter Normwert. A: linearisieren, damit es funktioniert. B: nicht linearisieren, der Krümmung folgen. Dies ist der schärfste, wirklichste Konflikt zwischen den beiden.</p>
+  </div>
+
+  <div class="card">
+    <p><b>(3) Zeit (Fluss) <span class="tag A">A</span> vs. Stille (Snapshot) <span class="tag B">B</span></b></p>
+    <p><span class="tag A">A</span> ist ausdrücklich <b>dynamisch/zeitlich</b>: Der Residual-Stream läuft „in der Zeit" über die Schichten — Velocity &#8214;&#916;h&#8214;, Phasen-Orbieten (~10.74 Umdrehungen vs. ~0 im Shuffle), Selbstkorrektion/Attraktion (mittlere Schichten 7/15/23 korrigieren am besten). Das essentielle Objekt ist eine <em>Bahn</em> in der Schicht-Zeit.</p>
+    <p><span class="tag B">B</span> ist <b>statisch/räumlich</b>: eine Daten-Mannigfaltigkeit + eine Fisher-Metrik <em>pro Snapshot</em> (ID-Messungen pool1&#8594;pool4, das Simplex am Entscheidungspunkt). Kein Velocity, keine Orbieten, keine Zeitentwicklung. Das essentielle Objekt ist eine <em>Mannigfaltigkeit/Metrik an einem Punkt</em>.</p>
+    <p>&#8594; <b>Spannung:</b> A braucht ein zeittwickelndes Objekt, Bs Rahmenwerk ist eine Familie statischer Schnitte. Erfasst das statische Geometrie-Bild den selbstkorrigierenden Fluss — oder verfehlt es die Dynamik?</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="note t"><b>(1) Dünn &#8658; Invarianz &#8658; generalisiert <em>und</em> broadcastet.</b>
+  Die beiden „Nutzen" sind derselbe Mechanismus von zwei Seiten: <b>Invarianz.</b> Eine dünne/niedrigdimensionale Repräsentation ist <em>invariant gegen irrelevante Variation</em>. Auf der <b>Eingabe-Seite</b> bedeutet diese Invarianz <em>Generalisierung</em> auf neue Daten (B: r = 0.94). Auf der <b>Ausgabe-/Readout-Seite</b> bedeutet dieselbe Invarianz <em>Transfer über Aufgaben/Prompts hin und stabile Berichtsbarkeit</em> (A's Broadcast: ein France-Vektor liefert korrekt Beijing/Chinesisch/Asien über alle Prompts). A's „Broadcast" (Eigenschaft 4) ist buchstäblich das verbale/dynamische Zwilling von B's „Generalisierung". <span class="tag F">Fusion</span>: Das dünne Objekt zahlt sich durch <em>Invarianz</em> aus — sichtbar als Generalisierung (B) und als Lesbarkeit/Broadcast (A). Keine Rivalen, eine Eigenschaft, zwei Readouts.</div>
+
+  <div class="note r"><b>(2) Zwei „Linearisierungen", zwei Akteure.</b>
+  Der scharfe Konflikt löst sich, sobald man sieht, dass sie <b>unterschiedliche Objekte durch unterschiedliche Akteure</b> betreffen:
+  <ul>
+    <li><b>A's Linearisierung</b> ist die <b>eigene interne Handlung des Netzes</b> auf seinen Zustand, während er durch die Schichten fließt — ein <em>Fakt</em> (MI fällt, Korrelation steigt, das Modell wirft nichtlineare Detail-Beziehungen ab). Sie ist <em>gut</em>, weil sie den Zustand <b>wirklich</b> linear macht, woraufhin ein <em>linearer</em> Readout (J-Lens) treu wird.</li>
+    <li><b>B's „nicht linearisieren"</b> ist eine Warnung an die <b>externe Annäherung von Analyst/Optimizer</b>: setze kein lineares/PCA-/euklidisches <em>Modell</em> auf eine intrinsisch gekrümmte Struktur (die Daten-Mannigfaltigkeit, das Simplex). Es ist <em>schlecht</em>, weil es ein Fehler ist — PCA übersteuert die ID um &gt;10&#215;, ein euklidischer Schritt ignoriert die Fisher-Metrik.</li>
+  </ul>
+  Die J-Lens ist ein linearer Probe <b>eines bereits linearisierten Zustands</b> — treu, weil dort angewandt, wo der Zustand wirklich linear ist. Die Fisher-Metrik ist ein gekrümmter Schritt <b>auf einem wirklich-gekrümmten Objekt</b> — treu, weil sie die Krümmung respektiert. <span class="tag F">Fusion</span>: <b>Lesen, wo das Objekt linear ist; Schritt, wo es gekrümmt ist. Nicht glätten, was gekrümmt ist; nicht proben, was noch nicht linear ist.</b> Ein Grundsatz, zwei Ebenen (interne Dynamik vs. externe Interaktion).</div>
+
+  <div class="note"><b>(3) Eine Mannigfaltigkeit, die fließt (B = Schnitt, A = Zeit).</b>
+  Bs pro-Schicht-ID-Messungen (pool1&#8594;pool4) sind <em>Schnitte entlang As Schicht-Zeit</em>; das „Hunchback-Falten" (ID 58&#8594;19) ist das statische Ablesen von As <em>dynamischem</em> Fluss. Das vollständige fusionierte Objekt ist eine <b>fluss-tragende dünne Mannigfaltigkeit mit einer Metrik</b> — B ist der <em>statische Schnitt</em>, A die <em>Zeitentwicklung dieses Schnitts</em>. Der Knoten, der beide bindet: <b>A's Selbstkorrektion (F7) ist der Fluss, der auf die dünne Mannigfaltigkeit kontrahiert</b> — die dünne Mannigfaltigkeit ist der <b>Attraktor</b> des Flusses. Bs „dünne Mannigfaltigkeit" und As „Attraktor/Kontraktion" sind dasselbe Objekt: die Mannigfaltigkeit ist, <em>wo</em> der Fluss lebt, und der Fluss hält sie dort. Eine Fisher-Metrik lässt sich punktweise entlang des Flusses definieren, womit Bs statisches Bild ein Querschnitt von As dynamischem wird. <span class="tag F">Fusion</span>: <b>Fluss-tragende Mannigfaltigkeit</b> — dünn (B), selbstkorrigierend (A), lesbar wo linear (A), ehrlich in der Metrik (B).</div>
+</section>
+
+<!-- 4 -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>4.1 Das Objekt: eine dünn-fließende Mannigfaltigkeit mit Metrik</h3>
+  <p><span class="tag B">B</span>: Ein Netz ist ein geometrisches Objekt mit zwei Seiten — Repräsentation auf einer dünnen, gekrümmten Daten-Mannigfaltigkeit (ID &#8594; Generalisierung, r = 0.94) und Entscheidung auf dem Wahrscheinlichkeits-Simplex (&#931;p = 1) mit Fisher-Metrik (&#8594; Lernen). „Dünn in Form, ehrlich in Metrik." Das Simplex {p : &#931;p<sub>i</sub> = 1} ist (n&#8722;1)-dimensional in <span class="m">R<sup>n</sup></span> — ein konkretes Leitbeispiel für A's Mannigfaltigkeit.</p>
+  <p><span class="tag A">A</span>: Dasselbe Objekt als Fluss — der Residual-Stream <span class="m">h<sub>&#8467;</sub></span> über den Schicht-Index &#8467; (Llama 3.1 8B, 4096-dim, 64 Sublayer = 32 Attn + 32 MLP). Sieben Beobachtungen: <b>F1</b> Aktivierungen verdichten sich (Vorzeichen bleiben); <b>F2</b> Stetigkeit — starke Korrelationen trotz „keiner privilegierten" Standard-Basis; <b>F3</b> Velocity früh flach, im letzten Drittel steil; <b>F4</b> MI fällt früh scharf, Korrelation steigt &#8658; Linearisierung; <b>F5</b> Phasen-Orbieten (~10.74 Umdrehungen vs. ~0 im Shuffle); <b>F6</b> niedrig-dimensionale, gekrümmte Bahn, die spät gerade wird (wenige PCs spät nötig); <b>F7</b> selbstkorrigierende, attraktor-artige Dynamik (mittlere Schichten korrigieren am besten).</p>
+  <p><span class="tag F">Fusion</span>: B = der statische Schnitt (ID, Fisher), A = die Zeitentwicklung (Velocity, Korrektur, Linearisierung). Selbstkorrektion = der Fluss kontrahiert <em>auf</em> die Mannigfaltigkeit &#8658; die Mannigfaltigkeit ist der Attraktor des Flusses.</p>
+
+  <h3>4.2 Freiheitsgrade: „Regler" (ID) und die J-Space-Kapazität</h3>
+  <ul>
+    <li><span class="tag B">B</span>: <b>Intrinsische Dimension (ID)</b> vs. <b>Einbettungsdimension (ED)</b>. Das Gesicht: ein digitales Bild = 150 528 Pixel, aber 4 Regler (x, y, Größe, Lächeln) beschreiben es fast perfekt. VGG-16: <span class="m">pool1: ID&#8776;58 / 802 816 &middot; pool2: &#8776;28 / 201 088 &middot; pool3: &#8776;22 / 50 272 &middot; pool4: &#8776;19 / 100 352</span> — am Ende nur &#8776;0,02&nbsp;% „echt". <b>TwoNN-Messung</b>: r = (zweitnächster / nächster Abstand); in einer k-dim Welt hat r eine charakteristische Verteilungsform &#8594; k wird abgelesen; robust gegen ungleichmäßige Dichte und Krümmung; exakt bis ID &#8776; 20, darüber eher Untergrenze.</li>
+    <li><span class="tag A">A</span>: Der J-Space &#8776; 5–10&nbsp;% der Aktivierungsvarianz, &#8776; 6 Wörter, 1–2 pro Schicht, nach Kategorien organisiert (&#8776; Millers Zahl). Er ist ein kleiner gelernter <em>schiefer</em> niedrigdimensionaler Koordinatenrahmen <em>auf</em> dem Fluss — nicht die Standard-4096-Achsen.</li>
+    <li><span class="tag F">Fusion</span>: zwei <em>verschiedene</em> niedrigdimensionale Objekte, verschachtelt: die Repräsentations-Mannigfaltigkeit (ID &#8776; 19) &#8834; der lesbare J-Space (&#8776; 6 Wörter). Der berichtbare Inhalt ist eine <b>dünnere lineare Projektion</b> der bereits dünnen Repräsentation. Beides „dünn"; das Lesbare ist noch dünner als das Gespeicherte.</li>
+  </ul>
+
+  <h3>4.3 Die zwei ehrlichen Interaktoren: J-Lens (linearer Readout) &amp; Fisher-Metrik (gekrümmter Schritt)</h3>
+  <p><span class="tag A">A</span>: J-Lens <span class="m">r<sub>&#8467;</sub> = U &middot; E<sub>x</sub>[&#8706;logits/&#8706;h<sub>&#8467;</sub>(x)]</span> = mittlere Jacobi &#215; Unembedding — ein <b>linearer</b> Readout, stabil (über ~1000 Kontexte gemittelt), im Gegensatz zur älteren Logit Lens, die früh „Müll" liest; sinnvoll erst, wo der Fluss linearisiert ist (&#8776;38&nbsp;%+).</p>
+  <p><span class="tag B">B</span>: Die Fisher-Matrix <span class="m">(1/&#964;)(diag p &#8722; pp&#186;)</span> ist zugleich <b>(OT)</b> Krümmung des dualen Potentials (Log-Sum-Exp), <b>(Info-Geom.)</b> — bis auf einen Faktor — die <b>Fisher-Metrik</b> (misst, wie unterscheidbar zwei Antworten sind), und <b>(RL)</b> das „Getriebe", das den Schritt dämpft, sobald sich die Strategie entschieden hat. <b>Backprop = REINFORCE</b> (Policy-Gradient) mit Baseline-Trick: der Vorteil A = u &#8722; E[u] kommt geschenkt, reine geometrische Folge von &#931;p = 1. <b>Softmax = einseitiger entropischer optimaler Transport</b> — erzwungen, nicht gewählt. <b>&#8730;d<sub>k</sub>-Skalierung</b> hält die Score-Varianz bei 1, sonst sättigt die Softmax für großes d<sub>k</sub> (&#8594; 100 % eine Antwort, Gradienten sterben).</p>
+  <p><span class="tag F">Fusion</span>: Beide sind <b>der treue Weg, mit dem Objekt auf der Ebene seiner aktuellen Geometrie umzugehen</b> — ein linearer Probe auf einem linearisierten Zustand (A), ein gekrümmter Schritt auf einem gekrümmten Objekt (B). Beide tragen ein Commitment-Lesart: je committed der Zustand, desto scharfer der lesbare Inhalt (A: Workspace &#8594; Motor) und desto gedämpfter der Fisher-Schritt (B: committed = gedämpfter Schritt). Commitment = niedrige Entropie = niedrige ID = „dünn" in beiden.</p>
+
+  <h3>4.4 Nützliche Mathematik (aus beiden)</h3>
+  <div class="formula"><span class="m">v<sub>&#8467;</sub> = &#8214; h<sub>&#8467;+1</sub> &#8722; h<sub>&#8467;</sub> &#8214;</span> &nbsp;<span style="color:var(--dim);font-style:normal;font-size:.9em">(Velocity — A)</span></div>
+  <div class="formula"><span class="m">r<sub>&#8467;</sub> = U &middot; E<sub>x</sub>[ &#8706; logits / &#8706; h<sub>&#8467;</sub>(x) ]</span> &nbsp;<span style="color:var(--dim);font-style:normal;font-size:.9em">(J-Lens-Readout — A)</span></div>
+  <div class="formula"><span class="m">(1/&#964;)&middot;(diag p &#8722; pp&#186;)</span> &nbsp;<span style="color:var(--dim);font-style:normal;font-size:.9em">(Fisher = OT-Krümmung = RL-Getriebe — B)</span></div>
+  <p><b>MI vs. Korrelation (A's Brücke zu B):</b> Korrelation erfasst nur <em>lineare</em> Abhängigkeit, MI <em>alle</em> (linear + nichtlinear). Dass Korrelation steigt, <em>während</em> MI fällt, heißt: das Modell <b>wirft komplexe nichtlineare Beziehungen weg</b> und linearisiert — genau die Voraussetzung, die B's linearer J-Lens-Readout für „lesbare" Auskünfte braucht.</p>
+  <p><b>ID vs. ED (B):</b> ID = Regler, die man bewegen muss; ED = gespeicherte Zahlen; Dünnheit = ID/ED &#8594; 0. <b>TwoNN (B):</b> r = (zweitnächster / nächster Abstand); charakteristische Verteilung &#8594; k; robust gegen Dichte/Krümmung. <b>Selbstkorrektion als Kontraktion (A):</b> nach einer Teleport-Störung kontrahiert die Bahn zur Mannigfaltigkeit; Korrekturrate in mittleren Schichten am höchsten — die dynamische Version von B's „dünne Mannigfaltigkeit ist der Attraktor".</p>
+
+  <h3>4.5 Anwendung: Geometrie als Sicherheits-/Trainings-Hebel (A)</h3>
+  <p>Versteckte Fehlausrichtungen zeigen Tokens wie <span class="m">fake/trick/secretly</span> oder <span class="m">reward/bias</span> <em>bereits im</em> J-Space, <em>bevor</em> sie Verhalten zeigen. <b>Counterfactual Reflection Training</b> (man trainiert, was das Modell <em>sagen würde</em>, wenn man es zur Reflexion auffordert) senkt Fabrication 0.25&#8594;0.07 und Deception 0.38&#8594;0.05 — kausal, weil danach <span class="m">ethical/honest/integrity</span> im Workspace auftauchen.</p>
+  <p><span class="tag F">Fusion</span>: Der Workspace ist der Ort, an dem <em>latent</em>er Inhalt <em>lesbar</em> wird, bevor er <em>Verhalten</em> wird. Das Überwachen des dünnen linearen Unterraums (J-Space) ist damit ein <b>geometrie-basiertes</b> Sicherheits-Tool: man liest die lesbaren Koordinaten des Flusses, bevor sie sich zum Output commiten. Das verbindet A's „lesbarer Workspace" mit B's „das dünne ehrliche Objekt inspizieren".</p>
+
+  <div class="card">
+    <p><b>Der eine Satz der Fusion:</b> Ein neuronales Netz ist ein <b>niedrigdimensionales Objekt</b> — eine dünn-fließende, sich linearisierende Mannigfaltigkeit (A) mit einer Fisher-Metrik (B), deren Attraktor die Bahn trägt. Es ist <em>lesbar, wo es linear wird</em> (J-Lens), und <em>generalisierend, weil es dünn/invariant ist</em> (ID, r = 0.94); Broadcast (A) ist das verbale Zwilling der Generalisierung (B), und Selbstkorrektion (A) ist die Dynamik, die die dünne Mannigfaltigkeit (B) zum Attraktor macht. <b>Dünn in Form, fließend in der Zeit, lesbar wo linear, ehrlich in der Metrik.</b></p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="visualisierung">
+  <h2>Visualisierung: das Objekt, das sich selbst liest</h2>
+  <p>Ein Bild, das beide Papiere vereint. <b>Oben</b> — die <b>Form + Metrik</b>: eine dünne, gekrümmte, fließende Mannigfaltigkeit über die Schichten 0&#8594;63, die mit der Tiefe <b>linearisiert</b> (gerade wird) und <b>dünner wird</b> (ID 58&#8594;19); an der bewegten Stelle die <b>Fisher-Schritt-Ellipse</b>, die mit Commitment/Temperatur wächst oder schrumpft; schattierte <b>lesbare J-Space-Band</b> (38&#8211;92&nbsp;%) mit Konzept-Tokens. <b>Unten</b> — die <b>Dynamik</b> (A): MI f&auml;llt, Korrelation steigt, Velocity beschleunigt. Bewege <b>Layer</b> und <b>&#964;</b>, wechsle die Aufgabe, oder lasse den Fluss durch die Schichten laufen.</p>
+  <div class="viz-card">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--teal)"></i> d&uuml;nn-flie&szlig;ende Mannigfaltigkeit (Form + Fluss)</span>
+      <span><i class="sw" style="background:var(--rose)"></i> Fisher-Schritt (ged&auml;mpft &#8596; frei)</span>
+      <span><i class="sw" style="background:var(--accent4)"></i> J-Space / lesbare Band + Tokens (B)</span>
+      <span><i class="sw" style="background:var(--accent3)"></i> MI (f&auml;llt)</span>
+      <span><i class="sw" style="background:var(--good)"></i> Korrelation (steigt)</span>
+      <span><i class="sw" style="background:var(--amber)"></i> Velocity (beschleunigt)</span>
+    </div>
+    <div class="viz-grid">
+      <div class="controls">
+        <div class="ctrl">
+          <label>Layer (Schicht-Zeit) <span class="val" id="vLayer">40</span></label>
+          <input id="layer" type="range" min="0" max="63" value="40">
+        </div>
+        <div class="ctrl">
+          <label>Temperatur &#964; (B: offen &#8596; committed) <span class="val" id="vTemp">1.00</span></label>
+          <input id="sTemp" class="v" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
+        </div>
+        <div class="btnrow">
+          <button id="taskSpider" class="active" type="button">&#128031; Spinne</button>
+          <button id="taskMath" type="button">&#129518; Rechnung</button>
+          <button id="playBtn" type="button">&#9654; Durch die Schichten</button>
+        </div>
+      </div>
+      <div>
+        <div class="verdict good" id="verdict">&#8212;</div>
+        <div class="ro">
+          <div class="box"><div class="k">A &#183; Regler (ID)</div><div class="v" id="vId">&#8212;</div></div>
+          <div class="box"><div class="k">A &#183; MI (nichtl.)</div><div class="v" id="vMi">&#8212;</div></div>
+          <div class="box"><div class="k">A &#183; Korrelation</div><div class="v" id="vCorr">&#8212;</div></div>
+          <div class="box"><div class="k">A &#183; Velocity &#8214;&#916;h&#8214;</div><div class="v" id="vVel">&#8212;</div></div>
+          <div class="box a4"><div class="k">B &#183; Entropie H/ln3</div><div class="v" id="vEnt">&#8212;</div></div>
+          <div class="box rose"><div class="k">B &#183; Schritt (Fisher)</div><div class="v" id="vStep">&#8212;</div></div>
+        </div>
+        <div class="ro" style="margin-top:9px"><div class="box a4"><div class="k">J-Lens liest (B)</div><div class="v" id="vToken">&#8212;</div></div></div>
+        <div class="fused-line" id="fusedLine"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <span class="tag A">A</span>
+    <p><a href="../r1-057.html">r1-057.html</a> &#8212; &#8222;Der lesende Fluss&#8220; (Fernando &amp; Guitchounts 2025, arXiv:2502.12131, Transformer Dynamics; Gurnee et&nbsp;al. 2026, J-Space/J-Lens): der Residual-Stream als dynamisches System, das sich &uuml;ber die Schichten linearisiert und im Workspace-Band (&#8776;38&#8211;92&nbsp;%) lesbar wird.</p>
+  </div>
+  <div class="prov">
+    <span class="tag b">B</span>
+    <p><a href="../r1-013.html">r1-013.html</a> &#8212; &#8222;Das Netz als geometrisches Objekt&#8220; (Ansuini et&nbsp;al. 2019, intrinsische Dimension, r = 0.94; Litman 2025, arXiv:2508.08369, Attention als optimaler Transport): d&uuml;nne gekr&uuml;mmte Repr&auml;sentationsfl&auml;chen + Fisher-Metrik auf dem Wahrscheinlichkeits-Simplex.</p>
+  </div>
+</section>
+
+<footer>
+  Round 2 &#183; Pair 024 &#183; Fusion: <code>r1-057.html</code> &#10007; <code>r1-013.html</code><br>
+  Selbstbehaftetes Standalone-Dokument &#183; alle Daten inline &#183; theme-aware
+</footer>
+
+</div>
+
+<script>
+;(function(){
+  "use strict";
+  var root=document.documentElement;
+  var cv=document.getElementById('viz');
+  if(!cv){ return; }
+  var ctx=cv.getContext('2d');
+  var H=460;
+  var el={
+    themeBtn:document.getElementById('themeBtn'),
+    layer:document.getElementById('layer'),
+    vLayer:document.getElementById('vLayer'),
+    sTemp:document.getElementById('sTemp'),
+    vTemp:document.getElementById('vTemp'),
+    tSpider:document.getElementById('taskSpider'),
+    tMath:document.getElementById('taskMath'),
+    play:document.getElementById('playBtn'),
+    verdict:document.getElementById('verdict'),
+    vId:document.getElementById('vId'),
+    vMi:document.getElementById('vMi'),
+    vCorr:document.getElementById('vCorr'),
+    vVel:document.getElementById('vVel'),
+    vEnt:document.getElementById('vEnt'),
+    vStep:document.getElementById('vStep'),
+    vToken:document.getElementById('vToken'),
+    fused:document.getElementById('fusedLine')
+  };
+  var N=63, L_E=24, L_M=58;
+  var task='spider';
+  var TOKENS={
+    spider:[{l:28,t:'spider'},{l:36,t:'web'},{l:46,t:'insect'},{l:54,t:'eight'},{l:60,t:'8'}],
+    math:[{l:30,t:'arith.'},{l:40,t:'21'},{l:50,t:'42'},{l:59,t:'49'}]
+  };
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function smooth(t){ t=clamp(t,0,1); return t*t*(3-2*t); }
+  function idAt(l){ return 19 + 39*Math.exp(-l/15); }
+  function mi(l){ return clamp(0.9 - 0.62*smooth(l/14) - 0.0015*l, 0.14, 0.9); }
+  function corr(l){ return 0.78 + 0.19*(l/N); }
+  function vel(l){ return 0.28 + 0.62*Math.pow(l/N, 2.4); }
+  function softmax(a){ var m=Math.max(a[0],a[1],a[2]); var e=[Math.exp(a[0]-m),Math.exp(a[1]-m),Math.exp(a[2]-m)]; var s=e[0]+e[1]+e[2]; return [e[0]/s,e[1]/s,e[2]/s]; }
+  function Hent(p){ var h=0; for(var i=0;i<3;i++){ if(p[i]>1e-12) h-=p[i]*Math.log(p[i]); } return h; }
+  function nearestToken(L){
+    if(L<L_E) return null;
+    var toks=TOKENS[task];
+    if(L>=L_M) return toks[toks.length-1].t;
+    var best=toks[0], bd=1e9;
+    for(var i=0;i<toks.length;i++){ var d=Math.abs(toks[i].l-L); if(d<bd){bd=d;best=toks[i];} }
+    return best.t;
+  }
+  function hexToRgb(s){
+    s=(s||'').trim();
+    if(s[0]==='#'){
+      var h=s.slice(1);
+      if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m) return [(m[0]*1|0),(m[1]*1|0),((m[2]||0)*1|0)];
+    return [128,128,128];
+  }
+  function argb(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  function rgb(name){ return hexToRgb(getComputedStyle(root).getPropertyValue(name)); }
+  function palette(){
+    return { panel:rgb('--panel'), ink:rgb('--ink'), dim:rgb('--dim'), line:rgb('--line'),
+      teal:rgb('--teal'), amber:rgb('--amber'), rose:rgb('--rose'),
+      a3:rgb('--accent3'), good:rgb('--good'), a4:rgb('--accent4') };
+  }
+  function rr(x,y,w,h,r){
+    ctx.beginPath(); ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+  }
+  var rafId=null;
+  function stopPlay(){ if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+  function play(){
+    stopPlay(); el.layer.value=0;
+    (function step(){
+      var v=(+el.layer.value)+1;
+      if(v>N){ el.layer.value=N; draw(); rafId=null; return; }
+      el.layer.value=v; draw(); rafId=requestAnimationFrame(step);
+    })();
+  }
+  function draw(){
+    var w=cv.clientWidth; if(w<20) return;
+    var dpr=window.devicePixelRatio||1;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr);
+    cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var P=palette();
+    var L=clamp(Math.round(+el.layer.value),0,N);
+    el.vLayer.textContent=String(L);
+    var tau=clamp(+el.sTemp.value,0.2,2.0);
+    el.vTemp.textContent=tau.toFixed(2);
+    var plotL=54, plotR=w-16;
+    function X(l){ return plotL + (l/N)*(plotR-plotL); }
+    var y0=46, y1=246, mid=(y0+y1)/2;
+    function straight(l){ return smooth(l/40); }
+    function cy(l){ var amp=50*(1-0.92*straight(l)); return mid + amp*Math.sin(l/N*Math.PI*2.2+0.3); }
+    function thHalf(l){ return 8 + (idAt(l)-19)/39*26; }
+    ctx.fillStyle=argb(P.a4,0.10);
+    ctx.fillRect(X(L_E), y0, X(L_M)-X(L_E), y1-y0);
+    ctx.strokeStyle=argb(P.a4,0.5); ctx.setLineDash([4,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(X(L_E),y0); ctx.lineTo(X(L_E),y1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(L_M),y0); ctx.lineTo(X(L_M),y1); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    for(var l=0;l<=N;l++){ var px=X(l), py=cy(l)-thHalf(l); if(l===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    for(var l2=N;l2>=0;l2--){ ctx.lineTo(X(l2), cy(l2)+thHalf(l2)); }
+    ctx.closePath(); ctx.fillStyle=argb(P.teal,0.16); ctx.fill();
+    ctx.beginPath();
+    for(var l3=0;l3<=N;l3++){ var px3=X(l3), py3=cy(l3); if(l3===0)ctx.moveTo(px3,py3); else ctx.lineTo(px3,py3); }
+    ctx.strokeStyle=argb(P.teal,0.9); ctx.lineWidth=1.6; ctx.stroke();
+    var toks=TOKENS[task], nearTk=nearestToken(L);
+    for(var ti=0;ti<toks.length;ti++){
+      var tk=toks[ti], cxp=X(tk.l), laneY=22;
+      ctx.strokeStyle=argb(P.a4,0.35); ctx.setLineDash([2,3]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(cxp, laneY+10); ctx.lineTo(cxp, cy(tk.l)-thHalf(tk.l)); ctx.stroke(); ctx.setLineDash([]);
+      var near=(tk.t===nearTk);
+      ctx.font='11px system-ui';
+      var tw=ctx.measureText(tk.t).width+14;
+      ctx.fillStyle=argb(P.a4, near?0.32:0.12);
+      rr(cxp-tw/2, laneY-9, tw, 18, 9); ctx.fill();
+      ctx.lineWidth=near?2:1; ctx.strokeStyle=argb(P.a4, near?1:0.7);
+      rr(cxp-tw/2, laneY-9, tw, 18, 9); ctx.stroke();
+      ctx.fillStyle=argb(near?P.a4:P.dim,1);
+      ctx.font=(near?'bold ':'')+'11px system-ui'; ctx.textAlign='center';
+      ctx.fillText(tk.t, cxp, laneY+4); ctx.textAlign='left';
+    }
+    var mx=X(L), my=cy(L);
+    var dcy=cy(L+(L<N?1:0)) - cy(L-(L>0?1:0));
+    var ang=Math.atan2(dcy, X(1)-X(0));
+    var cmt=smooth(L/N);
+    var openness=clamp((tau-0.2)/1.8,0.05,1)*(1-0.55*cmt);
+    var maj=10+openness*34, min=6+openness*14;
+    ctx.save(); ctx.translate(mx,my); ctx.rotate(ang);
+    ctx.beginPath(); ctx.ellipse(0,0,maj,min,0,0,Math.PI*2);
+    ctx.fillStyle=argb(P.rose,0.14); ctx.fill();
+    ctx.lineWidth=1.8; ctx.strokeStyle=argb(P.rose,0.95); ctx.stroke();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(mx,my,5,0,Math.PI*2); ctx.fillStyle=argb(P.ink,1); ctx.fill();
+    ctx.lineWidth=1.5; ctx.strokeStyle=argb(P.panel,1); ctx.stroke();
+    ctx.fillStyle=argb(P.ink,1); ctx.font='700 12.5px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Objekt: d\u00fcnne, gekr\u00fcmmte, flie\u00dfende Mannigfaltigkeit (Form + Fisher-Metrik)', plotL, 14);
+    var y2=292, y3=404;
+    ctx.fillStyle=argb(P.ink,1); ctx.font='700 12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Dynamik des Flusses (A): MI f\u00e4llt \u00b7 Korrelation steigt \u00b7 Velocity beschleunigt', plotL, y2-10);
+    ctx.strokeStyle=argb(P.line,0.7); ctx.lineWidth=1;
+    for(var gv=0; gv<=1; gv+=0.5){ var gy=y3-gv*(y3-y2); ctx.beginPath(); ctx.moveTo(plotL,gy); ctx.lineTo(plotR,gy); ctx.stroke(); }
+    function Yv(v){ return y3 - clamp(v,0,1)*(y3-y2); }
+    function curve(fn,col,lw){ ctx.strokeStyle=argb(col,0.95); ctx.lineWidth=lw; ctx.beginPath(); for(var i=0;i<=N;i++){ var px=X(i),py=Yv(fn(i)); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.stroke(); }
+    curve(mi,P.a3,2.2);
+    curve(corr,P.good,2.2);
+    curve(vel,P.amber,2.2);
+    ctx.strokeStyle=argb(P.ink,0.5); ctx.setLineDash([5,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(mx,y2); ctx.lineTo(mx,y3); ctx.stroke(); ctx.setLineDash([]);
+    var dts=[[mi(L),P.a3],[corr(L),P.good],[vel(L),P.amber]];
+    for(var di=0;di<3;di++){ ctx.beginPath(); ctx.arc(mx,Yv(dts[di][0]),4,0,Math.PI*2); ctx.fillStyle=argb(dts[di][1],1); ctx.fill(); ctx.lineWidth=1.2; ctx.strokeStyle=argb(P.panel,1); ctx.stroke(); }
+    el.vId.textContent=String(Math.round(idAt(L)));
+    el.vMi.textContent=mi(L).toFixed(2);
+    el.vCorr.textContent=corr(L).toFixed(2);
+    el.vVel.textContent=vel(L).toFixed(2);
+    var p=softmax([1.1/tau,0.2/tau,-0.6/tau]);
+    var h=Hent(p), hmax=Math.log(3);
+    el.vEnt.textContent=h.toFixed(2)+' / '+hmax.toFixed(2);
+    el.vStep.textContent= openness>0.6?'frei':openness>0.3?'halb':'ged\u00e4mpft';
+    el.vToken.textContent= (L<L_E)?'\u2014 (Rauschen)':nearTk;
+    if(L<L_E){ el.verdict.className='verdict warn'; el.verdict.textContent='Vor dem Workspace (\u22480\u201338 %)'; }
+    else if(L<L_M){ el.verdict.className='verdict good'; el.verdict.textContent='J-Space / Workspace (\u224838\u201392 %)'; }
+    else { el.verdict.className='verdict neutral'; el.verdict.textContent='Motor / Output (\u224892\u2013100 %)'; }
+    var note = (L<L_E)? '<i>Rohmaterial: reiche nichtlineare Information, aber Readout = Rauschen.</i>'
+              : (L<L_M)? '<i>Lesbarer, tauschbarer Inhalt \u2014 der \u201ebewusste\u201c Kern.</i>'
+              : '<i>Commitment: Velocity-Peak, n\u00e4chste Output-Entscheidung.</i>';
+    el.fused.innerHTML='Das Netz ist ein <b>niedrigdimensionales Objekt</b> \u2014 hier Schicht '+L+': '+Math.round(idAt(L))+' echte Regler (d\u00fclnn, B) \u00b7 MI '+mi(L).toFixed(2)+'/Korr '+corr(L).toFixed(2)+' (linearisiert, A) \u00b7 Entropie '+h.toFixed(2)+'/ln3, Schritt '+el.vStep.textContent+' (B). '+note;
+  }
+  el.layer.addEventListener('input', function(){ stopPlay(); draw(); });
+  el.sTemp.addEventListener('input', draw);
+  el.tSpider.addEventListener('click', function(){ task='spider'; el.tSpider.classList.add('active'); el.tMath.classList.remove('active'); draw(); });
+  el.tMath.addEventListener('click', function(){ task='math'; el.tMath.classList.add('active'); el.tSpider.classList.remove('active'); draw(); });
+  el.play.addEventListener('click', play);
+  el.themeBtn.addEventListener('click', function(){ root.classList.toggle('dark'); });
+  window.addEventListener('resize', draw);
+  if(window.MutationObserver){ new MutationObserver(function(){ draw(); }).observe(root,{attributes:true,attributeFilter:['class']}); }
+  window.addEventListener('load', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

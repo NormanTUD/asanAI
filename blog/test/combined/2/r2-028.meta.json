@@ -1,0 +1,17 @@
+{
+  "no": "028",
+  "a": "combined/r1-023.html",
+  "b": "combined/r1-053.html",
+  "a_title": "Das neuronale Garben-Modell: lokale Sektionen, globale Kohärenz",
+  "b_title": "Der diskrete Antworten-Engpass",
+  "combined_theme": "neural-sheaf-quantizer",
+  "one_line": "Ein neuronales Modell verschmelzt lokale, niedrigdimensionale Stücke zu einem stetigen Feld (Garben-Globalsektion = Fourier-/Logit-Interferenzfeld) und liest es entweder stetig (identisches Readout: Funktion fiten / Repräsentation glätten, r1-023) oder per Argmax/Quantisierung als diskrete Antwort ab (r1-053) — der Quantisierungsschritt ist genau der Ort, an dem der irreduzible Rate-Distortion-Boden entsteht und nur im ausgerichteten / stetig-zielenden Grenzfall auf null verschwindet.",
+  "contradictions": [
+    "Sitz des Kerns: r1-023 verortet die Essenz im Verschmelzen lokaler Sektionen zu einem STETIGEN globalen Objekt (Funktion/Vektor = die Ausgabe); r1-053 verortet sie in der QUANTISIERUNG eines Feldes in EINE diskrete Antwort (Argmax = die Ausgabe) — beide an entgegengesetzten Enden derselben Pipeline (Feldbau vs. Readout).",
+    "Removierbarkeit des Fehlers: r1-023 behauptet 'mehr Neuronen = feinere Überdeckung = bessere Approximation' (Universal-Approximation-artig, prinzipiell gegen null treibbar durch Kapazität); r1-053 beweist eine irreduzible Rate-Distortion-Untergrenze Fehler(N) ≥ c_k·(V/N)^(2/k) plus 5%-Boden m_0.05≈0.04–0.06, die kein Training/keines größeres Vokabular entfernt (nur im ausgerichteten Sonderfall → 0).",
+    "Rolle der linearen Kombination: bei r1-023 IST das Verschmelzen Σ c_j·Sektion_j (affin/convex) die (stetige) Ausgabe; bei r1-053 ist die lineare Kombination (Fourier-Interferenz logit(c)=Σ α_k cos(ω_k(target−c))) nur das Zwischenglied — die eigentliche Antwort ist ein hartes Argmax/Selektion über das Feld, nicht die gewichtete Summe.",
+    "Nächste reale Spannung (kein harter Widerspruch): Typ der niedrigdimensionalen Struktur — r1-023 betont Topologie/Überdeckung (Deckungskombinatorik: Mannigfaltigkeit vs. diskreter Nerve), r1-053 betont intrinsische Dimension/Krümmung (k≈20, Fourier-Torus vs. glattes Blatt); welche Invariante (Deckung vs. Dimension) die zentrale ist."
+  ],
+  "resolution": "Eine Maschine in zwei Stufen: lokale, niedrigdimensionale Stücke → (lineares Verschmelzen) → ein gemeinsames Feld, das zugleich Garben-Globalsektion (A) und Fourier-/Logit-Interferenzfeld (B) ist → Readout-Functional Φ. Φ=identisch (A: stetig, fiten/glätten) oder Φ=Argmax/Softmax (B: diskrete Antwort). Der Quantisierungsschritt ist der Ort des irreduziblen Fehlers; er ist verlustfrei gdn. das Feld auf dem Raster liegt (ausgerichtet) bzw. das Ziel stetig ist. Überdeckungs-Zellen (A) = Quantisierungs-Voronoi-Anker (B); 'feinere Überdeckung' (A) ≡ 'feineres Raster/größeres N' (B) — ein gemeinsamer Kapazitäts-Hebel.",
+  "viz": "Ein einziges Feld (Fourier-Interferenz = Garben-Globalsektion), zweimal abgelesen in zwei Canvas-Sub-Panelen: oben stetiges Readout (Φ=identisch, Feld=Objekt, feinere Überdeckung via K), unten diskretes Readout (Φ=Argmax-Quantisierung auf ein N-Anker-Raster mit Peak/Margin/Zwischenzone η(ε)); Offset δ zeigt den Ausrichtungs-Effekt (KLAR/verlustfrei vs. ZWISCHENZONE/irreduzible Lücke). Theme-aware, inline Daten, keine externen Bibliotheken."
+}

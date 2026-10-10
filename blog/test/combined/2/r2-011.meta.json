@@ -1,0 +1,16 @@
+{
+  "no": "011",
+  "a": "combined/r1-020.html",
+  "b": "combined/r1-030.html",
+  "a_title": "Fusion 020 — Simplicial Attention ✕ Generalization in Deep Learning",
+  "b_title": "Fusion: Residual-Stream — Push-Verfall trifft Rotation & Self-Alignment",
+  "combined_theme": "kontraktion-und-expansion",
+  "one_line": "Ein tiefes System wirkt als ein iterativer Operator, der den internen Zustand in einen kleinen, robusten, kohärenten Code kontrahiert (erank 4096→7 = winziger Signalkanal range W), während er den Ausdrucks-/Entscheidungsraum expandiert (exponentielle lineare Regionen / mehr Höherstufen-Kandidaten); inkoherentes Rauschen wird dabei in einen für jede Testmenge unsichtbaren Reservoir-Unterraum (ker W ⊆ ker G_Q) geparkt.",
+  "contradictions": [
+    "Ursprung der Kontraktion: A führt den Zusammenbruch auf zeitliche SGD-Dynamik (Drift ∝ T vs Diffusion ∝ √T, 'reine Algebra', explizit ohne Architekturwissen, der Interaktionsordnung indifferent); B führt denselben erank-Kollaps 4096→7 auf statische Operator-Geometrie (Nicht-Normalität/Rotation, Schur-Chirurgie hebt erank von 7 auf 45, 6.4×).",
+    "Ursprung der Expansion: A vergrößert den Kandidaten-Signalraum durch kombinatorische Höherstufen-Struktur (2-/3-Simplexe, Vietoris-Rips-Schwelle, 'pairwise attention misses'); B durch Tiefe und ReLU-Komposition ('exponentielle Zunahme der linearen Regionen'), ohne kombinatorische Höherstufen aufzurufen.",
+    "Behandlung des Inkoherenten: A stellt Rauschen als passiv/harmlos geparkt im Reservoir dar (ker W ⊆ ker G_Q, unsichtbar, SNR-Gate blockiert es); B macht aus späten Layern aktive, verstärkende Filter (Self-Alignment ≈ 0.7), die Brücken-Richtungen gezielt selektieren."
+  ],
+  "resolution": "Statisch-dynamische Dualität + zweistufige Pipeline: Nicht-Normalität/Rotation (B, statisch) pro Layer erzeugt ein drehendes, nicht-normales Δ — das erklärt WIE der Operator komprimiert (Schur-Chirurgie: ohne Rotation kein Kollaps); das kohärente-vs-inkoherente Verhalten dieser Δ über T (A, dynamisch) ist der Auslesemechanismus, der kohärente Richtungen in den kleinen Code (range W = ~7-dim-Code) anreichert (Drift ∝ T) und inkoherente in den unsichtbaren Reservoir-Unterraum (ker W, Diffusion ∝ √T) absetzt. Expansion entsteht, weil jeder Layer höhere Interaktionsstrukturen einbringt (A) und Tiefe/ReLU diese über L Lagen komponiert (B) — exponentiell. Parken (A) ist die notwendige/harmlose Seite, aktives Filtern (B) die hinreichende/formende; zusammen ergeben sie den robusten niedrig-dimensionalen Code, den eine exponentiell komplexe Grenze ausliest.",
+  "viz": "Theme-reaktives Canvas, zwei gekoppelte Regionen: oben ein Tiefenprofil (Push-Norm-Verfall, effektiver-Rang-Kollaps 4096→7, Self-Alignment 0.04→0.70) plus eine Richtungswolke, die in einen ~7-dim-Code kollabiert (Trainiert/Untrainiert → 7/326); unten Signalkanal/Reservoir (kohärente Drift ∝ T als Pfeil mit Simplicial-Badge, wächst mit Ordnung & T, vs geparkte Rausch-Zickzacks ∝ √T, für Tests unsichtbar). Regler: Tiefe L, Trainingszeit T, Interaktionsordnung, Rauschen σ, Trainiert-Toggle, Play/Pause, Theme."
+}

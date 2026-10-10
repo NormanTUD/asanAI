@@ -1,0 +1,16 @@
+{
+  "no": "015",
+  "a": "combined/r1-044.html",
+  "b": "combined/r1-059.html",
+  "a_title": "Zwei Basen, eine Projektion: Wie Netze Struktur 'sehen' — einmal als Position, einmal als Phase",
+  "b_title": "Falten & Phasen — wenn Netze Koordinaten wechseln",
+  "combined_theme": "compute-as-coordinate-change",
+  "one_line": "Ein Netz rechnet, indem es in eine aufgabenangepasste Basis wechselt (Zustand/Phase/Falz) und die Antwort per Matched-Filter-Projektion liest — dieselbe Operation in drei Basen; A's Fourier-Dualität ist der abelsche Spezialfall von B's Koordinatenwechsel-Schema.",
+  "contradictions": [
+    "Readout: A (r1-044) sagt, das Readout sei EINE Projektion/Innenprodukt, nur in dualen Basen geschrieben; B (r1-059) sagt, es sei eine BANK aus Matched-Filtern/Templates, deren Anzahl = Anzahl der Antwortklassen (1 Schwelle vs. 113 argmax).",
+    "Repräsentation: A (r1-044) sagt, die saubere Welt-/Aufgabe-Trennung sei eine architektonische Wahl (Rashomon — RNNs erreichen denselben Loss ohne saubere Trennung); B (r1-059) sagt, die gute Lösung sei geometrisch erzwungen (dünner Lösungsraum, es gibt fast nur diesen Ort).",
+    "Vereinigung: A (r1-044) macht eine starke strukturelle Identitätsbehauptung (dieselbe abelsche Gruppe in dualen Basen); B (r1-059) macht eine breitere, schwächere Schemata-Annähung (unterschiedliche Strukturen unter dem gemeinsamen Rezept Koordinatenwechsel → Code-Transport → lokale Probe)."
+  ],
+  "resolution": "Readout = Matched-Filter-Projektion auf eine Vorlagen-Bank, deren Dimension = #Antwortklassen (A's 'eine Projektion' ist der 1-Richtung-/1-Klasse-Spezialfall). Die Struktur MUSS vorhanden sein (dünner funktionaler Kern → Notwendigkeit, B), aber ihre saubere, lineares lesbare Form ist eine Architekturentscheidung (Rashomon-Hülle → Kontingenz, A). A's 'dieselbe abelsche Gruppe in dualen Basen' ist der abelsche Spezialfall von B's allgemeinem Schema 'Koordinatenwechsel → Code-Transport → lokale Probe'.",
+  "viz": "Interaktives Canvas-Panel: Positions-/Zustands-Basis (Walk a → +b Schritte → Zustand c*) und Phasen-Basis (Addition = Rotation, Phasoren a, b, a+b bei k=1) auf einem gemeinsamen Kreis, plus gemeinsame Matched-Filter-Probe S(c)=Σₖ cos(2πk(a+b−c)/P) als Balkendiagramm über alle Kandidaten c; K-Regler zeigt, wie destruktive Interferenz den Peak schärft, Basis-Umschalter betont eine der beiden Koordinatenwechsel. Theme-aware (CSS-Variablen), inline Daten, kein Netzwerk."
+}

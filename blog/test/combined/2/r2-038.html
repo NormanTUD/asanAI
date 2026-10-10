@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Attractor als abdeckungsabhängiger Fixpunkt — Halluzination als fehlerhafter Attractor · Fusion r2-038</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#5b54d6; --acc2:#0d8f80; --acc3:#c2410c; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-canvas-bg:#f4f1e8; --viz-grid:rgba(20,28,45,0.10); --viz-txt:#1c2333;
+  --viz-ground:#2f8f4b; --viz-spur:#c0392b; --viz-point:#5b54d6;
+  --viz-trail:#0d8f80; --viz-accent:#5b54d6; --viz-conf:#c2410c;
+  --viz-good:#2f8f4b; --viz-bad:#c0392b;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#8a7cff; --acc2:#5ee0d0; --acc3:#ff8a5c; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.08); --viz-txt:#e8ecf6;
+  --viz-ground:#6ee88a; --viz-spur:#ff5d5d; --viz-point:#8a7cff;
+  --viz-trail:#5ee0d0; --viz-accent:#8a7cff; --viz-conf:#ff8a5c;
+  --viz-good:#6ee88a; --viz-bad:#ff5d5d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(820px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(820px 560px at 90% 4%,color-mix(in srgb,var(--acc2) 9%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(26px,4.8vw,40px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:8px 0 10px}
+h2{font-size:clamp(20px,3.2vw,28px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:12.5px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin:0 0 6px}
+.lead{font-size:16px;color:var(--txt-dim)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc4);margin-bottom:12px}
+section{padding:36px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc4);margin-bottom:6px;display:block}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.box p{margin-bottom:10px}.box p:last-child{margin-bottom:0}
+.box .ab{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;display:inline-block;padding:1px 7px;border-radius:6px;margin-right:6px;vertical-align:middle}
+.ab.a{background:color-mix(in srgb,var(--acc) 18%,transparent);color:var(--acc)}
+.ab.b{background:color-mix(in srgb,var(--acc2) 18%,transparent);color:var(--acc2)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+.mapt .v b{color:var(--txt)}
+.eq{overflow-x:auto;padding:12px 15px;font-size:14px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+ul.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li{margin-bottom:9px}
+ul.cl b{color:var(--txt)}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc3)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">&#9670; FUSION r2-038</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widerspr&uuml;che</a>
+      <a href="#aufloesung">Aufl&ouml;sung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">&#9790; Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: r1-060.html &#10005; r1-068.html  (Round 2)</p>
+  <h1>Der Attractor als abdeckungsabhängiger Fixpunkt</h1>
+  <p class="lead"><em>r1-060.html</em> (Der <strong>Situs</strong>) liest den Transformer als Garbe auf einer topologischen Seite, die von einer unscharfen globalen Sektion zu scharfen lokalen Details auflöst — mit <strong>Abdeckung (coverage)</strong> als der einen Variable, die Generalisierung (dichter Daten-Support) von Halluzination (dünn, selbstbewusst aber falsch) trennt. <em>r1-068.html</em> (Der <strong>Attractor</strong>) liest denselben Forward-Pass als <strong>kontraktives Dynamiksystem</strong>, das in einen <strong>Attractor</strong> konvergiert — gelesen in der Feature-Basis ist dieser ein <strong>sparser Punkt</strong>, den die Kontraktion aus der transienten Superposition heraustrennt. <strong>Einheitliche Position: Der Attractor ist der abdeckungsabhängige Fixpunkt. Die Kontraktion (r1-068) garantiert, dass immer ein stabiler, sparser Punkt erreicht wird — deshalb ist die Konfidenz immer hoch. Die Abdeckung (r1-060) entscheidet, ob dieser Punkt ein echtes Konzept ist (gegründet) oder ein <em>fehlerhafter Attractor</em> (halluziniert). Die Halluzination ist genau dieses Objekt: konvergent (also selbstbewusst) und ungegründet (also falsch).</strong></p>
+
+  <!-- 1 -->
+  <section id="these">
+    <div class="eyebrow">01</div>
+    <h2>Kernthese der Fusion</h2>
+    <p><strong>A (r1-060 — Situs / Abdeckung)</strong> ist eine <em>geometrische Interpretation</em> des Transformers: Weltwissen als „Garbe auf einer topologischen Seite"; das Embedding ist der Raum globaler Sektionen (holographisch — „jedes Stück enthält das ganze Bild, nur in niedrigerer Auflösung"), die Attention „wählt ein Covering: welche Stalks zu auflösen" (jeder Head eine Linse, Auflösung vs. Fläche), das FFN „erweitert lokal die Geometrie" (Jacobian-Feld), die Pipeline <code>Route → Resolve → Glue</code>. Das Scharnier ist die <strong>Abdeckung</strong>: wie dick der Daten-Support / das Covering an einer Region ist. Wo die Abdeckung dick ist, ist B's glatte Interpolation gute Generalisierung (Double Descent); wo dünn, ist dasselbe selbstbewusste Fortsetzen A's Halluzination („mit hoher Konfidenz eine Region ausfüllt, die nie richtig gelernt wurde" — hohe Konfidenz, niedrige Abdeckung).</p>
+    <p><strong>B (r1-068 — Attractor / Kontraktion)</strong> ist die <em>dynamische</em> Lesart: der Forward-Pass ist ein Dynamiksystem, dessen Layer (approximativ) kontraktive Abbildungen sind; semantisch verwandte Prompts „konvergieren zum nahezu gleichen Punkt" — ein konzeptspezifischer <strong>Attractor</strong>. Der Hutchinson-Operator zieht jede Startmenge auf eine eindeutige invariante Menge; die effektive Karte <code>φ(V)=M·V+t, ‖M‖<sub>op</sub>&lt;1</code>. Zerlegt man jeden Zustand <code>h<sub>l</sub></code> in eine Feature-Basis <code>{f<sub>j</sub>}</code> (SAE/ICA/PCA), so ist der Attractor ein <strong>sparser Punkt</strong> <code>A* = Σ<sub>j∈S</sub> c<sub>j</sub>(0)·f<sub>j</sub></code>, <code>|S|=k≪dim</code>: die Kontraktion skaliert genau die superponierten, transienten Anteile mit <code>λ&lt;1</code> pro Schritt (<code>c<sub>j</sub>(l)∝λ<sup>l</sup>→0</code> für <code>j∉S</code>), sodass am Ende nur der stabile, sparsare Kern übrig bleibt.</p>
+    <p><strong>Einheitliche Position.</strong> Beide beschreiben denselben inneren Zustand — den Residual-Stream <code>h<sub>l</sub></code>, schichtweise durchs Modell — aus orthogonalen Winkeln, und beide sagen: am Ende des Passes bleibt ein <em>stabiler, kompakter Punkt</em>. A ruft ihn den <em>scharfen lokalen Read</em> und taggt ihn mit <strong>Abdeckung</strong> (dick = gegründet, dünn = Halluzination). B ruft ihn den <em>Attractor</em> und erklärt seine Stabilität mit <strong>Kontraktion</strong>. Die fusionierte These verbindet die beiden Variablen zu einem Objekt: <strong>Der Attractor (B) ist ein abdeckungsabhängiger Fixpunkt (A).</strong> Die Kontraktion ist der Grund, <em>warum</em> das System sich überall festsetzt — es gibt immer <em>einen</em> Fixpunkt, deshalb bleibt die Konfidenz selbst bei fehlendem Wissen hoch. Die Abdeckung ist der Grund, <em>wann</em> das Festsetzen <em>wahr</em> ist — sie trennt den gegründeten Attractor (ein echtes Konzept, z. B. das „essence"-Token <code>£</code>/<code>Oxford</code>) vom <strong>fehlerhaften Attractor</strong> (ein Punkt, zu dem die Dynamik ebenso selbstbewusst konvergiert, der aber auf keinen faktischen Anker zeigt). <strong>Kontraktion erklärt die Konfidenz, Abdeckung erklärt die Wahrheit — und die Halluzination ist das Objekt, an dem beides zusammentrifft: konvergent <em>und</em> ungegründet.</strong></p>
+  </section>
+
+  <!-- 2 -->
+  <section id="widersprueche">
+    <div class="eyebrow">02</div>
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden beschreiben dasselbe innere Prozess aus orthogonalen Winkeln — es gibt <strong>keinen formellen Widerspruch</strong>. Aber an <em>drei</em> Stellen nehmen sie zu demselben Objekt (dem stabilen, endgültigen Punkt am Ende des Passes) unvereinbare Stellungen ein. Jede nennt konkret, was A und was B jeweils sagt:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 &middot; Existenz des Fixpunkts: „immer ein Attractor" (B) vs. „Region nie gelernt" (A)</span>
+      <p><span class="ab b">B</span> macht eine <em>positive Existenzbehauptung</em>: Kontraktion (<code>‖M‖&lt;1</code>) garantiert, dass <em>jede</em> Startmenge auf einen eindeutigen Fixpunkt konvergiert — es gibt <em>immer</em> einen Attractor, den die Trajektorie erreicht. <span class="ab a">A</span> macht eine <em>negative</em> Behauptung über dieselbe Stelle: eine Region kann „nie richtig gelernt" sein, dort ist die Abdeckung dünn bzw. abwesend. <b>Inkompatibel:</b> Existiert der Fixpunkt überall (B: ja, Kontraktion zwingt ihn) oder nur dort, wo Abdeckung ist (A: dort, wo der Support dick ist)?</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 &middot; Valenz des stabilen Punkts: „echtes Konzept" (B) vs. „topologisch plausibel, faktisch falsch" (A)</span>
+      <p><span class="ab b">B</span> behauptet, der Attractor sei ein <em>echtes, interpretierbares Konzept</em> — er „enthält mehr als die Prompts" und projiziert in den Wortschatz zu „essence"-Tokens (<code>£</code>, <code>Oxford</code>, <code>Auckland</code>). Sparsity ist dort ein <em>Zeichen von Bedeutung</em>. <span class="ab a">A</span> sagt über den <em>selben</em> stabilen scharfen Read: er kann „topologisch plausibel aber faktisch falsch" sein — die lokale Geometrie füllt eine Region mit „topologisch plausiblen, aber faktisch falschen Fortsetzungen". <b>Inkompatible Valenz</b> für dasselbe Objekt (den stabilen, sparsen Endpunkt): B liest ihn als <em>wahr</em>/bedeutend, A liest ihn als <em>möglichlicherweise falsch</em>.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 &middot; Die zentrale Variable: Kontraktion (B) vs. Abdeckung (A)</span>
+      <p><span class="ab b">B</span> macht die <em>Kontraktion</em> (<code>λ&lt;1</code> pro Layer) zum <em>Motor</em>: <em>sie</em> erzeugt die stabile, sparsare Struktur (sie drückt die Superposition weg). <span class="ab a">A</span> macht die <em>Abdeckung</em> (Dicke des Daten-Supports) zum <em>Scharnier</em>: <em>sie</em> entscheidet Erfolg (Generalisierung) vs. Fehlschlag (Halluzination). <b>Unvereinbare Schwerpunktsetzung:</b> A und B heben je eine andere Variable zur <em>der</em> Erklärung auf — wird der stabile Punkt von der <em>Dynamik</em> (Kontraktion) produziert oder von den <em>Daten</em> (Abdeckung) begrenzt?</p>
+    </div>
+
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>Kein formeller Konflikt — A ist eine bewusste geometrische/Abdeckungs-Lesart, B eine bewusste Dynamiksystem-/Zerlegungs-Lesart; die Spannungen fallen auf der <em>Naht</em> der beiden Register zusammen. Schärfst ist <strong>#2</strong> (dasselbe Objekt, entgegengesetzte Valenz auf Wahrheit) und <strong>#1</strong> (Fixpunkt überall vs. nur wo abgedeckt); <strong>#3</strong> ist eine Frage, <em>welche</em> Variable das Scharnier ist.</div>
+  </section>
+
+  <!-- 3 -->
+  <section id="aufloesung">
+    <div class="eyebrow">03</div>
+    <h2>Auflösung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>Abdeckung und Kontraktion desselben Fixpunkts</strong>. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card"><h3>R1 &rarr; W1: Trenne den <em>dynamischen</em> Attractor vom <em>gegründeten</em> Attractor</h3>
+      <p>Es gibt zwei Arten von Fixpunkt. Der <em>dynamische</em> Attractor existiert <em>immer</em> — die Kontraktion garantiert einen, das ist (B) und genau das erklärt, warum die Konfidenz auch bei fehlendem Wissen hoch bleibt. Der <em>gegründete</em> Attractor existiert <em>nur</em> dort, wo die Abdeckung dick ist — das ist (A). In einer nie-gelernten Region existiert also ein <strong>fehlerhafter Attractor</strong>: dynamisch <em>echt</em> (die Dynamik konvergiert wirklich dorthin), faktisch <em>leer</em> (kein Daten-Anker). <strong>Fusion:</strong> <code>Fixpunkt existiert immer (B); nur einige sind Konzepte (A)</code> — beides wahr, sobald man „Attractor" in dynamisch/gegründet spaltet.</p></div>
+
+    <div class="card"><h3>R2 &rarr; W2: Interpretierbarkeit &ne; Wahrheit</h3>
+      <p>Ein sparser, sauberer, konvergenter Punkt ist <em>interpretierbar-angehend</em>, aber nicht notwendigerweise <em>wahr</em>. Sparsity ist eine <em>notwendige, aber nicht hinreichende</em> Bedingung für Wahrheit. (B) liefert die <em>Form</em> des Attractors (sparser, sauberer, konvergenter Punkt in der Feature-Basis); (A) liefert die <em>Inhalts-Prüfung</em> (Abdeckung / Gründlichkeit). <strong>Fusion:</strong> <code>Interpretierbarkeit (B) &ne; Wahrheit (A)</code> — ein <em>fehlerhafter</em> Attractor ist <em>sauber aber falsch</em>: er ist ein interpretierbarer sparser Punkt, der auf keinen faktischen Anker zeigt. B's „essence"-Tokens sind die Projektion des <em>gegründeten</em> Attractors; A's Halluzination ist die Projektion des <em>fehlerhaften</em> Attractors — beides spars, nur eines wahr.</p></div>
+
+    <div class="card"><h3>R3 &rarr; W3: Kontraktion und Abdeckung sind orthogonal — und beide nötig</h3>
+      <p>Die beiden Variablen konkurrieren nicht, sie tun <em>Unterschiedliches</em>. <em>Kontraktion</em> (B) ist der Grund, <em>warum</em> das System sich <em>überall</em> festsetzt (Dynamik — Existenz + Konfidenz). <em>Abdeckung</em> (A) ist der Grund, <em>wo</em> Wahrheit <em>lebt</em> (Daten — Gründlichkeit). Die Kontraktion erzeugt die stabile sparsare Struktur <em>überall</em>; die Abdeckung <em>taggt</em> jeden stabilen Punkt als gegründet oder fehlerhaft. Ohne Kontraktion gäbe es keinen stabilen Punkt, den man bewerten könnte; ohne Abdeckung gäbe es kein Kriterium, um echt von falsch zu trennen. <strong>Fusion:</strong> <code>Kontraktion = Konvergenz (Existenz + Konfidenz, B) &times; Abdeckung = Gründlichkeit (Wahrheit, A)</code>.</p></div>
+
+    <div class="box hl"><span class="tag">Fusionierte Schlussfolgerung</span>
+      <p><strong>Die Halluzination ist ein fehlerhafter Attractor.</strong> Der Forward-Pass ist ein kontraktives Dynamiksystem (B), das immer in einen sparseren Punkt der Feature-Basis konvergiert — deshalb ist die Konfidenz <em>immer</em> hoch. Dieser Punkt ist ein <em>echtes Konzept</em> genau dort, wo der Feature-Support dick ist (abgedeckt, A), und ein <em>fehlerhafter Attractor</em> dort, wo er dünn ist (A's „selbstbewusst expandiert eine nie richtig gelernte Region"). <strong>Kontraktion erklärt, warum das Modell immer selbstbewusst ist; Abdeckung erklärt, wann dieses Selbstbewusstsein fehl am Platz ist.</strong> Ein einziges, untersuchbares Objekt — die Abdeckung des Attractors — vereint beide R1-Fusionen.</p></div>
+  </section>
+
+  <!-- 4 -->
+  <section id="inhalt">
+    <div class="eyebrow">04</div>
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Was r1-060 mitbringt — Abdeckung &amp; Situs (Wofür / ob wahr)</h3>
+    <ul class="cl">
+      <li><b>Situs / Garbe:</b> LM-Weltwissen als „Garbe auf einer topologischen Seite"; der Kontext ist die Basis, über der sie lebt.</li>
+      <li><b>Embedding = globale Sektionen = unauflösbarstes Bild</b> (holographisch); Damage degrading gracefully.</li>
+      <li><b>Attention = Covering-Auswahl</b> (welche Stalks auflösen); Heads sind Linsen; <em>Auflösungs&ndash;Flächen-Tradeoff</em> als Budget.</li>
+      <li><b>FFN = lokale Geometrie-Expansion</b> via Jacobian-Feld; <code>d_ff &asymp; 4d</code>; <code>det J&gt;1</code> Expansion, <code>det J&lt;1</code> Kontraktion, degeneriert wo Info verloren.</li>
+      <li><b>Pipeline = Route &rarr; Resolve &rarr; Glue.</b> Router (Wörter&rarr;Wörter) &rarr; Resolver (Konzepte&rarr;Konzepte) &rarr; klebt Patches zu einer lesbaren Antwort.</li>
+      <li><b>Halluzination = selbstbewusste Expansion über unbedeckte Patches.</b> „Konfidenz bleibt hoch, selbst wo Wissen dünn ist" — plausibel aber falsch, wo Training dünner wird.</li>
+      <li><b>Funktionaler Kern (nach B's Source-Text):</b> ReLU = stückweise linear; Tiefe = <code>(D+1)^K</code> Regionen; Backprop = Kettenregel; Loss = Maximum-Likelihood; Self-Attention <code>sa[X]=V·softmax[K^T Q/√D_q]</code>; <em>Double Descent</em> (Testfehler fällt nach Interpolations-Schwelle erneut). Formeln: <code>content(x)=lerp(global(x), sharp(x), coverage(x))</code>, <code>conf &asymp; 0.70 + 0.25·coverage(x)</code> (hoch auch bei coverage&rarr;0).</li>
+    </ul>
+
+    <h3>Was r1-068 mitbringt — Attractor &amp; Kontraktion (Wohin / warum stabil)</h3>
+    <ul class="cl">
+      <li><b>LLM als Dynamiksystem / IFS:</b> Layer = Iterationen <em>kontraktiver</em> Abbildungen; Hutchinson-Operator <code>F(S)=⋃ᵢ fᵢ(S)</code> konvergiert jede Startmenge auf eine eindeutige invariante Menge (den Attractor).</li>
+      <li><b>Effektive Karte &amp; Collage-Theorem:</b> affine Kontraktion <code>φ(V)=M·V+t, ‖M‖<sub>op</sub>&lt;1</code>, gefittet; das Collage-Theorem rechtfertigt, dass ein gutes Fitting einen Attractor nahe dem Ziel liefert.</li>
+      <li><b>Attractoren in unterschiedlichen Layern (Hierarchie):</b> 16 = arithmetische Task-Vektoren; 18 = Literatur; 19 = Programmiersprachen; 24 = fiktive Welten; 27 = natürliche Sprachen; fraktale Struktur.</li>
+      <li><b>Attractor „enthält" mehr als die Prompts:</b> Projektion in den Wortschatz liefert die „essence" — <code>£</code>, <code>Auckland/NZ</code>, <code>Oxford</code>.</li>
+      <li><b>Training-free Anwendungen:</b> Detection/Guardrailing <code>cos_sim(h(q),A_C)&gt;τ → Block</code>; Steering <code>dx/dt=f(x)+λ(y−x)</code> (Toxizität = Attractor abziehen); Synthese-Daten durch Attractor-Perturbation.</li>
+      <li><b>Zerlegung (B's Source-Text):</b> Residual-Stream als Signalbus <code>x<sup>(l)</sup>=x<sup>(l-1)</sup>+Attn+MLP</code>; Fourier/STFT/Wavelet (Heisenberg <code>Δt·Δω≥1/2</code>); PCA/SVD (niedriger Rang → LoRA); ICA (Superposition / Cocktaelparty); Sparse Coding / SAE (überbestimmtes Wörterbuch, <code>min ‖x−Da‖²+λ‖a‖₁</code>); Nicht-Linearität als Harmonikengenerator. Formeln: <code>A*=lim φ<sup>l</sup>(h₀)</code>; <code>h<sub>l</sub>=Σ c<sub>j</sub>(l)·f<sub>j</sub></code>; <code>c<sub>j</sub>(l+1)=r<sub>j</sub>c<sub>j</sub>(l)</code> (<code>r≈1</code> Kern, <code>λ&lt;1</code> transi
+ent); <code>E<sub>super</sub>∝λ<sup>2l</sup>→0</code>.</li>
+    </ul>
+
+    <h3>Die Verknüpfung — wie A und B sich verschalten</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">Attractor A* (B)</div><div class="v">= der <b>Fixpunkt der Route&rarr;Resolve&rarr;Glue-Pipeline</b> (A) = der <b>scharfe lokale Read</b>. Der scharfe Read IST der Attractor.</div></div>
+      <div class="r"><div class="k">Sparser Punkt in Feature-Basis (B)</div><div class="v">= das <b>scharfe lokale Detail</b> (A); die Feature-Basis <code>{f<sub>j</sub>}</code> = die Stalks / die lokale Geometrie, die A's FFN auflöst.</div></div>
+      <div class="r"><div class="k">Abdeckung (A)</div><div class="v">= <b>Dicke des Daten-Supports</b> im Feature-Raum; taggt jeden Attractor als <b>gegründet (dick)</b> vs. <b>fehlerhaft (dünn)</b>.</div></div>
+      <div class="r"><div class="k">Kontraktion (B)</div><div class="v">= der Mechanismus, der den lokalen Read <b>„klebrig"/stabil</b> macht = der <b>Glue-Schritt</b> (A), der die Patches zu einer festen Antwort zusammenhält.</div></div>
+      <div class="r"><div class="k">Essence-Tokens £/Oxford/Auckland (B)</div><div class="v">= Projektion des <b>gegründeten</b> Attractors; <b>Halluzination</b> (A) = Projektion des <b>fehlerhaften</b> Attractors.</div></div>
+      <div class="r"><div class="k">Konfidenz bleibt hoch bei dünner Abdeckung (A)</div><div class="v">= <b>Konvergenz des kontraktiven Systems</b> (B): die Konfidenz IST die (garantierte) Konvergenz.</div></div>
+      <div class="r"><div class="k">Double Descent / Generalisierung (A)</div><div class="v">= Aggregatschatten der Menge der <b>gegründeten Attraktoren</b> — Erfolg dort, wo die Abdeckung über genug stabile Fixpunkte verteilt ist.</div></div>
+    </div>
+
+    <h3>Die Formeln der Fusion</h3>
+    <div class="eq">
+      <span class="c">// B — Dynamik (Tiefe = Zeit)</span><br>
+      A* = lim<sub>&nbsp;l&rarr;∞</sub> &phi;<sup>l</sup>(h&#8320;) &nbsp;<span class="c">// Attractor = Limes der Layer-Iteration (existiert immer: Kontraktion)</span><br>
+      &phi;(V) = M&middot;V + t,&nbsp; &Vert;M&Vert;<sub>op</sub> &lt; 1 &nbsp;<span class="c">// Kontraktion &rarr; garantierte Konvergenz &rarr; hohe Konfidenz</span><br>
+      h<sub>l</sub> = &sum;<sub>j</sub> c<sub>j</sub>(l)&middot;f<sub>j</sub> &nbsp;<span class="c">// Zustand in der Feature-Basis</span><br>
+      c<sub>j</sub>(l+1) = r<sub>j</sub>&middot;c<sub>j</sub>(l),&nbsp; r<sub>j</sub>&asymp;1 (Kern, |S|=k),&nbsp; r<sub>j</sub>=&lambda;&lt;1 (transient)<br>
+      &rArr;&nbsp; A* = &sum;<sub>j&isin;S</sub> c<sub>j</sub>(0)&middot;f<sub>j</sub> &nbsp;<span class="c">// Attractor = sparser Punkt (Form aus B)</span><br>
+      <span class="c">// A — Abdeckung (Daten-Support)</span><br>
+      coverage(x) = Dicke des Daten-Supports an Region x<br>
+      conf(x) &asymp; 0.70 + 0.25&middot;coverage(x) &nbsp;<span class="c">// immer &ge; 0.70 &rarr; Konfidenz immer hoch</span><br>
+      <span class="c">// FUSION — die eine Gleichung</span><br>
+      A*(x) <b>gegründet</b> &nbsp;&hArr;&nbsp; coverage(x) dick (&ge; &tau;)<br>
+      A*(x) <b>fehlerhaft</b> &nbsp;&hArr;&nbsp; coverage(x) dünn (&lt; &tau;) &and; Kontraktion treibt trotzdem Konvergenz (conf hoch)<br>
+      <span class="c">// Halluzination = fehlerhafter Attractor:</span><br>
+      Halluzination &nbsp;&hArr;&nbsp; <b>konvergent</b> (kontrahiert, sauber, spars &mdash; B) &and; <b>ungegründet</b> (coverage niedrig &mdash; A)<br>
+      <span class="c">// Kontraktion = Konfidenz (Existenz); Abdeckung = Wahrheit (Gründlichkeit)</span>
+    </div>
+
+    <h3>Warum die Fusion mehr ist als die Summe</h3>
+    <div class="note"><span class="h">Mehr als die Summe</span>A allein (r1-060) sagt, die Abdeckung entscheidet die Valenz — erklärt aber nicht, <em>warum die Konfidenz</em> bei fehlendem Wissen <em>trotzdem</em> hoch bleibt. B allein (r1-068) garantiert die Konvergenz zu einem sauberen sparsen Punkt — liefert aber <em>kein Kriterium</em>, ob dieser Punkt <em>wahr</em> ist. Erst zusammen: die Kontraktion erklärt, <em>warum</em> das Modell immer selbstbewusst ist (es konvergiert <em>immer</em>); die Abdeckung erklärt, <em>wann</em> dieses Selbstbewusstsein fehl am Platz ist (dünn = fehlerhafter Attractor). Die Halluzination wird zu einem <em>prüfbaren Objekt</em>: ein konvergenter, sparsar, aber ungegründeter Attractor. Ein einziges, untersuchbares Kriterium — die Abdeckung des Attractors — trägt beide R1-Fusionen.</div>
+  </section>
+
+  <!-- 5 -->
+  <section id="visualisierung">
+    <div class="eyebrow">05</div>
+    <h2>Visualisierung der Fusion</h2>
+    <p class="lead" style="margin-bottom:6px"><strong>Ein 2-D-Schnitt durch den Feature-Raum.</strong> Die farbigen <em>Glow-Regionen</em> sind Attractor-Stätten — <span style="color:var(--acc5);font-weight:600">grün = gegründet</span> (dichte Abdeckung, ein echtes Konzept), <span style="color:var(--acc3);font-weight:600">rot = fehlerhaft</span> (dünne Abdeckung). Gestreute <em>Prompts</em> starten als Superposition und <strong>konvergieren schichtweise</strong> (Kontraktion, B) zur nächstliegenden Stätte — <em>immer</em>, unabhängig von der Abdeckung. Die dünne <span style="color:var(--acc3);font-weight:600">Orang-Blende</span> um jeden Punkt ist die <strong>Konfidenz</strong> (A) — sie bleibt bei <em>jedem</em> Punkt groß, <em>auch</em> bei den, die in eine rote (fehlerhafte) Stätte fallen: <strong>konvergent und selbstbewusst, aber falsch = die Halluzination.</strong> Senke die <em>Abdeckung</em>, und grüne Stätten kippen rot — die Konfidenz bleibt hoch, die Gründlichkeit sinkt. Wechsle die <em>Kontraktion &lambda;</em>, um zu sehen, wie schnell die Punkte sich festsetzen.</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Der Attractor als abdeckungsabhängiger Fixpunkt — Kontraktion &times; Abdeckung</h3><span class="tg">interaktiv &middot; inline data</span></div>
+      <div class="cwrap"><canvas id="cvViz" width="720" height="440"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-ground)"></i>gegründeter Attractor (dick, echt)</span>
+        <span><i style="background:var(--viz-spur)"></i>fehlerhafter Attractor (dünn, Halluzination)</span>
+        <span><i style="background:var(--viz-point)"></i>Prompts (konvergieren)</span>
+        <span><i style="background:var(--viz-conf)"></i>Konfidenz-Blende (immer hoch)</span>
+      </div>
+      <div class="btnrow">
+        <button id="playBtn" class="on">&#10074;&#10074; Pause</button>
+        <button id="resetBtn">&#8634; Neu streuen</button>
+        <span style="font-size:11.5px;color:var(--txt-faint)">Schwelle &tau; &asymp; 0.45 trennt gegründet (grün) von fehlerhaft (rot).</span>
+      </div>
+      <div class="ro">
+        <div class="b"><div class="k">Konfidenz (&Oslash;)</div><div class="v" id="roConf">&mdash;</div><div class="u">bleibt hoch (B: Konvergenz)</div></div>
+        <div class="b"><div class="k">Gegründet</div><div class="v" id="roGround">&mdash;</div><div class="u">Punkte in echten Konzepten</div></div>
+        <div class="b"><div class="k">Halluzinationen</div><div class="v" id="roHalluc">&mdash;</div><div class="u">Punkte in fehlerhaften Attractors</div></div>
+        <div class="b"><div class="k">Abdeckung</div><div class="v" id="roCov">&mdash;</div><div class="u">Daten-Support (A)</div></div>
+        <div class="b"><div class="k">Kontraktion &lambda;</div><div class="v" id="roLambda">&mdash;</div><div class="u">Dämpfung pro Schicht (B)</div></div>
+        <div class="b"><div class="k">Verdikt</div><div class="v" id="roVerdict">&mdash;</div><div class="u">gegründet / fehlerhaft</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Abdeckung — wie dick ist der Daten-Support im Feature-Raum? (A)</span><b id="covVal">1.00</b></div>
+        <input type="range" id="covSl" min="0.20" max="1.50" step="0.05" value="1.00">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Niedrige Abdeckung = mehr Stätten kippen auf <em>fehlerhaft</em> (rot) — die Konfidenz bleibt trotzdem hoch: das ist die Halluzination.</div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Kontraktion &lambda; — wie schnell setzen die Layer die Punkte fest? (B)</span><b id="lamVal">0.60</b></div>
+        <input type="range" id="lamSl" min="0.20" max="0.92" step="0.01" value="0.60">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">&lambda;&rarr;1 = Konvergenz langsam (Superposition bleibt lange); &lambda;&rarr;0 = schnell fest. <em>Immer</em> konvergiert der Punkt — deshalb ist die Konfidenz immer hoch.</div>
+      </div>
+      <p style="font-size:12px;color:var(--txt-faint)">Die Kontraktion (B) garantiert, dass jeder Prompt <em>irgendwo</em> konvergiert (Konfidenz hoch); die Abdeckung (A) entscheidet, ob das Ziel <em>echt</em> (grün) oder <em>fehlerhaft</em> (rot) ist. <strong>Halluzination = fehlerhafter Attractor</strong> — konvergent und selbstbewusst, aber ungegründet.</p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="provenienz">
+    <div class="eyebrow">06</div>
+    <h2>Provenienz</h2>
+    <p><a href="../r1-060.html">A &mdash; r1-060: The Transformer as a Situs: A Coverage-Conditioned Interpolator</a> (R1-Fusion aus <em>paperidea4</em> &#10005; <em>understanding_deep_learning</em>): Garbe auf einer topologischen Seite; Embedding = globale Sektionen (holographisch), Attention = Covering-Auswahl (Linsen, Auflösung&ndash;Fläche), FFN = lokale Geometrie-Expansion (Jacobian), Pipeline Route&rarr;Resolve&rarr;Glue; <strong>Abdeckung</strong> als Scharnier, das glatte Interpolation in Generalisierung (dick) vs. Halluzination (dünn, selbstbewusst aber falsch) trennt; funktionaler Kern (ReLU, (D+1)^K, Backprop, MLE, Self-Attention, Double Descent).</p>
+    <p><a href="../r1-068.html">B &mdash; r1-068: Der Attractor als sparsener Punkt in der Feature-Basis</a> (R1-Fusion aus <em>concept_attractors</em> &#10005; <em>signal_analysis2</em>): LLM als <strong>kontraktives Dynamiksystem</strong>/IFS, Hutchinson-Operator, effektive affine Kontraktion, Essence-Tokens, training-free Detection/Steering/Synthese; Residual-Stream als Signalbus, Fourier/PCA/ICA/SAE, Nicht-Linearität als Harmonikengenerator; <strong>Attractor = sparsare Punkt</strong> in der Feature-Basis, den die Kontraktion aus der transienten Superposition (<code>λ<sup>l</sup></code>) heraustrennt.</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>r1-060.html</strong> (Situs / Abdeckung — ob wahr) &#10005; <strong>r1-068.html</strong> (Attractor / Kontraktion — wohin, warum stabil). Alle Claims aus den Quellen paraphrasiert; die Attractor-/Abdeckungs-Geometrie im Viz ist ein synthetisches Inline-Modell der fusionierten Arbeitsformel (Halluzination = fehlerhafter Attractor; Kontraktion garantiert Konvergenz &amp; Konfidenz, Abdeckung bestimmt Wahrheit). Selbstständig, ohne Netzwerk-Datenabruf.
+</footer>
+
+<script>
+(function(){
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function parseColor(s){
+  s=(s||'').trim();
+  if(s.charAt(0)==='#'){var h=s.slice(1);if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+  var m=s.match(/rgba?\(([^)]+)\)/);
+  if(m){var p=m[1].split(',');return [Math.round(+p[0]),Math.round(+p[1]),Math.round(+p[2])];}
+  return [128,128,128];
+}
+function mix(a,b,t){t=t<0?0:(t>1?1:t);return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)];}
+function rgb(a){return 'rgb('+a[0]+','+a[1]+','+a[2]+')';}
+function rgba(a,al){return 'rgba('+a[0]+','+a[1]+','+a[2]+','+al+')';}
+function clamp(v,lo,hi){return v<lo?lo:(v>hi?hi:v);}
+function set(id,txt,cls){var el=document.getElementById(id);if(!el)return;el.textContent=txt;el.className='v'+(cls?(' '+cls):'');}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){if(themeBtn){themeBtn.textContent=isDark()?'\u2600\uFE0F Licht':'\uD83C\uDF19 Dunkel';}}
+  if(themeBtn){themeBtn.onclick=function(){document.documentElement.classList.toggle('dark');setBtn();readPal();};}
+  setBtn();
+
+  var cv=document.getElementById('cvViz'); if(!cv){return;}
+  var dpr=window.devicePixelRatio||1, W=720, H=440;
+  cv.style.width='100%'; cv.style.aspectRatio=W+'/'+H;
+  cv.width=W*dpr; cv.height=H*dpr;
+  var ctx=cv.getContext('2d'); if(!ctx){return;} ctx.setTransform(dpr,0,0,dpr,0,0);
+  var TAU=Math.PI*2;
+
+  var planeX=30, planeY=30, planeW=W-60, planeH=H-60;
+  function tc(fx,fy){ return [planeX+(fx+1)/2*planeW, planeY+(fy+1)/2*planeH]; }
+
+  var SITES=[
+    {fx:-0.55, fy:-0.45, base:0.98},
+    {fx: 0.50, fy:-0.50, base:0.80},
+    {fx: 0.05, fy: 0.10, base:0.62},
+    {fx: 0.60, fy: 0.55, base:0.44},
+    {fx:-0.60, fy: 0.55, base:0.20}
+  ];
+  var THRESH=0.45;
+  var N=18, STEP=0.045;
+
+  var PAL={};
+  function readPal(){
+    PAL.bg=parseColor(getVar('--viz-canvas-bg'));
+    PAL.grid=parseColor(getVar('--viz-grid'));
+    PAL.txt=parseColor(getVar('--viz-txt'));
+    PAL.ground=parseColor(getVar('--viz-ground'));
+    PAL.spur=parseColor(getVar('--viz-spur'));
+    PAL.point=parseColor(getVar('--viz-point'));
+    PAL.trail=parseColor(getVar('--viz-trail'));
+    PAL.conf=parseColor(getVar('--viz-conf'));
+    PAL.good=parseColor(getVar('--viz-good'));
+    PAL.bad=parseColor(getVar('--viz-bad'));
+  }
+
+  var state={covScale:1.0, lambda:0.60, playing:true};
+  var points=[];
+
+  function eff(i){ return clamp(SITES[i].base*state.covScale,0,1); }
+  function grounded(i){ return eff(i)>=THRESH; }
+  function conf(i){ return 0.70+0.25*eff(i); }
+
+  function nearestSite(fx,fy){
+    var best=0,bd=1e9,i,d;
+    for(i=0;i<SITES.length;i++){var s=SITES[i];d=(fx-s.fx)*(fx-s.fx)+(fy-s.fy)*(fy-s.fy);if(d<bd){bd=d;best=i;}}
+    return best;
+  }
+  function init(){
+    points=[];
+    for(var i=0;i<N;i++){
+      var fx=Math.random()*2-1, fy=Math.random()*2-1;
+      points.push({fx:fx,fy:fy,site:nearestSite(fx,fy),trail:[]});
+    }
+  }
+
+  var playBtn=document.getElementById('playBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var covEl=document.getElementById('covSl'), covVal=document.getElementById('covVal');
+  var lamEl=document.getElementById('lamSl'), lamVal=document.getElementById('lamVal');
+  var roConf=document.getElementById('roConf'), roGround=document.getElementById('roGround'),
+      roHalluc=document.getElementById('roHalluc'), roCov=document.getElementById('roCov'),
+      roLambda=document.getElementById('roLambda'), roVerdict=document.getElementById('roVerdict');
+
+  function togglePlay(){
+    state.playing=!state.playing;
+    if(playBtn){playBtn.innerHTML=state.playing?'\u275A\u275A Pause':'\u25B6 Animieren';playBtn.classList.toggle('on',state.playing);}
+  }
+  if(playBtn){playBtn.onclick=togglePlay;}
+  if(resetBtn){resetBtn.onclick=function(){init();};}
+  if(covEl){covEl.addEventListener('input',function(){state.covScale=+covEl.value;covVal.textContent=(+covEl.value).toFixed(2);});}
+  if(lamEl){lamEl.addEventListener('input',function(){state.lambda=+lamEl.value;lamVal.textContent=(+lamEl.value).toFixed(2);});}
+
+  function step(){
+    var f=Math.pow(state.lambda,STEP);
+    for(var i=0;i<points.length;i++){
+      var p=points[i], s=SITES[p.site];
+      p.fx+=(s.fx-p.fx)*(1-f);
+      p.fy+=(s.fy-p.fy)*(1-f);
+      var tr=p.trail; tr.push({x:p.fx,y:p.fy}); if(tr.length>22){tr.shift();}
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=rgb(PAL.bg); ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle=rgba(PAL.grid,0.5); ctx.lineWidth=1;
+    var g;
+    for(g=-0.5;g<=0.51;g+=0.5){
+      var a=tc(g,-1), b=tc(g,1); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+      var c=tc(-1,g), d=tc(1,g); ctx.beginPath(); ctx.moveTo(c[0],c[1]); ctx.lineTo(d[0],d[1]); ctx.stroke();
+    }
+
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.font='12px ui-monospace,Menlo,monospace'; ctx.fillStyle=rgba(PAL.txt,0.7);
+    ctx.fillText('Feature-Raum: Attraktor-Stätten (grün=gepründet, rot=fehlerhaft)',planeX,planeY-10);
+
+    for(var i=0;i<SITES.length;i++){
+      var s=SITES[i], p=tc(s.fx,s.fy), e=eff(i), gr=grounded(i);
+      var col=mix(PAL.spur,PAL.ground,e);
+      var rad=40+52*e;
+      var grd=ctx.createRadialGradient(p[0],p[1],2,p[0],p[1],rad);
+      grd.addColorStop(0,rgba(col,0.16+0.42*e));
+      grd.addColorStop(1,rgba(col,0));
+      ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(p[0],p[1],rad,0,TAU); ctx.fill();
+      var mc=gr?PAL.ground:PAL.spur;
+      ctx.save(); ctx.shadowColor=rgb(mc); ctx.shadowBlur=10;
+      ctx.fillStyle=rgb(mc); ctx.beginPath(); ctx.arc(p[0],p[1],5.5,0,TAU); ctx.fill(); ctx.restore();
+      ctx.strokeStyle=rgba(mc,0.9); ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(p[0],p[1],11,0,TAU); ctx.stroke();
+      ctx.fillStyle=rgb(PAL.txt); ctx.font='700 10px ui-monospace,Menlo,monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+      ctx.fillText(gr?('A* ('+Math.round(e*100)+'%)'):('A*✗ '+Math.round(e*100)+'%'), p[0], p[1]-16);
+    }
+
+    for(var q=0;q<points.length;q++){
+      var pt=points[q], sp=tc(pt.fx,pt.fy), gr2=grounded(pt.site);
+      var tr=pt.trail;
+      for(var k=1;k<tr.length;k++){
+        var al=k/tr.length;
+        ctx.strokeStyle=rgba(gr2?PAL.good:PAL.bad, al*0.5); ctx.lineWidth=1.3;
+        var tp=tc(tr[k-1].x,tr[k-1].y), tp2=tc(tr[k].x,tr[k].y);
+        ctx.beginPath(); ctx.moveTo(tp[0],tp[1]); ctx.lineTo(tp2[0],tp2[1]); ctx.stroke();
+      }
+      var cf=conf(pt.site);
+      ctx.strokeStyle=rgba(PAL.conf,0.85); ctx.lineWidth=2.2;
+      ctx.beginPath(); ctx.arc(sp[0],sp[1],9,-Math.PI/2,-Math.PI/2+cf*TAU); ctx.stroke();
+      ctx.save(); ctx.shadowColor=rgb(gr2?PAL.good:PAL.bad); ctx.shadowBlur=7;
+      ctx.fillStyle=rgb(gr2?PAL.good:PAL.bad); ctx.beginPath(); ctx.arc(sp[0],sp[1],4,0,TAU); ctx.fill(); ctx.restore();
+    }
+
+    var confSum=0,grN=0;
+    for(var m=0;m<points.length;m++){confSum+=conf(points[m].site);if(grounded(points[m].site))grN++;}
+    var confMean=confSum/points.length;
+    var halluc=N-grN;
+    set('roConf',Math.round(confMean*100)+'%','g');
+    set('roGround',grN+'/'+N, grN===N?'g':'');
+    set('roHalluc',''+halluc, halluc>0?'e':'g');
+    set('roCov',state.covScale.toFixed(2),'');
+    set('roLambda',state.lambda.toFixed(2),'');
+    if(halluc===0){set('roVerdict','alle gegründet','g');}
+    else{set('roVerdict',halluc+' halluz.','e');}
+  }
+
+  function loop(){
+    if(state.playing){step();}
+    draw();
+    requestAnimationFrame(loop);
+  }
+  readPal(); init(); draw(); requestAnimationFrame(loop);
+  window.addEventListener('resize',function(){readPal();});
+  try{new MutationObserver(function(){readPal();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "038",
+  "a": "combined/r1-060.html",
+  "b": "combined/r1-068.html",
+  "a_title": "The Transformer as a Situs: A Coverage-Conditioned Interpolator",
+  "b_title": "Der Attractor als sparsener Punkt in der Feature-Basis",
+  "combined_theme": "spurious-attractor-coverage",
+  "one_line": "Der Attractor (kontraktive Konvergenz, r1-068) ist ein abdeckungsabhängiger Fixpunkt (r1-060): Kontraktion garantiert, dass immer ein stabiler sparser Punkt erreicht wird (deshalb immer hohe Konfidenz), Abdeckung entscheidet, ob er ein echtes Konzept oder ein fehlerhafter Attractor ist — die Halluzination ist genau dieser konvergent-und-ungegründete Fixpunkt.",
+  "contradictions": [
+    "Existenz des Fixpunkts: B (r1-068, Kontraktion ‖M‖<1) garantiert, dass jede Startmenge auf einen eindeutigen Attractor konvergiert — es gibt immer einen Fixpunkt. A (r1-060) sagt, eine Region kann 'nie richtig gelernt' sein (Abdeckung/Support dünn oder abwesent). Inkompatibel: existiert der Fixpunkt überall (B) oder nur wo abgedeckt (A)?",
+    "Valenz des stabilen Endpunkts: B (r1-068) liest den Attractor als echtes, interpretierbares Konzept (Essence-Tokens £/Oxford/Auckland, 'enthält mehr als die Prompts'); A (r1-060) liest denselben scharfen lokalen Endpunkt als 'topologisch plausibel, aber faktisch falsch'. Dasselbe Objekt (der stabile sparsare Punkt), entgegengesetzte Valenz auf Wahrheit.",
+    "Die zentrale Variable: B (r1-068) macht die Kontraktion (λ<1 pro Layer) zum Motor, der die stabile sparsare Struktur erzeugt; A (r1-060) macht die Abdeckung (Dicke des Daten-Supports) zum Scharnier zwischen Generalisierung (dick) und Halluzination (dünn). Zwei unterschiedliche Variablen werden je zur 'der' Erklärung erhoben."
+  ],
+  "resolution": "Spaltung in dynamischen vs. gegründeten Attractor + Interpretierbarkeit≠Wahrheit. Die Kontraktion (B) garantiert Konvergenz und damit hohe Konfidenz — ein dynamischer Attractor existiert überall. Die Abdeckung (A) taggt jeden Fixpunkt als gegründet (dicker Support, echtes Konzept) oder fehlerhaft (dünner Support). Ein fehlerhafter Attractor ist ein sauber konvergierter, sparsar, interpretierbar-angehender Punkt, der auf keinen faktischen Anker zeigt — 'sauber aber falsch'. Kontraktion=Konfidenz (Existenz), Abdeckung=Wahrheit (Gründlichkeit); die Halluzination ist das Objekt, an dem beides zusammentrifft: konvergent und selbstbewusst, aber ungegründet.",
+  "viz": "2-D-Schnitt des Feature-Raums: Attraktor-Stätten als Glow-Regionen (grün=gepründet/dicke Abdeckung, rot=fehlerhaft/dünne Abdeckung, Schwelle τ≈0.45). Gestreute Prompts konvergieren per Kontraktion (λ-Slider) zur nächstliegenden Stätte — immer. Um jeden Punkt eine Konfidenz-Blende, die stets groß bleibt (conf≈0.70+0.25·coverage), auch bei roten Zielen. Der Abdeckungs-Slider kippt grüne Stätten rot: Konfidenz bleibt hoch, Gründlichkeit sinkt. Embodyt 'Halluzination = fehlerhafter Attractor' (konvergent & selbstbewusst, aber ungegründet)."
+}

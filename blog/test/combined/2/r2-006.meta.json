@@ -1,0 +1,16 @@
+{
+  "no": "006",
+  "a": "combined/r1-008.html",
+  "b": "combined/r1-061.html",
+  "a_title": "Karten & Augen — Positional Encoding trifft Attention",
+  "b_title": "Emergente Weltmodelle: die Fourier-Kreisschaltung trifft Othello-Latentmodell",
+  "combined_theme": "die-karte-ist-das-weltmodell",
+  "one_line": "Position (PE-Wellen-Fingerprint) und Weltmodell (Grokking-Fourier-Schaltwerk) sind dieselbe rotierende Mehrfrequenz-Koordinaten-Karte, die ein Sequenzmodell als internes, kausales, generalisierendes Weltmodell lernt und über Interferenz/Drehung relativ abliest.",
+  "contradictions": [
+    "A hält die Wellen-Geometrie für eine feste, designte, nicht gelernte a-priori-Karte (sinusoidale PE); B zeigt, dass das Weltmodell im Training gelernt und emergiert (Grokking-Phasen, Othello-Repräsentation in mittleren Layern aufgebaut).",
+    "A setzt auf die eine kanonische, eindeutige geschlossene Form (Basis-10000-Leiter, deterministischer Fingerprint); B behauptet Unterbestimmtheit — dieselbe Architektur lernt datenabhängig viele verschiedene Repräsentationen (synthetisch regelbasiert vs. Championship strategisch).",
+    "A zerlegt Verständnis in zwei saubere, lesbare Terme (Inhalt + Relativposition, s = f(Inhalt)+g(Offset)); B zeigt, dass das interne Bild nichtlinear und keiner einfachen Formel gehorcht (linearer Probe ~20-25% Fehler vs. nichtlinear 1,7%), d.h. die lesbaren Terme addieren sich nicht zum Ganzen."
+  ],
+  "resolution": "Die Art der Karte (rotierende Frequenz-Koordinaten / Fourier-Basis) ist eine feste, geteilte, kanonische Prior, während ihre konkrete Instanz (welche Frequenzen feuern, welche Gewichte) gelernt, emergent und datenabhängig ist; A ist der vorgelöste, eindeutige, linear-lesbare Spezialfall (Tiefe 1), B der gelernte, nichtlineare, verteilte Fall (Tiefe n) derselben Karte — ein Kontinuum der Lese-Tiefe über der Generator-Komplexität.",
+  "viz": "Ein Canvas mit (links) dem Grund-Rotor, der a, b und a+b mod 113 als rotierende Punkte zeigt (Addition = Drehung), und (rechts) dem Interferenz-Peak Score(c)=Sigma cos(2pi f (a+b-c)/113) über alle 113 Antworten; plus ein Offset-Leser, der PE(p)·PE(p+k) für festes k über verschiedene p zeigt (identisch), also A's relative Lektüre — ein einziges Gerät, das beide Papiere trägt. Theme-aware, inline-Daten, Sliders a/b/Frequenzen/p/k."
+}

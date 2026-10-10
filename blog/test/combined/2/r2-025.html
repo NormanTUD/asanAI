@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 025 — Leere Richtungen (Falten × Parken) ✕ Der dünne Hebel (lineares Objekt)</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b22; --card:#ffffff; --card2:#f3efe6;
+  --border:#ddd6c6; --muted:#5d5a68; --head:#3b2f63;
+  --accent:#6a4fa3; --accent2:#2f7d6d;
+  --c-sig:#0d8f80; --c-rhat:#6a4fa3; --c-res:#c2410c;
+  --c-safe:#2f9e44; --c-harm:#c93a86; --c-empty:#b7ad98;
+  --chart-bg:#faf8f1; --grid:#e6e0d2;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e6e8ef; --card:#152036; --card2:#182238;
+  --border:#2a3552; --muted:#9aa6c0; --head:#b9a7f0;
+  --accent:#a78bfa; --accent2:#34d399;
+  --c-sig:#5ee0d0; --c-rhat:#a78bfa; --c-res:#fb923c;
+  --c-safe:#4ade80; --c-harm:#ff7ac0; --c-empty:#46536e;
+  --chart-bg:#0f172a; --grid:#243050;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,system-ui,sans-serif;
+  line-height:1.72; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px;}
+h1{font-size:1.85em;line-height:1.24;margin:.15em 0 .25em;color:var(--head);}
+.subtitle{font-size:.95em;color:var(--muted);border-left:3px solid var(--accent);padding-left:12px;margin:0 0 8px;}
+.meta-line{font-size:.85em;color:var(--muted);margin-bottom:26px;}
+section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:26px 0;}
+section>h2{font-size:1.28em;color:var(--head);margin:.1em 0 .6em;border-bottom:2px solid var(--border);padding-bottom:8px;}
+section>h2 .tag{font-size:.58em;vertical-align:middle;padding:2px 8px;border-radius:20px;color:#fff;background:var(--accent);margin-left:8px;}
+h3{color:var(--head);font-size:1.06em;margin:1.3em 0 .4em;}
+p{margin:.7em 0;}
+strong{color:var(--fg);}
+code{background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.88em;font-family:ui-monospace,Menlo,Consolas,monospace;}
+ul,ol{margin:.5em 0 .5em 1.2em;padding:0;}
+li{margin:.42em 0;}
+.formula{background:var(--card2);border:1px dashed var(--border);border-radius:8px;padding:10px 14px;margin:.8em 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;text-align:center;line-height:1.9;overflow-x:auto;}
+.badge{display:inline-block;font-size:.7em;font-weight:bold;padding:1px 8px;border-radius:12px;vertical-align:middle;color:#fff;}
+.badge.a{background:#2b6cb0;}
+.badge.b{background:var(--accent2);}
+.card-row{display:flex;gap:14px;flex-wrap:wrap;margin:.6em 0;}
+.paper{flex:1 1 240px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.paper h4{margin:.1em 0 .4em;font-size:.96em;}
+.paper.a h4{color:#2b6cb0;}
+.paper.b h4{color:var(--accent2);}
+.paper p{font-size:.9em;margin:.35em 0;}
+.who{border-left:4px solid var(--res,#c2410c);background:var(--card2);border-radius:0 8px 8px 0;padding:10px 14px;margin:.7em 0;}
+.who .lbl{font-size:.8em;color:var(--muted);display:block;margin-bottom:2px;font-family:ui-monospace,monospace;letter-spacing:.03em;}
+.who .lbl.a{color:#2b6cb0;}
+.who .lbl.b{color:var(--accent2);}
+.who .lbl.f{color:var(--accent);}
+table.map{width:100%;border-collapse:collapse;margin:.8em 0;font-size:.9em;}
+table.map th,table.map td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top;}
+table.map th{background:var(--card2);color:var(--head);font-size:.8em;letter-spacing:.03em;}
+table.map td.a{color:#2b6cb0;font-weight:600;}
+table.map td.b{color:var(--accent2);font-weight:600;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin:10px 0;}
+.viz-controls .grp{display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:120px;}
+.viz-controls label{font-size:.8em;color:var(--muted);}
+.viz-controls .val{font-family:ui-monospace,monospace;color:var(--head);font-weight:bold;}
+.viz-controls button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 13px;cursor:pointer;font-size:.82em;margin-left:auto;}
+input[type=range]{accent-color:var(--accent);width:130px;}
+canvas{display:block;width:100%;height:auto;background:var(--chart-bg);border:1px solid var(--border);border-radius:10px;margin:8px auto;}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:14px 0 4px;}
+.ro{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center;}
+.ro .k{font-size:.7em;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;}
+.ro .v{font-family:ui-monospace,monospace;font-size:1.12em;font-weight:700;}
+.ro.b .v{color:var(--accent2);}
+.ro.a .v{color:#2b6cb0;}
+.ro.hero .v{color:var(--c-res);}
+.viz-note{font-size:.84em;color:var(--muted);margin-top:8px;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:.82em;color:var(--muted);margin:4px 0 10px;}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle;}
+.prov{display:flex;gap:16px;flex-wrap:wrap;}
+.prov a{flex:1 1 260px;display:block;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--fg);text-decoration:none;}
+.prov a:hover{border-color:var(--accent);}
+.prov a .n{font-weight:bold;display:block;color:var(--head);margin-bottom:4px;}
+.prov a .d{font-size:.86em;color:var(--muted);}
+footer{font-size:.8em;color:var(--muted);text-align:center;margin-top:30px;}
+@media(max-width:560px){.viz-controls{gap:12px;}input[type=range]{width:100px;}}
+</style>
+</head>
+<body>
+<article>
+  <h1>Leere Richtungen und der dünne Hebel</h1>
+  <p class="subtitle">Fusion aus: r1-075.html &#10005; r1-076.html  (Round 2)</p>
+  <p class="meta-line">Round 2 &#183; Pair 025 &#183; A: r1-075.html &#8212; &bdquo;Leere Richtungen: Falten (Origami) &#10005; Parken (Generalisierung)&rdquo; &#183; B: r1-076.html &#8212; &bdquo;Der dünne Hebel: ein lineares Objekt, das Verhalten steuert&rdquo;</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion<span class="tag">These</span></h2>
+    <p>Beide R1-Fusionen sagen im Kern dasselbe, nur aus anderen Räumen betrachtet: <strong>Ein großes,
+      überparametrisiertes bzw. hochdimensionales System wird von <em>wenigen linearen Richtungen</em> gesteuert,
+      die in einem <em>größtenteils leeren, orthogonalen Raum</em> sitzen.</strong> A (r1-075) liefert die
+      <em>Geometrie</em> dieses leeren Raums: Überparametrisierung erzeugt leere/Null-Richtungen, die eine
+      Doppelfunktion haben &#8212; <span class="badge b">Werkbank</span> im Input-/Featurespace (ein ReLU <em>faltet</em>
+      die Datenmannigfaltigkeit injektiv in sie hinein, bis eine flache Ebene trennt) und
+      <span class="badge a">Tresor</span> im Output-/Verlustspace (der Nullraum <code>ker&nbsp;W</code> parkt den
+      Restfehler, der am Test exakt unsichtbar wird: <code>G&#183;P<sub>res</sub>=0</code>). B (r1-076) liefert den
+      <em>empirischen Hebel</em> und seine <em>Kombinatorik</em>: ein Gewichtvektor mit <code>d</code> Parametern
+      (Cover 1965, Kapazität <code>2d</code>) oder sogar <em>ein einzelner Pfeil</em> <code>r&#770;</code> (Arditi 2024)
+      trägt ein ganzes Verhalten &#8212; Verweigerung ist die Projektion einer Aktivierung auf diese eine Richtung.</p>
+    <p>Der Fusionskern ist die <em>doppelte Auslastung eines einzigen großen, orthogonalen, leeren Raums</em>.
+      Überparametrisierung bzw. hohe Modell-Dimension (<code>d<sub>model</sub>&asymp;4096</code>) erzeugt einen Pool von
+      zueinander (nahezu) orthogonalen Richtungen &#8212; dieselbe Eigenschaft, die in beiden Papiern vorkommt
+      (Konzentration <code>|&lt;u,v&gt;|&sim;1/&#8730;d</code>, Johnson&#8211;Lindenstrauss). In diesem Pool sind
+      <strong>nur einige wenige Richtungen <em>geladen</em></strong>: Sie halten das <em>Verhalten</em> (B:
+      <code>r&#770;</code>=Verweigerung, <code>w</code>=Entscheidung), und &#8212; von der Eingabeseite gefaltet &#8212;
+      sie stellen die <em>Trennbarkeit</em> her (A: Werkbank). <strong>Der überwiegende Rest des Pools bleibt
+      <em>leer</em></strong> und wirkt als <em>Reservoir/Tresor</em>, in dem der Restfehler geparkt und am Test unsichtbar
+      wird (A: <code>G&#183;P<sub>res</sub>=0</code>); und weil nur wenige Richtungen geladen sind, bleibt der Raum
+      <em>kapazitätsgrenziert</em> (Cover: <code>2d</code>, Generalisierung nur bei <code>&beta;=N/d&gt;2</code>).</p>
+    <p>In einem Satz: <strong> Dieselben leeren Richtungen, die das System groß machen, machen es zugleich steuerbar
+      (ein paar geladene Achsen = die Adressen des Verhaltens), trennbar (in sie hinein gefaltet) und generalisierend
+      (der Rest wird darin geparkt und am Test verworfen). Wenige geladene Richtungen in einem leeren Raum: die gemeinsame
+      Währung von A&rsquo;s Geometrie und B&rsquo;s Hebel.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B<span class="tag">Spannung</span></h2>
+    <p>Die beiden R1-Fusionen komplementieren sich stark (beide: ein kleines lineares Objekt in einem großen, überparametrisierten
+      Raum; beide: Mechanismus aus Struktur &#8212; Rang, Richtungen, Nullraum &#8212; nicht aus Gewichtswerten; beide stützen
+      sich auf hochdimensionale Orthogonalität). Es gibt dennoch <strong>zwei echte Spannungslinien</strong> plus eine nächste
+      reale Tension auf der Informations-Ebene. (Da jede R1-Fusion selbst aus zwei Quellen besteht, wird die konkrete Unter-Seite
+      benannt &#8212; das ist hier die ehrlichste Zuordnung.)</p>
+
+    <div class="who"><span class="lbl a">Widerspruch 1 &#183; Robustheit des steuernden linearen Objekts &#8212; A sagt (r1-075, Litman-Guo-Seite)</span>
+      Die generalisierungsrelevante Struktur ist eine <strong>Invariante</strong>: &bdquo;Der Kern darf sich um <strong>Faktor
+      4,8</strong> &auml;ndern &#8212; die Gleichung gilt trotzdem <em>exakt</em>.&rdquo; Die exakte Kopplung und die Unsichtbarkeit
+      (<code>G&#183;P<sub>res</sub>=0</code>) sind <strong>invariant gegen die Details der Feature-Bewegung</strong>; die konkrete
+      Dynamik wird <em>washed out</em> &#8212; nur das Invariante (Drift &asymp; T vs. Diffusion &asymp; &#8730;T, die Zerlegung
+      Signalkanal/Reservoir) z&auml;hlt. <em>Das steuernde lineare Objekt ist robust, delokalisiert, dick.</em></div>
+    <div class="who"><span class="lbl b">A (r1-076, Arditi-Seite) sagt im Gegenteil</span>
+      Das Verhalten sitzt auf <em>genau einer</em> Richtung <code>r&#770;</code> und ist <strong>maximal zerbrechlich</strong>:
+      eine <em>Rang-1-Änderung</em> <code>W&prime;=W&minus;r&#770;r&#770;<sup>&#7488;</sup>W</code> &#8212; der <em>minimal
+      m&#246;gliche</em> Perturbation, &lt;5&nbsp;$, kein Gradient &#8212; l&#246;scht die Verweigerung komplett. &bdquo;Sicherheit ist
+      d&uuml;nn&rdquo;, &bdquo;Open-Weight-Alignment ist eine Rang-1-Änderung entfernt vom Zusammenbruch&rdquo;.
+      <em>Das steuernde lineare Objekt ist dünn, lokalisiert, ein Hair-Trigger.</em> &#8212; <strong>Dieselbe Objekt-Klasse,
+      entgegengesetztes Robustheitsurteil.</strong></div>
+
+    <div class="who"><span class="lbl a">Widerspruch 2 &#183; Rolle/Zeichen der Überfluss-Dimensionen &#8212; A sagt (r1-075)</span>
+      Die leeren/Null-Richtungen sind der <strong>Tresor</strong>: &bdquo;Das Reservoir ist riesig &#8230; es gibt mehr als genug
+      Platz, Rauschen unsch&auml;dlich zu <strong>&lsquo;parken&rsquo;</strong>.&rdquo; Breite = <strong>Parkhaus</strong> f&#252;r das
+      <em>unerw&#252;nschte</em> (das auswendig gelernte Rauschen), das dort am Test exakt unsichtbar wird (<code>G&#183;P<sub>res</sub>=0</code>).
+      <em>Der Überfluss schluckt den Fehler.</em></div>
+    <div class="who"><span class="lbl b">B sagt (r1-076, Arditi-+Cover-Seite)</span>
+      Die hohen, (nahezu) orthogonalen Achsen sind der <strong>Speicher</strong>: &bdquo;in <code>d<sub>model</sub>&asymp;4096</code>
+      sind Zufallsrichtungen nahezu orthogonal &#8230; daher &asymp;tausend Konzepte als eigene Achsen&rdquo;; eine ganze
+      <em>Verhaltensfunktion</em> (Verweigerung) sitzt auf <em>einer</em> dieser Achsen. <em>Der Überfluss schweigt die Funktion.</em>
+      <em>Dieselben überschüssigen Dimensionen, entgegengesetztes Vorzeichen: A parkt den Fehler, B speichert das Verhalten.</em></div>
+
+    <div class="who"><span class="lbl f">Nächste reale Tension &#183; Information: erhalten vs. komprimieren</span>
+      A-<strong>Origami-Seite</strong> (r1-075): &bdquo;Fold, don&rsquo;t crush&rdquo; &#8212; die gute Feature-Map ist
+      <strong>injektiv auf den Daten</strong>; keine Information geht verloren; <em>Informations-Erhaltung ist die Tugend</em>.
+      B-<strong>Cover-Seite</strong> (r1-076): das gute Objekt <strong>komprimiert</strong> &#8212; &bdquo;Die wesentliche Information
+      einer <em>unendlichen</em> Trainingsmenge kann in einem Computer mit endlicher Speicherkapazität abgelegt werden&rdquo;
+      (auf &#8804;2d Extrem-Punkten); das ganze Verhalten ist <em>Rang 1</em>. <em>Erhalten (injektiv, A-Origami) vs. auf das
+      Minimum komprimieren (B-Cover).</em> (Faustregel: A selbst spannt diesen Bogen &#8212; seine Generalisierungs-Seite
+      <em>wirft</em> den Reservoir-Anteil weg. Die Tension ist also am reinsten zwischen A&rsquo;s Origami-H&#228;lfte und
+      B&rsquo;s Cover-H&#228;lfte.)</div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung<span class="tag">Fusion</span></h2>
+
+    <h3>1 &#183; robust vs. zerbrechlich &#8594; zwei Ebenen desselben Objekts</h3>
+    <p>Das steuernde lineare Objekt hat zwei Seiten, und A und B messen <em>nicht dieselbe</em>. <strong>Robustheit der
+      Funktion &ne; Robustheit einer Koordinate</strong> (der Zug, den B in r1-076 intern schon zwischen Cover und Arditi
+      gemacht hat &#8212; und der, den A in r1-075 zwischen &bdquo;wegw&auml;schbar&rdquo; und &bdquo;lasttragend&rdquo; gesetzt hat).
+      A&rsquo;s &bdquo;invariant gegen 4,8&#215; Kern-Drift&rdquo; ist eine <em>Populationsebene</em>-Invariante: die <em>Zerlegung</em>
+      Signalkanal/Reservoir und die Skalierung Drift/Diffusion h&auml;ngen nicht von einer bestimmten Richtung ab &#8212; sie
+      verlangen nur &bdquo;genug Nullraum + einen Signalkanal&rdquo;. B&rsquo;s &bdquo;Rang-1-Zerbrechlichkeit&rdquo; ist eine
+      <em>Einzelkoordinate</em>-Eigenschaft: <em>diese</em> eine Richtung <code>r&#770;</code>, in der ein <em>bestimmtes</em>
+      Verhalten abgelegt ist. <strong>Fused Schluss:</strong> Ein Netz <em>generalisiert robust/invariant</em> (A) <em>und</em>
+      jedes <em>einzelne</em> darauf gespeicherte Verhalten ist ein <em>d&uuml;nner, editierbarer Hebel</em> (B). Aggregate ist
+      dick, die einzelne Koordinate ist dünn &#8212; beides wahr, verschiedene Ebenen.</p>
+
+    <h3>2 &#183; Parkhaus vs. Speicher &#8594; EIN Pool, zwei Auslastungen zugleich</h3>
+    <p>Es ist <strong>ein einziger Pool</strong> großer, (nahezu) orthogonaler Richtungen, der <em>gleichzeitig</em> beides tut,
+      weil er <em>groß genug</em> ist. <strong>Wenige</strong> Achsen sind <em>geladen</em>: Sie tragen die Verhaltens-Achsen
+      (B: <code>r&#770;</code>, <code>w</code>) <em>und</em> &#8212; von der Eingabeseite &#8212; die Trennungsrichtungen (A-Werkbank:
+      die Faltung geht in geladene/unbesetzte Richtungen). <strong>Die &Uuml;berzahl bleibt leer</strong> und wirkt als
+      Reservoir/Tresor, in dem der Restfehler geparkt wird (A: <code>G&#183;P<sub>res</sub>=0</code>). Genau die <em>Orthogonalit&auml;t
+      und Konzentration</em> (<code>|&lt;u,v&gt;|&sim;1/&#8730;d</code>), die B&rsquo;s &bdquo;tausend unabh&auml;ngige Achsen&rdquo;
+      erm&#246;glicht, ist dieselbe Eigenschaft, die A benutzt, um zu sagen: die Daten besetzen nur einen <em>d&#252;nnen</em> Teil
+      des Raums, der Rest ist leer. &bdquo;Meistens leer&rdquo; (A) und &bdquo;voll von orthogonalen Konzept-Achsen&rdquo; (B) sind
+      kompatibel: die <em>salienten</em> Verhaltens-Achsen nehmen nur <em>ein paar</em> der vielen Achsen ein; die &Uuml;berzahl
+      bleibt unbesetzt &#8212; also parkf&auml;hig. <strong>Fused Schluss:</strong> Der Hebel ist d&uuml;nn, <em>weil</em> der Raum
+      meist leer ist; das Parken funktioniert, <em>weil</em> der Hebel nur wenige Achsen belegt. <em>Wenige geladen &#8594; viel leer.</em></p>
+
+    <h3>3 &#183; erhalten vs. komprimieren &#8594; zwei verschiedene Abbildungen</h3>
+    <p>Genau der Zug, mit dem A in r1-075 &bdquo;injektiv vs. rangm&auml;ngig&rdquo; gel&#246;st hat: Die beiden Tugenden geh&#246;ren
+      zu <strong>unterschiedlichen Maps</strong>. Die <strong>Eingabe-/Feature-Map</strong> <code>x&#8594;h(x)</code> soll
+      <strong>injektiv</strong> bleiben (A-Origami: falten, nicht plattdr&#252;cken) &#8212; dort muss die Klassenstruktur
+      <em>erhalten</em> werden, um sie trennen zu k&#246;nnen. Die <strong>Ausgabe-/Entscheidungs-Map</strong> (das lineare
+      Read-out, die Kompression auf &#8804;2d Extrem-Punkte, das Verhalten auf einer Richtung) soll <strong>rangm&auml;ngig /
+      komprimiert</strong> sein (B-Cover: wenige Freiheitsgrade gen&#252;gen; B-Arditi: Rang 1) &#8212; dort darf Information
+      <em>wegfallen</em> (der Reservoir-Anteil, <code>G&#183;P<sub>res</sub>=0</code>). <strong>Fused Schluss:</strong> Erhalten
+      auf dem Weg <em>herein</em> (treue, injektive Faltung), komprimieren auf dem Weg <em>hinaus</em> (niedrig-rangiges Read-out,
+      Rest im Tresor). Dieselbe Pipeline, zwei Stadien mit entgegengesetzten Tugenden.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt<span class="tag">Stoff</span></h2>
+
+    <h3>Gemeinsame Grundlage</h3>
+    <p>Beide Systeme sind <em>linear entscheidend</em>: die Ausgabe ist ein Vorzeichen bzw. eine Projektion.
+      A: das Verhalten/der Fehler ist die <strong>Koordinate/Zerlegung</strong> eines Vektors in Signalkanal (
+      <code>range(W)</code>) und Reservoir (<code>ker(W)</code>). B: das Verhalten ist die <strong>Projektion</strong>
+      <code>x&#183;r&#770;</code> (bzw. <code>sign(w&#183;x)</code>) auf ein kleines lineares Objekt. Beide: Mechanismus aus
+      <em>Struktur</em> (Rang, Richtungen, Nullraum), nicht aus Gewichtswerten; beide gr&#252;ndend auf <em>einem großen,
+      &#252;berparametrisierten/hochdimensionalen, orthogonalen Raum</em>; beide mit der hochdimensionalen Konzentration
+      <code>|&lt;u,v&gt;|&sim;1/&#8730;d</code> / Johnson&#8211;Lindenstrauss als struktureller Grundlage.</p>
+
+    <div class="card-row">
+      <div class="paper a"><h4>A (r1-075) &#183; Geometrie der leeren Richtungen (Generalisierung)</h4>
+        <p><strong>Werkbank (Input/Featurespace, Origami-H&#228;lfte):</strong> jede Schicht = Amboss (affin
+          <code>Wx+b</code>: Geraden bleiben Geraden, kann Trennbarkeit nicht &auml;ndern) + Hammer (ReLU = eine
+          Faltkante/Hyperebene). <strong>Falten</strong> (Kante aus einer <em>unbesetzten</em> Richtung) ist
+          <em>injektiv</em>; <strong>Plattdr&#252;cken</strong> (Kante in der Datenebene) nicht. 2D-Ei (Ring im Ring)
+          l&#246;st <em>eine</em> Schicht mit 3 ReLU (ein Zelt); N-dim. Ei &asymp; N+1 Neuronen (konstant, nicht
+          exponentiell). Tiefe = Origami-Kaskade: lineare Regionen &prop;<strong>2<sup>L</sup></strong>. Fingerprint:
+          bimodale Tuningkurve mit Delle bei z=0; Faltma&szlig; <code>&chi;</code>. ReLU ist <em>kein</em> Hom&#246;omorphismus
+          &#8594; schlie&szlig;t L&#246;cher (Betti <code>b&#8321;</code> f&#228;llt); tanh schon. Hochdim.: Cover
+          <code>C(N,d)</code>, Konzentration <code>|&lt;u,v&gt;|&sim;1/&#8730;d</code>, Neural Collapse zu Simplex-ETF
+          (Kosinus <code>&#8722;1/(K&#8722;1)</code>). Fold-and-Cut &asymp; UAT.</p>
+        <p><strong>Tresor (Output/Verlustspace, Litman-Guo-H&#228;lfte):</strong> Training = Bewegung in den <em>n</em>
+          Ausgaben. Tangentenkern <code>K=J&#183;J&#7488;</code>; kumulative Dissipation <code>W=&#8747;K(&tau;)d&tau;</code>.
+          Zerlegung: <strong>Signalkanal = range(W)</strong> (&lambda;&gt;0) vs. <strong>Reservoir = ker(W)</strong>
+          (&lambda;=0). <strong>Kernsatz: <code>G&#183;P<sub>res</sub>=0</code></strong> &#8212; der Transfer von allem im
+          Reservoir ist an <em>jeder</em> Testmenge exakt 0, ohne Annahmen. Drift &asymp; T vs. Diffusion &asymp; &#8730;T trennt
+          Signal/Rauschen. Kopplung exakt bei quadratischem Verlust, g&#252;ltig bei 4,8&#215; Kern-Drift (<em>Invarianz</em>).
+          Ein Spektralfilter M erkl&#228;rt Implicit Bias, Double Descent, Benign Overfitting, Ridge. Algorithmus: SNR-Gate
+          <code>&mu;&#178;&gt;&sigma;&#178;/(b&#8722;1)</code>.</p>
+      </div>
+      <div class="paper b"><h4>B (r1-076) &#183; Der dünne lineare Hebel (Verhalten)</h4>
+        <p><strong>Cover 1965 (Kombinatorik):</strong> <em>&phi;-Trick</em> &#8212; krumme Fl&#228;che im Musterraum = flache
+          Ebene im Messraum; man muss nur <code>d</code> z&#228;hlen. Function-Counting
+          <code>C(N,d)=2&#931;<sub>k=0</sub><super>d-1</super> C(N-1,k)</code>; Pascal-Rekursion; <code>k</code> Zwangspunkte
+          kosten <code>k</code> Freiheitsgrade. <strong>Kapazität 2d</strong>; Phasen&#252;bergang bei
+          <code>&beta;=N/d=2</code> (<code>P&#8594;1</code> f&#252;r &beta;&lt;2, <code>P=1/2</code> bei &beta;=2,
+          <code>P&#8594;0</code> f&#252;r &beta;&gt;2); &bdquo;zwei Muster pro Gewicht&rdquo;,
+          <code>E[N*]=2d</code>. Merken vs. Verstehen: Mehrdeutigkeit
+          <code>A(N,d)=C(N,d-1)/C(N,d)&#8594;1/(&beta;&#8722;1)</code>; f&#252;r &beta;&#8804;2 ist
+          <code>A*=1</code> (100&nbsp;% willk&#252;rlich = nur auswendig); f&#252;r nur 10&nbsp;% Mehrdeutigkeit
+          <code>&beta;&asymp;11</code>. Extrem-Punkte: <code>E[R]&#8594;2d</code> (Support-Vektoren; unendliche Trainingsmenge
+          &#8594; &#8804;2d Punkte). Selbstheilend: robust <em>als Karte</em>, &#252;bersteht tote Gewichte.</p>
+        <p><strong>Arditi 2024 (empirischer Hebel):</strong> Lineare Repr&#228;sentationshypothese. Verweigerung wird von
+          <em>einer</em> Richtung <code>r&#770;</code> im Residual Stream vermittelt (13 Modelle, 1,8&#8211;72 Mrd. Parameter).
+          <em>Difference-in-Means</em>: <code>r&#770;=(&mu;<sub>harm</sub>&#8722;&mu;<sub>safe</sub>)/||&mu;<sub>harm</sub>&#8722;&mu;<sub>safe</sub>||</code>
+          (128+128 Anfragen; Filter: bypass/induce/kl/Schicht). <em>Kausalit&#228;t:</em> Ablation (notwendig,
+          refusal 0,93&#8594;0,07) + Addition (hinreichend, sogar Yoga-Fragen verweigert) &#8594; <em>notwendig und
+          hinreichend</em>. <em>Rang-1-Gewichts&#228;nderung:</em> <code>W&prime;=W&minus;r&#770;r&#770;<sup>&#7488;</sup>W</code>
+          (&lt;5&nbsp;$, kein Gradient, keine sch&#228;dlichen Antworten). Hohe Dimension: <code>|cos|&sim;1/&#8730;d</code>,
+          &asymp;tausend Achsen; eine zu l&#246;schen r&#252;hrt die anderen kaum (MMLU/ARC/GSM8K &asymp; gleich). Base-Model:
+          die Richtung existiert <em>vor</em> dem Safety-Training (Alignment &bdquo;h&#228;ngt sich dran&rdquo;).</p>
+      </div>
+    </div>
+
+    <h3>Die fusionierte Br&#252;cke (A &#8596; B)</h3>
+    <table class="map">
+      <tr><th>A (r1-075, Geometrie der leeren Richtungen)</th><th>B (r1-076, der dünne lineare Hebel)</th><th>Gemeinsam</th></tr>
+      <tr><td class="a">leere / Null-Richtungen = Reservoir <code>ker(W)</code></td><td class="b">die &asymp;4096 orthogonalen (meist unbesetzten) Achsen</td><td><strong>der große, leere, orthogonale Raum</strong></td></tr>
+      <tr><td class="a">Signalkanal = <code>range(W)</code> (geladene Richtungen)</td><td class="b">die geladenen Konzept-/Verhaltens-Achsen (<code>r&#770;</code>, <code>w</code>)</td><td><strong>die wenigen geladenen Richtungen</strong></td></tr>
+      <tr><td class="a">Falten (Werkbank, injektiv) + <em>&phi;</em>-artige Anhebung</td><td class="b">&phi;-Trick / lineare Repr&#228;sentationshypothese (Verhalten = Koordinate)</td><td>Struktur <em>linear / adressierbar</em> machen</td></tr>
+      <tr><td class="a"><code>G&#183;P_res=0</code> (Reservoir-Anteil am Test = 0)</td><td class="b">Rang-1-Orthogonalisierung (eine Koordinate l&#246;schen, Rest intakt)</td><td>Effekt <em>einzelner Koordinaten</em> isolieren</td></tr>
+      <tr><td class="a">Drift &asymp; T / Diffusion &asymp; &#8730;T; Spektralfilter M</td><td class="b">Phasen&#252;bergang bei &beta;=2; Kapazit&#228;t 2d</td><td>die <em>Schwelle</em> Merken vs. Verstehen/Generalisieren</td></tr>
+      <tr><td class="a">Tresor (Parkhaus f&#252;r Fehler) &#8212; robust/invariant (4,8&#215; Kern-Drift)</td><td class="b">Speicher (orthogonale Achsen f&#252;r Verhalten) &#8212; d&uuml;nn (Rang-1-Bruch)</td><td>dieselben leeren Richtungen, zwei Zeichen / zwei Ebenen</td></tr>
+      <tr><td class="a">SNR-Gate (Algorithmus)</td><td class="b">Difference-in-Means + Ablation/Addition (empirischer Hebel)</td><td>das lineare Objekt <em>finden &amp; nutzen</em></td></tr>
+    </table>
+
+    <h3>Die fusionierte Pipeline</h3>
+    <ol>
+      <li><strong>EIN großer, orthogonaler, leere Raum</strong> (&#252;berparametrisierung / <code>d<sub>model</sub>&asymp;4096</code>):
+        die gemeinsame Ressource. Meist unbesetzt (Konzentration <code>|&lt;u,v&gt;|&sim;1/&#8730;d</code>).</li>
+      <li><strong>Wenige Richtungen werden geladen.</strong> Von der Eingabeseite: injektiv in sie hinein gefaltet, bis
+        Trennbarkeit entsteht (A-Werkbank; Neural Collapse = Endbild). Von der Ausgabeseite: sie tragen das Verhalten als
+        adressierbare Achsen (B: <code>r&#770;</code>=Verweigerung, <code>w</code>=Entscheidung). Diese wenigen Achsen =
+        A&rsquo;s Signalkanal <em>und</em> B&rsquo;s <code>d</code> in der Kapazit&#228;t <code>2d</code>.</li>
+      <li><strong>Der Rest bleibt leer = Tresor.</strong> Der Restfehler, der nicht ins Signal wanderte, wird dort geparkt und
+        am Test exakt verworfen (<code>G&#183;P<sub>res</sub>=0</code>). <em>Gerade weil nur wenige Achsen geladen sind, ist der
+        Nullraum noch riesig &#8212; genug zum Parken.</em></li>
+      <li><strong>Der Kapazit&#228;ts-Turmbogen (B-Cover) begrenzt es:</strong> Generalisierung braucht
+        <code>&beta;=N/d&gt;2</code> (mehr Daten als <code>2d</code>); die <em>Anzahl geladener Richtungen</em> <code>d</code>
+        setzt die Kapazit&#228;t. Man kann also nicht beliebig viele Verhaltens-Achsen laden <em>und</em> noch generalisieren
+        &#8212; das ist Covers Grenze auf A&rsquo;s Mechanismus.</li>
+      <li><strong>Robust in der Gesamtheit, d&uuml;nn im Einzelnen:</strong> die Zerlegung/Generalisierung ist eine Invariante
+        (A); jede einzelne Verhaltens-Achse ist ein editierbarer, rang-1-brechbarer Hebel (B).</li>
+    </ol>
+    <div class="formula">
+      A:  W = &#8747; K(&tau;) d&tau;,  Signalkanal = range(W),  Reservoir = ker(W),  G&#183;P<sub>res</sub> = 0<br>
+      B:  Kapazit&#228;t = 2d,  Phasen&#252;bergang bei &beta;=N/d=2;  Verhalten = x&#183;r&#770; (Rang 1)<br>
+      &#8776;  EIN leerer orthogonaler Raum; einige <em>geladene</em> Achsen = Verhalten + Trennung;
+      die <em>leere</em> &Uuml;berzahl = Tresor (Fehler &#8594; 0) + Kapazit&#228;tsgrenze
+    </div>
+
+    <h3>Gemeinsame Grenzen</h3>
+    <p>A: braucht ein C&#178;-Netz, konkaven Output-Verlust, exakte Kopplung nur bei quadratischem Verlust (sonst Sobolev-Rest
+      mit <code>m&gt;d/2</code>) und Batch-Unabh&#228;ngigkeit; die Origami-Seite argumentiert Falten-vs.-Scheren-Effizienz
+      intuitiv (nicht bewiesen), <code>&chi;</code> tr&#228;gt nicht direkt auf Attention; am st&#228;rksten f&#252;r dichte
+      ReLU-Bl&#246;cke. B: Cover braucht allgemeine Lage + lineare Schwellwertger&#228;te; Arditi ist an Verweigerung gebunden
+      (eine Richtung pro Modell), setzt hochdimensionale Orthogonalit&#228;t und Base-Model-Pr&#228;existenz voraus. <strong>
+      Beides ist im dichten / hochdimensionalen / linear-gelesenen Regime am st&#228;rks&#252;ten &#8212; genau dort
+      &#252;berlappen A und B und schlie&szlig;en nahtlos aneinander an.</strong></p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktiv: ein leerer Raum, wenige geladene Richtungen<span class="tag">Viz</span></h2>
+    <p>Links (fusioniert): ein Diskus aus vielen <strong>leeren (hellen) orthogonalen Richtungen</strong>; davon sind
+      <strong>d geladen</strong> (helle, dicke). Eine ist <code>r&#770;</code> (Verweigerung, B) <em>und</em> zugleich die
+      <strong>Trennungsrichtung</strong> (A): eine flache Schnittebene &perp; <code>r&#770;</code> trennt die beiden Klassen, und
+      ein Testpunkt, der entlang <code>r&#770;</code> geschoben wird (&alpha;&uarr;), kippt ins Verweigern (B-Hebel). Rechts
+      (A): der Restfehler zerlegt sich in einen <strong>Signalanteil (1&#8722;&#961;)r</strong> (z&auml;hlt) und einen
+      <strong>Reservoiranteil &#961;r</strong> (am Test &#8594; 0, <code>G&#183;P<sub>res</sub>=0</code>); und die Kapazit&#228;t
+      <code>2d</code> mit dem Phasen&#252;bergang bei <code>&beta;=2</code> (B-Cover) begrenzt das Ganze.</p>
+
+    <div class="viz-controls">
+      <div class="grp"><label>Geladene Richtungen <span class="val" id="vDV">4</span></label>
+        <input type="range" id="vD" min="1" max="10" value="4"></div>
+      <div class="grp"><label>Restfehler im Reservoir <span class="val" id="vRho">80 %</span></label>
+        <input type="range" id="vRho" min="0" max="100" value="80"></div>
+      <div class="grp"><label>&beta; = N/d <span class="val" id="vBeta">4</span></label>
+        <input type="range" id="vBeta" min="1" max="12" value="4"></div>
+      <div class="grp"><label>Schub entlang r&#770; (&alpha;) <span class="val" id="vAlpha">0.00</span></label>
+        <input type="range" id="vAlpha" min="0" max="1.5" step="0.01" value="0"></div>
+      <button id="b_theme">Theme umschalten</button>
+    </div>
+
+    <canvas id="viz" height="460"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--c-empty)"></i>leere Richtung</span>
+      <span><i style="background:var(--c-sig)"></i>geladene (Signal-)Richtung</span>
+      <span><i style="background:var(--c-rhat)"></i>r&#770; (Verweigerung + Trennung)</span>
+      <span><i style="background:var(--c-safe)"></i>harmlos</span>
+      <span><i style="background:var(--c-harm)"></i>sch&#228;dlich</span>
+      <span><i style="background:var(--c-res)"></i>Reservoir (unsichtbar)</span>
+    </div>
+
+    <div class="ro-grid">
+      <div class="ro b"><span class="k">Geladene Richtungen d</span><span class="v" id="roD">4</span></div>
+      <div class="ro b"><span class="k">Kapazit&#228;t 2d</span><span class="v" id="roCap">8</span></div>
+      <div class="ro a"><span class="k">Testfehler (Signal-Anteil)</span><span class="v" id="roTe">&#8212;</span></div>
+      <div class="ro hero"><span class="k">Im Reservoir (am Test)</span><span class="v" id="roInv">&#8212;</span></div>
+      <div class="ro b"><span class="k">Generalisiert? (&beta;&gt;2)</span><span class="v" id="roGen">&#8212;</span></div>
+      <div class="ro a"><span class="k">Verweigert? (Test&#183;r&#770;&gt;0)</span><span class="v" id="roRef">&#8212;</span></div>
+    </div>
+    <p class="viz-note">Alle Daten inline (deterministischer PRNG); keine Netzwerke-Calls. Theme-aware &#252;ber CSS-Variablen
+      (<code>html.dark</code>) + MutationObserver. Links: der leere orthogonale Raum mit d geladenen Achsen; eine flache
+      Schnittebene &perp; r&#770; trennt die Klassen (A), und der entlang r&#770; geschobene Testpunkt kippt ins Verweigern (B).
+      Rechts: Restfehler = Signalanteil (1&#8722;&#961;)r (z&auml;hlt) + Reservoiranteil &#961;r (<code>G&#183;P<sub>res</sub>=0</code>
+      &#8594; 0 am Test), plus Covers Kapazit&#228;tskurve P(&beta;) mit Phasen&#252;bergang bei &beta;=2 und Kapazit&#228;t 2d.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz<span class="tag">Quellen</span></h2>
+    <div class="prov">
+      <a href="../r1-075.html">
+        <span class="n">A &#183; r1-075.html</span>
+        <span class="d">R1-Fusion &bdquo;Leere Richtungen: Falten (Origami) &#10005; Parken (Generalisierung)&rdquo; &#8212;
+        &Uuml;berparametrisierung erzeugt leere/Null-Richtungen mit Doppelfunktion: <em>Werkbank</em> (ReLU-Faltung, injektiv,
+        Input/Featurespace) + <em>Tresor</em> (Reservoir <code>ker&nbsp;W</code>, <code>G&#183;P<sub>res</sub>=0</code>,
+        Output/Verlustspace). Liefert die <em>Geometrie des leeren Raums</em> und den <em>Tresor</em>.</span>
+      </a>
+      <a href="../r1-076.html">
+        <span class="n">B &#183; r1-076.html</span>
+        <span class="d">R1-Fusion &bdquo;Der dünne Hebel: ein lineares Objekt, das Verhalten steuert&rdquo; &#8212; Cover 1965
+        (Kapazit&#228;t 2d, Phasen&#252;bergang &beta;=2, Extrem-Punkte) &#10005; Arditi 2024 (eine Richtung
+        <code>r&#770;</code> vermittelt Verweigerung; Difference-in-Means, Ablation/Addition, Rang-1-Orthogonalisierung).
+        Liefert die <em>Kombinatorik des kleinen linearen Objekts</em> und den <em>empirischen Hebel</em>.</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>Fusion 025 &#183; Round 2 &#183; Selbst&#228;ndige Darstellung; beide Quellen im selben Verzeichnis (../).</footer>
+</article>
+
+<script>
+(function(){
+  try{
+    var cv=document.getElementById('viz');
+    if(!cv) return;
+    var ctx=cv.getContext('2d');
+    var $=function(id){return document.getElementById(id);};
+    var el={d:$('vD'),rho:$('vRho'),beta:$('vBeta'),alpha:$('vAlpha')};
+    var TAU=Math.PI*2;
+
+    function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+    function gaussF(seed){var r=mulberry(seed);return function(){var u=0,v=0;while(u===0)u=r();while(v===0)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);};}
+
+    var NS=46,safe=[],harm=[];
+    (function(){var g=gaussF(1234);for(var i=0;i<NS;i++)safe.push({u:-2.2+g()*0.5,v:g()*0.9});
+      var g2=gaussF(4321);for(var j=0;j<NS;j++)harm.push({u:2.2+g2()*0.5,v:g2()*0.9});})();
+
+    var logF=[0];for(var i=1;i<=400;i++)logF[i]=logF[i-1]+Math.log(i);
+    function lchoose(n,k){if(k<0||k>n)return -Infinity;return logF[n]-logF[k]-logF[n-k];}
+    function logC(N,d){if(N<1||d<1)return -Infinity;if(d>=N)return N*Math.LN2;var mx=-Infinity,ts=[];for(var k=0;k<d;k++){var t=lchoose(N-1,k);ts.push(t);if(t>mx)mx=t;}var s=0;for(var q=0;q<ts.length;q++)s+=Math.exp(ts[q]-mx);return Math.log(2)+mx+Math.log(s);}
+    function Pnd(N,d){if(d<1)return 0;if(d>=N)return 1;return Math.exp(logC(N,d)-N*Math.LN2);}
+
+    function css(n,fb){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return (v&&v.length)?v:fb;}
+    function pal(){return{
+      chart:css('--chart-bg','#0f172a'),grid:css('--grid','#243050'),
+      fg:css('--fg','#e6e8ef'),mut:css('--muted','#9aa6c0'),
+      sig:css('--c-sig','#5ee0d0'),rhat:css('--c-rhat','#a78bfa'),
+      res:css('--c-res','#fb923c'),safe:css('--c-safe','#4ade80'),
+      harm:css('--c-harm','#ff7ac0'),empty:css('--c-empty','#46536e')
+    };}
+
+    var W=0,H=460,dpr=1;
+    function resize(){dpr=window.devicePixelRatio||1;var r=cv.getBoundingClientRect();W=r.width;H=460;
+      cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);}
+
+    function setTxt(id,t){var e=$(id);if(e)e.textContent=t;}
+    function arrow(x0,y0,x1,y1,color,w,hl){
+      ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w;
+      ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+      var ang=Math.atan2(y1-y0,x1-x0);hl=hl||9;
+      ctx.beginPath();ctx.moveTo(x1,y1);
+      ctx.lineTo(x1-hl*Math.cos(ang-0.4),y1-hl*Math.sin(ang-0.4));
+      ctx.lineTo(x1-hl*Math.cos(ang+0.4),y1-hl*Math.sin(ang+0.4));
+      ctx.closePath();ctx.fill();
+    }
+
+    function drawLeft(divX,C,d,alpha){
+      var top=64,bottom=H-12;
+      var cx=(10+(divX-10))/2, cy=(top+bottom)/2;
+      var R=Math.min(cx-10-14,(bottom-top)/2-10);
+      if(R<20)R=40;
+      var scale=R/3.2;
+      // frame
+      ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.strokeRect(10,30,divX-20,bottom-30+ (H-12-30) );
+      // disk rim
+      ctx.strokeStyle=C.empty;ctx.globalAlpha=0.6;ctx.lineWidth=1;
+      ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();ctx.globalAlpha=1;
+      // empty orthogonal spokes
+      ctx.lineWidth=1;ctx.globalAlpha=0.45;
+      for(var k=0;k<40;k++){var a=k*TAU/40;
+        ctx.strokeStyle=C.empty;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));ctx.stroke();}
+      ctx.globalAlpha=1;
+      // loaded spokes: rhat at angle 0 (right) + d-1 others spread
+      for(var m=0;m<d-1;m++){var ang=TAU*(m+1)/(d+1);
+        ctx.strokeStyle=C.sig;ctx.lineWidth=3;ctx.globalAlpha=0.9;
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(ang),cy+R*Math.sin(ang));ctx.stroke();ctx.globalAlpha=1;}
+      // rhat (violet) at angle 0
+      arrow(cx,cy,cx+R,cy,C.rhat,3.4,11);
+      ctx.fillStyle=C.rhat;ctx.font='bold 12px '+css('--mono','ui-monospace,monospace');ctx.textAlign='left';
+      ctx.fillText('r\u0302 (Verweigerung + Trennung)',cx+R*0.05,cy-12);
+      // blobs
+      function pt(u,v,color,rad){var px=cx+u*scale,py=cy+v*scale;ctx.beginPath();ctx.arc(px,py,rad,0,TAU);ctx.fillStyle=color;ctx.fill();}
+      ctx.globalAlpha=0.85;
+      for(var i=0;i<safe.length;i++)pt(safe[i].u,safe[i].v,C.safe,3.1);
+      for(var j=0;j<harm.length;j++)pt(harm[j].u,harm[j].v,C.harm,3.1);
+      ctx.globalAlpha=1;
+      // cut plane (perp to rhat) at u=0
+      ctx.strokeStyle=C.mut;ctx.setLineDash([6,5]);ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(cx,cy-R*0.92);ctx.lineTo(cx,cy+R*0.92);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle=C.mut;ctx.font='11px '+css('--mono','ui-monospace,monospace');ctx.textAlign='center';
+      ctx.fillText('flacher Schnitt \u27C2 r\u0302',cx,cy-R*0.92-6);
+      // test point pushed along rhat
+      var uTest=-2.2+alpha*3.6;
+      var tx=cx+uTest*scale; tx=Math.max(14,Math.min(divX-14,tx));
+      ctx.beginPath();ctx.arc(tx,cy,7,0,TAU);ctx.fillStyle=C.fg;ctx.fill();
+      ctx.lineWidth=2;ctx.strokeStyle=C.rhat;ctx.stroke();
+      ctx.fillStyle=C.fg;ctx.font='11px '+css('--mono','ui-monospace,monospace');ctx.textAlign='center';
+      ctx.fillText('Test',tx,cy-12);
+      // titles
+      ctx.fillStyle=C.fg;ctx.font='bold 15px '+css('--sans','sans-serif');ctx.textAlign='left';
+      ctx.fillText('\u2460  Leerer Raum, d geladene Richtungen',14,20);
+      ctx.fillStyle=C.mut;ctx.font='11.5px '+css('--sans','sans-serif');
+      ctx.fillText('geladene Achsen: Trennung (A) + Verhalten (B); der Rest ist leer = Tresor',14,38);
+      // refusal readout
+      var refusal=uTest>0;
+      ctx.font='bold 13px '+css('--sans','sans-serif');ctx.textAlign='left';
+      ctx.fillStyle=refusal?C.harm:C.safe;
+      ctx.fillText(refusal?'\u21B3  VERWEIGERT  (Test \u00B7 r\u0302 > 0)':'\u2192  antwortet normal  (Test \u00B7 r\u0302 < 0)',14,H-16);
+      return {refusal:refusal};
+    }
+
+    function drawRight(divX,C,d,beta,signal,reservoir,rho){
+      var rx0=divX+12,rx1=W-12,panelW=rx1-rx0;
+      ctx.fillStyle=C.fg;ctx.font='bold 15px '+css('--sans','sans-serif');ctx.textAlign='left';
+      ctx.fillText('\u2461  Restfehler & Kapazit\u00E4t',rx0,20);
+      // ---- residual decomposition ----
+      ctx.fillStyle=C.mut;ctx.font='11.5px '+css('--sans','sans-serif');
+      ctx.fillText('Restfehler r nach dem Fit',rx0,52);
+      var barX=rx0+4,barLen=panelW-40,barY=64,barH=20;
+      var total=signal+reservoir;
+      var sigFrac=total>0?signal/total:0;
+      // track
+      ctx.fillStyle=C.grid;ctx.fillRect(barX,barY,barLen,barH);
+      // signal part (green)
+      ctx.fillStyle=C.sig;ctx.fillRect(barX,barY,barLen*sigFrac,barH);
+      // reservoir part (orange, faded)
+      ctx.globalAlpha=0.55;ctx.fillStyle=C.res;ctx.fillRect(barX+barLen*sigFrac,barY,barLen*(1-sigFrac),barH);ctx.globalAlpha=1;
+      ctx.strokeStyle=C.grid;ctx.strokeRect(barX,barY,barLen,barH);
+      ctx.fillStyle=C.fg;ctx.font='10.5px '+css('--mono','ui-monospace,monospace');
+      ctx.fillText('Signalanteil (1\u2212\u03C1)r = '+signal.toFixed(3)+'  (z\u00E4hlt)',barX,barY+barH+16);
+      ctx.fillStyle=C.res;
+      ctx.fillText('Reservoiranteil \u03C1r = '+reservoir.toFixed(3)+'  (am Test \u2192 0)',barX,barY+barH+30);
+      if(rho>=0.9){
+        ctx.fillStyle=C.sig;ctx.font='bold 11px '+css('--mono','ui-monospace,monospace');
+        ctx.fillText('\u2713  G\u00B7P_res = 0  (unsichtbar am Test)',barX,barY+barH+46);
+      }
+      // ---- capacity / phase plot ----
+      var py0=barY+barH+58,py1=H-26,pw=panelW-46,px0=rx0+44,px1=rx1-12;
+      if(py1-py0<60){py1=py0+60;}
+      var bMin=0.3,bMax=8;
+      function X(b){return px0+(b-bMin)/(bMax-bMin)*pw;}
+      function Y(p){return py0+(1-Math.min(1,Math.max(0,p)))*(py1-py0);}
+      // memorize shading (beta<2)
+      ctx.save();ctx.globalAlpha=0.10;ctx.fillStyle=C.res;
+      ctx.fillRect(X(bMin),py0,X(Math.min(2,bMax))-X(bMin),py1-py0);ctx.restore();
+      // frame
+      ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.strokeRect(px0,py0,pw,py1-py0);
+      // threshold beta=2
+      ctx.strokeStyle=C.rhat;ctx.setLineDash([5,4]);ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(X(2),py0);ctx.lineTo(X(2),py1);ctx.stroke();ctx.setLineDash([]);
+      // P curve
+      ctx.strokeStyle=C.sig;ctx.lineWidth=2;ctx.beginPath();var st=false;
+      for(var b=bMin;b<=bMax;b+=0.05){var N=Math.max(1,Math.round(b*d));var p=Pnd(N,d);var xx=X(b),yy=Y(p);if(!st){ctx.moveTo(xx,yy);st=true;}else ctx.lineTo(xx,yy);}
+      ctx.stroke();
+      // current beta dot
+      var Nb=Math.max(1,Math.round(beta*d));var pb=Pnd(Nb,d);
+      ctx.beginPath();ctx.arc(X(Math.max(bMin,Math.min(bMax,beta))),Y(pb),5,0,TAU);ctx.fillStyle=C.rhat;ctx.fill();
+      ctx.lineWidth=1.5;ctx.strokeStyle=C.fg;ctx.stroke();
+      // labels
+      ctx.fillStyle=C.mut;ctx.font='11px '+css('--mono','ui-monospace,monospace');ctx.textAlign='center';
+      ctx.fillText('\u03B2 = N/d',px0+pw/2,py1+16);
+      ctx.save();ctx.translate(px0-10,py0+(py1-py0)/2);ctx.rotate(-Math.PI/2);ctx.fillText('P trennbar',0,0);ctx.restore();
+      ctx.textAlign='left';ctx.fillStyle=C.mut;
+      ctx.fillText('merken (\u03B2<2)',px0+4,py1-6);
+      ctx.fillText('verstehen (\u03B2>2)',X(2)+6,py1-6);
+      ctx.fillStyle=C.rhat;ctx.fillText('2d-Schwelle',X(2)+4,py0+12);
+      ctx.fillStyle=C.fg;ctx.font='bold 12px '+css('--mono','ui-monospace,monospace');ctx.textAlign='right';
+      ctx.fillText('d='+d+' \u2192 2d='+2*d,rx1,py0-6);
+      ctx.textAlign='left';ctx.fillStyle=C.mut;ctx.font='11px '+css('--mono','ui-monospace,monospace');
+      ctx.fillText('P(\u03B2) = Anteil trennbarer F\u00E4rbungen',px0,py0-6);
+    }
+
+    function draw(){
+      if(!W)resize();
+      if(W<10)return;
+      ctx.clearRect(0,0,W,H);
+      var C=pal();
+      var d=el.d?(+el.d.value):4;
+      var rho=el.rho?(+el.rho.value)/100:0.8;
+      var beta=el.beta?(+el.beta.value):4;
+      var alpha=el.alpha?(+el.alpha.value):0;
+      var base_r=0.40;
+      var signal=base_r*(1-rho);
+      var reservoir=base_r*rho;
+      setTxt('vDV',String(d));setTxt('vRho',Math.round(rho*100)+' %');
+      setTxt('vBeta',String(Math.round(beta)));setTxt('vAlpha',alpha.toFixed(2));
+      var divX=W*0.57;
+      var left=drawLeft(divX,C,d,alpha);
+      drawRight(divX,C,d,beta,signal,reservoir,rho);
+      // readouts
+      setTxt('roD',String(d));setTxt('roCap',String(2*d));
+      setTxt('roTe',signal.toFixed(3));
+      setTxt('roInv',(rho>=0.999)?'exakt 0 \u2713':reservoir.toFixed(3)+' \u2192 0');
+      var gen=beta>2; setTxt('roGen',gen?'JA':'NEIN');
+      var ge=$('roGen'); if(ge)ge.style.color=gen?C.sig:C.res;
+      var re=$('roRef'); re.textContent=left.refusal?'JA':'NEIN';
+      re.style.color=left.refusal?C.harm:C.safe;
+    }
+
+    Object.keys(el).forEach(function(k){
+      if(!el[k])return;
+      el[k].addEventListener('input',draw);
+      el[k].addEventListener('change',draw);
+    });
+    var tid=null;
+    window.addEventListener('resize',function(){clearTimeout(tid);tid=setTimeout(function(){resize();draw();},150);});
+    var btn=$('b_theme');
+    if(btn){btn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});}
+    var mo=new MutationObserver(function(){draw();});
+    mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    resize();draw();
+    window.addEventListener('load',function(){setTimeout(function(){resize();draw();},60);});
+  }catch(e){/* no-op: keep zero console errors */}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "024",
+  "a": "combined/r1-057.html",
+  "b": "combined/r1-013.html",
+  "a_title": "Der lesende Fluss — Fusion transformer_dynamics ✕ j_space",
+  "b_title": "Das Netz als geometrisches Objekt — Fusion (intrinsische Dimensionen ✕ Attention als optimaler Transport)",
+  "combined_theme": "niedrigdimensionale-geometrie-des-flusses",
+  "one_line": "Ein neuronales Netz ist ein niedrigdimensionales geometrisches Objekt — als sich linearisierender Fluss durch den Residual-Stream (r1-057, dynamisch) und als dünne gekrümmte Mannigfaltigkeit mit Fisher-Metrik (r1-013, statisch); lesbar, wo es linear wird, generalisierend, weil es dünn ist.",
+  "contradictions": [
+    "Nutzen der Niedrigdimensionalität: A (r1-057) sagt, das Dünn-/Linear-Werden macht den Fluss lesbar und steuerbar (Bericht/Broadcast, J-Space, ≈6–7 % Varianz treiben ≈59 % der Berichts-Änderungen); B (r1-013) sagt, das Dünn-Sein (ID) macht das Netz generalisieren (r=0.94) — unterschiedlicher Zweck für dieselbe geometrische Eigenschaft.",
+    "Linearisierung: A feiert sie (Fluss linearisiert in mittleren Schichten, MI↓/Korr↑; genau das macht den J-Lens-Readout lesbar); B warnt davor (gekrümmte Datenfläche nicht linear/flach glätten, sonst PCA-Fehler >10×; Fisher-Metrik statt euklidisch) — derselbe Begriff, entgegengesetzter Normwert.",
+    "Zeit vs. Stille: A ist dynamisch (Residual-Stream läuft 'in der Zeit' über die Schichten; Velocity ‖Δh‖, Phasen-Orbieten, Selbstkorrektion); B ist statisch (Mannigfaltigkeit/Metrik pro Snapshot, pool1→pool4, kein Zeitbild) — Flussbahn vs. raumzeitlicher Schnitt."
+  ],
+  "resolution": "Linearisieren heißt (A) die interne, vom Netz vollzogene Glättung seines Zustands (faktisch, gut — die J-Lens liest den bereits linearisierten Zustand linear), während Bs 'nicht glätten' die externe Analyse-/Update-Ebene betrifft (PCA/euklidisch auf einer gekrümmten Struktur = Fehler). Dünn+linear ⇒ Invarianz ⇒ generalisiert (B, Eingabe-Seite) UND broadcastet/ist lesbar (A, Ausgabe-Seite) — Broadcast ist das verbale Zwilling der Generalisierung. Selbstkorrektion (A-F7, Kontraktion auf die Mannigfaltigkeit) macht die dünne Mannigfaltigkeit zum Attraktor des Flusses: B ist der statische Schnitt, A die Zeitentwicklung dieses Schnitts (Fluss-tragende Mannigfaltigkeit mit Metrik).",
+  "viz": "Canvas: eine dünne, gekrümmte, fließende Mannigfaltigkeit (Ribbon) über die Schichten 0–63, die mit der Tiefe linearisiert (gerade wird) und dünner wird (ID 58→19); eine Fisher-Schritt-Ellipse am bewegten Punkt, die mit Temperatur τ und Commitment (Schicht) wächst/schrumpft; schattierte lesbare J-Space-Band (38–92 %) mit Konzept-Tokens; unten die drei A-Dynamik-Kurven (MI↓, Korrelation↑, Velocity↑). Controls: Layer-Slider, τ-Slider, Aufgabe (Spinne/Rechnung), Play; theme-aware, inline Daten."
+}

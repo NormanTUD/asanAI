@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vom stetigen Feld zur diskreten Antwort — Fusion r1-023 ✕ r1-053 (Round 2)</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ecdf; --panel:#fffdf8; --panel2:#f6f2e9;
+  --ink:#20242c; --ink2:#5b6273;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#be185d; --accent4:#1d4ed8;
+  --grid:#e6e0d0; --line:#e6e1d2;
+  --good:#15803d; --bad:#b91c1c; --warn:#b45309;
+  --canvas:#ffffff;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111726; --panel:#141d31; --panel2:#1a2439;
+  --ink:#e8ecff; --ink2:#a8b3d9;
+  --accent:#7cf5c4; --accent2:#ffb86b; --accent3:#ff7ab6; --accent4:#8ab4ff;
+  --grid:#243150; --line:#26314f;
+  --good:#6ee7a0; --bad:#ff9b9b; --warn:#ffd166;
+  --canvas:#0d1424;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 62%);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+main{max-width:820px;margin:0 auto;padding:34px 22px 90px}
+header{padding:26px 10px 8px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--panel2);border:1px solid var(--line);color:var(--accent);padding:4px 12px;border-radius:99px;margin-bottom:14px}
+h1{font-size:clamp(26px,4.8vw,40px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin:0 0 14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--ink2);font-size:15px;margin:0 0 8px;max-width:70ch}
+.sub code{font-family:var(--mono);font-size:.86em;background:var(--panel2);border:1px solid var(--line);padding:1px 7px;border-radius:6px;color:var(--accent)}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin-top:10px}
+.fuse-line b{color:var(--accent)}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+nav.toc a{color:var(--ink2);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);background:var(--panel2)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px 26px;margin:20px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+section h2{margin:0 0 14px;font-size:clamp(19px,3vw,24px);letter-spacing:-.01em;color:var(--accent)}
+section h2 .n{font-family:var(--mono);font-size:.5em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--panel2);border-radius:99px;padding:3px 9px}
+h3{color:var(--accent2);margin:20px 0 8px;font-size:1.06rem}
+p{font-size:1rem;color:var(--ink2);margin:0 0 13px}
+p b,li b{color:var(--ink)}
+p+p{margin-top:11px}
+.lead{font-size:1.03rem}
+.hl{color:var(--accent);font-weight:600}
+.hl2{color:var(--accent2);font-weight:600}
+.hl3{color:var(--accent3);font-weight:600}
+a{color:var(--accent4)}
+.note{border-left:3px solid var(--accent4);background:var(--panel2);padding:11px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.94rem;color:var(--ink2)}
+.note b{color:var(--ink)}
+.note.a{border-color:var(--accent)}
+.note.b{border-color:var(--accent2)}
+.note.rose{border-color:var(--accent3)}
+ul{margin:10px 0;padding-left:22px;color:var(--ink2);font-size:.96rem}
+li{margin:8px 0}
+.wrow{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:12px 0;background:var(--panel2)}
+.wrow .wl{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--accent);margin-bottom:7px}
+.wrow .wa{font-size:.94rem;color:var(--ink2)}
+.wrow .wa b{color:var(--ink)}
+.wrow .pa{color:var(--accent);font-weight:700}
+.wrow .pb{color:var(--accent2);font-weight:700}
+.m{font-family:'Cambria Math','STIX Two Math',Georgia,'Times New Roman',serif;font-style:italic;letter-spacing:.01em;white-space:nowrap}
+.m sup,.m sub{font-size:.72em;font-style:normal}
+.formula{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:14px 0;overflow-x:auto;text-align:center;font-size:1rem;line-height:1.9}
+.formula .op{color:var(--ink2);font-style:normal}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent);font-weight:700}
+td{color:var(--ink2)}
+td b{color:var(--ink)}
+.trow-a{color:var(--accent);font-weight:600}
+.trow-b{color:var(--accent2);font-weight:600}
+.viz-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+canvas.viz{display:block;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--canvas);margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:10px 0 4px;font-size:.82rem;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.viz-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:12px}
+.controls{display:flex;flex-direction:column;gap:12px}
+.ctrl{display:flex;flex-direction:column;gap:5px}
+.ctrl label{font-size:.86rem;color:var(--ink2);display:flex;justify-content:space-between}
+.ctrl label .val{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;outline:none;cursor:pointer;background:var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 0 2px var(--panel)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+button{background:transparent;color:var(--ink);border:1px solid var(--line);padding:6px 14px;border-radius:9px;font-weight:600;cursor:pointer;font-size:.85rem;font-family:var(--mono);transition:.15s}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;font-size:.93rem}
+.verdict{font-weight:700;font-size:.95rem;padding:9px 12px;border-radius:10px;margin-bottom:11px;border:1px solid var(--line);background:var(--panel2)}
+.verdict.good{color:var(--good);border-color:var(--good)}
+.verdict.warn{color:var(--warn);border-color:var(--warn)}
+.verdict.bad{color:var(--bad);border-color:var(--bad)}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.9rem}
+.kv span:first-child{color:var(--ink2)}
+.kv span:last-child{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer;font-family:var(--mono)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;color:var(--ink2);font-size:.85rem;padding:24px 10px 6px}
+.prov{display:grid;gap:12px;margin-top:6px}
+.prov a{display:block;text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;transition:.15s}
+.prov a:hover{border-color:var(--accent);transform:translateY(-1px)}
+.prov .t{font-weight:700;color:var(--ink);font-size:.97rem}
+.prov .t code{font-family:var(--mono);font-size:.9em;color:var(--accent)}
+.prov .d{color:var(--ink2);font-size:.87rem;margin-top:5px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#9790; Dunkel</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 2 &middot; Paar 028 &middot; Garben &times; Quantisierung</div>
+  <h1>Vom stetigen Feld zur <em>diskreten Antwort</em></h1>
+  <p class="sub">Ein neuronales Modell verschmelzt <b>lokale, niedrigdimensionale St&uuml;cke</b> zu einem <b>stetigen Feld</b> &mdash; das zugleich <span class="hl">Garben-Globalsektion</span> (A) und <span class="hl2">Interferenz-/Logit-Feld</span> (B) ist. Die Ausgabe ist ein <b>Readout</b> dieses Feldes: <span class="hl">identisch</span> (stetig, A) oder <span class="hl2">Argmax/Quantisierung</span> (diskret, B).</p>
+  <p class="fuse-line">Fusion aus: <b>r1-023.html</b> &#10007; <b>r1-053.html</b> &nbsp;(Round 2)</p>
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widerspr&uuml;che</a>
+    <a href="#aufloesung">Aufl&ouml;sung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+</header>
+
+<!-- ==================== 1 ==================== -->
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p class="lead">Die beiden R1-Fusionen beschreiben von entgegengesetzten Seiten dieselbe zwei-stufige Maschine. <b>Stufe 1 &mdash; Feldbau:</b> Ein neuronales Modell bildet ein <b>stetiges Feld</b> als (eingeschr&auml;nkte) lineare Kombination <span class="m">Feld = &Sigma;<sub>j</sub> c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub></span> aus <b>lokalen, niedrigdimensionalen St&uuml;cken</b>. Dieses eine Feld ist zugleich die <span class="hl">globale Sektion des neuronalen Garbens</span> (r1-023: &bdquo;globale Sektion = lineare Kombination lokaler Sektionen&ldquo;) <i>und</i> die <span class="hl2">Fourier-Interferenz- / Logit-Landschaft</span> (r1-053: &bdquo;Logit-Feld &uuml;ber dem Raster&ldquo;). Die St&uuml;cke sind A&rsquo;s affine ReLU-Sektionen bzw. Vektor-Stapel einerseits und B&rsquo;s Kosinus-Basisfunktionen bzw. effektiven Blatt-Richtungen andererseits; die Beiwerte <span class="m">c<sub>j</sub></span> sind die gelernten Verschmelzungsgewichte.</p>
+<p><b>Stufe 2 &mdash; Readout:</b> Die beiden Papiere unterscheiden sich nur darin, <b>wie sie dieses gemeinsame Feld ablesen</b>. <span class="hl">r1-023</span> liest es <b>als sich selbst</b> ab (identisches Readout): die stetige globale Sektion <i>ist</i> das Produkt &mdash; eine gefittete Funktion oder ein gegl&auml;tteter Vektor. <span class="hl2">r1-053</span> liest es per <b>Argmax/Quantisierung</b> ab: die diskrete Antwort = der n&auml;chste Anker auf dem Raster; Softmax macht den Peak zur Wahrscheinlichkeit.</p>
+<div class="note"><b>Die eine integrierte Position:</b> Ein neuronales Modell = <b>lokale niedrigdimensionale St&uuml;cke &rarr; (lineares Verschmelzen) &rarr; ein Feld&nbsp;(<span class="hl">Garben-Globalsektion</span> = <span class="hl2">Interferenzfeld</span>) &rarr; Readout-Functional&nbsp;&Phi;</b>, mit &Phi; &isin; {identisch (stetig, A), Argmax/Quantisierer (diskret, B)}. <span class="hl3">Der Quantisierungsschritt ist genau der Ort, an dem die informations-theoretische Kosten (Rate-Distortion-Boden) entsteht</span> &mdash; und er ist verlustfrei nur, wenn das Feld auf dem Raster liegt (ausgerichtet) bzw. das Ziel stetig ist. A steht am Ende des Feldbaus, B am Ende des Readouts; gemeinsam bilden sie eine Maschine.</div>
+</section>
+
+<!-- ==================== 2 ==================== -->
+<section id="widersprueche">
+<h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+<p>Die beiden R1-Fusionen stehen in vier konkreten Punkten auf unvereinbaren Seiten (bzw. an der n&auml;chsten realen Spannung). A = r1-023 (Garben-Modell), B = r1-053 (Antworten-Engpass). Je ein Punkt mit der tats&auml;chlichen Aussage:</p>
+
+<div class="wrow"><div class="wl">&#9312; WO DER KERN DER MASCHINE SITZT &mdash; STETIGES OBJEKT VS. DISKRETE ANTWORT</div>
+<div class="wa"><span class="pa">A (r1-023):</span> Die Essenz ist das <b>Verschmelzen</b> lokaler Sektionen zu einem <b>stetigen</b> globalen Objekt (Funktion / gegl&auml;tteter Vektor); dieses Objekt <i>ist</i> die Ausgabe. Lernen <i>ist</i> das Verschmelzen (A) bzw. Inferenz f&uuml;hrt es aus (B).<br>
+<span class="pb">B (r1-053):</span> Die Essenz ist die <b>Quantisierung</b> eines kontinuierlichen Feldes in <b>eine diskrete</b> Antwort (ein Wort / ein Rest); die diskrete Selektion (Argmax) <i>ist</i> die Ausgabe, und genau dort liegt der Engpass.<br>
+&rarr; Beide sehen ein stetiges Feld, verorten aber den &bdquo;echten&ldquo; Akt an <b>entgegengesetzten Enden derselben Pipeline</b> (Feldbau vs. Readout).</div></div>
+
+<div class="wrow"><div class="wl">&#9313; REMOVIERTER VS. IRREDUZIBLER FEHLER (sch&auml;rfster Punkt)</div>
+<div class="wa"><span class="pa">A (r1-023):</span> Der Fehler ist ein <b>Approximations-/Deckungsfehler</b>; &bdquo;mehr Neuronen = feinere &Uuml;berdeckung = bessere Approximation&ldquo; &mdash; Universal-Approximation-&auml;hnlich, ohne Rate-Garantie, aber <b>prinzipiell gegen null treibbar</b> durch Kapazit&auml;t (feinere &Uuml;berdeckung).<br>
+<span class="pb">B (r1-053):</span> Der Fehler hat eine <b>irreduzible Untergrenze</b> (Satz 2: <span class="m">Fehler(N) &ge; c<sub>k</sub>&middot;(V/N)<sup>2/k</sup></span>) plus 5-%-Boden <span class="m">m<sub>0.05</sub>&asymp;0.04&ndash;0.06</span>; w&ouml;rtlich: &bdquo;kein Training und kein gr&ouml;&szlig;eres Vokabular dr&uuml;cken den Fehler auf null&ldquo; &mdash; er verschwindet nur im <i>ausgerichteten</i> Sonderfall.<br>
+&rarr; Direkter Konflikt &uuml;ber <i>&bdquo;Kann der Fehler auf null?&ldquo;</i>: A sagt <b>ja</b> (feinere &Uuml;berdeckung), B sagt <b>nein</b> (Boden) &mdash; <i>au&szlig;er</i> ausgerichtet.</div></div>
+
+<div class="wrow"><div class="wl">&#9314; ROLLE DER LINEAREN KOMBINATION &mdash; KOMBINATION VS. SELEKTION</div>
+<div class="wa"><span class="pa">A (r1-023):</span> Das Verschmelzen <span class="m">&Sigma; c<sub>j</sub>&middot;Sektion<sub>j</sub></span> <b>ist die Ausgabe</b> (stetig); Beiwerte affin (frei signiert, + Bias) oder convex (&Sigma;c=1) &mdash; die gewichtete Summe <i>ist</i> das Ergebnis.<br>
+<span class="pb">B (r1-053):</span> Die lineare Kombination (Fourier-Interferenz <span class="m">logit(c)=&Sigma;<sub>k</sub> &alpha;<sub>k</sub>cos(&omega;<sub>k</sub>(target&minus;c))</span>) ist nur das <b>Zwischenglied</b>; die eigentliche Antwort ist ein <b>hartes Argmax/Selektion</b> &uuml;ber das Feld (Softmax gibt eine Wahrscheinlichkeit) &mdash; <i>nicht</i> die gewichtete Summe.<br>
+&rarr; &bdquo;Lineare Kombination&ldquo; bedeutet zwei verschiedene Dinge: <b>finale Ausgabe</b> (A) vs. <b>Pr&auml;-Quantisierungs-Landschaft</b> (B).</div></div>
+
+<div class="wrow"><div class="wl">&#9315; TYP DER NIEDRIGDIMENSIONALEN STRUKTUR &mdash; &Uuml;BERDECKUNG VS. DIMENSION (n&auml;chste reale Spannung)</div>
+<div class="wa"><span class="pa">A (r1-023):</span> betont <b>Topologie/&Uuml;berdeckung</b> &mdash; wo sich die St&uuml;cke &uuml;berlappen (Mannigfaltigkeit mit ReLU-Deckung bzw. diskreter Simplizial-Nerve); kombinatorisch.<br>
+<span class="pb">B (r1-053):</span> betont <b>intrinsische Dimension/Kr&uuml;mmung</b> &mdash; <span class="m">k&asymp;20</span>, Fourier-Torus vs. glattes d&uuml;nnes Blatt; metrisch.<br>
+&rarr; Kein echter Widerspruch; die n&auml;chste Spannung ist, <b>welche Invariante die zentrale ist</b>: Deckungskombinatorik (A) vs. intrinsische Dimension (B).</div></div>
+</section>
+
+<!-- ==================== 3 ==================== -->
+<section id="aufloesung">
+<h2><span class="n">3</span>Aufl&ouml;sung</h2>
+<div class="note a"><b>Fusioniertes Grundger&uuml;st:</b> Es gibt <b>eine</b> Maschine in zwei Stufen &mdash; <b>Feldbau</b> (Verschmelzen der St&uuml;cke) und <b>Readout</b> (Funktionales &Phi; &uuml;ber dem Feld). Die vier Punkte l&ouml;sen sich auf, weil A und B zwei <i>Regime desselben Feldes</i> beschreiben und sich nur in <b>Stufe 2</b> und im <b>Ziel-Typ</b> unterscheiden.</div>
+
+<h3>&#9312; Kern-Sitz &rarr; zwei Stufen derselben Pipeline</h3>
+<p>A beschreibt <b>Stufe 1</b> (das Feld als Objekt), B beschreibt <b>Stufe 2</b> (das Feld &rarr; diskret). Beide sind Readout-Regime eines gemeinsamen Feldes. <b>Fusion:</b> der &bdquo;Kern&ldquo; ist das gemeinsame Feld; A = stetiges Regime (st&ouml;pt beim Feldbau auf), B = diskretes Regime (f&uuml;hrt das Feld zur Quantisierung).</p>
+
+<h3>&#9313; Fehler &rarr; zwei Fehlerarten, ein Hebel</h3>
+<p>Es gibt zwei Fehler: (i) <b>Approximationsfehler auf stetigem Ziel</b> (A) &mdash; reduzierbar durch feinere &Uuml;berdeckung; (ii) <b>Quantisierungsfehler auf diskretem Raster</b> (B) &mdash; rate-distortion-begrenzt, <i>au&szlig;er</i> ausgerichtet. Der &bdquo;Kapazit&auml;ts-Hebel&ldquo; ist <b>dieselbe Gr&ouml;&szlig;e</b>: feinere &Uuml;berdeckung (A) &equiv; feineres Raster / gr&ouml;&szlig;eres N (B). <b>Fusion:</b> Fehler &rarr; 0 <i>gdn.</i> (Ziel stetig &amp; &Uuml;berdeckung fein) <b>ODER</b> (Struktur auf dem Raster ausgerichtet); sonst irreduzibel. Die &Uuml;berdeckungs-Zellen (A) <i>sind</i> die Quantisierungs-Zellen/Voronoi-Anker (B) &mdash; ein Objekt, zwei Namen.</p>
+
+<h3>&#9314; Kombination vs. Selektion &rarr; ein Feld, zwei Funktionalen</h3>
+<p>Verallgemeinert: <span class="m">Antwort = &Phi;(Feld)</span>, <span class="m">Feld = &Sigma;<sub>j</sub> c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub></span>. &Phi;=identisch (A) liest das Feld direkt ab; &Phi;=Argmax/Softmax (B) selektiert. Die Beiwert-Einschr&auml;nkung (affin/convex, A) <i>formt</i> das Feld; die Raster-Ausrichtung (B) entscheidet die <i>Verlustfreiheit des Readouts</i>. <b>Fusion:</b> Verschmelzen = Feldbau; Readout = Funktionales &Phi; &uuml;ber dem Feld. &bdquo;Kombination&ldquo; (A) ist das Feld selbst, &bdquo;Selektion&ldquo; (B) das Argmax &uuml;ber demselben Feld.</p>
+
+<h3>&#9315; &Uuml;berdeckung vs. Dimension &rarr; zwei Facetten eines Objekts</h3>
+<p>Beide sind Facetten von &bdquo;niedrigdimensionaler Basis&ldquo;: die &Uuml;berdeckung (A) gibt die <i>Kombinatorik</i> (welche St&uuml;cke &uuml;berlappen), die intrinsische Dimension/Kr&uuml;mmung (B) gibt die <i>Metrik</i> (wie viele effektive Richtungen, wie gekr&uuml;mmt). <b>Fusion:</b> ein niedrigdimensionaler Basis-Raum mit sowohl &Uuml;berdeckung (Kombinatorik) als auch Dimension/Kr&uuml;mmung (Metrik); N (St&uuml;cke/Zellen) und k (effektive Richtungen) sind zwei Koordinaten desselben Objekts.</p>
+</section>
+
+<!-- ==================== 4 ==================== -->
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+<p class="lead">Die substanzielle Verschmelzung als <b>ein</b> Schema. Die Zeile &bdquo;Fusioniertes Feld-Modell&ldquo; ist das Objekt, von dem eine sp&auml;tere Runde allein arbeiten kann:</p>
+
+<table>
+<tr><th>Komponente</th><th class="trow-a">A &mdash; r1-023 (Garben-Modell)</th><th class="trow-b">B &mdash; r1-053 (Antworten-Engpass)</th><th>Fusioniertes Feld-Modell</th></tr>
+<tr><td><b>Lokale St&uuml;cke</b></td><td>affine ReLU-Sektionen <span class="m">w<sub>j</sub>x+b<sub>j</sub></span> (A); Vektor-Stapel <span class="m">v<sub>j</sub>=W<sub>V</sub>x<sub>j</sub></span> (B)</td><td>Kosinus-Basis <span class="m">cos(&omega;<sub>k</sub>&middot;)</span> (A); effektive Blatt-Richtungen (B)</td><td>niedrigdimensionale lokale Sektionen</td></tr>
+<tr><td><b>Verschmelzen</b></td><td><span class="m">&Sigma; c<sub>j</sub>&middot;Sektion<sub>j</sub></span>, c<sub>j</sub> affin/convex (gelernt)</td><td><span class="m">logit=&Sigma;<sub>k</sub> &alpha;<sub>k</sub>cos(&omega;<sub>k</sub>(target&minus;c))</span> (gelernt)</td><td><span class="m">Feld = &Sigma; c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub></span></td></tr>
+<tr><td><b>Feld = Objekt</b></td><td>globale Sektion (Funktion / Vektor)</td><td>Logit-/Score-Feld &uuml;ber Raster</td><td><b>dasselbe Feld</b> (Globalsektion = Interferenzfeld)</td></tr>
+<tr><td><b>Readout</b></td><td>identisch (stetig: fiten / gl&auml;tten)</td><td>Argmax / Softmax (diskret: Quantisierung)</td><td>&Phi; &isin; {identisch, Quantisierer}</td></tr>
+<tr><td><b>Basis / Raster</b></td><td>&#8477;-&Uuml;berdeckung / Simplizial-Nerve (A); gelernte Metrik <span class="m">G=(W<sub>V</sub>&#8868;)<sup>T</sup>W<sub>V</sub></span></td><td><span class="m">&#8484;<sub>P</sub></span>-Raster (P=113) / Vokabular-Anker (B)</td><td>&Uuml;berdeckungs-Zellen = Quantisierungs-Anker</td></tr>
+<tr><td><b>Fehler</b></td><td>Approximationsfehler, reduzierbar (feinere &Uuml;berdeckung)</td><td>Rate-Distortion-Boden <span class="m">c<sub>k</sub>(V/N)<sup>2/k</sup></span> + <span class="m">m<sub>0.05</sub></span>, irreduzibel (au&szlig;er ausgerichtet)</td><td>stetig &rarr; 0; diskret &rarr; Boden gdn. nicht ausgerichtet</td></tr>
+<tr><td><b>Kapazit&auml;ts-Hebel</b></td><td>mehr Neuronen (feinere &Uuml;berdeckung)</td><td>mehr Frequenzen k / gr&ouml;&szlig;eres N</td><td>K (St&uuml;cke) / N (Anker)</td></tr>
+</table>
+
+<h3>Schl&uuml;selmathematik A (r1-023) &mdash; Verschmelzen zur stetigen Globalsektion</h3>
+<div class="formula">
+<span class="m">lokale Sektion: z<sub>j</sub>=w<sub>j</sub>x+b<sub>j</sub></span> &nbsp;<span class="op">&middot;</span>&nbsp; <span class="m">Restriktion: ReLU(z<sub>j</sub>)</span> &nbsp;<span class="op">&middot;</span>&nbsp; <span class="m">globale Sektion: y&#770;(x)=&Sigma;<sub>j</sub> c<sub>j</sub>&middot;ReLU(w<sub>j</sub>x+b<sub>j</sub>)+&beta;</span><br>
+<span class="m">c<sub>j</sub> affin (frei signiert, +&beta;) &rArr; Ziel fiten &middot; convex (&Sigma;c<sub>j</sub>=1) &rArr; Repr&auml;sentation gl&auml;tten</span> &nbsp;<span class="op">&middot;</span>&nbsp; <span class="m">G=(W<sub>V</sub>&#8868;)<sup>T</sup>W<sub>V</sub></span> formt die Topologie
+</div>
+
+<h3>Schl&uuml;selmathematik B (r1-053) &mdash; Interferenzfeld + Quantisierungs-Geometrie</h3>
+<div class="formula">
+<span class="m">&omega;<sub>k</sub>=2&pi;k/P</span> &nbsp;<span class="op">&middot;</span>&nbsp; <span class="m">logit(c)=&Sigma;<sub>k</sub> &alpha;<sub>k</sub>cos(&omega;<sub>k</sub>(target&minus;c))</span>; bei <span class="m">c*=target</span> alle cos=1 &rarr; <span class="m">logit(c*)=&Sigma;&alpha;<sub>k</sub></span> = Maximum<br>
+<span class="m">Margin m(h)=Score(Sieger)&minus;Score(2.)</span> &nbsp;<span class="op">&middot;</span>&nbsp; <span class="m">Gap G<sub>&epsilon;</sub>={h:m(h)&lt;&epsilon;}</span> &nbsp;<span class="op">&middot;</span>&nbsp; <span class="m">&eta;(&epsilon;)=Vol(G<sub>&epsilon;</sub>)/Vol(Blatt)</span><br>
+<span class="m">Satz 1 (Schlauch): &eta;(&epsilon;)&asymp;[Grenzfl&auml;che/(&lambda;&middot;Vol)]&middot;&epsilon;</span> &nbsp;<span class="op">&middot;</span>&nbsp; <span class="m">Satz 2 (Rate-Dist.): Fehler(N) &ge; c<sub>k</sub>&middot;(V/N)<sup>2/k</sup></span>
+</div>
+
+<div class="note a"><b>Folgerung (A):</b> mehr Neuronen = feinere &Uuml;berdeckung = bessere Approximation &mdash; aber <i>ohne</i> Rate-Garantie (spiegelt Universal Approximation, liefert keinen Satz). Die &bdquo;Scharfheit&ldquo; steckt in Anzahl/Platzierung der St&uuml;cke.</div>
+<div class="note b"><b>Folgerung (B):</b> Fehler halbiert sich nur mit <span class="m">2<sup>k/2</sup></span> mehr W&ouml;rtern (<span class="m">k=20&rarr;&times;1024</span>, <span class="m">k=50&rarr;&times;33&nbsp;Mio</span>); Median-Margin steigt mit der Gr&ouml;&szlig;e, der Boden <span class="m">m<sub>0.05</sub>&asymp;0.04&ndash;0.06</span> bleibt. Fourier-Spartheit: 5 Frequenzen <span class="m">k&isin;{14,35,41,42,52}</span> erkl&auml;ren &gt;93&nbsp;% der Varianz.</div>
+<div class="note rose"><b>Br&uuml;ckenschlag (Fusion):</b> &Uuml;berdeckungs-Zellen (A) = Quantisierungs-Voronoi-Zellen (B); &bdquo;feinere &Uuml;berdeckung&ldquo; (A) &equiv; &bdquo;feineres Raster / gr&ouml;&szlig;eres N&ldquo; (B). Ein neuronales Modell = <span class="m">Antwort = &Phi;(&Sigma;<sub>j</sub> c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub>)</span> mit &Phi;=identisch (stetig) oder &Phi;=Argmax (diskret). Fehler &rarr; 0 gdn. (Ziel stetig &amp; fein) ODER (ausgerichtet); sonst irreduzibel.</div>
+</section>
+
+<!-- ==================== 5 ==================== -->
+<section id="visualisierung">
+<h2><span class="n">5</span>Visualisierung</h2>
+<p>Ein zusammenh&auml;ngendes interaktives Modell der fusionierten Idee: <b>ein einziges Feld</b> (lineare Kombination lokaler St&uuml;cke = Garben-Globalsektion = Interferenzfeld), <b>zweimal abgelesen</b>. Oben <span class="hl">stetiges Readout</span> (identisch, A): das Feld <i>ist</i> das Objekt, feinere &Uuml;berdeckung (K&uarr;) macht es sch&auml;rfer. Unten <span class="hl2">diskretes Readout</span> (Argmax, B): dasselbe Feld wird auf ein N-Anker-Raster quantisiert &mdash; Peak, Margin, Zwischenzone &eta;(&epsilon;). Der <span class="hl3">Offset &delta;</span> verschiebt den &bdquo;Gedanken&ldquo; vom Raster: stetig bleibt alles gut, diskret kollabiert die Margin zum irreduziblen Boden.</p>
+<div class="viz-card">
+  <canvas id="cvMain" class="viz" style="height:250px"></canvas>
+  <canvas id="cvDisc" class="viz" style="height:250px"></canvas>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--accent)"></i>Feld (Globalsektion = Interferenz)</span>
+    <span><i class="sw" style="background:var(--accent4)"></i>Gedanke (target t)</span>
+    <span><i class="sw" style="background:var(--accent2)"></i>Zwischenzone (Gap, &eta;(&epsilon;))</span>
+    <span><i class="sw" style="background:var(--good)"></i>Peak = Antwort c*</span>
+    <span><i class="sw" style="background:var(--accent3)"></i>Zweitbester (Margin davor)</span>
+  </div>
+  <div class="viz-grid">
+    <div class="controls">
+      <div>
+        <label style="font-size:.86rem;color:var(--ink2);display:block;margin-bottom:6px">Lokale St&uuml;cke / Frequenzen K (A&rsquo;s &bdquo;feinere &Uuml;berdeckung&ldquo;)</label>
+        <div class="btnrow" id="krow">
+          <button type="button" data-k="1">1</button>
+          <button type="button" data-k="2">2</button>
+          <button type="button" data-k="3" class="on">3</button>
+          <button type="button" data-k="4">4</button>
+          <button type="button" data-k="5">5</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <label>Nomineller Gedanke c* <span class="val" id="vCstar">18</span></label>
+        <input type="range" id="sCstar" min="0" max="35" step="1" value="18">
+      </div>
+      <div class="ctrl">
+        <label>Offset &delta; &mdash; Ausrichtung t&rarr;Raster (0 = ausgerichtet) <span class="val" id="vOff">0.00</span></label>
+        <input type="range" id="sOff" min="0" max="0.9" step="0.02" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Schwelle &epsilon; (B) &mdash; was z&auml;hlt als Zwischenzone <span class="val" id="vEps">40</span></label>
+        <input type="range" id="sEps" min="0" max="150" step="2" value="40">
+      </div>
+      <div class="readout">
+        <div class="verdict" id="rStat">&mdash;</div>
+        <div class="kv"><span>Antwort c* (Peak, B)</span><span id="rWin">&mdash;</span></div>
+        <div class="kv"><span>Margin m = Peak &minus; 2.</span><span id="rMar">&mdash;</span></div>
+        <div class="kv"><span>Zwischenzone &eta;(&epsilon;)</span><span id="rEta">&mdash;</span></div>
+        <div class="kv"><span>Stetiges Readout (A)</span><span id="rCont">&mdash;</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="note" style="margin-bottom:0"><b>Fusionssatz zum Anfasst:</b> <b>Ausgerichtet (&delta;=0)</b> &rarr; Peak trifft exakt einen Anker, Zwischenzone schrumpft, Quantisierung verlustfrei (Grokking). <b>Gitter-fremd (&delta;&asymp;0.5)</b> &rarr; Peak f&auml;llt <i>zwischen</i> zwei Ankern, Margin kollabiert, die goldene L&uuml;cke bleibt (irreduzibler Boden, B). Das stetige Readout (A) reagiert auf &delta; kaum &mdash; der Preis der Diskretisierung sitzt genau im Quantisierungsschritt. Mehr St&uuml;cke K (= feinere &Uuml;berdeckung = gr&ouml;&szlig;eres N) dr&uuml;cken die L&uuml;cke, diskret aber nur wie <span class="m">N<sup>&minus;2/k</sup></span>.</div>
+</div>
+</section>
+
+<!-- ==================== 6 ==================== -->
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <a href="../r1-023.html">
+    <span class="t">A &middot; <code>r1-023.html</code> &mdash; &bdquo;Das neuronale Garben-Modell: lokale Sektionen, globale Koh&auml;renz&ldquo;</span>
+    <span class="d">R1-Fusion von nn_as_sheaf.html &#10007; simplicial_complex_attention4.html. ReLU-Netz = Garbe &uuml;ber dem kontinuierlichen Input-Domain (affine Sektionen, ReLU-Restriktion, additives Verschmelzen) und Attention = Nerve + Garbe &uuml;ber einem daten-abgeleiteten Komplex (Vektor-Stapel, Transport, convexe mittlere globale Sektion). Quelle des Verschmelzungsschemas und der &bdquo;feinere &Uuml;berdeckung = feinere Kapazit&auml;t&ldquo;-These.</span>
+  </a>
+  <a href="../r1-053.html">
+    <span class="t">B &middot; <code>r1-053.html</code> &mdash; &bdquo;Der diskrete Antworten-Engpass&ldquo;</span>
+    <span class="d">R1-Fusion von grokking_addition_internal2.html &#10007; latent_semantic_manifolds_in_llm_simple.html. Fourier-Interferenz-Schaltkreis (Grokking, exakter Peak auf &#8484;<sub>113</sub>) und Quantisierungs-Geometrie (d&uuml;nnes Blatt k&asymp;20, Margin/Gap/&eta;(&epsilon;), Rate-Distortion-Satz 2 = 2<sup>k/2</sup>, irreduzibler 5-%-Boden). Quelle des Interferenzfelds, der Margin-/Zwischenzone-Mechanik und des Rasters.</span>
+  </a>
+</div>
+</section>
+
+<footer>
+Knockout-Synthese &middot; Runde 2 &middot; Paar 028 &middot; fusioniert aus r1-023.html &#10007; r1-053.html.<br>
+Simulationen laufen live im Browser &mdash; ohne externe Bibliotheken, nur Inline-Daten.
+</footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var N = 36;
+  var KF = [14,35,41,42,52];
+  var AL = [44.1,42.2,44.8,66.6,63.0];
+  var st = { K: 3, off: 0.0, eps: 40, cstar: 18 };
+  var dprMax = Math.min(2, window.devicePixelRatio || 1);
+
+  function $(id){ return document.getElementById(id); }
+  function col(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function C(){ return {
+    canvas: col('--canvas') || '#0d1424',
+    grid: col('--grid') || '#243150',
+    line: col('--line') || '#26314f',
+    txt: col('--ink2') || '#a8b3d9',
+    ink: col('--ink') || '#e8ecff',
+    acc: col('--accent') || '#7cf5c4',
+    acc2: col('--accent2') || '#ffb86b',
+    acc3: col('--accent3') || '#ff7ab6',
+    acc4: col('--accent4') || '#8ab4ff',
+    good: col('--good') || '#6ee7a0',
+    warn: col('--warn') || '#ffd166',
+    bad: col('--bad') || '#ff9b9b'
+  }; }
+
+  function field(c){
+    var t = st.cstar + st.off;
+    var s = 0, i;
+    for(i=0;i<st.K;i++){ s += AL[i]*Math.cos(2*Math.PI*KF[i]*(t - c)/N); }
+    return s;
+  }
+
+  function hidpi(cv,h){
+    var w = cv.clientWidth || 600;
+    cv.width = Math.max(1, Math.round(w*dprMax));
+    cv.height = Math.max(1, Math.round(h*dprMax));
+    cv.style.height = h+'px';
+    var c = cv.getContext('2d');
+    c.setTransform(dprMax,0,0,dprMax,0,0);
+    return {c:c, w:w, h:h};
+  }
+  function fmt(v,n){ return Number(v).toFixed(n); }
+
+  function computeStats(){
+    var peak=-1e18, winner=0, second=-1e18, secIdx=0, gap=0, lo=1e18, cb, v;
+    for(cb=0;cb<N;cb++){ v=field(cb); if(v>peak){peak=v;winner=cb;} if(v<lo)lo=v; }
+    for(cb=0;cb<N;cb++){ if(cb!==winner){ v=field(cb); if(v>second){second=v;secIdx=cb;} } }
+    var margin = peak - second;
+    for(cb=0;cb<N;cb++){ if(field(cb) >= peak - st.eps) gap++; }
+    return {peak:peak, winner:winner, second:second, secIdx:secIdx, margin:margin, gap:gap, eta:gap/N, lo:lo};
+  }
+
+  function drawCont(o){
+    var th=C(); var c=o.c, w=o.w, h=o.h;
+    c.clearRect(0,0,w,h);
+    var padL=48,padR=14,padT=22,padB=24;
+    var pw=w-padL-padR, ph=h-padT-padB;
+    var hi=-1e18, lo=1e18, i;
+    for(i=0;i<=240;i++){ var vv=field(i/240*(N-1)); if(vv>hi)hi=vv; if(vv<lo)lo=vv; }
+    var pad=(hi-lo)*0.14+0.001; hi+=pad; lo-=pad;
+    function X(cc){ return padL + (cc/(N-1))*pw; }
+    function Y(vv){ return padT + ph*(1-(vv-lo)/(hi-lo)); }
+    c.strokeStyle=th.grid; c.lineWidth=1;
+    for(var g=0;g<=3;g++){ var gy=padT+ph*g/3; c.beginPath(); c.moveTo(padL,gy); c.lineTo(w-padR,gy); c.stroke(); }
+    c.strokeStyle=th.line; c.lineWidth=1; c.globalAlpha=0.5;
+    for(var cb=0;cb<N;cb++){ var x=X(cb); c.beginPath(); c.moveTo(x,padT); c.lineTo(x,padT+ph); c.stroke(); }
+    c.globalAlpha=1;
+    c.strokeStyle=th.acc; c.lineWidth=2.6; c.beginPath();
+    for(i=0;i<=240;i++){ var cc=i/240*(N-1); var px=X(cc), py=Y(field(cc)); if(i===0)c.moveTo(px,py); else c.lineTo(px,py); }
+    c.stroke();
+    var tx=st.cstar+st.off;
+    if(tx>=0&&tx<=N-1){
+      var txx=X(tx), tyy=Y(field(tx));
+      c.fillStyle=th.acc4; c.beginPath(); c.arc(txx,tyy,5,0,2*Math.PI); c.fill();
+      c.strokeStyle=th.ink; c.lineWidth=1; c.stroke();
+    }
+    c.textBaseline='alphabetic';
+    c.fillStyle=th.ink; c.font='700 12px ui-monospace,monospace'; c.textAlign='left';
+    c.fillText('A — stetiges Readout: Garben-Globalsektion (Feld = Objekt)', padL, padT-8);
+    c.fillStyle=th.txt; c.font='10px ui-monospace,monospace';
+    c.fillText('Stücke K='+st.K+' · Raster N='+N+' (Überdeckungs-Zellen) · Readout Φ = identisch', padL, h-6);
+  }
+
+  function drawDisc(o){
+    var th=C(); var c=o.c, w=o.w, h=o.h;
+    c.clearRect(0,0,w,h);
+    var padL=48,padR=14,padT=22,padB=24;
+    var pw=w-padL-padR, ph=h-padT-padB;
+    var S=computeStats();
+    var hi=S.peak, lo=S.lo, pad=(hi-lo)*0.14+0.001; hi+=pad; lo-=pad;
+    function X(cc){ return padL + (cc/(N-1))*pw; }
+    function Y(vv){ return padT + ph*(1-(vv-lo)/(hi-lo)); }
+    c.strokeStyle=th.grid; c.lineWidth=1;
+    for(var g=0;g<=3;g++){ var gy=padT+ph*g/3; c.beginPath(); c.moveTo(padL,gy); c.lineTo(w-padR,gy); c.stroke(); }
+    var step=pw/(N-1);
+    for(var cb=0;cb<N;cb++){
+      if(field(cb) >= S.peak - st.eps){
+        var bx=X(cb), by=Y(field(cb));
+        c.fillStyle=th.acc2+'55'; c.fillRect(bx-step/2, by, step, padT+ph-by);
+      }
+    }
+    if(S.peak-st.eps>lo){
+      var ty=Y(S.peak-st.eps);
+      c.strokeStyle=th.acc2; c.setLineDash([5,4]); c.lineWidth=1.2;
+      c.beginPath(); c.moveTo(padL,ty); c.lineTo(w-padR,ty); c.stroke(); c.setLineDash([]);
+      c.fillStyle=th.acc2; c.font='10px ui-monospace,monospace'; c.textAlign='left';
+      c.fillText('ε-Schwelle', padL+4, ty-4);
+    }
+    c.strokeStyle=th.acc; c.lineWidth=2.4; c.beginPath();
+    for(cb=0;cb<N;cb++){ var px=X(cb), py=Y(field(cb)); if(cb===0)c.moveTo(px,py); else c.lineTo(px,py); }
+    c.stroke();
+    c.strokeStyle=th.acc3; c.setLineDash([3,3]); c.lineWidth=1;
+    c.beginPath(); c.moveTo(X(S.secIdx),padT); c.lineTo(X(S.secIdx),padT+ph); c.stroke(); c.setLineDash([]);
+    c.fillStyle=th.acc3; c.beginPath(); c.arc(X(S.secIdx),Y(S.second),4,0,2*Math.PI); c.fill();
+    c.fillStyle=th.good; c.beginPath(); c.arc(X(S.winner),Y(S.peak),6,0,2*Math.PI); c.fill();
+    c.strokeStyle=th.ink; c.lineWidth=1.5; c.stroke();
+    c.fillStyle=th.good; c.font='600 11px ui-monospace,monospace'; c.textAlign='left';
+    c.fillText('c*='+S.winner, Math.min(X(S.winner)+9, w-58), Math.max(Y(S.peak)-9, padT+12));
+    c.textBaseline='alphabetic';
+    c.fillStyle=th.ink; c.font='700 12px ui-monospace,monospace'; c.textAlign='left';
+    c.fillText('B — diskretes Readout: Argmax-Quantisierung (Feld → Antwort)', padL, padT-8);
+    c.fillStyle=th.txt; c.font='10px ui-monospace,monospace';
+    c.fillText('Peak/Margin/Zwischenzone η(ε) · Ausrichtung δ='+fmt(st.off,2)+' · Readout Φ = Argmax', padL, h-6);
+
+    $('rWin').textContent = S.winner;
+    $('rMar').textContent = fmt(S.margin,1);
+    $('rEta').textContent = fmt(S.eta*100,1)+' %';
+    $('rCont').textContent = 'Feld = Objekt, feinere Überdeckung (K↑) → schärfer';
+    var v=$('rStat');
+    var rel = S.peak>0 ? S.margin/S.peak : 0;
+    if(st.off < 0.05){
+      v.textContent='KLAR · Peak auf Rasterpunkt → Quantisierung verlustfrei (Grokking)';
+      v.className='verdict good';
+    } else if(rel < 0.18){
+      v.textContent='ZWISCHENZONE · Margin kollabiert → irreduzible Lücke (B)';
+      v.className='verdict bad';
+    } else {
+      v.textContent='lokalisiert · gitter-fremd, Peak aber eindeutig';
+      v.className='verdict warn';
+    }
+  }
+
+  function draw(){
+    var mc=$('cvMain'), dc=$('cvDisc');
+    if(!mc||!dc) return;
+    drawCont(hidpi(mc,250));
+    drawDisc(hidpi(dc,250));
+  }
+
+  function setK(k){
+    st.K=k;
+    var btns=document.querySelectorAll('#krow button');
+    for(var i=0;i<btns.length;i++){ var b=+btns[i].getAttribute('data-k'); btns[i].classList.toggle('on', b===k); }
+    draw();
+  }
+
+  function init(){
+    var btns=document.querySelectorAll('#krow button');
+    for(var i=0;i<btns.length;i++){ btns[i].addEventListener('click',function(){ setK(+this.getAttribute('data-k')); }); }
+    $('sOff').addEventListener('input',function(){ st.off=+this.value; $('vOff').textContent=fmt(st.off,2); draw(); });
+    $('sEps').addEventListener('input',function(){ st.eps=+this.value; $('vEps').textContent=st.eps; draw(); });
+    $('sCstar').addEventListener('input',function(){ st.cstar=+this.value; $('vCstar').textContent=st.cstar; draw(); });
+    $('themeBtn').addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); draw(); });
+    window.addEventListener('resize', draw);
+    if(window.MutationObserver){
+      new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    }
+    draw();
+  }
+  if(document.readyState==='complete') init(); else window.addEventListener('load',init);
+})();
+</script>
+</body>
+</html>

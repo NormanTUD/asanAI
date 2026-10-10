@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Tiefe als RG-Fluss — Low-Rank-Kollaps × freie-Feld-Koarse-Graining</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --fg:#1f2328; --muted:#5b6068; --card:#ffffff; --plot:#ffffff;
+    --grid:#e7e1d7; --border:#e2ddd2; --link:#2b6cb0;
+    --accent:#2b6cb0; --accent2:#0e9aa7; --amber:#b7791f; --early:#c0564b;
+    --mid:#c77d2f; --late:#2f855a; --purple:#6b46c1; --storage:#2c5282; --code-bg:#f1ede3;
+  }
+  html.dark{
+    --bg:#0d1117; --fg:#e6edf3; --muted:#8b949e; --card:#161b22; --plot:#0d1117;
+    --grid:#21262d; --border:#30363d; --link:#58a6ff;
+    --accent:#58a6ff; --accent2:#22d3ee; --amber:#ffa657; --early:#ff7b72;
+    --mid:#ffa657; --late:#7ee787; --purple:#d2a8ff; --storage:#79c0ff; --code-bg:#1c2128;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg); color:var(--fg);
+    font-family:Georgia,'Times New Roman',serif; line-height:1.7; padding:2.2rem 1rem 4rem;}
+  article{max-width:820px;margin:0 auto}
+  h1{font-size:1.95rem;line-height:1.25;margin-bottom:.4rem;letter-spacing:-.01em}
+  h2{font-family:system-ui,sans-serif;font-size:1.4rem;margin:2.4rem 0 .9rem;
+     padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  h3{font-family:system-ui,sans-serif;font-size:1.08rem;margin:1.5rem 0 .6rem;color:var(--accent)}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.96rem;margin-bottom:1.6rem}
+  p{margin-bottom:.85rem}
+  ul{margin:.4rem 0 1rem 1.3rem}
+  li{margin-bottom:.5rem}
+  a{color:var(--link)}
+  .lead{font-size:1.06rem}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+        padding:1.1rem 1.3rem;margin:1.1rem 0}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;
+           padding:.85rem 1.1rem;margin:.9rem 0;text-align:center;overflow-x:auto;font-size:1.22rem}
+  .tag{display:inline-block;font-family:system-ui,sans-serif;font-size:.72rem;font-weight:600;
+       padding:.15rem .55rem;border-radius:20px;border:1px solid var(--border);
+       color:var(--muted);background:var(--card);vertical-align:middle}
+  .vs{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+      padding:.15rem .5rem;border-radius:6px;display:inline-block;margin-right:.4rem}
+  .vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .vs.b{background:color-mix(in srgb,var(--purple) 22%,transparent);color:var(--purple)}
+  .fused{background:color-mix(in srgb,var(--late) 14%,transparent);
+         border-left:4px solid var(--late);border-radius:0 8px 8px 0;padding:.7rem 1rem;margin:.9rem 0}
+  .fused b{color:var(--late)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+  th,td{border:1px solid var(--border);padding:.55rem .65rem;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;background:var(--code-bg)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.86em;background:var(--code-bg);
+       padding:.1em .35em;border-radius:4px}
+  .controls{font-family:system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:1rem 1.4rem;
+            align-items:center;background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+  .controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+  .controls select{background:var(--bg);color:var(--fg);border:1px solid var(--border);
+                   border-radius:6px;padding:.3rem .5rem;font-size:.85rem}
+  .controls input[type=range]{accent-color:var(--accent);width:170px}
+  .controls input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+  .ctl-val{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;min-width:2.4em;display:inline-block}
+  #fusedPlot{width:100%;height:480px;margin:.6rem 0}
+  .readout{font-family:ui-monospace,monospace;font-size:.9rem;background:var(--code-bg);
+           border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin:.6rem 0}
+  .readout b{color:var(--accent)}
+  .anno{font-size:.85rem;color:var(--muted);font-style:italic}
+  #themeToggle{position:fixed;top:14px;right:14px;z-index:50;font-family:system-ui,sans-serif;
+    font-size:.8rem;background:var(--card);color:var(--fg);border:1px solid var(--border);
+    border-radius:20px;padding:.4rem .8rem;cursor:pointer}
+  .prov{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .9rem;border:1px solid var(--border);
+        border-radius:8px;margin-bottom:.7rem;background:var(--card)}
+  .prov .k{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;flex:0 0 1.6em;
+        text-align:center;border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+  .prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .prov .k.b{background:color-mix(in srgb,var(--purple) 22%,transparent);color:var(--purple)}
+  .foot{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border);
+        color:var(--muted);font-size:.85rem;font-style:italic}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Theme umschalten">&#9680; Theme</button>
+<article>
+
+  <h1>Tiefe ist RG-Skala: das Low-Rank-Kollaps des Jacobian-Flusses (A) und die freie-Feld-Koarse-Graining (B) sind dieselbe Kompression &mdash; Detail wird integriert, Abstraktion bleibt</h1>
+  <p class="subtitle">Fusion aus: r1-039.html &#10006; r1-037.html &nbsp;(Round 2)</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide R1-Papiere machen dieselbe Grundbewegung, nur auf unterschiedlichen Objekten: Sie lesen ein trainiertes tiefes Netz <b>nicht als statische Funktion, sondern als Skalen-/Dynamik-System &#8203; &#8220;&#252;ber der Tiefe&#8221;</b>, und sie erkennen darin, dass <b>Tiefergehen eine Koarse-Graining ist, die feine Struktur abtr&auml;gt</b>. A&nbsp;(r1-039) liest die Tiefe als <i>Zeitindex der Residual-Stream-Dynamik</i>: jede Schicht ist ein lokaler Operator $J_\ell$ auf dem gemeinsamen Residual-Stream, und die Komposition aller $J_\ell$ &#8220;die Tiefe hinab&#8221; ist ein <i>Fluss</i>, der Information (i) &#8220;per Rotation&#8221; routet (~98% komplex-konjugierte Eigenwertpaare) und (ii) die Darstellung <i>kumulativ in den Low-Rank kollabiert</i> (effektiver Rang 4096&#8594;~7). B&nbsp;(r1-037) liest die Tiefe als <i>RG-Skala</i>: jede Schicht ist ein Koarse-Graining-Schritt der <i>freien Feldenergie</i> eines neuronalen Felds, der hochfrequente (feine, niedrige) Struktur integriert und nur die langwelligen, abstrakten Freiheitsgrade beh&auml;lt.</p>
+    <p>Die fusionierte Position lautet: <b>Tiefe&nbsp;=&nbsp;RG-Skala&nbsp;=&nbsp;Flusszeit.</b> A&#8217;s <i>Forward-Pass-Zustandsfluss</i> (der Residual-Stream $h_\ell$ entwickelt sich durch $J_\ell$) und B&#8217;s <i>Effektiv-Beschreibungsfluss</i> (die Energie/das Feld $L$ wird &#8220;die Skala hinab&#8221; koarse-grained) sind die <b>zwei Seiten eines einzigen Prozesses</b>: Wenn man &#8220;die Tiefe hinabsteigt&#8221;, integriert das Netz schrittweise feine / hochdimensionale / hochfrequente Struktur heraus. A&#8217;s <i>Low-Rank-Jacobian-Produkt</i> und B&#8217;s <i>RG-Low-Pass</i> sind <b>derselbe Kompressionsmechanismus in zwei R&auml;umen</b> gesehen &mdash; A im <b>Aktivierungsraum</b> (was das Netz rechnet, <i>Run-Time</i>/Inferenz), B im <b>Parameter-/Energieraum</b> (wie das Netz beschrieben wird, <i>statistisch</i>/Learn-Time). Die <b>Lernrate</b> $\eta$ (B) und die <b>Nicht-Normalit&auml;ts-Dosis</b> $c$ (A) sind die <b>Kontrollparameter</b> dieses Flusses.</p>
+    <p>Und das Entscheidende: <b>das, was verloren geht, ist nicht das Wissen.</b> Was die RG-/Low-Rank-Kompression entfernt, ist der <i>hochfrequente, feine, niedrige</i> Kanal (und mit ihm ein Teil der Input-Sensitivit&auml;t); was <i>&uuml;berlebt</i>, ist der <i>niederfrequente, abstrakte, skalenrobuste</i> Inhalt &mdash; genau der <b>holographische, polysem gespeicherte</b> Speicher (A&#8217;s B-Teil, B&#8217;s Universalit&auml;t). Deshalb nennen &#8220;Flaschenhals&#8221; (A) und &#8220;Fortschritt&#8221; (B) <b>dieselbe</b> Kompression von zwei Seiten: eine Begrenzung des Fluss-Kanals, ein Gewinn an Darstellungsqualit&auml;t.</p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widerspr&#252;che zwischen A und B</h2>
+    <p>Drei <i>echte, substanzhaltige</i> Spannungen &mdash; sie zeigen, wo die beiden R1-Papiere unterschiedliche Annahmen &#8220;over&#8221; dieselbe Tiefe-Achse treffen.</p>
+
+    <div class="card">
+      <h3>W1 &middot; Was &#8220;flie&#223;t&#8221;: Aktivzustand (A) vs. Energiebeschreibung (B)</h3>
+      <p><span class="vs a">A</span> A flie&#223;t den <b>Residual-Stream-Aktivzustand</b> $h_\ell$: Tiefe ist die <i>Zeit</i> einer <b>Forward-Pass-Zustandsdynamik</b> $h_{\ell+1}=h_\ell+f_\ell(h_\ell)$, die durch den lokalen Operator $J_\ell$ vorangetrieben wird. Es ist die <i>Run-Time</i>-Dynamik eines <b>festen, trainierten</b> Netzes (Inferenz).</p>
+      <p><span class="vs b">B</span> B flie&#223;t die <b>Loss-/Freie-Energie-Funktion</b> $L(\theta)$ &#8220;over&#8221; die <b>Parameter</b>: Tiefe ist die <i>RG-Skala</i> einer <b>Effektiv-Beschreibung</b> (Koarse-Graining im Frequenzraum), nicht eine Zustandstrajektorie. Es ist die <i>statistische Feldtheorie</i> der <b>Familie</b> der Netze (Learn-Time / Ensemble).</p>
+      <p class="anno">Beide sagen &#8220;Tiefe ist eine Dynamik-Achse&#8221;, aber A&#8217;s Achse entwickelt den <i>Zustand</i> eines fixen Netzes, B&#8217;s Achse re-deskribiert die <i>Parameter-Familie</i>. &#8220;Tiefe&nbsp;=&nbsp;Zeit/Skala&#8221; trifft auf <i>unterschiedliche Objekte</i> zu.</p>
+    </div>
+
+    <div class="card">
+      <h3>W2 &middot; Detailverlust: Flaschenhals (A) vs. Fortschritt (B)</h3>
+      <p><span class="vs a">A</span> A rahmt die Tiefen-Kompression (effektiver Rang 4096&#8594;~7) explizit als <b>kumulativen Low-Rank-Flaschenhals</b>: die Input-Sensitivit&auml;t des Netzes ist auf einen Unterraum <b>drei Gro&#223;enordnungen kleiner</b> beschr&auml;nkt. Das <i>limitiert</i> den Informationsfluss.</p>
+      <p><span class="vs b">B</span> B rahmt dieselbe Kompression (Hochfrequenz <i>herausintegrieren</i>) als <b>Fortschritt</b>: &#8220;man entfernt das Hochfrequente&#8221;, um die <i>universelle</i>, langwellige Struktur freizulegen. Das <i>ist</i> das Ziel.</p>
+      <p class="anno">Dasselbe &#8220;feine Struktur &#8220;die Tiefe hinab&#8221; verlieren&#8221; ist bei A ein <i>Limit/Flaschenhals</i>, bei B ein <i>Erfolg/Fortschritt</i>.</p>
+    </div>
+
+    <div class="card">
+      <h3>W3 &middot; Treiber: deterministische Struktur (A) vs. stochastische Kontrolle (B)</h3>
+      <p><span class="vs a">A</span> A wird der Fluss von der <b>nicht-normalen (oberen-Dreiecks-)Komponente $N$ des Jacobians</b> getrieben &mdash; einer <b>deterministischen, strukturellen</b> Eigenschaft, die das <i>Training</i> installiert; Kontrollparameter = Dosis $c$ (Schur-Chirurgie $J_\ell=Q_\ell(\Lambda_\ell+cN_\ell)Q_\ell^*$).</p>
+      <p><span class="vs b">B</span> B wird der Fluss von der <b>Lernrate $\eta$</b> (einem <i>Kontrollparameter</i>) und <b>stochastischen Jumps</b> getrieben; der RG-Schritt wird bei endlicher Breite <i>stochastisch</i> realisiert (ein Hop).</p>
+      <p class="anno">Deterministischer, strukturgetriebener Fluss (A) vs. stochastischer, kontrolgetriebener Fluss (B). Zwei sehr unterschiedliche &#8220;Motoren&#8221; &#8220;f&#252;r&#8221; dieselbe Kompression.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Aufl&#246;sung</h2>
+
+    <div class="fused"><b>A1 &middot; Zwei R&auml;ume, ein Fluss.</b>
+    A&#8217;s Fluss l&auml;uft im <b>Aktivierungsraum</b> (<i>Run-Time</i>/Inferenz eines fixen Netzes): das koarse-grained Objekt ist der <i>Zustand</i> $h$ (Low-Rank-Projektion des Streams). B&#8217;s Fluss l&auml;uft im <b>Parameter-/Energieraum</b> (<i>statistische Feldtheorie</i>/Learn-Time): das koarse-grained Objekt ist die <i>Beschreibung</i> $L$ (Low-Pass der Energie). Die Tiefe-Achse ist <b>identisch</b> (eine Schicht = ein Schritt), aber die <i>Koarse-Graining-Variable</i> ist unterschiedlich. Sie sind der <i>mikroskopische (Zustand)</i>- und der <i>thermodynamische (Energie)</i>-Limes derselben Hierarchie: Das Low-Rank-Kollaps des Residual-Streams (A) ist der <i>Zustandsraum-Schatten</i> des Hochfrequenz-Integrieren der Energie (B).</p></div>
+
+    <div class="fused"><b>A2 &middot; Flaschenhals und Fortschritt sind dieselbe Kompression von zwei Seiten.</b>
+    Die Kompression <b>limitiert die Anzahl der unabh&auml;ngigen &#8220;Frageachsen&#8221;</b>, auf die das Netz reagiert (A&#8217;s Fluss-Flaschenhals), <i>und zugleich</i> <b>legt sie</b> die skalenrobuste, abstrakte, universelle Struktur frei (B&#8217;s Fortschritt). Der Low-Rank-Kanal <i>ist</i> genau der niederfrequente, langwellige, RG-&uuml;berlebende Inhalt. Die Aufl&#246;sung ist die <b>holographische Redundanz</b> (A&#8217;s B-Teil): Weil Information polysem &#8220;over&#8221; alle Dimensionen verteilt ist, l&#246;scht das Kollapsieren des <i>Flusses</i> auf ~7 Richtungen das <i>Wissen</i> nicht aus &mdash; das Wissen ist der RG-&uuml;berlebende, skalenrobuste Anteil. Der Flaschenhals liegt im <b>Kanal</b>, der Fortschritt im <b>Inhalt</b>. Low-Rank-Fluss $\perp$ hochdimensionaler Speicher.</p></div>
+
+    <div class="fused"><b>A3 &middot; Der stochastische Jump ist die diskretisierte, finite-Breiten-Realisierung des deterministischen Strukturtreibers.</b>
+    A&#8217;s nicht-normale Komponente $N$ ist der <b>strukturelle</b> (deterministische) Generator des Kollaps <i>pro Schicht</i>; B&#8217;s stochastischer Jump + Lernrate ist der <b>Koarse-Graining-Operator</b> auf der <i>Learn-Time</i>-Ebene. Im unendlich-breiten / lang-lernenden Limes <i>mitteln sich</i> die stochastischen RG-Schritte (B) zum deterministischen RG-Fluss, und die <b>trainierte</b> nicht-normale Jacobian-Struktur (A) ist der <b>Fixpunkt-Eindruck</b> genau dieses Learn-Time-Flusses (B). $N$ ist der <i>Fossil-Eindruck</i> des RG-Flusses: Training (B, Learn-Time, stochastisch) installiert die Nicht-Normalit&auml;t (A, Run-Time, deterministisch). Der Kontrollparameter $c$ (A) $\leftrightarrow$ Lernrate/Breite (B). Ein &#8220;Jump&#8221; ist ein <i>Meta-Dynamik</i>-Schritt; der nicht-normale Operator ist das <i>thermalisierte</i> Ergebnis.</p></div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Das gemeinsame Ger&#252;st: Tiefe als Dynamik-/Skalen-Achse</h3>
+    <p>Beide gehen von einer Tiefe-Achse aus, auf der sich etwas &#8220;entwickelt&#8221; bzw. &#8220;umskaliert&#8221;. A beschreibt sie als diskretzeitige Zustandsdynamik des Residual-Streams, B als RG-Fluss der freien Feldenergie:</p>
+    <div class="formula" id="f-state"></div>
+    <div class="formula" id="f-energy"></div>
+    <p>A&#8217;s lokale Linearisierung pro Schicht (der Operator, der $h$ vorantreibt) ist das Pendant zu B&#8217;s Koarse-Graining-Operator (der $L$ umskaliert):</p>
+    <div class="formula" id="f-jac"></div>
+    <div class="formula" id="f-rg"></div>
+    <p>Identifikation: <b>Tiefe&nbsp;=&nbsp;Zeit (A)&nbsp;=&nbsp;Skala (B)</b>; <b>Schicht&nbsp;=&nbsp;lokaler Operator $J_\ell$ (A)&nbsp;=&nbsp;RG-Schritt (B)</b> (nach Mehta &amp; Schwab: eine RBM &#8771; einem RG-Schritt der variationalen RG).</p>
+
+    <h3>Was komprimiert wird: der fusionierte Kompressions-Satz</h3>
+    <ul>
+      <li><b>A (Aktivierungsraum):</b> das kumulative Jacobian-Produkt $P_\ell=J_{L-1}\cdots J_\ell$ komprimiert den effektiven Rang auf ~7 (von 4096); bei Initialisierung ~326. Treue Zahlen: Llama 45.4&#8594;7.12&#8594;2.53, OLMo 314&#8594;55.5&#8594;12.4, Gemma 39.3&#8594;5.92&#8594;1.60.</li>
+      <li><b>B (Feldraum):</b> der RG-Schritt $L\to L_R$ ist ein Low-Pass (Box-Fenster $L_R(x)=\langle L\rangle_{x\pm r}$), der Hochfrequenz integriert; im unendlich-breiten Limes wird das Netz zu einem Gau&#223;-Prozess (= freiem Quantenfeld), in dem die feine Becken-Struktur verschwindet.</li>
+      <li><b>Fusion:</b> <b>Low-Rank-Kollaps (A) &#8801; RG-Integrieren (B)</b> &mdash; dieselbe Kompression, zwei R&auml;ume. Der &#8220;ueberlebende&#8221; niedrig-dimensionale Inhalt ist zugleich <i>niederfrequent</i> und <i>abstrakt</i> und <i>RG-fixiert</i>.</li>
+    </ul>
+    <div class="formula" id="f-prod"></div>
+    <div class="formula" id="f-erank"></div>
+
+    <h3>Die zwei Motoren, die rechnen: Rotation &amp; Nicht-Normalit&auml;t</h3>
+    <ul>
+      <li><b>A:</b> ~98% komplex-konjugierte Eigenwertpaare &#8594; Information wird <i>rotiert</i> (Spiralen in 2D-Unterr&auml;umen), nicht nur gestreckt &mdash; unsichtbar f&#252;r SVD. Drei Tiefenregimes: Early (0&#8211;4) stark anisotrop, fast reine Rotatoren (Self-Alignment &#8776;0.04); Mid (5&#8211;19) fallende Konditionszahl, weiterhin nicht-normal; Late (20&#8211;31) fast symmetrisch (Self-Alignment &#8776;0.55&#8211;0.70). <b>Schur-Chirurgie</b> $J_\ell=Q_\ell(\Lambda_\ell+cN_\ell)Q_\ell^*$: Entfernt man $N$ ($c=0$), steigt der erank 6&#8211;7&#215; &#8594; der Kollaps liegt in der <i>nicht-normalen</i> Struktur, nicht im Spektrum.</li>
+      <li><b>B:</b> das <b>Jacobian-Feld-Fingerprint</b> $J(x)\to\{\mathrm{div},\mathrm{curl},\mathrm{shear},\mathrm{eigphase}\}$ tr&auml;gt die &#8220;scrambled computational circuits&#8221; (Loops, Spiralen, Sattelpunkte); <i>innere Schichten rechnen, &auml;u&#223;ere &#252;bersetzen</i>; Attention = Linse, FFN = Diffeomorphismus-Generator; die <b>Holonomie</b> $H_\gamma$ (akkumulierte Rahmenrotation um eine Schleife) kodiert die Rechnung.</li>
+      <li><b>Fusion:</b> <b>Rotation</b> ($\Lambda$/Curl/eigphase) rechnet und routet (beide stimmen &#252;berein); <b>Nicht-Normalit&auml;t</b> ($N$/Shear) ist die RG-relevante Feinstruktur, die &#8220;die Tiefe hinab&#8221; <i>integriert wird</i>. A&#8217;s <i>&auml;u&#223;eres R&#252;ckdrehen</i> = der RG-Fluss relaxiert zum Readout-Fixpunkt (B). Community-Grenzknoten (hoher Partizipationskoeffizient $p_i=1-\sum_c(k_{ic}/k_i)^2$) werden in fast-symmetrischen (sp&auml;ten) Layern <i>verst&auml;rkt</i>, in nicht-normalen <i>unterdr&#252;ckt</i>.</li>
+    </ul>
+    <div class="formula" id="f-schur"></div>
+    <div class="formula" id="f-part"></div>
+    <div class="formula" id="f-field"></div>
+
+    <h3>Speicher vs. Fluss: die holographische Aufl&#246;sung</h3>
+    <p>A&#8217;s B-Teil: <b>holographische Speicherung</b> durch Polysemie (&#8220;Taubenschlag&#8221; &mdash; mehr Features als Neuronen), Information &#8220;over&#8221; <i>alle</i> Dimensionen verteilt; Superposition $h_i^{(L)}=h_i^{(0)}+\sum_\ell \Delta_i^{(\ell)}$. B: <b>Effektiv-Beschreibungen</b> + skalenrobuste Universalit&auml;t + Topologie (Persistent Homology $H_0,H_1$) als Skalen-robuste Sicht derselben Fl&auml;che. <b>Fusion:</b> das <i>Wissen</i> = der skalenrobuste (RG-&uuml;berlebende) Residual; der <i>Fluss</i> = der niederfrequente Kanal. Sie sind <b>orthogonal</b>: Kollapsieren des Flusses l&#246;scht das Wissen nicht, weil das Wissen holographisch = skalenrobust ist.</p>
+    <div class="formula" id="f-holo"></div>
+    <div class="formula" id="f-holo2"></div>
+
+    <h3>Das vereinheitlichte Tiefenprofil</h3>
+    <table>
+      <thead>
+        <tr><th>Tiefe</th><th>A &middot; Operatordynamik (Zustand)</th><th>B &middot; Feld/RG (Energie)</th><th>Fusion</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag" style="color:var(--early)">Early</span><br>0&#8211;4</td>
+          <td>stark anisotrop, fast reine Rotatoren, SA &#8776;0.04, nicht-normal</td>
+          <td>hohe Frequenzen / feine Details werden gelernt</td>
+          <td><b>fein &amp; hochfrequent</b>, viel Struktur, wenig Symmetrie; Rotation startet, RG hat kaum integriert</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="color:var(--mid)">Mid</span><br>5&#8211;19</td>
+          <td>Konditionszahl sinkt, Hauptrechneregime, weiterhin nicht-normal</td>
+          <td>RG integriert Feines weg; abstrakte Konzepte entstehen (niederfrequent)</td>
+          <td><b>Hauptrechneregime</b> &mdash; Rotation routet, $N$ erzeugt lokale Transienten; die meiste Komposition/Koarse-Graining passiert hier</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="color:var(--late)">Late</span><br>20&#8211;31</td>
+          <td>fast symmetrisch (SA &#8776;0.55&#8211;0.70), verst&auml;rkt Grenzknoten, Fluss kollabiert zum Low-Rank-Kanal</td>
+          <td>niederfrequent / abstrakt; universelle Struktur</td>
+          <td><b>Konsolidierung</b>; Fluss kollabiert (Flaschenhals), skalenrobuster Inhalt bleibt (Fortschritt)</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="color:var(--purple)">Outer</span><br>letzte 1&#8211;2</td>
+          <td>verst&auml;rken-then-r&#252;ckdrehen; Netto-Holonomie &#8776; Identit&auml;t</td>
+          <td>RG-Fluss erreicht den Readout-Fixpunkt; &#8220;&auml;u&#223;en &#252;bersetzt&#8221;</td>
+          <td><b>verst&auml;rken-then-r&#252;ckdrehen</b>; RG relaxiert in den Readout-Rahmen; Netto-Holonomie &#8776; Identit&auml;t</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fused"><b>Kernsynthese:</b> Ein trainiertes tiefes Netz <i>berechnet durch Raumverformung / Feld-Umskalierung</i> &#8212; und der <i>messbare Fingerprint</i> ist ein <b>trainierter, nicht-normaler, rotationsdominierter Jacobian-Stack mit kumulativem Low-Rank-Kollaps</b>, der <i>identisch</i> ist zu der <b>RG-Koarse-Graining der freien Feldenergie</b>. Rotation rechnet; Nicht-Normalit&auml;t ist lokal Rechenwerk und global der RG-relevante Fein-Kanal, der integriert wird; Verst&auml;rken + R&#252;ckdrehen bilden die &auml;u&#223;ere Zone; und der <b>holographische, skalenrobuste Speicher (&#8776; d) bleibt</b>, w&auml;hrend der <b>Fluss (Low-Rank &#8776; 7) kollabiert</b> &mdash; orthogonal, kein Widerspruch.</p></div>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung: Tiefe = RG-Skala &mdash; Detail kollabiert, Abstraktion bleibt</h2>
+    <p>Ein einziger Plot &#252;ber die Tiefe $\ell$ (Schicht) vereint beide Seiten. Die <b>blaue Fl&auml;che</b> (linke log-Achse) ist A&#8217;s <i>kumulativer Fluss-Rang</i> $\operatorname{erank}(P_\ell)$ im <b>Aktivierungsraum</b> &mdash; der Low-Rank-Flaschenhals, der &#8220;die Tiefe hinab&#8221; kollabiert. Die <b>t&#252;rkisfarbene Linie</b> ist B&#8217;s <i>RG-Details</i> (Hochfrequenz-Energie) im <b>Feldraum</b> &mdash; dieselbe Kompression, nahezu zur&#252;ckliegend auf A&#8217;s Kurve (die Fusion-Identifikation). Die <b>gr&#252;ne Linie</b> ist B&#8217;s <i>RG-Abstraktion / holographischer Speicher</i> (&#8776; $d$, &#252;berlebende niederfrequente Dimensionen) &mdash; sie <i>bleibt hoch</i>, w&auml;hrend der Fluss kollabiert (die W2-Aufl&#246;sung: Flaschenhals im Kanal, Fortschritt im Inhalt). Die <b>rechte 0&#8211;1-Achse</b> tr&auml;gt den <i>Rotationsanteil</i> (~98%, A/B: &#8220;Rotation rechnet&#8221;) und A&#8217;s <i>Self-Alignment</i> (steigt). Bewege die <b>Skalen-Kontrolle $c$</b> (A: Nicht-Normalit&auml;ts-Dosis / Schur-Chirurgie, B: RG-Grobk&#246;rnigkeit): bei $c\to0$ (Feingranularit&auml;t / $N$ entfernt) bleibt das Detail hoch (kein Kollaps); bei trainiertem $c\approx1$ kollabiert er; bei $c&gt;1$ &#252;berspitzt. Bei <b>OLMo step&nbsp;0</b> ist $c$ wirkungslos (trainierter Gradient fehlt).</p>
+
+    <div class="controls">
+      <label>Modell
+        <select id="vzModel">
+          <option value="llama">Llama 3.1 8B</option>
+          <option value="olmo_trained">OLMo 3 7B (trained)</option>
+          <option value="olmo_init">OLMo 3 7B (step 0)</option>
+          <option value="gemma">Gemma 4 E4B</option>
+        </select>
+      </label>
+      <label>Skalen-Kontrolle $c$: <input type="range" id="vzC" min="0" max="200" value="100"> <span class="ctl-val" id="vzCVal">1.00</span></label>
+      <label><input type="checkbox" id="vzFlow" checked> A &middot; Fluss-Rang</label>
+      <label><input type="checkbox" id="vzDetail" checked> B &middot; RG-Details</label>
+      <label><input type="checkbox" id="vzAbs" checked> B &middot; Abstraktion/Speicher</label>
+      <label><input type="checkbox" id="vzOp" checked> Rotation + SA (rechts)</label>
+      <label><input type="checkbox" id="vzBands" checked> Regime-B&auml;nder</label>
+    </div>
+
+    <div id="fusedPlot"></div>
+    <div class="readout" id="vzReadout"></div>
+    <p class="anno">Daten: faithful Simulation der in A berichteten Werte (erank: Llama 45.4&#8594;7.12&#8594;2.53, OLMo 314&#8594;55.5&#8594;12.4, OLMo-init &#8776;326 flach, Gemma 39.3&#8594;5.92&#8594;1.60; Self-Alignment-Regimes Early/Mid/Late). B&#8217;s RG-Details folgen A&#8217;s Kurve (Feldraum-Reskalierung), B&#8217;s Abstraktion = $d$&#8722;Detail. Keine Netzwerklade, alle Daten inline.</p>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><a href="../r1-039.html">r1-039.html</a> &mdash; &#8220;Der Jacobian der Tiefe&#8221;: Operatordynamik des Residual-Streams (Jacobian-Spektrum, ~98% Rotationspaare, drei Tiefenregimes, kumulativer Low-Rank-Flaschenhals 4096&#8594;~7, Schur-Chirurgie, Community-Coupling) &#215; Faserb&#252;ndel-Gesichtspunkt (Raum-Morphing per Lipschitz-Maps, Attention-Linse, FFN-Diffeomorphismus, holographische Speicherung, Holonomie, innere rechnen/&auml;u&#223;ere &#252;bersetzen).</div></div>
+    <div class="prov"><span class="k b">B</span><div><a href="../r1-037.html">r1-037.html</a> &mdash; &#8220;Loss-Landschaft als Freie Energie&#8221;: dieselbe Fl&auml;che $L(\theta)$ gelesen als (i) raues, adversariales Terrain mit stochastischem Basin-Hopping (Checkpoint, LR-Boost + Jump, Akzept/Rollback, adaptive Suchradius) und (ii) freie Feldenergie eines neuronalen Felds, in unendlich-breiter Breite = Gau&#223;-Prozess = freies Quantenfeld (NNGP), Tiefe = RG-Flow (Mehta &amp; Schwab: RBM &#8771; RG-Schritt) plus Topologie.</div></div>
+  </section>
+
+  <p class="foot">Fusion r2-016 &middot; Round 2, Knockout-Synthese. Beide Quellpapiere sind R1-Fusionen (simulierte Daten, keine neuen Experimente); diese Fusion &#252;bernimmt ihre Stellungen und ihre Zahlen, erfindet keine neuen.</p>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- math ---------- */
+  function renderMath(){
+    if(!window.temml) return;
+    var pairs=[
+      ["f-state","h_{\\ell+1} = h_\\ell + f_\\ell(h_\\ell)\\;\\;\\text{(A: Zustandsfluss)}"],
+      ["f-energy","L(\\theta) = L_{\\mathrm{free}}(\\theta) + L_{\\mathrm{int}}(\\theta)\\;\\;\\text{(B: freie + wechselwirkende Energie)}"],
+      ["f-jac","J_\\ell = \\frac{\\partial h_{\\ell+1}}{\\partial h_\\ell} = I + \\frac{\\partial f_\\ell}{\\partial h_\\ell}\\;\\;\\text{(A: lokaler Operator)}"],
+      ["f-rg","L \\to L_{R},\\quad L_{R}(x)=\\langle L\\rangle_{x\\pm r}\\;\\;\\text{(B: RG-Low-Pass)}"],
+      ["f-prod","P_\\ell = J_{L-1}\\,\\cdots\\, J_\\ell\\;\\;\\text{(kumulatives Jacobian-Produkt, A)}"],
+      ["f-erank","\\operatorname{erank}(P)=\\exp\\!\\left(-\\sum_i p_i \\ln p_i\\right),\\quad p_i=\\frac{\\sigma_i^{2}}{\\sum_j \\sigma_j^{2}}\\;\\;\\text{4096}\\to\\sim 7"],
+      ["f-schur","J_\\ell = Q_\\ell\\left(\\Lambda_\\ell + c\\,N_\\ell\\right)Q_\\ell^{*}\\;\\;\\text{(Schur-Chirurgie)}"],
+      ["f-part","p_i = 1-\\sum_c\\left(\\frac{k_{ic}}{k_i}\\right)^{2}\\;\\;\\text{(Partizipationskoeffizient)}"],
+      ["f-field","J(x)=\\frac{\\partial \\Phi}{\\partial x}\\;\\longrightarrow\\;\\{\\,\\mathrm{div},\\,\\mathrm{curl},\\,\\mathrm{shear},\\,\\mathrm{eigphase}\\,\\}"],
+      ["f-holo","h_i^{(L)} = h_i^{(0)} + \\sum_{\\ell} \\Delta_i^{(\\ell)}\\;\\;\\text{(Superposition, holographisch)}"],
+      ["f-holo2","H_{\\gamma}=\\mathrm{Pexp}\\!\\left(\\oint_{\\gamma}\\omega\\right)\\;\\;\\text{(Holonomie um Schleife }\\gamma\\text{)}"]
+    ];
+    for(var i=0;i<pairs.length;i++){
+      var el=document.getElementById(pairs[i][0]);
+      if(el){ try{ temml.render(pairs[i][1], el); }catch(e){} }
+    }
+  }
+
+  /* ---------- theme ---------- */
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function T(){
+    return {
+      paper:cssVar("--card"), plot:cssVar("--plot"), fg:cssVar("--fg"), muted:cssVar("--muted"),
+      grid:cssVar("--grid"), accent:cssVar("--accent"), accent2:cssVar("--accent2"),
+      amber:cssVar("--amber"), early:cssVar("--early"), mid:cssVar("--mid"),
+      late:cssVar("--late"), purple:cssVar("--purple")
+    };
+  }
+  function alpha(hex,suf){ return (hex.length===7||hex.length===9)? hex+suf : hex; }
+
+  /* ---------- model data (faithful to A's reported values) ---------- */
+  var MODELS={
+    llama:        {d:4096, L:32, label:"Llama 3.1 8B",       t:[45.4,7.12,2.53],  init:false},
+    olmo_trained: {d:4096, L:32, label:"OLMo 3 7B (trained)",t:[314,55.5,12.4],   init:false},
+    olmo_init:    {d:4096, L:32, label:"OLMo 3 7B (step 0)", t:[326,326,326],     init:true},
+    gemma:        {d:4096, L:42, label:"Gemma 4 E4B",        t:[39.3,5.92,1.60],  init:false}
+  };
+  function targetAt(m,c){
+    if(m.init) return m.t[1];
+    var a=m.t[0], b=m.t[1], d=m.t[2];
+    if(c<=1) return a*Math.pow(b/a,c);
+    return b*Math.pow(d/b,c-1);
+  }
+  function detailAt(m,c,ell){
+    var L=m.L, d=m.d, end=targetAt(m,c), f=ell/L, e;
+    if(m.init) e = m.t[1] + (d-m.t[1])*Math.pow(1-f,0.35);
+    else        e = end + (d-end)*Math.pow(1-f,1.25);
+    return Math.max(1.0,e);
+  }
+  function saAt(m,ell){ var f=ell/m.L; return m.init?0.90:0.04+0.66*Math.pow(f,1.5); }
+  function rotAt(m,ell){ var f=ell/m.L; return m.init?0.55:0.97+0.01*(1-f); }
+
+  function renderViz(){
+    if(!window.Plotly) return;
+    var m=MODELS[document.getElementById("vzModel").value]||MODELS.llama;
+    var c=parseInt(document.getElementById("vzC").value,10)/100;
+    var sFlow=document.getElementById("vzFlow").checked;
+    var sDet=document.getElementById("vzDetail").checked;
+    var sAbs=document.getElementById("vzAbs").checked;
+    var sOp=document.getElementById("vzOp").checked;
+    var sBands=document.getElementById("vzBands").checked;
+    document.getElementById("vzCVal").textContent=c.toFixed(2);
+
+    var t=T(), d=m.d, L=m.L;
+    var xs=[],flow=[],det=[],abs=[],sa=[],rot=[];
+    for(var ell=0;ell<=L;ell++){
+      var f=detailAt(m,c,ell);
+      xs.push(ell);
+      flow.push(f);
+      det.push(f*1.15);
+      abs.push(Math.max(d-f,1.0));
+      sa.push(saAt(m,ell));
+      rot.push(rotAt(m,ell));
+    }
+    var end=targetAt(m,c);
+    var ee=Math.round(L*0.16), ls=Math.round(L*0.63);
+
+    var traces=[];
+    if(sFlow){
+      traces.push({x:xs,y:flow,type:"scatter",mode:"lines",yaxis:"y",
+        line:{color:t.accent,width:3},fill:"tozeroy",fillcolor:alpha(t.accent,"22"),
+        name:"A &middot; Fluss-Rang erank(P&thinsp;ell) [Aktivierung]",
+        text:xs.map(function(i){return "Tiefe "+i+": Fluss-Rang \u2248 "+flow[i].toPrecision(3);}),
+        hoverinfo:"text"});
+    }
+    if(sDet){
+      traces.push({x:xs,y:det,type:"scatter",mode:"lines",yaxis:"y",
+        line:{color:t.accent2,width:2.5,dash:"dot"},name:"B &middot; RG-Details (HF-Energie) [Feld]",
+        hoverinfo:"skip",showlegend:true});
+    }
+    if(sAbs){
+      traces.push({x:xs,y:abs,type:"scatter",mode:"lines",yaxis:"y",
+        line:{color:t.late,width:2.5},name:"B &middot; Abstraktion/Speicher &asymp; d [holographisch]",
+        hoverinfo:"skip",showlegend:true});
+    }
+    if(sOp){
+      traces.push({x:xs,y:rot,type:"scatter",mode:"lines",yaxis:"y2",
+        line:{color:t.purple,width:2,dash:"dot"},name:"Rotation ~98% [A/B]",showlegend:true});
+      traces.push({x:xs,y:sa,type:"scatter",mode:"lines",yaxis:"y2",
+        line:{color:t.amber,width:2,dash:"dash"},name:"Self-Alignment [A]",showlegend:true});
+    }
+
+    var shapes=[];
+    if(sBands){
+      shapes.push({type:"rect",x0:0,x1:ee,yref:"paper",y0:0,y1:1,fillcolor:alpha(t.early,"12"),line:{width:0},layer:"below"});
+      shapes.push({type:"rect",x0:ee,x1:ls,yref:"paper",y0:0,y1:1,fillcolor:alpha(t.mid,"12"),line:{width:0},layer:"below"});
+      shapes.push({type:"rect",x0:ls,x1:Math.max(ls+1,L-2),yref:"paper",y0:0,y1:1,fillcolor:alpha(t.late,"12"),line:{width:0},layer:"below"});
+      shapes.push({type:"rect",x0:Math.max(ls,L-2),x1:L,yref:"paper",y0:0,y1:1,fillcolor:alpha(t.purple,"22"),line:{width:0},layer:"below"});
+    }
+    var ann=[];
+    if(sBands){
+      ann.push({x:ee/2,yref:"paper",y:0.965,text:"EARLY",showarrow:false,font:{color:t.early,size:11}});
+      ann.push({x:(ee+ls)/2,yref:"paper",y:0.965,text:"MID",showarrow:false,font:{color:t.mid,size:11}});
+      ann.push({x:(ls+L)/2-2,yref:"paper",y:0.965,text:"LATE",showarrow:false,font:{color:t.late,size:11}});
+      ann.push({x:L-1,yref:"paper",y:0.90,text:"OUTER",showarrow:false,font:{color:t.purple,size:10}});
+    }
+
+    var layout={
+      paper_bgcolor:t.paper,plot_bgcolor:t.plot,font:{color:t.fg},
+      title:{text:m.label+"  \u00b7  c="+c.toFixed(2)+"  \u00b7  Detail (log, links) vs. Operatortyp (0\u20131, rechts)",font:{color:t.fg,size:13.5}},
+      xaxis:{title:"Tiefe \u2113 (Schicht)  =  Zeit (A)  =  RG-Skala (B)",range:[0,L],color:t.muted,gridcolor:t.grid},
+      yaxis:{title:"Detail / Abstraktion (log)",type:"log",color:t.muted,gridcolor:t.grid,range:[0,Math.log10(d*2)]},
+      yaxis2:{title:"Operatortyp (0\u20131)",overlaying:"y",side:"right",range:[0,1],showgrid:false,color:t.muted},
+      legend:{bgcolor:alpha(t.paper,"cc"),orientation:"h",y:-0.30,font:{color:t.fg,size:11}},
+      shapes:shapes,annotations:ann,
+      margin:{l:66,r:58,t:66,b:76},showlegend:true
+    };
+
+    Plotly.react("fusedPlot",traces,layout,{responsive:true,displaylogo:false});
+
+    var rd=document.getElementById("vzReadout");
+    if(m.init){
+      rd.innerHTML="OLMo step 0 (untrainiert): kumulativer Fluss-Rang \u2248 <b>"+end.toFixed(0)+"</b> von d="+d+"\u2002\u2014\u2002 der trainierte Gradient <b>fehlt</b>, c ist (fast) wirkungslos. Training installiert den Kollaps (A) <i>und</i> die RG-Struktur (B).";
+    }else{
+      var regime=c<0.15?"Schur-Chirurgie (c\u21920, Feingranularit\u00e4t): Kollaps aufgel\u00f6st, Detail bleibt hoch (A\u2261B)"
+        :(c<1.15?"trainiertes Regime: nicht-normale Komponente aktiv \u2014 Fluss kollabiert (A) / HF wird integriert (B)"
+        :"verst\u00e4rkte Skala: Kollaps \u00fcberspitzt \u2014 nur noch die niedrigsten Frequenzen übrig");
+      rd.innerHTML="Kumulatives Detail (Fluss-Rang \u2261 RG-HF) \u2248 <b>"+end.toPrecision(3)+"</b> von d="+d+" \u00b7 Abstraktion/Speicher bleibt \u2248 <b>"+(d-end).toPrecision(3)+"</b> (holographisch, \u2248 d). Rotation \u2248 98% (A/B) \u00b7 c="+c.toFixed(2)+" \u2192 "+regime;
+    }
+  }
+
+  /* ---------- wiring ---------- */
+  function wire(){
+    ["vzModel","vzC","vzFlow","vzDetail","vzAbs","vzOp","vzBands"].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.addEventListener("input",renderViz);
+    });
+    var btn=document.getElementById("themeToggle");
+    if(btn) btn.addEventListener("click",function(){
+      document.documentElement.classList.toggle("dark");
+      renderViz();
+    });
+    try{
+      var mo=new MutationObserver(function(){ if(window.Plotly) renderViz(); });
+      mo.observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
+    }catch(e){}
+    window.addEventListener("resize",function(){
+      if(window.Plotly && window.Plotly.Plots) window.Plotly.Plots.resize("fusedPlot");
+    });
+  }
+
+  function init(){
+    renderMath();
+    wire();
+    renderViz();
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

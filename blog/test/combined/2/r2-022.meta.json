@@ -1,0 +1,16 @@
+{
+  "no": "022",
+  "a": "combined/r1-063.html",
+  "b": "combined/r1-074.html",
+  "a_title": "Die morphende Nützlichkeitsscheibe — Phasenraum × Space-Morphing",
+  "b_title": "Attention als Optimaler Transport ✕ Talking Heads",
+  "combined_theme": "morphende-leseschreib-maschine",
+  "one_line": "Ein Transformer ist ein Stapel lokaler Lese-Schreib-Operatoren: das dichte entropische Lesen (B) ist der Operator, das niedrig-rangige Schreiben (B) der Warp — deren Komposition (A) verformt den Repräsentationsraum layerweise und formt die dünne Nützlichkeitsscheibe (A), auf der Nützlichkeit lebt.",
+  "contradictions": [
+    "Dicht/entropisch (B: Softmax gibt jedem Key > 0, Entropie-Maximierung, dichte glatte Verteilung) vs. dünn/niedrig-dimensional (A: Nützlichkeit lebt auf einer hauchdünnen Energie-Scheibe, 'ein Staubkorn im Ozean der Ozeane')",
+    "Eingebauter Sicherheits-Mechanismus (B: Fisher-Geometrie dämpft ein sicheres Netz = manifold-awarees, rationales Lernen, 'kommt geschenkt') vs. kein OOD-Alarm (A: das Modell hat keinen eingebauten OOD-Alarm, es glättet weiter in falsche Täler)",
+    "Lokale, geschlossene, wohl-posede Primitive (B: jede Attention-Zeile = einseitiges entropisches OT mit geschlossener, nicht-iterativer Lösung) vs. globales, kontinuierliches dynamisches System (A: ein layerweises Jacobian-Morphing mit globalem Energie-Attraktor)"
+  ],
+  "resolution": "Lesen vs. Schreiben sind zwei Hälften eines Kopfes: das dichte Lesen (B) wählt den Kontext, das niedrig-rangige Schreiben (B) komprimiert ihn auf die dünne Scheibe — A's Scheibe ist genau B's Rang-1-Kanalstruktur. B's Fisher-Dämpfung ist Trainings-Zeit-Regelung, A's 'kein OOD-Alarm' ist die Inferenz-Zeit-Folge derselben Konfidenz-Dämpfung (zwei Stufen, kein Widerspruch). Die lokale geschlossene Lese-Schreib-Primitive (B) komponiert sich zum globalen Jacobian-Flow (A); der Layer-Jacobian ist das Produkt der rang-1 OV-Schreiben (J = prod(I + J_Δ)).",
+  "viz": "Eine fusionierte Lese-Schreib-Unit in zwei Panels: oben die globale morphende Scheibe (A: Jacobian-verformtes Gitter, mitschwimmende Energie-Scheibe, Boltzmann-Wolke ∝ e^(-E/T), dragbarer Query mit Status AUF/NEBEN/HALLUZINATION, falsches Tal), unten der lokale Kopf (B: entropisches Softmax-Lesen über m Keys → Kontextvektor c → Projektion auf Rang-1-Kanal v̂). Geführte Kennzahl 'Captured' = α²/‖c‖²: wie viel vom dichten Lesen im dünnen Kanal ankommt und die Scheiben-Leuchtkraft steuert. Theme-aware (CSS-Variablen, dunkel = Default), alle Daten inline, null Netzabrufe."
+}

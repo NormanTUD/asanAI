@@ -1,0 +1,16 @@
+{
+  "no": "035",
+  "a": "combined/r1-033.html",
+  "b": "combined/r1-042.html",
+  "a_title": "Der sich biegende Raum und der sich füllende Komplex",
+  "b_title": "Der Torus-Attraktor, der addiert",
+  "combined_theme": "computation-as-topology",
+  "one_line": "Die Rechnung eines Netzes ist ein topologisches Rechenobjekt (Komplex/Attraktor), dessen Betti-Zyklen als Register doppelt arbeiten (Bedeutung ordnen / Transformation ausführen) und dessen Lesbarkeit die Symmetrie der Aufgabe bestimmt — A's gewarbter, stückweise linearer Raum ist der niedrig-symmetrische, B's addierender harmonischer Torus der hoch-symmetrische Grenzfall.",
+  "contradictions": [
+    "Betti-Zahlen: A liest β₀/β₁ deskriptiv als 'Topologie der Bedeutung' (Schnappschuss, tut an sich nichts), B liest β₁ funktional als Anzahl rechenender Frequenz-Register (β₁ = 5, Ablation-verifiziert) — dasselbe Symbol, zwei Ontologien.",
+    "Objekt & Parameter: A's Objekt ist ein filtriertes Set (Vietoris–Rips K_ε, ε = Filter auf fester Menge) mit Tiefe als Stacking-Kapazität (ReLU-Regionen exponentiell in Tiefe); B's Objekt ist ein dynamisches System (f = Attn + MLP, Layer = Iteration) und der verifizierte Fall rechnet in einem Layer ohne Stacking.",
+    "Nichtlinearität: A setzt sie als tragenden, kontinuierlichen Bogen ein (linear∘linear = linear, ReLU warpt den Raum); B arbeitet fast vollständig linear/harmonisch (97,5 % lineares Softmax, 84,6 % Grad-2-Neuronen) mit der Nichtlinearität als einzem bilinearem Generator (cos a·cos b)."
+  ],
+  "resolution": "Betti-Zyklen = Register, die aufgaben-relativ Bedeutung ordnen (A) oder eine Transformation ausführen (B); die Symmetrie der Aufgabe bestimmt die Lesbarkeit — hoch-symmetrisch/Rotation (kreis-/gruppenstrukturiert) ⇒ harmonisch-linear lesbar (B), niedrig-symmetrisch ⇒ stückweise-linear, zahlt die Auflösung mit Tiefe/Stacking (A). A und B sind die beiden Symmetrie-Grenzfälle eines topologischen Rechenobjekts, dessen Topologie die Rechnung ist.",
+  "viz": "Canvas-Score-Landschaft Score(c)=Σ αₖ·cos(ωₖ(a+b−c)) über c=0..112: scharfer c*-Attraktor (B) + Ein-Schwelle-Trennung (A) + Interferenz-Nebenpeak (falsches Becken / cross-class); unten ein β₁-Torus aus n Frequenz-Registern und eine Lesart-Gaage (stückweise A ↔ harmonisch B). Ein Regler n = # β₁-Register steuert Attraktor-Schärfe UND lineare Trennung zugleich; Rauschen (A's Auslöser) kippt 1-Register ins nahe falsche Becken, 5-Register bleibt robust. Theme-aware, nur Inline-Daten, 0 Console-Errors."
+}

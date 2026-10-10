@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffeomorphismus als Eigen-Spektrum — Fusion (R2)</title>
+<style>
+  :root{
+    --bg:#f6f3ea; --fg:#1c2230; --muted:#5a6478; --grid:#cbc3b2;
+    --accent:#b5541f; --accent2:#1f6f8b; --pos:#2f8f5b; --neg:#c23b4e; --warn:#b5751d;
+    --panel:#ffffff; --panel2:#f3efe4; --panelbd:#ddd6c7; --shadow:rgba(40,30,10,.08);
+  }
+  html.dark{
+    --bg:#0b0d12; --fg:#e8ecf4; --muted:#8b96ac; --grid:#333c52;
+    --accent:#ffd166; --accent2:#5ad2ff; --pos:#4ade80; --neg:#ff6b8a; --warn:#ffa94d;
+    --panel:#11151f; --panel2:#0f1219; --panelbd:#252d40; --shadow:rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);line-height:1.65;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+    transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+  article{max-width:820px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:clamp(1.6rem,4.4vw,2.3rem);line-height:1.14;letter-spacing:-.02em;margin:.1em 0 .15em;font-weight:700;color:var(--accent)}
+  .sub{color:var(--muted);font-size:.96em;margin:0 0 2.1em;font-family:Georgia,"Times New Roman",serif;font-style:italic}
+  section{margin:2.4rem 0;scroll-margin-top:1rem}
+  h2{font-size:1.3em;margin:0 0 .6em;padding-bottom:.3em;border-bottom:1px solid var(--panelbd);letter-spacing:-.01em}
+  h3{font-size:1.04em;margin:1.3em 0 .35em;color:var(--accent2)}
+  p{margin:.7em 0}
+  b{font-weight:600}
+  .lead{font-size:1.04em}
+  a{color:var(--accent2)}
+  .tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    padding:.12rem .5rem;border-radius:20px;margin-right:.35rem;vertical-align:middle}
+  .tag-a{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+  .tag-b{background:color-mix(in srgb,var(--accent2) 18%,transparent);color:var(--accent2)}
+  .tag-x{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+  .math{background:var(--panel);border:1px solid var(--panelbd);border-left:3px solid var(--accent);
+    border-radius:10px;padding:14px 18px;margin:1em 0;font-family:"Cambria Math","Cambria",Georgia,serif;font-size:1.02em}
+  .math div{margin:.4em 0}
+  .math .lbl{color:var(--muted);font-family:Inter,system-ui,sans-serif;font-size:.78em;
+    text-transform:uppercase;letter-spacing:.5px;margin-right:.5em}
+  .math sub{font-size:.72em}
+  .card{background:var(--panel);border:1px solid var(--panelbd);border-radius:12px;padding:.95rem 1.1rem;margin:.9rem 0}
+  .card.hl{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+  .tension{color:var(--muted);font-style:italic;font-size:.94em;margin-top:.4em}
+  ul{margin:.5em 0 .5em 1.25em;padding:0}
+  li{margin:.42em 0}
+  /* viz */
+  .panel{background:var(--panel);border:1px solid var(--panelbd);border-radius:14px;
+    box-shadow:0 8px 30px var(--shadow);margin:1em 0;overflow:hidden}
+  .viz-canvas{display:block;width:100%;height:460px;touch-action:none;background:none}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem;padding:.8rem 1rem;border-top:1px solid var(--panelbd)}
+  .controls label{font-size:.9rem;color:var(--muted)}
+  input[type=range]{width:210px;accent-color:var(--accent)}
+  .val{font-family:ui-monospace,"JetBrains Mono",monospace;color:var(--accent);min-width:42px;font-weight:600}
+  .tbtn{font:inherit;cursor:pointer;color:var(--fg);background:var(--panel2);border:1px solid var(--panelbd);
+    border-radius:8px;padding:.35rem .8rem;font-size:.85rem;transition:all .15s}
+  .tbtn:hover{border-color:var(--accent)}
+  .readouts{display:flex;flex-wrap:wrap;gap:1.2rem;padding:.3rem 1rem .2rem;font-size:.9rem}
+  .readouts b{color:var(--accent)}
+  .inv{padding:.5rem 1rem .1rem}
+  .inv-lbl{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.35rem}
+  .inv-track{height:12px;border-radius:7px;background:var(--panel2);border:1px solid var(--panelbd);overflow:hidden}
+  .inv-fill{height:100%;width:40%;background:var(--warn);transition:width .12s,background .12s}
+  .inv-ends{display:flex;justify-content:space-between;font-size:.74rem;color:var(--muted);margin-top:.25rem}
+  .regime{padding:.1rem 1rem .9rem;font-weight:600;font-size:1rem}
+  .note{color:var(--muted);font-size:.88rem;font-style:italic;margin-top:.4rem}
+  @media(max-width:560px){.inv-ends{font-size:.68rem}}
+</style>
+</head>
+<body>
+<article>
+  <h1>Diffeomorphismus als Eigen-Spektrum</h1>
+  <p class="sub">Fusion aus: r1-004.html &#10005; r1-056.html &nbsp;(Round 2)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere beschreiben <b>die Wirkung einer einzelnen Attention-Schicht auf den
+    Repräsentationsraum</b> — und beide kommen auf <b>denselben Operator, zwei Seiten desselben Objekts</b>.
+    Eine Attention-Schicht ist die <b>Identität</b> (der Residual-Stream, in r1-004 die aufsteigende
+    „Elektrizität") plus ein glattes, lokal geglättetes <b>Verschiebungsfeld</b> f(x), das die
+    Aufmerksamkeit erzeugt: L(x) = x + f(x).</p>
+    <p><span class="tag tag-a">A</span> Betrachtet man diese Schicht <b>endlich / integriert</b>, ist sie ein
+    <b>Diffeomorphismus</b> der Repräsentations-Mannigfaltigkeit — eine glatte, (lokal) invertible Verformung,
+    die das Gitter „liquify"t (r1-004). <span class="tag tag-b">B</span> Betrachtet man dieselbe Schicht
+    <b>linear / tangential</b> — als Spektraloperator auf dem Aktivierungsraum —, ist sie ein
+    <b>Conceptor-Operator</b> C = R(R+α⁻²I)⁻¹, in der Eigenbasis diagonal, mit einem weichen Gain
+    γⱼ = σⱼ/(σⱼ+α⁻²) pro Eigenrichtung (r1-056).</p>
+    <p class="lead">B ist also das <b>Tangentenbild</b>, A das <b>Integrationsbild</b> desselben Operators.
+    Die <b>Aperture α</b> (in A: die ‖Df‖-Grenze / die Kernel-Breite) ist der <b>eine Parameter</b>, der beide
+    Pole verbindet: α→∞ macht C zur Identität (weicher, <i>invertibler</i> Raum — A), α→0 macht C zu einem
+    harten <i>Projektor</i> auf die Top-Eigenrichtungen (Rang-k-Kern — B). B's zentrale Beobachtung
+    „<b>Addition = Rotation auf dem Kreis</b>" ist dabei selbst ein (lineares) Diffeomorphismus auf dem
+    Rang-10-Unterraum — A's Diffeomorphismus in der diskreten Spezialform.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden R1-Papiere stehen sich an drei konkreten Punkten gegenüber:</p>
+    <div class="card">
+      <span class="tag tag-a">A</span><span class="tag tag-b">B</span>
+      <h3 style="margin-top:.2rem">1. Lineares Richtung-Filter vs. nichtlineare Raum-Verformung</h3>
+      <p><span class="tag tag-b">B</span> Die Wirkung einer Schicht auf ein Konzept ist ein <b>lineares
+      Operator</b> C = R(R+α⁻²I)⁻¹, in der Eigenbasis diagonal, pro Richtung ein <i>skalares</i> Gain γⱼ.
+      B spricht durchweg von „einer Eigenzerlegung, von außen (Steering) und von innen (gelernte Rechnung)".</p>
+      <p><span class="tag tag-a">A</span> Die Wirkung ist eine <b>nichtlineare, lokale, diffeomorphe</b>
+      Verformung der Mannigfaltigkeit — x→x+f(x) mit einem abklingenden Kernel
+      (<code>force = exp(−dist&#183;0.5)</code>), das Gitter „beult sich auf". A ist durchweg <i>nichtlinear</i>
+      (endliche Verformung, Komposition).</p>
+      <p class="tension">Spannung: ist die Schicht ein <em>lineares</em> Richtung-Filter (B) oder eine
+      <em>nichtlineare</em> Raum-Verformung (A)?</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-a">A</span><span class="tag tag-b">B</span>
+      <h3 style="margin-top:.2rem">2. Invertierbarkeit: Diffeomorphismus vs. Projektor</h3>
+      <p><span class="tag tag-a">A</span> Kernthese: jede Schicht ist ein <b>invertibler Diffeomorphismus</b>
+      x→x+f(x) — braucht ‖Df‖&lt;1. A's eigener Autor merkt selbst an, dass die Invertierbarkeits-These
+      „eine visuelle Metapher" ist, da echte Aufmerksamkeit im Allgemeinen nicht invertibel ist.</p>
+      <p><span class="tag tag-b">B</span> Der Conceptor wird bei α→0 zu einem <b>Projektor</b>: γⱼ→0 für den
+      nied-energetischen Schweif, der <b>Rang kollabiert</b> — ausdrücklich <i>nicht invertibel</i>. B's
+      Arithmetik-Kern ist <b>Rang 10 von 128</b>, also low-rank (singular).</p>
+      <p class="tension">Spannung: darf die Schicht ein <em>invertibler</em> Diffeomorphismus sein (A) oder ein
+      <em>Rang-k-Projektor</em> (B)?</p>
+    </div>
+    <div class="card">
+      <span class="tag tag-a">A</span><span class="tag tag-b">B</span>
+      <h3 style="margin-top:.2rem">3. Weich &amp; kontinuierlich vs. hart &amp; diskret</h3>
+      <p><span class="tag tag-a">A</span> Die Verformung ist ein <b>glatter, kontinuierlicher</b> lokaler
+      Kernel — weich überall im Raum, <b>kein</b> diskretes Gerüst, keine Frequenzen.</p>
+      <p><span class="tag tag-b">B</span> Die Arithmetik-Struktur ist <b>diskret und hart</b>: exakt
+      <b>5 Frequenzen</b> {14, 35, 41, 42, 52}, zusammen <b>Rang 10</b>; <b>84,6&nbsp;%</b> der Neuronen
+      berechnen ein Polynom 2. Grades <em>einer einzelnen</em> Frequenz; der Rest wird verworfen.</p>
+      <p class="tension">Spannung: ist die Konzepts-Geometrie <em>weich/kontinuierlich</em> (A) oder
+      <em>hart/diskret/low-rank</em> (B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><span class="tag tag-x">1</span> <b>Linear ist die Tangente, nichtlinear die Integralkurve.</b> Das
+    Diffeomorphismus A linearisiert um die Identität zu <b>I + Df</b>. In der Eigenbasis des
+    Aktivierungsraum-Kovarianz <i>R = U diag(σ) Uᵀ</i> ist I + Df genau der Conceptor-Operator C (B). B
+    zeichnet das <i>lineare</i> Bild, A das <i>endliche</i> Bild desselben Operators — die weichen Gains γⱼ
+    sind die Eigenwerte von C. „Nichtlinear" (A) und „linear" (B) sind keine Gegensätze, sondern
+    <b>dieselbe Abbildung auf zwei Skalen</b>.</p>
+    <p><span class="tag tag-x">2</span> <b>Invertierbarkeit lebt im Residual-Stream.</b> B's „Projektor" C
+    wird zu A's Diffeomorphismus, sobald man den <b>Identitäts-Stream addiert</b> und α endlich lässt
+    (‖Df‖&lt;1). Die Aperture ist der Schalter: <b>α groß → C≈I → Schicht = I + kleines Feld → invertibler
+    Diffeomorphismus (A)</b>; <b>α→0 → C→Projektor, das Feld wird ein harter Rang-k-Kern → die Schicht
+    bricht die Invertierbarkeit (B)</b> — genau dort, wo A's Diffeo-These nur noch „visuelle Metapher" ist.
+    Die Invertierbarkeit der Schicht wird von <b>det&nbsp;C = Πⱼ γⱼ</b> gemessen: →1 im weichen Raum, →0
+    im Projektor-Regime.</p>
+    <p><span class="tag tag-x">3</span> <b>Weich ist das Substrat, hart ist die selbst-organisierte
+    Spezialform.</b> A's glatter lokaler Kernel ist der <i>unstrukturierte</i> Zustand. B zeigt, dass eine
+    <i>Aufgabe mit sauberer spektraler Lücke</i> (a+b mod 113) den Spektrum des Verschiebungsfeldes <b>selbst
+    in einen diskreten Rang-10-Kern</b> zwingt; ein Conceptor mit <b>kleiner Aperture reproduziert ihn
+    exakt</b> (γ≈1 für die 10 Frequenz-Dimensionen, γ≈0 sonst). Weich/kontinuierlich (A) und hart/diskret (B)
+    sind also zwei Skalen <em>desselben</em> Spektrums, und die Aperture wählt die Skala.</p>
+    <div class="card hl">
+      <p class="lead" style="margin:0"><b>Fusionierte Schlussfolgerung:</b> Eine Attention-Schicht =
+      <b>Identität (Residuum) + spektral geglättetes Verschiebungsfeld</b>. Tangential ein Conceptor C (B)
+      mit Aperture α; endlich ein invertibler Diffeomorphismus x→x+f(x) (A). Dieselbe Eigenzerlegung, zwei
+      Seiten. Die Aperture α ist der Drehknopf: <b>weicher invertibler Raum (A) ↔ harter Rang-k-Kern (B)</b>.
+      Invertierbarkeit gilt <i>genau</i> im weichen Regime; der harte low-rank Kern ist der (nicht-invertible)
+      Grenzfall — und B's „Addition = Rotation" ist ein lineares Diffeomorphismus auf dem Kern-Unterraum.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3><span class="tag tag-a">A</span> Der Transformer als Diffeomorphismen-Stack</h3>
+    <p>Die Repräsentationen leben auf einer <b>Mannigfaltigkeit</b>; jede Schicht ist ein glatter,
+    (lokal) <b>invertibler</b> Diffeomorphismus (Verformung), Schichten stapeln sich vertikal. Der
+    <b>Residual-Stream</b> ist die Identität — A's „Elektrizität", die das Token-Signal durch alle Schichten
+    trägt. <b>Aufmerksamkeit</b> verschmilzt zwei Operationen: (i) eine <i>lineare Projektion</i> der
+    Token-Query-Ausrichtung (das „Lot auf die Query-Richtung fällen", Projektionslänge = rohes Logit),
+    (ii) eine <i>Konvexkombination</i> der Value-Punkte, die das Token residuell zum <b>Schwerpunkt</b> zieht
+    (<code>neu = &#931; a&#7523;&#183;V&#7523;</code>), per Softmax zu einem Wahrscheinlichkeits-Simplex. Lokal ist
+    das eine diffeomorphe Verformung über einen <b>abklingenden Kernel</b> (<code>force = exp(−dist&#183;0.5)</code>).
+    <b>Aktiv</b> (der Punkt bewegt sich im festen Raum) und <b>passiv</b> (der Raum wird verformt) sind
+    dieselbe Abbildung. <b>Tiefe = Komposition</b>: x<sub>N</sub> = L<sub>N</sub>&#8928;&#8230;&#8928;L<sub>1</sub>(x<sub>0</sub>)
+    = x<sub>0</sub> + &#931;<sub>k</sub> f<sub>k</sub> — ein Token beschreibt einen glatten Pfad.</p>
+
+    <h3><span class="tag tag-b">B</span> Das Konzept als Eigen-Spektrum</h3>
+    <p>Die Geometrie eines Konzepts ist ein <b>Spektrum aus Eigenrichtungen mit Energien</b>. Aus den
+    Aktivierungen baut man die Korrelationsmatrix <i>R = ⅟N XᵀX = U diag(σ₁,&#8230;,σ<sub>d</sub>) Uᵀ</i>. Der
+    <b>Conceptor</b> ist eine weiche Projektion, diagonal in derselben Eigenbasis:
+    <i>C = R(R+α⁻²I)⁻¹</i>, <i>γⱼ = σⱼ/(σⱼ+α⁻²) &#8712; [0,1]</i>. Die <b>Aperture α</b> (Kamerablende):
+    klein = enger Fokus auf die energiereichsten Richtungen; groß → C wird zur Identität. <b>Quota</b>
+    <i>q(C) = ⅟d tr(C) = ⅟d &#931;<sub>j</sub> γⱼ</i> sagt ohne Training, in welcher Layer das Konzept am besten
+    trennbar ist (Pearson-r bis 0,96). <b>Bipolar &gt; unipolar:</b> auf beiden Polen trainiert erfasst der
+    Unterraum ≥ 95&nbsp;% der DiffMean-Richtung. <b>Boolean-Algebra</b> auf Matrizen: ¬C = I−C,
+    A∧B = (A⁻¹+B⁻¹−I)⁻¹, A∨B = ¬(¬A∧¬B).</p>
+    <p><b>Die Grammatik der Rotation</b> (modulare Addition): Ein 1-Layer-Transformer (Embedding 128D,
+    4 Heads, MLP 128→512→128, Vokabular 113) lernt a+b mod 113 mit 100&nbsp;% Genauigkeit. <b>Addition =
+    Rotation</b> auf einem Kreis: θ<sub>a</sub> = (2πk/113)&#183;a; Score(c) = cos((2πk/113)(a+b−c)) — bei
+    korrektem c heben sich die Drehungen auf (cos 0 = 1). <b>Konstruktive Interferenz</b>:
+    Logit(c) = &#931;<sub>k&#8712;{14,35,41,42,52}</sub> cos((2πk/113)(a+b−c)) — nur die richtige Antwort hat alle
+    5 Cosinus-Terme gleichzeitig maximal. Das <b>Embedding</b> kodiert Zahlen als Kreis-Positionen in 2D-Ebenen;
+    5 Frequenzen × 2 (cos/sin) = <b>Rang 10</b>. Das <b>Additionstheorem</b> cos(α+β) = cosα&#183;cosβ −
+    sinα&#183;sinβ: Attention ist bilinear → erzeugt Produkte cos(wₖa)cos(wₖb); das MLP (ReLU-Knicke)
+    realisiert daraus cos(wₖ(a+b)). <b>84,6&nbsp;%</b> der Neuronen = Polynom 2. Grades einer einzelnen
+    Frequenz — das Netz hat DFT und Rotationsmatrizen <em>selbst erfunden</em>.</p>
+
+    <h3><span class="tag tag-x">Brücke</span> Eine Eigenzerlegung, zwei Skalen — und Rotation ist Diffeomorphismus</h3>
+    <p>Die 5 cos/sin-Paare spannen den „Konzept-Unterraum" der Arithmetik: ein Spektrum mit <b>10 großen
+    (geappteten)</b> und 118 winzigen Eigenwerten. Ein Conceptor auf B's Aktivierungen hätte genau dieses
+    Spektrum; <b>kleine Aperture → γ≈1 für die 10 Kern-Dimensionen, γ≈0 sonst → reproduziert den Rang-10-Kern</b>.
+    A's „Elektrizität" = die Identität (das I in C = R(R+α⁻²I)⁻¹); A's „Beugung" = das f(x) = C−I. Und der
+    entscheidende Punkt der Fusion: <b>„Addition = Rotation auf dem Kreis" (B) ist ein lineares
+    Diffeomorphismus auf dem 2D-cos/sin-Unterraum</b> — Rotationen sind (invertible) Diffeomorphismen. B's
+    gelernte Rechnung ist damit A's Diffeomorphismus in der diskreten, low-rank Spezialform, und A's
+    Diffeomorphismus ist B's Spektrum, wenn man es integriert statt nur linear abzulesen.</p>
+
+    <div class="math">
+      <div><span class="lbl">Conceptor (B)</span> C = R(R+α⁻²I)⁻¹, &nbsp; R = ⅟N XᵀX = U diag(σ₁,&#8230;,σ<sub>d</sub>) Uᵀ</div>
+      <div><span class="lbl">Gain</span> γⱼ = σⱼ/(σⱼ+α⁻²) &#8712; [0,1]; &nbsp; α→∞ ⇒ γⱼ→1 (C→I), &nbsp; α→0 ⇒ γⱼ→0 (Projektor)</div>
+      <div><span class="lbl">Schicht (A)</span> L(x) = x + f(x); &nbsp; linearisiert: I + Df; &nbsp; in Eigenbasis: C = I + Df</div>
+      <div><span class="lbl">Invertierbarkeit</span> det C = Πⱼ γⱼ; &nbsp; Diffeomorphismus, wenn ‖Df‖&lt;1 (α groß) &nbsp;⟺&nbsp; det C ≈ 1</div>
+      <div><span class="lbl">Tiefe (A)</span> x<sub>N</sub> = L<sub>N</sub> &#8928; &#8230; &#8928; L<sub>1</sub>(x<sub>0</sub>) = x<sub>0</sub> + &#931;<sub>k</sub> f<sub>k</sub></div>
+      <div><span class="lbl">Rotation (B)</span> θ<sub>a</sub> = (2πk/113)&#183;a; &nbsp; Logit(c) = &#931;<sub>k&#8712;{14,35,41,42,52}</sub> cos((2πk/113)(a+b−c))</div>
+      <div><span class="lbl">Additionstheorem</span> cos(α+β) = cosα&#183;cosβ − sinα&#183;sinβ; &nbsp; 5 Frequenzen × 2 = Rang 10</div>
+      <div><span class="lbl">Quota (B)</span> q(C) = ⅟d tr(C) = ⅟d &#931;<sub>4</sub> γⱼ</div>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung: Der Aperture-Dial als (lineares) Diffeomorphismus</h2>
+    <p class="note">Ein Spektrum aus 12 Eigenrichtungen — 4 im <b>Frequenz-Kern</b> (B, dunkel) und 8 im
+    <b>semantischen Hintergrund</b> (A, hell). Der Slider <b>α</b> steuert die weichen Gains
+    γⱼ = σⱼ/(σⱼ+α⁻²) — dieselbe Formel, die A's Diffeomorphismus linearisiert und B's Conceptor definiert.
+    Das <b>Gitter</b> (A's Mannigfaltigkeit) wird von diesem Operator verformt: bei großem α bleibt es fast
+    identisch (weicher, <b>invertibler</b> Raum — A); bei kleinem α beult es sich anisotrop auf die Kern-Richtungen
+    (strukturiert, <b>Rang-k-Projektor</b> — B). Der Punkt <b>x (Residuum)</b> zeigt die Identität, <b>x+f(x)</b>
+    das Ergebnis der Schicht. Die Invertierbarkeits-Leiste folgt det&nbsp;C = Πγⱼ.</p>
+    <div class="panel">
+      <canvas id="cv" class="viz-canvas"></canvas>
+      <div class="controls">
+        <label>Aperture α</label>
+        <input type="range" id="ap" min="0.6" max="3" step="0.02" value="1">
+        <span class="val" id="apVal">1.00</span>
+        <button id="themeBtn" class="tbtn" type="button">Theme umschalten</button>
+      </div>
+      <div class="readouts">
+        <span>Eff. Rang (γⱼ≥0,5): <b id="rankEl">–</b></span>
+        <span>Quota Σγ/d: <b id="quotaEl">–</b></span>
+        <span>Det(C)=Πγⱼ (log&#8321;&#8320;): <b id="detEl">–</b></span>
+      </div>
+      <div class="inv">
+        <div class="inv-lbl">Invertierbarkeit der Schicht &nbsp;(det C = Πγⱼ)</div>
+        <div class="inv-track"><div id="invEl" class="inv-fill"></div></div>
+        <div class="inv-ends"><span>Projektor (B) · nicht invertibel</span><span>Diffeomorphismus (A) · invertibel</span></div>
+      </div>
+      <div class="regime" id="regimeEl">–</div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul>
+      <li><a href="../r1-004.html">r1-004.html</a> — „Diffeomorphismen der Aufmerksamkeit": jeder
+      Transformer-Layer als glatter, lokal invertibler <b>Diffeomorphismus</b> (x→x+f(x)) einer
+      Repräsentations-Mannigfaltigkeit; Residual-Stream als Identität („Elektrizität"), Aufmerksamkeit als
+      Projektion + Konvexkombination (Zug zum Schwerpunkt), tiefe Komposition, Invertierbarkeits-These ‖Df‖&lt;1.</li>
+      <li><a href="../r1-056.html">r1-056.html</a> — „Weiche Räume, harte Rechnungen": das Konzept als
+      <b>Eigen-Spektrum</b>, weiche Unterraum-Steuerung via <b>Conceptor</b> C = R(R+α⁻²I)⁻¹ mit Aperture α,
+      Quota q(C), Boolean-Algebra; daneben die modulare Addition a+b mod 113 als <b>Kreis-Rotation</b> über
+      5 Frequenzen (Rang 10), selbst-organisierte Frequenz-Gruppen.</li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('cv'); if(!cv) return;
+  var ctx=cv.getContext('2d');
+  var slider=document.getElementById('ap');
+  var apVal=document.getElementById('apVal'), rankEl=document.getElementById('rankEl'),
+      quotaEl=document.getElementById('quotaEl'), detEl=document.getElementById('detEl'),
+      invEl=document.getElementById('invEl'), regimeEl=document.getElementById('regimeEl');
+  var W=0,H=0,DPR=1;
+  function rz(){DPR=Math.min(window.devicePixelRatio||1,2);
+    var r=cv.getBoundingClientRect(); W=Math.max(1,r.width); H=Math.max(1,r.height);
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0);}
+  function gv(n,fb){try{var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}catch(e){return fb;}}
+  var C={};
+  function readColors(){C.panel=gv('--panel','#11151f');C.fg=gv('--fg','#e8ecf4');C.muted=gv('--muted','#8b96ac');
+    C.grid=gv('--grid','#333c52');C.accent=gv('--accent','#ffd166');C.accent2=gv('--accent2','#5ad2ff');
+    C.pos=gv('--pos','#4ade80');C.neg=gv('--neg','#ff6b8a');C.warn=gv('--warn','#ffa94d');}
+  var N=12;
+  var SIGMA=[3.5,3.0,2.6,2.2, 1.0,0.85,0.7,0.55,0.45,0.38,0.32,0.28];
+  var ISCORE=[true,true,true,true,false,false,false,false,false,false,false,false];
+  var th=[]; for(var j=0;j<N;j++){th.push(j*2*Math.PI/N - Math.PI/2);}
+  var maxS=3.5;
+  var P0={x:0.9,y:0.6};
+
+  function cx(){return W*0.5;} function cy(){return H*0.46;}
+  function gs(){return Math.min(W*0.42,H*0.34)/1.6;}
+  function sScale(){return Math.min(W*0.40,H*0.33)/maxS;}
+  function map(p){return {X:cx()+p.x*gs(), Y:cy()-p.y*gs()};}
+
+  function compute(alpha){
+    var inv2=1/(alpha*alpha);
+    var g=SIGMA.map(function(s){return s/(s+inv2);});
+    var effrank=0,quota=0,det=1;
+    for(var i=0;i<N;i++){if(g[i]>=0.5)effrank++;quota+=g[i];det*=g[i];}
+    quota=quota/N;
+    var c00=0,c01=0,c11=0;
+    for(var k=0;k<N;k++){var cc=Math.cos(th[k]),ss=Math.sin(th[k]);
+      c00+=g[k]*cc*cc; c01+=g[k]*cc*ss; c11+=g[k]*ss*ss;}
+    var trM=c00+c11; if(trM<1e-6)trM=1e-6;
+    var ex=1.6, h=trM/2;
+    var m00=1+ex*(c00/h-1), m01=ex*(c01/h), m11=1+ex*(c11/h-1);
+    return {g:g,effrank:effrank,quota:quota,det:det,m00:m00,m01:m01,m11:m11};
+  }
+
+  function seg2(a,b,R){
+    var ax=R.m00*a.x+R.m01*a.y, ay=R.m01*a.x+R.m11*a.y;
+    var bx=R.m00*b.x+R.m01*b.y, by=R.m01*b.x+R.m11*b.y;
+    var Pa=map({x:ax,y:ay}), Pb=map({x:bx,y:by});
+    ctx.beginPath();ctx.moveTo(Pa.X,Pa.Y);ctx.lineTo(Pb.X,Pb.Y);ctx.stroke();
+  }
+  function arrow(x1,y1,x2,y2,col,lw,head){
+    ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    if(head){var a=Math.atan2(y2-y1,x2-x1),hs=8+lw;
+      ctx.beginPath();ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));
+      ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));
+      ctx.closePath();ctx.fill();}
+    ctx.restore();
+  }
+
+  function draw(){
+    if(W<=0||H<=0)return;
+    var alpha=parseFloat(slider.value)||1;
+    var R=compute(alpha);
+    readColors();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=C.panel; ctx.fillRect(0,0,W,H);
+    var i,j;
+
+    ctx.strokeStyle=C.grid; ctx.lineWidth=0.8; ctx.globalAlpha=0.5;
+    var step=0.28, ext=1.5;
+    for(i=-ext;i<=ext+1e-9;i+=step){ seg2({x:i,y:-ext},{x:i,y:ext},R); seg2({x:-ext,y:i},{x:ext,y:i},R); }
+    ctx.globalAlpha=1;
+
+    var cc=map({x:0,y:0});
+    ctx.strokeStyle=C.muted; ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(cc.X-7,cc.Y);ctx.lineTo(cc.X+7,cc.Y);
+    ctx.moveTo(cc.X,cc.Y-7);ctx.lineTo(cc.X,cc.Y+7);ctx.stroke();
+
+    var Rr=sScale();
+    for(j=0;j<N;j++){
+      var ux=Math.cos(th[j]), uy=Math.sin(th[j]);
+      var raw=SIGMA[j]*Rr, eff=R.g[j]*SIGMA[j]*Rr;
+      var col=ISCORE[j]?C.accent:C.accent2;
+      ctx.globalAlpha=0.26; ctx.strokeStyle=ISCORE[j]?C.accent:C.muted; ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(cc.X,cc.Y);ctx.lineTo(cc.X+ux*raw,cc.Y-uy*raw);ctx.stroke();
+      ctx.globalAlpha=1; arrow(cc.X,cc.Y,cc.X+ux*eff,cc.Y-uy*eff,col,ISCORE[j]?3:2.2,eff>10);
+      ctx.fillStyle=C.muted; ctx.font='10px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(String(j+1), cc.X+ux*(raw+11), cc.Y-uy*(raw+11));
+    }
+
+    var q={x:R.m00*P0.x+R.m01*P0.y, y:R.m01*P0.x+R.m11*P0.y};
+    var pp=map(P0), qq=map(q);
+    ctx.setLineDash([4,4]); ctx.strokeStyle=C.muted; ctx.lineWidth=1.3;
+    ctx.beginPath();ctx.arc(pp.X,pp.Y,11,0,Math.PI*2);ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=C.muted; ctx.font='600 11px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText('x (Residuum)', pp.X+15, pp.Y-12);
+    arrow(pp.X,pp.Y,qq.X,qq.Y,C.pos,2.2,true);
+    ctx.fillStyle=C.pos; ctx.beginPath();ctx.arc(qq.X,qq.Y,6,0,Math.PI*2);ctx.fill();
+    ctx.font='600 11px system-ui,sans-serif'; ctx.fillText('x+f(x)', qq.X+12, qq.Y+14);
+
+    apVal.textContent=alpha.toFixed(2);
+    rankEl.textContent=R.effrank+' / '+N;
+    quotaEl.textContent=R.quota.toFixed(2);
+    var dLog=Math.log10(Math.max(R.det,1e-12));
+    detEl.textContent=dLog.toFixed(2);
+    var inv=Math.max(0,Math.min(1,(dLog+8)/8));
+    invEl.style.width=(inv*100).toFixed(1)+'%';
+    invEl.style.background = inv>0.5?C.pos:(inv>0.2?C.warn:C.neg);
+    var regime, rc;
+    if(R.effrank>=12){regime='Weicher Raum (A) \u00B7 Diffeomorphismus, invertibel'; rc=C.pos;}
+    else if(R.effrank<=1){regime='\u00DCber-gated \u00B7 Projektor (Rang-0), nicht invertibel'; rc=C.neg;}
+    else if(R.effrank<=5){regime='Strukturierter Kern (B) \u00B7 Rotations-Diffeomorphismus'; rc=C.accent2;}
+    else {regime='\u00DCbergang'; rc=C.warn;}
+    regimeEl.textContent=regime; regimeEl.style.color=rc;
+  }
+
+  if(slider) slider.addEventListener('input',draw);
+  var tb=document.getElementById('themeBtn');
+  if(tb) tb.addEventListener('click',function(){document.documentElement.classList.toggle('dark');readColors();draw();});
+  var rt; window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){rz();draw();},150);});
+  rz();readColors();draw();
+})();
+</script>
+</body>
+</html>

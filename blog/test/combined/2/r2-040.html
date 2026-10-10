@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Transformer als singuläres Faserbündel — Strukturgruppe ✕ Bruchkanten · Fusion r2-040</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-s1:#0d8f80; --viz-s2:#c93a86; --viz-s3:#6451d8; --viz-kink:#b57e00;
+  --viz-apert:#6451d8; --viz-ok:#2f8f4b; --viz-bad:#c93a86;
+  --viz-fiber:#0d8f80; --viz-attn:#6451d8; --viz-ffn:#b57e00; --viz-res:#c93a86;
+  --viz-tracer:#2f8f4b; --viz-defect:#d13a2f;
+  --viz-canvas-bg:#f6f2e9; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-s1:#5ee0d0; --viz-s2:#ff7ac0; --viz-s3:#a99cff; --viz-kink:#ffc860;
+  --viz-apert:#8a7cff; --viz-ok:#6ee88a; --viz-bad:#ff7ac0;
+  --viz-fiber:#5ee0d0; --viz-attn:#8a7cff; --viz-ffn:#ffc860; --viz-res:#ff7ac0;
+  --viz-tracer:#6ee88a; --viz-defect:#ff5c7a;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.07); --viz-txt:#e8ecf6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(26px,5vw,40px);line-height:1.09;letter-spacing:-.025em;font-weight:760;margin:14px 0 10px}
+h2{font-size:clamp(20px,3.4vw,28px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16px;font-weight:660;margin:22px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:36px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:16px 18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b,.note strong{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.box p:last-child{margin-bottom:0}
+.eq{overflow-x:auto;padding:12px 15px;font-size:13.5px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke);white-space:nowrap}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap;text-decoration:none;border-bottom:none}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%;cursor:crosshair}
+.leg{display:flex;gap:13px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(102px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:14px;font-weight:640;color:var(--acc);line-height:1.25}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc3)}.ro .b .v.m{color:var(--acc4)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+button.onb{background:var(--acc2);color:var(--bg);border-color:var(--acc2);font-weight:660}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+footer strong{color:var(--txt-dim)}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r2-040</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: r1-036.html ✕ r1-043.html &nbsp;(Round 2)</p>
+  <h1>Der Transformer als singuläres Faserbündel — Strukturgruppe auf Bruchkanten</h1>
+  <p>Beide Quellen sind selbst Fusions-Papiere, die <em>dasselbe Objekt</em> mit dem <em>selben Wort</em> benennen — einem <strong>Faserbündel&nbsp;π:E→B</strong> über den Token-Embeddings. <b>A&nbsp;=&nbsp;r1-036</b> liest es in die <em>Faser-Richtung</em> (Basis = Token-<em>Folge</em>, Faser <code>ℝ<sup>d_model</sup></code> = der Embedding-Strang durch den Schicht-Stack, Strukturgruppe = Residual-Schicht <code>x↦LN(x+Attn(x))↦LN(x+FFN(x))</code>, Abschnitt&nbsp;s = Forward-Pass; Defekte im Schnitt: diskontinuierliches s = Halluzination, geschlossene Schleife = Kreisschluss). <b>B&nbsp;=&nbsp;r1-043</b> liest es in die <em>Basis-Richtung</em> (Basis = der Token-<em>Einbettungsraum</em> selbst, der <strong>kein glattes Manifold</strong>, sondern ein <em>singuläres, geschichtetes</em> Bündel mit <em>Bruchkanten</em> und variabler lokaler Dimension ist; die Schicht = ein <strong>Lipschitz-Morphismus</strong>, der Bruchkanten <em>transportiert</em>; ein <strong>Lipschitz-Objektiv</strong> dekodiert das verschlüsselte topologische Icon pro Stratum unter einem <em>Fokus-Budget</em>). <strong>Fusion: ein einzelnes Bündel, das A vertikal (Faser-Stack) und B horizontal (singuläre Basis) aufreißt — und „nicht alles kann überall scharf sein" ist die gemeinsame Grenze.</strong></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Ein singuläres Faserbündel, von zwei orthogonalen Seiten gelesen</h2>
+    <p>Beide Papiere verwenden exakt dieselbe Kernmetapher: <strong>die Token-Embedding-Geometrie eines LLMs ist ein Faserbündel&nbsp;π:E→B</strong>. Der Unterschied ist allein, <em>welche</em> Achse sie aufreißt. <strong>A&nbsp;(r1-036)</strong> läuft in die <em>Faser</em>: über jeden Token-Punkt&nbsp;b im Basisraum steht die Faser <code>F_b&nbsp;≈&nbsp;ℝ<sup>d_model</sup></code> — das Embedding dieses Tokens, so wie es durch den Stack wandert (der „Kelp-Strang"). In jeder Schicht spaltet sich der Strang in einen <em>Attention-Pfad</em> und einen <em>Dense/FFN-Pfad</em>, die <strong>⊕-addiert</strong> (Residual&nbsp;+&nbsp;LayerNorm) werden — das ist die <em>Strukturgruppe</em>. Der <em>Forward-Pass</em> ist ein <strong>Abschnitt&nbsp;s:B→E</strong>, der in jeder Faser an jeder Schicht genau einen Vektor auswählt. Die Pathologien sitzen im <em>Schnitt</em>: Halluzination = <em>s springt diskontinuierlich</em> (Sprung-Magnitude Δ); Kreisschluss = die <em>Attention-Gewichte bilden eine geschlossene Feedback-Schleife</em>.</p>
+    <p><strong>B&nbsp;(r1-043)</strong> läuft in die <em>Basis</em>: Der Basisraum ist der <em>Token-Einbettungsraum</em> <code>ℝᵈ</code> selbst, und der ist <em>kein glattes Manifold</em> — er ist ein <strong>singuläres, geschichtetes Faserbündel</strong>. Lokal ist er (innerhalb eines Stratums) annähernd flach mit einer <em>lokalen Dimension d_s</em>, an den <em>Stratum-Grenzen</em> steht eine <em>Bruchkante</em> (Singularität); die Dimension variiert um den Faktor 20+ (GPT-2: ~20 / ~389 / ~531). Jede Schicht ist eine <strong>Lipschitz-Map&nbsp;Φ:ℝᵈ→ℝᵈ</strong> — nach Rademacher fast-überall-differenzierbar, also „fast überall glatt" — die als <em>Faserbündel-Morphismus</em> die Bruchkanten <strong>transportiert, statt sie zu erzeugen</strong> (Lemma&nbsp;1&nbsp;/&nbsp;Satz&nbsp;2: Kontext heilt nichts, Singularitäten erreichen die Ausgabe). Zugleich wirkt die Schicht als <em>Objektiv</em>: das Wissen liegt <em>holographisch verschlüsselt</em> (Tori, Loop-Spaces, Spiralen) auf der Landschaft und wird stratumweise „deholographisiert", begrenzt durch ein <em>Fokus-Budget</em>.</p>
+    <p>Die <strong>einheitliche Position</strong> der Fusion lautet: <em>Die Token-Embedding-Geometrie ist ein singuläres Faserbündel, dessen Fasern die Schicht-Stacks sind (A), dessen Basis der geschichtete singuläre Einbettungsraum ist (B), dessen Strukturgruppe die Residual-Schicht-Abbildung ist — die ein a.e.-glatter Lipschitz-Morphismus ist und die Basis-Bruchkanten transportiert (B) — und dessen Abschnitt&nbsp;s (Forward-Pass, A) genau an diesen Basis-Bruchkanten diskontinuierlich werden kann (= Halluzination, A).</em> A liefert Faser&nbsp;+&nbsp;Abschnitt&nbsp;+&nbsp;Strukturgruppe (die <em>vertikale</em> Achse), B liefert die Basis-Geometrie&nbsp;+&nbsp;den Lipschitz-/Objektiv-Mechanismus (die <em>horizontale</em> Achse). Die gemeinsame Grenze ist in beiden das <strong>Fokus-Budget</strong> (A: „Resolution–Breite-Tradeoff in fester Dimension d") ↔ <strong>Reach-τ / Multiple-Testing-Limit</strong> (B): <em>nicht alles kann überall gleichzeitig scharf sein.</em></p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Vier Stellungen, die aufeinanderprallen</h2>
+    <p>Im Ziel stimmen beide überein (beide nennen es „Faserbündel", beide lehnen das naive glatte-Manifold-Bild ab). Aber zu <em>vier</em> Stellen nehmen sie unvereinbare Stellungen ein — jeweils was A&nbsp;(r1-036) und was B&nbsp;(r1-043) konkret sagt:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Was das Bündel übers ist (der Basisraum)</span>
+      <p><b>A&nbsp;(r1-036)</b> macht den Basisraum zu einer <em>sauberen, niedrig-dimensionalen Positions-Mannigfaltigkeit der Token-Folge</em> — „der Meeresboden": 1-D (Linie&nbsp;ℝ¹, Ring&nbsp;S¹, Möbius-Band — S¹ und Möbius <em>sauber getrennt</em>) oder 2-D (Gitter&nbsp;ℝ², Sphäre&nbsp;S²). Die Token sind <strong>diskrete Basispunkte</strong> auf dieser Folge.</p>
+      <p><b>B&nbsp;(r1-043)</b> macht den Basisraum zu <em>dem Token-Einbettungsraum&nbsp;ℝᵈ selbst</em> — einem <strong>kontinuierlichen, hochdimensionalen, singulären, geschichteten</strong> Raum, in dem die Token als Punkte eines Wolken-Feldes liegen mit <em>widert-varyierender lokaler Dimension</em> (GPT-2: 20→531, drei Gipfel).</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>„Wo sind die Token?" A: diskrete Punkte auf einer sauberen Linie/Ring/Sphäre (Folge-Topologie). B: Punkte in einer gezackten hoch-dimensionalen Wolke (Metrik-Geometrie). Zwei verschiedene Bilder desselben „Basisraums".</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Die Dimension d — fix vs. gemessen &amp; variabel</span>
+      <p><b>A&nbsp;(r1-036)</b> hat <em>eine feste Architektur-Dimension</em>: die Faser ist überall <code>ℝ<sup>d_model</sup></code>, mit <code>d_k = d_model/h</code> und <code>d_ff = 4·d_model</code> — dieselbe Zahl für <em>jeden</em> Token und <em>jede</em> Schicht; die Strukturgruppe ist uniform.</p>
+      <p><b>B&nbsp;(r1-043)</b> macht das Gegenteil zum Kern-Ergebnis: die <em>lokale/intrinsische Dimension</em> wird <em>gemessen</em> (Steigung von <code>log V(r)</code> gegen <code>log r</code>) und <strong>variiert pro Stratum um den Faktor 20+</strong> (20&nbsp;/&nbsp;389&nbsp;/&nbsp;531, „nicht konstant", sogar isolierte Dimension-0-Punkte).</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: ein einziges, festes d. B: ein per-Stratum gemessenes d, das um Faktor 20+ streut. Solange beide „die Dimension d" nennen, kollisionieren sie.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Wo die Pathologie sitzt — glatte Strukturgruppe vs. singuläre Basis</span>
+      <p><b>A&nbsp;(r1-036)</b>: die Strukturgruppe <code>x↦LN(x+Attn(x))↦LN(x+FFN(x))</code> ist eine <em>glatte</em> Residual-Abbildung. Die einzigen Pathologien sind im <em>Schnitt</em> (diskontinuierliches s) oder in der <em>Attention</em> (geschlossene Schleife); die Faser-/Basis-Geometrie wird als glatt vorausgesetzt (Krümmung/Chaos/Twist = Deformationen eines glatten Strangs).</p>
+      <p><b>B&nbsp;(r1-043)</b>: <em>der Raum selbst</em>, auf dem die Schicht wirkt, ist <em>singulär</em> — „ein Knick (plötzlicher Steigungswechsel) kann von <strong>keiner</strong> glatten Fläche kommen"; die Schicht ist eine <strong>Lipschitz-Map, die</strong> diese vorgefundenen Bruchkanten <em>transportiert</em>.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A legt die Pathologie in den Abschnitt/die Attention (Abbildung glatt); B in den Basisraum (Raum intrinsisch gezackt, transportiert von der a.e.-glatten Abbildung). Unterschiedlicher Sitz desselben „Defekts".</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 4 · Art des „Defekts" — dynamischer Fehler vs. gemessenes Faktum</span>
+      <p><b>A&nbsp;(r1-036)</b>: Halluzination = der <em>Abschnitt&nbsp;s springt diskontinuierlich in der Faser</em> bei (b,l) — ein <strong>dynamischer Inferenz-Fehler</strong> (das Modell tut etwas <em>falsch</em>), mit expliziter Sprung-Magnitude Δ.</p>
+      <p><b>B&nbsp;(r1-043)</b>: die Bruchkante/Singularität ist ein <em>direkt messbares statistisches Faktum</em> der <em>Geometrie des Raums</em> (p-Werte bis ~3×10⁻⁸), das in der Eingabe <em>vorhanden</em> ist und bis in die Ausgabe transportiert wird — eine <strong>statische Eigenschaft des Raums</strong>, kein Modellfehler.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel (weich)</span>Ontologie-Unterschied: A's Defekt = ein Ereignis/Modelle-Fehler; B's Defekt = eine immer-dort-gefundene geometrische Eigenschaft. Die harten Spannungen sind W1–W3; W4 ist eine Stellschranke, wie man „Defekt" <em>behandelt</em>.</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>A und B sind das <em>selbe</em> Faserbündel auf <em>zwei orthogonalen Achsen</em> (Faser vs. Basis) — sie widersprechen im Ziel nie. Die harten Widersprüche sind W1 (was die Basis ist), W2 (fixes vs. variables d), W3 (Sitz der Pathologie); W4 ist eine Ontologie-Differenz. Alle vier liegen auf der <em>Naht</em> zwischen „die Abbildung/der Schnitt" (A) und „der Raum" (B).</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Faser vs. Basis — und die gemeinsame „nicht alles"-Grenze</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>die Faser-Achse (A) und die Basis-Achse (B) eines einzigen Bündels</strong>. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: Eine Basis, zwei Beschreibungen — Folge-Ordnung (A) + Metrik (B) derselben Punkte</h3>
+      <p>Der Basisraum ist <em>der Token-Einbettungsraum</em> (B); die <em>Token-Folge-Ordnung</em> (A's „Meeresboden") ist das <strong>diskrete Skelett</strong> dieses Raums: jeder Basispunkt <em>ist</em> ein Token, <em>geordnet</em> nach seiner Position. A's Linie/Ring/Möbius/Gitter/Sphäre = die <em>kombinatorische Folge-Topologie</em> (wie die Punkte nummeriert/verdrahtet sind); B's singuläre Wolke = die <em>Metrik-Geometrie</em> derselben Punkte im Einbettungsraum. <strong>Fusion:</strong> B = die Token-Folge, gelesen als <em>Teilmenge des singulären geschichteten Einbettungsraums</em>, geordnet nach Position; S¹ und Möbius bleiben (mit A) sauber getrennt. Keine Kollision — Ordnungs- (A) und Metrik- (B) Struktur desselben Punktmengen-Skeletts.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: Zwei verschiedene „d" — d_model (Faser, fix) ⊥ d_s (Basis, gemessen, pro Stratum)</h3>
+      <p>Es sind schlicht <em>zwei andere Größen</em>, die zufällig beide „d" heißen. <strong>d_model = ambient/fiber Dimension</strong> (A, fix — die Faser&nbsp;<code>ℝ<sup>d_model</sup></code>, uniform über alle Token/Schichten); <strong>d_s = intrinsische/lokale Basisraum-Dimension</strong> (B, gemessen — variiert 20/389/531 pro Stratum). Sie sitzen auf <em>unterschiedlichen</em> Teilen des Bündels (Faser vs. Basis) und widersprechen sich erst gar nicht, sobald benannt. A's „Konservierung in fester d" gilt <em>innerhalb eines Stratums</em>, wo d_s annähernd konstant ist — exakt B's pro-Stratum-Messung. <strong>Fusion:</strong> fix d_model (Faser) ⊥ variabel d_s (Basis, pro Stratum); das Budget wird pro Stratum bei seinem lokalen d_s gezählt.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: Strukturgruppe = Lipschitz-Map (a.e. glatt, Rademacher) → zwei unabhängige Defekt-Familien</h3>
+      <p>Die Strukturgruppe ist eine <strong>Lipschitz-Map — fast überall differenzierbar (Satz von Rademacher)</strong>, also „fast überall glatt": das versöhnt A's glatte Residual-Abbildung mit B's Lipschitz-Morphismus. Die Pathologien spalten sich in <em>zwei unabhängige Familien auf zwei Teilen des Bündels</em>: <strong>(i) Basis-Singularitäten</strong> (B's Bruchkanten/Stratum-Grenzen) sind dem <em>Basisraum inhärent</em> und werden vom Morphismus <em>transportiert</em> (Lemma&nbsp;1/Satz&nbsp;2); <strong>(ii) Schnitt-Singularitäten</strong> (A's diskontinuierliches s + geschlossene Attention-Schleife) sitzen <em>auf dem Abschnitt/der Attention</em>, <em>zusätzlich</em> zu den transportierten Basis-Bruchkanten. <strong>Fusion:</strong> ein singuläres Faserbündel mit <em>zwei unabhängigen Defekt-Typen</em> — Basis-Bruchkanten (B) + Schnitt-Sprünge (A). Die a.e.-glatte Abbildung erzeugt weder Basis-Singularitäten (transportiert sie) noch springt sie von selbst den Abschnitt — ein Schnitt-Sprung ist eine <em>zusätzliche</em> Pathologie.</p>
+    </div>
+
+    <div class="card">
+      <h3>R4 → W4: Dasselbe Phänomen auf zwei Zeitskalen — statische Kante (Ursache) + Schnitt-Sprung (Symptom)</h3>
+      <p>B's Bruchkante ist die <em>statische, immer-dort</em>-Geometrie (gemessen, p-Wert). A's Halluzination ist das <em>dynamische Ereignis</em>: der Forward-Pass-Abschnitt&nbsp;s <em>trifft</em> genau diese Bruchkante und <em>springt diskontinuierlich</em>. <strong>Fusion:</strong> <code>Halluzination := der Abschnitt s kollidiert mit einer Basis-Bruchkante (B) und wird bei (b,l) diskontinuierlich (A)</code>. Die statische Kante (B) ist die <em>Ursache</em>; der Schnitt-Sprung (A) das <em>beobachtbare Symptom</em>. Kreisschluss (geschlossene Attention-Schleife) = ein <em>zweiter</em> Schnitt-Defekt: eine Attention-Feedback, die immer wieder dieselbe Kante neu trifft.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Die Token-Embedding-Geometrie ist ein <strong>singuläres Faserbündel&nbsp;π:E→B</strong>. Fasern = die Schicht-Stacks <code>ℝ<sup>d_model</sup></code> (A, fixes d_model); Basis = der geschichtete singuläre Einbettungsraum (B, variables d_s pro Stratum, Bruchkanten an den Stratum-Grenzen); Strukturgruppe = die Residual-Schicht-Abbildung (A's Attention⊕FFN⊕LayerNorm), die ein <strong>Lipschitz-Bündel-Morphismus</strong> ist (B, a.e. glatt, transportiert die Basis-Singularitäten); Abschnitt&nbsp;s = der Forward-Pass (A). <strong>Zwei Defekt-Familien:</strong> <em>Basis-Singularitäten</em> (B, statisch, gemessen, erreichen die Ausgabe via Lemma&nbsp;1/Satz&nbsp;2) und <em>Schnitt-Singularitäten</em> (A: diskontinuierliches s = Halluzination, geschlossene Schleife = Kreisschluss) — mit <em>Halluzination = Abschnitt&nbsp;s trifft eine Basis-Bruchkante und springt</em>. <strong>Gemeinsame Grenze:</strong> Fokus-Budget (A) = Reach-τ / Multiple-Testing (B) — <em>nicht alles überall scharf</em>. <strong>Netto:</strong> <code>Bündel = (Faser-Stack A) × (singuläre Basis B) · Strukturgruppe = Lipschitz-Residual (A, transportiert B) · Defekte = Basis-Bruchkanten (B) + Schnitt-Sprünge (A)</code>.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substanzielle Kern</h2>
+
+    <h3>Das Objekt: ein Bündel, zwei Lesarten (Verknüpfungstabelle)</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">A · Faser F_b = ℝ^d_model</div><div class="v">= der <b>Schicht-Stack</b> dieses Tokens (Kelp-Strang) — vertikal durch die L Ebenen; fixes d_model.</div></div>
+      <div class="r"><div class="k">A · Strukturgruppe Attn⊕FFN⊕LN</div><div class="v">= <b>Lipschitz-Bündel-Morphismus</b> (B, Conjecture 1) — a.e. glatt (Rademacher), transportiert Basis-Singularitäten.</div></div>
+      <div class="r"><div class="k">A · Abschnitt s : B→E (Forward-Pass)</div><div class="v">= die Inferenz-Welle; wird <b>diskontinuierlich an einer Basis-Bruchkante</b> (= Halluzination, A's Symptom auf B's Ursache).</div></div>
+      <div class="r"><div class="k">B · singuläre, geschichtete Basis</div><div class="v">= der <b>Token-Einbettungsraum</b>; Bruchkanten = Stratum-Grenzen; d_s pro Stratum (20/389/531).</div></div>
+      <div class="r"><div class="k">B · Lipschitz-Objektiv (Click-to-Focus)</div><div class="v">= <b>dekodiert das verschlüsselte topologische Icon</b> (Torus/Loop-Space/Spirale) pro Stratum — A's Faser wird damit lesbar.</div></div>
+      <div class="r"><div class="k">B · Lemma 1 / Satz 2</div><div class="v">= <b>der Morphismus transportiert, erzeugt nicht</b> — Kontext heilt nichts, Singularitäten erreichen die Ausgabe.</div></div>
+      <div class="r"><div class="k">A · Fokus-Budget (fixe d)</div><div class="v">= <b>B · Reach-τ / Holm-Bonferroni</b> — dieselbe „nicht alles überall scharf"-Regel in zwei Gewändern.</div></div>
+    </div>
+
+    <h3>A — die Faser &amp; Strukturgruppe (die vertikale Achse)</h3>
+    <ul class="cl">
+      <li><b>Faserbündel:</b> <code>π:E→B</code>, Faser <code>F_b=ℝ<sup>d_model</sup></code>, Abschnitt <code>s:B→E</code> = Forward-Pass.</li>
+      <li><b>Strukturgruppe (pro Schicht):</b> der Strang spaltet in <em>zwei parallele Pfade</em> — Attention (Multi-Head <code>Softmax(QKᵀ/√dₖ)V</code>, „zieht Stränge zueinander") und Dense/FFN (lokal, Breite ∝ d_ff, <code>ReLU(W₁x+b₁)W₂+b₂</code>) — und wird <strong>⊕-addiert</strong> (Residual&nbsp;+&nbsp;LayerNorm): <code>x_l = LN(x_{l-1}+Attn(x_{l-1})); x_l = LN(x_l+FFN(x_l))</code>.</li>
+      <li><b>Echte Attention:</b> pro Head&nbsp;h und Layer&nbsp;l, Skalarprodukt-Score ÷√d_k, dann Softmax mit Temperatur τ. Dimensionen: <code>d_k = d_model/h</code>, <code>d_ff = 4·d_model</code> (fixe Architektur). B's „nahe Tokens achten mehr"-Distanz-Heuristik ist der <em>typische Limes</em> dieser Softmasse.</li>
+      <li><b>Faser-Geometrie (A's Makro-Bild):</b> <em>Krümmung</em> = gelerntes Wissen bückt den Strang; <em>Chaos</em> = Entropie; <em>Twist</em> = Verdrehung. Basisraum-Topologie (A): ℝ¹, S¹, Möbius (getrennt), ℝ², S².</li>
+    </ul>
+
+    <h3>B — die singuläre, geschichtete Basis (die horizontale Achse)</h3>
+    <ul class="cl">
+      <li><b>„Steigung = Dimension":</b> zähle Nachbarn im Radius&nbsp;r (Volumen&nbsp;V(r)); es wächst wie <code>V(r)≈K·rᵈ</code> → <code>log V = log K + d·log r</code> → die <em>Steigung</em> von <code>log V</code> gegen <code>log r</code> ist <code>d</code> (Punktzählen/Monte-Carlo, 3-Punkt-Differenz).</li>
+      <li><b>Knick vs. Biegung:</b> eine Biegung kann von Krümmung kommen (Gray 1974: Ball-Volumen <code>K·rᵈ + (…)·r^(d+1)</code>); ein <em>aufwärts</em> knickender Knick kann von <em>keiner</em> glatten Fläche kommen → echte Singularität (Bruchkante).</li>
+      <li><b>Satz 1 (Fiber-Bundle, das mildere Modell):</b> jede Umgebung ≙ <em>Grundraum × Faser</em> (ein Streifen); die Log-Log-Kurve ist stückweise linear, die Steigungen (Dimensionen) dürfen bei wachsendem r <em>nur fallen</em> (Faser→Grundraum). Ein <em>aufwärts</em> knickender Knick ist unmöglich → Bundle widerlegt.</li>
+      <li><b>Die Maschine:</b> Distanzmatrix → pro Token sortierte Distanzen (Volumen = Rang) → Log-Log-Steigungen → Sliding-Window-t-Test → p-Werte → <strong>Holm-Bonferroni</strong> (sortiere p aufsteigend, vergleiche p_(k) mit α/(n−k+1); bei n=50.257, α=0.001 ≈50 Zufallstreffer). Manifold-Test = zweiseitig (jeder Steigungswechsel); Bundle-Test = einseitig (nur steigend).</li>
+      <li><b>Validierung an bekannter Wahrheit:</b> Kugel (wahre 2D-Mannigfaltigkeit — nicht verworfen ✓), Cusp <code>z⁸+x²+y²=0</code> (Manifold an der Spitze verworfen, Bundle <em>nicht</em> — der Trennschärfe-Beweis), Lollipop (1D-Stiel + 2D-Kugel — beide verworfen). Randpunkte werden übersehen (Sensitivität kostet Spezifität).</li>
+      <li><b>Empirie (4 echte LLMs, ~12 h CPU je Modell, fast alles Distanzmatrix):</b> 4/4 verwerfen die Mannigfaltigkeit (min p ≈ 3×10⁻⁸); 3/4 verwerfen auch das Faserbündel. GPT-2-Dimension <code>20 / 389 / 531</code> (Q1/Median/Q3) = drei Gipfel (~20 Zahlen/Monate/Wochentage, ~389 ganze Wörter, ~531 Wortfragmente). „gDNA"-Fingerabdruck: Llemma7B (Median-Dim 4096) vs. Mistral7B (Median-Dim 48) teilen sich das 32.016-token-Vokabular, haben aber völlig verschiedene Geometrien. Singuläre Token: <em>affect, monitor, ember, aunder, Xan, *</em>.</li>
+      <li><b>Persistenz:</b> <b>Lemma 1</b> (Produkt/Quotient): Ist X ein Manifold und X×Y ein Manifold, dann auch Y — Kontraposition: Ist T <em>kein</em> Manifold, dann ist auch T<sup>w</sup> keines → <em>für jede Fenstergröße gibt es eine längere, an der die Singularitäten zurückkehren</em>; Kontext heilt nichts dauerhaft. <b>Satz 2:</b> Bedingung <code>m &gt; 2·w·d/ℓ</code> und <code>w ≥ m</code> (m=Output-Tokens, w=Fenster, d=umhüllende Dimension, ℓ=Latenz); Faustregel: gültiges m existiert immer, wenn <code>2d &lt; ℓ</code> → Singularitäten überleben bis in die Ausgabe.</li>
+      <li><b>Grenzen (B's Ehrlichkeit):</b> Nicht-Verwerfung ≠ „ist glatt" (Pythia6.9B überlebt das Bundle); Verwerfung benennt die <em>Art</em> der Bruchkante nicht; nur Radien <em>unterhalb</em> des Reach τ sind gültig (Convex τ=∞, Cusp τ=0, τ schwer zu schätzen); nur mit Open-Weights (Zugriff auf die Embedding-Matrix) brauchbar.</li>
+    </ul>
+
+    <h3>Der Morphismus (Lipschitz, B's Conjecture 1) &amp; das Objektive (B's Linse)</h3>
+    <ul class="cl">
+      <li><b>Lipschitz-Map:</b> die Schicht ist <code>Φ:ℝᵈ→ℝᵈ</code> — eine <em>Deformation</em> des Einbettungsraums, keine Verschiebung einzelner Token-Vektoren: <code>‖Φ(x)−Φ(y)‖ ≤ L·‖x−y‖</code>. Fast überall differenzierbar (Rademacher) ⇒ a.e. glatt ⇒ versöhnt A's glattes Residual mit B's Morphismus.</li>
+      <li><b>Holographisches Verschlüsseln:</b> ein FFN-artiger Transform „scrambled" die Daten <em>abhängig von Dateninhalt UND Auflösung</em>. Die volle hochauflösende Struktur (64×64) wird intern berechnet, aber <em>nie angezeigt</em> — nur auflösungsreduzierte Versionen sind sichtbar.</li>
+      <li><b>Click-to-Focus / Objektive:</b> ein Klick auf eine „Insel" fokussiert ein Lipschitz-Objektiv; fokussiert = scharf, unfokussiert = pixelig. „You are the lens." Topologische Icons: Code = Torus, Math = Loop-Space (Ω), Language = Graf, Biology = Baum, History = Spirale, Music = Welle.</li>
+      <li><b>Progressive Deholographisation (Conjecture 6):</b> „Layer ℓ does not merely deform the space — it generates the instructions for layer ℓ+1." Phasen: <em>Routing</em> (früh, voll verschlüsselt) → <em>Resolving</em> (Mitte) → <em>Gluing</em> (spät, scharf).</li>
+      <li><b>Fokus-Budget-Konservierung (Conjecture 6):</b> „Narrow attention (low entropy) yields a sharp view of few stalks; broad attention yields a blurred view of many — a resolution–breadth tradeoff enforced by the convex combination in <strong>fixed dimensionality d</strong>." Die fixe Dimension begrenzt, wie viele Inseln gleichzeitig scharf sein können; der Fokus auf die eine defokussiert die anderen. = B's Reach-τ / Multiple-Testing-Grenze.</li>
+    </ul>
+
+    <h3>Die zwei Defekt-Familien (beide, fusioniert)</h3>
+    <ul class="cl">
+      <li><b>(i) Basis-Singularitäten (B):</b> Bruchkanten / Stratum-Grenzen — <em>statisch, gemessen</em> (p-Werte), inhärent dem Basisraum, vom Morphismus <em>transportiert</em> und bis in die Ausgabe getragen (Lemma&nbsp;1/Satz&nbsp;2).</li>
+      <li><b>(ii) Schnitt-Singularitäten (A):</b> der Abschnitt&nbsp;s wird <em>diskontinuierlich</em> (Sprung-Magnitude Δ) = <strong>Halluzination</strong>; die Attention-Gewichte bilden eine <em>geschlossene Feedback-Schleife</em> (w_ab·w_ba &gt; 0) = <strong>Kreisschluss</strong>.</li>
+      <li><b>Fusion:</b> <code>Halluzination := Abschnitt s trifft eine Basis-Bruchkante (B) und springt bei (b,l)</code> — statische Kante = Ursache, Schnitt-Sprung = Symptom. Kreisschluss = Attention-Feedback, die immer dieselbe Kante neu trifft.</li>
+    </ul>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq">
+      Faserbündel:&nbsp; π:E→B,&nbsp; Faser F_b=ℝ<sup>d_model</sup> (A, fix d_model),&nbsp; Basis = singulär-geschichteter Token-Raum (B, variabel d_s)<br>
+      Strukturgruppe (A):&nbsp; x_l = LN(x_{l-1}+Attn(x_{l-1}));&nbsp; x_l = LN(x_l+FFN(x_l)) &nbsp;<span class="c">// Attn⊕FFN⊕Residual⊕LayerNorm</span><br>
+      Attention (A):&nbsp; Attention(Q,K,V)=Softmax(QKᵀ/√d_k)·V,&nbsp; d_k=d_model/h,&nbsp; d_ff=4·d_model &nbsp;<span class="c">// pro Head/Layer, Temperatur τ</span><br>
+      Morphismus (B):&nbsp; ‖Φ_ℓ(x)−Φ_ℓ(y)‖ ≤ L·‖x−y‖ &nbsp;(a.e. differenzierbar — Rademacher) &nbsp;<span class="c">// transportiert, erzeugt nicht</span><br>
+      Steigung=Dim (B):&nbsp; V(r)≈K·r<sup>d_s</sup> ⟹ d_s = Steigung von log V(r); Knick: nur fallend ⇒ Bundle (Satz 1), aufwärts ⇒ Bruchkante<br>
+      Persistenz (B):&nbsp; Lemma 1 (T nicht Manifold ⟹ T^w nicht),&nbsp; Satz 2: m &gt; 2·w·d/ℓ &amp; w≥m &nbsp;<span class="c">// Singularitäten → Ausgabe</span><br>
+      Defekte:&nbsp; Basis-Bruchkante (B, statisch, gemessen)&nbsp;+&nbsp; Schnitt-Sprung (A: s diskontinuierlich, Δ)&nbsp;+&nbsp; geschlossene Attention-Schleife (A: w_ab·w_ba&gt;0)<br>
+      Grenze (beide):&nbsp; Fokus-Budget(A, fixe d) = Reach-τ / Holm-Bonferroni(B) — Σ Kacheln ≈ B, nur Radien &lt; τ gültig
+    </div>
+    <div class="note"><span class="h">Warum die Fusion mehr ist als die Summe</span>A allein baut die Schicht „richtig" (Strukturgruppe, exakte Attention, Schnitt-Defekte) auf, lässt aber die <em>Basis</em> als saubere Linie/Ring flach — und weiß nicht, dass der Raum, auf dem sie wirkt, gezackt ist. B allein misst den singulären Raum (Bruchkanten, d_s, persistierende Singularitäten), nennt aber weder den <em>Mechanismus</em>, wie sie durch den Stack wandern, noch hat er den exakten Attention-/Schnitt-Begriff. Erst zusammen: ein <em>messbares</em> (B) singuläres Bündel, dessen Faser der Schicht-Stack ist (A), dessen Strukturgruppe ein <em>Lipschitz-Morphismus</em> ist, der die Basis-Singularitäten <em>transportiert</em> (B), dessen Abschnitt an genau diesen Kanten <em>diskontinuierlich springen</em> kann (A = Halluzination), und das durch eine <em>gemeinsame</em> „nicht alles überall"-Grenze (Fokus-Budget = Reach-τ) gebunden ist.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Das Bündel in zwei Achsen: singuläre Basis ✕ Faser-Stack ✕ Log-Log-Knick</h2>
+    <p>Drei Panels, ein Bündel — <strong>links</strong> die singuläre, geschichtete <em>Basis</em> (B): drei Strata mit lokaler Dimension d_s ≈ 20 / 389 / 531, Bruchkanten als Stratum-Grenzen; <em>klicke</em> ein Stratum an, um das Lipschitz-Objektiv (B) zu fokussieren und das verschlüsselte topologische Icon zu dekodieren. <strong>Mitte</strong> die <em>Faser</em> (A): der Schicht-Stack mit Strukturgruppe <code>Attn⊕FFN⊕Merge</code>, der animierte <strong>Abschnitt-s-Tracer</strong>, der an einer Bruchkante <em>diskontinuierlich springt</em> (Halluzination) — plus optionale geschlossene Attention-Schleife (Kreisschluss). <strong>Rechts</strong> die <em>Log-Log-Kurve</em> (B): Steigung = d, Knick an der Stratum-Grenze r*, Apertur-Marker &amp; Satz-1-Verdikt. <strong>Unten</strong> das Fokus-Budget (Konservierung Σ Kacheln ≈ B).</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Singuläres Faserbündel — Basis(Achse&nbsp;B) ✕ Faser-Stack(Achse&nbsp;A) ✕ Log-Log</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvViz" width="780" height="560"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-s1)"></i>Stratum Zahlen (d_s≈20)</span>
+        <span><i style="background:var(--viz-s2)"></i>Wörter (d_s≈389)</span>
+        <span><i style="background:var(--viz-s3)"></i>Fragmente (d_s≈531)</span>
+        <span><i style="background:var(--viz-kink)"></i>Bruchkante / Knick</span>
+        <span><i style="background:var(--viz-fiber)"></i>Faser / Schicht-Stack (A)</span>
+        <span><i style="background:var(--viz-attn)"></i>Attention-Pfad</span>
+        <span><i style="background:var(--viz-ffn)"></i>FFN-Pfad</span>
+        <span><i style="background:var(--viz-res)"></i>⊕ Merge (LN)</span>
+        <span><i style="background:var(--viz-tracer)"></i>Abschnitt s</span>
+        <span><i style="background:var(--viz-defect)"></i>Defekt (Hallu / Loop)</span>
+      </div>
+      <div class="btnrow">
+        <button id="playBtn" class="on">⏸ Pause</button>
+        <button id="halluBtn">🌀 Halluzination (s springt an der Kante)</button>
+        <button id="loopBtn">🔄 Kreisschluss (Feedback-Schleife)</button>
+        <button id="kinkBtn">📐 Knick: fällt (Bundle ok)</button>
+      </div>
+      <div id="viewCap"></div>
+      <p style="font-size:12px;color:var(--txt-faint);margin:6px 0 10px"><b>Klick</b> links fokussiert/entfokussiert ein Stratum (dekodiert das Icon, B). <b>Linse-Apertur</b> = Radius r: klein = Faser (fein, d hoch), groß = Grundraum (grob, d niedrig). <b>Knick</b>: fällt = nur-fallende Steigung = Bundle-erlaubt (Satz 1); steigt = aufwärts-Knick = Bruchkante (Satz 1 widerlegt). <b>Halluzination</b> (A): der Abschnitt s springt an der Bruchkante diskontinuierlich. <b>Kreisschluss</b> (A): geschlossene Attention-Feedback-Schleife zwischen zwei Fasern.</p>
+      <div class="ro">
+        <div class="b"><div class="k">Stratum (Basis)</div><div class="v" id="roSel">—</div><div class="u">B · d_s gemessen</div></div>
+        <div class="b"><div class="k">d_model</div><div class="v" id="roDm">768</div><div class="u">A · fix (Faser)</div></div>
+        <div class="b"><div class="k">Steigung @ Apertur</div><div class="v" id="roD">—</div><div class="u">= d_s (B's Trick)</div></div>
+        <div class="b"><div class="k">Regime (r)</div><div class="v" id="roReg">—</div><div class="u">Faser ↔ Grundraum</div></div>
+        <div class="b"><div class="k">Kacheln (Fokus)</div><div class="v m" id="roK">—</div><div class="u">vom Budget</div></div>
+        <div class="b"><div class="k">Fokus-Budget B</div><div class="v m" id="roB">—</div><div class="u">konserviert</div></div>
+        <div class="b"><div class="k">Fokussiert</div><div class="v" id="roF">—</div><div class="u">von 3 Strata</div></div>
+        <div class="b"><div class="k">Verdict (Satz 1)</div><div class="v" id="roV">—</div><div class="u">Bundle ok / ✗</div></div>
+        <div class="b"><div class="k">Schnitt s</div><div class="v" id="roStat">stetig</div><div class="u">stetig / sprunghaft</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Linse-Apertur / Radius r (links = fein/Faser · rechts = grob/Grundraum)</span><b id="apertVal">35</b></div>
+        <input type="range" id="apertSl" min="0" max="100" value="35">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Fokus-Budget (konservierte Kacheln — A's Budget = B's Reach-τ)</span><b id="budgetVal">120</b></div>
+        <input type="range" id="budgetSl" min="20" max="256" step="4" value="120">
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen (Round-1-Fusionen)</h2>
+    <p><a href="../r1-036.html">A — r1-036.html · „Ein Transformer als Faserbündel: Attention⊕FFN &amp; topologische Defekte"</a>: die <em>Faser-Achse</em>. Faserbündel über der Token-Folge; pro Schicht <strong>Attention⊕FFN-Parallelstruktur</strong> mit Residual⊕+LayerNorm-Merge (Strukturgruppe), echte <strong>Softmax(QKᵀ/√dₖ)V</strong>-Attention (d_k=d_model/h, d_ff=4·d_model), Basisraum ℝ¹/S¹/Möbius/ℝ²/S², Faser-Geometrie via Krümmung/Chaos/Twist, Inferenz als <strong>Abschnitt&nbsp;s</strong>; Halluzination = <em>diskontinuierlicher Schnitt&nbsp;s</em>, Kreisschluss = geschlossene Attention-Feedback-Schleife.</p>
+    <p><a href="../r1-043.html">B — r1-043.html · „Singuläres Faserbündel des Token-Raums — Lipschitz-Objektive auf Bruchkanten"</a>: die <em>Basis-Achse</em>. Der Token-Einbettungsraum ist <strong>kein glattes Manifold</strong>, sondern singulär &amp; geschichtet; „Steigung = Dimension" im Log-Log; Knick vs. Biegung; <strong>Satz 1</strong> (nur fallende Steigungen = Bundle); 4/4 Modelle verworfen (p bis ~3×10⁻⁸), GPT-2 20→531; Holm-Bonferroni über 50.257 Tests; Schicht = <strong>Lipschitz-Morphismus</strong>, der Singularitäten <em>transportiert</em> (Lemma&nbsp;1/Satz&nbsp;2); <strong>Click-to-Focus-Objektiv</strong> dekodiert verschlüsselte topologische Icons; Fokus-Budget-Konservierung = Reach-τ.</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>r1-036.html</strong> (Faser-Stack · Strukturgruppe Attn⊕FFN · Schnitt-Defekte — die <em>vertikale</em> Achse) ✕ <strong>r1-043.html</strong> (singuläre geschichtete Basis · Lipschitz-Transport · Objektive — die <em>horizontale</em> Achse). Alle Claims aus den Quellen paraphrasiert; Strata, Icons &amp; Log-Log-Kurve im Viz sind ein didaktisches Modell (keine echten Modellgewichte). Selbstständig, ohne Netzwerk-Datenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return hex;}return 'rgba('+r+','+g+','+b+','+a+')';}
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(rng){var u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(Math.PI*2*v);}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){if(themeBtn){themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel';}}
+  if(themeBtn){themeBtn.onclick=function(){document.documentElement.classList.toggle('dark');setBtn();readPal();};}
+  setBtn();
+
+  var cv=document.getElementById('cvViz'); if(!cv){return;}
+  var dpr=Math.min(2,window.devicePixelRatio||1), LW=780, LH=560;
+  cv.style.width='100%'; cv.style.aspectRatio=LW+'/'+LH;
+  cv.width=LW*dpr; cv.height=LH*dpr;
+  var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  var TAU=Math.PI*2, W=LW, H=LH;
+  var time=0;
+
+  var STRATA=[
+    {id:0,name:'Zahlen / Monate',d:20,  icon:'torus',    fx:0.30,fy:0.30,fr:0.150,colorVar:'--viz-s1'},
+    {id:1,name:'einzelne Wörter',d:389, icon:'loopspace',fx:0.52,fy:0.62,fr:0.160,colorVar:'--viz-s2'},
+    {id:2,name:'Wortfragmente',  d:531, icon:'spiral',   fx:0.76,fy:0.30,fr:0.140,colorVar:'--viz-s3'}
+  ];
+  var PTS=[[],[],[]];
+  for(var s=0;s<3;s++){
+    var rng=rng32(1000+s*77);
+    for(var i=0;i<48;i++){
+      var px=clamp(STRATA[s].fx+gauss(rng)*STRATA[s].fr*0.66,0.06,0.94);
+      var py=clamp(STRATA[s].fy+gauss(rng)*STRATA[s].fr*0.66,0.06,0.94);
+      PTS[s].push({x:px,y:py});
+    }
+  }
+
+  // LEFT: base cloud region
+  var LX0=24, LY0=80, LWd=300, LHd=360;
+  function fx2X(fx){return LX0+fx*LWd;}
+  function fy2Y(fy){return LY0+fy*LHd;}
+  // MIDDLE: fiber region
+  var MXC=428, fiberAx=384, fiberBx=472, baseY=420, topY=112, L=5, crackLayer=3;
+  function layerY(l){return baseY-((l+1)/L)*(baseY-topY);}
+  // RIGHT: log-log region
+  var RX0=536, RX1=764, RXC=(RX0+RX1)/2;
+  var plotX0=RX0+34, plotX1=RX1-8, plotY0=90, plotY1=310;
+  var XK=0.5;
+  // BOTTOM: budget strip
+  var BX0=24, BX1=758, BY=466, BH=20;
+
+  var focused=new Set([1]);
+  var selected=1;
+  var hover=-1;
+  var apert=35, budget=120, falling=true, showHallu=false, showLoop=false, playing=true;
+
+  var PAL={}, VNAMES=['--viz-canvas-bg','--viz-grid','--viz-txt','--mono','--viz-s1','--viz-s2','--viz-s3','--viz-kink','--viz-apert','--viz-ok','--viz-bad','--viz-fiber','--viz-attn','--viz-ffn','--viz-res','--viz-tracer','--viz-defect'];
+  function readPal(){VNAMES.forEach(function(n){PAL[n]=getVar(n);});}
+  readPal();
+
+  var aSl=document.getElementById('apertSl'), bSl=document.getElementById('budgetSl');
+  var aVal=document.getElementById('apertVal'), bVal=document.getElementById('budgetVal');
+  var playBtn=document.getElementById('playBtn'), halluBtn=document.getElementById('halluBtn');
+  var loopBtn=document.getElementById('loopBtn'), kinkBtn=document.getElementById('kinkBtn');
+  var roSel=document.getElementById('roSel'),roDm=document.getElementById('roDm'),roD=document.getElementById('roD'),
+      roReg=document.getElementById('roReg'),roK=document.getElementById('roK'),roB=document.getElementById('roB'),
+      roF=document.getElementById('roF'),roV=document.getElementById('roV'),roStat=document.getElementById('roStat'),
+      viewCap=document.getElementById('viewCap');
+  if(roDm){roDm.textContent='768';}
+
+  aSl.addEventListener('input',function(){apert=+aSl.value;if(aVal)aVal.textContent=apert;});
+  bSl.addEventListener('input',function(){budget=+bSl.value;if(bVal)bVal.textContent=budget;});
+  playBtn.onclick=function(){playing=!playing;playBtn.textContent=playing?'⏸ Pause':'▶ Animieren';playBtn.classList.toggle('on',playing);};
+  halluBtn.onclick=function(){showHallu=!showHallu;halluBtn.classList.toggle('on',showHallu);};
+  loopBtn.onclick=function(){showLoop=!showLoop;loopBtn.classList.toggle('onb',showLoop);};
+  kinkBtn.onclick=function(){falling=!falling;kinkBtn.classList.toggle('onb',!falling);kinkBtn.textContent=falling?'📐 Knick: fällt (Bundle ok)':'📐 Knick: steigt (Bruchkante)';};
+
+  function canvasPos(e){var rect=cv.getBoundingClientRect();return {x:(e.clientX-rect.left)/rect.width*W, y:(e.clientY-rect.top)/rect.height*H};}
+  function nearestStratum(mx,my){
+    var best=-1,bd=Infinity;
+    for(var i=0;i<STRATA.length;i++){
+      var cx=fx2X(STRATA[i].fx),cy=fy2Y(STRATA[i].fy);
+      var d=Math.hypot(mx-cx,my-cy);
+      var hitR=STRATA[i].fr*Math.min(LWd,LHd)*1.18;
+      if(d<hitR && d<bd){bd=d;best=i;}
+    }
+    return best;
+  }
+  cv.addEventListener('mousemove',function(e){var p=canvasPos(e);hover=nearestStratum(p.x,p.y);});
+  cv.addEventListener('mouseleave',function(){hover=-1;});
+  cv.addEventListener('click',function(e){
+    var p=canvasPos(e);var id=nearestStratum(p.x,p.y);
+    if(id<0)return;
+    selected=id;
+    if(focused.has(id)){if(focused.size>1)focused.delete(id);else focused.clear();}
+    else focused.add(id);
+  });
+
+  function drawTorus(c,cx,cy,R,col){c.strokeStyle=col;c.lineCap='round';c.lineWidth=Math.max(2,R*0.34);c.beginPath();c.arc(cx,cy,R*0.72,0,TAU);c.stroke();c.lineWidth=Math.max(1,R*0.10);c.beginPath();c.arc(cx,cy,R*0.42,0,TAU);c.stroke();}
+  function drawLoopIcon(c,cx,cy,R,col){c.strokeStyle=col;c.lineWidth=Math.max(2,R*0.16);c.lineCap='round';c.beginPath();var n=150;for(var i=0;i<=n;i++){var t=i/n*TAU;var s2=1+Math.sin(t)*Math.sin(t);var x=R*Math.sqrt(2)*Math.cos(t)/s2;var y=R*Math.sqrt(2)*Math.sin(t)*Math.cos(t)/s2;if(i===0)c.moveTo(cx+x,cy+y);else c.lineTo(cx+x,cy+y);}c.stroke();}
+  function drawSpiral(c,cx,cy,R,col){c.strokeStyle=col;c.lineWidth=Math.max(1.5,R*0.10);c.lineCap='round';c.beginPath();var turns=3.2,n=200;for(var i=0;i<=n;i++){var f=i/n;var th=f*turns*TAU;var rr=R*f;var px=cx+rr*Math.cos(th),py=cy+rr*Math.sin(th);if(i===0)c.moveTo(px,py);else c.lineTo(px,py);}c.stroke();}
+  function drawIcon(c,icon,cx,cy,R,col){if(icon==='torus')drawTorus(c,cx,cy,R,col);else if(icon==='loopspace')drawLoopIcon(c,cx,cy,R,col);else drawSpiral(c,cx,cy,R,col);}
+
+  function drawCrack(c,x1,y1,x2,y2,col){
+    var dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy)||1, n=8;
+    c.strokeStyle=col;c.lineWidth=1.3;c.setLineDash([5,4]);c.beginPath();c.moveTo(x1,y1);
+    for(var i=1;i<n;i++){var t=i/n;var mx=x1+dx*t,my=y1+dy*t;var px=-dy/len,py=dx/len;var jag=((i%2)?1:-1)*3.5;c.lineTo(mx+px*jag,my+py*jag);}
+    c.lineTo(x2,y2);c.stroke();c.setLineDash([]);
+  }
+
+  function draw(){
+    var t=time;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=PAL['--viz-canvas-bg']||'#0c1120'; ctx.fillRect(0,0,W,H);
+    var mono=PAL['--mono']||'ui-monospace,monospace';
+    var txt=PAL['--viz-txt']||'#e8ecf6';
+    var grid=PAL['--viz-grid']||'rgba(120,120,120,0.1)';
+    var nFoc=focused.size||0;
+    var crackY=layerY(crackLayer);
+
+    // ---------- panel titles ----------
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillStyle=txt;ctx.font='600 12px '+mono;
+    ctx.fillText('B · singuläre, geschichtete Basis (Token-Raum)',LX0,44);
+    ctx.fillStyle=hexA(txt,0.55);ctx.font='10px '+mono;
+    ctx.fillText('Bruchkanten = Stratum-Grenzen · Klick = Linse/Icon',LX0,58);
+    ctx.fillStyle=txt;ctx.font='600 12px '+mono;
+    ctx.fillText('A · Faser = Schicht-Stack',336,44);
+    ctx.fillStyle=hexA(txt,0.55);ctx.font='10px '+mono;
+    ctx.fillText('Strukturgruppe Attn⊕FFN⊕LN + Abschnitt s',336,58);
+    ctx.fillStyle=txt;ctx.font='600 12px '+mono;
+    ctx.fillText('B · Log-Log (Steigung = d_s)',RX0,44);
+    ctx.fillStyle=hexA(txt,0.55);ctx.font='10px '+mono;
+    ctx.fillText('Knick = Stratum-Grenze r* · Satz 1',RX0,58);
+
+    // ---------- LEFT: base cloud + crack-edges + lens ----------
+    // crack-edges between strata (drawn first, under points)
+    for(var ci=0;ci<3;ci++){for(var cj=ci+1;cj<3;cj++){
+      var a=STRATA[ci],b=STRATA[cj];
+      drawCrack(ctx,fx2X(a.fx),fy2Y(a.fy),fx2X(b.fx),fy2Y(b.fy),hexA(PAL['--viz-kink']||'#b57e00',0.5));
+    }}
+    for(var s=0;s<STRATA.length;s++){
+      var st=STRATA[s];
+      var cx=fx2X(st.fx),cy=fy2Y(st.fy);
+      var col=PAL[st.colorVar]||'#888';
+      var isFoc=focused.has(st.id);
+      var share=isFoc?(1/nFoc):0;
+      var sharp=isFoc?clamp(share*(budget/120),0.1,1):0;
+      var pts=PTS[st.id];
+      for(var j=0;j<pts.length;j++){
+        var px=fx2X(pts[j].x),py=fy2Y(pts[j].y);
+        if(px<LX0-6||px>LX0+LWd+6||py<LY0-6||py>LY0+LHd+6)continue;
+        var sz,al;
+        if(isFoc){sz=1.4+1.7*(1-share);al=0.35+0.55*sharp;}
+        else{sz=2.6;al=0.13;}
+        ctx.fillStyle=hexA(col,al);
+        ctx.beginPath();ctx.arc(px,py,sz,0,TAU);ctx.fill();
+      }
+      ctx.textAlign='center';
+      ctx.fillStyle=hexA(col,isFoc?0.95:0.6);
+      ctx.font=(isFoc?'600 11px ':'10px ')+mono;
+      ctx.fillText(st.name,cx,cy-st.fr*LHd-8);
+      ctx.fillStyle=hexA(col,isFoc?0.9:0.5);
+      ctx.font='10px '+mono;
+      ctx.fillText('d_s≈'+st.d,cx,cy+st.fr*LHd+16);
+      if(isFoc){
+        var tiles=Math.floor(budget/nFoc);
+        ctx.fillStyle=hexA(txt,0.6);ctx.font='9px '+mono;
+        ctx.fillText('Kacheln: '+tiles,cx,cy+st.fr*LHd+28);
+        var lr=lerp(26,80,apert/100)*(0.5+0.5*share);
+        var pulse=0.5+0.28*Math.sin(t*2+st.id);
+        ctx.save();
+        ctx.beginPath();ctx.arc(cx,cy,lr,0,TAU);
+        ctx.fillStyle=hexA(PAL['--viz-canvas-bg']||'#0c1120',0.5);ctx.fill();
+        ctx.setLineDash([5,4]);ctx.lineWidth=2;ctx.strokeStyle=hexA(col,0.4+0.5*pulse);ctx.stroke();ctx.setLineDash([]);
+        ctx.globalAlpha=0.55+0.4*pulse;
+        drawIcon(ctx,st.icon,cx,cy,lr*0.72,col);
+        ctx.globalAlpha=1;
+        ctx.restore();
+      } else {
+        ctx.fillStyle=hexA(txt,0.4);ctx.font='9px '+mono;
+        ctx.fillText('verschlüsselt',cx,cy+st.fr*LHd+28);
+      }
+      ctx.textAlign='left';
+    }
+    if(hover>=0 && !focused.has(hover)){
+      var hs=STRATA[hover];var hcx=fx2X(hs.fx),hcy=fy2Y(hs.fy);
+      ctx.setLineDash([3,4]);ctx.lineWidth=1.5;ctx.strokeStyle=hexA(PAL[hs.colorVar]||'#888',0.5);
+      ctx.beginPath();ctx.arc(hcx,hcy,lerp(26,80,apert/100)*0.62,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    }
+
+    // ---------- MIDDLE: fiber stack (A) + section s + defects ----------
+    var crackColor=hexA(PAL['--viz-defect']||'#d13a2f',0.7);
+    // crack edge across both fibers (base-space singularity)
+    drawCrack(ctx,fiberAx-26,crackY,fiberBx+26,crackY,crackColor);
+    ctx.fillStyle=crackColor;ctx.font='600 9px '+mono;ctx.textAlign='left';
+    ctx.fillText('Bruchkante (B) = Stratum-Grenze',fiberAx-26,crackY-7);
+
+    // draw each fiber with Attn/FFN/Merge structure
+    for(var fi=0;fi<2;fi++){
+      var fx0=fi===0?fiberAx:fiberBx;
+      var prevX=fx0, prevY=baseY;
+      for(var l2=0;l2<L;l2++){
+        var sway=Math.sin(t*0.5+l2*0.5+fi*1.7)*(2+1.5);
+        var spineX=fx0+sway, ly=layerY(l2);
+        var splitY=prevY-(prevY-ly)*0.42;
+        var attnX=spineX-20, attnY=splitY;
+        var ffnAct=0.35+0.65*Math.abs(Math.sin((l2*1.31+fi*0.7)));
+        var ffnX=spineX+20+ffnAct*4*Math.sin(t*0.5+fi), ffnY=splitY;
+        var mergeX=spineX, mergeY=ly;
+        // stem
+        ctx.strokeStyle=hexA(PAL['--viz-fiber']||'#0d8f80',0.72);ctx.lineWidth=2;ctx.lineCap='round';
+        ctx.beginPath();ctx.moveTo(prevX,prevY);ctx.quadraticCurveTo((prevX+spineX)/2,(prevY+splitY)/2,spineX,splitY);ctx.stroke();
+        // attn branch
+        ctx.strokeStyle=hexA(PAL['--viz-attn']||'#6451d8',0.55);ctx.lineWidth=1.3;
+        ctx.beginPath();ctx.moveTo(spineX,splitY);ctx.lineTo(attnX,attnY);ctx.stroke();
+        ctx.fillStyle=hexA(PAL['--viz-attn']||'#6451d8',0.9);ctx.beginPath();ctx.arc(attnX,attnY,2.6,0,TAU);ctx.fill();
+        // ffn branch
+        ctx.strokeStyle=hexA(PAL['--viz-ffn']||'#b57e00',0.55);ctx.lineWidth=1.3;
+        ctx.beginPath();ctx.moveTo(spineX,splitY);ctx.lineTo(ffnX,ffnY);ctx.stroke();
+        ctx.fillStyle=hexA(PAL['--viz-ffn']||'#b57e00',0.9);ctx.beginPath();ctx.arc(ffnX,ffnY,2.4+ffnAct*1.8,0,TAU);ctx.fill();
+        // converge dashed
+        ctx.strokeStyle=hexA(PAL['--viz-res']||'#c93a86',0.4);ctx.lineWidth=1;ctx.setLineDash([3,2]);
+        ctx.beginPath();ctx.moveTo(attnX,attnY);ctx.lineTo(mergeX,mergeY);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(ffnX,ffnY);ctx.lineTo(mergeX,mergeY);ctx.stroke();ctx.setLineDash([]);
+        // residual skip
+        ctx.strokeStyle=hexA(PAL['--viz-res']||'#c93a86',0.2);ctx.setLineDash([2,3]);
+        ctx.beginPath();ctx.moveTo(prevX,prevY);ctx.lineTo(mergeX,mergeY);ctx.stroke();ctx.setLineDash([]);
+        // merge node + ⊕
+        ctx.fillStyle=hexA(PAL['--viz-res']||'#c93a86',0.9);ctx.beginPath();ctx.arc(mergeX,mergeY,3,0,TAU);ctx.fill();
+        ctx.fillStyle=hexA(PAL['--viz-res']||'#c93a86',0.7);ctx.font='8px '+mono;ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.fillText('⊕',mergeX+4,mergeY);
+        prevX=mergeX;prevY=mergeY;
+      }
+      // base anchor
+      ctx.fillStyle=hexA(PAL['--viz-fiber']||'#0d8f80',0.8);ctx.beginPath();ctx.arc(fx0,baseY,4,0,TAU);ctx.fill();
+    }
+    ctx.textAlign='center';ctx.fillStyle=hexA(txt,0.5);ctx.font='9px '+mono;
+    ctx.fillText('Faser F_b = ℝ^d_model (A)',MIDlabelX(),baseY+16);
+
+    function MIDlabelX(){return (fiberAx+fiberBx)/2;}
+
+    // section s tracer on fiber A
+    (function(){
+      var pts=[{x:fiberAx,y:baseY}];
+      for(var l=0;l<L;l++){var sway=Math.sin(t*0.5+l*0.5)*(2+1.5);pts.push({x:fiberAx+sway,y:layerY(l)});}
+      var prog=(t*0.28)%1, idx=clamp(Math.floor(prog*L),0,L-1), fr=prog*L-idx;
+      var a=pts[idx], b=pts[idx+1];
+      var orbX=a.x+(b.x-a.x)*fr, orbY=a.y+(b.y-a.y)*fr;
+      var jumpX=0, jumped=false;
+      if(showHallu && Math.abs(orbY-crackY)<12){jumpX=24*(0.6+0.4*Math.sin(t*4));jumped=true;}
+      var ox=orbX+jumpX;
+      var og=ctx.createRadialGradient(ox,orbY,0,ox,orbY,14);
+      og.addColorStop(0,hexA(PAL['--viz-tracer']||'#2f8f4b',0.9));og.addColorStop(0.4,hexA(PAL['--viz-tracer']||'#2f8f4b',0.35));og.addColorStop(1,hexA(PAL['--viz-tracer']||'#2f8f4b',0));
+      ctx.fillStyle=og;ctx.beginPath();ctx.arc(ox,orbY,14,0,TAU);ctx.fill();
+      ctx.fillStyle=hexA(PAL['--viz-tracer']||'#2f8f4b',1);ctx.beginPath();ctx.arc(ox,orbY,3.5,0,TAU);ctx.fill();
+      if(jumped){
+        ctx.save();ctx.strokeStyle=hexA(PAL['--viz-defect']||'#d13a2f',0.85);ctx.lineWidth=2;ctx.setLineDash([4,3]);
+        ctx.beginPath();ctx.moveTo(orbX,orbY);ctx.lineTo(ox,orbY);ctx.stroke();ctx.setLineDash([]);
+        ctx.strokeStyle=hexA('#2fd0a0',0.8);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(orbX,orbY,4,0,TAU);ctx.stroke();
+        ctx.fillStyle=hexA(PAL['--viz-defect']||'#d13a2f',0.9);ctx.beginPath();ctx.arc(ox,orbY,4,0,TAU);ctx.fill();
+        ctx.fillStyle=hexA(PAL['--viz-defect']||'#d13a2f',0.95);ctx.font='700 9px '+mono;ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.fillText('⚠ HALLUZINATION — s diskontinuierlich',fiberBx+30,orbY);
+        ctx.restore();
+      }
+      // circular-ref loop between the two fibers at crack layer
+      if(showLoop){
+        var cx=(fiberAx+fiberBx)/2, cy=crackY, rx=Math.abs(fiberBx-fiberAx)/2+14, ry=15;
+        var pulse=Math.sin(t*3)*0.3+0.7;
+        ctx.save();
+        ctx.strokeStyle=hexA(PAL['--viz-defect']||'#d13a2f',0.5*pulse+0.2);ctx.lineWidth=1.8;ctx.setLineDash([5,3]);
+        ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,TAU);ctx.stroke();ctx.setLineDash([]);
+        for(var aq=0;aq<3;aq++){
+          var aa=t*2.2+aq*TAU/3;
+          var ax=cx+Math.cos(aa)*rx, ayy=cy+Math.sin(aa)*ry, ad=aa+Math.PI/2;
+          ctx.fillStyle=hexA(PAL['--viz-defect']||'#d13a2f',0.85);ctx.beginPath();
+          ctx.moveTo(ax+Math.cos(ad)*5,ayy+Math.sin(ad)*5);
+          ctx.lineTo(ax+Math.cos(ad+2.4)*5,ayy+Math.sin(ad+2.4)*5);
+          ctx.lineTo(ax+Math.cos(ad-2.4)*5,ayy+Math.sin(ad-2.4)*5);
+          ctx.closePath();ctx.fill();
+        }
+        ctx.fillStyle=hexA(PAL['--viz-defect']||'#d13a2f',0.95);ctx.font='700 9px '+mono;ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('🔄 KREISSCHLUSS',cx,cy+ry+10);
+        ctx.restore();
+      }
+    })();
+
+    // ---------- RIGHT: log-log curve of selected stratum (B) ----------
+    var sel=STRATA[selected];
+    var selCol=PAL[sel.colorVar]||'#888';
+    var dHi=sel.d, dLo=Math.max(2,Math.round(sel.d*0.28));
+    var leftSlope=falling?dHi:dLo, rightSlope=falling?dLo:dHi;
+    function fLL(x){return x<XK?leftSlope*(x-XK):rightSlope*(x-XK);}
+    var vmin=Math.min(fLL(0),0), vmax=Math.max(fLL(1),0);
+    var pad=(vmax-vmin)*0.12+1e-6; vmin-=pad; vmax+=pad;
+    function PX(x){return plotX0+x*(plotX1-plotX0);}
+    function PY(v){return plotY1-(v-vmin)/(vmax-vmin)*(plotY1-plotY0);}
+    var xa=apert/100;
+    // aperture-regime shading
+    ctx.fillStyle=hexA(PAL['--viz-apert']||'#6451d8',0.08);
+    if(xa<XK)ctx.fillRect(PX(0),plotY0,PX(xa)-PX(0),plotY1-plotY0);
+    else ctx.fillRect(PX(xa),plotY0,PX(1)-PX(xa),plotY1-plotY0);
+    ctx.fillStyle=hexA(PAL['--viz-ok']||'#2f8f4b',0.06);
+    if(xa<XK)ctx.fillRect(PX(xa),plotY0,PX(1)-PX(xa),plotY1-plotY0);
+    else ctx.fillRect(PX(0),plotY0,PX(xa)-PX(0),plotY1-plotY0);
+    // grid
+    ctx.strokeStyle=grid;ctx.lineWidth=1;
+    for(var g=0;g<=4;g++){var gy=plotY0+(g/4)*(plotY1-plotY0);ctx.beginPath();ctx.moveTo(plotX0,gy);ctx.lineTo(plotX1,gy);ctx.stroke();}
+    for(var gx=0;gx<=4;gx++){var gxx=plotX0+(gx/4)*(plotX1-plotX0);ctx.beginPath();ctx.moveTo(gxx,plotY0);ctx.lineTo(gxx,plotY1);ctx.stroke();}
+    // curve
+    ctx.strokeStyle=selCol;ctx.lineWidth=3;ctx.lineJoin='round';ctx.beginPath();
+    for(var ci2=0;ci2<=80;ci2++){var cxp=ci2/80;var X=PX(cxp),Y=PY(fLL(cxp));if(ci2===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);}
+    ctx.stroke();
+    // kink dot
+    ctx.fillStyle=PAL['--viz-kink']||'#b57e00';
+    ctx.beginPath();ctx.arc(PX(XK),PY(0),6,0,TAU);ctx.fill();
+    ctx.strokeStyle=hexA(PAL['--viz-canvas-bg']||'#0c1120',0.9);ctx.lineWidth=2;ctx.stroke();
+    // aperture marker
+    var axx=PX(xa);
+    ctx.setLineDash([4,4]);ctx.lineWidth=1.5;ctx.strokeStyle=PAL['--viz-apert']||'#6451d8';
+    ctx.beginPath();ctx.moveTo(axx,plotY0);ctx.lineTo(axx,plotY1);ctx.stroke();ctx.setLineDash([]);
+    // slope annotations
+    ctx.font='9px '+mono;ctx.fillStyle=hexA(selCol,0.95);ctx.textAlign='center';
+    ctx.fillText('d_s = '+leftSlope,PX(0.22),PY(fLL(0.22))-8);
+    ctx.fillText('d_s = '+rightSlope,PX(0.78),PY(fLL(0.78))-8);
+    // labels
+    ctx.fillStyle=hexA(txt,0.6);ctx.textAlign='center';
+    ctx.fillText('log r :  fein (klein) → grob (groß)',(plotX0+plotX1)/2,plotY1+16);
+    // verdict block
+    ctx.textAlign='center';ctx.font='600 12px '+mono;
+    ctx.fillStyle=falling?(PAL['--viz-ok']||'#2f8f4b'):(PAL['--viz-bad']||'#c93a86');
+    ctx.fillText(falling?'Satz 1: Bundle ok ✓ (nur fallend)':'Satz 1: widerlegt ✗ (aufwärts-Knick)',(plotX0+plotX1)/2,plotY1+40);
+    ctx.fillStyle=hexA(txt,0.5);ctx.font='10px '+mono;
+    ctx.fillText('Stratum „'+sel.name+'\" · Strich = Steigung nur fallend erlaubt',(plotX0+plotX1)/2,plotY1+56);
+
+    // ---------- BOTTOM: budget strip ----------
+    ctx.fillStyle=hexA(txt,0.6);ctx.font='10px '+mono;ctx.textAlign='left';
+    ctx.fillText('A · Fokus-Budget (Konservierung): Σ Kacheln ≈ B = '+budget+'   (= B · Reach-τ / Multiple-Testing)',BX0,BY-8);
+    ctx.fillStyle=grid;
+    ctx.fillRect(BX0,BY,BX1-BX0,BH);
+    if(nFoc>0){
+      var segW=(BX1-BX0)/nFoc, xi=0;
+      var order=[];for(var q=0;q<STRATA.length;q++){if(focused.has(STRATA[q].id))order.push(STRATA[q]);}
+      for(var bi=0;bi<order.length;bi++){
+        ctx.fillStyle=hexA(PAL[order[bi].colorVar]||'#888',0.75);
+        ctx.fillRect(BX0+bi*segW+1,BY,segW-2,BH);
+        ctx.fillStyle=hexA(txt,0.7);ctx.font='9px '+mono;ctx.textAlign='center';
+        ctx.fillText('K'+Math.floor(budget/nFoc),BX0+bi*segW+segW/2,BY+14);
+      }
+    } else {
+      ctx.fillStyle=hexA(txt,0.35);ctx.font='10px '+mono;ctx.textAlign='center';
+      ctx.fillText('kein Fokus — Budget ungenutzt',BX0+(BX1-BX0)/2,BY+14);
+    }
+
+    // ---------- readouts ----------
+    var tilesSel=focused.has(selected)?Math.floor(budget/nFoc):0;
+    var dAtApert=xa<XK?leftSlope:rightSlope;
+    if(roSel)roSel.textContent=sel.name+' · d_s≈'+sel.d;
+    if(roD)roD.textContent='d_s ≈ '+dAtApert;
+    if(roReg)roReg.textContent=xa<XK?'Faser (fein)':'Grundraum (grob)';
+    if(roK)roK.textContent=focused.has(selected)?tilesSel:'—';
+    if(roB)roB.textContent=budget;
+    if(roF)roF.textContent=nFoc+'/3';
+    if(roV){roV.textContent=falling?'Bundle ok ✓':'widerlegt ✗';roV.className='v '+(falling?'g':'e');}
+    if(roStat){roStat.textContent=showHallu?'sprunghaft':'stetig';roStat.className='v '+(showHallu?'e':'g');}
+    if(viewCap){
+      if(nFoc===0){
+        viewCap.textContent='Klicke links ein Stratum an, um das Lipschitz-Objektiv (B) zu fokussieren und das verschlüsselte topologische Icon zu dekodieren. Mitte läuft der Abschnitt-s-Tracer (A) den Schicht-Stack hoch — bei „Halluzination" springt er an der Bruchkante diskontinuierlich.';
+      } else if(falling){
+        viewCap.textContent='Fokussiertes Stratum „'+sel.name+'\" (d_s≈'+sel.d+'). Links dekodiert die Linse das Icon dieser Stratum; rechts fällt die Log-Log-Steigung an der Stratum-Grenze r* von Faser (d_s≈'+dHi+', klein r) zu Grundraum (d_s≈'+dLo+', groß r) — nur-fallend = Bundle-erlaubt (Satz 1). Das Fokus-Budget wird über '+nFoc+' fokussierte Strata aufgeteilt (Konservierung, A = B); der Schnitt-s-Tracer läuft stetig (keine Halluzination).';
+      } else {
+        viewCap.textContent='Fokussiertes Stratum „'+sel.name+'\" (d_s≈'+sel.d+'). Rechts knickt die Log-Log-Steigung AN DER GRENZE AUFWÄRTS: klein r → d_s≈'+dLo+', groß r → d_s≈'+dHi+'. Ein aufwärts-Knick kann von keinem Bundle stammen → echte Bruchkante (Satz 1 widerlegt). Diese Kante ist genau die Stratum-Grenze, an der der Schnitt s (A) diskontinuierlich springen kann — bei „Halluzination" siehst du den Sprung live.';
+      }
+    }
+  }
+
+  function loop(){if(playing){time+=0.016;}draw();requestAnimationFrame(loop);}
+  window.addEventListener('resize',readPal);
+  try{new MutationObserver(function(){readPal();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+  loop();
+});
+</script>
+</body>
+</html>

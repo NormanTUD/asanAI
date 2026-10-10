@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Kernel-Feld ist der persistente 1-Zyklus — Fusion r2-021</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f2efe6; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --fog:#7c3aed;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --fog:#a78bfa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(820px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 11%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.09;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+.lede{font-size:1.02rem;color:var(--txt-dim);margin-bottom:8px}
+section{padding:40px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:16px 18px;margin:14px 0;backdrop-filter:blur(8px)}
+.card .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.math{background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:12px 16px;margin:14px 0;overflow-x:auto}
+.math .mrow{margin:6px 0;font-size:1.04rem;font-family:"Cambria Math","STIX Two Math",Georgia,serif;color:var(--txt);white-space:nowrap}
+.math .mnote{color:var(--txt-faint);font-size:.84rem;margin-top:6px;font-family:var(--sans);white-space:normal}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:9px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:9px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.hi{color:var(--acc);font-weight:600}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap;border-bottom:none}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:6px;overflow:hidden}
+canvas{display:block;width:100%}
+#loopCanvas{height:380px}#specCanvas{height:230px}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin:12px 0}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:19px;font-weight:640;color:var(--acc)}
+.ro .b .v.g{color:var(--acc3)}.ro .b .v.m{color:var(--acc4)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.f{color:var(--fog)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:2px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 14px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+@media(max-width:600px){.ro{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r2-021</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: r1-048.html ✕ r1-041.html  (Round 2)</p>
+  <h1>Das Kernel-Feld <em>ist</em> der persistente 1-Zyklus</h1>
+  <p class="eyebrow">Kernel-Surrogat / BO (A) × topologisch-spektrale Linse (B)</p>
+  <p class="lede">Zwei R1-Integrationen, ein Objekt. <code>r1-048</code> baut aus sparsamen Proben ein kontinuierliches Kernel-Feld (GP / RBF) mit Unsicherheitsband und handelt danach (nächste teure Probe). <code>r1-041</code> liest aus denselben gewichteten Token-Beziehungen Loops (1-Zyklen) mit Windung und Persistenz. Beide sind <em>derselbe</em> Akt: aus diskreter, sparsamer Evidenz ein kernel-gewichtetes Objekt machen — und ihm eine Robustheits-Dimension geben, auf der man handeln kann.</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide R1-Papiere vollziehen am Transformer denselben epistemischen Schritt. Man bekommt eine Handvoll <em>diskreter, sparser Beweise</em> — A (r1-048) teure Funktionsauswertungen bzw. Token-Deltas, B (r1-041) Attention-Gewichte — und soll daraus über <em>überall</em> ein Statement abgeben. Die ehrliche Vorgehensweise ist dieselbe: <strong>Kernel-Glättung</strong>. <code>r1-048</code> tut es mit einem Gaussian-Process / RBF-Surrogat: aus wenigen Proben entsteht ein kontinuierliches Feld <code>q(x)</code> — ein Mittelwert <em>plus</em> ein Unsicherheitsband — worauf man entweder <em>handelt</em> (den nächsten Punkt per Acquisition wählen) oder <em>rendert</em> (das verformte Gitter, das Strain-Feld). <code>r1-041</code> tut es mit der Attention: die Gewichte bilden einen gewichteten Graphen = das <strong>1-Gerüst eines Simplexkomplexes</strong>, und ein Fourier-/Persistent-Homology-Paar liest seine <strong>Loops</strong> ab — Zyklen mit einer Windungszahl <code>k</code>, die über einen ε-Bereich persistieren.</p>
+    <p>Die fusionierende Identität ist die eigentliche These: <strong>A's Kernel-Gewicht und B's Kanten-Gewicht sind derselbe Gaussian.</strong> A's <code>k(x,xᵢ) = exp(−‖x−xᵢ‖²/2σ²)</code> ist genau die Gewichtsfamilie, die B's Token-Graphen zu einem <em>kernel-gewichteten 1-Gerüst</em> macht. Der gelernte Repräsentationsraum ist daher <em>ein</em> kernel-gewichtetes Objekt: <strong>punktweise gelesen ist es A's Surrogat-Feld (Wert ± Varianz); topologisch gelesen ist es B's Zyklus-Komplex (Loops ± Persistenz).</strong> Das Feld <em>ist</em> der Zyklus; der Zyklus <em>ist</em> die Topologie des Feldes. A und B sind zwei Projektionen desselben Objektivs — die eine liest <em>Werte</em> ab, die andere <em>Löcher</em>.</p>
+    <p>Dazu kommt die geteilte Robustheits-Achse und die Handlung. A's Varianzband („Fog, wo es nicht weiß") und B's Persistenzband (<code>τ</code>, der ε-Bereich, in dem ein Loop überlebt) sind <em>ein und derselbe Regler</em>: A's Rauschvarianz <code>σₙ</code> und B's Schwelle <code>ε</code> sind zwei Stellräder über einer gemeinsamen <em>Signal-gegen-Rauschen</em>-Achse. Und A's Acquisition-Funktion — „gib die nächste teure Probe dort aus, wo die Unsicherheit am höchsten ist" — heißt übersetzt „geh dorthin, wo die Struktur am wenigsten feststeht", also genau dort, wo B's Zyklen am fragilsten sind. <strong>Fusioniertes Instrument: ein Kernel-Feld mit vollständigem Posterior <em>und</em> einem Persistenzdiagramm; die fragilen Regionen (hohe Varianz / niedrige Persistenz) zeigen, wo die nächste teure Beobachtung hingehört.</strong></p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <div class="note"><span class="h">Ehrlichkeits-Hinweis</span>
+    Die beiden R1-Papiere stammen aus verschiedenen Hälften der Transformer-Interpretation (A: Kernel-Surrogat / BO / Space-Morphing; B: Fourier / persistente Homologie / Grokking) und stehen in <strong>keinem direkten faktischen Widerspruch</strong>. Die Spannungen sitzen auf der Ebene der <em>methodischen Haltung</em> — was der Inhalt des Repräsentationsraums ist und wie man ihn liest. Vier konkrete, lokalisierbare Spannungen:</div>
+
+    <table>
+      <thead><tr><th style="width:24%">Spannung</th><th>A — r1-048 sagt</th><th>B — r1-041 sagt</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="hi">1 · Inhalt = punktueller Wert vs. Topologie</td>
+          <td>Der Inhalt ist ein <em>punktuelles Kernel-Feld</em> <code>q(x)</code> — „a continuous, kernel-weighted model of an 'everywhere' quantity". Man liest einen <em>Wert an einem Punkt</em> (Mean ± Variance); das Objekt, auf das man handelt, ist eine Koordinate.</td>
+          <td>Der Inhalt sind <em>Loops / 1-Zyklen</em> — „ein topologischer Raum, dessen Inhalt aus Zyklen besteht". Man liest <em>keinen</em> Punkt-Wert, sondern eine geschlossene Struktur mit Windung <code>k</code> und Persistenz.</td>
+        </tr>
+        <tr>
+          <td class="hi">2 · Konfidenz = lokale Varianz vs. Skalene-Persistenz</td>
+          <td>Die Konfidenz ist ein <em>punktuelles Posterior-Varianzband</em> <code>var*(x)</code> — „the uncertainty fog … dark where it does not know". Die Unsicherheit sitzt an <em>Punkten</em>.</td>
+          <td>Die Konfidenz ist <em>Persistenz</em> <code>τ = ε_death − ε_birth</code> — „über welchen ε-Bereich er überlebt". Die Robustheit sitzt an <em>Zyklen</em> und wird <em>über Skalen</em> gemessen.</td>
+        </tr>
+        <tr>
+          <td class="hi">3 · Daten-fitte Skala vs. feste, vorgegebene Basis</td>
+          <td>Die Kernbreite / der lengthscale wird <em>datengetrieben gefittet</em> — „fit by maximizing the marginal likelihood". Auflösung: „let the data set the kernel width" — die Glätte wird <em>abgeleitet</em>.</td>
+          <td>(Fourier-Arm) Die Extraktion gelingt <em>nur</em> auf die <em>vorab gewählte</em> Frequenz <code>k</code> — „eine vorab gewählte Fourier-Basis. Projiziert man auf die falsche Frequenz, scheitert es" („change the projection frequency to k"). Die Skala wird <em>behauptet</em>.</td>
+        </tr>
+        <tr>
+          <td class="hi">4 · Ausgabe = Entscheidung + Feld vs. Invariante + Diagramm</td>
+          <td>Die Ausgabe ist (i) eine <em>Entscheidung</em> — „the next probe … a coordinate" per Acquisition, und (ii) ein <em>gerendertes Feld</em> (Mittelfläche + Fog / verformtes Gitter). Räumlich &amp; handlungsorientiert.</td>
+          <td>Die Ausgabe ist (i) eine <em>Invariante</em> — Windung <code>k</code>, β₁, <code>τ</code>, SNR — und (ii) ein <em>Persistenzdiagramm</em> / DFT-Spektrum. Ein Klassifikat, keine Lage.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ 3. AUFLÖSUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <div class="card"><span class="tag">Zu 1 · Feld trägt den Zyklus</span>
+    Das Kernel-Feld <em>definiert</em> die Abbildung, deren Löcher B zählt. B's gewichteter Attention-Graph <em>ist</em> ein kernel-gewichtetes 1-Gerüst — dasselbe <code>exp(−‖x−xᵢ‖²/2σ²)</code>-Gewicht, mit dem A sein Surrogat glättet. Auflösung: das Feld <em>und</em> der Zyklus sind zwei Lesarten eines Objekts. Punktweise liest man den Wert (A), topologisch liest man die Homologie desselben gewichteten Objekts (B). <em>Fusioniert: Wert und Zyklus sind zwei Projektionen des einen kernel-gewichteten Feldes.</em></div>
+
+    <div class="card"><span class="tag">Zu 2 · Varianz und Persistenz = zwei Gesichter einer Achse</span>
+    Beide Bänder sind dieselbe Robustheits-Dimension des Kernel-Objekts, an einem Raster gemessen. A's <code>var*(x)</code> misst, wie <em>unstabil der Wert</em> gegen Rauschen <code>σₙ</code> ist; B's <code>τ</code> misst, wie <em>unbeständig der Zyklus</em> gegen die Schwelle <code>ε</code> ist. Das Rauschen (A) und die Schwelle (B) sind dieselbe Achse — „Signal gegen Rauschen". <em>Fusioniert: trage beides — die Wert-Varianz <em>und</em> die Zyklus-Persistenz — als zwei Seiten einer einzigen Robustheits-Maß; werfe nicht die eine für die andere weg.</em></div>
+
+    <div class="card"><span class="tag">Zu 3 · Feste Basis als Vorschlag, MLL als Test</span>
+    Die Fourier-Basis ist eine <em>a-priori-Bibliothek</em> von Kandidaten-Zyklen (jede Sinuswelle = 1-Zyklus mit Windung <code>k</code>); A's Marginal-likelihood-Fit ist der <em>Test</em>, der die Skala auswählt, die die Daten tatsächlich tragen. B <em>propose</em>t Zyklen nach Windung; A <em>verifiziert</em> die Breite per MLL. Und das „richtige <code>k</code>" ist nicht von Hand gesetzt, sondern die Windung mit dem stärksten Persistenz-/SNR-Peak — genau was B's Readout (<code>argmax |DFT|</code>) berechnet. <em>Fusioniert: die Daten setzen die Skala (A's MLL); das ist äquivalent zur Feststellung, welcher Fourier-Modus die realisierte Persistenz trägt (B's Peak). Der Slider wird zur Diagnose, der Peak zur Antwort.</em></div>
+
+    <div class="card"><span class="tag">Zu 4 · Invariante steuert die Entscheidung</span>
+    Entscheidung (A) und Invariante (B) sind zwei Rollen desselben Robustheits-Signals. A's Acquisition schickt die nächste Probe dorthin, wo die <em>Unschärfe hoch</em> ist; B's ε-Sweep / Persistenz <em>identifiziert</em>, welche Loops robust sind. Auflösung: <strong>verwende die Invariante (B: welche Zyklen persistieren), um zu entscheiden, wo hingesehen wird (A: wo die nächste Probe sitzt)</strong> — probe dort, wo die Topologie <em>unentschieden</em> ist (Zyklen, die unter ε schnell sterben = lokale Unsicherheit). <em>Fusioniert: Beschreibung (Feld + Diagramm) und Entscheidung (nächste Probe) sind ein Loop; die topologische Invariante <em>steuert</em> die Acquisition.</em></div>
+
+    <div class="note"><span class="h">Übergeordnete fusionierte Schlussfolgerung</span>
+    Ein Transformers innere Repräsentation ist ein <strong>kernel-gewichtetes Objekt</strong> (ein Gaussian/RBF-Ähnlichkeits-Feld über seinen Eingaben/Beziehungen). Punktweise gelesen ist es A's Surrogat (Wert + Varianz); topologisch gelesen ist es B's Simplexkomplex (Zyklen + Persistenz). Das Varianzband (A) und das Persistenzband (B) sind die <em>zwei Gesichter einer Robustheits-Achse</em> (A: Rauschen <code>σₙ</code>, B: Schwelle <code>ε</code>). Und das daten-gefittete <strong>MLL-lengthscale (A)</strong> ist genau die <strong>Windung, deren Persistenz die Daten realisieren (B)</strong>. Vereinigt zu einem Instrument: ein Kernel-Feld mit Posterior <em>und</em> Persistenzdiagramm, dessen fragile Regionen (hohe Varianz / niedrige Persistenz) die nächste teure Probe ausgeben.</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Das gemeinsame Objekt — ein kernel-gewichtetes Feld</h3>
+    <p>Beide Seiten starten von sparsamen, gewichteten Punkten und glätten sie mit demselben Gaussian-Kernel. A's GP/RBF-Kernel und B's Kanten-Gewicht sind ein Ausdruck:</p>
+    <div class="math">
+      <div class="mrow">k(x, xᵢ) = exp( − ‖x − xᵢ‖² / (2σ²) )</div>
+      <div class="mnote">A (r1-048): GP-Kernel (σ = lengthscale ℓ) / RBF-Gewicht. B (r1-041): das Gewicht, das den Token-Graphen zu einem kernel-gewichteten 1-Gerüst (Simplexkomplex) macht.</div>
+    </div>
+
+    <h3>A — Kernel-Surrogat + BO-Loop (r1-048)</h3>
+    <p>Der GP ist dasselbe RBF-Blending, hochgehoben zu einer Verteilung. Mit Prior <code>f ~ N(0, k)</code> und verrauschten Beobachtungen <code>y</code>:</p>
+    <div class="math">
+      <div class="mrow">μ*(x) = k(x, X)ᵀ (K + σₙ² I)⁻¹ y</div>
+      <div class="mrow">var*(x) = k(x, x) − k(x, X)ᵀ (K + σₙ² I)⁻¹ k(X, x)</div>
+      <div class="mnote">Für σₙ → 0 mit reinem Gaussian-Kernel reduziert μ* exakt auf das RBF-Blend. Das Space-Morpher-Feld ist der rauschfreie GP-Mittelwert; der GP liefert die Varianz, die das Feld sonst nie berechnet.</div>
+    </div>
+    <p>Der BO-Loop <em>wählt</em> Proben, statt sie zu rendern: GP fitten (Hyperparameter per Marginal likelihood) → Acquisition via <strong>Reparameterization-Trick</strong> <code>ξ = μ + σ·ε</code> (differenzierbar) → <strong>SAA</strong>: Proben einmal fixieren (deterministisches Ziel) → Multi-Start <code>L-BFGS-B</code> von Sobol-Punkten → echte (teure) Funktion dort auswerten → in die Daten übernehmen. Die Acquisition balanciert Erkunden (Unsicherheit) gegen Ausbeuten (nahe Bestwert):</p>
+    <div class="math">
+      <div class="mrow">EI(x) = (μ(x) − f_best)·Φ(z) + σ(x)·φ(z),  &nbsp; z = (μ(x) − f_best)/σ(x)</div>
+      <div class="mrow">UCB(x) = μ(x) + β·σ(x) &nbsp;&nbsp;&nbsp; POI(x) = Φ(z)</div>
+      <div class="mnote">SAA-Konvergenz: Plain-MC O(1/√N), Quasi-MC (Sobol) O(1/N) — „the QMC approximation only requires 64 samples", um 4096 Plain-MC-Stichproben zu treffen.</div>
+    </div>
+    <p>Der Space-Morpher-Arm (B von r1-048): Residual-Stream, Layer-Deltas <code>δ⁽ℓ⁾ = h⁽ℓ⁺¹⁾ − h⁽ℓ⁾</code> (gestapelt, <code>h⁽ᴸ⁾ = h⁽⁰⁾ + Σ_ℓ δ⁽ℓ⁾</code>), PCA auf 2D, RBF-Feld aus den Deltas, Gitter-Verformung <code>p′ = p + t·amp·δ(p)</code> und Strain <code>strainᵢⱼ = ‖p′ⱼ − p′ᵢ‖ / ‖pⱼ − pᵢ‖</code> (&gt;1 expand, &lt;1 contract). Das ist A's Feld im <em>Beschreibungs-Modus</em> — dieselbe Maschine, unendliches Budget, Ausgabe = Bild.</p>
+
+    <h3>B — Fourier-Modus = persistenter 1-Zyklus (r1-041)</h3>
+    <p>Ein Transformer auf modularer Addition (a+b mod P) embeddet Eingaben auf Kreisen, die in der Embedding-Ebene „verdreht" liegen, sodass kein 2D-Achsenschnitt sie zeigt. Die DFT liefert die orthogonale Basis, die sie „entverdreht"; die <strong>Fourier-Projection</strong> auf Frequenz <code>k</code> projiziert auf die Sinus-/Kosinus-Basis, in der der Kreis lebt:</p>
+    <div class="math">
+      <div class="mrow">p(t) = (cos w_k t, sin w_k t), &nbsp; w_k = 2π k / P &nbsp;(k = Windungszahl)</div>
+      <div class="mrow">proj_k(x) = (⟨x, cos(w_k·)⟩, ⟨x, sin(w_k·)⟩)</div>
+      <div class="mrow">Logit(c) = Σ_{k∈keys} α_k cos( w_k (a+b−c) ) &nbsp;⟶( c≡a+b mod P )&nbsp; max</div>
+      <div class="mnote">Alle Key-Frequenzen interferieren bei c ≡ a+b (mod P) konstruktiv (cos 0 = 1) und sonst destruktiv — der Logit-Peak sitzt exakt auf der korrekten Antwort.</div>
+    </div>
+    <p>Attention ist ein vollständiger gewichteter Graph über den Tokens — das <strong>1-Gerüst eines Simplexkomplexes</strong>. Man nimmt die <strong>ε-Filterung</strong> (Kanten mit Gewicht ≥ ε) und den Clique-Komplex; über ε von 1→0 entsteht eine <strong>Filtration</strong>, deren <strong>persistente Homologie</strong> die Loops nachverfolgt: <code>β₀</code> = Komponenten (Attention-Cluster), <code>β₁</code> = Loops („cyclic dependencies"), <code>β₂</code> = Voids. Jeder Head definiert einen eigenen Komplex über denselben Tokens:</p>
+    <div class="math">
+      <div class="mrow">β₁(ε) = E(ε) − V + C(ε) &nbsp;&nbsp;(cyclomatic number des ε-Komplexes)</div>
+      <div class="mrow">τ = ε_death − ε_birth &nbsp;&nbsp;(Persistenz des 1-Zyklusses über der Filtration)</div>
+      <div class="mnote">Der diskrete Token-Ring (B) ist eine diskrete Realisierung des stetigen Embedding-Kreises (A): zwei Kodierungen ein und desselben topologischen 1-Zyklusses.</div>
+    </div>
+
+    <h3>Die Brücke — zwei Linsen, eine Robustheits-Achse</h3>
+    <p>Der Brückenschlag ist präzise. A's Kreis bei Frequenz <code>k</code> <em>ist</em> ein 1-Zyklus mit Windung <code>k</code>; A's Fourier-Amplitude misst die <strong>Amplitude</strong> des k-ten Windungs-1-Zyklusses, B's Persistenz misst den <strong>Skalenbereich</strong>, über den derselbe Zyklus überlebt. Und die beiden „Konfidenz"-Bänder sind zwei Gesichter einer Achse:</p>
+    <div class="math">
+      <div class="mrow">A: var*(x)  &nbsp;(punktuelle Wert-Instabilität gegen Rauschen σₙ)</div>
+      <div class="mrow">B: τ = ε_death − ε_birth  &nbsp;(zyklische Struktur-Instabilität gegen Schwelle ε)</div>
+      <div class="mnote">σₙ (A) und ε (B) sind zwei Stellräder über derselben Signal-gegen-Rauschen-Achse. A meldet den Peak (eine Windung, ein Wert), B das ganze Persistenzdiagramm (alle Loops über Skalen) — A ist ein 1-dimensionaler Schnitt von B.</div>
+    </div>
+
+    <table>
+      <thead><tr><th>Frage</th><th>A · r1-048</th><th>B · r1-041</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td class="hi">Grundobjekt</td><td>Kernel-Surrogat-Feld q(x)</td><td>Simplexkomplex über Tokens</td><td>kernel-gewichteter 1-Zyklus</td></tr>
+        <tr><td class="hi">Detektor</td><td>GP-Posterior (Mean + Var)</td><td>ε-Filtration + persistente Homologie</td><td>Modus → Persistenz</td></tr>
+        <tr><td class="hi">Konfidenz</td><td>Varianz var*(x) an Punkten</td><td>Persistenz τ an Zyklen</td><td>eine Robustheits-Achse (σₙ / ε)</td></tr>
+        <tr><td class="hi">Skala / Breite</td><td>MLL-gefitetes lengthscale ℓ</td><td>vorgegebene Frequenz k (Fourier)</td><td>daten-fitte Windung = realisierte Persistenz</td></tr>
+        <tr><td class="hi">Ausgabe</td><td>nächste Probe (Koordinate) + Feld</td><td>Invariante (k,β₁,τ) + Diagramm</td><td>Feld + Diagramm; fragil → nächste Probe</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Visualisierung — ein Loop, der ein Feld trägt</h2>
+    <div class="viz">
+      <div class="head"><span class="dot"></span><h3>Kernel-gewichteter Zyklus: Feld (A) × Persistenz (B)</h3><span class="tg">Canvas · inline</span></div>
+      <p>Ein geschlossener Token-Ring ist <em>zugleich</em> B's 1-Zyklus (β₁) und A's kernel-gewichteter Graph — jede Kante trägt das Gaussian-Gewicht <code>exp(−d²/2σ²)</code> (A's Kernel), die B per <code>ε</code>-Schwelle filtriert. Der Ring trägt eine radiale <strong>K-fache Modulation</strong> = den Fourier-Modus <code>k</code>. Die lila <strong>Fog-Halos</strong> sind A's <em>lokale Varianz</em> (hoher dort, wo die Kernel-Kante schwach ist + Rauschen hoch); der rosa <strong>★</strong> ist A's <em>nächste Probe</em> (argmax Varianz = B's fragilstes Token). Erhöhe <strong>Rauschen</strong>: A's Fog <em>und</em> B's Persistenz τ degradieren zusammen (Auflösung 2). <strong>Fit σ (MLL)</strong> fittet A's Kernbreite datengetrieben = die realisierte Persistenz-Peak-Windung (Auflösung 3). <strong>Evaluate ★</strong> fügt dort eine Beobachtung (A's BO-Schritt) hinzu, die den lokalen Fog schrumpft und den Loop repariert (Auflösung 4). Unten: DFT-Spektrum (Peak bei k) + β₁(ε)-Persistenzband.</p>
+
+      <div class="cwrap"><canvas id="loopCanvas"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--acc)"></i> Token / Loop (B: 1-Zyklus)</span>
+        <span><i style="background:var(--acc3)"></i> Kanten ≥ ε (alive)</span>
+        <span><i style="background:var(--txt-faint)"></i> Kanten &lt; ε (gebrochen)</span>
+        <span><i style="background:var(--fog)"></i> Fog = A's Varianz</span>
+        <span><i style="background:var(--acc2)"></i> ★ nächste Probe / ε</span>
+        <span><i style="background:var(--acc5)"></i> beobachtet (A: Probe gesetzt)</span>
+      </div>
+      <div class="cwrap"><canvas id="specCanvas"></canvas></div>
+
+      <div class="ro">
+        <div class="b"><div class="k">k · Windung/Modus</div><div class="v" id="roK">2</div><div class="u">A: Zyklus · B: Fourier</div></div>
+        <div class="b"><div class="k">β₁ · Loops</div><div class="v e" id="roBetti">1</div><div class="u">B: 1-Zyklen</div></div>
+        <div class="b"><div class="k">τ · Persistenz</div><div class="v g" id="roPersist">–</div><div class="u">B: ε-Überlebensband</div></div>
+        <div class="b"><div class="k">σ · Kernbreite</div><div class="v m" id="roSigma">0.160</div><div class="u">A: lengthscale ℓ</div></div>
+        <div class="b"><div class="k">SNR · Peak</div><div class="v" id="roSNR">–</div><div class="u">A/B: |DFT|</div></div>
+        <div class="b"><div class="k">★ fragil @</div><div class="v f" id="roFrag">–</div><div class="u">A: nächste Probe</div></div>
+      </div>
+
+      <div class="ctl"><div class="ctl-lab"><span>Fourier-Modus · Windungszahl k (B, A's „welcher Zyklus")</span><b id="valK">2</b></div>
+        <input type="range" id="ctlK" min="1" max="8" step="1" value="2"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Kernbreite ℓ / kernel width σ (A) — MLL-Button = data-fit (Auflösung 3)</span><b id="valSigma">0.160</b></div>
+        <input type="range" id="ctlSigma" min="5" max="50" step="1" value="16"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Rauschen σₙ (degradiert A's Fog &amp; B's τ zugleich, Auflösung 2)</span><b id="valSigmaN">0.012</b></div>
+        <input type="range" id="ctlSigmaN" min="0" max="50" step="1" value="12"></div>
+      <div class="ctl"><div class="ctl-lab"><span>Schwelle ε (B's Filtration)</span><b id="valEps">0.45</b></div>
+        <input type="range" id="ctlEps" min="0" max="100" step="1" value="45"></div>
+      <div class="btnrow">
+        <button id="btnFit">◈ Fit σ (MLL) — A's marginal likelihood</button>
+        <button id="btnEval">★ Evaluate — A's nächster Probe (B's fragilsten Token)</button>
+        <button id="btnFilt">▶ ε-Filtration animieren (B)</button>
+        <button id="btnReset">↺ Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="card"><span class="tag">Quelle A</span>
+      <a href="../r1-048.html">r1-048.html</a> — <em>„From Sparse Samples to a Surrogate You Can Act On"</em>: GP/RBF-Surrogat (Mean + Varianz, lengthscale via Marginal likelihood), BO-Loop mit EI/UCB/POI, Reparameterization + SAA + Multi-Start L-BFGS-B, SAA-Konvergenz (MC vs. QMC); Space-Morphing (Residual-Deltas, PCA, RBF-Feld, Verformung, Strain). R1-Fusion aus botorch.html ✕ space_algorithm.html.</div>
+    <div class="card"><span class="tag">Quelle B</span>
+      <a href="../r1-041.html">r1-041.html</a> — <em>„Der Fourier-Modus k ist der persistente 1-Zyklus"</em>: Grokking-Kreise in „verdrehten" Embedding-Räumen, DFT-basierte Fourier-Projection und Logit-Readout per konstruktiver Interferenz (c = a+b mod P); Attention als Simplexkomplex, ε-Filtration → Clique-Komplex, persistente Homologie β₀/β₁/β₂, Multi-Head-Komplexe. R1-Fusion aus fourier_projection.html ✕ simplicial_complex_attention.html.</div>
+  </section>
+</article>
+
+<footer>r2-021 · Round 2 Fusion — Kernel-Feld × persistenter 1-Zyklus · selbständig, keine Netz-Daten, keine CDN-Abhängigkeit</footer>
+
+<script>
+(function(){
+  'use strict';
+  function byId(id){return document.getElementById(id);}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+
+  var N=64, AMP=0.16;
+  var K=2, SIGMA_K=0.16, SIGMA_N=0.012, EPS=0.45;
+  var fitLS=false, epsAnim=false, epsAnimStart=0;
+  var COL={};
+  var pts=[], weights=[], spec=[], vars=[];
+  var obs=[];
+  var betti1=0, persistence=0, peakFreq=K, peakSNR=0, fragIdx=0;
+  var loopCanvas, loopCtx, specCanvas, specCtx;
+  var roK,roBetti,roPersist,roSigma,roSNR,roFrag;
+  var elK,elSigma,elSigmaN,elEps, valK,valSigma,valSigmaN,valEps;
+  var btnFit,btnEval,btnFilt,btnReset;
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var rnd=mulberry32(20260410);
+  function gauss(){var u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+  var NOISE=[];for(var i=0;i<N;i++)NOISE.push([gauss(),gauss()]);
+
+  function readColors(){
+    var s=getComputedStyle(document.documentElement),g=function(n){return s.getPropertyValue(n).trim();};
+    COL={bg:g('--bg'),bg2:g('--bg2'),txt:g('--txt'),dim:g('--txt-dim'),faint:g('--txt-faint'),
+      acc:g('--acc'),acc2:g('--acc2'),acc3:g('--acc3'),acc4:g('--acc4'),acc5:g('--acc5'),
+      stroke:g('--stroke'),fog:g('--fog'),node:g('--acc'),nodeDim:g('--txt-faint'),star:g('--acc2'),best:g('--acc5')};
+  }
+
+  function idealPoint(n){
+    n=((n%N)+N)%N;
+    var th=2*Math.PI*n/N;
+    var rad=1+AMP*Math.cos(2*Math.PI*K*n/N);
+    return {x:rad*Math.cos(th),y:rad*Math.sin(th)};
+  }
+  function dampOf(n){return 1/(1+2*(obs[n]||0));}
+  function angDist(a,b){var d=Math.abs(a-b)%(2*Math.PI);return Math.min(d,2*Math.PI-d);}
+
+  function betti1At(eps){
+    var parent=[],i;for(i=0;i<N;i++)parent[i]=i;
+    function find(x){return parent[x]===x?x:(parent[x]=find(parent[x]));}
+    var E=0,n;
+    for(n=0;n<N;n++){if(weights[n]>=eps){var a=n,b=(n+1)%N;parent[find(a)]=find(b);E++;}}
+    var comp={},C=0;
+    for(i=0;i<N;i++){var r=find(i);if(!comp[r]){comp[r]=1;C++;}}
+    return Math.max(0,E-N+C);
+  }
+
+  // ---- linear algebra (Gauss-Jordan with log-det, from r1-048) ----
+  function invertWithLogDet(M){
+    var n=M.length,a=[],I=[],i,j,c;
+    for(i=0;i<n;i++){a.push(M[i].slice());var row=new Array(n);for(j=0;j<n;j++)row[j]=(i===j?1:0);I.push(row);}
+    var logdet=0;
+    for(c=0;c<n;c++){
+      var pr=c;for(var r=c+1;r<n;r++)if(Math.abs(a[r][c])>Math.abs(a[pr][c]))pr=r;
+      if(Math.abs(a[pr][c])<1e-12)return null;
+      if(pr!==c){var tt=a[pr];a[pr]=a[c];a[c]=tt;tt=I[pr];I[pr]=I[c];I[c]=tt;}
+      var piv=a[c][c];logdet+=Math.log(Math.abs(piv));
+      for(j=0;j<n;j++){a[c][j]/=piv;I[c][j]/=piv;}
+      for(var r2=0;r2<n;r2++){if(r2===c)continue;var f=a[r2][c];if(f===0)continue;
+        for(j=0;j<n;j++){a[r2][j]-=f*a[c][j];I[r2][j]-=f*I[c][j];}}
+    }
+    return {inv:I,logdet:logdet};
+  }
+  function matVec(M,v){var n=M.length,o=new Array(n);for(var i=0;i<n;i++){var s=0;for(var j=0;j<n;j++)s+=M[i][j]*v[j];o[i]=s;}return o;}
+
+  function recompute(){
+    var n;
+    pts=[];
+    for(n=0;n<N;n++){var ip=idealPoint(n),dp=dampOf(n);
+      pts.push({x:ip.x+NOISE[n][0]*SIGMA_N*dp,y:ip.y+NOISE[n][1]*SIGMA_N*dp});}
+    weights=[];
+    for(n=0;n<N;n++){var a=pts[n],b=pts[(n+1)%N];
+      var d=Math.hypot(a.x-b.x,a.y-b.y);
+      weights.push(Math.exp(-(d*d)/(2*SIGMA_K*SIGMA_K)));}
+    var sig=[];for(n=0;n<N;n++)sig.push(Math.hypot(pts[n].x,pts[n].y)-1);
+    var half=N>>1;spec=[];
+    for(var f=0;f<=half;f++){var re=0,im=0;
+      for(n=0;n<N;n++){var ang=2*Math.PI*f*n/N;re+=sig[n]*Math.cos(ang);im-=sig[n]*Math.sin(ang);}
+      spec.push(Math.hypot(re,im)/N);}
+    peakFreq=1;
+    for(f=2;f<=half;f++){if(spec[f]>spec[peakFreq])peakFreq=f;}
+    var floor=0,cnt=0;
+    for(f=1;f<=half;f++){if(f===peakFreq)continue;floor+=spec[f];cnt++;}
+    floor=cnt?floor/cnt:0;
+    peakSNR=(spec[peakFreq]>1e-6&&floor>1e-9)?spec[peakFreq]/floor:(spec[peakFreq]>1e-6?999:0);
+    var minw=1;for(n=0;n<N;n++)if(weights[n]<minw)minw=weights[n];
+    persistence=minw;
+    betti1=betti1At(EPS);
+    vars=[];var fragV=-1;
+    var noiseT=clamp(SIGMA_N/0.03,0,1);
+    for(n=0;n<N;n++){
+      var avgW=(weights[n]+weights[((n-1+N)%N)])/2;
+      var gap=1-avgW;
+      var vn=clamp(0.55*gap+0.45*noiseT*dampOf(n),0,1);
+      vars.push(vn);
+      if(vn>fragV){fragV=vn;fragIdx=n;}
+    }
+    updateReadouts();
+  }
+
+  // A's marginal likelihood on the radial-deviation signal as fn of angle (fits sigma)
+  function fitSigma(){
+    var n=N,f;
+    var sig=[];for(f=0;f<n;f++)sig.push(Math.hypot(pts[f].x,pts[f].y)-1);
+    var m=0;for(f=0;f<n;f++)m+=sig[f];for(f=0;f<n;f++)sig[f]-=m/n;
+    var angles=[];for(f=0;f<n;f++)angles.push(2*Math.PI*f/N);
+    var best=-1e18,bl=SIGMA_K;
+    for(var l=0.05;l<=0.6101;l+=0.012){
+      var Kk=new Array(n);
+      for(var i=0;i<n;i++){Kk[i]=new Array(n);
+        for(var j=0;j<n;j++){var dd=angDist(angles[i],angles[j]);Kk[i][j]=Math.exp(-(dd*dd)/(2*l*l));if(i===j)Kk[i][j]+=0.02;}}
+      var res=invertWithLogDet(Kk);if(!res)continue;
+      var Ky=matVec(res.inv,sig),a=0;
+      for(f=0;f<n;f++)a+=sig[f]*Ky[f];
+      var mll=-0.5*a-0.5*res.logdet-0.5*n*Math.log(2*Math.PI);
+      if(mll>best){best=mll;bl=l;}
+    }
+    SIGMA_K=bl;fitLS=true;
+    if(elSigma)elSigma.value=Math.round(SIGMA_K*100);
+    if(valSigma)valSigma.textContent=SIGMA_K.toFixed(3);
+    recompute();
+  }
+
+  function updateReadouts(){
+    if(roK)roK.textContent=K;
+    if(roBetti)roBetti.textContent=betti1;
+    if(roPersist)roPersist.textContent=persistence.toFixed(3);
+    if(roSigma)roSigma.textContent=SIGMA_K.toFixed(3)+(fitLS?' (fit)':'');
+    if(roSNR)roSNR.textContent=(peakSNR>900?'\u221e':peakSNR.toFixed(1));
+    if(roFrag)roFrag.textContent=fragIdx;
+  }
+
+  function drawStar(cx,cy,size,color){
+    loopCtx.save();loopCtx.translate(cx,cy);loopCtx.beginPath();loopCtx.fillStyle=color;
+    for(var i=0;i<5;i++){var a=(i*4*Math.PI)/5-Math.PI/2;var X=Math.cos(a)*size,Y=Math.sin(a)*size;if(i===0)loopCtx.moveTo(X,Y);else loopCtx.lineTo(X,Y);}
+    loopCtx.closePath();loopCtx.fill();loopCtx.restore();
+  }
+
+  function drawLoop(now){
+    if(!loopCtx)return;
+    var W=loopCanvas.clientWidth,H=loopCanvas.clientHeight;
+    if(W<2||H<2)return;
+    loopCtx.clearRect(0,0,W,H);
+    var cx=W/2,cy=H/2,R=Math.min(W,H)*0.36,n,X,Y;
+    loopCtx.strokeStyle=COL.stroke;loopCtx.lineWidth=1;loopCtx.setLineDash([3,6]);
+    loopCtx.beginPath();loopCtx.arc(cx,cy,R,0,Math.PI*2);loopCtx.stroke();loopCtx.setLineDash([]);
+    for(n=0;n<N;n++){
+      var a=pts[n],b=pts[(n+1)%N];
+      var on=weights[n]>=EPS;
+      loopCtx.beginPath();loopCtx.moveTo(cx+a.x*R,cy+a.y*R);loopCtx.lineTo(cx+b.x*R,cy+b.y*R);
+      loopCtx.strokeStyle=on?COL.acc3:COL.stroke;loopCtx.lineWidth=on?(1+3*weights[n]):1;loopCtx.stroke();
+    }
+    for(n=0;n<N;n++){
+      var p=pts[n],X=cx+p.x*R,Y=cy+p.y*R,vn=vars[n];
+      if(vn>0.03){loopCtx.globalAlpha=vn*0.42;loopCtx.fillStyle=COL.fog;
+        loopCtx.beginPath();loopCtx.arc(X,Y,8+16*vn,0,Math.PI*2);loopCtx.fill();loopCtx.globalAlpha=1;}
+    }
+    var tm=Math.floor((now*0.02)%N);
+    for(n=0;n<N;n++){
+      var p=pts[n],X=cx+p.x*R,Y=cy+p.y*R;
+      var edgeOn=(weights[n]>=EPS||weights[((n-1+N)%N)]>=EPS);
+      var r=(n===tm?7:4.0);
+      loopCtx.beginPath();loopCtx.arc(X,Y,r,0,Math.PI*2);
+      loopCtx.fillStyle=(n===tm?COL.acc3:(edgeOn?COL.node:COL.nodeDim));loopCtx.fill();
+      if(obs[n]>0){loopCtx.beginPath();loopCtx.arc(X,Y,r+3.5,0,Math.PI*2);loopCtx.lineWidth=2;loopCtx.strokeStyle=COL.best;loopCtx.stroke();}
+    }
+    var fp=pts[fragIdx],fX=cx+fp.x*R,fY=cy+fp.y*R;
+    drawStar(fX,fY,9,COL.star);
+    loopCtx.fillStyle=COL.txt;loopCtx.font='12px ui-monospace,monospace';loopCtx.textAlign='left';
+    loopCtx.fillText('k = '+K,12,22);
+    loopCtx.fillText('\u03b21 = '+betti1,12,40);
+    loopCtx.fillText('\u03c3 = '+SIGMA_K.toFixed(3)+(fitLS?' (fit)':''),12,58);
+    loopCtx.fillText('\u03b5 = '+EPS.toFixed(2),12,76);
+  }
+
+  function drawSpec(){
+    if(!specCtx)return;
+    var W=specCanvas.clientWidth,H=specCanvas.clientHeight;
+    if(W<2||H<2)return;
+    specCtx.clearRect(0,0,W,H);
+    var top=18,bot=H-24,ch=bot-top;
+    var leftW=W*0.42,rightX=W*0.50,rightW=W*0.46;
+    var maxv=1e-9,f;
+    for(f=0;f<spec.length;f++)if(spec[f]>maxv)maxv=spec[f];
+    var bw=leftW/spec.length;
+    for(f=0;f<spec.length;f++){
+      var h=ch*(spec[f]/maxv),x=14+f*bw,y=bot-h;
+      specCtx.fillStyle=(f===peakFreq)?COL.acc3:(f===0?COL.faint:COL.acc4);
+      specCtx.fillRect(x,y,Math.max(1,bw-1.5),h);
+    }
+    specCtx.fillStyle=COL.dim;specCtx.font='11px ui-monospace,monospace';specCtx.textAlign='left';
+    specCtx.fillText('DFT |rad-1|  Peak \u2192 k = '+peakFreq,14,13);
+    var rx=rightX,rw=rightW,ry=top,rh=ch;
+    specCtx.fillStyle=COL.dim;specCtx.fillText('\u03b21(\u03b5) \u2014 Persistenz des 1-Zyklusses',rx,13);
+    var aliveW=rw*clamp(persistence,0,1);
+    specCtx.globalAlpha=0.26;specCtx.fillStyle=COL.acc;specCtx.fillRect(rx,ry,aliveW,rh);specCtx.globalAlpha=1;
+    specCtx.strokeStyle=COL.acc;specCtx.lineWidth=2;
+    specCtx.beginPath();specCtx.moveTo(rx,ry);specCtx.lineTo(rx+aliveW,ry);specCtx.lineTo(rx+aliveW,ry+rh);specCtx.lineTo(rx+rw,ry+rh);specCtx.stroke();
+    var ex=rx+rw*clamp(EPS,0,1);
+    specCtx.strokeStyle=COL.star;specCtx.setLineDash([4,4]);specCtx.lineWidth=1.5;
+    specCtx.beginPath();specCtx.moveTo(ex,ry);specCtx.lineTo(ex,ry+rh);specCtx.stroke();specCtx.setLineDash([]);
+    specCtx.fillStyle=COL.star;specCtx.fillText('\u03b5='+EPS.toFixed(2),ex+4,ry+12);
+    specCtx.fillStyle=COL.faint;specCtx.font='10px ui-monospace,monospace';
+    specCtx.fillText('0',rx,ry+rh+15);specCtx.fillText('1',rx+rw-6,ry+rh+15);specCtx.fillText('\u03b5 \u2192',rx+rw/2-10,ry+rh+15);
+  }
+
+  function frame(now){
+    try{
+      if(epsAnim){
+        var t=(now-epsAnimStart)/3000;if(t>=1){t=1;stopEpsAnim();}
+        EPS=1-0.98*t;
+        if(elEps)elEps.value=Math.round(EPS*100);
+        if(valEps)valEps.textContent=EPS.toFixed(2);
+        betti1=betti1At(EPS);updateReadouts();
+      }
+      drawLoop(now);
+      drawSpec();
+    }catch(e){}
+    requestAnimationFrame(frame);
+  }
+
+  function onK(){K=parseInt(elK.value,10)||2;if(valK)valK.textContent=K;recompute();}
+  function onSigma(){SIGMA_K=parseFloat(elSigma.value,10)/100;if(!(SIGMA_K>0))SIGMA_K=0.16;fitLS=false;if(valSigma)valSigma.textContent=SIGMA_K.toFixed(3);recompute();}
+  function onSigmaN(){SIGMA_N=parseInt(elSigmaN.value,10)/1000;if(valSigmaN)valSigmaN.textContent=SIGMA_N.toFixed(3);recompute();}
+  function onEps(){stopEpsAnim();EPS=parseInt(elEps.value,10)/100;if(valEps)valEps.textContent=EPS.toFixed(2);betti1=betti1At(EPS);updateReadouts();}
+  function stopEpsAnim(){epsAnim=false;if(btnFilt)btnFilt.classList.remove('on');}
+  function toggleEpsAnim(){if(epsAnim){stopEpsAnim();}else{epsAnim=true;epsAnimStart=performance.now();if(btnFilt)btnFilt.classList.add('on');}}
+  function evaluateStar(){obs[fragIdx]=(obs[fragIdx]||0)+1;recompute();}
+  function reset(){
+    K=2;SIGMA_N=0.012;SIGMA_K=0.16;EPS=0.45;fitLS=false;stopEpsAnim();
+    obs=[];for(var i=0;i<N;i++)obs.push(0);
+    if(elK)elK.value=K;
+    if(elSigma)elSigma.value=Math.round(SIGMA_K*100);
+    if(elSigmaN)elSigmaN.value=Math.round(SIGMA_N*1000);
+    if(elEps)elEps.value=Math.round(EPS*100);
+    if(valK)valK.textContent=K;
+    if(valSigma)valSigma.textContent=SIGMA_K.toFixed(3);
+    if(valSigmaN)valSigmaN.textContent=SIGMA_N.toFixed(3);
+    if(valEps)valEps.textContent=EPS.toFixed(2);
+    recompute();
+  }
+
+  function fit(c){
+    var dpr=window.devicePixelRatio||1;
+    c.width=Math.max(1,Math.floor(c.clientWidth*dpr));
+    c.height=Math.max(1,Math.floor(c.clientHeight*dpr));
+    var ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+    return ctx;
+  }
+
+  function init(){
+    loopCanvas=byId('loopCanvas');specCanvas=byId('specCanvas');
+    if(!loopCanvas||!specCanvas)return;
+    loopCtx=fit(loopCanvas);specCtx=fit(specCanvas);
+    roK=byId('roK');roBetti=byId('roBetti');roPersist=byId('roPersist');
+    roSigma=byId('roSigma');roSNR=byId('roSNR');roFrag=byId('roFrag');
+    elK=byId('ctlK');elSigma=byId('ctlSigma');elSigmaN=byId('ctlSigmaN');elEps=byId('ctlEps');
+    valK=byId('valK');valSigma=byId('valSigma');valSigmaN=byId('valSigmaN');valEps=byId('valEps');
+    btnFit=byId('btnFit');btnEval=byId('btnEval');btnFilt=byId('btnFilt');btnReset=byId('btnReset');
+    if(elK)elK.addEventListener('input',onK);
+    if(elSigma)elSigma.addEventListener('input',onSigma);
+    if(elSigmaN)elSigmaN.addEventListener('input',onSigmaN);
+    if(elEps)elEps.addEventListener('input',onEps);
+    if(btnFit)btnFit.addEventListener('click',fitSigma);
+    if(btnEval)btnEval.addEventListener('click',evaluateStar);
+    if(btnFilt)btnFilt.addEventListener('click',toggleEpsAnim);
+    if(btnReset)btnReset.addEventListener('click',reset);
+    var tb=byId('themeBtn');
+    if(tb)tb.addEventListener('click',function(){document.documentElement.classList.toggle('dark');readColors();});
+    if(window.MutationObserver){
+      new MutationObserver(function(){readColors();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    }
+    readColors();
+    reset();
+    window.addEventListener('resize',function(){if(loopCanvas)loopCtx=fit(loopCanvas);if(specCanvas)specCtx=fit(specCanvas);});
+    requestAnimationFrame(frame);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else{init();}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "no": "010",
+  "a": "combined/r1-009.html",
+  "b": "combined/r1-021.html",
+  "a_title": "Attention als ein Schwerpunktfluss, zwei Blickwinkel",
+  "b_title": "Ein Torus — designed in der Helix, gefunden im Grok",
+  "combined_theme": "schwerpunktfluss-auf-dem-torus",
+  "one_line": "Verstehen ist ein relevanzgewichteter Schwerpunktfluss (A), und die Fläche, auf der er fließt, ist ein Torus (B) — derselbe Rotations-Invariant, gebaut (a-priori) oder im Grokking gefunden.",
+  "contradictions": [
+    "Fundamentale Geometrie: A behandelt den Bedeutungsraum primär als (lokal) flachen Vektorraum und den Schwerpunktfluss als gerade Interpolation (Krümmung nur nebensächlich via FFN), B macht die gekrümmte kompakte Fläche S1×S1 (Torus) selbst zum Gegenstand.",
+    "Wo Verstehen wohnt: A liest die Bedeutung als topologisches Objekt über den Wort-Punkten ab (Simplizialkomplex, Daten-Seite), B legt das Verstehen in den Attraktor der Gewichte (Torus im Gewichts-/Repräsentationsraum, Parameter-Seite).",
+    "Dynamik: A's Bewegung ist kontinuierlich und schwellenlos (glattes Gliden zum Schwerpunkt), B besteht auf einen scharfen, diskontinuierlichen Phasenübergang (Memorizations-Plateau, dann Kaskade).",
+    "Rolle der Position: A degradiert sie zu einer optionalen Winkel-Eingabe an die Relevanz-Metrik (Feature/Regler), B promovierte dieselbe Helix zur Identität/Generatinng der Struktur (Fixed-Rotation PE(pos+k)=M_k·PE(pos))."
+  ],
+  "resolution": "Dasselbe Phänomen von zwei Skalen/Enden aus: (1) lokaler gerader Schritt (A, in der Tangentialebene) auf globaler gekrümmter Fläche (B, Torus) — das FFN f ist der Operator, der den flachen Raum aufrollt; (2) der Simplizialkomplex (Daten-Seite) und der Gewichts-Torus (Parameter-Seite) sind dieselbe Fixed-Rotation-Gruppe aus zwei Enden; (3) glatte Lokaldynamik (ein Schritt) vs. scharfer globaler Phasenübergang (wiederholte Anwendung) — zwei Skalen desselben Flusses; (4) Position ist gleichermaßen A's Winkel-Feature (lokal) und B's flächen-generierende Helix (global). Gebaut (a-priori) -> sofort/glatt; gefunden (emergent) -> Plateau dann Kaskade.",
+  "viz": "Canvas-3D: ein Torus (die Fläche der Bedeutung) mit der designeden PE-Helix (der gemeinsame Faden); Wort-/Gewichtspunkte fließen per Schwerpunktfluss aus einer Wolke (Memorization) in einer Kaskade (Phasenübergang) auf den Torus, wobei ein Raster an grünen Kanten/Flächen (der Simplizialkomplex, A's Daten-Seiten-Auslese) entsteht. Regler: Fluss t (Zentrumsschritt/iteriert -> Phasenübergang), Windung U (Helix), Wolke σ (Memorizations-Streuung); drehen/zoomen, Theme-reaktiv, inline Daten."
+}

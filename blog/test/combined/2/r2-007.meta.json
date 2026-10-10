@@ -1,0 +1,16 @@
+{
+  "no": "007",
+  "a": "combined/r1-058.html",
+  "b": "combined/r1-017.html",
+  "a_title": "Die freie Dimension als Doppelschwert",
+  "b_title": "Phasenübergänge der Aufmerksamkeit",
+  "combined_theme": "topologie-falten-phasenuebergang",
+  "one_line": "Ein neuronales System ist ein niedrig-dimensionales topologisches Objekt im höheren Raum: der kontinuierliche Mechanismus (Falten/Attention-Gewichte) erzeugt diskrete topologische Ereignisse (Trennbarkeit, Betti-Sprünge) — Nutzen und Brüchigkeit derselben Geometrie.",
+  "contradictions": [
+    "A setzt die niedrig-dim Struktur als gegebene Prämisse (Manifold-Hypothese) voraus, B hält die Topologie für nicht-a-priori-fix und aus den Attention-Gewichten berechnet.",
+    "A fragt nach der extrinsischen Kodimension (freie Dimension, Einbettung in den Ambient-Raum), B nach der intrinsischen Konnektivität (Betti-Zahlen des auf den Punkten aufgebauten Simplizialkomplexes).",
+    "A betont Lernen als kontinuierlichen Mechanismus (Falten als stetige Maschine, diskrete Trennbarkeit nur als Ergebnis), B betont Lernen als abrupte diskrete Phasenübergänge ('don't learn gradually')."
+  ],
+  "resolution": "Zwei Ebenen / zwei Seiten derselben Topologie: extrinsische Kodimension (A) steuert intrinsische Konnektivität (B) — der Fold ist der Phasenübergang. Ein kontinuierlicher Parameter (Faltgrad/Scharfheit/Epochen) moduliert die Affinitäten; die topologischen Invarianten sind stückweise konstant und springen diskret an der Schwelle. Kontinuierliche Verformung erzeugt diskrete Topologie; dieselbe Geometrie ist zugleich Capability und Brüchigkeit (Doppelschwert).",
+  "viz": "Canvas: links eine 1D-Mannigfaltigkeit (Pfad von 8 Punkten) im 2D-Ambient, die sich per Faltgrad g faltet und den Loop schließt (A); rechts springen β₁, β₀ und die Dreiecke diskret über der Schwellwert-Achse ε (B); ein Brüchigkeits-Gauge markiert, wie nahe man an einer topologischen Sprungschwelle steht (das Doppelschwert)."
+}

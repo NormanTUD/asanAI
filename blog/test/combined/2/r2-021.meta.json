@@ -1,0 +1,17 @@
+{
+  "no": "021",
+  "a": "combined/r1-048.html",
+  "b": "combined/r1-041.html",
+  "a_title": "From Sparse Samples to a Surrogate You Can Act On",
+  "b_title": "Der Fourier-Modus k ist der persistente 1-Zyklus",
+  "combined_theme": "kernel-surrogate-persistent-cycle",
+  "one_line": "Ein und dasselbe kernel-gewichtete Objekt — A's GP/RBF-Surrogat (Wert + Varianz) und B's persistenter 1-Zyklus (Loop + Persistenz) — gelesen punktweise und topologisch, mit einem gemeinsamen Robustheitsband (A: Rauschen σₙ, B: Schwelle ε), das zugleich die nächste teure Probe (A's Acquisition) anzeigt.",
+  "contradictions": [
+    "A (r1-048): der Inhalt ist ein punktueller Wert des Kernel-Felds q(x) (Mean ± Varianz an einem Punkt). B (r1-041): der Inhalt sind Loops / 1-Zyklen (Topologie, keine Punkt-Werte).",
+    "A (r1-048): die Konfidenz ist ein punktuales Posterior-Varianzband var*(x) (Fog an Punkten). B (r1-041): die Konfidenz ist Persistenz τ = ε-Überlebensband, pro Zyklus über Skalen.",
+    "A (r1-048): die Kernbreite ℓ wird datengetrieben per Marginal likelihood gefittet (Glätte abgeleitet). B (r1-041, Fourier-Arm): die Basis/Frequenz k wird vorab fest vorgegeben (falsche Frequenz = Fehlschlag, Skala behauptet).",
+    "A (r1-048): die Ausgabe ist eine Entscheidung (nächste Probe = Koordinate) plus ein gerendertes Feld. B (r1-041): die Ausgabe ist eine Invariante (k, β₁, τ, SNR) plus ein Persistenzdiagramm."
+  ],
+  "resolution": "Der gewichtete Attention-Graph (B) ist ein kernel-gewichtetes 1-Gerüst — dasselbe exp(−‖x−xᵢ‖²/2σ²)-Gewicht, mit dem A sein Surrogat glättet. Feld (A) und Zyklus (B) sind zwei Projektionen desselben kernel-gewichteten Objekts: punktweise Wert+Varianz, topologisch Loop+Persistenz. Das Varianzband (A) und das Persistenzband (B) sind zwei Gesichter einer Robustheits-Achse (A: Rauschen σₙ, B: Schwelle ε). A's MLL-gefitete Kernbreite ist genau die Windung, deren Persistenz die Daten realisieren (B's Peak). Die fragilen Regionen (hohe Varianz / niedrige Persistenz) steuern A's nächste teure Probe.",
+  "viz": "Canvas: ein Token-Loop, der zugleich B's 1-Zyklus und A's kernel-gewichteter Graph ist (Kanten = Gaussian-Gewichte, ε-gefiltert) und einen Fourier-Modus k trägt. Lila Fog-Halos = A's lokale Varianz, rosa ★ = A's nächste Probe (argmax Varianz = B's fragilstes Token). Rauschen degradiert A's Fog und B's τ gemeinsam (Auflösung 2); ein MLL-Button fittet die Kernbreite datengetrieben = die realisierte Persistenz-Peak-Windung (Auflösung 3); 'Evaluate ★' fügt dort eine Beobachtung (A's BO-Schritt) hinzu, die den lokalen Fog schrumpft und den Loop repariert (Auflösung 4). Unten: DFT-Spektrum (Peak bei k) + β₁(ε)-Persistenzband."
+}

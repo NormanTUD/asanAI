@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R2-013 — Lesbar im Mikro, empfindlich an den Knicken: die iterierte stückweise-lineare Karte</title>
+<style>
+  :root{
+    --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel2:#f4f1e7;
+    --ink:#1c1c2b; --ink2:#3a3a4a; --ink3:#6b6b7b;
+    --acc:#2b6cb0; --acc2:#c05621; --acc3:#0e9488; --gold:#9a6b00;
+    --de:#c0392b; --en:#2b6cb0; --attr:#b7791f;
+    --line:#e0dac9; --grid:#d9d3c3; --code-bg:#efece1; --region:rgba(43,108,176,.10);
+    --bar:#3182ce; --bar-muted:#b7b0a2; --link:#2b6cb0;
+  }
+  html.dark{
+    --bg:#0f1626; --bg2:#0d1526; --panel:#111a2e; --panel2:#0d1830;
+    --ink:#e2e8f0; --ink2:#a9b6cc; --ink3:#7f93b3;
+    --acc:#59b7ff; --acc2:#f0a35e; --acc3:#5ee0d0; --gold:#e0b34d;
+    --de:#ff7675; --en:#63b3ed; --attr:#f4c65a;
+    --line:#243450; --grid:#1c2a45; --code-bg:#0b1322; --region:rgba(94,224,208,.12);
+    --bar:#63b3ed; --bar-muted:#3a4a63; --link:#6fb5ff;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(ellipse at top,var(--bg2) 0%,var(--bg) 60%);
+    color:var(--ink);font:16px/1.66 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  article{max-width:820px;margin:0 auto;padding:40px 20px 90px}
+  header{padding:4px 0 16px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  h1{font-size:clamp(25px,4.4vw,38px);line-height:1.12;margin:0 0 10px;letter-spacing:-.02em;font-weight:800}
+  h1 .g{color:var(--acc)}
+  .sub{color:var(--ink2);margin:0;font-size:14.5px}
+  .sub .x{color:var(--acc2);font-family:ui-monospace,Menlo,monospace;font-size:.94em}
+  .themebtn{margin-top:14px;font:600 12px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;
+    padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);transition:.15s}
+  .themebtn:hover{border-color:var(--acc);color:var(--acc)}
+  section{margin:0 0 42px;scroll-margin-top:16px}
+  .chap{font:600 11.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:var(--acc);
+    text-transform:uppercase;margin-bottom:9px;display:block}
+  h2{font-size:clamp(20px,3.1vw,28px);margin:0 0 14px;letter-spacing:-.01em}
+  h3{font-size:17px;margin:24px 0 9px}
+  p{color:var(--ink2);max-width:74ch}
+  p.lead{color:var(--ink);font-size:16.5px;max-width:76ch}
+  p strong,li strong{color:var(--ink);font-weight:620}
+  em{color:var(--acc2);font-style:normal;font-weight:600}
+  ul,ol{color:var(--ink2);max-width:76ch}
+  li{margin:7px 0}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.87em;background:var(--code-bg);
+    padding:2px 6px;border-radius:5px;color:var(--acc)}
+  .tag{display:inline-block;padding:1px 8px;border-radius:999px;font:600 11px/1.7 ui-monospace,Menlo,monospace}
+  .t-a{color:var(--acc);border:1px solid var(--acc)}
+  .t-b{color:var(--acc2);border:1px solid var(--acc2)}
+  .m{font-family:ui-monospace,Menlo,monospace;background:var(--code-bg);padding:12px 15px;border-radius:10px;
+    display:block;margin:14px 0;font-size:13.5px;color:var(--ink);border:1px solid var(--line);
+    overflow-x:auto;line-height:1.95;white-space:pre-wrap}
+  .m b{color:var(--acc2)}
+  .cbox{border:1px solid var(--line);border-radius:13px;padding:15px 17px;margin:14px 0;background:var(--panel)}
+  .cbox .head{font-weight:650;color:var(--ink);margin-bottom:8px;font-size:15.5px}
+  .cbox p{margin:5px 0;font-size:14.5px}
+  .cbox .vs{color:var(--ink3);font-size:13.5px;border-top:1px dashed var(--line);margin-top:9px;padding-top:9px}
+  .who{font-weight:700;font-size:.9em;padding:1px 7px;border-radius:6px}
+  .who.a{color:var(--acc)}
+  .who.b{color:var(--acc2)}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:16px 0}
+  th,td{text-align:left;padding:9px 12px;border:1px solid var(--line);vertical-align:top}
+  th{color:var(--ink3);font:600 11px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.05em;
+    text-transform:uppercase;background:var(--code-bg)}
+  td{color:var(--ink2)}
+  td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+  .note{border-left:3px solid var(--acc3);background:var(--panel2);padding:13px 16px;border-radius:0 11px 11px 0;
+    margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note b{color:var(--ink)}
+  /* ---- viz ---- */
+  .lab{background:linear-gradient(170deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:14px;padding:16px 16px 18px;margin:16px 0}
+  .controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin-bottom:12px;
+    font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+  .controls label{display:flex;align-items:center;gap:8px;color:var(--ink2)}
+  .controls .val{color:var(--acc2);min-width:30px;display:inline-block}
+  input[type=range]{accent-color:var(--acc);width:118px;cursor:pointer}
+  input[type=checkbox]{accent-color:var(--acc2)}
+  .vbtn{font:600 12.5px/1 ui-sans-serif,system-ui,sans-serif;background:var(--acc);color:var(--bg);
+    border:none;border-radius:8px;padding:8px 15px;cursor:pointer}
+  .vbtn:hover{opacity:.9}
+  .cvwrap{background:var(--code-bg);border:1px solid var(--line);border-radius:11px;overflow:hidden;padding:6px}
+  canvas#viz{display:block;width:100%;touch-action:none;cursor:default}
+  .readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+  .readouts .box{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 11px}
+  .readouts .k{font:600 9.5px/1.3 ui-monospace,Menlo,monospace;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--ink3);margin-bottom:4px}
+  .readouts .v{font:700 14px/1.2 ui-monospace,Menlo,monospace;color:var(--acc)}
+  .readouts .v.sm{font-size:12px;color:var(--ink2);font-weight:600}
+  .readouts .v.warn{color:var(--acc2)}
+  .cap{font-size:13px;color:var(--ink3);margin-top:12px;max-width:74ch}
+  .cap b{color:var(--ink2)}
+  .prov{list-style:none;padding:0;margin:6px 0}
+  .prov li{margin:0 0 12px;padding:13px 16px;background:var(--panel);border:1px solid var(--line);border-radius:11px}
+  .prov b{color:var(--acc);font-family:ui-monospace,Menlo,monospace;font-size:.92em}
+  .prov .d{color:var(--ink2);font-size:14px;display:block;margin-top:5px}
+  a{color:var(--link)}
+  footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink3);
+    font-size:12.5px;font-style:italic}
+  @media(max-width:560px){h1{font-size:22px}.controls{font-size:11.5px}input[type=range]{width:94px}}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Lesbar im Mikro, <span class="g">empfindlich an den Knicken</span></h1>
+    <p class="sub">Fusion aus: <span class="x">r1-067.html</span> &times; <span class="x">r1-038.html</span> &nbsp;&middot;&nbsp; <span class="x">(Round 2)</span></p>
+    <button class="themebtn" id="btnTheme">&#9788; Lichtmodus</button>
+  </header>
+
+  <section id="these">
+    <span class="chap">01 &mdash; Kernthese</span>
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere beschreiben <strong>derselbe Punkt, der durch eine vertiefte Karte wandert, bis er eine scharfe Auswahl benennt</strong> &mdash; sie tun es nur in zwei Sprachen. <span class="tag t-a">A&nbsp;r1-067</span> liest die Reise als <em>lesbare</em>, stufenweise Pipeline (Embedding &rarr; PE &rarr; kausales Self-Attention &rarr; FFN &rarr; Softmax), die auf einer <em>global empfindlichen, &bdquo;chaotischen&ldquo;</em> Geometrie operiert: <em>lokal verständlich, global unvorhersagbar</em>. <span class="tag t-b">B&nbsp;r1-038</span> liest dieselbe Vorwärts-Abbildung <code>f</code> als <em>stückweise lineare (tropische) Funktion</em> &mdash; lokal <em>exakt linear</em>, global in lineare Regionen (Zellen) partitioniert &mdash; und Generation als <em>Iteration</em> von <code>f</code>; die Ausgabe ist ein <em>max/argmax über Vokabular-Monome</em>, und Konvergenz in eine gemeinsame Ziel-Region ist der &bdquo;Attraktor&ldquo;.</p>
+    <p>Die <strong>Fusion</strong>: Der Forward-Pass <em>ist</em> eine stückweise-lineare (tropische) Karte <code>f</code> (B); die autoregressive <em>Reise</em> ist die <em>Iteration</em> dieser Karte (A's Reise = B's Iteration). Die endgültige Ausgabe ist eine <strong>gepuckte Auswahl</strong> &mdash; A's Softmax-/Fokus-<em>Verteilung</em> <em>ist</em> die <em>glatte</em> Version von B's <em>harten max/argmax</em> über die Vokabular-Monome (bei Temperatur <code>T&rarr;0</code> fallen beide zusammen). Und der gesamte &bdquo;globale Chaos&ldquo;-Charakter von A ist <em>nichts anderes</em> als B's <strong>Knicke</strong> (tropische Hyperflächen): die Stellen, an denen der lineare Ast &mdash; und damit der <em>Winner</em> &mdash; wechselt.</p>
+    <p>Integriert heißt: <strong>innerhalb einer Zelle ist die Karte linear und damit voll lesbar</strong> (A's Lesbarkeit ist durch B's Linearität <em>begründet</em>); <strong>über die Knick hinweg ist sie empfindlich und &bdquo;springt&ldquo;</strong> (A's Chaos = B's nicht-differenzierbare Hyperflächen). Die Tiefe multipliziert die Zahl der Knick/Regionen <em>exponentiell</em> (A's <code>1,8<sup>l</sup></code>-Verformung = B's Theorem 6.3, <code>k<sup>t</sup></code>) &mdash; genau deshalb kann ein tiefes Netz jeden Schritt lesen <em>und</em> dennoch global unvorhersagbar sein.</p>
+  </section>
+
+  <section id="widersprueche">
+    <span class="chap">02 &mdash; Spannungen</span>
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden stehen sich nicht logisch im Weg; sie machen <strong>inkompatible Behauptungen über dieselbe Karte</strong> auf drei Ebenen. Die schärfsten drei:</p>
+
+    <div class="cbox">
+      <div class="head">1. Regelmäßigkeit der Karte: glatter Chaos (A) vs. stückweise-linear mit scharfen Knicken (B)</div>
+      <p><span class="who a">A</span> modelliert die Position&rarr;Wirkung-Abbildung als <em>kontinuierliche chaotische Faltung</em> (Arnold-Katzen-Variante, sinusoidale Faltungen + Wrap): empfindlich <em>überall</em>, sie &bdquo;manchmal springt&ldquo;. Die Karte ist glatt/differenzierbar.</p>
+      <p><span class="who b">B</span> hat eine <em>stückweise lineare</em> Karte: differenzierbar <em>überall außer</em> an isolierten <em>tropischen Hyperflächen</em> (Knick). Innerhalb einer Region ist sie <em>exakt linear</em> &mdash; nicht &bdquo;chaotisch&ldquo;.</p>
+      <p class="vs">&rarr; A: Sensitivität ist eine <em>kontinuierliche, globale</em> Eigenschaft einer <em>glatten</em> Karte. B: Sensitivität ist an <em>diskrete, nicht-differenzierbare Knick</em> <em>konzentriert</em>; sonst ist die Karte perfekt linear (und lesbar).</p>
+    </div>
+
+    <div class="cbox">
+      <div class="head">2. Was die Tiefe tut: kontinuierliche Verformung (A) vs. diskrete Regionen-Explosion (B)</div>
+      <p><span class="who a">A</span>: Tiefe = <em>akkumulierende Verformung</em>, <code>warpScale &prop; 1,8<sup>l</sup></code>, &bdquo;each layer adds more warping complexity&ldquo; &mdash; eine <em>kontinuierliche</em> wachsende Nichtlinearität (Jacobi-Verzerrung).</p>
+      <p><span class="who b</span>: Tiefe = <em>exponentielle Anzahl linearer Regionen</em> (Theorem 6.3, <code>&prod; n<sub>l</sub><sup>d</sup></code> &asymp; <code>k<sup>t</sup></code>) &mdash; eine <em>diskrete, kombinatorische</em> Größe.</p>
+      <p class="vs">&rarr; A sagt: Tiefe fügt <em>kontinuierliche Verformung</em> hinzu. B sagt: Tiefe fügt eine <em>diskrete Menge linearer Regionen</em> hinzu. Unterschiedliche Mechanik desselben &bdquo;immer komplexer&ldquo;.</p>
+    </div>
+
+    <div class="cbox">
+      <div class="head">3. Die Ausgabe: gepuckte Verteilung mit Temperatur (A) vs. harter Winner (B)</div>
+      <p><span class="who a">A</span>: die Ausgabe ist eine <em>gepuckte Wahrscheinlichkeitsverteilung</em> (Softmax über dem Vokabular, Fokus-/Scharf-Kurve über dem Bild), mit <em>Temperatur-Dial</em> und <em>Entropie</em> &mdash; ein kontinuierliches scharf/pixeliert-Gefälle.</p>
+      <p><span class="who b</span>: die Ausgabe ist <em>ein einzelnes Gewinn-Monom</em> über <em>max/argmax</em> (&bdquo;welches Vokabular-Monom liegt am nächsten / gewinnt das max&ldquo;); <em>kein</em> Temperatur-Dial, <em>keine</em> Entropie &mdash; nur der Winner-Index ist das Token.</p>
+      <p class="vs">&rarr; A behält die <em>weiche</em> Verteilung (Temperatur/Entropie sind maßgeblich). B kollabiert auf einen <em>harten argmax</em>-Winner. Unterschiedliche Granularität desselben Peaks.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <span class="chap">03 &mdash; Auflösung</span>
+    <h2>Auflösung</h2>
+    <p>Alle drei Spannungen haben denselben Kern: <strong>der Maßstab (lokal vs. global) und der Grenzübergang (glatte max vs. harter max).</strong></p>
+
+    <h3>1. Glatter Chaos vs. scharfe Knick &rarr; Sensitivität ist an die Knick konzentriert</h3>
+    <p>Innerhalb einer Zelle ist die Karte <em>linear</em> &mdash; und ein lineares Stück ist per Definition <em>lesbar</em>. Damit ist A's &bdquo;lokal lesbar&ldquo; einfach B's <em>Linearität innerhalb der Zelle</em>. Der &bdquo;Springt&ldquo;-Effekt (A) passiert <em>genau an einem Knick</em> (B): dort wechselt der lineare Ast, also der Winner. Die fusionierte Karte ist also stückweise-linear: <em>lokal linear (lesbar, A), global empfindlich, weil sie aus vielen linearen Stücken an Knicken verklebt ist (B).</em> A's &bdquo;chaotische Faltung&ldquo; liest man als <em>Komposition vieler PL-Faltungen</em> (B): die Faltung einer Schicht = eine tropische Karte; ihre Komposition über die Tiefe = viele Knick = effektiver Chaos. <strong>Fusion:</strong> A's globaler Chaos <em>ist</em> B's &bdquo;viele Knick aus dem Zusammensetzen stückweise-linearer Karten&ldquo;; es gibt keinen zusätzlichen kontinuierlichen Chaos-Mechanismus.</p>
+
+    <h3>2. Verformung vs. Regionen &rarr; Regionen <em>sind</em> die Verformung</h3>
+    <p>Mehr Tiefe = mehr Regionen = mehr Knick = mehr lineare Stücke, in die der Raum gefaltet wird = mehr effektive &bdquo;Verformung&ldquo;. A's <code>warpScale &prop; 1,8<sup>l</sup></code> und B's <code>k<sup>t</sup></code> (Theorem 6.3) sind <em>derselbe</em> Satz, nur anders ausgedrückt: der eine als <em>Verformungs-Amplitude</em>, der andere als <em>Regionen-Zählung</em> &mdash; beide <em>exponentiell in der Tiefe</em>. <strong>Fusion:</strong> Tiefe wächst die Zahl der Knick exponentiell; jeder Knick ist eine Stelle, an der die Karte ihren linearen Ast wechselt, und die Summe dieser Astwechsel <em>ist</em> die effektive Verformung. Die Kontinuität (A) und die Diskretheit (B) sind zwei Beschreibungen derselben exponentiellen Zersplitterung.</p>
+
+    <h3>3. Verteilung vs. argmax &rarr; Softmax ist der <em>glatte</em> max</h3>
+    <p>A's Softmax ist die <em>glatte, temperaturgeformte</em> Version von B's harten max: bei <code>T&rarr;0</code> konvergiert der Softmax <em>exakt</em> auf den argmax (B's harter Winner). Bei <code>T&gt;0</code> behält er die <em>Form</em> bei, welches Monom nahe der Spitze steht (ein &bdquo;gepuckter Winner mit Vertrauen&ldquo;). <strong>Fusion:</strong> die Ausgabe ist <em>ein</em> gepuckter Peak &mdash; seine <em>Position</em> ist B's argmax-Winner, seine <em>Schärfe</em> ist A's Temperatur; die &bdquo;Fokus-/Scharf-Kurve&ldquo; (A) ist B's &bdquo;welche-Zelle / Distanz-zum-Winner&ldquo;-Sicht. A's Entropie = wie <em>entschieden</em> B's Winner ist. Der harte max (B) ist der <code>T&rarr;0</code>-Grenzfall von A's Softmax &mdash; zwei Grenzen derselben gepuckten Auswahl.</p>
+
+    <div class="note"><b>Ein Satz:</b> Ein Punkt <code>x</code> in einem Bedeutungsraum wird von einer stückweise-linearen (tropischen) Karte <code>f</code> bewegt; die Generation ist die <em>Iteration</em> von <code>f</em> (vorwärts-only, kausal). Innerhalb einer Zelle ist <code>f</code> linear &rarr; <em>lesbar</em>; an den Knicken wechselt der Winner &rarr; <em>empfindlich</em>. Die Tiefe multipliziert die Knick exponentiell; die Ausgabe ist ein gepuckter Peak, dessen <em>Stelle</em> der argmax-Winner und dessen <em>Steilheit</em> die Temperatur ist. Lokal lesbar &mdash; global an den Knicken empfindlich.</div>
+  </section>
+
+  <section id="inhalt">
+    <span class="chap">04 &mdash; Fusionierter Inhalt</span>
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Das gemeinsame Objekt: ein Punkt in einer vertieften Karte</h3>
+    <p>Amb Ausgangspunkt ist <strong>ein Punkt</strong> <code>x</code> in einem (Bedeutungs-)Raum. <span class="tag t-a">A</span> meint den Punkt als Embedding <code>W<sub>E</sub>[id] &isin; &mathbb;R}^d</code> (ähnliche Wörter nahe) plus Positions-Fingerabdruck, der durch die Pipeline wandert. <span class="tag t-b">B</span> meint den Punkt als Residual-/Ausgabe-Koordinate, die durch die Schichten <em>driftet</em> (Random-Walk) und in Attraktoren zusammenläuft. Fusion: <code>x</code> ist ein Punkt mit <em>Index</em> (Ordnung/Kausalität, A) <em>und</em> <em>Koordinate</em> (räumliche Kopplung, B).</p>
+
+    <h3>Die Karte <code>f</code> &mdash; B's Geometrie (tropisch / stückweise linear)</h3>
+    <p>Der Schlüssel-Trick: in der <strong>tropischen Semiring</strong> gilt <code>&oplus = max</code>, <code>&otimes; = +</code>, und damit <code>ReLU(x) = max(x,0) = x &oplus 0</code>. Ein tropisches Monom ist eine Gerade; ein tropisches Polynom das <code>max</code> vieler Geraden (konvex, stückweise linear); eine <em>tropisch rationale</em> Funktion <code>f &oslash; g</code> darf beliebig nicht-konvex sein. Der <strong>Äquivalenzsatz</strong>: <em>ReLU-Netze (ganzzahlige Gewichte) &hArr; stückweise lineare Funktionen mit ganzzahligen Steigungen &hArr; tropisch rationale Funktionen</em> &mdash; verlustfrei hin- und herschaltbar. Der <strong>Knick</strong> (tropische Hyperfläche) ist die Stelle, an der <em>zwei Monome exakt gleich</em> sind (Lücke = 0): dort ist die Funktion nicht differenzierbar und die Zellen drumherum die linearen Regionen. Das <strong>Zählen</strong> läuft über Zonotope: in 2D hat ein Zonotop aus <code>m</code> nicht-parallelen Strecken exakt <code>2m</code> Ecken; parallele Strecken &bdquo;sterben&ldquo; (&bdquo;allgemeine Lage&ldquo; ist wörtlich eine Voraussetzung). <strong>Theorem 6.3:</strong> lineare Regionen &le; <code>&prod;<sub>l</sub> &Sigma;<sub>i&le;d</sub> C(n<sub>l</sub>,i)</code> &asymp; <code>&prod; n<sub>l</sub><sup>d</sup></code> &mdash; <em>polynomial in der Breite, exponentiell in der Tiefe</em>. <strong>Limiten (B's Ehrlichkeit):</strong> nur PL-Aktivierungen (ReLU/Leaky-ReLU/abs/Max-Pool, <em>nicht</em> tanh/Sigmoid); ganzzahlige Gewichte nötig (reell &rarr; Signomials); die Grenze ist <code>&sube;</code> (nicht <code>=</code>) der tropischen Kurve; die gezählten Regionen sind <em>Unterschätzungen</em>; erklärt Tiefe, aber <em>nicht</em> Generalisierung.</p>
+
+    <h3>Die Reise / die Dynamik &mdash; A's Perspektive</h3>
+    <p>A liest dieselbe Karte <em>dynamisch</em>. <strong>Pipeline (lesbar, stufenweise):</strong> <code>PE(pos,2i)=sin(pos/10000^{2i/d})</code>, <code>PE(pos,2i+1)=cos(pos/10000^{2i/d})</code>; <code>x = Embedding + PE<sub>pos</sub></code>; <code>Attention = softmax(QK<sup>T</sup>/&radic;d<sub>k</sub>)V</code> mit <em>kausaler</em> Maske (<code>j&le;i</code>); <code>FFN(x)=ReLU(xW<sub>1</sub>+b<sub>1</sub>)W<sub>2</sub>+b<sub>2</sub></code>; <code>LayerNorm=(x-&mu;)/&radic;(&sigma;&sup2;+&epsilon;)&middot;&gamma;+&beta;</code>; <code>P(w)=softmax(h&middot;W<sub>vocab</sub>/T)</code>. <strong>Chaotischer räumlicher Aspekt:</strong> chaotische Faltung (Arnold-Variante) &bdquo;manchmal springt&ldquo;; Fokus = scharf/pixeliert <code>f(p)=exp(-d(p,focus)&sup2;/2r&sup2;)</code>; parallel transport <code>w<sub>ij</sub>=0,35&middot;exp(-d<sub>ij</sub>&sup2;/2&sigma;&sup2;)</code>; Warp pro Layer <code>warpScale &prop; 1,8<sup>l</sup></code>; <em>Ratchet</em> (vorwärts-only) = kausale Iteration.</p>
+
+    <div class="m"><b>Die fusionierte Zuordnung (Brücke):</b>
+  f (eine Schicht / Forward-Pass, B)  &hArr;  ein Schritt der lesbaren Pipeline (A)
+  Iteration von f (B)                &hArr;  die Reise / autoregressive Generation, kausal, Ratchet (A)
+  Knick / tropische Hyperfläche (B)  &hArr;  die empfindliche Stelle, an der der Winner wechselt — A's "springt"/Chaos
+  Region / Zelle (B)                 &hArr;  das lokal lineare, lesbare Stück (A's lokale Lesbarkeit)
+  Attraktor / gemeinsames Ziel (B)   &hArr;  der Ort, an den nahe Kontexte fallen ("lands on the same place", A)
+  Softmax/Fokus-Verteilung (A)       &hArr;  glatter max/argmax über Vokabular-Monome (B);  T&rarr;0 = harter Winner
+  Tiefe: 1,8^l-Verformung (A)        &hArr;  k^t Regionen (Theorem 6.3, B) = exponentiell viele Knick</div>
+
+    <h3>Was die Fusion neu erklärt</h3>
+    <ul>
+      <li><strong>Warum</strong> zwei <em>nahe</em> Kontexte unterschiedliche nächste Tokens erzeugen können, obwohl jede einzelne Schicht lesbar ist &mdash; weil die End-zu-Ende-Karte viele Knick <em>zusammensetzt</em> (B) und die Sensitivität <em>an diesen Knicken konzentriert</em> ist (A): eine winzige Eingabe-Änderung, die einen Knick überschreitet, wechselt den linearen Ast &rarr; den Winner.</li>
+      <li><strong>Warum</strong> Tiefe überhaupt nötig ist, um Bedeutung zu <em>differenzieren</em> &mdash; Theorem 6.3: die Zahl möglicher Regionen/Knick wächst <em>exponentiell</em> mit der Tiefe (B) = exponentiell viele unterscheidbare &bdquo;Bedeutungs-Plätze&ldquo;, auf die man konvergieren kann (A).</li>
+      <li><strong>Warum</strong> die Ausgabe ein scharfer Peak ist &mdash; A's Softmax und B's max/argmax sind zwei Grenzen (T&gt;0 vs. T&rarr;0) <em>derselben</em> gepuckten Auswahl über dem Vokabular-Ausgabraum.</li>
+      <li><strong>Wo das Bild brechen muss</strong> &mdash; an B's Grenzen: bei tanh/Sigmoid (nicht PL), bei degenerierten (nicht-allgemein-lage) Gewichten nur <em>annähernde</em> (nicht exakte) Konvergenz, und im <em>Generalisierungs-Rätsel</em>, das die Geometrie nicht löst, aber die Sprache dafür liefert.</li>
+    </ul>
+
+    <table>
+      <thead><tr><th>Aspekt</th><th>A &mdash; Token-Fokus (r1-067)</th><th>B &mdash; Attraktor &times; Tropisch (r1-038)</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td>Karte</td><td>glatt, chaotisch (Arnold-Faltung)</td><td>stückweise-linear, Knick = trop. Hyperfläche</td><td>PL; Chaos = viele Knick aus Komposition</td></tr>
+        <tr><td>Lesbarkeit</td><td>lokal/stufenweise lesbar</td><td>innerhalb einer Zelle exakt linear</td><td>lokal linear &rarr; lesbar (B begründet A)</td></tr>
+        <tr><td>Sensitivität</td><td>global, &bdquo;springt&ldquo;</td><td>an isolierten Knicken konzentriert</td><td>empfindlich <em>genau an</em> den Knicken</td></tr>
+        <tr><td>Tiefe</td><td>1,8<sup>l</sup> wachsende Verformung</td><td>k<sup>t</sup> Regionen (Thm 6.3)</td><td>exponentiell viele Knick = Verformung</td></tr>
+        <tr><td>Kopplung/Fluss</td><td>kausal (j&le;i), asymmetrisch</td><td>Ratchet, vorwärts-only Iteration</td><td>kausale Iteration der PL-Karte</td></tr>
+        <tr><td>Ausgabe</td><td>gepuckte Verteilung (Softmax/Fokus, T, Entropie)</td><td>harter max/argmax über Vokabular-Monome</td><td>ein Peak: Stelle=argmax, Steilheit=T; T&rarr;0=argmax</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="visualisierung">
+    <span class="chap">05 &mdash; Interaktiv</span>
+    <h2>Interaktive Visualisierung: eine Karte, zwei Lesarten</h2>
+    <p>Ein 1D-Bedeutungspunkt <code>x</code> wird von einer <em>stückweise-linearen (tropischen) Kontraktionsabbildung</em> <code>f</code> transformiert &mdash; B's Objekt, mit <em>Knicken</em> (tropische Hyperflächen) bei <code>x=&plusmn;1</code>. Wir <em>iterieren</em> sie Token für Token (das <strong>Ratchet</strong> von A, vorwärts-only): zwei Proben (rot = &bdquo;die Hauptstadt von Frankreich ist&ldquo;, blau = &bdquo;the capital of France is&ldquo;) starten in verschiedenen Regionen und <em>einlaufen in dieselbe lineare Region</em> (den gemeinsamen &bdquo;Attraktor&ldquo;). Unten entscheidet der <em>glatte max</em> (Softmax über die Vokabular-Monome, Temperatur <code>T</code>) das nächste Token; der Peak ist B's harter Winner. Der <strong>Jitter</strong> macht sichtbar, wie eine <em>winzige</em> Bewegung den Peak weichen lässt, solange der Punkt noch nah an einem Knick/einem Kandidaten liegt &mdash; und wie er nach genug Tiefe (Basin) robust wird. <span class="tag t-c" style="color:var(--acc3);border-color:var(--acc3)">Synthetisch/illustrativ</span></p>
+
+    <div class="lab">
+      <div class="controls">
+        <label>Tiefe t (Schritte) <input type="range" id="cM" min="0" max="8" step="1" value="2"><span class="val" id="vM">2</span></label>
+        <label>Temperatur T <input type="range" id="cT" min="0.1" max="3" step="0.05" value="1"><span class="val" id="vT">1.00</span></label>
+        <label>Jitter <input type="range" id="cJ" min="0" max="1.2" step="0.02" value="0.4"><span class="val" id="vJ">0.40</span></label>
+        <label><input type="checkbox" id="cK" checked> Knick zeigen</label>
+        <button class="vbtn" id="cR">Zurücksetzen</button>
+      </div>
+      <div class="cvwrap"><canvas id="viz" style="height:560px"></canvas></div>
+      <div class="readouts">
+        <div class="box"><div class="k">Schritt t / M</div><div class="v" id="roT">0 / 2</div></div>
+        <div class="box"><div class="k">Regionen &asymp; 3<sup>t</sup> (Thm 6.3)</div><div class="v" id="roReg">1</div></div>
+        <div class="box"><div class="k">Probe rot (DE)</div><div class="v sm" id="roDE">&mdash;</div></div>
+        <div class="box"><div class="k">Probe blau (EN)</div><div class="v sm" id="roEN">&mdash;</div></div>
+        <div class="box"><div class="k">Konvergiert?</div><div class="v sm" id="roConv">&mdash;</div></div>
+        <div class="box"><div class="k">Winner (glatter max)</div><div class="v" id="roUn">&mdash;</div></div>
+        <div class="box"><div class="k">Peak-Prob.</div><div class="v" id="roP">&mdash;</div></div>
+        <div class="box"><div class="k">Sensitivität (&Delta;=Jitter)</div><div class="v sm" id="roS">&mdash;</div></div>
+      </div>
+      <p class="cap"><b>Fusion:</b> <span style="color:var(--de)">&#9632; rot</span> = &bdquo;die Hauptstadt von Frankreich ist&ldquo;, <span style="color:var(--en)">&#9632; blau</span> = &bdquo;the capital of France ist&ldquo;. Die senkrechten gestrichelten Linien (oben <code>&plusmn;1</code>, Faltung bei <code>0</code>) sind die <em>Knicke</em> (= tropische Hyperflächen = Basin-Grenzen). Das mittlere Schattengebiet ist die gemeinsame <em>lineare Region</em>, in die beide Bahnen einlaufen (= A's Attraktor / B's Ziel-Zelle). Oben ist die Karte <code>f(x)</code> selbst (stückweise-linear, lokal linear = lesbar). Unten der <em>glatte max</em> über den Vokabular-Monomen: der helle Peak = Winner; der gestrichelte Marker zeigt, wohin der Jitter den Peak weichen lässt. <em>Werte didaktisch, Form folgt den beiden Quellen.</em></p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <span class="chap">06 &mdash; Quellen</span>
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><b><a href="../r1-067.html">r1-067.html</a></b>
+        <span class="d">&bdquo;Token-Fokus: Die lesbare Reise durch den chaotischen Raum&ldquo; (Fusion youarellm2 &times; paperidea3): ein Token als Punkt durch eine <em>lesbare</em>, stufenweise Pipeline (Embedding &rarr; PE &rarr; kausales Self-Attention &rarr; FFN &rarr; Softmax) auf einer <em>global empfindlichen / chaotischen</em> Geometrie; Softmax &amp; Fokus-Map als gepuckte Verteilung, Temperatur &amp; Entropie; &bdquo;lokal lesbar, global unvorhersagbar&ldquo;.</span></li>
+      <li><b><a href="../r1-038.html">r1-038.html</a></b>
+        <span class="d">&bdquo;Attraktor-Dynamik trifft tropische Geometrie&ldquo; (Fusion idea2 &times; tropische_geometrie): ein ReLU-Netz als <em>stückweise-lineare (tropische) Funktion</em>; Generation = <em>Iteration</em> der Karte; Attraktor = gemeinsame Ziel-Region, Knick = tropische Hyperfläche; Unembedding = max/argmax über Vokabular-Monome; Theorem 6.3 (Tiefe &gt; Breite) und Grenzen.</span></li>
+    </ul>
+  </section>
+
+  <footer>Fusion r2-013 &mdash; &bdquo;lokal lesbar, global an den Knicken empfindlich&ldquo;. Alle Daten inline; keine Netzwerk-Aufrufe.</footer>
+</article>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('viz');
+var ctx=cv.getContext('2d');
+var dpr=Math.min(2,window.devicePixelRatio||1);
+function $(id){return document.getElementById(id);}
+function cssVar(n){try{return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}catch(e){return '#888';}}
+
+var XMIN=-5,XMAX=5;
+function f(x){ if(x<-1) return 0.5*(x+1)-0.3; if(x<1) return 0.3*x; return 0.3+0.5*(x-1); }
+function regionOf(x){ return x<-1?0:(x<1?1:2); }
+var REGION_NAMES=['Links','Basin (Mittig)','Rechts'];
+var KINKS=[-1,1];
+
+var VOCAB=[
+  {label:'Berlin',x:-4.2},{label:'Madrid',x:-3.1},{label:'London',x:-2.2},
+  {label:'Paris',x:0},{label:'Rom',x:2.4},{label:'Wien',x:3.6}
+];
+
+var M=8,T=1.0,jitter=0.4,showKinks=true;
+var startX=-4,endX=4;
+var dePath=[],enPath=[];
+function recomputePaths(){
+  dePath=[];enPath=[];var a=startX,b=endX;
+  for(var i=0;i<=M;i++){dePath.push(a);enPath.push(b);a=f(a);b=f(b);}
+}
+recomputePaths();
+
+function softmax(logits,Tv){
+  var mx=-Infinity,i;for(i=0;i<logits.length;i++){if(logits[i]>mx)mx=logits[i];}
+  var ex=[],s=0;
+  for(i=0;i<logits.length;i++){var e=Math.exp((logits[i]-mx)/Tv);ex.push(e);s+=e;}
+  if(s===0){var u=[];for(var k=0;k<logits.length;k++)u.push(1/logits.length);return u;}
+  var p=[];for(i=0;i<ex.length;i++)p.push(ex[i]/s);return p;
+}
+function argmax(p){var bi=0,bv=-1;for(var i=0;i<p.length;i++){if(p[i]>bv){bv=p[i];bi=i;}}return bi;}
+function dists(q){var out=[];for(var i=0;i<VOCAB.length;i++){out.push(-1.3*Math.abs(q-VOCAB[i].x));}return out;}
+
+function resize(){
+  var w=cv.parentElement?cv.parentElement.clientWidth-12:600; if(w<320)w=320;
+  var H=560;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(H*dpr);
+  cv.style.width=w+'px';cv.style.height=H+'px';
+  return {w:w,H:H};
+}
+
+function draw(){
+  var dim=resize();var w=dim.w,H=dim.H;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  var cBg=cssVar('--code-bg'),cGrid=cssVar('--grid'),cInk=cssVar('--ink'),
+      cInk2=cssVar('--ink2'),cInk3=cssVar('--ink3'),cAcc=cssVar('--acc'),
+      cAcc2=cssVar('--acc2'),cDE=cssVar('--de'),cEN=cssVar('--en'),
+      cAttr=cssVar('--attr'),cBar=cssVar('--bar'),cBarM=cssVar('--bar-muted'),
+      cRegion=cssVar('--region'),cPanel=cssVar('--panel');
+  ctx.clearRect(0,0,w,H);
+  ctx.fillStyle=cBg;ctx.fillRect(0,0,w,H);
+
+  var padL=42,padR=16,pw=w-padL-padR;
+  function X(x){return padL+((x-XMIN)/(XMAX-XMIN))*pw;}
+
+  /* ---- TOP: f(x) PL map ---- */
+  var t0=10,t1=92;
+  ctx.strokeStyle=cGrid;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(padL,t0);ctx.lineTo(padL,t1);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(padL,t1);ctx.lineTo(padL+pw,t1);ctx.stroke();
+  ctx.strokeStyle=cAcc;ctx.lineWidth=2;ctx.beginPath();var first=true;
+  for(var i=0;i<=200;i++){var xx=XMIN+(XMAX-XMIN)*i/200;var yy=f(xx);
+    var py=t1-((yy+2.5)/5)*(t1-t0);
+    if(first){ctx.moveTo(X(xx),py);first=false;}else ctx.lineTo(X(xx),py);}
+  ctx.stroke();
+  if(showKinks){
+    for(var kk=0;kk<KINKS.length;kk++){
+      ctx.fillStyle=cAcc2;ctx.beginPath();ctx.arc(X(KINKS[kk]),t1-((f(KINKS[kk])+2.5)/5)*(t1-t0),3.4,0,Math.PI*2);ctx.fill();
+    }
+    ctx.setLineDash([3,3]);ctx.strokeStyle=cInk3;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(X(0),t0);ctx.lineTo(X(0),t1);ctx.stroke();ctx.setLineDash([]);
+  }
+  ctx.fillStyle=cInk3;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='left';
+  ctx.fillText('f(x) — stückweise-linear (tropisch): lokal linear = lesbar',padL,t0-1);
+  if(showKinks){ctx.fillStyle=cAcc2;ctx.textAlign='center';ctx.fillText('Knick',X(-1),t0+9);ctx.fillText('Knick',X(1),t0+9);}
+
+  /* ---- MIDDLE: iteration / trajectories ---- */
+  var m0=112,m1=360;
+  ctx.strokeStyle=cGrid;ctx.lineWidth=1;
+  for(var gx=XMIN;gx<=XMAX;gx++){ctx.beginPath();ctx.moveTo(X(gx),m0);ctx.lineTo(X(gx),m1);ctx.stroke();}
+  var rows=M>0?M:1;
+  for(var tt=0;tt<=M;tt++){var ry=m1-(tt/rows)*(m1-m0);ctx.beginPath();ctx.moveTo(padL,ry);ctx.lineTo(padL+pw,ry);ctx.stroke();}
+  ctx.fillStyle=cRegion;ctx.fillRect(X(-1),m0,X(1)-X(-1),m1-m0);
+  if(showKinks){
+    ctx.setLineDash([5,4]);ctx.strokeStyle=cInk3;ctx.lineWidth=1.2;
+    for(var k2=0;k2<KINKS.length;k2++){ctx.beginPath();ctx.moveTo(X(KINKS[k2]),m0);ctx.lineTo(X(KINKS[k2]),m1);ctx.stroke();}
+    ctx.setLineDash([]);
+  }
+  ctx.fillStyle=cInk3;ctx.font='9px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+  ctx.fillText('Knick',X(-1),m0-3);ctx.fillText('Knick (Basin-Grenze)',X(1),m0-3);
+  ctx.fillStyle=cInk3;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+  ctx.fillText('Links',X(-3),m1+13);ctx.fillText('Basin / Attraktor-Zelle',X(0),m1+13);ctx.fillText('Rechts',X(3),m1+13);
+  ctx.save();ctx.translate(12,(m0+m1)/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';
+  ctx.fillText('Schritt t (tief nach oben)',0,0);ctx.restore();
+
+  function Y(t){return m1-((t)/rows)*(m1-m0);}
+  function trace(arr,color,label){
+    ctx.strokeStyle=color;ctx.lineWidth=2.4;ctx.beginPath();
+    for(var i=0;i<=Math.min(t,M);i++){var px=X(arr[i]),py=Y(i);if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.stroke();
+    for(var j=0;j<=Math.min(t,M);j++){ctx.beginPath();ctx.arc(X(arr[j]),Y(j),(j===t?6:3),0,Math.PI*2);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle=cBg;ctx.lineWidth=1;ctx.stroke();}
+    ctx.fillStyle=color;ctx.font='11px ui-monospace,Menlo,monospace';ctx.textAlign='left';
+    ctx.fillText(label,X(arr[0])+9,Y(0)+15);
+  }
+  trace(dePath,cDE,'rot "die Hauptstadt …"');
+  trace(enPath,cEN,'blau "the capital …"');
+
+  var close=(regionOf(dePath[t])===1&&regionOf(enPath[t])===1&&Math.abs(dePath[t]-enPath[t])<0.25);
+  var ax=X(0),ay=Y(M);
+  ctx.fillStyle=cAttr;
+  ctx.beginPath();
+  for(var s2=0;s2<10;s2++){var rr=(s2%2)?5:11;var aa=Math.PI/2+s2*Math.PI/5;
+    var sxx=ax+Math.cos(aa)*rr,syy=ay-Math.sin(aa)*rr;if(s2===0)ctx.moveTo(sxx,syy);else ctx.lineTo(sxx,syy);}
+  ctx.closePath();ctx.globalAlpha=close?0.95:0.4;ctx.fill();ctx.globalAlpha=1;
+  ctx.fillStyle=cAttr;ctx.font='bold 10px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+  ctx.fillText('gemeinsame Ziel-Zelle (Attraktor)',ax,ay-14);
+
+  /* ---- BOTTOM: softmax over vocab (glatter max) ---- */
+  var b0=382,b1=548,base=520,maxH=132;
+  var q=dePath[Math.min(t,M)];
+  var p=softmax(dists(q),T);
+  var win=argmax(p);
+  var qj=q+jitter;
+  var pj=softmax(dists(qj),T);
+  var winj=argmax(pj);
+  ctx.strokeStyle=cGrid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(padL,base);ctx.lineTo(padL+pw,base);ctx.stroke();
+  ctx.fillStyle=cInk3;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='left';
+  ctx.fillText('glatte max / Softmax über Vokabular-Monome (T = Steilheit):',padL,b0-2);
+  for(var vi=0;vi<VOCAB.length;vi++){
+    var isW=(vi===win);
+    var bx=X(VOCAB[vi].x);
+    var bh=p[vi]*maxH;if(bh<1)bh=1;
+    ctx.fillStyle=isW?cAcc2:cBar;ctx.globalAlpha=isW?1:0.72;
+    ctx.fillRect(bx-7,base-bh,14,bh);ctx.globalAlpha=1;
+    ctx.fillStyle=isW?cInk:cInk3;ctx.font=(isW?'bold ':'')+'10px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+    ctx.fillText(VOCAB[vi].label,bx,base+14);
+    if(isW){ctx.fillStyle=cAcc2;ctx.font='bold 11px ui-monospace,Menlo,monospace';ctx.fillText((p[vi]*100).toFixed(1)+'%',bx,base-bh-6);}
+  }
+  // jittered winner ghost marker
+  if(jitter>0.001){
+    var gx2=X(VOCAB[winj].x);
+    ctx.setLineDash([4,3]);ctx.strokeStyle=cAcc;ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(gx2,base);ctx.lineTo(gx2,base-Math.max(12,pj[winj]*maxH));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=cAcc;ctx.font='9px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+    ctx.fillText('\u25b3 Jitter-Peak',gx2,base-Math.max(12,pj[winj]*maxH)-6);
+  }
+
+  /* readouts */
+  $('roT').textContent=t+' / '+M;
+  $('roReg').textContent=Math.pow(3,t).toLocaleString('de-DE');
+  $('roDE').textContent=REGION_NAMES[regionOf(dePath[t])]+'  x='+dePath[t].toFixed(2);
+  $('roEN').textContent=REGION_NAMES[regionOf(enPath[t])]+'  x='+enPath[t].toFixed(2);
+  $('roConv').textContent=close?'ja — gleiche Zelle':'noch nicht';
+  $('roConv').style.color=close?cAcc2:cInk2;
+  $('roUn').textContent=VOCAB[win].label;
+  $('roUn').style.color=cAcc2;
+  $('roP').textContent=(p[win]*100).toFixed(1)+'%';
+  var sens=(winj!==win)?('Peak weicht: '+VOCAB[win].label+'\u2192'+VOCAB[winj].label):'Peak stabil';
+  $('roS').textContent=sens;
+  $('roS').style.color=(winj!==win)?cAcc2:cInk2;
+}
+
+var t=2;
+function bind(id,fn){var el=$(id);if(el)el.addEventListener('input',fn);}
+bind('cM',function(){t=parseInt(this.value,10);$('vM').textContent=t;draw();});
+bind('cT',function(){T=parseFloat(this.value);$('vT').textContent=T.toFixed(2);draw();});
+bind('cJ',function(){jitter=parseFloat(this.value);$('vJ').textContent=jitter.toFixed(2);draw();});
+bind('cK',function(){showKinks=this.checked;draw();});
+$('cR').addEventListener('click',function(){
+  t=2;T=1.0;jitter=0.4;showKinks=true;
+  $('cM').value=2;$('vM').textContent='2';$('cT').value=1;$('vT').textContent='1.00';
+  $('cJ').value=0.4;$('vJ').textContent='0.40';$('cK').checked=true;
+  draw();
+});
+// step button by clicking canvas advances t (like a ratchet); double-click resets
+cv.addEventListener('click',function(){if(t<M){t++;draw();}else{t=0;draw();}});
+cv.addEventListener('dblclick',function(){t=0;draw();});
+
+var btn=$('btnTheme');
+if(btn){btn.addEventListener('click',function(){
+  var h=document.documentElement;h.classList.toggle('dark');
+  btn.textContent=h.classList.contains('dark')?'\u2600\uFE0F Lichtmodus':'\uD83C\uDF19 Dunkelmodus';
+  draw();
+});}
+var mo=new MutationObserver(function(){draw();});
+mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+window.addEventListener('resize',draw);
+
+draw();
+})();
+</script>
+</body>
+</html>

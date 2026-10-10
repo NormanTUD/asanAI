@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 001 · Der Rang-1-Fakt im selbstorganisierten Speicherbündel</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --ink:#22201b; --dim:#6f6a60; --line:#d8d2c4;
+    --acc:#0f7a5f; --acc2:#b3470f; --gold:#8a6d00; --data:#8a8f9c;
+    --panel:#ffffff; --canvas:#f4f0e7; --code:#efe9dc;
+    --good:#177a3d; --mid:#9a6a06; --bad:#b23b3b;
+  }
+  html.dark{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#5C6781; --line:#1c2740;
+    --acc:#5EF1C4; --acc2:#FF6FB5; --gold:#FFD166; --data:#2E3A57;
+    --panel:#0b1020; --canvas:#05070E; --code:#0f1626;
+    --good:#54d98c; --mid:#FFD166; --bad:#ff6b6b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:400 16px/1.62 ui-sans-serif,system-ui,"Segoe UI",Inter,Georgia,serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 20px 90px}
+  h1{font-size:clamp(25px,4.6vw,38px);font-weight:600;letter-spacing:-.01em;line-height:1.12;margin-bottom:8px}
+  h2{font-size:21px;font-weight:600;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:15px;font-weight:650;color:var(--acc);margin:20px 0 6px;letter-spacing:.01em}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.03em;margin-bottom:24px}
+  p{margin:0 0 14px}
+  strong{font-weight:650}
+  em{color:var(--acc)}
+  code{font:500 13.5px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+  .f{font:500 15px/1.5 ui-monospace,Consolas,monospace;color:var(--ink);background:var(--code);border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:inline-block;margin:6px 0}
+  .lead{font-size:17.5px}
+  ul,ol{margin:0 0 14px 20px}
+  li{margin:0 0 11px}
+  .role{color:var(--acc);font-weight:650}
+  .roleB{color:var(--acc2);font-weight:650}
+  .tension{color:var(--gold);font-size:13.5px}
+  .viz-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:8px 0}
+  canvas#viz{width:100%;height:480px;display:block;background:var(--canvas);border-radius:9px;touch-action:none}
+  .hud{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  button,select{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:7px 13px;border-radius:999px;cursor:pointer}
+  button:hover{border-color:var(--acc)}
+  .slider{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);letter-spacing:.02em}
+  input[type=range]{accent-color:var(--acc);width:130px}
+  .chk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink);cursor:pointer}
+  .chk input{accent-color:var(--acc);width:16px;height:16px}
+  .bar{width:100%;height:4px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--gold),var(--bad));transition:width .12s linear}
+  .legend{display:flex;gap:16px;color:var(--dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-top:10px;flex-wrap:wrap}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .note{color:var(--dim);font-size:13.5px;margin-top:8px}
+  .readout{font:500 13px/1.7 ui-monospace,Consolas,monospace;background:var(--canvas);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:12px}
+  .readout b{color:var(--acc)}
+  .good{color:var(--good)} .mid{color:var(--mid)} .bad{color:var(--bad)}
+  .prov{display:flex;flex-direction:column;gap:12px}
+  .prov a{color:var(--acc);text-decoration:none;font-weight:650}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:3px;line-height:1.55}
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:5px;vertical-align:middle;margin-right:6px}
+  .tag.a{background:var(--acc);color:var(--bg)}
+  .tag.b{background:var(--acc2);color:var(--bg)}
+  .kbd{font:500 12px ui-monospace,monospace;background:var(--code);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Der Rang-1-Fakt im selbstorganisierten Speicherbündel</h1>
+  <div class="sub">Fusion aus: rome2.html ✕ r1-005.html  (Round 2)</div>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere tun im Kern dasselbe: Sie schreiben eine <strong>kleine, lokalisierte, strukturerhaltende Veränderung in einen Speicher, der selbst eine Geometrie trägt</strong> — und sie beschreiben dasselbe Objekt auf zwei Skalen.</p>
+    <p><span class="role">A · ROME</span> zeigt das <em>Mikroskopische</em>: Ein Fakt ist ein einziger <strong>Rang-1-Schreibzugriff</strong> in eine mittlere MLP-Matrix <code>W_proj</code> — ein Schlüssel <code>k</code> (das Subjekt, nach der Schwelle σ) wird auf einen Wert <code>v</code> (das Objekt) abgebildet, und der Schreibzugriff wird per inverser Kovarianz <code>C⁻¹</code> gezielt in <em>leere</em> Schlüssel­richtungen gelenkt, damit der Rest des Speichers überlebt.</p>
+    <p><span class="roleB">B · selbstorganisierendes Faserbündel</span> zeigt das <em>Makroskopische</em>: Der Speicher ist ein <strong>von den Daten selbst organisierter, topologietreuer</strong> Key–Value-Raum (SOM), der durch einen <strong>Gauß-Kern lokal verformt</strong> wird — topologietreu innerhalb jeder Faser, frei verdrehbar (Torsion) zwischen den Fasern.</p>
+    <p>Die fusionierte Position: Der Speicher ist ein <strong>selbstorganisierendes Assoziativbündel</strong> — ein Stapel von Key–Value-Karten (Fasern) über einer Datenbasis. Die <em>globale Topologie</em> dieses Bündels (welche Schlüssel­richtungen belegt sind, welche Fakten koexistieren, ohne sich zu überschreiben) wird <strong>von den Daten selbstorganisiert</strong>; und genau diese selbstorganisierte Geometrie ist das, was ROME als Kovarianz <code>C</code> <em>mist und einfriert</em>. Jeder <em>einzelne Fakt</em> ist eine <strong>lokale, niedrig-rangige (Rang-1) Deformation</strong> dieser Geometrie, an die Stelle gesetzt, wo es Platz gibt.</p>
+    <p>Ein Objekt, zwei Rollen — der eine Gedanke, der beide verbindet (das Gegenstück zu B's „ein Kern, zwei Rollen"): Die Schlüsselraum-Geometrie <code>C</code> ist zugleich <strong>das, was geschützt wird</strong> (Topologie / Spezifität — die Menge der alten Fakten) <strong>und das, was den Schreibzug lenkt</strong> (<code>C⁻¹</code> sendet die Rang-1-Änderung in leere Richtungen). Lokal = ein one-shot, nicht-iterativer, strukturerhaltender Schreibzug (ROME). Global = selbstorganisiert, topologietragend, torsierbar (Bündel). „Wo der Fakt lebt“ (ROMEs Lokalisierung) und „wie der Speicher geformt ist“ (Bündels Geometrie) sind dieselbe geometrische Frage.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Ehrlich formuliert: Die folgenden Punkte sind weniger harte logische Widersprüche als <em>komplementäre Design-Stellungen auf zwei Skalen</em> (Mikro vs. Makro) — und genau deshalb lassen sie sich unten fusionieren.</p>
+    <ul>
+      <li><strong>Entstehung der Speicherstruktur — vorgegeben vs. selbstorganisiert.</strong>
+        <span class="role">A · ROME</span>: Die MLP-Matrix <code>W_proj</code> wird als <em>festes, bereits trainiertes</em> Speicherwerkzeug behandelt. ROME <em>lernt</em> es nicht — es schreibt einen einzelnen Fakt in eine <em>vorhandene, statische</em> Matrix per one-shot, geschlossener Formel und ist ausdrücklich <em>kein Trainingsverfahren</em>. Die Speicher-Geometrie (<code>C</code>) wird <em>gemessen</em>, nicht vom Verfahren erzeugt.
+        <span class="roleB">B · Faserbündel/SOM</span>: Die Struktur des Speichers <em>organisiert sich selbst aus den Daten</em> (konkurrentiell, unsupervised, topologietreu). Die Form ist <em>emergent / entdeckt</em>, nicht vorgegeben.
+        <span class="tension">→ Unvereinbar im Ansatz: gegebenes, von außen bearbeitetes, nicht lernendes Werkzeug vs. emergentes, datengesteuertes, selbstorganisierendes.</span></li>
+      <li><strong>Was als Invariante geschützt wird — diskrete Fakten vs. kontinuierliche Topologie.</strong>
+        <span class="role">A · ROME</span>: „Erhaltung“ heißt <em>Spezifität (NS)</em>: andere <em>diskrete Fakten</em> — besonders Nachbar-Subjekte mit gleicher Relation und gleichem Objekt — dürfen nicht beschädigt werden. Geschützt wird eine <em>Menge von Schlüssel–Wert-Assoziationen</em>.
+        <span class="roleB">B · Faserbündel/SOM</span>: „Erhaltung“ heißt <em>Topologieerhaltung</em>: die Karte bleibt eine Näherung eines Homöomorphismus der Datenverteilung (kein Reißen von Nachbarschaften). Geschützt wird die <em>kontinuierliche topologische Geometrie</em> selbst.
+        <span class="tension">→ Unvereinbar im Objekt: ROME schützt eine diskrete Faktenmenge; das Bündel schützt die kontinuierliche Topologie.</span></li>
+      <li><strong>Wie geschrieben / verformt wird — one-shot vs. iterativ-konvergent bzw. offen.</strong>
+        <span class="role">A · ROME</span>: Der Edit ist eine <em>einmalige, geschlossene, nicht-iterative</em> Rang-1-Berechnung (≈ 2 s, „kein Training, keine Iteration“). Harte Grenze: <em>ein Fakt zur Zeit</em> — viele nacheinander stören sich (→ MEMIT).
+        <span class="roleB">B · Faserbündel/SOM</span>: Die Karte wird durch <em>iteratives, annealingendes Lernen</em> über T=9000 Schritte mit schrumpfender Nachbarschaft (grob→fein) aufgebaut und <em>konvergiert</em>; die Lab-Seite ist ein <em>offenes, nicht-konvergierendes</em> Feld ohne Zielzustand.
+        <span class="tension">→ Unvereinbar im Ablauf: one-shot, nicht-iterativer, nicht lernender Schreibzug vs. iterativ-annaelnder, konvergierender (bzw. endlos offener) Formungsprozeß.</span></li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>1. Zwei Zeitskalen, ein Objekt.</strong> Trenne die <em>langsame, selbstorganisierte</em> Struktur vom <em>schnellen, lokalen</em> Schreibzug. Die Makro-Struktur organisiert sich aus den Daten (SOM-Annailing); ROMEs Kovarianz <code>C</code> ist exakt das <em>eingefrorene Snapshot</em> dieser selbstorganisierten Schlüsselraum-Geometrie. Der ROME-Edit ist ein <em>schneller, einmaliger lokaler Schreibzug in</em> diese bereits organisierte Geometrie — er muss den Speicher nicht neu lernen. (Genauso B: die <em>Faser</em> selbstorganisiert sich lokal &amp; datengesteuert, das <em>Bündel</em> wird global gesteuert.)</p>
+    <p><strong>2. Der Fakt IST ein lokales topologisches Merkmal.</strong> Eine gespeicherte Assoziation (Schlüssel→Wert) ist eine <em>lokale Deformation</em> in der Key–Value-Geometrie. Die <em>Topologie</em> des Schlüsselraums zu erhalten (die Kovarianz-Geometrie, „welcher Schlüssel liefert welchen Wert“) ist <strong>exakt das</strong>, was die <em>diskrete Menge der Fakten</em> (Spezifität) erhält. In Bündel-Sprache: Jeder Fakt ist ein <em>lokales Fasenmerkmal</em>; die <em>globale Topologie des Bündels</em> (welche Fakten koexistieren) wird durch den <em>lokalen Homöomorphismus</em> (C⁻¹-Routing meidet belegte Richtungen) gewahrt. <em>„Spezifität“ (diskret) und „Topologieerhaltung“ (kontinuierlich) sind zwei Seiten derselben Invariante: topologietreu innerhalb, torsierbar zwischen.</em></p>
+    <p><strong>3. Grob→fein: Selbstorganisation setzt die grobe Topologie, der one-shot Edit füllt die feine Lücke.</strong> Die grobe, belegte Geometrie (<code>C</code>) wird vom <em>langsamen</em> selbstorganisierenden Prozeß gesetzt (SOM-Annailing). Der <em>feine</em> lokale Schreibzug (einzelner Rang-1, ROME) <em>paßt in</em> diese grob vororganisierte Struktur, ohne das gesamte Annailing neu zu laufen — deshalb kann er one-shot sein. Die Grenze „ein Fakt zur Zeit“ ist genau die <em>Lokalität</em> des Schreibzugs: jede Rang-1-Deformation ist im Schlüsselraum lokal; weit (fast senkrecht) genug voneinander entfernt <em>koexistieren</em> sie (→ MEMIT = viele lokale Deformationen).</p>
+    <p><strong>Fused conclusion:</strong> ein <em>annealedes, selbstorganisierendes Assoziativbündel</em>, in dem jeder Fakt eine <em>lokalisierte Rang-1-Deformation</em> ist, die covariance-geführt in leere Schlüsselrichtungen geschrieben wird — <em>topologietreu innerhalb, torsierbar zwischen.</em></p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Das Objekt</h3>
+    <p>Basis <code>B</code> = der (hochdimensionale, hier 2-D geschnittene) Schlüsselraum gespeicherter Subjekt­einschränkungen. Faser <code>F</code> = eine mittlere MLP-Karte, ein 2-D-Schnitt von <code>W_proj</code>: Schlüssel <code>k</code> (Subjekt, nach σ) → Wert <code>v</code> (Objekt/Eigenschaft). Totalraum <code>E</code> = der Stapel der mittleren Schichten mit Projektion <code>π:E→B</code>. Die <em>Fasentorsion</em> <code>θ</code> ist die globale Verdrehung zwischen den Schichten.</p>
+
+    <h3><span class="tag a">A</span>Der Speicher als lineares Assoziativgedächtnis</h3>
+    <p>ROME liest <code>W_proj</code> nicht als „irgendeine Schicht“, sondern als <strong>lineares Assoziativgedächtnis</strong> — eine Idee aus den 1970ern, die ROME selbst mit <em>Kohonen 1972 / Anderson 1972</em> benennt (derselbe Assoziativgedächtnis-Strang, auf dem auch die SOM fußt). Grundgleichung: <code>W k ≈ v</code> für viele Paare → Kleinste Quadrate → <span class="f">W = V K⁺</span> (Moore–Penrose-Pseudoinverse). Entscheidend: die <strong>ganze Matrix gemeinsam</strong> ist der Speicher, verteilt über alle Neuronen — <em>nicht</em> „ein Neuron = ein Paar“ (Abgrenzung zu Geva et al. 2021). Hohe Dimension (1600-d, MLP 6400-d) → sehr viele fast senkrechte Schlüssel koexistieren, ohne sich zu stören.</p>
+
+    <h3><span class="tag a">A</span>Lokalisierung — Kausal-Tracing</h3>
+    <p>Korrelation ≠ Kausalität; erst ein Eingriff (Zustand verrauschen + eine Zelle reparieren) trennt Ursache von Begleiterscheinung. Totaleffekt = P<sub>sauber</sub> − P<sub>verrauscht</sub> (≈ 18,6 %); indirekter Effekt (AIE) = P<sub>Reparatur</sub> − P<sub>verrauscht</sub>. <strong>Zwei heiße Stellen:</strong> der <em>frühe Ort</em> (mittlere Schichten ≈ 15–18, MLPs, am letzten Subjekt-Token; AIE 8,7 % Einzelzustand / 6,6 % MLP) und der <em>späte Ort</em> (späte Schichten, Attention, letztes Token). MLPs durchtrennen → frühe Schichten brechen komplett ein (der Mechanismus); Attention durchtrennen → fast nichts. Die Hypothese in drei Koordinaten (MLP-Module ∧ mittlere Schichten ∧ letztes Subjekt-Token) plus die kühne Vermutung „dieses Bild ist vollständig“ — jeder Fakt ließe sich in <em>irgendeiner</em> mittleren MLP-Schicht speichern.</p>
+
+    <h3><span class="tag a">A</span>Die Rang-1-Formel (Gl. 2)</h3>
+    <p>Minimiere ‖ŴK − V‖ (altes Wissen bewahren) <strong>unter</strong> der Nebenbedingung Ŵ k* = v* (neuer Fakt) ⟹
+    <span class="f">Ŵ = W + Λ (C⁻¹ k*)ᵀ</span>
+    mit <span class="f">Λ = (v* − W k*) / ((C⁻¹ k*)ᵀ k*)</span>.
+    <code>k*</code> = Mittel über ~20 zufällige Vorspanne; <code>v*</code> per Gradientenabstieg (Zielwort maximieren + „Essenz-Drift“ per KL-Divergenz unterbinden). <code>C</code> = Kovarianz über ~100 000 Wikipedia-Schlüssel; <code>C⁻¹</code> lenkt die Änderung in <em>leere</em> Richtungen. Zielschicht 18 (Zentrum des kausalen Effekts + Schlüssel→Wert-Wechsel). ≈ 2 s, one-shot.</p>
+
+    <h3><span class="tag b">B</span>Der selbstorganisierte Speicher + das Bündel</h3>
+    <p><strong>SOM (Faser, lokal, konvergent):</strong> ein Neuronengitter organisiert sich <em>aus den Daten</em> (konkurrentiell, unsupervised); die Gauß-Nachbarschaft um die BMU schrumpft (grob→fein), annealed, topologietreu, <em>konvergent</em>. <strong>Faserbündel-Lab (Bündel, global, kaskadierend):</strong> ein Stapel 2-D-Ebenen wird <em>von außen lokal verformt</em>, kaskadiert nach oben und darf verdreht (Torsion); ein Satz wird als senkrechte Fasern („Kelp“) durch die Ebenen gefädelt. <strong>Ein Gauß-Kern, zwei Rollen:</strong> <span class="f">K(d) = e^(−d²/2σ²)</span> ist zugleich SOM-Nachbarschaft und Deformationseinfluß. Lokal = lernen &amp; konvergieren; global = formen &amp; kaskadieren.</p>
+
+    <h3>Fusion — ein Kern, zwei Skalen, zwei Rollen</h3>
+    <p>(a) <strong>Eine Geometrie, zwei Rollen:</strong> die Schlüsselraum-Geometrie <code>C</code> ist zugleich <em>geschützt</em> (Spezifität) und <em>lenkend</em> (<code>C⁻¹</code>) — das exakte Gegenstück zu B's „ein Kern, zwei Rollen“. (b) <strong>Eine Deformation, zwei Namen:</strong> ROMEs Rang-1-Schreibzug und die lokale Gauß-Deformation des Bündels sind beide <em>lokalisierte, niedrigstufige, strukturerhaltende Störungen</em>. (c) <strong>Eine Zeitskala-Aufteilung:</strong> selbstorganisierte grobe Topologie (langsam, konvergent) + one-shot feiner Schreibzug (schnell).</p>
+
+    <h3>Dynamik (fusioniert, grob→fein)</h3>
+    <p>(i) <em>Langsam:</em> die Daten organisieren die Schlüsselraum-Geometrie (<code>C</code>) — die grobe Topologie, welche Fakten koexistieren. (ii) <em>Schnell:</em> ein einzelner Rang-1-Schreibzug schreibt einen Fakt in eine leere Richtung (Spezifität bleibt). (iii) <em>Globale Torsion:</em> der Stapel mittlerer Schichten darf global verdreht / wiederverwendet werden, ohne den lokalen Homöomorphismus jeder Faser zu brechen. Bottom-up (Daten→Geometrie) und top-down (globale Torsion→lokale Faser) wirken auf denselben Fasern.</p>
+
+    <h3>Grenzen (fusioniert)</h3>
+    <p>Ein Fakt zur Zeit (Lokalität des Schreibzugs; MEMIT = viele lokale Deformationen). Gerichtet: A→B und B→A werden getrennt gespeichert = zwei Schreibzüge / zwei lokale Deformationen. Nur faktische Tripel <code>(s,r,o)</code>; logisches, räumliches oder numerisches Wissen ununtersucht. Das Modell <strong>rät weiter</strong> — flüssig und ohne Grund (Eingeständnis → Warnung: kein Einsatz als maßgebliche Faktenquelle). <strong>Missbrauch:</strong> dieselbe Formel, die einen Fehler korrigiert, pflanzt gezielt, unauffällig und generalisierend eine Lüge. Und von B her: der selbstorganisierte Speicher ist ein <em>Modell</em> der Geometrie — keine Behauptung, daß das echte <code>W_proj</code> wörtlich ein 2-D-Gitter wäre.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — ein selbstorganisiertes Assoziativbündel</h2>
+    <p class="note">Die Ebene zeigt den <strong>selbstorganisierten Schlüsselraum</strong> (B): die anisotrope Ellipse ist die Kovarianz <code>C</code> — die <em>belegten</em> Richtungen, in die der Speicher seine alten Fakten gestapelt hat (die grobe Topologie). Der <strong>goldene Punkt k*</strong> ist ein neuer Schlüssel. Der <strong>grüne Pfeil</strong> ist die <strong>Schreibrichtung</strong> der Rang-1-Änderung: ohne Korrektur läuft sie gerade auf <code>k*</code> (grau, gestrichelt) — mit <code>C⁻¹</code> wird sie <em>in die leere Nebenrichtung weggedreht</em>. Der <strong>Spillover-Wert</strong> mißt, wie viel von der Änderung auf die belegt­este Richtung überläuft — das ist ROMEs <em>Spezifität</em>. Die <strong>Fasern dahinter</strong> = der Stapel mittlerer Schichten; der <strong>Twist-Slider</strong> dreht das Bündel <em>global</em>, während jede Faser <em>lokal</em> topologietreu bleibt. Schalte <code>C⁻¹</code> aus und schiebe k* auf die belegte Hauptrichtung, um den Kollateralschaden zu sehen. <span class="kbd">Theme</span> wechselt Hell/Dunkel.</p>
+
+    <div class="viz-box">
+      <canvas id="viz"></canvas>
+      <div class="hud">
+        <span class="slider">Neuer Schlüssel k*
+          <input type="range" id="phi" min="0" max="359" step="1" value="100">
+          <span id="phiv">100°</span>
+        </span>
+        <span class="slider">Lokale Reichweite σ
+          <input type="range" id="sigma" min="0.3" max="2" step="0.05" value="0.9">
+          <span id="sigmav">0.90</span>
+        </span>
+        <span class="slider">Bündel-Twist
+          <input type="range" id="twist" min="-180" max="180" step="1" value="60">
+          <span id="twistv">60°</span>
+        </span>
+        <label class="chk"><input type="checkbox" id="useC" checked> Kovarianz-Korrektur C⁻¹</label>
+        <button id="theme">◐ Theme</button>
+      </div>
+      <div class="bar"><i id="spill"></i></div>
+      <div class="readout" id="read"></div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--data)"></i>Alte Schlüssel (belegte Geometrie)</span>
+        <span><i class="dot" style="background:var(--acc2)"></i>Lokal deformiert</span>
+        <span><i class="dot" style="background:var(--gold)"></i>Neuer Schlüssel k*</span>
+        <span><i class="dot" style="background:var(--acc)"></i>Schreibrichtung</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <span class="tag a">A</span><a href="../../rome2.html">rome2.html</a>
+        <div class="d">Interaktive Erklärung zu „Locating and Editing Factual Associations in GPT“ (Meng, Bau, Andonian, Belinkov; NeurIPS 2022; arXiv:2202.05262). Kausal-Tracing (Korrelation ≠ Kausalität, Totaleffekt / AIE) lokalisiert Fakten an zwei Stellen: frühe mittlere MLPs am letzten Subjekt-Token + späte Attention. MLPs als lineares Assoziativgedächtnis (Kohonen/Anderson 1972, ganze Matrix vs. pro Neuron), ROME = geschlossene Rang-1-Lösung <code>Ŵ=W+Λ(C⁻¹k*)ᵀ</code>, COUNTERFACT-Benchmark (21 919 Einträge), Skalierung 345 M–6 B, ehrliche Grenzen (ein Fakt, gerichtet, nur Fakten, weiter­rät, Missbrauch).</div>
+      </div>
+      <div>
+        <span class="tag b">B</span><a href="../r1-005.html">combined/r1-005.html</a>
+        <div class="d">R1-Fusion kohonen.html × fibrebundle5.html („Das selbstorganisierende Faserbündel“). SOM-Gitter organisiert sich datengesteuert, konkurrentiell, topologietreu, annealend und konvergent (Faser); ein Stapel 2-D-Ebenen (Bündel) wird per Gauß-Kern <code>e^(−d²/2σ²)</code> lokal verformt, kaskadiert nach oben und ist global torsierbar. Ein Gauß-Kern mit zwei Rollen (Nachbarschaft &amp; Deformation); Invariante: topologietreu innerhalb jeder Faser, torsierbar zwischen den Fasern.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz');
+  if(!cv||!cv.getContext) return;
+  var ctx=cv.getContext('2d');
+  var W=0,H=0;
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var L=4;                                  // Fasern im Bündel
+  var lam1=2.4, lam2=0.6, theta=28*Math.PI/180;
+  var e1={x:Math.cos(theta),y:Math.sin(theta)};   // belegt (hohe Varianz)
+  var e2={x:-Math.sin(theta),y:Math.cos(theta)};  // leer (geringe Varianz)
+  var phi=100*Math.PI/180;
+  var sigma=0.9;
+  var twist=60;
+  var useC=true;
+  var pulse=0;
+  var theme=null;
+
+  function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+  var rnd=mulberry(20261010);
+  function gauss(){var u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+  var keys=[];
+  (function(){var n=150,i;for(i=0;i<n;i++){var a=gauss()*Math.sqrt(lam1),b=gauss()*Math.sqrt(lam2);keys.push({x:a*e1.x+b*e2.x,y:a*e1.y+b*e2.y});}})();
+
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){var x=cs.getPropertyValue(n).trim();return x||fb;}
+    return {canvas:v('--canvas','#05070E'),dim:v('--dim','#5C6781'),acc:v('--acc','#5EF1C4'),acc2:v('--acc2','#FF6FB5'),gold:v('--gold','#FFD166'),data:v('--data','#2E3A57'),line:v('--line','#1c2740')};
+  }
+  function resize(){var r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);}
+  function S(){return Math.min(W,H)/6.6;}
+  function invC(v){var c1=v.x*e1.x+v.y*e1.y,c2=v.x*e2.x+v.y*e2.y,s1=c1/lam1,s2=c2/lam2;return {x:s1*e1.x+s2*e2.x,y:s1*e1.y+s2*e2.y};}
+  function norm(v){var m=Math.hypot(v.x,v.y)||1;return {x:v.x/m,y:v.y/m};}
+  function writeDir(){var k={x:Math.cos(phi),y:Math.sin(phi)};return useC?norm(invC(k)):norm(k);}
+  function spillover(){var w=writeDir(),d=w.x*e1.x+w.y*e1.y;return d*d;}
+
+  function arrow(x1,y1,x2,y2){var a=Math.atan2(y2-y1,x2-x1);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4));ctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4));ctx.closePath();ctx.fillStyle=ctx.strokeStyle;ctx.fill();}
+
+  function drawLayer(li,alpha,front){
+    var cx=W/2,cy=H/2,sc=S()*(1-li*0.05);
+    var tw=twist*Math.PI/180*(li/(L-1)),ct=Math.cos(tw),st=Math.sin(tw);
+    function rot(x,y){return {x:x*ct-y*st,y:x*st+y*ct};}
+    ctx.globalAlpha=alpha*0.5;ctx.strokeStyle=theme.line;ctx.lineWidth=1;ctx.beginPath();
+    var steps=72,i,a,ex,ey,rr,X,Y;
+    for(i=0;i<=steps;i++){a=2*Math.PI*i/steps;ex=Math.sqrt(lam1)*Math.cos(a);ey=Math.sqrt(lam2)*Math.sin(a);rr=rot(ex,ey);X=cx+rr.x*sc;Y=cy-rr.y*sc;if(i===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);}
+    ctx.stroke();
+    var kx=Math.cos(phi),ky=Math.sin(phi),wd=writeDir();
+    for(i=0;i<keys.length;i++){
+      var kp=keys[i],ox=kp.x,oy=kp.y,K=0;
+      if(front){var dx=kp.x-kx,dy=kp.y-ky,d2=dx*dx+dy*dy;K=Math.exp(-d2/(2*sigma*sigma));ox=kp.x+wd.x*0.5*K;oy=kp.y+wd.y*0.5*K;}
+      var o=rot(kp.x,kp.y),d2r=rot(ox,oy);
+      if(front&&K>0.04){
+        ctx.globalAlpha=alpha*0.30;ctx.fillStyle=theme.dim;ctx.beginPath();ctx.arc(cx+o.x*sc,cy-o.y*sc,1.5,0,6.283);ctx.fill();
+        ctx.globalAlpha=alpha*0.95;ctx.fillStyle=theme.acc2;ctx.beginPath();ctx.arc(cx+d2r.x*sc,cy-d2r.y*sc,1.9,0,6.283);ctx.fill();
+      } else {
+        ctx.globalAlpha=alpha*(front?0.85:0.65);ctx.fillStyle=theme.data;ctx.beginPath();ctx.arc(cx+o.x*sc,cy-o.y*sc,front?1.6:1.3,0,6.283);ctx.fill();
+      }
+    }
+    ctx.globalAlpha=1;
+    if(front) drawFront(cx,cy,sc,rot);
+  }
+
+  function drawFront(cx,cy,sc,rot){
+    var kx=Math.cos(phi),ky=Math.sin(phi),KX=cx+kx*sc,KY=cy-ky*sc;
+    var R=Math.max(8,sigma*sc*1.5*(0.9+0.1*Math.sin(pulse)));
+    var g=ctx.createRadialGradient(KX,KY,0,KX,KY,R);
+    g.addColorStop(0,theme.gold);g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.globalAlpha=0.11;ctx.fillStyle=g;ctx.beginPath();ctx.arc(KX,KY,R,0,6.283);ctx.fill();ctx.globalAlpha=1;
+    var wd=writeDir(),alen=sc*1.5;
+    ctx.globalAlpha=0.4;ctx.strokeStyle=theme.dim;ctx.lineWidth=1.4;
+    arrow(KX,KY,KX+Math.cos(phi)*alen,KY-Math.sin(phi)*alen);
+    ctx.globalAlpha=0.95;ctx.strokeStyle=theme.acc;ctx.lineWidth=2.3;
+    arrow(KX,KY,KX+wd.x*alen,KY-wd.y*alen);
+    ctx.globalAlpha=1;
+    ctx.fillStyle=theme.gold;ctx.shadowBlur=12;ctx.shadowColor=theme.gold;ctx.beginPath();ctx.arc(KX,KY,4.2,0,6.283);ctx.fill();ctx.shadowBlur=0;
+    ctx.font='600 11px system-ui,sans-serif';ctx.textBaseline='bottom';ctx.textAlign='left';
+    ctx.fillStyle=theme.gold;ctx.fillText('k* (neuer Schlüssel)',KX+9,KY-5);
+    ctx.fillStyle=theme.acc;ctx.textBaseline='top';ctx.fillText((useC?'Schreibrichtung C\u207B\u00B9k*':'Schreibrichtung k*'),KX+9,KY+7);
+  }
+
+  function updateReadout(){
+    var sp=spillover()*100,el=document.getElementById('spill');
+    if(el) el.style.width=Math.min(100,sp)+'%';
+    var verdict,cls;
+    if(sp<5){verdict='sehr spezifisch \u2014 die Schreibrichtung meidet die belegten Richtungen';cls='good';}
+    else if(sp<40){verdict='mäßig \u2014 ein Teil der Änderung läuft auf belegte Richtungen über';cls='mid';}
+    else {verdict='unspezifisch \u2014 hoher Kollateralschaden für alte Fakten wahrscheinlich';cls='bad';}
+    var r=document.getElementById('read');
+    if(r) r.innerHTML='Spillover auf die belegteste Richtung: <b>'+sp.toFixed(1)+'%</b> &nbsp; <span class="'+cls+'">'+verdict+'</span>';
+  }
+
+  function draw(){ctx.clearRect(0,0,W,H);ctx.fillStyle=theme.canvas;ctx.fillRect(0,0,W,H);for(var li=L-1;li>=0;li--){drawLayer(li,0.30+0.70*(1-li/(L-1)),li===0);}updateReadout();}
+  function loop(){pulse+=0.05;draw();requestAnimationFrame(loop);}
+
+  function bind(id,fn){var e=document.getElementById(id);if(e)e.addEventListener('input',fn);}
+  bind('phi',function(e){phi=+e.target.value*Math.PI/180;document.getElementById('phiv').textContent=e.target.value+'\u00B0';});
+  bind('sigma',function(e){sigma=+e.target.value;document.getElementById('sigmav').textContent=(+e.target.value).toFixed(2);});
+  bind('twist',function(e){twist=+e.target.value;document.getElementById('twistv').textContent=e.target.value+'\u00B0';});
+  var uc=document.getElementById('useC');if(uc)uc.addEventListener('change',function(e){useC=e.target.checked;});
+  var tb=document.getElementById('theme');if(tb)tb.onclick=function(){document.documentElement.classList.toggle('dark');theme=readTheme();};
+  window.addEventListener('resize',resize);
+  new MutationObserver(function(){theme=readTheme();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  theme=readTheme();resize();loop();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 003 — Das entscheidende Funktionsal: Attention-Kernel trifft Max-Margin</title>
+<style>
+:root{
+  --bg:#f7f4ec; --panel:#ffffff; --panel2:#fbf9f4;
+  --fg:#1d2433; --muted:#5b6472; --border:#e2ddd0; --grid:#00000014;
+  --accent:#0b7285; --accent2:#d9480f; --pos:#0f9d8f; --neg:#e5484d;
+  --hl:#b08968; --codebg:#f1ede1; --shadow:0 1px 3px rgba(0,0,0,.09);
+}
+html.dark{
+  --bg:#0b0f1a; --panel:#111726; --panel2:#0d1322;
+  --fg:#e6edf3; --muted:#8b97a7; --border:#243049; --grid:#ffffff1a;
+  --accent:#4dabf7; --accent2:#ffa94d; --pos:#5eead4; --neg:#fb7185;
+  --hl:#ffd43b; --codebg:#0d1424; --shadow:0 1px 3px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:'Georgia','Iowan Old Style',serif; line-height:1.68;
+  transition:background .2s,color .2s;
+}
+article{max-width:820px; margin:0 auto; padding:42px 22px 90px;}
+h1{font-size:1.9em; line-height:1.22; margin:0 0 .25em; letter-spacing:-.01em;}
+.subtitle{color:var(--muted); font-style:italic; margin:0 0 .3em; font-size:.98em;}
+.tagline{color:var(--muted); font-size:.92em; margin:0 0 1.4em;}
+h2{font-size:1.4em; margin:2em 0 .5em; border-bottom:1px solid var(--border); padding-bottom:.3em;}
+h3{font-size:1.08em; margin:1.3em 0 .4em; color:var(--accent);}
+p{margin:.7em 0;}
+ul{margin:.6em 0; padding-left:22px;}
+li{margin:.4em 0;}
+code{font-family:'Courier New',monospace; font-size:.9em; background:var(--codebg);
+  border:1px solid var(--border); padding:.05em .4em; border-radius:5px;}
+.math{
+  background:var(--codebg); border-left:3px solid var(--accent);
+  padding:.7em 1em; margin:1em 0; border-radius:0 8px 8px 0;
+  font-family:'Courier New',monospace; font-size:.9em; overflow-x:auto; white-space:pre;
+}
+.card{
+  background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:16px 18px; margin:1.1em 0; box-shadow:var(--shadow);
+}
+.card.insight::before{content:"💡 ";}
+.card.warn::before{content:"⚖️ ";}
+.card h3{margin-top:0; color:var(--fg);}
+.who{font-weight:700;}
+.w-a{color:var(--accent);} .w-b{color:var(--accent2);}
+.tag{display:inline-block; font-size:.72em; font-family:monospace; padding:.1em .55em;
+  border-radius:4px; background:var(--codebg); color:var(--accent);
+  border:1px solid var(--border); margin-right:.4em;}
+.tag.b{color:var(--accent2);}
+.viz-wrap{background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:14px; margin:1em 0; box-shadow:var(--shadow);}
+#viz{width:100%; height:460px; display:block; border-radius:8px; background:var(--panel2);}
+.controls{display:flex; flex-wrap:wrap; gap:14px; margin:12px 2px 4px; align-items:flex-end;}
+.ctrl{display:flex; flex-direction:column; font-size:.78em; color:var(--muted); min-width:130px; flex:1;}
+.ctrl label{margin-bottom:4px;}
+.ctrl input[type=range]{width:100%; accent-color:var(--accent);}
+.ctrl .val{color:var(--fg); font-family:monospace; font-size:.95em;}
+.toggle{background:var(--codebg); color:var(--fg); border:1px solid var(--border);
+  border-radius:6px; padding:8px 12px; cursor:pointer; font-size:.8em;}
+.toggle:hover{border-color:var(--accent);}
+.readout{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;}
+.ro{background:var(--panel2); border:1px solid var(--border); border-radius:8px;
+  padding:6px 10px; font-size:.8em;}
+.ro span{color:var(--muted); display:block; font-size:.85em;}
+.ro b{font-family:monospace; color:var(--fg); font-size:1.05em;}
+a{color:var(--accent);}
+.prov{list-style:none; padding:0; margin:.5em 0;}
+.prov li{margin:.6em 0; padding:.7em .9em; background:var(--panel);
+  border:1px solid var(--border); border-radius:10px;}
+.prov .d{color:var(--muted); font-size:.92em; display:block; margin-top:3px;}
+.prov .path{font-family:monospace; font-size:.8em; color:var(--accent); display:block; margin-bottom:2px;}
+footer{margin-top:3em; color:var(--muted); font-size:.85em;
+  border-top:1px solid var(--border); padding-top:1em;}
+</style>
+</head>
+<body>
+<article>
+<h1>Das entscheidende Funktionsal — Attention-Kernel trifft Max-Margin</h1>
+<p class="subtitle">Fusion aus: r1-024.html ✕ r1-018.html  (Round 2)</p>
+<p class="tagline">Vier Blätter, ein Atom: Attention-Geometrie ✕ RoPE ✕ McCulloch-Pitts ✕ SVM.</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>
+Die beiden R1-Papiere stammen aus scheinbar verschiedenen Welten — A aus dem
+Transformer (Self-Attention + RoPE), B aus dem linearen Klassifikator
+(MP-Neuron + SVM). Unter der Oberfläche drehen sich beide um
+<strong>dasselbe Objekt: ein lineares Funktionsal, also ein Skalarprodukt im
+Feature-Raum, das eine Entscheidung abgibt.</strong>
+A's Attention-Score ist <code>score(i,j) = q_i·k_j / √d_k</code> — ein
+(ge­skaliertes) Skalarprodukt. B's Klassifikator ist <code>y = sign(wᵀx + b)</code> —
+ebenfalls ein Skalarprodukt plus Verschiebung, mit dem man eine Schwelle zieht.
+</p>
+<p>
+Der Unterschied liegt nicht im Atom, sondern in <em>wie jedes Paper aus diesem
+einen Skalar eine strukturierte Entscheidung macht</em>:
+<strong>A (r1-024)</strong> macht das Funktionsal <em>positionssensitiv und weich</em> —
+RoPE dreht Q/K in 2D-Paaren, sodass der Score nur noch von der relativen Position
+<code>n−m</code> abhängt, und Softmax wandelt die Menge der Scores in eine
+<em>Konvexkombination</em> der Value-Vektoren (Gewichte auf dem Simplex) um.
+<strong>B (r1-018)</strong> macht dasselbe Skalarprodukt <em>optimal und hart</em> —
+Max-Margin wählt das robuste <code>w</code>, Soft-Margin balanciert Härte über
+<code>C</code>, der Kernel-Trick hebt den Raum an, und die Ausgabe ist ein
+<em>binärer Schwellenentscheid</em> (eine Seite feuert, die andere ist still,
+Inhibition hat Veto).
+</p>
+<p>
+Die <em>einzige integrierte Position</em>, die beide verbindet:
+<strong>RoPE-Kernel und SVM-Kernel sind dieselbe Algebra — „nichtlineare Ähnlichkeit
+zum Preis eines linearen Skalarprodukts" — umgesetzt mit entgegengesetzten Hebeln</strong>
+(A dreht bei fester Dimension, B erhöht die Dimension). Und <strong>der weiche
+A-Softmax und der harte B-Schwellenwert werden durch denselben Regler gesteuert</strong>:
+A's Temperatur <code>τ</code> (bzw. die <code>√d_k</code>-Skalierung) und B's
+Regularisierer <code>C</code> sind dieselbe Hard↔Soft-Achse — am einen Ende
+„eine Einheit auswählen / Veto" (hart), am anderen „alles gleichmäßig mischen /
+verzeihen" (weich). Attention ist damit <em>nicht</em> das Gegenteil von
+Max-Margin, sondern Max-Margin, das auf (rotierte) relative Features angewendet
+und weich ausgegeben wird.
+</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>
+Die beiden sind keine direkten Gegenpositionen, aber sie treffen drei genuine,
+konkrete Spannungen, bei denen A eine Aussage macht, die B auf andere Weise
+löst:
+</p>
+<div class="card warn">
+<h3>1. Aussagekraft: Drehung bei fester Dimension <span class="who w-a">(A)</span> vs. Dimensionserhöhung <span class="who w-b">(B)</span></h3>
+<p><span class="who w-a">A</span> (via RoPE): Nichtlinearität bzw.
+Positionsabhängigkeit entsteht durch <strong>orthogonale Rotationen in
+2D-Unterpäaren bei fixer Dimension d</strong>. Der relativ-positionsabhängige
+Score <code>Σ_p |q_p||k_p|·cos(δ_p + θ_p(n−m))</code> wird <em>exakt bei fester
+Dimension</em> berechnet — ein endlicher, impliziter Kernel, ohne den Punkt je
+explizit zu transformieren.</p>
+<p><span class="who w-b">B</span> (via Kernel-Trick): Nichtlinearität entsteht
+durch <strong>Hebung in einen hohen (ggf. unendlich-dimensionalen) Raum</strong>,
+dort trennt man linear. Die Kraft sitzt in der <em>Dimension</em>, nicht in der
+Geometrie eines fixen Raumes.</p>
+<p><strong>Konflikt:</strong> dieselbe Zielsetzung (nichtlineare Ähnlichkeit zum
+Preis eines Skalarprodukts), zwei entgegengesetzte Hebel — A <em>dreht in fester
+Dimension</em>, B <em>erhöht die Dimension</em>.</p>
+</div>
+<div class="card warn">
+<h3>2. Ausgabemechanik: weiche Konvexkombination <span class="who w-a">(A)</span> vs. harter Schwellenentscheid <span class="who w-b">(B)</span></h3>
+<p><span class="who w-a">A</span>: Attention trifft <em>keine</em> harte
+Entscheidung — sie bildet stets eine <strong>weiche Konvexkombination</strong>
+aller Value-Vektoren mit Softmax-Gewichten auf dem Simplex. Jeder Token trägt
+bei; es gibt kein Veto, kein Alles-oder-nichts.</p>
+<p><span class="who w-b">B</span>: Das MP-Neuron ist ein <strong>harter
+Schwellenwert</strong> (alles-oder-nichts, eine hemmende Synapse hat absolutes
+Veto); die SVM-Max-Margin ist eine <strong>harte lineare Grenze</strong> (bzw.
+Soft-Margin mit <code>C</code>). Eine Seite feuert, die andere ist still.</p>
+<p><strong>Konflikt:</strong> A mischt <em>alles weich</em> (jeder Token trägt
+bei); B macht einen <em>harten Schnitt</em> (eine Seite, die andere still, Veto
+möglich).</p>
+</div>
+<div class="card warn">
+<h3>3. Relation vs. Unär — Positionsbezug <span class="who w-a">(A)</span> vs. stateless <span class="who w-b">(B)</span></h3>
+<p><span class="who w-a">A</span>: RoPE ist fundamental <strong>relationell</strong> —
+der Score hängt von der <em>Differenz</em> <code>n−m</code> ab; die Struktur lebt
+auf einer Sequenz, in Paaren von Token.</p>
+<p><span class="who w-b">B</span>: Die SVM-/MP-Entscheidung ist
+<strong>unär und statisch</strong> — <code>f(x)=sign(wᵀx+b)</code>, jede Anfrage
+unabhängig, kein Ordnungsbegriff (Gedächtnis gibt es in B erst über
+MP-Schleifen).</p>
+<p><strong>Konflikt:</strong> A kodiert eine <em>Relation</em> (wer wen hört,
+abhängig vom Abstand); B ein <em>unäres Prädikat</em> (liegt x auf dieser
+Seite).</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p><span class="tag">A</span><span class="tag b">B</span><strong>1 → </strong>
+RoPE und Kernel-Trick sind <em>dasselbe algebraische Objekt</em>, nur anders
+implementiert. A's Score ist <code>q_m·k_n = q_mᵀ R(n−m) k_n</code> — ein lineares
+Skalarprodukt, in dem <code>R(Δ)</code> die Query in ein <em>implizites, endliches
+Feature-Raum-Koordinatensystem</em> (die Sinusoiden <code>cos(θ_p pos)</code>,
+<code>sin(θ_p pos)</code>) dreht. B's Kernel ist <code>K(a,b)=φ(a)ᵀφ(b)</code> —
+ein Skalarprodukt in einem <em>explizit erhobenen</em> Feature-Raum. <strong>Fusioniert:</strong>
+beide sind „Kernelfunktionen"; A zeigt, dass man denselben Effekt mit einer
+<em>endlichen, normerhaltenden</em> Transformation (Rotation statt Lift) <em>exakt</em>
+reproduzieren kann — die Dimension bleibt fest, die Nichtlinearität kommt aus
+der Phase, nicht aus der Hebung.</p>
+<p><span class="tag">A</span><span class="tag b">B</span><strong>2 → </strong>
+Der weiche A-Softmax und der harte B-Schwellenwert sind <em>die beiden Enden
+eines einzigen Reglers</em>. Lässt man A's Temperatur <code>τ→0</code>, kollabiert
+Softmax zu <em>argmax</em> = hartem Kopieren <em>eines</em> Tokens (Spitze des
+Simplex) — exakt B's Alles-oder-nichts / Veto / „Support-Vektor am Rand". Lässt
+man <code>τ→∞</code>, geht Softmax zur <em>Gleichverteilung</em> (Mitte des
+Simplex) über — B's weiches, verzeihendes Endverhalten bei kleinem <code>C</code>.
+<strong>Fusioniert:</strong> <code>τ</code> (A) und <code>C</code> (B) sind derselbe
+Hard↔Soft-Dial; der harte Limes ist in beiden eine <em>Auswahl-einer-Einheit</em>,
+der weiche Limes eine <em>Gleichverteilung</em>. A ist „Soft-Margin, die nie
+unter null fällt", B ist „der harte Grenzfall, den A in τ steuert".</p>
+<p><span class="tag">A</span><span class="tag b">B</span><strong>3 → </strong>
+B's unäre Entscheidung wird <em>relationell</em>, indem man sie nicht auf den rohen
+Punkt, sondern auf das <strong>relative Feature</strong> (die Paardifferenz, den
+RoPE-rotierten Vektor) anwendet; A's relationeller Score ist umgekehrt <em>genau</em>
+B's lineares Funktionsal, angewendet auf das (RoPE-)erhobene relative Feature.
+Und B's stateless-Einheit wird stateful, wenn man MP-artige Schleifen/Latches
+darumlässt — was A's Sequenz-Struktur (Position über Zeit) impliziert.
+<strong>Fusioniert:</strong> A liefert die <em>relationalen Features</em>
+(<code>Δ=n−m</code> über Sinusoiden), B liefert die <em>lineare
+Entscheidungs-/Auswahl-Maschinerie</em> darauf; zusammen ergibt das ein
+positionssensitives, max-margin-artiges <em>Entscheidungsfunktional auf
+relativen Features</em>.</p>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>Das gemeinsame Atom — das lineare Funktionsal</h3>
+<p>Beide Papiere drehen sich um dieselbe Abbildung, nur anders benannt:</p>
+<div class="math">A (Attention):  score(i,j) = q_i·k_j / √d_k  =  |q_i||k_j|·cos(θ_ij)/√d_k
+B (SVM/MP):    y = sign( wᵀx + b )     (Grenze: wᵀx + b = 0)
+Gemeinsam:     ein Skalarprodukt (+ Bias) / Skalierung  →  eine Entscheidung</div>
+<p>
+Das Funktionsal „misst, wie gut zwei Dinge zusammenpassen" (A: passt die Frage
+<code>q</code> zum Werbespruch <code>k</code>?) bzw. „auf welcher Seite liegt der
+Punkt" (B: ist <code>wᵀx+b</code> positiv?). Alles Weitere ist die Art, wie man
+aus diesem einen Skalar eine strukturierte Antwort macht.
+</p>
+
+<h3>Block 1 — A: Geometrie &amp; Softmax (aus r1-024 / qkv2)</h3>
+<div class="math">q = W_Q x ,  k = W_K x ,  v = W_V x
+score(i,j) = q_i·k_j/√d_k ;   softmax(z_i) = exp(z_i)/Σ_j exp(z_j)  →  Punkt auf Δⁿ⁻¹
+out_i = Σ_j softmax(q_i·k_j/√d_k)·v_j   →  Schwerpunkt im Konvexhüll{v_j}</div>
+<ul>
+<li><strong>√d_k:</strong> normalisiert die Varianz des Punktprodukts, damit der
+  Winkel dimensionsunabhängig bleibt und Softmax nicht saturiert.</li>
+<li><strong>Simplex/Konvexhüll:</strong> <code>out_i</code> liegt <em>notwendig</em>
+  im Konvexhüll der V-Vektoren; Attention interpoliert zwischen hartem Kopieren
+  (steil, Spitze) und Mitteln (weich, Mitte).</li>
+<li><strong>Multi-Head:</strong> mehrere unabhängige (Q,K,V)-Funktionale in
+  verschiedenen Unterräumen, konkateniert.</li>
+</ul>
+
+<h3>Block 2 — A: Position als Rotation (aus r1-024 / RoPE)</h3>
+<div class="math">P = d/2 Paare (x_{2p}, x_{2p+1});  jedes Paar um  pos·θ_p  rotiert
+θ_p = base^(−2p/d)          (base typ. 10⁴, geometrisch absteigend)
+orthogonal ⇒  R(m)ᵀ R(n) = R(n−m)  ⇒  Score hängt nur von  n−m  ab</div>
+<ul>
+<li><strong>Frequenzspektrum:</strong> Paar 0 rotiert schnell (feine Position),
+  hohe Paare langsam (langreichweitig) → <em>Mehrskalen-Relativpositions-Kernel</em>.</li>
+<li><strong>Fusionierte Identität:</strong>
+  <code>score(q_m,k_n) = Σ_p |q_p||k_p|·cos(δ_p + θ_p(n−m))</code>, wobei
+  <code>δ_p=ψ_p−φ_p</code> der rein inhaltliche Phase-Winkel ist. Bei identischem
+  Inhalt: <code>score(Δ)=Σ_p cos(θ_p·Δ)</code>, maximal (Wert P) bei Δ=0.</li>
+</ul>
+
+<h3>Block 3 — B: Margin &amp; Hard/Soft-Regler (aus r1-018 / SVM+MP)</h3>
+<div class="math">MP:      Σ wᵢ xᵢ ≥ θ  ⇒  feuert      (alles-oder-nichts, Inhibition = Veto)
+SVM:     max-margin  2/‖w‖   (maximieren ⇒ ‖w‖ minimieren)
+Soft:    min ½‖w‖² + C·Σᵢξᵢ  u.d.N.  yᵢ(wᵀxᵢ+b) ≥ 1−ξᵢ ,  ξᵢ ≥ 0
+C groß = steif (Veto/MP-Limes) · C klein = weich (verzeiht Ausreißer)</div>
+<ul>
+<li><strong>MP:</strong> Gatter (AND/OR/NOT), Universalität, Turing-Äquivalenz,
+  Schleifen = Gedächtnis/State.</li>
+<li><strong>Support-Vektoren:</strong> nur die Punkte am Rand bestimmen
+  <code>w,b</code>; der Rest ist austauschbar.</li>
+</ul>
+
+<h3>Block 4 — B: Der Kernel als lineares Skalarprodukt im Feature-Raum</h3>
+<div class="math">K(a,b) = φ(a)ᵀ φ(b)     (Skalarprodukt im erhobenen Raum =
+                             nichtlineare Ähnlichkeit im Originalraum)
+Beispiele: K_poly=(aᵀb+1)ᵈ ,  K_rbf=exp(−γ‖a−b‖²)
+A's RoPE-Kernel ist dasselbe:  K(q,k,Δ) = qᵀ R(Δ) k
+                             = Σ_p cos(θ_p·Δ)  bei identischem Inhalt
+  → endlicher, exakter, normerhaltender Kernel (Rotation statt Lift)</div>
+<p>
+<strong>Einheit:</strong> Beide sind <code>K(a,b)=φ(a)ᵀφ(b)</code>. B's <code>φ</code>
+ist explizit (ggf. unendlich-dim); A's <code>φ</code> ist implizit und <em>endlich</em>
+(die Sinusoiden), weshalb A die Ähnlichkeit <em>exakt</em> und <em>ohne Hebung</em>
+berechnen kann. Dieselbe Algebra, entgegengesetzte Hebel.
+</p>
+
+<h3>Block 5 — Die fusionierte Synthese: ein Entscheidungsfunktional auf relativen Features</h3>
+<ul>
+<li><strong>Feature-Raum, zweifach erweiterbar (orthogonal):</strong>
+  <em>relativisieren</em> (A: RoPE-Position Δ; B: Kernel-Lift) <em>und</em>
+  <em>kompunieren</em> viele Funktionale (A: Multi-Head; B: Netz-Tiefe/Gatter).
+  Zwei unabhängige Hebel, dieselben Schwelleneinheiten leistungsfähiger zu machen.</li>
+<li><strong>Ein Hard↔Soft-Regler für beide:</strong> A's <code>τ</code> (bzw.
+  <code>√d_k</code>) ↔ B's <code>C</code>.
+  Hart (<code>τ→0</code> / <code>C→∞</code>): eine Einheit wird ausgewählt —
+  A kopiert den Peak-Token, B feuert das Veto / den Support-Vektor am Rand.
+  Weich (<code>τ→∞</code> / <code>C klein</code>): Gleichverteilung — A mischt alle
+  Values, B verzeiht Ausreißer.</li>
+<li><strong>Margin ↔ Score-Spitze:</strong> B's Margin <code>2/‖w‖</code> ist der
+  Abstand der Grenze zum nächsten Beispiel; A's analoge Größe ist der Abstand
+  der Score-Spitze (Δ=0) zur restlichen Kurve — beides misst „wie sicher ist die
+  Entscheidung". <code>√d_k</code> (A) ↔ <code>‖w‖</code>-Normierung (B): beides
+  steuert die Schärfe der Entscheidung.</li>
+<li><strong>Fusioniertes Objekt:</strong> ein lineares Funktionsal auf (rotierten/
+  erhobenen) <em>relativen</em> Features, mit einem Hard↔Soft-Regler und entweder
+  weicher Konvexkombinations-Ausgabe (A) oder harter Margin-Ausgabe (B).
+  Attention = Max-Margin auf relativen Features, weich ausgegeben; SVM = derselbe
+  Peak, hart ausgegeben und auf einen Punkt gekippt.</li>
+</ul>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung — ein Funktionsal, zwei Ausgabemoden</h2>
+<p>
+Ein fixer Query in der Mitte, Keys bei relativen Positionen <code>Δ=n−m</code>.
+Die Kurve ist A's <em>relativ-positionsabhängiger RoPE-Score</em>
+<code>s(Δ)=Σ_p cos(θ_p·Δ)</code> (ein lineares Funktionsal im gedrehten
+Feature-Raum, Peak bei Δ=0). Die gestrichelte Linie ist B's <em>Margin-Schwelle</em>;
+dazwischen (bei Δ=0) ist die <em>Margin</em> abgetragen. Der Regler
+<em>Hard↔Soft</em> steuert den gemeinsamen Dial (A's <code>τ</code> ↔ B's
+<code>C</code>): hart → die Ausgabe kollabiert zu einer <em>einen</em> feuernden
+Einheit (B's Veto/Support-Vektor, A's τ→0 argmax); weich → eine flache
+<em>Konvexkombination</em> (A's Simplex, B's C→klein).
+</p>
+<div class="viz-wrap">
+  <canvas id="viz"></canvas>
+  <div class="controls">
+    <div class="ctrl"><label>Hard↔Soft  (τ · ↔ C)</label>
+      <input type="range" id="dC" min="0" max="1" value="0.35" step="0.01">
+      <span class="val" id="vC">hart</span></div>
+    <div class="ctrl"><label>Paare P = d_k/2</label>
+      <input type="range" id="dP" min="1" max="24" value="6" step="1">
+      <span class="val" id="vP">6</span></div>
+    <div class="ctrl"><label>base = 10^b</label>
+      <input type="range" id="dB" min="2" max="5" value="4" step="0.5">
+      <span class="val" id="vB">10⁴</span></div>
+    <div class="ctrl"><label>Margin-Schwelle θ (·Peak)</label>
+      <input type="range" id="dThr" min="0" max="0.9" value="0.35" step="0.05">
+      <span class="val" id="vThr">35%</span></div>
+    <button class="toggle" id="themeBtn">☾ / ☀</button>
+  </div>
+  <div class="readout">
+    <div class="ro"><span>Score-Peak s(0) = P</span><b id="roPeak">6.00</b></div>
+    <div class="ro"><span>Margin (Peak − θ)</span><b id="roMargin">–</b></div>
+    <div class="ro"><span>Softmax τ</span><b id="roTau">–</b></div>
+    <div class="ro"><span>Self-Gewicht w(0)</span><b id="roSelf">–</b></div>
+    <div class="ro"><span>Feuert (s≥θ)</span><b id="roFire">–</b></div>
+  </div>
+</div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<ul class="prov">
+<li><a href="../r1-024.html">
+  <span class="path">../r1-024.html</span>
+  <span class="d">R1-Fusion aus qkv2.html × positional.html — „Positionsbewusste
+  Aufmerksamkeitsgeometrie": Attention als (geskaliertes) Skalarprodukt
+  Kosinus-Übereinstimmung, Softmax auf dem Simplex, Konvexkombination der
+  Value-Vektoren; RoPE macht den Score über 2D-Rotationen
+  relativ-positionsabhängig (Multi-Scale-Kernel Σ_p cos(θ_p·Δ)).</span></a></li>
+<li><a href="../r1-018.html">
+  <span class="path">../r1-018.html</span>
+  <span class="d">R1-Fusion aus mcculloch_pitts.html × support_vector_machines.html
+  — „Das max-margin Neuron": das lineare Schwellenelement
+  (Σwᵢxᵢ≥θ ≙ sign(wᵀx+b)) als gemeinsame Zelle; MP=Repräsentation/Universalität/
+  Veto, SVM=Max-Margin-Auswahl, Soft-Margin C, Support-Vektoren, Kernel-Trick.</span></a></li>
+</ul>
+</section>
+
+<footer>
+Fusion 003 · Runde 2 · Selbstbeobachtendes, eigenständiges HTML; alle Daten inline,
+keine Netzabrufe. Gemeinsames Atom: das lineare Funktionsal im (rotierten/erhobenen)
+Feature-Raum — A macht es positionssensitiv &amp; weich, B optimal &amp; hart;
+gemeinsamer Regler: Hard↔Soft (τ ↔ C). (RoPE: Su et al., 2021; SVM: Cortes &amp; Vapnik, 1995; MP: 1943.)
+</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  var ctx = canvas.getContext('2d');
+  var elC=document.getElementById('dC'), elP=document.getElementById('dP'),
+      elB=document.getElementById('dB'), elThr=document.getElementById('dThr');
+  var vC=document.getElementById('vC'), vP=document.getElementById('vP'),
+      vB=document.getElementById('vB'), vThr=document.getElementById('vThr');
+  var roPeak=document.getElementById('roPeak'), roMargin=document.getElementById('roMargin'),
+      roTau=document.getElementById('roTau'), roSelf=document.getElementById('roSelf'),
+      roFire=document.getElementById('roFire');
+  var W=32;
+
+  function css(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function themeColors(){
+    return { bg:css('--bg'), panel:css('--panel'), fg:css('--fg'), muted:css('--muted'),
+             grid:css('--grid'), accent:css('--accent'), accent2:css('--accent2'),
+             pos:css('--pos'), neg:css('--neg'), hl:css('--hl') };
+  }
+  function thetaOf(p,P,base){ return Math.pow(base, -p/P); }
+  function scoreAt(delta,P,base){
+    var s=0,p; for(p=0;p<P;p++){ s+=Math.cos(thetaOf(p,P,base)*delta); } return s;
+  }
+  function softmax(arr,tau){
+    var m=-Infinity,i; for(i=0;i<arr.length;i++){ if(arr[i]>m)m=arr[i]; }
+    var e=[],sum=0; for(i=0;i<arr.length;i++){ e[i]=Math.exp((arr[i]-m)/tau); sum+=e[i]; }
+    for(i=0;i<arr.length;i++){ e[i]/=sum; } return e;
+  }
+  function setupHiDpi(){
+    var w=canvas.clientWidth, h=canvas.clientHeight, dpr=window.devicePixelRatio||1;
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function draw(){
+    setupHiDpi();
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    var T=themeColors();
+    var P=+elP.value, base=Math.pow(10,+elB.value),
+        hard=+elC.value, thrFrac=+elThr.value;
+    var tau=0.6 + hard*8.4;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=T.panel; ctx.fillRect(0,0,w,h);
+
+    var rtop=46, rbot=h-54, rleft=56, rright=w-26, pw=rright-rleft, ph=rbot-rtop;
+    var sMax=P, smin=-sMax*1.08, smax=sMax*1.08;
+    var deltas=[], scores=[], i;
+    for(i=-W;i<=W;i++){ deltas.push(i); scores.push(scoreAt(i,P,base)); }
+    var weights=softmax(scores,tau);
+    var thr=thrFrac*sMax;
+    var fired=0; for(i=0;i<scores.length;i++){ if(scores[i]>=thr)fired++; }
+
+    function xAt(d){ return rleft + ((d+W)/(2*W))*pw; }
+    function yS(s){ return rbot - ((s-smin)/(smax-smin))*ph; }
+    function yW(v){ return rbot - v*(ph*0.82); }
+
+    // frame + grid
+    ctx.strokeStyle=T.grid; ctx.lineWidth=1;
+    ctx.strokeRect(rleft,rtop,pw,ph);
+    ctx.font='12px Georgia'; ctx.fillStyle=T.fg; ctx.textAlign='center';
+    ctx.fillText('Ein Funktionsal, zwei Ausgabemoden — Score s(Δ)=Σ_p cos(θ_p·Δ)', rleft+pw/2, 22);
+    // zero / axes
+    ctx.strokeStyle=T.grid; ctx.beginPath();
+    ctx.moveTo(rleft, yS(0)); ctx.lineTo(rright, yS(0)); ctx.stroke();
+    ctx.fillStyle=T.muted; ctx.font='10px monospace'; ctx.textAlign='right';
+    [sMax,0,-sMax].forEach(function(s){ ctx.fillText(s, rleft-6, yS(s)+3); });
+    ctx.textAlign='center';
+    [-W,0,W].forEach(function(d){ ctx.fillText(d, xAt(d), rbot+14); });
+    ctx.fillText('relative Position Δ = n−m   (P='+P+', base=10^'+elB.value+')', rleft+pw/2, rbot+32);
+
+    // threshold line (B margin boundary)
+    var yThr=yS(thr);
+    ctx.strokeStyle=T.hl; ctx.setLineDash([6,5]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(rleft,yThr); ctx.lineTo(rright,yThr); ctx.stroke();
+    ctx.setLineDash([]); ctx.lineWidth=1;
+    ctx.fillStyle=T.hl; ctx.font='11px monospace'; ctx.textAlign='left';
+    ctx.fillText('Margin-Schwelle θ='+thr.toFixed(2), rleft+6, yThr-6);
+
+    // firing region (B: where score clears threshold)
+    ctx.fillStyle=T.pos; ctx.globalAlpha=0.20;
+    ctx.beginPath();
+    var started=false;
+    for(i=0;i<scores.length;i++){
+      if(scores[i]>=thr){
+        var X=xAt(deltas[i]);
+        if(!started){ ctx.moveTo(X, yS(thr)); started=true; }
+        ctx.lineTo(X, yS(scores[i]));
+      } else { if(started){ ctx.lineTo(xAt(deltas[i-1]), yS(thr)); started=false; } }
+    }
+    if(started){ ctx.lineTo(xAt(deltas[deltas.length-1]), yS(thr)); }
+    ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+
+    // score curve (A kernel)
+    ctx.strokeStyle=T.accent2; ctx.lineWidth=2; ctx.beginPath();
+    for(i=0;i<scores.length;i++){ var X=xAt(deltas[i]), Y=yS(scores[i]); if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+    ctx.stroke(); ctx.lineWidth=1;
+
+    // softmax weight area (A convex combination)
+    ctx.beginPath(); ctx.moveTo(xAt(deltas[0]), yW(0));
+    for(i=0;i<weights.length;i++){ ctx.lineTo(xAt(deltas[i]), yW(weights[i])); }
+    ctx.lineTo(xAt(deltas[deltas.length-1]), yW(0)); ctx.closePath();
+    ctx.fillStyle=T.accent; ctx.globalAlpha=0.26; ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=T.accent; ctx.lineWidth=2; ctx.beginPath();
+    for(i=0;i<weights.length;i++){ var X2=xAt(deltas[i]), Y2=yW(weights[i]); if(i===0)ctx.moveTo(X2,Y2); else ctx.lineTo(X2,Y2); }
+    ctx.stroke(); ctx.lineWidth=1;
+
+    // margin bracket at Delta=0
+    var x0=xAt(0), yPeak=yS(sMax);
+    ctx.strokeStyle=T.hl; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(x0,yThr); ctx.lineTo(x0,yPeak); ctx.stroke();
+    ctx.lineWidth=1;
+    ctx.fillStyle=T.hl; ctx.font='11px monospace'; ctx.textAlign='left';
+    ctx.fillText('Margin', x0+6, (yThr+yPeak)/2+3);
+
+    // peak marker
+    ctx.fillStyle=T.accent2; ctx.beginPath(); ctx.arc(x0,yPeak,4,0,Math.PI*2); ctx.fill();
+
+    // legend
+    ctx.textAlign='left'; ctx.font='11px monospace';
+    ctx.fillStyle=T.accent2; ctx.fillText('— RoPE-Score s(Δ)  [A: Funktionsal]', rleft+6, rtop+12);
+    ctx.fillStyle=T.accent;  ctx.fillText('— Softmax-Gewicht w(Δ)=softmax(s/τ)  [A: Konvexkomb., τ='+tau.toFixed(1)+']', rleft+6, rtop+26);
+    ctx.fillStyle=T.pos;     ctx.fillText('▮ s(Δ) ≥ θ  →  feuert  [B: harte Margin-Entscheidung]', rleft+6, rtop+40);
+
+    // readouts
+    roPeak.textContent = sMax.toFixed(2);
+    roMargin.textContent = (sMax-thr).toFixed(2);
+    roTau.textContent = tau.toFixed(2);
+    roSelf.textContent = weights[W].toFixed(3);
+    roFire.textContent = fired+' / '+(2*W+1);
+  }
+
+  function labelForHard(hard){
+    if(hard<0.2) return 'hart (τ→0 · C→∞)';
+    if(hard>0.8) return 'weich (τ→∞ · C klein)';
+    return 'mittel';
+  }
+  function sync(){
+    vC.textContent = labelForHard(+elC.value);
+    vP.textContent = elP.value;
+    vB.textContent = '10^'+elB.value;
+    vThr.textContent = (Math.round(+elThr.value*100))+'%';
+    draw();
+  }
+  [elC,elP,elB,elThr].forEach(function(el){ el.addEventListener('input', sync); });
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  var mo=new MutationObserver(function(){ draw(); });
+  mo.observe(document.documentElement,{attributes:true, attributeFilter:['class']});
+  window.addEventListener('resize', function(){ draw(); });
+  window.addEventListener('load', function(){ draw(); });
+  sync();
+})();
+</script>
+</body>
+</html>

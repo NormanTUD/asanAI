@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schwerpunktfluss auf dem Torus — Bedeutung als Fläche, die gebaut oder gefunden wird</title>
+<script>
+try{
+  var s=localStorage.getItem('r2010-theme');
+  var light = s ? s==='light' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
+  if(light) document.documentElement.classList.remove('dark');
+}catch(e){}
+</script>
+<style>
+:root{
+  --bg:#f5f3ec; --panel:#fbfaf6; --panel2:#efece2; --ink:#232830; --dim:#5b6472;
+  --acc:#a9700a; --cy:#0d7490; --rd:#c2410c; --ok:#15803d; --violet:#6d28d9;
+  --chart-bg:#fbfaf6; --grid:#e2ddcf; --axis:#8a93a3; --label:#232830; --border:#dcd7c9;
+  --st-wander:#be123c; --st-approach:#c2410c; --st-seed:#b45309; --st-general:#15803d;
+  --soft-acc:#f3ecdb; --soft-signal:#e7f0ec; --soft-noise:#f7ece2;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0b0d12; --panel:#12151d; --panel2:#0e1118; --ink:#e8ecf4; --dim:#8a93a6;
+  --acc:#ffd166; --cy:#5ad2ff; --rd:#ff6b8a; --ok:#4ade80; --violet:#a78bfa;
+  --chart-bg:#0b0d12; --grid:#1a2130; --axis:#6d7ea8; --label:#e8ecf4; --border:#222a3a;
+  --st-wander:#ef4444; --st-approach:#fb923c; --st-seed:#fbbf24; --st-general:#34d399;
+  --soft-acc:#1d1833; --soft-signal:#0e2a2b; --soft-noise:#2a1322;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);transition:background .3s}
+body{background:var(--bg);color:var(--ink);
+  font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Times New Roman",serif;
+  line-height:1.66;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+.wrap{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+#themeBtn{position:fixed;top:14px;right:16px;z-index:5;background:var(--panel);color:var(--ink);
+  border:1px solid var(--border);border-radius:20px;padding:7px 14px;font:600 13px/1 system-ui,sans-serif;cursor:pointer}
+#themeBtn:hover{border-color:var(--acc)}
+h1{font-size:30px;line-height:1.16;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+.subtitle{font:400 13px/1.5 system-ui,sans-serif;color:var(--dim);margin-bottom:26px;word-break:break-word}
+.subtitle code{background:var(--panel2);padding:1px 5px;border-radius:4px;font-size:12px}
+section{margin:0 0 34px}
+h2{font-size:20px;font-weight:700;color:var(--acc);margin:0 0 12px;padding-bottom:6px;
+  border-bottom:1px solid var(--border);letter-spacing:-.01em}
+h3{font-size:15.5px;font-weight:700;margin:20px 0 8px;color:var(--ink)}
+p{margin:0 0 13px}
+strong{color:var(--ink)}
+em.k{color:var(--cy);font-style:normal;font-weight:600}
+em.a{color:var(--rd);font-style:normal;font-weight:600}
+em.b{color:var(--cy);font-style:normal;font-weight:600}
+ul{margin:6px 0 14px 20px}
+li{margin-bottom:9px}
+.b{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--cy);border-radius:8px;padding:12px 15px;margin:14px 0}
+.b.a{border-left-color:var(--rd)}
+.b.f{border-left-color:var(--acc)}
+.b.v{border-left-color:var(--violet)}
+.b p{margin-bottom:0}
+.mono{font-family:var(--mono);font-size:13.5px;background:var(--panel2);border:1px solid var(--border);
+  border-radius:8px;padding:11px 14px;overflow-x:auto;margin:12px 0;color:var(--ink);line-height:1.75;white-space:pre}
+.tag{display:inline-block;font:600 11px/1 system-ui,sans-serif;letter-spacing:.03em;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;margin-right:6px;border:1px solid var(--border);color:var(--dim);background:var(--panel)}
+.tag.b{color:var(--cy);border-color:var(--cy)}
+.tag.a{color:var(--rd);border-color:var(--rd)}
+.tag.f{color:var(--acc);border-color:var(--acc)}
+a{color:var(--acc);text-decoration:underline;text-underline-offset:2px}
+.controls{display:flex;flex-wrap:wrap;gap:16px 26px;margin:14px 0 8px}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:200px;flex:1}
+.ctrl label{font:600 12px/1.3 system-ui,sans-serif;color:var(--dim)}
+.ctrl .row{display:flex;align-items:center;gap:9px}
+.ctrl input[type=range]{flex:1;accent-color:var(--acc);height:22px}
+.ctrl .val{font:700 12px/1 system-ui,sans-serif;color:var(--acc);min-width:38px;text-align:right}
+.state{font:600 13px/1.5 system-ui,sans-serif;color:var(--ink);background:var(--panel2);border:1px solid var(--border);
+  border-radius:8px;padding:9px 13px;margin:6px 0}
+.state b{color:var(--acc)}
+canvas{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:12px;
+  background:var(--chart-bg);cursor:grab;touch-action:none}
+canvas:active{cursor:grabbing}
+.stats{font:500 13px/1.6 system-ui,sans-serif;color:var(--dim);margin-top:10px}
+.stats b{color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:12px 16px;margin-top:10px;font:500 12px/1.5 system-ui,sans-serif;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.legend .line{width:16px;height:3px;border-radius:2px;display:inline-block}
+.prov{list-style:none;margin:6px 0 0;padding:0}
+.prov li{margin-bottom:12px;padding:12px 15px;background:var(--panel);border:1px solid var(--border);border-radius:8px}
+.prov .d{font:400 13px/1.5 system-ui,sans-serif;color:var(--dim);margin-top:5px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);font:400 12px/1.5 system-ui,sans-serif;color:var(--dim)}
+@media(max-width:560px){.ctrl{min-width:150px}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<button id="themeBtn" type="button">☀ hell</button>
+<div class="wrap">
+  <h1>Schwerpunktfluss auf dem Torus</h1>
+  <p class="subtitle">Bedeutung als Fläche, die gebaut <em>oder</em> gefunden wird · Fusion aus: <code>r1-009.html</code> ✕ <code>r1-021.html</code> (Round 2)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide R1-Papiere beschreiben, aus verschiedenen Entfernungen, <strong>ein und dasselbe geometrische Phänomen</strong>:
+      <em>Verstehen ist keine Liste von Fakten, sondern die Anwesenheit einer kompakten, rotationsstrukturierten Fläche —
+      eines <span class="mono" style="display:inline;padding:0 4px">Torus</span> (im vollen Modell: eines Produkts von Kreisen) —
+      auf der die Bedeutung lebt, und „Verstehen“ ist eine Strömung, die die relevanten Punkte auf diese Fläche bringt.</em></p>
+    <p><em class="a">A</em> (r1-009, <em>Schwerpunktfluss</em>) liefert die <strong>Lokaldynamik</strong>: ein Wort ist ein
+      Punkt im Bedeutungsraum, und ein Attention-Schritt ist ein <em class="k">relevanzgewichteter Schwerpunktfluss</em> — der
+      Punkt wandert zum gewichteten Schwerpunkt der relevanten Punkte (<span class="mono" style="display:inline;padding:0 4px">softmax(QKᵀ)V</span>,
+      gelesen als Bewegung). Position wird hier schon als <strong>Drehung</strong> (Helix, 72°) eingeführt — „ein Winkel, keine Nummer“ —
+      und das FFN <strong>verbiegt den Raum</strong> zwischen den Schritten.</p>
+    <p><em class="b">B</em> (r1-021, <em>der Torus</em>) liefert die <strong>Globalform</strong>: genau diese Drehungs-/Helix-Struktur
+      schließt sich zu einem <strong>kompakten, gekrümmten Torus</strong> <span class="mono" style="display:inline;padding:0 4px">S¹×S¹</span>,
+      dem invarianten Attraktor der Generalisierung. Er erscheint zweimal — einmal <strong>gebaut</strong> (a-priori, sinusoidale
+      Position-Encoding zeichnet eine Kurve auf dem Torus), einmal <strong>gefunden</strong> (emergent, SGD wandert im
+      Memorizations-Plateau, bis ein kritisches Seed die Mannigfaltigkeit findet und eine Kaskade den Phasenübergang triggert).</p>
+    <p><strong>Integriert:</strong> <em class="k">Der Torus ist die Fläche, auf der der Schwerpunktfluss fließt.</em>
+      <em class="a">A</em> ist der <strong>lokale, gerade Schritt</strong> (in der Tangentialebene der Fläche); <em class="b">B</em>
+      ist die <strong>globale, gekrümmte Form</strong> (die geschlossene Fläche) <em>und</em> die <strong>Dynamik ihres Erreichens</strong>
+      (glatt von A mitgeliefert, oder durch einen scharfen Phasenübergang gefunden). Die Helix/Drehung ist der <strong>gemeinsame Faden</strong>:
+      bei A eine <em>Eingabe</em> an die Relevanzfunktion, bei B die <em>Generatinng der Fläche selbst</em>. Der Simplizialkomplex (A’s
+      Daten-Seiten-Auslese) und der Gewichts-Torus (B’s Parameter-Seiten-Attraktor) sind <strong>derselbe Rotations-Invariant aus zwei Enden</strong>.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Logisch schließen sie sich nicht aus — beide sagen, Bedeutung/Generalisierung sei topologisch. Aber an vier konkreten
+      Stellen stehen ihre Stances <strong>unvereinbar</strong> gegenüber:</p>
+    <ul>
+      <li><span class="tag">1 · welche Geometrie ist fundamental</span>
+        <em class="a">A</em> behandelt den Bedeutungsraum primär als (lokal) <strong>flachen Vektorraum</strong>; der
+        Schwerpunktfluss ist eine <strong>gerade</strong> Interpolation
+        <span class="mono" style="display:inline;padding:0 4px">x_i ← x_i + s_i·(Schwerpunkt − x_i)</span>. Krümmung taucht nur
+        <em>nebensächlich</em> auf — als Effekt des FFN, das „den Raum verbiegt“, nicht als Gegenstand.
+        <em class="b">B</em> macht die <strong>gekrümmte, kompakte Fläche selbst</strong> zum Gegenstand: der Torus
+        <span class="mono" style="display:inline;padding:0 4px">S¹×S¹</span> <em>ist</em> die Struktur der Generalisierung.
+        Widerspruch: <em>flacher Fluss-Raum + Verbiegung als Werkzeug</em> (A) vs. <em>die gekrümmte kompakte Fläche als das Objekt</em> (B).</li>
+      <li><span class="tag">2 · wo „Verstehen“ wohnt</span>
+        <em class="a">A</em> liest die Bedeutung als <strong>topologisches Objekt über den Wort-Punkten</strong> ab — den
+        <strong>Simplizialkomplex</strong> (Kanten/Dreiecke), den der Fluss mit der <em>ganzen Wolke</em> macht; der „Beweis“
+        der Bedeutung ist, welche Punkte kumpeln.
+        <em class="b">B</em> legt das Verstehen in <strong>den Attraktor der Gewichte</strong> — der Torus lebt im
+        <em>Gewichts-/Repräsentationsraum</em>, und Generalization heißt: die <em>Parameter</em> sind auf ihm gelandet.
+        Widerspruch: <em>die Bedeutung ist ein Komplex <u>der Datenpunkte</u></em> (A) vs. <em>das Verstehen ist die <u>Position der Parameter</u></em> (B).</li>
+      <li><span class="tag">3 · Dynamik: glatt vs. sprunghaft</span>
+        <em class="a">A</em>’s Bewegung ist <strong>kontinuierlich und schwellenlos</strong> — der Punkt <em>glidet</em>
+        stetig zum Schwerpunkt; es gibt keinen „Entscheidungs-Moment“.
+        <em class="b">B</em> besteht auf einen <strong>scharfen, diskontinuierlichen Phasenübergang</strong>: flaches
+        Memorizations-Plateau, dann „clickt“ die Struktur und alles kaskadiert in einem Schlag.
+        Widerspruch: <em>glatter, stetiger Lokalfluss</em> (A) vs. <em>plötzlicher, schwelliger Makro-Übergang</em> (B).</li>
+      <li><span class="tag">4 · Rolle der Position</span>
+        <em class="a">A</em> degradiert die Position zu einer <strong>optionalen Winkel-Eingabe</strong> an die
+        Relevanz-Metrik (eine „Drehung statt einer Nummer“), die den „alle Punkte“-Fluss reihenfolge-empfindlich macht — ein
+        <em>Feature</em>.
+        <em class="b">B</em> promovierte dieselbe Helix zur <strong>Identität der Struktur</strong>: die Position-Encoding
+        <em>ist</em> der Torus, und ihre Fixed-Rotation-Eigenschaft <span class="mono" style="display:inline;padding:0 4px">PE(pos+k)=M_k·PE(pos)</span>
+        ist der Grund, warum relative Distanz generalisiert.
+        Widerspruch: <em>Position als Feature/Regler</em> (A) vs. <em>Position als Generator der Fläche</em> (B).</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Jeder „Widerspruch“ ist dasselbe Phänomen, von zwei Skalen/Enden aus gesehen. Die Auflösung folgt dem in beiden R1-
+      Papiern bereits angelegten Muster <em>„ein Objekt, zwei Resolutionsstufen“</em>:</p>
+    <ul>
+      <li><strong>1 · Geometrie → lokaler Schritt auf globaler Fläche.</strong>
+        Der Bedeutungsraum ist <em>lokal</em> flach (daher der gerade Schwerpunkt-Schritt in der Tangentialebene, A) und
+        <em>global</em> zu einem kompakten, rotationsstrukturierten Torus aufgerollt (B). Das FFN, das bei A „den Raum
+        verbiegt“, ist <em>genau</em> der Operator, der den flachen Raum zum Torus schließt.
+        <span class="b f"><p>Attention ist ein <b>geodätischer Schwerpunktfluss auf dem Torus</b>: A beschreibt den einen
+        (geraden) Schritt, B die geschlossene Fläche, auf der dieser Schritt lebt. Flacher Fluss und gekrümmte Fläche sind
+        dieselbe Rechnung auf zwei Zoomstufen.</p></span></li>
+      <li><strong>2 · Ort → derselbe Invariant aus zwei Enden.</strong>
+        Der Simplizialkomplex und der Gewichts-Torus sind <em>nicht</em> verschiedene Dinge, sondern die
+        <strong>Zwei-Seiten-Projektion eines Rotations-Invariants</strong>. Der Komplex ist die <em>Daten-/Input-Seite</em>:
+        wie die Wort-Punkte, angeordnet nach der Rotationsstruktur, kumpeln. Der Torus-Attraktor ist die
+        <em>Parameter-/Lösungs-Seite</em>: wo dieselbe Struktur in den Gewichten wohnt.
+        <span class="b f"><p>Genau wie B’s eigene Brücke („Input-Kodierung und Output-Attraktor sind derselbe Invariant“):
+        die <b>Fixed-Rotation-Gruppe</b> wirft einen Schatten auf die Daten (Komplex) und einen Sitzplatz in den Parametern
+        (Torus).</p></span></li>
+      <li><strong>3 · Dynamik → glatt lokal, sprunghaft global.</strong>
+        Trenne die <em>Lokaldynamik</em> (ein Attention-Schritt bzw. ein Gradient-Schritt nahe dem Attraktor: stetig, glatt —
+        A’s Gliden) von der <em>Makro-Dynamik</em> (Training von Null: lange Wolke, dann Kaskade — B’s Phasenübergang).
+        <span class="b f"><p>Dasselbe wie A’s „Einzel-Schritt vs. iterierte Bahn“ und B’s „Objekt vs. Prozess“:
+        <b>der lokale Fluss ist glatt; die wiederholte Anwendung erreicht die Struktur über einen scharfen Übergang.</b>
+        Zwei Skalen desselben Flusses — kein Widerspruch.</p></span></li>
+      <li><strong>4 · Position → das Feature, das den Raum erzeugt.</strong>
+        A liest <em>einen</em> Schritt der Helix (ein Winkel-Feature an der Metrik); B folgt der Helix <em>bis zum Schluss</em>
+        und schließt sie zur Fläche. Ein Feature, das den Raum erzeugt, <em>ist</em> die Koordinate des Raums.
+        <span class="b v"><p>Die Drehung ist <b>gleichzeitig</b> A’s Winkel-Eingabe (lokal) und B’s Fläche (global) —
+        „Position als Regler“ und „Position als Generator“ sind dasselbe, bevor und nach dem Aufrollen.</p></span></li>
+    </ul>
+    <p><strong>Integrierte Schlussfolgerung:</strong> <em>Verstehen = der relevante Punkt (Wort bei Inferenz, Gewicht bei
+      Training) wird per Schwerpunktfluss auf eine kompakte, rotationsstrukturierte Fläche — den Torus — gebracht.</em>
+      Gebaut (a-priori, A) → sofort und glatt. Gefunden (emergent, B) → Plateau, dann Kaskade. Der Komplex ist der
+      Daten-Seiten-Schatten, der Gewichts-Torus der Parameter-Seiten-Sitz desselben Rotations-Invariants; Helix/Drehung ist
+      der Faden, der beide Papiere an einer Stelle hält.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Die vereinte Regel (ein Mechanismus, mehrere Regler)</h3>
+    <p>Worte (und in der Training-Lesart: Gewichte) sind Punkte <span class="mono" style="display:inline;padding:0 4px">x_i</span>
+      auf/einer Fläche. Ein Schritt des Flusses ist:</p>
+    <div class="mono">1) Relevanz   r(i,j) = Metrik(x_i, x_j, [Winkel_i])
+2) Anteile    α_ij = exp((r(i,j) − max_k r(i,k)) / τ) / Σ_k exp((r(i,k) − max) / τ)
+3) Bewegung   x_i ← x_i + s_i · ( Σ_j α_ij · x_j − x_i )
+4) (Tiefe)    x ← f(x)   [FFN verbiegt den flachen Raum → Torus]   — Block = Fluss ∘ f, iteriert</div>
+    <p>mit Reglern: <strong>scope</strong> <code>s_i</code> (Suchwort: 1, sonst 0…1 — A), <strong>Metrik</strong>
+      (symmetrisch <code>⟨x_i,x_j⟩</code> vs. gerichtet <code>⟨x_j−x_i, R_i⟩</code> — A), <strong>Winkel</strong>
+      (Drehung/Eingabe — A &amp; B), <strong>Tiefe</strong> (ein Durchgang vs. gestapelt mit <code>f</code> — B),
+      <strong>Windung U</strong> (Helix — B) und der <strong>Erreichungsmodus</strong> (gebaut vs. gefunden — B).</p>
+
+    <h3>Der gemeinsame Faden: Position = Drehung auf einer Fläche</h3>
+    <div class="mono">PE(pos, 2i)   = sin( pos / 10000^(2i/d) )
+PE(pos, 2i+1) = cos( pos / 10000^(2i/d) )
+Eigenschaft:  PE(pos+k) = M_k · PE(pos),  M_k = feste Rotation</div>
+    <p>Jedes Dimensionspaar zeichnet als <code>pos</code> wächst einen <strong>Kreis</strong>; Paare mit
+      <em>verschiedenen Frequenzen</em> rotieren mit unterschiedlicher Geschwindigkeit — ein <strong>Corkscrew</strong>.
+      In 3D eine Helix; im vollen <code>d</code>-dimensionalen Raum eine <strong>Kurve auf einem Produkt von Kreisen</strong>,
+      also einem Torus. A benutzt das als <em>Eingabe an die Relevanzfunktion</em> (ein Winkel, keine Nummer); B zeigt, dass
+      dieselbe Konstruktion den <strong>Torus generiert</strong>. <em>Warum gerade diese Form?</em> (i) Adjazenz ist geometrisch
+      (42 neben 43 liegt auf der Kurve); (ii) <strong>relative Distanz = feste Rotation</strong> <code>M_k</code>, ob bei
+      pos 2 oder pos 2000 — die Gruppungsstruktur ist die Generalisierung auf unsequenzierte Längen; (iii) inkommensurable
+      Frequenzen → die Kurve <strong>schnidet sich nie selbst</strong> (dichte, nicht-wiederkehrende Orbiten, wie irrationale
+      Rotation auf einem Torus), jede Position ist eindeutig kodiert; (iv) <strong>tanh/sigmoid können das nicht</strong>:
+      es gibt kein <code>M_k</code> mit <code>tanh(pos+k)=M_k·tanh(pos)</code> — ohne diese Rotations-Algebra keine
+      Generalisierung über relative Distanzen.</p>
+
+    <h3>Die Lokaldynamik: Schwerpunktfluss (A)</h3>
+    <p>Ein Wort ist ein Punkt <span class="mono" style="display:inline;padding:0 4px">x_i ∈</span> Raum. A liest denselben
+      Fluss auf zwei Zoomstufen aus: <strong>global/topologisch</strong> — jeder Punkt zieht an jedem anderen, und was
+      überlebt, ist ein <strong>Simplizialkomplex</strong> (Kante <code>(i,j)</code> falls <code>min(α_ij,α_ji)&gt;ε</code>;
+      Dreieck, falls alle drei paarweise) — die <em>komponierte Bedeutung</em> als Topologie. Und <strong>lokal/
+      entscheidend</strong> — ein mehrdeutiger Punkt („Bank“ exakt zwischen <em>Sitzbank</em> und <em>Geldhaus</em>) wandert
+      zum gewichteten Schwerpunkt; der Kontext („kalt“) zeigt eine Richtung, die Mehrdeutigkeit <em>löst sich</em>. Die
+      Metrik ist ein <em>Inneres Produkt, zwei Lesarten</em>: A-symmetrisch <code>⟨x_i,x_j⟩</code> (Identitäts-Projektion)
+      ↔ B-gerichtet <code>⟨x_j−x_i, R_i⟩</code> mit <code>R_i=normalize(x_cue−x_i)</code> (das Query „lernt“ eine Richtung,
+      wie ein echtes <code>W_Q·W_K</code>) — dazwischen liegt allgemeines <code>QKᵀ</code>.</p>
+
+    <h3>Die Globalform &amp; ihre zwei Routen (B)</h3>
+    <p><strong>Gebaut (a-priori):</strong> die PE-Helix liegt schon da — eine exakte, handgebaute Kopie der Zieltopologie.
+      Das Modell liest Position sofort und glatt; es gibt <em>kein</em> Plateau, <em>kein</em> Grok.<br>
+      <strong>Gefunden (emergent):</strong> der Torus ist die „optimale Mannigfaltigkeit“ — ein kompakter <strong>Attraktor</strong>.
+      SGD wandert <em>rauschig</em> durch den hochdimensionalen Raum, eine schwache implizite Regularisierung übt einen
+      kaum sichtbaren Zug aus, aber das <strong>Memorizations-Plateau</strong> hält (Trainingsverlust runter, Testverlust
+      flach), bis ein <strong>kritisches Seed</strong> die Mannigfaltigkeit findet. Dann „clickt“ die Struktur, nahe Punkte
+      werden zuerst eingefangen, die Kaskade breitet sich aus, der Testverlust springt — ein <strong>echter Phasenübergang</strong>
+      von Memorization zu Generalization. <em>Warum ist der Torus „optimal“?</em> Genau weil er A’s Rotations-Algebra besitzt:
+      er ist der Sitz der Fixed-Rotation-Relative-Kodierung, die Generalisierung braucht.</p>
+
+    <h3>Die Brücke: ein Invariant, zwei Enden, zwei Routen</h3>
+    <p>Der geteilte Invariant ist <strong><span class="mono" style="display:inline;padding:0 4px">S¹×S¹</span></strong> (bzw.
+      dessen Produkt-Verallgemeinerung). A <em>baut</em> ihn lokal als Winkel-Feature; B <em>schließt</em> ihn global zur
+      Fläche. Die Lokaldynamik (A’s Fluss) ist der gerade Schritt <em>auf</em> dieser Fläche; das FFN <code>f</code> ist der
+      Operator, der den flachen Raum dazu aufrollt. Der <strong>Simplizialkomplex</strong> (Daten-Seite) und der
+      <strong>Gewichts-Torus</strong> (Parameter-Seite) sind dieselbe Rotations-Gruppe, einmal auf den Punkten, einmal in den
+      Parametern abgelesen. <em>Gleiche Struktur, zwei Enden, zwei Routen (gebaut/gefunden), zwei Skalen (lokal glatt /
+      global sprunghaft)</em> — das ist die gesamte Fusion in einem Satz.</p>
+
+    <h3>Grenzen (Ehrlichkeits-Ecke)</h3>
+    <ul>
+      <li>A’s Aussagen gelten für die <em>deterministische</em> Geometrie des Feature-Mappings (flacher Raum + ein
+        Verbiegungs-Schritt), nicht für eine gemessene Trainingsdynamik; die „dichten Orbiten“-Argumente setzen
+        inkommensurable Frequenzen voraus (Basis 10000 liefert das asymptotisch).</li>
+      <li>B’s Torus-Grokking ist eine <em>stilisierte</em> 3D-Metapher/Animation (SGD-Rauschen, Seed-Kaskade, „Optimal
+        Manifold“) — keine gemessene Kurve; der Torus steht symbolisch für die optimale topologische Repräsentation.</li>
+      <li>Dimensionen: A’s „Flussraum“ ist ein (lokal flacher) Vektorraum mit Verbiegung; B’s Objekt ist ein 2D-Torus
+        (bzw. Produkt von Kreisen). Die Fusion ist <em>topologisch</em> konsistent (beide = abelscher, flach-rotierender
+        Invariant), aber nicht literal identisch dimensioniert.</li>
+    </ul>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung</h2>
+    <p>Ein <strong>Torus</strong> — die kompakte, rotationsstrukturierte Fläche, auf der Bedeutung lebt. Die <em>teale
+      Wendellinie</em> ist die <strong>PE-Helix (B, gebaut)</strong>: der gemeinsame Faden, der schon da ist. Die
+      <em>Punkte</em> (Wort-/Gewichtspunkte) starten in einer <strong>Wolke</strong> (Memorization, Struktur = none) und
+      werden per <em class="a">Schwerpunktfluss (A)</em> in einer <strong>Kaskade</strong> (Phasenübergang, B) auf den
+      Torus gezogen; sobald Nachbarn gelandet sind, formen sie <em>grüne Kanten und Flächen</em> — der
+      <strong>Simplizialkomplex</strong>, A’s Daten-Seiten-Auslese desselben Invariants. Ziehen Sie
+      <strong>Fluss t</strong>: bei 0 Wolke (kein Komplex), mittig Kaskade, bei 1 alles auf dem Torus + vollständiges Raster.
+      <strong>Windung U</strong> ändert die Helix (die Rotations-Struktur); <strong>Wolke σ</strong> streckt die
+      Memorizations-Verteilung. Ziehen = drehen, Mausrad = zoomen.</p>
+    <div class="controls">
+      <div class="ctrl"><label>Fluss t — Zentrumsschritt iteriert (A) → Phasenübergang (B)</label>
+        <div class="row"><input id="tS" type="range" min="0" max="100" value="45"><span class="val" id="tV">45%</span></div></div>
+      <div class="ctrl"><label>Windung U — die Helix / der gemeinsame Faden (B)</label>
+        <div class="row"><input id="uS" type="range" min="1" max="6" value="3" step="1"><span class="val" id="uV">3</span></div></div>
+      <div class="ctrl"><label>Wolke σ — Memorizations-Streuung (B)</label>
+        <div class="row"><input id="sS" type="range" min="40" max="240" value="120"><span class="val" id="sV">120</span></div></div>
+    </div>
+    <div class="state" id="phase"></div>
+    <canvas id="cv" width="720" height="460"></canvas>
+    <div class="stats">Auf dem Torus <b id="rOn">–</b> · in Kaskade <b id="rTr">–</b> ·
+      Kanten <b id="rE">0</b> · Flächen <b id="rF">0</b></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--st-wander)"></i> wandernd (Memorization)</span>
+      <span><i class="dot" style="background:var(--st-approach)"></i> annähernd</span>
+      <span><i class="dot" style="background:var(--st-seed)"></i> Kaskade / Seed</span>
+      <span><i class="dot" style="background:var(--st-general)"></i> auf dem Torus (Generalization)</span>
+      <span><i class="line" style="background:var(--cy)"></i> PE-Helix (gebaut, B)</span>
+      <span><i class="line" style="background:var(--ok)"></i> Komplex-Kanten/-Flächen (A, Daten-Seite)</span>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../r1-009.html">r1-009.html</a>
+        <div class="d"><em class="a">A</em> „Attention als ein Schwerpunktfluss, zwei Blickwinkel“ (de) — Attention als
+        relevanzgewichteter Schwerpunktfluss: ein Wort ist ein Punkt, der zum gewichteten Schwerpunkt der relevanten Punkte
+        wandert. Global/topologisch (alle Punkte fließen → ein <strong>Simplizialkomplex</strong>, Kanten/Dreiecke als
+        komponierte Bedeutung) und lokal/entscheidend (ein mehrdeutiger Punkt „Bank“ wird <strong>ent-deutlicht</strong>).
+        Metrik = Innenprodukt, zwei Lesarten (symmetrisch ↔ gerichtet); Position als Drehung (Helix); FFN als
+        Raumverbiegung. Plotly-3D-Bedeutungsfeld mit Umfang/Temperatur/ε-Reglern.</div></li>
+      <li><a href="../r1-021.html">r1-021.html</a>
+        <div class="d"><em class="b">B</em> „Ein Torus — designed in der Helix, gefunden im Grok“ (de) — nützliche
+        Generalisierung ist topologisch: das Wissen über relative Position/Struktur lebt auf einem kompakten, gekrümmten
+        <strong>Torus</strong> <span style="font-family:var(--mono)">S¹×S¹</span>. Gebaut (a-priori): sinusoidale
+        Position-Encoding zeichnet eine Kurve auf dem Torus, Fixed-Rotation <code>PE(pos+k)=M_k·PE(pos)</code>,
+        nie Selbstschnitte. Gefunden (emergent): der Torus ist der <strong>Attraktor</strong>, den SGD nach dem
+        Memorizations-Plateau per <strong>Phasenübergang/Kaskade</strong> erreicht (Grokking). Canvas-3D-Torus mit
+        designeder Helix + wandernden Gewichten.</div></li>
+    </ul>
+  </section>
+
+  <div class="foot">Fusion r2-010 · aus <code>r1-009.html</code> und <code>r1-021.html</code> · alle Daten inline,
+    keine externen Abrufe · Theme-reaktiv.</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('cv');
+var ctx=cv.getContext('2d');
+var W=cv.width, H=cv.height;
+var tS=document.getElementById('tS'), uS=document.getElementById('uS'), sS=document.getElementById('sS');
+var tV=document.getElementById('tV'), uV=document.getElementById('uV'), sV=document.getElementById('sV');
+var rOn=document.getElementById('rOn'), rTr=document.getElementById('rTr'),
+    rE=document.getElementById('rE'), rF=document.getElementById('rF');
+var phaseEl=document.getElementById('phase'), themeBtn=document.getElementById('themeBtn');
+
+var R=108, rr=42, D=560;
+var camX=-0.5, camY=0.55, zoom=1.0;
+var PHI=1.6180339887;
+
+function rotY(p,a){var c=Math.cos(a),s=Math.sin(a);return [c*p[0]+s*p[2], p[1], -s*p[0]+c*p[2]];}
+function rotX(p,a){var c=Math.cos(a),s=Math.sin(a);return [p[0], c*p[1]-s*p[2], s*p[1]+c*p[2]];}
+function proj(p){var sc=(D/(D+p[2]))*zoom; return {x:p[0]*sc+W/2, y:p[1]*sc+H/2, z:p[2], sc:sc};}
+function torusPt(u,v){var w=R+rr*Math.cos(v);return [w*Math.cos(u), w*Math.sin(u), rr*Math.sin(v)];}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function sigm(x){return 1/(1+Math.exp(-x));}
+
+var rows=5, cols=8, N=rows*cols;
+var slots=[], scat=[], thr=[], jit=[];
+(function(){
+  var rnd=mulberry32(0x260a);
+  for(var i=0;i<N;i++){
+    var row=Math.floor(i/cols), col=i%cols;
+    var u=(col/cols)*Math.PI*2 + row*0.78;
+    var v=(row/rows)*Math.PI*2;
+    slots.push(torusPt(u,v));
+    var th=rnd()*Math.PI*2, ph=(rnd()-0.5)*Math.PI*0.9, rad=60+rnd()*220;
+    scat.push([rad*Math.cos(ph)*Math.cos(th), rad*Math.cos(ph)*Math.sin(th), rad*Math.sin(ph)*0.6]);
+    thr.push(0.10 + 0.70*rnd());
+    jit.push([(rnd()-0.5)*34,(rnd()-0.5)*34,(rnd()-0.5)*26]);
+  }
+})();
+
+function pointPos(i,t,sigma){
+  var snap=sigm((t-thr[i])/0.05);
+  var k=sigma/120;
+  var cp=[scat[i][0]*k, scat[i][1]*k, scat[i][2]*k];
+  return {x:cp[0]+(slots[i][0]-cp[0])*snap, y:cp[1]+(slots[i][1]-cp[1])*snap,
+          z:cp[2]+(slots[i][2]-cp[2])*snap, snap:snap};
+}
+function idx(row,col){return row*cols+col;}
+function projPt(p){return proj(rotX(rotY(p,camY),camX));}
+
+function drawTorus(){
+  var grid=cssVar('--grid'), uN=42, vN=18, i,j;
+  ctx.lineWidth=0.7; ctx.strokeStyle=grid;
+  for(j=0;j<vN;j++){
+    var v=(j/vN)*Math.PI*2;
+    ctx.beginPath();
+    for(i=0;i<=uN;i++){
+      var u=(i/uN)*Math.PI*2;
+      var pr=projPt(torusPt(u,v));
+      i?ctx.lineTo(pr.x,pr.y):ctx.moveTo(pr.x,pr.y);
+    }
+    ctx.globalAlpha=0.5; ctx.stroke();
+  }
+  ctx.lineWidth=0.6;
+  for(i=0;i<uN;i++){
+    var u2=(i/uN)*Math.PI*2;
+    ctx.beginPath();
+    for(j=0;j<=vN;j++){
+      var v2=(j/vN)*Math.PI*2;
+      var pr2=projPt(torusPt(u2,v2));
+      j?ctx.lineTo(pr2.x,pr2.y):ctx.moveTo(pr2.x,pr2.y);
+    }
+    ctx.globalAlpha=0.28; ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+}
+
+function drawHelix(U){
+  var sig=cssVar('--cy'), V=U*PHI, steps=700, s;
+  ctx.strokeStyle=sig; ctx.lineWidth=2.4; ctx.globalAlpha=0.95;
+  ctx.shadowColor=sig; ctx.shadowBlur=8;
+  ctx.beginPath();
+  for(s=0;s<=1;s+=1/steps){
+    var u=s*Math.PI*2*U, v=s*Math.PI*2*V;
+    var pr=projPt(torusPt(u,v));
+    s?ctx.lineTo(pr.x,pr.y):ctx.moveTo(pr.x,pr.y);
+  }
+  ctx.stroke();
+  ctx.shadowBlur=0; ctx.globalAlpha=1;
+}
+
+function drawComplex(t){
+  var ok=cssVar('--ok'), i;
+  var snap=[];
+  for(i=0;i<N;i++) snap[i]=pointPos(i,t,0).snap;
+  var eN=0, fN=0;
+  for(var row=0;row<rows;row++){
+    for(var col=0;col<cols;col++){
+      var a=idx(row,col);
+      if(col<cols-1){
+        var b=idx(row,col+1);
+        if(snap[a]>0.6 && snap[b]>0.6){
+          var pa=projPt(slots[a]), pb=projPt(slots[b]);
+          ctx.strokeStyle=ok; ctx.globalAlpha=0.55; ctx.lineWidth=1.2;
+          ctx.beginPath(); ctx.moveTo(pa.x,pa.y); ctx.lineTo(pb.x,pb.y); ctx.stroke();
+          ctx.globalAlpha=1; eN++;
+        }
+      }
+      if(row<rows-1){
+        var c=idx(row+1,col);
+        if(snap[a]>0.6 && snap[c]>0.6){
+          var pa2=projPt(slots[a]), pc=projPt(slots[c]);
+          ctx.strokeStyle=ok; ctx.globalAlpha=0.55; ctx.lineWidth=1.2;
+          ctx.beginPath(); ctx.moveTo(pa2.x,pa2.y); ctx.lineTo(pc.x,pc.y); ctx.stroke();
+          ctx.globalAlpha=1; eN++;
+        }
+      }
+      if(row<rows-1 && col<cols-1){
+        var d=idx(row+1,col+1);
+        if(snap[a]>0.6 && snap[b]>0.6 && snap[c]>0.6 && snap[d]>0.6){
+          var p0=projPt(slots[a]), p1=projPt(slots[b]), p2=projPt(slots[d]), p3=projPt(slots[c]);
+          ctx.fillStyle=ok; ctx.globalAlpha=0.10;
+          ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y);
+          ctx.lineTo(p2.x,p2.y); ctx.lineTo(p3.x,p3.y); ctx.closePath(); ctx.fill();
+          ctx.globalAlpha=1; fN++;
+        }
+      }
+    }
+  }
+  return {e:eN, f:fN, snap:snap};
+}
+
+function drawPoints(t,sigma,snapArr){
+  var stW=cssVar('--st-wander'), stA=cssVar('--st-approach'),
+      stS=cssVar('--st-seed'), stG=cssVar('--st-general');
+  var list=[], i;
+  for(i=0;i<N;i++){
+    var pos=pointPos(i,t,sigma);
+    list.push({pr:projPt([pos.x,pos.y,pos.z]), snap:snapArr[i], i:i});
+  }
+  list.sort(function(a,b){return b.pr.z-a.pr.z;});
+  for(var k=0;k<list.length;k++){
+    var o=list[k], pr=o.pr, snap=o.snap;
+    var col, glow=0;
+    if(snap<0.18){col=stW;}
+    else if(snap<0.45){col=stA;}
+    else if(snap<0.85){col=stS; glow=10;}
+    else {col=stG; glow=7;}
+    var sz=Math.max(2.2, 4.5*pr.sc);
+    if(snap>0.15 && snap<0.9){
+      var sp=projPt(slots[o.i]);
+      ctx.strokeStyle=col; ctx.globalAlpha=0.15*snap; ctx.lineWidth=0.7; ctx.setLineDash([2,4]);
+      ctx.beginPath(); ctx.moveTo(pr.x,pr.y); ctx.lineTo(sp.x,sp.y); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1;
+    }
+    if(glow){ctx.shadowColor=col; ctx.shadowBlur=glow;}
+    ctx.beginPath(); ctx.arc(pr.x,pr.y,sz,0,7); ctx.fillStyle=col; ctx.fill();
+    ctx.shadowBlur=0;
+  }
+}
+
+function draw(){
+  var t=parseInt(tS.value,10)/100, U=parseInt(uS.value,10), sigma=parseInt(sS.value,10);
+  var card=cssVar('--card')||cssVar('--chart-bg'), faint=cssVar('--axis');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=card; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=faint; ctx.font='10px '+cssVar('--mono'); ctx.textAlign='center';
+  ctx.fillText('T O R U S   ·   F L Ä C H E   D E R   B E D E U T U N G', W/2, 16);
+  drawTorus();
+  drawHelix(U);
+  var cx=drawComplex(t);
+  drawPoints(t,sigma,cx.snap);
+
+  var on=0, tr=0, sc=0;
+  for(var i=0;i<N;i++){
+    if(cx.snap[i]>=0.85)on++; else if(cx.snap[i]>=0.18)tr++; else sc++;
+  }
+  rOn.textContent=on+'/'+N;
+  rTr.textContent=tr;
+  rE.textContent=cx.e;
+  rF.textContent=cx.f;
+  tV.textContent=Math.round(t*100)+'%';
+  uV.textContent=U;
+  sV.textContent=sigma;
+
+  var txt, bg;
+  if(on>=N){ txt='Generalization — alle auf dem Torus, Komplex vollständig (gebaut & gefunden, A+B)'; bg='var(--soft-signal)'; }
+  else if(on>0||tr>0){ var pct=Math.round((on+0.5*tr)/N*100); txt='Phasenübergang — Kaskade, '+pct+'% (Schwerpunktfluss → Torus)'; bg='var(--soft-noise)'; }
+  else if(t>0.02){ txt='Memorization-Plateau — Wolke, noch kein Komplex (nur die designede Helix markiert die Fläche)'; bg='var(--soft-noise)'; }
+  else { txt='Bereit (t = 0) — ziehe den Fluss-Regler'; bg='var(--panel2)'; }
+  phaseEl.textContent=txt;
+  phaseEl.style.background=bg;
+
+  themeBtn.textContent = document.documentElement.classList.contains('dark') ? '☀ hell' : '☾ dunkel';
+}
+
+function setTheme(dark){
+  document.documentElement.classList.toggle('dark',dark);
+  try{localStorage.setItem('r2010-theme',dark?'dark':'light');}catch(e){}
+  draw();
+}
+
+themeBtn.addEventListener('click',function(){setTheme(!document.documentElement.classList.contains('dark'));});
+tS.addEventListener('input',draw);
+uS.addEventListener('input',draw);
+sS.addEventListener('input',draw);
+
+var dragging=false, dragS={x:0,y:0};
+cv.addEventListener('mousedown',function(e){dragging=true;dragS={x:e.clientX,y:e.clientY};});
+window.addEventListener('mousemove',function(e){
+  if(!dragging)return;
+  camY+=(e.clientX-dragS.x)*0.005;
+  camX+=(e.clientY-dragS.y)*0.005;
+  dragS={x:e.clientX,y:e.clientY};
+  draw();
+});
+window.addEventListener('mouseup',function(){dragging=false;});
+cv.addEventListener('touchstart',function(e){dragging=true;dragS={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
+cv.addEventListener('touchmove',function(e){
+  if(!dragging)return; e.preventDefault();
+  camY+=(e.touches[0].clientX-dragS.x)*0.005;
+  camX+=(e.touches[0].clientY-dragS.y)*0.005;
+  dragS={x:e.touches[0].clientX,y:e.touches[0].clientY};
+  draw();
+},{passive:false});
+cv.addEventListener('touchend',function(){dragging=false;});
+cv.addEventListener('wheel',function(e){
+  e.preventDefault();
+  zoom*= e.deltaY<0?1.06:0.94;
+  if(zoom<0.5)zoom=0.5; if(zoom>1.8)zoom=1.8;
+  draw();
+},{passive:false});
+window.addEventListener('resize',draw);
+
+draw();
+})();
+</script>
+</body>
+</html>

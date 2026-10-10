@@ -1,0 +1,16 @@
+{
+  "no": "037",
+  "a": "combined/r1-016.html",
+  "b": "combined/r1-072.html",
+  "a_title": "Glatt in der Nähe, scharf in der Ferne — der multiskale Gedankenraum (R1: Token-Mannigfaltigkeit × Positional-Encoding)",
+  "b_title": "Loss-Landschaft: Informationsgravitation × Gradientenabstieg (R1: Information Gravity × ICL via Gradientenabstieg)",
+  "combined_theme": "multiskale-potentialflaeche-zwei-achsen",
+  "one_line": "Ein einziger eingefrorener Transformer-Vorwärtsdurchlauf ist eine mehrskalige Potentialfläche Φ, die auf zwei verdeckten Auflösungsachsen gelesen wird: der räumlichen (A: Glätte = f(Zoom r), glatt in der Nähe/scharf in der Ferne) und der dynamisch-thermodynamischen (B: Sampling vs. Gradientenabstieg = f(T, η, K, γ)); die Bruchkante (A, räumlich, fix gemessen) und die Divergenz-/Capture-Kante (B, dynamisch, steuerbar) sind derselbe Ort, und die Krümmung ist die gemeinsame Währung.",
+  "contradictions": [
+    "Status der Fläche: A (r1-016) behandelt den Gedankenraum als fixes, realisiertes, gemessenes Terrain, dessen Glätte/Bruchkanten man durch Zoom entdeckt (setzt eine vorgegebene, unveränderliche Fläche voraus); B (r1-072) behauptet, die Loss-Fläche wird vom Durchlauf selbst erzeugt und abgestiegen (Attention = LS-Approximation, eine Schicht = ein GD-Schritt) — A setzt genau die 'gegebene Fläche' voraus, die B erklären will.",
+    "Der Bruch: A ortet das Scheitern (Prompt-Fragilität, Nicht-Portabilität) an einer fixen, räumlichen Bruchkante (Grobskala, permanent, unsteuerbar — nur messbar); B ortet es an einer steuerbaren dynamischen Schwelle (T→0 Capture, η>2/λmax Divergenz, GD++ γ — vermeidbar durch das Ändern des Limits). Fixe Geometrie (A) vs. tuneable Dynamik (B).",
+    "Die Krümmung: A misst die Nicht-Flachheit (F(r), steigende d(r)) als fixe, gemessene Eigenschaft des Embedding-Raums (der Test detectiert, entfernt aber nicht); B behandelt dieselbe Größe (κ der Hesse-Matrix H=XXᵀ) als endogenes Rad, das das Netz aktiv dreht (GD++ rundet via f(λ,γ)=λ−2γλ²+γ²λ³, κ↓)."
+  ],
+  "resolution": "A und B meinen zwei verschiedene Φ: A misst die fixe Hintergrund-Geometrie (Embedding-/Token-Raum, wo die Gedanken leben), B erzeugt und abstieg die Prozess-Fläche (gewichtsräumlicher LS-Loss, wie der Durchlauf abfährt). Der Bruch = räumliche Singularität (A, fixer Ort, parametrisiert) × dynamische Schwelle (B, steuerbare Marge): eine schärfere Bruchkante (höhere lokale Krümmung bei r) erhöht λmax und schiebt die Kante η=2/λmax nach links. Krümmung ist fix gemessen (Hintergrund, A) vs. vom Netz gedreht (Prozess, B) — GD++ rundet die Prozess-Landschaft, um ein fixes, singularisiertes Hintergrund-Terrain sicher zu durchfahren. Fusion: Glätte(r) [A, räumlich] × Konvergenz(T,η,K,γ) [B, dynamisch] = eine mehrskalige Potentialfläche Φ auf zwei verdeckten Achsen.",
+  "viz": "Eine einzige mehrskalige Potentialfläche Φ(x) (Canvas, theme-aware, inline data, zero console errors) mit Wissens-Tal (wahr), Void-Tal (falsch/Halluzination) und scharfer Bruchkante/Cusp (Mitte); räumliche Achse A (Messpunkt × Zoom-Radius r → tatsächlich berechnete Abweichung F(r) von der flachen Scheibe, glatt vs. Bruchkante) × dynamische Achse B (Temperatur-Sampling-Walker mit T→0-Capture/Halluzinationsrate, deterministischer GD-Lauf mit Divergenz an η>2/λmax, GD++ γ rundet die Cusp-Krümmung und schiebt die Kante nach rechts)."
+}

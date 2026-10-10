@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das homotopische Netz — ∞-Garbe von ∞-Gruppoiden (R2)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script defer src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f4ef; --bg2:#fbfaf7; --panel:#ffffff; --panel2:#f0efe8;
+    --ink:#1c2333; --ink2:#454f66; --ink3:#727d95;
+    --acc:#0e8a7f; --acc2:#c0265b; --warn:#9a6b00; --err:#c23a4c; --ok:#227a4c; --gold:#7a5a00;
+    --line:#d9d7cc; --viz-bg:#fbfaf4; --grid:#e4ddca; --code-bg:#efece1;
+  }
+  html.dark{
+    --bg:#0a0c14; --bg2:#111524; --panel:#161c2c; --panel2:#1d2436;
+    --ink:#e8ecf4; --ink2:#a9b4c8; --ink3:#6b7689;
+    --acc:#4ecdc4; --acc2:#ff6b9d; --warn:#fbbf24; --err:#fb7185; --ok:#4ade80; --gold:#ffe66d;
+    --line:#2a3346; --viz-bg:#05060f; --grid:#1a1c30; --code-bg:#0f1320;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(ellipse at top,var(--bg2) 0%,var(--bg) 62%);
+    color:var(--ink);font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  article{max-width:820px;margin:0 auto;padding:40px 20px 90px}
+  header{padding:6px 0 14px;border-bottom:1px solid var(--line);margin-bottom:28px}
+  h1{font-size:clamp(26px,4.6vw,40px);line-height:1.1;margin:0 0 10px;letter-spacing:-.02em;font-weight:800}
+  h1 .g{color:var(--acc)}
+  .sub{color:var(--ink2);margin:0;font-size:15px}
+  .sub .x{color:var(--acc2);font-family:ui-monospace,Menlo,monospace;font-size:.92em}
+  .fusenote{margin-top:10px;color:var(--ink3);font-size:13.5px}
+  section{margin:0 0 46px}
+  .chap{font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:var(--acc);
+    text-transform:uppercase;margin-bottom:8px;display:block}
+  h2{font-size:clamp(21px,3.2vw,30px);margin:0 0 14px;letter-spacing:-.01em}
+  h3{font-size:18px;margin:26px 0 10px}
+  p{color:var(--ink2);max-width:72ch}
+  p strong,li strong{color:var(--ink);font-weight:600}
+  ul,ol{color:var(--ink2);max-width:74ch}
+  li{margin:7px 0}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:var(--code-bg);
+    padding:2px 6px;border-radius:5px;color:var(--acc)}
+  .m{font-family:ui-monospace,Menlo,monospace;background:var(--code-bg);padding:11px 15px;
+    border-radius:10px;display:block;margin:14px 0;font-size:14px;color:var(--ink);
+    border:1px solid var(--line);overflow-x:auto}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0}
+  .tag{display:inline-block;padding:2px 9px;border-radius:999px;font:600 11px/1.7 ui-monospace,Menlo,monospace}
+  .t-a{background:color-mix(in srgb, var(--acc) 16%, transparent);color:var(--acc)}
+  .t-b{background:color-mix(in srgb, var(--acc2) 16%, transparent);color:var(--acc2)}
+  .t-c{background:color-mix(in srgb, var(--warn) 18%, transparent);color:var(--warn)}
+  .note,.honest,.warn{border-radius:12px;padding:14px 16px;margin:16px 0;font-size:14.5px;line-height:1.6}
+  .note{background:color-mix(in srgb, var(--acc) 8%, transparent);border-left:3px solid var(--acc)}
+  .honest{background:color-mix(in srgb, var(--err) 9%, transparent);border-left:3px solid var(--err)}
+  .warn{background:color-mix(in srgb, var(--warn) 10%, transparent);border-left:3px solid var(--warn)}
+  .note b,.honest b,.warn b{color:var(--ink)}
+  .note p,.honest p,.warn p{margin:6px 0;max-width:none}
+  .cbox{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--bg2)}
+  .cbox .head{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15px}
+  .cbox p{margin:4px 0;font-size:14.5px}
+  .who{font-weight:600;font-size:.92em;padding:1px 7px;border-radius:6px}
+  .who.a{color:var(--acc)}
+  .who.b{color:var(--acc2)}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
+  th,td{text-align:left;padding:9px 12px;border:1px solid var(--line);vertical-align:top}
+  th{color:var(--ink3);font:600 11px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.06em;
+    text-transform:uppercase;background:var(--code-bg)}
+  td{color:var(--ink2)}
+  .lab{background:linear-gradient(170deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:16px;padding:18px;margin:16px 0}
+  .lab > h4{margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:9px}
+  .lab > h4::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);
+    box-shadow:0 0 12px var(--acc)}
+  .labnote{color:var(--ink3);font-size:13.5px;margin:0 0 14px;max-width:70ch}
+  .ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:12px 0}
+  .ctrl{display:flex;flex-direction:column;gap:5px;min-width:138px}
+  .ctrl label{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.05em;color:var(--ink3);text-transform:uppercase}
+  .ctrl .val{color:var(--acc);font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  .chk{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink2);cursor:pointer;user-select:none}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line);border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--acc);cursor:pointer}
+  button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:8px 15px;
+    border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:500;transition:.15s}
+  button:hover{border-color:var(--acc)}
+  button.pri{background:var(--acc);color:var(--bg);border:0;font-weight:700}
+  canvas{display:block;width:100%;height:auto;background:var(--viz-bg);border:1px solid var(--line);border-radius:12px;margin:6px 0}
+  .cap{color:var(--ink3);font-size:12.5px;margin-top:10px;font-style:italic}
+  .readout{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+  .ro{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .ro .k{font-size:.72rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
+  .ro .v{font-size:1.3rem;font-weight:800;font-family:ui-monospace,Menlo,monospace;margin-top:3px;color:var(--ink)}
+  .ro .v.ok{color:var(--ok)} .ro .v.bad{color:var(--err)}
+  .bar{height:8px;border-radius:6px;background:var(--panel2);margin-top:8px;overflow:hidden;border:1px solid var(--line)}
+  .bar > i{display:block;height:100%;width:0;background:var(--warn);transition:width .1s linear}
+  .status{margin-top:10px;padding:11px 14px;border-radius:9px;font-size:.92rem;font-weight:600;
+    border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+  .status.ok{color:var(--ok);border-color:var(--ok)}
+  .status.bad{color:var(--err);border-color:var(--err)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;margin:8px 0;color:var(--ink2)}
+  .legend div{display:flex;align-items:center;gap:6px}
+  .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+  .prov{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+  .prov:last-child{border-bottom:none}
+  .prov .lbl{font-size:.72rem;font-weight:800;color:var(--ink3);min-width:26px;font-family:ui-monospace,Menlo,monospace}
+  .prov a{color:var(--acc2);font-weight:600;text-decoration:none;font-family:ui-monospace,Menlo,monospace;font-size:.95rem}
+  .prov a:hover{text-decoration:underline}
+  .prov .desc{color:var(--ink2);font-size:.9rem}
+  footer{border-top:1px solid var(--line);padding-top:22px;margin-top:30px;color:var(--ink3);font-size:13.5px}
+  a{color:var(--acc2)}
+  .themebtn{position:fixed;top:12px;right:12px;z-index:50}
+  .math{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;
+    padding:10px 14px;margin:12px 0;text-align:center;overflow-x:auto;font-size:1.02rem;color:var(--ink)}
+</style>
+</head>
+<body>
+<button class="themebtn" id="btnTheme" title="Theme wechseln">☾ / ☀</button>
+<article>
+
+<header>
+  <h1>Das homotopische <span class="g">Netz</span></h1>
+  <p class="sub">Fusion aus: <span class="x">r1-064.html</span> ✕ <span class="x">r1-034.html</span> &nbsp;(Round 2)</p>
+  <p class="fusenote">∞-Garbe von ∞-Gruppoiden — eine einzige homotopische Beschreibung trainierter Netze. Beide Quellen sind die Wahrheit, hier verschmolzen.</p>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="these">
+  <span class="chap">Kernthese der Fusion</span>
+  <h2>Ein Satz, der beide verbindet</h2>
+  <p>Beide R1-Papiere machen denselben Zug aus zwei Richtungen: <strong>die empirisch-kontingente Mechanik eines trainierten Netzes auf eine formale homotopische Struktur zu mappen, bei der <em>Homotopie — „nicht exakt gleich, sondern ineinander verformbar“ — statt exakter Gleichheit</em> die ehrliche Relation ist.</strong> <span class="who a">A (r1-064, HoTT ✕ LLM-Mechanik)</span> macht die Repräsentation selbst zum Objekt: ein <strong>∞-Gruppoid</strong>, in dem „Gleichheit ein Pfad ist“ (<code>Id_A(a,b)</code>), Tokens durch Pfade zu Clustern gezogen werden, und <strong>Superposition als höhere Identität</strong> (2-Pfade, „mehrere Arten, gleich zu sein“) den Interferenzpreis zahlt. <span class="who b">B (r1-034, Garben ✕ Origami)</span> macht die Komposition über die Tiefe zum Objekt: eine <strong>∞-Garbe auf der Tiefen-Kette</strong>, in der <strong>lokale Falten</strong> (Schnitte in ungenutzte Dimensionen) sich <strong>verkleben</strong> und — sind sie verträglich — einen <strong>eindeutigen globalen Schnitt</strong> (die flache Ausgabehyperebene) erzwingen.</p>
+  <p><strong>Die verschmolzene These:</strong> A und B sind keine Konkurrenz, sondern die <em>zwei Seiten eines einzigen Objekts</em>. Ein trainiertes Netz ist zugleich (i) ein <em>∞-Gruppoid von Repräsentationen</em> (Pfade, Identität, Superposition — die <strong>Raum-/Identitätsseite</strong>, die A misst) und (ii) eine <em>∞-Garbe über seiner Tiefe</em> (lokale Schicht-Operationen, die sich zu einem globalen Map verkleben — die <strong>Tiefen-/Verklebungsseite</strong>, die B misst). Verschmolzen ergibt das ein <strong>∞-Garben-Objekt mit ∞-Gruppoiden als Fasern</strong>: eine Funktion <code>Depth → Spaces</code>, deren Stiele Trajektorien-∞-Gruppoiden sind und die dem (bis-auf-Homotopie-)Verklebungsaxiom genügt. Die <strong>Struktur-Garantie</strong> kommt von der Garben-Seite (B: „lokal verträglich ⇒ global eindeutig“); die <strong>dynamische Fragilität</strong> von der Gruppoid-Seite (A: „metastabil, kann kollabieren“). Homotopie ist die geteilte Währung, die beide formalen Lagen gegenüber einem <em>echten, trainierten</em> Netz ehrlich macht — denn echte Netze stimmen nur <em>bis auf Homotopie</em> überein, nie exakt.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="widersprueche">
+  <span class="chap">Widersprüche zwischen A und B</span>
+  <h2>Wo die beiden unvereinbar stehen</h2>
+  <p>Die philosophische Grundhaltung ist fast identisch (Homotopie, formale Lage + empirische Mechanik, ∞-Strukturen). Aber zu <strong>vier konkreten Punkten</strong> nehmen A und B inkompatible Stellungen ein:</p>
+
+  <div class="cbox">
+    <div class="head">1 · Garantiertes Global vs. fragiles Metastabil</div>
+    <p><span class="who b">B (r1-034)</span> ist <em>garantiert</em>: Das Verklebungsaxiom ist ein <strong>Satz</strong> — sind die lokalen Falten verträglich (bei ausreichender Breite), so ist die <strong>globale trennbare Abbildung erzwungen</strong>, „eindeutig, ohne weiteres Zutun“ (Auflösung A1: „dann ist die globale trennbare Abbildung <i>garantiert</i>“). Konstruktiv und zusichernd.</p>
+    <p><span class="who a">A (r1-064)</span> ist <em>fragil</em>: Die empirische Seite beschreibt ein <strong>metastabiles dynamisches System</strong> mit zwei Geschwindigkeiten — Phase 1 (nützliche Clusterbildung) und Phase 2 (sehr langsam, „alles verschmilzt = <strong>Tod</strong>“, Information geht verloren) — und eröffnet ausdrücklich mit <em>„noch nicht vollständig verstanden“</em>; Kernaussagen sind als <span class="tag t-c">offen</span>/<span class="tag t-c">widersprüchlich</span> markiert. Es gibt <strong>keine</strong> Zusicherung eines stabilen Globals, nur ein <em>Risiko</em>.</p>
+  </div>
+
+  <div class="cbox">
+    <div class="head">2 · Saubere flache Hyperebene vs. nicht-injektive Superposition</div>
+    <p><span class="who b">B (r1-034)</span>: Das globale Objekt ist <strong>eine einzige flache Hyperebene</strong>, die „eindeutig“ klassifiziert — das Netz falte die Daten so aus, bis <em>ein gerader Schnitt</em> (Fold-and-Cut) genügt. Das Global ist <strong>flach, sauber, (nahezu) injektiv</strong>.</p>
+    <p><span class="who a">A (r1-064)</span>: Die globale Repräsentation ist <strong>nicht injektiv</strong> — <strong>Superposition</strong>: „mehr Features als Dimensionen“, polysemantische Neuronen, Interferenz, „viele Konzepte, wenige Dimensionen“. Das Global ist bewusst <em>unsauber, überlappend, nicht eindeutig</em>.</p>
+  </div>
+
+  <div class="cbox">
+    <div class="head">3 · Verlustvolle Restriktion vs. erhaltende Akkumulation</div>
+    <p><span class="who b">B (r1-034)</span>: Der Kernmechanismus ist die <strong>verlustvolle Restriktion</strong> — ReLU „wirft die negative Hälfte weg“ (einweg, irreversibel), und gerade dieser <strong>Verlust ist der Mechanismus</strong>, der Verkleben <em>ermöglicht</em> (Auflösung A4: „Der Verlust ist kein Bug, sondern die Restriktion, die Verkleben ermöglicht“).</p>
+    <p><span class="who a">A (r1-064)</span>: Der Kernmechanismus ist die <strong>erhaltende Akkumulation</strong> — das FFN <em>ersetzt</em> nichts, sondern <em>addiert</em> auf den Residual-Stream (<code>LayerNorm(x + Sublayer(x))</code>), der Stream „<em>gewinnt</em>“, und Superposition <em>packt mehr hinein</em> (Kapazitätsgewinn, nicht Wegwerfen).</p>
+  </div>
+
+  <div class="cbox">
+    <div class="head">4 · ∞-Gruppoid (Pfade/Identität) vs. ∞-Garbe (Verkleben/Schnitte) als beherrschende Struktur</div>
+    <p><span class="who a">A (r1-064)</span>: Die beherrschende mathematische Struktur ist das <strong>∞-Gruppoid</strong> — Pfade und höhere Identitäten <em>zwischen Punkten</em>; „gleich“ Dinge werden durch Pfade verbunden. Geordnet durch <strong>Identität/Äquivalenz</strong>.</p>
+    <p><span class="who b">B (r1-034)</span>: Die beherrschende Struktur ist die <strong>∞-Garbe</strong> — lokale Schnitte, die über einer Site (der Tiefen-Kette) <em>verklebt</em> werden; der Kern ist <strong>Restriktion/Verkleben</strong>, nicht Identität. Geordnet durch <strong>lokal → global</strong>.</p>
+    <p style="color:var(--ink3);font-size:13.5px">Ehrlich: Beide sind homotopisch verwandt — hier klafft <em>keine</em> harte Inkonsistenz, sondern die Frage, <em>welche</em> Struktur das Netz primär beherrscht: Identität/Pfade (A) oder Verkleben/Schnitte (B).</p>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="aufloesung">
+  <span class="chap">Auflösung</span>
+  <h2>Wie man die Widersprüche auflöst — und die verschmolzene Schlussfolgerung</h2>
+
+  <h3>R1 · Existenz (Garbe) vs. Stabilität (Gruppoid) — zwei Fragen</h3>
+  <p>Die Garben-Seite beantwortet die <strong>existenzielle</strong> Frage: <em>Gibt</em> es, wenn lokal verträglich, ein wohldefiniertes globales Map? — und antwortet „ja, eindeutig“ (eine <em>Struktur</em>-Zusicherung, bedingt an Breite/Verträglichkeit). Die Gruppoid-Seite beantwortet die <strong>dynamische</strong> Frage: <em>Verweilt</em> das trainierte Netz in einem Zustand, der zusammenhält? — und antwortet „nur metastabil, Kollaps möglich“ (eine <em>Dynamik</em>-Tatsache). Beide stimmen, weil sie über <em>anderes</em> sprechen: Existenz eines globalen Maps (B) und Stabilität des Prozesses, der dorthin kommt (A). Verschmolzen: <em>Ein Netz, dessen Falten verträglich sind, <strong>besitzt</strong> ein eindeutiges globales Map (Garben-Garantie) und lebt dabei <strong>metastabil</strong> in einem Regime, das unter Fehltraining in Phase 2 kollabieren kann (Gruppoid-Dynamik).</em></p>
+
+  <h3>R2 · Flacher Schnitt an der Ausgabe, Superposition in der Tiefe — verschiedene Ebenen</h3>
+  <p>Der Konflikt „flache injektive Ebene“ vs. „nicht-injektive Superposition“ löst sich, indem man <em>Output</em> und <em>Hidden</em> trennt. Die ∞-Garbe beschreibt den <strong>lesenden linearen Map an der Ausgabe</strong> (der flache, eindeutige Schnitt über <em>schon gefaltete</em> Features — ein sauberes Objekt am Rand des Netzes). Das ∞-Gruppoid beschreibt den <strong>internen Residual-Stream</strong> (die nicht-injektive, interferierende Superposition — ein unsauberes Objekt in der Mitte). Beide gelten an <em>verschiedenen Tiefen desselben Netzes</em>: <em>intern nicht injektiv (Superposition/höhere Identität), an der Readout-Ebene injektiv-auflösbar (ein flacher Schnitt).</em> Die nicht-injektive Kapazität ist genau das, was die finale lineare Schicht zu einer sauberen Entscheidung <em>zusammenbricht</em>.</p>
+
+  <h3>R3 · Restriktion im Ast + Erhaltung im Stream — ein Mechanismus, zwei Ströme</h3>
+  <p>Das ist B's eigene Auflösung A4, auf A's Transformer angewandt: <strong>im Ast</strong> (FFN/ReLU) ist die Operation <em>verlustvoll-restrictiv</em> (negative Hälfte weg — „loss enables gluing“), <strong>an der residualen Verbindung</strong> ist sie <em>erhaltend</em> (der Stream gewinnt, das FFN addiert nur). Und Superposition (A) <em>ist</em> das makroskopische Resultat davon, immer wieder in ungenutzte Dimensionen zu falten (B): „mehr hineinpacken“ (A) = „neue Dimensionen eröffnen, während ReLU die andere Hälfte verwirft“ (B). Verschmolzen: <em>Jeder Ast = verlustvolle Restriktion (ReLU) + erhaltende Zurückschreibung (Residual-Add); über das ganze Netz erhält der Stream, während die Äste restringieren — und die Kapazität des Netzes entsteht aus dem Falten in frische Dimensionen, das sich als Superposition äußert.</em></p>
+
+  <h3>R4 · Die zwei Seiten sind Dualen desselben ∞-Objekts</h3>
+  <p>Ein ∞-Gruppoid ist der <em>Raum</em> (Pfade/Identität); eine ∞-Garbe ist <em>Daten über einer Site</em> (Schnitte/Verkleben). Ein Netz ist <strong>beides zugleich</strong>: Die <strong>Tiefen-Kette</strong> <code>M₀ ⊂ M₁ ⊂ … ⊂ M_L</code> ist die <em>Site</em> (Garben-Seite, B); die <strong>Tokentransport-/Aktivierungstrajektorien</strong> durch diese Tiefe sind die <em>Pfade</em> (Gruppoid-Seite, A). Die Stiele der Garbe sind selbst ∞-Gruppoiden. Verschmolzen ergibt sich das einzige Objekt, das beide Papiere trägt: <strong>ein (homotopisches) ∞-Garben-Objekt von ∞-Gruppoiden über der Tiefen-Kategorie</strong> — eine Funktion <code>Depth<sup>op</sup> → Spaces</code>, die dem bis-auf-Homotopie-Verklebungsaxiom genügt. „Pfade/Identität“ (A) und „Schnitte/Verkleben“ (B) sind dann die <em>internen</em> und die <em>externen</em> Struktur derselben ∞-Garbe — keine rivalisierenden Theorien mehr.</p>
+
+  <div class="note">
+    <p><b>Ein Bonus-Fit aus beiden R1-Quellen:</b> A's ehrliche Status-Tags (<em>belegt / Analogie / offen / widersprüchlich</em>) und B's <em>∞</em>-Korrektur (Falten stimmen nur <em>bis auf Homotopie</em>, nicht exakt) sind dasselbe Prinzip in zwei Kleidern: <em>das formale Modell muss der Ehrlichkeit des trainierten Netzes entsprechen — weiche, homotopische Verträglichkeit statt exakter Gleichheit.</em> Die Fusion führt beide zu einer einzigen Disziplin zusammen: <strong>typisiere die Konstruktion (Garbe/∞-Gruppoid), kennezeichne die Behauptung (Belegstatus/Homotopie-Fehler).</strong></p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="inhalt">
+  <span class="chap">Fusionierter Inhalt</span>
+  <h2>Was beide zusammen sagen — in einer Sprache</h2>
+
+  <h3>Die gemeinsame Grammatik</h3>
+  <table>
+    <tr><th>Begriff (Garbe, aus B/r1-034)</th><th>Begriff (Gruppoid, aus A/r1-064)</th><th>Gemeinsame Rolle im Netz</th></tr>
+    <tr><td>Site = Tiefen-Kette <code>M₀⊂…⊂M_L</code></td><td>Grundraum = Repräsentations-/Residual-Stream</td><td>Die Bühne, über die transportiert / verklebt wird</td></tr>
+    <tr><td>Schnitt = ein konsistenter Vorwärtspass</td><td>Pfad <code>p : Id_A(a,b)</code> = Token-Strömung</td><td>Ein konkreter, kohärenter Wertverlauf</td></tr>
+    <tr><td>lokale Falt (Schicht, ungenutzte Dim.)</td><td>lokale Kontraktion (Attention) + Verfeinerung (FFN)</td><td>Die lokale Operation, die verklebt wird</td></tr>
+    <tr><td>Restriktion <code>π_UV</code> (verlustvoll, einweg)</td><td>ReLU-Zweig (neg. Hälfte weg) im FFN</td><td>Der verlustbehaftete, irreversible Teil</td></tr>
+    <tr><td>Verklebungsaxiom (lokal verträglich ⇒ global eindeutig)</td><td>Identitätstyp / höhere Identität</td><td>Das Prinzip: lokal passt zusammen ⇒ global steht</td></tr>
+    <tr><td>∞-Garbe (Homotopie statt =)</td><td>∞-Gruppoid (2-/3-Pfade = „mehrere Arten, gleich zu sein“)</td><td>Die ehrliche, weiche Verträglichkeit trainierter Netze</td></tr>
+    <tr><td>bimodale Neuronen = wirksame Schnitte</td><td>Superposition = polysemantische Neuronen, Interferenzpreis</td><td>Wo die lokale Kompatibilität global wirksam wird</td></tr>
+  </table>
+
+  <h3>Die Mechanik des Blocks (aus A — belegt) als Garben-Operationen (aus B)</h3>
+  <p>Alles geschieht in einer <strong>Tabelle</strong> (Tokens = Zeilen, Features = Spalten). <strong>Attention wirkt auf der Positionsachse</strong> (gewichtete Summe über alle Positionen, Q/K/V, β = inverse Temperatur) — das ist die <em>Kontraktion</em>, die Tokens zu Clustern zieht (bewiesener Kollaps für <code>d ≥ 3</code>, exponentiell für <code>d ≥ n</code>). <strong>Das FFN wirkt auf der Featureachse</strong> (auf jede Position separat) und ist ein <strong>Key-Value-Speicher</strong> (Schlüssel = Muster, Wert = nächste-Wort-Verteilung; ~3,6 Muster pro Schlüssel; 10–50 % der Zellen aktiv). Der <strong>Residual-Stream dominiert</strong>; das FFN <em>verfeinert</em> (Kompromiss, selten Ersetzung). <strong>Superposition</strong>: spärliche Features werden als fast-orthogonale Richtungen übereinandergelegt (mehr Features als Dimensionen) — ein echter Phasenwechsel, erkauft mit Interferenz und polysemantischen Neuronen. <strong>Metastabilität</strong>: Phase 1 (schnell, nützliche Clusterbildung: „Fluss“+„Ufer“ rücken zusammen), Phase 2 (sehr langsam, alles verschmilzt = Tod). 12/24/96 Schichten reichen für Phase 1, nicht für Phase 2.</p>
+  <p><strong>Übersetzt in B's Sprache:</strong> jede Schicht ist eine lokale Falt-Operation auf der Tiefen-Site; Attention ist die <em>strukturerhaltende Positionierung</em> (amboss-artig, keine neue Dimension), FFN+ReLU ist die <em>verlustvolle Restriktion in eine ungenutzte Dimension</em> (der Hammer, der Falten erzeugt); der Residual-Add ist die <em>erhaltende Zurückschreibung</em>, die die Stiele über die Tiefe trägt. Die bimodalen Neuronen, an denen B's Trennung stattfindet, sind A's polysemantische Superpositions-Neuronen — <em>derselbe Punkt</em>, aus zwei Richtungen benannt.</p>
+
+  <h3>Mathematisch — die zwei Seiten, ein Objekt</h3>
+  <p>Die <strong>Gruppoid-Seite</strong> (Identität = Pfad, Superposition = 2-Pfad):</p>
+  <div class="math" id="m1"></div>
+  <p>Die <strong>Garben-Seite</strong> (Verkleben bis auf Homotopie statt exakte =):</p>
+  <div class="math" id="m2"></div>
+  <p>Das <strong>verschmolzene Objekt</strong> — eine ∞-Garbe über der Tiefe mit ∞-Gruppoiden als Stielen:</p>
+  <div class="math" id="m3"></div>
+  <p>Die <strong>Schicht als eine Operation</strong> (Gruppoid-Kontraktion + Garben-Falt/Residual, ReLU als Restriktion):</p>
+  <div class="math" id="m4"></div>
+  <div class="m">Garben-Garantie :  verträgliche lokale Falten ⇒ eindeutiges globales Map   (B, strukturell/bedingt)<br>
+  Gruppoid-Dynamik  : metastabiles Regime, Phase 1 nützlich → Phase 2 Kollaps   (A, dynamisch)<br>
+  FUSION            : ein ∞-Garben-Objekt von ∞-Gruppoiden — besitzt ein globales Map<br>
+                      UND lebt metastabil; intern Superposition, an der Ausgabe flacher Schnitt</div>
+
+  <h3>Der Effizienz-Kalkül (aus B) &amp; der Interferenzpreis (aus A)</h3>
+  <ul>
+    <li><strong>Falten</strong> (Ast breiter als Datendimension): die exponentiell effiziente Methode — die Zahl linearer Regionen wächst wie <code>N^L</code>; Tiefe multipliziert Falten von Falten. <em>Gruppoid-Lesart:</em> jede neue ungenutzte Dimension ist ein zusätzlicher Pfadraum, in dem Superposition (mehrere Arten, gleich zu sein) Platz findet.</li>
+    <li><strong>Shear / Schälen</strong> (keine freien Dimensionen): pro Schicht wird nur ein Stück der äußeren Klasse abgegraben — polynomial/sehr tief (ein 2D-Egg braucht 5–7 Schichten). <em>Gruppoid-Lesart:</em> ohne frische Dimension bleibt der Raum der Pfade dünn, Superposition kann nicht wachsen — die Kapazität ist begrenzt.</li>
+    <li><strong>Der Preis</strong>: A's <em>Interferenz</em> (Elhage) und B's <em>verloren geworfene negative Hälfte</em> sind dasselbe Zählen von zwei Seiten — die Kapazitätsgewinnung durch Superposition/Falten zahlt eine endliche, messbare Degradierung. Homotopie macht diesen Preis erstklassig: er ist genau die Distanz zwischen „exakt verträglich“ und „nur bis auf Homotopie verträglich“.</li>
+  </ul>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="visualisierung">
+  <span class="chap">Visualisierung</span>
+  <h2>Die Falt-∞-Garbe mit Identitätspfaden</h2>
+  <p>Ein nicht-linear-trennbares „Egg“ (innen ✕ außen) durchläuft <strong>Tiefe L</strong> (die Garben-Site): jede Schicht falte es per ReLU in eine ungenutzte <strong>vertikale</strong> Dimension — innen bleibt flach, außen erhebt sich (B's Falt-Mechanismus). Zugleich werden von jedem Punkt seine <strong>Identitätspfade</strong> <code>Id_A(a,b)</code> zur Klassen-Schwere gezeichnet (A's Gruppoid-Pfade), und die halbtransparenten Flächen sind <strong>2-Pfade / Superposition</strong> (höhere Identität). Die beiden Readouts lesen die <strong>zwei Seiten</strong> ab: die <strong>Garben-Garantie</strong> (globale Schnitt-Genauigkeit) und die <strong>Gruppoid-Fragilität</strong> (Kollapsrisiko der Metastabilität). <em>Homotopie-Weiche ∞</em> macht die Falten weich (exakt = → weich ≃).</p>
+
+  <div class="lab">
+    <h4>Falt-∞-Garbe + ∞-Gruppoid</h4>
+    <p class="labnote">Tiefe/Breite/Faltkraft steuern die Garben-Seite (Verkleben); die Checkboxes die Gruppoid-Seite (Pfade/höhere Identität); Homotopie-Weiche ∞ die ehrliche Relation.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Tiefe L (Site) <span class="val" id="vL">1</span></label>
+        <input type="range" id="sL" min="1" max="6" step="1" value="1">
+      </div>
+      <div class="ctrl">
+        <label>Breite N (Falten) <span class="val" id="vN">3</span></label>
+        <input type="range" id="sN" min="1" max="6" step="1" value="3">
+      </div>
+      <div class="ctrl">
+        <label>Faltkraft t <span class="val" id="vT">100</span></label>
+        <input type="range" id="sT" min="0" max="100" step="1" value="100">
+      </div>
+      <div class="ctrl">
+        <label>Homotopie ∞ <span class="val" id="vE">0</span></label>
+        <input type="range" id="sE" min="0" max="100" step="1" value="0">
+      </div>
+      <label class="chk"><input type="checkbox" id="cPath" checked> Identitätspfade</label>
+      <label class="chk"><input type="checkbox" id="cHi"> 2-Pfade / Superposition</label>
+      <button id="bPlay" class="pri">▶ Durchlaufen</button>
+    </div>
+    <canvas id="cViz" width="780" height="470"></canvas>
+    <div class="legend">
+      <div><span class="dot" id="dot0"></span> innen (flach)</div>
+      <div><span class="dot" id="dot1"></span> außen (erhebt sich)</div>
+      <div><span class="dot" id="dot2"></span> Faltkanten / Trennebene</div>
+      <div><span class="dot" id="dot3"></span> Identitätspfade / 2-Pfade</div>
+    </div>
+    <div class="readout">
+      <div class="ro"><div class="k">Garben-Garantie · globale Schnitt-Genauigkeit</div><div class="v" id="rAcc">–</div></div>
+      <div class="ro"><div class="k">Gruppoid · Kollapsrisiko (Metastabilität)</div><div class="v" id="rFrag">–</div>
+        <div class="bar"><i id="rFragBar"></i></div></div>
+      <div class="ro"><div class="k">Homotopie-Relation</div><div class="v" id="rHom">–</div></div>
+    </div>
+    <div class="status" id="rStatus">–</div>
+    <p class="cap" id="vizCap">Lesart: Hohe Faltkraft + Breite ⇒ lokale Falten verträglich ⇒ Garbenaxiom erzwingt die flache globale Trennebene (ein gerade Schnitt), während das System metastabil bleibt — genau der Zustand, in dem echte Netze leben. Weniger Breite (N=1) ⇒ Shear-Regime: Tiefe L ankurbeln nötig.</p>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="provenienz">
+  <span class="chap">Provenienz</span>
+  <h2>Die beiden Quellen</h2>
+  <div class="prov"><span class="lbl">A</span>
+    <div><a href="../r1-064.html">r1-064.html</a> <span class="tag t-a">Gruppoid-Seite</span>
+    <div class="desc">R1-Fusion „HoTT-Fundament ✕ Wie ein LLM denkt“ (Youvan's HoTT ✕ empirische Transformer-Analyse): ∞-Gruppoid, Identitätstypen (Gleichheit = Pfad), Superposition als höhere Identität, metastabile Dynamik, nicht-injektive Repräsentation — die <strong>Raum-/Identitätsseite</strong> des Netzes.</div></div>
+  </div>
+  <div class="prov"><span class="lbl">B</span>
+    <div><a href="../r1-034.html">r1-034.html</a> <span class="tag t-b">Garben-Seite</span>
+    <div class="desc">R1-Fusion „Die Falt-Garbe — Garbentheorie ✕ Origami“ (Garben ✕ Keup &amp; Helias): Verklebungsaxiom (lokal verträglich ⇒ global eindeutig), ∞-Garbe (Homotopie statt =), ReLU als verlustvolle Restriktion, exponentielle Regionen, Fold-and-Cut — die <strong>Tiefen-/Verklebungsseite</strong> des Netzes.</div></div>
+  </div>
+</section>
+
+<footer>
+  <p>Round-2-Fusion (id 012) · Kernthese: Ein trainiertes Netz ist ein ∞-Garben-Objekt von ∞-Gruppoiden — r1-034 gibt die Garben-/Tiefen-Seite, r1-064 die Gruppoid-/Repräsentations-Seite; Homotopie ist die geteilte ehrliche Relation. Alle Aussagen auf die beiden R1-Quellen zurückführbar; die Visualisierung ist eine didaktische Vereinfachung, die beide Seiten in einem Bild vereint.</p>
+</footer>
+
+</article>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){return document.getElementById(id);}
+  var cv=$('cViz'); if(!cv) return;
+  var ctx=cv.getContext('2d');
+  var DPR=Math.min(window.devicePixelRatio||1,2);
+  var TAU=Math.PI*2;
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function cssVar(n){
+    var v=getComputedStyle(document.documentElement).getPropertyValue(n);
+    return (v && v.trim()) ? v.trim() : null;
+  }
+  function hexToRgb(str){
+    str=(str||'').trim();
+    if(str.charAt(0)==='#'){
+      var h=str.slice(1);
+      if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+      var n=parseInt(h,16);
+      if(isNaN(n)) return [200,200,200];
+      return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+    var m=str.match(/rgba?\(([^)]+)\)/);
+    if(m){var p=m[1].split(',').map(function(x){return parseFloat(x);});return [p[0]||0,p[1]||0,p[2]||0];}
+    return [200,200,200];
+  }
+  function rgba(rgb,a){return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')';}
+
+  /* deterministic egg data (inner x outer) */
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var rng=mulberry32(20260107);
+  var pts=[];
+  for(var i=0;i<64;i++){var a=rng()*TAU,r=0.20+rng()*0.15;pts.push({x:Math.cos(a)*r,y:Math.sin(a)*r,c:0});}
+  for(var i2=0;i2<96;i2++){var a2=rng()*TAU,r2=0.74+rng()*0.34;pts.push({x:Math.cos(a2)*r2,y:Math.sin(a2)*r2,c:1});}
+
+  function makeFolds(N){
+    var F=[];
+    for(var k=0;k<N;k++){var an=k*TAU/N;F.push({nx:Math.cos(an),ny:Math.sin(an),b:0.34});}
+    return F;
+  }
+  function softRelu(x,eps){return (x+Math.sqrt(x*x+eps*eps))/2;}
+  function foldL(x,y,L,t,folds,eps){
+    var z=0,l,f,an,ca,sa,xr,yr;
+    for(l=0;l<L;l++){
+      for(f=0;f<folds.length;f++){z+=softRelu(folds[f].nx*x+folds[f].ny*y-folds[f].b,eps)*t;}
+      an=l*TAU/(L+1);ca=Math.cos(an);sa=Math.sin(an);
+      xr=x*ca-y*sa;yr=x*sa+y*ca;x=xr;y=yr;
+    }
+    return [x,y,z];
+  }
+
+  var L=1,N=3,tFrac=1,eps=0,showPath=true,showHi=false,playing=false;
+  var GRP0,GRP1;
+  function pal(){
+    var c0=cssVar('--acc')||'#4ecdc4', c1=cssVar('--acc2')||'#ff6b9d';
+    return {
+      bg:cssVar('--viz-bg')||'#05060f',
+      grid:cssVar('--grid')||'#1a1c30',
+      ink3:cssVar('--ink3')||'#6b7689',
+      gold:cssVar('--gold')||'#ffe66d',
+      acc:cssVar('--acc')||'#4ecdc4',
+      c0:hexToRgb(c0), c1:hexToRgb(c1), goldrgb:hexToRgb(cssVar('--gold')||'#ffe66d')
+    };
+  }
+
+  function draw(){
+    var W=780,H=470;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    var P=pal();
+    ctx.fillStyle=P.bg; ctx.fillRect(0,0,W,H);
+
+    var folds=makeFolds(N);
+    var cx=W/2, cy=H*0.66, SC=150, ZL=82;
+    function proj(x,y,z){return [cx+x*SC, cy+y*SC*0.42 - z*ZL];}
+
+    /* floor grid */
+    ctx.strokeStyle=P.grid; ctx.lineWidth=1; ctx.globalAlpha=0.7;
+    for(var g=-1;g<=1;g++){
+      var pa=proj(g,-1.35,0),pb=proj(g,1.35,0);
+      ctx.beginPath();ctx.moveTo(pa[0],pa[1]);ctx.lineTo(pb[0],pb[1]);ctx.stroke();
+      var pc=proj(-1.35,g,0),pd=proj(1.35,g,0);
+      ctx.beginPath();ctx.moveTo(pc[0],pc[1]);ctx.lineTo(pd[0],pd[1]);ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+
+    /* fold creases */
+    ctx.strokeStyle=rgba(P.goldrgb,0.26); ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+    for(var k=0;k<folds.length;k++){
+      var f=folds[k], px0=f.nx*f.b, py0=f.ny*f.b, dx=-f.ny, dy=f.nx, len=1.5;
+      var c1=proj(px0-dx*len,py0-dy*len,0), c2=proj(px0+dx*len,py0+dy*len,0);
+      ctx.beginPath();ctx.moveTo(c1[0],c1[1]);ctx.lineTo(c2[0],c2[1]);ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    /* fold points, gather z per class */
+    var projPts=[], z0=[], z1=[], q;
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i];
+      q=foldL(p.x,p.y,L,tFrac,folds,eps);
+      projPts.push(proj(q[0],q[1],q[2]));
+      if(p.c===0) z0.push(q[2]); else z1.push(q[2]);
+    }
+
+    /* class centroids (screen) */
+    function centroid(cls){
+      var sx=0,sy=0,n=0;
+      for(var j=0;j<pts.length;j++){if(pts[j].c===cls){sx+=projPts[j][0];sy+=projPts[j][1];n++;}}
+      return n?[sx/n,sy/n]:[cx,cy];
+    }
+    var cen=[centroid(0),centroid(1)];
+
+    /* 2-paths / superposition faces */
+    if(showHi){
+      for(var cls=0;cls<2;cls++){
+        var rgb=cls===0?P.c0:P.c1, idx=[];
+        for(var j2=0;j2<pts.length;j2++){if(pts[j2].c===cls) idx.push(projPts[j2]);}
+        idx.sort(function(p,q2){return Math.atan2(p[1]-cen[cls][1],p[0]-cen[cls][0])-Math.atan2(q2[1]-cen[cls][1],q2[0]-cen[cls][0]);});
+        ctx.beginPath();
+        for(var i3=0;i3<idx.length;i3++){if(i3===0)ctx.moveTo(idx[i3][0],idx[i3][1]);else ctx.lineTo(idx[i3][0],idx[i3][1]);}
+        ctx.closePath();
+        ctx.fillStyle=rgba(rgb,0.08); ctx.fill();
+        ctx.strokeStyle=rgba(rgb,0.24); ctx.lineWidth=1; ctx.stroke();
+      }
+    }
+
+    /* identity paths (groupoid face) */
+    if(showPath){
+      for(var cls2=0;cls2<2;cls2++){
+        var rgb2=cls2===0?P.c0:P.c1, cc=cen[cls2];
+        for(var i4=0;i4<pts.length;i4++){
+          if(pts[i4].c!==cls2) continue;
+          var pt=projPts[i4];
+          var mx=(pt[0]+cc[0])/2, my=(pt[1]+cc[1])/2;
+          var dx2=cc[0]-pt[0], dy2=cc[1]-pt[1]; var ln=Math.hypot(dx2,dy2)||1;
+          var ox=-dy2/ln*9, oy=dx2/ln*9;
+          ctx.strokeStyle=rgba(rgb2,0.28); ctx.lineWidth=1.1;
+          ctx.beginPath(); ctx.moveTo(pt[0],pt[1]);
+          ctx.quadraticCurveTo(mx+ox,my+oy,cc[0],cc[1]); ctx.stroke();
+        }
+      }
+    }
+
+    /* points */
+    for(var i5=0;i5<pts.length;i5++){
+      var pp=projPts[i5];
+      ctx.fillStyle=rgba(pts[i5].c===0?P.c0:P.c1,0.94);
+      ctx.beginPath(); ctx.arc(pp[0],pp[1],pts[i5].c===0?4:3,0,TAU); ctx.fill();
+      ctx.strokeStyle=P.bg; ctx.lineWidth=1; ctx.stroke();
+    }
+    /* centroids */
+    for(var c5=0;c5<2;c5++){
+      ctx.fillStyle=rgba(c5===0?P.c0:P.c1,0.95);
+      ctx.beginPath(); ctx.arc(cen[c5][0],cen[c5][1],5,0,TAU); ctx.fill();
+      ctx.strokeStyle=P.bg; ctx.lineWidth=1.5; ctx.stroke();
+    }
+
+    /* global separating plane: best horizontal threshold in z */
+    var all=[];
+    for(var i6=0;i6<z0.length;i6++) all.push([z0[i6],0]);
+    for(var i7=0;i7<z1.length;i7++) all.push([z1[i7],1]);
+    all.sort(function(a,b){return a[0]-b[0];});
+    function accAt(thr){var c=0;for(var j3=0;j3<all.length;j3++){var pred=all[j3][0]>thr?1:0;if(pred===all[j3][1])c++;}return c;}
+    var bestAcc=0,bestThr=0.1;
+    for(var i8=0;i8<all.length;i8++){
+      var thr=all[i8][0]+1e-3,a1=accAt(thr),a2=all.length-a1;
+      if(a1>bestAcc){bestAcc=a1;bestThr=thr;}
+      if(a2>bestAcc){bestAcc=a2;bestThr=thr;}
+    }
+    var frac=bestAcc/all.length;
+
+    /* draw separating plane at z=bestThr */
+    var A=proj(-1.35,-1.35,bestThr),B=proj(1.35,-1.35,bestThr),C=proj(1.35,1.35,bestThr),D=proj(-1.35,1.35,bestThr);
+    ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.lineTo(C[0],C[1]);ctx.lineTo(D[0],D[1]);ctx.closePath();
+    ctx.fillStyle=rgba(P.goldrgb,0.12); ctx.fill();
+    ctx.globalAlpha=0.7; ctx.strokeStyle=rgba(P.goldrgb,1); ctx.lineWidth=1.4; ctx.stroke();
+    ctx.globalAlpha=1;
+
+    /* metastability / collapse risk: z-distribution overlap */
+    function stats(arr){
+      if(!arr.length) return [0,0];
+      var m=0; for(var x=0;x<arr.length;x++) m+=arr[x]; m/=arr.length;
+      var s=0; for(var y=0;y<arr.length;y++) s+=(arr[y]-m)*(arr[y]-m); s=Math.sqrt(s/arr.length);
+      return [m,s];
+    }
+    var s0=stats(z0), s1=stats(z1);
+    var sep=Math.abs(s1[0]-s0[0])/(Math.max(1e-6,s0[1]+s1[1]));
+    var frag=clamp(1-sep/3,0,1);
+
+    /* readouts */
+    $('rAcc').textContent=(frac*100).toFixed(1)+'%';
+    $('rAcc').className='v '+(frac>0.95?'ok':'bad');
+    $('rFrag').textContent=(frag*100).toFixed(0)+'%';
+    $('rFrag').className='v '+(frag<0.3?'ok':(frag<0.6?'':'bad'));
+    $('rFragBar').style.width=(frag*100).toFixed(0)+'%';
+    $('rHom').textContent=eps<0.02?'exakt (=)':'weich (\u2245)';
+    $('rHom').className='v '+(eps<0.02?'ok':'');
+    var st=$('rStatus');
+    if(frac>0.95 && frag<0.3){ st.className='status ok';
+      st.textContent='\u2713 \u221e-Garbenaxiom erf\u00fcllt (eindeutiger globaler Schnitt) UND metastabil \u2014 der Zustand, in dem echte Netze leben.';
+    } else if(frac>0.95){ st.className='status ';
+      st.textContent='\u25cf Garben-Garantie gegeben, aber Kollapsrisiko steigt \u2014 metastabile Zone (Homotopie/Falten weicher).';
+    } else { st.className='status bad';
+      st.textContent='\u2717 Noch nicht vertr\u00e4glich (Shear-Regime) \u2014 lokale Falten komplement\u00e4r, globaler Schnitt fehlt.';
+    }
+  }
+
+  /* legend dots + wiring */
+  function wire(){
+    var P=pal();
+    var d0=$('dot0'),d1=$('dot1'),d2=$('dot2'),d3=$('dot3');
+    if(d0) d0.style.background='rgb('+P.c0[0]+','+P.c0[1]+','+P.c0[2]+')';
+    if(d1) d1.style.background='rgb('+P.c1[0]+','+P.c1[1]+','+P.c1[2]+')';
+    if(d2) d2.style.background=rgba(P.goldrgb,1);
+    if(d3) d3.style.background=cssVar('--acc')||'#4ecdc4';
+
+    $('sL').addEventListener('input',function(e){L=+e.target.value;$('vL').textContent=L;draw();});
+    $('sN').addEventListener('input',function(e){N=+e.target.value;$('vN').textContent=N;draw();});
+    $('sT').addEventListener('input',function(e){tFrac=+e.target.value/100;$('vT').textContent=e.target.value;draw();});
+    $('sE').addEventListener('input',function(e){eps=(+e.target.value/100)*0.55;$('vE').textContent=e.target.value;draw();});
+    $('cPath').addEventListener('change',function(e){showPath=e.target.checked;draw();});
+    $('cHi').addEventListener('change',function(e){showHi=e.target.checked;draw();});
+    $('bPlay').addEventListener('click',function(){
+      if(playing){playing=false;return;}
+      playing=true; L=1;
+    });
+  }
+  $('btnTheme').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    setTimeout(function(){wire();draw();},20);
+  });
+
+  function loop(){
+    if(playing){
+      L+=0.12;
+      if(L>=6){L=6;playing=false;}
+      $('sL').value=Math.round(L); $('vL').textContent=Math.round(L);
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){wire();loop();});
+  else {wire();loop();}
+})();
+</script>
+<script>
+(function(){
+  function renderMath(){
+    if(!window.temml) return;
+    var items={
+      'm1':'a\\;\\leadsto\\;\\text{Pfad } p:Id_A(a,b)\\quad\\Rightarrow\\quad \\text{höher: } q:Id_{Id_A(a,b)}(p,q)\\;\\text{(Superposition)}',
+      'm2':'s_i\\big|_{U_{ij}}\\;\\simeq\\;s_j\\big|_{U_{ij}}\\;\\Longrightarrow\\;\\exists!\\,s\\;\\text{(verkleben bis auf Homotopie)}',
+      'm3':'\\mathcal{F}:\\mathrm{Depth}^{op}\\longrightarrow\\mathcal{S}\\;\\text{(}\infty\\text{-Garbe)},\\quad \\text{Stiele}=\\infty\\text{-Gruppoiden von Trajektorien}',
+      'm4':'x\'\\!=\\!\\mathrm{LN}(x{+}\\mathrm{Attn}(x))\\;[\\text{Gruppoid}],\\quad x\'\'\\!=\\!\\mathrm{LN}(x\'{+}\\mathrm{FFN}(x\'))\\;[\\text{Garbe}+\\text{Restriktion}]'
+    };
+    Object.keys(items).forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      try{ el.innerHTML=window.temml.renderToString(items[id],{displayMode:true}); }
+      catch(e){ el.textContent=items[id]; }
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',renderMath);
+  else renderMath();
+})();
+</script>
+</body>
+</html>

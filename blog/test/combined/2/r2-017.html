@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 017 — Das Detail-Budget am Anker der Welt (Round 2)</title>
+<style>
+:root{
+  --bg:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --signal:#0f766e; --noise:#be185d; --reservoir:#b45309;
+  --accent:#6d28d9; --green:#15803d; --sky:#0369a1;
+  --grid:#d9d0ba; --pt-fill:#fffdf8;
+  --soft-signal:#e6f2f0; --soft-res:#fdf3e3; --soft-noise:#fdeef4;
+  --soft-acc:#f1ecfb; --soft-green:#e7f3ea; --soft-sky:#e3f0f8;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1420; --card:#141b2b; --ink:#e6e9f0; --dim:#aab2c4; --faint:#7b8497;
+  --line:#26314a; --signal:#2dd4bf; --noise:#f472b6; --reservoir:#fbbf24;
+  --accent:#a78bfa; --green:#4ade80; --sky:#38bdf8;
+  --grid:#1f2c47; --pt-fill:#141b2b;
+  --soft-signal:#0e2a2b; --soft-res:#2a2110; --soft-noise:#2a1322;
+  --soft-acc:#1d1833; --soft-green:#0e2a17; --soft-sky:#0e2333;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+main{max-width:820px;margin:0 auto;padding:0 22px 90px}
+header{padding:64px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;background:var(--soft-acc);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(28px,5.2vw,42px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--signal)}
+h1 em.w{color:var(--sky)}
+.sub{font-size:14px;color:var(--dim);max-width:64ch;font-family:var(--mono)}
+.sub .x{color:var(--noise)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:52px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--signal);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--soft-signal);border-radius:99px;padding:3px 10px}
+h3{font-size:15.5px;font-weight:720;margin:22px 0 6px;color:var(--ink)}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b,li b,p strong,li strong{color:var(--ink)}
+ul{margin:0 0 16px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--signal);background:var(--soft-signal);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.res{border-color:var(--reservoir);background:var(--soft-res)}
+.note.acc{border-color:var(--accent);background:var(--soft-acc)}
+.note.sky{border-color:var(--sky);background:var(--soft-sky)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;vertical-align:middle;white-space:nowrap}
+.tag.A{background:var(--soft-acc);color:var(--accent)}
+.tag.B{background:var(--soft-signal);color:var(--signal)}
+.tag.both{background:var(--soft-res);color:var(--reservoir)}
+.rule{font-family:var(--mono);font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:14px 0;color:var(--ink);overflow-x:auto;line-height:1.95;white-space:pre-wrap}
+.rule .op{color:var(--signal);font-weight:700}
+.rule .op2{color:var(--reservoir);font-weight:700}
+.rule .cmt{color:var(--faint)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.demo h3{margin-top:0}
+.dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px;background:var(--card)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--signal);font-size:13px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card)}
+input[type=range].g::-webkit-slider-thumb{background:var(--sky)}
+input[type=range].g::-moz-range-thumb{background:var(--sky)}
+input[type=range].q::-webkit-slider-thumb{background:var(--accent)}
+input[type=range].q::-moz-range-thumb{background:var(--accent)}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 13px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{transform:translateY(-1px);border-color:var(--signal)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:118px;background:var(--soft-signal);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--signal)}
+.ro .box.res{background:var(--soft-res)}.ro .box.res .v{color:var(--reservoir)}
+.ro .box.no{background:var(--soft-noise)}.ro .box.no .v{color:var(--noise)}
+.ro .box.ac{background:var(--soft-acc)}.ro .box.ac .v{color:var(--accent)}
+.ro .box.gn{background:var(--soft-green)}.ro .box.gn .v{color:var(--green)}
+.badge-out{font-family:var(--mono);font-size:13px;font-weight:600;line-height:1.5;padding:11px 14px;border-radius:10px;display:block;margin-top:12px;border:1px solid var(--line)}
+.badge-out.ok{background:var(--soft-green);color:var(--green);border-color:var(--green)}
+.badge-out.warn{background:var(--soft-res);color:var(--reservoir);border-color:var(--reservoir)}
+.badge-out.bad{background:var(--soft-noise);color:var(--noise);border-color:var(--noise)}
+.legend{display:flex;flex-wrap:wrap;gap:12px 16px;margin-top:12px;font-size:12.5px;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.themebtn{position:fixed;top:16px;right:16px;z-index:5}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:26px 0;text-align:center;color:var(--faint);font-size:12.5px}
+footer a,.prov a{color:var(--signal);text-decoration:none}
+.prov{display:grid;gap:12px}
+.prov a{color:var(--ink);text-decoration:none;font-weight:700}
+.prov a:hover{color:var(--signal)}
+.prov .d{color:var(--dim);font-size:14.5px;margin-top:2px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+<script>(function(){try{var t=null;try{t=localStorage.getItem('r2017theme');}catch(e){}document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();</script>
+</head>
+<body>
+<button class="themebtn" id="themeBtn" type="button">Theme</button>
+<main>
+
+<header>
+  <div class="badge">Round 2 · Fusion · Pair 017 · Detail-Budget ✕ Geerdetes Weltmodell</div>
+  <h1>Das <em>Detail-Budget</em> am<br><em class="w">Anker der Welt</em></h1>
+  <p class="sub">Fusion aus: r1-025.html <span class="x">&#10005;</span> r1-026.html &nbsp;(Round 2)</p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Papiere starten beim selben, unbequemen Wort: <b>das Ganze ist nie gegeben — man baut es.</b> <span class="tag A">A</span> (r1-025) baut es, indem es ein <b>endliches, erhaltenes Detail-Budget</b> (Modell-Kapazität = Frequenz-Koeffizienten, „finite and conserved" bei fester Dimensionalität d) auf der Achse <i>Schärfe</i> (dort, wo man hinschaut) gegen <i>Weite</i> (dort, wo man nicht hinschaut) ausgibt. <span class="tag B">B</span> (r1-026) baut es, indem es <b>lokale Flicken über ihre Überlappungen zu einem Kohärenzraum verklebt</b> (kohärent, nicht identisch — ein Connector genügt) und dieses Ganze erst dann <i>akzeptiert</i>, wenn es an eine unabhängige Welt W per harten Kontaktpunkten ansetzt. In beiden Fällen: ein <b>begrenztes Ganzes, aus Teilstücken zusammengebaut unter einer erhaltenden Bedingung</b>, mit einem Gate, das Erfolg von Fehlschlag trennt.</p>
+<p>Und dieses Gate ist in beiden dasselbe. <span class="tag A">A</span>: das Budget auf die <b>tiefen Frequenzen</b> (das <i>Essence</i>) ausgeben ⇒ es generalisiert <i>und</i> bleibt scharf; es auf hochfrequentes Ornament ausgeben ⇒ Überfitt/Blur. <span class="tag B</span>: der Kohärenzraum ist erst dann <i>gerechtfertigt</i>, wenn Kohärenz (innere Nähte halten) <b>und</b> Korrespondenz (Ansetz an W) gelten; Kohärenz allein ist eine <i>kohärente Fiktion</i>. Die Fusion identifiziert beides: <b>Generalisierung (A) = Kohärenz ∧ Korrespondenz (B).</b> Das <i>Essence</i> von A <span class="tag A">A</span> ist exakt der <b>kontaktstabile, tief-frequente Kern</b>, der B's Korrespondenz übersteht <span class="tag B">B</span> — dieselbe Allokation, zwei Namen.</p>
+<div class="note acc"><b>Ein Satz:</b> <b>Ein Weltmodell ist ein endliches Detail-Budget, das man aus lokalen Flicken über ihre Nähte aufbaut — und es ist scharf, generalisierend und geerdet genau dann, wenn das Budget auf den kontaktstabilen, tief-frequenten Kern der Welt konzentriert wird.</b> A's Überfitt und B's kohärente Fiktion sind die zwei Seiten derselben Fehlallokation: das Budget dort ausgeben, wo die Welt es <i>nicht</i> ankert.</div>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+<p>Die beiden teilen die Technik (begrenztes Ganze aus Teilstücken + ein Gate), widersprechen sich aber in drei <em>Stellungnahmen</em> über das Ganze selbst:</p>
+<ul>
+<li><b>① Geschlossenes, erhaltenes Ganze vs. offener, nie erreichter Limes.</b>
+<span class="tag A">A</span> (r1-025, Abschnitt „B" / Conjecture 6) hält das Budget für <b>„finite and conserved" bei „fixed dimensionality d"</b> — eine geschlossene, feste Torte, die man nicht vergrößern kann; „mehr" Linsen ist strikte Subtraktion vom lokalen Detail. Das Ganze ist ein <i>endliches, abgeschlossenes</i> Objekt.
+<span class="tag B">B</span> (r1-026) sagt das Gegenteil über das Ganze: „Wahrheit = <b>lim(n→∞), angenähert, nie erreicht</b>" — man hat nie das totale Ganze, immer nur lokale Flicken; das Cover wächst, der Prozess ist nie abgeschlossen. Für B ist das Ganze ein <i>offener, asymptotischer</i> Aufbau. Eine fixe, erhaltene Torte (A) vs. ein nie volles, wachsendes Cover (B) sind unvereinbare Bilder vom Ganzen.</li>
+<li><b>② Immanente Essence-Selbsterklärung vs. externe Erdung.</b>
+<span class="tag A">A</span> validiert das Modell <b>von innen heraus</b>: das <i>Essence</i> ist der <i>tief-frequente Anteil desselben Signals</i>; der Generalisierungsfehler wird gegen genau diesen internen Anteil gemessen. Eine unabhängige externe Sache W existiert in A nicht — die „Wahrheit" ist die eigene tief-frequente Struktur.
+<span class="tag B">B</span> widerspricht direkt: „Kohärent ist <b>nicht</b> dasselbe wie wahr"; eine Theorie, die nie scheitern kann, sei eine <b>kohärente Fiktion</b>. Gültigkeit verlangt <b>Korrespondenz</b> an eine <i>unabhängige</i> Welt W über harte Kontaktpunkte. A's schöne, tief-frequente Essence ist für B <em>genau</em> die gefährliche, selbstreferentielle Struktur, die die Welt nie berührt.</li>
+<li><b>③ Über-Kommitment (Detail verbrennen) vs. Unter-Kommitment (Welt nie berühren).</b>
+A's <b>archetypale</b> Fehlsünde ist <b>Über-Kommitment</b>: das Budget auf hochfrequentes Detail / die gesehenen Punkte ausgeben ⇒ wildes Interpolieren, Überfitt, Blur — das Modell <i>über</i>-commit sich in die Struktur. B's <b>archetypale</b> Fehlsünde (das LLM) ist das Gegenteil, <b>Unter-Kommitment</b>: die <b>kohärente Fiktion</b> — brillante innere Struktur, die die Welt <i>nie</i> berührt; das Modell <i>unter</i>-commit sich gegenüber der Realität. Entgegengesetzte Sünden, entgegengesetzte Heilmittel: A sagt „hör auf, Detail zu verbrennen"; B sagt „fang an, die Welt zu berühren".</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Auflösung</h2>
+<div class="card">
+<p><b>Zu ① (erhaltene Torte vs. offener Limes):</b> Zwei Skalen, ein Gesetz. Das Budget ist <i>an jedem endlichen Stadium</i> erhalten — jede Allokations-/Gluing-Operation erhält die Gesamtmenge (A's „conserved"). Das <i>Cover / der Horizont dessen, was man allokiert</i>, wächst aber asymptotisch (B's Limes). Fusion: „finite and conserved" gilt für jeden <b>Schnitt</b> bei endlicher Auflösung; „nie erreicht" gilt für die <b>Folge aller je feineren Schnitte</b>. Die Torte ist bei <i>jeder</i> Auflösung fix; die Auflösungen selbst formen einen offenen Limes. Das Ganze ist also lokal erhalten <i>und</i> global ein Grenzobjekt — kein Widerspruch, sondern zwei Zeitauflösungen desselben Aufbaus.</p>
+</div>
+<div class="card">
+<p><b>Zu ② (immanent vs. extern):</b> Man definiert Essence so, dass beide Seiten zusammenfallen: das <b>Essence</b> (A's tiefe Frequenzen) <i>ist</i> der <b>kontaktstabile Kern</b> — jener Anteil des Signals, der die harten Kontaktpunkte (B's Korrespondenz) <i>übersteht</i>. Dann sind „auf das Essence ausgeben" (A) und „an W ansetzen" (B) <b>dieselbe Allokation</b>. B korrigiert A: Essence ist nicht <em>jedes</em> tief-frequente Muster, sondern nur das, das unter Kontakt <i>stabil</i> ist. A korrigiert B: Erdung ist nicht omnipräsent/umsonst — sie ist im <i>tief-frequenten</i> Budget <i>konzentriert</i>, nicht über alle hochfrequenten Koeffizienten verstrichen. Gefusiont: <b>Essence = kontaktstabil = tief-frequent = generalisierend = geerdet.</b></p>
+</div>
+<div class="card">
+<p><b>Zu ③ (Über- vs. Unter-Kommitment):</b> Beide sind <b>Fehlallokationen desselben begrenzten Budgets an entgegengesetzten Enden</b>. Über-Kommitment = Budget auf <i>nicht</i>-kontaktstabile hohe Frequenzen (A's Überfitt). Unter-Kommitment = Budget auf <i>keinen</i> Kontakt ausgegeben (B's kohärente Fiktion). Fusion: das erhaltene, lokal geschlossene Budget <b>auf den kontaktstabilen, tief-frequenten Kern</b> ausgeben — <i>über ein Cover, das man weiter ausdehnt</i> (①). Dann ist das Modell zugleich scharf (A), geerdet (B) und generalisierend (A). Die beiden „Fehler" sind zwei Gesichter einer Regel: <b>das Budget dort ausgeben, wo die Welt es ankert</b> — weder dorthin, wo nur Ornament ist (A), noch gar nicht (B).</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>4.1 Das begrenztes Ganze aus Teilstücken <span class="tag both">fusion</span></h3>
+<p>Beide starten bei „das Ganze ist nie gegeben". <span class="tag A">A</span> schreibt das Netz als <b>abgeschnittene Frequenzreihe</b> — das Budget K = Modell-Komplexität = Frequenz-Cutoff, erhalten bei fixem d; es multipliziert Knicke über die Tiefe (2<sup>n−1</sup> Stücke bei n-facher Verkettung) und addiert sie über die Breite. <span class="tag B">B</span> schreibt das Weltmodell als <b>Kohärenzraum</b>: lokale Flicken über ihren Überlappungen verklebt, kohärent (≃) statt identisch (=). In beiden ist das <i>Gluing</i> der Ort, an dem das Budget ausgegeben (A) bzw. konserviert (B) wird: <b>jede Naht / jeder Überlapp ist eine Stelle, an der man Detail entweder ausgiebt oder spart.</b></p>
+
+<h3>4.2 B's 9-Stufen-Kette, an A's Budget gebunden <span class="tag B">B</span></h3>
+<p>(1) <b>Distinktion</b> (Spencer-Brown: eine Grenze erzeugt Zwei) → (2) <b>Relation</b> → (3) <b>Transformation</b> (Beziehung wird dynamisch) → (4) <b>Lokalität ohne Metrik</b> (Punkte + offene Mengen, Nähe aus gemeinsamer Zugehörigkeit) → (5) <b>Kompatibilität</b> (Überlapp passt zusammen) → (6) <b>Kohärenz</b> (Übereinstimmung als Äquivalenz, ein Weg/Connector, HoTT) → (7) <b>Gluing</b> (lokal → ein globales Ganzes) → (8) <b>Globalität</b> (das Ganze ist die Kohärenz, nicht die Summe der Teile) → (9) <b>Invarianz</b> (überlebt jeden Perspektivwechsel). An Stufe 5–7 lebt A: der Überlapp, auf dem die Flicken zusammenpassen müssen, <i>ist</i> der Frequenz-Cutoff, an dem das Budget zwischen Schärfe und Weite aufgeteilt wird.</p>
+<div class="rule"><span class="cmt"># Garbenbedingung — der gemeinsame Kern, an A's Budget gebunden</span>
+∀ Überlapp U<sub>i</sub> ∩ U<sub>j</sub>:  s<sub>i</sub>|<sub>∩</sub> <span class="op">≃</span> s<sub>j</sub>|<sub>∩</sub>   <span class="cmt"># A: „=" (strikt) · B: „≃" (kohärenter Weg)</span>
+⇒ genau eine globale Sektion   <span class="cmt"># das Detail-Budget, das auf dieser Naht ausgegeben wurde</span></div>
+
+<h3>4.3 Das epistemische Gate: Kohärenz ∧ Korrespondenz <span class="tag A">A</span></h3>
+<p>Auf den konstruierten Kohärenzraum legt B <i>zwei getrennte</i> Tests. <b>Kohärenz</b> prüft die innere Struktur (halten die Nähte?); <b>Korrespondenz</b> prüft die Weltkopplung (setzt das Ganze an eine unabhängige Quelle W an?). Einer allein reicht nie — Wahrheit ist kein Zustand, sondern ein Ziel:</p>
+<div class="rule">Wahrheit  = <span class="op">lim<sub>n→∞</sub> ( Kohärenz ∧ Korrespondenz )</span>   <span class="cmt"># angenähert, nie erreicht</span>
+Gerechtfertigte Akzeptanz = <span class="op2">kohärent ∧ (bisher) kein gescheiterter harter Kontaktpunkt</span>
+Kohärenz      = 1 − (Energie in k &gt; k<sub>noise</sub> / Energie im Budget)   <span class="cmt"># Nähte halten ⇔ tief-frequent</span>
+Korrespondenz = 1 − mean|modell − W| an den Kontaktpunkten / scale</div>
+
+<h3>4.4 Die fünf Pathologien als Fehlallokationen des Budgets <span class="tag both">fusion</span></h3>
+<p>Jede Pathologie (aus B) ist eine Art, wie das <em>begrenzte Budget</em> (aus A) falsch ausgegeben wird — oder gar nicht:</p>
+<ul>
+<li><b>1 · Kohärente Fiktion</b> — Nähte halten, die Welt wird nie berührt (Unter-Kommitment; das LLM-Phänomen). <i>Fusion:</i> Budget nie auf Kontakt ausgegeben, A's „Weite" wurde nie geprüft. Heilmittel: Erdung (Retrieval, Werkzeuge, Verifikation).</li>
+<li><b>2 · Faktenbuch / Naht bricht</b> — lokale Aussagen treffen die Welt, aber die Flicken fügen sich zu keiner globalen Sektion zusammen (Über-Kommitment auf Einzel-Treffer, Nähte inkohärent). <i>Fusion:</i> A's „wildes Interpolieren" — Budget auf hoch-freq. Einzelstellen. Heilmittel: bessere Synthese / Struktur.</li>
+<li><b>3 · Kontaktpunkt-Lügner</b> — innere Pfeile „lizenziert", die Daten spiegeln die Welt systematisch falsch. <i>Fusion:</i> A's Essence ist <em>falsch</em> gewählt (falscher tiefer Kern). Heilmittel: die Zugriffsfunktion O neu wählen.</li>
+<li><b>4 · Kalibrierter Fehler</b> — Kohärenz und Lizenzen halten, Kalibrierung systematisch leicht daneben; kein einzelner Punkt deckt es. <i>Fusion:</i> tiefe Frequenzen stimmen in Form, nicht in Norm (systematischer Bias im Essence). Heilmittel: Bias in den Connectors auditieren.</li>
+<li><b>5 · Frage außerhalb des Covers</b> — das Modell ist auf dem Cover kohärent, aber die <em>Frage</em> liegt jenseits; keine lizenzierte Brücke. <i>Fusion:</i> A's „Weite" — der nie-gesehene Fall, wo das Modell nichts lizenziertes sagt. Heilmittel: Nicht-Abdeckung erkennen („ich weiß es nicht").</li>
+</ul>
+
+<h3>4.5 Die fusionierte Mathematik <span class="tag both">fusion</span></h3>
+<p>Man schreibt das Modell als abgeschnittene Kosinus-Reihe — A's „Komplexität" und B's „Frequenz-Cutoff" sind derselbe Knob <b>K</b>, und B's Erdung ist ein zweiter Knob <b>g</b>:</p>
+<div class="rule">Modell<sub>K,g</sub>(x) = Σ<sub>k=0…K</sub> a<sub>k</sub> · cos(π k x)      K = Detail-Budget · g = Erdung (0 = interne Struktur, 1 = an W)
+Essence (A)  = tiefe Frequenzen (k ≤ 3, generalisiert) · Ornament/Rauschen = hohe (k ≥ 4)
+Generalisierungsfehler (A) ≈ Energie in k ≥ k<sub>noise</sub>  ·  Kohärenz (B) ≈ 1 − (hohe-Freq.-Anteil im Budget)
+Korrespondenz (B) ≈ 1 − mean|Modell − W| an Kontaktpunkten  ·  Wahrheit ≈ <span class="op">min</span>(Kohärenz, Korrespondenz)
+Regel:  Budget (erhalten, lokal fix) auf den <b>kontaktstabilen, tief-frequenten Kern</b> ausgeben, über ein wachsendes Cover</div>
+
+<h3>4.6 Grenzen &amp; Ehrlichkeits-Ecke <span class="tag both">fusion</span></h3>
+<ul>
+<li><b>A's eigene Ehrlichkeit:</b> die exponentiellen Stücke-Schranken (Tiefe) erreicht ein zufällig initialisiertes Netz in der Praxis nicht (Erwartungswert wächst nur linear); NTK-Dynamik ist idealisiert.</li>
+<li><b>B ist eine Conjecture</b> (Conjecture 6) / ein interaktives Modell, kein Theorem; „conserved budget", „convex combination in fixed d", „Wahrheit = Limes" sind Modellannahmen, die zu beweisen wären.</li>
+<li><b>Die fusionierende Brücke selbst:</b> die Definition „Essence = kontaktstabil = tief-frequent" ist die <i>load-bearing</i> Vermittlung — sie ist selbst eine Annahme, die an echten Netzen geprüft werden müsste (dass Kontaktstabilität tatsächlich in den tiefen Frequenzen konzentriert ist). Das 1-D-Kosinus-Spiel unten reproduziert A's Overfitting-Parabel <i>und</i> B's Kohärenz/Korrespondenz-Gate, aber weder die volle NTK- noch die Homotopie-Geometrie. Es ist ein Stand-in für die Idee, nicht der Beweis.</li>
+</ul>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Visualisierung</h2>
+<p>Ein Weltmodell als <b>begrenztes Detail-Budget, das an die Welt geerdet ist</b> — die zwei Knobs vereint: <b>K</b> (A: wie viel Frequenz-Detail wird ausgegeben; klein = scharf/unterfitt, groß = hoch-freq. verbrannt/Überfitt) und <b>Erdung g</b> (B: wie stark das Modell an die externe Welt W statt an seine interne Struktur angelegt ist; g=0 → kohärente Fiktion). Oben: die externe Welt W (blau, mit harten Kontaktpunkten), das Essence (= tief-freq. Anteil, gestrichelt), das interne „Halluzinations"-Prior (rosa, lockt bei g&lt;1) und das gefittete Modell<sub>K,g</sub>. Unten: das Frequenz-Spektrum — ausgegeben (k ≤ K) leuchtet, Essence k ≤ 3 <span style="color:var(--signal)">teal</span>, Ornament k ≥ 4 <span style="color:var(--noise)">rosa</span>. Der violette Frage-Punkt kann das Cover [0,1] verlassen (Pathologie 5). Die Readouts lesen den fusionierten Status live ab:</p>
+
+<div class="demo">
+  <h3>Detail-Budget (A) × Erdung (B): scharf, generalisierend, geerdet</h3>
+  <p class="dsub">K = Detail-Budget (max. Frequenz / Komplexität). g = Erdung (0 % = interne Struktur, 100 % = an W). N = Trainingspunkte. „Neue Stichprobe" zieht frisches Rauschen.</p>
+  <div class="presets">
+    <button id="pSweet" type="button">✓ Sweet-Spot (verifiziert)</button>
+    <button id="pOver" type="button">A · Überfitt (Detail verbrennt)</button>
+    <button id="pFiktion" type="button">B · Kohärente Fiktion</button>
+    <button id="pBruch" type="button">B · Naht bricht / ungeerdet</button>
+    <button id="pAußen" type="button">B · Außerhalb des Covers</button>
+  </div>
+  <canvas id="fzCv" width="820" height="520"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Detail-Budget K (Frequenz-Cutoff = Modell-Komplexität) — A</span><b id="kV">3</b></div>
+    <input type="range" id="kS" min="0" max="14" value="3">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Erdung g (Korrespondenz-Anker an W) — B</span><b id="gV">100%</b></div>
+    <input type="range" id="gS" class="g" min="0" max="100" value="100">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Trainingsbeispiele N</span><b id="nV">16</b></div>
+    <input type="range" id="nS" min="6" max="40" value="16">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Frage-Punkt (x; darf das Cover [0,1] verlassen) — B</span><b id="qV">0.35</b></div>
+    <input type="range" id="qS" class="q" min="0" max="130" value="50">
+  </div>
+  <div class="presets" style="margin-bottom:0"><button id="nNew" type="button">Neue Stichprobe ziehen</button></div>
+  <div class="ro">
+    <div class="box"><div class="k">Kohärenz (Nähte halten)</div><div class="v" id="cCoh">–</div></div>
+    <div class="box res"><div class="k">Korrespondenz (an W)</div><div class="v" id="cCor">–</div></div>
+    <div class="box no"><div class="k">Generalis.-Fehler</div><div class="v" id="cGen">–</div></div>
+    <div class="box ac"><div class="k">Wahrheit ≈ min</div><div class="v" id="cTruth">–</div></div>
+  </div>
+  <div id="fzOut" class="badge-out warn">–</div>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--sky)"></i> Externe Welt W (Referenz)</span>
+    <span><i class="dot" style="background:var(--signal)"></i> Essence / tiefe Frequenzen</span>
+    <span><i class="dot" style="background:var(--accent)"></i> Modell<sub>K,g</sub></span>
+    <span><i class="dot" style="background:var(--noise)"></i> Interne Struktur (g&lt;1) / Ornament</span>
+    <span><i class="dot" style="background:var(--green)"></i> harte Kontaktpunkte</span>
+  </div>
+</div>
+
+<div class="note sky">
+  <b>Was du siehst:</b> <b>Sweet-Spot</b> (K≈3, g=100): Modell trifft das Essence, Kohärenz und Korrespondenz hoch, Generalisierungsfehler niedrig → <i>scharf (A) + geerdet (B) + generalisierend (A)</i>. <b>Überfitt</b> (K groß, g=100): Modell jagt das hochfrequente Rauschen — Trainingspassung gut, aber Kohärenz sinkt und das Generalisierungs- wie Korrespondenz-Maß leidet (A: wildes Interpolieren, B: Naht bricht, keine globale Sektion). <b>Kohärente Fiktion</b> (K klein, g=0): glatte, kohärente innere Struktur, aber sie folgt der rosa „Halluzination" statt W → Kohärenz hoch, Korrespondenz ~0 (B: das LLM-Phänomen, A: Weite nie geprüft). <b>Außerhalb</b> (Frage-Punkt jenseits [0,1]): keine lizenzierte Brücke (B: Pathologie 5, A: nie-gesehener Fall). Der Sweet-Spot ist derselbe in beiden Papiern: das Budget auf den kontaktstabilen, tief-frequenten Kern.
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="card prov">
+  <div>
+    <a href="../r1-025.html">r1-025.html</a>
+    <div class="d">„Fusion 025 — Das Detail-Budget: Schärfe gegen Weite" (A): ein endliches, „finite and conserved" Detail-Budget bei fester Dimensionalität d (Modell-Komplexität = Frequenz-Koeffizienten), Überfitt vs. Unschärfe als schlechte Allokation, Double Descent + NTK („einfache Lösungen generalisieren", „mehr Komplexität ist Heil"), Essence in den tiefen Frequenzen (abgeschnittene Kosinus-Reihe, K = Cutoff = Komplexität), Tiefe multipliziert Knicke (2<sup>n−1</sup>).</div>
+  </div>
+  <div>
+    <a href="../r1-026.html">r1-026.html</a>
+    <div class="d">„Fusion 026 — Kohärenzraum &amp; geerdetes Weltmodell" (B): ein Weltmodell als Kohärenzraum (lokale Flicken über Überlappungen geflickt, Kohärenz ≃ statt Gleichheit =, Homotopie/∞-Garbe/HoTT), strikte Trennung Kohärenz (innen) vs. Korrespondenz (an unabhängige Welt W über harte Kontaktpunkte), Wahrheit = lim(n→∞) nie erreicht, fünf Pathologien (kohärente Fiktion, Faktenbuch, Kontaktpunkt-Lügner, kalibrierter Fehler, Frage außerhalb des Covers), Bedeutung als Position im Netz der Unterschiede.</div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <p>Fusion 017 · Runde 2 · selbstständige HTML, keine Netzwerk-Daten, theme-reaktiv. <a href="#" id="themeLink">Theme wechseln</a></p>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('fzCv');
+  var ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+  var kS=document.getElementById('kS'), gS=document.getElementById('gS'), nS=document.getElementById('nS'), qS=document.getElementById('qS');
+  var kV=document.getElementById('kV'), gV=document.getElementById('gV'), nV=document.getElementById('nV'), qV=document.getElementById('qV');
+  var cCoh=document.getElementById('cCoh'), cCor=document.getElementById('cCor');
+  var cGen=document.getElementById('cGen'), cTruth=document.getElementById('cTruth');
+  var fzOut=document.getElementById('fzOut');
+  var KMAX=14, NOISEK=4, CORR_SCALE=0.35;
+  var seed=20261017;
+  var CPS=[0.12,0.34,0.55,0.78,0.92];
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|a)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+  function world(x){return 0.5 + 0.30*Math.cos(Math.PI*x) + 0.16*Math.cos(2*Math.PI*x) - 0.07*Math.cos(3*Math.PI*x);}
+  function hall(x){return 0.42 + 0.34*Math.cos(Math.PI*(x+0.18)) - 0.12*Math.cos(2*Math.PI*(x+0.18));}
+  function model(x,a){var s=0,i;for(i=0;i<a.length;i++){s+=a[i]*Math.cos(Math.PI*i*x);}return s;}
+
+  function genData(N,seedv,g){
+    var r=mulberry32(seedv ^ (N*7919) ^ (Math.round(g*100)*131));
+    var pts=[],i;
+    for(i=0;i<N;i++){
+      var x=(i+0.5)/N;
+      var y=g*world(x)+(1-g)*hall(x)+(r()*2-1)*0.11;
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+  function solve(A,b){
+    var n=b.length,i,j,k,m=A.map(function(r){return r.slice();}),c=b.slice();
+    for(i=0;i<n;i++){
+      var piv=i;
+      for(j=i+1;j<n;j++){ if(Math.abs(m[j][i])>Math.abs(m[piv][i])) piv=j; }
+      var tm=m[i];m[i]=m[piv];m[piv]=tm;
+      var tc=c[i];c[i]=c[piv];c[piv]=tc;
+      var d=m[i][i]||1e-12;
+      for(j=i;j<n;j++){ m[i][j]/=d; }
+      c[i]/=d;
+      for(k=0;k<n;k++){
+        if(k===i) continue;
+        var f=m[k][i]; if(f===0) continue;
+        for(j=i;j<n;j++){ m[k][j]-=f*m[i][j]; }
+        c[k]-=f*c[i];
+      }
+    }
+    return c;
+  }
+  function fit(pts,K){
+    var n=K+1,i,j,k;
+    var A=[],b=[];
+    for(k=0;k<n;k++){ A.push(new Array(n).fill(0)); b.push(0); }
+    for(i=0;i<pts.length;i++){
+      var x=pts[i][0],y=pts[i][1],ph=[];
+      for(k=0;k<n;k++){ ph.push(Math.cos(Math.PI*k*x)); }
+      for(k=0;k<n;k++){
+        b[k]+=ph[k]*y;
+        for(j=0;j<n;j++){ A[k][j]+=ph[k]*ph[j]; }
+      }
+    }
+    var tr=0; for(k=0;k<n;k++){ tr+=A[k][k]; }
+    var ridge=1e-3*((tr/n)||1);
+    for(k=0;k<n;k++){ A[k][k]+=ridge; }
+    return solve(A,b);
+  }
+  function spectrum(pts){
+    var N=pts.length,out=[],i;
+    for(var k=0;k<=KMAX;k++){
+      var s=0;
+      for(i=0;i<N;i++){ s+=pts[i][1]*Math.cos(Math.PI*k*pts[i][0]); }
+      out.push(k===0 ? s/N : 2*s/N);
+    }
+    return out;
+  }
+
+  function draw(){
+    var K=parseInt(kS.value,10), N=parseInt(nS.value,10);
+    var g=parseInt(gS.value,10)/100, xq=(parseInt(qS.value,10)/100)-0.15;
+    kV.textContent=K; nV.textContent=N; gV.textContent=Math.round(g*100)+'%'; qV.textContent=xq.toFixed(2);
+
+    var pts=genData(N,seed,g);
+    var a=fit(pts,K);
+    var sp=spectrum(pts);
+
+    var i,k;
+    var trainErr=0;
+    for(i=0;i<pts.length;i++){ var e=model(pts[i][0],a)-pts[i][1]; trainErr+=e*e; }
+    trainErr=Math.sqrt(trainErr/pts.length);
+
+    var GRID=240, genAcc=0;
+    for(i=0;i<=GRID;i++){ var gx=i/GRID, ge=model(gx,a)-world(gx); genAcc+=ge*ge; }
+    var genErr=Math.sqrt(genAcc/(GRID+1));
+
+    var totE=0,hfE=0;
+    for(k=0;k<=K;k++){ var av=a[k]*a[k]; totE+=av; if(k>=NOISEK) hfE+=av; }
+    var coh = totE>1e-12 ? clamp(1-hfE/totE,0,1) : 1;
+
+    var csum=0;
+    for(i=0;i<CPS.length;i++){ csum+=Math.abs(model(CPS[i],a)-world(CPS[i])); }
+    var cor=clamp(1-(csum/CPS.length)/CORR_SCALE,0,1);
+
+    var truth=Math.min(coh,cor);
+    var totAct=0,noiseAct=0;
+    for(k=0;k<=K;k++){ var av2=Math.abs(sp[k]); totAct+=av2; if(k>=NOISEK) noiseAct+=av2; }
+    var noiseFrac=totAct>1e-9 ? noiseAct/totAct : 0;
+
+    cCoh.textContent=Math.round(coh*100)+'%';
+    cCor.textContent=Math.round(cor*100)+'%';
+    cGen.textContent=genErr.toFixed(3);
+    cTruth.textContent=Math.round(truth*100)+'%';
+
+    var qIn=(xq>=0.02 && xq<=0.98);
+    var cls,msg;
+    if(!qIn){
+      cls='bad';
+      msg='Außerhalb des Covers — keine lizenzierte Brücke (B, Pathologie 5). Die Frage liegt jenseits der Flicken; A\'s „Weite" (nie-gesehene Fälle) und B\'s „außerhalb" sprechen dort nicht. Das Modell darf hier „ich weiß es nicht" sagen.';
+    } else if(coh<0.55){
+      cls='bad';
+      msg='Überfitt / Naht bricht — das Budget (K zu groß) ist auf hochfrequentes Detail verbrannt: wildes Interpolieren (A) ⇒ die Nähte tragen keinen kohärenten Connector, es entsteht keine globale Sektion (B, Pathologie 2). Kohärenz gesunken auf '+Math.round(coh*100)+'%, '+Math.round(noiseFrac*100)+'% des Budgets liegen bei k≥4.';
+    } else if(cor<0.45){
+      cls='bad';
+      msg='Kohärente Fiktion (B, Pathologie 1) — brillante, kohärente innere Struktur (Kohärenz '+Math.round(coh*100)+'%), aber das Budget wurde nie auf die Welt (Korrespondenz '+Math.round(cor*100)+'%) ausgegeben. Genau das, was ein LLM verwechselt; A\'s „Weite" wurde nie geprüft.';
+    } else if(genErr<0.08 && cor>=0.78 && coh>=0.6){
+      cls='ok';
+      msg='Verifiziert — scharf (A), generalisierend (A: Fehler '+genErr.toFixed(3)+') und an der Welt geerdet (B: Korrespondenz '+Math.round(cor*100)+'%). Gerechtfertigte Akzeptanz: Kohärenz ∧ Korrespondenz. Wahrheit bleibt ein Limes — angenähert, nie erreicht.';
+    } else {
+      cls='warn';
+      msg='Gerechtfertigt (vorläufig) — kohärent ('+Math.round(coh*100)+'%) und ansatzweise geerdet ('+Math.round(cor*100)+'%), aber die Evidenz ist dünn. Neue Kontaktpunkte (B) / neue Daten (A) könnten es brechen.';
+    }
+    fzOut.className='badge-out '+cls; fzOut.textContent=msg;
+
+    var card=cssVar('--card'), ink=cssVar('--ink'), faint=cssVar('--faint'), grid=cssVar('--grid');
+    var signal=cssVar('--signal'), noise=cssVar('--noise'), accent=cssVar('--accent');
+    var green=cssVar('--green'), sky=cssVar('--sky'), ptfill=cssVar('--pt-fill');
+    var mono=cssVar('--mono');
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=card; ctx.fillRect(0,0,W,H);
+
+    var tX=34,tY=16,tW=W-34-16,tH=286;
+    function X(x){return tX+x*tW;}
+    function Y(v){return tY+tH-(clamp(v,-0.1,1.2)+0.1)/1.3*tH;}
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var gi=0;gi<=4;gi++){ var gy=tY+tH*gi/4; ctx.beginPath();ctx.moveTo(tX,gy);ctx.lineTo(tX+tW,gy);ctx.stroke(); }
+    ctx.font='10px '+mono; ctx.fillStyle=faint; ctx.textAlign='right';
+    ctx.fillText('1.2',tX-6,tY+9); ctx.fillText('0.0',tX-6,tY+tH+3);
+    ctx.textAlign='left'; ctx.fillText('x →',tX+tW-22,tY+tH+16);
+
+    function curve(fn,col,lw,dash){
+      ctx.strokeStyle=col; ctx.lineWidth=lw;
+      if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+      ctx.beginPath();
+      for(var i2=0;i2<=400;i2++){ var xx=i2/400, px=X(xx), py=Y(clamp(fn(xx),-0.1,1.2)); i2?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    curve(hall,noise,1.6,[4,4]);
+    curve(world,sky,2.4,[]);
+    curve(function(x){return model(x,a);},accent,2.8,[]);
+
+    ctx.fillStyle=green;
+    for(var ci=0;ci<CPS.length;ci++){ ctx.beginPath();ctx.arc(X(CPS[ci]),Y(world(CPS[ci])),4,0,7);ctx.fill(); }
+
+    for(i=0;i<pts.length;i++){
+      ctx.beginPath();ctx.arc(X(pts[i][0]),Y(clamp(pts[i][1],-0.1,1.2)),3.4,0,7);
+      ctx.fillStyle=ptfill;ctx.fill();ctx.strokeStyle=ink;ctx.lineWidth=1.4;ctx.stroke();
+    }
+
+    var qIn2=(xq>=0 && xq<=1);
+    ctx.strokeStyle=accent; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(X(xq),tY-6);ctx.lineTo(X(xq),tY+tH);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=accent; ctx.font='bold 11px '+mono; ctx.textAlign='center';
+    if(qIn2){ ctx.fillText('Frage',X(xq),tY-10); }
+    else { ctx.fillStyle=noise; ctx.font='bold 22px '+mono; ctx.fillText('?',X(clamp(xq,0.005,0.995)),tY+18); }
+    ctx.textAlign='left';
+
+    ctx.font='10px '+mono;
+    var ly=tY+12;
+    ctx.fillStyle=sky; ctx.fillText('W (externe Welt, Referenz)',tX+4,ly);
+    ctx.fillStyle=accent; ctx.fillText('Modell_K,g  (K='+K+', g='+Math.round(g*100)+'%)',tX+4,ly+13);
+    ctx.fillStyle=noise; ctx.fillText('Interne Struktur (lockt bei g<100%)',tX+4,ly+26);
+
+    var sY=344,sH=118,sX=34,sW=W-34-16;
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(sX,sY+sH);ctx.lineTo(sX+sW,sY+sH);ctx.stroke();
+    ctx.font='10px '+mono; ctx.fillStyle=faint; ctx.textAlign='left';
+    ctx.fillText('Frequenz-Spektrum der Daten — ausgegeben (k ≤ K) leuchtet, Essence k ≤ 3 teal, Ornament/Rauschen k ≥ 4 rosa',sX,sY-8);
+
+    var maxSp=0;
+    for(k=0;k<=KMAX;k++){ var msp=Math.abs(sp[k]); if(msp>maxSp) maxSp=msp; }
+    if(maxSp<1e-6) maxSp=1;
+    var barW=sW/(KMAX+1);
+    for(k=0;k<=KMAX;k++){
+      var bx=sX+k*barW+2, bw=barW-4;
+      var h=Math.abs(sp[k])/maxSp*(sH-8);
+      var by=sY+sH-h;
+      var spent=(k<=K);
+      ctx.globalAlpha=spent?0.92:0.22;
+      ctx.fillStyle=(k<NOISEK)?signal:noise;
+      ctx.fillRect(bx,by,bw,Math.max(h,0.5));
+      ctx.globalAlpha=1;
+      if(k%2===0){
+        ctx.fillStyle=faint; ctx.font='9px '+mono; ctx.textAlign='center';
+        ctx.fillText(k, bx+bw/2, sY+sH+12);
+      }
+    }
+    var sepX=sX+NOISEK*barW;
+    ctx.strokeStyle=grid; ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(sepX,sY-2);ctx.lineTo(sepX,sY+sH);ctx.stroke();ctx.setLineDash([]);
+    ctx.font='10px '+mono;
+    ctx.fillStyle=signal; ctx.textAlign='left'; ctx.fillText('Essence  k ≤ 3 (generalisiert, scharf, kontaktstabil)',sX,sY+sH+26);
+    ctx.fillStyle=noise; ctx.textAlign='right'; ctx.fillText('Ornament / Rauschen  k ≥ 4 (Überfitt, Naht bricht)',sX+sW,sY+sH+26);
+  }
+
+  [kS,gS,nS,qS].forEach(function(el){ el.addEventListener('input',draw); });
+
+  function setP(K,g,N,q){
+    kS.value=K; gS.value=g; nS.value=N; qS.value=q; draw();
+  }
+  document.getElementById('pSweet').addEventListener('click',function(){ setP(3,100,16,50); });
+  document.getElementById('pOver').addEventListener('click',function(){ setP(14,100,12,50); });
+  document.getElementById('pFiktion').addEventListener('click',function(){ setP(3,0,16,50); });
+  document.getElementById('pBruch').addEventListener('click',function(){ setP(14,30,16,50); });
+  document.getElementById('pAußen').addEventListener('click',function(){ setP(3,100,16,128); });
+  document.getElementById('nNew').addEventListener('click',function(){ seed=(seed*1103515245+12345)&0x7fffffff; draw(); });
+
+  function toggleTheme(){
+    document.documentElement.classList.toggle('dark');
+    var d=document.documentElement.classList.contains('dark');
+    try{ localStorage.setItem('r2017theme', d?'dark':'light'); }catch(e){}
+    draw();
+  }
+  document.getElementById('themeBtn').addEventListener('click',toggleTheme);
+  var tl=document.getElementById('themeLink');
+  if(tl){ tl.addEventListener('click',function(e){ e.preventDefault(); toggleTheme(); }); }
+  var mo=new MutationObserver(function(){ draw(); });
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  draw();
+  window.addEventListener('resize',draw);
+})();
+</script>
+</body>
+</html>

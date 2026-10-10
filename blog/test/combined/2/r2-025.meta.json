@@ -1,0 +1,16 @@
+{
+  "no": "025",
+  "a": "combined/r1-075.html",
+  "b": "combined/r1-076.html",
+  "a_title": "Leere Richtungen: Falten (Origami) × Parken (Generalisierung)",
+  "b_title": "Der dünne Hebel: ein lineares Objekt, das Verhalten steuert",
+  "combined_theme": "leere-richtungen-duenner-hebel",
+  "one_line": "Überparametrisierung erzeugt einen großen, größtenteils leeren orthogonalen Raum; nur einige wenige lineare Richtungen sind geladen — sie sind zugleich die Adressen des Verhaltens, die Werkbank der Trennbarkeit und der Tresor, in dem der Restfehler am Test unsichtbar wird.",
+  "contradictions": [
+    "Robustheit des steuernden linearen Objekts: A (r1-075, Litman-Guo-Seite) nennt die Generalisierungs-Struktur eine Invariante, die exakt gilt selbst bei 4,8×-Kern-Drift (die konkrete Dynamik wird 'washed out'); B (r1-076, Arditi-Seite) sagt, das Verhalten sitzt auf EINE Richtung und ist maximal zerbrechlich — eine Rang-1-Änderung (der minimalste Perturbation) bricht es komplett weg.",
+    "Rolle/Zeichen der Überfluss-Dimensionen: A (r1-075) macht die leeren/Null-Richtungen zum Parkhaus für das unerwünschte Rauschen (G·P_res=0, 'Breite = Parkhaus'); B (r1-076) macht die hohen orthogonalen Achsen zum Speicher für Konzepte/Verhalten (eine ganze Richtung = Verweigerung). Dieselben überschüssigen Dimensionen bekommen entgegengesetztes Vorzeichen (Fehler vs. Funktion).",
+    "Information (nächste reale Tension): A-Origami-Seite (r1-075, 'fold don't crush') verlangt injektive Feature-Map = Informations-Erhaltung; B-Cover-Seite (r1-076) komprimiert — wesentliche Information einer unendlichen Trainingsmenge auf ≤2d Extrem-Punkten, Verhalten ist Rang 1 (wenige Freiheitsgrade genügen)."
+  ],
+  "resolution": "Ein einziger großer, orthogonaler, leere Raum, drei Ebenen: (1) robust vs. zerbrechlich → robust in der Gesamtheit (Invariante der Signalkanal/Reservoir-Zerlegung, A) vs. dünn in der Einzelkoordinate (Rang-1, B); Robustheit der Funktion ≠ Robustheit einer Koordinate. (2) Parkhaus vs. Speicher → EIN Pool: wenige Achsen sind geladen (Verhalten B + Trennung A-Werkbank), die Überzahl bleibt leer und parkt den Restfehler (A-Tresor); orthogonal und leer zugleich. (3) Erhalten vs. komprimieren → zwei verschiedene Abbildungen: injektiv auf der Eingabe/Feature-Seite, rangmangel/komprimiert auf der Ausgabe/Entscheidungs-Seite (der Zug, den A bereits für injektiv vs. rangmangel nutzte).",
+  "viz": "Canvas (inline Daten, kein Netzwerk, theme-aware): links ein Diskus aus vielen leeren (hellen) orthogonalen Richtungen mit d geladenen (hellen) Richtungen — eine ist r̂ (Verweigerung, B) und zugleich die Trennungsrichtung (A); zwei Gauss-Blobs werden von einer flachen Schnittebene ⊥ r̂ getrennt, ein Testpunkt wird entlang r̂ geschoben (α-Hebel, kippt ins Verweigern). Rechts: Zerlegung des Restfehlers in Signalanteil (1−ρ)r (zählt) und Reservoiranteil ρr (→0 am Test, G·P_res=0) plus Covers Kapazitätskurve P(β) mit Phasenübergang bei β=2 und Kapazität 2d. Slider: d (geladene Richtungen), ρ (Reservoir-Anteil), β=N/d, α (Schub entlang r̂) + Theme-Toggle; null Console-Errors."
+}

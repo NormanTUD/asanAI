@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Rechnung als Topologie — Betti-Register ✕ Fusions-Attraktor (R2-035)</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#fffdf8; --card:#ffffff;
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --stroke:rgba(20,28,45,.12); --stroke-hi:rgba(20,28,45,.24);
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px; --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-bg:#f4f0e7; --viz-grid:rgba(20,28,45,.08); --viz-txt:#1c2333;
+  --viz-cls0:#6451d8; --viz-cls1:#0d8f80; --viz-sum:#b57e00;
+  --viz-correct:#0d8f80; --viz-wrong:#c93a86; --viz-line:rgba(20,28,45,.18);
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:#0e1524; --card:#121a2c;
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --stroke:rgba(255,255,255,.09); --stroke-hi:rgba(255,255,255,.20);
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-bg:#0c1120; --viz-grid:rgba(255,255,255,.07); --viz-txt:#e8ecf6;
+  --viz-cls0:#8a7cff; --viz-cls1:#5ee0d0; --viz-sum:#ffc860;
+  --viz-correct:#5ee0d0; --viz-wrong:#ff7ac0; --viz-line:rgba(255,255,255,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.68;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(760px 480px at 10% 0%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 62%),
+             radial-gradient(760px 520px at 92% 4%,color-mix(in srgb,var(--acc) 10%,transparent),transparent 62%)}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 20px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc4);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap;text-decoration:none}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel);color:var(--txt);cursor:pointer;white-space:nowrap}
+article{max-width:820px;margin:0 auto;padding:18px 22px 90px}
+h1{font-size:clamp(26px,5vw,41px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:14px 0 8px}
+h1 em{font-style:normal;color:var(--acc)}
+.sub{font-size:12.5px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+h2{font-size:clamp(20px,3.4vw,28px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16px;font-weight:660;margin:22px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong,b{color:var(--txt);font-weight:650}
+em{color:var(--acc4);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--acc4) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+section{padding:36px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc2);background:color-mix(in srgb,var(--acc2) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note.a{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc2)}.note.t .h{color:var(--acc4)}.note.a .h{color:var(--acc3)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc3);font-weight:660;margin-bottom:8px;display:block}
+.tag2{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;margin-right:6px;vertical-align:middle}
+.tag2.A{background:color-mix(in srgb,var(--acc4) 16%,transparent);color:var(--acc4)}
+.tag2.B{background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--acc)}
+.tag2.F{background:color-mix(in srgb,var(--acc3) 18%,transparent);color:var(--acc3)}
+.eq{overflow-x:auto;padding:12px 15px;font-size:13px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;margin:12px 0;line-height:1.95;white-space:pre}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.k{color:var(--acc4);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc4);box-shadow:0 0 12px var(--acc4);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--viz-bg);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(98px,1fr));margin-top:14px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc4);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc4)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc4);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc4)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc4);border:2px solid var(--bg2)}
+input[type=range].v::-webkit-slider-thumb{background:var(--acc)}
+input[type=range].v::-moz-range-thumb{background:var(--acc)}
+.prov{display:grid;gap:12px;margin:14px 0}
+.prov a{display:block;background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:12px 16px;color:var(--txt)}
+.prov a:hover{border-color:var(--acc)}
+.prov a .t{font-family:var(--mono);font-size:12px;color:var(--acc)}
+.prov a .d{font-size:13.5px;color:var(--txt-dim);margin-top:4px}
+footer{border-top:1px solid var(--stroke);margin-top:56px;padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION R2 · 035</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: r1-033.html ✕ r1-042.html  (Round 2)</p>
+  <h1>Die <em>Rechnung ist die Topologie</em> — Betti-Register, die doppelt arbeiten</h1>
+  <p>Beide Quellen sind selbst schon Fusions-Papiere und treffen auf <strong>dieselbe Metaposition</strong> zu, nur über zwei verschiedene Paaare: <strong>A</strong> (r1-033: Raumwarpung ✕ Simpliziale Komplexe) und <strong>B</strong> (r1-042: Topologie-LLM ✕ Grokking-Torus) halten jeweils fest, dass <em>die Rechnung eines tiefen Netzes ein topologisches Objekt ist — ein Komplex / Attraktor, dessen Betti-Zahlen die Rechnung sind</em>. A kommt dort über <em>gewarbten Raum + gefüllte Komplexe</em> hin, B über <em>dynamisches System + einen grokkten Additions-Torus</em>. Die R2-Fusion: <em>das Objekt ist ein (filtriertes) topologisches Rechenobjekt, dessen Betti-Zyklen als <strong>Register</strong> doppelt dienen (Bedeutung ordnen / Transformation ausführen) und dessen <strong>Lesbarkeit die Symmetrie der Aufgabe</strong> bestimmt — verwarpen (A, generisch) oder harmonischer Torus (B, hoher Symmetrie).</em></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Ein topologisches Rechenobjekt, zwei Koordinaten, ein Betti-Zähler</h2>
+    <p><strong>A</strong> (r1-033) liest ein Netz aus zwei Seiten: feedforward macht die Rechnung aus <em>komponierten, lokal linearen Abbildungen</em>, die den Raum so <strong>warpen</strong>, bis in der letzten Hidden-Schicht <em>eine Gerade trennt</em> (der Bogen σ ist alles; ReLU-Regionen wachsen exponentiell mit der Tiefe). Die Attention-Seite füllt aus wechselseitiger Attention einen <strong>Simplizialkomplex</strong> (0/1/2-Simplexe per Schwellwert ε) mit Betti-Zahlen β₀/β₁ und Euler <code>χ = V − E + F</code> als «Topologie der Bedeutung». Tiefe / Runden / sinkendes ε ist ein <strong>Filtrationsparameter</strong> (<code>K_{ε₀} ⊃ K_{ε₁} ⊃ …</code>), der das Objekt von «verschränkt» nach «aufgelöst» (β₀ = 2, gefüllte within-group-Flächen) bewegt.</p>
+    <p><strong>B</strong> (r1-042) liest dasselbe als <strong>dynamisches System</strong>: der Residual Stream ist der Zustandsraum, der Layer-Durchgang <code>f(x) = Attn(x) + MLP(x)</code> die Zeitschritt-Abbildung; daraus entstehen <em>Attraktoren</em>, <em>Becken</em> und in späteren Layern <em>Zyklen und Tori</em> (β₀/β₁/β₂). B's verifizierte Instanz ist ein 1-Layer-Transformer, der <code>(a+b) mod 113</code> als <em>Rotation auf dem Kreis</em> löst: cos/sin-Embedding, bilineare Attention (<code>cos a·cos b</code>), MLP mit der Kosinus-Additionsformel, Unembedding <code>score(c)=cos ω(a+b−c)</code> und <em>fünf</em> Frequenzen <code>{14,35,41,42,52}</code> (<code>Σα ≈ 260,7</code>), die per Interferenz einen <em>scharfen Attraktor</em> bei <code>c*</code> bilden — ein <strong>5-Torus (β₁ = 5)</strong>, entstanden durch Grokking (Memorization → verborgener Torus → Cleanup).</p>
+    <p>Die <strong>einheitliche R2-Position</strong>: A's «gewarbener Raum + gefüllter Komplex» und B's «Attraktor-Torus, der addiert» sind <em>dasselbe Objekt in zwei Koordinaten</em>. Das Netz rechnet, indem es ein (filtriertes) topologisches Objekt realisiert — ein Simplizialkomplex, der zugleich ein dynamischer Attraktor ist. Die Betti-Zyklen sind <strong>Register</strong>: β₀ zählt getrennte Komponenten (A: zwei Klassen; B: ein zusammenhängender Attraktor), β₁ zählt unabhängige 1-Zyklen (A: Bedeutungsschleifen/Löcher; B: Frequenz-Kreise, die die Addition <em>ausführen</em>). Und der «Tiefe/ε/Runden/Layer»-Parameter ist in beiden der Hebel, der das Objekt auflöst — nur dass <em>Symmetrie der Aufgabe</em> die <strong>Lesbarkeit</em> bestimmt: bei hoher, gruppenstrukturierter Symmetrie (B, Rotation) ist das Objekt <em>voll harmonisch/linear</em> lesbar; bei niedriger Symmetrie (A, generisch) nur <em>stückweise-linear</em>, und dann zahlt man die Auflösung mit <strong>Tiefe/Stacking</strong>. <em>Kurz: Rechnung = Topologie; Betti-Zyklen = Register; Symmetrie bestimmt, ob man es als gewarpten Raum (A) oder als linearen Torus (B) abliest.</em></p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei echte Stellungen, die nicht aufgehen</h2>
+    <p>A und B widersprechen sich nicht im Formalen (beide setzen «das Netz verbirgt ein niedrige-dimensionales, topologisches Rechenobjekt» voraus). Aber sie nehmen zu drei Stellen <strong>unvereinbare Stellungen</strong> zum <em>selben</em> Symbol und zum <em>selben</em> Parameter ein:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Was die Betti-Zahlen <em>tun</em> — deskriptiv vs. funktional (der schärfste)</span>
+      <p><span class="tag2 A">A</span> gibt β₀/β₁ die Rolle <em>deskriptiver Diagnostik</em>: sie sind «diagnostische Metriken für die Struktur von Attention» / «Topologie der <em>Bedeutung</em>». β₀ = 2 sagt «Klassen getrennt», ein gefülltes 2-Simplex sagt «drei Konzepte gemeinsam komponiert». Die Betti-Zahl beschreibt einen <em>Schnappschuss</em> der semantischen Struktur — sie <em>tut</em> an sich nichts.</p>
+      <p><span class="tag2 B">B</span> gibt β₁ die Rolle <em>funktionaler Algorithmus-Dimension</em>: β₁ = 5 ist die Anzahl der <em>unabhängigen Frequenz-Kreise, die die Addition wirklich ausführen</em> — ein <em>Register, das rechnet</em>. Und das ist <em>kausal verifiziert</em>: die Ablation nicht-schlüsselfrequenzen <em>verbessert</em> sogar (Loss −70 %), also ist der Torus der wirksame Teil. β₁ misst hier <em>Grad der Freiheit der Rechnung</em>, nicht Bedeutung.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>Dasselbe Symbol <code>β₁</code>, zwei Ontologien: bei A ein <em>deskriptives Loch</em> in der Bedeutung, bei B ein <em>belasteter Frequenz-Kreis</em>, der die Transformation ausführt. A: Betti = «wie sieht die Struktur aus». B: Betti = «wie viele Register <em>rechnen</em>».</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Das Objekt &amp; der «Tiefe»-Parameter — Filter auf fester Menge vs. Fluss einer Abbildung; Stacking vs. ein bilinearer Schritt</span>
+      <p><span class="tag2 A">A</span> ist sein Objekt ein <em>filtriertes Set</em>: ein Vietoris–Rips-Komplex <code>K_ε</code> auf einer <em>festen</em> Punktmenge. «Tiefe / ε / Runden» ist ein <em>Schwellwert-Filter</em> auf statischen Daten (welche Simplexe existieren bei Skala ε). Und die Expressions-Maschine ist das <em>Stacking</em>: ReLU-Regionen <em>exponentiell in der Tiefe</em> — Tiefe <em>ist</em> der Kapazitäts-Hebel.</p>
+      <p><span class="tag2 B">B</span> ist sein Objekt ein <em>dynamisches System</em>: der Residual Stream, <code>f(x)=Attn(x)+MLP(x)</code>, «Layer» = <em>Iteration einer Abbildung</em> auf einem Zustand (Trajektorien konvergieren zu Attraktoren). Der Parameter «Layer/Tiefe» ist also <em>zeitliche Iteration</em>, kein Schwellwert. Und B's <em>verifizierte</em> Instanz erledigt die ganze Addition in <em>einem</em> Layer über <em>einen</em> bilinearen Schritt — der Torus entsteht <em>nicht</em> durch Stacking.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A's Parameter = <em>Filter auf einem Set</em> (kombinatorisch: welche Kante bei ε), B's = <em>Fluss einer Abbildung</em> (dynamisch: wohin eine Trajektorie läuft). A: Tiefe = Kapazität (Stacking). B: der Fall braucht <em>keine</em> Tiefe — ein bilinearer Generatorschritt genügt. «Tiefe» meint bei A <em>Kapazität</em>, bei B <em>dynamische Zeit</em>.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Die Rolle der Nichtlinearität — tragender kontinuierlicher Bogen (A) vs. bilinearer Generator + lineare Lesung (B)</span>
+      <p><span class="tag2 A">A</span> setzt die <em>Nichtlinearität als das Tragende</em> ein: «linear ∘ linear = linear», ohne σ kollabiert Tiefe zu einer Matrix; der Bogen <em>krummt</em> einen <em>kontinuierlichen</em> Raum (ReLU zerschneidet ihn in lineare Regionen). Die Rechnung <em>ist</em> das Warping; die Nichtlinearität ist kontinuierlich, geometrisch, unverzichtbar.</p>
+      <p><span class="tag2 B">B</span> arbeitet dagegen <em>fast vollständig linear/harmonisch</em>: Softmax in der Attention «97,5 % linear», «84,6 % der 512 Neuronen» sind Grad-2-Polynome <em>einer</em> Frequenz, die Antwort ist eine <em>lineare</em> Summe von Kosinus-Wellen. Die «Nichtlinearität» ist <em>ein einzelner bilinearer Schritt</em> (Attention: <code>cos a·cos b</code>) — fast degeneriert, ein <em>diskreter Generator</em>, der auf einen geschlossenen harmonischen Kreis landet.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A zentriert eine <em>tragende, kontinuierliche</em> Nichtlinearität (der Bogen). B zentriert eine <em>lineare/harmonische Lesung</em>, in der die Nichtlinearität ein diskreter Generator ist. Ist das Wesen des Netzes ein kontinuierlicher Bogen (A) oder eine harmonische Basis (B)? — und ist die Rechnung durch <em>Tiefe</em> (A) oder durch <em>Einmal-Komposition</em> (B) definiert?</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>Schärfste Naht ist W1: Beide sagen «die Topologie <em>ist</em> die Rechnung», geben aber demselben <code>β₁</code> zwei verschiedene Jobs (Bedeutung vs. Berechnung). W2 und W3 sind die daraus folgenden: unterschiedlicher Objekt-Typ (Set-Filter vs. Fluss) und unterschiedliche Natur des Nichtlinearen. Es ist kein formales A ∧ ¬A, sondern ein <em>Register-Konflikt</em> am Wort «Topologie/β₁/Tiefe».</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie sie zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>dieselbe Struktur, einmal deskriptiv (A) und einmal funktional (B) gescannt</strong>. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: β₁ ist in beiden derselbe 1-Zyklus — «live» vs. «still» ist eine Eigenschaft der <em>Aufgabe</em>, kein Widerspruch</h3>
+      <p>Ein β₁ ist mathematisch <em>immer</em> ein ungebundener 1-Zyklus. Bei A ist dieser Zyklus eine <em>deskriptive Bedeutungsschleife</em> (gefülltes Simplex = komponiertes Konzept); bei B derselbe mathematische Typ ein <em>belasteter Frequenz-Kreis</em> (Rotation = Gruppenaktion). Die Unterscheidung «Bedeutung ordnen» vs. «Transformation ausführen» ist <em>nicht</em> eine Eigenschaft der Topologie, sondern der <em>Aufgabe</em>: Läuft Information <em>den Zyklus herum</em> (Rotation/Gruppenaktion), <em>rechnet</em> das Register (B); ordnet es nur Bedeutung, ist es <em>still</em> (A). <span class="tag2 F">Fusion</span> <strong>β₁ = Anzahl unabhängiger Register</strong>; ob sie «bedeuten» oder «rechnen», entscheidet die Aufgabe. Der <em>selbe</em> Zähler ist für einen Klassifikator (A) eine semantische Trennung und für einen Addierer (B) ein arithmetisches Register — <em>Topologie ist aufgaben-relativ</em>.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: Filter und Fluss sind die zwei <em>Achsen</em> eines und desselben Objekts; Stacking und Einmal-Komposition sind zwei Wege zum selben aufgelösten Zustand</h3>
+      <p>Ein vollständiges topologisches Rechenobjekt hat <em>zwei</em> Achsen: eine <em>räumliche</em> (welche Simplexe bei welchem ε — A's Filtration auf einem Set) und eine <em>zeitliche</em> (Iteration von f — B's Fluss). A liefert die <em>Filtrations-Achse</em>, B die <em>Dynamik-Achse</em>; das fusionierte Objekt ist eine <em>Filtration eines dynamischen Systems</em>, dessen <em>stabile</em> Topologie der Attraktor ist. Und zu «Stacking vs. Einmal-Schritt»: Tiefe/Stacking ist der <em>allgemeine</em> Kapazitäts-Mechanismus (A); wenn die <em>Gruppenstruktur der Aufgabe</em> passt, lässt sich exakt diese Auflösung in <em>einen</em> bilinearen Schritt auf einem harmonischen Torus <em>zusammenfalten</em> (B). <span class="tag2 F">Fusion</span> <strong>der Torus ist das, was bleibt, wenn man A's Tiefe in einen gruppenstrukturierten Schritt komprimiert.</strong> Tiefe = Kapazität (A); ein passender bilinearer/harmonischer Generator = der <em>Shortcut</em>, der dieselbe Topologie ohne Stacking erreicht (B).</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: Nichtlinearität ist immer der <em>Generator</em>; die <em>Symmetrie der Aufgabe</em> bestimmt, wie <em>linear</em> man das Ergebnis abliest</h3>
+      <p>Die Spannung löst sich in eine <em>hierarchische</em> Aussage auf (genau wie B's eigene «nichtlinear erzeugt, linear lesbar», hier auf A ausgeweitet): <em>die</em> Nichtlinearität erzeugt die Struktur in beiden. Was sich unterscheidet, ist, wie viel der Nichtlinearität die <em>Task-Symmetrie</em> «rückgängig macht» in eine lineare Lesung. A's generische Aufgabe hat <em>niedrige</em> Symmetrie → die Lesung ist <em>stückweise-linear</em> (ReLU-Regionen, exponentiell in der Tiefe) — der Bogen bleibt sichtbar. B's Aufgabe ist der <em>zyklische Ring Z/113</em> (kompakte abelsche Gruppe) → die bilineare Landung liegt auf einer <em>geschlossenen harmonischen Mannigfaltigkeit</em> (Kreis/Torus) → die Lesung ist <em>voll linear/Fourier</em>. <span class="tag2 F">Fusion</span> <strong>Lesbarkeit(linear) = f( Symmetrie der Aufgabe ).</strong> A ist der <em>niedrig-symmetrische</em> Grenzfall (stückweise-linear, braucht Tiefe); B der <em>hoch-symmetrische</em> Grenzfall (voll harmonisch, ein bilinearer Schritt). Der «Bogen» (A) und die «Frequenz-Kreise» (B) sind dieselbe nichtlineare Erzeugung, gelesen durch unterschiedlich viel Symmetrie.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung (R2)</span>
+      <p><strong>Ein Netz «löst», wenn sein topologisches Objekt die aufgaben-adäquate Topologie hat und seine Register die Information tragen.</strong> β₀/β₁/β₂ zählen die Register; ob ein Register Bedeutung <em>ordnet</em> (A) oder eine Transformation <em>ausführt</em> (B), entscheidet die Aufgabe; die <em>Symmetrie</em> der Aufgabe entscheidet, ob man das Objekt als <em>gewarpten, stückweise linearen Raum</em> (A, generisch) oder als <em>harmonischen, linearen Torus</em> (B, hoch-symmetrisch) abliest. <em>Die Rechnung ist die Topologie; der Parameter (Tiefe/ε/Layer/Runden) löst sie auf; Symmetrie wählt die Lesart.</em> <code>gewarpter Raum (A) + addierender Torus (B) = ein topologisches Rechenobjekt, dessen Betti-Register doppelt arbeiten und dessen Lesbarkeit die Task-Symmetrie festlegt.</code></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substanzielle Kern</h2>
+
+    <h3>A — der gewarbte Raum &amp; der gefüllte Komplex (r1-033)</h3>
+    <ul class="cl">
+      <li><b>Neuron = Linie:</b> <code>σ(w·x+b)</code> — gewichtete Summe + Bogen; ein einzelner <em>gerader</em> Schnitt. XOR lässt sich mit einer Linie nicht trennen.</li>
+      <li><b>Der Bogen ist alles:</b> ohne σ komponieren affine Abbildungen zu <em>einer</em> — <code>linear ∘ linear = linear</code>. «Setze Activation auf None, Depth 5: die Grenze bleibt gerade.»</li>
+      <li><b>Komposition = Tiefe:</b> mit ReLU wachsen lineare Regionen <strong>exponentiell mit der Tiefe</strong> (deep &gt; wide); Backprop/Gradient-Descent <em>lernt</em> die Abbildung.</li>
+      <li><b>Space warps:</b> das Netz verformt den <em>Raum</em>, bis in der letzten Hidden-Schicht die Klassen <em>linear-separierbar</em> sind.</li>
+      <li><b>Attention als Komplex:</b> 0-Simplex = Token; 1-Simplex {i,j} wenn gegenseitige Attention <code>α_ij &gt; ε</code>; 2-Simplex wenn alle drei Paare &gt; ε. Semantikraum (Gender/Ontology/Power), RoPE <code>θ_i=10000^{−2i/d}</code>.</li>
+      <li><b>Betti-Topologie:</b> β₀ (Komponenten), β₁ (Löcher), <code>χ = V − E + F</code>, <code>β₁ = E − V + β₀ − F</code>. Trennung ⇒ β₀ = 2 (kein cross-class); Zusammensetzung ⇒ gefülltes within-group-2-Simplex. Filtration <code>K_{ε₀} ⊃ K_{ε₁} ⊃ …</code>.</li>
+    </ul>
+
+    <h3>B — das dynamische System &amp; der addierende Torus (r1-042)</h3>
+    <ul class="cl">
+      <li><b>Residual Stream = dynamisches System:</b> Zustandsraum ℝᵈ, Zeitschritt = Layer, <code>x_{l+1} = x_l + Attn_l(x_l) + MLP_l(x_l)</code>. Attraktor = semantische Konvergenz; <em>Becken</em> = ähnliche Prompts → gleiche Antwort; <em>Bifurkation</em> = kontextabhängige Bedeutungswechsel.</li>
+      <li><b>Layer-Progression (Hypothese):</b> frühe Layer = fixe, einfache Attraktoren (Punkte); späte Layer = dynamische, komplexe (Zyklen, Tori). <b>Betti-Hypothese:</b> β₀ Cluster, β₁ Zyklen, β₂ Hohlräume/Tori; Torus, wenn zwei unabhängige zyklische Dimensionen interagieren.</li>
+      <li><b>Komposition ⊗:</b> «Hauptstadt» ⊗ «Frankreich» → neues Basin «Paris» — <em>keine</em> bloße Vektoraddition; die Nichtlinearitäten erzeugen ein qualitativ neues Basin. Roadmap: finden → Kausalität → Modularität → Komposition → Synthese (Topologie → Gewichte).</li>
+      <li><b>Modular Addition mod 113 (verifizierte Instanz):</b> 1-Layer-Transformer (128-dim, 4 Köpfe, 512 MLP, ReLU, Weight-Delay λ=1). ① Embedding = cos/sin der 5 Frequenzen; ② Attention = bilinear → <code>cos a·cos b</code>, <code>sin a·sin b</code>; ③ MLP = Kosinus-Additionsformel <code>cos(A+B)=cosA·cosB−sinA·sinB</code>; ④ Unembedding <code>score(c)=cos ω(a+b−c)</code>; ⑤ Softmax wählt c mit höchstem Score.</li>
+      <li><b>5 Frequenzen {14,35,41,42,52}, α = 44,1 / 42,2 / 44,8 / 66,6 / 63,0 (Σ ≈ 260,7):</b> bei c* <em>alle</em> Kosinus = 1 (konstruktiv); bei jeder falschen Antwort kürzen sich die Wellen gegenseitig ab (destruktiv, best. Falsch ≈ 30–40). Mit 1 Frequenz läge c*±8 ≈ 0,998 — fast unverfälschbar.</li>
+      <li><b>Grokking (3 Phasen):</b> ① Memorization (100 % train / 0 % test) → ② Circuit Formation (verborgener Fourier-Torus) → ③ Cleanup (Weight Decay eraser das Memorieren; Test springt auf 100 %). Zahlen: 5 Frequenzen = 95 % Logit-Varianz; 84,6 % Neuronen ≈ Grad-2; Softmax 97,5 % linear; Ablation nicht-schlüsselfrequenzen <em>verbessert</em> (Loss −70 %).</li>
+    </ul>
+
+    <h3>Die Brücke — A ↔ B, ein Objekt, zwei Koordinaten</h3>
+    <table>
+      <tr><th>A (r1-033)</th><th>B (r1-042)</th></tr>
+      <tr><td class="k">Simplizialkomplex / VR-Komplex K_ε (Schnappschuss)</td><td>Attraktor / stabile Zustandsmenge (Fluss)</td></tr>
+      <tr><td class="k">Filter auf fester Menge (ε, welche Simplexe)</td><td>Iteration von f (Layer = dynamische Zeit)</td></tr>
+      <tr><td class="k">ReLU-Regionen, exponentiell in Tiefe</td><td>5 Frequenz-Kreise, 1 bilinearer Generatorschritt</td></tr>
+      <tr><td class="k">β₀ = 2 (Trennung der Klassen)</td><td>scharfer Attraktor-Peak bei c* (Konvergenz)</td></tr>
+      <tr><td class="k">gefülltes 2-Simplex (Zusammensetzung / Bedeutung)</td><td>β₁ = 5 (5 Frequenz-Register)</td></tr>
+      <tr><td class="k">cross-class-Kante / Betti-Loch</td><td>Interferenz-Nebenpeak (nahe falsches Becken)</td></tr>
+      <tr><td class="k">«Raum warpt, bis eine Gerade trennt»</td><td>«Rotation auf dem Kreis, bis Interferenz bei c* peakt»</td></tr>
+    </table>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq"><span class="c">// A — Komplex &amp; Filtration</span>
+Neuron:           y = s( w·x + b )          <span class="c">// s = der Bogen</span>
+Tiefe:            f = s( W_a · s( W_b · … s( W_1·x+b_1 ) ) + b_a )
+Kollaps ohne s:   W_a·W_b·…·W_1·x + b      <span class="c">// linear∘linear = linear</span>
+Komplex:          s_1={i,j} wenn a_ij&gt;e ; s_2={i,j,k} wenn alle 3 Paare &gt;e
+Topologie:        c = V - E + F ;  b_0 = Komponenten ;  b_1 = E - V + b_0 - F
+Filtration:       K_{e_0} 3 K_{e_1} 3 …    <span class="c">// e sinkt  <=>  Tiefe/Runden</span>
+
+<span class="c">// B — Attraktor &amp; Torus (mod 113)</span>
+System:           x_{l+1} = x_l + Attn_l(x_l) + MLP_l(x_l)   <span class="c">// Zeit = Layer</span>
+Rotation:         x -> x + b  (mod 113)                       <span class="c">// = B's Kreis-Rotation</span>
+Addition:         cos(A+B) = cosA*cosB - sinA*sinB            <span class="c">// via bilineare Attention</span>
+Score:            score(c) = cos( w(a+b-c) )                  <span class="c">// = 1 bei c = c*</span>
+Fused-Score:      Score(c) = sum_{k in {14,35,41,42,52}} a_k * cos( w_k (a+b-c) )
+Torus:            b_0 = 1 ,  b_1 = 5 (5 Frequenz-Zyklen) ;  sum a_k ~ 260.7
+
+<span class="c">// FUSION — ein Objekt, zwei Lesarten</span>
+Register:         b_1 = # unabhaengiger 1-Zyklen = "Register"
+                   (A: Bedeutungsschleife / B: Frequenz-Kreis)
+Symmetrie->Lesart:hoch (komp. abelsche Aktion = Rotation) => harmonisch/linear (B)
+                   niedrig => stueckweise-linear, braucht Tiefe/Stacking (A)
+Gesetz:           Rechnung = Topologie ;  Lese-linearitaet = f( Symmetrie der Aufgabe )
+Fehlantwort:      A: cross-class-Kante/Loch  +  B: Interferenz-Nebenpeak (Geometrie)
+                   + (A-Seite) Rauschen (Ausloeser)  =  nahe falsches Becken ; Heilung = schärfere Becken
+    </div>
+
+    <div class="note"><span class="h">Warum die Fusion mehr ist als die Summe</span>A allein sagt <em>wann</em> eine Grenze entsteht (Warpung, Tiefe) und <em>wie</em> Bedeutung zusammenhängt (gefüllte Simplexe), aber es liefert <em>kein verifiziertes, rechenbares</em> Beispiel und keine Erklärung, <em>warum</em> die Topologie gerade so herauskommt. B allein liefert den <em>verifizierten, ablatierbaren</em> Fall (Torus, β₁ = 5, Ablation −70 %) und die <em>Gruppenstruktur</em>, aber es ist ein <em>eineinziger</em> hoch-symmetrischer Fall — es sagt nichts über den <em>generischen</em>, niedrig-symmetrischen Fall. Erst zusammen gibt es ein <em>einheitliches topologisches Rechenobjekt</em> <strong>mit einem Gesetzmäßigkeits-Kern, den keine der beiden allein hat</strong>: <em>Betti-Zyklen = Register, die doppelt arbeiten (ordnen / ausführen), und die Task-Symmetrie bestimmt die Lesbarkeit</em> (harmonisch = B, stückweise-linear = A). A ist der niedrig-, B der hoch-symmetrische Grenzfall desselben Objekts.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Ein Regler, zwei Lesarten — die β₁-Register schärfen den Attraktor <em>und</em> die Trennung zugleich</h2>
+    <p class="sub" style="margin-bottom:4px">Oberer Plot: <code>Score(c)=Σ αₖ·cos(ωₖ(a+b−c))</code> über Kandidaten c = 0…112 (B's Interferenz). Der scharfe Peak bei <b>c* = (a+b) mod 113</b> ist B's <em>Attraktor</em> und zugleich der Punkt, an dem <em>einzige Schwelle die richtige Antwort von allen falschen trennt</em> (A's lineare Separierbarkeit). Der beste Neben-Peak ist B's <em>falsches Becken</em> = A's <em>cross-class-Kante</em>. Unten links: die <b>n β₁-Register</b> (n Frequenz-Kreise = der n-Torus); die Marker zeigen die <em>Rotation</em> des Zustands a+b um jeden Kreis. Unten rechts: die <em>Lesart</em> — bei wenig Registern <b>stückweise (A)</b> &amp; nicht klar trennbar, bei vielen <b>harmonisch (B)</b> &amp; klar trennbar. <b>Ein einziger Regler (n = # β₁-Register)</b> ist der gemeinsame Auflösungsparameter (A's Tiefe/Warpung ≡ B's Frequenz-Anzahl).</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Betti-Register (A × B) — Attraktor &amp; Trennung, ein Regler</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvFusion" width="720" height="440"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-correct)"></i>c* (Attraktor / trennbar)</span>
+        <span><i style="background:var(--viz-wrong)"></i>Neben-Becken (falsch / cross-class)</span>
+        <span><i style="background:var(--viz-sum)"></i>Fused-Score (Summe)</span>
+        <span><i style="background:var(--acc4)"></i>Ein-Schwelle (A: Linie)</span>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span># β₁-Register n (= Torus-Dimension, B's Frequenzen ≡ A's Auflösung)</span><b id="vN">5</b></div>
+        <input type="range" id="sN" min="1" max="5" step="1" value="5" class="v">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>a (erster Summand)</span><b id="vA">25</b></div>
+        <input type="range" id="sA" min="0" max="112" step="1" value="25">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>b (zweiter Summand)</span><b id="vB">47</b></div>
+        <input type="range" id="sB" min="0" max="112" step="1" value="47">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Rauschen (A's Auslöser: schiebt in das nahe falsche Becken)</span><b id="vNoise">0</b></div>
+        <input type="range" id="sNoise" min="0" max="100" step="1" value="0">
+      </div>
+      <div class="ro">
+        <div class="b"><div class="k">a + b mod 113</div><div class="v" id="vAns">72</div><div class="u">= c*</div></div>
+        <div class="b"><div class="k">β₁ (Register)</div><div class="v" id="vBeta">5</div><div class="u">Torus-Dim</div></div>
+        <div class="b"><div class="k">Peak bei c*</div><div class="v" id="vPeak">—</div><div class="u">Attraktor</div></div>
+        <div class="b"><div class="k">Best. falsch</div><div class="v e" id="vWrong">—</div><div class="u">Neben-Becken</div></div>
+        <div class="b"><div class="k">Gap</div><div class="v" id="vGap">—</div><div class="u">c* − falsch</div></div>
+        <div class="b"><div class="k">Trennbar (A)?</div><div class="v" id="vSep">—</div><div class="u">1 Schwelle</div></div>
+        <div class="b"><div class="k">Lesart</div><div class="v" id="vRead">—</div><div class="u">A ↔ B</div></div>
+        <div class="b"><div class="k">Entscheidung = c*?</div><div class="v" id="vDec">—</div><div class="u">mit Rauschen</div></div>
+      </div>
+      <p class="note t" style="margin-bottom:0"><span class="h">So liest du die Fusion</span>Bei <em>1 Register</em>: flache Landschaft, hoher Neben-Becken (c*±8 ≈ 0,998) — <em>nicht klar trennbar</em> (A's XOR-Fall) <em>und</em> halluzinationsanfällig (B's hohes Neben-Becken); Lesart <b>stückweise (A)</b>. Bei <em>5 Registern</em>: scharfer Attraktor (B) <em>und</em> klare Ein-Trennung (A); Lesart <b>harmonisch (B)</b>. Erhöhe <em>Rauschen</em>: bei vielen Registern bleibt die Entscheidung bei c* (robuste, scharfe Becken), bei einem Register kippt sie ins nahe falsche Becken — A's rauschgetriebener Basin-Wechsel trifft auf B's geometrisch vorgezeichneten Nebenpeak. <em>Ein Regler (n) steuert beide Lesarten zugleich: dieselbe Bewegung, ein topologisches Rechenobjekt, dessen Topologie die Rechnung ist.</em></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <div class="prov">
+      <a href="../r1-033.html">
+        <span class="t">A — r1-033.html · «Der sich biegende Raum und der sich füllende Komplex»</span>
+        <span class="d">R1-Fusion (why_deep_learning_works ✕ simplicial_complex_attention3): Tiefe warpt den Raum, bis eine Gerade trennt (stetig), Attention füllt einen Simplizialkomplex mit Betti-Zahlen (diskret); «die Topologie des Objekts ist die Rechnung», Tiefe/ε = Filtrationsparameter. Liefert die <em>deskriptive</em> Seite (β₀/β₁ als Topologie der Bedeutung) und die <em>generische/niedrig-symmetrische</em> Lesart.</span>
+      </a>
+      <a href="../r1-042.html">
+        <span class="t">B — r1-042.html · «Der Torus-Attraktor, der addiert»</span>
+        <span class="d">R1-Fusion (topology_idea ✕ grokking_addition_internal3): der Residual Stream als topologisches dynamisches System (Attraktoren/Becken/Tori), dessen verifizierte Instanz ein grokkter 1-Layer-Transformer ist, der mod-113-Addition als 5-Frequenz-Torus (β₁ = 5) auf einem Kreis löst; «nichtlinear erzeugt, linear lesbar». Liefert die <em>funktionale</em> Seite (β₁ als rechenendes Register, Ablation) und die <em>hoch-symmetrische</em> Lesart.</span>
+      </a>
+    </div>
+  </section>
+
+</article>
+<footer>
+  Fusion (Runde 2, Paar 035) aus <strong>r1-033.html</strong> (gewarbter Raum / gefüllter Komplex — deskriptiv, niedrig-symmetrisch) ✕ <strong>r1-042.html</strong> (addierender Torus — funktional, hoch-symmetrisch). Alle Claims aus den Quellen paraphrasiert; Frequenz-/Gewichts-Daten inline. Selbstständig, ohne Netzwert-Datenabruf.
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  function $(id){return document.getElementById(id);}
+  var cv=$('cvFusion');
+  var html=document.documentElement;
+  function setBtn(){var b=$('themeBtn'); if(b){ b.textContent=html.classList.contains('dark')?'☀️ Licht':'🌙 Dunkel'; }}
+  var themeBtn=$('themeBtn');
+  if(themeBtn){ themeBtn.onclick=function(){ html.classList.toggle('dark'); setBtn(); schedule(); }; }
+  setBtn();
+  if(!cv){ return; }
+  var ctx=cv.getContext('2d');
+  var L_W=720, L_H=440;
+
+  // ---- inline data (from source B: grokking mod 113) ----
+  var P=113;
+  var KF=[14,35,41,42,52];
+  var AL=[44.1,42.2,44.8,66.6,63.0];
+  var FREQCOL=['--acc4','--acc','--acc2','--acc5','--acc3'];
+  function wOf(k){return 2*Math.PI*k/P;}
+  function mod113(n){return ((n%113)+113)%113;}
+  function cssVar(name,fb){ try{var v=getComputedStyle(document.documentElement).getPropertyValue(name);v=v&&v.trim();return v||fb;}catch(e){return fb;} }
+  function palette(){return{
+    ink:cssVar('--txt','#1c2333'), dim:cssVar('--txt-dim','#3a4356'), faint:cssVar('--txt-faint','#6b7488'),
+    line:cssVar('--viz-line','rgba(0,0,0,.2)'), bg:cssVar('--viz-bg','#f4f0e7'), card:cssVar('--panel','#fffdf8'),
+    correct:cssVar('--viz-correct','#0d8f80'), wrong:cssVar('--viz-wrong','#c93a86'), sum:cssVar('--viz-sum','#b57e00'),
+    cls0:cssVar('--viz-cls0','#6451d8')
+  };}
+  function freqColor(i){return cssVar(FREQCOL[i]||'--acc','#888');}
+
+  function compute(a,b,n,noise){
+    var ab=mod113(a+b), YMAX=0, i;
+    for(i=0;i<n;i++){YMAX+=AL[i];}
+    var seed=987654321;
+    function rnd(){ seed=(Math.imul(seed,1103515245)+12345)&0x7fffffff; return (seed/0x7fffffff)*2-1; }
+    var amp=noise*0.3*(YMAX/100);
+    var scores=new Array(P);
+    for(var c=0;c<P;c++){
+      var s=0;
+      for(var j=0;j<n;j++){ s+=AL[j]*Math.cos(wOf(KF[j])*(ab-c)); }
+      if(amp>0){ s+=amp*rnd(); }
+      scores[c]=s;
+    }
+    return {ab:ab, scores:scores, YMAX:YMAX};
+  }
+
+  function fit(){
+    var dpr=window.devicePixelRatio||1, cw=cv.clientWidth||L_W, scale=cw/L_W;
+    cv.width=Math.round(cw*dpr); cv.height=Math.round(L_H*scale*dpr);
+    cv.style.height=(L_H*scale)+'px';
+    ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+  }
+  function draw(){
+    fit();
+    var Pp=palette();
+    var a=+$('sA').value, b=+$('sB').value, n=+$('sN').value, noise=+$('sNoise').value;
+    var r=compute(a,b,n,noise);
+    var ab=r.ab, scores=r.scores, YMAX=r.YMAX;
+
+    ctx.clearRect(0,0,L_W,L_H);
+    ctx.fillStyle=Pp.bg; ctx.fillRect(0,0,L_W,L_H);
+
+    // ---------- Panel 1: score landscape ----------
+    var ax0=46, ay0=34, aw=L_W-46-16, ah=200;
+    ctx.strokeStyle=Pp.line; ctx.lineWidth=1; ctx.strokeRect(ax0,ay0,aw,ah);
+    ctx.strokeStyle=Pp.line; ctx.globalAlpha=0.5; ctx.beginPath();
+    for(var gx=1;gx<4;gx++){var xx=ax0+aw*gx/4; ctx.moveTo(xx,ay0); ctx.lineTo(xx,ay0+ah);}
+    ctx.stroke(); ctx.globalAlpha=1;
+    function X(c){return ax0+aw*c/(P-1);}
+    function Y(s){return ay0+ah*(1-(s+YMAX)/(2*YMAX));}
+    ctx.strokeStyle=Pp.line; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(ax0,Y(0)); ctx.lineTo(ax0+aw,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+
+    for(var fi=0;fi<n;fi++){
+      ctx.strokeStyle=freqColor(fi); ctx.globalAlpha=0.32; ctx.lineWidth=1.2; ctx.beginPath();
+      for(var c0=0;c0<P;c0++){ var val=AL[fi]*Math.cos(wOf(KF[fi])*(ab-c0)); var px=X(c0),py=Y(val); if(c0===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    ctx.strokeStyle=Pp.sum; ctx.lineWidth=2.6; ctx.beginPath();
+    for(var c1=0;c1<P;c1++){ var px1=X(c1),py1=Y(scores[c1]); if(c1===0)ctx.moveTo(px1,py1); else ctx.lineTo(px1,py1); }
+    ctx.stroke();
+
+    // best wrong
+    var bestC=-1,bestS=-1e9, argC=0, argS=-1e9;
+    for(var cw0=0;cw0<P;cw0++){ if(scores[cw0]>argS){argS=scores[cw0];argC=cw0;} if(cw0!==ab && scores[cw0]>bestS){bestS=scores[cw0];bestC=cw0;} }
+    var peak=scores[ab];
+    var ratio=(peak-bestS)/(Math.abs(peak)+1e-6);
+
+    // A: single threshold line at midpoint
+    var T=(peak+bestS)/2;
+    ctx.strokeStyle=Pp.cls0; ctx.setLineDash([6,4]); ctx.lineWidth=1.4; ctx.globalAlpha=0.85;
+    ctx.beginPath(); ctx.moveTo(ax0,Y(T)); ctx.lineTo(ax0+aw,Y(T)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+
+    // c* (attractor / separable)
+    ctx.strokeStyle=Pp.correct; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(X(ab),ay0); ctx.lineTo(X(ab),ay0+ah); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=Pp.correct; ctx.beginPath(); ctx.arc(X(ab),Y(peak),6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=Pp.bg; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle=Pp.correct; ctx.font='700 11px monospace'; ctx.textAlign='center';
+    ctx.fillText('c* = '+ab+'  (Attraktor · trennbar)', Math.min(Math.max(X(ab),ax0+70),ax0+aw-70), ay0-8);
+
+    // best wrong (false basin / cross-class)
+    ctx.strokeStyle=Pp.wrong; ctx.setLineDash([4,4]); ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(X(bestC),ay0); ctx.lineTo(X(bestC),ay0+ah); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=Pp.wrong; ctx.beginPath(); ctx.arc(X(bestC),Y(bestS),5,0,Math.PI*2); ctx.fill();
+    ctx.font='700 10px monospace'; ctx.textAlign='center';
+    ctx.fillText('c='+bestC+' (Neben-Becken)', Math.min(Math.max(X(bestC),ax0+52),ax0+aw-52), ay0+ah-8);
+
+    ctx.fillStyle=Pp.faint; ctx.font='10px monospace'; ctx.textAlign='left';
+    ctx.fillText('0', ax0-2, ay0+ah+14);
+    ctx.textAlign='right'; ctx.fillText('112', ax0+aw+2, ay0+ah+14);
+    ctx.textAlign='center'; ctx.fillStyle=Pp.dim;
+    ctx.fillText('Kandidat-Antwort c', ax0+aw/2, ay0+ah+14);
+    ctx.fillStyle=Pp.ink; ctx.font='700 12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Score(c) = \u03A3 \u1D6D\u2096\u00B7cos(\u03C9\u2096\u00B7(a+b\u2212c))   \u00B7   ' + n + ' von 5 Registern', ax0, ay0-14);
+
+    // ---------- Panel 2: beta_1 torus (registers) ----------
+    var iy0=268, ih=142, iw=300;
+    ctx.strokeStyle=Pp.line; ctx.lineWidth=1; ctx.strokeRect(ax0,iy0,iw,ih);
+    ctx.fillStyle=Pp.ink; ctx.font='700 11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('\u03B2\u2081 = '+n+' Register  (n-Torus)', ax0+10, iy0+18);
+    ctx.fillStyle=Pp.faint; ctx.font='10px system-ui';
+    ctx.fillText('jeder Kreis = 1 Frequenz-Zyklus (A: 1-Zyklus / B: Kreis)', ax0+10, iy0+32);
+    var cy=iy0+92, gap=(iw-40)/Math.max(1,n), rad=Math.min(22,gap*0.42);
+    if(n>=2){
+      ctx.strokeStyle=Pp.line; ctx.lineWidth=7; ctx.globalAlpha=0.4;
+      ctx.beginPath(); ctx.moveTo(ax0+20,cy); ctx.lineTo(ax0+iw-20,cy); ctx.stroke(); ctx.globalAlpha=1;
+    }
+    for(var k2=0;k2<n;k2++){
+      var ccx=ax0+20+gap*(k2+0.5);
+      ctx.strokeStyle=freqColor(k2); ctx.lineWidth=2.2; ctx.globalAlpha=0.95;
+      ctx.beginPath(); ctx.arc(ccx,cy,rad,0,Math.PI*2); ctx.stroke();
+      ctx.globalAlpha=0.16; ctx.fillStyle=freqColor(k2); ctx.beginPath(); ctx.arc(ccx,cy,rad,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+      var ang=wOf(KF[k2])*ab;
+      ctx.fillStyle=freqColor(k2); ctx.beginPath(); ctx.arc(ccx+rad*Math.cos(ang), cy-rad*Math.sin(ang),3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=freqColor(k2); ctx.font='700 9px monospace'; ctx.textAlign='center';
+      ctx.fillText('k'+KF[k2], ccx, cy+3);
+    }
+
+    // ---------- Panel 3: readability gauge ----------
+    var rx=ax0+iw+16, rw=L_W-16-rx;
+    ctx.fillStyle=Pp.ink; ctx.font='700 11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Lesart:  Symmetrie der Aufgabe', rx, iy0+18);
+    var gy=iy0+52, glx=rx, grx=rx+rw-6; len(glx,grx,gy);
+    function len(a2,b2,y){ctx.strokeStyle=Pp.line; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(a2,y); ctx.lineTo(b2,y); ctx.stroke();}
+    ctx.fillStyle=Pp.faint; ctx.font='9px system-ui'; ctx.textAlign='left'; ctx.fillText('st\u00FCckweise (A)', glx, gy+14);
+    ctx.textAlign='right'; ctx.fillText('harmonisch (B)', grx, gy+14);
+    var pos=(n-1)/4;
+    ctx.fillStyle=Pp.sum; ctx.beginPath(); ctx.arc(glx+(grx-glx)*pos, gy, 5, 0, Math.PI*2); ctx.fill();
+
+    function statLine(y,lab,val,col){ ctx.fillStyle=Pp.faint; ctx.font='10px system-ui'; ctx.textAlign='left'; ctx.fillText(lab, rx, y); ctx.fillStyle=col; ctx.font='700 10px monospace'; ctx.textAlign='right'; ctx.fillText(val, rx+rw, y); }
+    statLine(iy0+78, 'Trennbar (A)?', ratio>=0.5?'ja \u2713':(ratio>=0.15?'kritisch':'nein \u2717'), ratio>=0.5?Pp.correct:(ratio>=0.15?Pp.sum:Pp.wrong));
+    statLine(iy0+94, 'Entscheidung = c*?', (argC===ab)?'\u2713':('\u2717 -> c='+argC), (argC===ab)?Pp.correct:Pp.wrong);
+    statLine(iy0+110, 'Neben-Becken-N\u00E4he', (bestS/peak).toFixed(3)+' (0=sicher)', (bestS/peak)<0.2?Pp.correct:(bestS/peak)<0.6?Pp.sum:Pp.wrong);
+
+    // ---------- DOM readouts ----------
+    $('vA').textContent=a; $('vB').textContent=b; $('vN').textContent=n; $('vNoise').textContent=noise;
+    $('vAns').textContent=ab;
+    $('vBeta').textContent=n;
+    $('vPeak').textContent=peak.toFixed(1);
+    $('vWrong').textContent=bestS.toFixed(1);
+    $('vGap').textContent=(peak-bestS).toFixed(1);
+    var sepTxt=ratio>=0.5?'ja \u2713':(ratio>=0.15?'kritisch':'nein \u2717');
+    $('vSep').textContent=sepTxt; $('vSep').className='v '+(ratio>=0.5?'g':(ratio>=0.15?'':'e'));
+    var readTxt=n<=1?'st\u00FCckw. (A)':(n<5?'\u00FCbergang':'harmon. (B)');
+    $('vRead').textContent=readTxt; $('vRead').className='v '+(n<=1?'e':(n<5?'':'g'));
+    $('vDec').textContent=(argC===ab)?'\u2713 c*':'\u2717 '+argC; $('vDec').className='v '+((argC===ab)?'g':'e');
+  }
+
+  function onSlide(){ draw(); }
+  ['sA','sB','sN','sNoise'].forEach(function(id){ var el=$(id); if(el){ el.addEventListener('input',onSlide); } });
+
+  var pending=false;
+  function schedule(){ if(pending)return; pending=true; requestAnimationFrame(function(){pending=false;draw();}); }
+  if(window.matchMedia){
+    try{
+      var mq=window.matchMedia('(prefers-color-scheme: dark)');
+      function follow(){ html.classList.add('dark'); }
+      if(mq.addEventListener) mq.addEventListener('change',follow);
+    }catch(e){}
+  }
+  if(window.MutationObserver){ try{ new MutationObserver(schedule).observe(html,{attributes:true,attributeFilter:['class']}); }catch(e){} }
+  window.addEventListener('resize',schedule);
+  draw();
+})();
+</script>
+</body>
+</html>

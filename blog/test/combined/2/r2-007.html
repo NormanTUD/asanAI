@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 007 — Topologie im Falten: von der freien Dimension zum Phasenübergang</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --panel:#ffffff; --ink:#1f2430; --muted:#5b6472;
+    --accent:#2563eb; --accent2:#d97706; --edge:#16a34a; --danger:#dc2626;
+    --line:#e2ddd0; --code-bg:#f2efe6; --ok:#16a34a; --warn:#d97706;
+  }
+  html.dark{
+    --bg:#0b0f1a; --panel:#121a2b; --ink:#e8eefc; --muted:#8aa0c8;
+    --accent:#60a5fa; --accent2:#f59e0b; --edge:#22c55e; --danger:#ff6b6b;
+    --line:#22304a; --code-bg:#0a1223; --ok:#7cf9d0; --warn:#ffd166;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.65;
+    font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif}
+  article{max-width:820px;margin:0 auto;padding:26px 20px 70px}
+  header{margin:14px 0 6px}
+  h1{font-size:clamp(1.5rem,4vw,2.3rem);margin:.2rem 0;line-height:1.15;font-weight:800;letter-spacing:-.5px}
+  .subtitle{color:var(--muted);font-size:.95rem;margin:0}
+  .tags{margin:10px 0 2px}
+  .tag{display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:999px;
+    border:1px solid var(--line);color:var(--muted);margin:2px 4px 2px 0}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:22px 24px;margin:22px 0;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+  h2{margin:0 0 8px;font-size:1.28rem;color:var(--accent)}
+  h3{margin:18px 0 6px;font-size:1.03rem;color:var(--accent2)}
+  p{margin:.55rem 0}
+  .lead{color:var(--muted)}
+  .pill{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:999px;border:1px solid var(--line);margin-right:6px}
+  .pill.a{color:var(--accent)} .pill.b{color:var(--accent2)}
+  ul,ol{padding-left:1.2rem;margin:.5rem 0}
+  li{margin:.4rem 0}
+  .formula{background:var(--code-bg);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+  .formula .cap{color:var(--muted);font-size:.8rem;margin-top:6px}
+  .callout{border-radius:10px;padding:12px 16px;margin:12px 0;font-size:.96rem}
+  .callout.fused{background:color-mix(in srgb,var(--accent) 10%,transparent);border-left:3px solid var(--accent)}
+  .callout.fused b{color:var(--accent)}
+  .callout.blade{background:color-mix(in srgb,var(--danger) 10%,transparent);border-left:3px solid var(--danger)}
+  .callout.blade b{color:var(--danger)}
+  canvas.viz{width:100%;height:auto;background:var(--code-bg);border:1px solid var(--line);
+    border-radius:12px;display:block}
+  .ctrls{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end;margin:14px 0 6px}
+  .ctrls label{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:5px;min-width:180px}
+  .ctrls input[type=range]{accent-color:var(--accent);width:100%}
+  .ctrls .val{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+  button{background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:8px 14px;
+    border-radius:10px;cursor:pointer;font-weight:600;transition:.15s}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  .readout{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .stat{flex:1;min-width:104px;background:var(--code-bg);border:1px solid var(--line);
+    border-radius:10px;padding:10px;text-align:center}
+  .stat .n{font-size:1.5rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+  .stat .t{font-size:.72rem;color:var(--muted)}
+  .fragbar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:6px}
+  .fragbar > div{height:100%;background:var(--danger);width:0%}
+  .phase-name{margin-top:10px;font-size:.9rem;color:var(--accent2);font-weight:600}
+  .caption{font-size:.8rem;color:var(--muted);margin-top:10px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin-top:10px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:600}
+  .prov a:hover{text-decoration:underline}
+  .prov li{margin:.55rem 0}
+  .prov .desc{color:var(--muted);display:block;font-size:.9rem;margin-top:2px}
+  .katex{font-size:1.02em}
+  footer{color:var(--muted);text-align:center;padding:24px 10px;font-size:.85rem}
+  @media (max-width:600px){section{padding:18px}}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Topologie im Falten: wie ein kontinuierlicher Mechanismus diskrete Struktur erzeugt</h1>
+    <p class="subtitle">Fusion aus: r1-058.html &#10005; r1-017.html  (Round 2)</p>
+  </header>
+  <p class="tags">
+    <span class="tag">Niedrig-dim. Mannigfaltigkeit im höheren Raum</span>
+    <span class="tag">Falten als kontinuierlicher Mechanismus</span>
+    <span class="tag">Simplizialkomplex / Betti-Zahlen</span>
+    <span class="tag">Phasenübergänge (diskrete Topologie)</span>
+    <span class="tag">Doppelschwert: Nutzen &#8805; Brüchigkeit</span>
+  </p>
+
+  <section id="these">
+    <h2>1 · Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere beschreiben <em>dasselbe</em> Phänomen von zwei Seiten:
+    Ein neuronales System ist ein <b>niedrig-dimensionales topologisches Objekt</b>, das in einem
+    <b>höherdimensionalen Raum</b> lebt — und seine <em>Fähigkeiten</em> sind <b>topologische
+    Eigenschaften</b> dieses Objekts, die sich <b>diskret</b> ändern, während der zugrunde liegende
+    <b>Mechanismus kontinuierlich</b> verläuft.</p>
+    <p><span class="pill a">A · r1-058</span> startet von der <b>Manifold-Hypothese</b>: Die Daten liegen auf
+    einer niedrig-dim Mannigfaltigkeit $M$ (Dimension $d_x$) in einem höheren Ambient-Raum; dazwischen liegt
+    die <b>freie Dimension</b> (Kodimension $d-d_x$). Dort <em>faltet</em> das Netz die Daten, um lineare
+    Trennbarkeit zu <b>erstellen</b> — aber genau dort ist die Funktion auch <em>unbestimmt</em> (Brüchigkeit).
+    <span class="pill b">B · r1-017</span> zeigt, dass Repräsentations-Punkte einen <b>Simplizialkomplex</b>
+    bilden, dessen Topologie (Betti-Zahlen $\beta_0,\beta_1$, Dreiecke) <em>stückweise konstant</em> ist und an
+    <em>diskreten Punkten springt</em>, wenn ein <em>kontinuierlicher</em> Parameter (Schwellwert, Scharfheit,
+    Trainingsfortschritt) eine Gewichtungsschwelle überschreitet. <b>Genau diese Sprünge sind Phasenübergänge.</b></p>
+    <div class="callout fused">
+      <b>Einheitliche Position:</b> Der <b>Fold von A</b> ist ein <em>konkretes Beispiel</em> für den
+      allgemeinen Mechanismus von <b>B</b>: ein <em>kontinuierlicher</em> geometrischer Vorgang (Faltgrad,
+      Rotation, Attention-Gewichte), der eine <em>diskrete topologische Größe</em> umschaltet (Trennbarkeit
+      entsteht, ein Loop/ eine Schleife entsteht, $\beta_1$ springt). Die <b>freie Dimension</b> von A und der
+      <b>kontinuierliche Parameterraum</b> von B sind zwei Seiten <em>desselben höheren Substrats</em>, in dem
+      das niedrig-dim Objekt lebt und verformt werden kann. Und das <b>Doppelschwert</b> zieht durch: Dieselbe
+      Geometrie, die die Fähigkeit <em>erzeugt</em> (Falten&rarr;Trennbarkeit, Konnektivität&rarr;Bedeutung),
+      ist die Quelle der <em>Brüchigkeit</em> (freie Dimension&rarr;Adversarial, abrupter Sprung&rarr;Fragilität).
+      <b>Topologische Struktur ist zugleich Motor der Capability und Ort des abrupten Versagens.</b>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>2 · Widersprüche zwischen A und B</h2>
+    <p>Drei konkrete, inkompatible Stellungen — beide wörtlich in den Quellen:</p>
+    <ol>
+      <li><b>Gegebene Prämisse vs. berechnete/emergente Struktur.</b>
+        <span class="pill a">A</span> setzt die niedrig-dim Struktur als <em>Prämisse</em> voraus — die
+        <b>Manifold-Hypothese</b> (Daten liegen auf $M$, dim $d_x$) ist das Ausgangspostulat; das Netz lernt
+        nur, diese vorgegebene Geometrie <em>auszunutzen</em> (Falten entlang der freien Dimension).
+        <span class="pill b">B</span> betont explizit, dass die Topologie <em>nicht a priori fix</em> ist: Der
+        Simplizialkomplex (Kanten, Dreiecke, $\beta_0,\beta_1$) wird bei <em>jedem Durchlauf aus den
+        Attention-Gewichten neu berechnet</em> — Struktur wird aus dem Inhalt <em>erzeugt</em>, nicht als Ziel
+        vorausgesetzt. <b>Inkompatibel:</b> A: Struktur ist eine <em>gegebene Prämisse</em>, B: Struktur ist ein
+        <em>berechnetes Ergebnis</em>.</li>
+      <li><b>Extrinsische Kodimension vs. intrinsische Konnektivität.</b>
+        <span class="pill a">A</span> fragt nach der <b>Kodimension / freien Dimension</b> $d-d_x$ — einer
+        <em>extrinsischen</em> Eigenschaft, wie die niedrig-dim Mannigfaltigkeit <em>in einem größeren Raum
+        eingebettet</em> ist (Falten <em>in</em> die freie Dimension, unbestimmte Normal-Richtungen).
+        <span class="pill b">B</span> fragt nach der <b>intrinsischen Topologie</b> der Repräsentations-Punkte —
+        den <em>Betti-Zahlen</em> des auf den Punkten aufgebauten Simplizialkomplexes (Zusammenhängende
+        Komponenten, Schleifen, Dreiecke); es geht um die <em>Verbindung <u>unter</u> den Punkten</em>, nicht um
+        eine Kodimension. <b>Inkompatibel:</b> A interessiert <em>wie das Objekt eingebettet ist</em>, B
+        <em>wie die Punkte untereinander verbunden sind</em>.</li>
+      <li><b>Lernen als kontinuierlicher Mechanismus vs. Lernen als abrupter diskreter Sprung.</b>
+        <span class="pill a">A</span> stellt den <b>kontinuierlichen Mechanismus</b> in den Vordergrund: das Netz
+        <em>lernt eine stetige Operation</em> (Falten: Faltstärke $L$, gelernte Rotation), die es glatt verfeinert;
+        der diskrete Teil (lineare Trennbarkeit) ist das <em>Ergebnis</em> dieser stetigen Maschine.
+        <span class="pill b">B</span> stellt den <b>diskreten Sprung</b> in den Vordergrund: „Neural networks
+        don't learn gradually — abrupt phase transitions"; die Ordnungsgröße springt, der kontinuierliche
+        Parameter ist nur das <em>Medium</em>. <b>Inkompatibel:</b> A betont die <em>stetige Maschine</em> (den
+        Fold als Engine), B den <em>diskreten Phasenübergang</em> als Phänomen.</li>
+    </ol>
+  </section>
+
+  <section id="aufloesung">
+    <h2>3 · Auflösung</h2>
+    <p>Die drei Spannungen sind keine Fehler, sondern zwei Ebenen / zwei Seiten <em>derselben</em> Topologie.</p>
+    <ol>
+      <li><b>Prämisse vs. berechnet &rarr; zwei Ebenen desselben Objekts.</b> Die <em>Eingabe</em>-Mannigfaltigkeit
+        (A) ist eine Prämisse über die <em>Daten</em>; die <em>Repräsentations</em>-Topologie (B) ist das, was das
+        Netz aus ihnen <em>berechnet</em>. A liefert das Substrat (niedrig-dim Daten im hohen Raum), B die daraus
+        erzeugte Struktur. <b>Fused:</b> niedrig-dim Eingabe-Geometrie (A) ist der <em>Impuls</em>, die
+        topologische Repräsentation (B) ist die <em>Antwort</em> — einmal gegeben, einmal erzeugt.</li>
+      <li><b>Kodimension vs. Konnektivität &rarr; extrinsik steuert intrinsik.</b> Die Kodimension (A) ist der
+        <em>freie Raum</em>, in dem die Struktur verformt werden kann; die Betti-Zahlen (B) sind die
+        <em>topologische Signatur</em> genau dieser Verformung. Falten (A) ändert die <em>Abstände</em> zwischen
+        Punkten im Ambient-Raum — und das ändert die <em>Konnektivität</em> (B): Kanten entstehen, ein Loop
+        schließt sich. <b>Fused:</b> <em>Wie eingebettet</em> (A) bestimmt <em>welche Topologie</em> (B).</li>
+      <li><b>Stetige Maschine vs. diskreter Sprung &rarr; Kontinuum mit diskreten Topologie-Ereignissen.</b>
+        Beide brauchen einen <em>kontinuierlichen Parameter</em> und eine <em>diskrete Ordnungsgröße</em>.
+        A's Faltgrad/Rotation (stetig) steuert, ob die Daten linear trennbar sind (diskret); B's $\varepsilon$/
+        Scharfheit (stetig) steuert die Betti-Zahlen (diskret). A's „Falten" ist <em>ein</em> Fall von B's
+        allgemeinem Mechanismus. <b>Fused:</b> <b>kontinuierliche Verformung (A) erzeugt diskrete Topologie (B)
+        — der Fold <em>ist</em> der Phasenübergang.</b></li>
+    </ol>
+    <div class="callout fused">
+      <b>Fused-Schlussfolgerung:</b> Ein neuronales System ist ein niedrig-dimensionales topologisches Objekt im
+      höheren Raum. Sein Mechanismus ist <em>kontinuierlich</em> (Falten / Gewichte / Parameter), seine
+      Fähigkeiten sind <em>topologisch und diskret</em> (Trennbarkeit wird erzeugt, $\beta_1$ springt). Und die
+      Doppelkante bleibt: Dieselbe Geometrie, die die Capability erzeugt, ist der Ort der Brüchigkeit —
+      <b>Nutzen und Risiko sind zwei Seiten derselben Topologie.</b>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>4 · Fusionierter Inhalt</h2>
+
+    <h3>4.1 Gemeinsame Prämisse — niedrig-dim Objekt im hohen Raum</h3>
+    <p><span class="pill a">A</span> 28&times;28-Bild in $\mathbb{R}^{784}$, sinnvolle Bilder bedecken nur einen
+    winzigen Teil — Mannigfaltigkeit $M$ mit $d_x \ll 784$, dazwischen die freie Dimension $d-d_x$.
+    <span class="pill b">B</span> Wort-Embeddings in einem (3D-)Semantikraum; die Punkte bilden einen
+    Simplizialkomplex. <b>Beide:</b> ein niedriger-dim Punktensemble / eine Struktur, eingebettet in einen höheren
+    Raum, auf dem eine topologische Struktur (A: Falten/Trennbarkeit, B: Kanten/Dreiecke/Betti) aufgebaut ist.</p>
+
+    <h3>4.2 A — der Mechanismus: Falten als kontinuierliche Maschine</h3>
+    <p>Ein Dense Layer ist <b>affin dann nicht-linear</b>:</p>
+    <div class="formula"><div id="fLayer"></div>
+      <div class="cap">Der affine Teil ist ein <b>Homöomorphismus</b> (Linien&rarr;Linien, Kreise&rarr;Ellipsen)
+      und ändert <em>nie</em> die Trennbarkeit. Der ReLU-Hammer ist die erste echte topologische Verformung. Liegt
+      die Mannigfaltigkeit in <em>weniger</em> Dimensionen als die Schicht breit ist, wird ein ReLU mit
+      Normalenrichtung in die <b>freie Dimension</b> zur <b>Falte</b> (injektiv, keine Info verloren) statt zur
+      Quetschung. Das 2D-Ei (Kern + Ring) ist in 2D nicht linear trennbar; hebt man den Kern in die 3. Dimension an
+      ($N$-Eck-Dom $z=\min_k \mathrm{ReLU}(L-2L(\hat u_k\cdot x))$), trennt <b>eine</b> Ebene innen vom außen. Die
+      <b>gelernte Rotation</b> richtet die Daten so, dass die wahre Grenze auf die Faltlinie fällt. Das
+      <b>Fold-and-Cut-Theorem</b> (Demaine et&nbsp;al. 1998) liefert die Analogie: erst Ränder überlappen
+      (versteckte Schichten falten), dann ein gerader Schnitt (letzte Schicht = Hyperebene) — erklärt die
+      Universal-Approximation. Empirisch: <b>bimodale Tuning-Kurven</b> an Faltkanten; „mixed selectivity" ist
+      Feature, kein Bug.</div>
+    </div>
+
+    <h3>4.3 B — die Topologie: Simplizialkomplex aus Attention, diskrete Sprünge</h3>
+    <p>Drei Projektionen erzeugen Rollen: $Q=XW_Q$, $K=XW_K$, $V=XW_V$; der Score ist $Q_i\!\cdot\!K_j/\sqrt d$;
+    Softmax mit Scharfheit liefert $\alpha_{ij}=\mathrm{softmax}_j(\mathrm{sharp}\cdot Q_i\!\cdot\!K_j/\sqrt d)$.
+    Daraus ein Simplizialkomplex:</p>
+    <div class="formula">
+      Kante $\{i,j\}$ g.d. $\min(\alpha_{ij},\alpha_{ji})>\varepsilon$&nbsp;&nbsp;&middot;&nbsp;&nbsp;
+      Dreieck $\{i,j,k\}$ g.d. alle drei Kanten existieren<br>
+      $\beta_0$ = zusammenhängende Komponenten (Union-Find),&nbsp; $\beta_1 = E - V + \beta_0$
+      <div class="cap">Die Topologie ist <em>pro Eingabe und pro Gewichts-Einstellung</em> neu berechenbar.
+      <span class="pill a">A-Teil</span> desselben Bildes: Fünf Fähigkeiten erscheinen sequentiell bei festen
+      trigger-Epochen (Pattern Matching &rarr; Induction Heads &rarr; Syntax Tree &rarr; Semantic Space &rarr;
+      Reasoning; Epochen 80/280/520/800/1100); Loss fällt in Stufen, Ordnungsgröße 0&rarr;1 — ein <em>diskreter
+      Phasenübergang</em> pro Fähigkeit.</div>
+    </div>
+
+    <h3>4.4 Vereinte Formulierung — ein $g$ steuert, die Topologie springt</h3>
+    <p>Seien $\{x_i\}$ Repräsentations-Punkte und $w_{ij}(g)\in[0,1]$ eine <em>Affinität, die ein
+    <b>kontinuierlicher</b> Kontrollparameter $g$ moduliert</em> ($g$ = Faltgrad bei A, Scharfheit/Epochen bei B).
+    Der Komplex $K(g)$ hat eine Kante g.d. $w_{ij}(g)>\varepsilon$. Dann sind die Invarianten stückweise konstant
+    mit diskreten Sprüngen:</p>
+    <div class="formula"><div id="fFused"></div>
+      <div class="cap"><b>Der Fold von A</b> ist genau eine solche $w_{ij}(g)$: Falten ändert die <em>Abstände</em>
+      im Ambient-Raum, also die Affinität „sind die beiden Enden jetzt nah genug?". Überschreitet die
+      End-Affinität die Schwelle, <em>schließt sich der Loop</em> und $\beta_1$ springt $0\to1$. A's
+      „Falten erzeugt Trennbarkeit" und B's „$\beta_1$ springt an der Schwelle" sind <em>derselbe</em>
+      topologische Mechanismus auf zwei Ebenen.</div>
+    </div>
+
+    <h3>4.5 Das Doppelschwert, verschmolzen</h3>
+    <p><span class="pill a">A</span> Die <em>genutzte</em> freie Dimension (Faltregion) ist kontrolliert und
+    informativ; die <em>unbenutzte</em> (Normal-Richtung, off-manifold) bleibt willkürlich —
+    $\|\Delta_y f\|^2 \le (\prod_{\ell=3}^{L}\|W^\ell\|^2)(\cdots)$, also <em>exponentiell mit der Tiefe</em>
+    instabil (Adversarial). <span class="pill b">B</span> Der <em>abrupte</em> Sprung ist die Capability — aber
+    genau <em>an der Schwelle</em> ist das System brüchig: ein winziges $\varepsilon$ verschiebt die gesamte
+    Topologie. <b>Fused:</b> Nutzen und Risiko sitzen am <em>gleichen Ort</em> — an der topologischen Schwelle.
+    Man kann die Capability (A: Falte, B: Loop) nicht haben, ohne die Brüchigkeit (A: freie Normal-Richtung,
+    B: abrupter Sprung) mitzuliefern.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>5 · Interaktive Visualisierung — Falten erzeugt Topologie</h2>
+    <p class="lead">Linke Seite (A): eine 1D-Mannigfaltigkeit (Pfad von Punkten) im 2D-Ambient. Ziehe den
+    <b>Faltgrad $g$</b> — der Pfad <em>faltet</em> sich, und die beiden Enden kommen zusammen (der Fold).
+    Rechte Seite (B): der aus den Punkten aufgebaute Simplizialkomplex. Ziehe den <b>Schwellwert
+    $\varepsilon$</b> — die topologischen Invarianten $\beta_1$ und die Dreiecke <em>springen diskret</em>, wenn
+    eine Kante die Schwelle kreuzt. Oben: <b>Brüchigkeit</b> — nahe einer Sprungschwelle ist das System am
+    brüchigsten (das Doppelschwert).</p>
+
+    <canvas id="vz" class="viz" width="760" height="460"></canvas>
+
+    <div class="ctrls">
+      <label>Faltgrad g (A) <span class="val" id="vG">0.60</span>
+        <input id="cG" type="range" min="0" max="1" step="0.01" value="0.60"></label>
+      <label>Schwellwert &epsilon; (B) <span class="val" id="vE">0.70</span>
+        <input id="cE" type="range" min="0" max="1" step="0.01" value="0.70"></label>
+      <button id="themeBtn">&#9790;/&#9788; Theme umschalten</button>
+    </div>
+
+    <div class="readout">
+      <div class="stat"><div class="n" id="s-b0">&ndash;</div><div class="t">&beta;&#8320; Komponenten</div></div>
+      <div class="stat"><div class="n" id="s-b1">&ndash;</div><div class="t">&beta;&#8321; Schleifen</div></div>
+      <div class="stat"><div class="n" id="s-e">&ndash;</div><div class="t">Kanten</div></div>
+      <div class="stat"><div class="n" id="s-t">&ndash;</div><div class="t">Dreiecke</div></div>
+      <div class="stat" style="min-width:150px"><div class="n" id="s-f" style="font-size:1rem;color:var(--danger)">&ndash;</div>
+        <div class="t">Br&uuml;chigkeit (nahe Schwelle)</div>
+        <div class="fragbar"><div id="fragfill"></div></div></div>
+    </div>
+    <div class="phase-name" id="phaseName"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--edge)"></span>Manifolds-Pfad (Kanten)</span>
+      <span><span class="dot" style="background:var(--accent2)"></span>Diagonalen</span>
+      <span><span class="dot" style="background:var(--accent)"></span>Falt-Kante (0&ndash;7) / Loop</span>
+      <span><span class="dot" style="background:var(--danger)"></span>gefillter Innenraum = genutzte freie Dimension</span>
+    </div>
+    <p class="caption">Alle Daten inline (feste Gewichtungsmatrix + Faltfunktion), keine Netzabfragen.
+    Diskreter Sprung bei der Schwelle = Phasenübergang. Kontinuierlicher Parameter (g / &epsilon;) &rarr; diskrete Topologie.</p>
+  </section>
+
+  <section id="provenienz" class="prov">
+    <h2>6 · Provenienz</h2>
+    <ul>
+      <li><a href="../r1-058.html">r1-058.html</a>
+        <span class="desc">„Die freie Dimension als Doppelschwert" (R1) — Keup &amp; Helias (2022)
+        „Origami in N dimensions" (Falten erzeugt Trennbarkeit) &times; He, Tsai &amp; Ward (2023) „Side Effects
+        of Learning from Low-dimensional Data" (Normal-Richtung unbestimmt, Adversarial). = Quelle A.</span></li>
+      <li><a href="../r1-017.html">r1-017.html</a>
+        <span class="desc">„Phasenübergänge der Aufmerksamkeit" (R1) — phasetransition.html (abrupte, diskrete
+        Fähigkeitssprünge) &times; simplicial_complex_attention6.html (Q&#183;K baut Simplizialkomplex,
+        $\beta_0,\beta_1$ als Topologie). = Quelle B.</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    Fusion 007 (Runde 2) · Topologie im Falten · Alle Berechnungen lokal im Browser, keine Netzwerk-Datenabrufe.
+  </footer>
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var TAU = Math.PI * 2, N = 8;
+  function tex(id, s) { var el = document.getElementById(id); if (!el) return;
+    if (window.renderMathInElement) { try { el.innerHTML = s; } catch (e) {} }
+    else { el.textContent = s; } }
+  tex('fLayer', '$$\\mathbf{z}=\\Phi(\\underbrace{\\mathbf{W}\\mathbf{x}+\\mathbf{b}}_{\\text{affin: Homöomorphismus}}),\\quad \\Phi=\\mathrm{ReLU}$$');
+  tex('fFused', '$$\\beta(g),\\ \\Delta(g)\\ \\text{stückweise konstant; Sprünge bei } g:\\ w_{ij}(g)=\\varepsilon$$');
+
+  var cv = document.getElementById('vz'), ctx = cv.getContext('2d');
+
+  function wConsec() { return 0.90; }
+  function wClose(g) { return 0.5 + 0.5 * g; }
+  function edgeWeights(g) {
+    var w = [];
+    for (var i = 0; i < N - 1; i++) w.push([i, i + 1, wConsec()]);
+    w.push([0, N - 1, wClose(g)]);
+    w.push([0, 2, 0.85]);
+    w.push([1, 3, 0.75]);
+    return w;
+  }
+  function hasEdge(edges, a, b) {
+    for (var i = 0; i < edges.length; i++)
+      if ((edges[i][0] === a && edges[i][1] === b) || (edges[i][0] === b && edges[i][1] === a)) return true;
+    return false;
+  }
+  function computeStats(g, eps) {
+    var w = edgeWeights(g), edges = [];
+    for (var k = 0; k < w.length; k++) if (w[k][2] > eps) edges.push([w[k][0], w[k][1]]);
+    var parent = []; for (var i = 0; i < N; i++) parent[i] = i;
+    function find(x) { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+    edges.forEach(function (e) { parent[find(e[0])] = find(e[1]); });
+    var roots = {}; for (var i = 0; i < N; i++) roots[find(i)] = 1;
+    var b0 = Object.keys(roots).length;
+    var b1 = Math.max(0, edges.length - N + b0);
+    var tris = 0;
+    for (var a = 0; a < N; a++) for (var b = a + 1; b < N; b++) for (var c = b + 1; c < N; c++)
+      if (hasEdge(edges, a, b) && hasEdge(edges, b, c) && hasEdge(edges, a, c)) tris++;
+    return { b0: b0, b1: b1, edges: edges, tris: tris };
+  }
+  function fragility(g, eps) {
+    var t = [wClose(g), 0.90, 0.85, 0.75], best = 1e9;
+    for (var i = 0; i < t.length; i++) if (t[i] >= 0 && t[i] <= 1) best = Math.min(best, Math.abs(eps - t[i]));
+    return Math.max(0, 1 - best / 0.2);
+  }
+  function phaseLabel(s) {
+    if (s.b0 > 1) return "Phase 0 — zerstreut (viele Komponenten, kein Loop)";
+    if (s.b1 <= 0) return "Phase I — zusammenhängend, aber ohne Schleife (offener Pfad)";
+    if (s.tris === 0) return "Phase II — Loop geschlossen (β₁≥1), keine Dreiecke gefüllt";
+    return "Phase III — dicht: Loop + gefüllte Dreiecke (reiche Topologie)";
+  }
+
+  function themeColors() {
+    var cs = getComputedStyle(document.documentElement);
+    function g(n, d) { var v = cs.getPropertyValue(n).trim(); return v || d; }
+    return { bg: g('--code-bg', '#0a1223'), ink: g('--ink', '#e8eefc'), muted: g('--muted', '#8aa0c8'),
+      accent: g('--accent', '#60a5fa'), accent2: g('--accent2', '#f59e0b'),
+      edge: g('--edge', '#22c55e'), danger: g('--danger', '#ff6b6b'), line: g('--line', '#22304a') };
+  }
+
+  function draw() {
+    var C = themeColors();
+    var g = +document.getElementById('cG').value;
+    var eps = +document.getElementById('cE').value;
+    document.getElementById('vG').textContent = g.toFixed(2);
+    document.getElementById('vE').textContent = eps.toFixed(2);
+    var W = cv.width, H = cv.height;
+    ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+    var s = computeStats(g, eps);
+
+    // ---------- LEFT: geometry (A) ----------
+    var Lx = 200, Ly = 225, R = 150;
+    var span = TAU * (0.55 + 0.45 * g);
+    var pos = [];
+    for (var i = 0; i < N; i++) { var a = (i / (N - 1)) * span - TAU / 4; pos.push({ x: Lx + R * Math.cos(a), y: Ly + R * Math.sin(a) }); }
+    // ambient grid
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.globalAlpha = 0.35;
+    for (var gx = Lx - R; gx <= Lx + R; gx += 50) { ctx.beginPath(); ctx.moveTo(gx, Ly - R); ctx.lineTo(gx, Ly + R); ctx.stroke(); }
+    for (var gy = Ly - R; gy <= Ly + R; gy += 50) { ctx.beginPath(); ctx.moveTo(Lx - R, gy); ctx.lineTo(Lx + R, gy); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+    // enclosed free dimension when loop closed
+    if (s.b1 > 0) { ctx.fillStyle = C.accent; ctx.globalAlpha = 0.10;
+      ctx.beginPath(); for (var i = 0; i < N; i++) { if (i === 0) ctx.moveTo(pos[i].x, pos[i].y); else ctx.lineTo(pos[i].x, pos[i].y); } ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; }
+    // manifold path
+    ctx.strokeStyle = C.edge; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+    ctx.beginPath(); for (var i = 0; i < N; i++) { if (i === 0) ctx.moveTo(pos[i].x, pos[i].y); else ctx.lineTo(pos[i].x, pos[i].y); } ctx.stroke();
+    // diagonals (dashed, if present)
+    ctx.setLineDash([5, 4]); ctx.strokeStyle = C.accent2; ctx.lineWidth = 2;
+    if (hasEdge(s.edges, 0, 2)) { ctx.beginPath(); ctx.moveTo(pos[0].x, pos[0].y); ctx.lineTo(pos[2].x, pos[2].y); ctx.stroke(); }
+    if (hasEdge(s.edges, 1, 3)) { ctx.beginPath(); ctx.moveTo(pos[1].x, pos[1].y); ctx.lineTo(pos[3].x, pos[3].y); ctx.stroke(); }
+    // fold edge 0-(N-1): bright if present, faint ghost otherwise
+    var closeOn = wClose(g) > eps;
+    ctx.setLineDash(closeOn ? [] : [4, 5]); ctx.strokeStyle = C.accent; ctx.lineWidth = closeOn ? 4 : 1.5;
+    ctx.globalAlpha = closeOn ? 1 : 0.4;
+    ctx.beginPath(); ctx.moveTo(pos[0].x, pos[0].y); ctx.lineTo(pos[N - 1].x, pos[N - 1].y); ctx.stroke(); ctx.globalAlpha = 1; ctx.setLineDash([]);
+    // points
+    for (var i = 0; i < N; i++) { ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(pos[i].x, pos[i].y, 4, 0, TAU); ctx.fill(); }
+    // labels
+    ctx.fillStyle = C.muted; ctx.font = '12px Inter, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('Mannigfaltigkeit im 2D-Ambient (A)', Lx, 34);
+    ctx.fillText('Falten schließt den Loop → β₁ springt (B)', Lx, H - 12);
+
+    // ---------- RIGHT: step functions (B) ----------
+    var px0 = 452, px1 = 730, py0 = 60, py1 = 400, ymax = 8;
+    function X(e) { return px0 + e * (px1 - px0); }
+    function Y(v) { return py1 - (v / ymax) * (py1 - py0); }
+    // axes
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px0, py0); ctx.lineTo(px0, py1); ctx.lineTo(px1, py1); ctx.stroke();
+    ctx.fillStyle = C.muted; ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('Schwellwert ε', (px0 + px1) / 2, py1 + 18);
+    ctx.save(); ctx.translate(px0 - 22, (py0 + py1) / 2); ctx.rotate(-Math.PI / 2); ctx.fillText('Invariante', 0, 0); ctx.restore();
+    // sweep eps
+    var series = { b1: [], tr: [], b0: [] }, ex = [];
+    for (var e = 0; e <= 1.0001; e += 0.02) { var st = computeStats(g, e); ex.push(e); series.b1.push(st.b1); series.tr.push(st.tris); series.b0.push(st.b0); }
+    function step(arr, col) { ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (var i = 0; i < arr.length; i++) { var x = X(ex[i]), y = Y(arr[i]); if (i === 0) ctx.moveTo(x, y); else { ctx.lineTo(x, Y(arr[i - 1])); ctx.lineTo(x, y); } } ctx.stroke(); }
+    step(series.b0, C.muted); step(series.tr, C.edge); step(series.b1, C.accent2);
+    // current-eps marker
+    ctx.strokeStyle = C.ink; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(X(eps), py0); ctx.lineTo(X(eps), py1); ctx.stroke(); ctx.setLineDash([]);
+    // legend
+    ctx.font = '11px Inter, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillStyle = C.accent2; ctx.fillText('β₁', px1 - 120, py0 - 16);
+    ctx.fillStyle = C.edge; ctx.fillText('Dreiecke', px1 - 78, py0 - 16);
+    ctx.fillStyle = C.muted; ctx.fillText('β₀', px1 - 30, py0 - 16);
+
+    // ---------- readout ----------
+    document.getElementById('s-b0').textContent = s.b0;
+    document.getElementById('s-b1').textContent = s.b1;
+    document.getElementById('s-e').textContent = s.edges.length;
+    document.getElementById('s-t').textContent = s.tris;
+    var fr = fragility(g, eps);
+    document.getElementById('s-f').textContent = (fr * 100).toFixed(0) + '%';
+    document.getElementById('fragfill').style.width = (fr * 100).toFixed(0) + '%';
+    document.getElementById('phaseName').textContent = phaseLabel(s);
+  }
+
+  ['cG', 'cE'].forEach(function (id) { document.getElementById(id).addEventListener('input', draw); });
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    document.documentElement.classList.toggle('dark'); draw();
+  });
+  var mo = new MutationObserver(function () { draw(); });
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('load', function () {
+    draw();
+    if (window.renderMathInElement) {
+      try { renderMathInElement(document.body, { delimiters: [
+        { left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }
+      ] }); } catch (e) {}
+    }
+  });
+})();
+</script>
+</body>
+</html>

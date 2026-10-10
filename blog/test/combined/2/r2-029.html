@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kapazität lizenziert, Mechanismus liefert — Fusion r1-050 ✕ r1-078</title>
+<script>
+(function(){try{var t=null;try{t=localStorage.getItem('r2029-theme');}catch(e){}
+if(!t){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}
+document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ecdf; --panel:#ffffff; --panel2:#f6f3ea;
+  --stroke:#e6e1d2; --stroke2:#d8d2c0;
+  --txt:#1c1a17; --txt-dim:#57524a;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#be185d;
+  --a-green:#157a3d; --a-red:#c62848; --a-line:#0f766e;
+  --a-bg:#ffffff; --grid:rgba(20,40,80,.07);
+  --ok:#15803d; --bad:#b91c1c; --amber:#b45309;
+  --shadow:0 10px 30px rgba(30,50,90,.10);
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111726; --panel:#141d31; --panel2:#1a2439;
+  --stroke:#26314f; --stroke2:#33405f;
+  --txt:#e8ecff; --txt-dim:#a8b3d9;
+  --accent:#7cf5c4; --accent2:#ffb86b; --accent3:#ff7ab6;
+  --a-green:#4ade80; --a-red:#ff5f7e; --a-line:#7cf5c4;
+  --a-bg:#0d1526; --grid:rgba(120,160,255,.07);
+  --ok:#6ee7a0; --bad:#ff9b9b; --amber:#ffd166;
+  --shadow:0 18px 50px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  line-height:1.66;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+.article{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header.hero{padding:58px 0 20px;text-align:center}
+header.hero .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:.7rem;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);line-height:1.12;margin:0 0 12px;font-weight:820;letter-spacing:-.02em}
+.subtitle{color:var(--txt-dim);font-size:.98rem;margin:0 auto 6px;max-width:660px}
+.subtitle code{background:var(--panel2);border:1px solid var(--stroke);padding:1px 6px;border-radius:6px;
+  font-size:.88em;color:var(--accent)}
+.fusion-tag{font-family:ui-monospace,Menlo,monospace;font-size:.78rem;color:var(--txt-dim);
+  border:1px solid var(--stroke);border-radius:99px;padding:4px 12px;display:inline-block;margin-top:14px;
+  background:var(--panel)}
+section{margin:46px 0;scroll-margin-top:20px}
+h2{font-size:clamp(1.3rem,3.2vw,1.8rem);margin:0 0 14px;font-weight:780;letter-spacing:-.01em;
+  padding-bottom:8px;border-bottom:1px solid var(--stroke)}
+h2 .num{font-family:ui-monospace,monospace;font-size:.68em;color:var(--accent);margin-right:10px;
+  border:1px solid var(--stroke2);border-radius:8px;padding:2px 8px;vertical-align:middle}
+h3{font-size:1.08rem;margin:24px 0 8px;font-weight:720}
+p{margin:11px 0;color:var(--txt)}
+.dim{color:var(--txt-dim)}
+b,strong{font-weight:700}
+.hl{color:var(--accent);font-weight:700}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:18px 20px;
+  box-shadow:var(--shadow);margin:16px 0}
+.card.tight{padding:14px 16px}
+.callout{border-left:3px solid var(--accent);background:var(--panel2);padding:12px 16px;
+  border-radius:0 12px 12px 0;margin:14px 0}
+.callout .tag{font-family:ui-monospace,monospace;font-size:.66rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--stroke);vertical-align:top}
+th{color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+tr.a td:first-child{color:var(--accent2);font-weight:600}
+tr.b td:first-child{color:var(--accent);font-weight:600}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--panel2);
+  border-left:3px solid var(--accent3);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;
+  font-size:1.02rem;overflow-x:auto}
+.sup{font-size:.62em;vertical-align:.5em}
+.sub{font-size:.62em;vertical-align:-.3em}
+.vizwrap{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;
+  box-shadow:var(--shadow);margin:16px 0}
+#viz{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--stroke);
+  background:var(--a-bg)}
+.ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:12px 0}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:140px;flex:1}
+.ctrl label{font-size:.72rem;color:var(--txt-dim);font-family:ui-monospace,monospace;
+  display:flex;justify-content:space-between;gap:8px}
+.ctrl label b{color:var(--accent)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--accent3));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:var(--txt);box-shadow:0 0 0 3px var(--stroke2);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border:none;border-radius:50%;background:var(--txt);cursor:pointer}
+button{background:var(--panel2);color:var(--txt);border:1px solid var(--stroke2);padding:7px 13px;
+  border-radius:9px;cursor:pointer;font-size:.8rem;font-weight:600;transition:.15s;font-family:inherit}
+button:hover{border-color:var(--accent);transform:translateY(-1px)}
+button.on{border-color:var(--accent);color:var(--accent)}
+.btnRow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--stroke2);border-radius:10px;overflow:hidden}
+.seg button{border:none;border-radius:0;padding:7px 13px}
+.seg button.on{transform:none;background:var(--panel);color:var(--accent)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.76rem;color:var(--txt-dim);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;margin-top:12px}
+.stat{background:var(--panel2);border:1px solid var(--stroke);border-radius:10px;padding:10px 12px;text-align:center}
+.stat .v{font-family:ui-monospace,monospace;font-size:1.28rem;font-weight:800;color:var(--accent)}
+.stat .l{font-size:.68rem;color:var(--txt-dim);margin-top:2px}
+.verdict{grid-column:1/-1;font-weight:700;font-size:.98rem;padding:12px 14px;border-radius:10px;margin-top:2px;border:1px solid var(--stroke)}
+.verdict.good{color:var(--ok);background:rgba(74,222,128,.10);border-color:var(--ok)}
+.verdict.warn{color:var(--amber);background:rgba(255,208,102,.10);border-color:var(--amber)}
+.verdict.bad{color:var(--bad);background:rgba(255,95,126,.10);border-color:var(--bad)}
+.regbar{height:7px;border-radius:99px;background:var(--panel);border:1px solid var(--stroke);overflow:hidden;margin-top:6px}
+.regbar>div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .15s}
+.hint{font-size:.8rem;color:var(--txt-dim);font-style:italic;margin-top:10px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--stroke);
+  color:var(--txt);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;padding:44px 0 10px;color:var(--txt-dim);font-size:.8rem;border-top:1px solid var(--stroke);margin-top:40px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">☀︎ Hell / 🌙 Dunkel</button>
+<div class="article">
+
+<header class="hero">
+  <div class="eyebrow">Knockout-Synthese · Runde 2 · Paar 029</div>
+  <h1>Kapazität lizenziert,<br>Mechanismus liefert</h1>
+  <p class="subtitle">Fusion aus: <code>r1-050.html</code> ✕ <code>r1-078.html</code> &nbsp;(Round 2)</p>
+  <span class="fusion-tag">Ein viele-zu-eins-Quotient (Faltung/Klebung), iteriert — Kapazität als Lizenz, Mechanismus + Korrespondenz als Lieferung.</span>
+</header>
+
+<section id="these">
+  <h2><span class="num">01</span>Kernthese der Fusion</h2>
+  <p class="dim">Beide R1-Papiere beschreiben <em>derselben</em> Konstruktion zwei Gesichter: eine <b>lokale
+  Identifikations-Operation</b> (eine Faltung / eine Klebung), die <em>iteriert</em> wird, um aus lokalen
+  Daten ein <em>globales Ganze</em> zu erzeugen — und in beiden dreht sich die Hauptdebatte um dieselbe
+  Frage: <b>Welches Gesichts der Operation tut die erklärende Arbeit?</b> Die <em>Kapazitätsseite</em>
+  (wie viel Struktur das lokale Bauelement <em>vermag</em>) oder die <em>Mechanismus-/Korrespondenzseite</em>
+  (was <em>tatsächlich geschieht</em> und ob es etwas <em>Reales</em> trifft).</p>
+  <p>Die Fusion lautet: <b>Ein lokaler viele-zu-eins-Quotient — in B die <span class="hl">ReLU-Faltung</span>
+  <span class="m">(x,y) ↦ (|x|,|y|)</span>, in A die <span class="hl">Klebkraft</span>
+  <span class="m">g(d)=e<sup>−λd</sup></span> — wird über eine lizenzierte Überdeckung iteriert und erzeugt ein
+  globales Objekt (in B die vereinfachte Topologie <span class="m">ω=1</span>, in A die natürliche Art / der
+  globale Schnitt&nbsp;G). Jede solche Konstruktion hat zwei Seiten: die <b>Kapazitätsseite</b>
+  (<span class="m">O(N<sup class="sup">L</sup>)</span> lineare Regionen bzw. das „universelle" exponentielle
+  Gesetz) und die <b>Mechanismus-/Korrespondenzseite</b> (die Faltung, die <span class="m">β<sub class="sub">1</sub></span>
+  bricht; der Tarski-Test, der G an W bindet). Kapazität ist eine <b>notwendige, aber nicht hinreichende</b>
+  Bedingung; der Mechanismus plus Korrespondenz ist die <b>ausführende</b> Seite.</b></p>
+  <p>Der gemeinsame Kernfehler — in beiden Papiern unter anderem Namen — ist der <b>silent upgrade</b>: die
+  <em>Lizenz</em> (Kapazität: „vermag es") als <em>Lieferung</em> (Mechanismus/Korrespondenz: „erzielt es /
+  ist es wahr") zu lesen. A nennt ihn: aus „generalisiert stark" (statistische Stufe) auf „ist identisch"
+  (Identitätsstufe) springen. B nennt ihn: aus „kann repräsentieren" (Expressivity) auf „erklärt deshalb
+  Tiefe" schließen. Fusioniert: <b>in jeder lokalen-zu-globalen Quotient-Konstruktion sind Kapazität und
+  Mechanismus dieselbe Operation auf zwei Skalen — und nur der Mechanismus, geprüft an einem externen
+  Grund, macht das globale Ganze <em>real</em>.</b></p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="num">02</span>Widersprüche zwischen A (r1-050) und B (r1-078)</h2>
+
+  <div class="card">
+    <h3>W1 — Ge­grad­te Klebkraft (A) gegen kategoriale Topologie-Veränderung (B)</h3>
+    <p><b>A (r1-050):</b> „Zu einer Art gehören" ist eine <em>Stufe</em>. Die Klebkraft
+    <span class="m">g(d)=e<sup>−λd</sup></span> ist eine <em>kontinuierliche Wahrscheinlichkeit</em>, und die
+    „dieselbe-Art"-Grenze <span class="m">d*=ln&nbsp;2/λ</span> ist eine <em>ad&nbsp;hoc 0.5-Schwelle</em>. Die
+    Sameness-Leiter hat <em>sechs graduierte</em> Stufen, und die Klebkraft sitzt auf Stufe 4–5
+    (statistisch/approximativ), <em>nie</em> auf Stufe 0 (Identität). Die Zugehörigkeit ist also
+    <em>weich / von Grad</em>.</p>
+    <p><b>B (r1-078):</b> die Faltung <span class="m">(x,y)↦(|x|,|y|)</span> ist ein <em>scharfes,
+    kategoriales</em> topologisches Ereignis — <span class="m">β<sub class="sub">1</sub></span> geht 1→0, das
+    Loch ist <em>entweder</em> vernichtet <em>oder nicht</em>; Topologie ist ein <em>diskreter Invariant</em>.
+    ReLU ist <em>kategorisch</em> nicht-injektiv, tanh <em>kategorisch</em> ein Homöomorphismus. Die
+    Topologie-Veränderung ist <em>hart / binär</em>.</p>
+    <p class="dim"><b>Spannung:</b> lebt das globale Ganze in einem <em>graduierten/weichen</em> Register (A)
+    oder in einem <em>diskreten/harten</em> (B)? — dasselbe Objekt, auf <em>unterschiedlich viele Grade</em>
+    gelesen.</p>
+  </div>
+
+  <div class="card">
+    <h3>W2 — Offenes Modell-Welt-Gap (A) gegen Theorem-verschlossene Lücke (B)</h3>
+    <p><b>A (r1-050):</b> Korrespondenz wird von der Kohärenz-Maschinerie <em>nie</em> garantiert; sie braucht
+    einen <em>externen</em> Tarski-Convention-T-Test (<span class="m">S ⇔ p</span>), und G ist
+    <em>provisorisch, revidierbar, niemals identisch mit W</em>. Halluzination = Kohärenz <em>ohne</em>
+    Korrespondenz (non-glueable presheaf). Das Modell/Welt-Gap bleibt <em>prinzipiell offen</em> — von innen
+    nicht entscheidbar.</p>
+    <p><b>B (r1-078):</b> Korrespondenz <em>kann in Prinzip garantiert</em> werden — durch das
+    <em>Niyogi–Smale–Weinberger-Theorem</em> (dicht genug sampeln ⇒ gemessene Homologie = Homologie der echten
+    Mannigfaltigkeit). Die „Welt" <em>ist</em> die Daten-Mannigfaltigkeit; das Netz <em>verfolgt</em> sie, und
+    die Lücke wird <em>unter einer präzisen hinreichenden Bedingung (dichte Sampling) verschlossen</em>.</p>
+    <p class="dim"><b>Spannung:</b> ein <em>prinzipiell offenes</em>, konventionsgebundenes Gap (A) gegen eine
+    <em>Theorem-verschlossene</em> Lücke unter Bedingungen (B) — eine echte epistemische Asymmetrie über den
+    Status von „Korrespondenz".</p>
+  </div>
+
+  <div class="card">
+    <h3>W3 — Nicht-Injektivität als Produkt (B) gegen lizenziertes Risiko (A)</h3>
+    <p><b>B (r1-078):</b> die Faltung (Nicht-Injektivität, ReLU tötet die negative Hälfte) <em>ist</em> das
+    Produkt — der Verlust der Injektivität <em>ist</em> der Mechanismus, der das Loch vernichtet und lineare
+    Trennbarkeit ergibt („in einem einzigen Schritt", Fig. 21). <em>Verlust = Gewinn.</em></p>
+    <p><b>A (r1-050):</b> dieselbe viele-zu-eins-Klebung ist ein <em>Risiko</em>, das <em>lizenziert</em>
+    werden muss (admissible transition class <span class="m">𝒯</span>) und <em>korrespondenzgeprüft</em>
+    (Tarski) — sonst entartet sie zur <em>selbstkonsistenten Fiktion</em> / Factbook / Halluzination.
+    <em>Verlust = potenzieller Fehler.</em></p>
+    <p class="dim"><b>Spannung:</b> der Quotient (Identifikation) als <em>Gewinn</em> (B) versus als
+    <em>Gefahr</em> (A) — derselbe geometrische Zug mit <em>entgegengesetztem Vorzeichen</em>.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="num">03</span>Auflösung</h2>
+
+  <div class="card">
+    <h3>A1 — Diskreter Invariant + gradueller Read-out = eine Operation auf zwei Skalen</h3>
+    <p>W1 löst sich, weil <em>Invariant</em> und <em>Zugehörigkeit</em> getrennt werden. Die
+    <em>topologische Tatsache</em> (<span class="m">β<sub class="sub">1</sub>:1→0</span>) ist diskret (B's
+    Register); der <em>Read-out</em>, <em>wie stark</em> ein neuer Punkt zum globalen Ganzen gehört, ist
+    graduell (A's <span class="m">g(d)</span>). <b>Fusioniert:</b> das <em>Ereignis</em> der Faltung geschieht
+    in einer <em>bestimmten</em> Schicht (diskret), aber „gehört zur Art" ist <em>Stufensache</em> bis hin zum
+    Korrespondenztest. A's Sameness-Leiter ist genau das Werkzeug, um die <em>kategoriale</em>
+    Topologie-Tatsache (B) auf der <em>richtigen</em> Stufe zu lesen — ohne sie stillschweigend auf Identität
+    zu upgraden. <span class="hl">Also: der Invariant ist hart, die Zugehörigkeit ist weich.</span></p>
+  </div>
+
+  <div class="card">
+    <h3>A2 — Zwei Arten der Korrespondenz: geometrisch (Theorem) und kategoriale (Konvention)</h3>
+    <p>W2 löst sich, weil „Korrespondenz" zwei <em>verschiedene Regime</em> benennt, nicht eines. NSW (B)
+    verschließt das Gap <em>nur für die Topologie der Daten-Mannigfaltigkeit</em> — eine <em>schmale,
+    geometrische</em> Korrespondenz mit <em>präkiser hinreichender Bedingung</em> (dichte Sampling). A's
+    Tarski-Korrespondenz ist <em>breit und offen</em> — ob die <em>Generalisierung</em> (die natürliche Art)
+    eine <em>echte</em> consequential-Struktur trifft, garantiert kein Theorem von innen.
+    <b>Fusioniert:</b> es gibt <em>mindestens zwei</em> Korrespondenz-Regime — ein
+    <em>geometrisch-topologisches</em>, das unter Bedingungen <em>theorembeweisbar</em> ist (B, NSW), und ein
+    <em>kategoriales/semantisches</em>, das <em>Konvention bleibt</em> und provisorisch (A, Tarski). Wo das
+    Theorem greift (Daten-Mannigfaltigkeit), vertrauen wir ihm; wo das <em>kategoriale</em> Claim steht
+    („dies ist <em>wirklich</em> die natürliche Art"), bleibt A's Tarski-Disziplin + No-Silent-Upgrade
+    wirksam.</p>
+  </div>
+
+  <div class="card">
+    <h3>A3 — Die Faltung braucht <em>Lizenz</em> und <em>Ziel</em></h3>
+    <p>W3 löst sich, weil B und A sich <em>gegenseitig vervollständigen</em>: B's Faltung ist produktiv,
+    <em>weil</em> sie auf die <em>echte Topologie der Daten</em> zulieft — und das <em>ist</em> genau A's
+    Doppelbedingung: (a) <em>lizenziert</em> (𝒯 / Occam / Training an echten Daten) und (b)
+    <em>korrespondierend</em> (Tarski / NSW + empirischer Betti-Kollaps). <b>Fusioniert:</b> ein Quotient ist
+    ein <em>Gewinn</em> genau dann, wenn er <em>lizenziert</em> und <em>korrespondierend</em> ist;
+    un-lizenziert und un-korrespondiert ist dieselbe Faltung eine <em>Halluzination</em> (A) bzw. ein
+    <em>spuriouser Kollaps</em> (B's tanh, das <em>nicht</em> faltet). <span class="hl">Verlust = Gewinn
+    <em>auf</em> die Daten-Mannigfaltigkeit, Verlust = Fehler <em>ohne</em> sie.</span></p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="num">04</span>Fusionierter Inhalt</h2>
+
+  <h3>4.1 Die gemeinsame Architektur (lokal → global)</h3>
+  <p class="dim">Beide operationalisieren <em>eine</em> Konstruktion in zwei Registern. Die Zuordnung, die die
+  ganze Fusion trägt:</p>
+  <div class="card tight">
+  <table>
+    <tr><th>A · r1-050</th><th>B · r1-078</th><th>Fusion</th></tr>
+    <tr class="a"><td>lokales Datum: Reiz / Trace O:W→R</td>
+        <td>lokales Datum: Punkt auf der Eingabe-Mannigfaltigkeit</td>
+        <td>der lokale Input, der verklebt/gefaltet wird</td></tr>
+    <tr class="a"><td>Operation: Klebkraft <span class="m">g(d)=e<sup>−λd</sup></span> (graduelle Identifikation)</td>
+        <td>Operation: ReLU-Knick → Faltung <span class="m">(x,y)↦(|x|,|y|)</span> (diskrete Identifikation)</td>
+        <td>die viele-zu-eins-Identifikation (der Quotient)</td></tr>
+    <tr class="a"><td>Überdeckung: consequential regions / admissible 𝒯</td>
+        <td>Überdeckung: L Schichten (sequentiell)</td>
+        <td>die „Lizenz", wo gefaltet/verklebt werden darf</td></tr>
+    <tr class="a"><td>globales Objekt: natürliche Art / globaler Schnitt G</td>
+        <td>globales Objekt: vereinfachte Topologie <span class="m">ω=1</span> je Klasse</td>
+        <td>das aus dem Quotienten entstehende Ganze</td></tr>
+    <tr class="a"><td>Kapazität: „universelles" exponentielles Gesetz</td>
+        <td>Kapazität: lineare Regionen <span class="m">O(N<sup class="sup">L</sup>)</span></td>
+        <td>„wie viel Raum" der Quotient <em>vermag</em></td></tr>
+    <tr class="a"><td>Mechanismus: Tarski-T + 𝒯 + No-Silent-Upgrade</td>
+        <td>Mechanismus: Faltung bricht <span class="m">β<sub class="sub">1</sub></span> + Tiefe=Zeit</td>
+        <td>was <em>tatsächlich</em> geschieht</td></tr>
+    <tr class="a"><td>Korrespondenztest: externer Tarski-Test (offen)</td>
+        <td>Korrespondenztest: NSW-Theorem + Empirie (theorem unter Bedingungen)</td>
+        <td>ob das Ganze etwas <em>Reales</em> trifft</td></tr>
+    <tr class="a"><td>Pathologie: non-glueable presheaf (Halluzination)</td>
+        <td>Pathologie: tanh (homöomorph, faltet nicht) / spuriouser Kollaps</td>
+        <td>der Quotient ohne Ziel</td></tr>
+  </table>
+  </div>
+
+  <h3>4.2 Die Kapazitätsseite (beide)</h3>
+  <p><b>A:</b> das exponentielle Gesetz <span class="m">g(d)=e<sup>−λd</sup></span> — robust über
+  Tauben/Menschen, Farben/Töne/Formen. Herleitung aus (i) natural kinds / consequential regions und
+  (ii) Unsicherheit über Region-Größe: <span class="m">g(x)=∫<sub class="sub">0</sub><sup>∞</sup>
+  p(s)·m(s,x)/m(s) ds</span>. Max-Entropie <span class="m">q(s)=(1/µ)e<sup>−s/µ</sup></span> +
+  Bayes <span class="m">p(s)∝s·q(s)</span> → <em>Erlang</em> → exakt <span class="m">g(d)=e<sup>−2d/µ</sup></span>.
+  Die „dieselbe-Art"-Grenze liegt bei <span class="m">d*=ln&nbsp;2/λ</span>. Zwei Metriken:
+  <span class="m">d=(Σ|x<sub class="sub">k</sub>−y<sub class="sub">k</sub>|<sup>r</sup>)<sup>1/r</sup></span>
+  — separable Dimensionen → L₁ (Raute), integrale → L₂ (Kreis).</p>
+  <p><b>B:</b> lineare Regionen — ein ReLU-Netz mit L Schichten, N Neuronen/Schicht, d Eingabe-Dimensionen
+  erzeugt bis zu <span class="m">(N/d)<sup class="sup">d·L</sup></span> Regionen (tief), gegenüber
+  <span class="m">2<sup class="sup">N</sup></span> (flach); für d=2 also <span class="m">(N/2)<sup class="sup">2L</sup></span>.
+  Der ReLU-Knick fügt eine Region hinzu; Tiefe wächst <em>exponentiell</em> in der Ausdruckskraft pro
+  Parameter.</p>
+  <p class="dim"><b>Fusioniert:</b> beide zählen, dass „genug Raum" ist — die <em>notwendige</em> Bedingung.
+  Kapazität sagt <em>dass</em> es gehen kann, nie <em>wie</em> es geschieht.</p>
+
+  <h3>4.3 Die Mechanismus-/Korrespondenzseite (beide)</h3>
+  <p><b>A:</b> Tarski-Convention-T (<span class="m">S ist wahr ⇔ p</span>); G ≠ W, provisorisch, revidierbar;
+  drei Pathologien (<em>self-consistent fantasy</em>, <em>factbook</em>, <em>contact-point liar</em>/Halluzination).
+  Admissible <span class="m">𝒯</span> = zugleich <em>Subkategorie</em> + <em>Bayesian Prior</em> +
+  <em>Occam-Penalty</em> („zu großes 𝒯 ⇒ Overfitting"; unbeschränktes 𝒯 macht Kohärenz vakuös).
+  Sameness-Leiter (<span class="m">=, ≅, ≃, d≤ε, statistisch, modelltheoretisch</span>) + Verbot des
+  <em>silent upgrade</em>. Sheaf/Descent + Equalizer als formales Agreement-Maß.
+  Ein LLM = globaler Schnitt ohne externe O<sub class="sub">i</sub> zu W → Halluzination = non-glueable
+  presheaf; Remedy: Korrespondenz <em>anhängen</em> (RAG, Tools, formale Verifikation), nicht Kohärenz durch
+  Skalierung reparieren.</p>
+  <p><b>B:</b> die Faltung <span class="m">(x,y)↦(|x|,|y|)</span> bricht <span class="m">β<sub class="sub">1</sub></span>
+  in <em>einem</em> Schritt (Fig. 21); ReLU <em>nicht-injektiv</em> (faltet) vs. tanh <em>Homöomorphismus</em>
+  (topologisch inert, „fälscht" Abbau allenfalls über Rundungsfehler); ReLU &gt; Leaky-ReLU &gt; tanh.
+  Breite = Extra-Raum, Tiefe = Zeit. „Donut → Croissant" β-Folge <span class="m">(1,2,1)→(1,1,1)→(1,1,2)→(1,0,1)</span>.
+  Aus einer Wolke X entsteht über Radius ε der <em>Vietoris–Rips-Komplex</em>; Betti-Zahlen
+  <span class="m">β<sub class="sub">k</sub>=dim&nbsp;ker&nbsp;∂<sub class="sub">k</sub>−rang&nbsp;∂<sub class="sub">k+1</sub></span>
+  über 𝔽<sub class="sub">2</sub>; <em>Persistente Homologie</em> (langer Balken = echte Struktur). Das
+  <em>Niyogi–Smale–Weinberger</em>-Theorem legitimiert (dicht ⇒ gemessen = echt); maßgeblich ist der
+  <em>graph-geodätische</em> Abstand δ<sub class="sub">k</sub> (streckimmun, topologie-empfindlich).
+  <em>Jordanscher Kurvensatz</em>: zwei ineinanderliegende Kreise trennt <em>kein</em> Homöomorphismus linear —
+  eine Faltung schon.</p>
+
+  <h3>4.4 Das fusionierte Gesetz: Kapazität lizenziert, Mechanismus liefert</h3>
+  <div class="callout"><span class="tag">Kerngesetz</span>
+  <b>Kapazität (Zählen) ist notwen­dig, aber nicht hinreichend; Mechanismus + Korrespondenz ist die
+  ausführende, hinreichende Seite.</b> A: „Kohärenz ≠ Korrespondenz". B: „Expressivity erklärt Tiefe nicht"
+  (eine einzelne weite Schicht approximiert bereits alles, doch Tiefe gewinnt trotzdem). Der <em>silent
+  upgrade</em> (A) — „generalisiert stark" als „ist identisch" lesen — und B's Gegenstück — „vermag zu
+  repräsentieren" als „erklärt deshalb Tiefe" — sind <em>derselbe</em> Kategorienfehler: die <em>Lizenz</em>
+  (Kapazität) für die <em>Lieferung</em> (Mechanismus/Korrespondenz) zu halten.</div>
+  <p class="dim">Die <em>Identifikation</em> als gemeinsamer Kern: beide Operationen sind
+  <em>viele-zu-eins-Quotienten</em> — ReLU-Faltung (B) und Klebung/Identifikation (A). Die Kapazität zählt,
+  <em>wie viele</em> Distinktionen der Quotient <em>vermög­en</em> zu verschmelzen; der Mechanismus entscheidet,
+  <em>welche</em> tatsächlich verschmolzen werden — und ob sie <em>etwas Rechtes</em> verschmelzen.</p>
+
+  <h3>4.5 Die gemeinsame Mathematik in einem Zug</h3>
+  <p>Alles läuft auf eine Kette: <em>Lizenz (𝒯 / Schichten) → Klebkraft/Knick
+  <span class="m">g(d)=e<sup>−λd</sup></span> / Faltung → Schwelle → Korrespondenztest</em>.
+  <span class="m">d*=ln&nbsp;2/λ</span> (A's „dieselbe-Art"-Grenze, wo <span class="m">g=0.5</span>) ↔ die
+  <em>Schicht</em>, in der <span class="m">β<sub class="sub">1</sub>→0</span> (B's Faltungsschicht): beide
+  sind „die Schwelle, an der die Identifikation <em>entscheidend</em> wird". <span class="m">ω</span> (B's
+  Komplexitätsmaß aus den Betti-Zahlen) ↔ <span class="m">g(d)</span> (A's Zugehörigkeitsgrad): ω sinkt
+  <em>diskret</em> auf 1, <span class="m">g(d)</span> sinkt <em>kontinuierlich</em> auf 0 — derselbe
+  „Vereinfachungsgrad" auf zwei Skalen. Zwei Korrespondenz-Regime: <em>geometrisch</em> (NSW: dicht ⇒
+  gemessen=echt) und <em>kategoriale</em> (Tarski: Konvention, offen).</p>
+
+  <h3>4.6 Grenzen (beide — Ehrlichkeit)</h3>
+  <p class="dim"><b>A:</b> das „Gesetz" ist ein <em>Modell</em>, nicht die Welt; revidierbar; Korrespondenz
+  ist Konvention, von innen nicht entscheidbar. <b>B:</b> <em>empirische</em> Studie ohne Theorem (außer
+  NSW); kein ImageNet/CIFAR (persistente Homologie dort außer Reichweite); der Mechanismus ist ausdrücklich
+  <em>spekulativ</em>; „echte Löcher" stets relativ zum Maßstab (k*, ε*); Grokking/Superposition als
+  Etabliertes präsentiert, teils mit offenen Theorien. <b>Fusioniert:</b> die Faltung <em>liefert</em> nur,
+  was sie <em>lizenziert</em> ist zu falten — und selbst dann bleibt das <em>kategoriale</em> Claim („wirklich
+  die Art") provisorisch.</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span>Fusionierte Visualisierung</h2>
+  <p>Zwei ineinanderliegende Ringe (grün = Klasse A außen, rot = Klasse B innen) durchlaufen ein
+  parametrisches ReLU-Netz — <b>B's Faltung</b> <span class="m">(x,y)↦(|x|,|y|)</span> ist dabei
+  <b>A's Kleb-Operation</b>: der Quotient, der lokale Punkte identifiziert. Über dem Raum liegt <b>A's
+  graduelle Klebkraft</b> <span class="m">g(d)=e<sup>−λd</sup></span> als Feld, begrenzt durch die
+  <em>„dieselbe-Art"-Grenze</em> <span class="m">d*=ln&nbsp;2/λ</span> (rosa Kontur). Die Readouts zeigen die
+  drei Seiten der Fusion: <b>Kapazität</b> (lineare Regionen), <b>Mechanismus</b> (Betti
+  <span class="m">β<sub class="sub">0/1</sub></span>, diskret — live aus der Punktwolke) und
+  <b>Korrespondenz</b> (Verdikt: lizenziert × Ziel getroffen). Ziehe <b>Fortschritt</b> durch die Schichten;
+  wechsele auf <b>tanh</b>, um zu sehen, dass ein Homöomorphismus die Ringe <em>nicht</em> entwirrt —
+  „Kapazität vorhanden, aber keine Faltung" = Kohärenz ohne Korrespondenz. Alles live, theme-aware, inline.</p>
+
+  <div class="vizwrap">
+    <canvas id="viz" width="760" height="460"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--a-green)"></i>Klasse A (außen)</span>
+      <span><i style="background:var(--a-red)"></i>Klasse B (innen = Testreiz Y)</span>
+      <span><i style="background:var(--accent)"></i>Klebkraft-Feld g(d)</span>
+      <span><i style="background:var(--accent3)"></i>d*-Grenze (g=0.5)</span>
+      <span><i style="background:var(--a-line)"></i>Trennlinie (wenn trennbar)</span>
+    </div>
+    <div class="ctrls">
+      <div class="ctrl"><label>Fortschritt p <b id="pL">0%</b></label>
+        <input type="range" id="p" min="0" max="100" value="0" step="1"></div>
+      <div class="ctrl"><label>Klebkraft λ <b id="lamL">0.90</b></label>
+        <input type="range" id="lam" min="0.3" max="3" value="0.9" step="0.05"></div>
+      <div class="ctrl"><label>Tiefe L <b id="LL">6</b></label>
+        <input type="range" id="L" min="1" max="8" value="6" step="1"></div>
+      <div class="ctrl"><label>Breite N <b id="NL">8</b></label>
+        <input type="range" id="N" min="2" max="12" value="8" step="1"></div>
+      <div class="btnRow">
+        <div class="seg" id="actSeg">
+          <button class="on" id="actRelu" type="button">ReLU (lizenziert, faltet)</button>
+          <button id="actTanh" type="button" style="border-left:1px solid var(--stroke)">tanh (homöomorph)</button>
+        </div>
+        <button id="play" type="button">▶ Abspielen</button>
+      </div>
+    </div>
+    <div class="readout">
+      <div class="stat"><div class="v" id="vB0a">–</div><div class="l">β₀ Klasse A</div></div>
+      <div class="stat"><div class="v" id="vB1a">–</div><div class="l">β₁ Klasse A</div></div>
+      <div class="stat"><div class="v" id="vB0b">–</div><div class="l">β₀ Klasse B</div></div>
+      <div class="stat"><div class="v" id="vB1b">–</div><div class="l">β₁ Klasse B</div></div>
+      <div class="stat"><div class="v" id="vOm">–</div><div class="l">ω (Proxy)</div></div>
+      <div class="stat"><div class="v" id="vG">–</div><div class="l">Klebkraft g(Y)</div></div>
+      <div class="stat"><div class="v" id="vDstar">–</div><div class="l">d* = ln2/λ</div></div>
+      <div class="stat"><div class="v" id="vReg">–</div><div class="l">Regionen ≈ (N/2)²ᴸ</div>
+        <div class="regbar"><div id="vRegBar"></div></div></div>
+      <div class="verdict warn" id="vVerdict">…</div>
+    </div>
+    <div class="hint" id="vStatus">Start: zwei ineinanderliegende Ringe — ein Homöomorphismus kann sie nicht
+      linear trennen (Jordanscher Kurvensatz). Ziehe den Fortschritt, bis die Faltung greift.</div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="num">06</span>Provenienz</h2>
+  <div class="card tight">
+    <p style="margin:4px 0"><a href="../r1-050.html">A — r1-050.html</a>
+      <span class="dim">· „Generalisierung als Descent — Fusion Shepard ✕ Coherent World Models". Liefert die
+      Kleb-/epistemische Seite: exponentielles Gesetz <span class="m">g(d)=e<sup>−λd</sup></span>,
+      psychologischer Raum (MDS), consequential regions, Herleitung Max-Entropie+Bayes→Erlang, Minkowski
+      L₁/L₂, d*=ln2/λ; Coherent World Models: Traces O:W→R, admissible 𝒯 (Subkategorie+Prior+Occam),
+      Sheaf/Descent/Equalizer, Tarski-Convention-T, Sameness-Leiter, No-Silent-Upgrade, LLM-Halluzination als
+      non-glueable presheaf.</span></p>
+    <p style="margin:4px 0"><a href="../r1-078.html">B — r1-078.html</a>
+      <span class="dim">· „Tiefe Netze als Formverformer: Ausdruckskraft trifft Topologie". Liefert die
+      Faltungs-/Kapazitätsseite: lineare Regionen <span class="m">O(N<sup class="sup">L</sup>)</span>
+      (Expressivity), Betti-Kollaps, Faltung <span class="m">(x,y)↦(|x|,|y|)</span> als Mechanismus, ReLU vs.
+      tanh (Homöomorphismus), Tiefe=Zeit, Vietoris–Rips/Persistente Homologie/NSW-Theorem/Jordanscher
+      Kurvensatz, Donut→Croissant, reale Daten (MNIST, Banknoten, …).</span></p>
+  </div>
+</section>
+
+<footer>
+  Selbstständige Fusion · Paar 029 · Runde 2 · Alle Inhalte aus den beiden Quell-Seiten,
+  Visualisierung clientseitig ohne Netzwerkdaten.
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('viz');
+if(!cv) return;
+var ctx=cv.getContext('2d');
+var W=760,H=460;
+(function(){var dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+  cv.style.width='100%';cv.style.height='auto';ctx.setTransform(dpr,0,0,dpr,0,0);})();
+
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function smooth(t){t=clamp(t,0,1);return t*t*(3-2*t);}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+var rng=mulberry32(7);
+var outer=[],inner=[],NA=130,NB=100,RA=1.0,RB=0.55,i;
+for(i=0;i<NA;i++){var t=i/NA*6.2831853;var r=RA+(rng()-0.5)*0.03;outer.push([r*Math.cos(t),r*Math.sin(t)]);}
+for(i=0;i<NB;i++){var t2=i/NB*6.2831853;var r2=RB+(rng()-0.5)*0.03;inner.push([r2*Math.cos(t2),r2*Math.sin(t2)]);}
+
+var VIEW={xmin:-1.9,xmax:2.5,ymin:-1.6,ymax:2.6};
+var padL=46,padR=30,padT=26,padB=30;
+var dw=VIEW.xmax-VIEW.xmin,dh=VIEW.ymax-VIEW.ymin;
+var S=Math.min((W-padL-padR)/dw,(H-padT-padB)/dh);
+function d2c(x,y){return [padL+(x-VIEW.xmin)*S+((W-padL-padR)-dw*S)/2,
+  (H-padB)-(y-VIEW.ymin)*S-((H-padT-padB)-dh*S)/2];}
+
+function cssColor(name){
+  var s=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  if(s[0]==='#'){var h=s.slice(1);if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}
+  var m=s.match(/[\d.]+/g); if(m) return [+m[0],+m[1],+(m[2]||0)];
+  return [128,128,128];
+}
+function rgba(c,a){return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')';}
+var theme={};
+function readTheme(){
+  var cs=getComputedStyle(document.documentElement);
+  theme={green:cssColor('--a-green'),red:cssColor('--a-red'),line:cssColor('--a-line'),
+    accent:cssColor('--accent'),accent3:cssColor('--accent3'),
+    dim:cssColor('--txt-dim'),txt:cssColor('--txt')};
+  theme.grid=cs.getPropertyValue('--grid').trim()||'rgba(120,160,255,.07)';
+}
+
+function transform(pt,p,act){
+  var x0=pt[0],y0=pt[1],r0=Math.sqrt(x0*x0+y0*y0),isOuter=r0>0.75;
+  var g=smooth(clamp(p/0.30,0,1)),ang=0.85*g,ca=Math.cos(ang),sa=Math.sin(ang);
+  var x1=x0*ca-y0*sa,y1=x0*sa+y0*ca;y1*=1+0.18*g;
+  if(act==='relu'){
+    var f=smooth(clamp((p-0.30)/0.40,0,1));
+    var x2=x1+(Math.abs(x1)-x1)*f,y2=y1+(Math.abs(y1)-y1)*f;
+    var s=smooth(clamp((p-0.70)/0.30,0,1));
+    var dxx=(isOuter?0.7:-0.2)*s,dyy=(isOuter?0.7:-0.2)*s;
+    return [x2+dxx,y2+dyy];
+  }else{
+    var tp=smooth(clamp((p-0.30)/0.70,0,1));
+    var yb=y1+0.16*tp*Math.sin(1.2*x1),xb=x1+0.10*tp*Math.sin(1.0*y1),sc=1+0.08*tp;
+    return [xb*sc,yb*sc];
+  }
+}
+
+function hole(pts){
+  var n=pts.length;if(n<5)return 0;
+  var cx=0,cy=0,j;for(j=0;j<n;j++){cx+=pts[j][0];cy+=pts[j][1];}cx/=n;cy/=n;
+  var angs=[],md=1e18,sd=0;
+  for(j=0;j<n;j++){var dx=pts[j][0]-cx,dy=pts[j][1]-cy,d=Math.sqrt(dx*dx+dy*dy);
+    angs.push(Math.atan2(dy,dx));sd+=d;if(d<md)md=d;}
+  var meanD=sd/n;angs.sort(function(a,b){return a-b;});
+  var maxgap=0;for(j=0;j<n-1;j++){var gp=angs[j+1]-angs[j];if(gp>maxgap)maxgap=gp;}
+  var wrap=(angs[0]+6.2831853)-angs[n-1];if(wrap>maxgap)maxgap=wrap;
+  var empty=(meanD>0.001&&md>0.28*meanD);
+  return (maxgap<0.95&&empty)?1:0;
+}
+function topology(pts){
+  var n=pts.length;if(n===0)return{b0:0,b1:0};if(n<2)return{b0:1,b1:0};
+  var a;
+  var mnx=1e18,mny=1e18,mxx=-1e18,mxy=-1e18;
+  for(a=0;a<n;a++){if(pts[a][0]<mnx)mnx=pts[a][0];if(pts[a][0]>mxx)mxx=pts[a][0];
+    if(pts[a][1]<mny)mny=pts[a][1];if(pts[a][1]>mxy)mxy=pts[a][1];}
+  var dg=Math.sqrt((mxx-mnx)*(mxx-mnx)+(mxy-mny)*(mxy-mny));
+  var eps=Math.max(2.0,dg*0.10),eps2=eps*eps;
+  var parent=new Array(n);for(a=0;a<n;a++)parent[a]=a;
+  function find(x){while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];}return x;}
+  function un(x,y){var ra=find(x),rb=find(y);if(ra!==rb)parent[ra]=rb;}
+  for(a=0;a<n;a++){for(var b=a+1;b<n;b++){var ex=pts[a][0]-pts[b][0],ey=pts[a][1]-pts[b][1];
+    if(ex*ex+ey*ey<=eps2)un(a,b);}}
+  var seen={},b0=0;for(a=0;a<n;a++){var rt=find(a);if(!seen[rt]){seen[rt]=1;b0++;}}
+  return{b0:b0,b1:hole(pts)};
+}
+function convexHull(pts){
+  var p=pts.slice().sort(function(a,b){return a[0]-b[0]||(a[1]-b[1]);});
+  var n=p.length;if(n<=2)return p.slice();
+  function cross(o,a,b){return(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);}
+  var lower=[],i;
+  for(i=0;i<n;i++){var q=p[i];
+    while(lower.length>=2&&cross(lower[lower.length-2],lower[lower.length-1],q)<=0)lower.pop();
+    lower.push(q);}
+  var upper=[];
+  for(i=n-1;i>=0;i--){var q2=p[i];
+    while(upper.length>=2&&cross(upper[upper.length-2],upper[upper.length-1],q2)<=0)upper.pop();
+    upper.push(q2);}
+  lower.pop();upper.pop();
+  var h=lower.concat(upper);return h.length?h:p.slice();
+}
+function pointInConvex(pt,poly){
+  var n=poly.length;if(n===0)return false;
+  if(n===1){var a1=pt[0]-poly[0][0],b1=pt[1]-poly[0][1];return(a1*a1+b1*b1)<1e-12;}
+  if(n===2){var A=poly[0],B=poly[1],ex=B[0]-A[0],ey=B[1]-A[1],L2=ex*ex+ey*ey;
+    if(L2<1e-12){var a2=pt[0]-A[0],b2=pt[1]-A[1];return(a2*a2+b2*b2)<1e-12;}
+    var tt=((pt[0]-A[0])*ex+(pt[1]-A[1])*ey)/L2;if(tt<-1e-9||tt>1+1e-9)return false;
+    var px=A[0]+tt*ex,py=A[1]+tt*ey,q=pt[0]-px,rr=pt[1]-py;return(q*q+rr*rr)<1e-9;}
+  var area=0;for(var i=0;i<n;i++){var C=poly[i],D=poly[(i+1)%n];area+=C[0]*D[1]-D[0]*C[1];}
+  var ccw=area>=0;
+  for(var j=0;j<n;j++){var E=poly[j],F=poly[(j+1)%n];
+    var cr=(F[0]-E[0])*(pt[1]-E[1])-(F[1]-E[1])*(pt[0]-E[0]);
+    if(ccw&&cr<-1e-9)return false;if(!ccw&&cr>1e-9)return false;}
+  return true;
+}
+function orient(a,b,c){var v=(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);return v>1e-9?1:(v<-1e-9?-1:0);}
+function onSeg(a,b,p){return Math.min(a[0],b[0])-1e-9<=p[0]&&p[0]<=Math.max(a[0],b[0])+1e-9&&
+  Math.min(a[1],b[1])-1e-9<=p[1]&&p[1]<=Math.max(a[1],b[1])+1e-9;}
+function segIntersect(a,b,c,d){
+  var o1=orient(a,b,c),o2=orient(a,b,d),o3=orient(c,d,a),o4=orient(c,d,b);
+  if(o1!==o2&&o3!==o4)return true;
+  if(o1===0&&onSeg(a,b,c))return true;if(o2===0&&onSeg(a,b,d))return true;
+  if(o3===0&&onSeg(c,d,a))return true;if(o4===0&&onSeg(c,d,b))return true;return false;
+}
+function separable(hA,hB){
+  function minD(a,b){var m=1e18,i,j;for(i=0;i<a.length;i++)for(j=0;j<b.length;j++){
+    var dx=a[i][0]-b[j][0],dy=a[i][1]-b[j][1],d=dx*dx+dy*dy;if(d<m)m=d;}return Math.sqrt(m);}
+  if(hA.length<3||hB.length<3)return minD(hA,hB)>0.05;
+  var i,j;
+  for(i=0;i<hA.length;i++){if(pointInConvex(hA[i],hB))return false;}
+  for(j=0;j<hB.length;j++){if(pointInConvex(hB[j],hA))return false;}
+  for(i=0;i<hA.length;i++){var a=hA[i],b=hA[(i+1)%hA.length];
+    for(j=0;j<hB.length;j++){var c=hB[j],d=hB[(j+1)%hB.length];if(segIntersect(a,b,c,d))return false;}}
+  return true;
+}
+function closestPair(hA,hB){
+  var m=1e18,pa=hA[0],pb=hB[0],i,j;
+  for(i=0;i<hA.length;i++)for(j=0;j<hB.length;j++){var dx=hA[i][0]-hB[j][0],dy=hA[i][1]-hB[j][1],
+    d=dx*dx+dy*dy;if(d<m){m=d;pa=hA[i];pb=hB[j];}}
+  return[pa,pb];
+}
+var state={p:0,L:6,N:8,act:'relu',playing:false,raf:0};
+
+function phaseLabel(p){
+  if(p<0.30)return 'Phase 1 · Geometrie (drehen / strecken)';
+  if(p<0.70)return 'Phase 2 · Faltung (x,y)↦(|x|,|y|) — der Knick wird zur Faltung';
+  return 'Phase 3 · Spalt öffnen → lineartrennbar';
+}
+function setV(id,val){var el=document.getElementById(id);if(el)el.textContent=String(val);}
+
+function draw(){
+  try{
+    readTheme();
+    ctx.clearRect(0,0,W,H);
+    ctx.strokeStyle=theme.grid;ctx.lineWidth=1;ctx.beginPath();
+    for(var gx=0;gx<=W;gx+=40){ctx.moveTo(gx,0);ctx.lineTo(gx,H);}
+    for(var gy=0;gy<=H;gy+=40){ctx.moveTo(0,gy);ctx.lineTo(W,gy);}
+    ctx.stroke();
+
+    var p=state.p/100,A=[],B=[],idx;
+    for(idx=0;idx<outer.length;idx++){var ta=transform(outer[idx],p,state.act);A.push(d2c(ta[0],ta[1]));}
+    for(idx=0;idx<inner.length;idx++){var tb=transform(inner[idx],p,state.act);B.push(d2c(tb[0],tb[1]));}
+
+    var lamEl=document.getElementById('lam');
+    var lam=lamEl?+lamEl.value:0.9;
+    var dStar=Math.log(2)/lam;
+    var o=d2c(0,0);
+    var dStarScreen=Math.max(dStar*S,2);
+
+    var grd=ctx.createRadialGradient(o[0],o[1],0,o[0],o[1],dStarScreen);
+    grd.addColorStop(0,rgba(theme.accent,0.34));
+    grd.addColorStop(0.6,rgba(theme.accent,0.14));
+    grd.addColorStop(1,rgba(theme.accent,0));
+    ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=rgba(theme.accent3,0.9);ctx.lineWidth=2;
+    ctx.setLineDash([6,5]);
+    ctx.beginPath();ctx.arc(o[0],o[1],dStarScreen,0,6.2831853);ctx.stroke();
+    ctx.setLineDash([]);
+
+    var topA=topology(A),topB=topology(B);
+    var hA=convexHull(A),hB=convexHull(B);
+    var sep=separable(hA,hB);
+
+    function drawPts(pts,col){ctx.fillStyle=col;for(var m=0;m<pts.length;m++){
+      ctx.beginPath();ctx.arc(pts[m][0],pts[m][1],3.1,0,6.2831853);ctx.fill();}}
+    drawPts(A,rgba(theme.green,1));drawPts(B,rgba(theme.red,1));
+
+    if(sep){
+      var pr=closestPair(hA,hB);
+      var ma=[(pr[0][0]+pr[1][0])/2,(pr[0][1]+pr[1][1])/2];
+      var ex=pr[1][0]-pr[0][0],ey=pr[1][1]-pr[0][1],ln=Math.sqrt(ex*ex+ey*ey)||1;
+      var nx=-ey/ln,ny=ex/ln,R=1200;
+      ctx.strokeStyle=rgba(theme.line,1);ctx.lineWidth=2;ctx.setLineDash([7,6]);
+      ctx.beginPath();ctx.moveTo(ma[0]-nx*R,ma[1]-ny*R);ctx.lineTo(ma[0]+nx*R,ma[1]+ny*R);
+      ctx.stroke();ctx.setLineDash([]);
+    }
+
+    ctx.fillStyle=rgba(theme.dim,1);ctx.font='600 13px ui-monospace,monospace';ctx.textAlign='left';
+    ctx.fillText(phaseLabel(p)+'   ['+(state.act==='relu'?'ReLU':'tanh')+' · L='+state.L+' · N='+state.N+']',14,H-12);
+
+    var gY=Math.exp(-lam*RB);
+    var inDstar=(RB<dStar);
+    var Lapp=Math.max(1,Math.round(p*state.L)),reg=Math.pow(state.N/2,2*Lapp);
+
+    setV('vB0a',topA.b0);setV('vB1a',topA.b1);setV('vB0b',topB.b0);setV('vB1b',topB.b1);
+    setV('vOm',topA.b0+topB.b0+topA.b1+topB.b1);
+    setV('vG',gY.toFixed(3));setV('vDstar',dStar.toFixed(3));
+    setV('vReg',reg>=1e6?reg.toExponential(2):String(Math.round(reg)));
+    var bar=document.getElementById('vRegBar');
+    if(bar){var maxLog=Math.log(6)/Math.LN10*16;
+      bar.style.width=(clamp(Math.log(Math.max(reg,1))/Math.LN10/maxLog,0,1)*100).toFixed(1)+'%';}
+    setV('pL',Math.round(state.p)+'%');setV('lamL',lam.toFixed(2));
+    setV('LL',state.L);setV('NL',state.N);
+
+    var vd=document.getElementById('vVerdict');
+    if(vd){
+      if(state.act==='tanh'){
+        vd.className='verdict bad';
+        vd.textContent='✗ tanh (Homöomorphismus): Kapazität (Regionen) vorhanden, aber kein Knick, der zur Faltung wird — Topologie bleibt, Ziel (β₁→0, trennbar) nie getroffen → Kohärenz ohne Korrespondenz.';
+      }else if(sep && topB.b1===0){
+        vd.className='verdict good';
+        vd.textContent='✓ Echte Vereinfachung — Kapazität lizenziert (ReLU), Faltung trifft, Korrespondenz erfüllt (NSW/Tarski). Y liegt '+(inDstar?'innerhalb':'außerhalb')+' der d*-Grenze.';
+      }else{
+        vd.className='verdict warn';
+        vd.textContent='⏳ ReLU lizenziert, Faltung läuft — β₁ noch offen / Ringe noch ineinander (Tiefe = Zeit). Y liegt '+(inDstar?'innerhalb':'außerhalb')+' der d*-Grenze.';
+      }
+    }
+
+    var st=document.getElementById('vStatus');
+    if(st){
+      if(state.act==='tanh'){
+        st.textContent='tanh (Homöomorphismus): selbst bei vollem Fortschritt bleiben die Ringe ineinander — die Topologie wird nicht abgebaut (kein Knick, der zur Faltung wird). Kapazität ohne Faltung.';
+      }else if(!sep){
+        st.textContent='Geometrie (Drehen/Strecken) ist ein Homöomorphismus — die Topologie bleibt (Jordanscher Kurvensatz). Weiterziehen, bis die Faltung greift.';
+      }else{
+        st.textContent='Die Faltung (x,y)↦(|x|,|y|) bricht β₁→0 und macht die Ringe lineartrennbar — in einem Schritt, wie Figure 21. Die rosa d*-Kontur zeigt, wie weit die Klebkraft g(d) reicht.';
+      }
+    }
+  }catch(e){/* defensive: niemals nach Konsole */}
+}
+
+function stopPlay(){state.playing=false;if(state.raf){cancelAnimationFrame(state.raf);state.raf=0;}
+  var pb=document.getElementById('play');if(pb)pb.textContent='▶ Abspielen';}
+function tick(){if(!state.playing)return;state.p+=1.4;if(state.p>=100){state.p=100;stopPlay();}
+  var pe=document.getElementById('p');if(pe)pe.value=state.p;draw();
+  if(state.playing)state.raf=requestAnimationFrame(tick);}
+
+var pEl=document.getElementById('p');
+if(pEl)pEl.addEventListener('input',function(){stopPlay();state.p=+pEl.value;draw();});
+var LEl=document.getElementById('L');
+if(LEl)LEl.addEventListener('input',function(){state.L=+LEl.value;draw();});
+var NEl=document.getElementById('N');
+if(NEl)NEl.addEventListener('input',function(){state.N=+NEl.value;draw();});
+var lamEl2=document.getElementById('lam');
+if(lamEl2)lamEl2.addEventListener('input',function(){draw();});
+var rel=document.getElementById('actRelu'),tan=document.getElementById('actTanh');
+function setAct(a){state.act=a;if(rel)rel.className=(a==='relu')?'on':'';if(tan)tan.className=(a==='tanh')?'on':'';draw();}
+if(rel)rel.addEventListener('click',function(){stopPlay();setAct('relu');});
+if(tan)tan.addEventListener('click',function(){stopPlay();setAct('tanh');});
+var playBtn=document.getElementById('play');
+if(playBtn)playBtn.addEventListener('click',function(){
+  if(state.playing){stopPlay();return;}
+  if(state.p>=100)state.p=0;state.playing=true;playBtn.textContent='⏸ Stop';
+  state.raf=requestAnimationFrame(tick);});
+function applyTheme(t){try{localStorage.setItem('r2029-theme',t);}catch(e){}
+  document.documentElement.classList.toggle('dark',t!=='light');draw();}
+var tb=document.getElementById('themeBtn');
+if(tb)tb.addEventListener('click',function(){
+  var cur=document.documentElement.classList.contains('dark')?'dark':'light';
+  applyTheme(cur==='dark'?'light':'dark');});
+window.addEventListener('resize',function(){draw();});
+readTheme();draw();
+})();
+</script>
+</body>
+</html>

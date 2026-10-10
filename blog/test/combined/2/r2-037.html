@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eine Fläche, zwei verdeckte Auflösungsachsen — multiskale Potentialfläche Φ</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --head:#3b2f63; --warn:#c2410c;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-canvas-bg:#f6f2e9; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333;
+  --viz-curve:#6451d8; --viz-curve2:#0d8f80;
+  --viz-ok:#2f8f4b; --viz-void:#c2410c; --viz-cusp:#c93a86;
+  --viz-probe:#6451d8; --viz-walk:#2b6cb0; --viz-gd:#b57e00;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --head:#b9a7f0; --warn:#fb923c;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.07); --viz-txt:#e8ecf6;
+  --viz-curve:#8a7cff; --viz-curve2:#5ee0d0;
+  --viz-ok:#6ee88a; --viz-void:#fb923c; --viz-cusp:#ff7ac0;
+  --viz-probe:#8a7cff; --viz-walk:#60a5fa; --viz-gd:#ffc860;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.7;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(820px 520px at 10% -4%,color-mix(in srgb,var(--acc4) 9%,transparent),transparent 60%),
+             radial-gradient(820px 560px at 92% 2%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:24px 22px 40px}
+h1{font-size:clamp(27px,5vw,41px);line-height:1.09;letter-spacing:-.025em;font-weight:760;margin:14px 0 10px;color:var(--head)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.01em;margin-bottom:6px}
+.meta-line{font-size:12.5px;color:var(--txt-faint);margin-bottom:22px;border-left:3px solid var(--acc4);padding-left:12px}
+section{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:22px 24px;margin:24px 0}
+section>h2{font-size:clamp(21px,3.4vw,28px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px;color:var(--head);border-bottom:2px solid var(--stroke);padding-bottom:10px}
+section>h2 .tag{font-size:.56em;font-family:var(--mono);vertical-align:middle;padding:3px 9px;border-radius:20px;color:var(--panel-solid);background:var(--acc4);margin-left:9px;letter-spacing:.05em}
+h3{font-size:16px;font-weight:660;margin:22px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px;color:var(--txt)}
+a{color:var(--acc4);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc4) 55%,transparent)}
+a:hover{color:var(--acc)}
+.badge{display:inline-block;font-family:var(--mono);font-size:.7em;font-weight:700;padding:1px 8px;border-radius:12px;vertical-align:middle;letter-spacing:.02em}
+.badge.a{background:var(--acc4);color:var(--panel-solid)}
+.badge.b{background:var(--acc);color:var(--panel-solid)}
+.badge.f{background:var(--acc3);color:var(--panel-solid)}
+.note{border-left:3px solid var(--acc4);background:color-mix(in srgb,var(--acc4) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc4);margin-bottom:6px;display:block}
+.note.w .h{color:var(--warn)}
+.box{background:color-mix(in srgb,var(--acc3) 6%,var(--panel-solid));border:1px solid color-mix(in srgb,var(--acc3) 40%,transparent);border-radius:var(--r);padding:16px 18px;margin:16px 0}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc3);font-weight:660;margin-bottom:8px;display:block}
+.conflict{border:1px solid var(--stroke);border-left:4px solid var(--warn);background:var(--panel-solid);border-radius:0 11px 11px 0;padding:14px 16px;margin:14px 0}
+.conflict .who{font-family:var(--mono);font-size:11.5px;color:var(--txt-faint);margin-bottom:7px;letter-spacing:.02em}
+.conflict .incomp{margin:10px 0 0;font-size:13px;color:var(--txt-dim);border-top:1px dashed var(--stroke);padding-top:9px}
+.conflict .incomp b{color:var(--warn)}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}
+ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.eq{overflow-x:auto;padding:12px 15px;font-size:13.5px;color:var(--txt);font-family:var(--mono);background:var(--panel-solid);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;margin:14px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+.eq .a{color:var(--acc4)}
+.eq .b{color:var(--acc)}
+table.map{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+table.map th,table.map td{border:1px solid var(--stroke);padding:8px 11px;text-align:left;vertical-align:top;color:var(--txt-dim)}
+table.map th{background:color-mix(in srgb,var(--acc4) 10%,var(--panel-solid));color:var(--head);font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+table.map td.g{color:var(--acc4);font-weight:600}
+table.map td.f{color:var(--acc);font-weight:600}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%;height:auto;background:var(--viz-canvas-bg);border-radius:8px}
+.leg{display:flex;gap:13px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:11px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.viz-controls{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;background:color-mix(in srgb,var(--acc4) 5%,var(--panel-solid));border:1px solid var(--stroke);border-radius:11px;padding:14px;margin:12px 0}
+.viz-controls .grp{display:flex;flex-direction:column;gap:5px}
+.viz-controls .grp.axa{border-left:3px solid var(--acc4);padding-left:11px}
+.viz-controls .grp.axb{border-left:3px solid var(--acc);padding-left:11px}
+.viz-controls label{font-size:11.5px;color:var(--txt-dim);font-family:var(--mono)}
+.viz-controls .val{font-family:var(--mono);color:var(--head);font-weight:700}
+.viz-controls .axhead{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+input[type=range]{accent-color:var(--acc);width:128px}
+input[type=checkbox]{accent-color:var(--acc);width:15px;height:15px}
+.viz-controls .chk{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--txt-dim)}
+button.act,button.theme{font-family:var(--sans);font-size:12px;padding:7px 13px;border:none;border-radius:8px;cursor:pointer}
+button.act{background:var(--acc2);color:var(--panel-solid)}
+button.act.g{background:var(--acc);color:var(--panel-solid)}
+button.theme{background:var(--panel-solid);color:var(--txt);border:1px solid var(--stroke-hi);margin-left:auto}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(116px,1fr));gap:8px;margin:14px 0}
+.ro{background:var(--panel-solid);border:1px solid var(--stroke);border-radius:9px;padding:8px 10px;text-align:center}
+.ro .k{font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--txt-faint);display:block;margin-bottom:3px;font-family:var(--mono)}
+.ro .v{font-family:var(--mono);font-size:16px;font-weight:640;line-height:1.2}
+.ro.a .v{color:var(--acc4)}
+.ro.b .v{color:var(--acc)}
+.ro.hero .v{color:var(--warn)}
+.readout{background:var(--panel-solid);border:1px solid var(--stroke);border-left:3px solid var(--acc3);border-radius:0 10px 10px 0;padding:11px 14px;font-size:13px;color:var(--txt-dim);margin-top:6px}
+.readout b{color:var(--txt)}
+.prov{display:flex;gap:16px;flex-wrap:wrap}
+.prov a{flex:1 1 280px;display:block;background:var(--panel-solid);border:1px solid var(--stroke);border-radius:11px;padding:13px 15px;color:var(--txt);text-decoration:none}
+.prov a:hover{border-color:var(--acc4)}
+.prov a .n{font-weight:700;display:block;color:var(--head);margin-bottom:5px}
+.prov a .d{font-size:13px;color:var(--txt-dim)}
+footer{border-top:1px solid var(--stroke);padding:24px 22px;text-align:center;color:var(--txt-faint);font-size:12px;margin-top:20px}
+@media(max-width:560px){input[type=range]{width:104px}section{padding:18px 16px}}
+</style>
+</head>
+<body>
+<article>
+  <p class="sub">Fusion aus: r1-016.html ✕ r1-072.html &nbsp;·&nbsp; Round 2</p>
+  <h1>Eine Fläche, zwei verdeckte Auflösungsachsen</h1>
+  <p class="meta-line">Round 2 · Pair 037 · A = r1-016 „Glatt in der Nähe, scharf in der Ferne" (Token-Mannigfaltigkeit × Positional-Encoding) · B = r1-072 „Loss-Landschaft: Informationsgravitation × Gradientenabstieg"</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion<span class="tag">These</span></h2>
+    <p>Beide R1-Papiere landen <em>unabhängig</em> auf demselben Meta-Prinzip: <strong>eine Eigenschaft, die wie ein Ja/Nein-Urteil klingt, ist in Wahrheit eine stetige Funktion eines verdeckten Auflösungsparameters.</strong> <span class="badge a">A</span> (r1-016) macht den Parameter <em>räumlich</em> — der Zoom-Radius <code>r</code> (äquivalent: Wellenlänge <code>λ</code>) — und findet: der Gedankenraum ist „glatt in der Nähe, scharf in der Ferne". <span class="badge b">B</span> (r1-072) macht denselben Schachzug <em>dynamisch-thermodynamisch</em> — Temperatur <code>T</code>, Schrittweite <code>η</code>, Tiefe <code>K</code>, GD++ <code>γ</code> — und findet: derselbe eingefrorene Durchlauf ist „Sampling" bei <code>T&gt;0</code>, „Gradientenabstieg" im <code>T→0</code>-Limit. <em>Der Schein des Widerspruchs kommt daher, dass man einen Grenzwert für die ganze Funktion hält.</em></p>
+    <p>Das gemeinsame Objekt ist eine <strong>einzige Potential-/Loss-Fläche&nbsp;Φ</strong>. <span class="badge a">A</span> liest <code>Φ</code> als <em>geometrische</em> Embedding-/Token-Struktur (gemessen, 4 Modelle); <span class="badge b">B</span> liest <code>Φ</code> als <em>thermodynamisches</em> Potential <code>Φ(t,Q)=−log P(t|Q)</code> und als <em>gewichtsräumlichen</em> Loss <code>L(W)</code>. Die <strong>gemeinsame Währung beider Lesarten ist die Nicht-Flachheit / Krümmung</strong>: <span class="badge a">A</span> misst sie als Abweichung <code>F(r)</code> von einer flachen Scheibe und die steigende lokale Dimension <code>d(r)</code> (Bruchkante-Signal); <span class="badge b">B</span> als Hesse-Eigenwerte und Konditionszahl <code>κ=λ₁/λ₂</code> der <code>H=XXᵀ</code>. Beide fragen im Kern: <strong>„Wo ist die Fläche nicht mehr flach — und wie stark?"</strong></p>
+    <div class="box"><span class="tag">Der vereinte Standpunkt</span>
+    <p style="margin-bottom:0">Ein eingefrorener Transformer-Vorwärtsdurchlauf ist ein Objekt mit <strong>zwei verdeckten Auflösungsachsen</strong> auf <strong>einer</strong> mehrskaligen Potentialfläche&nbsp;Φ. Die <em>Bruchkante</em> (<span class="badge a">A</span>, räumlich, fix gemessen, an der Grobskala) und die <em>Divergenz-/Capture-Kante</em> (<span class="badge b">B</span>, dynamisch, steuerbar, bei <code>η&gt;2/λmax</code> bzw. <code>T→0</code>) sind <strong>derselbe Ort</strong> — die Stelle, an der die Nicht-Flachheit von&nbsp;Φ groß genug ist, dass das Ergebnis kippt — nur von zwei Achsen aus gemessen. <em>Netto:</em> <code>Glätte(r) [A] × Konvergenz(T,η,K,γ) [B] = eine mehrskalige Potentialfläche Φ auf zwei Achsen</code>.</p>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B<span class="tag">Konflikt</span></h2>
+    <p>Im <em>Ziel</em> widersprechen sie sich nicht (beide lesen einen eingefrorenen Durchlauf) — und sie arbeiten streng genommen an <em>unterschiedlichen Oberflächen</em> (<span class="badge a">A</span>: Embedding-/Token-Raum; <span class="badge b">B</span>: gewichtsräumlicher Loss). Aber an der <em>Naht</em> stehen ihre Stellungen an drei Stellen in echtem, spezifischem Konflikt:</p>
+
+    <div class="conflict">
+      <div class="who">W1 · Status der Fläche: <span class="badge a">A</span> „fix gemessenes Terrain" vs. <span class="badge b">B</span> „vom Durchlauf erzeugte Fläche"</div>
+      <p><span class="badge a">A</span> (r1-016) behandelt den Gedankenraum als <strong>realisiertes, fixiertes, gemessenes</strong> Objekt; Glätte/Bruchkante ist eine Eigenschaft <em>dieses</em> Raums, die man durch Zoom <em>entdeckt</em> — der Zoom-Test setzt eine <strong>vorgegebene, unveränderliche Fläche</strong> voraus.</p>
+      <p><span class="badge b">B</span> (r1-072) sagt das Gegenteil: die Fläche wird <strong>vom Durchlauf selbst erzeugt und abgestiegen</strong> (Attention = im Vorwärtsdurchlauf berechnete Least-Squares-Approximation, eine Schicht = ein GD-Schritt); wörtlich: „B ist der Mechanismus, den A als gegeben voraussetzt."</p>
+      <p class="incomp"><b>Inkompatibel:</b> <span class="badge a">A</span> setzt genau die „gegebene, fixe Fläche" als <em>Ausgangspunkt</em> des Messens voraus — was <span class="badge b">B</span> als vom Prozess <em>Erzeugtes</em> erklärt. „Terrain, das man beprobt" vs. „Fläche, die man mitbaut".</p>
+    </div>
+
+    <div class="conflict">
+      <div class="who">W2 · Der Bruch: <span class="badge a">A</span> „fixer räumlicher Ort" vs. <span class="badge b">B</span> „steuerbare dynamische Schwelle"</div>
+      <p><span class="badge a">A</span> (r1-016) ortet das Scheitern (Prompt-Fragilität, Nicht-Portabilität, Nicht-Mannigfaltigkeit) an einer <strong>fixen, räumlichen Bruchkante</strong> an der Grobskala (großes <code>r</code>) — ein <em>permanentes</em> Geometrie-Fakt, das man nur <em>misst</em>, nicht ändert; Hebel = andere Skala/Stelle.</p>
+      <p><span class="badge b">B</span> (r1-072) ortet das Scheitern (Halluzination, Capture, Divergenz) an einer <strong>steuerbaren dynamischen Schwelle</strong> — <code>T</code> (<code>T→0</code>=Capture), <code>η</code> (<code>η&gt;2/λmax</code>=Divergenz), <code>γ</code>; Hebel = das Limit ändern (<code>T</code>↑, <code>η</code>↓, <code>γ</code> runden).</p>
+      <p class="incomp"><b>Inkompatibel:</b> Bruch = <em>unveränderliche Geometrie</em> (<span class="badge a">A</span>) vs. Bruch = <em>tuneable Dynamik</em> (<span class="badge b">B</span>). „Andere Skala" vs. „andere Temperatur/Schrittweite" sind unvereinbare Hebel für dieselbe Frage.</p>
+    </div>
+
+    <div class="conflict">
+      <div class="who">W3 · Die Krümmung: <span class="badge a">A</span> „gemessene fixe Konstante" vs. <span class="badge b">B</span> „vom Netz gedrehtes Rad"</div>
+      <p><span class="badge a">A</span> (r1-016) misst die Nicht-Flachheit (<code>F(r)</code>, steigende <code>d(r)</code>) als <strong>feste, gemessene</strong> Eigenschaft des Embedding-Raums; der „Honesty-Corner" ist explizit: der Test <em>detectiert</em> Bruchkanten, <em>entfernt</em> sie nicht.</p>
+      <p><span class="badge b">B</span> (r1-072) behandelt dieselbe Größe (Konditionszahl <code>κ</code> von <code>H=XXᵀ</code>) als <strong>endogen und aktiv optimiert</strong>: GD++ <em>reduziert</em> <code>κ</code> (Eigenwert-Map <code>f(λ,γ)=λ−2γλ²+γ²λ³</code>), <code>γ</code> wird knapp unter der Kante gewählt. „Krümmung ist ein Rad, das das Netz selbst dreht."</p>
+      <p class="incomp"><b>Inkompatibel:</b> Krümmung = <em>messbare Konstante des Raums</em> (<span class="badge a">A</span>) vs. <em>vom Netz gesteuerte Variable</em> (<span class="badge b">B</span>).</p>
+    </div>
+    <div class="note w"><span class="h">Ehrliche Einordnung</span>Die schärfste Spannung ist <b>W1</b> (fixes Terrain vs. erzeugte Fläche) — sie ist die Wurzel. <b>W2</b> und <b>W3</b> sind zwei Gesichter derselben Naht: ob man die Nicht-Flachheit als <em>festen räumlichen Ort</em> oder als <em>steuerbare dynamische Größe</em> liest. Die Auflösung zeigt, dass beide „wahr" sind — weil sie zwei <em>verschiedene Φ</em> meinen.</div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung<span class="tag">Synthese</span></h2>
+
+    <p><strong>1. Zwei Oberflächen, ein Wort (→ W1).</strong> <span class="badge a">A</span> misst die <em>Hintergrund-Geometrie</em> — die Embedding-/Token-Struktur, in der die Gedanken <em>leben</em>. Sie ist fix und gemessen. <span class="badge b">B</span> erzeugt und abstieg die <em>Prozess-Fläche</em> — den im Vorwärtsdurchlauf berechneten LS-Loss über den Gewichten. Sie wird mitgebaut und abgefahren. „Fixes Terrain" (<span class="badge a">A</span>) und „erzeugte Fläche" (<span class="badge b">B</span>) sind also <strong>zwei verschiedene Φ</strong>: das <em>Terrain</em> (fix, A) und die <em>bei der Durchfahrt mitgebaute Landschaft</em> (prozedural, B). Kein Widerspruch — zwei Ebenen desselben Objekts.</p>
+
+    <p><strong>2. Der Bruch = räumliche Singularität × dynamische Schwelle (→ W2).</strong> Die <em>Bruchkante</em> (<span class="badge a">A</span>) ist der <strong>fixe Ort</strong>, an dem die Nicht-Flachheit groß ist; die <em>Divergenz-/Capture-Kante</em> (<span class="badge b">B</span>) ist der <strong>Limit-Wert</strong> (<code>η</code>, <code>T</code>), bei dem ein Durchlauf <em>dort</em> kippt. Beide beschreiben denselben Ort: Die Singularität <em>setzt die Höhe</em> der Schwelle — je schärfer die Bruchkante (höhere lokale Krümmung bei <code>r</code>), desto <em>früher</em> wird <code>η=2/λmax</code> erreicht. Man kann die Singularität nicht entfernen (<span class="badge a">A</span>: Fakt des Raums), aber steuern, wie <em>nah</em> der Durchlauf an ihrer Schwelle operiert (<span class="badge b">B</span>: <code>T,η,γ</code> tuneable). <span class="badge f">Fusion:</span> <em>Bruch = (fixer räumlicher Ort, A) × (steuerbare Marge, B)</em>.</p>
+
+    <p><strong>3. Hintergrund-Krümmung vs. Prozess-Krümmung (→ W3).</strong> Die Krümmung, die <span class="badge a">A</span> <em>misst</em> (Nicht-Flachheit der Embedding-Geometrie), ist <strong>fix</strong> — die gelernte Token-Struktur lässt sich nicht nachträglich glätten. Die, die <span class="badge b">B</span> <em>dreht</em> (<code>κ</code> des Gewichtsraums, GD++-gerundet), ist die des <strong>Prozesses</strong>, nicht des Raums. „Gemessen" und „gedreht" sind derselbe Ausdruck „Krümmung" auf <strong>zwei Oberflächen</strong>: <span class="badge a">A</span> misst, wo die Gedanken <em>leben</em>; <span class="badge b">B</span> dreht, wie der Durchlauf <em>abfährt</em>. <span class="badge f">Fusion:</span> <em>fixe Hintergrund-Krümmung (A) + steuerbare Prozess-Krümmung (B)</em>; GD++ rundet die Prozess-Landschaft, um ein fixes, singularisiertes Hintergrund-Terrain sicher zu durchfahren.</p>
+
+    <div class="box"><span class="tag">Fusionierter Schluss</span>
+    <p style="margin-bottom:0">Die <strong>Bruchkante</strong> (<span class="badge a">A</span>) und die <strong>Divergenz-Kante</strong> (<span class="badge b">B</span>) sind <strong>derselbe Ort</strong> — die Nicht-Flachheit von&nbsp;Φ — auf zwei Achsen: <span class="badge a">A</span> liefert die <em>räumliche</em> Achse (an welchem Radius <code>r</code> die Fläche reißt), <span class="badge b">B</span> die <em>dynamische</em> (unter welchem Limit <code>T,η,K,γ</code> ein Durchlauf dort kippt). Krümmung ist die gemeinsame Währung: fix gemessen (A) vs. vom Netz gedreht (B). <em>Netto:</em> <code>Glätte(r) [A] × Konvergenz(T,η,K,γ) [B] = Φ auf zwei verdeckten Achsen</code>.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt<span class="tag">Materie</span></h2>
+
+    <h3>Das gemeinsame Objekt: die Potential-/Loss-Fläche Φ</h3>
+    <p>Beide Seiten reden über <em>dieselbe nicht-flache Fläche</em>, nur aus zwei Richtungen. <span class="badge a">A</span> sieht in <code>Φ</code> die <strong>Embedding-/Token-Geometrie</strong> — den Raum, in dem die „Gedanken" (Tokens/Embeddings) leben, gemessen über dem ganzen Vokabular. <span class="badge b">B</span> sieht in <code>Φ</code> (i) das <strong>semantische Potential</strong> <code>Φ(t,Q)=−log P(t|Q)</code>, in dem ein Token „rollt", und (ii) den <strong>gewichtsräumlichen Loss</strong> <code>L(W)=(1/2N)Σ‖Wxᵢ−yᵢ‖²</code>, den der Durchlauf abstieg. Beide <code>Φ</code> sind durch <em>Krümmung / Nicht-Flachheit</em> definiert — das ist die Brücke zwischen den beiden R1-Papieren.</p>
+
+    <h3>Achse A — die räumliche Auflösung (r1-016): Glätte = f(Zoom r)</h3>
+    <ul class="cl">
+      <li><b>Feinskala (Positional-Zahnradkaskade):</b> <code>PE(pos,2i)=sin(pos/10000^(2i/d))</code>, <code>PE(pos,2i+1)=cos(pos/10000^(2i/d))</code>; Frequenz <code>f_i=1/10000^(2i/d)</code>, Wellenlänge <code>λ_i=2π·10000^(2i/d)</code> (geometrische Progression: schnellstes λ≈1, langsamstes ~10⁴). Wo alle Wellen konstruktiv überlagern → <em>Interferenz-Fingerabdruck</em> der Position. <code>cos(a−b)</code> → Ähnlichkeit nur vom <em>Abstand</em> (translation-invariant). Feste <code>2·NFREQ</code> Dimensionen. <strong>Glatt, periodisch, niedrig-dimensional.</strong></li>
+      <li><b>Grobskala (Token-Raum / Bruchkanten):</b> Zoom-Test — ist die Nachbarschaft wie eine flache Scheibe (ℝᵈ)? Ja → glatt; Spitze/Einschnürung → <em>Bruchkante</em>. Trick „Steigung = Dimension": <code>V(r)≈K·r^d</code> → <code>d</code> = Steigung von <code>log V(r)</code>; <strong>Bruchkante-Signal: <code>d(r)</code> &amp; <code>F(r)</code> (Abweichung von der flachen Scheibe) <em>steigen</em> mit <code>r</code></strong>.</li>
+      <li><b>Empirie (4 Modelle, ~12 h Rechenzeit je Modell):</b> 4/4 verwerfen die Mannigfaltigkeits-Hypothese, 3/4 auch die mildere „Bündel"-Hypothese; kleinster p-Wert 3×10⁻⁸. GPT-2-Dimension 20 … 531 (drei Gipfel: ~20 Zahlen, ~389 ganze Wörter, ~531 Wortfragmente); manche Wörter <em>Dimension 0</em> (isoliert).</li>
+      <li><b>Folgen:</b> Prompts <em>nicht portabel</em> (Llemma7B Median 4096 vs. Mistral7B 48 bei identischem Vokabular 32.016 Tokens); Kontext „heilt" <em>nicht</em>; winziger Prompt-Wechsel an einer Bruchkante → <em>diskontinuierlicher</em> Sprung (Prompt-Fragilität).</li>
+      <li><b>Grenzen:</b> Nicht-Verwerfung ≠ glatt (z.&nbsp;B. Pythia6.9B); benennt die Bruchkante-<em>Art</em> nicht; gültig nur unterhalb des „Reach"; Randpunkte übersehen.</li>
+    </ul>
+
+    <h3>Achse B — die dynamisch-thermodynamische Auflösung (r1-072): Lesart = f(T, η, K, γ)</h3>
+    <ul class="cl">
+      <li><b>Informationsmasse &amp; Potential:</b> <code>M(Q)=α·H(Q)+β·D(Q)+γ·N(Q)</code> (Entropie, Kontexttiefe, Novelty) krümmt den semantischen Raum; <code>Φ(t,Q)=−log P(t|Q)</code>, <code>g=−∇Φ</code>. Boltzmann/Softmax <code>P(t)=exp(−Φ/T)/Z</code>; <code>T→0 ⇒ H→0</code> (deterministisch, „Capture"), <code>T→∞ ⇒ H→log|V|</code>.</li>
+      <li><b>Wirkung &amp; Trägheit:</b> ein Text ist eine Bahn <code>S[τ]=∫Φ dτ</code>; jeder Token verschiebt die Gravitationsquelle → „bewegliche Quelle" / Informations-Trägheit (Stil-Beharrung, Wiederholungsschleifen).</li>
+      <li><b>Halluzination (scharf):</b> hohe Hesse-Eigenwerte auf <em>kleinen</em> Gebieten + <code>P(t)≪1</code> ⇒ Einfang in falsches lokales Minimum. Zwei Pole: <em>semantische Leere</em> (flach → Halluzination) vs. <em>Informations-Schwarzloch</em> (extrem tief → Standardantwort).</li>
+      <li><b>GD-Lesart (Mechanismus):</b> Trick „Gewichts- = Datenänderung": <code>L(W+ΔW)=L(W)</code> mit Zielen <code>yᵢ−ΔW·xᵢ</code>. Attention ist <em>exakt</em> ein GD-Schritt: <code>e_j←e_j+P·W_V·Σᵢ(eᵢ⊗eᵢ)·W_KᵀW_Q·e_j</code> = Form von <code>−(η/N)Σ(Wxᵢ−yᵢ)xᵢᵀ</code>. Prop.&nbsp;1 ⇒ <code>(x_j,y_j)→(x_j, y_j−ΔW·x_j)</code>; Adam-Training erreicht exakt den GD-Verlust (Cos→1, L2→0, verlustfrei, OOD identisch). <strong>Tiefe = K Schritte.</strong></li>
+      <li><b>GD++ &amp; Divergenz:</b> <code>x_j←(I−γXXᵀ)x_j</code>; Eigenwert-Map <code>f(λ,γ)=λ−2γλ²+γ²λ³</code> → <code>κ↓</code> (rundet); <code>γ</code> knapp unter Kante (<code>γ&gt;1/λ</code> ⇒ Divergenz); Divergenz <code>η&gt;2/λmax</code>. Nichtlinearität: MLP ⇒ <code>ŷ=Σ yᵢ·m(xᵢ)ᵀm(x_test)</code> (Kernregression, Prop.&nbsp;2); Softmax-Kopierschicht baut Tokens (Induktionskopf, Prop.&nbsp;3).</li>
+      <li><b>Hebel:</b> Entropy Balancing, Kontext-Stabilisierung, Anchoring, adaptive <code>T(Q)=f(M(Q))</code>, drei Metriken (Curvature, Conductivity, Field Stability).</li>
+    </ul>
+
+    <h3>Die gemeinsame Währung: Krümmung / Nicht-Flachheit</h3>
+    <table class="map">
+      <tr><th>Gemeinsame Größe</th><th><span class="badge a">A</span> r1-016 (räumlich)</th><th><span class="badge b">B</span> r1-072 (dynamisch)</th></tr>
+      <tr><td>Die Fläche</td><td class="g">Embedding-/Token-Geometrie (gemessen)</td><td class="f">Φ(t,Q)=−log P(t|Q) &amp; L(W) (gebaut/abgestiegen)</td></tr>
+      <tr><td>Was „Nicht-Flach" heißt</td><td class="g">Abweichung <code>F(r)</code> von der flachen Scheibe; <code>d(r)</code> steigt</td><td class="f">Hesse-Eigenwerte; Konditionszahl <code>κ=λ₁/λ₂</code> von <code>H=XXᵀ</code></td></tr>
+      <tr><td>Verborgener Parameter</td><td class="g">räumliche Skala <code>r</code> / Wellenlänge <code>λ</code></td><td class="f">dynamische Limits <code>T, η, K, γ</code></td></tr>
+      <tr><td>Glatte Domäne</td><td class="g">Feinskala (positional, kurzes λ, niedrig-d)</td><td class="f">konvergiert in das <em>wahre</em> Minimum (in-Distribution)</td></tr>
+      <tr><td>Bruch / Kippen</td><td class="g">Bruchkante an der Grobskala (großes r, variabel-d 20→531)</td><td class="f">Capture (T→0) / Divergenz (η&gt;2/λmax); falsches Minimum = Halluzination</td></tr>
+      <tr><td>Krümmung: status</td><td class="g">fix &amp; gemessen (Hintergrund-Terrain)</td><td class="f">steuerbar &amp; gedreht (GD++ rundet, Prozess-Landschaft)</td></tr>
+      <tr><td>Hebel gegen den Bruch</td><td class="g">andere Skala / Stelle anschauen</td><td class="f">T erhöhen, η senken, γ runden (Kante nach rechts)</td></tr>
+    </table>
+
+    <h3>Die zwei Kanten = eine Kante</h3>
+    <p>Die <em>Bruchkante</em> (<span class="badge a">A</span>) und die <em>Divergenz-/Capture-Kante</em> (<span class="badge b">B</span>) sind dieselbe geometrische Tatsache, gelesen auf zwei Achsen: <span class="badge a">A</span> fragt <em>wo</em> (an welchem Radius <code>r</code> die Fläche reißt), <span class="badge b">B</span> fragt <em>wann</em> (unter welchem Limit <code>η,T</code> ein Durchlauf dort kippt). Sie treffen sich quantitativ: eine <em>schärfere</em> Bruchkante (höhere lokale Krümmung bei <code>r</code>) erhöht <code>λmax</code> und schiebt die Kante <code>η=2/λmax</code> nach <em>links</em> — das Netz muss dort mit <em>kürzerem</em> Schritt / höherer Temperatur arbeiten, um sicher durchzukommen. <span class="badge f">Fusion:</span> die Singularität (A) <em>parametrisiert</em> die Schwelle (B).</p>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq">
+      <span class="a">[A · Feinskala/Positional]</span> PE(pos,2i)=sin(pos/10000^(2i/d)); PE(pos,2i+1)=cos(pos/10000^(2i/d))<br>
+      <span class="a">[A]</span> f_i=1/10000^(2i/d), λ_i=2π·10000^(2i/d) ; cos(a−b) → Ähnlichkeit nur vom Abstand<br>
+      <span class="a">[A · Grobskala/Bruchkante]</span> V(r)≈K·r^d ⟹ d(r)=Steigung(log V(r)) ; F(r)=Abweichung von der flachen Scheibe<br>
+      <span class="a">[A]</span> Bruchkante-Signal: d(r) &amp; F(r) <b>steigen</b> mit r &nbsp;<span class="c">// glatt→scharf, niedrig-d→variabel-d (20→531)</span><br>
+      <span class="b">[B · Feldtheorie]</span> M(Q)=αH+βD+γN ; Φ(t,Q)=−log P(t|Q) ; P(t)=exp(−Φ/T)/Z ; T→0⇒H→0 (Capture)<br>
+      <span class="b">[B · GD im Durchlauf]</span> ΔW=−(η/N)Σ(Wxᵢ−yᵢ)xᵢᵀ ; Attention = 1 GD-Schritt ; Tiefe = K Schritte<br>
+      <span class="b">[B · GD++]</span> x_j←(I−γXXᵀ)x_j ; f(λ,γ)=λ−2γλ²+γ²λ³ → κ↓ ; Divergenz η&gt;2/λmax, γ&gt;1/λ<br>
+      <span class="c">// FUSION: Glätte(r) [A, räumlich] × Konvergenz(T,η,K,γ) [B, dynamisch] = Φ auf zwei verdeckten Achsen;<br>
+      //          Bruchkante (A, fixer Ort) = Divergenz-Kante (B, steuerbare Schwelle); Krümmung = gemeinsame Währung</span>
+    </div>
+
+    <div class="note"><span class="h">Beider Grenzen (ehrliche Bilanz)</span>
+    <b><span class="badge a">A</span></b> ist eine <em>empirisch-messende</em> Aussage über den <em>realisierten</em> Raum: der Mannigfaltigkeits-Test benennt die Bruchkante-Art nicht, ist nur für Radien unterhalb des „Reach" gültig und überliest Randpunkte. <b><span class="badge b">B</span></b> ist eine <em>konstruktive/existenzbasierte</em> Aussage über <em>kleine Netze auf linearen/quadratischen Tasks</em>: Hauptbefund für <em>lineare</em> Selbst-Attention (Softmax verschlechtert, zwei Köpfe retten teilweise, LayerNorm verschlechtert); die Autoren schreiben selbst, es sei wohl <em>einer von mehreren</em> Mechanismen. Das passt zusammen: <span class="badge a">A</span> liefert die <em>gemessene Hintergrund-Geometrie</em> (die singular ist), <span class="badge b">B</span> liefert den <em>mechanistischen Durchlauf</em> (der sie abfährt und deren Prozess-Krümmung rundet).</div>
+  </section>
+
+  <section id="visualisierung" class="viz">
+    <h2>Interaktive Visualisierung<span class="tag">Demo</span></h2>
+    <div class="head"><span class="dot"></span><h3 style="font-size:15px;color:var(--txt-dim)">Eine mehrskalige Potentialfläche Φ — räumliche Achse (A) × dynamische Achse (B)</h3><span class="tg">interaktiv · inline data</span></div>
+    <p style="margin-bottom:8px">Ein <strong>einziges</strong> Potential <code>Φ(x)</code> mit einem <em>Wissens-Tal</em> (links, wahr), einem <em>Void-Tal</em> (rechts, falsch = Halluzination) und einer scharfen <em>Bruchkante/Cusp</em> (Mitte, hohe lokale Krümmung) wird <em>zweimal zugleich</em> bestritten. <strong>Achse A (räumlich, lila):</strong> „Messpunkt" legt den Zoom-Bereich, „Zoom r" den Radius; die <em>tatsächlich aus der Nachbarschaft berechnete</em> Abweichung <code>F(r)</code> von einer flachen Scheibe entscheidet „glatt" vs. „Bruchkante" (glatt in der Nähe, scharf in der Ferne). <strong>Achse B (dynamisch, türkis):</strong> „Temperatur T" → Sampling-Walker (bei T→0 Capture; rot = Void-Tal = Halluzinationsrate); „Schrittweite η" → deterministischer GD-Lauf (konvergiert / divergiert an η&gt;2/λmax); „GD++ γ" rundet die <em>Bruchkante-Krümmung</em> (die gemeinsame Währung) und schiebt die Divergenzkante nach rechts. <strong>Ziehe Messpunkt auf die Cusp und Zoom nach groß, dann γ hoch und η über die Kante</strong> — und schau, wie aus einer glatten Linie eine Bruchkante wird und wie dieselbe Kante „Capture" (A) bzw. „Divergenz" (B) ist.</p>
+    <div class="cwrap"><canvas id="cv" width="820" height="460"></canvas></div>
+    <div class="leg">
+      <span><i style="background:var(--viz-curve)"></i>Φ(x) (raw, A)</span>
+      <span><i style="background:var(--viz-curve2)"></i>GD++-gerundet (γ&gt;0, B)</span>
+      <span><i style="background:var(--viz-ok)"></i>Wissens-Tal (wahr)</span>
+      <span><i style="background:var(--viz-void)"></i>Void-Tal (falsch)</span>
+      <span><i style="background:var(--viz-cusp)"></i>Bruchkante / Cusp</span>
+      <span><i style="background:var(--viz-walk)"></i>A: Walker</span>
+      <span><i style="background:var(--viz-gd)"></i>B: GD-Pfad</span>
+    </div>
+    <div class="viz-controls">
+      <div class="grp axa"><span class="axhead">A · räumlich</span>
+        <label>Messpunkt x₀ <span class="val" id="v-probe">0.40</span></label><input type="range" id="c-probe" min="0" max="100" value="55">
+        <label>Zoom / Radius r <span class="val" id="v-zoom">0.56</span></label><input type="range" id="c-zoom" min="0" max="100" value="45">
+      </div>
+      <div class="grp axb"><span class="axhead">B · dynamisch</span>
+        <label>Temperatur T <span class="val" id="v-T">0.70</span></label><input type="range" id="c-T" min="0.02" max="2.5" step="0.02" value="0.7">
+        <label>Schrittweite η <span class="val" id="v-eta">0.30</span></label><input type="range" id="c-eta" min="0.05" max="2.0" step="0.01" value="0.3">
+        <label>Schritte K <span class="val" id="v-K">25</span></label><input type="range" id="c-K" min="1" max="60" step="1" value="25">
+        <label>GD++ γ <span class="val" id="v-gam">0.00</span></label><input type="range" id="c-gam" min="0" max="0.2" step="0.005" value="0">
+      </div>
+      <div class="grp"><span class="axhead">Fläche</span>
+        <label>Krümmung/Rauheit <span class="val" id="v-Rug">0.50</span></label><input type="range" id="c-Rug" min="0" max="1" step="0.02" value="0.5">
+        <label>Wissensdichte <span class="val" id="v-Kd">0.70</span></label><input type="range" id="c-Kd" min="0.05" max="1" step="0.01" value="0.7">
+      </div>
+      <div class="grp" style="gap:7px">
+        <label class="chk"><input type="checkbox" id="c-showA" checked> A: Walker</label>
+        <label class="chk"><input type="checkbox" id="c-showB" checked> B: Abstieg</label>
+        <div style="display:flex;gap:8px;margin-top:2px">
+          <button class="act g" id="b-anim">▶ Animieren</button>
+          <button class="act" id="b-reset">⟲ Reset</button>
+          <button class="theme" id="b-theme" style="margin-left:0">Thema</button>
+        </div>
+      </div>
+    </div>
+    <div class="ro-grid">
+      <div class="ro a"><span class="k">A · F(r₀) Abweichung</span><span class="v" id="r-F">—</span></div>
+      <div class="ro a"><span class="k">A · Verdict</span><span class="v" id="r-verdict" style="font-size:.86em">—</span></div>
+      <div class="ro a"><span class="k">A · Skala-Domäne</span><span class="v" id="r-dom" style="font-size:.86em">—</span></div>
+      <div class="ro b"><span class="k">B · Halluzination</span><span class="v" id="r-hallu">—</span></div>
+      <div class="ro b"><span class="k">B · GD-Ende x*</span><span class="v" id="r-bend">—</span></div>
+      <div class="ro b"><span class="k">B · GD-Status</span><span class="v" id="r-bstatus" style="font-size:.86em">—</span></div>
+      <div class="ro hero"><span class="k">Krümmung max|Φ''| (raw)</span><span class="v" id="r-kraw">—</span></div>
+      <div class="ro hero"><span class="k">Krümmung (GD++)</span><span class="v" id="r-kgpp">—</span></div>
+      <div class="ro hero"><span class="k">Kante η=2/λmax</span><span class="v" id="r-etaC">—</span></div>
+    </div>
+    <div class="readout" id="r-readout">…</div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz<span class="tag">Quellen</span></h2>
+    <div class="prov">
+      <a href="../r1-016.html">
+        <span class="n">A · r1-016.html — „Glatt in der Nähe, scharf in der Ferne"</span>
+        <span class="d">R1-Fusion (Token-Mannigfaltigkeit × Positional-Encoding): der Token-Raum ist <em>multiskal</em> — glatt &amp; periodisch &amp; niedrig-dimensional auf der Positional-Feinskala, nicht-mannigfaltig &amp; singular &amp; dimensionsvariabel (20→531) auf der Token-Grobskala; Zoom-Test, „Steigung = Dimension", Bruchkanten, Prompt-Fragilität, Nicht-Portabilität. Liefert die <strong>räumliche</strong> Achse.</span>
+      </a>
+      <a href="../r1-072.html">
+        <span class="n">B · r1-072.html — „Loss-Landschaft: Informationsgravitation × Gradientenabstieg"</span>
+        <span class="d">R1-Fusion (Informationsgravitation × ICL via Gradientenabstieg): der eingefrorene Durchlauf ist <em> Bewegung auf Φ=−log P</em> — gelesen statistisch (Sampling, Temperatur T, Capture, Hesse-basierte Halluzination) und mechanistisch (eine Schicht = ein GD-Schritt, GD++ rundet κ, Divergenz η&gt;2/λmax). Liefert die <strong>dynamische</strong> Achse.</span>
+      </a>
+    </div>
+    <footer>Fusion 037 · Round 2 · Pair: r1-016 ✕ r1-072. Alle Claims aus den Quellen paraphrasiert. Das Potenzial-Φ im Viz ist ein didaktisches 1-D-Modell (inline, echte Krümmungs-/Abweichungs-Berechnung, keine Modellgewichte). Selbstständig, ohne Netz-Datenabruf, theme-aware.</footer>
+  </section>
+</article>
+
+<script>
+(function(){
+'use strict';
+var cv=document.getElementById('cv');
+var ctx=cv.getContext('2d');
+var LW=820, LH=460;
+function setHiDPI(){
+  var dpr=window.devicePixelRatio||1;
+  cv.width=LW*dpr; cv.height=LH*dpr;
+  cv.style.aspectRatio=LW+'/'+LH;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+setHiDPI();
+
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexToRgba(hex,a){
+  hex=String(hex||'').replace(/^#/,'').trim();
+  if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+  var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+  if(isNaN(r)||isNaN(g)||isNaN(b)){r=120;g=130;b=160;}
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+function palette(){
+  return {
+    bg:cssVar('--viz-canvas-bg')||'#0c1120',
+    fg:cssVar('--viz-txt')||'#e8ecf6',
+    grid:cssVar('--viz-grid')||'rgba(128,128,128,0.2)',
+    curve:cssVar('--viz-curve')||'#8a7cff',
+    curve2:cssVar('--viz-curve2')||'#5ee0d0',
+    ok:cssVar('--viz-ok')||'#6ee88a',
+    voidc:cssVar('--viz-void')||'#fb923c',
+    cusp:cssVar('--viz-cusp')||'#ff7ac0',
+    probe:cssVar('--viz-probe')||'#8a7cff',
+    walk:cssVar('--viz-walk')||'#60a5fa',
+    gd:cssVar('--viz-gd')||'#ffc860'
+  };
+}
+function mulberry32(seed){
+  var a=seed>>>0;
+  return function(){
+    a|=0; a=a+0x6D2B79F5|0;
+    var t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296;
+  };
+}
+
+var xmin=-4, xmax=4, RMIN=0.18, RMAX=2.2, FTHR=0.28;
+
+function phi(x,p,gam){
+  var g=(gam/0.2);
+  var rugScale=1-0.85*g;
+  var wid=1+1.2*g;
+  var v=0.05*x*x;
+  v -= p.Kd*3.0*Math.exp(-((x+1.5)*(x+1.5))/(0.9*wid));
+  v -= (1-p.Kd)*1.1*Math.exp(-((x-2.5)*(x-2.5))/(0.9*wid));
+  v -= p.Rug*rugScale*2.6*Math.exp(-((x-0.4)*(x-0.4))/0.12);
+  v += p.Rug*rugScale*0.5*Math.sin(x*3.5)*Math.exp(-((x-0.4)*(x-0.4))/2.0);
+  return v;
+}
+function dPhi(x,p,gam){var h=1e-3;return (phi(x+h,p,gam)-phi(x-h,p,gam))/(2*h);}
+function maxCurv(p,gam){
+  var N=800,dx=(xmax-xmin)/(N-1),prev2,prev,cur,mx=0,x,i;
+  prev2=phi(xmin,p,gam); x=xmin+dx; prev=phi(x,p,gam);
+  for(i=2;i<N;i++){x=xmin+i*dx; cur=phi(x,p,gam);
+    var d2=(cur-2*prev+prev2)/(dx*dx); if(d2>mx)mx=d2; prev2=prev; prev=cur;}
+  return mx;
+}
+function flatness(r0,x0,p,gam){
+  var N=48,xs=[],ys=[],i,x;
+  for(i=0;i<=N;i++){x=x0-r0+(2*r0)*i/N; xs.push(x); ys.push(phi(x,p,gam));}
+  var mn=ys[0],mx2=ys[0];
+  for(i=1;i<ys.length;i++){if(ys[i]<mn)mn=ys[i]; if(ys[i]>mx2)mx2=ys[i];}
+  var span=(mx2-mn); if(span<1e-9)return 0;
+  var mx=0,my=0;
+  for(i=0;i<xs.length;i++){mx+=xs[i];my+=ys[i];} mx/=xs.length; my/=ys.length;
+  var sxx=0,sxy=0;
+  for(i=0;i<xs.length;i++){var dx=xs[i]-mx,dy=ys[i]-my; sxx+=dx*dx; sxy+=dx*dy;}
+  var a=sxx>1e-12?sxy/sxx:0;
+  var mxdev=0;
+  for(i=0;i<xs.length;i++){var qy=ys[i]-my-a*(xs[i]-mx); if(Math.abs(qy)>mxdev)mxdev=Math.abs(qy);}
+  return mxdev/span;
+}
+function readParams(){
+  var g=function(id){var e=document.getElementById(id);return e?parseFloat(e.value):0;};
+  var x0=xmin+((g('c-probe')||0)/100)*(xmax-xmin);
+  var r0=RMIN*Math.pow(RMAX/RMIN,(g('c-zoom')||0)/100);
+  return { x0:x0, r0:r0, T:g('c-T'), eta:g('c-eta'), K:Math.max(1,Math.round(g('c-K'))),
+           gam:g('c-gam'), Kd:g('c-Kd'), Rug:g('c-Rug') };
+}
+function runA(p,Np,seed){
+  var rng=mulberry32(seed),res=[],S=140,n,s,x;
+  for(n=0;n<Np;n++){
+    x=xmin+0.2+rng()*(xmax-xmin-0.4);
+    for(s=0;s<S;s++){
+      x=x-0.05*dPhi(x,p,0)+(rng()*2-1)*p.T*0.35;
+      if(x<xmin+0.05)x=xmin+0.05; if(x>xmax-0.05)x=xmax-0.05;
+    }
+    var cls=(x>=-2.7&&x<=-0.4)?'ok':(x>=1.3&&x<=3.7)?'hallu':'other';
+    res.push({x:x,y:phi(x,p,0),cls:cls});
+  }
+  return res;
+}
+function runB(p){
+  var x=-2.6,pts=[{x:x,y:phi(x,p,p.gam)}],diverged=false,k;
+  for(k=0;k<p.K;k++){
+    x=x-p.eta*dPhi(x,p,p.gam);
+    if(!isFinite(x)||Math.abs(x)>3.8){diverged=true;break;}
+    pts.push({x:x,y:phi(x,p,p.gam)});
+  }
+  var fx=pts[pts.length-1].x;
+  var status=diverged?'div':(fx>=-2.7&&fx<=-0.4?'true':(fx>=1.3&&fx<=3.7?'false':'edge'));
+  return {pts:pts,diverged:diverged,status:status,fx:fx};
+}
+
+var animStep=Infinity,rafId=null,curB=null;
+function X(x){return 52+(x-xmin)/(xmax-xmin)*(LW-52-20);}
+function Y(y,ymn,ymx){return 40+(ymx-y)/(ymx-ymn)*(LH-40-64);}
+
+function draw(){
+  var p=readParams(),pal=palette();
+  var Aparts=runA(p,72,12345),hallu=0,hc;
+  for(hc=0;hc<Aparts.length;hc++)if(Aparts[hc].cls==='hallu')hallu++;
+  var hr=(hallu/Aparts.length*100);
+  var F0=flatness(p.r0,p.x0,p,0);
+  var isBruch=F0>FTHR;
+
+  ctx.clearRect(0,0,LW,LH);
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,LW,LH);
+  var mL=52,mR=20,mT=40,mB=64,pw=LW-mL-mR,phh=LH-mT-mB;
+  var N=300,rawV=[],effV=[],xs=[],i,x;
+  for(i=0;i<N;i++){x=xmin+(xmax-xmin)*i/(N-1);xs.push(x);rawV.push(phi(x,p,0));effV.push(phi(x,p,p.gam));}
+  var yall=rawV.concat(effV),ymin=Infinity,ymax=-Infinity;
+  for(i=0;i<yall.length;i++){if(yall[i]<ymin)ymin=yall[i];if(yall[i]>ymax)ymax=yall[i];}
+  var pad=(ymax-ymin)*0.14+0.12;ymin-=pad;ymax+=pad;
+
+  ctx.strokeStyle=pal.grid;ctx.lineWidth=1;
+  for(var gi=0;gi<=4;gi++){var gy=mT+phh*gi/4;ctx.beginPath();ctx.moveTo(mL,gy);ctx.lineTo(mL+pw,gy);ctx.stroke();}
+  for(var gx=-4;gx<=4;gx++){ctx.beginPath();ctx.moveTo(X(gx),mT);ctx.lineTo(X(gx),mT+phh);ctx.stroke();}
+  ctx.fillStyle=hexToRgba(pal.fg,0.5);ctx.font='10px ui-monospace,monospace';ctx.textAlign='center';
+  for(var gt=-4;gt<=4;gt++){ctx.fillText(String(gt),X(gt),mT+phh+14);}
+
+  // probe neighborhood band (A's zoom)
+  var bx0=Math.max(xmin,p.x0-p.r0),bx1=Math.min(xmax,p.x0+p.r0);
+  ctx.fillStyle=isBruch?hexToRgba(pal.cusp,0.14):hexToRgba(pal.ok,0.14);
+  ctx.fillRect(X(bx0),mT,X(bx1)-X(bx0),phh);
+  ctx.strokeStyle=isBruch?hexToRgba(pal.cusp,0.7):hexToRgba(pal.ok,0.7);ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(X(bx0),mT);ctx.lineTo(X(bx0),mT+phh);ctx.moveTo(X(bx1),mT);ctx.lineTo(X(bx1),mT+phh);ctx.stroke();ctx.setLineDash([]);
+
+  // fill under raw
+  ctx.beginPath();ctx.moveTo(X(xs[0]),Y(rawV[0],ymin,ymax));
+  for(i=1;i<N;i++)ctx.lineTo(X(xs[i]),Y(rawV[i],ymin,ymax));
+  ctx.lineTo(X(xmax),mT+phh);ctx.lineTo(X(xmin),mT+phh);ctx.closePath();
+  ctx.fillStyle=hexToRgba(pal.curve,0.10);ctx.fill();
+  // eff (rounded) if gam>0
+  if(p.gam>0.001){
+    ctx.beginPath();for(i=0;i<N;i++){i?ctx.lineTo(X(xs[i]),Y(effV[i],ymin,ymax)):ctx.moveTo(X(xs[i]),Y(effV[i],ymin,ymax));}
+    ctx.strokeStyle=pal.curve2;ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.stroke();ctx.setLineDash([]);
+  }
+  // raw curve
+  ctx.beginPath();for(i=0;i<N;i++){i?ctx.lineTo(X(xs[i]),Y(rawV[i],ymin,ymax)):ctx.moveTo(X(xs[i]),Y(rawV[i],ymin,ymax));}
+  ctx.strokeStyle=pal.curve;ctx.lineWidth=2.6;ctx.stroke();
+
+  // well markers
+  function marker(xw,label,col,above){
+    var yw=phi(xw,p,0),yy=Y(yw,ymin,ymax);
+    ctx.fillStyle=col;ctx.beginPath();
+    if(above){ctx.moveTo(X(xw),yy);ctx.lineTo(X(xw)-6,yy-10);ctx.lineTo(X(xw)+6,yy-10);ctx.closePath();}
+    else{ctx.moveTo(X(xw),yy);ctx.lineTo(X(xw)-6,yy+10);ctx.lineTo(X(xw)+6,yy+10);ctx.closePath();}
+    ctx.fill();
+    ctx.fillStyle=col;ctx.font='10.5px ui-monospace,monospace';ctx.textAlign='center';
+    ctx.fillText(label,X(xw),above?yy-14:yy+24);
+  }
+  marker(-1.5,'Wissens-Tal (wahr)',pal.ok,true);
+  marker(2.5,'Void-Tal (falsch)',pal.voidc,true);
+  marker(0.4,'Bruchkante/Cusp',pal.cusp,false);
+
+  // A walkers
+  if(document.getElementById('c-showA').checked){
+    for(var ai=0;ai<Aparts.length;ai++){
+      var a=Aparts[ai];
+      ctx.fillStyle=a.cls==='ok'?hexToRgba(pal.ok,0.85):a.cls==='hallu'?hexToRgba(pal.voidc,0.9):hexToRgba(pal.fg,0.45);
+      ctx.beginPath();ctx.arc(X(a.x),Y(a.y,ymin,ymax)-4-(ai%5),3.1,0,6.2832);ctx.fill();
+    }
+  }
+
+  // B GD path
+  curB=runB(p);
+  var showN=(animStep===Infinity)?curB.pts.length:Math.min(animStep,curB.pts.length);
+  if(document.getElementById('c-showB').checked){
+    ctx.strokeStyle=hexToRgba(pal.gd,0.9);ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(X(curB.pts[0].x),Y(curB.pts[0].y,ymin,ymax));
+    for(var bi=1;bi<showN;bi++){
+      var q=curB.pts[bi-1],rr=curB.pts[bi];
+      var x1=X(q.x),y1=Y(q.y,ymin,ymax),x2=X(rr.x),y2=Y(rr.y,ymin,ymax);
+      ctx.lineTo(x2,y2);
+      var ang=Math.atan2(y2-y1,x2-x1);
+      ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(ang-0.4),y2-7*Math.sin(ang-0.4));ctx.lineTo(x2-7*Math.cos(ang+0.4),y2-7*Math.sin(ang+0.4));ctx.closePath();ctx.fillStyle=pal.gd;ctx.fill();
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=hexToRgba(pal.gd,0.9);
+    }
+    ctx.stroke();
+    ctx.fillStyle=pal.bg;ctx.beginPath();ctx.arc(X(curB.pts[0].x),Y(curB.pts[0].y,ymin,ymax),4.5,0,6.2832);ctx.fill();
+    ctx.strokeStyle=pal.gd;ctx.lineWidth=1.5;ctx.stroke();
+    var en=curB.pts[Math.min(showN-1,curB.pts.length-1)];
+    ctx.fillStyle=curB.diverged?pal.voidc:pal.gd;ctx.beginPath();ctx.arc(X(en.x),Y(en.y,ymin,ymax),5.5,0,6.2832);ctx.fill();
+    if(curB.diverged){ctx.fillStyle=pal.voidc;ctx.font='bold 12px ui-monospace,monospace';ctx.textAlign='left';ctx.fillText('DIVERGENT  (η > 2/λmax)',mL+6,mT+14);}
+  }
+
+  // probe marker + lens ring
+  var px0=X(p.x0),py0=Y(phi(p.x0,p,0),ymin,ymax);
+  ctx.strokeStyle=hexToRgba(pal.probe,0.5);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px0,py0,10,0,6.2832);ctx.stroke();
+  ctx.fillStyle=pal.probe;ctx.beginPath();ctx.arc(px0,py0,4.5,0,6.2832);ctx.fill();
+
+  // eta gauge
+  var gy0=mT+phh+26,gy1=mT+phh+38,lam=maxCurv(p,p.gam),etaC=lam>1e-6?(2/lam):2.0;
+  ctx.fillStyle=hexToRgba(pal.fg,0.14);ctx.fillRect(mL,gy0,pw,gy1-gy0);
+  var edgeX=mL+Math.min(1,etaC/2.0)*pw;
+  ctx.fillStyle=hexToRgba(pal.voidc,0.28);ctx.fillRect(edgeX,gy0,mL+pw-edgeX,gy1-gy0);
+  ctx.strokeStyle=pal.voidc;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(edgeX,gy0-3);ctx.lineTo(edgeX,gy1+3);ctx.stroke();
+  ctx.fillStyle=pal.voidc;ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('2/λmax',Math.min(edgeX,mL+pw-20),gy1+14);
+  var etaX=mL+Math.min(1,p.eta/2.0)*pw;
+  ctx.strokeStyle=pal.gd;ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(etaX,gy0-5);ctx.lineTo(etaX,gy1+5);ctx.stroke();
+  ctx.fillStyle=hexToRgba(pal.fg,0.7);ctx.textAlign='left';ctx.font='9px ui-monospace,monospace';ctx.fillText('η',mL+2,gy0-4);
+
+  // title
+  ctx.fillStyle=pal.fg;ctx.font='bold 13px sans-serif';ctx.textAlign='left';
+  ctx.fillText('Eine mehrskalige Potentialfläche Φ — räumliche Achse (A) × dynamische Achse (B)',12,20);
+  ctx.font='11px sans-serif';ctx.fillStyle=hexToRgba(pal.fg,0.6);
+  ctx.fillText('A: Zoom-Test → glatt (kleines r) / Bruchkante (großes r)   ·   B: Sampling (T) & GD (η) auf derselben Fläche, GD++ (γ) rundet die Cusp',12,33);
+
+  // readouts
+  var el;
+  el=document.getElementById('r-F');if(el)el.textContent=F0.toFixed(3);
+  el=document.getElementById('r-verdict');if(el){el.textContent=isBruch?'Bruchkante ✗':'glatte Scheibe ✓';el.style.color=isBruch?pal.cusp:pal.ok;}
+  el=document.getElementById('r-dom');if(el)el.textContent=(p.r0<0.42?'fein · Positional':(p.r0>1.0?'grob · Token/Reach':'mittel'));
+  el=document.getElementById('r-hallu');if(el)el.textContent=hr.toFixed(0)+'%';
+  el=document.getElementById('r-bend');if(el)el.textContent=curB.diverged?'∞':curB.fx.toFixed(2);
+  var bs=document.getElementById('r-bstatus');
+  if(bs){if(curB.diverged){bs.textContent='DIVERGIERT';bs.style.color=pal.voidc;}
+    else if(curB.status==='true'){bs.textContent='→ Wissens-Tal';bs.style.color=pal.ok;}
+    else if(curB.status==='false'){bs.textContent='→ Void-Tal (!)';bs.style.color=pal.voidc;}
+    else{bs.textContent='→ Rand';bs.style.color=hexToRgba(pal.fg,0.7);}}
+  el=document.getElementById('r-kraw');if(el)el.textContent=maxCurv(p,0).toFixed(2);
+  el=document.getElementById('r-kgpp');if(el)el.textContent=lam.toFixed(2);
+  el=document.getElementById('r-etaC');if(el)el.textContent=etaC.toFixed(2);
+
+  var msg;
+  if(curB.diverged){
+    msg='<b>B divergiert</b> (η &gt; 2/λmax) — <em>dieselbe Kante</em>, an der A „Capture / Schwarzes Loch" meint. A-Zoom am Messpunkt: <b>'+(isBruch?'Bruchkante':'glatt')+'</b> (F(r₀)='+F0.toFixed(2)+'). A: '+hr.toFixed(0)+'% Walker landen im Void-Tal (Halluzination) bei T='+p.T.toFixed(2)+'.';
+  } else if(curB.status==='true'){
+    msg='<b>B konvergiert in das Wissens-Tal</b> (das T→0-Limit von A, <em>Erfolg</em>). A-Zoom am Messpunkt: <b>'+(isBruch?'Bruchkante':'glatt')+'</b> (F(r₀)='+F0.toFixed(2)+', r₀='+p.r0.toFixed(2)+'). Gleiche Fläche: B <em>löst</em> (deterministisch), A <em>samplemt</em> (T&gt;0).';
+  } else if(curB.status==='false'){
+    msg='<b>B „konvergiert" — aber in das falsche Void-Tal.</b> Das ist A\'s Halluzination, gelesen als deterministischer Optimierer: konvergieren kann <em>richtig oder falsch</em> sein, je nach Krümmung/Wissensdichte. A-Zoom: <b>'+(isBruch?'Bruchkante':'glatt')+'</b>.';
+  } else {
+    msg='B konvergiert an den Rand. A-Zoom am Messpunkt: <b>'+(isBruch?'Bruchkante':'glatt')+'</b> (F(r₀)='+F0.toFixed(2)+'). A: '+hr.toFixed(0)+'% in den Void-Tälern bei T='+p.T.toFixed(2)+'.';
+  }
+  if(p.gam>0.001){
+    msg+=' — GD++ hat die Bruchkante-Krümmung von '+maxCurv(p,0).toFixed(2)+' auf '+lam.toFixed(2)+' gerundet (κ ↓, Divergenzkante nach rechts: '+etaC.toFixed(2)+').';
+  }
+  var ro=document.getElementById('r-readout');if(ro)ro.innerHTML=msg;
+}
+
+function f2(v){var n=parseFloat(v);return isFinite(n)?n.toFixed(2):'0.00';}
+function setL(id,txt){var e=document.getElementById(id);if(e)e.textContent=txt;}
+function syncLabels(){
+  var p=readParams();
+  setL('v-probe',p.x0.toFixed(2));
+  setL('v-zoom',p.r0.toFixed(2));
+  setL('v-T',f2(document.getElementById('c-T').value));
+  setL('v-eta',f2(document.getElementById('c-eta').value));
+  setL('v-K',String(Math.round(parseFloat(document.getElementById('c-K').value))));
+  setL('v-gam',f2(document.getElementById('c-gam').value));
+  setL('v-Rug',f2(document.getElementById('c-Rug').value));
+  setL('v-Kd',f2(document.getElementById('c-Kd').value));
+}
+function onInput(){animStep=Infinity;syncLabels();draw();}
+function animate(){
+  if(rafId)cancelAnimationFrame(rafId);
+  var target=curB?curB.pts.length:30;
+  animStep=1;
+  (function loop(){
+    animStep++;draw();
+    if(animStep<target){rafId=requestAnimationFrame(loop);}
+    else{rafId=null;animStep=Infinity;draw();}
+  })();
+}
+function toggleTheme(){document.documentElement.classList.toggle('dark');draw();}
+function init(){
+  var ids=['c-probe','c-zoom','c-T','c-eta','c-K','c-gam','c-Rug','c-Kd'];
+  for(var i=0;i<ids.length;i++){var e=document.getElementById(ids[i]);if(e)e.addEventListener('input',onInput);}
+  var cb=['c-showA','c-showB'];
+  for(var j=0;j<cb.length;j++){var c=document.getElementById(cb[j]);if(c)c.addEventListener('change',draw);}
+  var an=document.getElementById('b-anim');if(an)an.addEventListener('click',animate);
+  var rs=document.getElementById('b-reset');if(rs)rs.addEventListener('click',function(){animStep=Infinity;draw();});
+  var th=document.getElementById('b-theme');if(th)th.addEventListener('click',toggleTheme);
+  if(!document.documentElement.classList.contains('dark'))document.documentElement.classList.add('dark');
+  syncLabels();draw();
+  window.addEventListener('resize',function(){setHiDPI();draw();});
+  try{new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+})();
+</script>
+</body>
+</html>

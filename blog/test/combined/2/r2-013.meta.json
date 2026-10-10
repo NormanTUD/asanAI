@@ -1,0 +1,16 @@
+{
+  "no": "013",
+  "a": "combined/r1-067.html",
+  "b": "combined/r1-038.html",
+  "a_title": "Token-Fokus — Die lesbare Reise durch den chaotischen Raum",
+  "b_title": "Attraktor-Dynamik trifft tropische Geometrie",
+  "combined_theme": "lokal-lesbar-global-empfindlich-an-den-knick",
+  "one_line": "Ein Bedeutungs-Punkt wird durch eine stückweise-lineare (tropische) Karte iteriert (Generation = Iteration des Forward-Passes): lokal linear & lesbar, global an den Knicken (tropischen Hyperflächen) empfindlich; die Ausgabe ist ein gepuckter Peak, dessen Stelle der max/argmax-Winner und dessen Steilheit die Temperatur ist (Softmax = glatter max, T→0 = harter Winner).",
+  "contradictions": [
+    "Regelmäßigkeit der Karte: glatter, überall empfindlicher Chaos (A/r1-067, Arnold-Faltung/sinusoidale Faltung, differenzierbar) vs. stückweise-linear mit scharfen, isolierten Knicken (B/r1-038, tropische Hyperflächen), innerhalb einer Zelle exakt linear (nicht chaotisch).",
+    "Was die Tiefe tut: kontinuierliche wachsende Verformung (A/r1-067, warpScale ∝ 1,8^l, 'more warping complexity') vs. diskrete exponentielle Regionen-Explosion (B/r1-038, Theorem 6.3, k^t).",
+    "Die Ausgabe: gepuckte, temperaturgeformte Wahrscheinlichkeitsverteilung mit Entropie (A/r1-067, Softmax/Fokus-Kurve) vs. harter max/argmax-Winner über Vokabular-Monome ohne Temperatur/Entropie (B/r1-038)."
+  ],
+  "resolution": "Sensitivität ist an die Knick konzentriert: innerhalb einer Zelle ist die Karte linear → lesbar (A), 'springt' aber genau an B's tropischen Hyperflächen; A's globaler Chaos = viele Knick aus der Komposition stückweise-linearer Karten (B). Tiefe multipliziert Knick/Regionen exponentiell — A's 1,8^l-Verformung und B's k^t-Regionen sind derselbe Satz (Verformungs-Amplitude vs. Regionen-Zählung). Die Ausgabe ist ein einzelner gepuckter Peak: Softmax (A) ist der glatte max über Vokabular-Monome (B); T→0 = harter argmax-Winner, Peak-Stelle = Winner, Steilheit = Temperatur, Entropie = wie entschieden der Winner ist.",
+  "viz": "Canvas (0 Libs, inline): (1) stückweise-lineare/tropische Karte f mit Knicken bei ±1 (lokal linear = lesbar); (2) Iteration zweier Proben (rot = DE, blau = EN; Ratchet vorwärts-only) durch t Schritte, mit Regionen-Bands + Konvergenz in eine gemeinsame Ziel-Zelle (Attraktor); (3) Readout 'Regionen ≈ 3^t' (Theorem 6.3) wächst exponentiell mit t (1→6.561); (4) glatter max/Softmax über 6 Vokabular-Monomen, Peak = Winner, Temperatur steuert die Steilheit (T→0 = 100% harter Winner), Jitter zeigt Empfindlichkeit (Peak weicht Berlin→Madrid bei kleinem t, robust im Basin bei großem t)."
+}

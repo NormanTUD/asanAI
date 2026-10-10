@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zirkuits schreiben, Topologie liest: das Loch als gemeinsame Währung (Fusion 030)</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e2dac9; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0;
+  --accent2:#be185d; --accent2-soft:#fdeef4;
+  --amber:#b45309;
+  --green:#15803d; --green-soft:#e7f4ec;
+  --danger:#b91c1c;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a;
+  --accent2:#f472b6; --accent2-soft:#2a1620;
+  --amber:#f0a656;
+  --green:#86efac; --green-soft:#10231a;
+  --danger:#fb7185;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 110px}
+header{padding:64px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(27px,5.2vw,43px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:16px;color:var(--muted);max-width:70ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:14px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:780;letter-spacing:-.015em;margin:56px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:730;margin:26px 0 8px}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b,li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.b{border-color:var(--accent2);background:var(--accent2-soft)}
+.note.green{border-color:var(--green);background:var(--green-soft)}
+ul,ol{margin:0 0 16px 22px;color:var(--muted);font-size:15px}
+li{margin-bottom:10px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin-right:6px;vertical-align:middle}
+.tag.b{background:var(--accent2-soft);color:var(--accent2)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:680px){.two{grid-template-columns:1fr}}
+.who{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:7px;display:inline-block;margin-bottom:8px}
+.who.a{color:var(--accent);border:1px solid var(--line);background:var(--accent-soft)}
+.who.b{color:var(--accent2);border:1px solid var(--line);background:var(--accent2-soft)}
+blockquote{margin:0 0 10px;padding:2px 0 2px 12px;border-left:2px solid var(--line);color:var(--muted);font-size:14px}
+blockquote b{color:var(--fg)}
+.eq{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto;line-height:1.95}
+.eq .c{color:var(--muted)}
+.eq b{color:var(--amber);font-weight:600}
+.eq i{color:var(--accent);font-style:normal}
+.eq .bb{color:var(--accent2);font-style:normal}
+.eq sup,.eq sub{font-size:.7em}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:16px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:720;font-size:11.5px}
+.tbl td b{color:var(--fg)}
+.tbl td.c{color:var(--fg);font-weight:600}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7}
+#phase-canvas{width:100%;display:block;border-radius:12px;border:1px solid var(--line)}
+.viz-row{display:grid;grid-template-columns:1fr 210px;gap:16px;align-items:start}
+@media (max-width:680px){.viz-row{grid-template-columns:1fr}}
+.viz-side{display:flex;flex-direction:column;gap:12px}
+.betti{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.betti .l{display:flex;justify-content:space-between;margin-bottom:4px}
+.betti .l b{font-size:15px}
+.betti .b1 b{color:var(--green)}
+.betti .b0 b{color:var(--accent)}
+.betti .b2 b{color:var(--accent2)}
+.readout{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7}
+.readout div{margin-bottom:6px}
+.readout .ev{color:var(--amber);font-weight:600}
+.readout .cyc{color:var(--green)}
+.readout .pt{color:var(--accent)}
+.readout .frag{color:var(--muted)}
+.readout .val{margin-top:6px;font-weight:700}
+.readout .msg{color:var(--muted);font-size:11px;line-height:1.5;margin-top:4px}
+.frag-box{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.frag-lab{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between}
+.frag-lab b{color:var(--amber)}
+.frag-track{position:relative;height:14px;border-radius:7px;background:var(--card);border:1px solid var(--line);overflow:hidden}
+.frag-fill{height:100%;width:0%;background:var(--danger);border-radius:7px;transition:width .08s linear}
+.frag-mark{position:absolute;top:0;bottom:0;left:25%;width:2px;background:var(--muted);opacity:.85}
+.frag-ref{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:6px}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px;flex-wrap:wrap}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+.ctl-lab .bv{font-family:var(--mono);color:var(--amber);font-size:13px;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);cursor:pointer}
+.chkrow{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--muted);margin-top:10px}
+.chkrow label{display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.chkrow input{accent-color:var(--accent)}
+.btnrow{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:12.5px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.alt{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px;font-family:var(--mono)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;font-family:var(--mono);font-size:12px;padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+footer{margin-top:70px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.8}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<button id="theme-toggle" class="theme-toggle" type="button">☀ / ☾</button>
+<main>
+<header>
+  <span class="badge">Fusion · Runde 2 · #030</span>
+  <h1>Zirkuits schreiben, Topologie liest:<br>das <em>Loch</em> als gemeinsame Währung</h1>
+  <p class="sub"><b>r1-073</b> liest ein Netz als Maschine, die <i>Löcher schreibt</i> (ReLU-Chirurgie) und am eingefrorenen Äquivalenz-Gerüst <i>harmonische Masse = Fragilität</i> abliest; <b>r1-066</b> liest denselben Residual Stream als <i>Strömung</i>, deren <i>Zirkuit-Eigenwert α</i> den topologischen Attraktor (Grenzzyklus / Fixpunkt) auswählt. Fusion: <b>die Löcher sind die universelle Währung der Interpretierbarkeit</b> — geschrieben (exakt, lokal, spät), gelesen (robust, global, früh); was <i>übrig bleibt</i> macht ein Modell fragil.</p>
+  <p class="fuse-line">Fusion aus: <b>r1-073.html</b> ✕ <b>r1-066.html</b>  (Round 2)</p>
+</header>
+
+<!-- ============ 1. THESE ============ -->
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p>Beide R1-Papiere sind selbst Fusionen — und sie laufen in <b>dieselben</b> Richtung auf <b>denselben</b> Gegenstand zusammen: ein neuronales Netz (konkret ein Transformer) ist ein <b>diskretes dynamisches System in der Schicht-Indiz-Zeit</b>, <span class="eq" style="display:inline;padding:2px 8px"><i>r</i><sub>l+1</sub> = <i>r</i><sub>l</sub> + <b>f</b><sub>l</sub>(<i>r</i><sub>l</sub>)</span>, und seine Interpretierbarkeit ist die <b>topologische Lektüre dieser Trajektorie</b>. <span class="tag">r1-066</span> kommt von der <i>mechanistischen</i> Seite; <span class="tag b">r1-073</span> von der <i>topologischen</i>. Dass sie auf dasselbe Objekt zulaufen, ist der Fund — und er ist stärker als jede der beiden Einzel-Fusionen, weil er vier Sub-Papiere statt zweier auf eine Größe projiziert.</p>
+  <p><span class="tag">r1-066 · „Zirkuit-Strömung"</span> liest die lokale Schicht-Karte <b>f</b><sub>l</sub> als <b>benannten Zirkuit</b> (W<sub>QK</sub> = „wohin schauen", W<sub>OV</sub> = „was bewegen"); der Eigenwert-Realteil <b>α</b> eines Zirkuits ist der <b>Bifurkationsparameter</b>, der den <b>topologischen Attraktor</b> auswählt, in den der Zustand fließt (α &gt; 0 → Grenzzyklus β₁ = 1 = Induktion; α &lt; 0 → Fixpunkt β₁ = 0 = copying). <span class="tag b">r1-073 · „Loch als Währung"</span> liest dieselbe Karte <b>f</b><sub>l</sub> als <b>Chirurgie</b> σ(Ax+b): die affine Karte ist ein Homöomorphismus, die <em>Aktivierung</em> entscheidet (ReLU nicht injektiv → reißt/näht die Datenform, Tiefe = Zeit, treibt Betti → (1,0,0)); und am <em>eingefrorenen</em> Snapshot wird die <b>residuelle topologische Aktivität</b> (Kern eines Laplace-Operators, harmonische Masse auf einem Zyklus) als <b>Fragilität</b> abgelesen.</p>
+  <p>Die <b>eine integrierte Position</b>: <b>Die Löcher</b> — Zyklen, β₁, der Kern eines Laplace-Operators, Grenzzyklen, harmonischer Inhalt — sind die <em>universelle Währung der Interpretierbarkeit</em>. Ein Netz <b>schreibt</b> Topologie (die lokale Zirkuit-/Chirurgie-Karte verformt den Zustand; exakt, lokal, spät in der Tiefe) und <b>liest</b> Topologie (die residuelle/persistente Aktivität; robust, global, früh gesetzt). Was das Netz <em>mit</em> den Löchern macht (Schreiben) und was <em>übrig bleibt</em> (Lesen) sind zwei Lesarten derselben Größe — der <em>residuellen topologischen Aktivität</em>. Beide R1-Papiere bleiben dabei ehrlich: <b>Mechanismus bzw. Korrelation ist noch keine bewiesene Theorie.</b></p>
+</section>
+
+<!-- ============ 2. WIDERSPRUECHE ============ -->
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widersprüche zwischen r1-073 und r1-066</h2>
+  <p>Keine hart gegenläufige <i>Behauptung</i> („A sagt X, B sagt ¬X"). Aber an drei konkreten Punkten stehen die beiden R1-Papiere — jeweils wörtlich aus ihren eigenen Resolutionen — auf unvereinbaren Positionen über <b>die Art des topologischen Objekts</b>, <b>das Vorzeichen eines Lochs</b> und <b>den Status der Topologie als Mechanismus</b>.</p>
+
+  <div class="card">
+    <h3>① Auf welchem Objekt sitzt die Topologie?</h3>
+    <div class="two">
+      <div>
+        <span class="who a">r1-073 · statisch / extrinsisch</span>
+        <blockquote>Topologie sitzt auf <b>von außen konstruierten, statischen</b> Strukturen: (a) der <em>Daten</em>mannigfaltigkeit, die die Schichten <em>schreiben</em> (Chirurgie), und (b) einem <b>Paraphrasen-/Äquivalenz-Graphen</b> über den Repräsentationen eines <em>eingefrorenen</em> Modells — „<b>absichtlich azyklisch gewählt</b>". Die Lektüre ist <b>extrinsisch</b> (das Objekt wird außerhalb des Laufs gebaut) und <b>statisch</b>.</blockquote>
+      </div>
+      <div>
+        <span class="who b">r1-066 · dynamisch / intrinsisch</span>
+        <blockquote>Topologie sitzt auf der <b>Trajektorie des laufenden Zustands</b>: der Residual Stream <b>r</b> ist ein <em>dynamisches System</em>, „Schichttiefe und Token-Verlauf werden als <b>Zeit</b> gelesen" (Takens als Zeitreihe), und man liest die <b>Aktivierungswolke</b> per Vietoris-Rips-Filtration + persistenter Homologie. Die Lektüre ist <b>intrinsisch</b> und <b>dynamisch</b>.</blockquote>
+      </div>
+    </div>
+    <p style="margin-top:6px;font-size:.92rem;color:var(--muted)">Objekt: statisches Gerüst / geschriebene Datenform (r1-073) vs. laufende Aktivierungstrajectorie (r1-066).</p>
+  </div>
+
+  <div class="card">
+    <h3>② Was ist ein β₁-Loch: Defekt oder Feature?</h3>
+    <div class="two">
+      <div>
+        <span class="who a">r1-073 · Loch = Defekt / Fragilität</span>
+        <blockquote>„Überlebende Löcher (β₁, β₂) sind <b>der Fehlschlag / die Langsamkeit</b>." „Gutes Repräsentationslernen senkt die relevante topologische Komplexität, und <b>genau das, was übrig bleibt, macht ein Modell fragil</b>." Ziel: β = (1,0,0). Ein β₁ &gt; 0 (Daten) oder <b>hohe harmonische Masse</b> (Gerüst) = <b>Fragilität</b>.</blockquote>
+      </div>
+      <div>
+        <span class="who b">r1-066 · Zyklus = Funktion / Robustheit</span>
+        <blockquote>„positiver Realteil = copying … ist exakt ein instabiler Fixpunkt, aus dem der Fluss in einen <b>Grenzzyklus (B, β₁ = 1)</b> geschleudert wird — <b>das Induction-Motiv</b>." „stabile Strukturen im Totalraum, die … über die Schichten hinweg <b>persistieren</b>", „<b>robust gegen Rauschen</b>". Ein β₁ = 1 (Grenzzyklus) = das <b>funktionierende, robuste</b> Induktion-Motiv.</blockquote>
+      </div>
+    </div>
+    <p style="margin-top:6px;font-size:.92rem;color:var(--muted)">Gleiche Größe (ein β₁-Loch / ein Zyklus), <b>entgegengesetztes Vorzeichen</b>: Defekt (r1-073) vs. Feature (r1-066).</p>
+  </div>
+
+  <div class="card">
+    <h3>③ Ist die Topologie Mechanismus oder Korrelation?</h3>
+    <div class="two">
+      <div>
+        <span class="who a">r1-073 · deflationär / ehrlich</span>
+        <blockquote>„Proposition 3.1 reduziert den Garben-Laplace auf L<sub>F</sub> = Pᵀ C<sub>W</sub> P — <b>reine Projektions-Kovarianz</b> (lineare Algebra). Remark 3.3: Die ‚H¹-Richtungen' sind <b>keine echte Kohomologieklasse</b> (algebraisch H¹ = 0, der Name ist eine Eselsbrücke). … der Ring nur <b>+0,5 pp</b> — auf keiner Architektur signifikant." „bezeichnen ihren Mechanismus bzw. ihre Korrelation selbst als <b>noch keine Theorie</b>."</blockquote>
+      </div>
+      <div>
+        <span class="who b">r1-066 · konstruktiv / kausal</span>
+        <blockquote>„Der Eigenwert, den A benutzt, um einen Head zu benennen, ist der <b>Bifurkationsparameter</b>, mit dem B den Attraktor auswählt." „jeder benannte Zirkuit (A) <b>realisiert</b> ein topologisches Motiv (B)". „<b>A sagt vorher, B zertifiziert</b>" — eine <em>generative</em>, quantitative Brücke (α ⇒ Attraktor).</blockquote>
+      </div>
+    </div>
+    <p style="margin-top:6px;font-size:.92rem;color:var(--muted)">Status: deskriptiv / korrelativ (r1-073) vs. kausal / generativ (r1-066).</p>
+  </div>
+</section>
+
+<!-- ============ 3. AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2><span class="n">3</span>Auflösung</h2>
+
+  <div class="card"><b>① → Quelle und ihre zwei Projektionen.</b> Der Residual Stream <b>r</b> (r1-066) ist der <em>Quelle</em>-Zustand eines diskreten dynamischen Systems. Seine Trajektorie <i>r</i><sub>l</sub> über die Schichten ist, <em>nach vorn</em> projiziert, genau die <em>Datenform</em>, die r1-073 „schreibt" (die Punktwolke, auf der r1-066 ohnehin Vietoris-Rips baut); <em>nach der Seite</em> projiziert (als Quotient / Koarsening eines eingefrorenen Snapshots), ist es r1-073' <em>Äquivalenz-Gerüst</em>. <b>Fusion:</b> die Topologie wird auf dem <em>dynamischen Zustand</em> gelesen (r1-066) <em>und</em> auf seinen <em>zwei abgeleiteten statischen Projektionen</em> (r1-073): der geschriebenen Datenform (vorwärts) und dem Äquivalenz-Gerüst (quer). Intrinsisch-dynamisch ist die <em>Quelle</em>; extrinsisch-statisch sind die <em>beiden Lesarten</em>. Kein Widerspruch — Objekt vs. Projektion desselben Zustands.</div>
+
+  <div class="card"><b>② → Das Vorzeichen hängt von Stabilität &amp; Absicht ab.</b> Ein Loch ist ein <em>Defekt</em>, wenn es ein <em>Restes unvollendeter Chirurgie</em> ist: das Netz hat die Klasse nicht auf (1,0,0) gefaltet, hohe harmonische Masse, fragil (r1-073). Es ist ein <em>Feature</em>, wenn es ein <em>stabil unterhaltener, benannter Attraktor</em> ist: der Grenzzyklus β₁ = 1 des Induction-Motivs, robust gegen Rauschen, über die Tiefe persistierend (r1-066). <b>Fusion / Diskriminator:</b> <em>decay-t</em> das Loch (bleibt als Rest) oder ist es <em>maintained</em> (wird als Attraktor gehalten)? Beide R1-Papiere lesen <em>dieselbe</em> Größe (die residuelle/persistente topologische Aktivität) — sie unterscheiden nur, welches Residuum <em>erwartet</em> ist. „Was hätte verschwinden sollen" (Defekt) vs. „was aufrechterhalten werden soll" (Feature).</div>
+
+  <div class="card"><b>③ → Generator und Zertifikat, beide ehrlich.</b> r1-066' konstruktive Brücke (α = Bifurkationsparameter, exakt, lokal, kleine Modelle) ist der <em>Hypothese-Generator</em> — er <em>sagt vorher</em>, welchen topologischen Motiv ein Zirkuit erzeugen sollte. r1-073' Deflation (Kopf-Ergebnis = Kovarianz, keine Kohomologie, +0,5 pp nicht signifikant) ist die <em>Ehrlichkeit des Zertifikats</em> — am großen, gefrorenen Modell ist die topologische Lektüre <em>robust, aber korrelativ</em>, noch kein bewiesener kausaler Mechanismus. <b>Fusion:</b> die lokale/exakte Seite (r1-066-A / r1-073-A) <em>generiert</em> die Vorhersage; die globale/robuste Seite (r1-066-B / r1-073-B) <em>zertifiziert</em> sie — und beide Seiten stimmen zu, dass die Zertifizierung <em>derzeit korrelativ</em> bleibt. Die fusionierte Haltung: Topologie ist ein <b>Hypothese-erzeugendes + robust-zertifizierendes Protokoll</b>, <em>noch</em> kein bewiesener kausaler Mechanismus. r1-066 liefert den <em>zu testenden</em> Mechanismus; r1-073 liefert die <em>Ehrlichkeit, dass er unbewiesen bleibt</em>.</div>
+</section>
+
+<!-- ============ 4. INHALT ============ -->
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+  <h3>(a) Gemeinsames Fundament — ein Zustand, zwei Karten, eine Währung</h3>
+  <p>Beide R1-Papiere drehen sich um denselben Vektor — den Residual Stream <b>r</b> ∈ ℝᵈ — und dieselbe Rekursion, ein diskretes dynamisches System in der Schicht-Indiz-Zeit:</p>
+  <div class="eq"><i>r</i><sub>l+1</sub> = <i>r</i><sub>l</sub> + <b>f</b><sub>l</sub>(<i>r</i><sub>l</sub>) &nbsp;&nbsp;<span class="c">= diskrete Zeit in der Schicht-Indiz-Zeit</span><br>
+  <span class="tag" style="margin:0">r1-066</span> liest <b>f</b><sub>l</sub> als <b>Zirkuit</b> (W<sub>QK</sub> = W<sub>Q</sub><sup>⊤</sup>W<sub>K</sub> „wohin schauen", W<sub>OV</sub> = W<sub>O</sub>W<sub>V</sub> „was bewegen", tensorielle Form <i>A</i> ⊗ W<sub>OV</sub>, Path-Expansion, virtuelle Gewichte).<br>
+  <span class="tag b" style="margin:0">r1-073</span> liest <b>f</b><sub>l</sub> als <b>Chirurgie</b> σ(Ax+b): die affine Karte ist ein Homöomorphismus (β bleibt exakt gleich); die <em>Aktivierung</em> entscheidet (tanh / Leaky-ReLU = Homöomorphismen, ReLU = nicht injektiv → kann falten/kollabieren).</div>
+  <p>Die <b>gemeinsame Währung</b> sind Betti-Zahlen und der Laplace: <b>β₀</b> = Zusammenhangskomponenten, <b>β₁</b> = Tunnel/Löcher, <b>β₂</b> = Hohlräume. r1-073 misst sie auf der <em>geschriebenen</em> Datenform (persistente Homologie, Graph-Geodätische auf dem kNN-Graph) und am Äquivalenz-Gerüst (b₁ = |E| − |V| + (# Komponenten)); r1-066 liest sie auf der <em>Aktivierungswolke</em> (Vietoris-Rips, persistente Homologie).</p>
+
+  <h3>(b) Was r1-073 einbringt — schreiben + lesen am eingefrorenen Gerüst</h3>
+  <p><b>Schreiben (Chirurgie):</b> der <em>tanh-Paradox</em> — erst Rundungsfehler (tanh(x) → exakt ±1) machen tanh nicht-injektiv, daher kann niedrigere Präzision topologisch <em>vorteilhaft</em> sein. Empirisch (bekannte Topologie + 4 reale Sätze, Netze bis zur Perfektion, Homologie pro Schicht): <b>β → (1,0,0)</b> am Ausgang (robust über ≥ 30 Runs); <b>ReLU &gt; Leaky-ReLU &gt; tanh</b> (der Nicht-Homöomorphismus gewinnt); manche Formen härter (D-II verkettete Tori, β₁-Loops überleben, tanh lässt β₁ teils <em>steigen</em>); Breite/Flaschenhals erzwingen Topologie-Änderung; <b>Tiefe = die letzte Arbeit</b> (Chirurgie konzentriert sich <em>spät</em>; der Approximationssatz sagt nur Existenz, nicht Trainierbarkeit). TDA und Netze sind inverse Probleme: <em>Form lesen</em> vs. <em>Form schreiben</em>.</p>
+  <p><b>Lesen (zelluläre Garbe am eingefrorenen Modell):</b> ein Satz = Hidden-State <b>h</b> ∈ ℝᵈ (mean-pooling, d = 768 … 4096); ein Paraphrasen-Paar → Differenz Δ = h⁽¹⁾ − h⁽²⁾ (reine Formulierung); C<sub>W</sub> = (1/N) Σ ΔᵢΔᵢᵀ misst, wo die Formulierung variiert (Eigenwerte ≈ 0 = Inhalt). Die Garbe trägt Knoten-Halm ℝᵈ, Kanten-Halm ℝᵏ (k = 128 ≪ d) und gemeinsame Restriktion Pᵀ; der Kokzyklus (δ⁰h)<sub>e</sub> = Pᵀ(h<sub>b</sub> − h<sub>a</sub>) misst „Uneinigkeit"; der Garben-Laplace ist nur <b>k×k</b>: L<sub>F</sub> = Pᵀ C<sub>W</sub> P, und <b>ker L<sub>F</sub> = ker δ⁰ = H⁰</b>. Drei Ergebnisse (alle label-frei, null Training):</p>
+  <ul>
+    <li><b>H⁰ = Inhalt:</b> die unteren m = 20 Eigenvektoren schlagen LEACE bei voller Breite um <b>+17,1 pp</b> (bis +48 pp gegen dimensions-kontrolliertes LEACE-20D); robust gegen P (PCA 81,6 % / Identity 77,5 % / Random 74,2 %); der <em>Kern</em> ist der Wirkstoff, nicht die Projektion; überträgt auf EN↔FR.</li>
+    <li><b>Spektral-Komplement = Einfluss:</b> Ablation der H¹-Koordinaten verändert den Output <b>5,6–26,5×</b> stärker als varianz-gematchte Kontrollen (echte Eigenbasis: 17,8–398× in KL); die Dormancy-Gegenprobe schließt die Patching-Illusion aus.</li>
+    <li><b>harmonische Masse = Fragilität:</b> auf dem Mehrschicht-Gitter (b₁ = N(L−1)) zerlegt sich jedes 1-Kokettenfeld per <b>Hodge</b> in <span class="eq" style="display:inline;padding:2px 6px">im δ⁰ ⊕ ker L₁ ⊕ im(δ¹)ᵀ</span>; die harmonische Masse spannt <b>10⁻⁴ … 0,08</b> bei fixem Graph &amp; fixen Paaren und ordnet 6 Architekturen wie ihre Steering-Fragilität (Spearman ρ = 0,90, p = 0,014). Zufalls-Referenz <b>b₁/|E| = 0,25</b> (bei L = 2).</li>
+  </ul>
+
+  <h3>(c) Was r1-066 einbringt — Zirkuits + Attraktoren + die Brücke</h3>
+  <p><b>Zirkuits (lokal, linear, exakt):</b> 0-Layer = Bigramm-Statistik (keine Info zwischen Positionen); 1-Layer Path-Expansion <span class="eq" style="display:inline;padding:2px 6px">T = W<sub>U</sub>( Id + Σ<sub>h</sub> <i>A</i><sup>h</sup> ⊗ W<sub>OV</sub><sup>h</sup> ) W<sub>E</sub></span> = Summe unabhängiger Pfade, <b>Skip-Trigramme</b> [A]…[B]→[C], Copying-Heads = positive Eigenwerte in W<sub>OV</sub>; 2-Layer <b>Composition</b> (Q/K/V) → <b>Induction Heads</b> [A][B]…[A]→[B]; Signatur: positive Eigenwerte in QK <b>und</b> OV, <span class="eq" style="display:inline;padding:2px 6px">λ = (tr ± √(tr² − 4 det)) / 2</span>. A's Schluss: „Transformer sind nicht magisch … die Herausforderung ist nicht Unverständlichkeit — sondern <b>schiere Größe</b>."</p>
+  <p><b>Topologische Charakterisierung (global, robust):</b> Aktivierungen = Punktwolke; <b>Vietoris-Rips-Filtration</b> verbindet Punkte zu Simplizes bei Abstand ≤ ε (klein = isoliert, groß = Blob, dazwischen = echte Struktur); <b>persistent Homologie</b> zählt über alle ε die Betti-Zahlen; <b>Persistenz = Robustheit</b> (weit über der (birth, death)-Diagonalen = langlebig = echte Struktur; nah = Rauschen); Klassifikation über persistente Betti-Signatur: Punkt (1,0,0) · Kreis S¹ (1,1,0) · Torus T² (1,2,1) · Sphäre S² (1,0,1) · Figur-8 (1,2,0) · zwei Kreise (2,2,0); <b>Takens-Embedding</b> <span class="eq" style="display:inline;padding:2px 6px"><i>v</i>(t) = (<i>x</i>(t), <i>x</i>(t+τ), …)</span> mit m ≥ 2d+1 rekonstruiert den Attraktor aus einer skalaren Observable.</p>
+  <p><b>Die Brücke (exakt, Normalform eines Grenzzyklus):</b> mit α = Realteil der Zirkuit-Eigenwerte (A's „copying"-Maß):</p>
+  <div class="eq">ẋ = (<b>α</b> − (x²+y²))·x − ω·y &nbsp;&nbsp;<span class="c">A's lineares Zirkuit-Feld + radialer Dämpfungs-/Zyklus-Term</span><br>
+  ẏ = (<b>α</b> − (x²+y²))·y + ω·x &nbsp;&nbsp;<span class="c">Jacobian am Fixpunkt: λ = α ± iω → Realteil = α (A's Eigenwert)</span><br>
+  d(x²+y²)/dt = 2(<b>α</b> − (x²+y²))(x²+y²) &nbsp;&nbsp;<span class="c">→ Strebt zu einem Grenzzyklus (α &gt; 0, Radius √α) oder zum Fixpunkt (α &lt; 0)</span></div>
+
+  <h3>(d) Die verschmolzene Lesart — vier Sub-Papiere, eine Größe</h3>
+  <table class="tbl">
+    <tr><th>Aspekt</th><th>r1-073·A<br>Daten, schreibt</th><th>r1-073·B<br>Gerüst, liest</th><th>r1-066·A<br>Zirkuit, exakt</th><th>r1-066·B<br>Attraktor, robust</th></tr>
+    <tr><td class="c">niedrig-eigen / Kern</td><td>β₀ → 1 — Klasse wird Klumpen</td><td>H⁰ = ker L<sub>F</sub> = Inhalt (+17,1 pp)</td><td>Copying/Memory (stabiler Zirkuit)</td><td>Punkt-Attraktor (α &lt; 0, β₁ = 0)</td></tr>
+    <tr><td class="c">hoch-eigen / Zyklus / harmonisch</td><td>β₁, β₂ — das Netz <em>zumachen</em> muss</td><td>harmonische Masse = Fragilität (ρ = 0,90)</td><td>Induktion/Matching (QK+OV positiv)</td><td>Grenzzyklus β₁ = 1 (α &gt; 0, Radius √α)</td></tr>
+    <tr><td class="c">Operator / Methode</td><td>(keine Matrix — direkte Betti-Messung)</td><td>L<sub>F</sub> = Pᵀ C<sub>W</sub> P (k×k, konstante Kosten)</td><td>Path-Expansion (exakte Formel)</td><td>Vietoris-Rips + persistente Homologie</td></tr>
+    <tr><td class="c">Rolle des Modells</td><td>aktiver Chirurg (topologie-verändernd)</td><td>eingefroren/passiv (Signatur abgelesen)</td><td>exakt ablesbar (in den Gewichten)</td><td>robust (gegen Rauschen)</td></tr>
+    <tr><td class="c">Tiefe</td><td>Chirurgie konzentriert sich <em>spät</em></td><td>Einfluss/Fragilität <em>früh</em> (L/4)</td><td>lokal pro Head</td><td>Trajektorie über Schicht-Zeit</td></tr>
+    <tr><td class="c">Endzustand</td><td>β = (1,0,0) pro Klasse</td><td>niedrige harmonische Masse / konsistente Schnitte</td><td>—</td><td>stabiler Attraktor (persistiert)</td></tr>
+  </table>
+
+  <h3>(e) Das fusionierte Protokoll — schreiben+lesen × vorhersagen+zertifizieren</h3>
+  <ol>
+    <li><b>Zerlege</b> die lokale Karte in Zirkuits (r1-066) / identifiziere die nicht-injektive Aktivierung (r1-073).</li>
+    <li><b>Lies</b> den lokalen Eigenwert α / die Chirurgie-Rate → <em>vorhersage</em> den topologischen Motiv (r1-066-Brücke: α &gt; 0 ⇒ Zyklus, α &lt; 0 ⇒ Punkt) / die Richtung der Betti-Deszendenz (r1-073: β → (1,0,0)).</li>
+    <li><b>Miss</b> die globale residuelle topologische Aktivität <em>robust</em> (r1-066-B: Persistenz der Aktivierungswolke; r1-073-B: harmonische Masse am Äquivalenz-Gerüst).</li>
+    <li><b>Valenz-Test</b> (die fusionierte ②-Auflösung): ein Zyklus ist <em>Feature</em>, wenn er ein stabiler, benannter, über die Tiefe persistierender Attraktor ist; <em>Defekt</em>, wenn er ein decay-tendes Restes / eine hohe harmonische Masse ist.</li>
+    <li><b>Zertifiziere:</b> die lokale/exakte Seite (r1-066-A / r1-073-A) liefert die <em>Theorie</em> (was erzeugt werden <i>sollte</i>), die globale/robuste Seite (r1-066-B / r1-073-B) die <em>Messung</em> (ob es im Großmodell <i>tatsächlich</i> persistiert).</li>
+  </ol>
+  <div class="note green"><b>Der Punkt, an dem alle vier zusammenlaufen:</b> ein Netz, das seine Daten erfolgreich zu (1,0,0) zerlegt hat (r1-073·A) <em>und</em> dessen Repräsentationen auf dem Gerüst „global konsistent" sind (r1-073·B) <em>und</em> dessen Zirkuits nur stabile Fixpunkte erzeugen (r1-066·A → α &lt; 0), ist genau ein Modell, dessen Aktivierungstrajectorie in <em>flache, robuste</em> Attraktoren fließt (r1-066·B). Die <em>residuelle</em> topologische Aktivität ist dieselbe Zahl, gelesen als „noch nicht zerrissenes Datenloch" (r1-073) <em>oder</em> als „unterhaltener Grenzzyklus" (r1-066) — und ihr <em>Vorzeichen</em> entscheidet, ob sie Defekt oder Feature ist. Beides ist empirisch; beide R1-Papiere betonen, dass Mechanismus/Korrelation <b>noch keine bewiesene Theorie</b> sind.</div>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="n">5</span>Interaktiv: ein Loch, zwei Lesarten, ein Vorzeichen</h2>
+  <div class="viz">
+    <h3>Residual-Stream als Phase-Porträt — Chirurgie (r1-073) trifft Bifurkation (r1-066)</h3>
+    <p class="dsub">Ein Zustandspunkt <b>r</b> (2D-Projektion des Residual Streams) fließt in Schicht-Zeit: <i>r</i> ← <i>r</i> + <b>f</b>(<i>r</i>). Die <b>Zirkuit-Verstärkung α</b> (r1-066, Bifurkation) setzt den Zyklus; die <b>Chirurgie-Tiefe k</b> (r1-073) suturiert das Loch über die Schichten — α<sub>eff</sub> = α − 0,12·k sinkt, der Grenzzyklus kollabiert in einen Fixpunkt (β → (1,0,0)). <b>Rauschen</b> (r1-066-B) macht den Attraktor fragil. Die <em>residuelle topologische Aktivität</em> bekommt ein Vorzeichen: <span style="color:var(--green)">stabil erhaltener Zyklus = Feature</span> · <span style="color:var(--danger)">marginales/lautes Restes = Defekt/Fragilität</span> · <span style="color:var(--accent)">geklappter Zyklus = flach/konsistent</span>.</p>
+
+    <div class="viz-row">
+      <canvas id="phase-canvas"></canvas>
+      <div class="viz-side">
+        <div class="betti">
+          <div class="l b0">β₀ (Komponenten) <b>1</b></div>
+          <div class="l b1">β₁ (Zyklen) <b id="b1-val">1</b></div>
+          <div class="l b2">β₂ (Hohlräume) <b>0</b></div>
+        </div>
+        <div class="readout" id="phase-readout"></div>
+        <div class="frag-box">
+          <div class="frag-lab">harmonische Masse / Fragilität <b id="frag-val">0.00</b></div>
+          <div id="frag-wrap" class="frag-track"><div id="frag-bar" class="frag-fill" style="width:0%"></div><div class="frag-mark"></div></div>
+          <div class="frag-ref">Zufalls-Referenz b₁/|E| = 0,25 (L = 2, r1-073)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctl">
+      <div class="ctl-lab"><b>Zirkuit-Verstärkung α  (Bifurkation, r1-066)</b><span class="bv" id="ctl-alpha-val">0.70</span></div>
+      <input id="ctl-alpha" type="range" min="-1.5" max="1.5" step="0.05" value="0.7">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><b>Chirurgie-Tiefe k  (Schicht-Zeit, r1-073)</b><span class="bv" id="ctl-k-val">0</span></div>
+      <input id="ctl-k" type="range" min="0" max="10" step="1" value="0">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><b>Rauschen  (Persistenz/Robustheit, r1-066-B)</b><span class="bv" id="ctl-noise-val">0.00</span></div>
+      <input id="ctl-noise" type="range" min="0" max="1.5" step="0.05" value="0">
+    </div>
+    <div class="chkrow">
+      <label><input id="ctl-field" type="checkbox" checked> Zirkuit-Vektorfeld (r1-066-A)</label>
+      <label><input id="ctl-loop" type="checkbox" checked> Topologischer Zyklus (r1-066-B)</label>
+    </div>
+    <div class="btnrow">
+      <button id="ctl-play" class="btn alt" type="button">⏸ Pause</button>
+      <button id="ctl-reset" class="btn" type="button">↺ Neustart</button>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i> Zirkuit-Feld (r1-066-A)</span>
+      <span><i style="background:var(--green)"></i> Grenzzyklus β₁ (r1-066-B)</span>
+      <span><i style="background:var(--amber)"></i> Bifurkation α / α_eff</span>
+      <span><i style="background:var(--accent2)"></i> Zustand / Trajektorie</span>
+      <span><i style="background:var(--danger)"></i> Fragilität</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="note"><b><a href="../r1-073.html">A · r1-073.html</a></b> — „Topologie schreiben &amp; lesen: das Loch als gemeinsame Währung" (R1-Fusion aus Naitzat–Zhitnikov–Lim, arXiv:2004.06093, und Grant–Wang, NeurIPS 2026): Netze <i>schreiben</i> Topologie (nicht-injektive ReLU-Chirurgie, Betti → (1,0,0), Tiefe = Zeit); ein zellulärer Garben-Laplace am <em>eingefrorenen</em> Paraphrasen-/Äquivalenz-Gerüst <i>liest</i> H⁰ = Inhalt (+17,1 pp) und harmonische Masse = Fragilität (Spearman ρ = 0,90). Die Löcher als gemeinsame Währung beider Lesarten.</div>
+  <div class="note b"><b><a href="../r1-066.html">B · r1-066.html</a></b> — „Der Transformer als Zirkuit-Strömung — lineare Pfade treffen topologische Attraktoren" (R1-Fusion aus Transformer Circuits, Anthropic 2021, und Topology of Attractors): der Residual Stream <b>r</b> ist Zustandsvariable eines diskreten dynamischen Systems in Schicht-Zeit; der Zirkuit-Eigenwert α ist der <em>Bifurkationsparameter</em>, der den topologischen Attraktor auswählt (α &gt; 0 → Grenzzyklus β₁ = 1 = Induktion; α &lt; 0 → Fixpunkt β₁ = 0 = copying); A sagt vorher, B zertifiziert robust.</div>
+  <footer>
+    Selbstständige Fusion (Runde 2, #030) — kein externes Netzwerk-Fetching, alle Daten inline, Visualisierung in reinem Canvas 2D, theme-aware über CSS-Variablen. Die „Fusion" ist eine interpretatorische Synthese: die <i>eigenen</i> Aussagen von r1-073 und r1-066 bleiben wörtlich erhalten; die Brücke (α ↔ Attraktor ↔ Chirurgie ↔ Fragilität, mit Vorzeichen-Test) ist das fusionierte Fazit dieser Arbeit. Simulationen sind didaktische Nachbildungen.
+  </footer>
+</section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  function onReady(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+  onReady(function () {
+    var canvas = document.getElementById('phase-canvas');
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+    var R = 2.6;
+    var view = { w: 680, h: 440, scale: 84 };
+    var state = {
+      alpha: 0.7, k: 0, noise: 0.0,
+      showField: true, showLoop: true, running: true,
+      p: { x: 1.8, y: 0.4 }, trail: []
+    };
+    var C = null;
+    function cssVar(name, fb) {
+      try {
+        var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fb;
+      } catch (e) { return fb; }
+    }
+    function readColors() {
+      C = {
+        text: cssVar('--fg', '#e8ecf1'),
+        muted: cssVar('--muted', '#9aa6b6'),
+        card: cssVar('--card', '#141b24'),
+        line: cssVar('--line', '#243040'),
+        accent: cssVar('--accent', '#2dd4bf'),
+        accent2: cssVar('--accent2', '#f472b6'),
+        amber: cssVar('--amber', '#f0a656'),
+        green: cssVar('--green', '#86efac'),
+        danger: cssVar('--danger', '#fb7185'),
+        bg: cssVar('--bg', '#0f1319')
+      };
+    }
+    function sx(x) { return view.w / 2 + x * view.scale; }
+    function sy(y) { return view.h / 2 - y * view.scale; }
+    function alphaEff() { return state.alpha - 0.12 * state.k; }
+    function field(x, y) {
+      var r2 = x * x + y * y;
+      var a = alphaEff(), w = 1.0;
+      return [(a - r2) * x - w * y, (a - r2) * y + w * x];
+    }
+    function setupCanvas() {
+      var dpr = window.devicePixelRatio || 1;
+      var W = canvas.clientWidth || 680;
+      var H = 440;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      view.w = W; view.h = H; view.scale = H / (2 * R);
+    }
+    function arrow(x1, y1, x2, y2, color, width, alpha) {
+      var a = Math.atan2(y2 - y1, x2 - x1);
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      var h = 4 + width;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - h * Math.cos(a - 0.4), y2 - h * Math.sin(a - 0.4));
+      ctx.lineTo(x2 - h * Math.cos(a + 0.4), y2 - h * Math.sin(a + 0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    function drawField() {
+      var stepW = 0.9;
+      var xmin = -view.w / 2 / view.scale, xmax = view.w / 2 / view.scale;
+      var ymin = -R, ymax = R;
+      for (var gx = Math.ceil(xmin / stepW) * stepW; gx <= xmax; gx += stepW) {
+        for (var gy = Math.ceil(ymin / stepW) * stepW; gy <= ymax; gy += stepW) {
+          var f = field(gx, gy);
+          var m = Math.sqrt(f[0] * f[0] + f[1] * f[1]) || 1;
+          var L = Math.min(0.42, m * 0.13);
+          var ux = f[0] / m, uy = f[1] / m;
+          arrow(sx(gx), sy(gy), sx(gx + ux * L), sy(gy + uy * L), C.accent, 1, 0.3);
+        }
+      }
+    }
+    function drawLoop() {
+      var a = alphaEff();
+      if (a <= 0) return;
+      var r = Math.sqrt(a);
+      ctx.setLineDash([6, 5]);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = C.green;
+      ctx.beginPath();
+      ctx.arc(sx(0), sy(0), r * view.scale, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = C.green; ctx.font = '12px monospace'; ctx.textAlign = 'left';
+      ctx.fillText('Grenzzyklus  β₁ = 1  (Induction-Motiv, r1-066-B)', sx(r) + 8, sy(0) - 6);
+    }
+    function drawFixed() {
+      var stable = alphaEff() < 0;
+      var col = stable ? C.accent : C.danger;
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(sx(0), sy(0), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = col; ctx.font = '12px monospace'; ctx.textAlign = 'left';
+      ctx.fillText(stable ? 'Fixpunkt (stabil, β₁=0)' : 'Fixpunkt (instabil)', sx(0) + 9, sy(0) + 14);
+    }
+    function drawTrail() {
+      var n = state.trail.length;
+      for (var i = 1; i < n; i++) {
+        var a0 = state.trail[i - 1], a1 = state.trail[i];
+        var t = i / n;
+        ctx.strokeStyle = t < 0.5 ? C.accent : C.amber;
+        ctx.globalAlpha = 0.12 + 0.8 * t;
+        ctx.lineWidth = 1.2 + 1.8 * t;
+        ctx.beginPath(); ctx.moveTo(sx(a0.x), sy(a0.y)); ctx.lineTo(sx(a1.x), sy(a1.y)); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    function drawParticle() {
+      var p = state.p;
+      ctx.fillStyle = C.text;
+      ctx.beginPath(); ctx.arc(sx(p.x), sy(p.y), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = C.accent2; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(sx(p.x), sy(p.y), 9, 0, Math.PI * 2); ctx.stroke();
+    }
+    function computeReadout() {
+      var a = alphaEff();
+      var cyclePresent = a > 0;
+      var persistent = cyclePresent && state.noise < 0.45;
+      var beta1 = cyclePresent ? 1 : 0;
+      var fragility = 0;
+      if (cyclePresent) {
+        fragility = Math.min(1, state.noise / 1.2);
+        if (a <= 0.25) fragility = Math.max(fragility, 0.5);
+      }
+      var valence, valenceCol, valenceMsg;
+      if (!cyclePresent) {
+        valence = 'FLACH / KONSISTENT'; valenceCol = 'var(--accent)';
+        valenceMsg = 'α_eff ≤ 0 → Fixpunkt (β₁=0): das Datenloch ist zu (1,0,0) gefaltet — topologisch flach & konsistent (r1-073: Chirurgie-Erfolg; r1-066: copying).';
+      } else if (persistent && a > 0.25) {
+        valence = 'FEATURE / STABIL'; valenceCol = 'var(--green)';
+        valenceMsg = 'stabil erhaltener Grenzzyklus (β₁=1, niedriges Rauschen) = das load-bearing Induction-Motiv (r1-066-B) — ein Loch, das das Netz *aufrechterhält*.';
+      } else {
+        valence = 'DEFECT / FRAGIL'; valenceCol = 'var(--danger)';
+        valenceMsg = 'Restes / fragil: Zyklus marginal oder laut (hohe harmonische Masse) — das Loch, das das Netz *nicht* falten konnte (r1-073: Fragilität).';
+      }
+      return { a: a, cyclePresent: cyclePresent, persistent: persistent, beta1: beta1, fragility: fragility, valence: valence, valenceCol: valenceCol, valenceMsg: valenceMsg };
+    }
+    function updateReadout() {
+      var r = computeReadout();
+      var b1 = document.getElementById('b1-val');
+      if (b1) b1.textContent = String(r.beta1);
+      var fv = document.getElementById('frag-val');
+      if (fv) fv.textContent = r.fragility.toFixed(2);
+      var bar = document.getElementById('frag-bar');
+      if (bar) bar.style.width = (Math.round(r.fragility * 100)) + '%';
+      var ro = document.getElementById('phase-readout');
+      if (ro) {
+        var html = '<div class="ev">α_eff = ' + r.a.toFixed(2) + '  (α − 0,12·k)</div>';
+        html += '<div class="ev" style="font-weight:400">α = Bifurkation (r1-066) · k = Chirurgie-Tiefe (r1-073)</div>';
+        if (r.cyclePresent) {
+          html += '<div class="cyc">α_eff &gt; 0 → Grenzzyklus β₁ = 1 (Induction-Motiv)</div>';
+        } else {
+          html += '<div class="pt">α_eff ≤ 0 → Fixpunkt β₁ = 0 (copying / gefalteter Klumpen)</div>';
+        }
+        html += '<div class="frag">harmonische Masse / Fragilität = ' + r.fragility.toFixed(2) + '</div>';
+        html += '<div class="val" style="color:' + r.valenceCol + '">VALENZ: ' + r.valence + '</div>';
+        html += '<div class="msg">' + r.valenceMsg + '</div>';
+        ro.innerHTML = html;
+      }
+    }
+    function resetParticle() {
+      var ang = Math.random() * Math.PI * 2;
+      var rad = 1.5 + Math.random() * 0.7;
+      state.p = { x: Math.cos(ang) * rad, y: Math.sin(ang) * rad };
+      state.trail = [];
+    }
+    function step() {
+      var dt = 0.02;
+      var p = state.p;
+      var f = field(p.x, p.y);
+      var nx = p.x + dt * f[0], ny = p.y + dt * f[1];
+      if (state.noise > 0) {
+        nx += (Math.random() - 0.5) * state.noise;
+        ny += (Math.random() - 0.5) * state.noise;
+      }
+      p.x = nx; p.y = ny;
+      if (p.x > 3.8 || p.x < -3.8 || p.y > R + 0.8 || p.y < -R - 0.8) resetParticle();
+      state.trail.push({ x: p.x, y: p.y });
+      if (state.trail.length > 520) state.trail.shift();
+    }
+    function draw() {
+      ctx.clearRect(0, 0, view.w, view.h);
+      ctx.fillStyle = C.bg; ctx.fillRect(0, 0, view.w, view.h);
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+      var gx, gy;
+      for (gx = -3; gx <= 3; gx++) { var X = sx(gx); ctx.beginPath(); ctx.moveTo(X, 0); ctx.lineTo(X, view.h); ctx.stroke(); }
+      for (gy = -2; gy <= 2; gy++) { var Y = sy(gy); ctx.beginPath(); ctx.moveTo(0, Y); ctx.lineTo(view.w, Y); ctx.stroke(); }
+      ctx.strokeStyle = C.muted; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(sx(0), 0); ctx.lineTo(sx(0), view.h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, sy(0)); ctx.lineTo(view.w, sy(0)); ctx.stroke();
+      if (state.showField) drawField();
+      if (state.showLoop) drawLoop();
+      drawFixed();
+      drawTrail();
+      drawParticle();
+      updateReadout();
+    }
+    function loop() {
+      if (state.running) step();
+      draw();
+      requestAnimationFrame(loop);
+    }
+    function bindRange(id, valId, cb) {
+      var el = document.getElementById(id), disp = document.getElementById(valId);
+      if (!el) return;
+      var upd = function () {
+        var v = parseFloat(el.value);
+        if (disp) disp.textContent = (id === 'ctl-k') ? String(Math.round(v)) : v.toFixed(2);
+        cb(v);
+      };
+      el.addEventListener('input', upd);
+      upd();
+    }
+    bindRange('ctl-alpha', 'ctl-alpha-val', function (v) { state.alpha = v; });
+    bindRange('ctl-k', 'ctl-k-val', function (v) { state.k = v; });
+    bindRange('ctl-noise', 'ctl-noise-val', function (v) { state.noise = v; });
+    function bindCheck(id, cb) {
+      var el = document.getElementById(id); if (!el) return;
+      el.addEventListener('change', function () { cb(el.checked); });
+      cb(el.checked);
+    }
+    bindCheck('ctl-field', function (v) { state.showField = v; });
+    bindCheck('ctl-loop', function (v) { state.showLoop = v; });
+    var playBtn = document.getElementById('ctl-play');
+    if (playBtn) playBtn.addEventListener('click', function () {
+      state.running = !state.running;
+      playBtn.textContent = state.running ? '⏸ Pause' : '▶ Los';
+    });
+    var resetBtn = document.getElementById('ctl-reset');
+    if (resetBtn) resetBtn.addEventListener('click', resetParticle);
+    function applyTheme(dark) {
+      document.documentElement.classList.toggle('dark', dark);
+      try { localStorage.setItem('r2030-theme', dark ? 'dark' : 'light'); } catch (e) {}
+      readColors();
+    }
+    var themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) themeBtn.addEventListener('click', function () {
+      applyTheme(!document.documentElement.classList.contains('dark'));
+    });
+    var stored = null;
+    try { stored = localStorage.getItem('r2030-theme'); } catch (e) {}
+    applyTheme(stored !== 'light');
+    window.addEventListener('resize', function () { setupCanvas(); });
+    setupCanvas();
+    readColors();
+    resetParticle();
+    updateReadout();
+    loop();
+  });
+})();
+</script>
+</body>
+</html>

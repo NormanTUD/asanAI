@@ -1,0 +1,16 @@
+{
+  "no": "004",
+  "a": "combined/r1-007.html",
+  "b": "combined/r1-054.html",
+  "a_title": "One Attention Field, Two Readouts",
+  "b_title": "Energie-Landschaften treffen Homotopie-Klassen",
+  "combined_theme": "scalar-field-two-readouts-thermal-dial",
+  "one_line": "Ein Skalarfeld (A's Attention-/Ähnlichkeitsfeld bzw. B's Energie-Landschaft) wird zweifach abgelesen — weich (Punkt: konvexe Kombination o=Σαv bzw. Argmin Y*) und hart (Struktur: ε-geschwellter Simplizial-Skelett mit Betti-Zahlen bzw. Homotopie-/Äquivalenzklassen) — und ein einziger thermischer Regler (A's T/β; A's ε/B's τ) schärft die weiche Ablesung, während er die harte spaltet oder verschmilzt.",
+  "contradictions": [
+    "Regler-Anzahl: A hält zwei unabhängige Regler offen (Temperatur T für die Weichheit der Attention-Zeile + Schwellwert ε für die Diskretheit, als zwei separate Slider), während B beide als einen einzigen Knopf identifiziert (Gibbs-β IST die Äquivalenz-Schwelle τ, 'β und τ sind derselbe Regler').",
+    "Feld-Natur: A's Feld ist ein paarweises/bilineares Ähnlichkeitsfeld s(i,j)=(W_Qx_i)·(W_Kx_j) über die Tokens einer einzigen Repräsentation (intra-Representation, relativ, paarweiser Similarity-Cut), B's ist eine skalare Energie-Funktion E(y,x) über alternativen Antwort-Formen für einen Kontext (inter-Form, absolut, Pfad-Barrier-Cut) — unterschiedliche Geometrie der diskreten Struktur.",
+    "Vorzeichen der Strenge: A's ε ist eine Unter-Grenze für Ähnlichkeit (Kante iff w>ε; ε↑ → mehr Komponenten/feinere Zerlegung), B's τ ist eine Ober-Grenze für die Barrier (gleich iff Barrier<τ; τ↑ → weniger Klassen/grobere) — dieselbe Strenge läuft in entgegengesetzte Richtungen (ε↑ ≡ τ↓)."
+  ],
+  "resolution": "Ein Skalarfeld + ein thermischer Regler: A's T und B's β sind derselbe Knopf, A's ε und B's τ derselbe Schwellwert mit entgegengesetzter Vorzeichenkonvention (ε(β) steigend, τ(β) fallend). Die weiche (Punkt-) und die harte (Struktur-) Ablesung sind zwei Projektionen desselben Felds; dessen Zusammenhangskomponenten sind sowohl A's β₀-Komponenten (zählt sie) als auch B's Homotopie-/Äquivalenzklassen (bewohnt sie, Argmin = kanonischer Vertreter). Die Dualität ist feld-unabhängig: sie gilt für jedes skalare Feld, das man schwellen kann.",
+  "viz": "2D-Energie-Landschaft (Heatmap) mit geschwelltem 1-Gerüst (Kante iff Barrier<τ(β)), gefüllten 2-Simplexen (Triangel) und Homotopie-/Äquivalenzklassen (farbige Blob + Argmin-Stern); ein einziger β-Regler schärft gleichzeitig die weiche Attention-Ablesung (o=Σαv, Kanten-Dicke=α, Kalt → α spitzt auf ≈ Argmin) und splittet/verschmilzt die Klassen (Kalt → viele, Heiß → Kollaps); Feld-formen/Kontext-Regler formt das Feld und damit die Topologie. Canvas, theme-aware, inline data, keine Netzdaten."
+}

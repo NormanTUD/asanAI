@@ -1,0 +1,16 @@
+{
+  "no": "029",
+  "a": "combined/r1-050.html",
+  "b": "combined/r1-078.html",
+  "a_title": "Generalisierung als Descent — Fusion Shepard ✕ Coherent World Models",
+  "b_title": "Tiefe Netze als Formverformer: Ausdruckskraft trifft Topologie",
+  "combined_theme": "kapazitaet-lizenziert-mechanismus-liefert",
+  "one_line": "Ein lokaler viele-zu-eins-Quotient (Faltung/Klebung), iteriert, erzeugt ein globales Ganze — die Kapazität (wie viel er vermag) ist notwendig, aber nicht hinreichend; erst Mechanismus + Korrespondenz liefern Wahrheit.",
+  "contradictions": [
+    "W1 (ge­grad­t vs. kategoriale): A liest Zugehörigkeit als weichen Grad — Klebkraft g(d)=e^−λd, ad-hoc-Schwelle d*=ln2/λ, Sameness-Leiter auf Stufe 4–5, nie Identität; B liest die Topologie-Veränderung diskret/kategorisch — Faltung β1:1→0, ReLU nicht-injektiv vs. tanh Homöomorphismus.",
+    "W2 (offenes Gap vs. Theorem-verschlossen): A hält das Modell-Welt-Gap prinzipiell offen — Korrespondenz nur per externem Tarski-Test, G≠W, provisorisch; B lässt die Lücke per Niyogi–Smale–Weinberger-Theorem unter Bedingungen (dichte Sampling) verschließen.",
+    "W3 (Produkt vs. Risiko): B liest die Nicht-Injektivität (Faltung) als Produkt — Verlust=Gewinn, β1→0 in einem Schritt (Fig. 21); A liest dieselbe viele-zu-eins-Klebung als lizenziertes Risiko — Verlust=potenzielle Halluzination/Factbook, braucht admissible 𝒯 + Tarski."
+  ],
+  "resolution": "Zwei Skalen + zwei Korrespondenz-Regime: der topologische Invariant ist diskret, die Zugehörigkeit graduell; die geometrisch-topologische Korrespondenz (NSW) ist unter Bedingungen theorembeweisbar, die kategoriale (Tarski) bleibt Konvention. Ein Quotient ist ein Gewinn genau dann, wenn er lizenziert (𝒯/Occam) UND korrespondierend (Tarski / NSW+Empirie) ist — sonst ist dieselbe Faltung eine Halluzination bzw. ein spuriouser Kollaps (B's tanh, das nicht faltet).",
+  "viz": "Zwei ineinanderliegende Ringe durchlaufen ein parametrisches ReLU-Netz; die Faltung (x,y)→(|x|,|y|) ist A's Klebung. Live aus der Punktwolke: Betti β0/β1 (diskret) + lineare Regionen (Kapazität) + Klebkraft-Feld g(d) mit d*-Grenze (graduell) + Korrespondenz-Verdikt (ReLU lizenziert & trifft → 'Echte Vereinfachung'; tanh homöomorph → 'Kohärenz ohne Korrespondenz')."
+}

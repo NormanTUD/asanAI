@@ -1,0 +1,17 @@
+{
+  "no": "012",
+  "a": "combined/r1-064.html",
+  "b": "combined/r1-034.html",
+  "a_title": "Fusion: HoTT-Fundament ✕ Wie ein LLM denkt",
+  "b_title": "Die Falt-Garbe — Garbentheorie ✕ Origami (N-Dim)",
+  "combined_theme": "infinity-sheaf-of-infinity-groupoids",
+  "one_line": "Ein trainiertes Netz ist ein ∞-Garben-Objekt von ∞-Gruppoiden: r1-034 liefert die Tiefen-/Garben-Seite (lokale Falten verkleben bis auf Homotopie zu einem eindeutigen globalen Schnitt), r1-064 die Raum-/Gruppoid-Seite (Pfade, Identität, Superposition als höhere Identität, Metastabilität); Homotopie ist die geteilte ehrliche Relation.",
+  "contradictions": [
+    "Garantiertes Global (B/r1-034: Verklebungsaxiom erzwingt eine eindeutige globale trennbare Abbildung, bedingt an Breite/Verträglichkeit) vs. fragiles Metastabil (A/r1-064: empirisch ein metastabiles System, Phase 2 = Kollaps/Tod, keine Zusicherung, 'noch nicht vollständig verstanden').",
+    "Saubere flache injektive Hyperebene (B/r1-034: ein einziger gerader globaler Schnitt klassifiziert) vs. nicht-injektive Superposition (A/r1-064: mehr Features als Dimensionen, polysemantische Neuronen, Interferenz, bewusst nicht eindeutig).",
+    "Verlustvolle Restriktion als Kernmechanismus (B/r1-034: ReLU wirft die negative Hälfte weg; der Verlust ermöglicht Verkleben) vs. erhaltende Akkumulation (A/r1-064: FFN addiert auf den Residual-Stream, der Stream 'gewinnt', Superposition packt mehr hinein).",
+    "∞-Gruppoid (Pfade/Identität) als beherrschende Struktur (A/r1-064) vs. ∞-Garbe (Schnitte/Verkleben) als beherrschende Struktur (B/r1-034) — beide homotopisch, aber unterschiedliche mathematische Hauptobjekte."
+  ],
+  "resolution": "Zwei Seiten eines ∞-Objekts, keine Konkurrenz: (R1) Garbe antwortet auf die existenzielle Frage (globales Map existiert, wenn lokal verträglich), Gruppoid auf die dynamische (das Netz lebt metastabil und kann kollabieren) — Existenz vs. Stabilität. (R2) Der flache Garben-Schnitt ist der lineare Readout an der Ausgabe, die nicht-injektive Superposition die interne Repräsentation — verschiedene Ebenen desselben Netzes. (R3) Restriktion (ReLU im Ast, verlustvoll) + Erhaltung (Residual-Add, erhaltend) sind ein Mechanismus, zwei Ströme; Superposition ist das makroskopische Ergebnis des Falterns in frische Dimensionen. (R4) Tiefen-Kette = Site (Garbe), Trajektorien = Pfade (Gruppoid): ein ∞-Garben-Objekt von ∞-Gruppoiden über Depth^op → Spaces, das dem bis-auf-Homotopie-Verklebungsaxiom genügt. Homotopie macht beide Lagen gegenüber echten Netzen ehrlich.",
+  "viz": "Canvas: Ein nicht-linear-trennbares 'Egg' (innen ✕ außen) durchläuft die Garben-Site (Tiefe L); pro Schicht falte es ReLU in eine ungenutzte vertikale Dimension (innen flach, außen erhebt sich). Überlagert werden A's Identitätspfade Id_A(a,b) zur Klassen-Schwere und 2-Pfade/Superposition-Flächen (höhere Identität). Readouts lesen beide Seiten ab: Garben-Garantie (globale Schnitt-Genauigkeit) und Gruppoid-Fragilität (Kollapsrisiko/Metastabilität als Balken); Homotopie-Weiche ∞ macht Falten exakt(=) → weich(≃)."
+}

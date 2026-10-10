@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 006 · Die Karte ist das Weltmodell (PE × Grokking/Othello)</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --ink:#22201b; --dim:#6f6a60; --line:#d8d2c4;
+    --acc:#2563eb; --acc2:#db2777; --gold:#0a7a55;
+    --canvas:#f2ede1; --code:#efe9dc;
+    --num-a:#2563eb; --num-b:#db2777; --correct:#0a7a55;
+    --grid:#e7e1d2; --onacc:#ffffff;
+  }
+  html.dark{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#5C6781; --line:#1c2740;
+    --acc:#60a5fa; --acc2:#f472b6; --gold:#34d399;
+    --canvas:#05070E; --code:#0f1626;
+    --num-a:#60a5fa; --num-b:#f472b6; --correct:#34d399;
+    --grid:#1c2740; --onacc:#0b1220;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:400 16px/1.62 ui-sans-serif,system-ui,"Segoe UI",Inter,Georgia,serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+  h1{font-size:clamp(25px,5vw,37px);font-weight:650;letter-spacing:-.01em;line-height:1.14;margin-bottom:8px}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.03em;margin-bottom:8px}
+  .meta{color:var(--dim);font-size:12.5px;margin-bottom:26px}
+  h2{font-size:20px;font-weight:650;margin:44px 0 12px;padding-top:16px;border-top:1px solid var(--line)}
+  p{margin:0 0 14px}
+  strong{font-weight:650}
+  em{color:var(--ink)}
+  code{font:500 13.5px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+  .lead{font-size:17.5px}
+  ul,ol{margin:0 0 14px 22px}
+  li{margin:0 0 12px}
+  .roleA{color:var(--acc);font-weight:650}
+  .roleB{color:var(--acc2);font-weight:650}
+  .roleF{color:var(--gold);font-weight:650}
+  .formula{
+    background:var(--code);border:1px dashed var(--line);border-radius:8px;
+    padding:11px 15px;margin:12px 0;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:14px;text-align:center;overflow-x:auto;white-space:pre-wrap;
+  }
+  .tension{border-left:4px solid var(--acc2);background:var(--code);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0}
+  .tension .who{font-size:.8em;color:var(--dim);display:block;margin-bottom:5px}
+  .res{border-left:4px solid var(--gold);background:var(--code);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0}
+  .badge{display:inline-block;font-size:.7em;font-weight:700;padding:1px 8px;border-radius:12px;vertical-align:middle;color:var(--onacc)}
+  .badge.a{background:var(--acc)}
+  .badge.b{background:var(--acc2)}
+  .badge.f{background:var(--gold)}
+  .card-row{display:flex;gap:14px;flex-wrap:wrap}
+  .paper{flex:1 1 260px;background:var(--code);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .paper h4{margin:0 0 6px;font-size:.96em}
+  .paper.a h4{color:var(--acc)}
+  .paper.b h4{color:var(--acc2)}
+  .paper p{font-size:.9em;margin:.4em 0}
+  .viz-box{background:var(--canvas);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+  canvas#viz{width:100%;height:440px;display:block;background:var(--canvas);border-radius:10px;touch-action:manipulation}
+  .hud{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-top:12px}
+  .grp{display:flex;flex-direction:column;gap:3px;align-items:center}
+  .grp label{font-size:12px;color:var(--dim)}
+  .grp .val{font-family:ui-monospace,monospace;color:var(--ink);font-weight:650}
+  input[type=range]{accent-color:var(--acc);width:130px}
+  button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--line);padding:8px 13px;border-radius:999px;cursor:pointer;margin-left:auto}
+  button:hover{border-color:var(--acc)}
+  .readout{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:11px 15px;font-size:14px;margin-top:10px;line-height:1.55}
+  .readout b{color:var(--ink)}
+  .readout .inv{color:var(--gold);font-weight:650}
+  .prov{display:flex;flex-direction:column;gap:12px}
+  .prov a{color:var(--acc);text-decoration:none;font-weight:650}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:3px;line-height:1.5}
+  .note{color:var(--dim);font-size:13.5px;margin-bottom:12px;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Die Karte ist das Weltmodell — rotierende Frequenz-Koordinaten</h1>
+  <div class="sub">Fusion aus: r1-008.html ✕ r1-061.html  (Round 2)</div>
+  <div class="meta">Round 2 · Pair 006 · A = „Karten &amp; Augen“ (PE × Attention) · B = „Emergente Weltmodelle“ (Grokking × Othello-GPT)</div>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide R1-Papiere beschreiben, aus entgegengesetzten Richtungen kommend, <em>dasselbe Objekt</em>. <span class="roleA">A (r1-008)</span> hält: Eine Position ist ein <strong>mehrfrequenter Wellen-Fingerprint</strong> — jede Frequenz-Dimension ist ein rotierender Kreis („Uhrzeiger“), und wo alle Wellen konstruktiv übereinstimmen, entsteht ein eindeutiger heller Fleck; Attention liest aus genau dieser Geometrie <em>Beziehungen als Offsets</em> ab (das Skalarprodukt zweier Positionsvektoren hängt nur vom Abstand ab) und verschmilzt Inhalt&nbsp;+&nbsp;Position zu einem Score. <span class="roleB">B (r1-061)</span> hält: Ein nur auf Next-Token-Prädiktion trainiertes Modell baut ein <strong>echtes, internes, kausales Weltmodell</strong> des Erzeugungsprozesses auf; bei der modularen Addition ist dieses Modell ein <strong>kompaktes Fourier-Schaltwerk</strong> — Zahlen als Punkte auf rotierenden Kreisen, die Antwort liegt dort, wo sich alle Wellen verstärken (Interferenz-Peak).</p>
+    <p>Die eine integrierte Position lautet: <span class="roleF">Karte und Weltmodell sind dasselbe.</span> Ein Sequenzmodell kodiert seine Welt als ein komprimiertes System <strong>rotierender Mehrfrequenz-Koordinaten</strong> (eine Fourier-/Wellengeometrie). „Position“ (A) und „Addition/Weltmodell“ (B) sind <em>dieselbe Interferenzgeometrie, auf unterschiedlichen Skalen gelesen</em>: Eine Position ist der eindeutige Interferenz-Peak bei dem Offset der Position; die Antwort auf <code>a+b mod P</code> ist der eindeutige Peak bei dem Offset <code>a+b</code>. Der gemeinsame Mechanismus ist das <strong>relative Ablesen</strong> — das Skalarprodukt hängt nur vom Offset ab, und Addition ist eine <em>Drehung</em>, kein Zählen.</p>
+    <p>Damit verschmelzen auch die drei Nachweise von B mit dem Mechanismus von A: Die rotierende Koordinatenkarte ist (1) <strong>nicht trivial ablesbar</strong> (ein Fingerprint, keine Zahlenliste), (2) <strong>kausal wirksam</strong> (Attention/Grokking benutzt sie, um den Offset bzw. die Antwort zu lesen) und (3) <strong>generalisiert</strong> (der Peak steht bei jedem Input — gesehen oder nicht — am richtigen Offset). A und B sind dasselbe kausale, generalisierende, interpretierbare Werkzeug: <em>Position ist der trivial vor gelöste Generator, Othello das reiche gelernte — die eine Karte, gelesen mit unterschiedlicher „Tiefe“.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere widersprechen sich nicht im Ergebnis, aber sie treffen drei reale Spannungen aufeinander, die unterschiedliche Bilder von „Verständnis“ und „Woher kommt die Geometrie?“ zeichnen:</p>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „gegebene, feste Karte“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „gelerntes, emergentes Weltmodell“</span>
+      <strong>Woher kommt die Geometrie — designed-in oder gelernt?</strong>
+      <span class="roleA">A</span>: Die sinusoidale PE ist eine <em>feste Architekturentscheidung</em> — sie ist von Anfang an da, wird nicht gelernt; die Karte existiert <em>a priori</em> als Koordinatenvokabular, das die „Augen“ lediglich ablesen. Es gibt in A keine Geschichte des <em>Bildens</em> der Karte.
+      <span class="roleB">B</span>: Der zentrale Befund ist genau das Gegenteil: das Weltmodell wird <em>im Training aufgebaut und emergiert</em> — Grokking durchläuft Phasen (Memorierung → Algorithmus bildet sich während des Plateaus → plötzliche Übernahme), bei Othello ist die Repräsentation durchgängig in mittleren Layern am stärksten und wird kontinuierlich kausal genutzt. Die Karte wird <em>erworben</em>, nicht vorgegeben.
+      <em>Unvereinbare These über den Ursprung:</em> statisches Design-Gerüst (A) vs. dynamisch erworbenen, emergenten internen Zustand (B).
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „die eine kanonische Form“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „unterbestimmt, datenabhängig”</span>
+      <strong>Eindeutigkeit der Lösung.</strong>
+      <span class="roleA">A</span>: Es gibt <em>die</em> eindeutige PE — die Basis-10000-Leiter mit <code>ω_i = 10000^(-2i/d)</code> ist eine feste, kanonische Geometrie; der Fingerprint pro Position ist deterministisch und eindeutig, das relative Ablesen ist exakt (hängt nur von <code>k</code> ab).
+      <span class="roleB">B</span>: argumentiert explizit gegen „die eine kanonische Lösung“: dieselbe Architektur lernt je nach Trainingsverteilung <em>fundamental verschiedene</em> Repräsentationen (synthetisch = regelbasiert, Championship = strategisch); die Repräsentation ist <em>unterbestimmt</em>, und selbst bei der Addition konkurrierte eine Memorierungs-Strategie, die verworfen wurde.
+      <em>Unvereinbare These über Kanonizität:</em> eine feste kanonische Form (A) vs. kein kanonisches Lösung, viele datenabhängige Varianten (B).
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „zwei saubere, lesbare Terme“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „nichtlineares, nicht-zersetzbares Bild“</span>
+      <strong>Zerlegbarkeit in lesbare Teile.</strong>
+      <span class="roleA">A</span>: Der fusionierte Score ist eine <em>saubere Summe</em> aus einem <em>Inhalts-Term</em> (lesbar: Wortlänge, Gleichheit, Vokale) und einem <em>Relativpositions-Term</em> (lesbar: cos/Drehung) — <code>s = f(Inhalt) + g(Offset)</code>. Verständnis = zwei lesbare Bausteine.
+      <span class="roleB">B</span>: Das interne Bild von Othello ist <em>nichtlinear und keiner einfachen Formel gehorchen</em> — ein <strong>linearer Probe</strong> liefert ~20–25&nbsp;% Fehler, ein nichtlinearer <strong>1,7&nbsp;%</strong>. Die „lesbaren Teile“ addieren sich <em>nicht</em> zum Ganzen; man braucht das volle nichtlineare verteilte Bild.
+      <em>Unvereinbare These über Zerlegbarkeit:</em> lineare Zersetzung in lesbare Terme (A) vs. irreduzible nichtlineare Verteilung (B).
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="res">
+      <p><strong>1. Das Gerüst ist prior, die Instanz ist gelernt.</strong>
+      Die <em>Art</em> der Karte — ein System rotierender Mehrfrequenz-Koordinaten, eine Fourier-/Kreisen-Basis — ist eine <em>feste, billige, allgemeine Prior</em> (das, was A als sinusoidale PE designet). Das <em>konkrete</em> Muster auf dieser Karte (welche Frequenzen feuern, wie sie kombiniert werden) wird <em>gelernt</em> (das, was B zeigt: Addition wählt Frequenzen 14/35/41/42/52, Othello wählt eine verteilte latente Basis). A’s PE ist also der <em>degenerierte, vorgelöste Fall</em> von B’s gelernten Weltmodell: Der Generator „Position“ ist eine so einfache zyklische Struktur, dass die kanonische Basis sie sofort, in geschlossener Form, löst. <span class="badge f">Fusion</span> Die rotierende Frequenz-Koordinate ist das feste Repräsentations-Prior; <strong>Lernen = Auswahl + Kombination ihrer Rotoren, passend zum echten Generator.</strong> Position (A) und Othello (B) sind dieselbe Kartenart in zwei gelernten Instanzen.</p>
+    </div>
+
+    <div class="res">
+      <p><strong>2. Die Basis ist kanonisch, die Lösung ist unterbestimmt.</strong>
+      Die <em>Wellen-/Kreisgeometrie</em> (Einheitskreise, cos/sin, Additionstheoreme) ist kanonisch und eindeutig — genau die geteilte Mathematik, die beide Papiere benutzen (A’s Leiter = B’s Kreis). Aber <em>welche</em> Basiselemente mit <em>welchen</em> Gewichten verwendet werden, ist unterbestimmt und wird von den Daten gewählt (B). A scheint „die eine Lösung“ zu haben, nur weil sein Generator (zyklische Position) so simpel ist, dass die kanonische Basis sie mit fester Leiter eindeutig löst; B’s reichere Generatoren zulassen viele Lösungen. <span class="badge f">Fusion</span> <strong>Form (die Kreis-/Wellengeometrie) ist kanonisch und geteilt; Inhalt (welche Rotoren, welche Gewichte) ist unterbestimmt und daten gewählt.</strong> A ist der Eindeutigkeits-Limes von B’s unterbestimmtem Bild.</p>
+    </div>
+
+    <div class="res">
+      <p><strong>3. Die Zweiterm-Summe ist die linearisierte, die nichtlineare Karte das Vollbild.</strong>
+      A’s Score <code>f(Inhalt)+g(Offset)</code> ist die <em>lineare, erste Ordnung</em>-Lektüre der Karte — ein „Auge“ liest einen Aspekt. B zeigt, dass das <em>volle</em> Weltmodell nichtlinear und verteilt ist (linearer Probe scheitert). Die Auflösung: A’s zersetzbarer Zweiterm ist die <em>Linearisierung / erste Ordnung</em> dessen, was B’s nichtlineares latentes Modell tatsächlich rechnet. Bei einem simplen Generator (Addition, Position) genügt die erste Ordnung (geschlossene Form); bei einem reichen Generator (Othello) braucht man das volle nichtlineare verteilte Modell. <span class="badge f">Fusion</span> <strong>A ist die Tiefen-1-Lektüre derselben Karte, B die Tiefen-n-Lektüre.</strong> Mit wachsender Generator-Komplexität steigt man von A’s geschlossener Zweiterm-Summe zu B’s nichtlinearem verteiltem Bild — ein Kontinuum der „Lese-Tiefe“ auf einer einzigen Karte (das ist B’s „Form ∝ Generator-Komplexität“, jetzt auf die Karte projiziert).</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <div class="card-row">
+      <div class="paper a">
+        <h4>A · Positional Encoding × Attention (r1-008)</h4>
+        <p><strong>Karte (PE):</strong> <code>PE(pos,i)=(sin(pos·ω_i), cos(pos·ω_i))</code>, <code>ω_i=10000^(-2i/d)</code> — geometrische Frequenz-Leiter; schnelle Frequenz unterscheidet nahe Positionen, langsame ferne; die Kombination ist pro Position ein eindeutiger Fingerprint („Wave Collapse“).</p>
+        <p><strong>Relativität:</strong> <code>PE(pos)·PE(pos+k)=Σ_i cos(k·ω_i)</code> — hängt nur vom Offset <code>k</code> ab, nicht von <code>pos</code>.</p>
+        <p><strong>Navigation (Attention):</strong> <code>a_ij = softmax_j(𝟙[j≤i]·s_ij)</code>, <code>o_i = Σ_{j≤i} a_ij·v_j</code>; ein Head ist ein „Auge“ auf einen Aspekt (vorheriges Token, Satzanfang, Gleichheit, Wortlänge, Vokale).</p>
+        <p><strong>Fusionsscore:</strong> <code>s_ij = f(Inhalt_i,Inhalt_j) + g(i−j)</code> — Inhalt (A) + Relativposition (B-Geometrie).</p>
+      </div>
+      <div class="paper b">
+        <h4>B · Grokking × Othello-GPT (r1-061)</h4>
+        <p><strong>Schaltwerk (Addition):</strong> <code>(a+b) mod P</code>, Primmodul <code>P=113</code>; Zahlen → Punkte auf Kreisen bei Frequenzen <code>k∈{14,35,41,42,52}</code>; Antwort = Interferenz <code>Σ_k cos(w_k·(a+b−c))</code>, maximal bei <code>c=(a+b) mod P</code>.</p>
+        <p><strong>Grokking-Phasen:</strong> ① Memorierung → ② Algorithmus bildet sich (Test-Loss flach) → ③ Weight Decay räumt auf → plötzlicher Test-Loss-Einbruch; λ=0 ⇒ grokkt nie.</p>
+        <p><strong>Othello-Beweise:</strong> linearer Probe ~20–25&nbsp;% Fehler, nichtlinear <strong>1,7&nbsp;%</strong> (Layer 7, 98,3&nbsp;%); kausale Intervention ändert die Vorhersage (auch für „unnatural“ Zustände); Saliency: synthetisch = regelbasiert, Championship = strategisch (Ecken/Kanten).</p>
+        <p><strong>Generalisierung:</strong> Skewed-Test (¼ Partien entfernt) ⇒ 0,02&nbsp;% Fehler; untrainiert: 93,29&nbsp;%.</p>
+      </div>
+    </div>
+
+    <h3 style="color:var(--ink);margin:20px 0 8px;font-size:16px;">Das geteilte Objekt: rotierende Frequenz-Koordinaten als Weltmodell</h3>
+    <p>Beide Papiere benutzen <em>dasselbe</em> mathematische Gerät, nur bei A als <em>Adressierung</em>, bei B als <em>Rechnen</em>:</p>
+    <div class="formula">Einheitlkreis pro Frequenz f:   z_f(x) = e^{i·2π·f·x/P}
+Additionstheorem:             z_f(a)·z_f(b) = z_f(a+b)   ⇒  Addition = Drehung, kein Zählen
+Interferenz-Peak:             Score(c) = Σ_{f} Re[ z_f(a+b)·conj(z_f(c)) ] = Σ_f cos(2π f (a+b−c)/P)
+                              ⇒  Peak genau bei c = (a+b) mod P  (eindeutiger Fingerprint)
+Relatives Ablesen:            PE(p)·PE(p+k) = Σ_f cos(2π f k/P)   ⇒  hängt nur vom Offset k ab</div>
+    <p>Das ist die Einheit: <strong>(i) die Basis ist ein System rotierender Frequenz-Koordinaten</strong> (A’s „Uhrzeiger“ = B’s Fourier-Kreise); <strong>(ii) die Operation wird als Phase/Differenz gelesen</strong> (A: Skalarprodukt hängt nur vom Offset ab; B: die Summe liegt um den Winkel von <code>b</code> hinter <code>a</code>); <strong>(iii) das Ergebnis ist der eindeutige Interferenz-Peak</strong> (A: der helle Fleck = die Position; B: der maximale Balken = die Antwort). Aus „Peak = Position“ folgt „Peak = Antwort“ durch dieselbe Identität.</p>
+
+    <h3 style="color:var(--ink);margin:20px 0 8px;font-size:16px;">Der gemeinsame Nachweis (warum es ein Weltmodell ist)</h3>
+    <ol>
+      <li><strong>Generalisierung jenseits des Gesehenen.</strong> Der Peak steht bei <em>jeder</em> (auch nie trainierten) Kombination am richtigen Offset — A: das Skalarprodukt „sieht“ den Offset exakt; B: Skewed-/Unnatural-Test liefert trotzdem ~0&nbsp;% Fehler. Beides widerlegt reines Memorizing.</li>
+      <li><strong>Kausal wirksam, kein Nebenprodukt.</strong> A: Attention <em>liest</em> den Offset über genau diese Geometrie, um den Kontext zu aggregieren. B: das Schaltwerk <em>ist</em> der Inferenzweg; Intervention am internen Zustand ändert die Ausgabe.</li>
+      <li><strong>Interpretierbar = lesbar + manipulierbar.</strong> A: die Drehungs-/Interferenzgeometrie lässt sich ablesen und in den Score einbauen. B: Probes / Intervention / Saliency machen das innere Bild sichtbar. Die gemeinsame Methodik ist mechanistische Interpretierbarkeit der <em>gleichen</em> Geometrie.</li>
+    </ol>
+
+    <h3 style="color:var(--ink);margin:20px 0 8px;font-size:16px;">Das fusionierte Modell: eine Karte, drei Lese-Tiefen</h3>
+    <div class="formula">Weltmodell  =  komprimiertes System rotierender Frequenz-Koordinaten  (die „Karte“)
+Lese-Tiefe  =  f(Generator-Komplexität)
+   Position        →  vor gelöst, geschlossene Form,  Tiefe 1  (A’s PE + Offset-Leser)
+   modulare Addition→  kompaktes Schaltwerk, Tiefe 2        (B’s Grokking)
+   Othello-Brett    →  verteiltes nichtlineares Bild, Tiefe n (B’s Othello-GPT)
+Lernen       =  Auswahl/Kombination der Rotoren an den Generator (kontinuierlich)
+Übernahme    =  (kann) diskret, wenn zwei Strategien konkurrieren (Weight Decay)
+Lösung       =  unterbestimmt; Daten + Aufgabe wählen die Variante</div>
+    <p><strong>Warum das wichtig ist:</strong> „Position“ und „Weltmodell“ sind kein Paar, das man nebeneinander stellt — sie sind <em>derselbe</em> Wellen-/Rotoren-Mechanismus. A liefert die <em>Karte</em> (wie man eine Position als Interferenz-Fingerprint codiert und relativ liest), B liefert den <em>Beweis</em>, dass genau diese Karte das ist, was ein Netz als Weltmodell lernt. Die Fusion: <span class="roleF">Die Karte, die die „Augen“ ablaufen, ist das Weltmodell, das das Netz baut.</span></p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — Eine Karte, zwei Lektüren (Rotation + Interferenz-Peak)</h2>
+    <p class="note">Ein einziges Gerät, das beide Papiere trägt. <strong>Links</strong> der Grund-Rotor (Frequenz <code>f=14</code>): die Zahlen <code>a</code>, <code>b</code> und ihre Summe <code>a+b mod 113</code> als Punkte auf einem Kreis — die Summe liegt einfach um den Winkel von <code>b</code> hinter <code>a</code>: <em>Addition ohne Addieren, nur durch Drehen</em> (B). <strong>Rechts</strong> der Interferenz-Peak <code>Score(c)=Σ_f cos(2π f (a+b−c)/113)</code> über alle 113 Antworten: Bei der richtigen Antwort verstärken sich alle Wellen konstruktiv (Peak&nbsp;=&nbsp;Anzahl der Frequenzen), bei falschen heben sie sich auf — <em>derselbe</em> Mechanismus, der bei A eine Position zu ihrem eindeutigen „Wave-Collapse“-Fingerprint macht und bei B die Antwort auf <code>a+b mod P</code> berechnet. Wähle <code>a</code>, <code>b</code> und die Anzahl der Frequenzen. Der <strong>Offset-Leser</strong> darunter demonstriert A’s Relativität: <code>PE(p)·PE(p+k)</code> ist bei festem <code>k</code> unabhängig vom Ort <code>p</code> — Attention liest damit „<code>k</code> Schritte zurück“, ohne den absoluten Ort zu kennen.</p>
+
+    <div class="viz-box">
+      <canvas id="viz"></canvas>
+      <div class="hud">
+        <div class="grp"><label>a <span class="val" id="va">37</span></label><input type="range" id="fa" min="0" max="112" value="37"></div>
+        <div class="grp"><label>b <span class="val" id="vb">58</span></label><input type="range" id="fb" min="0" max="112" value="58"></div>
+        <div class="grp"><label>Frequenzen <span class="val" id="vn">5</span></label><input type="range" id="fn" min="1" max="5" value="5"></div>
+        <div class="grp"><label>Pos p (A) <span class="val" id="vp">3</span></label><input type="range" id="fp" min="0" max="112" value="3"></div>
+        <div class="grp"><label>Offset k (A) <span class="val" id="vk">7</span></label><input type="range" id="fk" min="1" max="24" value="7"></div>
+        <button id="theme">◐ Thema</button>
+      </div>
+      <div class="readout" id="roMain">…</div>
+      <div class="readout" id="roInv">…</div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../r1-008.html">r1-008.html — „Karten &amp; Augen“ (PE × Attention)</a>
+        <div class="d">R1-Fusion: Positional Encoding als mehrfrequenter Wellen-Fingerprint („Uhrzeiger“/Wave Collapse) trifft Attention als „Augen“ — die Karte (absolute, eindeutige Position) wird relativ gelesen (Skalarprodukt hängt nur vom Offset ab); Inhalt&nbsp;+&nbsp;Position verschmelzen zu einem Score.</div>
+      </div>
+      <div>
+        <a href="../r1-061.html">r1-061.html — „Emergente Weltmodelle“ (Grokking × Othello)</a>
+        <div class="d">R1-Fusion: modulare Addition als kompaktes Fourier-Kreisschaltwerk (Nanda et al.) trifft Othello-GPTs nichtlineares, kausales latentes Brett-Modell (Li et al.) — beide beweisen ein echtes, generalisierendes, interpretierbares internes Weltmodell des Generators.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var P = 113;
+  var KEY_FREQS = [14, 35, 41, 42, 52];
+  var SANS = 'ui-sans-serif,system-ui,"Segoe UI",sans-serif';
+  var cv = document.getElementById('viz');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  var cssW = 0, cssH = 440;
+  var pal = null;
+
+  function cssVar(name, fb){
+    var x = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return x || fb;
+  }
+  function readPal(){
+    return {
+      canvas: cssVar('--canvas','#05070E'),
+      ink:    cssVar('--ink','#EAF0FF'),
+      dim:    cssVar('--dim','#5C6781'),
+      grid:   cssVar('--grid','#1c2740'),
+      numA:   cssVar('--num-a','#60a5fa'),
+      numB:   cssVar('--num-b','#f472b6'),
+      correct:cssVar('--correct','#34d399')
+    };
+  }
+  function v(id){ var e=document.getElementById(id); return e ? +e.value : 0; }
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3) hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    if(hex.length!==6) return 'rgba(120,120,120,'+a+')';
+    var r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+
+  function freqsNow(){
+    var n = Math.max(1, Math.min(5, v('fn')));
+    return KEY_FREQS.slice(0, n);
+  }
+  function scoresNow(a, b, freqs){
+    var out = [], c, i, s;
+    for(c=0;c<P;c++){
+      s=0;
+      for(i=0;i<freqs.length;i++){ s += Math.cos(2*Math.PI*freqs[i]/P*(a+b-c)); }
+      out.push(s);
+    }
+    return out;
+  }
+  function dotPE(base, k, freqs){
+    var s=0, i;
+    for(i=0;i<freqs.length;i++){ s += Math.cos(2*Math.PI*freqs[i]/P*((base)-(base+k))); }
+    return s;
+  }
+
+  function drawRotor(cx, cy, r, a, b, correct, f){
+    ctx.strokeStyle = pal.grid; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx-r-6,cy); ctx.lineTo(cx+r+6,cy);
+    ctx.moveTo(cx,cy-r-6); ctx.lineTo(cx,cy+r+6);
+    ctx.stroke();
+    function pt(x, col, lab, dy){
+      var ang = 2*Math.PI*f/P*x;
+      var px = cx + r*Math.cos(ang), py = cy - r*Math.sin(ang);
+      ctx.strokeStyle = col; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(px,py,6,0,2*Math.PI); ctx.fill();
+      ctx.fillStyle = col; ctx.font = 'bold 13px '+SANS; ctx.textAlign='center';
+      ctx.fillText(lab, px, py+dy);
+    }
+    pt(a, pal.numA, 'a = '+a, -12);
+    pt(b, pal.numB, 'b = '+b, 18);
+    pt(correct, pal.correct, 'a+b = '+correct, -12);
+    ctx.fillStyle = pal.ink; ctx.font = 'bold 12px '+SANS; ctx.textAlign='center';
+    ctx.fillText('Einbettung (f='+f+'): Addition = Drehung (B)', cx, cy - r - 14);
+  }
+
+  function drawBars(x0, y0, x1, y1, scores, correct){
+    var W = x1-x0, H = y1-y0;
+    var maxS=-Infinity, minS=Infinity, i;
+    for(i=0;i<scores.length;i++){ if(scores[i]>maxS)maxS=scores[i]; if(scores[i]<minS)minS=scores[i]; }
+    var range=(maxS-minS)||1, bw=W/P;
+    ctx.strokeStyle = pal.grid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y0+H); ctx.lineTo(x0+W,y0+H); ctx.stroke();
+    var c, h, x, y;
+    for(c=0;c<P;c++){
+      h=((scores[c]-minS)/range)*H;
+      x=x0+c*bw; y=y0+H-h;
+      if(c===correct){ ctx.fillStyle=pal.correct; ctx.globalAlpha=1; }
+      else { ctx.fillStyle=pal.numB; ctx.globalAlpha=0.4; }
+      ctx.fillRect(x, y, Math.max(1, bw-0.5), h);
+      ctx.globalAlpha=1;
+    }
+    var cxp = x0 + correct*bw + bw/2;
+    var cyT = y0 + H - ((scores[correct]-minS)/range)*H;
+    ctx.fillStyle = pal.correct; ctx.textAlign='center'; ctx.font='bold 13px '+SANS;
+    ctx.fillText(String(correct), cxp, Math.max(y0+13, cyT-15));
+    ctx.font='11px '+SANS; ctx.fillText('richtig', cxp, Math.max(y0+13, cyT-2));
+    ctx.textAlign='left'; ctx.fillStyle=pal.ink; ctx.font='bold 12px '+SANS;
+    ctx.fillText('Interferenz-Peak Score(c)  (A + B)', x0, y0-14);
+    ctx.textAlign='center'; ctx.fillStyle=pal.dim; ctx.font='11px '+SANS;
+    ctx.fillText('Antwort c  (0 … '+(P-1)+')', x0+W/2, y0+H+18);
+    ctx.textAlign='right'; ctx.fillStyle=pal.dim; ctx.font='10px '+SANS;
+    ctx.fillText('max', x0-6, y0+9);
+    ctx.fillText('min', x0-6, y0+H);
+    ctx.textAlign='left';
+  }
+
+  function draw(){
+    if(!pal) pal = readPal();
+    ctx.clearRect(0,0,cssW,cssH);
+    ctx.fillStyle = pal.canvas; ctx.fillRect(0,0,cssW,cssH);
+
+    var a=v('fa'), b=v('fb'), freqs=freqsNow();
+    var correct=((a+b)%P+P)%P;
+    var scores=scoresNow(a,b,freqs);
+
+    var r=Math.min(150, Math.max(86, cssW*0.185));
+    var cx=r+30, cy=cssH/2+8;
+    drawRotor(cx, cy, r, a, b, correct, KEY_FREQS[0]);
+
+    var bx0=Math.max(360, 2*r+70), bx1=cssW-20, by0=78, by1=cssH-40;
+    if(bx1-bx0 > 40) drawBars(bx0, by0, bx1, by1, scores, correct);
+
+    var second=-Infinity, c;
+    for(c=0;c<P;c++){ if(c!==correct && scores[c]>second) second=scores[c]; }
+    var margin=scores[correct]-second;
+    var roM=document.getElementById('roMain');
+    if(roM){
+      roM.innerHTML =
+        '<b>a + b mod '+P+' = '+correct+'</b> · Peak = <b>'+scores[correct].toFixed(2)+'</b> ('+
+        freqs.length+' Frequenz(en) × 1) · bester Falscher = '+second.toFixed(2)+
+        ' · <b>Abstand = '+margin.toFixed(2)+'</b>. '+
+        'Dieses eine Gerät ist bei <b>B</b> das Grokking-Schaltwerk (die Antwort ist der konstruktive Interferenz-Peak) '+
+        'und bei <b>A</b> die Positions-Karte (der Peak = der eindeutige Fingerprint am Offset). '+
+        'Es antwortet für <em>jede</em> nie gememorisierte Kombination korrekt — die Generalisierung, die B per Skewed-/Unnatural-Test an Othello nachweist.';
+    }
+    var p=v('fp'), k=v('fk');
+    var v1=dotPE(p,k,freqs), v2=dotPE((p+50)%P,k,freqs);
+    var roI=document.getElementById('roInv');
+    if(roI){
+      roI.innerHTML =
+        'Offset-Leser (A):  <span class="inv">PE(p)·PE(p+k)</span> mit k='+k+', p='+p+' → '+v1.toFixed(3)+
+        '  ·  bei p='+(p+50)%P+' → '+v2.toFixed(3)+'  <b>(identisch)</b>. '+
+        'Der Wert hängt nur vom Offset <b>k</b> ab, nicht vom Ort p — dieselbe Relativität, die B als „Addition = Drehung“ nutzt. '+
+        'Attention (A) liest damit „k Schritte zurück“, ohne den absoluten Ort zu kennen.';
+    }
+  }
+
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    cssW=Math.max(360, r.width||780);
+    cssH=440;
+    cv.width=Math.round(cssW*DPR);
+    cv.height=Math.round(cssH*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    draw();
+  }
+  function syncLabels(){
+    var e;
+    e=document.getElementById('va'); if(e) e.textContent=v('fa');
+    e=document.getElementById('vb'); if(e) e.textContent=v('fb');
+    e=document.getElementById('vn'); if(e) e.textContent=v('fn');
+    e=document.getElementById('vp'); if(e) e.textContent=v('fp');
+    e=document.getElementById('vk'); if(e) e.textContent=v('fk');
+  }
+  function onInput(){ syncLabels(); draw(); }
+
+  function init(){
+    var ids=['fa','fb','fn','fp','fk'];
+    for(var i=0;i<ids.length;i++){
+      var e=document.getElementById(ids[i]);
+      if(e) e.addEventListener('input', onInput);
+    }
+    var t=document.getElementById('theme');
+    if(t) t.addEventListener('click', function(){
+      document.documentElement.classList.toggle('dark');
+    });
+    if(!document.documentElement.classList.contains('dark')){
+      document.documentElement.classList.add('dark');
+    }
+    pal=readPal();
+    syncLabels();
+    resize();
+  }
+
+  window.addEventListener('resize', resize);
+  new MutationObserver(function(){ pal=readPal(); draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

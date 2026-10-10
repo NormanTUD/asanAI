@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 015 · Round 2: Berechnen als Koordinatenwechsel &amp; Matched-Filter-Projektion</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --fg:#1f2328; --muted:#5b6068; --card:#ffffff;
+    --grid:#e7e1d7; --border:#e2ddd2; --link:#2b6cb0;
+    --accent:#2b6cb0; --red:#c0564b; --green:#2f855a; --gold:#b7791f;
+    --code-bg:#f1ede3;
+  }
+  html.dark{
+    --bg:#0a0e1a; --fg:#e8ecf5; --muted:#8b95a8; --card:#111827;
+    --grid:#1a2540; --border:#243049; --link:#58a6ff;
+    --accent:#7cc4ff; --red:#ff9ac1; --green:#a8ff9a; --gold:#ffd47a;
+    --code-bg:#0a1122;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:Georgia,'Times New Roman',serif;
+       line-height:1.7;padding:2.2rem 1rem 4rem}
+  article{max-width:820px;margin:0 auto}
+  h1{font-size:1.95rem;line-height:1.25;margin-bottom:.4rem;letter-spacing:-.01em}
+  h2{font-family:system-ui,sans-serif;font-size:1.4rem;margin:2.4rem 0 .9rem;
+     padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  h3{font-family:system-ui,sans-serif;font-size:1.06rem;margin:1.5rem 0 .55rem;color:var(--accent)}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.97rem;margin-bottom:1.6rem}
+  p{margin-bottom:.85rem}
+  ul{margin:.4rem 0 1rem 1.3rem}
+  li{margin-bottom:.5rem}
+  a{color:var(--link)}
+  .lead{font-size:1.06rem}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+        padding:1.1rem 1.3rem;margin:1.1rem 0}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;
+           padding:.8rem 1.1rem;margin:.9rem 0;text-align:center;overflow-x:auto;font-size:1.16rem}
+  .vs{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+      padding:.15rem .5rem;border-radius:6px;display:inline-block;margin-right:.4rem}
+  .vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .vs.b{background:color-mix(in srgb,var(--gold) 26%,transparent);color:var(--gold)}
+  .fused{background:color-mix(in srgb,var(--green) 14%,transparent);
+         border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:.7rem 1rem;margin:.9rem 0}
+  .fused b{color:var(--green)}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+  th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;background:var(--code-bg)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.86em;background:var(--code-bg);
+       padding:.1em .35em;border-radius:4px}
+  .controls{font-family:system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:.9rem 1.3rem;
+            align-items:center;background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+  .controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+  .controls input[type=range]{accent-color:var(--accent);width:120px}
+  .controls select{accent-color:var(--accent);background:var(--card);color:var(--fg);
+                   border:1px solid var(--border);border-radius:6px;padding:.2rem .4rem}
+  .ctl-val{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;min-width:1.6em;display:inline-block}
+  #fusedCanvas{width:100%;height:600px;display:block;background:var(--card);
+               border:1px solid var(--border);border-radius:12px;margin:.6rem 0}
+  .readout{font-family:ui-monospace,monospace;font-size:.86rem;background:var(--code-bg);
+           border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin:.6rem 0;line-height:1.9}
+  .readout b{color:var(--gold)}
+  .anno{font-size:.85rem;color:var(--muted);font-style:italic}
+  #themeToggle{position:fixed;top:14px;right:14px;z-index:50;font-family:system-ui,sans-serif;
+    font-size:.8rem;background:var(--card);color:var(--fg);border:1px solid var(--border);
+    border-radius:20px;padding:.4rem .8rem;cursor:pointer}
+  .prov{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .9rem;border:1px solid var(--border);
+        border-radius:8px;margin-bottom:.7rem;background:var(--card)}
+  .prov .k{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;flex:0 0 1.6em;
+        text-align:center;border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+  .prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .prov .k.b{background:color-mix(in srgb,var(--gold) 26%,transparent);color:var(--gold)}
+  .foot{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border);
+        color:var(--muted);font-size:.85rem;font-style:italic}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Theme umschalten">&#9680; Theme</button>
+<article>
+
+  <h1>Berechnen als Koordinatenwechsel: drei Basen, eine Matched-Filter-Projektion</h1>
+  <p class="subtitle">Fusion aus: r1-044.html &#10005; r1-059.html  (Round 2)</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Die beiden R1-Papiere sind, auf eine Ebene gehoben, <b>die gleiche These in zwei Sprachen</b>. A (r1-044, Grid-Walker &#10005; Fourier-Addition) sagt: ein Netz lernt keine Tabelle, sondern eine <b>Repräsentation derselben abelschen Struktur</b> und liest die Antwort per <b>Projektion (Innenprodukt)</b>; der einzige Unterschied zwischen Grid-Walker und modulare Addition ist die <b>duale Basis</b> &mdash; additive <i>Positions-/Zustands-Basis</i> oder multiplikative <i>Fourier-/Phasen-Basis</i>. B (r1-059, mod &#10005; egg, Falten &amp; Phasen) sagt das gleiche, breiter: ein Netz lernt keinen Eingaberaum-Entscheidungsbaum, sondern einen <b>Koordinatenwechsel</b> &mdash; <i>Embedding = Koordinatenwechsel, Layer = Code-Transport, Readout = lokale Ausrichtungsprobe</i> &mdash; und zwar über <b>unterschiedliche</b> Aufgabenfamilien (Gruppenoperation <i>und</i> geometrische Trennung) hinweg, mit einem <b>diskreten</b> (Aktivierungs-Muster) oder <b>kontinuierlichen</b> (Phasenvektor) Code.</p>
+    <p>Die einzelne integrierte Position lautet: <b>Ein Netz rechnet, indem es (1) in eine aufgabenangepasste Basis wechselt &mdash; Positions-/Zustands-Basis für dynamische Aufgaben, Fourier-/Phasen-Basis für algebraische (Gruppen-)Aufgaben, stückweise-lineare Falz-Basis für geometrische Trennung &mdash;, (2) den daraus folgenden Code (eine suffiziente Statistik, einen Phasenvektor, ein Bit-Muster) durch die Layer <i>transportiert</i> und (3) die Antwort per <b>lokaler Ausrichtungsprobe</b> liest: einer Matched-Filter-Projektion, deren Vorlagen-<i>Anzahl</i> der Anzahl der Antwortklassen entspricht.</b></p>
+    <p>&bdquo;Durchschnitt&ldquo; (A&rsquo;s Grid-Walker), &bdquo;Interferenz&ldquo; (A&rsquo;s Fourier-Addition), &bdquo;Falten-dann-Schwelle&ldquo; (B&rsquo;s egg) und &bdquo;Phasen-Ausrichtung&ldquo; (B&rsquo;s mod) sind damit <b>dieselbe Operation in drei Basen</b>: eine Korrelation gegen feste Vorlagen. A liefert den eleganten <i>abelschen Spezialfall</i> (die Basiswahl ist eine echte Fourier-Dualität); B liefert den <i>allgemeinen Rahmen</i>, in dem dieselbe Mechanik auch für nicht-Gruppen-Aufgaben und diskrete Codes gilt.</p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+
+    <div class="card">
+      <h3>W1 &middot; Readout: EINE Projektion (A) vs. eine BANK aus Korrelatoren (B)</h3>
+      <p><span class="vs a">A &middot; r1-044</span> A sagt, das Readout in <i>beiden</i> seiner Netze sei <b>ein einziges Innenprodukt</b>, das nur in dualen Basen geschrieben ist: &bdquo;Durchschnitt&ldquo; (A) und &bdquo;Interferenz&ldquo; (B) sind dasselbe Innenprodukt, in dualen Basen geschrieben&ldquo;. Der Grid-Walker liest einen geteilten Zustand per linearem Probe (CKA 0.95&ndash;0.97), die Addition scoret Kandidaten per Interferenz &mdash; und A klammert beides unter <b>einen</b> Projektions-Operator.</p>
+      <p><span class="vs b">B &middot; r1-059</span> B sagt, das Readout sei eine <b>Bank aus Matched-Filtern, deren Anzahl = Anzahl der Antwortklassen</b>: &bdquo;Readout = Projektion auf Templates + lokale Probe; die Vorlagen liegen im Unembedding fest&ldquo;. Beim Disk/Ring ist das <i>ein</i> Template (Ebenen-Normale r=(1,1,1)) + eine Schwelle; bei der modularen Addition sind es <b>P = 113</b> Template-Vektoren + <b>argmax</b>. B vereint sie nur <i>funktional</i> (Korrelation + lokale Probe) und hält die Template-<i>Anzahl</i> (1 vs. P) als das Unterscheidungsmerkmal.</p>
+      <p class="anno">A reduziert das Readout auf <b>einen</b> Operator (Basis-Abhängigkeit); B sieht darin zwingend eine <b>klassengroße Bank</b> (1 vs. P Vorlagen), die nur funktionell zusammenfällt. Ist &bdquo;das Readout&ldquo; eine einzige Projektion (A) oder prinzipiell eine Vorlagen-Bank, deren Dimension = #Klassen (B)?</p>
+    </div>
+
+    <div class="card">
+      <h3>W2 &middot; Repräsentation: architektonisch <i>kontingent</i> (Rashomon, A) vs. geometrisch <i>notwendig</i> (B)</h3>
+      <p><span class="vs a">A &middot; r1-044</span> A (über den Grid-Walker) sagt, die saubere Welt-/Aufgabe-Trennung sei <b>eine architektonische Wahl</b> &mdash; ein <b>Rashomon-Effekt</b>: &bdquo;RNNs (LSTM/GRU) erreichen denselben Bayes-optimalen Loss, haben aber <b>keine</b> saubere Trennung &mdash; der Welt-Zustand ist vorhanden, aber vermischt&ldquo;. Die saubere Struktur ist also <i>nicht</i> nötig; sie ist, wie der Transformer zufällig rechnet.</p>
+      <p><span class="vs b">B &middot; r1-059</span> B (über egg/mod) sagt, die gute Lösung sei <b>geometrisch erzwungen</b>: &bdquo;Die Gewichte sind lesbar, weil der <b>Lösungsraum dünn</b> ist&ldquo; &mdash; &bdquo;Entdeckung und Notwendigkeit sind derselbe Sachverhalt &hellip; Beide landen am gleichen Ort, <b>weil es (fast) nur diesen Ort gibt</b>&ldquo;. Die gute Repräsentation ist also <i>nötig</i>; es gibt kaum eine andere.</p>
+      <p class="anno">Ist die saubere Repräsentation <b>kontingent</b> (A: RNNs lösen die Aufgabe ohne sie auf demselben Loss-Niveau) oder <b>notwendig</b> (B: dünner Lösungsraum, nur dieser Ort funktioniert)? Zwei streng komplementäre, an dieser Stelle unvereinbare Stellungen.</p>
+    </div>
+
+    <div class="card">
+      <h3>W3 &middot; Art der Vereinigung: <i>dieselbe</i> Struktur in dualen Basen (A) vs. <i>unterschiedliche</i> Strukturen unter einem Schema (B)</h3>
+      <p><span class="vs a">A &middot; r1-044</span> A macht eine <b>starke strukturelle Identitätsbehauptung</b>: Grid-Walker und Fourier-Addition seien &bdquo;die Repräsentation <b>dieselben</b> abelschen (Gruppen-)Struktur&ldquo;, gelesen in <b>dualen Basen</b> &mdash; Positions- (additiv) vs. Frequenz- (multiplikativ) &mdash; &bdquo;dieselbe abelsche Gruppe, duale Basen&ldquo;.</p>
+      <p><span class="vs b">B &middot; r1-059</span> B macht eine <b>breitere, aber schwächere Schemata-Behauptung</b>: modulare Addition und Disk/Ring-Trennung seien <b>unterschiedliche</b> Strukturen (eine zyklische Gruppenoperation <i>vs.</i> eine nichtlineare geometrische Trennung, die <i>keine</i> Gruppenoperation ist), vereint nur durch das abstrakte Rezept &bdquo;Embedding = Koordinatenwechsel, Layer = Code-Transport, Readout = lokale Ausrichtungsprobe&ldquo;. B behauptet ausdrücklich <i>keine</i> Dualität derselben Gruppe.</p>
+      <p class="anno">A: <b>eine</b> Struktur, zwei Basen (Identität). B: <b>verschiedene</b> Strukturen, ein gemeinsames Schema (Analogie). A&rsquo;s Vereinigung ist enger und stärker; B&rsquo;s weiter und schwächer.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="fused"><b>R1 zu W1 &mdash; dieselbe Matched-Filter-Projektion, zwei Parametrisierungen.</b>
+    Beide Readouts sind <b>Korrelation gegen feste Vorlagen + lokales Extremum/Schwelle</b>. A&rsquo;s &bdquo;eine Projektion&ldquo; ist der <i>degenerierte Spezialfall</i> (eine Richtung / eine Klasse): der Grid-Walker liest eine einzige suffiziente Zustands-Richtung linear ab. B&rsquo;s &bdquo;Bank&ldquo; ist die <i>allgemeine</i> Form: die Vorlagen-Dimension = Anzahl der Antwortklassen (2 Klassen &#8594; 1 Schwelle, P = 113 Klassen &#8594; P Korrelatoren + argmax). A fixiert den Operator und variiert die <i>Basis</i> (Dualität); B fixiert den Vorlagen-Raum und variiert seine <i>Dimension</i> (#Klassen). Fused: <b>Readout = Matched-Filter-Projektion auf eine Vorlagen-Bank; Bank-Dimension = #Antwortklassen</b> &mdash; 1 (Schwelle), 1 (suffiziente Zustands-Richtung) oder P (argmax) sind dieselbe Operation an verschiedenen Stellen dieser Achse. &bdquo;Eine Projektion&ldquo; (A) und &bdquo;klassengroße Bank&ldquo; (B) widersprechen sich nicht: A beschreibt den Kalkül-Operator, B dessen Auslegung an der Klassenzahl.</div>
+
+    <div class="fused"><b>R2 zu W2 &mdash; dünner Kern, weiche Hülle: Notwendigkeit <i>und</i> Kontingenz auf zwei Ebenen.</b>
+    Der Lösungsraum hat einen <b>dünnen funktionalen Kern</b> und eine <b>reiche repräsentative Hülle</b>. Kern (B): die Struktur der Aufgabe (Gruppe/Geometrie) muss in <i>irgendeiner</i> Form kodiert sein, um gelöst zu werden &mdash; das Netz muss den Zustand/die Phase/das Bit-Muster tragen; daher ist eine gute Lösung (fast) erzwungen, &bdquo;nur dieser Ort&ldquo;. Hülle (A): <i>wie sauber</i> und <i>wo</i> die Struktur isoliert liegt, ist architekturabhängig (Rashomon) &mdash; RNNs tragen dieselbe Struktur, aber vermischt, bei gleichem Loss. Fused: <b>die Struktur muss vorhanden sein (Notwendigkeit, dünner Kern); ihre saubere, lineares lesbare, isolierte Form ist eine Architekturentscheidung (Rashomon, weiche Hülle)</b> &mdash; der Transformer wählt die sauberste Ecke desselben dünnen Kerns. &bdquo;Notwendig&ldquo; (B) und &bdquo;kontingent&ldquo; (A) gelten also beide, nur auf verschiedenen Ebenen (Struktur vs. Repräsentation).</div>
+
+    <div class="fused"><b>R3 zu W3 &mdash; A ist der abelsche Spezialfall von B.</b>
+    Die beiden Papiere arbeiten auf verschiedenen Abstraktionsstufen und sind kompatibel. Ist die geteilte Struktur eine <b>abelsche Gruppe</b>, so ist der Koordinatenwechsel eine <b>echte Fourier-Dualität</b> (Position &#8596; Phase), und die beiden Netze sind tatsächlich <i>dieselbe</i> Struktur in zwei Basen &mdash; das ist A. Sind die Strukturen <b>verschieden</b> (Gruppenoperation vs. geometrische Trennung), gibt es keine Literal-Dualität mehr, aber B&rsquo;s allgemeines Rezept gilt noch: der Koordinatenwechsel ist <i>irgend</i> die Abbildung, die die Antwort lokal lesbar macht. Fused: <b>B&rsquo;s Schema &bdquo;Koordinatenwechsel &#8594; Code-Transport &#8594; lokale Probe&ldquo; ist der allgemeine Rahmen; A&rsquo;s Fourier-Dualität ist der eleganteste (lineare/Gruppen-)Fall davon</b>. A ist ein Spezialfall von B &mdash; nicht ein Widerspruch, sondern eine Instanzierung.</div>
+
+    <div class="fused"><b>Kernsynthese.</b>
+    Ein Netz rechnet, indem es (1) eine <b>aufgabenangepasste Basis</b> wählt &mdash; Zustands-/Positions-Basis (dynamisch), Fourier-/Phasen-Basis (algebraisch), Falz-Basis (geometrisch trennbar) &mdash;, (2) den daraus folgenden <b>Code</b> (suffiziente Statistik, Phasenvektor, Bit-Muster) durch die Layer <b>transportiert</b> und (3) die Antwort per <b>lokaler Ausrichtungsprobe</b> liest: einer Matched-Filter-Projektion mit Vorlagen-Anzahl = #Antwortklassen. Basis- und Code-Typ sind vom Aufgabentyp erzwungen; die <b>saubere, lineares lesbare Form</b> der Repräsentation wird aus einem <b>dünn-kernigen, Rashomon-hülligen</b> Lösungsraum gewählt. &bdquo;Durchschnitt&ldquo;, &bdquo;Interferenz&ldquo;, &bdquo;Falten-dann-Schwelle&ldquo; und &bdquo;Phasen-Ausrichtung&ldquo; sind <b>dieselbe</b> Operation &mdash; Korrelation gegen Vorlagen &mdash; in der eigenen Basis der Aufgabe geschrieben.</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Das gemeinsame Schema &mdash; drei Basen, eine Probe</h3>
+    <p>Beide R1-Papiere zerlegen &bdquo;Berechnen&ldquo; in dieselben drei Stufen; sie unterscheiden sich nur im <i>Typ</i> der Basis und des Codes:</p>
+    <table>
+      <thead><tr><th></th><th>Positions-/Zustands-Basis (A &middot; Grid-Walker)</th><th>Fourier-/Phasen-Basis (A+B &middot; modulare Addition)</th><th>Falz-Basis (B &middot; Disk/Ring)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Aufgabe</b></td>
+          <td>Random-Walker auf 2D-Gitter, von (0,0) in exakt T Schritten zum Ziel; Varianten L (Looper, Ziel=Start), D (zwei Ziele), O (Hindernisse)</td>
+          <td><code>a + b mod P</code>, P=113 (Prim), One-Hot-Input, 113 Ausgangslogits</td>
+          <td>Disk (r&#8804;0.45) vs. Ring (0.55&#8804;r&#8804;1), 2D-Punkte, 1 binäre Klasse &mdash; keine Gerade trennt</td></tr>
+        <tr><td><b>Koordinatenwechsel</b> (Embedding)</td>
+          <td>Attention-Durchschnitt: <code>&#10216;code&#10217; = (1/t)&#931;d&#7522; = A&#183;(x_t/t)</code>; diagonale Koordinaten <code>u=x+y, v=x-y</code> &#8594; effektives Feld <code>q=(q_u,q_v,q_uv)&#8712;&#8477;&#179;</code></td>
+          <td><code>n &#8614; e^{i&#969;&#8342;n}</code> für K=5 Key-Frequenzen k&#8712;{14,35,41,42,52}, &#969;&#8342;=2&#960;k/113; Embedding-Matrix 113&#8594;128 Dim, dünn im Fourier-Basis</td>
+          <td><code>h(x)=&#931;&#7522; ReLU(w&#7522;&#183;x+b&#7522;)</code> nach &#8477;&#179;; w&#7522;=(0,1),(&#8722;0.87,&#8722;0.5),(0.87,&#8722;0.5), Normalen im 120&#176;-Winkel, b&#7522;=0</td></tr>
+        <tr><td><b>Transport</b> (Layer)</td>
+          <td>uniforme Attention + additive Value-Writes; zweistufig: nach Attention &#8776; Zustand, nach MLP &#8594; Spezialfeld <code>q_t</code></td>
+          <td>Attention = Grad-2-Produkte der Embeddings (cos&#183;cos, sin&#183;sin); MLP kombiniert per Additionstheorem zu <code>(cos &#969;&#8342;(a+b), sin &#969;&#8342;(a+b))</code></td>
+          <td>ReLU-Falz (stückweise linear); jede Faltlinie <code>w&#7522;&#183;x+b&#7522;=0</code> flippt ein Bit; 2. Layer = echte Space-Folds</td></tr>
+        <tr><td><b>Code-Typ</b></td>
+          <td><b>kontinuierlicher Zustand</b> <code>[x_t/t, y_t/t, log t]</code> &mdash; suffizient für die Zukunft, über Varianten geteilt</td>
+          <td><b>kontinuierlicher Phasenvektor</b> <code>&#966;(c)=(&#969;&#8342;(a+b&#8722;c))&#8342; &#8712; (S&#185;)&#185;</code></td>
+          <td><b>diskretes</b> Aktivierungsmuster <code>&#960;(x)=(sign(w&#8321;&#183;x+b&#8321;),sign(w&#8322;&#183;x+b&#8322;),sign(w&#8323;&#183;x+b&#8323;))&#8712;{0,1}&#179;</code> &mdash; Walk auf dem Hamming-Würfel</td></tr>
+        <tr><td><b>Probe</b> (Readout)</td>
+          <td>lineares Probe / CKA &mdash; eine Richtung; Cross-Variante-CKA 0.95&ndash;0.97 nach Attention</td>
+          <td><code>logit(c)=&#931;&#8342; &#945;&#8342; cos(&#969;&#8342;(a+b&#8722;c))</code>, Antwort = argmax; reale &#945;&#8342;&#8776;44.1, 42.2, 44.8, 66.6, 63.0</td>
+          <td><code>&#375; = r&#183;h + b&#8322;</code> mit r=(1,1,1); Schwelle b&#8322;&#8776;&#8722;0.46 (Mittelpunkt der Klassen-Höhen)</td></tr>
+        <tr><td><b>Beweis, dass es stimmt</b></td>
+          <td>Bayes-optimaler Loss; RNNs (LSTM/GRU) gleicher Loss ohne saubere Trennung (Rashomon)</td>
+          <td>FVE &#8776; 95 %; Projektion auf den Algorithmus verbessert Test-Loss 2.4&#183;10&#8315;&#8308; &#8594; 4.7&#183;10&#8315;&#8309; (Nanda et al., ICLR 2023); Peak &#8776; 260.7</td>
+          <td>100 % Trennung; Falthöhen Disk &#8804; &#8776;0.45 &lt; Schwelle &lt; &#8776;0.48 &#8804; Ring; &#967;=1&#8722;r&#8321;/r&#8322;, &#934;&#770;, Regionen-Zählung (Lewandowski et al. 2025, arXiv:2502.09954; Keup &amp; Helias 2022)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Stufe 1 &mdash; Der Koordinatenwechsel (drei Gesichter)</h3>
+    <p><b>Positions-/Zustands-Basis (A &middot; Grid-Walker).</b> Die Next-Step-Verteilung hat eine geschlossene Form über Wegzählung H(&tau;,z) (Anzahl gültiger Pfade der Länge &tau; von z zum Ziel):</p>
+    <div class="formula" id="f-h">Pr(&Delta;|x,&tau;) = H(&tau;&#8722;1, x+&Delta;) / H(&tau;, x)   (Doob-h-Transform / Bayes)</div>
+    <p>Sackgassen erhalten automatisch Wahrscheinlichkeit 0. In diagonalen Koordinaten zerfällt der Log der Wahrscheinlichkeit in ein &bdquo;effektives Feld&ldquo; q=(q_u,q_v,q_uv)&#8712;&#8477;&#179;:</p>
+    <div class="formula" id="f-q">log Pr(&Delta;|s_t) &#8722; l&#772; = &#8722;q_u&#183;&Delta;u &#8722; q_v&#183;&Delta;v &#8722; q_uv&#183;&Delta;u&#183;&Delta;v</div>
+    <p>Bei L ist q_uv=0 (2D-Feld), bei D verrät q_uv&#8800;0 die Bayes&rsquo;sche Unsicherheit über das Ziel, bei O leben alle drei Komponenten. Der erste Attention-Head tut mit <b>einer Runde uniformer Mittelung</b> exakt x_t/t &mdash; &bdquo;ein Koordinatensystem der Welt&ldquo;:</p>
+    <div class="formula" id="f-state">&#10216;code&#10217; = (1/t)&#183;&#931;&#7522; d&#7522; = A&#183;(x_t/t)</div>
+    <p>Die zweistufige Pipeline trennt dann: <b>nach Attention</b> &#8776; [x_t/t, y_t/t, log t] (universell, CKA 0.95&ndash;0.97), <b>nach MLP&#8594;LN-final</b> &#8776; q_t (spezialisiert, Cross-Variante-CKA fällt scharf ab, z.&nbsp;B. ~0.43).</p>
+
+    <p><b>Fourier-/Phasen-Basis (A &amp; B, geteilt).</b> Jede Zahl n wird bei einer Frequenz k als Punkt auf dem Einheitskreis kodiert:</p>
+    <div class="formula" id="f-enc">n &#8614; (cos(2&#960;kn/P), sin(2&#960;kn/P)) = e^{i&#183;2&#960;kn/P}</div>
+    <p>Der Clou: zwei Wellenwerte zu multiplizieren <b>addiert die Winkel</b> (Winkelsummenformel) &mdash; Addition wird zur Rotation:</p>
+    <div class="formula" id="f-add">e^{i&#183;2&#960;ka/P} &#183; e^{i&#183;2&#960;kb/P} = e^{i&#183;2&#960;k(a+b)/P}</div>
+    <p><b>Falz-Basis (B &middot; Disk/Ring).</b> Die 2D-Ebene wird über drei ReLU-Faltlinien in den 3D-Raum gefaltet; die Disk bleibt &bdquo;flacher&ldquo; (Höhe &#8804;&#8776;0.45) als der Ring (&#8805;&#8776;0.48), sodass danach <i>eine</i> Ebene nach Höhe trennt. Jede Faltlinie flippt ein Bit des diskreten Codes.</p>
+
+    <h3>Stufe 2 &mdash; Der transportierte Code (zwei Kontinua, ein Diskretum)</h3>
+    <p>Der Code ist immer die <b>Kodierung der Aufgaben-Struktur</b> in der gewählten Basis &mdash; einmal als Zustand (A), einmal als Phase (A/B), einmal als Bit-Muster (B). Bei der Phasen-Basis ist die Antwort die Stelle, an der <i>alle</i> Komponenten gleichzeitig 0 (mod 2&#960;) sind &mdash; dort ist jeder Cosinus 1 und die Koeffizienten addieren sich. <b>Eine</b> Frequenz reicht nicht: bei c*+8 gilt cos(2&#960;&#183;14/113&#183;8)&#8776;0.998 (gefährliches falsches Maximum), aber cos(2&#960;&#183;35/113&#183;8)&#8776;&#8722;0.990, Summe &#8776;0.008 &mdash; die zweite Frequenz zerstört den falschen Peak. Mit K Frequenzen verschwinden die falschen Peaks durch <b>destruktive Interferenz</b>; am richtigen Ort bleibt die <b>konstruktive</b> (Peak &#8776; 260.7).</p>
+    <p>Bei der Falz-Basis ist der Code das Bit-Muster &#960;(x)&#8712;{0,1}&#179;; eine gerade Sehne &#915; durch den Eingaberaum kreuzt Faltlinien und flippt an jeder Kreuzung ein Bit &mdash; ein <b>Walk auf dem Hamming-Würfel</b> (8 Ecken). Metriken: r&#8322; = Gesamt-Bit-Flips, r&#8321; = größte Hamming-Distanz vom Startmuster, Faltgrad</p>
+    <div class="formula" id="f-psi">&#967; = 1 &#8722; r&#8321;/r&#8322;</div>
+    <p>Lemma 1 (Lewandowski et al. 2025): mit <i>einem</i> Hidden-Layer ist das Bild einer Geraden konvex, also &#967;&#8776;0; ein &bdquo;echter&ldquo; Space-Fold braucht den <b>zweiten</b> Layer. &#934;&#770; fasst über alle zwischenklassigen Pfaden zusammen; die Anzahl der Linear-Regionen (Montúfar et al.) misst die Expressivität.</p>
+
+    <h3>Stufe 3 &mdash; Die Probe als Matched-Filter-Projektion</h3>
+    <p>Beide Ausleseverfahren sind <b>Projektionen (Innenprodukte) auf feste Vorlagen</b>. B&rsquo;s Score ist das Realteil eines Innenprodukts zwischen Summen-Phase und Kandidaten-Phase:</p>
+    <div class="formula" id="f-proj">S(c) = Re[ e^{i&#183;2&#960;k(a+b)/P} &#183; e^(&#8722;i&#183;2&#960;kc/P) ]  =  Projektion auf Kandidat c</div>
+    <p>A&rsquo;s <code>&#10216;code&#10217;=(1/t)&#931;d&#7522;</code> ist dieselbe Struktur (Projektion der Sequenz auf die Codier-Richtung); B&rsquo;s Disk/Ring-Readout <code>&#375;=r&#183;h+b&#8322;</code> ist derselbe Operator mit <i>einem</i> Template. Das Readout der modularen Addition ist eine <b>Fourier-Reihe in der Kandidaten-Variablen c</b>:</p>
+    <div class="formula" id="f-logit">logit(c) = &#931;&#8342; &#945;&#8342; cos( &#969;&#8342;(a+b&#8722;c) )</div>
+    <p>Der Transport der modularen Addition sind exakt die <b>Additionstheoreme</b> &mdash; die Grad-2-Polynome, die Attention aus den Embeddings bilden kann:</p>
+    <div class="formula" id="f-addthm">cos(&#945;+&#946;)=cos&#945;&#183;cos&#946; &#8722; sin&#945;&#183;sin&#946; ;   sin(&#945;+&#946;)=sin&#945;&#183;cos&#946; + cos&#945;&#183;sin&#946;</div>
+    <p>Der Transport der Falz-Basis ist der stückweise lineare Falz mit linearer Probe:</p>
+    <div class="formula" id="f-fold">h(x)=&#931;&#7522; ReLU(w&#7522;&#183;x+b&#7522;) ,   &#375; = r&#183;h(x)+b&#8322; ,   r=(1,1,1)</div>
+    <p>Beide sind Koordinatenwechsel, nach denen die Antwort eine <b>lokale</b> Eigenschaft wird: bei der Zustands-Basis ein linear lesbarer Zustand, bei der Phasen-Basis das Maximum einer glatten Funktion, bei der Falz-Basis die Seite einer Ebene. <b>Die ganze Arbeit des Netzes besteht darin, das globale Problem lokal zu machen</b> &mdash; und die Probe ist überall dieselbe Matched-Filter-Projektion.</p>
+
+    <h3>Ein konkretes Beispiel in allen Basen (P=7, a=3, b=5)</h3>
+    <table>
+      <thead><tr><th>Basis</th><th>Ablauf</th><th>Ergebnis</th></tr></thead>
+      <tbody>
+        <tr><td>Positions-/Zustands-Basis (A)</td>
+          <td>Start 3; b=5 Einheiten-Schritte: 3&#8594;4&#8594;5&#8594;6&#8594;0&#8594;1. Netto-Verschiebung = 1&#8722;3 = &#8722;2 &#8773; 5 (mod 7); Ø pro Schritt = 1.</td>
+          <td>landet auf <b>1</b></td></tr>
+        <tr><td>Phasen-Basis (A &amp; B)</td>
+          <td>S(c)=&#931;&#8342; cos(2&#960;k(8&#8722;c)/7). Bei c=1: cos(2&#960;k)=1 für <i>jedes</i> k &#8594; S=K (Maximum). Bei c&#8800;1: die Kosinuse kürzen sich, S&lt;K.</td>
+          <td>Peak bei <b>1</b></td></tr>
+      </tbody>
+    </table>
+    <div class="fused"><b>Alle Basen liefern denselben Wert: 3 + 5 &#8773; 1 (mod 7).</b> Der Punkt, auf den der Walk (Zustand) landet, ist exakt der Punkt, auf den die Phasensumme (Interferenz) zeigt &mdash; und exakt der Balken, dessen Matched-Filter-Score maximal wird. Dieselbe Antwort, drei Basen, eine Projektion.</div>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung: Koordinatenwechsel &#8594; Code &#8594; Probe</h2>
+    <p>Ein gemeinsamer Kreis trägt beide kontinuierlichen Basen gleichzeitig. <b>Links</b> die <b>Positions-/Zustands-Basis</b> (A &middot; Grid-Walker): der rote Punkt ist a, der gestrichelte Bogen b Einheiten-Schritte, die goldene Sehne die <i>Netto-Verschiebung</i> &mdash; A&rsquo;s &bdquo;Durchschnitt der Codes&ldquo; als Zustand. <b>Rechts</b> die <b>Phasen-Basis</b> (A &amp; B &middot; Fourier) bei der Grundfrequenz k=1: der rote Phasor zeigt a, der grüne b, der goldene die Summe a+b &mdash; weil k=1 die Grundwelle ist, fallen Position und Phase exakt zusammen. <b>Unten</b> die gemeinsame <b>Probe</b>: die Matched-Filter-Kurve S(c)=&#931;&#8342; cos(2&#960;k(a+b&#8722;c)/P) über alle Kandidaten c; der goldene Balken (Maximum) steht auf a+b mod P. Bewege <b>K</b>: mehr Frequenzen = schärfere konstruktive Interferenz am Peak, flachere falsche Positionen (destruktive Interferenz). Der Basis-Umschalter betont eine der beiden Koordinatenwechsel.</p>
+
+    <div class="controls">
+      <label>P (Uhr): <input type="range" id="vzP" min="3" max="15" value="7"> <span class="ctl-val" id="vzPVal">7</span></label>
+      <label>a: <input type="range" id="vzA" min="0" max="14" value="3"> <span class="ctl-val" id="vzAVal">3</span></label>
+      <label>b: <input type="range" id="vzB" min="0" max="14" value="5"> <span class="ctl-val" id="vzBVal">5</span></label>
+      <label>Frequenzen K: <input type="range" id="vzK" min="1" max="8" value="3"> <span class="ctl-val" id="vzKVal">3</span></label>
+      <label>Basis:
+        <select id="vzMode">
+          <option value="both">Beide (duale Basen)</option>
+          <option value="pos">nur Zustand (Positions-Basis)</option>
+          <option value="ph">nur Interferenz (Phasen-Basis)</option>
+        </select>
+      </label>
+    </div>
+
+    <canvas id="fusedCanvas"></canvas>
+    <div class="readout" id="vzReadout"></div>
+    <p class="anno">Alle Werte werden live aus a, b, P, K berechnet &mdash; keine Netzwerklade, keine externen Daten (die realen Key-Frequenzen des trainierten Netzes sind k&#8712;{14,35,41,42,52} bei P=113; hier wird für den kleinen Kreis k=1..K verwendet). Farb-/Hintergrundwerte stammen aus den CSS-Theme-Variablen (<code>:root</code> / <code>html.dark</code>).</p>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><a href="../r1-044.html">r1-044.html</a> &mdash; &bdquo;Zwei Basen, eine Projektion: Wie Netze Struktur &rsquo;sehen&rsquo; &mdash; einmal als Position, einmal als Phase&ldquo; (R1-Fusion aus grid_walker.html &#10005; fourier_addition.html): der Random-Walker, Doob-h-Transform, effektives Feld q, der erste Attention-Head als Berechner von x_t/t, zwei-Stufen-Pipeline, lineare Probes &amp; CKA, RNN-vs-Transformer (Rashomon); Fourier-Addition als Phasen-Basis &mdash; und die Brücke &bdquo;dieselbe abelsche Gruppe in dualen Basen, Readout = Projektion&ldquo;.</div></div>
+    <div class="prov"><span class="k b">B</span><div><a href="../r1-059.html">r1-059.html</a> &mdash; &bdquo;Falten &amp; Phasen &mdash; wenn Netze Koordinaten wechseln&ldquo; (R1-Fusion aus mod.html &#10005; egg.html): das gemeinsame Schema &bdquo;Embedding = Koordinatenwechsel, Layer = Code-Transport, Readout = lokale Ausrichtungsprobe&ldquo;; modulare Addition mod 113 (kontinuierlicher Phasen-Code, FVE &#8776; 95 %, Nanda et al. ICLR 2023) und Disk/Ring (diskretes Aktivierungs-Muster, Space-Folding-Metriken &#967;, &#934;&#770;, Lewandowski et al. 2025 / Keup &amp; Helias 2022); Self-invention vs. enforced geometry.</div></div>
+  </section>
+
+  <p class="foot">Fusion r2-015 &middot; Round 2, Knockout-Synthese. Beide Quellen sind R1-Fusionspapiere und damit bereits Erklär-Synthesen (simulierte/übernommene Werte, keine neuen Experimente); diese Runde übernimmt ihre Stellungen und Zahlen, erfindet keine. Die Brücke dieser Runde: A&rsquo;s &bdquo;dieselbe abelsche Gruppe in dualen Basen + Projektion&ldquo; ist der abelsche Spezialfall von B&rsquo;s &bdquo;Koordinatenwechsel &#8594; Code-Transport &#8594; lokale (Matched-Filter-)Probe&ldquo;.</p>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+
+  function g(id){ return document.getElementById(id); }
+
+  /* ---------- math (Temml, guarded; plain fallback stays if it fails) ---------- */
+  function renderMath(){
+    if(!window.temml) return;
+    var pairs=[
+      ["f-h","\\Pr(\\Delta\\mid x,\\tau)=\\dfrac{H(\\tau-1,\\,x+\\Delta)}{H(\\tau,\\,x)}\\;\\;\\text{(Doob-h-Transform / Bayes)}"],
+      ["f-q","\\log\\Pr(\\Delta\\mid s_t)-\\bar\\ell \\;=\\; -q_u\\,\\Delta u \\;-\\; q_v\\,\\Delta v \\;-\\; q_{uv}\\,\\Delta u\\,\\Delta v"],
+      ["f-state","\\langle\\text{code}\\rangle=\\tfrac{1}{t}\\sum_{i=1}^{t} d_i \\;=\\; A\\,\\tfrac{x_t}{t}\\;\\;\\text{(Zustand = Durchschnitt)}"],
+      ["f-enc","n\\;\\longmapsto\\;\\big(\\cos\\tfrac{2\\pi k n}{P},\\;\\sin\\tfrac{2\\pi k n}{P}\\big)=e^{\\,i\\,2\\pi k n/P}"],
+      ["f-add","e^{\\,i2\\pi k a/P}\\;\\cdot\\;e^{\\,i2\\pi k b/P} \\;=\\; e^{\\,i2\\pi k(a+b)/P}\\;\\;\\text{(Addition}\\to\\text{Rotation)}"],
+      ["f-psi","\\chi \\;=\\; 1-\\tfrac{r_1}{r_2}\\,,\\qquad r_2=\\text{Gesamt-Bit-Flips},\\;\\; r_1=\\max_i\\,d_H(\\pi_1,\\pi_i)"],
+      ["f-proj","S(c)=\\operatorname{Re}\\Big[\\,e^{\\,i2\\pi k(a+b)/P}\\,e^{-\\,i2\\pi k c/P}\\,\\Big]\\;\\;\\text{= Projektion auf Kandidat }c"],
+      ["f-logit","\\operatorname{logit}(c)=\\sum_{k}\\alpha_k\\,\\cos\\!\\big(\\omega_k(a+b-c)\\big)"],
+      ["f-addthm","\\cos(\\alpha+\\beta)=\\cos\\alpha\\cos\\beta-\\sin\\alpha\\sin\\beta\\qquad\\sin(\\alpha+\\beta)=\\sin\\alpha\\cos\\beta+\\cos\\alpha\\sin\\beta"],
+      ["f-fold","h(x)=\\sum_{i=1}^{3}\\mathrm{ReLU}(w_i\\cdot x+b_i)\\,,\\qquad \\hat{y}=r\\cdot h(x)+b_2\\,,\\qquad r=(1,1,1)"]
+    ];
+    for(var i=0;i<pairs.length;i++){
+      var el=g(pairs[i][0]);
+      if(el){ try{ temml.render(pairs[i][1], el); }catch(e){} }
+    }
+  }
+
+  /* ---------- theme-aware colors ---------- */
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function T(){
+    return {
+      card:cssVar("--card"), fg:cssVar("--fg"), muted:cssVar("--muted"), grid:cssVar("--grid"),
+      accent:cssVar("--accent"), red:cssVar("--red"), green:cssVar("--green"), gold:cssVar("--gold")
+    };
+  }
+  function mod(n,m){ return ((n % m) + m) % m; }
+  function clampInt(v,lo,hi){ v=Math.round(v); if(v<lo)v=lo; if(v>hi)v=hi; return v; }
+  function ang(i,P){ return -Math.PI/2 + 2*Math.PI*i/P; }
+
+  function arrowhead(ctx,x1,y1,angR,color,s){
+    ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-s*Math.cos(angR-0.45), y1-s*Math.sin(angR-0.45));
+    ctx.lineTo(x1-s*Math.cos(angR+0.45), y1-s*Math.sin(angR+0.45));
+    ctx.closePath(); ctx.fill();
+  }
+  function drawArrow(ctx,x0,y0,x1,y1,color,w){
+    ctx.strokeStyle=color; ctx.lineWidth=w; ctx.beginPath();
+    ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    arrowhead(ctx,x1,y1,Math.atan2(y1-y0,x1-x0),color,Math.max(8,2.2*w));
+  }
+
+  var vc=g("fusedCanvas");
+  function draw(){
+    if(!vc) return;
+    var rect=vc.getBoundingClientRect(); if(!rect.width) return;
+    var dpr=window.devicePixelRatio||1, W=rect.width, LH=rect.height;
+    vc.width=Math.round(W*dpr); vc.height=Math.round(LH*dpr);
+    var ctx=vc.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,LH);
+    var t=T();
+
+    var P=clampInt(+g("vzP").value,3,15);
+    var K=clampInt(+g("vzK").value,1,8);
+    var a=clampInt(+g("vzA").value,0,P-1);
+    var b=clampInt(+g("vzB").value,0,P-1);
+    var mode=g("vzMode").value;
+    var res=mod(a+b,P);
+
+    g("vzPVal").textContent=P;
+    g("vzAVal").textContent=a;
+    g("vzBVal").textContent=b;
+    g("vzKVal").textContent=K;
+
+    var dimPos=(mode==="ph")?0.30:1;
+    var dimPh =(mode==="pos")?0.30:1;
+
+    var cy=150, R=Math.min(112, W*0.20, LH*0.23);
+    var cx1=W*0.25, cx2=W*0.72;
+    var i,angR;
+
+    /* ============ LEFT: Positions-/Zustands-Basis (A) ============ */
+    ctx.globalAlpha=dimPos;
+    ctx.fillStyle=t.fg; ctx.font="600 14px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText("Positions-/Zustands-Basis (A)", cx1, 26);
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx1,cy,R,0,2*Math.PI); ctx.stroke();
+    for(i=0;i<P;i++){
+      angR=ang(i,P);
+      var tx=cx1+R*Math.cos(angR), ty=cy+R*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.gold:(i===a)?t.red:t.muted;
+      ctx.beginPath(); ctx.arc(tx,ty,(i===res||i===a)?6:3,0,2*Math.PI); ctx.fill();
+      var lx=cx1+(R+16)*Math.cos(angR), ly=cy+(R+16)*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.gold:(i===a)?t.red:t.muted;
+      ctx.font=(i===res||i===a)?"bold 13px ui-monospace,monospace":"11px ui-monospace,monospace";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(i,lx,ly);
+    }
+    var angA=ang(a,P), angE=angA+2*Math.PI*b/P;
+    ctx.strokeStyle=t.accent; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.arc(cx1,cy,R,angA,angE,false); ctx.stroke(); ctx.setLineDash([]);
+    var spx=cx1+R*Math.cos(angA), spy=cy+R*Math.sin(angA);
+    var epx=cx1+R*Math.cos(angE), epy=cy+R*Math.sin(angE);
+    drawArrow(ctx,spx,spy,epx,epy,t.accent,2.5);
+    ctx.fillStyle=t.red; ctx.beginPath(); ctx.arc(spx,spy,7,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle=t.gold; ctx.beginPath(); ctx.arc(epx,epy,8,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle=t.fg; ctx.font="bold 12px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText("a="+a, spx, spy-16);
+    ctx.fillStyle=t.gold; ctx.fillText("Zustand c*="+res, epx, epy-18);
+    ctx.globalAlpha=1;
+
+    /* ============ RIGHT: Phasen-Basis (A & B, k=1) ============ */
+    ctx.globalAlpha=dimPh;
+    ctx.fillStyle=t.fg; ctx.font="600 14px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText("Phasen-Basis (k=1): Addition = Rotation", cx2, 26);
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx2,cy,R,0,2*Math.PI); ctx.stroke();
+    for(i=0;i<P;i++){
+      angR=ang(i,P);
+      var px=cx2+R*Math.cos(angR), py=cy+R*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.gold:t.muted;
+      ctx.beginPath(); ctx.arc(px,py,(i===res)?6:2.5,0,2*Math.PI); ctx.fill();
+    }
+    var angB=ang(b,P);
+    var gbx=cx2+R*Math.cos(angB), gby=cy+R*Math.sin(angB);
+    drawArrow(ctx,cx2,cy,gbx,gby,t.green,2);
+    var spx2=cx2+R*Math.cos(angA), spy2=cy+R*Math.sin(angA);
+    drawArrow(ctx,cx2,cy,spx2,spy2,t.red,2);
+    var epx2=cx2+R*Math.cos(angE), epy2=cy+R*Math.sin(angE);
+    drawArrow(ctx,cx2,cy,epx2,epy2,t.gold,3);
+    ctx.fillStyle=t.gold; ctx.beginPath(); ctx.arc(epx2,epy2,8,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle=t.fg; ctx.font="12px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillStyle=t.red;   ctx.fillText("a", spx2, spy2-14);
+    ctx.fillStyle=t.green; ctx.fillText("b", gbx, gby+ (gby>cy?16:-10));
+    ctx.fillStyle=t.gold;  ctx.fillText("a+b", epx2, epy2-14);
+    ctx.globalAlpha=1;
+
+    /* ============ BOTTOM: Matched-Filter-Readout (beide) ============ */
+    var bx0=W*0.08, bx1=W-14, by0=LH*0.50, by1=LH*0.88;
+    var bw=(bx1-bx0)/P, zeroY=(by0+by1)/2, half=(by1-by0)/2-10;
+
+    ctx.fillStyle=t.fg; ctx.font="600 14px system-ui,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+    ctx.fillText("Probe (Matched-Filter):  S(c) = Σₖ₌₁.."+K+" cos(2πk(a+b−c)/P)", bx0, by0-14);
+
+    var scores=[], c, k, s;
+    for(c=0;c<P;c++){ s=0; for(k=1;k<=K;k++){ s+=Math.cos(2*Math.PI*k*mod(a+b-c,P)/P); } scores.push(s); }
+    var second=-1e9;
+    for(c=0;c<P;c++){ if(c!==res && scores[c]>second) second=scores[c]; }
+
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(bx0,zeroY); ctx.lineTo(bx1,zeroY); ctx.stroke();
+    for(c=0;c<P;c++){
+      var barH=(scores[c]/K)*half;
+      var x=bx0+c*bw, y=zeroY-barH;
+      var col=(c===res)?t.gold:(scores[c]>=0?t.accent:t.red);
+      ctx.fillStyle=col;
+      ctx.fillRect(x+1, Math.min(y,zeroY), Math.max(1,bw-2), Math.max(1,Math.abs(barH)));
+    }
+    ctx.fillStyle=t.gold; ctx.font="bold 11px ui-monospace,monospace"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    var gx=bx0+res*bw+bw/2;
+    ctx.fillText("c="+res+" ✓", gx, zeroY-half-6);
+
+    ctx.fillStyle=t.muted; ctx.font="11px system-ui,sans-serif"; ctx.textAlign="center";
+    ctx.fillText("mögliche Antwort c  (0 … "+(P-1)+")", (bx0+bx1)/2, by1+18);
+
+    var net=mod(res-a,P);
+    g("vzReadout").innerHTML="Positions-/Zustands-Basis (A):  b = "+b+" Einheiten-Schritte von a = "+a+
+      "  →  Netto-Verschiebung "+net+"  →  Zustand landet auf <b>"+res+"</b>.<br>"+
+      "Phasen-Basis (A &amp; B):  S(c) = Σₖ₌₁.."+K+" cos(2πk·("+(a+b)+"−c)/"+P+")  →  Peak bei c = <b>"+res+"</b>" +
+      "  (Peak = "+K+", Margin zu 2. bestem = "+(K-second).toFixed(2)+"). <br>"+
+      "→ Dieselbe Probe, zwei Basen, ein Wert: <b>"+a+" + "+b+" ≡ "+res+" (mod "+P+")</b>.";
+  }
+
+  function wire(){
+    var ids=["vzP","vzA","vzB","vzK"];
+    ids.forEach(function(id){
+      var el=g(id);
+      if(el) el.addEventListener("input", function(){
+        if(id==="vzP"){
+          var P=clampInt(+g("vzP").value,3,15);
+          var as=g("vzA"), bs=g("vzB");
+          if(as){as.max=P-1; if(+as.value>P-1)as.value=P-1;}
+          if(bs){bs.max=P-1; if(+bs.value>P-1)bs.value=P-1;}
+        }
+        draw();
+      });
+    });
+    var ms=g("vzMode");
+    if(ms) ms.addEventListener("change", draw);
+    var btn=g("themeToggle");
+    if(btn) btn.addEventListener("click",function(){
+      document.documentElement.classList.toggle("dark");
+      draw();
+    });
+    try{
+      var mo=new MutationObserver(function(){ draw(); });
+      mo.observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
+    }catch(e){}
+    window.addEventListener("resize",function(){ draw(); });
+  }
+
+  function init(){
+    renderMath();
+    wire();
+    draw();
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

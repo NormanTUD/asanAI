@@ -1,0 +1,16 @@
+{
+  "no": "032",
+  "a": "combined/r1-065.html",
+  "b": "combined/r1-080.html",
+  "a_title": "Ein singulärer Raum, der sich zusammenzieht (R1: antioed.html ✕ token_manifold_verletzt.html)",
+  "b_title": "Die Falte, die klebt — Kohärenz als exakte Tropisch-Abbildung (R1: origami_2.html ✕ tropische_geometrie_tiefer_neuronaler_netze.html)",
+  "combined_theme": "tropische-falte-singulaeres-mass-repraesentationsgeometrie",
+  "one_line": "Ein tiefes ReLU-/Transformer-Netz ist eine exakt-tropische, kohärente stückweise-lineare KARTe (B), auf deren Falt-/Knicklinien sich ein singuläres, polysemes Token-MASS häuft (A): die Karte ist intern glatt und exakt, das Maß auf ihr ist an Homonymen gebrochen — Kohärenz ist die Exaktheit der Abbildung, die Singularität ist der Fußabdruck der Daten auf den Faltungen.",
+  "contradictions": [
+    "r1-065 (A): die Repräsentations-Geometrie ist gebrochen/singulär — Manifold-Hypothese an GPT-2/Llemma7B/Mistral7B/Pythia6.9B 4/4 verworfen (p bis 3e-8), Cusps/Pinches, lokale Dimension 20…531, teils unzusammenhängend. r1-080 (B): das Netz ist exakt eine tropische rationale Funktion = stetige PWL mit ganzzahligen Steigungen, saubere konvexe Zellen, Kohärenz=100% (Natura non facit saltus). A urteilt 'gebrochen', B 'exakt/kohärent' über dasselbe Gebilde.",
+    "r1-065 (A) liest Tiefe als Degeneration: mehr Schichten → Phase 2 → Rank-Collapse/Totalkollaps, metastabil, 'vor dem Kollaps aufhören'. r1-080 (B) liest Tiefe als Kapazität: mehr Tiefe → #Regionen multipliziert sich exponentiell (Satz 6.3, O(n^{d(L-1)})). Derselbe Mechanismus, entgegengesetzte Valenz.",
+    "r1-065 (A): das Netz ist ein dynamischer Verformungsprozess (kontrahiert + expandiert, Residual-Stream trägt Singularitäten durch die Schichten). r1-080 (B): das Netz ist eine feste, statische algebraische Abbildung R^d→R, in der 'lebendiger Kontakt keinen Platz hat' (explizit modest/deskriptiv). Prozess vs. Stillstand."
+  ],
+  "resolution": "Funktion und Maß trennen: B's Exaktheit gilt für die KARTe als Funktion (stetige tropische rationale PWL-Abbildung, Kohärenz=100%, intern), A's Nonsingularität gilt für das Daten-MASS darauf (Punkte häufen sich an Cusps). Die Falt-/Knicklinien der Karte (B's 𝒯(f), nicht-differenzierbarer Ort) sind exakt die Cusps/Singularitäten (A), an denen sich das Maß konzentriert — die Karte ist glatt, das Maß auf ihr gebrochen. Tiefe ist der Drehregler, der Kapazität (Regionen zählen, B) und Kollaps-Risiko (Konzentration, A) zugleich kauft; das Metastabile ist der Punkt, an dem man stoppt. 'Statische Karte, dynamische Anwendung': die Karte ist fix/geschlossen, die Trajektorie entsteht, wenn man sie schichtweise auf einen Datenstrom anwendet — der fehlende 'lebendige Pfeil' (B) ist genau der Residual-/Inferenz-Datenstrom (A), der einzige Weltkontakt.",
+  "viz": "2D-tropische PWL-Karte (Falt-/Knicklinien + eingefärbte Zellen/Regionen) mit sich auf die Faltlinien häufendem Token-Maß; Tiefe-/Falten-Slider (mehr Linien = mehr Regionen/Kapazität + mehr Cusp-Stellen), Konzentration-Slider (Kollaps-Drehregler), Probe zeigt lokale Dimension ≈1 am Knick (Cusp/Singularität, A) vs ≈2 in einer Region (Manifold) + log-log-Kurve mit 1D/2D-Referenz + Zellen-Schranke m(m+1)/2+1 (B) + Metastabilitäts-Status (A); theme-aware via CSS-Variablen, rein inline, kein Netzwerkabruf."
+}

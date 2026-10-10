@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Morphende Scheibe ✕ Lese-Schreib-Kopf (R2 · 022)</title>
+<style>
+  :root{
+    --bg:#faf8f1; --panel:rgba(255,255,255,.72); --panel-solid:#ffffff;
+    --stroke:rgba(20,30,55,.12);
+    --ink:#1c2333; --dim:#46506a; --faint:#77809a;
+    --acc:#0f9488; --acc2:#7c3aed; --acc3:#b45309; --acc4:#be123c;
+    --good:#15803d; --bad:#b91c1c;
+    --code-bg:rgba(20,30,55,.05);
+  }
+  html.dark{
+    --bg:#060912; --panel:rgba(18,25,42,.72); --panel-solid:#0e1524;
+    --stroke:rgba(255,255,255,.10);
+    --ink:#e8ecf5; --dim:#a7b3cc; --faint:#6b7896;
+    --acc:#5eead4; --acc2:#a78bfa; --acc3:#fbbf24; --acc4:#fb7185;
+    --good:#6ee7a8; --bad:#ff6b6b;
+    --code-bg:rgba(255,255,255,.06);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.72;
+    -webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+  .wrap{max-width:820px;margin:0 auto;padding:52px 22px 60px;}
+  .kicker{color:var(--acc);font-weight:750;letter-spacing:.16em;font-size:.78rem;text-align:center;margin-bottom:14px;}
+  h1{font-size:clamp(2rem,5.2vw,3.1rem);font-weight:800;color:var(--ink);line-height:1.08;letter-spacing:-.025em;margin:0;}
+  h1 .x{color:var(--acc2);}
+  .subtitle{color:var(--acc2);font-size:1.02rem;font-weight:600;margin:12px 0 0;}
+  .lede{color:var(--ink);font-size:1.05rem;margin:20px 0 6px;max-width:72ch;}
+  section{margin:42px 0;padding-top:30px;border-top:1px solid var(--stroke);}
+  h2{font-size:clamp(1.4rem,3.6vw,1.95rem);color:var(--ink);margin:0 0 14px;letter-spacing:-.015em;}
+  h3{font-size:1.12rem;color:var(--ink);margin:22px 0 8px;font-weight:700;}
+  p{margin:0 0 13px;max-width:74ch;}
+  ul{margin:8px 0;padding-left:22px;}
+  li{margin:7px 0;}
+  strong{color:var(--ink);font-weight:650;}
+  em{color:var(--acc);font-style:normal;font-weight:600;}
+  code{font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+    padding:1px 6px;border-radius:5px;color:var(--acc);font-size:.9em;}
+  .eq{display:block;font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+    border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:10px;
+    padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto;font-size:.95rem;}
+  .eq .b{color:var(--acc2)} .eq .a{color:var(--acc3)}
+  .callout{border-left:5px solid var(--acc);background:color-mix(in srgb,var(--acc) 10%,transparent);
+    padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;}
+  .callout.big{border-left-width:7px;font-size:1.04rem;}
+  .citem{margin:18px 0;padding-left:16px;border-left:2px solid var(--stroke);}
+  .citem h3{margin:0 0 6px;font-size:1.04rem;}
+  .citem p{margin:0 0 8px;}
+  .card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:16px 18px;margin:16px 0;}
+  .tag{display:inline-block;font-size:.68rem;font-weight:750;letter-spacing:.05em;text-transform:uppercase;
+    padding:3px 10px;border-radius:99px;margin-right:8px;vertical-align:1px;}
+  .tag.a{color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc) 34%,transparent);}
+  .tag.b{color:var(--acc2);background:color-mix(in srgb,var(--acc2) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc2) 34%,transparent);}
+  .tag.x{color:var(--acc3);background:color-mix(in srgb,var(--acc3) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc3) 34%,transparent);}
+  .viz-stage{position:relative;width:100%;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;
+    background:var(--panel-solid);aspect-ratio:820/580;}
+  .viz-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  #vzLight{cursor:crosshair;touch-action:none;}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin-top:16px;}
+  @media(max-width:620px){.controls{grid-template-columns:1fr;}}
+  .ctrl label{font-size:.83rem;color:var(--dim);display:flex;justify-content:space-between;margin-bottom:5px;}
+  .ctrl .val{font-family:ui-monospace,monospace;color:var(--acc);font-weight:650;}
+  input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer;height:6px;}
+  .btnrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  button{background:var(--panel);color:var(--ink);border:1px solid var(--stroke);padding:8px 15px;
+    border-radius:9px;cursor:pointer;font-weight:650;font-size:.86rem;}
+  button:hover{border-color:var(--acc);}
+  .readouts{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 4px;}
+  .ro{flex:1;min-width:104px;background:var(--panel);border:1px solid var(--stroke);border-radius:10px;padding:10px 12px;}
+  .ro .k{font-size:.64rem;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin-bottom:3px;}
+  .ro .v{font-family:ui-monospace,monospace;font-size:1.18rem;font-weight:700;color:var(--ink);}
+  .ro.hl .v{color:var(--acc4);}
+  .legend{display:flex;flex-wrap:wrap;gap:9px 18px;font-size:.85rem;color:var(--dim);margin-top:12px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .legend i{width:14px;height:14px;border-radius:3px;display:inline-block;}
+  .caption{font-size:.88rem;color:var(--faint);margin-top:12px;max-width:74ch;}
+  .prov{display:flex;flex-direction:column;gap:14px;}
+  .prov a{color:var(--acc);font-weight:650;text-decoration:none;border-bottom:1px dotted var(--acc);}
+  .prov .desc{color:var(--dim);font-size:.92rem;margin:5px 0 0;}
+  .footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--stroke);color:var(--faint);
+    font-size:.85rem;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">FUSION · KNOCKOUT RUNDE 2 · PAAR 022</div>
+  <h1>Die morphende <span class="x">Lese-Schreib-</span>Maschine</h1>
+  <p class="subtitle">Fusion aus: r1-063.html ✕ r1-074.html  (Round 2)</p>
+  <p class="lede">Zwei Round-1-Fusionen beschreiben denselben Transformer auf zwei Skalen.
+  <b>A</b> (r1-063) sieht das Ganze: ein dynamisches System, das den Repräsentationsraum layerweise verformt
+  und dabei eine dünne, niedrigenergetische <em>Nützlichkeitsscheibe</em> formt. <b>B</b> (r1-074) sieht das
+  Lokale: jeder Kopf <em>liest</em> dicht und entropisch (Softmax = entropisches Optimal-Transport) und
+  <em>schrift</em> niedrig-rangig in einen schmalen Kanal. Die Fusion verknüpft beides: <em>das niedrige
+  Schreiben ist der Mechanismus des Warps, das dichte Lesen der Operator, dessen Komposition die Scheibe erzeugt.</em></p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p><b>A</b> <span class="tag a">r1-063</span> behandelt den Transformer als <strong>globales dynamisches
+    System</strong>: Die Layer sind Jacobian-Morphismen (<em>space-morphing</em>), die den Raum verformen;
+    Training formt unter einer gelernten Energie die Datenmannigfaltigkeit zu einer <strong>dünnen,
+    niedrigenergetischen Scheibe</strong>, auf der Nützlichkeit lebt. Temperatur <code>T</code> (Boltzmann,
+    <code>P ∝ e^(−E/T)</code>) steuert, wie weit das Modell um die Scheibe streut; Halluzination = neben die
+    Scheibe fallen, ohne OOD-Alarm.</p>
+    <p><b>B</b> <span class="tag b">r1-074</span> behandelt denselben Transformer als <strong>Stapel lokaler
+    Lese-Schreib-Einheiten</strong>: Jede Attention-Zeile ist ein <em>einseitiges entropisches
+    OT-Problem</em> mit geschlossener Softmax-Lösung (Fisher-Geometrie &rarr; Backprop ist ein
+    Policy-Gradient), und jeder Kopf schreibt ein <em>niedrig-rangiges Ergebnis</em> (Rang-1, 1–3D)
+    in den Residual-Stream (SVD-Kanäle, kausal verifiziert).</p>
+    <p>Die fusionierte Position: <strong>Ein Transformer ist ein Stapel lokaler Lese-Schreib-Operatoren,
+    deren Komposition genau das globale dynamische System ist, das A beschreibt.</strong> Der lokale Kopf
+    <em>liest</em> dicht/entropisch (B) und <em>schrift</em> niedrig-rangig (B). Dieses
+    <strong>niedrig-rangige Schreiben</strong> ist der <em>Mechanismus</em>, mit dem der Raum
+    <strong>verformt</strong> wird (A) — jedes Rang-1-OV-Schreiben steuert eine Rang-1-Störung zum Jacobian
+    der Layer bei. Das <strong>dichte entropische Lesen</strong> ist der <em>Operator</em>, dessen Komposition
+    den <strong>globalen Attraktor</strong> — die Energie-Scheibe (A) — erzeugt. Nützlichkeit heißt: auf der
+    Scheibe bleiben.</p>
+    <p>Zwei Temperaturen, eine Maschine: das <strong>lokale</strong> <code>τ</code> (Lese-Breite, B) und die
+    <strong>globale</strong> <code>T</code> (Boltzmann-Streuung, A) steuern beide, wie viel man aufteilt —
+    einmal pro Kopf (Lesen), einmal pro Modell (Auswahl auf der Scheibe).</p>
+    <div class="callout big">
+      <b>Die eine fused Idee:</b> Dichtes entropisches <em>Lesen</em> × niedrig-rangiges <em>Schreiben</em>
+      (B) ist die lokale Primitive; ihre Komposition <em>morphed</em> den Repräsentationsraum (A) und formt die
+      dünne Nützlichkeitsscheibe (A). <em>Lesen = der Operator, Schreiben = der Warp, Scheibe = der Attraktor.</em>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden beschreiben denselben Transformer auf zwei Skalen, stehen aber an drei Stellen auf
+    <strong>unterschiedlichen Seiten derselben Frage</strong>:</p>
+
+    <div class="citem">
+      <h3>① „Dicht &amp; entropisch“ (B) vs. „dünn &amp; niedrig-dimensional“ (A)</h3>
+      <p><span class="tag b">B · r1-074</span> Das natürliche Vorwärts-Objekt ist eine <strong>dichte, glatte
+      Verteilung</strong> — Softmax gibt <em>jedem</em> Key ein Gewicht &gt; 0 („dichte, glatte Verteilung aus
+      Entropie-Maximierung“). Sparsity ist ein bewusster Tausch des Regularisierers, nicht der Normalfall.</p>
+      <p><span class="tag a">A · r1-063</span> Nützlichkeit lebt auf einer <strong>hauchdünnen, niedrigenergetischen
+      Scheibe</strong> — einer niedrig-dimensionalen Mannigfaltigkeit; „eine einzige Zahl (die Energie)
+      selektiert eine hauchdünne Kurve aus dem gesamten Raum“. Die sinnvollen Antworten sind „ein Staubkorn im
+      Ozean der Ozeane“.</p>
+      <p><em>&rarr; Echte Spannung: B’s Normalfall ist <b>dicht/verschmiert</b>, A’s Fundamental-Objekt ist
+      <b>dünn/niedrig-dimensional</b>.</em></p>
+    </div>
+
+    <div class="citem">
+      <h3>② „Eingebauter Sicherheits-Mechanismus“ (B) vs. „kein OOD-Alarm“ (A)</h3>
+      <p><span class="tag b">B · r1-074</span> Die Fisher-Geometrie ist ein <strong>eingebauter Regulations-
+      Mechanismus</strong>: „Ein sicheres Netz (niedrige Entropie) wird von F gedämpft: manifold-awarees,
+      rationales Lernen, <em>ohne dass es jemand eingebaut hätte</em>.“ Es gibt also eine intrinsische,
+      „geschenkte“ Rationalität.</p>
+      <p><span class="tag a">A · r1-063</span> Das Modell hat <strong>keinen eingebauten OOD-Alarm</strong>: „es
+      glättet weiter.“ Es fällt in ein lokal tiefes falsches Tal und gibt dort keinen Unschärfe-Warnhinweis aus —
+      Halluzination <em>ohne</em> eingebauten Schutz.</p>
+      <p><em>&rarr; Echte Spannung: Hat die Architektur einen intrinsischen Schutz (B: ja, Fisher-Dämpfung) oder
+      nicht (A: nein, kein OOD-Alarm)?</em></p>
+    </div>
+
+    <div class="citem">
+      <h3>③ „Lokale, geschlossene, wohl-posede Primitive“ (B) vs. „globale, kontinuierliche Dynamik“ (A)</h3>
+      <p><span class="tag b">B · r1-074</span> Attention ist eine <strong>pro-Zeile geschlossene, eindeutige</strong>
+      Lösung eines einseitigen entropischen OT-Problems — „die geschlossene, nicht-iterative Form ist die
+      Pointe“. Das Objekt ist <em>lokal, dekomponierbar, exakt lösbar</em> (pro Kopf, pro Zeile).</p>
+      <p><span class="tag a">A · r1-063</span> Der Transformer ist <strong>ein zusammenhängendes dynamisches
+      System</strong> — ein glatter, layerweiser Flow (Jacobian-Morphing), der auf einen <em>globalen</em>
+      Energie-Attraktor (die Scheibe) zustrebt. Das Objekt ist <em>global, kontinuierlich, eine Komposition</em>.</p>
+      <p><em>&rarr; Echte Spannung: Ist das Interessante die <b>lokale dekomponierbare Primitive</b> (B) oder der
+      <b>globale kontinuierliche Flow</b> (A)?</em></p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0">① Lesen (dicht) × Schreiben (dünn) = die Scheibe</h3>
+      <p>B’s <strong>dichte</strong> Verteilung lebt in den <em>Attention-Gewichten</em> (QK &rarr; Softmax):
+      einer Zeile Wahrscheinlichkeiten über die Keys. A’s <strong>dünne</strong> Scheibe ist der
+      <em>Ausgabe-Inhalt</em> — und genau der wird durch B’s <em>niedrig-rangiges Schreiben</em>
+      (SVD-Rang-1-Kanäle) komprimiert. <strong>Fusion:</strong> Das dichte Lesen wählt einen Kontextvektor
+      aus; das dünne Schreiben projiziert ihn auf einen schmalen Kanal. Die „dünne Scheibe“ (A) <em>ist</em>
+      die „niedrig-rangige Kanalstruktur“ (B). Dicht-Lesen × dünn-Schreiben ergibt dünnen Output — kein
+      Widerspruch, sondern eine Pipeline.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">② Schutz auf zwei Stufen — Training (B) vs. Inferenz (A)</h3>
+      <p>B’s Fisher-Dämpfung ist eine <strong>Trainings-Zeit-Regelung</strong>: Sie vorkonditioniert den
+      Gradienten (manifold-awarees Lernen) und sorgt damit, dass die Scheibe <em>sauber und rational aufgebaut
+      wird</em>. A’s „kein OOD-Alarm“ ist eine <strong>Inferenz-Zeit-Aussage</strong>: Sobald die Scheibe steht,
+      erkennt der Forward-Pass keinen OOD-Punkt. <strong>Fusion:</strong> Dieselbe Eigenschaft erklärt beides.
+      Die Konfidenz-Dämpfung, die das <em>Training</em> stabil macht (B), ist genau die, die beim <em>Inferieren</em>
+      dazu führt, dass das Modell einen OOD-Input selbstbewusst ins falsche Tal glättet (A) — eine selbstbewusste,
+      niedrig-entropische Vorwärtskarte flaggt sich nicht selbst. Zwei Stufen eines Mechanismus, keine
+      gegensätzliche Behauptung.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">③ Die mikroskopische Primitive komponiert den makroskopischen Flow</h3>
+      <p>B beschreibt den <strong>lokalen Mikro-Operator</strong> (ein Kopf: dicht lesen + dünn schreiben);
+      A den <strong>globalen Makro-Flow</strong> (Komposition aller Operatoren). Der
+      <strong>Jacobian einer Layer</strong> (A) ist wörtlich die Ableitung der <em>Komposition</em> der
+      Kopf-Lese-Schreib-Operatoren (B): <code>J_layer = ∏ (I + J_Δ)</code>, wobei jedes Kopf-OV-Schreiben
+      <code>Δ</code> <em>niedrig-rangig</em> ist. <strong>Fusion:</strong> Die geschlossene lokale Primitive
+      (B) komponiert sich zum globalen dynamischen System (A); der globale Attraktor (Scheibe) ist die
+      Fixstruktur, auf die die Komposition vieler lokaler optimaler Leser/Schreiber zustrebt.
+      Mikroskopisch wohl-posed &rarr; makroskopisch ein Flow.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3><span class="tag a">A · r1-063</span> Das globale dynamische System (Morphing × Scheibe)</h3>
+    <ul>
+      <li><b>Space-Morphing statt Point-Moving:</b> Layer verzerren den Raum, nicht die Punkte (Einstein-Analogie:
+        Gravitation krümmt den Raum). Faser-Bündel: Base = Token-Positionen, Faser = Repräsentation je Layer,
+        Layer-Map = „Aufzug“.</li>
+      <li><b>Jacobian = lokale Röntgenaufnahme des Warps:</b> <code>J = J_sym + J_antisym</code>. Divergenz =
+        tr(J) (Volumen), Wirbel/Curl (Rotation), Scherung (Form bei konstantem Volumen), Det (Flip).
+        Coq-verifizierte Identitäten: <code>tr(J)=tr(J_sym)</code>, <code>tr(J_antisym)=0</code>,
+        <code>tr(I+Δ)=n+tr(Δ)</code>.</li>
+      <li><b>Residual-Stream:</b> <code>h[l+1]=h[l]+Δ[l]</code>, Jacobian <code>J=I+J_Δ</code>. Innere Layer
+        leisten die „schwere Arbeit“ (größte Warps); der letzte Layer „reversed“ (dreht zurück).</li>
+      <li><b>Energie-Landschaft (LeCun):</b> niedrige Energie &harr; korrekt. Training formt die Landschaft, bis
+        Datenmannigfaltigkeit = Tal = <em>Nützlichkeitsscheibe</em>.</li>
+      <li><b>Mannigfaltigkeits-Hypothese:</b> sinnvolle Daten liegen auf einer niedrig-dimensionalen Fläche;
+        <code>|V|^n</code> mögliche Antworten gegen ~10<sup>80</sup> Atome — die grammatischen sind „ein Staubkorn
+        im Ozean der Ozeane“.</li>
+      <li><b>Temperatur / Boltzmann:</b> <code>P(Zustand) ∝ e^(−E/T)</code>; kalt = präzise, heiß = kreativ.
+        „Kreativität ist buchstäblich Temperatur-Erhöhung.“ Die Physik ist Metapher, aber die <b>Form</b> ist exakt.</li>
+      <li><b>Halluzination:</b> neben die Scheibe fallen — in ein <em>falsches Tal</em>, lokal niedrigenergetisch.
+        Kein eingebauter OOD-Alarm; es glättet weiter.</li>
+    </ul>
+
+    <h3><span class="tag b">B · r1-074</span> Der lokale Lese-Schreib-Kopf (entropisches OT × SVD-Kanäle)</h3>
+    <p><strong>Lesen</strong> — jede Attention-Zeile ist ein einseitiges entropisches OT-Problem (eine Quelle
+    <code>a = δ_q</code>, Zielmaß frei &rarr; kollabiert zu einem Zeilenvektor):</p>
+    <div class="eq">J(p) = −⟨p, s⟩ + ε·Σ p_j log p_j  <span class="a">&rarr;</span>
+      p_j* = exp(s_j/τ) / Σ exp(s_l/τ)  <span class="b">(Softmax ist hergeleitet, nicht gewählt)</span></div>
+    <p>Existenz (Simplex konvex/kompakt), Eindeutigkeit (x·log x strikt konvex, f''=1/x&gt;0).
+    <code>τ=√d_k</code> normiert Score-Varianz. Regularisierer-Familie: <code>−τH</code>&rarr;Softmax,
+    <code>½‖p‖²</code>&rarr;Sparsemax, Tsallis&rarr;α-entmax, <code>−τH+γΣ|i−j|</code>&rarr;ALiBi.
+    Dual: LogSumExp-Potential <code>φ'* = p*</code>, <code>∇²φ = τF</code>.</p>
+    <p><strong>Lernen</strong> — der Backprop-Gradient ist ein REINFORCE-Policy-Gradient mit Simplex-Baseline:</p>
+    <div class="eq">∂L/∂s_j = −(p_j/τ)·(u_j − 𝔼_p[u])  <span class="a">= Policy-Gradient</span>
+      &nbsp;·&nbsp; F = (1/τ²)(diag(p) − pp<sup>⊤</sup>)  <span class="b">Fisher = OT-Krümmung = Rao-Metrik = RL</span></div>
+    <p><strong>Schreiben</strong> — der Kopf schreibt niedrig-rangig in den Residual-Stream:</p>
+    <div class="eq">OV = U·S·V<sup>⊤</sup> = Σ s_i·(U_i ⊗ V_i)  <span class="a">— Rang-1-Bausteine = Kanäle</span>
+      &nbsp;·&nbsp; CS(W₁,W₂) = ‖W₁W₂‖_F / (‖W₁‖_F·‖W₂‖_F)  <span class="b">(5σ-Ausreißer = Kanal)</span></div>
+    <p>Kanäle tragen <strong>Position, nicht Inhalt</strong> (Zeiger / Variablen-Bindung). IOI-Schaltkreis
+    (Duplicate 3.0 &rarr; Inhibition 7.9/8.6/8.10 &rarr; Mover 9.9). Kausal: Löschen der richtigen Komponente
+    fängt den Inhibition-Score um 7–14&nbsp;%. <strong>Laundry-List-Fehler</strong>: Drei Inhibition-Komponenten
+    spannen einen 3D-Indexraum auf, der in Keile zerfällt; ab ~9–10 Objekten fragmentieren die mittleren
+    („Lost in the Middle“). Gezieltes Steuern auf den richtigen Index: <strong>+22&nbsp;%</strong> Listenkapazität,
+    ohne Training.</p>
+
+    <h3><span class="tag x">Fusion</span> Die Brücke — wo die beiden ineinandergreifen</h3>
+    <div class="eq">J_Layer = ∏_{H∈Layer} (I + J_Δ(H)),  J_Δ = Σ_Lesen × Σ_Schreiben
+      <span class="a">— Layer-Jacobian = Komposition der Kopf-Lese-Schreib-Operatoren</span></div>
+    <ul>
+      <li><b>Lesen = Operator, Schreiben = Warp:</b> Das dichte entropische Lesen (B) ist der lokale Operator; das
+        niedrig-rangige OV-Schreiben (B) ist der Rang-1-Beitrag zum Layer-Jacobian (A). Komposition vieler dieser
+        Mikro-Operatoren = der globale Morphing-Flow (A).</li>
+      <li><b>Dünne Scheibe (A) = niedrig-rangige Kanalstruktur (B):</b> die Scheibe ist der Fixraum, auf den die
+        Rang-1-Schreiben kollabieren; dort lebt Nützlichkeit.</li>
+      <li><b>Zwei Temperaturen:</b> <code>τ</code> (B, lokale Lese-Breite) steuert, wie dicht das Lesen ist;
+        <code>T</code> (A, globale Boltzmann-Streuung) steuert, wie weit die Auswahl um die Scheibe streut.</li>
+      <li><b>Fisher (B) ↔ kein OOD-Alarm (A):</b> dieselbe Konfidenz-Dämpfung auf Trainings- (B) und
+        Inferenz-Ebene (A) — der Grund, warum die Scheibe sauber gebaut wird und warum sie OOD „selbstbewusst“
+        glättet.</li>
+      <li><b>Halluzination (fused):</b> Lesen (dicht) + Schreiben (dünn) + <code>T</code> tragen den Zustand neben
+        die Scheibe ins falsche Tal — A’s „Halluzination“ und B’s „stark verworfener, aber lokaler glatter Raum“.</li>
+    </ul>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — eine fusionierte Lese-Schreib-Unit</h2>
+    <p style="max-width:74ch">Ein Bild, beide Skalen: <strong>Oben</strong> die globale morphende Scheibe
+    (A&nbsp;r1-063) — das Gitter wird <em>Jacobian-verformt</em>, die <em>niedrigenergetische Scheibe</em>
+    schwimmt mit, die <em>Boltzmann-Wolke</em> ∝ e^(−E/T) (Temperatur T) zeigt die Streuung, der
+    dragbare <em>Anfrage-Punkt</em> zeigt, ob er auf der Scheibe bleibt, danebenfällt oder ins falsche Tal
+    (Halluzination) rutscht. <strong>Unten</strong> der lokale Kopf (B&nbsp;r1-074) — <em>entropisches
+    Softmax-Lesen</em> (τ) &rarr; Kontextvektor <code>c</code> &rarr; <em>Rang-1-Kanal</em> <code>v̂</code>.
+    Die fusionierte Kennzahl <em>Captured</em> = α²/‖c‖² sagt, wie viel vom <em>dichten</em> Lesen im
+    <em>dünnen</em> Kanal ankommt — und steuert die Scheiben-Leuchtkraft oben.</p>
+
+    <div class="viz-stage">
+      <canvas id="vzHeavy" width="820" height="580"></canvas>
+      <canvas id="vzLight" width="820" height="580"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl"><label>Lesen-Breite τ  <span class="val" id="vzTau">1.00</span></label>
+        <input type="range" id="fzTau" min="0.2" max="3" step="0.05" value="1"></div>
+      <div class="ctrl"><label>Kanal-Winkel v̂  <span class="val" id="vzCh">40°</span></label>
+        <input type="range" id="fzCh" min="-90" max="270" step="1" value="40"></div>
+      <div class="ctrl"><label>Keys m  <span class="val" id="vzM">6</span></label>
+        <input type="range" id="fzM" min="3" max="8" step="1" value="6"></div>
+      <div class="ctrl"><label>Verformung (Warp)  <span class="val" id="vzWarp">55</span></label>
+        <input type="range" id="fzWarp" min="0" max="100" step="1" value="55"></div>
+      <div class="ctrl"><label>Temperatur T (Boltzmann)  <span class="val" id="vzT">0.40</span></label>
+        <input type="range" id="fzT" min="0.05" max="2.5" step="0.05" value="0.4"></div>
+      <div class="ctrl btnrow" style="justify-content:flex-start">
+        <button id="vzRe">🎲 Zufalls-Query</button>
+        <button id="vzTheme">☀ hell</button>
+      </div>
+    </div>
+
+    <div class="readouts">
+      <div class="ro"><div class="k">Entropie H(p) · B</div><div class="v" id="fzH">—</div></div>
+      <div class="ro"><div class="k">max pⱼ · B</div><div class="v" id="fzMax">—</div></div>
+      <div class="ro"><div class="k">‖c‖ · B</div><div class="v" id="fzC">—</div></div>
+      <div class="ro"><div class="k">α=⟨c,v̂⟩ · B</div><div class="v" id="fzA">—</div></div>
+      <div class="ro hl"><div class="k">Captured · Fusion</div><div class="v" id="fzCap">—</div></div>
+      <div class="ro"><div class="k">Scheiben-Distanz · A</div><div class="v" id="fzDist">—</div></div>
+    </div>
+    <div class="viz-status" style="margin-top:10px;font-size:1rem;font-weight:600">
+      Modell-Zustand (A): <span id="fzStat">—</span></div>
+
+    <div class="legend">
+      <span><i style="background:var(--acc2)"></i> Nützlichkeitsscheibe (A)</span>
+      <span><i style="background:var(--bad)"></i> Falsches Tal = Halluzination (A)</span>
+      <span><i style="background:var(--acc3)"></i> Boltzmann-Wolke (A)</span>
+      <span><i style="background:var(--acc)"></i> Entropisches Lesen / Kontext c (B)</span>
+      <span><i style="background:var(--acc2)"></i> Rang-1-Kanal v̂ (B)</span>
+      <span><i style="background:var(--acc4)"></i> α-Projektion (Fusion)</span>
+    </div>
+    <p class="caption"><strong>Captured</strong> ist die fusionierte Brücke: Wie viel vom <em>dichten</em>
+    entropischen Lesen (B) überlebt in dem <em>schmalen</em> Rang-1-Kanal (B) und trifft so die <em>dünne</em>
+    Scheibe (A)? Kanal parallel zu c &rarr; ~100&nbsp;%, senkrecht &rarr; ~0&nbsp;%. Aus zwei scheinbar
+    widersprüchlichen Aussagen (dicht vs. dünn) wird ein messbarer Kompromiss.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../r1-063.html">r1-063.html</a>
+        <div class="desc">A — „Die morphende Nützlichkeitsscheibe“ (R1-Fusion: Phasenraum × Space-Morphing):
+        globale Geometrie des Repräsentationsraums — Jacobian-Morphing, Faser-Bündel, Coq-Identitäten,
+        Energie-Scheibe (LeCun), Boltzmann-Temperatur, Halluzination als „neben die Scheibe fallen“, kein
+        OOD-Alarm.</div>
+      </div>
+      <div>
+        <a href="../r1-074.html">r1-074.html</a>
+        <div class="desc">B — „Attention als Optimaler Transport ✕ Talking Heads“ (R1-Fusion: Litman ×
+        Merullo/Eickhoff/Pavlick): lokaler Kopf als einseitiges entropisches OT (Softmax hergeleitet),
+        Backprop als Policy-Gradient auf Fisher-Geometrie, niedrig-rangige SVD-Kanäle, IOI-Schaltkreis,
+        3D-Indexraum, Laundry-List-Fehler, +22&nbsp;% Reparatur.</div>
+      </div>
+    </div>
+    <div class="footer">
+      Knockout-Fusion · Runde 2 · Paar 022 · Alle Daten inline, keine Netzabrufe.
+    </div>
+  </section>
+
+<script>
+(function(){
+  "use strict";
+  var W=820, H=580, TOP=300;
+  var topCX=410, topCY=150, topUnit=120;
+  var heavy=document.getElementById('vzHeavy');
+  var light=document.getElementById('vzLight');
+  if(!heavy||!light||!heavy.getContext||!light.getContext) return;
+  var hx=heavy.getContext('2d');
+  var lx=light.getContext('2d');
+
+  var state={ m:6, tau:1.0, chAng:40, warp:55, T:0.4 };
+  var q={x:0.0,y:0.05};
+  var FAKE={x:0.55,y:-0.45}, RF=0.13, FAKEDEPTH=0.9, SIGMA=0.09;
+  var dragging=false, heavyDirty=true, TC=null;
+
+  var BASE=[], BASEc=[];
+  var i,t;
+  for(i=0;i<=80;i++){t=-1+2*i/80; BASE.push({x:t, y:0.18*Math.sin(1.5*t)+0.06});}
+  for(i=0;i<=41;i++){t=-1+2*i/41; BASEc.push({x:t, y:0.18*Math.sin(1.5*t)+0.06});}
+
+  function sNow(){ return state.warp/100; }
+  function F(x,y,s){
+    var r=Math.hypot(x,y)+1e-6, ang=Math.atan2(y,x);
+    var theta=s*1.1*Math.exp(-r*1.4);
+    var scale=1+0.30*s*Math.exp(-r*1.1);
+    var nr=r*scale, na=ang+theta;
+    return {x:nr*Math.cos(na)+0.06*s*Math.sin(y*3), y:nr*Math.sin(na)+0.06*s*Math.cos(x*3)};
+  }
+  function warpArr(arr,s){ var o=[]; for(var k=0;k<arr.length;k++) o.push(F(arr[k].x,arr[k].y,s)); return o; }
+  function minDist(pt,arr){ var m=1e9; for(var k=0;k<arr.length;k++){var d=Math.hypot(pt.x-arr[k].x,pt.y-arr[k].y); if(d<m)m=d;} return m; }
+  function energy(pt,arr){
+    var d=minDist(pt,arr);
+    var df=Math.hypot(pt.x-FAKE.x,pt.y-FAKE.y);
+    return 0.6*Math.pow(d/SIGMA,2) - FAKEDEPTH*Math.exp(-df*df/(2*RF*RF));
+  }
+  function topPx(x){return topCX + x*topUnit;}
+  function topPy(y){return topCY - y*topUnit;}
+  function invTopPx(X){return (X-topCX)/topUnit;}
+  function invTopPy(Y){return (topCY-Y)/topUnit;}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+
+  function themeColors(){
+    var cs=getComputedStyle(document.documentElement);
+    function g(n){return cs.getPropertyValue(n).trim();}
+    return {bg:g('--panel-solid')||'#0e1524', stroke:g('--stroke')||'rgba(255,255,255,.10)',
+      ink:g('--ink')||'#e8ecf5', dim:g('--dim')||'#a7b3cc', faint:g('--faint')||'#6b7896',
+      acc:g('--acc')||'#5eead4', acc2:g('--acc2')||'#a78bfa', acc3:g('--acc3')||'#fbbf24',
+      acc4:g('--acc4')||'#fb7185', good:g('--good')||'#6ee7a8', bad:g('--bad')||'#ff6b6b'};
+  }
+  function hexA(hex,a){
+    if(!hex) return 'rgba(128,128,128,'+a+')';
+    var h=String(hex).replace('#','');
+    if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+    var n=parseInt(h,16);
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+
+  function softmax(s,tau){
+    var mx=-Infinity,k; for(k=0;k<s.length;k++) if(s[k]>mx) mx=s[k];
+    var e=[]; for(k=0;k<s.length;k++) e.push(Math.exp((s[k]-mx)/tau));
+    var Z=0; for(k=0;k<e.length;k++) Z+=e[k];
+    var o=[]; for(k=0;k<e.length;k++) o.push(e[k]/Z); return o;
+  }
+  function entropy(p){ var a=0,k; for(k=0;k<p.length;k++) if(p[k]>1e-12) a-=p[k]*Math.log(p[k]); return a; }
+
+  function computeLocal(){
+    var m=state.m, keys=[], vals=[], k, th, vlen;
+    for(k=0;k<m;k++){
+      th=k*2*Math.PI/m - Math.PI/2;
+      keys.push([Math.cos(th),Math.sin(th)]);
+      vlen=1.0+0.25*Math.cos(th*2+0.5);
+      vals.push([Math.cos(th)*vlen, Math.sin(th)*vlen]);
+    }
+    var qa=45*Math.PI/180, lenQ=1.35;
+    var qd=[Math.cos(qa)*lenQ, Math.sin(qa)*lenQ];
+    var s=[]; for(k=0;k<m;k++) s.push(qd[0]*keys[k][0]+qd[1]*keys[k][1]);
+    var p=softmax(s, state.tau);
+    var c=[0,0]; for(k=0;k<m;k++){c[0]+=p[k]*vals[k][0]; c[1]+=p[k]*vals[k][1];}
+    var ph=state.chAng*Math.PI/180, vhat=[Math.cos(ph),Math.sin(ph)];
+    var alpha=c[0]*vhat[0]+c[1]*vhat[1];
+    var nc=Math.sqrt(c[0]*c[0]+c[1]*c[1]);
+    var captured=nc>1e-6?(alpha*alpha)/(nc*nc):0;
+    var maxp=0; for(k=0;k<m;k++) if(p[k]>maxp)maxp=p[k];
+    return {keys:keys,vals:vals,q:qd,p:p,c:c,vhat:vhat,alpha:alpha,nc:nc,captured:captured,Hp:entropy(p),maxp:maxp};
+  }
+
+  var parts=[];
+  function seedParts(){ parts=[]; for(var k=0;k<34;k++) parts.push({t:Math.random(),j:0,sp:Math.random()}); }
+  function respawn(pt,p){
+    pt.t=0; pt.sp=Math.random();
+    var r=Math.random(), acc=0, k;
+    for(k=0;k<p.length;k++){ acc+=p[k]; if(r<=acc){ pt.j=k; break; } }
+    if(pt.j>=p.length) pt.j=0;
+  }
+
+  function statusOf(pt, sheet){
+    var d=minDist(pt,sheet);
+    var df=Math.hypot(pt.x-FAKE.x,pt.y-FAKE.y);
+    if(df<0.16 && df<d+0.10) return 'hallu';
+    if(d<0.16) return 'on';
+    return 'off';
+  }
+
+  function renderHeavy(){
+    TC=themeColors();
+    var s=sNow();
+    var sheet=warpArr(BASEc,s);
+    hx.clearRect(0,0,W,H);
+    hx.fillStyle=TC.bg; hx.fillRect(0,0,W,H);
+
+    var res=36, cells=12, cw=W/res, ch=TOP/cells;
+    var P=[], Pmin=1e9, Pmax=-1e9, gy,gx;
+    for(gy=0;gy<cells;gy++){for(gx=0;gx<res;gx++){
+      var wx=invTopPx((gx+0.5)*cw), wy=invTopPy((gy+0.5)*ch);
+      var Pv=Math.exp(-energy({x:wx,y:wy},sheet)/Math.max(0.05,state.T));
+      P.push(Pv); if(Pv<Pmin)Pmin=Pv; if(Pv>Pmax)Pmax=Pv;
+    }}
+    for(gy=0;gy<cells;gy++){for(gx=0;gx<res;gx++){
+      var idx=gy*res+gx; var tt=(P[idx]-Pmin)/((Pmax-Pmin)||1);
+      tt=Math.pow(Math.max(0,Math.min(1,tt)),1.7);
+      hx.fillStyle=hexA(TC.acc3, 0.04+tt*0.5);
+      hx.fillRect(gx*cw, gy*ch, cw+1, ch+1);
+    }}
+
+    hx.lineWidth=1; hx.strokeStyle=hexA(TC.stroke,0.7);
+    var step=0.1, gxv, yv;
+    for(gxv=-1;gxv<=1.001;gxv+=step){
+      hx.beginPath(); var first=true;
+      for(yv=-1.05;yv<=1.05;yv+=step){var pf=F(gxv,yv,s); var X=topPx(pf.x),Y=topPy(pf.y); if(first){hx.moveTo(X,Y);first=false;} else hx.lineTo(X,Y);}
+      hx.stroke();
+    }
+    for(yv=-1;yv<=1.001;yv+=step){
+      hx.beginPath(); var f2=true;
+      for(gxv=-1.05;gxv<=1.05;gxv+=step){var pf2=F(gxv,yv,s); var X2=topPx(pf2.x),Y2=topPy(pf2.y); if(f2){hx.moveTo(X2,Y2);f2=false;} else hx.lineTo(X2,Y2);}
+      hx.stroke();
+    }
+
+    hx.strokeStyle=hexA(TC.bad,0.9); hx.setLineDash([5,4]); hx.lineWidth=2;
+    hx.beginPath(); hx.arc(topPx(FAKE.x),topPy(FAKE.y),RF*topUnit,0,Math.PI*2); hx.stroke(); hx.setLineDash([]);
+    hx.fillStyle=hexA(TC.bad,0.9); hx.font='bold 11px system-ui, sans-serif'; hx.textAlign='left';
+    hx.fillText('FALSCHES TAL = Halluzination (A)', topPx(FAKE.x)+RF*topUnit+6, topPy(FAKE.y));
+    hx.fillStyle=hexA(TC.dim,0.95); hx.font='11px system-ui, sans-serif';
+    hx.fillText('Globale morphende Scheibe (A · r1-063)', 12, 20);
+  }
+
+  function roundRect(x,y,w,h,r){
+    r=Math.min(r, Math.abs(w)/2, Math.abs(h)/2); if(h<0.6) h=0.6;
+    lx.beginPath();
+    lx.moveTo(x+r,y);
+    lx.arcTo(x+w,y,x+w,y+h,r); lx.arcTo(x+w,y+h,x,y+h,r);
+    lx.arcTo(x,y+h,x,y,r); lx.arcTo(x,y,x+w,y,r);
+    lx.closePath();
+  }
+  function arrow(x1,y1,x2,y2,col,lw,head){
+    lx.strokeStyle=col; lx.fillStyle=col; lx.lineWidth=lw; lx.lineCap='round';
+    lx.beginPath(); lx.moveTo(x1,y1); lx.lineTo(x2,y2); lx.stroke();
+    var a=Math.atan2(y2-y1,x2-x1);
+    lx.beginPath(); lx.moveTo(x2,y2);
+    lx.lineTo(x2-head*Math.cos(a-0.4), y2-head*Math.sin(a-0.4));
+    lx.lineTo(x2-head*Math.cos(a+0.4), y2-head*Math.sin(a+0.4));
+    lx.closePath(); lx.fill();
+  }
+
+  function draw(){
+    if(heavyDirty){ renderHeavy(); heavyDirty=false; }
+    if(!TC) TC=themeColors();
+    var localR=computeLocal();
+    var s=sNow();
+    var sheetFine=warpArr(BASE,s);
+    var sheetCoarse=warpArr(BASEc,s);
+
+    lx.clearRect(0,0,W,H);
+    lx.drawImage(heavy,0,0);
+
+    /* ---- TOP: sheet + query + status ---- */
+    var glow=0.4+0.6*localR.captured;
+    lx.lineJoin='round'; lx.lineCap='round';
+    lx.beginPath();
+    for(var a=0;a<sheetFine.length;a++){var Pp=sheetFine[a]; var Xp=topPx(Pp.x),Yp=topPy(Pp.y); if(a===0)lx.moveTo(Xp,Yp); else lx.lineTo(Xp,Yp);}
+    lx.strokeStyle=hexA(TC.acc2,0.16*glow+0.12); lx.lineWidth=SIGMA*2*topUnit; lx.stroke();
+    lx.beginPath();
+    for(var b=0;b<sheetFine.length;b++){var Qp=sheetFine[b]; var Xq=topPx(Qp.x),Yq=topPy(Qp.y); if(b===0)lx.moveTo(Xq,Yq); else lx.lineTo(Xq,Yq);}
+    lx.strokeStyle=TC.acc2; lx.lineWidth=2.2+2.6*localR.captured; lx.stroke();
+
+    var st=statusOf(q,sheetCoarse);
+    var X=topPx(q.x), Y=topPy(q.y);
+    var target;
+    if(st==='hallu'){ target={x:FAKE.x,y:FAKE.y}; }
+    else { var best=sheetFine[0], bd=1e9; for(var i2=0;i2<sheetFine.length;i2++){var dd=Math.hypot(q.x-sheetFine[i2].x,q.y-sheetFine[i2].y); if(dd<bd){bd=dd;best=sheetFine[i2];}} target=best; }
+    lx.strokeStyle=hexA(TC.ink,0.4); lx.setLineDash([4,4]); lx.lineWidth=1;
+    lx.beginPath(); lx.moveTo(X,Y); lx.lineTo(topPx(target.x),topPy(target.y)); lx.stroke(); lx.setLineDash([]);
+    var col = st==='on'?TC.good : st==='hallu'?TC.bad : TC.dim;
+    lx.fillStyle=col; lx.beginPath(); lx.arc(X,Y,8,0,Math.PI*2); lx.fill();
+    lx.strokeStyle=hexA(TC.ink,0.9); lx.lineWidth=2; lx.stroke();
+    lx.fillStyle=col; lx.font='bold 12px system-ui, sans-serif'; lx.textAlign='left';
+    var lab = st==='on'?'AUF DER SCHEIBE' : st==='hallu'?'HALLUZINATION' : 'NEBEN DER SCHEIBE';
+    lx.fillText(lab, Math.min(X+12, W-150), Math.max(Y-12, 40));
+
+    /* ---- divider ---- */
+    lx.strokeStyle=hexA(TC.stroke,0.8); lx.lineWidth=1;
+    lx.beginPath(); lx.moveTo(0,TOP); lx.lineTo(W,TOP); lx.stroke();
+
+    /* ---- BOTTOM: local head ---- */
+    lx.fillStyle=hexA(TC.dim,0.95); lx.font='700 12px system-ui,sans-serif';
+    lx.fillText('①  ENTROPISCHES LESEN  (B · r1-074)', 18, TOP+24);
+    lx.font='500 10.5px system-ui,sans-serif';
+    lx.fillText('softmax(s/τ) — dichte Verteilung, jeder Key > 0', 18, TOP+40);
+    var barX=18, barW=W*0.34, barTop=TOP+52, barBot=H-58, m=localR.p.length;
+    var bw=barW/m, k;
+    for(k=0;k<m;k++){
+      var h=localR.p[k]*(barBot-barTop);
+      var x=barX + k*bw + bw*0.16, w=bw*0.68;
+      lx.globalAlpha=0.30+0.7*localR.p[k]; lx.fillStyle=TC.acc;
+      roundRect(x, barBot-h, w, h, 4); lx.fill(); lx.globalAlpha=1;
+      lx.fillStyle=TC.dim; lx.font='600 10px system-ui,sans-serif'; lx.textAlign='center';
+      lx.fillText(String(k+1), x+w/2, barBot+16); lx.textAlign='left';
+    }
+    lx.strokeStyle=TC.stroke; lx.beginPath(); lx.moveTo(barX,barBot); lx.lineTo(barX+barW,barBot); lx.stroke();
+
+    lx.fillStyle=hexA(TC.dim,0.95); lx.font='700 12px system-ui,sans-serif';
+    lx.fillText('②  NIEDRIG-RANGIGES SCHREIBEN  (B · r1-074)', W*0.45, TOP+24);
+    var plotCX=W*0.72, plotCY=TOP+145, plotR=Math.min(W*0.16,84), sc=plotR/1.7;
+    var cl=plotR*1.2;
+    lx.globalAlpha=0.9; lx.lineWidth=2.5; lx.lineCap='round'; lx.strokeStyle=TC.acc2;
+    lx.beginPath();
+    lx.moveTo(plotCX - localR.vhat[0]*cl, plotCY - localR.vhat[1]*cl);
+    lx.lineTo(plotCX + localR.vhat[0]*cl, plotCY + localR.vhat[1]*cl);
+    lx.stroke(); lx.globalAlpha=1; lx.lineWidth=1;
+    lx.fillStyle=TC.acc2; lx.font='600 11px system-ui,sans-serif'; lx.textAlign='left';
+    lx.fillText('Kanal v̂ (Rang 1)', plotCX - localR.vhat[0]*cl, plotCY - localR.vhat[1]*cl - 8);
+
+    lx.fillStyle=TC.dim; lx.beginPath(); lx.arc(plotCX,plotCY,2.4,0,7); lx.fill();
+    for(k=0;k<m;k++){
+      var v=localR.vals[k];
+      var vx=plotCX + v[0]*sc, vy=plotCY - v[1]*sc;
+      lx.globalAlpha=0.22+0.62*localR.p[k]; lx.lineWidth=2; lx.strokeStyle=TC.acc;
+      lx.beginPath(); lx.moveTo(plotCX,plotCY); lx.lineTo(vx,vy); lx.stroke();
+      lx.globalAlpha=1; lx.lineWidth=1;
+      lx.fillStyle=TC.acc; lx.beginPath(); lx.arc(vx,vy,3+3.2*localR.p[k],0,7); lx.fill();
+    }
+    var cxp=plotCX + localR.c[0]*sc, cyp=plotCY - localR.c[1]*sc;
+    if(localR.nc>0.01) arrow(plotCX,plotCY,cxp,cyp,TC.acc3,4,12);
+    lx.fillStyle=TC.acc3; lx.font='600 11px system-ui,sans-serif'; lx.textAlign='left';
+    lx.fillText('c = Σ pⱼ·vⱼ', cxp+9, cyp-7);
+
+    var px=plotCX + localR.vhat[0]*localR.alpha*sc, py=plotCY - localR.vhat[1]*localR.alpha*sc;
+    lx.setLineDash([4,4]); lx.strokeStyle=TC.ink; lx.globalAlpha=0.5; lx.lineWidth=1.3;
+    lx.beginPath(); lx.moveTo(cxp,cyp); lx.lineTo(px,py); lx.stroke();
+    lx.setLineDash([]); lx.globalAlpha=1;
+    lx.fillStyle=TC.acc4; lx.beginPath(); lx.arc(px,py,6,0,7); lx.fill();
+    lx.strokeStyle=TC.ink; lx.lineWidth=1.5; lx.beginPath(); lx.arc(px,py,6,0,7); lx.stroke(); lx.lineWidth=1;
+    lx.fillStyle=TC.acc4; lx.font='600 11px system-ui,sans-serif';
+    lx.fillText('α=⟨c,v̂⟩ → was den Kanal passiert', px+11, py+15);
+
+    for(k=0;k<parts.length;k++){
+      var pt=parts[k];
+      pt.t += 0.012 + 0.02*pt.sp;
+      if(pt.t>=1 || pt.j>=m) respawn(pt, localR.p);
+      var vv=localR.vals[pt.j];
+      var sx=plotCX + vv[0]*sc, sy=plotCY - vv[1]*sc;
+      var xx=sx + (px-sx)*pt.t, yy=sy + (py-sy)*pt.t;
+      lx.fillStyle=TC.acc; lx.globalAlpha=0.15+0.55*pt.t;
+      lx.beginPath(); lx.arc(xx,yy,2.4,0,7); lx.fill(); lx.globalAlpha=1;
+    }
+
+    updateReadout(localR, sheetCoarse, st);
+  }
+
+  function updateReadout(localR, sheetCoarse, st){
+    function setT(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+    setT('fzH', localR.Hp.toFixed(3));
+    setT('fzMax', (localR.maxp*100).toFixed(1)+'%');
+    setT('fzC', localR.nc.toFixed(2));
+    setT('fzA', localR.alpha.toFixed(2));
+    setT('fzCap', (localR.captured*100).toFixed(1)+'%');
+    setT('fzDist', minDist(q,sheetCoarse).toFixed(2));
+    var se=document.getElementById('fzStat');
+    if(se){ var lab=st==='on'?'AUF DER SCHEIBE':st==='hallu'?'HALLUZINATION':'NEBEN DER SCHEIBE';
+      se.textContent=lab; se.style.color=st==='on'?TC.good:st==='hallu'?TC.bad:TC.dim; }
+  }
+
+  function markHeavy(){ heavyDirty=true; }
+  function bind(id,fn){ var e=document.getElementById(id); if(e){ e.addEventListener('input',fn); e.addEventListener('change',fn); } }
+  function setL(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+  bind('fzTau', function(){ state.tau=Math.max(0.05,parseFloat(document.getElementById('fzTau').value)); setL('vzTau',state.tau.toFixed(2)); });
+  bind('fzCh',  function(){ state.chAng=parseFloat(document.getElementById('fzCh').value); setL('vzCh',Math.round(state.chAng)+'°'); });
+  bind('fzM',   function(){ state.m=Math.round(parseFloat(document.getElementById('fzM').value)); setL('vzM',state.m); seedParts(); });
+  bind('fzWarp',function(){ state.warp=parseFloat(document.getElementById('fzWarp').value); setL('vzWarp',Math.round(state.warp)); markHeavy(); });
+  bind('fzT',   function(){ state.T=parseFloat(document.getElementById('fzT').value); setL('vzT',state.T.toFixed(2)); markHeavy(); });
+
+  var reBtn=document.getElementById('vzRe');
+  if(reBtn) reBtn.addEventListener('click', function(){
+    q={x:(Math.random()*2-1)*0.9, y:(Math.random()*1.4-0.7)};
+  });
+
+  function themeToggle(){
+    var h=document.documentElement;
+    var dark=h.classList.toggle('dark');
+    TC=themeColors(); markHeavy();
+    var b=document.getElementById('vzTheme'); if(b) b.textContent = dark ? '☀ hell' : '🌙 dunkel';
+  }
+  var thBtn=document.getElementById('vzTheme');
+  if(thBtn) thBtn.addEventListener('click', themeToggle);
+
+  function toWorldTop(e){
+    var r=light.getBoundingClientRect();
+    var X=(e.clientX-r.left)*(W/r.width);
+    var Y=(e.clientY-r.top)*(H/r.height);
+    if(Y>TOP-2)Y=TOP-2; if(Y<4)Y=4;
+    return {x:clamp(invTopPx(X),-1.1,1.1), y:clamp(invTopPy(Y),-0.78,0.78)};
+  }
+  light.addEventListener('mousedown', function(e){ dragging=true; var w=toWorldTop(e); q={x:w.x,y:w.y}; });
+  window.addEventListener('mousemove', function(e){ if(dragging){ var w=toWorldTop(e); q={x:w.x,y:w.y}; } });
+  window.addEventListener('mouseup', function(){ dragging=false; });
+  light.addEventListener('touchstart', function(e){ dragging=true; var w=toWorldTop(e.touches[0]); q={x:w.x,y:w.y}; e.preventDefault(); }, {passive:false});
+  light.addEventListener('touchmove', function(e){ if(dragging){ var w=toWorldTop(e.touches[0]); q={x:w.x,y:w.y}; e.preventDefault(); } }, {passive:false});
+  light.addEventListener('touchend', function(){ dragging=false; });
+
+  new MutationObserver(function(){ TC=themeColors(); markHeavy(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+
+  TC=themeColors(); seedParts();
+
+  function loop(){
+    try{ draw(); }catch(e){}
+    requestAnimationFrame(loop);
+  }
+  renderHeavy(); heavyDirty=false;
+  requestAnimationFrame(loop);
+})();
+</script>
+
+</div>
+
+</body>
+</html>

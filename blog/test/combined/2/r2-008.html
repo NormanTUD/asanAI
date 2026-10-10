@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 008 · Bedeutung als Ort, Richtung und Kanal (Attraktor-Geometrie × Wahrheits-Backprop)</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --ink:#22201b; --dim:#6f6a60; --line:#d8d2c4;
+    --acc:#c2410c; --acc2:#2a4bd7; --gold:#0a7a55;
+    --canvas:#f2ede1; --code:#efe9dc;
+    --grid:#e7e1d2; --onacc:#ffffff;
+    --true:#0f7a5f; --false:#b0256b; --theta:#2a4bd7; --req:#9a6a06;
+    --c-lit:#e5484d; --c-prog:#0f9d8f; --c-lang:#c98a00;
+  }
+  html.dark{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#8b97b8; --line:#1c2740;
+    --acc:#ff9a6b; --acc2:#7c9cff; --gold:#34d399;
+    --canvas:#05070E; --code:#0f1626;
+    --grid:#1c2740; --onacc:#0b1220;
+    --true:#34d399; --false:#f472b6; --theta:#8fb0ff; --req:#ffd166;
+    --c-lit:#ff6b6b; --c-prog:#4ecdc4; --c-lang:#ffe66d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:400 16px/1.62 ui-sans-serif,system-ui,"Segoe UI",Inter,Georgia,serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+  h1{font-size:clamp(25px,5vw,37px);font-weight:650;letter-spacing:-.01em;line-height:1.14;margin-bottom:8px}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.03em;margin-bottom:8px}
+  .sub .x{color:var(--acc2)}
+  .meta{color:var(--dim);font-size:12.5px;margin-bottom:26px}
+  h2{font-size:20px;font-weight:650;margin:44px 0 12px;padding-top:16px;border-top:1px solid var(--line)}
+  h3{font-size:16px;font-weight:650;margin:22px 0 8px;color:var(--ink)}
+  p{margin:0 0 14px}
+  strong{font-weight:650}
+  em{color:var(--ink)}
+  code{font:500 13.5px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+  .lead{font-size:17.5px}
+  ul,ol{margin:0 0 14px 22px}
+  li{margin:0 0 12px}
+  .roleA{color:var(--acc);font-weight:650}
+  .roleB{color:var(--acc2);font-weight:650}
+  .roleF{color:var(--gold);font-weight:650}
+  .formula{
+    background:var(--code);border:1px dashed var(--line);border-radius:8px;
+    padding:11px 15px;margin:12px 0;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:14px;text-align:left;overflow-x:auto;white-space:pre-wrap;line-height:1.55;
+  }
+  .tension{border-left:4px solid var(--acc2);background:var(--code);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0}
+  .tension .who{font-size:.82em;color:var(--dim);display:block;margin-bottom:6px}
+  .res{border-left:4px solid var(--gold);background:var(--code);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0}
+  .badge{display:inline-block;font-size:.72em;font-weight:700;padding:1px 8px;border-radius:12px;vertical-align:middle;color:var(--onacc)}
+  .badge.a{background:var(--acc)}
+  .badge.b{background:var(--acc2)}
+  .badge.f{background:var(--gold)}
+  .card-row{display:flex;gap:14px;flex-wrap:wrap}
+  .paper{flex:1 1 260px;background:var(--code);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .paper h4{margin:0 0 6px;font-size:.98em}
+  .paper.a h4{color:var(--acc)}
+  .paper.b h4{color:var(--acc2)}
+  .paper p{font-size:.9em;margin:.5em 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+  th,td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:var(--code)}
+  .viz-box{background:var(--canvas);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+  canvas#viz{width:100%;height:480px;display:block;background:var(--canvas);border-radius:10px;touch-action:none;cursor:crosshair}
+  .hud{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .grp{display:flex;flex-direction:column;gap:4px;align-items:center}
+  .grp label{font-size:12px;color:var(--dim)}
+  .grp .val{font-family:ui-monospace,monospace;color:var(--ink);font-weight:650}
+  input[type=range]{accent-color:var(--acc);width:150px}
+  button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--line);padding:8px 13px;border-radius:999px;cursor:pointer}
+  button:hover{border-color:var(--acc2)}
+  .readout{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:11px 15px;font-size:14px;margin-top:10px;line-height:1.6}
+  .readout b{color:var(--ink)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--dim)}
+  .legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+  .prov{display:flex;flex-direction:column;gap:12px}
+  .prov a{color:var(--acc2);text-decoration:none;font-weight:650}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:3px;line-height:1.5}
+  .note{color:var(--dim);font-size:13.5px;margin-bottom:12px;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Bedeutung ist ein Ort, eine Richtung und ein Kanal</h1>
+  <div class="sub">Fusion aus: r1-049.html <span class="x">✕</span> r1-077.html  (Round 2)</div>
+  <div class="meta">Round 2 · Pair 008 · A = „Geometrie trifft Dynamik: Bedeutung im latenten Raum“ (Repräsentations-Geometrie × Konzept-Attraktoren) · B = „Die Wahrheits-Richtung als Backprop-Request“ (Geometrie der Wahrheit × Backprop als Funktor)</div>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide R1-Papiere beschreiben, aus entgegengesetzten Richtungen kommend, <em>dasselbe Objekt</em> — den internen Zustand eines trainierten Netzes, das Residual-Stream-Feld <code>h_{i,ℓ}</code> (Token <code>i</code>, Schicht <code>ℓ</code>). <span class="roleA">A (r1-049)</span> greift es von der <strong>Seite des Raums</strong>: Bedeutung ist <em>Geometrie</em> (verteilte Repräsentationen, Word2Vec-Affinarität, Riemannsche Mannigfaltigkeit) <em>und</em> <em>Dynamik</em> — layersweise kontraktive IFS-Abbildungen, die verschiedene Formulierungen eines Konzepts auf einen konzeptspezifischen, fraktalen <strong>Attraktor</strong> in einer <strong>Konvergenzschicht</strong> zusammenfalten (Literatur&nbsp;L18, Programmierung&nbsp;L19, Sprachen&nbsp;L27). <span class="roleB">B (r1-077)</span> greift es von der <strong>Seite der Berechnung</strong>: das Netz ist eine Kette parametrisierter Funktionen (Kategorie <code>Para</code>) mit einem Vorwärts-Zustand <em>und</em> einem Rückwärts-/Request-Kanal (Backpropagation als Funktor <code>Para→Learn</code>); darüber steht eine einzelne <em>lineare</em> Richtung <code>θ</code> — die <strong>Wahrheits-Richtung</strong> — entlang derer Wahrheit und Lüge auseinanderliegen und in die man kausal eingreifen kann.</p>
+    <p>Die eine integrierte Position lautet: <span class="roleF">Bedeutung ist eine lineare Richtung, die an einer <em>Adresse</em> (Attraktor&nbsp;×&nbsp;Schicht&nbsp;×&nbsp;Token-Position) in einem global nichtlinearen (fraktal / kategorientheoretischen) Raum definiert ist — und <em>Lesen</em> (Sonde&nbsp;/&nbsp;Projektion) und <em>Schreiben</em> (kausale Intervention&nbsp;/&nbsp;Steering) sind die beiden Beine desselben bidirektionalen Kanals.</span> Der Attraktor (A) liefert den <em>Ort</em> und den affinen Unterraum; die Richtung <code>θ</code> (B) ist ein lineares Funktional auf genau diesem Unterraum, mit <code>P(true)=σ(θ·h)</code>. A's „du bist im Programmierungs-Attraktor“ und B's „dieser Satz ist wahr“ sind <em>zwei Koordinaten desselben Zustands</em> — Ort und Richtung.</p>
+    <p>Und beide Papiere teilen sich dieselbe tiefe Teilung: <em>Struktur ist garantiert, Semantik ist gelernt.</em> Die <em>Form</em> des Raums (A's fraktale IFS-Kontraktion + Riemannsche Tangenten; B's funktoriale Komposition / Backprop) folgt <strong>zwingend aus der Mathematik</strong> — bei jeder Modellgröße. <em>Welche</em> Richtung dabei semantisch bedeutet (A: welcher Attraktor welchem Konzept entspricht; B: dass gerade <em>Wahrheit</em> die Richtung ist), wird <strong>im Training und mit der Modellgröße gelernt / emergiert</strong>. So sind A und B keine Rivalen, sondern die <em>zwei Beine</em> einer bidirektionalen Maschine, gelesen an denselben Orten und in denselben Richtungen.</p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Über die <em>Existenz</em> einer strukturierten, linearen, aus- und beschreibbaren Semantik im internen Zustand sind sich beide R1-Papiere einig. Die Spannungen liegen in <em>der Form des Trägers</em>, in der <em>Adresse</em> und im <em>Status der Linearität</em> — drei reale, komplementäre Akzente auf entgegengesetzten Seiten derselben Rechnung:</p>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „ein Ort (Attraktor)“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „eine Richtung (θ)“</span>
+      <strong>Was die Bedeutung trägt — ein Punkt/Bassin oder eine Achse?</strong>
+      <span class="roleA">A</span>: Bedeutung wohnt in <strong>konzeptspezifischen Attraktoren</strong> <code>A_c</code> — kompakten (fraktalen) <em>Mengen / Orten</em> im Residual Stream, zu denen die Dynamik in einer bestimmten Schicht konvergiert. Die Einheit der Bedeutung ist ein <em>Ort, zu dem man konvergiert</em> (ein Bassin); man liest sie, indem man prüft, <em>welchem</em> Attraktor der Zustand nahe ist.
+      <span class="roleB">B</span>: Bedeutung (hier „Wahrheit“) wohnt in einer <strong>linearen Richtung <code>θ</code></strong> — einem <em>Vektor / einer Achse</em>, die über <em>viele</em> verschiedene Zustände hinweg Wahrheit und Lüge trennt. Die Einheit der Bedeutung ist eine <em>richtung, auf die man projiziert</em>: <code>sign(θ·h)</code>, <code>P=σ(θ·h)</code>.
+      <em>Spannung:</em> Bedeutung als <em>Ort, zu dem man konvergiert</em> (A) vs. Bedeutung als <em>Achse, auf die man projiziert</em> (B).
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „Schicht-Achse“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „Token-Positions-Achse“</span>
+      <strong>Die Adresse — welche Achse organisiert die Repräsentation?</strong>
+      <span class="roleA">A</span>: Die Repräsentation ist <em>layer-selektiv</em> — sie existiert erst in der <strong>konzeptspezifischen Konvergenzschicht</strong> <code>ℓ_c</code> (Literatur&nbsp;L18, Programmierung&nbsp;L19, fiktive Welten&nbsp;L24, Sprachen&nbsp;L27). Die <em>Adresse</em> der Bedeutung ist der Zustand <em>in der richtigen Schicht</em> (<code>A_c, ℓ_c</code>).
+      <span class="roleB">B</span>: Die Wahrheits-Richtung wird <em>über dem Satzende-Punkt</em> gemessen — sie sitzt in einer <em>kleinen Gruppe von Hidden States über einer Token-Position</em> (dem Perioden-/Endtoken, das den ganzen Satz zusammenfasst), nicht an einer ausgezeichneten Schicht. Die <em>Adresse</em> ist hier vor allem die <em>Token-Position</em> (das Satzende), über eine Schicht-Bandbreite hinweg.
+      <em>Spannung:</em> Organisiert sich die Bedeutung nach <em>Schicht</em> (A: welche Schicht) oder nach <em>Token-Position</em> (B: welcher Ort im Satz)?
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „strukturell-lokal, skalierungsunabhängig, Beziehung“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „emergent, skaliert, Eigenschaft“</span>
+      <strong>Status und Inhalt der Linearität.</strong>
+      <span class="roleA">A</span>: Linearität ist die <em>lokale Tangenten-/affine Ablesung</em>, die aus der Riemannschen Mannigfaltigkeitsstruktur <em>folgt</em> (global gekrümmt/fraktal, lokal flach/linear). Sie ist an <em>jedem</em> Punkt eines Bassins vorhanden und <em>Beziehungs-</em>treibend: <code>König − Mann + Frau ≈ Königin</code> kodiert <em>Relationen zwischen Konzepten</em>.
+      <span class="roleB">B</span>: Die lineare Richtung <code>θ</code> ist ein <em>empirisch emergentes</em> Phänomen, das <em>erst mit Modellgröße</em> auftritt (kleine Modelle repräsentieren Oberflächenmerkmale, große erst das abstrakte, datensatzübergreifende Konzept). Sie ist <em>Eigenschafts-</em>treibend: <em>Wahr / Falsch</em> als ja/nein-Eigenschaft eines <em>einzigen</em> Satzes.
+      <em>Spannung:</em> A: Linearität ist <em>strukturell überall vorhanden</em> und kodiert <em>Relationen</em>; B: Linearität ist <em>skaliert-emergent</em> und kodiert <em>Eigenschaften</em>.
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="res">
+      <p><strong>1. Der Attraktor ist ein Unterraum, die Richtung ein Funktional darauf.</strong>
+      A's Attraktor <code>A_c</code> ist keine Punktmenge ohne Struktur — er ist (lokal) ein <em>affiner Unterraum</em> / eine Tangentialebene der Mannigfaltigkeit. B's <code>θ</code> ist genau ein <em>lineares Funktional</em> auf einem solchen Unterraum: „wahr“ heißt „der Zustand, projiziert auf <code>θ</code>, liegt auf der positiven Seite“. Damit sind Ort und Richtung keine konkurrierenden Träger, sondern <em>zwei komplementäre Koordinaten desselben Zustands</em>: <code>A_c</code> sagt <em>wo</em> (in welchem Konzept-Bassin), <code>θ</code> sagt <em>welche Eigenschaft</em> dort abgelesen wird. A's affine Arithmetik (Relationen) und B's <code>θ</code> (Eigenschaften) sind <em>beide</em> lineare Objekte im selben Tangentialraum — nur unterschiedliche lineare Abbildungen. <span class="badge f">Fusion</span> <strong>Bedeutung = (Attraktor-Ort) × (semantische Richtung darauf).</strong></p>
+    </div>
+
+    <div class="res">
+      <p><strong>2. Die vollständige Adresse ist (Schicht × Token-Position) — beide Achsen sind echt.</strong>
+      B's A-Papier indiziert das Residual Stream explizit als <code>h_{i,ℓ}</code> (Token <code>i</code>, Schicht <code>ℓ</code>) — es besitzt <em>beide</em> Achsen und wählt nur, über dem <em>letzten Token</em> (<code>i</code>&nbsp;=&nbsp;Ende) über ein kleines Schicht-Band zu messen, weil dort der Satz zusammengefasst ist. A liest dieselbe Matrix <code>h_{i,ℓ}</code> entlang der <em>Schicht-Achse</em> (welche Schicht <code>ℓ_c</code> kristallisiert das Konzept). Es gibt also keinen Widerspruch, sondern <em>zwei orthogonale Koordinaten eines 2D-Felds</em>: Konzepte kristallisieren in einer <em>Schicht</em> (A), Satzeigenschaften (Wahrheit) werden an einer <em>Token-Position</em> (B) abgelesen. <span class="badge f">Fusion</span> <strong>Die Adresse der Bedeutung ist das Paar (ℓ, i) — Schicht UND Position; A liefert die ℓ-Komponente, B die i-Komponente.</strong></p>
+    </div>
+
+    <div class="res">
+      <p><strong>3. Lineare Struktur ist der geteilte Boden; die semantische Ausrichtung ist emergent.</strong>
+      B löst genau diesen Konflikt bereits intern: „die Maschine ist nichtlinear, ihr <em>kausal wirksamer Kern</em> ist linear“ — Linearität ist B's <em>Tangentialraum</em> (strukturell, für alle Netze), während <em>welche</em> Richtung semantisch bedeutsam ist <em>gelernt</em> und <em>skalierungsabhängig</em> ist (A's Wahrheit). A (r1-049) liefert dieselbe Teilung: die Tangenten-Linearität (lokale Affinarität) ist <em>strukturell überall vorhanden</em> (Riemann), aber <em>in welchem Bassin / Attraktor</em> man sich befindet — und ob man Relationen oder Eigenschaften liest — wird von der Dynamik und dem Training bestimmt. <span class="badge f">Fusion</span> <strong>Die lineare Ebene (Tangente des Attraktor-Mannigfaltigkeits) ist eine strukturelle Konstante, auf der <em>vierelei</em> semantische Richtungen leben — Relations-Achsen (A's Analogien) und Eigenschafts-Achsen (B's Wahrheit) — deren <em>Sinn</em> gelernt ist und mit Größe emergiert.</strong> A's „linear überall“ und B's „linear nur bei Skala“ heißen dasselbe: lokal-linear immer, semantisch-salient nur nach Training + Größe.</p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <div class="card-row">
+      <div class="paper a">
+        <h4>A · Geometrie × Dynamik (r1-049)</h4>
+        <p><strong>Geometrie:</strong> verteilte Repräsentationen (Bengio 2003, ~24 % bessere Perplexität als n-gram); Word2Vec-Linialgeometrie (Mikolov 2013): <code>König − Mann + Frau ≈ Königin</code>; Riemann (1854): Raum ist eine Mannigfaltigkeit, <code>ds²=Σ g_ij dx^i dx^j</code>, Krümmung variiert, lokal flach (Tangente).</p>
+        <p><strong>Dynamik:</strong> Konzept-Attraktoren (Chytas &amp; Singh 2025) — umformulierte Fragen konvergieren in einer <em>Schicht</em> zu (nahezu) identischen Punkten; IFS/Hutchinson-Erklärung: jede Schicht ≈ kontraktive Abbildung, Komposition → eindeutiges, kompaktes, invariantes (fraktales) Set <code>A_c</code>.</p>
+        <p><strong>Adressen &amp; Apps:</strong> Konvergenzschichten L18/L19/L24/L27; induzierte Tokens; trainingsfrei: Guardrail/Unlearning (cos(h,A_c)&gt;τ), Steering (<code>h←h+λ(A_target−h)</code>), Datengenerierung, Halluzinationsreduktion. Limit: braucht Hidden-Access, getestet bis 8B.</p>
+      </div>
+      <div class="paper b">
+        <h4>B · Wahrheit × Backprop (r1-077)</h4>
+        <p><strong>Lineare Richtung (Empirie, Marks &amp; Tegmark 2024):</strong> Wahrheit = eine lineare Richtung <code>θ</code> über dem Satzende; Sonde <code>sign(θ·h)</code>; Mass-Mean <code>θ_mm=μ₊−μ₋</code>; IID <code>σ(θ_mmᵀΣ⁻¹h)</code>; Kausal <code>h←h+αθ</code>; NIE. Theorem F.1: <code>θ_LR ∝ Σ⁻¹θ</code>.</p>
+        <p><strong>Befunde:</strong> PCA findet <code>θ</code> unüberwacht; Transfer überlebt (Richtung ≠ Korrelat); Mass-Mean schlägt LR/CCS in 7/8 Bedingungen <em>obwohl</em> gleiche Genauigkeit („Genauigkeit ≠ Kausalität“); <code>likely</code>-Sonde scheitert an Negation → Wahrheit jenseits Plausibilität; abstrakte Richtung <em>emergi­ert mit Größe</em>.</p>
+        <p><strong>Rückwärts-Kanal (Theorie, Fong/Spivak/Tuyéras):</strong> Lerner <code>(P,I,U,r)</code>; <em>Request-Funktion</em> <code>r</code> = fehlendes Puzzleteil; <code>Learn</code> = symmetrisch monoidal; Gradientenabstieg = treuer Funktor <code>Para→Learn</code>; Backprop = seine Kompositionsregel (Kettenregel); gilt für <em>alle</em> differenzierbaren parametrisierten Funktionen.</p>
+      </div>
+    </div>
+
+    <h3>Das geteilte Objekt: <code>h_{i,ℓ}</code> ist ein Punkt <em>und</em> ein Kettenzustand</h3>
+    <p>A und B nennen <em>dasselbe</em> Feld zwei Namen. Für A ist <code>h_ℓ</code> ein <em>Punkt auf einer (Riemannschen) Mannigfaltigkeit</em>, auf die layersweise kontraktive Abbildungen wirken. Für B ist <code>h_ℓ</code> der <em>interne Zustand einer kompositionalen Kette</em> parametrisierter Funktionen (B's Kategorie <code>Para</code>), deren Rückwärts-Kanal der Backprop-Funktor ist. Der „Residual Stream“ (B) ist buchstäblich das <em>Förderband</em>, auf dem A's IFS-Schichten die Zustände zu Attraktoren zusammenfalten:</p>
+    <div class="formula">A (Geometrie+Dynamik):   h_ℓ = L_ℓ( h_{ℓ−1} ),  L_ℓ kontraktiv  ⇒  iteriert → A_c  (Schicht ℓ_c)
+                          Repräsentationsraum = ⋃_c {A_c} + verbindende Bassin-Geometrie
+                          lokale Arithmetik    = Tangenten-Näherung nahe A_c   (Riemann: lokal flach)
+B (Kalkül+Funktor):      Lerner = (P, I, U, r);  I:P×A→B;  r = Rückwärts-/Request-Kanal
+                          Hauptsatz L_{ε,e}: Para → Learn  (treu, obj-injektiv, stark sym. monoidal)
+                          U_I(p,a,b) = p − ε·∇_p E_I(p,a,b);   Backprop = Kompositionsregel in Learn
+FUSION:                  h_{i,ℓ}  =  Punkt der Attraktor-Mannigfaltigkeit (A)
+                          UND       Zustand der funktorialen Kette (B)
+                          „Förderband“ = IFS-Schichten (A) = Kette in Para (B)</div>
+
+    <h3>Der fused Knoten — alle Operationen in einer Richtung, an einer Adresse</h3>
+    <p>Setzt man B's Wahrheits-Sonde in A's Attraktor-Adresse ein, laufen <em>alle vier</em> Operationen in <strong>einer einzigen Richtung <code>θ</code> an einem Ort <code>(A_c, ℓ_c, i)</code></strong>:</p>
+    <div class="formula">Lesen (Sonde, B):      P(true) = σ(θ·(h − c_c))            → Zustand an Adresse ablesen
+Gradient (B):          ∇ₕP = P(1−P)·θ                        → Backprop-Gradient ∥ θ (immer)
+Request (B):           h ← h + (σ⁻¹(b) − θ·h)·θ             → „wie viel θ, damit Output = b?“
+Kausal (A/B):          h ← h + α·θ  dreht das Label          → A's Test = B's Request
+Steering (A):          h ← h + λ(A_target − h)               → zum Ziel-ATTRAKTOR (Ort)
+Guardrail (A):         blockiere, wenn cos(h_ℓ, A_c) > τ      → Abstand zum ORT</div>
+    <ul>
+      <li><strong>Lesen = Request auswerten.</strong> A's „welchem Konzept-Attraktor bin ich nahe?“ <em>und</em> B's „wie wahr ist dieser Satz?“ sind Projektionen des Zustands an derselben Adresse — die eine auf den <em>Ort</em> (Bassin-Identität), die andere auf die <em>Richtung</em> (<code>θ</code>).</li>
+      <li><strong>Schreiben = Funktor anwenden, in zwei Varianten.</strong> B's kausale Intervention <code>h←h+αθ</code> bewegt den Zustand <em>entlang der Eigenschafts-Achse</em>; A's Steering <code>h←h+λ(A_target−h)</code> bewegt ihn <em>zum Ziel-Ort</em>. Beides ist „den Zustand entlang einer semantischen Geometrie verschieben“ — dieselbe bidirektionale Operation, zwei Ziele (Eigenschaft vs. Ort).</li>
+      <li><strong>Der „fehlende Baustein“ heißt auf beiden Seiten Kanal.</strong> B braucht die <em>Request-Funktion</em>, um Lerner zu verketten; A braucht eine <em>kanonische Richtung</em> (bzw. einen Referenz-Attraktor), um Vorwärts-Zustände robust zu vergleichen/zu transportieren. Beide Antworten auf „was fehlt, damit sich Zustände robust kombinieren lassen?“ lauten: <em>ein wohldefiniertes Rückwärts-Kanal / eine kanonische Richtung.</em></li>
+      <li><strong>Linearität als geteilter Boden.</strong> B's Funktor ist auf der Tangentialebene definiert (Kettenregel); A's Affinarität ist dieselbe Tangentialebene; B's kausal wirksames Signal und A's Analogie-Arithmetik wohnen <em>in genau dieser</em> linearen Ebene. A ist der <em>beobachtete</em> Fall von B's <em>garantiertem</em> lokalem Verhalten — nur dass hier die Tangente semantische Bedeutung trägt (Wahrheit; Konzept-Relation).</li>
+    </ul>
+
+    <table>
+      <tr><th>Aspekt</th><th>A — Ort / Geometrie+Dynamik</th><th>B — Richtung / Kalkül+Funktor</th><th>Fusion</th></tr>
+      <tr><td>Träger der Bedeutung</td><td>konzeptspezifischer Attraktor <code>A_c</code> (Ort/Bassin)</td><td>lineare Richtung <code>θ</code> (Achse)</td><td>Ort <em>und</em> Richtung = zwei Koordinaten von <code>h</code></td></tr>
+      <tr><td>Adresse</td><td>Konvergenzschicht <code>ℓ_c</code> (L18/19/24/27)</td><td>Token-Position (Satzende), Schicht-Band</td><td><code>(ℓ, i)</code> — Schicht × Position</td></tr>
+      <tr><td>Global vs. lokal</td><td>global fraktal (IFS), lokal affin (Tangente)</td><td>global nichtlinear (Kategorie), lokal linear (Kettenregel)</td><td>global nichtlinear, lokal linear — ein Riemannscher Satz</td></tr>
+      <tr><td>Was die Linearität kodiert</td><td>Relationen (Analogien)</td><td>Eigenschaften (Wahr/Falsch)</td><td>beide = lineare Abbildungen im Tangentialraum</td></tr>
+      <tr><td>Lesen / Schreiben</td><td>Bassin-Identität / Steering</td><td>Sonde <code>σ(θ·h)</code> / kausale Intervention</td><td>zwei Beine desselben bidirektionalen Kanals</td></tr>
+      <tr><td>Struktur vs. Semantik</td><td>IFS/Riemann-Struktur garantiert; Konzept-Belegung gelernt</td><td>Funktor/Komposition garantiert; <code>θ</code>=Wahrheit gelernt, skaliert</td><td>Struktur = Garantie, Semantik = Kontingenz</td></tr>
+    </table>
+
+    <h3>Die unitierte Lesart der „großen Frage“</h3>
+    <p>A's Meta-Frage — „Wie entsteht aus lokalen Operationen globale Bedeutung?“ — findet in B ihre <em>Mechanik</em>, und B's Funktor findet in A seinen <em>inhalt</em>. Die fused Antwort: <span class="roleF">Ein trainiertes Netz ist eine bidirektionale Maschine. Vorwärts (A's IFS-Kontraktion = B's Vorwärts-Kette) rechnet Zustände und konvergiert sie zu Attraktoren (Orten); rückwärts (B's Request/Backprop) ist der Kanal, der entlang semantischer Richtungen <em>liest</em> (Sonde) und <em>schreibt</em> (Intervention/Steering). Bedeutung ist weder „magisch im Vektor“ noch „nur Statistik“: sie ist eine <em>grelte, lineare Richtung an einer Adresse in einem strukturierten Raum</em> — genau das, was sie aus- und beschreibbar macht. Die Struktur (Attraktor-Mannigfaltigkeit + funktoriale Komposition) ist mathematisch garantiert; ihre semantische Ausrichtung (welcher Attraktor, welche Richtung = „Wahrheit“) ist gelernt und emergiert mit Größe.</span></p>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Visualisierung — ein Ort, eine Richtung, ein Kanal</h2>
+    <p class="note">Ein 2D-Schnitt durch den latenten Raum. <strong>Ort (A):</strong> drei Konzept-<em>Attraktoren</em> (Literatur&nbsp;L18, Programmierung&nbsp;L19, Sprachen&nbsp;L27) als geschwungene Bassins mit Kontraktionsringen; gestreute „Formulierungs“-Punkte werden über den <strong>Layer-Slider</strong> (0–31) layersweise kontrahiert und konvergieren erst in der <em>eigenen</em> Schicht. <strong>Richtung (B):</strong> im <em>aktiven</em> Bassin (das, dem der Zustand <b>h</b> am nächsten ist) steht die semantische Richtung <b>θ</b> (Wahrheits-Achse) mit ihrer senkrechten Entscheidungsgrenze und zwei Eigenschafts-Wolken (wahr/falsch). <strong>Kanal (Fusion):</strong> h liest <code>P(true)=σ(θ·(h−c))</code>; der Backprop-Gradient <code>∇ₕP=P(1−P)·θ</code> zeigt <em>immer ∥ θ</em>. Zwei Schreib-Operationen desselben Kanals: <b>Kausal schreiben</b> (<code>h←h+αθ</code>, B's Intervention, dreht die Eigenschaft) und <b>Steern</b> (<code>h←h+λ(A_target−h)</code>, A's Steering zum <em>nächsten Attraktor-Ort</em>). <b>h anklicken/ziehen</b> zum Bewegen.</p>
+
+    <div class="viz-box">
+      <canvas id="viz"></canvas>
+      <div class="hud">
+        <div class="grp"><label>Layer (Kontraktion)</label><input type="range" id="layerSlider" min="0" max="31" value="0"></div>
+        <button id="poke">⚡ Kausal schreiben (h←h+αθ)</button>
+        <button id="steer">→ Steern (h←h+λ(A&#8211;h))</button>
+        <button id="reset">↺ Reset</button>
+        <button id="themeBtn">◐ Theme</button>
+      </div>
+      <div class="readout" id="ro">…</div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--c-lit)"></i>Literatur (L18)</span>
+        <span><i class="dot" style="background:var(--c-prog)"></i>Programmierung (L19)</span>
+        <span><i class="dot" style="background:var(--c-lang)"></i>Sprachen (L27)</span>
+        <span><i class="dot" style="background:var(--theta)"></i>θ = semantische Richtung (B)</span>
+        <span><i class="dot" style="background:var(--req)"></i>∇ₕP / Request ∥ θ (B)</span>
+        <span><i class="dot" style="background:var(--true)"></i>wahr</span>
+        <span><i class="dot" style="background:var(--false)"></i>falsch</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../r1-049.html">r1-049.html — „Geometrie trifft Dynamik: Die Bedeutung im latenten Raum von LLMs“</a>
+        <div class="d">R1-Fusion aus <code>buecher/ai.html</code> (Kernthese „Repräsentation ist alles“, verteilte Repräsentationen/Bengio, Word2Vec-Linialgeometrie/Mikolov, Riemannsche Mannigfaltigkeiten, 7 Meta-Muster, Frankfurt/Sparck-Jones „Bullshit“-Einwand) × <code>concept_attractors_in_llm.html</code> (Chytas &amp; Singh 2025: Konzept-Attraktoren, IFS/Hutchinson-Erklärung, schicht-spezifische Konvergenz L18/L19/L24/L27, induzierte Tokens, trainingsfreie Apps). Liefert die <em>Ort/Geometrie+Dynamik</em>-Seite.</div>
+      </div>
+      <div>
+        <a href="../r1-077.html">r1-077.html — „Die Wahrheits-Richtung als Backprop-Request“</a>
+        <div class="d">R1-Fusion aus <code>geometrie_der_wahrheit.html</code> (Marks &amp; Tegmark, COLM 2024: Wahrheit als emergente lineare Struktur <code>θ</code> im Residual Stream — lineare Sonden, Mass-Mean, PCA, Transfer, kausale Intervention/NIE, Skalierung) × <code>backprop_als_funktor.html</code> (Fong/Spivak/Tuyéras, arXiv:1711.10455: Lerner <code>(P,I,U,r)</code>, Request-Funktion, <code>Learn</code> als symmetrisch monoidale Kategorie, Gradientenabstieg als Funktor <code>Para→Learn</code>, Backprop = Kompositionsregel). Liefert die <em>Richtung/Kalkül+Funktor</em>-Seite.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz'); if(!cv) return;
+  var ctx=cv.getContext('2d'); if(!ctx) return;
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var W=0,H=0;
+  var WX0=-1.8,WX1=1.8,WY0=-1.45,WY1=1.45,M=46;
+  var ang=-0.6;
+  var th=[Math.cos(ang),Math.sin(ang)];
+  var nvec=[-th[1],th[0]];
+  function sig(x){return 1/(1+Math.exp(-x));}
+  function invSig(b){b=Math.max(0.02,Math.min(0.98,b));return Math.log(b/(1-b));}
+  function dot(a,b){return a[0]*b[0]+a[1]*b[1];}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function gaussR(rnd){var u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+  var concepts=[
+    {key:'lit', label:'Literatur',      layer:18, center:{x:-0.90,y:0.55}, seed:11},
+    {key:'prog',label:'Programmierung', layer:19, center:{x:0.92, y:0.42}, seed:23},
+    {key:'lang',label:'Sprachen',       layer:27, center:{x:0.02, y:-0.85},seed:41}
+  ];
+
+  var points=[];
+  (function buildPoints(){
+    for(var i=0;i<concepts.length;i++){
+      var c=concepts[i], rnd=mulberry32(c.seed);
+      for(var k=0;k<8;k++){
+        points.push({c:c, sx:-1.5+rnd()*3.0, sy:-1.15+rnd()*2.3,
+          tx:c.center.x+(rnd()-0.5)*0.2, ty:c.center.y+(rnd()-0.5)*0.2});
+      }
+    }
+  })();
+
+  var h=[concepts[0].center.x+0.18*th[0], concepts[0].center.y+0.18*th[1]];
+  var layer=0, maxLayer=31, anim=null, dash=0, theme=null, lastRo='';
+
+  function isDark(){return document.documentElement.classList.contains('dark');}
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){var x=cs.getPropertyValue(n).trim();return x||fb;}
+    return {
+      canvas:v('--canvas','#05070E'), ink:v('--ink','#EAF0FF'), dim:v('--dim','#8b97b8'),
+      line:v('--line','#1c2740'), grid:v('--grid','rgba(255,255,255,0.06)'),
+      lit:v('--c-lit','#ff6b6b'), prog:v('--c-prog','#4ecdc4'), lang:v('--c-lang','#ffe66d'),
+      tcol:v('--true','#34d399'), fcol:v('--false','#f472b6'),
+      theta:v('--theta','#8fb0ff'), req:v('--req','#ffd166')
+    };
+  }
+  function conceptColor(c){return c.key==='lit'?theme.lit:(c.key==='prog'?theme.prog:theme.lang);}
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    W=r.width;H=r.height;
+    cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function px(x){return M+(x-WX0)/(WX1-WX0)*(W-2*M);}
+  function py(y){return M+(y-WY0)/(WY1-WY0)*(H-2*M);}
+  function inv(px_,py_){return [WX0+(px_-M)/(W-2*M)*(WX1-WX0), WY0+(py_-M)/(H-2*M)*(WY1-WY0)];}
+  function hexA(hex,a){
+    if(!hex)return 'rgba(128,128,128,0.3)';
+    if(hex.indexOf('rgba')===0||hex.indexOf('rgb')===0)return hex;
+    hex=hex.replace('#','');
+    if(hex.length===3)hex=hex.split('').map(function(x){return x+x;}).join('');
+    var n=parseInt(hex,16);var r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function arrow(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w||2;
+    if(dashed){ctx.setLineDash([7,6]);ctx.lineDashOffset=-dash;}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);
+    var a=Math.atan2(y2-y1,x2-x1),hs=8;
+    ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));
+    ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));
+    ctx.closePath();ctx.fill();ctx.restore();
+  }
+  function line(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w||1.2;
+    if(dashed){ctx.setLineDash([5,6]);ctx.lineDashOffset=-dash;}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+  }
+  function label(t,x,y,color,align,size,font){
+    ctx.save();ctx.fillStyle=color;ctx.font='600 '+(size||12)+'px '+(font||'ui-monospace,Menlo,monospace');
+    ctx.textAlign=align||'left';ctx.textBaseline='middle';ctx.fillText(t,x,y);ctx.restore();
+  }
+  function tFor(c){
+    var onset=Math.max(2,c.layer-8),done=c.layer+9;
+    var u=clamp((layer-onset)/(done-onset),0,1);
+    return u*u*(3-2*u);
+  }
+  function activeIndex(){
+    var best=0,bd=1e9;
+    for(var i=0;i<concepts.length;i++){
+      var dx=h[0]-concepts[i].center.x,dy=h[1]-concepts[i].center.y,d=dx*dx+dy*dy;
+      if(d<bd){bd=d;best=i;}
+    }
+    return best;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=theme.canvas;ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle=theme.grid;ctx.lineWidth=0.5;
+    for(var gx=0;gx<W;gx+=36){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(var gy=0;gy<H;gy+=36){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+
+    var ai=activeIndex(), active=concepts[ai], c=active.center, rPx=0.52/(WX1-WX0)*(W-2*M);
+
+    for(var i=0;i<concepts.length;i++){
+      var cc=concepts[i], colc=conceptColor(cc), cxp=px(cc.center.x), cyp=py(cc.center.y);
+      ctx.beginPath();ctx.arc(cxp,cyp,rPx,0,6.2832);
+      ctx.fillStyle=hexA(colc, i===ai?0.15:0.08);ctx.fill();
+      ctx.strokeStyle=hexA(colc,0.45);ctx.lineWidth=1.3;ctx.stroke();
+      for(var ring=1;ring<=3;ring++){
+        ctx.beginPath();ctx.arc(cxp,cyp,rPx*(1-0.24*ring),0,6.2832);
+        ctx.strokeStyle=hexA(colc,0.18-0.05*ring);ctx.lineWidth=1;ctx.stroke();
+      }
+      ctx.fillStyle=colc;ctx.font='600 13px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(cc.label, cxp, cyp-rPx-10);
+      ctx.fillStyle=theme.dim;ctx.font='11px ui-monospace,Menlo,monospace';
+      ctx.fillText('L'+cc.layer, cxp, cyp-rPx+3);
+    }
+
+    for(var p=0;p<points.length;p++){
+      var pt=points[p], t=tFor(pt.c), colp=conceptColor(pt.c);
+      var x=pt.sx+(pt.tx-pt.sx)*t, y=pt.sy+(pt.ty-pt.sy)*t;
+      if(t>0.02){ctx.beginPath();ctx.moveTo(px(pt.sx),py(pt.sy));ctx.lineTo(px(x),py(y));ctx.strokeStyle=hexA(colp,0.18);ctx.lineWidth=1;ctx.stroke();}
+      ctx.beginPath();ctx.arc(px(x),py(y),3,0,6.2832);ctx.fillStyle=hexA(colp,0.85);ctx.fill();
+    }
+
+    var rnd=mulberry32(active.seed*7+13), i2, along, perp, tx2, ty2, fx2, fy2;
+    ctx.globalAlpha=isDark()?0.5:0.62;
+    for(i2=0;i2<55;i2++){along=0.32+gaussR(rnd)*0.16;perp=gaussR(rnd)*0.14;
+      tx2=c.x+th[0]*along+nvec[0]*perp; ty2=c.y+th[1]*along+nvec[1]*perp;
+      ctx.fillStyle=theme.tcol;ctx.fillRect(px(tx2)-1,py(ty2)-1,2,2);}
+    for(i2=0;i2<55;i2++){along=-(0.32+gaussR(rnd)*0.16);perp=gaussR(rnd)*0.14;
+      fx2=c.x+th[0]*along+nvec[0]*perp; fy2=c.y+th[1]*along+nvec[1]*perp;
+      ctx.fillStyle=theme.fcol;ctx.fillRect(px(fx2)-1,py(fy2)-1,2,2);}
+    ctx.globalAlpha=1;
+
+    var ext=1.7;
+    line(px(c.x-ext*nvec[0]),py(c.y-ext*nvec[1]),px(c.x+ext*nvec[0]),py(c.y+ext*nvec[1]),theme.line,1.3,true);
+    arrow(px(c.x),py(c.y),px(c.x+th[0]*0.85),py(c.y+th[1]*0.85),theme.theta,2.4,false);
+    label('θ',px(c.x+th[0]*0.95),py(c.y+th[1]*0.95)-13,theme.theta,'center',15);
+
+    var s=dot([h[0]-c.x,h[1]-c.y],th), P=sig(s), gmag=P*(1-P);
+    var b=0.9, delta=invSig(b)-s, hr=[h[0]+delta*th[0],h[1]+delta*th[1]];
+    line(px(h[0]),py(h[1]),px(hr[0]),py(hr[1]),theme.req,1.4,true);
+    ctx.save();ctx.strokeStyle=theme.req;ctx.lineWidth=1.6;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.arc(px(hr[0]),py(hr[1]),6,0,6.2832);ctx.stroke();ctx.restore();
+    var glen=gmag*1.7;
+    if(glen>0.01) arrow(px(h[0]),py(h[1]),px(h[0]+glen*th[0]),py(h[1]+glen*th[1]),theme.req,2.6,false);
+
+    ctx.save();ctx.shadowBlur=14;ctx.shadowColor=theme.ink;ctx.fillStyle=theme.ink;
+    ctx.beginPath();ctx.arc(px(h[0]),py(h[1]),6,0,6.2832);ctx.fill();ctx.restore();
+    label('h',px(h[0])+11,py(h[1])-11,theme.ink,'left',13);
+
+    label('Layer '+layer+' / '+maxLayer,12,20,theme.ink,'left',13);
+    label('Aktiver Attraktor: '+active.label+'  (L'+active.layer+')',12,40,theme.dim,'left',12);
+
+    var lbl=P>=0.5?'WAHR':'FALSCH', lc=P>=0.5?theme.tcol:theme.fcol;
+    var ro='s = θ·(h−c) = <b>'+s.toFixed(2)+'</b> · P(true)=σ(s) = <b>'+P.toFixed(3)+'</b> · Eigenschaft: <b style="color:'+lc+'">'+lbl+'</b><br>'+
+      '∇ₕP = P(1−P)·θ , ‖∇ₕP‖ = <b>'+gmag.toFixed(3)+'</b> · <b style="color:'+theme.req+'">∇ₕP ∥ θ (immer)</b><br>'+
+      'Request zu b='+b.toFixed(2)+': Δ = σ⁻¹(b)−s = <b>'+delta.toFixed(2)+'</b> · h ← h'+(delta>=0?'+':'')+delta.toFixed(2)+'·θ';
+    if(ro!==lastRo){var roEl=document.getElementById('ro');if(roEl)roEl.innerHTML=ro;lastRo=ro;}
+  }
+
+  function loop(){
+    dash=(dash+0.5)%1000;
+    if(anim){h[0]+=(anim[0]-h[0])*0.2;h[1]+=(anim[1]-h[1])*0.2;
+      if(Math.abs(anim[0]-h[0])+Math.abs(anim[1]-h[1])<0.004){h[0]=anim[0];h[1]=anim[1];anim=null;}}
+    draw();
+    requestAnimationFrame(loop);
+  }
+  function worldAt(e){var r=cv.getBoundingClientRect();return inv(e.clientX-r.left,e.clientY-r.top);}
+  var dragging=false;
+  cv.addEventListener('pointerdown',function(e){dragging=true;try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    var w=worldAt(e);h[0]=w[0];h[1]=w[1];anim=null;});
+  cv.addEventListener('pointermove',function(e){if(!dragging)return;var w=worldAt(e);h[0]=w[0];h[1]=w[1];});
+  cv.addEventListener('pointerup',function(){dragging=false;});
+  cv.addEventListener('pointerleave',function(){dragging=false;});
+
+  var layerSlider=document.getElementById('layerSlider');
+  if(layerSlider)layerSlider.addEventListener('input',function(){layer=parseInt(this.value,10)||0;});
+  var pokeBtn=document.getElementById('poke');
+  if(pokeBtn)pokeBtn.addEventListener('click',function(){anim=[h[0]+0.8*th[0],h[1]+0.8*th[1]];});
+  var steerBtn=document.getElementById('steer');
+  if(steerBtn)steerBtn.addEventListener('click',function(){
+    var next=concepts[(activeIndex()+1)%concepts.length];anim=[next.center.x,next.center.y];});
+  var resetBtn=document.getElementById('reset');
+  if(resetBtn)resetBtn.addEventListener('click',function(){
+    h=[concepts[0].center.x+0.18*th[0],concepts[0].center.y+0.18*th[1]];anim=null;layer=0;if(layerSlider)layerSlider.value=0;});
+  var themeBtn=document.getElementById('themeBtn');
+  if(themeBtn)themeBtn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');theme=readTheme();});
+  window.addEventListener('resize',resize);
+  new MutationObserver(function(){theme=readTheme();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  theme=readTheme();resize();
+  if(layerSlider)layerSlider.value=0;
+  loop();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "005",
+  "a": "combined/r1-004.html",
+  "b": "combined/r1-056.html",
+  "a_title": "Diffeomorphismen der Aufmerksamkeit",
+  "b_title": "Weiche Räume, harte Rechnungen (Conceptors ✕ Rotation)",
+  "combined_theme": "diffeomorphismus-als-eigenspektrum",
+  "one_line": "Eine Attention-Schicht ist Identität (Residuum) plus spektral geglättetes Verschiebungsfeld: linearisiert ein Conceptor mit Aperture α (B), integriert ein invertibler Diffeomorphismus (A) — derselbe Operator, zwei Seiten.",
+  "contradictions": [
+    "Lineares Richtung-Filter (B: Conceptor C = R(R+α⁻²I)⁻¹, pro Eigenrichtung ein skalares Gain γⱼ) vs. nichtlineare Raum-Verformung (A: Diffeomorphismus x→x+f(x) mit abklingendem lokalen Kernel, 'Liquify').",
+    "Invertierbarkeit: A verlangt einen invertiblen Diffeomorphismus (‖Df‖<1); B's Conceptor wird bei α→0 ein Rang-k-Projektor (γⱼ→0, Rang-Kollaps, nicht invertibel).",
+    "Weich & kontinuierlich (A: glatter lokaler Kernel überall, kein diskretes Gerüst) vs. hart & diskret (B: 5 Frequenzen {14,35,41,42,52}, exakt Rang 10, 84,6 % der Neuronen auf einer Frequenz, Rest verworfen)."
+  ],
+  "resolution": "Das Diffeomorphismus A linearisiert um die Identität zu I+Df, das in der Eigenbasis von R genau B's Conceptor C ist: linear = Tangente, nichtlinear = Integralkurve desselben Operators. Die Aperture α (bzw. A's ‖Df‖-Grenze) ist der einzige Drehknopf: α groß → C≈I → invertibler Diffeomorphismus (A); α→0 → C→Projektor → harter Rang-k-Kern, nicht invertibel (B), wo A's Diffeo-These nur noch 'visuelle Metapher' ist. Weich ist das Substrat, hart die selbst-organisierte Spezialform bei spektraler Lücke; B's 'Addition = Rotation auf dem Kreis' ist ein lineares Diffeomorphismus auf dem Rang-10-Unterraum.",
+  "viz": "Aperture-Dial als (lineares) Diffeomorphismus: Spektrum aus 12 Eigenrichtungen (4 Kern, 8 Hintergrund), Slider α steuert γⱼ=σⱼ/(σⱼ+α⁻²); ein von diesem Operator verformtes Gitter (A's Mannigfaltigkeit), Radial-Spokes, Token x→x+f(x), und eine Invertierbarkeits-Leiste nach det C=Πγⱼ (Projektor↔Diffeomorphismus), themenreaktiv, inline."
+}

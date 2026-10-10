@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "combined/r1-024.html",
+  "b": "combined/r1-018.html",
+  "a_title": "Positionsbewusste Aufmerksamkeitsgeometrie (Attention ✕ RoPE)",
+  "b_title": "Das max-margin Neuron — McCulloch-Pitts trifft SVM",
+  "combined_theme": "linear-functional-decision",
+  "one_line": "Beide Papiere drehen sich um dasselbe Atom — ein lineares Funktionsal / Skalarprodukt im (gedrehten oder erhobenen) Feature-Raum: A (Attention+RoPE) macht es positionssensitiv und weich (Softmax→Konvexkombination), B (MP+SVM) optimal und hart (Max-Margin→Schwellenentscheid); der gemeinsame Regler ist der Hard↔Soft-Dial (τ ↔ C).",
+  "contradictions": [
+    "Aussagekraft/Kernel: A (RoPE) erzeugt den relativ-positionsabhängigen Score Σ_p cos(θ_p·Δ) durch orthogonale 2D-Rotationen bei FIXER Dimension (endlicher, exakter, impliziter Kernel); B (Kernel-Trick) erzeugt Nichtlinearität durch explizite Dimensionserhöhung/Lift — dieselbe Idee (nichtlineare Ähnlichkeit zum Preis eines Skalarprodukts), entgegengesetzte Hebel (Drehung vs. Dimensionserhöhung).",
+    "Ausgabemechanik: A bildet immer eine WEICHE Konvexkombination (Softmax auf dem Simplex, jeder Token trägt bei, kein Veto); B trifft einen HARTE Schwellen-/Margin-Entscheid (MP Alles-oder-nichts + Inhibitions-Veto; SVM harte Grenze / Soft-Margin) — alles mischt (A) vs. harter Schnitt mit einer stillen Seite (B).",
+    "Relation vs. Unär: A ist fundamental relationell (Score hängt von der Differenz n−m ab, Struktur über einer Sequenz); B ist unär und stateless (f(x)=sign(wᵀx+b), jede Anfrage unabhängig, kein Ordnungsbegriff ohne MP-Schleifen) — Relation (wer wen hört) vs. unäres Prädikat (liegt x auf dieser Seite)."
+  ],
+  "resolution": "A's RoPE-Kernel qᵀR(Δ)k und B's SVM-Kernel φ(a)ᵀφ(b) sind dieselbe Algebra — ein lineares Skalarprodukt im Feature-Raum; A realisiert sie als endliche, normerhaltende Rotation (implizit, exakt, feste Dimension), B als explizite (ggf. unendliche) Erhebung. A's Softmax-Temperatur τ und B's Regularisierer C sind derselbe Hard↔Soft-Regler: hart (τ→0 / C→∞) = eine Einheit wird ausgewählt (A kopiert den Peak-Token argmax, B feuert Veto/Support-Vektor), weich (τ→∞ / C klein) = Gleichverteilung (A mischt alle Values, B verzeiht Ausreißer). B's unäres Funktionsal wird auf A's relative RoPE-Features angewendet → ein positionssensitives, max-margin-artiges Entscheidungsfunktional; A liefert die relationalen Features, B die lineare Auswahl-Maschinerie.",
+  "viz": "Canvas: der relativ-positionsabhängige RoPE-Score s(Δ)=Σ_p cos(θ_p·Δ) (A) als Kurve über Δ=n−m mit Peak bei 0; eine Margin-Schwelle θ (B) mit abgetragener Margin bei Δ=0; ein Hard↔Soft-Regler (τ ↔ C) steuert, ob die Ausgabe eine flache weiche Softmax-Konvexkombination (A, gefüllte Fläche) oder eine harte Firing/Margin-Entscheidung (B, s≥θ feuert) ist; Paare-P-Regler wechselt zwischen Multi-Scale-Kernel und einzelner Frequenz."
+}

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der gekrümmte Faserbündel-Fluss: gerichtete Attention, ihr Simplizial-Schatten und die intrinsische Dimension — Fusion 031</title>
+<style>
+:root{
+  --bg:#f5f7fb; --bg2:#eef1f8; --panel:#ffffff; --panel2:#f2f5fb;
+  --txt:#1b2436; --txt-dim:#48536e; --txt-faint:#8a93a8;
+  --acc:#0f9d8f; --acc2:#d63f8f; --acc3:#c9821b; --acc4:#5b4bd6; --acc5:#2f9d55;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+html.dark{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(820px 480px at 12% 4%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(760px 560px at 88% 16%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%),var(--bg)}
+article{max-width:820px;margin:0 auto;padding:46px 20px 90px}
+header.top{margin-bottom:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:color-mix(in srgb,var(--acc) 12%,transparent);border:1px solid color-mix(in srgb,var(--acc) 34%,transparent);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-size:clamp(26px,4.6vw,42px);line-height:1.09;letter-spacing:-.02em;font-weight:760;margin-bottom:14px}
+.sub{font-family:var(--mono);font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;word-break:break-word}
+.sub b{color:var(--acc);font-weight:600}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:74ch}
+p.lead{font-size:16px;color:var(--txt);max-width:72ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 60%,transparent)}
+a:hover{border-bottom-style:solid}
+section{padding:40px 0;scroll-margin-top:20px}
+section+section{border-top:1px solid color-mix(in srgb,var(--txt) 12%,transparent)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h2{font-size:clamp(21px,3vw,31px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:16.5px;font-weight:660;margin:22px 0 8px}
+.card{background:var(--panel);border:1px solid color-mix(in srgb,var(--txt) 12%,transparent);border-radius:var(--r);padding:16px 18px;margin:12px 0}
+.card h3{margin-top:0}
+.chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.05em;padding:2px 9px;border-radius:99px;margin-right:6px;font-weight:600;vertical-align:middle}
+.chip.a{background:color-mix(in srgb,var(--acc4) 16%,transparent);color:var(--acc4);border:1px solid color-mix(in srgb,var(--acc4) 40%,transparent)}
+.chip.b{background:color-mix(in srgb,var(--acc2) 16%,transparent);color:var(--acc2);border:1px solid color-mix(in srgb,var(--acc2) 40%,transparent)}
+.chip.f{background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 40%,transparent)}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:14px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc4);margin-bottom:5px;display:block}
+.math{font-family:var(--mono);font-size:14px;color:var(--txt);background:var(--panel2);border:1px solid color-mix(in srgb,var(--txt) 12%,transparent);border-radius:10px;padding:13px 15px;margin:12px 0;overflow-x:auto;line-height:1.9}
+.math b{color:var(--acc3)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid color-mix(in srgb,var(--txt) 14%,transparent);padding:8px 10px;text-align:left;color:var(--txt-dim);vertical-align:top}
+.tbl th{background:var(--panel);color:var(--txt);font-weight:700}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+code{font-family:var(--mono);font-size:.88em;background:color-mix(in srgb,var(--txt) 10%,transparent);padding:2px 6px;border-radius:5px;color:var(--acc)}
+.vz-controls{display:flex;gap:8px 14px;flex-wrap:wrap;align-items:center;margin:16px 0 10px}
+.vz-controls label{font-size:12.5px;color:var(--txt-dim);display:flex;align-items:center;gap:8px}
+.vz-controls b{font-family:var(--mono);color:var(--acc);font-weight:600}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 13px;border-radius:9px;border:1px solid color-mix(in srgb,var(--txt) 22%,transparent);background:color-mix(in srgb,var(--txt) 5%,transparent);color:var(--txt);transition:.15s}
+button:hover{background:color-mix(in srgb,var(--txt) 12%,transparent);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+input[type=range]{-webkit-appearance:none;appearance:none;width:120px;height:5px;border-radius:99px;background:color-mix(in srgb,var(--txt) 16%,transparent);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg)}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt-dim);cursor:pointer}
+.chk input{accent-color:var(--acc)}
+.cwrap{background:var(--panel2);border:1px solid color-mix(in srgb,var(--txt) 14%,transparent);border-radius:12px;padding:8px;overflow:hidden;margin:8px 0}
+canvas{display:block;width:100%;height:560px}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:12px}
+.ro .box{background:var(--panel);border:1px solid color-mix(in srgb,var(--txt) 12%,transparent);border-radius:11px;padding:10px 12px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.g{color:var(--acc3)} .ro .box .v.v{color:var(--acc4)}
+.hint{font-size:12px;color:var(--txt-faint);margin-top:8px;max-width:74ch}
+footer{border-top:1px solid color-mix(in srgb,var(--txt) 12%,transparent);margin-top:40px;padding-top:22px;color:var(--txt-faint);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<article>
+<header class="top">
+  <div class="pill"><span class="d"></span>KNOCKOUT-FUSION · RUNDE 2 · PAAR 031</div>
+  <h1>Der gekrümmte Faserbündel-Fluss: gerichtete Attention, ihr Simplizial-Schatten und die intrinsische Dimension</h1>
+  <p class="sub">Fusion aus: <b>r1-052.html</b> ✕ <b>r1-014.html</b>  (Round 2)</p>
+</header>
+
+<section id="these">
+  <div class="eyebrow">Sektion 1</div>
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Quellen lesen <em>denselben</em> Transformer auf <em>zwei Ebenen</em> — in komplementärer Weise. <strong>r1-052</strong> trennt <em>Behälter</em> von <em>Inhalt</em>: der Transformer ist ein <strong>Faserbündel</strong> (Basis = Token-Sequenz, Faser = <code>d_model</code>-Vector, Totalraum = alle (Position, Schicht)-Zustände, Residual Stream = Stängel), und der <em>Inhalt</em>, den die Daten in diesen Fasern ausbreiten, ist eine dünne, <em>gekrümmte</em> Mannigfaltigkeit mit einer <strong>intrinsischen Dimension (ID)</strong>, die über die Schichten einen <em>Buckel</em> bildet (steigt, Gipfel bei 20–40 % Tiefe, fällt auf ≈ <code>log₂(#Klassen)</code>) und die <em>Generalisierung vorhersagt</em> (r = 0,94).</p>
+  <p><strong>r1-014</strong> trennt <em>Mechanismus</em> von <em>Invariante</em>: Attention ist ein <strong>gerichteter geometrischer Fluss</strong> (ein „Blick" q→k, der einen Punkt in den gewichteten <em>Schwerpunkt</em> zieht, dann Residual + LayerNorm-Kugel + FFN-Krümmung, sechs Schichten = eine Trajektorie) — und genau der <em>symmetrierte, geschwellige</em> Teil dieses Flusses (gegenseitige Attention, <code>min(αᵢⱼ,αⱼᵢ)&gt;ε</code>) ist ein <strong>Simplizialkomplex</strong> aus „Bedeutungsklumpen" (Kanten = 1-Simplizes, Dreiecke = 2-Simplizes).</p>
+  <p>Die eine, beide vereinende Position lautet: <strong>Der Transformer ist ein schicht-indexierter gerichteter Fluss von Punkten durch einen lokal vom FFN gekrümmten Faserbündel-Raum. Sein gerichteter Attention-Fluss (Mechanismus) wirft einen symmetrischen Simplizial-Schatten (invariante Struktur); die Daten in seinen festen, hohen Fasern besetzen eine dünne, gekrümmte Mannigfaltigkeit, deren intrinsische Dimension einen Buckel trägt; die FFN-Krümmung und das Morphen des Skeletts über die Schichten sind <em>dasselbe</em> Phänomen — „Training schreibt globale Struktur"; und die lokalen topologischen Defekte (r1-052) sind genau die Stellen, an denen das gesunde Simplizial-Skelett (r1-014) reißt.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <div class="eyebrow">Sektion 2</div>
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Vorab: Beide R1-Papiere sind <em>interpretative</em> Modelle (kein direktes Messen des jeweils anderen); beide betonten selbst „inkompatible Stellungen, keine Faktenkonflikte". Dennoch nehmen <strong>A</strong> (= r1-052) und <strong>B</strong> (= r1-014) zu drei Achsen <em>unvereinbare</em> Stellungen ein:</p>
+
+  <div class="card">
+    <h3><span class="chip a">A</span>Herkunft der Krümmung: Lerneffekt vs. <span class="chip b">B</span>architektonischer Raumkrümmer</h3>
+    <p><strong>A</strong> (intrinsische Dimension) macht den Hauptbefund: „gekrümmt, nicht flach" ist ein <em>Lern-Effekt</em> — bei <em>zufälligen</em> Gewichten ist jede Schicht näherungsweise eine <em>Drehung</em>, die Daten bleiben flach, der Buckel existiert <em>nicht</em>; „Der Buckel ist ein echtes Trainings-Ergebnis, keine Architektureigenschaft".</p>
+    <p><strong>B</strong> (rein geometrisch) macht das <em>FFN</em> dagegen zum <em>architektonischen Raumkrümmer</em>, der im <em>Forward-Pass</em> wirkt: „Der Raum wird gekrümmt", „Verbiegung — jetzt linear trennbar", LayerNorm zieht auf eine Kugel. Die Krümmung ist hier eine <em>immer vorhandene</em> Struktur des Mechanismus, unabhängig davon, ob etwas gelernt wurde.</p>
+    <p class="hint">Unvereinbarkeit: Entsteht die (Wieder-)Krümmung der Repräsentation <em>nur durch Training</em> (A) oder ist sie eine <em>stetig wirksame architektonische Deformation</em>, die das FFN bei jedem Durchlauf vollzieht (B)?</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip a">A</span>Struktur = topologische Defekte (Pathologie) vs. <span class="chip b">B</span>Struktur = Simplizial-Skelett (Kohärenz)</h3>
+    <p><strong>A</strong> (Faserbündel) nimmt als <em>strukturtragendes</em> Objekt die <em>lokalen topologischen Defekte</em> an: <em>Riss</em> (Halluzination — der Schnitt springt in eine falsche Bedeutungsregion), <em>Schleife</em> (Kreisschluss), <em>Auffächerung</em> (Unsicherheit). Die Struktur wird über die <em>Pathologie</em> gefasst — was ein Netz danebengreifen lässt.</p>
+    <p><strong>B</strong> (Simplizial) nimmt als strukturtragendes Objekt den <em>gesunden</em> <em>Simplizialkomplex</em> der gegenseitigen Attention: Kanten, wo sich zwei Wörter <em>gegenseitig</em> stark beachten, Dreiecke für drei paarweise verbundene — „Bedeutungsklumpen". Die Struktur wird über die <em>Kohärenz</em> gefasst — was zusammenhält.</p>
+    <p class="hint">Unvereinbarkeit: A nimmt die <em>Risse</em> als Währung der Struktur, B das <em>Skelett</em>. Die eine liest, wo etwas bricht; die andere, wo etwas zusammenhängt.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip a">A</span>Schichtverlauf = gemessener ID-Buckel (Gesetz) vs. <span class="chip b">B</span>Schichtverlauf = offenes, formloses Morphen</h3>
+    <p><strong>A</strong> (intrinsische Dimension) behauptet über die Schichten ein <em>quantitatives, nicht-monotones</em> Gesetz: die ID <em>steigt</em> in frühen Schichten, erreicht ein <em>Gipfel</em> (20–40 % Tiefe, Werte 100–120) und <em>fällt monoton</em> auf ≈ 10 am Ausgang — in <em>allen</em> 14 getesteten Netzen eine gemessene Form.</p>
+    <p><strong>B</strong> (rein geometrisch) beschreibt dieselbe „über-die-Schichten"-Achse nur als <em>offene Trajektorie</em>: „Sechs Schichten = eine Bahn", der Simplizialkomplex <em>morphed</em> K(1)→…→K(6). Es wird <em>keine</em> Form (kein Buckel, keine Monotonie) über die Entwicklung des Inhalts behauptet — nur dass etwas sich Schicht für Schicht verwandelt.</p>
+    <p class="hint">Unvereinbarkeit (engste reale Spannung): eine offene, formlose Morph-Entwicklung (B) gegenüber einer gemessenen, buckelförmigen Gesetzmäßigkeit für dieselbe Schicht-Achse (A).</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <div class="eyebrow">Sektion 3</div>
+  <h2>Auflösung</h2>
+
+  <div class="card">
+    <h3><span class="chip f">→</span>Architektur liefert die Biege-Kapazität, Training selektiert die realisierte Krümmung</h3>
+    <p>Die FFN-Deformation (B) ist ein <em>metrischer Operator, der bei jedem Forward-Pass verfügbar ist</em> — sie <em>kann</em> den Raum biegen. <em>Ob</em> und <em>zu was</em> die Daten tatsächlich auf einer dünnen, gekrümmten Mannigfaltigkeit landen (A's „gekrümmt, nicht flach" + Buckel), entscheidet das <em>Training</em>: bei zufälligen Gewichten bleibt die Schicht ≈ Drehung und die Daten flach. Fusioniert: <strong>Das FFN ist die Möglichkeit der Krümmung; Training ist ihre Verwirklichung.</strong> „FFN biegt" (B, Mechanismus) und „gekrümmt, nicht flach" (A, gelernter Inhalt) sind komplementär — der Bieger ist stets an, das Training entscheidet, ob die Daten eine dünne, gekrümmte, buckelförmige Geometrie <em>darin</em> ausbreiten.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip f">→</span>Das Skelett ist gesund, die Defekte sind seine Risse</h3>
+    <p>Der Simplizialkomplex (B) ist das <em>gesunde invariante Skelett</em> — die kohärenten „Bedeutungsklumpen". Die topologischen Defekte (A) sind genau <em>wo dieses Skelett bricht</em>: ein <em>Riss</em> = eine fehlende/falsche Kante (Halluzination — der Schnitt springt in eine falsche Bedeutungsregion, die es im Komplex nicht geben dürfte); eine <em>Schleife</em> = ein degenerierter Zyklus; eine <em>Auffächerung</em> = ein diffuses, nicht schärfer werdendes Simplex. Fusioniert: <strong>dasselbe Objekt, von Gesundheit und Pathologie gelesen</strong> — Bedeutung via Skelett (B), Fehlleistung via seiner Defekte (A) plus der globalen ID-Signatur (A). Ein kombinatorisches + ein topologisches Diagnosepaar.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip f">→</span>Der Komplex morphed entlang des ID-Buckels</h3>
+    <p>Dieselbe Schicht-Achse, zwei Readouts: Der Komplex morphed (B) <em>als Funktion von</em> der intrinsischen Dimension (A). Frühe Schichten (ID↑, Aufweiten, weil irrelevante gemeinsame Eingangsmerkmale wegge-whitet werden) → der Komplex <em>gewinnt</em> Kanten (mehr gegenseitige Aufmerksamkeit, grober Zusammenhang). Späte Schichten (ID↓, Kompression auf ≈ <code>log₂(#Klassen)</code>) → der Komplex <em>verdünnigt</em> sich auf wenige, dichte, task-relevante Klicks. Fusioniert: <strong>die Morph-Entwicklung (B) ist das kombinatorische Readout, der ID-Buckel (A) das dimensionale Readout desselben schicht-indexierten Prozesses</strong> — zwei Projektionen einer einzigen Zeitentwicklung. Das Morphen (B) erhält so die konkrete Form, die A misst.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <div class="eyebrow">Sektion 4</div>
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Zusammengeführt: <em>ein schicht-indexierter gerichteter Attention-Fluss durch einen lokal FFN-gekrümmten Faserbündel-Raum; sein symmetrischer Schatten ist der Simplizialkomplex der Bedeutung; die Daten in den festen Fasern spannen eine dünne, gekrümmte Mannigfaltigkeit, deren intrinsische Dimension einen Buckel trägt, der die Generalisierung vorhersagt.</em></p>
+
+  <h3>F1 · Die gemeinsame Attention-Mathematik <span class="chip f">beide</span></h3>
+  <p>Drei Kernelemente sind in <em>allen vier</em> Unterquellen identisch: der <strong>Score</strong> als Skalarprodukt/Projektion (Parallelität, Q·K/√d — in A der „gemischte Faser-Fluss", in B „Blickrichtung trifft Schild"); der <strong>Softmax</strong> als Verteilung <em>einer Einheit Masse</em> über die Ziele (B's Temperatur τ = A's „1/Schärfe"); und der <strong>Output</strong> als gewichtete Mischung / Baryzentrum <code>O<sub>i</sub> = Σⱼ α<sub>ij</sub>·Vⱼ</code> (B: „der Punkt fällt in den Schwerpunkt" = A: Fasern werden horizontal gemischt). Die Faserbündel-Sprache von A und die Fluss-Sprache von B beschreiben dieselbe gewichtete Summe.</p>
+
+  <h3>F2 · Der Faserbündel-Container <span class="chip a">A · r1-052</span></h3>
+  <ul>
+    <li><strong>Basisraum</strong> = Token-Sequenz (Topologie: Linie ℝ¹, Ring S¹ oder nicht-triviales Möbius-Band); <strong>Faser</strong> = <code>d_model</code>-Hidden-Vektor (ED, der <em>Behälter</em>); <strong>Totalraum</strong> = alle (Position, Schicht)-Zustände.</li>
+    <li><strong>Residual Stream</strong> = der durchgehende Stängel, <code>x ← x + Attn(x) + FFN(x)</code>; <strong>Attention</strong> = horizontale Faser-Abbildung (liest an anderen Basispunkten, mischt Kontext zurück); <strong>FFN</strong> = lokale nichtlineare Transformation, die „Wissen" in den Stream schreibt; <strong>LayerNorm</strong> = hält den Schnitt beschränkt (B: Rückprojektition auf eine Kugel).</li>
+    <li><strong>Position-Encoding</strong> = sinusoidale „Wurzeln", die jede Faser verankern (B: die <em>Phase</em> / Helix-Winkel); <strong>Semantik</strong> = eine <em>Sektion</em> (Punktauswahl je Faser); <strong>Polysemantik</strong> = Superposition mehrerer Sektionen; <strong>Attention-Sinks</strong> = Basispunkte mit überproportionalem horizontalen Fluss.</li>
+  </ul>
+
+  <h3>F3 · Das Maß — intrinsische Dimension und der Buckel <span class="chip a">A · r1-052</span></h3>
+  <ul>
+    <li><strong>ED</strong> (Einbettungsdimension) = gespeicherte Zahlen pro Schicht (pool4: 100 352); <strong>ID</strong> (intrinsische Dimension) = minimale Parameter der Daten (pool4: ≈ 19), Verhältnis ≈ 2·10⁻⁴. Die Daten liegen auf einer dünnen, <em>global gekrümmten</em> Mannigfaltigkeit.</li>
+    <li><strong>PCA-Falle</strong>: lineare Methode findet nur flache Approximation → überschätzt an gekrümmten Daten um Größenordnungen (PC-ID ≈ 200 vs. TwoNN-ID ≈ 18).</li>
+    <li><strong>TwoNN-Schätzer</strong> (Facco et al. 2017): pro Punkt die Abstände r₁ (1. Nachbar), r₂ (2. Nachbar).
+      <div class="math">
+        <b>Verhältnis:</b>&nbsp; μ = r₂ / r₁ (≥ 1)<br>
+        <b>Verteilung:</b>&nbsp; auf einer k-dimensionalen Fläche Pareto: f(μ) ∝ μ<sup>−(k+1)</sup><br>
+        <b>Ablesen:</b>&nbsp; trägt man <code>ln μ</code> gegen <code>−ln(1 − F(μ))</code> auf, ist die <b>Steigung = k</b>.<br>
+        <span style="color:var(--txt-faint)">r₁ kürzt sich heraus → dichte/dünne Regionen stören nicht.</span>
+      </div>
+    </li>
+    <li><strong>Der Buckel</strong>: ID steigt früh (aufweiten), Gipfel bei 20–40 % Tiefe (100–120), fällt monoton auf ≈ 10 ≈ <code>log₂(1000)</code> am Ausgang — in allen 14 Netzen. <strong>ID → Leistung</strong>: die ID der Trainingsdaten in der letzten versteckten Schicht korreliert mit r = 0,94 (ResNets r = 0,99) mit dem Top-5-Testfehler — abschätzbar <em>ohne Testset</em>. <strong>Zufalls-Labels</strong>: Trainingsfehler 0, Test bleibt Zufall, der <em>Buckel verschwindet, ID steigt</em> zur ED. <strong>Gauß-Zwilling</strong> (gleiche Kovarianz): PCA-Streu-Ellipse unverändert, TwoNN-ID der echten Fläche niedrig &amp; stabil, die des Zwillings hoch &amp; wachsend → „gekrümmt, nicht flach" ist kein Artefakt.</li>
+  </ul>
+
+  <h3>F4 · Die Invariante — der Simplizial-Schatten <span class="chip b">B · r1-014</span></h3>
+  <ul>
+    <li>Wort = fester <strong>semantischer Anker</strong> (Embedding) in einem Bedeutungsräum; daraus Q = W<sub>Q</sub>X (Scheinwerfer), K = W<sub>K</sub>X (Schild), V = W<sub>V</sub>X (Inhalt).</li>
+    <li><strong>Gerichteter Fluss</strong> (B): ⟨q,kⱼ⟩ = Projektionslänge, das volle N×N-Feld ist die Dynamik („jeder Punkt zieht an jedem"). <strong>Symmetrischer Schatten</strong> (A): Kante {i,j} iff <code>min(αᵢⱼ,αⱼᵢ) &gt; ε</code>; Dreieck = drei paarweise verbundene = (m−1)-Simplex einer m-Klique = „Bedeutungsklumpen".</li>
+    <li><strong>Tensor, zwei Anteile</strong>: antisymmetrischer Teil = „reiner Blick" (transient, query-spezifisch, B); symmetrischer Teil <code>Rᵢⱼ = min(αᵢⱼ,αⱼᵢ)</code> = das stabile Skelett (A). ε (0,02–0,35) steuert Dichte; die <em>Gegenseitig</em>-Fraktion misst, wie viel des gerichteten Flusses symmetrisch ist.</li>
+  </ul>
+
+  <h3>F5 · Die Dynamik über die Schichten — ein Objekt <span class="chip f">Fusion</span></h3>
+  <p>Die Token-Position ist die Summe eines festen semantischen Ankers (A) und einer Positions-Phase (B): <code>p<sub>i</sub> = E<sub>i</sub> ⊕ PE(φ<sub>i</sub>)</code>. Die per-Schicht-Abbildung: <code>p ← LayerNorm(p + Attn(p))</code> (Schwerpunkt → Restweg → Kugel) und <code>p ← FFN(p)</code> (Krümmung). Schicht für Schicht (ℓ = 1…L) beschreibt jedes Token eine <em>Trajektorie</em>; gleichzeitig <em>morphed</em> der Simplizialkomplex K(ℓ) <em>entlang des ID-Buckels</em>: aufweiten (ID↑) → Kanten gewinnen; komprimieren (ID↓ → <code>log₂(#Klassen)</code>) → verdünnigen auf task-relevante Klicks. Das FFN biegt den Raum (B), das Training bestimmt die realisierte dünne, gekrümmte Daten-Geometrie (A).</p>
+
+  <table class="tbl">
+    <tr><th>Achse</th><th>A = r1-052 (Faserbündel + ID)</th><th>B = r1-014 (Fluss + Komplex)</th><th>Fusion</th></tr>
+    <tr><td>Score</td><td>Faser-Fluss / Mischung</td><td>Projektion ⟨q,kⱼ⟩/√d</td><td>dasselbe Skalarprodukt</td></tr>
+    <tr><td>Softmax</td><td>— (implizit gewichtet)</td><td>1/τ = „Schärfe", eine Einheit Masse</td><td>gewichtete Verteilung</td></tr>
+    <tr><td>Output</td><td>O = Σ αV (Fasern mischen)</td><td>Baryzentrum „Punkt fällt"</td><td>dieselbe gewichtete Summe</td></tr>
+    <tr><td>Container</td><td>Faser (ED) / Faserbündel</td><td>semantischer Raum</td><td>feste Faser = Behälter</td></tr>
+    <tr><td>Inhalt</td><td>dünne gekr. Mannigfaltigkeit, ID-Buckel</td><td>(nicht gemessen)</td><td>ID lebt <em>in</em> der Faser</td></tr>
+    <tr><td>Krümmung</td><td>Lern-Effekt (zufällig = Drehung)</td><td>FFN biegt im Forward-Pass</td><td>FFN = Möglichkeit, Training = Verwirklichung</td></tr>
+    <tr><td>Struktur</td><td>topologische Defekte (Riss/Schleife/Auf.)</td><td>Simplizial-Skelett (Kanten/Dreiecke)</td><td>Skelett gesund, Defekte = seine Risse</td></tr>
+    <tr><td>Schicht-Achse</td><td>ID-Buckel (Anstieg→Gipfel→Abfall)</td><td>offenes Morphen K(1)…K(6)</td><td>Komplex morphed <em>entlang</em> des Buckels</td></tr>
+    <tr><td>Position</td><td>sinusoidale Wurzeln</td><td>PE als Helix-Phase</td><td>p = E ⊕ PE(φ)</td></tr>
+  </table>
+
+  <h3>F6 · Defekte als Singularitäten des Skeletts <span class="chip f">Fusion</span></h3>
+  <p>Ein <em>generalisierendes</em> Netz = intaktes Bündel + <em>fallende</em> ID (Buckel) + kohärentes, sich verdünnigendes Skelett. Ein <em>memorisierendes</em> Netz (Zufalls-Labels) = akkumulierende Defekte (Risse: falsche Kanten/Halluzinationen) + <em>steigende</em> ID (Buckel verschwindet) + ein Skelett, das statt sich zu verdünnigen zur ED aufbläht. „Eine <em>Regel</em>" genügt eine dünne Fläche; <em>Einzelfälle</em> zu adressieren verlangen Platz, also Dimensionen.</p>
+
+  <div class="note t"><span class="h">Ehrlichkeit (von beiden Quellen selbst)</span>
+  A (r1-052): ID-Werte über ~20 sind <em>untere Schranken</em> (endliche Stichproben); die ID ist <em>global</em> (lokale Variation bleibt verborgen); die ID↔Leistung-Korrelation gilt <em>zwischen Architekturen</em>, nicht zwischen Zufalls-Init; Korrelation ≠ Kausalität; getestet wurde nur <em>Bildklassifikation</em> (Sprache/LLMs offen). A's Faserbündel ist <em>illustrativ</em> (keine Monodromie/Strukturgruppe). B (r1-014): der feste 3D-Bedeutungsräum und ε sind <em>heuristisch</em>; die „Scheinwerfer/Schild"-Zerlegung dient der Anschauung. Beide Metaphern sind keine bewiesene Theorie.</div>
+</section>
+
+<section id="visualisierung">
+  <div class="eyebrow">Sektion 5</div>
+  <h2>Interaktive Visualisierung: der Simplizial-Schatten entlang des ID-Buckels</h2>
+  <p><strong>Oben</strong> — über die Schichten: der <em>gemessene ID-Buckel</em> (türkis, linke Skala; Form nach Ansuini et al.) und die <em>Kanten-Dichte des Simplizial-Komplexes</em> (rosa, rechte Skala), die <em>entlang desselben Buckels morphed</em>; die hellen Balken dahinter = die (schrumpfende) Faser/ED. <strong>Unten</strong> — der 2D-Schnitt der gewählten Schicht: eine (optional <em>FFN-gekrümmte</em>) Punktewolke, deren <em>gerichtete q→k-Blickpfeile</em> (B) den Fluss zeigen und deren <em>Kanten/Dreiecke</em> aus der gegenseitigen Attention (A) den Simplizial-Schatten werfen. Regler: Schicht, ε, Schärfe, Krümmung.</p>
+
+  <div class="vz-controls">
+    <button id="vzTheme">☀️ Hell</button>
+    <button id="vzCurve" class="on">Gekrümmt</button>
+    <label>Schicht <b id="vzLayerV">pool3</b>
+      <input type="range" id="vzLayer" min="0" max="7" value="2">
+    </label>
+    <label>ε <b id="vzEpsV">0.070</b>
+      <input type="range" id="vzEps" min="0.02" max="0.35" step="0.005" value="0.07">
+    </label>
+    <label>Schärfe 1/τ <b id="vzSharpV">1.50</b>
+      <input type="range" id="vzSharp" min="0.5" max="5" step="0.1" value="1.5">
+    </label>
+    <label class="chk"><input type="checkbox" id="vzDir" checked> gerichteter Blick</label>
+    <label class="chk"><input type="checkbox" id="vzEdges" checked> Kanten</label>
+    <label class="chk"><input type="checkbox" id="vzTri" checked> Dreiecke</label>
+  </div>
+
+  <div class="cwrap"><canvas id="vz"></canvas></div>
+
+  <div class="ro">
+    <div class="box"><div class="k">ED · Faser / Behälter</div><div class="v v" id="rED">—</div></div>
+    <div class="box"><div class="k">ID · Inhalt (gemessen)</div><div class="v" id="rID">—</div></div>
+    <div class="box"><div class="k">Kanten · 1-Simplizes</div><div class="v m" id="rEdge">—</div></div>
+    <div class="box"><div class="k">Dreiecke · 2-Simplizes</div><div class="v g" id="rTri">—</div></div>
+    <div class="box"><div class="k">Gegenseitig (symm.)</div><div class="v" id="rMut">—</div></div>
+  </div>
+  <p class="hint">Der ID-Buckel ist die <em>gemessene</em> Form (Ansuini, Laio, Macke &amp; Zoccolan 2019); der Simplizial-Komplex und die Krümmung sind eine <em>Illustration</em>, die entlang desselben Schicht-Index morphed. Alles läuft lokal im Browser, nur Inline-Daten, keine Netzwerk-Anfragen.</p>
+</section>
+
+<section id="provenienz">
+  <div class="eyebrow">Sektion 6</div>
+  <h2>Provenienz</h2>
+  <div class="card">
+    <p style="margin-bottom:6px"><span class="chip a">A</span><a href="../r1-052.html">r1-052.html</a></p>
+    <p style="margin:0">„Der Transformer als Faserbündel mit intrinsischer Dimension" (R1, Paar 052): Faserbündel-Geometrie (Basis = Token, Faser = Hidden-Vektor, Residual Stream = Stängel, Attention mischt Fasern, Defekte = Riss/Schleife/Auffächerung) × intrinsische Dimension (ED vs. ID, PCA-Falle, TwoNN, der Buckel, „gekrümmt, nicht flach" als Lerneffekt, ID→Leistung r = 0,94).</p>
+  </div>
+  <div class="card">
+    <p style="margin-bottom:6px"><span class="chip b">B</span><a href="../r1-014.html">r1-014.html</a></p>
+    <p style="margin:0">„Der gerichtete Blick mit symmetrischem Schatten" (R1, Paar 014): Attention als gerichteter geometrischer Fluss (Score = Projektion, Softmax = eine Einheit Masse, Output = Schwerpunkt, Position = Helix-Phase, LayerNorm = Kugel, FFN = Raumkrümmung, 6 Schichten = Trajektorie) × der symmetrische, geschwellige Kern als Simplizialkomplex (min-Attention → Kanten/Dreiecke, „Bedeutungsklumpen").</p>
+  </div>
+</section>
+
+<footer>Knockout-Synthese · Runde 2 · Paar 031 · Faserbündel-Geometrie + intrinsische Dimension (r1-052) ∩ gerichteter Attention-Fluss + Simplizial-Schatten (r1-014) — ein selbständiges, themenreaktives HTML-Dokument. Keine externen Daten, nur inline.</footer>
+</article>
+
+<script>
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var TAU=Math.PI*2;
+
+var WORDS=['king','queen','god','goddess','lion','wolf'];
+var ANCH=[[-0.9,0.1],[0.9,0.1],[-0.5,1.0],[0.9,0.95],[-0.3,-0.9],[-0.4,-0.9]];
+var WQ=[[0.5,0.2],[0.1,0.9]];
+var WK=[[0.9,0.1],[0.2,0.8]];
+var WV=[[0.9,0.0],[0.0,0.9]];
+var LAYERS=['pool1','pool2','pool3','pool4','pool5','fc1','fc2','fc3'];
+var ED=[802816,401408,200704,100352,25088,4096,4096,4096];
+var ID=[28,52,61,19,13,12,11,10];
+var CURV=[0.10,0.40,0.70,0.60,0.40,0.30,0.20,0.15];
+
+function dot2(a,b){return a[0]*b[0]+a[1]*b[1];}
+function mv2(M,v){return [M[0][0]*v[0]+M[0][1]*v[1], M[1][0]*v[0]+M[1][1]*v[1]];}
+function spreadOf(li){ return 0.6 + (ID[li]-10)/52*0.8; }
+function ffnWarp2(p,t){ var r2=p[0]*p[0]+p[1]*p[1]; return [p[0]*(1-0.16*t*r2), p[1]*(1-0.16*t*r2)]; }
+function basePoints(li,curved){
+  var sp=spreadOf(li);
+  return ANCH.map(function(a){
+    var p=[a[0]*sp, a[1]*sp];
+    if(curved) p=ffnWarp2(p, CURV[li]);
+    return p;
+  });
+}
+function computeLayer(li,sharp,eps,curved){
+  var pts=basePoints(li,curved);
+  var n=pts.length, i, j;
+  var Q=pts.map(function(p){return mv2(WQ,p);});
+  var K=pts.map(function(p){return mv2(WK,p);});
+  var V=pts.map(function(p){return mv2(WV,p);});
+  var sc=[];
+  for(i=0;i<n;i++){ sc.push([]); for(j=0;j<n;j++){ sc[i][j]=dot2(Q[i],K[j])/Math.sqrt(2); } }
+  var attn=sc.map(function(row){
+    var mx=Math.max.apply(null,row);
+    var e=row.map(function(x){return Math.exp((x-mx)*sharp);});
+    var s=0; for(var k=0;k<e.length;k++) s+=e[k];
+    return e.map(function(x){return x/s;});
+  });
+  var out=[];
+  for(i=0;i<n;i++){ out.push([0,0]); for(j=0;j<n;j++){ for(var d=0;d<2;d++){ out[i][d]+=attn[i][j]*V[j][d]; } } }
+  var edges=[],tris=[];
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++){ var w=Math.min(attn[i][j],attn[j][i]); if(w>eps)edges.push([i,j,w]); }
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++)for(var kk=j+1;kk<n;kk++){
+    var ij=Math.min(attn[i][j],attn[j][i]),jk=Math.min(attn[j][kk],attn[kk][j]),ik=Math.min(attn[i][kk],attn[kk][i]);
+    if(ij>eps&&jk>eps&&ik>eps)tris.push([i,j,kk]);
+  }
+  var mut=0,tot=0;
+  for(i=0;i<n;i++)for(j=0;j<n;j++){ if(i===j)continue; tot+=attn[i][j]; mut+=Math.min(attn[i][j],attn[j][i]); }
+  var frac=tot>0? mut/tot:0;
+  return {pts:pts,attn:attn,out:out,edges:edges,tris:tris,frac:frac};
+}
+
+var S={sel:2,curved:true,eps:0.07,sharp:1.5,showDir:true,showEdges:true,showTri:true,stats:null};
+var vz=$('#vz');
+
+function cssVar(n){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||'#888888';}
+function hexA(hex,a){
+  hex=String(hex).replace('#','');
+  if(hex.length===3)hex=hex.split('').map(function(c){return c+c;}).join('');
+  if(hex.length<6)hex=(hex+'000000').slice(0,6);
+  var r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+function palette(){
+  var dark=document.documentElement.classList.contains('dark');
+  return {
+    txt:cssVar('--txt'),dim:cssVar('--txt-dim'),faint:cssVar('--txt-faint'),
+    acc:cssVar('--acc'),acc2:cssVar('--acc2'),acc3:cssVar('--acc3'),acc4:cssVar('--acc4'),acc5:cssVar('--acc5'),
+    grid:dark?'rgba(255,255,255,.06)':'rgba(20,30,60,.08)',
+    dark:dark
+  };
+}
+function hidpi(cv){
+  var dpr=Math.min(2,window.devicePixelRatio||1);
+  var w=cv.clientWidth||800, h=cv.clientHeight||560;
+  var W=Math.round(w*dpr), H=Math.round(h*dpr);
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
+  var c=cv.getContext('2d');
+  c.setTransform(dpr,0,0,dpr,0,0);
+  return {c:c,w:w,h:h};
+}
+function arrow(c,x0,y0,x1,y1,P){
+  c.strokeStyle=P.acc3;c.fillStyle=P.acc3;c.lineWidth=1.4;
+  c.setLineDash([3,3]);c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke();c.setLineDash([]);
+  var ang=Math.atan2(y1-y0,x1-x0),hs=5;
+  c.beginPath();c.moveTo(x1,y1);
+  c.lineTo(x1-hs*Math.cos(ang-0.4),y1-hs*Math.sin(ang-0.4));
+  c.lineTo(x1-hs*Math.cos(ang+0.4),y1-hs*Math.sin(ang+0.4));
+  c.closePath();c.fill();
+}
+
+function drawHump(c,w,h,P,t){
+  var padL=48,padR=42,padT=26,padB=28;
+  var pw=w-padL-padR, ph=h-padT-padB, n=8;
+  var xF=function(i){return padL+pw*(i/(n-1));};
+  var yID=function(v){return padT+ph*(1-v/70);};
+  var yED=function(v){return padT+ph*(1-v/16);};
+  var i;
+  var maxED=Math.log10(ED[0]);
+  for(i=0;i<n;i++){
+    var bw=Math.max(6,(pw/n)*0.5*(Math.log10(ED[i])/maxED));
+    c.fillStyle=hexA(P.acc4,0.10);
+    c.fillRect(xF(i)-bw/2,padT,bw,ph);
+  }
+  c.strokeStyle=P.grid;c.lineWidth=1;
+  for(var g=0;g<=70;g+=10){
+    var gy=yID(g);
+    c.beginPath();c.moveTo(padL,gy);c.lineTo(w-padR,gy);c.stroke();
+    c.fillStyle=P.faint;c.font='9px ui-monospace,monospace';c.textAlign='right';
+    c.fillText(String(g),padL-6,gy+3);
+  }
+  c.textAlign='left';
+  for(var ge=0;ge<=16;ge+=8){
+    c.fillStyle=hexA(P.acc2,0.7);c.font='9px ui-monospace,monospace';
+    c.fillText(String(ge),w-padR+6,yED(ge)+3);
+  }
+  var sx=xF(S.sel);
+  c.setLineDash([4,4]);c.strokeStyle=hexA(P.txt,0.25);c.lineWidth=1;
+  c.beginPath();c.moveTo(sx,padT);c.lineTo(sx,padT+ph);c.stroke();c.setLineDash([]);
+  var yl=yID(10);
+  c.setLineDash([4,4]);c.strokeStyle=hexA(P.acc5,0.6);c.lineWidth=1;
+  c.beginPath();c.moveTo(padL,yl);c.lineTo(w-padR,yl);c.stroke();c.setLineDash([]);
+  c.fillStyle=hexA(P.acc5,0.85);c.font='9px ui-monospace,monospace';c.textAlign='right';
+  c.fillText('≈ log2(#Klassen) ≈ 10',w-padR,yl-4);c.textAlign='left';
+  var pts=S.stats.map(function(s,idx){return {x:xF(idx),y:yID(s.id)};});
+  c.beginPath();c.moveTo(pts[0].x,padT+ph);
+  for(i=0;i<pts.length;i++)c.lineTo(pts[i].x,pts[i].y);
+  c.lineTo(pts[pts.length-1].x,padT+ph);c.closePath();
+  c.fillStyle=hexA(P.acc,0.12);c.fill();
+  c.strokeStyle=P.acc;c.lineWidth=2.4;c.lineJoin='round';
+  c.beginPath();for(i=0;i<pts.length;i++){ if(i===0)c.moveTo(pts[i].x,pts[i].y); else c.lineTo(pts[i].x,pts[i].y); }
+  c.stroke();
+  var epts=S.stats.map(function(s,idx){return {x:xF(idx),y:yED(s.edges)};});
+  c.strokeStyle=P.acc2;c.lineWidth=2;c.lineJoin='round';
+  c.beginPath();for(i=0;i<epts.length;i++){ if(i===0)c.moveTo(epts[i].x,epts[i].y); else c.lineTo(epts[i].x,epts[i].y); }
+  c.stroke();
+  for(i=0;i<n;i++){
+    var isSel=(i===S.sel);
+    var pulse=1+Math.sin(t*3+i*0.7)*0.12;
+    var rID=(3.5+ID[i]*0.05)*pulse;
+    c.fillStyle=P.acc;c.beginPath();c.arc(xF(i),yID(ID[i]),rID,0,TAU);c.fill();
+    c.strokeStyle=hexA(P.txt,0.5);c.lineWidth=1;c.stroke();
+    c.fillStyle=P.acc2;c.beginPath();c.arc(xF(i),yED(S.stats[i].edges),3,0,TAU);c.fill();
+    c.fillStyle=isSel?P.txt:P.faint;c.font=(isSel?'600 ':'')+'9px system-ui';c.textAlign='center';
+    c.fillText(LAYERS[i],xF(i),h-16);
+  }
+  c.fillStyle=P.dim;c.font='11px system-ui';c.textAlign='left';
+  c.fillText('Über die Schichten: ID-Buckel (gemessen) + Kanten des Simplizial-Komplexes (morphed)',padL,14);
+  c.fillStyle=hexA(P.acc,0.9);c.font='10px ui-monospace,monospace';c.textAlign='right';
+  c.fillText('links: ID (Inhalt) · rechts: Kanten (Komplex)',w-padR,14);
+  c.textAlign='left';
+}
+
+function drawSlice(c,w,yTop,h,P){
+  var padL=18,padR=18,padT=24,padB=14;
+  var pw=w-padL-padR, ph=h-padT-padB;
+  if(ph<20)return;
+  var st=S.stats[S.sel];
+  var pts=st.pts, n=pts.length;
+  var cx=padL+pw/2, cy=yTop+padT+ph/2;
+  var xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9,i,d;
+  for(i=0;i<n;i++){ var p=pts[i]; xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]); for(d=0;d<2;d++){ var o=st.out[i][d]; xmin=Math.min(xmin,o);xmax=Math.max(xmax,o); } }
+  var bw=(xmax-xmin)||1, bh=(ymax-ymin)||1;
+  var sc=Math.min(pw/bw,ph/bh)*0.8;
+  var M=function(p){ return {x:cx+p[0]*sc, y:cy-p[1]*sc}; };
+  if(S.showTri){
+    for(var q=0;q<st.trisR.length;q++){ var tr=st.trisR[q]; var a=M(pts[tr[0]]),b=M(pts[tr[1]]),dd=M(pts[tr[2]]);
+      c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.lineTo(dd.x,dd.y);c.closePath();c.fillStyle=hexA(P.acc2,0.14);c.fill(); }
+  }
+  if(S.showEdges){
+    for(var e=0;e<st.edgesR.length;e++){ var ed=st.edgesR[e]; var pa=M(pts[ed[0]]),pb=M(pts[ed[1]]);
+      c.strokeStyle=hexA(P.acc,Math.min(0.35+ed[2]*1.6,0.95));c.lineWidth=Math.max(1.2,ed[2]*12);
+      c.beginPath();c.moveTo(pa.x,pa.y);c.lineTo(pb.x,pb.y);c.stroke(); }
+  }
+  if(S.showDir){
+    for(i=0;i<n;i++){
+      var list=st.attn[i].map(function(a,jj){return {a:a,j:jj};}).filter(function(x){return x.j!==i;}).sort(function(a,b){return b.a-a.a;}).slice(0,2);
+      for(var s=0;s<list.length;s++){ if(list[s].a>0.12){ arrow(c, M(pts[i]).x,M(pts[i]).y, M(pts[list[s].j]).x,M(pts[list[s].j]).y,P); } }
+    }
+  }
+  for(var o2=0;o2<n;o2++){ var po=M(st.out[o2]); c.fillStyle=hexA(P.acc3,0.9); c.beginPath();c.arc(po.x,po.y,3,0,TAU);c.fill(); }
+  for(i=0;i<n;i++){ var pm=M(pts[i]);
+    c.fillStyle=P.acc;c.beginPath();c.arc(pm.x,pm.y,5,0,TAU);c.fill();
+    c.strokeStyle=hexA(P.txt,0.6);c.lineWidth=1.4;c.stroke();
+    c.fillStyle=P.txt;c.font='600 11px system-ui';c.textAlign='center';c.fillText(WORDS[i],pm.x,pm.y-9);
+  }
+  c.fillStyle=P.dim;c.font='11px system-ui';c.textAlign='left';
+  c.fillText('Schnitt · '+LAYERS[S.sel]+' — '+(S.curved?'FFN-gekrümmt (B)':'flach'), padL, yTop+14);
+  c.fillStyle=P.faint;c.font='9px ui-monospace,monospace';c.textAlign='right';
+  c.fillText('Pfeile = gerichteter Blick (B) · Kanten/Dreiecke = symmetrischer Schatten (A)', w-padR, yTop+14);
+  c.textAlign='left';
+}
+
+function draw(t){
+  var H=hidpi(vz); var c=H.c,w=H.w,h=H.h;
+  c.clearRect(0,0,w,h);
+  if(!S.stats)return;
+  var P=palette();
+  var ph1=Math.round(h*0.52), gapY=14, ph2=h-ph1-gapY;
+  drawHump(c,w,ph1,P,t);
+  drawSlice(c,w,ph1+gapY,ph2,P);
+}
+
+function rebuild(){
+  var stats=[];
+  for(var li=0;li<8;li++){
+    var r=computeLayer(li,S.sharp,S.eps,S.curved);
+    stats.push({li:li,id:ID[li],edges:r.edges.length,tris:r.tris.length,frac:r.frac,
+      pts:r.pts,attn:r.attn,out:r.out,edgesR:r.edges,trisR:r.tris});
+  }
+  S.stats=stats;
+  updateReadouts();
+}
+function updateReadouts(){
+  if(!S.stats)return;
+  var st=S.stats[S.sel];
+  $('#rED').textContent=ED[S.sel].toLocaleString('de-DE');
+  $('#rID').textContent='≈ '+ID[S.sel];
+  $('#rEdge').textContent=st.edges;
+  $('#rTri').textContent=st.tris;
+  $('#rMut').textContent=(st.frac*100).toFixed(0)+' %';
+  $('#vzLayerV').textContent=LAYERS[S.sel];
+}
+
+var rafId=null;
+function frame(ts){ draw(ts/1000); rafId=requestAnimationFrame(frame); }
+
+function init(){
+  $('#vzLayer').addEventListener('input',function(e){S.sel=+e.target.value;rebuild();});
+  $('#vzEps').addEventListener('input',function(e){S.eps=+e.target.value;$('#vzEpsV').textContent=(+e.target.value).toFixed(3);rebuild();});
+  $('#vzSharp').addEventListener('input',function(e){S.sharp=+e.target.value;$('#vzSharpV').textContent=(+e.target.value).toFixed(2);rebuild();});
+  $('#vzCurve').addEventListener('click',function(){S.curved=!S.curved;$('#vzCurve').classList.toggle('on',S.curved);$('#vzCurve').textContent=S.curved?'Gekrümmt':'Flach';rebuild();});
+  $('#vzDir').addEventListener('change',function(e){S.showDir=e.target.checked;});
+  $('#vzEdges').addEventListener('change',function(e){S.showEdges=e.target.checked;});
+  $('#vzTri').addEventListener('change',function(e){S.showTri=e.target.checked;});
+  $('#vzTheme').addEventListener('click',function(){var el=document.documentElement;el.classList.toggle('dark');$('#vzTheme').textContent=el.classList.contains('dark')?'☀️ Hell':'🌙 Dunkel';});
+  window.addEventListener('resize',function(){draw(0);});
+  rebuild();
+  rafId=requestAnimationFrame(frame);
+}
+init();
+</script>
+</body>
+</html>

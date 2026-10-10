@@ -1,0 +1,15 @@
+{
+  "no": "027",
+  "a": "combined/r1-046.html",
+  "b": "combined/r1-070.html",
+  "a_title": "Das entropische Optimum baut die Separierbarkeit",
+  "b_title": "Die Form der Repräsentation: topologische Instrumente × Population-Geometrie",
+  "combined_theme": "repraesentationsform-gemacht-und-gelesen",
+  "one_line": "Die Form der Repräsentationswolke ist das erzwungene Produkt lokaler entropischer Optima, durch nicht-lineare Biegen aufgebaut — und dieselbe Wolke wird zweimal gelesen: grob-linear (LS ≙ c/a/PR) und fein-topologisch (β₁, Mapper, Holonomie); „gut“ heißt, die Form passt zur latenten Struktur.",
+  "contradictions": [
+    "A (r1-046, Makro/Zhang) macht die lineare Separierbarkeit (Minkowski, LS₁/LS₂, Thm 1/3/7) zum globalen Erfolgsmaß — die Erfolgsgeschichte IST eine lineare. B (r1-070) sagt, genau das lineare Bild (c, a, PR, Eigenbasis) sei BLIND fürs Loch: Ring und Scheibe liefern fast dasselbe lineare Profil; erst der topologische Leser sieht Loops/Löcher/zirkulare Features.",
+    "A (r1-046) treibt die Wolke auf einen linear separierbaren (strukturell einfachen/trivialen) Endzustand zu — „gut = trennbar = einfach“. B (r1-070) hält reiche, nicht-triviale Topologie (Bündel, Holonomie, Superposition, zirkuläre Koordinaten) für das Informativ — „gut = reich strukturiert“, nicht nur trennbar."
+  ],
+  "resolution": "Die beiden sind zwei Seiten einer Wolke und teilen die Arbeit: A erklärt, wie die Form GEMACHT wird (lokale entropische OT-Optima + Fisher-Selbst-Dämpfung, durch nicht-lineare Biegen getrieben → grobe Lineartrennung steigt); B erklärt, wie sie GELESEN wird (zweimal: grob-linear c/a/PR ≙ LS, fein-topologisch β/Mapper/Holonomie). LS (A) und c/a/PR (B) sind dieselbe günstige lineare Lese-Familie. „Trennbar = gut“ (A) und „reich = gut“ (B) sind Spezialfälle eines Prinzips — die Form passt zur latenten Struktur: linear separiert, wenn das Latente diskret ist; topologisch reich, wenn es zyklich ist. Der Widerspruch „lineares Maß vs. lineare Blindheit“ und „trennbar vs. reich“ löst sich auf, weil Trennung das grobe lineare Optimum für einen linearen Leser ist, während topologische Struktur die feine Information für einen topologischen Leser ist — beides wohnt in derselben Wolke.",
+  "viz": "Canvas: zwei Punktringe, die ein „Tiefe/Biegen“-Regler nicht-linear vertikal entkoppelt (Machen, r1-046 Makro). Grob/linear (A-Makro + B): Minkowski-ω̂, LS₁ und lineare Accuracy steigen mit der Entkopplung, aber blind fürs Loch. Fein/topologisch (B): Vietoris–Rips-persistente Homologie über ε liefert β₀/β₁/χ — zwei Ringe = zwei Loops (β₁=2). Mikro/entropisch (A-Mikro): ein Softmax-Attention-Gewicht p über die beiden Zentren (Temperatur τ) schärft mit, Entropie H(p) und Fisher-Dämpfung p(1−p) sinken. Theme-aware, inline data, kein Netzwerk."
+}

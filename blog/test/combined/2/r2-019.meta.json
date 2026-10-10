@@ -1,0 +1,16 @@
+{
+  "no": "019",
+  "a": "combined/r1-055.html",
+  "b": "combined/r1-035.html",
+  "a_title": "Wissen als Geometrie — wenn formale Logik wird, was ein LLM aus Gewichten macht (McCarthy & Hayes 1969 × How LLMs Store Information)",
+  "b_title": "Sheaves, Persistence, and the Born–Persist–Die Machine (neural net as sheaf × persistent topology)",
+  "combined_theme": "persistenz-als-gemeinsame-invariante",
+  "one_line": "Bedeutung = der persistente Teil einer born–persist–die–glue-Maschine über einen Parameter; Logik (∞), Persistenz (δ) und Superposition (0) sind drei Einstellungen eines Lebensdauer-Dials, und die Garantien beider Seiten (Beweis / Architektur / Stabilität) komponieren sich auf drei Grobheits-Stufen statt sich auszuschließen.",
+  "contradictions": [
+    "A (r1-055): Bedeutung ist das verteilte Ganze — Superposition packt m≫d Richtungen, kein einzelner Fakt ist auswählbar; B (r1-035): Bedeutung sind die selektierten Überlebenden — Persistenz wirft die meisten kurzlebigen Features weg ('Short bars = noise').",
+    "A (r1-055): 'das, was bleibt' ist in die Architektur eingebaut (Residual-Identitätsterm x⁽ʰ⁺¹⁾=x⁽ʰ⁾+Δ als Frame-Axiom per Konstruktion); B (r1-035): 'das, was bleibt' wird gemessen, nicht eingebaut (Persistenz-Bars werden vom Barcode berechnet, topologisch nicht strukturell).",
+    "A (r1-055): die geometrische Seite hat die Beweis-Garantie & Transparenz verloren — Flexibilität um einen Preis; B (r1-035): die exakte/fragile Seite ist schlechter und die stabile Invariante das eigentliche Objekt (Stabilitätstheorem als Headline)."
+  ],
+  "resolution": "Selektion und Superposition sind zwei Grenzfälle eines Lebensdauer-Dials (∞=explizite Logik, δ=Persistenz, 0=Superposition); strukturelle (Identitätsterm) und topologische (Barcode) Persistenz sind zwei verschachtelte Ebenen desselben Überlebens-Operators, wobei der Identitätsterm das Gerüst ist, das den Barcode erst messbar macht; die drei Garantien (Beweis auf Schritt-Ebene, Identität auf Design-Ebene, Stabilität auf Störungs-Ebene) komponieren sich auf drei Grobheits-Stufen statt im Widerspruch zu stehen.",
+  "viz": "Canvas: oben strukturelle Persistenz (Residual-Identität x⁽ʰ⁾ + Δ über Schichten h = x⁽ʰ⁺¹⁾=x⁽ʰ⁾+Δ = result(p,σ,s)=s′), unten topologischer Barcode mit Lebensdauer-Schwellenwert-Dial θ; nur Bars mit Lebensdauer ≥ θ sind 'persistent' (grün=Signal), der Rest gedämpft (Rauschen). Drei Regime-Markierungen (θ≈0 Superposition/A, θ≈δ Persistenz/B, θ→∞ Logik/A) verkörpern die Positionen der zwei R1-Papiere. Theme-aware über CSS-Variablen, inline data, keine Netzwerkaufrufe."
+}

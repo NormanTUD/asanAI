@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persistenz als Invariante — Fusion: r1-055 ✕ r1-035 (Round 2)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+:root{
+  --bg:#f6f4ee; --card:#fffdf8; --card2:#efede4;
+  --text:#1c1b17; --dim:#6b685d; --border:#d8d4c6;
+  --accent:#5a4fcf; --accent2:#0e8a6d; --accent3:#d1495b; --accent4:#9a6a00; --resid:#2b6cb0;
+  --grid:#e2ded1; --axis:#c9c4b4; --canvas-bg:#fbfaf5; --callout:#f1eee2;
+}
+html.dark{
+  --bg:#0c0e16; --card:#151825; --card2:#1c2035;
+  --text:#dde1ea; --dim:#8a8fa3; --border:#282c44;
+  --accent:#8b7cff; --accent2:#22d3a7; --accent3:#ff6b6b; --accent4:#ffbe0b; --resid:#56b4e9;
+  --grid:#1e2140; --axis:#2a2d50; --canvas-bg:#0d0f18; --callout:#161a2b;
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:28px 20px 60px}
+header.hero{margin-bottom:6px}
+h1{font-size:1.62em;line-height:1.28;margin:4px 0 6px}
+.subtitle{color:var(--dim);font-size:.98em;margin-bottom:16px}
+.toggle{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.85em}
+.toggle:hover{border-color:var(--accent)}
+section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:18px 0}
+section h2{font-size:1.28em;margin-bottom:12px;color:var(--accent)}
+section h3{font-size:1.04em;margin:18px 0 6px;color:var(--accent2)}
+p{margin:9px 0}
+ul{margin:8px 0 8px 20px}
+li{margin:6px 0}
+.formula{background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:11px 14px;margin:12px 0;font-family:'Courier New',monospace;font-size:.94em;overflow-x:auto;line-height:1.7;white-space:pre-wrap}
+.callout{background:var(--callout);border:1px solid var(--border);border-left:4px solid var(--accent2);border-radius:0 10px 10px 0;padding:14px 16px;margin:14px 0}
+.callout strong{color:var(--accent2)}
+.tag{display:inline-block;font-size:.72em;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid var(--border);color:var(--dim);margin:0 4px 0 0}
+.tagA{color:var(--accent4);border-color:var(--accent4)}
+.tagB{color:var(--accent);border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.88em}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--card2);color:var(--accent2)}
+tr:nth-child(even) td{background:var(--card2)}
+.viz-canvas{display:block;max-width:760px;width:100%;margin:0 auto;border:1px solid var(--border);border-radius:12px;background:var(--canvas-bg);touch-action:none}
+.ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:12px;background:var(--card2);border-radius:10px;margin:12px 0}
+.ctrl label{color:var(--accent2);font-weight:600;font-size:.9em}
+.ctrl input[type=range]{accent-color:var(--accent);width:180px}
+.ctrl .val{color:var(--accent4);font-family:monospace;font-weight:700;min-width:36px}
+.btn{background:var(--card);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.85em}
+.btn:hover{border-color:var(--accent)}
+.readout{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'Courier New',monospace;font-size:.82em;line-height:1.75;margin:12px 0;overflow-x:auto}
+.readout div{white-space:pre-wrap}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82em;color:var(--dim);margin:10px 0 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.swatch{width:16px;height:3px;border-radius:2px;display:inline-block}
+footer{color:var(--dim);font-size:.82em;text-align:center;margin-top:22px}
+a{color:var(--accent)}
+b{font-weight:700}
+code{background:var(--card2);border:1px solid var(--border);padding:.05em .3em;border-radius:4px;font-size:.9em}
+</style>
+</head>
+<body>
+<article>
+  <header class="hero">
+    <button class="toggle" id="themeBtn">&#127769; Theme wechseln</button>
+    <h1>Was bleibt, tr&auml;gt die Bedeutung &mdash; Persistenz als die eine Invariante beider Fusionen</h1>
+    <p class="subtitle">Fusion aus: r1-055.html &#10007; r1-035.html  (Round 2)</p>
+  </header>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>1 &middot; Kernthese der Fusion</h2>
+    <p>Die beiden Round-1-Papiere haben <b>unabh&auml;ngig voneinander</b> auf dasselbe Ger&auml;t und dieselbe Invariante reduziert. <span class="tag tagA">A&nbsp;(r1-055)</span> verschmolz McCarthy&nbsp;&amp;&nbsp;Hayes (explizite formale Logik) mit &bdquo;How LLMs Store Information&ldquo; (geometrischer Residual-Stream) und landete auf: <b>&bdquo;Repr&auml;sentation ist die gemeinsame Invariante &mdash; nicht die Form.&ldquo;</b> <span class="tag tagB">B&nbsp;(r1-035)</span> verschmolz &bdquo;neural net as sheaf&ldquo; mit &bdquo;persistent topology&ldquo; und landete auf: <b>&bdquo;a network and a persistence module are two realizations of one 'born&ndash;persist&ndash;die&ndash;glue' machine, and the part that is genuinely meaningful in both cases is exactly the part that persists.&ldquo;</b></p>
+    <p>Die Round-2-Lese: diese beiden &bdquo;Invarianten&ldquo; sind <b>ein und dieselbe</b>, von zwei Seiten betrachtet. Die formunabh&auml;ngige Repr&auml;sentation von A <i>ist</i> die born&ndash;persist&ndash;die&ndash;glue-Maschine von B; und das &bdquo;Bedeutsame&ldquo; von B ist genau der <i>persistent</i> Teil genau dieser Maschine. <b>Die eine gefasste Position: Bedeutung = der persistente Teil einer born&ndash;persist&ndash;die&ndash;glue-Maschine &uuml;ber einen Parameter; die &bdquo;Form&ldquo; (formale Logik &#8646; gelernte Geometrie) ist lediglich, <u>wo man den Lebensdauer-Schwellenwert einstellt</u>.</b></p>
+    <div class="callout"><strong>Warum das die beiden wirklich vereint:</strong> A liest Persistenz <i>entlang der Schicht-Tiefe</i> (der Residual-Identit&auml;tsterm tr&auml;gt das Signal von Schicht zu Schicht) und <i>notiert den Preis</i> (verlorene Beweis-Garantie). B liest Persistenz <i>querschaltend &uuml;ber die Skala</i> (der Barcode selektiert die &Uuml;berlebenden) und <i>feiert den Gewinn</i> (Robustheit). Beide drehen an <em>einem</em> Regler &mdash; an unterschiedlichen Einstellungen desselben.</div>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUeCHE ============ -->
+  <section id="widersprueche">
+    <h2>2 &middot; Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die zwei haben unterschiedliche Oberfl&auml;chen-Objekte, stehen aber in drei konkreten Punkten auf <b>unvereinbaren Positionen</b>:</p>
+
+    <h3>C1 &middot; Alles behalten (Superposition) vs. Selektion (Persistenz)</h3>
+    <ul>
+      <li><span class="tag tagA">A</span> Bedeutung ist das <b>verteilte Ganze</b>: &bdquo;Wissen ist &uuml;berall verteilt und nicht kompositional&ldquo;; Superposition packt &bdquo;m&nbsp;&gg;&nbsp;d&ldquo; Richtungen in &bdquo;d&ldquo; Dimensionen, und &bdquo;kein einzelner Fakt steht explizit in den Gewichten&ldquo;. Man <i>kann</i> ein Feature nicht herausl&ouml;sen &mdash; alle Richtungen koexistieren und interferieren.</li>
+      <li><span class="tag tagB">B</span> Bedeutung sind die <b>selektierten &Uuml;berlebenden</b>: &bdquo;The whole point is to separate signal from noise: Short bars = noise. Long bars = real structure.&ldquo; Die meisten geborenen Features werden <i>expressis verbis</i> weggeworfen; nur die langlebigen z&auml;hlen.</li>
+    </ul>
+    <p><b>Unvereinbar:</b> Kommt Bedeutung aus dem <i>Alles-Behalten</i> (Superposition: nicht ausw&auml;hlbar) oder aus dem <i>Selektieren-des-&Uuml;berlebenden</i> (Persistenz: den Rest verwerfen)?</p>
+
+    <h3>C2 &middot; Strukturelle vs. gemessene Persistenz (das &bdquo;was bleibt&ldquo;)</h3>
+    <ul>
+      <li><span class="tag tagA">A</span> &bdquo;Das, was bleibt&ldquo; ist <b>in die Architektur eingebaut</b>: der Residual-Identit&auml;tsterm <code>x&#7497;&#7504;+1&#7498; = x&#7497;&#7504;&#7498; + &Delta;</code> ist das hart verdrahtete Frame-Axiom &mdash; &bdquo;das, was sich nicht &auml;ndert&ldquo;, flie&szlig;t per Konstruktion durch alle Schichten.</li>
+      <li><span class=&quot;tag tagB&quot;&gt;B</span> &bdquo;Das, was bleibt&ldquo; wird <b>gemessen, nicht eingebaut</b>: die Persistenz-Bars werden vom Barcode <i>berechnet</i>; ein Feature &bdquo;bleibt&ldquo;, weil es die T&ouml;tungs-Operationen &uuml;berlebt &mdash; topologisch, nicht strukturell.</li>
+    </ul>
+    <p><b>Unvereinbar:</b> Ist &bdquo;das, was bleibt&ldquo; ein <i>Design-Merkmal</i> (ein Versprechen) oder ein <i>diagnostisches Ergebnis</i> (eine Messung)?</p>
+
+    <h3>C3 &middot; Bewertung der Garantie (verloren vs. abgewertet)</h3>
+    <ul>
+      <li><span class="tag tagA">A</span> Die geometrische Seite hat die <b>Beweis-Garantie &amp; Transparenz verloren</b>: &bdquo;Flexibilit&auml;t und Skalierbarkeit erkauft man mit dem Preis von Explizizit&auml;t, Transparenz und Beweisgarantien&ldquo;. Die formale Seite ist die <i>mit</i> der Garantie; geometrisch zu werden hat sie <i>gekostet</i>.</li>
+      <li><span class="tag tagB">B</span> Die exakte/fragile Seite ist <b>schlechter</b>; die grobe/stabile Invariante ist das <i>eigentliche</i> Objekt: &bdquo;A is exact-but-fragile&hellip; B is deliberately insensitive to local detail by design&ldquo;; &bdquo;stability is what you recover by forgetting the exact weights&ldquo;. Die Fragilit&auml;t ist ein <i>korrekt ver&uuml;ffentlichter/abgewerteter</i> Preis, gefeiert &uuml;ber das Stabilit&auml;tstheorem.</li>
+    </ul>
+    <p><b>Unvereinbar:</b> Ist die Garantie ein <i>verlorenes Schatz</i> (A) oder ein <i>korrekt gezahlter, vergessen-w&uuml;rdiger Preis</i> (B)?</p>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>3 &middot; Aufl&ouml;sung</h2>
+
+    <h3>R1 (f&uuml;r C1) &middot; Selektion und Superposition sind zwei Grenzf&auml;lle eines Lebensdauer-Dials</h3>
+    <p>Jede Richtung in einem superponierten Residual-Stream hat eine <i>effektive Lebensdauer</i>: robuste Konzepte feuern &uuml;ber viele Eingaben wieder (langlebig); eingabespezifische/ausl&ouml;schende Kombinationen sind kurzlebig. B's Persistenz <b>ordnet genau diese Richtungen nach Lebensdauer</b>. A's &bdquo;alles behalten, nicht ausw&auml;hlbar&ldquo; ist der <b>Schwellenwert-0-Grenzwert</b> (&theta;=0 &rarr; Signal und Rauschen behalten). B's &bdquo;das Persistente selektieren&ldquo; ist ein <b>endlicher Schwellenwert</b> (&theta;=&delta;, nur Bars l&auml;nger als &delta;). Und die explizite formale Logik (A's B-Seite) ist der <b>unendliche Grenzwert</b> (&theta;=&infin;, nur handassertierte Axiome &uuml;berleben &mdash; alles andere ist per Definition Rauschen). <b>Gefasst:</b> Bedeutung&nbsp;=&nbsp;Persistenz; die Explizit&#8596;geometrisch-Design-Achse von A <i>ist</i> dieselbe Achse wie die Selektions-Schwellenwert-Achse (&infin;&nbsp;&#8596;&nbsp;&delta;&nbsp;&#8596;&nbsp;0).</p>
+
+    <h3>R2 (f&uuml;r C2) &middot; Zwei verschachtelte Persistenz-Ebenen</h3>
+    <p>(a) <i>Strukturelle</i> Persistenz (A's Identit&auml;tsterm): ein <b>Konstruktions-Versprechen</b>, dass das Ro-Signal jede Schicht &uuml;berlebt &mdash; das Frame-Axiom, hart verdrahtet als <code>x&#7497;&#7504;+1&#7498; = x&#7497;&#7504;&#7498; + &Delta;</code>. (b) <i>Topologische</i> Persistenz (B's Barcode): das <b>gemessene</b> Ergebnis, welche <i>gelernten/abgeleiteten</i> Features tats&auml;chlich &uuml;ber Skala/St&ouml;rung &uuml;berleben. Die strukturelle Ebene ist das <b>Ger&uuml;st, das die topologische Ebene erst messbar macht</b> &mdash; ohne den Residual-Stream, der Signal akkumuliert, g&auml;be es keine stabilen Feature-Richtungen, &uuml;berhaupt keinen Barcode. <b>Gefasst:</b> &bdquo;das, was bleibt&ldquo; = die Eingabe (per Konstruktion, strukturell) <b>+</b> die robusten Konzepte (per Messung, topologisch). Der Identit&auml;tsterm garantiert, dass das <i>Signal</i> persistiert; der Barcode berichtet, welche <i>Interpretationen dieses Signals</i> persistieren.</p>
+
+    <h3>R3 (f&uuml;r C3) &middot; Drei kompositionierbare Garantien auf drei Grobheits-Stufen</h3>
+    <p>(1) <i>Beweis</i> (A's B): lokale, schrittweise logische Korrektheit &mdash; &bdquo;Axiome &rArr; valide Deduktion&ldquo;. (2) <i>Aus der Architektur</i> (A's A Identit&auml;t + B's A Garben-Verklebung): Signal per Design erhalten. (3) <i>Topologisch/Robustheit</i> (B's B Stabilit&auml;tstheorem): st&ouml;rungsstabiler Barcode, Bottleneck-Schranke d&#8346;(D,&nbsp;D&prime;)&nbsp;&le;&nbsp;&delta;. Keine subsumiert die andere; sie sind <b>auf verschiedenen Skalen kompositionierbar</b> (Schritt &rarr; Design &rarr; St&ouml;rung). A's &bdquo;verlorene Garantie&ldquo; ist nur auf der <i>logischen</i> Ebene verloren &mdash; aber auf der <i>topologischen</i> Ebene <b>wiederhergestellt</b> als Robustheits-Garantie, sobald man auf den persistenten Unterraum vergr&ouml;bert (B). <b>Gefasst:</b> Man verliert die Garantie nicht durch Geometrie &mdash; man <i>wechselt ihre Ebene</i>. Der Trade ist nicht &bdquo;Garantie vs. keine&ldquo;, sondern &bdquo;welche Garantie liest man auf welcher Grobheit&ldquo;.</p>
+
+    <div class="callout"><strong>Die zentrale gefasste Br&uuml;cke (verkn&uuml;pft alle drei):</strong> Der Identit&auml;tsterm von A ist die <i>strukturelle</i> Persistenz; der Barcode von B ist die <i>topologische</i> Persistenz; und der &bdquo;was bleibt&ldquo;-Kern beider Papiere ist <b>exakt derselbe Operator</b> &mdash; das &Uuml;berleben eines Parameters. Logik (&theta;=&infin;), Persistenz (&theta;=&delta;) und Superposition (&theta;=0) sind drei Markierungen <u>eines</u> Dials. Die &bdquo;Garantie&ldquo; der zwei Seiten ist nicht im Konflikt, sondern eine <i>gestufte Komposition</i>: Beweis (Schritt), Identit&auml;t (Design), Stabilit&auml;t (St&ouml;rung).</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>4 &middot; Fusionierter Inhalt</h2>
+    <p>Der gemeinsame Kern, aus dem eine sp&auml;tere Runde allein weiterarbeiten kann.</p>
+
+    <h3>Das einheitliche Template: born &ndash; persist &ndash; die &ndash; glue &uuml;ber einen Parameter</h3>
+    <p>Beide R1-Papiere zerlegen eine Domain nach einem Parameter in lokale St&uuml;cke; jedes St&uuml;ck wird <b>geboren</b>, <b>persistiert</b> &uuml;ber ein Intervall, <b>stirbt</b> durch eine Boundary-/Restriction-Operation, und die &Uuml;berlebenden werden zu einem <b>globalen Gegenstand</b> zusammengebaut. Das <i>Bedeutsame</i> ist in beiden F&auml;llen der <i>persistent</i> Teil.</p>
+    <table>
+      <tr><th>Aspekt</th><th>A (r1-055: Logik &#8646; Geometrie)</th><th>B (r1-035: Garbe &#8646; Persistenz)</th><th>Gemeinsame Invariante</th></tr>
+      <tr><td>Repr&auml;sentation</td><td>explizite logische S&auml;tze (Fluenten) &#8596; Richtungen im Residual-Stream</td><td>ReLU-Lokalsektionen (Garbe) &#8596; Homologie-Klassen (Persistenz)</td><td>ein lokales St&uuml;ck, das &uuml;ber einen Parameter lebt</td></tr>
+      <tr><td>Was bleibt?</td><td>Residual-Identit&auml;t x&#7497;&#7504;+1&#7498;=x&#7497;&#7504;&#7498;+&Delta; (Frame-Axiom)</td><td>additive Verklebung / direkte Grenze (Colimit)</td><td>das, was den Parameter &uuml;berlebt = die Bedeutung</td></tr>
+      <tr><td>Tod / T&ouml;tung</td><td>Qualifikations-/Frame-Problem (explizite Axiome)</td><td>ReLU killt die Sektion am Bieg; Tod = Boundary (Loop wird Rand, Komponente verschmilzt)</td><td>ein St&uuml;ck stirbt durch eine Boundary-/Restriction-Operation</td></tr>
+      <tr><td>Globaler Gegenstand</td><td>Residual-Stream / Situation s&prime;=result(p,&sigma;,s)</td><td>verklebte Funktion / Colimit</td><td>Colimit eines lokalen Systems (r&auml;umliche Bedeckung vs. Skalen-Filtration)</td></tr>
+      <tr><td>Garantie</td><td>Beweis (lokal, exakt)</td><td>Stabilit&auml;tstheorem (Bottleneck)</td><td>drei kompositionierbare Garantien auf drei Grobheits-Stufen</td></tr>
+    </table>
+
+    <h3>A &mdash; die zwei Pole (McCarthy&nbsp;&amp;&nbsp;Hayes &#8646; How LLMs Store Information)</h3>
+    <div class="formula">Residual-Stream:   x&#7497;&#7504;+1&#7498; = x&#7497;&#7504;&#7498; + &Delta;,    &Delta; = Attention(x) + MLP(x)
+MLP als Key-Value:   MLP(x) = &Sigma;&#7522; ReLU(k&#7522;&middot;x + b&#7522;) &middot; v&#7522;     (Key = Muster, Value = Richtung)
+Superposition:        |&lt;f&#771;&#7522;, f&#771;&#7496;&gt;| &le; &epsilon; &lt;&lt; 1  &rArr;  m &gg; d ;   Johnson&ndash;Lindenstrauss: d &ge; 8&middot;ln(m)/&epsilon;&#178;  &rArr;  m &le; e^(&epsilon;&#178;&middot;d/8)
+Polysemie:            k&#7522; = &Sigma;&#7497; &alpha;&#7497;&middot;f&#771;&#7497;   (Preis: Ambiguit&auml;t &mdash; das Neuron benennt die ausl&ouml;sende Kombi nicht)
+Attention:            &alpha;&#7522;&#7496; = softmax(q&#7522;&middot;k&#7496;/&radic;d)   = weiche Situationstransformation (gewichteter Mix &uuml;ber Tokens)</div>
+    <ul>
+      <li><b>Determinismus auf zwei Ebenen:</b> B (Welt): <code>a&#8321;(t+1)=A&#8321;(a&#8321;(t), s&#8322;(t))</code> &mdash; die Zukunft der Welt ist fest. A (Inferenz): feste Gewichte &rArr; feste Funktion. B's &bdquo;Zukunft bestimmt&ldquo; gilt &uuml;ber die <i>Welt</i>, A's &uuml;ber die <i>Inferenz</i>.</li>
+      <li><b>McCarthy&nbsp;&amp;&nbsp;Hayes-Spezifik:</b> zwei Intelligenz-Teile (epistemisch vs. heuristisch); drei Ad&auml;quatheits-Stufen (metaphysisch, epistemologisch, heuristisch); &bdquo;can&ldquo; via Disconnection; Situationskalk&auml;l <code>result(p,&sigma;,s)=s&prime;</code> + Fluenten (z.&nbsp;B. <code>has(Monkey,Bananas,s)</code>); Frame-Problem; Wissen &uuml;ber Modallogik (Kripke/Hintikka): <code>K&#7520;(q) &equiv; &forall;t. shrug(p,t,s) &rarr; q(t)</code>; referentielle Opazit&auml;t.</li>
+      <li><b>Abschluss-These von A:</b> das LLM ist die lineare-algebraische Antwort auf die Repr&auml;sentations-/Abruf-/Handlungsprobleme der formalen Logik &mdash; Flexibilit&auml;t &amp; Skalierbarkeit <i>um den Preis</i> von Explizizit&auml;t, Transparenz und Beweisgarantien.</li>
+    </ul>
+
+    <h3>B &mdash; die zwei Pole (neural net as sheaf &#8646; persistent topology)</h3>
+    <div class="formula">Netz als Garbe:    y&#770;(x) = &Sigma;&#7482; &alpha;&#7482;&middot;ReLU(w&#7482;&middot;x + b&#7482;) + &beta; ;   Bieg x*&#7482; = &minus;b&#7482;/w&#7482;
+   (ReLU = Restriction-Map, killt die Sektion auf einer Seite; Verklebung = additive Summe; Optimizer = Kokokzykel/Kompatibilit&auml;t)
+Sublevel-Persistenz:  X_t = { x : y&#770;(x) &le; t }   &mdash; ein Minimum GEBAUR eine Komponente, ein Maximum KILLT die flachere
+Rips-Filtration:      K_&epsilon; (B&auml;lle wachsen); H&#8320;/H&#8321;/H&#8322; mit Geburt/Tod; Barcode = Bars (birth, death); Diagramm = Punkte fern von der Diagonale = Signal
+Algorithmen:          H&#8320; via Union-Find/Kruskal (Komponente stirbt beim Verschmelzen); H&#8321; via Boundary-Matrix-Reduktion &uuml;ber &mathbb;Z/2
+Stabilit&auml;tstheorem:  d&#8346;(D, D&prime;) &le; &delta;  bei Eingabe-St&ouml;rung &le; &delta;  (Cohen&ndash;Steiner, Edelsbrunner, Harer 2007)</div>
+    <ul>
+      <li><b>Colimit-Perspektive:</b> das &bdquo;Globale&ldquo; in beiden Theorien ist ein <i>Colimit eines lokalen Systems</i> &mdash; Garben-Verklebung &uuml;ber einer <i>r&auml;umlichen</i> Bedeckung (A) &#8646; Persistenz-Direktgrenze &uuml;ber einer <i>Skalen</i>-Filtration (B). Die beiden Assemble-Maps sind <i>dual</i>: kontravariante Restriction (Garbe, killt) vs. kovariante Inklusion (Persistenz, erh&auml;lt).</li>
+      <li><b>Die beiden T&ouml;tungs-Operationen sind algebraisch dieselbe Art:</b> Garben-Restriction <code>s &rarr; &rho;(s)=0</code> auf der Seite U&#7575;, wo die Sektion stirbt; Boundary/F&uuml;llen: ein Loop stirbt genau dann, wenn er der Rand eines 2-Simplices ist (&part;(Dreieck)=Loop).</li>
+      <li><b>Abschluss-These von B:</b> das Netzwerk und das Persistenzmodul sind zwei Realisationen einer born&ndash;persist&ndash;die&ndash;glue-Maschine; das Bedeutsame ist genau der <i>persistent</i> Teil.</li>
+    </ul>
+
+    <h3>Die fusionierte Konstruktion (in der Visualisierung implementiert)</h3>
+    <p>Man wendet B's Barcode auf A's Residual-Stream an: nehme die Aktivierungs-Profile einer Feature-Richtung &uuml;ber den Parameter (Tiefe&nbsp;/&nbsp;Skala), berechne ihr [Geburt,&nbsp;Tod], ordne nach Lebensdauer. Die <b>persistenten Richtungen</b> sind die &bdquo;bedeutsamen&ldquo; Features; der <b>Schwellenwert-Dial</b> w&auml;hlt, wie viele &uuml;berleben. Der Identit&auml;tsterm (strukturell) ist das Ger&uuml;st; der Barcode (topologisch) ist der Inhalt, den das Ger&uuml;st tragen soll. Damit wird A's &bdquo;man kann nicht ausw&auml;hlbar&ldquo; zum <i>Null-Schwellenwert-Grenzwert</i> und B's &bdquo;selektiere das Persistente&ldquo; zum <i>endlichen Schwellenwert</i> &mdash; ein einziger Regler, drei Markierungen: <b>Logik (&infin;), Persistenz (&delta;&gt;0), Superposition (0)</b>.</p>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>5 &middot; Visualisierung &mdash; der Lebensdauer-Dial und zwei verschachtelte Persistenz-Ebenen</h2>
+    <p><b>Oben</b>: die strukturelle Persistenz von A &mdash; die Residual-Identit&auml;t (gestrichelt, &bdquo;was sich NICHT &auml;ndert&ldquo;) tr&auml;gt das Signal von Schicht h zu h+1; die roten Ticks sind das &Delta; (Attention+MLP, &bdquo;was sich &auml;ndert&ldquo;); zusammen <code>x&#7497;&#7504;+1&#7498; = x&#7497;&#7504;&#7498; + &Delta;</code> = B's <code>result(p,&sigma;,s)=s&prime;</code>. <b>Unten</b>: die topologische Persistenz von B als Barcode &mdash; jede Bar ist [Geburt, Tod] eines Features &uuml;ber den Parameter &tau;. Ziehe den <b>Lebensdauer-Schwellenwert &theta;</b>: nur Bars mit Lebensdauer &ge; &theta; sind &bdquo;persistent&ldquo; (gr&uuml;n) = &bdquo;Signal&ldquo;; der Rest ist ged&auml;mpft = &bdquo;Rauschen&ldquo;. Die drei Markierungen entsprechen den Positionen der zwei R1-Papiere: <b>&theta;&asymp;0</b> Superposition (alles behalten, A), <b>&theta;&asymp;&delta;</b> Persistenz (Signal selektieren, B), <b>&theta;&rarr;&infin;</b> explizite Logik (nur Axiome, A).</p>
+
+    <canvas id="viz" class="viz-canvas" width="760" height="560"></canvas>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--resid)"></span> Identit&auml;t x&#7497;&#7504;&#7498; (was sich NICHT &auml;ndert)</span>
+      <span><span class="swatch" style="background:var(--accent2)"></span> Signal x&#7497;&#7504;+1&#7498; / persistent (gr&uuml;n)</span>
+      <span><span class="dot" style="background:var(--accent3)"></span> &Delta; (was sich &auml;ndert)</span>
+      <span><span class="dot" style="background:var(--dim)"></span> Rauschen (Lebensdauer &lt; &theta;)</span>
+    </div>
+    <div class="ctrl">
+      <label>Lebensdauer-Schwelle &theta;:</label>
+      <input id="theta" type="range" min="0" max="0.9" step="0.01" value="0.40">
+      <span class="val" id="thetaVal">0.40</span>
+      <button class="btn" id="rand">Zuf&auml;llige Lebensdauern</button>
+      <span style="color:var(--dim);font-size:.82em">Regime: 0&nbsp;=&nbsp;Superposition (A) &nbsp;&bull;&nbsp; &asymp;&delta;&nbsp;=&nbsp;Persistenz (B) &nbsp;&bull;&nbsp; &rarr;&infin;&nbsp;=&nbsp;Logik (A)</span>
+    </div>
+    <div id="readout" class="readout"></div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>6 &middot; Provenienz</h2>
+    <ul>
+      <li><a href="../r1-055.html">r1-055.html</a> &mdash; Round-1-Fusion &bdquo;Wissen als Geometrie&ldquo;: McCarthy&nbsp;&amp;&nbsp;Hayes (explizite formale Logik, Situationskalk&auml;l, Frame-Problem, Modallogik) &#10007; &bdquo;How LLMs Store Information&ldquo; (geometrischer Residual-Stream, MLP als Key-Value, Superposition/JL-Grenze, polysemantische Neuronen). These: <i>Repr&auml;sentation ist die Invariante &mdash; nicht die Form</i>; der Residual-Identit&auml;tsterm als geometrische L&ouml;sung des Frame-Problems.</li>
+      <li><a href="../r1-035.html">r1-035.html</a> &mdash; Round-1-Fusion &bdquo;Sheaves, Persistence, and the Born&ndash;Persist&ndash;Die Machine&ldquo;: &bdquo;neural net as sheaf&ldquo; (ReLU-Lokalsektionen, ReLU als Restriction, additive Verklebung) &#10007; &bdquo;persistent topology&ldquo; (Rips-Filtration, H&#8320;/H&#8321; Geburten-Tod, Barcodes, Stabilit&auml;tstheorem). These: <i>das Bedeutsame ist genau der persistente Teil</i>; Garbe und Persistenzmodul als ein born&ndash;persist&ndash;die&ndash;glue-Ger&auml;t.</li>
+    </ul>
+  </section>
+
+  <footer>Knockout-Synthese, Runde 2 &middot; Pair 019 &middot; Selbst-contained, inline data, theme-reactive.</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function C(n, fb){ var v = cssVar(n); return (v && v.length) ? v : fb; }
+
+  var W = 760, H = 560, H_LAYERS = 7, NBARS = 14;
+  var INIT_BARS = [
+    [0.05,0.95],[0.10,0.40],[0.20,0.85],[0.15,0.28],
+    [0.30,0.90],[0.50,0.62],[0.42,0.55],[0.60,0.98],
+    [0.35,0.42],[0.70,0.88],[0.05,0.30],[0.55,0.58],
+    [0.25,0.75],[0.65,0.72]
+  ];
+  var bars = INIT_BARS.map(function(b){ return { b: b[0], d: b[1] }; });
+  var theta = 0.40;
+
+  function regimeOf(th){
+    if (th <= 0.06) return { name: "Superposition (alles behalten)", src: "r1-055 A", desc: "m\u226Bd Richtungen koexistieren \u2014 nicht ausw\u00e4hlbar; jede Richtung ist \u0022real\u0022, Signal + Rauschen bleiben." };
+    if (th <= 0.45) return { name: "Persistenz (Signal selektieren)", src: "r1-035 B", desc: "nur langlebige Bars bleiben \u2014 \u0022Short bars = noise. Long bars = real structure.\u0022" };
+    return { name: "Explizite Logik (nur Axiome)", src: "r1-055 B", desc: "alles, was nicht als Axiom gesetzt ist, ist Rauschen \u2014 nur das Geassertete \u00fcberlebt (\u03b8\u2192\u221e)." };
+  }
+
+  function prep(canvas){
+    var dpr = window.devicePixelRatio || 1;
+    var cssW = canvas.clientWidth || W;
+    var cssH = cssW * H / W;
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, W: cssW, H: cssH };
+  }
+
+  function randomBars(){
+    bars = [];
+    for (var i = 0; i < NBARS; i++){
+      var b = Math.random() * 0.88;
+      var life = 0.03 + Math.random() * 0.95;
+      var d = Math.min(0.99, b + life);
+      if (d <= b) d = Math.min(0.99, b + 0.03);
+      bars.push({ b: b, d: d });
+    }
+  }
+
+  function updateRead(nAlive){
+    var reg = regimeOf(theta), el = $("readout");
+    if (!el) return;
+    el.innerHTML =
+      '<div style="color:' + C("--accent2", "#22d3a7") + '"><b>\u03b8 (Lebensdauer-Schwelle) = ' + theta.toFixed(2) + '</b></div>' +
+      '<div>\u00dcberlebende (persistente) Features: <b>' + nAlive + ' / ' + bars.length + '</b></div>' +
+      '<div style="margin-top:6px"><b>Regime:</b> ' + reg.name + ' <span style="color:var(--dim)">(' + reg.src + ')</span></div>' +
+      '<div style="color:var(--dim)">' + reg.desc + '</div>' +
+      '<div style="margin-top:8px"><b>Gefasste Fusion:</b> Bedeutung = das, was den Parameter <i>\u00fcberlebt</i>. ' +
+      'Logik (\u221e), Persistenz (\u03b4&gt;0) und Superposition (0) sind drei Einstellpunkte <u>eines</u> Schwellen-Dials.</div>';
+  }
+
+  function draw(){
+    var cv = $("viz"); if (!cv) return;
+    var p = prep(cv), ctx = p.ctx, W2 = p.W, H2 = p.H;
+    ctx.clearRect(0, 0, W2, H2);
+    ctx.fillStyle = C("--canvas-bg", "#0d0f18");
+    ctx.fillRect(0, 0, W2, H2);
+
+    var leftX = 0.07 * W2, rightX = 0.97 * W2;
+    var topY0 = 0.07 * H2, topY1 = 0.30 * H2;
+    var botY0 = 0.46 * H2, botY1 = 0.92 * H2;
+
+    function mapLayer(h){ return leftX + (h / H_LAYERS) * (rightX - leftX); }
+    function mapT(t){ return leftX + (t) * (rightX - leftX); }
+
+    // ---------- TOP: structural persistence ----------
+    ctx.textBaseline = "alphabetic"; ctx.textAlign = "left";
+    ctx.fillStyle = C("--text", "#dde1ea");
+    ctx.font = "bold " + Math.round(0.018 * W2) + "px system-ui, sans-serif";
+    ctx.fillText("1) Strukturelle Persistenz \u2014 Residual-Identit\u00e4t  (r1-055)", leftX, topY0 - 0.015 * H2);
+
+    var baseY = (topY0 + topY1) / 2;
+    ctx.strokeStyle = C("--resid", "#56b4e9"); ctx.lineWidth = 2; ctx.setLineDash([6, 5]);
+    ctx.beginPath(); ctx.moveTo(mapLayer(0), baseY); ctx.lineTo(mapLayer(H_LAYERS), baseY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    var deltas = [0.18, -0.12, 0.22, 0.08, -0.15, 0.20, 0.10];
+    var base = 0.5, run = base, net = [];
+    for (var h = 0; h <= H_LAYERS; h++){ if (h > 0) run += deltas[h - 1]; net.push(run); }
+    var nmin = Math.min.apply(null, net), nmax = Math.max.apply(null, net), yr = (nmax - nmin) || 1;
+    var sTop = topY0 + 0.03 * H2, sBot = topY1 - 0.03 * H2;
+    function mapNet(v){ return sBot - ((v - (nmin - yr * 0.15)) / (yr * 1.3)) * (sBot - sTop); }
+
+    ctx.strokeStyle = C("--accent2", "#22d3a7"); ctx.lineWidth = 3; ctx.setLineDash([]);
+    ctx.beginPath();
+    for (h = 0; h <= H_LAYERS; h++){ var xx = mapLayer(h), yy = mapNet(net[h]); if (h === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy); }
+    ctx.stroke();
+
+    ctx.strokeStyle = C("--accent3", "#ff6b6b"); ctx.lineWidth = 1.5;
+    for (h = 1; h <= H_LAYERS; h++){ var tx = mapLayer(h); ctx.beginPath(); ctx.moveTo(tx, baseY); ctx.lineTo(tx, mapNet(net[h])); ctx.stroke(); }
+
+    ctx.font = "italic " + Math.round(0.0135 * W2) + "px system-ui, sans-serif";
+    ctx.fillStyle = C("--resid", "#56b4e9"); ctx.textAlign = "right";
+    ctx.fillText("x\u1d2c\u1d27\u2009(Identit\u00e4t \u2014 was sich NICHT \u00e4ndert)", mapLayer(H_LAYERS), baseY + 0.035 * H2);
+    ctx.textAlign = "left"; ctx.fillStyle = C("--accent2", "#22d3a7");
+    ctx.fillText("x\u1d2c\u1d27\u200a+\u200a1\u1d28 = x\u1d2c\u1d27\u2009+ \u0394", mapLayer(0), sTop - 0.005 * H2);
+    ctx.fillStyle = C("--accent3", "#ff6b6b"); ctx.textAlign = "center";
+    ctx.fillText("\u0394 (was sich \u00e4ndert)", mapLayer(3) + 0.05 * W2, mapNet(net[3]) + 0.05 * H2);
+
+    ctx.fillStyle = C("--dim", "#8a8fa3"); ctx.font = Math.round(0.011 * W2) + "px monospace"; ctx.textAlign = "center";
+    for (h = 0; h <= H_LAYERS; h++){ ctx.fillText("h=" + h, mapLayer(h), topY1 + 0.03 * H2); }
+
+    // ---------- BOTTOM: topological persistence ----------
+    ctx.textAlign = "left"; ctx.fillStyle = C("--text", "#dde1ea");
+    ctx.font = "bold " + Math.round(0.018 * W2) + "px system-ui, sans-serif";
+    ctx.fillText("2) Topologische Persistenz \u2014 Barcode  (r1-035)", leftX, botY0 - 0.015 * H2);
+
+    var byTop = botY0 + 0.02 * H2, byBot = botY1 - 0.02 * H2;
+    ctx.strokeStyle = C("--axis", "#2a2d50"); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(leftX, byBot); ctx.lineTo(rightX, byBot); ctx.stroke();
+    ctx.fillStyle = C("--dim", "#8a8fa3"); ctx.font = Math.round(0.011 * W2) + "px monospace"; ctx.textAlign = "center";
+    ctx.fillText("\u03c4  (Parameter: Schicht-Tiefe / Skala \u03b5)", (leftX + rightX) / 2, byBot + 0.045 * H2);
+    ctx.fillText("0", leftX, byBot + 0.025 * H2);
+    ctx.fillText("1", rightX, byBot + 0.025 * H2);
+
+    var nB = bars.length, rowH = (byBot - byTop) / nB, bh = Math.max(2, rowH * 0.58), nAlive = 0, i, bar, x1, x2, yTop, life, alive;
+    for (i = 0; i < nB; i++){
+      bar = bars[i]; x1 = mapT(bar.b); x2 = mapT(bar.d);
+      yTop = byTop + i * rowH + (rowH - bh) / 2;
+      life = bar.d - bar.b; alive = life >= theta;
+      if (alive) nAlive++;
+      ctx.globalAlpha = alive ? 1 : 0.28;
+      ctx.fillStyle = alive ? C("--accent2", "#22d3a7") : C("--dim", "#8a8fa3");
+      ctx.fillRect(x1, yTop, Math.max(x2 - x1, 2), bh);
+      ctx.globalAlpha = 1;
+    }
+
+    // threshold bracket
+    var thX = mapT(theta);
+    ctx.strokeStyle = C("--accent4", "#ffbe0b"); ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(thX, byTop - 4); ctx.lineTo(thX, byBot + 2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = C("--accent4", "#ffbe0b"); ctx.font = "bold " + Math.round(0.012 * W2) + "px monospace"; ctx.textAlign = "center";
+    ctx.fillText("\u03b8=" + theta.toFixed(2), Math.min(Math.max(thX, leftX + 34), rightX - 34), byTop - 8);
+
+    updateRead(nAlive);
+  }
+
+  function wire(){
+    $("theta").addEventListener("input", function(e){ theta = +e.target.value; $("thetaVal").textContent = (+e.target.value).toFixed(2); draw(); });
+    $("rand").addEventListener("click", function(){ randomBars(); draw(); });
+    $("themeBtn").addEventListener("click", function(){ document.documentElement.classList.toggle("dark"); draw(); });
+    window.addEventListener("resize", function(){ draw(); });
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    wire();
+    draw();
+  });
+})();
+</script>
+</body>
+</html>

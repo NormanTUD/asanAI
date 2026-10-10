@@ -1,0 +1,16 @@
+{
+  "no": "031",
+  "a": "combined/r1-052.html",
+  "b": "combined/r1-014.html",
+  "a_title": "Der Transformer als Faserbündel mit intrinsischer Dimension",
+  "b_title": "Der gerichtete Blick mit symmetrischem Schatten: Attention als Fluss in einem gekrümmten Raum",
+  "combined_theme": "fibrebundle-attention-fluss-simplizial-id",
+  "one_line": "Der Transformer als schicht-indexierter gerichteter Attention-Fluss durch einen lokal FFN-gekrümmten Faserbündel-Raum; sein symmetrischer Schatten ist der Simplizialkomplex der Bedeutung, und die Daten in den festen Fasern bilden eine dünne, gekrümmte Mannigfaltigkeit, deren intrinsische Dimension einen Buckel trägt, der die Generalisierung vorhersagt.",
+  "contradictions": [
+    "Herkunft der Krümmung: A (r1-052, intrins. Dimension) sagt, 'gekrümmt, nicht flach' sei ein reiner Lerneffekt (bei zufälligen Gewichten ≈ Drehung, kein Buckel), während B (r1-014, rein geometrisch) das FFN als architektonischen Raumkrümmer im Forward-Pass darstellt.",
+    "Struktur-Objekt: A (r1-052) nimmt topologische Defekte (Riss/Schleife/Auffächerung) als strukturtragende Größe (Pathologie), B (r1-014) den Simplizial-Komplex der gegenseitigen Attention (Kanten/Dreiecke, 'Bedeutungsklumpen') als strukturtragende Größe (Kohärenz).",
+    "Schichtverlauf: B (r1-014) beschreibt die Schichten als offene, formlose Trajektorie/Morph K(1)→K(6), A (r1-052) als gemessenes, nicht-monotones ID-Buckel-Gesetz (Anstieg → Gipfel 20–40 % Tiefe → Abfall auf ≈ log2(#Klassen))."
+  ],
+  "resolution": "Architektur (FFN) liefert die Biege-Kapazität, Training selektiert die realisierte Krümmung; der Simplizial-Komplex ist das gesunde invariante Skelett und die topologischen Defekte sind seine Risse; der Komplex morphed entlang des ID-Buckels — das Morphen ist das kombinatorische Readout, der Buckel das dimensionale Readout desselben schicht-indexierten Prozesses.",
+  "viz": "Canvas (keine CDN, nur Inline-Daten): oben der gemessene ID-Buckel (türkis, linke Skala) neben der Kanten-Dichte des Simplizial-Komplexes (rosa, rechte Skala) über 8 Schichten mit ED-Balken; unten der FFN-gekrümmte 2D-Schnitt der gewählten Schicht mit gerichteten q→k-Blickpfeilen (B) und dem symmetrischen Simplizial-Schatten aus min-Attention (Kanten/Dreiecke, A). Regler Schicht/ε/Schärfe/Krümmung + Readouts; theme-aware via CSS-Variablen + MutationObserver."
+}
