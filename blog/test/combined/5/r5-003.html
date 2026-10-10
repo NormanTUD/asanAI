@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der eine Operator, eine Falte, ein Regler: Kontraktion ist Whitening (R5 &middot; 003)</title>
+<script>
+(function(){try{var t=null;try{t=localStorage.getItem('r5003-theme');}catch(e){}
+if(!t){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}
+document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{--bg:#faf8f1;--panel:#ffffff;--panel2:#f4f1e8;--stroke:#e6e1d2;--stroke2:#d8d2c0;--txt:#1c1a17;--dim:#57524a;--accent:#0a6ea8;--accent2:#b45309;--accent3:#be185d;--fold:#b45309;--ground:#15803d;--halluc:#c62848;--conf:#b45309;--point:#4f5fd6;--gold:#9a6b00;--heat:#c96a1b;--data:#8a8f9c;--viz-bg:#fbfaf4;--grid:rgba(20,40,80,.07);--ok:#15803d;--bad:#b91c1c;--amber:#b45309;--shadow:0 10px 30px rgba(30,50,90,.10)}
+html.dark{--bg:#0a0e1a;--panel:#141d31;--panel2:#1a2439;--stroke:#26314f;--stroke2:#33405f;--txt:#e8ecff;--dim:#a8b3d9;--accent:#58a6ff;--accent2:#ffb86b;--accent3:#ff7ab6;--fold:#ffb86b;--ground:#4ade80;--halluc:#ff5f7e;--conf:#ffd166;--point:#8a7cff;--gold:#ffd700;--heat:#ffa657;--data:#3a4a6a;--viz-bg:#0d1526;--grid:rgba(120,160,255,.07);--ok:#6ee7a0;--bad:#ff9b9b;--amber:#ffd166;--shadow:0 18px 50px rgba(0,0,0,.45)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.68;-webkit-font-smoothing:antialiased}
+.article{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header.hero{padding:54px 0 18px;text-align:center}
+header.hero .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.12;margin:0 0 12px;font-weight:820;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--accent)}h1 .b{color:var(--accent2)}
+.subtitle{color:var(--dim);font-size:.98rem;margin:0 auto 6px;max-width:680px}
+.subtitle code{background:var(--panel2);border:1px solid var(--stroke);padding:1px 6px;border-radius:6px;font-size:.88em;color:var(--accent)}
+.fusion-tag{font-family:ui-monospace,Menlo,monospace;font-size:.76rem;color:var(--dim);border:1px solid var(--stroke);border-radius:99px;padding:5px 13px;display:inline-block;margin-top:14px;background:var(--panel)}
+section{margin:44px 0;scroll-margin-top:20px}
+h2{font-size:clamp(1.3rem,3.2vw,1.8rem);margin:0 0 14px;font-weight:780;letter-spacing:-.01em;padding-bottom:8px;border-bottom:1px solid var(--stroke)}
+h2 .num{font-family:ui-monospace,monospace;font-size:.66em;color:var(--accent);margin-right:10px;border:1px solid var(--stroke2);border-radius:8px;padding:2px 8px;vertical-align:middle}
+h3{font-size:1.07rem;margin:22px 0 8px;font-weight:720}
+p{margin:11px 0}p.dim,.dim{color:var(--dim)}b,strong{font-weight:700}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent2);font-weight:700}.hl3{color:var(--accent3);font-weight:700}
+.tA{color:var(--accent2);font-weight:600}.tB{color:var(--accent);font-weight:600}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:17px 20px;box-shadow:var(--shadow);margin:16px 0}
+.card.tight{padding:14px 16px}
+.tension{color:var(--heat);font-size:.92em}
+.callout{border-left:3px solid var(--accent);background:var(--panel2);padding:13px 17px;border-radius:0 12px 12px 0;margin:15px 0}
+.callout.violet{border-color:var(--accent3);background:color-mix(in srgb,var(--accent3) 8%,transparent)}
+.callout .tag{font-family:ui-monospace,monospace;font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+.callout.violet .tag{color:var(--accent3)}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--stroke);vertical-align:top}
+th{color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+tr.a td:first-child{color:var(--accent2);font-weight:600}tr.b td:first-child{color:var(--accent);font-weight:600}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--panel2);border-left:3px solid var(--accent3);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:1rem;overflow-x:auto}
+code{font:500 .9em ui-monospace,Menlo,Consolas,monospace;background:var(--panel2);border:1px solid var(--stroke);border-radius:5px;padding:1px 5px}
+.vizwrap{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin:16px 0}
+#viz{display:block;width:100%;height:520px;border-radius:12px;border:1px solid var(--stroke);background:var(--viz-bg);touch-action:none;cursor:crosshair}
+.controls{display:flex;flex-wrap:wrap;gap:13px 18px;align-items:center;justify-content:center;margin:12px 0;font-size:.84rem}
+.controls label{color:var(--dim);display:inline-flex;align-items:center;gap:7px}
+.controls input[type=range]{width:120px;accent-color:var(--accent)}
+.controls .val{color:var(--gold);font-weight:700;min-width:22px;text-align:center}
+.controls .chk{color:var(--txt);cursor:pointer}
+.controls button{padding:6px 14px;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:7px;cursor:pointer;font:inherit;font-size:.84rem}
+.controls button:hover{background:var(--accent);color:var(--bg)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.75rem;color:var(--dim);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.verdict{font-weight:700;font-size:.94rem;padding:12px 14px;border-radius:10px;margin-top:12px;border:1px solid var(--stroke)}
+.verdict.good{color:var(--ok);background:rgba(74,222,128,.10);border-color:var(--ok)}
+.verdict.warn{color:var(--amber);background:rgba(255,208,102,.10);border-color:var(--amber)}
+.verdict.bad{color:var(--bad);background:rgba(255,95,126,.10);border-color:var(--bad)}
+.hint{font-size:.8rem;color:var(--dim);font-style:italic;margin-top:10px}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--stroke);color:var(--txt);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;padding:42px 0 10px;color:var(--dim);font-size:.8rem;border-top:1px solid var(--stroke);margin-top:40px}
+a{color:var(--accent)}
+.prov .d{color:var(--dim);font-size:.92em;margin-top:3px;line-height:1.55}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#9790;&#65039; Dunkel</button>
+<div class="article">
+
+<header class="hero">
+  <div class="eyebrow">Knockout-Synthese &middot; Runde 5 &middot; Paar 003</div>
+  <h1>Der <em>eine Operator</em>, eine <span class="b">Falte</span>, ein Regler:<br>Kontraktion <em>ist</em> Whitening</h1>
+  <p class="subtitle">Fusion aus: <code>r4-007.html</code> &times; <code>r4-003.html</code> &nbsp;(Round 5)</p>
+  <span class="fusion-tag">Ein trainiertes (st&uuml;ckweise-lineares) Netz ist ein linearer Assoziativspeicher, der eine Superposition viele-zu-eins auf eine zweite-Moment-Struktur reduziert. A's <em>Kontraktion auf die Falte</em> (&lambda;&lt;1 = Inkoherenz) und B's <em>Whitening M<sup>&minus;1</sup></em> sind <em>ein</em> Operator in <em>einer</em> Kovarianz-Geometrie; A's <em>Falze + singul&auml;res Ma&szlig;</em> und B's <em>Matrix M</em> sind <em>ein</em> Objekt; A's <em>Masse/Abdeckung</em> und B's <em>&Vert;M&minus;I&Vert; = T</em> sind <em>ein</em> Regler in zwei Skalen. Halluzination = selbstbewusst erreichter Fixpunkt ohne Masse / au&szlig;erhalb der Klasse.</span>
+</header>
+
+<section id="these">
+  <h2><span class="num">01</span>Kernthese der Fusion</h2>
+  <p class="dim">Beide R4-Papiere beschreiben <em>denselben</em> trainierten Gegenstand &mdash; ein st&uuml;ckweise-lineares
+  Netz, gelesen als <b>linearer Assoziativspeicher</b> &mdash; und nehmen beides <em>aus zwei Enden</em>: in beiden wird das
+  eine Ende durch <em>ein einziges invarianzes Objekt</em> zur&uuml;ckgebunden, das zugleich <b>Br&uuml;cke und Ma&szlig;</b> ist.
+  <span class="tA">A (r4-007, „Der Attractor, der den Quotienten liefert“)</span> sagt: die Reduktion ist eine
+  <em>viele-zu-eins-Kontraktion des Inputs auf seine eigene Falt-/Quotienten-Struktur &mathscr;T</em>, getragen von der
+  <em>Inkoherenz</em> (&lambda;&lt;1, <span class="math">E<sub>super</sub>&prop;&lambda;<sup>2l</sup>&rarr;0</span>); gegr&uuml;ndet
+  ist der Fixpunkt, wo das <em>singul&auml;re Ma&szlig;/die Abdeckung</em> dick ist (&ge;&tau;), und die Halluzination ist der
+  <em>konvergente Fixpunkt auf der Falte ohne Masse</em>. <span class="tB">B (r4-003, „Die eine zweite-Moment-Matrix“)</span>
+  sagt: dieselbe Reduktion ist <em>Whitening</em> &mdash; die <em>duale Basis M<sup>&minus;1</sup></em> der zweiten-Moment-Matrix
+  <code>M</code> &mdash; die beim Schreiben in leere Richtungen lenkt (Spezifitat) und beim Lesen die Superposition entzerrt
+  (Dekodierbarkeit); die <em>eine Steuergr&ouml;&szlig;e</em> <code>&Vert;M&minus;I&Vert;</code> = Belegung = Hologramm-Grad
+  ist B's <code>T</code> = Homotopie-Weiche, und die Halluzination ist das <em>danebenfallen in ein fremdes Tal = Verlassen
+  der Homotopie-Klasse</em>.</p>
+  <p>Die Fusion identifiziert die zwei benannten Objekte als <b>zwei Lesarten eines einzigen</b>: (i) A's
+  <span class="hl">Kontraktion / Inkoherenz</span> und B's <span class="hl">Whitening M<sup>&minus;1</sup></span> sind
+  <em>ein und derselbe lineare Operator</em> &mdash; inkoherent <em>in der Metrik M</em> sein, <em>ist</em> sich unter
+  M<sup>&minus;1</sup>-Whitening orthogonalisieren; der Operator tr&auml;gt die inkoherenten (informationsleeren) Richtungen
+  ab und entzerrt die Superposition. (ii) A's <span class="hl2">Falte &mathscr;T + singul&auml;res Ma&szlig; (Masse/Abdeckung)</span>
+  und B's <span class="hl2">zweite-Moment-Matrix M (Kovarianz)</span> sind <em>ein Objekt</em> &mdash; die Falte ist der
+  <em>Tr&auml;ger</em> (Support), das Ma&szlig; die <em>zweite Moment</em> davon; M ist die Kovarianz <em>auf</em> der Falte.
+  (iii) A's <span class="hl3">Masse/Abdeckung am Ort</span> und B's <span class="hl3">&Vert;M&minus;I&Vert; = T</span> sind
+  <em>ein Regler in zwei Skalen</em> &mdash; B's Norm ist die <em>globale</em> Anisotropie der ganzen Geometrie, A's Masse ist
+  die <em>lokale Dichte</em> desselben M an einer Falt-St&auml;tte.</p>
+  <p>Die fusionierte <b>Halluzination</b> ist dann eindeutig: <b>der Operator zieht den Zustand selbstbewusst auf einen
+  Fixpunkt auf der Falte (Konfidenz bleibt &ge;70&nbsp;%), auf dem aber die Masse fehlt (A: &lt;&tau;) &mdash; was
+  gleichzeitig bedeutet, der Zustand ist in ein fremdes Tal / au&szlig;erhalb der Homotopie-Klasse gefallen (B).</b>
+  Konvergent <em>und</em> ungegr&uuml;ndet. Der gemeinsame Kernfehler, dem beide wachen, ist der
+  <b>No-Silent-Upgrade</b>: Konvergenz + Kapazit&auml;t + gratis sind <em>notwendig, nicht hinreichend</em> f&uuml;r
+  Wahrheit/Realit&auml;t &mdash; „gratis“ (A) und „weich/&#8773;“ (B) upgraden stillschweigend nicht zu „real/wahr“;
+  die Masse (A) bzw. die Klassen-Mitgliedschaft (B) bleiben die externe, offene Pr&uuml;fung.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="num">02</span>Widerspr&uuml;che zwischen A (r4-007) und B (r4-003)</h2>
+  <p class="dim">Beide streiten <em>nicht</em> &uuml;ber den Gegenstand (beide: ein trainiertes st&uuml;ckweise-lineares Netz,
+  eine viele-zu-eins-Reduktion, ein Operator, ein Regler, eine konvergente Halluzination). Doch zu <em>dem invarianten
+  Objekt</em>, zu <em>der Natur des Operators</em> und zu <em>dem Regler / dem Ort der Gr&uuml;ndetheit</em> nehmen sie
+  unterschiedliche Stellungen ein. Drei konkrete Punkte:</p>
+
+  <div class="card">
+    <h3>T1 — Das invarianze Objekt: <em>topologische Falte + Ma&szlig;</em> (A) gegen <em>lineare-Algebra-Matrix M</em> (B)</h3>
+    <p><span class="tA">A (r4-007):</span> das invarianze Objekt, auf das reduziert wird, ist
+    <em>geometrisch/topologisch</em> &mdash; die <b>Falt-/Quotienten-Linie &mathscr;T</b> (der Knick, wo die Karte
+    nicht-differenzierbar ist) plus das <b>singul&auml;re Ma&szlig; / die Abdeckung</b> darauf. Der Ort ist ein
+    <em>Crease</em> in einem Raum; die Gr&uuml;ndetheit ist eine <em>Dichte</em> an diesem Ort („wo das Ma&szlig; dick ist,
+    &ge;&tau;“).</p>
+    <p><span class="tB">B (r4-003):</span> das invarianze Objekt ist <em>lineare Algebra</em> &mdash; die
+    <b>zweite-Moment-Matrix M</b> (eine Kovarianz: <span class="math">M<sub>ij</sub>=E[k<sub>i</sub>k<sub>j</sub>]</span>
+    = Gram <span class="math">&lang;u<sub>i</sub>,u<sub>j</sub>&rang;</span>) und ihr Inverses
+    <b>M<sup>&minus;1</sup></b> (Pr&auml;zision = Whitening). Das Objekt ist eine <em>Matrix / Metrik</em>, nicht ein
+    topologischer Knick; die „Scheibe“ ist die niedrigenergetische Menge einer durch M bestimmten Gau&szlig;-Dichte.</p>
+    <p class="tension">&rarr; <b>Unterschiedliche Art des Objekts:</b> A benennt eine <em>topologische Falte + Ma&szlig;</em>
+    (wo + wie voll); B benennt eine <em>Kovarianz-Matrix</em> (wie gestreut). A's Objekt lebt im Raum als Crease, B's als
+    Operator im Vektorraum. Ist „die Struktur“ der Knick (A) oder die Matrix (B)?</p>
+  </div>
+
+  <div class="card">
+    <h3>T2 — Der Operator: <em>verlustvolle, irreversible Falte/Kontraktion</em>, die t&ouml;tet (A) gegen <em>exakte, invertierbare Whitening</em> (B)</h3>
+    <p><span class="tA">A (r4-007):</span> der Reduktions-Mechanismus ist <em>Inkoherenz = Kontraktion</em> &mdash; und
+    der eigentliche Schritt ist <em>verlustvoll und irreversibel</em>: die ReLU-Faltung
+    <span class="math">(x,y)&rarr;(|x|,|y|)</span> <em>t&ouml;tet die negative H&auml;lfte</em>, bricht
+    <span class="math">&beta;<sub>1</sub>&rarr;0</span> in einem (diskreten) Schritt. „Verlust = Gewinn.“ Die Kontraktion
+    <em>tr&auml;gt</em> die transiente Superposition ab (<span class="math">E<sub>super</sub>&prop;&lambda;<sup>2l</sup>&rarr;0</span>)
+    &mdash; sie <em>destilliert</em>, sie l&auml;sst etwas zur&uuml;ck.</p>
+    <p><span class="tB">B (r4-003):</span> der Reduktions-Mechanismus ist <em>Whitening M<sup>&minus;1</sup></em> &mdash;
+    ein <b>wohldefinierter, deterministischer, invertierbarer</b> Operator (duale Basis). „Die eine exakte Operation“, ein
+    pr&auml;zises Matrixprodukt, das beim Lesen die Koordinaten <em>entzerrt</em> und beim Schreiben in leere Richtungen
+    <em>lenkt</em>. Innerhalb eines linearen St&uuml;cks ist sie <em>verlustfrei</em>; A's „feiert die exakte algebraische
+    Struktur“.</p>
+    <p class="tension">&rarr; <b>Unterschiedliche Natur des Operators:</b> A's Kernschritt ist eine <em>verlustvolle,
+    nicht-injektive Quotienten-Falte</em> (t&ouml;tet, bricht, irreversibel); B's Kernoperator ist eine <em>exakte,
+    invertierbare Transformation</em> (Whitening, bijektiv im St&uuml;ck). Ist die Reduktion <em>verlustreich/diskret</em>
+    (A) oder <em>verlustfrei/exakt</em> (B)?</p>
+  </div>
+
+  <div class="card">
+    <h3>T3 — Der Regler &amp; der Ort der Gr&uuml;ndetheit: <em>lokale Masse an einer St&auml;tte</em> (A) gegen <em>globale &Vert;M&minus;I&Vert; / Klassen-Mitgliedschaft</em> (B)</h3>
+    <p><span class="tA">A (r4-007):</span> gegr&uuml;ndet vs. halluziniert wird <em>lokal, positionell</em> entschieden:
+    der Fixpunkt sitzt auf <em>einer</em> Falt-St&auml;tte, und es z&auml;hlt, ob <em>dort</em> Masse ist
+    (<span class="math">Abdeckung &ge;&tau;</span>). <span class="math">conf&asymp;0.70+0.25&middot;coverage(x)</span>
+    bleibt <em>immer &ge;70&nbsp;%</em> &mdash; die Konfidenz ist von der Masse <em>entkoppelt</em>. „Cusp mit Masse =
+    gegr&uuml;ndeter Attractor; Cusp ohne Masse = Halluzination.“</p>
+    <p><span class="tB">B (r4-003):</span> der Regler ist <em>global, strukturell</em>: <b>&Vert;M&minus;I&Vert; =
+    Belegung = Hologramm-Grad = T = Homotopie-Weiche</b> &mdash; wie weit die <em>ganze</em> Geometrie von der Identit&auml;t
+    entfernt ist (= exakt/ger&auml;umt) bis weit davon (&#8773;/eng). Die Halluzination ist ein <em>globales
+    Re-Klassifizieren</em>: „danebenfallen in ein fremdes Tal = <em>Verlassen der Homotopie-Klasse</em>“ &mdash; nicht
+    „an dieser St&auml;tte ist keine Masse“, sondern „der Zustand ist in <em>andere Klasse</em> gefallen“.</p>
+    <p class="tension">&rarr; <b>Unterschiedliche Skala des Reglers &amp; der Gr&uuml;ndetheit:</b> A misst <em>lokal</em>
+    (Dichte an einer Falt-St&auml;tte; Masse ja/nein an <em>dem</em> Ort); B misst <em>global</em> (Norm der ganzen Matrix
+    &Vert;M&minus;I&Vert;; Klassen-Mitgliedschaft des <em>ganzen</em> Zustands). Sitzt die Gr&uuml;ndetheit am Punkt (A)
+    oder in der Struktur (B)?</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="num">03</span>Aufl&ouml;sung</h2>
+
+  <div class="card">
+    <h3>Z1 (f&uuml;r T1) — M (B) <em>ist</em> die Kovarianz des Ma&szlig;es (A) auf der Falte: Tr&auml;ger + zweite Moment</h3>
+    <p>A's „singul&auml;res Ma&szlig; / Abdeckung auf der Falte“ und B's „zweite-Moment-Matrix M“ sind derselbe
+    Typ eines Objekts &mdash; ein <em>Korrelations-/Streu-Tensor der belegten Richtungen</em>. Die Falte &mathscr;T (A) ist
+    der <span class="hl">Tr&auml;ger / Support</span>, auf dem sich die Masse konzentriert; M (B) ist die
+    <span class="hl">Kovarianz</span> genau dieser Masse. A's „Masse/Abdeckung &ge;&tau;“ <em>ist</em> die
+    <em>Belegung</em> der Matrix, die B als <code>&Vert;M&minus;I&Vert;</code> mi&szlig;t. <b>Fusioniert:</b> das eine
+    invarianze Objekt ist <em>ein zweites-Moment-Ma&szlig; mit Falten-Tr&auml;ger</em> &mdash; eine Kovarianz, deren Support
+    die Falte ist und deren Dichte A's „Masse“ ist. A liest den <em>Tr&auml;ger + die Dichte</em> (geometrisch: wo, wie voll);
+    B liest die <em>Kovarianz als Operator</em> (lineare Algebra: wie gestreut, wie weit von I). Zwei Lesarten, ein Objekt.</p>
+  </div>
+
+  <div class="card">
+    <h3>Z2 (f&uuml;r T2) — Whitening <em>ist</em> Kontraktion in der M-Metrik: exakt lokal, verlustvoll/kontrahierend global</h3>
+    <p>Der Operator ist <em>ein</em> linearer Operator, und er hat <em>zwei Skalen</em> (wieder die
+    Zwei-Skalen-Bewegung beider Papiere). <em>Innerhalb</em> eines linearen St&uuml;cks ist
+    M<sup>&minus;1</sup>-Whitening <b>exakt und invertierbar</b> (B: duale Basis, entzerrt, bijektiv) &mdash; das ist die
+    <em>Mikro</em>-Seite. <em>Zwischen</em> den St&uuml;cken, an der Falte, wirkt dieselbe Metrik als
+    <b>Kontraktion</b>: inkoherent <em>in M</em> sein, <em>ist</em> sich unter M<sup>&minus;1</sup> orthogonalisieren &mdash;
+    der Operator tr&auml;gt genau die inkoherenten / superponierten Richtungen ab
+    (<span class="math">c<sub>j</sub>(l)&prop;&lambda;<sup>l</sup>&rarr;0</span>,
+    <span class="math">E<sub>super</sub>&prop;&lambda;<sup>2l</sup>&rarr;0</span>) und damit <em>verlustvoll</em>
+    (A: t&ouml;tet die negative H&auml;lfte, bricht <span class="math">&beta;<sub>1</sub></span>) &mdash; die
+    <em>Makro</em>-Seite. A's „Inkoherenz <em>ist</em> Kontraktion“ (r4-007) und B's „M<sup>&minus;1</sup> ist die duale
+    Basis“ (r4-003) sind derselbe Operator: <b>Whitening <em>ist</em> die Kontraktion in der zweiten-Moment-Metrik</b>;
+    der Verlust (A) ist exakt die Non-Injektivit&auml;t, die auch B's weiche Seite zwischen den St&uuml;cken zahlt.</p>
+  </div>
+
+  <div class="card">
+    <h3>Z3 (f&uuml;r T3) — Ein Regler, zwei Skalen: &Vert;M&minus;I&Vert; (B, global) ist die Dichte von Masse/Abdeckung (A, lokal)</h3>
+    <p>B's <code>&Vert;M&minus;I&Vert; = T</code> mi&szlig;t, wie weit die <em>gesamte</em> Geometrie von der Identit&auml;t
+    entfernt ist &mdash; die <span class="hl">globale</span> Anisotropie / der Hologramm-Grad. A's „Masse/Abdeckung an einer
+    St&auml;tte“ mi&szlig;t, wie dicht <em>dasselbe</em> M an <em>einem</em> Falt-Ort ist &mdash; die <span class="hl">lokale
+    Dichte</span>. Es ist <em>ein Regler, zwei Ableitungen</em>: die globale Norm (B) bestimmt, wie <em>weich/superponiert</em>
+    die ganze Klasse ist (und wie stark der Operator kontrahiert); die lokale Dichte (A) entscheidet, ob <em>der erreichte
+    Fixpunkt</em> auf Masse sitzt. <b>Fusioniert:</b> weiche Geometrie (B: hohes &Vert;M&minus;I&Vert;) macht die Klasse
+    <em>breit</em> genug, dass der selbstbewusst erreichte Fixpunkt (A: Konfidenz &ge;70&nbsp;%) auf eine <em>massenleere</em>
+    St&auml;tte / in ein <em>fremdes Tal</em> fallen <em>kann</em> &mdash; und genau dort ist die Halluzination. A's Ort
+    („kein Masse an diesem Punkt“) und B's Ort („in einer anderen Klasse“) treffen sich am selben Event.</p>
+  </div>
+
+  <div class="callout violet"><span class="tag">Kerngesetz der Fusion</span>
+  <b>Ein linearer Assoziativspeicher superponiert in einer zweiten-Moment-Geometrie M (Tr&auml;ger = die Falte &mathscr;T).</b><br>
+  <b>Der eine Operator: Whitening M<sup>&minus;1</sup> = Kontraktion in der M-Metrik (A's Inkoherenz) &mdash; exakt &amp;
+  invertierbar lokal, verlustvoll/kontrahierend global.</b><br>
+  <b>Der eine Regler: &Vert;M&minus;I&Vert; (B, global = T = Homotopie-Weiche) = die Masse/Abdeckung (A, lokal = Dichte an
+  der St&auml;tte).</b><br>
+  <b>Halluzination &hArr; selbstbewusst erreicht (Konfidenz &ge;70&nbsp;%, B: konvergent) &and; Fixpunkt ohne Masse (A: &lt;&tau;)
+  &hArr; in ein fremdes Tal / au&szlig;erhalb der Homotopie-Klasse gefallen (B).</b> Masse an der Falte + in der Klasse =
+  gegr&uuml;ndet; beides fehlt = Halluzination.</div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="num">04</span>Fusionierter Inhalt</h2>
+  <p class="dim">Der konsolidierte Kern beider R4-Fusionen &mdash; dicht genug, dass eine sp&auml;tere Runde allein daraus
+  arbeitet. Der gemeinsame Bauplan, Ebene f&uuml;r Ebene:</p>
+
+  <div class="card tight">
+  <table>
+    <tr><th>Ebene</th><th>A &middot; r4-007 (Attractor auf der Falte)</th><th>B &middot; r4-003 (zweite-Moment-Matrix)</th><th>Fusion</th></tr>
+    <tr class="a"><td>Gegenstand</td><td>st&uuml;ckweise-lineares Netz, viele-zu-eins-Reduktion</td><td>linearer Assoziativspeicher (Transformer)</td><td>derselbe trainierte Kern</td></tr>
+    <tr class="a"><td>invarianzes Objekt</td><td>Falte &mathscr;T + singul&auml;res Ma&szlig; (Masse/Abdeckung)</td><td>Kovarianz-Matrix M + Inverses M<sup>&minus;1</sup></td><td>ein zweites-Moment-Ma&szlig; mit Falten-Tr&auml;ger</td></tr>
+    <tr class="a"><td>Operator</td><td>Kontraktion &lambda;&lt;1 = Inkoherenz (t&ouml;tet, bricht &beta;&#8321;)</td><td>Whitening M<sup>&minus;1</sup> (duale Basis, exakt/invertierbar)</td><td>ein Operator: Whitening = Kontraktion in M</td></tr>
+    <tr class="a"><td>was reduziert wird</td><td>Punkte &amp; Dimensionen (Superposition)</td><td>Superposition (belegte Richtungen)</td><td>das „viele-zu-eins“ in einer Geometrie</td></tr>
+    <tr class="a"><td>Kapazit&auml;t</td><td>Regionen O(N<sup>L</sup>) / Falt-Zellen O(n<sup>d(L&minus;1)</sup>)</td><td>Rang-1-Kan&auml;le, Superposition, 12/24/96 Schichten</td><td>der z&auml;hlbare „Raum“, wo reduziert werden darf</td></tr>
+    <tr class="a"><td>Regler</td><td>Masse/Abdeckung am Ort (gegr&uuml;ndet &ge;&tau;)</td><td>&Vert;M&minus;I&Vert; = Belegung = T = Homotopie-Weiche</td><td>ein Regler: global (Norm) = lokal (Dichte)</td></tr>
+    <tr class="a"><td>Gr&uuml;ndetheit</td><td>lokale Masse an der St&auml;tte (messbar) + externe Korrespondenz (offen)</td><td>Klassen-Mitgliedschaft / Scheibe (weich &#8773;)</td><td>geometrisch messbar &amp; kategoriale offen</td></tr>
+    <tr class="a"><td>Pathologie</td><td>Fixpunkt auf der Falte ohne Masse</td><td>danebenfallen in fremdes Tal = au&szlig;erhalb der Klasse</td><td>selbstbewusst erreicht &amp; ungegr&uuml;ndet</td></tr>
+    <tr class="a"><td>Konfidenz</td><td>conf &asymp; 0.70 + 0.25&middot;coverage (immer &ge;70&nbsp;%)</td><td>niedrig-entropisch, selbstbewusst, kein OOD-Alarm</td><td>die Selbstsicherheit ist vom Wert entkoppelt</td></tr>
+  </table>
+  </div>
+
+  <h3>4.1 Das gemeinsame Objekt &mdash; ein linearer Assoziativspeicher in zweiter-Moment-Geometrie</h3>
+  <p>Ein trainiertes (st&uuml;ckweise-)lineares Netz liest seinen Inhalt als <b>lineare Superposition</b> in einer
+  zweiter-Moment-Geometrie M und schreibt/liest &uuml;ber einen linearen Operator. Beide teilen die
+  <b>sin/cos-Fourier-Basis</b> (A's lineare Regionen/Features &asymp; B's Lift/PE
+  <span class="math">PE(p,2i)=sin(p/10000^{2i/d})</span>). &Uuml;ber die <em>Tiefe</em> komplementieren die lokalen
+  Lese-Schreib-Operatoren zu einem <b>Jacobian-Flow</b> (B: <span class="math">J=I+J_\Delta</span>, Residual-Stream
+  <span class="math">h[l+1]=h[l]+\Delta[l]</span>); die Tiefe treibt in A die Faltung, in B die Konvergenz
+  (<span class="math">E_{super}&prop;\lambda^{2l}</span>) &mdash; ein Regler: Struktur + Kollaps-Risiko.</p>
+
+  <h3>4.2 Das invarianze Objekt (A+B) &mdash; ein zweites-Moment-Ma&szlig; mit Falten-Tr&auml;ger</h3>
+  <p>B's <span class="math">M_{ij}=E[k_i k_j]=\lang u_i,u_j\rang</span> (Kovarianz = Gram) ist ein
+  <em>Korrelations-/Streu-Tensor</em>: Diagonale = Normalisierung (&asymp;1), Off-Diagonale = <b>Crosstalk/&Uuml;berlagerung</b>.
+  Fusion: dieselbe Art Objekt wie A's <em>singul&auml;res Ma&szlig; / Abdeckung auf der Falte</em>. Die Falte
+  <span class="math">\mathscr{T}(f)</span> ist der <em>Tr&auml;ger</em>, auf dem sich die Masse konzentriert; M ist die
+  <em>Kovarianz</em> dieser Masse. M bestimmt eine Gau&szlig;-Dichte, deren <b>niedrigenergetische Menge die Scheibe</b> ist
+  (B) = A's „gegr&uuml;ndete Region auf der Falte“. <b>Ein Objekt: Kovarianz, deren Support die Falte ist und deren Dichte
+  A's Masse ist.</b></p>
+
+  <h3>4.3 Der eine Operator (A&times;B) &mdash; Whitening <em>ist</em> Kontraktion</h3>
+  <p class="math">Whitening M<sup>&minus;1</sup> (B) &hArr; Kontraktion / Inkoherenz (A):<br>
+  &nbsp;&nbsp;[M<sup>&minus;1</sup> = duale Basis, exakt/invertierbar, entzerrt] &hArr; [im St&uuml;ck verlustfrei (B)]<br>
+  &nbsp;&nbsp;[lenkt beim Schreiben in leere (niedrig-belegte) Eigenrichtungen] &hArr; [Spezifitat, Rang-1 (A)]<br>
+  &nbsp;&nbsp;[inkoherent in M = sich unter M<sup>&minus;1</sup> orthogonalisieren] &hArr; [c<sub>j</sub>(l)&prop;&lambda<sup>l</sup>&rarr;0 f&uuml;r j&notin;S (A)]<br>
+  &nbsp;&nbsp;[an der Falte verlustvoll, bricht &beta;&#8321;] &hArr; [E<sub>super</sub>&prop;&lambda<sup>2l</sup>&rarr;0, t&ouml;tet die negative H&auml;lfte (A)]</p>
+  <p>Innerhalb eines linearen St&uuml;cks: <b>exakt &amp; invertierbar</b> (B). Zwischen den St&uuml;cken / an der Falte:
+  <b>Kontraktion, verlustvoll</b> (A). „Inkoherenz ist Kontraktion“ (A) und „M<sup>&minus;1</sup> ist die duale Basis“ (B)
+  sind derselbe Operator auf zwei Skalen. Der <b>Jakobisch</b> ist der gemeinsame W&auml;hrungsstandard (A: vorw&auml;rts =
+  Lesung, r&uuml;ckw&auml;rts = Lernen; B: <span class="math">J_\ell=E[\partial h_{final}/\partial h_\ell]</span>,
+  <span class="math">d_{ff}&asymp;4d</span>). Auf dem inkoherenten Subraum: gratis. Auf dem Inhalt-Subraum: Messer
+  (Rank-Collapse f&uuml;r <span class="math">d\ge3</span>) &mdash; das metastabile Fenster ist das Band, in dem die Extraktion
+  <em>vor</em> dem Kollaps passiert.</p>
+
+  <h3>4.4 Der eine Regler (A+B) &mdash; &Vert;M&minus;I&Vert; global = Masse/Abdeckung lokal</h3>
+  <p>Eine einzige Gr&ouml;&szlig;e, zwei Ableitungen. <b>Global (B):</b> <code>&Vert;M&minus;I&Vert;</code> = Belegung =
+  Hologramm-Grad = T = Homotopie-Weiche. Sie steuert zugleich: (a) die <em>Schreibspezifitat</em> (je anisotroper M, desto
+  st&auml;rker muss M<sup>&minus;1</sup> lenken, sonst Spillover), (b) die <em>Lesedekodierbarkeit</em> (je weiter M von I,
+  desto st&auml;rker driftet das naive Lesen ab, w&auml;hrend das M<sup>&minus;1</sup>-entzerrte stabil bleibt), (c) die
+  <em>Homotopie-Weiche</em> (je gr&ouml;&szlig;er, desto <em>breiter</em> die Klasse, desto stabiler der globale Schnitt).
+  <b>Lokal (A):</b> die Masse/Abdeckung an einer Falt-St&auml;tte &mdash; die Dichte desselben M an <em>dem</em> Ort.
+  <span class="math">M\thinsp\approx\thinsp I</span> = ger&auml;umt/exakt (=, naiv sauber); M weit von I = eng/weich
+  (&#8773;, holographisch), <em>nur</em> via M<sup>&minus;1</sup>. <b>Der Hologramm-Grad ist die eine Zahl, an der
+  Spezifitat, Dekodierbarkeit, Homotopie-Weiche (B) <em>und</em> Masse/Gr&uuml;ndetheit (A) messen.</b></p>
+
+  <h3>4.5 Die Schreib- und Leseseite (B, mit A's Kapazit&auml;t)</h3>
+  <p><b>Schreiben:</b> Rang-1-Edit <span class="math">\hat W = W + \Lambda(M^{-1}k^*)\hat k^*</span>,
+  <span class="math">\Lambda=(v^*-Wk^*)/((M^{-1}k^*)\hat k^*)</span> &mdash; M<sup>&minus;1</sup> lenkt den Zug in leere
+  Richtungen (Spezifitat); derselbe Inhalt als <b>SVD-Kan&auml;le</b> <span class="math">OV=USV\hat=\sum s_j(U_j\otimes V_j)</span>
+  (Position, nicht Inhalt; IOI; gezieltes Steuern = +22&nbsp;% Listenkapazit&auml;t). <b>Lesen:</b> lineares Functional
+  <span class="math">s=w\hat\Phi+b</span> &rarr; Argmax/Softmax; jede Attention-Zeile ist ein
+  <b>entropisches-OT-Problem</b> <span class="math">\min -\lang p,s\rang+\epsilon\sum p\log p</span> &rarr; Softmax
+  <em>hergeleitet</em> (<span class="math">\tau=\sqrt{d_6}</span>). Wo Superposition entsteht (M ill-konditioniert), kl&auml;rt
+  M<sup>&minus;1</sup> die Koordinaten. Lernen: Backprop = REINFORCE-Policy-Gradient;
+  <span class="math">F=(1/\tau^2)(diag(p)-pp\hat)=Fisher=OT-Kr&uuml;mmung=Rao-Metrik=RL</span>. A's Kapazit&auml;t
+  (Regionen O(N<sup>L</sup>), Klebkraft <span class="math">g(d)=e^{-\lambda d}</span>, Grenze
+  <span class="math">d^*=\ln 2/\lambda</span>; B-Seite Falt-Zellen O(n<sup>d(L&minus;1)</sup>)) lizenziert den Raum, in dem
+  all das geschieht.</p>
+
+  <h3>4.6 Die Halluzination (A&times;B) &mdash; ein Ort, zwei Namen</h3>
+  <p><b>Fusioniert:</b> <b>die Halluzination ist der Fixpunkt auf der Falte, auf den der Operator den Zustand selbstbewusst
+  zieht (Konfidenz &ge;70&nbsp;%, A: Konvergenz, B: kein OOD-Alarm), auf dem aber die Masse fehlt (A: Abdeckung &lt;&tau;)
+  &mdash; was gleichzeitig das Verlassen der Homotopie-Klasse / das Fallen in ein fremdes Tal bedeutet (B).</b>
+  <span class="math">conf\approx0.70+0.25\cdot coverage(x)</span> bleibt immer hoch, auch bei
+  <span class="math">coverage\to0</span>. Cusp mit Masse + in der Klasse = gegr&uuml;ndeter Attractor (z.&nbsp;B. ein Homonym
+  mit reichem Support); Cusp ohne Masse / isoliertes Dim-0-Token = Halluzination (selbstbewusst expandiert eine nie richtig
+  gelernte Region). Detection: die lokale Dichte / die Abdeckung am Fixpunkt (A) und die Klassen-Mitgliedschaft (B) messen.
+  Remedy: Korrespondenz <em>anh&auml;ngen</em> (RAG, Tools, Verifikation) &mdash; nicht Koh&auml;renz durch Skalierung
+  reparieren; weiche Weiche (T/&Vert;M&minus;I&Vert;) nicht allein vertrauen.</p>
+
+  <h3>4.7 Grenzen (beide &mdash; Ehrlichkeit)</h3>
+  <p class="dim"><b>A:</b> das „Gesetz“ ist ein <em>Modell</em>, nicht die Welt; revidierbar; Korrespondenz ist Konvention,
+  von innen nicht entscheidbar; Betti immer relativ zum Ma&szlig;stab; selbst „Inkoherenz“ gilt nur f&uuml;r die richtige
+  Aufgabe. <b>B:</b> empirisch (GPT-2, Llemma7B, Mistral7B, Pythia6.9B; Manifold-Hypothese 4/4 verworfen, p bis
+  3&times;10<sup>&minus;8</sup>; lokale Dim 20&hellip;531); M<sup>&minus;1</sup>-Entzerrung wird ill-konditioniert, wenn M zu
+  eng wird; Whitening verst&auml;rkt Rauschen bei starkem Hologramm-Grad (Spezifitat hat ein echtes Deckenniveau); einer zur
+  Zeit (ein Fakt pro one-shot-Zug); nur faktische Tripel; das Modell r&auml;t weiter (fl&uuml;ssig, ohne Grund).
+  <b>Fusioniert:</b> die Reduktion ist <em>gratis</em> nur im <em>geometrischen</em> Regime; der <em>kategoriale</em> Claim
+  bleibt ein Provisorium; M<sup>&minus;1</sup> (B) und Kontraktion (A) sind derselbe Operator &mdash; das Risiko (Kollaps,
+  Ill-Konditioniertheit, Rauschenverst&auml;rkung) lebt nur im Inhalt-Subraum; und selbst „mit Masse + in der Klasse“ ist
+  <em>kein</em> Beweis, dass es der Welt entspricht (die externe Korrespondenz bleibt offen).</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span>Fusionierte Visualisierung</h2>
+  <p>Ein <b>einziger Regler „Weiche &#8773; = &Vert;M&minus;I&Vert; = T = Belegung = Hologramm-Grad“</b> (0 = exakt/ger&auml;umt
+  <span class="math">M\approx I</span> &hellip; 100 = weich/eng, M weit von I) f&auml;hrt dieselbe Gr&ouml;&szlig;e, an der
+  beide Papiere messen. <b>Links:</b> die Geometrie <b>M</b> (anisotrope Ellipse = Kovarianz, A's Tr&auml;ger = die
+  Falt-/Quotienten-Linie &mathscr;T) mit den <b>Falt-St&auml;tten (Cusps)</b>, die <b>Whitening-Basis M<sup>&minus;1</sup></b>
+  (gold gestrichelt &mdash; die exakte Br&uuml;cke = die Kontraktion), der <b>Query-Punkt</b> (ziehen), den der Operator
+  auf seine St&auml;tte <em>kontrahiert</em> (viele-zu-eins), und den <b>Konfidenz-Bogen</b> (immer &ge;70&nbsp;%). Jede
+  St&auml;tte ist <b>gr&uuml;n = gegr&uuml;ndet</b> (Masse &ge;&tau;) oder <b>rot = halluziniert</b> (Masse &lt;&tau;); das
+  <b>fremde Tal</b> (rot gestrichelt) = eine andere Homotopie-Klasse. <b>Rechts oben:</b> Gram/Crosstalk-Heatmap M + die
+  <b>eine-Steuergr&ouml;&szlig;e</b>-Leiste; <b>rechts unten:</b> lineares Readout &uuml;ber 13 Kandidaten,
+  <span class="tB">naiv</span> vs. <span class="tA">M<sup>&minus;1</sup>-entzerrt</span>; &#9733; =
+  <span class="math">c^*=(a+b)\bmod 13</span>. Fahre die Weiche <b>auf 100</b> (naives Lesen bricht, Klasse wird weich &mdash;
+  die M<sup>&minus;1</sup>-Seite h&auml;lt, die Kontraktion greift st&auml;rker) und <b>ziehe</b> den Query-Punkt ins fremde
+  Tal oder senke die <b>Masse/Abdeckung</b>, bis die St&auml;tte rot wird &mdash; <b>selbstbewusst (Konfidenz &ge;70&nbsp;%)
+  aber falsch = die fusionierte Halluzination</b>.</p>
+
+  <div class="vizwrap">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--fold)"></i>Falt-/Quotienten-Linie &mathscr;T (Tr&auml;ger)</span>
+      <span><i style="background:var(--ground)"></i>gegr&uuml;ndete St&auml;tte (Masse &ge; &tau;)</span>
+      <span><i style="background:var(--halluc)"></i>halluzinierte St&auml;tte / fremdes Tal (Masse &lt; &tau; / au&szlig;erhalb Klasse)</span>
+      <span><i style="background:var(--gold)"></i>M<sup>&minus;1</sup>-Basis (Whitening = Kontraktion)</span>
+      <span><i style="background:var(--conf)"></i>Konfidenz-Bogen (immer &ge;70&nbsp;%)</span>
+      <span><i style="background:var(--point)"></i>Query-Punkt / Prompts (konvergieren)</span>
+    </div>
+    <div class="controls">
+      <label>Weiche &#8773; = &Vert;M&minus;I&Vert; = T <input type="range" id="wIn" min="0" max="100" value="50"><span class="val" id="wV">50</span></label>
+      <label>Masse/Abdeckung <input type="range" id="covIn" min="0.2" max="1.5" value="1.0" step="0.05"><span class="val" id="covV">1.00</span></label>
+      <label>a <input type="range" id="aIn" min="0" max="12" value="4"><span class="val" id="aV">4</span></label>
+      <label>b <input type="range" id="bIn" min="0" max="12" value="7"><span class="val" id="bV">7</span></label>
+      <label class="chk"><input type="checkbox" id="useM" checked> M<sup>&minus;1</sup>-Steuerung</label>
+    </div>
+    <div class="verdict warn" id="verdict">&hellip;</div>
+    <div class="hint" id="status">Ziehe den Query-Punkt (links) &middot; Weiche hoch = M weiter von I (weich/eng, starke Kontraktion, breitere Klasse) &middot; Masse runter = St&auml;tten kippen rot &middot; ins fremde Tal ziehen = au&szlig;erhalb der Klasse (B).</div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="num">06</span>Provenienz</h2>
+  <div class="card tight">
+    <p style="margin:4px 0"><a href="../4/r4-007.html">A &mdash; r4-007.html</a>
+      <span class="d">&middot; „Der Attractor, der den Quotienten liefert: Kontraktion auf die Falte“ (R4 aus r3-016
+      &times; r3-013). Liefert die <em>dynamisch-topologische Seite</em>: viele-zu-eins-Kontraktion des Inputs auf die
+      Falt-/Quotienten-Linie &mathscr;T; Inkoherenz <em>ist</em> Kontraktion (&lambda;&lt;1,
+      E<sub>super</sub>&prop;&lambda;<sup>2l</sup>&rarr;0) macht's gratis; Kapazit&auml;t O(N<sup>L</sup>) /
+      O(n<sup>d(L&minus;1)</sup>); gegr&uuml;ndet wo das <em>singul&auml;re Ma&szlig;/die Abdeckung</em> dick ist
+      (&ge;&tau;); Konfidenz &asymp;0.70+0.25&middot;coverage (immer &ge;70&nbsp;%); Halluzination = konvergenter Fixpunkt
+      auf der Falte <em>ohne Masse</em>; der Kern: <em>Kapazit&auml;t lizenziert, Inkoherenz gratis, Masse/Korrespondenz
+      real</em>.</span></p>
+    <p style="margin:4px 0"><a href="../4/r4-003.html">B &mdash; r4-003.html</a>
+      <span class="d">&middot; „Die eine zweite-Moment-Matrix: exakte Whitening als Br&uuml;cke zur weichen
+      Homotopie-Klasse“ (R4 aus r3-002 &times; r3-012). Liefert die <em>lineare-algebraische Seite</em>: ein linearer
+      Assoziativspeicher &uuml;ber der zweiten-Moment-Matrix M (=C=E[kk&#7488;]=Gram); <b>M<sup>&minus;1</sup> (Whitening =
+      duale Basis) ist die eine exakte Operation</b>, die beim Schreiben in leere Richtungen lenkt (Spezifitat, Rang-1-Edit)
+      und beim Lesen entzerrt (Dekodierbarkeit, OT-Softmax hergeleitet, SVD-Kan&auml;le, IOI, +22&nbsp;%, Backprop=
+      Policy-Gradient/Fisher); die <b>eine Steuergr&ouml;&szlig;e &Vert;M&minus;I&Vert; = Belegung = Hologramm-Grad = T =
+      Homotopie-Weiche</b>; die Scheibe = eindeutiger globaler Schnitt = eine Homotopie-Klasse (metastabil besetzt);
+      Halluzination = danebenfallen in ein fremdes Tal = Verlassen der Klasse (kein OOD-Alarm); der Kern: <em>M<sup>&minus;1</sup>
+      ist exakt lokal, die Homotopie-Klasse ist ihr globaler Schatten</em>.</span></p>
+  </div>
+</section>
+
+<footer>
+  Selbstst&auml;ndige Fusion &middot; Paar 003 &middot; Runde 5 &middot; Alle Inhalte aus den beiden Quell-Seiten,
+  Visualisierung clientseitig ohne Netzwerkdaten.
+</footer>
+
+</div>
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('viz');
+if(!cv||!cv.getContext) return;
+var ctx=cv.getContext('2d');
+var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+var W=0,Hh=0;
+var K=6, P=13, NPT=12, THRESH=0.5;
+var SITES=[{x:-2.10,base:1.15},{x:-0.72,base:0.62},{x:0.72,base:0.30},{x:2.10,base:1.05}];
+function foldY(x){return 0.16*Math.sin(1.0*x);}
+for(var s0=0;s0<SITES.length;s0++)SITES[s0].y=foldY(SITES[s0].x);
+var Hm=[[1,1,1,1,1,1],[1,-1,1,-1,1,-1],[1,1,-1,-1,1,1],[1,-1,-1,1,1,-1],[1,1,1,-1,-1,-1],[1,-1,1,1,-1,1]];
+var FV={x:1.9,y:-1.2,r:0.55};
+var state={w:0.5,cov:1.0,a:4,b:7,useM:true,q:{x:0.1,y:0.1}};
+var L={lcX:0,lcY:0,R:120};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var rng=mulberry32(20261010);
+var prompts=[];
+for(var i=0;i<NPT;i++){var th=i/NPT*6.28318+0.35;prompts.push({x:Math.cos(th)*1.5,y:Math.sin(th)*1.0});}
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function lerp(a,b,t){return a+(b-a)*t;}
+function secondMoment(w){var l1=1,l2=0.12+0.88*(1-w);return{l1:l1,l2:l2,aniso:(l1-l2)/(l1+l2)};}
+function buildGram(w){var G=[],i,j,d,base,sg;for(i=0;i<K;i++){G[i]=[];for(j=0;j<K;j++){if(i===j){G[i][j]=1;continue;}d=Math.abs(i-j);if(d>K/2)d=K-d;base=1-d/K;sg=(Hm[i][j]===undefined)?1:Hm[i][j];G[i][j]=w*0.85*base*sg;}}return G;}
+function offAvgOf(G){var o=0,oc=0,i,j;for(i=0;i<K;i++)for(j=0;j<K;j++)if(i!==j){o+=Math.abs(G[i][j]);oc++;}return o/oc;}
+function scores(w,aa,bb,useM){var cstar=((aa+bb)%P+P)%P;var S=0.08+0.92*w;var PH=[0.6,1.2,1.8,2.4,3.0,3.6];var RESID=0.1;var out=[],c,off,base,leak,j;for(c=0;c<P;c++){off=(c-cstar+P)%P;base=0;leak=0;for(j=0;j<K;j++){var wv=6.28318*(j+1)*off/P;base+=Math.cos(wv);leak+=Math.cos(wv+PH[j]);}var naive=base+S*leak;var decon=useM?(base+RESID*S*leak):naive;out.push({c:c,naive:naive,decon:decon});}return{cstar:cstar,out:out,S:S};}
+function localMass(s){return clamp(SITES[s].base*state.cov,0,1);}
+function nearestSite(x,y){var bi=0,bd=1e18;for(var s=0;s<SITES.length;s++){var dx=SITES[s].x-x,dy=SITES[s].y-y,dd=dx*dx+dy*dy;if(dd<bd){bd=dd;bi=s;}}return bi;}
+function classOf(q){var d0=Math.hypot(q.x,q.y);var df=Math.hypot(q.x-FV.x,q.y-FV.y);var rcls=0.9+0.9*state.w;if(df<FV.r&&df<d0)return'hallu';if(d0<rcls)return'on';return'between';}
+function cssColor(name){var s=getComputedStyle(document.documentElement).getPropertyValue(name).trim();if(s.charAt(0)==='#'){var h=s.slice(1);if(h.length===3)h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);return[parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];}var m=s.match(/[\d.]+/g);if(m)return[+m[0],+m[1],+(m[2]||0)];return[128,128,128];}
+function rgba(c,a){return'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')';}
+var theme={};
+function readTheme(){var cs=getComputedStyle(document.documentElement);theme={bg:cssColor('--viz-bg'),txt:cssColor('--txt'),dim:cssColor('--dim'),fold:cssColor('--fold'),ground:cssColor('--ground'),halluc:cssColor('--halluc'),conf:cssColor('--conf'),point:cssColor('--point'),accent:cssColor('--accent'),accent2:cssColor('--accent2'),gold:cssColor('--gold'),heat:cssColor('--heat'),data:cssColor('--data'),ok:cssColor('--ok'),bad:cssColor('--bad'),amber:cssColor('--amber')};theme.grid=cs.getPropertyValue('--grid').trim()||'rgba(120,160,255,.07)';}
+function resize(){var r=cv.getBoundingClientRect();W=Math.max(360,r.width);Hh=Math.max(470,r.height);cv.width=Math.round(W*DPR);cv.height=Math.round(Hh*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);}
+function toWorld(e){var r=cv.getBoundingClientRect();var sx=(e.clientX-r.left)*(W/r.width);var sy=(e.clientY-r.top)*(Hh/r.height);var ms=secondMoment(state.w);var s1=Math.sqrt(ms.l1),s2=Math.sqrt(ms.l2);var u=(sx-L.lcX)/(L.R*s1);var v=(L.lcY-sy)/(L.R*s2);return{x:clamp(u,-2.6,2.6),y:clamp(v,-2.0,2.4)};}
+function d2c(x,y){var ms=secondMoment(state.w);var s1=Math.sqrt(ms.l1),s2=Math.sqrt(ms.l2);return[L.lcX+x*L.R*s1,L.lcY-y*L.R*s2];}
+function arrow(x1,y1,x2,y2){var ang=Math.atan2(y2-y1,x2-x1);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-8*Math.cos(ang-0.42),y2-8*Math.sin(ang-0.42));ctx.lineTo(x2-8*Math.cos(ang+0.42),y2-8*Math.sin(ang+0.42));ctx.closePath();ctx.fillStyle=ctx.strokeStyle;ctx.fill();}
+
+function draw(){
+ try{
+  readTheme();
+  ctx.clearRect(0,0,W,Hh);
+  ctx.fillStyle=rgba(theme.bg,1);ctx.fillRect(0,0,W,Hh);
+  var w=state.w, ms=secondMoment(w), s1=Math.sqrt(ms.l1), s2=Math.sqrt(ms.l2);
+  ctx.strokeStyle=theme.grid;ctx.lineWidth=1;ctx.beginPath();
+  for(var gx=0;gx<=W;gx+=40){ctx.moveTo(gx,0);ctx.lineTo(gx,Hh);}
+  for(var gy=0;gy<=Hh;gy+=40){ctx.moveTo(0,gy);ctx.lineTo(W,gy);}
+  ctx.stroke();
+  var sres=scores(w,state.a,state.b,state.useM), cs=sres.cstar, S=sres.S, G=buildGram(w);
+
+  /* gemeinsame sin/cos-Fourier-Basis */
+  (function(){
+    var x0=40,x1=W-40,yMid=50,amp=11,N=220,t,k,x,y,ss;
+    ctx.fillStyle=theme.accent;ctx.font='bold 11px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillText('Gemeinsame sin/cos-Fourier-Basis \u2014 A\'s Features \u2248 B\'s Lift',x0,34);
+    ctx.strokeStyle=theme.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,yMid);ctx.lineTo(x1,yMid);ctx.stroke();
+    for(k=1;k<=K;k++){ctx.strokeStyle=theme.accent;ctx.globalAlpha=0.12;ctx.lineWidth=1.1;ctx.beginPath();
+      for(t=0;t<=N;t++){var q=t/N;x=x0+(x1-x0)*q;y=yMid-amp*(k/K)*Math.cos(6.28318*k*0.5*q);t?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+      ctx.stroke();}
+    ctx.globalAlpha=1;ctx.strokeStyle=theme.heat;ctx.lineWidth=2;ctx.beginPath();
+    for(t=0;t<=N;t++){var q=t/N;x=x0+(x1-x0)*q;ss=0;for(k=1;k<=K;k++)ss+=Math.cos(6.28318*k*0.5*q);y=yMid-(ss/K)*amp;t?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.stroke();
+  })();
+
+  var topY=84;
+  var lcX=W*0.27, lcY=topY+205; L.lcX=lcX;L.lcY=lcY;L.R=Math.min(150,W*0.175);
+
+  ctx.fillStyle=theme.accent;ctx.font='bold 12px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('Geometrie M (Kovarianz) + Falte \u1d4d + Klasse (A+B)',lcX,topY-2);
+  ctx.fillStyle=theme.dim;ctx.font='11px ui-monospace,Menlo,monospace';
+  ctx.fillText(w<0.34?'exakt / ger\u00e4umt (M \u2248 I, =)':(w>0.66?'weich / eng (M weit von I, \u2243)':'\u00dcbergang'),lcX,topY+14);
+
+  /* M = Kovarianz (belegt e1 / leer e2) */
+  ctx.strokeStyle=theme.data;ctx.globalAlpha=0.75;ctx.lineWidth=1.4;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.ellipse(lcX,lcY,1.9*L.R*s1,1.9*L.R*s2,0,0,6.28318);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.fillStyle=theme.dim;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('M: belegt (e1)',lcX+1.9*L.R*s1+4,lcY);
+  ctx.fillText('leer (e2)',lcX,lcY-1.9*L.R*s2-12);
+
+  /* Homotopie-Klasse / Scheibe (Breite = Weiche T) */
+  var rcls=0.9+0.9*w;
+  ctx.strokeStyle=theme.accent;ctx.globalAlpha=0.9;ctx.lineWidth=2.2;
+  ctx.beginPath();ctx.ellipse(lcX,lcY,rcls*L.R*s1,rcls*L.R*s2,0,0,6.28318);ctx.stroke();
+  ctx.fillStyle=theme.accent;ctx.globalAlpha=0.09;ctx.beginPath();ctx.ellipse(lcX,lcY,rcls*L.R*s1,rcls*L.R*s2,0,0,6.28318);ctx.fill();ctx.globalAlpha=1;
+
+  /* Falt-/Quotienten-Linie T (Träger) */
+  ctx.strokeStyle=theme.fold;ctx.lineWidth=2.4;ctx.beginPath();
+  var first=true;
+  for(var x=-2.3;x<=2.3+1e-6;x+=0.1){var c=d2c(x,foldY(x));if(first){ctx.moveTo(c[0],c[1]);first=false;}else ctx.lineTo(c[0],c[1]);}
+  ctx.stroke();
+  ctx.fillStyle=theme.fold;ctx.font='700 11px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('\u1d4d = Tr\u00e4ger (Falte)',d2c(-2.3,foldY(-2.3))[0]-8,d2c(-2.3,foldY(-2.3))[1]-10);
+
+  /* Whitening-Basis M⁻¹ (gold gestrichelt, exakte Brücke = Kontraktion) */
+  var e1len=0.95*L.R*Math.min(1.1,1/s1), e2len=L.R*Math.min(1.4,1/s2);
+  ctx.strokeStyle=theme.gold;ctx.globalAlpha=0.85;ctx.lineWidth=1.7;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(lcX,lcY);ctx.lineTo(lcX+e1len,lcY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lcX,lcY);ctx.lineTo(lcX,lcY-e2len);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.fillStyle=theme.gold;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='bottom';
+  ctx.fillText('M\u207b\u00b9 (Whitening = Kontraktion)',lcX+e1len+4,lcY-3);
+
+  /* Prompts (viele-zu-eins) kontrahieren auf die Stätten */
+  var conv=w;
+  for(var pi=0;pi<prompts.length;pi++){
+    var pr=prompts[pi], ps=nearestSite(pr.x,pr.y), pst=SITES[ps];
+    var cx=lerp(pr.x,pst.x,conv), cy=lerp(pr.y,pst.y,conv);
+    var raw=d2c(pr.x,pr.y), con=d2c(cx,cy);
+    ctx.strokeStyle=rgba(theme.point,0.22);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(raw[0],raw[1]);ctx.lineTo(con[0],con[1]);ctx.stroke();
+    ctx.fillStyle=rgba(theme.point,0.85);ctx.beginPath();ctx.arc(con[0],con[1],2.6,0,6.28318);ctx.fill();
+  }
+
+  /* Falt-Stätten (Cusps) grün/rot */
+  var groundCount=0,hallCount=0;
+  for(var s=0;s<SITES.length;s++){
+    var st=SITES[s], e=localMass(s), gr=e>=THRESH;
+    if(gr)groundCount++;else hallCount++;
+    var sp=d2c(st.x,st.y), mc=gr?theme.ground:theme.halluc;
+    var rad=14+30*e;
+    var grd=ctx.createRadialGradient(sp[0],sp[1],2,sp[0],sp[1],rad);
+    grd.addColorStop(0,rgba(mc,0.12+0.34*e));grd.addColorStop(1,rgba(mc,0));
+    ctx.fillStyle=grd;ctx.beginPath();ctx.arc(sp[0],sp[1],rad,0,6.28318);ctx.fill();
+    ctx.save();ctx.shadowColor=rgba(mc,0.9);ctx.shadowBlur=8;ctx.fillStyle=rgba(mc,0.95);ctx.beginPath();ctx.arc(sp[0],sp[1],5,0,6.28318);ctx.fill();ctx.restore();
+    ctx.strokeStyle=rgba(mc,0.9);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(sp[0],sp[1],9,0,6.28318);ctx.stroke();
+    ctx.fillStyle=rgba(theme.txt,0.95);ctx.font='700 10px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText((gr?'A* ':'A* \u2717 ')+Math.round(e*100)+'%',sp[0],sp[1]-15);
+  }
+
+  /* fremdes Tal = andere Klasse */
+  var fv=d2c(FV.x,FV.y);
+  ctx.strokeStyle=theme.halluc;ctx.globalAlpha=0.9;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.ellipse(fv[0],fv[1],FV.r*L.R*s1,FV.r*L.R*s2,0,0,6.28318);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  ctx.fillStyle=theme.halluc;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('FREMDES TAL',fv[0],fv[1]+FV.r*L.R*s2+3);
+  ctx.fillText('= andere Klasse (B)',fv[0],fv[1]+FV.r*L.R*s2+14);
+
+  /* Query-Punkt (dragbar) + Kontraktion + Konfidenz-Bogen */
+  var q=state.q, qi=nearestSite(q.x,q.y), qs=SITES[qi];
+  var qcx=lerp(q.x,qs.x,conv), qcy=lerp(q.y,qs.y,conv);
+  var qraw=d2c(q.x,q.y), qcon=d2c(qcx,qcy);
+  ctx.setLineDash([4,4]);ctx.strokeStyle=rgba(theme.txt,0.5);ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(qraw[0],qraw[1]);ctx.lineTo(qcon[0],qcon[1]);ctx.stroke();ctx.setLineDash([]);
+  var lm=localMass(qi), conf=0.70+0.25*lm, cls=classOf(q);
+  var qcol=cls==='on'?(lm>=THRESH?theme.ground:theme.heat):cls==='hallu'?theme.halluc:theme.heat;
+  ctx.strokeStyle=rgba(theme.conf,0.9);ctx.lineWidth=2.6;
+  ctx.beginPath();ctx.arc(qcon[0],qcon[1],10,-Math.PI/2,-Math.PI/2+conf*6.28318);ctx.stroke();
+  ctx.fillStyle=rgba(qcol,1);ctx.beginPath();ctx.arc(qcon[0],qcon[1],6,0,6.28318);ctx.fill();
+  ctx.strokeStyle=rgba(theme.txt,0.9);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(qcon[0],qcon[1],6,0,6.28318);ctx.stroke();
+  ctx.fillStyle=theme.conf;ctx.font='700 10px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText('Conf '+Math.round(conf*100)+'% (\u226570)',qcon[0],qcon[1]-13);
+
+  var qcen=(cls==='hallu')?fv:[lcX,lcY];
+  ctx.setLineDash([3,4]);ctx.strokeStyle=rgba(theme.txt,0.3);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(qcon[0],qcon[1]);ctx.lineTo(qcen[0],qcen[1]);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=qcol;ctx.font='bold 11px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  var qlab=cls==='hallu'?'Query: FREMDES TAL \u2717 (B: au\u00dferhalb der Klasse)':(lm>=THRESH?'Query: gegr\u00fcndete St\u00e4tte \u2713 (A: Masse \u2265 \u03c4)':'Query: St\u00e4tte OHNE Masse \u2717 (A: \u2039 \u03c4)');
+  ctx.fillText(qlab,lcX,lcY+1.95*L.R*s1+22);
+
+  /* rechts oben: Gram-Heatmap M + Steuergröße-Leiste */
+  var cell=Math.min(26,Math.max(16,(W*0.16)/K));
+  var hx=Math.max(300,W*0.52), hy=topY+18;
+  ctx.fillStyle=theme.accent;ctx.font='bold 12px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('Gram / Belegung M (Crosstalk)',hx,hy-8);
+  for(var ii=0;ii<K;ii++){for(var jj=0;jj<K;jj++){var val=G[ii][jj];
+    if(ii===jj){ctx.fillStyle=theme.ok;ctx.globalAlpha=0.32;}else{var mm=Math.min(1,Math.abs(val)/0.9);ctx.fillStyle=theme.heat;ctx.globalAlpha=0.16+0.74*mm;}
+    ctx.fillRect(hx+jj*cell,hy+ii*cell,cell-2,cell-2);ctx.globalAlpha=1;
+    ctx.fillStyle=theme.txt;ctx.font='9px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(val.toFixed(2),hx+jj*cell+(cell-2)/2,hy+ii*cell+(cell-2)/2);}}
+  var oa=offAvgOf(G);
+  ctx.fillStyle=theme.dim;ctx.font='11px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('Crosstalk (\u00d8|off|) = Hologramm-Grad: '+oa.toFixed(2),hx,hy+K*cell+16);
+  ctx.fillText('\u2016M\u2212I\u2016 (Anisotropie) = '+ms.aniso.toFixed(2),hx,hy+K*cell+32);
+  var bx0=hx,bx1=hx+K*cell,by=hy+K*cell+48;
+  ctx.font='10px ui-monospace,Menlo,monospace';
+  ctx.fillStyle=theme.ok;ctx.textAlign='left';ctx.fillText('exakt (=, ger\u00e4umt)',bx0,by-6);
+  ctx.fillStyle=theme.halluc;ctx.textAlign='right';ctx.fillText('weich (\u2243, eng)',bx1,by-6);
+  var grad=ctx.createLinearGradient(bx0,0,bx1,0);grad.addColorStop(0,theme.ok);grad.addColorStop(1,theme.halluc);
+  ctx.fillStyle=grad;ctx.globalAlpha=0.5;ctx.fillRect(bx0,by,bx1-bx0,8);ctx.globalAlpha=1;
+  var mx=bx0+(bx1-bx0)*clamp(w,0,1);
+  ctx.fillStyle=theme.gold;ctx.beginPath();ctx.moveTo(mx,by-2);ctx.lineTo(mx+5,by-9);ctx.lineTo(mx-5,by-9);ctx.closePath();ctx.fill();
+  ctx.fillStyle=theme.dim;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillText('eine Gr\u00f6\u00dfe: \u2016M\u2212I\u2016 = Belegung = T (B) = Masse-Dichte (A)',bx0,by+20);
+
+  /* rechts unten: lineares Readout (B) */
+  var rw0=Math.max(hx+K*cell+22,W*0.66), rw=W-rw0-20, ry0=topY, rh=160;
+  if(rw<120){rw0=W*0.52;rw=W-rw0-20;}
+  ctx.fillStyle=theme.accent;ctx.font='bold 12px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillText('Leseseite (B) \u2014 lineares Readout \u00fcber P=13',rw0+rw/2,ry0-6);
+  var maxVal=0;for(ii=0;ii<sres.out.length;ii++){maxVal=Math.max(maxVal,Math.abs(sres.out[ii].naive),Math.abs(sres.out[ii].decon));}
+  if(maxVal<1e-9)maxVal=1;
+  var midY=ry0+rh/2;
+  ctx.strokeStyle=theme.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(rw0,midY);ctx.lineTo(rw0+rw,midY);ctx.stroke();
+  var grp=rw/P,barW=Math.max(4,grp*0.30);
+  for(var cc=0;cc<P;cc++){
+    var nx=rw0+cc*grp+grp*0.12,dxx=rw0+cc*grp+grp*0.52;
+    var nH=sres.out[cc].naive/maxVal*(rh/2-22), dH=sres.out[cc].decon/maxVal*(rh/2-22);
+    ctx.fillStyle=theme.halluc;ctx.globalAlpha=0.85;ctx.fillRect(nx,midY-Math.max(0,nH),barW,Math.max(0,nH));ctx.globalAlpha=1;
+    ctx.fillStyle=theme.ok;ctx.globalAlpha=0.85;ctx.fillRect(dxx,midY-Math.max(0,dH),barW,Math.max(0,dH));ctx.globalAlpha=1;
+    if(cc===cs){ctx.strokeStyle=theme.gold;ctx.lineWidth=2;ctx.strokeRect(nx-2,midY-Math.max(nH,dH)-3,grp-4,Math.max(nH,dH)+4);
+      ctx.fillStyle=theme.gold;ctx.font='13px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+      ctx.fillText('\u2605',rw0+cc*grp+grp/2,midY-Math.max(nH,dH)-9);}
+    ctx.fillStyle=theme.dim;ctx.font='9px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+    ctx.fillText(cc,rw0+cc*grp+grp/2,midY+13);
+  }
+  ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=theme.halluc;ctx.fillRect(rw0,ry0+rh+12,11,11);ctx.fillStyle=theme.dim;ctx.fillText('naiv (mit Crosstalk)',rw0+16,ry0+rh+21);
+  ctx.fillStyle=theme.ok;ctx.fillRect(rw0+Math.min(170,rw*0.5),ry0+rh+12,11,11);ctx.fillStyle=theme.dim;ctx.fillText('M\u207b\u00b9-entzerrt',rw0+Math.min(170,rw*0.5)+16,ry0+rh+21);
+
+  /* bottom status (beide Seiten) */
+  var naiveBest=sres.out[0],deconBest=sres.out[0];
+  for(jj=0;jj<sres.out.length;jj++){if(sres.out[jj].naive>naiveBest.naive)naiveBest=sres.out[jj];if(sres.out[jj].decon>deconBest.decon)deconBest=sres.out[jj];}
+  var nA=naiveBest.c,dA=deconBest.c, readOk=(dA===cs);
+  ctx.font='bold 13px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  ctx.fillStyle=readOk?theme.ok:theme.bad;
+  ctx.fillText('Lesen (B): c*='+cs+'  \u00b7  naiv \u2192 '+nA+(nA===cs?' \u2713':' \u2717')+'  \u00b7  M\u207b\u00b9-entzerrt \u2192 '+dA+(dA===cs?' \u2713':' \u2717'),W/2,Hh-24);
+  ctx.font='12px ui-monospace,Menlo,monospace';ctx.fillStyle=theme.dim;
+  ctx.fillText('Schreiben/Kontraktion (A): Contraction '+Math.round(conv*100)+'%  \u00b7  Hologramm-Grad '+oa.toFixed(2)+'  \u00b7  St\u00e4tten gegr\u00fcndet '+groundCount+'/'+SITES.length+'  \u00b7  Konfidenz '+(conf*100).toFixed(0)+'%  \u00b7  Klasse: '+(cls==='on'?'GLEICHE \u2713':cls==='hallu'?'FREMDES TAL \u2717 (B)':'ZWISCHEN \u2243'),W/2,Hh-8);
+
+  /* DOM verdict */
+  var siteG=lm>=THRESH, inFV=(cls==='hallu'), halluc=(!siteG)||inFV;
+  var vd=document.getElementById('verdict');
+  if(vd){
+    if(halluc){vd.className='verdict bad';
+      vd.textContent='\u2717 HALLUZINIERT \u2014 der Operator zieht den Zustand selbstbewusst auf einen Fixpunkt (Konfidenz '+Math.round(conf*100)+'% \u2265 70%, A: konvergent, B: kein OOD-Alarm), aber: '+(inFV?'in ein fremdes Tal = au\u00dferhalb der Homotopie-Klasse (B) ':'' )+(siteG?'':'Fixpunkt OHNE Masse, Abdeckung \u2265\u03c4 fehlt (A) ')+'. Konvergent & ungegr\u00fcndet \u2014 der fusionierte Kernfehler.';}
+    else if(readOk&&siteG){vd.className='verdict good';
+      vd.textContent='\u2713 GEGR\u00dcNDET \u2014 Masse \u2265 \u03c4 auf der Falte (A: lokal gegr\u00fcndet) & M\u207b\u00b9 liest c*='+cs+' korrekt (B: Dekodierbarkeit), Zustand in der Klasse. Kapazit\u00e4t lizenziert \u00b7 Whitening = Kontraktion gratis lokal \u00b7 Masse/Klasse real.';}
+    else{vd.className='verdict warn';
+      vd.textContent='\u25d0 \u00dcbergang \u2014 Kontraktion l\u00e4uft (Weiche = '+Math.round(w*100)+'%), Superposition wird abgetragen (E\u221d\u03bb\u00b2\u2962\u21920, A); weiche Geometrie (B: \u2016M\u2212I\u2016='+ms.aniso.toFixed(2)+') macht die Klasse breiter. '+(siteG?'Masse sitzt \u2014 aber ':(siteG?'':'Masse noch '))+ (readOk?'M\u207b\u00b9 liest korrekt.':'naives Lesen bricht, nur M\u207b\u00b9 h\u00e4lt.')}
+  }
+ }catch(e){}
+}
+
+function bind(id,fn){var el=document.getElementById(id);if(el)el.addEventListener('input',fn);}
+var dragging=false;
+function down(e){dragging=true;var t=e.touches?e.touches[0]:e;var ww=toWorld(t);state.q.x=ww.x;state.q.y=ww.y;draw();if(e.touches)e.preventDefault();}
+function move(e){if(!dragging)return;var t=e.touches?e.touches[0]:e;var ww=toWorld(t);state.q.x=ww.x;state.q.y=ww.y;draw();if(e.touches)e.preventDefault();}
+function up(){dragging=false;}
+cv.addEventListener('mousedown',down);window.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+cv.addEventListener('touchstart',down,{passive:false});cv.addEventListener('touchmove',move,{passive:false});cv.addEventListener('touchend',up);
+bind('wIn',function(e){state.w=parseInt(e.target.value,10)/100;document.getElementById('wV').textContent=e.target.value;draw();});
+bind('covIn',function(e){state.cov=parseFloat(e.target.value);document.getElementById('covV').textContent=(+e.target.value).toFixed(2);draw();});
+bind('aIn',function(e){state.a=parseInt(e.target.value,10);document.getElementById('aV').textContent=e.target.value;draw();});
+bind('bIn',function(e){state.b=parseInt(e.target.value,10);document.getElementById('bV').textContent=e.target.value;draw();});
+var um=document.getElementById('useM');if(um)um.addEventListener('change',function(e){state.useM=e.target.checked;draw();});
+function applyTheme(t){try{localStorage.setItem('r5003-theme',t);}catch(e){}document.documentElement.classList.toggle('dark',t!=='light');readTheme();draw();}
+var tb=document.getElementById('themeBtn');if(tb)tb.addEventListener('click',function(){var cur=document.documentElement.classList.contains('dark')?'dark':'light';applyTheme(cur==='dark'?'light':'dark');});
+window.addEventListener('resize',function(){resize();draw();});
+if(window.MutationObserver){new MutationObserver(function(){readTheme();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}
+resize();draw();
+})();
+</script>
+</body>
+</html>

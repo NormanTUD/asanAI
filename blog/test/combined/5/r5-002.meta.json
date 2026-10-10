@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "combined/4/r4-001.html",
+  "b": "combined/4/r4-009.html",
+  "a_title": "Ein Regler, ein kritischer Punkt, drei Lesarten (R4-001)",
+  "b_title": "Der dünne Attraktor: Register, fragiler Übergang, ein Budget (R4-009)",
+  "combined_theme": "dunner-kern-eine-achse-zwei-bruchigkeiten",
+  "one_line": "Ein niedriger Kern (verifizierter 5-Frequenz-Torus mod 113 = Rang-10-Kern) auf EINE Robustheits-/Regime-Achse: die Capability ist der niedrig-belegte, hoch-persistente Kern (scharfer Cut/Projektor (A) = stabiles, niedrig-belegtes Regime (B)); es gibt ZWEI Bruchigkeiten — intrinsisch (A: Nicht-Invertierbarkeit des Kerns, am Ort der Capability) und grenzlich (B: der fragile Übergang zum Budget, am Rand).",
+  "contradictions": [
+    "C1 — Capability & Bruchigkeit: A identifiziert beide am selben Punkt (hartes Pol, Rang-k-Projektor + eindeutiger Peak, det C→0, 'Der Ort der Capability ist der Ort der Bruchigkeit'); B trennt sie (Capability = robust/niedrig-belegt ID/C<<1 & hoher τ, Bruchigkeit = fragiler Übergang/memorisiert ID/C→1, τ→0 an der gegenüberliegenden Grenze).",
+    "C2 — Der Übergang: A als diskreter topologischer Sprung ('β1 springt 0→1', Phasenübergang, 'ein deterministischer Cut' am kritischen Wert); B als kontinuierliche Persistenz-Degradation ('τ degradiert stetig') + aktives Probing (Evaluate ★ repariert den Loop, Fog schrumpft).",
+    "C3 (engste Spannung) — Entstehung der Capability: A als aktiver scharfer Cut/Commit (Rang-k-Projektor, 'hart = Abschneiden', Argmax auf einer fixen Verteilung); B als passives Unterbleiben unterhalb eines festen, architekturfixierten Budgets (ID/C<<1, 'man handelt nicht darauf')."
+  ],
+  "resolution": "Ein Kern, eine Achse, zwei Bruchigkeiten: A's Bruchigkeit ist intrinsisch (Nicht-Invertierbarkeit des niedrigen Kerns, eine Eigenschaft DES Zustands, sitzt am Ort der Capability), B's ist grenzlich (der fragile Übergang zum Budget, die GRENZE des Regimes, am gegenüberliegenden Rand) — zwei Skalen desselben Doppelschwert. Diskretes topologisches Event (A: β1:0→1 = ε_birth) + kontinuierliche Persistenz (B: τ=ε_death−ε_birth) + aktives Probing (B: Evaluate ★) sind dieselbe Robustheits-Achse als Event, Größe und Handlung. A's scharfer Cut (Mechanismus) realisiert B's festes Budget (Container): der Cut beschränkt die Belegung auf den Kern, der das Budget einhält. Die Achsenkonventionen sind entgegengesetzt (A 'hart' = B 'niedrig belegt' = Capability), beschreiben aber denselben Arbeitspunkt.",
+  "viz": "Ein interaktives Canvas: EINE Robustheits-/Regime-Achse t (0=diffus/Voll-Rang/hoch belegt, 1=scharf/Rang-k/niedrig belegt) steuert gekoppelt drei Panels — (1) der 5-Frequenz-Interferenz-Peak Score(c) über 113 Antworten (Capability/eindeutiger Peak, wird schärfer mit t), (2) das Conceptor-Spektrum γᵢ=σᵢ/(σᵢ+α⁻²) als effektiver Rang (A) = Belegung (B) (Rang-5-Kern vs. Voll-Rang), (3) die Achsen-Landschaft mit Capability-Kurve (gold) + intrinsischer Bruchigkeit A (rose, maximal bei t=1, det C→0) + grenzlicher Bruchigkeit B (orange, maximal bei t=0, Budget-Rand) + Budget-/Limes-Referenzlinien und ★-Markern. Readouts: t, aktive Frequenzen, eindeutiger Peak?, Margin, eff. Rang, Quota, det C, Belegung ID/C, Persistenz τ, Bruchigkeit A, Bruchigkeit B + Regime-Status. Theme-aware (CSS-Variablen + MutationObserver), alle Daten inline, kein Network-Fetch."
+}

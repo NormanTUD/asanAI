@@ -1,0 +1,73 @@
+{
+  "round": 5,
+  "seed": 20261010,
+  "big_threshold_kb": 100.0,
+  "method": "seeded-random, size-balanced (big>=threshold always paired with smallest available partner); bye advances unchanged",
+  "pool_size": 11,
+  "num_pairs": 5,
+  "num_byes": 1,
+  "max_pair_total_kb": 121.6,
+  "pairs": [
+    {
+      "id": 1,
+      "no": "001",
+      "out": "combined/5/r5-001.html",
+      "meta": "combined/5/r5-001.meta.json",
+      "a": "combined/4/r4-002.html",
+      "b": "combined/4/r4-004.html",
+      "size_a": 40.0,
+      "size_b": 40.4,
+      "total_kb": 80.4
+    },
+    {
+      "id": 2,
+      "no": "002",
+      "out": "combined/5/r5-002.html",
+      "meta": "combined/5/r5-002.meta.json",
+      "a": "combined/4/r4-001.html",
+      "b": "combined/4/r4-009.html",
+      "size_a": 45.3,
+      "size_b": 45.8,
+      "total_kb": 91.1
+    },
+    {
+      "id": 3,
+      "no": "003",
+      "out": "combined/5/r5-003.html",
+      "meta": "combined/5/r5-003.meta.json",
+      "a": "combined/4/r4-007.html",
+      "b": "combined/4/r4-003.html",
+      "size_a": 50.8,
+      "size_b": 51.7,
+      "total_kb": 102.5
+    },
+    {
+      "id": 4,
+      "no": "004",
+      "out": "combined/5/r5-004.html",
+      "meta": "combined/5/r5-004.meta.json",
+      "a": "combined/4/r4-006.html",
+      "b": "combined/4/r4-005.html",
+      "size_a": 54.6,
+      "size_b": 55.5,
+      "total_kb": 110.1
+    },
+    {
+      "id": 5,
+      "no": "005",
+      "out": "combined/5/r5-005.html",
+      "meta": "combined/5/r5-005.meta.json",
+      "a": "combined/4/r4-008.html",
+      "b": "combined/4/r4-010.html",
+      "size_a": 58.3,
+      "size_b": 63.3,
+      "total_kb": 121.6
+    }
+  ],
+  "byes": [
+    {
+      "path": "combined/2/r2-040.html",
+      "size_kb": 66.1
+    }
+  ]
+}

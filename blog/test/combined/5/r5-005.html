@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Zustand, ein Regler, zwei Lesetiefen, ein Vorzeichen · Fusion 005 (R5)</title>
+<style>
+  :root{
+    --bg:#faf8f1; --card:#fffdf8; --panel:#ffffff; --ink:#1c1a17; --dim:#57524a; --line:#e6e1d2;
+    --plot-bg:#fbfaf3;
+    --teal:#0f766e; --blue:#1d4ed8; --amber:#b45309; --rose:#be185d; --green:#15803d; --purple:#6d28d9;
+    --danger:#c0392b;
+    --c-canvas:#f1eee3; --c-grid:rgba(20,28,45,0.07); --c-txt:#1c2333; --c-dim:#6b7488;
+    --c-accent:#0d8f80; --c-accent2:#c93a86; --c-amber:#b57e00; --c-green:#2f8f4b; --c-danger:#c0392b; --c-blue:#2f6fb5; --c-purple:#6451d8;
+  }
+  html.dark{
+    --bg:#0a0e1a; --card:#111726; --panel:#141d31; --ink:#e8ecff; --dim:#a8b3d9; --line:#26314f;
+    --plot-bg:#0d1526;
+    --teal:#2dd4bf; --blue:#8ab4ff; --amber:#fbbf24; --rose:#f472b6; --green:#4ade80; --purple:#c084fc;
+    --danger:#fb7185;
+    --c-canvas:#0c1120; --c-grid:rgba(255,255,255,0.07); --c-txt:#e8ecf6; --c-dim:#64708c;
+    --c-accent:#5ee0d0; --c-accent2:#ff7ac0; --c-amber:#ffc860; --c-green:#6ee88a; --c-danger:#fb7185; --c-blue:#7fb0ff; --c-purple:#8a7cff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:radial-gradient(ellipse at top,var(--card) 0%,var(--bg) 62%);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;line-height:1.68;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:34px 22px 90px}
+  header{text-align:center;padding:22px 10px 8px}
+  header h1{font-size:clamp(1.7rem,4.6vw,2.6rem);margin:0;line-height:1.14;letter-spacing:-.02em;font-weight:800;
+    background:linear-gradient(135deg,var(--teal) 0%,var(--blue) 50%,var(--rose) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .subtitle{color:var(--dim);margin-top:14px;font-size:.96rem}
+  .subtitle code{background:var(--card);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-size:.86em;color:var(--teal)}
+  .tagline{color:var(--dim);font-size:.95rem;margin-top:12px;max-width:760px;margin-left:auto;margin-right:auto}
+  .tagline b{color:var(--ink)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:18px 0 4px}
+  nav.toc a{color:var(--dim);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+  nav.toc a:hover{color:var(--teal);border-color:var(--teal);background:var(--card)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 26px;margin:20px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+  section h2{margin:0 0 14px;font-size:1.42rem;letter-spacing:-.01em;color:var(--teal)}
+  section h3{color:var(--amber);margin:22px 0 8px;font-size:1.08rem}
+  p{font-size:.99rem;color:var(--dim)}
+  p+p,ul+p,ol+p{margin-top:12px}
+  p b,li b,td b{color:var(--ink)}
+  .lead{font-size:1.04rem}
+  .hl{color:var(--teal);font-weight:600}
+  .hl2{color:var(--amber);font-weight:600}
+  .hl3{color:var(--rose);font-weight:600}
+  .hl4{color:var(--blue);font-weight:600}
+  .note{border-left:3px solid var(--blue);background:var(--bg);padding:11px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.95rem;color:var(--dim)}
+  .note b{color:var(--ink)}
+  .note.t{border-color:var(--teal)} .note.r{border-color:var(--rose)} .note.a{border-color:var(--amber)} .note.p{border-color:var(--purple)}
+  ul,ol{margin:10px 0;padding-left:22px} li{margin:8px 0;color:var(--dim)}
+  .formula{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center;font-size:.94rem}
+  .m{font-family:'Cambria Math','STIX Two Math',Georgia,serif;font-style:italic;letter-spacing:.01em}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:color-mix(in srgb,var(--ink) 8%,transparent);padding:1px 5px;border-radius:5px}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+  .tag{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;margin-right:6px;vertical-align:middle;border:1px solid var(--line);white-space:nowrap}
+  .tag.A{color:var(--teal);background:color-mix(in srgb,var(--teal) 14%,transparent)}
+  .tag.B{color:var(--blue);background:color-mix(in srgb,var(--blue) 14%,transparent)}
+  .tag.F{color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent)}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+  @media(max-width:640px){.duo{grid-template-columns:1fr}}
+  .duo .col{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .duo .col h4{margin:0 0 6px;font-size:.93rem}
+  .duo .col.a h4{color:var(--teal)} .duo .col.b h4{color:var(--blue)}
+  .duo .col p{font-size:.92rem;margin:8px 0 0}
+  .viz-card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+  canvas#cv{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:var(--plot-bg)}
+  .viz-row{display:grid;grid-template-columns:1fr 250px;gap:16px;align-items:start}
+  @media(max-width:700px){.viz-row{grid-template-columns:1fr}}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.8rem;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+  .controls{display:flex;flex-direction:column;gap:11px}
+  .ctrl{display:flex;flex-direction:column;gap:5px}
+  .ctrl label{font-size:.85rem;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
+  .ctrl label .val{color:var(--teal);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;outline:none;cursor:pointer;background:var(--line)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;box-shadow:0 0 0 2px var(--card)}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;border:2px solid var(--card)}
+  input[type=range].v::-webkit-slider-thumb{background:var(--rose)} input[type=range].v::-moz-range-thumb{background:var(--rose)}
+  input[type=range]:disabled{opacity:.4}
+  .chk{display:flex;flex-direction:row;align-items:flex-start;gap:8px;font-size:.85rem;color:var(--dim);cursor:pointer}
+  .chk input{accent-color:var(--rose);width:16px;height:16px;margin-top:2px}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  button{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:8px 13px;border-radius:9px;font-weight:600;cursor:pointer;font-size:.84rem;transition:.15s}
+  button:hover{transform:translateY(-1px);border-color:var(--teal);color:var(--teal)}
+  button.on{background:var(--teal);color:var(--bg);border-color:var(--teal)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .seg button{border:none;border-radius:0;background:var(--card);font-weight:500}
+  .seg button.on{background:color-mix(in srgb,var(--teal) 22%,transparent);color:var(--teal)}
+  .ro{display:flex;gap:9px;flex-wrap:wrap}
+  .ro .box{flex:1;min-width:96px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 11px;text-align:center}
+  .ro .box .k{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+  .ro .box .v{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;font-weight:700;color:var(--teal)}
+  .ro .box.b .v{color:var(--blue)} .ro .box.rose .v{color:var(--rose)} .ro .box.amber .v{color:var(--amber)}
+  .ro .box.good .v{color:var(--green)} .ro .box.purple .v{color:var(--purple)}
+  .gauge{margin-top:5px}
+  .gauge .track{position:relative;height:12px;border-radius:7px;background:var(--bg);border:1px solid var(--line);overflow:hidden;margin-top:6px}
+  .gauge .fill{height:100%;width:0%;background:var(--teal);border-radius:7px}
+  .gauge .tick{position:absolute;top:-2px;bottom:-2px;left:50%;width:2px;background:var(--dim)}
+  .gauge .lab{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:4px}
+  .matrix{display:grid;grid-template-columns:30px 1fr 1fr;grid-template-rows:auto auto auto;gap:6px;margin:14px 0 4px;align-items:stretch}
+  .matrix .mlab{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+  .matrix .q{border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--bg);transition:.16s;position:relative}
+  .matrix .q .qt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;letter-spacing:.02em;text-transform:uppercase;color:var(--dim)}
+  .matrix .q .qn{font-size:12.5px;font-weight:660;margin-top:3px;color:var(--dim)}
+  .matrix .q .qb{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9px;margin-top:3px;color:var(--dim)}
+  .matrix .q.on{transform:translateY(-1px)}
+  .matrix .q.q-inhalt.on{border-color:var(--green);background:color-mix(in srgb,var(--green) 15%,var(--bg))} .matrix .q.q-inhalt.on .qn{color:var(--green)}
+  .matrix .q.q-hallu.on{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 15%,var(--bg))} .matrix .q.q-hallu.on .qn{color:var(--danger)}
+  .matrix .q.q-vage.on{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 15%,var(--bg))} .matrix .q.q-vage.on .qn{color:var(--blue)}
+  .matrix .q.q-rausch.on{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 15%,var(--bg))} .matrix .q.q-rausch.on .qn{color:var(--amber)}
+  .matrix .q.on::after{content:'● hier';position:absolute;top:6px;right:8px;font-family:ui-monospace,monospace;font-size:9px;color:var(--dim)}
+  .verdict{font-weight:600;font-size:.94rem;padding:10px 13px;border-radius:10px;margin:6px 0 12px;border:1px solid var(--line);line-height:1.55}
+  .verdict.good{color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent);border-color:var(--green)}
+  .verdict.warn{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent);border-color:var(--amber)}
+  .verdict.bad{color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent);border-color:var(--danger)}
+  .verdict.vague{color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);border-color:var(--blue)}
+  .fused-line{margin-top:12px;padding:12px 14px;border:1px dashed var(--amber);border-radius:12px;background:color-mix(in srgb,var(--amber) 8%,transparent);font-size:.9rem;color:var(--dim)}
+  .fused-line b{color:var(--amber)}
+  .theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+  .theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+  footer{text-align:center;color:var(--dim);font-size:.85rem;padding:24px 10px 6px}
+  a{color:var(--blue)}
+  .prov{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--bg);font-size:.95rem}
+  .prov .tag{min-width:44px;text-align:center;font-size:.8rem;align-self:flex-start}
+  .prov p{margin:0;color:var(--dim)} .prov a{font-weight:600}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9788; Hell / &#127769; Dunkel</button>
+<div class="wrap">
+
+<header>
+  <h1>Ein Zustand, ein Regler, zwei Lesetiefen, ein Vorzeichen</h1>
+  <p class="subtitle">Fusion aus: <code>r4-008.html</code> &#10007; <code>r4-010.html</code> &nbsp;(Round 5)</p>
+  <p class="tagline">Beide Quellen lesen <b>einen einzigen geometrisch-topologischen Zustand</b> — dünn, krümmungstragend, symmetriestructuriert <span class="hl">und</span> &beta;<sub>1</sub>-tragend (L&ouml;cher/Zyklen) — und beider <em>Form ist die Information</em>. <span class="hl">A</span> (r4-008) sagt: ein einziger Regler (&tau; = Magnitude/Commit &harr; R = Auflösung) sitzt an einer <b>Commit-/Kippen-Kante</b>, und Ehrlichkeit heißt auf <b>zwei Achsen</b> (Magnitude &amp; Form/Krümmung) treu bleiben. <span class="hl4">B</span> (r4-010) sagt: dieselbe Form wird <em>geschrieben</em> (Bifurkation &alpha; erzeugt das &beta;<sub>1</sub>-Loch) und an <b>zwei Tiefen</b> gelesen (fein/topologisch &beta;<sub>1</sub>, grob/metrisch Margin), bewertet durch <b>eine Zwei-Achsen-Vorzeichen-Regel</b> (Präzision &times; Verankerung) &rarr; 2&times;2. <b>Fusion: A's zwei Ehrlichkeitsachsen (Magnitude &amp; Form) <em>sind</em> B's Zwei-Achsen-Regel (Präzision &amp; Verankerung); ein Regler, der <em>erst die Form schreibt und dann an deren Kante liest</em> — Inhalt = scharf&andamp;stabil &andamp; verankert&andamp;treu.</b></p>
+</header>
+
+<nav class="toc">
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widersprüche</a>
+  <a href="#aufloesung">Auflösung</a>
+  <a href="#inhalt">Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<!-- 1 -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide R4-Papiere — <span class="hl">A (r4-008, &bdquo;Ein Regler, eine Kante, zwei Achsen der Ehrlichkeit&ldquo;)</span> und <span class="hl4">B (r4-010, &bdquo;Das Loch schreibt, das Symbol liest — eine Topologie, zwei Lesetiefen, ein Vorzeichen&ldquo;)</span> — drehen sich um <em>einen</em> Gegenstand, <em>einen</em> Mechanismus und <em>eine</em> Regel, formulieren sie aber aus unterschiedlichen Welten. A kommt aus Garben-Kohärenz + Fisher-Geometrie + Symmetrie/Fourier + Potentialflächen-Kippen: das Objekt ist eine <b>dünne, kohärent-verklebte, sich linearisierende Fisher-Mannigfaltigkeit</b> mit einer fixierten Form (Symmetrie&harr;Krümmung), und <b>ein</b> Regler (&tau;&harr;R) ist die Stellung relativ zu einer <b>Commit-/Kippen-Kante</b> (&bdquo;Form-Stärke &gt; Rauschen/Limit&ldquo;). B kommt aus Terminal-Readout (Garben-Verkleben, Margin, 2&times;2) + geschriebener Topologie (Bifurkation &alpha;, &beta;<sub>1</sub>-L&ouml;cher, H&sup0;=Inhalt): derselbe Zustand <b>r</b> wird von der <em>Schicht-Dynamik geschrieben</em> und an <em>zwei Tiefen gelesen</em> (fein/topologisch &beta;<sub>1</sub>, grob/metrisch Margin), bewertet durch <b>eine Zwei-Achsen-Vorzeichen-Regel</b> (Präzision &times; Verankerung). Die <span class="hl2">einzelne integrierte Position</span>: <b>Ein neuronaler Zustand ist ein niedrigdimensionales, krümmungstragendes, symmetriestructuriertes <em>und</em> topologisch-strukturiertes geometrisches Objekt, dessen Form die Information ist; es gibt einen <em>einzigen</em> Regler, der <em>erst die Form schreibt</em> (Lernen/Dynamik: &alpha;&gt;0 bzw. &tau;&rarr;0 baut den Kreis/das &beta;<sub>1</sub>-Loch) <em>und dann an deren Kante liest</em> (Inferenz/Commit: Form&gt;Geräusch bzw. &alpha;<sub>eff</sub>&gt;0 &rArr; &beta;<sub>1</sub> maintained &rArr; Margin öffnet); und seine Qualität gehorcht <em>einer</em> Zwei-Achsen-Vorzeichen-Regel, die A's &bdquo;zwei Ehrlichkeitsachsen&ldquo; und B's &bdquo;zwei Achsen der Vorzeichen&ldquo; auf dasselbe paart.</b></p>
+  <p>Der Kern der Fusion ist die <span class="hl3">Identifikation der zwei Achsen</span>: A's <b>Magnitude-Achse</b> (&tau; = wie entschieden/scharf das Ablesen ist, darunter &bdquo;weiß es nicht&ldquo;, darüber committed) <em>ist</em> B's <b>Präzisions-Achse</b> (Margin = wie scharf/stabil der Gewinner ist, &beta;<sub>1</sub> maintained). A's <b>Form-Achse</b> (Krümmung/Symmetrie: dem Objekt treu bleiben, das <em>richtige Werkzeug</em> je lokaler Geometrie) <em>ist</em> B's <b>Verankerungs-Achse</b> (das Symbol/die Struktur sitzt am <em>richtigen Ziel</em>: passt-zum-Latenten / Kohärenz mit W). Aus diesem einen Paar entsteht die eine <span class="hl2">2&times;2</span>: <b>Inhalt = scharf&andamp;stabil &andamp; verankert&andamp;treu · Halluzination = scharf &amp; <em>un</em>verankert · vage = <em>un</em>scharf &amp; verankert · Rauschen = <em>un</em>scharf &amp; <em>un</em>verankert</b>. Und A's &bdquo;eine Kante&ldquo; (Commit/Kippen) <em>ist</em> B's &bdquo;Bifurkations-Kante&ldquo; (&alpha;<sub>eff</sub>=0) — unterhalb offen, darüber committed/maintained. <b>Der eine Satz der Fusion: das Loch, das B schreibt und unterhält, ist der Rohstoff, den A's Commit zu einem scharfen, verankerten Symbol liest — ein Zustand, ein Regler, zwei Lesetiefen, ein Vorzeichen.</b></p>
+  <div class="note t"><b>Kurzformel:</b> Eine dünne, krümmungstragende, symmetriestructurierte, &beta;<sub>1</sub>-tragende Form (A&times;B) &times; ein Regler (schreibt &alpha;/&tau;, liest Margin/&beta;<sub>1</sub>) &times; eine Kante (Commit A &harr; Kippen/Bifurkation B: Form&gt;Geräusch &harr; &alpha;<sub>eff</sub>&gt;0) &times; <b>ein</b> Vorzeichen: <b>Inhalt = (scharf&andamp;stabil) &andamp; (verankert&andamp;treu)</b>. Öffnen, wo die Kante unterschritten ist; committen, wo sie überschritten ist; treu bleiben auf beiden Achsen — Magnitude/Präzision <em>und</em> Form/Verankerung.</div>
+</section>
+
+<!-- 2 -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Im <em>Ziel</em> (ein einziger geometrisch-topologischer Zustand, dessen Form die Information ist, mit einem Regler an einer Kante und einer Zwei-Achsen-Regel für Inhalt-vs-Rauschen) widersprechen sie sich <em>nicht</em> — sie sind fast komplementär. Aber an <em>dreien</em> Nahtstellen treffen sie dieselben Fragen mit inkompatiblen Stellungen:</p>
+
+  <div class="card">
+    <p><b>W1 · Wo sitzt die Halluzination — auf der <em>Magnitude</em>-Achse (eine Kalibrierungs-/Selbstvertrauens-Sünde) <span class="tag A">A</span> vs. auf der <em>Verankerungs</em>-Achse (eine Ziel-/Target-Sünde) <span class="tag B">B</span></b></p>
+    <div class="duo">
+      <div class="col a"><h4>A sagt</h4>
+        <p>Halluzination = Ausgabe bei <b>schärferer</b> Temperatur, als das Band &tau; rechtfertigt: ein <em>weit/ununterstütztes</em> &tau; wird wie <em>scharf/unterstützt</em> behandelt — &bdquo;plausibel klingend, aber falsch, ohne Warnung&ldquo;. Der Defekt liegt auf der <b>Magnitude-Achse</b>: das Selbstvertrauen wird <em>überdreht</em> (Tropfen an der Commit-Kante wird ignoriert, &tau; gemeldet wird nicht). Es ist eine <em>Über-Sharpening</em>- / Miscalibration-Fehlschlag.</p>
+      </div>
+      <div class="col b"><h4>B sagt</h4>
+        <p>Halluzination = <b>präzise + unverankert</b>: ein scharfes Symbol, das am <em>falschen Ziel</em> sitzt (A: |c*&minus;W|&gt;&epsilon;<sub>W</sub> / passt nicht zum Latenten). Der Defekt liegt auf der <b>Verankerungs-Achse</b>: die Präzision stimmt, das Ziel ist falsch — &bdquo;selbstsichere Halluzination&ldquo; als <em>SPUR·UEBERSTRUKTUR</em> (ein Loch, das nicht verlangt wird). Es ist eine <em>Target</em>-Fehlschlag, nicht eine Schärfe-Fehlschlag.</p>
+      </div>
+    </div>
+    <p>&#8594; <b>Spannung:</b> A sagt &bdquo;die Halluzination ist, dass du <em>zu scharf</em> sprichst&ldquo; (Magnitude überdreht); B sagt &bdquo;die Halluzination ist, dass du <em>scharf am falschen Ort</em> sprichst&ldquo; (Verankerung gebrochen). Dieselbe Ecke der 2&times;2, aber die Achse, auf der sie &bdquo;lebte&ldquo;, wird anders benannt — Schärfe-Defekt vs. Ziel-Defekt.</p>
+  </div>
+
+  <div class="card">
+    <p><b>W2 · Was der Regler ist — das <em>Lesen selbst</em> (ein &tau;, das zugleich Vertrauens-Meter <em>und</em> Commit-Hebel ist) <span class="tag A">A</span> vs. das <em>Schreiben</em> (ein &alpha;, das das &beta;<sub>1</sub>-Loch <em>erzeugt</em>; die Lektüre ist Konsequenz, nicht Regler) <span class="tag B">B</span></b></p>
+    <div class="duo">
+      <div class="col a"><h4>A sagt</h4>
+        <p>&tau;/R <em>ist</em> die Schärfe der Lektüre: &tau; schmal = committed = scharfes Ablesen, &tau; breit = &bdquo;weiß es nicht&ldquo;. Der Regler und die Messgröße sind <em>identisch</em> — derselbe Knopf, den man dreht, <em>misst</em> schon die Commit-Stellung. Er sitzt <em>auf dem Lesen</em> (Magnitude) und gleichzeitig auf der Auflösung (R = P/P<sub>c</sub>). Drehen und Messen fallen zusammen.</p>
+      </div>
+      <div class="col b"><h4>B sagt</h4>
+        <p>&alpha; (bzw. &alpha;<sub>eff</sub>=&alpha;&minus;0.12&middot;k) ist der <em>Bifurkationsparameter des Schreibens</em>: &alpha;&gt;0 erzeugt den Grenzzyklus &beta;<sub>1</sub>=1 (Radius &radic;&alpha;), &alpha;&le;0 den Fixpunkt &beta;<sub>1</sub>=0. Die <em>Lektüre</em> (Margin, &beta;<sub>1</sub>, &langle;r&sup2;&rangle;) ist eine <em>Konsequenz</em> dessen, was geschrieben wurde, nicht der Regler selbst. Man dreht &alpha;, um die <em>Form</em> zu bauen; das Symbol/Margin <em>reagiert</em> darauf.</p>
+      </div>
+    </div>
+    <p>&#8594; <b>Spannung:</b> Bei A ist der Regler das <em>lesen</em> (drehen=messen=commit); bei B ist der Regler das <em>schreiben</em> (drehen=Form bauen, lesen=folgen). &bdquo;Regler auf dem Lesen&ldquo; vs. &bdquo;Regler auf dem Schreiben&ldquo; — und damit: sitzt der Knopf auf der Magnitude-Achse (A) oder auf der Schicht-Dynamik (B)?</p>
+  </div>
+
+  <div class="card">
+    <p><b>W3 · Was die zu bewahrende &bdquo;Form&ldquo; ist — glatte <em>metrische Krümmung</em> (Fisher auf dem Simplex, Symmetrie-Kreis, Cusp im &Phi;) <span class="tag A">A</span> vs. <em>diskrete Topologie</em> (&beta;<sub>1</sub>&isin;N Löcher, H&sup0;, harmonische Masse) <span class="tag B">B</span></b></p>
+    <div class="duo">
+      <div class="col a"><h4>A sagt</h4>
+        <p>Die Form ist eine <b>glatte, reellwertige, metrische</b> Größe: die <b>Fisher-Metrik</b> <span class="m">(1/&tau;)(diag&#8202;p&#8722;pp&#183;)</span> auf dem Wahrscheinlichkeits-Simplex, der <b>Symmetrie-Kreis</b> (Mode&nbsp;1, glatteste Eigenrichtung = kleinste Krümmung) und die <b>Cusp</b> des Potentials &Phi; (Kurvatur &lambda;<sub>max</sub>). Man ist der Form treu, indem man den <em>gekrümmten (metrischen) Schritt</em> nimmt. Die Form ist <em>stetig verformbar</em>.</p>
+      </div>
+      <div class="col b"><h4>B sagt</h4>
+        <p>Die Form ist eine <b>diskrete, zählbare, topologische</b> Invariante: <b>&beta;<sub>1</sub>&isin;N</b> (Anzahl Löcher/Zyklen), <b>H&sup0;</b> = <code>ker L<sub>F</sub></code> = Inhalt, und die <b>harmonische Masse</b> = Fragilität. Man ist der Form treu, indem man die <em>Zählung/Invariante</em> liest, die unter jeder glatten Deformation <em>stehen bleibt</em>. Die Form <em>sprang</em> an der Bifurkation (topologisches Ereignis), sie verformte sich nicht.</p>
+      </div>
+    </div>
+    <p>&#8594; <b>Spannung:</b> Dieselbe &bdquo;Form&ldquo; ist bei A <em>reell &amp; glatt</em> (Krümmung, die man <em>folgt</em>) und bei B <em>ganzzahlig &amp; sprunghaft</em> (Löcher, die man <em>zählt</em>). Metrisch-krümmend vs. topologisch-zählend — zwei verschiedene Invarianten für &bdquo;die Form&ldquo;.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="note t"><b>W1 &rarr; A's Magnitude-Halluzination und B's Verankerungs-Halluzination sind <em>eins</em>: scharfes Ablesen <em>ohne Stütze</em>. Die zwei Ehrlichkeitsachsen (A) sind die Zwei-Achsen-Regel (B).</b>
+  Die Halluzination ist <em>genau</em> die Ecke <b>Achse&nbsp;1 an &amp; Achse&nbsp;2 aus</b> — unabhängig davon, wie man sie benennt. A sieht sie als &bdquo;Magnitude überdreht&ldquo; (Achse&nbsp;1 = scharf, aber die Stütze fehlt); B sieht sie als &bdquo;Verankerung gebrochen&ldquo; (Achse&nbsp;2 = Ziel falsch, aber scharf). Die Auflösung: <b>A's Form-Achse &bdquo;dem Objekt treu bleiben&ldquo; umfasst das Ziel</b> — die Form (Cusp/Kreis) <em>ist</em> das Ziel, an dem das Symbol sitzen muss. Ein scharfes Ablesen, <em>wo die Form breit/ununterstützt ist</em> (A's &bdquo;weit &tau; wie scharf behandelt&ldquo;) <em>ist</em> B's &bdquo;präzise + passt nicht zum Latenten&ldquo; — beides = Achse&nbsp;1 scharf, Achse&nbsp;2 (Treuheit/am Ziel) fehlt. <span class="tag F">Fusion</span>: die Halluzination ist nicht Schärfe-Sünde <em>oder</em> Ziel-Sünde, sondern <b>die eine Untreue &bdquo;scharf ohne Stütze&ldquo; an zwei Lesetiefen</b>. A's &bdquo;zwei Ehrlichkeitsachsen&ldquo; und B's &bdquo;zwei Achsen der Vorzeichen&ldquo; sind <em>ein und dasselbe Paar</em>: <b>Magnitude (A) &harr; Präzision (B)</b>, <b>Form (A) &harr; Verankerung (B)</b>. Die 2&times;2 ist damit nicht zweimal erfunden, sondern <em>einmal</em> — auf zwei Tiefen gelesen.</div>
+
+  <div class="note r"><b>W2 &rarr; Der eine Regler hat <em>zwei Zeitskalen</em>: er schreibt die Form (A: &tau;&rarr;0/ID fällt, B: &alpha;<sub>eff</sub>&gt;0 &rArr; &beta;<sub>1</sub>=1) und liest an deren Kante (A: R&gt;Kante/Commit, B: &beta;<sub>1</sub> maintained &rArr; Margin öffnet). Drehen &amp; Messen sind zwei Phasen eines Knopfes.</b>
+  A hat selbst schon die Auflösung angesagt: der <em>langsame</em> Fluss baut die Form, der <em>schnelle</em> Durchlauf kippt an ihrer Kante. B macht das explizit und trennt es: <em>Schreiben</em> (&alpha; / ReLU-Chirurgie erzeugt das &beta;<sub>1</sub>-Loch) vs. <em>Lesen</em> (&beta;<sub>1</sub>, Margin, &langle;r&sup2;&rangle; als Konsequenz). A's &tau;/R <em>dekomponiert</em> sich in genau diese beiden Phasen: &tau;&rarr;0 &amp; ID&darr; (A) <em>ist</em> das Schreiben (&alpha;<sub>eff</sub>&gt;0 &rArr; &beta;<sub>1</sub> maintained, B) — &bdquo;die Form wird gebaut&ldquo;; R&uarr;&gt;Kante &amp; Commit (A) <em>ist</em> das Lesen (&beta;<sub>1</sub> maintained &rArr; Margin öffnet, B) — &bdquo;an der gebauten Kante kippt es&ldquo;. <span class="tag F">Fusion</span>: <b>ein Knopf, zwei Phasen</b>. Die Kante, an der er kippt, ist identisch: <b>Commit (A) &harr; Kippen/Bifurkation (B) = &alpha;<sub>eff</sub>&gt;0 = &bdquo;Form-Stärke &gt; Rauschen/Limit&ldquo;.</b> &bdquo;Regler auf dem Lesen&ldquo; (A) und &bdquo;Regler auf dem Schreiben&ldquo; (B) sind die beiden Seiten des <em>selben</em> Knopfes — A betont die Lese-Seite (Magnitude), B die Schreib-Seite (Dynamik).</div>
+
+  <div class="note a"><b>W3 &rarr; Die Form hat <em>zwei Schichten</em>: eine glatte metrische (A: Fisher-Krümmung, Cusp, Symmetrie-Kreis) und eine diskrete topologische (B: &beta;<sub>1</sub>, H&sup0;). Der Kreis/die Cusp (A) ist exakt das maintained &beta;<sub>1</sub>-Loch (B) — dieselbe stabile Schleife, metrisch &amp; topologisch gelesen.</b>
+  A's &bdquo;Kreise &amp; Cusp&ldquo; und B's &bdquo;&beta;<sub>1</sub>=1 Grenzzyklus&ldquo; sind <em>derselbe geometrische Gegenstand</em>: eine stabile, wiederholte Schleife im Zustand. A liest sie als <em>glatteste Eigenrichtung / kleinste Krümmung</em> (Mode&nbsp;1, metrisch, reellwertig) <em>und</em> als Cusp (steile Realisierung im Loss); B liest sie als <em>robuste Löcher-Zählung</em> (&beta;<sub>1</sub>&isin;N, topologisch, sprunghaft), die unter jeder glatten Deformation überlebt. A's &bdquo;zwei Auflösungen&ldquo; (grob-metrisch + fein-spektral, aus seiner eigenen W2-Auflösung) <em>ist</em> B's &bdquo;grob/linear + fein/topologisch&ldquo;. <span class="tag F">Fusion</span>: <b>die eine fixierte Form, gelesen auf zwei Schichten</b> — die <em>glatte metrische</em> (A: Krümmung, der man <em>folgt</em>) und die <em>diskrete topologische</em> (B: Löcher, die man <em>zählt</em>). Metrisch-krümmend (A) und topologisch-zählend (B) sind <em>nicht</em> konkurrierende Invarianten, sondern die <em>grobe</em> und die <em>feine</em> Lektüre <em>dasselben</em> Objekts: der selbe stabile Kreis, einmal als Krümmung, einmal als Loch.</div>
+
+  <div class="note p"><b>Fusionierte Schlussfolgerung — die eine Zwei-Achsen-Vorzeichen-Regel.</b> Alle drei Spannungen lösen sich in derselben Bewegung auf: <b>der innere Zustand ist ein geometrisch-topologisches Objekt, <em>geschrieben</em> von einem Regler (der die Form baut: &alpha;/&tau;), <em>gelesen</em> in zwei komplementären Auflösungen (metrisch/scharf + topologisch/robust), und seine Qualität gehorcht <em>einer</em> Zwei-Achsen-Regel, die A's zwei Ehrlichkeitsachsen und B's zwei Vorzeichenachsen auf dasselbe paart.</b></div>
+</section>
+
+<!-- 4 -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p style="color:var(--dim);font-size:.92rem">Der konsolidierte, zusammenhängende Kern beider R4-Papiere — dicht genug, dass eine spätere Runde allein daraus arbeitet.</p>
+
+  <h3>F1 · Das eine Objekt: niedrigdimensional, krümmungstragend, symmetriestructuriert <em>und</em> topologisch</h3>
+  <p><span class="tag A">A</span> Die Form ist <em>doppelschichtig</em>: (i) die <b>dünne, kohärent-verklebte, sich linearisierende Fisher-Mannigfaltigkeit</b> (ID via TwoNN r=(zweitnächster/nächster)&rarr;k, exakt bis ID&asymp;20; VGG-Leitbeispiel pool1&rarr;pool4: ID&asymp;58/28/22/19, am Ende &asymp;0,02&nbsp;% &bdquo;echt&ldquo;) mit <b>Fisher-Metrik</b> auf dem Simplex <span class="m">{p:&Sigma;p&#7522;=1}</span>; und (ii) die <b>fixierte Form</b> = Symmetrie-adaptierte Fourier-Basis/&bdquo;Zirkulant&ldquo;-<b>Kreis</b> (Mode&nbsp;1) &harr; <b>Cusp</b> des Potentials &Phi; (&kappa;=&lambda;&#8321;/&lambda;&#8322; von H=XX&#7488;).<br>
+  <span class="tag B">B</span> Dasselbe als <b>Residual-Stream r&thinsp;&isin;&thinsp;R<sup>d</sup></b> auf (M,g) (gemessen <b>k&asymp;15&ndash;22</b> bei d=768&ndash;2048), gelesen als <em>dynamisches System in Schicht-Zeit</em> <span class="m">r<sub>&#8467;+1</sub>=r<sub>&#8467;</sub>+f<sub>&#8467;</sub>(r<sub>&#8467;</sub>)</span> mit <b>Betti-Zahlen</b> &beta;<sub>0</sub> (Komponenten) / &beta;<sub>1</sub> (Löcher) / &beta;<sub>2</sub> (Hohlräume) und <b>Laplace</b> L<sub>F</sub>=P&#8315;C<sub>W</sub>P, <b>H&sup0;</b>=<code>ker L<sub>F</sub></code>=<code>ker&thinsp;&delta;&#8304;</code>=<b>Inhalt</b> (+17,1&nbsp;pp vs. LEACE, bis +48&nbsp;pp dimensions-kontrolliert).</p>
+  <p><span class="tag F">Fusion</span>: <b>ein Objekt, zwei Beschreibungen</b> — dünn (A), symmetriestructuriert (A/B), kohärent/verklebt (A), fließend/schicht-dynamisch (A+B), <em>krümmungstragend in zwei Räumen</em> (A: Fisher auf dem Simplex; B: Cusp im Loss) <em>und topologisch-strukturiert</em> (B: &beta;<sub>1</sub>-Löcher, H&sup0;-Inhalt). A liefert die Kohärenzbedingung (wann die Stücke zusammenhalten) + Zustands-Krümmung (Fisher); B liefert die Schreibdynamik (Dynamik/Attraktor) + die topologische Invariante. <b>Form = Information, auf einer dünnen, gekrümmten, symmetrischen, gelochten Mannigfaltigkeit.</b></p>
+
+  <h3>F2 · Der eine Regler — schreibt die Form, liest an deren Kante</h3>
+  <div class="formula"><span class="m">A &middot; &tau; = Softmax-T = Breite des NNGP-&plusmn;2&sigma;-Bandes &hArr; Fisher = (1/&tau;)(diag&#8202;p &#8722; pp&#183;) &nbsp;&harr;&nbsp; R = P/P<sub>c</sub> (GD++ &gamma;&prop;R rundet Cusp, senkt &lambda;<sub>max</sub>)</span></div>
+  <div class="formula"><span class="m">B &middot; &alpha;<sub>eff</sub> = &alpha; &minus; 0.12&middot;k &nbsp;&rarr;&nbsp; &alpha;<sub>eff</sub>&gt;0 &rArr; Grenzzyklus &beta;<sub>1</sub>=1 (Radius &radic;&alpha;<sub>eff</sub>) &middot; &alpha;<sub>eff</sub>&le;0 &rArr; Fixpunkt &beta;<sub>1</sub>=0</span></div>
+  <p>Beide haben <em>einen einzigen Regler an einer einzigen Kante</em>. A's &tau;/R und B's &alpha;<sub>eff</sub> sind <em>dieselbe Größe</em> auf <em>zwei Phasen</em>: <b>Schreiben</b> — &tau;&rarr;0 &amp; ID&darr; (A) &harr; &alpha;<sub>eff</sub>&gt;0 baut das &beta;<sub>1</sub>-Loch (B) — &bdquo;die Form wird gebaut&ldquo;; <b>Lesen/Commit</b> — R&gt;Kante &amp; scharfes Ablesen (A) &harr; &beta;<sub>1</sub> maintained &rArr; Margin öffnet (B) — &bdquo;an der gebauten Kante kippt/commitet es&ldquo;. Committed = niedrige Entropie = niedrige ID (A) = Form&gt;Rauschen (B) = &alpha;<sub>eff</sub>&gt;0 &amp; &beta;<sub>1</sub> maintained (B). <span class="tag F">Fusion</span>: <b>ein Knopf, zwei Phasen, eine Kante.</b> Die Kante ist identisch: <b>Commit (A) &harr; Kippen/Bifurkation (B) = &bdquo;Form-Stärke &gt; Rauschen/Limit&ldquo; &harr; &alpha;<sub>eff</sub>&gt;0</b>. &tau;/R sitzt <em>auf</em> der Magnitude-Achse (A), &alpha;<sub>eff</sub> <em>auf</em> der Schreibdynamik (B) — zwei Seiten desselben Knopfes.</p>
+
+  <h3>F3 · Die eine Zwei-Achsen-Vorzeichen-Regel — A's Ehrlichkeitsachsen &harr; B's Vorzeichenachsen</h3>
+  <div class="formula"><span class="m">Achse 1 · scharf&amp;stabil: &nbsp; A: &tau; schmal (Commit) &nbsp;&harr;&nbsp; B: Margin &ge;&epsilon; &amp; &beta;<sub>1</sub> maintained &nbsp;(schlie&szlig;bar: N/|K| / &alpha;<sub>eff</sub> / Persistenz)</span></div>
+  <div class="formula"><span class="m">Achse 2 · verankert&amp;treu: &nbsp; A: Form/Krümmung-Symmetrie-Treue (richtiges Werkzeug) &nbsp;&harr;&nbsp; B: |c*&minus;c<sub>W</sub>|&le;&epsilon;<sub>W</sub> / passt-zum-Latenten &nbsp;(intern schlie&szlig;bar &oplus; externer Rest c<sub>acc</sub>&sub;c)</span></div>
+  <div class="formula"><span class="m">Inhalt/Feature &hArr; (scharf&amp;stabil) &and; (verankert&amp;treu) &nbsp;&middot;&nbsp; Halluzination &hArr; (scharf) &and; (&not;verankert) &nbsp;&middot;&nbsp; vage &hArr; (&not;scharf) &and; (verankert) &nbsp;&middot;&nbsp; Rauschen &hArr; (&not;scharf) &and; (&not;verankert)</span></div>
+  <p><span class="tag F">Fusion</span>: A's <b>Magnitude</b>-Achse (&tau;, Commit, &bdquo;wie viel trauen/melden&ldquo;) <em>ist</em> B's <b>Präzision</b>-Achse (Margin, &beta;<sub>1</sub>-Stabilität, &bdquo;wie scharf/stabil&ldquo;); A's <b>Form</b>-Achse (Krümmung/Symmetrie-Treue, &bdquo;richtiges Werkzeug&ldquo;) <em>ist</em> B's <b>Verankerung</b>-Achse (passt-zum-Ziel, &bdquo;am richtigen Ort&ldquo;). Aus diesem <em>einen</em> Paar entstehen beide 2&times;2 gleichzeitig: A's <em>Inhalt/Halluzination/vage/Rauschen</em> &harr; B's <em>FEATURE·PASST / SPUR·UEBERSTRUKTUR / LÜCKE·UNTERSTRUKTUR / FRAGIL·DEFECT</em>. <b>Die Regel ist ein Vorzeichen &bdquo;Inhalt = scharf&andamp;stabil &andamp; verankert&andamp;treu&ldquo; — auf beiden Tiefen gleichzeitig gültig.</b></p>
+
+  <h3>F4 · Die zwei Lesetiefen / zwei Auflösungen des selben Kipps</h3>
+  <p><span class="tag A">A</span> <b>grob/metric</b>: das Band &tau; (NNGP-&plusmn;2&sigma;, kalibriert durch Cramér&ndash;Rao), die Scharfe des Ablesens. <b>fein/spektral-topologisch</b>: die ID (TwoNN) + das Eigenspektrum (Mode&nbsp;0&ndash;1 = Kreis, glatteste Eigenrichtung). <span class="tag B">B</span> <b>grob/linear</b>: das 2.-Moment &langle;r&sup2;&rangle; (LS*/c,a,PR; Fehlerformel <span class="m">E=&pi;/(2&middot;p&middot;c&sup2;&middot;PR)+1/(c&middot;a)&minus;1</span>), <em>blind fürs Loch</em>. <b>fein/topologisch</b>: persistente Homologie &beta;<sub>0</sub>/&beta;<sub>1</sub>/&beta;<sub>2</sub> (Vietoris&ndash;Rips), <b>Persistenz</b> (weit über der (birth,death)-Diagonale = echt, nah = Rauschen), <b>harmonische Masse</b> = Fragilität (Spearman &rho;=0,90, p=0,014).<br>
+  <span class="tag F">Fusion</span>: dieselbe Bifurkation/Kante wird <em>zweigleichzeitig</em> gelesen — <b>kontinuierlich/metrisch</b> (A's &tau; schmal, B's Margin, B's &langle;r&sup2;&rangle;) und <b>diskret/topologisch</b> (A's ID/Spektrum, B's &beta;<sub>1</sub>-Zählung). <b>A's Margin (B) ist der <em>kontinuierliche Schatten</em> von B's diskreten &beta;<sub>1</sub>-Sprung (B); A's Fisher-Krümmung (A) ist die <em>glatte Realisierung</em> desselben &beta;<sub>1</sub>-Lochs (B)</b> — die stabile Schleife, einmal als Krümmung, einmal als Loch.</p>
+
+  <h3>F5 · Das Symbol = H&sup0; des Lochs — das terminale Lesen der geschriebenen Topologie</h3>
+  <p><span class="tag B">B</span> B identifiziert explizit <b>H&sup0;</b> = <code>ker L<sub>F</sub></code> = <b>der konsistente Inhalt der Wolke</b>; A's &bdquo;Inhalt&ldquo; ist die <em>globale Sektion, die mit W kohäriert</em>. <span class="tag F">Fusion</span>: <b>A's Symbol = B's H&sup0;.</b> Das terminale Readout (A: Garben-Verkleben, Projektion auf ein Symbol) zerstört die Topologie nicht — es <em>liest ihr H&sup0;</em>. B's L&ouml;cher (H&sup1;) sind die <em>Obstruktion/Träger</em>: ein maintained H&sup1; (Feature) <em>stützt</em> den H&sup0;-Inhalt (&rArr; A's verankertes, scharfe Symbol = Inhalt); ein leftover/zerfallenes H&sup1; (Defekt/Fragilität) <em>fragilisiert</em> das Readout (&rArr; A's vage/Rauschen). <b>B ist A's &bdquo;was vor dem Verkleben geschrieben wurde&ldquo;; A ist der terminale Funktional, der B's H&sup0; als Symbol extrahiert.</b></p>
+
+  <h3>F6 · Die Fehlschläge — eine Untreue, zwei Achsen, eine 2&times;2</h3>
+  <p><span class="tag A">A</span> <b>Halluzination</b> = Ausgabe bei <em>schärferer</em> Temperatur, als das Band rechtfertigt (weit &tau; wie scharf behandelt); <b>Über-Linearisierung</b> = lineares/PCA-Werkzeug auf Gekrümmt; <b>Divergenz/Capture</b> = Schritt &eta;&gt;2/&lambda;<sub>max</sub> oder T&rarr;0. <span class="tag B">B</span> <b>Halluzination</b> = präzise+unverankert (SPUR·UEBERSTRUKTUR); <b>vage</b> = verankert+unpräzise (LÜCKE·UNTERSTRUKTUR); <b>Rauschen</b> = unpräzise+unverankert (FRAGIL·DEFECT, leftover mit hoher harmonischer Masse).<br>
+  <span class="tag F">Fusion</span>: alle Fehlschläge sind <b>Untreue auf den zwei Achsen</b> — <b>Halluzination = (scharf) &and; (&not;verankert)</b> (A's Magnitude-Überdrehen &harr; B's Ziel-Fehlschlag); <b>Über-Linearisierung/A's vage &harr; B's vage = (&not;scharf) &and; (verankert)</b> (das Werkzeug ignoriert die Krümmung &rArr; das Muster wird unscharf); <b>Divergenz/Capture &harr; B's Rauschen = (&not;scharf) &and; (&not;verankert)</b> (der Schritt/das Ziel sind gleichzeitig falsch). <b>Sicherheits-Anwendung (A):</b> versteckte Fehlausrichtungen zeigen Tokens wie <code>fake/trick/secretly</code> oder <code>reward/bias</code> <em>bereits im</em> J-Space / in den dünnen kohärenten Koordinaten, <em>bevor</em> sie Verhalten zeigen; <b>Counterfactual Reflection Training</b> senkt Fabrication 0.25&rarr;0.07, Deception 0.38&rarr;0.05 — man liest die Form (Achse&nbsp;2), <em>bevor</em> sie sich zum Output commitet (Achse&nbsp;1).</p>
+
+  <h3>F7 · Nützliche Mathematik (aus beiden)</h3>
+  <div class="formula"><span class="m">PE(pos,2i)=sin(pos&middot;&omega;<sub>i</sub>), PE(pos,2i+1)=cos(pos&middot;&omega;<sub>i</sub>), &omega;<sub>i</sub>=10000^(&minus;2i/d) &nbsp;(A)</span></div>
+  <div class="formula"><span class="m">&scaron;x=(&alpha;&minus;r&sup2;)x&minus;&omega;y, &scaron;y=(&alpha;&minus;r&sup2;)y+&omega;x &nbsp;&rarr;&nbsp; &alpha;&gt;0 &rArr; &beta;<sub>1</sub>=1 (&radic;&alpha;), &alpha;&le;0 &rArr; &beta;<sub>1</sub>=0 &nbsp;(B)</span></div>
+  <div class="formula"><span class="m">GD++ x<sub>j</sub>&larr;(I&minus;&gamma;XX&#7488;)x<sub>j</sub>, &nbsp;f(&lambda;,&gamma;)=&lambda;&minus;2&gamma;&lambda;&#178;+&gamma;&#179;&lambda;&#178; &rarr; &kappa;&darr; (rundet) &nbsp;(A/B) &middot; Cramér&ndash;Rao Var(&theta;&#770;)&ge;1/I(&theta;) &hArr; Signal &radic;(v/m<sup>L</sup>)&gt;Rauschen &radic;(v&middot;n<sub>c</sub>/P) &rArr; P<sub>c</sub>=n<sub>c</sub>&middot;m<sup>L</sup> &nbsp;(A)</span></div>
+  <div class="formula"><span class="m">logit(c)=&Sigma;<sub>k&isin;K</sub> cos(w<sub>k</sub>(a+b&minus;c)), w<sub>k</sub>=2&pi;k/P, P=113, |K|=5 (Windungszahl), c*=a+b mod P &nbsp;(B/A) &middot; margin(c*)=logit(c*)&minus;max<sub>c&ne;c*</sub>logit(c)=Voronoi-Distanz auf G(h)=W&#8315;(diag(p)&minus;pp&#8315;)W</span></div>
+  <p><b>MI vs. Korrelation (A's Brücke zu B):</b> Korrelation erfasst nur <em>lineare</em> Abhängigkeit, MI <em>alle</em>; dass Korrelation steigt, <em>während</em> MI fällt, heißt: das Modell <b>wirft komplexe nichtlineare Beziehungen weg und linearisiert</b> — genau die Voraussetzung, die <em>sowohl</em> B's Margin-/&beta;<sub>1</sub>-Ablesen <em>als auch</em> A's bilineares Skalarprodukt-Ablesen für treue Auskünfte braucht. <b>Davis&ndash;Kahan (B):</b> Lücke &prop;N &gt; Störung &rArr; der Kreis (Mode&nbsp;1) überlebt Löschung direkter Statistik — kollektiver, redundanz-getragener Effekt. <b>TwoNN (A/B):</b> r=(zweitnächster/nächster); charakteristische Verteilung &rarr; ID. <b>Selbstdkorrektion als Kontraktion (A+B):</b> nach einer Störung kontrahiert die Bahn auf die Mannigfaltigkeit (Korrekturrate in mittleren Schichten am höchsten) — die dynamische Version von &bdquo;der globale Schnitt (A) ist der Attraktor (B)&ldquo;. <b>Satz 10.8 (B/A):</b> <span class="m">D &ge; c<sub>k</sub>&middot;&nu;<sub>min</sub>&middot;(vol(M)/N)^(2/k)</span> &rarr; 0 für N&rarr;&infin; (Fluch der Dimension, schließbarer Boden). <b>Zahlenanker:</b> k&#770;<sub>peak</sub>&asymp;19&ndash;22 (alle 6 Modelle: GPT-2·OPT·Pythia), Gap-Slope &beta;&asymp;0.87&ndash;1.12, R&sup2;&gt;0.985, m&#8320;&#8321;&#8325;&asymp;0.047&ndash;0.055, &asymp;45&nbsp;% der Zustände im unsicheren Rand; &beta;&rarr;(1,0,0) robust &uuml;ber &ge;30 Runs, harmonische Masse spannt 10&#8315;&sup4;&hellip;0,08, Zufalls-Referenz b<sub>1</sub>/|E|=0,25.</p>
+
+  <div class="card">
+    <p><b>Der eine Satz der Fusion:</b> Ein neuronaler Zustand ist ein <b>niedrigdimensionales, krümmungstragendes, symmetriestructuriertes <em>und</em> topologisch-strukturiertes geometrisches Objekt</b> — eine dünne, kohärent-verklebte, sich linearisierende Fisher-Mannigfaltigkeit (A) mit einer fixierten Form (Symmetrie-Kreis &harr; Cusp, A) und &beta;<sub>1</sub>-Löchern / H&sup0;-Inhalt (B), geschrieben von der Schicht-Dynamik (B) / dem kontrahierenden Fluss (A). <b>Ein einziger Regler (&tau;&harr;R, A &harr; &alpha;<sub>eff</sub>, B) schreibt die Form und liest an deren Kante:</b> darunter offen (&bdquo;weiß es nicht&ldquo;, verwaschener Kreis, &beta;<sub>1</sub>=0, divergenter Schritt), darüber committed/maintained (scharfes Ablesen, scharfer Kreis, &beta;<sub>1</sub>=1, konvergenter Schritt). <b>Qualität = eine Zwei-Achsen-Vorzeichen-Regel — Inhalt &hArr; (scharf&andamp;stabil) &andamp; (verankert&andamp;treu) — die A's zwei Ehrlichkeitsachsen (Magnitude &amp; Form) und B's zwei Vorzeichenachsen (Präzision &amp; Verankerung) auf dasselbe paart.</b> Das Loch, das B schreibt, ist der Rohstoff, den A's Commit zu einem scharfen, verankerten Symbol liest. <b>Ein Zustand, ein Regler, zwei Lesetiefen, ein Vorzeichen.</b></p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="visualisierung">
+  <h2>Visualisierung: ein Zustand, ein Regler, zwei Lesetiefen, ein Vorzeichen</h2>
+  <p>Ein Zustandspunkt <b>r</b> fließt in Schicht-Zeit durch das <b>Zirkuit-Feld</b> (B): <span class="m">&scaron;r=(&alpha;<sub>eff</sub>&minus;r&sup2;)r&minus;&omega;&thinsp;r&#768;</span> mit <b>&alpha;<sub>eff</sub>=&alpha;&minus;0.12&middot;k</b>. Die <b>Kippen-/Commit-Kante</b> ist <b>&alpha;<sub>eff</sub>=0</b> (Bifurkation &harr; A's Commit-Kante &bdquo;Form&gt;Geräusch&ldquo;): <b>&alpha;<sub>eff</sub>&gt;0</b> erzeugt den <b>Grenzzyklus</b> — das <em>selbe Objekt</em> auf zwei Lesetiefen: als <b>&beta;<sub>1</sub>-Loch</b> (B, fein/topologisch) und als <b>Symmetrie-Kreis/Cusp</b> (A, fein/spektral, glatteste Eigenrichtung); <b>&alpha;<sub>eff</sub>&le;0</b> den Fixpunkt (<b>&beta;<sub>1</sub>=0</b>, A's &bdquo;weiß es nicht&ldquo;). Die Wolke wird <em>zweigleichzeitig</em> gelesen: <b>grob/metric</b> = <b>Margin/&tau;</b> (A, kontinuierlicher Schatten, loch-blind) und <b>fein/topologisch</b> = <b>Vietoris&ndash;Rips-&beta;<sub>1</sub></b> (B, diskret, robust). Die <b>Verankerungs-Achse</b> (A's Form-Treue &harr; B's passt-zum-Ziel) wählt das Ziel: <em>intern</em> (Latentes — zyklisch&harr;Zyklus, diskret&harr;Fixpunkt, schließbar) oder <em>extern</em> (Welt — Drift = c<sub>acc</sub>&sub;c, unschließbar). Das Ergebnis ist die <b>eine 2&times;2</b> (A) = die <b>Valenz-Karte</b> (B): <span style="color:var(--green)">Inhalt/FEATURE</span> · <span style="color:var(--danger)">Halluzination/SPUR</span> · <span style="color:var(--blue)">vage/LÜCKE</span> · <span style="color:var(--amber)">Rauschen/FRAGIL</span>.</p>
+
+  <div class="viz-card">
+    <div class="viz-row">
+      <div>
+        <canvas id="cv"></canvas>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--c-accent)"></i> Zirkuit-Feld (B)</span>
+          <span><i class="sw" style="background:var(--c-green)"></i> Grenzzyklus &beta;<sub>1</sub>=1 = Kreis/Cusp (A+B)</span>
+          <span><i class="sw" style="background:var(--c-accent2)"></i> Trajektorie / Wolke</span>
+          <span><i class="sw" style="background:var(--c-amber)"></i> Kippen-Kante &alpha;<sub>eff</sub>=0</span>
+          <span><i class="sw" style="background:var(--c-danger)"></i> Fixpunkt &beta;<sub>1</sub>=0 / Fragilität</span>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Zirkuit-Verst&alpha;rkung &alpha; — Bifurkation (B) / Commit-Kante (A) <span class="val" id="v-alpha">0.70</span></label>
+          <input id="c-alpha" type="range" min="-1.5" max="1.5" step="0.05" value="0.7">
+        </div>
+        <div class="ctrl">
+          <label>akkumuliertes Biegen / Chirurgie k (A's Biegen + B's Chirurgie) <span class="val" id="v-k">0</span></label>
+          <input id="c-k" type="range" min="0" max="10" step="1" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Rauschen — Persistenz/Robustheit (B) <span class="val" id="v-noise">0.00</span></label>
+          <input id="c-noise" type="range" class="v" min="0" max="1.5" step="0.05" value="0">
+        </div>
+        <label class="chk"><input id="c-hallu" type="checkbox"><span><b>Präzision erzwingen (A):</b> Margin scharf halten, selbst wo &alpha;<sub>eff</sub> klein / Kante unterschritten (Selbstvertrauen ignorieren)</span></label>
+        <div class="seg" id="latent-seg">
+          <button data-latent="cyclic" class="on" type="button">Latentes: zyklisch</button>
+          <button data-latent="discrete" type="button">diskret</button>
+        </div>
+        <div class="btnrow">
+          <button id="wModeBtn" type="button">W: intern (Latentes) — schließbar</button>
+          <button id="c-play" class="on" type="button">&#9208; Pause</button>
+          <button id="c-reset" type="button">&#8634; Reset</button>
+        </div>
+        <div class="ro" style="margin-top:2px">
+          <div class="box b"><div class="k">B &middot; &beta;<sub>0</sub></div><div class="v" id="b0-val">&mdash;</div></div>
+          <div class="box good"><div class="k">B &middot; &beta;<sub>1</sub> (topo)</div><div class="v" id="b1-val">&mdash;</div></div>
+          <div class="box purple"><div class="k">B &middot; &alpha;<sub>eff</sub></div><div class="v" id="aeff-val">&mdash;</div></div>
+        </div>
+        <div class="gauge">
+          <div class="lab" style="margin-top:8px"><span>Präzision / Margin / &tau;-Schärfe (A, metrisch)</span><b id="mar-val" style="color:var(--teal)">&mdash;</b></div>
+          <div class="track"><div class="fill" id="mar-fill" style="width:0%"></div><div class="tick"></div></div>
+          <div class="lab"><span>unpräzise</span><span>&#9679; Schwellenwert 0.5</span><span>scharf</span></div>
+        </div>
+        <div class="ro">
+          <div class="box rose"><div class="k">A &middot; Verankerung</div><div class="v" id="drift-val">&mdash;</div></div>
+          <div class="box amber"><div class="k">Fusion &middot; Kippen/Commit</div><div class="v" id="vFlip">&mdash;</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix" id="matrix">
+      <div class="mlab"></div><div class="mlab" style="grid-column:2/4">Präzision / scharf&amp;stabil (A: Margin/&tau; &middot; B: &beta;<sub>1</sub>-Stabilität) &rarr;</div>
+      <div class="mlab" style="writing-mode:vertical-rl;transform:rotate(180deg)">verankert&amp;treu</div><div class="q q-inhalt"><div class="qt">scharf + verankert</div><div class="qn">Inhalt</div><div class="qb">A: committed&amp;Form-treu &middot; B: FEATURE·PASST</div></div><div class="q q-vage"><div class="qt">unscharf + verankert</div><div class="qn">vage, echt</div><div class="qb">A: über-linearisiert &middot; B: LÜCKE·UNTERSTRUKTUR</div></div>
+      <div class="mlab" style="writing-mode:vertical-rl;transform:rotate(180deg)">unverankert</div><div class="q q-hallu"><div class="qt">scharf + unverankert</div><div class="qn">Halluzination</div><div class="qb">A: &tau; überdreht &middot; B: SPUR·UEBERSTRUKTUR</div></div><div class="q q-rausch"><div class="qt">unscharf + unverankert</div><div class="qn">Rauschen</div><div class="qb">A: divergiert/captured &middot; B: FRAGIL·DEFECT</div></div>
+    </div>
+
+    <div class="verdict good" id="verdict">&mdash;</div>
+    <div class="fused-line" id="fusedLine"></div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <span class="tag A">A</span>
+    <p><a href="../4/r4-008.html">r4-008.html</a> — &bdquo;Ein Regler, eine Kante, zwei Achsen der Ehrlichkeit&ldquo; (R4-Fusion aus r3-011 &bdquo;Der Kohärenz-Regler &tau;&ldquo; &times; r3-020 &bdquo;Symmetrie und Krümmung sind dieselbe Kante&ldquo;). Ein Regler (&tau;&harr;R) an einer Commit-/Kippen-Kante (&bdquo;Form&gt;Rauschen/Limit&ldquo;); zwei Ehrlichkeitsachsen (Magnitude &tau; &amp; Form/Krümmung-Symmetrie); bilineares/J-Lens-Ablesen; Halluzination als überdrehte Magnitude; Lernen baut die Form, Inferenz kippt an ihrer Kante.</p>
+  </div>
+  <div class="prov">
+    <span class="tag B">B</span>
+    <p><a href="../4/r4-010.html">r4-010.html</a> — &bdquo;Das Loch schreibt, das Symbol liest — eine Topologie, zwei Lesetiefen, ein Vorzeichen&ldquo; (R4-Fusion aus r3-019 &bdquo;Das Readout ist ein Garben-Verkleben&ldquo; &times; r3-017 &bdquo;Gemacht durch Optima, gelesen als Attraktor&ldquo;). Geschriebene Topologie (&beta;<sub>1</sub>-Löcher, Bifurkation &alpha;, H&sup0;=Inhalt) in zwei Auflösungen (fein/topologisch + grob/metrisch Margin); zwei Lesetiefen (Zwischen-/Terminal-Schicht); eine Zwei-Achsen-Vorzeichen-Regel (Präzision &times; Verankerung) &rarr; 2&times;2 (Inhalt/Halluzination/vage/Rauschen = Valenz).</p>
+  </div>
+</section>
+
+<footer>
+  Round 5 &#183; Pair 005 &#183; Fusion: <code>r4-008.html</code> &#10007; <code>r4-010.html</code><br>
+  Selbstbehaftetes Standalone-Dokument &#183; alle Daten inline &#183; theme-aware &#183; kein Netzabruf
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+function onReady(fn){ if(document.readyState!=="loading")fn(); else document.addEventListener("DOMContentLoaded",fn); }
+onReady(function(){
+  var canvas=document.getElementById("cv");
+  if(!canvas||!canvas.getContext)return;
+  var ctx=canvas.getContext("2d");
+  var TAU=Math.PI*2;
+  var W=1.0;
+  var view={w:680,h:440,scale:84};
+  var state={alpha:0.7,k:0,noise:0.0,hallu:false,wMode:"latent",drift:0,latent:"cyclic",p:{x:1.8,y:0.4},trail:[],running:true};
+  var C={};
+  function cssVar(n,fb){try{var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}catch(e){return fb;}}
+  function readColors(){
+    C.canvas=cssVar("--c-canvas","#0c1120"); C.grid=cssVar("--c-grid","rgba(255,255,255,.07)");
+    C.txt=cssVar("--c-txt","#e8ecf6"); C.dim=cssVar("--c-dim","#64708c");
+    C.accent=cssVar("--c-accent","#5ee0d0"); C.accent2=cssVar("--c-accent2","#ff7ac0");
+    C.amber=cssVar("--c-amber","#ffc860"); C.green=cssVar("--c-green","#6ee88a");
+    C.danger=cssVar("--c-danger","#fb7185"); C.blue=cssVar("--c-blue","#7fb0ff"); C.purple=cssVar("--c-purple","#8a7cff");
+  }
+  function sx(x){return view.w/2 + x*view.scale;}
+  function sy(y){return view.h/2 - y*view.scale;}
+  function alphaEff(){return state.alpha - 0.12*state.k;}
+  function field(x,y){var r2=x*x+y*y,a=alphaEff();return [(a-r2)*x - W*y,(a-r2)*y + W*x];}
+  function precision(){var a=alphaEff();var sharp=Math.min(1,Math.abs(a)/1.2);var noisy=Math.min(1,state.noise/1.2);var pr=sharp*(1-0.7*noisy);if(state.hallu)pr=Math.max(pr,0.62);return pr;}
+  function isPrecise(){return precision()>=0.5;}
+  function isAnchored(){
+    if(state.wMode==="welt"){return state.drift<=2;}
+    var cycle=alphaEff()>0;
+    return state.latent==="cyclic"?cycle:!cycle;
+  }
+  function setupCanvas(){
+    var dpr=window.devicePixelRatio||1; var wEl=canvas.clientWidth||680; var H=440;
+    canvas.width=Math.round(wEl*dpr); canvas.height=Math.round(H*dpr); canvas.style.height=H+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0); view.w=wEl; view.h=H; view.scale=H/(2*2.9);
+  }
+  function arrow(x1,y1,x2,y2,color,width,alpha){
+    var a=Math.atan2(y2-y1,x2-x1);
+    ctx.globalAlpha=alpha; ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=width;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    var h=4+width; ctx.beginPath();
+    ctx.moveTo(x2,y2); ctx.lineTo(x2-h*Math.cos(a-0.4),y2-h*Math.sin(a-0.4));
+    ctx.lineTo(x2-h*Math.cos(a+0.4),y2-h*Math.sin(a+0.4)); ctx.closePath();ctx.fill();
+    ctx.globalAlpha=1;
+  }
+  function drawField(){
+    var stepW=0.95, xmin=-view.w/2/view.scale, xmax=view.w/2/view.scale, ymin=-2.9, ymax=2.9;
+    for(var gx=Math.ceil(xmin/stepW)*stepW; gx<=xmax; gx+=stepW){
+      for(var gy=Math.ceil(ymin/stepW)*stepW; gy<=ymax; gy+=stepW){
+        var f=field(gx,gy); var m=Math.sqrt(f[0]*f[0]+f[1]*f[1])||1; var L=Math.min(0.42,m*0.13);
+        arrow(sx(gx),sy(gy),sx(gx+f[0]/m*L),sy(gy+f[1]/m*L),C.accent,1,0.24);
+      }
+    }
+  }
+  function drawLoop(){
+    var a=alphaEff(); if(a<=0)return; var r=Math.sqrt(a);
+    ctx.setLineDash([6,5]); ctx.lineWidth=2.4; ctx.strokeStyle=C.green;
+    ctx.beginPath(); ctx.arc(sx(0),sy(0),r*view.scale,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=C.green; ctx.font="11px monospace"; ctx.textAlign="left";
+    ctx.fillText("Grenzzyklus \u03b2\u2081=1 = Kreis/Cusp (A+B)",sx(r)+6,sy(0)-6);
+  }
+  function drawFixed(){
+    var stable=alphaEff()<=0; var col=stable?C.accent:C.danger;
+    ctx.fillStyle=col; ctx.beginPath();ctx.arc(sx(0),sy(0),5,0,TAU);ctx.fill();
+    ctx.font="11px monospace"; ctx.textAlign="left";
+    ctx.fillText(stable?"Fixpunkt (\u03b2\u2081=0, A: weiß es nicht)":"Fixpunkt (instabil)",sx(0)+9,sy(0)+14);
+  }
+  function drawEdgeK(){
+    var a=alphaEff(); var col=C.amber;
+    ctx.strokeStyle=col; ctx.setLineDash([2,4]); ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(sx(0),0);ctx.lineTo(sx(0),view.h);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,sy(0));ctx.lineTo(view.w,sy(0));ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=col; ctx.font="10px monospace"; ctx.textAlign="left";
+    ctx.fillText("Kippen-/Commit-Kante \u03b1\u1d9c\u209b\u2099=0 (B \u2194 A)",sx(0)+4,sy(0)+26);
+  }
+  function drawTrail(){
+    var n=state.trail.length;
+    for(var i=1;i<n;i++){var a0=state.trail[i-1],a1=state.trail[i];var t=i/n;
+      ctx.strokeStyle=t<0.5?C.accent2:C.purple; ctx.globalAlpha=0.1+0.8*t; ctx.lineWidth=1.2+1.8*t;
+      ctx.beginPath();ctx.moveTo(sx(a0.x),sy(a0.y));ctx.lineTo(sx(a1.x),sy(a1.y));ctx.stroke();}
+    ctx.globalAlpha=1;
+  }
+  function drawParticle(){
+    var p=state.p; ctx.fillStyle=C.txt;
+    ctx.beginPath();ctx.arc(sx(p.x),sy(p.y),5,0,TAU);ctx.fill();
+    ctx.strokeStyle=C.accent2; ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(sx(p.x),sy(p.y),9,0,TAU);ctx.stroke();
+  }
+  function UF(n){this.p=[];this.c=n;for(var i=0;i<n;i++)this.p[i]=i;}
+  UF.prototype.find=function(x){while(this.p[x]!==x){this.p[x]=this.p[this.p[x]];x=this.p[x];}return x;};
+  UF.prototype.union=function(a,b){a=this.find(a);b=this.find(b);if(a===b)return;this.p[a]=b;this.c--;};
+  function subTrail(){var tr=state.trail,n=tr.length;if(n<4)return tr.slice();var K=72,out=[],step=n/K;for(var i=0;i<K;i++){var idx=Math.floor(i*step);out.push(tr[Math.min(n-1,idx)]);}return out;}
+  function betas(pts){
+    var N=pts.length;if(N<3)return{b0:N,b1:0};
+    var D=[],i,j,k,md=0;
+    for(i=0;i<N;i++){D[i]=[];for(j=0;j<N;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);D[i][j]=d;if(d>md)md=d;}}
+    var eps=0.32*(md>1e-6?md:1);
+    var uf=new UF(N),E=0,T=0;
+    for(i=0;i<N;i++)for(j=i+1;j<N;j++){if(D[i][j]<=eps){E++;uf.union(i,j);}}
+    var b0=uf.c;
+    for(i=0;i<N;i++)for(j=i+1;j<N;j++){if(D[i][j]>eps)continue;for(k=j+1;k<N;k++){if(D[i][k]<=eps&&D[j][k]<=eps)T++;}}
+    var chi=N-E+T,b1=b0-chi;if(b1<0)b1=0;
+    return{b0:b0,b1:b1};
+  }
+  function quadOf(precise,anchored){return (precise&&anchored)?"q-inhalt":(precise&&!anchored)?"q-hallu":(!precise&&anchored)?"q-vage":"q-rausch";}
+  function verdictText(quad,pr,cycle,anchored){
+    var M={
+      "q-inhalt":{l:"INHALT  (A committed+Form-treu)  =  FEATURE \u00b7 PASST  (B)",c:"var(--green)",m:"Scharfe, stabile globale Sektion (A) = maintained Zyklus \u03b2\u2081=1 (B), koh\u00e4rent mit W / passt zum Latenten. (scharf&stabil) \u2227 (verankert&treu) \u2014 der Inhalt."},
+      "q-hallu":{l:"HALLUZINATION  (A: \u03c4 \u00fcberdreht)  =  SPUR \u00b7 UEBERSTRUKTUR  (B)",c:"var(--danger)",m:"Scharf, aber unverankert (A: \u03c4 weit wie scharf behandelt / B: |c*\u2212W|>\u03b5_W bzw. passt nicht zum Latenten). (scharf) \u2227 (\u00acverankert) \u2014 die Halluzination an zwei Tiefen."},
+      "q-vage":{l:"VAGE, ECHT  (A: \u00fcber-linearisiert)  =  LUECKE \u00b7 UNTERSTRUKTUR  (B)",c:"var(--blue)",m:"Verankert, aber unscharf (A: lineares Werkzeug auf Gekr\u00fcmmt / B: Zyklus zerf\u00e4llt, \u03b2\u2081 springt). (\u00acscharf) \u2227 (verankert) \u2014 echt aber unscharf."},
+      "q-rausch":{l:"RAUSCHEN  (A: divergiert/captured)  =  FRAGIL \u00b7 DEFECT  (B)",c:"var(--amber)",m:"Unpr\u00e4zise + unverankert (A: \u03b7>2/\u03bb\u1d50\u2090\u2094 oder T\u21920 / B: leftover mit hoher harmonischer Masse). (\u00acscharf) \u2227 (\u00acverankert) \u2014 Rauschen."}
+    };
+    var v=M[quad];
+    return '<b style="color:'+v.c+'">'+v.l+'</b><br>'+v.m+' &nbsp;<span style="color:var(--c-dim)">Pr\u00e4zision='+pr.toFixed(2)+' \u00b7 Zyklus='+(cycle?"ja":"nein")+' \u00b7 verankert='+(anchored?"ja":"nein")+'</span>';
+  }
+  var QEL={};
+  var qnodes=document.querySelectorAll("#matrix .q");
+  for(var qi=0;qi<qnodes.length;qi++){var cls=qnodes[qi].classList[1];if(cls)QEL[cls]=qnodes[qi];}
+  function set(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
+  function updateReadout(b0,b1,precise,anchored,cycle,pr){
+    set("b0-val",String(b0)); set("b1-val",String(b1)); set("aeff-val",alphaEff().toFixed(2));
+    var quad=quadOf(precise,anchored);
+    set("mar-val",pr.toFixed(2));
+    var fill=document.getElementById("mar-fill"); if(fill)fill.style.width=(Math.round(pr*100))+"%";
+    var flip=alphaEff()>0;
+    set("vFlip",flip?"kippt \u2713":"offen \u2717");
+    var vf=document.getElementById("vFlip"); if(vf)vf.style.color=flip?"var(--green)":"var(--rose)";
+    set("drift-val", state.wMode==="welt" ? ("|c*\u2212W|="+state.drift+" "+(anchored?"(verankert)":"(UNVERANKERT)")) : ("intern: "+(anchored?"passt":"passt nicht")));
+    var dv=document.getElementById("drift-val"); if(dv)dv.style.color=anchored?"var(--green)":"var(--danger)";
+    for(var key in QEL){if(QEL.hasOwnProperty(key)){QEL[key].classList.toggle("on",key===quad);}}
+    var vEl=document.getElementById("verdict"); if(vEl){vEl.className="verdict "+(quad==="q-inhalt"?"good":quad==="q-hallu"?"bad":quad==="q-vage"?"vague":"warn");vEl.innerHTML=verdictText(quad,pr,cycle,anchored);}
+    var fr=document.getElementById("fusedLine");
+    if(fr){fr.innerHTML='Ein Regler, zwei Lesetiefen, ein Vorzeichen: <b>&alpha;<sub>eff</sub></b>='+alphaEff().toFixed(2)+' (Kante '+ (flip?'\u00fcberschritten \u2192 maintained/committed':'unterschritten \u2192 offen/weiß es nicht') +') \u00b7 <b>&beta;<sub>1</sub></b> (topo, B) = '+b1+' \u00b7 <b>Margin/&tau;</b> (metrisch, A) = '+pr.toFixed(2)+' ('+(precise?'scharf':'unscharf')+') \u00b7 Verankerung '+(anchored?'ja':'nein')+'. '+(quad==="q-inhalt"?'<b>Dieselbe stabile Schleife: Kreis/Cusp (A) = \u03b2\u2081-Loch (B); Commit (A) = Kippen (B); Inhalt = scharf\u2020 &andamp; verankert\u2020.</b>':'<i>Die eine Kante, zwei Lesarten \u2014 beides muss stimmen, sonst ist es kein Inhalt.</i>');}
+  }
+  function resetParticle(){
+    var ang=Math.random()*Math.PI*2; var rad=1.4+Math.random()*0.6;
+    state.p={x:Math.cos(ang)*rad,y:Math.sin(ang)*rad}; state.trail=[];
+  }
+  function step(){
+    var dt=0.02,p=state.p,f=field(p.x,p.y);
+    var nx=p.x+dt*f[0],ny=p.y+dt*f[1];
+    if(state.noise>0){nx+=(Math.random()-0.5)*state.noise;ny+=(Math.random()-0.5)*state.noise;}
+    p.x=nx;p.y=ny;
+    if(p.x>3.8||p.x<-3.8||p.y>3.6||p.y<-3.6)resetParticle();
+    state.trail.push({x:p.x,y:p.y}); if(state.trail.length>360)state.trail.shift();
+  }
+  function draw(){
+    ctx.clearRect(0,0,view.w,view.h);
+    ctx.fillStyle=C.canvas; ctx.fillRect(0,0,view.w,view.h);
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1; var gx,gy;
+    for(gx=-3;gx<=3;gx++){var X=sx(gx);ctx.beginPath();ctx.moveTo(X,0);ctx.lineTo(X,view.h);ctx.stroke();}
+    for(gy=-2;gy<=2;gy++){var Y=sy(gy);ctx.beginPath();ctx.moveTo(0,Y);ctx.lineTo(view.w,Y);ctx.stroke();}
+    drawEdgeK(); drawField(); drawLoop(); drawFixed(); drawTrail(); drawParticle();
+    var bb=betas(subTrail()); var pr=precision(); var precise=isPrecise(); var anchored=isAnchored(); var cycle=alphaEff()>0;
+    updateReadout(bb.b0,bb.b1,precise,anchored,cycle,pr);
+  }
+  function loop(){ if(state.running)step(); draw(); requestAnimationFrame(loop); }
+  function bindRange(id,valId,fmt,cb){var el=document.getElementById(id),disp=document.getElementById(valId);if(!el)return;var upd=function(){var v=parseFloat(el.value);if(disp)disp.textContent=fmt(v);cb(v);};el.addEventListener("input",upd);upd();}
+  bindRange("c-alpha","v-alpha",function(v){return v.toFixed(2);},function(v){state.alpha=v;});
+  bindRange("c-k","v-k",function(v){return String(Math.round(v));},function(v){state.k=v;});
+  bindRange("c-noise","v-noise",function(v){return v.toFixed(2);},function(v){state.noise=v;});
+  var halluEl=document.getElementById("c-hallu");
+  if(halluEl)halluEl.addEventListener("change",function(){state.hallu=halluEl.checked;draw();});
+  var wBtn=document.getElementById("wModeBtn");
+  if(wBtn)wBtn.addEventListener("click",function(){
+    state.wMode=state.wMode==="latent"?"welt":"latent";
+    if(state.wMode==="latent"){state.drift=0;wBtn.textContent="W: intern (Latentes) \u2014 schlie\u00dfbar";wBtn.classList.remove("on");}
+    else{if(state.drift===0){state.drift=5;}wBtn.textContent="W: extern (Welt) \u2014 unschlie\u00dfbar (c\u1d02\u2092\u2093\u2282c)";wBtn.classList.add("on");}
+    draw();
+  });
+  var seg=document.getElementById("latent-seg");
+  if(seg){var btns=seg.getElementsByTagName("button");for(var bi=0;bi<btns.length;bi++)(function(b){b.addEventListener("click",function(){state.latent=b.getAttribute("data-latent");for(var z=0;z<btns.length;z++)btns[z].classList.toggle("on",btns[z]===b);draw();});})(btns[bi]);}
+  var playBtn=document.getElementById("c-play");
+  if(playBtn)playBtn.addEventListener("click",function(){state.running=!state.running;playBtn.textContent=state.running?"\u23f8 Pause":"\u25b6 Los";playBtn.classList.toggle("on",state.running);});
+  var resetBtn=document.getElementById("c-reset"); if(resetBtn)resetBtn.addEventListener("click",function(){resetParticle();draw();});
+  function applyTheme(dark){document.documentElement.classList.toggle("dark",dark);readColors();}
+  var themeBtn=document.getElementById("themeBtn");
+  if(themeBtn)themeBtn.addEventListener("click",function(){var dark=!document.documentElement.classList.contains("dark");applyTheme(dark);themeBtn.textContent=dark?"\u2600\u260a Hell":"\ud83c\udf19 Dunkel";draw();});
+  try{new MutationObserver(function(){readColors();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:["class"]});}catch(e){}
+  window.addEventListener("resize",function(){setupCanvas();});
+  readColors(); setupCanvas(); resetParticle(); loop();
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der kompakte Kern terminiert die dünne Kapazitäts-Mannigfaltigkeit (Round 5)</title>
+<script>(function(){try{var t=null;try{t=localStorage.getItem('r5004theme');}catch(e){}document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();</script>
+<style>
+  :root{
+    --bg:#faf8f1; --fg:#1f2328; --muted:#5b6068; --card:#fffdf8;
+    --grid:#e7e1d7; --border:#e2ddd2;
+    --accent:#2b6cb0; --accent2:#c9771b; --good:#1f9d57; --bad:#cf3b53;
+    --ring:#7c3aed; --code-bg:#f1ede3; --plot-bg:#fffdf8;
+    --shadow:0 6px 24px rgba(20,40,80,.08);
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  html.dark{
+    --bg:#0a0e1a; --fg:#e8ecf5; --muted:#8b95a8; --card:#0f1626;
+    --grid:#1a2540; --border:#243049;
+    --accent:#58a6ff; --accent2:#ffb84d; --good:#4fd08a; --bad:#ff6b7d;
+    --ring:#c4a7ff; --code-bg:#0a1122; --plot-bg:#0b1020;
+    --shadow:0 8px 28px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:Georgia,'Times New Roman',serif;
+       line-height:1.72;padding:2.4rem 1rem 4rem;-webkit-font-smoothing:antialiased;
+       transition:background .25s,color .25s}
+  article{max-width:820px;margin:0 auto}
+  h1{font-size:2rem;line-height:1.22;margin-bottom:.5rem;letter-spacing:-.012em}
+  h1 em{font-style:normal;color:var(--accent)}
+  h1 em.b{color:var(--accent2)}
+  h1 em.g{color:var(--good)}
+  h2{font-family:var(--sans);font-size:1.35rem;margin:2.5rem 0 .9rem;
+     padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  h2 .no{color:var(--accent);font-variant-numeric:tabular-nums}
+  h3{font-family:var(--sans);font-size:1.05rem;margin:1.5rem 0 .55rem;color:var(--accent)}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.98rem;margin-bottom:.7rem}
+  .lede{font-size:1.05rem}
+  p{margin-bottom:.85rem}
+  ul{margin:.4rem 0 1rem 1.3rem}
+  li{margin-bottom:.55rem}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.85em;background:var(--code-bg);
+       padding:.1em .35em;border-radius:4px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+        padding:1.1rem 1.3rem;margin:1.1rem 0;box-shadow:var(--shadow)}
+  .card p{margin-bottom:.7rem;font-size:.97rem}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;
+           padding:.85rem 1.1rem;margin:.95rem 0;text-align:left;overflow-x:auto;
+           font-family:var(--mono);font-size:.82rem;line-height:1.85;white-space:pre}
+  .formula .cmt{color:var(--muted)}
+  .formula .op{color:var(--accent);font-weight:700}
+  .formula .opa{color:var(--accent2);font-weight:700}
+  .formula .opg{color:var(--good);font-weight:700}
+  .vs{font-family:var(--sans);font-size:.72rem;font-weight:700;letter-spacing:.03em;
+      padding:.15rem .5rem;border-radius:6px;display:inline-block;margin-right:.4rem}
+  .vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .vs.b{background:color-mix(in srgb,var(--accent2) 26%,transparent);color:var(--accent2)}
+  .vs.f{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+  .fused{background:color-mix(in srgb,var(--good) 12%,transparent);
+         border-left:4px solid var(--good);border-radius:0 8px 8px 0;
+         padding:.8rem 1.05rem;margin:.95rem 0;font-size:.97rem}
+  .fused b{color:var(--good)}
+  .tension{border-left:4px solid var(--accent2);background:var(--card);
+           border-radius:0 10px 10px 0;padding:.9rem 1.1rem;margin:1rem 0;box-shadow:var(--shadow)}
+  .tension .who{font-size:.83em;color:var(--muted);display:block;margin-bottom:.5rem}
+  .tension .q{color:var(--fg);font-weight:720;display:block;margin-bottom:.5rem;font-size:.98rem}
+  .tension p{margin-bottom:.6rem;font-size:.95rem}
+  .tension .span{color:var(--fg);font-size:.92rem}
+  .anno{font-size:.9rem;color:var(--muted);font-style:italic}
+  table{width:100%;border-collapse:collapse;font-size:.87rem;margin:1rem 0}
+  th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+  th{font-family:var(--sans);background:var(--code-bg)}
+  td{color:var(--muted)} td b,th b{color:var(--fg)}
+  .leg{background:var(--code-bg);border:1px dashed var(--border);border-radius:10px;
+       padding:.85rem 1.1rem;margin:.9rem 0;font-family:var(--mono);font-size:.9rem;line-height:2}
+  .leg .k{color:var(--good)} .leg .o{color:var(--accent)} .leg .w{color:var(--accent2)} .leg .r{color:var(--ring)}
+  .controls{font-family:var(--sans);display:flex;flex-wrap:wrap;gap:.9rem 1.3rem;
+            align-items:center;background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:.85rem 1rem;margin:1rem 0;box-shadow:var(--shadow)}
+  .controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.5rem}
+  .controls input[type=range]{accent-color:var(--accent);width:120px}
+  .ctl-val{color:var(--accent);font-weight:700;font-family:var(--mono);min-width:2.2em;display:inline-block}
+  .presets{display:flex;gap:.5rem;flex-wrap:wrap;margin:.9rem 0}
+  button{font-family:var(--sans);font-size:.8rem;font-weight:600;cursor:pointer;padding:.45rem .8rem;
+         border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--fg)}
+  button:hover{transform:translateY(-1px);border-color:var(--good)}
+  .viz-stage{margin:1rem 0}
+  #cv{width:100%;height:600px;display:block;background:var(--plot-bg);
+      border:1px solid var(--border);border-radius:12px;margin:.4rem 0;touch-action:none;cursor:crosshair}
+  .ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .ro .box{flex:1;min-width:108px;background:var(--card);border:1px solid var(--border);
+           border-radius:12px;padding:.7rem .85rem;text-align:center}
+  .ro .box .k{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;line-height:1.3}
+  .ro .box .v{font-family:var(--mono);font-size:1.15rem;font-weight:700;color:var(--fg)}
+  .ro .box.a .v{color:var(--accent)} .ro .box.b .v{color:var(--accent2)} .ro .box.g .v{color:var(--good)}
+  .badge-out{font-family:var(--sans);font-size:.88rem;font-weight:600;line-height:1.55;padding:.8rem 1rem;
+             border-radius:10px;display:block;margin-top:12px;border:1px solid var(--border);
+             background:var(--card);color:var(--muted)}
+  .badge-out.ok{background:color-mix(in srgb,var(--good) 16%,var(--card));color:var(--good);border-color:var(--good)}
+  .badge-out.warn{background:color-mix(in srgb,var(--accent2) 15%,var(--card));color:var(--accent2);border-color:var(--accent2)}
+  .badge-out.bad{background:color-mix(in srgb,var(--bad) 15%,var(--card));color:var(--bad);border-color:var(--bad)}
+  .prov{display:flex;gap:.7rem;align-items:flex-start;padding:.75rem .95rem;border:1px solid var(--border);
+        border-radius:8px;margin-bottom:.7rem;background:var(--card)}
+  .prov .k{font-family:var(--sans);font-size:.72rem;font-weight:700;flex:0 0 1.6em;text-align:center;
+           border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+  .prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .prov .k.b{background:color-mix(in srgb,var(--accent2) 26%,transparent);color:var(--accent2)}
+  .prov .d{color:var(--muted);font-size:.92rem;margin-top:.25rem;line-height:1.55}
+  .foot{margin-top:2.6rem;padding-top:1rem;border-top:1px solid var(--border);
+        color:var(--muted);font-size:.86rem;font-style:italic}
+  #themeBtn{position:fixed;top:14px;right:14px;z-index:50;font-family:var(--sans);font-size:.8rem;
+    background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:20px;
+    padding:.4rem .8rem;cursor:pointer}
+</style>
+</head>
+<body>
+<button id="themeBtn" type="button" title="Theme umschalten">&#9680; Theme</button>
+<article>
+
+  <h1>Der kompakte <em>Kern</em> terminiert die d&uuml;nne <em class="b">Kapazit&auml;ts-Mannigfaltigkeit</em></h1>
+  <p class="subtitle">Fusion aus: r4-006.html &#10005; r4-005.html &nbsp;(Round 5)</p>
+  <p class="lede"><span class="vs a">A &middot; r4-006</span> A sagt: ein Netz rechnet <i>und</i> wird wahr, indem es <b>einen kompakten Rotations-Kern</b> nutzt &mdash; gelesen als <b>Basis/Cut</b> (Addition als Fixed-Rotation <code>M_k</code>, <code>d_eff=1</code>), transportiert als <b>Fluss</b> (kettenregel-geklebte weiche Zellen = lernbarer Residual-Operator), abgelesen per <b>Matched-Filter-Probe</b>; als konvergierendes Objekt <b>kontrahiert</b> der Fluss koh&auml;rentes Signal in den ~7-dim-Code <code>range(W)</code> (erank 4096&rarr;~7) und <b>parkt</b> Rauschen im Reservoir <code>ker(W)&#8839;ker(G_Q)</code> (gebaut glatt / gefunden &uuml;ber einen Phasen&uuml;bergang). G&uuml;te = <b>Koh&auml;renz &and; Korrespondenz(live + Reservoir) &and; Struktur</b>. <span class="vs b">B &middot; r4-005</span> B sagt: ein Netz faltet ein <b>konservatives Budget scharfer Faltungen</b> (ReLU-Knick, tropisch) in eine <b>d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit</b>, an <b>glatten linearen Adressen</b> gehalten (sinusoidale Position = Attraktor-Ort <code>A_c</code>; assoziativer Wert <code>W&middot;k&asymp;v</code> = Richtung <code>&theta;</code>); die scharfe Mitte ist <b>Kapazit&auml;t</b> (Regionen &asymp; k<sup>L</sup>, <b>Tiefe &gt; Breite</b>) und aktive Dimension (Buckel &rarr; log&#8322;); das Gate = <b>Koh&auml;renz &amp; Korrespondenz an eine Welt W</b>, und <b>Wahrheit = min = lim</b>. <span class="vs f">Fusion</span> A&rsquo;s kompakter Kern ist der <i>Terminus</i> von B&rsquo;s d&uuml;nner Mannigfaltigkeit: jede Adresse/Klumpen (B) ist ein lokales Chart, jedes Chart ist ein Rotations-Kern (A), und der Fluss kontrahiert die Charts in den einen kompakten Code.</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2><span class="no">1.</span> Kernthese der Fusion</h2>
+    <p><span class="vs a">A &middot; r4-006</span> A ist eine <b>Repr&auml;sentations-/Konvergenz-These &uuml;ber <i>einen</i> kompakten Kern</b>. Das Netz rechnet <i>und</i> wird wahr, indem es ein und dasselbe abelsche Rotations-Objekt auf zwei Weisen nutzt: (a) als <b>Berechnungs-Mechanik</b> &mdash; weicher Cut/Basiswechsel (Addition als Fixed-Rotation <code>M_k</code>, <code>d_eff=1</code>), Code-Transport (Kettenregel klebt weiche Zellen = lernbarer Residual-Operator/Schwerpunktfluss), lokale Matched-Filter-Probe (Bank-Dim = #Klassen, K Frequenzen t&ouml;ten die falschen Peaks); und (b) als <b>konvergierendes Objekt</b> &mdash; der Fluss kontrahiert koh&auml;rentes Signal (Drift &prop; T) in den ~7-dim-Code <code>range(W)</code> (erank 4096&rarr;~7) und parkt inkoherentes Rauschen (Diffusion &prop; &radic;T) im unsichtbaren Reservoir <code>ker(W)&#8839;ker(G_Q)</code>; erreicht <i>gebaut</i> (glatt) oder <i>gefunden</i> (Phasen&uuml;bergang/Grokking). G&uuml;te = <b>Wahrheit = Koh&auml;renz &and; Korrespondenz(live + Reservoir-Universalit&auml;t) &and; Struktur</b>.</p>
+    <p><span class="vs b">B &middot; r4-005</span> B ist eine <b>Kapazit&auml;ts-/Mannigfaltigkeits-These &uuml;ber <i>viele</i> Adressen</b>. Ein Netz ist eine Maschine, die ein <b>konservatives Budget scharfer Faltungen</b> in eine <b>d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit</b> faltet und sie an <b>glatten linearen Adressen</b> h&auml;lt. Die scharfe Mitte ist in beiden die <b>Kapazit&auml;t</b>, doppelt gemessen: als <i>Angebot</i> (Regionen &asymp; k<sup>L</sup>, w&auml;chst exponentiell mit der Tiefe, <b>Tiefe &gt; Breite</b>) und als <i>Nachfrage</i> (intrinsische Dimension, Buckel: Gipfel in 20&ndash;40&nbsp;% Tiefe, Kompression auf &asymp; log&#8322; am Ende). Das Gate trennt echt von Fiktion: <b>Koh&auml;renz &amp; Korrespondenz an eine externe Welt W</b>, und <b>Wahrheit = min(Koh&auml;renz, Korrespondenz) = lim</b> (angen&auml;hert, nie erreicht). Ein Fehler ist derselbe Bruch: koh&auml;rent, aber der lineare Wert korrespondiert nicht (<i>koh&auml;rente Fiktion</i>).</p>
+    <p><span class="vs f">Fusion</span> Die eine, beide vereinigende Position: <b>Ein Netz ist ein Fluss, der ein wachsendes Budget scharfer Kapazit&auml;t (B) entlang einer d&uuml;nnen Mannigfaltigkeit linearer Adressen (B) faltet, dabei das koh&auml;rente Signal in <i>EINEN</i> kompakten Rotations-Kern (A) am Entscheidungsende kontrahiert und es an eine externe Welt W (B) erdet.</b> Der kompakte Kern (A) ist der <i>Terminus</i> der d&uuml;nnen Mannigfaltigkeit (B): jede Adresse/Klumpen (B) ist ein lokales lineares Chart, jedes Chart ist ein Rotations-Kern (A, <code>d_eff=1</code>), und der Fluss kontrahiert die Charts in den einen kompakten Code (<code>range(W)</code> ~7). Die scharfe Faltung (B) <i>erzeugt</i> die Kapazit&auml;t (Regionen &asymp; k<sup>L</sup>) und <i>ist</i> zugleich die Rotation, die die Antwort lokal lesbar macht (A). Das konservative Budget (B) <b>allokiert</b> die Kapazit&auml;t auf den Kern (A); die Matched-Filter-Probe (A) <b>liest</b> den allokierten Kern; Fehlallokation (B, &Uuml;berfitt) = Inkoh&auml;renz/Riss (A). Die Wahrheit zerlegt sich in ein <i>erreichtes</i> Bein (Struktur: der Kern ist ein stabiler Attraktor, &nabla;L&asymp;0, A) und ein <i>asymptotisches</i> Bein (Korrespondenz: Erdung an W bleibt ein Limes, B): <b>Wahrheit = Koh&auml;renz &and; (erreichte Struktur) &and; (asymptotische Korrespondenz).</b></p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2><span class="no">2.</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Beide beschreiben dieselbe Maschine (Ganzes aus lokalen St&uuml;cken, scharfe Mitte, glatte lineare Enden, ein Gate) und teilen die Teilung &bdquo;Struktur ist garantiert, Inhalt ist gelernt&ldquo;. Aber auf vier bezeugten Achsen stehen sie auf unterschiedlichen Seiten (keine erfundenen Stance-Differenzen):</p>
+
+    <div class="tension">
+      <span class="who"><span class="vs a">A</span> &bdquo;alles kontrahiert in EINEN kompakten Kern&ldquo; &nbsp;vs.&nbsp; <span class="vs b">B</span> &bdquo;Bedeutung wohnt an VIELEN linearen Adressen&ldquo;</span>
+      <span class="q">Ist der zentrale Gegenstand EINE Konzentration in einen Kern &mdash; oder eine Verteilung &uuml;ber eine gewachsene Mannigfaltigkeit?</span>
+      <p><span class="vs a">A &middot; r4-006</span> A betont <b>Konzentration in <i>einen</i> kompakten Kern</b>: erank 4096&rarr;~7, <code>d_eff=1</code>, der Torus S&sup1;&times;S&sup1; = der lineare ~7-dim-Code <code>range(W)</code>. Alles koh&auml;rente Signal wird in diesen einen kleinen Kern gepresst; das ist das Herzst&uuml;ck.</p>
+      <p><span class="vs b">B &middot; r4-005</span> B betont <b>Verteilung &uuml;ber <i>viele</i> Adressen</b>: Bedeutung wohnt an vielen linearen Adressen/Klumpen (Literatur@L18, Programmierung@L19, Sprachen@L27) auf einer d&uuml;nnen, gekr&uuml;mmten Mannigfaltigkeit; die Mitte ist kombinatorischer <i>Platz</i> (Regionen &asymp; k<sup>L</sup>).</p>
+      <p class="span"><em>Spannung:</em> A = Konzentration in einen (kontrahierten) Kern; B = Verteilung &uuml;ber eine (gewachsene) Mannigfaltigkeit mit vielen Adressen. <i>Ein Kern</i> vs. <i>viele Adressen</i>.</p>
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="vs a">A</span> &bdquo;die zentrale Dynamik ist Kontraktion (erank &darr;)&ldquo; &nbsp;vs.&nbsp; <span class="vs b">B</span> &bdquo;die zentrale Dynamik ist Kapazit&auml;ts-Wachstum (k<sup>L</sup> &uarr;)&ldquo;</span>
+      <span class="q">Wird das relevante Objekt zur Entscheidung hin kleiner (kompakter) oder gr&ouml;&szlig;er (mehr Kapazit&auml;t)?</span>
+      <p><span class="vs a">A &middot; r4-006</span> A&rsquo;s zentrale Dynamik ist <b>Kontraktion</b>: erank 4096&rarr;~7, <code>d_eff=1</code>, koh&auml;rentes Signal in den kleinen Kern gepresst; der Kern bleibt kompakt. Die Geschichte ist <i>Kompression</i> zum Niedrigrang-Code.</p>
+      <p><span class="vs b">B &middot; r4-005</span> B&rsquo;s zentrale Dynamik ist <b>Wachstum der scharfen Kapazit&auml;t</b>: Regionen &asymp; k<sup>L</sup> w&auml;chst monoton mit der Tiefe, &bdquo;mehr Tiefe = mehr Regionen = st&auml;rker&ldquo;, <b>Tiefe &gt; Breite</b>, &bdquo;flach sei schwach&ldquo;.</p>
+      <p class="span"><em>Spannung:</em> A: die wirksame Struktur <i>kontrahiert</i> auf den kompakten Kern; B: die (scharfe) Kapazit&auml;t <i>w&auml;chst</i> mit der Tiefe. <i>Verd&uuml;nnung/Kompression</i> (A) vs. <i>Kapazit&auml;ts-Zuwachs</i> (B).</p>
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="vs a">A</span> &bdquo;Wahrheit = Koh&auml;renz &and; Korrespondenz &and; Struktur, erreichbar (invariant, &nabla;L&asymp;0)&ldquo; &nbsp;vs.&nbsp; <span class="vs b">B</span> &bdquo;Wahrheit = min(Koh&auml;renz, Korrespondenz) = lim, nie erreicht&ldquo;</span>
+      <span class="q">Ist &bdquo;wahr&ldquo; ein erreichbarer, stabiler Zustand &mdash; oder eine asymptotische Grenze, die nie voll erreicht wird?</span>
+      <p><span class="vs a">A &middot; r4-006</span> A definiert G&uuml;te als <b>dreifaches AND</b> (Koh&auml;renz &and; Korrespondenz &and; Struktur) auf den Attraktor und behauptet, der Kern kann voll <b>&bdquo;WAHR / invariant (&nabla;L&asymp;0)&ldquo;</b> sein &mdash; ein <i>erreichter</i>, stabiler Fixpunkt des Flusses.</p>
+      <p><span class="vs b">B &middot; r4-005</span> B definiert G&uuml;te als <b>zweibeiniges min(Koh&auml;renz, Korrespondenz)</b> und schreibt explizit <b>&bdquo;Wahrheit = lim &hellip; angen&auml;hert, nie erreicht&ldquo;</b> &mdash; ein Limes, das sich ann&auml;hert, aber nie voll erreicht wird.</p>
+      <p class="span"><em>Spannung:</em> A positiert eine <i>erreichbare, stabile</i> Wahrheit (Attraktor/invariant, &nabla;L&asymp;0); B positiert Wahrheit als <i>unerreichte asymptotische</i> Grenze. Dreifaches AND mit Erreichbarkeit vs. zweibeiniges min als Limes.</p>
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="vs a">A</span> &bdquo;der Kern ist ein Objekt, das man liest&ldquo; &nbsp;vs.&nbsp; <span class="vs b">B</span> &bdquo;die scharfe Mitte ist ein Mittel, das man allokiert&ldquo;</span>
+      <span class="q">Ist die scharfe Mitte eine Koordinate, die man <i>liest</i> &mdash; oder ein Budget, das man <i>ausgibt</i>?</span>
+      <p><span class="vs a">A &middot; r4-006</span> A macht den Kern zum <b>Objekt, das man liest</b>: die Matched-Filter-Probe liest den kontrahierten Kern (eine Koordinate/Attraktor, deren Peak die Antwort ist; Bank-Dim = #Klassen). Prim&auml;ruhr: <i>Ablesung</i>.</p>
+      <p><span class="vs b">B &middot; r4-005</span> B macht die scharfe Mitte zur <b>Kapazit&auml;t / einem Mittel zur Allokation</b>: &bdquo;Die Knicks sind das <i>Mittel</i>; der Essence ist der Zweck&ldquo;; das konservative Budget wird auf den Essence oder auf hochfrequentes Ornament ausgegeben (Fehlallokation = &Uuml;berfitt). Prim&auml;ruhr: <i>Allokation</i>.</p>
+      <p class="span"><em>Spannung:</em> A = <i>Objekt zum Lesen</i> (epistemisch, eine Koordinate); B = <i>Budget zur Allokation</i> (wirtschaftlich, eine Ressource, deren Fehlausgabe der Bruch ist).</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2><span class="no">3.</span> Aufl&ouml;sung</h2>
+
+    <div class="fused"><b>Zu W1 &mdash; Die d&uuml;nne Mannigfaltigkeit ist das Atlas lokaler Kerne; der kompakte Kern ist ihr Terminus.</b>
+    B&rsquo;s d&uuml;nne Mannigfaltigkeit ist die <i>Route</i> durch die Schichten (die Adressen/Klumpen); A&rsquo;s kompakter Kern ist der <i>Ort, an den sie endet</i>. Jeder Klumpen (B) ist ein lokales lineares Chart; jedes Chart ist ein Rotations-Kern (A, <code>d_eff=1</code>); der Fluss kontrahiert die Charts in den einen kompakten Code <code>range(W)</code> am Entscheidungsende. &bdquo;Ein Kern&ldquo; (A) = die lokale Karte; &bdquo;viele Adressen&ldquo; (B) = das Atlas dieser Karten. <b>Fused:</b> die Mannigfaltigkeit (B) ist die Trajektorie; der kompakte Kern (A) ist ihr Endpunkt &mdash; <i>distributed on the way, concentrated at the end</i>.</div>
+
+    <div class="fused"><b>Zu W2 &mdash; Angebot (B, &uarr;) und Nachfrage (A, &darr;) auf derselben Schicht-Achse.</b>
+    B&rsquo;s Regionen &asymp; k<sup>L</sup> ist das <i>Angebot</i> (verf&uuml;gbarer kombinatorischer Platz, w&auml;chst mit der Tiefe, Tiefe &gt; Breite); A&rsquo;s wirksame Dimension/erank ist die <i>Nachfrage</i> (wie viel koh&auml;rentes Signal tats&auml;chlich aktiv bleibt, kontrahiert auf ~7). Beide sind wahr, weil sie Unterschiedenes messen: die Faltung erzeugt mehr Platz (Angebot &uarr;, B), w&auml;hrend das koh&auml;rente Signal in den Niedrigrang-Code komprimiert wird (Nachfrage &darr;, A). Die Mitte ist breit (max. Angebot + Gipfel der Nachfrage); das Ende ist komprimiert (max. Angebot, minimale Nachfrage = kompakter Kern). <b>Fused:</b> B liefert die wachsende Kapazit&auml;t (Angebot &uarr;); A die kontrahierende wirksame Dimension (Nachfrage &darr; auf ~7). Der kompakte Kern ist die <i>komprimierte Nachfrage bei maximalem Angebot</i>.</div>
+
+    <div class="fused"><b>Zu W3 &mdash; Die Struktur wird erreicht (A); die Korrespondenz ist das Limes (B).</b>
+    A&rsquo;s &bdquo;invariant, &nabla;L&asymp;0&ldquo; ist der <i>Fixpunkt</i> des Flusses (der Attraktor, wenn die Kontraktion komplett ist &mdash; ein echter station&auml;rer Punkt der Struktur). B&rsquo;s &bdquo;Wahrheit = lim&ldquo; ist die <i>Korrespondenz</i>, die sich asymptotisch an die externe Welt W ann&auml;hert (der Wert/die Richtung <code>&theta;</code> verfeinert sich endlos an W, &bdquo;angen&auml;hert, nie erreicht&ldquo;). <b>Fused:</b> Wahrheit zerlegt sich &mdash; das <i>Struktur-/Koh&auml;renz</i>-Bein wird <i>erreicht</i> (der Kern ist ein wahrer Attraktor, A), das <i>Korrespondenz</i>-Bein ist <i>asymptotisch</i> (Erdung an W bleibt ein Limes, B). <b>Wahrheit = Koh&auml;renz &and; (erreichte Struktur, &nabla;L&asymp;0) &and; (asymptotische Korrespondenz, &asymp; lim).</b> A&rsquo;s dreifaches AND und B&rsquo;s zweibeiniges min vereinigen sich zu: Struktur erreicht &times; Korrespondenz als Limes &times; Koh&auml;renz.</div>
+
+    <div class="fused"><b>Zu W4 &mdash; Das Budget (B) allokiert; der Kern (A) ist das allokierte Objekt.</b>
+    Das konservative Budget (B) <i>allokiert</i> die scharfe Kapazit&auml;t auf die linearen Adressen (B) / in den Kern (A); die Matched-Filter-Probe (A) <i>liest</i> genau das, was allokiert wurde. Fehlallokation (B: Budget auf hochfrequentes Ornament) = der Kern wird inkoh&auml;rent/unlesbar (A: harter Cut, Riss). <b>Fused:</b> B&rsquo;s Budget ist der Allokations-Mechanismus; A&rsquo;s Kern ist das, was die Allokation erzeugt. <i>Lesen (A) setzt Allokation (B) voraus</i>; die Probe ist die <i>Ablesung des allokierten Kerns</i>. &bdquo;Objekt zum Lesen&ldquo; und &bdquo;Mittel zur Allokation&ldquo; sind zwei Seiten desselben Kerns: was gut allokiert ist, ist lesbar.</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2><span class="no">4.</span> Fusionierter Inhalt</h2>
+    <p>Der fusionierte Kern, aus dem eine sp&auml;tere Runde allein arbeiten kann: <b>ein Fluss, der ein wachsendes Budget scharfer Kapazit&auml;t (B) entlang einer d&uuml;nnen Mannigfaltigkeit linearer Adressen (B) faltet, das koh&auml;rente Signal in einen kompakten Rotations-Kern (A) kontrahiert und es an eine externe Welt W (B) erdet; Gate = Koh&auml;renz &and; (erreichte Struktur) &and; (asymptotische Korrespondenz).</b></p>
+
+    <h3>4.1 Das geeinte Objekt: eine d&uuml;nn-gekr&uuml;mmte Mannigfaltigkeit lokaler Rotations-Kerne, die in einen kompakten Kern terminiert</h3>
+    <p>B&rsquo;s d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit (lokal linear, global FFN-gekr&uuml;mmt) ist die <i>Route</i> durch die Schichten; ihre St&uuml;cke sind die <b>Adressen/Klumpen</b> (A&rsquo;s Attraktor-Orte <code>A_c</code> = B&rsquo;s sinusoidale Position). An jedem Klumpen liegt ein <b>lokales lineares Chart</b>; jedes Chart ist ein <b>Rotations-Kern</b> (A: der weiche Cut/Basis, <code>d_eff=1</code>, lokal &amp; separabel). Der Fluss l&auml;uft die Route und <b>kontrahiert</b> (A) die Charts in den <b>einen kompakten Code</b> <code>range(W)</code> ~7 am Entscheidungsende. &bdquo;Ein kompakter Kern&ldquo; (A) ist die lokale Karte; &bdquo;die d&uuml;nne Mannigfaltigkeit&ldquo; (B) ist das Atlas dieser Karten &mdash; die Maschine ist <i>verteilt auf dem Weg, konzentriert am Ende</i>.</p>
+
+    <h3>4.2 Der eine Mechanismus: falten &rarr; flie&szlig;en &rarr; lesen = allozieren &rarr; kontrahieren &rarr; erden</h3>
+    <p>B&rsquo;s glatt&ndash;scharf&ndash;glatt-Pipeline ist A&rsquo;s Basis&rarr;Code&rarr;Probe, dreimal gelesen:</p>
+    <table>
+      <thead><tr><th>Stufe</th><th>A-Facet (r4-006)</th><th>B-Facet (r4-005)</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td><b>1 &middot; Adresse / Rotation</b></td><td>Basiswechsel: Phase n&rarr;e<sup>i2&pi;kn/P</sup>, Addition als Fixed-Rotation <code>M_k</code>, <code>d_eff=1</code></td><td>sinusoidale Position <code>f_i=10000^{\u22122i/d}</code> (Vaswani 2017) = Attraktor-Ort <code>A_c</code> (IFS, Chytas &amp; Singh 2025, kontaktstabil)</td><td>die <i>Adresse</i> (B) <i>ist</i> die <i>Rotation/Basis</i> (A) &mdash; der kontaktstabile Ort, in dem die Antwort lokal &amp; separabel ist</td></tr>
+        <tr><td><b>2 &middot; Scharfe Faltung / Fluss</b></td><td>Kettenregel klebt weiche Zellen (dL/dz = dL/dy &middot; &sigma;&prime;(z)) = lernbarer Residual-Operator/Schwerpunktfluss; kontrahiert</td><td>ReLU-Knick (tropisch, <code>ReLU(x)=max(x,0)</code>) = Kapazit&auml;t Regionen &asymp; k<sup>L</sup> (Tiefe &gt; Breite, Zhang/Naitzat/Li 2018)</td><td>die scharfe Faltung <i>erzeugt</i> die Kapazit&auml;t (B) und <i>ist</i> die Rotation, die die Antwort lokal macht (A); nur lernbar, weil weich (Koh&auml;renz)</td></tr>
+        <tr><td><b>3 &middot; Probe / Wert</b></td><td>Matched-Filter: logit(c)=&Sigma;<sub>k</sub>&alpha;<sub>k</sub>cos(&omega;<sub>k</sub>(a+b&minus;c)), Bank-Dim=#Klassen, K Frequenzen t&ouml;ten falsche Peaks</td><td>assoziativer Wert <code>W&middot;k&asymp;v</code> (ROME Rang-1) = Richtung <code>&theta;</code> (Marks &amp; Tegmark 2024)</td><td>die Probe <i>liest</i> den allokierten, kontrahierten Kern; der Wert/die Richtung <i>ist</i> der geerdete Code an der Adresse</td></tr>
+      </tbody>
+    </table>
+    <div class="formula"><span class="cmt"># Die geeinte Gleichung: eine abelsche Rotationsgruppe, als Chart und als Attraktor</span>
+A:  n &longmapsto e^{i2&pi;kn/P}   =   B:  PE(pos+k) = <span class="op">M_k</span> &middot; PE(pos)      <span class="cmt"># Addition als Rotation</span>
+f_{soft}(d;&sigma;)=exp(-(d-r)^2/2&sigma;^2),  f_{hard}=lim_{&sigma;&rarr;0} f_{soft}   <span class="cmt"># weicher Cut (A) = d_eff=1 (A/B)</span>
+Kontraktion:  erank 4096 &rarr; <span class="opg">~7</span> (range(W)) ;  Drift &prop; T im Kern ;  Diffusion &prop; &radic;T &rarr; Reservoir ker(W)&#8839;ker(G_Q)
+Lesen:         S(c)=<span class="opa">&Sigma;</span>_{k=1..K} cos(2&pi;k(res&minus;c)/P)  &rarr; Peak bei res ;  Bank-Dim = #Klassen
+Allokation:   Regionen &asymp; k^L  <span class="op">(Angebot &uarr;)</span>  &times;  konservatives Budget &rarr; Essence (tief-frequent) <span class="opg"># B</span></div>
+
+    <h3>4.3 Kontraktion (Nachfrage, A) vs. Kapazit&auml;t (Angebot, B) &mdash; die Schicht-Achse</h3>
+    <ul>
+      <li><b>Angebot (B):</b> die scharfe Kapazit&auml;t w&auml;chst mit der Tiefe &mdash; &Auml;quivalenzsatz (Zhang, Naitzat &amp; Li 2018): {ReLU-Netze mit ganzen Gewichten} = {stetige PL-Funktionen} = {tropische rationale Funktionen}; <b>Regionen &asymp; k<sup>L</sup></b> (exponentiell) vs. Neuronen = L&middot;k (linear) &rArr; <b>Tiefe &gt; Breite</b>. Monoton wachsend, &bdquo;flach sei schwach&ldquo;.</li>
+      <li><b>Nachfrage (A):</b> die wirksame Dimension (erank / intrinsische Dimension) <i>kontrahiert</i> &mdash; erank 4096&rarr;~7, <code>d_eff=1</code>; TwoNN/Facco 2017: <code>&mu;=r&#8322;/r&#8321;</code>, Buckel (Gipfel 20&ndash;40&nbsp;%, 100&ndash;120) &rarr; Kompression auf &asymp; log&#8322;(#Klassen); ID &harr; Leistung r=0,94.</li>
+      <li><b>Fusion:</b> Angebot (B) w&auml;chst &uarr; mit der Tiefe; Nachfrage (A) kontrahiert &darr; auf ~7. Die Mitte ist breit (max. Angebot + Gipfel der Nachfrage); das Ende ist komprimiert (max. Angebot, minimale Nachfrage = kompakter Kern). <i>Die B&uuml;hne w&auml;chst (B), die Besetzung verd&uuml;nnt sich (A)</i> &mdash; der kompakte Kern ist die komprimierte Nachfrage bei maximalem Angebot.</li>
+    </ul>
+
+    <h3>4.4 Die Adressen und der Kern als eins</h3>
+    <ul>
+      <li><b>Links &mdash; Adresse:</b> B&rsquo;s sinusoidale Position <code>f_i=10000^{\u22122i/d}</code> (Vaswani 2017) = A&rsquo;s Phasen-Basis n&rarr;e<sup>i2&pi;kn/P</sup> = A/B&rsquo;s Attraktor-Ort <code>A_c</code> (IFS, Chytas &amp; Singh 2025; Konvergenzschichten L18/19/24/27) &mdash; glatt, eindeutig, kontaktstabil. <b>Fusion: die Adresse (B) ist die Koordinate, in der die Antwort lokal ist (A).</b></li>
+      <li><b>Rechts &mdash; Wert/Richtung:</b> B&rsquo;s assoziativer Wert <code>v = W&middot;k &asymp; gespeicherter Wert</code> (ROME Rang-1: <code>W&#770; = W + &Lambda;&middot;(C^{\u22121}k*)^T</code>, <code>&Lambda;=(v*&minus;W&middot;k*)/((C^{\u22121}k*)^T k*)</code>, <code>C=E[kk^T]</code>; Causal Tracing lokalisiert den Fakt) = A&rsquo;s Richtung <code>&theta;</code> (Marks &amp; Tegmark 2024): <code>P=&sigma;(&theta;&middot;(h&minus;c_c))</code>, <code>&nabla;_h P = P(1&minus;P)&theta; &parallel; &theta;</code>, kausal <code>h &larr; h + &alpha;&theta;</code>. <b>Fusion: der geerdete Wert (B) ist der Code, den A&rsquo;s Probe liest (A).</b></li>
+    </ul>
+
+    <h3>4.5 Das Gate: Koh&auml;renz &and; (erreichte Struktur) &and; (asymptotische Korrespondenz)</h3>
+    <div class="formula"><span class="cmt"># A's dreifaches AND + B's zweibeiniges min vereinigen sich (AND &asymp; min)</span>
+Koh&auml;renz     &asymp; 1 &minus; (hoche-Freq.-Anteil im Budget)        <span class="cmt"># A: weiche Rotation, Kettenregel klebt / B: Knicks&rarr;eine PL-Sektion</span>
+Struktur      &asymp; [erank~7 &and; d_eff=1]   <span class="opg">erreicht, Attraktor, &nabla;L&asymp;0</span>  <span class="cmt"># A (erreichtes Bein)</span>
+Korrespondenz &asymp; 1 &minus; mean|Modell &minus; W| an Kontaktpunkten  <span class="op">asymptotisch &asymp; lim, nie voll erreicht</span>
+              <span class="cmt"># B: W&middot;k&asymp;v trifft W / A: &theta; liest die rechte Eigenschaft + live Klausel + ker(W)&#8839;ker(G_Q)</span>
+Wahrheit      = <span class="opg">Koh&auml;renz &and; (erreichte Struktur) &and; (asymptotische Korrespondenz)</span>
+Gerechtfertigte Akzeptanz = koh&auml;rent &and; strukturiert &and; (bisher) kein gescheiterter harter Kontaktpunkt</div>
+    <p>Die <b>f&uuml;nf Pathologien</b> (B, als Fehlallokationen des Budgets auf der scharfen Kapazit&auml;t) und A&rsquo;s <b>frozen/Plateau</b> sind die Weisen, wie dieses Gate f&auml;llt: <b>1 &middot; Koh&auml;rente Fiktion</b> (Skelett h&auml;lt, Wert ber&uuml;hrt nie W &mdash; das LLM-Ph&auml;nomen; = A&rsquo;s falsches Bassin/falsche Richtung; Heilmittel: Erdung/Retrieval); <b>2 &middot; Faktenbuch / Naht bricht</b> (einzeln hoch-freq. Treffer treffen W, Knicks f&uuml;gen sich zu keiner globalen PL-Sektion &mdash; = A&rsquo;s harter Cut; Heilmittel: bessere Synthese); <b>3 &middot; Kontaktpunkt-L&uuml;gner</b> (Essence systematisch falsch); <b>4 &middot; Kalibrierter Fehler</b> (tief Frequenzen in Form nicht in Norm); <b>5 &middot; Frage au&szlig;erhalb des Covers</b> (kein Key/Wert an dieser Adresse &mdash; &bdquo;ich wei&szlig; es nicht&ldquo;). A&rsquo;s <i>Memorizations-Plateau</i> (Rauschen noch nicht geparkt, Testverlust flach) ist derselbe Zustand in A&rsquo;s Konvergenz-Sprache: der Attraktor ist noch nicht erreicht (Struktur nicht invariant).</p>
+
+    <h3>4.6 Die vier Mysterien (A) + das konservative Budget (B), auf den Kern gefaltet</h3>
+    <p><b>Benign Overfitting:</b> Rauschen sitzt physisch im Reservoir <code>ker(W)</code> (A) und wird von den sp&auml;ten aktiven Filtern nicht verst&auml;rkt &mdash; = das Budget flie&szlig;t nicht auf hochfrequentes Ornament (B) &rArr; Trainingsfehler 0, Testfehler klein. <b>Grokking:</b> der koh&auml;rente Anteil der H&ouml;herstufen &uuml;berholt den Rauschen-Anteil (A: Phasen&uuml;bergang, Drift &prop; T &gt; Diffusion &prop; &radic;T) &mdash; = das Budget reallokiert vom Plateau auf den Essence (B): der Moment, in dem der Attraktor &bdquo;clickt&ldquo;. <b>Double Descent:</b> neue Kapazit&auml;t (B: mehr Regionen k<sup>L</sup>) lohnt nur, wenn sie mehr koh&auml;rentes Signal als Rauschen bringt (A). <b>Implicit Bias:</b> fr&uuml;he nicht-normale Mixer entknoten, sp&auml;te Filter verfeinern (A) = die Faltung konzentriert sich auf die tief-frequente Struktur (B).</p>
+
+    <h3>4.7 Konkretes Beispiel in allen Facetten (P=7, a=3, b=5)</h3>
+    <table>
+      <thead><tr><th>Facet</th><th>Ablauf</th><th>Ergebnis</th><th>Truth-Check</th></tr></thead>
+      <tbody>
+        <tr><td>Rotation (A=B)</td><td>modulare Addition 3+5 als Fixed-Rotation <code>M_8</code> auf dem P=7-Kreis; Phasen n&rarr;e<sup>i2&pi;kn/7</sup>; die Adresse (B) ist die Rotation (A)</td><td><b>1</b> (mod 7)</td><td rowspan="4">Koh&auml;renz: weiche Rotation klebt (lernbar). Struktur: erreicht (erank~7, <code>d_eff=1</code>, Attraktor &nabla;L&asymp;0). Korrespondenz: live Ziel = Probe-Peak (A) &amp; Wert/&theta; trifft W (B), &asymp; lim; Reservoir <code>ker(W)&#8839;ker(G_Q)</code> f&uuml;r alle Tests unsichtbar. &rarr; <b>WAHR</b>.</td></tr>
+        <tr><td>Kontraktion (A) auf der Mannigfaltigkeit (B)</td><td>erank 4096&rarr;~7; koh&auml;rentes Signal (Drift &prop; T) im kleinen Code, Rauschen (Diffusion &prop; &radic;T) in <code>ker(W)</code>; Angebot k<sup>L</sup> maximal, Nachfrage komprimiert</td><td>Code auf <b>1</b></td></tr>
+        <tr><td>Probe (A) liest den allokierten Kern (B)</td><td>S(c)=&Sigma;<sub>k=1..K</sub>cos(2&pi;k(1&minus;c)/7); bei c=1: cos(2&pi;k)=1 f&uuml;r jedes k &rarr; S=K (Max); K Frequenzen t&ouml;ten falsche Peaks</td><td>Peak bei <b>1</b></td></tr>
+        <tr><td>Wert/&theta; erdet an W (B)</td><td>assoziativer Wert <code>W&middot;k&asymp;v</code> = Richtung <code>&theta;</code>, liest Eigenschaft &bdquo;1&ldquo; an der Adresse; ROME k&ouml;nnte v ohne Knick-Kern &auml;ndern</td><td>Wert trifft W</td></tr>
+      </tbody>
+    </table>
+    <div class="fused"><b>Alle Facetten liefern denselben Wert: 3 + 5 &cong; 1 (mod 7)</b> &mdash; und der Wahrheits-Check ist gr&uuml;n, weil Koh&auml;renz (weiche Rotation), <i>erreichte</i> Struktur (kompakter Kern &nabla;L&asymp;0) und <i>asymptotische</i> Korrespondenz (live Peak + Wert trifft W, &asymp; lim) <i>alle</i> zutreffen. W&auml;re das Ziel <i>frozen</i> bzw. das Rauschen <i>nicht geparkt</i> (A: Plateau), oder der Wert <i>ber&uuml;hrte nie W</i> (B: koh&auml;rente Fiktion), w&auml;re die Rechnung koh&auml;rent + strukturiert, aber un-verankert &rarr; Halluzination / Plateau &mdash; auch wenn A &bdquo;die richtige lokale Antwort&ldquo; liest.</div>
+
+    <h3>4.8 Grenzen &amp; Ehrlichkeits-Ecke</h3>
+    <ul>
+      <li>Beide Quellen sind R4-Fusionspapiere (simulierte/&uuml;bernommene Werte, keine neuen Experimente); diese Runde &uuml;bernimmt ihre Stellungen und Zahlen, erfindet keine.</li>
+      <li>B&rsquo;s theorem-grade Teile (Familien-Gleichheit Zhang et al. 2018, ROME Rang-1) gelten nur f&uuml;r PL-Aktivierungen/ganze Gewichte, ein Fakt pro Edit; A&rsquo;s Kontraktions-Zahlen (4096&rarr;7) gelten f&uuml;r den untersuchten Transformer; B&rsquo;s ID-Buckel (100&ndash;120, r=0,94) ist gemessen, nicht universal bewiesen.</li>
+      <li>Die fusionierende Br&uuml;cke selbst (&bdquo;der Kern (A) terminiert die Mannigfaltigkeit (B)&ldquo;, &bdquo;Angebot (B) vs. Nachfrage (A)&ldquo;, &bdquo;Struktur erreicht &times; Korrespondenz als Limes&ldquo;, &bdquo;Budget allokiert, Probe liest&ldquo;) ist <em>load-bearing</em> und selbst eine Hypothese &mdash; dass der kompakte Kern tats&auml;chlich der Endpunkt der Adress-Mannigfaltigkeit ist und dass &bdquo;invariant&ldquo; (A) und &bdquo;lim&ldquo; (B) auf dieselbe Maschine passen, m&uuml;sste an echten Netzen gepr&uuml;ft werden.</li>
+      <li>Dimensionen: A&rsquo;s Objekt ist ein ~7-dim linearer Code / der Cut; B&rsquo;s ist eine Mannigfaltigkeit mit vielen linearen Adressen. Sie treffen sich auf der <i>Rotationsgruppe</i> (Chart-Konzeption) und auf der <i>Schicht-Achse</i>, nicht auf gleicher Dimension.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2><span class="no">5.</span> Interaktive Visualisierung: d&uuml;nne Mannigfaltigkeit (B) &rarr; kompakter Kern (A), gehalten vom zweibeinigen Gate</h2>
+    <p><b>Oben &mdash; die Schicht-Achse:</b> B&rsquo;s <em>Angebot</em> (Regionen &asymp; k<sup>&#8467;</sup>, Kapazit&auml;t, w&auml;chst monoton mit der Tiefe &mdash; blau) vs. A&rsquo;s <em>Nachfrage</em> (wirksame Dimension/erank: Buckel in der Mitte, Kontraktion auf den kompakten ~7-Floor am Ende &mdash; orange), mit B&rsquo;s Kristallisationsticks (L18/19/24/27, gold). <b>Unten &mdash; die Route zum Kern:</b> eine d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit mit 3 Adressen/Klumpen (B); der Fluss <b>kontrahiert</b> (A) das Signal aus den Klumpen in <b>einen kompakten Kern</b> am rechten Ende (erank~7, <code>d_eff=1</code>); das <b>blaue Reservoir-Ring</b> f&auml;ngt das Rauschen (Diffusion &prop; &radic;T, <code>ker(W)</code>). Im <em>aktiven</em> Klumpen: die Richtung <code>&theta;</code> (A, gr&uuml;n), die externe Welt W (B, lila) als Ziel, und der <em>Wert</em> (B, orange), der um einen <b>Fehlerwinkel</b> abweicht (= Korrespondenz). Bewege <b>&#8467;</b> (Schicht), <b>K</b> (konservatives Budget), <b>g</b> (Erdung an W), <b>t</b> (Konvergenz/Grokking); <b>h</b> ziehen. Readouts lesen das Gate live ab: <b>Koh&auml;renz &and; Struktur &and; Korrespondenz &rArr; Wahrheit = min</b>.</p>
+
+    <div class="controls">
+      <label>Schicht &#8467; (0&ndash;31): <input type="range" id="lS" min="0" max="31" value="9"> <span class="ctl-val" id="lV">9</span></label>
+      <label>Budget K: <input type="range" id="kS" min="0" max="14" value="3"> <span class="ctl-val" id="kV">3</span></label>
+      <label>Erdung g (an W): <input type="range" id="gS" min="0" max="100" value="100"> <span class="ctl-val" id="gV">100%</span></label>
+      <label>Konvergenz t (Grokking): <input type="range" id="tS" min="0" max="100" value="70"> <span class="ctl-val" id="tV">70%</span></label>
+    </div>
+    <div class="presets">
+      <button id="pSweet" type="button">&#10003; Sweet-Spot (verifiziert)</button>
+      <button id="pGrok" type="button">Gefunden / Grokking (t&uarr;)</button>
+      <button id="pOver" type="button">B &middot; &Uuml;berfitt (Naht bricht)</button>
+      <button id="pFik" type="button">B &middot; Koh&auml;rente Fiktion</button>
+      <button id="pFlat" type="button">B &middot; flach &amp; schwach</button>
+    </div>
+
+    <div class="viz-stage"><canvas id="cv"></canvas></div>
+
+    <div class="ro">
+      <div class="box b"><div class="k">Angebot &asymp; k<sup>&#8467;</sup> (B)</div><div class="v" id="rCap">&ndash;</div></div>
+      <div class="box b"><div class="k">Nachfrage ID(&#8467;) / erank (A)</div><div class="v" id="rId">&ndash;</div></div>
+      <div class="box a"><div class="k">Koh&auml;renz (A/B)</div><div class="v" id="rCoh">&ndash;</div></div>
+      <div class="box a"><div class="k">Struktur (A, &nabla;L&asymp;0)</div><div class="v" id="rStr">&ndash;</div></div>
+      <div class="box b"><div class="k">Korrespondenz (B, &asymp;lim)</div><div class="v" id="rCor">&ndash;</div></div>
+      <div class="box g"><div class="k">Wahrheit = min (Gate)</div><div class="v" id="rTruth">&ndash;</div></div>
+    </div>
+    <div id="out" class="badge-out warn">&ndash;</div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2><span class="no">6.</span> Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><a href="../4/r4-006.html">r4-006.html</a> &mdash; &bdquo;Der kompakte Rotations-Kern &mdash; als Basis gelesen und als Attraktor erreicht&ldquo; (R4-Fusion aus r3-010 &times; r3-005): ein Netz rechnet <i>und</i> wird wahr, indem es einen kompakten Rotations-Kern nutzt &mdash; gelesen als Basis/Cut (Addition als Fixed-Rotation <code>M_k</code>, <code>d_eff=1</code>), transportiert als Fluss (kettenregel-geklebte weiche Zellen = lernbarer Residual-Operator), abgelesen per Matched-Filter-Probe; als konvergierendes Objekt kontrahiert es Signal in den ~7-dim-Code <code>range(W)</code> (erank 4096&rarr;~7) und parkt Rauschen in <code>ker(W)&#8839;ker(G_Q)</code> (gebaut glatt / gefunden &uuml;ber Phasen&uuml;bergang/Grokking); Wahrheit = Koh&auml;renz &and; Korrespondenz(live) &and; Struktur, invariant (&nabla;L&asymp;0). Liefert hier: die <b>Kontraktions-/Kern-Seite</b> &mdash; den kompakten Kern, die Kontraktion, die Matched-Filter-Probe, das erreichte invariant Bein, P=7/a=3/b=5.</div></div>
+    <div class="prov"><span class="k b">B</span><div><a href="../4/r4-005.html">r4-005.html</a> &mdash; &bdquo;Scharfe Kapazit&auml;t als d&uuml;nne, geerdete Mannigfaltigkeit&ldquo; (R4-Fusion aus r3-009 &times; r3-008): ein Netz faltet ein konservatives Budget scharfer Faltungen (ReLU/tropisch, Regionen &asymp; k<sup>L</sup>, Tiefe &gt; Breite, Zhang et al. 2018) in eine d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit, an glatten linearen Adressen gehalten (sinusoidale Position/Attraktor-Ort <code>A_c</code>; assoziativer Wert <code>W&middot;k&asymp;v</code>/Richtung <code>&theta;</code>, ROME Rang-1); intrinsische Dimension (Buckel &rarr; log&#8322;, Facco 2017); Gate = Koh&auml;renz &amp; Korrespondenz an eine Welt W, Wahrheit = min = lim, f&uuml;nf Pathologien. Liefert hier: die <b>Kapazit&auml;ts-/Mannigfaltigkeits-Seite</b> &mdash; die d&uuml;nne Mannigfaltigkeit, die wachsende Kapazit&auml;t, die Adressen, die Erdung an W, das asymptotische Korrespondenz-Bein.</div></div>
+  </section>
+
+  <p class="foot">Fusion r5-004 &middot; Round 5, Knockout-Synthese. Beide Quellen sind R4-Fusionspapiere und damit bereits Erkl&auml;r-Synthesen (simulierte/&uuml;bernommene Werte, keine neuen Experimente); diese Runde &uuml;bernimmt ihre Stellungen und Zahlen, erfindet keine. Die Br&uuml;cke dieser Runde: A&rsquo;s <b>kompakter Rotations-Kern</b> (das konzentrierte Ende, Kontraktion, lesbar, invariant) und B&rsquo;s <b>d&uuml;nne Kapazit&auml;ts-Mannigfaltigkeit</b> (der verteilte Weg, wachsende Kapazit&auml;t, allokiert, geerdet) werden zu einer Maschine: die Mannigfaltigkeit (B) ist die Route, der Kern (A) ihr Terminus; Angebot (B) &uarr; und Nachfrage (A) &darr; auf derselben Schicht-Achse; das Budget (B) allokiert, die Probe (A) liest; Struktur wird erreicht (A, &nabla;L&asymp;0), Korrespondenz bleibt das Limes (B).</p>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function sig(x){ return 1/(1+Math.exp(-x)); }
+  function smoothstep(x,a,b){ if(b===a) return x<a?0:1; var t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+  var cv=$("cv"); if(!cv) return;
+  var ctx=cv.getContext("2d"); if(!ctx) return;
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var W=0,H=0, MAXL=31;
+
+  var lS=$("lS"), kS=$("kS"), gS=$("gS"), tS=$("tS");
+  var lV=$("lV"), kV=$("kV"), gV=$("gV"), tV=$("tV");
+  var rCap=$("rCap"), rId=$("rId"), rCoh=$("rCoh"), rStr=$("rStr"), rCor=$("rCor"), rTruth=$("rTruth");
+  var outEl=$("out");
+
+  function capOf(l){ return Math.pow(2,l)/Math.pow(2,MAXL); }
+  function demandOf(l){ return 7 + 112*Math.exp(-Math.pow(l-10,2)/(2*81)); }
+  function capStr(l){ var v=Math.pow(2,l); return v>=1e6 ? v.toExponential(1) : String(Math.round(v)); }
+
+  var concepts=[
+    {label:"Literatur",      layer:18, th:-0.55},
+    {label:"Programmierung", layer:19, th:-0.95},
+    {label:"Sprachen",       layer:27, th:-1.25}
+  ];
+  var NSIG=12, NOISE=6, sigP=[], noiseP=[];
+  (function(){
+    var rnd=mulberry32(0x5a26), rnd2=mulberry32(0xbee5);
+    for(var i=0;i<NSIG;i++){ sigP.push({ci:i%3, dx:(rnd()-0.5)*2, dy:(rnd()-0.5)*2, th:0.05+0.85*rnd()}); }
+    for(var j=0;j<NOISE;j++){ noiseP.push({ang:rnd2()*Math.PI*2, rr:0.5+0.7*rnd2()}); }
+  })();
+  function snapOf(i,t){ return sig((t - sigP[i].th)/0.06); }
+
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){ var x=cs.getPropertyValue(n).trim(); return x||fb; }
+    return {
+      canvas:v("--plot-bg","#0b1020"), ink:v("--fg","#e8ecf5"), muted:v("--muted","#8b95a8"),
+      line:v("--border","#243049"), grid:v("--grid","#1a2540"),
+      accent:v("--accent","#58a6ff"), accent2:v("--accent2","#ffb84d"),
+      good:v("--good","#4fd08a"), bad:v("--bad","#ff6b7d"), ring:v("--ring","#c4a7ff"),
+      mono:v("--mono","ui-monospace,monospace")
+    };
+  }
+  var P=readTheme();
+  function hexA(hex,a){
+    hex=String(hex||"").trim();
+    if(hex.charAt(0)==="#"){
+      hex=hex.slice(1);
+      if(hex.length===3) hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+      if(hex.length>=6){ var n=parseInt(hex.slice(0,6),16);
+        if(!isNaN(n)) return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")"; }
+    }
+    return "rgba(140,140,140,"+a+")";
+  }
+
+  var p1y=0,p1h=0,p2y=0,p2h=0,p2x=48,p2w=0;
+  var h={x:0,y:0}, hSet=false;
+
+  function bandY(xf){ return p2y + p2h*0.52 + p2h*0.11*Math.sin(xf*Math.PI); }
+  function clumpCenter(i){ var xf=[0.22,0.5,0.78][i]; return {x:p2x+xf*p2w, y:bandY(xf)}; }
+  function corePos(){ var xf=0.93; return {x:p2x+xf*p2w, y:bandY(xf)}; }
+  function activeIndex(){
+    var best=0,bd=1e18;
+    for(var i=0;i<concepts.length;i++){ var c=clumpCenter(i),dx=h.x-c.x,dy=h.y-c.y,d=dx*dx+dy*dy; if(d<bd){bd=d;best=i;} }
+    return best;
+  }
+
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    W=r.width; H=r.height;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    p1y=28; p1h=150;
+    p2y=p1y+p1h+40; p2h=H-p2y-20;
+    p2x=48; p2w=Math.max(50,W-p2x-44);
+    if(!hSet){ h.x=p2x+p2w*0.30; h.y=p2y+p2h*0.62; hSet=true; }
+    h.x=clamp(h.x,p2x+8,p2x+p2w-8); h.y=clamp(h.y,p2y+8,p2y+p2h-8);
+  }
+
+  function arrow(x1,y1,x2,y2,color,w,dashed){
+    ctx.save(); ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=w||2;
+    if(dashed){ ctx.setLineDash([7,6]); }
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.setLineDash([]);
+    var a=Math.atan2(y2-y1,x2-x1), hs=8;
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));
+    ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+  function seg(x1,y1,x2,y2,color,w,dashed){
+    ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=w||1.2;
+    if(dashed){ ctx.setLineDash([5,6]); }
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  }
+  function label(t,x,y,color,align,size){
+    ctx.save(); ctx.fillStyle=color; ctx.font="600 "+(size||11)+"px "+P.mono;
+    ctx.textAlign=align||"left"; ctx.textBaseline="middle"; ctx.fillText(t,x,y); ctx.restore();
+  }
+  function diamond(x,y,r,color){
+    ctx.fillStyle=color; ctx.beginPath();
+    ctx.moveTo(x,y-r); ctx.lineTo(x+r,y); ctx.lineTo(x,y+r); ctx.lineTo(x-r,y);
+    ctx.closePath(); ctx.fill();
+  }
+
+  function state(){
+    var l=clamp(Math.round(+(lS.value||9)),0,MAXL);
+    var K=clamp(parseInt(kS.value,10)||0,0,14);
+    var g=clamp(parseInt(gS.value,10)||0,0,100)/100;
+    var t=clamp((+(tS.value!=null?tS.value:70)||0),0,100)/100;
+    var capE=smoothstep(K,1,4), ov=smoothstep(K,5,14);
+    var coherence=clamp(capE*(1-ov),0,1);
+    var err=(1-g)*0.8 + ov*0.55 + (1-capE)*0.35;
+    var cor=clamp(1-err/1.3,0,1);
+    var structure=smoothstep(t,0.25,0.85);
+    var erank=Math.round(7 + (4096-7)*Math.exp(-t*9));
+    var truth=Math.min(coherence, cor, structure);
+    return {l:l,K:K,g:g,t:t,capE:capE,ov:ov,coherence:coherence,err:err,cor:cor,
+            structure:structure,erank:erank,truth:truth,cap:Math.pow(2,l),demand:demandOf(l)};
+  }
+
+  function drawPanel1(m){
+    var padL=48,padR=44,padT=14,padB=22;
+    var pw=W-padL-padR, ph=p1h-padT-padB;
+    if(pw<30||ph<30) return;
+    function xF(l){ return padL+pw*(l/MAXL); }
+    function yF(v){ return padT+ph*(1-clamp(v,0,1)); }
+    ctx.strokeStyle=P.grid; ctx.lineWidth=1;
+    for(var g2=0;g2<=4;g2++){ var gy=padT+ph*g2/4; ctx.beginPath(); ctx.moveTo(padL,gy); ctx.lineTo(padL+pw,gy); ctx.stroke(); }
+    ctx.fillStyle=P.muted; ctx.font="9px "+P.mono; ctx.textAlign="right"; ctx.textBaseline="middle";
+    ctx.fillText("1.0",padL-6,padT+2); ctx.fillText("0.0",padL-6,padT+ph+2);
+    // B supply area (blue)
+    ctx.beginPath(); ctx.moveTo(xF(0),yF(0));
+    for(var l2=0;l2<=MAXL;l2++) ctx.lineTo(xF(l2),yF(capOf(l2)));
+    ctx.lineTo(xF(MAXL),yF(0)); ctx.closePath();
+    ctx.fillStyle=hexA(P.accent,0.16); ctx.fill();
+    ctx.beginPath();
+    for(var l3=0;l3<=MAXL;l3++){ var mx=xF(l3),my=yF(capOf(l3)); l3?ctx.lineTo(mx,my):ctx.moveTo(mx,my); }
+    ctx.strokeStyle=P.accent; ctx.lineWidth=2.2; ctx.stroke();
+    // A demand line (orange)
+    ctx.beginPath();
+    for(var l4=0;l4<=MAXL;l4++){ var nx=xF(l4),ny=yF(demandOf(l4)/130); l4?ctx.lineTo(nx,ny):ctx.moveTo(nx,ny); }
+    ctx.strokeStyle=P.accent2; ctx.lineWidth=2.2; ctx.stroke();
+    // compact floor (A) dashed near the end
+    var floorY=yF(7/130);
+    seg(padL+pw*0.55,floorY,padL+pw,floorY,hexA(P.accent2,0.5),1,true);
+    label("kompakter Kern erank~7 (A)", padL+pw-4, floorY-9, P.accent2, "right", 9);
+    // B crystallization ticks (gold)
+    concepts.forEach(function(c){
+      var tx=xF(c.layer);
+      seg(tx,padT,tx,padT+ph,hexA(P.good,0.7),1.3,true);
+      label("L"+c.layer, tx, padT-4, P.good, "center", 9);
+    });
+    // current layer marker
+    var cl=clamp(m.l,0,MAXL), cx=xF(cl);
+    seg(cx,padT,cx,padT+ph,hexA(P.ink,0.4),1,true);
+    ctx.beginPath(); ctx.arc(cx,yF(capOf(cl)),4,0,6.2832); ctx.fillStyle=P.accent; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,yF(demandOf(cl)/130),4,0,6.2832); ctx.fillStyle=P.accent2; ctx.fill();
+    ctx.textAlign="left";
+    label("Angebot: Regionen ≈ k^ℓ (B, ↑ Tiefe)   vs.   Nachfrage / wirksame Dim (A, Buckel → kompakt ~7)", padL, p1y+p1h-4, P.muted, "left", 9);
+  }
+
+  function drawPanel2(m){
+    var core=corePos();
+    // manifold band
+    ctx.beginPath();
+    for(var i=0;i<=100;i++){ var xf=i/100,px=p2x+xf*p2w,py=bandY(xf); i?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+    ctx.strokeStyle=hexA(P.muted,0.5); ctx.lineWidth=6; ctx.lineCap="round"; ctx.stroke(); ctx.lineCap="butt";
+    label("dünne, gekrümmte Kapazitäts-Mannigfaltigkeit (B) — Adressen/Klumpen", p2x+4, p2y+12, P.muted, "left", 9);
+
+    var ai=activeIndex();
+    var crx=Math.max(28,p2w*0.085), cry=Math.max(24,p2h*0.17);
+
+    // skeleton edges (A) between clumps — hold when coherent
+    for(var e=0;e<concepts.length-1;e++){
+      var a=clumpCenter(e),b=clumpCenter(e+1);
+      seg(a.x,a.y,b.x,b.y, hexA(P.accent, m.coherence>0.5?0.55:0.18), m.coherence>0.5?2:1, m.coherence<=0.5);
+    }
+    // clumps
+    for(var ci=0;ci<concepts.length;ci++){
+      var c=clumpCenter(ci); var active=ci===ai;
+      ctx.beginPath(); ctx.ellipse(c.x,c.y,crx,cry,0,0,6.2832);
+      ctx.fillStyle=hexA(P.accent, active?0.16:0.06); ctx.fill();
+      ctx.strokeStyle=hexA(P.accent, active?0.85:0.35); ctx.lineWidth=active?2:1.2; ctx.stroke();
+      if(active&&m.ov>0.4){
+        ctx.save(); ctx.strokeStyle=hexA(P.bad,0.85); ctx.lineWidth=1.6;
+        ctx.beginPath(); ctx.moveTo(c.x-crx*0.7,c.y-cry*0.8);
+        ctx.lineTo(c.x-crx*0.1,c.y-cry*0.2); ctx.lineTo(c.x+crx*0.2,c.y+cry*0.1);
+        ctx.lineTo(c.x+crx*0.7,c.y+cry*0.8); ctx.stroke(); ctx.restore();
+      }
+      label(concepts[ci].label, c.x, c.y-cry-10, P.accent, "center", 12);
+      label("L"+concepts[ci].layer, c.x, c.y+cry+11, P.muted, "center", 9);
+    }
+
+    // terminal compact core (A)
+    var Rr=34;
+    ctx.save(); ctx.setLineDash([4,5]); ctx.lineWidth=1; ctx.strokeStyle=hexA(P.muted,0.5);
+    ctx.beginPath(); ctx.arc(core.x,core.y,Rr,0,6.2832); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+    label("Reservoir ker(W) (A/B)", core.x, core.y-Rr-9, P.muted, "center", 9);
+    var coreR=7+13*m.structure;
+    ctx.beginPath(); ctx.arc(core.x,core.y,coreR,0,6.2832);
+    ctx.fillStyle=hexA(P.accent, 0.2+0.45*m.structure); ctx.fill();
+    ctx.strokeStyle=hexA(P.accent,0.9); ctx.lineWidth=1.6; ctx.stroke();
+    for(var j=0;j<7;j++){ var aa=2*Math.PI*j/7;
+      ctx.beginPath(); ctx.arc(core.x+Math.cos(aa)*coreR*0.55, core.y+Math.sin(aa)*coreR*0.55, 2, 0, 6.2832);
+      ctx.fillStyle=P.accent; ctx.fill();
+    }
+    label("kompakter Kern (A): erank~"+m.erank+", d_eff=1", core.x, core.y+Rr+14, P.accent, "center", 9);
+
+    // signal points: contract from clumps to core (A), driven by t
+    for(var s=0;s<NSIG;s++){
+      var sp=sigP[s]; var cl2=clumpCenter(sp.ci);
+      var sx=cl2.x+sp.dx*crx*0.9, sy=cl2.y+sp.dy*cry*0.9;
+      var sn=snapOf(s,m.t);
+      var x=lerp(sx,core.x+ (sn>0.9?0:sp.dx*4), sn);
+      var y=lerp(sy,core.y+ (sn>0.9?0:sp.dy*4), sn);
+      var col; if(sn<0.18)col=P.bad; else if(sn<0.45)col=P.accent2; else if(sn<0.85)col=P.accent; else col=P.good;
+      if(sn>0.15&&sn<0.9){ ctx.strokeStyle=hexA(col,0.16); ctx.lineWidth=0.7; ctx.setLineDash([2,4]);
+        ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(core.x,core.y); ctx.stroke(); ctx.setLineDash([]); }
+      if(sn>=0.85){ ctx.shadowColor=col; ctx.shadowBlur=6; }
+      ctx.fillStyle=col; ctx.globalAlpha=0.9;
+      ctx.beginPath(); ctx.arc(x,y,sn<0.2?2.2:3.4,0,6.2832); ctx.fill();
+      ctx.shadowBlur=0; ctx.globalAlpha=1;
+    }
+    // noise points: park in reservoir (A/B)
+    for(var n=0;n<NOISE;n++){
+      var nr=Rr*(1+m.t*0.5*noiseP[n].rr);
+      var nx=core.x+nr*Math.cos(noiseP[n].ang), ny=core.y+nr*Math.sin(noiseP[n].ang);
+      ctx.fillStyle=hexA(P.muted,0.4); ctx.beginPath(); ctx.arc(nx,ny,2.4,0,6.2832); ctx.fill();
+    }
+
+    // active clump: theta (A), world W (B), value (B) with error angle
+    var ac=clumpCenter(ai), ang=concepts[ai].th;
+    var tux=Math.cos(ang), tuy=Math.sin(ang);
+    var pxp=Math.cos(ang+Math.PI/2), pyp=Math.sin(ang+Math.PI/2);
+    seg(ac.x-1.15*crx*pxp, ac.y-1.15*crx*pyp, ac.x+1.15*crx*pxp, ac.y+1.15*crx*pyp, hexA(P.muted,0.35),1,true);
+    var thL=crx*1.5;
+    arrow(ac.x,ac.y,ac.x+tux*thL,ac.y+tuy*thL,P.good,2.4,false);
+    label("θ (A)", ac.x+tux*(thL+12), ac.y+tuy*(thL+12), P.good, "center", 13);
+    var wx=ac.x+tux*(thL+26), wy=ac.y+tuy*(thL+26);
+    ctx.save(); ctx.strokeStyle=P.ring; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.arc(wx,wy,10,0,6.2832); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wx-13,wy); ctx.lineTo(wx+13,wy); ctx.moveTo(wx,wy-13); ctx.lineTo(wx,wy+13); ctx.stroke(); ctx.restore();
+    label("W (B)", wx, wy-16, P.ring, "center", 12);
+    var errAng=m.err*1.3 + m.ov*0.4, vl=crx*1.5, valAng=ang+errAng;
+    arrow(ac.x,ac.y,ac.x+Math.cos(valAng)*vl,ac.y+Math.sin(valAng)*vl,P.accent2,2.4,false);
+    label("Wert (B)", ac.x+Math.cos(valAng)*(vl+14), ac.y+Math.sin(valAng)*(vl+14), P.accent2, "center", 11);
+
+    // guardrail ring + h
+    var bdist=Math.sqrt((h.x-ac.x)*(h.x-ac.x)+(h.y-ac.y)*(h.y-ac.y));
+    var tauPx=Math.sqrt(crx*crx+cry*cry);
+    ctx.save(); ctx.strokeStyle=hexA(bdist>tauPx?P.bad:P.good,0.55); ctx.lineWidth=1.3; ctx.setLineDash([5,5]);
+    ctx.beginPath(); ctx.arc(ac.x,ac.y,tauPx,0,6.2832); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+    ctx.save(); ctx.shadowBlur=12; ctx.shadowColor=P.ink; ctx.fillStyle=P.ink;
+    ctx.beginPath(); ctx.arc(h.x,h.y,6,0,6.2832); ctx.fill(); ctx.restore();
+    label("h", h.x+11, h.y-11, P.ink, "left", 13);
+  }
+
+  function draw(){
+    if(!W||!H) return;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=P.canvas; ctx.fillRect(0,0,W,H);
+    var m=state();
+    drawPanel1(m);
+    drawPanel2(m);
+  }
+
+  function updateReadout(){
+    var m=state();
+    lV.textContent=m.l; kV.textContent=m.K; gV.textContent=Math.round(m.g*100)+"%"; tV.textContent=Math.round(m.t*100)+"%";
+    if(rCap) rCap.textContent="≈"+capStr(m.l);
+    if(rId)  rId.textContent=Math.round(m.demand)+" / "+m.erank;
+    if(rCoh) rCoh.textContent=Math.round(m.coherence*100)+"%";
+    if(rStr) rStr.textContent=Math.round(m.structure*100)+"%";
+    if(rCor) rCor.textContent=Math.round(m.cor*100)+"%";
+    if(rTruth) rTruth.textContent=Math.round(m.truth*100)+"%";
+    if(!outEl) return;
+    var cls,msg;
+    if(m.t<0.3){
+      cls="warn";
+      msg="Noch nicht konvergiert (A: Wolke / Memorizations-Plateau — Drift ∝ T hat Diffusion ∝ √T noch nicht überholt; B: Budget noch nicht auf den tief-frequenten Essence allokiert). Konvergenz t erhöhen → „Gefunden / Grokking“ (Phasenübergang).";
+    } else if(m.coherence<0.5 && m.capE<0.6){
+      cls="warn";
+      msg="Flach & schwach (B: „flach sei schwach“ — zu wenige Regionen k^ℓ, K="+m.K+") — die scharfe Kapazität (Angebot) reicht nicht, den Essence darzustellen; A's Nachfrage wird zu weich (Blur/Unterfitt). Mehr Tiefe/Budget (B) für Regionen.";
+    } else if(m.coherence<0.5){
+      cls="bad";
+      msg="Überfitt / Naht bricht (B: Budget K="+m.K+" auf hoch-freq. Ornament; A: harter Cut, Kohärenz fehlt) — die Faltung trägt keinen kohärenten Connector, A's Kern wird unlesbar, der aktive Klumpen reißt. Kohärenz "+Math.round(m.coherence*100)+"%.";
+    } else if(m.cor<0.45){
+      cls="bad";
+      msg="Kohärente Fiktion (B: Wert berührt nie W, Erdung g="+Math.round(m.g*100)+"%; A: falsches Bassin / falsche Richtung) — der Kern ist kohärent + strukturiert, korrespondiert aber nicht an die Welt (Korrespondenz "+Math.round(m.cor*100)+"%, ≈lim). Das LLM-Phänomen. Heilmittel: Erdung (Retrieval/Werkzeuge).";
+    } else if(m.truth>=0.62){
+      cls="ok";
+      msg="WAHR — Gate: Struktur erreicht (A, Attraktor ∇L≈0, "+Math.round(m.structure*100)+"%) ∧ Kohärenz "+Math.round(m.coherence*100)+"% (Kern/Skelett hält) ∧ Korrespondenz "+Math.round(m.cor*100)+"% (Wert an W, B ≈ lim). Der kompakte Kern (erank~"+m.erank+", d_eff=1) terminiert die dünne Mannigfaltigkeit.";
+    } else {
+      cls="warn";
+      msg="Gerechtfertigt (vorläufig) — kohärent ("+Math.round(m.coherence*100)+"%) & strukturiert ("+Math.round(m.structure*100)+"%) & ansatzweise geerdet ("+Math.round(m.cor*100)+"%), aber Evidenz dünn; mehr Erdung g / Konvergenz t könnten es festigen oder brechen.";
+    }
+    outEl.className="badge-out "+cls; outEl.innerHTML=msg;
+  }
+
+  function render(){ draw(); updateReadout(); }
+
+  function worldAt(e){
+    var r=cv.getBoundingClientRect();
+    var mx=e.clientX-r.left, my=e.clientY-r.top;
+    return {x:clamp(mx,p2x+8,p2x+p2w-8), y:clamp(my,p2y+8,p2y+p2h-8)};
+  }
+  var dragging=false;
+  cv.addEventListener("pointerdown",function(e){
+    var r=cv.getBoundingClientRect();
+    if(e.clientY-r.top < p2y-6) return;
+    dragging=true; try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+    var w=worldAt(e); h.x=w.x; h.y=w.y; render();
+  });
+  cv.addEventListener("pointermove",function(e){ if(!dragging)return; var w=worldAt(e); h.x=w.x; h.y=w.y; render(); });
+  cv.addEventListener("pointerup",function(){ dragging=false; });
+  cv.addEventListener("pointerleave",function(){ dragging=false; });
+
+  function bind(id,fn){ var el=$(id); if(el) el.addEventListener("input",fn); }
+  bind("lS",render); bind("kS",render); bind("gS",render); bind("tS",render);
+  function setP(K,g,t){ if(kS)kS.value=K; if(gS)gS.value=g; if(tS)tS.value=t; render(); }
+  var pS=$("pSweet"); if(pS)pS.addEventListener("click",function(){ setP(3,100,80); });
+  var pG=$("pGrok");  if(pG)pG.addEventListener("click",function(){ setP(3,100,98); });
+  var pO=$("pOver");  if(pO)pO.addEventListener("click",function(){ setP(14,100,80); });
+  var pF=$("pFik");   if(pF)pF.addEventListener("click",function(){ setP(3,0,80); });
+  var pFl=$("pFlat"); if(pFl)pFl.addEventListener("click",function(){ setP(1,100,80); });
+
+  function toggleTheme(){
+    document.documentElement.classList.toggle("dark");
+    var d=document.documentElement.classList.contains("dark");
+    try{ localStorage.setItem("r5004theme", d?"dark":"light"); }catch(e){}
+    P=readTheme(); render();
+  }
+  var tb=$("themeBtn"); if(tb) tb.addEventListener("click",toggleTheme);
+  window.addEventListener("resize",function(){ resize(); render(); });
+  try{ new MutationObserver(function(){ P=readTheme(); render(); }).observe(document.documentElement,{attributes:true,attributeFilter:["class"]}); }catch(e){}
+
+  P=readTheme(); resize();
+  if(lS) lS.value=9;
+  render();
+})();
+</script>
+</body>
+</html>
