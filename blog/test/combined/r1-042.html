@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Torus-Attraktor, der addiert — Fusion</title>
+<style>
+:root{
+  --paper:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --panel:#f5f0e6;
+  --teal:#0f766e; --teal-soft:#e6f2f0; --amber:#b45309; --amber-soft:#fdf3e3;
+  --rose:#be185d; --rose-soft:#fdeef4; --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --sky:#0369a1; --sky-soft:#e3f0f7;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --paper:#0f172a; --card:#131c30; --ink:#e8edf6; --dim:#a9b4c6; --faint:#6f7c94;
+  --line:#26334a; --panel:#0c1424;
+  --teal:#2dd4bf; --teal-soft:#0e2a2a; --amber:#fbbf24; --amber-soft:#2a2210;
+  --rose:#f472b6; --rose-soft:#2a1520; --violet:#a78bfa; --violet-soft:#1c1733;
+  --sky:#38bdf8; --sky-soft:#0e2230;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header{padding:56px 0 8px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--teal-soft);color:var(--teal);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(29px,5.2vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--teal)}
+.fusion-sub{font-size:13.5px;color:var(--faint);font-family:var(--mono);margin-bottom:14px;word-break:break-word}
+.fusion-sub b{color:var(--amber);font-weight:700}
+.sub{font-size:16.5px;color:var(--dim);max-width:62ch}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:52px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--teal);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--teal-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:17px;font-weight:720;margin:24px 0 8px;color:var(--ink)}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b,li b{color:var(--ink)}
+p a,li a,footer a{color:var(--teal)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:18px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.card p{margin-bottom:10px}.card p:last-child{margin-bottom:0}
+.note{border-left:4px solid var(--teal);background:var(--teal-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.rose{border-color:var(--rose);background:var(--rose-soft)}
+ul{margin:0 0 14px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:8px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;margin-right:6px;vertical-align:middle}
+.tag.A{background:var(--teal-soft);color:var(--teal);border:1px solid var(--line)}
+.tag.B{background:var(--violet-soft);color:var(--violet);border:1px solid var(--line)}
+.tag.F{background:var(--amber-soft);color:var(--amber);border:1px solid var(--line)}
+.eq{font-family:var(--mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto;line-height:1.9}
+.eq .op{color:var(--teal);font-weight:700}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.demo h3{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--ink)}
+.demo .dsub{font-size:12.5px;color:var(--faint);margin-bottom:14px}
+canvas{display:block;width:100%;border-radius:12px;background:var(--panel)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--teal);font-size:13.5px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid var(--card);box-shadow:0 1px 5px rgba(0,0,0,.3)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid var(--card);box-shadow:0 1px 5px rgba(0,0,0,.3)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)}
+input[type=range].v::-moz-range-thumb{background:var(--violet)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{transform:translateY(-1px)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;justify-content:flex-end}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:120px;background:var(--teal-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--teal)}
+.ro .box.amber{background:var(--amber-soft)}.ro .box.amber .v{color:var(--amber)}
+.ro .box.violet{background:var(--violet-soft)}.ro .box.violet .v{color:var(--violet)}
+.ro .box.rose{background:var(--rose-soft)}.ro .box.rose .v{color:var(--rose)}
+.fused-line{margin-top:16px;padding:14px 16px;border:1px dashed var(--amber);border-radius:12px;background:var(--amber-soft);font-size:14px;color:var(--dim)}
+.fused-line b{color:var(--amber)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 20px;text-align:center;color:var(--faint);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:14px 0}
+.prov a{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:var(--ink);text-decoration:none}
+.prov a:hover{border-color:var(--teal)}
+.prov a .t{font-family:var(--mono);font-size:12px;color:var(--teal);word-break:break-all}
+.prov a .d{font-size:13.5px;color:var(--dim);margin-top:4px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Fusion · Runde 1 · Paar 042 · ca. 10 Minuten</div>
+  <h1>Der <em>Torus-Attraktor</em>, der addiert</h1>
+  <div class="fusion-sub">Fusion aus: <b>topology_idea.html</b> ✕ <b>grokking_addition_internal3.html</b></div>
+  <p class="sub">Zwei Papiere, ein Phänomen. <b>A</b> liest Large Language Models als <em>topologisches dynamisches System</em>: der Residual Stream hat Attraktoren, Becken und (in späteren Layern) Zyklen und Tori, messbar über Betti-Zahlen. <b>B</b> zeigt einen Tiny-Transformer, der Modulo-113-Addition als <em>Rotation auf dem Kreis</em> löst — und dabei genau einen solchen <em>5-Frequenz-Torus</em> bildet. Die Fusion: <b>As allgemeiner Attraktor-Rahmen ist die Linse, Bs grokkter Torus ist die verifizierte Instanz.</b></p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Papiere drehen sich um dieselbe Beobachtung, nur auf verschiedenen Ebenen: <b>In einem hochdimensionalen, überparametrisierten Netzwerk entsteht ein kompakter, niedrigdimensionaler geometrischer Algorithmus.</b> <span class="tag A">A</span> liefert das <em>allgemeine topologische Vokabular</em>: Der Residual Stream ist der Zustandsraum eines dynamischen Systems (Zeitschritt = Layer, Abbildung <span style="font-family:var(--mono)">f(x) = Attn(x) + MLP(x)</span>), in dem <b>Attraktoren</b> als semantische Konvergenzregionen und <b>Becken</b> als „ähnliche Prompts → gleiche Antwort" auftreten; in späteren Layern werden diese Strukturen topologisch komplex (Zyklen, Tori), und <b>Komposition erzeugt ein qualitativ neues Basin</b>. <span class="tag B">B</span> liefert den <em>konkreten, verifizierten Sonderfall</em>: ein 1-Layer-Transformer (128-dim, 4 Köpfe, 512 MLP-Neuronen), der <span style="font-family:var(--mono)">(a+b) mod 113</span> rechnet, indem es Zahlen als <span style="font-family:var(--mono)">(cos ω_k·a, sin ω_k·a)</span>-Paare bei fünf Frequenzen <span style="font-family:var(--mono)">k ∈ {14,35,41,42,52}</span> auf Kreise legt, über die bilineare <b>Attention</b> die Multiplikation liefert, über den <b>MLP</b> die Kosinus-Additionsformel anwendet und über <b>Interferenz</b> der fünf Frequenz-Zyklen die Antwort identifiziert.</p>
+<p>Der eine integrierte Standpunkt: <b>Das, was A als „topologisch komplexer Algorithmus in späteren Layern" vorhergesagt hat, ist genau Bs Frequenz-Torus.</b> B's Kreis ist A's <b>Attraktor</b>; die Rotation <span style="font-family:var(--mono)">x → x+b</span> ist A's dynamische Abbildung <span style="font-family:var(--mono)">f(x)</span>; die fünf Frequenz-Kreise bilden zusammen einen <b>5-dimensionalen Torus</b> (Betti <span style="font-family:var(--mono)">β₁ = 5</span>) — A's „später, komplexer Algorithmus", hier konkret und ablesbar. A's „Komposition ist nicht bloße Vektoraddition, die Nichtlinearität erzeugt ein neues Basin" ist B's <b>Attention-Multiplikation</b> (der einzige Schritt, der <span style="font-family:var(--mono)">cos a · cos b</span> erzeugt), die auf dem geschlossenen Kreis landet; und A's „falsches Basin = Halluzination" ist B's <b>Interferenz-Nebenpeak</b> — ein nahe liegendes falsches Becken, das durch mehr Frequenzen verkleinert wird.</p>
+<p>Kurz: <b>A benennt die Struktur (Attraktor/Torus/Becken), B zeigt, wie sie entsteht (Grokking: Memorieren → verborgener Torus → Weight-Decay-Cleanup) und wie man sie abliest (Interferenz als scharfes Basin).</b> <span class="tag F">Fusion:</span> <em>der Algorithmus ist nichtlinear erzeugt und linear lesbar — ein Torus-Attraktor, der addiert.</em></p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+<p>Im Kern widersprechen sie sich nicht — beide setzen „das Netzwerk verbirgt einen niedrigen, geometrischen Algorithmus" als Prämisse. Aber auf vier konkreten Punkten treffen sie aufeinander:</p>
+
+<div class="card">
+<p><b>(1) Nichtlinear als Ursache vs. linear als Ergebnis — die zentrale Spannung</b></p>
+<p><span class="tag A">A</span> bestreitet die lineare Superposition ausdrücklich: <em>„Die Komposition ist <b>nicht</b> bloße Vektoraddition. Die Nicht-Linearitäten (Attention, MLP-Aktivierungen) erzeugen ein qualitativ neues Basin."</em> A stellt eine „Lineare Hypothese" (Vektoraddition, Subspace-Schnitt, „immer interpolierbar", gradueller Fehler) als <em>einfach/ungenügend</em> der „Topologischen Hypothese" (emergentes Basin, neue Mannigfaltigkeit, <em>Phasenübergänge</em> möglich) gegenüber.</p>
+<p><span class="tag B">B</span> arbeitet dagegen fast vollständig <b>linear/harmonisch</b>: Die Antwort ist eine <em>lineare</em> Summe von Kosinus-Wellen (Interferenz) mit gelernten Gewichten α_k; B betont, dass „Softmax in attention 97,5 % linear" ist und „84,6 % der 512 Neuronen" (433 Stück) durch ein <em>Grad-2-Polynom einer einzelnen Frequenz</em> über 85 % beschrieben werden. Die „Nichtlinearität" (ReLU) ist dort beinahe degeneriert.</p>
+<p>→ <b>Die Spannung:</b> A sagt, der Algorithmus entstehe als <em>nichtlineare, nicht-interpolierbare Topologie</em>; B's funktionierender Algorithmus ist eine <em>linear lesbare Fourier-Basis</em>. Ist das Entscheidende die Nichtlinearität (A) oder die Harmonik (B)?</p>
+</div>
+
+<div class="card">
+<p><b>(2) Topologie als Werkzeug vs. als Optimierungs-Begleitprodukt</b></p>
+<p><span class="tag A">A</span> will Topologie <em>aktiv nutzen</em>: das Ziel ist „<b>topologische Programmierung</b>" — gewünschtes Verhalten → topologische Spezifikation → Attraktor-Konstruktion → <b>Gewichts-Synthese</b>; Strukturen sollen gezielt <em>geeditet/gebaut</em> werden („LLMs programmierbar machen").</p>
+<p><span class="tag B">B</span> zeigt das Gegenteil in der Praxis: Der Torus <em>emergierte</em> aus dem Training (Grokking) und wurde <b>nicht</b> spezifiziert oder von Hand gebaut. Man kann ihn nicht direkt reinschreiben — er erscheint erst, nachdem <b>Weight Decay</b> über ~14 000 Epochen das aufblähte Memorieren ausradiert hat (Phase 3 „Cleanup").</p>
+<p>→ <b>Die Spannung:</b> Ist die Geometrie ein <em>Design-Griff</em> (A: spezifizieren &amp; synthetisieren) oder ein <em>schwer steuerbares Nebenprodukt der Optimierung</em> (B: nur ablesbar, nicht setzbar)?</p>
+</div>
+
+<div class="card">
+<p><b>(3) Globale Topologie vs. lokaler Circuit als Erklärungs-Ebene</b></p>
+<p><span class="tag A">A</span> argumentiert explizit <b>gegen Circuits</b> (à la Neel Nanda): Sie „funktionieren für kleine Modelle mit isolierten Aufgaben" und <b>skalieren nicht</b> zu echten LLMs (Polysemantizität, „verwundene" verteilte Speicherung, Emergenz). <em>Topologie soll Circuits ersetzen</em> („Globale Struktur statt lokale Schaltkreise").</p>
+<p><span class="tag B">B</span> ist <em>genau</em> eine <b>lokale Circuit-/Mechanismus-Zerlegung</b> — Embedding-Tabelle (cos/sin), bilineare Attention-Produkte (QK/OV), MLP-Polynome, Unembedding — und sie <b>erfolgt vollständig</b> für die Aufgabe (jeder Baustein hat eine klare Rolle, mit Zahlen).</p>
+<p>→ <b>Die Spannung:</b> Braucht man für echte LLMs die <em>globale Topologie</em> (A), oder reicht die <em>lokale Circuit-Analyse</em> (B)? A verwarf das Mittel, mit dem B seinen Fall vollständig gelöst hat.</p>
+</div>
+
+<div class="card">
+<p><b>(4) Stochastisch vs. deterministisch: die „falsche" Antwort</b></p>
+<p><span class="tag A">A</span> rahmt das Fehlschlagen <em>zufällig</em>: Erhöhe das Rauschen (Ambiguität) → „manche Tokens fallen in das <b>falsche</b> Basin (= Halluzination)" — ein sprunghafter, rauschgetriebener Basin-Wechsel.</p>
+<p><span class="tag B">B</span> macht es <em>deterministisch</em>: Die falsche Antwort ist ein <b>Interferenz-Nebenpeak</b> — bei nur einer Frequenz liegt <span style="font-family:var(--mono)">c = c*±8</span> bei 0,998, fast so hoch wie die richtige. Das ist keine Zufalls-, sondern eine System-Eigenschaft, behoben durch mehr Frequenzen (destruktive Interferenz der Neben-Becken).</p>
+<p>→ <b>Die Spannung:</b> Ist die Halluzination <em>zufällig ausgelöst</em> (A: Rauschen schiebt über den Grat) oder <em>geometrisch vorgezeichnet</em> (B: der Nebenpeak liegt von vornherein nah)?</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Auflösung</h2>
+
+<div class="note">
+<b>(1) Nichtlinear erzeugt, linear lesbar — die Spannung löst sich in eine Hierarchie auf.</b>
+A hat recht, dass die <em>Nichtlinearität</em> den Algorithmus erzeugt: Bs einziger bilinearer Schritt (Attention multipliziert <span style="font-family:var(--mono)">cos a · cos b</span>) ist genau A's „Nichtlinearität erzeugt Komposition". Der Trick: Weil die Aufgabe die <em>Gruppenstruktur</em> <span style="font-family:var(--mono)">Z/113</span> hat, landet diese Nichtlinearität auf einer <b>geschlossenen (harmonischen) Mannigfaltigkeit</b> — dem Kreis/Torus. Ein geschlossener Kreis ist <em>nichtlinear erzeugt, aber linear lesbar</em> (cos/sin-Basis). A's „Phasenübergang" ist dabei wörtlich B's <b>Grokking-Sprung</b> (Memorization → Torus → Cleanup). <span class="tag F">Fusion:</span> Nichtlinearität (A) baut die Struktur, die Gruppenstruktur der Aufgabe (B) macht sie zu einem Torus, der sich harmonisch/linear ablesen lässt.
+</div>
+
+<div class="note amber">
+<b>(2) Erst ablesen, dann schreiben — das ist eine Zeitachse, kein Widerspruch.</b>
+B beweist, dass man die Topologie <em>jetzt schon</em> <b>ablesen und verifizieren</b> kann: der Torus ist messbar, und <b>Ablation belegt es</b> — das Entfernen der nicht-schlüsselfrequenzen <em>verbessert</em> die Leistung (Loss −70 %), also ist der Torus der wirksame Teil. A's „Schreiben" (Topologie → Gewichte synthetisieren) ist die <em>offene</em>, langfristige Phase (A selbst stellt die Frage „Ist die Rückabbildung berechenbar?"). <span class="tag F">Fusion:</span> Der Torus ist heute ein <em>verifizierbares, ablesbares</em> Optimierungsprodukt (B); er wird erst <em>möglicherweise</em> später ein speifizierbares Werkzeug (A's Roadmap Phasen 4–5). Lesbar jetzt, schreibbar später.
+</div>
+
+<div class="note violet">
+<b>(3) Circuit = Zelle, Topologie = Gewebe — dieselbe Skala, zwei Zoom-Stufen.</b>
+B's Circuit-Analyse ist die <em>Zelle</em>: sie trennt, solange der Algorithmus in einzelne Bausteine zerlegt bleibt. A's Topologie ist das <em>Gewebe</em>: sobald in echten LLMs Polysemantizität und Verwundung die lokalen Zellen <em>nicht mehr trennen</em>, muss man auf die globale Struktur (TDA/Betti) ausweichen. A's Rahmen ist also keine Rivalin, sondern die <em>Erweiterung/Fallback</em> von B's Methode. <span class="tag F">Fusion:</span> <em>lokal zuerst (Circuit), global, wenn lokal nicht mehr trennt (Topologie).</em> Für strukturierte Aufgaben wie Addition reicht B's Zelle — und ihre Zusammensetzung hat einen Namen: <em>einen Torus.</em>
+</div>
+
+<div class="note rose">
+<b>(4) Geometrie + Auslöser: die „falsche Antwort" ist beides.</b>
+B liefert die <em>statische Geometrie</em> — wie nah das falsche Becken liegt, misst die Höhe des Interferenz-Nebenpeaks. A liefert den <em>dynamischen Auslöser</em> — das Rauschen, das den Zustand über den Grat in das nahe falsche Becken schiebt. Die Heilung ist in beiden dasselbe: <b>schärfere Becken-Grenzen</b>. Bei B heißt das „mehr Frequenzen → niedrigere Nebenpeaks"; bei A heißt es „schärfere Attraktoren → selteneres Überspringen". <span class="tag F">Fusion:</span> <em>Halluzination = nahe liegendes falsches Becken; seine Nähe = Nebenpeak-Höhe; mehr Frequenzen (B) = schärfere Becken-Grenzen (A).</em>
+</div>
+
+<div class="card">
+<p><b>Die eine Auflösungssatz:</b> A und B sind zwei Ebenen eines Phänomens. <b>A</b> liefert Vokabular + Agenda (Attraktoren, Becken, Tori, TDA, Roadmap, „topologische Programmierung"). <b>B</b> liefert Instanz + Proof-of-Principle (der grokkte 5-Frequenz-Torus, der die Addition löst). Nichtlinearität (A) erzeugt den Torus; die Gruppenstruktur (B) macht ihn linear lesbar; man liest ihn jetzt ab (B, verifizierbar/ablatierbar) und schreibt ihn evtl. später (A's Phasen 4–5); der Circuit ist die Zelle, die Topologie das Gewebe; und die Halluzination ist ein nahes falsches Becken, dessen Nähe der Interferenz-Nebenpeak ist. <span class="tag F">Fused:</span> <em>der grokkte Modular-Addition-Transformer ist der kleinste, verifizierte Fall von A's topologischem Attraktor-Rahmen.</em></p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>4.1 A's Rahmen — die Linse (topologisches dynamisches System)</h3>
+<ul>
+<li><b>Das Abbild:</b> Zustandsraum = Residual Stream <span style="font-family:var(--mono)">ℝ^d</span>; Zeitschritt = Layer-Durchgang; Abbildung <span style="font-family:var(--mono)">f(x) = Attn(x) + MLP(x)</span> (jeder Layer addiert auf den Stream: <span style="font-family:var(--mono)">x<sub>l+1</sub> = x<sub>l</sub> + Attn<sub>l</sub>(x<sub>l</sub>) + MLP<sub>l</sub>(x<sub>l</sub>)</span>). Attraktor = semantische Konvergenzregion; <b>Basin</b> = Menge ähnlicher Prompts → gleiche Antwort; <b>Bifurkation</b> = kontextabhängige Bedeutungsänderung.</li>
+<li><b>Warum nicht nur Circuits (A's These):</b> Polysemantizität (Features teilen Dimensionen), verteilte FFT-artige Speicherung, ineinander <em>verwundene</em> Strukturen, Emergenz in späteren Layern. A: „Topologische Beschreibung <b>akzeptiert die Verwundung als Struktur</b>."</li>
+<li><b>Layer-Progression (Hypothese):</b> Frühe Layer (1–8) = <em>fixe</em> Attraktoren nahe am Embedding (syntaktisch/lexikalisch, topologisch einfach = Punkt-Attraktoren). Späte Layer (24–32) = <em>dynamische</em>, kontextabhängige Attraktoren (semantisch/algorithmisch, topologisch komplex = Zyklen, Tori).</li>
+<li><b>Betti-Hypothese:</b> β₀ = zusammenhängende Komponenten (diskrete semantische Cluster), β₁ = Schleifen/Zyklen (zyklische Konzepte: Zeit, Analogien), β₂ = Hohlräume/Tori (interagierende zyklische Dimensionen). <em>Vorhersage:</em> ein Torus entsteht, wenn zwei unabhängige zyklische Dimensionen interagieren (z. B. „Wochentag" × „Tageszeit"); Betti-Zahlen steigen in mittleren Layern und stabilisieren spät.</li>
+<li><b>Komposition:</b> „Hauptstadt" ⊗ „Frankreich" → neues Basin „Paris". <em>Keine</em> bloße Vektoraddition: die Nichtlinearitäten erzeugen ein qualitativ neues, topologisch komplexeres Basin. Linear (A's Gegenentwurf): immer interpolierbar, gradueller Fehler, leicht editierbar — vs. topologisch: Phasenübergänge, sprunghafter Basin-Wechsel (Halluzination), komplex editierbar.</li>
+<li><b>Roadmap (A):</b> 1 Strukturen finden (TDA auf Residual Stream) → 2 Kausalität zeigen (Struktur zerstören → Verhalten ändert sich) → 3 Modularität testen (eine Struktur editieren) → 4 Komposition zeigen (Strukturen kombinieren) → 5 Synthese (gewünschte Topologie → Gewichte).</li>
+<li><b>Offene Fragen (A):</b> Ist Topologie → Gewichte berechenbar? Sind verwundene Strukturen modular editierbar? Skaliert TDA auf d = 4096+? Wo versagt die lineare Approximation? Gibt es topologische Universalien?</li>
+</ul>
+
+<h3>4.2 B's Instanz — der belegte Fall (Modular Addition mod 113, grokkelt)</h3>
+<ul>
+<li><b>Aufgabe &amp; Netz:</b> <span style="font-family:var(--mono)">(a+b) mod 113</span>; 1-Layer-Transformer, 128-dim, 4 Attention-Köpfe (je 32), 512 MLP-Neuronen, ReLU, Weight Decay λ = 1; trainiert auf nur 30 % aller Paare.</li>
+<li><b>Die 5 Stufen der Pipeline:</b> ① <b>Embedding</b> = Lookup-Tabelle (128 × 113), Spalte a enthält <span style="font-family:var(--mono)">cos(ω_k·a)</span> und <span style="font-family:var(--mono)">sin(ω_k·a)</span> für die 5 Frequenzen — <em>das Sinus/Kosinus <b>ist</b> das gewichtete Gewicht</em>. ② <b>Attention</b> = bilinear → erzeugt die <em>Produkte</em> <span style="font-family:var(--mono)">cos a · cos b</span>, <span style="font-family:var(--mono)">sin a · sin b</span> (Gewicht ≈ <span style="font-family:var(--mono)">0.5 + 0.27·(cos ωa − cos ωb)</span>; hier 97,5 % linear). ③ <b>MLP</b> = wendet die Additionsformel an → <span style="font-family:var(--mono)">cos(ω(a+b)), sin(ω(a+b))</span> (84,6 % der Neuronen = Grad-2-Polynom einer Frequenz). ④ <b>Unembedding</b> = <span style="font-family:var(--mono)">score(c) = cos ω(a+b)·cos ωc + sin ω(a+b)·sin ωc = cos ω(a+b−c)</span>. ⑤ <b>Softmax</b> = wählt c mit höchstem Score.</li>
+<li><b>Die Kosinus-Additionsformel (der Kern):</b> <span style="font-family:var(--mono)">cos(A+B) = cos A·cos B − sin A·sin B</span> — man „addiert" nie die Zahlen selbst, man kombiniert deren Kreis-Positionen durch Multiplikation/Subtraktion.</li>
+<li><b>Warum 5 Frequenzen (Interferenz-Trick):</b> Mit <em>einer</em> Frequenz wäre <span style="font-family:var(--mono)">cos ω(a+b−c)</span> bei c* = 1, aber bei c*±8 ≈ 0,998 — fast unverfälschbar. Mit <b>fünf</b> Frequenzen <span style="font-family:var(--mono)">{14,35,41,42,52}</span> (Gewichte α = 44.1, 42.2, 44.8, 66.6, 63.0) sind bei c* <em>alle</em> Kosinus = 1 (Σα ≈ <b>260,7</b>); bei jeder falschen Antwort zeigen die Wellen in verschiedene Richtungen und <em>kürzen sich gegenseitig</em> ab (bestes Falsch ≈ 30–40). Die 5 exakten Zahlen sind nicht heilig — andere Seeds finden andere Sätze (z. B. 2, 9, 19, 31); entscheidend ist die <em>konstruktive</em> Interferenz bei 0 und <em>destruktive</em> überall sonst.</li>
+<li><b>Grokking (3 Phasen):</b> ① <em>Memorization</em> (Epochen 0–1 400): Flashcards, 100 % train / 0 % test. ② <em>Circuit Formation</em> (1 400–9 400): der Fourier-Torus bildet sich <em>verborgen</em> in den Gewichten, Test-Genauigkeit bleibt noch bei 0 — „man sieht den Fortschritt von außen nicht". ③ <em>Cleanup</em> (9 400–14 000): Weight Decay eraser das aufblähte Memorieren; der kompakte Torus überlebt → Test springt auf 100 %.</li>
+<li><b>Zahlen (B):</b> 5 Frequenzen erklären 95 % der Logit-Varianz; 84,6 % der MLP-Neuronen ≈ Grad-2-Polynom einer Frequenz; Softmax in Attention 97,5 % linear; Ablation nicht-schlüsselfrequenzen <em>verbessert</em> (Loss −70 %).</li>
+</ul>
+
+<h3>4.3 Wie B A bestätigt — die tatsächliche Brücke</h3>
+<ul>
+<li><b>Kreis = Attraktor, Rotation = f(x):</b> B's Einheitskreis ist A's Attraktor; „addiere b" = „rotiere um b Schritte" ist exakt A's dynamische Abbildung <span style="font-family:var(--mono)">f(x)</span>. A's „Tokens werden zum Attraktor gezogen" = B's „der Zustand konvergiert zum Peak c*".</li>
+<li><b>5 Zyklen = Torus = A's „später, komplexer Algorithmus":</b> Jede Frequenz ist ein Kreis (S¹, β₁ = 1); fünf unabhängige Kreis-Dimensionen zusammen = ein <b>5-dimensionaler Torus</b> (β₁ = 5). Das ist <em>wörtlich</em> A's Vorhersage, dass der Algorithmus in späteren Layern topologisch komplex wird (Zyklen → Tori) — hier als 5-Torus gemessen und ablesbar.</li>
+<li><b>Attention = A's „Komposition ⊗":</b> A sagt, die Nichtlinearität (Attention+MLP) erzeuge ein neues Basin, <em>nicht</em> bloße Addition. B's einziger Multiplikationsschritt ist genau diese Attention: <span style="font-family:var(--mono)">cos a · cos b − sin a · sin b = cos(a+b)</span>. Die Nichtlinearität <em>erzeugt</em> die Summe — und weil das Ergebnis wieder auf dem selben Kreis liegt, bleibt es linear lesbar (siehe Auflösung 1).</li>
+<li><b>Interferenz-Peak = A's „Konvergenz zum Attraktor"; Nebenpeak = A's „falsches Basin":</b> Der scharfe Score-Peak bei c* <em>ist</em> der Attraktor; die Nebenpeaks sind <em>nahe falsche Becken</em>. A's „Rauschen → falsches Basin" ist der Auslöser, B's Nebenpeak ist die vorgezeichnete Geometrie. Mehr Frequenzen = schärfere Becken-Grenzen = weniger Halluzination (beide Seiten).</li>
+<li><b>Grokking = A's „Bifurkation / Phasenübergang":</b> A's „sprunghafter Basin-Wechsel / Phasenübergang" realisiert sich in B als der Grokking-Sprung (versteckter Torus wird durch Weight Decay freigelegt). Der kompakte Torus überlebt, das aufblähte Memorieren eraser — die <em>elegante</em> Struktur gewinnt.</li>
+</ul>
+
+<div class="card">
+<p><b>Die Schlüsselmathematik der Fusion (beide zusammen):</b></p>
+<p><span style="font-family:var(--mono)">Rotation: &nbsp;x <span class="op">→</span> x + b &nbsp;(mod 113) &nbsp;&nbsp;[A's f(x) = B's Kreis-Rotation]</span></p>
+<p><span style="font-family:var(--mono)">Additionsformel: &nbsp;cos(A+B) <span class="op">=</span> cos A·cos B − sin A·sin B</span></p>
+<p><span style="font-family:var(--mono)">Unembedding: &nbsp;score(c) <span class="op">=</span> cos(ω·(a+b−c)) &nbsp;[= 1 bei c = c*]</span></p>
+<p><span style="font-family:var(--mono)">Fused-Score (Interferenz): &nbsp;Score(c) <span class="op">=</span> Σ<sub>k ∈ {14,35,41,42,52}</sub> α_k · cos(ω_k·(a+b−c)), &nbsp; ω_k <span class="op">=</span> 2π·k/113</span></p>
+<p><span style="font-family:var(--mono)">Topologie (A auf B angewandt): &nbsp;β₀ = 1, &nbsp;β₁ = 5 (5 Frequenz-Zyklen = Torus), &nbsp; Score(c*) ≈ Σα_k ≈ 260,7 &gt;&gt; best. Falsch ≈ 30–40</span></p>
+<p>Das Netzwerk hat <em>nicht</em> „Addition" gelernt — es hat Zahlen als Punkte auf Kreisen repräsentiert, sie über die Attention-Multiplikation (die nichtlineare Komposition) rotiert und über Wellen-Interferenz (einen scharfen Attraktor) die Antwort abgelesen. Ein <b>Fourier-Rechner, den Gradientenabstieg von selbst gebaut hat</b> — und genau der „topologische Algorithmus", den A vorhergesagt hatte.</p>
+</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktiv: der Torus-Attraktor, der addiert</h2>
+<div class="demo">
+  <h3>Die Interferenz-Landschaft als A's „Basin-Landschaft"</h3>
+  <p class="dsub">Oben: der <b>Score(c)</b> für jede Kandidat-Antwort c = 0…112 als Summe der aktiven Frequenz-Kosinus (B's Interferenz). Der scharfe Peak bei <b>c* = (a+b) mod 113</b> ist A's <em>Attraktor</em>; die Nebenpeaks sind <em>nahe falsche Becken</em> (Halluzinationsrisiko). Unten links: die <b>n Frequenz-Zyklen</b> als <em>Torus</em> (jeder Kreis = eine Frequenz, β₁ = n). Ziehe „Frequenzen n" von 1 → 5: die falschen Becken sinken, der Attraktor wird scharf.</p>
+  <div class="btnrow"><button id="themeToggle">🌗 Theme</button></div>
+  <canvas id="cvFusion" width="760" height="470"></canvas>
+
+  <div class="ctl">
+    <div class="ctl-lab"><span>a (Erster Summand)</span><b id="vA">25</b></div>
+    <input type="range" id="sA" min="0" max="112" value="25">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>b (Zweiter Summand)</span><b id="vB">47</b></div>
+    <input type="range" id="sB" min="0" max="112" value="47">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Frequenzen n (B's Schlüssel-Frequenzen → A's Torus-Dimension β₁)</span><b id="vN">5</b></div>
+    <input type="range" id="sN" min="1" max="5" value="5" class="v">
+  </div>
+
+  <div class="ro">
+    <div class="box"><div class="k">a + b mod 113</div><div class="v" id="vAns">72</div></div>
+    <div class="box"><div class="k">Score bei c*</div><div class="v" id="vPeak">—</div></div>
+    <div class="box rose"><div class="k">Best. falsch (Neben-Becken)</div><div class="v" id="vWrong">—</div></div>
+    <div class="box amber"><div class="k">Gap (c* − falsch)</div><div class="v" id="vGap">—</div></div>
+    <div class="box violet"><div class="k">Topologie β₁ (Torus)</div><div class="v" id="vBeta">5</div></div>
+    <div class="box amber"><div class="k">Becken</div><div class="v" id="vBasin">scharf</div></div>
+  </div>
+  <div class="fused-line" id="fusedLine"></div>
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <a href="../topology_idea.html">
+    <span class="t">A — topology_idea.html</span>
+    <span class="d">„Attraktoren in Large Language Models" — topologische Perspektive auf den Residual Stream: Attraktoren/Becken/Bifurkationen als dynamisches System, Layer-Progression (fixe → dynamische Attraktoren), Komposition ⊗ erzeugt neue Basins, TDA/Persistent Homology mit Betti-Zahlen (β₀,β₁,β₂), Roadmap zu „topologischer Programmierung" und offene Fragen (d = 4096+, Rückabbildung Topologie → Gewichte).</span>
+  </a>
+  <a href="../grokking_addition_internal3.html">
+    <span class="t">B — grokking_addition_internal3.html</span>
+    <span class="d">„How a Tiny AI Learned to Add" — visuelles Erklärstück zum Grokking-Paper: Modular Addition mod 113 als Kreis-Rotation; cos/sin-Embedding, bilineare Attention (Multiplikation), MLP (Kosinus-Additionsformel), Unembedding = cos(ω(a+b−c)), 5 Frequenzen {14,35,41,42,52} als Interferenz; Grokking-Phasen (Memorization → Circuit Formation → Weight-Decay-Cleanup); Zahlen (95 % Logit-Varianz, 84,6 % Neuronen, 97,5 % linear, Ablation −70 %).</span>
+  </a>
+</div>
+</section>
+
+<footer>
+  <p>Fusion (Runde 1, Paar 042) aus A und B · Alle Daten inline, alles läuft lokal im Browser — keine Daten verlassen diese Seite. · <a href="../topology_idea.html">A</a> ✕ <a href="../grokking_addition_internal3.html">B</a></p>
+</footer>
+
+</main>
+
+<script>
+"use strict";
+(function(){
+  function $(id){return document.getElementById(id);}
+  var cv=$('cvFusion'); if(!cv) return;
+  var ctx=cv.getContext('2d');
+  var L_W=760, L_H=470;
+
+  // ---- inline data (from source B) ----
+  var P=113;
+  var KF=[14,35,41,42,52];
+  var AL=[44.1,42.2,44.8,66.6,63.0];
+  var YMAX=0; for(var i=0;i<5;i++){YMAX+=AL[i];} // ≈ 260.7
+  var FREQCOL=['--teal','--amber','--rose','--violet','--sky'];
+  function wOf(k){return 2*Math.PI*k/P;}
+  function mod113(n){return ((n%113)+113)%113;}
+
+  function cssVar(name,fb){
+    try{var v=getComputedStyle(document.documentElement).getPropertyValue(name);v=v&&v.trim();return v||fb;}catch(e){return fb;}
+  }
+  function palette(){return{
+    ink:cssVar('--ink','#2b2e3a'), dim:cssVar('--dim','#5c6272'), faint:cssVar('--faint','#9aa0b0'),
+    line:cssVar('--line','#e7e0d0'), panel:cssVar('--panel','#f5f0e6'), card:cssVar('--card','#fffdf8'),
+    teal:cssVar('--teal','#0f766e'), amber:cssVar('--amber','#b45309'),
+    rose:cssVar('--rose','#be185d'), violet:cssVar('--violet','#6d28d9'), sky:cssVar('--sky','#0369a1')
+  };}
+  function freqColor(Pp,i){return cssVar(FREQCOL[i],'#888');}
+
+  function computeScores(a,b,n){
+    var ab=mod113(a+b), out=new Array(P);
+    for(var c=0;c<P;c++){
+      var s=0;
+      for(var i=0;i<n;i++){ s+=AL[i]*Math.cos(wOf(KF[i])*(ab-c)); }
+      out[c]=s;
+    }
+    return {ab:ab, scores:out};
+  }
+
+  function fit(){
+    var dpr=window.devicePixelRatio||1, cw=cv.clientWidth||L_W, scale=cw/L_W;
+    cv.width=Math.round(cw*dpr); cv.height=Math.round(L_H*scale*dpr);
+    cv.style.height=(L_H*scale)+'px';
+    ctx.setTransform(dpr*scale,0,0,dpr*scale,0,0);
+  }
+
+  function wrapText(txt,x,y,maxW,lh,maxLines){
+    var words=txt.split(' '), line='', lines=[], cur=y;
+    for(var i=0;i<words.length;i++){
+      var test=line?line+' '+words[i]:words[i];
+      if(ctx.measureText(test).width>maxW && line){ lines.push(line); line=words[i]; }
+      else{ line=test; }
+    }
+    if(line) lines.push(line);
+    for(var j=0;j<lines.length && j<maxLines;j++){ ctx.fillText(lines[j],x,cur); cur+=lh; }
+    return cur;
+  }
+
+  function draw(){
+    fit();
+    var Pp=palette();
+    var a=+$('sA').value, b=+$('sB').value, n=+$('sN').value;
+    var r=computeScores(a,b,n);
+    var ab=r.ab, scores=r.scores;
+
+    ctx.clearRect(0,0,L_W,L_H);
+    ctx.fillStyle=Pp.panel; ctx.fillRect(0,0,L_W,L_H);
+
+    // ---------- MAIN PLOT (score landscape) ----------
+    var ax0=46, ay0=26, aw=L_W-46-16, ah=270;
+    ctx.strokeStyle=Pp.line; ctx.lineWidth=1; ctx.strokeRect(ax0,ay0,aw,ah);
+    // faint grid
+    ctx.strokeStyle=Pp.line; ctx.globalAlpha=0.5; ctx.beginPath();
+    for(var gx=1;gx<4;gx++){var xx=ax0+aw*gx/4; ctx.moveTo(xx,ay0); ctx.lineTo(xx,ay0+ah);}
+    ctx.stroke(); ctx.globalAlpha=1;
+    // x(c) / y(s)
+    function X(c){return ax0+aw*c/(P-1);}
+    function Y(s){return ay0+ah*(1-(s+YMAX)/(2*YMAX));}
+    // zero line
+    ctx.strokeStyle=Pp.line; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(ax0,Y(0)); ctx.lineTo(ax0+aw,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+
+    // individual frequency waves (faint)
+    for(var fi=0;fi<n;fi++){
+      ctx.strokeStyle=freqColor(Pp,fi); ctx.globalAlpha=0.35; ctx.lineWidth=1.2; ctx.beginPath();
+      for(var c0=0;c0<P;c0++){
+        var val=AL[fi]*Math.cos(wOf(KF[fi])*(ab-c0));
+        var px=X(c0), py=Y(val);
+        if(c0===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    // sum curve (fusion) bold
+    ctx.strokeStyle=Pp.amber; ctx.lineWidth=2.6; ctx.beginPath();
+    for(var c1=0;c1<P;c1++){ var px1=X(c1), py1=Y(scores[c1]); if(c1===0)ctx.moveTo(px1,py1); else ctx.lineTo(px1,py1); }
+    ctx.stroke();
+
+    // best wrong neighbour
+    var bestC=-1,bestS=-1e9;
+    for(var cw0=0;cw0<P;cw0++){ if(cw0===ab)continue; if(scores[cw0]>bestS){bestS=scores[cw0];bestC=cw0;} }
+
+    // correct c* marker (attractor)
+    ctx.strokeStyle=Pp.teal; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(X(ab),ay0); ctx.lineTo(X(ab),ay0+ah); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=Pp.teal; ctx.beginPath(); ctx.arc(X(ab),Y(scores[ab]),6,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=Pp.card; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle=Pp.teal; ctx.font='700 11px monospace'; ctx.textAlign='center';
+    ctx.fillText('c* = '+ab+'  (Attraktor)', X(ab), ay0-6<16?ay0+14:ay0-6);
+
+    // best wrong (false basin)
+    ctx.strokeStyle=Pp.rose; ctx.setLineDash([4,4]); ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.moveTo(X(bestC),ay0); ctx.lineTo(X(bestC),ay0+ah); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=Pp.rose; ctx.beginPath(); ctx.arc(X(bestC),Y(bestS),5,0,Math.PI*2); ctx.fill();
+    ctx.font='700 10px monospace'; ctx.textAlign='center';
+    ctx.fillText('c='+bestC+' (Neben-Becken)', X(bestC), ay0+ah-6);
+
+    // axes labels
+    ctx.fillStyle=Pp.faint; ctx.font='10px monospace'; ctx.textAlign='left';
+    ctx.fillText('0', ax0-2, ay0+ah+14);
+    ctx.textAlign='right'; ctx.fillText('112', ax0+aw+2, ay0+ah+14);
+    ctx.textAlign='center'; ctx.fillStyle=Pp.dim;
+    ctx.fillText('Kandidat-Antwort c', ax0+aw/2, ay0+ah+14);
+    ctx.textAlign='left'; ctx.fillStyle=Pp.faint;
+    ctx.fillText('+', ax0-12, ay0+4); ctx.fillText('0', ax0-12, Y(0)+3); ctx.fillText('−', ax0-12, ay0+ah);
+
+    // title
+    ctx.fillStyle=Pp.ink; ctx.font='700 12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Score(c) = Σ αₖ·cos(ωₖ·(a+b−c))   ·   ' + n + ' von 5 Frequenzen', ax0, ay0-12);
+
+    // ---------- INSET: torus (left bottom) ----------
+    var iy0=316, ih=138, iw=300;
+    ctx.strokeStyle=Pp.line; ctx.lineWidth=1; ctx.strokeRect(ax0,iy0,iw,ih);
+    ctx.fillStyle=Pp.ink; ctx.font='700 11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Torus aus '+n+' Zyklen (A: β₁ = '+n+')', ax0+10, iy0+18);
+    ctx.fillStyle=Pp.faint; ctx.font='10px system-ui';
+    ctx.fillText('jeder Kreis = 1 Frequenz-Zyklen (S¹, B)', ax0+10, iy0+32);
+    // draw n circles in a row
+    var cy=iy0+92, gap=(iw-40)/Math.max(1,n), rad=Math.min(24,gap*0.42);
+    for(var k2=0;k2<n;k2++){
+      var ccx=ax0+20+gap*(k2+0.5);
+      ctx.strokeStyle=freqColor(Pp,k2); ctx.lineWidth=2.2; ctx.globalAlpha=0.9;
+      ctx.beginPath(); ctx.arc(ccx,cy,rad,0,Math.PI*2); ctx.stroke();
+      ctx.globalAlpha=0.16; ctx.fillStyle=freqColor(Pp,k2); ctx.beginPath(); ctx.arc(ccx,cy,rad,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+      ctx.fillStyle=freqColor(Pp,k2); ctx.font='700 10px monospace'; ctx.textAlign='center';
+      ctx.fillText('k'+KF[k2], ccx, cy+3);
+    }
+    // faint tube hint behind
+    if(n>=2){
+      ctx.strokeStyle=Pp.line; ctx.lineWidth=8; ctx.globalAlpha=0.35;
+      ctx.beginPath(); ctx.moveTo(ax0+20,cy); ctx.lineTo(ax0+iw-20,cy); ctx.stroke(); ctx.globalAlpha=1;
+    }
+
+    // ---------- FUSED CAPTION (right bottom) ----------
+    var rx=ax0+iw+14, rw=L_W-16-rx;
+    var cap = n<=1
+      ? '1 Frequenz: flache Landschaft, hohe Neben-Becken (c±8 ≈ 0.998). Ein einziger Kreis (β₁=1), kein scharfer Attraktor — Halluzinationsanfällig (A).'
+      : (n<5
+        ? n+' Frequenzen: Neben-Becken sinken, Peak bei c* wird spitzer. Jede Zyklen-Frequenz unterdrückt falsche Becken. Torus wächst: β₁='+n+'.'
+        : '5 Frequenzen {14,35,41,42,52}: ein scharfer Attraktor bei c* (Score ≈ '+scores[ab].toFixed(1)+'), tiefe Neben-Becken. B\'s Interferenz = A\'s „scharfe Becken". 5 Zyklen = 5-Torus (β₁=5).');
+    ctx.fillStyle=Pp.ink; ctx.font='700 11px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Fusion (A ↕ B)', rx, iy0+18);
+    ctx.fillStyle=Pp.dim; ctx.font='11px system-ui';
+    wrapText(cap, rx, iy0+36, rw, 15, 6);
+
+    // ---------- DOM readouts ----------
+    $('vA').textContent=a; $('vB').textContent=b; $('vN').textContent=n;
+    $('vAns').textContent=ab;
+    $('vPeak').textContent=scores[ab].toFixed(1);
+    $('vWrong').textContent=bestS.toFixed(1);
+    $('vGap').textContent=(scores[ab]-bestS).toFixed(1);
+    $('vBeta').textContent=n;
+    $('vBasin').textContent = n<=1 ? 'flach' : (n<4 ? 'mittel' : 'scharf');
+
+    var fl;
+    if(n<=1){ fl='Mit <b>1 Frequenz</b> ist die Landschaft flach: der beste Neben-Becken (c='+bestC+') liegt nur '+(scores[ab]-bestS).toFixed(1)+' unter c*. B\'s Problem — c=c*±8 ≈ 0,998. Topologisch (A): ein Kreis, kein scharfer Attraktor → <b>Halluzinationsanfällig</b>.'; }
+    else if(n<5){ fl='<b>'+n+' Frequenzen</b>: die Neben-Becken sinken auf '+(scores[ab]-bestS).toFixed(1)+' unter c* — jede weitere Zyklen-Frequenz (B) ist eine „Fingerkennzahl", die falsche Becken (A) unterdrückt. Der Torus wächst: β₁ = '+n+'.'; }
+    else { fl='<b>5 Frequenzen</b>: ein scharfer <b>Attraktor</b> bei c* (Score ≈ '+scores[ab].toFixed(1)+'), beste falsche Antwort nur '+bestS.toFixed(1)+' → Gap '+(scores[ab]-bestS).toFixed(1)+'. Das ist B\'s Interferenz-Trick = A\'s „scharfe Basin-Grenzen". Topologisch: <b>5 Zyklen = 5-dimensionaler Torus (β₁ = 5)</b> — A\'s „topologisch komplexer Algorithmus", hier konkret und verifiziert.'; }
+    $('fusedLine').innerHTML=fl;
+  }
+
+  $('sA').addEventListener('input',draw);
+  $('sB').addEventListener('input',draw);
+  $('sN').addEventListener('input',draw);
+
+  // theme reactivity
+  var html=document.documentElement, pending=false;
+  function schedule(){if(pending)return;pending=true;requestAnimationFrame(function(){pending=false;draw();});}
+  if(window.matchMedia){
+    try{
+      var mq=window.matchMedia('(prefers-color-scheme: dark)');
+      var userToggled=false;
+      function follow(){ if(!userToggled){ html.classList.toggle('dark', mq.matches); schedule(); } }
+      if(mq.addEventListener) mq.addEventListener('change',follow); else if(mq.addListener) mq.addListener(follow);
+      var tog=$('themeToggle');
+      if(tog){ tog.addEventListener('click',function(){ userToggled=true; html.classList.toggle('dark'); schedule(); }); }
+    }catch(e){}
+  }
+  if(window.MutationObserver){
+    try{ new MutationObserver(schedule).observe(html,{attributes:true,attributeFilter:['class']}); }catch(e){}
+  }
+  window.addEventListener('resize',schedule);
+  draw();
+})();
+</script>
+</body>
+</html>
