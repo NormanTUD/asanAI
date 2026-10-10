@@ -4860,6 +4860,58 @@ window.bibData = {
 		title: "On the Mathematical Foundations of Theoretical Statistics",
 		author: "Ronald Aylmer Fisher"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Guinness brewery and "Student" (statistics_i.php, t-test section):
+	 *  W. S. Gosset invented the t-test at the Dublin brewery and published
+	 *  it under a pseudonym; Fisher's letters made it famous.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"student1907haemocytometer": {
+		title: "On the Error of Counting with a Hæmocytometer",
+		author: "Student (William Sealy Gosset)",
+		year: 1907,
+		publisher: "Biometrika 5(3): 351–360",
+		url: "https://doi.org/10.1093/biomet/5.3.351",
+		alternativetitle: "Student (1907) — unknowingly rediscovered the Poisson distribution"
+	},
+	"student1908probableerror": {
+		title: "The Probable Error of a Mean",
+		author: "Student (William Sealy Gosset)",
+		year: 1908,
+		publisher: "Biometrika 6(1): 1–25",
+		url: "https://doi.org/10.1093/biomet/6.1.1",
+		alternativetitle: "Student (1908) — the t-test"
+	},
+	"pearson1990studentbio": {
+		title: "'Student': A Statistical Biography of William Sealy Gosset",
+		author: "E. S. Pearson, edited with R. L. Plackett",
+		year: 1990,
+		publisher: "Oxford University Press",
+		url: "https://www.gwern.net/docs/statistics/decision/1990-pearson-studentastatisticalbiographyofwilliamsealygosset.pdf",
+		alternativetitle: "Pearson (1990) — the biography of Gosset"
+	},
+	"ziliak2008guinnessometrics": {
+		title: "Retrospectives: Guinnessometrics — The Economic Foundation of 'Student's' t",
+		author: "Stephen T. Ziliak",
+		year: 2008,
+		publisher: "Journal of Economic Perspectives 22(4): 199–216",
+		url: "https://doi.org/10.1257/jep.22.4.199",
+		alternativetitle: "Ziliak (2008) — the economics behind the brewery's statistics"
+	},
+	"murtagh2024guinness": {
+		title: "How the Guinness Brewery Invented the Most Important Statistical Method in Science",
+		author: "Jack Murtagh",
+		year: 2024,
+		publisher: "Scientific American 331(1): 88",
+		url: "https://www.scientificamerican.com/article/how-the-guinness-brewery-invented-the-most-important-statistical-method-in/",
+		alternativetitle: "Murtagh (2024) — the brewery story in Scientific American"
+	},
+	"studentstest_wiki": {
+		title: "Student's t-test",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Student%27s_t-test",
+		alternativetitle: "Student's t-test — definition, history (Gosset/Student 1908; Fisher 1925)"
+	},
 	"boltzmann": {
 		url: "https://web.archive.org/web/20201021205227/http://crystal.med.upenn.edu/sharp-lab-pdfs/2015SharpMatschinsky_Boltz1877_Entropy17.pdf",
 		title: "On the Relationship between the Second Fundamental Theorem of the Mechanical Theory of Heat and Probability Calculations Regarding the Conditions for Thermal Equilibrium",

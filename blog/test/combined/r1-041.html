@@ -348,17 +348,16 @@ footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;co
     return Math.max(0,E-N+C);
   }
   function recompute(){
-    var n,f;
-    idealTurns=[];
-    for(n=0;n<N;n++)idealTurns.push(turnOf(idealPoint(n-1),idealPoint(n),idealPoint(n+1)));
+    var n,f,p,SCALE=0.12,nodeW=[];
     pts=[];
-    for(n=0;n<N;n++){var p=idealPoint(n);pts.push({x:p.x+NOISE[n][0]*SIGMA,y:p.y+NOISE[n][1]*SIGMA});}
-    weights=[];
+    for(n=0;n<N;n++){p=idealPoint(n);pts.push({x:p.x+NOISE[n][0]*SIGMA,y:p.y+NOISE[n][1]*SIGMA});}
     for(n=0;n<N;n++){
-      var at=turnOf(pts[((n-1+N)%N)],pts[n],pts[(n+1)%N]);
-      var dev=Math.abs(at-idealTurns[n]);
-      var w=1-dev/1.6;if(w<0)w=0;if(w>1)w=1;weights.push(w);
+      var ip=idealPoint(n);
+      var dev=Math.hypot(pts[n].x-ip.x,pts[n].y-ip.y);
+      var w=1-dev/SCALE;if(w<0)w=0;if(w>1)w=1;nodeW.push(w);
     }
+    weights=[];
+    for(n=0;n<N;n++)weights.push(Math.min(nodeW[n],nodeW[(n+1)%N]));
     var sig=[];
     for(n=0;n<N;n++)sig.push(Math.hypot(pts[n].x,pts[n].y)-1);
     spec=[];var half=N>>1;

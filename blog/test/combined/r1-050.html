@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Generalisierung als Descent — Fusion Shepard ✕ Coherent World Models</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <style>
 :root{
   --bg:#faf8f1; --bg2:#f1ecdf; --panel:#ffffff; --panel2:#f6f3ea;
@@ -57,6 +55,9 @@ p+p{margin-top:12px}
 ul,ol{margin:10px 0;padding-left:22px}
 li{margin:7px 0}
 .formula{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center}
+.m{font-family:'Cambria Math','STIX Two Math','Latin Modern Math',Georgia,'Times New Roman',serif;font-style:italic;letter-spacing:.02em;white-space:nowrap}
+.m sup,.m sub{font-size:.72em;font-style:normal}
+.m .op{font-style:normal}
 table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
 th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
 th{background:var(--panel2);color:var(--accent);font-weight:600}
@@ -134,7 +135,7 @@ footer code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size
 <section id="these">
   <h2>Kernthese der Fusion</h2>
   <p class="lead">Beide Papiere stellen — aus zwei Richtungen — <em>dieselbe</em> strukturelle Frage: Aus <span class="hl">partiellen, lokalen</span> Daten, wann und <span class="hl">wie stark</span> gehört ein <em>neues</em> lokales Datum zu einem <span class="hl2">kohärenten Ganzen</span>? Für <em>Shepard&nbsp;A</em> ist das der gelernte Reiz&nbsp;X und die Frage, ob ein neuer Reiz&nbsp;Y zur selben <em>natürlichen Art</em> gehört; für <em>Coherent&nbsp;World&nbsp;Models&nbsp;B</em> sind es <em>Traces</em> eines Gegenstands&nbsp;W und die Frage, ob sie per <em>Descent</em> zu einem <em>globalen Modell</em>&nbsp;G verkleben. Die Operation ist identisch — <em>lokale Daten entlang lizenzierter Übergänge auf einem Überdeckungsgitter zusammenführen</em> — nur das Vokabular wechselt.</p>
-  <p>Die Fusion lautet: <span class="hl3">Eine Generalisierung ist ein Descent-Problem in einem metrischen Raum.</span> Der <em>psychologische Raum</em> (A) ist die <em>Stelle</em> 𝒞; die <em>consequential regions</em> (A) bilden eine <em>zulässige Überdeckung</em>; die <em>natürliche Art</em> (A) ist der <em>globale Schnitt</em>&nbsp;G (B); der <em>psychologische Abstand</em>&nbsp;d (A) bestimmt, <em>auf welcher Stufe der „Selbigkeit"</em> (B) wir verkleben; und das <em>exponentielle Gesetz</em> <span class="ktx" data-mode="inline">g(d)=e^{-\lambda d}</span> (A) ist die <em>Klebkraft</em> bzw. der <em>Agreement-Maß</em> (B, der Equalizer). Shepards „universelles Gesetz" ist damit kein Gesetz <em>über</em> die Welt, sondern der <em>einfachste</em> globale Schnitt (minimaler Occam-Penalty), den die Spuren stützen — genau deshalb <em>wirkt</em> er so universell: niedrige Komplexität, hohe Wiederverwendbarkeit über alle Cover hinweg.</p>
+  <p>Die Fusion lautet: <span class="hl3">Eine Generalisierung ist ein Descent-Problem in einem metrischen Raum.</span> Der <em>psychologische Raum</em> (A) ist die <em>Stelle</em> 𝒞; die <em>consequential regions</em> (A) bilden eine <em>zulässige Überdeckung</em>; die <em>natürliche Art</em> (A) ist der <em>globale Schnitt</em>&nbsp;G (B); der <em>psychologische Abstand</em>&nbsp;d (A) bestimmt, <em>auf welcher Stufe der „Selbigkeit"</em> (B) wir verkleben; und das <em>exponentielle Gesetz</em> <span class="m">g(d) = e<sup>−λd</sup></span> (A) ist die <em>Klebkraft</em> bzw. der <em>Agreement-Maß</em> (B, der Equalizer). Shepards „universelles Gesetz" ist damit kein Gesetz <em>über</em> die Welt, sondern der <em>einfachste</em> globale Schnitt (minimaler Occam-Penalty), den die Spuren stützen — genau deshalb <em>wirkt</em> er so universell: niedrige Komplexität, hohe Wiederverwendbarkeit über alle Cover hinweg.</p>
   <p>Und gerade B's Kernwarnung bleibt dabei bestehen: <span class="hl">Kohärenz ist notwendig, aber nicht hinreichend.</span> Der abgeleitte „Schnitt" ist <em>Provisorium, revidierbar, niemals identisch mit W</em>. Eine Generalisierung ist also nur dann <em>wahr</em> (nicht bloß <em>kohärent</em>), wenn sie zusätzlich einen <em>Tarski-Korrespondenztest</em> besteht. Die Fusion hält also zwei Dinge fest zusammen: <b>A liefert die Metrik und die probabilistische Herleitung der Klebkraft</b>; <b>B liefert deren epistemischen Status</b> (Modell, nicht Welt) <b>und das Korrespondenz-Prinzip</b>, das bloße Kohärenz in Wahrheit aufwertet.</p>
 </section>
 
@@ -195,24 +196,24 @@ footer code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size
   <h3>2 · A's Beitrag — die Metrik und ihre Herleitung</h3>
   <ul>
     <li><b>Psychologischer Raum:</b> Aus einer Verwechslungs-Tabelle („wie oft wird Reiz&nbsp;i mit&nbsp;j verwechselt") rekonstruiert <em>Multidimensional Scaling</em> Punkte, sodass <em>Verwechslung = kleine Distanz</em>. Die physikalische Skala (Hz, nm) wird durch eine psychophysische ersetzt.</li>
-    <li><b>Exponentielles Gesetz:</b> <span class="ktx" data-mode="display">g(d) = e^{-\lambda\, d}</span> — die Wahrscheinlichkeit, von X auf Y zu generalisieren, fällt <em>exponentiell</em> mit der psychologischen Distanz; robust über Tauben/Menschen, Farben/Töne/Formen.</li>
-    <li><b>Herleitung aus zwei Prinzipien:</b> (i) <em>natural kinds</em> / consequential regions; (ii) <em>Unsicherheit</em> über Größe &amp; Position der Region. Dann <span class="ktx" data-mode="display">g(\mathbf{x}) = \int_{0}^{\infty} p(s)\,\frac{m(s,\mathbf{x})}{m(s)}\, ds</span> — das Verhältnis Überlappung/Größe, integriert über alle Region-Größen&nbsp;s.</li>
-    <li><b>Robustheit + Erlang:</b> Jede vernünftige Dichte p(s) liefert ≈ exponentiell; <em>Max-Entropie</em> <span class="ktx" data-mode="inline">q(s)=\tfrac{1}{\mu}e^{-s/\mu}</span> + <em>Bayes</em> <span class="ktx" data-mode="inline">p(s)\propto s\,q(s)</span> ergibt die <em>Erlang</em>-Dichte, die <em>exakt</em> <span class="ktx" data-mode="inline">g(d)=e^{-2d/\mu}</span> ergibt.</li>
-    <li><b>Zwei Metriken:</b> <span class="ktx" data-mode="display">d(x,y)=\Big(\sum_{k}|x_k-y_k|^{r}\Big)^{1/r}</span> — <em>separable</em> Dimensionen → L₁ (r=1, Rauten/City-Block); <em>integrale</em> Dimensionen → L₂ (r=2, Kreise/Euklidisch).</li>
+    <li><b>Exponentielles Gesetz:</b> <span class="m">g(d) = e<sup>−λ·d</sup></span> — die Wahrscheinlichkeit, von X auf Y zu generalisieren, fällt <em>exponentiell</em> mit der psychologischen Distanz; robust über Tauben/Menschen, Farben/Töne/Formen.</li>
+    <li><b>Herleitung aus zwei Prinzipien:</b> (i) <em>natural kinds</em> / consequential regions; (ii) <em>Unsicherheit</em> über Größe &amp; Position der Region. Dann <span class="m">g(x) = ∫<sub>0</sub><sup>∞</sup> p(s)·m(s,x)/m(s) ds</span> — das Verhältnis Überlappung/Größe, integriert über alle Region-Größen&nbsp;s.</li>
+    <li><b>Robustheit + Erlang:</b> Jede vernünftige Dichte p(s) liefert ≈ exponentiell; <em>Max-Entropie</em> <span class="m">q(s) = (1/µ)·e<sup>−s/µ</sup></span> + <em>Bayes</em> <span class="m">p(s) ∝ s·q(s)</span> ergibt die <em>Erlang</em>-Dichte, die <em>exakt</em> <span class="m">g(d) = e<sup>−2d/µ</sup></span> ergibt.</li>
+    <li><b>Zwei Metriken:</b> <span class="m">d(x,y) = ( Σ<sub>k</sub> |x<sub>k</sub> − y<sub>k</sub>|<sup>r</sup> )<sup>1/r</sup></span> — <em>separable</em> Dimensionen → L₁ (r=1, Rauten/City-Block); <em>integrale</em> Dimensionen → L₂ (r=2, Kreise/Euklidisch).</li>
   </ul>
 
   <h3>3 · B's Beitrag — Kohärenz, Lizenz und Wahrheit</h3>
   <ul>
     <li><b>Traces</b> O:W→R — <em>transformed, mediated, underdetermined, indexical</em>; nie das Ding an sich. <b>Drei Ebenen der Differenz</b> (Welt/Instrument/Interpretation): Symptom ist eins, die <em>Ursache</em> an der <em>richtigen</em> Stelle lokalisieren.</li>
     <li><b>Sameness-Leiter</b> (=, ≅, ≃, d&le;ε, statistisch, modelltheoretisch) + Verbot des <em>silent upgrade</em>; <b>admissible 𝒯</b> = zugleich <em>Subkategorie</em>, <em>Bayesian Prior</em>, <em>Occam-Penalty</em>.</li>
-    <li><b>Sheaf/Descent + Equalizer/Pullback:</b> <span class="ktx" data-mode="display">F(c)\;\simeq\;\mathrm{Eq}\!\Big(\prod_{i}F(c_i)\;\rightrightarrows\;\prod_{ij}F(c_i\times_{c}c_j)\Big)</span> — <em>kompatible</em> lokale Sektionen auf admissible Überdeckung ⇒ <em>einziges</em> globales Datum; der <em>Equalizer</em> ist der formale <em>Agreement-Maß</em>.</li>
+    <li><b>Sheaf/Descent + Equalizer/Pullback:</b> <span class="m">F(c) ≃ Eq( ∏<sub>i</sub>F(c<sub>i</sub>) ⇉ ∏<sub>ij</sub>F(c<sub>i</sub>×<sub>c</sub>c<sub>j</sub>) )</span> — <em>kompatible</em> lokale Sektionen auf admissible Überdeckung ⇒ <em>einziges</em> globales Datum; der <em>Equalizer</em> ist der formale <em>Agreement-Maß</em>.</li>
     <li><b>Master-Diagramm</b> W → {R_i} → G = lim (G je nach Setting: Set-Limit, ∞-topos-Limit, Posterior-Mode, gelernter Latent).</li>
-    <li><b>Tarski Convention T:</b> <span class="ktx" data-mode="display">S \text{ ist wahr } \iff p</span> — Kohärenz <em>notwendig, nicht hinreichend</em>; drei Pathologien: <em>self-consistent fantasy</em>, <em>factbook</em>, <em>contact-point liar/Halluzination</em>.</li>
+    <li><b>Tarski Convention T:</b> <span class="m">S ist wahr ⇔ p</span> — Kohärenz <em>notwendig, nicht hinreichend</em>; drei Pathologien: <em>self-consistent fantasy</em>, <em>factbook</em>, <em>contact-point liar/Halluzination</em>.</li>
     <li><b>LLM-Anwendung:</b> ein LLM = globaler Schnitt aus dem Korpus-Cover, <em>interne</em> 𝒯 (Tokenisierung, Attention, MLP) aber <em>keine externen</em> O_i zu W; Halluzination = <em>non-glueable presheaf</em>. Remedy: Korrespondenz <em>anhängen</em> (RAG, Tools, formale Verifikation), nicht Kohärenz durch Skalierung reparieren. Plus <b>9-Schritt-Disziplin</b> + 5 Verbote.</li>
   </ul>
 
   <h3>4 · Die fused Math in einem Zug</h3>
-  <p>Alles läuft auf eine Kette: <em>Wahl von 𝒯 (Träger) → p(s) (Maß, max-entropy) → Klebkraft g(d)=e<sup>−λd</sup> → Agreement-Schwelle</em>. Die <em>0.5-Schwelle</em> („dieselbe Art"-Grenze) liegt bei <span class="ktx" data-mode="display">d^{*}=\frac{\ln 2}{\lambda}</span> — in der Visualisierung die <span class="hl3">rosa</span> Iso-Kurve. Innerhalb: Kohärenz; ob die Art <em>echt</em> ist, entscheidet erst der Korrespondenztest (gibt es eine <em>gegründete</em> Region, die X <em>und</em> Y enthält?).</p>
+  <p>Alles läuft auf eine Kette: <em>Wahl von 𝒯 (Träger) → p(s) (Maß, max-entropy) → Klebkraft g(d)=e<sup>−λd</sup> → Agreement-Schwelle</em>. Die <em>0.5-Schwelle</em> („dieselbe Art"-Grenze) liegt bei <span class="m">d* = (ln 2)/λ</span> — in der Visualisierung die <span class="hl3">rosa</span> Iso-Kurve. Innerhalb: Kohärenz; ob die Art <em>echt</em> ist, entscheidet erst der Korrespondenztest (gibt es eine <em>gegründete</em> Region, die X <em>und</em> Y enthält?).</p>
 </section>
 
 <!-- ============ 5. VISUALISIERUNG ============ -->
@@ -294,14 +295,6 @@ footer code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size
 <script>
 (function(){
   "use strict";
-  // ---------- KaTeX ----------
-  function renderMath(){
-    if(!window.katex) return;
-    document.querySelectorAll('.ktx').forEach(function(el){
-      try{ katex.render(el.textContent, el, {displayMode: el.dataset.mode==='display', throwOnError:false}); }catch(e){}
-    });
-  }
-
   // ---------- theme ----------
   var root=document.documentElement;
   var themeBtn=document.getElementById('themeBtn');
@@ -559,8 +552,8 @@ footer code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size
   window.addEventListener('resize',draw);
   var mo=new MutationObserver(draw);
   mo.observe(root,{attributes:true,attributeFilter:['class']});
-  window.addEventListener('load',function(){ renderMath(); draw(); });
-  renderMath(); draw();
+  window.addEventListener('load',function(){ draw(); });
+  draw();
 })();
 </script>
 </body>
