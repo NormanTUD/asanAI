@@ -4824,13 +4824,15 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 2,
+  "works": 3,
   "keys": [
    "img_flaming_heart",
-   "moscowpapyrus"
+   "moscowpapyrus",
+   "brazenheadimage"
   ],
   "cited_in": [
    "geometry_i",
+   "history",
    "untold_history"
   ]
  },
@@ -16229,6 +16231,7 @@
   "cited_in": [
    "alignment",
    "evaluation",
+   "mechanistic_interpretability",
    "reasoning",
    "training_data",
    "unexpected_capabilities"
@@ -16915,6 +16918,7 @@
    "burns2022ccs"
   ],
   "cited_in": [
+   "mechanistic_interpretability",
    "unexpected_capabilities"
   ]
  },
@@ -18170,14 +18174,16 @@
   "city": "New York, USA",
   "year": 1995.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "chalmers1996conscious",
    "chalmers1995hard",
+   "chalmers2016singularity",
    "chalmers1995consciousmind"
   ],
   "cited_in": [
    "human_mind",
+   "metaphysics_of_ai",
    "philosophy"
   ]
  },
@@ -26467,6 +26473,7 @@
    "burns2022ccs"
   ],
   "cited_in": [
+   "mechanistic_interpretability",
    "unexpected_capabilities"
   ]
  },
@@ -27388,6 +27395,7 @@
    "putnam1981reason"
   ],
   "cited_in": [
+   "metaphysics_of_ai",
    "philosophy"
   ]
  },
@@ -41380,8 +41388,9 @@
   "city": "New York, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
+   "gurnee2023spacetime",
    "marks2023geometry",
    "udrescu2020aifeynman",
    "ding2024fittest",
@@ -43321,9 +43330,10 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "templeton2024scaling",
+   "turner2023activation",
    "goldengateclaude"
   ],
   "cited_in": [
@@ -44172,10 +44182,11 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 8,
+  "works": 9,
   "keys": [
    "olsson2022induction",
    "nanda2023grokking",
+   "arditi2024refusal",
    "copysuppression",
    "incontextlearninghead",
    "elhage2022superposition",
@@ -57968,10 +57979,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "monte_carlo_animation_image",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "monte_carlo_animation_image"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -59874,10 +59885,10 @@
   "conf": 0,
   "works": 4,
   "keys": [
+   "diffusion_astronaut_img",
    "cuevadelasmanos_image",
    "img_bessemer_converter",
-   "alphafold_protein_img",
-   "diffusion_astronaut_img"
+   "alphafold_protein_img"
   ],
   "cited_in": [
    "ai_for_science",
@@ -60537,10 +60548,12 @@
   "city": "San Francisco, USA",
   "year": 2025.0,
   "conf": 1,
-  "works": 3,
+  "works": 5,
   "keys": [
    "lindsey2025biology",
    "ameisen2025circuit",
+   "arditi2024refusal",
+   "gurnee2023spacetime",
    "engels2024multidim"
   ],
   "cited_in": [
@@ -60675,7 +60688,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 236,
+  "works": 245,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -60733,8 +60746,14 @@
    "matrix_wiki",
    "tensor_wiki",
    "einstein_notation_wiki",
+   "studentstest_wiki",
    "lowbackgroundsteel",
    "antikytherawiki",
+   "brazenheadwiki",
+   "brazenheadpub",
+   "pygmalionmyth",
+   "mechanicalturk",
+   "zhanghengseismoscope",
    "perceptronswiki",
    "hebbianlearningrule",
    "markkac",
@@ -60912,7 +60931,10 @@
    "magnetic_field_wiki",
    "magnetosphere_wiki",
    "atmosphere_wiki",
-   "goe_wiki"
+   "goe_wiki",
+   "paleontology_history_wiki",
+   "continental_drift_wiki",
+   "chicxulub_wiki"
   ],
   "cited_in": [
    "ai_and_society",
@@ -60929,6 +60951,7 @@
    "origami",
    "philosophy",
    "promptengineering",
+   "statistics_i",
    "topology",
    "untold_history",
    "websearch"
@@ -65998,9 +66021,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "transformer_attention_figure",
    "puppeteer",
-   "googlecustomsearch"
+   "googlecustomsearch",
+   "transformer_attention_figure"
   ],
   "cited_in": [
    "atlas",
@@ -66784,12 +66807,14 @@
   "city": "",
   "year": 2013.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "azizian2025geometries",
    "cuturi2013sinkhorn"
   ],
   "cited_in": [
-   "attentionlab"
+   "attentionlab",
+   "mechanistic_interpretability"
   ]
  },
  {
