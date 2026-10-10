@@ -1,0 +1,16 @@
+{
+  "no": "050",
+  "a": "shepard.html",
+  "b": "coherent_world_models.html",
+  "a_title": "Shepard 1987 · Ein universelles Gesetz der Generalisierung",
+  "b_title": "Coherent World Models — Interaktive Visualisierung",
+  "combined_theme": "generalization-as-descent",
+  "one_line": "Eine Generalisierung ist ein Descent-Problem in einem metrischen Raum: Shepard's exponentielle Klebkraft g(d)=e^(−λd) ist die Agreement-Operation und der natürlichen Art der globale Schnitt — und wie bei Coherent World Models gilt, Kohärenz ist notwenig, aber erst der Tarski-Korrespondenztest macht sie wahr.",
+  "contradictions": [
+    "A deklariert ein universelles, gesetzhaftes Exponentengesetz (ein 'Newton für die Psychologie'), B verweigert jede Modell=Welt-Identifikation (Verbot #3 'G ≡ W', 'nie identisch mit dem Gegenstand') und macht Kohärenz strikt schwächer als Wahrheit.",
+    "A reduziert 'Zusammengehören' auf eine einzige Minkowski-Metrik plus g(d), B besteht auf einer 6-stufigen Sameness-Leiter und verbietet den Silent-Upgrade — genau den Sprung, den A von 'generalisiert stark' zu 'ist die selbe Art' vollzieht.",
+    "A's A-priori ist ein Maß p(s) über die Region-Größe (Max-Entropie + Bayes → Erlang), B's ist die strukturelle lizenzierte Klasse 𝒯 (Subkategorie + Occam-Penalty); A's Anspruch 'für alle Spezies, alle Reize' ist das Risiko des zu permissiven 𝒯, das B als Kohärenz-aufhegend flaggt."
+  ],
+  "resolution": "Das 'universelle Gesetz' wird neu gelesen als der einfachste (minimaler Occam-Penalty) globale Schnitt — ein stabiles Modell, kein Weltbild, revidierbar; g(d) bleibt auf der statistischen Sameness-Stufe und steigt nur per Korrespondenztest weiter (kein Silent Upgrade); 𝒯 ist der Träger und p(s) das Maß darauf, wobei A's Robustheit (jede Dichte → ≈ exponentiell) B's eigene Antwort auf die Vakuum-Warnung ist und den Schnitt stabil macht.",
+  "viz": "2D-metrischer Raum (Minkowski, r ↔ L₁/L₂): Trainingsreiz X in der Mitte, bewegbarer Testreiz Y; Klebkraft-Feld g(d)=e^(−λd) als Heatmap, rosa 0.5-'Art'-Grenze bei d*=ln2/λ, consecutive Regions als admissible Überdeckung (durchgezogen = reale/gegründete Art, gestrichelt = spurious). Rechte Spalte: Kohärenz × Korrespondenz-Verdikt (Echte Generalisierung / Selbstkonsistente Fiktion / Andere Art) plus B's Sameness-Leiter mit erreichter Stufe. Voll interaktiv (Slider für Y, r, λ, µ, Regionen; L₁/L₂-Buttons; Reshuffle; Theme-Toggle), theme-aware, nur Inline-Daten, 0 Console-Meldungen."
+}

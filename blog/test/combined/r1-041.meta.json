@@ -1,0 +1,16 @@
+{
+  "no": "041",
+  "a": "fourier_projection.html",
+  "b": "simplicial_complex_attention.html",
+  "a_title": "Fourier Projection: Extracting Circles from Skewed Embedding Spaces",
+  "b_title": "Simplicial Complexes & The Attention Mechanism",
+  "combined_theme": "fourier-mode-persistent-loop",
+  "one_line": "Der Fourier-Kreis bei Frequenz k (A) ist genau ein 1-Zyklus mit Windungszahl k; die persistente Homologie (B) misst, über welche ε-Schwellen dieser Loop überlebt — Fourier liefert die Form (Windung), Homologie die Robustheit (Persistenz); zusammen ein topologisch-spektrales Profil des gelernten Raums.",
+  "contradictions": [
+    "Kontinuierliche Geometrie (A) vs. diskrete Kombinatorik (B): A misst den Kreis als stetiges Objekt in ℝⁿ (Neigung α,β,γ, Amplitude, Winkel); B zählt einen diskreten Simplexkomplex über Tokens (Simplices, Betti-Zahlen).",
+    "Feste universelle Fourier-Basis (A) vs. datengetriebene ε-Konstruktion (B): A gelingt nur bei Projektion auf die richtige Frequenz k (falsche Frequenz → 'Mismatch'); B baut den Komplex aus den Attention-Gewichten selbst, ohne vorausgesetzte Basis.",
+    "Lineares globales Instrument für einen sauberen Einfrequenz-Kreis, das eine eindeutige Ebene liefert (A) vs. nichtlineare, schwellenwertabhängige Filtration für beliebige Zyklen, die ein Persistenzdiagramm über Skalen ergibt (B)."
+  ],
+  "resolution": "Der Fourier-Kreis ist die stetige Realisierung des β₁-Loops, den Homologie zählt; die Fourier-Basis ist eine a-priori-Bibliothek von 1-Zyklen (Windungszahl k), und Homologie ist der Test, der zeigt, welche die Daten stützen. Fourier liest die Form (Windung/Amplitude) des dominanten Loops, Homologie seine Robustheit (Persistenz über ε). A meldet den Peak, B das Persistenzdiagramm — A ist ein 1-dimensionaler Schnitt von B, der Fourier-Kreis die prominenteste Leiste.",
+  "viz": "Canvas (reines Vanilla, keine CDN-/Netz-Daten): geschlossener Token-Ring (B, β₁=1) mit radialer k-Fach-Modulation (Fourier-Modus k, A); Kanten unter ε ausgeblendet (B's ε-Filterung). Oben der Loop, unten links DFT-Spektrum des Radius (Peak exakt bei k = A's Signatur), unten rechts β₁(ε)-Schritt mit Persistenz-Fläche (B's Signatur). Regler: Windung k (1-8), Rauschen σ, Schwelle ε + ε-Filtrations-Animation. Readouts k, β₁, τ (Persistenz), SNR, det. Modus. Theme-aware (CSS-Variablen), rAF, keine Konsolenfehler."
+}
