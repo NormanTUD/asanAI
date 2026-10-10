@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "latent_semantic_manifolds_in_llm.html",
+  "b": "turing2.html",
+  "a_title": "Latente Semantische Mannigfaltigkeiten in LLMs (Mabrok, 2026)",
+  "b_title": "LLM: Spiral to Turing Machine",
+  "combined_theme": "geometric-quantization-turing-readout",
+  "one_line": "Beide Seiten lesen denselben Schritt eines LLM — die Projektion eines kontinuierlichen Zustands auf ein diskretes Symbol — als verlustbehaftete Quantisierung (A) und als diskrete Turing-Lektüre (B).",
+  "contradictions": [
+    "Treue der Ablesung: B setzt eine faithful Lektüre voraus (die Geometrie 'kollabiert in diskrete Bits', das Head liest den Bit, der 'da ist'); A beweist, sie ist fundamental verlustbehaftet (≈45 % im Gap, irreduzibler Boden m₀.₀₅≈0.05, kein endliches Vokabular erreicht Verzerrung 0).",
+    "Fundamentalität: A macht die kontinuierliche Mannigfaltigkeit fundamental (Token = verlustbehaftete Projektion, vom Transformer erzeugt; Schicht 0 verletzt sie); B macht die diskreten Bits fundamental (die Spirale ist nur die Ansicht, die auf Bits reduziert wird).",
+    "Dynamik: A sieht einen glatten mannigfaltigkeitswertigen Fluss (Neural ODE, Krümmung ≈10⁻⁵, Geometrie wird erhalten); B sieht diskrete read/match/write-Schritte einer Turing-Maschine pro Schicht."
+  ],
+  "resolution": "Derselbe Projektschritt auf zwei Höhenstufen: A's kontinuierlicher Zustand wird pro Schicht per Softmax/Voronoi auf ein diskretes Symbol quantisiert, das B auf dem Band liest. Zuverlässigkeit(B's Read) = Margin(A); der Expressibility Gap(A) = genau die unzuverlässigen Reads(B). Glatte Dynamik ist A's Fluss, pro Schicht gesampelt = B's Schritt. B's 'LLM ist TM' wird auf 'das diskrete Token-Level-Verhalten ist Turing-modellierbar' heruntergestuft, begrenzt durch A's Quantisierungsuntergrenze N^(−2/k).",
+  "viz": "2D semantisches Feld mit Voronoi-Token-Zellen und einer kontinuierlichen Residual-Stream-Bahn; ein wandernder Zustand liest das aktuelle Token auf ein diskretes Turing-Band (B), während der Margin die Lektüre-Treue markiert und der goldene Expressibility Gap (A) die Menge zeigt, in der die Lektüre ambig wird."
+}

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 005 · Selbstorganisierendes Faserbündel (SOM × Manifold Lab)</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --ink:#22201b; --dim:#6f6a60; --line:#d8d2c4;
+    --acc:#0f7a5f; --acc2:#b3470f; --gold:#9a6a06; --data:#8a8f9c;
+    --panel:#ffffff; --canvas:#f4f0e7; --code:#efe9dc;
+  }
+  html.dark{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#5C6781; --line:#1c2740;
+    --acc:#5EF1C4; --acc2:#FF6FB5; --gold:#FFD166; --data:#2E3A57;
+    --panel:#0b1020; --canvas:#05070E; --code:#0f1626;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:400 16px/1.62 ui-sans-serif,system-ui,"Segoe UI",Inter,Georgia,serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+  h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.01em;line-height:1.1;margin-bottom:6px}
+  h2{font-size:21px;font-weight:600;margin:46px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.04em;margin-bottom:26px}
+  p{margin:0 0 14px}
+  strong{font-weight:650}
+  code{font:500 14px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+  .lead{font-size:17.5px}
+  ul{margin:0 0 14px 20px}
+  li{margin:0 0 8px}
+  .role{color:var(--acc);font-weight:650}
+  .roleB{color:var(--acc2);font-weight:650}
+  .viz-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:8px 0}
+  canvas#viz{width:100%;height:560px;display:block;background:var(--canvas);border-radius:9px;touch-action:none}
+  .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  button,select{
+    font:inherit;font-size:13px;color:var(--ink);
+    background:var(--bg);border:1px solid var(--line);
+    padding:8px 13px;border-radius:999px;cursor:pointer;
+  }
+  button:hover,select:hover{border-color:var(--acc)}
+  .slider{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);letter-spacing:.03em}
+  input[type=range]{accent-color:var(--acc);width:150px}
+  .bar{width:100%;height:3px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:12px}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .1s linear}
+  .legend{display:flex;gap:16px;color:var(--dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-top:10px;flex-wrap:wrap}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .note{color:var(--dim);font-size:13.5px;margin-top:10px}
+  .prov{display:flex;flex-direction:column;gap:10px}
+  .prov a{color:var(--acc);text-decoration:none;font-weight:600}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:2px}
+  .kbd{font:500 12px ui-monospace,monospace;background:var(--code);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Das selbstorganisierende Faserbündel</h1>
+  <div class="sub">Fusion aus: kohonen.html ✕ fibrebundle5.html</div>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Werke sind im Kern dasselbe Objekt auf zwei Skalen: eine <strong>zwei­dimensionale Mannigfaltigkeit mit lokaler Nachbarschaft, deren Geometrie durch einen Gauß-Kern lokal verformt wird</strong> — und die dabei topologie­bewußt ist. Der einzige, alles vereinigende Gedanke lautet: <strong>Die Faser wird gelernt, das Bündel wird geformt.</strong></p>
+    <p><span class="role">Kohonen (SOM)</span> läßt ein festes Gitter von Neuronen <em>aus den Daten heraus</em> selbst organisieren: konkurrentiell, unsupervised, ohne Labels. Die Topologie des Gitters bleibt starr, aber die Positionen der Neuronen im Datenraum verformen sich so, daß sie die Daten­verteilung <em>abdecken</em>, ohne deren Topologie zu reißen — ein topologietreuer, 2-D-Codewer­buch, das gegen Ende annealed und <em>konvergiert</em>. Die Lokalität ist eine Gauß-Nachbarschaft um die BMU, die mit der Zeit zusammenzieht (grob&nbsp;→&nbsp;fein).</p>
+    <p><span class="roleB">Fibrebundle-Lab</span> zeigt einen <em>Stapel von 2-D-Ebenen</em> — ein Bündel von Fasern über einer Basis — dessen Geometrie <em>von außen</em> lokal verformt wird (L-Klick dehnt, R-Klick staucht, Shift verdreht), wobei jede Verformung mit einem Gauß-Einfluß wirkt und <em>nach oben kaskadiert</em>. Ein Vortex/Torus-Twist darf dabei die Topologie der Ebene <em>verändern</em>; Bedeutung (ein Satz) wird als Fasern durch die Ebenen gefädelt. Es gibt keinen Zielzustand — es ist ein permanentes Skulptur-Feld.</p>
+    <p>Die Fusion: ein <strong>selbstorganisierendes Faserbündel</strong> über einer Datenbasis. Jede Faser ist ein <em>lokal topologietreuer, selbstorganisierter</em> SOM-Abbild (die <em>Faser</em>, grob gelernt, konvergent); die <em>globale Verklebung</em> der Fasern darf frei <em>verdreht</em> werden (das <em>Bündel</em>, top-down, kaskadierend, nichttriviale Torsion). Beide Teile teilen sich <strong>einen einzigen Gauß-Lokalitäts­kern</strong> — derselbe Term, der bei der SOM die Nachbarschaft ist und im Lab den räumlichen Einfluß. Lokal = lernen&nbsp;&amp; konvergieren; global = formen&nbsp;&amp; kaskadieren. Das ist die eine integrierte Position.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <ul>
+      <li><strong>Entstehung der Geometrie — bottom-up vs. top-down.</strong>
+        <span class="role">Kohonen</span>: Die Geometrie <em>entsteht ungeleitet</em> aus den Daten — konkurrentielles, unsupervisedes Lernen, keine Labels, keine Absicht („die Karte findet ihre Form selbst“).
+        <span class="roleB">Fibrebundle</span>: Die Geometrie wird <em>von außen aufgezwungen</em> — explizite Benutzerverformungen, die Bedeutung wird <em>imponiert</em>, nicht entdeckt.
+        <em>Unvereinbar im Ansatz:</em> emergent/entdeckt vs. autoral/aufgezwungen.</li>
+      <li><strong>Topologie — invariant vs. verformbar.</strong>
+        <span class="role">Kohonen</span>: Topologieerhaltung ist das <em>Kernziel</em>; das Gitter darf die Topologie der Daten nicht zerreißen oder kollabieren lassen (topologietreue Karte, näherungsweise homöomorph).
+        <span class="roleB">Fibrebundle</span>: Die Deformation <em>verändert</em> die Topologie explizit — „Vortex / Torus-Twist“ dreht die Ebene in einen Torus (nichttriviale Topologie).
+        <em>Unvereinbar im Ziel:</em> Topologie als zu <em>erhaltende</em> Invariante vs. Topologie als zu <em>verändernder</em> Gegenstand.</li>
+      <li><strong>Prozeß — konvergent vs. offen.</strong>
+        <span class="role">Kohonen</span>: Der Prozeß <em>konvergiert</em>; Lernrate <code>lr=.46·(.008/.46)^f</code> und Radius <code>rad=(G·.62)·(.9/(G·.62))^f</code> werden annealed und das Training endet endgültig bei <code>T=9000</code> Schritten (Fortschrittsbalken füllt sich).
+        <span class="roleB">Fibrebundle</span>: Es gibt <em>keinen</em> Zielzustand — ein permanentes, interaktives Feld, in dem Verformungen akkumulieren und kaskadieren; nichts „endet“.
+        <em>Unvereinbar im Ablauf:</em> endlicher, konvergenter Prozeß mit Attraktor vs. endloses, nicht-konvergierendes Skulptur-Feld.</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>1. Faser lernt, Bündel wird geformt.</strong> Der scheinbare Widerspruch (emergent vs. autoral) ist die <em>Aufteilung einer Aufgabe auf zwei Skalen</em>: Die <em>lokale</em> Geometrie jeder Faser wird <em>datengesteuert</em> und selbstorganisierend erzeugt (SOM-Update, konkurrentiell, lokal). Der Benutzer legt dagegen nur <em>globale Randbedingungen</em> an (die Torsion). Die Fasern relaxieren dann selbstorganisierend in eine niedrig­energetische, topologietreue Konfiguration unter diesem globalen Zwang. Lokal = emergent; global = gesteuert. Kein Widerspruch, sondern Komplementärfunktionen.</p>
+    <p><strong>2. Lokal trivial, global torsi­er­bar — genau das <em>ist</em> ein Faserbündel.</strong> Ein Bündel ist <em>lokal</em> trivials (jede Faser&nbsp;≅&nbsp;Basis, also lokal topologietreu) — das liefert die SOM. <em>Global</em> darf es eine nichttriviale Verklebung/Torsion tragen — das liefert das Fibrebundle-Lab. Die „Widersprüche“ sind dieselbe Struktur von zwei Seiten: die <em>Faser</em> (lokal, homöomorph) und die <em>Verklebung</em> (global, verdrehbar). Auflösung als Invariante: <em>Topologie innerhalb jeder Faser erhalten, Torsion zwischen den Fasern frei lassen.</em></p>
+    <p><strong>3. Grob→fein-Annailing verbindet Kaskade und Konvergenz.</strong> Die <em>große, kaskadierende</em> Verformung (Fibrebundle, top-down) ist die <em>frühe, grobe</em> Phase; die <em>feine</em> SOM-Nachbarschafts-Annealing ist die <em>späte, feine</em> Phase. Erst globale, kaskadierende Twists setzen die grobe Topologie; dann verfeinert die schrumpfende Gauß-Nachbarschaft die Abdeckung — und der Prozeß konvergiert. Das offene Skulptur-Feld erhält so einen Attraktor; der konvergierende SOM-Prozeß wird grob→fein gesteuert. Ergebnis: ein <em>annealed, self-organizing bundle</em> — konvergent <em>und</em> global torsierbar.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p><strong>Das Objekt.</strong> Basis <code>B</code> = die 2-D-Datenverteilung. Faser <code>F</code> = eine 2-D-Ebene (ein SOM-Gitter). Totalraum <code>E</code> = Stapel von <em>L</em> Fasern mit Abbildung <code>π:E→B</code>. Jede Faser ist ein <em>selbstorganisierter</em> SOM-Abbild der Basis (oder einer um die Fasentorsion rotierten Ansicht); die Faser­<em>torsion</em> <code>θ</code> ist der Winkel, um den aufeinander­folgende Fasern relativ zueinander verdreht sind.</p>
+    <p><strong>Die SOM (Faser, lokal, konvergent).</strong> Neuronen <code>w_i ∈ ℝ²</code> auf einem <code>G×G</code>-Gitter. Pro Datenpunkt <code>x</code>: BMU <code>c = argmin_i ‖w_i − x‖</code>. Nachbarschaft <code>h_ij(t) = η(t)·exp(−‖i−j‖²/2σ²(t))</code>. Update <code>w_i += h_ij·(x − w_i)</code>. <code>η</code> und <code>σ</code> annealen (grob→fein). Folge: topologisch geordnetes, konvergentes 2-D-Codewerkbuch; Nachbar-Neuronen&nbsp;↔&nbsp;Daten­nachbarn (Topologie­erhaltung). Die SOM-Farbcodierung folgt hier dem Polarwinkel im Datenraum (Visueller, kein gelerntes Cluster).</p>
+    <p><strong>Das Lab (Bündel, global, kaskadierend).</strong> Sechs gestapelte 2-D-Ebenen; Deformation <code>d</code> wirkt räumlich mit Gauß-Ablöschen <code>exp(−dist²/25)</code> und kaskadiert nach oben mit Abklingung <code>s / (1 + (i − l)·0.3)</code>. Vortex/Twist = lokale Rotation (Winkel&nbsp;∝&nbsp;s·influence) — eine nichttriviale Verklebung (Torus-Torsion). Ein Satz wird als senkrechte „Kelp“-Röhren (Fasern) durch die Ebenen gefädelt: Position im Stapel ≈ Position im Netzwerk.</p>
+    <p><strong>Ein Kern, zwei Rollen.</strong> Der <em>selbe</em> Term <code>K(d) = e^(−d²/2σ²)</code> ist bei der SOM die <em>Nachbarschaftsfunktion</em> (d = Gitter­distanz, topologischer Raum) und im Lab der <em>Deformations­einfluß</em> (d = räumliche Distanz, eingebetteter Raum). Das fusionierte Bündel benutzt diesen einen Kern für <em>beides</em>: lokales Lernen <em>und</em> lokale Verformung. Daraus folgt die zentrale Invariante: <em>topologietreu innerhalb der Faser, torsierbar zwischen den Fasern.</em></p>
+    <p><strong>Dynamik (fusioniert, grob→fein).</strong> (i) Grobe Phase: globale Fasentorsion + kaskadierende Großverformung setzt die grobe Topologie. (ii) Feine Phase: SOM-Annailing mit schrumpfendem Gauß-Radius verfeinert die Abdeckung jeder Faser. (iii) Konvergenz: Attraktor = ein <em>verdrehtes, selbstorganisiertes</em> Bündel — lokal topologietreue SOM-Fasern, global torsi­er­bar. Bottom-up (Daten→Faser) und top-down (Bündel→Faser) wirken auf denselben Fasern zusammen.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — ein selbstorganisierendes Faserbündel</h2>
+    <p class="note">Vorderste Ebene = die <strong>SOM</strong>: ein <code>9×9</code>-Gitter organisiert sich datengesteuert, topologietreu, mit Gauß-Nachbarschaft &amp; Annailing, um die Datenwolke abzudecken (BMU-Puls zeigt die aktive Nachbarschaft). Der Stapel dahinter = das <strong>Faserbündel</strong>: jede Ebene ist eine Faser desselben selbstorganisierten Abbilds. Der <strong>Twist-Slider</strong> verdreht die Fasern kaskadierend (globale Torsion des Bündels) — lokal bleibt jede Faser topologietreu, global entsteht Torsion. <span class="kbd">Klick</span> injiziert einen Datenpunkt (bottom-up, datengesteuert); die Auswahl wechselt die Datentopologie.</p>
+
+    <div class="viz-box">
+      <canvas id="viz" width="680" height="560"></canvas>
+      <div class="hud">
+        <select id="shape">
+          <option value="ring">◍ Ring</option>
+          <option value="blobs">⁂ Cluster</option>
+          <option value="spiral">◉ Spirale</option>
+          <option value="cross">✚ Kreuz</option>
+          <option value="square">▦ Fläche</option>
+        </select>
+        <button id="play">⏸ Pause</button>
+        <button id="reset">↺ Neu</button>
+        <span class="slider">Bündel-Twist
+          <input type="range" id="twist" min="-180" max="180" value="60">
+          <span id="twistval">60°</span>
+        </span>
+        <button id="theme">◐ Theme</button>
+      </div>
+      <div class="bar"><i id="prog"></i></div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--data)"></i>Daten (Basis)</span>
+        <span><i class="dot" style="background:var(--acc)"></i>Neuron / Faser</span>
+        <span><i class="dot" style="background:var(--gold)"></i>BMU + Gauß-Nachbarschaft</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../kohonen.html">kohonen.html</a>
+        <div class="d">Self-Organizing Map (Kohonen): ein 14×14-Neuronen­gitter organisiert sich unsupervised, konkurrentiell, topologietreu und gegen Ende annealend, um eine 2-D-Datenverteilung (Ring/Cluster/Spirale/Kreuz/Fläche) abzudecken — Gauß-Nachbarschaft <code>exp(−g²/s)</code>, BMU-Update, konvergierend bis T=9000.</div>
+      </div>
+      <div>
+        <a href="../fibrebundle5.html">fibrebundle5.html</a>
+        <div class="d">Topological Manifold Lab / Topological Sculptor v9: sechs gestapelte 2-D-Ebenen (Faserbündel über einer Basis) mit lokalen Gauß-Verformungen <code>exp(−dist²/25)</code>, die nach oben kaskadieren (<code>1/(1+(i−l)·0.3)</code>), inkl. Vortex/Torus-Twist; ein Satz wird als senkrechte Fasern („Kelp“) durch die Ebenen gefädelt — top-down, autoral, offen (kein Zielzustand).</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz'), ctx=cv.getContext('2d');
+  var M=44, G=9, L=5;
+  var W=0,H=0;
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var nodes=[], data=[], t=0, T=6000, playing=true, pulse=null;
+  var twist=60, twistRad=twist*Math.PI/180;
+  var theme=null;
+
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){var x=cs.getPropertyValue(n).trim();return x||fb;}
+    return {
+      canvas:v('--canvas','#05070E'), ink:v('--ink','#EAF0FF'),
+      dim:v('--dim','#5C6781'), acc:v('--acc','#5EF1C4'),
+      acc2:v('--acc2','#FF6FB5'), gold:v('--gold','#FFD166'),
+      data:v('--data','#2E3A57')
+    };
+  }
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    W=r.width; H=r.height;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  var R=function(a,b){return a+Math.random()*(b-a);};
+  function makeData(kind){
+    var p=[],N=1400,i,x,y,a,r,c;
+    for(i=0;i<N;i++){
+      if(kind==='ring'){a=R(0,6.283);r=R(.45,.78);x=.5+Math.cos(a)*r/2;y=.5+Math.sin(a)*r/2;}
+      else if(kind==='blobs'){c=[[.30,.32],[.70,.34],[.50,.74]][i%3];x=c[0]+R(-1,1)*.09;y=c[1]+R(-1,1)*.09;}
+      else if(kind==='spiral'){a=R(0,4.2*Math.PI);r=.03+a*.03;x=.5+Math.cos(a)*r;y=.5+Math.sin(a)*r;x+=R(-1,1)*.015;y+=R(-1,1)*.015;}
+      else if(kind==='cross'){if(i%2){x=R(.14,.86);y=.5+R(-1,1)*.07;}else{x=.5+R(-1,1)*.07;y=R(.14,.86);}}
+      else {x=R(.14,.86);y=R(.14,.86);}
+      p.push([x,y]);
+    }
+    return p;
+  }
+
+  function reset(){
+    t=0; nodes=[];
+    for(var i=0;i<G;i++)for(var j=0;j<G;j++)
+      nodes.push({i:i,j:j,x:.5+R(-1,1)*.05,y:.5+R(-1,1)*.05});
+    data=makeData(document.getElementById('shape').value);
+    pulse=null;
+  }
+
+  function step(){
+    var f=Math.min(1,t/T);
+    var lr=0.5*Math.pow(0.01/0.5,f);
+    var rad=(G*0.6)*Math.pow(0.8/(G*0.6),f);
+    var s=rad*rad*2;
+    var d=data[(Math.random()*data.length)|0];
+    var bmu=nodes[0],best=1e9,n,dx,dy,q;
+    for(var a=0;a<nodes.length;a++){n=nodes[a];dx=n.x-d[0];dy=n.y-d[1];q=dx*dx+dy*dy;if(q<best){best=q;bmu=n;}}
+    for(var b=0;b<nodes.length;b++){n=nodes[b];var gi=n.i-bmu.i,gj=n.j-bmu.j,g2=gi*gi+gj*gj;if(g2>s*4.5)continue;var h=Math.exp(-g2/s)*lr;n.x+=h*(d[0]-n.x);n.y+=h*(d[1]-n.y);}
+    pulse={x:d[0],y:d[1],bx:bmu.x,by:bmu.y,r:rad};
+    t++; if(t>=T)t=T;
+  }
+
+  function nodeXY(n,layer){
+    var ang=twistRad*(layer/(L-1));
+    var cx=n.x-0.5, cy=n.y-0.5;
+    var rx=cx*Math.cos(ang)-cy*Math.sin(ang);
+    var ry=cx*Math.sin(ang)+cy*Math.cos(ang);
+    var scale=1-layer*0.045;
+    var sx=0.5+rx*scale, sy=0.5+ry*scale;
+    var off=layer*13;
+    return [M+sx*(W-2*M)+off, M+sy*(H-2*M)-off];
+  }
+  function nodeColor(n){
+    var ang=Math.atan2(n.y-0.5,n.x-0.5);
+    var hue=((ang*57.3+360)%360+360)%360;
+    var light=isDark()?56:42;
+    return 'hsl('+hue.toFixed(0)+' 70% '+light+'%)';
+  }
+
+  function drawLayer(layer,alpha){
+    ctx.lineWidth=1;
+    for(var i=0;i<G;i++)for(var j=0;j<G;j++){
+      var n=nodes[i*G+j];
+      var rr=(j<G-1)?nodes[i*G+j+1]:null;
+      var dd=(i<G-1)?nodes[(i+1)*G+j]:null;
+      if(rr){var A=nodeXY(n,layer),B=nodeXY(rr,layer);ctx.strokeStyle=theme.acc;ctx.globalAlpha=alpha*0.45;ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();}
+      if(dd){var C=nodeXY(n,layer),D=nodeXY(dd,layer);ctx.strokeStyle=theme.acc;ctx.globalAlpha=alpha*0.45;ctx.beginPath();ctx.moveTo(C[0],C[1]);ctx.lineTo(D[0],D[1]);ctx.stroke();}
+    }
+    for(var k=0;k<nodes.length;k++){
+      var p=nodeXY(nodes[k],layer);
+      ctx.fillStyle=nodeColor(nodes[k]);
+      ctx.globalAlpha=alpha;
+      ctx.beginPath();ctx.arc(p[0],p[1],layer===0?2.6:2.0,0,6.283);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+  function drawPulse(){
+    var P=function(x){return M+x*(W-2*M);}, Q=function(y){return M+y*(H-2*M);};
+    ctx.strokeStyle=theme.gold;ctx.globalAlpha=0.7;ctx.lineWidth=1.3;
+    ctx.beginPath();ctx.moveTo(P(pulse.x),Q(pulse.y));ctx.lineTo(P(pulse.bx),Q(pulse.by));ctx.stroke();
+    ctx.globalAlpha=1;
+    ctx.fillStyle=theme.gold;
+    ctx.beginPath();ctx.arc(P(pulse.x),Q(pulse.y),3.2,0,6.283);ctx.fill();
+    ctx.shadowBlur=16;ctx.shadowColor=theme.gold;
+    ctx.beginPath();ctx.arc(P(pulse.bx),Q(pulse.by),5,0,6.283);ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.strokeStyle=theme.gold;ctx.globalAlpha=0.3;
+    ctx.beginPath();ctx.arc(P(pulse.bx),Q(pulse.by),Math.max(6,pulse.r*(W/G)*0.9),0,6.283);ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+
+  function draw(){
+    ctx.fillStyle=theme.canvas; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=theme.data;
+    for(var k=0;k<data.length;k+=2){var d=data[k];ctx.fillRect(M+d[0]*(W-2*M),M+d[1]*(H-2*M),1.6,1.6);}
+    for(var layer=L-1;layer>=0;layer--){
+      var alpha=0.28+0.72*(1-layer/(L-1));
+      drawLayer(layer,alpha);
+    }
+    if(pulse) drawPulse();
+    document.getElementById('prog').style.width=(t/T*100)+'%';
+  }
+
+  function loop(){
+    if(playing && t<T){ for(var k=0;k<20;k++) step(); }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  document.getElementById('play').onclick=function(e){playing=!playing;e.target.textContent=playing?'⏸ Pause':'▶ Play';};
+  document.getElementById('reset').onclick=function(){reset();};
+  document.getElementById('shape').onchange=function(){reset();};
+  document.getElementById('twist').oninput=function(e){twist=+e.target.value;twistRad=twist*Math.PI/180;document.getElementById('twistval').textContent=twist+'°';};
+  document.getElementById('theme').onclick=function(){document.documentElement.classList.toggle('dark');theme=readTheme();};
+  cv.onpointerdown=function(e){
+    var r=cv.getBoundingClientRect();
+    var dx=(e.clientX-r.left-M)/(r.width-2*M);
+    var dy=(e.clientY-r.top-M)/(r.height-2*M);
+    if(dx>0&&dx<1&&dy>0&&dy<1){data.push([dx,dy]);if(t>=T)t=0;}
+  };
+  window.addEventListener('resize',resize);
+  new MutationObserver(function(){theme=readTheme();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  theme=readTheme(); resize(); reset(); loop();
+})();
+</script>
+</body>
+</html>

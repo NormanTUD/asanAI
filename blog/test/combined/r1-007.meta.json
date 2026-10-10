@@ -1,0 +1,16 @@
+{
+  "no": "007",
+  "a": "qkv.html",
+  "b": "simplicial_complex_attention5.html",
+  "a_title": "Attention — Watch It Work",
+  "b_title": "Attention Creates Simplicial Complexes",
+  "combined_theme": "one-attention-field-two-readouts",
+  "one_line": "Attention is a single similarity field: A (qkv) reads it as a soft, directed convex combination of value vectors, B (simplicial) reads the same field, symmetrized and thresholded at eps, as a simplicial skeleton with Betti numbers.",
+  "contradictions": [
+    "A: output is a continuous convex combination o=Sigma alpha_j v_j (every token always contributes, no threshold, always fully connected) vs B: connectivity is binary and thresholded (an edge exists only if mutual attention > eps, a combinatorial complex).",
+    "A: attention is directed/asymmetric (one chosen query token reads keys then values) vs B: attention is symmetrized into undirected mutual agreement (edge weight = min(alpha_ij, alpha_ji), needs both directions).",
+    "A: the learned projections W_Q/W_K/W_V are the mechanism (twist knobs define what is relevant/what is read) vs B: raw identity dot/cosine similarity with 'no learned weights for clarity' on fixed 3D semantic axes."
+  ],
+  "resolution": "One soft adjacency field s(i,j)=(W_Q x_i).(W_K x_j): A integrates the soft row against V (content readout), B symmetrizes with min, thresholds at eps and fills triangles (topology). B is exactly A at W=I; W and the softmax temperature reshape the field while eps sets the soft<->discrete cut, so both the convex readout and the Betti invariants are functions of the same field.",
+  "viz": "Theme-aware 2D canvas showing one field with two readouts at once: faint lines = soft mutual-attention field (thickness ~ min(alpha_ij,alpha_ji)), bright lines = eps-thresholded 1-skeleton, filled shapes = 2-simplices, and the selected query's output o=Sigma alpha v as an arrow. Knobs for W_Q/W_K/W_V twist, temperature T, threshold eps, and query token, with a live edges/triangles/beta0/beta1 readout. Zero external requests."
+}

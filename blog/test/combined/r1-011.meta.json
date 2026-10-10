@@ -1,0 +1,16 @@
+{
+  "no": "011",
+  "a": "posembed2.html",
+  "b": "tropische_geometrie_tiefer_neuronaler_netze_very_simple.html",
+  "a_title": "Positional Encoding as Overlapping Circles (sinusoidale Positionscodierung, Basis 10000)",
+  "b_title": "Die geheime Rechenkunst hinter neuronalen Netzen - ganz einfach (Tropical Geometry of Deep Neural Networks, Zhang/Naitzat/Li 2018)",
+  "combined_theme": "superposition-und-faltung",
+  "one_line": "Ein Netz ist eine zweistufige Pipeline: lineare, parallele, additive Superposition vieler Frequenzen codiert jede Position als glatten, lokal treuen, eindeutigen Fingerabdruck (A, Repraesentation, 'Wo'), und tropische, sequenzielle Faltung dieser Signatur Schicht fuer Schicht macht daraus exponentiell reiche stueckweise lineare Funktionen (B, Berechnung, 'Was'); A ist genau die Eingabe, auf die B wirkt.",
+  "contradictions": [
+    "A: ein einziger flacher, paralleler, additiver Durchlauf ueber viele Frequenzdimensionen reicht schon fuer einen eindeutigen Fingerprint (Unterscheidungskraft linear in der Breite, keine Schichten) - B: flach ist schwach, nur die Tiefe erzeugt exponentiell viele Regionen (Breite polynomial, Tiefe exponentiell, Theorem 6.3).",
+    "A: das Objekt ist glatt, oszillatorisch und lokal treu (nahe Positionen -> aehnliche Signaturen, nah bleibt nah) - B: das Objekt ist stueckweise linear mit Knicken (nicht glatt) und faltet nahe Eingaben weit auseinander (nicht-lokal).",
+    "A zaehlt Reichtum diskriminierend (wie verschieden die Fingerabdruck-Vektoren zueinander sind, Metrik/Einbettung) - B zaehlt Reichtum kombinatorisch (Anzahl der linearen Regionen, topologisches Zaehlen): zwei verschiedene Masse fuer 'Staerke'."
+  ],
+  "resolution": "Kein echter Konflikt, sondern zwei Serienstufen derselben Pipeline: A ist die Eingabe-Seite (glatt, lokal, additiv, linear in der Breite), B die Funktions-Seite (geknickt, nicht-lokal, tropisch, exponentiell in der Tiefe). A's parallele Superposition erzeugt genau die glatte, unterscheidbare Signatur, auf die B's Faltung wirkt (A's Ausgang ist B's Eingang). Die 'Addition' (Summe von Sinus, A) ist der lineare Kombinierer, das 'max' (tropisch, B) der nichtlineare; Lokalitaet ist eine Ressource, die ausgegeben wird: das Netz startet glatt (A) und falt sich in die Komplexitaet (B). Lineare Superposition baut Identitaet, tropische Superposition baut Funktion.",
+  "viz": "Eins Canvas, zwei Panel in einer Pipeline: oben (A) glatte sinusoidale Fingerabdruck-Kurven (d Dimensionen, violetter Markerpunkt bei Position p, Nachbar-Marker zeigt Lokalitaet); der Wert der groebsten Kurve s(p) ist die Bruecke; unten (B) wird s(p) L-mal mit k Zaehnen gefaltet -> k^L Regionen (schraffiert wenn <=64) aus L*k Neuronen, violetter Ausgangspunkt f_L(s(p)). Regler: Position p, Frequenzdimensionen d, Zaehne k, Tiefe L; Readouts: s(p), Regionen k^L, Neuronen L*k, Ausgang f_L(s(p)), Ratio Regionen/Neuronen. Theme-aware via CSS-Variablen (html.dark) + MutationObserver + Theme-Button; alle Daten inline, keine Netzwerke-Calls."
+}

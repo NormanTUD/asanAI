@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nächste-Nachbar-Geometrie: Attention und Wortausgabe — Fusion 010</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#d99a12; --panel:rgba(255,253,248,.95); --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4b73a; --panel:rgba(20,27,36,.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:66px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:16px;color:var(--muted);max-width:62ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:10px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:26px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin:1px 4px 1px 0}
+.tag.b{background:var(--accent2-soft);color:var(--accent2)}
+.eq{font-family:var(--mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto}
+.eq sup,.eq sub{font-size:.7em}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted)}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+canvas{display:block;width:100%;height:440px;border-radius:12px;border:1px solid var(--line);cursor:crosshair}
+.ctl{margin:14px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:110px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--accent)}
+.ro .box.amber{background:var(--amber-soft)}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--accent2-soft)}
+.ro .box.rose .v{color:var(--accent2)}
+.stat{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px}
+.stat b{color:var(--amber)}
+.viz-note{font-size:13px;color:var(--muted);margin-top:12px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">☀︎ / ☾</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion · Runde 1 · Paar 010 · KI/Geometrie</div>
+  <h1>Die <em>Nächste-Nachbar</em>-Maschine: wie Attention und Wortausgabe dieselbe Geometrie sind</h1>
+  <p class="sub">Zwei Papiere, ein gemeinsamer Kern: Ein Transformer arbeitet in Vektorräumen, in denen <b>Distanz Bedeutung ist</b>. Attention (Punkt A) und die Wortausgabe (Punkt B) sind dieselbe Distanzgeometrie, nur bei zwei verschiedenen &bdquo;Temperaturen&ldquo; gelesen — einmal weich und lesbar, einmal hart und mehrdeutig.</p>
+  <p class="fuse-line">Fusion aus: <b>paper/AttentionViz.html</b> ✕ <b>latent_semantic_manifolds_in_llm_very_simple.html</b></p>
+</header>
+
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p>Beide Papiere beschreiben denselben Grundmechanismus aus zwei Perspektiven: <b>Ein Transformer ist eine Kette von Nächste-Nachbar-Operationen im Vektorraum.</b> Attention fragt &bdquo;welcher Token ist mir ähnlich?&ldquo; (Punkt A: das Skalarprodukt &langle;Q,K&rangle; wird zur Attention-Gewichtung, Nähe = starke Attention). Die Ausgabe fragt &bdquo;welches Wort ist meinem Gedanken am nächsten?&ldquo; (Punkt B: ein kontinuierlicher latenter Punkt trifft auf endliche Wortanker, das nächste Wort gewinnt). Beides ist <em>Nächste-Nachbar</em> — einmal <b>weich</b> (Softmax, alles gewichtet, kein harter Gewinner) und einmal <b>hart</b> (argmin, genau ein Wort).</p>
+  <p>Die integrierte Position lautet: <b>Die Form der gemeinsamen Query/Key-Wolke (A) und die Form des latenten Gedankenfelds (B) sind zwei Ansichten einer und derselben niedrigdimensionalen Geometrie.</b> Attention ist die <em>verlustfrei darstellbare, lesbare</em> Seite dieser Geometrie; die Diskretisierung in ein Wort ist die <em>verlustbehaftete, mehrdeutige</em> Seite. Dasselbe Distanzgesetz, das einen Attention-Head zu einer &bdquo;visuellen Signatur&ldquo; macht (A), erzeugt am Rand des Raums die unsichtbare Mauer, an der &bdquo;einige Gedanken nie genau in ein Wort passen&ldquo; (B).</p>
+  <p class="note violet"><b>Der Schraubstock der Fusion:</b> Es gibt genau einen Regler, der beide Papiere verbindet — die <b>Weichheit / Temperatur</b>. Weich = weiche Attention (viele Wörter/Token gleichzeitig relevant, Muster lesbar, Punkt A). Hart = harte Wort-Entscheidung (ein Wort gewinnt, Zellgrenzen = Mehrdeutigkeit, Punkt B). Die Visualisierung unten dreht an genau diesem Regler und zeigt, wie aus derselben Geometrie erst die lesbare Signatur und dann der &bdquo;Expressibility Gap&ldquo; werden.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht in den Fakten, aber sie nehmen <b>inkompatible Stellungen</b> zu ein und derselben geometrischen Tatsache ein. Drei konkrete Punkte:</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">W1 · Verlustfrei &amp; ohne Informationsverlust (A) vs. unüberwindbarer Verlust (B)</h3>
+    <p><span class="tag">A</span> AttentionViz baut seine gesamte Methode darauf, dass man Queries/Keys verschieben und skalieren darf <b>ohne die Attention zu verändern</b> (Softmax ist translationsinvariant; Q&middot;c / K&middot;1/c lässt das Skalarprodukt gleich). Der beworbene Nutzen ist wörtlich: &bdquo;Attention <b>ohne Informationsverlust</b> visualisierbar machen&ldquo;. Das Bild der Geometrie ist <em>treu</em> — nichts geht verloren.</p>
+    <p><span class="tag b">B</span> Mabrok sagt genau das Gegenteil über den entscheidenden Schritt: Die Ausgabe ist eine <b>verlustbehaftete Kompression</b> von Bedeutung, und die unsichere Zone hat einen <em>Boden</em>, &bdquo;den keine Technik erreichen kann&ldquo; — den <b>Expressibility Gap</b>. Geometrie hier bedeutet: etwas geht <em>prinzipbedingt</em> verloren.</p>
+    <p><b>Tension:</b> A konstruiert ein <em>verlustfreies</em> geometrisches Bild; B beweist einen <em>Verlust-Floor</em>, den keine Geometrie entfernt. &bdquo;Nichts geht verloren&ldquo; vs. &bdquo;etwas geht zwangsläufig verloren&ldquo;.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W2 · Geometrie als Transparenz (A) vs. Geometrie als Wand (B)</h3>
+    <p><span class="tag">A</span> liest die Distanzgeometrie als <b>Zugang</b>: &bdquo;Die <em>Form</em> eines Attention-Heads wird zur visuellen Signatur&ldquo; — Nähe &hArr; hohe Attention ist ein sauberes, ausnutzbares Gesetz (Spearman ≈ −0.938 in BERT). Wer die Wolke sieht, sieht, was der Head tut.</p>
+    <p><span class="tag b">B</span> liest dieselbe Prämisse (Distanz kodiert Bedeutung) als <b>Grenze</b>: &bdquo;Einige Gedanken passen <em>nie</em> genau in ein Wort&ldquo;. 40–51 % aller Wortvorhersagen liegen in der unsicheren Zone; die schwersten ~5 % sind bei <em>allen</em> Modellen gleich schwer — das ist Sprachambiguität, kein Modell-Fehler.</p>
+    <p><b>Tension:</b> Gleiche Prämisse, entgegengesetzte Lesart. Für A macht Distanz das Innere <em>lesbar</em>; für B macht Distanz den Rand <em>unüberschreitbar</em>.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W3 · Niedrigdimensionalität durch Projektion (A) vs. intrinsisch (B)</h3>
+    <p><span class="tag">A</span> nimmt einen <b>64-dimensionalen</b> Q/K-Raum und <em>quetscht</em> ihn per t-SNE / UMAP / PCA auf 2D. Die sichtbare Struktur (Spiralen, Cluster) entsteht erst <em>nach</em> der Projektion — sie ist Teilweise Wahl des Abbildungsverfahrens.</p>
+    <p><span class="tag b">B</span> behauptet, der Datenraum sei <b>von vornherein niedrig-dimensional</b> (~20 gemessene effektive Freiheitsgrade), und die Geometrie (Voronoi-Zellen, Skalengesetz) ist eine <em>Eigenschaft des Raums selbst</em> — unabhängig davon, wie man ihn plottet. Die 2D-Wiese ist hier eine Vereinfachung, nicht die Quelle der Struktur.</p>
+    <p><b>Tension:</b> Bei A ist die 2D-Struktur ein <em>Projektions-Artefakt</em> (man muss einen High-dim-View zerstören, um ihn zu sehen); bei B ist sie <em>intrinsisch</em> (der Inhalt liegt ohnehin dünn). Entsteht die Ordnung durchs Abbilden oder liegt sie im Raum?</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span>Auflösung</h2>
+  <p>Alle drei &bdquo;Widersprüche&ldquo; sind <b>Perspektivendifferenzen auf verschiedenen Schritten derselben Maschine</b> — keine echten Faktenkonflikte. Die Auflösung ist einheitlich: <b>&bdquo;verlustfrei innen, verlustbehaftet am Rand&ldquo;.</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W1 — verschiedene Schritte, keine Konkurrenz</h3>
+    <p>A's Verlustfreiheit gilt für die <em>Attention-Scores selbst</em>: Die Softmax-Invarianzen sind eine <b>Freiheit der Darstellung</b> (man darf die Punkte verschieben/skalieren, die <em>relativen</em> Attention-Werte bleiben), keine Behauptung, dass nirgends Information verloren geht. B's Verlust-Floor gilt für einen <em>anderen</em> Schritt: die <b>Diskretisierung</b> eines kontinuierlichen Gedankens in ein endliches Wörterbuch. Keiner der beiden widerspricht dem anderen: <b>innen</b> (im kontinuierlichen Attention-Raum) ist die Geometrie verlustfrei darstellbar; <b>am Rand</b> (Bezug zum diskreten Wort) ist sie verlustbehaftet.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W2 — eine Geometrie, zwei Temperaturen</h3>
+    <p>Transparenz und Ambiguität sind zwei Seiten derselben Nächste-Nachbar-Geometrie. A schaut auf <em>weiche</em> Nächste-Nachbar-Attention (Softmax, alles gewichtet, kein harter Gewinner) — dort ist das Muster maximal <em>lesbar</em>, die &bdquo;Signatur&ldquo;. B schaut auf <em>harte</em> Nächste-Nachbar-Entscheidung (argmin &rarr; ein Wort) — dort sind genau die <em>Zellgrenzen</em> der Mehrdeutigkeitssitz. Die &bdquo;Signatur eines Heads&ldquo; (A) und die &bdquo;unsichere Zone&ldquo; (B) sind <b>dasselbe Voronoi-Muster</b>: lesbar, solange alles weich gewichtet ist; gefährlich, sobald ein harter Entscheidungspunkt gezwungen ist.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W3 — erlernte Subräume vs. intrinsische Mannigfaltigkeit</h3>
+    <p>Es gibt zwei verschiedene Dimensionen, die hier nicht verwechselt werden dürfen: die Dimension der <em>erlernten Attention-Subräume</em> (A: 64d pro Head — ein spezifischer &bdquo;Blick&ldquo;) und die <em>intrinsische</em> effektive Dimension der Daten, die auf dem Modell liegen (B: ~20). A's Projektion (t-SNE/UMAP) ist ein <b>diagnostisches Werkzeug</b> — man wählt es, um einen einzelnen High-dim-View sichtbar zu machen. B's Niedrigdimensionalität ist eine <b>gemessene Tatsache</b> über den Inhalt. Sie komplementieren sich: <b>A liefert die Methode (Projektion), die B's intrinsische Niedrigdimensionalität überhaupt erst sichtbar macht.</b> Die Projektion ist das Fernrohr, die dünnen Mannigfaltigkeit ist das Objekt.</p>
+
+    <table class="tbl">
+      <tr><th>Punkt</th><th>A (AttentionViz)</th><th>B (Manifolds)</th><th>Fusion</th></tr>
+      <tr><td>Schritt</td><td>Attention (weich, innen)</td><td>Wortausgabe (hart, am Rand)</td><td>Kette: weich &rarr; hart</td></tr>
+      <tr><td>Geometrie</td><td>Distanz = Ähnlichkeit (Q↔K)</td><td>Distanz = Wortnähe (Gedanke↔Wort)</td><td>ein Distanzgesetz</td></tr>
+      <tr><td>Verlust</td><td>verlustfrei darstellbar</td><td>verlustbehaftet (Gap)</td><td>frei innen, verlust am Rand</td></tr>
+      <tr><td>Dimension</td><td>64d erlernt, → 2D projiziert</td><td>~20 intrinsisch</td><td>Projektion offenbart die dünnere Schicht</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+  <p>Hier der konsolidierte, zusammenhängende Kern beider Papiere — dicht genug, dass eine spätere Runde allein daraus arbeitet.</p>
+
+  <h3>A1 · Attention als weiche Geometrie <span class="tag">A</span></h3>
+  <p>Jeder Token erhält zwei Vektoren, einen <b>Query (Q)</b> und einen <b>Key (K)</b>. Die Attention-Gewichtung stammt vom Skalarprodukt, skaliert um √d, normalisiert per Softmax:</p>
+  <div class="eq">a<sub>i</sub>(j) = softmax<sub>j</sub>( ⟨W<sub>Q</sub>x<sub>i</sub>, W<sub>K</sub>y<sub>j</sub>⟩ / √d )</div>
+  <p>Da Attention vom Skalarprodukt abhängt und das Skalarprodukt eng mit der <b>Distanz</b> zusammenhängt, projiziert AttentionViz Q <em>und</em> K <b>gemeinsam</b> in 2D (t-SNE/UMAP/PCA): <b>nahe Punkte = hohe Attention</b>. Die <em>Form</em> der Wolke wird zur visuellen Signatur des Heads.</p>
+  <p>Zwei Invarianz-Tricks machen die Geometrie lesbar, <em>ohne</em> die Attention zu verändern:</p>
+  <ul>
+    <li><b>Key-Translation</b> — Softmax ist translationsinvariant: alle Keys um ein konstantes <i>v</i> verschieben &rarr; beide Wolken lassen sich übereinander zentrieren.</li>
+    <li><b>Query-Key-Skalierung</b> — Q mit <i>c</i>, K mit 1/<i>c</i> skalieren &rarr; Skalarprodukt bleibt gleich, der visuelle Abstand ändert sich; <i>c</i> wird so gewählt, dass Distanz &hArr; Attention bestmöglich korreliert.</li>
+  </ul>
+  <p><b>Empirisch:</b> In BERT liegt die durchschnittliche Spearman-Korrelation zwischen Query-Key-Distanz und Skalarprodukt bei <b>≈ −0.938</b> — fast perfekt negativ. Befunde: <b>Positional-Spiralen</b> &amp; <b>semantische Cluster</b> (BERT), <b>Farb-/Frequenz-Heads</b> (ViT), sowie die GPT-2-Anomalie <b>&bdquo;Attend to First&ldquo;</b> plus große Norm-Unterschiede zwischen Queries und Keys (≈ −4.6).</p>
+
+  <h3>B1 · Die Wortausgabe als harte Geometrie <span class="tag b">B</span></h3>
+  <p>Das Modell &bdquo;denkt&ldquo; in einem <b>kontinuierlichen</b> latenten Raum mit ~20 effektiven Freiheitsgraden; die Wörter des endlichen Wörterbuchs sind Anker darin. An jedem Punkt gewinnt das <b>nächste Wort</b> — eine Voronoi-Zerlegung des Gedankenfelds. Die <b>goldenen Bänder</b> dazwischen sind die Orte, an denen zwei Wörter fast gleich nah sind: das Modell ist dort <b>unschlüssig</b>.</p>
+  <p><b>Gemessen</b> (sechs echte Modelle, 124 Mio. bis 1,5 Mrd. Parameter): <b>40–51 %</b> aller Wortvorhersagen liegen in der unsicheren Zone. Größere Modelle sind etwas sicherer, aber die schwersten <b>~5 %</b> bleiben bei <em>allen</em> gleich schwer — das ist <b>Sprachambiguität</b>, nicht mangelndes Training.</p>
+  <div class="note amber"><b>Der Kernsatz &bdquo;Expressibility Gap&ldquo;:</b> Die unsichere Zone hat eine <em>Boden</em>-Größe, die keine Technik erreicht. Sprache ist eine <b>verlustbehaftete Kompression</b> von Bedeutung — wie eine Landkarte, die immer etwas vom Terrain weglässt.</div>
+  <p><b>Warum mehr Wörter so teuer sind:</b> In einem Raum mit ~20 echten Dimensionen gilt ein bewiesener Satz — um den Fehler zu <em>halbieren</em>, braucht man etwa <b>1000× so viele Wörter</b>:</p>
+  <div class="eq">Fehler &prop; (1/N)<sup>2/20</sup> &nbsp;&nbsp;(&asymp; (1/N)<sup>0.1</sup> — kaum Abfall pro Verdopplung)</div>
+  <p>Das erklärt Wörterbücher mit 50.000–250.000 Einträgen und warum selbst die größten an knappen Stellen zögern. <b>Anwendungen:</b> messbare Unsicherheit (&bdquo;hier zögere ich&ldquo;), gezieltes Einfügen neuer Teilewörter dort, wo die Zone am breitesten ist, und die Einsicht, dass manches &bdquo;Halluzinierte&ldquo; einfach ein Gedanke auf einer Wortgrenze ist — dort ist <em>jedes</em> Modell blind. (Hintergrund der Mannigfaltigkeits-Idee: Ansuini et al. 2019; für große Transformer Valeriani et al. 2023.)</p>
+
+  <h3>F · Das zusammenhängende Bild der fusionierten Maschine</h3>
+  <div class="note violet"><b>Fusionssatz:</b> Ein Transformer ist eine Kette von Nächste-Nachbar-Operationen. (1) <b>Attention</b> ist weiche Nächste-Nachbar im erlernten Q/K-Subraum (64d/Head): verlustfrei darstellbar, lesbar — die &bdquo;Signatur&ldquo;. (2) Der <em>inhaltliche</em> Zustand liegt auf einer <b>dünnen intrinsischen Mannigfaltigkeit</b> (~20d). (3) Die <b>Wortausgabe</b> ist harte Nächste-Nachbar am Rand dieses Raums: verlustbehaftet, am Voronoi-Rand mehrdeutig — der &bdquo;Expressibility Gap&ldquo;. Die Projektion (A) ist genau das Werkzeug, um die intrinsische Niedrigdimensionalität (B) sichtbar zu machen. <b>Ein Distanzgesetz, zwei Temperaturen, ein Regler: die Weichheit.</b></div>
+  <p>Der gemeinsame, über beide Papiere gültige Mechanismus lässt sich so fassen: <b>je weiter ein Punkt in seiner Zelle / je weiter er von der nächsten Grenze entfernt ist, desto eindeutiger ist das Ergebnis</b> — egal ob das Ergebnis eine Attention-Gewichtung (weich, A) oder ein Wort (hart, B) ist. Genau das demonstriert die Visualisierung: derselbe Punkt, derselbe Regler, zwei Extreme.</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span>Interaktive Visualisierung: eine Geometrie, zwei Temperaturen</h2>
+  <div class="viz">
+    <h3>Das Gedankenfeld, das zugleich Attention-Feld ist</h3>
+    <p class="dsub">Maus über die Fläche bewegen (oder Punkt ziehen) · Weichheit &amp; Wörterbuchgröße regeln. Die goldenen Ränder sind die Voronoi-Grenzen — bei <b>Weich</b> (rechts, A) sind sie harmlos und die Attention spreadt über viele Wörter (lesbar); bei <b>Hart</b> (links, B) wird dieselbe Grenze zum Mehrdeutigkeits-Risiko.</p>
+    <canvas id="fusedCanvas"></canvas>
+    <div class="ro">
+      <div class="box"><div class="k">Gewinner-Wort</div><div class="v" id="fWord">—</div></div>
+      <div class="box amber"><div class="k">Gewinn-Chance</div><div class="v" id="fProb">—</div></div>
+      <div class="box rose"><div class="k">Ambiguitäts-Risiko</div><div class="v" id="fRisk">—</div></div>
+      <div class="box"><div class="k">Aktive Wörter</div><div class="v" id="fSupp">—</div></div>
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Weichheit · links = hart (Wort-Entscheidung, B) · rechts = weich (Attention, A)</span><b id="fSoftV">0.80</b></div>
+      <input type="range" id="fSoftR" min="0" max="100" step="1" value="80">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Wörterbuchgröße (Anker)</span><b id="fNV">14</b></div>
+      <input type="range" id="fNR" min="6" max="30" step="1" value="14">
+    </div>
+    <div class="stat" id="fGap">unsichere Zone (Fläche): —</div>
+    <p class="viz-note"><b>So liest man es:</b> Ziehe den Weichheits-Regler von rechts nach links. &bdquo;Gewinn-Chance&ldquo; steigt, &bdquo;Aktive Wörter&ldquo; sinken (weich = viele gleich relevant, hart = ein Wort dominiert). Das <b>Ambiguitäts-Risiko</b> bleibt niedrig, solange der Punkt tief in einer Zelle liegt — aber wenn du ihn auf eine goldene Grenze legst <em>und</em> hart machst, springt es hoch: genau dort ist das Modell bei B blind. In A (weich) wäre dieselbe Stelle unspektakulär.</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="prov">
+    <div class="item">
+      <div class="lbl">QUELLE A · Attention-Geometrie</div>
+      <a href="../paper/AttentionViz.html">paper/AttentionViz.html</a> — Interaktive Erklärung von Yeh et al. 2023 (AttentionViz): gemeinsame 2D-Einbettung von Query und Key (Nähe = Attention), zwei Invarianz-Tricks (Translation + Skalierung), Spearman ≈ −0.938, Positional-Spiralen / semantische Cluster (BERT), Farb-/Frequenz-Heads (ViT), GPT-2 &bdquo;Attend to First&ldquo;.
+    </div>
+    <div class="item">
+      <div class="lbl">QUELLE B · Latente Mannigfaltigkeit &amp; Expressibility Gap</div>
+      <a href="../latent_semantic_manifolds_in_llm_very_simple.html">latent_semantic_manifolds_in_llm_very_simple.html</a> — Einfache Darstellung von Mabrok (2026), arXiv:2603.22301: Gedankenfeld mit Wortankern (Voronoi), 40–51 % unsichere Zone (6 Modelle), ~20 effektive Dimensionen, Fehler ∝ (1/N)<sup>2/20</sup>, der verlustbehaftete &bdquo;Expressibility Gap&ldquo;; Hintergrund Ansuini et al. 2019, Valeriani et al. 2023.
+    </div>
+  </div>
+  <footer>Eine Knockout-Fusion (Runde 1, Paar 010) aus zwei lokalen Erklärungen. Alles läuft lokal im Browser — keine Daten verlassen diese Seite. Theme-Umschaltung oben rechts.</footer>
+</section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s){ return document.querySelector(s); };
+  var clamp = function(v,a,b){ return Math.min(b, Math.max(a, v)); };
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function hsl(h,s,l){ s/=100; l/=100; var k=function(n){return (n+h/30)%12;}; var a=s*Math.min(l,1-l); var f=function(n){return l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));}; return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)]; }
+  function smoothstep(a,b,t){ t=clamp((t-a)/(b-a),0,1); return t*t*(3-2*t); }
+  function hexToRgb(hex){ hex=(hex||"").trim().replace(/^#/,""); if(hex.length===3){ hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; } var n=parseInt(hex,16); if(isNaN(n)){ return [217,154,18]; } return [(n>>16)&255,(n>>8)&255,n&255]; }
+  function rr(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  var cv = $('#fusedCanvas');
+  var WORDS = ["Hund","Katze","Baum","Haus","Auto","Buch","Maus","Lampe","Blume","Stein","Tisch","Stuhl","Wasser","Feuer","Nacht","Sonne","Regen","Mond","Kaffee","Stern","Fluss","Berg","Vogel","Fisch","Milch","Zucker","Tür","Fenster","Brücke","Feld"];
+  var HUES = [188,220,260,290,320,350,15,40,60,90,140,170,200,240,280,310,340,25,50,75,120,155,195,230,270,300,330,10,45,100];
+
+  var FW = 560, FH = 330;
+  var off = document.createElement('canvas'); off.width=FW; off.height=FH;
+  var octx = off.getContext('2d');
+  var N = 14, anchors = [], hover = null, gapFrac = 0;
+  var ctx2 = null;
+
+  function gen(n){
+    var rng = mulberry32(7 + n*13);
+    var cols = Math.ceil(Math.sqrt(n*FW/FH)), rows = Math.ceil(n/cols);
+    var pts = [];
+    for(var i=0;i<n;i++){
+      var cx=(i%cols), cy=Math.floor(i/cols);
+      var jx=(rng()-0.5)*0.72, jy=(rng()-0.5)*0.72;
+      pts.push({
+        x: clamp((cx+0.3+jx)/cols*FW, 26, FW-26),
+        y: clamp((cy+0.3+jy)/rows*FH, 26, FH-26),
+        w: WORDS[i%WORDS.length],
+        c: HUES[i%HUES.length]
+      });
+    }
+    return pts;
+  }
+
+  function recompute(){
+    var isDark = document.documentElement.classList.contains('dark');
+    var gold = hexToRgb(cssVar('--gold'));
+    var img = octx.createImageData(FW,FH);
+    var a = anchors;
+    var dTyp = Math.sqrt(FW*FH/a.length);
+    var eps = 0.28*dTyp;
+    var cnt = 0;
+    for(var y=0;y<FH;y++){
+      for(var x=0;x<FW;x++){
+        var d1=1e18,d2=1e18,i1=0;
+        for(var i=0;i<a.length;i++){
+          var dx=x-a[i].x, dy=y-a[i].y, dd=dx*dx+dy*dy;
+          if(dd<d1){ d2=d1; i1=i; d1=dd; }
+          else if(dd<d2){ d2=dd; }
+        }
+        var m = Math.sqrt(d2)-Math.sqrt(d1);
+        var depth = clamp(m/dTyp, 0, 1);
+        var s, l;
+        if(isDark){ s=44; l=32-9*depth; } else { s=33; l=71-10*depth; }
+        var cell = hsl(a[i1].c, s, l);
+        var t = smoothstep(eps*0.22, eps*1.25, m);
+        var p=(y*FW+x)*4;
+        img.data[p]  = Math.round(gold[0]+(cell[0]-gold[0])*t);
+        img.data[p+1]= Math.round(gold[1]+(cell[1]-gold[1])*t);
+        img.data[p+2]= Math.round(gold[2]+(cell[2]-gold[2])*t);
+        img.data[p+3]= 255;
+        if(t<0.5) cnt++;
+      }
+    }
+    octx.putImageData(img,0,0);
+    gapFrac = cnt/(FW*FH);
+    draw();
+  }
+
+  function computeAttn(px,py,soft){
+    var a = anchors;
+    var dTyp = Math.sqrt(FW*FH/a.length);
+    var h = 1-soft;
+    var sigma = dTyp*(0.10 + soft*0.55);
+    var inv = 1/(2*sigma*sigma);
+    var scores = new Array(a.length), dd = new Array(a.length);
+    var sum = 0;
+    for(var i=0;i<a.length;i++){
+      var dx=px-a[i].x, dy=py-a[i].y;
+      dd[i]=dx*dx+dy*dy;
+      scores[i]=Math.exp(-dd[i]*inv);
+      sum+=scores[i];
+    }
+    if(sum<=0){ sum=1; }
+    for(i=0;i<a.length;i++){ scores[i]/=sum; }
+    var idx = [];
+    for(i=0;i<a.length;i++){ idx.push(i); }
+    idx.sort(function(a2,b2){ return scores[b2]-scores[a2]; });
+    var top = idx.slice(0,5).map(function(j){ return { i:j, p:scores[j], d:Math.sqrt(dd[j]) }; });
+    var p1 = top.length?top[0].p:0;
+    var p2 = top.length>1?top[1].p:0;
+    var d1 = top.length?top[0].d:0;
+    var d2 = top.length>1?top[1].d:0;
+    var boundaryProx = clamp(1-(d2-d1)/(0.35*dTyp), 0, 1);
+    var risk = boundaryProx*h;
+    var L = 0; for(i=0;i<a.length;i++){ L += scores[i]*scores[i]; }
+    L = L>0 ? 1/L : 1;
+    return { top:top, p1:p1, p2:p2, risk:risk, L:L, sigma:sigma, dTyp:dTyp, d1:d1, d2:d2 };
+  }
+
+  function draw(){
+    if(!cv) return;
+    var dpr = Math.min(2, window.devicePixelRatio||1);
+    var w = cv.clientWidth||600;
+    var H = 440;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(H*dpr);
+    var c = cv.getContext('2d');
+    c.setTransform(dpr,0,0,dpr,0,0);
+    ctx2 = c;
+    c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+    c.drawImage(off, 0, 0, w, H);
+    var sx = w/FW, sy = H/FH;
+
+    var accent = cssVar('--accent');
+    var fg = cssVar('--fg');
+    var muted = cssVar('--muted');
+    var panel = cssVar('--panel');
+    var accent2 = cssVar('--accent2');
+
+    var showLabels = N<=18;
+    for(var i=0;i<anchors.length;i++){
+      var a = anchors[i];
+      var ax=a.x*sx, ay=a.y*sy;
+      c.beginPath(); c.arc(ax,ay,6,0,Math.PI*2); c.fillStyle='#fff'; c.fill();
+      c.beginPath(); c.arc(ax,ay,6,0,Math.PI*2); c.strokeStyle='rgba(20,20,30,.35)'; c.lineWidth=1.5; c.stroke();
+      if(showLabels){
+        c.font='600 11px system-ui'; c.textAlign='center'; c.textBaseline='top';
+        var ly=ay+11, tw2=c.measureText(a.w).width;
+        c.fillStyle=panel; rr(c,ax-tw2/2-4,ly-2,tw2+8,16,5); c.fill();
+        c.fillStyle=fg; c.fillText(a.w,ax,ly+1);
+      }
+    }
+
+    var soft = (+$('#fSoftR').value)/100;
+    var px, py;
+    if(hover){ px=hover[0]; py=hover[1]; } else { px=FW/2; py=FH/2; }
+    var mx=px*sx, my=py*sy;
+    var attn = computeAttn(px,py,soft);
+
+    var topDraw = attn.top.slice(0,8);
+    for(var j=0;j<topDraw.length;j++){
+      var t = topDraw[j];
+      var a2 = anchors[t.i];
+      var ax2=a2.x*sx, ay2=a2.y*sy;
+      c.strokeStyle = 'rgba('+ (cssVar('--accent')) +','+ (0.12+t.p*0.85).toFixed(3) +')';
+      c.lineWidth = 0.6 + t.p*9;
+      c.beginPath(); c.moveTo(mx,my); c.lineTo(ax2,ay2); c.stroke();
+    }
+
+    c.beginPath(); c.arc(mx,my, attn.sigma*sy, 0, Math.PI*2);
+    c.strokeStyle='rgba('+hexToRgb(cssVar('--accent')).join(',')+',0.5)'; c.lineWidth=1.5; c.setLineDash([6,4]); c.stroke(); c.setLineDash([]);
+    c.beginPath(); c.arc(mx,my,8,0,Math.PI*2); c.fillStyle='rgba(255,255,255,.94)'; c.fill();
+    c.strokeStyle='rgba(20,20,30,.55)'; c.lineWidth=2; c.stroke();
+
+    var top5 = attn.top.slice(0,5);
+    var panelW=150, panelH=top5.length*26+14;
+    var right = mx+18;
+    var px2 = (right+panelW>w-8) ? clamp(mx-panelW-18, 4, w-panelW-8) : clamp(right, 4, w-panelW-8);
+    var py2 = clamp(my-panelH/2, 8, H-panelH-8);
+    c.fillStyle=panel; rr(c,px2,py2,panelW,panelH,10); c.fill();
+    c.strokeStyle='rgba(15,118,110,.25)'; c.lineWidth=1; c.stroke();
+    c.font='700 11px system-ui'; c.fillStyle=muted; c.textAlign='left'; c.textBaseline='middle';
+    c.fillText('Chancen', px2+10, py2+12);
+    var barMax = panelW-78;
+    for(var k=0;k<top5.length;k++){
+      var cd=top5[k];
+      var rowY=py2+26+k*26;
+      c.font=(k===0?'700':'400')+' 12px system-ui'; c.fillStyle=(k===0?accent:muted); c.textAlign='left';
+      c.fillText(anchors[cd.i].w, px2+10, rowY);
+      var bw=Math.max(4, cd.p*barMax);
+      c.fillStyle='rgba(120,120,140,.12)'; rr(c,px2+54,rowY-5,barMax,10,5); c.fill();
+      c.fillStyle=(k===0?accent:accent2); rr(c,px2+54,rowY-5,bw,10,5); c.fill();
+      c.font='600 10px monospace'; c.fillStyle=muted; c.textAlign='right';
+      c.fillText(Math.round(cd.p*100)+'%', px2+panelW-8, rowY);
+    }
+
+    var word = top5.length?anchors[top5[0].i].w:'—';
+    var prob = Math.round(attn.p1*100)+' %';
+    var risk = Math.round(attn.risk*100)+' %';
+    var supp = attn.L.toFixed(1);
+    $('#fWord').textContent = word;
+    $('#fProb').textContent = prob;
+    $('#fRisk').textContent = risk;
+    $('#fSupp').textContent = supp;
+    var fGap = $('#fGap');
+    fGap.innerHTML = 'unsichere Zone (Fläche): <b>'+Math.round(gapFrac*100)+' %</b> &nbsp;·&nbsp; Regime: '+(soft>0.62?'weich / Attention (A)':(soft<0.32?'hart / Wort (B)':'übergang'));
+  }
+
+  function toField(e){
+    var r = cv.getBoundingClientRect();
+    return [ (e.clientX-r.left)/r.width*FW, (e.clientY-r.top)/r.height*FH ];
+  }
+  cv.addEventListener('pointermove', function(e){ hover = toField(e); draw(); });
+  cv.addEventListener('pointerdown', function(e){ hover = toField(e); draw(); });
+  cv.addEventListener('pointerleave', function(){ hover=null; draw(); });
+  cv.addEventListener('pointerup', function(){ });
+
+  $('#fSoftR').addEventListener('input', function(){ $('#fSoftV').textContent=(+this.value/100).toFixed(2); draw(); });
+  $('#fNR').addEventListener('input', function(){ N=+this.value; $('#fNV').textContent=N; anchors=gen(N); recompute(); });
+  window.addEventListener('resize', draw);
+
+  var btn = $('#themeBtn');
+  if(btn){
+    btn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); recompute(); });
+  }
+  if(window.MutationObserver){
+    new MutationObserver(function(){ recompute(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+
+  anchors = gen(N);
+  recompute();
+})();
+</script>
+</body>
+</html>

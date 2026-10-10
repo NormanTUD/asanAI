@@ -1,0 +1,16 @@
+{
+  "no": "027",
+  "a": "gradient_flow.html",
+  "b": "ideen2.html",
+  "a_title": "Gradient Flow — Interaktive Visualisierung",
+  "b_title": "Kohärente Welten – 20 Konzepte zum Anfassen",
+  "combined_theme": "gradient-descent-gluing-coherence-correspondence",
+  "one_line": "Eine kohärente Welt entsteht nicht deklariert, sondern dynamisch: lokale Bausteine klebt eine Konsistenzbedingung (Kettenregel = Sheaf-/Gluing-Condition), ein Korrespondenz-Signal (Loss zum Ziel) treibt den Gradientenabstieg, bis die Struktur einen globalen Invariante-Punkt (∇L = 0) erreicht; Wahrheit = Kohärenz ∧ Korrespondenz.",
+  "contradictions": [
+    "A hält innere Kohärenz für konstruktionsgemäß garantiert (Kettenregel = exakte Identität, Backward ist die transponierte Forward; kein Halluzinations-Concept); B beharrt, Kohärenz sei eine gefahrene, nie ausreichende Bedingung (Selbst-Kohärenz ⇏ Wahrheit, 'Hallucination', 'Weder allein reicht').",
+    "A baut bottom-up (Zufalls-Init, rein lokale Gradientenschritte, globale Low-Loss-Funktion emergiert, kein globaler Plan); B baut top-down auf die Invarianz zu, die die lokalen Stücke erfüllen müssen ('Gluing': lokale Daten + Kompatibilität ⟹ Ganzes).",
+    "A läuft auf Analysis (tanh, Kettenregel, kontinuierliche Gradien, glatte Funktion — Abstieg setzt Differenzierbarkeit voraus); B fundiert diskret/kategorial (erster Cut ¬¬x = x, Topos, Embedding 'nahezu ein Sheaf') — B's erster Zug hat keinen Gradienten."
+  ],
+  "resolution": "A ist der wohlverhaltene Spezialfall von B's Vorlage: ein Modell, dessen Kohärenz durch Struktur automatisch gilt (die Kettenregel erfüllt die Sheaf-/Gluing-Bedingung exakt, ein Netz ist ein trivial geklebtetes Sheaf lokaler affine+tanh-Abbildungen) und dessen Korrespondenz durch ein live Ziel/Loss kontinuierlich erzwungen wird. B's 'Invarianz' (Ketten-Krone) ist A's Konvergenzpunkt ∇L = 0; B's Gluing-Bedingung ist A's Kettenregel. Distinktion (B) schneidet die Mannigfaltigkeit, Gradientenfluss (A) ist das Vektorfeld, das sie hinabsteigt. Kapp das live Ziel, wird ein kohärentes Modell zur Halluzination.",
+  "viz": "2D-Parameterlandschaft (Loss-Becken) mit animiertem Gradientenabstieg-Partikel, das zum grünen Invariante-Punkt (∇L = 0) rollt; zwei Messleisten (Kohärenz immer voll = Kettenregel, Korrespondenz = 1 - L/L0) und Wahrheit-LED (grün nur bei Kohärenz ∧ Korrespondenz); Toggle 'Ziel kappen' friert das Partikel ein und kippt die LED auf 'Halluzination'. Rein Canvas, inline Daten, theme-reactive via CSS-Variablen."
+}

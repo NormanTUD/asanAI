@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 021 — Die Helix ist der Torus, den das Grok findet</title>
+<style>
+:root{
+  --bg:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --signal:#0f766e; --reservoir:#b45309; --noise:#be185d; --accent:#6d28d9;
+  --grid:#d9d0ba; --band-signal:rgba(15,118,110,.10); --band-res:rgba(180,83,9,.09);
+  --soft-signal:#e6f2f0; --soft-res:#fdf3e3; --soft-noise:#fdeef4; --soft-acc:#f1ecfb;
+  --st-wander:#be123c; --st-approach:#c2410c; --st-seed:#b45309; --st-general:#0f766e;
+  --r:16px; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1420; --card:#141b2b; --ink:#e6e9f0; --dim:#aab2c4; --faint:#7b8497;
+  --line:#26314a; --signal:#2dd4bf; --reservoir:#fbbf24; --noise:#f472b6; --accent:#a78bfa;
+  --grid:#1f2c47; --band-signal:rgba(45,212,191,.11); --band-res:rgba(251,191,36,.08);
+  --soft-signal:#0e2a2b; --soft-res:#2a2110; --soft-noise:#2a1322; --soft-acc:#1d1833;
+  --st-wander:#ef4444; --st-approach:#fb923c; --st-seed:#fbbf24; --st-general:#34d399;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+main{max-width:820px;margin:0 auto;padding:0 22px 90px}
+header{padding:64px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;background:var(--soft-acc);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(28px,5.2vw,42px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--signal)}
+.sub{font-size:14.5px;color:var(--dim);max-width:60ch;font-family:var(--mono)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:52px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--signal);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--soft-signal);border-radius:99px;padding:3px 10px}
+h3{font-size:15.5px;font-weight:720;margin:20px 0 6px;color:var(--ink)}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b,li b{color:var(--ink)}
+ul{margin:0 0 16px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:9px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:18px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--signal);background:var(--soft-signal);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.res{border-color:var(--reservoir);background:var(--soft-res)}
+.note.acc{border-color:var(--accent);background:var(--soft-acc)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;vertical-align:middle}
+.tag.A{background:var(--soft-acc);color:var(--accent)}
+.tag.B{background:var(--soft-signal);color:var(--signal)}
+.tag.both{background:var(--soft-res);color:var(--reservoir)}
+.rule{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:14px 0;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.demo h3{margin-top:0}
+.dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+.status{font-family:var(--mono);font-size:13px;padding:8px 12px;border-radius:10px;background:var(--soft-signal);color:var(--ink);border:1px solid var(--line);margin:12px 0;min-height:36px;text-align:center;transition:background .25s}
+canvas{display:block;width:100%;border-radius:12px;background:var(--card);cursor:grab}
+canvas:active{cursor:grabbing}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--signal);font-size:13px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card)}
+input[type=range].r::-webkit-slider-thumb{background:var(--reservoir)}
+input[type=range].r::-moz-range-thumb{background:var(--reservoir)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:120px;background:var(--soft-signal);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--signal)}
+.ro .box.res{background:var(--soft-res)}.ro .box.res .v{color:var(--reservoir)}
+.ro .box.no{background:var(--soft-noise)}.ro .box.no .v{color:var(--noise)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:12.5px;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.line{width:16px;height:3px;border-radius:2px;display:inline-block}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:26px 0;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--signal);text-decoration:none}
+.prov{display:grid;gap:12px}
+.prov a{color:var(--ink);text-decoration:none;font-weight:700}
+.prov a:hover{color:var(--signal)}
+.prov .d{color:var(--dim);font-size:14.5px;margin-top:2px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Fusion 021 · Runde 1 · Torus-Geometrie ✕ Grokking</div>
+  <h1>Ein <em>Torus</em> — designed in der Helix, <em>gefunden</em> im Grok</h1>
+  <p class="sub">Fusion aus: posembed7.html ✕ grokking.html</p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Papiere sind bis auf den Kern dieselbe Aussage: <b>nützliche Verallgemeinerung ist topologisch</b> — das Wissen, das ein System über <i>relative Position</i> bzw. <i>Struktur</i> trägt, lebt auf einer kompakten, gekrümmten Fläche, dem <b>Torus</b>. Sie streiten nur über den <i>Ursprung</i> dieser Fläche. Papier A betrachtet die <span class="tag A">A</span> <b>Geometrie der Repräsentation</b>: Die Rohe-Embedding eines Tokens ist ein fester Punkt; sinusoidale Position-Encoding fegt ihn entlang einer <i>helixartigen Kurve</i> — in d Dimensionen eine Kurve auf einem hochdimensionalen Torus (Produkt von Kreisen). Die FFN sieht nur die Summe <code>e(Word)+PE(pos)</code> und muss „welche Helix" (Identität) von „wo auf der Helix" (Position) entwirren. Papier B betrachtet die <span class="tag B">B</span> <b>Dynamik des Trainings</b>: Der Torus ist die „optimale Mannigfaltigkeit" — ein kompakter <b>Attraktor</b>, auf den die Gewichte erst nach einer langen Memorizations-Plateau-Phase durch eine scharfe <b>Phasenübergangs-Kaskade</b> aufspringen (Grokking).</p>
+<p>Die <span class="tag both">fusion</span> vereint beides zu einer einzigen These: <b>Der Torus ist der invariante Attraktor der Generalisierung.</b> Er erscheint zweimal: einmal als <i>handgebauter, exakter, a-priori-Geometrie</i> (A), einmal als <i>emergenter, von SGD entdeckter Attraktor</i> (B). A ist das Ziel, gemacht explizit; B ist der Weg zum selben Ziel. Wird der Torus mitgeliefert, liest das Modell Position sofort und glatt — kein Plateau, kein Grok. Muss es ihn lernen, wird dieselbe Fläche zum Attraktor, der nur durch einen abrupten Kaskadensprung erreicht wird. <b>Gleiche Struktur, zwei Routen.</b></p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+<p>Direkt-logisch widersprechen sie sich nicht — beide behaupten, Generalisierung sei topologisch (Torus). Aber an drei konkreten Stellen stehen ihre Stances unvereinbar gegenüber:</p>
+<ul>
+<li><b>Ursprung der Struktur — gegeben vs. entdeckt.</b>
+<span class="tag A">A</span> sagt, die torus-artige Geometrie sei <i>vom Design her ins Modell eingelegt</i>: die PE-Formel konstruiert wörtlich „eine Kurve auf einem hochdimensionalen Torus (Produkt von Kreisen)"; sie ist exakt und <i>vor jedem Training</i> vorhanden. <span class="tag B">B</span> sagt das Gegenteil: Der Torus ist <i>anfänglich überhaupt nicht da</i> — er ist die „optimale Mannigfaltigkeit", die SGD erst nach einem Plateau <i>entdeckt</i> („a critical seed discovers the manifold"). a-priori-Geometrie vs. emergente Struktur.</li>
+<li><b>Glatt &amp; immer vorhanden vs. scharfer Phasenübergang.</b>
+<span class="tag A">A</span>'s Helix existiert an jeder Position ab <code>pos&nbsp;0</code>; sie ist glatt, kontinuierlich, und es gibt keinen „Discovery"-Moment. <span class="tag B">B</span> besteht dagegen auf einen <i>scharfen, diskontinuierlichen</i> Phasenübergang: flaches Memorizations-Plateau, dann „clicks" die Struktur und kaskadiert alles in einen Schlag. A ist graduell/kontinuierlich, B ist plötzlich/schwellig — das genaue Gegenteil.</li>
+<li><b>Wo der Torus lebt und wofür er ist.</b>
+<span class="tag A">A</span>: Der Torus ist das <i>input-seitige Positionsfeature</i> im Embeddingraum — ein <i>Produkt von Kreisen</i> (ein Kreis pro sin/cos-Frequenzpaar), also die Kodierung der Sequenzposition. <span class="tag B">B</span>: Der Torus ist ein einzelner <i>Gattungs-1-Torus</i> (R,r) im <i>Gewichts-/Repräsentationsraum</i>, auf den die <i>Lösung</i> als Generalisierungsantwort aufspringt. Anderes Objekt (mehrdimensionales Produkt von Kreisen vs. ein 2D-Torus) und andere Rolle (Kodierung vs. Lösungs-Attraktor).</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Auflösung</h2>
+<p><b>Ursprung (T1):</b> „Design" und „Discovery" sind zwei Wege zu <i>einem</i> Attraktor. A's PE ist eine menschlich autorisierte, exakte Kopie der Zieltopologie; B's Grokking ist ein Netz, das dieselbe Topologie <i>selbst</i> ableitet. Fused: Der Torus kann <i>spezifiziert</i> (A) oder <i>entdeckt</i> (B) werden. Wird er mitgeliefert → sofort und glatt. Muss er gelernt werden → Plateau, dann Kaskade. Beide Papiere beschreiben dieselbe Zielfläche, nur unterschiedliche Provenienzen.</p>
+<p><b>Glatt vs. Phasenübergang (T2):</b> Man muss die <i>Geometrie des Objekts</i> von der <i>Dynamik des Erreichens</i> trennen. A's Glätte ist das <i>Ziel</i>; B's Rauschen/Plötzlichkeit ist der <i>Pfad</i>. Die Ziel-Mannigfaltigkeit ist glatt und kontinuierlich (A); der Prozess, der Gewichte darauf sperrt, kann trotzdem ein scharfer, diskontinuierlicher Übergang sein (B). Beides ist wahr — auf verschiedenen Ebenen (Objekt vs. Prozess).</p>
+<p><b>Ort &amp; Rolle (T3):</b> A's Produkt-von-Kreisen und B's 2D-Torus sind der <i>selbe Topologietyp</i> — ein flacher, abelscher Torus <code>S¹×S¹</code>, in A auf ein Produkt von Kreisen in höherem d erweitert. A's Behauptung „inkommensurable Frequenzen → dichte, nicht-wiederkehrende Orbiten, nie Selbstschnitte" ist <i>genau der Grund</i>, warum der Torus das richtige Ziel ist: Seine Rotationsgruppe liefert die Fixed-Rotation-Relative-Kodierung, die Generalisierung braucht. B's „optimale Mannigfaltigkeit" ist optimal, <i>weil</i> sie A's algebraische Rotationsstruktur besitzt. Input-Kodierung (A) und Output-Attraktor (B) sind derselbe Invariant — gesehen aus Feature-Raum und Lösungsräum.</p>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>4.1 Die designede Geometrie — die Helix als Kurve auf dem Torus <span class="tag A">A</span></h3>
+<p>Die sinusoidale Position-Encoding gibt jeder Position einen Vektor aus Sinus/Kosinus-Paaren auf <b>verschiedenen Frequenzen</b>:</p>
+<div class="rule">PE(pos, 2i)   = sin( pos / 10000^(2i/d) )<br>PE(pos, 2i+1) = cos( pos / 10000^(2i/d) )</div>
+<p>Jedes Dimensionspaar <code>(2i, 2i+1)</code> zeichnet als <code>pos</code> wächst einen <b>Kreis</b> (denn <code>(sin θ, cos θ)</code> liegt auf dem Einheitskreis). Aber <b>unterschiedliche Paare rotieren mit unterschiedlicher Geschwindigkeit</b>: das schnellste Paar (Dims 0,1) zeichnet die kreisförmige Querschnitte, langsamere Paare strecken diese Kreise entlang weiterer Achsen — ein <b>Corkscrew</b>. In 3D eine klassische Helix; im vollen d-dimensionalen Raum eine Kurve auf einem <b>Produkt von Kreisen</b>, also einem hochdimensionalen Torus. Die FFN sieht <i>nie</i> Embedding und PE getrennt, sondern nur ihre Summe — einen Punkt <i>auf der Helix des Wortes</i>. Sie muss entwirren: <b>„Welche Helix?"</b> → Wortidentität; <b>„Wo auf der Helix?"</b> → Position.</p>
+
+<h3>4.2 Warum gerade diese Geometrie <span class="tag A">A</span></h3>
+<ul>
+<li><b>Adjazenz ist geometrisch:</b> Position 42 und 43 sind Nachbarn <i>auf der Kurve</i>; das Modell merkt sich „42 neben 43" nicht — es steckt in der Kontinuität der Kurve.</li>
+<li><b>Relative Distanz = feste Rotation:</b> „3 Positionen auseinander" entspricht immer derselben Rotationsmatrix <code>M₃</code>, ob bei pos 2 oder pos 2000. Diese Gruppungsstruktur lässt das Modell auf unsequenzierte Längen generalisieren: <code>PE(pos+k) = M_k · PE(pos)</code>.</li>
+<li><b>Die Helix schneidet sich nie selbst:</b> Inkommensurable Frequenzen garantieren, dass die Kurve nie zum selben Punkt zurückkehrt — jede Position wird wirklich eindeutig kodiert, wie irrationale Rotationen auf einem Torus dichte, nicht-wiederkehrende Orbiten erzeugen.</li>
+<li><b>Warum nicht tanh/sigmoid?</b> Sättigende Funktionen haben die <i>Rotations-Eigenschaft nicht</i>: es gibt kein <code>M_k</code> mit <code>tanh(pos+k) = M_k · tanh(pos)</code>. Ohne diese algebraische Struktur kann das Modell relative Distanzen nicht generalisieren.</li>
+</ul>
+
+<h3>4.3 Die entdeckte Geometrie — Grokking als Phasenübergang <span class="tag B">B</span></h3>
+<p>B betrachtet nicht die Repräsentation, sondern die <b>Training-Dynamik</b> der Gewichte. Der Torus ist die „optimale topologische Repräsentation" — ein kompakter Attraktor, auf dem die Datenstruktur perfekt kodiert werden kann. Während des SGD wandern die Gewichtsvektoren <i>rauschig</i> durch den hochdimensionalen Raum; eine schwache implizite Regularisierung übt einen kaum sichtbaren Zug auf den Torus aus, aber das <b>Memorizations-Plateau</b> hält (Trainingsverlust runter, Testverlust flach), bis ein <b>kritischer Seed</b> die Mannigfaltigkeit findet. Dann „clicks" die topologische Struktur, und die übrigen Punkte kaskadieren nach — ein <b>echter Phasenübergang von Memorization zu Generalization</b>: nahe Punkte werden zuerst eingefangen, dann breitet sich die Kaskade aus, und der Testverlust springt.</p>
+
+<h3>4.4 Die Brücke — ein Objekt, zwei Enden <span class="tag both">fusion</span></h3>
+<p>Der geteilte Invariant ist <b>S¹×S¹</b> (bzw. dessen Produkt-Verallgemeinerung). A <i>baut</i> ihn: <code>x = base + [sin(ω_i·pos), cos(ω_i·pos)]_i</code> — eine Karte in ein Produkt von Kreisen. B <i>findet</i> ihn: der globale Attraktor der Optimierung ist genau diese kompakte abelsche Mannigfaltigkeit; Grokking ist das späte Betreten seines Einzugsbereichs. Die <b>Rotations-Eigenschaft, die A braucht</b> (<code>PE(pos+k) = M_k · PE(pos)</code>, <code>M_k</code> feste Rotation), ist <i>exakt die</i> algebraisch-topologische Invariante, auf die B's Gewichte konvergieren. Also: <b>A liefert die Form der Antwort; B ist der dynamische Beweis, dass dieselbe Form dort ist, wo die Optimierung hinkommen will.</b> Wird der Invariant mitgeliefert (A) → kein Plateau. Muss er gelernt werden (B) → dieselbe Fläche wird durch eine abrupte Kaskade erreicht. Die „Helix" ist eine handgezeichnete Probe dieses Invariants; das „Grok" ist der Übergang in seinen Einzugsbereich.</p>
+
+<h3>4.5 Grenzen (Ehrlichkeits-Ecke)</h3>
+<ul>
+<li>A's Aussagen gelten für die <i>deterministische</i> PE-Geometrie — es ist keine Trainingsdynamik, sondern eine Eigenschaft des Feature-Mappings; die „dichte Orbiten"-Argumente setzen inkommensurable Frequenzen voraus (der Basis 10000 liefert das asymptotisch).</li>
+<li>B ist eine <i>stilisierte</i> 3D-Metapher/Animation von Grokking (SGD-Rauschen, Seed-Kaskade, „Optimal Manifold") — keine gemessene Kurve; der „Torus" dort steht symbolisch für die optimale topologische Repräsentation.</li>
+<li>Die Fusion ist konzeptionell: A ist höherdimensional (Produkt von Kreisen), B zeichnert ein einzelnes 2D-Exemplar — topologisch konsistent, aber nicht literal identisch dimensioniert.</li>
+</ul>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Visualisierung</h2>
+<p>Die Grafik legt beide Seiten auf <b>dieselbe Fläche</b>. Der <b>teale Wendelfaden</b> ist die <b>PE-Helix (A)</b> — die designede, a-priori-Struktur, die schon da ist. Die <b>gepunkteten Gewichte (B)</b> wandern in einer Wolke (Memorization), bis eine Kaskade sie auf denselben Torus zieht — der Phasenübergang. Zieh <i>Training p</i>: bei 0 alles rot/wandernd, mittig die Kaskade (orange/gelb), bei 100 alles grün auf dem Torus. <i>PE-Hauptkreise</i> ändert A's Windung (unterschiedliche Frequenzen → verschiedene Helixen). <i>Wander-Rauschweite</i> streckt B's Memorizations-Wolke. Ziehen zum Drehen, Mausrad zum Zoomen.</p>
+
+<div class="demo">
+  <h3>Fusion: designede Helix (A) × entdeckter Torus-Attraktor (B)</h3>
+  <p class="dsub">p = Trainingsschritt (B: Plateau → Kaskade → Generalization). U = PE-Hauptkreise (A: Frequenz/Windung). σ = Wander-Rauschweite (B: Größe der Memorizations-Wolke).</p>
+  <div class="status" id="phase">Bereit</div>
+  <canvas id="cvFusion" width="720" height="430"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Training p — Phasenübergang (B)</span><b id="pV">45%</b></div>
+    <input type="range" id="pS" min="0" max="100" value="45">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>PE-Hauptkreise U — Windung der Helix (A)</span><b id="uV">3×φ</b></div>
+    <input type="range" id="uS" min="1" max="6" value="3" step="1">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Wander-Rauschweite σ — Memorizations-Wolke (B)</span><b id="sV">120</b></div>
+    <input type="range" id="sS" min="40" max="240" value="120" class="r">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Auf dem Torus</div><div class="v" id="rOn">–</div></div>
+    <div class="box no"><div class="k">Wandernd</div><div class="v" id="rWand">–</div></div>
+    <div class="box res"><div class="k">In Kaskade</div><div class="v" id="rTrans">–</div></div>
+  </div>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--st-wander)"></i> Wandernd (Memorization)</span>
+    <span><i class="dot" style="background:var(--st-approach)"></i> Annähernd</span>
+    <span><i class="dot" style="background:var(--st-seed)"></i> Kaskade / Seed</span>
+    <span><i class="dot" style="background:var(--st-general)"></i> Auf dem Torus (Generalization)</span>
+    <span><i class="line" style="background:var(--signal)"></i> PE-Helix (designed, A)</span>
+  </div>
+</div>
+
+<div class="note acc">
+  <b>Was du siehst:</b> Bei <i>p=0</i> liegen alle Gewichte (B) in einer Wolke <i>abseits</i> des Torus — nur die designede Helix (A) markiert die Zielfläche. Erhöhe <i>p</i>: erst Memorizations-Plateau (rot), dann die Kaskade (orange→gelb), dann Generalization (grün) — <i>alle Gewichte landen auf genau derselben Fläche, auf der A's Helix schon liegt</i>. Das ist die fusionierte Kernaussage: ein Torus, gebaut (A) und gefunden (B).
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="card prov">
+  <div>
+    <a href="../posembed7.html">posembed7.html</a>
+    <div class="d">„A Word Is Not a Point — It's a Helix": sinusoidale Position-Encoding als Helix, in d Dimensionen eine Kurve auf einem hochdimensionalen Torus (Produkt von Kreisen); Fixed-Rotation-Struktur <code>PE(pos+k)=M_k·PE(pos)</code>, inkommensurable Frequenzen → nie Selbstschnitte. Die designede, a-priori-Geometrie (Seite A).</div>
+  </div>
+  <div>
+    <a href="../grokking.html">grokking.html</a>
+    <div class="d">„Grokking — Phase Transition onto the Torus": der Torus als „optimale Mannigfaltigkeit"/Attraktor; SGD wandert im Memorizations-Plateau, ein kritischer Seed findet die Struktur, Kaskade → Phasenübergang von Memorization zu Generalization. Die entdeckte, emergente Geometrie (Seite B).</div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <p>Fusion 021 · Runde 1 · selbstständige HTML, keine Netzwerk-Daten, Theme-reaktiv. <a href="#" id="themeBtn">Theme wechseln</a></p>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  var cv=document.getElementById('cvFusion');
+  var ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+  var pS=document.getElementById('pS'), uS=document.getElementById('uS'), sS=document.getElementById('sS');
+  var pV=document.getElementById('pV'), uV=document.getElementById('uV'), sV=document.getElementById('sV');
+  var rOn=document.getElementById('rOn'), rWand=document.getElementById('rWand'), rTrans=document.getElementById('rTrans');
+  var phaseEl=document.getElementById('phase');
+
+  var R=110, r=40, d=560;
+  var camX=-0.5, camY=0.55, zoom=1.0;
+  var PHI=1.6180339887;
+
+  function rotY(p,a){var c=Math.cos(a),s=Math.sin(a);return [c*p[0]+s*p[2], p[1], -s*p[0]+c*p[2]];}
+  function rotX(p,a){var c=Math.cos(a),s=Math.sin(a);return [p[0], c*p[1]-s*p[2], s*p[1]+c*p[2]];}
+  function proj(p){var sc=(d/(d+p[2]))*zoom; return {x:p[0]*sc+W/2, y:p[1]*sc+H/2, z:p[2], sc:sc};}
+  function torusPt(u,v){return [(R+r*Math.cos(v))*Math.cos(u),(R+r*Math.cos(v))*Math.sin(u), r*Math.sin(v)];}
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function sigm(x){return 1/(1+Math.exp(-x));}
+
+  var N=40, rows=5, cols=N/rows;
+  var slots=[], scat=[], thr=[], jit=[];
+  (function(){
+    var rnd=mulberry32(0x260a);
+    for(var i=0;i<N;i++){
+      var row=Math.floor(i/cols), col=i%cols;
+      var u=(col/cols)*Math.PI*2 + row*0.78;
+      var v=(row/rows)*Math.PI*2;
+      slots.push(torusPt(u,v));
+      var th=rnd()*Math.PI*2, ph=(rnd()-0.5)*Math.PI*0.9, rad=60+rnd()*220;
+      scat.push([rad*Math.cos(ph)*Math.cos(th), rad*Math.cos(ph)*Math.sin(th), rad*Math.sin(ph)*0.6]);
+      thr.push(0.40 + 0.50*rnd());
+      jit.push([(rnd()-0.5)*34,(rnd()-0.5)*34,(rnd()-0.5)*26]);
+    }
+  })();
+
+  function pointPos(i,p,sigma){
+    var snap=sigm((p-thr[i])/0.045);
+    var w=1-snap, k=sigma/120;
+    var x=scat[i][0]*k + jit[i][0]*w;
+    var y=scat[i][1]*k + jit[i][1]*w;
+    var z=scat[i][2]*k + jit[i][2]*w;
+    return {x:x+(slots[i][0]-x)*snap, y:y+(slots[i][1]-y)*snap, z:z+(slots[i][2]-z)*snap, snap:snap};
+  }
+
+  function drawTorus(){
+    var grid=cssVar('--grid');
+    var uN=42, vN=20;
+    ctx.lineWidth=0.7;
+    for(var j=0;j<vN;j++){
+      var v=(j/vN)*Math.PI*2;
+      ctx.beginPath();
+      for(var i=0;i<=uN;i++){
+        var u=(i/uN)*Math.PI*2;
+        var pr=proj(rotX(rotY(torusPt(u,v),camY),camX));
+        i?ctx.lineTo(pr.x,pr.y):ctx.moveTo(pr.x,pr.y);
+      }
+      ctx.strokeStyle=grid; ctx.globalAlpha=0.55; ctx.stroke();
+    }
+    ctx.lineWidth=0.6;
+    for(var i2=0;i2<uN;i2++){
+      var u2=(i2/uN)*Math.PI*2;
+      ctx.beginPath();
+      for(var j2=0;j2<=vN;j2++){
+        var v2=(j2/vN)*Math.PI*2;
+        var pr2=proj(rotX(rotY(torusPt(u2,v2),camY),camX));
+        j2?ctx.lineTo(pr2.x,pr2.y):ctx.moveTo(pr2.x,pr2.y);
+      }
+      ctx.strokeStyle=grid; ctx.globalAlpha=0.32; ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function drawHelix(U){
+    var V=U*PHI, sig=cssVar('--signal');
+    ctx.strokeStyle=sig; ctx.lineWidth=2.4; ctx.globalAlpha=0.95;
+    ctx.shadowColor=sig; ctx.shadowBlur=8;
+    ctx.beginPath();
+    var steps=700;
+    for(var s=0;s<=1;s+=1/steps){
+      var u=s*Math.PI*2*U, v=s*Math.PI*2*V;
+      var pr=proj(rotX(rotY(torusPt(u,v),camY),camX));
+      s?ctx.lineTo(pr.x,pr.y):ctx.moveTo(pr.x,pr.y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur=0; ctx.globalAlpha=1;
+  }
+
+  function drawPoints(p,sigma){
+    var stW=cssVar('--st-wander'), stA=cssVar('--st-approach'), stS=cssVar('--st-seed'), stG=cssVar('--st-general');
+    var list=[];
+    for(var i=0;i<N;i++){
+      var pos=pointPos(i,p,sigma);
+      var pr=proj(rotX(rotY([pos.x,pos.y,pos.z],camY),camX));
+      list.push({pr:pr,snap:pos.snap,i:i});
+    }
+    list.sort(function(a,b){return b.pr.z-a.pr.z;});
+    for(var k2=0;k2<list.length;k2++){
+      var o=list[k2], pr=o.pr, snap=o.snap;
+      var col, glow=0;
+      if(snap<0.18){col=stW;}
+      else if(snap<0.45){col=stA;}
+      else if(snap<0.85){col=stS; glow=10;}
+      else {col=stG; glow=7;}
+      var sz=Math.max(2.2, 4.5*pr.sc);
+      if(snap>0.15 && snap<0.9){
+        var sp=proj(rotX(rotY(slots[o.i],camY),camX));
+        ctx.strokeStyle=col; ctx.globalAlpha=0.15*snap; ctx.lineWidth=0.7; ctx.setLineDash([2,4]);
+        ctx.beginPath();ctx.moveTo(pr.x,pr.y);ctx.lineTo(sp.x,sp.y);ctx.stroke();
+        ctx.setLineDash([]); ctx.globalAlpha=1;
+      }
+      if(glow){ctx.shadowColor=col; ctx.shadowBlur=glow;}
+      ctx.beginPath(); ctx.arc(pr.x,pr.y,sz,0,7); ctx.fillStyle=col; ctx.fill();
+      ctx.shadowBlur=0;
+    }
+  }
+
+  function draw(){
+    var p=parseInt(pS.value)/100, U=parseInt(uS.value), sigma=parseInt(sS.value);
+    var card=cssVar('--card'), faint=cssVar('--faint');
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=card; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=faint; ctx.font='10px '+cssVar('--mono'); ctx.textAlign='center';
+    ctx.fillText('O P T I M A L   M A N I F O L D', W/2, 16);
+    drawTorus();
+    drawHelix(U);
+    drawPoints(p,sigma);
+
+    var on=0,trans=0,sc=0;
+    for(var i=0;i<N;i++){
+      var s=pointPos(i,p,sigma).snap;
+      if(s>=0.85)on++; else if(s>=0.18)trans++; else sc++;
+    }
+    rOn.textContent=on+'/'+N;
+    rWand.textContent=sc;
+    rTrans.textContent=trans;
+    pV.textContent=Math.round(p*100)+'%';
+    uV.textContent=U+'×φ';
+    sV.textContent=sigma;
+
+    var txt, bg;
+    if(on>=N){ txt='Generalization ✨ — alle Gewichte auf dem Torus'; bg=cssVar('--soft-signal'); }
+    else if(on>0||trans>0){ var pct=Math.round((on+0.5*trans)/N*100); txt='Phase transition — '+pct+'% Kaskade'; bg=cssVar('--soft-res'); }
+    else if(p>0.02){ txt='Memorization plateau — wandernd, keine Struktur'; bg=cssVar('--soft-noise'); }
+    else { txt='Bereit (p = 0) — ziehe den Regler'; bg=cssVar('--card'); }
+    phaseEl.textContent=txt;
+    phaseEl.style.background=bg;
+  }
+
+  [pS,uS,sS].forEach(function(el){el.addEventListener('input',draw);});
+  document.getElementById('themeBtn').addEventListener('click',function(e){
+    e.preventDefault();
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+
+  var dragging=false, dragS={x:0,y:0};
+  cv.addEventListener('mousedown',function(e){dragging=true;dragS={x:e.clientX,y:e.clientY};});
+  window.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    camY+=(e.clientX-dragS.x)*0.005;
+    camX+=(e.clientY-dragS.y)*0.005;
+    dragS={x:e.clientX,y:e.clientY};
+    draw();
+  });
+  window.addEventListener('mouseup',function(){dragging=false;});
+  cv.addEventListener('touchstart',function(e){dragging=true;dragS={x:e.touches[0].clientX,y:e.touches[0].clientY};},{passive:true});
+  cv.addEventListener('touchmove',function(e){
+    if(!dragging)return; e.preventDefault();
+    camY+=(e.touches[0].clientX-dragS.x)*0.005;
+    camX+=(e.touches[0].clientY-dragS.y)*0.005;
+    dragS={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    draw();
+  },{passive:false});
+  cv.addEventListener('touchend',function(){dragging=false;});
+  cv.addEventListener('wheel',function(e){
+    e.preventDefault();
+    zoom*= e.deltaY<0?1.06:0.94;
+    if(zoom<0.5)zoom=0.5; if(zoom>1.8)zoom=1.8;
+    draw();
+  },{passive:false});
+
+  draw();
+  window.addEventListener('resize',draw);
+})();
+</script>
+</body>
+</html>

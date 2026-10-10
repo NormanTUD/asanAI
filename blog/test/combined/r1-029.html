@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Konzept ist ein Hologramm — dicht gespeichert, spars gelesen</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:rgba(255,253,248,0.72); --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-canvas-bg:#f4efe3; --viz-txt:#1c2333;
+  --viz-pos:#0d8f80; --viz-neg:#c93a86; --viz-dmg:#c0392b;
+  --viz-ref:rgba(20,28,45,0.10); --viz-panel:#ffffff; --viz-grid:rgba(20,28,45,0.08);
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-canvas-bg:#0c1120; --viz-txt:#e8ecf6;
+  --viz-pos:#5ee0d0; --viz-neg:#ff7ac0; --viz-dmg:#ff6b5e;
+  --viz-ref:rgba(255,255,255,0.08); --viz-panel:#121a2c; --viz-grid:rgba(255,255,255,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(820px 520px at 10% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(820px 560px at 92% 4%,color-mix(in srgb,var(--acc2) 8%,transparent),transparent 60%)}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:22px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note.r{border-color:var(--acc2);background:color-mix(in srgb,var(--acc2) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}.note.r .h{color:var(--acc2)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:11px 14px;font-size:13.5px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:1fr auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);padding:10px 12px;background:color-mix(in srgb,var(--acc4) 9%,transparent);border-bottom:1px solid var(--stroke)}
+.mapt .h.b{text-align:right}
+.mapt .h.c{color:var(--acc4);text-align:center}
+.mapt .a{padding:10px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13px;border-right:1px solid var(--stroke)}
+.mapt .b{padding:10px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13px;text-align:right}
+.mapt .a b,.mapt .b b{color:var(--txt)}
+.mapt .x{display:none}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.btnrow button{font-family:var(--sans);font-size:12.5px;padding:8px 14px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer}
+.btnrow button:hover{border-color:var(--acc);color:var(--acc)}
+.btnrow button.pri{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+.prov{display:grid;gap:12px;margin-top:6px}
+.prov a{display:block;background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:12px 15px;color:var(--txt-dim);font-size:13.5px;border-bottom:1px solid var(--stroke)}
+.prov a .t{display:block;font-family:var(--mono);font-size:12px;color:var(--acc);margin-bottom:3px}
+footer{border-top:1px solid var(--stroke);padding:24px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+@media(max-width:560px){.mapt{grid-template-columns:1fr}.mapt .a,.mapt .b{text-align:left}.mapt .b{border-right:none;border-top:1px dashed var(--stroke)}}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-029</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: hologram.html ✕ j_space2.html</p>
+  <h1>Das Konzept ist ein Hologramm</h1>
+  <p class="eyebrow">dicht gespeichert · spars gelesen · eine einzige Geometrie</p>
+
+  <!-- ============ 1. KERNTHESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Ein <strong>Konzept in einem Sprachmodell ist ein Hologramm.</strong> Es wird auf einer „Platte“ <em>dicht</em> gespeichert — als redundantes Muster, das sich über <strong>alle</strong> Dimensionen des Residual-Streams erstreckt (A). Genau diese Dichte macht es <strong>robust</strong>: Zerbrichst du einen beliebigen Teil, so <em>verblasst</em> das Ganze, aber nichts <em>verschwindet</em> — die Signalqualität folgt dem Hologramm-Gesetz <code>Qualität ≈ √(k/d)</code> (A).</p>
+    <p>Das Gleiche wird gleichzeitig <em>spars</em> gelesen (B): Eine feste, kontextunabhängige, geometrische Linse — die <strong>Jacobian Lens</strong> — projiziert die dichte Aktivierung in eine kleine Handvoll interpretierbarer Konzept-Richtungen; ein „Gedanke“ ist dabei eine <strong>sparsen, nicht-negativen</strong> Linearkombination von höchstens <em>k ≈ 25</em> J-Lens-Vektoren — das ist der <strong>J-Space</strong> (B).</p>
+    <p>Die Linse ist der <strong>Decoder (die IDCT) der Platte</strong>: Die dichte Platte ist das <em>Speichern</em>, die sparses Lesung ist die <em>Interpretation</em>. <strong>Robustheit und Interpretierbarkeit sind zwei Seiten desselben Objekts</strong> — eines fixen, verteilten Basissatzes (der Geometrie des Modells), der das Signal zugleich durch Redundanz schützt <em>und</em> durch seine Geometrie entzifferbar macht.</p>
+    <div class="note"><span class="h">Ein Satz</span> Konzept = <b>fixer verteilter Basissatz × sparses variables Signal</b>; robust, weil dicht; lesbar, weil spars; die J-Lens ist der IDCT-Decoder der holografischen Platte.</div>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere beschreiben denselben LLM-Raum, nehmen aber zu <em>wie</em> ein Konzept darin liegt und gelesen wird unvereinbare Stellungen ein.</p>
+
+    <div class="note r"><span class="h">Widerspruch 1 · Dichte Verteilung vs. sparses Lesen</span>
+      <b>A (hologram.html):</b> Das Konzept „dog“ liegt „als Muster über <em>allen</em> 768+ Dimensionen“; „<em>jede</em> Dimension trägt zu <em>jedem</em> Konzept bei“ — voll dicht und redundant.
+      <b>B (j_space2.html):</b> Eine Aktivierung ist „eine <em>sparse, nicht-negative</em> Linearkombination von <em>höchstens k ≈ 25</em> J-Lens-Vektoren“ und erklärt „&lt;10% der Aktivierungsvarianz“ — nur ein sparses Teilmengen von Richtungen ist aktiv.
+      <b>Konflikt:</b> das Konzept lebt in <em>allen</em> Dimensionen (A) vs. nur ~25 von ~100k Richtungen tragen den lesbaren Gedanken (B).</div>
+
+    <div class="note w"><span class="h">Widerspruch 2 · „Verschwindet nie“ vs. „Rauschen außerhalb des Bands“</span>
+      <b>A:</b> „Zero out random dimensions → the concept gets noisier, but <em>never fully disappears</em>“ — globale Robustheit, unabhängig vom Ort, via <code>√(k/d)</code>.
+      <b>B:</b> Der J-Space / interpretierbare Gedanken existiert <em>nur</em> in einem mittleren Schichtband (L38–L92 bei Sonnet 4.5); in den frühen „sensorischen“ Schichten zeigt die J-Lens „Rauschen“.
+      <b>Konflikt:</b> A behauptet, das Konzept ist <em>überall</em> im Repräsentationsraum robust präsent; B sagt, die <em>interpretierbare</em> Lesung ist nur in einem bestimmten Tiefenband sinnvoll und sonst Rauschen.</div>
+
+    <div class="note t"><span class="h">Widerspruch 3 · Wo lebt das Wissen — Gewicht/Speicher vs. Aktivierung/Lesung</span>
+      <b>A:</b> „knowledge is distributed holographically across <em>every weight and dimension</em>, not stored in fragile individual neurons“ — die <em>Platte (das Speichermedium) ist</em> das Wissen.
+      <b>B:</b> Die J-Lens-Vektoren sind ein <em>fixer, kontextunabhängiger Koordinatenrahmen</em>; der „Gedanke“ ist die <em>variable Aktivierung h<sub>ℓ</sub></em>; der J-Space ist eine <em>Lesung</em>, kein Speicher.
+      <b>Konflikt:</b> A verortet das Konzept im (dichten) <em>gespeicherten Gewicht</em>; B verortet den „Gedanken“ in der (sparsen, variablen) <em>Aktivierung</em>, die durch eine feste Linse gelesen wird — zwei Ontologien von „wo das Konzept ist“.</div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="note"><span class="h">Zu 1 · Trenne <b>speichern</b> von <b>lesen</b></span>
+      Das <em>Speichern</em> im Residual-Stream ist dicht &amp; holografisch (A); das <em>Interpretieren</em> dieses dichten Codes ist spars (B). Die J-Lens ist der IDCT-Decoder: A's eigenes Bild liefert die Analogie — die DCT-Kacheln sind der verteilte Speicher, die IDCT-Rekonstruktion ist die Lesung, und „nur die signifikanten Koeffizienten behalten“ = das sparsen Top-k. <b>Fusion:</b> ein Konzept wird <em>dicht gespeichert</em> (robust) und <em>spars gelesen</em> (interpretierbar) — dasselbe Objekt, zwei Auflösungen.</div>
+
+    <div class="note w"><span class="h">Zu 2 · Trenne <b>Schaden</b> von <b>Tiefe</b> (zwei Achsen)</span>
+      Graceful Degradation (A) beschreibt Robustheit gegen <em>Schaden innerhalb des Repräsentationsraums</em>; das Schichtband (B) sagt, <em>wie tief</em> die Platte liegt. Innerhalb des Workspace-Bands (L38–92) ist die Platte genau das, was die Linse liest — und dort degradiert Schaden nach <code>√(k/d)</code> (A). Außerhalb des Bands gibt es <em>keine Konzept-Platte</em> zu beschädigen (sensorisch/motorisch) — „Rauschen“ ist dort die <em>korrekte</em> Lesung, kein Fehler. <b>Fusion:</b> das J-Space-Band sagt, <em>wo</em> die Platte liegt; <code>√(k/d)</code> sagt, wie sie <em>dort</em> Schaden übersteht.</div>
+
+    <div class="note t"><span class="h">Zu 3 · Ein <b>fixer Basissatz</b> trägt beide Ontologien</span>
+      Das <em>Fixe</em> in beiden Papiern ist die <strong>Modell-Geometrie</strong>: A's DCT-Platte (die verteilte Parametrisierung) ≈ B's J-Lens-Vektoren (die gemittelte Jacobian) — beides ein fixer, kontextunabhängiger Basissatz. Das <em>Variable</em>: A's Bild/Scene ≈ B's Aktivierung h<sub>ℓ</sub>. <b>Fusion:</b> Konzept = <em>fixer verteilter Basissatz × variables sparses Signal</em>. Die fixe Geometrie liefert Redundanz (Robustheit) <em>und</em> Geometrie (Lesbarkeit); das variable Signal liefert den konkreten Gedanken.</div>
+  </section>
+
+  <!-- ============ 4. FUSIONIERTER INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Die zwei Mathematiken, verknüpft</h3>
+    <p><strong>A — holografische Speicherung (2D-DCT).</strong> Das Bild wird mit der 2D-Discrete-Cosine-Transformation (der JPEG-Mathematik) in 256 Frequenz-Koeffizienten zerlegt; diese werden in 16 „Tiles“ aufgeteilt. Im <em>Foto</em> trägt jede Kachel nur ihre Ecke (lokalisiert — zerkratzt = Ecke weg). Im <em>Hologramm</em> trägt jede Kachel eine Welle über das <em>ganze</em> Bild (verteilt — zerkratzt = alles wird weicher, nichts wird gelöscht). Die Signalqualität nach dem Abwischen von <code>d</code> Dimensionen auf <code>k</code> Überlebende:</p>
+    <div class="eq">Qualität <span class="c">≈</span> √( k / d ) &nbsp;&nbsp;<span class="c">// bei 50% Schaden → ~71% Signal verbleibt</span></div>
+    <p>Übertragung auf LLMs (A): Ein Begriff ist nicht in „Dimension #42“; er ist ein Muster über <em>allen</em> Dimensionen. Dimensionen zu nullen macht ihn rauschiger, nie weg — <em>holographic graceful degradation</em>.</p>
+
+    <p><strong>B — J-Space &amp; Jacobian Lens (Lesen).</strong> Die Lens fragt: „Welche Wörter ist diese Aktivierung <em>bereit zu verbalisieren</em>“:</p>
+    <div class="eq">lens(h<sub>ℓ</sub>) = softmax( W<sub>U</sub> · norm( J<sub>ℓ</sub> · h<sub>ℓ</sub> ) )</div>
+    <div class="eq">J<sub>ℓ</sub> = 𝔼[ ∂h<sub>final</sub> / ∂h<sub>ℓ</sub> ] &nbsp;&nbsp;<span class="c">// gemittelte Jacobian, d_model × d_model, fix pro Schicht</span></div>
+    <div class="eq">J-Space: &nbsp; 𝓕 = ⋃<sub>|S|=k</sub> cone{ v<sub>i</sub> : i ∈ S }, &nbsp; k ≤ 25 &nbsp;<span class="c">// Vereinigung von Kegeln, spars &amp; nicht-negativ</span></div>
+    <p>B's Fakten: Der J-Space ist <em>kein</em> linearer Unterraum, sondern eine <strong>Kegelnvereinigung</strong>; nur <strong>~25 Konzepte</strong> gleichzeitig aktiv, <strong>&lt;10% Varianz</strong>; er lebt nur im mittleren Band <strong>L38–L92</strong> („Workspace“; früh = sensorisch/Rauschen, spät = motorisch). Die <strong>Logit Lens</strong> ist der Sonderfall <code>J<sub>ℓ</sub>=I</code> und funktioniert nur spät. <em>Dezisiv:</em> Die J-Lens-Vektoren definieren <strong>Richtungen</strong> (fix, kontextunabhängig); die Aktivierung h<sub>ℓ</sub> liefert <strong>Koordinaten</strong> (variabel, kontextabhängig). Beispiel Multihop: „The color of the planet fourth from the sun is“ → über die Schichten tauchen nacheinander <em>color → Mars → red</em> auf.</p>
+
+    <h3>Die Fusions-Mappe (A ↔ B)</h3>
+    <div class="mapt">
+      <div class="r"><div class="h">A · Hologramm (Speicher)</div><div class="h c">≈</div><div class="h b">B · J-Lens (Lesung)</div></div>
+      <div class="r"><div class="a"><b>DCT-Platte</b> (256 Koeffizienten, verteilt)</div><div class="x"></div><div class="b"><b>J-Lens-Vektoren</b> (fixer Basissatz, gemittelte Jacobian)</div></div>
+      <div class="r"><div class="a"><b>Bild / Scene</b> (gespeicherter Inhalt)</div><div class="x"></div><div class="b"><b>Aktivierung h<sub>ℓ</sub></b> (kontextabhängige Koordinaten)</div></div>
+      <div class="r"><div class="a"><b>IDCT-Rekonstruktion</b></div><div class="x"></div><div class="b"><b>J<sub>ℓ</sub>·h<sub>ℓ</sub> → W<sub>U</sub> → Top-k</b> (der Decoder)</div></div>
+      <div class="r"><div class="a"><b>Tile zerkratzen</b> / Dimension nullen</div><div class="x"></div><div class="b"><b>Dimensionen abwischen</b> (Schaden)</div></div>
+      <div class="r"><div class="a"><b>Graceful Degradation</b> √(k/d)</div><div class="x"></div><div class="b"><b>sparses, robustes Lesen</b> (~25 Richtungen)</div></div>
+      <div class="r"><div class="a"><b>16 Tiles</b> (wenige Basis-Elemente)</div><div class="x"></div><div class="b"><b>~25 J-Lens-Vektoren</b></div></div>
+      <div class="r"><div class="a"><b>Hologramm vs. Foto</b> (verteilt vs. lokal)</div><div class="x"></div><div class="b"><b>J-Space vs. Logit-Lens</b> (J ≠ I vs. J = I)</div></div>
+    </div>
+
+    <div class="note"><span class="h">Das fusionierte Modell</span>
+      <b>Konzept = fixer verteilter Basissatz × variables sparses Signal.</b> Es ist <b>dicht</b> gespeichert (deshalb robust: Schaden → glattes Verblasßen nach √(k/d), nie in schwarze Ecken) und <b>spars</b> lesbar (deshalb interpretierbar: nur ~25 Richtungen, im J-Space-Band L38–92). Die fixe Geometrie ist zugleich Schutz (Redundanz) <em>und</em> Schlüssel (Decodierbarkeit); die J-Lens ist der IDCT, der die Platte in Gedanken übersetzt.</div>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung" class="viz">
+    <h2>Visualisierung</h2>
+    <div class="viz head"><span class="dot"></span><h3>Die Platte zerbrechen — und die J-Lens lesen</h3><span class="tg">live · inline</span></div>
+
+    <div class="ctl">
+      <div class="ctl-lab"><span>Schaden der Platte (zufällige Dimensionen abwischen)</span><b id="dmgLabel">0%</b></div>
+      <input type="range" id="dmg" min="0" max="90" value="0" step="1">
+    </div>
+    <div class="btnrow">
+      <button id="autoBtn" class="pri">▶ Abwischen (0 → 90)</button>
+      <button id="imgBtn">🔀 Neue Platte</button>
+      <button id="resetBtn">↺ Reset</button>
+    </div>
+
+    <div class="cwrap"><canvas id="cv"></canvas></div>
+    <div class="leg">
+      <span><i style="background:var(--viz-pos)"></i> positive Frequenz / Konzept (aktiv)</span>
+      <span><i style="background:var(--viz-neg)"></i> negative Frequenz</span>
+      <span><i style="background:var(--viz-dmg)"></i> zerstörte Dimension</span>
+      <span><i style="background:var(--acc3)"></i> Konzept-Lesung (B)</span>
+    </div>
+
+    <div class="ro">
+      <div class="b"><div class="k">Qualität · Messung</div><div class="v g" id="qmeas">100%</div><div class="u">1 − √MSE</div></div>
+      <div class="b"><div class="k">Hologramm √(k/d)</div><div class="v m" id="qpred">100%</div><div class="u">A's Gesetz</div></div>
+      <div class="b"><div class="k">Überlebend</div><div class="v" id="alive">256/256</div><div class="u">k / d</div></div>
+      <div class="b"><div class="k">Top-Konzept</div><div class="v e" id="topk" style="font-size:13px">—</div><div class="u">stärkste Richtung</div></div>
+    </div>
+
+    <div id="viewCap"><strong>Links</strong> die <em>dichte</em> Platte (A): 256 DCT-Koeffizienten, jede Dimension trägt zum Ganzen bei. Zieh den Schaden — das Bild verblasst <em>graziös</em> (√(k/d)) und zerfällt <em>nicht</em> in schwarze Ecken. <strong>Oben rechts</strong> die Signalqualität (Messung vs. Hologramm-Gesetz). <strong>Unten</strong> die <em>sparses J-Lens-Lesung</em> (B): 6 Konzept-Richtungen, nicht-negativ, die sich glatt <em>verkürzen</em> statt zu verschwinden. <b>Dichte Speicherung × sparses Lesen = das holografische Konzept.</b></div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <a href="../hologram.html"><span class="t">A · hologram.html — „Holographic Storage – Visual Explorer“ (engl.)</span>2D-DCT-Kacheln, lokalisiert vs. verteilt, Zerkratz-Demo, graceful degradation <code>√(k/d)</code> (50% → ~71%), LLM-Analogie (768+ Dimensionen, „dog“).</a>
+      <a href="../j_space2.html"><span class="t">B · j_space2.html — „J-Space &amp; Jacobian Lens“ (deutsch)</span>J-Lens-Formel, <code>J<sub>ℓ</sub>=𝔼[∂h<sub>final</sub>/∂h<sub>ℓ</sub>]</code>, J-Space als Kegelnvereinigung (k≤25, spars, nicht-negativ, &lt;10% Varianz), Schichtband L38–L92, Logit-Lens=J·I, Multihop-Beispiel color→Mars→red.</a>
+    </div>
+  </section>
+
+  <footer>Fusion r1-029 · hologram.html ✕ j_space2.html · selbstenthalten, keine Netz-Datenabrufe</footer>
+</article>
+
+<script>
+(function(){
+"use strict";
+// ---------- DCT (2D, orthogonal) — wie in A ----------
+var N=16, CM=[], k, n;
+for(k=0;k<N;k++){CM[k]=[];var a0=(k===0)?Math.sqrt(1/N):Math.sqrt(2/N);for(n=0;n<N;n++)CM[k][n]=a0*Math.cos(Math.PI*(2*n+1)*k/(2*N));}
+function dct1(x){var X=new Float64Array(N),kk,nn,s;for(kk=0;kk<N;kk++){s=0;for(nn=0;nn<N;nn++)s+=x[nn]*CM[kk][nn];X[kk]=s;}return X;}
+function idct1(X){var x=new Float64Array(N),kk,nn,s;for(nn=0;nn<N;nn++){s=0;for(kk=0;kk<N;kk++)s+=X[kk]*CM[kk][nn];x[nn]=s;}return x;}
+function dct2(im){var t=new Float64Array(N*N),o=new Float64Array(N*N),i,j,r,c,d;
+  for(i=0;i<N;i++){r=new Float64Array(N);for(j=0;j<N;j++)r[j]=im[i*N+j];d=dct1(r);for(j=0;j<N;j++)t[i*N+j]=d[j];}
+  for(j=0;j<N;j++){c=new Float64Array(N);for(i=0;i<N;i++)c[i]=t[i*N+j];d=dct1(c);for(i=0;i<N;i++)o[i*N+j]=d[i];}return o;}
+function idct2(co){var t=new Float64Array(N*N),o=new Float64Array(N*N),i,j,c,r,d;
+  for(j=0;j<N;j++){c=new Float64Array(N);for(i=0;i<N;i++)c[i]=co[i*N+j];d=idct1(c);for(i=0;i<N;i++)t[i*N+j]=d[i];}
+  for(i=0;i<N;i++){r=new Float64Array(N);for(j=0;j<N;j++)r[j]=t[i*N+j];d=idct1(r);for(j=0;j<N;j++)o[i*N+j]=d[j];}return o;}
+
+// ---------- Inline-Bilder (aus A) ----------
+var IMGS=[
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
+ 0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+ 0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,
+ 0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+ 0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
+ 0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,
+ 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+ 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+ 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+ 0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,
+ 0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,
+ 0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,
+ 0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,
+ 0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+ 0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,
+ 0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,
+ 0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,
+ 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+ 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+ 0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,
+ 0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
+ 0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,
+ 0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,
+ 0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,
+ 0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+];
+
+// ---------- Fixe zufällige Zerstörungs-Reihenfolge (deterministisch) ----------
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var order=[], orderPos=new Array(N*N), rng=mulberry32(20240517), i;
+for(i=0;i<N*N;i++)order.push(i);
+for(i=N*N-1;i>0;i--){var j2=Math.floor(rng()*(i+1));var tmp=order[i];order[i]=order[j2];order[j2]=tmp;}
+for(i=0;i<N*N;i++)orderPos[order[i]]=i;
+
+// ---------- Konzept-Richtungen (spatial, normalisiert) = J-Lens-Stand-ins ----------
+function makeDir(fn){var d=new Float64Array(N*N),ss=0,i2,j2,v,p;for(i2=0;i2<N;i2++)for(j2=0;j2<N;j2++){v=fn(i2,j2);d[i2*N+j2]=v;ss+=v*v;}var nn=Math.sqrt(ss)||1;for(p=0;p<N*N;p++)d[p]/=nn;return d;}
+var DIRS=[
+ {name:"Gesamthelligkeit", d:makeDir(function(){return 1;})},
+ {name:"Links–Rechts", d:makeDir(function(i2,j2){return (j2-7.5)/7.5;})},
+ {name:"Oben–Unten", d:makeDir(function(i2,j2){return (i2-7.5)/7.5;})},
+ {name:"Zentrum–Rand", d:makeDir(function(i2,j2){var dx=(j2-7.5)/7.5,dy=(i2-7.5)/7.5;return Math.max(0,1-Math.sqrt(dx*dx+dy*dy));})},
+ {name:"Oberer Rand", d:makeDir(function(i2,j2){return Math.max(0,1-i2/7.5);})},
+ {name:"Kanten", d:makeDir(function(i2,j2){return Math.abs(i2-7.5)+Math.abs(j2-7.5);})}
+];
+
+// ---------- State ----------
+var state={imgIdx:0, f:0, DC:null, ORI:null};
+function loadImg(){state.ORI=Float64Array.from(IMGS[state.imgIdx]);state.DC=dct2(state.ORI);}
+loadImg();
+
+// ---------- Theme palette ----------
+var P={};
+function varCSS(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+function c2rgb(s){s=(s||"").trim();if(s[0]==="#"){var h=s.slice(1);if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];return[parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}var m=s.match(/rgba?\(([^)]+)\)/);if(m){var p=m[1].split(",").map(function(x){return parseFloat(x);});return[p[0],p[1],p[2],(p.length>3?p[3]:1)];}return[120,120,120,1];}
+function mix(a,b,t){var A=c2rgb(a),B=c2rgb(b);return"rgb("+Math.round(A[0]+(B[0]-A[0])*t)+","+Math.round(A[1]+(B[1]-A[1])*t)+","+Math.round(A[2]+(B[2]-A[2])*t)+")";}
+function theme(){
+  P.canvas=varCSS("--viz-canvas-bg"); P.txt=varCSS("--viz-txt"); P.faint=varCSS("--txt-faint");
+  P.pos=varCSS("--viz-pos"); P.neg=varCSS("--viz-neg"); P.dmg=varCSS("--viz-dmg");
+  P.ref=varCSS("--viz-ref"); P.panel=varCSS("--viz-panel"); P.grid=varCSS("--viz-grid");
+  P.acc=varCSS("--acc"); P.acc3=varCSS("--acc3"); P.acc4=varCSS("--acc4"); P.acc5=varCSS("--acc5");
+}
+
+// ---------- Canvas ----------
+var cv=document.getElementById("cv"), ctx=cv.getContext("2d");
+var W=830, H=560, dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+function sizeCanvas(){cv.width=W*dpr;cv.height=H*dpr;cv.style.width="100%";cv.style.height="auto";ctx.setTransform(dpr,0,0,dpr,0,0);}
+sizeCanvas();
+
+function dot2(a,b){var s=0,i2;for(i2=0;i2<a.length;i2++)s+=a[i2]*b[i2];return s;}
+
+function render(){
+  if(!ctx)return;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=P.canvas;ctx.fillRect(0,0,W,H);
+  var f=state.f, kept=Math.round((1-f)*N*N);
+  var DC=state.DC, ORI=state.ORI;
+
+  // Rekonstruktion (IDCT der überlebenden Koeffizienten)
+  var co=new Float64Array(N*N), idx;
+  for(idx=0;idx<N*N;idx++){if(orderPos[idx]<kept)co[idx]=DC[idx];}
+  var img=idct2(co);
+
+  // ---- Platte (DCT) ----
+  var CS=13, OX=24, OY=66, maxAbs=1e-9, v;
+  for(idx=0;idx<N*N;idx++){v=Math.abs(DC[idx]);if(v>maxAbs)maxAbs=v;}
+  for(var pi=0;pi<N;pi++){for(var pj=0;pj<N;pj++){idx=pi*N+pj;var x=OX+pj*CS, y=OY+pi*CS;
+    var val=DC[idx];
+    if(orderPos[idx]<kept){
+      var m=Math.min(1,Math.abs(val)/maxAbs);
+      ctx.fillStyle=(val>=0)?mix(P.canvas,P.pos,m):mix(P.canvas,P.neg,m);
+      ctx.fillRect(x,y,CS,CS);
+    } else {
+      ctx.fillStyle=P.canvas;ctx.fillRect(x,y,CS,CS);
+      ctx.strokeStyle=P.dmg;ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.moveTo(x+3,y+3);ctx.lineTo(x+CS-3,y+CS-3);ctx.moveTo(x+CS-3,y+3);ctx.lineTo(x+3,y+CS-3);ctx.stroke();
+    }
+  }}
+  ctx.strokeStyle=P.grid;ctx.lineWidth=1;ctx.strokeRect(OX,OY,N*CS,N*CS);
+  ctx.fillStyle=P.faint;ctx.font="11px system-ui, sans-serif";ctx.textAlign="left";
+  ctx.fillText("Platte · DCT (dicht, alle 256 Dimensionen)",OX,OY+N*CS+15);
+
+  // ---- Rekonstruktion ----
+  var RX=258;
+  for(pi=0;pi<N;pi++){for(pj=0;pj<N;pj++){idx=pi*N+pj;var t=Math.max(0,Math.min(1,img[idx]));
+    var x2=RX+pj*CS, y2=OY+pi*CS;
+    ctx.fillStyle=mix(P.canvas,P.acc,t);
+    ctx.fillRect(x2,y2,CS,CS);
+  }}
+  ctx.strokeStyle=P.grid;ctx.strokeRect(RX,OY,N*CS,N*CS);
+  ctx.fillStyle=P.faint;ctx.fillText("Rekonstruktion · IDCT",RX,OY+N*CS+15);
+
+  // ---- Qualität-Panel (oben rechts) ----
+  var QX=492,QY=66,QW=314,QH=208;
+  ctx.fillStyle=P.panel;ctx.fillRect(QX,QY,QW,QH);
+  ctx.strokeStyle=P.grid;ctx.strokeRect(QX,QY,QW,QH);
+  var mse=0;for(idx=0;idx<N*N;idx++){var dd=(img[idx]-ORI[idx]);mse+=dd*dd;}mse/=N*N;
+  var qm=(mse<1e-9)?100:Math.max(0,Math.round(100*(1-Math.sqrt(mse))));
+  var qp=Math.round(100*Math.sqrt(kept/(N*N)));
+  var topName="—", topVal=-1;
+  var bars=DIRS.map(function(dir){var cur=Math.abs(dot2(img,dir.d)), ref=Math.abs(dot2(ORI,dir.d));return{name:dir.name,cur:cur,ref:ref};});
+  for(var bi=0;bi<bars.length;bi++){if(bars[bi].cur>topVal){topVal=bars[bi].cur;topName=bars[bi].name;}}
+  var qcol=(qm>=60)?P.acc5:(qm>=30?P.acc3:P.dmg);
+  ctx.textAlign="left";
+  ctx.fillStyle=P.faint;ctx.font="10px system-ui, sans-serif";ctx.fillText("S I G N A L - Q U A L I T Ä T",QX+16,QY+24);
+  ctx.fillStyle=qcol;ctx.font="bold 46px system-ui, sans-serif";ctx.fillText(qm+"%",QX+14,QY+74);
+  ctx.font="12px system-ui, sans-serif";ctx.fillStyle=P.txt;
+  ctx.fillText("Messung (1−√MSE): "+qm+"%",QX+16,QY+104);
+  ctx.fillStyle=P.acc3;ctx.fillText("Hologramm √(k/d): "+qp+"%",QX+16,QY+126);
+  ctx.fillStyle=P.txt;ctx.fillText("Überlebend: "+kept+"/"+(N*N)+"  ("+Math.round(100*kept/(N*N))+"%)",QX+16,QY+148);
+  ctx.fillStyle=P.acc4;ctx.fillText("Top-Konzept: "+topName,QX+16,QY+170);
+  ctx.fillStyle=P.faint;ctx.font="10.5px system-ui, sans-serif";ctx.fillText("dicht gespeichert (A) · spars gelesen (B)",QX+16,QY+192);
+
+  // ---- J-Lens-Lesung (Balken, unten) ----
+  ctx.textAlign="left";
+  ctx.fillStyle=P.txt;ctx.font="12.5px system-ui, sans-serif";
+  ctx.fillText("J-Lens-Lesung — welche Konzept-Richtungen sind (noch) aktiv?  (spars, nicht-negativ · B)",24,300);
+  var by0=316, rowH=31, labelW=150, tx0=184, tx1=684, tw=tx1-tx0;
+  for(bi=0;bi<bars.length;bi++){
+    var b=bars[bi]; var yy=by0+bi*rowH;
+    ctx.fillStyle=P.txt;ctx.font="12px system-ui, sans-serif";ctx.textAlign="left";
+    ctx.fillText(b.name,24,yy+11);
+    // track
+    ctx.fillStyle=P.ref;ctx.fillRect(tx0,yy, tw,16);
+    // current (clamped)
+    var ratio=(b.ref>1e-6)?Math.min(1,b.cur/b.ref):0;
+    ctx.fillStyle=P.acc3;ctx.fillRect(tx0,yy, tw*ratio,16);
+    // value
+    var pct=(b.ref>1e-6)?Math.round(100*b.cur/b.ref):0;
+    ctx.fillStyle=P.faint;ctx.font="11px system-ui, sans-serif";ctx.textAlign="left";
+    ctx.fillText(pct+"%",tx1+10,yy+12);
+  }
+  ctx.textAlign="left";ctx.fillStyle=P.faint;ctx.font="10.5px system-ui, sans-serif";
+  ctx.fillText("Balken verkürzen sich glatt mit dem Schaden (graziös) — sie verschwinden nie abrupt.  hell=Referenz (unbeschädigt),  dunkel=aktuell.",24,532);
+
+  // ---- DOM Readout ----
+  setTxt("qmeas",qm+"%"); setTxt("qpred",qp+"%"); setTxt("alive",kept+"/"+(N*N)); setTxt("topk",topName);
+  setTxt("dmgLabel",Math.round(f*100)+"%");
+  var el=document.getElementById("qmeas"); if(el)el.className="v "+(qm>=60?"g":(qm>=30?"m":"e"));
+}
+function setTxt(id,s){var e=document.getElementById(id);if(e)e.textContent=s;}
+
+// ---------- Controls ----------
+var dmg=document.getElementById("dmg"), autoTimer=null;
+dmg.addEventListener("input",function(){stopAuto();state.f=parseInt(dmg.value,10)/100;render();});
+function stopAuto(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;var b=document.getElementById("autoBtn");if(b)b.textContent="▶ Abwischen (0 → 90)";}}
+document.getElementById("autoBtn").addEventListener("click",function(){
+  if(autoTimer){stopAuto();return;}
+  var b=this; b.textContent="⏸ Stoppen";
+  dmg.value=0;state.f=0;render();
+  autoTimer=setInterval(function(){var val=parseInt(dmg.value,10)+2;if(val>=90){val=90;stopAuto();}dmg.value=val;state.f=val/100;render();},80);
+});
+document.getElementById("imgBtn").addEventListener("click",function(){state.imgIdx=(state.imgIdx+1)%IMGS.length;loadImg();render();});
+document.getElementById("resetBtn").addEventListener("click",function(){stopAuto();dmg.value=0;state.f=0;render();});
+
+// ---------- Theme toggle ----------
+var tb=document.getElementById("themeBtn");
+tb.addEventListener("click",function(){
+  var h=document.documentElement; h.classList.toggle("dark");
+  tb.textContent=h.classList.contains("dark")?"☀️ Licht":"🌙 Dunkel";
+});
+new MutationObserver(function(){theme();render();}).observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
+
+// ---------- Init ----------
+theme();render();
+window.addEventListener("resize",function(){sizeCanvas();render();});
+})();
+</script>
+</body>
+</html>

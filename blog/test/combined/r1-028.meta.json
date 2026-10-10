@@ -1,0 +1,16 @@
+{
+  "no": "028",
+  "a": "paper/manifold_flattening.html",
+  "b": "universal_approximation_theorem.html",
+  "a_title": "FlatNet: Manifold Flattening & Reconstruction — Visual Guide",
+  "b_title": "Dense-ReLU-Dense + Bumps",
+  "combined_theme": "universal-approximation-meets-manifold-geometry",
+  "one_line": "UAT (B): ein ReLU-Netz kann jede kontinuierliche Funktion annähern (Existenz, Breite unbekannt, Black-Box-Fit); FlatNet (A): baue ein kleines, interpretierbares Netz ohne Backprop, das 2. Ordnung (Krümmung/2. Grundform) nutzt und eine flache, konvexe Latente garantiert — B's ReLU-Welt (stückweise linear) ist der Null-Krümmungs-Limes von A's quadratischer Konstruktion.",
+  "contradictions": [
+    "A: ReLU-MLPs sind stückweise linear und modellieren nur 1. Ordnung (keine Krümmung); B (UAT): ReLU-Netze mit genug Breite nähern jede kontinuierliche (auch gekrümmte) Funktion beliebig genau an.",
+    "A: Netz wird ohne Backprop layer-weise konstruiert, Dimension & Tiefe werden automatisch entdeckt (White-Box, O(N·D·d²)); B: Universalität ist nicht-konstruktiv — Gewichte per Gradientenabstieg/'Auto-Fit' (Black-Box), Breite unbekannt.",
+    "A garantiert eine konvexe, affine Latentstruktur (Theorem 6) + Out-of-Sample-Decoder; B optimiert nur den punktuellen, skalaren Funktionsfehler — ohne strukturelle Garantie für die Repräsentation."
+  ],
+  "resolution": "UAT = Existenz-/Dach ('ein ReLU-Netz kann die Daten abbilden', Breite nicht genannt, nicht-konstruktiv); FlatNet = konstruktive, geometriegetreue, parameter-sparende Route (lokale quadratische Patches aus der 2. Grundform, Partition-of-Unity-Verklebung, ohne Backprop, auto Dimension/Tiefe, flache konvexe Latente). Beide nutzen lokale Bausteine + Komposition (B: lineare ReLU-Bumps; A: quadratische Krümmungs-Patches). Im Limes Krümmung II→0 fallen A's quadratischen Patches auf B's linearen/ReLU-Stücke zusammen — B ist exakt der Null-Krümmungs-Sonderfall von A; die 2. Grundform ist der Zusatz, der den blinden Universal-Approximator zum geometrie-bewussten Flattener macht.",
+  "viz": "Canvas-Vergleich einer Kurve A·sin(x): (B) stückweise-lineare ReLU-Approximation (Knicke, rosa Fehlerfläche) vs. (A) stückweise-quadratische Krümmungs-Approximation (2. Grundform); Slider für Krümmungsamplitude A und Stückzahl N; MSE beider + Vorsprung. A→0 ⇒ beide konvergieren (ReLU = Null-Krümmungs-Limes); A>0 & kleines N ⇒ A klar vorn (2. Ordnung), hohe Breite ⇒ beide →0 (UAT)."
+}

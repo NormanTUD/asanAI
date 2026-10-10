@@ -1,0 +1,16 @@
+{
+  "no": "006",
+  "a": "posembed8.html",
+  "b": "space_morph.html",
+  "a_title": "Positional Embedding Helices — 3 Wörter im 3D-Raum",
+  "b_title": "Layer als Raumkrümmung",
+  "combined_theme": "lift-via-structured-coordinate",
+  "one_line": "Beide Papiere machen denselben Zug: eine erhaltene Basis wird in höherer Dimension um eine strukturierte Koordinate (Funktion eines Attributs) erweitert, die das Ziel linear lesbar macht — A: sinusoidale Position (fix), B: erlernte Krümmung (Radius).",
+  "contradictions": [
+    "Feste A-priori-Struktur (A: sinusoidales PE ohne Lernen) vs. erlernte Raumkrümmung (B: Layer-Parameter w aus den Daten)",
+    "Externer Index als Treiber der neuen Koordinate (A: Positionsindex p, unabhängig vom Wort) vs. Eigenkoordinate des Punkts (B: z = x²+y² = r²)",
+    "Ziel: Positionen gegenseitig unterscheidbar/injektiv machen (A) vs. zwei Klassen linear trennbar machen (B)"
+  ],
+  "resolution": "Kein harter Widerspruch, zwei Fälle desselben Musters: neue Koordinate = (nichtlineare) Funktion eines Attributs, gefolgt von linearem Readout. A fixiert das Attribut (Position, universell → a-priori-Sinusoid), B lernt es (Radius/Klasse, datenspezifisch → a-posteriori-Krümmung); ein echtes Modell komponiert beide (feste Positions-Encoding + erlernte Feature-Maps), und das Leseziel (Position bzw. sign(s = wᵀΦ(x)+b)) ist in beiden Fällen linear.",
+  "viz": "Eigenes theme-aware 3D-Canvas: Daten-Schale z=β·r² (Kern rot / Ring blau) mit Trennebene bei z* (Slider β, z*), dazu Helix um eine feste Basis (A: sinusoidaler PE(p)-Offset, Slider Positionen) und 1D-Score-Streifen s=z−z* mit Schwellwert; Inline-Daten via seeded RNG, Drag=rotieren, R=Reset, Theme-Toggle."
+}

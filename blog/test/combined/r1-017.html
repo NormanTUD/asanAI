@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Phasenübergänge der Aufmerksamkeit (017)</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root {
+    --bg:#faf8f1; --fg:#1f2328; --card:#ffffff; --card-border:#e2ddd0;
+    --muted:#6b7280; --accent:#2563eb; --edge:#16a34a; --tri:#d97706;
+    --point:#2563eb; --chart-grid:#e5e1d6; --chart-font:#3a3f47;
+    --panel:#f2efe6; --code:#f6f3ea;
+  }
+  html.dark {
+    --bg:#0f172a; --fg:#e5e7eb; --card:#111827; --card-border:#1f2937;
+    --muted:#94a3b8; --accent:#60a5fa; --edge:#22c55e; --tri:#f59e0b;
+    --point:#60a5fa; --chart-grid:#1e293b; --chart-font:#cbd5e1;
+    --panel:#0b1120; --code:#0b1120;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    line-height:1.65; padding:28px 18px 64px;
+  }
+  article { max-width:820px; margin:0 auto; }
+  h1 { font-size:1.55rem; line-height:1.3; margin-bottom:6px; }
+  .subtitle { color:var(--muted); font-size:0.86rem; margin-bottom:4px; }
+  .tag { display:inline-block; font-size:0.72rem; color:var(--accent);
+    border:1px solid var(--card-border); border-radius:20px; padding:2px 10px; margin:2px 4px 2px 0; }
+  h2 { font-size:1.12rem; margin:30px 0 10px; color:var(--fg);
+    border-bottom:1px solid var(--card-border); padding-bottom:5px; }
+  p { margin:12px 0; }
+  section { margin-top:6px; }
+  .card { background:var(--card); border:1px solid var(--card-border);
+    border-radius:12px; padding:16px; margin:14px 0; }
+  .lead { font-size:1.02rem; }
+  .lead b, p b { color:var(--accent); }
+  ul,ol { margin:10px 0 10px 22px; }
+  li { margin:7px 0; }
+  .lbl { color:var(--muted); font-size:0.82rem; }
+  .pair { display:flex; gap:10px; flex-wrap:wrap; }
+  .pill { font-size:0.78rem; padding:3px 10px; border-radius:6px;
+    background:var(--panel); border:1px solid var(--card-border); }
+  .pill.a { color:var(--accent); } .pill.b { color:var(--tri); }
+  code { background:var(--code); border:1px solid var(--card-border);
+    border-radius:4px; padding:1px 5px; font-size:0.86em; }
+  .viz-controls { display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
+  .srow { display:flex; align-items:center; gap:10px; font-size:0.85rem; }
+  .srow label { min-width:120px; color:var(--muted); }
+  .srow input[type=range] { flex:1; accent-color:var(--accent); }
+  .srow .val { min-width:34px; text-align:right; font-variant-numeric:tabular-nums; color:var(--accent); }
+  #themeToggle { margin-left:auto; background:var(--panel); color:var(--fg);
+    border:1px solid var(--card-border); border-radius:8px; padding:6px 12px; cursor:pointer; font-size:0.82rem; }
+  #plotMain { height:440px; width:100%; }
+  #plotPhase { height:250px; width:100%; }
+  .readout { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .stat { flex:1; min-width:110px; background:var(--panel); border:1px solid var(--card-border);
+    border-radius:10px; padding:10px; text-align:center; }
+  .stat .n { font-size:1.5rem; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums; }
+  .stat .t { font-size:0.72rem; color:var(--muted); }
+  .phase-name { margin-top:10px; font-size:0.9rem; color:var(--tri); font-weight:600; }
+  .caption { font-size:0.8rem; color:var(--muted); margin-top:10px; }
+  .proven a { color:var(--accent); text-decoration:none; }
+  .proven a:hover { text-decoration:underline; }
+  .proven p { margin:10px 0; }
+  .katex { font-size:1.02em; }
+</style>
+</head>
+<body>
+<article>
+  <h1>Phasenübergänge der Aufmerksamkeit: wie neuronale Struktur sich diskret aus einem kontinuierlichen Raum herausbildet</h1>
+  <p class="subtitle">Fusion aus: phasetransition.html &#10005; simplicial_complex_attention6.html</p>
+  <p>
+    <span class="tag">Simpliziale Homologie</span>
+    <span class="tag">Phasenübergänge</span>
+    <span class="tag">Attention / Q&#183;K&#8594;Struktur</span>
+    <span class="tag">Ordnungsparameter</span>
+    <span class="tag">Emergenz</span>
+  </p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Quellen beschreiben dasselbe Phänomen von zwei Seiten:
+    <b>Neuronale Repräsentationen besitzen keine feste, vorgegebene Geometrie — sie bilden Struktur heraus, und diese Struktur ist topologischer Natur.</b>
+    Die eine Seite (phasetransition) hält fest, dass neue Fähigkeiten <b>diskret und abrupt</b> auftreten: eine
+    Ordnungsgröße springt, Punkte kollabieren auf eine Struktur, das Loss fällt in Stufen. Die andere Seite
+    (simplicial_complex_attention) zeigt, dass die Struktur <b>kontinuierlich verstellbar und aus dem Inhalt berechnet</b> ist:
+    Aus den Attention-Gewichten $Q\cdot K$ entsteht ein Simplizialkomplex, dessen Topologie (verbundene Komponenten,
+    Schleifen, Dreiecke) sich mit Schwellwert, Scharfheit und Eingabe ändert.</p>
+    <p>Die fusionierte Einzelperspektive lautet daher:
+    <b>Ein neuronales System läuft auf einem kontinuierlichen Raum möglicher Strukturen, innerhalb dessen
+    topologische Größen — etwa die Betti-Zahlen $\beta_0,\beta_1$ oder die Zahl der Dreiecke — stückweise konstant sind
+    und an diskreten Punkten springen.</b> Genauer: Es gibt einen kontinuierlichen Kontrollparameter
+    (Schwellwert $\varepsilon$, Scharfheit, Trainingsfortschritt, Modellgröße) und eine diskrete Ordnungsgröße.
+    Der Parameter variiert glatt; die Ordnungsgröße springt, sobald der Parameter eine Gewichtsschwelle überschreitet.
+    <b>Genau diese Sprünge sind die Phasenübergänge.</b> Die „Mannigfaltigkeit“ einer Fähigkeit (A) ist ein
+    <em>Phasen-Attraktor</em> — ein stabiles topologisches Regime; der Simplizialkomplex (B) ist das
+    feingranulare, kontinuierlich verformbare Substrat, aus dem diese Regime selektiert werden.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+
+    <p><span class="pill a">A · phasetransition</span><span class="pill b">B · simplicial_attention</span>
+    <span class="lbl">— drei konkrete, unvereinbare Stellungen</span></p>
+
+    <ol>
+      <li><b>Ursprung der Struktur — vorgegeben vs. berechnet.</b>
+        In A ist jede Fähigkeit ein <em>fix vordefiniertes</em> Geometrie-Objekt: die fünf Mannigfaltigkeiten
+        (ring, torus, trefoil, sphere, Möbius) mit fester Form und einem festen <code>triggerEpoch</code>
+        sind bereits im Code vorgegeben; das Training „aktiviert“ sie nur, indem verstreute Punkte darauf kollabieren.
+        Die Topologie ist also ein <em>vorgegebenes Ziel, das ausgewählt wird</em>.
+        In B ist der Simplizialkomplex dagegen <em>nicht</em> vorgegeben: Kanten, Dreiecke und die Betti-Zahlen
+        $\beta_0,\beta_1$ werden bei jedem Durchlauf aus den Attention-Gewichten neu <em>berechnet</em> —
+        ändert man $\varepsilon$, die Scharfheit, den Satz oder die Matrizen $W_Q,W_K,W_V$, ändert sich der
+        gesamte Komplex. Die Struktur wird <em>aus dem Inhalt erzeugt</em>, nicht auf ein Ziel hin aktiviert.</li>
+
+      <li><b>Das Phänomen: diskreter Sprung vs. kontinuierliches Spektrum.</b>
+        Die Kernthese von A ist wörtlich das Gegenteil des graduellen Lernens: „Neural networks don't learn
+        gradually — abrupt phase transitions.“ Lernen ist dort eine Folge plötzlicher, diskreter Ereignisse
+        (Kollaps, sprungförmige Ordnungsgröße, stufenförmiges Loss). B zeigt dagegen ein <em>kontinuierlich
+        verstellbares</em> Objekt: Zwei Slider ($\varepsilon$, Sharpness) lassen einen <em>glatt</em> durch
+        Zwischenzustände fahren; es wird dort kein einzelner „kritischer Punkt“ des Systems betont, $\varepsilon$
+        ist ein willkürliches Einstellrad. A betont das diskrete <em>Ereignis</em> als Phänomen, B das
+        kontinuierliche <em>Medium</em>.</li>
+
+      <li><b>Perspektive: zeitliche Trainingsdynamik vs. statischer Snapshot pro Eingabe.</b>
+        A ist ein Modell der <em>Trainingsdynamik</em>: eine globale Abfolge über Epochen
+        (trigger-Epochen 80 / 280 / 520 / 800 / 1100), bei der das <em>ganze Netz</em> nacheinander die Fähigkeit
+        wechselt; Loss-Kurven sind zentral. B ist ein <em>statisches, relationales Objekt</em>, das pro Eingabe
+        (Satz) auf <em>fixen</em> Gewichten berechnet wird — keine Epochen, kein Loss, kein Lernen; die Struktur
+        ist lokal (paarweis), kompositionell und ändert sich mit jedem Satz. A: Emergenz als Eigenschaft des
+        Lernprozesses (zeitlich, global). B: Struktur als Eigenschaft eines einzelnen Durchlaufs (strukturell, lokal).</li>
+    </ol>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <ol>
+      <li><b>Vorgegeben vs. erzeugt → zwei Ebenen desselben Objekts.</b>
+        Beide stimmen auf ihrer Ebene: Die Struktur ist aus dem Inhalt berechnet (B, mikroskopisch)
+        <em>und</em> sie organisiert sich in wenige stabile topologische „Phasen“/Attraktoren, die sich diskret
+        umschalten (A, makroskopisch). Die Mannigfaltigkeit bei A ist ein <em>Phasen-Attraktor</em>; der
+        Simplizialkomplex bei B ist das feingranulare Substrat, aus dem Phasen selektiert werden. Es ist nicht
+        „entweder vorgegeben oder erzeugt“, sondern: Die Topologie ist nicht <em>a priori</em> fix (B), aber die
+        Menge möglicher Phasen ist durch die Geometrie des Systems eingeschränkt, und das System „wählt“ durch
+        Tuning bzw. Lernen eine aus (A).</li>
+
+      <li><b>Diskret vs. kontinuierlich → kein Widerspruch, zwei Skalen.</b>
+        Man braucht nur einen kontinuierlichen Kontrollparameter und eine diskrete Ordnungsgröße. Der Parameter
+        ($\varepsilon$ / Sharpness / Trainingsfortschritt) variiert glatt; die Ordnungsgröße ($\beta_0,\beta_1$,
+        #Dreiecke) ist stückweise konstant und springt, wenn der Parameter eine Gewichtsschwelle überschreitet.
+        Das <em>ist</em> ein Phasenübergang: kontinuierliche Ursache, diskrete Folge. A beschreibt die Sprünge
+        (die Phasen), B das Medium, in dem sie passieren.</li>
+
+      <li><b>Dynamik vs. Snapshot → sie komplementieren sich.</b>
+        A liefert die <em>Zeitachse</em> (wie sich die Struktur im Training neu organisiert), B die
+        <em>Strukturachse</em> (wie die Struktur für eine feste Gewichts-Einstellung aus einer Eingabe entsteht).
+        Kombiniert: Training ist ein <em>Pfad durch den Parameterraum</em>, auf dem der Simplizialkomplex
+        kontinuierlich umgeformt wird und dabei an diskreten Punkten topologische Phasenübergänge macht.
+        Ein „Epochen-Phasenübergang“ (A) ist genau ein Punkt, an dem der aus den aktuellen Gewichten berechnete
+        Komplex (B) eine Betti-Zahl oder eine Dreiecksschicht wechselt.</li>
+    </ol>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3 style="margin-top:18px;font-size:1rem;">B — wie Attention einen Simplizialkomplex baut</h3>
+    <p>Wörter werden als Embeddings $X$ in einen (3D) Semantikraum gelegt. Drei Projektionen erzeugen Rollen:
+    $Q=XW_Q$ („Wonach suche ich?“), $K=XW_K$ („Was biete ich an?“), $V=XW_V$ (der Inhalt, der übertragen wird).
+    Der Attention-Score ist $Q_i\cdot K_j/\sqrt{d}$; Softmax mit Scharfheit liefert Gewichte
+    $\alpha_{ij}=\mathrm{softmax}_j(\mathrm{sharp}\cdot Q_i\cdot K_j/\sqrt{d})$. Daraus entsteht ein Simplizialkomplex:</p>
+    <div style="margin:10px 0;padding:12px;background:var(--panel);border:1px solid var(--card-border);border-radius:8px;">
+      Kante (1-Simplex) $\{i,j\}$ &nbsp;g.d.&nbsp; $\min(\alpha_{ij},\alpha_{ji})>\varepsilon$<br>
+      Dreieck (2-Simplex) $\{i,j,k\}$ &nbsp;g.d.&nbsp; alle drei gegenseitigen Kanten existieren<br>
+      Bedeutungsfluss (V) &nbsp; $\mathrm{out}_i=\sum_j \alpha_{ij}\,V_j$
+    </div>
+    <p>Als topologische Invarianten werden $\beta_0$ (Zusammenhängende Komponenten, via Union-Find) und
+    $\beta_1$ (unabhängige Schleifen) bestimmt. Für den reinen Graphen gilt exakt $\beta_1=E-V+\beta_0$.
+    Die ganze Konstruktion ist <em>pro Eingabe und pro Gewichts-Einstellung</em> neu berechenbar.</p>
+
+    <h3 style="margin-top:18px;font-size:1rem;">A — wie Training Phasenübergänge zeigt</h3>
+    <p>Jede Fähigkeit wird als eine (gegebene) Mannigfaltigkeit in einem Repräsentationsraum realisiert;
+    zugehörige Punkte sind zunächst verstreut und <em>kollabieren</em> auf die Mannigfaltigkeit, wenn die
+    Fähigkeit entdeckt wird — ein Phasenübergang. Fünf Fähigkeiten erscheinen sequentiell bei festen
+    trigger-Epochen (Pattern Matching &#8594; Induction Heads &#8594; Syntax Tree &#8594; Semantic Space
+    &#8594; Reasoning; Epochen 80/280/520/800/1100). Das Loss ist der mittlere Abstand der Punkte zu ihrem Ziel
+    und fällt in Stufen; die Ordnungsgröße ist die pro-Fähigkeit-Aktivierung $0\to1$. Der Rahmen ist physikalisch:
+    diskrete Phase, Ordnungsparameter, kritische Schwelle.</p>
+
+    <h3 style="margin-top:18px;font-size:1rem;">Vereinigte Formulierung</h3>
+    <p>Seien $\{x_i\}$ Repräsentationspunkte (A: Daten-/Gewichtspunkte, B: Wort-Embeddings) und
+    $w_{ij}\in[0,1]$ eine Affinität (A: implizit durch die Mannigfaltigkeit, B: explizit
+    $\min(\alpha_{ij},\alpha_{ji})$). Ein Kontrollparameter $g$ (Temperatur / Scharfheit / Trainingsschritt)
+    moduliere die Gewichte: $w_{ij}(g)$. Definiere den Komplex $K(g)$ mit Kante g.d. $w_{ij}(g)>\varepsilon$.
+    Dann sind die Invarianten $\beta(g)$ und $\Delta(g)=\#\text{Dreiecke}$ <em>stückweise konstant</em> in $g$,
+    mit diskreten Sprüngen bei den Werten, an denen $w_{ij}(g)$ die Schwelle $\varepsilon$ kreuzt:</p>
+    <div style="margin:10px 0;padding:12px;background:var(--panel);border:1px solid var(--card-border);border-radius:8px;">
+      $\beta(g),\ \Delta(g)\ \ \text{ist stückweise konstant, Sprünge bei}\ \ g:\ w_{ij}(g)=\varepsilon$
+    </div>
+    <p>Die „Mannigfaltigkeit“ einer Phase (A) ist die Region im Raum von $(g,\{w_{ij}\})$, in der ein stabiles
+    topologisches Muster persistiert. A liefert die <em>diskreten Sprünge</em>, B das <em>kontinuierliche
+    Medium</em>. Zusammen: <b>Kontinuierliche Verformung, diskrete Topologie — und die Diskontinuitäten sind die
+    Phasenübergänge des Lernens.</b></p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — Phasenübergänge im Simplizialkomplex</h2>
+    <div class="card">
+      <p class="lbl">Zehn Repräsentationspunkte mit festen Affinitäten $w_{ij}$. Die beiden Slider steuern den
+      kontinuierlichen Kontrollparameter; das obere 3D-Objekt ist der Simplizialkomplex (Kanten, Dreiecke),
+      das untere Diagramm die topologischen Invarianten gegen den Schwellwert $\varepsilon$.
+      Sieh zu, wie die Kurven <em>Treppen</em> bilden und die Invarianten <em>diskret springen</em>, während der
+      Parameter glatt läuft — der vereinte Kern: kontinuierliche Ursache, diskrete Folge.</p>
+      <div class="viz-controls">
+        <div class="srow">
+          <label>Schwellwert &epsilon;</label>
+          <input type="range" id="eps" min="0.05" max="0.95" step="0.01" value="0.60">
+          <span class="val" id="eps-v">0.60</span>
+          <button id="themeToggle">Light &#9681;</button>
+        </div>
+        <div class="srow">
+          <label>Scharfheit (Sharpness)</label>
+          <input type="range" id="sharp" min="0.5" max="3" step="0.1" value="1.0">
+          <span class="val" id="sharp-v">1.0</span>
+        </div>
+      </div>
+      <div id="plotMain"></div>
+      <div id="plotPhase"></div>
+      <div class="readout">
+        <div class="stat"><div class="n" id="s-b0">–</div><div class="t">&beta;&#8320; Komponenten</div></div>
+        <div class="stat"><div class="n" id="s-b1">–</div><div class="t">&beta;&#8321; Schleifen</div></div>
+        <div class="stat"><div class="n" id="s-e">–</div><div class="t">Kanten (1-Simplex)</div></div>
+        <div class="stat"><div class="n" id="s-t">–</div><div class="t">Dreiecke (2-Simplex)</div></div>
+      </div>
+      <div class="phase-name" id="phaseName"></div>
+      <p class="caption">Alle Daten inline (feste Affinitätsmatrix), keine Netzabfragen.
+      Treppensprung = Phasenübergang. Der Marker im unteren Plot zeigt den aktuellen &epsilon;.</p>
+    </div>
+  </section>
+
+  <section id="provenienz" class="proven">
+    <h2>Provenienz</h2>
+    <p><a href="../phasetransition.html">phasetransition.html</a> — „Phase Transitions in Neural Network Training“.
+    Training-/Zeit-Perspektive: Fähigkeiten entstehen diskret, Punkte kollabieren auf fix vorgegebene
+    Mannigfaltigkeiten; sequentielle trigger-Epochen, stufenförmiges Loss, Ordnungsparameter.</p>
+    <p><a href="../simplicial_complex_attention6.html">simplicial_complex_attention6.html</a> —
+    „How Attention Builds Simplicial Complexes“ (Q&#183;K &#8594; Simplex, V &#8594; Meaning Flow).
+    Inferenz-/Struktur-Perspektive: Q&#183;K baut Kanten und Dreiecke, V trägt Bedeutung;
+    $\beta_0,\beta_1$ als Topologie; pro Eingabe und Gewichts-Einstellung berechnet.</p>
+  </section>
+</article>
+
+<script>
+(function () {
+  "use strict";
+
+  var P = [
+    { n:"king",    p:[-0.8, 0.10, 0.90] },
+    { n:"god",     p:[-0.5, 1.00, 0.95] },
+    { n:"divine",  p:[ 0.0, 0.90, 0.85] },
+    { n:"lion",    p:[-0.3,-0.90, 0.60] },
+    { n:"wolf",    p:[-0.4,-0.90, 0.55] },
+    { n:"horse",   p:[-0.2,-0.80, 0.40] },
+    { n:"deer",    p:[ 0.2,-0.90, 0.15] },
+    { n:"power",   p:[ 0.0, 0.20, 0.95] },
+    { n:"queen",   p:[ 0.9, 0.10, 0.85] },
+    { n:"forest",  p:[ 0.0,-0.40, 0.20] }
+  ];
+  var N = P.length;
+
+  var W = Array.from({ length:N }, function () { return new Array(N).fill(0); });
+  function setW(i, j, v) { W[i][j] = v; W[j][i] = v; }
+  // Dreieck A (king, god, divine)
+  setW(0, 1, 0.90); setW(1, 2, 0.85); setW(0, 2, 0.88);
+  // 4-Zyklus B (lion, wolf, horse, deer) -> eine Schleife, plus schwache Diagonale
+  setW(3, 4, 0.72); setW(4, 5, 0.66); setW(5, 6, 0.60); setW(6, 3, 0.55);
+  setW(3, 5, 0.34);
+  // power verknüpft A
+  setW(0, 7, 0.50); setW(1, 7, 0.45);
+  // queen-forest-Kette
+  setW(7, 8, 0.38); setW(8, 9, 0.42); setW(2, 9, 0.30);
+  // Kreuzverbindung A/B
+  setW(7, 4, 0.28);
+
+  function cssVar(name) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || "#888888";
+  }
+
+  function computeStats(eps, sharp) {
+    var i, j, k;
+    var ew = W.map(function (row) { return row.map(function (w) { return Math.pow(w, sharp); }); });
+    var edges = [];
+    for (i = 0; i < N; i++) for (j = i + 1; j < N; j++) {
+      if (ew[i][j] > eps) edges.push([i, j, ew[i][j]]);
+    }
+    var tris = [];
+    for (i = 0; i < N; i++) for (j = i + 1; j < N; j++) for (k = j + 1; k < N; k++) {
+      if (ew[i][j] > eps && ew[j][k] > eps && ew[i][k] > eps) {
+        tris.push([i, j, k, Math.min(ew[i][j], ew[j][k], ew[i][k])]);
+      }
+    }
+    var parent = Array.from({ length:N }, function (_, x) { return x; });
+    function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+    edges.forEach(function (e) { parent[find(e[0])] = find(e[1]); });
+    var roots = {};
+    for (i = 0; i < N; i++) roots[find(i)] = 1;
+    var b0 = Object.keys(roots).length;
+    var b1 = Math.max(0, edges.length - N + b0);
+    return { edges: edges, tris: tris, b0: b0, b1: b1 };
+  }
+
+  function phaseLabel(b0) {
+    if (b0 >= 7) return "Phase I \u2013 weitgehend zerstreut (viele isolierte Komponenten)";
+    if (b0 >= 4) return "Phase II \u2013 erste Zusammenhänge (Cluster bilden sich)";
+    if (b0 >= 2) return "Phase III \u2013 zwei zusammenhängende Komplexe";
+    return "Phase IV \u2013 ein großer Komplex, reich an Schleifen";
+  }
+
+  function buildMain(eps, sharp) {
+    var s = computeStats(eps, sharp);
+    var traces = [], i, t, w;
+    for (i = 0; i < s.tris.length; i++) {
+      t = s.tris[i];
+      traces.push({
+        type: "mesh3d",
+        x: [P[t[0]].p[0], P[t[1]].p[0], P[t[2]].p[0]],
+        y: [P[t[0]].p[1], P[t[1]].p[1], P[t[2]].p[1]],
+        z: [P[t[0]].p[2], P[t[1]].p[2], P[t[2]].p[2]],
+        i: [0], j: [1], k: [2],
+        opacity: 0.22, color: cssVar("--tri"), flatshading: true, showlegend: false,
+        hovertemplate: "\u25b3 {" + P[t[0]].n + ", " + P[t[1]].n + ", " + P[t[2]].n + "}<extra></extra>"
+      });
+    }
+    for (i = 0; i < s.edges.length; i++) {
+      t = s.edges[i]; w = t[2];
+      traces.push({
+        type: "scatter3d", mode: "lines",
+        x: [P[t[0]].p[0], P[t[1]].p[0]],
+        y: [P[t[0]].p[1], P[t[1]].p[1]],
+        z: [P[t[0]].p[2], P[t[1]].p[2]],
+        line: { color: cssVar("--edge"), width: Math.max(2, w * 14) },
+        showlegend: false, hoverinfo: "skip"
+      });
+    }
+    traces.push({
+      type: "scatter3d", mode: "markers+text",
+      x: P.map(function (q) { return q.p[0]; }),
+      y: P.map(function (q) { return q.p[1]; }),
+      z: P.map(function (q) { return q.p[2]; }),
+      text: P.map(function (q) { return q.n; }), textposition: "top center",
+      textfont: { size: 11, color: cssVar("--chart-font") },
+      marker: { size: 9, color: cssVar("--point"), line: { width: 1, color: cssVar("--chart-font") } },
+      showlegend: false
+    });
+    var axis = function (t) {
+      return { title: t, gridcolor: cssVar("--chart-grid"), zerolinecolor: cssVar("--chart-grid"), color: cssVar("--chart-font") };
+    };
+    var layout = {
+      paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+      scene: { xaxis: axis("x"), yaxis: axis("y"), zaxis: axis("z"), bgcolor: "transparent" },
+      font: { color: cssVar("--chart-font") },
+      margin: { l: 0, r: 0, t: 0, b: 0 }, showlegend: false
+    };
+    if (typeof Plotly === "undefined") {
+      document.getElementById("plotMain").innerHTML = "<p style='color:var(--muted)'>Plotly nicht geladen.</p>";
+      return;
+    }
+    Plotly.react("plotMain", traces, layout, { responsive: true });
+  }
+
+  function buildPhase(eps, sharp) {
+    var xs = [], b0s = [], b1s = [], trisN = [], e;
+    for (e = 0; e <= 0.96 + 1e-9; e += 0.02) {
+      var s = computeStats(e, sharp);
+      xs.push(+e.toFixed(2)); b0s.push(s.b0); b1s.push(s.b1); trisN.push(s.tris.length);
+    }
+    var traces = [];
+    traces.push({ x: xs, y: b0s, mode: "lines+markers", name: "\u03b2\u2080 Komponenten",
+      line: { shape: "hv", width: 2, color: cssVar("--accent") }, marker: { size: 4 } });
+    traces.push({ x: xs, y: b1s, mode: "lines+markers", name: "\u03b2\u2081 Schleifen",
+      line: { shape: "hv", width: 2, color: cssVar("--tri") }, marker: { size: 4 } });
+    traces.push({ x: xs, y: trisN, mode: "lines+markers", name: "Dreiecke",
+      line: { shape: "hv", width: 2, color: cssVar("--edge") }, marker: { size: 4 } });
+    traces.push({ x: [eps, eps], y: [0, 10], mode: "lines", name: "akt. \u03b5",
+      line: { width: 1.5, dash: "dash", color: cssVar("--fg") }, showlegend: true });
+    var layout = {
+      paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+      xaxis: { title: "Schwellwert \u03b5", gridcolor: cssVar("--chart-grid"), color: cssVar("--chart-font"), range: [0, 1] },
+      yaxis: { title: "Invariante", gridcolor: cssVar("--chart-grid"), color: cssVar("--chart-font"), range: [-0.5, 10.5], dtick: 1 },
+      font: { color: cssVar("--chart-font") },
+      margin: { l: 44, r: 12, t: 28, b: 40 },
+      showlegend: true, legend: { orientation: "h", x: 0, y: 1.14, font: { size: 11 } }
+    };
+    if (typeof Plotly === "undefined") return;
+    Plotly.react("plotPhase", traces, layout, { responsive: true });
+  }
+
+  function updateReadout(eps, sharp) {
+    var s = computeStats(eps, sharp);
+    document.getElementById("s-b0").textContent = s.b0;
+    document.getElementById("s-b1").textContent = s.b1;
+    document.getElementById("s-e").textContent = s.edges.length;
+    document.getElementById("s-t").textContent = s.tris.length;
+    document.getElementById("phaseName").textContent = phaseLabel(s.b0);
+  }
+
+  function renderAll() {
+    var eps = parseFloat(document.getElementById("eps").value);
+    var sharp = parseFloat(document.getElementById("sharp").value);
+    document.getElementById("eps-v").textContent = eps.toFixed(2);
+    document.getElementById("sharp-v").textContent = sharp.toFixed(1);
+    buildMain(eps, sharp);
+    buildPhase(eps, sharp);
+    updateReadout(eps, sharp);
+  }
+
+  var debounce;
+  function scheduleRender() { clearTimeout(debounce); debounce = setTimeout(renderAll, 60); }
+
+  document.getElementById("eps").addEventListener("input", scheduleRender);
+  document.getElementById("sharp").addEventListener("input", scheduleRender);
+
+  var btn = document.getElementById("themeToggle");
+  btn.addEventListener("click", function () {
+    var root = document.documentElement;
+    var dark = root.classList.contains("dark");
+    root.classList.toggle("dark", !dark);
+    btn.textContent = dark ? "Light \u25fd" : "Dark \u25fe";
+    renderAll();
+  });
+
+  window.addEventListener("load", function () {
+    renderAll();
+    if (window.renderMathInElement) {
+      try {
+        renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ]
+        });
+      } catch (e) { /* math optional */ }
+    }
+  });
+})();
+</script>
+</body>
+</html>

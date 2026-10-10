@@ -1,0 +1,16 @@
+{
+  "no": "035",
+  "a": "nn_as_sheaf_2.html",
+  "b": "persistent_topology.html",
+  "a_title": "Neural Networks as Sheaves",
+  "b_title": "Persistent Topology Explorer",
+  "combined_theme": "local-to-global-gluing",
+  "one_line": "Both papers instantiate one template - local pieces are born, persist, and die by a boundary/restriction map, then assemble into a global object; the sheaf glues local ReLU sections additively while persistent homology keeps only the scale-persistent ones.",
+  "contradictions": [
+    "Additive gluing vs. selection: A's sheaf view keeps every local section (the global output is the sum of all pieces, even ReLU-killed halves as zero sections), while B's TDA view is a selector that explicitly discards short-lived (near-diagonal) bars as noise.",
+    "Exact-but-fragile vs. stable-but-coarse: A celebrates sharp local detail (bend points x*=-b/w that shift continuously under perturbation, no robustness claim), while B's headline is the Cohen-Steiner-Edelsbrunner-Harer stability theorem (bottleneck distance), deliberately insensitive to local detail.",
+    "Opposite assembly arrows: A is contravariant (sheaf restriction maps go big-open-set -> small and kill the section), B is covariant (persistence inclusion/structure maps go small-scale -> large and preserve features)."
+  ],
+  "resolution": "The two are dual views of one born-persist-die lifecycle: 'signal vs noise' reduces to 'long-lived vs short-lived', so A's additive gluing is the zero-threshold limit of B's selection, and stability is what you recover by forgetting the exact weights and keeping only persistence; sheaf gluing (colimit over a spatial cover) and the persistence direct-limit (colimit over a scale filtration) are the same universal construction in opposite directions, and running B's 1-D sublevel-set persistence on A's piecewise-linear output gives a perturbation-stable topological fingerprint of the network.",
+  "viz": "Interactive two-panel canvas: top draws a ReLU network as the glued sum of local bent sections (A) with bend points marked; bottom draws the 1-D sublevel-set persistence barcode of that same output function (B applied to A); a single filtration slider t (B's epsilon analog) plus N/randomize/theme/animate controls drive both, showing components born at minima and killed (glued) at maxima."
+}

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 015 — Skalenproben und die Nichtlinearität</title>
+<style>
+:root{
+  --mn-bg:#FAF8F1;
+  --mn-fg:#1c1b18;
+  --mn-muted:#5c574c;
+  --mn-card:#ffffff;
+  --mn-card2:#f2ede1;
+  --mn-border:#e3dcc9;
+  --mn-accent:#a78bfa;
+  --mn-accent2:#d97706;
+  --mn-grid:#00000012;
+  --mn-on-accent:#2a1f4a;
+}
+html.dark{
+  --mn-bg:#0f172a;
+  --mn-fg:#e2e8f0;
+  --mn-muted:#94a3b8;
+  --mn-card:#111c30;
+  --mn-card2:#0b1220;
+  --mn-border:#243449;
+  --mn-accent:#a78bfa;
+  --mn-accent2:#fbbf24;
+  --mn-grid:#ffffff12;
+  --mn-on-accent:#ffffff;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--mn-bg);color:var(--mn-fg);line-height:1.65;
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;}
+.topbar{display:flex;justify-content:flex-end;padding:14px 20px 0;max-width:820px;margin:0 auto;}
+#themeBtn{background:var(--mn-card2);border:1px solid var(--mn-border);color:var(--mn-fg);
+  padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;}
+article{max-width:820px;margin:0 auto;padding:14px 20px 90px;}
+h1{font-size:1.65rem;line-height:1.28;margin:.4rem 0 .2rem;}
+.subtitle{color:var(--mn-muted);font-size:.82rem;margin:0 0 6px;font-family:ui-monospace,monospace;}
+section{margin-top:38px;}
+section h2{font-size:1.14rem;border-left:3px solid var(--mn-accent);padding-left:11px;margin:0 0 8px;}
+p{margin:10px 0;}
+ul{margin:8px 0;padding-left:20px;}
+li{margin:7px 0;}
+strong{color:var(--mn-fg);}
+.math{font-family:ui-monospace,'JetBrains Mono',monospace;background:var(--mn-card2);
+  padding:1px 5px;border-radius:4px;font-size:.92em;white-space:nowrap;}
+.block{display:block;font-family:ui-monospace,monospace;background:var(--mn-card2);
+  border:1px solid var(--mn-border);border-radius:8px;padding:12px 15px;margin:14px 0;
+  overflow-x:auto;line-height:1.85;font-size:.92rem;}
+.pa{color:var(--mn-accent);font-weight:600;}
+.pb{color:var(--mn-accent2);font-weight:600;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:14px 0 10px;}
+.vbtn{background:var(--mn-card2);border:1px solid var(--mn-border);color:var(--mn-fg);
+  padding:7px 13px;border-radius:7px;cursor:pointer;font-size:.83rem;}
+.vbtn.active{background:var(--mn-accent);border-color:var(--mn-accent);color:var(--mn-on-accent);}
+.vlab{font-size:.8rem;color:var(--mn-muted);display:flex;align-items:center;gap:7px;}
+.vlab input[type=range]{width:150px;accent-color:var(--mn-accent);}
+#vcanvas{width:100%;height:380px;display:block;border-radius:10px;
+  background:var(--mn-card);border:1px solid var(--mn-border);}
+.vreadout{margin-top:10px;font-family:ui-monospace,monospace;font-size:.78rem;
+  color:var(--mn-muted);background:var(--mn-card2);border:1px solid var(--mn-border);
+  border-radius:8px;padding:9px 12px;word-break:break-word;}
+.vnote{font-size:.78rem;color:var(--mn-muted);margin-top:8px;}
+a{color:var(--mn-accent);}
+</style>
+</head>
+<body>
+<div class="topbar"><button id="themeBtn" title="Thema umschalten">Thema</button></div>
+<article>
+<h1>Skalenproben und die Nichtlinearität: ReLU-Faltung und positionales Encoding</h1>
+<p class="subtitle">Fusion aus: dense_relu_dense.html &#10005; posembed5.html</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere tun dasselbe auf zwei Ebenen: Sie bauen eine <strong>niedrigdimensionale Größe</strong> (ein Vektor <span class="math">x</span> bzw. eine skalare Position) in einen <strong>niedrigerdimensionalen Merkmalsraum</strong> auf, indem sie ein Signal durch eine Reihe <strong>skalengetrennter linearer Proben</strong> schicken und auf jede Probe eine <strong>punktweise Nichtlinearität</strong> anwenden. In <span class="pa">A</span> ist die Probe <span class="math">&omega;&#7522;&middot;x + &phi;&#7522;</span> (ein affines Mischen), die Nichtlinearität ist ReLU, und das Ergebnis ist eine <strong>stückweise lineare</strong> Funktion, die den Eingaberaum in viele lineare Regionen <em>faltet und zerteilt</em>. In <span class="pb">B</span> ist die Probe <span class="math">&omega;&#7522;&middot;pos</span> (ein frequenzspezifisches Skalieren), die Nichtlinearität ist sin/cos, und das Ergebnis ist ein <strong>periodischer</strong> Einbettungspunkt auf einem Torus, bei dem der <em>relative</em> Abstand zweier Positionen als <em>Rotation</em> ablesbar ist.</p>
+<p>Der einzige Unterschied — und er ist alles — ist die <strong>Wahl der punktweisen Nichtlinearität</strong> plus die <strong>Form der linearen Proben</strong>. ReLU (unbeschränkt, stückweise linear) erzeugt <strong>polyedrische/konische Geometrie</strong> (ebene Facetten, scharfe Knicke) und macht <em>absolute</em> Funktionen approximierbar (die Zahl der Regionen ist die Ausdruckskraft). Sin/cos (beschränkt, periodisch) erzeugt <strong>torische/gekrümmte Geometrie</strong> (Wicklung, Interferenz) und macht <em>relative</em> Offsets berechenbar (das Skalarprodukt zweier Einbettungen hängt nur vom Abstand ab). Der dichte Schritt (<span class="pa">A</span>: volle Matrix) und der diagonale Schritt (<span class="pb">B</span>: Frequenzskalierung pro Kanal) sind schließlich nur <em>zwei Arten, die Proben zu wählen</em> — ein volles affines Mischen ist das allgemeine Werkzeug, ein diagonaler Frequenzvektor ein handverlesener Spezialfall davon.</p>
+<p><strong>Fusion:</strong> <em>Die Nichtlinearität ist die Maschine.</em> Der lineare Teil (dicht oder diagonal) wählt die Skalen/Frequenzen, die die Probe sieht; die punktweise Nichtlinearität wählt die <strong>Geometrie</strong> des Merkmalsraums und damit die <strong>Art der Beziehung</strong>, die die lineare Berechnung darüber ausnutzen kann. Ein volles Netz sequenziert beides: ein torusförmiger, relativ-empfindlicher Einbettungsschritt (<span class="pb">B</span>) <em>füttert</em> einen ReLU-basierten, stückweise-linearen Funktionsapproximator (<span class="pa">A</span>) — genau so, wie ein Transformer sein positionales Encoding in ein ReLU/GELU-MLP speist und ein CNN seine Feature-Maps durch ReLU-Blöcke.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<p>Die beiden widersprechen sich <strong>nicht direkt</strong> (es sind verschiedene Mechanismen). Aber auf <em>dieselben</em> Designfragen nehmen sie <strong>gegenseitig unvereinbare Stellungen</strong> ein. Fünf konkrete Spannungen, jeweils mit dem eigentlichen Claim:</p>
+<ul>
+<li><strong>Unbeschränkt vs. beschränkt (Rolle der Nichtlinearität).</strong>
+<span class="pa">A</span> setzt auf ReLU, die den Raum <em>faltet</em> — das Original wörtlich: <em>&bdquo;Faltet den Raum — negative Werte &rarr; 0&ldquo;</em>; die Kraft liegt in Unbeschränktheit und Stückweiseliniearität (beliebig viele Regionen).
+<span class="pb">B</span> setzt auf sin/cos, die <em>wickeln</em> — jede Komponente ist eine Einheitskreis-Koordinate in <span class="math">[-1,1]</span>; die Kraft liegt in Beschränktheit und Periodizität. — <em>Entweder falten (unbeschränkt) oder wickeln (beschränkt):</em> zwei gegensätzliche Antworten auf &bdquo;Was soll die punktweise Nichtlinearität sein?&ldquo;</li>
+<li><strong>Absolut vs. relativ (was die Repräsentation trägt).</strong>
+<span class="pa">A</span> zerteilt den Raum in Regionen, die von der <em>absoluten</em> Lage abhängen — ein Punkt ist dadurch gekennzeichnet, <em>in welcher</em> Region er liegt (absolute Unterscheidung).
+<span class="pb">B</span> behauptet <em>explizit</em>: <em>&bdquo;die Ähnlichkeit zweier Positionen hängt nur vom Abstand ab, nicht von der absoluten Position&ldquo;</em> — die absolute Position wird gezielt zugunsten des relativen Offsets verworfen. — Direkt gegenüberstehendes Ziel: absolut empfindlich machen vs. nur Relatives zählen lassen.</li>
+<li><strong>Volles Mischen vs. kanalunabhängig (Form des linearen Schritts).</strong>
+<span class="pa">A</span> ist buchstäblich <em>Dense &rarr; ReLU &rarr; Dense</em>: der lineare Schritt ist eine <strong>volle Matrix</strong> <span class="math">A&#8321;</span> (jede Dimension mischt in jede versteckte Einheit).
+<span class="pb">B</span> hat nur einen <strong>diagonalen</strong> Schritt: jede Frequenzdimension skaliert <span class="math">pos</span> unabhängig mit ihrem <span class="math">&omega;&#7522;</span>, kein Quermischen. — A setzt volle Mischung als <em>notwendig</em> für Ausdruckskraft voraus; B zeigt, dass ein kanalu&shy;nabhängiger Schritt für seine Aufgabe <em>ausreicht</em>.</li>
+<li><strong>Polyeder vs. Torus (die erzeugte Geometrie).</strong>
+<span class="pa">A</span> schneidet den Raum durch <em>Hyperebenen</em> (Vorzeichen der Pre-Activationen) in <strong>konvexe polyedrische Regionen</strong> — flache Facetten, scharfe Knicke (sichtbar im gefalteten Gitter).
+<span class="pb">B</span> wickelt jede <span class="math">(sin,cos)</span>-Paar-Komponente um den <strong>Einheitskreis</strong>; die Gesamteinbettung lebt auf einem <strong>Torus</strong> — glatt, gekrümmt, periodisch, ohne Knicke. — Buchstäblich verschiedene Geometrien: stückweise-flach vs. glatt-periodisch.</li>
+<li><strong>Regionenzählung vs. Interferenz-Fingerabdruck (was die Unterscheidungskraft liefert).</strong>
+<span class="pa">A</span>: Unterscheidungskraft = <em>Anzahl der linearen Regionen</em> (mehr Neuronen &rarr; mehr Faltungen &rarr; feinere Approximation).
+<span class="pb">B</span>: Unterscheidungskraft = <em>Interferenz</em> — <em>&bdquo;Wo sich alle konstruktiv überlagern &rarr; hell. Dieses Muster ist für jede Position einzigartig&ldquo;</em>, begrenzt durch das langsamste Zahnrad (<em>&bdquo;braucht tausende für eine Umdrehung&ldquo;</em>, also Aliasing darüber). — Zwei verschiedene Mechanismen, dieselbe Frage: Wie wird eine Position/Größe eindeutig?</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<p>Alle Spannungen lösen sich durch <em>Stufung</em>: Die vermeintlich konkurrierenden Eigenschaften sind keine Entweder-oder, sondern <strong>unterschiedliche Schichten desselben Aufbaus</strong>.</p>
+<ul>
+<li><strong>Unbeschränkt vs. beschränkt &rarr; Stapeln.</strong> Sie erfüllen <em>verschiedene Funktionen</em>. Man nutzt eine <em>beschränkte</em> (sin/cos) Nichtlinearität dort, wo <strong>relative/periodische</strong> Struktur gewollt ist (Positionen, Phasen), und eine <em>unbeschränkte</em> (ReLU) dort, wo <strong>absolute</strong> stückweise-lineare Entscheidungen gewollt sind. Fused: <em>beschränkte Einbettung &rarr; unbeschränktes MLP</em>.</li>
+<li><strong>Absolut vs. relativ &rarr; verschiedene Stufen.</strong> <span class="pb">B</span> liefert das <strong>Koordinatensystem</strong> (eine Eingabe, deren relative Ablesbarkeit von der <em>linearen</em> Berechnung über sie genutzt wird); <span class="pa">A</span> liefert die <strong>Funktion</strong> darüber, die auf absoluten Punkten wirkt. Das Relativ-Empfindliche aus B wird vom <em>linearen</em> Teil (dicht/Attention) ausgenutzt; das ReLU aus A liefert die <em>Nichtlinearität</em>. Sie <em>komponieren</em>: relativ-empfindliche Einbettung &rarr; absolut-fähiger Approximator.</li>
+<li><strong>Volles Mischen vs. diagonal &rarr; Spezialfall.</strong> Ein <em>diagonaler</em> (Frequenz-)Schritt ist ein <strong>Spezialfall</strong> eines dichten. Man wählt <em>diagonal</em>, wenn jeder Kanal eine unabhängige &bdquo;Frequenzsonde&ldquo; ist (<span class="pb">B</span>), und <em>dicht</em>, wenn man Merkmale <em>kombinieren</em> will (das MLP, <span class="pa">A</span>). Das diagonale Skalieren und das dichte Mischen sind <em>ergänzende Stufen</em> — erst <em>nach</em> der Einbettung mischt die dichte Schicht die kanalgetrennten Informationen.</li>
+<li><strong>Polyeder vs. Torus &rarr; aufeinanderfolgen.</strong> Die Geometrien <em>folgen aufeinander</em>: Die torische Einbettung (gekrümmt, beschränkt) wird <em>in einen Raum abgebildet</em>, den das ReLU-Netz dann <em>zerteilt</em> (polyedrisch). Die <em>Ausgangs-</em>Geometrie ist polyedrisch <em>auf</em> einem torischen Koordinatensystem. Beide Geometrien koexistieren in verschiedenen Schichten.</li>
+</ul>
+<p><strong>Fused conclusion:</strong> Die <em>Wahl der Nichtlinearität</em> bestimmt die Geometrie und damit die Art der berechenbaren Beziehung; der <em>lineare Schritt</em> (dicht oder diagonal) bestimmt, wie stark die Proben gemischt werden. Beide Papiere sind Spezialfälle einer einzigen Bauvorschrift, die ein echtes Netz <em>gleichzeitig</em> ausfüllt.</p>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<p><strong>(a) Das gemeinsame Muster — Skalenproben + punktweise Nichtlinearität.</strong> Gegeben ein Signal <span class="math">s</span>, eine Probenfamilie <span class="math">p&#7522;(s)</span> auf skalengetrennten Skalen und eine punktweise Nichtlinearität <span class="math">&sigma;</span>:</p>
+<span class="block">f(s) = c &middot; &sigma;( p(s) ) + b ,  &nbsp; p(s) = ( p&#8321;(s), &hellip;, p&#7522;(s) )<br>
+A:  p&#7522;(x)  = &omega;&#7522;&middot;x + &phi;&#7522;   (affine Probe),  &sigma; = ReLU   &rarr; stückweise linear<br>
+B:  p&#7522;(pos) = &omega;&#7522;&middot;pos   (Frequenzprobe),  &sigma; = (sin, cos) &rarr; torische Einbettung</span>
+<p>Beide sind &bdquo;lineare Proben + punktweise Nichtlinearität&ldquo;. Der <em>lineare</em> Teil wählt die Proben (dicht = gelernte beliebige Mischung; diagonal = feste geometrische Frequenzproben). Die <em>Nichtlinearität</em> wählt die Geometrie.</p>
+
+<p><strong>(b) Seite A — ReLU: Faltung, Regionen, stückweise linear.</strong></p>
+<span class="block">y = A&#8321;&middot;x + b&#8321;   &nbsp; z = ReLU(y)   &nbsp; out = A&#8322;&middot;z + b&#8322;</span>
+<ul>
+<li><strong>Kompositionsargument:</strong> Ohne ReLU wäre <span class="math">A&#8322;(A&#8321;x+b&#8321;)+b&#8322; = (A&#8322;A&#8321;)&middot;x + (A&#8322;b&#8321;+b&#8322;)</span> — eine einzige <em>affine</em> Abbildung. Das ReLU macht es <em>nicht-affin</em> &rarr; stückweise linear.</li>
+<li><strong>Regionen:</strong> Jede versteckte Einheit <span class="math">j</span> definiert eine Hyperebene <span class="math">y&#7522; = A&#8321;[:,j]&middot;x + b&#8321;[j] = 0</span>; das Vorzeichenmuster aller <span class="math">y&#7522;</span> zerteilt den Raum in <strong>konvexe polyedrische Regionen</strong>. Innerhalb einer Region ist jede Einheit fest linear oder fest null &rarr; das ganze Netz ist dort affin. <strong>Anzahl der Regionen = Ausdruckskraft</strong> (Obere Schranke für ein 2-Schicht-Netz mit <span class="math">n</span> versteckten Einheiten in <span class="math">R&#8308;</span>: <span class="math">O(n&#7510;)</span>).</li>
+<li><strong>ReLU-Eigenschaften:</strong> homogen (<span class="math">ReLU(&lambda;x) = &lambda;&middot;ReLU(x)</span> für &lambda; &gt; 0), stückweise-linear, dünn (in 1D ist die Hälfte der Ausgabe 0), und es &bdquo;faltet&ldquo; den Raum entlang <span class="math">y&#7522; = 0</span>.</li>
+</ul>
+
+<p><strong>(c) Seite B — sin/cos: Frequenzen, Torus, Relativität.</strong></p>
+<span class="block">PE(pos, 2i)   = sin(pos &middot; &lambda;&#7522;)<br>
+PE(pos, 2i+1) = cos(pos &middot; &lambda;&#7522;),   &lambda;&#7522; = 10000^(-2i/d)   (geometrische Frequenzfolge)</span>
+<ul>
+<li><strong>Skalenhierarchie:</strong> <span class="math">&lambda;&#7522;</span> läuft von &asymp;1 (schnell) bis &asymp;1e-4 (langsam) — rund vier Größenordnungen. Die schnellste Probe unterscheidet benachbarte Positionen, die langsamste braucht tausende für eine Umdrehung &rarr; darüber <em>aliasing</em> (der Fingerabdruck gilt nur im nicht-aliasenden Bereich).</li>
+<li><strong>Torus:</strong> <span class="math">sin(&lambda;&#7522; pos), cos(&lambda;&#7522; pos)</span> läuft den Einheitskreis ab; die Gesamteinbettung lebt auf einem <span class="math">d/2</span>-dimensionalen <strong>Torus</strong>.</li>
+<li><strong>Relativität:</strong> <span class="math">&lang;PE(a),PE(b)&rang; = &Sigma;&#8322; [sin(a&lambda;&#8322;)sin(b&lambda;&#8322;) + cos(a&lambda;&#8322;)cos(b&lambda;&#8322;)] = &Sigma;&#8322; cos((a-b)&lambda;&#8322;)</span> — hängt <strong>nur vom Offset a-b</strong> ab. Äquivalent: <span class="math">PE(pos+k) = M_k&middot;PE(pos)</span> mit einer <em>Rotations</em>matrix <span class="math">M_k</span> pro Frequenz — <strong>Hinzufügen ist Rotieren</strong>.</li>
+<li><strong>Interferenz:</strong> Die Superposition aller Frequenzen erzeugt ein <strong>einzigartiges Interferenzmuster</strong> (den &bdquo;Fingerabdruck&ldquo;) pro Position.</li>
+</ul>
+
+<p><strong>(d) Die Synthese — warum das zusammenpasst.</strong></p>
+<ul>
+<li>Die <em>Skalenhierarchie</em> ist in beiden dieselbe Idee: viele feine (schnelle) + wenige grobe (langsame) Proben, damit ein Signal über <em>viele Skalen gleichzeitig</em> repräsentiert wird.</li>
+<li>Der <em>lineare Ableser</em> ist der Brückenkopf: In A ist er die <em>Regionen-Zuordnung</em> (welche Region?), in B die <em>relative Verschiebung</em> (welcher Offset?). Beides sind &bdquo;lineare Ablesungen&ldquo; einer nichtlinearen Repräsentation — genau dort, wo ein <em>dichter</em> (<span class="pa">A</span>) oder <em>Attention</em> (<span class="pb">B</span>) Schicht arbeitet.</li>
+<li><strong>Gefüge (fused architecture):</strong> <span class="math">[Position] &rarr; [diagonale Frequenzproben &times; sin/cos = torische, relativ-empfindliche Einbettung (B)] &rarr; [dichte ReLU-Schicht = stückweise-linearer Approximator (A)] &rarr; [Ausgabe]</span>. B <em>kodiert</em>, A <em>entscheidet</em>. Das ist exakt Transformer (PE + Attention + MLP) und exakt CNN/MLP (Features + ReLU-Blöcke).</li>
+<li><strong>Faustregel (fused design rule):</strong> Wähle die <em>Nichtlinearität</em> nach der Art der Beziehung, die du berechenbar machen willst — relative/periodische &rarr; beschränkt &amp; periodisch (sin/cos, torisch); absolute stückweise-lineare Entscheidung &rarr; unbeschränkt &amp; faltend (ReLU, polyedrisch). Wähle den <em>linearen Schritt</em> nach dem Mischungsbedarf — feste, handverlesene Frequenzen &rarr; diagonal; erlernte Kombinationen &rarr; dicht.</li>
+</ul>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung — ein Signal, zwei Nichtlinearitäten</h2>
+<p>Ein skalarer Eingang <span class="math">x</span> durchläuft <span class="math">K</span> <strong>skalengetrennte Proben</strong> <span class="math">&omega;&#7522;</span> (geometrische Frequenzfolge, wie das Zahnrädergetriebe aus B). Umschalbar wird jede Probe durch <strong>ReLU</strong> (<span class="pa">A</span>: faltend, erzeugt Knicke &amp; lineare Regionen) oder <strong>sin/cos</strong> (<span class="pb">B</span>: periodisch, rotierende Frequenz-Gehäuse &amp; relativ-Offset) nichtlinearisiert. Oben die einzelnen Proben, unten die daraus komponierte Funktion.</p>
+<div class="viz-controls">
+  <button id="btnRelu" class="vbtn active">ReLU (A)</button>
+  <button id="btnSincos" class="vbtn">sin/cos (B)</button>
+  <label class="vlab">Eingang x <input type="range" id="vx" min="0" max="100" value="50"></label>
+  <label class="vlab">Proben K <input type="range" id="vK" min="3" max="7" value="5"></label>
+  <button id="btnPlay" class="vbtn">&#9654; Animation</button>
+</div>
+<canvas id="vcanvas"></canvas>
+<div id="vreadout" class="vreadout"></div>
+<p class="vnote">ReLU-Modus: gestrichelte Linien = Falte-Flanken (Regionengrenzen an den Knicke), schraffierte Bänder = lineare Regionen. sin/cos-Modus: die kleinen Zahnräder zeigen den Winkel &phi;&#7522; = &omega;&#7522;(x - t&#7522;) jeder Probe — ein Offset &Delta; rotiert jede Probe, schnelle mehr (das Getriebe aus B). </p>
+
+<script>
+(function(){
+  var canvas = document.getElementById('vcanvas');
+  var ctx = canvas.getContext('2d');
+  var MODE='relu', XPOS=50, K=5, playing=false, rafId=null;
+  var R=1.5, DH=380;
+
+  function cv(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function hueFor(i){ return 45 + (K<=1?0:(i/(K-1)))*165; }
+  function probeCol(i){ return 'hsl('+hueFor(i)+',78%,58%)'; }
+
+  function buildProbes(){
+    var p=[];
+    for(var i=0;i<K;i++){
+      var freq=2*Math.PI*Math.pow(R,(K-1-i));
+      var t=-1+(K<=1?0:(2*i)/(K-1));
+      var c=(i%2===0)?1:-1;
+      p.push({freq:freq,t:t,c:c,i:i});
+    }
+    return p;
+  }
+  function compose(probes,x){
+    var s=0;
+    for(var i=0;i<probes.length;i++){
+      if(MODE==='relu') s+=probes[i].c*Math.max(0,probes[i].freq*(x-probes[i].t));
+      else s+=Math.cos(probes[i].freq*(x-probes[i].t));
+    }
+    return MODE==='relu'?s:s/probes.length;
+  }
+
+  function setup(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth||Math.max(1,canvas.getBoundingClientRect().width);
+    var h=DH;
+    canvas.width=Math.max(1,Math.round(w*dpr));
+    canvas.height=Math.max(1,Math.round(h*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w:w,h:h};
+  }
+
+  function draw(){
+    var size=setup();
+    var W=size.w, H=size.h;
+    if(W<10){ return; }
+    var fg=cv('--mn-fg')||'#888';
+    var grid=cv('--mn-grid')||'#88822';
+    var accent=cv('--mn-accent')||'#a78bfa';
+    var accent2=cv('--mn-accent2')||'#fbbf24';
+    var card=cv('--mn-card')||'#111';
+    ctx.clearRect(0,0,W,H);
+    var probes=buildProbes();
+    var xNow=-1+(XPOS/100)*2;
+    var plotL=W*0.06, plotR=W*0.96;
+    var barTop=34, barBot=H*0.40;
+    var curTop=H*0.52, curBot=H*0.93;
+    var colW=(plotR-plotL)/K;
+
+    // probe-zone baseline
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(plotL,barBot); ctx.lineTo(plotR,barBot); ctx.stroke();
+
+    // probe zone label
+    ctx.fillStyle=fg; ctx.font='11px system-ui,sans-serif'; ctx.textAlign='left';
+    ctx.fillText(MODE==='relu'?'Proben (ReLU, faltend)':'Frequenz-Gehaeuse (sin/cos, rotierend)', plotL, 16);
+
+    for(var i=0;i<K;i++){
+      var p=probes[i];
+      var cx=plotL+colW*(i+0.5);
+      var col=probeCol(i);
+      ctx.fillStyle=fg; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+      ctx.fillText('ω'+(i+1), cx, barTop-6);
+      if(MODE==='relu'){
+        var a=Math.max(0,p.freq*(xNow-p.t));
+        var aMax=p.freq*2+1e-6;
+        var hpx=Math.min(a/aMax,1)*(barBot-barTop-6);
+        ctx.fillStyle=col;
+        ctx.fillRect(cx-colW*0.26, barBot-hpx, colW*0.52, hpx);
+        ctx.fillStyle=fg; ctx.font='9px ui-monospace,monospace';
+        ctx.fillText(a.toFixed(2), cx, barBot+14);
+      } else {
+        var r=Math.min(colW*0.40,20);
+        var cy=(barTop+barBot)/2;
+        var phase=p.freq*(xNow-p.t);
+        ctx.strokeStyle=col; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke();
+        ctx.lineWidth=1;
+        for(var tt=0;tt<8;tt++){
+          var ta=tt/8*2*Math.PI;
+          ctx.beginPath(); ctx.moveTo(cx+Math.cos(ta)*r, cy+Math.sin(ta)*r);
+          ctx.lineTo(cx+Math.cos(ta)*(r+4), cy+Math.sin(ta)*(r+4)); ctx.stroke();
+        }
+        var ang=-phase;
+        ctx.lineWidth=2; ctx.strokeStyle=col;
+        ctx.beginPath(); ctx.moveTo(cx,cy);
+        ctx.lineTo(cx+Math.cos(ang)*r, cy+Math.sin(ang)*r); ctx.stroke();
+        ctx.fillStyle=col; ctx.beginPath();
+        ctx.arc(cx+Math.cos(ang)*r, cy+Math.sin(ang)*r,3,0,2*Math.PI); ctx.fill();
+        var ph=((phase%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+        ctx.fillStyle=fg; ctx.font='9px ui-monospace,monospace';
+        ctx.fillText('φ='+ph.toFixed(1), cx, barBot+14);
+      }
+    }
+
+    // main curve samples
+    var N=400, samples=[], fmin=Infinity, fmax=-Infinity;
+    for(var s=0;s<=N;s++){
+      var xv=-1+(s/N)*2;
+      var val=compose(probes,xv);
+      samples.push([xv,val]);
+      if(val<fmin)fmin=val; if(val>fmax)fmax=val;
+    }
+    if(fmax-fmin<1e-9){ fmin-=1; fmax+=1; }
+    function xMap(xv){ return plotL+(xv+1)/2*(plotR-plotL); }
+    function yMap(v){ return curBot-(v-fmin)/(fmax-fmin)*(curBot-curTop); }
+
+    // region shading (relu)
+    if(MODE==='relu'){
+      var ts=probes.map(function(q){return q.t;}).sort(function(a,b){return a-b;});
+      var bounds=[-1].concat(ts).concat([1]);
+      for(var b=0;b<bounds.length-1;b++){
+        if(b%2===0){
+          ctx.fillStyle=accent+'22';
+          ctx.fillRect(xMap(bounds[b]), curTop, xMap(bounds[b+1])-xMap(bounds[b]), curBot-curTop);
+        }
+      }
+    }
+
+    // zero line
+    if(fmin<0 && fmax>0){
+      ctx.strokeStyle=grid; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(plotL,yMap(0)); ctx.lineTo(plotR,yMap(0)); ctx.stroke();
+    }
+
+    // curve
+    ctx.strokeStyle=accent2; ctx.lineWidth=2.5; ctx.beginPath();
+    for(var q=0;q<samples.length;q++){
+      var px=xMap(samples[q][0]), py=yMap(samples[q][1]);
+      if(q===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+
+    // kinks (relu)
+    if(MODE==='relu'){
+      probes.forEach(function(p){
+        var px=xMap(p.t), py=yMap(compose(probes,p.t));
+        ctx.strokeStyle=accent+'66'; ctx.setLineDash([3,3]); ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(px,curTop); ctx.lineTo(px,curBot); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle=accent; ctx.beginPath(); ctx.arc(px,py,3.5,0,2*Math.PI); ctx.fill();
+      });
+    }
+
+    // current marker
+    var cxp=xMap(xNow), cyp=yMap(compose(probes,xNow));
+    ctx.strokeStyle=fg; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cxp,curTop-4); ctx.lineTo(cxp,curBot+4); ctx.stroke();
+    ctx.fillStyle=accent2; ctx.beginPath(); ctx.arc(cxp,cyp,5,0,2*Math.PI); ctx.fill();
+    ctx.strokeStyle=card; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cxp,cyp,5,0,2*Math.PI); ctx.stroke();
+
+    // sincos: offset marker + relativity note
+    if(MODE==='sincos'){
+      var d=0.25, xd=Math.min(xNow+d,1);
+      var dxp=xMap(xd), dyp=yMap(compose(probes,xd));
+      ctx.strokeStyle=fg; ctx.setLineDash([3,3]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(dxp,curTop-4); ctx.lineTo(dxp,curBot+4); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=fg; ctx.beginPath(); ctx.arc(dxp,dyp,4,0,2*Math.PI); ctx.fill();
+      var ay=curTop-12;
+      ctx.strokeStyle=accent2; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(cxp,ay); ctx.lineTo(dxp,ay); ctx.stroke();
+      ctx.fillStyle=accent2; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+      ctx.fillText('Δ='+d+' → Rotation', (cxp+dxp)/2, ay-6);
+    }
+
+    // readout
+    var ro=document.getElementById('vreadout');
+    if(ro){
+      var freqList=probes.map(function(p){return (p.freq/(2*Math.PI)).toFixed(2);}).join(':');
+      ro.textContent='Modus: '+(MODE==='relu'?'ReLU (A) — faltend, stückweise-linear':'sin/cos (B) — periodisch, relativ')
+        +'    |    x = '+xNow.toFixed(3)
+        +'    |    Wert = '+compose(probes,xNow).toFixed(3)
+        +'    |    K = '+K+' Proben    |    Frequenzfolge (Zyklen): '+freqList;
+    }
+  }
+
+  function setModeBtns(){
+    document.getElementById('btnRelu').classList.toggle('active',MODE==='relu');
+    document.getElementById('btnSincos').classList.toggle('active',MODE==='sincos');
+  }
+  function setPlay(on){
+    playing=on;
+    document.getElementById('btnPlay').classList.toggle('active',on);
+    document.getElementById('btnPlay').textContent=on?'⏸ Stop':'▶ Animation';
+    if(on){ tick(); } else if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+  }
+  function tick(){
+    if(!playing) return;
+    XPOS=(XPOS+0.5)%100;
+    document.getElementById('vx').value=XPOS;
+    draw();
+    rafId=requestAnimationFrame(tick);
+  }
+
+  function bind(){
+    document.getElementById('vx').addEventListener('input',function(e){ XPOS=+e.target.value; draw(); });
+    document.getElementById('vK').addEventListener('input',function(e){ K=+e.target.value; draw(); });
+    document.getElementById('btnRelu').addEventListener('click',function(){ MODE='relu'; setModeBtns(); draw(); });
+    document.getElementById('btnSincos').addEventListener('click',function(){ MODE='sincos'; setModeBtns(); draw(); });
+    document.getElementById('btnPlay').addEventListener('click',function(){ setPlay(!playing); });
+    var tb=document.getElementById('themeBtn');
+    if(tb) tb.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); draw(); });
+    window.addEventListener('resize',draw);
+    var mo=new MutationObserver(function(){ draw(); });
+    mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+
+  bind();
+  setModeBtns();
+  draw();
+  window.addEventListener('load',draw);
+})();
+</script>
+</article>
+</body>
+</html>

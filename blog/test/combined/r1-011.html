@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glatte Fingerabdrücke, scharfe Faltungen — Fusion 011</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --panel:rgba(255,253,248,.95); --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --panel:rgba(20,27,36,.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:66px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+h1 em.a{color:var(--accent)}
+h1 em.b{color:var(--amber)}
+.sub{font-size:16px;color:var(--muted);max-width:62ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:10px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:24px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.rose{border-color:var(--accent2);background:var(--accent2-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin:1px 4px 1px 0}
+.tag.b{background:var(--amber-soft);color:var(--amber)}
+.eq{font-family:var(--mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto}
+.eq .op{color:var(--accent);font-weight:700}
+.eq .op2{color:var(--amber);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted)}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+canvas{display:block;width:100%;height:440px;border-radius:12px;border:1px solid var(--line);cursor:crosshair}
+.ctl{margin:14px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+.ctl-lab b.b{color:var(--amber)}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].b::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].b::-moz-range-thumb{background:var(--amber)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:110px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--accent)}
+.ro .box.amber{background:var(--amber-soft)}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--accent2-soft)}
+.ro .box.rose .v{color:var(--accent2)}
+.ro .box.violet{background:var(--violet-soft)}
+.ro .box.violet .v{color:var(--violet)}
+.stat{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px}
+.stat b{color:var(--amber)}
+.viz-note{font-size:13px;color:var(--muted);margin-top:12px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;display:block;margin-bottom:4px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">&#9788; / &#9790;</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 1 &middot; Paar 011 &middot; Repr&auml;sentation &times; Berechnung</div>
+  <h1>Glatte <em class="a">Fingerabdr&uuml;cke</em>, scharfe <em class="b">Faltungen</em>: wie ein Netz Positionen codiert und daraus rechnet</h1>
+  <p class="sub">Zwei Papiere, ein gemeinsamer Kern: <b>aus vielen simplen Bausteinen entsteht ein komplexes Ganzes</b> &mdash; nur auf zwei ganz verschiedene Arten. Die sinusoidale <b>Positionscodierung</b> (A) kombiniert viele Frequenzen <b>additiv, parallel und glatt</b> zu einer eindeutigen, lokal treuen Signatur. Die <b>tropische Geometrie</b> (B) kombiniert viele gerade St&uuml;cke <b>nichtlinear, sequenziell und knickig</b> zu exponentiell vielen Regionen. A macht <i>Wo</i> lesbar, B macht <i>Was</i> berechenbar &mdash; und A ist genau die Eingabe, auf die B wirkt.</p>
+  <p class="fuse-line">Fusion aus: <b>posembed2.html</b> &times; <b>tropische_geometrie_tiefer_neuronaler_netze_very_simple.html</b></p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Seiten erkl&auml;ren dasselbe Ph&auml;nomen &mdash; <b>warum ein neuronales Netz aus simplen Bausteinen so viel kann</b> &mdash; aber von zwei entgegengesetzten Seiten her. Die Fusion besteht darin, sie zu <b>einer einzelnen Pipeline</b> zu verbinden, in der sich <b>zwei verschiedene Arten, viele einfache Teile zu einem komplexen Ganzen zu kombinieren</b>, in Serie aufeinanderfolgend abspielen.</p>
+<p><span class="tag">A</span> Die <b>Repr&auml;sentations-Seite</b> („Wo bist du?“): Eine <b>lineare, parallele, additive Superposition</b> vieler einfacher Oszillationen (Sinuswellen mit geometrisch aufsteigenden Frequenzen, Basis&nbsp;10000) wird <b>zusammengelegt</b>. Die Summe/Konkatenation ergibt f&uuml;r jede Position eine <b>glatte, hochdimensionale, lokal treue „Fingerabdruck“-Signatur</b>. Sie braucht <b>keine Tiefe</b>: ein einziger flacher Durchlauf &uuml;ber viele unabh&auml;ngige Frequenz-Kan&auml;le macht jede Position bereits unterscheidbar. Die Unterscheidungskraft w&auml;chst dabei <b>additiv/linear</b> mit der Zahl der Dimensionen.</p>
+<p><span class="tag b">B</span> Die <b>Berechnungs-Seite</b> („Was kannst du?“): Eine <b>nichtlineare, sequenzielle Komposition</b> einfacher st&uuml;ckweiser linearer Teile (ReLU&nbsp;=&nbsp;tropisches&nbsp;<i>max</i>) <b>faltet</b> die Signale Schicht f&uuml;r Schicht. Die Anzahl der linearen Regionen w&auml;chst <b>exponentiell mit der Tiefe</b>, w&auml;hrend die Neuronenzahl nur linear w&auml;chst. Hier ist <b>flach schwach</b>; erst die Tiefe liefert die kombinatorische Explosion.</p>
+<p><b>Die fusionierte Position:</b> A <b>gl&auml;ttert und unterscheidet</b>, B <b>macht scharf und multipliziert</b>. Die „Addition“ bei A (Summe von Wellen &rarr; Fingerprint) ist der <b>lineare</b> Kombinierer; das „max/plus“ bei B (tropisch) ist der <b>nichtlineare</b> Kombinierer. Beide sagen dieselbe tiefere Sache &mdash; <i>viele simple Bausteine, kombiniert, ergeben ein komplexes Ganzes</i> &mdash; nur dass A es <b>additiv, flach und glatt auf der Eingabe-Seite</b> tut und B es <b>tropisch, tief und knickig auf der Funktions-Seite</b>. Die Fingerabdruck-Kodierung (A) erzeugt genau die Art von glatter, unterscheidbarer Eingabe, auf die das Falt-Netz (B) arbeitet: <b>A macht <i>Wo</i> lesbar, B macht <i>Was</i> berechenbar.</b></p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+
+<h3>Widerspruch 1 &mdash; Woher kommt die St&auml;rke: flach/parallel/additiv (A) oder tief/sequenziell/exponentiell (B)?</h3>
+<p><b>A sagt:</b> Ein <b>einziger flacher, paralleler, additiver</b> Durchlauf &uuml;ber viele Frequenz-Dimensionen reiche bereits f&uuml;r eine eindeutige Signatur. Im Original: <i>„Where all the points converge &mdash; that's the unique 'fingerprint' of that position.”</i> Mehr Dimensionen &rarr; mehr Unterscheidungskraft, aber <b>linear</b> (jede Dimension ein bi&szlig;chen); es kommen keinerlei Schichten ins Spiel.</p>
+<p><b>B sagt:</b> <b>Flach sei schwach</b>; nur die Tiefe sei stark. Im Original: <i>„Ein flaches Netz mit vielen Neuronen in einer Reihe kann nur so viele Regionen wie Neuronen erzeugen”</i> &mdash; und <i>„Breite hilft polynomial, Tiefe exponentiell”</i> (Theorem&nbsp;6.3): <i>„1024 Regionen mit 'nur' 20 Neuronen”</i> (L=5, k=4).</p>
+<p class="note rose"><b>Die Spannung:</b> A behauptet, ein <b>flacher, breiter, paralleler, additiver</b> Aufbau sei <em>schon reich</em> (ein Fingerprint braucht keine Tiefe); B behauptet, <b>flach sei schwach</b> und nur die <b>Tiefe</b> liefere die eigentliche kombinatorische Explosion. Zwei entgegengesetzte Stellungen dar&uuml;ber, <em>wo</em> die kombinatorische St&auml;rke sitzt.</p>
+
+<h3>Widerspruch 2 &mdash; Die Form des Objekts: glatt &amp; lokal (A) vs. geknickt &amp; nicht-lokal (B)</h3>
+<p><b>A:</b> Der Fingerprint ist eine <b>glatte, oszillatorische, stetige</b> Funktion der Position (Summe von Sinus), <b>ohne Knicken</b>. Und er ist <b>lokal</b>: <i>„nearby positions have similar convergence zones, while distant positions create completely different patterns”</i> &mdash; nah bleibt nah, der Raum ist treu und glatt.</p>
+<p><b>B:</b> Die berechnete Funktion ist <b>st&uuml;ckweise linear mit Knicken</b> &mdash; <i>„keine glatte Kurve &mdash; eine geknickte aus geraden St&uuml;cken”</i>; sie ist <b>nicht glatt</b>. Und Faltung ist <b>nicht-lokal</b>: jede Schicht <i>„faltet”</i> die St&uuml;cke, sodass <b>nahe Eingaben weit auseinander</b> abgebildet werden k&ouml;nnen &mdash; genau der Punkt des Faltens.</p>
+<p class="note rose"><b>Die Spannung:</b> Das A-Objekt ist <b>glatt und lokal treu</b> (nah &rarr; nah); das B-Objekt ist <b>nicht-glatt und kann Lokalität gezielt brechen</b> (nah &rarr; weit). Sie widersprechen einander in <em>Regelm&auml;&szlig;igkeit</em> und <em>Lokalit&auml;t</em>.</p>
+
+<h3>Widerspruch 3 (zarter) &mdash; Was man als „Reichtum” z&auml;hlt</h3>
+<p>A z&auml;hlt Reichtum <b>diskriminierend</b> (wie <em>verschieden</em> sind die Fingerabdr&uuml;cke zueinander &mdash; ein Einbettungs-/Metrik-Begriff). B z&auml;hlt Reichtum <b>kombinatorisch</b> (Anzahl der linearen Regionen &mdash; ein topologisches Z&auml;hlen). Das sind zwei unterschiedliche Ma&szlig;e f&uuml;r „St&auml;rke”, die in denselben Worten („reich”, „viele”) klingen, aber nicht dasselbe messen.</p>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Aufl&ouml;sung</h2>
+<p><b>Zu Widerspruch 1 (flach vs. tief):</b> Sie wirken auf <b>unterschiedlichen Stufen</b> und <b>komponieren sich</b>. A's parallele Superposition ist exakt die <b>Eingabe</b>, die ein tiefes Netz haben will &mdash; eine glatte, hochdimensionale, bereits unterscheidbare Signatur. B's Faltung ist, was das tiefe Netz <b>mit</b> dieser Signatur macht. Die St&auml;rke „linear in der Breite” (A) und „exponentiell in der Tiefe” (B) sind keine Rivalen, sondern <b>Serienstufen</b>: linear-in-Breite auf der Eingabe-Seite, exponentiell-in-Tiefe auf der Funktions-Seite. Die „Addition“ (Summe von Sinus, A) ist der lineare Kombinierer, das „max” (tropisch, B) der nichtlineare. <b>L&ouml;st sich auf, sobald man A als Eingabe-Seite und B als Funktions-Seite derselben Pipeline sieht.</b></p>
+<p><b>Zu Widerspruch 2 (glatt/lokal vs. knickig/nicht-lokal):</b> <b>Lokalit&auml;t ist eine Ressource, die man ausgibt.</b> A <em>will</em> glatte Lokalit&auml;t &mdash; genau das macht Positionscodierung n&uuml;tzlich (eine treue, glatte Einbettung, aus der sich relative Position ablesen l&auml;sst). B <em>will die Lokalit&auml;t zerst&ouml;ren</em> &mdash; Faltung bildet nahe Eingaben weit auseinander ab, und genau so entstehen scharfe, nicht-lokale Entscheidungsgrenzen. Ein gutes Netz <b>startet glatt</b> (A: treue, lokale, unterscheidbare Eingabe) und <b>faltet sich dann in die Komplexit&auml;t</b> (B: scharfe, nicht-lokale Grenzen). <b>Glattheit ist das Rohmaterial; Knicken ist, was man <i>mit</i> ihm macht.</b></p>
+<p><b>Zu Widerspruch 3 (z&auml;hlen):</b> Sie messen an zwei Enden derselben Kette. A misst, wie gut die <b>Eingabe</b> unterscheidbar ist; B misst, wie komplex die <b>Funktion</b> darauf ist. Beide Ma&szlig;e werden n&uuml;tzlich, sobald man sie als <em>voneinander abh&auml;ngig</em> liest: A's diskriminierende Reichtum (viele Dimensionen &rarr; eindeutige Adresse) ist die Voraussetzung, die B's kombinatorischer Reichtum (viele Regionen &rarr; viele Grenzf&auml;lle) erst sinnvoll macht.</p>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>Was A mitbringt (Positionscodierung)</h3>
+<div class="eq">
+  Frequenz<sub>i</sub> = 10000<sup>&minus;2i/d</sup> &nbsp;&nbsp;(geometrisch aufsteigend, Basis 10000)<br>
+  Komponente<sub>i</sub>(pos) = sin(pos &middot; Frequenz<sub>i</sub>) &nbsp; bzw. &nbsp; cos(pos &middot; Frequenz<sub>i</sub>)
+</div>
+<ul>
+  <li>Geringe Frequenz = <b>grobe Struktur</b>, hohe Frequenz = <b>feine Details</b> (im A-Bild: kleine Kreis = hohe Frequenz).</li>
+  <li>Der kombinierte Vektor ist pro Position ein <b>eindeutiger Fingerprint</b>; die geometrische Aufteilung (Basis&nbsp;10000) sorgt f&uuml;r inkommutative Wellenl&auml;ngen &rarr; je Position ein <em>anderes</em> Interferenzmuster.</li>
+  <li>Die Abbildung ist <b>glatt und lokal treu</b> (Lipschitz): nah &rarr; &auml;hnlich, weit &rarr; ganz anders.</li>
+  <li>Architektonisch eine <b>lineare Einbettung</b>: flach, ein Durchlauf, parallel &mdash; <em>die sinusoidale Positionscodierung des Transformers</em> (Vaswani et al., 2017).</li>
+</ul>
+
+<h3>Was B mitbringt (tropische Geometrie)</h3>
+<div class="eq">
+  normale Welt: <span class="op">x + y</span> &nbsp;und&nbsp; <span class="op2">x &middot; y</span> &nbsp;&nbsp;&rarr;&nbsp;&nbsp;
+  tropische Welt: <span class="op">max(x, y)</span> &nbsp;und&nbsp; <span class="op2">x + y</span><br>
+  ReLU(x) = max(x, 0) = <span class="op">x &oplus; 0</span> &nbsp;(ein ReLU-Neuron <em>ist</em> ein tropischer Baustein)
+</div>
+<ul>
+  <li><b>Relu-Netz = Knick-Maschine:</b> Jede Schicht legt <b>Knicke</b> an; die „Intelligenz” = <em>Wo</em> und <em>Wie viele</em> Knicke &rarr; die <b>linearen Regionen</b>.</li>
+  <li><b>&Auml;quivalenzsatz</b> (Zhang, Naitzat &amp; Li 2018, ICML / arXiv:1805.07091): {ReLU-Netze mit ganzzahligen Gewichten} = {stetige st&uuml;ckweise lineare Funktionen mit ganzzahligen Steigungen} = {tropische rationale Funktionen}. Eine <em>Gleichheit von Familien</em>, keine N&auml;herung.</li>
+  <li><b>1D:</b> Eine PL-Funktion mit k Knicken hat k+1 Regionen. <b>Flach:</b> Regionen &asymp; #Neuronen (linear). <b>Tief:</b> jede Schicht mit k „Z&auml;hnen” faltet &rarr; Regionen &asymp; k<sup>L</sup> (exponentiell in der Tiefe), Neuronen = L&middot;k (linear).</li>
+  <li><b>Theorem 6.3</b> formuliert den Bound von Raghu et al. (2017) <em>neu</em> (in 3 Zeilen Konvexgeometrie), verbessert ihn aber nicht. St&uuml;tzend: Dualit&auml;t (Maclagan &amp; Sturmfels), Zonotop-Vertex-Satz (Gritzmann &amp; Sturmfels), Umkehrung (Tarela &amp; Martinez).</li>
+  <li><b>Grenzen (honesty corner):</b> nur PL-Aktivierungen (ReLU, Leaky-ReLU, abs, Max-Pooling &mdash; <em>tanh/Sigmoid nein</em>); ganzzahlige Gewichte (Reelle nur approximierbar); erkl&auml;rt <em>Generalisierung</em> nicht.</li>
+</ul>
+
+<h3>Die Integration &mdash; vier verbindende Achsen</h3>
+<table class="tbl">
+  <tr><th>Achse</th><th>A (Repr&auml;sentation)</th><th>B (Berechnung)</th></tr>
+  <tr><td><b>Kombinierer</b></td><td>lineare <em>Summe</em> (kommutativ, glatt)</td><td>tropisches <em>max</em> (nichtlinear, knickig)</td></tr>
+  <tr><td><b>Skalierung</b></td><td>linear in der <em>Breite</em> (#Frequenzdimensionen)</td><td>exponentiell in der <em>Tiefe</em> (L)</td></tr>
+  <tr><td><b>Regelm&auml;&szlig;igkeit</b></td><td>glatt, oszillatorisch, lokal treu</td><td>st&uuml;ckweise linear, geknickt, nicht-lokal</td></tr>
+  <tr><td><b>Frage</b></td><td>„Wo bist du?” (Adresse)</td><td>„Was kannst du?” (Funktion)</td></tr>
+</table>
+<ul>
+  <li><b>Zwei Arten zu kombinieren:</b> A's Fingerprint = <em>Summe</em> vieler Sinus; B's Funktion = <em>max/Summe</em> vieler affiner St&uuml;cke. Das „max” ist f&uuml;r PL-Funktionen, was die „Summe” f&uuml;r Wellen ist.</li>
+  <li><b>Die Br&uuml;cke:</b> A's glatter, lokal-treuer, hochdimensionaler Fingerprint ist genau die Eingabe, auf die B's Faltung wirkt. <b>A's Ausgang ist B's Eingang.</b></li>
+  <li><b>Unifiziert:</b> Ein Netz „versteht” ein Token, indem es (i) ihm eine glatte, eindeutige, unterscheidbare <b>Adresse</b> gibt (A, parallele additive Superposition) und (ii) diese Adresse durch tiefe st&uuml;ckweise lineare Schichten in eine <b>exponentiell reiche Funktion</b> davon f&auml;ltt (B, sequenzielle tropische Komposition).</li>
+</ul>
+<div class="note"><b>Ein Satz:</b> <b>Lineare Superposition baut Identit&auml;t</b> (Repr&auml;sentation); <b>tropische Superposition baut Funktion</b> (Berechnung) &mdash; dasselbe Prinzip, <em>viele simple Teile zu einem komplexen Ganzen kombinieren</em>, einmal additiv/flach/glatt, einmal tropisch/tief/knickig.</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Fusion: von der glatten Signatur zur gefalteten Funktion</h2>
+<div class="viz">
+  <h3>Die Pipeline: A macht <i>Wo</i> lesbar &rarr; B macht <i>Was</i> berechenbar</h3>
+  <p class="dsub">Oben (A) die <b>glatte, parallele, additive</b> Superposition mehrerer Frequenzen; der Wert der <b>grobsten</b> Kurve an der Position p &mdash; <b>s(p)</b> &mdash; ist die <b>Br&uuml;cke</b>. Unten (B) wird genau dieses s(p) <b>L-mal mit k Z&auml;hnen gefaltet</b>. Zieh <i>Position</i> und beobachte, wie der glatte Punkt (violet) &uuml;ber die Br&uuml;cke zum knickigen Ausgang f&auml;llt; dreh <i>Tiefe</i>/Z&auml;hne</i>, um die exponentielle Regionen-Explosion gegen die lineare Neuronenzahl zu sehen.</p>
+  <canvas id="viz"></canvas>
+
+  <div class="ctl">
+    <div class="ctl-lab"><span>Position p <span style="color:var(--accent)">(A: Eingabe)</span></span><b id="vP">0.25</b></div>
+    <input type="range" id="slP" min="0" max="100" step="1" value="25">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Frequenz-Dimensionen d <span style="color:var(--accent)">(A: Breite/Parallelit&auml;t)</span></span><b id="vD">3</b></div>
+    <input type="range" id="slD" min="2" max="4" step="1" value="3">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Z&auml;hne pro Schicht k <span style="color:var(--amber)">(B: Faltung)</span></span><b class="b" id="vK">3</b></div>
+    <input type="range" class="b" id="slK" min="1" max="4" step="1" value="3">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Tiefe / Schichten L <span style="color:var(--amber)">(B: Tiefe)</span></span><b class="b" id="vL">3</b></div>
+    <input type="range" class="b" id="slL" min="1" max="6" step="1" value="3">
+  </div>
+
+  <div class="ro">
+    <div class="box violet"><div class="k">Br&uuml;cke s(p)</div><div class="v" id="roS">0.500</div></div>
+    <div class="box amber"><div class="k">Regionen k<sup>L</sup> <span style="color:var(--muted)">(B)</span></div><div class="v" id="roReg">27</div></div>
+    <div class="box rose"><div class="k">Neuronen L&middot;k <span style="color:var(--muted)">(B)</span></div><div class="v" id="roNeu">9</div></div>
+    <div class="box amber"><div class="k">Ausgang f<sub>L</sub>(s(p))</div><div class="v" id="roOut">0.000</div></div>
+    <div class="box"><div class="k">Regionen / Neuronen</div><div class="v" id="roRat">3.0</div></div>
+  </div>
+  <p class="stat" id="stat">A: glatt, 0 Knicken, lokal (nah&rarr;nah) &middot; B: geknickt, exponentiell, nicht-lokal.</p>
+</div>
+<p class="viz-note">Alle Daten inline; keine Netzwerke-Calls. Theme-aware &uuml;ber CSS-Variablen (<code>html.dark</code>) + MutationObserver. In A sind die Frequenzen 2<sup>i</sup> (geometrisch, Basis hier zur Sichtbarkeit komprimiert; im Original A Basis&nbsp;10000).</p>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <div class="item"><span class="lbl">A &middot; <a href="../posembed2.html">posembed2.html</a></span>
+  Interaktive Visualisierung der <b>sinusoidalen Positionscodierung</b> (Basis&nbsp;10000) als &uuml;berlappende Frequenz-Kreise / Interferenz: jede Position wird pro Frequenz zu einem Punkt auf einem Kreis, die <b>Konvergenz</b> aller Punkte ist der eindeutige „Fingerprint”. Kleine Kreise = hohe Frequenz (fein), große = niedrige (grob); nahe Positionen &rarr; &auml;hnliche Zonen, ferne &rarr; ganz andere. Die <b>Repr&auml;sentations-Seite</b> der Fusion.</div>
+  <div class="item"><span class="lbl">B &middot; <a href="../tropische_geometrie_tiefer_neuronaler_netze_very_simple.html">tropische_geometrie_tiefer_neuronaler_netze_very_simple.html</a></span>
+  Stark vereinfachte Erkl&auml;rung der <b>tropischen Geometrie</b> von ReLU-Netzen (Zhang, Naitzat &amp; Li 2018, ICML / arXiv:1805.07091): <b>ReLU&nbsp;=&nbsp;max</b>, Netze als <b>Knick-Maschinen</b>, die &Auml;quivalenz ReLU-Netz&nbsp;&harr;&nbsp;st&uuml;ckweise linear&nbsp;&harr;&nbsp;tropisch-rational, und <b>Tiefe &gt; Breite</b> (exponentiell vs. polynomial, Theorem&nbsp;6.3). Die <b>Berechnungs-Seite</b> der Fusion.</div>
+</div>
+</section>
+
+<footer>
+  Fusion 011 &middot; posembed2.html &times; tropische_geometrie_tiefer_neuronaler_netze_very_simple.html &middot; alles l&auml;uft lokal im Browser.
+</footer>
+
+</main>
+
+<script>
+"use strict";
+(function(){
+  function $(id){ return document.getElementById(id); }
+  var cv = $('viz');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var TAU = Math.PI*2;
+  var PAXMAX = 4*Math.PI;
+
+  var pVal = +$('slP').value/100*PAXMAX;
+  var dVal = +$('slD').value;
+  var kVal = +$('slK').value;
+  var lVal = +$('slL').value;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function freq(i){ return Math.pow(2, i); }
+  function sOf(p){ return (Math.sin(freq(0)*p)+1)/2; }
+  function fold1(x,k){ var t=x*k; var f=t-Math.floor(t); return 1-Math.abs(1-2*f); }
+  function foldL(x,k,L){ for(var i=0;i<L;i++){ x=fold1(x,k); } return x; }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function rr(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.arcTo(x+w,y,x+w,y+h,r);
+    c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r);
+    c.arcTo(x,y,x+w,y,r);
+    c.closePath();
+  }
+
+  function draw(){
+    var dpr = Math.min(2, window.devicePixelRatio||1);
+    var w = cv.clientWidth||600;
+    var H = 440;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.imageSmoothingEnabled = true;
+
+    var panel=cssVar('--panel'), grid=cssVar('--line'), fg=cssVar('--fg'),
+        muted=cssVar('--muted'), accent=cssVar('--accent'), accent2=cssVar('--accent2'),
+        violet=cssVar('--violet'), amber=cssVar('--amber');
+
+    ctx.clearRect(0,0,w,H);
+
+    var A={x0:46,x1:w-18,y0:46,y1:192};
+    var B={x0:46,x1:w-18,y0:242,y1:390};
+
+    rr(ctx,10,14,w-20,184,12); ctx.fillStyle=panel; ctx.fill(); ctx.strokeStyle=grid; ctx.lineWidth=1; ctx.stroke();
+    rr(ctx,10,212,w-20,184,12); ctx.fillStyle=panel; ctx.fill(); ctx.stroke();
+
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic'; ctx.font='700 13px system-ui, sans-serif';
+    ctx.fillStyle=accent; ctx.fillText('A \u00b7 Repr\u00e4sentation \u2014 glatt \u00b7 parallel \u00b7 additiv', 24, 33);
+    ctx.fillStyle=amber;  ctx.fillText('B \u00b7 Berechnung \u2014 geknickt \u00b7 sequenziell \u00b7 exponentiell', 24, 231);
+
+    function axX(x){ return A.x0 + (x/PAXMAX)*(A.x1-A.x0); }
+    function ayY(y){ return A.y0 + (1-(y+1)/2)*(A.y1-A.y0); }
+    function bxX(x){ return B.x0 + (x/1)*(B.x1-B.x0); }
+    function byY(y){ return B.y0 + (1-y)*(B.y1-B.y0); }
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var g=0; g<=4; g++){
+      var gyA=A.y0+(A.y1-A.y0)*g/4; ctx.beginPath(); ctx.moveTo(A.x0,gyA); ctx.lineTo(A.x1,gyA); ctx.stroke();
+      var gyB=B.y0+(B.y1-B.y0)*g/4; ctx.beginPath(); ctx.moveTo(B.x0,gyB); ctx.lineTo(B.x1,gyB); ctx.stroke();
+    }
+    ctx.strokeStyle=muted; ctx.globalAlpha=0.5;
+    var zA=ayY(0); ctx.beginPath(); ctx.moveTo(A.x0,zA); ctx.lineTo(A.x1,zA); ctx.stroke();
+    var zB=byY(0); ctx.beginPath(); ctx.moveTo(B.x0,zB); ctx.lineTo(B.x1,zB); ctx.stroke();
+    ctx.globalAlpha=1;
+
+    var pal=[accent,violet,amber,accent2];
+    for(var i=0;i<dVal;i++){
+      var f=freq(i);
+      ctx.strokeStyle=pal[i%4];
+      ctx.lineWidth=(i===0)?3:1.6;
+      ctx.globalAlpha=(i===0)?1:0.75;
+      ctx.beginPath();
+      var N=400;
+      for(var s=0;s<=N;s++){
+        var x=(s/N)*PAXMAX;
+        var y=Math.sin(f*x);
+        var px=axX(x), py=ayY(y);
+        if(s===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+
+    var pxm=axX(pVal);
+    ctx.strokeStyle=violet; ctx.lineWidth=1.6; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pxm,A.y0); ctx.lineTo(pxm,A.y1); ctx.stroke();
+    ctx.setLineDash([]);
+    for(i=0;i<dVal;i++){
+      var yv=Math.sin(freq(i)*pVal);
+      ctx.beginPath(); ctx.arc(pxm, ayY(yv), 4, 0, TAU); ctx.fillStyle=pal[i%4]; ctx.fill();
+      ctx.strokeStyle=panel; ctx.lineWidth=1.5; ctx.stroke();
+    }
+    var pn=pVal+0.35;
+    if(pn<PAXMAX){
+      var pxn=axX(pn);
+      ctx.strokeStyle=muted; ctx.globalAlpha=0.5; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+      ctx.beginPath(); ctx.moveTo(pxn,A.y0); ctx.lineTo(pxn,A.y1); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1;
+    }
+
+    var regions=Math.pow(kVal,lVal);
+    if(regions<=64){
+      for(var r=0;r<regions;r++){
+        if(r%2===0) continue;
+        var xa=r/regions, xb=(r+1)/regions;
+        ctx.fillStyle=amber; ctx.globalAlpha=0.10;
+        ctx.fillRect(bxX(xa), B.y0, bxX(xb)-bxX(xa), B.y1-B.y0);
+      }
+      ctx.globalAlpha=1;
+    }
+    ctx.strokeStyle=amber; ctx.lineWidth=2.4;
+    ctx.beginPath();
+    var M=1200;
+    for(s=0;s<=M;s++){
+      x=(s/M)*1;
+      var fy=foldL(x,kVal,lVal);
+      var fx=bxX(x), fyy=byY(fy);
+      if(s===0)ctx.moveTo(fx,fyy); else ctx.lineTo(fx,fyy);
+    }
+    ctx.stroke();
+
+    var sp=sOf(pVal);
+    var out=foldL(sp,kVal,lVal);
+    var pxs=bxX(sp);
+    ctx.strokeStyle=violet; ctx.lineWidth=1.6; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pxs,B.y0); ctx.lineTo(pxs,B.y1); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(pxs, byY(out), 5, 0, TAU); ctx.fillStyle=violet; ctx.fill();
+    ctx.strokeStyle=panel; ctx.lineWidth=2; ctx.stroke();
+
+    ctx.fillStyle=muted; ctx.font='11px ui-monospace, monospace'; ctx.textAlign='left';
+    ctx.fillText('0', A.x0, A.y1+13);
+    ctx.textAlign='right'; ctx.fillText('4\u03c0', A.x1, A.y1+13);
+    ctx.textAlign='left'; ctx.fillText('0', B.x0, B.y1+13);
+    ctx.textAlign='right'; ctx.fillText('1', B.x1, B.y1+13);
+
+    ctx.font='700 11px ui-monospace, monospace'; ctx.fillStyle=violet; ctx.textAlign='center';
+    ctx.fillText('p='+(pVal/PAXMAX).toFixed(2), clamp(pxm,34,w-34), A.y0+13);
+    ctx.fillText('s(p)='+sp.toFixed(2)+' \u2192 f='+out.toFixed(2), clamp(pxs,40,w-40), B.y0+13);
+
+    $('vP').textContent=(pVal/PAXMAX).toFixed(2);
+    $('vD').textContent=dVal;
+    $('vK').textContent=kVal;
+    $('vL').textContent=lVal;
+    $('roS').textContent=sp.toFixed(3);
+    $('roReg').textContent=regions;
+    $('roNeu').textContent=(kVal*lVal);
+    $('roOut').textContent=out.toFixed(3);
+    $('roRat').textContent=(regions/(kVal*lVal)).toFixed(1);
+    $('stat').innerHTML='A: glatt, <b>0 Knicken</b>, lokal (nah&rarr;nah) &middot; B: geknickt, <b>'+regions+'</b> Regionen aus <b>'+(kVal*lVal)+'</b> Neuronen, exponentiell in der Tiefe, nicht-lokal.';
+  }
+
+  function bind(id,setter){
+    var el=$(id);
+    el.addEventListener('input', function(){ setter(+el.value); draw(); });
+  }
+  bind('slP', function(v){ pVal=v/100*PAXMAX; });
+  bind('slD', function(v){ dVal=v; });
+  bind('slK', function(v){ kVal=v; });
+  bind('slL', function(v){ lVal=v; });
+
+  var btn=$('themeBtn');
+  if(btn){ btn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); }); }
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+  window.addEventListener('resize', draw);
+
+  draw();
+})();
+</script>
+</body>
+</html>

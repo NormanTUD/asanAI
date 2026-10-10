@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das neuronale Garben-Modell: lokale Sektionen, globale Kohärenz — Fusion 023</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e4dccd; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#d99a12; --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --v-target:#2e7d4f; --v-approx:#b45309; --v-piece:#6d28d9; --v-vertex:#0f766e;
+  --v-edge:#0f766e; --v-tri:#b45309; --v-ref:#9aa0ab;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4b73a;
+  --v-target:#3fb950; --v-approx:#f0a656; --v-piece:#a78bfa; --v-vertex:#2dd4bf;
+  --v-edge:#3fb950; --v-tri:#f4b73a; --v-ref:#5b6472;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:60px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(27px,5.2vw,42px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:15.5px;color:var(--muted);max-width:68ch}
+.sub b{color:var(--fg)}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,26px);font-weight:760;letter-spacing:-.015em;margin:50px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.52em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16px;font-weight:720;margin:24px 0 8px}
+h3.a{color:var(--accent)} h3.b{color:var(--accent2)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.rose{border-color:var(--accent2);background:var(--accent2-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.wrow{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:12px 0;background:var(--card)}
+.wrow .wl{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--accent);margin-bottom:6px}
+.wrow .wa{font-size:14px;color:var(--muted)}
+.wrow .wa b{color:var(--fg)}
+.wrow .wa .pa{color:var(--accent);font-weight:700}
+.wrow .wa .pb{color:var(--accent2);font-weight:700}
+.eq{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:12px 0;color:var(--fg);overflow-x:auto;line-height:1.9}
+.eq sup,.eq sub{font-size:.7em}
+.eq .k{color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.tbl td b{color:var(--fg)}
+.tbl .ca{color:var(--accent)} .tbl .cb{color:var(--accent2)}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz .dsub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.viz .dsub b{color:var(--fg)}
+#viz{display:block;width:100%;height:600px;border-radius:12px;border:1px solid var(--line)}
+.ctl{margin:14px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:8px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.nb{font-family:var(--mono);font-size:13px;padding:5px 15px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);cursor:pointer}
+.nb:hover{border-color:var(--accent);color:var(--accent)}
+.nb.on{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:700}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.ro .box{flex:1;min-width:150px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 13px}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.ro .box .v{font-family:var(--mono);font-size:13.5px;font-weight:700;color:var(--accent);line-height:1.5}
+.ro .box.amber{background:var(--amber-soft)}
+.ro .box.amber .v{color:var(--amber)}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;margin-bottom:6px}
+.prov .item a{font-family:var(--mono);font-size:13px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button" aria-label="Theme umschalten">&#9728;&#65038; / &#9790;</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 1 &middot; Paar 023 &middot; Topologie / Attention</div>
+  <h1>Das neuronale <em>Garben-Modell</em>: lokale Sektionen, globale Kohärenz</h1>
+  <p class="sub">Zwei Papiere, ein Kerngedanke: Eine neuronale Berechnung baut ein <b>globales Objekt</b> auf, indem sie (1) einen <b>Raum</b> konstruiert, der das Problem lokalisiert, und (2) <b>lokale Daten</b> zu einer <b>kohärenten globalen Sektion</b> zusammenfügt. <b>A</b> tut das mit einem ReLU-Netz, das affine Stücke <i>additiv</i> zu einer Ziel-Funktion verklebt (Funktionen-Approximation). <b>B</b> tut das mit Attention, die über einem daten-abgeleiteten Simplizialnerve <i>Vektor-Stapel</i> durch <i>convex gewichtete Durchschnittsbildung</i> transportiert (Repräsentation). Beide sind Eckpunkte <b>eines</b> Spektrums — des neuronalen Garben-Modells.</p>
+  <p class="fuse-line">Fusion aus: <b>nn_as_sheaf.html</b> &#10007; <b>simplicial_complex_attention4.html</b></p>
+</header>
+
+<!-- ==================== 1 ==================== -->
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<div class="card">
+<p>Beide Papiere landen — von entgegengesetzten Seiten kommend — auf derselben tiefen These: <b>Ein neuronales Modell ist eine Maschine, die aus lokal definierten Daten ein globales Objekt zusammenfügt; und genau dieses &bdquo;Zusammenfügen&ldquo; ist das, was die Garbentheorie das Verschmelzungsaxiom (gluing axiom) nennt.</b></p>
+</div>
+<p><b>Papier A</b> sieht es in einem ReLU-Netz, das eine Funktion approximiert: Jedes Neuron liefert ein <b>affines Stück</b> (eine lokale Sektion), jede ReLU <b>biegt</b> dieses Stück an seinem Nulldurchgang (die Restriktion — sie schneidet die Sektion auf der negativen Seite auf null), und die Ausgangsschicht <b>summiert</b> alle gebogenen Stücke zu einer globalen Funktion (das Verschmelzen). Der Optimizer (SGD/Adam) erzwingt dabei die <i>Kompatibilität</i> der Stücke auf den Überlappungen — in den Worten von A &bdquo;the optimizer glues local pieces&ldquo;.</p>
+<p><b>Papier B</b> sieht es in der Self-Attention: <b>Q·K&#7488;</b> definiert ein gewichtetes <b>Nerve</b> — es entscheidet, welche Tokens zu Simplexen (Ecken, Kanten, Dreiecke) zusammengehören; das ist der <b>Raum</b>. <b>V</b> weist jeder Ecke einen <b>Vektor-Stapel</b> (Stalk) zu, die Attention-Gewichte <b>transportieren</b> diese entlang der Kanten (die Restriktionsabbildungen), und die Ausgabe ist eine <b>globale Sektion</b> dieses Garbens — ein convex gewichteter Durchschnitt der Nachbar-Stapel.</p>
+<div class="note"><b>Die eine integrierte Position:</b> Ein neuronales Modell = ein <b>neuronales Garben-Modell</b> = das Tupel <b>(Basis-Raum, Faser, Restriktion/Transport, Verschmelzungsregel)</b>. <span style="color:var(--accent)">A</span> ist der <b>kontinuierliche, additive, topologie-gelernte</b> Eckpunkt; <span style="color:var(--accent2)">B</span> ist der <b>diskrete, mittlere, daten-konditionierte</b> Eckpunkt. Die Widersprüche zwischen den beiden sind keine echten Konflikte, sondern Unterschiede darin, <b>welcher Teil des Tupels gelernt vs. fest ist</b> und <b>an welchem Ende eines Spektrums</b> man steht.</div>
+</section>
+
+<!-- ==================== 2 ==================== -->
+<section id="widersprueche">
+<h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+<p>Die beiden verwenden dasselbe Wort — <i>&bdquo;Garbe&ldquo; (sheaf)</i> — meinen aber <b>verschiedene Konstrukte</b>. Die schärfsten konkreten Spannungspunkte, jeweils mit der tatsächlichen Aussage:</p>
+
+<div class="wrow"><div class="wl">① WO DIE GARBE LEBT (BASIS-RAUM)</div>
+<div class="wa"><span class="pa">A:</span> Die Garbe lebt auf dem <b>kontinuierlichen Eingabe-Domain ℝ</b>; der offene Überdeckung ist die Teilung des Funktions-Domains durch die ReLU-Knickpunkte (&bdquo;Open cover {U&#7522;} &#8596; Regions where each ReLU neuron is active vs. inactive&ldquo;).<br>
+<span class="pb">B:</span> Die Garbe lebt auf einem <b>diskreten Simplizialkomplex aus den Tokens selbst</b>; der &bdquo;Raum&ldquo; <i>ist</i> das relationale Nerve der Daten und wird pro Satz neu berechnet (&bdquo;attention constructs a simplicial complex (the nerve of semantic overlap)&ldquo;).<br>
+→ Garbe über einer <b>Mannigfaltigkeit</b> (A) vs. über einem <b>Punktmengen-Komplex</b> (B).</div></div>
+
+<div class="wrow"><div class="wl">② HERKUNFT DER TOPOLOGIE: GELERNT/FEST VS. DATEN-ABHÄNGIG</div>
+<div class="wa"><span class="pa">A:</span> Die Überdeckung ist eine <b>gelernte, statische</b> Struktur — der Knick bei x = −b&#8298;&#8322;/w&#8298;&#8322; wird einmal vom Optimizer gesetzt und für <i>alle</i> Inputs identisch geteilt.<br>
+<span class="pb">B:</span> Der Simplizialkomplex ist <b>daten-abhängig</b> und wird <i>jeden Forward-Pass</i> neu berechnet (Kante &#8596; min(&alpha;&#7522;&#8321;,&alpha;&#8321;&#7522;)&gt;&epsilon; <i>für diesen</i> Satz).<br>
+→ <b>A lernt die Topologie</b>; <b>B&rsquo;s Topologie emergiert</b> aus den aktuellen Attention-Scores.</div></div>
+
+<div class="wrow"><div class="wl">③ FASER / SEKTION: SKALAR VS. VEKTOR</div>
+<div class="wa"><span class="pa">A:</span> Sektionen sind <b>reell-wertige affine Funktionen</b> (skalarer Stapel w&#8298;&#8322;x+b&#8298;&#8322;). Keine Faser, keine Verbindung.<br>
+<span class="pb">B:</span> Sektionen sind <b>Vektoren</b> v&#7522;=W&#8364; x&#7522;, mit <b>RoPE als Verbindung auf einem Vektorbündel</b> (Parallel-Transport; &bdquo;only relative position m−n matters — this is gauge invariance&ldquo;).<br>
+→ <b>A</b> ist <b>skalar/flat</b>; <b>B</b> ist <b>vektorwertig/mit Verbindung</b>.</div></div>
+
+<div class="wrow"><div class="wl">④ VERSCHMELZUNGSREGEL: ADDITIVE REKONSTRUKTION VS. CONVEXY DURCHSCHNITT</div>
+<div class="wa"><span class="pa">A:</span> Verschmelzen = <b>additive, frei signierte Summe</b> ŷ = &Sigma;&alpha;&#8298;&#8322;·ReLU(·)+&beta;, die eine <i>externe Ziel-Funktion</i> rekonstruiert (Basis-Expansion; &alpha;&#8298;&#8322; können negativ sein, + Bias).<br>
+<span class="pb">B:</span> Verschmelzen = <b>softmax-gewichteter convexer Durchschnitt</b> s&#7522; = &Sigma;&alpha;&#7522;&#8321;·v&#8321; der <i>eigenen</i> Datenwerte (Smoothing/Message-Passing; transformiert die Repräsentation, <i>keine</i> externe Ziel-Funktion).<br>
+→ <b>A fitet</b> eine Ground-Truth; <b>B verfeinert</b> eine Repräsentation.</div></div>
+
+<div class="wrow"><div class="wl">⑤ RESTRIKTIONSABBILDUNG: ABSCHNEIDEN VS. TRANSPORT</div>
+<div class="wa"><span class="pa">A:</span> Restriktion = ReLU, die die Sektion auf der negativen Seite <b>auf 0 schneidet</b> (wirft Daten weg / erzeugt Sparsity).<br>
+<span class="pb">B:</span> res<sub>i&#8592;j</sub> = &alpha;&#7522;&#8321;·v&#8321; — <b>transportiert</b> (kopiert mit Gewicht) den Nachbar-Stapel.<br>
+→ <b>A&rsquo;s Restriktion &bdquo;discard&ldquo;t</b>; <b>B&rsquo;s transportiert</b>.</div></div>
+
+<div class="wrow"><div class="wl">⑥ WAS &bdquo;VERSCHMELZEN&ldquo; IST: LERNEN VS. FORWARD-PASS</div>
+<div class="wa"><span class="pa">A:</span> Verschmelzen ist der <b>iterative, gelernte</b> Prozess — jeder Trainingsschritt verfeinert die Kompatibilität. Lernen <i>ist</i> das Verschmelzen.<br>
+<span class="pb">B:</span> Das &bdquo;Garben-Konsistenzproblem&ldquo; wird <b>in einem Forward-Pass gelöst</b> (der gewichtete Durchschnitt <i>ist</i> die Lösung); Lernen stellt nur G und W&#8364; ein. Inferenz <i>ist</i> das Verschmelzen.<br>
+→ <b>A:</b> Lernen erzeugt das Verschmelzen · <b>B:</b> Inferenz führt es aus.</div></div>
+</section>
+
+<!-- ==================== 3 ==================== -->
+<section id="aufloesung">
+<h2><span class="n">3</span>Auflösung</h2>
+<div class="note violet"><b>Fusionierte Schlussfolgerung:</b> A und B sind <b>zwei Regime eines einzigen Objekts — des neuronalen Garben-Modells</b> — eines Tupels <b>(Basis, Faser, Transport, Verschmelzung)</b>. Jeder scheinbare Widerspruch ist eine Frage davon, <b>welcher Teil gelernt vs. fest ist</b> und <b>an welchem Ende eines Spektrums</b> man steht. Konkret:</div>
+
+<h3 class="a">① Basis → verallgemeinern</h3>
+<p>A&rsquo;s ReLU-Teilung ist eine <i>gute Überdeckung</i> eines Domains; B&rsquo;s Komplex ein <i>Čech-Nerve</i> der Daten (k-Simplex = k+1 gegenseitig ähnliche Tokens). Beides ist eine Überdeckung/ein Nerve, der die Berechnung lokalisiert — dieselbe Idee, andere Instanzierung. <b>Fusion:</b> Basis &isin; {Mannigfaltigkeit, Attention-Nerve}.</p>
+
+<h3 class="a">② Herkunft → eine gelernte Metrik induziert die Topologie</h3>
+<p>Beide Papiere haben in Wahrheit einen <i>gelernten</i> Gegenstand, der die Topologie formt: A lernt <b>Knick-Positionen</b> (eine gelernte Platzierung der Überdeckung); B lernt den <b>Metrik-Tensor G=(W&#8364;&#8221;)&#7488;W&#7524;</b>, und der Komplex ist das <i>Nerve dieser Metrik</i> (Kante = nahe Punkte im G-Abstand). &bdquo;Wer besitzt die Topologie&ldquo; löst sich zu: <b>eine gelernte Ähnlichkeit (Knick bei A, Metrik G bei B) induziert die Basis</b>; ob das Ergebnis eine <i>feste Überdeckung</i> (A) oder ein <i>pro-Input-Nerve</i> (B) ist, hängt davon ab, ob die Metrik auf ein festes Domain oder auf die wandernden Daten wirkt.</p>
+
+<h3 class="b">③ Faser → B verallgemeinert A</h3>
+<p>A ist eine Garbe <i>skalaren</i> Sektionen (1-dimensionale Fasern, flat). B ist ein <i>Vektorbündel mit Verbindung</i> (d-dimensionale Fasern, RoPE = Parallel-Transport). <b>A ist der Spezialfall d=1, ohne Verbindung.</b> Fusion: Fasern = Vektorräume der Dimension d&ge;1, mit optionaler Verbindung (flat &rArr; A).</p>
+
+<h3 class="b">④ Verschmelzen → eine lineare Kombination, zwei Einschränkungsmengen</h3>
+<p>Beide verschmelzen als <b>&bdquo;globale Sektion = lineare Kombination lokaler Sektionen&ldquo;</b>. A nutzt <i>freie Koeffizienten + Offset</i> (affine Einschränkung: c&#8298;&#8322;&isin;ℝ, +&beta;), um eine Ziel-Funktion zu <i>rekonstruieren</i>; B nutzt <i>convexe Koeffizienten</i> (Simplex-Einschränkung: c&#8298;&#8322;=&alpha;&#7522;&#8321;, &Sigma;c=1), um zu <i>glätten</i>. Die Wahl ist <b>aufgabengetrieben</b>: externe Funktion fiten &rArr; affin; Repräsentation verfeinern &rArr; convex. <b>Fusion:</b> Verschmelzen = &Sigma;&#8298;&#8322; c&#8298;&#8322;·(lokale Sektion)&#8298;&#8322; mit aufgabenbestimmter Einschränkung.</p>
+
+<h3 class="a">⑤ Restriktion → beide sind Garben-Restriktionen; A&rsquo;s ist nur verlustbehaftet</h3>
+<p>Eine Garben-Restriktion res:F(U)&rarr;F(V) ist jede Abbildung, die mit weiterer Restriktion kompatibel ist. A&rsquo;s ReLU-Abschneiden ist eine <i>spärliche/verlustbehaftete</i> Restriktion (schneidet Daten außerhalb des Bereichs, erzwingt Lokalität); B&rsquo;s &alpha;-Kopie ist eine <i>treue/gewichtete</i> Restriktion. <b>Fusion:</b> Restriktion = lineare Faser-Abbildung; <i>Abschneiden</i> und <i>gewichteter Transport</i> sind zwei Spezialfälle (Sparsity-erzeugend &harr; flusserhaltend).</p>
+
+<h3 class="b">⑥ Lernen vs. Forward → lernen justiert, Inferenz verschmilzt</h3>
+<p>Vereinheitlicht: <b>neuronales Garben-Modell = gelernte</b> (Basis-formende Ähnlichkeit, Fasern, Transport) <b>+ feste</b> (Verschmelzungsregel); Inferenz wendet die Verschmelzungsregel auf die aktuelle (gelernt &cup; daten-konditioniert) Struktur an. A lernt die Topologie, also <i>sieht Lernen aus wie Verschmelzen</i> (Knick bewegen = Überdeckung bewegen); B lernt nur Transport/Faser, das Verschmelzen ist im Inferenz-Zeitpunkt bestimmt. <b>Beide verteilen das &bdquo;Gelernte&ldquo; anders (Topologie / Transport) — der Mechanismus &bdquo;Struktur lernen, dann bei Inferenz verschmelzen&ldquo; ist identisch.</b></p>
+</section>
+
+<!-- ==================== 4 ==================== -->
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+<p>Die zwei Papiere sind in einem <b>Schema</b> zusammengeführt. Die Zeile &bdquo;Fusioniertes Modell&ldquo; ist das Objekt, von dem eine spätere Runde arbeiten kann:</p>
+
+<table class="tbl">
+<tr><th>Komponente</th><th class="ca">A — nn_as_sheaf</th><th class="cb">B — SCA</th><th>Fusioniertes Modell</th></tr>
+<tr><td><b>Basis / Raum</b></td><td>ℝ (Input-Domain); Überdeckung = Regionen durch ReLU-Knick</td><td>diskretes Simplizialkomplex der Tokens (Nerve der semantischen Überlappung), pro Input</td><td>Basis &isin; {Mannigfaltigkeit, Čech/Attention-Nerve}</td></tr>
+<tr><td><b>Faser / Sektion</b></td><td>reelle affine Funktion (skalar) w&#8298;&#8322;x+b&#8298;&#8322;</td><td>Vektor v&#7522;=W&#8364;x&#7522;, + RoPE-Verbindung</td><td>Vektorraum d&ge;1, optional Verbindung</td></tr>
+<tr><td><b>Restriktion</b></td><td>ReLU: schneidet auf negativer Seite auf 0</td><td>res<sub>i&#8592;j</sub>=&alpha;&#7522;&#8321;·v&#8321; (gewichteter Transport)</td><td>lineare Faser-Abbildung (spärlich &harr; treu)</td></tr>
+<tr><td><b>Verschmelzen</b></td><td>&Sigma; &alpha;&#8298;&#8322;·ReLU(·)+&beta; (frei signiert, + Bias)</td><td>&Sigma; &alpha;&#7522;&#8321;·v&#8321; (softmax-convex)</td><td>&Sigma; c&#8298;&#8322;·s&#8298;&#8322;; Einschränkung affin &harr; Simplex</td></tr>
+<tr><td><b>Topologie-Herkunft</b></td><td>gelernt &amp; statisch (Knick −b&#8298;&#8322;/w&#8298;&#8322;)</td><td>daten-konditioniert, pro Forward-Pass (&epsilon;-Schwelle)</td><td>f(gelernte Ähnlichkeit, Input)</td></tr>
+<tr><td><b>Ziel</b></td><td>externe Ziel-Funktion fiten (Approximation)</td><td>Repräsentation transformieren (Message-Passing)</td><td>aufgabenbestimmt: fiten &harr; glätten</td></tr>
+</table>
+
+<h3 class="a">Schlüsselmathematik — A (ReLU-Netz als Garbe)</h3>
+<div class="eq"><span class="k">Lokale Sektion</span>   z&#8298;&#8322; = w&#8298;&#8322;·x + b&#8298;&#8322;   (affine Karte)<br>
+<span class="k">Restriktion (Falt)</span> h&#8298;&#8322;(x) = ReLU(z&#8298;&#8322;) = max(0, w&#8298;&#8322;x+b&#8298;&#8322;); &nbsp; U&#8298;&#8322;&#177; = {x : w&#8298;&#8322;x+b&#8298;&#8322; &gt;/&lt; 0}<br>
+<span class="k">Verschmelzen</span>     ŷ(x) = &Sigma;<sub>j=1..N</sub> &alpha;&#8298;&#8322;·ReLU(w&#8298;&#8322;x+b&#8298;&#8322;) + &beta; &nbsp;(Verschmelzungsaxiom)<br>
+<span class="k">Lernregel</span>      &Lscr; = (1/M)&Sigma;(y&#7522;−ŷ(x&#7522;))&sup2; &nbsp;;&nbsp; &theta; &larr; &theta; − &eta;&nabla;<sub>&theta;</sub>&Lscr;, &theta;={w&#8298;&#8322;,b&#8298;&#8322;,&alpha;&#8298;&#8322;,&beta;}<br>
+<span class="k">Garben-Tabelle</span>   offene Überdeckung &harr; aktive/nicht-aktive Regionen &middot; Restriktion &harr; ReLU &middot; Kleb-Morphismus &harr; Optimizer</div>
+
+<h3 class="b">Schlüsselmathematik — B (Attention als Nerve + Garbe)</h3>
+<div class="eq"><span class="k">Boundary (Gerüst)</span> &alpha;&#7522;&#8321; = softmax<sub>j</sub>( &lang;&lt;R<sub>m</sub>q&#7522;, R<sub>n</sub>k&#8321;&rangle;/&radic;d )<br>
+<span class="k">Nerve-Axiom</span>      &sigma;&#185;={i,j}&isin;K &#8596; min(&alpha;&#7522;&#8321;,&alpha;&#8321;&#7522;)&gt;&epsilon; &nbsp;;&nbsp; &sigma;&#178;={i,j,k}&isin;K &#8596; alle Faces &isin;K (Abwärts-Abschluss)<br>
+<span class="k">Stapel + Transport</span> F(&sigma;&#8308;&#7522;)=v&#7522;=W&#8364;x&#7522; &nbsp;;&nbsp; res<sub>i&#8592;j</sub>=&alpha;&#7522;&#8321;·v&#8321;<br>
+<span class="k">Globale Sektion</span>    s&#7522; = &Sigma;<sub>j:{i,j}&isin;K</sub> &alpha;&#7522;&#8321; v&#8321; &nbsp;(convex gemittelte Ausgabe)<br>
+<span class="k">Gelernte Metrik</span>    G = (W&#8364;&#8221;)&#7488; W&#7524; &nbsp;(eine bilineare Form, die die Topologie definiert)<br>
+<span class="k">RoPE = Verbindung</span>  &lang;&lt;R<sub>m</sub>q, R<sub>n</sub>k&rangle; = q&#7488; R<sub>m−n</sub> k &nbsp;(nur Relativposition &rArr; gauge-invariant)</div>
+
+<div class="note"><b>Folgerung (A):</b> mehr Neuronen = feinere Überdeckung = bessere Approximation — aber <i>ohne</i> Raten-Garantie (das &bdquo;finer cover&ldquo;-Argument spiegelt Universal Approximation wider, liefert aber keinen Satz). Die &bdquo;Scharfheit&ldquo; der Überdeckung steckt in der Platzierung/Breite der Knickpunkte.</div>
+<div class="note amber"><b>Folgerung (B):</b> kleiner &epsilon; / kleiner &tau; = spärlicheres Komplex (weniger Kanten/Dreiecke); größeres &epsilon;/&tau; = dichteres Komplex = mehr &bdquo;gemeinsame Bedeutungs-Verhandlung&ldquo; auf Dreiecken, aber Gefahr der <i>Über-Glättung</i>. &tau; steuert die Weichheit der Kanten, &epsilon; deren Existenz — zusammen das Analogon zur &bdquo;Scharfheit der Überdeckung&ldquo; aus A.</div>
+<div class="note rose"><b>Die &bdquo;zwei Dinge&ldquo; aus B:</b> Q und K sind die zwei Hälben <i>einer</i> bilinearen Form B(x&#7522;,x&#8321;)=x&#7522;&#7488;Gx&#8321; (G = gelernte Metrik); <b>Q·K ist &bdquo;eine&ldquo; Sache</b> (definiert die Topologie), <b>V die &bdquo;zweite&ldquo;</b> (Inhalt darauf). Im Tupel: G formt die <i>Basis</i>, W&#8364; weist die <i>Fasern</i> zu — beide gelernt; die Verschmelzungsregel (convex) ist fest.</div>
+</section>
+
+<!-- ==================== 5 ==================== -->
+<section id="visualisierung">
+<h2><span class="n">5</span>Visualisierung</h2>
+<div class="viz">
+<p class="dsub"><b>Gleiche Daten, zwei Regime desselben neuronalen Garben-Modells:</b> oben (<span style="color:var(--accent)">A</span>) <b>additiv</b> über einer kontinuierlichen Überdeckung (gelernt, fitet die Ziel-Funktion), unten (<span style="color:var(--amber)">B</span>) <b>convex</b> über einem daten-abgeleiteten Nerve (pro Input, glättet die eigenen Werte); ganz unten das Nerve-Band (Eckpunkte / Kanten / 2-Simplexe).</p>
+<canvas id="viz"></canvas>
+<div class="ctl">
+  <div class="ctl-lab"><span>Panel A — Hinge-Stücke <b style="color:var(--fg)">N</b> (feiner Überdeckung von ℝ)</span><b id="nVal">8</b></div>
+  <div class="btnrow" id="nrow">
+    <button class="nb" data-n="2">2</button>
+    <button class="nb" data-n="4">4</button>
+    <button class="nb on" data-n="8">8</button>
+    <button class="nb" data-n="16">16</button>
+  </div>
+</div>
+<div class="ctl">
+  <div class="ctl-lab"><span>Panel B — Nachbarschafts-Radius <b style="color:var(--fg)">R</b> (≈ &epsilon;-Schwelle des Nerves)</span><b id="rVal">1.60</b></div>
+  <input type="range" id="rSlider" min="0.4" max="3" step="0.1" value="1.6" aria-label="Radius">
+</div>
+<div class="ro">
+  <div class="box"><div class="k">A — kontinuierlich · gelernt</div><div class="v" id="roA">…</div></div>
+  <div class="box amber"><div class="k">B — diskret · daten-konditioniert</div><div class="v" id="roB">…</div></div>
+</div>
+</div>
+</section>
+
+<!-- ==================== 6 ==================== -->
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <div class="item"><div class="lbl">A</div><a href="../nn_as_sheaf.html">nn_as_sheaf.html</a> — &bdquo;Neural Networks as Sheaves&ldquo;: ReLU-Netz = Garbe über dem <i>kontinuierlichen</i> Input-Domain; affine lokale Sektionen, ReLU-Restriktion, additives Verschmelzen, Optimizer als Klebungs-Morphismus (Funktionen-Approximation).</div>
+  <div class="item"><div class="lbl">B</div><a href="../simplicial_complex_attention4.html">simplicial_complex_attention4.html</a> — &bdquo;Attention = Simplicial Sheaf&ldquo;: Attention = Nerve + Garbe über einem <i>daten-abgeleiteten</i> Komplex; Q·K Boundary/Gerüst, V Vektor-Stapel, Attention-gewichteter Transport, RoPE als Verbindung, convex gemittelte globale Sektion (Repräsentation).</div>
+</div>
+</section>
+
+<footer>Knockout-Synthese &middot; Runde 1 &middot; Paar 023 &middot; fusioniert aus nn_as_sheaf.html &#10007; simplicial_complex_attention4.html</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var XMIN=-4, XMAX=4, M=24;
+  var xs=[], ys=[];
+  for(var i=0;i<M;i++){ var x=XMIN+(XMAX-XMIN)*i/(M-1); xs.push(x); ys.push(Math.sin(1.5*x)); }
+  var N=8, R=1.6, Afit=null;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function pal(){ return {
+    bg:cssVar('--card'), grid:cssVar('--line'), fg:cssVar('--fg'), muted:cssVar('--muted'),
+    target:cssVar('--v-target'), approx:cssVar('--v-approx'), piece:cssVar('--v-piece'),
+    vertex:cssVar('--v-vertex'), edge:cssVar('--v-edge'), tri:cssVar('--v-tri'), ref:cssVar('--v-ref')
+  }; }
+
+  function fitA(n){
+    var bends=[], j, e;
+    for(j=0;j<n;j++) bends.push(XMIN+(XMAX-XMIN)*(j+0.5)/n);
+    var w=new Float64Array(n), b=new Float64Array(n), a=new Float64Array(n); var beta=0;
+    for(j=0;j<n;j++){ w[j]=(j%2===0?1:-1)*(1+0.25); b[j]=-w[j]*bends[j]; a[j]=0; }
+    var lr=0.002;
+    for(e=0;e<1600;e++){
+      var dw=new Float64Array(n), db=new Float64Array(n), da=new Float64Array(n); var dB=0;
+      for(var i=0;i<M;i++){
+        var x=xs[i], yh=beta; var z=new Float64Array(n), h=new Float64Array(n);
+        for(j=0;j<n;j++){ z[j]=w[j]*x+b[j]; h[j]=z[j]>0?z[j]:0; yh+=a[j]*h[j]; }
+        var err=yh-ys[i]; dB+=err;
+        for(j=0;j<n;j++){ da[j]+=err*h[j]; if(z[j]>0){ dw[j]+=err*a[j]*x; db[j]+=err*a[j]; } }
+      }
+      var s=2*lr/M;
+      for(j=0;j<n;j++){ a[j]-=s*da[j]; w[j]-=s*dw[j]; b[j]-=s*db[j]; }
+      beta-=s*dB;
+    }
+    return {w:w,b:b,a:a,beta:beta,n:n};
+  }
+  function evalA(x){ if(!Afit) return 0; var f=Afit, y=f.beta; for(var j=0;j<f.n;j++){ var z=f.w[j]*x+f.b[j]; y+=f.a[j]*(z>0?z:0); } return y; }
+  function pieceA(j,x){ if(!Afit) return 0; var f=Afit; var z=f.w[j]*x+f.b[j]; return f.a[j]*(z>0?z:0); }
+
+  function bcomplex(){
+    var edges=[], tris=[], i, j, k;
+    for(i=0;i<M;i++) for(j=i+1;j<M;j++){ if(Math.abs(xs[i]-xs[j])<=R) edges.push([i,j,1-Math.abs(xs[i]-xs[j])/R]); }
+    for(i=0;i<M;i++) for(j=i+1;j<M;j++) for(k=j+1;k<M;k++){
+      if(Math.abs(xs[i]-xs[j])<=R && Math.abs(xs[j]-xs[k])<=R && Math.abs(xs[i]-xs[k])<=R) tris.push([i,j,k]);
+    }
+    var wout=[];
+    for(i=0;i<M;i++){
+      var sw=1, acc=ys[i];
+      for(var t=0;t<edges.length;t++){ var e=edges[t]; if(e[0]===i){ acc+=e[2]*ys[e[1]]; sw+=e[2]; } else if(e[1]===i){ acc+=e[2]*ys[e[0]]; sw+=e[2]; } }
+      wout.push(sw>0? acc/sw : ys[i]);
+    }
+    var par=[], r; for(i=0;i<M;i++) par[i]=i;
+    function find(x){ while(par[x]!==x){ par[x]=par[par[x]]; x=par[x]; } return x; }
+    for(t=0;t<edges.length;t++){ par[find(edges[t][0])]=find(edges[t][1]); }
+    var roots={}; for(i=0;i<M;i++) roots[find(i)]=1; var b0=0; for(r in roots) b0++;
+    return {edges:edges,tris:tris,wout:wout,b0:b0};
+  }
+
+  function plotFn(ctx,box,fn,ymin,ymax,color,lw,dash){
+    var tX=function(x){return box.x+(x-XMIN)/(XMAX-XMIN)*box.w;};
+    var tY=function(y){return box.y+(1-(y-ymin)/(ymax-ymin))*box.h;};
+    ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.setLineDash(dash||[]); ctx.beginPath();
+    var S=240;
+    for(var i=0;i<=S;i++){ var x=XMIN+(XMAX-XMIN)*i/S, y=fn(x), px=tX(x), py=tY(y); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+    ctx.stroke(); ctx.restore();
+  }
+  function frame(ctx,box,ymin,ymax,P){
+    ctx.fillStyle=P.bg; ctx.fillRect(box.x-8,box.y-8,box.w+16,box.h+16);
+    ctx.strokeStyle=P.grid; ctx.lineWidth=1; ctx.strokeRect(box.x-8,box.y-8,box.w+16,box.h+16);
+    var tX=function(x){return box.x+(x-XMIN)/(XMAX-XMIN)*box.w;};
+    var tY=function(y){return box.y+(1-(y-ymin)/(ymax-ymin))*box.h;}, v;
+    ctx.strokeStyle=P.grid; ctx.lineWidth=1;
+    for(v=Math.ceil(XMIN);v<=Math.floor(XMAX);v++){ ctx.beginPath(); ctx.moveTo(tX(v),box.y); ctx.lineTo(tX(v),box.y+box.h); ctx.stroke(); }
+    for(v=Math.ceil(ymin);v<=Math.floor(ymax);v++){ ctx.beginPath(); ctx.moveTo(box.x,tY(v)); ctx.lineTo(box.x+box.w,tY(v)); ctx.stroke(); }
+    ctx.strokeStyle=P.muted; ctx.lineWidth=1.2;
+    if(ymin<=0&&ymax>=0){ ctx.beginPath(); ctx.moveTo(box.x,tY(0)); ctx.lineTo(box.x+box.w,tY(0)); ctx.stroke(); }
+    if(XMIN<=0&&XMAX>=0){ ctx.beginPath(); ctx.moveTo(tX(0),box.y); ctx.lineTo(tX(0),box.y+box.h); ctx.stroke(); }
+    ctx.fillStyle=P.muted; ctx.font='11px ui-monospace,monospace'; ctx.textBaseline='top';
+    ctx.fillText(XMIN.toFixed(1),box.x,box.y+box.h+5); ctx.fillText(XMAX.toFixed(1),box.x+box.w-18,box.y+box.h+5);
+  }
+  function drawA(ctx,P,box){
+    var ymin=-2.2,ymax=2.2;
+    frame(ctx,box,ymin,ymax,P);
+    if(Afit) for(var j=0;j<Afit.n;j++) plotFn(ctx,box,(function(jj){return function(x){return pieceA(jj,x);};})(j),ymin,ymax,P.piece,1,[4,3]);
+    plotFn(ctx,box,function(x){return Math.sin(1.5*x);},ymin,ymax,P.target,2.4);
+    plotFn(ctx,box,function(x){return evalA(x);},ymin,ymax,P.approx,2.8);
+    ctx.fillStyle=P.fg; ctx.font='700 12.5px ui-monospace,monospace'; ctx.textBaseline='alphabetic';
+    ctx.fillText('A — additives Verschmelzen über kontinuierlicher Überdeckung', box.x, box.y+16);
+    ctx.fillStyle=P.muted; ctx.font='11px ui-monospace,monospace';
+    ctx.fillText('N='+N, box.x+box.w-34, box.y+16);
+    ctx.fillStyle=P.target; ctx.font='10.5px ui-monospace,monospace';
+    ctx.fillText('— Ziel f', box.x, box.y+box.h-6);
+    ctx.fillStyle=P.approx;
+    ctx.fillText('— globale Sektion ŷ', box.x+64, box.y+box.h-6);
+  }
+  function smoothAt(C,x){
+    if(x<=xs[0]) return C.wout[0];
+    for(var i=1;i<M;i++){ if(x<=xs[i]){ var t=(x-xs[i-1])/(xs[i]-xs[i-1]); return C.wout[i-1]+t*(C.wout[i]-C.wout[i-1]); } }
+    return C.wout[M-1];
+  }
+  function drawB(ctx,P,box,C){
+    var ymin=-1.35,ymax=1.35;
+    frame(ctx,box,ymin,ymax,P);
+    var tX=function(x){return box.x+(x-XMIN)/(XMAX-XMIN)*box.w;};
+    var tY=function(y){return box.y+(1-(y-ymin)/(ymax-ymin))*box.h;};
+    plotFn(ctx,box,function(x){return Math.sin(1.5*x);},ymin,ymax,P.ref,1,[5,4]);
+    plotFn(ctx,box,function(x){return smoothAt(C,x);},ymin,ymax,P.approx,2.8);
+    ctx.fillStyle=P.vertex;
+    for(var i=0;i<M;i++){ ctx.beginPath(); ctx.arc(tX(xs[i]),tY(ys[i]),3.2,0,Math.PI*2); ctx.fill(); }
+    ctx.fillStyle=P.approx;
+    for(i=0;i<M;i++){ var px=tX(xs[i]),py=tY(C.wout[i]); ctx.beginPath(); ctx.moveTo(px,py-4);ctx.lineTo(px+4,py);ctx.lineTo(px,py+4);ctx.lineTo(px-4,py);ctx.closePath();ctx.fill(); }
+    ctx.fillStyle=P.fg; ctx.font='700 12.5px ui-monospace,monospace'; ctx.textBaseline='alphabetic';
+    ctx.fillText('B — convexe Glättung über diskretem Nerve', box.x, box.y+16);
+    ctx.fillStyle=P.muted; ctx.font='11px ui-monospace,monospace';
+    ctx.fillText('R='+R.toFixed(1), box.x+box.w-34, box.y+16);
+    ctx.fillStyle=P.vertex; ctx.font='10.5px ui-monospace,monospace';
+    ctx.fillText('● Input-Stapel', box.x, box.y+box.h-6);
+    ctx.fillStyle=P.approx;
+    ctx.fillText('◆ globale Sektion s', box.x+92, box.y+box.h-6);
+    ctx.fillStyle=P.ref;
+    ctx.fillText('┄ f (Datenquelle)', box.x+214, box.y+box.h-6);
+  }
+  function drawBand(ctx,P,band,C){
+    var tX=function(x){return band.x+(x-XMIN)/(XMAX-XMIN)*band.w;}, i;
+    ctx.fillStyle=P.bg; ctx.fillRect(band.x-8,band.y-6,band.w+16,band.h+12);
+    ctx.strokeStyle=P.grid; ctx.lineWidth=1; ctx.strokeRect(band.x-8,band.y-6,band.w+16,band.h+12);
+    ctx.fillStyle=P.vertex;
+    for(i=0;i<M;i++){ ctx.fillRect(tX(xs[i])-1, band.y+8, 2, 30); }
+    ctx.strokeStyle=P.edge; ctx.lineWidth=2; ctx.globalAlpha=0.4;
+    for(i=0;i<C.edges.length;i++){ var e=C.edges[i]; ctx.beginPath(); ctx.moveTo(tX(xs[e[0]]),band.y+18); ctx.lineTo(tX(xs[e[1]]),band.y+18); ctx.stroke(); }
+    ctx.strokeStyle=P.tri; ctx.lineWidth=3; ctx.globalAlpha=0.85;
+    for(i=0;i<C.tris.length;i++){ var t=C.tris[i]; var lo=Math.min(xs[t[0]],xs[t[1]],xs[t[2]]), hi=Math.max(xs[t[0]],xs[t[1]],xs[t[2]]); ctx.beginPath(); ctx.moveTo(tX(lo),band.y+34); ctx.lineTo(tX(hi),band.y+34); ctx.stroke(); }
+    ctx.globalAlpha=1;
+    ctx.fillStyle=P.muted; ctx.font='11px ui-monospace,monospace'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Nerve der Daten (1D):  │ Eckpunkt   ─ Kante (R)   ═ 2-Simplex   ·   β₀='+C.b0, band.x, band.y+band.h-2);
+  }
+  function draw(){
+    var c=document.getElementById('viz'); if(!c) return;
+    var dpr=window.devicePixelRatio||1, rect=c.getBoundingClientRect();
+    var W=rect.width, H=rect.height;
+    c.width=Math.max(1,Math.round(W*dpr)); c.height=Math.max(1,Math.round(H*dpr));
+    var ctx=c.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    var P=pal();
+    ctx.clearRect(0,0,W,H);
+    var padL=46,padR=14;
+    var boxA={x:padL,y:30,w:W-padL-padR,h:230};
+    var boxB={x:padL,y:300,w:W-padL-padR,h:230};
+    var band={x:padL,y:540,w:W-padL-padR,h:48};
+    var C=bcomplex();
+    drawA(ctx,P,boxA);
+    drawB(ctx,P,boxB,C);
+    drawBand(ctx,P,band,C);
+    var ra=document.getElementById('roA'), rb=document.getElementById('roB');
+    if(ra) ra.textContent=N+' Hinge-Stücke · ℝ-Überdeckung (gelernt) · additive Rekonstruktion';
+    if(rb) rb.textContent=M+' Eckpunkte · '+C.edges.length+' Kanten · '+C.tris.length+' Dreiecke · β₀='+C.b0+' · convexe Glättung';
+  }
+
+  function setN(n){
+    N=n; Afit=fitA(N);
+    var btns=document.querySelectorAll('#nrow .nb');
+    for(var i=0;i<btns.length;i++){ if(+btns[i].getAttribute('data-n')===N) btns[i].classList.add('on'); else btns[i].classList.remove('on'); }
+    var nv=document.getElementById('nVal'); if(nv) nv.textContent=N;
+    draw();
+  }
+  function init(){
+    Afit=fitA(N);
+    draw();
+    var btns=document.querySelectorAll('#nrow .nb');
+    for(var i=0;i<btns.length;i++){ btns[i].addEventListener('click',function(){ setN(+this.getAttribute('data-n')); }); }
+    var rs=document.getElementById('rSlider');
+    if(rs) rs.addEventListener('input',function(){ R=parseFloat(this.value); var rv=document.getElementById('rVal'); if(rv) rv.textContent=R.toFixed(2); draw(); });
+    var tb=document.getElementById('themeBtn');
+    if(tb) tb.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); draw(); });
+    window.addEventListener('resize',draw);
+    if(window.MutationObserver){
+      new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    }
+  }
+  if(document.readyState==='complete') init(); else window.addEventListener('load',init);
+})();
+</script>
+</body>
+</html>

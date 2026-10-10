@@ -1,0 +1,18 @@
+{
+  "no": "015",
+  "a": "dense_relu_dense.html",
+  "b": "posembed5.html",
+  "a_title": "Dense → ReLU → Dense Explorer",
+  "b_title": "Positional Encoding — Die Unendlichkeitsmaschine",
+  "combined_theme": "skalenproben-und-nichtlinearitaet",
+  "one_line": "Die punktweise Nichtlinearität (ReLU vs. sin/cos) wählt die Geometrie einer skalengetrennten Merkmalskodierung — polyedrisch/faltend/absolut vs. torisch/periodisch/relativ — während der lineare Schritt (dicht vs. diagonal) das Mischen der Proben bestimmt.",
+  "contradictions": [
+    "A: ReLU ist unbeschränkt und stückweise-linear, um den Raum in Regionen zu falten; B: sin/cos sind beschränkt und periodisch, um auf einen Torus zu wickeln.",
+    "A entwirft eine absolut empfindliche Approximator-Geometrie (Punkte werden durch ihre Region unterschieden); B entwirft explizit eine relativ-invariante Einbettung, bei der nur der Offset a−b zählt.",
+    "A setzt einen dichten linearen Schritt (volle Matrix, jeder Kanal mischt in jeden) voraus; B nutzt nur einen diagonalen, kanalunabhängigen Frequenzskalierer.",
+    "A erzeugt polyedrische/konische Geometrie (Hyperebenen, scharfe Knicke); B erzeugt torische/gekrümmte Geometrie (Einheitskreise, glatt, ohne Knicke).",
+    "A: Unterscheidungskraft = Anzahl der linearen Regionen; B: Unterscheidungskraft = Interferenz-Fingerabdruck, begrenzt durch das langsamste Zahnrad (Aliasing)."
+  ],
+  "resolution": "Kein Entweder-oder, sondern Stufung: die beschränkte sin/cos-Einbettung (B, diagonal, relativ, torisch) füttert den dichten ReLU-Approximator (A, stückweise-linear, absolut, polyedrisch); der diagonale Schritt ist ein Spezialfall des dichten, die torische Geometrie wird dann polyedrisch zerteilt.",
+  "viz": "Interaktives Canvas: ein skalarer Eingang durchläuft K skalengetrennte Proben ω_i (geometrische Frequenzfolge) mit umschaltbarer Nichtlinearität ReLU (faltend, Knicke + schraffierte lineare Regionen) vs. sin/cos (Interferenzkurve + rotierende Frequenz-Gehäuse/relativer Offset Δ), themenreaktiv mit Theme-Toggle."
+}

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometrische Quantisierung als Turing-Lektüre — Fusion r1-002</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f3f0e6; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:18px 0 10px}
+h2{font-size:clamp(21px,3.4vw,30px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:17px;font-weight:660;margin:26px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:72ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:40px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0;backdrop-filter:blur(8px)}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 7%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 7%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:10px 2px;font-size:17px;color:var(--txt)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim)}
+td.n{font-family:var(--mono);color:var(--txt)}
+td.hi{color:var(--acc);font-weight:600}
+ol.claims{margin:0 0 14px 20px;color:var(--txt-dim)}ol.claims li{margin-bottom:9px}
+ol.claims b{color:var(--txt)}
+
+/* top bar */
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+
+/* viz */
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.tape{display:flex;gap:5px;flex-wrap:wrap;margin:12px 0 4px}
+.tc{min-width:30px;flex:1;text-align:center;padding:6px 3px;border-radius:7px;font-family:var(--mono);font-size:11.5px;
+  background:hsl(var(--h,200),52%,85%);color:#20263a;border:1px solid var(--stroke)}
+html.dark .tc{background:hsl(var(--h,200),44%,24%);color:#eef1f8}
+.tc.gap{outline:2px solid var(--acc3);outline-offset:1px}
+.tc:empty{opacity:.22;background:transparent;color:transparent}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:18px;font-weight:640;color:var(--acc)}
+.ro .b .v.g{color:var(--acc3)}.ro .b .v.e{color:var(--acc5)}.ro .b .v.m{color:var(--acc2)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:2px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-002</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: latent_semantic_manifolds_in_llm.html ✕ turing2.html</p>
+  <h1>Geometrische Quantisierung als Turing-Lektüre</h1>
+  <p>Ein LLM führt einen <em>kontinuierlichen</em>, hochdimensionalen Zustand — und muss daraus ein einzelnes <em>diskretes</em> Symbol machen. Diese Fusion zeigt: genau dieser Schritt ist einmal eine verlustbehaftete <strong>Quantisierung</strong> (A, Mabrok) und zugleich die <strong>diskrete Lektüre</strong>, auf der B die Maschine „rechnet".</p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Die eine Abbildung, auf zwei Höhenstufen</h2>
+    <p class="lead">Beide Seiten beschäftigen sich mit demselben fundamentalen Schritt eines LLM: der Abbildung eines <strong>kontinuierlichen, hochdimensionalen, geometrisch strukturierten Zustands</strong> auf ein <strong>einzelnes diskretes Symbol</strong>. A (Mabrok 2026) nennt diesen Schritt die Projektion auf ein Token über die Softmax-/Voronoi-Zerlegung — und beweist, dass sie eine <em>unüberwindbare Verlustgrenze</em> besitzt. B (Spiral→TM) nennt denselben Schritt das „Schneiden" der Residual-Stream-Spirale, bei dem „die komplexe Geometrie in diskrete Bits kollabiert" und das Ergebnis auf ein <em>Band</em> geschrieben wird.</p>
+    <p>Die <strong>einheitliche Position</strong> der Fusion lautet: <em>Das diskrete Symbol, das B auf seinem Band liest, ist genau das Ergebnis der Quantisierung, die A formalisiert.</em> Die Zuverlässigkeit dieser Lektüre wird durch A's <strong>Margin</strong> gemessen — wie tief der Zustand in einer Voronoi-Zelle (einem Token) liegt. Und die <em>Unzuverlässigkeit</em> der Lektüre ist exakt A's <strong>Expressibility Gap</strong>, das unsichere Grenzgebiet, in dem der Zustand zwischen zwei Tokens steht und kein einzelnes Symbol ihn „greift".</p>
+    <p>Ein LLM ist damit <em>kein</em> „Turing-Maschine" im starken, wörtlichen Sinne (B überschätzt), sondern ein <strong>kontinuierliches, mannigfaltigkeitswertiges dynamisches System</strong> (A), dessen <em>Schicht-für-Schicht-Verhalten</em> auf der Token-Ebene als <strong>Turing-ähnlicher Prozess modelliert</strong> werden kann (B) — mit einer <strong>Quantisierungsuntergrenze</strong> (A), die die Treue jeder solchen diskreten Lektüre begrenzt. A liefert das <em>Wie-verlustig</em>, B liefert das <em>Was-man-mit-dem-Diskreten-liest</em>. Zusammen: eine kontinuierliche Geometrie, die sich pro Schicht in ein diskretes Symbol „herunterrechnet", das eine Maschine abliest — und deren Lektüre genau dort versagt, wo A den irreduziblen Gap lokalisiert.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei Punkte, an denen die beiden aufeinanderprallen</h2>
+    <p>Die beiden widersprechen sich nicht im <em>Ziel</em> (beide wollen verstehen, was ein LLM „rechnet"), sondern in der <em>Bewertung desselben Projektschritts</em> — kontinuierlich → diskret. Drei konkrete Stellungen, bei der jeweils feststeht, was A und was B sagt:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Treue der Ablesung</span>
+      <p><b>A</b> behauptet und beweist: Die Ablesung des kontinuierlichen Zustands in ein Token ist <em>fundamental verlustbehaftet</em>. ≈45&nbsp;% aller Zustände liegen im unsicheren Randgebiet zwischen zwei Tokens; es gibt einen <em>irreduziblen Ambiguitätsboden</em> (m₀.₀₅ ≈ 0.05 bei allen sechs Modellen), den weder mehr Parameter noch besserer Training entfernt; und Satz 10.8 sagt, dass <em>kein</em> endliches Vokabular die Verzerrung auf null bringt.</p>
+      <p><b>B</b> setzt hingegen eine <em>faithful</em> Ablesung voraus: Wenn man die Spirale „an einem Winkel schneidet", dann „kollabiert die komplexe Geometrie in diskrete Bits" — das Attention-Head „liest" (Read) den Bit, der <em>da ist</em>, und schreibt ihn weiter. Das Diskrete ist demnach bereits <em>in</em> dem Kontinuierlichen enthalten und lässt sich verlustfrei ablesen.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Spannung</span>Treue Ablesung (B) gegen irreduziblen Verlust (A) — direkt inkompatibel, so lange man „das Symbol steht im Zustand" wörtlich liest.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Was ist fundamental</span>
+      <p><b>A</b> macht das <em>Kontinuierliche</em> fundamental: die latente semantische Mannigfaltigkeit ist das eigentliche Objekt; das Token ist nur seine (verlustbehaftete) Projektion. Die diskrete Schicht ist ein „Schatten" der kontinuierlichen Geometrie. (Zusätzlich: die Mannigfaltigkeit wird vom Transformer <em>erzeugt</em>, nicht von der Embedding-Tabelle geerbt — Schicht 0 verletzt sie sogar.)</p>
+      <p><b>B</b> macht das <em>Diskrete</em> fundamental: die Bits auf dem Band sind das eigentliche Rechenobjekt; die kontinuierliche Spirale ist nur die geometrische <em>„Ansicht"</em>, die auf Bits reduziert wird, damit überhaupt gerechnet werden kann.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Spannung</span>Ontologische Priorität ist vertauscht: kontinuierlich-fundamental (A) gegen diskret-fundamental (B).</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Glatte Dynamik vs. diskrete Schritte</span>
+      <p><b>A</b> sieht den Residual-Stream als <em>glatte Dynamik</em>: für L→∞ eine Neural-ODE, die Mannigfaltigkeit wandert mit, die Krümmung bleibt über alle Schichten stabil (≈10⁻⁵), die Schicht-Updates <em>erhalten</em> die lokale Geometrie. Die Evolution ist eine glatte Deformation (Sanduhr: diffus → strukturiert → geclustert).</p>
+      <p><b>B</b> sieht jede Schicht als <em>diskreten</em> <code>read / match / write</code>-Schritt einer Turing-Maschine: „Read" — das Attention-Head scannt den Slice; „Match" — Bit=1 aktualisiert den internen Vektor; „Write" — „Move to next layer (Next turn of spiral)". Das ist ein <em>takter</em> Übergang, keine glatte Deformation.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Spannung</span>Kontinuierlicher geometrischer Fluss (A) gegen diskrete, getaktete Rechen-Dynamik (B).</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>Die beiden widerlegen einanders Mathematik nicht: B ist eine einzelne, beweisfreie 3-D-Visualisierung ohne Theorem, A ein formales Paper mit bewiesenen Sätzen. Die Widersprüche sind <em>interpretativ</em> — sie liegen in der Lesart desselben kontinuierlich→diskret-Schritts, nicht in einem direkten formalen Konflikt.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie die beiden zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B beschreiben <strong>dieselbe Abbildung auf zwei Höhenstufen</strong>. Sie widersprechen sich nicht, sie <em>komponieren</em>. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: Der Verlust ist der Preis des diskreten Alphabets</h3>
+      <p>Die Ablesung ist <em>gleichzeitig</em> verlustbehaftete Quantisierung (A) <em>und</em> das diskrete Substrat einer Berechnung (B). Der Verlust ist kein Fehler, der die Berechnung verhindert, sondern der <em>Preis</em> dafür, überhaupt ein diskretes, kombinatorisches Interface zu besitzen. A's „irreduzibler Gap" ist genau die Menge der Zustände, in denen das diskrete Symbol durch den kontinuierlichen Zustand <em>unterbestimmt</em> ist — und dort wäre B's Lektüre unzuverlässig. Tief in einer Zelle (hoher Margin — A: die sicheren ~55–60&nbsp;%) ist B's Read <em>wohldefiniert</em>; nahe der Grenze (im Gap) ist er <em>ambigu</em>. <strong>Fusion:</strong> <code>Zuverlässigkeit(B's Read) = Margin(A)</code>; <code>Gap(A) = Menge der unzuverlässigen Reads(B)</code>.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: zwei Rollen, kein Widerspruch</h3>
+      <p>Kontinuierlich ist fundamental <em>als Zustandsraum</em>, diskret ist fundamental <em>als Ausgabe/Interface</em> — das sind zwei Rollen derselben Maschine, kein Konflikt. A liefert die Geometrie des Zustands (Mannigfaltigkeit + Fisher-Metrik), B liefert die <em>algorithmische Lektüre</em> des Übergangs (Schicht = Read/Match/Write). Damit wird B's starke Identität „LLM <em>ist</em> eine Turing-Maschine" zu der <em>modellierenden</em> Aussage heruntergestuft: „das <strong>projizierte, diskrete Symbol-Dynamik kann als Turing-/finite-State-Prozess modelliert werden</strong>" — mit einer durch A's Gap gesteuerten Treue.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: der Fluss, pro Schicht gesampelt</h3>
+      <p>Glatte Dynamik ist die zugrunde liegende Wahrheit; B's diskreter <code>read/match/write</code>-Schritt ist das <em>Sample</em> dieses Flusses pro Schicht. Eine Neural-ODE, einen Zeitschritt pro Schicht betrachtet, <em>ist</em> eine diskrete Abbildung — und B liest genau diese diskrete Abbildung ab („Write: move to next layer" = das per-Schicht-Update von A). <strong>Fusion:</strong> <code>Fluss(A), pro Schicht gesampelt = diskreter Schritt(B)</code>.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Ein LLM führt einen <strong>glaten, hochdimensionalen, mannigfaltigkeitswertigen Fluss</strong> aus (A). Jede Schicht projiziert diesen Zustand durch die Softmax-/Voronoi-Quantisierung auf ein <strong>diskretes Symbol</strong> (Token/Feature). <strong>Diese quantisierte Symbol-Stream ist, was B als Turing-ähnliche Berechnung liest</strong> (Read = Attention liest den Slice, Write = next-layer update). Die beiden Seiten sind derselbe Prozess auf zwei Höhen: A sagt dir die <em>Geometrie</em> und den <em>Verlust</em> der Projektion (mit harten, testbaren Schranken), B sagt dir, dass das <em>Ergebnis</em> der Projektion das diskrete Alphabet ist, auf dem die Maschine „rechnet". Der <em>irreduzible Gap</em> (A) ist genau die Menge der Zustände, in denen B's Read unzuverlässig ist. <strong>Netto:</strong> Das LLM ist nicht „ein Turing-Maschine" im starken Sinne (B überschätzt); es ist ein <em>kontinuierliches geometrisches dynamisches System</em>, dessen <em>diskretisiertes, Token-Level-Verhalten Turing-modelliert</em> werden kann — begrenzt durch eine Quantisierungsuntergrenze (A), die die Treue jeder solchen diskreten Lektüre abschließt.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substantielle Kern</h2>
+
+    <h3>Der gemeinsame Kern: die Projektion</h3>
+    <p>Beide Papiere kreisen um eine einzige Operation. A stellt sie als geometrische Identität auf: Bei gebundenen Gewichten und gleicher Norm der Embeddings wird „größtes Skalarprodukt" identisch zu „nächster Nachbar" — die Tokenwahl wird damit <em>geometrisch</em>:</p>
+    <div class="eq" id="eqVor"></div>
+    <p>B formuliert dieselbe Operation als <em>Akt</em>: die Spirale (der Residual-Stream) wird geschnitten, und aus dem Schnittpunkt mit der „Attention-Ebene" entsteht das Bit/das Symbol auf dem Band. Die Projektion ist also das <strong>gemeinsame Herzstück</strong> — A misst ihren Verlust, B liest ihr Ergebnis.</p>
+
+    <h3>A's formaler Apparat (die Geometrie und ihre Schranken)</h3>
+    <ul class="claims" style="list-style:disc;margin-left:20px;color:var(--txt-dim)">
+      <li><b>Latente semantische Mannigfaltigkeit</b> (Hyp. 4.1): Die kontextuellen Hidden States (Schicht ≥ 1) liegen auf einer glatten, kompakten, zusammenhängenden Riemannschen Untermannigfaltigkeit (M, g) der intrinsischen Dimension k in ℝ<sup>d</sup>. <em>Gemessen: k ≈ 15–22 bei d = 768–2048, also nur 1–3&nbsp;% des Raums; die Krümmung ≈ 10⁻⁵.</em> Wichtig: die Mannigfaltigkeit wird vom Transformer <em>erzeugt</em>, nicht von der Embedding-Tabelle geerbt (Schicht 0 verletzt sie).</li>
+      <li><b>Fisher-Metrik</b> als „die richtige" Abstandsmaß: Euklidisch ist semantisch falsch; die kanonische Metrik ist</li>
+    </ul>
+    <div class="eq" id="eqFisher"></div>
+    <ul class="claims" style="list-style:disc;margin-left:20px;color:var(--txt-dim)">
+      <li>Nach dem <b>Chentsov-Satz</b> ist sie (bis auf Skalierung) die <em>einzige</em> Metrik, invariant unter suffizienten Statistiken — für eine statistische Aufgabe also kanonisch; sie ist die zweite Ableitung der KL-Divergenz.</li>
+      <li><b>Token = Voronoi-Zelle.</b> Jedes Token besitzt eine Region R<sub>t</sub>; ihr Riemann-Volumen μ(R<sub>t</sub>) misst die <em>konzeptuelle Breite</em> (polysemes „und" groß, präzises „Mitochondrium" klein).</li>
+      <li><b>Margin und Expressibility Gap</b> — die drei neuen Größen des Papers:</li>
+    </ul>
+    <div class="eq" id="eqGap"></div>
+    <ul class="claims" style="list-style:disc;margin-left:20px;color:var(--txt-dim)">
+      <li><b>Satz 10.5 — lineares Volumengesetz:</b> Der Anteil des unsicheren Gebiets wächst (für kleine ε) linear mit der Schwelle:</li>
+    </ul>
+    <div class="eq" id="eqT1"></div>
+    <ul class="claims" style="list-style:disc;margin-left:20px;color:var(--txt-dim)">
+      <li>Ein einziger Skalar <b>α</b> = H<sup>k−1</sup>(∂V)/(λ·vol(M)) charakterisiert die Qualität des Vokabulars als Quantisierer. Beweis über die Koflächenformel. <em>Erstmals empirisch bestätigt: Log-Log-Slopes 0.873…1.117 bei R² &gt; 0.985 über 6 Modelle.</em></li>
+      <li><b>Satz 10.8 — fundamentale Verzerrungsschranke:</b></li>
+    </ul>
+    <div class="eq" id="eqT2"></div>
+    <ul class="claims" style="list-style:disc;margin-left:20px;color:var(--txt-dim)">
+      <li>mit c<sub>k</sub> = k/(k+2)·ω<sub>k</sub><sup>−2/k</sup>. <strong>Kein endliches Vokabular erreicht Verzerrung 0.</strong> Die Rate <code>N^(−2/k)</code> ist der „Fluch der Dimension": bei k = 20 kostet Halbierung des Verlusts ≈ 2<sup>10</sup> ≈ 1024× mehr Tokens; bei k = 50 ≈ 2<sup>25</sup> ≈ 33 Mio ×.</li>
+      <li><b>TWO-NN-Schätzer</b> für k: k̂ = n / Σ log μ<sub>i</sub>, μ<sub>i</sub> = ρ<sub>i,2</sub>/ρ<sub>i,1</sub> ∼ Pareto(1,k) — liest die intrinsische Dimension rein aus Nachbarschaftsabständen ab.</li>
+      <li><b>Sanduhr-Muster:</b> k steigt von Schicht 0 an, peak bei 40–60&nbsp;% Tiefe (≈ 20), schrumpft zum Ausgang — <em>Expansion</em> (Kontext integrieren) → <em>Kompression</em> (auf ein Token). Architekturunabhängig bei GPT-2 · OPT · Pythia.</li>
+    </ul>
+    <div class="note t"><span class="h">Geometrie = Engineering (A, Abschnitt 14)</span>LoRA-Rang r ≈ k (Tangentialraum der Mannigfaltigkeit), layer-adaptives Pruning (Endschichten kleineres k → aggressiver prunbar), nicht-uniforme Breiten, margin-adaptives Dekodieren (hoher Margin = sichere Kandidaten für speculative acceptance), RLHF als Umformung der Voronoi-Zerlegung, Geodesic Probing. Und <em>ehrliche Grenzen</em> (A, 15.1): kein Kausalitäts-Nachweis (nur Korrelationen), keine Modelle &gt; 1.5 B, andere Modalitäten ungetestet, vol(M) nie absolut gemessen — Satz 10.8 daher qualitativ, nicht numerisch, geprüft.</div>
+
+    <h3>B's Apparat (die algorithmische Lektüre)</h3>
+    <p>B ist kompakt, aber seine Bausteine sind genau die, die A's Projektion „betreiben":</p>
+    <ol class="claims">
+      <li><b>Spirale = Residual-Stream:</b> der hochdimensionale Zustand, der sich Schicht für Schicht windet (hier 2-D-projiziert als „high-dimensional residual stream (Spiral)").</li>
+      <li><b>Slice = Projektion:</b> „When we slice the spiral at a specific angle, the complex geometry collapses into discrete bits." Der Schnittpunkt mit der Attention-Ebene liefert das Symbol.</li>
+      <li><b>Binary Feature Tape:</b> eine Kette von Zellen (0/1 bzw. Symbolen) — das Band, auf das die Maschine schreibt.</li>
+      <li><b>Attention-Head = Read/Write-Head:</b> „Read: Attention head scans the Slice. Match: If bit is 1 (Spiral hits plane), update internal vector. Write: Move to next layer (Next turn of spiral)."</li>
+      <li><b>Turing State:</b> der Prozess führt Zustände (z. B. <code>SCANNING_EMBEDDINGS…</code>, <code>FOUND_PATTERN_MATCH</code>) — die Schicht ist ein getakteter Übergang der Maschine.</li>
+    </ol>
+
+    <h3>Die Fusion als einheitliches Modell</h3>
+    <div class="box">
+      <p style="margin-bottom:0"><b>Modell:</b> <code>kontinuierlicher Zustand h<sup>(ℓ)</sup>  ─[Softmax/Voronoi]→  diskretes Symbol t<sup>(ℓ)</sup>  ─[B liest]→  Band</code>.<br>
+      (1) Der <strong>Zustandsraum</strong> ist A's glatte Mannigfaltigkeit mit Fisher-Metrik; (2) die <strong>Projektion</strong> ist A's Voronoi-Quantisierung — und zugleich B's „Slice"; (3) das <strong>Sym</strong>bol auf dem Band ist beides: A's Token <em>und</em> B's gelesener Bit; (4) die <strong>Treue</strong> der Lektüre = A's Margin, die <strong>Versagensmenge</strong> = A's Gap; (5) die <strong>Dynamik</strong> ist A's Fluss, pro Schicht gesampelt = B's <code>read/match/write</code>-Schritt; (6) B's „LLM = TM" wird zu „<strong>das diskrete Token-Level-Verhalten ist Turing-modellierbar</strong>", begrenzt durch A's Quantisierungsuntergrenze <code>N^(−2/k)</code>.</p>
+    </div>
+
+    <h3>Empirische Anker (A, 6 Modelle, 3 Familien, 124M–1.5B)</h3>
+    <table>
+      <thead><tr><th>Modell</th><th>Params</th><th>d</th><th>L</th><th>k̂ peak</th><th>Auslastung</th><th>Gap-Slope β</th><th>R²</th><th>m₀.₀₅</th></tr></thead>
+      <tbody>
+        <tr><td class="hi">GPT-2</td><td class="n">124M</td><td class="n">768</td><td class="n">12</td><td class="n">19.2</td><td class="n">2.5 %</td><td class="n">1.117</td><td class="n">0.995</td><td class="n">0.041</td></tr>
+        <tr><td class="hi">OPT-125M</td><td class="n">125M</td><td class="n">768</td><td class="n">12</td><td class="n">19.5</td><td class="n">2.5 %</td><td class="n">0.929</td><td class="n">0.995</td><td class="n">0.050</td></tr>
+        <tr><td class="hi">Pythia-160M</td><td class="n">160M</td><td class="n">768</td><td class="n">12</td><td class="n">21.7</td><td class="n">2.8 %</td><td class="n">1.030</td><td class="n">0.998</td><td class="n">0.048</td></tr>
+        <tr><td class="hi">GPT-2 XL</td><td class="n">1.5B</td><td class="n">1600</td><td class="n">48</td><td class="n">20.2</td><td class="n">1.3 %</td><td class="n">0.946</td><td class="n">0.986</td><td class="n">0.047</td></tr>
+        <tr><td class="hi">OPT-1.3B</td><td class="n">1.3B</td><td class="n">2048</td><td class="n">24</td><td class="n">20.9</td><td class="n">1.0 %</td><td class="n">0.873</td><td class="n">0.991</td><td class="n">0.055</td></tr>
+        <tr><td class="hi">Pythia-1B</td><td class="n">1B</td><td class="n">2048</td><td class="n">16</td><td class="n">22.1</td><td class="n">1.1 %</td><td class="n">1.021</td><td class="n">0.989</td><td class="n">0.047</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><span class="h">Was die Tabelle für die Fusion trägt</span>d verdreifacht sich (768→2048), aber k̂<sub>peak</sub> bleibt ≈ 20: die Geometrie ist eine Eigenschaft der <em>Aufgabe</em> „nächstes Token auf natürlicher Sprache", nicht der Architektur. Und m₀.₀₅ ≈ 0.05 bleibt bei <em>allen</em> Modellen stehen — der irreduzible Boden, der (in der Fusion) genau die Lektüre begrenzt, die B auf dem Band vollzieht.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Ein Zustand, zwei Lesarten — live</h2>
+    <p class="lead" style="margin-bottom:4px">Der <em>selbe</em> kontinuierliche Zustand wird zweimal gelesen: als Punkt auf der Mannigfaltigkeit (A) und als Symbol, das eine Maschine auf ihr Band schreibt (B). Bewege die Schwelle ε und sieh, wie der <strong>Gap</strong> (gold) die Menge der Zustände markiert, in der B's Lektüre <em>ambig</em> wird — genau dort, wo A den verlustigen Rand lokalisiert.</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Residual-Stream → Quantisierung → Turing-Band</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvViz" width="680" height="460"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--acc)"></i>Bahn = Residual-Stream (A's Fluss / B's Spirale)</span>
+        <span><i style="background:var(--acc2)"></i>Token-Anker (Voronoi-Zelle)</span>
+        <span><i style="background:var(--acc3)"></i>Gap G<sub>ε</sub>: hier ist B's Read ambig</span>
+      </div>
+      <div class="btnrow">
+        <button id="playBtn" class="on">⏸ Pause</button>
+        <button id="viewA" class="on">A · Geometrie</button>
+        <button id="viewB">B · Maschine</button>
+      </div>
+      <div id="viewCap"></div>
+      <p style="font-size:12px;color:var(--txt-faint);margin-bottom:8px">Das Band unten = B's „Binary Feature Tape": jedes Feld ein von der Maschine gelesenes Symbol (eine Schicht). Felder, die aus dem Gap stammen, sind gold gerahmt — die <em>unzuverlässigen Lektüren</em>, die A's Verlustquantifizierung vorhersagt.</p>
+      <div class="tape" id="tape"></div>
+      <div class="ro">
+        <div class="b"><div class="k">Gelesenes Symbol</div><div class="v" id="roTok">—</div><div class="u">= Token / Band-Bit</div></div>
+        <div class="b"><div class="k">Margin m(h)</div><div class="v" id="roMar">—</div><div class="u">Treue der Lektüre (A)</div></div>
+        <div class="b"><div class="k">Im Gap?</div><div class="v e" id="roGap">—</div><div class="u">unzuverlässiger Read (B)</div></div>
+        <div class="b"><div class="k">Schritt ℓ</div><div class="v" id="roStep">—</div><div class="u">Schicht = TM-Schritt</div></div>
+        <div class="b"><div class="k">Bahn-Anteil im Gap</div><div class="v g" id="roFrac">—</div><div class="u">≈ η(ε), A's ≈45 %</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Schwelle ε — wie breit ist der „unsichere Rand"?</span><b id="epsVal">0.90</b></div>
+        <input type="range" id="epsSl" min="0.2" max="2.2" step="0.02" value="0.90">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Klein = nur die dünnsten Grenzschichten gelten als Gap; groß = immer mehr der Bahn ist „zu unsicher", um ein Symbol zu liefern.</div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Tempo des Streams</span><b id="spdVal">0.6×</b></div>
+        <input type="range" id="spdSl" min="0.1" max="2.5" step="0.1" value="0.6">
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <p><a href="../latent_semantic_manifolds_in_llm.html">A — Latente Semantische Mannigfaltigkeiten in LLMs (Mabrok, 2026)</a>: Interaktive Erklärseite zu arXiv:2603.22301 — Fisher-Metrik, Voronoi-Token, Margin, Expressibility Gap und die bewiesenen Sätze 10.5/10.8, empirisch an 6 LLMs (GPT-2 · OPT · Pythia, 124M–1.5B) getestet.</p>
+    <p><a href="../turing2.html">B — LLM: Spiral to Turing Machine</a>: Drei.js-Visualisierung, die den Residual-Stream als Spirale zeigt, die per „Slice" in diskrete Bits auf einem Band kollabiert; das Attention-Head als Read/Write-Head und jede Schicht als <code>read/match/write</code>-Schritt einer Turing-Maschine.</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>latent_semantic_manifolds_in_llm.html</strong> (Mabrok 2026, arXiv:2603.22301) ✕ <strong>turing2.html</strong> („LLM: Spiral to Turing Machine"). Alle Zahlen aus A; Punktwolke im Viz synthetisch. Selbstständig, ohne Netzwert-Datenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function renderMath(id,tex,display){
+  var el=document.getElementById(id); if(!el)return;
+  try{ if(window.temml){ el.innerHTML=temml.renderToString(tex,{displayMode:display!==false}); }
+       else { el.textContent=tex; } }
+  catch(e){ el.textContent=tex; }
+}
+document.addEventListener('DOMContentLoaded',function(){
+  renderMath('eqVor','\\arg\\max_t\\;\\langle e_t,h\\rangle \\;=\\; \\arg\\min_t\\;\\|h-e_t\\|^{2}\\quad(\\|e_t\\|=c)');
+  renderMath('eqFisher','G(h)\\,=\\,W^{\\top}\\bigl(\\operatorname{diag}(p)-pp^{\\top}\\bigr)W\\;=\\;W^{\\top}\\Sigma_{p}\\,W');
+  renderMath('eqGap','m(h)=\\ell_{t^{*}}(h)-\\ell_{t^{**}}(h)\\ge0,\\qquad G_{\\varepsilon}=\\{h\\in M:m(h)<\\varepsilon\\},\\qquad \\eta(\\varepsilon)=\\tfrac{\\mu(G_{\\varepsilon})}{\\mathrm{vol}(M)}');
+  renderMath('eqT1','\\eta(\\varepsilon)=\\underbrace{\\tfrac{\\mathcal H^{k-1}(\\partial V)}{\\lambda\\,\\mathrm{vol}(M)}}_{\\displaystyle=\\;\\alpha}\\,\\varepsilon\\;+\\;O(\\varepsilon^{2})\\quad(0<\\varepsilon<\\tfrac{1}{2\\kappa_{\\partial}})');
+  renderMath('eqT2','D\\,\\ge\\,c_{k}\\,\\nu_{\\min}\\left(\\frac{\\mathrm{vol}(M)}{N}\\right)^{2/k},\\qquad c_{k}=\\tfrac{k}{k+2}\\,\\omega_{k}^{-2/k}');
+
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; }
+  themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); };
+  setBtn();
+
+  // ---------- VIZ ----------
+  var cv=document.getElementById('cvViz'); if(!cv)return;
+  var dpr=window.devicePixelRatio||1, LW=680, LH=460;
+  cv.style.width='100%'; cv.style.aspectRatio=LW+'/'+LH;
+  cv.width=LW*dpr; cv.height=LH*dpr;
+  var ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+
+  function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var clamp=function(x,a,b){return Math.min(b,Math.max(a,x));};
+  var TAU=Math.PI*2;
+  var W=LW,H=LH,S2=6050;
+
+  var toks=['und','der','die','ein','ist','Haus','Baum','geht','rot','blau','sehr','groß','gut','zeit','weg','Kopf'];
+  var anchors=[];
+  (function(){
+    var r=mulberry(2026), cols=4, rows=4, ox=74, oy=72;
+    var sx=(W-2*ox)/(cols-1), sy=(H-2*oy)/(rows-1);
+    for(var i=0;i<cols;i++)for(var j=0;j<rows;j++){
+      anchors.push({x:ox+i*sx+(r()-0.5)*sx*0.55, y:oy+j*sy+(r()-0.5)*sy*0.55});
+    }
+  })();
+
+  function nearestIdx(x,y){var bi=0,bd=1e18;for(var i=0;i<anchors.length;i++){var dx=x-anchors[i].x,dy=y-anchors[i].y,dd=dx*dx+dy*dy;if(dd<bd){bd=dd;bi=i;}}return bi;}
+  function read(x,y){
+    var i1=0,i2=1,v1=0,v2=0;
+    for(var i=0;i<anchors.length;i++){
+      var a=anchors[i], v=-((x-a.x)*(x-a.x)+(y-a.y)*(y-a.y))/S2;
+      if(i===0){v1=v;i1=0;}
+      else if(i===1){v2=v;i2=1;}
+      else { if(v>v1){v2=v1;i2=i1;i1=i;v1=v;} else if(v>v2){v2=v;i2=i;} }
+    }
+    return {idx:i1,label:toks[i1],margin:v1-v2};
+  }
+  function point(s){
+    var t=s*TAU, cx=W/2, cy=H/2;
+    var x=cx+Math.cos(t*1.0+0.4)*W*0.345+Math.sin(t*2.3)*W*0.055;
+    var y=cy+Math.sin(t*1.0)*H*0.33+Math.cos(t*1.7)*H*0.05;
+    return {x:clamp(x,22,W-22),y:clamp(y,22,H-22)};
+  }
+  function fracInGap(eps){var c=0,n=520;for(var i=0;i<n;i++){var p=point(i/n);if(read(p.x,p.y).margin<eps)c++;}return c/n;}
+
+  // precompute static grid (anchors fixed)
+  var STEP=5, GW=Math.ceil(W/STEP), GH=Math.ceil(H/STEP);
+  var idxG=new Int16Array(GW*GH), marG=new Float32Array(GW*GH), bndG=new Uint8Array(GW*GH);
+  (function(){
+    for(var j=0;j<GH;j++)for(var i=0;i<GW;i++){var k=j*GW+i;var x=i*STEP+STEP/2,y=j*STEP+STEP/2;idxG[k]=nearestIdx(x,y);marG[k]=read(x,y).margin;}
+    for(var j2=0;j2<GH-1;j2++)for(var i2=0;i2<GW-1;i2++){var k2=j2*GW+i2;if(idxG[k2]!==idxG[k2+1]||idxG[k2]!==idxG[k2+GW])bndG[k2]=1;}
+  })();
+
+  var tapeEl=document.getElementById('tape'), TAPE_N=20, tapeCells=[], tapeRing=[];
+  for(var ti=0;ti<TAPE_N;ti++){var d=document.createElement('div');d.className='tc';tapeEl.appendChild(d);tapeCells.push(d);}
+  function renderTape(eps){
+    for(var i=0;i<TAPE_N;i++){var c=tapeCells[i],it=tapeRing[i];
+      if(!it){c.textContent='';c.style.removeProperty('--h');c.classList.remove('gap');continue;}
+      c.textContent=it.label;c.style.setProperty('--h',(it.idx*47+195)%360);
+      c.classList.toggle('gap',it.margin<eps);
+    }
+  }
+
+  var epsEl=document.getElementById('epsSl'), spdEl=document.getElementById('spdSl');
+  var epsVal=document.getElementById('epsVal');
+  var playBtn=document.getElementById('playBtn');
+  var spdVal=document.getElementById('spdVal');
+  var s=0.06, playing=true, speed=(+spdEl.value)/240, STEPS=20, lastStep=-1;
+  epsEl.addEventListener('input',function(){epsVal.textContent=(+epsEl.value).toFixed(2);});
+  spdEl.addEventListener('input',function(){speed=(+spdEl.value)/240;spdVal.textContent=(+spdEl.value).toFixed(1)+'×';});
+  playBtn.onclick=function(){playing=!playing;playBtn.textContent=playing?'⏸ Pause':'▶ Animieren';playBtn.classList.toggle('on',playing);};
+  var viewA=document.getElementById('viewA'),viewB=document.getElementById('viewB'),viewCap=document.getElementById('viewCap');
+  var A_CAP='A · Geometrie: Der Zustand h wandert auf der Mannigfaltigkeit. Der Voronoi-Anker = das Token, der Margin = wie tief h in der Zelle liegt, das Gold = der Expressibility Gap (das unsichere Grenzgebiet zwischen zwei Tokens).';
+  var B_CAP='B · Maschine: Dieselbe Bahn = eine Umdrehung der Residual-Stream-Spirale. Jeder Schritt „liest" ein Symbol auf das Band (read/match/write). Deep in a cell = verlässliche Lektüre; im Gap (gold) = die Lektüre ist ambig — genau dort verliert die Maschine Information.';
+  viewA.onclick=function(){viewA.classList.add('on');viewB.classList.remove('on');viewCap.textContent=A_CAP;};
+  viewB.onclick=function(){viewB.classList.add('on');viewA.classList.remove('on');viewCap.textContent=B_CAP;};
+
+  var roTok=document.getElementById('roTok'),roMar=document.getElementById('roMar'),roGap=document.getElementById('roGap'),
+      roStep=document.getElementById('roStep'),roFrac=document.getElementById('roFrac');
+
+  function drawAll(){
+    var eps=+epsEl.value;
+    var bndCol=isDark()?'rgba(232,236,246,0.82)':'rgba(28,35,51,0.5)';
+    var trajCol=isDark()?'rgba(94,224,208,0.30)':'rgba(13,143,128,0.42)';
+    var gapCol=getVar('--acc3');
+    ctx.clearRect(0,0,W,H);
+    // field
+    for(var j=0;j<GH;j++)for(var i=0;i<GW;i++){
+      var k=j*GW+i, idx=idxG[k], mar=marG[k];
+      ctx.globalAlpha=1;
+      ctx.fillStyle=isDark()?('hsl('+(idx*47+195)%360+',44%,19%)'):('hsl('+(idx*47+195)%360+',58%,85%)');
+      ctx.fillRect(i*STEP,j*STEP,STEP,STEP);
+      if(mar<eps){ctx.fillStyle=gapCol;ctx.globalAlpha=0.42;ctx.fillRect(i*STEP,j*STEP,STEP,STEP);ctx.globalAlpha=1;}
+      if(bndG[k]){ctx.fillStyle=bndCol;ctx.fillRect(i*STEP,j*STEP,STEP,STEP);}
+    }
+    // trajectory
+    ctx.strokeStyle=trajCol;ctx.lineWidth=1.6;ctx.beginPath();
+    for(var q=0;q<=260;q++){var pp=point(q/260);if(q===0)ctx.moveTo(pp.x,pp.y);else ctx.lineTo(pp.x,pp.y);}
+    ctx.closePath();ctx.stroke();
+    // anchors
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    for(var ai=0;ai<anchors.length;ai++){var a=anchors[ai];
+      ctx.fillStyle=getVar('--acc2');ctx.beginPath();ctx.arc(a.x,a.y,4.4,0,TAU);ctx.fill();
+      ctx.fillStyle=isDark()?'rgba(255,255,255,0.72)':'rgba(20,28,45,0.6)';
+      ctx.font='10px ui-monospace,Menlo,monospace';ctx.fillText(toks[ai],a.x,a.y-12);
+    }
+    // current point
+    var p=point(s), r=read(p.x,p.y);
+    var pcol=r.margin<eps?getVar('--acc3'):(r.margin<eps*1.7?(isDark()?'#ffab70':'#e8842f'):getVar('--acc5'));
+    ctx.save();ctx.shadowColor=pcol;ctx.shadowBlur=16;ctx.fillStyle=pcol;
+    ctx.beginPath();ctx.arc(p.x,p.y,7,0,TAU);ctx.fill();ctx.restore();
+    ctx.strokeStyle=isDark()?'#fff':'#1c2333';ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(p.x,p.y,7,0,TAU);ctx.stroke();
+    ctx.fillStyle=isDark()?'#fff':'#1c2333';ctx.font='700 13px -apple-system,Inter,sans-serif';ctx.textAlign='left';ctx.fillText('h',p.x+11,p.y-11);
+    // readouts
+    roTok.textContent=r.label;
+    roMar.textContent=r.margin.toFixed(3);
+    roMar.style.color=r.margin<eps?getVar('--acc3'):getVar('--acc');
+    var ig=r.margin<eps; roGap.textContent=ig?'JA':'NEIN'; roGap.className='v '+(ig?'g':'e');
+    roStep.textContent=Math.floor(s*STEPS);
+    roFrac.textContent=(fracInGap(eps)*100).toFixed(1)+'%';
+  }
+
+  function loop(){
+    var eps=+epsEl.value;
+    if(playing){
+      s+=speed; if(s>=1)s-=1;
+      var st=Math.floor(s*STEPS);
+      if(st!==lastStep){lastStep=st;var p=point(s);var r=read(p.x,p.y);tapeRing.push(r);if(tapeRing.length>TAPE_N)tapeRing.shift();renderTape(eps);}
+    }
+    drawAll();
+    requestAnimationFrame(loop);
+  }
+  viewCap.textContent=A_CAP;
+  requestAnimationFrame(loop);
+});
+</script>
+</body>
+</html>

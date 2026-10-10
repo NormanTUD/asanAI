@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 038 — Attraktor-Dynamik trifft tropische Geometrie</title>
+<style>
+:root{
+  --bg:#f7f6f2; --bg-2:#efeee8; --panel:#ffffff;
+  --text:#1b1b1f; --text-dim:#3d3d44; --text-faint:#6b6b73;
+  --border:rgba(0,0,0,.12); --border-hi:rgba(0,0,0,.22);
+  --accent:#0e9488; --accent-2:#d6336c; --accent-3:#e8590c;
+  --accent-4:#4263eb; --accent-5:#12b886;
+  --de:#e8590c; --en:#4263eb; --attr:#d98a00;
+  --canvas-bg:#ffffff; --grid:rgba(0,0,0,.08); --region:rgba(14,148,136,.10);
+  --r:14px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0a0e18; --bg-2:#0d1322; --panel:#121a2c;
+  --text:#e8ecf6; --text-dim:#9aa6c0; --text-faint:#64708c;
+  --border:rgba(255,255,255,.09); --border-hi:rgba(255,255,255,.2);
+  --accent:#5ee0d0; --accent-2:#ff7ac0; --accent-3:#ff9f43;
+  --accent-4:#7aa2ff; --accent-5:#6ee88a;
+  --de:#ff9f43; --en:#7aa2ff; --attr:#ffd43b;
+  --canvas-bg:#060910; --grid:rgba(255,255,255,.06); --region:rgba(94,224,208,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+header{border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:8px}
+h1{font-size:clamp(26px,4.4vw,40px);line-height:1.12;letter-spacing:-.02em;font-weight:760;margin-bottom:12px}
+.subtitle{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.01em;line-height:1.5}
+.subtitle .fx{color:var(--text-faint)}
+#btnTheme{margin-top:16px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--border-hi);background:var(--panel);color:var(--text);transition:.15s}
+#btnTheme:hover{border-color:var(--accent);color:var(--accent)}
+section{padding:34px 0;scroll-margin-top:20px}
+section+section{border-top:1px solid var(--border)}
+h2{font-size:clamp(20px,3vw,29px);line-height:1.18;letter-spacing:-.015em;font-weight:720;margin-bottom:16px}
+h3{font-size:16.5px;font-weight:680;margin:22px 0 8px;color:var(--text)}
+p{color:var(--text-dim);margin-bottom:13px;max-width:72ch}
+p.lead{color:var(--text);font-size:15.5px;max-width:70ch}
+strong{color:var(--text);font-weight:640}
+em{color:var(--accent);font-style:normal;font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--bg-2);padding:2px 6px;border-radius:5px;color:var(--accent)}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;border:1px solid var(--border-hi);color:var(--text-faint);margin-right:6px}
+.tag.a{color:var(--accent-3);border-color:var(--accent-3)}
+.tag.b{color:var(--accent-4);border-color:var(--accent-4)}
+.note{border-left:3px solid var(--accent);background:var(--bg-2);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--text-dim)}
+.note b{color:var(--text)}
+.thm{background:var(--bg-2);border:1px solid var(--border-hi);border-radius:12px;padding:14px 16px;margin:16px 0}
+.thm .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-4);font-weight:700;margin-bottom:8px;display:block}
+.thm .math{font-family:var(--mono);font-size:14px;color:var(--text);overflow-x:auto;padding:4px 0;line-height:1.9}
+ul{color:var(--text-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:72ch}
+.viz{margin-top:18px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.controls button{font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:8px 14px;border-radius:9px;border:1px solid var(--border-hi);background:var(--panel);color:var(--text);transition:.15s}
+.controls button:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.controls button.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.sliderbox{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text-dim);margin-left:auto}
+.sliderbox b{font-family:var(--mono);color:var(--accent)}
+input[type=range]{-webkit-appearance:none;width:130px;height:5px;border-radius:99px;background:var(--border-hi);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.cwrap{background:var(--canvas-bg);border:1px solid var(--border-hi);border-radius:12px;padding:8px;overflow:hidden}
+#cwrap canvas{display:block;width:100%}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin-top:14px}
+.readouts .box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px}
+.readouts .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint);margin-bottom:4px}
+.readouts .box .v{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--accent)}
+.cap{font-size:12.5px;color:var(--text-faint);margin-top:12px;max-width:72ch}
+a.ext{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+footer{border-top:1px solid var(--border);padding:24px 22px;text-align:center;color:var(--text-faint);font-size:12px}
+</style>
+</head>
+<body>
+<article>
+<header>
+  <h1>Attraktor-Dynamik trifft tropische Geometrie</h1>
+  <p class="subtitle"><span class="fx">Fusion aus:</span> idea2.html <span class="fx">✕</span> tropische_geometrie_tiefer_neuronaler_netze_simple.html</p>
+  <button id="btnTheme">☀️ Lichtmodus</button>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Texte beschreiben <strong>dasselbe Objekt — ein tiefes Netz — in zwei unterschiedlichen Sprachen.</strong> <span class="tag b">B</span> tropische_geometrie… legt das Netz als <em>zeitlose</em> Funktion fest: ein ReLU-Netz <em>ist</em> eine tropisch rationale Funktion, also eine stückweise lineare Karte, die den Eingaberaum in lineare Regionen (Zellen) partitioniert. <span class="tag a">A</span> idea2 zeigt dasselbe Netz als <em>dynamischen Fluss</em>: ein Bedeutungsvektor, der sich Token für Token (Ratchet/Sperrklinke) durch die Schichten bewegt und in <em>Attraktoren</em> mit <em>Basins of Attraction</em> zusammenläuft — zwei verschiedene Sprachen fallen in einem mittleren Layer auf denselben Attraktor.</p>
+  <p>Die Fusion lautet: <strong>Der „Fluss“ von A ist die <em>Iteration</em> der tropischen Abbildung von B.</strong> Ein einzelner Forward-Pass ist genau eine (stückweise lineare, tropische) Abbildung f. Autoregressive Erzeugung ist diese Abbildung, auf einen wachsenden Kontext wiederholt angewandt — das ist A’s Zahnrad. A’s „Attraktor“ ist geometrisch nichts als eine <em>gemeinsame Ziel-Region</em> (eine Zelle) unter dieser iterierten Karte; A’s „Basin of Attraction“ ist eine lineare Region bzw. ihr Urbild; A’s „Knick“ an der Regionsgrenze ist exakt B’s <em>tropische Hyperfläche</em>. Und A’s Unembedding — „welcher Vokabular-Punkt liegt am nächsten?“ — ist in B’s Sprache ein <em>max/argmax über die Vokabular-Monome</em>.</p>
+  <p>Das Gewinnen der Fusion ist wechselseitig: B erklärt, <em>warum</em> und <em>wie stark</em> A’s Bild überhaupt aufgehen kann (stückweise lineare Struktur, endliche Regionen, Exponentialität der Tiefe), während A B eine <em>Phänomenologie</em> gibt — was es bedeutet, wenn sich Bedeutungen auf denselben Platz legen und man nicht zurück darf. A liefert das Gefühl, B liefert den Beweis mit Voraussetzungen.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden stehen sich nicht logisch im Wege — sie machen <strong>inkompatible <em>Behauptungen</em> über dieselbe Struktur</strong> auf verschiedenen Ebenen. Die drei schärfsten Punkte:</p>
+  <h3>1. <span class="tag a">A</span> Dynamik gegen <span class="tag b">B</span> Stille</h3>
+  <p><strong>A</strong> modelliert Generation als <em>Bewegung in der Zeit</em>: ein Zahnrad mit Sperrklinke, das „nicht zurück, nur vorwärts“ geht, Token für Token den Kontext füllt und bis zur maximalen Kontextlänge läuft; der Bedeutungsvektor „verschiebt sich im Raum mit jedem neuen Token“ (ein Random-Walk). <strong>B</strong> betrachtet dagegen eine <em>zeitlose Funktion</em> <code>f</code> — eine feste stückweise lineare Abbildung, die man in beliebiger Reihenheit auswerten kann. B kennt keinen Kontext, keine Sequenz, keine Richtung, kein „Weiter“. A’s zentrale Mechanik (das Zahnrad, die Drift) existiert in B’s Theorie schlicht nicht.</p>
+  <h3>2. <span class="tag a">A</span> Punkt-Konvergenz gegen <span class="tag b">B</span> Regions-Partition</h3>
+  <p><strong>A</strong> behauptet <em>Konvergenz auf einen Punkt</em>: „<code>die Hauptstadt von Frankreich ist</code>“ und „<code>the capital of France is</code>“ erzeugen „in einem mittleren Layer denselben Attraktor — das Konzept [HAUPTSTADT_FRANKREICH] — obwohl die Eingabe-Tokens völlig verschieden sind.“ Bedeutung <em>collabiert zu einem Punkt</em>. <strong>B</strong> hat keine Attraktoren und keine Punkte — es hat eine <em>Partition in lineare Regionen</em> (Zellen, Mengen). Und B warnt ausdrücklich davor, exakte Koinzidenz zu behaupten: die Entscheidungsgrenze ist <code>⊆</code> (nicht <code>=</code>) der tropischen Kurve, „allgemeine Lage“ ist wörtlich eine Voraussetzung (parallele Strecken „sterben“), und die gezählten Regionen sind <em>Unterschätzungen</em>. A’s „sie werden <em>dasselbe</em>“ ist genau die idealisierte Behauptung, die B’s Grenzen-Sektion relativiert.</p>
+  <h3>3. <span class="tag a">A</span> Idealisierung gegen <span class="tag b">B</span> Ehrlichkeit</h3>
+  <p><strong>A</strong> ist unqualifiziert-metaphorisch: Attraktoren „ziehen“ an, Basins „fangen auf“, Konvergenz ist saubere, fast mystische Tatsache. <strong>B</strong> ist vorsichtig und benennt seine Grenzen selbst: nur <em>stückweise lineare</em> Aktivierungen gelten (tanh/Sigmoid fallen raus), <em>ganzzahlige</em> Gewichte sind nötig (reelle → „Signomials“, Prop. 5.6), Theorem 6.3 <em>verbessert</em> den Bound von Raghu et al. (2017) nicht, und das <em>Generalisierungs-Rätsel</em> bleibt offen. A überbehauptet also relativ zu B’s eigenen Einschränkungen — A beschreibt ein <em>Idealbild</em>, B eine <em>Theorie mit Hypothesen</em>.</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <h3>1. Dynamik als Iteration der statischen Karte</h3>
+  <p>A und B beschreiben zwei Stufen derselben Sache: B liefert den <em>Übergang pro Schritt</em> (eine tropische PL-Abbildung f), A das <em>dynamische System</em>, das man bekommt, wenn man f auf den wachsenden Kontext <em>iteriert</em> (jedes neue Token = eine weitere Anwendung). Das „Zahnrad/Vorwärts-nur“ ist keine neue Mechanik, sondern bloß die <em>Kausalität</em> der Iteration: der Kontext wächst monoton, man wertet nicht rückwärts. <strong>Fusion:</strong> A = B, wiederholt + Feedback des neuen Tokens. Die Drift im Bedeutungsraum von A ist die Bahn der iterierten tropischen Karte von B.</p>
+  <h3>2. Attraktor = gemeinsame Ziel-Region</h3>
+  <p>Übersetze A in B’s Vokabular: A’s „Basin of Attraction“ ist eine <em>lineare Region</em> (Zelle) der tropischen Anordnung bzw. das Urbild, dessen Bahn in sie fällt. A’s „Attraktor-Punkt“ ist die <em>gemeinsame Ziel-Region</em> unter der iterierten Abbildung: DE und EN starten in <em>verschiedenen</em> Zellen, aber ihr <em>Bild</em> nach einigen Schichten landet in <em>derselben</em> Zelle — dem „HAUPTSTADT_FR“-Attraktor. B’s Warnungen werden zu <em>Bedingungen</em>: Unter <em>allgemeiner Lage / generischen Gewichten</em> ist die Konvergenz <em>exakt</em> (saubere gemeinsame Region); bei degenerierten Gewichten nur <em>annähernd</em> (nahe, aber distincte Zellen). <strong>Fusion:</strong> „Attraktor“ heißt „gemeinsame Ziel-Region unter der iterierten PL-Karte“; Konvergenz ist real, aber an B’s Hypothesen gebunden.</p>
+  <h3>3. Idealbild + Hypothesen = Theorem</h3>
+  <p>A behält die <em>Intuition</em> (Konvergenz, Irreversibilität, Bedeutung als Platz im Raum), B liefert die <em>Maschinerie</em> (warum, wann, wie stark: PL, tropisch, Regionszählung, Tiefe). Man nimmt A’s „exakt dasselbe Attraktor“ und qualifiziert jede Stelle mit B’s „unter allgemeiner Lage / bis auf die ⊆-Feinheit“. <strong>Fusion:</strong> A’s Mystik wird zu B’s Satz mit Voraussetzungen; B’s abstrakte Zählung bekommt A’s greifbare Phänomenologie.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>Zwei Sprachen für ein Objekt</h3>
+  <p>Das gemeinsame Objekt ist die vom Netz berechnete Karte <code>f : R^d → R^m</code>. B beschreibt sie <em>algebraisch-geometrisch</em> (was sie <em>ist</em>), A <em>dynamisch-semantisch</em> (was sie <em>tut</em>, wenn man sie auf eine wachsende Eingabe anwendet). Die Brücke ist, dass die Iteration einer PL-Karte ein diskretes dynamisches System erzeugt, dessen Fixpunkte/Regionen A als „Attraktoren/Basins“ liest.</p>
+
+  <h3>Was B bringt — die Geometrie (Zhang, Naitzat &amp; Li 2018)</h3>
+  <p>Die <strong>tropische Semiring</strong> tauscht die Grundoperationen: <code>⊕ = max</code>, <code>⊙ = +</code>. Damit ist <code>ReLU(x) = max(x,0) = x ⊕ 0</code> — der ganze Trick in einer Zeile. Ein tropisches <em>Monom</em> ist eine Gerade (lineare Funktion); ein tropisches <em>Polynom</em> ist das <code>max</code> vieler Geraden — immer konvex und stückweise linear. Eine <em>tropisch rationale</em> Funktion ist <code>f − g</code> zweier solcher und darf beliebig nicht-konvex sein.</p>
+  <div class="thm">
+    <span class="lbl">Der Schlüssel-Trick (3 Zeilen) — eine Schicht ist tropisch rational</span>
+    <div class="math">
+      <b>1</b> Zerlege: <code>A = A₊ − A₋</code> &nbsp;(A₊ = max{A,0}, A₋ = max{−A,0})<br>
+      <b>2</b> Addiere <code>A₋x</code> zu beiden Seiten &nbsp;(max{p,q}+c = max{p+c, q+c})<br>
+      <b>3</b> <code>max{Ax+b, t} = max{A₊x+b, A₋x+t} − A₋x = F ⊘ G</code> ✓
+    </div>
+  </div>
+  <p>Daraus der <strong>Äquivalenzsatz</strong> (Satz 5.2/5.4/5.5): <em>ReLU-Netze (ganzzahlige Gewichte) ⇔ stückweise lineare Funktionen mit ganzzahligen Steigungen ⇔ tropisch rationale Funktionen f ⊘ g</em> — verlustfrei hin- und herschaltbar; die Familie ist unter tropischer Addition/Multiplikation/Division abgeschlossen (eine „Algebra mit Semikörper-Eigenschaft“). Quantitativ: jede Funktion mit r Monomen braucht <code>L ≤ max{⌈log₂ r_f⌉, ⌈log₂ r_g⌉} + 2</code> Schichten — der <em>Logarithmus</em> ist die Tiefe, weil pro Schicht nur <em>binäre</em> Maxima gebildet werden (Turnier-Baum).</p>
+  <div class="thm">
+    <span class="lbl">Theorem 6.3 — warum Tiefe exponentiell gewinnt</span>
+    <div class="math">
+      lineare Regionen ≤ <code>∏_l Σ_{i≤d} C(n_l, i)</code> ≈ <code>∏ n_l^d</code><br>
+      → <b>polynomial in der Breite n</b>, <b>exponentiell in der Tiefe L</b>
+    </div>
+  </div>
+  <p>Das <strong>Zählen</strong> läuft über <em>Zonotope</em> (Minkowski-Summe von Strecken): in 2D hat ein Zonotop aus m nicht-parallelen Strecken exakt <code>2m</code> Ecken — parallele Strecken „sterben“ („allgemeine Lage“). Der <strong>Knick</strong> (tropische Hyperfläche) ist die Stelle, wo <em>zwei Monome exakt gleich</em> sind (Lücke = 0); dort ist die Funktion nicht differenzierbar, und die Zellen drumherum sind die linearen Regionen. <strong>Limiten</strong> (B’s Ehrlichkeit): nur PL-Aktivierungen (ReLU/Leaky-ReLU/abs/Max-Pool, <em>nicht</em> tanh/Sigmoid); ganzzahlige Gewichte nötig (reell → Signomials); erklärt Tiefe, aber <em>nicht</em> Generalisierung; Grenze <code>⊆</code> Kurve; gezählte Regionen = Unterschätzungen. Die tragende Dualität (Maclagan–Sturmfels): die tropische Kurve ist das Skelett, dual zur Unterteilung des Newton-Polytops.</p>
+
+  <h3>Was A bringt — die Dynamik im Bedeutungsraum</h3>
+  <p>A liest die <em>Residual/Output-Koordinate</em> als einen Punkt in einem (symbolischen) Bedeutungsraum. <strong>Ratchet/Sperrklinke:</strong> Generation ist vorwärts-only; jeder Token-Schnapp füllt einen Kontext-Slot und verschiebt den Gesamtvektor, bis zur max. Kontextlänge. Der Vektor <em>driftet</em> mit jedem Token. <strong>Attraktoren &amp; Basins pro Layer:</strong> frühe Layer = <em>fixierte</em> (syntaktische, wortartenartige) Attraktoren; mittlere = <em>Konvergenz</em> (semantische Konzepte, hier [HAUPTSTADT_FR]); späte = <em>dynamische</em> (Antwort-vorbereitende). <strong>Konvergenz:</strong> zwei verschiedene Oberflächenformen (DE/EN) landen in derselben mittleren Zelle. <strong>Unembedding:</strong> der finale Vektor des letzten Layers wird auf den <em>nächsten Vokabular-Punkt</em> projiziert — das wird das nächste Token.</p>
+
+  <h3>Die Brücke — fusionierte Zuordnung</h3>
+  <ul>
+    <li><strong>Basin of Attraction (A) ≡ lineare Region (B)</strong>, gelesen durch die Vorwärtskarte; das Urbild, dessen Bahn in eine Zelle fällt, <em>ist</em> das Basin.</li>
+    <li><strong>Attraktor-Punkt (A) ≡ gemeinsame Ziel-Region (B)</strong>: Konvergenz zweier Eingaben = <em>verschiedene</em> Startzellen, <em>gleiches</em> Bild.</li>
+    <li><strong>Knick / tropische Hyperfläche (B) ≡ Basin-Grenze (A)</strong>: die nicht-differenzierbare Faltlinie, an der die „Gewinner“ wechseln.</li>
+    <li><strong>Unembedding (A) ≡ max/argmax über Vokabular-Monome (B)</strong>: „welcher Punkt liegt am nächsten“ ist exakt „welches Monom gewinnt das max“ — der Gewinner-Index ist das Token.</li>
+    <li><strong>Tiefe (B) erklärt die Feinstruktur (A)</strong>: mehr Tiefe = <em>exponentiell</em> mehr Regionen = mehr unterscheidbare „Bedeutungs-Plätze“, auf die man konvergieren kann. A’s dichte Attraktor-Landschaft <em>braucht</em> B’s Tiefe.</li>
+    <li><strong>Ratchet (A) = Iteration + Kausalität (B)</strong>: ein Vorwärts-Schritt = eine Anwendung der PL-Karte; „kein Zurück“ = monotoner Kontext, keine Umkehrbarkeitsoperation in der Karte.</li>
+  </ul>
+  <p class="note"><b>Was die Fusion neu erklärt:</b> (1) <em>Warum</em> sich DE/EN auf denselben „Attraktor“ legen — weil ihre Bildebenen unter der iterierten PL-Karte in dieselbe gemeinsame Region fallen, und zwar <em>genau dann exakt</em>, wenn B’s allgemeine-Lage-Hypothese gilt. (2) <em>Warum</em> tiefe Netze „Bedeutung“ überhaupt differenzieren können — Theorem 6.3: die Zahl möglicher Zonen wächst exponentiell mit der Tiefe. (3) Wo A’s Bild <em>brechen</em> muss — an B’s Grenzen: bei tanh/Sigmoid, bei degenerierten Gewichten und im Generalisierungs-Rätsel, das die Geometrie nicht löst, aber die Sprache dafür liefert.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung: eine Karte, zwei Lesarten</h2>
+  <p class="lead">Eine 1D-Bedeutungskoordinate <code>x</code> wird von einer <em>stückweise linearen (tropischen) Kontraktionsabbildung</em> <code>f</code> transformiert — B’s Objekt. Wir <em>iterieren</em> sie Token für Token (das <strong>Ratchet</strong> von A, vorwärts-only). Oben: die Unembedding-Zeile, in der der <em>gewinnende Vokabular-Monom</em> (max/argmax) das nächste Token bestimmt. DE- und EN-Pfad starten in verschiedenen Regionen und <em>konvergieren in dieselbe lineare Region</em> — den „Attraktor/Basin“ — dessen Grenzen die <em>Knicke</em> (tropische Hyperflächen) markieren. Pro Schritt multipliziert sich die Regionszahl (Theorem 6.3: <code>k^t</code>).</p>
+  <div class="viz">
+    <div class="controls">
+      <button id="btnStep">⚙ + Token (Schritt)</button>
+      <button id="btnAuto">▶ Auto-Play</button>
+      <button id="btnReset">↺ Reset</button>
+      <div class="sliderbox">
+        <label>Max Kontext: <b id="roMlabel">8</b></label>
+        <input type="range" id="rngM" min="4" max="12" step="1" value="8">
+      </div>
+    </div>
+    <div class="cwrap"><canvas id="vCanvas" style="width:100%"></canvas></div>
+    <div class="readouts">
+      <div class="box"><div class="k">Schritt t / M</div><div class="v" id="roT">0 / 8</div></div>
+      <div class="box"><div class="k">Regionen k^t (Theorem 6.3)</div><div class="v" id="roReg">1</div></div>
+      <div class="box"><div class="k">Region DE</div><div class="v" id="roDE" style="font-size:12px">—</div></div>
+      <div class="box"><div class="k">Region EN</div><div class="v" id="roEN" style="font-size:12px">—</div></div>
+      <div class="box"><div class="k">Konvergiert?</div><div class="v" id="roConv" style="font-size:12px">—</div></div>
+      <div class="box"><div class="k">Unembedding → Token</div><div class="v" id="roUn">—</div></div>
+    </div>
+    <p class="cap"><strong>Fusion:</strong> orange = <code>„die Hauptstadt von Frankreich ist“</code>, blau = <code>„the capital of France is“</code>. Die senkrechten gestrichelten Linien sind die <em>Knicke</em> (= tropische Hyperflächen = Basin-Grenzen). Das zentrale Schattengebiet ist die gemeinsame <em>lineare Region</em>, in die beide Bahnen einlaufen (= A’s Attraktor). Oben entscheidet das <em>max</em> über die Vokabular-Monome das nächste Token (= Unembedding). Kleine Box rechts oben: die Abbildung <code>f(x)</code> selbst. <em>Symbolische Darstellung — Werte sind didaktisch, Form folgt den beiden Quellen.</em></p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a class="ext" href="../idea2.html">idea2.html</a> — „LLM Attraktoren &amp; Bedeutungsraum“: interaktive Ideen-Exploration des LLMs als dynamischer Fluss im Bedeutungsraum (Zahnrad/Ratchet, Attraktoren &amp; Basins pro Layer, Sprach-Konvergenz, Unembedding).</li>
+    <li><a class="ext" href="../tropische_geometrie_tiefer_neuronaler_netze_simple.html">tropische_geometrie_tiefer_neuronaler_netze_simple.html</a> — „Tropische Geometrie tiefer Netze“: einfach erklärte Version von Zhang, Naitzat &amp; Li (2018), ICML (arXiv:1805.07091) — ReLU-Netze ≡ tropisch rational, Knick, Zonotope, Äquivalenz, Theorem 6.3 (Tiefe &gt; Breite), Grenzen.</li>
+  </ul>
+</section>
+</article>
+<footer>Fusion 038 · Round 1 · Selbstständige, themenreaktive Darstellung — alle Daten inline, keine Netzwerk-Abrufe.</footer>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('vCanvas');
+var $=function(id){return document.getElementById(id);};
+var dpr=Math.min(2,window.devicePixelRatio||1);
+
+var XMIN=-5,XMAX=5;
+var KINKS=[-1,1];
+function f(x){
+  if(x<-1) return 0.5*(x+1)-0.3;
+  if(x<1)  return 0.3*x;
+  return 0.3+0.5*(x-1);
+}
+function regionOf(x){ return x<-1?0:(x<1?1:2); }
+var REGION_NAMES=['Region L (links)','Region M (Basin)','Region R (rechts)'];
+
+var VOCAB=[
+  {label:'Berlin',x:-4.2},{label:'Madrid',x:-3.1},{label:'London',x:-2.2},
+  {label:'Paris',x:0},{label:'Rom',x:2.4},{label:'Wien',x:3.6}
+];
+function unembed(x){
+  var best=0,bd=1e9;
+  for(var i=0;i<VOCAB.length;i++){var d=Math.abs(VOCAB[i].x-x);if(d<bd){bd=d;best=i;}}
+  return best;
+}
+
+var M=8,t=0;
+var dePath=[],enPath=[];
+function recomputePaths(){
+  dePath=[];enPath=[];var a=-4,b=4;
+  for(var i=0;i<=M;i++){dePath.push(a);enPath.push(b);a=f(a);b=f(b);}
+}
+recomputePaths();
+
+function palette(){
+  var s=getComputedStyle(document.documentElement);
+  function g(n){return s.getPropertyValue(n).trim();}
+  return {canvasBg:g('--canvas-bg'),grid:g('--grid'),text:g('--text'),dim:g('--text-dim'),
+    faint:g('--text-faint'),border:g('--border-hi'),de:g('--de'),en:g('--en'),
+    attr:g('--attr'),accent:g('--accent'),accent5:g('--accent-5'),region:g('--region')};
+}
+function drawStar(c,cx,cy,r,fill,stroke){
+  c.save();c.beginPath();
+  for(var i=0;i<10;i++){var rr=(i%2)?r*0.45:r;var a=Math.PI/2+i*Math.PI/5;
+    c.lineTo(cx+Math.cos(a)*rr,cy-Math.sin(a)*rr);}
+  c.closePath();c.fillStyle=fill;c.fill();c.strokeStyle=stroke;c.lineWidth=1.2;c.stroke();c.restore();
+}
+function drawInset(c,pal,X0,Y0,W,H){
+  c.save();
+  c.strokeStyle=pal.border;c.lineWidth=1;c.strokeRect(X0,Y0,W,H);
+  c.fillStyle=pal.faint;c.font='10px system-ui';c.textAlign='left';
+  c.fillText('f(x): tropische PL-Abbildung',X0+6,Y0+13);
+  var lx=function(x){return X0+8+((x-XMIN)/(XMAX-XMIN))*(W-16);};
+  var ly=function(y){return (Y0+H-6)-((y+2.6)/5.2)*(H-26);};
+  c.strokeStyle=pal.grid;c.lineWidth=1;
+  for(var gx=-4;gx<=4;gx++){c.beginPath();c.moveTo(lx(gx),ly(-2.6));c.lineTo(lx(gx),ly(2.6));c.stroke();}
+  c.strokeStyle=pal.accent;c.lineWidth=2;c.beginPath();var first=true;
+  for(var i=0;i<=200;i++){var x=XMIN+(XMAX-XMIN)*i/200;var y=f(x);
+    if(first){c.moveTo(lx(x),ly(y));first=false;}else c.lineTo(lx(x),ly(y));}
+  c.stroke();
+  for(var k=0;k<KINKS.length;k++){c.beginPath();c.arc(lx(KINKS[k]),ly(f(KINKS[k])),3,0,Math.PI*2);c.fillStyle=pal.attr;c.fill();}
+  c.beginPath();c.arc(lx(0),ly(0),3,0,Math.PI*2);c.fillStyle=pal.de;c.fill();
+  c.restore();
+}
+function draw(){
+  var w=cv.clientWidth||600; if(w<10)w=600;
+  var H=520;
+  cv.width=Math.max(1,Math.round(w*dpr));cv.height=Math.round(H*dpr);cv.style.height=H+'px';
+  var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+  var pal=palette();
+  c.clearRect(0,0,w,H);
+  c.fillStyle=pal.canvasBg;c.fillRect(0,0,w,H);
+
+  var padL=40,padR=16,padT=54,padB=40;
+  var pw=w-padL-padR,ph=H-padT-padB;
+  var X=function(x){return padL+((x-XMIN)/(XMAX-XMIN))*pw;};
+  var Y=function(tt){return padT+ph*(1-tt/M);};
+  var yStrip=26;
+
+  c.strokeStyle=pal.grid;c.lineWidth=1;
+  for(var gx=XMIN;gx<=XMAX;gx++){c.beginPath();c.moveTo(X(gx),padT);c.lineTo(X(gx),padT+ph);c.stroke();}
+  for(var tt=0;tt<=M;tt++){c.beginPath();c.moveTo(padL,Y(tt));c.lineTo(padL+pw,Y(tt));c.stroke();}
+  c.fillStyle=pal.faint;c.font='10px system-ui';c.textAlign='center';
+  for(var gl=XMIN;gl<=XMAX;gl+=2){c.fillText(String(gl),X(gl),padT+ph+14);}
+  c.save();c.translate(13,padT+ph/2);c.rotate(-Math.PI/2);c.textAlign='center';
+  c.fillText('Schritt t / Schicht (tief nach oben)',0,0);c.restore();
+  c.textAlign='left';c.fillText('Bedeutung Koordinate x',padL+4,H-6);
+
+  c.fillStyle=pal.region;c.fillRect(X(-1),padT,X(1)-X(-1),ph);
+  c.save();c.setLineDash([5,4]);c.strokeStyle=pal.faint;c.lineWidth=1.2;
+  for(var kk=0;kk<KINKS.length;kk++){c.beginPath();c.moveTo(X(KINKS[kk]),padT);c.lineTo(X(KINKS[kk]),padT+ph);c.stroke();}
+  c.restore();
+  c.fillStyle=pal.faint;c.font='9px system-ui';c.textAlign='center';
+  c.fillText('Knick',X(-1),padT-5);c.fillText('(trop. Hyperfläche / Basin-Grenze)',X(1),padT-5);
+
+  c.font='11px system-ui';c.fillStyle=pal.dim;c.textAlign='center';
+  c.fillText('Region L',X(-3),padT+ph+28);
+  c.fillText('Basin / Attraktor-Region',X(0),padT+ph+28);
+  c.fillText('Region R',X(3),padT+ph+28);
+
+  var close=(regionOf(dePath[t])===1&&regionOf(enPath[t])===1&&Math.abs(dePath[t]-enPath[t])<0.2);
+  function trace(arr,color,label){
+    c.strokeStyle=color;c.lineWidth=2.4;c.beginPath();
+    for(var i=0;i<=t;i++){var px=X(arr[i]),py=Y(i);if(i===0)c.moveTo(px,py);else c.lineTo(px,py);}
+    c.stroke();
+    for(var j=0;j<=t;j++){c.beginPath();c.arc(X(arr[j]),Y(j),(j===t?6:3),0,Math.PI*2);c.fillStyle=color;c.fill();c.strokeStyle=pal.canvasBg;c.lineWidth=1;c.stroke();}
+    c.fillStyle=color;c.font='11px system-ui';c.textAlign='left';
+    c.fillText(label,X(arr[0])+9,Y(0)+15);
+    c.fillText('t='+t,X(arr[t])+9,Y(t)-7);
+  }
+  trace(dePath,pal.de,'DE „die Hauptstadt …“');
+  trace(enPath,pal.en,'EN „the capital …“');
+
+  var ax=X(0),ay=Y(M);
+  drawStar(c,ax,ay,11,pal.attr,pal.canvasBg);
+  c.fillStyle=pal.attr;c.font='bold 11px system-ui';c.textAlign='center';
+  c.fillText('HAUPTSTADT_FR (gemeinsame Region)',ax,ay-15);
+
+  var win=unembed(dePath[Math.min(t,M)]);
+  c.strokeStyle=pal.border;c.lineWidth=1;
+  c.beginPath();c.moveTo(padL,yStrip+10);c.lineTo(padL+pw,yStrip+10);c.stroke();
+  c.fillStyle=pal.faint;c.font='10px system-ui';c.textAlign='left';
+  c.fillText('Unembedding → nächstes Token (max/argmax über Vokabular-Monome):',padL,yStrip-8);
+  if(close){
+    c.save();c.setLineDash([3,3]);c.strokeStyle=pal.attr;c.lineWidth=1.3;
+    c.beginPath();c.moveTo(X(dePath[t]),Y(t));c.lineTo(X(VOCAB[win].x),yStrip+10);c.stroke();c.restore();
+  }
+  for(var vi=0;vi<VOCAB.length;vi++){
+    var isW=(vi===win);
+    c.beginPath();c.arc(X(VOCAB[vi].x),yStrip+10,isW?7:4,0,Math.PI*2);
+    c.fillStyle=isW?pal.accent5:pal.dim;c.fill();c.strokeStyle=pal.canvasBg;c.lineWidth=1;c.stroke();
+    c.fillStyle=isW?pal.accent5:pal.faint;c.font=(isW?'bold ':'')+'10px system-ui';c.textAlign='center';
+    c.fillText(VOCAB[vi].label,X(VOCAB[vi].x),yStrip+26);
+  }
+  if(w>560) drawInset(c,pal,w-180,padT+2,164,92);
+}
+
+function updateReadouts(){
+  $('roT').textContent=t+' / '+M;
+  var reg=Math.pow(3,t);
+  $('roReg').textContent=reg.toLocaleString('de-DE');
+  $('roDE').textContent=REGION_NAMES[regionOf(dePath[t])];
+  $('roEN').textContent=REGION_NAMES[regionOf(enPath[t])];
+  var close=(regionOf(dePath[t])===1&&regionOf(enPath[t])===1&&Math.abs(dePath[t]-enPath[t])<0.2);
+  $('roConv').textContent=close?'ja — gleiche Region':'noch nicht';
+  $('roConv').style.color=close?'var(--accent-5)':'var(--text-dim)';
+  $('roUn').textContent=VOCAB[unembed(dePath[Math.min(t,M)])].label;
+}
+
+var autoId=null;
+function stopAuto(){if(autoId){clearInterval(autoId);autoId=null;$('btnAuto').textContent='▶ Auto-Play';$('btnAuto').classList.remove('on');}}
+$('btnStep').onclick=function(){if(t<M){t++;updateReadouts();draw();}};
+$('btnReset').onclick=function(){t=0;stopAuto();updateReadouts();draw();};
+$('btnAuto').onclick=function(){
+  if(autoId){stopAuto();return;}
+  if(t>=M)t=0;
+  $('btnAuto').textContent='⏸ Pause';$('btnAuto').classList.add('on');
+  autoId=setInterval(function(){if(t<M){t++;updateReadouts();draw();}else stopAuto();},500);
+};
+$('rngM').oninput=function(e){M=+e.target.value;$('roMlabel').textContent=M;recomputePaths();if(t>M)t=M;updateReadouts();draw();};
+$('btnTheme').onclick=function(){
+  var h=document.documentElement;h.classList.toggle('dark');
+  $('btnTheme').textContent=h.classList.contains('dark')?'☀️ Lichtmodus':'🌙 Dunkelmodus';
+  draw();
+};
+var mo=new MutationObserver(function(){draw();});
+mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+addEventListener('resize',draw);
+
+$('roMlabel').textContent=M;
+updateReadouts();
+draw();
+})();
+</script>
+</body>
+</html>

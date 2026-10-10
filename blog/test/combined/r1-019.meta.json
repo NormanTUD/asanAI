@@ -1,0 +1,16 @@
+{
+  "no": "019",
+  "a": "johnson_lindenstrauss_very_simple.html",
+  "b": "backprop.html",
+  "a_title": "Hohe Dimensionen komprimieren — Ganz einfach erklärt",
+  "b_title": "Backpropagation – Schicht für Schicht",
+  "combined_theme": "komprimieren-und-lernen",
+  "one_line": "Zufällige Kompression (JL) erzeugt günstige k-Features, auf denen Backprop die Funktion lernt — beides ist derselbe Trick: lokale Teile, die sich nicht stören (Unabhängigkeit beim JL-Union-Bound, Faktorisierung bei der Kettenregel).",
+  "contradictions": [
+    "Viele Dimensionen sind eine Last, die man wegpresst (A: d→k komprimieren, Redundanz wegwerfen) vs. viele Schichten/Dimensionen sind der Rohstoff, den man aufbaut (B: tiefe Repräsentationen verfeinern, nichts wegwerfen).",
+    "Zufall genügt und ist die Endantwort (A: zufällige Projektion, daten-unabhängig, wird nie gelernt) vs. Zufall ist der Ausgangspunkt, den der Gradient gegen ein Ziel aktiv besiegen muss (B).",
+    "Der Fehler ist die Abstandsverzerrung der Punktewolke — global, ohne Ziel und ohne Labels (A) vs. der Ziel-Loss am Output, gerichtet und mit Labels (B)."
+  ],
+  "resolution": "Keine Faktenkonflikte, sondern zwei günstige Mechanismen in zwei Stufen: Zufall liefert die treue Geometrie (JL, ohne Labels), die Kettenregel liefert den Fit (Backprop, mit Labels). Redundante Umgebungskoordinaten werden weggedrückt, informative erlernte Features aufgebaut; zwei Verluste (Abstandsverzerrung, dann Ziel-Loss) machen aus beiden eine kohärente Pipeline.",
+  "viz": "Ein-Canvas-Pipeline: links der Zufalls-Wurf d→k mit Abstands-Erhalt (%), rechts ein kleines Netz, das per Backprop auf den k JL-Features ein Konzept in der (von JL erhaltenen) 2D-Struktur lernt (Genauigkeit + fallender Loss). Die Genauigkeit folgt der JL-Treue: k=1 ≈ Chance (~45 %), k=2 → 88 %, k=3 → 95 %."
+}

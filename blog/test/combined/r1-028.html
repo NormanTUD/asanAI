@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das Kann und das Bauen — Universalität trifft Krümmung · Fusion r1-028</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-true:#6b7488; --viz-b:#c93a86; --viz-a:#0d8f80; --viz-kink:#b57e00;
+  --viz-canvas-bg:#faf8f1; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-true:#64708c; --viz-b:#ff7ac0; --viz-a:#5ee0d0; --viz-kink:#ffc860;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.07); --viz-txt:#e8ecf6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc2) 8%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:72ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc2);background:color-mix(in srgb,var(--acc2) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc2)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc2) 45%,transparent);background:color-mix(in srgb,var(--acc2) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:11px 14px;font-size:14px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:14px;height:3px;border-radius:2px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+button.onb{background:var(--acc2);color:var(--bg);border-color:var(--acc2);font-weight:660}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-028</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: paper/manifold_flattening.html ✕ universal_approximation_theorem.html</p>
+  <h1>Das Kann und das Bauen — Universalität trifft Krümmung</h1>
+  <p><b>B</b> (Universal Approximation, ReLU-Netze) liefert das <em>Kann</em>: „ein ReLU-Netz mit genug Breite kann <strong>jede</strong> kontinuierliche Funktion beliebig genau annähern" — aber als bloße Existenzaussage, ohne zu sagen, <em>wie</em>, <em>wie breit</em> und <em>mit welcher Struktur</em>. <b>A</b> (FlatNet / Manifold Flattening) liefert das <em>Bauen</em>: ein kleines, interpretierbares Netz, das die Daten <strong>ohne Backprop</strong> layer-weise konstruiert, weil es <strong>Krümmung (2. Ordnung)</strong> aus der 2. Grundform liest. <strong>Die Krümmung ist das Scharnier: B's ReLU-Welt (stückweise linear) ist exakt der Null-Krümmungs-Limes von A's quadratischer Konstruktion.</strong></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Ein Netz, das nicht nur passt, sondern geometrie-treu baut</h2>
+    <p>Beide Seiten beantworten dieselbe Grundfrage — <em>kann ein neuronales Netz beliebige Daten abbilden, und wenn ja, wie baut man das <strong>richtige</strong> Netz?</em> — aber auf zwei unterschiedlichen Höhenstufen. B steht auf der <em>Approximations-</em>Ebene: der universelle Approximationssatz (Cybenko 1989, Hornik 1991) garantiert, dass ein Shallow-ReLU-Netz <code>ŷ = b₂ + Σᵢ w₂ᵢ·ReLU(w₁ᵢx + b₁ᵢ)</code> jede auf einem Kompaktum stetige Funktion mit beliebig kleiner <code>sup</code>-Fehler annähert. Der Beweis ist <em>konstruktiv per Bump-Funktionen</em>, aber die <em>Existenz</em> der Gewichte ist der Punkt, nicht die Gewichte selbst. A steht auf der <em>Repräsentations-</em>Ebene: FlatNet ist ein White-Box-Autoencoder, der eine gekrümmte Datendatenmannigfaltigkeit ℳ ⊂ ℝ<sup>D</sup> <em>flachlegt</em> — und beweißt (Theorem 6), dass der Encoder ℳ in eine <em>konvexe Teilmenge eines d-affinen Unterraums</em> abbildet, womit PCA „für free" die Kompression fertig macht.</p>
+    <p>Die <strong>einheitliche Position</strong> der Fusion: <em>Universalität ist das Dach (Repräsentierbarkeit), Geometrie-Flattening ist die Route (Konstruktion).</em> UAT sagt „es existiert ein Netz, das die Daten abdeckt"; FlatNet sagt „hier ist ein kleines, interpretierbares Netz, das es <em>ohne Backprop</em> baut, weil es die 2. Grundform (Krümmung) liest und daraus Tangente + Krümmungs-Korrektur komponiert". Beide arbeiten mit <strong>lokalen Bausteinen, die man komponiert</strong> — B summiert lineare ReLU-Bumps, A verklebt quadratische Krümmungs-Patches mit einer Partition of Unity. Der Unterschied ist die <em>Ordnung</em> des lokalen Bausteins: linear (1.) vs. quadratisch (2.).</p>
+    <p>Und der entscheidende Limes: Wenn die Krümmung <code>II → 0</code> (Daten sind flach), fällt A's quadratischer Term <code>½·II(v,v)</code> weg und der lokale Patch reduziert sich auf <code>x₀ + v</code> — eine <em>lineare, stückweise-lineare</em> Abbildung. <strong>Genau das ist B's ReLU-Netz.</strong> B ist also kein Rivale von A, sondern A's Sonderfall bei verschwindender Krümmung; die 2. Grundform ist der Zusatz, der den blinden Universal-Approximator zum geometrie-bewussten Flattener macht.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei konkrete Stellungen, die aufeinanderprallen</h2>
+    <p>Die beiden widersprechen sich nicht im Ziel (beide: „neuronale Netze können Daten abbilden"), aber sie nehmen zu <em>drei</em> Stellen unvereinbare Stellungen ein:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Die geometrische Reichweite von ReLU (der schärfste)</span>
+      <p><b>A</b> (manifold_flattening, Abschnitt „What's Genuinely New") sagt es wörtlich: „<strong>Most deep networks (ReLU MLPs) are piecewise linear → they only model first-order geometry</strong>." ReLU-Netze können laut A <em>keine</em> Krümmung sehen; deshalb braucht FlatNet explizit die <em>2. Grundform</em> (extrinsische Krümmung), um „direct access to curvature" zu erhalten — das ist der Grund, warum FlatNet's Rekonstruktionen auch aus Rauschen glatt bleiben.</p>
+      <p><b>B</b> (universal_approximation_theorem) ist im Gegenteil die kanonische Demonstration, dass <em>genau diese</em> ReLU-Netze <strong>jede</strong> kontinuierliche Funktion annähern — die Interaktiv approximiert live gekrümmte Ziele wie <code>sin(x)</code>, <code>x²</code>, <code>Gauß</code> und zeigt die Kumulativ-Zerlegung, wie die Summe der ReLU-Beiträge gegen die Zielfunktion konvergiert. Die zugrunde liegende UAT-These: ausreichend große Breite ⇒ beliebig kleiner <code>sup</code>-Fehler auch für gekrümmte Funktionen.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: ReLU ist strukturell auf 1. Ordnung beschränkt (keine Krümmung). B: ReLU ist universell (krümmte Funktionen mitgenutzt). Direkt widersprüchlich über die <em>geometrische Reichweite</em> desselben Netztyps.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Konstruktiv ohne Backprop vs. Black-Box-Fitting</span>
+      <p><b>A</b> baut das Netz <em>layer-weise, greedy, ohne Backprop</em>: Dimension <code>d̂</code> wird <em>automatisch entdeckt</em> (kleinstes d, das lokal mit einem quadratischen Modell passt), Tiefe ergibt sich, Radius <code>λ̂</code> wird per Rekonstruktionsfehler <code>≤ ε</code> gewählt; Komplexität <code>O(N·D·d²)</code> pro Layer. „White-box: no gradient descent through layers, no hyperparameter tuning of dimension or depth."</p>
+      <p><b>B</b> ist die <em>nicht-konstruktive</em> Seite: UAT ist eine Existenzaussage (∃ Breite, ∃ Gewichte) ohne Algorithmus, und die konkrete Seite erzeugt ihre Gewichte per <strong>Gradientenabstieg</strong> (Button „Auto-Fit", Animation) — also Black-Box-Nummerik mit Trial-and-error über die Breite. UAT sagt nichts darüber, <em>wie breit</em> das Netz sein muss oder wie man die Gewichte explizit findet.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: kein Training, Dimension/Tiefe werden entdeckt (konstruktiv). B: Universalität ohne Konstruktionsvorschrift, Gewichte per Optimierung (Black-Box), Breite unbekannt. Unvereinbare Stellungen darüber, ob Training/Breiten-Suche nötig ist.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Strukturelle Latente vs. punktueller Funktionsfehler</span>
+      <p><b>A</b> optimiert eine <em>strukturelle</em> Eigenschaft der Repräsentation: Theorem 6 garantiert, dass <code>φ(ℳ)</code> eine <em>konvexe Teilmenge eines d-affinen Unterraums</em> ist — eine flache, saubere Latente — und liefert zusätzlich einen <strong>Out-of-Sample-Decoder</strong> (explizites ψ). Das Ziel ist geometrische Treue des <em>latenten Raums</em>.</p>
+      <p><b>B</b> optimiert dagegen den <em>punktweisen skalareren</em> Funktionsfehler <code>|f(x) − ŷ(x)|</code> auf der <em>Zielfunktion</em>. Ob der interne Raum dabei eine nette Mannigfaltigkeit ist, konvex, affine Unterraum, mit Decoder — ist B's Approximationsziel <em>ganz egal</em>. Es gibt keine strukturelle Garantie für die Repräsentation.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A verlangt eine flache/konvexe Latente + Decoder (strukturelle Garanten); B jagt nur den punktuellen skalareren Fehler und ist der Struktur der Repräsentation indifferent. Verschiedene Optimierungsziele.</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>A ist ein Forschungs-Paper mit Theoremen und Algorithmus; B ist eine pädagogische Interaktiv zu UAT/ReLU-Approximation (deren Demo gekrümmte Ziele fittet). Die Spannungen sind <em>interpretativ</em> und fallen auf der Naht zweier Register zusammen — nicht ein formeller Beweis-Konflikt. Schärft bleibt Widerspruch 1: A behauptet es über ReLU wörtlich („only first-order geometry"), B demonstriert es wörtlich im Gegenbeispiel (ReLU fittet Krümmung).</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie sie zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>Dach und Route</strong>. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: „kann repräsentieren" vs. „baut geometrie-treu" — zwei Fragen</h3>
+      <p>B antwortet auf <em>Existenz</em>: „<strong>Kann</strong> ein ReLU-netz eine gekrümmte Funktion abbilden?" — ja, universell, mit <code>ε</code> beliebig klein, bei <em>nicht genannter</em> Breite. A antwortet auf <em>Konstruktion + Struktur</em>: „<strong>Wie baue ich</strong> ein kleines Netz, das die Geometrie (Krümmung) der Daten <em>erhält</em> und garantierte Eigenschaften hat?" — indem es 2. Ordnung einbezieht. A's Satz „only first-order geometry" gilt für <em>die Geometrie des lokalen Bausteins</em> (ein ReLU ist linear zwischen seinen Knicke); er widerpricht nicht, dass eine <em>Summe vieler</em> linearer Stücke eine Kurve <em>annähern</em> kann (das ist ja B's Punkt). <strong>Fusion:</strong> <code>UAT = Existenz/Limes-Breite (B); FlatNet = konstruktive, krümmungsbewusste Realisierung (A)</code>. Im Limes <code>II→0</code> fällt A auf B herab — <strong>B ist der Null-Krümmungs-Sonderfall von A</strong>, A verallgemeinert B's lokalen Baustein um den Krümmungsterm. Kein Widerspruch: A ist strikt stärker, B der entartete Grenzfall.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: UAT nennt das Ziel, FlatNet den Weg dorthin</h3>
+      <p>UAT (B) ist eine <em>Erreichbarkeits</em>-Aussage: das Ziel ist prinzipiell abbildbar. FlatNet (A) ist ein <em>Algorithmus</em>: er zeigt, wie man es <em>ohne Backprop</em>, mit <em>automatischer Dimensions-/Tiefenerkennung</em> und <code>O(N·D·d²)</code> erreicht. <strong>Fusion:</strong> <code>UAT = „es geht" (B); FlatNet = „so geht's, und zwar parameter-sparend & interpretierbar" (A)</code>. B sagt „∃ Lösung", A liefert „Konstruktion + Aufwand". Die beiden vervollständigen sich: Existenz <em>ohne</em> Konstruktion ist für den Praktiker wertlos; Konstruktion <em>ohne</em> Existenzgarantie wäre fragil. Zusammen: „es geht, und hier ist der billige, transparente Weg."</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: skalarer Fehler ist nur ein Surrogat der geometrischen Treue</h3>
+      <p>B's <code>sup</code>-Fehler ist ein <em>Surrogat</em>: Er misst, wie gut die <em>Funktion</em> gepasst wird, nicht, ob der <em>latente Raum</em> sinnvoll ist. A's Ziel (flache, konvexe affine Latente + Decoder) ist das <em>tiefere</em> Kriterium — eine Repräsentation, die komprimierbar (PCA), interpretierbar und out-of-sample nutzbar ist. Ein Netz kann B's Maß klein halten <em>und</em> einen chaotischen latenten Raum haben; A verlangt das Gegenteil. <strong>Fusion:</strong> Bewerte ein Netz nicht nur am <code>sup</code>-Fehler (B), sondern daran, ob seine Latente <em>geometrische Struktur</em> trägt (A). B misst die <em>Abbildung</em>, A die <em>Repräsentation</em>.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Das ReLU/Bump-Netz von B ist der <strong>Null-Krümmungs-Sonderfall</strong> von A's lokaler quadratischer Konstruktion. A's <em>2. Grundform</em> ist der „Zusatz", der den <em>blinden</em> Universal-Approximator (B: kann alles, sagt aber nicht wie/wie breit/mit welcher Struktur) in einen <em>geometrie-bewussten</em> Flattener verwandelt (A: baut ein kleines, interpretierbares Netz ohne Backprop, mit automatischer Dimension/Tiefe und beweisbar flacher Latente). <strong>Netto:</strong> <code>Existenz (B) + Krümmungs-Konstruktion (A) = „es geht, und hier ist das richtige kleine Netz"</code>.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substantielle Kern</h2>
+
+    <h3>Seite B — Universal Approximation &amp; ReLU-Bumps (das Kann)</h3>
+    <ul class="cl">
+      <li><b>Netzform:</b> Shallow-ReLU <code>ŷ(x) = b₂ + Σᵢ w₂ᵢ·ReLU(w₁ᵢ·x + b₁ᵢ)</code> — eine <em>stückweise lineare</em> Funktion mit <em>Knickpunkten</em> bei <code>x = −b₁ᵢ/w₁ᵢ</code>. Architektur: x → Dense₁ (N Einheiten) → ReLU → Dense₂ (1) → ŷ.</li>
+      <li><b>Bumps als Atom:</b> „Bump = ReLU-Differenz": zwei benachbarte ReLU-Einheiten mit <em>entgegengesetzter</em> Steigung bilden eine „Hut"-Funktion, die nur auf einem Intervall <code>[a,b]</code> aktiv ist — der lokale, kompakt-getragene Baustein. Formel: <code>m⁺·ReLU(x−a) + m⁻·ReLU(x−b)</code>, <code>m⁺·m⁻ &lt; 0</code>.</li>
+      <li><b>Kumulativ-Zerlegung:</b> einheitenweise addiert (U₁, U₁+U₂, …) — die Summe konvergiert gegen die Zielfunktion; das ist die lebendige Veranschaulichung, wie Breite ≈ Genauigkeit.</li>
+      <li><b>UAT (Cybenko 1989 / Hornik 1991):</b> <code>∀ε&gt;0 ∃ N, Gewichte : sup_{x∈K}|f(x) − ŷ(x)| &lt; ε</code> für jede auf Kompaktum K stetige f. <em>Existenz</em> — nicht-algorithmisch, Breite nicht quantifiziert.</li>
+      <li><b>Praxis der Seite:</b> editierbare Gewichte (Klick auf die blauen Zahlen), „Auto-Fit" per Gradientenabstieg, Animation; viele Zielfunktionen (<code>sin, x², |x|, Stufe, Sägezahn, Gauß, x³, sin+cos</code>). Gewichte kommen aus <em>Optimierung</em> (Black-Box).</li>
+    </ul>
+
+    <h3>Seite A — Manifold Flattening / FlatNet (das Bauen)</h3>
+    <ul class="cl">
+      <li><b>Mannigfaltigkeits-Hypothese:</b> Daten <code>x ∈ ℝ<sup>D</sup></code> liegen nahe an einer glatten, niedrig-dimensionalen Oberfläche ℳ (intrinsic <code>d ≪ D</code>). FlatNet legt ℳ <em>flach</em>, bis PCA die Kompression trivial macht.</li>
+      <li><b>Äquivalenz (Theorem 6):</b> Flattening ℳ durch glatte (φ, ψ) ⇔ minimales Autoencoding; wenn (φ, ψ) flatten, dann ist <code>φ(ℳ)</code> eine <em>konvexe Teilmenge eines d-affinen Unterraums</em>. Flache Latente + Out-of-Sample-Decoder.</li>
+      <li><b>Lokales quadratisches Modell (2. Grundform):</b> um <code>x₀</code>: <code>exp_{x₀}(v) ≈ x₀ + v + ½·II_{x₀}(v,v)</code> — <code>v</code> = Tangente (1. Ordnung), <code>½·II(v,v)</code> = Krümmung/Korrektur in Normale (2. Ordnung, extrinsisch). Skalar: <code>κ = f″/(1+f′²)^{3/2}</code>.</li>
+      <li><b>Partition of Unity (lokal → global):</b> <code>φ(x) = ψ(x)·φ_loc(x) + (1−ψ(x))·x</code>, <code>ψ = e^{−λ‖x−x₀‖²}</code>; λ = Radius. Blendet lokales Flattening mit Identität.</li>
+      <li><b>Convexification-Flow:</b> Iteration wirkt wie ein geometrischer Fluss <code>dx/dt = P_N{x̄(t) − x(t)}</code> — die Oberfläche entweicht zu ihrem konvexen Hüll.</li>
+      <li><b>Algorithmus (White-Box, kein Backprop):</b> ① x₀ sampeln → ② <code>d̂</code> auto-schätzen → ③ <code>λ̂</code> per Fehler <code>≤ε</code> → ④ Tangentenbasis Û (Stiefel) + Krümmungstensor V̂ (closed-form LSQ) → ⑤ komposition. Komplexität <code>O(N·D·d²)</code> pro Layer.</li>
+      <li><b>Grenzen (ehrlich):</b> verbindet/“flattenable” (keine geschlossenen Schleifen), schwach bei Hyperflächen (Self-Kollision), Single-Mannigfaltigkeit.</li>
+    </ul>
+
+    <h3>Die Verknüpfung — wie B in A <em>entartet</em> (Limes II → 0)</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">ReLU-Einheit (B)</div><div class="v"><code>w₂ᵢ·ReLU(w₁ᵢx+b₁ᵢ)</code> = linearer 1.-Ordnungs-Baustein ↔ <b>Tangenten-Term</b> <code>v ∈ T_{x₀}ℳ</code> (A, 1. Ordnung).</div></div>
+      <div class="r"><div class="k">Bump = ReLU-Differenz (B)</div><div class="v">Hut auf <code>[a,b]</code> = kompakt-getragener lokaler Baustein ↔ <b>lokaler quadratischer Patch</b> <code>x₀+v+½II(v,v)</code> (A, 1.+2. Ordnung).</div></div>
+      <div class="r"><div class="k">Knicke x=−b₁ᵢ/w₁ᵢ (B)</div><div class="v">Eckpunkte der PWL-Stücke ↔ <b>Krümmung</b> <code>κ=f″/(1+f′²)^{3/2}</code> / 2. Grundform (A) — B's „Knick" ist A's Krümmung im diskreten Kleid.</div></div>
+      <div class="r"><div class="k">Breite N (B)</div><div class="v">Anzahl Einheiten/Knicke = Approximations-Budget ↔ <b>Tiefe / Anzahl Patches + Radius λ</b> (A) = Kompositions-Budget.</div></div>
+      <div class="r"><div class="k">Auto-Fit / GD (B)</div><div class="v">Gewichte per Gradientenabstieg (Black-Box) ↔ <b>White-Box-Konstruktion ohne Backprop</b>, d̂ &amp; Tiefe auto (A).</div></div>
+      <div class="r"><div class="k">sup-Fehler |f−ŷ| (B)</div><div class="v">piktualer Fehler der Abbildung ↔ <b>flache konvexe affine Latente + Decoder</b> (A, Theorem 6) = Fehler der Repräsentation.</div></div>
+    </div>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq">
+      UAT (B):&nbsp; ∀ε&gt;0 ∃ N, Gewichte&nbsp; :&nbsp; sup<sub>x∈K</sub> | f(x) − ( b₂ + Σ<sub>i</sub> w₂<sub>i</sub>·ReLU(w₁<sub>i</sub>x + b₁<sub>i</sub>) ) | &lt; ε<br>
+      Bump (B):&nbsp; b(x) = m⁺·ReLU(x−a) + m⁻·ReLU(x−b),&nbsp; m⁺·m⁻ &lt; 0 &nbsp;⇒&nbsp; Stütz [a,b]<br>
+      A lokal:&nbsp; y ≈ y₀ + y₀′(x−x₀) + ½·y₀″(x−x₀)²,&nbsp;&nbsp; κ = y₀″/(1+y₀′²)<sup>3/2</sup><br>
+      A PoU:&nbsp; φ(x) = ψ(x)·φ<sub>loc</sub>(x) + (1−ψ(x))·x,&nbsp; ψ = e<sup>−λ‖x−x₀‖²</sup><br>
+      A Thm 6:&nbsp; φ(ℳ) ⊆ affiner d-Unterraum,&nbsp; konvex &nbsp;⇒&nbsp; PCA fertig<br>
+      <span class="c">// Limes: κ → 0 &nbsp;⇒&nbsp; y ≈ y₀ + y₀′(x−x₀) &nbsp;= linear/PWL = B (ReLU-Limes)</span><br>
+      <span class="c">// Netto: Existenz (B) + Krümmungs-Konstruktion (A) = „es geht &amp; hier ist das kleine Netz"</span>
+    </div>
+    <div class="note"><span class="h">Warum die Fusion mehr ist als die Summe</span>B allein verkauft „jedes Netz kann alles" und lässt bei der Breite und bei der Struktur offen. A allein baut ein tolles Netz, aber ohne die <em>garantierte</em> Aussage, dass ReLU-Netze das überhaupt <em>können</em>, wäre die Konstruktion nur ein Trick. Erst zusammen: <em>UAT sagt, das Ziel ist erreichbar; die Krümmungs-Konstruktion sagt, wie man es mit dem kleinstmöglichen, transparentesten Netz baut — und zeigt, dass „ReLU reicht" genau dann gilt, wenn die Krümmung verschwindet.</em></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Lineares ReLU vs. Krümmungs-Patch — und der Null-Krümmungs-Limes</h2>
+    <p class="lead" style="margin-bottom:4px">Eine Kurve <code>A·sin(x)</code> wird von beiden Seiten approximiert: <em>B</em> stückweise linear (ReLU-Netz, 1. Ordnung — die rosa Fläche zeigt dessen „Krümmungs-Fehler") und <em>A</em> stückweise quadratisch (2. Grundform, krümmungsbewusst). Ziehe <b>Krümmung A</b> gegen 0: die Kurve wird flach, B und A <em>konvergieren</em> — der Null-Krümmungs-Limes, in dem A auf B herabfällt. Ziehe <b>Stücke N</b> hoch: B's Breite verkleinert seinen Fehler (UAT), aber bei Krümmung braucht A <em>weniger</em> Stücke für denselben Fehler.</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>ReLU (1. O.) vs. 2. Grundform (2. O.) — Limes II → 0</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvViz" width="760" height="430"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-true)"></i>Wahre Kurve A·sin(x)</span>
+        <span><i style="background:var(--viz-b)"></i>B · stückweise linear (ReLU, 1. O.)</span>
+        <span><i style="background:var(--viz-a)"></i>A · stückweise quadratisch (2. Grundform)</span>
+        <span><i style="background:var(--viz-kink);height:9px;width:9px;border-radius:50%"></i>Knickpunkte (B) / Knoten</span>
+      </div>
+      <div class="btnrow">
+        <button id="modeB" class="onb">B · ReLU (1. O.)</button>
+        <button id="modeA" class="on">A · Krümmung (2. O.)</button>
+        <button id="resetBtn">🔄 Reset</button>
+      </div>
+      <div id="viewCap"></div>
+      <div class="ro">
+        <div class="b"><div class="k">MSE B (linear)</div><div class="v" id="roEB">—</div><div class="u">1. Ordnung</div></div>
+        <div class="b"><div class="k">MSE A (quad.)</div><div class="v" id="roEA">—</div><div class="u">2. Ordnung</div></div>
+        <div class="b"><div class="k">Vorsprung A</div><div class="v" id="roGap">—</div><div class="u">(MSE_B−MSE_A)/MSE_B</div></div>
+        <div class="b"><div class="k">Verdikt</div><div class="v m" id="roVerdict" style="font-size:12px">—</div><div class="u">Limes / Krümmung / Breite</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Krümmung A — Amplitude A·sin(x) (Limes A→0 = flach)</span><b id="ampVal">0.80</b></div>
+        <input type="range" id="ampSl" min="0" max="1.5" step="0.01" value="0.80">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Klein = Daten fast linear ⇒ B's ReLU reicht (Null-Krümmungs-Limes, A≈B). Groß = krümmte Daten ⇒ A (2. O.) zahlt seine Krümmung aus.</div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Stücke N — Breite / Anzahl lokaler Bausteine</span><b id="nVal">6</b></div>
+        <input type="range" id="nSl" min="2" max="16" step="1" value="6">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Mehr Stücke = mehr Breite. B konvergiert mit N (UAT), A erreicht denselben Fehler schon mit weniger N — das ist der Parameter-Vorteil der 2. Ordnung.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <p><a href="../paper/manifold_flattening.html">A — FlatNet: Manifold Flattening &amp; Reconstruction (JMLR 2024, Psenka et al.)</a>: White-Box-Autoencoder, der gekrümmte Datenmannigfaltigkeiten layer-weise <em>ohne Backprop</em> flachlegt; Theorem 6 (φ(ℳ) = konvexe Teilmenge eines d-affinen Unterraums), lokales quadratisches Modell via 2. Grundform, Partition of Unity, Convexification-Flow, <code>O(N·D·d²)</code>; explizit: „ReLU MLPs … only model first-order geometry".</p>
+    <p><a href="../universal_approximation_theorem.html">B — Dense-ReLU-Dense + Bumps (Universal Approximation, interaktiv)</a>: Shallow-ReLU-Netz <code>ŷ = b₂ + Σ w₂ᵢ·ReLU(w₁ᵢx+b₁ᵢ)</code> mit editierbaren Gewichten, Bump-Erkennung (ReLU-Differenz), Kumulativ-Zerlegung und „Auto-Fit" per Gradientenabstieg; demonstriert die UAT (Cybenko/Hornik), dass ReLU-Netze beliebige (auch gekrümmte) Ziele beliebig genau annähern — als Existenzaussage, nicht als konstruktive, strukturgetreue Repräsentation.</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>paper/manifold_flattening.html</strong> (Krümmung / 2. Grundform — das Bauen) ✕ <strong>universal_approximation_theorem.html</strong> (ReLU / UAT — das Kann). Alle Claims aus den Quellen paraphrasiert; Kurve &amp; Approximationen im Viz synthetisch/inline. Selbstständig, ohne Netzdatenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return hex;}return 'rgba('+r+','+g+','+b+','+a+')';}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ if(themeBtn){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; } }
+  if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); readPal(); drawAll(); }; }
+  setBtn();
+
+  var cv=document.getElementById('cvViz'); if(!cv){return;}
+  var dpr=window.devicePixelRatio||1, LW=760, LH=430;
+  cv.style.width='100%'; cv.style.aspectRatio=LW+'/'+LH;
+  cv.width=LW*dpr; cv.height=LH*dpr;
+  var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var TAU=Math.PI*2, M=400;
+  var xMin=-Math.PI, xMax=Math.PI;
+  var state={amp:0.80, N:6};
+  var showB=true, showA=true;
+  var PAL={};
+  function readPal(){
+    ['--viz-true','--viz-b','--viz-a','--viz-kink','--viz-canvas-bg','--viz-grid','--viz-txt'].forEach(function(n){PAL[n]=getVar(n);});
+    state.yMax=Math.max(0.5, state.amp*1.35);
+  }
+  readPal();
+
+  var W=LW, H=LH, L=48, R=18, TOP=24, BOT=LH-36;
+  function px(x){ return L + (x-xMin)/(xMax-xMin)*(W-L-R); }
+  function py(y){ return BOT - (y+state.yMax)/(2*state.yMax)*(BOT-TOP); }
+
+  function f(x){return state.amp*Math.sin(x);}
+  function fp(x){return state.amp*Math.cos(x);}
+  function fpp(x){return -state.amp*Math.sin(x);}
+  function cellIdx(x){var w=(xMax-xMin)/state.N;var j=Math.floor((x-xMin)/w);if(j<0)j=0;if(j>state.N-1)j=state.N-1;return j;}
+  function B(x){var w=(xMax-xMin)/state.N;var j=cellIdx(x);var x0=xMin+j*w,x1=x0+w;var f0=f(x0),f1=f(x1);return f0+(f1-f0)*(x-x0)/w;}
+  function A(x){var w=(xMax-xMin)/state.N;var j=cellIdx(x);var x0=xMin+j*w;var dx=x-x0;return f(x0)+fp(x0)*dx+0.5*fpp(x0)*dx*dx;}
+  function mse(fn){var s=0;for(var i=0;i<=M;i++){var x=xMin+(xMax-xMin)*i/M;var d=f(x)-fn(x);s+=d*d;}return s/(M+1);}
+
+  function plotFn(fn,color,lw,dash){
+    ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.setLineDash(dash||[]);
+    ctx.beginPath();var started=false;
+    for(var i=0;i<=600;i++){var x=xMin+(xMax-xMin)*i/600;var y=fn(x);var X=px(x),Y=py(y);
+      if(Y<-60||Y>H+60){started=false;continue;}
+      if(!started){ctx.moveTo(X,Y);started=true;}else{ctx.lineTo(X,Y);}
+    }
+    ctx.stroke();ctx.setLineDash([]);
+  }
+
+  var ampSl=document.getElementById('ampSl'),ampVal=document.getElementById('ampVal');
+  var nSl=document.getElementById('nSl'),nVal=document.getElementById('nVal');
+  var modeB=document.getElementById('modeB'),modeA=document.getElementById('modeA'),resetBtn=document.getElementById('resetBtn');
+  var viewCap=document.getElementById('viewCap');
+  var roEB=document.getElementById('roEB'),roEA=document.getElementById('roEA'),roGap=document.getElementById('roGap'),roVerdict=document.getElementById('roVerdict');
+
+  ampSl.addEventListener('input',function(){state.amp=+ampSl.value;state.yMax=Math.max(0.5,state.amp*1.35);ampVal.textContent=(+ampSl.value).toFixed(2);drawAll();});
+  nSl.addEventListener('input',function(){state.N=+nSl.value;nVal.textContent=nSl.value;drawAll();});
+  modeB.onclick=function(){showB=!showB;modeB.classList.toggle('onb',showB);drawAll();};
+  modeA.onclick=function(){showA=!showA;modeA.classList.toggle('on',showA);drawAll();};
+  resetBtn.onclick=function(){state.amp=0.80;state.N=6;state.yMax=Math.max(0.5,state.amp*1.35);showB=true;showA=true;
+    ampSl.value='0.80';nSl.value='6';ampVal.textContent='0.80';nVal.textContent='6';
+    modeB.classList.add('onb');modeA.classList.add('on');drawAll();};
+
+  function drawAll(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=PAL['--viz-canvas-bg']||'#0c1120';ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle=PAL['--viz-grid']||'rgba(120,120,120,0.1)';ctx.lineWidth=1;
+    var gx=[-Math.PI,-Math.PI/2,0,Math.PI/2,Math.PI];
+    for(var g=0;g<gx.length;g++){var X=px(gx[g]);ctx.beginPath();ctx.moveTo(X,TOP);ctx.lineTo(X,BOT);ctx.stroke();}
+    var yt=[-1,-0.5,0,0.5,1];
+    for(var y2=0;y2<yt.length;y2++){var Y=py(yt[y2]*state.yMax);ctx.beginPath();ctx.moveTo(L,Y);ctx.lineTo(W-R,Y);ctx.stroke();}
+    ctx.strokeStyle=hexA(PAL['--viz-txt']||'#888',0.28);ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(L,py(0));ctx.lineTo(W-R,py(0));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px(0),TOP);ctx.lineTo(px(0),BOT);ctx.stroke();
+
+    var i;
+    if(showB){
+      ctx.fillStyle=hexA(PAL['--viz-b']||'#c93a86',0.14);ctx.beginPath();
+      for(i=0;i<=600;i++){var xx=xMin+(xMax-xMin)*i/600;var Y1=py(f(xx));if(i===0){ctx.moveTo(px(xx),Y1);}else{ctx.lineTo(px(xx),Y1);}}
+      for(i=600;i>=0;i--){var xx2=xMin+(xMax-xMin)*i/600;ctx.lineTo(px(xx2),py(B(xx2)));}
+      ctx.closePath();ctx.fill();
+    }
+
+    plotFn(f, PAL['--viz-true']||'#6b7488', 1.6, [2,3]);
+    if(showB){ plotFn(B, PAL['--viz-b']||'#c93a86', 2.6, []); }
+    if(showA){ plotFn(A, PAL['--viz-a']||'#0d8f80', 2.6, []); }
+
+    ctx.fillStyle=PAL['--viz-kink']||'#b57e00';
+    for(var j=1;j<state.N;j++){var xk=xMin+j*(xMax-xMin)/state.N;var Xk=px(xk),Yk=py(f(xk));ctx.beginPath();ctx.arc(Xk,Yk,4,0,TAU);ctx.fill();}
+
+    var eB=mse(B),eA=mse(A);
+    roEB.textContent=eB.toFixed(4);
+    roEA.textContent=eA.toFixed(4);
+    var gap=eB>1e-9?(eB-eA)/eB:0;
+    roGap.textContent=eB>1e-9?(gap*100).toFixed(0)+'%':'—';
+    roGap.className='v '+(gap>1e-4?'g':'m');
+
+    var verdict,vcls;
+    if(state.amp<0.12){verdict='Null-Krümmung: B ≈ A (ReLU-Limes)';vcls='m';}
+    else if(gap>0.3){verdict='Krümmung → A klar vorn';vcls='g';}
+    else if(gap>1e-4){verdict='A vorn (2. Ordnung)';vcls='g';}
+    else{verdict='konvergent (hohe Breite)';vcls='m';}
+    roVerdict.textContent=verdict;roVerdict.className='v '+vcls;
+
+    if(state.amp<0.12){
+      viewCap.textContent='Nahezu flach (A = '+state.amp.toFixed(2)+'): die Kurve ist ~linear, daher genügt schon B\'s stückweise-lineare ReLU-Approximation — der Null-Krümmungs-Limes, in dem A\'s quadratischer Zusatz (2. Grundform) verschwindet und A ≈ B wird.';
+    }else{
+      viewCap.textContent='Krümmung aktiv (A = '+state.amp.toFixed(2)+'): B (stückweise linear, 1. Ordnung) schiebt um die Krümmung daneben (rosa Fläche); A (quadratisch, 2. Grundform) folgt der Krümmung und braucht weniger Stücke N für denselben Fehler. Genau hier zahlt B\'s Universalität ihren Preis: Breite statt Struktur.';
+    }
+  }
+  drawAll();
+
+  window.addEventListener('resize',function(){readPal();});
+  try{new MutationObserver(function(){readPal();drawAll();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "001",
+  "a": "coherent_differences_and_world_model.html",
+  "b": "turing.html",
+  "a_title": "Vom Weltzugang zum Weltmodell (From World Access to World Model — Coherent Representation)",
+  "b_title": "LLM Topological Spiral Visualization",
+  "combined_theme": "spiral-geometry-licensed-truth",
+  "one_line": "turing's Residual-Stream-Spirale (Slice → diskrete Bits) ist die Form — ein Modell des Interfaces (c_acc) — und coherent's Garben-/𝒯-/Tarski-Hülle der Test: die Bits tragen Inhalt nur, wenn die Diskretisierung eine lizenzierte, W-verankerte Transition ist; unlizenziert ist es Kohärenz ohne Korrespondenz, d. h. Halluzination.",
+  "contradictions": [
+    "Diskretisierung: B erklärt den Schnittpunkt einer kontinuierlichen Spirale per Bildunterschrift sofort zum diskreten 0/1-Bit („the discrete bits (0/1) extracted … to perform algorithmic logic”); A verbietet genau diesen Sprung („Stärke eine schwächere Gleichheit niemals still zu einer stärkeren”) — ein Bit gilt nur unter lizenzierter, kalibrierter, W-verankerter Transition (A's 'stilles Upgrade' / Pathologie 4).",
+    "Ort des Inhalts: A sagt explizit, 'Der Inhalt liegt nicht in der Abstiegs-Maschinerie, sondern in der Rechtfertigung von 𝒯'; B ist auf die These gebaut, dass genau diese Maschinerie (Spirale + Slice + Bits) die algorithmische Logik trage — inkompatible Verortung von Inhalt.",
+    "Kompetenz vs. Halluzination: B schreibt dem LLM echte 'algorithmische Logik' zu (Bits werden extrahiert, um Logik zu betreiben); A nennt es 'eine interne Kohärenz-Maschine ohne lizenzierte Korrespondenz-Übergänge', die 'strukturell … halluzinieren muss' und auf Fitness- nicht auf Wahrheits-Metriken gewinnt (Demo 34 'Fitness schlägt Wahrheit')."
+  ],
+  "resolution": "B liefert die Form (Geometrie der internen Struktur = c_acc), A die Bedingung, unter der diese Form Inhalt trägt: (i) Kohärenz (Garbenbedingung — Spiral-Stücke kleben über Überlappungen) und (ii) lizenzierte, W-verankerte Übergänge (Tarski/Popper). Der Schritt 'Schnittpunkt → 0/1-Bit → Logik' ist die Transition, die B ohne Lizenz darstellt (B's eigener Code: 'conceptual approximation'); lizenziert (kalibriert + W-ankiert) wird daraus Inhalt, unlizenziert ist es Pathologie 1 (Kohärenz ohne Korrespondenz). Das LLM kann formale Logik (B) auf nicht-verankerter Interface-Bitrepräsentation (A) betreiben — genau die Kombination, die kompetent aussieht und strukturell halluziniert. Form (B) + Lizenz (A) = fusionierter Inhalt.",
+  "viz": "2D-Canvas (reiner Vanilla, keine CDN/Netz-Daten): Archimedische Spirale (Residual-Stream, c_acc) mit radialer Attention-Slice; die Schnittpunkte werden zu 0/1-Bits. Toggle 'B · nur Maschine' (rohe Diskretisierung) vs. 'Fusion · 𝒯 lizenziert'; inline W-Anker als Kontaktpunkte; Regler für Kohärenz (Garben-Naht), Kalibrierung-ε und Slice-Fokus-φ; Band der Bits nach A's Lizenzstatus eingefärbt; Readout (Kohärenz / W-Anker / lizenziert / Verdict). Theme-aware (CSS-Variablen), rAF, keine Konsolenfehler."
+}

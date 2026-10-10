@@ -1,0 +1,646 @@
+[
+  {
+    "path": "attn.html",
+    "size_kb": 26.7
+  },
+  {
+    "path": "attn_as_optimal_transport.html",
+    "size_kb": 173.3
+  },
+  {
+    "path": "attn_as_optimal_transport_simple.html",
+    "size_kb": 54.2
+  },
+  {
+    "path": "attn_as_optimal_transport_very_simple.html",
+    "size_kb": 20.8
+  },
+  {
+    "path": "backprop.html",
+    "size_kb": 24.9
+  },
+  {
+    "path": "backprop_als_funktor.html",
+    "size_kb": 192.2
+  },
+  {
+    "path": "botorch.html",
+    "size_kb": 56.2
+  },
+  {
+    "path": "buecher/ai.html",
+    "size_kb": 57.9
+  },
+  {
+    "path": "buecher/antioed.html",
+    "size_kb": 84.2
+  },
+  {
+    "path": "buecher/attention_is_all_you_need.html",
+    "size_kb": 51.8
+  },
+  {
+    "path": "buecher/mcculloch_pitts.html",
+    "size_kb": 24.4
+  },
+  {
+    "path": "categorial_homotopy_for_llm.html",
+    "size_kb": 64.6
+  },
+  {
+    "path": "coherent_differences_and_world_model.html",
+    "size_kb": 312.2
+  },
+  {
+    "path": "coherent_differences_and_world_model_very_simple.html",
+    "size_kb": 30.3
+  },
+  {
+    "path": "coherent_world_models.html",
+    "size_kb": 59.4
+  },
+  {
+    "path": "concept_attractors.html",
+    "size_kb": 91.2
+  },
+  {
+    "path": "concept_attractors_in_llm.html",
+    "size_kb": 58.6
+  },
+  {
+    "path": "covers_theorem.html",
+    "size_kb": 188.3
+  },
+  {
+    "path": "darstellungstheorie.html",
+    "size_kb": 210.8
+  },
+  {
+    "path": "decode_holo.html",
+    "size_kb": 44.8
+  },
+  {
+    "path": "deep.html",
+    "size_kb": 197.7
+  },
+  {
+    "path": "deep2.html",
+    "size_kb": 33.8
+  },
+  {
+    "path": "dense_relu_dense.html",
+    "size_kb": 21.9
+  },
+  {
+    "path": "dynamic_residual_stream_paper.html",
+    "size_kb": 44.7
+  },
+  {
+    "path": "dynamic_residual_stream_paper2.html",
+    "size_kb": 34.7
+  },
+  {
+    "path": "egg.html",
+    "size_kb": 70.8
+  },
+  {
+    "path": "energy_based_learning.html",
+    "size_kb": 64.0
+  },
+  {
+    "path": "fibrebundle.html",
+    "size_kb": 41.1
+  },
+  {
+    "path": "fibrebundle2.html",
+    "size_kb": 41.0
+  },
+  {
+    "path": "fibrebundle3.html",
+    "size_kb": 62.5
+  },
+  {
+    "path": "fibrebundle4.html",
+    "size_kb": 7.0
+  },
+  {
+    "path": "fibrebundle5.html",
+    "size_kb": 9.0
+  },
+  {
+    "path": "fourier_addition.html",
+    "size_kb": 49.6
+  },
+  {
+    "path": "fourier_projection.html",
+    "size_kb": 45.8
+  },
+  {
+    "path": "garben_in_transformern.html",
+    "size_kb": 169.9
+  },
+  {
+    "path": "garbentheorie.html",
+    "size_kb": 38.8
+  },
+  {
+    "path": "generalisierung_im_deep_learning.html",
+    "size_kb": 179.5
+  },
+  {
+    "path": "generalisierung_im_deep_learning_very_simple.html",
+    "size_kb": 25.7
+  },
+  {
+    "path": "geometrie_der_wahrheit.html",
+    "size_kb": 190.6
+  },
+  {
+    "path": "geometrie_neuronaler_populationen.html",
+    "size_kb": 145.7
+  },
+  {
+    "path": "gradient_flow.html",
+    "size_kb": 31.2
+  },
+  {
+    "path": "grid_walker.html",
+    "size_kb": 48.6
+  },
+  {
+    "path": "grokking.html",
+    "size_kb": 26.3
+  },
+  {
+    "path": "grokking2.html",
+    "size_kb": 53.5
+  },
+  {
+    "path": "grokking_addition.html",
+    "size_kb": 74.7
+  },
+  {
+    "path": "grokking_addition_internal.html",
+    "size_kb": 61.9
+  },
+  {
+    "path": "grokking_addition_internal2.html",
+    "size_kb": 63.0
+  },
+  {
+    "path": "grokking_addition_internal3.html",
+    "size_kb": 47.0
+  },
+  {
+    "path": "grokking_paper.html",
+    "size_kb": 65.9
+  },
+  {
+    "path": "hologram.html",
+    "size_kb": 32.2
+  },
+  {
+    "path": "holographic_principle.html",
+    "size_kb": 61.1
+  },
+  {
+    "path": "hott_ai.html",
+    "size_kb": 81.4
+  },
+  {
+    "path": "how_ai_approximates.html",
+    "size_kb": 35.6
+  },
+  {
+    "path": "idea.html",
+    "size_kb": 26.4
+  },
+  {
+    "path": "idea2.html",
+    "size_kb": 43.3
+  },
+  {
+    "path": "ideen2.html",
+    "size_kb": 31.2
+  },
+  {
+    "path": "in-context-learning_through_gradient.html",
+    "size_kb": 167.7
+  },
+  {
+    "path": "informationsgravitation.html",
+    "size_kb": 159.4
+  },
+  {
+    "path": "intrinsische_dimensionen_tiefer_neuronaler_netze.html",
+    "size_kb": 205.6
+  },
+  {
+    "path": "intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html",
+    "size_kb": 62.8
+  },
+  {
+    "path": "intrinsische_dimensionen_tiefer_neuronaler_netze_very_simple.html",
+    "size_kb": 19.8
+  },
+  {
+    "path": "intuition_idee.html",
+    "size_kb": 15.1
+  },
+  {
+    "path": "j_space.html",
+    "size_kb": 68.2
+  },
+  {
+    "path": "j_space2.html",
+    "size_kb": 33.0
+  },
+  {
+    "path": "johnson_lindenstrauss_very_simple.html",
+    "size_kb": 24.7
+  },
+  {
+    "path": "kohaerente_differenz.html",
+    "size_kb": 78.3
+  },
+  {
+    "path": "kohaerente_modelle.html",
+    "size_kb": 36.3
+  },
+  {
+    "path": "kohonen.html",
+    "size_kb": 8.7
+  },
+  {
+    "path": "latent_semantic_manifolds_in_llm.html",
+    "size_kb": 292.3
+  },
+  {
+    "path": "latent_semantic_manifolds_in_llm_simple.html",
+    "size_kb": 63.6
+  },
+  {
+    "path": "latent_semantic_manifolds_in_llm_very_simple.html",
+    "size_kb": 18.3
+  },
+  {
+    "path": "latter_inner.html",
+    "size_kb": 79.6
+  },
+  {
+    "path": "linear_seperability.html",
+    "size_kb": 54.3
+  },
+  {
+    "path": "llm_topology.html",
+    "size_kb": 129.2
+  },
+  {
+    "path": "low_dim_learning.html",
+    "size_kb": 68.9
+  },
+  {
+    "path": "math_framework_for_transformers.html",
+    "size_kb": 86.6
+  },
+  {
+    "path": "mccarthy_heyes_1969.html",
+    "size_kb": 65.1
+  },
+  {
+    "path": "minima_explorer.html",
+    "size_kb": 41.3
+  },
+  {
+    "path": "mod.html",
+    "size_kb": 70.4
+  },
+  {
+    "path": "mood_explorer.html",
+    "size_kb": 19.8
+  },
+  {
+    "path": "new_space.html",
+    "size_kb": 30.7
+  },
+  {
+    "path": "nlab_nn.html",
+    "size_kb": 43.3
+  },
+  {
+    "path": "nlab_nn2.html",
+    "size_kb": 37.0
+  },
+  {
+    "path": "nn_as_sheaf.html",
+    "size_kb": 27.2
+  },
+  {
+    "path": "nn_as_sheaf_2.html",
+    "size_kb": 39.8
+  },
+  {
+    "path": "origami.html",
+    "size_kb": 39.2
+  },
+  {
+    "path": "origami_1.html",
+    "size_kb": 186.1
+  },
+  {
+    "path": "origami_2.html",
+    "size_kb": 216.6
+  },
+  {
+    "path": "othellogpt.html",
+    "size_kb": 76.0
+  },
+  {
+    "path": "paper.html",
+    "size_kb": 81.4
+  },
+  {
+    "path": "paper/AttentionViz.html",
+    "size_kb": 17.8
+  },
+  {
+    "path": "paper/geometric_structure_of_layer_updates.html",
+    "size_kb": 55.2
+  },
+  {
+    "path": "paper/manifold_flattening.html",
+    "size_kb": 31.6
+  },
+  {
+    "path": "paperidea2.html",
+    "size_kb": 44.8
+  },
+  {
+    "path": "paperidea3.html",
+    "size_kb": 90.5
+  },
+  {
+    "path": "paperidea4.html",
+    "size_kb": 73.2
+  },
+  {
+    "path": "paperidea5.html",
+    "size_kb": 47.0
+  },
+  {
+    "path": "paperidea6.html",
+    "size_kb": 30.2
+  },
+  {
+    "path": "persistent_topology.html",
+    "size_kb": 40.2
+  },
+  {
+    "path": "phasenraum.html",
+    "size_kb": 80.9
+  },
+  {
+    "path": "phasetransition.html",
+    "size_kb": 24.3
+  },
+  {
+    "path": "posembed1.html",
+    "size_kb": 19.4
+  },
+  {
+    "path": "posembed2.html",
+    "size_kb": 18.4
+  },
+  {
+    "path": "posembed3.html",
+    "size_kb": 15.8
+  },
+  {
+    "path": "posembed4.html",
+    "size_kb": 23.3
+  },
+  {
+    "path": "posembed5.html",
+    "size_kb": 22.2
+  },
+  {
+    "path": "posembed7.html",
+    "size_kb": 25.8
+  },
+  {
+    "path": "posembed8.html",
+    "size_kb": 11.5
+  },
+  {
+    "path": "positional.html",
+    "size_kb": 29.6
+  },
+  {
+    "path": "proof.html",
+    "size_kb": 103.8
+  },
+  {
+    "path": "qkv.html",
+    "size_kb": 14.4
+  },
+  {
+    "path": "qkv2.html",
+    "size_kb": 29.3
+  },
+  {
+    "path": "random_hierarchy_model.html",
+    "size_kb": 153.7
+  },
+  {
+    "path": "rome.html",
+    "size_kb": 36.0
+  },
+  {
+    "path": "rome2.html",
+    "size_kb": 225.2
+  },
+  {
+    "path": "semantic_steering.html",
+    "size_kb": 65.2
+  },
+  {
+    "path": "shepard.html",
+    "size_kb": 58.6
+  },
+  {
+    "path": "signal_analysis2.html",
+    "size_kb": 103.3
+  },
+  {
+    "path": "simplicial_complex_attention.html",
+    "size_kb": 45.9
+  },
+  {
+    "path": "simplicial_complex_attention2.html",
+    "size_kb": 25.2
+  },
+  {
+    "path": "simplicial_complex_attention3.html",
+    "size_kb": 38.2
+  },
+  {
+    "path": "simplicial_complex_attention4.html",
+    "size_kb": 27.4
+  },
+  {
+    "path": "simplicial_complex_attention5.html",
+    "size_kb": 14.9
+  },
+  {
+    "path": "simplicial_complex_attention6.html",
+    "size_kb": 24.3
+  },
+  {
+    "path": "simplicial_complex_attention7.html",
+    "size_kb": 16.3
+  },
+  {
+    "path": "simplicial_complex_attention8.html",
+    "size_kb": 21.1
+  },
+  {
+    "path": "space_algorithm.html",
+    "size_kb": 56.9
+  },
+  {
+    "path": "space_morph.html",
+    "size_kb": 13.8
+  },
+  {
+    "path": "space_warps.html",
+    "size_kb": 68.4
+  },
+  {
+    "path": "support_vector_machines.html",
+    "size_kb": 24.6
+  },
+  {
+    "path": "symmetrie_in_sprachstatistik.html",
+    "size_kb": 159.4
+  },
+  {
+    "path": "talking_heads.html",
+    "size_kb": 175.8
+  },
+  {
+    "path": "test.html",
+    "size_kb": 65.1
+  },
+  {
+    "path": "test2.html",
+    "size_kb": 116.7
+  },
+  {
+    "path": "theory_of_deep_learning.html",
+    "size_kb": 268.6
+  },
+  {
+    "path": "theory_of_deep_learning_simple.html",
+    "size_kb": 54.5
+  },
+  {
+    "path": "theory_of_deep_learning_very_simple.html",
+    "size_kb": 29.7
+  },
+  {
+    "path": "token_manifold_verletzt.html",
+    "size_kb": 85.0
+  },
+  {
+    "path": "token_manifold_verletzt_simple.html",
+    "size_kb": 48.3
+  },
+  {
+    "path": "token_manifold_verletzt_very_simple.html",
+    "size_kb": 22.3
+  },
+  {
+    "path": "topologie_tiefer_neuronaler_netze.html",
+    "size_kb": 192.3
+  },
+  {
+    "path": "topologie_tiefer_neuronaler_netze_2.html",
+    "size_kb": 168.4
+  },
+  {
+    "path": "topology_idea.html",
+    "size_kb": 46.3
+  },
+  {
+    "path": "topology_of_attractors.html",
+    "size_kb": 89.8
+  },
+  {
+    "path": "transformer_dynamics.html",
+    "size_kb": 65.9
+  },
+  {
+    "path": "transformer_rein_geometrisch.html",
+    "size_kb": 21.4
+  },
+  {
+    "path": "transformer_rein_geometrisch2.html",
+    "size_kb": 16.4
+  },
+  {
+    "path": "transformer_rein_geometrisch3.html",
+    "size_kb": 7.5
+  },
+  {
+    "path": "tropische_geometrie_tiefer_neuronaler_netze.html",
+    "size_kb": 224.2
+  },
+  {
+    "path": "tropische_geometrie_tiefer_neuronaler_netze_simple.html",
+    "size_kb": 44.4
+  },
+  {
+    "path": "tropische_geometrie_tiefer_neuronaler_netze_very_simple.html",
+    "size_kb": 18.8
+  },
+  {
+    "path": "turing.html",
+    "size_kb": 4.9
+  },
+  {
+    "path": "turing2.html",
+    "size_kb": 5.6
+  },
+  {
+    "path": "turing3.html",
+    "size_kb": 6.1
+  },
+  {
+    "path": "understanding_deep_learning.html",
+    "size_kb": 73.6
+  },
+  {
+    "path": "universal_approximation_theorem.html",
+    "size_kb": 32.1
+  },
+  {
+    "path": "verweigerungsrichtung.html",
+    "size_kb": 189.3
+  },
+  {
+    "path": "why_deep_learning_works.html",
+    "size_kb": 37.8
+  },
+  {
+    "path": "wie_ein_llm_denkt.html",
+    "size_kb": 84.2
+  },
+  {
+    "path": "youarellm.html",
+    "size_kb": 45.2
+  },
+  {
+    "path": "youarellm2.html",
+    "size_kb": 89.9
+  }
+]

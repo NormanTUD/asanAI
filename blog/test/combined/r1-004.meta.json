@@ -1,0 +1,16 @@
+{
+  "no": "004",
+  "a": "fibrebundle4.html",
+  "b": "transformer_rein_geometrisch3.html",
+  "a_title": "Manifold Liquify — Residual Stream & Diffeomorphisms",
+  "b_title": "Attention (purely geometric, 4-step)",
+  "combined_theme": "attention-diffeomorphisms",
+  "one_line": "A transformer is a stack of smooth, locally invertible deformations (diffeomorphisms) of a representation manifold: each layer is the residual identity plus an attention displacement field, where attention is a linear projection (query -> logit) turned by softmax into a convex pull toward a meaning-centroid.",
+  "contradictions": [
+    "A models each layer as an invertible diffeomorphic warp of the whole manifold, while B's attention step is a convex combination to the centroid — a many-to-one, non-invertible contraction.",
+    "B moves the point (the word 'Bank') through a fixed space to the centroid, whereas A warps the manifold/grid around fixed tokens that ride straight up the residual stream.",
+    "B's attention operator is a linear projection onto a query direction (drop the perpendicular, length = logit), while A's warp is a local, nonlinear, distance-decaying Gaussian kernel (force = exp(-dist*0.5)*1.2)."
+  ],
+  "resolution": "The residual connection x -> x + f(x) is the hinge: B isolates the displacement field f = sum a_i(V_i - x) (the centroid-pull contraction), A sees the whole map x + f(x); when f is locally a contraction (||Df|| < 1) the composite is a diffeomorphism, and the residual 'electricity' supplies the identity term that makes it invertible. Point-motion (B) and space-warp (A) are the active vs. passive views of the same map; the logit is a linear projection (B right) while its geometric footprint is a local smooth deformation (A right).",
+  "viz": "Four-step canvas reproducing B (points -> query-ray with dropped perpendiculars -> softmax weight bar -> pull to centroid); a mode toggle contrasts contracting collapse onto the centroid (B, non-invertible) vs. a residual diffeomorphic manifold bump with the origin preserved as the 'residual' (A, invertible); temperature slider, drag-to-rotate, theme-aware, inline data only."
+}

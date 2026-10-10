@@ -1,0 +1,16 @@
+{
+  "no": "024",
+  "a": "qkv2.html",
+  "b": "positional.html",
+  "a_title": "What Attention Actually Does — Geometrically",
+  "b_title": "RoPE 3D Slice Visualizer (1-64D)",
+  "combined_theme": "position-aware-attention-geometry",
+  "one_line": "Attention's Q·K score is scaled cosine alignment (A), and RoPE rotates Q and K per position so that this alignment depends only on the relative position n−m — making the softmax attention weights (hence the convex combination of V) position-aware while the V payload stays untouched.",
+  "contradictions": [
+    "A states the score measures alignment 'purely by the angle between them' (a static content property); B makes that same angle a function of relative position, so A's angle is incomplete without B.",
+    "A treats W_Q/W_K as fixed learned projections ('two static views of the same point'); B post-rotates Q and K per position, i.e. makes that very Q/K subspace position-dependent — A never says W depends on position, B requires it.",
+    "A frames √d_k as 'just a geometric rescaling' keeping ONE angle meaningful regardless of dimension; B introduces d/2 independent rotating frequencies (θ_p=base^(-p/P), a huge spread) so the single A-angle becomes a sum of many wrapped cosines across scales."
+  ],
+  "resolution": "They operate on different subspaces of the same op and compose, not clash. A is the baseline (static content angle δ_p in Q/K), B is an add-on: q_m=R(m)W_Q x. score(q_m,k_n)=Σ_p |q_p||k_p|cos(δ_p+θ_p(n−m)) depends only on relative position. Rotations are norm-preserving so A's √d_k saturation control survives; the many frequencies yield a multi-scale relative-position kernel (low θ = long range, high θ = short range). RoPE only touches Q/K (routing), never V (payload), so A's convex-hull output structure is unchanged — position modulates WHO is attended to, not WHAT is carried.",
+  "viz": "Self-contained canvas, no external libs / inline data. Left: one RoPE pair (B) with the key vectors spiraling around a circle at frequency θ_p (position = rotation), a content-aligned query arrow and the per-pair cos(Δ·θ_p) contribution. Right: the fused attention-weight profile w(Δ)=softmax(Σ_p cos(θ_p·Δ)/τ) over relative distance Δ=n−m (A's softmax over B's position-dependent score). Sliders for Δ, displayed pair p, number of pairs P=d_k/2, base=10^b, and softmax temperature τ (default √(2P) per A); theme toggle (dark default) re-renders using CSS variables."
+}

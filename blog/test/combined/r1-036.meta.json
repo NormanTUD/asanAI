@@ -1,0 +1,17 @@
+{
+  "no": "036",
+  "a": "fibrebundle2.html",
+  "b": "fibrebundle.html",
+  "a_title": "LLM Kelp-Wald v3 – Faserbündel",
+  "b_title": "LLM Kelp-Wald – Faserbündel-Visualisierung",
+  "combined_theme": "transformer-faserbuendel-fusion",
+  "one_line": "Ein Transformer als Faserbündel über der Token-Folge: A (Mikro) liefert die Schicht als Attention⊕FFN-Parallelstruktur mit echter Softmax(QKᵀ/√dₖ)-Attention und der Residual-Abbildung als Strukturguppe; B (Makro) liefert die Faser-Geometrie und den 1-D/2-D-Basisraum; Halluzination = diskontinuierlicher Schnitt s, Kreisschluss = geschlossene Attention-Feedback-Schleife.",
+  "contradictions": [
+    "Schicht-Bau: A modelliert jede Schicht als parallele Attention⊕FFN-Struktur mit Residual-⊕-Merge + LayerNorm (d_ff = d_model·ffM als Regler); B zeichnet jede Schicht als ein einzelnes, unteiltes Fasersegment ohne FFN-Pfad.",
+    "Attention-Mathematik: A rechnet echtes Scaled-Dot-Product Softmax(QKᵀ/√dₖ)V pro Head und Layer mit Temperatur; B nutzt nur eine Distanz-Heuristik 'nahe Tokens achten mehr' (+ Zufall), ohne Softmax/√dₖ.",
+    "Basisraum-Topologie: A erlaubt nur 1-D (ℝ¹, S¹, Möbius-Band) und trennt S¹ und Möbius korrekt; B bietet 2-D (Gitter ℝ², Sphäre S²) und verwechselt 'Ring' mit 'Möbius'.",
+    "Halluzination: A definiert sie präzise als Diskontinuität des Schnitts s ('springt diskontinuierlich in der Faser', mit Sprung-Magnitude Δ); B nennt sie generisch einen 'topologischen Defekt' (Verzerrungs-/Riss-Feld)."
+  ],
+  "resolution": "A steht auf der Mikro-Ebene (innere Schichtstruktur + exakte Attention-Mathematik), B auf der Makro-Ebene (Bündel, Basisraum, Faser-Geometrie) desselben Faserbündels. Fusioniert: ein Faserbündel über der Token-Folge, dessen Strukturguppe die Residual-Schicht-Abbildung x ↦ LN(x+Attn(x)) ↦ LN(x+FFN(x)) ist; Basisraum = Token-Folge in wählbarer 1-D- oder 2-D-Mannigfaltigkeit (S¹ und Möbius getrennt, B's Fehlbetitelung korrigiert); Attention = Softmax(QKᵀ/√dₖ)V als Definition, B's lokaler Distanz-Verfall als dessen typischer Limes; Halluzination = diskontinuierlicher Schnitt s (A), gerendert als B's Defekt-Feld; Kreisschluss = geschlossene Attention-Feedback-Schleife (beide).",
+  "viz": "Canvas: Kelp-Fasern über der Token-Basislinie; pro Schicht der Attention⊕FFN⊕Merge-Aufbau (A), echte Softmax(QKᵀ/√dₖ)-Attention-Flüsse zwischen den Fasern (A), animierter Schnitt-s-Tracer (B). Toggles: Halluzination (diskontinuierlicher Schnitt s) und Kreisschluss (geschlossene Attention-Schleife). Theme-reaktiv via CSS-Variablen (:root / html.dark)."
+}

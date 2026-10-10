@@ -1,0 +1,16 @@
+{
+  "no": "008",
+  "a": "intuition_idee.html",
+  "b": "posembed3.html",
+  "a_title": "Attention Heads als Augen — Interaktive Visualisierung",
+  "b_title": "Positional Encoding — Wave Collapse",
+  "combined_theme": "position-attention-fusion",
+  "one_line": "Positional Encoding (B) ist die Karte — ein mehrfrequenter Wellen-Fingerprint pro Position (Uhrzeiger / Wave Collapse); Attention-Heads (A) sind die Augen, die diese Karte lesen: absolut + relativ (PE(pos)·PE(pos+k) hängt nur vom Offset k ab) und kombiniert mit Token-Inhalt, um Kontext zu aggregieren — Position wird absolut codiert, um relativ gelesen zu werden.",
+  "contradictions": [
+    "Absolute Identität vs. relative Beziehung: B (posembed3) beschreibt Position als absolute, eindeutige Fingerprint-Geometrie ('the unique fingerprint of this position', rein aus pos·freq), A (intuition_idee) definiert seine 'Augen' über relative Offsets (vorheriges Token, Token 2 zurück, Satzanfang) — der Ort als Punkt vs. die Relation als Objekt.",
+    "Inhaltsfrei vs. inhaltsgetrieben: B steckt kein Wort im Feld (nur die Positions-Zahl, rein geometrisch), A macht mehrere Heads explizit inhaltlich (Wortlängen-Match, Wiederholungs-Detektor für identische Tokens, Vokal-Ähnlichkeit) — Muster aus Position allein vs. Muster aus Position + Inhalt.",
+    "EIN Punkt vs. VIELE als Verteilung: B lässt alle Wellen in einem hellen 'Wave-Collapse'-Punkt kollabieren (eindeutige Position), A verteilt Aufmerksamkeit über viele Keys als Wahrscheinlichkeitsverteilung (Matrix-Zeile nach Softmax) — Punkt-Identität vs. ausgedehnte Verteilung."
+  ],
+  "resolution": "Die sinusoidale PE ist die Brücke: weil jede Position ein Satz verschachtelter, rotierender Kreise (Uhrzeiger) ist, ist PE(pos+k) eine Drehung von PE(pos), also hängt PE(pos)·PE(pos+k) nur vom Offset k ab — B's absolute Geometrie macht A's relative 'Augen' rechenbar. Im echten Transformer kombinieren Q/K/V Inhalt und PE, also Score = f(Inhalt_i, Inhalt_j) + g(i−j): B liefert den Relativpositions-Term, A die Inhalt-Heads. Punkt (B) ist Eingabe, Verteilung (A) ist Ausgabe — Karte (B) + Navigation (A): Position wird absolut codiert, um relativ gelesen zu werden.",
+  "viz": "Canvas-2D, nur Inline-Daten: Token-Reihe (10 Tokens, inline), unter jedem ein rotierender mehrfrequenter PE-Dial (B: Fingerprint/Uhrzeiger, Basis-10000-Leiter auf Basis 4 komprimiert). Query-Position wählbar (Chip-Klick oder Dropdown), Head-Modus umschaltbar — Position (Distanz-Abklingung, rein B), Inhalt (Match auf identische Tokens, rein A), Fusion (beides) — mit Attention-„Augen“ als Bögen über den Chips und Softmax-Verteilung als Balken (Causal-Mask: nur j≤i, graue = maskiert). Play schreitet Query durch. Theme-aware über CSS-Variablen (:root/html.dark) + Dark-Toggle + MutationObserver; alle Farben aus Tokens, kein #ffffff, kein Netzwerk (nur optionales KaTeX-CDN)."
+}

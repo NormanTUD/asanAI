@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Neural-Network Sheaves x Persistent Topology</title>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#f6f4ee; --card:#fffdf8; --border:#dcd6c8; --text:#20242c; --muted:#6b7280;
+    --accent:#2563eb; --green:#16a34a; --orange:#d97706; --red:#dc2626; --purple:#7c3aed; --cyan:#0891b2;
+  }
+  html.dark{
+    --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+    --accent:#58a6ff; --green:#3fb950; --orange:#d29922; --red:#f85149; --purple:#bc8cff; --cyan:#39d2c0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.65;}
+  article{max-width:820px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+  h1{font-size:1.9rem;line-height:1.2;margin:.2rem 0 .4rem;}
+  h2{color:var(--accent);font-size:1.3rem;margin:2.2rem 0 .6rem;border-bottom:1px solid var(--border);padding-bottom:.35rem;}
+  h3{color:var(--purple);font-size:1.05rem;margin:1.3rem 0 .4rem;}
+  .sub{color:var(--muted);font-size:.98rem;margin-bottom:1.2rem;}
+  p{margin:.7rem 0;}
+  .eq{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin:.7rem 0;
+    overflow-x:auto;text-align:center;font-size:1.02rem;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;margin:.9rem 0;}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;margin:.6rem 0;}
+  th,td{padding:.5rem .6rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;}
+  th{color:var(--purple);}
+  ul{margin:.5rem 0 .5rem 1.15rem;padding:0;}
+  li{margin:.5rem 0;}
+  .tagA{color:var(--accent);font-weight:600;}
+  .tagB{color:var(--green);font-weight:600;}
+  canvas{display:block;width:100%;border:1px solid var(--border);border-radius:10px;background:var(--card);margin:.5rem 0;}
+  .controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.7rem 0;}
+  button{background:var(--accent);color:#fff;border:none;padding:.45rem .85rem;border-radius:7px;font-weight:600;cursor:pointer;font-size:.85rem;}
+  button:hover{opacity:.88;}
+  button.sec{background:var(--border);color:var(--text);}
+  button.active{background:var(--purple);color:#fff;}
+  label{color:var(--muted);font-size:.85rem;}
+  input[type=range]{accent-color:var(--accent);width:230px;}
+  .legend{display:flex;flex-wrap:wrap;gap:.7rem;font-size:.8rem;color:var(--muted);margin:.4rem 0;}
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .swatch{width:16px;height:3px;border-radius:2px;display:inline-block;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .insight{border-left:3px solid var(--purple);padding:.55rem .8rem;margin:.7rem 0;
+    background:var(--card);border-radius:0 8px 8px 0;font-size:.93rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  code{background:var(--card);border:1px solid var(--border);padding:.08rem .3rem;border-radius:4px;font-size:.9em;}
+  .prov a{color:var(--accent);text-decoration:none;}
+  .prov a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<article>
+
+  <h1>Sheaves, Persistence, and the Born&ndash;Persist&ndash;Die Machine</h1>
+  <p class="sub">Fusion aus: nn_as_sheaf_2.html &#10007; persistent_topology.html</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>These two papers look at different objects &mdash; a <em>neural-network function</em> (A) and the <em>shape of a point cloud</em> (B) &mdash; but both are built on the <strong>same template</strong>: take a domain, decompose it by a parameter into local pieces, let each piece be <strong>born</strong>, let it <strong>persist</strong> over a range of that parameter, let it <strong>die</strong> (killed by a restriction/boundary map or absorbed into a larger whole), and then <strong>assemble the survivors into a global object</strong>.</p>
+    <p>In A the pieces are the ReLU local sections; the domain &#8477; is covered by the intervals on which each section is active, the <em>restriction map</em> is the ReLU itself (it kills a section on one side of its bend), and the global section is the glued &mdash; in fact the <em>additive</em> &mdash; sum. In B the pieces are homology classes; the data is filtered by radius &epsilon;, a connected component is born at &epsilon; = 0 and dies when it merges, a loop is born when a cycle closes and dies when a triangle fills it (i.e. when it becomes a boundary). The single integrated position: <strong>a network and a persistence module are two realizations of one "born&ndash;persist&ndash;die&ndash;glue" machine, and the part that is genuinely meaningful in both cases is exactly the part that persists</strong> &mdash; the local pieces long-lived enough to survive into the global object.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widerspr&uuml;che zwischen A und B</h2>
+    <p>The two do not directly contradict (different subject matter), but they take <strong>opposing stances</strong> on three specific points:</p>
+    <ul>
+      <li><strong>Additive gluing (A) vs. noise-filtering selection (B).</strong>
+        <span class="tagA">A</span> says the global section is the coherent <em>sum of all</em> local sections, <code>y&#770; = &Sigma; &alpha;&#8338;&middot;ReLU(w&#8338;x+b&#8338;) + &beta;</code>; even the ReLU-"killed" half of a section is kept in the cover as the <em>zero section</em>, and no piece is ever discarded &mdash; every neuron contributes &alpha;&#8338;h&#8338;.
+        <span class="tagB">B</span> says the whole point is to <em>separate signal from noise</em>: "Short bars = noise. Long bars = real structure." Most born features are explicitly thrown away; only the long-lived (persistent) ones count. A keeps <em>everything</em>; B <em>selects</em>.</li>
+      <li><strong>Sharp / fragile local exactness (A) vs. coarse / stable global invariants (B).</strong>
+        <span class="tagA">A</span> celebrates <em>exact</em> local structure &mdash; each bend is the sharp coordinate x*&#8338; = &minus;b&#8338;/w&#8338; and every equation is shown "with real values"; a small change in w&#8338; or b&#8338; <em>moves</em> the bend continuously, and A claims no robustness guarantee.
+        <span class="tagB">B</span> makes the <em>Stability Theorem</em> (Cohen&ndash;Steiner, Edelsbrunner, Harer 2007) its headline: small input perturbations produce only small (bottleneck-distance) changes in the diagram. A is exact-but-fragile at the local level; B is deliberately <em>insensitive</em> to local detail by design.</li>
+      <li><strong>Opposite direction of the assembly maps: contravariant restriction (A) vs. covariant inclusion (B).</strong>
+        <span class="tagA">A</span> is a <em>contravariant</em> system &mdash; a sheaf's maps are <em>restriction</em> maps that go from a larger open set to a smaller one (F(U) &rarr; F(V) for U &supset; V), and here they <em>kill</em> the section (ReLU &rarr; 0). Assembly runs <em>downward / by restriction</em>.
+        <span class="tagB">B</span> is a <em>covariant</em> system &mdash; a persistence module's <em>inclusion / structure</em> maps go from small scale to large scale (K_&epsilon; &rarr; K_&epsilon;&#8242;, &epsilon; &le; &epsilon;&#8242;) and <em>preserve</em> features. Assembly runs <em>upward / by inclusion</em>. The two assemble their global object along <em>opposite arrows</em>.</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Aufl&ouml;sung</h2>
+    <ul>
+      <li><strong>Selection is gluing with a persistence threshold.</strong> Every local piece carries a <em>lifetime</em> &mdash; in A the length of the x-interval over which a section is nonzero; in B the &epsilon;-interval over which a feature is nontrivial. "Signal vs. noise" then just means "long-lived vs. short-lived." A's additive gluing is the <em>zero-threshold limit</em> of B's selection: in A every section is structural by construction (the network was built to have exactly these pieces, none degenerate), so "keep all" already equals "keep the persistent." In B, unstructured data spawns many immediately-dying (near-diagonal) features, so selection drops them. <strong>Fused conclusion:</strong> the sheaf's global section and the persistence module's persistent feature are the <em>same notion</em> &mdash; a local structure that survives long enough to matter; gluing (A) is superposition of all local pieces, which reduces to selection (B) once the pieces are guaranteed persistent.</li>
+      <li><strong>Exactness and stability are two resolutions of one object.</strong> A gives the <em>fine, parameter-exact</em> description (the network <em>is</em> its piecewise formula); B gives the <em>coarse, perturbation-stable</em> description (the topological signature, invariant under small changes). <strong>Fused conclusion:</strong> stability is what you recover by <em>forgetting the exact weights and keeping only persistence</em>. A's individual bend points are fragile, but the <em>set of persistence bars</em> (which features survive, roughly where) is stable in exactly the bottleneck sense B formalizes &mdash; so the exact piecewise function (A) is a point in the space of networks, and the persistence of its sublevel/superlevel sets (B) is a stable, low-dimensional, robust fingerprint of that network.</li>
+      <li><strong>Restriction and inclusion are dual arrows of one assembly.</strong> The two are not contradictory but <em>dual</em>: a sheaf (contravariant, restriction maps) and a persistence module (covariant, inclusion maps) are opposite functors on dual posets (opens ordered by &supset; vs. scales ordered by &le;). Both assemble a global object from a compatible family of local ones by a <em>universal construction</em> &mdash; the sheaf's <em>gluing axiom</em> (compatible local sections &rarr; a unique global section) corresponds to the persistence module's <em>direct limit / colimit</em>. <strong>Fused conclusion:</strong> the "global" in both theories is a <em>colimit of a local system</em> &mdash; a colimit over a <em>spatial</em> cover in A, over a <em>scale</em> filtration in B. Same mechanism, two directions, two parameters (position x vs. scale &epsilon;).</li>
+    </ul>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>A &mdash; the network as a sheaf</h3>
+    <p>The object is the simplest non-trivial network, one hidden layer with N ReLU neurons:</p>
+    <div class="eq" data-display="1" data-tex="\hat{y}(x)=\sum_{j=1}^{N}\alpha_j\,\mathrm{ReLU}(w_j x+b_j)+\beta,\qquad \mathrm{ReLU}(u)=\max(0,u)">y&#770;(x) = &Sigma; &alpha;&#8338;&middot;ReLU(w&#8338;x+b&#8338;) + &beta;, ReLU(u)=max(0,u)</div>
+    <p>Each neuron is a <em>local section</em>: a line w&#8338;x + b&#8338; that ReLU bends at its zero crossing x*&#8338; = &minus;b&#8338;/w&#8338; and keeps only on the active side (exactly zero on the other). The sheaf dictionary of A:</p>
+    <table>
+      <tr><th>Sheaf concept</th><th>In the network</th><th>Effect</th></tr>
+      <tr><td>Open cover {U&#8338;}</td><td>Intervals split by the bend points</td><td>Partition of the input line</td></tr>
+      <tr><td>Local section s&#8338;</td><td>Active affine piece w&#8338;x+b&#8338;</td><td>One colored bent line</td></tr>
+      <tr><td>Restriction map</td><td>ReLU kills the section on U&#8315;</td><td>Line folds flat to zero on one side</td></tr>
+      <tr><td>Gluing axiom</td><td>y&#770; = &Sigma; &alpha;&#8338;h&#8338; + &beta;</td><td>Global output = sum of all pieces</td></tr>
+      <tr><td>Cocycle / compatibility</td><td>Optimizer minimizing loss</td><td>Pieces rearrange until the glue matches the target</td></tr>
+    </table>
+    <p>Stance: the <em>global</em> output is a <em>sum</em> of <em>local</em> pieces &mdash; constructive, additive, local-to-global.</p>
+
+    <h3>B &mdash; persistent homology as shape-finding</h3>
+    <p>The object is a point cloud. Build the Vietoris&ndash;Rips <em>filtration</em> K_&epsilon; by growing balls of radius &epsilon;: an edge appears when two balls meet, a triangle when three mutually meet. Track three feature types across &epsilon; &mdash; <strong>H&#8320;</strong> connected components, <strong>H&#8321;</strong> loops, <strong>H&#8322;</strong> voids &mdash; recording each feature's <em>birth</em> &epsilon; and <em>death</em> &epsilon;. The result is a <em>barcode</em> (one bar per feature) or a <em>persistence diagram</em> (points at (birth, death)); points far from the diagonal are long-lived = signal, points near the diagonal are noise.</p>
+    <p>Algorithms: H&#8320; via union-find / Kruskal (a component dies when an edge merges two clusters); H&#8321; via boundary-matrix reduction over &#8484;/2 (a cycle-creating edge is a birth, a triangle kills the cycle it bounds). The headline is the <strong>Stability Theorem</strong>: the bottleneck distance between diagrams is bounded by the perturbation of the input &mdash; hence robustness.</p>
+
+    <h3>The unified template: born &ndash; persist &ndash; die &ndash; glue</h3>
+    <p>Both decompose a domain by a parameter and each piece <strong>dies by a boundary/restriction operation</strong>: in A a local section is <em>cut</em> by the restriction map (ReLU) at its bend; in B a loop <em>dies</em> precisely when it becomes a <em>boundary</em> (a triangle fills it, &part;(triangle) = loop &rArr; the loop is trivial in H&#8321;), and a component dies when an edge <em>glues</em> two clusters. The "global" object in both is a <em>colimit</em> of a local system: sheaf gluing over a <em>spatial</em> cover (A) &harr; persistence direct-limit over a <em>scale</em> filtration (B). The two parameters are orthogonal &mdash; A's <em>position</em> x and B's <em>scale</em> &epsilon; &mdash; so together they form a (position, scale) plane; A is the spatial slice, B the scale slice.</p>
+    <p>The two "death" operations are algebraically the same kind of map:</p>
+    <ul>
+      <li>Sheaf restriction: s &rarr; &rho;(s) = 0 on the side U&#8315; where the section is killed.</li>
+      <li>Boundary/filling: a loop is killed exactly when it is the boundary of a 2-simplex, i.e. &part;(triangle) = loop, so the loop is trivial in H&#8321;.</li>
+    </ul>
+
+    <h3>The concrete fused construction (implemented in the viz)</h3>
+    <p>Apply B's 1-D <em>sublevel-set persistence</em> to A's output function:</p>
+    <div class="eq" data-display="1" data-tex="X_t = \{\, x \;:\; \hat{y}(x) \le t \,\}">X_t = { x : y&#770;(x) &le; t }</div>
+    <p>Each local minimum of y&#770; <em>births</em> a connected component of X_t; each local maximum <em>kills</em> the shallower of the two components it joins (the deeper one survives). The resulting barcode is a <em>stable</em> topological fingerprint of the network: a small perturbation of the weights moves the exact bend points (A's fragility) but only slightly shifts the persistence bars (B's stability, mirroring the bottleneck bound d_B(D, D&#8242;) &le; &delta; for input perturbation &le; &delta;). This is the fusion made executable: the network's local-to-global gluing (A) read through the born&ndash;persist&ndash;die barcode (B).</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Fusion</h2>
+    <p>Top: the ReLU network drawn as the glued sum of its local bent sections (A), with bend points marked. Bottom: the 1-D sublevel-set persistence barcode of that very same output function (B applied to A). A single slider t (the filtration level &mdash; B's &epsilon; analog) drives both: drag it and watch local components get <em>born</em> at minima and <em>die</em> (glued into larger components) at maxima.</p>
+    <div class="card">
+      <div class="controls">
+        <label>Neuronen N:</label>
+        <button data-n="3">3</button>
+        <button data-n="4" class="active">4</button>
+        <button data-n="6">6</button>
+        <button data-n="8">8</button>
+        <button id="btnRand" class="sec">&#127922; Randomize</button>
+        <button id="btnTheme" class="sec">&#9681; Theme</button>
+      </div>
+      <div class="controls">
+        <label>Filtration level t : <span id="tVal">&mdash;</span></label>
+        <input type="range" id="tSlider" min="0" max="100" value="40">
+        <button id="btnAnim" class="sec">&#9654; Animate</button>
+      </div>
+      <canvas id="topCanvas" width="800" height="340"></canvas>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--accent)"></span>y&#770;(x) glued network (A)</span>
+        <span><span class="swatch" style="background:var(--purple)"></span>local ReLU sections</span>
+        <span><span class="dot" style="background:var(--red)"></span>bend point x*&#8338;</span>
+        <span><span class="swatch" style="background:var(--orange)"></span>filtration level t</span>
+        <span><span class="dot" style="background:var(--green)"></span>sublevel set {y&#770;&le;t}</span>
+      </div>
+      <canvas id="barCanvas" width="800" height="300"></canvas>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--green)"></span>alive at t (persistent)</span>
+        <span><span class="swatch" style="background:var(--muted);opacity:.4"></span>not yet born / already dead</span>
+        <span>bars = (birth, death) in function-value space</span>
+      </div>
+      <p id="vizRead" class="insight"></p>
+    </div>
+  </section>
+
+  <section id="provenienz" class="prov">
+    <h2>Provenienz</h2>
+    <ul>
+      <li><a href="nn_as_sheaf_2.html">nn_as_sheaf_2.html</a> &mdash; reframes a one-hidden-layer ReLU network as a sheaf: local ReLU sections, the ReLU as restriction map, the output as the glued global section, and the optimizer as the cocycle/compatibility condition.</li>
+      <li><a href="persistent_topology.html">persistent_topology.html</a> &mdash; interactive persistent homology: the Rips filtration, H&#8320;/H&#8321; birth&ndash;death tracking, barcodes and persistence diagrams, and the Cohen&ndash;Steiner&ndash;Edelsbrunner&ndash;Harer bottleneck-distance stability theorem.</li>
+    </ul>
+  </section>
+
+</article>
+
+<script>
+window.addEventListener('load', function () {
+  function renderMath() {
+    if (!window.temml) return;
+    document.querySelectorAll('[data-tex]').forEach(function (el) {
+      var tex = el.getAttribute('data-tex');
+      var dm = el.getAttribute('data-display') === '1';
+      try { el.innerHTML = temml.renderToString(tex, { displayMode: dm }); }
+      catch (e) { el.innerHTML = '<code>' + tex + '</code>'; }
+    });
+  }
+
+  var topC = document.getElementById('topCanvas');
+  var barC = document.getElementById('barCanvas');
+  var tSlider = document.getElementById('tSlider');
+  var tVal = document.getElementById('tVal');
+  var readEl = document.getElementById('vizRead');
+  var btnAnim = document.getElementById('btnAnim');
+  var PALETTE = ['#58a6ff', '#f85149', '#3fb950', '#d29922', '#bc8cff', '#39d2c0', '#f778ba', '#ff7b72'];
+
+  var S = { N: 4, net: null, t: 0, tMin: 0, tMax: 1, tInit: false, bars: [], xs: [], ys: [], xMin: -3, xMax: 3, SAMP: 420, animId: null, animDir: 1, rt: null };
+
+  function var_(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function theme() {
+    return { card: var_('--card'), border: var_('--border'), text: var_('--text'), muted: var_('--muted'),
+      accent: var_('--accent'), green: var_('--green'), orange: var_('--orange'), red: var_('--red'), purple: var_('--purple') };
+  }
+  function hexA(hex, a) {
+    var h = (hex || '').trim().replace('#', '');
+    if (/^[0-9a-fA-F]{3}$/.test(h)) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    if (!/^[0-9a-fA-F]{6}$/.test(h)) return hex;
+    return 'rgba(' + parseInt(h.slice(0, 2), 16) + ',' + parseInt(h.slice(2, 4), 16) + ',' + parseInt(h.slice(4, 6), 16) + ',' + a + ')';
+  }
+
+  function createNet(n) {
+    var w1 = [], b1 = [], w2 = [], j;
+    for (j = 0; j < n; j++) {
+      w1.push((Math.random() - 0.5) * 4);
+      b1.push((Math.random() - 0.5) * 2.6);
+      w2.push((Math.random() - 0.5) * 2.4 / Math.sqrt(n));
+    }
+    return { w1: w1, b1: b1, w2: w2, beta: (Math.random() - 0.5) * 0.4, N: n };
+  }
+  function evalNet(net, x) {
+    var y = net.beta, j, z;
+    for (j = 0; j < net.N; j++) { z = net.w1[j] * x + net.b1[j]; if (z > 0) y += net.w2[j] * z; }
+    return y;
+  }
+
+  function sublevelPersistence(ys) {
+    var n = ys.length, cv = [], i;
+    for (i = 0; i < n; i++) { if (cv.length === 0 || Math.abs(ys[i] - cv[cv.length - 1]) > 1e-9) cv.push(ys[i]); }
+    var m = cv.length;
+    var E = [];
+    for (i = 0; i < m; i++) {
+      var type = null;
+      if (m === 1) type = 'min';
+      else if (i === 0) type = cv[0] <= cv[1] ? 'min' : 'max';
+      else if (i === m - 1) type = cv[m - 1] <= cv[m - 2] ? 'min' : 'max';
+      else if (cv[i] < cv[i - 1] && cv[i] < cv[i + 1]) type = 'min';
+      else if (cv[i] > cv[i - 1] && cv[i] > cv[i + 1]) type = 'max';
+      if (type) E.push({ i: i, type: type, val: cv[i] });
+    }
+    var mins = E.filter(function (e) { return e.type === 'min'; });
+    var M = mins.length;
+    if (M === 0) return [{ birth: Math.min.apply(null, ys), death: Infinity }];
+    var minIdxOf = {}; mins.forEach(function (e, mi) { minIdxOf[e.i] = mi; });
+    var parent = new Array(M), minBirth = new Array(M);
+    for (i = 0; i < M; i++) { parent[i] = i; minBirth[i] = mins[i].val; }
+    function find(a) { while (parent[a] !== a) { parent[a] = parent[parent[a]]; a = parent[a]; } return a; }
+    var eIndexOf = {}; E.forEach(function (e, k) { eIndexOf[e.i] = k; });
+    var maxes = E.filter(function (e) { return e.type === 'max'; }).sort(function (a, b) { return a.val - b.val; });
+    var bars = [], k, left, right, li, ri, rl, rr, surv, die, e;
+    for (i = 0; i < maxes.length; i++) {
+      e = maxes[i]; k = eIndexOf[e.i];
+      left = E[k - 1]; right = E[k + 1];
+      if (!left || !right || left.type !== 'min' || right.type !== 'min') continue;
+      li = minIdxOf[left.i]; ri = minIdxOf[right.i];
+      rl = find(li); rr = find(ri);
+      if (rl === rr) continue;
+      if (minBirth[rl] <= minBirth[rr]) { surv = rl; die = rr; } else { surv = rr; die = rl; }
+      bars.push({ birth: minBirth[die], death: e.val });
+      parent[die] = surv;
+    }
+    var g = 0;
+    for (i = 1; i < M; i++) if (minBirth[i] < minBirth[g]) g = i;
+    bars.push({ birth: minBirth[g], death: Infinity });
+    bars.sort(function (a, b) { return a.birth - b.birth; });
+    return bars;
+  }
+
+  function prep(canvas, lw, lh) {
+    var dpr = window.devicePixelRatio || 1;
+    var cssW = canvas.clientWidth || lw;
+    var cssH = cssW * lh / lw;
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, W: cssW, H: cssH };
+  }
+  function transform(W, H, xMin, xMax, yMin, yMax) {
+    var pad = { l: 42, r: 14, t: 20, b: 26 };
+    var pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+    return { X: function (x) { return pad.l + (x - xMin) / (xMax - xMin) * pw; },
+      Y: function (y) { return pad.t + ph - (y - yMin) / (yMax - yMin) * ph; },
+      xMin: xMin, xMax: xMax, yMin: yMin, yMax: yMax };
+  }
+  function niceStep(range) {
+    if (!(range > 0)) return 1;
+    var raw = range / 6, p = Math.pow(10, Math.floor(Math.log10(raw))), nn = raw / p;
+    return (nn < 1.5 ? 1 : nn < 3 ? 2 : nn < 7 ? 5 : 10) * p;
+  }
+  function plotFn(ctx, tr, fn, color, lw, dash) {
+    ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.setLineDash(dash || []);
+    ctx.beginPath();
+    for (var i = 0; i <= S.SAMP; i++) {
+      var x = tr.xMin + (tr.xMax - tr.xMin) * i / S.SAMP;
+      var y = Math.max(tr.yMin - 2, Math.min(tr.yMax + 2, fn(x)));
+      var px = tr.X(x), py = tr.Y(y);
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+  function fillRun(ctx, tr, a, b, t) {
+    ctx.beginPath();
+    ctx.moveTo(tr.X(S.xs[a]), tr.Y(S.ys[a]));
+    for (var i = a; i <= b; i++) ctx.lineTo(tr.X(S.xs[i]), tr.Y(S.ys[i]));
+    for (i = b; i >= a; i--) ctx.lineTo(tr.X(S.xs[i]), tr.Y(t));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function drawTop() {
+    var th = theme();
+    var p = prep(topC, 800, 340);
+    var ctx = p.ctx, W = p.W, H = p.H;
+    var yMin = Math.min.apply(null, S.ys), yMax = Math.max.apply(null, S.ys);
+    var yr = (yMax - yMin) || 1; yMin -= yr * 0.15; yMax += yr * 0.15;
+    var tr = transform(W, H, S.xMin, S.xMax, yMin, yMax);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = th.card; ctx.fillRect(0, 0, W, H);
+    ctx.font = '11px monospace';
+    var ystep = niceStep(yMax - yMin), v, xx, yy;
+    ctx.strokeStyle = th.border; ctx.lineWidth = 1; ctx.fillStyle = th.muted;
+    for (v = Math.ceil(yMin / ystep) * ystep; v <= yMax; v += ystep) {
+      yy = tr.Y(v); ctx.beginPath(); ctx.moveTo(tr.X(S.xMin), yy); ctx.lineTo(tr.X(S.xMax), yy); ctx.stroke();
+      ctx.fillText(v.toFixed(1), 4, yy + 3);
+    }
+    for (v = Math.ceil(S.xMin); v <= Math.floor(S.xMax); v++) {
+      xx = tr.X(v); ctx.beginPath(); ctx.moveTo(xx, tr.Y(yMin)); ctx.lineTo(xx, tr.Y(yMax)); ctx.stroke();
+      ctx.fillText(v.toFixed(0), xx - 3, H - 6);
+    }
+    ctx.strokeStyle = th.muted;
+    if (yMin <= 0 && yMax >= 0) { ctx.beginPath(); ctx.moveTo(tr.X(S.xMin), tr.Y(0)); ctx.lineTo(tr.X(S.xMax), tr.Y(0)); ctx.stroke(); }
+    if (S.xMin <= 0 && S.xMax >= 0) { ctx.beginPath(); ctx.moveTo(tr.X(0), tr.Y(yMin)); ctx.lineTo(tr.X(0), tr.Y(yMax)); ctx.stroke(); }
+    for (var j = 0; j < S.net.N; j++) {
+      (function (jj) {
+        var col = PALETTE[jj % PALETTE.length];
+        plotFn(ctx, tr, function (x) { return S.net.w2[jj] * Math.max(0, S.net.w1[jj] * x + S.net.b1[jj]); }, col, 1.3, [5, 4]);
+      })(j);
+    }
+    plotFn(ctx, tr, function (x) { return evalNet(S.net, x); }, th.accent, 2.6, []);
+    for (j = 0; j < S.net.N; j++) {
+      var w = S.net.w1[j], b = S.net.b1[j];
+      if (Math.abs(w) > 1e-9) { var bx = -b / w; if (bx > S.xMin && bx < S.xMax) { ctx.fillStyle = th.red; ctx.beginPath(); ctx.arc(tr.X(bx), tr.Y(evalNet(S.net, bx)), 4, 0, 7); ctx.fill(); } }
+    }
+    var t = S.t;
+    ctx.fillStyle = hexA(th.green, 0.18);
+    var inRun = false, runStart = 0;
+    for (var i = 0; i < S.SAMP; i++) {
+      var inside = S.ys[i] <= t;
+      if (inside && !inRun) { inRun = true; runStart = i; }
+      if (!inside && inRun) { inRun = false; fillRun(ctx, tr, runStart, i - 1, t); }
+    }
+    if (inRun) fillRun(ctx, tr, runStart, S.SAMP - 1, t);
+    ctx.strokeStyle = th.orange; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+    var ty = tr.Y(Math.min(Math.max(t, yMin), yMax));
+    ctx.beginPath(); ctx.moveTo(tr.X(S.xMin), ty); ctx.lineTo(tr.X(S.xMax), ty); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = th.orange; ctx.font = '11px monospace';
+    ctx.fillText('t=' + t.toFixed(2), tr.X(S.xMax) - 54, ty - 5);
+    ctx.fillStyle = th.muted; ctx.font = '12px monospace';
+    ctx.fillText('y-hat(x) = glued sum of ' + S.net.N + ' local ReLU sections  (A)', tr.X(S.xMin) + 4, 15);
+  }
+
+  function drawBar() {
+    var th = theme();
+    var p = prep(barC, 800, 300);
+    var ctx = p.ctx, W = p.W, H = p.H;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = th.card; ctx.fillRect(0, 0, W, H);
+    var tMin = S.tMin, tMax = S.tMax;
+    var pad = { l: 42, r: 16, t: 24, b: 28 };
+    var pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+    ctx.strokeStyle = th.border; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, H - pad.b); ctx.lineTo(W - pad.r, H - pad.b); ctx.stroke();
+    ctx.font = '11px monospace'; ctx.fillStyle = th.muted; ctx.textAlign = 'center';
+    var tstep = niceStep(tMax - tMin), v;
+    for (v = Math.ceil(tMin / tstep) * tstep; v <= tMax; v += tstep) {
+      var gx = pad.l + (v - tMin) / (tMax - tMin) * pw;
+      ctx.beginPath(); ctx.moveTo(gx, pad.t); ctx.lineTo(gx, H - pad.b); ctx.stroke();
+      ctx.fillText(v.toFixed(1), gx, H - pad.b + 15);
+    }
+    ctx.fillText('t  (function value)   --   each bar is (birth, death) of a component of {x: y-hat <= t}', W / 2, H - 6);
+    var bars = S.bars, nB = bars.length;
+    var bh = Math.min(16, ph / Math.max(nB, 1) - 2);
+    for (var idx = 0; idx < nB; idx++) {
+      var bar = bars[idx];
+      var y = pad.t + idx * (bh + 2);
+      var x1 = pad.l + (bar.birth - tMin) / (tMax - tMin) * pw;
+      var d = bar.death === Infinity ? tMax : bar.death;
+      var x2 = pad.l + (d - tMin) / (tMax - tMin) * pw;
+      var alive = bar.birth <= S.t && (bar.death > S.t || bar.death === Infinity);
+      ctx.fillStyle = alive ? th.green : hexA(th.muted, 0.35);
+      ctx.fillRect(x1, y, Math.max(x2 - x1, 2), bh);
+      if (bar.death === Infinity) { ctx.fillStyle = th.green; ctx.font = '11px sans-serif'; ctx.textAlign = 'left'; ctx.fillText('->inf', x2 + 2, y + bh - 1); }
+      ctx.fillStyle = th.muted; ctx.font = '10px monospace'; ctx.textAlign = 'right';
+      ctx.fillText('H0', pad.l - 4, y + bh - 1);
+    }
+    var tx = pad.l + (S.t - tMin) / (tMax - tMin) * pw;
+    ctx.strokeStyle = th.orange; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(tx, pad.t); ctx.lineTo(tx, H - pad.b); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = th.orange; ctx.textAlign = 'center'; ctx.font = '10px monospace';
+    ctx.fillText('t=' + S.t.toFixed(1), Math.min(Math.max(tx, pad.l + 26), W - pad.r - 26), pad.t - 8);
+    ctx.fillStyle = th.muted; ctx.font = '12px monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Persistence of y-hat: a minimum BIRTHS a component, a maximum KILLS the shallower one  (B applied to A)', pad.l, 14);
+  }
+
+  function updateRead() {
+    var alive = S.bars.filter(function (b) { return b.birth <= S.t && (b.death > S.t || b.death === Infinity); }).length;
+    readEl.innerHTML = 'At filtration level <strong>t = ' + S.t.toFixed(2) + '</strong>, the sublevel set {x : y&#770;(x) &le; t} has <strong>' + alive +
+      '</strong> connected component(s) out of ' + S.bars.length + ' tracked features. A component is <em>born</em> at a local minimum of y&#770; and <em>dies</em> (glued into a larger component) at a local maximum &mdash; the same born&ndash;persist&ndash;die lifecycle as a sheaf local section cut by its restriction map.';
+  }
+  function draw() { tVal.textContent = S.t.toFixed(2); drawTop(); drawBar(); updateRead(); }
+
+  function recompute() {
+    S.xs = []; S.ys = [];
+    for (var i = 0; i < S.SAMP; i++) { var x = S.xMin + (S.xMax - S.xMin) * i / (S.SAMP - 1); S.xs.push(x); S.ys.push(evalNet(S.net, x)); }
+    S.tMin = Math.min.apply(null, S.ys) - 0.3;
+    S.tMax = Math.max.apply(null, S.ys) + 0.3;
+    S.bars = sublevelPersistence(S.ys);
+    if (!S.tInit) { S.t = S.tMin + (S.tMax - S.tMin) * 0.5; S.tInit = true; }
+    else { S.t = Math.min(Math.max(S.t, S.tMin), S.tMax); }
+    tSlider.min = S.tMin; tSlider.max = S.tMax; tSlider.step = (S.tMax - S.tMin) / 400; tSlider.value = S.t;
+    draw();
+  }
+
+  function stopAnim() { if (S.animId) { clearInterval(S.animId); S.animId = null; } btnAnim.innerHTML = '&#9654; Animate'; }
+  btnAnim.onclick = function () {
+    if (S.animId) { stopAnim(); return; }
+    btnAnim.innerHTML = '&#9208; Pause';
+    S.animId = setInterval(function () {
+      S.t += (S.tMax - S.tMin) * 0.01 * S.animDir;
+      if (S.t >= S.tMax) { S.t = S.tMax; S.animDir = -1; }
+      if (S.t <= S.tMin) { S.t = S.tMin; S.animDir = 1; }
+      tSlider.value = S.t; draw();
+    }, 40);
+  };
+  tSlider.addEventListener('input', function () { if (S.animId) stopAnim(); S.t = parseFloat(tSlider.value); draw(); });
+  document.getElementById('btnRand').onclick = function () { S.net = createNet(S.N); recompute(); };
+  document.getElementById('btnTheme').onclick = function () { document.documentElement.classList.toggle('dark'); draw(); };
+  var nBtns = document.querySelectorAll('[data-n]');
+  nBtns.forEach(function (b) { b.onclick = function () { S.N = parseInt(b.getAttribute('data-n'), 10); nBtns.forEach(function (o) { o.classList.remove('active'); }); b.classList.add('active'); S.net = createNet(S.N); recompute(); }; });
+  window.addEventListener('resize', function () { clearTimeout(S.rt); S.rt = setTimeout(draw, 150); });
+
+  renderMath();
+  S.net = createNet(S.N);
+  recompute();
+});
+</script>
+</body>
+</html>

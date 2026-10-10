@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention als ein Schwerpunktfluss, zwei Blickwinkel</title>
+<script>
+try{
+  var s=localStorage.getItem('r1009-theme');
+  var light = s ? s==='light' : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
+  if(light) document.documentElement.classList.remove('dark');
+}catch(e){}
+</script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+:root{
+  --bg:#f5f3ec; --panel:#fbfaf6; --panel2:#efece2; --ink:#232830; --dim:#5b6472;
+  --acc:#a9700a; --cy:#0d7490; --rd:#c2410c; --ok:#15803d;
+  --chart-bg:#fbfaf6; --grid:#e6e2d6; --axis:#8a93a3; --label:#232830;
+  --edge:#15803d; --tri:#a9700a; --ghost:#8a93a3; --border:#dcd7c9;
+}
+html.dark{
+  --bg:#0b0d12; --panel:#12151d; --panel2:#0e1118; --ink:#e8ecf4; --dim:#8a93a6;
+  --acc:#ffd166; --cy:#5ad2ff; --rd:#ff6b8a; --ok:#4ade80;
+  --chart-bg:#0b0d12; --grid:#1a2130; --axis:#6d7ea8; --label:#e8ecf4;
+  --edge:#3fb950; --tri:#f0c040; --ghost:#6d7ea8; --border:#222a3a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);transition:background .3s}
+body{background:var(--bg);color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Times New Roman",serif;line-height:1.65;transition:background .3s,color .3s}
+.wrap{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+#themeBtn{position:fixed;top:14px;right:16px;z-index:5;background:var(--panel);color:var(--ink);
+  border:1px solid var(--border);border-radius:20px;padding:7px 14px;font:600 13px/1 system-ui,sans-serif;cursor:pointer}
+#themeBtn:hover{border-color:var(--acc)}
+h1{font-size:30px;line-height:1.15;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.subtitle{font:400 13px/1.5 system-ui,sans-serif;color:var(--dim);margin-bottom:26px;word-break:break-word}
+.subtitle code{background:var(--panel2);padding:1px 5px;border-radius:4px;font-size:12px}
+section{margin:0 0 34px}
+h2{font-size:20px;font-weight:700;color:var(--acc);margin:0 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);letter-spacing:-.01em}
+h3{font-size:15.5px;font-weight:700;margin:20px 0 8px;color:var(--ink)}
+p{margin:0 0 13px}
+strong{color:var(--ink)}
+em.k{color:var(--cy);font-style:normal;font-weight:600}
+em.a{color:var(--rd);font-style:normal;font-weight:600}
+ul{margin:6px 0 14px 20px}
+li{margin-bottom:9px}
+.b{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--cy);border-radius:8px;padding:12px 15px;margin:14px 0}
+.b.a{border-left-color:var(--rd)}
+.b.f{border-left-color:var(--acc)}
+.b p{margin-bottom:0}
+.mono{font-family:"SF Mono",ui-monospace,"Cascadia Code",Consolas,monospace;font-size:13.5px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;overflow-x:auto;margin:12px 0;color:var(--ink);line-height:1.7;white-space:pre}
+.tag{display:inline-block;font:600 11px/1 system-ui,sans-serif;letter-spacing:.03em;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;margin-right:6px;border:1px solid var(--border);color:var(--dim);background:var(--panel)}
+.tag.b{color:var(--cy);border-color:var(--cy)}
+.tag.a{color:var(--rd);border-color:var(--rd)}
+a{color:var(--acc);text-decoration:underline;text-underline-offset:2px}
+.controls{display:flex;flex-wrap:wrap;gap:18px 26px;margin:14px 0 8px}
+.ctrl{display:flex;flex-direction:column;gap:5px;min-width:200px;flex:1}
+.ctrl label{font:600 12px/1.3 system-ui,sans-serif;color:var(--dim)}
+.ctrl .row{display:flex;align-items:center;gap:9px}
+.ctrl input[type=range]{flex:1;accent-color:var(--acc);height:22px}
+.ctrl .val{font:700 12px/1 system-ui,sans-serif;color:var(--acc);min-width:34px;text-align:right}
+.state{font:600 13px/1.5 system-ui,sans-serif;color:var(--ink);background:var(--panel2);border:1px solid var(--border);
+  border-radius:8px;padding:9px 13px;margin:6px 0}
+.state b{color:var(--acc)}
+#plot{width:100%;height:520px;border:1px solid var(--border);border-radius:12px;background:var(--chart-bg)}
+.stats{font:500 13px/1.6 system-ui,sans-serif;color:var(--dim);margin-top:10px}
+.stats b{color:var(--ink)}
+.prov{list-style:none;margin:6px 0 0}
+.prov li{margin-bottom:12px;padding:12px 15px;background:var(--panel);border:1px solid var(--border);border-radius:8px}
+.prov .d{font:400 13px/1.5 system-ui,sans-serif;color:var(--dim);margin-top:5px}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--border);font:400 12px/1.5 system-ui,sans-serif;color:var(--dim)}
+@media(max-width:560px){.ctrl{min-width:150px}h1{font-size:25px}#plot{height:420px}}
+</style>
+</head>
+<body>
+<button id="themeBtn" type="button">☀ hell</button>
+<div class="wrap">
+  <h1>Attention als ein Schwerpunktfluss, zwei Blickwinkel</h1>
+  <p class="subtitle">Fusion aus: <code>simplicial_complex_attention7.html</code> ✕ <code>transformer_rein_geometrisch2.html</code></p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Texte zeichnen <strong>nicht zwei Modelle, sondern ein und dieselbe geometrische Operation</strong>,
+      nur aus verschiedenen Entfernungen. Die Operation ist: <em>ein Wort ist ein Punkt im
+      <span class="mono" style="display:inline;padding:0 4px">ℝ³</span>-Bedeutungsraum; messe, wohin der relevante Teil zeigt; wandle die Messung in Anteile um; und
+      lass den Punkt zum gewichteten Schwerpunkt der relevanten Punkte wandern.</em> Genau das ist
+      <span class="mono" style="display:inline;padding:0 4px">softmax(QKᵀ)V</span>, gelesen als Bewegung statt als Matrixprodukt.</p>
+    <p><em class="a">A</em> (Simplizialkomplex) sieht dabei die <strong>ganze Wortwolke zugleich</strong>: jeder
+      Punkt zieht an jedem anderen, und das, was überlebt, ist ein <strong>Simplizialkomplex</strong> — Kanten
+      für sich gegenseitig „interessant“ findende Wortpaare, Dreiecke für drei Wörter, die in einer Region
+      zusammengezogen wurden. Dieses Zusammenschieben ist für A die <em>komponierte Bedeutung</em>.</p>
+    <p><em class="b">B</em> (geometrisch) zoomt auf <strong>eins</strong> mehrdeutiges Suchwort — „Bank“ liegt exakt
+      halbwegs zwischen den beiden Bedeutungen <em>Sitzbank</em> und <em>Geldhaus</em>. Es fällt ein Lot auf einen
+      <strong>gelernten Suchstrahl</strong>, macht aus den Längen Softmax-Anteile und rutscht zum Schwerpunkt:
+      die Mehrdeutigkeit <strong>löst sich</strong> Richtung „Sitzbank“, weil der Kontext „kalt“ in diese Richtung zeigt.</p>
+    <p><strong>Integriert:</strong> Attention ist ein <em class="k">einziges</em> Schwerpunktfluss-Regelwerk.
+      <em class="a">A</em> ist seine <strong>globale/topologische</strong> Lesart (was passiert, wenn <em>alle</em> Punkte
+      fließen → ein Komplex). <em class="b">B</em> ist seine <strong>lokale/entcheidende</strong> Lesart (was passiert, wenn
+      <em>ein</em> mehrdeutiger Punkt fließt → eine Entscheidung). Umfang, Metrik und Tiefe sind <strong>Regler</strong>
+      an diesem einen Mechanismus — keine widersprüchlichen Modelle.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden sind nicht in sich inkonsistent, aber sie treffen an fünf Stellen aufeinander
+      <strong>unvereinbare Entscheidungen</strong> über dasselbe Phänomen:</p>
+    <ul>
+      <li><span class="tag">1 · wer sich bewegt</span>
+        <em class="a">A</em> lässt <strong>jeden</strong> Punkt wandern: „attention makes <em>each</em> point move toward
+        the points it finds relevant“ — die gesamte Wolke reorganisiert sich.
+        <em class="b">B</em> bewegt <strong>nur das Suchwort</strong> „Bank“ zum Schwerpunkt; „Die“ und „kalt“ bleiben
+        stehen (im Code wird nur <code>TOK[QI]</code> Richtung <code>CEN</code> gemischt).</li>
+      <li><span class="tag">2 · wozu</span>
+        <em class="a">A</em> erzeugt als Beleg einen <strong>Simplizialkomplex</strong> — der „Beweis“ der Bedeutung ist
+        topologisch (welche Punkte kumpeln zusammen).
+        <em class="b">B</em> erzeugt <strong>gar keinen</strong> Komplex; sein Beleg ist eine <strong>Entscheidung</strong>
+        für ein einzelnes Token („Bank → Sitzbank“).</li>
+      <li><span class="tag">3 · wie Relevanz gemessen wird</span>
+        <em class="a">A</em> rechnet <code>score = dot(x_i, x_j)</code> — eine <strong>symmetrische</strong> Ähnlichkeit der
+        <em>absoluten</em> Positionen („Q·K … a way to measure similarity“).
+        <em class="b">B</em> rechnet <code>score = dot(x_j − x_i, R)</code> — die <strong>gerichtete</strong> Projektion des
+        <em>Offsets vom Query</em> auf einen <strong>gelernten Strahl</strong> <code>R</code> (von „Bank“ Richtung „kalt“);
+        nur die Richtung des Suchworts zählt, also asymmetrisch und query-relativ.</li>
+      <li><span class="tag">4 · Reihenfolge</span>
+        <em class="b">B</em> kodiert die Position als <strong>feste Drehung pro Schritt</strong> (Helix, 72°):
+        „Position wird ein Winkel, keine Nummer“.
+        <em class="a">A</em> kennt die <strong>Wortreihenfolge gar nicht</strong> — der Satz ist eine Menge von Punkten.</li>
+      <li><span class="tag">5 · Tiefe &amp; FFN</span>
+        <em class="b">B</em> stapelt den Block <strong>sechsmal</strong> und macht das <strong>FFN zu einer eigenen
+        Raumverbiegung</strong> „aus x wird f(x)“ zwischen den Attention-Schritten.
+        <em class="a">A</em> macht <strong>einen</strong> Attention-Durchgang, <strong>ohne</strong> FFN, ohne Stapelung.</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Der Trick: Man liest <strong>denselben</strong> Schwerpunktfluss auf zwei Zoom-Stufen. Jede scheinbare
+      Widerspruchs-Stelle ist ein einziger Parameter:</p>
+    <ul>
+      <li><strong>1 · wer sich bewegt → <em>scope</em>.</strong>
+        Die Regel „wander zum gewichteten Schwerpunkt“ ist identisch; <em>wer</em> sie anwendet, ist ein Bereichs-Parameter.
+        <em class="b">B</em> = scope auf das Suchwort (lokal, entcheidend), <em class="a">A</em> = scope auf alle Punkte
+        (global, selbstorganisierend). <span class="b f"><p>Beide sind dasselbe Werkzeug in unterschiedlichem Zoom. Die Visualisierung
+        macht genau diesen Regler sichtbar: <b>Umfang</b> fährt von „nur Bank zieht“ nach „alle ziehen“.</p></span></li>
+      <li><strong>2 · wozu → zwei Lesarten eines Feldes.</strong>
+        Der Komplex ist kein anderer Output, sondern der <em>strukturelle Schatten</em> derselben Ziehkräfte, die das
+        Suchwort bewegen. Wo viele Punkte sich gegenseitig anziehen (Dreiecke), ist Bedeutung „komponiert“; wo einer
+        mehrdeutige Punkt zieht (Bank), ist sie „gelöst“. <span class="b f"><p>Ein Gewichts-Feld hat eine
+        topologische Auslese (A) <em>und</em> eine lokale Auslese auf einem Token (B).</p></span></li>
+      <li><strong>3 · Metrik → ein Skalarprodukt, zwei Lesarten.</strong>
+        <code>dot(x_i,x_j)</code> und <code>dot(x_j−x_i, R)</code> sind beide Innenprodukte. B’s Form ist A’s,
+        <em>gerichtet und eingeschränkt</em>: Das Query „lernt“ eine Richtung <code>R</code> (zum stärksten Hinweis „kalt“)
+        und bewertet nach Ausrichtung — genau das, was ein gelerntes <code>W_Q·W_K</code> tut, während A die Einsetzung
+        verwendet. <span class="b f"><p>Allgemeines <b>QKᵀ</b> liegt dazwischen: Identitäts-Projektion (A) ↔
+        Richtungs-Projektion (B). Die Visualisierung nutzt für das Suchwort B’s gerichtetes Innenprodukt, für die
+        anderen A’s symmetrisches.</p></span></li>
+      <li><strong>4 · Reihenfolge → Positionscode als Drehung.</strong>
+        B’s Helix sagt der <em>Relevanzfunktion</em> nur, wo Punkte in der Reihenfolge sitzen — „eine Drehung, keine
+        Zahl“. A lässt das weg (Bag-of-Points). <span class="b f"><p>Fügt man A’s Feld den rotationsbasierten
+        Positionssignal hinzu, wird A’s „alle Punkte“-Fluss reihenfolge-empfindlich — ohne die Schwerpunktregel zu
+        ändern.</p></span></li>
+      <li><strong>5 · Tiefe/FFN → Fluss ∘ Verbiegung, iteriert.</strong>
+        Ein Schwerpunktfluss-Schritt (beide) + ein FFN, das den <em>Raum verbiegt</em> (B’s <code>x → f(x)</code>)
+        dazwischen. Sechsmal gestapelt beschreibt jeder Punkt eine Bahn. <span class="b f"><p>A zeigt den
+        Einzel-Schritt, B die Iteration. Der Block ist <b>(Schwerpunktfluss) ∘ (Raumverbiegung)</b>; die Bahn ist
+        wiederholte Anwendung.</p></span></li>
+    </ul>
+    <p><strong>Integrierte Schlussfolgerung:</strong> <em>Attention = relevanzgewichteter
+      Schwerpunktfluss im Bedeutungsraum.</em> Der Simplizialkomplex ist, was dieser Fluss mit der
+      <strong>ganzen Wolke</strong> macht; die Ent-Deutlichmachung ist, was er mit <strong>einem mehrdeutigen Punkt</strong>
+      macht. Metrik, Umfang und Tiefe sind Dial-Einstellungen am selben Reglerwerk.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Der eine Satz (die vereinte Regel)</h3>
+    <p>Worte werden zu Punkten <span class="mono" style="display:inline;padding:0 4px">x_i ∈ ℝ³</span>. Ein
+      Attention-Schritt ist:</p>
+    <div class="mono">1) Relevanz   r(i,j) = Metrik(x_i, x_j)
+2) Anteile    α_ij  = exp((r(i,j) − max_k r(i,k)) / τ) / Σ_k exp((r(i,k) − max) / τ)
+3) Bewegung   x_i  ←  x_i + s_i · ( Σ_j α_ij · x_j  −  x_i )</div>
+    <p>mit drei <strong>Reglern</strong>: <strong>scope</strong> <code>s_i</code> (Suchwort: 1, sonst: 0…1),
+      <strong>Metrik</strong> (symmetrisch vs. gerichtet) und <strong>Tiefe</strong> (ein Durchgang vs. gestapelt
+      mit FFN-Verbiegung). <em class="a">A</em> setzt <code>s_i = 1</code> für alle, Metrik =
+      <code>dot(x_i,x_j)</code>, Tiefe = 1. <em class="b">B</em> setzt <code>s_i = 1</code> nur für das Query,
+      Metrik = <code>dot(x_j − x_i, R_i)</code>, Tiefe = 6 mit <code>∘ f</code>.</p>
+
+    <h3>Metrik: ein Innenprodukt, zwei Lesarten</h3>
+    <div class="mono">A (symmetrisch, identische W):   r = ⟨x_i, x_j⟩
+B (gerichtet, gelernte Richtung):   r = ⟨x_j − x_i, R_i⟩,   R_i = normalize(x_cue − x_i)</div>
+    <p>B’s <code>R_i</code> ist das, was in einem echten Modell ein gelerntes <code>W_Q·W_K</code> wäre: das Query
+      „schaut“ in Richtung seines stärksten Kontext-Hinweises (hier „kalt“ → zur physischen Seite) und bewertet
+      Nachbarn nach ihrer Ausrichtung. A’s <code>dot(x_i,x_j)</code> ist dieselbe Rechnung mit Einsetzungs-Projektionen —
+      undicht, aber ungerichtet. <strong>Dazwischen liegt allgemeines <code>QKᵀ</code>.</strong></p>
+
+    <h3>Der Simplizialkomplex (A): Bedeutung als Topologie</h3>
+    <div class="mono">Kante   (i,j)  falls  min(α_ij, α_ji) &gt; ε
+Dreieck (i,j,k)  falls  alle drei paarweise min(&gt; ε)</div>
+    <p>„Eine Kante heißt: die zwei fanden sich gegenseitig interessant. Ein Dreieck heißt: drei fanden sich
+      gegenseitig interessant — sie bildeten eine enge Gruppe.“ A liest genau dieses Muster als
+      <em>komponierte Bedeutung</em>: drei Wörter in einer Region = ein zusammengesetztes Konzept. Die Kanten/
+      Dreiecke sind also keine separate Konstruktion, sondern die <strong>topologische Auslese</strong> des
+      selben Gewichts-Feldes, das auch das Suchwort bewegt.</p>
+
+    <h3>Die Ent-Deutlichmachung (B): ein Token, eine Entscheidung</h3>
+    <p>„Bank“ startet exakt im <strong>Mittelpunkt</strong> der beiden Bedeutungs-Geister
+      <em>Sitzbank</em> (physisch) und <em>Geldhaus</em> (abstrakt) — „noch unentschieden“. Der Kontextwort „kalt“
+      liegt nahe <em>Sitzbank</em>. Der Suchstrahl <code>R</code> zeigt von „Bank“ Richtung „kalt“, die Projektionen
+      <code>⟨x_j − x_Bank, R⟩</code> favorisieren daher die physische Seite, und der Schwerpunkt
+      <span class="mono" style="display:inline;padding:0 4px">Σ α_j x_j</span> („wie eine Wippe“, Konvexkombination)
+      zieht „Bank“ vom Mittelpunkt weg — Richtung Sitzbank. Das ist die <strong>lokale Auslese</strong> desselben
+      Feldes: statt Struktur entsteht eine <em>Entscheidung</em>.</p>
+
+    <h3>Positionscode (B): Drehung statt Zahl</h3>
+    <p>„Ein Schritt weiter = immer die gleiche Drehung.“ B kodiert die Sequenzposition als Rotation um eine feste
+      Winkelstufe (Helix, 72°): die <em>Position wird ein Winkel, keine Nummer</em>. Das ist rotationsbasierter
+      Positional-Encoding (rope-artig), und zwar als <strong>Eingabe an die Relevanzfunktion</strong> — nicht als
+      separate Schicht. A hat diese Dimension nicht (Menge von Punkten); die Fusion ergänzt sie als optionale
+      Winkel-Eingabe an die Metrik, ohne die Schwerpunktregel anzufassen.</p>
+
+    <h3>FFN als Raumverbiegung &amp; Stapelung (B)</h3>
+    <p>Das zweite Teilstück jeder Schicht verbiegt den ganzen Raum: <code>x → f(x)</code> (in B als gekrümmtes
+      Gitter gezeigt). Ein Block ist also <span class="mono" style="display:inline;padding:0 4px">(Schwerpunktfluss)
+      ∘ (Raumverbiegung)</span>. Sechsmal hintereinander <span class="mono" style="display:inline;padding:0 4px">∘</span>
+      beschreibt jedes Wort eine <strong>Bahn</strong> durch die Schichten. A zeigt nur den Einzel-Schritt — die
+      Fusion sieht A als den ersten Schritt dieser Bahn und B als die fortgesetzte Iteration.</p>
+
+    <h3>Wie es zusammenfällt</h3>
+    <p>Ein Gewichts-Feld <code>α_ij</code> wird auf drei Arten ausgelesen: (1) auf <strong>alle</strong> Punkte ⇒
+      der Komplex (A); (2) auf <strong>ein mehrdeutiges</strong> Token ⇒ die Entscheidung (B); (3) mit
+      <strong>Drehungs-Eingabe</strong> ⇒ reihenfolge-empfindlich; und (4) <strong>gestapelt ∘ f</strong> ⇒
+      Tiefe/Bahn. <strong>Ein Mechanismus, zwei (vielleicht vier) Resolutionsstufen</strong> — das ist die
+      gesamte Fusion in einem Satz.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung</h2>
+    <p>Ein <strong>Bedeutungsfeld</strong> um „Die Bank war kalt.“: zehn Punkte, zwei davon die
+      <em>Bedeutungs-Geister</em> <span style="color:var(--cy)">Sitzbank</span> und
+      <span style="color:var(--rd)">Geldhaus</span>, um die herum <em class="b">Bank</em>
+      (gelb) exakt in der Mitte schwebt. Jeder Punkt achtet auf die anderen: das Suchwort nach <em class="b">B’s</em>
+      gerichtetem Innenprodukt (Strahl Richtung „kalt“), die anderen nach <em class="a">A’s</em> symmetrischem.
+      Der Regler <strong>Umfang</strong> morphed die Szene von <b>„nur Bank zieht“</b> (B — Ent-Deutlichmachung,
+      die Komplex-Lesart schweigt) über ein gemischtes Regime bis zu <b>„alle ziehen“</b> (A — die Wolke
+      ballt sich in Kanten und Dreiecke, der Simplizialkomplex). <strong>Temperatur τ</strong> schärft/weicht die
+      Anteile; <strong>ε</strong> legt die Kanten-Schwelle des Komplexes. Grüne Linien = Kanten, goldene
+      Flächen = Dreiecke; gestrichelte Linien zeigen, wie weit jeder Punkt vom Ursprung weggewandert ist.
+      Ziehen Sie die Ansicht mit der Maus.</p>
+    <div class="controls">
+      <div class="ctrl"><label>Umfang — nur Suchwort (B) ↔ alle Punkte (A)</label>
+        <div class="row"><input id="scope" type="range" min="0" max="1" step="0.01" value="0.5"><span class="val" id="scopeV">0.50</span></div></div>
+      <div class="ctrl"><label>Temperatur τ (klein = scharf)</label>
+        <div class="row"><input id="temp" type="range" min="0.4" max="3" step="0.05" value="1.2"><span class="val" id="tempV">1.20</span></div></div>
+      <div class="ctrl"><label>Kanten-Schwelle ε</label>
+        <div class="row"><input id="eps" type="range" min="0.02" max="0.4" step="0.01" value="0.10"><span class="val" id="epsV">0.10</span></div></div>
+    </div>
+    <div class="state" id="scopeState"></div>
+    <div id="plot"></div>
+    <div class="stats">Kanten <b id="nE">0</b> · Dreiecke <b id="nT">0</b> · <span id="bank"></span></div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../simplicial_complex_attention7.html">simplicial_complex_attention7.html</a>
+        <div class="d"><em class="a">A</em> „Attention = Points That Pull Each Other Closer“ (en) —
+        jeder Punkt wandert zum gewichteten Schwerpunkt der relevanten Punkte; der daraus entstehende
+        Simplizialkomplex (Kanten/Dreiecke) wird als komponierte Bedeutung gelesen. Plotly-3D mit
+        Scharfheits- und ε-Reglern.</div></li>
+      <li><a href="../transformer_rein_geometrisch2.html">transformer_rein_geometrisch2.html</a>
+        <div class="d"><em class="b">B</em> „Transformer — geometrisch“ (de) — ein Block als reine Geometrie:
+        Position als Drehung (Helix), Attention als Projektion auf einen Suchstrahl + Softmax,
+        Bewegung zum Schwerpunkt, FFN als Raumverbiegung, sechsmal gestapelt; ent-deutlich macht „Bank“ in
+        „Die Bank war kalt.“ Custom-Canvas-3D mit sieben vorgegebenen Schlüsselszenen.</div></li>
+    </ul>
+  </section>
+
+  <div class="foot">Fusion r1-009 · aus <code>simplicial_complex_attention7.html</code> und
+    <code>transformer_rein_geometrisch2.html</code> · alle Daten inline, keine externen Abrufe.</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var DATA=[
+  {n:"Sitzbank", p:[-0.95,0.50,0.30], k:"ghost", lab:"Sitzbank (Bedeutung)"},
+  {n:"Stuhl",    p:[-0.80,0.30,0.20], k:"phys"},
+  {n:"kalt",     p:[-0.55,0.75,0.55], k:"phys"},
+  {n:"kühl",     p:[-0.62,0.50,0.30], k:"phys"},
+  {n:"Geldhaus", p:[0.95,-0.65,0.30], k:"ghost", lab:"Geldhaus (Bedeutung)"},
+  {n:"Konto",    p:[0.80,-0.50,0.40], k:"money"},
+  {n:"Münze",    p:[0.72,-0.30,0.22], k:"money"},
+  {n:"Bank",     p:[0.00,-0.07,0.33], k:"query"},
+  {n:"Die",      p:[-0.12,0.10,0.06], k:"fn"},
+  {n:"war",      p:[0.12,-0.05,0.08], k:"fn"}
+];
+var QI=7, CUE=2;
+
+function el(id){return document.getElementById(id);}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+function sub(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]];}
+function norm(a){var l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l];}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+function compute(){
+  var scope=+el('scope').value, temp=+el('temp').value, eps=+el('eps').value;
+  var P=DATA.map(function(d){return d.p;}), n=P.length;
+  var ray=norm(sub(P[CUE],P[QI]));
+  var S=[],i,j;
+  for(i=0;i<n;i++){S[i]=[];for(j=0;j<n;j++){
+    if(i===QI) S[i][j]=dot(sub(P[j],P[QI]),ray);
+    else S[i][j]=dot(P[i],P[j]);
+  }}
+  var W=S.map(function(row){
+    var mx=Math.max.apply(null,row);
+    var ex=row.map(function(v){return Math.exp((v-mx)/temp);});
+    var Z=ex.reduce(function(a,b){return a+b;},0);
+    return ex.map(function(v){return v/Z;});
+  });
+  var target=P.map(function(_,i){
+    var t=[0,0,0];
+    for(var j=0;j<n;j++){t[0]+=W[i][j]*P[j][0];t[1]+=W[i][j]*P[j][1];t[2]+=W[i][j]*P[j][2];}
+    return t;
+  });
+  var fin=P.map(function(p,i){
+    var s=(i===QI)?1:scope;
+    return [p[0]+s*(target[i][0]-p[0]), p[1]+s*(target[i][1]-p[1]), p[2]+s*(target[i][2]-p[2])];
+  });
+  var edges=[];
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++){var w=Math.min(W[i][j],W[j][i]);if(w>eps)edges.push([i,j,w]);}
+  var tris=[];
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++)for(var k=j+1;k<n;k++){
+    var ij=Math.min(W[i][j],W[j][i]),jk=Math.min(W[j][k],W[k][j]),ik=Math.min(W[i][k],W[k][i]);
+    if(ij>eps&&jk>eps&&ik>eps)tris.push([i,j,k,Math.min(ij,jk,ik)]);
+  }
+  return {P:P,fin:fin,edges:edges,tris:tris,W:W};
+}
+
+function render(){
+  if(!window.Plotly){el('plot').innerHTML='<p style="padding:20px;font-family:system-ui">Plotly wird geladen …</p>';return;}
+  var r=compute(), P=r.P, fin=r.fin, edges=r.edges, tris=r.tris, n=P.length;
+  var tr=[], i;
+  var cTri=cssVar('--tri'), cEdge=cssVar('--edge'), cGhost=cssVar('--ghost'),
+      cLabel=cssVar('--label'), cChart=cssVar('--chart-bg'), cGrid=cssVar('--grid'), cAxis=cssVar('--axis');
+  var kindCol={query:cssVar('--acc'),phys:cssVar('--cy'),money:cssVar('--rd'),fn:cssVar('--dim'),ghost:cGhost};
+
+  for(i=0;i<tris.length;i++){var t=tris[i];
+    tr.push({type:'mesh3d',
+      x:[fin[t[0]][0],fin[t[1]][0],fin[t[2]][0]],
+      y:[fin[t[0]][1],fin[t[1]][1],fin[t[2]][1]],
+      z:[fin[t[0]][2],fin[t[1]][2],fin[t[2]][2]],
+      i:[0],j:[1],k:[2],color:cTri,opacity:0.14+t[3]*0.28,flatshading:true,
+      hovertemplate:'△ '+DATA[t[0]].n+' · '+DATA[t[1]].n+' · '+DATA[t[2]].n+'<extra></extra>',
+      showlegend:false});}
+  for(i=0;i<edges.length;i++){var e=edges[i];
+    tr.push({type:'scatter3d',mode:'lines',
+      x:[fin[e[0]][0],fin[e[1]][0]],y:[fin[e[0]][1],fin[e[1]][1]],z:[fin[e[0]][2],fin[e[1]][2]],
+      line:{color:cEdge,width:Math.max(1.5,e[2]*10),opacity:Math.min(0.9,0.3+e[2])},
+      showlegend:false,hoverinfo:'skip'});}
+  for(i=0;i<n;i++){var ddx=fin[i][0]-P[i][0],ddy=fin[i][1]-P[i][1],ddz=fin[i][2]-P[i][2];
+    if(Math.hypot(ddx,ddy,ddz)>0.02){
+      tr.push({type:'scatter3d',mode:'lines',
+        x:[P[i][0],fin[i][0]],y:[P[i][1],fin[i][1]],z:[P[i][2],fin[i][2]],
+        line:{color:cGhost,width:1,dash:'dot',opacity:0.5},showlegend:false,hoverinfo:'skip'});}}
+  tr.push({type:'scatter3d',mode:'markers',
+    x:P.map(function(p){return p[0];}),y:P.map(function(p){return p[1];}),z:P.map(function(p){return p[2];}),
+    marker:{size:3.5,color:cGhost,opacity:0.32,line:{width:0}},showlegend:false,hoverinfo:'skip'});
+  tr.push({type:'scatter3d',mode:'markers+text',
+    x:fin.map(function(p){return p[0];}),y:fin.map(function(p){return p[1];}),z:fin.map(function(p){return p[2];}),
+    text:DATA.map(function(d){return d.lab||d.n;}),
+    textposition:'top center',textfont:{size:11,color:cLabel},
+    marker:{size:DATA.map(function(d){return d.k==='query'?10:7;}),
+            color:DATA.map(function(d){return kindCol[d.k];}),
+            line:{width:1,color:cChart}},
+    name:'Bedeutungsfeld',
+    hovertemplate:'%{text}<extra></extra>'});
+
+  Plotly.react('plot',tr,{
+    scene:{
+      xaxis:{title:{text:'körperlich ↔ abstrakt',font:{size:11,color:cAxis}},gridcolor:cGrid,zerolinecolor:cAxis,color:cAxis,tickfont:{size:9,color:cAxis},range:[-1.4,1.4]},
+      yaxis:{title:{text:'physisch ↑',font:{size:11,color:cAxis}},gridcolor:cGrid,zerolinecolor:cAxis,color:cAxis,tickfont:{size:9,color:cAxis},range:[-1.4,1.4]},
+      zaxis:{title:{text:'Salienz',font:{size:11,color:cAxis}},gridcolor:cGrid,zerolinecolor:cAxis,color:cAxis,tickfont:{size:9,color:cAxis},range:[0,1.1]},
+      bgcolor:cChart,camera:{eye:{x:1.6,y:1.3,z:0.7}}
+    },
+    paper_bgcolor:cChart,margin:{l:0,r:0,t:10,b:0},showlegend:false,
+    font:{color:cLabel,family:'system-ui,sans-serif'}
+  },{responsive:true,displayModeBar:false});
+
+  var qd=Math.hypot(fin[QI][0]-P[QI][0],fin[QI][1]-P[QI][1],fin[QI][2]-P[QI][2]);
+  var dSitz=Math.hypot(fin[QI][0]-DATA[0].p[0],fin[QI][1]-DATA[0].p[1],fin[QI][2]-DATA[0].p[2]);
+  var dGeld=Math.hypot(fin[QI][0]-DATA[4].p[0],fin[QI][1]-DATA[4].p[1],fin[QI][2]-DATA[4].p[2]);
+  var dir = dSitz<dGeld ? 'Sitzbank' : (dGeld<dSitz ? 'Geldhaus' : 'unentschieden');
+  el('nE').textContent=edges.length;
+  el('nT').textContent=tris.length;
+  el('bank').textContent='Bank wandert '+qd.toFixed(2)+' → Richtung '+dir;
+  var sc=+el('scope').value;
+  el('scopeState').innerHTML = sc<0.05
+      ? '<b>nur das Suchwort zieht</b> — B-Lesart: eine Entscheidung (Ent-Deutlichmachung), der Komplex schweigt'
+      : (sc>0.95
+          ? '<b>alle Punkte ziehen</b> — A-Lesart: die Wolke ballt sich zum Simplizialkomplex'
+          : '<b>gemischt</b> — Suchwort voll, Kontext teilweise: beide Lesarten gleichzeitig');
+  el('themeBtn').textContent = document.documentElement.classList.contains('dark') ? '☀ hell' : '☾ dunkel';
+}
+
+function setTheme(dark){
+  document.documentElement.classList.toggle('dark',dark);
+  try{localStorage.setItem('r1009-theme',dark?'dark':'light');}catch(e){}
+  render();
+}
+
+window.addEventListener('DOMContentLoaded',function(){
+  el('themeBtn').addEventListener('click',function(){setTheme(!document.documentElement.classList.contains('dark'));});
+  el('scope').addEventListener('input',function(){el('scopeV').textContent=(+this.value).toFixed(2);render();});
+  el('temp').addEventListener('input',function(){el('tempV').textContent=(+this.value).toFixed(2);render();});
+  el('eps').addEventListener('input',function(){el('epsV').textContent=(+this.value).toFixed(2);render();});
+  render();
+});
+})();
+</script>
+</body>
+</html>

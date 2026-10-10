@@ -1,0 +1,18 @@
+{
+  "no": "009",
+  "a": "simplicial_complex_attention7.html",
+  "b": "transformer_rein_geometrisch2.html",
+  "a_title": "Attention = Points That Pull Each Other Closer",
+  "b_title": "Transformer — geometrisch",
+  "combined_theme": "attention-centroid-flow",
+  "one_line": "Attention ist ein einziger, relevanzgewichteter Schwerpunktfluss im Bedeutungsraum; alle Punkte zugleich ergeben den Simplizialkomplex (A), ein einziges mehrdeutiges Suchwort ergibt die Ent-Deutlichmachung (B) — Umfang, Metrik und Tiefe sind nur Regler am selben Mechanismus.",
+  "contradictions": [
+    "Umfang: A lässt jeden Punkt zum relevanten Schwerpunkt wandern (globale Selbstorganisation der ganzen Wolke); B bewegt nur das Suchwort 'Bank' zum Schwerpunkt, während die Kontextwörter fix bleiben (lokale Ent-Deutlichmachung).",
+    "Zweck/Beleg: A erzeugt als Beleg einen Simplizialkomplex (Kanten/Dreiecke = komponierte Bedeutung, topologisch); B erzeugt gar keinen Komplex, sondern die Entscheidung 'Bank -> Sitzbank' für ein einzelnes Token.",
+    "Metrik: A = symmetrische Ähnlichkeit dot(x_i, x_j) der absoluten Positionen; B = gerichtete Projektion des Offsets dot(x_j - x_i, R) auf einen gelernten Suchstrahl (nur die Richtung des Queries zählt, asymmetrisch).",
+    "Reihenfolge: B kodiert Position als feste Drehung pro Schritt (Helix 72°, 'Position wird ein Winkel, keine Nummer'); A kennt Wortreihenfolge gar nicht (Menge von Punkten).",
+    "Tiefe & FFN: B stapelt den Block sechsmal und macht das FFN zu einer eigenen Raumverbiegung x -> f(x); A macht einen einzelnen Attention-Durchgang ohne FFN und ohne Stapelung."
+  ],
+  "resolution": "Derselbe Schwerpunktfluss wird auf zwei Zoom-Stufen gelesen: 'wer sich bewegt' (scope: alle Punkte vs. nur Suchwort), 'wie Relevanz gemessen wird' (identische W -> symmetrisches Innenprodukt vs. gelernter Richtungsvektor -> gerichtetes Innenprodukt) und 'wie oft' (ein Durchgang vs. gestapelt, mit FFN-Raumverbiegung dazwischen) sind Parameter, keine unterschiedlichen Modelle. Der Simplizialkomplex ist die globale/topologische Auslese desselben Gewichts-Feldes, die Ent-Deutlichmachung die lokale Auslese auf einem mehrdeutigen Token; der Positionscode wird als Drehung an die Relevanzfunktion gegeben, das FFN als Verbiegung des Raums zwischen Flüssen.",
+  "viz": "Plotly-3D-Bedeutungsfeld um 'Die Bank war kalt.' (10 Punkte, inkl. der Bedeutungs-Geister Sitzbank/Geldhaus, um die 'Bank' in der Mitte schwebt). Ein 'Umfang'-Regler morphed von 'nur Bank zieht' (B, Ent-Deutlichmachung) zu 'alle ziehen' (A, Simplizialkomplex mit Kanten/Dreiecken); das Suchwort nutzt B's gerichtetes Strahl-Innenprodukt Richtung 'kalt', die anderen A's symmetrisches; plus Temperatur-tau- und Kanten-Schwelle-eps-Regler; theme-aware, inline-Daten."
+}

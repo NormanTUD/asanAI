@@ -1,0 +1,16 @@
+{
+  "no": "005",
+  "a": "kohonen.html",
+  "b": "fibrebundle5.html",
+  "a_title": "Self-Organizing Map (SOM) · Kohonen",
+  "b_title": "Topological Manifold Lab v9 — Topological Sculptor",
+  "combined_theme": "self-organizing-fiber-bundle",
+  "one_line": "Beide sind 2-D-Mannigfaltigkeiten/Gitter, die einen gaußförmigen Lokalitätskern für lokale, topologie­bewußte Verformung nutzen: die SOM lernt topologietreu und konvergent aus den Daten (die Faser), das Manifold-Lab wird kaskadierend verformt und global verdreht (das Bündel) — fusioniert zu einem selbstorganisierenden, lokal topologietreuen, global torsierbaren Faserbündel über einer Datenbasis.",
+  "contradictions": [
+    "Entstehung der Geometrie: Kohonen = emergent, unsupervised, konkurrentiell, datengesteuert (ohne Labels/Absicht) vs. Fibrebundle = top-down, autoral, explizit vom Benutzer verformt (L/R/Shift-Klick); Bedeutung imponiert statt entdeckt.",
+    "Topologie: Kohonen behält die Daten­topologie als Kerninvariante (topologietreue, näherungsweise homöomorphe Karte) vs. Fibrebundle verändert sie explizit (Vortex/Torus-Twist erzeugt nichttriviale Topologie).",
+    "Prozeß: Kohonen konvergiert endgültig (annealing, Training endet bei T=9000, Fortschrittsbalken) vs. Fibrebundle ist ein offenes, nicht-konvergierendes, permanent interaktives Skulptur-Feld ohne Zielzustand."
+  ],
+  "resolution": "Ein Faserbündel ist lokal trivial (jede Faser ≅ Basis, also lokal topologietreu — das liefert die SOM) aber global torsierbar (nichttriviale Verklebung/Twist — das liefert das Lab). Auflösung: Faser lernt & konvergiert (datengesteuert, topologietreu), Bündel wird gesteuert & kaskadiert (torsierbar); ein Gauß-Kern dient zugleich als SOM-Nachbarschaft und als Deformationseinfluß. Grob→fein-Annailing vereint kaskadierende globale Torsion (früh) mit lokaler feiner Abdeckung (spät) → konvergentes, global torsierbares Bündel.",
+  "viz": "Canvas-2D, ohne Netzwerk: ein Stapel von 5 self-organizing SOM-Fasern (9×9-Gitter, Gauß-Nachbarschaft, BMU-Update, annealing, topologietreu, konvergent) über einer gemeinsamen 2-D-Datenbasis (Ring/Cluster/Spirale/Kreuz/Fläche). Der Twist-Slider verdreht die Fasern kaskadierend = globale Bündel-Torsion; Klick injiziert einen Datenpunkt (bottom-up, datengesteuert). Theme-aware über CSS-Variablen (:root/html.dark) + Dark-Toggle + MutationObserver; alle Farben aus Tokens, kein #ffffff."
+}

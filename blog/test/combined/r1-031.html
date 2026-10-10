@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funktionstiefe trifft lokaler Speicher — Fusion 031</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#a97910; --panel:rgba(255,253,248,.95); --r:16px;
+  --viz-bg:#fbfaf5; --viz-grid:#e7e0d0; --viz-ink:#262a33; --viz-mut:#5b6273;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4b73a; --panel:rgba(20,27,36,.92);
+  --viz-bg:#0d1219; --viz-grid:#232c38; --viz-ink:#e8ecf1; --viz-mut:#9aa6b6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:66px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:16px;color:var(--muted);max-width:66ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:26px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin-left:6px;vertical-align:middle}
+.tag.b{background:var(--accent2-soft);color:var(--accent2)}
+.eq{font-family:var(--mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto;line-height:1.95}
+.eq .c{color:var(--muted)}
+.eq sup,.eq sub{font-size:.7em}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7}
+canvas#fcanvas{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--line);background:var(--viz-bg)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px;flex-wrap:wrap}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+.chkrow{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:2px}
+.chkrow label{display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.chkrow input{accent-color:var(--accent)}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:120px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent)}
+.ro .box.rose{background:var(--accent2-soft)}
+.ro .box.rose .v{color:var(--accent2)}
+.ro .box.amber{background:var(--amber-soft)}
+.ro .box.amber .v{color:var(--amber)}
+.viz-note{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.6}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;display:block;margin-bottom:5px}
+.prov .item a{word-break:break-all}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">☀︎ / ☾</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion · Runde 1 · Paar 031 · KI/Neuronale Netze</div>
+  <h1><em>Funktionstiefe</em> trifft <em>lokalen Speicher</em>: ein MLP, gelesen von zwei Seiten</h1>
+  <p class="sub">Zwei Erklärungen desselben Bausteins, gelesen auf zwei Ebenen. <b>Paper A</b> erklärt, <i>wie</i> ein Netz aus ReLU-„Knick“-Funktionen beliebige Funktionen berechnet und approximiert — stückweise linear, und mit der Tiefe wächst die Anzahl linearer Regionen <i>exponentiell</i> (O(k^L)). <b>Paper B</b> (ROME) erklärt, <i>wo</i> ein konkretes Stück Wissen (ein Fakt) gespeichert ist und wie man es umschreibt — in den mittleren MLP-Schichten am Subjekt-Token, als <i>linearer assoziativer Speicher</i>, editierbar durch eine <i>einzelne Rang-1-Änderung</i> an einer Gewichtsmatrix.</p>
+  <p class="fuse-line">Fusion aus: <b>how_ai_approximates.html</b> ✕ <b>rome.html</b></p>
+</header>
+
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p>Beide Papiere beschreiben — von entgegengesetzten Richtungen her — <b>dasselbe Objekt: das Transformer-MLP</b>. A liest es als <i>Rechenmaschine</i>: Der atomare Baustein ist der ReLU-Knick <code>a = max(0, w·x + b)</code>; eine Schicht mischt mehrere Knicks zu Bumps und Stufen, und weil jede Schicht nicht den Input, sondern <i>die bereits geknickte Funktion</i> der Vorgänger knickt („Faltung der Faltung“), wächst die Zahl linearer Regionen mit der Tiefe <i>exponentiell</i> — darum ist Tiefe effizienter als Breite. B liest denselben Baustein als <i>Speicher</i>: Causal Tracing lokalisiert ein konkretes Faktum in genau einer mittleren MLP-Schicht am letzten Subjekt-Token, und die Rückseite dieses MLPs (W<sub>proj</sub>) verhält sich wie ein <b>linearer assoziativer Speicher</b> (W·k ≈ v) — und genau diese Linearität erlaubt, einen Fakt mit <i>einer</i> Rang-1-Änderung umzuschreiben, ohne den Rest zu zerstören.</p>
+  <p>Die einzelne, beide vereinende Position lautet: <b>Ein MLP ist eine Zwei-Stufen-Einheit — eine nichtlineare Front, die den Key baut, und eine lineare Rückseite, die den Value hält.</b> Der ReLU-Knick aus A ist die <i>Front</i> (W<sub>fc</sub> + Aktivierung): durch die Tiefe hindurch „gefaltet“ produziert er am Ort der mittleren Schicht einen <b>Key k</b>, der das Subjekt kodiert. Der assoziative Speicher aus B ist die <i>Rückseite</i> (W<sub>proj</sub>): sie bildet den Key auf den <b>Value v</b> ab und hält dort den Fakt. A sagt dir, <i>was</i> das Modell rechnen kann (Funktionsapproximation); B sagt dir, <i>wo</i> genau <i>ein</i> Faktum liegt und wie man es ändert (assoziatives Speichern). Funktionenapproximation ist <i>das Rechnen</i>; assoziatives Speichern ist <i>das Erinnern</i>. Sie sind die zwei Gesichter desselben MLP.</p>
+  <p class="note violet"><b>In einem Satz:</b> Das nichtlineare Knicken (A) baut den Key, der lineare assoziativer Speicher (B) hält den Value — weshalb Fakten lokal in einer mittleren Schicht liegen und per einer einzigen Rang-1-Änderung schreibbar sind.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht faktisch — sie treffen auf drei Achsen auf <b>inkompatible Stellungen</b> zum selben Baustein. Jede ist eine echte, benennbare Divergenz:</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">W1 · Verteilte kompositorische Funktion (A) vs. lokale Speicherung (B)</h3>
+    <p><b>Paper A</b> baut seine gesamte Argumentation auf <i>verteilter, kompositionaler</i> Funktionsapproximation auf: die Netz-Funktion ist das Ergebnis des Zusammenspiels <i>aller</i> Schichten („Faltung der Faltung“, exponentiell viele Regionen) — sie sitzt nirgends, sie <i>ist</i> das ganze Faltwerk. <b>Paper B</b> sagt für Wissen explizit das Gegenteil: „Faktisches Wissen in GPT ist <b>nicht diffus über das ganze Netz verteilt</b>, sondern lokal“ — konzentriert in bestimmten mittleren MLP-Schichten. Inkompatibel: Für A ist die Funktion ein <i>verteilter</i> Produkt aller Schichten; für B ist ein Fakt an <i>genau einem Ort</i> gespeichert.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W2 · Nichtlinearität als Motor (A) vs. Linearität als Motor (B)</h3>
+    <p><b>Paper A</b> feiert die <i>Nichtlinearität</i>: der ReLU-<b>Knick</b> ist der atomare Baustein; erst die <i>komponierten Nichtlinearitäten</i> machen das Netz zum Funktionsapproximator, und seine Struktur ist <i>stückweise linear</i> (piecewise-linear) — ohne Knick kein Approximieren. <b>Paper B</b> feiert genau die <i>Linearität</i>: die MLP-Rückseite verhält sich wie ein <i>linearer</i> assoziativer Speicher (W·k ≈ v), und <i>genau diese Linearität</i> ist es, die das geschlossene Rang-1-Edit möglich macht. Inkompatibel: A macht den Wert aus der Nichtlinearität, B macht den Wert aus der Linearität.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W3 · „Tiefe ist effizienter“ (A) vs. „eine mittlere Schicht genügt“ (B)</h3>
+    <p><b>Paper A</b>: Tiefe ist der Effizienzgewinn — mehr Schichten → exponentiell mehr Regionen → <i>tief schlägt breit</i>; jede zusätzliche Schicht trägt zur Ausdruckskraft bei. <b>Paper B</b>: für einen konkreten Fakt zählt <i>nur eine einzige mittlere Schicht</i> (≈ 18 von 48); die späten Schichten sind nur „Kopie/Transport“ (late site), also für diesen Fakt <i>redundant</i>. Inkompatibel: Für A bringt (fast) jede zusätzliche Schicht mehr Funktion; für B tragen die allermeisten Schichten <i>nichts</i> zu diesem einen Faktum bei.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span>Auflösung</h2>
+  <div class="card">
+    <h3 style="margin-top:0">Zu W1 · verteilt vs. lokal — zwei Ebenen, kein Konflikt</h3>
+    <p>A beschreibt die <i>Berechnungs-</i>Ebene (welche Funktion die Maschine als Ganzes ausführt — genuinely verteilt und kompositorisch). B beschreibt die <i>Speicher-</i>Ebene (wo ein einzelner Inhalt geschrieben ist — lokal). Die Spannung löst sich, sobald man „welche Funktion“ von „wo liegt ein Fakt“ trennt: Die verteilte Komposition (A) <i>führt die Rechnung aus</i>, die in der mittleren Schicht einen Key liefert; der lokale assoziative Speicher (B) <i>hält den Wert</i>, den dieser Key abfragt. Dasselbe MLP ist als <i>Rechner</i> verteilt und als <i>Speicher</i> lokal.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Zu W2 · nichtlinear vs. linear — die zwei Sub-Schichten eines MLPs</h3>
+    <p>A’s ReLU-Knick und B’s linearer Speicher sind keine konkurrierenden Motoren, sondern die <b>zwei Stufen eines einzigen MLPs in Serie</b>. Der Knick (A) ist die <i>Front</i> (W<sub>fc</sub> + σ), die den Key <b>k</b> berechnet; der lineare Speicher (B) ist die <i>Rückseite</i> (W<sub>proj</sub>), die den Recall ausführt. Die nichtlineare Front macht den Key zu einem guten Unterscheidungsmerkmal; die lineare Rückseite macht den Speicher billig editierbar. Fusion: <b>nichtlineares Keying + lineares Speichern</b> — beides nötig, beides an seinem Platz.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Zu W3 · Tiefe vs. eine Schicht — Kapazität vs. Ort</h3>
+    <p>A’s „Tiefe = mehr Regionen“ ist ein Statement über die <i>gesamte Kapazität/Ausdruckskraft</i> der Maschine; B’s „eine mittlere Schicht“ ist ein Statement über den <i>Ort eines einzelnen Faktums</i>. Beide gelten auf ihrer Ebene: Die Tiefe (A) <i>baut auf</i> (faltet) die Darstellung, bis in der mittleren Schicht der richtige Key zur Abfrage des Speichers vorliegt; dann tut genau diese mittlere MLP den Recall (B). Die „späte Site“ (B), an der Attention das Ergebnis ausliest, ist konsistent mit A’s Sicht, dass spätere Schichten transformieren/propagieren. Tiefe finanziert den <i>Key-Raum</i>; der lokale lineare Speicher finanziert den <i>Value-Raum</i>.</p>
+  </div>
+  <p class="note"><b>Fusionierter Schluss:</b> Causal Tracing (B) ist die <i>experimentelle Methode</i>, die A’s funktionale Struktur in der Maschine <i>verortet</i>; ROME nutzt die Linearität der Rückseite, um <i>ohne Nachtraining</i> zu editieren. A liefert „das Modell kann alles approximieren“, B liefert „dieses eine Ding liegt an diesem einen Ort — hier ist der Schreibvorgang“.</p>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+  <p>Der fusionierte Kern, aus dem eine spätere Runde allein arbeiten kann, verbindet die Mechanismen beider Seiten zu einem Modell des MLP als <i>Key→Value</i>-Einheit:</p>
+
+  <h3>Die zwei Stufen eines MLP (das gemeinsame Rückgrat)</h3>
+  <div class="eq">
+    <span class="c">Front (nichtlinear, A):</span> k = σ(W<sub>fc</sub> · γ(h))<br>
+    <span class="c">Rückseite (linear, B):</span> v = W<sub>proj</sub> · k<br>
+    <span class="c">A’s ReLU-Knick:</span> a = max(0, w·x + b), Knick bei x = −b/w
+  </div>
+  <p>A liefert die <b>Knick-Gleichung</b> und die Regionenzählung (k Neuronen → ≤ k+1 lineare Regionen pro Schicht; L Schichten → O(k<sup>L</sup>) Regionen; darum Tiefe &gt; Breite). B liefert die <b>Speicher-Gleichung</b> (assoziativer Speicher, Kohonen/Anderson: W·k<sub>i</sub> ≈ v<sub>i</sub>) und den geschlossenen Schreibvorgang.</p>
+
+  <h3>A · Wie es rechnet — Knick, Regionen, Backprop</h3>
+  <ul>
+    <li><b>Atomar:</b> ein ReLU-Neuron ist eine Knickfunktion; links vom Knick 0, rechts linear mit Steigung w.</li>
+    <li><b>Eine Schicht:</b> gewichtete Summe von Knicks → Bumps, Stufen, Dreiecke; zwei gegenläufige Knicks = ein Bump.</li>
+    <li><b>Tiefe:</b> Schicht 2 knickt die <i>bereits geknickte</i> Funktion von Schicht 1 → exponentielles Regionwachstum O(k<sup>L</sup>) statt O(L·k) bei Breite.</li>
+    <li><b>Lernen:</b> Backpropagation passt die Gewichte an Daten an (A’s CSV-Fit: Punkte setzen → live approximieren).</li>
+  </ul>
+
+  <h3>B · Wo es speichert — Causal Tracing, assoziativer Speicher, ROME</h3>
+  <ul>
+    <li><b>Transformer-Gitter:</b> h<sub>i</sub><sup>(l)</sup> = h<sub>i</sub><sup>(l−1)</sup> + Attention<sub>i</sub><sup>(l)</sup> + MLP<sub>i</sub><sup>(l)</sup>, MLP<sub>i</sub><sup>(l)</sup> = W<sub>proj</sub><sup>(l)</sup> · σ(W<sub>fc</sub><sup>(l)</sup> · γ(…)).</li>
+    <li><b>Kausale Mediation</b> (Judea Pearl): Total Effect TE = P[o] − P<sup>*</sup>[o]; Indirect Effect IE(h) = P<sup>*,clean h</sup>[o] − P<sup>*</sup>[o]. Drei Läufe: sauber, korrupt (Subjekt verrauschen), gepatcht (einer Zustand zurücksetzen).</li>
+    <li><b>Causal Tracing:</b> IE auf <i>jeden</i> Hidden State anwenden, über ~1000 Fakten mitteln → zwei helle Zonen: <b>early site</b> (mittlere Schichten am letzten Subjekt-Token) und <b>late site</b> (letzte Schichten am letzten Token). MLPs „severed“ (kastriert) → early Peak verschwindet ⇒ MLPs speichern hier den Fakt.</li>
+    <li><b>Assoziativer Speicher:</b> Key k = Aktivierung nach erster MLP-Schicht (kodiert Subjekt); Value v = Output von W<sub>proj</sub> (kodiert Fakten).</li>
+    <li><b>ROME</b> (Rank-One Model Editing): constrained least squares in geschlossener Form; C = 𝔼[kk<sup>T</sup>]; ~2 s pro Edit.</li>
+  </ul>
+  <div class="eq">
+    <span class="c">ROME-Optimierung:</span> min ‖ŴK − V‖<sub>F</sub><sup>2</sup>  s.t.  Ŵ·k<sup>*</sup> = v<sup>*</sup><br>
+    <span class="c">Lösung (Rang-1):</span> Ŵ = W + Λ·(C<sup>−1</sup>k<sup>*</sup>)<sup>T</sup>,&nbsp; Λ = (v<sup>*</sup> − W·k<sup>*</sup>) / ((C<sup>−1</sup>k<sup>*</sup>)<sup>T</sup>k<sup>*</sup>)
+  </div>
+
+  <h3>Die Brücke — warum beides zusammengeht</h3>
+  <p>ROME berührt <i>nur</i> W<sub>proj</sub> (die lineare Rückseite) und lässt W<sub>fc</sub> + σ (die nichtlineare Front aus A) <i>unberührt</i> — deshalb ist der Edit <b>lokal und billig</b>, während die kompositorische Knick-Struktur (A) intakt bleibt. Die Tiefe (A) erzeugt genug lineare Regionen, damit <i>viele verschiedene Subjekte</i> verschiedene, gut trennbare Keys bekommen (B’s viele gespeicherte Fakten). Der Sweet Spot des Edits (mittlere Schicht, letztes Subjekt-Token) ist exakt dort, wo A’s „Faltung“ den Key fertig aufgebaut hat <i>und</i> B’s Speicher ihn abfragt.</p>
+
+  <h3>Evaluation & Grenzen (B, übernommen)</h3>
+  <p>Metriken: <b>Efficacy</b> (neue Antwort favorisiert), <b>Generalization</b> (Paraphrasen), <b>Specificity</b> (Nachbar-Fakten unangetastet), <b>Fluency</b>, <b>Consistency</b>. Datensatz <b>COUNTERFACT</b> (21.919 Fake-Fakten). Im Spezifität–Generalisierungs-Tradeoff liegt ROME nahe oben-rechts; Fine-Tuning generalisiert, aber zerstört Nachbarn. Grenzen: ein Fakt pro Edit (viele → Folgearbeit MEMIT), nur faktische Assoziationen, Edits sind gerichtet, editierte Modelle raten teils plausibel-falsche Folge-Fakten.</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span>Visualisierung — die fusionierte Schicht</h2>
+  <div class="viz">
+    <h3>Ein MLP, drei Ansichten auf einem Canvas</h3>
+    <p class="dsub">Links: <b>B’s</b> Lokalisierung — eine Spalte Transformer-Schichten mit dem AIE-Signal (Peak in der mittleren Schicht = „assoziativer Speicher“, kleinerer Peak ganz oben = „Kopie/Transport“). Rechts oben: <b>A’s</b> Front — der ReLU-Knick, der den <b>Key</b> baut (der Regler „Knick-Stelle“ verschiebt den Knick <i>und</i> dreht den Key). Rechts unten: <b>B’s</b> Rückseite — der lineare Speicher (Key k → Value W·k, blau; mit Rang-1-Edit → v*, Gold). Unten: <b>A’s</b> Regionenwachstum (tief k<sup>L</sup> vs. breit L·k, logarithmisch). Die Knicke (A) und der Speicher (B) sind zwei Stufen <i>desselben</i> MLPs.</p>
+    <canvas id="fcanvas" width="820" height="560"></canvas>
+
+    <div class="ctl">
+      <div class="ctl-lab"><span>Tiefe L (Transformer-Schichten)</span><b id="lL">24</b></div>
+      <input type="range" id="sL" min="8" max="40" step="1" value="24">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Knick-Stelle der Front (A) — verschiebt Knick <i>und</i> Key</span><b id="lB">0.5</b></div>
+      <input type="range" id="sB" min="-3" max="3" step="0.1" value="0.5">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Breite k (Neuronen/Schicht, A)</span><b id="lK">4</b></div>
+      <input type="range" id="sK" min="2" max="8" step="1" value="4">
+    </div>
+    <div class="chkrow">
+      <label><input type="checkbox" id="cEdit" checked> Rang-1-Edit anwenden (B) — ändert nur die Rückseite</label>
+    </div>
+
+    <div class="ro">
+      <div class="box"><div class="k">Tiefe L</div><div class="v" id="roL">24</div></div>
+      <div class="box rose"><div class="k">Speicher-Schicht l*</div><div class="v" id="roStar">≈ 8</div></div>
+      <div class="box amber"><div class="k">Regionen ≤ k^L</div><div class="v" id="roReg">1.7e14</div></div>
+      <div class="box"><div class="k">Rang-1-Edit</div><div class="v" id="roEdit">an</div></div>
+    </div>
+    <p class="viz-note">Alle Daten inline/simuliert — die AIE-Kurve und die Speicher-Geometrie sind <i>Rekonstruktionen</i> der in B gezeigten Heatmaps/Updates (B’s eigene Demos sind ebenso simuliert), keine Rohdaten. Keine externen Abhängigkeiten, keine Netzwerk-Calls.</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="prov">
+    <div class="item">
+      <span class="lbl">PUNKT A · how_ai_approximates.html</span>
+      <a href="../how_ai_approximates.html">how_ai_approximates.html</a> — „Wie NNs beliebige Muster bauen — Mechanismen-Visualisierung“. Der ReLU-Knick als atomarer Baustein, Schicht = Mischung von Knicks, Tiefe = exponentielles Regionwachstum O(k^L) (tief &gt; breit), plus ein CSV-Fit per Backpropagation.
+    </div>
+    <div class="item">
+      <span class="lbl">PUNKT B · rome.html</span>
+      <a href="../rome.html">rome.html</a> — „ROME — Fakten in GPT lokalisieren und editieren“ (Meng, Bau, Andonian &amp; Belinkov 2022). Causal Tracing via kausaler Mediation, MLPs als linearer assoziativer Speicher, ROME als geschlossenes Rang-1-Edit, COUNTERFACT-Evaluation und der Spezifität–Generalisierungs-Tradeoff.
+    </div>
+  </div>
+</section>
+
+<footer>Fusion 031 · Runde 1 · self-contained, keine Netzwerk-Calls, theme-aware (CSS-Variablen, Dark default).</footer>
+</main>
+
+<script>
+"use strict";
+(function(){
+  var cv = document.getElementById('fcanvas');
+  var ctx = cv.getContext('2d');
+  var sL = document.getElementById('sL');
+  var sB = document.getElementById('sB');
+  var sK = document.getElementById('sK');
+  var cEdit = document.getElementById('cEdit');
+
+  function cssVar(n){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return v || '#888';
+  }
+  function L(){ return +sL.value; }
+  function kN(){ return +sK.value; }
+  function bK(){ return +sB.value; }
+  function editOn(){ return cEdit.checked; }
+
+  function arrow(x0,y0,x1,y1,col,w){
+    ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    var ang = Math.atan2(y1-y0, x1-x0), s = 9;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x1 - s*Math.cos(ang-0.4), y1 - s*Math.sin(ang-0.4));
+    ctx.lineTo(x1 - s*Math.cos(ang+0.4), y1 - s*Math.sin(ang+0.4));
+    ctx.closePath(); ctx.fillStyle = col; ctx.fill();
+  }
+  function line(x0,y0,x1,y1,col,w,dash){
+    ctx.strokeStyle = col; ctx.lineWidth = w;
+    if(dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  function txt(s,x,y,col,font,align){
+    ctx.fillStyle = col; ctx.font = font || '12px monospace'; ctx.textAlign = align || 'left';
+    ctx.fillText(s, x, y);
+  }
+  function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+  function draw(){
+    var W = cv.width, H = cv.height;
+    var bg = cssVar('--viz-bg'), grid = cssVar('--viz-grid'), ink = cssVar('--viz-ink');
+    var mut = cssVar('--viz-mut'), acc = cssVar('--accent'), acc2 = cssVar('--accent2');
+    var vio = cssVar('--violet'), gold = cssVar('--gold'), amber = cssVar('--amber');
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    var Lv = L(), k = kN(), b0 = bK(), eon = editOn();
+    var lStar = Math.round(0.35*Lv);
+
+    /* ---------- LEFT: depth column (B locality) ---------- */
+    var cx0 = 26, cx1 = 150, cy0 = 40, cy1 = 430;
+    var cellH = (cy1-cy0)/Lv;
+    for(var l=0; l<Lv; l++){
+      var y = cy1 - (l+1)*cellH;
+      var mid = 0.10*Math.exp(-Math.pow(l-0.35*Lv,2)/(2*16));
+      var late = 0.05*Math.exp(-Math.pow(l-(Lv-2),2)/(2*9));
+      var aie = 0.02 + mid + late;
+      var t = clamp(aie/0.14, 0, 1);
+      ctx.fillStyle = grid;
+      ctx.fillRect(cx0, y+1, cx1-cx0, cellH-2);
+      ctx.fillStyle = 'rgba(244,183,58,'+(0.05+0.85*t)+')';
+      ctx.fillRect(cx0, y+1, cx1-cx0, cellH-2);
+      if(l === lStar){
+        ctx.strokeStyle = acc2; ctx.lineWidth = 2.5;
+        ctx.strokeRect(cx0-2, y-1, (cx1-cx0)+4, cellH+2);
+      }
+    }
+    // axis + labels
+    line(cx0-8, cy0, cx0-8, cy1, mut, 1);
+    txt('Schicht 0', cx0, cy1+16, mut, '11px sans-serif','left');
+    txt('L = '+Lv, cx0, cy0-10, mut, '11px sans-serif','left');
+    // marker for l*
+    var yStar = cy1 - (lStar+0.5)*cellH;
+    line(cx1+4, yStar, cx1+30, yStar, acc2, 1.5, [4,3]);
+    txt('l*', cx1+34, yStar+4, acc2, 'bold 12px monospace','left');
+    txt('assoziativer', cx0, cy0+ (cy1-cy0)*0.02+ 2, mut, '10px sans-serif','center');
+
+    /* ---------- RIGHT TOP: Front ReLU kink (A) ---------- */
+    var fx0=210, fx1=790, fy0=62, fy1=186;
+    ctx.strokeStyle = grid; ctx.lineWidth=1;
+    ctx.strokeRect(fx0, fy0, fx1-fx0, fy1-fy0);
+    txt('① FRONT · ReLU-Knick → Key   (A)', fx0, fy0-8, ink, 'bold 13px sans-serif','left');
+    // axes
+    line(fx0, fy1, fx1, fy1, mut, 1);
+    line(fx0, fy0, fx0, fy1, mut, 1);
+    var wRel = 1;
+    function aFn(x){ return Math.max(0, wRel*x + b0); }
+    ctx.strokeStyle = acc; ctx.lineWidth=2.5; ctx.beginPath();
+    var started=false;
+    for(var px=fx0; px<=fx1; px++){
+      var xx = -4 + (px-fx0)/(fx1-fx0)*8;
+      var yy = aFn(xx);
+      var yyCl = clamp(yy,0,5);
+      var py = fy1 - (yyCl/5)*(fy1-fy0);
+      if(!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // kink point at x = -b0
+    var kinkX = -b0;
+    if(kinkX>=-4 && kinkX<=4){
+      var kpx = fx0 + (kinkX+4)/8*(fx1-fx0);
+      line(fx0, fy1, kpx, fy1, mut, 1, [3,3]);
+      ctx.fillStyle = acc; ctx.beginPath(); ctx.arc(kpx, fy1, 5, 0, 6.283); ctx.fill();
+      txt('Knick bei x=−b='+kinkX.toFixed(1), kpx-10, fy1-8, acc, '11px monospace','center');
+    }
+    txt('a = max(0, x+b)', fx1-8, fy0+14, acc, '11px monospace','right');
+
+    /* ---------- RIGHT BOTTOM: Back associative store (B) ---------- */
+    var bx0=210, bx1=790, by0=238, by1=406;
+    ctx.strokeStyle = grid; ctx.lineWidth=1;
+    ctx.strokeRect(bx0, by0, bx1-bx0, by1-by0);
+    txt('② RÜCKSEITE · linearer assoziativer Speicher   (B)', bx0, by0-8, ink, 'bold 13px sans-serif','left');
+    var ccx = (bx0+bx1)/2, ccy = (by0+by1)/2, sc = 108;
+    // plane grid
+    line(bx0, ccy, bx1, ccy, grid, 1);
+    line(ccx, by0, ccx, by1, grid, 1);
+    // key from front (angle driven by kink slider)
+    var a0 = ((b0+3)/6)*Math.PI;
+    var kk = [Math.cos(a0), Math.sin(a0)];
+    var Wm = [[0.5,-0.4],[0.3,0.6]];
+    var Wk = [Wm[0][0]*kk[0]+Wm[0][1]*kk[1], Wm[1][0]*kk[0]+Wm[1][1]*kk[1]];
+    var va = 2.35, vm = 0.9;
+    var vstar = [Math.cos(va)*vm, Math.sin(va)*vm];
+    function P(v){ return [ccx+v[0]*sc, ccy - v[1]*sc]; }
+    var pk = P(kk), pw = P(Wk), pv = P(vstar);
+    // key
+    arrow(ccx,ccy, pk[0],pk[1], acc2, 3);
+    txt('k (Key, aus Front)', pk[0]+8, pk[1]-6, acc2, '11px monospace','left');
+    // old value Wk (blue)
+    arrow(ccx,ccy, pw[0],pw[1], vio, 2.5, [5,4]);
+    txt('W·k (alter Wert)', pw[0]+8, pw[1]+16, vio, '11px monospace','left');
+    // target / new value
+    ctx.fillStyle = gold; ctx.beginPath(); ctx.arc(pv[0],pv[1], 7, 0, 6.283); ctx.fill();
+    txt('v* (neuer Wert)', pv[0]+8, pv[1]-8, gold, '11px monospace','left');
+    if(eon){
+      arrow(pw[0],pw[1], pv[0],pv[1], amber, 3.5);
+      txt('Λ (Rang-1)', (pw[0]+pv[0])/2+8, (pw[1]+pv[1])/2-6, amber, 'bold 12px monospace','left');
+      txt('nur Rückseite geändert — Front/Key bleibt', bx0+8, by1-8, amber, '11px sans-serif','left');
+    } else {
+      txt('v = W·k  (Original-Fakt, kein Edit)', bx0+8, by1-8, mut, '11px sans-serif','left');
+    }
+
+    /* ---------- BOTTOM: region growth (A) ---------- */
+    var gx0=210, gx1=790, gy0=468, gy1=544;
+    ctx.strokeStyle = grid; ctx.lineWidth=1;
+    ctx.strokeRect(gx0, gy0, gx1-gx0, gy1-gy0);
+    txt('③ TIEFE → REGIONEN   (A): tief k^L vs. breit L·k  (log₁₀)', gx0, gy0-8, ink, 'bold 13px sans-serif','left');
+    var yMax = Lv*Math.log10(k) + 2;
+    function gy(v){ return gy1 - (clamp(v,0,yMax)/yMax)*(gy1-gy0); }
+    function gx(Lp){ return gx0 + (Lp-1)/39*(gx1-gx0); }
+    // deep curve k^Lp
+    ctx.strokeStyle = acc; ctx.lineWidth=2.5; ctx.beginPath();
+    for(var Lp=1; Lp<=40; Lp++){ var yy2=Lp*Math.log10(k); if(Lp===1)ctx.moveTo(gx(Lp),gy(yy2)); else ctx.lineTo(gx(Lp),gy(yy2)); }
+    ctx.stroke();
+    // wide curve log10(Lp*k)
+    ctx.strokeStyle = vio; ctx.lineWidth=2; ctx.beginPath();
+    for(var Lw=1; Lw<=40; Lw++){ var yw=Math.log10(Lw*k); if(Lw===1)ctx.moveTo(gx(Lw),gy(yw)); else ctx.lineTo(gx(Lw),gy(yw)); }
+    ctx.stroke();
+    // current L marker
+    line(gx(Lv), gy0, gx(Lv), gy1, amber, 1.5, [4,3]);
+    txt('L='+Lv, gx(Lv)-6, gy0+12, amber, '11px monospace','right');
+    txt('tief k^L', fx1, gy0+14, acc, '11px monospace','right');
+    txt('breit L·k', fx1, gy0+28, vio, '11px monospace','right');
+    txt('log₁₀ Regionen', gx0+8, gy1-8, mut, '10px sans-serif','left');
+
+    /* ---------- readouts ---------- */
+    var reg = Math.pow(k, Lv);
+    var regStr = reg >= 1e5 ? reg.toExponential(1) : Math.round(reg).toLocaleString('en-US');
+    document.getElementById('roL').textContent = Lv;
+    document.getElementById('roStar').textContent = '≈ '+lStar;
+    document.getElementById('roReg').textContent = regStr;
+    document.getElementById('roEdit').textContent = eon ? 'an' : 'aus';
+    document.getElementById('lL').textContent = Lv;
+    document.getElementById('lB').textContent = b0.toFixed(1);
+    document.getElementById('lK').textContent = k;
+  }
+
+  [sL,sB,sK].forEach(function(el){ el.addEventListener('input', draw); });
+  cEdit.addEventListener('change', draw);
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

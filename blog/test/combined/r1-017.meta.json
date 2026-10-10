@@ -1,0 +1,16 @@
+{
+  "no": "017",
+  "a": "phasetransition.html",
+  "b": "simplicial_complex_attention6.html",
+  "a_title": "Phase Transitions in Neural Network Training",
+  "b_title": "How Attention Builds Simplicial Complexes",
+  "combined_theme": "topological-phase-transitions",
+  "one_line": "Aufmerksamkeit erzeugt einen kontinuierlich verstellbaren Simplizialkomplex, in dem topologische Groessen (Betti-Zahlen, Dreiecke) diskret springen - genau diese Spruenge sind die Phasenuebergange des Trainings.",
+  "contradictions": [
+    "Struktur-Ursprung: A behandelt jede Faehigkeit als fix vorgegebene Maennigfaltigkeit, die das Training nur 'aktiviert' (Punkte kollabieren darauf); B berechnet den gesamten Simplizialkomplex (Kanten, Dreiecke, Betti-Zahlen) aus den Attention-Gewichten und er aendert sich mit Schwellwert/Satz/W-Matrizen - erzeugt, nicht vorgegeben.",
+    "Diskret vs. kontinuierlich: A's Kernthese ist, Lernen sei eine Folge abrupter, diskreter Phasenuebergange (Ordnungsparameter springt, Loss in Stufen); B zeigt ein kontinuierlich verstellbares Spektrum (Epsilon- und Sharpness-Slider), das keinen als kritisch gedeuteten Moment betont.",
+    "Dynamik-Perspektive: A modelliert Trainingsdynamik ueber Epochen (globale Abfolge, Loss-Kurven, trigger-Epochen 80/280/520/800/1100); B ist ein statisches, pro Eingabe auf fixen Gewichten berechnetes relationales Objekt (keine Epochen, kein Loss)."
+  ],
+  "resolution": "Struktur ist aus dem Inhalt berechnet (B, mikroskopisch) und organisiert sich in wenige stabile topologische Phasen/Attraktoren, die sich diskret umschalten (A, makroskopisch). Kontinuierlicher Kontrollparameter (Epsilon/Sharpness/Training) + diskrete Ordnungsgröße (b0, b1, #Dreiecke): glatte Ursache, diskrete Folge = Phasenuebergang. A liefert die Spruenge, B das Medium, in dem sie passieren.",
+  "viz": "3D-Simplizialkomplex aus zehn festen Affinitaets-Knoten; Epsilon- und Sharpness-Slider; ein zweites Diagramm zeigt b0, b1 und #Dreiecke gegen Epsilon als Treppenfunktion mit diskreten Spruengen (= Phasenuebergange) und einem Marker fuer das aktuelle Epsilon."
+}

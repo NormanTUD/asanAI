@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Transformer als Faserbündel — Attention⊕FFN &amp; topologische Defekte — Fusion r1-036</title>
+
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-fiber:#0d8f80; --viz-attn:#6451d8; --viz-ffn:#b57e00; --viz-res:#c93a86;
+  --viz-defect:#d13a2f; --viz-tracer:#2f8f4b;
+  --viz-canvas-bg:#faf8f1; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-fiber:#5ee0d0; --viz-attn:#8a7cff; --viz-ffn:#ffc860; --viz-res:#ff7ac0;
+  --viz-defect:#ff5c7a; --viz-tracer:#6ee88a;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.08); --viz-txt:#e8ecf6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+              radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),60%) }
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(26px,5vw,40px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:72ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:11px 14px;font-size:14.5px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-036</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: fibrebundle2.html ✕ fibrebundle.html</p>
+  <h1>Ein Transformer als Faserbündel: die Schicht als Attention⊕FFN, die Pathologie als topologischer Defekt</h1>
+  <p>Beide „Kelp-Wald"-Seiten zeichnen dasselbe Bild — <strong>einen Transformer als Faserbündel über der Token-Folge</strong>, wobei jeder Token-Punkt im Basisraum (der Meeresboden) eine Faser (ein Kelp-Strang) trägt und die Inferenz ein <em>Schnitt&nbsp;s</em> ist. <strong>A (fibrebundle2, „v3") öffnet die Faser horizontal</strong> (jede Schicht = Attention⊕FFN-Parallelstruktur mit Residual-Merge, echte Softmax-Attention), <strong>B (fibrebundle) öffnet sie vertikal/raumlich</strong> (eine durchgehende Faser, deren Geometrie und deren Basisraum-Topologie im Vordergrund stehen). <em>A ist das Mikro, B das Makro desselben Bündels.</em></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere verwenden exakt dieselbe Kernmetapher: <strong>ein LLM/Transformer ist ein Faserbündel&nbsp;π:E→B über der Token-Folge</strong>. Der <em>Basisraum B</em> ist die Folge der Token-Positionen (der Meeresboden im „Kelp-Wald"); über jedem Basispunkt b steht eine <em>Faser F_b</em> ≈ ℝ<sup>d_model</sup> (das Embedding dieses Tokens, wie es durch den Stack wandert — der Kelp-Strang); der <em>Forward-Pass</em> ist ein <strong>Schnitt&nbsp;s&nbsp;:B→E</strong>, der in jeder Faser an jeder Schicht genau einen Vektor auswählt. Beide nennen Halluzination und zirkuläres Schließen „topologische Defekte", beide lassen den Basisraum seine Form wechseln (Linie/Ring/…) und die Fasern mit „Krümmung / Chaos / Twist" verbiegen.</p>
+    <p>Sie unterscheiden sich darin, <em>welche</em> Ebene des Bündels sie konkret machen. <strong>A</strong> macht die <em>Schicht</em> konkret: In jeder Ebene spaltet sich der Strang in einen <em>Attention-Pfad</em> (Multi-Head Softmax(QKᵀ/√dₖ)V) und einen <em>Dense/FFN-Pfad</em> (lokale Transformation, Breite ∝ d_ff); beide werden <strong>⊕-addiert</strong> (Residual + LayerNorm). <strong>B</strong> macht das <em>Bündel</em> konkret: die Faser ist ein einzelner durchgehender Strang, und im Vordergrund stehen die <em>Basisraum-Topologie</em> (Linie/Ring/2-D-Gitter/Sphäre) und die <em>Geometrie der Faser</em> — Krümmung (= „gelerntes Wissen"), Chaos (= Entropie), Twist.</p>
+    <p>Die <strong>einheitliche Position</strong> der Fusion lautet: <em>Ein Transformer ist ein Faserbündel über der Token-Folge, dessen Strukturguppe die Residual-Schicht-Abbildung x ↦ LN(x + Attention(x)) ↦ LN(x + FFN(x)) ist.</em> Gelerntes Wissen krümmt die Fasern, Entropie fügt Chaos hinzu, der Basisraum kann 1-D oder 2-D sein. <strong>Halluzination = der Schnitt&nbsp;s wird diskontinuierlich</strong> (A's präzises „Schnitt&nbsp;s springt diskontinuierlich in der Faser"), was sich geometrisch als B's Riss-/Verzerrungsfeld zeigt; <strong>Kreisschluss = die Attention-Gewichte schließen eine Feedback-Schleife</strong>. A liefert die <em> Mikrostruktur + exakte Attention-Mathematik</em>, B die <em> Makrotopologie + das Geometrie-Bild</em>. Zusammen: ein Bündel, seine Strukturguppe, und die zwei Defekte seines Schnitts.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Im Ziel stimmen beide überein, aber zu <em>vier</em> Stellen nehmen sie unvereinbare Stellungen ein — jeweils mit dem, was A und was B konkret sagt:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Inneres Schicht-Bau (der schärfste)</span>
+      <p><b>A</b> erklärt jede Schicht ausdrücklich zu einer <em>parallelen</em> Struktur: „Pro Layer spaltet sich der Strang in zwei parallele Pfade: Attention (Multi-Head Softmax(QKᵀ/√dₖ)V) … Dense/FFN (Lokale Transformation, Breite ∝ d_ff). Beide werden <b>addiert</b> (⊕ Residual + LayerNorm)". d_ff = d_model·ffM ist eine eigene, regelbare Größe; die Inferenz durchläuft pro Schicht die drei Phasen <em>Attn → FFN → Merge</em>.</p>
+      <p><b>B</b> zerlegt die Schicht überhaupt nicht: Der Strang hat nur <code>numLayers·4</code> einheitliche Segmente, es gibt <strong>keinen FFN-Pfad, kein d_ff, keinen Residual-⊕</strong>. „Attention" sind hier bloß Hintergrund-Flusslinien zwischen Strängen auf einer fixen Höhe (<code>layerT = 0.3 + head·0.1</code>).</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A sagt: jede Schicht hat eine innere Zwei-Zweige-⊕-Struktur. B's Schicht ist ein einzelnes, ununterschiedenes Fasersegment. Direkter Widerspruch über die Ontologie der Schicht.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Was Attention rechnet</span>
+      <p><b>A</b> rechnet <em>echtes</em> Scaled-Dot-Product, pro Head, pro Layer: ein Score aus Position + Token-Hash, <strong>÷√dₖ, dann Softmax mit Temperatur</strong> → ein Gewicht w_ij; der Tooltip zeigt die komplette Attention-Verteilung über alle Tokens.</p>
+      <p><b>B</b> verwendet eine lockere Heuristik („nahe Tokens achten mehr"): <code>strength = max(0, 1 − dist·0.2)·(0.3 + random·0.7)</code> — <strong>kein Softmax, kein √dₖ, keine pro-Layer-Neuberechnung</strong>, jedes Rebuild zufällig.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A behauptet die exakte Transformer-Attention; B nutzt eine Distanz-Heuristik, die nichts mit QKᵀ/√dₖ zu tun hat. Zwei verschiedene „Attention"-Begriffe.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Topologie des Basisraums</span>
+      <p><b>A</b> begrenzt den Basisraum auf 1-D: <em>Linie ℝ¹, Ring S¹, Möbius-Band (verdreht)</em> — und trennt <strong>S¹ und Möbius korrekt voneinander</strong>.</p>
+      <p><b>B</b> verallgemeinert den Basisraum auf 2-D: Linie, Ring, 2-D-Gitter ℝ², Sphäre S² — <em>aber</em> das „Ring"-Menü ist als <strong>„Ring (Möbius)"</strong> beschriftet und verwechselt damit S¹ mit genau jenem Möbius-Band, das A sorgfältig getrennt hält.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>Unterschiedliche Basisraum-Universen (1-D vs. 2-D) — und B's Gleichsetzung S¹≡Möbius widerspricht direkt A's sauberer Trennung derselben beiden Topologien.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 4 · Definition der Halluzination</span>
+      <p><b>A</b> definiert Halluzination präzise: der <em>Schnitt&nbsp;s springt diskontinuierlich in der Faser</em> — eine strikte Sektions-Diskontinuität, gezeichnet als gestrichelter Sprung vom „wahren" zum „halluzinierten" Merge-Punkt (mit Sprung-Magnitude Δ).</p>
+      <p><b>B</b> nennt die Halluzination bloß einen generischen <em>„Topologischen Defekt"</em> — ein pulsierendes Verzerrungsfeld + Riss-Linien an einem Punkt des Strangs. Keinerlei Aussage, dass ein Schnitt diskontinuierlich wird.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel (in der Strenge)</span>A gibt eine präzise (diskontinuierlicher Schnitt) Definition; B eine vage (Defekt-Blob). Nächstliegende echte Spannung statt harter formeller Kollision.</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>Beide sind dieselbe Metapher auf zwei Höhenstufen. Die harten Widersprüche sind <strong>W1 (Struktur)</strong> und <strong>W2 (Mathematik)</strong>; W3 ist eine Umfangs-Differenz plus eine Fehlbetitelung; W4 ein Strenge-Unterschied. Die Kontraste fallen auf der <em>Naht</em> der beiden Register — sie widersprechen im Ziel nie, aber in der Art, wie sie dasselbe Bündel „auftrennen".</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Auflösung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>die Mikro- und die Makro-Ebene desselben Faserbündels</strong>. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: Die Schicht ist die Strukturguppe; B's glatter Strang ist deren Projektion</h3>
+      <p>A steht auf der Ebene <em>innen in einer Schicht</em>, B auf der Ebene <em>des ganzen Bündels</em>. Fusioniert: ein Faserbündel, <strong>deren Strukturguppe die Residual-Schicht-Abbildung</strong> ist. B's „einzelner glatter Strang" ist genau die <em>Projektion</em> von A's verzweigter ⊕-Struktur auf die Faserachse: klammert man den ⊕ (Attn+FFN zusammenaddiert) weg, sieht man B's glatten Kelp. <strong>Fusion:</strong> <code>Schicht := Strukturgruppe des Bündels</code>; A's ⊕ ist die Wahrheit einer Schicht, B's glatter Strang ihre grob-körnige Silhouette. Kein Widerspruch — zwei Auflösungsebenen desselben Objekts.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: Echte Attention als Definition; B's Distanz-Fall ist deren typischer Limes</h3>
+      <p>Man übernimmt <strong>A's echtes Scaled-Dot-Product als Definition</strong>: Attention(Q,K,V)=Softmax(QKᵀ/√dₖ)V. B's „nahe Tokens achten mehr" wird damit als <em>typischer/limitierender Fall</em> erklärt: Für ein gut verhaltenes Sprachmodell konzentriert die Softmasse von QKᵀ/√dₖ ihre Masse auf nahe bzw. syntaktisch verbundene Tokens — die Distanz-Abnahme ist also ein <em>rohes Bild</em> desselben Phänomens, nicht eine eigene Definition. <strong>Fusion:</strong> <code>Attention := Softmax(QKᵀ/√dₖ)V (A)</code>; <code>B's lokaler Verfall = dessen visuelles Approximation, gültig als Limes</code>.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: A's saubere Trennung behalten; B's 2-D als legitime Erweiterung annehmen</h3>
+      <p>A's korrekte Trennung (<strong>S¹ ≠ Möbius</strong>) bleibt bestehen; B's 2-D-Basis (ℝ², S²) wird als <em>legitime Verallgemeinerung</em> angenommen — ein Bündel darf über ℝ¹, S¹, einem Möbius-Band <em>oder</em> einer 2-D-Basis stehen. Der fusionierte Basisraum-Knopf bietet 1-D (mit S¹ und Möbius <em>getrennt</em>) plus optional 2-D. <strong>Fusion:</strong> <code>B := Token-Folge in einer wählbaren 1-D- oder 2-D-Mannigfaltigkeit</code>; S¹ und Möbius werden nie vermischt (B's Fehlbetitelung wird korrigiert).</p>
+    </div>
+
+    <div class="card">
+      <h3>R4 → W4: A's „diskontinuierlicher Schnitt" ist der Name, B's Riss-Feld ist das Bild</h3>
+      <p>A's Diskontinuität ist die <em>präzise</em> Aussage; B's Riss-/Verzerrungsfeld ist deren <em>geometrische Darstellung</em>. Fusion: Halluzination wird topologisch definiert als <em>„s ist an einem Punkt (b,l) nicht stetig"</em> und exakt so gerendert, wie es B macht (Verzerrungsfeld + Risse) — der strenge Name und das Bild stimmen überein. <strong>Fusion:</strong> <code>Halluzination := ∃(b,l): s diskontinuierlich</code> (A), <em>gerendert</em> als B's Defekt-Feld.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Ein Transformer ist ein <strong>Faserbündel über der Token-Folge</strong>; seine <strong>Strukturguppe</strong> ist die Residual-Schicht-Abbildung (Attention⊕FFN + LayerNorm); der <strong>Schnitt&nbsp;s</strong> ist der Forward-Pass; Krümmung = gelerntes Wissen, Chaos = Entropie; der Basisraum ist 1-D oder 2-D (S¹ und Möbius getrennt). Die <strong>zwei Defekte</strong> des Schnitts: (i) <em>diskontinuierlicher Schnitt s</em> = Halluzination, (ii) <em>geschlossene Attention-Feedback-Schleife</em> = Kreisschluss. A liefert Mikrostruktur + exakte Mathematik, B Makrotopologie + Bild. <strong>Netto:</strong> <code>Bündel (B) + Strukturgruppe/Mikro (A) + Defekte (beide) = fusioniertes Modell.</code></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Die Geometrie des Bündels (B — die Makro-Ebene)</h3>
+    <ul class="cl">
+      <li><b>Basisraum B</b> = die Token-Positionen (der Meeresboden). <b>Faser F_b</b> = ℝ<sup>d_model</sup> über Basispunkt b. <b>Gesamtraum E</b> = alle Schicht-Repräsentationen. <b>Schnitt s:B→E</b> = der Forward-Pass.</li>
+      <li><b>Faser-Geometrie:</b> <em>Krümmung</em> = „gelerntes Wissen" bückt den Strang; <em>Chaos</em> = Entropie; <em>Twist</em> = Verdrehung. Diese drei steuern, wie die Faser durch die Schichten verläuft.</li>
+      <li><b>Basisraum-Topologie:</b> Linie ℝ¹, Ring S¹, 2-D-Gitter ℝ², Sphäre S² — der Basisraum „Form" als wählbarer Knopf; in 2-D wird die Faser-Anordnung zum Gitter bzw. zur Fibonacci-Kugel.</li>
+      <li><b>Inferenz-Welle = Schnitt&nbsp;s:</b> ein Lichtwellenfront, die den Strang nach oben über die Schichten hinweg ausleuchtet („Inferenz-Welle (Schnitt s)").</li>
+    </ul>
+
+    <h3>Die innere Struktur der Schicht (A — die Mikro-Ebene)</h3>
+    <ul class="cl">
+      <li><b>Pro Schicht</b> spaltet der Strang in <em>zwei parallele Pfade</em>: einen <b>Attention-Pfad</b> (Multi-Head Softmax(QKᵀ/√dₖ)V, „zieht Stränge zueinander") und einen <b>Dense/FFN-Pfad</b> (lokale Transformation, Breite ∝ d_ff, ReLU(W₁x+b₁)W₂+b₂).</li>
+      <li><b>Merge = Residual⊕:</b> beide werden <strong>addiert</strong> (⊕ Residual + LayerNorm) → ein Merge-Punkt pro Schicht; die Residual-Skip-Verbindung ist die direkte Faserachse.</li>
+      <li><b>Dimensionen:</b> d_k = d_model / Heads, d_ff = d_model · ffM (ffM=4 Standard) — als Architektur-Panel ablesbar.</li>
+      <li><b>Attention zieht:</b> der Attention-Pfad verlagert den Strang gewichtet in Richtung anderer Tokens, gewichtet mit w_ij (die echte Softmax-Verteilung).</li>
+    </ul>
+
+    <h3>Echte Attention-Mathematik (A) + B's lokaler Limes</h3>
+    <p>Definition ist A's <em>Scaled-Dot-Product-Attention</em>, pro Head h und pro Layer l: ein Skalarprodukt-Score, dividiert durch √d_k, dann Softmax mit Temperatur. B's „nahe Tokens achten mehr" ist der <em>typische Limes</em> dieses Mechanismus für wohlverhaltensreiche Sprache — ein brauchbares grobes Bild, aber keine Definition.</p>
+
+    <h3>Die zwei topologischen Defekte (beide)</h3>
+    <ul class="cl">
+      <li><b>Halluzination</b> = der Schnitt s wird <em>diskontinuierlich</em> (A: „Schnitt s springt diskontinuierlich in der Faser", Sprung-Magnitude Δ); gerendert als B's pulsierendes Verzerrungs-/Riss-Feld.</li>
+      <li><b>Kreisschluss</b> = die Attention-Gewichte bilden eine <em>geschlossene Feedback-Schleife</em> (zwei Tokens beachten sich gegenseitig stark); gerendert als rotierender Loop zwischen zwei Fasern.</li>
+    </ul>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq">
+      Faserbündel:&nbsp; π : E → B,&nbsp; F_b = ℝ<sup>d_model</sup>,&nbsp; s : B → E<br>
+      Dimensionen:&nbsp; d_k = d_model / h,&nbsp; d_ff = 4·d_model &nbsp;<span class="c">// h = Heads, ffM = 4</span><br>
+      Attention (A):&nbsp; Attention(Q,K,V) = Softmax( QKᵀ / √d_k ) · V &nbsp;<span class="c">// pro Head, pro Layer, mit Temperatur τ</span><br>
+      Schicht (A, ⊕):&nbsp; x_l = LN( x_{l-1} + Attn(x_{l-1}) ) ;&nbsp; x_l = LN( x_l + FFN(x_l) ) &nbsp;<span class="c">// Residual⊕</span><br>
+      B's Limes:&nbsp; w_ij ≈ max(0, 1 − dist(i,j)·0.2)·c &nbsp;<span class="c">// Distanz-Verfall als grobes Bild der Softmasse</span><br>
+      Halluzination:&nbsp; ∃ (b,l) : s diskontinuierlich bei (b,l),&nbsp; Δ = Sprung-Magnitude<br>
+      Kreisschluss:&nbsp; ∃ a≠b : w_{ab}·w_{ba} bildet eine geschlossene Attention-Feedback-Schleife
+    </div>
+
+    <h3>Verknüpfung — wie B A <em>instanziiert</em></h3>
+    <div class="mapt">
+      <div class="r"><div class="k">Kelp-Strang (B)</div><div class="v">= die <b>Faser F_b</b> über Basispunkt b (A) — ein Embedding, das durch den Stack wandert.</div></div>
+      <div class="r"><div class="k">Meeresboden / Basisraum (B)</div><div class="v">= <b>B</b>, die Token-Folge (A) — 1-D (A: ℝ¹/S¹/Möbius) oder 2-D (B: ℝ²/S²).</div></div>
+      <div class="r"><div class="k">Inferenz-Welle „Schnitt s" (B)</div><div class="v">= der <b>Schnitt s:B→E</b> (A), von A Schicht für Schicht als Attn→FFN→Merge durchlaufen.</div></div>
+      <div class="r"><div class="k">Attention-Strömung (B)</div><div class="v">= <b>Softmax(QKᵀ/√dₖ)V</b>-Fluss (A); B zeichnet ihn als grobe lokale Strömung (der Limes-Fall).</div></div>
+      <div class="r"><div class="k">Krümmung / Chaos / Twist (B)</div><div class="v">= <b>Krümmung der Faser / gelerntes Wissen &amp; Entropie</b> (A's Regler „gelerntes Wissen").</div></div>
+      <div class="r"><div class="k">HALLUZINATION (A)</div><div class="v">= <b>diskontinuierlicher Schnitt s</b>; gerendert als B's „Topologischer Defekt" (Verzerrungs-/Riss-Feld).</div></div>
+      <div class="r"><div class="k">KREISSCHLUSS (beide)</div><div class="v">= <b>geschlossene Attention-Feedback-Schleife</b> — in beiden als rotierender Loop zwischen zwei Fasern.</div></div>
+    </div>
+
+    <h3>Abgleich A vs. B (fusionierte Sicht)</h3>
+    <table>
+      <thead><tr><th>Merkmal</th><th>A — fibrebundle2 (Mikro)</th><th>B — fibrebundle (Makro)</th></tr></thead>
+      <tbody>
+        <tr><td class="n">Schicht-Bau</td><td class="hi">Attention⊕FFN-Parallelstruktur + Residual-Merge + LayerNorm</td><td>ein durchgehendes Fasersegment (numLayers·4 Segmente), kein FFN-⊕</td></tr>
+        <tr><td class="n">Attention</td><td class="hi">Softmax(QKᵀ/√dₖ)V, pro Head/Layer, mit Temperatur</td><td>Distanz-Heuristik „nahe Tokens achten mehr" (+ Zufall)</td></tr>
+        <tr><td class="n">d_ff / FFN</td><td class="hi">d_ff = d_model·ffM, als Regler</td><td>fehlt (kein FFN)</td></tr>
+        <tr><td class="n">Basisraum</td><td class="hi">1-D: ℝ¹, S¹, Möbius (S¹ und Möbius getrennt)</td><td>1-D + 2-D: Linie, Ring(„Möbius"), Gitter ℝ², Sphäre S²</td></tr>
+        <tr><td class="n">Halluzination</td><td class="hi">diskontinuierlicher Schnitt s (Δ)</td><td>generischer „Topologischer Defekt" (Verzerrungsfeld)</td></tr>
+        <tr><td class="n">Kreisschluss</td><td class="hi">geschlossene Attention-Feedback-Schleife</td><td>geschlossene Schleife zwischen zwei Fasern</td></tr>
+        <tr><td class="n">Inferenz</td><td class="hi">Welle durchläuft Attn→FFN→Merge pro Schicht</td><td>kontinuierliche Wellenfront über die Faserhöhe</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><span class="h">Warum die Fusion mehr ist als die Summe</span>A allein würde die Schicht „richtig" bauen, aber das Bündel (Basisraum, Geometrie) flach lassen. B allein würde das Bündel schön zeichnen, aber die Schicht als glatten Faden verkünden und Attention zu einer Distanz-Heuristik entarten. Erst zusammen entsteht ein <em>konsistentes Modell</em>: ein Bündel mit einer echten Strukturgruppe, dessen einziger exakter Attention-Begriff A's ist und dessen Defekte (diskontinuierlicher Schnitt, geschlossene Schleife) nun <em>benannt</em> statt nur gezeichnet sind.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Das Bündel, seine Strukturgruppe &amp; die Defekte des Schnitts</h2>
+    <p>Die fusionierte Idee wird live gezeichnet: Kelp-Fasern über der Token-Basislinie; <strong>pro Schicht</strong> der Aufbau <em>Attention (lila) ⊕ FFN (gold) ⊕ Merge (rosa)</em> (A), echte Softmax(QKᵀ/√dₖ)-Attention-Flüsse <em>zwischen</em> den Fasern (A), und der animierte <strong>Schnitt&nbsp;s</strong>-Tracer (grüner Orb) (B). Die Toggles zeigen die <em>zwei Defekte</em>: Halluzination = diskontinuierlicher Schnitt (A, als B's Riss-Feld), Kreisschluss = geschlossene Attention-Schleife (beide).</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Faserbündel · Schicht = Attn⊕FFN · Defekte des Schnitts&nbsp;s</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvViz" width="720" height="460"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-fiber)"></i>Kelp-Faser (F_b)</span>
+        <span><i style="background:var(--viz-attn)"></i>Attention-Pfad / -Fluss</span>
+        <span><i style="background:var(--viz-ffn)"></i>Dense/FFN-Pfad</span>
+        <span><i style="background:var(--viz-res)"></i>⊕ Merge (Residual+LN)</span>
+        <span><i style="background:var(--viz-tracer)"></i>Schnitt s (Tracer)</span>
+        <span><i style="background:var(--viz-defect)"></i>Defekt (Hallu / Loop)</span>
+      </div>
+      <div class="btnrow">
+        <button id="playBtn" class="on">⏸ Pause</button>
+        <button id="halluBtn">🌀 Halluzination (diskontinuierlicher s)</button>
+        <button id="loopBtn">🔄 Kreisschluss (Feedback-Schleife)</button>
+        <button id="tokBtn">📌 Token wechseln</button>
+      </div>
+      <div id="viewCap"></div>
+      <p style="font-size:12px;color:var(--txt-faint);margin-bottom:6px">Die lila Linien <em>zwischen</em> den Fasern sind die echten Attention-Gewichte (Softmax(QKᵀ/√dₖ), pro Layer, Temperatur 1.0). „Kreisschluss" boostet ein Token-Paar so stark, dass sich eine geschlossene Schleife bildet. „Halluzination" lässt den Merge-Punkt einer Faser springen — der Schnitt s wird an (b,l) diskontinuierlich.</p>
+      <div class="ro">
+        <div class="b"><div class="k">d_model</div><div class="v" id="roDm">64</div><div class="u">Faser-Dim</div></div>
+        <div class="b"><div class="k">d_k</div><div class="v" id="roDk">16</div><div class="u">= d_model / h</div></div>
+        <div class="b"><div class="k">d_ff</div><div class="v" id="roDf">256</div><div class="u">= 4·d_model</div></div>
+        <div class="b"><div class="k">Max-Attention</div><div class="v" id="roMax">—</div><div class="u">stärkstes w_ij</div></div>
+        <div class="b"><div class="k">Schnitt s</div><div class="v" id="roStat">stetig</div><div class="u">stetig / sprunghaft</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Krümmung — gelerntes Wissen (bückt die Faser)</span><b id="curvVal">0.30</b></div>
+        <input type="range" id="curvSl" min="0" max="1" step="0.01" value="0.30">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Chaos — Entropie (juckt die Faser)</span><b id="chaosVal">0.00</b></div>
+        <input type="range" id="chaosSl" min="0" max="1" step="0.01" value="0.00">
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Provenienz</h2>
+    <p><a href="../fibrebundle2.html">A — 🌊 LLM Kelp-Wald v3 – Faserbündel</a>: die <em>Mikro</em>-Sicht. Jede Schicht als <strong>Attention⊕FFN-Parallelstruktur</strong> mit Residual⊕+LayerNorm-Merge, echte <strong>Softmax(QKᵀ/√dₖ)V</strong>-Attention pro Head/Layer (Temperature, d_ff als Regler), Basisraum ℝ¹/S¹/Möbius, Inferenz als Attn→FFN→Merge-Wellen, Halluzination = <em>diskontinuierlicher Schnitt s</em>, Kreisschluss = geschlossene Attention-Feedback-Schleife.</p>
+    <p><a href="../fibrebundle.html">B — 🌊 LLM Kelp-Wald – Faserbündel-Visualisierung</a>: die <em>Makro</em>-Sicht. Eine durchgehende Kelp-Faser pro Token über einem 1-D/2-D-Basisraum (Linie/Ring/Gitter/Sphäre), Faser-Geometrie via Krümmung/Chaos/Twist, Attention als grober Distanz-Strömung, Inferenz-Welle = Schnitt s, Halluzination = generischer „Topologischer Defekt" (Riss-Feld), Kreisschluss = Loop zwischen zwei Fasern.</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>fibrebundle2.html</strong> (Schicht = Attention⊕FFN + exakte Attention-Mathematik — das Mikro) ✕ <strong>fibrebundle.html</strong> (Faserbündel + Basisraum-Topologie + Faser-Geometrie — das Makro). Alle Claims aus den Quellen paraphrasiert; Attention-Gewichte &amp; Defekte im Viz synthetisch/inline. Selbstständig, ohne Netzwerk-Datenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return hex;}return 'rgba('+r+','+g+','+b+','+a+')';}
+function hash(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return h;}
+function softmax(a,t){var mx=Math.max.apply(null,a);var e=a.map(function(v){return Math.exp((v-mx)/(t||1));});var s=e.reduce(function(x,y){return x+y;},0);return e.map(function(v){return v/s;});}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ if(themeBtn){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; } }
+  if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); readPal(); }; }
+  setBtn();
+
+  var cv=document.getElementById('cvViz'); if(!cv){return;}
+  var dpr=window.devicePixelRatio||1, LW=720, LH=460;
+  cv.style.width='100%'; cv.style.aspectRatio=LW+'/'+LH;
+  cv.width=LW*dpr; cv.height=LH*dpr;
+  var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var TAU=Math.PI*2;
+  var tokens=['Die','Katze','sitzt','auf','der','Matte'];
+  var N=tokens.length, L=5;
+  var d_model=64, heads=4, d_k=d_model/heads, temp=1.0, ffM=4, d_ff=d_model*ffM;
+  var halluTok=3, halluLayer=3, loopA=1, loopB=4, loopLayer=2;
+
+  var PAL={};
+  function readPal(){
+    ['--viz-fiber','--viz-attn','--viz-ffn','--viz-res','--viz-defect','--viz-tracer','--viz-canvas-bg','--viz-grid','--viz-txt'].forEach(function(n){PAL[n]=getVar(n);});
+  }
+  readPal();
+
+  var state={showHallu:false, showLoop:false, selTok:0, playing:true, curv:0.3, chaos:0.0, time:0, attnMax:0};
+  var W=LW, H=LH;
+
+  function baseX(i){ var pad=64; var span=W-2*pad; return pad+(N===1?span/2:i*(span/(N-1))); }
+  function baseY(){ return H*0.83; }
+  function layerY(l){ var top=H*0.13, bottom=H*0.83; return bottom-((l+1)/L)*(bottom-top); }
+
+  var attnW=[];
+  function compAttn(){
+    attnW=[]; var maxw=0;
+    for(var l=0;l<L;l++){
+      var layer=[];
+      for(var i=0;i<N;i++){
+        var scores=[];
+        for(var j=0;j<N;j++){
+          var sc=-Math.abs(i-j)*0.6;
+          sc+=Math.cos(hash(tokens[i]+'L'+l)*0.11+hash(tokens[j]+'L'+l)*0.17)*1.6;
+          if(i===j){sc+=0.6;}
+          if(state.showLoop && l===loopLayer && ((i===loopA&&j===loopB)||(i===loopB&&j===loopA))){sc+=3.6;}
+          sc/=Math.sqrt(d_k);
+          scores.push(sc);
+        }
+        var w=softmax(scores,temp);
+        for(var q=0;q<N;q++){ if(w[q]>maxw){maxw=w[q];} }
+        layer.push(w);
+      }
+      attnW.push(layer);
+    }
+    state.attnMax=maxw;
+  }
+
+  var roDm=document.getElementById('roDm'),roDk=document.getElementById('roDk'),roDf=document.getElementById('roDf'),roMax=document.getElementById('roMax'),roStat=document.getElementById('roStat');
+  roDm.textContent=d_model; roDk.textContent=d_k; roDf.textContent=d_ff;
+  var viewCap=document.getElementById('viewCap');
+  var CAP_CLEAN='Fasern wandern stetig durch die Schichten: jede Ebene ist Attention⊕FFN⊕Merge (A), die lila Linien dazwischen sind die echten Attention-Gewichte. Der grüne Orb ist der Schnitt s, der die ausgewählte Faser von unten nach oben abläuft.';
+  var CAP_HALLU='HALLUZINATION (A: „Schnitt s springt diskontinuierlich in der Faser", als B\'s Riss-Feld): der Merge-Punkt von „der" in L'+halluLayer+' springt — an (b,l) ist der Schnitt s nicht stetig, Δ = Sprung-Magnitude.';
+  var CAP_LOOP='KREISSCHLUSS (beide): „Katze" ⇄ „Matte" boosten in L'+loopLayer+' ihre Attention-Gewichte so stark, dass sich eine geschlossene Feedback-Schleife bildet (w_ab·w_ba > 0).';
+  function updateCap(){
+    if(state.showHallu && state.showLoop){ viewCap.textContent=CAP_HALLU+' '+CAP_LOOP; }
+    else if(state.showHallu){ viewCap.textContent=CAP_HALLU; }
+    else if(state.showLoop){ viewCap.textContent=CAP_LOOP; }
+    else { viewCap.textContent=CAP_CLEAN; }
+  }
+  updateCap();
+
+  var playBtn=document.getElementById('playBtn');
+  var halluBtn=document.getElementById('halluBtn');
+  var loopBtn=document.getElementById('loopBtn');
+  var tokBtn=document.getElementById('tokBtn');
+  var curvEl=document.getElementById('curvSl'),curvVal=document.getElementById('curvVal');
+  var chaosEl=document.getElementById('chaosSl'),chaosVal=document.getElementById('chaosVal');
+
+  playBtn.onclick=function(){ state.playing=!state.playing; playBtn.textContent=state.playing?'⏸ Pause':'▶ Animieren'; playBtn.classList.toggle('on',state.playing); };
+  halluBtn.onclick=function(){ state.showHallu=!state.showHallu; halluBtn.classList.toggle('on',state.showHallu); updateCap(); };
+  loopBtn.onclick=function(){ state.showLoop=!state.showLoop; loopBtn.classList.toggle('on',state.showLoop); compAttn(); updateCap(); };
+  tokBtn.onclick=function(){ state.selTok=(state.selTok+1)%N; tokBtn.textContent='📌 Token: '+tokens[state.selTok]; };
+  tokBtn.textContent='📌 Token: '+tokens[state.selTok];
+  curvEl.addEventListener('input',function(){ state.curv=+curvEl.value; curvVal.textContent=(+curvEl.value).toFixed(2); });
+  chaosEl.addEventListener('input',function(){ state.chaos=+chaosEl.value; chaosVal.textContent=(+chaosEl.value).toFixed(2); });
+
+  var secPts=[], halluDraw=null;
+
+  function draw(){
+    secPts=[]; halluDraw=null;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=PAL['--viz-canvas-bg']||'#0c1120'; ctx.fillRect(0,0,W,H);
+
+    // layer guides + base line
+    ctx.strokeStyle=PAL['--viz-grid']||'rgba(120,120,120,0.1)'; ctx.lineWidth=1;
+    ctx.setLineDash([4,6]);
+    for(var gl=0;gl<L;gl++){ var gy=layerY(gl); ctx.beginPath(); ctx.moveTo(34,gy); ctx.lineTo(W-34,gy); ctx.stroke(); }
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(30,baseY()); ctx.lineTo(W-30,baseY()); ctx.stroke();
+
+    // attention flows between fibers (per layer)
+    var spread=16;
+    for(var l=0;l<L;l++){
+      var ay=layerY(l);
+      for(var i=0;i<N;i++){
+        for(var j=0;j<N;j++){
+          if(i===j){continue;}
+          var w=attnW[l][i][j];
+          if(w<0.10){continue;}
+          var x1=baseX(i)-spread, x2=baseX(j)-spread;
+          var cpx=(x1+x2)/2, cpy=ay-14-w*30;
+          ctx.strokeStyle=hexA(PAL['--viz-attn'],Math.min(0.55,w*0.55));
+          ctx.lineWidth=w*3+0.4;
+          ctx.beginPath(); ctx.moveTo(x1,ay); ctx.quadraticCurveTo(cpx,cpy,x2,ay); ctx.stroke();
+          var ft=(state.time*0.4+i*0.15+j*0.1)%1; var t1=1-ft,t2=ft;
+          var fx=t1*t1*x1+2*t1*t2*cpx+t2*t2*x2;
+          var fy=t1*t1*ay+2*t1*t2*cpy+t2*t2*ay;
+          ctx.fillStyle=hexA(PAL['--viz-attn'],Math.min(1,w));
+          ctx.beginPath(); ctx.arc(fx,fy,1.4+w*2,0,TAU); ctx.fill();
+        }
+      }
+    }
+
+    // fibers with per-layer Attn / FFN / Merge structure
+    for(var fi=0;fi<N;fi++){
+      var sway0=Math.sin(state.time*0.7+fi*0.9)* (2+state.curv*4);
+      var prevX=baseX(fi), prevY=baseY();
+      for(var l2=0;l2<L;l2++){
+        var ly=layerY(l2);
+        var sway=Math.sin(state.time*0.7+fi*0.9+l2*0.5)*(2+state.curv*6)
+                + (state.chaos>0?Math.sin(state.time*3.7+l2*7.3+fi*2.1)*state.chaos*10:0);
+        var spineX=baseX(fi)+sway;
+        var splitY=prevY-(prevY-ly)*0.42;
+        var attnX=spineX-spread, attnY=splitY;
+        var ffnAct=0.35+0.65*Math.abs(Math.sin(hash(tokens[fi]+'F'+l2)*0.3));
+        var ffnX=spineX+spread+ffnAct*5*Math.sin(state.time*0.5+fi);
+        var ffnY=splitY;
+        var mergeX=spineX, mergeY=ly;
+        if(state.showHallu && fi===halluTok && l2===halluLayer){
+          var pulse=Math.sin(state.time*4)*0.3+0.7;
+          mergeX+=22*pulse; mergeY+=8*pulse;
+          halluDraw={x1:spineX,y1:ly,x2:mergeX,y2:mergeY,pulse:pulse};
+        }
+        // stem
+        ctx.strokeStyle=hexA(PAL['--viz-fiber'],0.75); ctx.lineWidth=2.2; ctx.lineCap='round';
+        ctx.beginPath(); ctx.moveTo(prevX,prevY); ctx.quadraticCurveTo((prevX+spineX)/2,(prevY+splitY)/2,spineX,splitY); ctx.stroke();
+        // attn branch
+        ctx.strokeStyle=hexA(PAL['--viz-attn'],0.55); ctx.lineWidth=1.4;
+        ctx.beginPath(); ctx.moveTo(spineX,splitY); ctx.lineTo(attnX,attnY); ctx.stroke();
+        ctx.fillStyle=hexA(PAL['--viz-attn'],0.9); ctx.beginPath(); ctx.arc(attnX,attnY,3,0,TAU); ctx.fill();
+        // ffn branch
+        ctx.strokeStyle=hexA(PAL['--viz-ffn'],0.55); ctx.lineWidth=1.4;
+        ctx.beginPath(); ctx.moveTo(spineX,splitY); ctx.lineTo(ffnX,ffnY); ctx.stroke();
+        ctx.fillStyle=hexA(PAL['--viz-ffn'],0.9); ctx.beginPath(); ctx.arc(ffnX,ffnY,3+ffnAct*2,0,TAU); ctx.fill();
+        // converge (dashed)
+        ctx.strokeStyle=hexA(PAL['--viz-res'],0.4); ctx.lineWidth=1; ctx.setLineDash([3,2]);
+        ctx.beginPath(); ctx.moveTo(attnX,attnY); ctx.lineTo(mergeX,mergeY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ffnX,ffnY); ctx.lineTo(mergeX,mergeY); ctx.stroke();
+        ctx.setLineDash([]);
+        // residual skip
+        ctx.strokeStyle=hexA(PAL['--viz-res'],0.22); ctx.setLineDash([2,3]);
+        ctx.beginPath(); ctx.moveTo(prevX,prevY); ctx.lineTo(mergeX,mergeY); ctx.stroke();
+        ctx.setLineDash([]);
+        // merge node + ⊕
+        ctx.fillStyle=hexA(PAL['--viz-res'],0.9); ctx.beginPath(); ctx.arc(mergeX,mergeY,3.4,0,TAU); ctx.fill();
+        ctx.fillStyle=hexA(PAL['--viz-res'],0.75); ctx.font='9px ui-monospace,monospace'; ctx.textAlign='left'; ctx.textBaseline='middle';
+        ctx.fillText('⊕',mergeX+5,mergeY);
+        if(fi===state.selTok){ secPts.push({x:mergeX,y:mergeY}); }
+        prevX=mergeX; prevY=mergeY;
+      }
+    }
+
+    // section s tracer (selected token)
+    if(secPts.length){
+      var p=(state.time*0.22)%1;
+      var fp=p*(secPts.length-1);
+      var idx=Math.floor(fp), fr=fp-idx;
+      var a=secPts[idx], b=secPts[Math.min(idx+1,secPts.length-1)];
+      var tx=a.x+(b.x-a.x)*fr, ty=a.y+(b.y-a.y)*fr;
+      var og=ctx.createRadialGradient(tx,ty,0,tx,ty,14);
+      og.addColorStop(0,hexA(PAL['--viz-tracer'],0.9)); og.addColorStop(0.4,hexA(PAL['--viz-tracer'],0.35)); og.addColorStop(1,hexA(PAL['--viz-tracer'],0));
+      ctx.fillStyle=og; ctx.beginPath(); ctx.arc(tx,ty,14,0,TAU); ctx.fill();
+      ctx.fillStyle=hexA(PAL['--viz-tracer'],1); ctx.beginPath(); ctx.arc(tx,ty,3.5,0,TAU); ctx.fill();
+    }
+
+    // hallucination crack + label
+    if(halluDraw){
+      ctx.save(); ctx.strokeStyle=hexA(PAL['--viz-defect'],0.85); ctx.lineWidth=2.2; ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(halluDraw.x1,halluDraw.y1); ctx.lineTo(halluDraw.x2,halluDraw.y2); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle=hexA('#2fd0a0',0.8); ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(halluDraw.x1,halluDraw.y1,4.5,0,TAU); ctx.stroke();
+      ctx.fillStyle=hexA(PAL['--viz-defect'],0.9); ctx.beginPath(); ctx.arc(halluDraw.x2,halluDraw.y2,4.5,0,TAU); ctx.fill();
+      ctx.fillStyle=hexA(PAL['--viz-defect'],0.95); ctx.font='700 10px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('⚠ HALLUZINATION — s diskontinuierlich',halluDraw.x2,halluDraw.y2-16);
+      ctx.restore();
+    }
+
+    // circular-ref loop
+    if(state.showLoop){
+      var ly2=layerY(loopLayer);
+      var x1=baseX(loopA)-spread, x2=baseX(loopB)-spread;
+      var cx=(x1+x2)/2, cy=ly2, rx=Math.abs(x2-x1)/2+16, ry=16;
+      var pulse=Math.sin(state.time*3)*0.3+0.7;
+      ctx.save();
+      ctx.strokeStyle=hexA(PAL['--viz-defect'],0.5*pulse+0.2); ctx.lineWidth=2; ctx.setLineDash([5,3]);
+      ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+      for(var aq=0;aq<3;aq++){
+        var aa=state.time*2.2+aq*TAU/3;
+        var ax=cx+Math.cos(aa)*rx, ayy=cy+Math.sin(aa)*ry, ad=aa+Math.PI/2;
+        ctx.fillStyle=hexA(PAL['--viz-defect'],0.85);
+        ctx.beginPath();
+        ctx.moveTo(ax+Math.cos(ad)*5,ayy+Math.sin(ad)*5);
+        ctx.lineTo(ax+Math.cos(ad+2.4)*5,ayy+Math.sin(ad+2.4)*5);
+        ctx.lineTo(ax+Math.cos(ad-2.4)*5,ayy+Math.sin(ad-2.4)*5);
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.fillStyle=hexA(PAL['--viz-defect'],0.95); ctx.font='700 10px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('🔄 KREISSCHLUSS — geschlossene Schleife',cx,cy-ry-8);
+      ctx.restore();
+    }
+
+    // token labels
+    ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    for(var ti=0;ti<N;ti++){
+      var sel=ti===state.selTok;
+      ctx.font=(sel?'700 12px':'11px')+' ui-monospace,monospace';
+      ctx.fillStyle=sel?PAL['--viz-fiber']:hexA(PAL['--viz-txt'],0.6);
+      ctx.fillText(tokens[ti],baseX(ti),baseY()+16);
+      if(sel){ ctx.strokeStyle=hexA(PAL['--viz-fiber'],0.9); ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(baseX(ti),baseY(),12,0,TAU); ctx.stroke(); }
+    }
+
+    roMax.textContent=state.attnMax.toFixed(2);
+    roStat.textContent=state.showHallu?'sprunghaft':'stetig';
+    roStat.className='v '+(state.showHallu?'e':'g');
+  }
+
+  function loop(){
+    if(state.playing){ state.time+=0.016; }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  compAttn();
+  requestAnimationFrame(loop);
+  window.addEventListener('resize',function(){ readPal(); });
+  try{ new MutationObserver(function(){ readPal(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']}); }catch(e){}
+});
+</script>
+</body>
+</html>

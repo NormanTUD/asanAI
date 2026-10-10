@@ -1,0 +1,16 @@
+{
+  "no": "031",
+  "a": "how_ai_approximates.html",
+  "b": "rome.html",
+  "a_title": "Wie NNs beliebige Muster bauen – Mechanismen-Visualisierung",
+  "b_title": "ROME – Fakten in GPT lokalisieren und editieren",
+  "combined_theme": "funktionstiefe-treffen-lokaler-speicher",
+  "one_line": "Ein Transformer-MLP ist eine Zwei-Stufen-Einheit – nichtlineares Knicken (A, ReLU-Knick) baut den Key, der lineare assoziativer Speicher (B, W_proj) hält den Value – weshalb Fakten lokal in einer mittleren Schicht liegen und per einer einzigen Rang-1-Änderung schreibbar sind.",
+  "contradictions": [
+    "Verteilte kompositorische Funktion (A: die Netz-Funktion ist das Faltwerk aller Schichten, exponentiell viele Regionen O(k^L), sitzt nirgends) vs. lokale Speicherung (B: 'Faktisches Wissen ist nicht diffus verteilt, sondern lokal' in mittleren MLPs, an genau einem Ort).",
+    "Nichtlinearität als Motor (A: der ReLU-Knick ist der atomare Baustein, komponierte Nichtlinearitäten -> stückweise lineare Approximation) vs. Linearität als Motor (B: die MLP-Rückseite ist ein linearer assoziativer Speicher W·k≈v, genau diese Linearität erlaubt das geschlossene Rang-1-Edit).",
+    "'Tiefe ist effizienter als Breite' (A: mehr Schichten -> exponentiell mehr Regionen, jede Tiefe trägt zur Ausdruckskraft bei) vs. 'eine mittlere Schicht genügt' (B: für einen Fakt zählt nur ~Schicht 18/48, späte Schichten sind nur Kopie/Transport, also redundant)."
+  ],
+  "resolution": "A und B lesen dasselbe MLP auf zwei Ebenen, kein faktischer Konflikt. A = Berechnungsebene (welche Funktion die Maschine als Ganzes ausführt, verteilt/kompositorisch), B = Speicherebene (wo ein einzelner Fakt liegt, lokal). A's ReLU-Knick und B's linearer Speicher sind die beiden Sub-Schichten EINES MLPs in Serie: die nichtlineare Front (W_fc+σ) baut den Key k, die lineare Rückseite (W_proj) hält/ergibt den Value v. ROME editiert nur W_proj (Rückseite) und lässt die Knick-Front unangetastet -> lokal und billig, Komposition bleibt intakt. W3: A's 'Tiefe=mehr Regionen' ist Kapazität/Ausdruckskraft der Maschine, B's 'eine Schicht' ist der Ort eines einzelnen Faktums; Tiefe baut (faltet) den Key auf, bis in der mittleren Schicht der Speicher ihn abfragt – Tiefe finanziert den Key-Raum, der lokale lineare Speicher den Value-Raum. Causal Tracing (B) verortet experimentell A's funktionale Struktur; ROME nutzt die Linearität der Rückseite zum Edit ohne Nachtraining.",
+  "viz": "Self-contained Canvas (keine externen Libs, keine Netzwerk-Calls): links B's Lokalisierung als Spalte Transformer-Schichten mit AIE-Heatmap (Peak mittlere Schicht = assoziativer Speicher, kleiner Peak oben = Kopie/Transport); rechts oben A's Front = ReLU-Knick, der den Key baut (Knick-Regler verschiebt Knick UND dreht Key, verknüpft A↔B); rechts unten B's Rückseite = linearer Speicher (Key k -> W·k blau, mit Rang-1-Edit -> v* Gold, Pfeil Λ); unten A's Regionenwachstum tief k^L vs. breit L·k (log₁₀). Regler: Tiefe L, Knick-Stelle, Breite k, Edit-Toggle; Readouts L / l* / Regionen≤k^L / Edit-Status. Theme-aware über CSS-Variablen (:root light, html.dark default) + Theme-Button, Daten inline/simuliert."
+}

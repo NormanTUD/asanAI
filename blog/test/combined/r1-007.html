@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Attention Field, Two Readouts — Convex Combination ✕ Simplicial Skeleton</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1a17; --muted:#5b564d; --panel:#ffffff; --panel-border:#e2ddd0;
+  --card:#fffdf9; --grid:#ece8dd; --axis:#c9c4b6; --code-bg:#f1ede2;
+  --edge-rgb:112,126,224; --skeleton-rgb:70,92,200; --query-rgb:16,140,116;
+  --triangle-rgb:196,96,230; --node:#221f1b; --node-stroke:#667eea;
+  --output:#9c2fc4; --label:#33302a; --accent:#667eea; --accent-soft:#ece9ff;
+}
+html.dark{
+  --bg:#0d1117; --fg:#e6edf3; --muted:#8b949e; --panel:#161b22; --panel-border:#30363d;
+  --card:#10151c; --grid:#1c2128; --axis:#30363d; --code-bg:#0b0f14;
+  --edge-rgb:88,166,255; --skeleton-rgb:126,196,255; --query-rgb:63,185,80;
+  --triangle-rgb:212,160,255; --node:#e6edf3; --node-stroke:#58a6ff;
+  --output:#d4a0ff; --label:#c9d1d9; --accent:#58a6ff; --accent-soft:#12233a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,'Segoe UI',system-ui,sans-serif;line-height:1.65;padding:26px 16px 60px}
+article{max-width:820px;margin:0 auto}
+h1{font-size:1.7em;line-height:1.25;margin-bottom:6px;letter-spacing:-.01em}
+.subtitle{color:var(--muted);font-size:.92em;margin-bottom:26px;font-family:ui-monospace,monospace}
+section{margin-bottom:34px}
+h2{font-size:1.22em;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--panel-border)}
+p{margin-bottom:12px}
+strong{color:var(--fg)}
+a{color:var(--accent)}
+.eq{font-family:'Cambria Math','Times New Roman',Georgia,serif;font-size:1.06em;background:var(--card);border:1px solid var(--panel-border);border-radius:8px;padding:12px 16px;margin:14px 0;overflow-x:auto;white-space:nowrap}
+.eq em{font-style:italic}
+sub{font-size:.72em}
+ul,ol{margin:0 0 12px 22px}
+li{margin-bottom:8px}
+.card{background:var(--card);border:1px solid var(--panel-border);border-radius:12px;padding:16px;margin:14px 0}
+.tag{display:inline-block;font-size:.72em;font-family:ui-monospace,monospace;padding:2px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent);margin-right:6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 14px;background:var(--card);border:1px solid var(--panel-border);border-radius:12px;margin-bottom:12px;font-size:.86em}
+.toolbar label{color:var(--muted)}
+.toolbar select{background:var(--bg);color:var(--fg);border:1px solid var(--panel-border);border-radius:6px;padding:3px 8px}
+.toolbar input[type=range]{width:96px;accent-color:var(--accent);vertical-align:middle}
+.toolbar .v{font-family:ui-monospace,monospace;color:var(--accent);min-width:42px;display:inline-block}
+#cv{display:block;width:100%;border:1px solid var(--panel-border);border-radius:12px;background:var(--card)}
+.readout{font-size:.85em;line-height:1.9}
+.readout .row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--panel-border);padding:3px 0}
+.readout .row:last-child{border-bottom:none}
+.readout b{color:var(--accent);font-family:ui-monospace,monospace}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8em;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:22px;height:0;border-top-width:3px;border-top-style:solid;display:inline-block}
+.dotc{width:11px;height:11px;border-radius:50%;display:inline-block}
+.prov{list-style:none;margin:0}
+.prov li{margin-bottom:10px;padding:10px 14px;background:var(--card);border:1px solid var(--panel-border);border-radius:10px}
+#themeBtn{position:fixed;top:14px;right:14px;background:var(--card);color:var(--fg);border:1px solid var(--panel-border);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:.82em}
+.note{font-size:.85em;color:var(--muted);border-left:3px solid var(--accent);padding:8px 14px;background:var(--card);border-radius:0 8px 8px 0;margin:14px 0}
+</style>
+</head>
+<body>
+<button id="themeBtn" type="button">☾ dark / ☀ light</button>
+<article>
+<h1>One Attention Field, Two Readouts</h1>
+<p class="subtitle">Fusion aus: qkv.html ✕ simplicial_complex_attention5.html</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Both papers describe the <em>same primitive</em> and disagree only about what to read off it. The primitive is a token-to-token <strong>similarity field</strong>: each token gets an embedding, and the "score" between two tokens is a dot product of (linearly transformed) embeddings, sharpened by a softmax temperature. <strong>A (qkv.html)</strong> reads this field as a <strong>directed, continuous convex combination</strong> of value vectors — a chosen query's output is <em>o</em> = Σ<sub>j</sub> α<sub>j</sub> v<sub>j</sub> with α<sub>j</sub> = softmax(q·k<sub>j</sub>/√d), so every token always contributes a positive share that sums to one. <strong>B (simplicial_complex_attention5.html)</strong> reads the very same field as a <strong>combinatorial object</strong>: it symmetrizes the attention by mutual agreement, cuts it with a threshold ε, and treats the surviving pairs as the 1-skeleton of a <em>simplicial complex</em> (triangles where three tokens are mutually connected), then extracts Betti numbers.</p>
+<p>The fused position: <strong>attention is a single similarity field, and "reading values" (A) and "reading topology" (B) are two projections of one operation.</strong> A's soft row-integral against the value vectors is the <em>content-level</em>, 0-dimensional view; B's thresholded, symmetrized, hierarchically-filled version is the <em>structural/topological</em> view. Nothing in either view is new information — both are functions of the one field s(i,j). The projection matrices W<sub>Q</sub>/W<sub>K</sub>/W<sub>V</sub> (A's "twist" knobs) and the softmax temperature shape <em>what the field looks like</em>, while ε (B) sets <em>where you cut the field to expose discrete structure</em>.</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+<ul>
+<li><span class="tag">A</span> says the output is a <strong>convex combination</strong>: <em>o</em> = Σ<sub>j</sub> α<sub>j</sub> v<sub>j</sub> with α<sub>j</sub> &gt; 0 for every j and Σα<sub>j</sub> = 1, "the output is pulled mostly toward X's V vector (78% weight)". It is smooth, always fully connected, with no threshold and no discrete object.
+<span class="tag">B</span> says connectivity is <strong>binary and thresholded</strong>: an edge exists <em>iff</em> mutual attention &gt; ε, and the object is a simplicial complex with a definite 1-skeleton and filled triangles. So A's readout is a smooth vector; B's readout is a combinatorial complex. In A nothing is ever "disconnected"; in B the entire point is <em>which</em> pairs/triples are connected.</li>
+<li><span class="tag">A</span> is <strong>directed</strong>: one selected query token attends to all the keys; the score q·k<sub>j</sub> is asymmetric in role (one query, many keys) and the value read flows query→keys→values.
+<span class="tag">B</span> <strong>symmetrizes</strong>: the edge weight is min(α<sub>ij</sub>, α<sub>ji</sub>) — an undirected edge appears only where attention is <em>mutual</em> (both directions agree above ε). So A's unit is a directed read (which one token reads), B's unit is an undirected agreement (where two tokens attend to each other).</li>
+<li><span class="tag">A</span> makes the <strong>learned projections the mechanism</strong>: "twist the W<sub>Q</sub>/W<sub>K</sub> knobs to change <em>what counts as relevant</em>; twist W<sub>V</sub> to change <em>what gets read</em>" — without the linear maps there is no matching.
+<span class="tag">B</span> <strong>deliberately strips them out</strong>: "single-head, no learned weights for clarity — the metric is just cosine-like similarity" on fixed, interpretable 3D axes (gender / being / power). So A says W is load-bearing; B shows the same "attention" running on raw dot/cosine with W = identity.</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+<ol>
+<li><strong>Soft weights <em>are</em> the edge weights.</strong> A's convex combination and B's skeleton read the same adjacency field S[i][j] two ways: A integrates the soft row (Σ α<sub>j</sub> v<sub>j</sub>); B applies a hard threshold (a hard-sigmoid / quantization) to expose the 1-skeleton, then fills triangles. ε is a decision boundary on one continuous field: as ε→0 the complex becomes the complete graph (all soft edges visible); as ε→∞ it empties. The convex blend is the "relaxed" version of the same connectivity, and the readout is a single dial (ε / temperature) along the soft↔discrete axis.</li>
+<li><strong>Directionality and symmetry are two roles of one field, not a contradiction.</strong> The directed attention α<sub>ij</sub> (query i reads key j) is the primitive. B's min(α<sub>ij</sub>, α<sub>ji</sub>) is a <em>symmetrization</em> that asks "do they attend to each other?" — extracting the undirected mutual-agreement substructure from the directed field. In the fused model the directed field carries <em>content flow</em> (the value read, A) while its symmetrized-and-thresholded part carries <em>topology</em> (the skeleton, B). The query→key→value pipeline and the mutual edge are the directed read and the symmetric skeleton of one matrix.</li>
+<li><strong>B is the identity-projection limit of A.</strong> A computes s(i,j) = (W<sub>Q</sub>x<sub>i</sub>)·(W<sub>K</sub>x<sub>j</sub>); B computes x<sub>i</sub>·x<sub>j</sub> — exactly A with W<sub>Q</sub>=W<sub>K</sub>=W<sub>V</sub>=I (B literally uses identity weights). So B is not a rival mechanism; it is A evaluated at W=I on a fixed semantic basis. Keeping W as a free dial, the twist knobs (A) rotate the field and thereby reshape <em>which triples close into triangles</em> — i.e. <strong>W controls topology, not just readout</strong> — so the Betti numbers become a functional of (W, temperature, ε).</li>
+</ol>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+<p><strong>The shared primitive.</strong> Let x<sub>i</sub> ∈ ℝ<sup>d</sup> be the embedding of token i, with Q=XW<sub>Q</sub>, K=XW<sub>K</sub>, V=XW<sub>V</sub>. The raw score is r<sub>ij</sub> = q<sub>i</sub>·k<sub>j</sub> = (W<sub>Q</sub>x<sub>i</sub>)·(W<sub>K</sub>x<sub>j</sub>), scaled by √d; with temperature T (A's "focus", the inverse of B's "sharpness") the attention row is</p>
+<p class="eq">α<sub>ij</sub> = softmax<sub>j</sub>( r<sub>ij</sub> / √d / T )&nbsp;&nbsp;=&nbsp;&nbsp; exp(r<sub>ij</sub>/√d/T) / Σ<sub>ℓ</sub> exp(r<sub>iℓ</sub>/√d/T)</p>
+<p><strong>Readout 1 — content (A):</strong> the query's output is a convex combination of the value vectors,</p>
+<p class="eq"><em>o</em><sub>i</sub> = Σ<sub>j</sub> α<sub>ij</sub> v<sub>j</sub> ,&nbsp;&nbsp; α<sub>ij</sub> ≥ 0,&nbsp; Σ<sub>j</sub> α<sub>ij</sub> = 1</p>
+<p>which is exactly the "matching (Q·K) → reading (V)" picture: the output is pulled toward the value of the key the query aligns with most (smallest angle, largest weight).</p>
+<p><strong>Readout 2 — structure (B):</strong> symmetrize, threshold, fill:</p>
+<p class="eq">w<sub>ij</sub> = min(α<sub>ij</sub>, α<sub>ji</sub>)&nbsp;&nbsp;·&nbsp;&nbsp;edge ⇔ w<sub>ij</sub> &gt; ε&nbsp;&nbsp;·&nbsp;&nbsp;triangle ⇔ all three w of a triple &gt; ε</p>
+<p>The surviving edges are the 1-skeleton of a simplicial complex K = (V, E, F); a triangle (2-simplex) is filled when three tokens are mutually connected — B's "these words are thought about together". Topology is then summarized by <strong>Betti numbers</strong>: β<sub>0</sub> = connected components (union-find over E), and B's β<sub>1</sub> ≈ |E| − (n − β<sub>0</sub>) − |F| (a cyclomatic-style approximation, not a full homology computation).</p>
+<p><strong>The dials and their limits.</strong> W reshapes the field (rotating it re-pairs the tokens); T trades peakiness (T→0 locks the query onto its single best key — A's "smallest angle"; T→∞ flattens to the uniform average of all values); ε trades softness for discreteness (ε→0 complete graph, ε→∞ empty complex). <strong>Locality unifies both claims</strong>: A's "one token pulls mostly toward its best-matching key" and B's "meaning focuses locally" are the same low-temperature, high-ε limit of the field, where a soft row collapses to one dominant weight and the complex collapses to a sparse skeleton.</p>
+<p class="note"><strong>Caveats carried faithfully.</strong> A uses 2D rotations of hand-picked embeddings (not learned full-rank W) and a single query/head; B uses 3D rule-based lexicon embeddings, identity weights, and an approximate β<sub>1</sub>. The fusion is conceptual: the visualization below keeps 2D hand-picked embeddings, adds the W twist knobs (A), the temperature T, the threshold ε, and the Betti readout (B) so both readouts run off one field.</p>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung</h2>
+<p>One 2D field, two readouts at once. Faint lines are the <strong>soft mutual-attention field</strong> (thickness ∝ w<sub>ij</sub> = min(α<sub>ij</sub>,α<sub>ji</sub>)); bright lines are the <strong>ε-thresholded 1-skeleton</strong>; filled shapes are <strong>2-simplices</strong> (triangles). The arrow is the selected query's content readout <em>o</em><sub>i</sub> = Σ α<sub>i</sub> v. Twist W to re-shape the field and watch the topology change.</p>
+<div class="toolbar">
+  <label>Query</label>
+  <select id="who"></select>
+  <label>W<sub>Q</sub> twist</label>
+  <input type="range" id="qTwist" min="-90" max="90" value="0"><span class="v" id="qTwist-v"></span>
+  <label>W<sub>K</sub> twist</label>
+  <input type="range" id="kTwist" min="-90" max="90" value="0"><span class="v" id="kTwist-v"></span>
+  <label>W<sub>V</sub> twist</label>
+  <input type="range" id="vTwist" min="-90" max="90" value="0"><span class="v" id="vTwist-v"></span>
+  <label>Temp T</label>
+  <input type="range" id="temp" min="0.2" max="3" step="0.05" value="0.8"><span class="v" id="temp-v"></span>
+  <label>Threshold ε</label>
+  <input type="range" id="eps" min="0" max="0.2" step="0.005" value="0.06"><span class="v" id="eps-v"></span>
+</div>
+<canvas id="cv"></canvas>
+<div class="legend">
+  <span><span class="sw" style="border-color:rgba(var(--edge-rgb),.5)"></span> soft field</span>
+  <span><span class="sw" style="border-color:rgba(var(--skeleton-rgb),.95)"></span> edge (w&gt;ε)</span>
+  <span><span class="sw" style="border-color:rgba(var(--query-rgb),.95)"></span> query read</span>
+  <span><span class="dotc" style="background:rgba(var(--triangle-rgb),.4)"></span> triangle</span>
+  <span><span class="dotc" style="background:var(--node)"></span> token</span>
+  <span><span class="sw" style="border-color:var(--output);border-top-width:4px"></span> output <em>o</em></span>
+</div>
+<div class="card" style="margin-top:14px"><div class="readout" id="readout"></div></div>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<ul class="prov">
+<li><a href="../qkv.html">qkv.html</a> — "Attention — Watch It Work": single-token attention flow; α<sub>j</sub>=softmax(q·k<sub>j</sub>/√d), o=Σα<sub>j</sub>v<sub>j</sub>, W<sub>Q/K/V</sub> twist knobs and a focus (temperature) slider on a 2D canvas.</li>
+<li><a href="../simplicial_complex_attention5.html">simplicial_complex_attention5.html</a> — "Attention Creates Simplicial Complexes": 3D word embeddings, dot-product attention, ε-thresholded edges and triangles forming a simplicial complex with Betti numbers (Plotly).</li>
+</ul>
+</section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var toks = [
+    {w:'king',     e:[1.0, 1.0]},
+    {w:'lion',     e:[0.4, 0.6]},
+    {w:'power',    e:[0.9, 0.3]},
+    {w:'commanded',e:[0.6, 1.2]},
+    {w:'divine',   e:[0.2, 0.8]},
+    {w:'the',      e:[0.1,-0.1]}
+  ];
+  var n = toks.length;
+  var cv = document.getElementById('cv');
+  var ctx = cv.getContext('2d');
+
+  function rot(v,deg){var r=deg*Math.PI/180,c=Math.cos(r),s=Math.sin(r);return [v[0]*c-v[1]*s, v[0]*s+v[1]*c];}
+  function dot(a,b){return a[0]*b[0]+a[1]*b[1];}
+  function softmax(arr,T){var m=-1e9;for(var i=0;i<arr.length;i++)if(arr[i]>m)m=arr[i];var e=arr.map(function(x){return Math.exp((x-m)/T);});var s=0;for(var j=0;j<e.length;j++)s+=e[j];return e.map(function(x){return x/s;});}
+  function cssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
+  function w2c(v,cx,cy,sc){return [cx+v[0]*sc, cy-v[1]*sc];}
+  function arrow(x1,y1,x2,y2,col,w){
+    var ang=Math.atan2(y2-y1,x2-x1),hl=11;
+    ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hl*Math.cos(ang-0.35),y2-hl*Math.sin(ang-0.35));
+    ctx.lineTo(x2-hl*Math.cos(ang+0.35),y2-hl*Math.sin(ang+0.35));ctx.closePath();ctx.fill();
+  }
+
+  function sizeCanvas(){
+    var dpr=window.devicePixelRatio||1, w=cv.clientWidth||820, h=460;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+    cv.style.height=h+'px'; ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function render(){
+    try{
+      var W=cv.clientWidth||820, H=460;
+      var edge=cssVar('--edge-rgb'), skel=cssVar('--skeleton-rgb'), qry=cssVar('--query-rgb'),
+          tri=cssVar('--triangle-rgb'), node=cssVar('--node'), stroke=cssVar('--node-stroke'),
+          out=cssVar('--output'), grid=cssVar('--grid'), axis=cssVar('--axis'), label=cssVar('--label');
+
+      var qi=parseInt(document.getElementById('who').value,10);
+      var qT=parseFloat(document.getElementById('qTwist').value);
+      var kT=parseFloat(document.getElementById('kTwist').value);
+      var vT=parseFloat(document.getElementById('vTwist').value);
+      var T=parseFloat(document.getElementById('temp').value);
+      var eps=parseFloat(document.getElementById('eps').value);
+      document.getElementById('qTwist-v').textContent=qT+'°';
+      document.getElementById('kTwist-v').textContent=kT+'°';
+      document.getElementById('vTwist-v').textContent=vT+'°';
+      document.getElementById('temp-v').textContent=T.toFixed(2);
+      document.getElementById('eps-v').textContent=eps.toFixed(3);
+
+      var Q=toks.map(function(t){return rot(t.e,qT);});
+      var K=toks.map(function(t){return rot(t.e,kT);});
+      var V=toks.map(function(t){return rot(t.e,vT);});
+
+      var A=[];
+      for(var i=0;i<n;i++){var row=[];for(var j=0;j<n;j++)row.push(dot(Q[i],K[j])/Math.sqrt(2));A[i]=softmax(row,T);}
+      var Wm=[];for(i=0;i<n;i++){Wm[i]=[];for(j=0;j<n;j++)Wm[i][j]=Math.min(A[i][j],A[j][i]);}
+      var edges=[];for(i=0;i<n;i++)for(j=i+1;j<n;j++)if(Wm[i][j]>eps)edges.push([i,j,Wm[i][j]]);
+      var tris=[];for(i=0;i<n;i++)for(j=i+1;j<n;j++)for(var k=j+1;k<n;k++)
+        if(Wm[i][j]>eps&&Wm[j][k]>eps&&Wm[i][k]>eps)tris.push([i,j,k]);
+      var parent=[];for(i=0;i<n;i++)parent[i]=i;
+      function find(x){while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];}return x;}
+      for(var e=0;e<edges.length;e++){var a=find(edges[e][0]),b=find(edges[e][1]);if(a!==b)parent[a]=b;}
+      var roots={};for(i=0;i<n;i++)roots[find(i)]=1;
+      var b0=Object.keys(roots).length, b1=Math.max(0,edges.length-(n-b0)-tris.length);
+      var o=[0,0];for(j=0;j<n;j++){o[0]+=A[qi][j]*V[j][0];o[1]+=A[qi][j]*V[j][1];}
+
+      ctx.clearRect(0,0,W,H);
+      var cx=W*0.5, cy=H*0.52, sc=Math.min(120, W*0.12);
+
+      // grid
+      ctx.strokeStyle=grid;ctx.lineWidth=1;
+      var ext=3.2*sc;
+      for(var g=-3;g<=3;g++){
+        ctx.beginPath();ctx.moveTo(cx+g*sc,cy-ext);ctx.lineTo(cx+g*sc,cy+ext);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx-ext,cy+g*sc);ctx.lineTo(cx+ext,cy+g*sc);ctx.stroke();
+      }
+      ctx.strokeStyle=axis;ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(cx-ext,cy);ctx.lineTo(cx+ext,cy);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx,cy-ext);ctx.lineTo(cx,cy+ext);ctx.stroke();
+
+      // triangles (filled)
+      for(var t=0;t<tris.length;t++){var tr=tris[t];
+        var p0=w2c(toks[tr[0]].e,cx,cy,sc),p1=w2c(toks[tr[1]].e,cx,cy,sc),p2=w2c(toks[tr[2]].e,cx,cy,sc);
+        ctx.fillStyle='rgba('+tri+',0.16)';ctx.strokeStyle='rgba('+tri+',0.5)';ctx.lineWidth=1.2;
+        ctx.beginPath();ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.closePath();ctx.fill();ctx.stroke();
+      }
+      // soft field
+      for(i=0;i<n;i++)for(j=i+1;j<n;j++){
+        var s1=w2c(toks[i].e,cx,cy,sc),s2=w2c(toks[j].e,cx,cy,sc),ww=Wm[i][j];
+        ctx.strokeStyle='rgba('+edge+','+(0.06+ww*0.7).toFixed(3)+')';ctx.lineWidth=0.6+ww*10;
+        ctx.beginPath();ctx.moveTo(s1[0],s1[1]);ctx.lineTo(s2[0],s2[1]);ctx.stroke();
+      }
+      // skeleton edges
+      for(var ed=0;ed<edges.length;ed++){var eg=edges[ed];
+        var e1=w2c(toks[eg[0]].e,cx,cy,sc),e2=w2c(toks[eg[1]].e,cx,cy,sc);
+        ctx.strokeStyle='rgba('+skel+',0.92)';ctx.lineWidth=2.2+eg[2]*10;
+        ctx.beginPath();ctx.moveTo(e1[0],e1[1]);ctx.lineTo(e2[0],e2[1]);ctx.stroke();
+      }
+      // query directed read edges
+      for(j=0;j<n;j++){if(j===qi)continue;
+        var q1=w2c(toks[qi].e,cx,cy,sc),q2=w2c(toks[j].e,cx,cy,sc),aw=A[qi][j];
+        ctx.strokeStyle='rgba('+qry+','+(0.15+aw*0.8).toFixed(3)+')';ctx.lineWidth=1+aw*9;
+        ctx.beginPath();ctx.moveTo(q1[0],q1[1]);ctx.lineTo(q2[0],q2[1]);ctx.stroke();
+        if(aw>0.04){var mx=(q1[0]+q2[0])/2,my=(q1[1]+q2[1])/2;
+          ctx.fillStyle='rgba('+qry+',0.95)';ctx.font='11px ui-monospace,monospace';ctx.textAlign='center';
+          ctx.fillText((aw*100).toFixed(0)+'%',mx,my-3);ctx.textAlign='left';}
+      }
+      // nodes
+      for(i=0;i<n;i++){var np=w2c(toks[i].e,cx,cy,sc);
+        ctx.beginPath();ctx.arc(np[0],np[1],i===qi?7:6,0,Math.PI*2);
+        ctx.fillStyle=node;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=(i===qi)?stroke:'rgba('+edge+',0.6)';ctx.stroke();
+        ctx.fillStyle=label;ctx.font=(i===qi?'bold ':'')+'12px -apple-system,sans-serif';ctx.textAlign='left';
+        ctx.fillText(toks[i].w,np[0]+10,np[1]+4);ctx.textAlign='left';
+      }
+      // output vector
+      var op=w2c(o,cx,cy,sc), qp=w2c(toks[qi].e,cx,cy,sc);
+      arrow(qp[0],qp[1],op[0],op[1],out,3.4);
+      ctx.beginPath();ctx.arc(op[0],op[1],6,0,Math.PI*2);ctx.fillStyle=out;ctx.fill();
+      ctx.fillStyle=label;ctx.font='bold 12px -apple-system,sans-serif';ctx.fillText('output o',op[0]+11,op[1]-6);
+
+      // readout panel
+      var order=[];for(j=0;j<n;j++)order.push(j);
+      order.sort(function(x,y){return A[qi][y]-A[qi][x];});
+      var html='<div class="row"><span>query <b>"'+toks[qi].w+'"</b> reads →</span><span>o = ['+o[0].toFixed(2)+', '+o[1].toFixed(2)+']</span></div>';
+      for(var r=0;r<order.length;r++){var jx=order[r];
+        html+='<div class="row"><span>&nbsp;&nbsp;→ '+toks[jx].w+'</span><span><b>'+(A[qi][jx]*100).toFixed(1)+'%</b></span></div>';
+      }
+      html+='<div class="row"><span>simplicial complex K</span><span>'+n+' vertices · '+edges.length+' edges · '+tris.length+' triangles</span></div>';
+      html+='<div class="row"><span>Betti numbers</span><span><b>β₀='+b0+'</b> components · <b>β₁≈'+b1+'</b> loops</span></div>';
+      document.getElementById('readout').innerHTML=html;
+    }catch(err){}
+  }
+
+  function buildWho(){
+    var sel=document.getElementById('who');
+    for(var i=0;i<n;i++){var o=document.createElement('option');o.value=i;o.textContent=toks[i].w;sel.appendChild(o);}
+    sel.value='0';
+  }
+
+  document.getElementById('who').addEventListener('change',render);
+  ['qTwist','kTwist','vTwist','temp','eps'].forEach(function(id){document.getElementById(id).addEventListener('input',render);});
+  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){sizeCanvas();render();},120);});
+  document.getElementById('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');render();});
+
+  buildWho();
+  window.addEventListener('DOMContentLoaded',function(){sizeCanvas();render();});
+  sizeCanvas();render();
+})();
+</script>
+</body>
+</html>

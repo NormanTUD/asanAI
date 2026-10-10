@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Residual-Stream — Push-Verfall trifft Rotation &amp; Self-Alignment</title>
+<style>
+:root{
+  --bg:#f6f4ec; --panel:#ffffff; --ink:#1a1a22; --muted:#5c5c68; --border:#dcd8cc;
+  --grid:#e7e3d8; --card:#fbfaf5;
+  --viz-a:#c2410c; --viz-b:#0e7490; --viz-c:#6d28d9;
+  --viz-bg:#ffffff; --viz-ink:#1a1a22; --viz-grid:#e7e3d8;
+  --regime-early:#ef4444; --regime-mid:#f59e0b; --regime-late:#22c55e;
+  --accent:#0e7490;
+}
+html.dark{
+  --bg:#0b0f16; --panel:#111826; --ink:#e6ebf2; --muted:#93a1b3; --border:#223044;
+  --grid:#1e2a3a; --card:#0e1622;
+  --viz-a:#fb923c; --viz-b:#38bdf8; --viz-c:#a78bfa;
+  --viz-bg:#0d1420; --viz-ink:#e6ebf2; --viz-grid:#1b2838;
+  --regime-early:#f87171; --regime-mid:#fbbf24; --regime-late:#4ade80;
+  --accent:#38bdf8;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink); line-height:1.65;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:40px 22px 80px;}
+h1{font-size:1.7rem;line-height:1.25;margin:.2rem 0 .3rem;}
+.subtitle{color:var(--muted);font-size:.9rem;margin:0 0 1.6rem;border-bottom:1px solid var(--border);padding-bottom:1.1rem;}
+h2{font-size:1.18rem;margin:2.1rem 0 .5rem;padding-top:.4rem;}
+h2 .k{color:var(--accent);font-variant-numeric:tabular-nums;}
+p{margin:.55rem 0;}
+section{margin:0 0 1.4rem;}
+.lead{font-size:1.02rem;}
+.m{font-family:Georgia,"Times New Roman",serif;font-style:italic;white-space:nowrap;}
+.m sub,.m sup{font-style:normal;font-size:.72em;}
+code,.mono{font-family:"SFMono-Regular",Consolas,monospace;font-size:.9em;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:.05em .35em;}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;padding:.1em .5em;border-radius:999px;border:1px solid var(--border);color:var(--muted);vertical-align:middle;}
+.tagA{color:var(--viz-a);border-color:var(--viz-a);}
+.tagB{color:var(--viz-b);border-color:var(--viz-b);}
+blockquote{margin:.9rem 0;padding:.55rem 1rem;border-left:3px solid var(--accent);background:var(--card);border-radius:0 8px 8px 0;color:var(--ink);}
+blockquote .src{display:block;margin-top:.35rem;font-size:.78rem;color:var(--muted);font-style:italic;}
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.86rem;}
+th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top;}
+th{background:var(--card);}
+td.c{white-space:nowrap;font-family:Georgia,serif;font-style:italic;}
+.note{font-size:.82rem;color:var(--muted);}
+.controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin:.9rem 0 .4rem;}
+.controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.4rem;}
+input[type=range]{width:130px;accent-color:var(--accent);}
+.val{color:var(--accent);font-weight:700;min-width:34px;display:inline-block;font-variant-numeric:tabular-nums;}
+button{background:var(--card);border:1px solid var(--border);color:var(--ink);padding:.35rem .75rem;border-radius:6px;cursor:pointer;font-size:.82rem;}
+button:hover{border-color:var(--accent);}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:.78rem;margin:.3rem 0 .6rem;color:var(--muted);}
+.legend span{display:flex;align-items:center;gap:.35rem;}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block;background:var(--c);}
+canvas#cviz{display:block;width:100%;height:auto;max-width:780px;margin:.6rem auto;border:1px solid var(--border);border-radius:10px;}
+.readouts{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0 .2rem;}
+.rc{flex:1;min-width:110px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.45rem .6rem;text-align:center;}
+.rc .rl{display:block;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.rc .rv{display:block;font-size:1.05rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;margin-top:.15rem;}
+.prov{list-style:none;margin:.6rem 0;padding:0;}
+.prov li{padding:.55rem .8rem;border:1px solid var(--border);border-radius:8px;margin-bottom:.5rem;background:var(--card);}
+.prov a{color:var(--accent);font-weight:600;text-decoration:none;}
+.prov a:hover{text-decoration:underline;}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:10;}
+.vizcap{font-size:.85rem;color:var(--muted);text-align:center;margin-top:.5rem;}
+</style>
+</head>
+<body>
+<button id="btnTheme" class="theme-toggle" type="button">☀️ hell</button>
+<article>
+  <h1>Ein Residual-Stream, zwei Projektionen: Push-Verfall trifft Rotation &amp; Self-Alignment</h1>
+  <p class="subtitle">Fusion aus: <code>deep2.html</code> ✕ <code>dynamic_residual_stream_paper2.html</code></p>
+
+  <section id="these">
+    <h2><span class="k">1</span> Kernthese der Fusion</h2>
+    <p class="lead">Ein tiefes Residual-Netz — ResNet <em>oder</em> Transformer — ist <strong>keine Pipeline unabhängiger Feature-Stufen, sondern ein einziger kumulativer Residual-Stream</strong>: <span class="m">h<sub>l+1</sub> = h<sub>l</sub> + f<sub>l</sub>(h<sub>l</sub>)</span>. Jede Lage fügt nur eine kleine Aktualisierung hinzu, und die Tiefe wirkt, indem diese kleinen Aktualisierungen sich <em>akumulieren</em>. Beide Papiere beschreiben denselben Mechanismus in zwei verschiedenen Architekturen — aber sie <strong>lesen dieselbe Tiefe mit zwei verschiedenen Instrumenten ab</strong>.</p>
+    <p>Paper&nbsp;A (<code>deep2.html</code>, ResNet) liest die <strong>Magnitude</strong> der Aktualisierung ab — die „Delta-Norm“ <span class="m">‖Δ<sub>l</sub>‖</span> des Schubs, die mit der Tiefe <em>abfällt</em> — und die daraus folgende <strong>Ausdehnung</strong> der Entscheidungsgrenze: Die Spirale wird Layer für Layer „aufgerollt“, die lineare Trennbarkeit steigt und die <em>Zahl der linearen Regionen wächst exponentiell</em>. Paper&nbsp;B (<code>dynamic_residual_stream_paper2.html</code>, Transformer) liest die <strong>Geometrie</strong> ab: die Aktualisierung ist zu <em>~98&nbsp;% eine Rotation</em>, und die <strong>Nicht-Normalität</strong> (Ein-Richtung ≠ Aus-Richtung, gemessen als <em>Self-Alignment</em> von Mixer&nbsp;→&nbsp;Filter) treibt eine <strong>Kontraktion</strong> — der effektive Rang kollabiert von 4096 auf ~7.</p>
+    <p><strong>Der fusionierte Standpunkt:</strong> Das ist kein Widerspruch, sondern zwei Projektionen <em>eines</em> Operators. Die per-layer-Aktualisierung ist eine Abbildung, die den Stream zugleich <strong>verschiebt</strong> (Push, A) und <strong>neu dreht</strong> (Rotation, B); und Tiefe hat zwei gleichzeitige Wirkungen, die an <em>unterschiedlichen Objekten</em> sitzen: Sie <strong>kontrahiert den Zustand</strong> (effektive Dimension des internen Streams → ~7, robust &amp; lesbar) und <strong>dehnt die Entscheidungsfunktion</strong> aus (exponentiell viele lineare Regionen, feinere, besser trennbare Grenze). Kontraktion des Signals und Expansion der Grenze <em>koexistieren</em> — und zusammen machen sie Tiefe nützlich.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="k">2</span> Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere sind <em>nicht</em> trivial verträglich — sie treffen an drei Stellen auf dieselbe Größe mit unterschiedlichen, teils inkompatiblen Aussagen:</p>
+    <blockquote><strong>(1) Natur der Layerverschiebung — Translation vs. Rotation.</strong>
+      <span class="tag tagA">A</span> A: Jede Lage des Punktes ändert sich durch einen <em>Schubs</em> — eine Verschiebung. Die Leitgröße ist die <strong>Delta-Norm</strong> <span class="m">‖Δ<sub>l</sub>‖</span>, und ihr Hauptbefund ist, dass sie mit der Tiefe <em>abfällt</em> („Frühe Layer: Große Schubser … späte Layer: winzige Schubser“).
+      <span class="src">deep2.html — „kleiner Schubs“, „Ø Delta-Norm“, Delta-Verfall</span>
+    </blockquote>
+    <blockquote><strong></strong>
+      <span class="tag tagB">B</span> B: Die Verschiebung ist zu <em>~98&nbsp;% eine Rotation</em>, ausdrücklich <em>nicht</em> „einfach schieben nach links“ („Statt einen Punkt in eine Richtung zu stupsen, dreht jeder Layer Paare von Koordinaten gegeneinander“). Und der Kollaps kommt von der <strong>Nicht-Normalität</strong> (Ein&nbsp;≠&nbsp;Aus-Richtung), <em>nicht</em> von kleinen Eigenwerten/Norm („Man könnte denken: Manche Eigenwerte sind &lt; 1 … Aber nein — der Kollaps kommt von der Nicht-Normalität“).
+      <span class="src">dynamic_residual_stream_paper2.html — Sektion 1 &amp; 4</span>
+    </blockquote>
+    <p class="note">→ Sie widersprechen sich über <em>was die per-layer-Aktualisierung geometrisch „ist“</em> und über die <em>dominante erklärende Größe</em>: A sagt <strong>Magnitude/Verfall</strong>, B sagt <strong>Richtung/Normalität</strong>.</p>
+
+    <blockquote><strong>(2) Richtung der Transformation — Ausdehnung vs. Kontraktion.</strong>
+      <span class="tag tagA">A</span> A: Tiefe <em>dehnt aus</em>. Die Spirale wird „aufgerollt“, die <strong>lineare Trennbarkeit steigt</strong>, und „die exponentielle Zunahme der linearen Regionen“ macht die Grenzen „feiner und komplexer“. Mehr Layer = mehr Struktur, mehr Trennung.
+      <span class="src">deep2.html — Tab 0 &amp; 1 („Regionen visualisieren“)</span>
+    </blockquote>
+    <blockquote><strong></strong>
+      <span class="tag tagB">B</span> B: Tiefe <em>kontrahiert</em>. „Der gelernte Flaschenhals: 4096 → ~7 Dimensionen“; „viele Startpunkte (links) konvergieren auf wenige Richtungen (rechts)“. Mehr Layer = <em>weniger</em> überlebende Richtungen.
+      <span class="src">dynamic_residual_stream_paper2.html — Sektion 3 &amp; 7</span>
+    </blockquote>
+    <p class="note">→ Fast entgegengesetzte Aussagen über dieselbe kumulative Transformation: A liest <em>Separability/Regionen&nbsp;↑</em>, B liest <em>effektiven Rang&nbsp;↓</em>.</p>
+
+    <blockquote><strong>(3) Wo liegt die „Arbeit“ — späte Layer unbedeutend vs. aktive Filter.</strong>
+      <span class="tag tagA">A</span> A: Späte Layer machen <em>nur noch Feinkorrektur</em> („Späte Layer = Feinkorrektur, nicht neue Features!“); ihre <strong>Magnitude</strong> ist klein — die Arbeit konzentriert sich auf die frühen, großen Schubs-Layouts.
+      <span class="src">deep2.html — Tab 2 („Vektoren live“)</span>
+    </blockquote>
+    <blockquote><strong></strong>
+      <span class="tag tagB">B</span> B: Späte Layer sind <strong>Filter</strong>, die <em>symmetrisch</em> wirken (Self-Alignment ≈ 0.7) und Brücken-Dimensionen <em>verstärken</em> — also aktiv formend, nicht vernachlässigbar; und die <em>Ursache</em> des Flaschenhals sind die <strong>frühen nicht-normalen</strong> Mixer-Layer.
+      <span class="src">dynamic_residual_stream_paper2.html — Sektion 2, 4 &amp; 6</span>
+    </blockquote>
+    <p class="note">→ A: „späte ≈ kleine Korrekturen“; B: „späte = aktive verstärkende Filter, Ursache in den frühen nicht-normalen Layern“. (Die weichere, aber reale Spannung von drei.)</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="k">3</span> Auflösung</h2>
+    <p><strong>Zu (1) — Translation vs. Rotation: zwei Größen desselben Δ.</strong> Der Schubs <span class="m">‖f<sub>l</sub>(h<sub>l</sub>)‖</span> (die tatsächlich am Datenpunkt hinzugefügte Verschiebung — das, was A misst) und die <strong>Nicht-Normalität</strong> des Operators (Ein- vs. Aus-Richtung seiner linearen Teile — das, was B misst) sind <em>unterschiedliche Größen desselben</em> <span class="m">Δ<sub>l</sub></span>. Eine stark nicht-normale Abbildung kann an einem Punkt trotzdem nur eine kleine Netto-Verschiebung erzeugen; eine stark rotierende Abbildung trägt Information, ohne den Punkt groß zu „stupsen“. A liest die <strong>Trajektorie</strong> (Verschiebung sichtbar, fällt), B liert die <strong>Eigenstruktur / Self-Alignment</strong> (Geometrie sichtbar). Beide sind wahr: Magnitude-Verfall (A) und normalitätsgetriebener Kollaps (B) sind <em>kompatibel</em> — der fused per-layer-Operator verschiebt <em>und</em> dreht zugleich.</p>
+    <p><strong>Zu (2) — Ausdehnung vs. Kontraktion: zwei verschiedene Objekte.</strong> A’s „Ausdehnung“ beschreibt die <strong>Entscheidungsfunktion / Grenze im Eingaberaum</strong>: die ReLU-Komposition erzeugt exponentiell viele lineare Regionen → feinere Grenze, höhere Trennbarkeit. B’s „Kontraktion“ beschreibt die <strong>effektive Dimensionalität des Stream-Zustands</strong>: der effektive Rang der End-to-End-Abbildung kollabiert (4096→7). Beides kann zugleich gelten: Ein Netz kann einen <em>niedrig-dimensionalen</em> internen Stream (~7-dim-Code, robust, B) tragen <em>und</em> diesen über eine <em>exponentiell komplexe</em> Eingaberaum-Grenze auslesen (A). <strong>Kontraktion</strong> = Robustheit/Interpretierbarkeit des Signals; <strong>Expansion</strong> = Ausdrucksstärke des Klassifikators. Die ~7 Dimensionen, auf die der Stream sich zubewegt (B), sind genau der Code, den die komplexe Grenze (A) dann trennt.</p>
+    <p><strong>Zu (3) — lokale Größe vs. globale Rolle.</strong> Man trennt die <strong>lokale Push-Magnitude</strong> von der <strong>globalen Selektionsrolle</strong>. Die lokale Push-Norm der späten Layer ist klein (A), doch ihre Rolle — <em>welche</em> der ~7 Richtungen zu verstärken/unterdrücken (Brücken-Dimensionen) — ist entscheidend (B). Die frühen Layer sind in beiden Bildern „groß/aktiv“: A’s „große Schubs-Layouts“ = B’s „Mixer, die den Flaschenhals installieren“. Das <em>qualitative Tiefenprofil stimmt also überein</em> (front-loaded, verfeinernd nach hinten); die Papiere tracken es nur mit unterschiedlichen Zahlen. Fused-Tiefenprofil: <strong>früh = groß, nicht-normal, mischend, entknotend</strong>; <strong>spät = klein an Magnitude, symmetrisch, filternd, korrigierend</strong>.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="k">4</span> Fusionierter Inhalt</h2>
+    <p><strong>Ein gemeinsames Modell.</strong> Beide Papiere sind Instanzen von <span class="m">h<sub>l+1</sub> = h<sub>l</sub> + f<sub>l</sub>(h<sub>l</sub>)</span>. Bei A (ResNet) ist <span class="m">f<sub>l</sub>(x) = W2·ReLU(W1·x + b1) + b2</span> mit Input-Projektion <span class="m">W<sub>in</sub></span> (2D→hidden) und Output-Projektion <span class="m">W<sub>out</sub></span> (hidden→2D); bei B (Transformer) liegt <span class="m">h</span> in <span class="m">d = 4096</span> Dimensionen. Der Residual-Stream ist der gemeinsame „Notizblock“, in den jede Lage liest und hinein schreibt.</p>
+    <p><strong>Zwei Ablesungen desselben <span class="m">f<sub>l</sub></span>.</strong></p>
+    <table>
+      <thead><tr><th>Ablesung</th><th>Was es misst</th><th>Trend mit Tiefe</th><th>Herkunft</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m">‖Δ<sub>l</sub>‖</span> (Push-Norm)</td><td>Magnitude des Schubs am Datenpunkt</td><td class="c">fällt (geometrisch, ~e<sup>−cl</sup>)</td><td>A</td></tr>
+        <tr><td><span class="m">SA<sub>l</sub></span> (Self-Alignment)</td><td>⟨û<sub>in</sub>, û<sub>out</sub>⟩ der linearen Teile: 0 = reiner Rotator (Mixer), 1 = symmetrisch (Filter)</td><td class="c">steigt 0.04 → 0.70</td><td>B</td></tr>
+        <tr><td><span class="m">erank(Π<sub>L</sub>)</span></td><td>effektiver Rang der End-to-End-Abbildung; Nicht-Normalität → erank ≪ d trotz harmloser Eigenwerte</td><td class="c">kollabiert 4096 → ~7 (untrainiert → ~326)</td><td>B</td></tr>
+        <tr><td># lineare Regionen / Trennbarkeit</td><td>komplexität der Entscheidungsfunktion im Eingaberaum (ReLU-Stack)</td><td class="c">wächst exponentiell / steigt</td><td>A</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Warum der Kollaps von der Rotation kommt.</strong> Schur-Chirurgie (Rotation entfernen, Eigenwerte beibehalten, Dosis c=0) hebt den effektiven Rang von ~7 auf ~45 — ein <strong>6.4×-Anstieg</strong>. Der Flaschenhals ist also eine Eigenschaft der <strong>trainierten Rotationsstruktur</strong>, nicht der Eigenwert-Größen. Zusammen mit A’s Push-Verfall ergibt sich ein kohärentes Bild: <em>kleiner an Norm, aber stark drehend</em> — genau das, was einen Stream komprimiert, ohne ihn einfach zu „stupsen“.</p>
+    <p><strong>Orchester ohne Dirigent.</strong> Die Layer kommunizieren <em>nicht</em> direkt: die Überlappung von Output(ℓ) und Input(ℓ+1) liegt auf Zufallsniveau (~0.016). Jede Lage liest aus dem Stream und schreibt hinein; koordiniert wird nur durch das Training, das die Gewichte so setzt, dass sich die Summe aller Rotationen zum Ziel bewegt (B, Sektion 5). A’s „Entknoten“ ist dieselbe Akkumulation, nur über die Trajektorie statt über den Operator gesehen.</p>
+    <p><strong>Communities &amp; Brücken.</strong> Die <span class="m">d</span> Dimensionen bilden Communities korrelierter Einheiten; späte Layer <em>verstärken</em> Brücken-Dimensionen (integrative Info), frühe <em>unterdrücken</em> sie (erst lokale Struktur) — ein gelernter Effekt (Cohen’s d), der bei Initialisierung fehlt (B, Sektion 6). Das ergänzt A’s „früh groß / spät klein“ um eine <em>selektive</em> Rolle der späten Filter.</p>
+    <p><strong>Fused-Tiefenprofil (beide Papiere, ein Profil).</strong></p>
+    <table>
+      <thead><tr><th>Tiefe</th><th>Push-Norm ‖Δ<sub>l</sub>‖ (A)</th><th>Self-Alignment SA<sub>l</sub> (B)</th><th>Wirkung auf den Stream</th><th>Fusionierte Rolle</th></tr></thead>
+      <tbody>
+        <tr><td>früh (Mixer)</td><td class="c">groß</td><td class="c">niedrig (~0.04)</td><td>Entknoten, nicht-normale Rotation installiert den ~7-dim-Substrat-Flaschenhals</td><td>groß, mischend, strukturierend</td></tr>
+        <tr><td>mitte (Übergang)</td><td class="c">mittel</td><td class="c">steigend</td><td>Rotation wird symmetrischer, Stream konvergiert Richtung ~7 Richtungen</td><td>überleitend, komprimierend</td></tr>
+        <tr><td>spät (Filter)</td><td class="c">klein (Feinkorrektur)</td><td class="c">hoch (~0.70)</td><td>symmetrische Verstärkung/Selektion des ~7-dim-Codes (Brücken)</td><td>filternd, selektierend, korrektur</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Die fusionierte Funktion der Tiefe.</strong> Tiefe = <strong>Kontraktion des internen Zustands</strong> zu einem robusten, niedrig-dimensionalen ~7-dim-Code (B) <em>plus</em> <strong>Expansion der Eingaberaum-Grenze</strong> zu einem ausdrucksstarken, fein trennenden Klassifikator (A). Der niedrigdimensionale Code ist die <em>Repräsentation</em>; die komplexe Grenze ist der <em>Auslese-Mechanismus</em>. Ein tiefes Netz ist damit zugleich <em>komprimierend</em> (lesbar, rauschrobust) und <em>komplexitäts-vermehrend</em> (ausdrucksstark) — scheinbar widersprüchlich, aber an verschiedenen Objekten wahr.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="k">5</span> Interaktive Fusion: ein Tiefenprofil, zwei Projektionen</h2>
+    <p>Die Grafik zeigt <strong>einen</strong> Residual-Stream über die Tiefe <span class="m">l</span>. Auf derselben x-Achse liegen die vier Ablesungen: <em>abfallend</em> die Push-Norm <span class="m">‖Δ<sub>l</sub>‖</span> (A) und der effektive Rang (B), <em>steigend</em> das Self-Alignment <span class="m">SA<sub>l</sub></span> (B). Der Marker fährt über die Tiefe; rechts oben visualisiert ein Inset den Operator der aktuellen Lage — der <strong>Rotationsanteil α</strong> morphed zwischen Paper-A-Welt (α=0: reiner Push, keine Rotation) und Paper-B-Welt (α=1: maximale Rotation). <em>Trainiert/Untrainiert</em> schaltet den Rang-Kollaps (7 vs. 326).</p>
+    <div class="controls">
+      <label>Layer L: <input type="range" id="sL" min="4" max="32" value="16"><span class="val" id="vL">16</span></label>
+      <label>Rotationsanteil α: <input type="range" id="sAlpha" min="0" max="100" value="60"><span class="val" id="vAlpha">0.60</span></label>
+      <button id="btnTrain" type="button">Trainiert (erank→7)</button>
+      <button id="btnPlay" type="button">⏸ Pause</button>
+    </div>
+    <div class="legend">
+      <span><i style="--c:var(--viz-a)"></i> A: Push-Norm ‖Δ<sub>l</sub>‖ (Verfall)</span>
+      <span><i style="--c:var(--viz-c)"></i> B: effektiver Rang (Kollaps 4096→7)</span>
+      <span><i style="--c:var(--viz-b)"></i> B: Self-Alignment SA<sub>l</sub> (Mixer→Filter)</span>
+    </div>
+    <canvas id="cviz" width="780" height="460"></canvas>
+    <div class="readouts">
+      <div class="rc"><span class="rl">Layer</span><span class="rv" id="readLayer">0 / 16</span></div>
+      <div class="rc"><span class="rl">SA(m)</span><span class="rv" id="readSA">0.04</span></div>
+      <div class="rc"><span class="rl">‖Δ(m)‖</span><span class="rv" id="readNorm">1.000</span></div>
+      <div class="rc"><span class="rl">erank(m)</span><span class="rv" id="readRank">4096</span></div>
+      <div class="rc"><span class="rl">Rotation θ(m)</span><span class="rv" id="readRot">0°</span></div>
+    </div>
+    <p class="vizcap">Ein Profil, zwei Instrumente: während die Push-Norm fällt (A), steigt das Self-Alignment (B) — und der effektive Rang kollabiert (B), während die (nicht gezeigte) Eingaberaum-Grenze komplexer wird (A).</p>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="k">6</span> Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../deep2.html">deep2.html</a> — „Deep ResNet Visualisierung – Wie tiefe Netze lernen“. ResNet mit Skip-Connections entknotet eine 2D-Punktwolke Layer für Layer: Delta-Norm-Verfall, exponentielle lineare Regionen, späte Layer = Feinkorrektur. (Quelle für A: Push/Magnitude, Ausdehnung.)</li>
+      <li><a href="../dynamic_residual_stream_paper2.html">dynamic_residual_stream_paper2.html</a> — „Dynamics of the Transformer Residual Stream“ (Fernando &amp; Guitchounts, 2026), interaktiv. ~98&nbsp;% Rotation, Mixer→Filter (Self-Alignment 0.04→0.70), effektiver-Rang-Kollaps 4096→7 durch Nicht-Normalität (Schur 7→45, 6.4×), Orchester ohne Dirigent, Brücken-Dimensionen. (Quelle für B: Rotation/Geometrie, Kontraktion.)</li>
+    </ul>
+    <p class="note">Alle Zahlen wurden aus den beiden Quellseiten übernommen; es wurden keine externen Fakten erfunden.</p>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById('cviz');
+  if(!canvas||!canvas.getContext) return;
+  var g=canvas.getContext('2d');
+  var W=canvas.width, H=canvas.height;
+  var padL=48,padR=18,padT=16,padB=30;
+  var d=4096;
+  var L=16, alpha=0.6, trained=true, playing=true, m=0, raf=null;
+  var THETA_MAX=1.2, PUSH_R=0.86;
+
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function hexA(hex,a){
+    hex=hex.replace('#','');
+    if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}
+    var n=parseInt(hex,16); if(isNaN(n))return 'rgba(127,127,127,'+a+')';
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+  function SA(l){var Lm=Math.max(2,L);return 0.04+0.66*Math.pow(clamp(l,0,Lm)/(Lm-1),1.5);}
+  function pushNorm(l){return Math.pow(PUSH_R,clamp(l,0,400));}
+  function finalRank(){return trained?7:326;}
+  function erank(l){var Lm=Math.max(2,L);var fr=finalRank();var tau=Math.max(0.5,(Lm-1)/4);return fr+(d-fr)*Math.exp(-clamp(l,0,Lm)/tau);}
+  function erankNorm(l){var fr=finalRank();return (erank(l)-fr)/(d-fr);}
+  function plotW(){return W-padL-padR;}
+  function plotH(){return H-padT-padB;}
+  function depthToX(l){return padL+(clamp(l,0,L)/(L-1))*plotW();}
+  function valToY(v){return padT+plotH()*(1-clamp(v,0,1));}
+  function line(x1,y1,x2,y2,col,w){g.beginPath();g.strokeStyle=col;g.lineWidth=w||2;g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();}
+  function dot(x,y,col,r){g.beginPath();g.arc(x,y,r||4,0,7);g.fillStyle=col;g.fill();}
+
+  function palette(){
+    return {bg:cssVar('--viz-bg'),ink:cssVar('--viz-ink'),grid:cssVar('--viz-grid'),
+      a:cssVar('--viz-a'),b:cssVar('--viz-b'),c:cssVar('--viz-c'),
+      re:cssVar('--regime-early'),rm:cssVar('--regime-mid'),rl:cssVar('--regime-late')};
+  }
+
+  function plotCurve(fn,col,w,dash){
+    g.beginPath();g.strokeStyle=col;g.lineWidth=w;g.setLineDash(dash?[5,4]:[]);
+    for(var i=0;i<=L;i++){var x=depthToX(i),y=valToY(fn(i));if(i===0)g.moveTo(x,y);else g.lineTo(x,y);}
+    g.stroke();g.setLineDash([]);
+  }
+
+  function drawInset(m,P){
+    var bw=176,bh=128,bx=W-padR-bw-6,by=padT+2;
+    g.fillStyle=hexA(P.bg,1);g.fillRect(bx,by,bw,bh);
+    g.strokeStyle=P.grid;g.lineWidth=1;g.strokeRect(bx,by,bw,bh);
+    g.fillStyle=P.ink;g.font='10px monospace';g.globalAlpha=0.75;
+    g.fillText('Operator Lage m',bx+8,by+14);g.globalAlpha=1;
+    var cx=bx+64,cy=by+74,r=38;
+    var sa=SA(m),theta=alpha*THETA_MAX*(1-sa);
+    var a0=-Math.PI/3;
+    line(cx,cy,cx+Math.cos(a0)*r,cy+Math.sin(a0)*r,P.b,2);
+    var a1=a0+theta;
+    line(cx,cy,cx+Math.cos(a1)*r,cy+Math.sin(a1)*r,P.a,2);
+    if(theta>0.02){g.beginPath();g.strokeStyle=P.ink;g.globalAlpha=0.5;g.arc(cx,cy,r*0.5,a0,a1,false);g.stroke();g.globalAlpha=1;}
+    var pn=pushNorm(m);
+    var px0=cx+r*0.2,py0=cy-r*0.2;
+    line(px0,py0,px0+18+pn*22,py0,P.a,3);
+    g.fillStyle=P.ink;g.font='11px monospace';
+    g.fillText('in',cx+Math.cos(a0)*r+3,cy+Math.sin(a0)*r);
+    g.fillStyle=P.ink;g.globalAlpha=0.7;g.font='10px monospace';
+    g.fillText('SA='+sa.toFixed(2),bx+120,by+30);
+    g.fillText('θ='+(theta*180/Math.PI).toFixed(0)+'°',bx+120,by+44);
+    g.fillText('Mixer→Filter',bx+118,by+60);
+    g.globalAlpha=1;
+  }
+
+  function draw(){
+    var P=palette();
+    g.clearRect(0,0,W,H);
+    g.fillStyle=P.bg;g.fillRect(0,0,W,H);
+    var bands=[[0,0.15,P.re],[0.15,0.6,P.rm],[0.6,1,P.rl]];
+    for(var b=0;b<bands.length;b++){
+      var x0=depthToX(bands[b][0]*(L-1)),x1=depthToX(bands[b][1]*(L-1));
+      g.fillStyle=hexA(bands[b][2],0.09);g.fillRect(x0,padT,x1-x0,plotH());
+    }
+    g.strokeStyle=P.grid;g.lineWidth=1;
+    var nt=Math.min(8,L);
+    g.font='10px monospace';
+    for(var i=0;i<=nt;i++){
+      var l=Math.round(i*L/nt),x=depthToX(l);
+      g.globalAlpha=0.45;g.beginPath();g.moveTo(x,padT);g.lineTo(x,H-padB);g.stroke();g.globalAlpha=1;
+      g.fillStyle=P.ink;g.globalAlpha=0.7;g.fillText('L'+l,x-6,H-padB+15);g.globalAlpha=1;
+    }
+    g.fillStyle=P.ink;g.globalAlpha=0.6;
+    g.fillText('1.0',8,padT+9);g.fillText('0.5',8,padT+plotH()/2+4);g.fillText('0.0',8,H-padB+3);
+    g.globalAlpha=1;
+    plotCurve(function(l){return pushNorm(l);},P.a,2.4,false);
+    plotCurve(function(l){return erankNorm(l);},P.c,2.2,true);
+    plotCurve(function(l){return SA(l);},P.b,2.4,false);
+    drawInset(m,P);
+    var mx=depthToX(m);
+    g.strokeStyle=P.ink;g.globalAlpha=0.5;g.setLineDash([4,4]);
+    g.beginPath();g.moveTo(mx,padT);g.lineTo(mx,H-padB);g.stroke();g.setLineDash([]);g.globalAlpha=1;
+    dot(mx,valToY(pushNorm(m)),P.a,4);
+    dot(mx,valToY(erankNorm(m)),P.c,4);
+    dot(mx,valToY(SA(m)),P.b,4);
+    var sa=SA(m),pn=pushNorm(m),er=erank(m),th=alpha*THETA_MAX*(1-sa);
+    var el;
+    el=document.getElementById('readLayer');if(el)el.textContent=Math.round(m)+' / '+L;
+    el=document.getElementById('readSA');if(el)el.textContent=sa.toFixed(2);
+    el=document.getElementById('readNorm');if(el)el.textContent=pn.toFixed(3);
+    el=document.getElementById('readRank');if(el)el.textContent=String(Math.round(er));
+    el=document.getElementById('readRot');if(el)el.textContent=(th*180/Math.PI).toFixed(0)+'\u00B0';
+  }
+
+  function anim(){
+    if(!playing)return;
+    m+=0.25;if(m>L)m=0;
+    draw();
+    raf=requestAnimationFrame(anim);
+  }
+  function setPlaying(v){
+    playing=v;
+    var el=document.getElementById('btnPlay');
+    if(el)el.textContent=playing?'\u23F8 Pause':'\u25B6 Play';
+    if(raf){cancelAnimationFrame(raf);raf=null;}
+    if(playing)raf=requestAnimationFrame(anim);
+    else draw();
+  }
+
+  function init(){
+    var sL=document.getElementById('sL');
+    var sAlpha=document.getElementById('sAlpha');
+    var vL=document.getElementById('vL');
+    var vAlpha=document.getElementById('vAlpha');
+    var btnTrain=document.getElementById('btnTrain');
+    if(sL)sL.addEventListener('input',function(){L=+this.value;m=clamp(m,0,L);if(vL)vL.textContent=String(L);draw();});
+    if(sAlpha)sAlpha.addEventListener('input',function(){alpha=(+this.value)/100;if(vAlpha)vAlpha.textContent=alpha.toFixed(2);draw();});
+    var btnPlay=document.getElementById('btnPlay');
+    if(btnPlay)btnPlay.addEventListener('click',function(){setPlaying(!playing);});
+    if(btnTrain)btnTrain.addEventListener('click',function(){trained=!trained;this.textContent=trained?'Trainiert (erank→7)':'Untrainiert (erank→326)';draw();});
+    var btnTheme=document.getElementById('btnTheme');
+    if(btnTheme)btnTheme.addEventListener('click',function(){
+      var h=document.documentElement;
+      var dark=h.classList.toggle('dark');
+      this.textContent=dark?'\u2600\uFE0F hell':'\uD83C\uDF19 dunkel';
+      draw();
+    });
+    draw();
+    raf=requestAnimationFrame(anim);
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffeomorphismen der Aufmerksamkeit — Fusion</title>
+<style>
+  :root{
+    --bg:#f5f2ea; --fg:#1c2230; --muted:#5a6478; --grid:#c9c2b4;
+    --accent:#b5541f; --accent2:#1f6f8b; --good:#2f8f5b; --bad:#c23b4e;
+    --panel:#ffffff; --panelbd:#ddd6c7; --shadow:rgba(40,30,10,.08);
+  }
+  html.dark{
+    --bg:#0b0d12; --fg:#e8ecf4; --muted:#8b96ac; --grid:#333c52;
+    --accent:#ffd166; --accent2:#5ad2ff; --good:#5ad2ff; --bad:#ff6b8a;
+    --panel:#11151f; --panelbd:#252d40; --shadow:rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif;line-height:1.65;
+    transition:background .3s,color .3s}
+  article{max-width:820px;margin:0 auto;padding:32px 20px 90px}
+  h1{font-size:1.75em;line-height:1.2;margin:.2em 0 .1em;font-weight:700}
+  .sub{color:var(--muted);font-size:.98em;margin:0 0 2em;font-family:Georgia,serif}
+  h2{font-size:1.28em;margin:2.1em 0 .5em;padding-bottom:.25em;
+    border-bottom:1px solid var(--panelbd)}
+  h3{font-size:1.05em;margin:1.4em 0 .3em;color:var(--accent)}
+  p{margin:.7em 0}
+  b{font-weight:600}
+  .lead{font-size:1.04em}
+  .math{background:var(--panel);border:1px solid var(--panelbd);border-radius:10px;
+    padding:14px 18px;margin:1em 0;box-shadow:0 4px 18px var(--shadow);
+    font-family:"Cambria Math","Cambria",Georgia,serif;font-size:1.02em}
+  .math div{margin:.35em 0}
+  .math .lbl{color:var(--muted);font-family:Inter,system-ui,sans-serif;
+    font-size:.82em;text-transform:uppercase;letter-spacing:.5px}
+  .math sub{font-size:.75em}
+  .note{color:var(--muted);font-size:.92em}
+  ul{margin:.5em 0 .5em 1.2em;padding:0}
+  li{margin:.4em 0}
+  a{color:var(--accent2)}
+
+  /* ---- viz ---- */
+  .panel{background:var(--panel);border:1px solid var(--panelbd);border-radius:14px;
+    box-shadow:0 8px 30px var(--shadow);margin:1em 0;overflow:hidden}
+  .stage{position:relative}
+  canvas{display:block;width:100%;height:460px;touch-action:none;cursor:grab}
+  canvas:active{cursor:grabbing}
+  .cap{position:absolute;left:22px;top:18px;max-width:56%;pointer-events:none}
+  .cap .t{font-size:1.12em;font-weight:600;line-height:1.25}
+  .cap .f{font-family:"Cambria Math",Georgia,serif;font-size:1em;margin-top:6px;
+    color:var(--accent)}
+  .hud{position:absolute;right:18px;top:18px;font-size:.8em;color:var(--muted);
+    text-align:right;line-height:1.5;pointer-events:none}
+  .ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    padding:12px 16px;border-top:1px solid var(--panelbd)}
+  button{font:inherit;cursor:pointer;color:var(--fg);background:var(--bg);
+    border:1px solid var(--panelbd);border-radius:8px;padding:6px 12px;transition:all .15s}
+  button:hover{border-color:var(--accent)}
+  button.on{background:var(--accent);color:#0b0d12;border-color:var(--accent);font-weight:600}
+  .grp{display:flex;gap:6px;align-items:center}
+  .grp .gl{font-size:.8em;color:var(--muted);margin-right:2px}
+  input[type=range]{accent-color:var(--accent);width:130px}
+  .val{font-size:.85em;color:var(--muted);min-width:34px}
+  .sp{flex:1}
+  @media(max-width:560px){.cap{max-width:80%}}
+</style>
+</head>
+<body>
+<article>
+  <h1>Diffeomorphismen der Aufmerksamkeit</h1>
+  <p class="sub">Fusion aus: fibrebundle4.html &#10005; transformer_rein_geometrisch3.html</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Der Transformer ist kein Stapel intransparenter statistischer Lookups, sondern eine
+    Folge glatter, lokal invertibler Verformungen &#8212; <b>Diffeomorphismen</b> &#8212; einer
+    Mannigfaltigkeit von Repräsentationen. Jede Schicht ist die <b>Identität</b> (der Residual- bzw.
+    Skip-Stream, in A die aufsteigende &#8222;Elektrizität&#8220;) plus ein glattes lokales
+    <b>Verschiebungsfeld</b>, das die Aufmerksamkeit erzeugt. Aufmerksamkeit selbst verschmilzt zwei
+    Operationen: (i) eine <i>lineare Projektion</i> der Token-Query-Ausrichtung auf eine Richtung &#8212;
+    in B das &#8222;Lot auf die Query-Richtung fällen&#8220;, per Softmax zu einem Wahrscheinlichkeits-Simplex
+    gemacht &#8212; und (ii) eine <i>Konvexkombination</i> von Value-Punkten, die das Token residuell zu einem
+    Bedeutungs-Schwerpunkt zieht; lokal ist genau das eine diffeomorphe Verformung der Mannigfaltigkeit
+    (das &#8222;Liquify&#8220; in A).</p>
+    <p>Das Residual-Glied ist das <b>Scharnier</b>: Es macht aus der nicht-invertiblen Kontraktion der
+    Aufmerksamkeit (B) eine invertible Diffeomorphismus-Schicht (A). Ein einzelner Attention-Kopf
+    verschiebt einen Punkt zu einem Schwerpunkt; N Schichten komponieren N Diffeomorphismen zu einem
+    glatten Pfad entlang der Residual-Säule. A liefert damit die Geometrie <i>zwischen</i> den Schichten
+    (Mannigfaltigkeit, Residual-Säule, tiefe Komposition), B die Geometrie <i>innerhalb</i> einer Schicht
+    (Projektion, Softmax, Bewegung zum Schwerpunkt) &#8212; dieselbe Geschichte auf zwei Skalen.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere stehen sich an drei konkreten Punkten gegenüber:</p>
+    <h3>1. Invertierbarkeit</h3>
+    <p>A modelliert jede Schicht als <b>Diffeomorphismus</b> &#8212; eine glatte, <i>invertible</i> Verformung der
+    ganzen Mannigfaltigkeit (Titel &#8222;Diffeomorphic Manifold Stack&#8220;, Code-Kommentar
+    &#8222;Warp the grid (Diffeomorphismus)&#8220;). B beschreibt den Einzelschritt der Aufmerksamkeit dagegen
+    als <b>Konvexkombination zum Schwerpunkt</b> (&#8222;neu = a&#8321;&#183;P&#8321; + a&#8322;&#183;P&#8322; + a&#8323;&#183;P&#8323;&#8220;,
+    &#8222;&#8218;Bank&#8216; rutscht zum Schwerpunkt&#8220;). Eine Mittelbildung ist eine Many-to-one-Kontraktion und
+    damit per Definition <b>nicht invertibel</b>. Widerspruch: Kann dieselbe Schicht eine invertible
+    Verformung (A) und zugleich ein kollabierendes Mittel (B) sein? A's eigener Index-Autor merkt selbst
+    an, dass die Invertierbarkeits-These &#8222;eine visuelle Metapher&#8220; ist, da echte Aufmerksamkeit im
+    Allgemeinen nicht invertibel ist.</p>
+    <h3>2. Was bewegt sich?</h3>
+    <p>In B bewegt sich der <b>Punkt</b>: das Wort &#8222;Bank&#8220; wandert durch einen <i>festen</i> Raum zum
+    Schwerpunkt. In A verformt sich der <b>Raum</b>: das Gitter wird &#8222;liquified&#8220;/gebeugt, während
+    die Tokens als Signal gerade die vertikalen Residual-Röhren emporsteigen. Widerspruch: den Punkt im
+    festen Raum bewegen (B) &#8212; oder den Raum um den Punkt verzerren (A)?</p>
+    <h3>3. Form des Operators</h3>
+    <p>In B ist Aufmerksamkeit eine <b>lineare Projektion</b> auf eine Query-Richtung (Lot fällen,
+    Projektionslänge = rohes Logit, Softmax = Gewicht). In A ist die Verformung <b>lokal, nichtlinear und
+    abklingend</b> &#8212; ein Gauß-Kern um den Fokuspunkt (Code: <code>force = exp(&#8722;dist&#183;0.5)&#183;1.2</code>).
+    Widerspruch: linear/projektional (B) vs. lokaler nichtlinearer Kernel (A).</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Alle drei Spannungen lösen sich an derselben Struktur auf: dem Residual-Glied
+    <b>x &#8594; x + f(x)</b>.</p>
+    <ul>
+      <li><b>Kontraktion + Identität = Diffeomorphismus.</b> B isoliert das
+      <i>Verschiebungsfeld</i> f(x) = &#931; a&#7523;(V&#7523; &#8722; x) &#8212; die Kontraktion zum Schwerpunkt. A sieht die
+      <i>ganze</i> Abbildung x + f(x). Ist f lokal klein (Kontraktion, &#8214;Df&#8214; &lt; 1), so ist x + f(x) ein
+      Diffeomorphismus (Inverse per Kontraktionssatz). Der Residual-Stream (A's &#8222;Elektrizität&#8220;)
+      liefert exakt den Identitätsterm, der das Kompositum invertierbar macht. <i>Fusionierte
+      Schlussfolgerung:</i> Schicht = Identität (Residuum) + glattes lokales Verschiebungsfeld (Achtung) =
+      Diffeomorphismus der Repräsentations-Mannigfaltigkeit. B zeigt das &#8222;Ziehen&#8220;, A die daraus
+      folgende invertible Verformung.</li>
+      <li><b>Aktive vs. passive Diffeomorphismus.</b> Einen Punkt im festen Koordinatensystem bewegen (B)
+      und das Koordinatengitter verzerren (A) sind <i>dieselbe</i> Abbildung, nur aktiv (B) bzw. passiv (A)
+      beschrieben. Man nutzt Punkt-Bewegung, um die <i>Eindeutigung</i> zu erklären, und Raum-Verzerrung,
+      um die <i>globale Wirkung</i> der Schicht zu zeigen.</li>
+      <li><b>Linear in den Gewichten, lokal-nichtlinear in der Verschiebung.</b> Das Query-Key-Innprodukt
+      ist tatsächlich eine lineare Projektion (B hat mit dem Logit recht). Aber der <i>geometrische
+      Fußabdruck</i> eines Attention-Kopfs auf der Mannigfaltigkeit &#8212; &#931; a&#7523;(V&#7523; &#8722; x) mit Softmax-Gewichten &#8212;
+      ist eine lokale, glatte, beschränkte Verformung (A hat mit der Gestalt recht). <i>Fusion:</i> die
+      Algebra der Gewichte ist linear/projektional, die Geometrie der Verschiebung ist lokal und
+      nichtlinear; der Softmax macht aus Projektionslängen einen glatten, lokal begrenzten &#8222;Stoß&#8220;.</li>
+    </ul>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p><b>Die Geometrie der Aufmerksamkeit (aus B).</b> Wörter sind Punkte im Raum; Bedeutung = Nähe. Ein
+    mehrdeutiges Wort liegt zwischen seinen Bedeutungen: &#8222;Bank&#8220; exakt in der Mitte von
+    <i>Sitzbank</i> und <i>Geldhaus</i>. Eine Query ist eine <i>Richtung</i> R (in B:
+    <code>R = normalize(e&#7619;&#7500;&#7619; &#8722; e&#7512;&#7521;&#7523;&#8211;)</code>). Die Passung eines Tokens wird gemessen, indem man
+    das Lot auf R fällt und die Projektionslänge liest &#8212; das rohe Logit. Softmap macht daraus ein
+    Wahrscheinlichkeits-Simplex &#931; a&#7523; = 1 (Temperatur &#949;: klein = scharf, groß = breit; negative
+    Projektionen gewichten ein Wort <i>herunter</i>, in B rot). Die Values sind hier die Punkte selbst, also
+    ist das Ergebnis die Konvexkombination <code>neu = &#931; a&#7523; e&#7523;</code> &#8212; das Wort rutscht zum
+    <b>Schwerpunkt</b> und damit zu der Bedeutung, die der Kontext stützt. Das ist die gesamte Eindeutigung
+    in einem Schritt.</p>
+    <p><b>Die Geometrie der Schicht (aus A).</b> Jede Schicht ist ein glattes, invertibles Beugen
+    (Diffeomorphismus) einer Repräsentations-Mannigfaltigkeit; Schichten stapeln sich vertikal. Der
+    Residual-Stream ist die vertikale &#8222;Elektrizität&#8220;, die das Token-Signal durch alle Schichten
+    trägt &#8212; der Identitätsterm. Der Attention-Fokus (in A: die Maus) verformt das Gitter lokal über
+    einen abklingenden Kernel. <b>Tiefe = Komposition</b> dieser Schicht-Diffeomorphismen: ein Token
+    beschreibt einen glatten Pfad.</p>
+    <p><b>Die Verschmelzung.</b> B ist der Spezialfall <i>Values = Positionen</i>, in dem
+    &#8222;zum Schwerpunkt wandern&#8220; wörtlich stimmt. Im Allgemeinen sind die Values eine eigene lineare
+    Karte (V = XW<sub>V</sub>), also ist das Ergebnis der Aufmerksamkeit kein Punkt auf der Ursprungslinie,
+    sondern ein <i>Verschiebungsvektor</i>. Addiert man diesen residuell (x + f(x)), wird daraus die lokale
+    diffeomorphe Verformung, die A zeichnet. A's &#8222;Elektrizität&#8220; ist damit die Identität, und die
+    &#8222;Beugung&#8220; ist das f(x) der Aufmerksamkeit. Eindeutigung (B) ist <i>ein</i> Diffeomorphismus;
+    Tiefe (A) ist die <i>Komposition</i> vieler.</p>
+    <div class="math">
+      <div><span class="lbl">Logit (B)</span> &nbsp; s&#7523; = 2.2 &#183; &#10216;e&#7523; &#8722; e&#7619;, R&#10217;, &nbsp; s&#7619; = 0.5</div>
+      <div><span class="lbl">Softmax</span> &nbsp; a&#7523; = exp(s&#7523;/&#949;) / &#931;<sub>j</sub> exp(s&#7522;/&#949;), &nbsp; &#931;<sub>k</sub> a&#7523; = 1</div>
+      <div><span class="lbl">Zug (Values = Positionen)</span> &nbsp; neu = &#931;<sub>k</sub> a&#7523; e&#7523; = e&#7619; + &#931;<sub>k&#8800;&#7619;</sub> a&#7523;(e&#7523; &#8722; e&#7619;)</div>
+      <div><span class="lbl">Schicht (Residuum)</span> &nbsp; L(x) = x + f(x), &nbsp; f = Attention + MLP</div>
+      <div><span class="lbl">Invertierbarkeit</span> &nbsp; x &#8594; x + f(x) invertibel, wenn &#8214;Df&#8214; &lt; 1 &nbsp;(Kontraktion)</div>
+      <div><span class="lbl">Tiefe</span> &nbsp; x<sub>N</sub> = L<sub>N</sub> &#8928; &#8230; &#8928; L<sub>1</sub> (x<sub>0</sub>) = x<sub>0</sub> + &#931;<sub>k</sub> f<sub>k</sub></div>
+    </div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung: Kontraktion vs. Diffeomorphismus</h2>
+    <p class="note">Vier Schritte (wie in B): Punkte im Raum &#8594; Lot auf die Query-Richtung &#8594; Softmax-Gewichte
+    &#8594; Zug zum Schwerpunkt. Der <b>Modus-Schalter</b> demonstriert die Auflösung: In
+    <i>Kontraktion (B)</i> fällt &#8222;Bank&#8220; exakt auf den Schwerpunkt (nicht invertibel); in
+    <i>Diffeomorphismus (A)</i> wird es nur <i>teilweise</i> verschoben und die Mannigfaltigkeit (das Gitter)
+    beult sich um den Punkt auf &#8212; x + f(x), invertierbar, Ursprung als &#8222;Residuum&#8220; erhalten. Ziehen = drehen.</p>
+    <div class="panel">
+      <div class="stage">
+        <canvas id="cv"></canvas>
+        <div class="cap"><div class="t" id="capT"></div><div class="f" id="capF"></div></div>
+        <div class="hud" id="hud"></div>
+      </div>
+      <div class="ctl">
+        <button id="play">&#9654; Play</button>
+        <span class="grp" id="steps">
+          <button data-s="0" class="on">1</button>
+          <button data-s="1">2</button>
+          <button data-s="2">3</button>
+          <button data-s="3">4</button>
+        </span>
+        <span class="grp"><span class="gl">&#949; (Temp.)</span><input id="tau" type="range" min="0.4" max="2.5" step="0.05" value="0.9"><span class="val" id="tauv">0.9</span></span>
+        <span class="sp"></span>
+        <button id="mode" title="Schaltet die Auflösung um">Modus: Diffeomorphismus (A)</button>
+        <button id="theme" title="Farbschema">Dark</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul>
+      <li><a href="../fibrebundle4.html">fibrebundle4.html</a> &#8212; &#8220;Manifold Liquify&#8221;: jeder Transformer-Layer als
+      diffeomorphe Verformung eines gestapelten Mannigfaltigkeits-Gitters; der Residual-Stream als die aufsteigende
+      &#8222;Elektrizität&#8220;, der Attention-Fokus als lokaler Gauß-Kern, der das Gitter beugt.</li>
+      <li><a href="../transformer_rein_geometrisch3.html">transformer_rein_geometrisch3.html</a> &#8212; &#8220;Attention&#8221; (rein geometrisch, 4 Schritte):
+      Eindeutigung von &#8222;Bank&#8220; (Sitzbank/Geldhaus) als Projektion auf eine Query-Richtung, Softmax über die Längen und
+      Bewegung zum gewichteten Schwerpunkt neu = &#931; a&#7523;&#183;P&#7523;.</li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('cv'), x=cv.getContext('2d');
+  var capT=document.getElementById('capT'), capF=document.getElementById('capF'), hud=document.getElementById('hud');
+  var TAU=document.getElementById('tau'), TAUV=document.getElementById('tauv');
+  var W=0,H=0,DPR=1;
+  function rz(){DPR=Math.min(window.devicePixelRatio||1,2);
+    W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;x.setTransform(DPR,0,0,DPR,0,0);}
+
+  var COL={};
+  function readColors(){var cs=getComputedStyle(document.documentElement);
+    COL.bg=cs.getPropertyValue('--bg').trim();COL.fg=cs.getPropertyValue('--fg').trim();
+    COL.muted=cs.getPropertyValue('--muted').trim();COL.grid=cs.getPropertyValue('--grid').trim();
+    COL.accent=cs.getPropertyValue('--accent').trim();COL.accent2=cs.getPropertyValue('--accent2').trim();
+    COL.good=cs.getPropertyValue('--good').trim();COL.bad=cs.getPropertyValue('--bad').trim();}
+
+  // world
+  var MO={x:-1.1,y:0.9,z:-0.5}, GE={x:1.1,y:-0.9,z:-0.5};   // Bedeutungs-Ghosts
+  var TK=[{w:"Die",e:{x:-1.6,y:-0.9,z:0},c:"muted"},
+          {w:"Bank",e:{x:0,y:0,z:0},c:"accent"},
+          {w:"kalt",e:{x:-1.0,y:1.1,z:0},c:"accent2"}];
+  var Q=1; // Bank
+  var R=(function(){var dx=TK[2].e.x-TK[1].e.x, dy=TK[2].e.y-TK[1].e.y, l=Math.hypot(dx,dy)||1;return {x:dx/l,y:dy/l,z:0};})();
+  function sub(a,b){return {x:a.x-b.x,y:a.y-b.y,z:a.z-b.z};}
+  function dot(a,b){return a.x*b.x+a.y*b.y+a.z*b.z;}
+  function wgt(tau){var s=TK.map(function(t){return dot(sub(t.e,TK[Q].e),R)*2.2;});s[Q]=0.5;
+    var m=Math.max.apply(null,s), e=s.map(function(v){return Math.exp((v-m)/tau);}),
+    z=e.reduce(function(a,b){return a+b;},0); return {s:s,w:e.map(function(v){return v/z;})};}
+
+  // camera (2D-ish 3D, drag-rotate)
+  var sA=0.62,sB=0.34,uA=0,uB=0;
+  function P(p){var A=sA+uA,B=sB+uB,S=Math.min(W,H)*0.235;
+    var a=p.x*Math.cos(A)-p.y*Math.sin(A), b=p.x*Math.sin(A)+p.y*Math.cos(A);
+    var Y=-b*Math.sin(B)+p.z*Math.cos(B), Z=b*Math.cos(B)+p.z*Math.sin(B);
+    var k=6.0/(6.0+Z*0.72);
+    return {X:W/2+a*S*k, Y:H/2-Y*S*k, d:Z, k:k};}
+
+  var C=function(v,a,b){return Math.max(a,Math.min(b,v));};
+  var TIT=["Alle Wörter sind Punkte im Raum",
+           "\u201EBank\u201C fragt: wer passt? \u2192 Lote auf die Query-Richtung",
+           "Längen \u2192 Gewichte (Softmax)",
+           "\u201EBank\u201C wird gezogen \u2014 Kontraktion vs. Diffeomorphismus"];
+  var FML=["\u201EBank\u201C liegt exakt zwischen Sitzbank &amp; Geldhaus",
+           "s&#7523; = 2.2\u00B7\u27E8e&#7523;\u2212e&#7619;, R\u27E9",
+           "a&#7523; = e&#8319;^(s&#7523;/\u03C4) \u00F7 \u03A3e&#8319;^(s&#7522;/\u03C4),  \u03A3a&#7523;=1",
+           "neu=\u03A3a&#7523;e&#7523; (B)  |  L(x)=x+f(x) (A)"];
+
+  var p=0, step=0, tau=0.9, mode='diffeo', playing=false, acc=0, lastT=0;
+  var warpAmp=0, bkx=0, bky=0;
+
+  var GMIN=-2.3, GMAX=2.3, GN=15;
+  function warpLift(gx,gy){ if(warpAmp<=0.001) return 0;
+    var dx=gx-bkx, dy=gy-bky; return warpAmp*Math.exp(-(dx*dx+dy*dy)/(2*0.85*0.85)); }
+
+  function seg(a,b,col,w,al){var pr=P(a),q=P(b);x.globalAlpha=al;x.strokeStyle=col;x.lineWidth=w;
+    x.beginPath();x.moveTo(pr.X,pr.Y);x.lineTo(q.X,q.Y);x.stroke();x.globalAlpha=1;}
+  function grid(){ for(var i=0;i<=GN;i++){var v=GMIN+(GMAX-GMIN)*i/GN;
+    for(var j=0;j<GN;j++){var v0=GMIN+(GMAX-GMIN)*j/GN, v1=GMIN+(GMAX-GMIN)*(j+1)/GN;
+      seg({x:v0,y:v,z:-1+warpLift(v0,v)},{x:v1,y:v,z:-1+warpLift(v1,v)},COL.grid,0.8,0.42);
+      seg({x:v,y:v0,z:-1+warpLift(v,v0)},{x:v,y:v1,z:-1+warpLift(v,v1)},COL.grid,0.8,0.42);}}}
+  function sph(p,r,al,base){var s=P(p),Rr=Math.max(3,r*s.k);
+    var g=x.createRadialGradient(s.X-Rr*0.35,s.Y-Rr*0.35,Rr*0.1,s.X,s.Y,Rr);
+    g.addColorStop(0,'rgba(255,255,255,0.95)');g.addColorStop(0.45,base);g.addColorStop(1,base);
+    x.globalAlpha=al*(0.7+0.3*s.k);x.beginPath();x.arc(s.X,s.Y,Rr,0,6.2832);x.fillStyle=g;x.fill();x.globalAlpha=1;}
+  function lbl(p,txt,col,al,size,bold){var q=P(p);x.globalAlpha=al;x.fillStyle=col;
+    x.font=(bold?'600 ':'')+size+'px Inter, system-ui, sans-serif';x.textAlign='left';
+    x.fillText(txt,q.X+11,q.Y-9);x.globalAlpha=1;}
+  function cross(p,col,al,sz){var s=P(p);x.globalAlpha=al;x.strokeStyle=col;x.lineWidth=1.3;
+    var r=sz*s.k;x.beginPath();x.arc(s.X,s.Y,r,0,6.2832);x.stroke();
+    x.beginPath();x.moveTo(s.X-r*1.4,s.Y);x.lineTo(s.X+r*1.4,s.Y);
+    x.moveTo(s.X,s.Y-r*1.4);x.lineTo(s.X,s.Y+r*1.4);x.stroke();x.globalAlpha=1;}
+  function arrow(a,b,col,w,al){var pr=P(a),q=P(b);x.globalAlpha=al;x.strokeStyle=col;x.lineWidth=w;
+    x.beginPath();x.moveTo(pr.X,pr.Y);x.lineTo(q.X,q.Y);x.stroke();
+    var gg=Math.atan2(q.Y-pr.Y,q.X-pr.X),s2=9+w;x.fillStyle=col;x.beginPath();
+    x.moveTo(q.X,q.Y);x.lineTo(q.X-s2*Math.cos(gg-0.4),q.Y-s2*Math.sin(gg-0.4));
+    x.lineTo(q.X-s2*Math.cos(gg+0.4),q.Y-s2*Math.sin(gg+0.4));x.closePath();x.fill();x.globalAlpha=1;}
+  function ring(p,col,al){var s=P(p);x.globalAlpha=al;x.strokeStyle=col;x.lineWidth=1.2;
+    x.setLineDash([3,4]);x.beginPath();x.arc(s.X,s.Y,16*s.k,0,6.2832);x.stroke();x.setLineDash([]);x.globalAlpha=1;}
+
+  function draw(){
+    x.fillStyle=COL.bg;x.fillRect(0,0,W,H);
+    var rayAmt=C(p-0.5,0,1), wgtAmt=C(p-1.5,0,1), mvAmt=C(p-2.5,0,1);
+    var A=wgt(tau), cn={x:0,y:0,z:0};
+    A.w.forEach(function(w,k){cn.x+=w*TK[k].e.x;cn.y+=w*TK[k].e.y;cn.z+=w*TK[k].e.z;});
+    var dx=cn.x-TK[Q].e.x, dy=cn.y-TK[Q].e.y, dlen=Math.hypot(dx,dy);
+    var pullFrac=mvAmt*(mode==='contract'?1:0.42);
+    bkx=TK[Q].e.x+dx*pullFrac; bky=TK[Q].e.y+dy*pullFrac;
+    warpAmp=mvAmt*(mode==='diffeo'?1:0)*Math.min(1.15,dlen)*0.95;
+    var bank={x:bkx,y:bky,z:0};
+
+    grid();
+
+    // Bedeutung-Ghosts
+    if(rayAmt>0.02||mvAmt>0.02){
+      ring(MO,COL.accent2,0.5);ring(GE,COL.bad,0.5);
+      seg(MO,GE,COL.muted,1.1,0.3);
+      lbl(MO,'Sitzbank',COL.accent2,0.75,13,false);lbl(GE,'Geldhaus',COL.bad,0.75,13,false);
+    }
+
+    // Query-Ray + Lote
+    if(rayAmt>0.02){
+      arrow(TK[Q].e,{x:TK[Q].e.x+R.x*1.9,y:TK[Q].e.y+R.y*1.9,z:0},COL.accent,2.4,rayAmt*0.95);
+      TK.forEach(function(t,k){ if(k===Q) return;
+        var pr=dot(sub(t.e,TK[Q].e),R), ft={x:TK[Q].e.x+R.x*pr,y:TK[Q].e.y+R.y*pr,z:0};
+        seg(t.e,ft,COL.muted,1,rayAmt*0.4,[3,4]);
+        seg(TK[Q].e,ft, pr>0?COL.good:COL.bad, 5, rayAmt*0.75);
+      });
+    }
+
+    // Displacement vector (ghost -> new bank) + centroid cross
+    if(mvAmt>0.04){
+      cross(cn,COL.accent,mvAmt*0.9,6);
+      seg(TK[Q].e,bank,COL.accent,mode==='diffeo'?1.4:1.6,mvAmt*0.6,[4,5]);
+      lbl(TK[Q].e,'x (Residuum)',COL.muted,mvAmt*0.85,12,false);
+      if(mode==='diffeo') lbl(bank,'x + f(x)  invertibel',COL.good,mvAmt*0.9,12,true);
+      else lbl(bank,'Schwerpunkt  (nicht invertibel)',COL.bad,mvAmt*0.9,12,true);
+    }
+
+    // Tokens (Bank at moved pos)
+    TK.forEach(function(t,k){ var pos=(k===Q)?bank:t.e;
+      var r=7+(wgtAmt>0.02?26*(A.w[k]-1/3):0)+(k===Q?2:0);
+      sph(pos,Math.max(4,r),0.95,COL[t.c]);
+      lbl(pos,t.w,(k===Q)?COL.accent:COL.fg,0.95,k===Q?16:13,k===Q);
+    });
+
+    // Weight bar
+    if(wgtAmt>0.04){
+      var X0=W-300,Y0=H-84,BW=250,BH=20,ac=0;
+      x.globalAlpha=wgtAmt*0.8;x.strokeStyle=COL.muted;x.lineWidth=1;x.strokeRect(X0,Y0,BW,BH);
+      A.w.forEach(function(w,k){var x1=X0+BW*ac,x2=X0+BW*(ac+w);ac+=w;
+        x.globalAlpha=wgtAmt*0.55;x.fillStyle=k===Q?COL.accent:(A.s[k]>0?COL.good:COL.bad);
+        x.fillRect(x1,Y0,x2-x1,BH);
+        if(w>0.12){x.globalAlpha=wgtAmt*0.95;x.fillStyle=COL.bg;x.font='600 12px Inter, sans-serif';
+          x.textAlign='center';x.fillText(TK[k].w,(x1+x2)/2,Y0+14);x.textAlign='left';}});
+      x.globalAlpha=1;
+    }
+
+    hud.innerHTML='Schritt '+(step+1)+'/4 &middot; '+Math.round(A.w[0]*100)+'/'+Math.round(A.w[1]*100)+'/'+Math.round(A.w[2]*100)
+      +'<br>Modus: '+(mode==='diffeo'?'Diffeomorphismus (A)':'Kontraktion (B)');
+  }
+
+  function setStep(i){step=(i+4)%4;capT.textContent=TIT[step];capF.innerHTML=FML[step];
+    var b=document.querySelectorAll('#steps button');
+    for(var k=0;k<b.length;k++)b[k].classList.toggle('on',+b[k].getAttribute('data-s')===step);}
+
+  function frame(t){ var dt=Math.min(0.05,(t-lastT)/1000||0); lastT=t;
+    p+=(step-p)*(1-Math.exp(-dt*4));
+    if(playing){acc+=dt; if(acc>2.2){acc=0;setStep(step+1);}}
+    draw(); requestAnimationFrame(frame); }
+
+  // controls
+  document.querySelectorAll('#steps button').forEach(function(b){
+    b.addEventListener('click',function(){playing=false;document.getElementById('play').innerHTML='&#9654; Play';setStep(+b.getAttribute('data-s'));});});
+  document.getElementById('play').addEventListener('click',function(){playing=!playing;acc=0;
+    this.innerHTML=playing?'&#10073;&#10073; Pause':'&#9654; Play';});
+  TAU.addEventListener('input',function(){tau=+TAU.value;TAUV.textContent=tau.toFixed(2);});
+  document.getElementById('mode').addEventListener('click',function(){
+    mode=(mode==='diffeo')?'contract':'diffeo';
+    this.textContent='Modus: '+(mode==='diffeo'?'Diffeomorphismus (A)':'Kontraktion (B)');});
+  document.getElementById('theme').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    this.textContent=document.documentElement.classList.contains('dark')?'Dark':'Light';
+    readColors();});
+  window.addEventListener('keydown',function(e){
+    var d=/Right|Down/.test(e.key)?1:/Left|Up/.test(e.key)?-1:0;
+    if(d){e.preventDefault();playing=false;document.getElementById('play').innerHTML='&#9654; Play';setStep(step+d);}});
+  var md=0,mx=0,my=0;
+  cv.addEventListener('mousedown',function(e){md=1;mx=e.clientX;my=e.clientY;});
+  window.addEventListener('mouseup',function(){md=0;});
+  window.addEventListener('mousemove',function(e){if(!md)return;
+    uA+=(e.clientX-mx)*0.006;uB=C(uB+(e.clientY-my)*0.005,-1.2,1.2);mx=e.clientX;my=e.clientY;});
+  window.addEventListener('resize',rz);
+
+  // boot
+  rz();readColors();setStep(0);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

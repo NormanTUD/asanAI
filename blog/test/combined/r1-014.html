@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention als Fluss mit Simplizial-Schatten — Fusion 014</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#d99a12; --panel:rgba(255,253,248,.95); --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4b73a; --panel:rgba(20,27,36,.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:66px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:16px;color:var(--muted);max-width:64ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:26px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin-left:6px;vertical-align:middle}
+.tag.b{background:var(--accent2-soft);color:var(--accent2)}
+.eq{font-family:var(--mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto;line-height:1.9}
+.eq .c{color:var(--muted)}
+.eq sup,.eq sub{font-size:.7em}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7}
+#plot{width:100%;height:470px;border-radius:12px;border:1px solid var(--line)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px;flex-wrap:wrap}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+.ctl input[type=text]{width:100%;padding:9px 12px;font-family:var(--mono);font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:10px;outline:none}
+.ctl input[type=text]:focus{border-color:var(--accent)}
+.chkrow{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:4px}
+.chkrow label{display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.chkrow input{accent-color:var(--accent)}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:120px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--accent)}
+.ro .box.rose{background:var(--accent2-soft)}
+.ro .box.rose .v{color:var(--accent2)}
+.ro .box.amber{background:var(--amber-soft)}
+.ro .box.amber .v{color:var(--amber)}
+.viz-note{font-size:12.5px;color:var(--muted);margin-top:12px;line-height:1.6}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;display:block;margin-bottom:5px}
+.prov .item a{word-break:break-all}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">☀︎ / ☾</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion · Runde 1 · Paar 014 · KI/Geometrie</div>
+  <h1>Der <em>gerichtete</em> Blick mit <em>symmetrischem</em> Schatten: Attention als Fluss in einem gekrümmten Raum</h1>
+  <p class="sub">Zwei Erklärungen desselben Mechanismus, gelesen auf zwei Ebenen: Ein Transformer ist eine <b>geometrische Maschine</b>. Attention ist ein <b>gerichteter Fluss</b> (ein &bdquo;Blick&ldquo;, q→k, der einen Punkt in den gewichteten Schwerpunkt zieht) — und genau der <b>symmetrische, gegenseitige</b> Teil dieses Flusses ist ein <b>Simplizialkomplex</b> aus &bdquo;Bedeutungsklumpen&ldquo;. Über die Schichten hinweg bewegt sich der Fluss, der Raum wird vom FFN gekrümmt, und der Komplex <i>morphed</i> mit.</p>
+  <p class="fuse-line">Fusion aus: <b>simplicial_complex_attention8.html</b> ✕ <b>transformer_rein_geometrisch.html</b></p>
+</header>
+
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p>Beide Papiere teilen eine tiefere Prämisse: <b>Der Transformer ist ein geometrisches Objekt in einem Vektorraum</b>, und Attention ist eine geometrische Operation, nicht ein abstraktes Gewichte-Produkt. In beiden ist der Score ein <b>Skalarprodukt</b> (Parallelität / Projektion), ist der Softmax die Verteilung <b>einer Einheit Masse</b> über die Ziele, und ist der Output eine <b>gewichtete Mischung / ein Schwerpunkt</b> der Value-Punkte. Wo sie sich unterscheiden, ist die <i>Ebene</i>, auf der sie dieselbe Maschine lesen: <b>Punkt A</b> liest Attention als <i>statischen Zustand</i> — einen Punktewolke in einem festen semantischen Raum, aus der er per <i>gegenseitiger</i> Attention (min&nbsp;α<sub>ij</sub>,&nbsp;α<sub>ji</sub>&nbsp;&gt;&nbsp;ε) ein <b>Komplex-Gerüst</b> (Kanten = 1-Simplizes, Dreiecke = 2-Simplizes) ausschneidet. <b>Punkt B</b> liest denselben Mechanismus als <i>dynamischen Prozess</i> — einen <i>gerichteten</i> Blick, der einen Punkt in seinen Schwerpunkt fallen lässt, gefolgt von Residual + LayerNorm (Rückprojektition auf eine Kugel) + FFN (Krümmung des Raums), sechs Schichten tief, sodass jeder Token eine <i>Trajektorie</i> beschreibt.</p>
+  <p>Die einzelne, beide vereinende Position lautet daher: <b>Attention ist ein gerichteter geometrischer Fluss, und der symmetrierte, geschwellige Teil dieses Flusses ist der Simplizialkomplex der Bedeutung; über die Schichten ist dieser Fluss ein Zeit-Index, der den Raum lokal krümmt und den Komplex dabei morphen lässt.</b> Punkt A liefert den <i>statistischen Schatten</i> eines Einzelrahs (einer Attention-Passage) — die kombinatorische Struktur. Punkt B liefert die <i>Dynamik</i> — den gerichteten Fluss, die Temperatur, den Schwerpunkt-Fall, die Kugel und die Krümmung, sowie die Zeitdimension (Schicht 1…6). Der gerichtete Fluss ist der <i>Mechanismus</i>; sein symmetrischer Kern ist die <i>invariante Struktur</i>; die per-Schicht-Abbildung (Schwerpunkt → Residual → Kugel → Krümmung) ist die <i>Zeitentwicklung</i>.</p>
+  <p class="note violet"><b>In einem Satz:</b> Attention ist ein geometrischer Fluss, dessen symmetrischer Schatten ein Simplizialkomplex ist — und dieser Komplex morphed entlang einer Trajektorie durch einen vom FFN gekrümmten Raum. Punkt A ist ein einzelnes Frame + sein Skelett; Punkt B ist der ganze Film.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht faktisch — sie treffen auf vier Achsen <b>inkompatible Stellungen</b> zum selben Objekt. Jede ist eine echte, benennbare Divergenz:</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">W1 · Gerichteter Blick (B) vs. symmetrisches Gerüst (A)</h3>
+    <p><b>Punkt B</b> macht Attention explizit <i>gerichtet</i>: q ist eine <b>&bdquo;Blickrichtung&ldquo;</b>, k ein <b>&bdquo;Schild&ldquo;</b>, und ⟨q,k<sub>j</sub⟩⟩ ist die <b>&bdquo;Länge der Projektion&ldquo;</b> — ein projektionsartiges, nicht-symmetrisches, an den Query-Token gebundenes Geschehen. Das volle Feld ist ein <i>gerichteter</i> Fließfeld (&bdquo;jeder Punkt zieht an jedem&ldquo;). <b>Punkt A</b> dagegen definiert das bedeutungstragende Objekt als den <i>symmetrierten</i> Kern: eine Kante entsteht nur, wo sich zwei Wörter <i>gegenseitig</i> stark beachten (<b>min</b>(α<sub>ij</sub>,α<sub>ji</sub>)&nbsp;&gt;&nbsp;ε), und der Simplizialkomplex (Kanten, Dreiecke) <i>erfordert</i> Symmetrie. Inkompatibel: B's Kern ist inhärent asymmetrisch/gerichtet, A's Kern ist inhärent symmetrisch.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W2 · Statischer Zustand (A) vs. dynamische Trajektorie (B)</h3>
+    <p><b>Punkt A</b> berechnet <i>eine</i> Attention-Passage; der Output ist eine <i>statische</i> konvexe Kombination (&bdquo;Der Output-Punkt liegt geometrisch <em>zwischen</em> den V-Punkten&ldquo;), aus der dann ein statischer Komplex abgelesen wird — keine Schichten, keine Zeit. <b>Punkt B</b> ist ein <i>Prozess</i>: &bdquo;Der Punkt fällt in den Schwerpunkt&ldquo;, dann Residual + LayerNorm (Kugelschale), dann FFN, und &bdquo;Sechs Schichten = eine Bahn&ldquo; — jeder Token <i>beschreibt eine Trajektorie</i>. Inkompatibel: Ist der Transformer ein einzelner Zustand (A) oder eine sich entwickelnde Bahn über sechs Schichten (B)?</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W3 · Flacher fester Raum (A) vs. gekrümmter Raum (B)</h3>
+    <p><b>Punkt A</b> arbeitet in einem <i>festen</i> 3D-semantischen Bedeutungsräum (Achsen: Männlich/Weiblich · Tier/Mensch/Göttlich · Schwach/Stark); die Punkte sind fix, der Raum <i>verändert sich nie</i> — es gibt kein FFN und keine Biegung. <b>Punkt B</b> macht das FFN zum <i>Raumkrümmer</i>: &bdquo;Der Raum wird gekrümmt&ldquo;, &bdquo;Verbiegung — jetzt linear trennbar&ldquo;, und LayerNorm zieht die Punkte auf eine Kugel. Inkompatibel: verändert der Netzwerkbetrieb den Raum selbst? A: nein (statisch). B: ja (das FFN ist eine metrische Deformation).</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W4 · Position abwesend (A) vs. Position als Winkel (B)</h3>
+    <p><b>Punkt A</b> kennt <i>keine</i> Positions-Codierung: die Reihenfolge der Wörter hat <i>keine</i> geometrische Rolle — &bdquo;king lion power&ldquo; ist nur eine Menge von Bedeutungs-Positionen. <b>Punkt B</b> macht die Position zu einem <i>Winkel</i>: PE(pos,2i)=sin, PE(pos,2i+1)=cos, eine dreifrequente Schraubenlinie, bei der &bdquo;feste Verschiebung k = feste Drehung&ldquo; ist; die Wortordnung ist ein Kernbestandteil der Geometrie. Inkompatibel: gehört die Wort-<i>Reihenfolge</i> überhaupt zur Geometrie?</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span>Auflösung</h2>
+  <p>Alle vier Punkte sind <b>Perspektiven auf dieselbe Attention-Matrix</b>, keine Faktenkonflikte. Die Auflösung ist durchgängig: <b>gerichteter Fluss = Mechanismus, symmetrischer Kern = invariante Struktur, per-Schicht-Abbildung = Zeit.</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W1 — ein Tensor, zwei Anteile</h3>
+    <p>Beide haben recht über verschiedene Anteile derselben Matrix. Attention ist <i>tatsächlich</i> gerichtet (B): ⟨q,k<sub>j</sub⟩ ist eine Projektion, ein Blick, und das volle N×N-Feld ist die Dynamik. Aber der <i>strukturell stabile</i> Teil — was als &bdquo;Bedeutungsklumpen&ldquo; übrig bleibt — ist <i>genau</i> der symmetrische Kern R<sub>ij</sub>=min(α<sub>ij</sub>,α<sub>ji</sub>) (A). Zerlege die Matrix in einen <i>antisymmetrischen</i> Teil (&bdquo;reiner Blick&ldquo;, transient, query-spezifisch — B) und einen <i>symmetrischen</i> Teil (&bdquo;gegenseitige Relevanz&ldquo;, das Skelett — A). Das Readout <i>Gegenseitig</i> in der Visualisierung misst genau diese Aufteilung: hoch = A's Welt, niedrig = B's Welt.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W2 — ein Frame aus dem Film</h3>
+    <p>A's Einzel-Passage ist <i>ein Frame</i> von B's Animation. B's Trajektorie ist die <i>Zeitentwicklung</i> von A's statischen Objekt: wende die per-Schicht-Abbildung (Schwerpunkt → Residual → Kugel → Krümmung) wiederholt an, und der Simplizialkomplex <i>morphed</i> Schicht für Schicht. Fusioniert: Der Transformer ist ein <i>zeit-geordneter Stapel von Simplizial-Flussfeldern</i>; A's &bdquo;Bedeutungsklumpen&ldquo; ist der Komplex <i>bei</i> Schicht&nbsp;ℓ, B's &bdquo;Bahn&ldquo; ist K(1)→K(2)→…→K(6). A erfasst Frame + Skelett, B den ganzen Film.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W3 — Faser + Krümmung</h3>
+    <p>A's fester Bedeutungsräum ist die <i>Faser / Ausgangs-Geometrie</i> (wo jedes Wort lebt); B's FFN-Krümmung ist die <i>konnektive Geometrie</i>, die diese Faser <i>nutzbar</i> macht. Fusioniert: Jeder Token ist in einer flachen semantischen Faser verankert (A), die das FFN lokal <i>biegt</i> (B), sodass überlappende Bedeutungsklumpen (die Simplizes) <b>linear trennbar</b> werden. A liefert den kombinatorischen Inhalt (<i>welche</i> Wörter clustern), B die metrische Deformation, die eine unscharfe, überlappende Wolke von Simplizes in eine sauber trennbare macht. &bdquo;Biegen&ldquo; und &bdquo;Komplex&ldquo; sind komplementär, nicht widersprüchlich.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W4 — Bedeutung = wo, Position = Phase</h3>
+    <p>A's Position ist die <i>Bedeutungs-Position</i>; B fügt die <i>Reihenfolge-Position</i> als Phase hinzu. Fusioniert: Die volle Token-Position ist die Summe einer festen semantischen Anker-Position (A's Embedding) und einer Positions-Phase (B's Helix-Winkel): <b>p<sub>i</sub> = E<sub>i</sub> ⊕ PE(φ<sub>i</sub>)</b>. Ist die Spirale aus, ist die Geometrie A's (nur Bedeutung, Ordnung unsichtbar); ist sie an, tritt die Ordnung als Phasenverschiebung ein und kann gegenseitige Kanten <i>erschaffen oder zerstören</i> (zwei gleichbedeutende Wörter weit auseinander in der Reihenfolge erhalten verschiedene Phasen → verschiedene Attention). So wird aus &bdquo;Bedeutung = wo&ldquo; und &bdquo;Ordnung = Phase&ldquo; eine einzige Position, auf der der Komplex berechnet wird.</p>
+  </div>
+
+  <p class="note amber"><b>Fusionierter Schluss:</b> Der Transformer ist <i>ein</i> geometrisches Objekt — ein schicht-indexierter Fluss von Punkten durch einen lokal FFN-gekrümmten Vektorraum, bei dem (i) der <i>gerichtete</i> Attention-Fluss die Dynamik ist, (ii) sein <i>symmetrierter, geschwelliger</i> Attention-Teil das Skelett des Simplizialkomplexes, (iii) die Token-Position = feste semantische Anker + Positions-Phase, und (iv) die sechs Schichten die Trajektorie jedes Tokens zeichnen, während das Skelett morphed.</p>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+  <h3>A1 · Attention als Q/K/V im festen semantischen Raum <span class="tag">A</span></h3>
+  <p>Jedes Wort hat eine feste <b>Bedeutungs-Position</b> (Embedding) im 3D-Raum mit drei Achsen (Männlich/Weiblich · Tier/Mensch/Göttlich · Schwach/Stark). Daraus werden drei Verzerrungen: <b>Q = W<sub>Q</sub>·X</b> (der <i>Scheinwerfer</i> / &bdquo;Wen suche ich?&ldquo;), <b>K = W<sub>K</sub>·X</b> (das <i>Schild</i> / &bdquo;Das bin ich, findet mich!&ldquo;) und <b>V = W<sub>V</sub>·X</b> (der Inhalt). Der Score ist das Skalarprodukt S<sub>ij</sub> = Q<sub>i</sub>·K<sub>j</sub>/√d; Softmax macht daraus Gewichte α<sub>ij</sub>; der Output ist O<sub>i</sub> = Σ<sub>j</sub> α<sub>ij</sub>·V<sub>j</sub> — ein Punkt, der &bdquo;zwischen&ldquo; den V-Punkten der stark beachteten Wörter liegt. Der <b>Simplizialkomplex</b> wird aus dem gegenseitigen Teil gelesen: Kante {i,j} iff min(α<sub>ij</sub>,α<sub>ji</sub>)&gt;ε; Dreieck (2-Simplex) für drei paarweise verbundene Wörter. Das ist ein <b>&bdquo;Bedeutungsklumpen&ldquo;</b>. ε (0.02–0.35) steuert die Dichte, die Schärfe die Peakigkeit.</p>
+
+  <h3>B1 · Der Transformer als reiner geometrischer Prozess <span class="tag b">B</span></h3>
+  <p>Token ↦ x ∈ ℝ³, ähnliche Bedeutung = kurze Distanz. <b>Position ist ein Winkel:</b> PE(pos,2i)=sin, PE(pos,2i+1)=cos — eine Schraubenlinie aus drei Frequenzen; &bdquo;feste Verschiebung k = feste Drehung&ldquo;. <b>⟨q,k<sub>j</sub⟩</b> = Länge der Projektion (&bdquo;Blickrichtung trifft Schild&ldquo;). <b>Softmax als Masse:</b> α<sub>j</sub> = e^{⟨q,k<sub>j</sub⟩/τ} ⁄ Σ e^{⟨q,k<sub>l</sub⟩/τ} — <i>eine Einheit Masse, optimal verteilt</i>; τ ist der (EOT-)Regularisierer, τ↓ = schärfer. <b>Output als Schwerpunkt:</b> c = Σ α<sub>j</sub>·v<sub>j</sub>, das Baryzentrum der Value-Vektoren — &bdquo;Der Punkt fällt in den Schwerpunkt&ldquo;. <b>Alle-gleichzeitig:</b> Attention(Q,K,V)=softmax(QKᵀ/√d<sub>k</sub>)·V, ein Fließfeld, &bdquo;jeder Punkt zieht an jedem&ldquo;. <b>Residual + LayerNorm:</b> &bdquo;Verschieben, nicht springen&ldquo; — Restweg + Rückprojektition auf eine Kugel. <b>FFN:</b> FFN(x)=max(0, xW₁+b₁)W₂+b₂ <i>biegt den Raum</i> — &bdquo;jetzt linear trennbar&ldquo;. <b>N=6 Schichten</b> = &bdquo;eine Bahn&ldquo;, jeder Token beschreibt eine Trajektorie.</p>
+
+  <h3>F · Das fusionierte Objekt — die gemeinsame Mathematik</h3>
+  <p>Die drei Kernelemente sind in beiden Papieren <i>identisch</i>: Score = Projektion/Parallelität, Softmax = eine Einheit Masse, Output = Schwerpunkt/konvexe Kombination. A's √3 ist B's √d<sub>k</sub>; A's &bdquo;Schärfe&ldquo; ist 1/B's τ; A's &bdquo;Bedeutungsklumpen&ldquo; ist ein Frame von B's morphendem Skelett. Zusammengefasst:</p>
+  <div class="eq">
+    p<sub>i</sub> = E<sub>i</sub> ⊕ PE(φ<sub>i</sub>) &nbsp;<span class="c"># semantischer Anker (A) ⊕ Positions-Phase (B)</span><br>
+    A<sub>ij</sub> = softmax<sub>j</sub>( Q<sub>i</sub>·K<sub>j</sub> ⁄ (√d · τ) ) &nbsp;<span class="c"># gerichteter Fluss (B); τ = 1/Schärfe (A)</span><br>
+    R<sub>ij</sub> = min( A<sub>ij</sub>, A<sub>ji</sub> ) &nbsp;<span class="c"># gegenseitige Relevanz = Kanten-Gewicht (A)</span><br>
+    i ~ j &nbsp;iff&nbsp; R<sub>ij</sub> &gt; ε &nbsp;;&nbsp; m-Klique ⟹ (m−1)-Simplex &nbsp;<span class="c"># Skelett (A)</span><br>
+    p ← LayerNorm( p + Attn(p) ) ;&nbsp; p ← FFN(p) &nbsp;<span class="c"># Residual + Kugel + Krümmung (B)</span><br>
+    ℓ = 1…6 :&nbsp; p<sub>i</sub>(ℓ) Trajektorie ;&nbsp; R(ℓ) und K(ℓ) morphen &nbsp;<span class="c"># der Film (B)</span>
+  </div>
+  <table class="tbl">
+    <tr><th>Element</th><th>Punkt A (statisch/kombinatorisch)</th><th>Punkt B (dynamisch/metrisch)</th><th>Fusion</th></tr>
+    <tr><td>Score</td><td>Parallelität Q<sub>i</sub>,K<sub>j</sub></td><td>Projektionslänge ⟨q,k<sub>j</sub⟩</td><td>identisch (Skalarprodukt/√d)</td></tr>
+    <tr><td>Softmax</td><td>&bdquo;Schärfe&ldquo;-Regler</td><td>Temperatur τ, eine Einheit Masse</td><td>1/Schärfe = τ</td></tr>
+    <tr><td>Output</td><td>konvexe Kombination &bdquo;zwischen den V&ldquo;</td><td>Baryzentrum, &bdquo;Punkt fällt&ldquo;</td><td>dieselbe gewichtete Summe</td></tr>
+    <tr><td>Struktur</td><td>min(α) → Kanten/Dreiecke (Komplex)</td><td>vollständiges N×N Fließfeld</td><td>gerichteter Fluss + symmetrischer Schatten</td></tr>
+    <tr><td>Zeit</td><td>ein Frame</td><td>6 Schichten = Trajektorie</td><td>K(ℓ) morphed über ℓ</td></tr>
+    <tr><td>Raum</td><td>fester semantischer 3D-Raum</td><td>FFN krümmt, LayerNorm = Kugel</td><td>Faser + lokale Krümmung</td></tr>
+    <tr><td>Position</td><td>nur Bedeutung, keine Ordnung</td><td>PE als Helix-Winkel</td><td>p = E ⊕ PE(φ)</td></tr>
+  </table>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span>Interaktive Visualisierung: der Blick, der ein Gerüst wirft</h2>
+  <div class="viz">
+    <h3>Attention-Fluss → sein Simplizial-Schatten, im (optional gekrümmten) Raum</h3>
+    <p class="dsub">Jedes Wort = ein Punkt. <b style="color:var(--gold)">Gestrichelte Gold-Pfeile</b> = der <i>gerichtete</i> Blick q→k (Punkt B). <b style="color:#3fb950">Kanten</b> + <b style="color:var(--gold)">Dreiecke</b> = der <i>symmetrische</i> Kern (Punkt A): nur wo sich zwei Wörter <i>gegenseitig</i> stark beachten (min&nbsp;α&nbsp;&gt;&nbsp;ε) entsteht eine Kante; ein paarweises Dreieck = ein &bdquo;Bedeutungsklumpen&ldquo;. Der Regler <b>Krümmung t</b> biegt den Raum (FFN, B); das Häkchen <b>Positionsspirale</b> schaltet die Positions-Phase (B) ein und rechnet die Attention neu. Die Readouts unten messen Kanten, Dreiecke und — der Kern der Fusion — wie viel des gerichteten Flusses <i>gegenseitig</i> (symmetrisch) ist.</p>
+
+    <div class="ctl">
+      <div class="ctl-lab"><span>Wörter (semantische Anker aus A)</span><b id="cntV">6</b></div>
+      <input type="text" id="sentence" value="king queen god goddess lion wolf">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Schärfe = 1/τ &nbsp;(A: &bdquo;Schärfe&ldquo; · B: Temperatur)</span><b id="sharpV">1.50</b></div>
+      <input type="range" id="sharp" min="0.5" max="5" step="0.1" value="1.5">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Threshold ε &nbsp;(A: Simplizial-Gerüst)</span><b id="epsV">0.07</b></div>
+      <input type="range" id="eps" min="0.02" max="0.35" step="0.005" value="0.07">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Krümmung t &nbsp;(B: FFN biegt den Raum)</span><b id="curvV">0.00</b></div>
+      <input type="range" id="curv" min="0" max="1" step="0.01" value="0">
+    </div>
+    <div class="ctl">
+      <div class="chkrow">
+        <label><input type="checkbox" id="helix"> Positionsspirale (B)</label>
+        <label><input type="checkbox" id="showQK" checked> gerichtete Pfeile q→k</label>
+        <label><input type="checkbox" id="showQ" checked> Q</label>
+        <label><input type="checkbox" id="showK" checked> K</label>
+        <label><input type="checkbox" id="showOut"> Output</label>
+        <label><input type="checkbox" id="showEdges" checked> Kanten</label>
+        <label><input type="checkbox" id="showTri" checked> Dreiecke</label>
+      </div>
+    </div>
+
+    <div id="plot"></div>
+
+    <div class="ro">
+      <div class="box"><div class="k">Kanten · 1-Simplizes</div><div class="v" id="rEdge">–</div></div>
+      <div class="box"><div class="k">Dreiecke · 2-Simplizes</div><div class="v" id="rTri">–</div></div>
+      <div class="box rose"><div class="k">Gegenseitig (min-α/Σα)</div><div class="v" id="rMut">–</div></div>
+      <div class="box amber"><div class="k">gerichteter Fluss (Rest)</div><div class="v" id="rDir">–</div></div>
+    </div>
+    <p class="viz-note">Theme-aware über CSS-Variablen + MutationObserver; alles inline, keine Netzwerk-Daten. Achsen x₁/x₂/x₃ = die semantischen Bedeutungsausse aus A (Männlich/Weiblich · Tier/Mensch/Göttlich · Schwach/Stark), solange die Positionsspirale aus ist — wird sie eingeblendet, verschiebt der Helix-Winkel die Punkte entlang der Reihenfolge (B).</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="prov">
+    <div class="item">
+      <span class="lbl">PUNKT A</span>
+      <a href="../simplicial_complex_attention8.html">simplicial_complex_attention8.html</a> — Attention als Q/K/V (Scheinwerfer/Schild/Inhalt) in einem festen semantischen 3D-Raum; die <i>gegenseitige</i> Attention (min&nbsp;α&nbsp;&gt;&nbsp;ε) erzeugt das Simplizialkomplex-Gerüst (Kanten = 1-, Dreiecke = 2-Simplizes, &bdquo;Bedeutungsklumpen&ldquo;). Plotly-3D, Satz eintippen, ε-/Schärfe-Regler.
+    </div>
+    <div class="item">
+      <span class="lbl">PUNKT B</span>
+      <a href="../transformer_rein_geometrisch.html">transformer_rein_geometrisch.html</a> — Der Transformer als reine Geometrie: Position als Winkel (Helix), ⟨q,k⟩ als Projektion, Softmax als eine Einheit Masse, Output als Schwerpunkt (&bdquo;Punkt fällt&ldquo;), LayerNorm als Kugel, FFN als Raumkrümmung, 6 Schichten = Trajektorie. Canvas-Animation, Schritt für Schritt.
+    </div>
+  </div>
+</section>
+
+<footer>Eine Knockout-Fusion (Runde 1, Paar 014) aus zwei lokalen Erklärungen. Alles läuft lokal im Browser — keine Daten verlassen diese Seite. Theme-Umschaltung oben rechts.</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(id){return document.getElementById(id);};
+  if(typeof Plotly==='undefined'){ var p=$('plot'); if(p){p.innerHTML='<div style="padding:30px;color:var(--muted);text-align:center;font-family:var(--mono)">Plotly konnte nicht geladen werden (offline?).</div>';} return; }
+
+  var LEX={
+    king:[-0.9,0.1,0.9],queen:[0.9,0.1,0.85],man:[-0.8,0,0.4],woman:[0.8,0,0.4],
+    boy:[-0.8,0,0.2],girl:[0.8,0,0.2],prince:[-0.85,0.1,0.7],princess:[0.85,0.1,0.6],
+    father:[-0.8,0.1,0.6],mother:[0.8,0.1,0.6],god:[-0.5,1.0,0.95],goddess:[0.9,0.95,0.9],witch:[0.6,0.4,0.6],
+    lion:[-0.3,-0.9,0.6],wolf:[-0.4,-0.9,0.55],eagle:[-0.1,-0.85,0.5],deer:[0.2,-0.9,0.15],
+    dragon:[-0.3,-0.6,0.9],dog:[-0.2,-0.85,0.3],cat:[0.2,-0.85,0.2],
+    power:[0.0,0.2,0.95],strength:[-0.2,0.1,0.85],sacred:[0.0,0.8,0.6],divine:[0.0,0.9,0.85],
+    holy:[0.0,0.85,0.6],celestial:[0.1,0.95,0.75],cosmic:[0.0,0.85,0.7],eternal:[0.0,0.7,0.7],
+    light:[0.2,0.3,0.4],dark:[-0.1,0.1,0.4],fire:[-0.1,0,0.6],water:[0.1,-0.1,0.2],
+    love:[0.4,0.1,0.3],death:[-0.2,0.2,0.7],life:[0.2,0.2,0.5],great:[0.0,0.1,0.7],fierce:[-0.2,0,0.65]
+  };
+  function getEmb(w){
+    var s=w.toLowerCase().replace(/[^a-z]/g,'');
+    if(LEX[s]) return LEX[s].slice();
+    var h=0,i; for(i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))&0xffff; }
+    return [ ((h%100)-50)/80, (((h>>4)%100)-50)/80, (h%60)/80 ];
+  }
+
+  var WQ=[[0.5,0.2,0.4],[0.1,0.9,0.2],[0.3,0.2,0.8]];
+  var WK=[[0.9,0.1,0.1],[0.2,0.8,0.2],[0.1,0.1,0.6]];
+  var WV=[[0.9,0.0,0.1],[0.0,0.9,0.1],[0.1,0.1,0.9]];
+  function dot3(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+  function mv3(M,v){return [dot3(M[0],v),dot3(M[1],v),dot3(M[2],v)];}
+
+  var TAU=6.283185307;
+  function helix(pos,n){
+    var f1=1.00,f2=0.34,f3=0.11; var t=pos/((n-1)||1);
+    return [
+      Math.cos(TAU*f1*pos*0.62)*0.42 + Math.cos(TAU*f2*pos*0.62)*0.16,
+      Math.sin(TAU*f1*pos*0.62)*0.42 + Math.sin(TAU*f2*pos*0.62)*0.16,
+      (t-0.5)*1.55 + Math.sin(TAU*f3*pos)*0.06
+    ];
+  }
+  function ffnWarp(p,t){
+    var r2=p[0]*p[0]+p[1]*p[1];
+    return [ p[0]*(1-0.16*t*r2), p[1]*(1-0.16*t*r2), p[2]+(r2*0.85-0.42)*t ];
+  }
+
+  function compute(tokens,base,sharp,eps){
+    var n=tokens.length;
+    var Q=base.map(function(e){return mv3(WQ,e);});
+    var K=base.map(function(e){return mv3(WK,e);});
+    var V=base.map(function(e){return mv3(WV,e);});
+    var sc=[]; var i,j;
+    for(i=0;i<n;i++){ sc.push([]); for(j=0;j<n;j++){ sc[i][j]=dot3(Q[i],K[j])/Math.sqrt(3); } }
+    var attn=sc.map(function(row){
+      var mx=Math.max.apply(null,row);
+      var e=row.map(function(x){return Math.exp((x-mx)*sharp);});
+      var s=e.reduce(function(a,b){return a+b;},0);
+      return e.map(function(x){return x/s;});
+    });
+    var out=[]; for(i=0;i<n;i++){ out.push([0,0,0]); for(j=0;j<n;j++){ for(var d=0;d<3;d++){ out[i][d]+=attn[i][j]*V[j][d]; } } }
+    var edges=[],tris=[];
+    for(i=0;i<n;i++)for(j=i+1;j<n;j++){ var w=Math.min(attn[i][j],attn[j][i]); if(w>eps)edges.push([i,j,w]); }
+    for(i=0;i<n;i++)for(j=i+1;j<n;j++)for(var k=j+1;k<n;k++){
+      var ij=Math.min(attn[i][j],attn[j][i]),jk=Math.min(attn[j][k],attn[k][j]),ik=Math.min(attn[i][k],attn[k][i]);
+      if(ij>eps&&jk>eps&&ik>eps)tris.push([i,j,k,Math.min(ij,jk,ik)]);
+    }
+    return {Q:Q,K:K,V:V,attn:attn,out:out,edges:edges,tris:tris};
+  }
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function chartPal(){
+    var dark=document.documentElement.classList.contains('dark');
+    var g=function(nm){ var v=cssVar(nm); return v? v : null; };
+    return {
+      paper: g('--card') || (dark?'#141b24':'#fffdf8'),
+      scene: g('--bg')   || (dark?'#0f1319':'#f6f3ec'),
+      grid:  g('--line') || (dark?'#243040':'#e5ddcc'),
+      axis:  g('--muted')|| (dark?'#9aa6b6':'#5b6273'),
+      legend: dark?'rgba(20,27,36,0.9)':'rgba(255,253,248,0.92)',
+      legendBorder: g('--line') || (dark?'#243040':'#e5ddcc'),
+      label: dark?'rgba(232,236,241,0.92)':'rgba(38,42,51,0.92)'
+    };
+  }
+
+  function meanColor(y){ return y<-0.3?'#3fb950':(y>0.3?'#e0a11f':'#4f8fdd'); }
+
+  function render(){
+    var text=($('sentence')?$('sentence').value:'').trim();
+    var tokens=text.split(/\s+/).filter(function(t){return t.length>0;}).slice(0,12);
+    if(!tokens.length) return;
+    var n=tokens.length;
+    $('cntV').textContent=n;
+
+    var emb=tokens.map(getEmb);
+    var useHelix=$('helix').checked;
+    var base=emb.map(function(e,i){
+      if(useHelix){ var h=helix(i,n); return [0.55*e[0]+h[0], 0.55*e[1]+h[1], 0.55*e[2]+h[2]]; }
+      return e;
+    });
+    var sharp=parseFloat($('sharp').value);
+    var eps=parseFloat($('eps').value);
+    var curv=parseFloat($('curv').value);
+
+    var r=compute(tokens,base,sharp,eps);
+    function wv(p){ return curv>0? ffnWarp(p,curv) : p.slice(); }
+    var disp=base.map(wv);
+    var Qd=r.Q.map(wv), Kd=r.K.map(wv), outd=r.out.map(wv);
+
+    var showQK=$('showQK').checked, showQ=$('showQ').checked, showK=$('showK').checked,
+        showOut=$('showOut').checked, showEdges=$('showEdges').checked, showTri=$('showTri').checked;
+
+    var traces=[]; var i,j;
+
+    if(showTri){ for(i=0;i<r.tris.length;i++){ var tr=r.tris[i];
+      traces.push({type:'mesh3d',
+        x:[disp[tr[0]][0],disp[tr[1]][0],disp[tr[2]][0]],
+        y:[disp[tr[0]][1],disp[tr[1]][1],disp[tr[2]][1]],
+        z:[disp[tr[0]][2],disp[tr[1]][2],disp[tr[2]][2]],
+        i:[0],j:[1],k:[2],opacity:0.22,color:'#e0a11f',flatshading:true,showlegend:false,
+        hovertemplate:'△ {'+tokens[tr[0]]+', '+tokens[tr[1]]+', '+tokens[tr[2]]+'}<extra></extra>'});
+    }}
+
+    if(showEdges){ for(i=0;i<r.edges.length;i++){ var e=r.edges[i];
+      traces.push({type:'scatter3d',mode:'lines',
+        x:[disp[e[0]][0],disp[e[1]][0]],y:[disp[e[0]][1],disp[e[1]][1]],z:[disp[e[0]][2],disp[e[1]][2]],
+        line:{color:'rgba(63,185,80,'+Math.min(e[2]*5,0.95)+')',width:Math.max(2.5,e[2]*15)},
+        showlegend:false,hovertemplate:'{'+tokens[e[0]]+', '+tokens[e[1]]+'} min-α='+e[2].toFixed(3)+'<extra></extra>'});
+    }}
+
+    if(showQ){
+      for(i=0;i<n;i++){ traces.push({type:'scatter3d',mode:'lines',
+        x:[disp[i][0],Qd[i][0]],y:[disp[i][1],Qd[i][1]],z:[disp[i][2],Qd[i][2]],
+        line:{color:'rgba(249,117,131,0.45)',width:2},showlegend:false,hoverinfo:'skip'}); }
+      traces.push({type:'scatter3d',mode:'markers+text',
+        x:Qd.map(function(q){return q[0];}),y:Qd.map(function(q){return q[1];}),z:Qd.map(function(q){return q[2];}),
+        text:tokens.map(function(t){return 'Q:'+t;}),textposition:'bottom left',textfont:{size:8,color:'#f97583'},
+        marker:{size:4,color:'#f97583',symbol:'diamond',opacity:0.8},
+        name:'Q (Scheinwerfer)',hovertemplate:'Q: %{text}<extra></extra>'});
+    }
+    if(showK){
+      for(i=0;i<n;i++){ traces.push({type:'scatter3d',mode:'lines',
+        x:[disp[i][0],Kd[i][0]],y:[disp[i][1],Kd[i][1]],z:[disp[i][2],Kd[i][2]],
+        line:{color:'rgba(121,192,255,0.45)',width:2},showlegend:false,hoverinfo:'skip'}); }
+      traces.push({type:'scatter3d',mode:'markers+text',
+        x:Kd.map(function(q){return q[0];}),y:Kd.map(function(q){return q[1];}),z:Kd.map(function(q){return q[2];}),
+        text:tokens.map(function(t){return 'K:'+t;}),textposition:'bottom right',textfont:{size:8,color:'#79c0ff'},
+        marker:{size:4,color:'#79c0ff',symbol:'square',opacity:0.8},
+        name:'K (Schild)',hovertemplate:'K: %{text}<extra></extra>'});
+    }
+
+    if(showQK){
+      for(i=0;i<n;i++){
+        var sorted=r.attn[i].map(function(a,jj){return {a:a,j:jj};}).filter(function(x){return x.j!==i;})
+                .sort(function(a,b){return b.a-a.a;}).slice(0,2);
+        for(var s=0;s<sorted.length;s++){ var tg=sorted[s];
+          if(tg.a>0.1){ traces.push({type:'scatter3d',mode:'lines',
+            x:[Qd[i][0],Kd[tg.j][0]],y:[Qd[i][1],Kd[tg.j][1]],z:[Qd[i][2],Kd[tg.j][2]],
+            line:{color:'rgba(255,200,60,'+Math.min(tg.a,0.7)+')',width:Math.max(1,tg.a*5),dash:'dot'},
+            showlegend:false,hovertemplate:tokens[i]+' → '+tokens[tg.j]+': α='+tg.a.toFixed(3)+'<extra></extra>'}); }
+        }
+      }
+    }
+
+    if(showOut){
+      for(i=0;i<n;i++){ traces.push({type:'scatter3d',mode:'lines',
+        x:[disp[i][0],outd[i][0]],y:[disp[i][1],outd[i][1]],z:[disp[i][2],outd[i][2]],
+        line:{color:'rgba(210,168,255,0.4)',width:2,dash:'dot'},showlegend:false,hoverinfo:'skip'}); }
+      traces.push({type:'scatter3d',mode:'markers+text',
+        x:outd.map(function(o){return o[0];}),y:outd.map(function(o){return o[1];}),z:outd.map(function(o){return o[2];}),
+        text:tokens.map(function(t){return '→'+t;}),textposition:'top right',textfont:{size:8,color:'#d2a8ff'},
+        marker:{size:5,color:'#d2a8ff',symbol:'cross',opacity:0.9},
+        name:'Output (Schwerpunkt)',hovertemplate:'Output %{text}<extra></extra>'});
+    }
+
+    var colors=base.map(function(e){return meanColor(e[1]);});
+    traces.push({type:'scatter3d',mode:'markers+text',
+      x:disp.map(function(e){return e[0];}),y:disp.map(function(e){return e[1];}),z:disp.map(function(e){return e[2];}),
+      text:tokens,textposition:'top center',textfont:{size:12,color:chartPal().label},
+      marker:{size:9,color:colors,line:{width:1.5,color:chartPal().label},opacity:1},
+      name:'X (Wort-Embedding)',
+      hovertemplate:'%{text}<br>[%{x:.2f}, %{y:.2f}, %{z:.2f}]<extra></extra>'});
+
+    var pal=chartPal();
+    var layout={
+      scene:{
+        xaxis:{title:'x₁',range:[-1.5,1.5],gridcolor:pal.grid,zerolinecolor:pal.grid,color:pal.axis,tickfont:{size:9}},
+        yaxis:{title:'x₂',range:[-1.5,1.5],gridcolor:pal.grid,zerolinecolor:pal.grid,color:pal.axis,tickfont:{size:9}},
+        zaxis:{title:'x₃',range:[-1.5,1.5],gridcolor:pal.grid,zerolinecolor:pal.grid,color:pal.axis,tickfont:{size:9}},
+        bgcolor:pal.scene,camera:{eye:{x:1.8,y:1.2,z:0.9}}
+      },
+      paper_bgcolor:pal.paper,margin:{l:0,r:0,t:0,b:0},showlegend:true,
+      legend:{x:0.01,y:0.99,bgcolor:pal.legend,bordercolor:pal.legendBorder,font:{size:10,color:pal.axis}},
+      font:{color:pal.axis}
+    };
+    Plotly.react('plot',traces,layout,{responsive:true,displayModeBar:false});
+
+    $('rEdge').textContent=r.edges.length;
+    $('rTri').textContent=r.tris.length;
+    var mut=0,tot=0;
+    for(i=0;i<n;i++)for(j=0;j<n;j++){ if(i===j)continue; tot+=r.attn[i][j]; mut+=Math.min(r.attn[i][j],r.attn[j][i]); }
+    var frac=tot>0? mut/tot : 0;
+    $('rMut').textContent=(frac*100).toFixed(0)+' %';
+    $('rDir').textContent=((1-frac)*100).toFixed(0)+' %';
+  }
+
+  function debounce(fn,ms){ var t; return function(){ clearTimeout(t); t=setTimeout(fn,ms); }; }
+  $('sentence').addEventListener('input',debounce(render,220));
+  $('sharp').addEventListener('input',function(){$('sharpV').textContent=(+this.value).toFixed(2);render();});
+  $('eps').addEventListener('input',function(){$('epsV').textContent=(+this.value).toFixed(2);render();});
+  $('curv').addEventListener('input',function(){$('curvV').textContent=(+this.value).toFixed(2);render();});
+  ['helix','showQK','showQ','showK','showOut','showEdges','showTri'].forEach(function(id){
+    $(id).addEventListener('change',render);
+  });
+  window.addEventListener('resize',render);
+
+  var btn=$('themeBtn');
+  if(btn){ btn.addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); render(); }); }
+  if(window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "038",
+  "a": "idea2.html",
+  "b": "tropische_geometrie_tiefer_neuronaler_netze_simple.html",
+  "a_title": "LLM Attraktoren & Bedeutungsraum — Interaktive Visualisierung (Zahnrad/Ratchet, Attraktoren & Basins pro Layer, Sprach-Konvergenz, Unembedding)",
+  "b_title": "Tropische Geometrie tiefer Netze — Einfach erklärt (Zhang, Naitzat & Li 2018: ReLU-Netze ≡ tropisch rational, Knick, Zonotope, Theorem 6.3)",
+  "combined_theme": "tropical-attractor-meaning-space",
+  "one_line": "Ein tiefes Netz ist zugleich tropische stückweise-lineare Geometrie (B) und dynamischer Attraktor-Fluss im Bedeutungsraum (A) — dieselbe Karte, zwei Lesarten: A ist die Iteration von B, der Attraktor ist die gemeinsame Ziel-Region.",
+  "contradictions": [
+    "B betrachtet das Netz als zeitlose, statische stückweise-lineare Abbildung f (in beliebiger Reihenheit auswertbar, kein Kontext, keine Richtung); A modelliert Generation als dynamische, vorwärts-only-Trajektorie (Zahnrad/Sperrklinke, Token-fuer-Token-Drift bis zur max. Kontextlaenge) — A's Sequenz existiert in B's Theorie nicht.",
+    "A behauptet Punkt-Konvergenz: 'die Hauptstadt von Frankreich ist' und 'the capital of France is' erzeugen in einem mittleren Layer denselben Attraktor [HAUPTSTADT_FRANKREICH] und werden 'dasselbe'. B kennt keine Attraktoren/Punkte, nur eine Partition in lineare Regionen (Zellen) und warnt (Entscheidungsgrenze ⊆ ≠ = tropischer Kurve, 'allgemeine Lage' als Voraussetzung, gezählte Regionen = Unterschätzungen), dass exakte Koinzidenz keine Garantie ist.",
+    "A ist unqualifiziert-idealisiert (Attraktoren 'ziehen an', saubere Konvergenz, fast mystisch); B ist vorsichtig-honest und nennt selbst seine Grenzen: nur stueckweise lineare Aktivierungen (tanh/Sigmoid raus), ganzzahlige Gewichte noetig (reell → Signomials, Prop. 5.6), Theorem 6.3 verbessert Raghu et al. 2017 nicht, Generalisierungs-Rätsel bleibt offen. A überbehauptet relativ zu B's eigenen Einschraenkungen."
+  ],
+  "resolution": "A ist die Iteration von B: jedes Ratchet-Token = eine Anwendung der tropischen PL-Abbildung auf den wachsenden Kontext ('kein Zurück' = Kausalität/monotone Kontext, keine neue Mechanik). A's 'Attraktor' = gemeinsame Ziel-Region (Zelle) unter der iterierten Karte, 'Basin of Attraction' = lineare Region bzw. ihr Urbild, 'Knick/Basin-Grenze' = tropische Hyperfläche, Unembedding = max/argmax über Vokabular-Monome. B's Voraussetzungen (allgemeine Lage, PL-Aktivierung, ganze Gewichte) sind genau die Bedingungen, unter denen A's saubere Konvergenz exakt gilt, sonst nur annähernd; A liefert die Phänomenologie, B den Beweis mit Hypothesen.",
+  "viz": "2D-Canvas-Phasenporträt (x = Bedeutungskoordinate, t = Schritt/Schicht): DE- & EN-Trajektorien laufen durch eine stückweise-lineare tropische Kontraktionsabbildung f in dieselbe lineare Region (= Attraktor/Basin) konvergierend; Knicke als tropische Hyperflächen/Basin-Grenzen; Ratchet-Schritt-Steuerung (vorwärts-only) + Auto-Play; Tiefe→Regionen k^t (Theorem 6.3); Unembedding-Zeile zeigt das gewinnende Vokabular-Monom (max) = nächstes Token; kleine Inset-Box zeigt f(x) selbst. Themereaktiv (CSS-Variablen), rein inline, keine Netzwerk-Abrufe."
+}

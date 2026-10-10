@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Basis + strukturierte Koordinate — Positionshelix ✕ Raumkrümmung</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --ink:#1e293b; --dim:#5b6472; --card:#ffffff; --line:#e3e6ec;
+    --grid:#c9d1de; --plane:#2563eb; --classA:#dc2626; --classB:#0e7490; --helix:#15803d;
+    --code:#f2f4f8; --code-ink:#334155;
+  }
+  html.dark{
+    --bg:#0b0d12; --ink:#e8ecf4; --dim:#8a93a6; --card:#12161f; --line:#222a3a;
+    --grid:#2a3346; --plane:#ffd166; --classA:#ff6b8a; --classB:#5ad2ff; --helix:#7ce0a3;
+    --code:#0f141d; --code-ink:#c7d0e0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif;line-height:1.66;
+    padding:44px 20px 80px;-webkit-font-smoothing:antialiased}
+  article{max-width:820px;margin:0 auto}
+  h1{font-size:2em;line-height:1.18;font-weight:650;margin-bottom:6px}
+  .fusion-line{color:var(--dim);font-size:.98em;margin-bottom:8px}
+  .lede{color:var(--dim);font-size:.95em;margin-bottom:28px;border-left:2px solid var(--plane);
+    padding-left:14px}
+  section{margin:38px 0}
+  h2{font-size:1.28em;font-weight:650;margin-bottom:14px;padding-bottom:8px;
+    border-bottom:1px solid var(--line)}
+  h2 .no{color:var(--plane);font-weight:700;margin-right:8px}
+  p{margin-bottom:14px}
+  em{color:var(--ink);font-style:italic}
+  strong{font-weight:650}
+  code{font-family:"Cambria Math",Georgia,"Courier New",monospace;background:var(--code);
+    color:var(--code-ink);padding:1px 6px;border-radius:5px;font-size:.9em}
+  .math-block{background:var(--code);color:var(--code-ink);border:1px solid var(--line);
+    border-radius:10px;padding:16px 20px;margin:18px 0;font-family:"Cambria Math",Georgia,
+    "Courier New",monospace;font-size:.98em;line-height:1.8;white-space:pre;overflow-x:auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;margin:14px 0}
+  .card h3{font-size:1.02em;font-weight:650;margin-bottom:6px}
+  .card h3 .tag{font-size:.72em;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--dim);font-weight:600;margin-left:8px}
+  .tag-a{color:var(--classA)} .tag-b{color:var(--classB)} .tag-f{color:var(--plane)}
+  .controls{display:flex;flex-wrap:wrap;gap:16px 22px;align-items:center;
+    margin:6px 0 14px;padding:12px 16px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px}
+  .controls label{font-size:.86em;color:var(--dim);display:flex;align-items:center;gap:8px}
+  .controls input[type=range]{width:132px;accent-color:var(--plane)}
+  .controls .val{font-weight:700;color:var(--plane);min-width:30px;font-variant-numeric:tabular-nums}
+  .btn{font:inherit;font-size:.84em;color:var(--ink);background:var(--code);
+    border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+  .btn:hover{border-color:var(--plane)}
+  #viz-wrap{position:relative;width:100%;height:560px;background:var(--card);
+    border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  #cv{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+  #cv:active{cursor:grabbing}
+  #status{font-size:.86em;color:var(--dim);margin-top:12px;font-variant-numeric:tabular-nums}
+  #status b{color:var(--plane);font-weight:650}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:.82em;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .prov a{color:var(--plane);text-decoration:none;border-bottom:1px dotted var(--plane)}
+  .prov a:hover{border-bottom-style:solid}
+  .prov li{margin-bottom:12px}
+  .prov .f{font-family:"Cambria Math",Georgia,monospace;color:var(--dim);font-size:.9em}
+</style>
+</head>
+<body>
+<article>
+  <h1>Basis + strukturierte Koordinate</h1>
+  <p class="fusion-line">Fusion aus: posembed8.html ✕ space_morph.html</p>
+  <p class="lede">Derselbe Zug, zwei Fälle: Eine erhaltene <em>Basis</em> wird in einer
+  höheren Dimension um eine <em>strukturierte Koordinate</em> erweitert, die eine
+  (nichtlineare) Funktion eines Attributs des Objekts ist. Genau diese zusätzliche
+  Koordinate macht, was vorher unterscheidbar-unmöglich war, <em>linear lesbar</em>.</p>
+
+  <section id="these">
+    <h2><span class="no">1</span>Kernthese der Fusion</h2>
+    <p>Beide Papiere sind zwei Gesichtsebenen eines einzigen Mechanismus:
+    <strong>Untrennbares wird trennbar, indem man eine strukturierte Koordinate
+    hinzuzieht.</strong> In <em>posembed8</em> (A) hat ein Wort eine feste
+    <em>Basis</em> — sein Embedding <code>e(w)</code> (der Diamant ◆). Um jede
+    Sequenzposition unterscheidbar zu machen, legt man einen <em>fixen sinusoidalen
+    Offset</em> <code>PE(p)</code> darauf; das Wort beschreibt dann über die
+    Positionen hinweg eine <strong>Helix</strong>. In <em>space_morph</em> (B) hat
+    ein Punkt seine Basis <code>(x, y)</code>; ein <em>Layer</em> legt dazu eine
+    <em>strukturierte Koordinate</em> <code>z = x² + y²</em> bei und krümmt so den
+    Raum zu einer Schale, in der eine <strong>einzige lineare Ebene</strong> die
+    beiden Klassen trennt.</p>
+    <p>Die gemeinsame, integrierende Position lautet: <em>Die Basis bleibt erhalten,
+    die neue Koordinate ist eine Funktion eines Attributs</em> — in A das
+    Positionsindex <code>p</code> (ein <em>externes</em> Attribut des Tokens), in B
+    der Radius <code>r² = x²+y²</em> (ein <em>eigenes</em> Attribut des Punkts).
+    Und in beiden Fällen ist das eigentliche Ziel, dass die Menge, die man lesen
+    will (Position bzw. Klasse), nach dem Lift eine <em>lineare Funktion</em> der
+    Koordinaten ist: ein Schwellwert <code>s = wᵀΦ(x) + b</code> genügt, bzw. die
+    Position wird aus dem Sinus-Code (nahezu) linear ablesbar.</p>
+    <p>Der unifizierende Ausdruck lautet
+    <code>Φ(a) = [Basis(a)] ⊕ [g(Attribut(a))]</code> mit einem <em>linearen
+    Readout</em> — und genau das zeigt die Visualisierung unten als eine Szene.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="no">2</span>Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere <em>streiten sich nicht direkt</em> — sie beschreiben
+    denselben Zug. Es gibt aber drei echte Spannungspunkte, an denen sie
+    unterschiedliche Standpunkte einnehmen:</p>
+    <div class="card">
+      <h3><span class="tag tag-a">A</span> vs <span class="tag tag-b">B</span>
+      Feste A-priori-Struktur vs. erlernte Krümmung</h3>
+      <p>A setzt die Positionsgeometrie durch eine <em>fixe, von Hand entworfene</em>
+      Sinus-Formel (<code>PE</code>) <strong>ohne jegliches Lernen</strong> — sie soll
+      für jedes Wort, jede Position, ohne Daten funktionieren. B dagegen erzählt, dass
+      die Krümmung des Raums ein <em>Layer</em> ist, dessen Parameter
+      <code>w</code> <strong>aus den Daten gelernt</strong> werden; die Schale
+      <code>z = x²+y²</code> passt genau <em>diese</em> Daten (Kern vs. Ring = Radius).</p>
+    </div>
+    <div class="card">
+      <h3><span class="tag tag-a">A</span> vs <span class="tag tag-b">B</span>
+      Externer Index vs. Eigenkoordinate als Treiber</h3>
+      <p>In A hängt die neue Koordinate an einem <em>externen</em> Attribut — der
+      Sequenzposition <code>p</code> —, die unabhängig vom Wortinhalt ist (
+      <code>e(w)</code> ist über alle Positionen konstant). In B hängt sie an einem
+      <em>eigenen</em> Attribut des Punkts — <code>r²</code> ist eine Funktion von
+      <code>(x, y)</code> selbst. Frage: Was trägt die Struktur — „wo bin ich in der
+      Folge“ oder „was bin ich“?</p>
+    </div>
+    <div class="card">
+      <h3><span class="tag tag-a">A</span> vs <span class="tag tag-b">B</span>
+      Unterscheidbarkeit vs. lineare Trennbarkeit</h3>
+      <p>A will, dass viele Positionen <em>gegenseitig unterscheidbar</em> sind
+      (die Helix überschneidet sich im gezeigten Bereich nicht — injektiv). B will,
+      dass zwei <em>Klassen linear trennbar</em> sind (eine Ebene genügt). Zwei
+      verschiedene Optimierungsziele, beide über „zusätzliche strukturierte
+      Dimensionen“ erreicht.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="no">3</span>Auflösung</h2>
+    <p>Alle drei Spannungen lösen sich, weil sie keine Gegensätze, sondern
+    <em>Spezialfälle</em> sind von: <strong>neue Koordinate = (nichtlineare)
+    Funktion eines Attributs des Objekts</strong>, gefolgt von einem linearen
+    Readout.</p>
+    <div class="card">
+      <h3><span class="tag tag-f">Fusion</span> A-priori vs. a-posteriori</h3>
+      <p>Die Geometrie wird <em>fixiert</em>, wenn das Attribut <em>universell</em>
+      ist (Position/Reihenfolge ist inhaltsunabhängig — kein Datenbedarf, A), und
+      <em>gelernt</em>, wenn das Attribut <em>datenspezifisch</em> ist (Klasse/Radius,
+      B). Ein echtes Modell komponiert beides: <strong>fixe Positions-Encoding +
+      erlernte Feature-Maps</strong>. Das ist kein Widerspruch, sondern die Teilung
+      der Arbeit nach der Art des Attributs.</p>
+    </div>
+    <div class="card">
+      <h3><span class="tag tag-f">Fusion</span> Extern vs. eigen</h3>
+      <p>Beides ist „Funktion eines Attributs“. Position ist ein Attribut des Tokens
+      (welche Position es besetzt); Radius ist ein Attribut des Punkts (wie weit er
+      vom Ursprung entfernt ist). Unifiziert: <code>g(Attribut)</code>, wobei das
+      Attribut frei wählbar ist — <code>p</code> in A, <code>r²</code> in B.</p>
+    </div>
+    <div class="card">
+      <h3><span class="tag tag-f">Fusion</span> Unterscheidbar vs. trennbar</h3>
+      <p>Beide sind „die Zielgröße wird linear lesbar“. Unterscheidbarkeit der
+      Position heißt: Position ≈ (nahezu) linearer Readout aus dem Sinus-Code
+      (rel. Position = Skalarprodukt, <code>PE(p)ᵀPE(q) = f(p−q)</code>). Trennbarkeit
+      der Klasse heißt: <code>sign(wᵀΦ(x)+b)</code> = Klasse. Gleiche Forderung an den
+      Lift: <em>die Koordinate, die die Zielgröße trägt, linear machen.</em></p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="no">4</span>Fusionierter Inhalt</h2>
+    <p>Der gemeinsame Formkern, aus dem beide Papiere hervorgehen:</p>
+    <div class="math-block">Lift:      Φ(a) = [ Basis(a) ] ⊕ [ g( Attribut(a) ) ]
+Readout:   s = wᵀ Φ(a) + b      (linear)
+Leseziel:  sign(s) bzw. ablesbare Position</div>
+    <p><strong>Instantiierung A (Positionshelix, fix, a-priori):</strong></p>
+    <div class="math-block">Basis(a) = e(w)                       (konstant über p)
+g(p)    = PE(p),   PE(p,2i)   = sin(p / 10000^(2i/d_model))
+                   PE(p,2i+1) = cos(p / 10000^(2i/d_model))
+Φ(p)    = e(w) + PE(p)        (Helix im d-dim Raum)</div>
+    <p>Jedes Dimensionspaar <code>i</code> schwingt mit der Wellenlänge
+    <code>λ_i = 2π·10000^(2i/d)</code> — verschiedene Dimensionen = verschiedene
+    „Gänge“. Deshalb bleibt die Spur injektiv und die (rel.) Position wird aus dem
+    Skalarprodukt ablesbar: <code>PE(p)ᵀPE(q) = f(p−q)</code>.</p>
+    <p><strong>Instantiierung B (Raumkrümmung, gelernt, a-posteriori):</strong></p>
+    <div class="math-block">Basis(a) = (x, y)
+g(x,y)  = r² = x² + y²
+Φ(x,y)  = (x, y, x² + y²)         (Schale / Einbettung ℝ² ↪ ℝ³)
+s       = wᵀ Φ(x) + b ∈ ℝ         (eine Zahl; sign = Klasse)</div>
+    <p>Abfolge: <code>ℝ² ↪ ℝ³ ↦ ℝ</code> — einbetten (Boden), krümmen (Layer =
+    Verbiegung, reißt nicht), dann auf eine Zahl falten. Innere Punkte (kleines
+    <code>r²</code>) sinken, äußere (großes <code>r²</code>) steigen → eine flache
+    Ebene <code>wᵀΦ(x)+b = 0</code> schiebt sich dazwischen; gestaut zur Linie,
+    schließlich zum Schwellwert <code>s = 0</code>.</p>
+    <p><strong>Was die Fusion daraus macht.</strong> Der Lift trägt in beiden Fällen
+    genau <em>eine</em> Strukturkoordinate, die ein Attribut in seine eigene Achse
+    hebt: A hebt <em>Position</em> (extern) in sinusoidale Achsen, B hebt
+    <em>Radius</em> (eigen) in die <code>z</code>-Achse. Die Trennung/Unterscheidung
+    ist danach nicht mehr eine Krümmungsfrage, sondern eine <em>lineare</em>: ein
+    Schwellwert bzw. ein Skalarprodukt. Wer den Mechanismus so liest, sieht
+    Positions-Encoding und Feature-Map als <em>dasselbe Werkzeug</em> an —
+    „Attribut in eine Koordinate heben + linear ablesen“ — unterscheidbar nur
+    danach, ob das Attribut universell (fix) oder datenspezifisch (gelernt) ist.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="no">5</span>Interaktive Visualisierung der Fusion</h2>
+    <p>Eine Szene, die beide Fälle zugleich zeigt: die <strong>Daten-Schale</strong>
+    (B — <code>z = β·r²</code>, Kern in <span style="color:var(--classA)">rot</span>,
+    Ring in <span style="color:var(--classB)">blau</span>) mit der <strong>Trennebene</strong>
+    bei <code>z*</code>, dazu eine <strong>Helix</strong> um eine feste Basis
+    (A — sinusoidaler Offset über der Position <code>p</code>) und unten der
+    <strong>1D-Score-Streifen</strong> <code>s = z − z*</code>, den ein einziger
+    Schwellwert trennt.</p>
+    <div class="controls">
+      <label>Krümmung β
+        <input type="range" id="beta" min="0" max="1.5" step="0.05" value="1.0">
+        <span class="val" id="v-beta">1.0</span></label>
+      <label>Trennebene z*
+        <input type="range" id="zstar" min="0" max="1.0" step="0.01" value="0.40">
+        <span class="val" id="v-zstar">0.40</span></label>
+      <label>Positionen (Helix)
+        <input type="range" id="npos" min="30" max="220" step="10" value="130">
+        <span class="val" id="v-npos">130</span></label>
+      <button class="btn" id="reset">Reset (R)</button>
+      <button class="btn" id="theme">Theme</button>
+    </div>
+    <div id="viz-wrap"><canvas id="cv"></canvas></div>
+    <div id="status"></div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--classA)"></i> innerer Kern (Klasse A)</span>
+      <span><i class="sw" style="background:var(--classB)"></i> äußerer Ring (Klasse B)</span>
+      <span><i class="sw" style="background:var(--plane)"></i> Trennebene / Schwellwert</span>
+      <span><i class="sw" style="background:var(--helix)"></i> Helix = Basis + PE(p) (A)</span>
+    </div>
+    <p style="font-size:.82em;color:var(--dim);margin-top:10px">
+      Drag: rotieren · R: Reset · β=0 → flach &amp; untrennbar, β↑ → Schale → eine Ebene
+      trennt. Die Helix zeigt A: dieselbe erhaltene Basis + strukturierte Koordinate.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="no">6</span>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../posembed8.html">posembed8.html</a> —
+        <span class="f">„Positional Embedding Helices — 3 Wörter im 3D-Raum“</span><br>
+        Fixe Wort-Embeddings (◆) + sinusoidales <code>PE(p)</code>; jedes Wort
+        beschreibt über die Sequenzpositionen eine 3D-Helix. (A)</li>
+      <li><a href="../space_morph.html">space_morph.html</a> —
+        <span class="f">„Layer als Raumkrümmung“</span><br>
+        7-Schritte-Geschichte: ein Layer biegt <code>ℝ²→ℝ³</code> mit
+        <code>φ(x,y)=(x,y,x²+y²)</code>, sodass eine lineare Ebene, dann Linie,
+        dann Schwellwert zwei Klassen trennt. (B)</li>
+    </ul>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+  var betaEl=document.getElementById('beta'), zEl=document.getElementById('zstar'),
+      nEl=document.getElementById('npos'), statusEl=document.getElementById('status');
+  var vBeta=document.getElementById('v-beta'), vZ=document.getElementById('v-zstar'),
+      vN=document.getElementById('v-npos');
+  var W=0,H=0,DPR=1, PAL={};
+
+  function resize(){
+    var box=cv.parentElement;
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=box.clientWidth; H=box.clientHeight;
+    cv.width=Math.max(1,W*DPR); cv.height=Math.max(1,H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+
+  function readPalette(){
+    var cs=getComputedStyle(document.documentElement), g=function(n){return cs.getPropertyValue(n).trim();};
+    PAL={bg:g('--bg'),ink:g('--ink'),dim:g('--dim'),grid:g('--grid'),
+         plane:g('--plane'),a:g('--classA'),b:g('--classB'),helix:g('--helix')};
+  }
+  function rgba(hex,a){
+    hex=(hex||'').replace('#','');
+    if(hex.length===3)hex=hex.split('').map(function(c){return c+c;}).join('');
+    var r=parseInt(hex.slice(0,2),16)||0,gg=parseInt(hex.slice(2,4),16)||0,b=parseInt(hex.slice(4,6),16)||0;
+    return 'rgba('+r+','+gg+','+b+','+a+')';
+  }
+
+  /* ---- Inline-Daten (seeded RNG, kein Netzwerk) ---- */
+  var rng=42, rnd=function(){rng=(rng*1103515245+12345)&0x7fffffff;return rng/0x7fffffff;};
+  var PTS=[];
+  for(var i=0;i<140;i++){var a=rnd()*6.2832,r=Math.sqrt(rnd())*0.40;PTS.push({x:Math.cos(a)*r,y:Math.sin(a)*r,c:0,r:r});}
+  for(var j=0;j<220;j++){var b=rnd()*6.2832,rr=0.82+Math.sqrt(rnd())*0.26;PTS.push({x:Math.cos(b)*rr,y:Math.sin(b)*rr,c:1,r:rr});}
+
+  /* ---- Kamera ---- */
+  var camA=-0.62, camB=0.66, dragA=0, dragB=0, md=false, mx=0, my=0;
+  function BASE(){return Math.min(W,H)*0.30;}
+  function proj(p){
+    var A=camA+dragA, B=camB+dragB, S0=BASE();
+    var x=p.x*Math.cos(A)-p.y*Math.sin(A);
+    var y=p.x*Math.sin(A)+p.y*Math.cos(A);
+    var y2=-y*Math.sin(B)+p.z*Math.cos(B);
+    var z2= y*Math.cos(B)+p.z*Math.sin(B);
+    var d=5.0, k=d/(d+z2*0.6);
+    return {X:W*0.5+x*S0*k, Y:H*0.44-y2*S0*k, d:z2, k:k};
+  }
+
+  function drawFloor(){
+    var E=1.15,G=12,i,v,p,q;
+    ctx.globalAlpha=0.45;ctx.strokeStyle=PAL.grid;ctx.lineWidth=0.8;
+    for(i=0;i<=G;i++){v=-E+2*E*i/G;
+      p=proj({x:-E,y:v,z:0});q=proj({x:E,y:v,z:0});
+      ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();
+      p=proj({x:v,y:-E,z:0});q=proj({x:v,y:E,z:0});
+      ctx.beginPath();ctx.moveTo(p.X,p.Y);ctx.lineTo(q.X,q.Y);ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function drawPlane(zstar,alpha){
+    var E=1.0,M=8,rows=[],i,j;
+    for(i=0;i<=M;i++){var yv=-E+2*E*i/M,row=[];
+      for(j=0;j<=M;j++)row.push(proj({x:-E+2*E*j/M,y:yv,z:zstar}));
+      rows.push(row);}
+    ctx.globalAlpha=alpha*0.14;ctx.fillStyle=PAL.plane;
+    ctx.beginPath();ctx.moveTo(rows[0][0].X,rows[0][0].Y);
+    for(j=1;j<=M;j++)ctx.lineTo(rows[0][j].X,rows[0][j].Y);
+    for(j=M;j>=0;j--)ctx.lineTo(rows[M][j].X,rows[M][j].Y);
+    ctx.closePath();ctx.fill();
+    ctx.globalAlpha=alpha*0.5;ctx.strokeStyle=PAL.plane;ctx.lineWidth=1;
+    for(i=0;i<=M;i++){ctx.beginPath();rows[i].forEach(function(pt,kk){kk?ctx.lineTo(pt.X,pt.Y):ctx.moveTo(pt.X,pt.Y);});ctx.stroke();}
+    for(j=0;j<=M;j++){ctx.beginPath();for(i=0;i<=M;i++){var pp=rows[i][j];i?ctx.lineTo(pp.X,pp.Y):ctx.moveTo(pp.X,pp.Y);}ctx.stroke();}
+    ctx.globalAlpha=1;
+  }
+
+  function drawStrip(beta,zstar){
+    var yS=H*0.865, ss=[], sMin=Infinity, sMax=-Infinity, k;
+    for(k=0;k<PTS.length;k++){var s=beta*PTS[k].r*PTS[k].r-zstar;ss.push(s);if(s<sMin)sMin=s;if(s>sMax)sMax=s;}
+    var pad=0.06*(sMax-sMin+0.001);sMin-=pad;sMax+=pad;
+    var L=W*0.10,R=W*0.90, span=(sMax-sMin)||1;
+    function X(s){return L+(R-L)*(s-sMin)/span;}
+    ctx.strokeStyle=PAL.grid;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(L,yS);ctx.lineTo(R,yS);ctx.stroke();
+    for(k=0;k<=10;k++){var X0=L+(R-L)*k/10;ctx.beginPath();ctx.moveTo(X0,yS-4);ctx.lineTo(X0,yS+4);ctx.stroke();}
+    var XT=X(0);
+    ctx.strokeStyle=PAL.plane;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(XT,yS-15);ctx.lineTo(XT,yS+15);ctx.stroke();
+    for(k=0;k<ss.length;k++){ctx.globalAlpha=0.7;ctx.fillStyle=PAL[PTS[k].c?'b':'a'];
+      ctx.beginPath();ctx.arc(X(ss[k]),yS,2.4,0,6.2832);ctx.fill();}
+    ctx.globalAlpha=1;
+    ctx.font='12px Inter,system-ui,sans-serif';
+    ctx.fillStyle=PAL.a;ctx.textAlign='right';ctx.fillText('s < 0  innerer Kern',XT-6,yS+30);
+    ctx.fillStyle=PAL.b;ctx.textAlign='left';ctx.fillText('s > 0  äußerer Ring',XT+6,yS+30);
+    ctx.fillStyle=PAL.dim;ctx.textAlign='center';ctx.fillText('s = wᵀΦ(x) + b   (eine Zahl trennt)',(L+R)/2,yS-22);
+    ctx.textAlign='left';
+  }
+
+  function draw(){
+    if(W<2||H<2){requestAnimationFrame(draw);return;}
+    var beta=+betaEl.value, zstar=+zEl.value, N=+nEl.value, i;
+    ctx.fillStyle=PAL.bg;ctx.fillRect(0,0,W,H);
+    drawFloor();
+    drawPlane(zstar,1);
+
+    var items=[];
+    for(i=0;i<PTS.length;i++){var p=PTS[i],z=beta*p.r*p.r;
+      var P=proj({x:p.x,y:p.y,z:z});
+      items.push({d:P.d,X:P.X,Y:P.Y,k:P.k,c:p.c});}
+    items.sort(function(m,n){return m.d-n.d;});
+    for(i=0;i<items.length;i++){var it=items[i],rad=(3.0+0.6*it.k)*it.k;
+      ctx.globalAlpha=0.5+0.5*it.k;ctx.fillStyle=it.c?PAL.b:PAL.a;
+      ctx.beginPath();ctx.arc(it.X,it.Y,rad,0,6.2832);ctx.fill();}
+    ctx.globalAlpha=1;
+
+    /* Helix (A): Basis (erhalten) + sinusoidaler Offset über p */
+    var ax=0.95,ay=0,az=beta*(0.95*0.95),amp=0.16,rise=0.006,freq=0.12;
+    var an=proj({x:ax,y:ay,z:az});
+    ctx.globalAlpha=0.55;ctx.strokeStyle=PAL.helix;ctx.lineWidth=2;ctx.beginPath();
+    for(i=0;i<N;i++){var pp=i*freq;
+      var Hp=proj({x:ax+amp*Math.cos(pp),y:ay+amp*Math.sin(pp),z:az+rise*pp});
+      i?ctx.lineTo(Hp.X,Hp.Y):ctx.moveTo(Hp.X,Hp.Y);}
+    ctx.stroke();ctx.globalAlpha=1;
+    for(i=0;i<N;i++){var pp2=i*freq,t=N>1?i/(N-1):1;
+      var Hm=proj({x:ax+amp*Math.cos(pp2),y:ay+amp*Math.sin(pp2),z:az+rise*pp2});
+      ctx.globalAlpha=0.3+0.7*t;ctx.fillStyle=PAL.helix;
+      ctx.beginPath();ctx.arc(Hm.X,Hm.Y,2.2,0,6.2832);ctx.fill();}
+    ctx.globalAlpha=1;
+    ctx.fillStyle=PAL.helix;ctx.strokeStyle=PAL.ink;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(an.X,an.Y-7);ctx.lineTo(an.X+6,an.Y);
+    ctx.lineTo(an.X,an.Y+7);ctx.lineTo(an.X-6,an.Y);ctx.closePath();ctx.fill();ctx.stroke();
+
+    drawStrip(beta,zstar);
+    requestAnimationFrame(draw);
+  }
+
+  function separation(){
+    var beta=+betaEl.value,zstar=+zEl.value,c=0,i,s;
+    for(i=0;i<PTS.length;i++){s=beta*PTS[i].r*PTS[i].r-zstar;
+      if(PTS[i].c===0&&s<0)c++;else if(PTS[i].c===1&&s>0)c++;}
+    return Math.round(100*c/PTS.length);
+  }
+  function updateStatus(){
+    vBeta.textContent=(+betaEl.value).toFixed(1);
+    vZ.textContent=(+zEl.value).toFixed(2);
+    vN.textContent=nEl.value;
+    statusEl.innerHTML='Krümmung <b>β = '+(+betaEl.value).toFixed(1)+'</b> · '
+      +'Trennebene <b>z* = '+(+zEl.value).toFixed(2)+'</b> · '
+      +'Trennung = <b>'+separation()+' %</b>';
+  }
+
+  betaEl.addEventListener('input',updateStatus);
+  zEl.addEventListener('input',updateStatus);
+  nEl.addEventListener('input',updateStatus);
+  document.getElementById('reset').addEventListener('click',function(){dragA=0;dragB=0;});
+  document.getElementById('theme').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');readPalette();});
+
+  cv.addEventListener('mousedown',function(e){md=true;mx=e.clientX;my=e.clientY;});
+  window.addEventListener('mouseup',function(){md=false;});
+  window.addEventListener('mousemove',function(e){if(!md)return;
+    dragA+=(e.clientX-mx)*0.006;dragB+=(e.clientY-my)*0.005;
+    dragB=Math.max(-1.4,Math.min(1.5,dragB));mx=e.clientX;my=e.clientY;});
+  window.addEventListener('keydown',function(e){if(e.key==='r'||e.key==='R'){dragA=0;dragB=0;}});
+  window.addEventListener('resize',function(){resize();readPalette();});
+
+  resize();readPalette();updateStatus();
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>

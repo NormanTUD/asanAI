@@ -1,0 +1,16 @@
+{
+  "no": "016",
+  "a": "token_manifold_verletzt_very_simple.html",
+  "b": "posembed4.html",
+  "a_title": "Ist der Gedankenraum eines Sprachmodells glatt? (Token Embeddings Violate the Manifold Hypothesis — vereinfacht nach Robinson, Dey & Chiang 2025, arXiv:2504.01002)",
+  "b_title": "Positional Encoding — Die Unendlichkeitsmaschine",
+  "combined_theme": "multiskale-embeddings-geometrie",
+  "one_line": "Der Gedankenraum eines LLM ist multiskal: auf der Feinskala glatt & periodisch (Positional-Encoding als Zahnradkaskade, B), auf der Grobskala eine Bruchkante / nicht-mannigfaltig mit variabler Dimension (A) — 'glatt' ist keine Ja/Nein-Eigenschaft, sondern eine Funktion des Zooms.",
+  "contradictions": [
+    "Glätte/Regularität: B präsentiert die Geometrie als perfekt glatt, periodisch, niedrig-dimensional (geometrische Frequenz-Progression, Interferenz-Fingerabdruck der Position); A widerlegt empirisch genau diese Glätte — der reale Token-Raum ist eine nicht-mannigfaltige Bruchkante (Mannigfaltigkeits-Hypothese an 4/4 Modellen verworfen, Dimension 20→531).",
+    "Stetigkeit/Portabilität: B's cos(a−b)-Trick macht die Ähnlichkeit nur vom relativen Abstand abhängig (stetig, einheitlich, '3 Tokens zurück' überall gleich); A zeigt das Gegenteil auf semantischer Ebene — ein winziger Prompt-Wechsel an einer Bruchkante lässt die Antwort diskontinuierlich springen (Prompt-Fragilität), und Prompts sind nicht portabel (Llemma7B med. 4096 vs. Mistral7B 48, gleicher Vokabular).",
+    "Dimension: B's Positional-Encoding lebt in fester, niedriger, bekannter Dimension (2·NFREQ sin/cos-Paare, hier 14); A misst eine wild variable effektive Dimension 20…531 (drei Gipfel), sogar isolierte Dimension-0-Punkte."
+  ],
+  "resolution": "Trenne Koordinate von Repräsentation und trenne Skalen. Das Positional-Encoding (B) ist die einzige durch Konstruktion glatte, niedrig-dimensionale, translation-invariante Zutat (Feinskala/Koordinate); der realisierte Token-Raum (A) ist, was das Modell darauf lernt (Grobskala/Repräsentation) und verletzt dort die Mannigfaltigkeits-Hypothese. B's Glätte/Translation-Invarianz sind Feinskala-Eigenschaften (λ≈1, benachbarte Positionen), A's Bruchkanten/Sprünge Grobskala-Eigenschaften (ganze Wörter, Reach). Fusion: der Raum ist dimensions- und glättungshierarchisch — glatt & niedrig-d im Nahbereich (Positional-Domäne), singular & variables-d in der Ferne (Token-Domäne). 'Ist er eine Mannigfaltigkeit?' hat keine Ja/Nein-Antwort: glatt in der Nähe, Bruchkante in der Ferne.",
+  "viz": "2D-Canvas (reines Vanilla, inline data, kein Netz-Datenabruf): Modell einer Bruchkante (Cusp) im Token-Bulk mit Zoom-Linse am Messpunkt (links); rechts oben A's Zoom-Test als Kurve — die tatsächlich berechnete Abweichung F(r) der Nachbarschaft von der flachen Scheibe (PCA) über die Skala r, mit glatt-/Bruchkante-Zonen und Marker; rechts unten B's Positional-Zahnrad-Wellenlängen (geometrische Progression λ=1→10⁴, cos(a−b)). Regler: 'Punkt' (Cusp-Spitze vs. glatter Ast) und 'Zoom' (fein↔grob). Readout: r₀, F(r₀), lokale Dimension d(r₀) (Steigung von log V(r), A's Trick), Skala-Domäne, Verdict. An der Spitze: fein=glatt → grob=Bruchkante; an glatten Stellen: glatt auf allen Skalen. Theme-aware (CSS-Variablen, MutationObserver), keine Konsolenfehler."
+}

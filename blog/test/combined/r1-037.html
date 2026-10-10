@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loss-Landschaft als Freie Energie — Basin-Hopping × RG-Flow</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1a1f2e; --dim:#5a6478;
+  --panel:#ffffff; --panel2:#f2eee3; --grid:#dcd6c8; --border:#e6e0d2;
+  --accent:#7c5cff; --accent2:#0e9aa7; --hop:#b8770a; --desc:#2d6cdf;
+  --min:#2d8a4e; --reject:#c0392b; --hl:rgba(124,92,255,0.10);
+}
+html.dark{
+  --bg:#0a0e1a; --fg:#e8ecf5; --dim:#8a94b0;
+  --panel:#131829; --panel2:#0f1424; --grid:#232a44; --border:#1f2740;
+  --accent:#7c5cff; --accent2:#22d3ee; --hop:#fbbf24; --desc:#4f9dff;
+  --min:#3fb950; --reject:#f85149; --hl:rgba(124,92,255,0.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  line-height:1.65;-webkit-text-size-adjust:100%}
+header{max-width:820px;margin:0 auto;padding:52px 22px 14px;text-align:center}
+h1{font-size:clamp(1.7rem,4.4vw,2.7rem);margin:0 0 6px;line-height:1.2;font-weight:800;letter-spacing:-0.02em;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{color:var(--dim);font-size:0.98rem;margin:0 0 14px;font-family:"JetBrains Mono",Menlo,monospace}
+#themeBtn{background:var(--panel);border:1px solid var(--border);color:var(--fg);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.85rem}
+main{max-width:820px;margin:0 auto;padding:12px 22px 90px}
+section{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:18px 0}
+section>h2{font-size:1.35rem;margin:0 0 14px;color:var(--accent2);font-weight:700}
+p{margin:0 0 12px}
+strong{color:var(--fg)}
+code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-family:"JetBrains Mono",Menlo,monospace;font-size:0.86em;color:var(--accent2)}
+.aha{background:var(--hl);border-left:4px solid var(--accent);padding:12px 16px;border-radius:8px;margin:14px 0}
+.aha::before{content:"◆ ";color:var(--accent);font-weight:700}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:12px 0}
+.kv b{color:var(--accent2);font-weight:600;white-space:nowrap}
+.tension{border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin:12px 0;background:var(--panel2)}
+.tension h3{margin:0 0 8px;font-size:1.02rem;color:var(--fg)}
+.tagA{display:inline-block;background:var(--hop);color:#111;font-size:0.72rem;font-weight:700;padding:1px 8px;border-radius:10px;margin-right:6px}
+.tagB{display:inline-block;background:var(--accent2);color:#111;font-size:0.72rem;font-weight:700;padding:1px 8px;border-radius:10px;margin-right:6px}
+#viz{width:100%;height:440px}
+.ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:12px 0}
+.ctrl label{color:var(--dim);font-size:0.86rem;display:block;margin-bottom:2px}
+input[type=range]{width:220px;accent-color:var(--accent)}
+button.act{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.86rem}
+button.act:hover{opacity:0.9}
+.hud{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:0.8rem;font-family:"JetBrains Mono",Menlo,monospace}
+.chip b{color:var(--accent2)}
+#hlog{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:"JetBrains Mono",Menlo,monospace;font-size:0.78rem;max-height:150px;overflow-y:auto;line-height:1.5}
+#hlog .a{color:var(--min)} #hlog .r{color:var(--reject)} #hlog .w{color:var(--hop)} #hlog .i{color:var(--dim)}
+.caption{color:var(--dim);font-size:0.88rem;margin-top:10px}
+.prov{display:flex;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--border)}
+.prov:last-child{border-bottom:none}
+.prov a{color:var(--accent2);font-weight:600;text-decoration:none;white-space:nowrap}
+.prov a:hover{text-decoration:underline}
+.prov .d{color:var(--dim);font-size:0.92rem}
+footer{text-align:center;color:var(--dim);font-size:0.8rem;padding:10px 22px 40px}
+@media(max-width:560px){section{padding:16px} .ctrl{flex-direction:column;align-items:stretch} input[type=range]{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Loss-Landschaft als Freie Energie</h1>
+  <p class="subtitle">Fusion aus: minima_explorer.html ✕ nlab_nn.html</p>
+  <button id="themeBtn">🌓 Theme</button>
+</header>
+
+<main>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Dokumente handeln <em>dasselbe Objekt</em> — die <strong>Loss-Landschaft</strong> <code>L(θ)</code>, die Fläche über den Netzwerk-Parametern <code>θ</code>, auf der sich das Training abspielt. Aber sie betrachten sie von zwei entgegengesetzten Enden. <span class="tagA">A</span> (BasinHopper) hält <code>L(θ)</code> für ein <strong>raues physikalisches Terrain</strong>, dessen viele lokale Minima ein praktischer Feind sind, dem man mit einem aktiven, stochastischen <em>Basin-Hopping</em>-Protokoll (Checkpoint → hoher-LR-Sprung → Kandidaten-Descent → Akzept/Rollback) zwischen den Tälern hin- und herspringen muss. <span class="tagB">B</span> (nLab-Explorer) liest die <em>selbe</em> Fläche stattdessen als <strong>Freie Energie einer neuronalen Feldtheorie</strong>: im unendlich-breiten Grenzfall wird das Netz zu einem Gauß-Prozess (= freies Quantenfeld, Aha&nbsp;#9), und seine Tiefe ist ein <strong>Renormierungsgruppen-Fluss</strong> — Schicht für Schicht wird hochfrequente Struktur <em>herausintegriert</em> (Aha&nbsp;#10).</p>
+  <p>Die fusionierte Position ist, dass diese beiden Bilder <em>kein Widerspruch</em> sind, sondern <strong>derselbe Prozess in zwei Regimen</strong>: A ist der <em>endliche-Breiten-, konvergierten</em> Fall (rau, wechselwirkend, beckenreich, man bewegt sich <em>stochastisch-diskret</em>), B ist der <em>statistische, unendlich-breite, mehrskalige</em> Grenzfall (glatt, gaußsch, man bewegt sich <em>kontinuierlich-deterministisch</em> per Coarse-Graining). Der entscheidende Identitäts-Satz lautet: <strong>die Lernrate <code>η</code> ist der RG-Skalen-Parameter, ein "Jump" ist ein stochastischer RG-Schritt, "Einpendeln in ein Minimum" ist der Fixpunkt des Flusses auf einer Skala, und Akzept/Rollback ist eine freie-Energie-Auswahl zwischen effektiven Beschreibungen.</strong></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die drei Punkte sind keine formalen logischen Contradictions, sondern <em>echte, substanzhaltige Spannungen</em> in der Wahl des Beschreibungs-Regimes — sie zeigen an, wo die zwei Dokumente unterschiedliche Annahmen über dieselbe Fläche treffen.</p>
+
+  <div class="tension">
+    <h3>1. Rau-adversarische Landschaft (A) vs. glatte freie-Feld-Landschaft (B)</h3>
+    <p><span class="tagA">A</span> <strong>konstruiert absichtlich eine raue, adversarische, multi-basin Landschaft</strong> — garantierte Minima (Shallow/Medium/Global) <em>plus</em> zufällige Extra-Becken, Hünen und sinusoidale Rauhigkeit — deren <em>gesamter Zweck</em> es ist, den Optimizer zum Scheitern zu bringen. A geht davon aus, dass "plainer Gradient Descent" sich festfahren wird und man ein Hop-Metaheuristik braucht, um zu entkommen.</p>
+    <p><span class="tagB">B</span> sagt in Aha&nbsp;#9 das Gegenteil über die <em>Grenzform</em> derselben Fläche: Schickt man die Layer-Breite → ∞, wird ein zufällig initialisiertes Netz zu einem <strong>Gauß-Prozess / freien Quantenfeld</strong> — einer <em>glatten, gaußschen</em> Freien-Energie-Landschaft <em>ohne</em> adversarische Beckenstruktur ("Nicht-Gaussianität ↔ Wechselwirkungen").</p>
+    <p><strong>Spannung:</strong> A's Kernobjekt (rau, beckenreich, hart) ist exakt das, was B's Grenztheorie im Free/Infinite-Width-Limit <em>wegnimmt</em>. A optimiert gegen Rauhigkeit; B's Ziellandschaft ist (fast) ohne Rauhigkeit.</p>
+  </div>
+
+  <div class="tension">
+    <h3>2. Zufall als Motor (A) vs. Rauschen-herausintegrieren (B)</h3>
+    <p><span class="tagA">A</span> macht Progress <em>durch Zufall</em>: der Escape-Mechanismus ist ein <strong>stochastischer Sprung</strong> (<code>Math.random()</code>-Noise in die Geschwindigkeit, hochgesteckte LR). Ohne Zufall kein Verlassen des Beckens — Stochastik ist der <em>Treiber</em>.</p>
+    <p><span class="tagB">B</span> (Aha&nbsp;#10 RG-Flow) macht Progress durch <em>deterministisches Coarse-Graining</em>, dessen expliziter Zweck es ist, hochfrequente Details (kurze Skalen, Rauschen) <strong>herauszualisieren</strong> und nur die relevanten langen Skalen zu behalten. Die "Welt ist hierarchisch"; man <em>entfernt</em> das Hochfrequente, statt es einzuspritzen.</p>
+    <p><strong>Spannung:</strong> A <em>addiert</em> Stochastik, um voranzukommen; B <em>mittelt/entfernt</em> Stochastik, um die universelle Struktur freizulegen.</p>
+  </div>
+
+  <div class="tension">
+    <h3>3. LR als diskrete Scheduler-Schaltfläche (A) vs. Skala als kontinuierlicher RG-Parameter (B)</h3>
+    <p><span class="tagA">A</span> behandelt die Lernrate als <strong>ereignisgesteuertes, diskretes</strong> Kontrollsignal in einem expliziten <em>Scheduler↔Optimizer</em>-Protokoll: Plateau erkannt → Checkpoint speichern → LR um <code>×jmul</code> (bis <code>×exploreMultiplier</code>) anheben für den Sprung → LR wieder absenken für den Kandidaten-Descent. Dazu eine <em>adaptiv wachsende Suchradius</em>, wenn Sprünge immer wieder in dasselbe Becken landen.</p>
+    <p><span class="tagB">B</span> stellt die Lernrate <em>nicht</em> in den Vordergrund. Die bedeutende "Skala" ist die <strong>RG-Skala</strong>, die sich <em>kontinuierlich über die Schichten</em> fortsetzt (jede Schicht = ein Coarse-Graining-Schritt, Aha&nbsp;#10; RBM ≙ RG-Schritt nach Mehta &amp; Schwab).</p>
+    <p><strong>Spannung:</strong> diskrete, stochastische Intervention (A) vs. kontinuierlicher, deterministischer Fluss (B).</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p>Alle drei Spannungen lösen sich durch eine <em>Skalen-/Regimeneinordnung desselben Objekts</em> auf. Man muss A und B nicht gegeneinander ausspielen, sondern <em>miteinander identifizieren</em>:</p>
+  <p><strong>1. Rauheit = Wechselwirkung.</strong> A's multi-basin Rauhigkeit ist nicht "Widerspruch" zu B, sondern die <strong>Wechselwirkungs-Korrektur</strong> auf B's freie Theorie. B sagt explizit (Aha&nbsp;#9): Nicht-Gaussianität ↔ Wechselwirkungen. A's raue Fläche ist also exakt der <em>endliche-Breiten-, nicht-gaußsche</em> Anteil, den die <em>freie</em> (gaußsche) Theorie B <em>per Definition weglässt</em>. Im Free-Limit, das B beschreibt, <strong>verschwindet A's Hopping-Problem</strong> (ein glattes Becken) — A ist die Vollendung, die B's Freitheorie bräuchte, um endlich breit zu sein.</p>
+  <p><strong>2. Sprung = stochastischer RG-Schritt.</strong> A's "hoher-LR-Zufallssprung" und B's "Coarse-Graining-Schritt" sind <em>zwei Realisierungen desselben Akts</em>: die effektive Skala, auf der das Netz abgelesen wird, wird <em>um eine Ebene verändert</em>. A tut es <em>diskret und stochastisch</em> (ein Jump), B <em>kontinuierlich und deterministisch</em> (der Flow). A ist damit die <em>stochastische, low-resolution-Approximation</em> eines RG-Schritts — genau das, was man bei endlicher Breite und endlicher Zeitstatistik <em>tatsächlich</em> macht.</p>
+  <p><strong>3. Einpendeln = Fixpunkt; Akzept/Rollback = freie-Energie-Auswahl.</strong> Wenn A's Ball "in ein Minimum einpendelt" (Plateau, <code>stale</code> läuft hoch), ist der RG-Fluss <em>auf der aktuellen Skala an einen Fixpunkt / eine stabile Phase</em> gelangt. A's Entscheidungsregel — <em>akzeptiere nur, wenn die Kandidaten-Loss niedriger <strong>und</strong> das Becken neu ist, sonst Rollback</em> — ist eine <strong>Auswahl zwischen effektiven Beschreibungen nach freier Energie (Loss)</strong>. Und A's "adaptive Suchradius-Erweiterung, wenn man im selben Becken stecken bleibt" ist die <em>Skala, die weiterläuft</em>, solange der Fixpunkt auf der aktuellen Skala nicht der globale ist. Die <em>Scheduler↔Optimizer</em>-Kopplung in A ist die <em>operationaler Schatten</em> der RG-Hierarchie in B: der Scheduler = der Fortschritt der RG-Skala; der Optimizer = die Feldkonfiguration, die sich bei fester Skala relaxiert.</p>
+  <p><strong>Fusionierter Schluss:</strong> Die Loss-Landschaft <em>ist</em> die Freie Energie eines neuronalen Felds. <strong>A</strong> (Basin-Hopping) ist der <em>stochastisch-diskrete, endliche-Breiten-Coarse-Graining-RG-Schritt</em>, der zwischen metastabilen Minima einer <em>wechselwirkenden</em> Landschaft springt. <strong>B</strong> (NNGP/RG-Flow) ist der <em>kontinuierliche, statistische, unendlich-breite Grenzfall</em> desselben Prozesses, in dem die Landschaft eine <em>freie (gaußsche)</em> Feldenergie ist. Die Lernrate ist der gemeinsame Skalen-Parameter; ein Jump ist ein stochastischer RG-Schritt; Einpendeln ist ein Fixpunkt; Akzept/Rollback ist eine freie-Energie-Auswahl.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p><strong>Was ein Netz ist (von B).</strong> Ein Netz ist "nur" eine Verkettung affiner Karten mit punktueller Nichtlinearität:
+  <code>f(x) = Tₗ ∘ g ∘ Tₗ₋₁ ∘ g ∘ … ∘ T₁(x)</code>, mit <code>Tᵢ(x) = Wᵢx + bᵢ</code> und punktueller Karte <code>g</code> (Aha&nbsp;#1). Ohne <code>g</code> kollabiert die Verkettung zu einer einzigen affinen Karte — erst die Nichtlinearität schafft Ausdruckskraft. Ein einzelnes Neuron ist ein linearer Klassifizierer + Squasher: <code>y = g(w·x + b)</code>; die Hyperebene <code>w·x + b = 0</code> teilt den Raum, die <em>Richtung</em> von <code>w</code> setzt die Trennlinie, die <em>Länge</em> die Schärfe, <code>b</code> verschiebt (Aha&nbsp;#2). Das <strong>Universal Approximation Theorem</strong> (Aha&nbsp;#3): eine einzige versteckte Schicht mit genug Neuronen approximiert jede stetige Funktion beliebig genau.</p>
+  <p><strong>Wie man trainiert (beide).</strong> Training ist Wandern auf der Loss-Landschaft nach <code>θ ← θ − η∇L(θ)</code> (Aha&nbsp;#4 bei B; das gesamte Terrain-Modell bei A). Der Gradient wird über <strong>Backpropagation</strong> = rückwärts-angewandte Kettenregel (Reverse-Mode Automatic Differentiation) berechnet, Kosten ≈ 2–3× Forward <em>unabhängig</em> von der Parameterzahl (Aha&nbsp;#5) — das ist der Grund, warum Deep Learning skaliert. Kategorientheoretisch ist AD der eindeutige struktur-erhaltende Funktor (CHAD-Perspektive, Aha&nbsp;#6); Netze sind String-Diagramme in monoidalen Kategorien, und Backprop ist das "Diagramm umdrehen" (Aha&nbsp;#7); viele Architekturen sind Tensor-Netzwerke (Aha&nbsp;#8).</p>
+  <p><strong>Die Struktur der Fläche (von B) — der Schlüssel zur Fusion.</strong></p>
+  <div class="kv">
+    <b>NNGP / freie Feldtheorie (Aha #9):</b> <span>Breite → ∞ ⇒ zufälliges Netz = Gauß-Prozess = freies Quantenfeld. Die "Verteilung über Funktionen" trägt eine Wirkung <code>S[f] = ∫ ρ_f</code>; <em>Nicht-Gaussianität ↔ Wechselwirkungen</em>; Feynman-Diagramme sind anwendbar ("Neural Network Field Theory").</span>
+    <b>RG-Flow (Aha #10):</b> <span>Frühe Schichten lernen Details (hohe Frequenzen), späte abstrakte Konzepte (niedrige Frequenzen) — Coarse-Graining Schicht für Schicht. Mehta &amp; Schwab (2014): eine RBM ist <em>mathematisch äquivalent</em> zu einem RG-Schritt der Variational RG.</span>
+    <b>Topologie (Aha #11):</b> <span>Daten haben Robuste Form (Löcher H₁, Komponenten H₀) via Persistent Homology — eine Skalen-robuste Sicht auf dieselbe Fläche.</span>
+  </div>
+  <p><strong>Das Hopping-Protokoll (von A) — die endliche-Breiten-Realisierung.</strong> Der Ball (Optimierzustand) steigt mit Momentum + Reibung + LR-Decay ab. Bei Plateau (stagnierte Schritte ≥ Patience) löst ein expliziter <em>Scheduler↔Optimizer</em>-Dialog aus: (i) <strong>Checkpoint</strong> der aktuellen Position/Geschwindigkeit/Loss speichern; (ii) <strong>LR-Boost</strong> <code>×jmul</code> (× adaptiver <code>exploreMultiplier</code>) + <strong>zufälliger Sprung</strong> (Noise ∝ LR); (iii) <strong>LR-Senkung</strong> + Kandidaten-Descent in einem neuen Becken; (iv) <strong>Entscheidung</strong>: akzeptieren, wenn Kandidaten-Loss <em>niedriger und</em> in einem <em>neuen</em> Becken (Suchradius zurücksetzen), akzeptieren-aber-Raus, wenn niedriger aber <em>gleiches</em> Becken (Suchradius <em>vergrößern</em> + Extra-Schritte), sonst <strong>ablehnen &amp; Rollback</strong> auf den Checkpoint. Essentiell: <strong>stochastisches Basin-Hopping</strong> mit adaptiver Suche.</p>
+  <p><strong>Die Identität, die beide verbindet.</strong></p>
+  <div class="kv">
+    <b>Lernrate η:</b> <span>= RG-Skalen-Parameter. Anheben = eine Ebene grobkörniger lesen; senken = feiner relaxieren.</span>
+    <b>Jump (hohe LR + Zufall):</b> <span>= stochastischer RG-Schritt (eine Coarse-Graining-Ebene), realisiert als diskrete, zufällige Perturbation statt als glatter Fluss.</span>
+    <b>Einpendeln / Plateau:</b> <span>= der Fluss erreicht auf der aktuellen Skala einen Fixpunkt / eine stabile Phase.</span>
+    <b>Akzept / Reject / Rollback:</b> <span>= Auswahl zwischen effektiven Beschreibungen nach freier Energie (Loss); man behält die niedrigere.</span>
+    <b>Adaptive Suchradius-Erweiterung:</b> <span>= die Skala läuft weiter, solange der Fixpunkt auf ihr nicht global ist.</span>
+    <b>Rauheit / Extra-Basins:</b> <span>= die Wechselwirkungs-Korrektur (Nicht-Gaussianität) auf der freien GP-Landschaft.</span>
+  </div>
+  <p>In Formeln: die <em>freie</em> Fläche ist der gaußsche Anteil <code>L_free(θ)</code> (im NNGP-Limit der gesamte Erwartungswert), A's reale Fläche ist <code>L(θ) = L_free(θ) + L_int(θ)</code>, wobei <code>L_int</code> die endliche-Breiten-Wechselwirkungen ist. Der RG-Schritt <code>L → L_R</code> ist ein Low-Pass/Coarse-Graining, z. B. Box-Fenster <code>L_R(x) = ⟨L⟩_{x±r}</code>; A's einzelner Jump ist die <em>stochastische, eine-Ebene</em>-Version dieses Operators, und der Grenzwert <code>r → ∞</code> (bzw. Breite → ∞) liefert B's glatte freie Fläche, in der die vielen Minima von A verschwinden.</p>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — dasselbe Terrain, zwei Lesarten</h2>
+  <p>Eine 1-D Loss-Landschaft <code>L(θ)</code> (= Freie Energie) wird bei <strong>RG-Schritt 0</strong> als A's <em>raue, wechselwirkende</em> Fläche gezeichnet (glatter Freie-Anteil + hochfrequente Rauhigkeit + schmale Extra-Becken). Der Slider <em>RG-Schritt</em> wendet B's <strong>Coarse-Graining</strong> (Low-Pass-Box, <code>L_R(x)=⟨L⟩_{x±r}</code>) schrittweise an — bis bei RG=12 nur noch B's <em>glatte freie-Feld-Landschaft</em> übrig ist. Der <strong>Ball</strong> führt A's <em>stochastisches Basin-Hopping</em> (Descent → hoher-LR-Sprung → Kandidaten-Descent → Akzept/Reject/Rollback) auf der <em>aktuell grobkörnigen</em> Fläche aus. Beobachte: Die lokalen Minima (Diamanten) <em>verschwinden mit jedem RG-Schritt</em> — A's "Feind" (Beckenstruktur) kollabiert in B's freie Landschaft.</p>
+
+  <div class="ctrl">
+    <div>
+      <label>RG-Schritt / Skalen-Parameter &nbsp;<b id="rgVal">0</b>&nbsp;/&nbsp;12 &nbsp;<span style="color:var(--dim)">(0 = A rau → 12 = B frei)</span></label>
+      <input type="range" id="rg" min="0" max="12" step="1" value="0">
+    </div>
+    <button class="act" id="hopBtn">⚡ 1 Hop</button>
+    <button class="act" id="autoBtn">▶ Auto-Hop</button>
+    <button class="act" id="resetBtn" style="background:var(--dim)">↺ Reset</button>
+  </div>
+
+  <div id="viz"></div>
+
+  <div class="hud">
+    <span class="chip">Minima jetzt: <b id="hMin">–</b></span>
+    <span class="chip">Ball θ: <b id="hX">–</b></span>
+    <span class="chip">Loss: <b id="hLoss">–</b></span>
+    <span class="chip">Best: <b id="hBest">–</b></span>
+    <span class="chip">Hops: <b id="hHops">0</b> &nbsp;✓<b id="hAcc">0</b> ✗<b id="hRej">0</b></span>
+  </div>
+  <div id="hlog"><span class="i">[0] Bereit. Slider = RG-Skala (B). Ball = stochastisches Basin-Hopping (A). Drücke "1 Hop".</span></div>
+  <p class="caption">Legende: <span style="color:var(--accent)">■</span> grobkörnige (aktuelle) Fläche · <span style="color:var(--dim)">┈</span> rohe Fläche (RG=0, A) · <span style="color:var(--min)">◆</span> erkannte Minima · <span style="color:var(--hop)">━ ━</span> Sprung-Phase · <span style="color:var(--desc)">━</span> Kandidaten-Descent · <span style="color:var(--hop)">●</span> Ball.</p>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <a href="../minima_explorer.html">minima_explorer.html</a>
+    <span class="d">"BasinHopper 3D – Loss Landscape Explorer": raue 3-D Loss-Landschaft mit garantiert 3+ Minima; Ball-Optimizer mit Momentum/Reibung/LR-Decay, Scheduler↔Optimizer-Protokoll (Checkpoint, LR-Boost + zufälliger Sprung, Kandidaten-Descent, Akzept/Reject/Rollback) und adaptiver Suchradius-Erweiterung — stochastisches Basin-Hopping.</span>
+  </div>
+  <div class="prov">
+    <a href="../nlab_nn.html">nlab_nn.html</a>
+    <span class="d">"Neural Networks — Aha-Explorer": 11 interaktive Aha's vom Neuron (affin + Nichtlinearität, Universal Approximation) über Training als Loss-Landschaft-Wandern, Backprop/AD, String-Diagramme &amp; Tensor-Netzwerken bis zu unendlich-breite Netze = Gauß-Prozesse = freie Feldtheorie (NNGP) und Deep Learning ≈ RG-Flow (Mehta &amp; Schwab) plus Topologie.</span>
+  </div>
+</section>
+
+</main>
+<footer>Round 1 · Fusion 037 · minima_explorer.html ✕ nlab_nn.html</footer>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- Landscape: free (gaussian) part + interacting rough part ---------- */
+  var N = 240, XMIN = -5.5, XMAX = 5.5, X = [];
+  for (var i=0;i<N;i++) X.push(XMIN + (XMAX-XMIN)*i/(N-1));
+
+  function freeField(x){
+    return 0.02*x*x
+      + 0.55*Math.exp(-((x-1.8)*(x-1.8))/6.0)
+      - 0.50*Math.exp(-((x+2.1)*(x+2.1))/5.0)
+      - 0.15*Math.exp(-((x-0.3)*(x-0.3))/9.0);
+  }
+  function interactions(x){
+    var v = 0.34*Math.sin(2.3*x+0.7) + 0.26*Math.sin(5.1*x+2.0) + 0.18*Math.sin(8.9*x+0.3);
+    v += -0.45*Math.exp(-((x-3.4)*(x-3.4))/0.12);
+    v += -0.38*Math.exp(-((x+0.6)*(x+0.6))/0.10);
+    v += -0.30*Math.exp(-((x-4.5)*(x-4.5))/0.14);
+    v +=  0.30*Math.exp(-((x-2.4)*(x-2.4))/0.08);
+    return v;
+  }
+  var L0 = X.map(function(x){ return freeField(x)+interactions(x); });
+
+  /* ---------- RG coarse-graining: box low-pass (B's Aha #10) ---------- */
+  function boxBlur(arr, r){
+    if (r<=0) return arr.slice();
+    var n=arr.length, pref=new Array(n+1); pref[0]=0;
+    for (var i=0;i<n;i++) pref[i+1]=pref[i]+arr[i];
+    var out=new Array(n);
+    for (var j=0;j<n;j++){
+      var a=Math.max(0,j-r), b=Math.min(n-1,j+r);
+      out[j]=(pref[b+1]-pref[a])/(b-a+1);
+    }
+    return out;
+  }
+  var MAXR = 40;
+  var Lcur = L0.slice();
+  function setRG(steps){
+    var r = steps/12*MAXR;
+    Lcur = boxBlur(L0, r);
+  }
+
+  /* ---------- interpolation / grad on current (coarse-grained) array ---------- */
+  function clamp(x){ return Math.max(XMIN, Math.min(XMAX, x)); }
+  function evalAt(x, arr){
+    if (x<=X[0]) return arr[0];
+    if (x>=X[N-1]) return arr[N-1];
+    var f=(x-X[0])/(X[N-1]-X[0])*(N-1);
+    var i0=Math.floor(f), t=f-i0;
+    return arr[i0] + (arr[Math.min(N-1,i0+1)]-arr[i0])*t;
+  }
+  function gradAt(x, arr){ var h=0.04; return (evalAt(x+h,arr)-evalAt(x-h,arr))/(2*h); }
+  function settle(x){
+    var s=x;
+    for (var k=0;k<140;k++){ var g=gradAt(s,Lcur); s=clamp(s-0.01*g); if (Math.abs(g)<1e-4) break; }
+    return s;
+  }
+  function sameBasin(a,b){ return Math.abs(settle(a)-settle(b))<1.0; }
+  function findMinima(arr){
+    var res=[];
+    for (var i=1;i<arr.length-1;i++){
+      if (arr[i]<arr[i-1] && arr[i]<=arr[i+1]) res.push(i);
+    }
+    var kept=res.filter(function(i){
+      var w=9, a=Math.max(0,i-w), b=Math.min(arr.length-1,i+w), mx=-Infinity;
+      for (var j=a;j<=b;j++){ if (j!==i && arr[j]>mx) mx=arr[j]; }
+      return (mx-arr[i])>0.08;
+    });
+    return kept.map(function(i){ return {x:X[i], loss:arr[i]}; });
+  }
+
+  /* ---------- hopper state (A's stochastic basin hopping, 1-D) ---------- */
+  var hop = { x:XMIN+0.5, best:Infinity, hops:0, acc:0, rej:0, trail:[], running:false, auto:false, autoTimer:null };
+
+  function logLine(cls, msg){
+    var el=$('hlog');
+    var d=document.createElement('div');
+    d.className=cls;
+    d.textContent='['+hop.hops+'] '+msg;
+    el.appendChild(d);
+    el.scrollTop=el.scrollHeight;
+    while (el.children.length>14) el.removeChild(el.firstChild);
+  }
+
+  function hopOnce(){
+    if (hop.running || !window.Plotly) return;
+    hop.running=true;
+    var cpX=hop.x, cpLoss=evalAt(cpX,Lcur);
+    var baseLR=0.6, mom=0.82, fric=0.90, jmul=8, jumpSteps=14, dstep=26, thresh=0.02;
+    var stage=0, it=0, v=0, x=cpX, best=cpLoss, stale=0;
+    var trail=[{x:cpX, s:'cp'}];
+    var tick=setInterval(function(){
+      try{
+        var arr=Lcur;
+        if (stage===0){
+          var g=gradAt(x,arr);
+          v=mom*v-(baseLR*0.02)*g; v*=fric; x=clamp(x+v);
+          var loss=evalAt(x,arr);
+          trail.push({x:x,s:'d'});
+          if (loss<best-thresh){ best=loss; stale=0; } else { stale++; }
+          it++;
+          if (stale>14 || it>60){ stage=1; it=0; v=0; }
+        } else if (stage===1){
+          var g2=gradAt(x,arr), noise=baseLR*0.02*jmul;
+          v=mom*v-(baseLR*0.02)*g2+(Math.random()-0.5)*noise; v*=fric; x=clamp(x+v);
+          trail.push({x:x,s:'j'});
+          it++;
+          if (it>=jumpSteps){ stage=2; it=0; v=0; }
+        } else if (stage===2){
+          var g3=gradAt(x,arr);
+          v=mom*v-(baseLR*0.012)*g3; v*=fric; x=clamp(x+v);
+          trail.push({x:x,s:'c'});
+          it++;
+          if (it>=dstep){ stage=3; }
+        }
+        hop.trail=trail.slice(-90);
+        hop.x=x;
+        render();
+        if (stage===3){
+          clearInterval(tick);
+          var candLoss=evalAt(x,arr);
+          var same=sameBasin(cpX,x);
+          if (candLoss<cpLoss && !same){ hop.acc++; hop.best=Math.min(hop.best,candLoss);
+            logLine('a','✓ Akzeptiert: neues, besseres Minimum ('+cpLoss.toFixed(3)+' → '+candLoss.toFixed(3)+')'); }
+          else if (candLoss<cpLoss && same){ hop.acc++;
+            logLine('w','⚠ Akzeptiert, aber gleiches Becken → Suchradius wird vergrößert'); }
+          else { hop.rej++; x=cpX; hop.x=cpX;
+            logLine('r','✗ Abgelehnt ('+candLoss.toFixed(3)+' ≥ '+cpLoss.toFixed(3)+(same?' [selbes Becken]':'')+'), Rollback'); }
+          hop.hops++;
+          hop.running=false;
+          render();
+        }
+      }catch(e){ clearInterval(tick); hop.running=false; }
+    }, 26);
+  }
+
+  function toggleAuto(){
+    if (hop.auto){ hop.auto=false; if (hop.autoTimer) clearInterval(hop.autoTimer); }
+    else {
+      hop.auto=true;
+      hop.autoTimer=setInterval(function(){ if(!hop.running) hopOnce(); }, 1700);
+      if (!hop.running) hopOnce();
+    }
+    $('autoBtn').textContent = hop.auto ? '⏸ Auto-Hop aus' : '▶ Auto-Hop';
+  }
+
+  function resetHop(){
+    hop.x=XMIN+0.5; hop.best=Infinity; hop.hops=0; hop.acc=0; hop.rej=0; hop.trail=[];
+    logLine('i','Reset: Ball bei θ='+(XMIN+0.5).toFixed(2)+'.');
+    render();
+  }
+
+  /* ---------- theme-aware palette ---------- */
+  function hexA(hex, a){
+    try{
+      var h=String(hex).replace('#','').trim();
+      if (h.length===3) h=h.split('').map(function(c){return c+c;}).join('');
+      var n=parseInt(h,16);
+      if (isNaN(n)) return 'rgba(124,92,255,'+a+')';
+      return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+    }catch(e){ return 'rgba(124,92,255,'+a+')'; }
+  }
+  function palette(){
+    var cs=getComputedStyle(document.documentElement);
+    return {
+      bg: cs.getPropertyValue('--panel').trim() || '#131829',
+      grid: cs.getPropertyValue('--grid').trim() || '#232a44',
+      fg: cs.getPropertyValue('--fg').trim() || '#e8ecf5',
+      dim: cs.getPropertyValue('--dim').trim() || '#8a94b0',
+      accent: cs.getPropertyValue('--accent').trim() || '#7c5cff',
+      hop: cs.getPropertyValue('--hop').trim() || '#fbbf24',
+      desc: cs.getPropertyValue('--desc').trim() || '#4f9dff',
+      min: cs.getPropertyValue('--min').trim() || '#3fb950'
+    };
+  }
+
+  var plotInit=false;
+  function render(){
+    if (!window.Plotly) return;
+    var P=palette(), min=findMinima(Lcur);
+    var traces=[];
+    traces.push({x:X, y:L0, mode:'lines', line:{color:P.dim, width:1, dash:'dot'}, showlegend:false, hoverinfo:'skip'});
+    traces.push({x:X, y:Lcur, mode:'lines', fill:'tozeroy', fillcolor:hexA(P.accent,0.10),
+      line:{color:P.accent, width:3}, showlegend:false,
+      hovertemplate:'θ=%{x:.2f}<br>L=%{y:.3f}<extra>L_R</extra>'});
+    traces.push({x:min.map(function(m){return m.x;}), y:min.map(function(m){return m.loss;}),
+      mode:'markers', marker:{color:P.min, size:9, symbol:'diamond', line:{color:P.fg, width:1}},
+      showlegend:false, hovertemplate:'θ=%{x:.2f}<br>L=%{y:.3f}<extra>Min</extra>'});
+    if (hop.trail.length>1){
+      var start=0;
+      var pushSeg=function(seg){
+        var s=seg[0].s;
+        var col=s==='j'?P.hop : s==='c'?P.desc : s==='d'?P.dim : P.min;
+        traces.push({x:seg.map(function(p){return p.x;}),
+          y:seg.map(function(p){return evalAt(p.x,Lcur);}),
+          mode:'lines', line:{color:col, width:2, dash:s==='j'?'dash':'solid'},
+          showlegend:false, hoverinfo:'skip'});
+      };
+      for (var i=1;i<hop.trail.length;i++){
+        if (hop.trail[i].s!==hop.trail[start].s){
+          var seg=hop.trail.slice(start,i);
+          if (seg.length>1) pushSeg(seg);
+          start=i;
+        }
+      }
+      var segEnd=hop.trail.slice(start);
+      if (segEnd.length>1) pushSeg(segEnd);
+    }
+    var bx=hop.x, by=evalAt(bx,Lcur);
+    traces.push({x:[bx], y:[by], mode:'markers', marker:{color:P.hop, size:14, symbol:'circle', line:{color:P.fg, width:2}},
+      showlegend:false, hovertemplate:'θ=%{x:.2f}<br>L=%{y:.3f}<extra>Ball</extra>'});
+
+    var layout={
+      paper_bgcolor:P.bg, plot_bgcolor:P.bg,
+      font:{color:P.fg, size:12},
+      margin:{l:54, r:16, t:14, b:44},
+      xaxis:{title:{text:'θ (Parameter-Skala)', font:{size:12}}, gridcolor:P.grid, zerolinecolor:P.grid, color:P.dim, range:[XMIN,XMAX]},
+      yaxis:{title:{text:'Loss L(θ) = Freie Energie', font:{size:12}}, gridcolor:P.grid, color:P.dim},
+      showlegend:false, height:440
+    };
+    var config={responsive:true, displayModeBar:false};
+    if (!plotInit){ Plotly.newPlot('viz', traces, layout, config); plotInit=true; }
+    else { Plotly.react('viz', traces, layout, config); }
+    updateHUD(min.length);
+  }
+  function updateHUD(nMin){
+    $('hMin').textContent=nMin;
+    $('hX').textContent=hop.x.toFixed(2);
+    $('hLoss').textContent=evalAt(hop.x,Lcur).toFixed(3);
+    $('hBest').textContent=hop.best===Infinity?'–':hop.best.toFixed(3);
+    $('hHops').textContent=hop.hops;
+    $('hAcc').textContent=hop.acc;
+    $('hRej').textContent=hop.rej;
+    $('rgVal').textContent=$('rg').value;
+  }
+
+  /* ---------- wiring ---------- */
+  $('rg').addEventListener('input', function(){ setRG(parseInt(this.value,10)); render(); });
+  $('hopBtn').addEventListener('click', function(){ hopOnce(); });
+  $('autoBtn').addEventListener('click', toggleAuto);
+  $('resetBtn').addEventListener('click', resetHop);
+  $('themeBtn').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    render();
+  });
+
+  setRG(0);
+  render();
+})();
+</script>
+</body>
+</html>

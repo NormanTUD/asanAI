@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 008 · Karten &amp; Augen (PE × Attention)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+  :root{
+    --bg:#FAF8F1; --ink:#22201b; --dim:#6f6a60; --line:#d8d2c4;
+    --acc:#2563eb; --acc2:#db2777; --gold:#0a7a55;
+    --canvas:#f2ede1; --code:#efe9dc;
+    --chipbg:#ffffff; --chipfg:#22201b; --chipborder:#d8d2c4;
+    --ring:#c9c1ab; --fhigh:#2563eb; --fmid:#0a7a55; --flo:#db2777;
+    --arcpos:#2563eb; --arccontent:#db2777; --arcfuse:#0a7a55;
+    --onacc:#ffffff; --grid:#e7e1d2;
+  }
+  html.dark{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#5C6781; --line:#1c2740;
+    --acc:#60a5fa; --acc2:#f472b6; --gold:#34d399;
+    --canvas:#05070E; --code:#0f1626;
+    --chipbg:#0e1626; --chipfg:#EAF0FF; --chipborder:#2b3a4f;
+    --ring:#2b3a4f; --fhigh:#60a5fa; --fmid:#34d399; --flo:#f472b6;
+    --arcpos:#60a5fa; --arccontent:#f472b6; --arcfuse:#34d399;
+    --onacc:#0b1220; --grid:#1c2740;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:400 16px/1.62 ui-sans-serif,system-ui,"Segoe UI",Inter,Georgia,serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+  h1{font-size:clamp(26px,5vw,38px);font-weight:600;letter-spacing:-.01em;line-height:1.12;margin-bottom:6px}
+  h2{font-size:21px;font-weight:600;margin:46px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.04em;margin-bottom:26px}
+  p{margin:0 0 14px}
+  strong{font-weight:650}
+  code{font:500 14px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+  .lead{font-size:17.5px}
+  ul{margin:0 0 14px 20px}
+  li{margin:0 0 12px}
+  .role{color:var(--acc);font-weight:650}
+  .roleB{color:var(--acc2);font-weight:650}
+  .math{color:var(--ink)}
+  .math-block{display:block;margin:12px 0;overflow-x:auto;padding:4px 0}
+  .math-fallback{font-family:ui-monospace,monospace;font-size:.85em;background:var(--code);padding:2px 6px;border-radius:6px;white-space:pre-wrap}
+  .viz-box{background:var(--canvas);border:1px solid var(--line);border-radius:14px;padding:14px;margin:8px 0}
+  canvas#viz{width:100%;height:520px;display:block;background:var(--canvas);border-radius:10px;touch-action:manipulation}
+  .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  button,select{
+    font:inherit;font-size:13px;color:var(--ink);
+    background:var(--bg);border:1px solid var(--line);
+    padding:8px 13px;border-radius:999px;cursor:pointer;
+  }
+  button:hover,select:hover{border-color:var(--acc)}
+  button.active{background:var(--acc);color:var(--onacc);border-color:var(--acc)}
+  .lbl{font-size:12px;color:var(--dim);letter-spacing:.03em}
+  .ro{margin-top:10px;font-size:13.5px;color:var(--dim);line-height:1.5}
+  .ro b{color:var(--ink)}
+  .note{color:var(--dim);font-size:13.5px;margin-top:12px;line-height:1.55}
+  .prov{display:flex;flex-direction:column;gap:12px}
+  .prov a{color:var(--acc);text-decoration:none;font-weight:600}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:3px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Karten &amp; Augen — Positional Encoding trifft Attention</h1>
+  <div class="sub">Fusion aus: intuition_idee.html ✕ posembed3.html</div>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Ein Transformer beantwortet auf einmal zwei Fragen: <strong>Wo</strong> steht jedes Token (Position) und <strong>was gehört mit was zusammen</strong> (Beziehung). Die meisten Erklärungen behandeln das als zwei getrennte Bauteile. Die Fusion sagt: Das sind zwei Seiten derselben Münze — <strong>Position ist das Koordinatensystem, das die Attention durchquert.</strong> Die eine integrierte Position lautet: <em>Position existiert, damit Attention relativ sein kann.</em></p>
+    <p><span class="roleB">PE (B, posembed3)</span> hält: Eine Position ist das Ergebnis von <strong>Wellen-Interferenz</strong> — jede Frequenz-Dimension ist ein Kreis, auf dem ein Punkt mit der Position rotiert; wo alle Wellen konstruktiv übereinstimmen, entsteht ein heller Fleck. Dieses Muster ist pro Position <strong>eindeutig</strong>, wie die Zeiger einer Uhr: die schnelle Frequenz (Sekundenzeiger) unterscheidet nahe Positionen, die langsame (Stundenzeiger) ferne. Daraus wird pro Position ein <strong>Fingerprint</strong> (der „Wave Collapse“).</p>
+    <p><span class="role">Attention (A, intuition_idee)</span> hält: Jeder <strong>Head ist ein „Auge“</strong>, das auf einen <em>anderen Aspekt</em> der Beziehungen zwischen Tokens achtet — das vorherige Token, sich selbst, identische Tokens, Wortlängen, den Satzanfang. Eine Zeile der Attention-Matrix (Query-Token&nbsp;i) ist eine <strong>Verteilung</strong> über die Key-Tokens; nach Softmax und <strong>Causal-Mask</strong> wird der (kausal) Kontext gewichtet zusammengezogen zu einem neuen Vektor.</p>
+    <p>Die Fusion: <strong>B zeichnet die Karte, A ist der, der sie abläuft.</strong> B gibt jedem Token eine mehrfrequente Adresse (verschachtelte rotierende Kreise). A liest genau diese Adressen — absolut <em>und</em>, über das Skalarprodukt, relativ — und kombiniert sie mit dem Token-Inhalt, um zu entscheiden, welches Token welchen Kontext „heranzieht“. Der eindeutige Positions-Fingerprint (B) ist der Grund, warum ein „Auge“ (A) überhaupt wissen kann, was „zwei Positionen zurück“ bedeutet.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die beiden widersprechen sich nicht logisch — sie arbeiten mit <strong>unterschiedlichen Grundeinheiten</strong> und <strong>unterschiedlichen Quellen</strong> für das Muster. Die konkreten Spannungen:</p>
+    <ul>
+      <li><strong>Absolute Identität (B) vs. relative Beziehung (A).</strong>
+        <span class="roleB">PE</span>: „the unique fingerprint of this position“ — Position ist eine <em>absolute, eindeutige</em> Identität; das Interferenzfeld entsteht rein aus <code>pos · freq</code>.
+        <span class="role">Attention</span>: Die „Augen“ werden fast ausschließlich über <em>relative</em> Offsets definiert („vorheriges Token“, „Token 2 Positionen zurück“, „Satzanfang“).
+        <em>Unvereinbare Betonung:</em> die Position als <em>Ort</em> (ein Punkt im Raum) vs. die Relation als <em>Objekt</em> (eine Verbindung zwischen zwei Tokens).</li>
+      <li><strong>Inhaltsfrei (B) vs. inhaltsgetrieben (A).</strong>
+        <span class="roleB">PE</span>: Im Feld steckt <em>kein Wort</em> — nur die Zahl der Position. Der Fingerprint ist rein geometrisch.
+        <span class="role">Attention</span>: Mehrere Heads sind explizit <em>inhaltlich</em>: Wortlängen-Match, Wiederholungs-Detektor (identische Tokens), Vokal-Ähnlichkeit. Heads achten auf „einen anderen Aspekt der Beziehungen zwischen Tokens“ — der Inhalt steht im Zentrum.
+        <em>Unvereinbare Quelle:</em> Muster aus der Position allein vs. Muster aus Position <em>und</em> Token-Inhalt.</li>
+      <li><strong>EIN Punkt (B) vs. VIELE als Verteilung (A)</strong> — die nächstliegende echte Spannung:
+        <span class="roleB">PE</span> lässt alle Wellen in <em>einem</em> hellen „Wave-Collapse“-Punkt zusammenfallen (die eindeutige Position).
+        <span class="role">Attention</span> verteilt die Aufmerksamkeit über <em>viele</em> Keys als Wahrscheinlichkeitsverteilung (eine Matrix-Zeile nach Softmax).
+        <em>Unterschiedliche Form:</em> Punkt-Identität vs. ausgedehnte Verteilung.</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>1. Absolut codiert, um relativ gelesen zu werden.</strong> Die sinusoidale PE ist <em>genau die Brücke</em>. Weil jede Position ein Satz von <em>verschachtelten, rotierenden Kreisen</em> (Uhrzeiger) ist, ist <code>PE(pos + k)</code> eine <em>Drehung</em> von <code>PE(pos)</code>. Folglich hängt das Skalarprodukt <code>PE(pos) · PE(pos+k)</code> <strong>nur vom Offset k</strong> ab, nicht von <code>pos</code>. Die absolute Geometrie von B ist daher der <em>Boden</em>, auf dem die relativen „Augen“ von A laufen: „zwei zurück“ ist rechenbar, weil die PE Relative Distanz als Drehung codiert. <em>Auflösung: B liefert den absoluten Ort, aus dem A die relative Beziehung abliest.</em></p>
+    <p><strong>2. Content + Position in einem Score.</strong> Im echten Transformer fließen Inhalt <em>und</em> Position in die Projektionen Q, K, V ein. Der Score eines Heads ist (vereinfacht) eine Summe aus einem <em>Inhalts-Term</em> und einem <em>Relativpositions-Term</em>. B liefert den Positionsterm (aus der Wellen-Geometrie, als Drehung/Skalarprodukt); die inhaltlichen Heads von A liefern den Inhaltestermer (Wortlänge, Gleichheit, Vokale). <em>Auflösung: Attention = Inhalts-Ähnlichkeit + Relativpositions-Term.</em> Die „Augen“ fassen beides zusammen statt sich zu widersprechen.</p>
+    <p><strong>3. Punkt und Verteilung gehören zusammen.</strong> Der <em>eindeutige Fingerprint</em> (B) ist die <strong>Eingabe</strong>; die <strong>Verteilung</strong> (A) ist die <strong>Ausgabe</strong>. Jedes Token hat genau eine Position (ein Punkt im Fingerprint-Raum) — aber es <em>bezieht sich</em> auf viele andere (eine Verteilung). Auflösung als Aufgabenteilung: <em>Koordinate (B) → Navigation (A).</em></p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p><strong>Die Karte (B — Positional Encoding).</strong> Jede Frequenz-Dimension i liefert ein Winkel-Paar; die Frequenzen bilden eine <em>geometrische Leiter</em>:</p>
+    <div class="math-block" data-tex="PE(pos,\, i) = \big(\sin(pos\cdot\omega_i),\ \cos(pos\cdot\omega_i)\big), \qquad \omega_i = 10000^{-2i/d}"></div>
+    <p>Die höchste Frequenz (links, schneller Zeiger) ändert sich stark zwischen <em>nahe</em> Positionen (Fein-detail); die tiefste (rechts, langsamer Zeiger) unterscheidet <em>ferne</em> (Großstruktur). Weil die Kombination aller Winkel pro Position eindeutig ist — wie die Zeiger einer Uhr — ist jede Position ein eindeutiger Fingerprint. B zeigt das als <strong>Wellen-Interferenz</strong>: jeder Freq-Kreis ist eine Wellenquelle, konstruktive Überlagerung = heller Fleck („Wave Collapse“). Zentrale Eigenschaft — <em>Relativität</em>:</p>
+    <div class="math-block" data-tex="PE(pos)\cdot PE(pos+k) = \sum_i \cos(k\,\omega_i) \qquad (\text{nur abhängig von } k)\"></div>
+    <p>Der Dot-Product zweier Positionsvektoren „sieht“ nur den <em>relativen Abstand</em> k, nicht die absolute Position. Das ist genau der Hebel, den Attention benutzt, um „n Schritte zurück“ zu adressieren.</p>
+    <p><strong>Die Navigation (A — Attention als Augen).</strong> Zeile i der Matrix = Query „von hier aus“, Spalte j = Key „dorthin“. Ein Causal-Mask setzt j&nbsp;&gt;&nbsp;i auf 0 (ein Token sieht nur sich und Früheres). Danach Softmax über die erlaubten Keys:</p>
+    <div class="math-block" data-tex="a_{ij} = \operatorname{softmax}_{j}\big(\mathbb{1}[j \le i]\cdot s_{ij}\big), \qquad o_i = \sum_{j \le i} a_{ij}\, v_j"></div>
+    <p>Der Head ist ein „Auge“: er implementiert eine <em>bewusste</em> Funktion <code>s(i,j)</code> über einen Aspekt — bei A z.B. Distanz-Offset (relativ), Gleichheit des Tokens (Inhalt), Wortlänge, Vokal-Muster, Satzanfang. Verschiedene Heads = verschiedene Augen = verschiedene Aspekte desselben Token-Paars. Der Output <code>o_i</code> ist der neue Vektor von Token i, in den (kausal) der Kontext eingemischt wurde.</p>
+    <p><strong>Das fusionierte Objekt.</strong> Ein Heads-Score ist die Summe eines Inhalts- und eines Positionsterms — A liefert den ersten, B den zweiten:</p>
+    <div class="math-block" data-tex="s_{ij} = \underbrace{f(\text{inhalt}_i,\ \text{inhalt}_j)}_{\text{A: Inhalt}} \;+\; \underbrace{g(i-j)}_{\text{B: Relativposition}}"></div>
+    <p><code>g(i−j)</code> ist aus der PE-Geometrie (Drehung → cos-kosinus-Term, bzw. in den Visualisierungen ein Distanz-Abkling-Proxy). <code>f</code> ist der inhaltliche Aspekt des „Auge“s. <strong>Position wird absolut codiert (eindeutiger Fingerprint), aber relativ gelesen (Drehung/Dot-Product); Attention ist die Verteilung, die über diesen Koordinaten navigiert.</strong> In der Visualisierung unten: Token-Reihe mit PE-Dials (B, Fingerprint/Uhrzeiger) + Attention-„Augen“ (A, Bögen + Softmax-Verteilung), umschaltbar zwischen reinem Positionsterm (B), reinem Inhaltestermer (A) und dem <strong>fusionierten</strong> Score (A+B).</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — Karte (PE) &amp; Augen (Attention)</h2>
+    <p class="note">Oben: eine Reihe von <strong>Tokens</strong> (inline, keine Daten von außen). Unter jedem Token sein <strong>Positional-Embedding (B)</strong> als rotierender Mehrfrequenz-Dial — der schnelle Zeiger (hohe Frequenz) unterscheidet nahe Positionen, der langsame (tiefe Frequenz) ferne; die <em>Kombination</em> der Zeiger ist pro Position eindeutig (Uhrzeiger-Idiome, Basis-10000-Leiter, hier für Übersicht auf Basis&nbsp;4 komprimiert). Wähle eine Query-Position (Chip klicken oder Dropdown). Der <strong>Head-Modus (A)</strong> steuert den Score: <em>Position</em> = Distanz-Abklingung (rein B, aus der Relativgeometrie), <em>Inhalt</em> = Match auf identische Tokens (rein A), <em>Fusion</em> = beides. Die Bögen über den Chips sind die Attention-„Augen“; die Balken unten die Softmax-Verteilung (Causal-Mask: nur j ≤ i; graue Balken = maskiert).</p>
+
+    <div class="viz-box">
+      <canvas id="viz"></canvas>
+      <div class="hud">
+        <span class="lbl">Head-Modus (A):</span>
+        <button data-mode="pos">Position</button>
+        <button data-mode="content">Inhalt</button>
+        <button data-mode="fuse" class="active">Fusion</button>
+        <span class="lbl">Query:</span>
+        <select id="qs"></select>
+        <button id="play">▶ Play</button>
+        <button id="theme">◐ Theme</button>
+      </div>
+      <div class="ro" id="ro"></div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../intuition_idee.html">intuition_idee.html</a>
+        <div class="d">„Attention Heads als Augen — Interaktive Visualisierung“: eine interaktive Attention-Matrix (Zeilen&nbsp;= Query, Spalten&nbsp;= Key) mit 8 unterschiedlichen „Augen“ (Heads) — vorheriges Token, Satzanfang, Selbstbezug, Wortlängen-Match, Wiederholungs-Detektor, Weit-Zurück-Blick, Vokal-Ähnlichkeit, Token-2-zurück — inkl. Causal-Mask, Softmax pro Zeile und Output-Vektoren pro Token (aggregierter, kausal beschränkter Kontext).</div>
+      </div>
+      <div>
+        <a href="../posembed3.html">posembed3.html</a>
+        <div class="d">„Positional Encoding — Wave Collapse“: 5 Frequenz-Dimensionen als rotierende Kreise (geometrische Basis-10000-Leiter); jede Quelle sendet cosinus-förmige Wellen, die mit Distanz abklingen; konstruktive Überlagerung = heller Fleck = eindeutiger Positions-Fingerprint („Wave Collapse“), analog zum Dot-Product, das relative Distanz codiert.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var TOKENS=["the","cat","sat","on","the","mat","and","cat","the","slept"];
+  var N=TOKENS.length;
+  var FREQS=[1.0,0.25,0.0625];
+  var SANS='ui-sans-serif,system-ui,"Segoe UI",sans-serif';
+  var cv=document.getElementById('viz'), ctx=cv.getContext('2d');
+  var W=0,H=0;
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var theme=null;
+  var queryIdx=N-1;
+  var headMode='fuse';
+  var playing=false, lastT=0;
+  var chipRects=[];
+
+  function isDark(){ return document.documentElement.classList.contains('dark'); }
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){var x=cs.getPropertyValue(n).trim();return x||fb;}
+    return {
+      canvas:v('--canvas','#05070E'), ink:v('--ink','#EAF0FF'), dim:v('--dim','#5C6781'),
+      line:v('--line','#1c2740'), acc:v('--acc','#60a5fa'), acc2:v('--acc2','#f472b6'),
+      chipbg:v('--chipbg','#0e1626'), chipfg:v('--chipfg','#EAF0FF'), chipborder:v('--chipborder','#2b3a4f'),
+      ring:v('--ring','#2b3a4f'), fhigh:v('--fhigh','#60a5fa'), fmid:v('--fmid','#34d399'), flo:v('--flo','#f472b6'),
+      arcpos:v('--arcpos','#60a5fa'), arccontent:v('--arccontent','#f472b6'), arcfuse:v('--arcfuse','#34d399'),
+      grid:v('--grid','#1c2740'), code:v('--code','#0f1626')
+    };
+  }
+  function hexToRgba(hex,a){
+    hex=hex.replace('#','');
+    if(hex.length===3) hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    var r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function rr(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+  function computeAttn(i){
+    var raws=[], j, dist, raw;
+    for(j=0;j<=i;j++){
+      dist=i-j;
+      if(headMode==='pos') raw=Math.exp(-0.5*dist);
+      else if(headMode==='content') raw=(TOKENS[i]===TOKENS[j])?1:0.05;
+      else raw=0.6*Math.exp(-0.5*dist)+0.8*((TOKENS[i]===TOKENS[j])?1:0);
+      raws.push(raw);
+    }
+    var m=-Infinity; for(j=0;j<raws.length;j++) if(raws[j]>m)m=raws[j];
+    var ex=[], s=0;
+    for(j=0;j<raws.length;j++){ ex.push(Math.exp(raws[j]-m)); s+=ex[j]; }
+    var full=new Array(N).fill(0);
+    for(j=0;j<raws.length;j++) full[j]=ex[j]/s;
+    return full;
+  }
+  function drawDial(cx,cy,r,pos,th,hi){
+    var t,a,len,px,py,i;
+    ctx.strokeStyle=th.ring; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,6.283); ctx.stroke();
+    for(t=0;t<12;t++){
+      a=t/12*6.283;
+      ctx.strokeStyle=th.dim; ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(cx+Math.cos(a)*r, cy-Math.sin(a)*r);
+      ctx.lineTo(cx+Math.cos(a)*(r-3), cy-Math.sin(a)*(r-3));
+      ctx.stroke();
+    }
+    var cols=[th.fhigh,th.fmid,th.flo];
+    var lens=[r*0.95,r*0.68,r*0.44];
+    var wids=[2.6,2,1.5];
+    for(i=0;i<3;i++){
+      a=pos*FREQS[i]; len=lens[i];
+      px=cx+Math.cos(a)*len; py=cy-Math.sin(a)*len;
+      ctx.strokeStyle=cols[i]; ctx.lineWidth=wids[i]; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+      ctx.fillStyle=cols[i]; ctx.beginPath(); ctx.arc(px,py,2.4,0,6.283); ctx.fill();
+    }
+    ctx.fillStyle=hi?th.acc:th.ring;
+    ctx.beginPath(); ctx.arc(cx,cy,3,0,6.283); ctx.fill();
+  }
+  function updateReadout(probs){
+    var q=TOKENS[queryIdx], parts=[], j;
+    for(j=queryIdx;j>=0;j--){ if(probs[j]>0.03) parts.push('„'+TOKENS[j]+'“ (Pos '+j+'): '+(probs[j]*100).toFixed(0)+'%'); }
+    var mn = headMode==='pos' ? 'Position (B)' : (headMode==='content' ? 'Inhalt (A)' : 'Fusion (A+B)');
+    document.getElementById('ro').innerHTML =
+      'Query <b>„'+q+'“</b> (Pos '+queryIdx+') · Modus <b>'+mn+'</b> → ' +
+      (parts.length ? parts.join(' &nbsp;·&nbsp; ') : 'nur Selbstbezug');
+  }
+  function draw(){
+    ctx.fillStyle=theme.canvas; ctx.fillRect(0,0,W,H);
+    var padL=30, padR=30;
+    var gap=(W-padL-padR)/N;
+    var xs=[], i;
+    for(i=0;i<N;i++) xs.push(padL+gap*(i+0.5));
+    var chipTop=52, chipH=32;
+    var dialCy=168;
+    var dialR=Math.max(11,Math.min(26,gap*0.42));
+    var barTop=300, barBottom=468;
+    var probs=computeAttn(queryIdx);
+    var cArc = headMode==='pos'?theme.arcpos : (headMode==='content'?theme.arccontent:theme.arcfuse);
+    chipRects.length=0;
+
+    var j,p,xq,xk,cy;
+    for(j=0;j<=queryIdx;j++){
+      if(j===queryIdx) continue;
+      p=probs[j]; if(p<0.02) continue;
+      xq=xs[queryIdx]; xk=xs[j];
+      cy=14+Math.min(58,(queryIdx-j)*7);
+      ctx.strokeStyle=hexToRgba(cArc,0.25+0.62*p);
+      ctx.lineWidth=1+6*p;
+      ctx.beginPath(); ctx.moveTo(xq,chipTop); ctx.quadraticCurveTo((xq+xk)/2,cy,xk,chipTop); ctx.stroke();
+    }
+
+    var w,x,isQ;
+    for(i=0;i<N;i++){
+      w=Math.min(gap*0.88,76); x=xs[i]-w/2;
+      isQ=(i===queryIdx);
+      ctx.fillStyle=theme.chipbg; rr(x,chipTop,w,chipH,8); ctx.fill();
+      ctx.strokeStyle=isQ?theme.acc:theme.chipborder; ctx.lineWidth=isQ?3:1.4;
+      rr(x,chipTop,w,chipH,8); ctx.stroke();
+      ctx.fillStyle=isQ?theme.chipfg:theme.dim;
+      ctx.font=(isQ?'600 14px ':'500 13px ')+SANS;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(TOKENS[i], xs[i], chipTop+chipH/2);
+      ctx.fillStyle=theme.dim; ctx.font='10px '+SANS; ctx.textBaseline='alphabetic';
+      ctx.fillText('pos '+i, xs[i], chipTop+chipH+13);
+      chipRects.push({i:i,x:x,y:chipTop-6,w:w,h:chipH+22});
+    }
+
+    for(i=0;i<N;i++) drawDial(xs[i],dialCy,dialR,i,theme,(i===queryIdx));
+    ctx.fillStyle=theme.dim; ctx.font='11px '+SANS; ctx.textAlign='center';
+    ctx.fillText('Positional Encoding (B) — mehrfrequenter Fingerprint („Uhrzeiger“)', W/2, dialCy+dialR+24);
+
+    ctx.textAlign='left'; ctx.fillStyle=theme.dim; ctx.font='11px '+SANS;
+    ctx.fillText('Attention-Verteilung (Softmax, Causal) über die Keys', padL, barTop-8);
+    var bw,bx,h,by,masked;
+    for(j=0;j<N;j++){
+      p=probs[j];
+      bw=Math.min(gap*0.5,30); bx=xs[j]-bw/2;
+      h=p*(barBottom-barTop-14); by=barBottom-h;
+      masked=(j>queryIdx);
+      ctx.fillStyle=masked?hexToRgba(theme.grid,0.6):hexToRgba(cArc,0.32+0.6*p);
+      rr(bx,by,bw,Math.max(h,masked?0:2),3); ctx.fill();
+      if(!masked && p>0.02){
+        ctx.fillStyle=theme.dim; ctx.font='9px '+SANS; ctx.textAlign='center';
+        ctx.fillText((p*100).toFixed(0)+'%', xs[j], by-3); ctx.textAlign='left';
+      }
+    }
+    ctx.strokeStyle=theme.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,barBottom); ctx.lineTo(W-padR,barBottom); ctx.stroke();
+    ctx.fillStyle=theme.dim; ctx.font='10px '+SANS;
+    ctx.fillText('graue Balken = maskiert (j > i)', padL, barBottom+16);
+
+    updateReadout(probs);
+  }
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    W=r.width; H=r.height;
+    if(W<50) W=780; if(H<100) H=520;
+    cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function loop(ts){
+    if(playing){
+      if(!lastT) lastT=ts;
+      if(ts-lastT>450){ lastT=ts; queryIdx=(queryIdx+1)%N; qs.value=String(queryIdx); }
+    } else lastT=0;
+    draw();
+    requestAnimationFrame(loop);
+  }
+  function setPlayLabel(){ document.getElementById('play').textContent=playing?'⏸ Pause':'▶ Play'; }
+  function renderMath(){
+    var els=document.querySelectorAll('.math, .math-block');
+    for(var i=0;i<els.length;i++){
+      var el=els[i];
+      var tex=el.getAttribute('data-tex');
+      if(!tex) continue;
+      var block=el.classList.contains('math-block');
+      if(typeof window.katex!=='undefined'){
+        try{ window.katex.render(tex, el, {throwOnError:false, displayMode:block}); }
+        catch(err){ el.textContent=tex; el.classList.add('math-fallback'); }
+      } else { el.textContent=tex; el.classList.add('math-fallback'); }
+    }
+  }
+
+  var qs=document.getElementById('qs'), i, o;
+  for(i=0;i<N;i++){ o=document.createElement('option'); o.value=String(i); o.textContent='Pos '+i+' — „'+TOKENS[i]+'“'; qs.appendChild(o); }
+  qs.value=String(queryIdx);
+  qs.onchange=function(){ queryIdx=+qs.value; playing=false; setPlayLabel(); };
+
+  var modeBtns=document.querySelectorAll('[data-mode]');
+  for(i=0;i<modeBtns.length;i++){
+    (function(b){
+      b.onclick=function(){
+        headMode=b.getAttribute('data-mode');
+        for(var k=0;k<modeBtns.length;k++) modeBtns[k].classList.remove('active');
+        b.classList.add('active');
+      };
+    })(modeBtns[i]);
+  }
+  document.getElementById('play').onclick=function(){ playing=!playing; setPlayLabel(); };
+  document.getElementById('theme').onclick=function(){ document.documentElement.classList.toggle('dark'); theme=readTheme(); };
+  cv.addEventListener('click',function(e){
+    var r=cv.getBoundingClientRect();
+    var mx=e.clientX-r.left, my=e.clientY-r.top;
+    for(var k=0;k<chipRects.length;k++){
+      var c=chipRects[k];
+      if(mx>=c.x && mx<=c.x+c.w && my>=c.y && my<=c.y+c.h){
+        queryIdx=c.i; qs.value=String(c.i); playing=false; setPlayLabel(); return;
+      }
+    }
+  });
+  window.addEventListener('resize',resize);
+  window.addEventListener('load',renderMath);
+  new MutationObserver(function(){ theme=readTheme(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  theme=readTheme(); resize(); setPlayLabel(); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lernen ist Verklebung — Fusion kohaerente_modelle ✕ nlab_nn2</title>
+<style>
+  :root{
+    --bg:#f6f5f0; --bg2:#ffffff; --plot-bg:#fbfaf5;
+    --ink:#1c1a2e; --muted:#6b6585;
+    --accent:#c026a3; --accent2:#0e7490; --accent3:#b45309;
+    --good:#15803d; --bad:#be123c; --warn:#b45309;
+    --card:#ffffff; --border:#e4e0d4;
+    --grad-a:#c026a3; --grad-b:#0e7490; --grad-c:#b45309;
+  }
+  html.dark{
+    --bg:#0a0612; --bg2:#150a24; --plot-bg:#0d0718;
+    --ink:#f4ecff; --muted:#a99cc9;
+    --accent:#ff6ec7; --accent2:#6ee7ff; --accent3:#ffd166;
+    --good:#7cffb2; --bad:#ff6b8a; --warn:#ffd166;
+    --card:rgba(255,255,255,0.04); --border:rgba(255,255,255,0.10);
+    --grad-a:#ff6ec7; --grad-b:#6ee7ff; --grad-c:#ffd166;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:
+    radial-gradient(1100px 700px at 12% -10%, color-mix(in srgb, var(--accent) 14%, transparent) 0%, transparent 58%),
+    radial-gradient(900px 700px at 108% 8%, color-mix(in srgb, var(--accent2) 14%, transparent) 0%, transparent 55%),
+    var(--bg);
+    color:var(--ink);
+    font-family:"Inter","Helvetica Neue",system-ui,sans-serif;line-height:1.6;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:0 18px}
+  header{padding:52px 18px 26px;text-align:center;max-width:860px;margin:0 auto}
+  header h1{
+    font-size:clamp(28px,4.6vw,50px);margin:0 0 10px;letter-spacing:-0.02em;font-weight:800;
+    background:linear-gradient(90deg,var(--grad-a),var(--grad-b) 60%,var(--grad-c));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  header .sub{color:var(--muted);font-size:15px;max-width:720px;margin:6px auto 0}
+  header .tagline{color:var(--ink);max-width:720px;margin:14px auto 0;font-size:16px}
+  .themebtn{position:fixed;top:14px;right:14px;z-index:50;cursor:pointer;
+    background:var(--card);color:var(--ink);border:1px solid var(--border);
+    padding:7px 13px;border-radius:999px;font:inherit;font-size:13px}
+  section{
+    background:var(--card);border:1px solid var(--border);border-radius:18px;
+    padding:26px;margin:20px auto;max-width:820px;box-shadow:0 8px 34px rgba(0,0,0,0.18);
+  }
+  section h2{margin:0 0 14px;font-size:24px;letter-spacing:-0.01em}
+  section h3{color:var(--accent3);margin:22px 0 8px;font-size:17px}
+  p{margin:10px 0}
+  .lead{color:var(--ink);font-size:16px}
+  .muted{color:var(--muted);font-size:14px}
+  code,.mono{font-family:"JetBrains Mono","Fira Code",ui-monospace,monospace;
+    background:color-mix(in srgb, var(--ink) 8%, transparent);padding:1px 6px;border-radius:6px;font-size:0.9em}
+  .formula{display:block;text-align:center;
+    background:color-mix(in srgb, var(--accent) 7%, var(--plot-bg));
+    border:1px solid var(--border);padding:13px 16px;border-radius:12px;margin:14px 0;
+    font-family:"JetBrains Mono",monospace;font-size:15px;overflow-x:auto}
+  .pill{display:inline-block;padding:1px 9px;border-radius:999px;font-size:12px;
+    background:color-mix(in srgb, var(--ink) 10%, transparent);color:var(--muted);margin-right:5px}
+  .pill.a{color:var(--accent);background:color-mix(in srgb, var(--accent) 14%, transparent)}
+  .pill.b{color:var(--accent2);background:color-mix(in srgb, var(--accent2) 16%, transparent)}
+  .callout{border-left:3px solid var(--accent2);padding:12px 16px;
+    background:color-mix(in srgb, var(--accent2) 8%, transparent);
+    border-radius:8px;margin:14px 0;font-size:15px}
+  .callout.warn{border-color:var(--warn);background:color-mix(in srgb, var(--warn) 9%, transparent)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:680px){.grid2{grid-template-columns:1fr}}
+  .cardlet{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--bg2)}
+  .cardlet h4{margin:0 0 6px;font-size:14px}
+  .cardlet.a h4{color:var(--accent)}
+  .cardlet.b h4{color:var(--accent2)}
+  canvas{display:block;width:100%;height:440px;border-radius:14px;border:1px solid var(--border);
+    background:var(--plot-bg);margin-top:6px}
+  .controls{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;
+    margin-top:14px;padding:14px;background:color-mix(in srgb, var(--bg2) 70%, transparent);
+    border:1px solid var(--border);border-radius:12px}
+  .controls label{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:5px;min-width:120px}
+  input[type=range]{accent-color:var(--accent)}
+  button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);
+    border:0;padding:9px 15px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer;font-size:13.5px;
+    transition:transform .12s ease}
+  button:hover{transform:translateY(-1px)}
+  .statusbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .status{padding:8px 13px;border-radius:9px;font-size:13px;font-family:"JetBrains Mono",monospace;border:1px solid var(--border)}
+  .status.good{color:var(--good);border-color:color-mix(in srgb, var(--good) 45%, transparent);background:color-mix(in srgb, var(--good) 10%, transparent)}
+  .status.bad{color:var(--bad);border-color:color-mix(in srgb, var(--bad) 45%, transparent);background:color-mix(in srgb, var(--bad) 10%, transparent)}
+  .status.warn{color:var(--warn);border-color:color-mix(in srgb, var(--warn) 45%, transparent);background:color-mix(in srgb, var(--warn) 10%, transparent)}
+  .status.read{color:var(--muted)}
+  .prov{display:flex;flex-direction:column;gap:8px;margin:6px 0 0;padding:0;list-style:none}
+  .prov a{color:var(--accent2);text-decoration:none;font-family:"JetBrains Mono",monospace;font-size:13.5px}
+  .prov a:hover{text-decoration:underline}
+  .prov span{color:var(--muted);font-size:14px}
+  footer{text-align:center;color:var(--muted);padding:26px;font-size:13px}
+</style>
+</head>
+<body>
+<button id="theme" class="themebtn">☀️ / 🌙</button>
+
+<header>
+  <h1>Lernen ist Verklebung</h1>
+  <p class="sub">Fusion aus: kohaerente_modelle.html ✕ nlab_nn2.html</p>
+  <p class="tagline">Ein trainiertes neuronales Netz ist der <em>globale Schnitt</em> einer Garbe über den
+  lokalen Trainings-Spuren. Gradientenabstieg findet das Tal, in dem alle lokalen Schnitte
+  am kohärentesten verkleben — und die Stelle, an der die Daten-Überdeckung eine Lücke hat,
+  ist die Stelle, an der das Netz halluziniert.</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ 1. THESE ============ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Die beiden Papiere beschreiben dasselbe Objekt aus zwei komplementären Richtungen,
+  die man zu einer einzigen Aussage zusammenlegen kann.
+  <span class="pill b">B · nlab_nn2</span> sagt: ein neuronales Netz ist eine <em>Funktion</em>
+  $f:\mathbb{R}^d\to\mathbb{R}^m$, die man nicht hinschreibt, sondern aus Beispielen <em>lernt</em> —
+  und das Lernen ist <strong>Gradientenabstieg</strong> auf einer Verlustlandschaft
+  <code>θ'(t) = −∇_θ Φ</code>; in der Grenze unendlicher Breite wird das Netz ein Gaußprozess (NNGP)
+  mit einer ±2σ-Uncertainty.</p>
+  <p class="lead"><span class="pill a">A · kohaerente_modelle</span> sagt, was all das <em>bedeutet</em>:
+  ein Weltmodell ist dann „richtig“, wenn die lokalen Beobachtungen / Spuren (die <em>Schnitte</em>
+  einer Garbe) auf ihren Überlappungen kohärent <strong>verkleben</strong> — streng, oder (das
+  eigentlich Interessante) nur <em>bis auf Homotopie</em> (∞-Garbe). Eine Halluzination ist
+  eine <em>Verklebung, wo keine sein sollte</em>.</p>
+  <div class="callout">
+    <strong>Fusionierte Position.</strong> Ein trainiertes Netz ist ein Kandidat für den
+    <em>globalen Schnitt</em> einer Garbe über der Überdeckung <code>{Uᵢ}</code> der Trainings-Spuren.
+    Gradientenabstieg ist der Prozess, diesen Schnitt zu <em>konstruieren</em>, und das Tal der
+    Verlustlandschaft ist genau die Stelle, an der alle lokalen Schnitte am kohärentesten
+    (bis auf Homotopie) verkleben. Die NNGP-±2σ-Uncertainty <em>misst</em> diese Verklebbarkeit;
+    und an der Lücke der Daten-Überdeckung <em>bricht</em> die Verklebung — das ist die Halluzination.
+  </div>
+  <p class="muted">Kurz: B liefert den <em>Mechanismus</em> (Wie rollt der Ball ins Tal, und was passiert
+  an der Grenze der Breite?), A liefert die <em>Lesart</em> (Was <em>ist</em> das Tal — und wo
+  wird das Netz trotz „Tals“ falsch?).</p>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden verfehlen sich an zwei konkreten Punkten. (Eine dritte, weichere Spannung —
+  „Ding an sich“ vs. reine Funktionsapproximierung — wird in der Auflösung mitbedacht.)</p>
+
+  <h3>(1) Ein Punkt vs. eine Kohärenz-Struktur (Homotopie)</h3>
+  <div class="grid2">
+    <div class="cardlet b"><h4>B sagt</h4>
+      <p>Das trainierte Netz ist <em>ein</em> Punkt <code>θ*</code> in einem Tal: „Ein Netz zu trainieren =
+      einen Ball einen Berg herunterrollen lassen“ (Aha #7). Und im NTK-Grenzfall „wird diese Landschaft
+      so glatt …, dass fast überall ein Talweg ist. … Lernen wird formal ähnlich zur Bewegung eines
+      <strong>Teilchens</strong>“ (Aha #8). B reduziert das Modell auf eine <em>eindeutige Trajektorie zu
+      einem (fast) eindeutigen Minimum</em>.</p>
+    </div>
+    <div class="cardlet a"><h4>A sagt</h4>
+      <p>Strenge Verklebung / Gleichheit ist zu grob. Das mathematisch <em>richte</em> Objekt ist kein
+      einzelner globaler Wert, sondern eine <em>Kohärenz-Struktur höherer Stufe</em>: Isomorphismen
+      <code>α_ij : sᵢ|₍ᵢⱼ₎ ≅ sⱼ|₍ᵢⱼ₎</code>, die <em>selbst wieder</em> Kohärenz-Isomorphismen auf
+      Tripel-Überlappungen erfüllen „und so weiter, unendlich hoch“. „Gleichheit wird zu einer
+      <strong>Struktur</strong>, nicht zu einer bloßen Eigenschaft.“</p>
+    </div>
+  </div>
+  <div class="callout warn"><strong>Inkompatibel:</strong> B sagt „das beste Netz ist ein (fast) eindeutiges
+  Minimum, ein Punkt <code>θ*</code>“; A sagt „Wahrheit ist <em>kein Punkt</em>, sondern ein <em>Raum
+  kohärenter Verklebungen</em> mit Homotopie-Struktur — ‘am besten’ ist eine Kohärenz-Eigenschaft, kein
+  einziges <code>θ*</code>“. Das Konzept „bis auf Homotopie“ kommt in B gar nicht vor.</div>
+
+  <h3>(2) Kennt das Netz seine eigene Ungewissheit?</h3>
+  <div class="grid2">
+    <div class="cardlet b"><h4>B sagt</h4>
+      <p>In der Unendlich-Breite-Grenze ist ein (untrainiertes) Netz ein <strong>Gaußprozess</strong> mit
+      einem <em>prinzipiellem</em> ±2σ-Band; die Informationsgeometrie (Fisher-Metrik, KL,
+      <strong>Cramér-Rao</strong>) liefert eine <em>untere Schranke</em> für Schätzfehler. Aha #10:
+      „Deep Learning und ‘alte’ Statistik sind Verwandte — nur an der Grenze.“ Das Framework <em>weiß</em>,
+      wo die Daten dünn sind, und <em>kann</em> die Unsicherheit melden.</p>
+    </div>
+    <div class="cardlet a"><h4>A sagt</h4>
+      <p>Eine Halluzination entsteht genau dort, wo lokale Schnitte <em>nicht</em> sauber verkleben:
+      das Modell „interpoliert“ dann „<em>plausibel klingend, aber falsch</em>“ — und tut das
+      <em>ohne Warnung</em>. „Das ist eine Halluzination: eine Verklebung, wo keine sein sollte.“</p>
+    </div>
+  </div>
+  <div class="callout warn"><strong>Inkompatibel:</strong> B’s Rahmen (GP ±2σ, Cramér-Rao) sagt, das Modell
+  <em>hat</em> ein kalibriertes Unsicherheitsmaß und <em>kann</em> melden, wo es unsicher ist. A sagt, dasselbe
+  Mechanismus <em>halluziniert still</em> über Lücken — meldet den Kohärenzbruch <em>nicht</em>.
+  Kernfrage: <em>Merkt das Modell, wenn seine lokalen Spuren einander widersprechen?</em> B: ja. A: nein.</div>
+</section>
+
+<!-- ============ 3. AUFLÖSUNG ============ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>zu (1) — Punkt vs. Kohärenz-Struktur</h3>
+  <p>Das Tal <code>θ*</code> aus B ist <em>ein Repräsentant einer Homotopie-Klasse</em> kohärenter
+  Verklebungen aus A — nicht die Klasse selbst. Die θ-Trajektorie <code>θ_i → θ*</code> (B, Aha #7) ist
+  ein <em>Pfad</em> in genau diesem Raum (in HoTT-Sprache: Pfade <em>sind</em> Identitäten). Und der
+  NTK-Grenzfall, in dem die Landschaft „glatt“ wird (B, Aha #8), ist <em>nicht</em> ein Zufall, sondern
+  die Aussage, dass wir in einem <em>Raum kohärenter Konfigurationen</em> bewegt — die Glätte kommt von der
+  Kohärenzstruktur, nicht aus dem Nichts. „Bestes Fit“ (B) heißt dann: „die lokalen Spuren verkleben
+  <em>bis auf Homotopie</em> am kohärentesten“ (A). Die lokalen Minima, die beide nennen, sind exakt A’s
+  „konsistente, aber unvollständige Weltbilder“ — Schnitte, die <em>lokal</em> verkleben, aber sich nicht zu
+  einem <em>globalen</em> Schnitt fortsetzen lassen.</p>
+
+  <h3>zu (2) — Ungewissheit vs. stille Interpolation</h3>
+  <p>Das NNGP-±2σ-Band aus B <em>ist</em> die quantitative <em>Maßeinheit</em> der Homotopie-Toleranz α aus A:
+  die Bandbreite sagt, wie weit sich lokale Schnitte unterscheiden dürfen, bevor die Verklebung bricht.
+  Aha #12 (B): „Zwei Verteilungen sind ‘nah’, wenn man sie schlecht voneinander unterscheiden kann“ — das ist
+  A’s Verklebungsbedingung <code>sᵢ|₍ᵢⱼ₎ = sⱼ|₍ᵢⱼ₎</code> in statistischer Kleidung. Die
+  Cramér-Rao-Schranke (B) ist das <em>Erkennbarkeits-Limit</em> eines Kohärenzbruchs: <em>unterhalb</em> der
+  Schranke kann <em>kein</em> Modell melden, dass die lokalen Schnitte brüchig sind. Die A-Halluzination ist
+  dann der Fall, in dem das GP-Band die Schwelle α überschreitet <em>und</em> das Interface dieses Flag nicht
+  an die Ausgabe weiterleitet — der Spalt zwischen „die Mathematik <em>hat</em> ein Unsicherheitsmaß“ und
+  „die Ausgabe <em>zeigt</em> es“. → <strong>Fusioniertes Urteil:</strong> eine Halluzination ist eine Region,
+  in der das Homotopie-/GP-Band α überschreitet und das Netz den Bruch nicht an die Oberfläche propft.</p>
+  <div class="callout">Dritte, weiche Spannung: A positiert ein inaccessibles Ding-an-sich <code>w</code>, auf das
+  wir nur über Spuren <code>eᵢ = fᵢ(w)</code> zugreifen, und bewertet Modelle an der <em>inneren Kohärenz</em> der
+  Spuren; B kennt keine solche Ebene — dort ist das Netz eine reine Funktion, bewertet durch den Loss auf Daten.
+  Auflösung: „Richtigkeit“ des Netzes <em>ist</em> die innere Kohärenz der Spurfamilie (A), und der B-Loss auf den
+  Daten ist das <em>beobachtbare Proxy</em> dafür. Man misst nie <code>w</code>; man misst, ob die Spuren verkleben.</div>
+</section>
+
+<!-- ============ 4. INHALT ============ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>1 · Das Netz als Funktion — und als Schnitt</h3>
+  <div class="formula">f(x) = (T_L ∘ g ∘ T_{L-1} ∘ g ∘ … ∘ T_1)(x), &nbsp; T(x) = ⟨W, x⟩ + b</div>
+  <p>B’s „Sandwich“ — linear → biegen → linear → biegen — wird neu gelesen: <code>f</code> ist ein
+  <em>Kandidat für den globalen Schnitt</em> einer Garbe <code>F</code> über der Überdeckung
+  <code>{Uᵢ}</code> der Trainings-Spuren; <code>Tᵢ</code> = Einschränkung des Schnitts auf <code>Uᵢ</code>.
+  Die Nichtlinearität <code>g</code> (B’s Aha #1: „Ohne das ‘biegen’ … immer noch nur eine Gerade“) ist
+  genau das, was überhaupt erlaubt, dass lokale Stücke <em>neu interpretiert</em> und so verklebt werden —
+  das ist A’s Isomorphismus <code>α</code> (eine „Übersetzungsfunktion“ zwischen zwei Deutungen, z. B.
+  Ballon ↔ UFO). Ohne <code>g</code> verkleben nur lineare Fragmente; mit <code>g</code> kann eine Spirale
+  entwirrt werden, weil die Deutung an jeder Stelle frei gewachsen wird.</p>
+
+  <h3>2 · Verklebungsbedingung = Verlust</h3>
+  <div class="formula">sᵢ|₍Uᵢ∩Uⱼ₎ = sⱼ|₍Uᵢ∩Uⱼ₎ &nbsp;∀ i, j &nbsp;⟹&nbsp; ∃! s ∈ F(U) mit s|₍Uᵢ₎ = sᵢ</div>
+  <p>A’s Herzstück. Neu gelesen: Das trainierte Netz erfüllt dies nur <em>approximativ</em>, und B’s Verlust
+  <code>Φ = Σ_z C(f_θ(z), y_z)</code> ist ein Maß für den <em>Verklebungs-Fehler</em> der lokalen Schnitte.
+  <code>θ'(t) = −∇_θ Φ</code> (B) ist der Prozess, diesen Fehler zu minimieren — also den globalen Schnitt
+  zu <em>konstruieren</em>. „Verkleben“ ist keine Metapher; es ist das, was der Gradient absteigt.</p>
+
+  <h3>3 · ∞-Verklebung = Toleranzband</h3>
+  <div class="formula">∃ α_ij : sᵢ|₍ᵢⱼ₎ ≅ sⱼ|₍ᵢⱼ₎ &nbsp;(und α_ij selbst ≅ … auf Tripeln, …)</div>
+  <p>Strenge Gleichheit ist zu streng — und das ist kein Mangel, sondern die Pointe: Training erreicht nie
+  exakt Null-Fehler (Rauschen in den Spuren), also ist das Netz <em>bis auf Homotopie</em> konsistent.
+  A’s <code>α</code>-Amplitude (Kap. 4) wird zur <em>Toleranz</em>, und B’s NNGP-±2σ-Band (Kap. 8) ist die
+  <em>Messung</em> dieser Toleranz: wie weit dürfen sich lokale Schnitte unterscheiden.
+  <code>Δ &lt; α</code> → „verklebt (∞)“; <code>Δ ≥ α</code> → Bruch.</p>
+
+  <h3>4 · Lernen = Ball im Tal = Schnitt finden</h3>
+  <div class="formula">θ* = argmin_θ &nbsp;Φ(θ) &nbsp;·&nbsp; Tal = bester globaler Schnitt</div>
+  <p>A (Kap. 7): „der Loss ist eine Energielandschaft, das Modell landet in einem Tal … Tiefstes Tal = beste
+  Verklebung aller Trainingsspuren. Lokale Minima = konsistente, aber unvollständige Weltbilder.“ B (Kap. 5/6):
+  „Ein Netz zu trainieren = einen Ball einen Berg herunterrollen lassen“ (Aha #7), NTK-Glättung (Aha #8).
+  Dieselbe Bildsprache, zwei Lesarten: die <em>Ball-Position</em> ist der aktuelle Modellzustand; das <em>Tal</em>
+  ist der kohärenteste globaler Schnitt; das <em>Hängenbleiben in einer Mulde</em> ist ein Weltbild, das
+  lokal verklebt, aber nicht global fortsetzbar ist.</p>
+
+  <h3>5 · Uncertainty &amp; Halluzination als Bruch</h3>
+  <div class="formula">Cramér-Rao: &nbsp;Var(θ̂) ≥ 1 / I(θ) &nbsp;&nbsp;(I = Fisher-Information)</div>
+  <p>B (Kap. 9): die Fisher-Metrik ersetzt „Krümmung“, KL ersetzt „Abstand“, Cramér-Rao ist die untere
+  Schranke jeder Schätzung. A (Kap. 7): die Halluzination ist Interpolation über eine <em>Lücke der
+  Überdeckung</em>. Fusion: Die GP-Uncertainty markiert die Lücken der Daten-Überdeckung; dort, wo das Band
+  die Schwelle α überschreitet, <em>müsste</em> das Netz „ich weiß es nicht“ sagen. Die Halluzination ist der
+  Fall, in dem es <em>nicht</em> sagt. Cramér-Rao ist das Fundament, <em>unterhalb</em> dessen kein
+  Kohärenzbruch erkennbar ist — also die fundamentale Grenze, bis zu der ein Modell seine eigene
+  Inkoherenz anzeigen <em>kann</em>.</p>
+
+  <h3>6 · Epistemische Einbettung</h3>
+  <div class="formula">w (Ding an sich, inaccessibel) &nbsp;·&nbsp; eᵢ = fᵢ(w) &nbsp;·&nbsp; „richtig“ ⟺ {eᵢ} verklebt</div>
+  <p>A (Kap. 6): Wir haben nie direkten Zugriff auf <code>w</code>, nur auf Spuren; ein Weltmodell ist „richtig“,
+  wenn die Spuren verkleben. B kennt diese Ebene nicht. Fused: „Richtigkeit“ = <em>innere Kohärenz der
+  Spurfamilie</em>, und der B-Loss ist das <em>beobachtbare Proxy</em> dafür. „Wissenschaft“ (A, Kap. 6) ist
+  dann die Kunst, Kontaktpunkte <em>in der Überdeckung</em> zu isolieren — Experimente, an denen sich zeigt,
+  ob die Verklebung hält; die „große Breite“ (B) ist der Grenzfall, in dem die Überdeckung so dicht wird,
+  dass die Kohärenz <em>berechenbar</em> wird (Gaußprozess).</p>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2>Interaktiv: Der verklebte Gradient</h2>
+  <p class="muted">Links: die 2D-Verlustlandschaft <code>L(θ)</code> mit dem Ball, der per Gradientenabstieg
+  in das Tal rollt (B). Die gestrichelte Linie ist der Rand des <em>Daten-Supports</em> — außerhalb wächst das
+  GP-±2σ-Band (B/NNGP). Rechts: N lokale Beobachter lesen das Ding-an-sich <code>w</code>; ihre
+  Überlappungs-Kohärenz <code>Δ</code> wird live gemessen. Der Slider α (Homotopie-Toleranz, A) legt fest,
+  ob das Modell „strikte“, „∞-konsistent“ verklebt — oder ob es über eine Lücke der Überdeckung
+  <strong>halluziniert</strong> (A).</p>
+
+  <canvas id="viz"></canvas>
+
+  <div class="controls">
+    <label>Lernrate η
+      <input id="lr" type="range" min="0.01" max="0.20" step="0.005" value="0.05">
+      <span class="mono" id="lrV">0.05</span>
+    </label>
+    <label>Homotopie-Toleranz α
+      <input id="alpha" type="range" min="0.10" max="1.00" step="0.05" value="0.45">
+      <span class="mono" id="alphaV">0.45</span>
+    </label>
+    <label>Beobachter N
+      <input id="nobs" type="range" min="2" max="8" step="1" value="5">
+      <span class="mono" id="nobsV">5</span>
+    </label>
+    <button id="step">Trainingsschritt</button>
+    <button id="run">▶ Auto-Trainieren</button>
+    <button id="reset">↺ Reset</button>
+  </div>
+  <div class="statusbar">
+    <span id="vstatus" class="status read">…</span>
+    <span id="vread" class="status read">…</span>
+  </div>
+  <p class="muted">Fahre den Ball (Auto-Trainieren) ins Tal: Δ sinkt → „strikte“ → „∞-konsistent“. Ziehe den Ball
+  (Reset + Schritt) in eine Lücke außerhalb des Supports → GP-Band wächst → „Halluzination“. Erhöhe α, um zu
+  sehen, wie die ∞-Toleranz mehr Bruch erlaubt.</p>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul class="prov">
+    <li>
+      <a href="../kohaerente_modelle.html">kohaerente_modelle.html</a>
+      <span>— „Garben, ∞-Garben &amp; die Welt als lokales Datum“: die Welt als Garbe lokaler Spuren;
+      Verklebung, Kohärenz bis auf Homotopie (∞-Garbe / HoTT), KI &amp; Halluzinationen als vergebliche Verklebung.</span>
+    </li>
+    <li>
+      <a href="../nlab_nn2.html">nlab_nn2.html</a>
+      <span>— „Neuronale Netze zum Anfassen“ (nach nLab): Netz als gelernte Funktion, Gradientenabstieg,
+      3D-Verlustlandschaft, NNGP/Gaußprozess in der Unendlich-Breite-Grenze, Neural Network Field Theory,
+      Informationsgeometrie (Fisher, KL, Cramér-Rao).</span>
+    </li>
+  </ul>
+</section>
+
+</div>
+
+<footer>
+  Fusion · Runde 1 · Paar 032 · Garben-Kohärenz (A) ⨯ neuronales Lernen (B) · self-contained, inline-only, theme-aware.
+</footer>
+
+<script>
+(function(){
+  const canvas = document.getElementById('viz');
+  const stepB = document.getElementById('step');
+  const runB  = document.getElementById('run');
+  const resetB= document.getElementById('reset');
+  const lr    = document.getElementById('lr');
+  const alpha = document.getElementById('alpha');
+  const nobs  = document.getElementById('nobs');
+  const lrV   = document.getElementById('lrV');
+  const alphaV= document.getElementById('alphaV');
+  const nobsV = document.getElementById('nobsV');
+  const vstatus = document.getElementById('vstatus');
+  const vread   = document.getElementById('vread');
+  const themeB = document.getElementById('theme');
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function hexToRgb(h){ h=h.replace('#',''); if(h.length===3) h=h.split('').map(c=>c+c).join('');
+    const n=parseInt(h,16); return {r:(n>>16)&255,g:(n>>8)&255,b:n&255}; }
+  function mix(a,b,t){ t=Math.max(0,Math.min(1,t));
+    return {r:a.r+(b.r-a.r)*t,g:a.g+(b.g-a.g)*t,b:a.b+(b.b-a.b)*t}; }
+  function rgbStr(c){ return 'rgb('+(c.r|0)+','+(c.g|0)+','+(c.b|0)+')'; }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+  const XMIN=-3, XMAX=3, YMIN=-3, YMAX=3;
+  const r_support=1.4, strictEps=0.08;
+  function lossFn(x,y){
+    return Math.sin(0.8*x)*Math.cos(0.8*y) + 0.045*(x*x+y*y)
+         - 1.5*Math.exp(-((x-1)*(x-1)+(y-1)*(y-1)));
+  }
+  function dL(x,y){ const h=0.01;
+    return {x:(lossFn(x+h,y)-lossFn(x-h,y))/(2*h), y:(lossFn(x,y+h)-lossFn(x,y-h))/(2*h)}; }
+
+  let Lmin=1e9, Lmax=-1e9, minx=1, miny=1;
+  (function(){ for(let i=0;i<=200;i++) for(let j=0;j<=200;j++){
+    const x=XMIN+(XMAX-XMIN)*i/200, y=YMIN+(YMAX-YMIN)*j/200, L=lossFn(x,y);
+    if(L<Lmin){Lmin=L;minx=x;miny=y;} if(L>Lmax)Lmax=L; }})();
+
+  let t=0, running=false, ball={x:-2.3,y:2.3};
+  function quality(p){ return clamp(1-(lossFn(p.x,p.y)-Lmin)/0.6,0,1); }
+  function gapOf(p){ return Math.hypot(p.x-minx,p.y-miny)-r_support; }
+
+  function hidpi(){ const r=window.devicePixelRatio||1; const rect=canvas.getBoundingClientRect();
+    canvas.width=rect.width*r; canvas.height=rect.height*r;
+    const ctx=canvas.getContext('2d'); ctx.setTransform(r,0,0,r,0,0);
+    return {ctx,w:rect.width,h:rect.height}; }
+
+  function gdStep(){ const lv=parseFloat(lr.value); const g=dL(ball.x,ball.y);
+    ball.x=clamp(ball.x-lv*g.x,XMIN,XMAX); ball.y=clamp(ball.y-lv*g.y,YMIN,YMAX); }
+
+  function theme(){ return {
+    plot:hexToRgb(cssVar('--plot-bg')), ink:cssVar('--ink'), muted:cssVar('--muted'),
+    accent:cssVar('--accent'), accent2:cssVar('--accent2'), accent3:cssVar('--accent3'),
+    good:cssVar('--good'), bad:cssVar('--bad'), warn:cssVar('--warn'), border:cssVar('--border')
+  }; }
+
+  function draw(){
+    if(running) gdStep();
+    const {ctx,w,h}=hidpi(); const T=theme();
+    ctx.clearRect(0,0,w,h);
+    const gapW=14; const lw=(w-gapW)/2;
+    const left={x:0,y:0,w:lw,h:h}, right={x:lw+gapW,y:0,w:w-lw-gapW,h:h};
+
+    const g=gapOf(ball); const isGap=g>0;
+    const sigma=0.05+0.35*Math.max(0,g);
+    const n=parseInt(nobs.value);
+    const q=quality(ball);
+    const base=Math.sin(t*0.5);
+    const noiseAmp=(1-q)*0.55+(isGap?0.5:0);
+    const readings=[]; for(let i=0;i<n;i++) readings.push(base+noiseAmp*Math.sin(i*7.3+t*1.3));
+    let delta=0; for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) delta=Math.max(delta,Math.abs(readings[i]-readings[j]));
+    const av=parseFloat(alpha.value);
+    let verdict, cls;
+    if(isGap){ verdict='HALLUZINATION · Interpolation über Lücke der Überdeckung'; cls='bad'; }
+    else if(delta<strictEps){ verdict='Strikte Verklebung ✓ · globaler Schnitt'; cls='good'; }
+    else if(delta<av){ verdict='∞-Verklebung ✓ · bis auf Homotopie (α)'; cls='good'; }
+    else { verdict='Konsistenzbruch · lokale Minima, unvollständiges Weltbild'; cls='warn'; }
+
+    drawLandscape(ctx,left,T);
+    drawCoherence(ctx,right,T,{n:n,readings:readings,delta:delta,alpha:av,isGap:isGap,sigma:sigma});
+
+    vstatus.textContent=verdict; vstatus.className='status '+cls;
+    vread.textContent='Δ='+delta.toFixed(3)+'   GP ±2σ='+(2*sigma).toFixed(2)+'   Daten-Support='+(isGap?'Lücke':'ja');
+
+    t+=0.02;
+  }
+
+  function drawLandscape(ctx,r,T){
+    const pad=30;
+    const X=dx=>r.x+pad+((dx-XMIN)/(XMAX-XMIN))*(r.w-2*pad);
+    const Y=dy=>r.y+r.h-pad-((dy-YMIN)/(YMAX-YMIN))*(r.h-2*pad);
+    ctx.fillStyle=rgbStr(T.plot); ctx.fillRect(r.x,r.y,r.w,r.h);
+
+    const cell=5, valley=hexToRgb(T.accent2), hill=hexToRgb(T.accent);
+    for(let px=r.x+pad; px<r.x+r.w-pad; px+=cell){
+      const dx=XMIN+((px-(r.x+pad))/(r.w-2*pad))*(XMAX-XMIN);
+      for(let py=r.y+pad; py<r.y+r.h-pad; py+=cell){
+        const dy=YMAX-((py-(r.y+pad))/(r.h-2*pad))*(YMAX-YMIN);
+        const nL=clamp((lossFn(dx,dy)-Lmin)/(Lmax-Lmin),0,1);
+        let c=mix(valley,hill,nL); c=mix(c,T.plot,0.40);
+        ctx.fillStyle=rgbStr(c); ctx.fillRect(px,py,cell,cell);
+      }
+    }
+
+    const cx=X(minx), cy=Y(miny), rpx=(r_support/(XMAX-XMIN))*(r.w-2*pad);
+    ctx.save(); ctx.beginPath();
+    ctx.rect(r.x+pad,r.y+pad,r.w-2*pad,r.h-2*pad); ctx.clip();
+    ctx.globalAlpha=0.12; ctx.fillStyle=T.good;
+    ctx.beginPath(); ctx.arc(cx,cy,rpx,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=T.warn; ctx.lineWidth=1.6; ctx.setLineDash([6,5]);
+    ctx.beginPath(); ctx.arc(cx,cy,rpx,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.restore();
+
+    // global min marker
+    ctx.fillStyle=T.accent3;
+    ctx.beginPath(); ctx.arc(cx,cy,4,0,Math.PI*2); ctx.fill();
+
+    // ball
+    ctx.shadowColor=T.accent; ctx.shadowBlur=18; ctx.fillStyle=T.accent;
+    ctx.beginPath(); ctx.arc(X(ball.x),Y(ball.y),8,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+    ctx.strokeStyle=T.ink; ctx.lineWidth=1.5; ctx.stroke();
+
+    ctx.fillStyle=T.muted; ctx.font='12px system-ui, sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Loss-Landschaft  L(θ₁,θ₂)', r.x+pad, r.y+pad-10);
+    ctx.fillStyle=T.warn;
+    ctx.fillText('gestrichelt = Rand des Daten-Supports · rechts davon GP ±2σ ↑', r.x+pad, r.y+r.h-8);
+    ctx.fillStyle=T.muted; ctx.textAlign='center';
+    ctx.fillText('θ₁', r.x+r.w/2, r.y+r.h-8);
+    ctx.save(); ctx.translate(r.x+12, r.y+r.h/2); ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center'; ctx.fillText('θ₂', 0, 0); ctx.restore();
+    ctx.textAlign='left';
+  }
+
+  function drawCoherence(ctx,r,T,S){
+    ctx.fillStyle=rgbStr(T.plot); ctx.fillRect(r.x,r.y,r.w,r.h);
+    const cx=r.x+r.w/2, cy=r.y+r.h*0.40, R=r.w*0.26;
+    const n=S.n;
+
+    // world core
+    ctx.fillStyle=T.accent3; ctx.beginPath(); ctx.arc(cx,cy,12,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=T.ink; ctx.font='bold 11px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('w',cx,cy); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+
+    const pos=[];
+    for(let i=0;i<n;i++){ const a=(i/n)*Math.PI*2+Math.PI/2+t*0.1;
+      pos.push({x:cx+R*Math.cos(a), y:cy+R*Math.sin(a), i:i}); }
+
+    // spokes world -> observer (dashed)
+    pos.forEach(o=>{ ctx.strokeStyle=T.muted; ctx.globalAlpha=0.45; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(o.x,o.y); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha=1; });
+
+    // neighbour edges coloured by agreement
+    for(let i=0;i<n;i++){
+      const a=pos[i], b=pos[(i+1)%n];
+      const d=Math.abs(S.readings[i]-S.readings[(i+1)%n]);
+      const ok=d<S.alpha;
+      ctx.strokeStyle=ok?T.good:T.bad; ctx.lineWidth=ok?1.5:2.4;
+      const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+      const dx=mx-cx, dy=my-cy, dl=Math.hypot(dx,dy)||1;
+      const bx=mx+(dx/dl)*22, by=my+(dy/dl)*22;
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.quadraticCurveTo(bx,by,b.x,b.y); ctx.stroke();
+    }
+
+    // observer nodes + reading bars
+    pos.forEach((o,i)=>{
+      const ri=S.readings[i];
+      ctx.fillStyle=S.isGap?T.bad:T.accent2;
+      ctx.beginPath(); ctx.arc(o.x,o.y,9,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=T.ink; ctx.font='bold 9px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('e'+(i+1),o.x,o.y);
+      const ux=(o.x-cx)/R, uy=(o.y-cy)/R;
+      const blen=(ri+1)*10;
+      ctx.strokeStyle=T.ink; ctx.globalAlpha=0.5; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(o.x+ux*16,o.y+uy*16); ctx.lineTo(o.x+ux*(16+blen),o.y+uy*(16+blen));
+      ctx.stroke(); ctx.globalAlpha=1;
+      ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    });
+
+    ctx.fillStyle=T.muted; ctx.font='11px system-ui';
+    ctx.fillText('w = Ding an sich · eᵢ = fᵢ(w) · Kante = Übereinstimmung auf eᵢ∩eⱼ', r.x+6, r.y+r.h*0.70);
+
+    // coherence meter
+    const my=r.y+r.h*0.78, mx0=r.x+r.w*0.08, mw=r.w*0.84;
+    const scaleMax=Math.max(S.alpha*1.3,0.6);
+    const zx=v=>mx0+clamp(v,0,scaleMax)/scaleMax*mw;
+    ctx.fillStyle=T.good;  ctx.fillRect(mx0,my,zx(strictEps)-mx0,7);
+    ctx.fillStyle=T.accent2;ctx.fillRect(zx(strictEps),my,zx(S.alpha)-zx(strictEps),7);
+    ctx.fillStyle=T.bad;   ctx.fillRect(zx(S.alpha),my,mx0+mw-zx(S.alpha),7);
+    const mdx=zx(Math.min(S.delta,scaleMax));
+    ctx.fillStyle=T.ink; ctx.beginPath();
+    ctx.moveTo(mdx,my-2); ctx.lineTo(mdx-5,my-10); ctx.lineTo(mdx+5,my-10); ctx.closePath(); ctx.fill();
+    ctx.fillStyle=T.muted; ctx.font='10px system-ui'; ctx.textAlign='center';
+    ctx.fillText('strikte', zx(strictEps/2), my+18);
+    ctx.fillText('∞-konsistent', (zx(strictEps)+zx(S.alpha))/2, my+18);
+    ctx.fillText('Bruch/Halluz.', (zx(S.alpha)+mx0+mw)/2, my+18);
+    ctx.textAlign='left';
+  }
+
+  function upd(){ lrV.textContent=parseFloat(lr.value).toFixed(2);
+    alphaV.textContent=parseFloat(alpha.value).toFixed(2); nobsV.textContent=nobs.value; }
+  [lr,alpha,nobs].forEach(el=>el.addEventListener('input',upd));
+  stepB.onclick=()=>gdStep();
+  runB.onclick=()=>{ running=!running; runB.textContent=running?'⏸ Stop':'▶ Auto-Trainieren'; };
+  resetB.onclick=()=>{ ball={x:-2.3,y:2.3}; running=false; runB.textContent='▶ Auto-Trainieren'; };
+  themeB.onclick=()=>document.documentElement.classList.toggle('dark');
+  upd();
+  (function frame(){ draw(); requestAnimationFrame(frame); })();
+})();
+</script>
+</body>
+</html>

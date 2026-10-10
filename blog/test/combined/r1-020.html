@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 020 — Simplicial Attention ✕ Generalization in Deep Learning</title>
+<style>
+:root{
+  --bg:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --signal:#0f766e; --reservoir:#b45309; --noise:#be185d; --accent:#6d28d9;
+  --grid:#d9d0ba; --band-signal:rgba(15,118,110,.10); --band-res:rgba(180,83,9,.09);
+  --soft-signal:#e6f2f0; --soft-res:#fdf3e3; --soft-noise:#fdeef4; --soft-acc:#f1ecfb;
+  --r:16px; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1420; --card:#141b2b; --ink:#e6e9f0; --dim:#aab2c4; --faint:#7b8497;
+  --line:#26314a; --signal:#2dd4bf; --reservoir:#fbbf24; --noise:#f472b6; --accent:#a78bfa;
+  --grid:#1f2c47; --band-signal:rgba(45,212,191,.11); --band-res:rgba(251,191,36,.08);
+  --soft-signal:#0e2a2b; --soft-res:#2a2110; --soft-noise:#2a1322; --soft-acc:#1d1833;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+main{max-width:820px;margin:0 auto;padding:0 22px 90px}
+header{padding:64px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;background:var(--soft-acc);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(28px,5.2vw,42px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--signal)}
+.sub{font-size:14.5px;color:var(--dim);max-width:60ch;font-family:var(--mono)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:52px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--signal);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--soft-signal);border-radius:99px;padding:3px 10px}
+h3{font-size:15.5px;font-weight:720;margin:20px 0 6px;color:var(--ink)}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b,li b{color:var(--ink)}
+ul{margin:0 0 16px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:9px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:18px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--signal);background:var(--soft-signal);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.res{border-color:var(--reservoir);background:var(--soft-res)}
+.note.acc{border-color:var(--accent);background:var(--soft-acc)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;vertical-align:middle}
+.tag.A{background:var(--soft-acc);color:var(--accent)}
+.tag.B{background:var(--soft-signal);color:var(--signal)}
+.tag.both{background:var(--soft-res);color:var(--reservoir)}
+.rule{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:14px 0;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.demo h3{margin-top:0}
+.dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px;background:var(--card)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--signal);font-size:13px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card)}
+input[type=range].r::-webkit-slider-thumb{background:var(--reservoir)}
+input[type=range].r::-moz-range-thumb{background:var(--reservoir)}
+input[type=range].n::-webkit-slider-thumb{background:var(--noise)}
+input[type=range].n::-moz-range-thumb{background:var(--noise)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{transform:translateY(-1px)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:120px;background:var(--soft-signal);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--signal)}
+.ro .box.res{background:var(--soft-res)}.ro .box.res .v{color:var(--reservoir)}
+.ro .box.no{background:var(--soft-noise)}.ro .box.no .v{color:var(--noise)}
+.ro .box.ac{background:var(--soft-acc)}.ro .box.ac .v{color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:12.5px;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:26px 0;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--signal);text-decoration:none}
+.prov{display:grid;gap:12px}
+.prov a{color:var(--ink);text-decoration:none;font-weight:700}
+.prov a:hover{color:var(--signal)}
+.prov .d{color:var(--dim);font-size:14.5px;margin-top:2px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Fusion 020 · Runde 1 · Simpliciale Geometrie ✕ Generalisierungstheorie</div>
+  <h1>Struktur <em>fangen</em>, Rauschen <em>parken</em></h1>
+  <p class="sub">Fusion aus: simplicial_complex_attention2.html ✕ generalisierung_im_deep_learning_very_simple.html</p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Papiere erklären dasselbe Phänomen — <b>warum ein Netz, das sein Trainingsset (bis auf reines Rauschen) auswendig lernt, an neuen Daten trotzdem gut bleibt</b> — aber an zwei komplementären Enden desselben Prozesses. Papier A betrachtet die <span class="tag A">A</span> <b>Geometrie der Repräsentation</b>: Tokens sind Vertices, Interaktionen sind Simplexe, und erst <i>höherstufige</i> (nicht-paarweise) 2- und 3-Simplexe tragen irreduzible Struktur, die paarweise Attention verfehlt. Papier B betrachtet die <span class="tag B">B</span> <b>Dynamik des Trainings</b>: der Ausgaberaum zerfällt linear in einen winzigen <b>Signalkanal</b> (range&nbsp;W) und ein riesiges, für jede Testfrage unsichtbares <b>Reservoir</b> (ker&nbsp;W); SGD trennt dort kohärentes Signal (Drift&nbsp;∝&nbsp;T) von inkoherentem Rauschen (Diffusion&nbsp;∝&nbsp;√T).</p>
+<p>Die <span class="tag both">fusion</span> vereint beides zu einer einzigen These: <b>Höherstufige Geometrie (A) vergrößert den Raum, in dem kohärentes Signal überhaupt leben kann; die Training-Dynamik (B) entscheidet dann linear, welcher Teil davon im Signalkanal überlebt und welcher im Reservoir abgeparkt wird.</b> A liefert die <i>Kandidat-Struktur</i> (mehr und reicher werden), B liefert den <i>Filter</i> (kohärent überlebt, inkoherent wird harmlos). Auswendig gelerntes Rauschen ist deshalb nicht, weil das Modell „klug" generalisiert, sondern weil es physisch in Subräumen sitzt, die kein Testvektor erreichen kann — und je reicher die Repräsentation (A), desto mehr dieser Subräume stehen für echtes Signal zur Verfügung.</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+<p>Logisch direkt widersprechen sich die beiden nicht — A macht Aussagen über <i>Repräsentationsgeometrie</i>, B über <i>Ausgaberaum-Dynamik</i>, und beide sind positiv formuliert. Es gibt aber drei konkrete, gut bezeugte <b>Stellen, an denen ihre Stances in Spannung / bei Punktformulierung unvereinbar sind</b>:</p>
+<ul>
+<li><b>Ordnung der Struktur — nichtlinear vs. linear.</b>
+<span class="tag A">A</span> behauptet explizit, dass die relevante Struktur <i>nicht-paarweise</i> ist und sich nicht in Paare zerlegen lässt („The interaction isn't decomposable into pairs"); 2-/3-Simplexe seien nötig, weil „pairwise attention misses" Information. <span class="tag B">B</span> erklärt dagegen die Generalisierung vollständig als <i>lineare Algebra</i>: Ausgaberaum&nbsp;=&nbsp;range(W)&nbsp;⊕&nbsp;ker(W), eine pro-Parameter-Skalare SNR-Regel, und die Kernsätze seien „reine Algebra" — B ruft nirgends kombinatorische Höherstufen-Struktur auf und ist der Interaktionsordnung prinzipiell indifferent.</li>
+<li><b>Ort der Lösung — Architektur ändern vs. eine Optimizer-Zeile.</b>
+<span class="tag A">A</span> sagt, man müsse das <i>Modell selbst</i> umbauen, um Mehrfach-Abhängigkeiten zu nutzen: simpliciale Attention (SAN), TDA-Pipelines, topologisches Message-Passing — also architekturseitige Erweiterungen. <span class="tag B">B</span> sagt explizit „<b>kein Architekturwissen</b>" nötig: der Nutzen bestehe in jedem glatten Netz automatisch, und der praktische Fix sei <i>eine einzige Zeile in AdamW</i>, repräsentations-agnostisch.</li>
+<li><b>Bewertung von Kapazität — „reicher ist besser" vs. „fast alles ist harmloser Ballast".</b>
+<span class="tag A">A</span> stellt es so auf, dass beim Wachsen der Vietoris-Rips-Schwelle <i>immer mehr</i> höherdimensionale Simplexe entstehen und Topologie <i>offenbaren</i> — die reicher werdende Höherstufen-Struktur sei das <i>Wertvolle</i>. <span class="tag B">B</span> stellt das Gegenteil als Kern ein: der Signalkanal sei „winzig", das Reservoir „riesig", und die überwältigende Mehrheit aller Richtungen sei <i>verwertbarer Ballast</i>, den man abparken darf — mehr Kapazität sei nur ein gutes Geschäft, weil der Großteil ohnehin nichts taugt.</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Auflösung</h2>
+<p><b>Ordnung (T1):</b> Die beiden leben in <i>verschiedenen Räumen</i> und konkurrieren nicht. A's Höherstufen-Simplexe definieren, <i>wo</i> kohärentes Signal leben <i>kann</i> — je reicher die Repräsentation, desto größer die Anzahl verfügbarer Richtungen im potenziellen Signalkanal. B's lineare Aufspaltung entscheidet dann <i>dynamisch</i>, welche dieser Richtungen tatsächlich mit kohärentem Signal befüllt werden (range&nbsp;W) und welche im ker&nbsp;W abgeparkt werden. Nichtlinearität (A) liefert also die <i>Kandidaten</i>; Linearität (B) ist der <i>Routen-Filter</i>. Fused: Höherstufige Geometrie erweitert den Kandidaten-Unterraum, die Drift/Diffusions-Dynamik selektiert den Überlebenden.</p>
+<p><b>Ort der Lösung (T2):</b> Ebenfalls komplementär: A setzt den <i>Raum der Möglichkeiten</i> (Repräsentation), B setzt das <i>tatsächliche Ergebnis</i> (Dynamik) — ohne Architekturwissen. Die eine Zeile SNR-Gate (B) steht <i>senkrecht</i> dazu, ob das Modell simpliciale Attention nutzt (A): Beide <i>komponieren</i>. Ein simpliciales Modell (größerer range&nbsp;W) <i>plus</i> SNR-Gate (sauberere Sortierung) ist strikt besser als eines der beiden allein.</p>
+<p><b>Kapazität (T3):</b> „Reicher ist besser" (A) und „fast alles ist Ballast" (B) sind <i>beide wahr, auf verschiedenen Ebenen</i>. Reicher an Höherstufen-Simplexen <i>erhöht die potenzielle Signalkanal-Größe</i>; aber nur der <i>kohärente</i> Anteil (Drift&nbsp;∝&nbsp;T) füllt sie, der Rest wandert ins Reservoir (Ballast). „Reicher" ist also gut <i>soweit</i>, wie es kohärente Signalkapazität hinzufügt — und genau der mitgebrachte Ballast ist das, was B als harmlos zeigt. Fused-Regel: <b>reiche Repräsentation bauen (A), und die Dynamik parkt den inkoherenten Überschuss automatisch (B); das SNR-Gate (B) macht diese Sortierung pro Parameter explizit.</b></p>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>4.1 Die Geometrie der Repräsentation <span class="tag A">A</span></h3>
+<p>Ein <b>simpliciales Komplex</b> ist eine Sammlung von Simplexen (Vertex&nbsp;=&nbsp;0, Kante&nbsp;=&nbsp;1, Dreieck&nbsp;=&nbsp;2, Tetraeder&nbsp;=&nbsp;3 …) mit <b>Closure-Eigenschaft</b>: Enthält der Komplex ein Dreieck [A,B,C], so müssen auch Kanten [A,B],[A,C],[B,C] und Vertices [A],[B],[C] enthalten sein. In der KI ist jeder Vertex ein <b>Token</b>, eine Feature oder ein Datenpunkt; Attention-Gewichte <i>softmax(QKᵀ/√d)</i> legen ein Gewicht auf jede <b>Kante</b> — die Menge aller paarweisen Attention-Scores bildet ein 1-dimensionales simpliciales Komplex.</p>
+<p>Der Kernanspruch von A: <b>Pairwise Attention ist unvollständig.</b> Ein 2-Simplex (Dreieck) kodiert eine Drei-Wege-Beziehung, die sich nicht in Paare zerlegen lässt; Sprach-Mehrfach-Abhängigkeiten („The cat sat on the mat" — „on" hängt gleichzeitig an „cat", „sat" <i>und</i> „mat") erfordern solche höherstufigen Simplexe. Architekturen wie <b>SAN</b> (Simplicial Attention Networks), simpliciale Transformer und topologisches Message-Passing modellieren das explizit. <b>Topological Data Analysis</b> baut die Struktur aus Daten: das <b>Vietoris-Rips-Komplex</b> fügt für jede Distanz-Schwelle Simplexe hinzu — wächst die Schwelle, erscheinen höherdimensionale Simplexe und offenbaren die Topologie; <b>persistente Homologie</b> trackt, welche Simplexe über Skalen hinweg überleben, also welche Struktur robust ist.</p>
+
+<h3>4.2 Die zwei Zimmer des Ausgaberaums <span class="tag B">B</span></h3>
+<p>B schaut nicht auf die Gewichte (Milliarden), sondern auf die <b>Ausgaben</b> — eine pro Trainingsbeispiel. Dieser Ausgaberaum zerfällt in zwei senkrechte Zimmer: den <b>Signalkanal</b> range(W) — Richtungen, in denen das Training tatsächlich Fehler abgebaut hat (wird auch im Test sichtbar) — und das <b>Reservoir</b> ker(W) — Richtungen, in denen es nie hinkam; hier abgeparkter Restfehler ist für <i>jede</i> Testfrage unsichtbar. W ist die <b>kumulative Erreichbarkeit</b>, summiert über die gesamte Trainingslaufzeit (nicht ein Schnappschuss): großer W-Wert → Signalkanal, null → Reservoir. In echten Netzen fällt das Spektrum über viele Größenordnungen ab — <b>das Reservoir ist riesig, der Signalkanal winzig</b>. Formal: da Training und Test-Transfer denselben Faktor Jᵀ teilen, gilt <b>ker(W) ⊆ ker(G_Q)</b> für jede Testmenge Q — Rauschen im Reservoir ist für alle Q unsichtbar.</p>
+
+<h3>4.3 Das Rennen: Drift gegen Diffusion <span class="tag B">B</span></h3>
+<p>Im Signalkanal liegen <i>beides</i> — echtes Signal und auswendig gelerntes Rauschen. Die Trennung führt SGD selbst, fast zum Nichts, über einen Skalierungsunterschied: <b>echtes Signal</b> zeigt in jeder Charge in etwa dieselbe Richtung → nach T Schritten wächst der Fortschritt <b>wie T</b> (gerade Drift). <b>Rauschen</b> taktet wie ein Betrunkener hin und her → nach T Schritten nur <b>wie √T</b> (Zickzack). Die Wurzel wächst viel langsamer als die Gerade: <i>länger trainieren, und das Signal lässt das Rauschen hinter sich.</i> Große Batches verkleinern die Zickzacks zusätzlich.</p>
+
+<h3>4.4 Ein Mechanismus, vier Mysterien <span class="tag B">B</span></h3>
+<ul>
+<li><b>Benign Overfitting:</b> auswendig gelerntes Rauschen sitzt physisch im Reservoir → folgenlos (Trainingsfehler 0, Testfehler klein).</li>
+<li><b>Double Descent:</b> mehr Kapazität lohnt nur, wenn die neue Richtung mehr Signal als Rauschen bringt; der Peak liegt am Vorzeichenwechsel.</li>
+<li><b>Implicit Bias:</b> das Netz passt Richtungen in fester Reihenfolge an (leichte zuerst) — ein von selbst entstehender Zeitplan.</li>
+<li><b>Grokking:</b> das echte Signal <i>wandert</i> aus dem Reservoir in den Signalkanal; genau im Moment des Überholens springt die Testgenauigkeit.</li>
+</ul>
+
+<h3>4.5 Die Brücke <span class="tag both">fusion</span></h3>
+<p>A's Höherstufen-Simplexe <b>vergrößern range(W)</b>: mehr und reicher werdende Interaktionen stehen dem Training als zusätzliche <i>Kandidaten-Richtungen für kohärentes Signal</i> zur Verfügung. B's Drift/Diffusions-Rennen sortiert diese Kandidaten: der kohärente Teil (der, den die höherstufige Geometrie <i>neu zugänglich gemacht</i> hat) wächst wie T und bleibt im Signalkanal sichtbar; der inkoherente Teil wächst nur wie √T und wird in ker(W) geparkt, wo ker(W) ⊆ ker(G_Q) ihn für jede Testmenge unsichtbar macht. Die Fusion liest die vier Mysterien deshalb um eine Dimension reicher: <b>Grokking</b> ist nicht nur „Signal wandert nach oben", sondern „die höherstufige Struktur reift so weit, dass ihr kohärenter Anteil den Rauschen-Anteil überholt" — und <b>Double Descent</b> ist der Punkt, an dem die <i>neu hinzugekommene</i> Kapazität mehr Kandidaten-Signal als Rauschen beiträgt.</p>
+
+<h3>4.6 Der praktische Hebel <span class="tag B">B</span> + <span class="tag A">A</span></h3>
+<p>B kollabiert die Theorie zu einer einzigen, first-order-populationssicheren, binären Update-Regel — dem <b>SNR-Gate</b>, eine Zeile in AdamW:</p>
+<div class="rule">Parameter k aktualisieren&nbsp; ⇐&nbsp; Signal²(k) &gt; Rausch²(k) / (b − 1)</div>
+<p>In Worten: <b>Ein Parameter darf nur lernen, wenn sein kohärentes Signal sein Rauschen schlägt.</b> b im Nenner: kleine Batches → viel Rauschen → Gate blockiert mehr; große Batches → Rauschen kleiner → mehr darf lernen. Im Paper in fünf verschiedenen Settings eingebaut (PINNs, Grokking, DPO, INRs, Lorenz) — alle besser. Die Fusion fügt hinzu: Das Gate ist <i>repräsentations-agnostisch</i> und steht senkrecht zu A — man kann ein <i>simpliciales</i> Modell (A, größerer Kandidaten-Raum) mit dem SNR-Gate (B, sauberere Sortierung) kombinieren. A bestimmt, wie groß das mögliche Signal ist; B bestimmt, wie sauber es gefiltert wird.</p>
+
+<h3>4.7 Grenzen (Ehrlichkeits-Ecke) <span class="tag B">B</span></h3>
+<ul>
+<li>Glatte Netz (zweimal differenzierbar) — erfüllen ResNets und Transformer.</li>
+<li>Konvexer Ausgangsverlust für die Hauptsätze; exakte Kopplung nur bei quadratischem Verlust, sonst kleiner Rest (schrumpft mit Glattheit/Datendichte).</li>
+<li>Mehrfach-Epochen: Gate-Herleitung setzt unabhängige Batches voraus, sonst kleiner Restterm.</li>
+<li>Stärken: keine „Breite → ∞", keine eingefrorenen Kerne, keine asymptotischen Aussagen, kein „mit hoher Wahrscheinlichkeit" — Kernsätze sind reine Algebra.</li>
+</ul>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Visualisierung</h2>
+<p>Die Grafik vereint beide Seiten: Der <b>horizontale Streifen</b> ist der <b>Signalkanal</b> (B), der <b>vertikale</b> das <b>Reservoir</b>. Der <b>teale Pfeil</b> ist das kohärente Signal (Drift&nbsp;∝&nbsp;T); seine Länge wächst mit der <b>Interaktionsordnung</b> (A: höherstufige Simplexe tragen mehr irreduzibles Signal) <i>und</i> mit den Trainings-Schritten. Die <b>rosen Zickzacks</b> sind Rauschen-Läufe (Diffusion&nbsp;∝&nbsp;√T), deren Energie überwiegend ins Reservoir fließt und dort für jede Testfrage unsichtbar bleibt. Zieh die Regler — und schalte oben das Theme um.</p>
+
+<div class="demo">
+  <h3>Fusion: Höherstufige Struktur (A) × Signalkanal/Reservoir (B)</h3>
+  <p class="dsub">Order = Interaktionsordnung (1 = Kante, 2 = Dreieck, 3 = Tetraeder). T = Trainings-Schritte. σ = Rauschstärke.</p>
+  <canvas id="cvFusion" width="720" height="400"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Interaktionsordnung (A: mehr irreduzibles Signal)</span><b id="oV">2 · Dreieck</b></div>
+    <input type="range" id="oS" min="1" max="3" value="2">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Trainings-Schritte T</span><b id="tV">100</b></div>
+    <input type="range" id="tS" min="10" max="500" value="100">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Rauschstärke σ</span><b id="sV">1.0</b></div>
+    <input type="range" id="sS" min="20" max="300" value="100" class="r">
+  </div>
+  <div class="ro">
+    <div class="box"><div class="k">Signal (Drift ∝ T)</div><div class="v" id="vSig">–</div></div>
+    <div class="box no"><div class="k">Rauschen (√T)</div><div class="v" id="vNoi">–</div></div>
+    <div class="box ac"><div class="k">SNR = T / √T</div><div class="v" id="vSnr">–</div></div>
+    <div class="box res"><div class="k">Testanteil (Reservoir → unsichtbar)</div><div class="v" id="vTest">~0</div></div>
+  </div>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--signal)"></i> Signalkanal / kohärentes Signal (A×B)</span>
+    <span><i class="dot" style="background:var(--noise)"></i> Rauschen-Läufe (Diffusion)</span>
+    <span><i class="dot" style="background:var(--reservoir)"></i> Reservoir (ker W, unsichtbar)</span>
+  </div>
+</div>
+
+<div class="note acc">
+  <b>Was du siehst:</b> Erhöhe die <i>Ordnung</i> — der teale Pfeil (Signal) wird länger, weil A mehr irreduzible Struktur in den Signalkanal legt. Erhöhe <i>T</i> — der Pfeil wächst linear, die rosa Zickzacks nur wie √T, und der SNR-Wert steigt: B's Rennen. Drehe <i>σ</i> hoch — die Zickzacks dehnen sich, bleiben aber überwiegend im (vertikalen) Reservoir; der sichtbare Testanteil bleibt klein. Genau das ist die fusionierte Kernaussage.
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="card prov">
+  <div>
+    <a href="../simplicial_complex_attention2.html">simplicial_complex_attention2.html</a>
+    <div class="d">Visueller Explorer simplicialer Komplexe (0–4-Simplex, Vietoris-Rips-Aufbau) und deren Übertragung auf Attention: Tokens als Vertices, paarweise Attention als Kanten, Höherstufen-Interactionen (SAN, TDA, persist. Homologie) als irreduzible 2-/3-Simplexe.</div>
+  </div>
+  <div>
+    <a href="../generalisierung_im_deep_learning_very_simple.html">generalisierung_im_deep_learning_very_simple.html</a>
+    <div class="d">Einfache Erklärung der Stanford-Generalisierungstheorie (Litman &amp; Guo): Ausgaberaum = Signalkanal range(W) ⊕ Reservoir ker(W), Drift ∝ T vs. Diffusion ∝ √T, vier Mysterien als ein Mechanismus, SNR-Gate μ² &gt; σ²/(b−1) als eine Zeile in AdamW.</div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <p>Fusion 020 · Runde 1 · selbstständige HTML, keine Netzwerk-Daten, Theme-reaktiv. <a href="#" id="themeBtn">Theme wechseln</a></p>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  var cv=document.getElementById('cvFusion');
+  var ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+  var oS=document.getElementById('oS'), tS=document.getElementById('tS'), sS=document.getElementById('sS');
+  var oV=document.getElementById('oV'), tV=document.getElementById('tV'), sV=document.getElementById('sV');
+  var vSig=document.getElementById('vSig'), vNoi=document.getElementById('vNoi'), vSnr=document.getElementById('vSnr'), vTest=document.getElementById('vTest');
+  var ORDERNAMES=['','1 · Kante','2 · Dreieck','3 · Tetraeder'];
+  var MUBASE=[0,0.05,0.10,0.18];
+  var MAXT=500;
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function genWalks(){
+    var r=mulberry32(20260107), walks=[];
+    for(var k=0;k<5;k++){var w=[0];for(var i=0;i<MAXT;i++)w.push(w[i]+(r()*2-1));walks.push(w);}
+    return walks;
+  }
+  var walks=genWalks();
+
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+  function simplexBadge(x,y,order,scale,col){
+    ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=1.5;
+    if(order===1){
+      ctx.beginPath();ctx.moveTo(x-scale,y);ctx.lineTo(x+scale,y);ctx.stroke();
+      ctx.beginPath();ctx.arc(x-scale,y,3,0,7);ctx.fill();ctx.beginPath();ctx.arc(x+scale,y,3,0,7);ctx.fill();
+    }else if(order===2){
+      var p=[[x,y-scale*0.9],[x-scale*0.85,y+scale*0.6],[x+scale*0.85,y+scale*0.6]];
+      ctx.beginPath();ctx.moveTo(p[0][0],p[0][1]);ctx.lineTo(p[1][0],p[1][1]);ctx.lineTo(p[2][0],p[2][1]);ctx.closePath();ctx.stroke();
+      for(var i=0;i<3;i++){ctx.beginPath();ctx.arc(p[i][0],p[i][1],3,0,7);ctx.fill();}
+    }else{
+      var p=[[x,y-scale],[x-scale*0.9,y+scale*0.55],[x+scale*0.9,y+scale*0.55],[x,y+scale*0.1]];
+      for(var i=0;i<4;i++)for(var j=i+1;j<4;j++){ctx.beginPath();ctx.moveTo(p[i][0],p[i][1]);ctx.lineTo(p[j][0],p[j][1]);ctx.stroke();}
+      for(var i=0;i<4;i++){ctx.beginPath();ctx.arc(p[i][0],p[i][1],3,0,7);ctx.fill();}
+    }
+  }
+
+  function draw(){
+    var order=parseInt(oS.value), T=parseInt(tS.value), sig=sS.value/100;
+    var ink=cssVar('--ink'), dim=cssVar('--dim'), faint=cssVar('--faint');
+    var signal=cssVar('--signal'), reservoir=cssVar('--reservoir'), noise=cssVar('--noise');
+    var grid=cssVar('--grid'), card=cssVar('--card');
+    var bandS=cssVar('--band-signal'), bandR=cssVar('--band-res');
+
+    var mu=MUBASE[order];
+    var drift=mu*T, spread=sig*Math.sqrt(T);
+
+    var pad={l:20,r:20,t:20,b:30};
+    var pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+    var cx=pad.l+pw/2, cy=pad.t+ph/2;
+    var maxV=Math.max(drift*1.15, 5*spread, 12);
+    var xOf=function(t){return pad.l+t/MAXT*pw;};
+    var yOf=function(v){return cy-v/maxV*(ph/2);};
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=card; ctx.fillRect(0,0,W,H);
+
+    ctx.fillStyle=bandS; ctx.fillRect(0,cy-14,pad.l+pw,28);
+    ctx.fillStyle=bandR; ctx.fillRect(cx-14,pad.t,28,ph);
+
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad.l,cy);ctx.lineTo(pad.l+pw,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,pad.t);ctx.lineTo(cx,pad.t+ph);ctx.stroke();
+
+    ctx.font='11px '+cssVar('--mono');
+    ctx.fillStyle=signal; ctx.textAlign='right';
+    ctx.fillText('Signalkanal  range(W)', pad.l+pw-6, cy-20);
+    ctx.fillStyle=reservoir; ctx.textAlign='left';
+    ctx.fillText('Reservoir  ker(W)', cx+20, pad.t+14);
+    ctx.fillStyle=faint; ctx.textAlign='left';
+    ctx.fillText('unsichtbar für Test  →', cx+20, pad.t+30);
+
+    for(var k=1;k<5;k++){
+      ctx.strokeStyle=noise; ctx.globalAlpha=0.28; ctx.lineWidth=1.4;
+      ctx.beginPath();
+      for(var i=0;i<=T;i++){ var x=xOf(i), y=yOf(walks[k][i]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+      ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    ctx.strokeStyle=noise; ctx.globalAlpha=0.85; ctx.lineWidth=2.2;
+    ctx.beginPath();
+    for(var i=0;i<=T;i++){ var x=xOf(i), y=yOf(walks[0][i]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.stroke();
+    ctx.globalAlpha=1;
+
+    var tipX=xOf(T), tipY=yOf(drift);
+    ctx.strokeStyle=signal; ctx.lineWidth=3.5;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(tipX,tipY);ctx.stroke();
+    var a=Math.atan2(tipY-cy,tipX-cx), s=11;
+    ctx.fillStyle=signal;
+    ctx.beginPath();ctx.moveTo(tipX,tipY);
+    ctx.lineTo(tipX-s*Math.cos(a-0.42),tipY-s*Math.sin(a-0.42));
+    ctx.lineTo(tipX-s*Math.cos(a+0.42),tipY-s*Math.sin(a+0.42));
+    ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.arc(tipX,tipY,5,0,7);ctx.fill();
+
+    simplexBadge(tipX,tipY,order,16,signal);
+
+    ctx.fillStyle=signal; ctx.font='11px '+cssVar('--mono'); ctx.textAlign='left';
+    ctx.fillText('kohärentes Signal (A: order '+order+')', tipX-s*0.2+10, tipY-8);
+
+    var maxAbs=0;
+    for(var k=0;k<5;k++)for(var i=0;i<=T;i++){var av=Math.abs(walks[k][i]);if(av>maxAbs)maxAbs=av;}
+    var resTop=yOf(maxAbs);
+    ctx.strokeStyle=reservoir; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(cx,resTop);ctx.lineTo(cx,cy);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=reservoir; ctx.textAlign='left';
+    ctx.fillText('∝ √T  (geparkt)', cx+8, resTop+4);
+
+    ctx.fillStyle=faint; ctx.font='10px '+cssVar('--mono');
+    ctx.textAlign='left';ctx.fillText('0', pad.l, H-10);
+    ctx.textAlign='right';ctx.fillText(MAXT+' Schritte', W-pad.r, H-10);
+
+    oV.textContent=ORDERNAMES[order];
+    tV.textContent=T;
+    sV.textContent=sig.toFixed(1);
+    vSig.textContent=Math.round(drift);
+    vNoi.textContent=spread.toFixed(1);
+    vSnr.textContent=(spread>0?Math.round(drift/spread):'∞')+' : 1';
+    var testComp=spread/Math.SQRT2;
+    vTest.textContent=testComp<0.02?'~0':testComp.toFixed(1)+' (<< Signal)';
+  }
+
+  [oS,tS,sS].forEach(function(el){el.addEventListener('input',draw);});
+  document.getElementById('themeBtn').addEventListener('click',function(e){
+    e.preventDefault();
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  draw();
+  window.addEventListener('resize',draw);
+})();
+</script>
+</body>
+</html>

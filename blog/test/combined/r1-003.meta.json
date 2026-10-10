@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "theory_of_deep_learning.html",
+  "b": "turing3.html",
+  "a_title": "Die mathematische Theorie des Deep Learning",
+  "b_title": "The Topological Slice: 3D to 2D Logic",
+  "combined_theme": "differentiable-topological-attention",
+  "one_line": "Ein Attention-Head schneidet den hochdimensionalen Hidden-State auf eine 2D-Feature-Ebene und liest ein Feature ab; der weiche, differenzierbare Softmax-Mittelwert (A) ist die lernbare Entspannung des harten binären Topologie-Tests 'drinnen/außen' (B) — und genau dieser Featureschnitt ist die Struktur, die den Fluch der Dimension bricht.",
+  "contradictions": [
+    "Weich/differenzierbar vs. hart/diskret — A: Attention ist eine glatte Konvexkombination der Wert-Vektoren (Softmax-Mittelwert); B: der Head ist ein harter binärer Featureschnitt (drinnen/außen im Kreis -> 0/1-Bit).",
+    "Fluch der Dimension vs. Wegprojektieren — A: hohe Dimension ist eine harte Grenze (>= C*N^(-k/d), nur Spezialstruktur entkommt); B: der 3D-Zustand wird auf eine 2D-Feature-Ebene geschnitten, wo das Feature lesbar ist (vorausgesetzt wird low-dim topologische Struktur).",
+    "Funktion darstellen vs. Turing-Berechnung — A: das Netz approximiert eine statische Zielfunktion (Forward-Pass, Approximations-/Generalisierungsfehler); B: der Head ist ein Turing-Kopf, der Bits auf ein Tape schreibt (stateful, sequentielle symbolische Berechnung)."
+  ],
+  "resolution": "Keine der Stancen ist falsch — es sind zwei Stufen desselben Mechanismus. Der harte binäre Topologie-Test (B) ist die semantische Operation (welches Feature?), der weiche Softmax-Mittelwert (A) die lernbare, differenzierbare Entspannung (man kann nicht durch ein 0/1-Gate backpropagieren). Im Limes sigma->0 wird die weiche Feature-Funktion exp(-(d-r)^2/2sigma^2) zum harten Band-Gate 1_{|d-r|<w}. Der Featureschnitt ist zugleich einer der Auswege aus dem Fluch: er projiziert den Zustand auf die low-dim Koordinate, in der die Zielfunktion separabel ist. Fusion: Aufmerksamkeit = differenzierbarer Weichsatz eines harten topologischen Featureschnitts; die Weichheit macht den harten, rechnerischen Schritt trainierbar, der Schnitt macht die Weichheit effizient.",
+  "viz": "2D-Canvas: eine 2D-Feature-Scheibe mit Feature-Ring; ein Punkt (projizierter Hidden-State, Spiralfahrt wie in B) durchquert den Ring und schreibt eine Bit-Tape; ein Weichheits-/Temperatur-Regler sigma zeigt, wie der harte 0/1-Topologie-Test (B, großes Bit) zur glatten, differenzierbaren Feature-Funktion (A, gelb) wird; daneben Kurve weich vs. hart über dem Abstand d. Theme-aware (CSS-Variablen), vanilla canvas, inline data."
+}

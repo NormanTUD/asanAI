@@ -1,0 +1,17 @@
+{
+  "no": "022",
+  "a": "idea.html",
+  "b": "attn.html",
+  "a_title": "LLM Transformer Visualisierung – Attraktoren & Embedding-Raum",
+  "b_title": "Self-Attention — Tokens as Gravitational Particles",
+  "combined_theme": "qk-gravity-attractor-basins",
+  "one_line": "Die paarweisen Q·K-Gravitationskräfte der Self-Attention bilden die Attraktor-Becken des Embedding-Raums aus (Attraktor = Null-Kraft-Gleichgewicht); der letzte Kontext-Vektor wird per Nearest-Point-Vokabular-Punkt als nächster Token gelesen.",
+  "contradictions": [
+    "Rolle der Attention: idea.html nennt sie 'partielle Hemmung' (maskiert vergangene Tokens selektiv — unterdrückend), attn.html nennt sie 'gravitational attraction' (stärkere Attention = stärkerer pull — anziehend).",
+    "Feste Attraktoren vs. emergente Interaktion: idea.html zieht Tokens zu festen Bedeutungs-Punkten/Becken (z. B. CAPITAL_OF bei (3.5,3.7)); attn.html hat keine Destinationen, Tokens ziehen einander rein über Q·K an (Lage entsteht aus Paar-Wechselwirkung).",
+    "Organisationsachse: idea.html denkt vertikal über Layer-Tiefe (12 Layer: fixiert→semantisch→dynamisch, 'Kontext-Uhr'); attn.html denkt horizontal über Köpfe (Positional/Syntactic/Semantic in einem Layer, 'Physics'-Regler, keine Tiefe).",
+    "Readout-Asymmetrie: idea.html hat ein vollständiges Unembedding/Nearest-Point-Readout ('Paris', Cosine 0.94, Softmax) via Cosine-Similarität; attn.html hat kein Readout (endet bei der Attention-Matrix) und misst Kraft per rohem Dot-Produkt Q·K."
+  ],
+  "resolution": "Softmax-normalisiertes Kraftfeld: Attention ist zugleich Anziehung UND Hemmung (relative Gewinne/Verluste, Summe=1). Der 'feste' Attraktor (A) ist nicht extern, sondern der Gleichgewichtspunkt (∑F=0) des Q·K-Kraftfeldes (B) — Becken sind emergent. Tiefe (A) und Köpfe (B) sind orthogonale Achsen: jeder Layer ist ein Stack paralleler Kopf-Kraftfelder. Das Unembedding-Readout (A) liest die durch die Kräfte (B) geformte Position als nächsten Vokabular-Punkt aus; Cosine = normiertes Dot-Produkt, also dieselbe q/k-Geometrie.",
+  "viz": "Canvas-Partikelsimulation: 5 Tokens als Partikel im Vektorraum; Regler 'Attention-Kraft (Q·K)' skaliert die paarweisen Gravitationslinien, Regler 'Layer 0-11' tickt die Kontext-Uhr und blendet die Becken POS/Syntax → Semantik → Kontext→Paris ein. Das Kontext-Partikel 'ist' relaxiert ins spätdynamische Becken; der nächstgelegene Vokabular-Kandidat (Paris/Lyon/Berlin/Stadt/Europa) wird als Nearest-Point-Vorhersage mit Cosine-Wert live angezeigt. Theme-reactiv (var(--mn-*)-analoge CSS-Variablen), rein inline, keine Netzwerk-Abrufe."
+}

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 022 — Gravitation formt Attraktoren</title>
+<style>
+  :root {
+    --bg:#faf8f1; --panel:#ffffff; --panel2:#f1ede2; --fg:#1c1c1c; --muted:#5b5b5b;
+    --accent:#0e7490; --accent2:#7c3aed; --line:#ddd6c6; --basin:#b45309; --grid:#e7e1d3;
+  }
+  html.dark {
+    --bg:#0f172a; --panel:#111827; --panel2:#0b1220; --fg:#e5e7eb; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#a78bfa; --line:#1e293b; --basin:#fbbf24; --grid:#1b2637;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height:1.6; transition:background .3s, color .3s;
+  }
+  article { max-width:820px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { font-size:1.9rem; line-height:1.25; margin-bottom:6px; letter-spacing:-.01em; }
+  .subtitle { color:var(--muted); font-size:.95rem; margin-bottom:30px; }
+  .subtitle b { color:var(--accent); font-weight:600; }
+  section { margin:34px 0; }
+  h2 {
+    font-size:1.25rem; margin-bottom:14px; padding-bottom:8px;
+    border-bottom:1px solid var(--line); color:var(--fg);
+  }
+  h2 .num { color:var(--accent2); font-variant-numeric:tabular-nums; margin-right:8px; }
+  p { margin:0 0 14px; }
+  p:last-child { margin-bottom:0; }
+  ul { margin:0 0 14px 0; padding-left:20px; }
+  li { margin-bottom:10px; }
+  li b, p b { color:var(--accent); font-weight:600; }
+  .tagA { color:var(--accent); font-weight:600; }
+  .tagB { color:var(--accent2); font-weight:600; }
+  .callout {
+    background:var(--panel2); border-left:3px solid var(--accent2);
+    padding:12px 16px; border-radius:0 8px 8px 0; margin:14px 0; font-size:.95rem;
+  }
+  .math {
+    font-family:'Cambria Math','Latin Modern Math',Georgia,serif;
+    background:var(--panel2); border:1px solid var(--line); border-radius:6px;
+    padding:10px 14px; display:block; margin:14px 0; overflow-x:auto;
+    font-size:1.02rem; letter-spacing:.01em;
+  }
+  .math sub, .math sup { font-size:.72em; }
+  .viz-wrap { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  canvas#field { width:100%; height:520px; display:block; border-radius:8px; background:var(--panel2); }
+  .ctrl { display:flex; gap:22px; flex-wrap:wrap; align-items:center; margin:12px 2px 4px; }
+  .ctrl label { font-size:.85rem; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .ctrl input[type=range] { width:150px; accent-color:var(--accent); }
+  .ctrl .val { color:var(--accent); font-variant-numeric:tabular-nums; min-width:24px; }
+  .readout { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+  .chip {
+    background:var(--panel2); border:1px solid var(--line); border-radius:8px;
+    padding:7px 12px; font-size:.85rem;
+  }
+  .chip .k { color:var(--muted); }
+  .chip .v { color:var(--fg); font-weight:600; }
+  .chip.pred .v { color:var(--accent); }
+  .legend { display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:.8rem; color:var(--muted); }
+  .legend span { display:flex; align-items:center; gap:6px; }
+  .dot { width:11px; height:11px; border-radius:50%; display:inline-block; }
+  .theme-toggle {
+    float:right; background:var(--panel2); border:1px solid var(--line); color:var(--fg);
+    border-radius:8px; padding:6px 12px; cursor:pointer; font-size:.85rem;
+  }
+  .prov li { font-size:.95rem; }
+  .prov a { color:var(--accent); text-decoration:none; font-weight:600; }
+  .prov a:hover { text-decoration:underline; }
+  footer { margin-top:40px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:.8rem; }
+</style>
+</head>
+<body>
+<article>
+  <button class="theme-toggle" id="themeBtn">☀ Hell</button>
+  <h1>Tokens im Feld: Gravitation formt Attraktoren</h1>
+  <p class="subtitle">Fusion aus: <b>idea.html</b> ✕ <b>attn.html</b> — ein Transformer-Layer als
+  Kraftfeld, in dem paarweise Aufmerksamkeit (Q·K) die Attraktor-Geometrie des
+  Embedding-Raums ausbildet und der letzte Vektor per Nearest-Point zum nächsten
+  Token wird.</p>
+
+  <section id="these">
+    <h2><span class="num">1</span>Kernthese der Fusion</h2>
+    <p>Beide Papiere beschreiben <em>einen</em> Vorgang aus zwei Richtungen.
+    <span class="tagA">idea.html</span> sagt: Bedeutung ist ein <b>Punkt im
+    Vektorraum</b>; Layer-Attraktoren ziehen die Repräsentationen in
+    <em>Becken</em> (Basins of Attraction) hinein — früh fixiert (Syntax/POS),
+    mittel semantisch (z. B. „Hauptstadt von X“), spät dynamisch und
+    kontextabhängig — und der letzte Vektor des letzten Layers ist die
+    gemischte Gesamtbedeutung, dessen <b>nächster Vokabular-Punkt</b> der
+    vorhergesagte Token ist (Unembedding, Cosine).
+    <span class="tagB">attn.html</span> sagt: Aufmerksamkeit ist eine
+    <b>paarweise Gravitationskraft</b> zwischen Tokens, berechnet als
+    Skalarprodukt <b>Query·Key</b>; stärkere Aufmerksamkeit = stärkerer Zug;
+    verschiedene <b>Köpfe</b> lernen verschiedene Beziehungsmuster
+    (Positional / Syntactic / Semantic).</p>
+    <p>Die Fusion: <b>die paarweisen Q·K-Kräfte sind genau das, was die
+    Attraktor-Geometrie ausbildet.</b> Ein Attraktor ist kein externer Magnet,
+    sondern der <em>Gleichgewichtspunkt</em> eines Kraftfeldes — die Stelle, an
+    der die resultierende Q·K-Kraft null wird. Die „Basins“ von
+    <span class="tagA">idea.html</span> sind also emergent, geformt durch die
+    „Gravitation“ von <span class="tagB">attn.html</span>. Aufmerksamkeit ist
+    zugleich anziehend <em>und</em> hemmend, weil ihre Gewichte per Softmax
+    normalisiert sind (relative Gewinns/Verluste). Das Gesamtbild ist
+    zweidimensional organisiert: <b>Layer (Tiefe)</b> aus
+    <span class="tagA">idea.html</span> × <b>Köpfe (Spezialisierung)</b> aus
+    <span class="tagB">attn.html</span>. Und das <b>Readout</b> —
+    <span class="tagA">idea.html</span> liest die Position als nächsten Token
+    aus — gibt den Kräften von <span class="tagB">attn.html</span> ihren
+    Zweck: <em>Kraft formt Position → Position wird als nächster Token gelesen.</em></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span>Widersprüche zwischen A und B</h2>
+    <ul>
+      <li><b>Die Rolle der Attention — Hemmung vs. Anziehung.</b>
+        <span class="tagA">idea.html</span> nennt Attention ausdrücklich
+        <b>„partielle Hemmung“</b>: „Attention maskiert vergangene Tokens
+        selektiv“ — sie ist ein unterdrückender/verhüllender Mechanismus.
+        <span class="tagB">attn.html</span> sagt das Gegenteil: „Attention
+        scores are computed as the dot product of Query × Key — shown here as
+        <b>gravitational attraction</b>. Stronger attention = stronger
+        <b>pull</b>“ — sie ist anziehend. Kompatibel nicht ohne Auflösung:
+        hemmen (wegdrücken/maskieren) vs. ziehen (zusammenführen).</li>
+      <li><b>Feste Attraktoren vs. emergente Partikel-Interaktion.</b>
+        <span class="tagA">idea.html</span> zieht Tokens zu <b>festen
+        Bedeutungs-Punkten</b> (Basins of Attraction — feste Ziele im Raum;
+        z. B. der CAPITAL_OF-Attraktor bei (3.5, 3.7)).
+        <span class="tagB">attn.html</span> hat <b>keine festen
+        Destinationen</b>: Tokens ziehen <em>einander</em> über Q·K an, ihre
+        Lage entsteht rein aus der Paar-Wechselwirkung (+ Rückfederung).
+        Zwei dynamische Bilder: „Partikel fallen in Becken“ vs. „Partikel
+        ziehen einander an“.</li>
+      <li><b>Die Organisationsachse — Tiefe vs. Köpfe.</b>
+        <span class="tagA">idea.html</span> denkt <b>vertikal (Layer-Tiefe)</b>:
+        ein 12-Layer-Fortschritt, früh fixiert → mittel semantisch → spät
+        dynamisch, und die „Uhr, die sich verlängert“ tickt über die Layer
+        hinweg (Kontext-Akkumulation).
+        <span class="tagB">attn.html</span> denkt <b>horizontal (Köpfe)</b>:
+        drei Köpfe in (einem) Layer — Positional/Syntactic/Semantic — plus
+        einen „Physics“-Regler für die Kraftstärke; es gibt dort keine
+        Layer-Tiefe, sondern Kopf-Parallelität. Tiefe (A) vs. Köpfe (B).</li>
+      <li><b>Readout-Asymmetrie (engste reale Spannung).</b>
+        <span class="tagA">idea.html</span> hat eine vollständige
+        <b>Dekodier-Geschichte</b>: Unembedding → Nearest-Point → „Paris“
+        (Cosine 0.94, Softmax-Verteilung).
+        <span class="tagB">attn.html</span> hat <b>keine</b>: es endet bei der
+        internen Attention-Matrix; das Kraftbild kennt kein Readout. Zudem
+        misst <span class="tagA">idea.html</span> die Nähe per
+        <b>Cosine-Similarität</b>,
+        <span class="tagB">attn.html</span> die Kraft per rohem
+        <b>Skalarprodukt Q·K</b> — unterschiedliche Geometrien an der
+        Schnittstelle.</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span>Auflösung</h2>
+    <p><b>(1) Attention hemmt und zieht gleichzeitig.</b> Attention-Gewichte
+    sind pro Query per Softmax auf Summe 1 normiert. Ein normalisiertes
+    Kraftfeld bedeutet: Mehr Gewichtung eines Tokens ist <em>Anziehung</em> zu
+    ihm <em>und</em> gleichzeitig <em>Hemmung</em> aller anderen (relativer
+    Gewinn = relativer Verlust). „Partielle Hemmung“ (A) und „Gravitation“ (B)
+    sind zwei Seiten desselben Softmax. <b>Fusion:</b> Attention =
+    normiertes Kraftfeld = Anziehung + gegenseitige Konkurrenz.</p>
+    <p><b>(2) Attraktor = Gleichgewichtspunkt der Kraft.</b> Ein Attraktor ist
+    per Definition ein Punkt, an dem die resultierende Kraft null wird
+    (∇Kraft = 0). Der „feste semantische Attraktor“ (A) ist also kein
+    externer Magnet, sondern das <em>Gleichgewicht</em> von Bs Q·K-Kraftfeld.
+    Die Becken sind emergent, geformt durch die Paar-Kräfte. <b>Fusion:</b>
+    das Kraftfeld (B) erzeugt die Becken-Geometrie (A); „Attraktor“ =
+    Null-Kraft-Punkt des Q·K-Feldes.</p>
+    <p><b>(3) Tiefe × Köpfe = zweidimensionale Organisation.</b> Tiefe (A) und
+    Köpfe (B) sind orthogonale Achsen. Jeder Layer ist ein Stack paralleler
+    Kopf-Kraftfelder; Köpfe früher Layer kodieren Syntax, Köpfe späterer
+    Layer Semantik/Dynamik. Die „Kontext-Uhr“ tickt über die Layer (A);
+    innerhalb jedes Layers laufen die Köpfe parallel (B). <b>Fusion:</b>
+    Transformer = Folge von Layern, jeder ein paralleles Multi-Head-Kraftfeld.</p>
+    <p><b>(4) Readout vervollständigt das Bild.</b> Das Kraftfeld des letzten
+    Layers lässt den letzten Token in ein Becken sinken; das Unembedding
+    (A) liest aus, welches Vokabular-Becken das ist → nächster Token. Bs
+    Matrix erklärt, <em>wie</em> die Position entstand; As Readout erklärt,
+    <em>warum</em> sie zählt. Cosine (A) und Dot-Produkt (B) vereinheitlichen
+    sich: beide sind Metriken über q/k-Vektoren; die Cosine ist das
+    normalisierte Dot-Produkt, also dieselbe Geometrie auf der Einheitskugel.
+    <b>Fusion:</b> Kraft (B) formt Position → Position (A) wird per
+    Nearest-Vocab-Punkt gelesen.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span>Fusionierter Inhalt</h2>
+    <p><b>Der Vektorraum (A).</b> Jedes Token ist ein Punkt
+    <em>e</em><sub>v</sub> im hochdimensionalen Embedding-Raum; Ähnlichkeit =
+    Nähe (Cosine). Repräsentationen sind keine statischen Einträge, sondern
+    <em>Zustände</em> eines dynamischen Systems, das Layer für Layer weitergezogen wird.</p>
+    <p><b>Der Q/K/V-Mechanismus (B).</b> Jedes Token erzeugt eine
+    <b>Query</b> („was suche ich?“), einen <b>Key</b> („was enthalte ich?“) und
+    einen <b>Value</b> („was trage ich bei?“). Die Attention-Matrix
+    <em>A</em> ∈ ℝ<sup>n×n</sup> wird über alle paarweisen Skalarprodukte
+    gebildet; verschiedene <b>Köpfe</b> projizieren q/k in eigene Subräume und
+    lernen damit verschiedene Beziehungsmuster (Positional = Nähe, Syntactic =
+    Subjekt-Verb/Pronomen, Semantic = Kausalität/Polysémie).</p>
+    <div class="math">
+      attention: a<sub>i</sub> = softmax( q<sub>i</sub>·Kᵀ / √d ) &nbsp;·&nbsp;
+      Value &nbsp;&nbsp;—&nbsp;&nbsp; Kraft: F<sub>ij</sub> ∝ a<sub>ij</sub>
+    </div>
+    <p><b>Die Kraft-Interpretation (B → A).</b> Man liest das Gewicht
+    a<sub>ij</sub> als <em>Gravitationsstärke</em>: Token j übt auf Token i
+    eine Anziehung aus, proportional zur Aufmerksamkeit. Das System ist ein
+    Partikelensemble mit Paar-Anziehung (∝ a<sub>ij</sub>), Überlappungs-Abstoßung
+    und Rückfederung; es relaxiert zu einem Gleichgewicht.</p>
+    <p><b>Layer-Attraktoren (A), neu gelesen als Gleichgewichte.</b>
+    Frühe Layer: das Kraftfeld aligniert Tokens in <em>fixierte</em> Becken
+    (POS/Syntax — Artikel, Präposition, Kopula). Mittlere Layer: semantische
+    Becken („Hauptstadt von X“), in die die beteiligten Tokens hineingezogen
+    werden. Späte Layer: dynamische, kontextabhängige Becken, die erst durch
+    den laufenden Kontext festgelegt sind. Der „feste Attraktor“ ist die
+    Stelle, an der die Summe aller Q·K-Kräfte null wird.</p>
+    <div class="math">
+      Attraktor: &nbsp; ∑<sub>j</sub> F<sub>ij</sub> = 0
+      &nbsp;&nbsp;(Gleichgewicht des Q·K-Feldes)&nbsp;&nbsp;
+      Softmax = normiertes Feld: &nbsp; ∑<sub>j</sub> a<sub>ij</sub> = 1
+    </div>
+    <p><b>Kontext-Akkumulation, die „sich verlängernde Uhr“ (A).</b> Mit jedem
+    neuen Token wächst der Kontext-Frame; der letzte Vektor des letzten Layers
+    enthält die <em>gemischte Gesamtbedeutung</em> — das Ergebnis, in das die
+    gesamte Folge von Kopf-Kraftfeldern (B) über die Layer (A) hineingeflossen
+    ist. Die „partielle Hemmung“ ist dabei die Normalisierung des Feldes:
+    indem ein Token mehr auf einen Key achtet, achtet es auf alle anderen
+    weniger.</p>
+    <p><b>Unembedding / Nearest-Point (A) als Readout des Feldes.</b> Der
+    finale Kontext-Vektor <em>h</em><sub>last</sub> wird gegen alle
+    Vokabular-Embeddings e<sub>v</sub> verglichen; der nächste Punkt ist der
+    wahrscheinlichste nächste Token. Beispiel aus A: „Die Hauptstadt von
+    Frankreich ist“ → das spätdynamische Becken zieht <em>ist</em> Richtung
+    „Paris“; Paris liegt am nächsten (Cosine ≈ 0.94), Softmax konzentriert die
+    Masse auf ihn.</p>
+    <div class="math">
+      ẑ = argmin<sub>v</sub> ‖ h<sub>last</sub> − e<sub>v</sub> ‖
+      &nbsp;&nbsp;⇔&nbsp;&nbsp; cos(h<sub>last</sub>, e<sub>v</sub>) maximal
+      &nbsp;&nbsp;(Cosine = normiertes Dot-Produkt — dieselbe q/k-Geometrie wie bei B)
+    </div>
+    <p><b>Das vollständige, fusionierte Pipeline-Bild.</b> Embed → pro Layer:
+    paralleles Multi-Head-Kraftfeld (Köpfe, B) formt die Repräsentationen,
+    dabei sinken sie in immer semantischere Becken (Layer-Tiefe, A) → letzter
+    Token landet im spätdynamischen Becken → Unembedding liest den nächsten
+    Vokabular-Punkt aus. <em>Kraft formt Position; Position wird Bedeutung;
+    Bedeutung wird nächster Token.</em></p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span>Interaktive Visualisierung: Das fusionierte Kraftfeld</h2>
+    <p class="callout">Die fünf Tokens „Die / Hauptstadt / von / Frankreich /
+    ist“ sind Partikel im Vektorraum. Der Regler <b>Attention (Q·K)</b> skaliert
+    die paarweisen Gravitationskräfte (B); der Regler <b>Layer</b> tickt die
+    „Kontext-Uhr“ (A) — früh wirken syntaktische Becken, mittel semantische,
+    spät das spätdynamische Kontext-Becken bei „Paris“. Das
+    <b>Kontext-Partikel</b> (ist) wird von den Kräften + Becken in ein Becken
+    gezogen; der <b>nächste Vokabular-Punkt</b> daran ist die Vorhersage
+    (Unembedding, A).</p>
+    <div class="viz-wrap">
+      <canvas id="field"></canvas>
+      <div class="ctrl">
+        <label>Attention-Kraft (Q·K Gravitation)
+          <input type="range" id="att" min="0" max="100" value="55">
+          <span class="val" id="attVal">55%</span>
+        </label>
+        <label>Layer / Frame (Tiefe, 0–11)
+          <input type="range" id="layer" min="0" max="11" value="6">
+          <span class="val" id="layerVal">6</span>
+        </label>
+      </div>
+      <div class="readout">
+        <div class="chip"><span class="k">Phase: </span><span class="v" id="phase">–</span></div>
+        <div class="chip"><span class="k">Aktive Becken: </span><span class="v" id="basins">–</span></div>
+        <div class="chip pred"><span class="k">Nächster Token (Nearest-Point): </span><span class="v" id="pred">–</span></div>
+      </div>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--muted)"></span> Fixiert (Syntax)</span>
+        <span><span class="dot" style="background:var(--accent2)"></span> Semantisch</span>
+        <span><span class="dot" style="background:var(--accent)"></span> Dynamisch (Kontext)</span>
+        <span><span class="dot" style="background:var(--fg);border:1px dashed var(--muted)"></span> Kontext-Partikel (ist)</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span>Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../idea.html">idea.html</a> — „LLM Transformer Visualisierung –
+        Attraktoren &amp; Embedding-Raum“: Bedeutung als Punkt im Raum,
+        Layer-Attraktoren (Syntax → Semantik → Kontext), Kontext-Akkumulation
+        („die sich verlängernde Uhr“) und Unembedding via Nearest-Point
+        („→ Paris“, Cosine 0.94).</li>
+      <li><a href="../attn.html">attn.html</a> — „Self-Attention — Tokens as
+        Gravitational Particles“: Q/K/V-Mechanismus, Attention als
+        Gravitationskraft aus Q·K, Multi-Head (Positional/Syntactic/Semantic)
+        und die Attention-Matrix als Partikel-Wechselwirkung.</li>
+    </ul>
+  </section>
+
+  <footer>Fusion 022 · Runde 1 · idea.html ✕ attn.html — selbsttragend, keine
+  externen Daten.</footer>
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var cv = document.getElementById('field');
+  var ctx = cv.getContext('2d');
+  var attEl = document.getElementById('att');
+  var layerEl = document.getElementById('layer');
+  var attVal = document.getElementById('attVal');
+  var layerVal = document.getElementById('layerVal');
+  var phaseEl = document.getElementById('phase');
+  var basinsEl = document.getElementById('basins');
+  var predEl = document.getElementById('pred');
+  var themeBtn = document.getElementById('themeBtn');
+
+  var theme = {};
+  function readTheme() {
+    var s = getComputedStyle(document.documentElement);
+    theme.bg = s.getPropertyValue('--panel2').trim() || '#0b1220';
+    theme.fg = s.getPropertyValue('--fg').trim() || '#e5e7eb';
+    theme.muted = s.getPropertyValue('--muted').trim() || '#94a3b8';
+    theme.accent = s.getPropertyValue('--accent').trim() || '#38bdf8';
+    theme.accent2 = s.getPropertyValue('--accent2').trim() || '#a78bfa';
+    theme.line = s.getPropertyValue('--line').trim() || '#1e293b';
+    theme.basin = s.getPropertyValue('--basin').trim() || '#fbbf24';
+    themeBtn.textContent = document.documentElement.classList.contains('dark') ? '☀ Hell' : '🌙 Dunkel';
+  }
+  themeBtn.addEventListener('click', function () {
+    document.documentElement.classList.toggle('dark');
+    readTheme();
+  });
+
+  function hexA(hex, a) {
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    if (isNaN(r)) { r=120; g=140; b=170; }
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function clamp01(x){ return x<0?0:(x>1?1:x); }
+
+  // --- Daten (inline) ---
+  // Partikel: [wort, homeX, homeY, farbe, isContext]
+  var T = [
+    { word:'Die',        hx:0.18, hy:0.42, color:'#8b949e' },
+    { word:'Hauptstadt', hx:0.40, hy:0.40, color:'#ff8844' },
+    { word:'von',        hx:0.46, hy:0.58, color:'#9aa0a6' },
+    { word:'Frankreich', hx:0.60, hy:0.44, color:'#44aadd' },
+    { word:'ist',        hx:0.30, hy:0.66, color:'#ffd54a', isContext:true }
+  ];
+  // Attention-Matrix (Zeile i = Kraft, die i auf j ausübt, ∝ Q·K)
+  var attn = [
+    [0.05, 0.30, 0.05, 0.05, 0.05],
+    [0.02, 0.05, 0.03, 0.60, 0.15],
+    [0.02, 0.05, 0.05, 0.60, 0.05],
+    [0.02, 0.55, 0.05, 0.05, 0.08],
+    [0.02, 0.45, 0.02, 0.20, 0.05]
+  ];
+  // Becken (Attraktoren): [label, x, y, mid, spread, eraFarbe-Key]
+  var basins = [
+    { label:'POS / Syntax',          x:0.22, y:0.28, mid:1.5, spread:2.4, key:'muted'   },
+    { label:'SEMANTIK · Hpt.-v.-X',  x:0.72, y:0.34, mid:6.0, spread:2.6, key:'accent2' },
+    { label:'KONTEXT → dynamisch',   x:0.82, y:0.62, mid:10.0, spread:2.4, key:'accent'  }
+  ];
+  // Vokabular-Kandidaten (Unembedding-Zielraum)
+  var cand = [
+    { word:'Paris',   x:0.84, y:0.58 },
+    { word:'Lyon',    x:0.72, y:0.80 },
+    { word:'Berlin',  x:0.58, y:0.82 },
+    { word:'Stadt',   x:0.66, y:0.50 },
+    { word:'Europa',  x:0.54, y:0.66 }
+  ];
+
+  var n = T.length;
+  var P = T.map(function (t) {
+    return { word:t.word, hx:t.hx, hy:t.hy, color:t.color, isContext:!!t.isContext,
+             x:t.hx, y:t.hy, vx:0, vy:0, r: t.isContext?20:17 };
+  });
+
+  var att = 0.55, layer = 6;
+  attEl.addEventListener('input', function(){ att = attEl.value/100; attVal.textContent = attEl.value+'%'; });
+  layerEl.addEventListener('input', function(){ layer = +layerEl.value; layerVal.textContent = layerEl.value; });
+
+  function basinAct(b, L){ return clamp01(1 - Math.abs(L - b.mid) / b.spread); }
+  function phaseName(L){ return L<=3 ? 'Fixierte Attraktoren (Syntax)' : (L<=7 ? 'Semantische Attraktoren' : 'Dynamische Attraktoren (Kontext)'); }
+
+  function step() {
+    var Kpair = 1.25*att, basinK = 0.95, springK = 0.045, dt = 0.12, damp = 0.86;
+    for (var i=0;i<n;i++){
+      var pi = P[i];
+      var fx=0, fy=0;
+      for (var j=0;j<n;j++){
+        if (i===j) continue;
+        var pj = P[j];
+        var dx = pj.x-pi.x, dy = pj.y-pi.y;
+        var dist = Math.sqrt(dx*dx+dy*dy)||0.001;
+        var F = attn[i][j]*Kpair;
+        var minD = 0.13;
+        var rep = dist<minD ? (minD-dist)*0.9 : 0;
+        var net = F - rep;
+        fx += (dx/dist)*net; fy += (dy/dist)*net;
+      }
+      var cMult = pi.isContext ? 1.7 : 1.0;
+      for (var k=0;k<basins.length;k++){
+        var b = basins[k];
+        var act = basinAct(b, layer);
+        if (act<=0.01) continue;
+        var bdx = b.x-pi.x, bdy = b.y-pi.y;
+        var bd = Math.sqrt(bdx*bdx+bdy*bdy)||0.001;
+        var BF = basinK*act*cMult;
+        fx += (bdx/bd)*BF; fy += (bdy/bd)*BF;
+      }
+      fx += (pi.hx-pi.x)*springK; fy += (pi.hy-pi.y)*springK;
+      var m=0.08;
+      if (pi.x<m) fx+=(m-pi.x)*0.4; if (pi.x>1-m) fx+=(1-m-pi.x)*0.4;
+      if (pi.y<m) fy+=(m-pi.y)*0.4; if (pi.y>1-m) fy+=(1-m-pi.y)*0.4;
+      pi.vx = (pi.vx+fx*dt)*damp; pi.vy = (pi.vy+fy*dt)*damp;
+      pi.x += pi.vx*dt; pi.y += pi.vy*dt;
+    }
+  }
+
+  function sizeCanvas(){
+    var dpr = window.devicePixelRatio||1;
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if (w<10||h<10) return false;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return true;
+  }
+  window.addEventListener('resize', sizeCanvas);
+
+  function draw(){
+    if (!sizeCanvas()) return;
+    var W = cv.clientWidth, H = cv.clientHeight;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = theme.bg; ctx.fillRect(0,0,W,H);
+
+    var i,j;
+    // Gitter
+    ctx.strokeStyle = hexA(theme.line, 0.5); ctx.lineWidth=1;
+    for (var gx=1;gx<10;gx++){ ctx.beginPath(); ctx.moveTo(W*gx/10,0); ctx.lineTo(W*gx/10,H); ctx.stroke(); }
+    for (var gy=1;gy<8;gy++){ ctx.beginPath(); ctx.moveTo(0,H*gy/8); ctx.lineTo(W,H*gy/8); ctx.stroke(); }
+
+    // Becken
+    for (i=0;i<basins.length;i++){
+      var b = basins[i]; var act = basinAct(b,layer);
+      var bx=b.x*W, by=b.y*H;
+      var col = theme[b.key];
+      var r = 46 + 12*act;
+      ctx.beginPath(); ctx.arc(bx,by,r,0,Math.PI*2);
+      ctx.fillStyle = hexA(col, 0.05+0.10*act); ctx.fill();
+      ctx.strokeStyle = hexA(col, 0.25+0.5*act); ctx.lineWidth = 1.5;
+      ctx.setLineDash(act>0.5?[]:[4,4]); ctx.stroke(); ctx.setLineDash([]);
+      if (act>0.05){
+        ctx.fillStyle = hexA(col, 0.4+0.6*act);
+        ctx.font='600 11px Segoe UI, sans-serif'; ctx.textAlign='center';
+        ctx.fillText(b.label, bx, by - r - 6);
+      }
+      // Stern in Mitte
+      ctx.fillStyle = hexA(col, 0.5+0.5*act);
+      ctx.font='14px Segoe UI, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('★', bx, by);
+    }
+
+    // Attention-Linien (Q·K-Kräfte)
+    ctx.lineCap='round';
+    for (i=0;i<n;i++) for (j=0;j<n;j++){
+      if (i===j) continue;
+      var w = attn[i][j]; if (w<0.05) continue;
+      var pi=P[i], pj=P[j];
+      var sx=pi.x*W, sy=pi.y*H, tx=pj.x*W, ty=pj.y*H;
+      var a = (0.06 + w*0.8*att);
+      var mx0=(sx+tx)/2, my0=(sy+ty)/2;
+      var dx=tx-sx, dy=ty-sy;
+      var perpx=-dy*0.08, perpy=dx*0.08;
+      ctx.beginPath(); ctx.moveTo(sx,sy);
+      ctx.quadraticCurveTo(mx0+perpx, my0+perpy, tx, ty);
+      ctx.strokeStyle = hexA(pi.color, a); ctx.lineWidth = 0.5 + w*3.2*att; ctx.stroke();
+    }
+
+    // Vokabular-Kandidaten
+    var cctx = P[4]; var ccx=cctx.x*W, ccy=cctx.y*H;
+    var best=-1, bestD=1e9;
+    for (i=0;i<cand.length;i++){
+      var c=cand[i]; var cxp=c.x*W, cyp=c.y*H;
+      var d = Math.sqrt((cxp-ccx)*(cxp-ccx)+(cyp-ccy)*(cyp-ccy));
+      if (d<bestD){ bestD=d; best=i; }
+      var isBest = (i===best);
+      ctx.beginPath(); ctx.arc(cxp,cyp, isBest?11:7, 0, Math.PI*2);
+      ctx.fillStyle = hexA(isBest?theme.accent:theme.muted, isBest?0.5:0.25); ctx.fill();
+      ctx.strokeStyle = hexA(isBest?theme.accent:theme.muted, isBest?1:0.5);
+      ctx.lineWidth = isBest?2:1;
+      if (isBest) ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = hexA(theme.fg, isBest?1:0.6);
+      ctx.font=(isBest?'600 12px ':'11px ')+'Segoe UI, sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='top';
+      ctx.fillText(c.word, cxp, cyp+10);
+    }
+    // Linie Kontext → bester Kandidat (Nearest-Point)
+    if (best>=0){
+      var bc=cand[best];
+      ctx.strokeStyle = hexA(theme.accent, 0.8); ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+      ctx.beginPath(); ctx.moveTo(ccx,ccy); ctx.lineTo(bc.x*W,bc.y*H); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // Partikel
+    for (i=0;i<n;i++){
+      var p=P[i]; var px=p.x*W, py=p.y*H;
+      var glow = p.isContext?22:0;
+      if (glow>0){
+        var g=ctx.createRadialGradient(px,py,p.r*0.5,px,py,p.r+glow);
+        g.addColorStop(0, hexA(p.color,0.35)); g.addColorStop(1, hexA(p.color,0));
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,p.r+glow,0,Math.PI*2); ctx.fill();
+      }
+      var fg=ctx.createRadialGradient(px-3,py-3,2,px,py,p.r);
+      fg.addColorStop(0, hexA(p.color,0.9)); fg.addColorStop(1, hexA(p.color,0.3));
+      ctx.fillStyle=fg; ctx.beginPath(); ctx.arc(px,py,p.r,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle = p.isContext?theme.accent:hexA(p.color,0.7);
+      ctx.lineWidth = p.isContext?2.5:1;
+      if (p.isContext) ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=theme.fg; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font=(p.isContext?'700 ':'600 ')+12+'px Segoe UI, sans-serif';
+      ctx.fillText(p.word, px, py);
+      if (p.isContext){
+        ctx.fillStyle=theme.accent; ctx.font='600 10px Segoe UI, sans-serif';
+        ctx.fillText('Kontext-Vektor', px, py+p.r+11);
+      }
+    }
+
+    // Readout
+    var actList=[];
+    for (i=0;i<basins.length;i++){ if (basinAct(basins[i],layer)>0.5) actList.push(basins[i].label); }
+    phaseEl.textContent = 'Layer '+layer+'/11 · '+phaseName(layer);
+    basinsEl.textContent = actList.length?actList.join(', '):'— (Übergang)';
+    if (best>=0){
+      var sim = clamp01(1 - bestD/ (Math.max(W,H)*0.55));
+      predEl.textContent = cand[best].word+'  ·  cos ≈ '+sim.toFixed(2);
+    }
+  }
+
+  function loop(){ step(); draw(); requestAnimationFrame(loop); }
+
+  readTheme();
+  sizeCanvas();
+  loop();
+})();
+</script>
+</body>
+</html>

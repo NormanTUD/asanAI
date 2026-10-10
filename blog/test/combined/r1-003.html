@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weiche Gates, harte Schnitte — Aufmerksamkeit als differenzierbarer Topologie-Test</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#f7f5ef; --panel:#ffffff; --panel2:#f1ede2;
+  --ink:#1f2430; --ink-dim:#48526a; --ink-faint:#8a93a6;
+  --stroke:rgba(31,36,48,.14); --stroke-hi:rgba(31,36,48,.26);
+  --accent:#0b7285;
+  --acc-soft:#c77311; --acc-hard:#b0239a; --acc-ring:#0b7285;
+  --acc-point:#1d4ed8; --acc-hit:#c1121f; --acc-miss:#1b7f3b;
+  --plot-bg:#ffffff; --grid:rgba(31,36,48,.10);
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 6px 18px rgba(31,36,48,.06);
+  --r:14px;
+}
+html.dark{
+  --bg:#0a0c12; --panel:#12141f; --panel2:#0f1220;
+  --ink:#e8ebf5; --ink-dim:#aab3cf; --ink-faint:#6b7490;
+  --stroke:rgba(255,255,255,.10); --stroke-hi:rgba(255,255,255,.22);
+  --accent:#5eead4;
+  --acc-soft:#fbbf24; --acc-hard:#e879f9; --acc-ring:#5eead4;
+  --acc-point:#93c5fd; --acc-hit:#ff6b6b; --acc-miss:#6ee7b7;
+  --plot-bg:#0e1019; --grid:rgba(255,255,255,.08);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  line-height:1.68;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 90px}
+header.hero{text-align:center;margin:8px 0 34px}
+.kicker{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);
+  border:1px solid var(--stroke);border-radius:999px;padding:5px 13px;
+  background:var(--panel);margin-bottom:16px;
+}
+h1{
+  font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.1;margin:0 0 12px;
+  font-weight:800;letter-spacing:-.02em;color:var(--ink);
+}
+.sub{color:var(--ink-dim);font-size:14px;margin:0 0 4px}
+.sub .x{color:var(--accent);font-weight:700}
+.theme-toggle{
+  margin-top:16px;background:var(--panel);color:var(--ink-dim);
+  border:1px solid var(--stroke);border-radius:999px;padding:6px 14px;
+  font-size:12px;cursor:pointer;font-weight:600;
+}
+.theme-toggle:hover{border-color:var(--stroke-hi);color:var(--ink)}
+section{margin:0 0 40px;scroll-margin-top:20px}
+h2{
+  font-size:1.45rem;font-weight:800;letter-spacing:-.01em;margin:0 0 14px;
+  padding-bottom:10px;border-bottom:1px solid var(--stroke);color:var(--ink);
+}
+h2 .no{color:var(--accent);font-family:ui-monospace,"JetBrains Mono",monospace;
+  font-size:.72rem;font-weight:700;margin-right:10px;vertical-align:middle;
+  border:1px solid var(--stroke);border-radius:6px;padding:2px 7px}
+h3{font-size:1.05rem;font-weight:700;margin:26px 0 8px;color:var(--accent)}
+p{margin:0 0 12px;color:var(--ink-dim);font-size:15px}
+p strong,li strong{color:var(--ink);font-weight:650}
+ul{margin:0 0 12px;padding-left:22px;color:var(--ink-dim);font-size:15px}
+li{margin:6px 0}
+a{color:var(--accent)}
+.card{
+  background:var(--panel);border:1px solid var(--stroke);
+  border-radius:var(--r);padding:16px 18px;margin:16px 0;box-shadow:var(--shadow);
+}
+.card.fused{border-left:3px solid var(--accent)}
+.card a{font-weight:650}
+.tag{
+  display:inline-block;font-family:ui-monospace,monospace;font-size:11px;
+  font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:6px;
+  border:1px solid var(--stroke);margin-right:6px;
+}
+.tag.a{color:var(--acc-soft)} .tag.b{color:var(--acc-hard)}
+.kmath{overflow-x:auto;font-size:15px;margin:4px 0 8px;color:var(--ink)}
+.katex-display{margin:.4em 0}
+.viz{
+  background:var(--panel);border:1px solid var(--stroke);
+  border-radius:var(--r);padding:16px;margin:16px 0;box-shadow:var(--shadow);
+}
+.viz .row{display:flex;gap:16px;flex-wrap:wrap}
+.viz canvas{width:100%;display:block;border-radius:10px;border:1px solid var(--stroke)}
+#vizMain{height:340px} #vizCurve{height:170px}
+.ctrl{display:flex;flex-direction:column;gap:2px;margin:10px 0;font-size:12px}
+.ctrl label{color:var(--ink-dim);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:10.5px;
+  display:flex;justify-content:space-between}
+.ctrl .val{font-family:ui-monospace,monospace;color:var(--accent);text-transform:none}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.reads{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.read{
+  flex:1;min-width:90px;background:var(--panel2);border:1px solid var(--stroke);
+  border-radius:10px;padding:8px 10px;text-align:center;
+}
+.read .k{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:700}
+.read .v{font-family:ui-monospace,monospace;font-size:20px;font-weight:700;color:var(--ink);margin-top:2px}
+.tape{
+  font-family:ui-monospace,monospace;font-size:15px;letter-spacing:4px;
+  background:var(--panel2);border:1px solid var(--stroke);border-radius:10px;
+  padding:8px 10px;margin-top:10px;text-align:center;min-height:20px;
+}
+.state{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;
+  letter-spacing:.06em;color:var(--ink-dim);text-align:center;margin-top:6px}
+.btn{background:var(--panel);color:var(--ink-dim);border:1px solid var(--stroke);
+  border-radius:9px;padding:6px 12px;font-size:12px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--stroke-hi);color:var(--ink)}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-dim);margin-top:10px}
+.lead{font-size:16px;color:var(--ink)}
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--stroke);
+  color:var(--ink-faint);font-size:12px;text-align:center}
+@media(max-width:560px){.read .v{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="content">
+
+  <header class="hero">
+    <div class="kicker">Fusion · Runde 1 · Paar 003</div>
+    <h1>Weiche Gates, harte Schnitte<br>Aufmerksamkeit als differenzierbarer Topologie-Test</h1>
+    <p class="sub">Fusion aus: <span class="x">theory_of_deep_learning.html</span> <span class="x">✕</span> <span class="x">turing3.html</span></p>
+    <button class="theme-toggle" id="themeBtn">🌗 Theme wechseln</button>
+  </header>
+
+  <!-- 1 -->
+  <section id="these">
+    <h2><span class="no">1</span>Kernthese der Fusion</h2>
+    <p class="lead">Beide Quellen beschreiben dasselbe Phänomen von zwei Seiten.
+    <strong>turing3.html</strong> (B) modelliert einen einzelnen
+    <strong>Attention-Head</strong> als <em>Topologie-Schnitt</em>: Der Head projiziert einen
+    dreidimensionalen versteckten Zustand (eine „Spirale“) auf eine zweidimensionale
+    <strong>Feature-Ebene</strong> und testet eine geometrische Bedingung — liegt der Zustand
+    im <strong>Feature-Kreis</strong>? — und schreibt daraus ein <strong>binäres Bit</strong> auf ein
+    Tape (ein „Turing-Head“). <strong>theory_of_deep_learning.html</strong> (A) erklärt dieselbe
+    Maschine mathematisch: Aufmerksamkeit ist dort eine <em>glatte, differenzierbare</em>
+    <strong>Konvexkombination</strong> der Wert-Vektoren, und das gesamte Gelingen von Deep
+    Learning (Approximation × Optimierung × Generalisierung) ruht auf genau dieser Weichheit.</p>
+    <p>Die fusionierte Position: <strong>Ein Attention-Head ist ein harter, diskreter,
+    topologischer Featureschnitt — und der weiche Softmax-Mittelwert ist seine lernbare,
+    differenzierbare Entspannung (Relaxation).</strong> Man kann nicht durch ein hartes
+    0/1-„drinnen/außen“ backpropagieren; deshalb ersetzt A den harten Test durch glatte
+    Gewichte. Im Limes verschwindender Temperatur wird die weiche Feature-Funktion zum harten
+    Gate. Und <strong>turing3</strong> liefert die geometrische Seele dazu: der <em>Schnitt</em>
+    selbst ist die Struktur, die den <strong>Fluch der Dimension</strong> bricht — statt eine
+    allgemeine hochdimensionale Funktion zu approximieren, liest das Netz <em>ein</em> Feature
+    von einer niedrigdimensionalen Koordinate ab, auf der die Daten tatsächlich leben.</p>
+  </section>
+
+  <!-- 2 -->
+  <section id="widersprueche">
+    <h2><span class="no">2</span>Widersprüche zwischen A und B</h2>
+    <p>Die zwei Texte stehen nicht einfach komplementär zueinander — sie treffen an drei
+    Stellen auf inkompatible Stances über <em>was ein Attention-Head ist</em> und <em>was
+    hohe Dimension bedeutet</em>:</p>
+
+    <div class="card fused">
+      <p style="margin-top:0"><span class="tag a">A</span>
+      <strong>Weich/differenzierbar &nbsp;vs.&nbsp; &nbsp;<span class="tag b" style="margin-left:6px">B</span> hart/diskret.</strong><br>
+      A (Kap. 15, Transformer): die Attention-Ausgabe ist „eine Konvexkombination aller
+      Wert-Vektoren“ — ein <em>glatter, differenzierbarer</em> Softmax-Mittelwert, über den
+      Backpropagation, die NTK-Linearisierung und die Lipschitz-Robustheit laufen.
+      B (Label + Code): der Head „care[s] only if the spiral is inside this specific
+      circle“ und liefert ein <em>hartes 0/1-Bit</em> („BIT WRITE: ACTIVE“ vs.
+      „SCANNING TAPE“). Inkompatibel, was derselbe Baustein <em>tut</em>: glatte
+      Interpolation vs. diskreter Topologie-Test.</p>
+    </div>
+
+    <div class="card fused">
+      <p style="margin-top:0"><span class="tag a">A</span>
+      <strong>Hohe Dimension ist ein Fluch &nbsp;vs.&nbsp; &nbsp;<span class="tag b" style="margin-left:6px">B</span> der Punkt ist, sie wegzuschneiden.</strong><br>
+      A (Kap. 6): Der Fluch der Dimensionalität ist eine <em>harte, informations-theoretische
+      Grenze</em> — für allgemeine $C^k$-Funktionen $\ge C\,N^{-k/d}$, also
+      $N\sim\varepsilon^{-d/k}$ Parameter; hohe Dimension ist generisch der Feind, nur
+      Spezialstruktur (Barron / Kompositionalität / Mannigfaltigkeit) entkommt.
+      B (Kernidee): man nimmt den <em>3D</em>-Zustand und <em>schneidet</em> ihn auf eine
+      <em>2D</em>-Feature-Ebene, „This is what the Attention Head ‘sees’“ — B geht <em>a priori</em>
+      davon aus, dass der Zustand niedrigdimensionale topologische Struktur hat (die Spirale
+      liegt im Kreis), die der Schnitt freilegt. Pessimismus (Struktur nicht generisch da)
+      vs. Optimismus (der Schnitt enthüllt sie).</p>
+    </div>
+
+    <div class="card fused">
+      <p style="margin-top:0"><span class="tag a">A</span>
+      <strong>Funktion approximativ darstellen &nbsp;vs.&nbsp; &nbsp;<span class="tag b" style="margin-left:6px">B</span> Turing-Berechnung ausführen.</strong><br>
+      A: Das Netz <em>approximiert eine (statische) Zielfunktion</em> in einer Norm; „Berechnung“
+      ist der Forward-Pass $\Phi(x)$, gemessen wird Approximations-/Generalisierungsfehler.
+      B: Der Head ist ein <em>Turing-Kopf, der Bits auf ein Tape schreibt</em>
+      („TURING HEAD STATE“, Binärstrom) — eine stateful, sequentielle, symbolische
+      Berechnung. Statische Funktionsrepräsentation vs. Rechen-/Schreibprozess.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section id="aufloesung">
+    <h2><span class="no">3</span>Auflösung</h2>
+    <p>Keine der Stancen ist falsch — sie sind <strong>zwei Stufen desselben
+    Mechanismus</strong>. Drei Auflösungen:</p>
+
+    <div class="card fused">
+      <p style="margin-top:0"><strong>① Weich ↔ hart — zwei Stufen, keine Widerspruch.</strong>
+      Der harte binäre Test (B) ist die <em>semantische</em> Operation: <em> welches
+      Feature? </em> Der weiche Softmax-Mittelwert (A) ist die <em>lernbare</em>
+      Entspannung dieses Tests. Gradientenverfahren brauchen eine stetige Ableitung —
+      deshalb ersetzt A das harte Gate durch glatte Gewichte. Die Feature-Funktion
+      $f_{\mathrm{soft}}(d;\sigma)=\exp\!\big(-(d-r)^2/(2\sigma^2)\big)$ wird im Limes
+      $\sigma\to 0$ zum harten Band-Gate $f_{\mathrm{hard}}(d)=\mathbf 1_{|d-r|<w}$.
+      Die Temperatur (A, Faktor $1/\sqrt d$) regelt genau diese Weichheit: hoch → flach
+      (nichts gelernt), niedrig → scharf (ein Feature, Gradient läuft weg).
+      <strong>Fusion:</strong> Aufmerksamkeit = differenzierbarer Weichsatz eines harten
+      topologischen Featureschnitts.</p>
+    </div>
+
+    <div class="card fused">
+      <p style="margin-top:0"><strong>② Fluch ↔ Schnitt — der Schnitt <em>ist</em> der Ausweg.</strong>
+      Der Featureschnitt (B) ist <em>genau einer der vier Auswege</em> aus dem Fluch,
+      den A benennt: Statt eine allgemeine high-dim Funktion zu approximieren ($N^{d/k}$),
+      <em>projiziert</em> das Netz den Zustand auf die low-dim Koordinate, in der die
+      Zielfunktion <em>separabel</em> ist. B's „Spirale im Feature-Kreis“ ist eine low-dim
+      Mannigfaltigkeit; der 2D-Schnitt ist ihr Lese-Header. Die Struktur ist real,
+      <em>weil die Daten auf der Spirale leben</em> — nicht, weil sie generisch existierte.
+      <strong>Fusion:</strong> Repräsentation = Dimensionsreduktion durch Struktur. Der
+      Fluch bricht, wo die niedrigdimensionale Struktur echt ist (Barron-/Mannigfaltigkeits-
+      Rate statt Glattkeitsrate — A's Aha #24: „Struktur schlägt Glattheit“).</p>
+    </div>
+
+    <div class="card fused">
+      <p style="margin-top:0"><strong>③ Funktionsdarstellung ↔ Berechnung — komplementär.</strong>
+      A sagt, <em>welche</em> Funktionen darstell- und lernbar sind (Säulen 1–3). B zeigt,
+      dass ein einzelner attentioneller Schritt zudem einen <em>diskreten Rechen-/
+      Schreibschritt</em> ausführt (Bit auf Tape — Sequenz + Gedächtnis). Die weiche
+      Entspannung aus ① macht genau diese diskreten Schritte <em>trainierbar</em>.
+      <strong>Fusion:</strong> Ein Attention-Block ist zugleich (i) eine glatte
+      Funktionsdarstellung und (ii) ein diskreter Berechnungsschritt; Theorie (A)
+      garantiert, dass beides gemeinsam lernbar bleibt, solange der diskrete Schritt als
+      weiche Relaxation formuliert wird. Tiefe (A: $ (2w)^L $ Stücke) stapelt solche
+      Schritte.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="inhalt">
+    <h2><span class="no">4</span>Fusionierter Inhalt</h2>
+
+    <h3>Der Aufgabensatz &amp; die drei Säulen <span class="tag a">A</span></h3>
+    <p>Gegeben ist eine Verteilung $\mathcal D$ und eine Stichprobe
+    $S=(x_i,y_i)_{i=1}^m\sim\mathcal D^m$. Das Netz $\Phi$ minimiert das empirische Risiko
+    $\widehat{\mathcal R}_S=\frac1m\sum_i \mathcal L(\Phi(x_i),y_i)$; gefragt ist das
+    <strong>wahre Risiko</strong> $\mathcal R=\mathbb E[\mathcal L(\Phi(x),y)]$. A zerlegt
+    die Frage „warum funktioniert Deep Learning?“ in drei Säulen: <strong>Approximation</strong>
+    (darstellbar?), <strong>Optimierung</strong> (findbar?), <strong>Generalisierung</strong>
+    (gilt neu?) —
+    $\mathcal R(\Phi_S)-R^*\le 2\underbrace{\sup_{\Phi}|\mathcal R-\widehat{\mathcal R}_S|}_{\varepsilon_{\rm gen}}
+    +\underbrace{\inf_{\Phi}\mathcal R(\Phi)-R^*}_{\varepsilon_{\rm approx}}$.</p>
+
+    <h3>Was ein Attention-Head tut: weicher Mittelwert <span class="tag a">A</span> + harter Schnitt <span class="tag b">B</span></h3>
+    <p>A (Kap. 15): $\Phi_{\rm at}(X)=V\,\mathrm{softmax}^{\rm col}\!\big(K^\top Q/\sqrt d+M\big)$,
+    mit $K=W_KX, Q=W_QX, V=W_VX$. Jede Zeile summiert sich auf 1 — die Ausgabe an Position $t$
+    ist eine <em>Konvexkombination</em> aller Wert-Vektoren; Kosten $O(n^2)$, $W$ unabhängig
+    von Kontextlänge $n$. <em>Weich, stetig, differenzierbar.</em></p>
+    <p>B: Derselbe Head, als Geometrie gelesen. Versteckter Zustand = eine 3D-Spirale; der Head
+    schneidet sie auf die 2D-Feature-Ebene und testet $d\in[r-w,\,r+w]$ (B's Ring bei
+    Radius 2, Band $1.8$–$2.2$) → Bit $0/1$ → Schreibschritt auf dem Tape.
+    <em>Hart, diskret, topologisch.</em></p>
+    <div class="kmath">$$f_{\mathrm{hard}}(d)=\mathbf 1_{\{|d-r|<w\}}\ \ \text{(B)},\qquad
+      f_{\mathrm{soft}}(d;\sigma)=\exp\!\Big(-\frac{(d-r)^2}{2\sigma^2}\Big)\ \ \text{(A, weicher Ersatz)},\qquad
+      f_{\mathrm{hard}}=\lim_{\sigma\to0} f_{\mathrm{soft}}\ (\text{Bang-Bang})$$</div>
+
+    <h3>Approximation: Universalität, Tiefe, Yarotsky — und der Preis der Dimension <span class="tag a">A</span></h3>
+    <p><strong>Universalität</strong> (Leshno–Lin–Pinkus–Schocken): Ein Neuron mit
+    nicht-polynomialer Aktivierung $\sigma$ ist bereits dicht in $C^0(\mathbb R^d)$; „kein
+    Polynom“ ist zugleich notwendig. ReLU ist <strong>stückweise linear</strong>, und
+    umgekehrt ist jede cpwl-Funktion exakt ein ReLU-Netz (Tarela–Martínez; Arora).
+    <strong>Tiefe</strong> schlägt Breite, weil bei Addition Stücke <em>addieren</em>, bei
+    Komposition aber <em>multiply</em>: $\mathrm{Pieces}(f_1\circ f_2)\le
+    \mathrm{Pieces}(f_1)\cdot\mathrm{Pieces}(f_2)$, Schranke $(2w)^L$ (Telgarsky).
+    Yarotskys Sägezahn $h_1=\sigma(2x)-\sigma(4x-2)$ erzeugt $2^{n-1}$ Zacken mit
+    $O(n)$ Parametern und approximiert $x^2$ mit Fehler $\le 2^{-2n-1}$; über
+    Polarisation $(x+y)^2-(x-y)^2=4xy$ wird Multiplikation daraus, über Monome →
+    Polynome → alles Glatte: für $f\in C^{k,s}$ Größe $N\log N$, Tiefe $\log N$,
+    Fehler $N^{-(k+s)/d}$.</p>
+    <p>Doch für <em>alle</em> $C^k$-Funktionen gilt die <strong>harte</strong> untere
+    Schranke $\ge C\,N^{-k/d}$ (DeVore–Howard–Micchelli; Borsuk–Ulam) — der Fluch.
+    <strong>Vier Auswege:</strong> Barron-Klasse ($N^{-1/2}$), <strong>Kompositionalität</strong>,
+    <strong>Mannigfaltigkeiten</strong> ($N^{-k/m}$, $m$ = innere Dimension), ReLU-optimal.
+    A's Fazit: <em>Struktur schlägt Glattheit</em> — reale Daten sind niedrigdimensional
+    komponiert, und genau das macht sie darstellbar.</p>
+
+    <h3>Der Featureschnitt als Struktur-Ausweg <span class="tag a">A</span> <span class="tag b">B</span></h3>
+    <p><strong>Fusion-Kern:</strong> B's 3D→2D→Bit-Schnitt <em>ist</em> die Kompositionalitäts-/
+    Mannigfaltigkeits-Form des Auswegs in A. Statt $N^{d/k}$ Parameter für eine
+    high-dim-Glattheitsrate braucht der Netz-Zugriff auf das Feature nur, die low-dim
+    Koordinate $d$ (Abstand zum Feature-Kreis) sauber zu messen — effektiv $d_{\rm eff}=1$.
+    Die Barron-/Mannigfaltigkeits-Rate bleibt dabei stehen, während alle
+    Glattkeitsraten bei wachsender $d$ kollabieren (A's Aha #24). Der Slice
+    <em>wählt</em> die Koordinate, in der die Struktur maximal und der Fluch minimal ist;
+    weiche Relaxation (①) macht diese Koordinate learnbar.</p>
+
+    <h3>Optimierung: GD, Landschaft, NTK <span class="tag a">A</span></h3>
+    <p>Gradientenabstieg: Rate $\big(1-\mu/L\big)^k$, Kondition $\kappa=L/\mu$;
+    Nesterov $\big(1-\sqrt{\mu/L}\big)^k$. Backpropagation: $O(L)$ statt $O(L^2)$.
+    Die Fehlerlandschaft ist nicht konvex, aber gutmütig: hohe Fehlerniveaus produzieren
+    vor allem <em>Sattelpunkte</em> (Hesse-Matrix $H=H_0+H_1$ mit $H_0\succeq0$ und
+    $H_1$ linear in den Fehlern), keine schlechten Minima; überparametrisierte flache
+    Netze haben keine Spurious Valleys (Venturi). Im <strong>NTK-Regime</strong> wird ein
+    sehr breites Netz zu seinem Taylor-Polynom 1. Ordnung linearisiert —
+    $\frac1n\hat K_n\to K^{\rm NTK}(x,z)=\mathbb E[\sigma(u^\top x)\sigma(u^\top z)]$ —
+    und Training konvergiert zum globalen Minimum mit Rate $O(n^{-1/2})$; im Limes
+    ist das Netz eine Kernel-/Gauß-Prozess-Methode. <em>Weichheit ist der Grund, warum
+    das alles überhaupt funktioniert.</em></p>
+
+    <h3>Generalisierung, Double Descent &amp; Robustheit <span class="tag a">A</span></h3>
+    <p>Über Covering Numbers und VC-Dimension folgt $\mathcal R(\Phi_S)-R^*\le
+    O\big(\sqrt{(\log\mathcal G+\log(1/\delta))/m}\big)$. Die <strong>Double-Descent</strong>-
+    Kurve: an der Interpolationsschwelle $n=m$ explodiert der Fehler (kleinstes
+    Singulärwert $s_{m,m}\to0$); für $n\gg m$ wählt GD von null die
+    <em>Minimalnorm-Lösung</em> → kleine Gewichte → Lipschitz → Covering-Number
+    <em>unabhängig</em> von der Parameterzahl → Fehler fällt erneut. Adversarial
+    Examples sind der Fluch erneut: $\|w\|_2/\|w\|_1\sim1/\sqrt d\to0$ macht die nötige
+    Störung pro Pixel winzig; die Antwort ist Lipschitz-Robustheit
+    ($\delta<s/C_L$) und Interval-Bound-Propagation. <strong>Keine der Säulen
+    funktioniert ohne die Weichheit</strong>, die B hart „einschneidet“.</p>
+
+    <div class="card fused">
+      <p style="margin:0"><strong>Fused-Claim (synthetisch, auf A+B aufgebaut):</strong>
+      <em>Ein Attention-Block ist ein differenzierbarer Weichsatz eines diskreten
+      topologischen Featureschnitts. Die Weichheit macht den harten, rechnerischen
+      Schritt trainierbar; der Schnitt macht die Weichheit effizient — er wählt die
+      Koordinate, in der der Fluch der Dimension klein ist.</em></p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="visualisierung">
+    <h2><span class="no">5</span>Interaktive Visualisierung</h2>
+    <p>Die Feature-Scheibe (2D-Schnitt aus B) mit Feature-Ring; ein Punkt — der
+    projizierte Hidden-State, auf Spiralfahrt wie in B — durchquert den Ring und
+    schreibt eine <strong>Bit-Tape</strong>. Der Weichheits-Regler $\sigma$ zeigt,
+    wie der <em>harte 0/1-Topologie-Test</em> (B, oben links als großes Bit) zur
+    <em>glatten, differenzierbaren Feature-Funktion</em> (A, gelb) wird. Unten:
+    die Kurve weich vs. hart über dem Abstand $d$ — für $\sigma\to0$ fallen beide
+    zusammen (Limes = hares Gate).</p>
+    <div class="viz">
+      <div class="row">
+        <div style="flex:1;min-width:280px"><canvas id="vizMain"></canvas></div>
+        <div style="flex:0 0 260px;min-width:200px">
+          <div class="ctrl"><label>Weichheit σ <span class="val" id="vSigma">0.35</span></label>
+            <input type="range" id="ctlSigma" min="0.05" max="1" step="0.01" value="0.35"></div>
+          <div class="ctrl"><label>Feature-Radius r <span class="val" id="vRing">1.00</span></label>
+            <input type="range" id="ctlRing" min="0.6" max="1.3" step="0.01" value="1.0"></div>
+          <label class="check"><input type="checkbox" id="ctlAuto" checked> Auto (Spiralfahrt)</label>
+          <div class="reads">
+            <div class="read"><div class="k">Feature (hart)</div><div class="v" id="roBit">0</div></div>
+            <div class="read"><div class="k">Feature (weich)</div><div class="v" id="roSoft">0.000</div></div>
+            <div class="read"><div class="k">d / r</div><div class="v" id="roDist">1.00</div></div>
+          </div>
+          <div class="state" id="roState">SCANNING TAPE · …</div>
+          <button class="btn" id="ctlReset">Tape zurücksetzen</button>
+        </div>
+      </div>
+      <div style="margin-top:14px"><canvas id="vizCurve"></canvas></div>
+      <div class="tape" id="roTape"></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="provenienz">
+    <h2><span class="no">6</span>Provenienz</h2>
+    <div class="card">
+      <p style="margin:0"><span class="tag a">A</span>
+      <a href="../theory_of_deep_learning.html">theory_of_deep_learning.html</a> —
+      „Die mathematische Theorie des Deep Learning“: 16-Kapitel-Buch zu Approximation,
+      Optimierung und Generalisierung; Universalität, ReLU-Geometrie, Tiefe vs. Breite,
+      Yarotskys Sägezahn, Fluch der Dimension, GD/Landschaft/NTK, Covering Numbers,
+      Double Descent, Adversarial Examples, ResNets/CNNs/Transformer.</p>
+    </div>
+    <div class="card">
+      <p style="margin:0"><span class="tag b">B</span>
+      <a href="../turing3.html">turing3.html</a> — „The Topological Slice: 3D to 2D
+      Logic“: three.js-Demo, in der ein Attention-Head eine 3D-Spirale (Hidden-State)
+      auf eine 2D-Feature-Ebene schneidet und den Topologie-Test „im Feature-Kreis?“
+      als Bit auf ein Turing-Tape schreibt.</p>
+    </div>
+  </section>
+
+  <footer>Fusion r1-003 · theory_of_deep_learning.html ✕ turing3.html · vanilla canvas, KaTeX, inline data</footer>
+</div>
+
+<script>
+(function(){
+  var main=document.getElementById('vizMain');
+  var curve=document.getElementById('vizCurve');
+  if(!main) return;
+  var mctx=main.getContext('2d');
+  var cctx=curve?curve.getContext('2d'):null;
+
+  var sigma=document.getElementById('ctlSigma');
+  var ring=document.getElementById('ctlRing');
+  var auto=document.getElementById('ctlAuto');
+  var resetBtn=document.getElementById('ctlReset');
+  var themeBtn=document.getElementById('themeBtn');
+
+  var elBit=document.getElementById('roBit');
+  var elSoft=document.getElementById('roSoft');
+  var elDist=document.getElementById('roDist');
+  var elTape=document.getElementById('roTape');
+  var elState=document.getElementById('roState');
+  var vSigma=document.getElementById('vSigma');
+  var vRing=document.getElementById('vRing');
+
+  var dpr=1,MW=0,MH=0,CW=0,CH=0;
+  var t=0;
+  var trail=[];
+  var tape=[];
+
+  function cssVar(n){
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';
+  }
+  function hexA(hex,a){
+    if(hex && hex[0]==='#' && hex.length===7){
+      var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+      return 'rgba('+r+','+g+','+b+','+a+')';
+    }
+    return hex;
+  }
+
+  function size(){
+    dpr=window.devicePixelRatio||1;
+    MW=main.clientWidth||300; MH=main.clientHeight||340;
+    main.width=Math.max(1,Math.round(MW*dpr));
+    main.height=Math.max(1,Math.round(MH*dpr));
+    mctx.setTransform(dpr,0,0,dpr,0,0);
+    if(cctx){
+      CW=curve.clientWidth||300; CH=curve.clientHeight||170;
+      curve.width=Math.max(1,Math.round(CW*dpr));
+      curve.height=Math.max(1,Math.round(CH*dpr));
+      cctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+  }
+
+  function drawMain(o){
+    var x=o.x,y=o.y,d=o.d,R=o.R,band=o.band,sPx=o.sPx,hit=o.hit;
+    var bg=cssVar('--plot-bg'),grid=cssVar('--grid'),softCol=cssVar('--acc-soft');
+    var hardCol=cssVar('--acc-hard'),ringCol=cssVar('--acc-ring');
+    var pointCol=cssVar('--acc-point'),hitCol=cssVar('--acc-hit');
+    var ink=cssVar('--ink'),inkFaint=cssVar('--ink-faint');
+    mctx.clearRect(0,0,MW,MH);
+    mctx.fillStyle=bg; mctx.fillRect(0,0,MW,MH);
+    mctx.lineWidth=1;
+    for(var i=1;i<=4;i++){
+      mctx.beginPath(); mctx.arc(MW/2,MH/2,R*i/4,0,6.2832);
+      mctx.strokeStyle=grid; mctx.stroke();
+    }
+    for(var r=0;r<R*1.5;r+=3){
+      var s=Math.exp(-(r-R)*(r-R)/(2*sPx*sPx));
+      if(s>0.02){
+        mctx.beginPath(); mctx.arc(MW/2,MH/2,r,0,6.2832);
+        mctx.strokeStyle=hexA(softCol,s*0.5); mctx.lineWidth=2; mctx.stroke();
+      }
+    }
+    mctx.beginPath(); mctx.arc(MW/2,MH/2,R+band,0,6.2832);
+    mctx.arc(MW/2,MH/2,Math.max(0.1,R-band),0,6.2832,true);
+    mctx.fillStyle=hexA(hardCol,0.10); mctx.fill();
+    mctx.beginPath(); mctx.arc(MW/2,MH/2,R,0,6.2832);
+    mctx.strokeStyle=ringCol; mctx.lineWidth=2; mctx.stroke();
+    mctx.setLineDash([5,4]); mctx.lineWidth=1; mctx.strokeStyle=hexA(hardCol,0.7);
+    mctx.beginPath(); mctx.arc(MW/2,MH/2,R+band,0,6.2832); mctx.stroke();
+    mctx.beginPath(); mctx.arc(MW/2,MH/2,Math.max(0.1,R-band),0,6.2832); mctx.stroke();
+    mctx.setLineDash([]);
+    mctx.beginPath(); mctx.arc(MW/2,MH/2,2,0,6.2832); mctx.fillStyle=inkFaint; mctx.fill();
+    for(var j=0;j<trail.length;j++){
+      var p=trail[j], a=(j/trail.length)*0.4;
+      mctx.beginPath(); mctx.arc(p.x,p.y,2.2,0,6.2832);
+      mctx.fillStyle=hexA(p.hit?hitCol:pointCol,a); mctx.fill();
+    }
+    var pc=hit?hitCol:pointCol;
+    mctx.beginPath(); mctx.arc(x,y,10,0,6.2832); mctx.fillStyle=hexA(pc,0.25); mctx.fill();
+    mctx.beginPath(); mctx.arc(x,y,5,0,6.2832); mctx.fillStyle=pc; mctx.fill();
+    mctx.font='700 42px ui-monospace,"JetBrains Mono",monospace';
+    mctx.textBaseline='top'; mctx.fillStyle=pc;
+    mctx.shadowColor=hexA(pc,0.6); mctx.shadowBlur=16;
+    mctx.fillText(String(hit),16,10); mctx.shadowBlur=0;
+    mctx.font='600 10px "Inter",system-ui,sans-serif'; mctx.fillStyle=inkFaint;
+    mctx.fillText('FEATURE (hart)',18,56);
+    mctx.fillText('d/r = '+(d/R).toFixed(2),18,MH-18);
+    mctx.font='600 10px "Inter",system-ui,sans-serif'; mctx.fillStyle=inkFaint;
+    mctx.fillText('2D-Feature-Schnitt · Ring = Feature-Zone',MW-180,10);
+  }
+
+  function drawCurve(){
+    if(!cctx) return;
+    var bg=cssVar('--plot-bg'),grid=cssVar('--grid');
+    var softCol=cssVar('--acc-soft'),hardCol=cssVar('--acc-hard');
+    var inkFaint=cssVar('--ink-faint');
+    var sf=+sigma.value, rf=+ring.value;
+    var baseR=Math.min(MW,MH)*0.34, R=baseR*rf, band=R*0.12, sPx=sf*R*0.55;
+    cctx.clearRect(0,0,CW,CH); cctx.fillStyle=bg; cctx.fillRect(0,0,CW,CH);
+    var padL=30,padB=22,padT=12,padR=10;
+    var plotW=CW-padL-padR, plotH=CH-padT-padB;
+    var dMax=R*1.5;
+    function X(d){return padL+(d/dMax)*plotW;}
+    function Y(v){v=Math.max(0,Math.min(1,v)); return padT+plotH-v*plotH;}
+    cctx.strokeStyle=grid; cctx.lineWidth=1;
+    cctx.beginPath(); cctx.moveTo(padL,padT); cctx.lineTo(padL,padT+plotH);
+    cctx.lineTo(padL+plotW,padT+plotH); cctx.stroke();
+    cctx.fillStyle=hexA(hardCol,0.08);
+    cctx.fillRect(X(R-band),Y(1),X(R+band)-X(R-band),Y(0)-Y(1));
+    cctx.strokeStyle=hardCol; cctx.lineWidth=1.5; cctx.setLineDash([4,3]);
+    cctx.beginPath();
+    cctx.moveTo(X(0),Y(0)); cctx.lineTo(X(R-band),Y(0)); cctx.lineTo(X(R-band),Y(1));
+    cctx.lineTo(X(R+band),Y(1)); cctx.lineTo(X(R+band),Y(0)); cctx.lineTo(X(dMax),Y(0));
+    cctx.stroke(); cctx.setLineDash([]);
+    cctx.beginPath();
+    for(var d=0;d<=dMax;d+=dMax/200){
+      var s=Math.exp(-(d-R)*(d-R)/(2*sPx*sPx));
+      var px=X(d),py=Y(s); d===0?cctx.moveTo(px,py):cctx.lineTo(px,py);
+    }
+    cctx.strokeStyle=softCol; cctx.lineWidth=2; cctx.stroke();
+    cctx.fillStyle=inkFaint; cctx.font='600 10px "Inter",system-ui,sans-serif';
+    cctx.fillText('Abstand d',padL+plotW-50,CH-6);
+    cctx.save(); cctx.translate(10,padT+plotH/2); cctx.rotate(-Math.PI/2);
+    cctx.fillText('Feature 0-1',0,0); cctx.restore();
+    cctx.fillStyle=softCol; cctx.fillText('weich (sigma)',padL+8,padT+12);
+    cctx.fillStyle=hardCol; cctx.fillText('hart (Gate)',padL+82,padT+12);
+  }
+
+  function step(){
+    var sf=+sigma.value, rf=+ring.value;
+    var baseR=Math.min(MW,MH)*0.34, R=baseR*rf, band=R*0.12, sPx=sf*R*0.55;
+    var th=t*0.9;
+    var d=R*(0.55 + 0.6*Math.sin(t*0.35) + 0.25*Math.sin(t*0.9+1));
+    var x=MW/2 + d*Math.cos(th);
+    var y=MH/2 + d*Math.sin(th);
+    var dd=Math.abs(d-R);
+    var hit=dd<band?1:0;
+    var soft=Math.exp(-(d-R)*(d-R)/(2*sPx*sPx));
+    trail.push({x:x,y:y,hit:hit}); if(trail.length>46) trail.shift();
+    if(auto.checked){
+      tape.push(hit); if(tape.length>24) tape.shift();
+    }
+    elBit.textContent=hit;
+    elBit.style.color=cssVar(hit?'--acc-hit':'--acc-miss');
+    elSoft.textContent=soft.toFixed(3);
+    elDist.textContent=(d/R).toFixed(2);
+    elTape.textContent=tape.join('');
+    elState.textContent=hit?'BIT WRITE · FEATURE GETROFFEN':'SCANNING TAPE · …';
+    elState.style.color=cssVar(hit?'--acc-hit':'--ink-dim');
+    vSigma.textContent=sf.toFixed(2);
+    vRing.textContent=rf.toFixed(2);
+    drawMain({x:x,y:y,d:d,R:R,band:band,sPx:sPx,soft:soft,hit:hit});
+    if(auto.checked){ t+=0.03; }
+  }
+
+  var raf=0;
+  function loop(){ step(); drawCurve(); raf=requestAnimationFrame(loop); }
+  raf=requestAnimationFrame(loop);
+
+  [sigma,ring].forEach(function(el){ el && el.addEventListener('input',function(){ t=0; }); });
+  resetBtn && resetBtn.addEventListener('click',function(){ tape.length=0; trail.length=0; t=0; });
+  themeBtn && themeBtn.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    step(); drawCurve();
+  });
+
+  var rt;
+  window.addEventListener('resize',function(){
+    clearTimeout(rt); rt=setTimeout(function(){ size(); step(); drawCurve(); },150);
+  });
+
+  size(); step(); drawCurve();
+})();
+</script>
+
+<script>
+window.addEventListener('load',function(){
+  if(window.renderMathInElement){
+    try{
+      renderMathInElement(document.getElementById('content'),{
+        delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+        throwOnError:false
+      });
+    }catch(e){/* KaTeX optional */}
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "010",
+  "a": "paper/AttentionViz.html",
+  "b": "latent_semantic_manifolds_in_llm_very_simple.html",
+  "a_title": "AttentionViz - Interaktive Erklärung (Yeh et al. 2023)",
+  "b_title": "Wenn aus Gedanken Wörter werden - ganz einfach erklärt (Mabrok 2026)",
+  "combined_theme": "geometric-nearest-neighbor-in-llms",
+  "one_line": "Ein Transformer ist eine Kette von Nächste-Nachbar-Operationen im Vektorraum: Attention ist die weiche, verlustfrei darstellbare, lesbare Variante (Q/K-Distanz = Ähnlichkeit), die Wortausgabe ist die harte, verlustbehaftete, mehrdeutige Variante (Gedanke -> nächstes Wort); dieselbe Distanzgeometrie, gelesen bei zwei Temperaturen (Weichheit).",
+  "contradictions": [
+    "A macht Attention 'ohne Informationsverlust' visualisierbar (Softmax-Invarianzen: Key-Translation + Q*K-Skalierung verändern nicht die Attention, Bild ist treu) - B zeigt, dass die Wortausgabe eine verlustbehaftete Kompression ist mit einem 'Expressibility Gap'-Boden, den keine Technik erreicht: verlustfrei vs. unüberwindbarer Verlust.",
+    "A liest die Distanzgeometrie als Transparenz/Zugang ('die Form eines Heads wird zur visuellen Signatur', Spearman ~ -0.938) - B liest dieselbe Prämisse als unüberwindbare Wand ('einige Gedanken passen nie genau in ein Wort', 40-51% unsicher, schwerste ~5% = Sprachambiguität): Zugang vs. Grenze.",
+    "A erzeugt die sichtbare Niedrigdimensionalität durch Projektion eines 64d Q/K-Subraums per t-SNE/UMAP/PCA auf 2D (Struktur entsteht erst nach dem Plot) - B behauptet intrinsisch niedrige effektive Dimension (~20 Freiheitsgrade, projek-tionsunabhängig, gemessen): Projektions-Artefakt vs. echte Geometrie."
+  ],
+  "resolution": "Kein echter Konflikt, sondern verschiedene Schritte derselben Maschine: 'verlustfrei innen, verlustbehaftet am Rand'. A's Verlustfreiheit gilt für die Attention-Scores (Freiheit der Darstellung, relative Attention bleibt), B's Verlust-Floor für die Diskretisierung in ein endliches Wörterbuch. Transparenz (A) und Ambiguität (B) sind dieselbe Voronoi-Geometrie bei zwei Temperaturen: weich (Softmax, alles gewichtet, lesbar Signatur) vs. hart (argmin, ein Wort, Zellgrenzen = Risiko). Die 64d erlernten Subräume (A) und die ~20d intrinsische Mannigfaltigkeit (B) komplementieren sich: A's Projektion ist das Werkzeug, das B's intrinsische Niedrigdimensionalität sichtbar macht. Ein einziger Regler - die Weichheit - verbindet beide Extreme.",
+  "viz": "Ein 2D-Gedankenfeld (Voronoi der Wortanker, goldene Ränder = unsichere Zone) mit einem ziehbaren Gedankenpunkt und zwei Reglern (Weichheit, Wörterbuchgröße). Weich (rechts, A) = weiche Attention über viele Wörter (lesbar, 'Aktive Wörter' hoch); hart (links, B) = harte Wort-Entscheidung (ein Wort dominiert). Live-Readouts: Gewinner-Wort, Gewinn-Chance, Ambiguitäts-Risiko (steigt nur hart UND auf einer Zellgrenze), aktive Wörter (effektive Support 1/sum p^2) und Anteil der unsicheren Zone. Theme-aware via CSS-Variablen + MutationObserver, inline Data, keine Netzwerk-Calls."
+}

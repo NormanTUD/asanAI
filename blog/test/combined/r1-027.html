@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 027 — Gradientenfluss trifft kohärente Welten</title>
+<style>
+  :root{
+    --bg:#f7f5ef; --fg:#1c2330; --muted:#5a6478;
+    --accent:#0f8fd6; --accent2:#c9771b; --good:#1f9d57; --bad:#cf3b53;
+    --card:#ffffff; --border:rgba(0,0,0,.10); --panel:rgba(0,0,0,.03);
+    --viz-low:#e9f4fc; --viz-high:#2b8fd6; --viz-trail:rgba(201,119,27,.85);
+    --shadow:0 6px 24px rgba(20,40,80,.08);
+  }
+  html.dark{
+    --bg:#0d1320; --fg:#e8ecf5; --muted:#95a1ba;
+    --accent:#4cc9f0; --accent2:#ffb84d; --good:#4fd08a; --bad:#ff6b7d;
+    --card:#131b2c; --border:rgba(255,255,255,.09); --panel:rgba(255,255,255,.04);
+    --viz-low:#0a1522; --viz-high:#2f9fe0; --viz-trail:rgba(255,184,77,.85);
+    --shadow:0 8px 28px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Inter",system-ui,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  article{max-width:820px; margin:0 auto; padding:48px 22px 96px;}
+  header{margin-bottom:8px;}
+  h1{
+    font-size:clamp(1.7rem,4.4vw,2.5rem); line-height:1.15; margin:0 0 10px;
+    letter-spacing:-.01em;
+  }
+  .subtitle{color:var(--muted); font-size:1rem; margin:0 0 6px;}
+  .subtitle b{color:var(--fg); font-weight:600;}
+  section{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:22px 24px; margin-top:22px; box-shadow:var(--shadow);
+  }
+  h2{
+    font-size:1.25rem; margin:0 0 14px; letter-spacing:-.01em;
+    padding-bottom:10px; border-bottom:2px solid var(--border);
+  }
+  h2 .no{color:var(--accent); font-variant-numeric:tabular-nums;}
+  p{margin:0 0 14px;}
+  p:last-child{margin-bottom:0;}
+  strong{color:var(--fg);}
+  code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.86em;
+    background:var(--panel); border:1px solid var(--border);
+    padding:.08em .4em; border-radius:6px;
+  }
+  .paper{color:var(--accent); font-weight:600; white-space:nowrap;}
+  .paper.b{color:var(--accent2);}
+  ul{margin:0 0 14px; padding-left:20px;}
+  li{margin-bottom:10px;}
+  .claim{
+    background:var(--panel); border-left:3px solid var(--accent);
+    border-radius:0 10px 10px 0; padding:12px 16px; margin:14px 0;
+  }
+  .claim.b{border-left-color:var(--accent2);}
+  .claim .who{font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:4px;}
+  .res{
+    background:var(--panel); border:1px dashed var(--border);
+    border-radius:12px; padding:14px 16px; margin:12px 0;
+  }
+  .res .h{font-weight:600; color:var(--good); margin-bottom:6px;}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.92rem;}
+  th,td{text-align:left; vertical-align:top; padding:9px 11px; border-bottom:1px solid var(--border);}
+  th{color:var(--muted); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;}
+  td:first-child{font-weight:600; white-space:nowrap;}
+  .law{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.86rem;
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; margin:14px 0; line-height:1.9; overflow-x:auto;
+  }
+  .law .k{color:var(--good);} .law .o{color:var(--accent);} .law .w{color:var(--accent2);}
+  .cap{color:var(--muted); font-size:.86rem; margin-top:14px;}
+
+  /* ---- visualisierung ---- */
+  .viz-wrap{display:flex; gap:18px; margin-top:6px; flex-wrap:wrap;}
+  .viz-stage{flex:1 1 420px; min-width:280px;}
+  #viz{
+    width:100%; height:400px; display:block; border-radius:14px;
+    border:1px solid var(--border); background:var(--bg);
+  }
+  .viz-side{flex:1 1 250px; min-width:240px; display:flex; flex-direction:column; gap:14px;}
+  .gauge .glabel{font-size:.82rem; font-weight:600; margin-bottom:6px; display:flex; justify-content:space-between; align-items:baseline;}
+  .gauge .gtag{font-size:.68rem; color:var(--muted); font-weight:500; text-transform:uppercase; letter-spacing:.04em;}
+  .bar{height:14px; border-radius:8px; background:var(--panel); border:1px solid var(--border); overflow:hidden;}
+  .bar .fill{height:100%; width:0%; transition:width .12s linear; border-radius:8px;}
+  .fill.coh{background:var(--accent);}
+  .fill.cor{background:var(--accent2);}
+  .fill.cor.off{background:var(--bad); opacity:.6;}
+  .gnote{font-size:.76rem; color:var(--muted); margin-top:6px; min-height:1.1em;}
+  .truth{
+    display:flex; gap:12px; align-items:flex-start; background:var(--panel);
+    border:1px solid var(--border); border-radius:12px; padding:12px 14px;
+  }
+  .led{width:16px; height:16px; border-radius:50%; margin-top:3px; flex:0 0 16px; background:var(--muted); transition:background .2s;}
+  .led.good{background:var(--good); box-shadow:0 0 12px var(--good);}
+  .led.warn{background:var(--accent2); box-shadow:0 0 10px var(--accent2);}
+  .led.bad{background:var(--bad); box-shadow:0 0 12px var(--bad);}
+  .tlabel{font-size:.86rem; font-weight:600;}
+  .tnote{font-size:.78rem; color:var(--muted); margin-top:3px;}
+  .controls{display:flex; flex-direction:column; gap:10px;}
+  .controls label{font-size:.82rem; color:var(--muted); display:flex; align-items:center; gap:8px;}
+  .controls input[type=range]{flex:1; accent-color:var(--accent);}
+  .controls .lrv{font-variant-numeric:tabular-nums; color:var(--fg); min-width:34px; text-align:right;}
+  .btns{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+  button{
+    font:inherit; font-size:.82rem; cursor:pointer; color:var(--fg);
+    background:var(--panel); border:1px solid var(--border); border-radius:9px; padding:7px 12px;
+    transition:transform .06s, border-color .15s;
+  }
+  button:hover{border-color:var(--accent);}
+  button:active{transform:scale(.97);}
+  .toggle{flex-basis:100%; display:flex; align-items:center; gap:8px; font-size:.82rem; cursor:pointer;}
+  .toggle input{accent-color:var(--bad);}
+  .stats{font-size:.8rem; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .stats b{color:var(--fg);}
+  .prov a{color:var(--accent); text-decoration:none; font-weight:600;}
+  .prov a:hover{text-decoration:underline;}
+  .prov li{margin-bottom:10px;}
+  footer{margin-top:26px; text-align:center; color:var(--muted); font-size:.8rem;}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Kohärente Welten aus Gradienten</h1>
+    <p class="subtitle">Fusion aus: <b>gradient_flow.html</b> ✕ <b>ideen2.html</b></p>
+    <p class="subtitle" style="font-size:.9rem;">Wie aus lokalen, geklebten Bausteinen unter dem Druck eines Korrespondenz-Signals eine stabile Welt entsteht.</p>
+  </header>
+
+  <section id="these">
+    <h2><span class="no">1.</span> Kernthese der Fusion</h2>
+    <p>
+      Eine „kohärente Welt“ wird nicht deklariert, sondern <strong>dynamisch erzeugt</strong>.
+      <span class="paper">A (Gradient Flow)</span> liefert den <em>Mechanismus</em>: ein Netz ist eine
+      Verkettung lokaler Abbildungen, deren <strong>Konsistenzbedingung durch die Kettenregel exakt erfüllt</strong> ist —
+      der Rückwärtspass ist nichts anderes als die transponierte, differenzierte Form des Vorwärtspasses.
+      <span class="paper b">B (Kohärente Welten)</span> liefert die <em>Semantik</em>: ein Ganzes darf sich
+      „Welt“ nennen, wenn die lokalen Stücke an ihren Übergängen <strong>zusammenpassen</strong> (die Sheaf-/Gluing-Bedingung)
+      und wenn zusätzlich ein <strong>Korrespondenz-Signal</strong> (Abstand zur echten Welt) den Abstand schließt.
+    </p>
+    <p>
+      Die Fusion liest A also als <em>konkrete Maschine</em>, die genau B’s zwei Tests durchführt:
+      <strong>Kohärenz</strong> = die intern gültige Gluing-Bedingung (hier: die exakte Kettenregel-Kopplung),
+      und <strong>Korrespondenz</strong> = der Loss zum Ziel, den der <strong>Gradientenabstieg</strong> minimiert.
+      Der Punkt, an dem das System ankommt — <code>∇L = 0</code> — ist zugleich B’s Krone der Weltmodellierungs-Kette,
+      die <strong>Invarianz</strong>: eine Welt, die „sich nicht mehr ändert, egal wie du sie ansiehst“.
+    </p>
+    <p>
+      Der entscheidende Satz, auf den beide Papiere zusammenlaufen:
+    </p>
+    <div class="claim">
+      <span class="who">Fusions-Legesatz</span>
+      <strong>Wahrheit(θ) = Kohärenz(θ) ∧ Korrespondenz(θ)</strong>.
+      Kohärenz kann durch Struktur <em>automatisch</em> erfüllt sein (A). Korrespondenz muss <em>live</em>
+      bleiben (das Ziel, der Loss). Entferne das live Ziel — ein eingefrorenes, selbstkonsistentes Modell ist
+      dann exakt B’s <strong>Halluzination</strong>: kohärent, aber nicht wahr.
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="no">2.</span> Widersprüche zwischen A und B</h2>
+    <p>Die beiden Papiere sind nicht bloß komplementär — an drei Punkten stehen sie auf unterschiedlichen Seiten.</p>
+
+    <p><strong>(W1) Ist innere Kohärenz automatisch oder ist sie eine Gefahr?</strong></p>
+    <div class="claim">
+      <span class="who">A · Gradient Flow</span>
+      A behandelt Kohärenz als <em>konstruktionsgemäß garantiert</em>. Der Backward-Pass multipliziert den
+      nachgelagerten Fehler mit der lokalen Ableitung (dL/dz = dL/dy ⊙ σ′(z)); Forward und Backward sind durch die
+      Kettenregel eine <em>Identität</em>. Es gibt in A kein Konzept von „Halluzination“ — die Signalpropagation
+      ist mathematisch exakt und kann nicht „inkohärent“ werden.
+    </div>
+    <div class="claim b">
+      <span class="who">B · Kohärente Welten</span>
+      B beharrt, Kohärenz sei eine <em>geprüfte Bedingung, die scheitern kann</em>, und nie allein ausreichend.
+      Karte „Hallucination“: „M_internal self-consistent ⇏ M_internal ≈ W — ein perfekt kohärentes Modell kann
+      trotzdem eine Fantasie sein.“ Karte „Kohärenz vs. Korrespondenz“: „Weder allein reicht.“
+    </div>
+
+    <p><strong>(W2) Bottom-up oder top-down — wer erzeugt das Ganze?</strong></p>
+    <div class="claim">
+      <span class="who">A · Gradient Flow</span>
+      A baut <em>bottom-up</em>: Ausgangspunkt ist eine Zufalls-Initialisierung; jeder Schritt ist ein rein
+      <em>lokaler</em> Gradientenschritt. Die globale, kohärente Low-Loss-Funktion <em>emergiert</em> aus diesen
+      lokalen Updates. Es gibt keinen globalen Plan — nur den skalaren Loss als Kompass.
+    </div>
+    <div class="claim b">
+      <span class="who">B · Kohärente Welten</span>
+      B baut <em>auf die Invarianz zu</em>: Die „Kette der Weltmodellierung“ endet in der Invarianz — „eine Welt,
+      die sich nicht mehr ändert, egal wie du sie ansiehst“ — und die lokalen Stücke <em>müssen</em> dieser
+      globalen Norm gehorchen. Karte „Gluing“: „Lokale Daten + Kompatibilität ⟹ ein einziges Ganzes.“
+      Das Ganze ist die Norm, der die Teile sich unterwerfen.
+    </div>
+
+    <p><strong>(W3) Analyse oder Diskretion — worauf läuft der Motor?</strong></p>
+    <div class="claim">
+      <span class="who">A · Gradient Flow</span>
+      A läuft auf <em>Analysis</em>: tanh-Aktivierung, Kettenregel, kontinuierliche Gewichts-Updates. Die „Welt“ ist
+      eine glatte, differenzierbare Funktion ℝ³→ℝ. Gradientenabstieg <em>setzt Differenzierbarkeit voraus</em>.
+    </div>
+    <div class="claim b">
+      <span class="who">B · Kohärente Welten</span>
+      B fundiert <em>diskret/kategorial</em>: Es beginnt mit dem <em>ersten Cut</em> (Spencer-Brown, ¬¬x = x;
+      Marked/Unmarked — eine diskrete, nicht-differenzierbare Unterscheidung) und baut mit Topologie, Topoi und
+      Embeddings weiter. Karte „Embedding-Raum“: Bedeutung als „Position in einem hochdimensionalen Raum …
+      näherungsweise ein Sheaf über Token-Kontexten.“ B’s erster Zug hat <em>keinen Gradienten</em>, den man absteigen könnte.
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="no">3.</span> Auflösung</h2>
+    <p>Jeder Widerspruch löst sich auf, sobald man A als den <em>wohlverhaltenen Spezialfall</em> von B’s allgemeiner Vorlage liest.</p>
+
+    <div class="res">
+      <div class="h">Zu (W1) — Kohärenz als durch Struktur garantierte Gluing-Bedingung</div>
+      Ein neuronales Netz ist eine Verkettung lokaler Abbildungen. Die Sheaf-Bedingung verlangt, dass diese an ihren
+      Übergängen zusammenpassen — bei einer <em>differenzierten</em> Verkettung ist das genau die Kettenregel, die
+      <strong>immer</strong> gilt. A ist also eine Welt, in der die Gluing-Bedingung <em>konstruktionsgemäß</em> erfüllt ist:
+      ein „triviale geklebtes“ Sheaf lokaler affine+tanh-Abbildungen. B’s Warnung greift erst dort, wo man das <em>live
+      Korrespondenz-Signal entfernt</em> — eingefrorene Gewichte, Inferenz ohne Ground-Truth-Anker (B: „kein live
+      O_i-Pfeil bei Inferenz — nur frozen, mediated Korpus“). <strong>Fusion:</strong> Kohärenz kann automatisch gemacht
+      werden; Korrespondenz muss live bleiben; Wahrheit ist der Fixpunkt, an dem der Abstieg auf dem Ziel landet.
+    </div>
+
+    <div class="res">
+      <div class="h">Zu (W2) — dieselbe Struktur, gesehen als Bewegung und als Ruhe</div>
+      B’s „Invarianz“ (die Krone der Kette) <em>ist</em> A’s Konvergenzpunkt: ein Parameter θ* mit <code>∇L(θ*) = 0</code>,
+      bei dem die Welt „sich nicht mehr ändert“ unter infinitesimalen Störungen. B’s „Kompatibilitäts-/Gluing-Bedingung“
+      <em>ist</em> A’s Kettenregel, der jeder lokale Schritt gehorcht. Der lokale Gradientenschritt ist die <em>Dynamik</em>;
+      der Invariante-Punkt ist die <em>Equilibrierung</em>. Kein Rivale — derselbe Prozess, gesehen als Weg und als Ankunft.
+      <strong>Fusion:</strong> Lokal-Gradientenfluss ist die Dynamik, die zu B’s globaler Invarianz hinaufklettert.
+    </div>
+
+    <div class="res">
+      <div class="h">Zu (W3) — zwei Skalen einer Konstruktion</div>
+      B’s diskrete Distinktion schneidet den <em>Raum</em> (was unterscheidbar ist, die Topologie, das Embedding).
+      A’s Analysis ist das <em>Vektorfeld</em> innerhalb der glatten Karten dieses Raums. Man braucht B’s Struktur, um
+      eine differenzierbare Mannigfaltigkeit zu definieren, die sich lohnt, optimiert zu werden; und A’s Gradien, um
+      sich darin effizient zu bewegen. <strong>Fusion:</strong> Distinktion (B) schneidet die Mannigfaltigkeit;
+      Gradientenfluss (A) ist das Vektorfeld, das sie hinabsteigt.
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="no">4.</span> Fusionierter Inhalt</h2>
+    <p>Das gemeinsame Vokabular, ausgedrückt als Übertetzung: B’s Struktur-Begriffe werden zu A’s Rechenschritten, und A’s
+    Mechanik bekommt B’s epistemischen Sinn.</p>
+    <table>
+      <thead><tr><th>Begriff (B)</th><th>Mechanik (A)</th><th>Fusionierte Lesart</th></tr></thead>
+      <tbody>
+        <tr><td>Distinktion (Cut)</td><td>Eingabe-Features x</td><td>Der erste diskrete Schnittpunkt, der den Raum überhaupt erst markiert</td></tr>
+        <tr><td>Relation / Embedding</td><td>Gewichtsmatrizen W</td><td>Struktur als (nahe/femte) Position in einem hochdimensionalen Raum</td></tr>
+        <tr><td>Gluing / Sheaf-Bedingung</td><td>Kettenregel-Identität</td><td>Die lokale Konsistenz, an der Forward &amp; Backward exakt gekoppelt sind</td></tr>
+        <tr><td>Identity-Morphismus</td><td>Residual-Skip (gestrichelte Kante)</td><td>Eine kanonische Gluing-Stelle, die Information ohne Verlust durchschleift</td></tr>
+        <tr><td>Kohärenz</td><td>∂L/∂θ exakt via Kettenregel</td><td>Interne Konsistenz — hier durch Struktur erfüllt</td></tr>
+        <tr><td>Korrespondenz</td><td>Loss ½(ŷ − t)² zum Ziel</td><td>Externer Anker an die echte Welt — muss live bleiben</td></tr>
+        <tr><td>Invarianz</td><td>Konvergenz θ*, ∇L = 0</td><td>Der stabile Fixpunkt: „die Welt ändert sich nicht mehr“</td></tr>
+        <tr><td>Halluzination</td><td>Eingefrorenes Modell ohne Ziel</td><td>Kohärent, aber unanchored — der Fall, wenn man t wegnimmt</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Die Mathematik von A, im Vokabular von B.</strong> A’s Trainingsschleife ist ein einziger Satz in B’s Sprache:</p>
+    <div class="law">
+      <span class="o">Forward</span>&nbsp; ŷ = f<sub>θ</sub>(x), &nbsp; f<sub>θ</sub> = Komposition lokaler (affine · tanh) Abbildungen<br>
+      <span class="o">Loss</span>&nbsp;&nbsp;&nbsp;&nbsp; L(θ) = ½·(ŷ − t)² &nbsp;&nbsp;<em>(Korrespondenz: Abstand zum Ziel t)</em><br>
+      <span class="o">Back</span>&nbsp;&nbsp;&nbsp;&nbsp; dL/dz = dL/dy ⊙ σ′(z), &nbsp; dL/dW = dL/dz · a<sub>in</sub><sup>⊤</sup> &nbsp;<em>(Gluing: exakte Kettenregel)</em><br>
+      <span class="w">Update</span>&nbsp; θ ← θ − η·∇L(θ) &nbsp;&nbsp;<em>(die Dynamik, die Kohärenz auf Korrespondenz zuzieht)</em><br>
+      <span class="k">Invarianz</span>&nbsp; θ*: ∇L(θ*) = 0 &nbsp;&nbsp;<em>(die Kette endet hier)</em>
+    </div>
+
+    <p><strong>Die Mathematik von B, die A trägt.</strong> Drei von B’s Karten sind exakt die Baupläne, die A in Bewegung setzt:</p>
+    <ul>
+      <li><strong>Sheaf-Bedingung.</strong> s<sub>i</sub>|<sub>U_i∩U_j</sub> = s<sub>j</sub>|<sub>U_i∩U_j</sub>. Bei einer differenzierten
+        Komposition ist die „Übergangsgleichheit“ die Kettenregel — sie gilt ohne weitere Prüfung. Ein Netz ist ein
+        <em>trivial geklebt</em>es Sheaf: die lokalen Karten (Schichten) überlappen in ihren Zwischenvorgängen, und die
+        Ableitung der Komposition <em>ist</em> die Hintereinanderschaltung der lokalen Ableitungen.</li>
+      <li><strong>Hierarchie der Gleichheit.</strong> = ⇒ ≅ ⇒ ≃ ⇒ ≤ε ⇒ statistisch ⇒ modelltheoretisch. A arbeitet bewusst
+        auf der Stufe „≈ bis ε“: der Loss misst einen <em>Abstand</em>, nicht eine Identität. Konvergenz bedeutet,
+        die Stufen <em>nach unten</em> zu klettern (von statistisch hin zu ≈), nie stillschweigend <em>nach oben</em>
+        (von ≈ zu =) — genau die Kategorienverwechslung, die B verbietet.</li>
+      <li><strong>Kohärenz vs. Korrespondenz (Tarski).</strong> „S is true iff p“. Kohärenz (Descent/Gluing) und
+        Korrespondenz (Tarski’s Schema an jedem Kontaktpunkt) sind zwei <em>unterschiedliche</em> Tests. A führt beide
+        gleichzeitig aus — und zeigt, was passiert, wenn man den zweiten Test abschaltet.</li>
+    </ul>
+
+    <p><strong>Der Residual-Path als gemachtes Gluing.</strong> In A markiert die gestrichelte, zackige Kante einen
+      Identitäts-Sprung: Der Gradient fließt <em>zusätzlich</em> über einen Identity-Pfad zurück, damit Information
+      über viele Schichten hinweg nicht verkümmert. In B’s Sprache ist das eine <strong>kanonische Gluing-Stelle</strong> —
+      ein Identitäts-Morphismus, der den Schnitt über Lagen hinweg erhält. Kohärenz wird hier <em>sichtbar</em> gemacht:
+      die Skip-Verbindung ist die Gluing-Bedingung, gezeichnet.</p>
+
+    <p><strong>Die fünf „Zustände“ eines Modells</strong> — die gemeinsame Landkarte, aus der die Visualisierung unten lebt:</p>
+    <div class="law">
+      Kohärent + korrespondierend &nbsp;→&nbsp; <span class="k">WAHR</span><br>
+      Kohärent + <em>nicht</em> korrespondierend &nbsp;→&nbsp; <span class="w">HALLUZINATION</span> (self-consistent ⇏ W)<br>
+      <em>inkohärent</em> + korrespondierend &nbsp;→&nbsp; Faktbuch (Daten ohne Struktur)<br>
+      inkohärent + nicht korrespondierend &nbsp;→&nbsp; falsch / Rauschen
+    </div>
+    <p>Gradientenabstieg ist der Weg von „Rauschen/inkohärent“ nach „WAHR“: Er baut Kohärenz (durch die exakte Kettenregel,
+      von Anfang an gegeben) und zieht Korrespondenz (Loss → 0), bis beides zugleich erfüllt ist. B’s „Halluzination“
+    ist der Zustand links vom Ziel, wenn man das live Signal kappt.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="no">5.</span> Interaktive Visualisierung — Abstieg zur Invarianz</h2>
+    <p>
+      Eine 2-D-Parameterlandschaft (ein Loss-Becken). Ein Partikel startet fern vom Ziel und vollzieht
+      <strong>Gradientenabstieg</strong> (A’s Mechanik). Es rollt hinab zum grünen <strong>Invariante-Punkt</strong>
+      (∇L = 0, B’s Krone). Zwei Messleisten zeigen die zwei Tests: <strong>Kohärenz</strong> ist durch Konstrukt immer voll
+      (die Kettenregel gilt exakt); <strong>Korrespondenz</strong> = 1 − L/L₀ füllt sich, je näher das Partikel dem Ziel.
+      Die <strong>Wahrheit-LED</strong> wird grün, sobald <em>beide</em> hoch sind.
+    </p>
+    <p>
+      <strong>Der entscheidende Knopf:</strong> „Ziel kappen (frozen Inference)“ entfernt das live Korrespondenz-Signal.
+      Das Partikel friert ein — Kohärenz bleibt voll, aber die Wahrheit-LED kippt auf
+      <em>Halluzination: kohärent, aber ohne live Ziel → nicht wahr</em>. Genau B’s Warnung, live nachvollziehbar.
+    </p>
+    <div class="viz-wrap">
+      <div class="viz-stage"><canvas id="viz"></canvas></div>
+      <div class="viz-side">
+        <div class="gauge">
+          <div class="glabel">Kohärenz <span class="gtag">Kettenregel</span></div>
+          <div class="bar"><div class="fill coh" id="cohBar"></div></div>
+          <div class="gnote">durch Konstrukt erfüllt — Forward &amp; Backward koppeln exakt</div>
+        </div>
+        <div class="gauge">
+          <div class="glabel">Korrespondenz <span class="gtag">Ziel / Loss</span></div>
+          <div class="bar"><div class="fill cor" id="corBar"></div></div>
+          <div class="gnote" id="corNote">Abstand zum Ziel schwindet…</div>
+        </div>
+        <div class="truth">
+          <span class="led warn" id="led"></span>
+          <div>
+            <div class="tlabel">Wahrheit = Kohärenz ∧ Korrespondenz</div>
+            <div class="tnote" id="truthNote">annähert sich dem Ziel…</div>
+          </div>
+        </div>
+        <div class="controls">
+          <label>Lernrate η <input id="lr" type="range" min="0.05" max="0.4" step="0.01" value="0.15"><span class="lrv" id="lrv">0.15</span></label>
+          <div class="btns">
+            <button id="playBtn">⏸ Pause</button>
+            <button id="resetBtn">↺ Reset</button>
+            <label class="toggle"><input type="checkbox" id="freeze"> Ziel kappen (frozen Inference) → Halluzination</label>
+          </div>
+        </div>
+        <div class="stats">Schritt <b id="steps">0</b> · L <b id="lv">—</b> · |∇L| <b id="gv">—</b></div>
+      </div>
+    </div>
+    <p class="cap">
+      Alle Daten inline; kein Netzwerk. Die Landschaft ist ein Becken L(w) = ½((w₀−1)² + (w₁+0.5)²) + 0.05·w₀²·w₁² —
+      sein Minimum (1, −0.5) ist der Invariante-Punkt. Farben folgen dem Theme (CSS-Variablen).
+    </p>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="no">6.</span> Provenienz</h2>
+    <ul class="prov">
+      <li><a href="../gradient_flow.html">gradient_flow.html</a> — „Gradient Flow — Interaktive Visualisierung“: Ein echtes kleines Feedforward-Netz (3→5→5→1, tanh, optionaler Residual-Skip), dessen vollständige manuelle Backpropagation als Phasen-Animation (forward → loss → backward → update) läuft. Liefert A: die Mechanik — Loss, Kettenregel, Gradientenabstieg, Residual als Identity-Path.</li>
+      <li><a href="../ideen2.html">ideen2.html</a> — „Kohärente Welten – 20 Konzepte zum Anfassen“: 20 interaktive Karten (Distinktion, Relation, Gluing, Sheaf, Halluzination, Kohärenz vs. Korrespondenz, Invarianz, …) basierend auf „Coherent Difference“ &amp; „Coherent World Models“. Liefert B: die Semantik — Kohärenz, Korrespondenz, Invarianz und die Warnung Selbst-Kohärenz ≠ Wahrheit.</li>
+    </ul>
+  </section>
+
+  <footer>Knockout-Synthese · Runde 1 · Pair 027</footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var canvas = document.getElementById('viz');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+
+  var X0=-3, X1=3, Y0=-2.4, Y1=2.6;
+
+  function loss(w){
+    var a=w[0]-1, b=w[1]+0.5;
+    return 0.5*(a*a+b*b) + 0.05*w[0]*w[0]*w[1]*w[1];
+  }
+  function grad(w){
+    return [ (w[0]-1) + 0.1*w[0]*w[1]*w[1],
+             (w[1]+0.5) + 0.1*w[1]*w[0]*w[0] ];
+  }
+  var START=[-2.4, 2.2];
+  var L0 = loss(START);
+  var INV=[1,-0.5];
+
+  function hexToRgb(h){
+    h=h.replace('#','').trim();
+    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    var n=parseInt(h,16);
+    if(isNaN(n)) return [200,200,200];
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  function mix(a,b,t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  function rgb(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+(a==null?1:a)+')'; }
+
+  var pal={low:[200,200,200],high:[20,80,150],accent:[15,143,214],accent2:[201,119,27],good:[31,157,87],bad:[207,59,83],fg:[28,35,48],trail:[201,119,27]};
+  function readPalette(){
+    var cs=getComputedStyle(document.documentElement);
+    function g(n){ var v=cs.getPropertyValue(n).trim(); return v?hexToRgb(v):null; }
+    var L=g('--viz-low'), H=g('--viz-high'), A=g('--accent'), A2=g('--accent2'), G=g('--good'), B=g('--bad'), F=g('--fg');
+    if(L) pal.low=L; if(H) pal.high=H; if(A) pal.accent=A; if(A2) pal.accent2=A2;
+    if(G) pal.good=G; if(B) pal.bad=B; if(F) pal.fg=F;
+    pal.trail=pal.accent2;
+    pal.isDark=document.documentElement.classList.contains('dark');
+  }
+
+  var land=document.createElement('canvas');
+  function buildLandscape(){
+    var cw=canvas.clientWidth||600, ch=canvas.clientHeight||400;
+    land.width=Math.round(cw*DPR); land.height=Math.round(ch*DPR);
+    var lc=land.getContext('2d'); lc.setTransform(DPR,0,0,DPR,0,0);
+    var cols=84, rows=54, low=pal.low, high=pal.high;
+    var cw1=cw/cols, ch1=ch/rows;
+    for(var r=0;r<rows;r++){
+      for(var c=0;c<cols;c++){
+        var w=[ X0+((c+0.5)/cols)*(X1-X0), Y0+((r+0.5)/rows)*(Y1-Y0) ];
+        var L=loss(w);
+        var t=L/L0; if(t<0)t=0; if(t>1)t=1;
+        var col=t<0.5?mix(low,high,t*2):mix(high,high,t); // keep high for t>0.5 (flat far field)
+        lc.fillStyle=rgb(col,1);
+        lc.fillRect(c*cw1-0.5, r*ch1-0.5, cw1+1, ch1+1);
+      }
+    }
+  }
+
+  var state={ w:START.slice(), trail:[], steps:0, playing:true, frozen:false, lr:0.15 };
+  function reset(){ state.w=START.slice(); state.trail=[]; state.steps=0; }
+
+  function toPx(w){
+    var cw=canvas.clientWidth, ch=canvas.clientHeight;
+    return [ (w[0]-X0)/(X1-X0)*cw, (1-(w[1]-Y0)/(Y1-Y0))*ch ];
+  }
+
+  function step(){
+    var it=2;
+    for(var k=0;k<it;k++){
+      var g=grad(state.w);
+      var s0=state.lr*g[0], s1=state.lr*g[1];
+      var m=Math.hypot(s0,s1), cap=1.1;
+      if(m>cap){ s0=s0/m*cap; s1=s1/m*cap; }
+      state.w[0]-=s0; state.w[1]-=s1;
+      if(state.w[0]<X0)state.w[0]=X0; if(state.w[0]>X1)state.w[0]=X1;
+      if(state.w[1]<Y0)state.w[1]=Y0; if(state.w[1]>Y1)state.w[1]=Y1;
+      state.steps++;
+    }
+    state.trail.push(state.w.slice());
+    if(state.trail.length>160) state.trail.shift();
+  }
+
+  var el={
+    coh:document.getElementById('cohBar'), cor:document.getElementById('corBar'),
+    corNote:document.getElementById('corNote'), led:document.getElementById('led'),
+    truthNote:document.getElementById('truthNote'), steps:document.getElementById('steps'),
+    lv:document.getElementById('lv'), gv:document.getElementById('gv'), lrv:document.getElementById('lrv')
+  };
+
+  function setLed(cls){ el.led.className='led '+cls; }
+
+  function updateGauges(){
+    var L=loss(state.w);
+    var cor=Math.max(0,Math.min(1,1-L/L0));
+    if(state.frozen){
+      el.cor.style.width='0%';
+      el.cor.classList.add('off');
+      el.corNote.textContent='kein live Ziel (frozen) — Korrespondenz unterbrochen';
+      setLed('bad');
+      el.truthNote.textContent='Halluzination: kohärent, aber ohne live Ziel — Selbst-Kohärenz ≠ Wahrheit';
+    } else {
+      el.cor.classList.remove('off');
+      el.cor.style.width=(cor*100).toFixed(1)+'%';
+      if(cor>0.94){ el.corNote.textContent='am Ziel angekommen (∇L ≈ 0)'; setLed('good'); el.truthNote.textContent='Kohärent UND korrespondierend — wahr (invariant)'; }
+      else { el.corNote.textContent='Abstand zum Ziel schwindet…'; setLed('warn'); el.truthNote.textContent='annähert sich dem Ziel…'; }
+    }
+    el.coh.style.width='100%';
+    el.steps.textContent=String(state.steps);
+    el.lv.textContent=L.toFixed(4);
+    var g=grad(state.w); el.gv.textContent=Math.hypot(g[0],g[1]).toFixed(3);
+  }
+
+  function draw(){
+    var cw=canvas.clientWidth, ch=canvas.clientHeight;
+    ctx.clearRect(0,0,cw,ch);
+    if(land.width) ctx.drawImage(land,0,0,cw,ch);
+
+    // Invarianz marker
+    var ip=toPx(INV);
+    ctx.save();
+    ctx.strokeStyle=rgb(pal.good,0.95); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(ip[0],ip[1],11,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ip[0],ip[1],4,0,Math.PI*2); ctx.fillStyle=rgb(pal.good,1); ctx.fill();
+    ctx.fillStyle=rgb(pal.fg,0.95); ctx.font='600 12px -apple-system, "Inter", sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='bottom';
+    ctx.fillText('Invarianz  (∇L = 0)', ip[0], ip[1]-16);
+    ctx.restore();
+
+    // Trail
+    if(state.trail.length>1){
+      ctx.save(); ctx.lineCap='round';
+      for(var i=1;i<state.trail.length;i++){
+        var a=toPx(state.trail[i-1]), b=toPx(state.trail[i]);
+        var alpha=(i/state.trail.length)*0.85;
+        ctx.strokeStyle=rgb(pal.trail,alpha);
+        ctx.lineWidth=1.5+2*(i/state.trail.length);
+        ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Particle
+    var p=toPx(state.w);
+    ctx.save();
+    var glow=ctx.createRadialGradient(p[0],p[1],2,p[0],p[1],22);
+    glow.addColorStop(0,rgb(pal.accent2,0.9)); glow.addColorStop(1,rgb(pal.accent2,0));
+    ctx.fillStyle=glow; ctx.beginPath(); ctx.arc(p[0],p[1],22,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle=rgb(pal.accent2,1); ctx.beginPath(); ctx.arc(p[0],p[1],6.5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.9)'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.restore();
+
+    // frozen banner on canvas
+    if(state.frozen){
+      ctx.save();
+      ctx.fillStyle=rgb(pal.bad,0.12); ctx.fillRect(0,0,cw,ch);
+      ctx.fillStyle=rgb(pal.bad,0.95); ctx.font='600 13px -apple-system, "Inter", sans-serif';
+      ctx.textAlign='left'; ctx.textBaseline='top';
+      ctx.fillText('⚠ live Ziel gekappt — Modell eingefroren (Halluzinations-Modus)', 14, 12);
+      ctx.restore();
+    }
+  }
+
+  function loop(){
+    if(state.playing && !state.frozen) step();
+    updateGauges();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function sizeCanvas(){
+    var cw=canvas.clientWidth, ch=canvas.clientHeight;
+    canvas.width=Math.round(cw*DPR); canvas.height=Math.round(ch*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    buildLandscape();
+  }
+
+  // Controls
+  var lr=document.getElementById('lr');
+  if(lr) lr.addEventListener('input', function(){ state.lr=parseFloat(lr.value); el.lrv.textContent=state.lr.toFixed(2); });
+  var playBtn=document.getElementById('playBtn');
+  if(playBtn) playBtn.addEventListener('click', function(){ state.playing=!state.playing; playBtn.textContent=state.playing?'⏸ Pause':'▶ Play'; });
+  var resetBtn=document.getElementById('resetBtn');
+  if(resetBtn) resetBtn.addEventListener('click', function(){ reset(); });
+  var freeze=document.getElementById('freeze');
+  if(freeze) freeze.addEventListener('change', function(){ state.frozen=freeze.checked; });
+
+  // Theme change -> rebuild
+  var mo=new MutationObserver(function(){ readPalette(); buildLandscape(); });
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  var rto=null;
+  window.addEventListener('resize', function(){ clearTimeout(rto); rto=setTimeout(sizeCanvas,120); });
+
+  readPalette();
+  sizeCanvas();
+  reset();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "020",
+  "a": "simplicial_complex_attention2.html",
+  "b": "generalisierung_im_deep_learning_very_simple.html",
+  "a_title": "Simplicial Complexes — Visual Explorer (Simplicial Attention in Transformers)",
+  "b_title": "Warum Auswendiglernen nicht schadet — ganz einfach erklärt (A Theory of Generalization in Deep Learning)",
+  "combined_theme": "hoherstufige-struktur-fang-rauschen-parken",
+  "one_line": "Höherstufige simpliciale Geometrie (A) vergrößert den Raum, in dem kohärentes Signal leben kann; die lineare Training-Dynamik (B) parkt das inkoherente Rauschen in ker(W) — deshalb bleibt der Testfehler klein, während das Netz auswendig lernt.",
+  "contradictions": [
+    "Ordnung der Struktur: A behauptet, die relevante Struktur sei nicht-paarweise und nicht in Paare zerlegbar (2-/3-Simplexe nötig, 'pairwise attention misses'); B erklärt Generalisierung vollständig als lineare Algebra (range(W)⊕ker(W), pro-Parameter-Skalare SNR, 'reine Algebra') und ist der Interaktionsordnung prinzipiell indifferent.",
+    "Ort der Lösung: A verlangt architekturseitige Umbauten (simplicial Attention/SAN, TDA, topologisches Message-Passing), um Mehrfach-Abhängigkeiten zu nutzen; B verlangt explizit 'kein Architekturwissen' — der Nutzen bestehe automatisch und der Fix sei eine repräsentations-agnostische Zeile in AdamW (SNR-Gate).",
+    "Bewertung von Kapazität: A stellt es so auf, dass beim Wachsen der Vietoris-Rips-Schwelle immer mehr höherdimensionale Simplexe entstehen und Topologie offenbaren — die reicher werdende Höherstufen-Struktur sei das Wertvolle; B hält den Signalkanal für 'winzig' und das Reservoir für 'riesig', die überwältigende Mehrheit der Kapazität sei verwertbarer, abparkbarer Ballast."
+  ],
+  "resolution": "Die drei Spannungen sind komplementär, nicht konkurrierend: A liefert die Kandidaten-Struktur (Höherstufen-Simplexe vergrößern den potenziellen Signalkanal range(W)), B den Filter (Drift ∝ T vs. Diffusion ∝ √T routet kohärentes Signal sichtbar in den Signalkanal und parkt inkoherentes Rauschen in ker(W) ⊆ ker(G_Q), wo es für jede Testmenge unsichtbar bleibt). 'Reicher ist besser' (A) gilt nur soweit wie kohärente Signal-Kapazität dazukommt; der mitgebrachte Ballast ist genau das, was B als harmlos zeigt. Die zwei Ansätze komponieren: ein simpliciales Modell (A, größerer Kandidaten-Raum) plus SNR-Gate (B, sauberere Sortierung) ist strikt besser als eines der beiden allein.",
+  "viz": "Theme-reaktives 2D-Canvas, das den Ausgaberaum als zwei senkrechte Zimmer darstellt (horizontal: Signalkanal range(W), vertikal: Reservoir ker(W)). Ein tealer Drift-Pfeil (∝ T) verkörpert das kohärente Signal, dessen Länge mit der Interaktionsordnung (A: Kante→Dreieck→Tetraeder-Badge) und T wächst; fünf rosa Zickzack-Läufe (∝ √T) sind Rauschen, das überwiegend ins unsichtbare Reservoir fließt. Regler für Order/T/σ, Readouts für Signal, Rauschen, SNR und Testanteil; deterministische Inline-Runs, keine Netzwerk-Daten."
+}

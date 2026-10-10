@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 025 — Das Detail-Budget: Schärfe gegen Weite ✕</title>
+<style>
+:root{
+  --bg:#faf7f0; --card:#fffdf8; --ink:#2b2e3a; --dim:#5c6272; --faint:#9aa0b0;
+  --line:#e7e0d0; --signal:#0f766e; --reservoir:#b45309; --noise:#be185d; --accent:#6d28d9;
+  --grid:#d9d0ba; --pt-fill:#fffdf8;
+  --soft-signal:#e6f2f0; --soft-res:#fdf3e3; --soft-noise:#fdeef4; --soft-acc:#f1ecfb;
+  --r:16px; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1420; --card:#141b2b; --ink:#e6e9f0; --dim:#aab2c4; --faint:#7b8497;
+  --line:#26314a; --signal:#2dd4bf; --reservoir:#fbbf24; --noise:#f472b6; --accent:#a78bfa;
+  --grid:#1f2c47; --pt-fill:#141b2b;
+  --soft-signal:#0e2a2b; --soft-res:#2a2110; --soft-noise:#2a1322; --soft-acc:#1d1833;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.72;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+main{max-width:820px;margin:0 auto;padding:0 22px 90px}
+header{padding:64px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.05em;background:var(--soft-acc);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(28px,5.2vw,42px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--signal)}
+.sub{font-size:14px;color:var(--dim);max-width:62ch;font-family:var(--mono)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:52px 0 12px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--signal);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--soft-signal);border-radius:99px;padding:3px 10px}
+h3{font-size:15.5px;font-weight:720;margin:20px 0 6px;color:var(--ink)}
+p{color:var(--dim);margin-bottom:14px;font-size:15.5px}
+p b,li b{color:var(--ink)}
+ul{margin:0 0 16px 20px;color:var(--dim);font-size:15px}
+li{margin-bottom:9px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:18px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--signal);background:var(--soft-signal);border-radius:0 12px 12px 0;padding:13px 16px;margin:18px 0;font-size:14.5px;color:var(--dim)}
+.note b{color:var(--ink)}
+.note.res{border-color:var(--reservoir);background:var(--soft-res)}
+.note.acc{border-color:var(--accent);background:var(--soft-acc)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;vertical-align:middle}
+.tag.A{background:var(--soft-acc);color:var(--accent)}
+.tag.B{background:var(--soft-signal);color:var(--signal)}
+.tag.both{background:var(--soft-res);color:var(--reservoir)}
+.rule{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:14px 0;color:var(--ink);overflow-x:auto;white-space:nowrap}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.demo h3{margin-top:0}
+.dsub{font-size:12.5px;color:var(--faint);margin-bottom:12px}
+canvas{display:block;width:100%;border-radius:12px;background:var(--card)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--signal);font-size:13px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--signal);cursor:pointer;border:3px solid var(--card)}
+input[type=range].r::-webkit-slider-thumb{background:var(--reservoir)}
+input[type=range].r::-moz-range-thumb{background:var(--reservoir)}
+input[type=range].n::-webkit-slider-thumb{background:var(--noise)}
+input[type=range].n::-moz-range-thumb{background:var(--noise)}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 14px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.15s}
+button:hover{transform:translateY(-1px)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:118px;background:var(--soft-signal);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--signal)}
+.ro .box.res{background:var(--soft-res)}.ro .box.res .v{color:var(--reservoir)}
+.ro .box.no{background:var(--soft-noise)}.ro .box.no .v{color:var(--noise)}
+.ro .box.ac{background:var(--soft-acc)}.ro .box.ac .v{color:var(--accent)}
+.badge-out{font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 14px;border-radius:10px;display:inline-block;margin-top:10px}
+.badge-out.ok{background:var(--soft-signal);color:var(--signal);border:1px solid var(--line)}
+.badge-out.warn{background:var(--soft-res);color:var(--reservoir);border:1px solid var(--line)}
+.badge-out.bad{background:var(--soft-noise);color:var(--noise);border:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:12.5px;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+footer{border-top:1px solid var(--line);margin-top:56px;padding:26px 0;text-align:center;color:var(--faint);font-size:12.5px}
+footer a{color:var(--signal);text-decoration:none}
+.prov{display:grid;gap:12px}
+.prov a{color:var(--ink);text-decoration:none;font-weight:700}
+.prov a:hover{color:var(--signal)}
+.prov .d{color:var(--dim);font-size:14.5px;margin-top:2px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="badge">Fusion 025 · Runde 1 · Deep-Learning-Theorie ✕ Frequenz-Budget / Attention</div>
+  <h1>Ein <em>Budget</em> für Detail:<br>Schärfe gegen Weite</h1>
+  <p class="sub">Fusion aus: theory_of_deep_learning_very_simple.html ✕ paperidea6.html</p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Papiere beschreiben <b>derselben Sache zwei Namen</b>: ein <b>begrenztes Budget für Detail</b>, das man ausgeben muss — und den dadurch erzwungenen Kompromiss zwischen <b>Konzentration</b> (scharf dort, wo man hinschaut / gut an den gesehenen Punkten) und <b>Weite</b> (bleibt richtig dort, wo man nicht hinschaut / an nie gesehenen Fällen). Papier A <span class="tag A">A</span> nennt es <b>Kapazität / Modell-Komplexität</b> (Anzahl Parameter, Polynomgrad, Breite/Tiefe). Papier B <span class="tag B">B</span> nennt es <b>feste Dimensionalität d / Frequenz-Koeffizienten</b> — ein explizit „finite and conserved" Budget an hochfrequentem Detail. Beides ist derselbe endliche Vorrat an Freiheitsgraden, die man zwischen „diesem Detail hier" und „allem anderen" aufteilen muss.</p>
+<p>Darum sind auch die beiden <b>Fehlmodi derselbe</b>: A's <b>Überfitt</b> (scharf auf den Trainingspunkten, wilder Unsinn dazwischen) und B's <b>Unschärfe</b> (das Detail-Budget über alles gestreut → nirgends scharf, „LEGO"-Pixel) sind die <i>schlechte Allokation</i> desselben Budgets. Und die beiden <b>guten Ergebnisse sind dasselbe Prinzip</b>: A's „einfache Lösungen generalisieren" und B's „schmale Aufmerksamkeit = scharfer Blick auf wenige" sagen beide: <b> gib das Budget auf die tiefen Frequenzen / das Essenz, nicht auf das hochfrequente Ornament.</b></p>
+<p>Die <span class="tag both">fusion</span> lautet deshalb in einem Satz: <b>Ein Netz (und jede Repräsentation fester Dimension) besitzt nur ein begrenztes Detail-Budget; wer gewinnt, entscheidet sich an dessen Verteilung.</b> Generalisierungsfehler (A) und Rekonstruktions-Unschärfe (B) sind zwei Messungen derselben Größe; A's „wildes Interpolieren" ist exakt das hochfrequente Detail, das B's Tiefpass wegwirft, um scharf zu bleiben. Der Sweet-Spot — das Budget auf das (tief frequentische) Essenz ausgeben — generalisiert <i>und</i> bleibt gleichzeitig scharf.</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+<p>Logisch direkt widersprechen sie sich nicht — A arbeitet über <i>Komplexität und Trainingsdynamik</i>, B über <i>festes Frequenz-Budget und Aufmerksamkeit</i>. Es gibt aber drei konkrete Stellen, an denen ihre Stances unvereinbar formuliert sind:</p>
+<ul>
+<li><b>Mehr Kapazität — Heil oder Subtraktion?</b>
+<span class="tag A">A</span> (Aha #5, Double Descent) behauptet explizit: „<b>Mehr Komplexität ist nicht mehr Fluch, sondern Heil</b>" — rechts von der 1.0-Marke (Überparametrisierung) <i>sinkt</i> der Test-Fehler erneut; mehr Parameter → besser, weil die NTK das Netz linear macht und Gradientenabstieg die einfachste Lösung findet. A behandelt Kapazität als <i>wachsend und nützlich</i>.
+<span class="tag B">B</span> hält dagegen, das Budget sei „<b>finite and conserved</b>" bei „fixed dimensionality d" — mehr Linsen bedeutet <i>weniger</i> Budget pro Linse; „mehr" zu verteilen ist eine strenge Subtraktion vom lokalen Detail. B behandelt das Detail-Budget als <i>feste Torte</i>, die man nicht vergrößern kann.</li>
+<li><b>Das Paradox — aufgelöst oder erzwungen?</b>
+<span class="tag A">A</span> (Aha #5): „<b>Das große Paradox ist aufgelöst</b>" — das NTK-Argument lässt die Spannung unter den richtigen Trainingsdynamiken verschwinden (überparametrisiert + GD → einfache Lösung → generalisiert).
+<span class="tag B">B</span> (Conjecture 6) formuliert den Resolution–Breadth-Tradeoff dagegen als „<b>enforced by the convex combination in fixed dimensionality d</b>" — eine strukturelle Gesetzmäßigkeit, die man <i>verwalten</i> (verteilen) aber nicht <i>eliminieren</i> kann.</li>
+<li><b>Wer gibt das Budget aus — Dynamik oder explizite Fokussierung?</b>
+<span class="tag A">A</span> schreibt die gute Auswahl den <i>Trainingsdynamiken</i> zu: Gradientenabstieg über eine (bei Breiten Netzen) fast konvexen Landschaft wählt die einfache Lösung <i>automatisch, implizit, global</i>.
+<span class="tag B">B</span> macht das Ausgeben des Budgets zu einem <i>expliziten, lokalen Akt der Aufmerksamkeit</i>: man setzt „Linsen", die den lokalen Frequenz-Cutoff heben — eine bewusste, räumlich, budgeterhaltende Operation.</li>
+</ul>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Auflösung</h2>
+<p><b>Mehr = Heil vs. Subtraktion (T1):</b> Kapazität ist ein <i>Mindestniveau</i>, Allokation die <i>bindende Grenze</i>. A's Double Descent tritt erst <i>nach</i> der Interpolations-Schwelle ein — also genau dann, wenn das Budget so groß ist, dass die Frage aufhört, „wie viel?", und zu „wie verteile ich?" wird. B's „fixed d, conserved" ist exakt das Regime, in dem die Gesamtmenge fest ist und <i>Verteilung</i> der einzige Hebel bleibt. Fusion: Erst das Budget über den Boden heben (A), damit Detail überhaupt existiert — danach ist das ganze Spiel das kluge Ausgeben (B). „Mehr" hilft nur, soweit es ein größeres Budget kauft, das man auf das <i>Essenz</i> ausgibt; auf Ornament/Rauschen ausgegeben, ist es in beiden Papieren der Fehler (Überfitt / Unschärfe).</p>
+<p><b>Aufgelöst vs. erzwungen (T2):</b> Zwei Skalen, ein Gesetz. A löst das Paradox <i>global/im Mittel</i> (der Gesamt-Test-Fehler fällt, wenn man überparametrisiert); B's Tradeoff ist <i>lokal/räumlich</i> (mit festem d kann man an <i>jedem</i> Punkt nicht scharf sein). Beides ist wahr: man kann das <i>Mittel</i> gut machen (A), aber nicht <i>jeden Punkt</i> für gratis scharf (B). Fusion: Der Generalisierungsfehler (A) ist die <i>gemittelte</i> Form des Resolution–Breadth-Gesetzes; die lokale Schärfe (B) ist dessen <i>punktuell</i>e Form. A's „wildes Interpolieren" ist genau das hochfrequente Detail, das B's Tiefpass zur Schärfe verwirft. Ein Gesetz, zwei Skalen.</p>
+<p><b>Dynamik vs. Fokussierung (T3):</b> Gradientenabstieg <i>ist</i> implizite Aufmerksamkeit. A's „GD findet die einfachste Lösung" (Min-Norm in der NTK) <i>ist</i> B's „Konzentriere die endlichen Koeffizienten dort, wo sie Signal tragen". Der eine ist die implizite/globale Auswahl durch die Dynamik, der andere der explizite/lokale Akt der Aufmerksamkeit. Fusion: Der Simple-Bias des Trainings und die budgeterhaltende Fokussierung der Attention sind dasselbe Prinzip — das Detail-Budget auf die tiefen Frequenzen (das Essenz) geben, woanders minimal halten. „Einfach" (A) = „scharf &amp; konzentriert" (B).</p>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>4.1 Die Maschine <span class="tag A">A</span></h3>
+<p>Ein Netz ist eine Kette „Gewichte mal Eingabe plus Verschiebung", zwischen denen <b>Knick-Funktionen</b> (ReLU) sitzen. Jedes ReLU erzeugt eine scharfe Kante; ein Netz ist eine <b>stückweise lineare Funktion</b> — eine Faltkarte aus vielen geraden Flächenstücken. Universalität: genug Neuronen approximieren jede stetige Kurve (aber der Satz sagt nichts über <i>wie viele</i>). Der entscheidende Hebel: Netze <i>addiert</i> (breite Schicht) addiert Knicke, Netze <i>verkettet</i> (tiefe Schicht) <b>multipliziert</b> sie. Eine 2-Zacken-Hat-Funktion, n-mal verkettet, hat 2<sup>n−1</sup> Zacken bei nur linear wachsender Größe. Bei fixem Budget von 30 Neuronen: 1 Schicht → ~31 Stücke; 10 Schichten à 3 → ~6<sup>10</sup> ≈ 60 Mio. Stücke. Das ist der Grund für Tiefe — und das erste große Ergebnis der Approximationstheorie.</p>
+
+<h3>4.2 Die zentrale Spannung: Overfitting <span class="tag A">A</span></h3>
+<p>Endlich viele Beispiele → eine Regel, die auch für nie gesehene Fälle gilt. Mehr Freiheit im Modell → passt besser zu den <i>gesehenen</i> Punkten, erfindet aber wilder <i>dazwischen</i>. Overfitting = scharf auf dem Gesehenen, Müll auf dem Ungesehenen (Bias–Varianz). Genau diese Spannung ist die gesamte Theorie.</p>
+
+<h3>4.3 Optimierung <span class="tag A">A</span></h3>
+<p>Die Gewichte findet man, indem man in jeder Schicht die Richtung misst, in der der Fehler am stärksten sinkt (Gradient), und einen kleinen Schritt macht. Die Fehlerlandschaft ist kein glatter Berg; in hohen Dimensionen <b>dominieren Sattelpunkte</b> über echte lokale Minima. Moderne Theorie: sehr <i>breite</i> Netze machen die Landschaft fast <i>konvex</i> — es gibt dann im Wesentlichen nur noch gutes und schlechtes Tal, keinen trügerischen Schein.</p>
+
+<h3>4.4 Das Generalisierungsparadox &amp; Double Descent <span class="tag A">A</span></h3>
+<p>Klassische Statistik: mehr Parameter als Datenpunkte = Katastrophe, nur Auswendiglernen. Aber ImageNet-Modelle haben ~1000× mehr Parameter als Bilder und funktionieren. <b>Double Descent</b>: der Test-Fehler als Funktion der Modellgröße fällt, spitzt an der Interpolations-Marke (1.0) auf, und <i>fällt erneut</i>. Grund: sehr breite Netze werden im Training (nahezu) <i>linear</i> (Neural-Tangent-Kernel); Gradientenabstieg findet systematisch die <i>einfachste</i> (Min-Norm-)Lösung; und <i>einfache Lösungen generalisieren</i>.</p>
+
+<h3>4.5 Das Detail-Budget im Frequenzraum <span class="tag B">B</span></h3>
+<p>B rechnet im <b>Frequenzraum</b> (DCT/FFT). Das Detail eines Signals steckt in seinen <i>hochfrequenten</i> Koeffizienten. Rekonstruiert man mit nur den tiefsten N Koeffizienten, ist das ein <b>Tiefpassfilter = Unschärfe</b> (die „LEGO"-Pixel). <b>Feste Dimensionalität d</b> = eine feste Anzahl unabhängiger Detailrichtungen. Die „convex combination in fixed d" erzwingt den Tradeoff: man kann nicht beliebig viel Detail haben, man kann es nur verteilen.</p>
+
+<h3>4.6 Aufmerksamkeit / Fokus <span class="tag B">B</span></h3>
+<p>Man setzt <b>Linsen</b>, die <i>lokal</i> den Frequenz-Cutoff heben → lokal schärfere Rekonstruktion. Überlappende Linsen addieren Koeffizienten → feinere Details. Das Budget ist <b>erhalten</b>: mehr Linsen = weniger pro Linse. Entropie-Frame (Conjecture 6): <i>niedrige</i> Entropie = schmal = scharfer Blick auf wenige; <i>hohe</i> Entropie = breit = verschwommener Blick auf viele.</p>
+
+<h3>4.7 Die Brücke — die fusionierte Mathematik <span class="tag both">fusion</span></h3>
+<p>Man schreibt das Modell als abgeschnittene Kosinus-Reihe — A's „Komplexität" und B's „Frequenz-Cutoff" sind dann derselbe Knob <b>K</b>:</p>
+<div class="rule">Modell<sub>K</sub>(x) = Σ<sub>k=0…K</sub> a<sub>k</sub> · cos(π k x)      K = Detail-Budget = Modell-Komplexität</div>
+<ul>
+<li>Das <b>Essenz</b> (die Regel, die generalisiert) lebt in den <i>tiefen</i> Frequenzen (kleines k). Das <b>Ornament / Rauschen</b> lebt in den <i>hohen</i> Frequenzen (großes k).</li>
+<li>A's „wildes Interpolieren" = das Budget in <b>hohe k</b> ausgeben. B's „Blur" = das Budget zu <b>dünn</b> streuen (zu wenige Koeffizienten überall).</li>
+<li>Die <b>einfache Lösung</b> (A) <i>ist</i> die <b>Tiefpass-Abschneidung</b> (B): a<sub>k</sub> := 0 für k &gt; K*. Dieser eine Akt macht das Modell zugleich generalisierend (A) <i>und</i> scharf/stabil (B).</li>
+<li>Generalisierungsfehler (A) ≈ Rekonstruktions-Unschärfe (B) ≈ die Energie, die im Modell in die <i>faulen</i> Koeffizienten wandert.</li>
+<li>Conjecture-6-Tradeoff: Bei festem d ist die Gesamt-Detail-Menge gebunden, also muss man <i>konzentrieren</i> (niedrige Entropie), um überhaupt lokale Schärfe zu bekommen — und genau diese Konzentration ist A's „einfache/tief-frequente" Lösung, die generalisiert.</li>
+</ul>
+<div class="rule">Unschärfe (B) ≈ Σ<sub>k &gt; K</sub> |a<sub>k</sub>|²   ·   Überfitt/Generalisierungsfehler (A) ≈ Energie in k ≥ k<sub>noise</sub>   ·   simple solution ⇔ low-pass ⇔ generalizes + stays sharp</div>
+
+<h3>4.8 Grenzen &amp; Ehrlichkeits-Ecke <span class="tag both">fusion</span></h3>
+<ul>
+<li><b>A's eigene Ehrlichkeit:</b> die exponentiellen Stücke-Schranken (Tiefe) erreicht ein zufällig initialisiertes Netz in der Praxis <i>nicht</i> (Erwartungswert wächst nur linear in der Tiefe); warum ResNets/CNNs/Transformer jeweils <i>so</i> funktionieren, ist nicht vollständig verstanden; Adversarial Examples (hohe Dimension + glatte Funktion ⇒ <i>muss</i> passieren) sind nicht behoben.</li>
+<li><b>B ist eine Conjecture</b> (Conjecture 6) / ein interaktives Modell, kein Theorem; „conserved budget" und „convex combination in fixed d" sind Modellannahmen, die zu beweisen wären.</li>
+<li><b>Die Fusion selbst:</b> Das 1-D-Kosinus-Spiel hier reproduziert A's Overfitting-Parabel (Bias–Varianz/Double-Descent-Kante) und B's Frequenz-Budget (Tiefpass = scharf), aber weder die volle NTK-Dynamik noch die Homotopie-/Lipschitz-Geometrie. Es ist ein Stand-in für die Idee, nicht der Beweis.</li>
+</ul>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Visualisierung</h2>
+<p>Die Grafik vereint beide Seiten in <b>einem</b> Regler, dem <b>Detail-Budget K</b> (= Frequenz-Cutoff = Modell-Komplexität). Oben: die wahre <b>Essence</b> (gestrichelt, die generalisierende Regel), die <b>Datenpunkte</b> (mit Rauschen) und das gefittete <b>Modell<sub>K</sub></b>. Unten: das <b>Frequenz-Spektrum</b> — welche Koeffizienten das Modell „ausgibt". Tiefe Frequenzen (k&nbsp;≤&nbsp;3, Essence) sind <span style="color:var(--signal)">teal</span>, hohe (k&nbsp;≥&nbsp;4, Ornament/Rauschen) <span style="color:var(--noise)">rosa</span>; ausgegeben (k&nbsp;≤&nbsp;K) leuchten, nicht ausgegeben sind ausgeblasen. Zieh K:</p>
+
+<div class="demo">
+  <h3>Das Detail-Budget: Essence fangen (A: generalisiert) vs. auf Rauschen ausgeben (B: Unschärfe/Überfitt)</h3>
+  <p class="dsub">K = Detail-Budget (max. Frequenz / Modell-Komplexität). N = Trainingspunkte. „Neue Stichprobe" zieht frisches Rauschen.</p>
+  <canvas id="fzCv" width="820" height="500"></canvas>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Detail-Budget K (Frequenz-Cutoff = Modell-Komplexität)</span><b id="kV">3</b></div>
+    <input type="range" id="kS" min="0" max="14" value="3">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Trainingsbeispiele N</span><b id="nV">12</b></div>
+    <input type="range" id="nS" min="6" max="40" value="12">
+  </div>
+  <div class="btnrow"><button id="nNew">Neue Stichprobe ziehen</button></div>
+  <div class="ro">
+    <div class="box"><div class="k">Generalisierungsfehler (vs Essence)</div><div class="v" id="rGen">–</div></div>
+    <div class="box no"><div class="k">Rauschen-Anteil im Budget</div><div class="v" id="rNoise">–</div></div>
+    <div class="box res"><div class="k">Trainingsfehler (vs Daten)</div><div class="v" id="rTrain">–</div></div>
+    <div class="box ac"><div class="k">Budget = aktive Koeff.</div><div class="v" id="rBudget">–</div></div>
+  </div>
+  <div id="fzOut" class="badge-out ok">–</div>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--signal)"></i> Essence / tiefe Frequenzen (generalisieren, scharf)</span>
+    <span><i class="dot" style="background:var(--accent)"></i> gefittetes Modell<sub>K</sub></span>
+    <span><i class="dot" style="background:var(--noise)"></i> Ornament / hohe Frequenzen (Rauschen, Überfitt)</span>
+  </div>
+</div>
+
+<div class="note acc">
+  <b>Was du siehst:</b> Bei kleinem K (0–2) kann das Modell die Essence nicht abbilden → <i>Unterfitt</i>, Generalisierungsfehler hoch, „überall unscharf" (B's LEGO-Blur). Bei K ≈ 3–4 trifft es die Essence, der Rauschen-Anteil bleibt 0 % → <i>scharf und generalisierend</i>. Bei K ≥ 6 beginnt das Modell, das Budget in die rosa Koeffizienten (k&nbsp;≥&nbsp;4) zu stecken: Trainingsfehler → 0, aber der Generalisierungsfehler <i>steigt wieder</i> — das ist A's „wildes Interpolieren" und B's „Detail auf Rauschen verstreut" in einem einzigen Vorgang. Der Sweet-Spot ist derselbe in beiden Papiern.
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="card prov">
+  <div>
+    <a href="../theory_of_deep_learning_very_simple.html">theory_of_deep_learning_very_simple.html</a>
+    <div class="d">„Die mathematische Theorie des Deep Learning — ganz einfach erklärt" (A): die drei Säulen Approximation / Optimierung / Generalisierung; Überfitt (Passform vs. Wahrheit), Universalität (stückweise lineare Faltkarte), Tiefe multipliziert Knicke (2<sup>n−1</sup> Zacken, 30 Neuronen → 60 Mio. Stücke), Gradientenabstieg &amp; Sattelpunkte, Double Descent + NTK („einfache Lösungen generalisieren", „mehr Komplexität ist Heil").</div>
+  </div>
+  <div>
+    <a href="../paperidea6.html">paperidea6.html</a>
+    <div class="d">„Lipschitz Lenses — Homotopic Focus Stack v3 / FFT Focus Stack" (B): Repräsentation im Frequenzraum (DCT/FFT), Detail = hochfrequente Koeffizienten, lokale Fokus-Linsen heben den Frequenz-Cutoff, „finite and conserved" Detail-Budget bei fester Dimensionalität d, Resolution–Breadth-Tradeoff, Conjecture 6 (niedrige Entropie = scharf, hohe = verschmiert).</div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <p>Fusion 025 · Runde 1 · selbstständige HTML, keine Netzwerk-Daten, Theme-reaktiv. <a href="#" id="themeBtn">Theme wechseln</a></p>
+</footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('fzCv');
+  var ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+  var kS=document.getElementById('kS'), nS=document.getElementById('nS');
+  var kV=document.getElementById('kV'), nV=document.getElementById('nV');
+  var rGen=document.getElementById('rGen'), rNoise=document.getElementById('rNoise');
+  var rTrain=document.getElementById('rTrain'), rBudget=document.getElementById('rBudget');
+  var fzOut=document.getElementById('fzOut');
+  var KMAX=14, NOISEK=4;
+  var seed=20261010;
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+  function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+  function essence(x){
+    return 0.5 + 0.30*Math.cos(Math.PI*x) + 0.16*Math.cos(2*Math.PI*x) - 0.07*Math.cos(3*Math.PI*x);
+  }
+  function model(x,a){
+    var s=0;
+    for(var k=0;k<a.length;k++){ s+=a[k]*Math.cos(Math.PI*k*x); }
+    return s;
+  }
+  function genData(N,seedv){
+    var r=mulberry32(seedv ^ (N*7919));
+    var pts=[];
+    for(var i=0;i<N;i++){
+      var x=(i+0.5)/N;
+      var y=essence(x)+(r()*2-1)*0.12;
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+  function solve(A,b){
+    var n=b.length,i,j,k,m=A.map(function(r){return r.slice();}),c=b.slice();
+    for(i=0;i<n;i++){
+      var piv=i;
+      for(j=i+1;j<n;j++){ if(Math.abs(m[j][i])>Math.abs(m[piv][i])) piv=j; }
+      var tm=m[i];m[i]=m[piv];m[piv]=tm;
+      var tc=c[i];c[i]=c[piv];c[piv]=tc;
+      var d=m[i][i]||1e-12;
+      for(j=i;j<n;j++){ m[i][j]/=d; }
+      c[i]/=d;
+      for(k=0;k<n;k++){
+        if(k===i) continue;
+        var f=m[k][i]; if(f===0) continue;
+        for(j=i;j<n;j++){ m[k][j]-=f*m[i][j]; }
+        c[k]-=f*c[i];
+      }
+    }
+    return c;
+  }
+  function fit(pts,K){
+    var n=K+1,i,j,k;
+    var A=[],b=[];
+    for(k=0;k<n;k++){ A.push(new Array(n).fill(0)); b.push(0); }
+    for(i=0;i<pts.length;i++){
+      var x=pts[i][0],y=pts[i][1],ph=[];
+      for(k=0;k<n;k++){ ph.push(Math.cos(Math.PI*k*x)); }
+      for(k=0;k<n;k++){
+        b[k]+=ph[k]*y;
+        for(j=0;j<n;j++){ A[k][j]+=ph[k]*ph[j]; }
+      }
+    }
+    var tr=0; for(k=0;k<n;k++){ tr+=A[k][k]; }
+    var ridge=1e-4*((tr/n)||1);
+    for(k=0;k<n;k++){ A[k][k]+=ridge; }
+    return solve(A,b);
+  }
+  function spectrum(pts){
+    var N=pts.length,out=[];
+    for(var k=0;k<=KMAX;k++){
+      var s=0;
+      for(var i=0;i<N;i++){ s+=pts[i][1]*Math.cos(Math.PI*k*pts[i][0]); }
+      out.push(k===0 ? s/N : 2*s/N);
+    }
+    return out;
+  }
+
+  function draw(){
+    var N=parseInt(nS.value,10), K=parseInt(kS.value,10);
+    kV.textContent=K; nV.textContent=N;
+
+    var ink=cssVar('--ink'), faint=cssVar('--faint'), card=cssVar('--card'), grid=cssVar('--grid');
+    var signal=cssVar('--signal'), noise=cssVar('--noise'), accent=cssVar('--accent');
+    var mono=cssVar('--mono');
+
+    var pts=genData(N,seed);
+    var a=fit(pts,K);
+    var sp=spectrum(pts);
+
+    var trainErr=0,i,k;
+    for(i=0;i<pts.length;i++){ var e=model(pts[i][0],a)-pts[i][1]; trainErr+=e*e; }
+    trainErr=Math.sqrt(trainErr/pts.length);
+
+    var genAcc=0,GRID=240;
+    for(i=0;i<=GRID;i++){ var gx=i/GRID, ge=model(gx,a)-essence(gx); genAcc+=ge*ge; }
+    var genErr=Math.sqrt(genAcc/(GRID+1));
+
+    var totAct=0,noiseAct=0;
+    for(k=0;k<=KMAX;k++){
+      var av=Math.abs(sp[k]);
+      if(k<=K){ totAct+=av; if(k>=NOISEK){ noiseAct+=av; } }
+    }
+    var noiseFrac=totAct>1e-9 ? noiseAct/totAct : 0;
+
+    rGen.textContent=genErr.toFixed(3);
+    rNoise.textContent=Math.round(noiseFrac*100)+'%';
+    rTrain.textContent=trainErr.toFixed(3);
+    rBudget.textContent=(K+1)+' / '+(KMAX+1);
+
+    if(trainErr<0.02 && genErr>0.055){
+      fzOut.className='badge-out bad';
+      fzOut.textContent='Überfitt — Budget auf Rauschen (k≥4) verbrannt: A (wild interpoliert) ✕ B (Detail verschmiert)';
+    } else if(genErr<0.05){
+      fzOut.className='badge-out ok';
+      fzOut.textContent='Essence erfasst (k≤3 ausgeben): generalisiert (A) und bleibt scharf (B)';
+    } else if(K<=1 && genErr>0.08){
+      fzOut.className='badge-out warn';
+      fzOut.textContent='Unterfitt — zu knappes Budget: überall unscharf (B: LEGO-Blur), Essence verfehlt';
+    } else {
+      fzOut.className='badge-out warn';
+      fzOut.textContent='Suboptimal — Budget zu breit gestreut (B: Breite→Unschärfe)';
+    }
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=card; ctx.fillRect(0,0,W,H);
+
+    /* ---- top: curves ---- */
+    var tX=34,tY=18,tW=W-34-14,tH=282;
+    function X(x){return tX+x*tW;}
+    function Y(v){return tY+tH-(clamp(v,-0.15,1.2)+0.15)/1.35*tH;}
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    for(var gi=0;gi<=4;gi++){
+      var gy=tY+tH*gi/4;
+      ctx.beginPath();ctx.moveTo(tX,gy);ctx.lineTo(tX+tW,gy);ctx.stroke();
+    }
+    ctx.font='10px '+mono; ctx.fillStyle=faint; ctx.textAlign='left';
+    ctx.fillText('x →', tX+tW-24, tY+tH+16);
+    ctx.textAlign='right'; ctx.fillText('1.0', tX-6, tY+10); ctx.fillText('0.0', tX-6, tY+tH+3);
+
+    // essence (dashed, signal)
+    ctx.strokeStyle=signal; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    for(var i2=0;i2<=300;i2++){ var xx=i2/300, px=X(xx), py=Y(essence(xx)); i2?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // model (accent)
+    ctx.strokeStyle=accent; ctx.lineWidth=2.6;
+    ctx.beginPath();
+    for(i2=0;i2<=400;i2++){ xx=i2/400; px=X(xx); py=Y(clamp(model(xx,a),-0.15,1.2)); i2?ctx.lineTo(px,py):ctx.moveTo(px,py); }
+    ctx.stroke();
+
+    // data points
+    for(i2=0;i2<pts.length;i2++){
+      ctx.beginPath();ctx.arc(X(pts[i2][0]),Y(clamp(pts[i2][1],-0.15,1.2)),4,0,7);
+      ctx.fillStyle=cssVar('--pt-fill');ctx.fill();
+      ctx.strokeStyle=ink;ctx.lineWidth=1.6;ctx.stroke();
+    }
+    ctx.font='10px '+mono;
+    ctx.fillStyle=signal; ctx.textAlign='left'; ctx.fillText('Essence (wahr, generalisierbar)', tX+4, tY+12);
+    ctx.fillStyle=accent; ctx.fillText('Modell_K  (K='+K+')', tX+4, tY+26);
+
+    /* ---- separator ---- */
+    var sY=352,sH=118,sX=34,sW=W-34-14;
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(sX,sY+sH);ctx.lineTo(sX+sW,sY+sH);ctx.stroke();
+
+    // spectrum bars
+    var maxSp=0;
+    for(k=0;k<=KMAX;k++){ var msp=Math.abs(sp[k]); if(msp>maxSp) maxSp=msp; }
+    if(maxSp<1e-6) maxSp=1;
+    var barW=sW/(KMAX+1);
+    for(k=0;k<=KMAX;k++){
+      var bx=sX+k*barW+2, bw=barW-4;
+      var h=Math.abs(sp[k])/maxSp*(sH-8);
+      var by=sY+sH-h;
+      var spent=(k<=K);
+      ctx.globalAlpha=spent?0.92:0.22;
+      ctx.fillStyle=(k<NOISEK)?signal:noise;
+      ctx.fillRect(bx,by,bw,Math.max(h,0.5));
+      ctx.globalAlpha=1;
+      if(k%2===0){
+        ctx.fillStyle=faint; ctx.font='9px '+mono; ctx.textAlign='center';
+        ctx.fillText(k, bx+bw/2, sY+sH+12);
+      }
+    }
+    var sepX=sX+NOISEK*barW;
+    ctx.strokeStyle=grid; ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(sepX,sY-4);ctx.lineTo(sepX,sY+sH);ctx.stroke();ctx.setLineDash([]);
+    ctx.font='10px '+mono;
+    ctx.fillStyle=signal; ctx.textAlign='left';
+    ctx.fillText('Essence  k ≤ 3', sX, sY-8);
+    ctx.fillStyle=noise; ctx.textAlign='right';
+    ctx.fillText('Ornament / Rauschen  k ≥ 4', sX+sW, sY-8);
+  }
+
+  [kS,nS].forEach(function(el){ el.addEventListener('input',draw); });
+  document.getElementById('nNew').addEventListener('click',function(){
+    seed=(seed*1103515245+12345)&0x7fffffff;
+    draw();
+  });
+  document.getElementById('themeBtn').addEventListener('click',function(e){
+    e.preventDefault();
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+  var mo=new MutationObserver(function(){ draw(); });
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  draw();
+  window.addEventListener('resize',draw);
+})();
+</script>
+</body>
+</html>

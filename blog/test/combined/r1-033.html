@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raumwarpung × Simpliziale Komplexe — Fusion r1-033</title>
+
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-canvas-bg:#f4f0e7; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333;
+  --viz-cls0:#6451d8; --viz-cls1:#0d8f80; --viz-line:rgba(20,28,45,0.16);
+  --viz-sep:rgba(20,28,45,0.6); --viz-edge-in:#0d8f80; --viz-edge-cross:#b57e00; --viz-fill:#6451d8;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.07); --viz-txt:#e8ecf6;
+  --viz-cls0:#8a7cff; --viz-cls1:#5ee0d0; --viz-line:rgba(255,255,255,0.10);
+  --viz-sep:rgba(255,255,255,0.55); --viz-edge-in:#5ee0d0; --viz-edge-cross:#ffc860; --viz-fill:#8a7cff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(820px 520px at 12% 0%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%),
+             radial-gradient(820px 560px at 90% 4%,color-mix(in srgb,var(--acc) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc4);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--acc4) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc3);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:11px 14px;font-size:14px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;margin:12px 0;line-height:2;white-space:pre}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc4);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc4);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc4);box-shadow:0 0 12px var(--acc4);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--viz-canvas-bg);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+.cwrap + .cwrap{margin-top:10px}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:14px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc4);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc4)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc4);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc4)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc4);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc4)}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-033</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: why_deep_learning_works.html ✕ simplicial_complex_attention3.html</p>
+  <h1>Der sich biegende Raum und der sich füllende Komplex</h1>
+  <p>Beide Seiten beantworten dieselbe Frage — <em>Wie sieht die Rechnung eines Netzes aus?</em> — und zeigen jeweils ein <strong>Geometrie-Objekt</strong>. <strong>A</strong> (why_deep_learning_works) macht sie aus <em>komponierten, lokal linearen Abbildungen</em>, die den Eingaberaum so lange <strong>warpen</strong>, bis eine einzige Gerade trennt. <strong>B</strong> (simplicial_complex_attention3) macht sie aus <em>Attention</em>, das zwischen Tokens <strong>Simpliziale füllt</strong>. <em>Ein Zug, zwei Auflösungen: ein gewundener Raum (stetig) und ein gefüllter Komplex (diskret).</em></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Die Topologie des Objekts ist die Rechnung</h2>
+    <p><strong>A</strong> erzählt eine Geschichte in sechs Schritten: Ein einzelnes Neuron <code>σ(w·x + b)</code> ist «eine gerade Linie» — es kann die Ebene nur <em>einmal gerade</em> schneiden. XOR lässt sich mit einer Linie nicht trennen. Die <em>Nichtlinearität ist der Bogen</em>: fehlt σ, kollabiert jede Zahl von Schichten zu <em>einer einzigen Matrix</em> («a linear function of a linear function is still linear»). Setzt man Schichten mit ReLU <em>zusammen</em>, wächst die Anzahl der darstellbaren «linearen Regionen» <strong>exponentiell mit der Tiefe</strong> («deep beats wide»), und Backprop/Gradient-Descent <em>lernt</em> diese Abbildung. Die Pointe ist die Schrittel «The Space Warps»: Das Netz zeichnet keine gewundene Grenze — es <strong>verformt den Raum selbst</strong>, sodass in der <em>letzten Hidden-Schicht</em> die Klassen <strong>linear-separierbar</strong> sind.</p>
+    <p><strong>B</strong> liest einen Transformer aus: Scaled-Dot-Product-Attention <code>softmax(QKᵀ/√d_k)V</code> mit RoPE-Positionen wirkt auf Token-Embeddings in einem 3D-Semantikraum (Achsen Gender / Ontology / Power). Daraus baut B ein <strong>Simplizialkomplex</strong>: Token = 0-Simplex, <em>gegenseitige</em> Attention über einen Schwellwert ε = 1-Simplex (Kante), drei wechselseitig attendierende Tokens = 2-Simplex (Dreieck). Die <strong>Betti-Zahlen</strong> β₀ (Komponenten) und β₁ (Löcher) sind für B die «Topologie der Bedeutung»: Ein gefülltes 2-Simplex heißt, drei Konzepte werden <em>gemeinsam komponiert</em>.</p>
+    <p>Die <strong>einheitliche Position</strong> der Fusion: <em>Ein Netz rechnet, indem es ein Geometrie-Objekt durch <strong>Komposition lokal (nahezu) linearer Operationen</strong> aufbaut; die Topologie dieses Objekts ist die Rechnung.</em> A's «Raum warpen, bis eine Gerade trennt» und B's «Simplexe füllen, wo Tokens wechselseitig attentionieren» sind <em>dieselbe Bewegung in zwei Auflösungen</em>: A's Objekt ist eine <strong>stetige Mannigfaltigkeit</strong> mit einer Trennungsgrenze, B's Objekt ein <strong>diskretes Simplizialkomplex</strong>. Und «Tiefe» (A) bzw. «Attention-Runden / sinkendes ε» (B) sind hier beides ein <strong>Filtrationsparameter</strong>, der das Objekt von «verschränkt» nach «aufgelöst» bewegt.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei Stellungen, die aufeinanderprallen</h2>
+    <p>A (feedforwardes tiefes Netz, kontinuierliche Stichproben) und B (Transformer-Attention, diskrete Tokens) sind andere Architekturen — es gibt keinen <em>direkten</em> formellen Konflikt. Aber sie nehmen zu drei Stellen <strong>unvereinbare Stellungen</strong> zum selben Wort «Geometrie eines Netzes» ein:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Was «Geometrie» überhaupt ist — stetig vs. diskret (der schärfste)</span>
+      <p><b>A</b> macht die Rechnung aus einer <em>stetigen</em> Verformung eines <em>Kontinuums</em>: «the network learns to <em>bend space itself</em>», die Entscheidungsgrenze ist eine <em>glatte Kurve</em> in einem <em>verformten</em> Raum; das Objekt ist metrisch/differenzierbar. Schritt 6 zeichnet wörtlich ein <em>gewundenes Gitter</em>.</p>
+      <p><b>B</b> macht sie aus einem <em>diskret-kombinatorischen</em> Objekt auf einer <em>endlichen</em> Token-Menge: 0-/1-/2-Simplexe, die per <em>hartem Schwellwert ε</em> angehängt werden. Die Struktur ist kombinatorisch (Kanten/Flächen), nicht metrisch — Abstände spielen keine Rolle, nur die Binär-Entscheidung «α &gt; ε».</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: relevante Geometrie = glatte, metrische Verformung eines Raums. B: relevante Geometrie = kombinatorischer, thresholded Komplex. Sie streiten darüber, <em>was die Geometrie eines Netzes überhaupt ist</em> — Mannigfaltigkeit vs. Simplizialkomplex.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Woher die Geometrie kommt — gelernt vs. vorgegeben</span>
+      <p><b>A</b>: Die nützliche Verformung wird <em>gelernt</em> — Backprop/Gradient-Descent; das Netz «learns to bend space». Die Geometrie ist das <em>Ergebnis der Optimierung</em>; man setzt sie nicht an, man findet sie.</p>
+      <p><b>B</b>: Der 3D-Semantikraum und die Token-Koordinaten sind <em>Hand-Constanten</em> in der Datei — z. B. <code>king = [-0.8, 0.1, 0.8]</code> (männlich, menschlich, mächtig), Achsen Gender/Ontology/Power. Attention <em>liest diese vorgegebene Geometrie nur ab</em>; sie wird nicht gelernt, sondern <em>vorausgesetzt</em>.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: die Struktur wird <em>verdient</em> (Lernerergebnis). B: die Struktur wird <em>vorausgesetzt</em> (Input). Ontologie der Geometrie ist vertauscht — Output der Optimierung vs. Input des Systems.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Womit Erfolg gemessen wird — Trennung (Schnitt) vs. Zusammensetzung (gefülltes Inneres)</span>
+      <p><b>A</b> misst Erfolg an einer <em>Entscheidungsgrenze</em> / linear-separierbarer Partition: ein <strong>Schnitt</strong> durch den Raum. Entscheidend ist die <em>Gerade und die zwei Seiten</em> — also das <em>Komplement</em> (der Rand). Der Expressivitäts-Hebel ist die <em>Tiefe</em> (Stacking, exponentiell viele lineare Regionen).</p>
+      <p><b>B</b> misst Erfolg an einem <em>gefüllten 2-Simplex</em> = gemeinsam komponierter Bedeutung: ein <strong>gefülltes Inneres</strong>. Entscheidend ist die <em>koheptive Fläche</em> — das <em>Interieur</em>. Und B ist ein <em>einzelner</em> Attention-Durchgang; seine Kraft kommt aus der Geometrie + <em>einer</em> relationalen Runde, nicht aus Stacking.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A fragt «Kann eine Linie <em>trennen</em>?» (Rand/Schnitt, Tiefe als Hebel). B fragt «Welche Tokens bilden eine <em>gemeinsame Einheit</em>?» (gefülltes Simplex, eine Runde). Trennung (Rand) vs. Zusammensetzung (Interieur) — und Tiefe vs. einzelne Relation.</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>A ist ein ausformuliertes, animiertes Tutorial zu <em>tiefen feedforwarden Netzen</em> (XOR, Komposition, Space-Warping); B ist eine interaktive 3D-Skizze zu <em>Transformer-Attention als TDA</em>. Die Widersprüche sind <em>registernaturgemäß</em> und fallen auf der Naht «was bedeutet Geometrie für ein Netz?» zusammen — nicht in einem formalen A ∧ ¬A. Schärft liegt in W1: Beide verwenden denselben Begriff «Geometrie» für zwei unvereinbare Objekttypen.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie sie zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>dasselbe Objekt in zwei Auflösungen</strong> — plus ein gemeinsamer Mechanismus. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: Stetig und diskret sind dieselbe Geometrie in zwei Auflösungen</h3>
+      <p>Entscheidungsregionen eines Kontinuums, auf einer Punktmenge samplend und per Ähnlichkeit thresholded, <em>sind</em> ein <strong>Vietoris–Rips-Komplex</strong> auf den Daten. A's Warpung ist der <em>stetige Limes</em>; B's Komplex ist seine <em>endliche kombinatorische Schatten</em>. <strong>Fusion:</strong> Das Objekt ist ein <em>filtriertes Simplizialkomplex</em> — eine verschachtelte Familie <code>K_{ε₀} ⊃ K_{ε₁} ⊃ …</code>, wenn ε sinkt (bzw. die Tiefe wächst). «Raum warpen» (A) heißt dann genau: <em>durch die Filtration wandern</em>. Stetig (A) und diskret (B) sind die beiden Grenzfälle desselben gefilterten Objekts.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: Gelernt und vorgegeben — ein Spektrum «wo die Geometrie wohnt»</h3>
+      <p>Trenne <em>Geometrie</em> von <em>Struktur</em>. B ist <em>als Geometrie-Input</em> richtig: der Semantikraum (Gender/Ontology/Power) ist ein <strong>Embedding</strong>. A ist <em>als Geometrie-Output</em> richtig: ein solches Embedding wird <em>gelernt</em> (Backprop). B ist <em>als Struktur-Pass</em> richtig: Attention <strong>organisiert</strong> eine vorgegebene Geometrie in einen Komplex. <strong>Fusion:</strong> ein reales System hat <em>beides</em> — ein <em>gelerntes Embedding</em> (A's Rolle) <strong>plus</strong> einen <em>struktur-entdeckenden relationalen Pass</em> (B's Rolle). A wird «gelernte Geometrie», B wird «darüber der Komplex, den Attention <em>extrahiert</em>» — nicht mehr vorgegeben, sondern abgeleitet. Lerne Geometrie (A) + extrahiere Struktur (B) = das allgemeine Bild.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: Trennung und Zusammensetzung sind duale Fragen auf demselben Komplex</h3>
+      <p>A Trennung ist die <em>Grenze</em> (der Schnitt); eine Zusammensetzung ist ein <em>gefülltes Simplex</em> (das Interieur). Auf <em>einem</em> Komplex: die Entscheidungsgrenze ist die Stelle, an der der <em>within-class-Komplex abbricht</em> und cross-class-Kanten auftreten würden; das gefüllte Simplex ist die Stelle, an der die Kohe<em>sion</em> maximal ist. <strong>Fusion per Topologie:</strong> Eine Aufgabe ist lösbar, wenn der Komplex die <em>aufgaben-adäquate Topologie</em> hat. <em>Trennung</em> ⇒ der within-class-Komplex bricht in zwei Komponenten (<code>β₀ = 2</code>, keine cross-Kante). <em>Zusammensetzung</em> ⇒ der within-group-Komplex füllt sich in höhere Simplexe. Und <em>Tiefe</em> (A) bzw. <em>Attention-Runden / sinkendes ε</em> (B) ist der <em>Mechanismus</em>, der den Komplex von «verschränkt» (ein Blob, β₀ = 1) nach «aufgelöst» (β₀ = 2 und/oder gefüllte Simplexe) bewegt.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Ein Netz «löst» eine Aufgabe, wenn seine Filtration einen Komplex erzeugt, dessen <strong>Topologie zur Aufgabe passt</strong>: Trennung = der within-class-Komplex <em>dis-kon-nektiert</em>; Zusammensetzung = der within-group-Komplex <em>füllt sich</em>. «Tiefe» (A) und «Attention-Runden / ε» (B) sind derselbe Filtrationsparameter. <strong>Netto:</strong> <code>Deep Learning funktioniert ⇔ Komposition lokaler (nahezu) linearer Operationen realisiert die geforderte Topologie</code> — A liefert die <em>stetige</em> Seite (Raum warpen bis eine Gerade trennt), B die <em>diskrete</em> (Komplex füllen bis die Bedeutung zusammenhängt). <code>gewundener Raum (A) + gefüllter Komplex (B) = ein filtriertes Objekt, dessen Topologie die Rechnung ist</code>.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substanzielle Kern</h2>
+
+    <h3>A — warum Tiefe funktioniert (der gewundene Raum)</h3>
+    <ul class="cl">
+      <li><b>Ein Neuron = eine Linie:</b> <code>σ(w·x + b)</code> — ein gewichteter Summe + Bogen, geometrisch <em>ein gerade Schnitt</em>.</li>
+      <li><b>XOR ist unmöglich für eine Schicht:</b> keine einzige Gerade trennt die diagonal gegenüberliegenden Klassen.</li>
+      <li><b>Der Bogen ist alles:</b> ohne Nichtlinearität komponieren affine Abbildungen zu <em>einer</em> affinen Abbildung — <code>linear ∘ linear = linear</code>. «Setze Activation auf None und Depth 5: die Grenze bleibt gerade.»</li>
+      <li><b>Komposition = Tiefe:</b> mit ReLU wächst die Anzahl linearer Regionen <strong>exponentiell mit der Tiefe</strong> — bei gleicher Parameterzahl schlägt Tiefe Breite («deep beats wide»).</li>
+      <li><b>Backprop/Gradient-Descent</b> ist der Optimierer, der die Abbildung <em>lernt</em>; Loss runter, Accuracy hoch.</li>
+      <li><b>Space warps (Punchline):</b> das Netz zeichnet keine gewundene Grenze — es <em>verformt den Raum</em>, sodass in der letzten Hidden-Schicht die Klassen <em>linear-separierbar</em> sind. Das <em>ist</em> das, was Tiefe «wirklich» tut.</li>
+    </ul>
+
+    <h3>B — Attention als Simplizialkomplex (das gefüllte Objekt)</h3>
+    <ul class="cl">
+      <li><b>Scaled-Dot-Product-Attention:</b> <code>Attention(Q,K,V) = softmax(QKᵀ/√d_k)·V</code>, mit <code>Q=XW^Q, K=XW^K, V=XW^V</code>.</li>
+      <li><b>RoPE (relative Position):</b> <code>θ_i = 10000^{−2i/d}</code>, Rotation <code>R_{Θ,m}</code>; Kernidentität <code>a_mn = q_mᵀ R_{Θ,m−n} k_n / √d_k</code> — Attention kodiert die <em>relative</em> Position m−n in die Score.</li>
+      <li><b>Semantikraum:</b> 3D mit Achsen Gender (←M|F→), Ontology (←Tier|Mensch|Göttlich→), Power (←schwach|stark→). Tokens liegen dort als Punkte (in B hand-authored).</li>
+      <li><b>Komplex aus Attention:</b> 0-Simplex = Token; 1-Simplex {v_i,v_j} wenn <em>gegenseitige</em> Attention <code>α_{ij} &gt; ε</code>; 2-Simplex {v_i,v_j,v_k} wenn alle drei Paare über ε. Der Komplex «fokusiert Bedeutung lokal».</li>
+      <li><b>Betti-Zahlen:</b> β₀ (Konnektivität/Komponenten, Union-Find), β₁ (Löcher), Euler <code>χ = V − E + F</code>, <code>β₁ = E − V + β₀ − F</code> — «diagnostische Metriken für die Struktur von Attention».</li>
+      <li><b>Bedeutung:</b> Ein gefülltes 2-Simplex (z. B. {king, lion, power}) = drei Konzepte werden <em>gemeinsam komponiert</em> zu einer einheitlichen semantischen Region.</li>
+    </ul>
+
+    <h3>Die Verknüpfung — wie B A in diskret instanziiert</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">affine Schicht + ReLU (A)</div><div class="v">= eine <b>Attention-Runde / ein Simplizial-Refinement</b> (B) — ein lokaler, nahezu linearer Zug, der Struktur anhängt.</div></div>
+      <div class="r"><div class="k">Entscheidungsgrenze / trennende Hyperfläche (A)</div><div class="v">= der <b>Schnitt, an dem der within-class-Komplex abbricht</b> (B) — die Stelle der β₀-Spalte.</div></div>
+      <div class="r"><div class="k">gewarpte letzte Hidden-Schicht (A)</div><div class="v">= der <b>Komplex nach einer Refinement-Runde</b> (B) — der «aufgelöste» Zustand.</div></div>
+      <div class="r"><div class="k">Tiefe / Stacking (A)</div><div class="v">= <b>Attention-Runden / sinkendes ε</b> (B) — der gemeinsame <b>Filtrationsparameter</b>.</div></div>
+      <div class="r"><div class="k">XOR: nicht von einer Linie trennbar (A)</div><div class="v">= <b>verschränkter Komplex, β₀ = 1</b>, keine gefüllten within-group-Flächen (B).</div></div>
+      <div class="r"><div class="k">Klassen linear-separierbar (A)</div><div class="v">= <b>β₀ = 2</b> (zwei Komponenten) <b>plus gefüllte within-group-Simplexe</b> (B).</div></div>
+    </div>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq">
+<span class="c">// A — Komposition & Warpung</span>
+Neuron:                 ŷ = σ( w·x + b )
+Tiefe (Komposition):    f = σ( Wₐ · σ( W_b · … σ( W₁·x + b₁ ) … ) + bₐ )
+Kollaps ohne σ:         Wₐ·W_b·…·W₁·x + b   <span class="c">// linear ∘ linear = linear → σ ist der Bogen</span>
+ReLU-Regionen:          # lineare Regionen ∼ exponentiell in Tiefe   <span class="c">// deep &gt; wide</span>
+Punchline:              letzte Hidden-Schicht ⇒ linear-separierbar   <span class="c">// "the space warps"</span>
+
+<span class="c">// B — Attention & Komplex</span>
+Attention:              Attention(Q,K,V) = softmax( QKᵀ / √d_k ) · V ;  Q=XW^Q, K=XW^K, V=XW^V
+RoPE (relativ):         θ_i = 10000^{−2i/d} ;  a_mn = q_mᵀ R_{Θ,m−n} k_n / √d_k
+Simplexe:               σ₀={v_i} ;  σ₁={v_i,v_j} wenn α_ij&gt;ε ;  σ₂={v_i,v_j,v_k} wenn α_ij,α_jk,α_ik&gt;ε
+Topologie:              χ = V − E + F ;  β₀ = Komponenten ;  β₁ = E − V + β₀ − F
+
+<span class="c">// Fusion — derselbe Komplex in zwei Auflösungen</span>
+Ähnlichkeit (≈ α_ij):   a_ij = exp( −‖p_i − p_j‖² / 2τ² )
+Vietoris–Rips:          K_ε = { σ : alle Kanten-Ecken von σ erfüllen a &gt; ε }
+Filtration:             K_{ε₀} ⊃ K_{ε₁} ⊃ …   <span class="c">// ε sinkt ⇔ Tiefe wächst</span>
+Prinzip:                Rechnung = Topologie( K_ε ) ;  Tiefe(A) ≡ Attention-Runden/ε(B) = Filtrationsparameter
+A ⇔ B:                  "gewarpt linear-separierbar"  ⇔  within-class-Komplex bricht in β₀ = 2
+                        "2-Simplex = komponierte Bedeutung"  ⇔  within-group-Komplex füllt sich
+    </div>
+
+    <h3>Warum die Fusion mehr ist als die Summe</h3>
+    <div class="note"><span class="h">Der Zusatzgewinn</span>A allein sagt <em>wann</em> eine Grenze entsteht (durch Warpung) aber nicht <em>wie die Struktur dazwischen aussieht</em>; B allein sagt <em>wie die Struktur aussieht</em> (Komplex, Betti) aber nicht, <em>woher die Geometrie kommt</em> (hand-authored). Erst zusammen gibt es ein <em>einheitliches Objekt</em> — ein <strong>filtriertes Simplizialkomplex</strong> — mit zwei ablesbaren Seiten: die <em>Trennung</em> (β₀ der within-class-Komponenten) für Klassifikationsfragen und die <em>Zusammensetzung</em> (gefüllte within-group-Simplexe) für Bedeutungsfragen. Beide werden vom <em>selben</em> Parameter (Tiefe / ε) gesteuert — das ist der eigentliche Fusions-Gedanke, den keine der beiden Quellen allein hat.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Derselbe Zug, zwei Darstellungen — Raum wird gewarpt / Komplex wird gefüllt</h2>
+    <p class="lead" style="margin-bottom:4px">Zwei verschränkte «Moons» (zwei Klassen). <strong>Links (A · stetig):</strong> eine Warpung <code>y ↦ y + d·s(x,y)</code> (s = glattes Feld um die Klassen-Schwerpunkte) verformt den Raum — bei <em>starkem d</em> trennt eine einzige Gerade. <strong>Rechts (B · diskret):</strong> dieselben Punkte bilden per Ähnlichkeit <code>a_ij = exp(−‖p_i−p_j‖²/2τ²)</code> über einem Schwellwert ε ein Vietoris–Rips-Komplex. <strong>Ein einziger Regler</strong> steuert beide — er <em>ist</em> der Filtrationsparameter (Tiefe bzw. ε).</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Raumwarpung (A) × Simplizialkomplex (B) — ein Regler</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvA" width="680" height="340"></canvas></div>
+      <div class="cwrap"><canvas id="cvB" width="680" height="340"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-cls0)"></i>Klasse 0</span>
+        <span><i style="background:var(--viz-cls1)"></i>Klasse 1</span>
+        <span><i style="background:var(--viz-edge-in)"></i>Kante innerh. Klasse</span>
+        <span><i style="background:var(--viz-edge-cross)"></i>Kante über Klassen</span>
+        <span><i style="background:var(--viz-fill)"></i>gefülltes 2-Simplex</span>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Tiefe / Schärfe — ein Regler, zwei Geometrien (Filtrationsparameter)</span><b id="intenVal">55</b></div>
+        <input type="range" id="intenSl" min="0" max="100" step="1" value="55">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:5px">Hoch = (links) stärkere Warpung → <em>% linear trennbar</em> steigt · (rechts) niedrigerer ε → <em>mehr Kanten/Flächen</em>. Tiefe (A) und Attention-Runden/Schwellwert (B) sind hier dieselbe Filtration.</div>
+      </div>
+      <div class="ro">
+        <div class="b"><div class="k">Warp-Stärke d (A)</div><div class="v" id="roD">—</div><div class="u">Komposition</div></div>
+        <div class="b"><div class="k">linear trennbar (A)</div><div class="v" id="roSep">—</div><div class="u">nach Warp, 1 Gerade</div></div>
+        <div class="b"><div class="k">Kanten E (B)</div><div class="v" id="roE">—</div><div class="u">1-Simplexe, a&gt;ε</div></div>
+        <div class="b"><div class="k">Flächen F (B)</div><div class="v" id="roF">—</div><div class="u">2-Simplexe</div></div>
+        <div class="b"><div class="k">β₀ (B)</div><div class="v" id="roB0">—</div><div class="u">Konnektivität</div></div>
+      </div>
+      <p class="note t" style="margin-bottom:0"><span class="h">So liest du die Fusion</span>Bei <em>niedrigem</em> Reglerwert: links trennt keine Gerade die Moons (A's XOR-Fall), rechts ist der Komplex dünn (wenige Kanten, β₀ klein, kaum gefüllte Flächen). Bei <em>hohem</em> Reglerwert: links wird der Raum so stark gewarpt, dass <em>eine Gerade</em> die Klassen scheidet (A: «the space warps»), rechts verdichtet sich der Komplex — <em>within-class-Flächen füllen sich</em>, während cross-class-Kanten (gold) spärlich bleiben. Zwei Blicke auf denselben Zug: <em>lokale Operationen, komponiert, erzeugen ein Objekt, dessen Topologie die Rechnung ist.</em></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <p><a href="../why_deep_learning_works.html">A — Why Deep Learning Works (An Interactive Story)</a>: Animiertes, interaktives Tutorial (Mini-Deep-Learning-Engine in reinem JS, XOR/Circle/Spiral-Daten, Backprop, «Space Warps»-Ansicht): ein Neuron = eine Linie, der Bogen (Nichtlinearität) ist alles, Komposition warpt den Raum exponentiell effizient, und in der letzten Hidden-Schicht sind die Klassen linear-separierbar.</p>
+    <p><a href="../simplicial_complex_attention3.html">B — Attention as Simplicial Complexes in 3D Semantic Space</a>: Interaktive 3D-Visualisierung (Plotly + MathJax), die Scaled-Dot-Product-Attention mit RoPE auf Token-Embeddings in einem 3D-Semantikraum (Gender/Ontology/Power) anwendet und daraus ein Simplizialkomplex (0/1/2-Simplexe per Schwellwert ε) mit Betti-Zahlen als «Topologie der Bedeutung» baut.</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>why_deep_learning_works.html</strong> (gewundener Raum — stetig) ✕ <strong>simplicial_complex_attention3.html</strong> (gefüllter Komplex — diskret). Alle Claims aus den Quellen paraphrasiert; Moons- &amp; Komplex-Daten im Viz synthetisch/inline. Selbstständig, ohne Netzwert-Datenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return hex;}return 'rgba('+r+','+g+','+b+','+a+')';}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ if(themeBtn){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; } }
+  setBtn();
+
+  var cvA=document.getElementById('cvA'), cvB=document.getElementById('cvB');
+  if(!cvA||!cvB){ if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); }; } return; }
+
+  var TAU=Math.PI*2, LW=680, LH=340;
+  var dpr=window.devicePixelRatio||1;
+  [cvA,cvB].forEach(function(cv){ cv.style.width='100%'; cv.style.aspectRatio=LW+'/'+LH; cv.width=LW*dpr; cv.height=LH*dpr; });
+  var ctxA=cvA.getContext('2d'), ctxB=cvB.getContext('2d');
+  ctxA.setTransform(dpr,0,0,dpr,0,0); ctxB.setTransform(dpr,0,0,dpr,0,0);
+
+  var PAL={};
+  function readPal(){ ['--viz-canvas-bg','--viz-grid','--viz-txt','--viz-cls0','--viz-cls1','--viz-line','--viz-sep','--viz-edge-in','--viz-edge-cross','--viz-fill'].forEach(function(n){PAL[n]=getVar(n);}); }
+  readPal();
+
+  /* ---- deterministische Daten: zwei verschränkte Moons ---- */
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var rng=mulberry32(20240137);
+  function gnoise(){var u=1-rng(),v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+  var pts=[];
+  (function(){
+    var i,t;
+    for(i=0;i<34;i++){ t=Math.PI*(0.06+0.88*rng()); pts.push({x:Math.cos(t)+0.05*gnoise(), y:Math.sin(t)+0.05*gnoise()+0.12, cls:0}); }
+    for(i=0;i<34;i++){ t=Math.PI*(0.06+0.88*rng()); pts.push({x:1-Math.cos(t)+0.05*gnoise(), y:0.5-Math.sin(t)+0.05*gnoise()-0.12, cls:1}); }
+  })();
+
+  var c0={x:0,y:0}, c1={x:0,y:0}, SIG=0.55;
+  function computeCentroids(){ var s0x=0,s0y=0,n0=0,s1x=0,s1y=0,n1=0,i; for(i=0;i<pts.length;i++){ if(pts[i].cls===0){s0x+=pts[i].x;s0y+=pts[i].y;n0++;} else {s1x+=pts[i].x;s1y+=pts[i].y;n1++;} } c0={x:s0x/n0,y:s0y/n0}; c1={x:s1x/n1,y:s1y/n1}; }
+  function sfield(x,y){ var a=(x-c0.x)*(x-c0.x)+(y-c0.y)*(y-c0.y); var b=(x-c1.x)*(x-c1.x)+(y-c1.y)*(y-c1.y); return Math.exp(-a/(2*SIG*SIG))-Math.exp(-b/(2*SIG*SIG)); }
+  function warp(x,y,d){ return [x, y+d*sfield(x,y)]; }
+  function toPxA(x,y){ return [ (x+1.6)/3.2*LW, (1-(y+1.8)/3.6)*LH ]; }
+  function toPxB(x,y){ var x0=-1.4,x1=1.6,y0=-0.9,y1=1.2; return [ (x-x0)/(x1-x0)*LW, (1-(y-y0)/(y1-y0))*LH ]; }
+
+  var nPts=pts.length, TAUk=0.35, aff=[];
+  (function(){ var i,j,dx,dy; for(i=0;i<nPts;i++){ aff[i]=[]; for(j=0;j<nPts;j++){ dx=pts[i].x-pts[j].x; dy=pts[i].y-pts[j].y; aff[i][j]=Math.exp(-(dx*dx+dy*dy)/(2*TAUk*TAUk)); } } })();
+
+  var roD=document.getElementById('roD'), roSep=document.getElementById('roSep'), roE=document.getElementById('roE'), roF=document.getElementById('roF'), roB0=document.getElementById('roB0');
+  var sl=document.getElementById('intenSl'), iv=document.getElementById('intenVal');
+  var state={inten:55};
+
+  function grid(c){ c.strokeStyle=PAL['--viz-grid']; c.lineWidth=1; var x,y,st=34; for(x=st;x<LW;x+=st){c.beginPath();c.moveTo(x,0);c.lineTo(x,LH);c.stroke();} for(y=st;y<LH;y+=st){c.beginPath();c.moveTo(0,y);c.lineTo(LW,y);c.stroke();} }
+
+  function drawA(){
+    var d=state.inten/100*1.15, i,r,c,s;
+    ctxA.clearRect(0,0,LW,LH);
+    ctxA.fillStyle=PAL['--viz-canvas-bg']||'#0c1120'; ctxA.fillRect(0,0,LW,LH);
+    grid(ctxA);
+    var N=26, wp, p;
+    ctxA.lineWidth=1;
+    for(r=0;r<=14;r++){ ctxA.beginPath();
+      for(s=0;s<=N;s++){ var x=-1.6+3.2*s/N, y=-1.8+3.6*r/14; wp=warp(x,y,d); p=toPxA(wp[0],wp[1]); if(s===0){ctxA.moveTo(p[0],p[1]);}else{ctxA.lineTo(p[0],p[1]);} }
+      ctxA.strokeStyle=hexA(PAL['--viz-cls1'],0.35); ctxA.stroke();
+    }
+    for(c=0;c<=14;c++){ ctxA.beginPath();
+      for(s=0;s<=N;s++){ var x2=-1.6+3.2*c/14, y2=-1.8+3.6*s/N; wp=warp(x2,y2,d); p=toPxA(wp[0],wp[1]); if(s===0){ctxA.moveTo(p[0],p[1]);}else{ctxA.lineTo(p[0],p[1]);} }
+      ctxA.strokeStyle=hexA(PAL['--viz-cls0'],0.35); ctxA.stroke();
+    }
+    var my0=0,n0=0,my1=0,n1=0,correct=0;
+    for(i=0;i<nPts;i++){ var wpp=warp(pts[i].x,pts[i].y,d); if(pts[i].cls===0){my0+=wpp[1];n0++;} else {my1+=wpp[1];n1++;} }
+    my0/=n0; my1/=n1; var sepY=(my0+my1)/2;
+    for(i=0;i<nPts;i++){ var wq=warp(pts[i].x,pts[i].y,d); var up=wq[1]>sepY; if((pts[i].cls===0)?up:(!up)){correct++;} }
+    var sepPct=Math.round(correct/nPts*100);
+    var sy=toPxA(0,sepY)[1];
+    ctxA.save(); ctxA.setLineDash([7,5]); ctxA.strokeStyle=PAL['--viz-sep']; ctxA.lineWidth=1.6; ctxA.beginPath(); ctxA.moveTo(0,sy); ctxA.lineTo(LW,sy); ctxA.stroke(); ctxA.restore();
+    for(i=0;i<nPts;i++){ var wr=warp(pts[i].x,pts[i].y,d); var pp=toPxA(wr[0],wr[1]); ctxA.beginPath(); ctxA.arc(pp[0],pp[1],4.2,0,TAU); ctxA.fillStyle=pts[i].cls===0?PAL['--viz-cls0']:PAL['--viz-cls1']; ctxA.fill(); }
+    ctxA.fillStyle=PAL['--viz-txt']; ctxA.font='12px ui-monospace,Menlo,monospace'; ctxA.textAlign='left'; ctxA.textBaseline='top';
+    ctxA.fillText('Tiefe d='+d.toFixed(2)+' · nach Warp linear trennbar: '+sepPct+'%',10,8);
+    roD.textContent=d.toFixed(2); roD.className='v '+(d>0.7?'g':'');
+    roSep.textContent=sepPct+' %'; roSep.className='v '+(sepPct>=90?'g':(sepPct<=70?'e':''));
+  }
+
+  function drawB(){
+    var eps=0.85-0.73*(state.inten/100), i,j,k;
+    ctxB.clearRect(0,0,LW,LH);
+    ctxB.fillStyle=PAL['--viz-canvas-bg']||'#0c1120'; ctxB.fillRect(0,0,LW,LH);
+    grid(ctxB);
+    var parent=new Array(nPts); for(i=0;i<nPts;i++){parent[i]=i;}
+    function find(a){while(parent[a]!==a){parent[a]=parent[parent[a]];a=parent[a];}return a;}
+    function un(a,b){a=find(a);b=find(b);if(a!==b){parent[a]=b;}}
+    var edges=[],E=0,F=0,e;
+    for(i=0;i<nPts;i++){ for(j=i+1;j<nPts;j++){ if(aff[i][j]>eps){ edges.push([i,j,aff[i][j]]); E++; un(i,j); } } }
+    ctxB.globalAlpha=0.10; ctxB.fillStyle=PAL['--viz-fill'];
+    for(i=0;i<nPts;i++){ for(j=i+1;j<nPts;j++){ if(aff[i][j]<=eps){continue;} for(k=j+1;k<nPts;k++){ if(aff[i][k]>eps&&aff[j][k]>eps){ F++; var A=toPxB(pts[i].x,pts[i].y),B=toPxB(pts[j].x,pts[j].y),C=toPxB(pts[k].x,pts[k].y); ctxB.beginPath();ctxB.moveTo(A[0],A[1]);ctxB.lineTo(B[0],B[1]);ctxB.lineTo(C[0],C[1]);ctxB.closePath();ctxB.fill(); } } } }
+    ctxB.globalAlpha=1;
+    for(i=0;i<edges.length;i++){ e=edges[i]; var within=pts[e[0]].cls===pts[e[1]].cls; var p1=toPxB(pts[e[0]].x,pts[e[0]].y),p2=toPxB(pts[e[1]].x,pts[e[1]].y); ctxB.strokeStyle=within?PAL['--viz-edge-in']:PAL['--viz-edge-cross']; ctxB.globalAlpha=within?0.5:0.42; ctxB.lineWidth=Math.max(1,(e[2]-eps)*5); ctxB.beginPath();ctxB.moveTo(p1[0],p1[1]);ctxB.lineTo(p2[0],p2[1]);ctxB.stroke(); }
+    ctxB.globalAlpha=1;
+    for(i=0;i<nPts;i++){ var pv=toPxB(pts[i].x,pts[i].y); ctxB.beginPath();ctxB.arc(pv[0],pv[1],4.2,0,TAU); ctxB.fillStyle=pts[i].cls===0?PAL['--viz-cls0']:PAL['--viz-cls1']; ctxB.fill(); ctxB.strokeStyle=PAL['--viz-canvas-bg']; ctxB.lineWidth=1; ctxB.stroke(); }
+    var roots={}; for(i=0;i<nPts;i++){roots[find(i)]=1;} var b0=0,rr; for(rr in roots){b0++;}
+    ctxB.fillStyle=PAL['--viz-txt']; ctxB.font='12px ui-monospace,Menlo,monospace'; ctxB.textAlign='left'; ctxB.textBaseline='top';
+    ctxB.fillText('Schwellwert ε='+eps.toFixed(2)+' · Kanten E='+E+' · Flächen F='+F,10,8);
+    roE.textContent=E; roF.textContent=F; roB0.textContent=b0; roB0.className='v '+(b0<=2?'g':'');
+  }
+
+  function redraw(){ drawA(); drawB(); }
+  function onSlide(){ state.inten=+sl.value; iv.textContent=Math.round(+sl.value); redraw(); }
+  sl.addEventListener('input',onSlide);
+
+  if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); readPal(); redraw(); }; }
+  try{ new MutationObserver(function(){ readPal(); redraw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']}); }catch(err){}
+  window.addEventListener('resize',function(){ redraw(); });
+
+  computeCentroids();
+  onSlide();
+});
+</script>
+</body>
+</html>

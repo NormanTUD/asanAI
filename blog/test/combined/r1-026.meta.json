@@ -1,0 +1,15 @@
+{
+  "no": "026",
+  "a": "coherent_differences_and_world_model_very_simple.html",
+  "b": "new_space.html",
+  "a_title": "Was ist ein Weltmodell? — und wann darf man ihm vertrauen?",
+  "b_title": "Coherent Difference — wie aus lokalen Unterschieden ein zusammenhängender Raum wird",
+  "combined_theme": "coherent-difference-world-model",
+  "one_line": "Ein Weltmodell ist ein Kohärenzraum (lokale Sichten, auf Überlappungen kohärent — nicht identisch — geflickt, Bedeutung als Position im Netz der Unterschiede); es ist nur gerechtfertigt akzeptiert, nie wahr, solange es zusätzlich an eine unabhängige Welt ansetzt und harte Kontaktpunkte übersteht: Wahrheit = lim(Kohärenz ∧ Korrespondenz).",
+  "contradictions": [
+    "Kohärenz konstituiert das Ding vs. Kohärenz ist unzureichend: B hält das Ding für das kohärente Netz seiner Erscheinungen (Raum = Beziehungsmuster, nichts 'hinter' der Struktur, Leibniz), A verlangt Korrespondenz an eine externe Sache W — Kohärenz ohne Weltkopplung ist für A eine 'kohärente Fiktion' (genau der LLM-Fehler).",
+    "Strenge Gleichheit vs. Kohärenz-statt-Gleichheit: A's Garbenbedingung verlangt exaktes Übereinstimmen auf dem Überlapp (klassische/0-trunkierte Garbe, eine schlechte Naht bricht das Ganze), B relaxiert dies zu kohärenter Äquivalenz (ein Weg/Connector genügt; Blitz ≠ Donner, Homotopie/∞-Garbe/HoTT)."
+  ],
+  "resolution": "B verallgemeinert A, A ist der Spezialfall: 'übereinstimmen' (A) heißt 'übereinstimmen up to Identity', B's Connector ist die Verallgemeinerung (A=0-trunkierte Garbe, B=∞-Garbe). Epistemisch arbeiten die zwei auf verschiedenen Ebenen: B liefert die Struktur (was ein Modell/Bedeutung ist — ein Kohärenzraum), A die Status-Logik (wann man es wahrhaftig nennen darf — nur mit Korrespondenz + harten Kontaktpunkten). Das LLM-Phänomen wird präzise: brillante Kohärenzstruktur ohne Weltanker = kohärente Fiktion.",
+  "viz": "Canvas: vier überlappende Flicken (lokale Sektionen) werden über Kohärenz-brücken (≃/⊥) zu einer globalen Sektion geflickt; ein 'Kohärenz statt Gleichheit'-Toleranz-Slider spannt den Bogen von A (strikt, 0) zu B (ein Weg genügt, >0); eine externe Weltkurve mit harten Kontaktpunkten bestimmt die Korrespondenz; ein Frage-Punkt außerhalb des Covers löst Pathologie 5 aus. Live-Status: verifiziert / gerechtfertigt / kohärente Fiktion / Faktenbuch / inkohärent / außerhalb — plus fünf Presets (Fiktion, Faktenbuch, Ideal, Bruch, Außerhalb)."
+}

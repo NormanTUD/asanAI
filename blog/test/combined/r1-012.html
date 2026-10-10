@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Vektor, zwei Lesarten: Position als Uhr, Bedeutung als Joystick — Fusion 012</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#d99a12; --panel:rgba(255,253,248,.95); --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4b73a; --panel:rgba(20,27,36,.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:66px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:16px;color:var(--muted);max-width:66ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:10px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:26px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin:1px 4px 1px 0}
+.tag.b{background:var(--accent2-soft);color:var(--accent2)}
+.eq{font-family:var(--mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto}
+.eq sup,.eq sub{font-size:.7em}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted)}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+canvas{display:block;width:100%;height:440px;border-radius:12px;border:1px solid var(--line)}
+.ctl{margin:14px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:110px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--accent)}
+.ro .box.amber{background:var(--amber-soft)}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--accent2-soft)}
+.ro .box.rose .v{color:var(--accent2)}
+.viz-note{font-size:13px;color:var(--muted);margin-top:12px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;margin-bottom:5px}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">&#9728;&#65038; / &#9790;</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 1 &middot; Paar 012 &middot; KI/Geometrie</div>
+  <h1>Ein Vektor, <em>zwei Lesarten</em>: die Uhr der Position und der Joystick der Bedeutung</h1>
+  <p class="sub">Zwei Erklärungen, ein Kern: ein Vektorraum ist eine einzige Koordinatensprache. Eine <b>Position in einer Sequenz</b> (A) und eine <b>Bedeutung in einem Feld</b> (B) sind dieselbe Sache &mdash; ein Punkt, den man über eine mehrachige Zerlegung zuweist und dessen Relation über <b>dasselbe Skalarprodukt</b> liest: einmal als exakte Distanz (Ordnung, A), einmal als weiche Ähnlichkeit (Bedeutung, B).</p>
+  <p class="fuse-line">Fusion aus: <b>posembed1.html</b> &#10007; <b>mood_explorer.html</b></p>
+</header>
+
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p>Beide Papiere tun exakt dasselbe, nur mit anderem Inhalt: Sie belegen einen Vektorraum mit Punkten und lesen die Sache, um die es ihnen geht, über das <b>Skalarprodukt</b> ab. A belegt den Raum mit <b>Positionen</b>: Jede Position <i>p</i> erhält einen Punkt aus mehreren Sinus-/Kosinus-Wellen, und das Skalarprodukt zweier Punkte ergibt <em>nur</em> ihren Abstand &mdash; die Ordnung als Geometrie. B belegt den Raum mit <b>Wörtern</b>: Jedes Wort erhält einen Punkt, und das Skalarprodukt eines Wortpunkts mit einem &bdquo;Stimmungsvektor&ldquo; ergibt seine <em>Relevanz</em> &mdash; die Bedeutung als Geometrie. &bdquo;Ordnung&ldquo; und &bdquo;Bedeutung&ldquo; sind hier nicht zwei verschiedene Tricks; sie sind <b>zwei Inhalte derselben Koordinatensprache</b>.</p>
+  <p>Die integrierte Position lautet: <b>Ein Vektorraum ist eine universelle Koordinatensprache für strukturierte Information.</b> Jeder Punkt ist die Koordinate einer Sache (eine Zeitleiste-Position oder eine Bedeutung), und das Skalarprodukt ist die Brücke, die aus zwei Koordinaten die Beziehung zwischen ihnen liest (Abstand/Ordnung oder Ähnlichkeit/Passung). Die mehrachige Zerlegung &mdash; die <b>Uhr</b> in A (schnelle + langsame Frequenz = Zeiger zusammen ergeben die Zeit) und der <b>Joystick</b> in B (Stimmung-, Formalitäts-, Epoche-, Intensitätsachse) &mdash; ist <em>dasselbe Instrument</em>: ein Gerät, das eine niedrige Eingabe (Zeitindex / Absichtsvektor) in eine hohe Koordinate übersetzt, aus der die Relation per Skalarprodukt zurückgelesen wird.</p>
+  <p class="note violet"><b>Der Schraubstock der Fusion:</b> Es gibt genau zwei Regler, die beide Papiere trennen &mdash; (1) die <b>Basis</b>: entworfen (a priori, eine Formel, A) oder entdeckt (a posteriori, aus Daten/Bedeutung, B); und (2) die <b>Lesart</b>: exakt/deterministisch (Ordnung muss exakt sein, A) oder weich/probabilistisch (Bedeutung ist unscharf, B). Drehst du diese beiden Regler, verwandelt sich die Uhr (A) in den Joystick (B) und umgekehrt. Die Visualisierung unten arbeitet mit demselben 4er-Vektor und zeigt beide Lesarten gleichzeitig.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+  <p>Die beiden Papiere widersprechen sich nicht in den Fakten, aber sie nehmen <b>inkompatible Stellungen</b> zu ein und derselben Struktur ein. Drei konkrete Punkte:</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">W1 &middot; Exakter, verlustloser Code (A) vs. weicher, approximativer Schwerpunkt (B)</h3>
+    <p><span class="tag">A</span> Der Positionscode ist <b>exakt, deterministisch und verlustlos</b>: Jede Position hat einen eindeutigen &bdquo;Barcode&ldquo;, und das Skalarprodukt stellt die relative Distanz <em>genau</em> wieder her &mdash; <i>&langue;PE(a), PE(b)&rangue; hängt nur von a&minus;b ab</i>, nicht von der absoluten Position. Der Punkt <em>ist</em> die Antwort: aus dem Code liest man die Position exakt ab.</p>
+    <p><span class="tag b">B</span> Der semantische Raum ist <b>weich und approximativ</b>: Wörter treffen nur <em>annähernd</em> einen Zielpunkt, die Relevanz ist ein Skalar, der über einen <b>Softmax</b> zu einer <em>Wahrscheinlichkeitsverteilung</em> wird. Das beste Wort ist &bdquo;wahrscheinlich&ldquo;, nicht &bdquo;die Koordinate&ldquo;. Der Punkt ist ein <em>Schwerpunkt</em>, um den die Antworten verschwimmen.</p>
+    <p><b>Tension:</b> Der Punkt IST die Antwort (A) vs. der Punkt ist ein Zentrum, um das sich die Antworten verteilen (B). Exakte Dekodierung vs. probabilistische Lesart.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W2 &middot; Einzelne Achsen sind lesbar &amp; steuerbar (B) vs. Dimensionen sind einzeln sinnlos (A)</h3>
+    <p><span class="tag b">B</span> Die ganze These ist &bdquo;<b>Bedeutung ist eine Koordinate</b>&ldquo;: Jede Achse ist <em>einzeln</em> lesbar und steuerbar &mdash; eine Stimmungsachse, eine Formalitätsachse, eine Epoche-, eine Intensitätsachse. Du ziehst an einer Achse, und die Bedeutung bewegt sich in genau dieser Richtung. Jede Achse hat einen menschlichen Namen.</p>
+    <p><span class="tag">A</span> Die Dimensionen sind <b>einzeln sinnlos</b>: Jede Dimension ist nur ein Frequenz-Gang der Uhr (ein &bdquo;Zeiger&ldquo;). Keine einzelne Dimension &bdquo;ist&ldquo; die Position &mdash; erst die <em>Kombination aller</em> Dimensionen (alle Zeiger zusammen, bzw. alle Bits eines Binärzählers zusammen) kodiert die Position. Man kann nicht auf eine Dimension zeigen und &bdquo;die Position&ldquo; ablesen.</p>
+    <p><b>Tension:</b> Ausgerichtete, deutliche, steuerbare Achsen (B) vs. distribuierte, mehrfrequenzige Kodierung ohne eine einzelne bedeutsame Dimension (A). Wo liegen die &bdquo;Bedeutungsträger&ldquo; &mdash; in einer Achse oder in der Kombination?</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W3 &middot; Entworfene Basis (A) vs. entdeckte Achsen (B)</h3>
+    <p><span class="tag">A</span> Das Koordinatensystem ist <b>entworfen</b>: eine feste, geschlossene Formel (sin/cos mit um 10000 abfallenden Frequenzen), als Induktions-Bias vom Architekten gewählt &mdash; ohne Daten, ohne Lernen. Die Struktur wird von außen auferlegt (a priori).</p>
+    <p><span class="tag b">B</span> Die Achsen werden als semantische Richtungen eines <b>&bdquo;Latent Space&ldquo;</b> präsentiert &mdash; das Modell ist der &bdquo;Alchemist&ldquo;, der Stimmung/Formalität/Epoche/Intensität <em>gefunden</em> hat, d.h. sie sind (im realen Modell) aus den Daten/Bedeutungen <em>entdeckt</em> (a posteriori). Das Artefakt selbst simuliert den Raum per Hand, um das Verhalten des echten Modells greifbar zu machen.</p>
+    <p><b>Tension:</b> Struktur a priori vom Designer auferlegt (A) vs. Struktur a posteriori aus Konzepten/Daten gelesen (B). Wer legt die Achsen fest &mdash; der Architekt oder die Daten?</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span>Auflösung</h2>
+  <p>Alle drei &bdquo;Widersprüche&ldquo; sind <b>Perspektiven auf zwei Schrauben derselben Maschine</b> &mdash; keine echten Faktenkonflikte. Die Auflösung ist einheitlich: <b>&bdquo;Ordnung und Bedeutung sind dieselbe Koordinate.&rdquo;</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W1 &mdash; die Geometrie ist exakt; die <em>Lesart</em> passt sich der Relation an</h3>
+    <p>Der Vektorraum ist in beiden Fällen exakt aufgebaut. Entscheidend ist, <em>welche</em> Relation abgelesen wird: <b>Position</b> ist eine <em>harte</em> Restriktion &mdash; Attention braucht exakte relative Offsets und muss auf beliebige, unbekannte Längen extrapolieren, also wird sie <em>deterministisch</em> dekodiert (aus dem Code kommt exakt die Distanz). <b>Bedeutung</b> ist eine <em>weiche</em> Eigenschaft &mdash; das ehrliche Ablesen einer weichen Nähe <em>ist</em> eine Wahrscheinlichkeit (Softmax). Dasselbe Skalarprodukt, zwei Deutungen: <b>exakt, wo die Relation hart ist; probabilistisch, wo sie weich ist.</b></p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W2 &mdash; eine Kodierung ist so &bdquo;ausgerichtet&ldquo;, wie viele beschränkte Eigenschaften sie trägt</h3>
+    <p>Es gibt kein &bdquo;richtig&ldquo; zwischen deutlichen Achsen und verteiltem Code &mdash; es hängt von den Eigenschaften ab, die kodiert werden müssen. <b>Wenige, benannte, beschränkte, konzeptuelle</b> Eigenschaften (Stimmung, Formalität, Epoche, Intensität &mdash; vier greifbare Stellschrauben) &rarr; <em>ausgerichtete, interpretierbare Achsen</em> (B). <b>Eine unbeschränkte Ordinal-Eigenschaft</b>, die auf beliebige Sequenzlängen generalisieren soll &rarr; <em>distribuierte Mehrfrequenz-Kodierung</em>, in der die Position über alle Frequenzbänder verteilt ist (A). Beide sind Basen, in denen die Ziel-Relation (Distanz bzw. Ähnlichkeit) mathematisch einfach wird. Der Unterschied ist ein Regler: <b>Anzahl &amp; Beschränktheit der zu tragenden Eigenschaften &rarr; Ausrichtung des Codes.</b></p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zu W3 &mdash; entworfen ist der Spezialfall von entdeckt</h3>
+    <p>&bdquo;Entworfen&ldquo; und &bdquo;entdeckt&ldquo; sind zwei Wege, dieselbe Basis zu finden. Der sinusoidale PE (A) ist eine <b>&bdquo;per-Hand prätrainierte&rdquo;</b> Einbettung: ihre Frequenzen wurden so gewählt, dass die relative Distanz als reines Skalarprodukt lesbar wird &mdash; <em>genau das</em>, was ein reales Modell an seinen semantischen Achsen (B) durch Lernen tut, nur hier per Rechnung statt per Gradient. Die Alchemie ist identisch: <b>finde eine Basis, in der ein Skalarprodukt die Relation zurückgibt, um die es dir geht.</b> Der Architekt hat in A einfach schon die Arbeit getan, die in B den Daten zugeschrieben wird.</p>
+    <table class="tbl">
+      <tr><th>Regler</th><th>A (Position)</th><th>B (Bedeutung)</th><th>Fusion</th></tr>
+      <tr><td>Inhalt des Punkts</td><td>Position in der Sequenz</td><td>Bedeutung eines Wortes</td><td>die Koordinate einer Sache</td></tr>
+      <tr><td>Relation via</td><td>&langue;PE(a),PE(b)&rangue; = Distanz</td><td>&langue;Wort, Abfrage&rangue; = Relevanz</td><td>dasselbe Skalarprodukt</td></tr>
+      <tr><td>Basis</td><td>entworfen (10000-Frequenzen)</td><td>entdeckt (semant. Achsen)</td><td>entworfen = Hand-Lernen</td></tr>
+      <tr><td>Lesart</td><td>exakt / deterministisch</td><td>weich / probabilistisch</td><td>passt sich der Relation an</td></tr>
+      <tr><td>Zerlegung</td><td>Uhr (Frequenzen = Zeiger)</td><td>Joystick (Achsen = Stellschrauben)</td><td>dasselbe Instrument</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+  <p>Hier der konsolidierte, zusammenhängende Kern beider Papiere &mdash; dicht genug, dass eine spätere Runde allein daraus arbeitet.</p>
+
+  <h3>A1 &middot; Position als mehrfrequenziger Code <span class="tag">A</span></h3>
+  <p>Jede Position <i>pos</i> erhält einen Vektor, dessen Dimensionen Sinus-/Kosinus-Wellen mit abfallenden Frequenzen <i>&omega;<sub>i</sub></i> sind (nieder dimension = schnell, hoch dimension = langsam &mdash; wie die Sekunden- und Stundenzeiger einer Uhr):</p>
+  <div class="eq">PE(pos, 2i) = sin(pos &middot; &omega;<sub>i</sub>), &nbsp; PE(pos, 2i+1) = cos(pos &middot; &omega;<sub>i</sub>), &nbsp; &omega;<sub>i</sub> = 10000<sup>&minus;2i/d</sup></div>
+  <p>Der Code ist die <b>glatte, kontinuierliche Verallgemeinerung eines Binärzählers</b> (alle Bits zusammen = eindeutige Zahl; hier alle Frequenzbänder zusammen = eindeutige Position). Zwei Folgerungen, die die Fusion trägt:</p>
+  <ul>
+    <li><b>Relativer Shift = Rotation.</b> Pro Frequenzband ist <i>PE(a+k)</i> eine Drehung von <i>PE(a)</i> um den Winkel <i>k&middot;&omega;</i>. Position ist also eine lineare Struktur: Verschieben = lineare Abbildung.</li>
+    <li><b>Skalarprodukt = Distanz.</b> Aus der Formel folgt <i>&langue;PE(a), PE(b)&rangue; = &Sigma;<sub>i</sub> cos(&omega;<sub>i</sub>(a&minus;b))</i> &mdash; es hängt <em>nur</em> von der Differenz <i>a&minus;b</i> ab, nicht von der absoluten Position. Die Ordnung wird zur Distanz, und Distanz ist lesbar.</li>
+  </ul>
+  <p>Wichtig: Der Code ist <b>fix und verlustlos</b> &mdash; keine gelerntes Gewicht, kein Daten. Die Geometrie ist a priori gesetzt.</p>
+
+  <h3>B1 &middot; Bedeutung als steuerbarer Punkt <span class="tag b">B</span></h3>
+  <p>Ein Wort ist ein Punkt im (hier 3D-)Latent-Raum mit einem Basisvektor und vier semantischen Attributen. Ein <b>&bdquo;Stimmungsvektor&rdquo;</b> (die vier Joystick-Regler: Stimmung, Formalität, Epoche, Intensität) verschiebt den Punkt linear:</p>
+  <div class="eq">position(Wort) = base + &Sigma;<sub>j</sub> attr<sub>j</sub> &middot; s<sub>j</sub> &nbsp;&nbsp;(s = Joystick-Vektor)</div>
+  <p>Die <b>Relevanz</b> eines Wortes zur aktuellen Abfrage ist ein Skalarprodukt des Attributvektors mit der Abfrage; über einen Softmax (im Original mit Temperatur-Faktor &times;3) wird daraus die Wahrscheinlichkeit des <b>nächsten Tokens</b>:</p>
+  <div class="eq">P(Wort) = softmax( &langue;attr(Wort), abfrage&rangue; &middot; T )</div>
+  <p>Das ist die &bdquo;<b>Vektor-Alchemie</b>&ldquo;: Addiere einen Vektor (Richtung = Eigenschaft), und du landest in der Nähe verwandter Wörter; die nächstgelegenen sind die &bdquo;wahrscheinlichen nächsten Wörter&ldquo;. Wichtig: Das Artefakt <b>simuliert</b> den Raum per Hand (ein kuratiertes Vokabular mit 38 Wörtern), um das Verhalten eines echten Modells greifbar zu machen.</p>
+
+  <h3>F &middot; Das zusammenhängende Bild der fusionierten Maschine</h3>
+  <div class="note violet"><b>Fusionssatz:</b> Ein Vektorraum ist eine universelle Koordinatensprache. (1) <b>Ein Punkt</b> = die Koordinate einer Sache &mdash; eine Position (A) oder eine Bedeutung (B). (2) <b>Ein Skalarprodukt</b> = die Brücke, die aus zwei Koordinaten die Beziehung liest &mdash; Distanz/Ordnung (A) oder Ähnlichkeit/Passung (B). (3) <b>Eine mehrachige Zerlegung</b> = die Uhr (Frequenzen = Zeiger, A) und der Joystick (Achsen = Stellschrauben, B) sind dasselbe Instrument. Die einzigen Unterschiede sind zwei Regler: die <b>Basis</b> (entworfen a priori = Hand-Lernen, A; entdeckt a posteriori, B) und die <b>Lesart</b> (exakt, wo die Relation hart ist, A; probabilistisch, wo sie weich ist, B).</div>
+  <p><b>Der gemeinsame Mechanismus</b> lässt sich so fassen: <b>je weiter ein Punkt in seiner Zelle / je eindeutiger seine Koordinate, desto exakter ist das Ergebnis</b> &mdash; egal ob das Ergebnis eine Distanz (A, immer exakt) oder ein Wort (B, weich) ist. Beide Papiere nutzen aus, dass in einer <em>linearen</em> Struktur die Ziel-Relation eine einfache Skalarprodukt-Funktion ist: in A ist Verschieben eine Rotation (Distanz = Skalarprodukt), in B ist Verschieben eine lineare Addition entlang einer Achse (Ähnlichkeit = Skalarprodukt). Genau das demonstriert die Visualisierung: derselbe 4er-Vektor, zwei Lesarten, ein Regler pro Seite.</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span>Interaktive Visualisierung: derselbe Vektor, zwei Lesarten</h2>
+  <div class="viz">
+    <h3>Die Uhr (A) und der Joystick (B) aus vier Zahlen</h3>
+    <p class="dsub">Ziehe die <b>Position p*</b> (oben: der Punkt wandert auf der Rosette; links: der &bdquo;Bulge&ldquo; der Distanz-Kurve wandert mit) und die <b>Temperatur T</b> (rechts: wie scharf/weich die Bedeutungswahrscheinlichkeit ist). Oben ist die <b>Ordnungs-Lesart</b> (exakt), unten rechts die <b>Bedeutungs-Lesart</b> (weich) &mdash; aus <em>denselben vier Zahlen</em>.</p>
+    <canvas id="fusedCanvas"></canvas>
+    <div class="ro">
+      <div class="box"><div class="k">Position p*</div><div class="v" id="posV">&mdash;</div></div>
+      <div class="box rose"><div class="k">Top-Wort (B)</div><div class="v" id="topW">&mdash;</div></div>
+      <div class="box amber"><div class="k">Top-Chance (B)</div><div class="v" id="topP">&mdash;</div></div>
+      <div class="box"><div class="k">Regime</div><div class="v" id="regime">&mdash;</div></div>
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Position p* &middot; der Ort / die Absicht (bewegt beide Panels)</span><b id="posRv">30.0</b></div>
+      <input type="range" id="posR" min="0" max="59" step="0.1" value="30">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>Temperatur T &middot; Weichheit der B-Lesart &middot; klein = scharf (ein Wort), groß = flach (viele)</span><b id="tempRv">1.5</b></div>
+      <input type="range" id="tempR" min="0.5" max="5" step="0.1" value="1.5">
+    </div>
+    <p class="viz-note"><b>So liest man es:</b> Oben links ist die <b>exakte</b> Ordnung: Der Punkt p* ist eine Koordinate; die Kurve unten links &bdquo;&langue;PE(p*), PE(q)&rangue;&ldquo; ist eine symmetrische, wellige Bulge, die <em>nur von der Distanz q&minus;p*</em> abhängt (die Form ist invariant, nur der Mittelpunkt wandert mit p*). Unten rechts ist die <b>weiche</b> Bedeutung: <em>dieselben vier Zahlen</em> (sin/cos der beiden Frequenzen bei p*) werden als Abfragevektor über ein kleines Vokabular gescannt; Softmax liefert Wortwahrscheinlichkeiten. Drehst du T, wird dieselbe Bedeutungslasung scharfer oder flacher &mdash; genau die W1-Auflösung (exakt vs. probabilistisch) am Regler.</p>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="prov">
+    <div class="item">
+      <div class="lbl">QUELLE A &middot; Sinusoidale Positional Embeddings</div>
+      <a href="../posembed1.html">posembed1.html</a> &mdash; Interaktive Erklärung (englisch), wie Transformer Position kodieren: PE(pos,2i)=sin, PE(pos,2i+1)=cos mit &omega;<sub>i</sub>=10000<sup>&minus;2i/d</sup>; Frequenzen = Uhrzeiger (schnell &rarr; fein, langsam &rarr; grob); (sin,cos)-Paare laufen auf Kreisen; Skalarprodukt hängt nur von der Distanz ab; Heatmap &bdquo;Barcode&ldquo; = glatte Verallgemeinerung des Binärzählers.
+    </div>
+    <div class="item">
+      <div class="lbl">QUELLE B &middot; Vektor-Alchemie / Semantischer Latent Space</div>
+      <a href="../mood_explorer.html">mood_explorer.html</a> &mdash; Interaktive Erklärung (deutsch), &bdquo;Bedeutung ist eine Koordinate&ldquo;: 3D-Scatter eines simulierten Latent-Raums (38 Wörter), vier Joystick-Regler (Stimmung, Formalität, Epoche, Intensität) als &bdquo;Stimmungsvektor&ldquo;; lineare Projektion der Wörter, Relevanz = Skalarprodukt, Softmax (T&times;3) &rarr; Wahrscheinlichkeit des nächsten Tokens; Top-10-Wörter mit Balken.
+    </div>
+  </div>
+  <footer>Eine Knockout-Fusion (Runde 1, Paar 012) aus zwei lokalen Erklärungen. Alles läuft lokal im Browser &mdash; keine Daten verlassen diese Seite. Theme-Umschaltung oben rechts.</footer>
+</section>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s){ return document.querySelector(s); };
+  var clamp = function(v,a,b){ return Math.min(b, Math.max(a, v)); };
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function hexToRgb(hex){ hex=(hex||"").trim().replace(/^#/,""); if(hex.length===3){ hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; } var n=parseInt(hex,16); if(isNaN(n)){ return [15,118,110]; } return [(n>>16)&255,(n>>8)&255,n&255]; }
+  function rgba(rgb,a){ return "rgba("+rgb[0]+","+rgb[1]+","+rgb[2]+","+a+")"; }
+  function rr(c,x,y,w,h,r){ if(w<0) w=0; if(h<0) h=0; r=Math.min(r, w/2, h/2); c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+
+  var OMEGA1 = 1.0, OMEGA2 = 0.21, N = 60;
+  function pe4(p){ return [Math.sin(OMEGA1*p), Math.cos(OMEGA1*p), Math.sin(OMEGA2*p), Math.cos(OMEGA2*p)]; }
+  function dot(a,b){ var s=0; for(var i=0;i<a.length;i++) s+=a[i]*b[i]; return s; }
+
+  var VOCAB = [
+    { w:"wunderbar",   a:[ 0.90,  0.20, 0.00,  0.20] },
+    { w:"fantastisch", a:[ 0.95,  0.00, 0.00,  0.30] },
+    { w:"traurig",     a:[-0.90,  0.00, 0.00, -0.20] },
+    { w:"elend",       a:[-0.95,  0.10, 0.20,  0.30] },
+    { w:"krass",       a:[ 0.20, -0.90,-0.40,  0.60] },
+    { w:"fürwahr",   a:[ 0.10,  0.60, 0.95,  0.10] },
+    { w:"brutal",      a:[-0.10, -0.30, 0.00,  0.95] },
+    { w:"chillig",     a:[ 0.40, -0.85,-0.50, -0.30] }
+  ];
+
+  function softmaxTop(query, T, k){
+    var scores = [];
+    for(var i=0;i<VOCAB.length;i++){ scores.push(dot(query, VOCAB[i].a)/T); }
+    var mx = -Infinity; for(var j=0;j<scores.length;j++){ if(scores[j]>mx) mx=scores[j]; }
+    var ex=[]; var sum=0;
+    for(var m=0;m<scores.length;m++){ ex.push(Math.exp(scores[m]-mx)); sum+=ex[m]; }
+    if(sum<=0){ sum=1; }
+    var out=[];
+    for(var n=0;n<VOCAB.length;n++){ out.push({ w:VOCAB[n].w, p:ex[n]/sum }); }
+    out.sort(function(a,b){ return b.p-a.p; });
+    return out.slice(0,k);
+  }
+
+  var cv = $('#fusedCanvas');
+
+  function draw(){
+    if(!cv) return;
+    var dpr = Math.min(2, window.devicePixelRatio||1);
+    var w = cv.clientWidth || 600;
+    var H = 440;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(H*dpr);
+    var c = cv.getContext('2d');
+    c.setTransform(dpr,0,0,dpr,0,0);
+
+    var card = cssVar('--card');
+    var fg = cssVar('--fg');
+    var muted = cssVar('--muted');
+    var line = cssVar('--line');
+    var accent = cssVar('--accent');
+    var accent2 = cssVar('--accent2');
+    var accRgb = hexToRgb(accent);
+    var acc2Rgb = hexToRgb(accent2);
+    var isDark = document.documentElement.classList.contains('dark');
+
+    var pStar = (+$('#posR').value);
+    var T = (+$('#tempR').value);
+    var q = pe4(pStar);
+
+    c.clearRect(0,0,w,H);
+    c.fillStyle = card; c.fillRect(0,0,w,H);
+
+    var g = 14, topH = 200, botY = topH + g, botH = H - botY, halfW = (w - g)/2;
+
+    function region(x,y,rw,rh,title){
+      c.strokeStyle = line; c.lineWidth = 1; c.strokeRect(x+0.5, y+0.5, rw, rh);
+      c.font = '700 12px system-ui'; c.fillStyle = muted; c.textAlign = 'left'; c.textBaseline = 'top';
+      c.fillText(title, x+10, y+8);
+    }
+
+    // ---- TOP: rosette (Ort / A) ----
+    (function(){
+      var x=0,y=0,rw=w,rh=topH;
+      region(x,y,rw,rh,'①  Ort (A): Position -> Punkt  ·  mehrere Frequenzen = Uhr / Binärzähler');
+      var pad=34, cx=x+rw/2, cy=y+rh/2, R=Math.min(rw,rh)/2 - pad;
+      c.strokeStyle=rgba(accRgb,0.15); c.lineWidth=1;
+      c.beginPath(); c.moveTo(cx-R,cy); c.lineTo(cx+R,cy); c.moveTo(cx,cy-R); c.lineTo(cx,cy+R); c.stroke();
+      c.strokeStyle=rgba(accRgb,0.12); c.beginPath(); c.arc(cx,cy,R,0,Math.PI*2); c.stroke();
+      c.beginPath();
+      for(var p=0;p<N;p++){
+        var px=cx + Math.sin(OMEGA1*p)*R;
+        var py=cy - Math.sin(OMEGA2*p)*R;
+        if(p===0) c.moveTo(px,py); else c.lineTo(px,py);
+      }
+      c.strokeStyle=rgba(accRgb,0.25); c.lineWidth=1; c.stroke();
+      for(var p2=0;p2<N;p2++){
+        var px2=cx + Math.sin(OMEGA1*p2)*R;
+        var py2=cy - Math.sin(OMEGA2*p2)*R;
+        c.fillStyle=rgba(accRgb,0.5); c.beginPath(); c.arc(px2,py2,1.8,0,Math.PI*2); c.fill();
+      }
+      var hx=cx + Math.sin(OMEGA1*pStar)*R;
+      var hy=cy - Math.sin(OMEGA2*pStar)*R;
+      c.fillStyle=rgba(accRgb,1); c.beginPath(); c.arc(hx,hy,6,0,Math.PI*2); c.fill();
+      c.strokeStyle = isDark ? 'rgba(255,255,255,.9)' : 'rgba(20,20,30,.6)'; c.lineWidth=2; c.stroke();
+      c.font='600 11px system-ui'; c.fillStyle=fg; c.textAlign='left'; c.textBaseline='middle';
+      c.fillText('p = '+pStar.toFixed(1), hx+10, hy);
+    })();
+
+    // ---- BOTTOM-LEFT: dot product (A, exakt) ----
+    (function(){
+      var x=0,y=botY,rw=halfW,rh=botH;
+      region(x,y,rw,rh,'②  ⟨PE(p*), PE(q)⟩  (A: exakt, nur Distanz)');
+      var padL=26, padR=10, px0=x+padL, px1=x+rw-padR, py0=y+24, py1=y+rh-22;
+      var pw=px1-px0, ph=py1-py0, midy=(py0+py1)/2;
+      c.strokeStyle=rgba(accRgb,0.35); c.setLineDash([4,4]); c.beginPath(); c.moveTo(px0,midy); c.lineTo(px1,midy); c.stroke(); c.setLineDash([]);
+      function f(qq){ return (Math.cos(OMEGA1*(pStar-qq)) + Math.cos(OMEGA2*(pStar-qq)))/2; }
+      c.beginPath();
+      for(var i=0;i<=N;i++){
+        var v=f(i);
+        var xx=px0 + (i/(N-1))*pw;
+        var yy=midy - v*(ph/2 - 2);
+        if(i===0) c.moveTo(xx,yy); else c.lineTo(xx,yy);
+      }
+      c.strokeStyle=accent; c.lineWidth=1.6; c.stroke();
+      c.lineTo(px1, midy); c.lineTo(px0, midy); c.closePath();
+      c.fillStyle=rgba(accRgb,0.12); c.fill();
+      var mx = clamp(pStar,0,N-1);
+      var mxx=px0 + (mx/(N-1))*pw;
+      c.strokeStyle=rgba(acc2Rgb,0.7); c.lineWidth=1.2; c.setLineDash([3,3]);
+      c.beginPath(); c.moveTo(mxx,py0); c.lineTo(mxx,py1); c.stroke(); c.setLineDash([]);
+      c.font='600 10px system-ui'; c.fillStyle=muted; c.textAlign='center'; c.textBaseline='top';
+      c.fillText('q  (Mittelpunkt = p*, also Distanz 0)', (px0+px1)/2, py1+4);
+    })();
+
+    // ---- BOTTOM-RIGHT: softmax (B, weich) ----
+    (function(){
+      var x=w/2+g, y=botY, rw=halfW, rh=botH;
+      region(x,y,rw,rh,'③  Derselbe Vektor als Wort-Abfrage  (B: weich, Softmax)');
+      var top = softmaxTop(q, T, 5);
+      var padL=92, barX=x+padL, barMax=(x+rw-14)-barX;
+      var rowH=Math.min(30, (rh-32)/5);
+      var y0=y+26;
+      var maxp = top.length?top[0].p:1;
+      for(var k=0;k<top.length;k++){
+        var pr=top[k];
+        var ry=y0 + k*rowH + rowH/2;
+        c.font=(k===0?'700':'400')+' 12px system-ui';
+        c.fillStyle=(k===0?accent:muted); c.textAlign='right'; c.textBaseline='middle';
+        c.fillText(pr.w, x+padL-8, ry);
+        var bw=Math.max(3, (pr.p/maxp)*barMax);
+        c.fillStyle=rgba(acc2Rgb,0.10); rr(c, barX, ry-6, barMax, 12, 6); c.fill();
+        c.fillStyle=(k===0?accent:rgba(acc2Rgb,0.55)); rr(c, barX, ry-6, bw, 12, 6); c.fill();
+        var lblX = Math.min(barX+bw+6, x+rw-34);
+        c.font='600 10px monospace'; c.fillStyle=muted; c.textAlign='left';
+        c.fillText(Math.round(pr.p*100)+'%', lblX, ry);
+      }
+    })();
+
+    // readouts
+    var all = softmaxTop(q, T, VOCAB.length);
+    $('#posV').textContent = pStar.toFixed(1);
+    $('#posRv').textContent = pStar.toFixed(1);
+    $('#tempRv').textContent = T.toFixed(1);
+    $('#topW').textContent = all.length?all[0].w:'—';
+    $('#topP').textContent = all.length?Math.round(all[0].p*100)+' %':'—';
+    $('#regime').innerHTML = 'A exakt &middot; B '+(T<1.2?'scharf':(T>3?'flach':'mittel'));
+  }
+
+  $('#posR').addEventListener('input', function(){ draw(); });
+  $('#tempR').addEventListener('input', function(){ draw(); });
+  window.addEventListener('resize', draw);
+
+  var btn = $('#themeBtn');
+  if(btn){ btn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); draw(); }); }
+  if(window.MutationObserver){ new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']}); }
+
+  draw();
+})();
+</script>
+</body>
+</html>
