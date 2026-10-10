@@ -128,6 +128,7 @@ footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;co
   <!-- ============ THESE ============ -->
   <section id="these">
     <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Ein erzwungenes Optimum — in zwei Höhenstufen</h2>
     <p>Zwei Papiere, eine gemeinsame Geste: Beide nehmen ein Phänomen, das in der Praxis wie eine <em>willkürliche Designentscheidung</em> aussieht, und zeigen, dass es in Wahrheit der <strong>erzwungene, geometrische Ausgang eines sauberen Ziels</strong> ist. Paper&nbsp;A (Litman, Stanford 2025, arXiv:2508.08369) argumentiert, dass die Softmax-Attention <b>nicht gewählt</b>, sondern die <em>eindeutige Lösung</em> des Problems „Ähnlichkeit maximieren, maximal entschlossen bleiben, Wahrscheinlichkeit sein" ist — einseitiger entropischer Optimaler Transport auf dem Simplex. Paper&nbsp;B (Zhang et al. 2023, arXiv:2307.13962) argumentiert, dass die „Entwirrung" verschlungener Klassen durch die Schichten kein Zufall ist, sondern eine messbare Größe — die <em>lineare Separierbarkeit</em> — die von Schicht zu Schicht und mit der Accuracy <b>synchron</b> steigt.</p>
     <p>Der <strong>fusionierte Standpunkt</strong>: Diese beiden „Geometrien erzwungen" sitzen auf <em>unterschiedlichen Ebenen desselben Prozesses</em>. A beschreibt den <strong>lokalen</strong> Schritt — wie eine Attention-Operation als konvexes/entropisches Optimum auf eine verteilte Antwort konvergiert und sich über die Fisher-Matrix selbst dämpft. B den <strong>globalen</strong> Fluss — wie nicht-lineare Aktivierungen die Repräsentation Schicht für Schicht so verbiegen, dass lineare Separierbarkeit (und damit Generalisierung) monoton steigt. <strong>Fusion:</strong> Ein Netz ist ein Stapel lokaler entropischer Optima (A), gespeist von nicht-linearen Bogen (B); jeder lokale Schritt konvergiert sauber (Selbst-Dämpfung), genau deshalb akkumuliert der globale Separierbarkeits-Anstieg, ohne frühere Gewinne zu zerstören.</p>
     <p>Kurz: A erklärt, <em>warum ein einzelner Baustein die Form hat, die er hat</em> (Softmax = entropisches Optimum); B, <em>warum das Zusammensetzen vieler Bausteine funktioniert</em> (Trennung wächst mit Tiefe und Breite). Die Fusion liest A als <strong>Mikro-Form</strong> und B als den daraus komponierten <strong>Makro-Effekt</strong>.</p>
@@ -136,6 +137,7 @@ footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;co
   <!-- ============ WIDERSPRUECHE ============ -->
   <section id="widersprueche">
     <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Wo sie aufeinanderprallen: der Motor und die Tragweite</h2>
     <p>Die Papiere behandeln unterschiedliche Objekte (eine Attention-Operation vs. die Hidden-Layer-Repräsentation), also widersprechen sie nicht <em>direkt</em>. Sie stehen aber an zwei Stellen in einem echten Spannungsverhältnis, weil sie auf die Frage „<em>was trägt die Arbeit?</em>" jeweils die gegenteilige Antwort geben:</p>
 
     <div class="card">
