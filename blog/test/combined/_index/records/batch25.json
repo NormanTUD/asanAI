@@ -1,0 +1,658 @@
+[
+  {
+    "path": "pullback.html",
+    "slug": "pullback",
+    "title": "Pullback — Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 35.0,
+    "category": "nicht-ki",
+    "category_reason": "German interactive visualization of the pullback construction in differential topology: how a smooth map f: M -> N induces a pullback on functions, forms, and tangent vectors. Pure differential geometry/topology with no AI or ML content.",
+    "theme": "differential-topology",
+    "themes": [
+      "pullback",
+      "differential-geometry",
+      "manifolds",
+      "smooth-maps",
+      "differential-forms"
+    ],
+    "thesis": "An interactive German-language visualization explaining the pullback construction: given a smooth map f: M -> N, how functions, differential forms, and tangent vectors on N are 'pulled back' to M, with animated diagrams showing the commutative universal-property diagram and concrete coordinate examples.",
+    "key_claims": [
+      "The pullback f* of a function g on N along f: M -> N is simply (f*g)(p) = g(f(p)); it composes g with f and requires no derivative.",
+      "For differential forms, the pullback f*(ω) is defined so that the diagram commutes: evaluating f*(ω) on tangent vectors at p equals evaluating ω on the pushed-forward vectors at f(p).",
+      "The pullback is contravariant: a map going M -> N induces a map going 'the other way' on forms (N^* -> M^*), reversing the direction of the original map.",
+      "The pullback is the universal construction: any map from M to the 'function space' of N factors uniquely through f*, which is why it appears throughout differential geometry.",
+      "Pullbacks preserve algebraic structure: f*(g1 ∧ g2) = f*(g1) ∧ f*(g2) and f*(d g) = d(f* g), making them compatible with the exterior calculus."
+    ],
+    "methods_math": [
+      "smooth maps between manifolds",
+      "tangent and cotangent spaces",
+      "pullback on functions and differential forms",
+      "exterior derivative and wedge product compatibility",
+      "universal property / commutative diagrams",
+      "coordinate representations of pullback"
+    ],
+    "visualizations": [
+      "animated commutative diagram showing f: M -> N and f*: N^* -> M^* with a point moving through both directions",
+      "interactive 2D surface example: a map from a torus to the plane with pullback of a 1-form visualized as a vector field on the torus",
+      "coordinate-based slider: choose f(x,y) and a form ω on N, watch f*(ω) change in real time"
+    ],
+    "internal_tensions": [
+      "The visualization uses 2D surface examples for intuition but the pullback is a coordinate-free construction; the coordinate sliders risk reinforcing the false impression that pullback 'is' a Jacobian matrix operation.",
+      "The contravariance is stated clearly but the visual arrows all seem to flow in the same direction as the original map, which can confuse readers about the direction reversal."
+    ],
+    "related_files": [
+      "christoffel",
+      "fibrebundleslab",
+      "modelltheorie"
+    ]
+  },
+  {
+    "path": "christoffel.html",
+    "slug": "christoffel",
+    "title": "Christoffel Symbols — Visual Explorer",
+    "lang": "en",
+    "size_kb": 34.7,
+    "category": "nicht-ki",
+    "category_reason": "English interactive explorer of Christoffel symbols on curved 2D surfaces: how the connection coefficients encode how a coordinate basis changes from point to point, with live 3D surface rendering and vector-field overlays. Pure Riemannian geometry.",
+    "theme": "riemannian-geometry",
+    "themes": [
+      "christoffel-symbols",
+      "connection",
+      "curved-surfaces",
+      "covariant-derivative",
+      "metric-tensor"
+    ],
+    "thesis": "An interactive English-language explorer that lets the user deform a 2D surface and watch the Christoffel symbols Γᵏᵢⱼ update in real time, showing how they measure the failure of the coordinate basis to be parallel, and how they enter the covariant derivative of a vector field on the surface.",
+    "key_claims": [
+      "Christoffel symbols are the components of the Levi-Civita connection in a coordinate basis; they are determined entirely by the metric tensor and its first derivatives: Γᵏᵢⱼ = ½ gᵏˡ (∂ᵢ gⱡˡ + ∂ⱼ gᵢˡ − ∂ˡ gᵢⱼ).",
+      "On a flat surface in Cartesian coordinates all Christoffel symbols vanish, but on the same flat surface in polar coordinates they are nonzero — curvature is not the same as nonzero Christoffel symbols.",
+      "The covariant derivative ∇ᵢ Vʲ = ∂ᵢ Vʲ + Γʲᵢₖ Vᵏ corrects the ordinary derivative by subtracting the change in the basis vectors, giving a geometrically meaningful derivative on curved spaces.",
+      "Geodesic equations ẍᵏ + Γᵏᵢⱼ ẋⁱ ẋʲ = 0 are second-order ODEs whose solutions are the 'straightest possible' curves on the surface; Christoffel symbols act as the 'force' bending the coordinate trajectory.",
+      "Symmetry Γᵏᵢⱼ = Γᵏⱼᵢ (torsion-free) is a property of the Levi-Civita connection, not of arbitrary connections."
+    ],
+    "methods_math": [
+      "metric tensor and its inverse",
+      "Levi-Civita connection formula",
+      "covariant derivative of vector and tensor fields",
+      "geodesic equation as a second-order ODE",
+      "coordinate transformation and tensor transformation law",
+      "curvature tensor (Riemann) as the commutator of covariant derivatives"
+    ],
+    "visualizations": [
+      "3D surface (three.js) that the user can deform with sliders (height, curvature, twist); Christoffel symbol values displayed as a live matrix overlay",
+      "vector field on the surface showing parallel transport: a vector is dragged around a small loop and the holonomy (angle deficit) is measured",
+      "geodesic path animation: initial direction chosen by the user, the geodesic ODE is integrated and drawn on the surface",
+      "comparison panel: same flat plane in Cartesian vs. polar coordinates, showing nonzero Γ in polar but zero Riemann curvature in both"
+    ],
+    "internal_tensions": [
+      "The page emphasizes that nonzero Christoffel symbols do not imply curvature, but the interactive deformation controls make it easy for the user to conflate 'bending the surface in 3D' with 'intrinsic curvature' — the embedded vs. intrinsic distinction is underplayed.",
+      "The geodesic ODE is presented as a 'force' equation, which is physically suggestive but mathematically misleading: Christoffel symbols are not forces but artifacts of the coordinate choice."
+    ],
+    "related_files": [
+      "pullback",
+      "fibrebundleslab"
+    ]
+  },
+  {
+    "path": "dynamic_residual_stream_paper2.html",
+    "slug": "dynamic_residual_stream_paper2",
+    "title": "Dynamischer Residual Stream (Paper 2) — Fernando & Guitchounts 2026",
+    "lang": "de",
+    "size_kb": 34.7,
+    "category": "ki",
+    "category_reason": "German interactive explanation of a 2026 paper (Fernando & Guitchounts) on the dynamics of the residual stream in transformer architectures: how information is written, read, and overwritten across layers, with logit-lens and attention-head visualizations. Core transformer interpretability.",
+    "theme": "transformer-interpretability",
+    "themes": [
+      "residual-stream",
+      "transformer-architecture",
+      "logit-lens",
+      "attention-heads",
+      "information-flow"
+    ],
+    "thesis": "A German-language interactive explanation of Fernando & Guitchounts (2026): the residual stream in a transformer is a shared 'blackboard' on which attention heads and MLPs sequentially write and overwrite features; the paper's contribution is a formal account of the dynamics (write/read/overwrite operations) and how the logit lens can be understood as projecting the blackboard's content onto the output vocabulary at each intermediate layer.",
+    "key_claims": [
+      "The residual stream is a high-dimensional vector that is never overwritten in place — each sublayer (attention, MLP) adds its output to it, creating an additive 'blackboard' that accumulates information layer by layer.",
+      "Attention heads implement a 'read-modify-write' operation: they read a key pattern from the blackboard, attend to the corresponding value positions, and write the result back — this is the fundamental unit of information flow in the transformer.",
+      "The logit lens (interpreting the residual stream at layer ℓ as if it were the final output) works because the residual stream at each layer already contains a partial 'draft answer'; the dynamics paper formalizes when this draft is reliable vs. when later layers substantially revise it.",
+      "Overwrite dynamics: later attention heads can cancel or suppress features written by earlier heads, creating a 'competing writers' picture; the paper characterizes the conditions under which a feature survives to the final layer.",
+      "The MLP sublayers act as 'nonlinear feature extractors' that read the current blackboard state and write back a transformed version, enabling composition of features that attention alone cannot express."
+    ],
+    "methods_math": [
+      "residual stream as additive accumulator: h^ℓ = h^ℓ⁻¹ + f_ℓ(h^ℓ⁻¹)",
+      "attention as a keyed read operation: Attention(Q,K,V) = softmax(QKᵀ/√d)V",
+      "logit lens: W_U h^ℓ as an intermediate prediction",
+      "feature survival analysis across layers (write/overwrite/cancel)",
+      "MLP as nonlinear feature map: MLP(h) = W₂ ReLU(W₁ h + b₁) + b₂"
+    ],
+    "visualizations": [
+      "animated residual stream as a horizontal 'blackboard' with layers as columns; attention heads and MLPs shown as arrows writing/erasing features",
+      "logit lens heatmap: rows are layers, columns are vocabulary tokens, color = logit value; user can scrub through layers to watch the 'draft answer' evolve",
+      "individual attention head animation: query/key/value vectors shown as arrows in 2D projection, with the attention pattern as a matrix",
+      "overwrite dynamics: two competing heads writing to the same feature slot, with a slider controlling the relative 'write strength' to show cancellation"
+    ],
+    "internal_tensions": [
+      "The 'blackboard' metaphor suggests a single shared space, but in practice the residual stream is high-dimensional and different heads attend to different subspaces; the 2D/3D projections in the visualizations can mislead about the true geometry.",
+      "The paper's formal account of write/read/overwrite is presented as settled, but the boundary between 'writing' and 'overwriting' a feature is somewhat arbitrary — depends on the chosen feature basis."
+    ],
+    "related_files": [
+      "j_space2",
+      "deep2",
+      "universal_approximation_theorem"
+    ]
+  },
+  {
+    "path": "fibrebundleslab.html",
+    "slug": "fibrebundleslab",
+    "title": "Fiber Bundles Lab",
+    "lang": "en",
+    "size_kb": 34.3,
+    "category": "nicht-ki",
+    "category_reason": "English interactive lab on fiber bundles: visualizing principal bundles, associated bundles, connections (gauge fields), and curvature, with both Plotly 3D cross-sections and three.js bundle renderings. Pure differential geometry / gauge theory with no AI content.",
+    "theme": "fiber-bundles",
+    "themes": [
+      "fiber-bundles",
+      "gauge-theory",
+      "principal-bundles",
+      "connection-forms",
+      "curvature",
+      "differential-geometry"
+    ],
+    "thesis": "An interactive English-language lab that builds intuition for fiber bundles from the ground up: what a total space, base, and fiber are, how a connection (gauge field) lets you compare fibers at different base points (parallel transport), and how curvature measures the failure of parallel transport to be path-independent — with 3D renderings of common examples (trivial bundle, Möbius strip, SU(2) bundle).",
+    "key_claims": [
+      "A fiber bundle is a surjection π: E -> B such that every point in B has a neighborhood whose preimage looks like U × F (local triviality); the 'fiber' F is the space you get by looking straight down at a base point.",
+      "A connection on a principal G-bundle is a choice of 'horizontal direction' at each point of E, equivalent to a Lie-algebra-valued 1-form ω satisfying equivariance and reproducing the fundamental vertical vectors; in physics this is the gauge potential A.",
+      "Parallel transport along a path γ in the base lifts γ to a horizontal path in E; the endpoint depends on the path if and only if the curvature F = dω + ½[ω,ω] is nonzero.",
+      "Holonomy: transporting a vector around a closed loop in the base and comparing it to the original gives an element of the structure group G; the collection of all holonomies is the holonomy group, which (by Ambrose-Singer) is generated by curvature.",
+      "The trivial bundle B × F has zero curvature and a global section; the Möbius strip is the simplest nontrivial line bundle over S¹ with structure group Z/2; the Hopf fibration S³ -> S² with fiber S¹ is the prototype for SU(2) gauge theory."
+    ],
+    "methods_math": [
+      "fiber bundle definition: surjection + local triviality",
+      "principal G-bundle and structure group action",
+      "connection form: equivariant Lie-algebra-valued 1-form",
+      "curvature 2-form F = dω + ½[ω,ω]",
+      "parallel transport and horizontal lift",
+      "holonomy and the Ambrose-Singer theorem",
+      "associated bundles via quotient E ×_G F"
+    ],
+    "visualizations": [
+      "three.js rendering of a 3D fiber bundle: base as a colored surface, fibers as vertical lines/tubes, with a 'gauge' slider that twists the fibers to show nontriviality",
+      "Plotly 3D cross-section: a principal bundle over a 2D base shown as a 3D manifold with the group action visualized as rotations of the fiber",
+      "parallel transport animation: a vector in the fiber is transported around a small loop in the base; the holonomy angle is displayed as a function of loop area (showing curvature = area × field strength)",
+      "Möbius strip vs. cylinder comparison: two side-by-side 3D renderings with a vector being transported around the core circle, showing the sign flip for the Möbius strip"
+    ],
+    "internal_tensions": [
+      "The lab presents gauge theory as 'just geometry', but the physical interpretation (local symmetry as a redundancy in description) is only lightly touched; the mathematical formalism and the physical motivation are not fully reconciled.",
+      "The 3D renderings of higher-dimensional bundles (e.g. SU(2) over S²) are necessarily schematic projections that lose the true fiber structure; the page acknowledges this but the visual dominance of the 3D scenes can overwhelm the caveat."
+    ],
+    "related_files": [
+      "pullback",
+      "christoffel"
+    ]
+  },
+  {
+    "path": "deep2.html",
+    "slug": "deep2",
+    "title": "Deep ResNet Visualization — Spiral Entangling",
+    "lang": "de",
+    "size_kb": 33.8,
+    "category": "ki",
+    "category_reason": "German interactive visualization of how deep ResNet architectures progressively untangle a two-spiral classification problem layer by layer, showing the geometric effect of residual blocks on the data manifold. Core deep learning / neural network architecture content.",
+    "theme": "deep-learning-visualization",
+    "themes": [
+      "resnet",
+      "skip-connections",
+      "spiral-classification",
+      "feature-space-geometry",
+      "depth-vs-width"
+    ],
+    "thesis": "A German-language interactive visualization showing a two-arm spiral dataset being progressively separated by a deep ResNet: each residual block applies a small local deformation to the data manifold, and the accumulation of many such deformations over 50+ layers straightens the spirals into linearly separable clusters — with the user able to step through layers and watch the geometry change.",
+    "key_claims": [
+      "A two-arm spiral is one of the hardest 2D classification problems for shallow networks but is easily separable by a sufficiently deep network: each residual block contributes a small 'untangling' step.",
+      "Skip connections (h_{l+1} = h_l + F_l(h_l)) ensure that the identity function is always an option for each block, preventing degradation in very deep networks and allowing the gradient to flow unchanged through the skip path.",
+      "The data manifold in feature space undergoes a sequence of local diffeomorphisms (one per block); the composition of many small diffeomorphisms can produce a large global deformation (straightening the spiral) that no single small map could achieve.",
+      "The 'effective depth' of untangling is greater than the number of layers with nonzero F_l: even blocks that learn F_l ≈ 0 contribute by providing a stable identity path that other blocks can build on.",
+      "Visualization of the intermediate feature spaces shows that the spiral does not get 'cut' or 'folded' — it is smoothly reparametrized, consistent with the idea that deep networks learn coordinate changes rather than decision boundaries."
+    ],
+    "methods_math": [
+      "ResNet residual block: h_{l+1} = h_l + F_l(h_l)",
+      "composition of local diffeomorphisms as global untangling",
+      "two-spiral dataset generation and its topological properties",
+      "t-SNE / PCA projection of high-dimensional feature spaces to 2D for visualization",
+      "gradient flow through skip connections (identity shortcut)",
+      "effective rank of the Jacobian of the composed map"
+    ],
+    "visualizations": [
+      "layer-by-layer animation: 2D projection of the data manifold at each residual block, showing the spiral progressively straightening; user can scrub through all 50+ layers",
+      "side-by-side comparison: shallow network (5 layers) vs. deep ResNet (55 layers) on the same spiral, showing the shallow network's failure",
+      "feature importance heatmap: which blocks contribute the most 'untangling' (measured by change in manifold curvature)",
+      "gradient flow visualization: backpropagation through the skip connections shown as arrows, demonstrating the gradient highway"
+    ],
+    "internal_tensions": [
+      "The visualization projects high-dimensional feature spaces to 2D, which can make the 'straightening' look more dramatic or more gradual than it actually is in the true dimensionality; the projection method (t-SNE vs. PCA) significantly affects the perceived geometry.",
+      "The claim that deep networks 'learn coordinate changes' is an interpretive overlay on the visualization; the actual learned maps are not necessarily diffeomorphisms (ReLU introduces non-invertible kinks)."
+    ],
+    "related_files": [
+      "dynamic_residual_stream_paper2",
+      "universal_approximation_theorem"
+    ]
+  },
+  {
+    "path": "kult_der_statistischen_signifikanz_very_simple.html",
+    "slug": "kult_der_statistischen_signifikanz_very_simple",
+    "title": "Der Kult der statistischen Signifikanz — very simple",
+    "lang": "de",
+    "size_kb": 33.7,
+    "category": "nicht-ki",
+    "category_reason": "German 'very simple' explanation of the Ziliak & McCloskey critique of p-value worship in empirical economics: why the binary significant/not-significant framework (p < 0.05) distorts scientific inference. Pure statistics / research methodology, no AI content.",
+    "theme": "statistics-reform",
+    "themes": [
+      "p-values",
+      "hypothesis-testing",
+      "statistical-significance",
+      "research-methodology",
+      "economics"
+    ],
+    "thesis": "A deliberately simple German-language explanation of why the 'cult of statistical significance' — the practice of treating p < 0.05 as a binary gate for what counts as a real effect — is harmful to empirical science, following the critique of Ziliak & McCloskey (2008/2009), with intuitive analogies and simple numerical examples.",
+    "key_claims": [
+      "A p-value is the probability of seeing data at least as extreme as what was observed, assuming the null hypothesis is true — it is NOT the probability that the null hypothesis is true, nor the probability that the result is a fluke.",
+      "The 0.05 threshold is arbitrary (chosen by Fisher as a convenient convention, not a logical boundary); effects with p = 0.049 are not 'real' while effects with p = 0.051 are not 'fake'.",
+      "Binary significance testing discards the magnitude of the effect and the strength of the evidence: a p-value of 0.04 with a tiny effect size is published, while a p-value of 0.06 with a large, important effect is ignored.",
+      "The correct question is not 'is the effect statistically significant?' but 'how large is the effect, and how precise is our estimate?' — confidence intervals and effect sizes convey more information than p-values.",
+      "The 'very simple' framing targets a non-specialist audience (students, journalists, policy makers) who encounter p-values in news reports and need to understand what they do and do not tell them."
+    ],
+    "methods_math": [
+      "null hypothesis significance testing (NHST)",
+      "p-value as a tail probability under H₀",
+      "Type I and Type II error",
+      "statistical power and sample size",
+      "confidence intervals as an alternative to point decisions",
+      "effect size (Cohen's d, standardized mean difference)"
+    ],
+    "visualizations": [
+      "interactive p-value slider: adjust the test statistic and watch the p-value update, with the 'significant' / 'not significant' label flipping at 0.05 — designed to show how arbitrary the cutoff is",
+      "effect size vs. p-value scatter: a grid of (effect size, p-value) pairs showing that large effects can be 'non-significant' (small n) and tiny effects can be 'significant' (large n)",
+      "confidence interval animation: as sample size grows, the CI shrinks; the page argues this continuous picture is more informative than the binary p < 0.05 decision",
+      "news headline simulator: given a study's effect size and p-value, generate the (misleading) headline a journalist would write"
+    ],
+    "internal_tensions": [
+      "The 'very simple' framing necessarily oversimplifies: the actual critique of p-values (including the role of prior probabilities, multiple testing, and the base-rate fallacy) is more nuanced than the page presents.",
+      "The page implies that discarding p-values entirely is the solution, but the deeper issue is that significance testing is one tool among many and the problem is its overuse as a decision rule, not its existence."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "new_kind_of_science.html",
+    "slug": "new_kind_of_science",
+    "title": "A New Kind of Science — Interactive Overview",
+    "lang": "en",
+    "size_kb": 33.5,
+    "category": "nicht-ki",
+    "category_reason": "English interactive overview of Stephen Wolfram's 'A New Kind of Science' (2002): cellular automata as the basis of a new science of computation, the principle of computational equivalence, and the claim that the universe is a computational system. No AI/ML focus (Wolfram's work predates and is distinct from modern deep learning).",
+    "theme": "cellular-automata",
+    "themes": [
+      "cellular-automata",
+      "computational-equivalence",
+      "wolfram",
+      "computation",
+      "complexity"
+    ],
+    "thesis": "An interactive English-language overview of Wolfram's core claims: that simple rules applied to grids of cells can produce arbitrarily complex behavior, that there is a 'principle of computational equivalence' (most complex systems are equally capable of computation), and that this reframes science from 'finding equations' to 'finding the right rule' — with live cellular automaton simulations for the user to explore.",
+    "key_claims": [
+      "Cellular automata (e.g., Rule 110, Rule 30) can produce behavior that appears random or complex from extremely simple local rules; Rule 110 is Turing-complete, meaning it can simulate any computable process.",
+      "The 'principle of computational equivalence' states that once a system is sufficiently complex, it is capable of performing any form of computation — the difference between systems is not in their computational power but in the form of their behavior.",
+      "The 'principle of equivalence of programs and nature' proposes that the laws of physics are best understood as computational rules; the universe is not 'computing' in a traditional sense but IS a computation (a cellular automaton evolving in time).",
+      "The shift from 'equations of motion' (Newton, Einstein) to 'rules of update' (cellular automata) changes the scientific question from 'what is the equation?' to 'what is the rule, and why this rule and not another?'",
+      "Wolfram Language (formerly Mathematica) is positioned as the natural tool for this kind of science: the language itself is built around iterative rule application and pattern rewriting."
+    ],
+    "methods_math": [
+      "cellular automata: 1D/2D grids, local update rules",
+      "Turing completeness and universal computation",
+      "rule space exploration (2^4 rules for 1D 2-color CAs)",
+      "computational irreducibility: some CA behaviors cannot be predicted without simulating every step",
+      "fractals and self-similarity in CA patterns",
+      "entropy and information flow in CA spacetimes"
+    ],
+    "visualizations": [
+      "live 1D cellular automaton: user selects a rule (0-255), sets the initial condition, and watches the spacetime pattern evolve; Rule 30, Rule 110, and Rule 90 highlighted with descriptions",
+      "rule space gallery: a grid of all 256 elementary CA rules, each showing a small spacetime thumbnail; user can click any rule to expand it",
+      "computational equivalence demo: two very different CA rules (e.g., Rule 30 and a 2D CA) both shown to be capable of universal computation, with glider collisions demonstrating logic gates",
+      "computational irreducibility demo: a CA with a 'shortcut' (analytical formula) vs. the full simulation; the user can try to predict the state at step 1000 without running the simulation"
+    ],
+    "internal_tensions": [
+      "The page presents Wolfram's claims as settled science, but the 'principle of computational equivalence' and the identification of the universe with a CA remain speculative and are not accepted by the mainstream physics community.",
+      "The 'rule space' exploration (256 elementary CA rules) gives the impression that the search for 'the right rule' is a finite combinatorial task, but the actual space of physically plausible laws is vastly larger and more constrained."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "buecher/what_the_frogs_eye_tell_the_frogs_brain.html",
+    "slug": "what_the_frogs_eye_tell_the_frogs_brain",
+    "title": "Was das Froschauge dem Froschhirn sagt — Lettvin et al. 1959",
+    "lang": "de",
+    "size_kb": 33.5,
+    "category": "nicht-ki",
+    "category_reason": "German explanation of the classic Lettvin, Maturana, McCulloch & Pitts (1959) paper on the frog's retina: electrophysiological identification of four types of retinal ganglion cells as 'feature detectors' (spot-on, spot-off, edge, moving-edge). Neuroscience / computational biology, no AI/ML focus (though the paper historically influenced early neural network work).",
+    "theme": "neuroscience",
+    "themes": [
+      "frog-retina",
+      "feature-detection",
+      "electrophysiology",
+      "visual-system",
+      "lettvin-1959"
+    ],
+    "thesis": "A German-language explanation of the landmark 1959 paper by Lettvin, Maturana, McCulloch & Pitts: by recording from single retinal ganglion cells in the frog, they identified four cell types tuned to specific visual features (bright spot, dark spot, edge, moving edge), arguing that the frog's visual system is optimized for detecting flying-insect prey — a foundational result in computational neuroscience.",
+    "key_claims": [
+      "The frog's retina contains four distinct types of retinal ganglion cells, each tuned to a different visual stimulus: 'spot-on' (bright blob), 'spot-off' (dark blob), 'edge' (light-dark boundary), and 'moving-edge' (directional motion).",
+      "The 'moving-edge' detector is the most behaviorally important: it fires only when a dark object moves against a bright background in a specific direction, which is exactly the signature of a flying insect against the sky.",
+      "The frog's visual system is not a general-purpose image processor but a highly specialized 'bug detector': the four cell types are sufficient for the frog's ecological niche (catching flying insects) and are not needed for tasks like reading or navigation.",
+      "The paper is a landmark in 'functional anatomy': it shows that the brain can be understood as a collection of specialized detectors, each solving a sub-problem, and that the overall behavior emerges from the combination of these detectors.",
+      "The McCulloch-Pitts neuron (a binary threshold unit) provides the theoretical framework: each ganglion cell can be modeled as a weighted sum of its inputs (from photoreceptors and bipolar cells) passed through a threshold, making the retina a 'wiring diagram' that can be analyzed logically."
+    ],
+    "methods_math": [
+      "extracellular single-unit electrophysiology",
+      "stimulus-response tuning curves",
+      "receptive field mapping (center/surround antagonism)",
+      "McCulloch-Pitts neuron model: binary threshold logic",
+      "center-surround receptive field structure (difference-of-Gaussians)",
+      "direction selectivity as a temporal filter"
+    ],
+    "visualizations": [
+      "interactive receptive field diagram: a frog retinal ganglion cell's center-surround field with a movable light spot; the user can position the spot to see when each of the four cell types fires",
+      "moving-edge detector animation: a dark dot moves across a bright field; the 'moving-edge' cell fires only for the correct direction, with the firing rate shown as a live trace",
+      "comparison with human vision: the same stimulus shown to a 'human-like' visual system (with many more cell types) vs. the frog's four-cell system, highlighting the specialization trade-off",
+      "McCulloch-Pitts wiring diagram: the retinal circuit from photoreceptors through bipolar cells to ganglion cells, shown as a logical circuit with threshold gates"
+    ],
+    "internal_tensions": [
+      "The paper's 'four cell types' framing is an oversimplification: the frog's retina actually has more than four ganglion cell types, and the 'feature detector' interpretation has been refined by subsequent work; the page presents the 1959 result as the definitive picture.",
+      "The 'bug detector' interpretation is ecological but somewhat reductive: the same circuitry is used for other behaviors (startle response, orientation), and the four types are not the only information the frog's brain receives about the visual world."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "j_space2.html",
+    "slug": "j_space2",
+    "title": "J-Space & Jacobian Lens — Transformer Interpretability",
+    "lang": "de",
+    "size_kb": 33.0,
+    "category": "ki",
+    "category_reason": "German interactive explanation of J-Space (a geometric structure for transformer representation space) and the Jacobian Lens (a tool for reading out intermediate computations), using Temml for embedding visualizations and Plotly for projections. Core transformer interpretability / representation geometry.",
+    "theme": "transformer-interpretability",
+    "themes": [
+      "j-space",
+      "jacobian-lens",
+      "representation-geometry",
+      "transformer-interpretability",
+      "embedding-space"
+    ],
+    "thesis": "A German-language interactive explanation of two complementary tools for understanding transformer internals: J-Space, which posits that the representation space of a transformer has a geometric structure (a 'J-space') where semantically related concepts occupy nearby regions, and the Jacobian Lens, which uses the Jacobian of the output with respect to an intermediate layer to read out what the layer is 'thinking' — visualized with Temml embedding projections and Plotly scatter plots.",
+    "key_claims": [
+      "J-Space is the hypothesis that the high-dimensional representation space of a transformer is not a flat vector space but has intrinsic geometric structure: semantically related tokens are close, and the 'distance' between concepts in J-space corresponds to their functional relationship in the model's computation.",
+      "The Jacobian Lens works as follows: for a given intermediate layer ℓ and output token v, the Jacobian entry ∂logit(v)/∂h_ℓ[i] measures how much the i-th dimension of the layer-ℓ residual stream influences the probability of token v; this gives a 'lens' that maps the layer-ℓ state to a vocabulary distribution.",
+      "Unlike the standard logit lens (which uses the unembedding matrix W_U directly), the Jacobian Lens accounts for the nonlinear transformations in later layers, giving a more accurate 'readout' of intermediate computations at deeper layers.",
+      "In J-Space, linear directions correspond to semantic features (e.g., 'positive sentiment', 'past tense'); the geometry of J-space is anisotropic — some directions are 'longer' (more important) than others, and the metric is learned, not Euclidean.",
+      "The combination of J-space geometry and the Jacobian Lens allows the user to 'navigate' the model's internal computation: pick a layer, pick a direction in J-space, and see which tokens are affected — a kind of 'X-ray' of the transformer's reasoning."
+    ],
+    "methods_math": [
+      "Jacobian matrix ∂f/∂h and its entries as influence measures",
+      "logit lens: W_U h^ℓ as a baseline readout",
+      "Jacobian Lens: J_ℓ[v,i] = ∂logit(v)/∂h_ℓ[i] as a per-token influence map",
+      "embedding space geometry: cosine similarity, anisotropy, metric learning",
+      "PCA / t-SNE projection of high-dimensional embeddings to 2D/3D",
+      "Temml (Temml) for rendering embedding vectors as interactive 3D point clouds"
+    ],
+    "visualizations": [
+      "Temml 3D embedding cloud: token embeddings projected to 3D, color-coded by semantic category; user can click a point to see its Jacobian Lens readout",
+      "Jacobian Lens heatmap: rows are vocabulary tokens, columns are dimensions of the residual stream at layer ℓ; color = J_ℓ value; user can scrub through layers to watch the 'focus' of the lens shift",
+      "J-space navigation: a 2D slice of J-space with a draggable 'probe' vector; the affected tokens are highlighted in a side panel",
+      "comparison: logit lens vs. Jacobian Lens at the same layer, showing where they agree and where the Jacobian Lens captures nonlinear effects the logit lens misses"
+    ],
+    "internal_tensions": [
+      "The J-space hypothesis is presented as established, but the geometric structure of transformer representation space is still an active area of research; the 'J-space' is a useful metaphor but its precise mathematical definition is not settled.",
+      "The Jacobian Lens is computationally expensive (requires backpropagating through all later layers for each token), which limits its practical use to small models or a subset of tokens; the page does not emphasize this computational cost."
+    ],
+    "related_files": [
+      "dynamic_residual_stream_paper2",
+      "universal_approximation_theorem",
+      "hologram"
+    ]
+  },
+  {
+    "path": "buecher/sein_und_zeit.html",
+    "slug": "sein_und_zeit",
+    "title": "Sein und Zeit — Interaktive Einführung",
+    "lang": "de",
+    "size_kb": 32.8,
+    "category": "nicht-ki",
+    "category_reason": "German interactive introduction to Heidegger's 'Being and Time' (1927): Dasein, being-in-the-world, authenticity vs. inauthenticity, temporality as the horizon of Being. Pure phenomenological philosophy, no AI/ML content.",
+    "theme": "phenomenology",
+    "themes": [
+      "heidegger",
+      "dasein",
+      "being-in-the-world",
+      "temporality",
+      "phenomenology",
+      "ontology"
+    ],
+    "thesis": "A German-language interactive introduction to Heidegger's 'Sein und Zeit': the question of the meaning of Being (Seinsfrage) is approached through the analysis of Dasein (the being for whom Being is an issue), whose fundamental structure is being-in-the-world (In-der-Welt-sein) — not a subject inside a container of objects, but an engaged, practical involvement with equipment (Zuhandenheit) that only breaks down in the moment of concern (Sorge).",
+    "key_claims": [
+      "The 'Seinsfrage' (question of Being) asks not 'what is?' (which is answered by ontology/categorization) but 'what does it mean to be?' — the meaning of Being is temporality (Zeitlichkeit).",
+      "Dasein is the being that we ourselves are; its defining feature is that it is 'being-its-Own-most-Possibility' (seine eigentümste Möglichkeit) — it is always ahead of itself, already in a world, and being-alongside entities.",
+      "The primary way Dasein encounters entities is not theoretical observation but practical use (Zuhandenheit, 'readiness-to-hand'): the hammer is encountered as 'for hammering', not as an object with properties; the theoretical attitude (Vorhandenheit, 'presence-at-hand') is a derived mode.",
+      "Dasein is normally 'fallen' (verfallen) into the They (das Man): it interprets itself through public, average interpretations rather than its own authentic possibilities; authenticity (Eigentlichkeit) requires facing one's own Being-towards-death (Sein-zum-Tode).",
+      "Temporality is not clock-time but the ecstatical-horizonal structure of care (Sorge): Dasein is always already projected into the future (Sein-vor-zu), factually situated in the past (Geworfenheit, 'thrownness'), and present in the moment (Geworfenheit in der Gegenwart). The 'circle of temporality' (temporal circle) is the structure in which past, present, and future are not sequential but co-constitutive."
+    ],
+    "methods_math": [
+      "phenomenological description (Husserl's 'to the things themselves')",
+      "hermeneutic circle: understanding is always circular (pre-structure of understanding)",
+      "ontological distinction: ontic (facts about beings) vs. ontological (the meaning of Being)",
+      "structural analysis: Dasein's existence is analyzed as care (Sorge) = being-ahead-of-itself + being-already-in + being-alongside",
+      "temporality as the meaning of Being: ecstases (future/past/present) as co-original"
+    ],
+    "visualizations": [
+      "interactive 'Dasein structure' diagram: three overlapping circles (ahead-of-itself / already-in / being-alongside) with the user able to 'collapse' one to see how the structure breaks down",
+      "Zuhandenheit vs. Vorhandenheit toggle: a hammer shown as 'for hammering' (transparent, integrated into the activity) vs. 'present-at-hand' (opaque object with properties); the toggle simulates the 'breakdown' (Störfall) that reveals the referential totality",
+      "temporality circle: a non-linear diagram where past, present, and future are three 'ecstases' pointing at each other; the user can rotate the diagram to see that no one is 'first'",
+      "das Man vs. Eigentlichkeit slider: a narrative scenario (e.g., 'you are deciding whether to take a risky job') where the slider shifts the decision from 'what everyone does' (das Man) to 'what I, facing my own death, choose' (authentic)"
+    ],
+    "internal_tensions": [
+      "The interactive format (sliders, toggles) is somewhat at odds with Heidegger's insistence that Dasein's structure must be 'lived' and cannot be reduced to a diagram; the visualizations risk making the existential structures look like mechanical parts.",
+      "The page presents 'Sein und Zeit' as a finished system, but Heidegger himself later (in the 'turn', Kehre) distanced himself from the work, and the interpretation of Dasein's temporality remains contested among Heidegger scholars."
+    ],
+    "related_files": [
+      "analytic_idealism"
+    ]
+  },
+  {
+    "path": "hologram.html",
+    "slug": "hologram",
+    "title": "Holographic Storage & LLM Embedding Parallel",
+    "lang": "en",
+    "size_kb": 32.2,
+    "category": "ki",
+    "category_reason": "English explanation of holographic data storage (volume holography, Fourier transform reconstruction, angular multiplexing) with an explicit and sustained parallel to LLM embedding spaces: how a hologram's non-local storage of information (any fragment contains the whole) mirrors the distributed, superposed nature of LLM embeddings. The LLM parallel is central, not incidental.",
+    "theme": "holographic-storage",
+    "themes": [
+      "holography",
+      "holographic-storage",
+      "fourier-transform",
+      "embedding-spaces",
+      "distributed-representation",
+      "superposition"
+    ],
+    "thesis": "An English-language explanation of how volume holograms store and reconstruct data using wave interference and diffraction, drawing a sustained structural parallel to LLM embedding spaces: in both cases, information is stored non-locally (every part of the hologram contains information about the whole object; every dimension of an embedding vector contributes to the meaning), and retrieval is a projection operation (diffraction reconstructs the image; the unembedding matrix W_U projects the embedding onto the vocabulary).",
+    "key_claims": [
+      "A volume hologram stores data as an interference pattern in a thick photorefractive or polymer medium; reconstruction is achieved by illuminating the hologram with the reference beam, which diffracts to reconstruct the object wave — this is a physical implementation of a correlation (matched filter) operation.",
+      "Angular multiplexing: many holograms can be stored in the same volume by using slightly different reference beam angles; during reconstruction, selecting the correct angle retrieves the correct data page, with crosstalk between pages acting as 'noise' — analogous to how LLMs store many concepts in the same embedding dimensions with superposition.",
+      "Non-local storage: if a hologram is broken into pieces, each piece still reconstructs the full image (at lower resolution); this is structurally analogous to LLM embeddings, where meaning is distributed across all dimensions and no single dimension 'contains' the meaning.",
+      "The reconstruction process (diffraction) is a linear projection: the stored interference pattern is multiplied by the reconstruction beam and integrated over the volume, which is mathematically a correlation operation — the same type of operation as the dot product between an embedding vector and a target concept vector in an LLM.",
+      "The 'grain' of the hologram medium (spatial resolution of the interference fringes) sets the storage density limit; analogously, the dimensionality of the embedding space sets the information capacity limit of an LLM, and the 'grain' is the quantization of floating-point precision."
+    ],
+    "methods_math": [
+      "wave interference and diffraction (Huygens-Fresnel principle)",
+      "Fourier transform as the reconstruction operation",
+      "angular multiplexing and crosstalk analysis",
+      "correlation / matched filter: ∫ h(x) · r*(x) dx",
+      "holographic storage density: fringe spacing, volume, and angle range",
+      "embedding space as a superposition code: meaninging = Σ w_i · v_i"
+    ],
+    "visualizations": [
+      "hologram reconstruction animation: a reference beam hits a holographic plate; the diffracted wavefront is animated to show the object image appearing; user can adjust the angle to select different stored 'pages'",
+      "broken hologram demo: a hologram image is divided into 4 quadrants; the user can hide/show quadrants and see that each one still reconstructs the full (blurred) image",
+      "embedding space comparison: a 2D/3D plot of LLM embeddings with a 'probe' vector; the user can 'break' the embedding (zero out random dimensions) and watch the meaning degrade gracefully, mirroring the broken hologram",
+      "angular multiplexing crosstalk: two holograms stored at different angles; the user adjusts the reconstruction angle and sees the crosstalk (ghost image) from the other hologram grow as the angle approaches"
+    ],
+    "internal_tensions": [
+      "The LLM parallel is suggestive but not rigorous: holographic storage is a physical wave-optics phenomenon while LLM embeddings are learned mathematical representations; the 'non-locality' of a hologram is a property of wave physics, not of the information encoding per se.",
+      "The page implies that LLMs 'work like holograms' in a deep sense, but the analogy breaks down at the level of how information is written (training via gradient descent vs. exposure to an interference pattern) and how it is read (softmax over logits vs. physical diffraction)."
+    ],
+    "related_files": [
+      "j_space2",
+      "universal_approximation_theorem"
+    ]
+  },
+  {
+    "path": "universal_approximation_theorem.html",
+    "slug": "universal_approximation_theorem",
+    "title": "Universeller Approximationssatz — Interaktive Erklärung",
+    "lang": "de",
+    "size_kb": 32.1,
+    "category": "ki",
+    "category_reason": "German interactive explanation of the Universal Approximation Theorem (Cybenko 1989, Hornik 1991): single-hidden-layer neural networks with suitable activation functions can approximate any continuous function on a compact set, with a constructive proof using bump functions and a Dense-ReLU-Dense architecture. Core neural network theory.",
+    "theme": "neural-network-theory",
+    "themes": [
+      "universal-approximation-theorem",
+      "relu-networks",
+      "bump-functions",
+      "constructive-proof",
+      "width-vs-depth"
+    ],
+    "thesis": "A German-language interactive explanation of the Universal Approximation Theorem: a single hidden layer with a finite number of neurons and a non-polynomial activation function can approximate any continuous function on a compact subset of R^n to arbitrary precision; the page gives a constructive proof for the 1D case using bump functions (bump = smooth, compactly supported) and shows how a Dense-ReLU-Dense network can be built from them, with Temml-based visualizations of the approximation converging as width increases.",
+    "key_claims": [
+      "Cybenko (1989) / Hornik (1991): for any continuous f: [a,b] -> R and any ε > 0, there exist weights w_i, v_i, c_i and a finite number N of neurons such that |f(x) − Σᵢ vᵢ σ(wᵢx + cᵢ)| < ε for all x ∈ [a,b], where σ is a non-polynomial activation (e.g., sigmoid, ReLU).",
+      "The theorem is existential, not constructive: it guarantees the existence of a network that works but does not tell you how to find the weights; in practice, training (gradient descent) is the algorithm for finding them.",
+      "A constructive 1D proof using bump functions: any continuous function on [a,b] can be approximated by a sum of scaled and translated 'bump' functions (smooth, compactly supported); each bump can be implemented by a small ReLU network (a 'ReLU bump' = difference of two ReLUs), so the sum is a single-layer ReLU network.",
+      "The width of the network (number of hidden neurons) must grow as ε shrinks; there is no bound on the required width in terms of ε alone (it depends on the complexity of f), but the theorem guarantees that a finite width always suffices.",
+      "Depth can reduce width: a deep network (many layers, few neurons per layer) can approximate some functions with exponentially fewer total parameters than a wide shallow network, but the UAT only guarantees the existence of a wide shallow solution."
+    ],
+    "methods_math": [
+      "Stone-Weierstrass theorem (as a precursor: polynomials are dense in C[a,b])",
+      "bump functions: smooth, compactly supported functions as building blocks",
+      "ReLU as a 'hinge' function: max(0, x) and its use to construct triangular bumps",
+      "Dense-ReLU-Dense architecture: y = W₂ ReLU(W₁x + b₁) + b₂",
+      "uniform approximation: sup-norm convergence on [a,b]",
+      "non-polynomial activation requirement (polynomial activations cannot approximate all continuous functions)"
+    ],
+    "visualizations": [
+      "Temml-based 1D approximation: a target function (e.g., a square wave, a Gaussian, a fractal-like curve) is approximated by a ReLU network; the user increases the width (number of ReLU bumps) and watches the approximation converge, with the individual bumps visible as triangular 'teeth'",
+      "bump function constructor: the user places and scales individual bump functions on a 1D axis; the sum is shown as a running total, demonstrating how a complex function is built from simple pieces",
+      "width vs. error plot: a log-log plot of approximation error vs. number of neurons, showing the rate of convergence for different target functions (smooth vs. discontinuous)",
+      "shallow vs. deep comparison: the same target function approximated by a wide shallow network (1000 neurons, 1 layer) vs. a narrow deep network (10 neurons, 100 layers); the parameter count and approximation quality are compared"
+    ],
+    "internal_tensions": [
+      "The theorem is for a single hidden layer, but the visualizations use ReLU networks which require a specific construction (difference of ReLUs for bumps) that is not the same as the standard Dense-ReLU-Dense architecture used in practice; the gap between the constructive proof and the practical architecture is not fully bridged.",
+      "The theorem says 'any continuous function' but the rate of convergence can be extremely slow for functions with sharp features; the page shows this with the width-vs-error plot but the interactive approximation can be misleadingly fast for smooth functions, giving the impression that the theorem is 'useful' in a practical sense."
+    ],
+    "related_files": [
+      "deep2",
+      "j_space2",
+      "hologram"
+    ]
+  },
+  {
+    "path": "modelltheorie.html",
+    "slug": "modelltheorie",
+    "title": "Modelltheorie — Interaktive Einführung",
+    "lang": "de",
+    "size_kb": 31.8,
+    "category": "nicht-ki",
+    "category_reason": "German interactive introduction to model theory (a branch of mathematical logic): structures, languages, satisfaction, elementary equivalence, compactness, completeness, and the Löwenheim-Skolem theorems. Pure mathematical logic with no AI/ML content.",
+    "theme": "model-theory",
+    "themes": [
+      "model-theory",
+      "mathematical-logic",
+      "first-order-logic",
+      "compactness",
+      "lowenheim-skolem",
+      "structures"
+    ],
+    "thesis": "A German-language interactive introduction to model theory: the branch of mathematical logic that studies the relationship between formal languages (sentences built from symbols and rules) and their models (mathematical structures that satisfy those sentences). The key results — compactness, completeness, and Löwenheim-Skolem — are presented as surprising consequences of the limitations of first-order logic, with interactive examples for the user to explore.",
+    "key_claims": [
+      "A structure M = (M, ·, +, 0, 1, ...) interprets the symbols of a language L and assigns them meaning; a sentence φ of L is 'true in M' (M ⊨ φ) if the interpretation makes it so; the theory of M is the set of all sentences true in M.",
+      "Two structures are elementarily equivalent (M ≡ N) if they satisfy exactly the same first-order sentences; elementary equivalence is weaker than isomorphism — there are non-isomorphic structures that are elementarily equivalent (e.g., the rationals and the reals are elementarily equivalent as ordered fields, by the completeness theorem + model of Th(Q)).",
+      "The compactness theorem: if every finite subset of a set of sentences Σ is satisfiable, then Σ itself is satisfiable; this leads to counterintuitive results such as the existence of non-standard models of arithmetic (with 'infinite' natural numbers) and the existence of an ordered field between the rationals and the reals.",
+      "The completeness theorem (Gödel 1930): a sentence is logically valid (true in all structures) if and only if it is provable from the axioms of first-order logic; this is a syntactic/semantic bridge that does not hold for second-order logic.",
+      "The Löwenheim-Skolem theorems: if a countable first-order theory has an infinite model, it has a countable model (downward LS) and a model of every infinite cardinality (upward LS); this means first-order logic cannot pin down the cardinality of a structure, even for the natural numbers."
+    ],
+    "methods_math": [
+      "first-order logic: syntax (terms, formulas, sentences) and semantics (structures, satisfaction)",
+      "Tarski's definition of truth (satisfaction relation M ⊨ φ)",
+      "elementary substructure and elementary extension",
+      "compactness via the ultraproduct construction or via the completeness theorem",
+      "Gödel completeness theorem: syntactic provability = semantic validity",
+      "Löwenheim-Skolem theorems via the downward and upward constructions",
+      "non-standard models of arithmetic (via compactness)"
+    ],
+    "visualizations": [
+      "structure explorer: a small finite structure (e.g., a graph with 5 nodes and some edges) with the user able to toggle edge presence; first-order sentences are evaluated live (e.g., 'every node has degree ≥ 2', 'there exists a triangle')",
+      "compactness demo: a set of sentences Σ is built incrementally; the user can check that every finite subset is satisfiable (with a small model shown) and then see the full model that compactness guarantees",
+      "Löwenheim-Skolem animation: a large uncountable model is shown, and the 'downward' construction is animated to show how a countable submodel is extracted; the user can see which elements are 'kept' and which are 'dropped'",
+      "elementary equivalence gallery: pairs of structures (e.g., (Q, <) and (R, <), (N, +, ·) and a non-standard model) shown side-by-side with the sentences they agree/disagree on"
+    ],
+    "internal_tensions": [
+      "The interactive examples use finite structures for intuition, but the key theorems (compactness, LS) are about infinite structures; the finite examples are suggestive but do not capture the actual content of the theorems.",
+      "The page presents model theory as a self-contained branch of logic, but its applications (e.g., to database query optimization, program verification, and the foundations of physics) are not mentioned, which may make the subject seem purely abstract to a practical reader."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "analytic_idealism.html",
+    "slug": "analytic_idealism",
+    "title": "Analytischer Idealismus — Interaktive Erklärung",
+    "lang": "de",
+    "size_kb": 31.8,
+    "category": "nicht-ki",
+    "category_reason": "German interactive explanation of Bernardo Kastrup's analytic idealism (based on his 2019 Radboud University dissertation): a consciousness-only ontology where phenomenal consciousness is the sole ontological primitive, matter is the extrinsic appearance of transpersonal consciousness, and individual minds are dissociated 'alters' of a universal consciousness. Philosophy of mind, no AI/ML content.",
+    "theme": "philosophy-of-mind",
+    "themes": [
+      "analytic-idealism",
+      "consciousness",
+      "kastrup",
+      "dissociation",
+      "hard-problem",
+      "ontology"
+    ],
+    "thesis": "A German-language interactive explanation of Kastrup's analytic idealism: the only thing that exists is universal phenomenal consciousness; the physical world is the extrinsic (third-person) appearance of transpersonal consciousness activity; individual organisms are dissociated 'alters' of this universal consciousness (analogous to alters in dissociative identity disorder); and the correlation between brain activity and experience is explained not by causation but by the brain being the extrinsic appearance of the experience itself.",
+    "key_claims": [
+      "Analytic idealism posits a single ontological primitive: universal phenomenal consciousness. There is no 'matter' in the fundamental sense; the physical world is a model (extrinsic appearance) of the activity of consciousness, analogous to how the 'wave' is a model of the activity of the ocean.",
+      "Dissociation — a well-documented clinical phenomenon (DID) — explains how a single unified consciousness can give rise to apparently separate subjects: a dissociative boundary separates the 'internal' (subjective) experience of an alter from the 'external' (transpersonal) activity of the whole.",
+      "Perception is the experience of transpersonal consciousness activity that has been 'coded and compressed' by the dissociative boundary: external thoughts hitting the boundary are experienced as sensory qualia; the coding is lossy and optimized for fitness (per Hoffman/Friston), not for truth.",
+      "The brain-experience correlation is not causal (brain causes experience) but constitutive: the brain is what the experience looks like from the outside (extrinsic perspective); damage to the brain changes the appearance, not the experience itself — which explains why reduced brain activity (hypoxia, psychedelics, NDEs) can be associated with expanded consciousness.",
+      "Analytic idealism avoids both the hard problem (no need to explain how matter gives rise to experience, since there is no matter) and the combination problem of panpsychism (no need to explain how micro-experiences combine, since there is only one macro-experience that is dissociated)."
+    ],
+    "methods_math": [
+      "phenomenological ontology (consciousness as the sole primitive)",
+      "dissociation as a formal mechanism for subject individuation",
+      "extrinsic/intrinsic perspective distinction (analogous to third-person/first-person in physics)",
+      "quantum field analogy: field -> self-excitation -> particles, consciousness -> self-excitation -> experiences",
+      "Hoffman's fitness-beats-truth argument for perceptual coding",
+      "Friston's free energy principle as a model of perceptual compression"
+    ],
+    "visualizations": [
+      "Plotly funnel chart: abstraction levels from direct experience (Qualia) to strings/branes, with epistemic confidence decreasing at each level",
+      "Plotly scatter plot: brain activity vs. experience intensity, with the annotation 'correlation, not causation — the brain IS the appearance of the experience'",
+      "Plotly grouped bar chart: six conditions (hypoxia, psychedelics, NDE, TMS, brain damage, trance) showing reduced brain activity alongside increased experience intensity — the 'paradox' that physicalism cannot explain",
+      "Plotly radar chart: three ontologies (physicalism, panpsychism, analytic idealism) scored on parsimony, hard problem solved, combination problem solved, empirical fit, and explanatory power",
+      "Canvas animation: universal consciousness as an 'ocean' with dissociated alters as islands; three modes (normal, dissociation, perception) switchable by the user",
+      "Canvas graph: 20 nodes representing cognitive connections; a dissociation slider breaks the cross-group edges, simulating the formation of a dissociative boundary",
+      "Canvas perception animation: transpersonal 'thought waves' (particles) travel from the outer field and hit the dissociative boundary of an alter, where they are converted into 'perception sparks' inside the alter"
+    ],
+    "internal_tensions": [
+      "The page presents Kastrup's ontology as if it were empirically supported, but the 'evidence' section (hypoxia, psychedelics, NDEs) is anecdotal and the correlation between reduced brain activity and expanded experience does not uniquely support idealism — it could also be explained by changes in the brain's filtering/gating mechanisms under physicalism.",
+      "The dissociation analogy (DID) is powerful but risky: DID is a trauma response, and equating the structure of a trauma disorder with the fundamental ontology of the universe is a large inferential leap that the page does not adequately qualify.",
+      "The quantum field analogy (field -> particles via self-excitation) is used for intuition but is physically inaccurate: particles in QFT are excitations of a field, not 'self-excitations' in the sense the page implies; the analogy is suggestive but should not be taken literally."
+    ],
+    "related_files": [
+      "sein_und_zeit"
+    ]
+  }
+]

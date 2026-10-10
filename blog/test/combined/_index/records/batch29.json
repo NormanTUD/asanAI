@@ -1,0 +1,375 @@
+[
+  {
+    "path": "support_vector_machines.html",
+    "slug": "support_vector_machines",
+    "title": "Support Vector Machines — interaktiv verstehen",
+    "lang": "de",
+    "size_kb": 24.6,
+    "category": "ki",
+    "category_reason": "Interactive teaching page on the SVM, a core ML classifier (max-margin, kernel trick, SMO training).",
+    "theme": "support-vector-machines",
+    "themes": ["kernel-methods", "optimization", "classification"],
+    "thesis": "A library-free HTML/CSS/JS interactive explaining the SVM: the classifier that finds the widest-margin separating hyperplane, plus the kernel trick and a live SMO playground.",
+    "key_claims": [
+      "The SVM picks the separating hyperplane farthest from both classes; margin = 2/||w||, so maximizing the margin is minimizing ||w||.",
+      "Only the support vectors determine the decision boundary; deleting every other point changes nothing.",
+      "Kernel trick: points need never be transformed explicitly — a kernel K(a,b) computes inner products in the high space directly (RBF exp(-gamma*||a-b||^2), poly (a^T b + 1)^d).",
+      "Soft margin: slack variables xi_i allow violations, and C controls how expensive they are; large C -> overfitting risk, small C -> smoother boundary tolerating outliers.",
+      "Optimization problem: min 1/2||w||^2 + C*sum xi_i subject to y_i(w^T x_i + b) >= 1 - xi_i, xi_i >= 0.",
+      "A simplified SMO (Sequential Minimal Optimization) is implemented to train live and redraw the decision-region heatmap."
+    ],
+    "methods_math": ["maximum-margin classification", "support vectors", "kernel methods (RBF, polynomial)", "soft-margin / slack variables", "SMO / quadratic programming (dual)", "decision-region contouring"],
+    "visualizations": ["canvas 2D margin demo: draggable separating line (angle/offset), margin corridor, animated 'find optimum' search", "canvas pseudo-3D 'kernel lift' (z = x^2+y^2) morph showing a flat plane separates rings in 3D", "canvas live playground: click to add +1/-1 points, SMO retrain, bilinear-smoothed decision heatmap, margin contours, linear/RBF/poly tabs and C/gamma sliders"],
+    "internal_tensions": [
+      "Claims 'no framework, no libraries' yet ships a hand-rolled numerical SMO that may not fully converge (maxPass=12, tol=1e-3).",
+      "The 3D 'a flat plane separates the rings' is an illustrative analogy, not the literal linear SVM in that lifted space."
+    ],
+    "related_files": ["universal_approximation_theorem", "linear_seperability"]
+  },
+  {
+    "path": "buecher/mcculloch_pitts.html",
+    "slug": "mcculloch_pitts",
+    "title": "McCulloch & Pitts (1943) – Interaktiv Erleben",
+    "lang": "de",
+    "size_kb": 24.4,
+    "category": "ki",
+    "category_reason": "Interactive walkthrough of the 1943 paper that founded artificial neural networks and their computational equivalence to Turing machines.",
+    "theme": "neural-network-foundations",
+    "themes": ["symbolic-ai", "computability", "history-of-ai"],
+    "thesis": "An interactive retelling of McCulloch & Pitts (1943): neurons are all-or-none logical switches, their networks realize AND/OR/NOT and are computationally equivalent to Turing machines — the 'birth certificate of AI'.",
+    "key_claims": [
+      "A neuron fires all-or-none like a bit (0/1); a threshold determines when it fires.",
+      "Neuron networks realize the logic gates AND (threshold 2), OR (threshold 1) and NOT (via inhibition).",
+      "Every logical function/expression can be built as a neuron network (their Theorem 2).",
+      "Inhibition has absolute veto: a single inhibitory synapse blocks firing no matter how many excitatory inputs arrive.",
+      "Circular/recurrent nets let activity circulate -> memory and reference to past events; variable synapses can be replaced by loops (Theorem 7), so learning ~ recurrent activity.",
+      "A network plus a memory/tape computes exactly what a Turing machine can, and vice versa."
+    ],
+    "methods_math": ["threshold (all-or-none) neuron model", "logical gates AND/OR/NOT", "propositional/boolean logic", "recurrent circuits", "Turing-machine / computability equivalence"],
+    "visualizations": ["DOM neuron threshold demo (stimulus vs threshold sliders, fire/silence)", "DOM logic-gate toggles (AND/OR/AND-NOT with truth outputs)", "canvas neuron-network animation of the paper's 'heat after a short cold stimulus' example (delay + AND + inhibition)", "DOM time-step 'circuit' loop for memory (start/stop/inhibit to wipe it)", "DOM memory-matching game pairing concepts + SVG progress ring"],
+    "internal_tensions": [
+      "The 'Turing equivalence' and 'every program buildable' claims are presented pedagogically, not as a formal proof.",
+      "Conflates 'learning' with recurrence/loops (a loose reading of their Theorem 7)."
+    ],
+    "related_files": ["turing", "history", "narc_group"]
+  },
+  {
+    "path": "hologram2.html",
+    "slug": "hologram2",
+    "title": "Holographic FFT Smiley — All Cells Active + Overzoom Estimation",
+    "lang": "en",
+    "size_kb": 24.4,
+    "category": "nicht-ki",
+    "category_reason": "A signal-processing / Fourier toy about a 'holographic' FFT smiley and overzoom estimation; no machine-learning subject.",
+    "theme": "signal-processing",
+    "themes": ["fourier-analysis", "holography", "interpolation"],
+    "thesis": "A 'holographic FFT smiley': a 3x3 grid of cells each encodes the whole image (holographic principle), with per-patch FFT magnitude spectra and an 'overzoom' mode that estimates detail beyond native resolution via sinc / sine-wave patches.",
+    "key_claims": [
+      "Every one of the 9 cells encodes the entire image, not just its local patch (the 'holographic principle').",
+      "Each patch has a computed 2D DFT/FFT magnitude spectrum (DC-centered, log-scaled) that is visualized.",
+      "Levels run 0-24 per cell; a cell's effective level is a Gaussian-weighted (sigma 0.55) blend of its 3x3 neighbors.",
+      "'Overzoom' past native level L12 reconstructs by blending the pixelated base with sinc interpolation plus added sine-wave patches ('~SINE' mode) to estimate detail.",
+      "The inverse FFT returns to the spatial domain to reconstruct the smiley."
+    ],
+    "methods_math": ["2D DFT / FFT magnitude spectrum", "sinc interpolation", "wave interference / constructive overlay", "Gaussian-weighted neighborhood averaging"],
+    "visualizations": ["canvas 3x3 FFT patch grid (pixelated smiley patches, level badges, left/right-click to change resolution)", "canvas 3x3 FFT magnitude-spectrum grid per patch (log-scaled, DC crosshair)", "canvas reconstructed smiley with grid overlay, sine-wave 'overzoom' ripples, and a stats row (avg level, active cells, overzoomed count)"],
+    "internal_tensions": [
+      "The 'holographic principle' is a loose analogy (each cell samples the whole function), not true optical/quantum holography.",
+      "'Overzoom' is heuristic sine-patch estimation, not genuine information recovery — it fabricates detail."
+    ],
+    "related_files": ["signal_analysis", "signal_analysis2", "decode_holo", "hologram"]
+  },
+  {
+    "path": "phasetransition.html",
+    "slug": "phasetransition",
+    "title": "Phase Transitions in Neural Network Training",
+    "lang": "en",
+    "size_kb": 24.3,
+    "category": "ki",
+    "category_reason": "Argues that neural-network training exhibits abrupt capability-emerging phase transitions (a claim about ML training dynamics).",
+    "theme": "phase-transitions-in-training",
+    "themes": ["grokking-generalization", "dynamical-systems", "interpretability"],
+    "thesis": "Neural networks don't learn gradually — they undergo abrupt phase transitions in which new capabilities emerge suddenly, visualized as point clouds collapsing onto distinct manifolds (one per ability) as training progresses.",
+    "key_claims": [
+      "New capabilities emerge in discrete, abrupt phase transitions, not gradually.",
+      "Each learned ability is modeled as a distinct manifold: Pattern Matching (ring, ~epoch 80), Induction Heads (torus, 280), Syntax Tree (trefoil knot, 520), Semantic Space (sphere, 800), Reasoning (Möbius, 1100).",
+      "Points begin scattered and 'cascade'/collapse onto the target manifold once the network discovers that structure.",
+      "A total-loss curve with dashed markers at each phase-transition epoch, plus per-ability loss lines, tracks the learning.",
+      "Points scatter, wander (FBM/value noise), then settle into exact manifold slots."
+    ],
+    "methods_math": ["parametric manifolds (ring, torus, trefoil knot, sphere, Möbius strip)", "phase transitions / order parameter", "brute-force closest-point-on-manifold", "FBM / value noise for stochastic wandering", "3D perspective projection + depth sorting"],
+    "visualizations": ["canvas 3D auto-rotating point cloud collapsing onto five parametric manifolds (state machine dormant->emerging->cascading->complete), per-ability glowing badges and per-epoch status", "canvas 2D loss curve (total gradient fill + per-ability lines) with dashed phase-transition markers", "controls: start/pause/reset and a 1-8x speed slider"],
+    "internal_tensions": [
+      "Highly speculative: 'phase transitions / discrete capability emergence in NN training' is an interpretive claim, not measured from a real model.",
+      "Manifold shapes (trefoil=Syntax, Möbius=Reasoning) are aesthetic assignments, not derived from any trained network."
+    ],
+    "related_files": ["grokking", "grokking2", "transformer_dynamics", "fourier_addition"]
+  },
+  {
+    "path": "simplicial_complex_attention6.html",
+    "slug": "simplicial_complex_attention6",
+    "title": "Q·K → Simplex, V → Meaning Flow — How Attention Builds Simplicial Complexes",
+    "lang": "en",
+    "size_kb": 24.3,
+    "category": "ki",
+    "category_reason": "Applies simplicial-complex / topological-data-analysis ideas to transformer self-attention (edges/triangles from attention, Betti numbers).",
+    "theme": "topology-of-nns",
+    "themes": ["transformer-attention", "topological-data-analysis", "geometry-of-embeddings"],
+    "thesis": "A Plotly interactive showing how attention builds a simplicial complex: Q·K attention scores above a threshold create 1-simplices (edges) and mutually attending triples create 2-simplices (triangles), through which V vectors carry 'meaning'; Betti numbers are reported.",
+    "key_claims": [
+      "Words are 0-simplices: embeddings in a 3D semantic space whose axes are Male/Female, Animal/Divine, Weak/Strong (from a fixed toy lexicon).",
+      "An edge {i,j} exists iff min(alpha_ij, alpha_ji) > epsilon; a triangle exists iff all three mutual attention weights exceed epsilon.",
+      "Q = X·W_Q ('what am I looking for'), K = X·W_K ('what do I offer'), V = X·W_V (content that flows); scores = Q·K^T/sqrt(d), softmax -> attention; output = weighted sum of V.",
+      "Betti numbers are computed via union-find: beta_0 = connected components, beta_1 = loops (edges - (n - components) - triangles).",
+      "W_Q, W_K, W_V are user-editable 3x3 matrices; threshold epsilon and softmax sharpness are sliders."
+    ],
+    "methods_math": ["transformer self-attention (Q,K,V, softmax, sqrt(d) scaling)", "simplicial complexes (1- and 2-simplices)", "thresholded attention -> simplicial skeleton", "Betti numbers beta_0, beta_1 via union-find / loop counting", "hash-based fallback embedding for out-of-lexicon words"],
+    "visualizations": ["Plotly 3D scatter/mesh: embedding points, Q (diamond) and K (square) vectors, edges (lines), triangles (mesh3d), dotted Q->K lines, V-output (cross) markers; epsilon-threshold and sharpness sliders; editable W_Q/W_K/W_V matrix inputs; sentence text input; info panel listing vertices/edges/triangles + Betti numbers"],
+    "internal_tensions": [
+      "The semantic 3D space is a hand-authored toy lexicon (gender/being/power), not a real LLM embedding.",
+      "The beta_1 formula is a rough approximation (assumes triangles fill loops), not a true homology computation.",
+      "'V flows meaning along simplices' is a narrative metaphor, not the actual linear weighted-sum computation."
+    ],
+    "related_files": ["simplicial_complex_attention", "llm_topology", "attn_as_optimal_transport"]
+  },
+  {
+    "path": "whitehead.html",
+    "slug": "whitehead",
+    "title": "Whitehead's Prozessphilosophie – Interaktiv",
+    "lang": "de",
+    "size_kb": 24.0,
+    "category": "nicht-ki",
+    "category_reason": "An interactive canvas embodying Whitehead's process philosophy (actual occasions, prehension, concrescence); no machine-learning subject.",
+    "theme": "process-philosophy",
+    "themes": ["philosophy-of-mind", "philosophy", "metaphysics"],
+    "thesis": "An interactive canvas embodiment of Whitehead's process philosophy: each glowing particle is an 'Actual Occasion' — born, prehends its surroundings, concresces toward a subjective aim, satisfies, and perishes, leaving 'objective immortality' as data for new occasions.",
+    "key_claims": [
+      "Reality is made of Actual Occasions (drops of experience), not enduring substances.",
+      "Each occasion has a life cycle: birth -> prehension (feeling) -> concrescence (becoming) -> satisfaction -> perishing.",
+      "Prehension = an occasion 'feels' others (range and strength sliders draw connecting lines).",
+      "Subjective Aim = an inner goal (high -> ordered motion, low -> chaotic drift); Eternal Objects = pure possibilities (colors/forms); Creativity = the drive to produce new occasions; God = an ordering principle (order vs chaos).",
+      "Perished occasions live on as data ('objective immortality') that can seed influenced child occasions."
+    ],
+    "methods_math": ["qualitative particle dynamical system (aim-attractor force, neighbor prehension, stochastic creativity noise, damping)", "phase-based lifecycle state machine", "presets as parameter vectors"],
+    "visualizations": ["canvas particle system: Actual Occasions with glow, trails, phase rings, prehension lines to neighbors, ghost 'objective immortality' traces, mouse hover tooltip, click-to-spawn creativity burst, presets (chaos/harmony/creative/contemplative) that animate the sliders", "seven sliders: Creativity, Prehension range, Prehension strength, Aim, Eternal Objects, Concrescence, God/order"],
+    "internal_tensions": [
+      "An aesthetic simulation — the sliders are pedagogical metaphors, not a rigorous model of process philosophy.",
+      "'God as ordering principle' reduces Whitehead's dipolar God to a simple center-pulling harmonic attractor."
+    ],
+    "related_files": ["whitehead", "consciousness_overview", "bewusstsein", "lawsofform"]
+  },
+  {
+    "path": "buecher/fritz_zorn.html",
+    "slug": "fritz_zorn",
+    "title": "Mars im Exil – Interaktiv erleben",
+    "lang": "de",
+    "size_kb": 23.7,
+    "category": "nicht-ki",
+    "category_reason": "An interactive reading of Fritz Zorn's memoir 'Mars im Exil' (family neurosis, conformity); literature/psychology, no ML.",
+    "theme": "literature",
+    "themes": ["psychology", "family-neurosis", "memory"],
+    "thesis": "An interactive reading of Fritz Zorn's memoir 'Mars im Exil': growing up in an enforced (false) family harmony, and how the avoidance of conflict and feeling produces a person unable to live — with language itself ('schwierig', 'unvergleichbar', 'oder') as a weapon against thinking.",
+    "key_claims": [
+      "'Nicht in einer unglücklichen Welt bin ich aufgewachsen, sondern in einer verlogenen' — the problem was lies, not suffering.",
+      "Enforced harmony is a cage: no one may hold an own opinion; the family could not argue 'like someone who doesn't know how to play trumpet.'",
+      "Being spared problems in childhood meant never learning to face them — what was spared was not suffering but the problems and the skill to deal with them.",
+      "Three language-avoidance strategies: 'schwierig' (topic becomes taboo), 'unvergleichbar' (no valuation possible), 'oder' (dissolves every statement until language collapses into meaningless particles).",
+      "The narrator adopted taste blindly (bought 'correct' Mozart) and mistook blind obedience for superiority over his brother's spontaneous, truer jazz choice.",
+      "Cancer is framed as 'das bei weitem Gescheiteste, was ich je in meinem Leben getan habe' — the outbreak of the lifelong-suppressed; Zorn died 1976 at 32, the book posthumous (1977)."
+    ],
+    "methods_math": [],
+    "visualizations": ["DOM interactive 'cages' (click to break the harmony and reveal the hidden truth)", "Ja-Sager simulator (choose ja/nein/schwierig for feedback) and a 'Schwierig' meter (block 6 topics)", "spinning vinyl records (Mozart 'gut' vs the brother's jazz 'kitschig' — whose choice was truer)", "'Oder' flip (reality progressively dissolves as 'oder' is appended)", "clickable insight cards and scroll nav-dots"],
+    "internal_tensions": [
+      "Interpretive/literary — reads the memoir as a psychological critique of conformist upbringing.",
+      "The 'cancer as the cleverest thing' framing is the narrator's own, presented without any clinical claim."
+    ],
+    "related_files": ["daniel_paul_schreber", "kastrup_jung", "antioed", "hermann_schmitz"]
+  },
+  {
+    "path": "phasenuebergaenge.html",
+    "slug": "phasenuebergaenge",
+    "title": "Phasenübergänge",
+    "lang": "de",
+    "size_kb": 23.7,
+    "category": "nicht-ki",
+    "category_reason": "A slide deck on physical phase transitions of water (melting/boiling, latent heat, evaporative cooling); physics, no ML.",
+    "theme": "thermodynamics",
+    "themes": ["physics", "statistical-mechanics", "phase-transitions"],
+    "thesis": "A canvas slide deck on physical phase transitions of water — 'same thing, three faces'; only energy is added, temperature plateaus while melting/boiling (latent heat breaks bonds instead of heating), and evaporation cools because the fastest molecules escape.",
+    "key_claims": [
+      "The same substance has three phases; nothing is added or removed except energy.",
+      "During a phase change the temperature does NOT rise — the added energy tears bonds (latent heat) rather than heating.",
+      "Evaporative cooling: the fastest (hottest) molecules escape the surface, so the remainder's average energy/temperature drops (why sweating works).",
+      "A phase transition = the moment when cohesion (Zusammenhalt) loses to motion (Bewegung).",
+      "Particle model: solid (lattice spring + vibration) -> liquid (gravity, drift, surface) -> gas (random high-speed, rising)."
+    ],
+    "methods_math": ["particle / SPH-like simulation (lattice springs, damping, pairwise repulsion, wall collisions)", "latent-heat heating curve with plateaus (piecewise energy->temperature map)", "evaporation / energy-exchange random walk (only the fastest, E>0.88, escape)"],
+    "visualizations": ["canvas 6-slide deck (arrows/keyboard/touch-swipe nav) with a title orb breathing through all phases", "three mini particle sims (solid/liquid/gas)", "main simulation with a temperature slider (-40..140 C), phase word, and glowing inter-particle bonds", "heating curve with glowing plateaus and a moving marker", "evaporation sim (surface line, escaping fast drops, average-energy bar)"],
+    "internal_tensions": [
+      "Didactic simulation — bond-breaking and 'cohesion vs motion' are qualitative, not a real thermodynamic model.",
+      "The heating-curve plateaus are hand-placed segments, not computed from enthalpy."
+    ],
+    "related_files": ["phasetransition", "chaos", "relativity"]
+  },
+  {
+    "path": "goedel2.html",
+    "slug": "goedel2",
+    "title": "Gödel's Incompleteness Theorems — Interactive Explainer",
+    "lang": "en",
+    "size_kb": 23.7,
+    "category": "nicht-ki",
+    "category_reason": "A pure math-logic explainer of Gödel's incompleteness theorems; AI is only mentioned in passing as a ripple effect.",
+    "theme": "mathematical-foundations",
+    "themes": ["logic", "incompleteness", "computability"],
+    "thesis": "An interactive tabbed explainer of Gödel's 1931 incompleteness theorems: Gödel numbering lets mathematics talk about itself, and a self-referential formula G ('G is not provable') is true yet unprovable — so no sufficiently strong, consistent, recursively-axiomatized system is complete, nor can it prove its own consistency.",
+    "key_claims": [
+      "Gödel numbering encodes symbols/formulas/proofs as natural numbers via prime factorization, making 'provability' an arithmetic (recursive) property.",
+      "The formula R(q);q asserts its own unprovability — a liar-paradox made rigorous, true but unprovable inside the system.",
+      "First Incompleteness (Satz VI): every omega-consistent recursive class of formulas has undecidable formulas.",
+      "Second Incompleteness (Satz XI): a consistent system cannot prove its own consistency.",
+      "Theorem VII: every recursive relation is arithmetical; Theorem X: the first-order Entscheidungsproblem is undecidable.",
+      "This killed Hilbert's program and influenced Turing (halting), Church, Cohen (CH independent of ZFC); Penrose's 'mind transcends algorithms' is flagged as controversial."
+    ],
+    "methods_math": ["Gödel numbering / prime-factorization coding", "Peano arithmetic and recursive relations", "self-reference / diagonalization", "1st and 2nd incompleteness theorems", "Entscheidungsproblem / undecidability", "omega-consistency"],
+    "visualizations": ["tabbed DOM interface (6 tabs)", "interactive Gödel-number calculator (BigInt prime powers) + symbol grid", "self-reference 'Reason About It' cycler and a depth-of-understanding slider (levels 0-4)", "step-by-step proof reveal (Next/All/Reset, 9 steps)", "system evaluator (consistent / powerful-enough / recursive checkboxes -> 'Gödel strikes')"],
+    "internal_tensions": [
+      "Uses the original (stronger) omega-consistency statement of the 1st theorem; modern versions use mere consistency (Rosser).",
+      "The Penrose/mind claims are presented as a controversial ripple, not endorsed."
+    ],
+    "related_files": ["goedel", "modelltheorie", "turing", "formal_proof"]
+  },
+  {
+    "path": "posembed4.html",
+    "slug": "posembed4",
+    "title": "Positional Encoding — Die Unendlichkeitsmaschine",
+    "lang": "de",
+    "size_kb": 23.3,
+    "category": "ki",
+    "category_reason": "Explains the transformer's sinusoidal positional encoding (a core component of the attention/transformer architecture).",
+    "theme": "positional-encoding",
+    "themes": ["transformer-attention", "geometry-of-embeddings"],
+    "thesis": "Positional encoding explained as an 'Unendlichkeitsmaschine' (infinity-machine) gear cascade: 7 frequency-dimensions each rotating exponentially slower than the last, together producing a unique interference pattern — the fingerprint of each position.",
+    "key_claims": [
+      "Each gear = one frequency dimension of the sinusoidal positional encoding; the frequencies form a geometric progression (fast to slow).",
+      "The fastest gear distinguishes adjacent positions; the slowest needs ~10,000 positions for a full rotation (distinguishing text start from middle).",
+      "Each position's encoding is a unique interference pattern; neighboring positions give similar patterns (similar embeddings), far ones very different.",
+      "The sin/cos trick: cos(a-b)=cos a cos b + sin a sin b -> the similarity of two positions depends only on their distance, not absolute position (so the model can learn '3 tokens back').",
+      "Formula: PE(pos,2i)=sin(pos/10000^(2i/d)), PE(pos,2i+1)=cos(pos/10000^(2i/d))."
+    ],
+    "methods_math": ["sinusoidal positional encoding", "geometric frequency progression", "wave interference / constructive overlay", "trig identity cos(a-b) (relative-position invariance)"],
+    "visualizations": ["canvas gear cascade (7 rotating gears with frequency/lambda/theta/sin-cos labels and ratio labels on dashed chains) plus a warm interference field (pixel ImageData) and a 'WELLENKOLLAPS' constructive-maximum crosshair", "HUD panels: token-position box, per-dimension encoding-vector cells, relative-speed bar, and the PE formula", "controls: position slider 0-199, arrow keys, mouse-wheel fine control, spacebar auto-play"],
+    "internal_tensions": [
+      "The gears are independent (not mechanically meshing in this version) — the 'machine' is a visual metaphor, not a real gear train.",
+      "The interference field is an aesthetic rendering of the encoding, not a computation the transformer actually performs."
+    ],
+    "related_files": ["positional", "qkv", "attention_is_all_you_need", "posembed5"]
+  },
+  {
+    "path": "ÉtaleRaum.html",
+    "slug": "ÉtaleRaum",
+    "title": "Étale Raum & Étale Kohomologie — visuell",
+    "lang": "de",
+    "size_kb": 22.7,
+    "category": "nicht-ki",
+    "category_reason": "Pure algebraic geometry / number theory (étale cohomology, Weil conjectures, ℓ-adic cohomology); no AI application.",
+    "theme": "sheaves",
+    "themes": ["algebraic-geometry", "number-theory", "cohomology", "fiber-bundles"],
+    "thesis": "A visual tour of étale space and étale cohomology: the étale space of a sheaf (stalks over the base), étale morphisms as algebraic (unbranched) coverings, the étale site (a Grothendieck topology), Čech cohomology (gluing on overlaps), and the payoff — ℓ-adic cohomology and Frobenius eigenvalues behind the Weil conjectures / Deligne's Riemann hypothesis over finite fields.",
+    "key_claims": [
+      "The étale space Ét(F) is the disjoint union of stalks F_x; a section is a continuous section of the projection pi, which is a local homeomorphism (hence 'étale').",
+      "An étale morphism = flat + unbranched = a local-homeomorphism analogue that works in positive characteristic (e.g. z -> z^n on C*).",
+      "The étale site replaces open sets by étale morphisms with surjective étale families as covers — a Grothendieck topology that needs no points.",
+      "Čech cohomology measures how local sections fail to glue to global ones; the cocycle condition dc=0 (e.g. c_23 - c_13 + c_12 = 0 mod 4).",
+      "Étale cohomology gives finite-dimensional Q_l spaces with a Frobenius action; #X(F_{q^n}) = sum (-1)^i tr(Frob^n | H^i_et); Deligne showed |eigenvalue| = q^{i/2} (Riemann over finite fields).",
+      "Comparison theorem: for smooth X/C, H^i_et(X, Z/n) is isomorphic to the singular cohomology H^i(X(C), Z/n)."
+    ],
+    "methods_math": ["sheaves / stalks", "étale morphisms (flat + unramified, Omega = 0)", "Grothendieck topologies / sites", "Čech cohomology (Cech complex, cocycle condition)", "ℓ-adic étale cohomology", "Frobenius action / Weil conjectures / Lefschetz trace formula", "weight filtration |eigenvalue| = sqrt(q)"],
+    "visualizations": ["canvas étale space (base line X, vertical stalks, a section running on one sheet, sheet-count slider + 'wiggle section')", "canvas covering z -> z^n (base circle, n preimages, monodromy rotation toggle, degree slider)", "canvas étale site (add surjective étale 'covers' drawn as multi-sheet arcs over X)", "canvas Čech: three overlapping open sets U1,U2,U3 on S^1, click to cycle 1-cochain values in Z/4, toggle the cocycle check (check/cross + status)", "canvas Frobenius eigenvalues (elliptic-curve-style spectrum, q=5; weight circles 1, sqrt(q), q; Frob^n slider -> Lefschetz sum)", "MathJax-rendered formulas throughout"],
+    "internal_tensions": [
+      "Visual/metaphorical — 'étale site covers' drawn as arcs is an analogy; the real object is a category with a coverage notion.",
+      "The Frobenius widget is one specific toy (q=5, a single elliptic-curve-like spectrum), not a general computation."
+    ],
+    "related_files": ["sheaves", "garben", "grothendiek_raum", "garben_zug", "inftytopoi"]
+  },
+  {
+    "path": "buecher/hermann_schmitz.html",
+    "slug": "hermann_schmitz",
+    "title": "Hermann Schmitz – Philosophie des Leibes | Interaktiv",
+    "lang": "de",
+    "size_kb": 22.3,
+    "category": "nicht-ki",
+    "category_reason": "An interactive overview of Hermann Schmitz's philosophy of the body (Leib); philosophy/phenomenology, no ML.",
+    "theme": "philosophy-of-mind",
+    "themes": ["phenomenology", "body-philosophy", "ethics"],
+    "thesis": "An interactive overview of Hermann Schmitz's 'Philosophie des Leibes': Leib vs Körper (the felt, surfaceless body), the vital dynamic Enge <-> Weite, feelings as spatially poured atmospheres, bodily communication (Einleibung), personhood requiring the body, the ethics of the atomic bomb, and animal consciousness via 'Du-Evidenz'.",
+    "key_claims": [
+      "Leib (the felt body) != Körper (the measurable body); the body has 'islands' (Leibesinseln) and a surfaceless space.",
+      "All bodily life oscillates between Engung (constriction: fear, pain) and Weitung (expansion: relief, lust); their interplay is the vital drive — without it, no consciousness.",
+      "Feelings are not private soul-states but spatially poured atmospheres (like weather); feeling = being bodily seized by one.",
+      "Einleibung: bodies fuse into a common vital drive — antagonistic (dominance fluctuates) or solidaristic (singing, marching); even with machines.",
+      "Personhood = the capacity for self-attribution, possible only through being affektively affected (bodily); the person lives between personal emancipation (reason) and personal regression (rapture).",
+      "The atomic bomb destroyed war's 'serious school' for integrating emancipation and regression, stranding humanity at too high an emancipation level, leaving unmet regression needs (traffic, sport, festivals).",
+      "Animals are conscious: 'Du-Evidenz' arises through reciprocal Einleibung, not language or analogy."
+    ],
+    "methods_math": [],
+    "visualizations": ["Enge<->Weite slider (gradient background + label changes) and a breathing circle (click = Schreck/pause)", "feelings buttons (Freude/Trauer/Zorn/Scham/Angst -> atmospheric descriptions)", "Einleibung canvas (mouse-driven 'you' circle, a reactive 'other' circle and connecting line, antagonistic repulsion)", "clickable person-layers (emancipation / fassung / antrieb / regression)", "atomic-bomb tabs (Kernthese / Hitler & Bombe / Folgen) and scroll nav-dots"],
+    "internal_tensions": [
+      "The 'atomic bomb' thesis is Schmitz's idiosyncratic, controversial claim (war as a 'serious school' of integration), presented as his position, not consensus.",
+      "'Du-Evidenz with animals' is a phenomenological rebuttal of Tinbergen's behaviorist stance, not an empirical demonstration."
+    ],
+    "related_files": ["fritz_zorn", "kastrup_jung", "daniel_paul_schreber", "bewusstsein"]
+  },
+  {
+    "path": "token_manifold_verletzt_very_simple.html",
+    "slug": "token_manifold_verletzt_very_simple",
+    "title": "Bruchkanten im Gedankenraum — ganz einfach erklärt",
+    "lang": "de",
+    "size_kb": 22.3,
+    "category": "ki",
+    "category_reason": "Explains a 2025 result on the geometry of LLM token-embedding spaces (manifold hypothesis violation) — a question about ML models.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["manifold-hypothesis", "interpretability", "fiber-bundles"],
+    "thesis": "A no-math, plain-language version of Robinson, Dey & Chiang (2025, NeurIPS): token-embedding spaces of real LLMs are NOT smooth manifolds — they have 'Bruchkanten' (singularities / break-edges), which is why near-identical prompts can yield wildly different answers.",
+    "key_claims": [
+      "Most AI work silently assumes model 'thoughts' lie on a smooth curved surface (manifold); this paper tests that and finds it false for real LLMs.",
+      "The test: zoom in at a point — if the neighborhood looks like a flat disc it is smooth, otherwise it is a singularity (Bruchkante).",
+      "Dimension trick: count neighbors in a ball — volume ~ K*r^d, so the log-log slope = dimension; a suddenly RISING slope signals a break-edge.",
+      "On 4 real models (~12 h compute each): 4/4 reject the manifold hypothesis; 3/4 also reject the milder fiber-bundle hypothesis; min p-value 3e-8 (GPT2); GPT2's dimension ranges 20-531 (not constant).",
+      "GPT2's dimension distribution has three peaks (~20 for numbers/months/days, ~389 single words, ~531 word-fragments); some words have dimension 0 (isolated points).",
+      "Prompts aren't portable: Llemma7B vs Mistral7B (same 32,016-token vocab) have very different geometry (median dim 4096 vs 48); longer context does not 'heal' singularities; singularities can reach the output.",
+      "Honesty corner: non-rejection is not evidence of smoothness; the test detects but does not classify the kind of break-edge; validity is limited to radii below the hard-to-estimate 'reach'; boundary points are missed (sensitivity vs specificity)."
+    ],
+    "methods_math": ["manifold / fiber-bundle hypothesis testing", "local dimension estimation via volume scaling V(r)~K*r^d (log-log slope)", "singularity (cusp) detection via zoomed-neighborhood flatness", "statistical hypothesis testing (p-values)", "distance-matrix geometry (median dimension)"],
+    "visualizations": ["canvas demo 1: two prompt answer-clouds — a 'Bruchkante' slider splits cloud B into clusters (prompt fragility)", "canvas demo 2: zoom-test on a circle (smooth) vs a cusp (singularity) with position + zoom sliders and a 'flache Scheibe' vs 'Singularität' verdict", "canvas demo 3: build a log-log volume curve with two slopes (left/right of a kink) — rising slope -> 'Bruchkante!' verdict", "big-number stat cards (4/4, 3/4, 3e-8, 20-531)"],
+    "internal_tensions": [
+      "An explicit 'honesty corner' — a non-rejection is not evidence of smoothness, and the test neither classifies singularities nor is valid above the 'reach'.",
+      "The demo clouds/shapes are didactic rebuilds, not real model weights; all figures are quoted from the paper's tables/figures."
+    ],
+    "related_files": ["token_manifold_verletzt", "token_manifold_verletzt_simple", "latent_semantic_manifolds_in_llm"]
+  },
+  {
+    "path": "posembed5.html",
+    "slug": "posembed5",
+    "title": "Positional Encoding — Die Unendlichkeitsmaschine",
+    "lang": "de",
+    "size_kb": 22.2,
+    "category": "ki",
+    "category_reason": "A refined interactive of the transformer's sinusoidal positional encoding, using a real meshing gear train as the metaphor.",
+    "theme": "positional-encoding",
+    "themes": ["transformer-attention", "geometry-of-embeddings"],
+    "thesis": "A refined 'Unendlichkeitsmaschine' of positional encoding where the gears are a real meshing gear train (constant module, correct tooth meshing, alternating rotation, gear ratios = tooth-count ratios), each gear being one frequency dimension of the sinusoidal PE.",
+    "key_claims": [
+      "Gears mesh like a real gearbox: constant module m, radius = m*teeth/2, center distance = r1+r2, tooth-meets-gap phase offset (pi/teeth), and gear B rotates at -gear A * (teethA/teethB).",
+      "Each gear = one PE frequency dimension; the frequencies form a geometric progression (fast distinguishes neighbors, slow needs ~10,000 positions per rotation).",
+      "Each position yields a unique constructive-interference pattern (fingerprint); the PE is the same sin/cos formula PE(pos,2i)=sin(pos/10000^(2i/d)).",
+      "cos(a-b)=cos a cos b + sin a sin b => position similarity depends only on distance, not absolute position."
+    ],
+    "methods_math": ["sinusoidal positional encoding", "geometric frequency progression", "involute-style gear meshing (module, pitch radius, gear ratio = tooth-count ratio, phase offset)", "wave interference / constructive overlay", "trig identity cos(a-b)"],
+    "visualizations": ["canvas real meshing gear train (7 gears, involute-ish trapezoidal teeth, mesh-contact spark glows + tooth-ratio labels, per-gear theta/rotations/sin-cos, SCHNELLSTES/LANGSAMSTES labels) plus a subtle warm interference field and a 'WELLENKOLLAPS' constructive-maximum crosshair", "HUD panels: token-position box, per-dimension encoding-vector cells, and the PE formula", "controls: position slider 0-199, arrow keys, mouse-wheel, spacebar auto-play"],
+    "internal_tensions": [
+      "The gear train is a visual metaphor — the PE frequencies form a geometric progression, not literal mechanical gear ratios (tooth counts are chosen for on-screen fit).",
+      "The interference field is an aesthetic rendering, not a transformer computation."
+    ],
+    "related_files": ["positional", "qkv", "attention_is_all_you_need", "posembed4"]
+  }
+]

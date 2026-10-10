@@ -1,0 +1,357 @@
+[
+  {
+    "path": "sheaf.html",
+    "slug": "sheaf",
+    "title": "Topoi & Sheaves — Where Geometry Meets Logic",
+    "lang": "en",
+    "size_kb": 36.4,
+    "category": "nicht-ki",
+    "category_reason": "A seven-part interactive journey through Grothendieck's sheaf theory and topos theory: presheaves, gluing, Grothendieck topologies, sites, topoi, and internal intuitionistic logic. Pure algebraic geometry / category theory / mathematical logic with no AI or ML content.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "topoi", "category-theory", "topology", "logic", "grothendieck-topology"],
+    "thesis": "A seven-section interactive English-language journey through Grothendieck's sheaf theory and topos theory, from presheaves on open sets through the gluing axiom, Grothendieck topologies on arbitrary categories, sites, the topos as a universe of sets twisted by geometry, to internal intuitionistic logic where truth values become open sets and the law of excluded middle can fail.",
+    "key_claims": [
+      "A presheaf is a contravariant functor F: O(X)^op → Set assigning data to open sets with restriction maps; the 'contravariant' flip means inclusions U→V induce restrictions F(V)→F(U).",
+      "A sheaf is a presheaf satisfying two axioms for every covering: locality (sections agreeing on a cover are equal) and gluing (compatible local sections produce a unique global section).",
+      "Grothendieck topologies generalize the notion of covering from topological spaces to arbitrary categories: a rule declaring which families of arrows count as 'coverings' determines what 'local' means.",
+      "A Grothendieck topos is a category equivalent to Sh(C,J) for some site (C,J); it has products, coproducts, exponentials, a subobject classifier Ω, and internal logic.",
+      "In the topos Sh(X) of sheaves on a space X, truth values are open sets of X: a proposition can be 'true on U' and 'false on V', making logic local and intuitionistic (excluded middle can fail).",
+      "Sheafification is the left adjoint to the inclusion Sh(C,J) ↪ [C^op, Set], making every Grothendieck topos a left-exact reflective subcategory of a presheaf topos."
+    ],
+    "methods_math": ["contravariant functors", "sheaf axioms (locality, gluing)", "Grothendieck topologies", "sites", "adjunctions", "subobject classifier", "intuitionistic logic"],
+    "visualizations": ["interactive presheaf on nested open sets with clickable regions and restriction arrows", "gluing section checker with two overlapping open sets and value sliders", "sheaf vs presheaf on a circle cover with compatible/incompatible toggle", "Grothendieck topology selector (trivial/dense/atomic) showing how covering rules change the notion of sheaf", "sheafification animation (presheaf category → sheaf subcategory)", "topos structure explorer with toggleable features (Ω, exponentials, limits)", "intuitionistic truth slider showing P true on U, ¬P on complement, P∨¬P coverage"],
+    "internal_tensions": [
+      "The page mentions étale, fppf, and Zariski topologies as examples of Grothendieck topologies on algebraic objects but never develops them, creating a gap between the elementary sheaf intuition built in sections 1–3 and the advanced algebraic-geometric applications referenced in sections 4–5."
+    ],
+    "related_files": ["kohaerente_modelle", "hott", "pullback2"]
+  },
+  {
+    "path": "foam_of_meaning.html",
+    "slug": "foam_of_meaning",
+    "title": "The Foam of Meaning",
+    "lang": "en",
+    "size_kb": 36.4,
+    "category": "nicht-ki",
+    "category_reason": "A 13-slide kinetic canvas presentation on the geometry of meaning in language: clusters, filaments, voids, phase transitions, and scale invariance in the space of possible utterances. Uses cosmological and category-theoretic metaphors but makes no claims about AI, ML, or neural networks.",
+    "theme": "philosophy-of-language",
+    "themes": ["meaning-space", "topology-of-language", "compositionality", "metaphor", "phase-transitions", "scale-invariance", "fiber-bundles"],
+    "thesis": "A 13-slide kinetic canvas presentation arguing that meaning has a geometric shape — a landscape of clusters (convention/idiom), filaments (productive grammar), and voids (ungrammatical/nonsense) in the space of all possible utterances — drawing explicit analogies to the cosmic web, category-theoretic fiber bundles, and phase transitions, and concluding that 'understanding is the knowledge of that shape.'",
+    "key_claims": [
+      "The space of all possible utterances (≈10^94 for a 50K-token vocabulary and length 20) is overwhelmingly void; meaningful language occupies a vanishingly thin sliver.",
+      "The meaningful sliver has structure: clusters (frequent phrasing, idiom), filaments (productive grammar connecting clusters), and voids (ungrammatical or never-uttered sequences).",
+      "The geometry of the language space is isomorphic to the cosmic web (galaxies/filaments/voids) — different physics, identical geometry.",
+      "Four 'coherence fields' (syntax C, semantics S, grounding G, epistemic E) determine whether an utterance is meaningful; void is a direction (away from all four axes), not a place.",
+      "Meaning transitions are phase transitions (like water to ice): the boundary ∂M carries more information than either interior.",
+      "Language is scale-invariant: clusters, filaments, and voids appear at every level from discourse to token; there is no preferred scale.",
+      "Metaphor is a long-range filament connecting distant regions of meaning space, not a short step within a cluster.",
+      "Paraphrase = moving inside a fiber of the form→meaning map π; synonymy is a property of fibers, not of individual words.",
+      "Compositionality is the commutative diagram π'∘f = g∘π: transforming form then interpreting equals interpreting then transforming meaning."
+    ],
+    "methods_math": ["topological data analysis (Betti numbers β₀, β₁)", "fiber bundles", "commutative diagrams", "phase transitions", "scale invariance / self-similarity", "cosmological web geometry"],
+    "visualizations": ["hero web (clusters/filaments/voids with labeled regions)", "combinatorial explosion counter (10^94 sequences)", "cosmos ≅ language side-by-side comparison", "four-void direction diagram (syntactic/semantic/grounding/epistemic)", "radar coherence chart with four axes and bar indicators", "phase transition plot (meaning snaps, not fades)", "zoom animation showing scale invariance (discourse→token)", "metaphor bridge across void", "fiber bundle (many forms covering one meaning)", "commutative diagram (compositionality)", "collapse test (three panels: point cloud, topological signature, scale invariance degrading together)", "final summary with X→S⊨W diagram"],
+    "internal_tensions": [
+      "The cosmology analogy (Cosmos ≅ Language) is visually compelling but mathematically loose — gravity and grammar are different forces producing similar-looking structures, and the file never addresses whether the analogy is explanatory or merely decorative.",
+      "The 'phase transition' claim for meaning boundaries is asserted with a visual but not modeled: no threshold, no order parameter, no critical exponent is defined."
+    ],
+    "related_files": ["kohaerente_modelle", "hott"]
+  },
+  {
+    "path": "kohaerente_modelle.html",
+    "slug": "kohaerente_modelle",
+    "title": "Garben, ∞-Garben & Erkenntnistheorie — Interaktiv",
+    "lang": "de",
+    "size_kb": 36.3,
+    "category": "ki",
+    "category_reason": "Builds from sheaf theory and HoTT to an explicit AI application: section 7 models language-model training as loss-landscape optimization where the model finds the best 'gluing' of training traces, and defines hallucination as 'a gluing where no gluing should exist' — i.e., the model interpolates in regions with no coherent training data. The HoTT embedding-space example (König − Mann + Frau ≈ Königin) is presented as working because semantic proximity is a path in a meaning space.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "infinitesheaves", "hott", "ai-epistemology", "loss-landscapes", "hallucination", "embedding-spaces"],
+    "thesis": "A seven-section German interactive essay that builds from sheaf theory (presheaves on sin(x), gluing conditions) through ∞-sheaves (gluing up to homotopy) and HoTT (types as spaces, embedding spaces in AI) to an epistemological claim — the world is a sheaf of traces observed through multiple channels — and finally to AI: the loss function is an energy landscape, the model finds the best gluing of training data, and hallucination occurs when it glues where no coherent training sections exist.",
+    "key_claims": [
+      "A presheaf F: Open(X)^op → Set assigns local data with restriction maps; the gluing condition (compatible local sections → unique global section) makes it a sheaf.",
+      "∞-sheaves replace strict equality on overlaps with isomorphisms: sᵢ|ᵢⱼ ≅ sⱼ|ᵢⱼ, with the isomorphisms themselves satisfying higher coherence conditions — 'equality becomes a structure, not a property.'",
+      "In HoTT, every type is a space and identity a = b is a path; embedding spaces in AI work because semantic proximity (König − Mann + Frau ≈ Königin) is a path in the meaning space.",
+      "Epistemology: a world event w produces traces e = f(w) through multiple channels fᵢ (eyes, ears, instruments, testimony); a world model is 'true' when its local sections glue coherently, at least up to homotopy.",
+      "Science is the art of isolating contact points between model and world — experiments with few free variables where gluing can be tested.",
+      "A language model's loss is an energy landscape: θ* = argmin E[L(f_θ(x), y)]; the model lands in a valley representing the best gluing of all training traces.",
+      "Hallucination is a gluing where no gluing should exist: when the model encounters a context where local training sections do not coherently overlap, it interpolates — producing plausible-sounding but false output.",
+      "Local minima in the loss landscape correspond to consistent but incomplete world models."
+    ],
+    "methods_math": ["presheaf/sheaf axioms", "∞-sheaf (∞-topos) coherence", "homotopy type theory", "identity types as paths", "loss minimization (argmin)", "gradient descent", "embedding spaces"],
+    "visualizations": ["sin(x) window slider (presheaf on a function)", "two-window gluing checker with overlap consistency status", "phase-shift and noise consistency breaker (∞-sheaf transition)", "∞-sheaf transformation α (amplitude/frequency sliders)", "HoTT point/path canvas (click to add points, draw paths)", "multi-observer model consistency (2–8 observers, model error slider)", "loss landscape training (ball rolling, learning rate slider, step/run/reset)"],
+    "internal_tensions": [
+      "The leap from rigorous ∞-topos mathematics to 'AI hallucination as failed gluing' is philosophically suggestive but never formalized: the file does not define what the 'space' of training data is, what the 'sections' are, or what 'gluing' means operationally for a neural network.",
+      "The HoTT embedding-space example (König − Mann + Frau ≈ Königin) conflates linear algebra in a vector space with path structure in a type — the analogy is intuitive but the mathematical content is different."
+    ],
+    "related_files": ["sheaf", "hott", "paper/hott", "foam_of_meaning"]
+  },
+  {
+    "path": "ricci_fluss.html",
+    "slug": "ricci_fluss",
+    "title": "Ricci-Fluss – Visuelle Erklärung",
+    "lang": "de",
+    "size_kb": 36.3,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive visual explanation of the Ricci flow as a geometric evolution equation: what it is, the heat-equation analogy, curve-smoothing demos, curvature visualization, and its role in Perelman's proof of the Poincaré conjecture. Pure differential geometry / geometric analysis with no AI or ML content.",
+    "theme": "differential-geometry",
+    "themes": ["ricci-flow", "poincare-conjecture", "differential-geometry", "hamilton-perelman", "curvature", "geometric-pde"],
+    "thesis": "A German-language interactive visual explanation of the Ricci flow (∂g/∂t = −2Rᵢⱼ): what it is, how it works (heat-equation analogy for curvature), three canvas demos (2D curve smoothing, surface deformation, curvature coloring), the step-by-step algorithm, singularity analysis, and its role in Hamilton's 1982 program and Perelman's 2003 proof of the Poincaré conjecture.",
+    "key_claims": [
+      "The Ricci flow deforms a Riemannian metric proportionally to the Ricci curvature: regions of positive curvature shrink, regions of negative curvature expand, flattening the geometry over time.",
+      "It is analogous to the heat equation but acting on curvature instead of temperature: an unevenly heated metal plate evens out, and the Ricci flow 'evens out' the shape of a space.",
+      "Richard Hamilton introduced the flow in 1982; Grigori Perelman used it (with topological surgery at singularities) to prove the Poincaré conjecture in 2003.",
+      "In 2D, the analogous flow (curve shortening) smooths any closed curve to a circle — the Ricci flow is the higher-dimensional generalization toward the sphere.",
+      "Singularities (where curvature blows up in finite time) are the main obstruction to global convergence; Perelman's key contribution was the surgery procedure that removes them.",
+      "The flow converges (after surgery) to a geometry of constant positive curvature, implying the manifold is a sphere (Poincaré)."
+    ],
+    "methods_math": ["Riemannian geometry", "Ricci tensor", "geometric PDEs", "heat equation analogy", "curve shortening flow", "singularity analysis", "topological surgery"],
+    "visualizations": ["2D curve smoothing animation (bumpy/star shapes → circle) with progress bar", "surface deformation (heightmap smoothing) with randomize button", "curvature coloring (red = positive/shrinking, blue = negative/expanding, green = flat)", "sphere convergence canvas", "step-by-step algorithm list with timeline", "Hamilton/Perelman history timeline"],
+    "internal_tensions": [
+      "The file presents the Ricci flow as converging to constant curvature in the 'ideal case' but the actual theorem requires surgery at singularities; the visual demos only show the smooth convergence case, potentially misleading about the mathematical difficulty of Perelman's proof."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "buecher/daniel_paul_schreber.html",
+    "slug": "daniel_paul_schreber",
+    "title": "Daniel Paul Schreber – Denkwürdigkeiten eines Nervenkranken",
+    "lang": "de",
+    "size_kb": 36.2,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive exploration of Daniel Paul Schreber's 1903 psychiatric memoir and its interpretations by Freud, Lacan, and Foucault. Pure psychiatry / literary history / philosophy of mind with no AI or ML content.",
+    "theme": "psychiatry",
+    "themes": ["schreber", "paranoia", "psychoanalysis", "lacan", "foucault", "philosophy-of-mind", "madness"],
+    "thesis": "A German-language interactive exploration of Daniel Paul Schreber's 1903 memoir 'Denkwürdigkeiten eines Nervenkranken': his life as a senior Saxon judge, his 1884 psychotic breakdown, the elaborate theological delusional system he constructed (God as omnipotent torturer, women as seals of damnation, his own mission to save humanity), and the subsequent interpretations by Freud (structural paranoia), Lacan (foreclosure of the Name-of-the-Father), and Foucault (madness as social production).",
+    "key_claims": [
+      "Daniel Paul Schreber (1842–1937) was a senior judge in the Saxony court who suffered a psychotic break in 1884 after a period of severe overwork and exhaustion.",
+      "He constructed an elaborate delusional theology: God communicated with him directly through 'nerves' and 'rays,' women were 'seals of damnation' placed by God to tempt him, and he was ultimately appointed to save the human race from divine abuse.",
+      "Freud (1911) analyzed the case as structural paranoia rooted in castration anxiety and the turn of passive into active homosexual object choice.",
+      "Lacan used the Schreber case to develop the concept of the 'foreclosure of the Name-of-the-Father' (forclusion du Nom-du-Père): the fundamental signifier is rejected from the symbolic order, producing psychosis rather than neurosis.",
+      "Foucault cited Schreber in 'Madness and Civilization' as an example of how modern society produces madness through exclusion: the 'insane' are defined by their removal from the rational social order.",
+      "The memoir is now considered a landmark of both psychiatric literature and modernist literary theory (its fragmented, self-contradicting narrative anticipates stream-of-consciousness fiction)."
+    ],
+    "methods_math": [],
+    "visualizations": ["tabbed sections (biography, delusional system, Freud, Lacan, Foucault, legacy)", "quote boxes with source attribution", "timeline of Schreber's life and the memoir's reception"],
+    "internal_tensions": [
+      "The file presents three conflicting interpretations (Freud's psychoanalytic, Lacan's structuralist, Foucault's socio-historical) side by side without adjudicating between them — appropriate for a historical overview, but a casual reader may be left unsure which reading is authoritative."
+    ],
+    "related_files": ["heraklit"]
+  },
+  {
+    "path": "buecher/heraklit.html",
+    "slug": "heraklit",
+    "title": "Heraklit Interaktiv – Die Fragmente erleben",
+    "lang": "de",
+    "size_kb": 36.2,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive game/lesson on Heraclitus of Ephesus (~535–475 BC): panta rhei, unity of opposites, eternal fire, logos, and the 'wake up' imperative. Ancient Greek philosophy with no AI or ML content.",
+    "theme": "philosophy",
+    "themes": ["heraclitus", "pre-socratics", "panta-rhei", "logos", "unity-of-opposites", "eternal-fire"],
+    "thesis": "A German-language interactive game/lesson on Heraclitus of Ephesus covering his five core ideas (panta rhei, unity of opposites, eternal fire, logos, wake-up call) with a river-flow animation, an opposites-matching game, a fire-element slider, a logos explanation, everyday-life connections, a scored quiz, and a breathing exercise — gamifying the fragments for a general audience.",
+    "key_claims": [
+      "Panta rhei (everything flows): nothing remains the same; you cannot step into the same river twice, and you are not the same person today as yesterday.",
+      "Unity of opposites: good/evil, day/night, life/death, war/peace are interconnected and define each other; the tension of opposites is the 'harmony of things.'",
+      "The world is an ever-living fire (kosmos as process, not substance): it is kindled and extinguished in measures.",
+      "The Logos is a universal rational principle that permeates everything and governs all things; most people live as if they had their own private understanding, sleepwalking past the shared Logos.",
+      "Heraclitus was called 'the Dark One' (ho skotinos) because his riddles were obscure; he wrote a single book on nature that was too difficult for most readers.",
+      "Only fragments (~130 short passages) of his work survive, quoted by later authors like Diogenes Laertius, Hippolytus, and Plato."
+    ],
+    "methods_math": [],
+    "visualizations": ["fire canvas background (animated particles)", "river flow animation (click to interact)", "opposites-matching grid with arrow animations", "fire element slider (blue→orange gradient)", "logos explanation with interactive cards", "breathing circle (expand/contract)", "scored quiz with flame meter progress", "timeline of Heraclitus's life and fragments"],
+    "internal_tensions": [
+      "The file mixes serious philosophical content with gamification (score points, flame meter, quiz rewards) in a way that may trivialize the fragments' density; the 'everyday life' section connects Heraclitus to modern psychology and mindfulness, but the connections are loose and not philosophically rigorous."
+    ],
+    "related_files": ["daniel_paul_schreber"]
+  },
+  {
+    "path": "mathe_abi.html",
+    "slug": "mathe_abi",
+    "title": "Abi Mathe – Visuell & Interaktiv",
+    "lang": "de",
+    "size_kb": 36.1,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive math reference for the Abitur (university-entrance exam): calculus, linear algebra, 3D geometry, and probability, each with Plotly/Three.js visualizations and Temml-rendered formulas. Pure math education with no AI or ML content.",
+    "theme": "math-education",
+    "themes": ["calculus", "linear-algebra", "probability", "3d-geometry", "abitur", "exam-preparation"],
+    "thesis": "A German-language interactive math reference for the Abitur covering calculus (derivatives, integrals, limits), linear algebra (matrices, determinants, eigenvalues), 3D geometry (vectors, planes, distances), and probability (distributions, Bayes' theorem), each section with Plotly or Three.js visualizations, parameter sliders, and Temml-rendered formulas.",
+    "key_claims": [
+      "Standard Abitur-level mathematics: derivative rules, integration techniques, limit computation, matrix operations, eigenvalue problems, 3D vector/plane geometry, and probability distributions are presented as exam-relevant tools.",
+      "Each topic is paired with an interactive visualization (function plots, 3D scenes, probability curves) and parameter sliders to build geometric intuition.",
+      "The structure follows the typical Abitur exam format: multiple choice, computation, and application problems across the four main topic areas."
+    ],
+    "methods_math": ["differential calculus", "integral calculus", "matrix operations", "eigenvalue problems", "3D vector geometry", "probability distributions", "Bayes' theorem"],
+    "visualizations": ["Plotly function plots with parameter sliders (derivatives, integrals)", "3D geometry scenes (Three.js: vectors, planes, distances)", "probability density curves with adjustable parameters", "matrix transformation demos"],
+    "internal_tensions": [],
+    "related_files": []
+  },
+  {
+    "path": "rome.html",
+    "slug": "rome",
+    "title": "ROME – Fakten in GPT lokalisieren und editieren",
+    "lang": "de",
+    "size_kb": 36.0,
+    "category": "ki",
+    "category_reason": "A German-language interactive walkthrough of the ROME paper (Meng, Bau, Andonian & Belinkov 2022): locating factual associations in GPT via causal tracing (indirect effects on hidden states) and editing them with a single rank-one MLP weight update. Core transformer interpretability and model editing.",
+    "theme": "interpretability",
+    "themes": ["causal-tracing", "model-editing", "transformer-architecture", "mlp", "rank-one-update", "causal-mediation"],
+    "thesis": "A German-language interactive walkthrough of the ROME paper (Meng, Bau, Andonian & Belinkov 2022): how to locate where GPT stores factual associations (via causal tracing — measuring indirect effects on hidden states across the layer/token grid) and how to edit them with a single rank-one weight update to an MLP layer, replacing a fact (e.g., 'Space Needle is in Seattle' → 'Paris') without destroying the rest of the model.",
+    "key_claims": [
+      "A transformer's hidden states h(l,i) form a grid indexed by layer l and token position i; each cell combines an attention contribution (looking at earlier tokens) and an MLP contribution (local computation).",
+      "Causal tracing measures the indirect effect of a hidden state: corrupt the input, then patch only state h(l,i) to its clean value; the recovery of P(target token) measures how much information flows through that state.",
+      "Causal tracing identifies two 'bright zones': the 'early site' (middle layers at the last subject token, primarily in the MLP) and the 'late site' (last layers at the last token).",
+      "Factual knowledge is stored primarily in MLP layers, not attention layers — the MLP acts as a key-value memory.",
+      "ROME (Rank-One Model Editing): a single rank-one update to one MLP weight matrix W₂ can replace a fact while preserving performance on all other facts.",
+      "The edit is computed as a closed-form solution to a constrained optimization: minimize the change to the weight matrix subject to the model producing the new answer for the target fact."
+    ],
+    "methods_math": ["causal mediation analysis (Judea Pearl)", "indirect effects", "rank-one matrix updates", "constrained optimization", "attention mechanism", "MLP feedforward layers"],
+    "visualizations": ["interactive transformer grid (click cells to trace info flow, adjustable prompt and depth)", "three-run causal demo (clean/corrupt/patch tabs with token-level output display)", "causal-tracing heatmap with component isolation (all/MLP/attention/MLP-severed) and depth slider", "MLP storage diagram", "ROME edit animation", "evaluation plots (target fact accuracy vs. side effects)"],
+    "internal_tensions": [
+      "The file presents ROME as a clean 'find and replace' for facts, but the actual paper reports side effects (performance drops on related facts) and notes that the 'early site' is not always the MLP; the simplified narrative may overstate the precision and generality of the method."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "neumuenster.html",
+    "slug": "neumuenster",
+    "title": "Neumünster – Die Stadt im Herzen Schleswig-Holsteins",
+    "lang": "de",
+    "size_kb": 36.0,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive canvas-based city guide to Neumünster, Schleswig-Holstein (~80,000 inhabitants), with six animated scenes (overview, history, textile industry, nature/parks, landmarks, facts). Pure geography/city presentation with no AI or ML content.",
+    "theme": "geography",
+    "themes": ["neumuenster", "schleswig-holstein", "textile-industry", "city-history", "canvas-animation"],
+    "thesis": "A German-language interactive full-screen canvas city guide to Neumünster with six switchable animated scenes (city overview, history, textile industry, nature/parks, landmarks, statistics), a particle-system background, interactive area tooltips, and smooth scene transitions.",
+    "key_claims": [
+      "Neumünster is located in the heart of Schleswig-Holstein with approximately 80,000 inhabitants.",
+      "The city's history is closely tied to the textile industry, which shaped its economy from the 19th century through the mid-20th century.",
+      "The city offers parks, nature areas, and cultural landmarks characteristic of a mid-sized German city."
+    ],
+    "methods_math": [],
+    "visualizations": ["full-screen canvas with animated particle background", "six switchable scenes (city skyline, historical timeline, textile mill, parks, landmarks, statistics)", "interactive area tooltips on hover/click", "scene transition animations", "navigation button overlay"],
+    "internal_tensions": [],
+    "related_files": ["paris"]
+  },
+  {
+    "path": "how_ai_approximates.html",
+    "slug": "how_ai_approximates",
+    "title": "Wie NNs beliebige Muster bauen – Mechanismen-Visualisierung",
+    "lang": "de",
+    "size_kb": 35.6,
+    "category": "ki",
+    "category_reason": "A German-language interactive visualization explaining how neural networks build arbitrary patterns: the universal approximation theorem, local-expert hidden units, gradient descent training, and hierarchical feature learning in deep networks. Core neural-network theory and mechanism explanation.",
+    "theme": "neural-networks",
+    "themes": ["universal-approximation", "hidden-units", "activation-functions", "gradient-descent", "mechanism-interpretability", "hierarchical-learning"],
+    "thesis": "A German-language interactive visualization explaining how neural networks build arbitrary patterns: from the universal approximation theorem (one hidden layer suffices in principle) through the mechanism of how individual hidden units learn to be local experts, to the full training process (gradient descent on a loss landscape) and hierarchical feature learning in deep networks.",
+    "key_claims": [
+      "The universal approximation theorem: a single hidden layer with sufficiently many units and a non-polynomial activation function can approximate any continuous function on a compact set to arbitrary precision.",
+      "In practice, hidden units learn to be 'local experts': each unit fires strongly in a region of input space and weakly elsewhere, and the network output is a weighted sum of these local contributions.",
+      "Training via gradient descent adjusts weights so that each unit's contribution becomes increasingly aligned with the target function; the loss landscape is non-convex but gradient methods work in practice.",
+      "Deeper networks learn hierarchical features: lower layers detect local patterns (edges, parts), and higher layers compose them into global structures (wholes, categories).",
+      "The 'mechanism' of approximation is not a single clever trick but the collective contribution of many simple local experts whose weighted sum produces the global function."
+    ],
+    "methods_math": ["universal approximation theorem", "activation functions (sigmoid, ReLU)", "gradient descent", "loss landscapes", "hierarchical feature learning", "local expert decomposition"],
+    "visualizations": ["function approximation with adjustable number of hidden units", "local expert activation heatmaps (which unit fires where)", "gradient descent ball-on-loss-landscape animation", "layer-by-layer feature hierarchy (edges → parts → wholes)", "side-by-side comparison panels", "target function vs. network output overlay"],
+    "internal_tensions": [
+      "The universal approximation theorem is existence-only: the required width can be enormous and the weights are not constructively found; the file's visual demos show smooth convergence that masks the non-convexity, plateaus, and mode-collapse phenomena of real training."
+    ],
+    "related_files": ["kohaerente_modelle"]
+  },
+  {
+    "path": "paris.html",
+    "slug": "paris",
+    "title": "Hauptstadt von Frankreich",
+    "lang": "de",
+    "size_kb": 35.6,
+    "category": "nicht-ki",
+    "category_reason": "A German-language educational game about Paris as the capital of France: an interactive SVG map, a drag-and-drop quiz matching landmarks/facts to Paris, and information cards about the city's geography, history, and culture. Pure geography/education with no AI or ML content.",
+    "theme": "geography",
+    "themes": ["paris", "france", "geography-education", "drag-and-drop", "quiz"],
+    "thesis": "A German-language educational game about Paris: an interactive SVG map of France where the user locates Paris (pulsing dot), a drag-and-drop quiz matching landmarks and facts to the city, and information cards about Paris's geography, history, and culture — all styled with French flag colors (blue/white/red).",
+    "key_claims": [
+      "Paris is the capital of France, located on the Seine river in the north-central part of the country.",
+      "The city is famous for landmarks including the Eiffel Tower, the Louvre, Notre-Dame, and the Arc de Triomphe.",
+      "Paris has a rich history from Roman Lutetia through the Middle Ages, the Revolution, and its role as a center of art and culture."
+    ],
+    "methods_math": [],
+    "visualizations": ["interactive SVG map of France with pulsing Paris dot and tooltip", "drag-and-drop quiz (match landmarks/facts to Paris)", "information cards (geography, history, culture)", "French flag color scheme (blue/white/red gradient background)"],
+    "internal_tensions": [],
+    "related_files": ["neumuenster"]
+  },
+  {
+    "path": "pullback2.html",
+    "slug": "pullback2",
+    "title": "Pullback – Visuell erklärt",
+    "lang": "de",
+    "size_kb": 35.6,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive visual explanation of the pullback (fiber product) in category theory, using a weather-map/satellite-photo analogy and a step-by-step click-through story. Pure category theory / topology with no AI or ML content.",
+    "theme": "category-theory",
+    "themes": ["pullback", "category-theory", "fiber-product", "universal-property", "topology", "maps"],
+    "thesis": "A German-language interactive visual explanation of the pullback (fiber product) in category theory: a weather-map/satellite-photo analogy for 'pulling back' information from one representation to another, followed by a step-by-step click-through canvas story that builds the concept from the analogy to the formal commutative diagram with projections and the universal property.",
+    "key_claims": [
+      "The pullback of f: X → Z and g: Y → Z is the object P = {(x,y) ∈ X×Y | f(x) = g(y)} with projection maps p₁: P → X and p₂: P → Y satisfying f∘p₁ = g∘p₂.",
+      "It is the limit of the cospan X → Z ← Y in the categorical sense: the 'most general' object mapping to both X and Y that makes the diagram commute.",
+      "In topology, pulling back a continuous function along a continuous map gives the composite function on the product space.",
+      "The weather-map analogy: transferring weather data from a standard map to a distorted satellite photo is a pullback operation — you 'pull' the information back along the distortion map."
+    ],
+    "methods_math": ["category theory (limits, universal properties)", "fiber products", "continuous maps", "function composition", "product spaces"],
+    "visualizations": ["weather-map to satellite-photo analogy (two distorted views of the same land)", "step-by-step click-through canvas story (progress dots)", "commutative diagram animation (arrows, objects, projections)", "interactive point-pulling demo (click points to see them pulled back)"],
+    "internal_tensions": [
+      "The analogy is intuitive but the file never connects the pullback to its central role in sheaf theory (where the sheaf condition is defined via pullbacks over coverings) — a connection that would be natural given the other files in this batch dealing with sheaves."
+    ],
+    "related_files": ["sheaf", "kohaerente_modelle"]
+  },
+  {
+    "path": "hott.html",
+    "slug": "hott",
+    "title": "Homotopy Type Theory — Visual Explorer",
+    "lang": "en",
+    "size_kb": 35.4,
+    "category": "nicht-ki",
+    "category_reason": "A six-section interactive Plotly-based English-language explorer of Homotopy Type Theory: types as spaces, equality as paths, homotopy, higher paths on a 3D sphere, the univalence axiom, and a 'Rosetta Stone' network graph unifying topology/logic/type theory. Pure mathematics / logic / type theory with no AI or ML content.",
+    "theme": "hott",
+    "themes": ["hott", "univalence", "infinity-groupoids", "type-theory", "topology", "logic", "path-types"],
+    "thesis": "A six-section interactive Plotly-based English-language explorer of Homotopy Type Theory: types as spaces (Bool, ℕ, S¹, ⊥), equality as paths (multiple proofs between the same endpoints), homotopy as continuous deformation of paths, higher paths on a 3D sphere (the ∞-groupoid tower), the univalence axiom (equivalent types are equal), and a 'Rosetta Stone' network graph showing how concepts from topology, logic, and type theory become one and the same in HoTT.",
+    "key_claims": [
+      "In HoTT, every type is a space and every term is a point in that space; Bool has two points (true, false), ℕ is a countably infinite discrete space, S¹ has a base point and a non-trivial loop, and ⊥ is empty.",
+      "A proof of a = b is a path from a to b; different proofs are different paths, and the space of equalities between two points can be rich and interesting.",
+      "A homotopy is a continuous deformation of one path into another — a 'path between paths' — representing an equality between equalities.",
+      "The tower of higher paths (points → paths → homotopies → homotopies between homotopies → …) makes types into ∞-groupoids.",
+      "The univalence axiom: if two types are equivalent (there is a perfect two-way mapping with coherence), they are equal; A ≃ B implies A = B. Structure-preserving equivalence is identity.",
+      "HoTT unifies three fields: topology (spaces, points, paths, homotopies, homeomorphisms), logic (propositions, proofs, equality proofs, logical equivalence), and type theory (types, terms, identity types, paths between paths, type equivalence)."
+    ],
+    "methods_math": ["homotopy type theory", "univalence axiom", "∞-groupoids", "identity types", "path composition", "homotopy", "topological equivalence", "higher inductive types"],
+    "visualizations": ["type-space selector (Bool/Nat/Circle/Empty) with Plotly scatter and annotations", "path curvature slider with multiple colored proof paths", "homotopy animation (path morphing with intermediate ghost paths)", "3D sphere with level-0/1/2 paths (surface trace, great-circle arcs, homotopy sheet)", "univalence morphing (triangle → circle with inhabitants and equivalence arrows)", "Rosetta Stone network graph (three columns: Topology/Logic/Type Theory with correspondence lines)"],
+    "internal_tensions": [
+      "The univalence section shows a triangle morphing to a circle and calls them 'equivalent' — but a triangle and a circle are homeomorphic (equivalent as topological spaces) while the HoTT univalence axiom is about types in a type-theoretic sense; the conflation is pedagogically useful but technically imprecise."
+    ],
+    "related_files": ["paper/hott", "kohaerente_modelle", "sheaf"]
+  },
+  {
+    "path": "paper/hott.html",
+    "slug": "hott",
+    "title": "Visual Guide to Homotopy Type Theory",
+    "lang": "en",
+    "size_kb": 35.2,
+    "category": "nicht-ki",
+    "category_reason": "An eight-section canvas-based English-language visual guide to HoTT with more technical depth than hott.html: path operations (groupoid structure), transport along paths (fibrations), homotopy levels (n-truncation ladder), the circle with π₁(S¹) ≃ ℤ, and univalence. Pure mathematics / logic / type theory with no AI or ML content.",
+    "theme": "hott",
+    "themes": ["hott", "univalence", "infinity-groupoids", "type-theory", "path-operations", "transport", "fibrations", "fundamental-group"],
+    "thesis": "An eight-section canvas-based English-language visual guide to HoTT with more technical depth than its sibling hott.html: types as spaces (click to add points), paths as equalities (reflexivity, deformation), path operations (refl, inverse, composition, associativity up to 2-path), higher paths (2-path/homotopy animation), transport along paths (fibers, fibrations), the ladder of homotopy levels (contractible → proposition → set → groupoid → 2-groupoid), the circle S¹ with winding number π₁(S¹) ≃ ℤ, and univalence (step-by-step: types → equivalence → univalence).",
+    "key_claims": [
+      "Types are spaces; elements are points; the identity type x = y is the type of paths from x to y; this is proof-relevant mathematics (different paths = different proofs).",
+      "Paths form a groupoid: identity (refl_x : x = x), inverse (p⁻¹ : y = x), composition (p·q : x = z); associativity (p·q)·r = p·(q·r) holds only up to a 2-path, making types ∞-groupoids.",
+      "A 2-path (homotopy) is a continuous deformation between two paths; p·p⁻¹ is not literally the constant path but there exists a 2-path deforming it to the constant one.",
+      "Transport: given a family of types P: A → Type and a path p: x = y, transport gives p_*: P(x) → P(y); this makes type families into fibrations over the base space.",
+      "Homotopy levels stratify types: (-2) contractible (one point), (-1) proposition (any two elements equal), (0) set (all paths between points equal), (1) groupoid (non-trivial paths, trivial 2-paths), (2) 2-groupoid (non-trivial 2-paths); every n-type is also an (n+1)-type.",
+      "The circle S¹ has one base point and one non-trivial loop; π₁(S¹) ≃ ℤ (winding number); the encode function transports 0 along the loop applying successor/predecessor.",
+      "Univalence: (A ≃ B) ≃ (A = B); two equivalent types can be identified; any theorem proven about A automatically applies to B — isomorphic structures share all properties for free."
+    ],
+    "methods_math": ["homotopy type theory", "groupoid axioms", "2-groups / ∞-groupoids", "transport / fibrations", "homotopy levels (n-truncation)", "fundamental group", "univalence axiom", "higher inductive types"],
+    "visualizations": ["clickable point-add space (canvas, hover to see paths)", "path deformation animation (slider + auto-animate)", "path operations (refl/inv/comp/assoc) with labeled arrows", "2-path homotopy fill animation (green region between two paths)", "transport with moving element through fibers (base space + fiber ellipses)", "homotopy level ladder (5 levels with illustrations)", "circle with winding number counter (wind+/wind− buttons, spiral visualization)", "univalence step-by-step (types → equivalence arrows → univalence conclusion)"],
+    "internal_tensions": [
+      "The file references [[12]], [[13]], [[14]] as footnotes but these are not defined in the HTML — they appear to be references to the HoTT Book or Voevodsky's papers that are not included, leaving the reader without source attribution.",
+      "The 'associativity up to 2-path' claim is correct but the visual shows the 2-path as a simple dashed curve between two compositions, which may suggest it is a trivial correction rather than a higher-dimensional coherence condition."
+    ],
+    "related_files": ["hott", "kohaerente_modelle", "sheaf"]
+  }
+]

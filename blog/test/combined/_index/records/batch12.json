@@ -1,0 +1,356 @@
+[
+  {
+    "path": "framespotting.html",
+    "slug": "framespotting",
+    "title": "Framespotting — Warum wir die Welt so sehen, wie wir sie sehen",
+    "lang": "de",
+    "size_kb": 79.0,
+    "category": "nicht-ki",
+    "category_reason": "Buch-Begleiter zu Framing/Mental Models/Klimawandel: exponentielles Wachstum, Bestands-Fluss-Diagramme, Bistabilität, Spieltheorie, sphärische Geometrie. Keine ML-/KI-Inhalte.",
+    "theme": "framing-mental-models",
+    "themes": ["framing", "mental-models", "climate", "exponential-growth", "game-theory", "systems-thinking"],
+    "thesis": "Unsere Wahrnehmung der Welt wird durch mentale Rahmen (Frames) bestimmt, die oft unzureichend sind – insbesondere bei exponentiellen Prozessen, Nichtlinearitäten und komplexen Systemen wie dem Klimasystem.",
+    "key_claims": [
+      "Lineare Intuition versagt bei exponentiellem Wachstum: Menschen unterschätzen exponentielle Prozesse systematisch.",
+      "Bestands-Fluss-Diagramme (stock-and-flow) machen kausale Strukturen sichtbar, die in narrativen Beschreibungen verborgen bleiben.",
+      "Bistabilität und Kipppunkte erklären, warum kleine Änderungen große, irreversible Effekte haben können.",
+      "Spieltheoretische Frames (Gefangenendilemma, Public Goods Game) bestimmen kollektives Verhalten.",
+      "Sphärische Geometrie (Flugwege, Zeitzonen, Erdkrümmung) zeigt, wie gewohnte Frames bei globalen Phänomenen versagen."
+    ],
+    "methods_math": ["Exponentielles Wachstum", "Bestands-Fluss-Modelle (Differentialgleichungen)", "Bistabilität / Potential-Landschaften", "Nash-Gleichgewicht", "Sphärische Geometrie"],
+    "visualizations": ["Interaktive Canvas-Animationen (Wachstumskurven)", "Bestands-Fluss-Diagramme", "Potential-Landschaften mit Kipppunkten", "Spieltheoretische Szenarien", "Globus/Flugweg-Visualisierung"],
+    "internal_tensions": [
+      "Der Text will Frames aufbrechen, muss aber selbst frame-basiert argumentieren – epistemische Spannung.",
+      "Klimawandel wird als konkreter Anwendungsfall genutzt, könnte aber in einem rein abstrakten Framing-Text aufgehen."
+    ],
+    "related_files": ["chaos.html", "game2.html"]
+  },
+  {
+    "path": "kaupstrat_jung.html",
+    "slug": "kaupstrat_jung",
+    "title": "Kastrup dekodiert Jung — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 78.4,
+    "category": "nicht-ki",
+    "category_reason": "Philosophie/Psychologie: Kastrups objektiver Idealismus, Dekodierung von Jungs Archetypen, Synchronizität, Bewusstsein als fundamentales. Keine ML-Inhalte.",
+    "theme": "consciousness",
+    "themes": ["consciousness", "objective-idealism", "jung", "archetypes", "synchronicity", "philosophy-of-mind"],
+    "thesis": "Kastrups objektiver Idealismus bietet eine kohärente metaphysische Grundlage, um Jungs Archetypen, Synchronizität und das Unbewusste als Aspekte eines fundamentalen Bewusstseinsfeldes zu verstehen.",
+    "key_claims": [
+      "Kastrup argumentiert, dass Bewusstsein fundamental ist (nicht aus Materie entstanden), und Materie ein Aspekt des Bewusstseins.",
+      "Jungs Archetypen werden als strukturelle Muster im objektiven Bewusstseinsfeld reinterpretiert – nicht als biologische Instinkte.",
+      "Synchronizität (bedeutsame Koinzidenzen) ergibt sich natürlich, wenn psychische und physikalische Ereignisse gemeinsame Bewusstseinsgrundlagen teilen.",
+      "Das Unbewusste ist nicht 'dunkel', sondern der objektive, nicht-personalisierte Aspekt des Bewusstseins.",
+      "Die psychotherapeutische Praxis wird dadurch ontologisch fundiert: Heilung = Integration von Bewusstseinsaspekten."
+    ],
+    "methods_math": ["keine formale Mathematik – philosophische/metaphysische Argumentation"],
+    "visualizations": ["Interaktive Navigationsstruktur (Kapitel)", "Konzeptionelle Diagramme (Bewusstsein-Materie-Beziehung)", "Archetypen-Karten", "Synchronizitäts-Beispiele"],
+    "internal_tensions": [
+      "Objektiver Idealismus vs. naturwissenschaftlicher Naturalismus – der Text nimmt die kontroverse Position ernst, ohne die Gegenargumente vollständig zu behandeln.",
+      "Jung ist historisch umstritten (Rassismus, Politikausflüge) – der Text fokussiert auf die metaphysische Dimension und überspringt die historische Kritik."
+    ],
+    "related_files": ["bewusstsein.html", "philosophy2.html", "analytischer_idealismus.html"]
+  },
+  {
+    "path": "kohaerente_differenz.html",
+    "slug": "kohaerente_differenz",
+    "title": "Kohärente Differenz — Von der Unterscheidung zum Einbettungsraum",
+    "lang": "de",
+    "size_kb": 78.3,
+    "category": "ki",
+    "category_reason": "Mathematik FÜR KI: Sheaves, ∞-Sheaves, Kohomologie, Topoi und HoTT werden auf die Geometrie von Einbettungsräumen (Embeddings) angewandt – direkt relevant für Repräsentationslernen.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "infinity-sheaves", "cohomology", "topos-theory", "hott", "embeddings", "category-theory"],
+    "thesis": "Eine 9-Schritte-Kette von der Unterscheidung über Topologie, Kategorien, Sheaves, ∞-Sheaves und Kohomologie bis zu Einbettungsgeometrie zeigt, wie abstrakte Mathematik die Struktur neuronaler Repräsentationsräume beschreibt.",
+    "key_claims": [
+      "Schritt 1–2: Unterscheidung erzeugt Äquivalenzklassen – die Basis jeder Repräsentation.",
+      "Schritt 3–4: Topologie und Kategorien formalisieren lokale Strukturen und ihre Verklebung.",
+      "Schritt 5–6: Sheaves (und ∞-Sheaves) beschreiben, wie lokale Informationen global verklebt werden – direkt analog zu lokalen Repräsentationen in Netzen.",
+      "Schritt 7–8: Kohomologie und Topoi messen 'Verklebungs-Hindernisse' – Analogie zu Konflikten in Repräsentationsräumen.",
+      "Schritt 9: Die Geometrie von Einbettungsräumen (Floats) wird durch diese Struktur erklärt: warum lokale Muster globale Koherenz erzwingen."
+    ],
+    "methods_math": ["Sheaf-Theorie", "∞-Sheaves (Lurie)", "Kohomologie (Čech, Singular)", "Topos-Theorie", "HoTT (Unvalenz)", "Kategorientheorie (Limites, Adjunktionen)"],
+    "visualizations": ["Schematische Darstellungen der 9-Schritte-Kette", "Sheaf-Beispiele auf Überdeckungen", "∞-Sheaf-Interpretation", "Kohomologie-Gruppen als Hindernisse", "Embedding-Geometrie (Floats)"],
+    "internal_tensions": [
+      "Der Sprung von reiner Mathematik (Sheaves/Topoi) zu KI (Embeddings) ist konzeptionell mutig – die Analogie ist überzeugend, aber nicht formal bewiesen.",
+      "Die 9 Schritte sind sehr ambitioniert; jeder Einzelne füllt ein Buch. Der Text muss komprimieren, was Tiefe opfert."
+    ],
+    "related_files": ["hott2.html", "hott3.html", "cohomology.html", "useful_math.html"]
+  },
+  {
+    "path": "chaos.html",
+    "slug": "chaos",
+    "title": "Chaos — A Visual Guide to Dynamical Systems",
+    "lang": "en",
+    "size_kb": 78.1,
+    "category": "nicht-ki",
+    "category_reason": "Chaos-Theorie und dynamische Systeme: Fixpunkte, Van der Pol, logistische Map/Feigenbaum, Lorenz/Rössler, Lyapunov-Exponenten, Smale-Horseshoe, Templates/Branched Manifolds. Reine Mathematik/Physik, keine ML-Inhalte.",
+    "theme": "dynamical-systems",
+    "themes": ["chaos", "dynamical-systems", "attractors", "bifurcation", "lyapunov-exponents", "strange-attractors"],
+    "thesis": "Chaotische dynamische Systeme – vom einfachen Fixpunkt über Bifurkationen bis zu seltschen Attraktoren – sind durch interaktive Visualisierungen und die Sprache der Phasenraum-Geometrie intuitiv verständlich.",
+    "key_claims": [
+      "Fixpunkte und ihre Stabilität (Eigenwert-Analyse) sind das Fundament der Systemanalyse.",
+      "Die logistische Map zeigt universelle Bifurkation: der Feigenbaum-Konstante δ ≈ 4.669 ist systemunabhängig.",
+      "Der Lorenz-Attraktor (1963) ist der Prototyp des seltschen Attraktors: deterministisch, aber unvorhersagbar.",
+      "Lyapunov-Exponenten quantifizieren die sensitive Abhängigkeit von Anfangsbedingungen.",
+      "Smale-Horseshoe und Templates (Branched Manifolds) liefern die topologische Klassifikation chaotischer Strömungen.",
+      "Der Van der Pol-Oszillator zeigt, wie nichtlineare Dämpfung Grenzzyklen erzeugt."
+    ],
+    "methods_math": ["Phasenraum-Analyse", "Jacobian/Eigenwerte", "Bifurkationsdiagramme", "Feigenbaum-Szenario", "Lyapunov-Exponenten", "Smale-Horseshoe (Symbolische Dynamik)", "Templates (Branched Manifolds)"],
+    "visualizations": ["Phasenraum-Porträts (Lorenz, Rössler, Van der Pol)", "Bifurkationsdiagramm (logistische Map)", "Attraktor-Animationen", "Poincaré-Schnitte", "Lyapunov-Exponenten-Plots", "Horseshoe-Mapping"],
+    "internal_tensions": [
+      "Der Bogen von linearen Systemen zu vollentwickeltem Chaos ist sehr lang – die mittleren Abschnitte (z.B. normale Formen) werden komprimiert.",
+      "Templates/Branched Manifolds sind hochspezialisiert (Fluid-Dynamics) und für den allgemeinen Leser schwer einzuordnen."
+    ],
+    "related_files": ["framespotting.html", "useful_math.html"]
+  },
+  {
+    "path": "othellogpt.html",
+    "slug": "othellogpt",
+    "title": "Othello-GPT — Wie Transformer die Welt repräsentieren",
+    "lang": "de",
+    "size_kb": 76.0,
+    "category": "ki",
+    "category_reason": "Erklärt das ICLR'23-Paper von Li et al. zu Othello-GPT: World Representations, Probes (linear vs. MLP), kausale Intervention, Latent Saliency. Direkte KI-/Transformer-Forschung.",
+    "theme": "world-models",
+    "themes": ["world-models", "transformers", "interpretability", "probes", "causal-intervention", "latent-representations"],
+    "thesis": "Transformer, die Othello-Spiele vorhersagen, intern eine strukturierte Weltrepräsentation des Spielbretts bilden – die durch lineare Probes und kausale Interventionen nachweisbar ist.",
+    "key_claims": [
+      "Othello-GPT (Transformer auf Othello-Spielzügen) bildet eine interne Repräsentation des Brettzustands, obwohl diese nie explizit als Input gegeben wird.",
+      "Lineare Probes (ein lineares Layer auf den Hidden States) können den Brettzustand mit hoher Genauigkeit dekodieren.",
+      "MLP-Probes zeigen, dass die Repräsentation in frühen Schichten stärker 'verstreut' ist und sich mit Tiefe strukturiert.",
+      "Kausale Intervention (Token-Editieren) bestätigt: die Repräsentation ist nicht nur korreliert, sondern kausal für die Vorhersage.",
+      "Latent Saliency identifiziert, welche Eingabe-Tokens die Repräsentation am stärksten beeinflussen.",
+      "Die Arbeit ist ein Schritt hin zu 'mechanistischer Interpretierbarkeit' großer Modelle."
+    ],
+    "methods_math": ["Transformer-Architektur", "Lineare Probes (Causal Abstraction)", "MLP-Probes", "Kausale Intervention (Token Editing)", "Latent Saliency Analysis"],
+    "visualizations": ["Probenauigkeit über Schichten (Plotly)", "Brettzustand-Rekonstruktion", "Kausale Interventions-Effekte", "Latent Saliency Heatmaps", "Architektur-Diagramm"],
+    "internal_tensions": [
+      "Othello ist ein perfektes Informationsspiel – ob die Ergebnisse auf domänenübergreifende Weltrepräsentationen generalisieren, ist offen.",
+      "Lineare Probes finden lineare Strukturen – ob die volle Repräsentation linear lesbar ist, wird in der Debatte um 'superposition' angezweifelt."
+    ],
+    "related_files": ["understanding_deep_learning.html", "grokking_addition.html"]
+  },
+  {
+    "path": "paper/sorting_with_bialgebras.html",
+    "slug": "sorting_with_bialgebras",
+    "title": "Sorting with Bialgebras",
+    "lang": "en",
+    "size_kb": 75.0,
+    "category": "nicht-ki",
+    "category_reason": "Kategorientheorie/Algebra: Bialgebra-Dualität in Sortieralgorithmen (Hinze et al. WGP'12). Fold/unfold, Paramorphismen, natürliche Transformationen. Reine Mathematik/Computer Science, keine ML-Inhalte.",
+    "theme": "category-theory",
+    "themes": ["category-theory", "bialgebra", "duality", "sorting", "functional-programming", "algebraic-specification"],
+    "thesis": "Sortieralgorithmen lassen sich durch die Dualität der Bialgebra-Theorie (fold/unfold, paramorphism/apomorphism) elegant charakterisieren – natürliche Transformationen wie swap, swop, sprout und pile ergeben sich als Spezialfälle.",
+    "key_claims": [
+      "Fold (Kata) und Unfold (Ana) sind dual: jede rekursive Definition hat eine ko-rekursive Gegenstück.",
+      "Paramorphismen (fold mit Zugang zum Rest) und Apomorphismen (unfold mit Zugang zum Rest) sind die 'starken' Versionen.",
+      "Die Bialgebra-Dualität erlaubt es, Sortieralgorithmen (Insertion Sort, Merge Sort) als Instanzen eines allgemeinen Musters zu lesen.",
+      "Natürliche Transformationen wie swap (Elementetausch), swop, sprout und pile sind komposabel und bilden eine Kategorie.",
+      "Der Ansatz verbindet algebraische Spezifikation mit kategorientheoretischer Semantik."
+    ],
+    "methods_math": ["Bialgebra (Monade + Komonade)", "Fold/Unfold (Kata/Ana)", "Paramorphism/Apomorphism", "Natürliche Transformation", "Universelle Eigenschaften", "Kategorientheoretische Komposition"],
+    "visualizations": ["Algebraische Schemata (fold/unfold-Diagramme)", "Kommutationsdiagramme", "Algorithmus-Abstraktions-Ebenen"],
+    "internal_tensions": [
+      "Der formalismus ist extrem abstrakt – die konkrete Sortieralgorithmus-Intuition geht leicht verloren.",
+      "Die Verbindung zu praktischer Programmierung ist dünn: der Wert liegt in der einheitlichen Sprache, nicht in neuen Algorithmen."
+    ],
+    "related_files": ["kohaerente_differenz.html", "useful_math.html", "hott2.html"]
+  },
+  {
+    "path": "grokking_addition.html",
+    "slug": "grokking_addition",
+    "title": "Grokking Addition — Wie Netzwerke plötzlich 'verstehen'",
+    "lang": "de",
+    "size_kb": 74.7,
+    "category": "ki",
+    "category_reason": "Erklärt das Phänomen 'Grokking' am Beispiel der Addition: Netzwerke memorisieren zunächst, dann generalisieren sie plötzliche. Direktes ML-/Deep-Learning-Phänomen.",
+    "theme": "grokking-generalization",
+    "themes": ["grokking", "generalization", "phase-transition", "weight-decay", "addition", "double-descent"],
+    "thesis": "Grokking – der plötzliche Generalisierungs-Sprung nach langem Memorizing – lässt sich am Beispiel der Addition (modular addition) Schritt für Schritt nachvollziehen und hängt eng mit Weight Decay und dem Double-Descent-Phänomen zusammen.",
+    "key_claims": [
+      "Beim Training auf modularer Addition memorisiert das Netz zunächst die Trainingsdaten (Train Loss → 0, Test Loss hoch).",
+      "Nach einem Plateau (oft Tausende von Epochs) sinkt der Test Loss plötzlich – das Netz hat 'gegrokt'.",
+      "Weight Decay ist entscheidend: ohne Regularisierung grokt das Netz nicht.",
+      "Der Mechanismus: zunächst werden 'kurze' (lokal validierte) Lösungen gefunden; mit Decay werden diese instabil und das Netz findet die 'lange' (global generalisierende) Lösung.",
+      "Grokking ist ein Sonderfall von Double Descent: der Test Error sinkt zweimal, wenn die Kapazität/das Training zunimmt.",
+      "Das Phänomen ist nicht auf Addition beschränkt, sondern scheint ein allgemeines Merkmal von Overparameterized Networks zu sein."
+    ],
+    "methods_math": ["Modulare Addition (Z/nZ)", "Weight Decay (L2-Regularisierung)", "Double Descent", "Phase Transition im Training", "Spektrale Analyse der Gewichte"],
+    "visualizations": ["Train/Test Loss über Epochs (Plotly)", "Grokking-Punkt (Plötzlicher Abfall)", "Gewichtsspektren vor/nach Grokking", "Weight-Decay-Sweep", "Vergleich mit/ohne Regularisierung"],
+    "internal_tensions": [
+      "Die Erklärung 'kurze vs. lange Lösungen' ist intuitiv, aber kein formales Theorem – der genaue Mechanismus ist noch offen.",
+      "Grokking an Addition ist ein Minimalmodell; ob der Mechanismus in großen LLMs die gleiche Rolle spielt, ist ungeklärt."
+    ],
+    "related_files": ["understanding_deep_learning.html", "othellogpt.html"]
+  },
+  {
+    "path": "game2.html",
+    "slug": "game2",
+    "title": "Bloom Garden",
+    "lang": "en",
+    "size_kb": 74.6,
+    "category": "nicht-ki",
+    "category_reason": "Interaktives Kunst-/Game-Erlebnis: ein canvas-basierter 'Bloom Garden' mit Wachstumsanimationen. Kein ML-/KI-Content, keine mathematische Tiefe.",
+    "theme": "interactive-art",
+    "themes": ["interactive-art", "game", "generative", "canvas", "nature", "growth"],
+    "thesis": "Ein interaktiver 'Bloom Garden' – ein generatives, canvas-basiertes Wachstums-Erlebnis, das den Nutzer durch sanfte Animationen und Partikeleffekte in einen meditativen Raum führt.",
+    "key_claims": [
+      "Der Garten wächst prozedural: Blumen, Blätter und Partikel entstehen durch parametrische Animationen.",
+      "Interaktion (Klick/Touch) beeinflusst das Wachstum – neue Blüte an der Interaktionsstelle.",
+      "Die Farbpalette folgt einem natürlichen Farbrad (Pastell → Sättigung).",
+      "Sanfte Partikeleffekte (Blütenblätter, Lichtpunkte) erzeugen Atmosphäre.",
+      "Kein Ziel, kein Score – reines ästhetisches Erlebnis (Ambient Game)."
+    ],
+    "methods_math": ["Parametrische Kurven (Blumenformen)", "Partikelsysteme", "Farbinterpolation (HSL)", "Prozedurale Generierung"],
+    "visualizations": ["Canvas: Wachsender Garten (Blumen, Blätter, Stiele)", "Partikeleffekte (Blütenblätter, Glühen)", "Farbverläufe über Zeit", "Interaktive Blüte-Trigger"],
+    "internal_tensions": [
+      "Als 'Game' klassifiziert, hat es keine Spielmechanik – es ist eher ein interaktives Kunstwerk (Ambient Art).",
+      "Die Komplexität ist bewusst niedrig – das kann als zu einfach empfunden werden, ist aber die Designentscheidung."
+    ],
+    "related_files": ["framespotting.html"]
+  },
+  {
+    "path": "hott2.html",
+    "slug": "hott2",
+    "title": "Homotopy Type Theory — Why It Should Be the Foundation of Math",
+    "lang": "en",
+    "size_kb": 74.4,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik/Logik: HoTT als mathematische Grundlage – Types as Spaces, Equality as Paths, Univalence, Circle Type, Arithmetic as Paths. Keine ML-Inhalte.",
+    "theme": "hott",
+    "themes": ["hott", "univalent-foundations", "type-theory", "homotopy", "univalence", "higher-inductive-types", "proof-theory"],
+    "thesis": "HoTT bietet eine mathematische Grundlage, in der Typen Räume sind, Gleichheit Pfade, und äquivalente Dinge wirklich gleich – die Struktur wird respektiert, Beweise tragen Information, und Topologie, Logik und Informatik vereinen sich.",
+    "key_claims": [
+      "Typen sind keine Mengen (Bags of Elements), sondern Räume mit Topologie: Bool ist diskret (2 Punkte, keine Pfade), S¹ hat einen Loop.",
+      "Gleichheit ist ein Pfad, nicht ein Bit: verschiedene Berechnungen = verschiedene Pfade = verschiedene Beweise derselben Gleichheit.",
+      "Pfade zwischen Pfaden (Homotopien) erzeugen unendliche Tiefe – genau das, was Topologie studiert.",
+      "Der Kreis S¹ als Typ: ein Punkt + ein Loop. Die 'Equality Type' base=base ist isomorph zu ℤ (Winding Number).",
+      "Unvalenz: äquivalente Typen sind gleich. ℤ/2 und {even, odd} sind nicht nur isomorph, sondern identisch.",
+      "2+2=4 ist ein Pfad in einem Raum – der Beweis ist ein mathematisches Objekt, das man studieren, komponentieren und invertieren kann.",
+      "HoTT wird in Cubical Agda und Lean implementiert – drei Felder (Topologie, Logik, CS) werden zu einer Grundlage."
+    ],
+    "methods_math": ["Typtheorie (Cubical Agda, Lean)", "Homotopietheorie (Pfade, Homotopien, ∞-Gruppoiden)", "Unvalenz-Axiom", "Higher Inductive Types (S¹)", "Fundamentalgruppe via HoTT (Ω(S¹) ≃ ℤ)", "Beweistheorie (Proof-Relevance)"],
+    "visualizations": ["Canvas: Types vs Sets (Bool)", "Canvas: Pfade als Gleichheit (2+2=4, n+1+1)", "Canvas: Homotopie (Pfad zwischen Pfaden)", "Canvas: Kreis mit Winding Number", "Canvas: Unvalenz (Äquivalenz → Gleichheit)", "Canvas: Arithmetik als Pfad (2+2=4, 3×4=12)", "Footer: Cubical Agda, Lean, Unification"],
+    "internal_tensions": [
+      "Die Präsentation ist 'persuasiv' (Why It Should Be the Foundation) – HoTT ist noch keine akzeptierte Standard-Grundlage, Unvalenz ist ein Axiom ohne formale Modelle in ZFC.",
+      "Die Infinite Tiefe (Pfade zwischen Pfaden zwischen Pfaden…) wird intuitiv erklärt, aber die formale Kohärenz (∞-Gruppoid-Struktur) wird nicht ausgearbeitet."
+    ],
+    "related_files": ["hott3.html", "kohaerente_differenz.html", "cohomology.html"]
+  },
+  {
+    "path": "cohomology.html",
+    "slug": "cohomology",
+    "title": "Advanced TDA — Persistent Cohomology & Multiparameter Persistence",
+    "lang": "en",
+    "size_kb": 74.1,
+    "category": "nicht-ki",
+    "category_reason": "Topologische Datenanalyse (TDA): persistente Kohomologie (Dual der Homologie, Cup Product, Circular Coordinates) und Multiparameter-Persistenz (Bifiltrationen, Fibered Barcodes, Persistence Landscapes). Mathematik/Datenanalyse, keine ML-Inhalte.",
+    "theme": "persistent-homology",
+    "themes": ["persistent-homology", "cohomology", "cup-product", "multiparameter-persistence", "topological-data-analysis", "bifiltration"],
+    "thesis": "Persistente Kohomologie (das algebraische Dual der Homologie) und Multiparameter-Persistenz (mehrere Filterparameter gleichzeitig) sind zwei mächtige Erweiterungen klassischer TDA, die zusätzliche algebraische Struktur (Cup Product) und multi-scale Analyse ermöglichen.",
+    "key_claims": [
+      "Kohomologie fragt nicht 'welche Löcher existieren?', sondern 'welche Funktionen kann man auf diesen Löchern definieren?'",
+      "Das Cup Product α∪β detektiert Interaktionen zwischen Löchern: auf dem Torus α∪β≠0 (verknüpft), auf der Figure-8 α∪β=0 (unverknüpft).",
+      "Circular Coordinates: eine Kohomologieklasse [α]∈H¹(X;ℤ) definiert eine Karte θ:X→S¹ – Punkte werden mit einem Winkel gefärbt.",
+      "Multiparameter-Persistenz: statt eines Skalarens ε, wird gleichzeitig nach Distanz ε und Dichte ρ gefiltert (Bifiltration).",
+      "Es gibt keine vollständige Barcode-Zerlegung für Multiparameter-Persistenz – die algebraische Struktur ist fundamental reicher.",
+      "Fibered Barcodes: Einschränkung auf 1D-Linien im Parameterspace liefert gewöhnliche Persistenz; verschiedene Winkel zeigen verschiedene Aspekte."
+    ],
+    "methods_math": ["Simpliciale Kohomologie (Cech)", "Cup Product (Ring-Struktur)", "Circular Coordinates (H¹→S¹)", "Bifiltration (2D-Parameter)", "Fibered Barcodes", "Persistence Landscapes (multiparameter)"],
+    "visualizations": ["Canvas: Homology vs Cohomology (Cycle/Cocycle/Circular Coords)", "Canvas: Cup Product (Torus, Figure-8, Sphere, Klein Bottle)", "Canvas: Bifiltration Grid (ε×ρ)", "Canvas: Fibered Barcode (Angle Sweep)", "Canvas: Multiparameter Landscape (Heatmap)"],
+    "internal_tensions": [
+      "Multiparameter-Persistenz hat keine vollständige algebraische Klassifikation – die Visualisierung muss mit 'Approximationen' (Fibered Barcodes) arbeiten.",
+      "Die Verbindung zwischen Kohomologie (abstrakt) und Circular Coordinates (anwendbar) ist der 'Killer App' – aber die theoretische Tiefe (Cup Product, Ring-Struktur) wird nur angerissen."
+    ],
+    "related_files": ["hott2.html", "hott3.html", "kohaerente_differenz.html", "chaos.html"]
+  },
+  {
+    "path": "understanding_deep_learning.html",
+    "slug": "understanding_deep_learning",
+    "title": "Understanding Deep Learning — Interactive Visual Guide",
+    "lang": "en",
+    "size_kb": 73.6,
+    "category": "ki",
+    "category_reason": "Umfasst das gesamte Spektrum des Deep Learning: Neuronale Netze, ReLU, Tiefe vs. Breite, Gradient Descent, Backpropagation, Loss Functions, Overfitting/Double Descent, Transformer/Attention, Generative Models (GANs, Diffusion), Offene Mysterien (Loss Landscape, Implicit Regularization, Lottery Tickets, Grokking). Direktes ML.",
+    "theme": "deep-learning-fundamentals",
+    "themes": ["deep-learning", "neural-networks", "backpropagation", "transformers", "attention", "generative-models", "generalization", "double-descent"],
+    "thesis": "Deep Learning – von der einzelnen Neuron-Einheit über Training, Backpropagation, Generalisierung bis zu Transformern und generativen Modellen – lässt sich als interaktive visuelle Reise durch die Kernkonzepte begreifen, basierend auf dem Lehrbuch von Simon Prince.",
+    "key_claims": [
+      "Ein neuronales Netz ist eine mathematische Funktion: ReLU-Einheiten erzeugen piecewise linear regions; Universal Approximation Theorem.",
+      "ReLU arbeitet, weil seine Ableitung 0 oder 1 ist – keine vanishing Gradients, trivial zu berechnen.",
+      "Tiefe erzeugt exponentiell mehr lineare Regionen: (D+1)^K Regionen mit K Layern von D Einheiten (Folding Metaphor).",
+      "Gradient Descent: der Learning Rate Dilemma – zu klein = langsam, zu groß = instabil. Adam adaptiert per-Parameter.",
+      "Backpropagation ist die Kettenregel, systematisch angewandt: linear im Netz-Size durch Reuse of Computation.",
+      "Loss Functions kommen aus Maximum Likelihood: Gauß → Least Squares, Bernoulli → Cross-Entropy.",
+      "Double Descent: Test Error sinkt zweimal, wenn Kapazität den Interpolation Threshold überschreitet – Overparameterized Models generalisieren.",
+      "Transformer/Self-Attention: jedes Element attends auf jedes andere; weights sind datenabhängig (Q,K,V).",
+      "Generative Models: GANs (Zwei-Netzwerk-Spiel) und Diffusion (Rauschen hinzufügen/entfernen).",
+      "Offene Mysterien: Loss Landscape ist 'benign', SGD biasiert zu flachen Minima, Lottery Tickets, Grokking."
+    ],
+    "methods_math": ["Piecewise Linear Functions", "Universal Approximation Theorem", "Gradient Descent / Adam", "Backpropagation (Kettenregel)", "Maximum Likelihood Estimation", "Bias-Variance Decomposition", "Double Descent", "Self-Attention (Q,K,V, Softmax)", "GANs (Nash Equilibrium)", "Diffusion Models (Forward/Reverse Process)"],
+    "visualizations": ["Canvas: Neuronales Netz (Hidden Units, Piecewise Linear)", "Canvas: ReLU/Activation Functions + Ableitungen", "Canvas: Regionen-Zahlen (Tiefe vs. Breite)", "Canvas: Gradient Descent auf Loss Surface (Interaktiv)", "Canvas: Backpropagation (Forward/Backward Pass)", "Canvas: Loss Functions (Regression vs. Classification)", "Canvas: Bias-Variance / Double Descent", "Canvas: Self-Attention (Sentence)", "Canvas: Generative Models (Noise → Data)", "Temml-Formeln (ReLU, Regions, GD, Chain Rule, Loss, Attention)"],
+    "internal_tensions": [
+      "Der Bogen von 'Was ist ein Neuron?' bis 'Warum generalisieren überparameterisierte Netze?' ist enorm – jedes Thema wird komprimiert.",
+      "Die 'Offenen Mysterien' (Section 10) sind ehrlich, aber auch unbefriedigend: der Text erklärt, warum DL funktioniert, und endet mit 'Niemand weiß genau warum'."
+    ],
+    "related_files": ["grokking_addition.html", "othellogpt.html", "kohaerente_differenz.html"]
+  },
+  {
+    "path": "hott3.html",
+    "slug": "hott3",
+    "title": "Homotopy Type Theory - Interactive Visual Explanation",
+    "lang": "en",
+    "size_kb": 73.2,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik/Logik: HoTT im Detail – Rosetta Stone (Types/Logic/Topology), Types as Spaces, Identity Types as Paths, Path Composition/Groupoid, Higher Paths, Univalence, Higher Inductive Types (S¹), Fundamental Groups (Encode-Decode, Ω(S¹)≃ℤ). Keine ML-Inhalte.",
+    "theme": "hott",
+    "themes": ["hott", "univalent-foundations", "type-theory", "homotopy", "univalence", "higher-inductive-types", "fundamental-group", "proof-theory"],
+    "thesis": "HoTT unified drei Perspektiven (Typtheorie, Logik, Topologie) in einem 'Rosetta Stone': Typen sind Räume, Terme sind Punkte, Gleichheit sind Pfade, und die Unvalenz-Axiom macht äquivalente Typen gleich – von hier aus lassen sich Fundamentalgruppen konstruktiv berechnen.",
+    "key_claims": [
+      "Der 'Rosetta Stone' übersetzt: Type↔Proposition↔Space, Term↔Proof↔Point, Identity Type↔Equality Evidence↔Path.",
+      "H-levels klassifizieren Typen: (-2) contractible, (-1) propositions, (0) sets, (1) groupoids, (n) n-groupoids, (∞) general.",
+      "Identity Types: p:a=b ist ein Pfad; es kann viele verschiedene Pfade (Beweise) geben – in ZFC nur 'gleich oder nicht'.",
+      "Path Composition bildet ein ∞-Gruppoid: Einheit, Inverse, Assoziativität – alles 'up to homotopy' (2-Pfade).",
+      "Unvalenz-Axiom: (A≃B) ≃ (A=𝒰B). Äquivalenz IST Gleichheit für Typen. Das Universum 𝒰 ist kein Set – es hat Pfadstruktur.",
+      "Higher Inductive Types (HITs): S¹ wird durch einen Punkt (base) und einen Pfad (loop) definiert. S², Torus, Quotients, Truncations folgen.",
+      "Fundamentalgruppe via HoTT: Ω(S¹,base) ≃ ℤ. Der Encode-Decode Method: code(base)=ℤ, encode(loop)=1, encode(loop⁻¹)=-1.",
+      "Alles ist konstruktiv und in Beweisassistenten (Coq, Agda) formalisierbar."
+    ],
+    "methods_math": ["Typtheorie (Cubical Agda, Coq)", "∞-Gruppoid-Struktur (Pfad-Komposition, Inverse, Assoziativität up to homotopy)", "Unvalenz-Axiom", "Higher Inductive Types (S¹, S², Torus)", "Encode-Decode Method", "Fundamentalgruppe Ω(S¹)≃ℤ", "H-levels (-2 bis ∞)"],
+    "visualizations": ["Canvas: Types as Spaces (Bool, ℕ, S¹)", "Canvas: Identity Types as Paths (Single/Multiple/Loop)", "Canvas: Path Composition (Compose/Inverse/Associativity)", "Canvas: Higher Paths (1-paths, 2-paths, 3-paths)", "Canvas: Univalence (Equivalence→Path in 𝒰, Transport)", "Canvas: Circle S¹ (HIT, Winding Numbers)", "Canvas: Fundamental Group (Loop Space, Ω(S¹)≃ℤ)", "Rosetta Stone Dictionary (Types/Logic/Topology)"],
+    "internal_tensions": [
+      "Dies ist die detaillierteste der drei HoTT-Seiten – die Tiefe (∞-Gruppoid, Encode-Decode) ist beeindruckend, aber die formale Kohärenz der Unvalenz (Warum ist das Axiom konsistent? CW-Modelle?) wird nicht behandelt.",
+      "Die Verbindung zur praktischen Beweisführung (Coq/Agda Code) wird behauptet, aber nicht gezeigt."
+    ],
+    "related_files": ["hott2.html", "kohaerente_differenz.html", "cohomology.html"]
+  },
+  {
+    "path": "useful_math.html",
+    "slug": "useful_math",
+    "title": "Abstract Mathematical Structures You Already Use",
+    "lang": "en",
+    "size_kb": 66.6,
+    "category": "nicht-ki",
+    "category_reason": "Abstrakte Mathematik: 6 Strukturen (Convolution, Fixed Points, Entropy, Fourier/Duality, Manifold Hypothesis, Group Actions) werden als 'dieselbe Struktur in verschiedenen Masken' präsentiert und via Representation Theory vereinheitlicht. Das Manifold-Kapitel erwähnt Neural Nets, aber der Fokus ist reine Mathematik.",
+    "theme": "math-structures",
+    "themes": ["convolution", "fixed-points", "entropy", "fourier-transform", "manifold-hypothesis", "group-actions", "representation-theory", "duality"],
+    "thesis": "Sechs scheinbar verschiedene mathematische Strukturen – Faltung, Fixpunkte, Entropie, Fourier-Dualität, Mannigfaltigkeiten, Gruppenwirkungen – sind dieselbe Struktur (Representation Theory einer Gruppe) in verschiedenen Verkleidungen.",
+    "key_claims": [
+      "Convolution: jede Messung ist eine Faltung (Auge×Rezeptor, Gedächtnis×Decay, Foto×PSF). Faltungstheorem: Faltung in einem Domain = Multiplikation im Dual.",
+      "Fixed Points: Brouwer (geknüllte Karte), Banach (Kontraktion → eindeutiger Fixpunkt), Nash (Gleichgewicht). Iteration einer Map bis f(x)=x.",
+      "Entropy: nicht 'Unordnung', sondern 'average surprise'. Compression = Redundanz entfernen. KL-Divergenz = Kosten für falsche Distribution.",
+      "Fourier/Duality: jedes Space hat ein Dual, wo harte Probleme einfach werden. Position↔Momentum, Zeit↔Frequenz. Der Transform ist sein eigenes Inverse.",
+      "Manifold Hypothesis: reelle Daten leben auf dünnen gekrümmten Blättern in hohem Raum. 'Curse of Dimensionality' ist ein Segen – nichts Reelles ist wirklich hochdimensional.",
+      "Group Actions: Noether (Symmetrie → Erhaltung). Jede Klassifikation ist Quotientieren durch eine Gruppe.",
+      "Unifikation: Convolution ist Gruppenwirkung (Translation), Fourier zerlegt in irreps, Fixed Points sind triviale Orbits, Entropie misst Orbit-Verteilung, Manifolds sind Quotientenspaces. 'It's all representation theory.'"
+    ],
+    "methods_math": ["Faltung (Kernel, PSF)", "Brouwer/Banach Fixed Point Theorems", "Shannon Entropy, KL-Divergenz", "Fourier Transform (FFT), Duality", "Manifold Hypothesis (Intrinsic vs Ambient Dimension)", "Group Actions, Noether's Theorem", "Representation Theory (Irreps, Regular Representation)"],
+    "visualizations": ["Canvas: Convolution (Signal × Kernel, Draw Mode)", "Canvas: Fixed Point (Cobweb Iteration)", "Canvas: Entropy (Probability Bars, Drag to Redistribute)", "Canvas: Fourier (Time/Frequency Domain, FFT, Cutoff)", "Canvas: Manifold (Swiss Roll, Sphere, Torus, Helix, 3D Rotation, PCA Projection)", "Canvas: Group Actions (Cyclic, Dihedral, SO(2), Wallpaper, Orbits, Quotient)", "Canvas: Unity (Connections between all 6)", "Temml-Formeln"],
+    "internal_tensions": [
+      "Die Unifikation via Representation Theory ist elegant, aber die Behauptung 'It's all representation theory' ist eine Interpretation, kein Theorem – die Verbindungen sind metaphorisch stärker als formal.",
+      "Das Manifold-Kapitel streift ML ('neural nets generalize', 'PCA works'), aber der Text positioniert sich bewusst als Mathematik, nicht als ML-Einführung."
+    ],
+    "related_files": ["chaos.html", "cohomology.html", "kohaerente_differenz.html", "understanding_deep_learning.html"]
+  }
+]

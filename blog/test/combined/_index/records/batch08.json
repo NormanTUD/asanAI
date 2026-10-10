@@ -1,0 +1,230 @@
+[
+  {
+    "path": "geometrie_neuronaler_populationen.html",
+    "slug": "geometrie_neuronaler_populationen",
+    "title": "Die Geometrie neuronaler Populationen — interaktiv erklärt",
+    "lang": "de",
+    "size_kb": 145.7,
+    "category": "ki",
+    "category_reason": "Geometrie neuronaler Populationen und optimales Kodieren in neuronalen Netzen und im Gehirn (Wakhloo, Slatton & Chung 2024, arXiv:2402.16770): drei geometrische Größen (Korrelation c, Ausrichtung a, Partizipationsverhältnis PR) bestimmen den Generalisierungsfehler eines linearen Lesers.",
+    "theme": "neural-representation-geometry",
+    "themes": ["neural-population-geometry", "optimal-coding", "representation-geometry", "generalization", "brain-inspiration"],
+    "thesis": "Eine gute neuronale Repräsentation passt zur verborgenen Struktur der Welt — empfindlich genug, sauber getrennt und so weit gestreut, wie es die Erfahrung rechtfertigt; drei geometrische Kennzahlen der Population (Korrelation c, Ausrichtung a, Partizipationsverhältnis PR) bestimmen den Generalisierungsfehler eines linearen Lesers, mit einem irreduziblen Fehler-Boden und einem optimalen entflochtenen Code.",
+    "key_claims": [
+      "Der Generalisierungsfehler eines linearen Lesers hängt nur von drei geometrischen Größen der Populations-Verteilung ab: mittlerer Korrelation c zwischen Neuronen, Ausrichtung a (Kodierungsrichtung vs. Aufgabenrichtung) und Partizipationsverhältnis PR (wirksame Dimension).",
+      "Es gibt einen irreduziblen Fehler: selbst die beste Population kann nur so gut sein, wie die verborgene (latente) Struktur der Aufgabe es erlaubt.",
+      "Der optimale Code ist entflochten: Neuronen sollten die latente Struktur entflechten (eine Richtung pro latenter Faktor) und dabei redundanten Korrelationen vermeiden.",
+      "ReLU wirkt als Rauschfilter: durch die Nichtlinearität wird Rauschen unterdrückt und die effektive Kodierungsrichtung verbessert.",
+      "Bestätigung am Affenhirn: Populationen in V4/IT zeigen genau diese geometrische Signatur (niedrige Korrelation, gute Ausrichtung, angemessenes PR).",
+      "Partizipationsverhältnis PR als Maß für die effektive Dimension: kleines PR = nur wenige Neuronen tragen die Information (sparsam), großes PR = breit verteilt."
+    ],
+    "methods_math": ["Kovarianzmatrizen", "Eigenwertanalyse", "Partizipationsverhältnis (Participation Ratio)", "Gauß-Integrale / lineare Lesbarkeit", "Hebb-Regel", "Korrelationsstruktur von Populationen", "latente Struktur / Faktor-Modelle"],
+    "visualizations": ["Plotly: Generalisierungsfehler vs. (c, a, PR)", "three.js: 3D-Punktewolke der Population", "2D-Canvas: Neuronen-Vektoren und Kodierungsrichtung", "Interaktive Labore (Regler für c, a, PR, ReLU-Schalter)"],
+    "internal_tensions": [
+      "Das Modell ist lineares Lesen auf top-Gaußschen Populationen; reale Netze sind nichtlinear und trainiert — die Übertragbarkeit ist eine Analogie, kein bewiesener Mechanismus.",
+      "Die optimale Geometrie ist aufgabenabhängig (hängt von der latenten Struktur ab); ohne diese Struktur ist optimal undefiniert.",
+      "Die Affendaten sind korrilierend (Beobachtung); die Kausalrichtung Geometrie → Generalisierung bleibt hypothetisch."
+    ],
+    "related_files": ["tropische_geometrie_tiefer_neuronaler_netze.html", "theory_of_deep_learning.html", "topologie_tiefer_neuronaler_netze.html"]
+  },
+  {
+    "path": "grothendiek_raum.html",
+    "slug": "grothendiek_raum",
+    "title": "Grothendieck — Der Raum: von Schemata zur Geometrie der Formen",
+    "lang": "de",
+    "size_kb": 142.0,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik und Philosophie der Mathematik: Grothendiecks veränderlicher Begriff des Raums (Schemata, Topoi, gezähmte Topologie, Geometrie der Formen). Keine ML-/KI-Inhalte.",
+    "theme": "scheme-theory",
+    "themes": ["schemes", "topoi", "sheaves", "algebraic-geometry", "philosophy-of-math", "tame-topology"],
+    "thesis": "Ein Raum ist nicht ein Behälter für Punkte, sondern alles, worauf Lokalisierung (Garben) sinnvoll ist; der Raum-Begriff ist chameleonhaft und verformt sich mehrfach — von konkreten Punkten über Schemata (Spec) zu Topoi, gezähmter Topologie und schließlich der Geometrie der Formen, in der das Kontinuum (Continuum) als Fiktion entlarvt wird.",
+    "key_claims": [
+      "Delignes Rekonzeption: Der Raum ist definiert durch, was man lokal auf ihm tun kann (Garben/Schnitte), nicht durch seine Punkte.",
+      "Spec(A): Der Raum einer Algebra ist die Menge ihrer Prime-Ideale mit der Zariski-Topologie; Punkte sind Primideale, nicht Zahlen.",
+      "Topoi: Ein Topos ist eine allgemeine Kategorie, die wie die Kategorie der Garben auf einem Raum funktioniert — viele Welten mit unterschiedlicher Logik.",
+      "Gezähmte Topologie (tame topology): Über den komplexen Zahlen gelten nur semianalytische Mengen/Sätze — sie sind wildfrei, und die Sätze werden zu berechenbaren, endlichen Objekten (Devissage).",
+      "Das Kontinuum (alle reellen Funktionen / alle Teilmengen von R) ist eine Fiktion: es enthält nicht-konstruierbare Pfade; die Geometrie der Formen ersetzt es durch eine wohlverhaltene, endliche Struktur.",
+      "Modellpluralismus: Schemata, Topoi und tame beschreiben dieselbe Mathematik aus verschiedenen Räumen; Grothendieck sucht die Invarianten über all diesen Metamorphosen hinweg."
+    ],
+    "methods_math": ["Garben und Fasern (Stalks)", "Spec / Prime-Ideale / Zariski-Topologie", "Stellen / Sites / Siebe", "Topoi und étale Überdeckungen", "semianalytische Mengen", "Devissage", "geizige (tame) Topologie"],
+    "visualizations": ["2D-Canvas: Punkte → Prime-Ideale → Spec (Abstraktionsskala)", "Plotly: Spektrum / Dimension", "Interaktive Abschnitte zu Schemata, Topoi, tame topology, Geometrie der Formen"],
+    "internal_tensions": [
+      "Der Text ist essayistisch/philosophisch; Behauptungen (z.B. Kontinuum als Fiktion) sind interpretativ und streitbar, nicht theorematisch bewiesen.",
+      "Die mehrfachen Metamorphosen des Raums sind eine didaktische Rahmung, kein formales Theorem — die Grenze zwischen Poesie und Mathematik wird bewusst verwischt.",
+      "Die Bezugnahme auf die Geometrie der Formen (Hrushovski/Loeser) ist ein aktives Forschungsgebiet; die Darstellung vereinfacht stark."
+    ],
+    "related_files": ["grothendiek.html", "grothendiek2.html", "garben_uebersicht.html", "sheaves.html"]
+  },
+  {
+    "path": "quantum_cryptography.html",
+    "slug": "quantum_cryptography",
+    "title": "Shor's Algorithm & Post-Quantum Cryptography - Interactive Visual Guide",
+    "lang": "en",
+    "size_kb": 138.2,
+    "category": "nicht-ki",
+    "category_reason": "Quantencomputing und Kryptographie: Shors Algorithmus bricht RSA/ECC; Post-Quanten-Kryptographie (Gitter/LWE, Hash, Codes, multivariate) schützt sich mit Problemen, für die Quanten nur kleine Speedups bringen. Keine ML-/KI-Inhalte.",
+    "theme": "post-quantum-cryptography",
+    "themes": ["quantum-computing", "shor-algorithm", "lattice-cryptography", "post-quantum", "number-theory"],
+    "thesis": "Shors Algorithmus reduziert das Faktorisieren/Logarithmieren auf Periodensuche (schnell durch die Quanten-Fourier-Transformation), wodurch RSA/ECC gebrochen werden; die Post-Quanten-Antwort sind Kryptosysteme auf Gitter-Problemen (LWE/SVP), Hash- und Codebasierte sowie multivariate Schemata, für die der Quanten-Vorteil nur polynomial/klein ist (Grover: Quadratwurzel).",
+    "key_claims": [
+      "Shor reduziert Faktorisieren auf Periodensuche f(x)=2^x mod N; die Quanten-Fourier-Transformation (QFT) findet die Periode exponentiell schneller als klassisch.",
+      "RSA und ECC (Diskreter Logarithmus) sind dadurch gebrochen; harvest now, decrypt later ist eine reale Bedrohung.",
+      "Gitter-Kryptographie (LWE/SVP) bleibt sicher, weil der beste bekannte Quanten-Algorithmus (BKV) nur ~11 % schneller ist als klassisch — kein exponentieller Kollaps.",
+      "Grover gibt nur einen Quadratwurzel-Speedup → Schlüsselhalbierung reicht als Gegenmaßnahme (z.B. 256 → 512 Bit).",
+      "NIST-2024-Standardisierung: ML-KEM (Kyber, Gitter), ML-DSA (Dilithium), SLH-DSA (Hash/SPHINCS+) — die drei finalen PQC-Standardfamilien.",
+      "Multivariate (MQ) und Codebasierte Schemata sind Alternativen; MQ bricht bei schlechter Parameterwahl über algebraische Angriffe."
+    ],
+    "methods_math": ["modulare Arithmetik", "Quanten-Fourier-Transformation (QFT)", "Superposition/Interferenz", "Gitter / SVP / LWE", "Merkle-Bäume (Hash-Kryptosignaturen)", "Fehlerkorrigierende Codes", "multivariate quadratische Gleichungssysteme"],
+    "visualizations": ["2D-Canvas: QFT / Periodensuche", "Canvas: Lattice / LWE-Würfel", "Interaktive Abschnitte zu RSA, Shor, QFT, LWE, Hash, Codes, multivariate"],
+    "internal_tensions": [
+      "Die Sicherheitsbehauptungen (z.B. BKV nur ~11 %) sind parameterabhängig und entwickeln sich mit der Forschung weiter — keine ewige Wahrheit.",
+      "PQC bringt neue Angriffsvektoren (Side-Channels, Quanten-Implementationsfehler), die der Überblick nur streift.",
+      "Die harvest-now-decrypt-later-Drohung setzt voraus, dass Daten heute abgehört und erst später entschlüsselt werden — nicht für alle Kontexte relevant."
+    ],
+    "related_files": ["shors_algorithm.html", "miller_rabin.html"]
+  },
+  {
+    "path": "secure_hpc_workflow.html",
+    "slug": "secure_hpc_workflow",
+    "title": "Secure HPC Workflow — Interaktive Erkundung",
+    "lang": "de",
+    "size_kb": 134.0,
+    "category": "nicht-ki",
+    "category_reason": "Datensicherheit/Datenschutz auf geteilten HPC-Systemen: sensible Daten lokal verschlüsseln (hybrid RSA+AES), Skripte signieren, Rechenknoten isolieren, nur im isolierten containerisierten Knoten entschlüsseln (IEEE/ACM CCGrid 2022). Keine ML-/KI-Inhalte.",
+    "theme": "secure-data-workflow",
+    "themes": ["data-privacy", "cryptography", "hpc", "containers", "threat-model"],
+    "thesis": "Man kann sensible Daten auf einem geteilten, nicht vollständig vertrauenswürdigen HPC-System verarbeiten, indem die Daten lokal mit Hybrid-Kryptographie (AES-256 + RSA) verschlüsselt, das Arbeits-Skript digital signiert, ein Rechenknoten isoliert und die Entschlüsselung nur im isolierten, containerisierten Knoten stattfindet — mit nur vernachlässigbarem Performance-Verlust.",
+    "key_claims": [
+      "Hybrid-Verschlüsselung: Daten mit AES-256 (symmetrisch, schnell) verschlüsseln; der AES-Schlüssel wird selbst mit RSA (asymmetrisch) verschlüsselt und nur auf dem Zielknoten geöffnet.",
+      "Digitale Signatur des Skripts: garantiert, dass der Code, der auf dem Knoten läuft, unverändert ist (Integrität).",
+      "Knoten-Isolierung: Ein dedizierter Rechenknoten wird so eingerichtet, dass nur der Container mit dem entschlüsselten Schlüssel die Daten sehen kann; der HPC-Betreiber sieht nur Chiffretext.",
+      "Threat Model: Der HPC-Betreiber ist nicht vertrauenswürdig (sieht Dateien, Logs), aber nicht aktiv bösartig mit root im Container — die Grenzen werden explizit gezogen.",
+      "Performance: Die Hybrid-Verschlüsselung ist so schnell, dass der Overhead für große Dateien vernachlässigbar ist (gemessen im Paper).",
+      "Vergleich mit Alternativen (Vollverschlüsselung, TEE/Enclaves): TEEs sind sicherer, aber weniger portabel; der Workflow ist eine praktikable Mitte."
+    ],
+    "methods_math": ["Hybrid-Kryptographie (AES-256 + RSA)", "digitale Signaturen", "Container-Isolierung (Docker/Singularity)", "Slurm-Jobsteuerung", "Threat-Modellierung"],
+    "visualizations": ["2D-Canvas: Datenfluss / Knoten-Isolierung", "Plotly: Performance-Vergleich (verschlüsselt vs. nicht)", "Interaktive Demos (Verschlüsselung, Signatur, Container, Slurm)"],
+    "internal_tensions": [
+      "Die Sicherheit hängt vom Threat Model ab: ein aktiv bösartiger Betreiber mit Container-Escape bricht das Schema — die Grenze ist bewusst eng gezogen.",
+      "Container-Isolierung ist keine formale Trennung (Kernel ist geteilt) — schwächer als TEEs/Hardware-Sicherheitsmodule.",
+      "Der Workflow ist auf ein konkretes System zugeschnitten; Portabilität auf andere HPC-Stacks ist offen."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "homological_scaffolding_psilocybin.html",
+    "slug": "homological_scaffolding_psilocybin",
+    "title": "Homologische Gerüste des Gehirns – Interaktive Erkundung",
+    "lang": "de",
+    "size_kb": 133.4,
+    "category": "nicht-ki",
+    "category_reason": "Topologische Datenanalyse (persistente Homologie) angewendet auf fMRT-Gehirnnetzwerke; Neuro­wissenschaft, keine ML-/KI-Inhalte. Zeigt, wie Psilocybin die mesoskalige Struktur der Verbindungsgewichte verändert (Petri et al. 2014).",
+    "theme": "persistent-homology",
+    "themes": ["persistent-homology", "algebraic-topology", "tda", "neuroscience", "brain-networks"],
+    "thesis": "Persistente Homologie baut homologische Gerüste, die die mesoskalige Struktur gewichteter Netzwerke über alle Gewichtsketten hinweg einfangen; Psilocybin enthüllt eine andere Organisation — weniger stabile Zyklen, aber einige extrem persistente intercommunautaire Kanten (Petri et al. 2014, n=15 fMRT).",
+    "key_claims": [
+      "Schwellenwertproblem: Ein einziger Schwellenwert auf den Konnektivitäts-Gewichten verliert Struktur; eine gewichtete Filtration (alle Schwellen gleichzeitig) überlässt nichts zu.",
+      "Gewichtsfiltration: Man steigert das Schwellen θ; bei jedem θ entsteht ein simplicialer Komplex (Vietoris-Rips), dessen Homologie H0 (Komponenten), H1 (Löcher/Zyklen), H2 (Höhlen) verfolgt wird.",
+      "Persistenzdiagramm: Jedes topologische Merkmal bekommt eine Lebensspanne (Geburts-θ → Todes-θ); lange Lebensspannen = stabile Struktur, kurze = Rauschen.",
+      "Ergebnis Placebo: Die Persistenz ist nahezu linear (kaum stabile Zyklen) — das Gehirn ist unter Placebo fast zusammenhängend.",
+      "Ergebnis Psilocybin: Streuung — einige Zyklen/intercommunautaire Kanten werden extrem persistent, andere verschwinden; die Zahl der stabilen Zyklen sinkt insgesamt.",
+      "Statistik: Der Unterschied Placebo vs. Psilocybin ist hochsignifikant (Kolmogorov-Smirnov-Test, p<10⁻¹⁰).",
+      "Drei Hauptbefunde: (1) weniger stabile Zyklen, (2) einige extrem persistente intercommunautaire Kanten, (3) veränderte Gewichtsverteilung."
+    ],
+    "methods_math": ["simpliciale Komplexe", "Vietoris-Rips-Komplex", "gewichtete Filtration", "persistente Homologie / Persistenzdiagramme", "Betti-Zahlen", "homologische Gerüste", "Kolmogorov-Smirnov-Test"],
+    "visualizations": ["2D-Canvas: gewichtete Netzwerk-Filtration", "Plotly: Persistenzdiagramme (Placebo vs. Psilocybin)", "Interaktive Schwellen-Slider", "Gerüst-Vergleich (Placebo vs. Psilocybin)"],
+    "internal_tensions": [
+      "Kleines n (15 Subjekte); die Aussagekraft über die ganze Population ist begrenzt (explizit im Paper).",
+      "fMRT misst BOLD-Aktivitätskorrelationen, nicht direkte synaptische Verbindungen — Konnektivität ist indirekt.",
+      "Die Persistenzdiagramme sind interpretierbar, aber das Warum (warum Psilocybin genau diese Kanten persistent macht) bleibt offen — das Paper ist deskriptiv."
+    ],
+    "related_files": ["topologie_biologischer_systeme.html", "topological_data_analysis.html", "homological_scaffolds/index.html"]
+  },
+  {
+    "path": "good.html",
+    "slug": "good",
+    "title": "How to Live Well — A Formally Verified Guide",
+    "lang": "en",
+    "size_kb": 131.0,
+    "category": "nicht-ki",
+    "category_reason": "Ethik/Philosophie des Lebens, gerahmt durch formale Verifikation: neun ethische Prinzipien werden als ein kohärentes Ganzes dargestellt, dessen Konsistenz per Garben-Theorie und Coq-Formalisierung verifiziert wird. Keine ML-/KI-Inhalte.",
+    "theme": "formal-ethics",
+    "themes": ["ethics", "formal-verification", "sheaf-theory", "type-theory", "axiomatic-systems"],
+    "thesis": "Neun ethische Prinzipien (Schritte zum guten Leben) lassen sich als ein zusammenhängendes, widerspruchsfreies Axiomensystem auffassen — mit 8 Axiomen und 14 Theoremen, dessen Konsistenz formal über Garben-Theorie (offene Mengen = Domänen, Schnitte = Prinzipien, Verklebung = kohärentes Leben) und Coq/abhängige Typentheorie verifiziert wird.",
+    "key_claims": [
+      "Das System hat 9 Schritte (ethische Prinzipien), 8 Axiome und 14 bewiesene Theoreme — ein vollständiger, formalisierbarer Aufbau.",
+      "Garben-theoretische Konsistenz: Man legt eine Garbe über den Lebensraum; offene Mengen sind Kontexte/Domänen, Schnitte die Prinzipien in diesem Kontext, und das Verklebungstheorem (Gluing) besagt: lokal widerspruchsfreie Prinzipien kleben zu einem globalen, kohärenten Leben.",
+      "Formale Verifikation in Coq/abhängiger Typentheorie: Jedes Theorem ist ein Typ, jeder Beweis ein Programm; verifiziert heißt maschinell geprüft, nicht nur behauptet.",
+      "Verbindung zu anderen Axiomensystemen: Die Methode spiegelt, wie physikalische (Maxwell), logische (ZFC) und mathematische Axiome aufgebaut sind — Einheit durch Struktur, nicht durch Inhalt.",
+      "Jedes Prinzip ist lokal anwendbar; die Garben-Axiome (Lokalität + Verklebung) garantieren, dass keine lokalen Widersprüche global entstehen."
+    ],
+    "methods_math": ["Garben-Theorie (Verklebungstheorem / Gluing)", "abhängige Typentheorie / Coq", "axiomatische Systeme", "Typen als Propositionen (Curry-Howard)"],
+    "visualizations": ["d3.js: Abhängigkeits-/Kohärenz-Graph der Theoreme", "Verifikations-Konsole (Beweis-Schritte)", "Interaktive Prinzip-Karten"],
+    "internal_tensions": [
+      "Die Verifikation verifiziert nur die innere Konsistenz (widerspruchsfreie Axiome), nicht die Richtigkeit/Gültigkeit der ethischen Behauptungen — ein formales No-Go für wahr.",
+      "Die Garben-Analogie ist eine Rahmung: ob Leben wirklich ein topologischer Raum mit offenen Mengen ist, ist metaphorisch, nicht bewiesen.",
+      "Die Wahl der 9 Prinzipien / 8 Axiome ist eine philosophische Position (nicht neutral); die Formalisierung macht sie transparent, aber nicht objektiv."
+    ],
+    "related_files": ["proof.html", "paper/formal_proof.html", "coherent_worldview.html"]
+  },
+  {
+    "path": "llm_topology.html",
+    "slug": "llm_topology",
+    "title": "Topology for LLM Interpretability — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 129.2,
+    "category": "ki",
+    "category_reason": "Topologische Datenanalyse angewendet auf LLM-/Transformer-Interpretierbarkeit: persistente Homologie, Mapper, Mannigfaltigkeiten, Faserbündel, Morse-Theorie, Garben und Kohomologie als Werkzeuge, um die Geometrie der Hidden States zu verstehen.",
+    "theme": "topology-of-nns",
+    "themes": ["interpretability", "persistent-homology", "topology-of-nns", "fiber-bundles", "sheaves", "geometry-of-embeddings"],
+    "thesis": "Topologische Werkzeuge (persistente Homologie, Mapper, intrinsische Dimension, Faserbündel, Morse-Theorie, Garben, persistente Kohomologie) können die Geometrie der Hidden States von LLMs sichtbar machen und damit Interpretierbarkeit liefern — von zirkulären Merkmalen über Superposition bis zu globalen Inkonsistenzen (Halluzinationen).",
+    "key_claims": [
+      "Persistente Homologie auf Aktivierungswolken: lange β₁-Balken → zirkulare Merkmale (Wochentage, Modulo-Arithmetik, Sentiment-Polarität); lange β₀ bei großem ε → gut getrennte semantische Cluster; Persistenz (Tod − Geburt) trennt Signal von Rauschen (entspricht den TDA-Papern von Anthropic und EleutherAI).",
+      "Mapper/Reeb-Graphen auf dem Residual-Stream zeigen Verzweigungen (Branching) in der syntaktischen Verarbeitung; informativer als UMAP, weil topologische Konnektivität (nicht nur lokale Distanzen) erhalten bleibt.",
+      "Intrinsische Dimension der Hidden States variiert pro Schicht: früh hoch (Roh-Tokens), mittig niedrig (Kompression/Abstraktion), spät wieder hoch (Dekompression für die Vorhersage) — ein Dimensionsprofil charakterisiert jede Schicht.",
+      "Residual-Stream als Faserbündel über Positionen; Attention = Verbindung (parallel Transport); Holonomie misst Pfadabhängigkeit — nicht-null Holonomie ↔ nicht-kommutierende Attention-Heads (bezieht sich auf Geometry of Truth, Marks et al.).",
+      "Morse-Theorie: Genauigkeit eines linearen Probes als Morse-Funktion; Sattelpunkte im Genauigkeits-Landscape = zwischen interpretierbaren Zuständen = wo Superposition lebt; gilt auch für das Loss-Landscape.",
+      "Garben auf dem Attention-Graph: dim(H⁰) = Information, auf der alle Tokens einig sind (globaler Kontext); dim(H¹) = Inkonsistenzen-Modi — lokal anwesend, global nicht vereinbar = genau das, was bei Halluzination passiert.",
+      "Superposition: N Merkmale in d<N Dimensionen; die Feature-Vektoren bilden Polytop-Geometrien je nach Sparsity (Anthropic); bei hoher Sparsity exponentiell viele Merkmale; Phasenübergänge zwischen Packungsgeometrien.",
+      "Topologische Komplexität TC(X): misst, wie viele Strategien/Bewegungsplanung-Regionen ein Transformer zum kontinuierlichen Routing braucht; Konfigurationsraum von n Tokens ≈ Zopfgruppe B_n; untere Schranke für die Zahl distinct Attention-Patterns (bezieht sich auf Circuits-Komplexität).",
+      "Persistente Kohomologie → zirkuläre Koordinaten θ: X→S¹, die periodische Merkmale (Uhrzeit, Kompass, Modulo) automatisch aus der Topologie finden; triviale H¹ → keine zirkulare Struktur (lineare Repräsentation)."
+    ],
+    "methods_math": ["persistente Homologie (β₀/β₁/β₂, Barcodes/Diagramme)", "Vietoris-Rips-Komplex", "Mapper-Algorithmus / Reeb-Graphen", "Mannigfaltigkeits-Hypothese / intrinsische Dimension", "Faserbündel / Verbindungen / Krümmung / Holonomie", "Morse-Theorie (kritische Punkte, Index, Hesse, Euler-Charakteristik)", "zellulare Garben / Garbenkohomologie / Garben-Laplacian", "Superposition / Polytop-Geometrie / Gram-Matrizen", "topologische Komplexität TC / Zopfgruppen", "persistente Kohomologie / zirkuläre Koordinaten"],
+    "visualizations": ["2D-Canvas (kein externes Lib): Aktivierungswolke + Barcode + Rips-Kanten", "Mapper-Punkte + Reeb-Graph", "Mannigfaltigkeits-Kurve + Singulärwert-Spektrum", "Faserbündel (Zylinder/Möbius/Tangential) + Parallel Transport + Holonomie", "Morse-Landscape + Niveaumengen + Gradientenfluss", "zellulärer Garben-Graph + Coboundary", "Superpositions-Feature-Vektoren + Gram-Matrix + Voronoi", "topologischer Komplexitäts-Raum + Zopfgruppe", "zirkuläre Koordinaten θ + Persistenzdiagramm"],
+    "internal_tensions": [
+      "Die meisten LLM-connections sind Vorschläge/Hypothesen (z.B. Residual-Stream als nicht-triviales Faserbündel, Garbenkohomologie erkennt Halluzination, TC schränkt Attention-Patterns ein, Zopfgruppen für Token-Swaps) — hier nicht empirisch validiert, sondern als Kandidatenwerkzeuge dargelegt.",
+      "Es ist ein didaktischer Explorer: die Geometrien sind illustrierend (2D), nicht an echten LLMs gemessen — die Behauptungen sind plausibilitätsbasiert.",
+      "Die Verbindung zu Geometry of Truth / den Anthropic-TDA-Papern wird behauptet, aber die konkreten Messungen werden hier nicht wiederholt."
+    ],
+    "related_files": ["topologie_tiefer_neuronaler_netze.html", "latent_semantic_manifolds_in_llm.html", "geometry_of_meaning_test.html", "math_framework_for_transformers.html", "dynamic_residual_stream_paper.html"]
+  },
+  {
+    "path": "buecher/history_of_mathematical_notation.html",
+    "slug": "history_of_mathematical_notation",
+    "title": "Die Geheime Geschichte der Mathe-Symbole",
+    "lang": "de",
+    "size_kb": 22.8,
+    "category": "nicht-ki",
+    "category_reason": "Wissenschaftsgeschichte / Didaktik: die Herkunft und Durchsetzung der mathematischen Symbole (+, −, ×, ÷, =, 0) nach Cajori (1928). Keine ML-/KI-Inhalte.",
+    "theme": "math-history",
+    "themes": ["history-of-math", "notation", "didactics", "place-value"],
+    "thesis": "Gute Notation ermöglicht Fortschritt, schlechte verhindert ihn — die Geschichte der Mathematik ist die Geschichte einer ~1500-jährigen, unkoordinierten Kampagne, in der sich Symbole (Stellenwert, +/−, =, 0) erst nach Jahrhunderten international durchsetzten; fünf große Erkenntnisse (Notation=Macht, Symbole kämpfen, Genies scheitern an schlechter Notation, = brauchte 100+ Jahre, die Null veränderte alles) fassen das zusammen.",
+    "key_claims": [
+      "Notation ist Macht: Das indische Stellenwert-System (mit Null) machte echte Mathematik möglich; Laplace nannte es eine der nützlichsten Erfindungen — so einfach, dass wir ihre Genialität kaum noch sehen.",
+      "Symbole kämpfen: + und − (Deutschland ~1489, Widman) kämpften über 130 Jahre gegen die italienischen p/m; erst ~1630 siegten +/− endgültig (in Spanien überlebte p/m länger).",
+      "Genies scheitern an schlechter Notation: Die 27 griechischen Buchstaben-Zahlzeichen waren ein Hindernis statt eine Hilfe (Cajori); Archimedes/Apollonius verpassten Entdeckungen wegen der Notation.",
+      "Das Gleichheitszeichen: Robert Recorde erfand = 1557 (Nichts kann gleicher sein als zwei parallele Linien); Descartes benutzte noch jahrzehntelang ∝; erst im 18. Jh. setzte sich = durch.",
+      "Die Null: Drei unabhängige Erfindungen (Babylonier Basis 60 ohne echte Null, Maya Basis 20 mit vollem Null-Symbol früher als die Inder, Inder Basis 10); nur Maya und Inder hatten ein echtes Null-Symbol.",
+      "Chronologie der Symbole: Hindu-Ziffern (~500) → + und − (1489, Widman) → × (1631, Oughtred) → Buchstaben-Variablen (Viète 1591, Descartes 1637) → ÷ (1659, Rahn; fast nur GB/USA, Kontinentaleuropa nutzt :).",
+      "Cajoris Kriterien für gute Notation: kurz, eindeutig, leicht zu schreiben, suggestiv, erweiterbar."
+    ],
+    "methods_math": ["Stellenwert-Systeme (Basis 10/60/20)", "Null-Symbol", "historische Notations-Entwicklung", "Wissenschaftsgeschichte (Cajori 1928)"],
+    "visualizations": ["Canvas-Hintergrund: fallende Symbole", "Station 1: Symbol-Labor (Klick-Karten)", "Station 2: Drag&Drop-Chronologie", "Station 3: Quiz-Spiel", "Station 5: Zeichen-Canvas (eigenes Symbol)", "Fortschrittsbalken"],
+    "internal_tensions": [
+      "Die Darstellung vereinfacht/romantisiert (z.B. Archimedes verpasste Entdeckungen) — historisch nicht ganz belegt, eher didaktisch.",
+      "Einzelne Daten (exakte Jahreszahlen, Zuweisungen wie × von Oughtred 1631) werden vereinfacht; die Notationsgeschichte ist in Details streitig.",
+      "Das Quiz/die Chronologie mischen Fakten mit Merkspielchen; die fünf großen Erkenntnisse sind interpretativ."
+    ],
+    "related_files": ["history.html", "mathe_abi.html"]
+  }
+]

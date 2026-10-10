@@ -1,0 +1,152 @@
+[
+  {
+    "path": "tropische_geometrie_tiefer_neuronaler_netze.html",
+    "slug": "tropische_geometrie",
+    "title": "Tropische Geometrie tiefer neuronaler Netze — Interaktiv",
+    "lang": "de",
+    "size_kb": 224.2,
+    "category": "ki",
+    "category_reason": "Tropische Geometrie (max-plus-Algebra, DC-Zerlegung, Newton-Polytope, Minkowski-Summen) direkt auf die Struktur von ReLU-Netzwerken angewendet.",
+    "theme": "tropical-geometry-neural-nets",
+    "themes": ["tropical-geometry", "relu-nets", "dc-decomposition", "newton-polytopes", "minkowski-sums", "max-plus-algebra", "zonotopes"],
+    "thesis": "ReLU-tiefe Netze sind exakt max-affine (tropische) Abbildungen, deren kombinatorische Struktur — Anzahl der linearen Regionen, Krümmung, Komplexität der Entscheidungsgrenzen — durch tropische Algebra (DC-Zerlegung, Newton-Polytope, Minkowski-Summen, tropische Dualität) präzise quantifizierbar ist; Tiefe multipliziert die regionsweise Komplexität exponential.",
+    "key_claims": [
+      "Ein ReLU-Netz mit L Schichten und d-dimensionalen Eingaben ist eine max-affine (tropische) Funktion, deren Epigraph ein tropisches Hyperarrangement induziert.",
+      "Die Zahl der linearen Regionen wächst mindestens exponential mit der Tiefe bei ausreichender Breite; tiefe Netze sind kombinatorisch weitaus komplexer als flache.",
+      "Die DC-Zerlegung (Difference of Convex) zerlegt jede max-affine Funktion in die Differenz zweier konvexer max-affiner Funktionen; die Zahl der DC-Teile korrespondiert mit der Schichtzahl.",
+      "Das Newton-Polytop der tropicalisierten Funktion kodiert die kombinatorische Struktur der Regionen; seine Fläche/Volumen ist ein Komplexitätsmaß.",
+      "Minkowski-Summen der per-Layer Newton-Polytope geben eine subadditive Abschätzung des Gesamtpolytops — nicht exakt, aber eine Obergrenze.",
+      "Die tropische Legendre-Fenchel-Dualität verknüpft die Geometrie der Entscheidungsgrenzen mit der Geometrie der Gewichte.",
+      "Zonotope entstehen als Bild des Einheitswürfels unter der linearen Hülle der ReLU-Netzabbildung; deren Volumen kodiert die Anzahl der Regionen."
+    ],
+    "methods_math": ["max-plus Algebra", "tropische Geometrie", "DC-Zerlegung (Difference of Convex)", "Newton-Polytope", "Minkowski-Summe", "tropische Legendre-Fenchel-Dualität", "Zonotope", "Hyperarrangements", "Komplexitätsabschätzungen"],
+    "visualizations": ["Plotly 3D (tropische Flächen, DC-Zerlegung)", "Canvas 2D (Regionen, Polytope, Zonotope)", "Interaktive Slider (Tiefe, Breite, Dimensionszahl)", "~20 interaktive Demos"],
+    "internal_tensions": [
+      "Die exponentielle Regionschätzung gilt im Worst Case; typische trainierte Netze erreichen diese Schärfe nicht — die tropische Analyse gibt eine Obergrenze, keine Prädiktion für reale Gewichte.",
+      "Die DC-Zerlegung ist nicht eindeutig; die 'natürliche' Zerlegung durch die Schichten ist eine von vielen möglichen.",
+      "Minkowski-Summen geben nur subadditive Abschätzungen, keine exakte Zählung — die Lücke zwischen Abschätzung und Realität bleibt offen."
+    ],
+    "related_files": ["tropische_geometrie_tiefer_neuronaler_netze_simple.html", "tropische_geometrie_tiefer_neuronaler_netze_very_simple.html"]
+  },
+  {
+    "path": "origami_2.html",
+    "slug": "origami_2",
+    "title": "Kohärente Weltmodelle — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 216.6,
+    "category": "ki",
+    "category_reason": "Sheaf-Theorie, Descent und ∞-Stacks als mathematisches Framework für Kohärenz in LLM-Weltmodellen; Origami/ReLU-Falten (Keup & Helias 2022) als konkretes Descent-Beispiel; Modellkollaps als Überdeckungs-Theorie-Phänomen.",
+    "theme": "coherent-world-models",
+    "themes": ["sheaf-theory", "descent", "grothendieck-topologies", "infinity-stacks", "coherence-theory", "category-theory", "origami-relu-folding", "model-collapse", "llm-world-models", "space-of-reasons"],
+    "thesis": "Kohärenz — philosophisch (Bradley, Blanshard, BonJour) und mathematisch (Descent, Sheaves, ∞-Stacks) — ist die fundamentale Struktur, die ein LLM-Weltmodell zusammenhält; das Falten von ReLU-Netzen (Origami, Keup & Helias 2022) ist ein konkretes Descent-Phänomen, und der Zusammenbruch der Kohärenz (Modellkollaps) lässt sich als Versagen der Überdeckungstheorie formalisieren.",
+    "key_claims": [
+      "Ein Sheaf über einer Kategorie kodiert 'lokale Daten, die sich global verkleben lassen' — genau die Struktur, die ein kohärentes Weltmodell braucht.",
+      "Descent (Warendt): wenn lokale Informationen global verträglich sind, existiert ein globales Objekt — die formale Aussage dahinter, dass ein LLM 'zusammenhält'.",
+      "ReLU-Netzwerke falten den Raum (Origami-Interpretation, Keup & Helias 2022): jede ReLU-Schicht ist eine piecewise-lineare 'Falte', und die Komposition aller Falten ist ein Descent-Problem.",
+      "Modellkollaps entsteht, wenn die trainierende Überdeckung zu dünn wird: lokal kohärente Fragmente lassen sich nicht mehr global verkleben.",
+      "Sellars' 'Raum der Gründe' (space of reasons) ist informell eine Kategorie; ein LLM-Weltmodell ist ein Sheaf auf dieser Kategorie.",
+      "Fünf Pathologien (Halluzination, Inkohärenz, Konfabulation, Kontextverlust, Zielverschiebung) entsprechen dem Versagen verschiedener Axiome der Sheaf-Struktur.",
+      "Wahrheit = Kohärenz + Korrespondenz: ein Sheaf mit zusätzlichem 'Correspondence'-Träger ist ein 'verankertes' Weltmodell.",
+      "∞-Stacks generalisieren Sheaves auf Homotopie-Ebene und modellieren die 'Tiefe' von Weltmodellen (mehrschichtige Kohärenz)."
+    ],
+    "methods_math": ["Sheaf-Theorie", "Grothendieck-Topologien", "Descent (Warendt)", "∞-Stacks", "Kategorientheorie", "Homotopietheorie", "piecewise-lineare Topologie (Origami)", "Überdeckungstheorie", "Homotopie-Limite"],
+    "visualizations": ["Canvas 2D (Falten, Sheaves, Überdeckungen)", "Plotly (Kohärenz-Metriken, Modellkollaps)", "~30 interaktive Demos", "Temml Mathematik"],
+    "internal_tensions": [
+      "Die Analogie zwischen Sheaves und LLM-Weltmodellen ist heuristisch, nicht bewiesen — es gibt keinen expliziten Theorem-Transfer.",
+      "Die fünf Pathologien werden qualitativ beschrieben, aber nicht quantitativ mit Sheaf-Invarianten verknüpft.",
+      "Die Origami-Interpretation (Keup & Helias 2022) wird als Beispiel benutzt, aber die Brücke zur ∞-Stack-Ebene bleibt konzeptionell."
+    ],
+    "related_files": ["origami_1.html", "origami.html", "coherent_world_models.html", "coherent_differences_and_world_model.html"]
+  },
+  {
+    "path": "darstellungstheorie.html",
+    "slug": "darstellungstheorie",
+    "title": "Die Darstellungstheorie Neuronaler Netze — interaktiv",
+    "lang": "de",
+    "size_kb": 210.8,
+    "category": "ki",
+    "category_reason": "Darstellungstheorie (Quiver-Darstellungen, Modulisräume) als exakte algebraische Struktur für neuronale Netze; basiert auf Armenta & Jodoin (arXiv:2007.12213v2).",
+    "theme": "representation-theory-nn",
+    "themes": ["representation-theory", "quiver-representations", "moduli-spaces", "relu-invariance", "teleportation", "max-pooling", "residual-blocks", "meng-et-al-rebuttal"],
+    "thesis": "Ein neuronales Netz ist eine dünne Quiver-Darstellung mit Aktivierungsfunktionen als modifizierte Morphismen; isomorphe Netze haben dieselbe Funktion (Thm 4.13), ReLU-Netze besitzen positive Skalierungsinvarianz (Cor 4.15), und alle Entscheidungen faktorialisieren durch den Modulisraum (Cor 7.18) — was die algebraische Struktur zum zentralen Werkzeug für Architektur- und Generalisierungsverständnis macht.",
+    "key_claims": [
+      "Ein neuronales Netz ist eine dünne Quiver-Darstellung; isomorphe Netze haben dieselbe Funktion (Armenta & Jodoin, Thm 4.13).",
+      "ReLU-Netze besitzen positive Skalierungsinvarianz: Multiplikation aller Gewichte einer Schicht mit c > 0 und Bias mit 0 lässt die Funktion invariant (Cor 4.15).",
+      "Teleportation: Flippen von ReLU zu min(0,x) durch negative Skalierung τ < 0 erzeugt ein 'duales' Netz, das die komplementäre Entscheidung trifft.",
+      "Max-Pooling bricht die algebraische Struktur: es ist keine lineare Abbildung und damit keine Quiver-Darstellung mehr.",
+      "Daten können selbst als Quiver-Darstellungen modelliert werden (Thm 6.4), was eine 'doppelte' Darstellungstheorie ergibt.",
+      "Der Modulisraum eines Netzes hat Dimension #Kanten − #versteckte Neuronen (bei generischen Gewichten).",
+      "Alle Entscheidungen eines Netzes faktorialisieren durch seinen Modulisraum (Cor 7.18): die Klassifikationsfunktion ist eine Abbildung Moduli → Labels.",
+      "Residuelle Blöcke sind algebraisch nicht trivial — sie ändern die Quiver-Struktur und damit den Modulisraum (Refutation von Meng et al.)."
+    ],
+    "methods_math": ["Quiver-Darstellungen", "Modulisräume", "darstellungstheoretische Invarianten", "Isomorphieklassen", "ReLU-Invarianz", "Skalierungsdualität (Teleportation)", "lineare Algebra", "algebraische Geometrie (Modulisräume)"],
+    "visualizations": ["Canvas 2D (Quiver-Diagramme, Modulisräume)", "Plotly (Dimension, Invarianz)", "Temml (Formeln)", "Interaktive Demos (Skalierung, Teleportation)"],
+    "internal_tensions": [
+      "Die Theorie gilt für 'dünne' Quiver-Darstellungen; tiefe, breite Netze mit Skip-Connections sind algebraisch komplexer und die Modulisraum-Formel wird ungenau.",
+      "Max-Pooling, Softmax und Sigmoid brechen die Quiver-Struktur — die Theorie deckt nur ReLU-Netze vollständig ab.",
+      "Die Refutation von Meng et al. ist algebraisch exakt, aber die praktische Relevanz für die Trainingsdynamik bleibt offen."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "intrinsische_dimensionen_tiefer_neuronaler_netze.html",
+    "slug": "intrinsische_dimensionen",
+    "title": "Intrinsische Dimension in tiefen neuronalen Netzen — Interaktive Reise",
+    "lang": "de",
+    "size_kb": 205.6,
+    "category": "ki",
+    "category_reason": "Intrinsische Dimension von Repräsentationen in tiefen Netzen als zentrales diagnostisches Werkzeug; basiert auf Ansuini et al. (NeurIPS 2019, arXiv:1905.12784) und TwoNN (Facco et al. 2017).",
+    "theme": "intrinsic-dimension",
+    "themes": ["intrinsic-dimension", "twonn-estimator", "hunchback-phenomenon", "data-curvature", "overfitting", "random-labels", "flattening-myth", "ansuini-2019"],
+    "thesis": "Tiefe Netze verformen den Eingaberaum nicht 'flacher', sondern 'dünner': die intrinsische Dimension der Repräsentationen steigt zunächst an (Hunchback) und fällt dann wieder; die Daten sind dünn (niedrige ID) aber gekrümmt (nicht flach), und die ID der letzten versteckten Schicht ist ein starker Prädiktor für die Testgenauigkeit (r=0.94) — was den Flachheits-Mythos und die Übertrainings-Interpretation von Ma et al. 2018 widerlegt.",
+    "key_claims": [
+      "Die intrinsische Dimension (ID) in tiefen Netzen zeigt ein Hunchback-Phänomen: sie steigt in frühen Schichten, erreicht ein Maximum und fällt in späten Schichten (Ansuini et al. 2019).",
+      "Die ID der letzten versteckten Schicht korreliert stark (r=0.94) mit der Testgenauigkeit — sie ist ein Prädiktor für Generalisierung.",
+      "Tiefe Netze machen Daten nicht flacher, sondern dünner: die ID sinkt, aber die Krümmung steigt — die Repräsentation ist eine gekrümmte niedrigdimensionale Mannigfaltigkeit.",
+      "Der TwoNN-Äschätzer (Facco et al. 2017) ist der Standard für die ID-Schätzung in hochdimensionalen Räuen; er nutzt die Verteilung der Abstände zum 1. und 2. nächsten Nachbarn.",
+      "Random-Label-Experimente: bei zufälligen Labels steigt die ID in der zweiten Hälfte des Trainings (Memorisation); bei echten Labels bleibt sie stabil — ID als 'Übertrainings-Alarm' ist irreführend.",
+      "Die Trainings-Dynamik der ID ist nicht monoton und hängt von Architektur, Learning-Rate-Schedule und Datenkomplexität ab.",
+      "Widerlegung von Ma et al. 2018: eine steigende ID ist kein Übertrainings-Signal, sondern kann mit besserer Generalisierung einhergehen.",
+      "Widerlegung des Flachheits-Mythos: tiefe Netze minimieren nicht den Flachheitsgrad, sondern die ID in Kombination mit der Krümmung."
+    ],
+    "methods_math": ["Intrinsische Dimension (Fraktal-Dimension)", "TwoNN-Äschätzer (Facco et al. 2017)", "Nächste-Nachbar-Verteilungen", "Mannigfaltigkeits-Lernung", "Riemannsche Krümmung", "Korrelationsanalyse", "Random-Label-Experimente"],
+    "visualizations": ["Three.js (3D-Punktewolken, Krümmung)", "Canvas 2D (ID-Verläufe, TwoNN-Histogramme)", "Plotly (Training-Kurven, Korrelationen)", "Temml (Formeln)", "14 interaktive Labs"],
+    "internal_tensions": [
+      "Der TwoNN-Äschätzer hat bekannte Bias bei nicht-euklidischen Metriken und inhomogener Dichte — die ID-Schätzung in tiefen Netzen (mit LayerNorm, Softmax) ist nicht genau euklidisch.",
+      "Die Korrelation r=0.94 ist auf MNIST/CIFAR-10-Architekturen beobachtet; die Übertragbarkeit auf große Sprachmodelle ist unklar.",
+      "Das Hunchback-Phänomen ist ein Durchschnitt über viele Experimente; individuelle Trainingsläufe können andere Verläufe zeigen."
+    ],
+    "related_files": ["intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html", "intrinsische_dimensionen_tiefer_neuronaler_netze_very_simple.html"]
+  },
+  {
+    "path": "test2.html",
+    "slug": "test2",
+    "title": "Transformer Attractor Dynamics",
+    "lang": "de",
+    "size_kb": 116.7,
+    "category": "ki",
+    "category_reason": "Transformer-Modelle als nicht-autonome dynamische Systeme mit Attraktoren: Layer als Euler-Schritte, Attention + FFN als Kräfte, LayerNorm als Sphären-Projektion, Basin-of-Attraction-Dynamik, Superposition.",
+    "theme": "transformer-dynamics",
+    "themes": ["dynamical-systems", "attractors", "euler-integration", "transformers", "attention", "ffn", "layernorm", "hypersphere", "basin-of-attraction", "superposition", "softmax", "saddle-points", "chen-et-al-2018"],
+    "thesis": "Ein Transformer ist ein nicht-autonomes dynamisches System, bei dem jeder Layer ein Euler-Schritt ist (h^(ℓ+1) = h^(ℓ) + f_ℓ(h^(ℓ))); Tokens sind Teilchen auf einer Hypersphäre S^(d-1) (aufgezwungen durch LayerNorm), die durch Attention (Kontext-Kraft zwischen Tokens) und FFN (assoziative Attraktor-Kraft) gegen stabile Attraktoren konvergieren, die den Output-Tokens entsprechen; die Konvergenz ist progressiv (breite → scharfe Bassins), und die finale Decodierung erfolgt über die Unembedding-Matrix.",
+    "key_claims": [
+      "Jeder Transformer-Layer ist ein Euler-Schritt: h^(ℓ+1) = h^(ℓ) + f_ℓ(h^(ℓ)), f_ℓ = Attention + FFN (analog zu Chen et al. 2018 für ResNets).",
+      "LayerNorm projiziert alle Repräsentationen auf eine Hypersphäre S^(d-1); Attraktoren liegen auf der Kugeloberfläche, nicht frei im ℝ^d.",
+      "Attention erzeugt 'Kontext-Kräfte' zwischen Tokens (relationale Verschiebung): es verschiebt Tokens zueinander, nicht zu Attraktoren.",
+      "FFN erzeugt 'Attraktor-Kräfte' (assoziatives Nachschlagen): W₁ ist ein Pattern-Matcher, W₂ gibt den Wissensinhalt zurück (Geva et al. 2021: FFN als Key-Value-Memory).",
+      "Die Konvergenz ist progressiv: frühe Layer haben breite, überlappende Bassins; späte Layer schärfen die Grenzen; ‖f_ℓ(h)‖ nimmt mit ℓ ab.",
+      "Zwischen Layer 8–12 (bei 24 Layern) liegt ein Saddle Point: die Entscheidung ist instabil, kleine Perturbationen können den Token in ein anderes Basin kippen.",
+      "Superposition: in d Dimensionen können ≫d fast-orthogonale Konzept-Richtungen untergebracht werden; die 'Entscheidung' zwischen zwei Attraktoren passiert oft nur in wenigen kritischen Dimensionen.",
+      "Fünf offene Fragen: Punkt-Attraktoren vs. Mannigfaltigkeiten, fraktale Basin-Grenzen, Limit Cycles, Kontext-Abhängigkeit der Attraktor-Landschaft, Berechenbarkeit der Bassins aus den Gewichten."
+    ],
+    "methods_math": ["dynamische Systeme (Euler-Integrierung)", "Attraktor-Theorie", "Hypersphären-Geometrie", "LayerNorm als Projektion", "Attention als bilineare Form", "FFN als assoziativer Speicher", "Superposition (fast-orthogonale Vektoren)", "Softmax als Temperature-Scaling", "Saddle-Point-Analyse"],
+    "visualizations": ["Canvas 2D (Trajektorien, Attention-Weight-Matrix, FFN-Aktivierungen, Basin-Grenzen, Superposition, Output-Distribution)", "Canvas 2D 3D-Projektion (Sphäre mit Attraktoren, 3D-Trajektorien)", "Interaktive Slider (Layer, Temperatur, Dimensionen, Auflösung)", "Animationen (Layer-Durchlauf, Trajektorien-Playback)"],
+    "internal_tensions": [
+      "Die Attraktor-Interpretation ist heuristisch und nicht formal bewiesen — es gibt keinen Theorem, der die Existenz stabiler Attraktoren in trainierten Transformers garantiert.",
+      "Die Simulationen sind synthetisch (feste Trajektorien, keine echten Gewichte); die visualisierten Dynamiken sind Illustrationen, keine Messungen.",
+      "Die Superposition-Argumentation (≫d Konzepte in d Dimensionen) ist ein Hochdimensionalitäts-Phänomen, das in der 2D/3D-Visualisierung nicht direkt darstellbar ist.",
+      "Der Saddle-Point bei Layer 8–12 ist eine heuristische Beobachtung, keine messbare Invariante."
+    ],
+    "related_files": ["test.html", "transformer_dynamics.html", "topology_of_attractors.html", "concept_attractors.html", "concept_attractors_in_llm.html"]
+  }
+]

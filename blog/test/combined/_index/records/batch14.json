@@ -1,0 +1,712 @@
+[
+  {
+    "path": "j_space.html",
+    "slug": "j_space",
+    "title": "Global Workspace in Language Models - Interaktive Erklärung",
+    "lang": "de",
+    "size_kb": 68.2,
+    "category": "ki",
+    "category_reason": "Interaktive Erklärung des Papers 'Verbalizable Representations Form a Global Workspace in Language Models' (Gurnee et al., 2026): LLM-Repräsentationen bilden einen kleinen 'verbalisierbaren' Globalen Arbeitsraum (J-Space), lesbar über eine Jacobian-Lens. Klare KI-Kopplung (LLM-Interpretierbarkeit + Safety).",
+    "theme": "llm-interpretability",
+    "themes": [
+      "llm-interpretability",
+      "global-workspace",
+      "jacobian-lens",
+      "mechanistic-interpretability",
+      "llm-safety"
+    ],
+    "thesis": "Sprachmodelle besitzen einen kleinen, 'verbalisierbaren' Teil ihrer internen Repräsentationen (den J-Space/Jacobian-Space), der wie ein Globaler Arbeitsraum (analog zur Global-Workspace-Theorie aus der Neurowissenschaft) funktioniert; eine Jacobian-Lens macht diese Gedanken lesbar, und die Struktur hat praktische Sicherheitsrelevanz.",
+    "key_claims": [
+      "Der J-Space macht nur ~5–10 % der Gesamtaktivierung (bzw. ~6–7 % der Varianz) aus, trägt aber ~59 % der berichteten Änderungsleistung; der Rest (~93 % Varianz) leistet nur ~5 %.",
+      "Eine 'Jacobian Lens' (J-Lens) — im Unterschied zur Logit Lens — zeigt, welche Wörter ein Modell gerade intern 'denkt', auch wenn es sie nicht ausspricht.",
+      "Der J-Space erfüllt fünf Eigenschaften eines Globalen Arbeitsraums: verbaler Bericht, gerichtete Modulation, internes Reasoning (Zwischenschritte), flexible Generalisierung und Selektivität.",
+      "Die Workspace-Zone liegt in den oberen Schichten des Modells (Layer-Diagramm).",
+      "Der J-Space ist für Safety-Anwendungen nutzbar: Erpressungs-/Blackmail-Szenario, Erkennung trainierter Fehlausrichtungen und 'Counterfactual Reflection Training' werden demonstriert.",
+      "Kausale Interventions-Experimente (z. B. Ersetzen des J-Space-Vektors 'spider' durch 'ant' ändert die Antwort von 8 auf 6) belegen die kausale Rolle des J-Space."
+    ],
+    "methods_math": [
+      "Jacobian-Lens (J-Lens) als Aktivierungs-Lesung",
+      "Vergleich Logit Lens vs. Jacobian Lens",
+      "Ablations-/Varianzanalyse des J-Space",
+      "Kausale Interventions-Experimente",
+      "Global-Workspace-Modell (Baars/Dehaene) als neurowissenschaftliche Analogie"
+    ],
+    "visualizations": [
+      "Tab-UI mit mehreren Abschnitten (fade-in)",
+      "Interaktive Workspace-Visualisierung ('Thought Bubbles')",
+      "Layer-Diagramm (Wo im Modell ist der Workspace?)",
+      "J-Lens-Readout-Demo",
+      "Aufklappbare Property-Karten (5 Eigenschaften)",
+      "Erpressungs-/Blackmail-Szenario-Simulator",
+      "Quiz mit 5 Fragen"
+    ],
+    "internal_tensions": [
+      "'Globaler Arbeitsraum' und 'Bewusstsein' werden auf LLMs übertragen — die Entsprechung zur neurowissenschaftlichen Global-Workspace-Theorie ist eine Analogie, kein Nachweis.",
+      "Punktwerte wie ~6–7 % Varianz / 59 % Berichtsleistung werden nicht auf Robustheit über Modellgrößen/Architekturen geprüft.",
+      "Die Safety-Anwendungen (Erpressung, Fehlausrichtung) sind illustrierend, nicht als evaluiertes Defense-Framework belegt."
+    ],
+    "related_files": [
+      "semantic_steering.html",
+      "test.html",
+      "transformer_dynamics.html",
+      "grokking_paper.html"
+    ]
+  },
+  {
+    "path": "commutative_diagram.html",
+    "slug": "commutative_diagram",
+    "title": "Kommutative Diagramme – Visuell & Intuitiv",
+    "lang": "de",
+    "size_kb": 67.8,
+    "category": "nicht-ki",
+    "category_reason": "Reine Kategorientheorie/Garbentheorie visuell erklärt (Pfeil, Dreieck, kommutatives Quadrat, Homotopie, Pullback, Keime, exakte Sequenzen, Étalé-Raum). Keine ML-/KI-Kopplung.",
+    "theme": "category-theory",
+    "themes": [
+      "category-theory",
+      "commutative-diagrams",
+      "functors",
+      "pullback",
+      "homotopy",
+      "sheaves",
+      "etale-space"
+    ],
+    "thesis": "Kommutative Diagramme werden vom Symbol zum Sehen gebracht: ein Pfeil ist eine Bewegung, ein Dreieck 'zwei Wege ein Ziel', ein kommutatives Quadrat die Konsistenz-/Garbenbedingung, Homotopie die Fläche zwischen zwei Wegen, der Pullback das Finden konsistenter Paare, Keime das lokale Wissen einer Garbe und der Étalé-Raum die Garbe als Raum über dem Raum.",
+    "key_claims": [
+      "Ein Pfeil ist eine Bewegung/Morphismus; das kommutative Quadrat drückt aus, dass zwei Wege dieselbe Wahrheit liefern (Konsistenz).",
+      "Das kommutative Quadrat wird als Garbenbedingung interpretiert (lokale Daten verkleben konsistent).",
+      "Homotopie ist die 2-Zelle/'Fläche' zwischen zwei Wegen (Bezug zur HoTT).",
+      "Der Pullback sammelt die 'zusammenpassenden' Paare über einem gemeinsamen Ziel.",
+      "Keime (Germs) sind die lokale Welt einer Garbe; der Étalé-Raum stellt die Garbe als Raum über der Basis dar.",
+      "Exakte Sequenzen beschreiben den Fluss der Information zwischen Objekten."
+    ],
+    "methods_math": [
+      "Morphismen/Pfeile",
+      "kommutative Diagramme (Dreieck, Quadrat)",
+      "Homotopie / 2-Zellen",
+      "Pullback",
+      "Keime & Halme (Germs/Stalks)",
+      "exakte Sequenzen",
+      "Étalé-Raum"
+    ],
+    "visualizations": [
+      "8 animierte 2D-Canvas-Animationen (Pfeil, Dreieck, Quadrat, Homotopie, Pullback, Keim, exakte Sequenz, Étalé-Raum)",
+      "MathJax-Formeln"
+    ],
+    "internal_tensions": [
+      "Die Brücke vom rein algebraischen Diagramm zum 'Sehen' ist didaktisch — die formale Präzision (z. B. Universalität des Pullbacks) wird zugunsten der Intuition zurückgestellt.",
+      "Homotopie/2-Zellen werden im 2D-Canvas nur angedeutet, nicht in voller Typ-Theorie-Präzision dargestellt."
+    ],
+    "related_files": [
+      "sheaves.html",
+      "teichmueller.html",
+      "paperidea4.html"
+    ]
+  },
+  {
+    "path": "understanding.html",
+    "slug": "understanding",
+    "title": "Understanding Understanding",
+    "lang": "en",
+    "size_kb": 67.7,
+    "category": "nicht-ki",
+    "category_reason": "Kognitive/philosophische Untersuchung, was es heißt, etwas zu 'verstehen' — 9 Facetten (Connection, Pattern Recognition, Depth, Compression, Prediction, Mental Models, Aha-Moment, Transfer, Embodied Intuition). Kein ML-Fokus (ML nur als eines der Transfer-Beispiele).",
+    "theme": "philosophy-of-mind",
+    "themes": [
+      "philosophy-of-mind",
+      "cognition",
+      "mental-models",
+      "compression",
+      "embodied-cognition"
+    ],
+    "thesis": "Verstehen ist kein Binärzustand, sondern ein Zusammenspiel mehrerer Facetten: Fakten werden zu Verbindungen, man erkennt Muster im Rauschen, Verstehen hat Tiefenstufen, gutes Verstehen komprimiert, wer versteht kann vorhersagen, baut innere Modelle, erlebt Aha-Momente, transferiert Wissen in neue Domänen und besitzt verkörperte Intuition.",
+    "key_claims": [
+      "Verstehen beginnt, wenn isolierte Fakten zu verbundenen Konzepten werden (Connection).",
+      "Verstehen ist, das in Rauschen versteckte Muster zu erkennen (Pattern Recognition).",
+      "Verstehen ist nicht binär, sondern hat Tiefenstufen (Depth).",
+      "Zu verstehen heißt zu komprimieren: eine gute Theorie verdichtet viele Beobachtungen auf wenige Prinzipien (Compression, Kolmogorov-Aspekt).",
+      "Wer etwas wirklich versteht, kann vorhersagen, was als Nächstes kommt (Prediction).",
+      "Verstehen heißt, ein internes Modell zu bauen, das die Realität spiegelt (Mental Models); der Aha-Moment ist das plötzliche 'Klick'-Erleben verborgener Struktur; Transfer (Anwendung in neuen Domänen) und verkörperte Intuition sind weitere Facetten."
+    ],
+    "methods_math": [
+      "Kompressions-Intuition (Kolmogorov)",
+      "Mustererkennung",
+      "mentale Modelle",
+      "Transfer zwischen Domänen (Druck/Pipes, Schaltkreis, Evolution, ML/Training als Beispiele)",
+      "verkörperte Intuition (Gravitationsexperiment)"
+    ],
+    "visualizations": [
+      "neuronales Netzwerk im Hintergrund",
+      "Connection-Canvas (Knoten + Verbindungen)",
+      "Pattern-Grid (Regel finden)",
+      "Depth-Ebenen (aufklappbar)",
+      "3D-Puzzle-Canvas für den Aha-Moment (drehbar)",
+      "Transfer-Canvas (Konzepte zwischen Domänen ziehen)",
+      "Gravitations-Canvas (Embodied Intuition)"
+    ],
+    "internal_tensions": [
+      "Die 9 Facetten sind ein didaktisches Rahmenwerk, keine empirisch validierte Taxonomie der Kognition.",
+      "ML (Loss Funktion, Accuracy, Training) taucht nur als ein Transfer-Beispiel auf — die Seite macht keine KI-Aussagen, wird aber in einem KI-Korpus eingeordnet."
+    ],
+    "related_files": [
+      "mccarthy_heyes_1969.html",
+      "voidstar.html",
+      "sheaves.html"
+    ]
+  },
+  {
+    "path": "voidstar.html",
+    "slug": "voidstar",
+    "title": "VOIDST★R — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 67.3,
+    "category": "nicht-ki",
+    "category_reason": "Interaktive Reise durch das Album 'VOIDST★R' von Grim Salvo × Witchhouse 40k (Grim-Rap/Witchhouse über Verfall, Tod, Suizidgedanken, okkulte Imagery). Musik-/Literaturanalyse + Geschichte (Tanzwut 1518). Kein KI-/ML-Bezug.",
+    "theme": "interactive-art",
+    "themes": [
+      "interactive-art",
+      "music-analysis",
+      "allegory",
+      "decay",
+      "history-of-dance",
+      "ritual"
+    ],
+    "thesis": "Das Album VOIDST★R ist ein 12-stufiger Abstieg und ein Ritual — ein Weg nach unten und wieder hinaus — getragen von drei Stimmen (Facetten desselben Bewusstseins, ein 'dämonisches Trio'); die Kernmetapher ist der Verfall, historisch über die Tanzwut von 1518 (Ratking) allegorisch aufgeladen, kulminierend im Pakt (Baphomet & Queen Leech) und der Flut als Katharsis/Auslöschung.",
+    "key_claims": [
+      "Die 12 Tracks bilden einen Bogen: Abstieg & Ritual, jeder Track eine Station (emotionaler Verlauf: Hoffnungslosigkeit, Wut, Transformation).",
+      "Drei 'Personas' (Stimmen) tragen das Album — keine getrennten Rapper, sondern Facetten desselben Bewusstseins, ein dämonisches Trio.",
+      "Der Verfall ist die Kernmetapher; ein interaktiver 'Decay-Simulator' macht sie erfahrbar.",
+      "Die historische Tanzwut (Ratking) von 1518 wird als Allegorie eingebunden (Simulation mit 400 Tänzern / Ausbreitungs-Dynamik).",
+      "Der Pakt (Baphomet & Queen Leech) und die Flut (Katharsis oder Auslöschung?) sind zentrale Bildfelder.",
+      "Sprachanalyse: welche Wörter fallen am häufigsten (Wortfrequenz-Plot)."
+    ],
+    "methods_math": [
+      "emotionaler Verlauf (Liniendiagramm über 12 Tracks)",
+      "Stimmen-/Persona-Verteilung (Anteil der Verses)",
+      "Themen-Netz (Netzwerk)",
+      "Decay-Simulation",
+      "Ausbreitungs-/Epidemie-Modell (400 Tänzer)",
+      "Wortfrequenz"
+    ],
+    "visualizations": [
+      "Plotly: Emotion-Liniendiagramm, Stimme-Verteilung, Wortfrequenz",
+      "Canvas: Themen-Netz, Decay-Simulator, 400-Tänzer-Simulation, Baphomet-Pentagramm, Flut/Regen, Spirale"
+    ],
+    "internal_tensions": [
+      "Die Seite versteht sich explizit als 'keine Analyse, sondern eine Reise' — die These des Albums ist interpretierend, nicht beweisbar.",
+      "Okkulte/düstere Imagery (Baphomet, Suizidgedanken, Pakt) wird ästhetisch verhandelt, ohne deren Ernst oder ethische Dimension zu kritisieren.",
+      "Die historische Einbindung (1518) ist allegorisch aufgeladen; der Zusammenhang zwischen Track-Inhalten und historischer Quelle bleibt interpretativ."
+    ],
+    "related_files": [
+      "understanding.html",
+      "kult_der_statistischen_signifikanz_simple.html"
+    ]
+  },
+  {
+    "path": "orbifold.html",
+    "slug": "orbifold",
+    "title": "Manifolds & Orbifolds — A Visual Journey",
+    "lang": "en",
+    "size_kb": 67.2,
+    "category": "nicht-ki",
+    "category_reason": "Reine Differentialgeometrie/Topologie: Was ist eine Mannigfaltigkeit (Kreis, Sphäre, Torus, Gluing) und was ein Orbifold (Konuspunkte, Spiegelkanten, Teardrop, Wallpaper-Symmetrie). Keine ML-/KI-Kopplung.",
+    "theme": "geometry-manifolds",
+    "themes": [
+      "geometry-manifolds",
+      "orbifolds",
+      "cone-points",
+      "wallpaper-symmetry",
+      "gluing",
+      "differential-topology"
+    ],
+    "thesis": "Eine Mannigfaltigkeit ist lokal euklidisch; Orbifolds verallgemeinern sie, indem sie Punkte mit 'symmetrischen Defekten' (Konuspunkte, Spiegelkanten, Ecken) zulassen; man kann Orbifolds durch Gluing und aus Wallpaper-Symmetrien (z. B. den Teardrop) konstruieren — die Seite macht diesen Unterschied visuell.",
+    "key_claims": [
+      "Eine Mannigfaltigkeit ist eine 2D-Fläche, die lokal wie der euklidische Raum aussieht (Beispiele: Kreis 1D, Sphäre, Torus 2D).",
+      "Mannigfaltigkeiten lassen sich durch Gluing (Zusammenkleben) konstruieren.",
+      "Ein Orbifold erlaubt 'exotische' Punkte: Konuspunkte (der Kern von Orbifolds), Spiegelkanten und Ecken-Reflektoren.",
+      "Konuspunkte verhalten sich wie die Spitze eines Kegels — die Umlaufsymmetrie dort ist nicht frei.",
+      "Der Teardrop ist ein klassisches Orbifold; Orbifolds entstehen aus Wallpaper-/Raumgruppen-Symmetrien.",
+      "Manifold vs. Orbifold: an gewöhnlichen Punkten identisch, an den Defekt-Punkten unterschiedlich (Stabilisatoren)."
+    ],
+    "methods_math": [
+      "lokale Euklidizität",
+      "Gluing/Klebekonstruktion",
+      "Konuspunkte & Stabilisatoren",
+      "Spiegelkanten / Ecken-Reflektoren",
+      "Wallpaper-/Raumgruppen-Symmetrie",
+      "Teardrop-Orbifold"
+    ],
+    "visualizations": [
+      "12 animierte 2D-Canvas-Animationen (Kreis, Sphäre, Torus, Gluing, Konus, Teardrop, Tiling/Wallpaper, Manifold-vs-Orbifold-Vergleich)"
+    ],
+    "internal_tensions": [
+      "Der Begriff 'Orbifold' wird über 2D-Beispiele eingeführt; die volle Definition (Gruppen-Handlungen / Stabilisator-Struktur) bleibt im Hintergrund.",
+      "Die Brücke zu höheren Dimensionen / zu Orbifolds in der Physik (Stringtheorie) wird nicht gezogen."
+    ],
+    "related_files": [
+      "teichmueller.html",
+      "mannigfaltigkeiten.html",
+      "sheaves.html"
+    ]
+  },
+  {
+    "path": "sheaves.html",
+    "slug": "sheaves",
+    "title": "Garbentheorie – Interaktiv & Intuitiv",
+    "lang": "de",
+    "size_kb": 66.1,
+    "category": "nicht-ki",
+    "category_reason": "Komplette Garbentheorie ohne ML-Bezug: offene Mengen, Prägarben, Garben-Axiome, Halme, Garbifizierung, Morphismen/Funktorialität, Garbenkohomologie (Cech, Mayer-Vietoris), konstruierbare Garben & Exodromie, étale Version, SGA1. Reine Mathematik.",
+    "theme": "sheaves",
+    "themes": [
+      "sheaves",
+      "sheaf-theory",
+      "presheaves",
+      "stalks",
+      "sheafification",
+      "sheaf-cohomology",
+      "functoriality",
+      "exodromy"
+    ],
+    "thesis": "Garben verallgemeinern Funktionen, indem sie lokale Daten mit einer 'Verklebe'-Eigenschaft ausstatten: eine Prägarbe ist eine Garbe genau dann, wenn lokal übereinstimmende Schnitte zu einem globalen Schnitt verkleben; die Seite führt interaktiv durch offene Mengen, Prägarben→Garben, Halme, Garbifizierung, Funktorialität bis zur Garbenkohomologie und Exodromie.",
+    "key_claims": [
+      "Prägarben (z. B. beschränkte Funktionen) sind nicht automatisch Garben; stetige Funktionen erfüllen die Garben-Axiome, beschränkte Funktionen nicht.",
+      "Die Garben-Axiome verlangen: (1) Schnitte injektiv auf Überdeckungen, (2) lokal übereinstimmende Schnitte verkleben zu einem globalen Schnitt.",
+      "Der Halm (Stalk) ist der Limes über offenen Mengen um einen Punkt (Schnitt → Keim → Halm).",
+      "Garbifizierung ist ein Funktor, der jede Prägarbe in die 'nächste' Garbe abbildet (z. B. Konstante Prägarbe → Konstante Garbe; Beschränkt → alle stetigen Funktionen).",
+      "Morphismen & Funktorialität: Kern, Bild, Kokern, Pushforward & Pullback.",
+      "Garbenkohomologie (Cech, Mayer-Vietoris) misst, wie das globale Verkleben scheitert; konstruierbare Garben & Exodromie verbinden Garben auf lokalkompakten Räumen mit Homotopie."
+    ],
+    "methods_math": [
+      "Prägarben & Garben-Axiome",
+      "Halme (Stalks) als Limes",
+      "Garbifizierung",
+      "Morphismen, Funktorialität (Kern/Bild/Kokern, Push/Pullback)",
+      "Cech-Kohomologie, Mayer-Vietoris-Sequenz",
+      "konstruierbare Garben, Exodromie",
+      "étale Garben, SGA1"
+    ],
+    "visualizations": [
+      "7 animierte 2D-Canvas-Animationen (offene Mengen, Garben, Garbifizierung, Halm, Kern/Bild, Exit-Pfade)",
+      "Plotly: Konzept-Graph, Kohomologie-Balken (Sphäre Sⁿ)",
+      "Temml-Formeln"
+    ],
+    "internal_tensions": [
+      "Die Seite deckt sehr viel ab (von Prägarben bis SGA1/étale) — die Tiefe pro Konzept ist didaktisch, nicht beweisend.",
+      "Exodromie und étale Garben sind forschungsnahe; die Verbindung zu moderner algebraischer Geometrie wird nur angedeutet."
+    ],
+    "related_files": [
+      "commutative_diagram.html",
+      "paperidea4.html",
+      "s_theory.html"
+    ]
+  },
+  {
+    "path": "grokking_paper.html",
+    "slug": "grokking_paper",
+    "title": "Wie ein Transformer rechnen lernt",
+    "lang": "de",
+    "size_kb": 65.9,
+    "category": "ki",
+    "category_reason": "Erklärt mechanistisch, wie ein (1-Schicht-)Transformer modulare Addition (mod 113) lernt — 'Grokking'/'clock embedding' (Zahlen auf einem Kreis, sin/cos, Frequenzen, Additionstheorem). Klare KI-Kopplung (Transformer-Circuits/Interpretierbarkeit).",
+    "theme": "transformer-circuits",
+    "themes": [
+      "transformer-circuits",
+      "grokking",
+      "modular-addition",
+      "clock-embedding",
+      "mechanistic-interpretability",
+      "attention",
+      "ffn"
+    ],
+    "thesis": "Ein kleiner Transformer lernt modulare Addition, indem er Zahlen als Punkte auf einem Kreis (Clock-/Zahlenblatt-Embedding, sin/cos) codiert: Addition wird dann zu einer Rotation auf dem Kreis, der Attention die zwei Zahlen zusammenbringt, ein MLP die Rotation/Summe berechnet und die Unembedding über mehrere Frequenzen die eindeutige richtige Antwort als Maximum ausliest.",
+    "key_claims": [
+      "Die Aufgabe ist modulare Addition: zwei Zahlen addieren, Rest modulo 113.",
+      "Zahlen werden als 113 gleichmäßig verteilte Punkte auf einem Kreis codiert (Clock-Embedding); eine Position wird mit zwei Koordinaten sin/cos beschrieben.",
+      "Addition entspricht dann einer Drehung/Rotation auf dem Kreis (Additionstheorem: Drehungen kombinieren).",
+      "Ein einzelner Cosinus hat sein Maximum an der richtigen Stelle, aber fast gleich hohe Werte auch anderswo — daher mehrere Frequenzen, die eine eindeutige Antwort erzeugen.",
+      "Der Mini-Transformer: Layer 1 Embedding → Layer 2a Attention (bringt Information zusammen, Causal Mask) → Layer 2b MLP (nichtlineare Berechnung, Universelle Approximation) → Layer 3 Unembedding (Vektor → Antwort, 'Rang 10').",
+      "Der Residual Stream trägt die Information zwischen den Schichten; die Vorhersage kommt immer vom letzten Token."
+    ],
+    "methods_math": [
+      "Clock-/Zahlenblatt-Embedding (sin/cos auf Kreis)",
+      "modulare Addition (mod 113)",
+      "Additionstheorem / Rotation",
+      "Mehrfrequenz-Codierung für Eindeutigkeit",
+      "Attention (Causal Mask), MLP/FFN (Universelle Approximation)",
+      "Unembedding & Rang-10-Analyse"
+    ],
+    "visualizations": [
+      "Folien-basierte Interaktion (Pfeiltasten-Navigation)",
+      "5 Canvases (Kreis, sin/cos, Frequenzen, Pipeline)",
+      "Plotly (7 Diagramme: Addition=Rotation, Frequenzen, Pipeline)",
+      "Temml-Formeln"
+    ],
+    "internal_tensions": [
+      "Das Modell wird auf 113 und 1 Schicht reduziert — die Verallgemeinerung zu größeren Modellen und zum eigentlichen 'Grokking' (spät einsetzendes Generalisieren nach Overfitting) wird nur angedeutet.",
+      "Die mechanistische Erklärung ist eine plausible Lesart, nicht ein bewiesener Mechanismus (das reale Training kann andere Pfade nehmen)."
+    ],
+    "related_files": [
+      "test.html",
+      "transformer_dynamics.html",
+      "j_space.html"
+    ]
+  },
+  {
+    "path": "transformer_dynamics.html",
+    "slug": "transformer_dynamics",
+    "title": "Transformer Dynamics - Interactive Visual Explainer",
+    "lang": "en",
+    "size_kb": 65.9,
+    "category": "ki",
+    "category_reason": "Behandelt den Residual Stream eines LLM als dynamisches System, das sich über die Lagen entwickelt (Fernando & Guitchounts 2025, Llama 3.1 8B); 7 empirische Befunde zur Transformer-Dynamik. Klare KI-Kopplung (Interpretierbarkeit/Dynamiksysteme).",
+    "theme": "transformer-dynamics",
+    "themes": [
+      "transformer-dynamics",
+      "residual-stream",
+      "dynamical-systems",
+      "phase-space",
+      "attractors",
+      "mutual-information",
+      "mechanistic-interpretability"
+    ],
+    "thesis": "Der Residual Stream eines LLM verhält sich wie ein neuronales/dynamisches System über den Lagen: Aktivierungen werden dichter, bleiben stark kontinuierlich (trotz fehlender privilegierter Basis), beschleunigen, verlieren mutual information, die Einheiten verfolgen instabile periodische Orbits, beschreiben gekrümmte Trajektorien im niedrigdimensionalen Raum und zeigen selbstkorrigierendes, attractor-artiges Verhalten.",
+    "key_claims": [
+      "Finding 1: Aktivierungen werden über die Lagen hinweg dichter.",
+      "Finding 2: Starke Kontinuität zwischen Lagen, obwohl es keine privilegierte Basis gibt.",
+      "Finding 3: Der Residual Stream 'beschleunigt' (wächst in seiner Änderungsrate).",
+      "Finding 4: Die Mutual Information fällt über die Lagen hinweg steil ab.",
+      "Finding 5: Einheiten (Units) im Residual Stream verfolgen instabile periodische Orbits (Phasenporträts).",
+      "Finding 6: Im reduzierten 2D-Raum beschreiben die RS-Trajektorien gekrümmte Bahnen.",
+      "Finding 7: Das System zeigt selbstkorrigierende, attractor-ähnliche Dynamik (Perturbation → Rückkehr)."
+    ],
+    "methods_math": [
+      "Residual Stream als dynamisches System",
+      "Aktivierungs-Dichte über Lagen",
+      "Layer-zu-Layer-Korrelation",
+      "Velocity-Profil (Beschleunigung)",
+      "Mutual Information",
+      "Phasenporträts / periodische Orbits",
+      "Dimensionalitätsreduktion (2D-Bahnen)",
+      "Perturbation & Self-Correction (Attractors)"
+    ],
+    "visualizations": [
+      "10 animierte 2D-Canvas-Visualisierungen (River, Heatmap, Correlation, Velocity, MI, Phase Portrait, 2D-Trajektorie, Attractor, Summary, Full Pipeline)"
+    ],
+    "internal_tensions": [
+      "Das 'neurale' Framing (Residual Stream als Dynamiksystem) ist eine Interpretationslinse; es erklärt Korrelationen, aber keine kausale Funktion der Lagen.",
+      "Die Befunde sind empirisch an Llama 3.1 8B gezeigt — die Übertragbarkeit auf andere Modellgrößen/Architekturen bleibt offen.",
+      "'Instabile periodische Orbits' und 'Attractors' sind metaphorisch-mathematisch; es sind keine streng bewiesenen Fixpunkt-/Stabilitäts-Nachweise."
+    ],
+    "related_files": [
+      "grokking_paper.html",
+      "test.html",
+      "j_space.html"
+    ]
+  },
+  {
+    "path": "berkeley.html",
+    "slug": "berkeley",
+    "title": "BPF vs iptables vs ufw – Interaktive Erklärung",
+    "lang": "de",
+    "size_kb": 65.5,
+    "category": "nicht-ki",
+    "category_reason": "Linux-Netzwerk-/Paketfilter: BPF/eBPF vs. iptables vs. ufw, Paketweg durch den Stack, Geschwindigkeit, BPF-Playground. Reine System-/Computer-Sicherheit, kein KI-/ML-Bezug.",
+    "theme": "computer-science",
+    "themes": [
+      "networking",
+      "firewalls",
+      "bpf",
+      "ebpf",
+      "iptables",
+      "linux-kernel",
+      "computer-science"
+    ],
+    "thesis": "Die drei Paketfilter-Tools sitzen auf unterschiedlichen Ebenen des Linux-Stacks: ufw ist das einfache Frontend (übersetzt in iptables), iptables konfiguriert die Netfilter-Regeln im Kernel, und BPF/eBPF läuft direkt im Kernel und kann Pakete abfangen, bevor Netfilter sie sieht — die Seite macht den Paketweg, die Geschwindigkeit und die Unterschiede interaktiv erfahrbar.",
+    "key_claims": [
+      "Analogie: Paketfilter sind wie Türsteher im Club — wer darf rein?",
+      "ufw = Frontend, übersetzt Befehle in iptables-Regeln.",
+      "iptables = konfiguriert die Netfilter-Regeln im Kernel (an definierten Hooks).",
+      "BPF/eBPF = läuft direkt im Kernel und kann Pakete abfangen, BEVOR Netfilter sie sieht — daher schneller/flexibler.",
+      "Der Paketweg durch den Stack (NIC Driver → Kernel → Netfilter → ufw/iptables → BPF) ist die Kern-Visualisierung.",
+      "BPF ist nicht nur Firewall, sondern allgemein im Kernel einsetzbar (Performance, Observability)."
+    ],
+    "methods_math": [
+      "Netzwerk-Stack-Schichten (NIC, Kernel, Netfilter, eBPF)",
+      "Paketweg/Flow durch Hooks",
+      "Paketfilter-Regeln",
+      "eBPF-Programmierung (vereinfacht)",
+      "Performance-Vergleich"
+    ],
+    "visualizations": [
+      "Interaktiver Paketfilter (Klick: Paket senden → Weg beobachten)",
+      "Stack-Schichten-Visualisierung (ufw/iptables/Netfilter/BPF/NIC)",
+      "BPF-Playground (vereinfachtes BPF-Programm + gleiche Aufgabe auf 3 Wegen)"
+    ],
+    "internal_tensions": [
+      "eBPF-Programme werden stark vereinfacht dargestellt — die reale eBPF-VM-/Verifier-Logik bleibt ausgeblendet.",
+      "Der Fokus liegt auf Firewall; die breiteren BPF-Verwendungen (Observability, Tracing) werden nur angedeutet.",
+      "Kein Sicherheits-/Threat-Modell — reine Funktions-/Layer-Erklärung."
+    ],
+    "related_files": [
+      "kult_der_statistischen_signifikanz_simple.html",
+      "test.html"
+    ]
+  },
+  {
+    "path": "kult_der_statistischen_signifikanz_simple.html",
+    "slug": "kult_der_statistischen_signifikanz_simple",
+    "title": "Der Kult der statistischen Signifikanz — Einfach erklärt",
+    "lang": "de",
+    "size_kb": 65.3,
+    "category": "nicht-ki",
+    "category_reason": "Kritik der Statistik-Forschungsmethodik (p-Wert/Schwellwert-Kult): σ vs. SE, t-Wert als Signal-Rausch-Maschine, die willkürliche 5-%-Linie, Vioxx, Verluste vs. Schwellen, DeGroots 20 000, Power, Gosset (Student). Reine Statistik/Methodenkritik, kein KI-/ML-Bezug.",
+    "theme": "statistics-inference",
+    "themes": [
+      "statistics-inference",
+      "p-value",
+      "hypothesis-testing",
+      "student-t",
+      "meta-science",
+      "vioxx"
+    ],
+    "thesis": "Der 'Kult der statistischen Signifikanz' verwechselt die Überschreitung einer willkürlichen 5-%-Schwelle mit Bedeutung; der eigentliche Gedanke ist, Verluste (False Positives vs. False Negatives) abzuwägen, nicht Schwellen zu überschreiten — der p-Wert ist nur eine Signal-Rausch-Maschine (t), und seine Blindheit (Power, der zweite Fehler) hat reale Konsequenzen (Vioxx).",
+    "key_claims": [
+      "Ausgangspunkt: die Frage 'Deine Mutter ruft an' — zwei Pillen, gleicher Preis/Nebenwirkungen, unterschiedliche Wirksamkeit.",
+      "'± 10 Pfund' meint: innerhalb ±2σ liegen 95,4 % aller Fälle.",
+      "Die meistverwechselte Unterscheidung: σ (Standardabweichung) ≠ SE (Standardfehler).",
+      "Der t-Wert ist eine 'Signal-Rausch-Maschine' (Signal/Rausch-Verhältnis).",
+      "Der p-Wert und die willkürliche 5-%-Linie sind der Kern des 'Kults'; ein p<0.05 ist keine Beweis-/Bedeutungs-Garantie.",
+      "Wenn es Leben kostet (Violex/Vioxx) zeigt die Blindheit der Schwelle reale Schäden.",
+      "Der eigentliche Gedanke ist, Verluste abzuwägen (Decision-Theorie), nicht Schwellen zu überschreiten.",
+      "DeGroots '20 000' (Befund) und die Power (zweiter Fehler) sind die zerstörerischen Blindstellen; Gosset (Student) ist der historische Ursprung des t-Tests."
+    ],
+    "methods_math": [
+      "Standardabweichung σ vs. Standardfehler SE",
+      "t-Test / t-Wert als Signal-Rausch-Verhältnis",
+      "p-Wert & 5-%-Schwelle",
+      "Power (1−β, zweiter Fehler)",
+      "Verlust-/Entscheidungstheorie",
+      "DeGroots 20 000-Stichprobe",
+      "Student's t (Gosset)"
+    ],
+    "visualizations": [
+      "9 animierte 2D-Canvas-Visualisierungen (Verteilungen, ±2σ, σ vs. SE, t-Maschine, p-Wert/Schwelle, Vioxx, Verluste, DeGroot 20000, Power)"
+    ],
+    "internal_tensions": [
+      "Die Seite ist polemisch ('Kult', 'zerstörerisch') — die Kritik am p-Wert-Kult wird zugunsten der Klarheit zugespitzt.",
+      "Der 'simple' Ansatz reduziert die Nuancen der inferentiellen Statistik (Konfidenz, Effekstärken, Bayesian-Alternativen) auf die Kern-Gegensätze.",
+      "Der Vioxx-Fall wird als Warnbeispiel verwendet; die tatsächliche regulatorische/kausale Komplexität bleibt ausgeblendet."
+    ],
+    "related_files": [
+      "understanding.html",
+      "berkeley.html"
+    ]
+  },
+  {
+    "path": "semantic_steering.html",
+    "slug": "semantic_steering",
+    "title": "Conceptors für Semantic Steering – Interaktive Reise",
+    "lang": "de",
+    "size_kb": 65.2,
+    "category": "ki",
+    "category_reason": "Erklärt das Paper 'Conceptors for Semantic Steering' (Triantafyllopoulos et al., 2026, NYU & UPenn): Conceptor-Matrizen als weiche Projektionen auf Konzept-Unterräume, um Hidden States zu steuern. Klare KI-Kopplung (Representation Engineering).",
+    "theme": "representation-engineering",
+    "themes": [
+      "representation-engineering",
+      "conceptors",
+      "semantic-steering",
+      "latent-representations",
+      "pca",
+      "mechanistic-interpretability",
+      "model-editing"
+    ],
+    "thesis": "Konzepte in Sprachmodellen sind Unterräume (keine einzelnen Pfeile), und man kann den Hidden State gezielt darauf steuern, indem man ihn mit einer Conceptor-Matrix weich auf den Konzept-Unterraum projiziert (mit einer 'Blende' α); Conceptors ermöglichen Boolesche Konzept-Komposition (NOT/AND/OR auf Matrizen), schlagen additive Baselines und ersetzen teures Probe-Training als Layer-Wegweiser.",
+    "key_claims": [
+      "Ein Hidden State ist ein Vektor im Bedeutungssraum; Steering mit einem einzelnen Vektor (z. B. DiffMean) ist der einfache Fall.",
+      "Konzepte sind Unterräume (aus einer Datenwolke + Korrelationsmatrix & Eigenwerten), keine einzelnen Richtungen.",
+      "Der Conceptor ist eine weiche Projektions-Matrix C (aus R gebaut), die den State auf den Top-Unterraum des Konzepts projiziert (Capture(Δv̄, Top-Unterraum)).",
+      "α ist die 'Blende'/Aperture des Conceptors und steuert, wie viel Signal durchgelassen wird (steuert die Ellipse).",
+      "Bipolar > Unipolar: bipolare Conceptor-Matrizen sind leistungsfähiger.",
+      "Die Conceptor-Quota dient als Layer-Wegweiser (Pearson r bis 0.96 mit Probe-AUC) und ersetzt teures Probe-Training.",
+      "Boolesche Algebra (NOT/AND/OR) auf den Matrizen erlaubt Konzept-Komposition; Subspace-Overlap entscheidet, wann welche Operation funktioniert.",
+      "Ergebnis: Conceptors schlagen additive Baselines (Degenerate Outputs 13 % vs. 58 %; Win-Ratio pro Layer)."
+    ],
+    "methods_math": [
+      "Hidden State im Bedeutungssraum",
+      "DiffMean-Vektor",
+      "Korrelationsmatrix & Eigenwerte (PCA-Unterraum)",
+      "Conceptor als weiche Projektion (Capture)",
+      "Aperture α (Blende)",
+      "Boolesche Algebra auf Matrizen (NOT/AND/OR)",
+      "Subspace-Overlap",
+      "Conceptor-Quota als Layer-Selektor (Pearson r)"
+    ],
+    "visualizations": [
+      "12 Canvases (Hidden State bewegen, DiffMean, Punktwolke→Unterraum, Korrelationsmatrix/Eigenwerte, weiche Gates, Aperture, bipolar, Quota, Boolean-Mixing, Overlap-Regime, Win-Ratio)",
+      "Plotly: Gating, Quota vs. AUC, Win-Ratio, MCQ"
+    ],
+    "internal_tensions": [
+      "Die 'Boolesche Algebra auf Matrizen' ist eine analoge Näherung — keine echte Mengen-/Logik-Algebra, sondern eine Projektions-Komposition.",
+      "Die Zahlen (r=0.96, 13 % vs. 58 %) stammen aus dem Paper; die Robustheit über Modelle/Tasks wird hier nicht re-evaluiert.",
+      "'Conceptors schlagen additive Baselines' ist an spezifischen Konzepten/Tasks gezeigt — die allgemeine Überlegenheit ist nicht bewiesen."
+    ],
+    "related_files": [
+      "j_space.html",
+      "test.html",
+      "grokking_paper.html"
+    ]
+  },
+  {
+    "path": "teichmueller.html",
+    "slug": "teichmueller",
+    "title": "Teichmüller Theory — Visual Explorer",
+    "lang": "en",
+    "size_kb": 65.1,
+    "category": "nicht-ki",
+    "category_reason": "Reine komplexe Geometrie: Flächen, konforme & quasikonforme Abbildungen (Stretching), Teichmüller- & Moduli-Raum, Torus aus einem Parallelogramm, Teichmüller-Distanz. Keine ML-/KI-Kopplung.",
+    "theme": "algebraic-geometry",
+    "themes": [
+      "teichmuller-theory",
+      "complex-geometry",
+      "conformal-maps",
+      "quasiconformal",
+      "moduli-spaces",
+      "torus"
+    ],
+    "thesis": "Teichmüller-Theorie beantwortet die Frage, wie 'verschieden' zwei konforme Strukturen auf derselben Fläche sind: konforme Abbildungen strecken nicht, quasikonforme strecken kontrolliert (kleine Kreise werden kleine Ellipsen); der Teichmüller-Raum sammelt die konformen Strukturen, der Moduli-Raum modultiert durch Diffeomorphismen, und die Teichmüller-Distanz misst den minimalen 'Stretch'.",
+    "key_claims": [
+      "Eine Fläche ist eine 2D-Form; ihre zentrale Eigenschaft ist ihre konforme Struktur.",
+      "Konforme Abbildungen erhalten Winkel (strecken nicht); quasikonforme Abbildungen strecken kontrolliert/begrenzt (Kleinkreise → kleine Ellipsen).",
+      "Man kann einen Torus aus einem Parallelogramm durch Gluing konstruieren.",
+      "Der Teichmüller-Raum sammelt die konformen Strukturen einer topologischen Fläche; der Moduli-Raum ist Teichmüller-Raum modulo Diffeomorphismen.",
+      "Die Teichmüller-Distanz misst den minimalen quasikonformen Stretch zwischen zwei Strukturen.",
+      "Ganzes: von 'Gummiblättern' (rubber sheets) zum Raum aller Formen."
+    ],
+    "methods_math": [
+      "konforme Abbildungen (Winkel-erhaltend)",
+      "quasikonforme Abbildungen (begrenztes Stretching)",
+      "Torus aus Parallelogramm (Gluing)",
+      "Teichmüller-Raum",
+      "Moduli-Raum (mod Diffeomorphismen)",
+      "Teichmüller-Distanz"
+    ],
+    "visualizations": [
+      "7 animierte 2D-Canvas-Explorations (Big Idea, Surfaces, Stretch, Torus, Moduli, Dist, Summary)"
+    ],
+    "internal_tensions": [
+      "Teichmüller-Theorie ist eine forschungsnahe, abstrakte Theorie — die Visualisierung bleibt auf 2D/Torus-Beispielen und andeutet nicht die volle Riemann-Flächen-/Beltrami-Präzision.",
+      "Der Bezug zu Moduli-Räumen (algebraische Geometrie) und Stringtheorie wird nicht weiter ausgeführt."
+    ],
+    "related_files": [
+      "orbifold.html",
+      "commutative_diagram.html",
+      "sheaves.html"
+    ]
+  },
+  {
+    "path": "mccarthy_heyes_1969.html",
+    "slug": "mccarthy_heyes_1969",
+    "title": "McCarthy & Hayes 1969 – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 65.1,
+    "category": "ki",
+    "category_reason": "Interaktive Visualisierung des KI-Klassikers 'Some Philosophical Problems from the Standpoint of Artificial Intelligence' (McCarthy & Hayes, 1969) — u. a. das Frame-Problem, Situationskalkül, Wissens-/Glaubenslogik. Klare KI-Kopplung (KI-Philosophie/Symbolische KI).",
+    "theme": "frame-problem",
+    "themes": [
+      "frame-problem",
+      "ai-history",
+      "situation-calculus",
+      "symbolic-ai",
+      "modal-logic",
+      "knowledge-representation",
+      "mccarthy-hayes-1969"
+    ],
+    "thesis": "McCarthy & Hayes (1969) stellen die Grundfrage, wie ein intelligentes System über seine Umgebung wissen kann: sie trennen Intelligenz in einen epistemologischen (Wissens-) und einen heuristischen (Such-/Lösungs-) Teil, modellieren die Welt als System interagierender Automaten, formalisieren 'können' (can) und den Situationskalkül — und stoßen damit auf das Frame-Problem (Explosion der 'nichts ändert sich'-Axiome), die Wissens-/Glaubenslogik und referentielle Transparenz vs. Opazität.",
+    "key_claims": [
+      "Intelligenz hat zwei Teile: den epistemologischen (Wissen/Glaube) und den heuristischen (Suchen/Lösen) Teil.",
+      "Drei Stufen der Adäquatheit (Adequacy) ordnen, wie gut ein Modell die Welt abbildet.",
+      "Das 'Reasoning Program' (RP) ist das formale Modell; die Welt wird als System interagierender Automaten dargestellt.",
+      "'Können' (can(p, π, s)) wird auf verschiedenen Ebenen formalisiert.",
+      "Der Situationskalkül verwendet Fluenten (Funktionen auf Situationen) und result(p, σ, s) — Aktionen verändern die Welt.",
+      "Das Frame-Problem (Affen-Bananen-Problem): bei jeder Aktion explodieren die 'nichts ändert sich'-Frame-Axiome; Lösungsansätze sind Frame-Deklarationen und der 'normally'-Operator.",
+      "Wissen, Glauben & Modallogik (Mögliche-Welten-Semantik, Kombinationsschloss-Problem), referentielle Transparenz vs. Opazität (Substitutionstest) und Hintikkas Wissenslogik runden ab."
+    ],
+    "methods_math": [
+      "epistemologischer vs. heuristischer Teil",
+      "3 Stufen der Adäquatheit",
+      "Reasoning Program (RP)",
+      "Welt als interagierende Automaten",
+      "can(p, π, s) Formalisierung",
+      "Situationskalkül (Fluenten, result)",
+      "Frame-Problem & Lösungsansätze",
+      "Modallogik / Mögliche-Welten-Semantik",
+      "referentielle Transparenz vs. Opazität",
+      "Hintikkas Wissenslogik"
+    ],
+    "visualizations": [
+      "8 animierte 2D-Canvases (Automat, can, Affen-Bananen, Frame-Demo, Situation, Welt, Shrugs, RP)",
+      "Plotly (9 Diagramme: Adäquatheit, can-Ebenen, Fluenten, Frame-Explosion, Vergleich, Legacy, Opazität, Paper-Struktur)"
+    ],
+    "internal_tensions": [
+      "Das Frame-Problem wurde 1969 als offenes Problem gestellt; die Seite zeigt Lösungsansätze, aber kein vollständiges, heute akzeptiertes Lösungsmodell.",
+      "Die Brücke von der symbolischen/formalen Darstellung (1969) zur modernen KI (neuronal, probabilistisch) wird nur im 'Vermächtnis' angedeutet.",
+      "Referentielle Transparenz vs. Opazität ist ein subtiles logisch/philosophisches Thema, das die interaktive Demo nur anskizziert."
+    ],
+    "related_files": [
+      "understanding.html",
+      "j_space.html",
+      "test.html"
+    ]
+  },
+  {
+    "path": "test.html",
+    "slug": "test",
+    "title": "How LLMs Store Information — Deep Interactive Demonstrator",
+    "lang": "en",
+    "size_kb": 65.1,
+    "category": "ki",
+    "category_reason": "Tiefer interaktiver Demonstrator, wie LLMs Information speichern: Residual Stream (Concept-Geometrie), MLP als Key-Value-Memory, Superposition (Features über Dimensionen hinaus), polysemantische Neuronen, Live-Training, Mini-Transformer-Forward-Pass. Klare KI-Kopplung (Repräsentationsgeometrie/Interpretierbarkeit).",
+    "theme": "neural-network-internals",
+    "themes": [
+      "neural-network-internals",
+      "residual-stream",
+      "mlp-key-value",
+      "superposition",
+      "polysemantic-neurons",
+      "representation-geometry",
+      "mechanistic-interpretability"
+    ],
+    "thesis": "LLMs speichern Information als Geometrie im Residual Stream: der Stream ist ein Vektorraum, in dem Konzepte Richtungen sind; das MLP agiert als Key-Value-Memory, Superposition packt mehr Features als Dimensionen (mit Interferenz), polysemantische Neuronen mischen Feature-Richtungen, und man kann per Live-Training zusehen, wie Wissen als geometrische Struktur entsteht.",
+    "key_claims": [
+      "Der Residual Stream trägt den State jedes Tokens als Vektor; Konzepte sind geometrische Richtungen (ziehbar).",
+      "Das MLP funktioniert als Key-Value-Memory (Keys erkennen, Values schreiben).",
+      "Superposition erlaubt es, mehr Features als Dimensionen zu packen — mit einer Interferenz-Matrix; die Johnson-Lindenstrauss-Schranke begrenzt, wie fast-orthogonale Richtungen getrennt bleiben.",
+      "Polysemantische Neuronen: ein Neuron-Key ist eine Mischung mehrerer Feature-Richtungen; der 'Ambiguitäts-Problem'-Dissektor macht das sichtbar.",
+      "Live-Training: ein kleines 2D-Netz (2 Attention-Heads, 4-Neuron-MLP) lernt 4 Queries → 4 Answers; die Gewichtsmatrizen entwickeln sich via Gradient Descent und Wissen entsteht als Geometrie (Loss-Kurve, editable Gewichtszellen).",
+      "Voller Mini-Transformer: Schritt-für-Schritt-Forward-Pass (Input Tokens → Residual Stream → Operation → Attention-Weights → MLP-Aktivierungen → Output-Logits)."
+    ],
+    "methods_math": [
+      "Residual Stream als Vektorraum / Concept-Geometrie",
+      "MLP als Key-Value-Memory",
+      "Superposition (Feature-Packing, Interferenz-Matrix)",
+      "Johnson-Lindenstrauss-Schranke",
+      "polysemantische Neuronen (Feature-Dissektion)",
+      "Gradient Descent (Live-Training)",
+      "Forward-Pass (Attention, MLP, Logits)"
+    ],
+    "visualizations": [
+      "6 Canvases (ziehbar: Residual Stream, MLP Key-Value, Superposition, Polysemantic, Training, Forward-Pass)",
+      "Plotly (11 Diagramme: Logits, Loss, MLP-Aktivierungen, Multi-Neuron, Poly-Breakdown, Projektions-Balken)"
+    ],
+    "internal_tensions": [
+      "Das Modell ist ein 2D-Mini-Transformer mit 2 Heads und 4 Neuronen — die Verallgemeinerung zu echten LLMs (Tausende Dimensionen) ist didaktisch, nicht realistisch.",
+      "Superposition & polysemantische Neuronen sind reale Phänomene, aber hier stark vereinfacht (wenige Features, klare Geometrie) dargestellt.",
+      "Die Johnson-Lindenstrauss-Schranke wird als Begrenzung genannt, aber die tatsächliche Feature-Separability in großen Netzen bleibt aus dem Blick."
+    ],
+    "related_files": [
+      "grokking_paper.html",
+      "transformer_dynamics.html",
+      "j_space.html"
+    ]
+  }
+]

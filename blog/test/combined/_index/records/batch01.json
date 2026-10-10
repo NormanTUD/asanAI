@@ -1,0 +1,185 @@
+[
+  {
+    "path": "calculus_on_manifolds.html",
+    "slug": "calculus_on_manifolds",
+    "title": "Spivak · Calculus on Manifolds — Interaktiv",
+    "lang": "de",
+    "size_kb": 355.6,
+    "category": "nicht-ki",
+    "category_reason": "Pure differential-geometric/analytic exposition of Spivak's book (differential forms, Stokes, manifolds) with no AI/ML application; only points forward to de Rham cohomology and gauge-theory physics.",
+    "theme": "differential-forms",
+    "themes": ["geometry-manifolds", "algebraic-topology", "mathematical-foundations"],
+    "thesis": "The Fundamental Theorem of Calculus, Green's theorem, the Divergence theorem and Stokes' theorem are not four theorems but one (int_M dω = int_{∂M} ω) in four disguises; the proof is trivial (Fubini + 1D FTC) while the real work is in the definitions (alternating tensors, wedge, d, chains, ∂, orientation, manifolds, partition of unity).",
+    "key_claims": [
+      "HDI, Green, Divergence and classical Stokes are a single statement ∫ dω = ∫_{∂} ω with different k and different ω; the classical notation (cross products, normal vectors) is just bookkeeping artifacts of ℝ³.",
+      "The proof of Stokes is 'a complete triviality' (three lines: Fubini + 1D fundamental theorem); the difficulty is entirely in the definitions — Spivak's own diagnosis from the preface.",
+      "The derivative is not a number but a linear map; Spivak's linear-approximation definition lives in every dimension, whereas the school formula fails because h is a vector and you cannot divide by it.",
+      "The determinant is the prototype of all differential forms: it is linear in each column and flips sign under column swap — the two properties that define alternating tensors.",
+      "d² = 0 (forms) and ∂² = 0 (chains) are the dual structures; Stokes' theorem says d and ∂ are adjoint with respect to the integral.",
+      "'Closed ⇒ exact' holds only on star-shaped regions (Poincaré lemma); dθ on ℝ²∖{0} is closed but not exact, so integrals detect holes — the beginning of topology.",
+      "On manifolds one must integrate forms, not functions, because forms carry the Jacobian factor |det| automatically under a change of chart (Satz 4-9).",
+      "Green, Divergence and classical Stokes are each obtained by choosing the right form ω of degree 0/1/2; rot grad f = 0 and div rot F = 0 fall out of d²=0 (Problem 4-19b)."
+    ],
+    "methods_math": [
+      "differential forms and exterior derivative d",
+      "wedge product ∧ and alternating/antisymmetric tensors",
+      "singular chains and boundary operator ∂",
+      "Stokes' theorem (Satz 4-13 and 5-5)",
+      "n-dimensional Riemann integration, Lebesgue criterion (measure zero)",
+      "Fubini's theorem",
+      "change of variables / Jacobian factor |det g'|"
+    ],
+    "visualizations": [
+      "Four-masks hero: one equation in four classical disguises (custom 2D canvas + Temml math)",
+      "Linear map / determinant-as-oriented-area, norm/open-set/boundary classifier, Riemann 2D upper/lower sums, measure-zero covering, Fubini slicing, change-of-variables (all custom 2D canvas)",
+      "Partition of unity, alternating-tensor and wedge-product demos, orientation/volume-element, 1-form and 2-form fields, d-operator and d²=0, dθ on ℝ²∖{0} (custom 2D canvas)",
+      "Chains and ∂²=0, step-through Stokes proof and a numerical live-verification of ∫dω = ∫_{∂}ω (custom 2D canvas)",
+      "Manifold 'locally flat', tangent space in 3D and Möbius band orientability (Plotly 3D surface / custom canvas)",
+      "Classical theorems (Green, Divergence in 3D, Stokes) numerically, Archimedes' principle as physics, and a dependency-graph of the book (custom 2D canvas + Plotly)"
+    ],
+    "internal_tensions": [
+      "The proof is trivial but the 'horde of difficult definitions' is the real content — the page is built to make those definitions tangible.",
+      "Whether 'closed ⇒ exact' holds depends on the topology (holes) of the region, not on the formula.",
+      "Area defined as a limit of inscribed triangles fails (Schwarz's cylinder); the correct definition is the integral over the volume element.",
+      "Partial derivatives alone do not imply differentiability — Satz 2-8 (continuous partials) is only sufficient, not necessary."
+    ],
+    "related_files": ["mannigfaltigkeiten", "homotopie"]
+  },
+  {
+    "path": "coherent_differences_and_world_model.html",
+    "slug": "coherent_differences_and_world_model",
+    "title": "Vom Weltzugang zum Weltmodell (From World Access to World Model — Coherent Representation)",
+    "lang": "de",
+    "size_kb": 312.2,
+    "category": "ki",
+    "category_reason": "A sheaf-/category-theoretic epistemology of 'world models' that is applied with a dedicated, substantive LLM station (structural necessity of hallucination, model collapse, RLHF as a Tarski anchor) — sheaves/category theory used 'for AI', with a clear AI application.",
+    "theme": "world-models",
+    "themes": ["sheaves", "category-theory", "philosophy-of-math", "interpretability"],
+    "thesis": "A world model is the global section reconstructed from local descent data along an admissible cover — provisional, revisable, and never identical to what it represents; coherence is necessary but not sufficient for truth, and an LLM structurally (not accidentally) confuses the two, which is why it must hallucinate.",
+    "key_claims": [
+      "A world model = a global section glued from locally-compatible sections over an admissible cover (the sheaf/Garben condition: local compatibility ⇒ unique global section).",
+      "Coherence (internal consistency) is necessary but NOT sufficient for truth; correspondence ('Kontakt' to W) is a separate, independent test — a self-consistent fantasy passes coherence and fails correspondence.",
+      "The class 𝒯 of licensed transformations carries all the content: an unlicensed or overly rich 𝒯 is itself a form of overfitting — more transformation freedom demands more evidence.",
+      "The cover never reaches the whole context c, only the accessible interface c_acc ⊆ c; every instrument widens but never closes the cover, so the model is of the interface, not the thing-in-itself (Kant's Ding an sich).",
+      "Truth (veridicality) = the limit of (coherence ∧ correspondence) as the W-anchored cover is widened — approximated, never reached, a regulative ideal; justified acceptance = coherence on the current cover ∧ no failed contact point (Popper: not yet falsified), which IS operationalizable.",
+      "An LLM is an internal coherence machine without licensed correspondence transitions, so it wins on fitness metrics and structurally must hallucinate; model collapse is predicted because AI-generated corpus text adds only derived patches that do not widen c_acc.",
+      "Five pathologies of a model — self-consistent fantasy, fact-book, contact-point liar, calibrated error, question-outside-the-cover — each needs a different cure; the fifth (no contact point at all, the question lies outside c_acc) is the sneakiest and breaks no condition.",
+      "Self-application: the framework instantiates 'Pathology 4: calibrated error' — it has a consistent small bias toward presenting a working definition or loose reading with the force of a theorem."
+    ],
+    "methods_math": [
+      "sheaf theory (presheaf vs sheaf, sections, global sections, gluing/Garben condition, Čech nerve, winding number on the circle)",
+      "category theory (equalizers, pullbacks, Ologs / ontology-logs, higher n-morphisms, commutativity)",
+      "Tarski's T-convention (semantic truth, object vs meta language)",
+      "homotopy / ∞-groupoids (coherent equivalence vs strict equality)",
+      "first-order completeness and compactness theorems"
+    ],
+    "visualizations": [
+      "44 interactive demos on custom 2D canvas + Plotly charts",
+      "Trace-machine (world→access→trace), perception pipeline, 'difference detective' (3 levels: world/channel/processing)",
+      "Ladder of six kinds of equality + silent-upgrade detector + isomorphism≠identity coin swap",
+      "Transformation triangle / thermometer Olog, overfitting-by-freedom (𝒯 richness), Sellars' web vs foundation",
+      "Cover builder + instruments widening c_acc, panorama sheaf (stitching), presheaf-vs-sheaf counterexample, circle/winding-number",
+      "Equalizer & pullback (thermometer agreement, radar/video track matching), higher-coherence filler, n-morphism tower, Čech nerve",
+      "Tarski T-schema machine, coherence×correspondence four-field, Mercury-perihelion contact test, Rosetta, truth-as-limit",
+      "Model-vs-factbook connectivity, Popper risky predictions, pathology simulator, fitness-vs-truth survival sim",
+      "LLM chain (world→author→document→model), model collapse, hallucination two-types, tools as licensed transitions, RLHF, nine-step audit, self-audit, final full diagram"
+    ],
+    "internal_tensions": [
+      "Circularity: the right side of Tarski's T (the fact in the meta-language) is itself a trace, so correspondence secretly becomes coherence at a higher level; the escape is the limit over INDEPENDENT W-anchored widenings (derived patches do not advance it).",
+      "c_acc never reaches c — the model is of the interface, not the thing (Kant).",
+      "The framework self-identifies as Pathology 4 (calibrated error) and lists three found residues: the Bradley reading (reconstruction, not exegesis), 𝒯 = space of reasons (analogy, not identity), and the Caramello transfer (imprecisely formulated).",
+      "The coherence-vs-correspondence four-field: only (coherent ∧ contact) is a good indicator for 'right', and even that is not a proof."
+    ],
+    "related_files": ["coherent_worldview", "coherent_world_models", "kohaerente_modelle", "kohaerente_differenz", "nn_as_sheaf", "sheaf", "sheaving"]
+  },
+  {
+    "path": "latent_semantic_manifolds_in_llm.html",
+    "slug": "latent_semantic_manifolds_in_llm",
+    "title": "Latent Semantic Manifolds in Large Language Models (Mabrok, 2026)",
+    "lang": "de",
+    "size_kb": 292.3,
+    "category": "ki",
+    "category_reason": "A formal information-geometric paper (arXiv:2603.22301) about the geometry of LLM hidden-state representations — Fisher metric, Riemannian semantic manifolds, Voronoi token generation, and rate-distortion bounds, empirically tested on 6 real LLMs.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["transformer-attention", "information-theory", "dynamical-systems"],
+    "thesis": "Language is a lossy compression of a continuous concept space; contextual hidden states of a transformer lie on a thin Riemannian 'latent semantic manifold' (k≈20 ≪ d) tiled by token Voronoi cells, and there is a provable, unbridgeable loss floor for any finite vocabulary — the first empirical confirmation of a proven geometric theorem about LLM representations.",
+    "key_claims": [
+      "Hypothesis 4.1: for each layer ℓ, contextual hidden states (layer ≥ 1) lie on a smooth compact connected k-dimensional Riemannian submanifold of ℝ^d with k ≈ 15–22 and d = 768–2048, so only 1–3% of the vector space is actually used.",
+      "The manifold is GENERATED by the transformer, not inherited from the embedding table — raw token embeddings (layer 0) violate the hypothesis (Robinson et al. 2025; MLE gives a k≈68 artifact there).",
+      "Token generation = Voronoi projection: when embeddings have equal norm, argmax ⟨e_t, h⟩ is identical to argmin ‖h − e_t‖ (greedy decoding = nearest-neighbor search); each token's cell volume μ(R_t) measures its conceptual breadth (polysemous vs precise words).",
+      "The Fisher metric G = Wᵀ(diag(p) − ppᵀ)W is the canonical metric on hidden states — by Chentsov's theorem it is the only Riemannian metric (up to scale) invariant under sufficient statistics; it is the second derivative of the KL divergence (Prop 12.3).",
+      "Satz 10.5 (linear volume law): the normalized expressibility gap η(ε) = [H^{k−1}(∂V)/(λ·vol(M))]·ε + O(ε²) for ε < 1/(2κ_∂); a single scalar α characterizes vocabulary quality; empirically log-log slopes 0.873–1.117 with R² > 0.985 on all 6 models.",
+      "Satz 10.8 (fundamental distortion bound): D ≥ c_k·ν_min·(vol(M)/N)^(2/k) — no finite vocabulary reaches zero distortion; halving the loss at k=20 needs ~1024× more tokens, at k=50 ~33 million× (the curse of dimensionality).",
+      "There is an 'irreducible ambiguity floor': m_0.05 ≈ 0.04–0.06 across all 6 models despite a 12× parameter range — ~5% of natural-language positions are genuinely ambiguous and no model size removes it (analogous to irreducible loss in scaling laws).",
+      "The geometry (k, the hourglass pattern, the linear gap law) is an invariant of the TASK 'next-token prediction on natural language', not of the architecture — identical across GPT-2/OPT/Pythia, 124M–1.5B, different data and tokenizers."
+    ],
+    "methods_math": [
+      "Riemannian geometry (manifolds, tangent spaces, geodesics, Gaussian curvature / second fundamental form)",
+      "information geometry (Fisher metric, Chentsov's theorem, KL divergence)",
+      "Voronoi tessellations + Lloyd's relaxation / optimal quantization",
+      "rate-distortion theory (lower bound, N^(-2/k) scaling)",
+      "coarea formula / tube (Steiner) formula, Jensen's inequality",
+      "two-nearest-neighbor (TWO-NN) intrinsic-dimension estimator (Pareto(1,k)) and MLE estimator",
+      "UMAP, Neural-ODE / residual-stream layer flow, LoRA low-rank analysis"
+    ],
+    "visualizations": [
+      "Overview canvas: continuous thought h → token, with Voronoi cells, margin field and expressibility gap (custom 2D canvas + Temml math)",
+      "Pipeline (discrete→continuous→discrete quantization), Softmax lab, entropy-vs-margin gauges (custom 2D canvas)",
+      "three.js 3D manifold viewer (sphere/Swiss roll/torus/curve) + Riemannian metric lab + Voronoi sandbox with Lloyd steps + tube/coarea volume demo (three.js + canvas)",
+      "Hourglass intrinsic-dimension-over-layers plot, layer-flow animation (diffuse→structured→clustered), geodesic-vs-linear word arithmetic (Plotly + canvas)",
+      "Curvature workshop (three.js) + measured curvature from Fig 5/6 (Plotly)",
+      "Gap-explorer (margin histogram, CDF, log-log power-law test), percentile profiles, margin→surprisal→perplexity chain (Plotly)",
+      "Satz 10.5 linear-law demo with log-log LACKMUS test, Satz 10.8 rate-distortion calculator, Jensen demo, Lloyd optimal quantization on the manifold (Plotly + canvas)",
+      "Experiment design + TWO-NN estimator sandbox + UMAP projection (margin vs entropy) + layer evolution (canvas + Plotly)",
+      "Consequences: architecture designer (non-uniform widths), LoRA/pruning/quantization calculator, final all-controls sandbox (canvas + Plotly)"
+    ],
+    "internal_tensions": [
+      "All evidence is correlation and consistency-checking, not causality — no intervention experiments.",
+      "Not tested above 1.5B parameters; if k grows with scale, the rate-distortion / vocabulary-design predictions change fundamentally.",
+      "vol(M) is never measured absolutely (only ratios), so Satz 10.8 is qualitative, not numerically verified.",
+      "The Fisher metric degenerates when the output distribution becomes sharp (large β, Σ_p → 0) — a stated boundary of the framework.",
+      "Layer 0 (raw embeddings) violates the manifold hypothesis, so the hypothesis applies only to contextual states (layer ≥ 1).",
+      "Entropy and margin are related but NOT the same (|Spearman ρ| ≈ 0.16–0.23, not ~1); the paper argues margin — not entropy — is the right quantity for 'can language express this thought'.",
+      "Vision-language / other modalities are untested."
+    ],
+    "related_files": ["intrinsische_dimensionen_tiefer_neuronaler_netze", "token_manifold_verletzt", "latent_semantic_manifolds_in_llm_simple", "llm_topology", "manifold_flattening"]
+  },
+  {
+    "path": "transformer_rein_geometrisch2.html",
+    "slug": "transformer_rein_geometrisch2",
+    "title": "Transformer — geometrisch",
+    "lang": "de",
+    "size_kb": 16.4,
+    "category": "ki",
+    "category_reason": "A minimal interactive 3D animation that explains one transformer block (embeddings, positional encoding, attention, FFN) purely geometrically for a polysemous German sentence — a clear transformer/attention explainer.",
+    "theme": "transformer-attention",
+    "themes": ["geometry-of-embeddings", "geometry-manifolds"],
+    "thesis": "A single transformer block is a purely geometric operation on points in ℝ³ — tokens as points, positional encoding as a fixed rotation, attention as projecting onto a learned query ray and softmaxing those lengths, then moving the query token to the weighted center of mass, followed by a spatial warp (FFN) — repeated six times to disambiguate 'Bank' in 'Die Bank war kalt.'",
+    "key_claims": [
+      "Each word is a point in 3D space; 'Bank' starts exactly halfway between two meaning 'ghost points' (Sitzbank/furniture and Geldhaus/money), i.e. undecided, and context resolves it.",
+      "Positional encoding = a fixed rotation per step (72° helix): 'position becomes an angle, not a number.'",
+      "Attention = drop a perpendicular (Lot) from each token onto a query 'search ray' (the learned question direction, pointing from 'Bank' toward 'kalt'); the length on the ray is the raw score, longer = better fit.",
+      "The lengths become softmax shares a₁+a₂+a₃=1 (longer → bigger share); temperature anneals as the step plays.",
+      "The attention output moves the query token to the weighted center of mass of the tokens (new = a₁P₁ + a₂P₂ + a₃P₃, 'like a seesaw').",
+      "The FFN is a warp of the whole embedding space (x → f(x)), the second sub-layer of each block, shown as a bent grid.",
+      "Stacking six such geometric steps traces a trajectory per word through the layers ('Und das sechsmal hintereinander')."
+    ],
+    "methods_math": [
+      "token embeddings as points in ℝ³",
+      "rotational positional encoding (fixed-angle helix)",
+      "attention as projection onto a query direction + softmax over projection lengths",
+      "weighted centroid / convex combination (residual update)",
+      "FFN as a coordinate warp/diffeomorphism of the space",
+      "layer stacking / trajectory per token"
+    ],
+    "visualizations": [
+      "Single full-screen custom canvas 2D projection of a 3D scene (hand-rolled 3D→2D camera with drag-to-rotate and zoom), animating 7 keyframed 'images' (Bilder 1–7) with eased transitions and a keyboard/progress bar; no external viz or math-rendering library (formulas are HTML/CSS text)."
+    ],
+    "internal_tensions": [
+      "It is a minimal intuition/preview artifact (7 fixed slides, one hand-crafted sentence and one query token) — a pedagogical reduction, not a full treatment.",
+      "It omits multi-head attention, attention masking/softmax masking, layer normalization, and any real learned weights — all geometry is hand-set for the 'Bank/kalt' polysemy example.",
+      "It is a variant/companion in the transformer_rein_geometrisch family (v1/v3 in other batches)."
+    ],
+    "related_files": ["transformer_rein_geometrisch", "transformer_rein_geometrisch3", "attn", "positional", "qkv"]
+  }
+]

@@ -1,0 +1,209 @@
+[
+  {
+    "path": "topologie_tiefer_neuronaler_netze_2.html",
+    "slug": "topologie_tiefer_neuronaler_netze_2",
+    "title": "Topologie tiefer neuronaler Netze · Interaktives Paper-Erlebnis",
+    "lang": "de",
+    "size_kb": 168.4,
+    "category": "ki",
+    "category_reason": "Analyse der topologischen Struktur (Betti-Zahlen, Homotopiegruppen) von Aktivierungsland景观 in tiefen neuronalen Netzen; zentrales Thema ist das Verhalten neuronaler Netze über Trainings- und Architekturparameter.",
+    "theme": "topology-of-deep-networks",
+    "themes": ["topology", "deep-learning", "betti-numbers", "persistent-homology", "activation-landscapes"],
+    "thesis": "Die topologische Struktur (Betti-Zahlen, Zusammenhängigkeit) der Aktivierungslandschaften in neuronalen Netzen ändert sich systematisch mit Tiefe, Breite, Aktivierungsfunktion und Trainingsfortschritt; Bottleneck-Ebenen reduzieren die topologische Komplexität.",
+    "key_claims": [
+      "Betti-Zahlen b0 (Zusammenhangskomponenten) und b1 (Löcher) der Entscheidungsgrenzen ändern sich über die Schichttiefe.",
+      "Tiefe Netze komprimieren topologische Komplexität: obere Schichten haben höhere b0-Werte (mehr Regionen).",
+      "Aktivierungsfunktion bestimmt die Topologie: ReLU erzeugt viele kleine Regionen (hohes b0), tanh erzeugt zusammenhängendere Landschaften.",
+      "Breite Netze (mehr Neuronen/Schicht) erhöhen b0 durch mehr Entscheidungsgrenzen.",
+      "Geodätische Distanz im latenten Raum unterscheidet sich systematisch von euklidischer Distanz.",
+      "Persistente Homologie quantifiziert, wie lange topologische Merkmale über Skalen erhalten bleiben."
+    ],
+    "methods_math": ["Betti-Zahlen", "persistente Homologie", "Homotopiegruppen", "geodätische vs. euklidische Distanz", "Aktivierungslandscapes", "Entropie-basierte Komplexitätsmetrik"],
+    "visualizations": ["Plotly-Diagramme für Betti-Zahlen vs. Schichttiefe", "Canvas: geodätischer Graph im latenten Raum", "Balkendiagramme der Topologie-Parameter", "Aktivierungslandscapes in 2D-Projektion"],
+    "internal_tensions": [
+      "Die Messung erfolgt auf synthetischen Datensätzen (Möbius-Band, Figure-8); Übertragbarkeit auf reale Tasks offen.",
+      "Topologische Komplexität korreliert mit Genauigkeit, aber Kausalrichtung unklar (Komplexität → Genauigkeit oder umgekehrt?).",
+      "Persistente Homologie rechnerisch aufwendig; Skalierbarkeit auf große Netze fraglich."
+    ],
+    "related_files": ["random_hierarchy_model.html", "in-context-learning_through_gradient.html"]
+  },
+  {
+    "path": "in-context-learning_through_gradient.html",
+    "slug": "in-context-learning_through_gradient",
+    "title": "Transformers Learn In Context by Gradient Descent · Interaktiver Erklärer",
+    "lang": "de",
+    "size_kb": 167.7,
+    "category": "ki",
+    "category_reason": "Erklärt den Mechanismus von In-Context-Learning in Transformer-LLMs als impliziter Gradientenabstieg; zentrales Ergebnis verbindet Forward-Pass mit GD-Schritt (von Oswald et al., ICML 2023).",
+    "theme": "in-context-learning",
+    "themes": ["in-context-learning", "transformers", "gradient-descent", "fast-weights", "meta-learning"],
+    "thesis": "Der Forward-Pass eines Transformers berechnet einen Schritt impliziten Gradientenabstiegs auf den Demonstrations-Beispielen: Die Gewichtsmatrizen W_K, W_Q, W_V und die Projektion P sind so konstruiert, dass ein einzelner Forward-Pass exakt einen GD-Schritt auf quadratischer Verlustfunktion reproduziert.",
+    "key_claims": [
+      "Proposition 1: Es existiert eine explizite Konstruktion von W_K, W_Q, W_V, P, so dass der Forward-Pass eines 2-Schicht-Transformers exakt einen GD-Schritt mit Lernrate η = λ reproduziert.",
+      "W_K^T W_Q = η·I: die Schlüssel-Query-Interaktion kodiert die Lernrate.",
+      "Die Projektionsmatrix P ist meta-ge Lernt: sie optimiert die Lernrate über die Demonstrationen.",
+      "Tiefe Transformer = mehrere aufeinanderfolgende GD-Schritte (ein Layer pro Schritt).",
+      "GD++ (Kraftkorrektur) entspricht einer zusätzlichen Schicht mit Hessian-Korrigatur.",
+      "In-Context-Learning ist ein Fall von Mesa-Optimierung: das Modell optimiert eine interne Metaspiele, um die GD-Dynamik zu lernen.",
+      "Verbindung zu Fast Weights (Schmidhuber 1992): Attention ist eine moderne Realisierung des Fast-Weight-Prinzips."
+    ],
+    "methods_math": ["Gradientenabstieg", "quadratische Verlustfunktion", "Matrixfaktorisierung (W_K, W_Q, W_V)", "Meta-Learning", "Hessian-Korrigatur (GD++)", "Mesa-Optimierung", "Fast Weights"],
+    "visualizations": ["Plotly: GD-Schritt vs. Transformer-Forward-Pass (Identität)", "Interaktive Lernraten-Regler", "Schichtweite GD-Schritte animiert", "KaTeX-Formeln für die Matrixkonstruktion"],
+    "internal_tensions": [
+      "Das Ergebnis gilt für lineare/quadratische Tasks; für echte NLP-Daten ist die Näherung nicht bewiesen.",
+      "Die Konstruktion ist existenzbasiert (es gibt eine Lösung), aber nicht die einzige; reale Trainingsverfahren erreichen diese Konfiguration nicht garantiert.",
+      "Mesa-Optimierung ist ein interpretativer Rahmen, kein formal bewiesener Mechanismus — der Begriff trägt kontroverse Konnotationen."
+    ],
+    "related_files": ["symmetrie_in_sprachstatistik.html", "informationsgravitation.html"]
+  },
+  {
+    "path": "informationsgravitation.html",
+    "slug": "informationsgravitation",
+    "title": "Informationsgravitation · Interaktive Reise durch das Paper",
+    "lang": "de",
+    "size_kb": 159.4,
+    "category": "ki",
+    "category_reason": "Feldtheoretisches Modell für Token-Auswahl in LLMs: modelliert Sprachmodell-Generierung als Bewegung in einem durch Informationsmasse gekrümmten semantischen Raum (Vyshnyvetska, arXiv:2504.20951, 2025).",
+    "theme": "information-theory-llm",
+    "themes": ["llm-generation", "information-theory", "field-theory-analogy", "hallucination", "prompt-sensitivity"],
+    "thesis": "Eine Nutzerfrage Q übt eine Informationsmasse M(Q) = αH(Q) + βD(Q) + γN(Q) aus, die den semantischen Potentialraum Φ(t,Q) = −log P(t|Q) krümmt; Token-Generierung ist die Bewegung in diesem Potential, und die drei Hauptphänomene (Zufallszahlen-Bias, Prompt-Sensitivität, Halluzinationen) sind derselbe Effekt in verschiedenen Parameterbereichen.",
+    "key_claims": [
+      "Informationsmasse M(Q) = α·H(Q) + β·D(Q) + γ·N(Q): Entropie, Kontexttiefe und Novelty kombinieren zu einer einzigen Größe.",
+      "Semantisches Potential Φ(t,Q) = −log P(t|Q); Gradient g = −∇Φ zeigt zum wahrscheinlichsten Token.",
+      "Hessematrix-Hoch-Eigenwerte auf kleinen Gebieten + niedrige globale Token-Probabilität → Halluzination (Einfang in falsches lokales Minimum).",
+      "Prompt-Sensitivität (56 Prozentpunkte, Sclar et al.) = Bifurkationspunkt zwischen zwei Attraktor-Tälern; kleine ΔΦ kann den Attraktor wechseln.",
+      "Zufallszahlen-Bias (Zhang et al., 2024: Llama-2 bevorzugt die 5) = Training-Data-Attraktor im Potential.",
+      "Boltzmann-Verteilung / Softmax mit Temperatur T: T→0 deterministisch (Capture), T→∞ uniform (chaotisch).",
+      "Vorgeschlagene adaptive Temperatur T(Q) = f(M(Q)): hohe Masse → höhere T, um aus Fallen herauszukommen.",
+      "Informations-Schwarzloch (Alignment): künstlich erzeugte Region extrem hoher Dichte → deterministische Standardantworten."
+    ],
+    "methods_math": ["Shannon-Entropie H", "KL-Divergenz (Novelty)", "Mutual Information (Kontexttiefe)", "Hessematrix / Eigenwertanalyse", "Boltzmann-Verteilung / Softmax", "Wirkungsintegral S[τ]", "Bifurkationstheorie"],
+    "visualizations": ["Gummituch-Simulation (Canvas: Gravitationsdelle)", "3D-Potentiallandschaft (Plotly surface)", "Entropie-/KL-/MI-Interaktive Labore", "Hesse-Eigenwert-Simulator", "Halluzinations-Simulator (40 Läufe)", "Prompt-Perturbations-Labor", "Trajektorien-Simulator", "Große Sandbox (alle Konzepte zusammen)"],
+    "internal_tensions": [
+      "Konzeptionelle Analogie, kein wörtliches physikalisches Modell — die Autorin betont das explizit (§4.4).",
+      "H, D, N sind nicht unabhängig (neuartige Frage hat oft hohe Entropie); Messproblem der Entkoppelung.",
+      "Gewichte α, β, γ sind aufgabenabhängig zu kalibrieren, aber nicht spezifiziert.",
+      "Keine eigenen Experimente im Paper — nur vorgeschlagene Experimente (§5).",
+      "Die drei Rätsel werden als dieselben Effekt interpretiert, aber keine quantitative Vorhersage für reale Modelle geliefert."
+    ],
+    "related_files": ["symmetrie_in_sprachstatistik.html", "in-context-learning_through_gradient.html"]
+  },
+  {
+    "path": "symmetrie_in_sprachstatistik.html",
+    "slug": "symmetrie_in_sprachstatistik",
+    "title": "Symmetrie in Sprachstatistik · Interaktiver Erklärer",
+    "lang": "de",
+    "size_kb": 159.4,
+    "category": "ki",
+    "category_reason": "Erklärt, warum Sprachmodelle (word2vec bis LLMs) Monate auf Kreisen, Jahre auf gewellten Linien und US-Staaten auf Landkarten anordnen: die Translationssymmetrie der Kookkurrenzstatistik macht M* zirkulant, und zirkulante Matrizen haben Fourier-Moden als Eigenvektoren (Karkada et al., ICML 2026).",
+    "theme": "representation-geometry",
+    "themes": ["word-embeddings", "symmetry", "fourier-analysis", "circulant-matrices", "interpretability"],
+    "thesis": "Die Geometrie der Wortrepräsentationen in Sprachmodellen ist die Fourier-Transformierte der Kookkurrenzstatistik: Translationssymmetrie → zirkulante Matrix → Fourier-Eigenvektoren → Sinus/Kosinus-PCA-Achsen → Kreis (2 Achsen), Rippel (3+ Achsen), Lissajous-Figuren (Achsenpaare).",
+    "key_claims": [
+      "Kookkurrenzstatistik M*_ij hängt fast nur vom Abstand |i−j| ab (Translationssymmetrie, gemessen an 2,72 Mrd. Wikipedia-Wörtern).",
+      "Zirkulante Matrizen werden immer von diskreten Fourier-Moden diagonalisiert (universell, kernunabhängig).",
+      "Korollar 2: Für exponentiellen Kern C(Δ) = exp(−|Δ|/σ) sind die PCA-Achsen a_n·sin(k_n·x + φ) mit a_n = √(2σ/(1+σ²k_n²)) — geschlossene Formel.",
+      "Offene Randbedingungen (Jahre): Quantisierungsbedingung für k_n (Fixpunkt-Gleichung, Proposition 3); Frequenzen sind nicht ganzzahlig.",
+      "Lissajous-Figuren: Jede Kombination zweier PCA-Achsen ergibt eine Lissajous-Kurve — empirisch in echten Wortvektoren bestätigt.",
+      "Lineares Dekodieren: Dekodierfehler ε² ~ r^(−1/D) (Proposition 4); Double Descent bei r = n_train.",
+      "Robustheit: Der Kreis überlebt die Löschung aller Monat-Monat-Kookkurrenzen, weil saisonale Helferwörter (Top-100) die Symmetrie kollektiv tragen; Eigenlücken wachsen ∝ N (Weyl/Davis-Kahan).",
+      "Architekturunabhängigkeit: Dieselbe Geometrie in word2vec, EmbeddingGemma und Gemma 2 2B."
+    ],
+    "methods_math": ["Kookkurrenz / PMI", "M*-Normalisierung", "Eigenzerlegung (Eckart-Young-Mirsky)", "zirkulante / Toeplitz-Matrizen", "diskrete Fourier-Transformation", "Jacobi-Eigenzerlegung", "Weyl/Davis-Kahan Störungstheorie", "Fixpunkt-Iteration (Quantisierungsbedingung)"],
+    "visualizations": ["Monat-Kreis in PCA (Plotly)", "Jahres-Mannigfaltigkeit 3D", "US-Staaten-Landkarte (Heatmap auf Gitter)", "Kookkurrenz-Fenster-Animation (Canvas)", "Zirkulante Matrix-Konstruktion interaktiv", "Fourier-Moden addieren (Plotly)", "Lissajous-Labor", "3D Kalender-Pringle (Plotly surface)", "Ablation-Spielzeug (Monat-Monat löschen)", "Saisonale Helferwörter (Kopplungsmatrix)", "Double Descent Kurve", "2D-Plane-Waves (Trommelfell-Moden)"],
+    "internal_tensions": [
+      "Theorie gilt rigoros für Wort-Einbettungsmodelle; für LLMs nur empirisch belegt, nicht bewiesen.",
+      "LLMs können kontextabhängig umstrukturieren (Polysemie, z.B. 'May' als Monat vs. Modalverb) — Theorie beschreibt nur die kontextfreie Basisgeometrie.",
+      "Ausblck auf Gitterzellen im Gehirn (Entorhinalkortex) ist spekulativ, nicht belegt.",
+      "Die Translationssymmetrie ist eine Näherung: reale Texte brechen sie (Weltkriegsjahre, Polysemie)."
+    ],
+    "related_files": ["in-context-learning_through_gradient.html", "informationsgravitation.html", "topologie_tiefer_neuronaler_netze_2.html"]
+  },
+  {
+    "path": "hott5.html",
+    "slug": "hott5",
+    "title": "Homotopietypentheorie — Interaktiv Lernen",
+    "lang": "de",
+    "size_kb": 158.7,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik / Grundlagen der Informatik: Homotopietypentheorie (HoTT) als konstruktiver Formalismus, der Typen als Räume, Terme als Punkte und Gleichheitsbeweise als Pfade interpretiert. Keine ML-/KI-Inhalte.",
+    "theme": "homotopy-type-theory",
+    "themes": ["type-theory", "homotopy", "univalence", "higher-inductive-types", "constructive-mathematics"],
+    "thesis": "In der Homotopietypentheorie sind Typen Räume, Terme Punkte darin, Gleichheitsbeweise Pfade zwischen Punkten und Beweise von Gleichheit zwischen Gleichheiten Homotopien; das Univalenz-Axiom (äquivalente Typen sind gleich) formalisiert die mathematische Praxis der Struktur-Invarianz und macht jede Isomorphie zu einer Gleichheit.",
+    "key_claims": [
+      "Typen als Räume, Terme als Punkte, Pfade als Gleichheitsbeweise, Flächen als Homotopien (n-stufige Verallgemeinerung).",
+      "Der Gleichheitstyp Id_A(a,b) ist ein höherer induktiver Typ (HIT) mit einem einzigen Generator: refl.",
+      "Pfade bilden ein ∞-Gruppoid: Verkettung, Inverse, Einheit, Assoziativität (bis auf Homotopie).",
+      "Univalenz-Axiom: ua : (A ≃ B) → (A =_U B) ist selbst eine Äquivalenz; isomorphe Strukturen sind gleich.",
+      "Konsequenzen der Univalenz: isomorphe Gruppen gleich, äquivalente Kategorien gleich, homöomorphe Räume gleich.",
+      "Transport entlang eines Pfades: transport : Π(B:A→U). Π(p:a=b). B(a)→B(b) — berechnet die zugehörige Funktion.",
+      "S¹ als HIT: base : S¹, loop : base =_{S¹} base; π₁(S¹) ≅ ℤ (berechenbar in HoTT).",
+      "Trunkierungslevel (h-Level): −2 kontrahierbar, −1 Proposition, 0 Menge, 1 Gruppoid, 2 2-Gruppoid, ...",
+      "Jeder Beweis ist ein Algorithmus (konstruktive Mathematik); Beweise sind in Agda/Coq maschinell überprüfbar."
+    ],
+    "methods_math": ["abhängige Typen (Π, Σ)", "höhere induktive Typen (HITs)", "Univalenz-Axiom", "Transport / Path-Induktion", "Trunkierungslevel (h-Level)", "∞-Gruppoiden", "Funktionserweiterung (funext)", "Äquivalenz-Typen"],
+    "visualizations": ["Intro-Animation: Punkte/Pfade/Homotopien im Raum (Canvas)", "Typen als Räume (Nat, Bool, Unit, Empty)", "Faserung für abhängige Typen (Canvas)", "Universum-Hierarchie (Canvas)", "Pfad-Zeichnen (Canvas, interaktiv)", "Pfad-Algebra: Verkettung, Inverse, Gesetze (Canvas)", "Transport entlang Pfades (Slider)", "Homotopie-Animation (Canvas, Slider)", "h-Level Visualisierung (Slider)", "Kreis S¹ + loop (Canvas)", "π₁(S¹) = ℤ Beweis schrittweise", "Natürliche Zahlen-Arithmetik (Pfad-Induktion)", "Bool ≃ Bool = Bool (2 Autoäquivalenzen)", "Univalenz: A ≃ B → A = B (Animation)", "Pfad-Raum Explorer (Bool, Nat, S¹, T², S²)", "Beweisbaum-Builder", "Term-Evaluator (Mini-Interpreter)", "Quiz (8 Fragen)"],
+    "internal_tensions": [
+      "HoTT ist ein Grundlagen-Formalismus; praktische Anwendungen (z.B. in der Kryptographie oder Topologie) werden nur angedeutet.",
+      "Das Univalenz-Axiom ist nicht aus den anderen Regeln ableitbar; es ist ein zusätzliches Postulat, dessen Konsistenz nicht vollständig bewiesen ist.",
+      "Die Berechnungsvorschriften für Univalenz-Transport sind nicht konstruktiv (kein Algorithmus, der den Transport berechnet)."
+    ],
+    "related_files": ["garben_uebersicht.html"]
+  },
+  {
+    "path": "random_hierarchy_model.html",
+    "slug": "random_hierarchy_model",
+    "title": "Random Hierarchy Model · Interaktives Paper-Erlebnis",
+    "lang": "de",
+    "size_kb": 153.7,
+    "category": "ki",
+    "category_reason": "Erklärt, warum tiefe neuronale Netze kompositorische Daten (hierarchische Strukturen) effizient lernen: das Random Hierarchy Model liefert eine analytische Skalierung des benötigten Parametervolumens als Polynom in der Eingabedimension (Cagnetta et al., EPFL, arXiv:2307.02129v5).",
+    "theme": "compositional-learning",
+    "themes": ["deep-learning", "compositional-data", "hierarchy", "generalization", "synonym-invariance"],
+    "thesis": "Tiefe neuronale Netze lernen kompositorische (hierarchische) Daten mit parametervolumen P* = n_c · m^L = n_c · d^(ln m/ln s), ein Polynom in der Eingabedimension d — im Gegensatz zum exponentiellen P_max für flache Netze; der Mechanismus ist die Bildung synonym-invarianter Repräsentationen durch Zählen von Korrelationen.",
+    "key_claims": [
+      "Das Random Hierarchy Model: Daten sind auf L Ebenen hierarchisch organisiert, mit m Synonymen pro Konzept und s Eltern pro Konzept.",
+      "Minimales Parametervolumen P* = n_c · m^L = n_c · d^(ln m/ln s) — polynomial in d (d = m^L · s^L).",
+      "Flache Netze brauchen P_max ~ d (exponentiell schlechter) — die Tiefe spart Parameter.",
+      "Netzwerke bilden synonym-invariante Repräsentationen: Neuronen in oberen Schichten feuern auf alle Synonyme eines Konzepts gleich stark.",
+      "Mechanismus: Zählen von Korrelationen — obere Schichten summieren über die Synonyme der unteren Schicht.",
+      "Die Skalierung erklärt, warum Tiefe für kompositorische Daten so effektiv ist: log-Verhalten statt exponentiell.",
+      "Validiert an synthetischen hierarchischen Datensätzen und (teilweise) an Bilderkennung."
+    ],
+    "methods_math": ["Random Hierarchy Model (hierarchischer Baum)", "parametervolumen-Skalierung", "Synonym-Invarianz", "Korrelationszählen", "Polynomiale vs. exponentielle Skalierung", "Analytische Herleitung (Induktion über Ebenen)"],
+    "visualizations": ["Canvas: hierarchische Bäume (m Synonyme, s Eltern)", "Plotly: P* vs. d (polynomial vs. exponential)", "Heatmaps der Gewichtung über Ebenen", "Balkendiagramme: Parameter-Budget pro Ebene", "Interaktive m, s, L Regler"],
+    "internal_tensions": [
+      "Das Modell ist synthetisch (zufälliger Baum); reale Daten haben überlappende Hierarchien und Rauschen.",
+      "Die Skalierung gilt im asymptotischen Regime; für kleine Netze/geringe Tiefe weicht die Praxis ab.",
+      "Übertragbarkeit auf Bild-/Sprachdaten ist nicht vollständig belegt — nur teilweise Validierung."
+    ],
+    "related_files": ["topologie_tiefer_neuronaler_netze_2.html", "symmetrie_in_sprachstatistik.html"]
+  },
+  {
+    "path": "garben_uebersicht.html",
+    "slug": "garben_uebersicht",
+    "title": "Garben — Übersicht (Intuition, Visualisierung, Formalismus)",
+    "lang": "de",
+    "size_kb": 9.1,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik (Algebraische Geometrie / Topologie): Übersichtstabelle zu Garben (Sheaves) als lokalisierende Datenstruktur auf topologischen Räumen. Keine ML-/KI-Inhalte.",
+    "theme": "sheaf-theory",
+    "themes": ["sheaf-theory", "algebraic-geometry", "topology", "local-to-global"],
+    "thesis": "Eine Garbe ist eine systematische Art, lokale Daten (Schnitte) auf überlappenden offenen Mengen so zu verknüpfen, dass sie zu globalen Daten zusammenpassen; sie ist das zentrale Werkzeug der algebraischen Geometrie und der topologischen Invariantenrechnung.",
+    "key_claims": [
+      "Garben generalisieren Vektorbündel: statt Vektor-Räumen über Punkten hat man Garben von Algebren/Ringen/Modulen.",
+      "Lokale Schnitt-Ringe O_U sind die algebraischen Gegenstücke der offenen Mengen U.",
+      "Restriktionsmorphismen O_V → O_U für V ⊂ U verknüpfen die lokalen Daten.",
+      "Die Garben-Axiome (Lokalität, Verklebung) garantieren, dass lokale Informationen zu globalen zusammenpassen.",
+      "Garbenkohomologie H^i(X, F) misst, wie stark die lokale→globale Verklebung scheitert.",
+      "Anwendungen: algebraische Geometrie (Strukturgarbe), komplexe Analysis (Holomorphe Funktionen), Topologie (Lokale Systeme)."
+    ],
+    "methods_math": ["topologische Räume", "offene Überdeckungen", "Restriktionsmorphismen", "Garben-Axiome (Lokalität, Verklebung)", "Garbenkohomologie", "Lokale Systeme"],
+    "visualizations": ["Übersichtstabelle (Intuition / Visualisierung / Formalismus pro Konzept)"],
+    "internal_tensions": [
+      "Die Seite ist eine Referenzübersicht, kein vollständiger Kurs — tiefergehende Beispiele und Berechnungen fehlen.",
+      "Der Bezug zur Informatik (z.B. Garben in der Programmiersprachen-Theorie) wird nicht behandelt."
+    ],
+    "related_files": ["hott5.html"]
+  }
+]

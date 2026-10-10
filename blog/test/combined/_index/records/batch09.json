@@ -1,0 +1,287 @@
+[
+  {
+    "path": "philosophy2.html",
+    "slug": "philosophy2",
+    "title": "Philosophy — The Deep Dive",
+    "lang": "de",
+    "size_kb": 127.7,
+    "category": "nicht-ki",
+    "category_reason": "Interaktive Philosophie-Einführung: Gedankenexperimente, Paradoxa, mentales Modell-Rad, Zitat-Maschine, Debatten-Arena, persönlicher Philosophiebauer. Keine ML-/KI-Inhalte.",
+    "theme": "philosophy",
+    "themes": ["philosophy", "thought-experiments", "paradoxes", "mental-models", "ethics"],
+    "thesis": "Philosophische Konzepte (Gedankenexperimente, Paradoxa, Ethik, Erkenntnistheorie) lassen sich durch interaktive Simulationen und spielerische Auseinandersetzung intuitiv erfahrbar machen.",
+    "key_claims": [
+      "Gedankenexperimente (Schiffsthesen, Trolley-Problem, Gehirnin-einer-Schüssel) werden durch Live-Simulationen veranschaulicht.",
+      "Ein 'Lebenssimulator' lässt den Nutzer ethische Entscheidungen in Szenarien treffen und Konsequenzen sehen.",
+      "Mentale Modelle werden als radiales Diagramm dargestellt, das das eigene Denken widerspiegelt.",
+      "Eine Zitat-Maschine generiert philosophische Aussagen aus kombinierbaren Fragmenten.",
+      "Eine Debatten-Arena stellt zwei philosophische Positionen gegenüber (z.B. Determinismus vs. freier Wille).",
+      "Ein persönlicher Philosophiebauer sammelt die eigenen Positionen zu einem kohärenten Weltbild."
+    ],
+    "methods_math": ["keine formale Mathematik – konzeptionelle/philosophische Strukturierung"],
+    "visualizations": ["Canvas-Hintergrund (partikelbasiert)", "GSAP-Animationen", "Gedankenexperiment-Simulatoren (DOM/Canvas)", "Mental-Model-Rad", "Debatten-Arena", "Zitat-Maschine", "Lebenssimulator", "Philosophie-Journal"],
+    "internal_tensions": [
+      "Die Oberfläche ist spielerisch, die Inhalte ernsthaft – Spannung zwischen Unterhaltung und philosophischer Tiefe.",
+      "Viele verschiedene Philosophien werden parallel präsentiert, ohne eine zu favorisieren – was sowohl Stärke (Neutralität) als auch Schwäche (Oberflächlichkeit) sein kann."
+    ],
+    "related_files": ["philosophy.html", "analytischer_idealismus.html", "buecher/an_experiment_with_time.html"]
+  },
+  {
+    "path": "relativity.html",
+    "slug": "relativity",
+    "title": "Interactive Relativity Explorer",
+    "lang": "en",
+    "size_kb": 108.3,
+    "category": "nicht-ki",
+    "category_reason": "Interaktive Relativitätstheorie (Spezielle + Allgemeine): Zeitdilatation, Längenkontraktion, Schwarze Löcher. Reine Physik, keine ML-Inhalte.",
+    "theme": "physics-relativity",
+    "themes": ["relativity", "special-relativity", "general-relativity", "black-holes", "spacetime"],
+    "thesis": "Die spezielle und allgemeine Relativitätstheorie – Zeitdilatation, Längenkontraktion, Lichtuhren, Schwarze Löcher, Ereignishorizonte – sind durch interaktive Animationen und Plotly-Diagramme intuitiv veranschaulichbar.",
+    "key_claims": [
+      "Eine Lichtuhr macht Zeitdilatation sichtbar: aus der Perspektive eines anderen Beobachters tickt sie langsamer.",
+      "Längenkontraktion: bewegte Objekte erscheinen in Bewegungsrichtung verkürzt.",
+      "Der 'Zwillingen-Paradoxon' wird durch Geschwindigkeits-Slider und Zeitachsen visualisiert.",
+      "Schwarze Löcher: Akkretionsscheibe, Photonensphäre, ISCO (innermost stable circular orbit), Ereignishorizont.",
+      "Die Raumzeit-Krümmung um Massen wird durch verformte Gitter dargestellt.",
+      "KaTeX render die zentralen Formeln (Lorentz-Faktor, Schwarzschild-Metrikkomponenten)."
+    ],
+    "methods_math": ["Lorentz-Transformation", "Lorentz-Faktor gamma", "Lichtuhr-Modell", "Schwarzschild-Metrik", "Photonensphäre (r = 3GM/c²)", "ISCO (r = 6GM/c²)"],
+    "visualizations": ["Canvas: Lichtuhr-Animation", "Canvas: Schwarzes Loch mit Akkretionsscheibe und Photonensphäre", "Plotly: Zeitdilatations-Kurve", "Plotly: Längenkontraktion", "Plotly: Raumzeit-Krümmung", "KaTeX-Formeln"],
+    "internal_tensions": [
+      "Spezielle und allgemeine Relativität werden in einem einzigen Dokument vereint – die Konzepte bauen aufeinander auf, erfordern aber unterschiedliche mathematische Tiefe.",
+      "Die Schwarze-Loch-Visualisierung ist künstlerisch (Akkretionsscheibe als Farbband), physikalisch aber stark vereinfacht."
+    ],
+    "related_files": ["relativity.html", "quantum_cryptography.html", "holographic_principle.html"]
+  },
+  {
+    "path": "koerper.html",
+    "slug": "koerper",
+    "title": "Deinen Körper verstehen – 10 Schlüsselkonzepte",
+    "lang": "de",
+    "size_kb": 107.7,
+    "category": "nicht-ki",
+    "category_reason": "Biologie/Physiologie: 10 Schlüsselkonzepte des menschlichen Körpers (Homöostase, Energie, Nervensystem, Hormone, Immunsystem, Mikrobiom, zirkadianer Rhythmus, Entzündung, Epigenetik, Neuroplastizität). Keine ML-Inhalte.",
+    "theme": "human-biology",
+    "themes": ["physiology", "homeostasis", "neuroscience", "immunology", "epigenetics", "microbiome", "circadian-rhythm"],
+    "thesis": "Zehn zentrale Konzepte der menschlichen Physiologie – von Homöostase bis Neuroplastizität – lassen sich als interaktive Plotly-Diagramme und erklärende Module begreifen, ohne dass Vorkenntnisse nötig sind.",
+    "key_claims": [
+      "Homöostase: der Körper hält innere Werte (Temperatur, pH, Glukose) durch Rückkopplungsschleifen stabil.",
+      "Energie: ATP als Währung, aerobe vs. anaerobe Glykolyse.",
+      "Nervensystem: Aktionspotential, Synapse, Neurotransmitter.",
+      "Hormone: Signalwege (Hypothalamus-Hypophysen-Nebennieren-Achse), Feedback-Schleifen.",
+      "Immunsystem: angeborene vs. adaptive Immunität, Antigen-Antikörper-Reaktion.",
+      "Mikrobiom: Darmbakterien beeinflussen Immunsystem, Stimmung, Stoffwechsel.",
+      "Zirkadianer Rhythmus: Suprachiasmatischer Nukleus, Melatonin, Schlafzyklen.",
+      "Entzündung: akute vs. chronische Entzündung, Zytokine.",
+      "Epigenetik: DNA-Methylierung und Histon-Modifikationen verändern Genexpression ohne Sequenzänderung.",
+      "Neuroplastizität: Synapsenstärke verändert sich mit Erfahrung (Hebb: 'cells that fire together wire together')."
+    ],
+    "methods_math": ["Rückkopplungsschleifen", "Konzentrations-Zeit-Kurven", "Hormon-Level-Simulation", "Schlafzyklen-Modell"],
+    "visualizations": ["Plotly: Homöostase-Regelkreise", "Plotly: ATP-Produktion", "Plotly: Aktionspotential", "Plotly: Hormonachsen", "Plotly: Immunantwort-Zeitverlauf", "Plotly: Mikrobiom-Diversität", "Plotly: zirkadianer Rhythmus", "Plotly: Entzündungs-Marker", "Plotly: Epigenetische Methylierung", "Plotly: Neuroplastizität (Lernkurve)"],
+    "internal_tensions": [
+      "Das Spektrum ist sehr breit (10 verschiedene Systeme) – jedes Konzept wird nur oberflächlich behandelt.",
+      "Die Verbindung zwischen den Konzepten (z.B. Entzündung ↔ Immunsystem ↔ Mikrobiom) wird nur angedeutet, nicht vertieft."
+    ],
+    "related_files": ["bewusstsein.html", "homological_scaffolding_psilocybin.html", "brain.html"]
+  },
+  {
+    "path": "narc_group.html",
+    "slug": "narc_group",
+    "title": "Covert Narcissism & Manipulative Gruppen – Immersive Visualisierung",
+    "lang": "de",
+    "size_kb": 105.5,
+    "category": "nicht-ki",
+    "category_reason": "Psychologie: interaktive Visualisierung von covertem Narzissmus und manipulativen Gruppendynamiken (Scapegoating, Triangulierung, Isolation). Keine ML-Inhalte.",
+    "theme": "psychology",
+    "themes": ["narcissism", "group-dynamics", "manipulation", "psychology", "relationship-dynamics"],
+    "thesis": "Die Dynamiken manipulativer Gruppen – Scapegoating, Triangulierung, Isolation – lassen sich durch animierte Knoten-Graphen und Chart.js-Diagramme visuell begreifen.",
+    "key_claims": [
+      "Covert Narzissmus unterscheidet sich vom grandiosen Narzissmus: der kovert-narzisstische Manipulator agiert unter der Oberfläche (Selbstopferung, Passive-Aggression).",
+      "Scapegoating: ein Gruppenmitglied wird als Sündenbock bestimmt; die Gruppe richtet ihren Aggression gegen es.",
+      "Triangulierung: der Manipulator bringt Dritte in Konflikte ein, um Macht zu halten und Loyalität zu testen.",
+      "Isolation: das Sündenbock-Mitglied wird schrittweise von der Gruppe abgeschnitten.",
+      "Die Gruppen-Dynamik wechselt zwischen den Modi (Scapegoat → Triangulate → Isolate) – eine Zyklus-Dynamik.",
+      "Chart.js zeigt die 'Affinitätswerte' der Gruppenmitglieder über die Zeit."
+    ],
+    "methods_math": ["Knoten-Graphen (Kraftrichtungen)", "Modus-Zyklen", "Affinitäts-Zeitverläufe"],
+    "visualizations": ["Canvas: animierter Gruppen-Graph (Knoten mit Kanten, Modi-Farbcodes)", "Chart.js: Affinitäts-Linien über Zeit", "Canvas: Scapegoat-Animation", "Canvas: Triangulierungs-Animation", "Canvas: Isolations-Animation"],
+    "internal_tensions": [
+      "Das Modell ist stark vereinfacht: reale Gruppendynamiken sind nicht zyklisch-regular, sondern chaotisch.",
+      "Die Darstellung riskiert, komplexe menschliche Dynamiken auf einen Algorithmus zu reduzieren."
+    ],
+    "related_files": ["narc_group2.html", "narcissism.html", "kastrup_jung.html", "buecher/daniel_paul_schreber.html"]
+  },
+  {
+    "path": "signal_analysis2.html",
+    "slug": "signal_analysis2",
+    "title": "Signalanalyse für LLM-Internals – Interaktiv",
+    "lang": "de",
+    "size_kb": 103.3,
+    "category": "ki",
+    "category_reason": "Signalanalyse (Fourier, STFT, Wavelets, PCA/SVD, ICA, Sparse Coding/SAE, Nichtlinearität) wird explizit auf LLM-Interne (Residual Stream, Features, Superposition, Mechanistic Interpretability) angewendet.",
+    "theme": "signal-analysis-llm",
+    "themes": ["signal-processing", "mechanistic-interpretability", "fourier", "sparse-autoencoders", "superposition", "representation-learning"],
+    "thesis": "Die klassischen Werkzeuge der Signalanalyse (Fourier, Wavelets, PCA, ICA, Sparse Coding) sind direkt auf die Internals von LLMs anwendbar: der Residual Stream ist ein Signalbus, Features sind Frequenzen, Superposition ist ein Überbestimmungsproblem.",
+    "key_claims": [
+      "Jedes Signal ist eine Summe von Sinuswellen – analog: ein LLM-Aktivierungsvektor ist eine Summe von Features.",
+      "STFT/Spektrogramm zeigt, welche Features an welchen Token-Positionen aktiv sind.",
+      "Wavelets fassen transient Features – analog: Features, die nur an einer Sequenz-Position 'aufblitzen'.",
+      "PCA/SVD findet die optimale Datenbasis – die Gewichtsmatrizen in Transformern haben niedrigen effektiven Rang (LoRA).",
+      "ICA trennt statistisch unabhängige Quellen – analog: Features in Superposition sind gemischte Quellen, die ICA-artige Methoden entmischen.",
+      "Sparse Autoencoders sind DAS Werkzeug der Mechanistic Interpretability: sie finden interpretierbare Features in Residual-Stream-Aktivierungen.",
+      "Nicht-Linearitäten (ReLU, GELU) erzeugen Harmonische – tiefe Netze bauen so komplexe Features aus einfachen auf.",
+      "Der Residual Stream ist ein hochdimensionaler Signalbus; jede Schicht addiert Informationen (Fourier-Muster, Wavelet-Features, SVD-Strukturen, SAE-Sparsity)."
+    ],
+    "methods_math": ["DFT/FFT", "STFT (Kurzzeit-Fourier)", "Wavelet-Transformation (Morlet, Haar, Mexican Hat)", "PCA/SVD (Rang-k-Approximation)", "ICA (Cocktailparty-Problem)", "Sparse Coding (L1-Regularisierung)", "Sparse Autoencoder (Encode → Sparsify → Decode)", "Nicht-Linearität / Harmonische"],
+    "visualizations": ["Plotly: Fourier Zeit-/Frequenzdomäne", "Canvas: Zeichen-Canvas mit Fourier-Analyse", "Plotly: STFT-Spektrogramm", "Plotly: Wavelet-Scalogram", "Plotly: interaktive 2D-PCA", "Plotly: SVD Rang-k-Approximation", "Plotly: ICA Cocktailparty (Quellen/Mischung/Rekonstruktion)", "Plotly: Sparse Dictionary", "Plotly: SAE Aktivierungen", "Plotly: Nicht-Linearität Eingang/Ausgang/Spektrum", "Plotly: LLM Residual Stream Heatmap", "Plotly: Superposition (Features > Dimensionen)"],
+    "internal_tensions": [
+      "Die Analogie 'Signalanalyse → LLM' ist lehrreich, aber unvollständig: LLM-Features sind nicht stationär, nicht linear, und die 'Frequenzen' sind keine Sinuswellen.",
+      "Die SAE-Demo ist stark vereinfacht (2D, 8 Atome) – reale SAEs haben 10.000+ Features in 4.096-Dimensionalität."
+    ],
+    "related_files": ["signal_analysis.html", "latent_semantic_manifolds_in_llm.html", "verweigerungsrichtung.html", "wie_ein_llm_denkt.html", "semantic_steering.html"]
+  },
+  {
+    "path": "floats.html",
+    "slug": "floats",
+    "title": "How Floating Point Numbers Work – Interactive Explorer",
+    "lang": "en",
+    "size_kb": 101.1,
+    "category": "nicht-ki",
+    "category_reason": "IEEE 754 Floating-Point: Bit-Visualisierung (Sign/Exponent/Mantissa), Sonderwerte, Präzisionsprobleme, Dichteverteilung. Rechnerarithmetik, keine ML-Inhalte.",
+    "theme": "computer-science",
+    "themes": ["floating-point", "ieee-754", "numerical-computing", "computer-architecture", "precision"],
+    "thesis": "IEEE 754 Floating-Point-Zahlen – Sign, Exponent, Mantisse, Sonderwerte (NaN, ±Inf, ±0), Präzisionsverlust, ungleichmäßige Dichte – sind durch interaktive Bit-Toggles und Canvas-Visualisierungen intuitiv begreifbar.",
+    "key_claims": [
+      "Jede Float-Zahl = (-1)^Sign × 1.Mantisse × 2^(Exponent - Bias).",
+      "32-Bit: 1 Sign-Bit, 8 Exponent-Bits, 23 Mantisse-Bits. 64-Bit: 1 + 11 + 52.",
+      "Sonderwerte: alle Exponent-Bits 1 + Mantisse ≠ 0 → NaN; alle 1 + Mantisse = 0 → ±Infinity; alle 0 → Denormal.",
+      "0.1 ist in Binär nicht darstellbar (wie 1/3 in Dezimal) – daher 0.1 + 0.2 ≠ 0.3.",
+      "Ganzzahlen verlieren ab 2^53 (64-Bit) bzw. 2^24 (32-Bit) an Präzision.",
+      "Floats sind nicht gleichmäßig verteilt: zwischen 1 und 2 gibt es so viele darstellbare Zahlen wie zwischen 2 und 4.",
+      "Der 'Next Representable' Wert zeigt die absolute Obergrenze der Präzision."
+    ],
+    "methods_math": ["IEEE 754 Format (Sign/Exponent/Mantissa)", "Bias (127 für 32-Bit, 1023 für 64-Bit)", "Denormale Zahlen", "Runde aufgerundet (Round-to-Nearest)"],
+    "visualizations": ["DOM: interaktive Bit-Anzeige (klickbare Bits, farbcodiert nach Sign/Exp/Mantissa)", "DOM: Zahlenrepräsentationen (Dezimal, Hex, Binär, Fehler, Nächste Zahl)", "DOM: Formel-Dekomposition (Schritt für Schritt)", "DOM: Sonderwert-Buttons", "DOM: Limits-Tabelle (32 vs 64 Bit)", "Canvas: Float-Dichteverteilung (drei Bereiche: 0–0.25, 1–1.25, 8–10)"],
+    "internal_tensions": [
+      "Das Dokument behandelt nur IEEE 754 binary32/binary64 – andere Formate (bfloat16, half precision, decimal) fehlen.",
+      "Die Verbindung zu ML (wo Float-Präzision kritisch ist, z.B. bfloat16 in Transformer-Training) wird nicht hergestellt."
+    ],
+    "related_files": ["miller_rabin.html", "shors_algorithm.html", "mccarthy_heyes_1969.html"]
+  },
+  {
+    "path": "topologie_biologischer_systeme.html",
+    "slug": "topologie_biologischer_systeme",
+    "title": "Topologische Modellierung Biologischer Systeme — Interaktiv",
+    "lang": "de",
+    "size_kb": 100.6,
+    "category": "nicht-ki",
+    "category_reason": "Topologische Modellierung biologischer Systeme nach Osis & Beghi (IFAC 1997): Digraphen, Topologie, geschlossene Schleifen, Syndrome. Reine Mathematik/Biologie, keine ML-Inhalte.",
+    "theme": "topology-biology",
+    "themes": ["topology", "biological-systems", "digraphs", "control-theory", "diagnostics", "closed-loops"],
+    "thesis": "Biologische Systeme lassen sich als topologische Räume über gerichteten Graphen (Digraphen) modellieren; aus der Struktur (Zusammenhang, Schleifen, Erreichbarkeit) lassen sich Fehlerausbreitung (Syndrome) und automatische Diagnosen ableiten.",
+    "key_claims": [
+      "Ein biologisches System ist ein topologischer Raum (X, θ), wobei X die Menge der funktionellen Eigenschaften ist und θ die Topologie (Nachbarschaften).",
+      "Die Topologie wird aus einem Digraphen abgeleitet: die Umgebung eines Elements ist es selbst + alle Elemente, die es direkt beeinflusst.",
+      "Ein System muss zusammenhängend sein (Statement 1): jede Funktion muss erreichbar sein.",
+      "Geschlossene Schleifen sind essenziell für das Leben: eine Hauptschleife und Nebenschleifen im Verdauungssystem.",
+      "Ein Fehler (Defekt) erzeugt ein Syndrom: die Menge der Funktionen, die von diesem Fehler aus erreichbar sind. Der Rest ist das Asyndrom.",
+      "Eine Verfeinerung des Modells (Knoten → Untereigenschaften) ist eine stetige Abbildung: die Topologie wird erhalten.",
+      "Syndrome sind invariant unter Modellverfeinerung: dieselbe Zusammenhangstruktur bleibt erhalten.",
+      "Automatische Diagnose: durch Vergleich von Syndrom-Mustern verschiedener möglicher Fehler kann die Ursache identifiziert werden."
+    ],
+    "methods_math": ["Mengen & binäre Relationen", "Topologie (Umgebungen, Abschluss, Berührungspunkte)", "Digraphen (gerichtete Graphen, Erreichbarkeit)", "Geschlossene Schleifen", "Stetige Abbildungen (Urbild offener Mengen)", "Syndrome/Asyndrome (Fehlerausbreitung)"],
+    "visualizations": ["Canvas: Motivations-Graph (Fehler → Symptome)", "Canvas: Mengen mit Teilmenge-Toggle", "Canvas: binäre Relationen (4 Typen)", "Canvas: Topologie (Umgebungen)", "Canvas: Abschluss/Berührungspunkte", "Canvas: Digraphen-Bau (Klick-to-Connect)", "Canvas: Erreichbarkeit (Puls-Animation)", "Canvas: Verdauungssystem-Modell (8 Funktionen, schrittweiser Aufbau)", "Canvas: System/Umgebung (N ∪ M)", "Canvas: Zusammenhang (Isolation-Toggle)", "Canvas: geschlossene Schleifen (Puls entlang des Pfads)", "Canvas: stetige Abbildung (Verfeinerung)", "Canvas: Syndrom-Ausbreitung", "Canvas: Invarianz unter Verfeinerung"],
+    "internal_tensions": [
+      "Das Paper (1997) ist mathematisch elegant, aber die biologischen Beispiele (Verdauungssystem mit 8 Funktionen) sind stark vereinfacht.",
+      "Die Verbindung zur modernen Systembiologie (Netzwerk-Pharmakologie, Wundnetz-Topologie) wird nicht hergestellt."
+    ],
+    "related_files": ["topologie_tiefer_neuronaler_netze.html", "topologie_tiefer_neuronaler_netze_2.html", "llm_topology.html", "topology.html"]
+  },
+  {
+    "path": "analytischer_idealismus.html",
+    "slug": "analytischer_idealismus",
+    "title": "Analytischer Idealismus – Eine interaktive Reise durch Kastrups Metaphysik",
+    "lang": "de",
+    "size_kb": 97.9,
+    "category": "nicht-ki",
+    "category_reason": "Bernardo Kastrups analytischer Idealismus: universelles Bewusstsein, Dissoziation, Cockpit-Metapher, Bell-Experiment, Panpsychismus-Kritik, empirische Evidenz (Psilocybin, NDE). Philosophie/Metaphysik, keine ML-Inhalte.",
+    "theme": "philosophy-of-mind",
+    "themes": ["analytic-idealism", "consciousness", "philosophy-of-mind", "quantum-physics", "panpsychism", "dissoziation", "metaphysics"],
+    "thesis": "Der Materialismus scheitert an logischen Widersprüchen (hartes Problem des Bewusstseins), experimenteller Evidenz (Quantenphysik/Bell-Experimente) und dem Kombinationsproblem; die einzige kohärente Alternative ist der analytische Idealismus: ein einziges universelles Bewusstsein, dessen dissoziierte 'Alters' die scheinbar getrennten Lebewesen sind.",
+    "key_claims": [
+      "Wahrnehmung ist kein transparentes Fenster, sondern ein Cockpit-Instrumentenbrett: komprimierte, handlungsleitende Ikonen, keine Abbilder der Realität (Hoffman 2009, Friston 2014).",
+      "Die Karte ist nicht das Territorium: Materialismus verwechselt die Beschreibung (Zahlen) mit der Welt selbst – das harte Problem des Bewusstseins ist prinzipiell unlösbar.",
+      "Bell-Experimente (Nobelpreis 2022) zeigen: physikalische Eigenschaften existieren erst durch die Messung – die Welt ist beobachter-partizipativ.",
+      "Panpsychismus scheitert am Kombinationsproblem: aus vielen Mikro-Bewusstseinen lässt sich kein einheitliches Makro-Bewusstsein konstruieren.",
+      "Kastrups Lösung: Umkehrung – ein einziges universelles Bewusstsein, das sich in viele dissoziierte Alters auflöst (Analogie: DIS/Dissociative Identitätsstörung).",
+      "Strudel-Metapher: du bist kein Ding im Bewusstsein, du BIST das Bewusstsein, geformt zu einem Strudel. Tod = Auflösung des Strudels, nicht Vernichtung des Wassers.",
+      "Alles ist Schwingung eines mentalen Feldes (Chladni-Figuren des Geistes) – die Mathematik der Physik bleibt gleich, nur die ontologische Interpretation ändert sich.",
+      "Empirische Evidenz: bei reduzierter Gehirnaktivität (Psilocybin, LSD, NDE, Savant-Syndrom) taucht erweitertes Bewusstsein auf – konsistent mit dem Filter-Modell, inkonsistent mit dem Erzeugungs-Modell des Materialismus."
+    ],
+    "methods_math": ["Bell-Ungleichungen / Verschränkung", "Kombinationsproblem (Panpsychismus)", "Entropie-Argument (Friston 2014)", "Schwingungsmoden / Chladni-Figuren"],
+    "visualizations": ["Canvas: Cockpit-Simulation (Instrumente vs. Realität)", "Canvas: Desktop-Icon (Datei vs. Icon)", "Canvas: Karte vs. Territorium (Detailgrad-Slider)", "Canvas: Bell-Experiment (500 Messungen)", "Canvas: Zombie-Simulation (Komplexitäts-Regler)", "Canvas: Kombinationsproblem (Mikro-Subjekte)", "Canvas: Strudel/Vortex (Dissoziationsstärke)", "Canvas: DIS-Modell (Integriert vs. Dissoziiert)", "Canvas: Membran-Schwingung (Frequenz/Amplitude/Modus)", "Canvas: Dashboard (Sinnesorgan-Wahl)", "Plotly: empirische Evidenz (6 Studien)", "three.js: 3D-Hintergrund"],
+    "internal_tensions": [
+      "Das Dokument ist stark pro-idealistisch geschrieben – es präsentiert Kastrups Position als die einzig kohärente Alternative, ohne die stärksten Gegenargumente (z.B. das Problem der intersubjektiven Übereinstimmung) fair darzustellen.",
+      "Die Verbindung zur Quantenphysik ist umstritten: die Bell-Experimente beweisen nicht direkt Idealismus, sondern nur den Verzicht auf lokalen Realismus."
+    ],
+    "related_files": ["kastrup_jung.html", "buecher/sein_und_zeit.html", "bewusstsein.html", "consciousness_overview.html", "buecher/kritik_der_reinen_vernunft.html"]
+  },
+  {
+    "path": "grothendiek2.html",
+    "slug": "grothendiek2",
+    "title": "Grothendiecks Universum – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 95.7,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik: Grothendiecks zentrale Konzepte (Garben, Schemata, Topoi, Motive, étale Kohomologie, Dessins d'Enfants, Yoga der Gewichte, 6 Operationen, anabelsche Geometrie) als interaktive Canvas-Visualisierung. Keine ML-Inhalte.",
+    "theme": "algebraic-geometry",
+    "themes": ["grothendieck", "sheaves", "schemes", "topoi", "motives", "etale-cohomology", "dessins-denfants", "anabelian-geometry"],
+    "thesis": "Grothendiecks mathematische Vision – die Mathematik als lebendiges Gewebe, in dem lokale Daten zu globalen Strukturen zusammenkleben – ist durch eine interaktive 'Universum'-Visualisierung mit konzeptionellen Knoten und thematischen Szenen erfahrbar.",
+    "key_claims": [
+      "Garben (Faisceaux): lokale Daten, die auf Überlappungen übereinstimmen, kleben zu eindeutigen globalen Schnitten zusammen.",
+      "Schemata: Spec(R) macht Ringe zu geometrischen Räumen; jede Primzahl wird zu einem Punkt; der generische Punkt (0) 'schwebt über allen'.",
+      "Topoi: Universen der Logik und Geometrie – Kategorien, die sich wie Mengen verhalten, aber eigene innere Logik besitzen.",
+      "Motive: der universelle Grund aller Kohomologietheorien (de Rham, étale, Betti, kristallin) – bis heute nicht vollständig konstruiert.",
+      "Étale Kohomologie: die richtige Topologie für algebraische Geometrie über endlichen Körpern; Grundlage für den Beweis der Weil-Vermutungen (Deligne).",
+      "Dessins d'Enfants: bipartite Graphen auf Riemannschen Flächen kodieren tiefe arithmetische Information (Galoiswirkung).",
+      "Yoga der Gewichte: gemischte Hodge-Strukturen zerlegen sich in reine Stücke durch Gewichtsfiltrierung.",
+      "Sechs Operationen (f*, f_*, f!, f_!, ⊗, RHom): das formale Kalkül der Kohomologietheorie; Verdier-Dualität.",
+      "Anabelsche Geometrie: die Fundamentalgruppe einer Kurve bestimmt die Kurve – π₁ ist die Geometrie (Mochizuki)."
+    ],
+    "methods_math": ["Garbenkohomologie", "Spec(R), Primideal, generischer Punkt", "Grothendieck-Topologie, Situs", "Unterobjektklassifizierer Ω", "Étale Morphismen (flach + unverzweigt)", "Weil-Vermutungen, Zetafunktion, Frobenius", "Belyi-Morphismen, Galoiswirkung", "Hodge-Strukturen, Gewichtsfiltrierung", "Verdier-Dualität, Basiswechsel", "Anabelsche Vermutung, Teichmüller-Turm"],
+    "visualizations": ["Canvas: Konstellation (9 Knoten, 15 Kanten, wandernde Partikel, Glow-Effekte)", "Canvas: Garben (3 offene Mengen, Schnitte, Verklebung, Stalks)", "Canvas: Schemata (Spec(ℤ) mit Primzahl-Punkten, generischer Punkt, Fasern, elliptische Kurve)", "Canvas: Topoi (überlagernde 'Welten')", "Canvas: Motive (Kohomologien entspringen einem Zentrum)", "Canvas: Étale (Frobenius-Spirale, Überdeckungen)", "Canvas: Dessins (bipartite Graphen auf Fläche)", "Canvas: Yoga (Hodge-Diamant, Filtrierungen)", "Canvas: 6 Operationen (Pfeile zwischen Welten)", "Canvas: Anabelisch (Schleifen, Galoiswirkung)", "Info-Panel: thematische Textblöcke mit Formeln"],
+    "internal_tensions": [
+      "Die Visualisierung ist stark metaphorisch – die mathematischen Objekte (Garben, Topoi, Motive) werden nicht wirklich berechnet, sondern als abstrakte Muster dargestellt.",
+      "Das Dokument ist eine Hommage, keine Einführung: es setzt erhebliche Vorkenntnisse in algebraischer Geometrie voraus."
+    ],
+    "related_files": ["grothendiek_raum.html", "grothendiek.html", "faserbuendel_und_fibrationen.html", "garben_in_transformern.html", "garben_uebersicht.html", "garben_weltsicht.html"]
+  },
+  {
+    "path": "buecher/an_experiment_with_time.html",
+    "slug": "an_experiment_with_time",
+    "title": "An Experiment with Time – Interaktiv",
+    "lang": "de",
+    "size_kb": 27.7,
+    "category": "nicht-ki",
+    "category_reason": "J.W. Dunnes (1927) Theorie der seriellen Zeit: Träume als Vorschauen, serielle Zeitdimensionen, serieller Beobachter. Parapsychologie/Zeitphilosophie, keine ML-Inhalte.",
+    "theme": "time-philosophy",
+    "themes": ["serial-time", "dreams", "parapsychology", "time-perception", "consciousness", "JW-Dunne"],
+    "thesis": "Zeit ist nicht eindimensional, sondern seriell: eine unendliche Schachtelung von Zeitdimensionen. Im Schlaf wird das Aufmerksamkeitsfeld in 'Zeit 2' frei und kann vorwärts und rückwärts in 'Zeit 1' wandern – daher enthalten Träume Bilder aus der Zukunft genauso häufig wie aus der Vergangenheit.",
+    "key_claims": [
+      "Dunnes Kernbeobachtung: Träume enthalten Bilder aus der Zukunft genauso häufig wie aus der Vergangenheit – das ist normal, nicht paranorm.",
+      "Die Zeit ist eine Landschaft, die bereits existiert; im Wachzustand sehen wir nur den 'jetzigen' Punkt.",
+      "Serielle Zeit: wenn die Zeit 'fließt', braucht dieses Fließen selbst Zeit → Zeit 2 → Zeit 3 → ∞.",
+      "Der 'serielle Beobachter': du bist nicht ein 3D-Wesen in Zeit 1, sondern eine unendliche Serie von Beobachtern, die jeweils den darunterliegenden beobachten.",
+      "Freier Wille kommt vom 'Beobachter bei Unendlich' – er kann Aufmerksamkeit lenken und eingreifen.",
+      "Tod = Ende von Feld 1 (Körper), nicht das Ende des Bewusstseins.",
+      "Dunnes Methode: Traum sofort nach dem Aufwachen aufschreiben, Details vergleichen, 2-Tage-Fenster für Übereinstimmung."
+    ],
+    "methods_math": ["keine formale Mathematik – konzeptionelle/zeitliche Strukturierung"],
+    "visualizations": ["Canvas: Partikel-Hintergrund (60 Partikel)", "Canvas: Zeit-Diagramm (3 Ebenen: Zeit 1, 2, 3; animiert)", "DOM: Traum-Timeline (3 berühmte Dunne-Träume)", "DOM: Traum-Journal (Textarea + Analyse)", "DOM: Quiz (Multiple Choice)", "DOM: 7 Kernerkenntnisse (progressive Reveal)"],
+    "internal_tensions": [
+      "Die Theorie ist spekulativ und empirisch nicht widerlegbar im streng wissenschaftlichen Sinn – sie wird hier als 'Erlebnis' präsentiert, nicht als bewiesene Hypothese.",
+      "Die 'Analyse' im Traum-Journal ist heuristisch (Farben, Zahlen, Orte zählen) und nicht wissenschaftlich validiert."
+    ],
+    "related_files": ["buecher/also_sprach_zarathustra.html", "buecher/whitehead.html", "philosophy2.html", "bewusstsein.html"]
+  }
+]

@@ -1,0 +1,304 @@
+[
+  {
+    "path": "geometry_of_meaning_test.html",
+    "slug": "geometry_of_meaning",
+    "title": "Geometrie & Topologie bedeutungsvoller Sprachräume — Interaktive Reise",
+    "lang": "de",
+    "size_kb": 95.5,
+    "category": "nicht-ki",
+    "category_reason": "Untersucht die Geometrie/Topologie von Sprach- und Bedeutungsräumen (Faserbündel, persistente Homologie, Coarse-Graining, Zipf/Heaps, Multifraktale, Tarski) — reine Sprach-/Bedeutungstheorie, keine KI.",
+    "theme": "geometry-of-language",
+    "themes": ["geometry-of-embeddings", "topology", "fiber-bundles", "persistent-homology", "coarse-graining", "zipf-law", "multifractal-analysis", "semantic-spaces", "model-theory"],
+    "thesis": "Bedeutungsvolle Sprachräume sind keine flachen Punktewolken, sondern tragen eine interne geometrisch-topologische Struktur (Faserbündel über Kontexten, nicht-triviale Homologie, Multifraktalität, skaleninvariante Gesetze wie Zipf/Heaps), die durch Coarse-Graining/Zoom sichtbar wird und die Semantik 'formal' macht.",
+    "key_claims": [
+      "Bedeutungsräume lassen sich als Faserbündel auffassen: Kontext als Basis, Wortbedeutung als Faser — Bedeutung ist kontextabhängig (lokal), nicht global eindeutig.",
+      "Die topologische Struktur (persistente Homologie, Betti-Zahlen) eines Bedeutungsraums ist eine Invariante der Semantik; nicht-triviale 'Löcher' kodieren konzeptionelle Lücken.",
+      "Coarse-Graining / Multiskalen-Analyse: bei geeignetem Zoom erscheinen stabile geometrische Strukturen; das 'Rauschen' einzelner Sätze ist multiskalen-bedingt.",
+      "Skaleninvariante Gesetze (Zipf für Wortfrequenzen, Heaps für Wortschatzwachstum) sind Signaturen der selbstähnlichen (multifraktalen) Struktur der Sprache.",
+      "Modelltheorie / Tarski als formale Grundlage: Bedeutung ist Modellzuweisung in einem strukturierten Raum."
+    ],
+    "methods_math": ["Faserbündel (fiber bundles)", "persistente Homologie / Betti-Zahlen", "Multiskalen-/Coarse-Graining-Analyse", "multifraktale Analyse", "Skaleninvarianz (Zipf, Heaps)", "Modelltheorie / Tarski"],
+    "visualizations": ["Plotly 3D (Bedeutungsräume, Homologie)", "Canvas 2D (Skalen, Faserbündel)", "KaTeX Mathematik", "Interaktive Slider (Zoom, Skalierung)"],
+    "internal_tensions": [
+      "Die Faserbündel-Interpretation ist heuristisch; ein expliziter Theorem-Transfer von der formalen Semantik zur konkreten Geometrie fehlt.",
+      "Zipf/Heaps sind empirische Näherungen, keine exakten Gesetze — die multifraktale Modellierung ist interpretativ.",
+      "Persistente Homologie auf echten Sprachdaten ist rechenintensiv; die visualisierten Invarianten sind auf synthetische/abstrahierte Räume beschränkt."
+    ],
+    "related_files": ["geometrie_der_wahrheit.html", "foam_of_meaning.html", "persistent_topology.html", "betti.html", "topologie_biologischer_systeme.html"]
+  },
+  {
+    "path": "brain.html",
+    "slug": "brain",
+    "title": "Interaktiver Gehirn-Explorer",
+    "lang": "de",
+    "size_kb": 94.9,
+    "category": "nicht-ki",
+    "category_reason": "Neurowissenschaftlicher Explorer: Gehirnareale, neuronale Dynamik, Attraktoren, Chaos, Kuramoto/LIF-Netzwerke — Biologie des Gehirns, keine KI.",
+    "theme": "neuroscience",
+    "themes": ["neuroscience", "brain-regions", "attractors", "chaos", "kuramoto-model", "lif-neurons", "neural-oscillations", "connectome"],
+    "thesis": "Das Gehirn ist ein Netzwerk gekoppelter Oszillatoren und neuronaler Populationen, dessen funktionale Areale als Attraktoren bzw. (chaotische) instabile Regime organisiert sind; Synchronisation (Kuramoto) und Feuerraten (LIF) erzeugen die beobachtete funktionelle Architektur.",
+    "key_claims": [
+      "Funktionelle Gehirnareale entsprechen Attraktoren bzw. chaotischen Regimen in einem hochdimensionalen Phasenraum der neuronalen Aktivität.",
+      "Kuramoto-Modell: die Synchronisation gekoppelter Oszillatoren erklärt Rhythmen (Alpha/Beta/Gamma) und deren Übergänge.",
+      "LIF (Leaky-Integrate-and-Fire) Neuronen erzeugen realistische Feuerraten; kollektive Dynamik entsteht aus lokalen Regeln.",
+      "Chaos (empfindliche Abhängigkeit) in neuronalen Populationen erlaubt flexible, adaptive Reaktionen ohne deterministische Vorhersagbarkeit."
+    ],
+    "methods_math": ["dynamische Systeme / Attraktoren", "Kuramoto-Oszillator-Modell", "LIF-Neuronen (Leaky Integrate & Fire)", "Chaos-Theorie", "Phasenraum-Analyse", "Graph-/Konnektivitätstheorie"],
+    "visualizations": ["Plotly 3D (Gehirnareale, Phasenraum)", "Canvas 2D (Oszillatoren, Feuerraten, Chaos)", "Interaktive Slider (Kopplung, Frequenz)"],
+    "internal_tensions": [
+      "Das Kuramoto-Modell ist eine starke Abstraktion; echte Neuronen sind weder reine Oszillatoren noch perfekte LIF.",
+      "Chaotische Regime werden qualitativ behauptet, ein konkreter Lyapunov-Nachweis auf realen Daten fehlt.",
+      "Die Zuordnung von Attraktoren zu spezifischen Gehirnarealen ist illustrativ, keine messbare Invariante."
+    ],
+    "related_files": ["geometrie_neuronaler_populationen.html", "topologie_biologischer_systeme.html", "phasenraum.html", "homological_scaffolding_psilocybin.html"]
+  },
+  {
+    "path": "grothendiek.html",
+    "slug": "grothendiek",
+    "title": "Grothendiecks Universum – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 92.5,
+    "category": "nicht-ki",
+    "category_reason": "Reine algebraische Geometrie / Kategorientheorie (Sheaves, Schemata, Yoneda, Topoi, Kohomologie, Dessins d'enfants, Motive) — Grothendiecks mathematisches Universum, keine KI.",
+    "theme": "algebraic-geometry",
+    "themes": ["category-theory", "sheaves", "schemes", "topos-theory", "yoneda-lemma", "cohomology", "dessins-d-enfants", "motives", "algebraic-geometry"],
+    "thesis": "Grothendieks mathematisches Universum ist eine hierarchische Kaskade von Verallgemeinerungen — von konkreten Räumen über Garben und Schemata bis zu Topoi und Motiven — die Geometrie auf reine Struktur (Morphismen, Adjunktionen, Kohomologie) reduziert und damit große Teile der modernen Mathematik in einem einzigen Rahmen vereint.",
+    "key_claims": [
+      "Yoneda-Lemma: ein Objekt wird vollständig von seinen Beziehungen (Morphismen) zu allen anderen bestimmt — 'Struktur durch Beziehung'.",
+      "Garben (Sheaves) verallgemeinern lokale Daten, die sich global verkleben lassen; sie sind das Fundament der modernen Geometrie und der Kohomologie.",
+      "Schemata ersetzen Punktmengen durch Ring-Bündel — Geometrie wird algebraisch, 'Räume' sind Spektra von Ringen.",
+      "Topoi verallgemeinern den topologischen Raum zu 'Universen' von Logik/Geometrie; jedes Topos trägt eine eigene (oft intuitionistische) Logik.",
+      "Dessins d'enfants (Belyi) verknüpfen algebraische Geometrie mit Graphen und Zahlentheorie (Absolute Galois-Gruppe).",
+      "Motive (Beilinson/Voevodsky) sind die 'Universal-Bausteine' der Kohomologietheorien — ein gemeinsamer Ursprung aller Kohomologien."
+    ],
+    "methods_math": ["Kategorientheorie / Funktoren / Adjunktionen", "Yoneda-Lemma", "Garben-/Sheaf-Theorie", "Schemata (Spektra von Ringen)", "Topos-Theorie", "Kohomologie", "Dessins d'enfants / Belyi", "Motive"],
+    "visualizations": ["Canvas 2D (Kategorien, Garben, Diagramme)", "interaktive Navigationskarten durch die Konzepte", "grafische Schemata (keine 3D-Szenen)"],
+    "internal_tensions": [
+      "Die enorme Abstraktionsschrittfolge (Räume→Garben→Schemata→Topoi→Motive) macht die konkrete Geometrie oft unsichtbar.",
+      "Motive sind teils noch nicht vollständig konstruktiv (Motivic Homotopie, Voevodsky) — große Teile bleiben conjectural.",
+      "Dessins d'enfants / Absolute Galois-Gruppe berühren tiefe offene Probleme (Langlands, abc)."
+    ],
+    "related_files": ["grothendiek_raum.html", "grothendiek2.html", "kategorientheorie.html", "sheaves.html", "topoi.html", "inftytopoi.html"]
+  },
+  {
+    "path": "concept_attractors.html",
+    "slug": "concept_attractors",
+    "title": "Concept Attractors in LLMs — Interactive Explainer",
+    "lang": "en",
+    "size_kb": 91.2,
+    "category": "ki",
+    "category_reason": "Erklärt, wie LLM-Schichten als kontraktive Abbildungen (IFS) 'Konzept-Attraktoren' bilden und wie man daraus trainingsfrei Konzepte steuern kann (Chytas & Singh 2025, arXiv:2601.11575v1).",
+    "theme": "concept-attractors",
+    "themes": ["dynamical-systems", "attractors", "transformer-dynamics", "contractive-maps", "iterated-function-systems", "llm-internals", "training-free-steering", "residual-stream", "superposition"],
+    "thesis": "Die Schichten eines LLMs verhalten sich wie kontraktive Abbildungen eines iterierten Funktionensystems (IFS): wiederholte Anwendung zieht Repräsentationen gegen stabile 'Konzept-Attraktoren' im residual stream; weil Attraktoren stabil und lokalisiert sind, lassen sich Konzepte trainingsfrei identifizieren und steuern, indem man gezielt in/aus dem Attraktor-Bassin schiebt.",
+    "key_claims": [
+      "Ein LLM-Layer-Stack ist ein iteriertes Funktionensystem; die Kontraktivität der Abbildungen sorgt (Banach-Fixpunktsatz-Analogie) für die Existenz stabiler Fixpunkte/Attraktoren.",
+      "Konzepte (z.B. ein Name, ein Ort, ein Fakt) entsprechen lokalen Attraktoren im hochdimensionalen residual stream — Repräsentationen, die das Konzept kodieren, konvergieren dorthin.",
+      "Weil die Attraktoren stabil (kontraktiv) sind, sind sie robust gegen kleine Störungen und damit detektier- und steuerbar.",
+      "Trainingsfreie Manipulation: addiert man einen kleinen Vektor in Richtung des Attraktors (oder aus ihm heraus), verschiebt man die Modellantwort — ein mechanistischer 'Steuerhebel'.",
+      "Die Idee verknüpft mechanistische Interpretability (Geva, Meng et al.) mit der dynamisch-systemischen Attraktor-Sicht (Chen et al. 2018)."
+    ],
+    "methods_math": ["dynamische Systeme (kontraktive Abbildungen)", "iterierte Funktionensysteme (IFS)", "Banach-Fixpunktsatz", "residual-stream-Geometrie", "Attraktor-/Basin-Analyse", "Vektorsteuerung (activation steering)"],
+    "visualizations": ["Canvas/Plotly (Basins, Trajektorien, Attraktor-Landschaft)", "Interaktive Slider (Steuervektor, Layer)", "Temml/KaTeX Mathematik"],
+    "internal_tensions": [
+      "Die Kontraktivität der LLM-Layer ist empirisch beobachtet, aber nicht formal bewiesen; ein globaler Kontraktionsnachweis über alle Schichten fehlt.",
+      "Attraktoren sind heuristisch lokalisiert; Superposition (fast-orthogonale Konzepte) macht die 'Einzigartigkeit' eines Attraktors fragil.",
+      "Die trainingsfreie Steuerung funktioniert für klar lokalisierte Konzepte; für verteilte/abstrakte Konzepte bricht die Attraktor-Interpretation zusammen."
+    ],
+    "related_files": ["concept_attractors_in_llm.html", "topology_of_attractors.html", "transformer_dynamics.html", "dynamic_residual_stream_paper.html", "wie_ein_llm_denkt.html", "test2.html"]
+  },
+  {
+    "path": "paperidea3.html",
+    "slug": "paperidea3",
+    "title": "Spatial Focus Explorer — Chaotic Lens Encoding",
+    "lang": "en",
+    "size_kb": 90.5,
+    "category": "ki",
+    "category_reason": "Schlägt ein LLM-Design vor, bei dem Token-Embedding-Positionen durch eine chaotische, invertierbare räumliche Karte (Arnold-Katen-Map) gehasht werden, um den räumlichen Fokus zu steuern; residual stream, paralleler Transport, Jacobi-Matrix.",
+    "theme": "chaotic-lens-encoding",
+    "themes": ["transformers", "token-embedding", "chaos", "arnold-cat-map", "residual-stream", "parallel-transport", "jacobi-matrix", "spatial-encoding", "positional-encoding"],
+    "thesis": "Statt Token-Positionen linear/positional zu kodieren, kann man sie durch eine chaotische, invertierbare räumliche Abbildung (z.B. die Arnold-Katen-Map) auf eine 'Linsen'-Karte hashen; die resultierende Positionsstruktur steuert, auf welchen Bereich sich das Modell fokussiert, wobei der residual stream und paralleler Transport (über die Jacobi-Matrix) die Information konsistent entlang der Positionen transportieren.",
+    "key_claims": [
+      "Eine chaotische, invertierbare Karte (Arnold-Katen-Map) vermengt Positionen gleichmäßig (Mischungseigenschaft) — sie dient als 'Lens', die den räumlichen Fokus verteilt.",
+      "Die Positions-Hashing beeinflusst, welche Bereiche im residual stream aktiviert werden → kontrollierbarer räumlicher Fokus.",
+      "Paralleler Transport (über die Jacobi-Matrix der Abbildung) hält die Richtung der Repräsentationen entlang der Positionen konsistent — Invarianz unter der Karte.",
+      "Der Ansatz kombiniert mechanistische Interpretability (residual stream) mit dynamisch-systemischer Chaos-Geometrie."
+    ],
+    "methods_math": ["Arnold-Katen-Map (chaotische Abbildung)", "Mischungseigenschaft / Ergodizität", "paralleler Transport / Jacobi-Matrix", "residual-stream-Geometrie", "Token-Embedding / positionale Kodierung"],
+    "visualizations": ["Canvas 2D/3D (Katen-Map, Fokus-Linsen, Trajektorien)", "Interaktive Slider (Map-Parameter, Position)", "Temml/KaTeX Mathematik"],
+    "internal_tensions": [
+      "Der Ansatz ist eine 'paper idea' (Design-Skizze) — ein trainierter Nachweis, dass chaotische Fokus-Hashing funktioniert, fehlt.",
+      "Paralleler Transport auf der chaotischen Karte ist rechenintensiv und in der Praxis nur näherungsweise durchführbar.",
+      "Die Übertragbarkeit von 2D-Spielzeug-Geometrie auf reale Bild-/Token-Räume ist unklar."
+    ],
+    "related_files": ["dynamic_residual_stream_paper.html", "transformer_dynamics.html", "positional.html", "paperidea2.html", "paperidea4.html"]
+  },
+  {
+    "path": "youarellm2.html",
+    "slug": "youarellm2",
+    "title": "🧠 Token Odyssey – Erlebe die Welt eines Tokens im LLM",
+    "lang": "de",
+    "size_kb": 89.9,
+    "category": "ki",
+    "category_reason": "Immersive Erste-Person-Interaktion: man wird zum Token und durchläuft die sechs Stufen eines Transformers (Embedding, Positional Encoding, Self-Attention QKV, FFN, Logits/Softmax, Next-Token) — LLM-Mechanik.",
+    "theme": "transformer-token-journey",
+    "themes": ["transformers", "token-embedding", "positional-encoding", "self-attention", "qkv", "ffn", "softmax", "residual-stream", "mechanistic-interpretability", "pedagogy"],
+    "thesis": "Ein Token durchläuft in einem Transformer sechs mechanistische Stufen — Embedding → Positional Encoding → Self-Attention (QKV, causal mask) → FFN (Dense+ReLU+LayerNorm) → Logits/Softmax → Next-Token-Vorhersage; die Reise wird als immersive Erste-Person-Erfahrung visualisiert, um die interne Datenströmung des LLMs verständlich zu machen.",
+    "key_claims": [
+      "Token-Embedding: jedes Token wird aus der Embedding-Matrix (|V|×d_model) in einen hochdimensionalen Vektorraum eingebettet; ähnliche Tokens liegen nahe.",
+      "Positional Encoding (sin/cos, 10000^Frequenzen) addiert einen Positions-Fingerabdruck — so wird 'WAS' zu 'WAS an Position i'.",
+      "Self-Attention: Q,K,V-Projektionen; Score = softmax(QK^T/√d_k); Causal-Mask (nur ≤ eigene Position) — der Token 'liest' relevante Kontext-Values.",
+      "FFN: zwei Dense-Layer mit ReLU (+ LayerNorm) — assoziatives Nachschlagen / Konzept-Transformation.",
+      "Logits → Softmax (mit Temperatur) → Next-Token-Wahrscheinlichkeitsverteilung; der gewählte Token wird ausgegeben."
+    ],
+    "methods_math": ["Embedding-Matrizen", "positionale Kodierung (sin/cos)", "scaled dot-product Attention / Softmax", "Causal Masking", "Dense+ReLU (FFN)", "LayerNorm", "Temperatur-Skalierung"],
+    "visualizations": ["Canvas/JS (Embedding-Raum 2D-Projektion, Attention-Grid, Neuronen, Softmax-Balken, Wellen)", "Temml Mathematik", "Erste-Person-Narrative + Fortschrittsbar", "synthetische Matrixdaten (He-Init, seeded)"],
+    "internal_tensions": [
+      "Die Visualisierung nutzt synthetische/seeded-Matrizen und vereinfachtes Whitespace-Tokenizing (keine BPE) — illustrativ, kein echtes Modell.",
+      "EMBED_DIM=16 (vereinfacht) steht für reale 768–12288; die hochdimensionale Superposition geht in der 2D-Projektion verloren.",
+      "Der didaktische Wert ist hoch, aber es gibt keine Aussage über reale Trainings-/Gewichtsdynamik."
+    ],
+    "related_files": ["youarellm.html", "wie_ein_llm_denkt.html", "dynamic_residual_stream_paper.html", "transformer_dynamics.html", "qkv.html", "attn.html"]
+  },
+  {
+    "path": "topology_of_attractors.html",
+    "slug": "topology_of_attractors",
+    "title": "Topologie von Attraktoren – TDA auf LLM-Aktivierungen",
+    "lang": "de",
+    "size_kb": 89.8,
+    "category": "ki",
+    "category_reason": "Persistent Homology / TDA auf LLM-Aktivierungen: Punktewolke → Vietoris-Rips → Betti-Zahlen → Topologie-Klassifikation; Bonus Takens-Embedding und Faserbündel-Bild — LLM-internals.",
+    "theme": "persistent-homology-llm",
+    "themes": ["topological-data-analysis", "persistent-homology", "vietoris-rips", "betti-numbers", "attractors", "llm-internals", "takens-embedding", "fiber-bundles", "dynamical-systems"],
+    "thesis": "Die Aktivierungen eines LLM-Layers (über viele Kontexte, die ein Konzept implizieren) bilden eine Punktewolke, deren topologische Struktur — via Vietoris-Rips-Filtration und persistenter Homologie (Betti-Zahlen, Barcode, Persistenzdiagramm) — die Art des Attraktors (Punkt/Kreis/Torus/Sphäre/Figur-8) klassifiziert; ein Bonus-Takens-Embedding rekonstruiert den Attraktor aus einer einzelnen Zeitreihe, und ein Faserbündel-Bild ordnet Kontext=Basis, Layer=Faser zu.",
+    "key_claims": [
+      "Vietoris-Rips-Filtration: Punkte werden per ε-Schwellwert zu Simplizes (Kanten, Dreiecke) verbunden; die entstehenden Betti-Zahlen zählen Komponenten, Löcher (Zyklen) und Hohlräume.",
+      "Persistenz-Barcode/Diagramm: Features weit über der Diagonalen sind echte Struktur, nahe der Diagonalen = Rauschen; die langlebige Signatur klassifiziert die Topologie.",
+      "Bekannte Topologien haben charakteristische Betti-Signaturen: Punkt (1,0,0), Kreis S¹ (1,1,0), Torus T² (1,2,1), Sphäre S² (1,0,1), Figur-8 (1,2,0).",
+      "Takens-Embedding (m ≥ 2d+1): aus einer einzigen skalaren Observable (ein Neuron über die Token) lässt sich der volle Attraktor rekonstruieren — relevant, wenn nur eine Dimension zugänglich ist.",
+      "Faserbündel-Bild: Kontext = Basis-Mannigfaltigkeit, jeder Layer = Faser; Attention/FFN transportieren Krümmung zwischen Fasern; stabile Attraktoren persistieren über die Schichten hinweg."
+    ],
+    "methods_math": ["persistente Homologie", "Vietoris-Rips-Komplex", "Betti-Zahlen (β0 Union-Find, β1/β2 Euler)", "Persistenz-Barcodes/Diagramme", "Wasserstein-Distanz (Signatur)", "Takens-Embedding (Delay-Embedding)", "Faserbündel-Geometrie"],
+    "visualizations": ["Plotly 3D (Punktwolken, VR-Complex mesh, Takens, Faserbündel)", "Plotly 2D (Barcode, Persistenzdiagramm, Signatur-Balken)", "Interaktive Slider (ε, Punkte, Rauschen, τ)", "Klassifikations-Readout"],
+    "internal_tensions": [
+      "β1/β2 werden über die Euler-Charakteristik + Heuristik geschätzt (keine vollständige Boundary-Matrix-Reduktion) — exakt nur für 2-Dim-Komplexe/typische VR.",
+      "Die Punktewolken sind synthetisch (bekannte Formen + Rauschen), keine echten LLM-Aktivierungen — die Pipeline ist demonstrativ.",
+      "Takens auf LLMs ist konzeptionell interessant, aber die 'einzelne Observable'-Voraussetzung ist in realen Modellen schwer zu erfüllen."
+    ],
+    "related_files": ["test2.html", "topology.html", "llm_topology.html", "concept_attractors.html", "betti.html", "persistent_topology.html", "takens_embedding_theorem.html"]
+  },
+  {
+    "path": "narc_group2.html",
+    "slug": "narc_group2",
+    "title": "Die Architektur der Manipulation – Abstrakte Visualisierung",
+    "lang": "de",
+    "size_kb": 89.0,
+    "category": "nicht-ki",
+    "category_reason": "Psychologie der Manipulation: wie verdeckte Narzissten und manipulative Gruppen Realität verformen, Identität erodieren und Abhängigkeit erzeugen — abstrakt visualisiert; keine KI.",
+    "theme": "manipulation-psychology",
+    "themes": ["narcissism", "manipulation", "gaslighting", "double-bind", "group-dynamics", "triangulation", "hoovering", "identity-erosion", "recovery", "psychoeducation"],
+    "thesis": "Manipulation (verdeckter Narzissmus, toxische Gruppen) ist eine wiedererkennbare Architektur aus Taktiken — Gaslighting, Schuldumkehr, Schweigen, Triangulation, Gruppendruck, Hoovering, Double-Bind, Informationskontrolle — die Realität verformt, das Selbst erodiert und Abhängigkeit erzeugt; die Seite macht diese unsichtbaren Mechanismen durch abstrakte, steuerbare Visualisierungen sichtbar (Aufklärung, keine Therapie).",
+    "key_claims": [
+      "Energiefeld: der Manipulator 'nimmt Raum ein' (Feld wächst), das Gegenüber wird komprimiert/absorbiert — Macht als raumgebende Dynamik.",
+      "Erosion: Teile der Identität (Selbstvertrauen, Grenzen, Freude, …) werden schrittweise angezogen, absorbiert und aufgelöst.",
+      "Narzisstischer Zyklus (Idealisierung → Abwertung → Verwerfen) als Herzschlag: die Hochs werden niedriger, die Tiefs tiefer.",
+      "Gaslighting spaltet Realität (tatsächlich vs. geglaubt) — zwei Linien driften auseinander.",
+      "Gruppendynamik als Gravitationsfeld: alle kreisen um den Mittelpunkt; zu nah → verschluckt, zu fern → zurückgezogen.",
+      "Double-Bind: jeder Weg führt in die Schuld (Labyrinth); Informationskontrolle: der Anführer ist der einzige Knoten und filtert/verzieht alle Informationen.",
+      "Heilung ist nicht-linear (Rückschläge, Trigger), aber es wächst wieder — mit explizitem Hilfetelefon-Verweis (Aufklärung ersetzt keine Beratung)."
+    ],
+    "methods_math": ["(keine formale Mathematik —) abstrakte/qualitative Modellierung", "Partikel-/Feld-Simulationen", "Schwungungs-/Zyklus-Modelle (Herzschlag)", "Gravitations-/Orbit-Modelle", "Netzwerk-/Knoten-Graphen (Informationsfluss)"],
+    "visualizations": ["Canvas 2D (Energiefelder, Erosions-Partikel, Herzschlag, Gaslighting-Split, Gravitation, Labyrinth, Info-Graph, Recovery)", "Interaktiver Chat-Decoder (6 Manipulations-Szenarien)", "Slider-Docks (Level/Jahre/Kontrolle)"],
+    "internal_tensions": [
+      "Vollkommen qualitativ/anschaulich — es gibt keine quantitativen Modelle oder empirischen Messgrößen.",
+      "Pädagogisch/aufklärerisch; ersetzt keine Therapie (expliziter Hinweis + Hilfetelefone).",
+      "Die 'Architektur'-Metaphorik (Felder, Gravitation, Labyrinthe) ist evokativ, aber nicht operationalisierbar."
+    ],
+    "related_files": ["narcissism.html", "narc_group.html"]
+  },
+  {
+    "path": "conceptual_spaces.html",
+    "slug": "conceptual_spaces",
+    "title": "Conceptual Spaces – Die Geometrie des Denkens (Interaktiv)",
+    "lang": "de",
+    "size_kb": 88.1,
+    "category": "nicht-ki",
+    "category_reason": "Interaktive Adaption von Gärdenfors' 'Conceptual Spaces' (MIT Press 2000): Bedeutung als Geometrie in Qualitätsräumen (Ähnlichkeit=Distanz, Konzepte=konvexe Regionen) — Kognitionswissenschaft/Semantik, keine KI.",
+    "theme": "conceptual-spaces",
+    "themes": ["conceptual-spaces", "cognitive-science", "convexity", "voronoi-tessellation", "prototypes", "minkowski-metrics", "shepard-generalization-law", "concept-combination", "metaphors-domain-mapping", "goodmans-grue", "kohonen-som", "quality-dimensions"],
+    "thesis": "Bedeutung wird in geometrischen 'konzeptuellen Räumen' repräsentiert, deren Achsen Qualitätsdimensionen sind (Farbe, Zeit, Temperatur, …): Ähnlichkeit ist Distanz, natürliche Konzepte sind konvexe Regionen (Kriterium P), Prototypen erzeugen per Voronoi-Tessellation automatisch Kategorien, Metaphern sind strukturerhaltende Domain-Mappings — eine dritte, zwischen Symbol und Neuron liegende Kognitionsebene (Gärdenfors 2000).",
+    "key_claims": [
+      "Drei Ebenen: subkonzeptuell (Neuronen), konzeptuell (Geometrie), symbolisch (Sprache) — die konzeptuelle Ebene ist die Brücke.",
+      "Kriterium P: eine natürliche Eigenschaft ist eine konvexe Region; das löst u.a. Goodmans Grue-Rätsel (grün/blau konvex, grue/bleen unstetig bei 2030).",
+      "Integral vs. separable Dimensionen bestimmen die Metrik (Minkowski r=2 euklidisch für integral, r=1 city-block für separabel).",
+      "Prototyp = Mittelwert der Beispiele; Prototypen + Metrik → Voronoi-Tessellation → konvexe Kategorieregionen (Lemma 3.1); erklärt graduale Kategorien (Rosch 1975).",
+      "Konzeptkombination ('steinerner Löwe') = der Modifikator überschreibt Domänen des Kopfnomens (kein Mengenschnitt); Kontrastklassen erklären Bedeutungsverschiebungen ('heißes Wasser', 'großer Chihuahua').",
+      "Metaphern = strukturerhaltende Mappings zwischen Domänen, asymmetrisch (fundamental → weniger fundamental, z.B. räumlich → zeitlich).",
+      "Zwarts' Präpositionen sind konvexe Vektor-Regionen; Kohonen-SOMs erzeugen die Räume; Gärdenfors' Muschel-Experiment: kein einziges Kategorisierungsmodell ist durchgehend überlegen."
+    ],
+    "methods_math": ["Konvexität", "Minkowski-Metriken (r=1,2,∞)", "Voronoi-Tessellation (euklidisch/generalisiert)", "Prototypen (Mittelwert)", "Qualitätsdimensionen (integral/separable)", "strukturerhaltende Abbildungen (Metaphern)", "SOM/Kohonen", "Shepards Gesetz der Generalisierung"],
+    "visualizations": ["Canvas 2D (Jungle, Metriken/Isodistanz, Konvexität, Voronoi, Lernen, Kontrast, Hautfarben, Metapher, Muschel, Präpositionen)", "Plotly 3D (Farbkegel NCS, Zeit-Farbe-Zylinder Grue)", "KaTeX Mathematik", "Hero-Partikelnetz + Slider/Buttons"],
+    "internal_tensions": [
+      "Die Geometrie ist ein Modell der Kognition, nicht ein bewiesenes Implementierungsschema im Gehirn/Computer.",
+      "Konvexität (Kriterium P) ist eine starke Annahme; nicht alle menschlichen Kategorien sind sauber konvex.",
+      "Die Shell-Experiment-Ergebnisse zeigen keine durchgehende Überlegenheit eines Modells — die Voronoi-Regel ist nicht universell."
+    ],
+    "related_files": ["foam_of_meaning.html", "geometrie_der_wahrheit.html", "kohonen.html"]
+  },
+  {
+    "path": "math_framework_for_transformers.html",
+    "slug": "math_framework_for_transformers",
+    "title": "Transformer Circuits — Interaktive Reise",
+    "lang": "de",
+    "size_kb": 86.6,
+    "category": "ki",
+    "category_reason": "Interaktive Reise durch Elhage et al. (Anthropic 2021) 'A Mathematical Framework for Transformer Circuits': 0/1/2-Layer-Transformer, Path-Expansion, Skip-Trigramme, Induction Heads, Eigenwert-Analyse — mechanistische Interpretability.",
+    "theme": "transformer-circuits",
+    "themes": ["transformer-circuits", "mechanistic-interpretability", "residual-stream", "attention-heads", "qkv", "path-expansion", "skip-trigrams", "induction-heads", "eigenvalue-analysis", "in-context-learning", "virtual-weights"],
+    "thesis": "Kleine Transformer (0, 1, 2 Layer, nur Attention) lassen sich mathematisch reverse-engineeren: via Path-Expansion zerfällt die Berechnung in unabhängige Pfade durch den residual stream; 0-Layer = Bigramme (W_U·W_E), 1-Layer = Ensemble von Skip-Trigrammen [A]…[B]→[C] (faktorisiert in QK/OV), 2-Layer = Induction Heads ([A][B]…[A]→[B]), ein echter Algorithmus für In-Context-Learning — erkennbar an positiven Eigenwerten in QK und OV.",
+    "key_claims": [
+      "Residual Stream = 'Anschlagbrett': jeder Layer liest linear, schreibt linear; nichts wird gelöscht, nur addiert → lineare 'virtuelle Gewichte' verknüpfen beliebige Layer direkt.",
+      "Head = QK-Kreis (W_Q^T·W_K: wohin schauen) + OV-Kreis (W_O·W_V: welche Info wird bewegt) — tensorielle Form A⊗W_OV.",
+      "0-Layer: T = W_U·W_E → reine Bigramm-Statistik (keine Inter-Position-Info).",
+      "1-Layer: Path-Expansion → Summe aus direktem Pfad + Head-Pfaden; jeder Head lernt Skip-Trigramme [A]…[B]→[C]; Copying-Heads dominieren (positive Eigenwerte im OV-Kreis).",
+      "'Bugs by Design': faktorisierte Skip-Trigramme produzieren Kreuz-Produkte (keep…in→bay, keep…at→mind).",
+      "2-Layer: Heads in Layer 2 lesen, was Layer 1 schrieb → Q-/K-/V-Composition; Induction Heads (Previous-Token-Head + Induction-Head) implementieren In-Context-Learning; Signatur = positive Eigenwerte in QK UND OV."
+    ],
+    "methods_math": ["Pfad-Expansion / lineare Algebra", "QK-/OV-Produkte (W_Q^T W_K, W_O W_V)", "Tensor-Produkte (A⊗W_OV)", "Eigenwert-Analyse (Copying-Detektion)", "Softmax / scaled dot-product", "Low-Rank-Zerlegung", "virtuelle Gewichte (Komposition)"],
+    "visualizations": ["Canvas 2D (Matrix-Vektor, Eigenwerte, Low-Rank-Bild, Tensor, Attention-Pattern, Pfade, Skip-Trigramme, Composition, Induction-Mechanik)", "Plotly (Softmax, Bigramme, Eigenwert-2D, Subspace)", "KaTeX Mathematik", "Interaktive Slider/Buttons"],
+    "internal_tensions": [
+      "Drastische Vereinfachungen (nur Attention, keine MLP/LayerNorm/Bias) — die realen Komponenten fehlen bewusst für Klarheit.",
+      "Path-Expansion wird für 2 Layer exakt; bei mehr Layern explodiert die Pfadzahl (nur näherungsweise behandelbar).",
+      "Die Demos sind vereinfacht/pädagogisch (simulierte Gewichte), keine Analyse echter GPT-Gewichte."
+    ],
+    "related_files": ["qkv.html", "attn.html", "in-context-learning_through_gradient.html", "dynamic_residual_stream_paper.html", "transformer_dynamics.html"]
+  },
+  {
+    "path": "space_warps.html",
+    "slug": "space_warps",
+    "title": "Origami in N Dimensionen — Interaktive Reise durch Keup & Helias (2022)",
+    "lang": "de",
+    "size_kb": 68.4,
+    "category": "ki",
+    "category_reason": "Keup & Helias (2022, arXiv:2203.11355): Feedforward-Netzwerke machen lineare Trennbarkeit durch 'Falten' der Datenverteilung in freie (höhere) Dimensionen — ReLU als Hammer, Fold-and-Cut-Analogie; ReLU-Netze.",
+    "theme": "origami-relu-folding",
+    "themes": ["origami-relu-folding", "relu-nets", "folding", "linear-separability", "fold-and-cut", "affine-transformations", "dimension-lift", "bimodal-tuning-curves", "keup-helias-2022", "mixed-selectivity"],
+    "thesis": "Das primäre mechanistische Werkzeug, mit dem ein Feedforward-Netz lineare Trennbarkeit herstellt, ist progressives Falten (Origami) der Datenverteilung in ungenutzte, höhere Dimensionen: ein ReLU ist der 'Hammer' (drückt die halbe Ebene auf die Faltlinie), eine affine Abbildung die Positionierung (gelernte Rotation), und die letzte Schicht macht einen einzigen 'Schnitt' (Hyperebene) — analog zum Fold-and-Cut-Theorem; empirisch bestätigt durch bimodale Tuning-Kurven.",
+    "key_claims": [
+      "Eine Schicht = affine Transformation (dreht/skaliert/schert, Homöomorphismus — ändert Trennbarkeit NICHT) + elementweiser ReLU (Hammer — erste echte topologische Verformung).",
+      "Falten in freie Dimensionen (Schicht breiter als die Daten) ist injektiv und verliert keine Information — das zentrale Macht-Feature; Scheren ohne Extra-Dimensionen ist ineffizient (braucht tiefe, schmale Netze).",
+      "Kreis-im-Kreis (nicht linear trennbar) wird durch Heben in eine 3. Dimension (N ReLU-Neuronen als N-Eck-Wanne) linear trennbar.",
+      "Fold-and-Cut-Analogie: die Schichten falten die Daten so, dass alle Klassengrenzen übereinanderliegen; der letzte 'gerade Schnitt' (Hyperebene) schneidet die ganze Form — erklärt Universal-Approximation.",
+      "Bimodale Tuning-Kurven (zwei Peaks mit Tal bei x̃=0) im Poker-Hand-Netz sind der empirische Fingerabdruck einer Faltkante; Neurone mit großem 'Dip' sind die wichtigsten.",
+      "Konsequenzen: Schichten müssen breiter als die Datendimensionalität sein; 'Mixed Selectivity' ist kein Bug, sondern ein Feature des Faltmechanismus."
+    ],
+    "methods_math": ["affine Transformationen (Homöomorphismen)", "ReLU als Faltlinie/Hammer", "Dimension-Lift (freie Dimension)", "Fold-and-Cut-Theorem (Demaine et al. 1998)", "N-Eck-Wannen (ReLU-Neuronen)", "bimodale Tuning-Kurven", "Universal-Approximation"],
+    "visualizations": ["Canvas 2D (Motivation, Affin, ReLU, Hammer, 2D-Ei, Rotation, 1D-Falte, Fold-and-Cut Papier, Shear-Animation, Tuning-Kurven)", "Plotly 3D (Ei-Lift, N-Eck-Wanne, 3D-Neuronen)", "Temml Mathematik (live aus den Reglern)", "Slider/Buttons"],
+    "internal_tensions": [
+      "'Effizienteste Operation = Falten' ist eine These mit empirischer Stütze (bimodale Kurven), aber kein vollständiger formaler Beweis über alle Architekturen.",
+      "Die Fold-and-Cut-Analogie ist heuristisch: die letzte Schicht 'schneidet', aber die vorherigen müssen die Grenzen exakt übereinanderlegen — in echten Netzen unvollständig.",
+      "Bimodale Tuning-Kurven sind in einem spezifischen (Poker-)Netz beobachtet; die Übertragbarkeit auf große Netze/Modelle ist offen."
+    ],
+    "related_files": ["origami.html", "origami_1.html", "origami_2.html", "space_morph.html"]
+  }
+]

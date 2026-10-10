@@ -1,0 +1,409 @@
+[
+  {
+    "path": "paperidea4.html",
+    "slug": "paperidea4",
+    "title": "The Situs — How a Transformer Sees the World",
+    "lang": "en",
+    "size_kb": 73.2,
+    "category": "ki",
+    "category_reason": "Wendet Garben-/Situs-Strukturen (nach Grothendieck) explizit auf Transformer/LLMs an: der Embedding-Raum wird als topologischer Situs gelesen, Attention-Köpfe als 'Linsen' über lokalen Patches, Halluzination wird an Patch-Grenzen verortet. Klare KI-Kopplung.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "grothendieck-situs", "transformer-attention", "geometry-of-embeddings", "hallucination"],
+    "thesis": "Ein Transformer lässt sich als Garbe/Situs über einem topologischen Situs lesen: der Kontext wird in lokale Patches zerlegt, Attention-Köpfe wirken als 'Linsen', die lokale Daten in den Embedding-Raum projizieren, und Halluzination entsteht genau dort, wo lokale Patches nicht zu einem globalen Schnitt verkleben (nicht global-kompatible lokale Daten).",
+    "key_claims": [
+      "Der Embedding-Raum eines Transformers trägt die Struktur eines topologischen Situs; der Eingabe-Kontext ist die Basis, über der die Garbe/Situs lebt.",
+      "Attention-Köpfe fungieren als 'Linsen' (lokalisierende Abbildungen), die den Kontext in den Embedding-Raum warpen und lokale Information extrahieren.",
+      "Die Jakobische Determinante der Embedding-Abbildung markiert degenerierte Stellen, an denen Information verloren geht (visualisiert als Färbung).",
+      "Halluzination entsteht an den Grenzen lokaler Patches: lokal konsistente, aber nicht global verklebbare Daten werden durch erfundenen Inhalt 'ausgefüllt'.",
+      "Die Holographische-Kodierung: globale Kontext-Information steckt in lokalen Repräsentationen, analog zum Holographischen Prinzip.",
+      "Die Feed-Forward-Schicht agiert punktuell/expansiv auf den lokal geglätteten Darstellungen, nachdem Attention die Linsen-Ansicht gebildet hat."
+    ],
+    "methods_math": ["Garben- & Situs-Struktur (Grothendieck)", "lokale Patches / offene Überdeckung", "Jacobian-Determinante (degenerierte Stellen)", "Gluing lokaler Schnitte (Verklebung)", "holographische Kodierung"],
+    "visualizations": ["Canvas: Warping des Kontexts in den Embedding-Raum", "Canvas: Jakobische-Determinante-Färbung (Information Loss)", "Canvas: Weight Centers / lokale Patches", "interaktive Drill-down-Demos (klickbare Kernidee)"],
+    "internal_tensions": [
+      "Die Analogie 'Transformer = Situs' ist inspirierend, aber nicht formalisiert: es wird keine echte Garbenkohomologie berechnet oder bewiesen.",
+      "Die Halluzination-These (Patch-Grenzen) ist eine Heuristik; ob sie für reale LLMs empirisch zutrifft, bleibt offen.",
+      "Spekulative Ideen (Situs-Vermutung) werden mit konkreten Transformer-Komponenten vermengt, ohne die Brücke rigoros zu schlagen."
+    ],
+    "related_files": ["garben_in_transformern.html", "garben_weltsicht.html", "grothendiek2.html", "holographic_principle.html", "egg.html", "low_dim_learning.html"]
+  },
+  {
+    "path": "s_theory.html",
+    "slug": "s_theory",
+    "title": "S – Iterative Mengenlehre (Boolos)",
+    "lang": "de",
+    "size_kb": 72.0,
+    "category": "nicht-ki",
+    "category_reason": "Reine mathematische Grundlagen: Boolos' axiomatische Mengenlehre S (1989) mit zwei Sorten (Mengen & Stufen) und sechs Axiomen; schwächer als ZFC. Keine ML-/KI-Inhalte.",
+    "theme": "set-theory",
+    "themes": ["set-theory", "mathematical-foundations", "axiomatic-set-theory", "iterative-conception", "boolos-s-theory"],
+    "thesis": "Boolos' Mengenlehre S ist eine auf der iterativen Auffassung beruhende, zweisortige (Mengen und Stufen) axiomatische Theorie, die schwächer als ZFC ist; ihre sechs Axiome (abgekürzt Tra, Net, Inf, All, When, Spec) werden interaktiv als schrittweiser Aufbau der Mengen-Hierarchie erfahrbar gemacht.",
+    "key_claims": [
+      "S arbeitet mit zwei Sorten: Mengen und Stufen (Stufen der iterativen Konstruktions-Hierarchie).",
+      "Die Theorie wird von sechs Axiomen getragen (abgekürzt Tra, Net, Inf, All, When, Spec), darunter Unendlichkeit und Spezifikation.",
+      "S ist schwächer als ZFC: sie vermeidet bestimmte Antinomien, gibt dafür aber andere Axiome (z.B. volle Separation) auf.",
+      "Mengen werden iterativ in Stufen aufgebaut: jede Stufe sammelt die Submengen der vorherigen.",
+      "Ein interaktiver 'Spec-Buildor' erlaubt, Spezifikationsterme zu konstruieren und ihre Folgen an der Hierarchie zu sehen.",
+      "Klassische Paradoxa (Cantor, Russell) werden als Grenzfall der Axiome an der Hierarchie demonstriert."
+    ],
+    "methods_math": ["Iterative Mengen-Hierarchie (Stufen)", "zweisortige Axiomatik (Mengen/Stufen)", "Axiome Tra, Net, Inf, All, When, Spec", "Vergleich mit ZFC (Stärkeordnung)", "Paradox-Demolierung an der Hierarchie"],
+    "visualizations": ["interaktiver Aufbau der Mengen-Hierarchie (Stufen)", "per-Axiom-Animationen (effekt jedes Axioms)", "Spec-Buildor (konstruiert Spezifikationsterme)", "Paradox-Demos (Cantor/Russell an der Hierarchie)"],
+    "internal_tensions": [
+      "Die Abstraktion 'Stufen' ist schwer intuitiv zu fassen – die Interaktivität hilft, aber die Theorie bleibt forschungsnahe.",
+      "Die Stärke gegenüber ZFC wird behauptet, aber ein vollständiger Unabhängigkeits-/Antinomien-Nachweis fehlt.",
+      "Die Abkürzungen der Axiome (Tra, Net, …) werden nicht alle vollständig ausgeschrieben – Vorkenntnisse in der Axiomatik werden vorausgesetzt."
+    ],
+    "related_files": ["higher_algebra.html", "miller_rabin.html", "shors_algorithm.html", "kokettenkomplex.html"]
+  },
+  {
+    "path": "morse_theory.html",
+    "slug": "morse_theory",
+    "title": "Morse Theory — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 71.4,
+    "category": "nicht-ki",
+    "category_reason": "Reine Topologie: Morse-Theorie (Kritische Punkte, Zellanheftung, Morse-Ungleichungen, Störung). Keine ML-/KI-Inhalte.",
+    "theme": "morse-theory",
+    "themes": ["morse-theory", "algebraic-topology", "critical-points", "cell-attachment", "morse-inequalities"],
+    "thesis": "Die Morse-Theorie verbindet Analysis und Topologie: die kritischen Punkte einer Morse-Funktion (indiziert nach ihrem Index) korrespondieren exakt mit dem Anheften von Zellen an einem Raum, und die Morse-Ungleichungen knüpfen die Anzahl kritischer Punkte an die Betti-Zahlen des Raums.",
+    "key_claims": [
+      "Ein kritischer Punkt einer Morse-Funktion besitzt einen Index (Anzahl der negativen Richtungen der Hesse-Form).",
+      "Bei jeder kritischen Stelle vom Index k wird eine k-Zelle angeheftet – so wird der Raum 'Zelle für Zelle' aufgebaut (Cell Attachment).",
+      "Die Morse-Ungleichungen: die Anzahl der kritischen Punkte vom Index k ist ≥ der k-ten Betti-Zahl; die alternierende Summe ist die Euler-Charakteristik.",
+      "Jede glatte Funktion kann generisch zu einer Morse-Funktion gestört werden (Morse-Sard/Störung).",
+      "Demo 1D: eine Kurve mit Minima, Maxima, Satteln macht die Indizes sichtbar.",
+      "Demo 2D: eine Höhenfunktion (Berge/Täler/Sättel) und der Torus (mit seinen kritischen Punkten) veranschaulichen die Zellanheftung."
+    ],
+    "methods_math": ["Morse-Funktionen & kritische Punkte", "Index / Hesse-Form", "Zellanheftung (Cell Attachment)", "Morse-Ungleichungen", "Morse-Sard / generische Störung", "Betti-Zahlen, Euler-Charakteristik"],
+    "visualizations": ["1D-Funktions-Plot mit kritischen Punkten", "2D-Höhenfunktion (Berge/Täler/Sättel)", "Torus mit kritischen Punkten", "Zellanheftungs-Animation (Zelle für Zelle)"],
+    "internal_tensions": [
+      "Die Morse-Ungleichungen werden qualitativ gezeigt, aber die volle Stärke (z.B. Morse-Smale-Fluss, handlebody-Konstruktion) wird nicht behandelt.",
+      "Die 2D/3D-Demos sind illustrativ – eine echte Berechnung von Betti-Zahlen aus der Morse-Funktion fehlt.",
+      "Der Sprung von 'kritische Punkte' zu 'Zellen' ist der eigentliche Inhalt, wird aber schnell genommen – Anfänger hängen hier leicht ab."
+    ],
+    "related_files": ["kokettenkomplex.html", "homotopie_kurz.html", "higher_algebra.html", "algebraische_topologie.html"]
+  },
+  {
+    "path": "egg.html",
+    "slug": "egg",
+    "title": "Origami in N Dimensions – Dense–ReLU–Dense Network",
+    "lang": "de",
+    "size_kb": 70.8,
+    "category": "ki",
+    "category_reason": "Geometrie/Expressivität neuronaler Netze: ein 2→3→1 Dense-ReLU-Dense-Netz faltet den Eingaberaum wie Origami (Keup & Helias 2022, Lewandowski 2025); Montúfar-Expressivitätsgrenzen. Klarer KI-Bezug.",
+    "theme": "neural-geometry",
+    "themes": ["neural-geometry", "relu-geometry", "neural-architecture", "expressivity", "piecewise-linear", "geometry-of-embeddings"],
+    "thesis": "Ein schmales Dense-ReLU-Dense-Netz (2→3→1) 'faltet' den Eingaberaum stückweise-linear wie Origami: die versteckte Schicht erzeugt durch die ReLU-Grenzebenen eine Regionenaufteilung, deren Faltungszahl die Expressivität steuert (Montúfar), und so einfache Muster (z.B. Ei vs. Ring) in lineartrennbare Stücke zerlegt.",
+    "key_claims": [
+      "Ein 2→3→1-Netz (Eingang 2D, 3 ReLU-Neuronen, 1D-Ausgang) faltet die Ebene stückweise-linear; die Faltlinien sind die ReLU-Nullstellen der versteckten Schicht.",
+      "Jede ReLU-Neuron teilt den Raum in eine 'an' und eine 'aus'-Hälfte; die Überlappung der 3 Neuronen erzeugt bis zu 2³ Kombinationen (Regionen).",
+      "Die Hamming-Kubus-Analogie: jede Region entspricht einem Bitmuster der aktivierten Neuronen; ein 'Bit-Flip-Walk' zeigt, wie man von Region zu Region wandert.",
+      "Montúfars Expressivitätsgrenzen: die Anzahl der linearen Regionen wächst mit der Anzahl der Neuronen – mehr Neuronen = komplexere Faltschläge.",
+      "Die Klassifikation 'Ei' vs. 'Ring' gelingt, weil die Faltung die nicht-konvexen Muster in lineartrennbare Stücke zerlegt.",
+      "Keup & Helias (2022) bzw. Lewandowski (2025) formalisieren diese 'Space-Folding'-Sicht auf ReLU-Netze."
+    ],
+    "methods_math": ["stückweise-lineare Funktionen (ReLU)", "Nullstellen-Hyperflächen / Faltlinien", "Regionenzählung (2^n obere Schranke)", "Hamming-Kubus & Bit-Flip-Graph", "Montúfar-Expressivitätsschranken", "Convex-Partition des Eingaberaums"],
+    "visualizations": ["Three.js: 3D versteckte Schicht (Faltung im Raum)", "2D: Faltlinien / Regionenaufteilung der Ebene", "Hamming-Kubus (8 Bitmuster)", "Bit-Flip-Walk (Region-zu-Region-Navigation)", "Temml-Formel-Rendering"],
+    "internal_tensions": [
+      "2→3→1 ist didaktisch, aber die Regionenzahl (≤8) ist winzig gegenüber realen Netzen (10⁴+) – der Sprung zur Skalierung wird nur angedeutet.",
+      "Die Montúfar-Schranke (2^n) ist eine Obergrenze; die tatsächlich erreichte Regionenzahl hängt von der generischen Lage der Gewichte ab und wird nicht berechnet.",
+      "Die 'Origami'-Metapher ist anschaulich, aber sie kaschiert, dass nicht jede Faltung jede Zielfunktion erreicht – Expressivität ≠ Lernbarkeit."
+    ],
+    "related_files": ["low_dim_learning.html", "paperidea4.html", "higher_algebra.html", "topologie_tiefer_neuronaler_netze.html"]
+  },
+  {
+    "path": "mod.html",
+    "slug": "mod",
+    "title": "How a Neural Network Learns Addition on a Circle",
+    "lang": "en",
+    "size_kb": 70.4,
+    "category": "ki",
+    "category_reason": "Neuronale Netze lernen Addition auf einem Kreis (modulare Arithmetik Z_P); die zugrunde liegende Gruppen-/Periodenstruktur wird per Fourierrechnung auf endlichen Gruppen analysiert. Klare KI-Kopplung (Grokking/Generalisierung).",
+    "theme": "grokking-generalization",
+    "themes": ["grokking-generalization", "modular-arithmetic", "fourier-analysis", "finite-groups", "periodic-functions", "generalization"],
+    "thesis": "Wenn ein neuronales Netz Addition modulo P (auf einem Kreis) lernt, überträgt es implizit die zugrunde liegende Gruppenstruktur Z_P; die Fourierrechnung auf der endlichen Gruppe zerlegt die Zielfunktion in Fourier-Moden, deren schrittweises Erscheinen das 'Eingrokked-Sein' (Übergang von Auswendiglernen zu verallgemeinernder Regel) erklärt.",
+    "key_claims": [
+      "Addition auf Z_P ist eine periodische (kreisförmige) Funktion: das Netz muss die Wrapping-Struktur des Kreises lernen, nicht nur Punktpaare auswendig.",
+      "Die Fourierrechnung auf der endlichen Gruppe Z_P zerlegt jede Funktion in diskrete Fourier-Moden (Kardinalitäts-Charaktere der Gruppe).",
+      "Die Logit-Balkendarstellung über alle Kandidaten zeigt die Vorhersageverteilung des Netzes – bei Erfolg konzentriert sie sich auf den einzigen korrekten Summanden.",
+      "Generalisierung/Grokking: das Netz wechselt von reinem Memorisieren (interpoliert Trainingspaare) zur Anwendung der additiven Regel, wenn es die tiefen Fourier-Moden erfasst hat.",
+      "Die niedrigen Fourier-Moden (große Wellenlänge) werden zuerst gelernt; feinere Moden erscheinen später – eine Spektral-Bias-Dynamik.",
+      "Die Kreis-/Gruppenstruktur ist der Grund, warum das Problem für Netze 'grokkbar' ist: es ist eine endliche abelsche Gruppe mit klarer harmonischer Analyse."
+    ],
+    "methods_math": ["modulare Arithmetik Z_P", "Fourierrechnung auf endlichen Gruppen", "diskrete Fourier-Moden / Charaktere", "Spektral-Bias / Mode-Erscheinen", "Logit-Verteilung über Kandidaten", "Memorisieren → Generalisieren Übergang"],
+    "visualizations": ["Kreis-/Kreislinie der Addition mod P", "Logit-Balkendiagramm über alle Summanden-Kandidaten", "Fourier-Moden-Darstellung (Welche Moden sind aktiv)", "Trainingsverlauf (Memorization → Grokking)"],
+    "internal_tensions": [
+      "Der 'Grokking'-Begriff wird verwendet, aber der Übergang wird nicht quantitativ (z.B. mit Generalisierungsfehler vs. Trainingszeit) belegt.",
+      "Die Fourierrechnung auf Z_P ist exakt für die lineare Zielfunktion; für reale Netze mit ReLU-Nichtlinearität ist die Spektral-Bias-Annahme eine Vereinfachung.",
+      "Ein einzelnes 1D-Beispiel (Addition mod P) wird als generelles Muster für 'Grokking' herangezogen – die Übertragbarkeit auf andere Aufgaben bleibt behauptet."
+    ],
+    "related_files": ["low_dim_learning.html", "eigen.html", "signal_analysis2.html", "higher_algebra.html"]
+  },
+  {
+    "path": "homotopie_kurz.html",
+    "slug": "homotopie_kurz",
+    "title": "Homotopie — die Kurzversion (interaktiv)",
+    "lang": "de",
+    "size_kb": 70.1,
+    "category": "nicht-ki",
+    "category_reason": "Reine Topologie: Weg-Homotopie, Fundamentalgruppe, Windungszahl π₁(S¹)≅ℤ, freie Gruppe, Schleifen-Rechner. Keine ML-/KI-Inhalte.",
+    "theme": "homotopy-theory",
+    "themes": ["homotopy-theory", "fundamental-group", "winding-number", "free-groups", "hott"],
+    "thesis": "Die Homotopietheorie in der Kurzform: zwei Wege sind homotop, wenn einer stetig in den anderen deformiert werden kann; die Fundamentalgruppe π₁(X) fasst die Schleifen in Homotopieklassen, und π₁(S¹)≅ℤ wird über die Windungszahl berechnet, während ein Schleifen-Rechner die freie Gruppe der Schleifen zeigt.",
+    "key_claims": [
+      "Zwei Wege (mit gleichen Endpunkten) sind homotop, wenn sie stetig ineinander übergeführt werden können, ohne die Endpunkte zu lösen.",
+      "Die Fundamentalgruppe π₁(X, x₀) ist die Menge der Homotopieklassen von Schleifen bei Basispunkt x₀, verknüpft durch Konkatenation.",
+      "Die Windungszahl: π₁(S¹) ≅ ℤ – eine Schleife, die den Kreis n-mal umläuft, repräsentiert die Klasse n.",
+      "Der Schleifen-Rechner: Schleifen können verkettet, invertiert und reduziert werden – die resultierende Struktur ist (für mehrere Basislinien) eine freie Gruppe.",
+      "Ein Hindernis-Toggle zeigt, wie das Hinzufügen eines Hindernisses (Lochs) die Fundamentalgruppe ändert (mehr nicht-triviale Schleifen).",
+      "KaTeX rendert die zentralen Gleichungen (Gruppengesetze, π₁(S¹)≅ℤ)."
+    ],
+    "methods_math": ["Weg-Homotopie (stetige Deformation)", "Fundamentalgruppe π₁", "Windungszahl / Deckungstransformation", "freie Gruppe (Wortreduktion)", "Konkatenation & Inversion von Schleifen", "KaTeX-Formelrendering"],
+    "visualizations": ["Weg-Homotopie-Animation (Deformation eines Wegs)", "Kreis mit Windungszahl (n-facher Umlauf)", "Schleifen-Rechner (freie Gruppe, Wortreduktion)", "Hindernis-Toggle (Loch verändert π₁)", "KaTeX-Formeln"],
+    "internal_tensions": [
+      "Die 'Kurzversion' opfert Tiefe: höhere Homotopiegruppen πₙ (n>1) und der Hurewicz-Satz werden nicht behandelt.",
+      "Der Sprung von 'Windungszahl' zu 'π₁(S¹)≅ℤ' wird intuitiv, aber der universelle-Eigenschaft-Nachweis (Deckungsräume) fehlt.",
+      "Der Schleifen-Rechner ist auf endliche Wörtern basiert – die Äquivalenz zur abstrakten freien Gruppe wird nicht bewiesen, nur demonstriert."
+    ],
+    "related_files": ["morse_theory.html", "kokettenkomplex.html", "higher_algebra.html", "exotic_spheres.html"]
+  },
+  {
+    "path": "algebraische_topologie.html",
+    "slug": "algebraische_topologie",
+    "title": "Algebraische Geometrie – Visuell verstehen",
+    "lang": "de",
+    "size_kb": 69.7,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik: algebraische Geometrie (Varietäten, Ideal-Varietät-Dualität, Nullstellensatz) visuell. Keine ML-/KI-Inhalte.",
+    "theme": "algebraic-geometry",
+    "themes": ["algebraic-geometry", "varieties", "polynomial-ideals", "nullstellensatz", "schemes"],
+    "thesis": "Die algebraische Geometrie studiert die Lösungsmengen (Varietäten) polynomialer Gleichungen; ihr Kern ist die Dualität zwischen geometrischen Objekten (Varietäten) und algebraischen Objekten (Idealen), verknüpft durch den Hilbertschen Nullstellensatz – hier als visuelle Erkundung der Kurven/Flächen und ihrer Ideale.",
+    "key_claims": [
+      "Eine Varietät ist die Menge aller gemeinsamen Nullstellen eines Ideals polynomialer Funktionen.",
+      "Es besteht eine (anti-)Korrespondenz zwischen Idealen und Varietäten: V(I) ist die Nullstellmenge, I(V) das Ideal aller Polynome, die auf V verschwinden.",
+      "Der Hilbertsche Nullstellensatz (algebraisch abgeschlossener Körper): I(V(I)) = radical(I) – die Dualität ist exakt modulo des Radikals.",
+      "Algebraische Kurven/Flächen (z.B. Kreise, Ellipsen, Singuläre Kurven) werden aus ihren Gleichungen gezeichnet.",
+      "Operationen auf Varietäten (Schnitte, Vereinigungen) entsprechen Operationen auf Idealen (Summe, Produkt, rad)."
+    ],
+    "methods_math": ["polynomiale Ideale & Nullstellenmengen", "Hilbertscher Nullstellensatz (algebraisch abgeschlossener Körper)", "Varietät/Variety-Definition", "Ideal-Operationen (rad, Summe, Produkt)", "Schnitt/Vereinigung von Varietäten"],
+    "visualizations": ["Plotly/Canvas: algebraische Kurven (Kreise, Ellipsen, Singuläre)", "Ideal-Varietät-Korrespondenz (V(I), I(V))", "Schnitt-/Vereinigungs-Demos", "Nullstellensatz-Visualisierung"],
+    "internal_tensions": [
+      "Die Dualität Ideal↔Varietät ist der Kern, aber die volle Kraft (z.B. affine Varietäten über C vs. endliche Körpern, Schemata) wird nicht erschöpft.",
+      "Die Visualisierung arbeitet über reellen Zahlen, während der Nullstellensatz algebraisch abgeschlossene Körper (C) voraussetzt – die Diskrepanz wird nicht ausgemerzt.",
+      "Der Dateiname sagt 'algebraische_topologie', der Titel 'Algebraische Geometrie' – die Themen gehören zu benachbarten, aber verschiedenen Gebieten."
+    ],
+    "related_files": ["morse_theory.html", "kokettenkomplex.html", "grothendiek2.html", "higher_algebra.html"]
+  },
+  {
+    "path": "catastrophe_theory.html",
+    "slug": "catastrophe_theory",
+    "title": "Catastrophe Theory Interactive Explorer",
+    "lang": "en",
+    "size_kb": 69.4,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik/Dynamik: René Thoms Katastrophentheorie (Faltung, Schneide, Aalschwanz, Schmetterling; Hysterese; Bifurkationsmengen). Keine ML-/KI-Inhalte.",
+    "theme": "catastrophe-theory",
+    "themes": ["catastrophe-theory", "bifurcation", "dynamical-systems", "hysteresis", "singularity-theory"],
+    "thesis": "Die Katastrophentheorie (Thom) klassifiziert plötzliche, qualitative Zustandswechsel in Systemen, die von glatten Potentialfunktionen V(x; a,b,…) gesteuert werden: glatte Änderungen der Steuerparameter können ein Minimum verschwinden lassen, sodass das System springt – und für ≤2 Zustandsvariablen & ≤4 Steuerparameter gibt es exakt 7 elementare Katastrophen, von denen die vier Cuspoide (Faltung, Schneide, Aalschwanz, Schmetterling) hier interaktiv erkundet werden.",
+    "key_claims": [
+      "Ein System mit Potential V(x; a,b,…) sitzt an Minima (stabile Gleichgewichte); eine glatte Parameteränderung kann ein Minimum auslöschen → plötzlicher Sprung ('Katastrophe').",
+      "Thoms Klassifikationssatz: für ≤2 Zustandsvariablen und ≤4 Steuerparameter existieren exakt 7 elementare Katastrophen (bis auf glatte Äquivalenz).",
+      "Die vier Cuspoide (1 Zustandsvariable): Faltung A₂ (V=x³+ax, 1 Parameter), Schneide A₃ (V=x⁴+ax²+bx, 2), Aalschwanz A₄ (V=x⁵+ax³+bx²+cx, 3), Schmetterling A₅ (V=x⁶+ax⁴+bx³+cx²+dx, 4).",
+      "Die Bifurkationsmenge der Schneide in (a,b)-Raum ist die Kurve 8a³+27b²=0; im Inneren koexistieren 2 stabile + 1 instabile Gleichgewichte (Bistabilität).",
+      "Hysterese: der Systemzustand hängt von der Geschichte ab – der Sweep der Steuerung macht bei Hin- und Rückweg an verschiedenen Werten; die eingeschlossene Fläche = dissipierte Energie.",
+      "Ball-on-Surface-Simulation: eine Kugel rollt per Gradientendurchlauf auf dem Potential und springt, wenn ihr aktuelles Minimum verschwindet.",
+      "Anwendungen: Phasenübergänge, Meinungsdynamik, Optik (Kaus­tiken), Triple-Übergänge."
+    ],
+    "methods_math": ["Potential V(x; params), Gleichgewichte dV/dx=0", "Stabilität (Minima/Maxima, d²V/dx²)", "Bifurkationsmenge (dV/dx=0 ∧ d²V/dx²=0)", "Thoms Klassifikation (A₂–A₅)", "Hysterese-Schleife / dissipierte Energie", "numerische Nullstellen (Scan+Bisektion)"],
+    "visualizations": ["Plotly: Potential V(x) mit kritischen Punkten (alle 4 Cuspoide)", "Plotly: Bifurkationsdiagramm (stabil/instabil)", "Plotly 3D: Katastrophenfläche (Schneide)", "Plotly: Bifurkationsmenge 8a³+27b²=0 (Schneide)", "Canvas: Ball-on-Surface (Gradientendurchlauf)", "Canvas: Phasenporträt (x, dx/dt)", "Plotly: Hysterese-Schleife", "Vergleichstabelle aller Cuspoide"],
+    "internal_tensions": [
+      "Die Katastrophentheorie wurde außerhalb der Mathematik (Biologie, Ökonomie) oft überdehnt; die Anwendungen hier sind korrekt, aber die 'Volkstheorie'-Kritik wird nicht thematisiert.",
+      "Nur die Cuspoide (1 Zustandsvariable) werden behandelt – die restlichen 3 elementaren Katastrophen (z.B. Elliptische, Hyperbolische Umbilic, Butterfly-Variationen) fehlen.",
+      "Die numerische Nullstellenfindung (Scan+Bisektion) ist robust, aber für 5/6-Gleichungen (Aalschwanz/Schmetterling) numerisch aufwendig – die Performance bei vielen Parametern bleibt unklar."
+    ],
+    "related_files": ["higher_algebra.html", "morse_theory.html", "eigen.html", "low_dim_learning.html"]
+  },
+  {
+    "path": "was_heisst_denken.html",
+    "slug": "was_heisst_denken",
+    "title": "Heidegger: Was heißt Denken? — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 69.4,
+    "category": "nicht-ki",
+    "category_reason": "Philosophie: interaktive Erkundung von Heideggers Vorlesungsreihe 'Was heißt Denken?' (1951–52): Vierfach-Frage, Nietzsche (die Wüste wächst, Übermensch, ewige Wiederkehr), Parmenides-Spruch, griechische Termini, die Zwiefalt. Keine ML-/KI-Inhalte.",
+    "theme": "heidegger",
+    "themes": ["heidegger", "philosophy-of-mind", "essence-of-thinking", "parmenides", "nietzsche", "zwiefalt"],
+    "thesis": "Heideggers Vorlesungsreihe 'Was heißt Denken?' dreht sich um eine scheinbar simple Frage, die sich als die tiefste der heutigen Zeit erweist: Denken ist kein Wissenschafts-Betrieb, sondern das Antwort-Bereitsein auf den 'Geheiß' (Geheiß), der uns ins Denken beruft – und dieses 'Was' ist die Zwiefalt (das Zu-sammen von Sein und Seiendem), der ungedachte Grund aller westlichen Metaphysik.",
+    "key_claims": [
+      "Die Vierfach-Frage: (1) Was heißt das Wort 'Denken'? (2) Was versteht die Tradition unter Denken? (3) Was müssen wir mitbringen, um richtig zu denken? (4) Was ruft uns ins Denken? – die vierte ist die regierende Frage.",
+      "'Die Wissenschaft denkt nicht': Wissenschaften arbeiten in vorgegebenen Bereichen (Natur, Geschichte, Sprache), können aber deren Wesen nicht questionieren – zwischen Denken und Wissenschaft klafft eine Lücke, keine Brücke.",
+      "Teil I liest Nietzsche als letzten Metaphysiker: 'Die Wüste wächst', der letzte Mensch (blinzeln), der Übermensch (Übergang, kein Supermensch), der Geist der Rache, die ewige Wiederkehr des Gleichen als Gipfel des westlichen Denkens.",
+      "Teil II kehrt zum Parmenides-Spruch zurück: 'χρή τό λέγειν τε νοεῖν τ' ἐόν ἔμμεναι' – Heidegger übersetzt es nicht als 'Man muss sagen und denken, dass das Seiende ist', sondern 'Es braucht: das Vor-legen, so auch das Ein-herz-nehmen: das Seiende im Sein'.",
+      "Die Zwiefalt (Zwiefalt): das Wort ἐόν benennt zugleich 'ein Seiendes' und 'Sein' (das Präsenz) – dieses Zu-sammen, das nie selbst questioniert wurde, ist der ungedachte Grund aller Metaphysik (Plato → Kant → Hegel).",
+      "Griechische Termini (λέγειν, νοεῖν, ἐόν, ἀλήθεια, φύσις, μετοχή) müssen in ihrer ursprünglichen Resonanz gehört werden, bevor sie durch lateinische Übersetzung und moderne Benutzung abgeflacht wurden.",
+      "Denken ist 'Handwerk' (Hand-Werk): das einfachste und deshalb schwerste Handwerk des Menschen – der Denker muss dem entsprechen, was sich zu denken gibt, wie der Schreiner den im Holz schlafenden Formen."
+    ],
+    "methods_math": ["keine formale Mathematik – philosophische Begriffsgeschichte", "etymologische Analyse (Gedanc, Dank, Gedächtnis)", "Übersetzungsarbeit am Parmenides-Spruch", "Begriffsgeschichte λόγος/λέγειν"],
+    "visualizations": ["Canvas: interaktive Konzept-Map (Begriffsknoten, Hover-Tooltips, Drag)", "Vierfach-Frage-Explorer (4 klickbare Karten mit Detail)", "Vortrags-Timeline (Teil I/II, erweiterbar)", "Nietzsche-Übergang-Slider (letzter Mensch → Übermensch)", "Parmenides-Wort-Explorer (5 griechische Termini, klickbar)", "Griechische-Termini-Grid (6 Termini, Detail-Panels)", "Zwiefalt-Diagramm (Sein ⟷ Seiendem, pulsierender Pfeil)"],
+    "internal_tensions": [
+      "Die Darstellung folgt Heideggers eigener Lesart (Nietzsche als Metaphysiker, Parmenides als Ursprung) – alternative Lesarten (z.B. Nietzsche als Anti-Metaphysiker) werden nicht vorgestellt.",
+      "Die Übersetzungsarbeit am Parmenides-Spruch ist kontrovers; die 'letting-lie-before'-Übersetzung wird als die einzig richtige präsentiert, ohne die Debattierbarkeit zu benennen.",
+      "Die Verbindung zu KI/ML (z.B. 'Denkt eine Maschine?') wird bewusst nicht hergestellt – das Dokument bleibt im philosophischen Rahmen, was für den Synthese-Kontext ein Feature ist."
+    ],
+    "related_files": ["philosophy2.html", "bewusstsein.html", "analytischer_idealismus.html", "buecher/also_sprach_zarathustra.html"]
+  },
+  {
+    "path": "kokettenkomplex.html",
+    "slug": "kokettenkomplex",
+    "title": "Chain Complexes — From Zero to Homology (Interactive Visual Guide)",
+    "lang": "en",
+    "size_kb": 69.0,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik: Kettenkomplexe & Homologie von Grund auf (abelsche Gruppen, Module, Randoperatoren, Ketten-/Kokettenkomplexe, Homologie, Kettenabbildungen, doppelte Komplexe, Euler-Charakteristik). Keine ML-/KI-Inhalte.",
+    "theme": "homological-algebra",
+    "themes": ["chain-complexes", "homology", "homological-algebra", "algebraic-topology", "euler-characteristic"],
+    "thesis": "Kettenkomplexe sind Folgen von Modulen, verbunden durch Randoperatoren mit der Goldenen Regel ∂∘∂=0; aus ihnen entsteht Homologie Hₙ=Zₙ/Bₙ (Zyklen modulo Ränder), die die 'Löcher' eines Raums misst – und alles (Simplicial-, Singular-, de-Rham-Kohomologie, Gruppenkohomologie, elliptische Komplexe) ist ein Spezialfall dieses einzigen Musters.",
+    "key_claims": [
+      "Eine abelsche Gruppe ist eine Menge mit einer Operation '+', die abgeschlossen, assoziativ, mit Einheit, inversen und kommutativ ist (die Kommutativität macht sie 'abelisch').",
+      "Ein Modul ist die Verallgemeinerung eines Vektorraums, wo die Skalare aus einem Ring R (statt einem Körper) kommen; ein ℤ-Modul ist exakt eine abelsche Gruppe.",
+      "Die Goldene Regel der homologischen Algebra: ∂∘∂=0 – der Rand eines Randes ist nichts (z.B. der Rand einer Kante ist v₁−v₀; der Rand dessen ist 0).",
+      "Ein Kettenkomplex ist eine Folge ⋯→C₃→C₂→C₁→C₀→0 mit ∂ₙ∘∂ₙ₊₁=0; ein Kokettenkomplex läuft in die andere Richtung (Indizes steigen).",
+      "Homologie Hₙ=Zₙ/Bₙ misst 'Löcher': Zₙ=ker ∂ₙ (geschlossene Zyklen), Bₙ=im ∂ₙ₊₁ (echte Ränder); der Quotient zählt die nicht-trivialen Zyklen.",
+      "Kettenabbildungen sind 'Übersetzungen' zwischen zwei Kettenkomplexen, die die Randoperatoren respektieren (kommutive Quadrate) und so induzierte Abbildungen auf der Homologie definieren.",
+      "Doppelte Komplexe sind 2D-Gitter; der totale Komplex summierst entlang der Anti-Diagonalen (Tot(D)ₙ=⊕_{p+q=n} D_{p,q}).",
+      "Die Euler-Charakteristik χ=Σ(−1)ⁱ dim Cⁱ ist invariant (z.B. Würfel: 8−12+6=2; Torus: 0) und verallgemeinert auf jeden Kettenkomplex."
+    ],
+    "methods_math": ["abelsche Gruppen (Operationstabelle)", "Module & Ringe", "Randoperator ∂ (alternierende Vorzeichen / Orientierung)", "Ketten-/Kokettenkomplexe (∂∘∂=0)", "Homologie Hₙ=ker ∂ₙ / im ∂ₙ₊₁", "Kettenabbildungen (kommutive Quadrate)", "doppelte Komplexe & totaler Komplex", "Euler-Charakteristik"],
+    "visualizations": ["interaktive Operationstabellen (ℤ/2ℤ, ℤ/3ℤ, ℤ/4ℤ, ℤ/5ℤ, Klein-Vierergruppe)", "Canvas: Randoperator (Kante, Dreieck, Tetraeder, schrittweise)", "Richtung-Diagramm (Ketten vs. Koketten, Pfeile hoch/runter)", "Canvas: Homologie-Demo (exakt, H₁≅ℤ, H₁≅ℤ/2ℤ Torsion)", "SVG: Kettenabbildung (kommutatives Quadrat)", "Doppel-Komplex-Gitter (Hover-Diagonal-Highlight)", "totaler Komplex (Anti-Diagonal-Summe)", "Euler-Charakteristik-Slider (χ live)"],
+    "internal_tensions": [
+      "Die Erklärung ist bewusst 'von Null' (ohne Vorkenntnisse) – für Experten zu ausführlich bei abelschen Gruppen, für Anfänger aber ideal.",
+      "Die Homologie-Demos (H₁≅ℤ/2ℤ Torsion) sind schematisch; die echte Berechnung aus einer Kettenkomplex-Matrix (z.B. via Smith-Normalform) fehlt.",
+      "Der Übergang von 'topologische Löcher' zu 'algebraische Quotienten' ist der springende Punkt – die Verbindung wird an Beispielen gezeigt, aber der Satz von der Homotopie-Invarianz wird nicht bewiesen."
+    ],
+    "related_files": ["morse_theory.html", "homotopie_kurz.html", "higher_algebra.html", "algebraische_topologie.html"]
+  },
+  {
+    "path": "exotic_spheres.html",
+    "slug": "exotic_spheres",
+    "title": "Exotic Spheres - Visual Explorer",
+    "lang": "en",
+    "size_kb": 68.9,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik: exotische Sphären (topologisch Sphäre, aber glatt unterschiedlich); Milnors Entdeckung (28 in Dimension 7), Smooth Poincaré in Dimension 4 (offen). Keine ML-/KI-Inhalte.",
+    "theme": "exotic-spheres",
+    "themes": ["exotic-spheres", "differential-topology", "smooth-manifolds", "milnor", "poincare-conjecture"],
+    "thesis": "Eine exotische Sphäre ist topologisch eine gewöhnliche Sphäre (keine Löcher, gleiche Konnektivität), aber glatt 'verdreht' – eine glatte Struktur, die sich durch keine glatte Deformation auf die Standard-Sphäre bringen lässt; Milnor (1956) zeigte, dass es in Dimension 7 genau 28 solche glatten Strukturen gibt, und in Dimension 4 bleibt die Existenz offener exotischer Sphären eines der großen ungelösten Probleme.",
+    "key_claims": [
+      "Eine Sphäre ist jede Form, die sich stetig (strecken, stauchen, beugen – ohne Reißen/Verkleben) in einen runden Ball deformieren lässt; Topologie fragt nur nach Löchern.",
+      "Eine glatte Struktur ist ein 'Atlas' von Koordinatenkarten, die sich glatt überlappen; für die Standard-Sphäre sind die Übergangsabbildungen glatt.",
+      "Eine exotische Sphäre hat denselben Topologie-Typ, aber ihre glatte Struktur ist 'verdreht' – die Verdrehung ist in der glatten Struktur 'eingebrennt' und lässt sich nicht glatt entfernen.",
+      "Milnor (1956): in Dimension 7 gibt es genau 28 glatte Strukturen auf der Sphäre (1 Standard + 27 exotisch).",
+      "Dimension 4 ist der Mysterien-Fall: ob exotische 4-Sphären existieren, ist offen (Smooth Poincaré-Vermutung in Dimension 4).",
+      "Die Verklebungs-Analogie: klebe zwei Halbkugeln entlang ihres Äquators; eine verdrehte Verklebung (eine Halbkugel vor dem Verkleben gedreht) ergibt topologisch eine Sphäre, aber eine glatt unterschiedliche.",
+      "Die Anzahl explodiert: Dimension 11 hat 992, Dimension 15 hat 16.256, Dimension 31 hat ~16,9 Millionen exotische Sphären."
+    ],
+    "methods_math": ["glatte Mannigfaltigkeit / glatter Atlas", "Übergangsabbildungen (Diffeomorphismen)", "Verklebung entlang des Äquators (Gluing)", "glatter Homöomorphismus vs. Diffeomorphismus", "Zählung glatter Strukturen (Dimension 7 = 28, Milnor)", "Smooth Poincaré-Vermutung (Dimension 4, offen)"],
+    "visualizations": ["Canvas: topologische Sphäre (rund/gequetscht/klumpig/stachelig, alle homöomorph)", "Canvas: Atlas / glatte Struktur (Standard vs. exotische Karten, Überlappungen)", "Canvas: die Verdrehung (Flow-Lines am Äquator, τ-Parameter)", "Canvas: Dimensions-Explorer (Sphären pro Dimension, Fragezeichen für Dim 4)", "Canvas: Verklebungs-Analogie (4 Schritte: zwei Hälften → Standard → exotisch → Vergleich)", "Canvas: interaktive Morphing-Explorer (Drag-Rotation, τ-Parameter, 3 Modi)"],
+    "internal_tensions": [
+      "Die 'Verdrehung' wird als Flow-Lines am Äquator visualisiert – das ist eine starke Vereinfachung, die die echte glatte Struktur (Parallelisierungsproblem) nicht zeigt.",
+      "Die Zählung (28 in Dim 7, 992 in Dim 11, …) wird behauptet, aber der Nachweis (via Kervaire-Milnor, exakte Folgen) fehlt komplett.",
+      "Die Smooth Poincaré-Vermutung in Dimension 4 wird als 'offen' genannt – korrekt, aber die Nuance (sie ist äquivalent zur 4D-Smooth-Poincaré, einander ungelöst) wird nur angerissen."
+    ],
+    "related_files": ["homotopie_kurz.html", "morse_theory.html", "higher_algebra.html", "algebraische_topologie.html"]
+  },
+  {
+    "path": "low_dim_learning.html",
+    "slug": "low_dim_learning",
+    "title": "Nebeneffekte des Lernens aus niedrig-dimensionalen Daten",
+    "lang": "de",
+    "size_kb": 68.9,
+    "category": "ki",
+    "category_reason": "ML-Theorie: interaktive Erklärung des Papers von He, Tsai & Ward (2023) 'Side Effects of Learning from Low-dimensional Data' (arXiv:2203.00614) – Mannigfaltigkeits-Hypothese, Off-Mannigfaltigkeits-Verhalten, Rauschen als Regularisierer, Tiefe, ReLU-Frostgewichte, Adversarial-Beispiele. Klarer KI-Bezug.",
+    "theme": "manifold-learning",
+    "themes": ["manifold-learning", "geometry-of-embeddings", "generalization", "adversarial-examples", "implicit-regularization"],
+    "thesis": "Wenn Daten auf einer niedrig-dimensionalen Mannigfaltigkeit M in einem hochdimensionalen Raum liegen, ist die Normalenableitung ∂f/∂n_M des gelernten Netzes prinzipiell unkontrolliert – Rauschen in Normalenrichtung und (in bestimmten Initialisierungsbereichen) Tiefe wirken als implizite Regularisierer, aber mit hohem Preis (superlineare Datenmenge, exponentielles Wachstum der Instabilität mit der Tiefe bei ReLU), was auch den geometrischen Grund für Adversarial-Beispiele liefert.",
+    "key_claims": [
+      "Mannigfaltigkeits-Hypothese: reale Daten (z.B. 28×28-Bilder in ℝ^784) liegen auf einer niedrig-dimensionalen Mannigfaltigkeit M; die Labels hängen nur vom Punkt auf M ab, nicht von der Normalen-Komponente.",
+      "Die Normalenableitung ∂f/∂n_M ist von den Trainingsdaten überhaupt nicht bestimmt – bei σ=0 bleibt das Gewicht in Normalenrichtung genau an der Initialisierung (unkontrolliert).",
+      "Lineare Regression (Theorem 2.1): mit Rauschen σ gilt ‖w_y*‖~O(1/(σ√N)) – um Stabilität zu behalten, muss N~O(σ⁻²) superlinear wachsen.",
+      "Deep Linear Networks (Arora et al. 2018): der Flow ist in w nichtlinear (Faktor ‖w‖^{2−2/L} + Projektor), auch wenn das Netz linear ist; es gibt eine Slow-Manifold, und nahe w=0 kann die Entkommen-Zeit ~ε^{−2/(L−1)} dauern (Theorem 2.3).",
+      "Zwei Zeitskalen: w_x konvergiert schnell, w_y braucht ~1/σ² Iterationen – Training wird praktisch abgebrochen, bevor die Normalen-Stabilität erreicht ist.",
+      "Tiefe als impliziter Regularisierer (Theorem 2.4): in der Region U⁺ (außerhalb des Ellipsoids E) regularisiert größere Tiefe (‖w_y(T)‖ sinkt), in E⁻ (innerhalb) verstärkt sie die Instabilität.",
+      "ReLU (Lemma 3.1): bei σ=0 bleibt W_y¹ während des gesamten Trainings komplett unverändert ('eingefroren') – nur durch die Initialisierung bestimmt.",
+      "Adversarial-Verbindung: die 'unbenutzten' Normalen-Gewichte W_y¹ machen ReLU-Netze anfällig – winzige Perturbationen normal zur Mannigfaltigkeit können die Klassifikation umwerfen (MNIST-Demo, Fig. 3.1).",
+      "Theorem 3.2: die Instabilität wächst bei ReLU exponentiell mit der Tiefe (Produkt der Operator-Normen).",
+      "Trade-off (Gl. 4.4 & 4.5): Genauigkeit ~O(σ²)+O(N⁻¹) vs. Stabilität ~O(1/(σ²N^β)) mit β<1/2 für ReLU – der Trade-off ist härter als bei linearen Netzen."
+    ],
+    "methods_math": ["Mannigfaltigkeits-Hypothese (M ⊂ ℝ^d)", "Tangential-/Normalen-Zerlegung x=(x, σy)", "Lineare Regression (offene Formel für w_y*)", "Deep-Linear-Flow (Arora et al. 2018, ‖w‖^{2−2/L})", "Phasenporträt / Slow-Manifold / Eigenwert-Skalierung O(σ²)", "a-priori-Schranke (Theorem 2.4, Region U⁺/E⁻)", "ReLU-frozen-Weights (Lemma 3.1)", "Instabilitäts-Schranke (Theorem 3.2, Produkt der Normen)", "Stabilitäts-Genauigkeits-Trade-off (β<1/2)"],
+    "visualizations": ["Plotly 3D: Daten auf einer Ebene mit Normalen-Pfeilen (Kippwinkel)", "Plotly 2D: Zerlegung (Datenpunkte, σ-Rauschen)", "Plotly: lineare Regression mit Rauschen (Skalierungsgesetz ‖w_y*‖~1/(σ√N))", "Plotly: 2D-Landschaft der gelernten Funktion (Rauschen erzeugt Stabilität)", "Plotly: Log-Log Skalierung (verschiedene σ)", "Canvas: Deep Linear Flow vs. LR (Trajektorien, Slow-Manifold, Optimum)", "Canvas: interaktives Phasenporträt (klickbar, ‖F‖-Heatmap, Streamlines)", "Plotly: Verlustkurven (zwei Phasen/Zeitskalen)", "Canvas: Tiefe-Vergleich L=5 vs. L=100 (Regularisierung vs. Nebeneffekt)", "Canvas: MNIST-Experiment (perturbiertes Bild, Heatmap I(s,t))", "Plotly: Stabilitätsabschätzung vs. Tiefe (Theorem 3.2)", "Plotly: Stabilitäts-Genauigkeits-Trade-off"],
+    "internal_tensions": [
+      "Die Theorie ist für lineare Netze exakt, für ReLU-Nets aber nur durch Schranken (Theorem 3.2) – die Schranken sind konservativ und werden in der Praxis selten erreicht.",
+      "Der Trade-off 'Rauschen hilft Stabilität, aber schadet Genauigkeit' wird gezeigt, aber die optimale σ-Wahl für reale Daten (nicht synthetisch) bleibt offen.",
+      "Die 'frozen Weights'-These (Lemma 3.1) gilt bei σ=0 exakt; mit Rauschen wird W_y¹ trainierbar – der Übergang wird angedeutet, aber nicht quantitativ erfasst."
+    ],
+    "related_files": ["egg.html", "paperidea4.html", "mod.html", "eigen.html"]
+  },
+  {
+    "path": "eigen.html",
+    "slug": "eigen",
+    "title": "Eigenvectors — See the Unseen Axes of Transformation",
+    "lang": "en",
+    "size_kb": 68.8,
+    "category": "nicht-ki",
+    "category_reason": "Lineare Algebra (Eigenvektoren/Eigenwerte, Power Iteration) als reines Mathematik-Intuition mit generischen Anwendungen (PageRank, Schwingungsmoden, PCA, Quantenmechanik, Eigenfaces); kein explizites KI-/ML-Fokus im Framing.",
+    "theme": "linear-algebra",
+    "themes": ["eigenvectors", "eigenvalues", "linear-algebra", "power-iteration", "spectral-theory"],
+    "thesis": "Ein Eigenvektor v einer Matrix A ist ein nicht-nullicher Vektor, der unter A nicht die Richtung ändert, nur skaliert wird (Av=λv, λ Eigenwert); die Eigenvektoren sind die 'natürlichen Achsen' der Transformation, und wiederholte Anwendung (Power Iteration) richtet jeden Vektor entlang des dominierenden Eigenvektors aus – die Grundlage für PageRank, Schwingungsmoden, PCA und Stabilitätsanalyse.",
+    "key_claims": [
+      "Ein Eigenvektor v von A erfüllt Av=λv: die Transformation skaliert v nur, dreht es nicht (es bleibt auf seiner Linie).",
+      "Die Eigenwerte sind die Lösungen der charakteristischen Gleichung det(A−λI)=0; für 2×2: λ²−(a+d)λ+(ad−bc)=0.",
+      "Ein reiner 2D-Drehung hat keine reellen Eigenvektoren (jede Richtung wird gedreht) – die Eigenwerte sind dann komplex.",
+      "Power Iteration: wiederholtes Multiplizieren eines Zufallsvektors mit A richtet ihn entlang des dominierenden Eigenvektors (größtes |λ|) aus.",
+      "Anwendung PageRank: die Wichtigkeit einer Webseite ist der dominierende Eigenvektor der Link-Matrix des Webs.",
+      "Anwendung Schwingungsmoden: die Moden einer Brücke/Saite/Gebäudes sind Eigenvektoren der Steifigkeitsmatrix; der Eigenwert gibt die Frequenz.",
+      "Anwendung PCA: die Hauptkomponenten sind Eigenvektoren der Kovarianzmatrix der Daten – die Richtungen maximaler Varianz.",
+      "Anwendung Stabilitätsanalyse: ein System ist stabil, wenn alle Eigenwerte Betrag <1 haben; es oszilliert/explodiert je nach Lage der Eigenwerte.",
+      "Quiz: Skalierung (3,2) → Eigenvektoren sind die Achsen; λ₁=5, λ₂=0.1 nach 100 Anwendungen → Ausrichtung an v₁ und enormes Wachstum; 90°-Drehung → keine reellen Eigenvektoren."
+    ],
+    "methods_math": ["Eigenwertgleichung Av=λv", "charakteristisches Polynom det(A−λI)=0", "Diskriminante (reell vs. komplex)", "Power Iteration / dominante Eigenrichtung", "Trace/Determinante (2×2)", "Stabilitätskriterium (Spektralradius)"],
+    "visualizations": ["Canvas: Pfeilfeld-Transformation (36 Richtungen, goldene Eigenvektoren vs. blaue), animiert", "Canvas: Single-Vector-Explorer (drag, Alignment-Meter, Eigenwert-Anzeige)", "Canvas: Eigenvalue-Visualizer (beide Eigenpaare, Presets: Shear/Rotation/Scale/Reflection)", "Canvas: Iterierte Transformation (Cloud → dominierender Eigenvektor, Auto-Iterate)", "Anwendungs-Grid (PageRank, Schwingungsmoden, PCA, Quanten, Eigenfaces, Stabilität)", "3 Quizzes (Multiple Choice)", "Canvas: Partikel-Hintergrund (vernetzt)"],
+    "internal_tensions": [
+      "Das Framing ist reine lineare Algebra; die ML-Adjazenzen (PCA, Eigenfaces, Stabilität des Trainings) werden als 'Anwendungen' gelistet, aber nicht vertieft – die Brücke zu KI fehlt.",
+      "Die Power-Iteration wird 2D-visuell gezeigt; der Konvergenz-Beweis (Spektral-Lücke |λ₁|>|λ₂|) wird nicht erklärt.",
+      "Die Quiz-Antworten sind binär richtig/falsch – der lerntheoretische Wert ist begrenzt, und es werden keine Fälle mit multiplen/doppeln Eigenwerten (nicht-diagonalisierbar) behandelt."
+    ],
+    "related_files": ["signal_analysis2.html", "mod.html", "higher_algebra.html", "low_dim_learning.html"]
+  },
+  {
+    "path": "higher_algebra.html",
+    "slug": "higher_algebra",
+    "title": "Higher Algebra: A Visual Guide",
+    "lang": "en",
+    "size_kb": 64.1,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik: höhere Algebra / Homotopie-kohärente Algebra (Monoide, monoidale Kategorien, Spektren, Smash-Produkt, E∞-Ringe, Modellkategorien, Kohärenz, Hierarchie ∞-Kategorien → stabile Spektren → E∞-Ringe → klassische Ringe). Keine ML-/KI-Inhalte.",
+    "theme": "higher-algebra",
+    "themes": ["higher-algebra", "infinity-categories", "stable-homotopy", "e-infinity-rings", "spectra", "monoidal-categories", "homotopy-theory"],
+    "thesis": "Höhere Algebra studiert dieselben algebraischen Strukturen (Ringe, Algebra), aber in einer Welt, in der Gleichungen nur bis auf (stetige) Deformation (Homotopie) gelten – und diese Homotopien selbst müssen kohärent sein; ein E∞-Ring ist ein kommutativer Ring 'bis auf alle kohärenten höheren Homotopien', präsentiert durch symmetrische/orthogonale Spektren in Modellkategorien, und verallgemeinert klassische kommutative Ringe so, wie Spektren abelsche Gruppen verallgemeinern (𝕊↔ℤ).",
+    "key_claims": [
+      "Ordentliche Algebra: Gleichungen gelten exakt (a·b=b·a). Höhere Algebra: sie gelten nur bis auf Homotopie ('es existiert ein Pfad von a·b zu b·a'), und diese Pfade müssen kohärent sein.",
+      "Ein Monoid ist eine Menge mit assoziativer Operation + Einheit; ein kommutatives Monoid erfüllt zusätzlich a·b=b·a.",
+      "Ein Monoid in einer monoidalen Kategorie verallgemeinert dies: in (Sets,×) = gewöhnliches Monoid, in (Ab,⊗ℤ) = Ring, in (Spectra,∧) = Ringspektrum.",
+      "Eine monoidale Kategorie hat ein Tensorprodukt ⊗ + Einheit, wobei Assoziativität/Unitarität nur bis auf Isomorphie gelten – mit Pentagon- und Dreiecks-Kohärenz.",
+      "Ein Spektrum ist eine Folge gezeichneter Räume (X₀,X₁,…) verbunden durch Strukturabbildungen σₙ: S¹∧Xₙ→Xₙ₊₁ ('stabilisierte' Räume).",
+      "Das Smash-Produkt X∧Y ist das 'Tensorprodukt' der Spektren; um es streng assoziativ/kommutativ zu machen, braucht man symmetrische/orthogonale Spektren (Day-Konvolution); Lewis' Theorem (1991) zeigt, dass man nicht alle 'netten' Anforderungen gleichzeitig haben kann.",
+      "Ein E∞-Ring ist ein kommutatives Monoid in Spektren – 'alles kommutiert bis auf alle kohärenten höheren Homotopien'; die E_n-Operaden (kleine n-Würfel) steuern die Stufen (E₁=A∞ ⊂ E₂=geflochten ⊂ … ⊂ E∞=voll kommutativ).",
+      "Eine Modellkategorie hat drei Morphismenklassen (schwache Äquivalenzen W, Fibrationen Fib, Cofibrationen Cof) mit Faktorisierungs- und Liftungs-Axiomen – das 'Workshop-Manual' für konkrete Homotopietheorie.",
+      "Die Hierarchie: ∞-Kategorien → stabile (∞,1)-Kategorie der Spektren → E∞-Ringe (kommutative Monoide in Spektren) → Modellkategorien (symmetrische/orthogonale Spektren) → klassische kommutative Ringe.",
+      "Die Sphärenspektrum 𝕊=(S⁰,S¹,S²,…) ist der initiale E∞-Ring, analog zu ℤ als initialem kommutativen Ring; π₀(𝕊)=ℤ."
+    ],
+    "methods_math": ["Monoid / kommutatives Monoid", "monoidale Kategorie (⊗, Pentagon, Dreieck)", "Spektrum (Strukturabbildungen σₙ: S¹∧Xₙ→Xₙ₊₁)", "Smash-Produkt & Day-Konvolution (Coend)", "symmetrische/orthogonale Spektren (Σₙ-/O(n)-Wirkung)", "E_n-Operaden (kleine n-Würfel), E∞", "Modellkategorien (W/Fib/Cof, Faktorisierung, Liftings)", "Sphärenspektrum 𝕊 (initialer E∞-Ring)"],
+    "visualizations": ["Canvas: Übersicht (Strenge Gleichheit =, Homotopie ≃, Kohärente Homotopien, animierte Pfade)", "Canvas: Monoide (Assoziativität/Unit/Kommutativität/Monoid-in-Kategorie, Tree-Diagramme)", "Canvas: monoidale Kategorien (Tensorprodukt, Pentagon-Identität, Braiding)", "Canvas: Spektren (Sequentiell, Suspension, Symmetrisch, Sphärenspektrum)", "Canvas: Smash-Produkt (Smash von Räumen, Day-Konvolution, warum symmetrische Spektren)", "Canvas: E∞-Ringe (Stufen der Kommutativität, E_n-Operaden, Sphäre als E∞-Ring)", "Canvas: Modellkategorien (3 Klassen, Faktorisierung, Liftings)", "Canvas: Kohärenz (Pentagon, kontrahierbarer Raum, Homotopien von Homotopien)", "Tower: vollständige Hierarchie (∞-Kat → Spektren → E∞-Ringe → Modell → Ringe)"],
+    "internal_tensions": [
+      "Das Dokument ist extrem forschungsnahe (E∞-Ringe, Spektren, Modellkategorien) – die didaktische 'Von Null'-Linie anderer Papiere dieser Sammlung wird hier nicht erreicht.",
+      "Die Visualisierung ist stark metaphorisch: E∞-Strukturen werden als 'Pfade/Homotopien' gezeichnet, aber keine echte (∞,1)-kategoriale Berechnung wird durchgeführt.",
+      "Lewis' Theorem und die Quillen-Äquivalenz der drei Spektrum-Modelle (symmetrisch/orthogonal/S-Module) werden behauptet, aber nicht bewiesen – die Tiefe bleibt an der Oberfläche."
+    ],
+    "related_files": ["morse_theory.html", "kokettenkomplex.html", "homotopie_kurz.html", "s_theory.html"]
+  }
+]

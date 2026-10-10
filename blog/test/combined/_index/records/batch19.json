@@ -1,0 +1,381 @@
+[
+  {
+    "path": "buecher/a_simple_proof_the_world_is_three_dimensional.html",
+    "slug": "a_simple_proof_the_world_is_three_dimensional",
+    "title": "Warum die Welt 3-dimensional ist – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 48.2,
+    "category": "nicht-ki",
+    "category_reason": "Pure math/physics: wave PDE and Huygens' principle; no ML or AI content",
+    "theme": "wave_propagation",
+    "themes": ["pde", "wave_equation", "huygens_principle", "dimension", "physics"],
+    "thesis": "The wave equation in 3D satisfies Huygens' principle (sharp wavefronts with no tail), while in other dimensions it does not — suggesting 3D is the 'natural' dimension for wave propagation in our universe.",
+    "key_claims": [
+      "Huygens' principle holds exactly only in odd spatial dimensions >= 3",
+      "In 3D, waves propagate as sharp fronts; in 2D and higher even dimensions, they leave a trailing 'tail'",
+      "The Green's function of the wave equation has a fundamentally different structure in 3D vs 2D",
+      "This mathematical property may explain why our universe is 3-dimensional"
+    ],
+    "methods_math": ["wave_equation", "green_functions", "huygens_principle", "distribution_theory", "fourier_analysis"],
+    "visualizations": ["interactive_wave_propagation", "dimension_comparison", "wavefront_animation"],
+    "internal_tensions": [
+      "The argument is suggestive but not a proof — mathematical properties of the wave equation do not constitute a physical explanation for dimensionality",
+      "The 'simple proof' framing oversells what is really a collection of mathematical observations"
+    ],
+    "related_files": ["lie.html", "cauchydedeking.html"]
+  },
+  {
+    "path": "cauchydedeking.html",
+    "slug": "cauchydedeking",
+    "title": "Cauchy-Sequenzen & Dedekind-Schnitte – Interaktiv",
+    "lang": "de",
+    "size_kb": 47.9,
+    "category": "nicht-ki",
+    "category_reason": "Pure mathematical foundations: construction of the real numbers; no ML content",
+    "theme": "mathematical_foundations",
+    "themes": ["real_numbers", "completeness", "cauchy_sequences", "dedekind_cuts", "constructive_math"],
+    "thesis": "The real numbers can be rigorously constructed from the rationals via two equivalent methods — Cauchy sequences and Dedekind cuts — both of which fill the 'gaps' in the rational number line to achieve completeness.",
+    "key_claims": [
+      "Rational numbers are incomplete: there exist Cauchy sequences of rationals with no rational limit (e.g., approximations of sqrt(2))",
+      "Cauchy sequence construction: reals are equivalence classes of Cauchy sequences of rationals",
+      "Dedekind cut construction: reals are partitions of rationals into two non-empty sets with no greatest element in the lower set",
+      "Both constructions yield isomorphic complete ordered fields",
+      "Completeness is the key property that distinguishes R from Q"
+    ],
+    "methods_math": ["cauchy_sequences", "dedekind_cuts", "equivalence_relations", "ordered_fields", "completeness_axiom"],
+    "visualizations": ["interactive_number_line", "sequence_convergence", "cut_visualization", "gap_filling_demo"],
+    "internal_tensions": [
+      "The two constructions feel different (sequences = dynamic/process, cuts = static/structural) but are isomorphic — which one is 'more fundamental' is debatable",
+      "The presentation may conflate the motivation (gaps in Q) with the formal construction"
+    ],
+    "related_files": ["a_simple_proof_the_world_is_three_dimensional.html", "lie.html"]
+  },
+  {
+    "path": "model_decomposition.html",
+    "slug": "model_decomposition",
+    "title": "On the Criteria To Be Used in Decomposing Systems into Modules - Visual Explanation",
+    "lang": "en",
+    "size_kb": 47.7,
+    "category": "nicht-ki",
+    "category_reason": "Software engineering: Parnas 1972 modularity criteria; no ML content",
+    "theme": "software_architecture",
+    "themes": ["modularity", "information_hiding", "coupling", "cohesion", "software_design", "abstraction"],
+    "thesis": "The correct criterion for decomposing a system into modules is information hiding (secrecy of design decisions), not functional decomposition. A module should encapsulate a design decision to minimize the risk that changes to that decision propagate throughout the system.",
+    "key_claims": [
+      "Decomposition by function (each module does one 'task') is insufficient and often misleading",
+      "Information hiding: each module should encapsulate a design decision (secret) that is likely to change",
+      "The boundary of a module should be drawn around design decisions, not functional steps",
+      "Good modularity minimizes the number of modules that must change when a design decision changes",
+      "The interface of a module should reveal only what is needed, not how the decision is implemented"
+    ],
+    "methods_math": ["set_theory", "dependency_graphs", "information_theory"],
+    "visualizations": ["module_dependency_diagrams", "change_propagation_demo", "interface_boundary_visualization"],
+    "internal_tensions": [
+      "Parnas' criteria are normative (how modules 'should' be designed) but hard to operationalize — where exactly is the 'design decision' boundary?",
+      "The paper predates object-oriented programming, microservices, and modern API design, yet its principles remain influential"
+    ],
+    "related_files": ["strukturwissenschaften.html"]
+  },
+  {
+    "path": "paperidea5.html",
+    "slug": "paperidea5",
+    "title": "Lipschitz Lenses & Scrambled Topology — Click-to-Focus",
+    "lang": "en",
+    "size_kb": 47.0,
+    "category": "ki",
+    "category_reason": "Applies differential geometry (Lipschitz maps, fiber bundles) to interpret transformer architecture",
+    "theme": "transformer_geometry",
+    "themes": ["lipschitz_continuity", "fiber_bundles", "transformers", "attention", "differential_geometry", "topology"],
+    "thesis": "Transformer layers can be understood as Lipschitz maps acting on fiber bundles: the attention mechanism performs a 'scrambling' of the base space (token positions) while preserving fiber structure (embedding directions), and the Lipschitz constant controls how much geometric information is preserved or destroyed across layers.",
+    "key_claims": [
+      "Each transformer layer is a Lipschitz map on a vector bundle over the token sequence",
+      "The Lipschitz constant of attention controls how much local structure is preserved",
+      "Deep stacking of Lipschitz maps can either preserve or scramble topology depending on the constant",
+      "The 'scrambled topology' view explains why transformers can learn complex functions while maintaining some structural invariants",
+      "Fiber bundle language clarifies the separation between 'position' (base) and 'meaning' (fiber)"
+    ],
+    "methods_math": ["lipschitz_continuity", "fiber_bundles", "differential_geometry", "topological_invariants", "operator_norms"],
+    "visualizations": ["interactive_3d_geometric_deformation", "click_to_focus_lens", "topology_scrambling_animation"],
+    "internal_tensions": [
+      "The fiber bundle analogy is suggestive but not rigorous — transformers do not literally act as bundle maps in the differential geometric sense",
+      "The Lipschitz constant of a transformer layer is hard to compute in practice and depends on the specific weights",
+      "The 'scrambling' narrative may oversimplify: transformers are trained to be selectively Lipschitz, not uniformly"
+    ],
+    "related_files": ["topology_idea.html", "simplicial_complex_attention.html", "grokking_addition_internal3.html"]
+  },
+  {
+    "path": "grokking_addition_internal3.html",
+    "slug": "grokking_addition_internal3",
+    "title": "How a Tiny AI Learned to Add — A Visual Story",
+    "lang": "en",
+    "size_kb": 47.0,
+    "category": "ki",
+    "category_reason": "Directly about transformer interpretability: circuit analysis of a grokking model for modular addition",
+    "theme": "grokking_interpretability",
+    "themes": ["grokking", "modular_addition", "circuit_analysis", "transformer_interpretability", "attention_circuits"],
+    "thesis": "A tiny transformer trained on modular addition (mod 113) undergoes 'grokking' — a phase transition where it suddenly generalizes from memorization to genuine algorithmic computation. The learned circuit implements addition via a Fourier-based mechanism: embeddings encode inputs as rotations, attention performs angle addition via trigonometric identities, and the readout extracts the result.",
+    "key_claims": [
+      "Grokking is a phase transition: the model transitions from memorization to generalization after a long plateau",
+      "The learned circuit uses a Fourier basis: each input n is embedded as (cos(2πkn/P), sin(2πkn/P)) for various frequencies k",
+      "Attention heads implement rotation composition: attending to token b from token a computes the rotation by b applied to the embedding of a",
+      "The readout layer uses constructive interference: multiple cosine waves peak simultaneously at c = a+b mod P",
+      "The circuit is sparse: only a few 'key frequencies' carry the computation"
+    ],
+    "methods_math": ["modular_arithmetic", "fourier_analysis", "rotation_groups", "trigonometric_identities", "attention_mechanism"],
+    "visualizations": ["attention_circuit_diagram", "embedding_circle", "logit_interference_plot", "grokking_training_curve"],
+    "internal_tensions": [
+      "The circuit analysis is for a specific small model (mod 113) — whether it generalizes to larger primes or other tasks is unclear",
+      "The 'grokking' phase transition may be an artifact of the specific regularization (weight decay) used in the Nanda et al. setup",
+      "The Fourier explanation is elegant but the model could implement addition via other equivalent mechanisms"
+    ],
+    "related_files": ["fourier_projection.html", "topology_idea.html", "simplicial_complex_attention.html", "paperidea5.html"]
+  },
+  {
+    "path": "betti.html",
+    "slug": "betti",
+    "title": "Betti-Zahlen – Visuelle Erklärung",
+    "lang": "de",
+    "size_kb": 47.0,
+    "category": "nicht-ki",
+    "category_reason": "Pure algebraic topology/TDA; ML is mentioned as one of several applications but is not the focus",
+    "theme": "algebraic_topology",
+    "themes": ["betti_numbers", "homology", "topological_data_analysis", "holes", "shape_analysis"],
+    "thesis": "Betti numbers (β₀, β₁, β₂, ...) are topological invariants that count the number of k-dimensional 'holes' in a space. They provide a rigorous, computation-oriented way to characterize shape that is invariant under continuous deformation.",
+    "key_claims": [
+      "β₀ counts connected components, β₁ counts 1D holes (loops), β₂ counts 2D voids (cavities)",
+      "Betti numbers are topological invariants: they are preserved under homeomorphism",
+      "They can be computed from a chain complex: β_k = dim(H_k) = dim(ker ∂_k) − rank(∂_k)",
+      "In TDA, Betti numbers of a filtered simplicial complex track how topological features appear and disappear as a scale parameter varies",
+      "The Euler characteristic χ = Σ(−1)^k β_k provides a global summary"
+    ],
+    "methods_math": ["homology", "chain_complexes", "boundary_operators", "euler_characteristic", "persistent_homology"],
+    "visualizations": ["topological_shapes_with_holes", "hole_counting_animation", "filtration_visualization"],
+    "internal_tensions": [
+      "Betti numbers alone lose information (two spaces can have the same Betti numbers but different topology — they are not complete invariants)",
+      "The TDA application (persistent Betti numbers) is where the real power lies, but the basic Betti number concept is much simpler than what TDA actually uses"
+    ],
+    "related_files": ["persistent_landscape.html", "simplicial_complex_attention.html", "topology_idea.html", "paperidea5.html"]
+  },
+  {
+    "path": "schmitz.html",
+    "slug": "schmitz",
+    "title": "Hermann Schmitz – Die Neue Phänomenologie interaktiv",
+    "lang": "de",
+    "size_kb": 46.6,
+    "category": "nicht-ki",
+    "category_reason": "Philosophy: Hermann Schmitz's 'new phenomenology'; no ML content",
+    "theme": "philosophy_phenomenology",
+    "themes": ["phenomenology", "affect_structures", "body_schema", "presence", "philosophy_of_mind"],
+    "thesis": "Hermann Schmitz's 'Neue Phänomenologie' proposes that affect structures (Gefühlsstrukturen) and the body schema (Leibschema) are the fundamental layer of experience, prior to and independent of cognition. The 'presence' (Präsenz) of the world is not constructed by the mind but is a given that the body participates in.",
+    "key_claims": [
+      "Affect is not a secondary feeling about a thought but a primary, pre-reflective way of being-in-the-world",
+      "The body schema (Leib) is distinct from the physical body (Körper): it is the spatial orientation structure of experience",
+      "'Presence' (Präsenz) has degrees: the world is not equally 'present' everywhere — attention and affect modulate presence",
+      "Schmitz rejects the cognitive reduction of experience: not everything experienced is a representation or a judgment",
+      "The 'new' in new phenomenology is the emphasis on the structural (not descriptive) analysis of experience"
+    ],
+    "methods_math": ["structural_analysis", "phenomenological_reduction", "typology"],
+    "visualizations": ["affect_intensity_scale", "body_schema_diagram", "presence_field_visualization"],
+    "internal_tensions": [
+      "Schmitz's philosophy is notoriously dense and jargon-heavy — the interactive presentation necessarily simplifies",
+      "The boundary between Schmitz and Merleau-Ponty is often blurred, but Schmitz explicitly rejects the 'carnal' framing",
+      "The 'structural' approach risks becoming a new kind of essentialism despite its anti-essentialist intentions"
+    ],
+    "related_files": ["psychologische_feldtheorie.html"]
+  },
+  {
+    "path": "persistent_landscape.html",
+    "slug": "persistent_landscape",
+    "title": "Interactive Persistent Landscapes & Wasserstein-1 Distance Explorer",
+    "lang": "en",
+    "size_kb": 46.5,
+    "category": "nicht-ki",
+    "category_reason": "Pure TDA mathematics: persistent landscapes and Wasserstein distance; no ML focus",
+    "theme": "topological_data_analysis",
+    "themes": ["persistent_landscapes", "wasserstein_distance", "persistent_homology", "topological_signatures", "statistical_tda"],
+    "thesis": "Persistent landscapes transform persistence diagrams into functions on a common domain, enabling statistical comparison of topological features. The Wasserstein-1 distance between persistence diagrams measures how much 'mass' (topological features) must be moved to transform one diagram into another, and persistent landscapes provide a functional representation that approximates this distance.",
+    "key_claims": [
+      "A persistence diagram records birth-death pairs of topological features across a filtration",
+      "The persistent landscape is a sequence of functions: the k-th landscape takes the k-th largest peak at each scale",
+      "Persistent landscapes are stable: small perturbations in the diagram lead to small changes in the landscape (L∞ bound)",
+      "The Wasserstein-1 distance between diagrams equals the L1 distance between their persistent landscapes (up to a constant)",
+      "This enables statistical TDA: you can compute means, variances, and run hypothesis tests on topological features"
+    ],
+    "methods_math": ["persistent_homology", "persistence_diagrams", "wasserstein_distance", "functional_analysis", "stability_theorems"],
+    "visualizations": ["persistence_diagram_plot", "landscape_function_plot", "wasserstein_distance_comparison", "filtration_animation"],
+    "internal_tensions": [
+      "Persistent landscapes lose information: different diagrams can have the same landscape (the mapping is not injective)",
+      "The Wasserstein distance is computationally expensive (optimal transport), and the landscape approximation is not exact",
+      "The choice of which Betti numbers to include and how to weight them in the landscape is somewhat arbitrary"
+    ],
+    "related_files": ["betti.html", "simplicial_complex_attention.html", "topology_idea.html"]
+  },
+  {
+    "path": "topology_idea.html",
+    "slug": "topology_idea",
+    "title": "Attraktoren in LLMs – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 46.3,
+    "category": "ki",
+    "category_reason": "Applies dynamical systems theory (attractors, phase space) to understand LLM behavior",
+    "theme": "llm_dynamics",
+    "themes": ["attractors", "dynamical_systems", "phase_space", "llm_behavior", "strange_attractors"],
+    "thesis": "LLM generation can be understood as a dynamical system where the hidden state trajectory is drawn toward attractors in the representation space. Different prompts and contexts correspond to different basins of attraction, and the 'strange attractor' structure may explain the creative yet constrained nature of LLM outputs.",
+    "key_claims": [
+      "The hidden state of an LLM during generation traces a trajectory in a high-dimensional phase space",
+      "Common response patterns correspond to attractors: the system repeatedly visits similar regions of state space",
+      "The attractor structure explains why LLMs produce coherent text (constrained by attractor geometry) while still being variable (chaotic within the attractor)",
+      "Prompt engineering can be understood as selecting which basin of attraction the trajectory enters",
+      "The 'temperature' parameter controls the effective dimensionality of the attractor explored"
+    ],
+    "methods_math": ["dynamical_systems", "attractor_theory", "phase_space_analysis", "lyapunov_exponents", "basin_of_attraction"],
+    "visualizations": ["phase_space_trajectory", "attractor_basin_diagram", "strange_attractor_plot", "prompt_attractor_mapping"],
+    "internal_tensions": [
+      "The dynamical systems analogy is metaphorical at best: LLMs are not autonomous dynamical systems, they are stateless functions called in a loop",
+      "The 'attractor' structure in LLMs has not been rigorously demonstrated — it is an interpretive framework",
+      "High-dimensional phase space visualization necessarily loses information (projection to 2D/3D)"
+    ],
+    "related_files": ["grokking_addition_internal3.html", "paperidea5.html", "betti.html", "persistent_landscape.html", "strukturwissenschaften.html"]
+  },
+  {
+    "path": "lie.html",
+    "slug": "lie",
+    "title": "Lie-Gruppen – Visuell Erleben",
+    "lang": "de",
+    "size_kb": 46.3,
+    "category": "nicht-ki",
+    "category_reason": "Pure mathematics: Lie groups and their geometric intuition; no ML content",
+    "theme": "lie_groups",
+    "themes": ["lie_groups", "lie_algebras", "rotation_groups", "group_actions", "symmetry"],
+    "thesis": "Lie groups are smooth manifolds that are also groups — they describe continuous symmetries. From SO(3) (3D rotations) to SU(2) (quantum spin) to the Poincaré group (spacetime symmetry), Lie groups provide the mathematical language for all continuous symmetry in physics and geometry.",
+    "key_claims": [
+      "A Lie group is a group that is also a smooth manifold, with smooth multiplication and inversion",
+      "The Lie algebra is the tangent space at the identity: it linearizes the group and captures the 'infinitesimal' structure",
+      "SO(3) (rotations in 3D) has Lie algebra so(3) ≈ R³ with the cross product as bracket",
+      "SU(2) is a double cover of SO(3): two elements of SU(2) map to each rotation in SO(3)",
+      "Every finite-dimensional Lie group is (locally) determined by its Lie algebra"
+    ],
+    "methods_math": ["lie_groups", "lie_algebras", "matrix_groups", "exponential_map", "representation_theory"],
+    "visualizations": ["rotation_group_visualization", "group_action_animation", "lie_algebra_tangent_space", "double_cover_diagram"],
+    "internal_tensions": [
+      "The local-to-global step (Lie algebra → Lie group) requires a simply-connected assumption that does not always hold (SO(3) vs SU(2))",
+      "The geometric intuition (rotations) breaks down for non-compact or higher-dimensional groups"
+    ],
+    "related_files": ["cauchydedeking.html", "a_simple_proof_the_world_is_three_dimensional.html", "strukturwissenschaften.html"]
+  },
+  {
+    "path": "psychologische_feldtheorie.html",
+    "slug": "psychologische_feldtheorie",
+    "title": "Lewins Feldtheorie – Interaktive Erkundung",
+    "lang": "de",
+    "size_kb": 46.0,
+    "category": "nicht-ki",
+    "category_reason": "Psychology: Kurt Lewin's field theory; no ML content",
+    "theme": "psychology_field_theory",
+    "themes": ["field_theory", "force_vectors", "life_space", "valence", "psychology", "behavioral_science"],
+    "thesis": "Kurt Lewin's field theory posits that behavior is a function of the person and their environment (B = f(P, E)), where the 'life space' (Lebensraum) contains the person as the center, surrounded by zones of varying psychological distance. Behavior is driven by 'forces' (toward and away from goals) and 'barriers' in this psychological field.",
+    "key_claims": [
+      "Behavior is determined by the totality of the life space, not by isolated stimuli",
+      "The life space is organized into zones: immediate (body, needs) → near (social) → far (abstract, future)",
+      "Forces have valence: positive (attractive) or negative (repulsive), and can act from any zone",
+      "Barriers (physical or psychological) can block movement toward goals, creating frustration",
+      "The field is dynamic: forces change as the person moves through the life space"
+    ],
+    "methods_math": ["vector_fields", "topology_of_regions", "graph_theory"],
+    "visualizations": ["force_field_diagram", "life_space_concentric_zones", "barrier_animation", "goal_pull_demo"],
+    "internal_tensions": [
+      "Lewin's theory is qualitatively rich but quantitatively vague: forces have no precise magnitude or units",
+      "The B = f(P, E) formula is unfalsifiable as stated — it does not specify the functional form",
+      "The 'life space' is a psychological construct that resists operationalization"
+    ],
+    "related_files": ["schmitz.html"]
+  },
+  {
+    "path": "simplicial_complex_attention.html",
+    "slug": "simplicial_complex_attention",
+    "title": "Simplicial Complexes & The Attention Mechanism",
+    "lang": "en",
+    "size_kb": 45.9,
+    "category": "ki",
+    "category_reason": "Applies simplicial complexes and persistent homology to interpret transformer attention mechanisms",
+    "theme": "topological_attention",
+    "themes": ["simplicial_complexes", "attention_mechanism", "persistent_homology", "transformer_interpretability", "multi_head_attention", "clique_complex"],
+    "thesis": "Transformer attention weights define a filtered simplicial complex over tokens: mutually-attending tokens form cliques that correspond to higher-dimensional simplices. Multi-head attention creates multiple such complexes, and persistent homology of the attention complex reveals topological features (connected components, loops, voids) that characterize what each head has learned.",
+    "key_claims": [
+      "Standard attention creates a complete weighted graph over tokens — the 1-skeleton of a simplicial complex",
+      "Thresholding attention weights at ε and taking the clique complex gives a filtration as ε varies from 1 to 0",
+      "Persistent homology tracks which topological features (β₀ components, β₁ loops, β₂ voids) persist across the filtration",
+      "Each attention head defines a different simplicial complex over the same vertex set (tokens)",
+      "Topological invariants of the attention complex provide interpretability: β₀ = attention clusters, β₁ = cyclic dependencies, β₂ = missing higher-order relations"
+    ],
+    "methods_math": ["simplicial_complexes", "clique_complex", "persistent_homology", "attention_mechanism", "epsilon_filtration", "betti_numbers"],
+    "visualizations": ["interactive_simplicial_complex", "attention_weight_graph", "filtration_animation", "multi_head_overlay", "persistent_barcode"],
+    "internal_tensions": [
+      "The attention weights are soft (continuous) while simplicial complexes are combinatorial (discrete) — the thresholding step is arbitrary",
+      "The clique complex is the 'maximal' complex for a given graph; other constructions (Vietoris-Rips, alpha complex) might be more appropriate",
+      "The interpretation of Betti numbers of attention (e.g., 'β₁ = cyclic dependencies') is suggestive but not rigorously validated"
+    ],
+    "related_files": ["betti.html", "persistent_landscape.html", "grokking_addition_internal3.html", "paperidea5.html", "topology_idea.html"]
+  },
+  {
+    "path": "strukturwissenschaften.html",
+    "slug": "strukturwissenschaften",
+    "title": "Strukturwissenschaften – Visuelle Intuition",
+    "lang": "de",
+    "size_kb": 45.8,
+    "category": "nicht-ki",
+    "category_reason": "General complexity science and structure theory; no ML or AI focus",
+    "theme": "complexity_science",
+    "themes": ["structure", "nonlinearity", "constraints", "bifurcation", "emergence", "attractors", "self_organization", "evolution", "hierarchy", "information_theory", "cellular_automata", "genetic_algorithms"],
+    "thesis": "Eleven core concepts — structure, nonlinearity, constraints, bifurcation, emergence, attractors, information, self-organization, evolution, hierarchy, and bottom-up/top-down constraint hierarchy — form the recurring backbone of complexity science. Each concept is illustrated with an interactive simulation showing how simple rules give rise to complex behavior.",
+    "key_claims": [
+      "Structure = set + relations; without relations, a set is 'boring'",
+      "Nonlinearity is the necessary condition for chaos, self-organization, and complex patterns",
+      "Constraints (holonomic or non-holonomic) reduce degrees of freedom but enable new system functions",
+      "Bifurcation: as a control parameter crosses a critical value, system behavior splits (logistic map → Feigenbaum diagram)",
+      "Emergence: complex global patterns arise from simple local rules (cellular automata, e.g., Rule 30, 90, 110)",
+      "Attractors: system trajectories converge to point, cycle, torus, or strange attractors (Lorenz system)",
+      "Information lies between pure randomness (max entropy) and rigid regularity (min entropy)",
+      "Self-organization: open systems far from equilibrium spontaneously form patterns (Gray-Scott reaction-diffusion)",
+      "Evolution requires only variation, heredity, and selection — no designer needed",
+      "Hierarchy: living complexity is organized in ~10 levels, each with few types but many instances ('more is different')",
+      "Bottom-up constraints create possibilities; top-down constraints (order parameters) select among them (boids)"
+    ],
+    "methods_math": ["cellular_automata", "logistic_map", "lorenz_system", "gray_scott_model", "genetic_algorithms", "boids", "shannon_entropy", "reaction_diffusion"],
+    "visualizations": ["graph_builder", "nonlinearity_slider", "constraint_particle_sim", "feigenbaum_diagram", "cellular_automaton", "lorenz_attractor", "entropy_bars", "gray_scott_grid", "evolution_sim", "hierarchy_zoom", "boids_flock"],
+    "internal_tensions": [
+      "The 11 concepts overlap significantly (e.g., self-organization ⊂ emergence, attractors ⊂ bifurcation) — the boundary between them is not clean",
+      "The 'structure science' framing is ambitious: it claims these concepts are the 'recurring core' of all the author's texts, but this is a meta-claim that cannot be verified within the page",
+      "The simulations are toy models: the logistic map is 1D, the Gray-Scott model is 2D, etc. — they illustrate the concept but not its full generality"
+    ],
+    "related_files": ["topology_idea.html", "lie.html", "model_decomposition.html"]
+  },
+  {
+    "path": "fourier_projection.html",
+    "slug": "fourier_projection",
+    "title": "Fourier Projection: Extracting Circles from Skewed Embedding Spaces",
+    "lang": "en",
+    "size_kb": 45.8,
+    "category": "ki",
+    "category_reason": "Directly about transformer embedding spaces and the grokking paper: Fourier projection as the mechanism by which the model reads out addition",
+    "theme": "fourier_grokking",
+    "themes": ["fourier_transform", "grokking", "embedding_space", "modular_addition", "transformer_interpretability", "constructive_interference"],
+    "thesis": "In the grokking circuit, the embedding space contains circles that are 'skewed' — rotated across multiple dimensions so no single 2D coordinate slice reveals them. The Discrete Fourier Transform provides the orthogonal basis (sin/cos at each frequency) that 'un-skews' these circles: projecting onto the Fourier basis at frequency k extracts the clean 2D circular structure, and the readout uses constructive interference of multiple cosine waves to peak at c = a+b mod P.",
+    "key_claims": [
+      "Circles in embedding space are 'skewed': they exist in a rotated orientation across multiple dimensions, not aligned with any coordinate plane",
+      "Axis-aligned projections (XY, XZ, YZ) distort the circle into ellipses — the periodic structure is lost",
+      "The DFT provides an orthogonal basis of sinusoidal functions; projecting data onto this basis extracts the circular component at each frequency",
+      "The Fourier coefficients at frequency k (cosine and sine) define a 2D plane in which the circle at that frequency lives",
+      "The grokking algorithm: embed a as rotation by a, attend to b to compose rotations (trig identity), read out via cos(w_k(a+b-c)) which peaks at c = a+b mod P",
+      "Multiple key frequencies superimpose: their cosine waves constructively interfere at the correct answer and destructively interfere elsewhere"
+    ],
+    "methods_math": ["discrete_fourier_transform", "rotation_matrices", "fourier_projection", "orthogonal_basis", "constructive_interference", "modular_arithmetic"],
+    "visualizations": ["3d_skewed_circle_plotly", "axis_aligned_slices", "fourier_spectrum_bars", "before_after_projection", "logit_bar_chart", "interference_wave_overlay"],
+    "internal_tensions": [
+      "The 3D visualization is a pedagogical simplification: real transformer embeddings are 64+ dimensional, not 3D",
+      "The 'skewed circle' analogy is illustrative but the actual embedding is a superposition of multiple frequency circles, not a single circle",
+      "The Fourier projection works cleanly for pure sinusoids; real embeddings have noise and cross-frequency contamination"
+    ],
+    "related_files": ["grokking_addition_internal3.html", "topology_idea.html", "paperidea5.html"]
+  }
+]

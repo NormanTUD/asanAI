@@ -1,0 +1,390 @@
+[
+  {
+    "path": "fibrebundle.html",
+    "slug": "fibrebundle",
+    "title": "LLM Kelp-Wald – Faserbündel-Visualisierung der Transformer-Architektur",
+    "lang": "de",
+    "size_kb": 41.1,
+    "category": "ki",
+    "category_reason": "Uses fiber bundle mathematics (base space = token positions, fiber = embedding/layer stack) to visualize and explain Transformer architecture, attention mechanisms, and failure modes (hallucination, circular references).",
+    "theme": "fiber-bundles",
+    "themes": ["fiber-bundles", "transformers", "attention-mechanisms", "topological-defects"],
+    "thesis": "The Transformer stack can be understood as a fiber bundle over the token sequence, where each token position carries a fiber (embedding × layers) and attention creates horizontal flows between fibers; failure modes (hallucination, circular reasoning) manifest as topological defects in this bundle structure.",
+    "key_claims": [
+      "Tokens form the base space B; each token's embedding through N layers forms a vertical fiber F",
+      "Attention weights create horizontal couplings between fibers, visualized as flow lines",
+      "Hallucination = a section s jumps discontinuously within a fiber (topological defect)",
+      "Circular reference = attention weights form a closed feedback loop between tokens",
+      "Base space topology (line, ring/S¹, 2D grid, sphere) changes the global structure of the bundle",
+      "Curvature of the fiber represents 'learned knowledge'; chaos represents entropy"
+    ],
+    "methods_math": ["fiber bundles", "base space topology (ℝ¹, S¹, ℝ², S²)", "sections and discontinuities", "attention as horizontal coupling"],
+    "visualizations": ["2D canvas: kelp-strand fiber bundle with animated sway", "attention flow lines between strands", "inference wave propagation", "topological defect injection (hallucination jump, circular loop)", "base space topology selector (line/ring/grid/sphere)"],
+    "internal_tensions": [
+      "The 'fiber bundle' metaphor is illustrative, not a formal mathematical construction — no actual bundle map π: E→B is defined",
+      "Attention weights are simulated (hash-based), not computed from real QK^T/√d",
+      "The 'topological defects' are visual metaphors, not actual topological invariants"
+    ],
+    "related_files": ["fibrebundle2.html", "nn_as_sheaf_2.html"]
+  },
+  {
+    "path": "fibrebundle2.html",
+    "slug": "fibrebundle2",
+    "title": "LLM Kelp-Wald v3 – Faserbündel · Attention ⊕ Dense Parallelstruktur · Topologische Defekte",
+    "lang": "de",
+    "size_kb": 41.0,
+    "category": "ki",
+    "category_reason": "v3 of the fiber bundle Transformer visualization with explicit per-layer decomposition into Attention sublayer and Dense/FFN sublayer, computing real softmax attention weights, and modeling the Transformer as a fiber bundle with parallel sublayer structure.",
+    "theme": "fiber-bundles",
+    "themes": ["fiber-bundles", "transformers", "attention-mechanisms", "ffn", "residual-connections", "topological-defects"],
+    "thesis": "Each Transformer layer can be decomposed into a parallel Attention ⊕ Dense/FFN structure that, when stacked, forms a fiber bundle where each token's signal travels up as a kelp strand splitting into two sublayer paths that merge via residual connection; hallucinations and circular references are topological defects in this bundle.",
+    "key_claims": [
+      "Per layer, the fiber splits into Attention (left, multi-head Softmax(QKᵀ/√d)V) and Dense/FFN (right, local transformation, width ∝ d_ff)",
+      "Both sublayers merge via ⊕ (residual addition + LayerNorm)",
+      "Attention weights are computed with a real softmax over hash-based scores, with temperature control",
+      "Base space topology: ℝ¹ (line), S¹ (ring, cyclic), Möbius band (twisted)",
+      "Hallucination = section s jumps discontinuously; Circular reference = attention weights form closed feedback loop",
+      "Curvature represents 'learned knowledge', chaos represents entropy"
+    ],
+    "methods_math": ["fiber bundles", "softmax attention", "residual connections", "base space topology (ℝ¹, S¹, Möbius)", "parallel sublayer decomposition"],
+    "visualizations": ["2D canvas: kelp strands with per-layer Attention/Dense split and merge", "real attention flow lines with animated dots", "hallucination defect (discontinuous jump) and circular reference (loop)", "base space topology selector", "inference wave propagation layer by layer", "architecture info overlay (d_model, d_k, d_ff, heads)"],
+    "internal_tensions": [
+      "Attention scores are hash-based simulations, not from real trained weights",
+      "The fiber bundle structure is a visual metaphor, not a formal topological construction",
+      "The Möbius band topology is a visual twist, not a true non-orientable bundle"
+    ],
+    "related_files": ["fibrebundle.html", "origami.html"]
+  },
+  {
+    "path": "nn_as_sheaf_2.html",
+    "slug": "nn_as_sheaf_2",
+    "title": "Neural Networks as Sheaves — Fully Interactive",
+    "lang": "en",
+    "size_kb": 39.8,
+    "category": "ki",
+    "category_reason": "Explicitly maps sheaf theory concepts (open cover, local sections, restriction maps, gluing axiom, cocycle) to ReLU neural network components, with a full 'Sheaf Dictionary' table and interactive training demo.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "neural-networks", "relu", "piecewise-linear", "optimization"],
+    "thesis": "A single-hidden-layer ReLU network is a sheaf: the bend points partition ℝ into an open cover, each neuron defines a local section (affine on its active region, zero elsewhere), ReLU acts as the restriction map, and the weighted sum is the gluing axiom producing the global section (network output).",
+    "key_claims": [
+      "Open cover {Uⱼ} = regions where each ReLU is on/off (split by bend points)",
+      "Local section sⱼ = wⱼx + bⱼ on the active region, zero elsewhere",
+      "ReLU is the restriction map: kills the section on the negative side",
+      "Gluing axiom: ŷ = Σ αⱼhⱼ + β (sum of local pieces = global section)",
+      "Cocycle/compatibility = optimizer minimizing loss (pieces rearranging)",
+      "The network output is a global section obtained by gluing compatible local sections"
+    ],
+    "methods_math": ["sheaf theory (open cover, local sections, restriction, gluing)", "piecewise linear functions", "ReLU networks", "gradient descent"],
+    "visualizations": ["step-by-step forward pass with live tensor values", "phase canvas (affine → ReLU → weighted → sum → all)", "before/after ReLU bend visualization per neuron", "live training with loss curve and evolving local sections", "sheaf dictionary table mapping concepts"],
+    "internal_tensions": [
+      "The sheaf structure is exact for a 1-input, 1-hidden-layer ReLU network but becomes a loose metaphor for deeper/wider networks",
+      "The 'open cover' is a partition by bend points, not an arbitrary open cover in the topological sense",
+      "The gluing is a linear sum, not the categorical gluing axiom in full generality"
+    ],
+    "related_files": ["garbentheorie.html", "fibrebundle.html", "origami.html"]
+  },
+  {
+    "path": "persistent_topology.html",
+    "slug": "persistent_topology",
+    "title": "Persistent Topology Explorer",
+    "lang": "en",
+    "size_kb": 40.2,
+    "category": "ki",
+    "category_reason": "Interactive TDA tool that explicitly includes Machine Learning as a primary application ('Use persistence diagrams as features for classification'), and the full Rips complex + boundary matrix reduction algorithm is the computational backbone of topological feature extraction for ML.",
+    "theme": "persistent-homology",
+    "themes": ["persistent-homology", "rips-complex", "topological-data-analysis", "machine-learning", "simplicial-complexes"],
+    "thesis": "Persistent homology provides a multi-scale, coordinate-free, noise-stable summary of data shape: as a filtration parameter ε grows, topological features (connected components, loops) are born and die; long-lived features are signal, short-lived ones are noise. This makes persistence diagrams robust features for ML classification.",
+    "key_claims": [
+      "Rips complex: grow ε-balls around points; connect overlapping points; fill triangles for mutual overlap",
+      "H₀ tracks connected components (merge events), H₁ tracks loops (birth at cycle-edge, death at triangle-fill)",
+      "Barcode: each feature is a bar from birth ε to death ε; long bars = structure, short = noise",
+      "Persistence diagram: (birth, death) points; distance from diagonal = significance",
+      "Stability theorem (Cohen-Steiner, Edelsbrunner, Harer 2007): small input changes → small diagram changes (bottleneck distance)",
+      "ML application: persistence diagrams as classification features, invariant to rotation/translation/perturbation"
+    ],
+    "methods_math": ["Rips complex construction", "union-find for H₀", "boundary matrix reduction (Z/2) for H₁", "barcode and persistence diagram", "bottleneck distance / stability theorem"],
+    "visualizations": ["interactive Rips complex (click to add points, animate ε)", "live barcode (H₀ green, H₁ red)", "persistence diagram canvas", "guided step-by-step walkthrough (birth/death events)", "preset point clouds (circle, two clusters, figure-eight, noisy circle, random, triangle)"],
+    "internal_tensions": [
+      "The H₁ computation uses a simplified boundary matrix reduction that works for small point sets but is not the full persistent homology algorithm",
+      "ML is mentioned as one of four applications, not the primary focus — the file is primarily a TDA education tool",
+      "No actual ML pipeline is implemented (no classifier, no diagram vectorization)"
+    ],
+    "related_files": ["garbentheorie.html", "fibrebundle.html"]
+  },
+  {
+    "path": "windows.html",
+    "slug": "windows",
+    "title": "Die Geschichte von Windows – Interaktive Reise",
+    "lang": "de",
+    "size_kb": 41.1,
+    "category": "nicht-ki",
+    "category_reason": "Interactive history of the Windows operating system (1985–2026+), covering OS evolution, beta culture, kernel architecture, and market share. No ML/AI focus.",
+    "theme": "os-history",
+    "themes": ["os-history", "software-engineering", "windows", "beta-testing", "kernel-architecture"],
+    "thesis": "Windows evolved over 40 years from a 16-bit DOS overlay to a unified NT-based OS, with each version introducing a key paradigm shift (overlapping windows, Start menu, NT kernel, consumer/enterprise unification, cloud integration, AI), and its beta/insider culture turned millions of users into co-developers.",
+    "key_claims": [
+      "The WIMP paradigm (Windows, Icons, Menus, Pointer) was the core innovation: making computers accessible to non-technical users",
+      "Two kernel lines (DOS-based consumer, NT-based enterprise) merged in Windows XP (2001)",
+      "Beta culture: Pre-Alpha → Alpha → Beta → RC → RTM → GA, with Windows 95 having 400,000 beta testers",
+      "Windows Insider program (2014+) provides continuous feedback from millions across channels (Insider Slow/Ring/Beta/Dev/Canary)",
+      "Windows runs on 1.4+ billion devices, the most widespread desktop OS",
+      "Windows 11 24H2 introduces AI integration (Copilot+, NPU acceleration)"
+    ],
+    "methods_math": [],
+    "visualizations": ["starfield hero animation", "interactive timeline slider (1985–2026) with auto-play", "simulated desktop previews per era", "beta phase pipeline (canvas)", "Plotly stacked area chart (market share over time)", "Plotly build number growth chart", "kernel evolution canvas"],
+    "internal_tensions": [
+      "The Windows 12 entry is explicitly marked as speculation/rumor",
+      "Market share data is approximate/illustrative, not from a specific cited source"
+    ],
+    "related_files": []
+  },
+  {
+    "path": "bewusstsein.html",
+    "slug": "bewusstsein",
+    "title": "Qualia & Bewusstsein – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 41.0,
+    "category": "nicht-ki",
+    "category_reason": "Interactive exploration of philosophy of mind: qualia, the hard problem of consciousness, Mary's Room, layers of consciousness, and competing theories (GWT, IIT, dualism, panpsychism, higher-order). No ML/AI focus.",
+    "theme": "consciousness",
+    "themes": ["consciousness", "qualia", "philosophy-of-mind", "hard-problem", "theory-of-mind"],
+    "thesis": "Consciousness has multiple layers (phenomenal/qualia, access, self-consciousness) and the 'hard problem' — why there is something it is like to be a subject — resists physical explanation; competing theories (GWT, IIT, property dualism, panpsychism, higher-order) address it from different angles without consensus.",
+    "key_claims": [
+      "Qualia are subjective sensory qualities (redness of red, painfulness of pain) that cannot be fully communicated or reduced to physical processes",
+      "The hard problem (Chalmers 1995): why does neural processing give rise to subjective experience at all?",
+      "Mary's Room (Frank Jackson): a neuroscientist who has never seen color learns something new when she exits — suggesting non-physical facts about consciousness",
+      "Three layers: phenomenal (qualia), access (information available for cognition), self-consciousness (awareness of self)",
+      "IIT (Tononi): consciousness = integrated information Φ; GWT (Baars/Dehaene): consciousness = broadcast in global workspace",
+      "Panpsychism: consciousness is a fundamental property of matter"
+    ],
+    "methods_math": [],
+    "visualizations": ["hero canvas (animated background)", "qualia cards with hover overlays", "color qualia interactive (click swatches)", "hard problem gap visualization (physical → mental)", "Mary's Room interactive (BW → color)", "consciousness layers (clickable)", "neural 'firework' canvas (pulsing neurons)", "qualia mixer (sliders → color output)", "theory cards (GWT, IIT, dualism, panpsychism, higher-order)"],
+    "internal_tensions": [
+      "The neural visualization is purely decorative — it does not model any actual neural mechanism",
+      "The 'qualia mixer' is an artistic analogy, not a model of how qualia combine"
+    ],
+    "related_files": ["joaxiannothingness.html"]
+  },
+  {
+    "path": "stacks.html",
+    "slug": "stacks",
+    "title": "Algebraic Stacks — An Interactive Journey",
+    "lang": "en",
+    "size_kb": 40.6,
+    "category": "nicht-ki",
+    "category_reason": "Pure algebraic geometry education: a step-by-step visual journey from sets to algebraic stacks (sets → sheaves → functors → groupoids → descent → stack tower → algebraic stack). No ML/AI connection.",
+    "theme": "algebraic-geometry",
+    "themes": ["algebraic-geometry", "algebraic-stacks", "sheaves", "category-theory", "descent-theory"],
+    "thesis": "Algebraic stacks generalize schemes by allowing objects to have non-trivial automorphisms; they are built up from familiar concepts (sets, sheaves, functors, groupoids, descent) in a cumulative tower, with the final object being a category fibered in groupoids satisfying descent.",
+    "key_claims": [
+      "A set is a collection of things; a function maps between sets",
+      "A sheaf assigns data to regions of a space, compatible on overlaps",
+      "A functor maps between categories, preserving structure",
+      "A groupoid is a category where all morphisms are invertible (objects with symmetries)",
+      "Descent: local data that agrees on overlaps can be glued to global data",
+      "An algebraic stack is a 'tower' of these concepts: a category fibered in groupoids over schemes, satisfying descent"
+    ],
+    "methods_math": ["sets and functions", "sheaves", "functors and categories", "groupoids", "descent theory", "algebraic stacks"],
+    "visualizations": ["interactive set/function demo (clickable dots)", "sheaf base space with clickable regions showing fibers", "functor demo (category boxes with objects and arrows)", "groupoid canvas (animated nodes with invertible arrows)", "descent visual (patches merging into a result shape)", "stack tower (layered visualization)", "final algebraic stack diagram (orbiting rings)"],
+    "internal_tensions": [
+      "The 'stack tower' visualization is purely schematic — it does not capture the formal definition of a stack",
+      "The groupoid animation is a toy model, not a real category-theoretic construction"
+    ],
+    "related_files": ["garbentheorie.html", "stacks.html"]
+  },
+  {
+    "path": "montana_sacra.html",
+    "slug": "montana_sacra",
+    "title": "Der Heilige Berg — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 40.4,
+    "category": "nicht-ki",
+    "category_reason": "Interactive narrative/analysis of Alejandro Jodorowsky's 1973 film 'The Holy Mountain': plot, tarot symbolism, alchemical transmutation, seven planets as social critique, and the meta-cinematic 'zoom back' ending. No ML/AI focus.",
+    "theme": "cinema",
+    "themes": ["cinema", "film-analysis", "jodorowsky", "alchemy", "tarot", "counterculture"],
+    "thesis": "The Holy Mountain (1973) is a self-refuting spiritual film: it builds a shamanic quest narrative (thief → alchemist → seven planets → mountain) only to reveal the 'immortals' at the summit are puppets and the film set behind them, answering 'Can cinema deliver spiritual enlightenment?' with 'No, but it can send you out.'",
+    "key_claims": [
+      "The plot follows a Tarot-structured journey: The Fool (thief) → 5 of Swords (dwarf) → Sun (alchemist) → seven planets → mountain",
+      "Alchemical transmutation (nigredo → albedo → rubedo) maps to the thief's transformation: 'You are excrement. You can transform yourself into gold.'",
+      "The seven planets are the 'architecture of modernity': cosmetics, arms, art-as-commodity, childhood indoctrination, population policy, police, housing",
+      "The Lotus Island = the counterculture's failure: the journey replaced by the journey itself (drugs, poetry, acrobatics as destination)",
+      "The 'Zoom back, camera!' ending breaks the fourth wall: the film refutes its own spiritual pretension",
+      "The film's message: cinema cannot make you immortal, but it can make you leave the theater and continue the search in real life"
+    ],
+    "methods_math": [],
+    "visualizations": ["pulsing all-seeing eye (canvas)", "tarot card hover interactions", "alchemical transmutation canvas (nigredo→albedo→rubedo with fire/time/mirror sliders)", "seven planets SVG orbit (clickable)", "Plotly polar chart (Lotus Island compass)", "three.js mountain scene (scroll-linked altitude, 10 pilgrims, 9 dummies at summit)", "zoom-back canvas (film apparatus reveal)", "marquee scrolling quotes"],
+    "internal_tensions": [
+      "The film analysis is interpretive, drawing on Santos and other critics, not a single authoritative reading",
+      "The 'meta-reveal' at the end (this page is HTML, the mountains are triangles) is a playful self-refutation mirroring the film, but breaks the immersive tone"
+    ],
+    "related_files": []
+  },
+  {
+    "path": "calculus_on_manifolds_very_simple.html",
+    "slug": "calculus_on_manifolds_very_simple",
+    "title": "Was eine Mannigfaltigkeit ist — visuell erklärt",
+    "lang": "de",
+    "size_kb": 40.3,
+    "category": "nicht-ki",
+    "category_reason": "Pure differential geometry education: a simplified visual explanation of manifolds, tangent spaces, and the generalized Stokes theorem (unifying HDI, Green, Divergence, Stokes) based on Spivak's 'Calculus on Manifolds'. No ML/AI focus.",
+    "theme": "differential-geometry",
+    "themes": ["differential-geometry", "manifolds", "stokes-theorem", "tangent-space", "vector-calculus"],
+    "thesis": "A manifold is a space that is locally flat (like ℝⁿ) but globally curved; the generalized Stokes theorem ∫_M dω = ∫_∂M ω unifies the fundamental theorem of calculus, Green's theorem, the divergence theorem, and the classical Stokes theorem into a single statement about any manifold with boundary.",
+    "key_claims": [
+      "A manifold is locally flat, globally curved: every point has a neighborhood that smoothly deforms to a flat patch of ℝⁿ",
+      "Non-examples: cusps (no unique tangent), crossings (too many directions), self-intersections break the definition",
+      "The tangent space at a point is the unique direction the curve continues in — it rotates globally but is always 1D locally",
+      "HDI, Green, Divergence, and Stokes are all the same theorem in different dimensions/notations",
+      "The generalized Stokes theorem: ∫_M dω = ∫_∂M ω — the integral of the derivative over the interior equals the integral over the boundary",
+      "The hard work is in defining 'd' (exterior derivative) and 'ω' (differential form); once defined, all theorems follow"
+    ],
+    "methods_math": ["manifolds (local flatness)", "tangent spaces", "curvature (finite-difference estimate)", "differential forms", "exterior derivative", "generalized Stokes theorem", "numerical integration (trapezoid rule)"],
+    "visualizations": ["examples gallery (line, circle, sine, parabola, knot) with hover curvature", "non-examples (cusp, cross, figure-8) with problem indicators", "tangent vector on a moving point (slider-controlled)", "four masks of Stokes (HDI/Green/Divergence/Stokes) with SVG illustrations", "Green's theorem live demo (deformable region, vector field, real-time line vs area integral comparison)"],
+    "internal_tensions": [
+      "The curvature estimate is a rough finite-difference approximation, not the exact differential curvature",
+      "The numerical integration in the Green demo uses a crude trapezoid rule, hence the small nonzero difference"
+    ],
+    "related_files": ["stacks.html"]
+  },
+  {
+    "path": "joaxiannothingness.html",
+    "slug": "joaxiannothingness",
+    "title": "The Jocaxian Nothingness — Interactive Exploration",
+    "lang": "en",
+    "size_kb": 40.2,
+    "category": "nicht-ki",
+    "category_reason": "Philosophical/metaphysical exploration of João Carlos Holland de Barcellos' 'Jocaxian Nothingness' concept: a rule-free void from which existence is inevitable. No ML/AI focus.",
+    "theme": "philosophy",
+    "themes": ["philosophy", "metaphysics", "existentialism", "emergence", "philosophy-of-mind"],
+    "thesis": "The Jocaxian Nothingness (JN) is a 'nothingness that exists' — a state free from all rules including the rule that nothing may arise; since there is no law forbidding existence, existence is not merely possible but inevitable, making the JN the 'ground' (or absence of ground) from which the universe necessarily emerges.",
+    "key_claims": [
+      "The JN is not 'something in which nothing exists' (that would be contradictory) but a state with no constraints at all",
+      "Without rules, there is no restriction on existence — no physical law, no logic, no time that could prevent it",
+      "Without time, 'possible' and 'actual' collapse: what is possible simply is",
+      "The JN is not the quantum vacuum (which has spacetime and quantum mechanics), not the classical nothing (which implicitly forbids existence)",
+      "From the JN, anything can emerge: matter, space-time, natural laws, mathematical structures, other universes, consciousness",
+      "Existence is the normal state, not the exception"
+    ],
+    "methods_math": [],
+    "visualizations": ["animated background canvas (void/void simulation)", "simulation modes (spontaneous emergence, with rules, total chaos, freeze)", "logic chain (P1–P5 + conclusion, click to expand)", "comparison table (classical nothing vs quantum vacuum vs JN)", "emergence grid (8 categories of what can emerge)", "objections section (click to reveal answers)"],
+    "internal_tensions": [
+      "The argument is philosophically contested: critics would note that 'no rules' itself is a meta-rule, and the inference from 'possible' to 'actual' requires a principle that the JN is supposed to lack",
+      "The file is presented as 'based on the work of' Barcellos but the philosophical argument is presented as settled rather than debated"
+    ],
+    "related_files": ["bewusstsein.html"]
+  },
+  {
+    "path": "origami.html",
+    "slug": "origami",
+    "title": "Origami in N Dimensionen — Interaktive Reise",
+    "lang": "de",
+    "size_kb": 39.2,
+    "category": "ki",
+    "category_reason": "Interactive visualization of Keup & Helias (2022) 'Origami in N dimensions: How feed-forward networks manufacture linear separability' — explicitly about how neural networks use ReLU layers to fold data manifolds into higher dimensions to achieve linear separability.",
+    "theme": "neural-networks",
+    "themes": ["neural-networks", "relu", "linear-separability", "geometric-deep-learning", "universal-approximation"],
+    "thesis": "Feed-forward ReLU networks achieve linear separability by progressively folding the data manifold into unused higher dimensions — each layer folds what the previous layer has folded, exponentially increasing the number of linear regions; the final layer is the 'single straight cut' (Fold-and-Cut Theorem connection). Bimodal tuning curves are the fingerprint of active folds.",
+    "key_claims": [
+      "Affine transformation (Wx+b) only repositions on the anvil — it cannot create separability",
+      "ReLU is the 'hammer blow' — it can only affect the convex hull, not selectively reach interior points",
+      "Folding (Origami in N dimensions) is the primary efficient method when layers are wider than the data dimension",
+      "Shear (peeling) is the inefficient alternative for narrow layers, requiring very deep networks",
+      "Each layer multiplies the number of linear regions (exponential in depth): N^L regions for L layers of width N",
+      "Bimodal tuning curves (dip at zero in preactivation histogram) are the fingerprint of a fold separating a class",
+      "Causality test: silencing 10 bimodal neurons collapses accuracy; silencing 10 unimodal neurons has minimal effect"
+    ],
+    "methods_math": ["piecewise linear functions", "ReLU networks", "linear separability", "convex hull", "fold-and-cut theorem (Demaine 1998)", "Hartigan dip statistic", "representation dimensionality"],
+    "visualizations": ["Demo 1: non-separable data with draggable separating line (2D-egg, XOR, spiral)", "Demo 2: ReLU hammer (before/after point projection)", "Demo 3: 1D folding into 2D (fold position, angle, count sliders)", "Demo 4: 3D folding of 2D-egg (three.js, animated fold progress, orbit controls)", "Demo 5: cascade (decision regions of a random ReLU net, exponential region count)", "Demo 6: shear/peeling mechanism (step-by-step)", "Demo 7: bimodal tuning curves (Plotly histograms per class, dip score)", "Demo 8: poker hand results (dimensionality expansion, dip statistics, silencing experiment)"],
+    "internal_tensions": [
+      "The 3D folding uses 3 hyperplanes at 120° which is the known 3-neuron solution to the 2D-egg, not a general folding",
+      "The cascade demo uses a random net — the region count shown is the theoretical upper bound N^L, not the actual count",
+      "The poker hand results are simulated, not from the actual trained network in the paper"
+    ],
+    "related_files": ["nn_as_sheaf_2.html", "fibrebundle2.html"]
+  },
+  {
+    "path": "brednich.html",
+    "slug": "brednich",
+    "title": "Die Spinne in der Yucca-Palme – Brednich Interaktiv",
+    "lang": "de",
+    "size_kb": 39.0,
+    "category": "nicht-ki",
+    "category_reason": "Interactive exploration of Rolf Wilhelm Brednich's urban legend collections: FoaF structure, legend anatomy, SIR epidemic model for rumor spread, themes/fears, truth vs fiction, media feedback loops, and a legend generator. No ML/AI focus.",
+    "theme": "folklore",
+    "themes": ["folklore", "urban-legends", "rumor-spread", "sociology", "media-studies"],
+    "thesis": "Modern legends (urban legends) are 'absolutely true stories that happened to a friend of a friend' — they follow a three-step structure (everyday → rupture → punchline), spread like epidemics (SIR dynamics), mirror societal fears, and exist in a feedback loop between oral tradition and media; the 'friend of a friend' distance makes them unchallengeable while the 'spark of truth' in many gives them credibility.",
+    "key_claims": [
+      "The FoaF (Friend of a Friend) chain is the legend's authentication mechanism: the narrator is merely a transmitter, not a witness",
+      "Every legend follows a three-step anatomy: everyday setting → sudden rupture into the extraordinary → punchline (horror, schadenfreude, irony, moral)",
+      "Legends spread like epidemics: SIR model with reproduction number R₀ = β/γ; R₀ > 1 → wave, R₀ < 1 → dies out",
+      "Legends are mirrors of societal fears: foreigners, car obsession, technology, organ theft, sex taboos, DDR stereotypes",
+      "The media feedback loop: oral → press → oral again; each station amplifies and varies the story",
+      "Many legends have a 'spark of truth' (Brednich had to admit some of his 'legends' were real)"
+    ],
+    "methods_math": ["SIR epidemic model (dS/dt, dI/dt, dR/dt)", "reproduction number R₀ = β/γ", "truth drift (exaggeration per retelling)"],
+    "visualizations": ["FoaF chain canvas (adjustable chain length)", "legend anatomy SVG (3-step flow diagram + selectable legends)", "SIR epidemic Plotly chart (β, γ, population, media boost sliders)", "theme bubble chart (Plotly, 15 themes)", "truth drift canvas (kernel → hops with increasing distortion)", "media feedback loop SVG (oral → press → film cycle)", "legend zoo (filterable card grid, 27 legends)", "legend lab (generate your own legend from components)"],
+    "internal_tensions": [
+      "The SIR model is a gross simplification of rumor spread (homogeneous mixing, no network structure)",
+      "Theme frequencies in the bubble chart are 'rough estimates', not from systematic coding"
+    ],
+    "related_files": []
+  },
+  {
+    "path": "buecher/dynamische_systeme_und_konflikte.html",
+    "slug": "dynamische_systeme_und_konflikte",
+    "title": "Dynamische Systeme & Konflikte – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 38.9,
+    "category": "nicht-ki",
+    "category_reason": "Interactive visualization of dynamical systems concepts applied to conflict psychology from Vallacher et al. (2013) 'Attracted to Conflict': attractor landscapes, feedback loops, coupled ODEs for cooperation/competition, escalation dynamics, and conflict spread. No ML/AI focus.",
+    "theme": "dynamical-systems",
+    "themes": ["dynamical-systems", "attractors", "conflict-theory", "feedback-loops", "bifurcation", "peace-studies"],
+    "thesis": "Conflicts are dynamical systems with attractor landscapes: parties converge to stable states (cooperation or conflict) that are hard to escape from; escalation can be linear (proportional) or nonlinear (catastrophic with hysteresis); conflicts spread self-sustainingly (Deutsch's Crude Law); resolution requires changing the landscape itself (deconstruction, activating latent attractors, or bifurcation via control parameters).",
+    "key_claims": [
+      "An attractor is a state a system converges to; depth = strength (harder to escape), width = basin of attraction",
+      "Reinforcing feedback loops amplify polarization; inhibiting loops regulate; balance = healthy self-regulation",
+      "Coupled ODE model: cooperation-cooperation → both positive; competition-competition → one positive, one negative; mixed → oscillation",
+      "High complexity → linear (proportional) escalation; low complexity → nonlinear (catastrophic) with hysteresis (de-escalation requires more than escalation took)",
+      "Deutsch's Crude Law: competitive behavior produces competitive orientations that reinforce competitive behavior — conflicts are self-sustaining",
+      "Sustainable peace requires a positive:negative ratio of ~3:1 to 5:1 plus complexity and adaptivity for resilience"
+    ],
+    "methods_math": ["attractor landscapes (Gaussian wells)", "coupled ODEs (tanh coupling)", "linear vs nonlinear (catastrophe) dynamics", "hysteresis", "cellular automaton (spread/diffusion)", "bifurcation diagrams", "positivity ratio"],
+    "visualizations": ["attractor landscape canvas (depth/width sliders, ball drop simulation)", "feedback loop time series (reinforcing vs inhibiting)", "cooperation/competition Plotly (coupled ODE trajectories)", "escalation canvases (linear vs nonlinear with hysteresis, provocation slider)", "conflict spread canvas (50×50 grid, cellular automaton with reproduction/decay/diffusion)", "transformation cards (deconstruction, latent attractors, bifurcation diagram)", "sustainable peace Plotly (ratio, complexity, adaptivity)"],
+    "internal_tensions": [
+      "The ODE model is a toy model — real conflict dynamics are far more complex",
+      "The cellular automaton for spread is a crude spatial model, not a network-based one",
+      "The 'sustainable peace' parameters are illustrative, not empirically calibrated"
+    ],
+    "related_files": []
+  },
+  {
+    "path": "garbentheorie.html",
+    "slug": "garbentheorie",
+    "title": "Garbentheorie – Sehen. Spielen. Verstehen.",
+    "lang": "de",
+    "size_kb": 38.8,
+    "category": "ki",
+    "category_reason": "Interactive sheaf theory tutorial that explicitly connects sheaf concepts to AI/ML applications in every section (Federated Learning, Sheaf Neural Networks, TDA, Deep Learning loss landscapes) and includes a dedicated 'Where does this appear in AI/CS?' card in the synopse.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "fiber-bundles", "algebraic-geometry", "higher-category-theory", "federated-learning", "sheaf-neural-networks"],
+    "thesis": "Sheaf theory — from base manifold through fiber, section, presheaf, germ, stalk, sheaf (gluing), to ∞-sheaf (homotopy) — is a mathematical framework for 'local data that agrees on overlaps, hence glues to global data'; this structure appears in AI as Federated Learning (local models → global), Sheaf Neural Networks (restriction maps as learnable matrices), and sensor fusion (multimodal perception as ∞-sheaf gluing).",
+    "key_claims": [
+      "Base M = ground space (time, input domain); open sets U = observation windows",
+      "Fiber F_x = all possible values at point x (feature vectors, senses); total space E projects to M",
+      "A section s: U→E selects exactly one value per point (π∘s = id); like a sickle picking one grain per stalk",
+      "Presheaf: contravariant functor from Open(M) to Set; restriction ρ_UV: F(U)→F(V) (crop the window)",
+      "Germ [s]_x = equivalence class of sections that agree in some neighborhood (infinite zoom at x)",
+      "Stalk F_x = direct limit over shrinking neighborhoods (all germs at x); the 'wheat stalk' of germs",
+      "Sheaf axiom: uniqueness (locally equal → identical) + gluing (compatible local sections → unique global section)",
+      "∞-sheaf: replace equality on overlaps with homotopy equivalence → ∞-Topos; the brain glues lightning+thunder homotopically into one event"
+    ],
+    "methods_math": ["topological spaces and open sets", "fiber bundles (π: E→M)", "sections (π∘s = id)", "contravariant functors (presheaves)", "restriction maps", "germs (local equivalence classes)", "direct limits (stalks)", "sheaf axioms (uniqueness + gluing)", "homotopy limits (∞-sheaves)", "∞-Topos"],
+    "visualizations": ["8 interactive SVG visualizations (one per concept)", "base: time axis with movable open window U", "fiber: wheat stalks with selectable point x and sense markers", "section: path through stalks (sense selector, wave control)", "presheaf: U/V windows with restriction animation", "germ: zoom slider showing local equivalence", "stalk: colimit animation (shrinking neighborhoods → stalk column)", "sheaf: gluing puzzle (adjust two sections until compatible → global section appears)", "∞-sheaf: homotopy path between lightning and sound (auto-deform animation)", "synopse: concept tower diagram (8 nodes with edges)"],
+    "internal_tensions": [
+      "The AI/ML connections (Sheaf NNs, Federated Learning, TDA) are listed as analogies, not demonstrated with actual implementations",
+      "The wheat/grain analogy is carried throughout but the formal math (direct limits, homotopy limits) is only stated, not derived",
+      "The ∞-sheaf section is the most speculative — the connection to HoTT/Univalence is asserted, not argued"
+    ],
+    "related_files": ["nn_as_sheaf_2.html", "fibrebundle.html", "fibrebundle2.html", "stacks.html", "persistent_topology.html"]
+  }
+]

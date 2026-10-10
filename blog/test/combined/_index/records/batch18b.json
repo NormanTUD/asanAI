@@ -1,0 +1,305 @@
+[
+  {
+    "path": "hott4.html",
+    "slug": "hott4",
+    "title": "Set Theory vs Homotopy Type Theory - Foundations of Mathematics",
+    "lang": "en",
+    "size_kb": 50.0,
+    "category": "nicht-ki",
+    "category_reason": "It is a pure foundations-of-mathematics comparison of ZFC set theory and Homotopy Type Theory (philosophy, structure, expressiveness) with no AI/ML application anywhere.",
+    "theme": "hott",
+    "themes": ["mathematical-foundations", "category-theory", "algebraic-topology", "curry-howard"],
+    "thesis": "An interactive English comparison of two foundational frameworks for all of mathematics — classical ZFC set theory and modern Homotopy Type Theory (HoTT) — contrasting their philosophy, structure, and expressiveness, with the emphasis that HoTT treats types as spaces and proofs as programs (Curry-Howard) and makes equality a path space (homotopical) rather than a bare true/false proposition.",
+    "key_claims": [
+      "In ZFC everything is a set and logic is an external first-order apparatus assumed before any mathematical content; in HoTT logic is internal — propositions are types and proofs are the terms inhabiting them.",
+      "Set-theoretic equality is a simple true/false proposition (extensionality: same elements, hence equal); the HoTT identity type Id(A,a,b) is itself a space of paths that can have multiple inhabitants, capturing 'different ways of being the same'.",
+      "The Univalence Axiom says equivalent types are equal, (A ≃ B) ≃ (A =_U B); it is described as the key innovation of HoTT and as having no set-theoretic analogue.",
+      "Higher Inductive Types let one define the circle S^1 with just a base point and a loop path, so that pi_1(S^1) ≅ Z becomes a theorem rather than an axiom — stated as 'impossible to express so directly in set theory'.",
+      "Curry-Howard: in HoTT every proof is a program and every program a proof, so 2+2 'computes' to 4 by beta/eta reduction and the mathematics becomes machine-verifiable (Coq, Agda, Lean).",
+      "The cumulative hierarchy V_alpha of sets has no 'set of all sets' (Russell's paradox), whereas the HoTT universe hierarchy U_0 : U_1 : U_2 ... makes each universe a type living in the next.",
+      "Strengths summary: set theory is well-understood, encodes anything, has mature model theory and independence results; HoTT is natively computational, constructive by default, natural for homotopy/higher categories, and synthetically topological."
+    ],
+    "methods_math": [
+      "identity/path types and the infinity-groupoid interpretation of types (paths between paths = homotopy)",
+      "the Univalence Axiom (A ≃ B) ≃ (A =_U B)",
+      "higher inductive types (the circle S^1, pi_1(S^1) ≅ Z)",
+      "universe hierarchy U_0:U_1:... vs the cumulative set hierarchy V_0 = ∅, V_{alpha+1} = P(V_alpha)",
+      "Curry-Howard correspondence (proofs-as-programs, beta-reduction, eta-expansion)",
+      "Pi / Sigma / + type formers, function extensionality, first-order logic as the external base of ZFC"
+    ],
+    "visualizations": [
+      "two 'structural architecture' stacked-layer canvases contrasting the ZFC stack (Syntax -> FOL -> Axioms -> Theorems) with the HoTT stack (Type Formers -> Identity/Paths -> Univalence -> HITs)",
+      "side-by-side equality canvases: set-theoretic (two Venn circles A = B) vs the HoTT identity type (an ellipse with several distinct paths p, q, r between a and b)",
+      "an animated paths-and-homotopy canvas with Animate / Show Higher Paths / Reset buttons drawing paths a->b, a->c, b->c and a homotopy (path between paths)",
+      "a universes canvas contrasting the cumulative V_alpha ladder with nested universes U_0..U_3 and the univalence label",
+      "a philosophy canvas contrasting the 'material' set view (nested sets, 2 = {∅,{∅}}) with the 'structural' HoTT view (nodes connected by multiple paths, 2 = a type with two terms)",
+      "a tabbed UI (Equality / Axioms / Paths&Homotopy / Universes / Computation) plus a ZFC-vs-HoTT concept-by-concept comparison table"
+    ],
+    "internal_tensions": [
+      "Framed as a clean two-column 'which to use' comparison, it underplays how unsettled and non-trivially consistent univalence is, and presents HoTT as simply 'more modern/computational' rather than a genuine trade-off against ZFC.",
+      "It asserts set theory 'must manually construct' higher structure and is 'not native' to computation, which is fair but glosses that ZFC encodes plenty of higher structure and that HoTT's computational content depends on the chosen identity/cubical model.",
+      "Pure expository: the circle / pi_1 result and the Univalence Axiom are stated as facts without any proof or model-theoretic justification."
+    ],
+    "related_files": ["hott", "hott2", "hott3", "hott5", "hott6", "hott_book", "hott_practical", "hott_ai", "categorial_homotopy_for_llm", "kategorientheorie", "algebraische_topologie"]
+  },
+  {
+    "path": "fourier_addition.html",
+    "slug": "fourier_addition",
+    "title": "How a Neural Network Learns Addition (mod P) - The 'Fourier Multiplication' Algorithm",
+    "lang": "en",
+    "size_kb": 49.6,
+    "category": "ki",
+    "category_reason": "It is a step-by-step interactive explainer of how a neural network computes modular addition via Fourier features / circle embeddings (the 'Fourier Multiplication Algorithm').",
+    "theme": "grokking-generalization",
+    "themes": ["fourier-features", "geometry-of-embeddings", "interpretability", "signal-analysis"],
+    "thesis": "A 7-step interactive explanation of how a neural network learns modular addition (a+b mod P): it embeds each number as a point on circles at several frequencies, adds by rotating (multiplying) those circle positions, and reads the answer by constructive wave interference (a score that peaks exactly at a+b mod P).",
+    "key_claims": [
+      "Modular addition is cast as 'clock math' on a P-hour clock: numbers live on a circle and adding means moving around the circle, wrapping to 0 once the sum reaches P.",
+      "The network encodes a number a at frequency k as a point on the unit circle at angle 2*pi*k*a/P (x = cos, y = sin) — a Fourier feature / wave encoding of a discrete value.",
+      "Addition is done by combining rotations via the angle-addition formula cos(a+b) = cos(a)cos(b) - sin(a)sin(b): multiplying the wave values of a and b rotates the combined position to angle(a+b mod P) — 'it rotates, without adding'.",
+      "The answer is read by scoring each candidate c with score(c) = sum_k cos(2*pi*k*(a+b-c)/P), which is maximal exactly at c = a+b mod P because the waves line up (constructive interference) and cancel for wrong c (destructive interference); more frequencies sharpen the peak.",
+      "The network uses several frequencies at once (e.g. k = 14, 35, 41, 42, 52 for P = 113), each giving a different 'view' of the numbers, and the summed score selects the answer."
+    ],
+    "methods_math": [
+      "modular arithmetic (Z/PZ) as the cyclic/clock group",
+      "Fourier feature map / trigonometric embedding x -> (cos(2 pi k x / P), sin(2 pi k x / P)) at multiple frequencies",
+      "the angle-addition formula cos(a+b) = cos a cos b - sin a sin b (rotation/complex-multiplication in the circle group)",
+      "constructive/destructive wave interference as the scoring function sum_k cos(2 pi k (a+b-c)/P)"
+    ],
+    "visualizations": [
+      "a 7-step tabbed walkthrough (0 Problem, 1 Clock, 2 Waves, 3 Numbers->Circles, 4 Combining Waves, 5 Reading the Answer, 6 Full Algorithm) with a step navigation bar",
+      "Step 0: an interactive clock/number-line wrap demo (sliders P, a, b) showing where the sum lands and a 'WRAPS!' jump arrow",
+      "Step 1: numbers placed on a circle with a dashed arc showing 'move +b steps' from a to a+b mod P",
+      "Step 2: a cosine wave plot with frequency and position sliders reading off the wave height",
+      "Step 3: a unit-circle scatter of all numbers at a chosen frequency, with one highlighted number and its (cos, sin) coordinates and angle",
+      "Step 4: an angle-addition diagram (red angle a + green angle b = gold angle a+b) with the cos(a+b) identity displayed",
+      "Step 5: a bar chart of the interference score for every candidate answer, the correct bar highlighted",
+      "Step 6: a full animated pipeline (place on circles -> combine rotations -> score -> pick) driven by a 6-phase Animate / Reset sequence"
+    ],
+    "internal_tensions": [
+      "Titled a 'neural network' but no trained network, gradients, or layers are ever shown — it reconstructs the algorithm by hand, so it explains the *function* the net implements rather than how it *learns* it (no actual grokking or learning dynamics).",
+      "It presents the 'Fourier Multiplication' as the discovered mechanism, but real addition networks do not necessarily implement a clean per-frequency rotation; this is a pedagogical idealization that may overstate the fidelity of actual trained weights.",
+      "The scoring/interference picture is essentially a Fourier-basis / matched-filter view; it does not explain why a network would pick these particular frequencies, nor what changes for composite vs prime P."
+    ],
+    "related_files": ["grokking_addition", "grokking_addition_internal", "grokking_addition_internal2", "grokking_addition_internal3", "grokking2", "grokking_paper", "grokking", "hott_addition", "fourier_projection", "signal_analysis", "transformer_dynamics"]
+  },
+  {
+    "path": "consciousness_overview.html",
+    "slug": "consciousness_overview",
+    "title": "Theorien des Bewusstseins (Theories of Consciousness)",
+    "lang": "de",
+    "size_kb": 49.4,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive summary of Seth & Bayne (2022, Nature Reviews Neuroscience) comparing four scientific theories of consciousness; it is a philosophy-of-mind/neuroscience piece where AI is only a side-application.",
+    "theme": "consciousness",
+    "themes": ["philosophy-of-mind", "global-workspace-theory", "iit", "predictive-processing", "neuroscience"],
+    "thesis": "A German interactive summary of Seth & Bayne (2022, Nature Reviews Neuroscience) comparing the four leading scientific theories of consciousness — Higher-Order Theories (HOT), Global Workspace Theory (GWT), Integrated Information Theory (IIT), and Predictive Processing / Re-Entry — across their core mechanisms, neural loci, and open problems, organized around Chalmers' 'hard problem'.",
+    "key_claims": [
+      "The organizing question is Chalmers' hard problem: why is there subjective experience at all ('what it is like'), distinct from the 'easy' functional/behavioral problems; some theories (IIT, HOT) address it directly and some (GWT) deliberately bypass it.",
+      "HOT: a mental state becomes conscious when the brain represents it 'about itself' via a higher-order / meta-representation; located in the prefrontal cortex; explains mainly why some *contents* are conscious.",
+      "GWT: consciousness arises when information is 'ignited' and broadcast in a global (fronto-parietal) workspace — the 'bulletin board' of specialized modules; explains function and global states but not phenomenal quality.",
+      "IIT: consciousness IS the system's irreducible integrated information (Phi); derived from axioms about experience -> postulates -> identification; located in the posterior 'hot zone'; radical prediction that any system with Phi > 0 (even non-biological, e.g. photodiodes) is (something) conscious; Phi is practically uncomputable.",
+      "Predictive Processing / Re-Entry: perception is the brain's top-down 'best guess' and conscious content is that top-down prediction; Lamme's re-entry theory holds that local recurrent (posterior) processing suffices for consciousness while frontal regions are only needed for *report*.",
+      "The central localization debate is frontal (HOT/GWT) vs posterior (IIT/Re-Entry); 'No-Report' studies show frontal activity drops when no verbal report is needed, hinting it may serve only reporting.",
+      "The timing debate (early 120-200 ms supporting IIT/Re-Entry vs late 250-400 ms P3b supporting HOT/GWT) and the measurement problem (self-report circularity; the Perturbational Complexity Index as a non-report marker) are left open, with 'adversarial collaborations' (IIT vs GWT) proposed as a way forward."
+    ],
+    "methods_math": [],
+    "visualizations": [
+      "a 9-section nav (Uebersicht / HOT / GWT / IIT / PP / Vergleich / Hirnregionen / Offene Fragen / Quiz) with a fixed progress bar and keyboard arrow-key navigation",
+      "a clickable brain-region diagram (PFC / posterior hot zone / fronto-parietal network) that reveals which theory emphasizes each region",
+      "accordions for the HOT variants (Rosenthal, Cleeremans, Lau), the frontal-vs-posterior debate, and the three 'ways forward'",
+      "comparison tables (four theories at a glance; a full 8-criteria comparison; early-vs-late timing; why the cerebellum is not conscious per each theory)",
+      "a 7-question self-test quiz with correct/wrong feedback, plus hover tooltips for glossary terms"
+    ],
+    "internal_tensions": [
+      "It is a neutral overview of a deeply contested field: frontal vs posterior localization, early vs late timing, and the hard-problem stance are all genuinely unresolved, and the tables' tick/mostly-not ratings encode one (reasonable but debatable) reading.",
+      "IIT's most distinctive claim — that non-biological systems and even photodiodes can be conscious — is flagged as 'contraintuitive' rather than resolved, and its Phi is 'practically uncomputable', so the theory's testability remains an open problem the piece admits.",
+      "The measurement problem (validating a consciousness marker without circular self-report) is left open; the piece presents the PCI as clinically useful but notes the fundamental validation gap, and its treatment of AI is only a side-application, not the focus."
+    ],
+    "related_files": ["brain", "bewusstsein", "anatomie_des_verstehens", "was_heisst_denken", "philosophy", "philosophy2"]
+  },
+  {
+    "path": "history.html",
+    "slug": "history",
+    "title": "Topologie der Geschichte (Topology of History) - Interaktiver Explorer",
+    "lang": "de",
+    "size_kb": 48.6,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive explorer of recurring historical structures (cycles, feedback loops, emergence, path dependence, attractors/phase space, Braudel's time-slices); the dynamical-systems math is applied to history, not to any neural net or ML task.",
+    "theme": "dynamical-systems",
+    "themes": ["cliodynamics", "history", "complex-systems", "feedback-loops", "attractors"],
+    "thesis": "A German interactive explorer of recurring structures in history that casts six 'principles' — cyclical dynamics, feedback loops, emergence/self-organization, path dependence, attractors/phase space, and Braudel's time-slices — as live Canvas simulations (with Cliodynamic references to Ibn Khaldun, Spengler, Toynbee, Turchin, and Braudel) to show why history 'rhymes rather than repeats'.",
+    "key_claims": [
+      "Cyclical dynamics: civilizations, economies, and institutions pass through recurring rise-flourish-decline-renewal phases, modeled (Ibn Khaldun's asabiyyah, Spengler, Toynbee, Turchin's cliodynamics) as quasi-periodic oscillations with variable amplitude and damping ('learning').",
+      "Feedback loops: positive feedback drives escalation (arms races, bubbles, revolutions) while negative feedback stabilizes (institutions, norms, checks & balances); their interplay with delay and external shocks generates complex historical dynamics.",
+      "Emergence/self-organization: complex structures (states, markets, cultures) emerge from simple local interactions of many agents with no central plan, modeled by agent-based simulation with conformity pressure and an innovation rate.",
+      "Path dependence: early decisions or chances lock in the whole subsequent course (Lock-in); history is non-ergodic — the path matters, not just the state — with bifurcation points as critical moments (QWERTY, the Reformation, the USSR's collapse).",
+      "Attractors/phase space: historical systems converge to stable equilibria, limit cycles, or strange (chaotic) attractors; revolutions are jumps between attractor basins.",
+      "Braudel's time-slices: three overlapping temporal levels — longue duree (centuries: geography, climate, mentality), conjunctures (decades: economy, social structure), and events (days/years: politics) — superimpose into the 'history' we experience."
+    ],
+    "methods_math": [
+      "damped, forced oscillation (cycles with amplitude, frequency, damping, and noise terms)",
+      "positive/negative feedback loops with delay and perturbation, classified by short-window variance as stable / oscillating / chaotic",
+      "agent-based (Boids-like) simulation with cohesion/separation plus conformity and innovation, measured by Shannon entropy / diversity",
+      "branching path-dependence trees (bifurcation, chaos sensitivity, non-ergodicity)",
+      "attractor dynamics in a 2D phase space: fixed point, limit cycle, and a Lorenz-like strange attractor",
+      "superposition of multi-timescale sine waves (Braudel's three layers with a coupling term) to form the summed 'history'"
+    ],
+    "visualizations": [
+      "a sidebar of six principle buttons plus a large animated Canvas with per-principle parameter sliders, play/pause/reset, and draggable nodes",
+      "Cycles: an orbiting point on a cycle ring with a fading rainbow trail, four phase nodes (Aufstieg/Bluete/Niedergang/Krise), and a synchronized time-series panel",
+      "Feedback: a directed loop graph (Aktion -> Veraestkerung -> Ergebnis -> Dampfung -> Aktion) with animated flow dots and a live system-state time series plus a stability readout",
+      "Emergence: an agent-based simulation of ~120 colored agents (Haendler/Krieger/Gelehrte/Bauern) with influence radii and a live diversity/entropy readout",
+      "Path: a clickable branching decision tree (depth/branches/sensitivity) where clicking a bifurcation node re-rolls the chosen path, with animated flow along the selected branch",
+      "Attractors: draggable attractor nodes (Demokratie/Autokratie/Anarchie) with three particle systems (fixed point / limit cycle / Lorenz-like chaos); clicking anywhere injects a 'revolutionary shock'",
+      "Braudel: four stacked animated time-series (longue duree, conjunctures, events, sum) with per-layer weights and inter-layer coupling arrows"
+    ],
+    "internal_tensions": [
+      "It borrows the vocabulary of nonlinear dynamics (attractors, bifurcation, chaos, limit cycles) to *model* history, but these are illustrative/qualitative simulations, not calibrated or falsifiable historical models — the 'topology' is metaphorical rather than a genuine invariant.",
+      "Real tension between the cycle/feedback framing (history recurs in pattern) and path dependence (history is non-ergodic and unique, 'the path matters') — held together as complementary 'principles' without a resolution of how they cohere.",
+      "No AI/ML content; the closest analog (agent-based emergence) is a general complex-systems tool, and the piece explicitly targets history rather than any learning system."
+    ],
+    "related_files": ["chaos", "phasenraum", "feedback", "new_kind_of_science", "takens_embedding_theorem"]
+  },
+  {
+    "path": "grid_walker.html",
+    "slug": "grid_walker",
+    "title": "Grid Walker: Wie ein neuronales Netz eine Welt 'sieht'",
+    "lang": "de",
+    "size_kb": 48.6,
+    "category": "ki",
+    "category_reason": "It is a German interactive walkthrough of Brenner, Knoesche & Scherf (2026) on how decoder-only transformers and RNNs, trained only to predict the next step of a grid walker, spontaneously form a linear world-state representation extracted by self-attention.",
+    "theme": "world-models",
+    "themes": ["transformer-attention", "interpretability", "geometry-of-embeddings", "representation-learning"],
+    "thesis": "A German 10-chapter interactive walkthrough of Brenner, Knoesche & Scherf (2026): using a fully solvable 'grid walker' prediction task (a random walker that must reach a target in exactly T steps) as a miniature world whose predictive distribution is exactly computable, the paper shows that transformer first-attention layers universally encode the world-state [x_t/t, y_t/t, log t] (readable by linear probes and CKA) while the MLPs then specialize to the variant's 'effective field' q_t — and that this clean world/task separation is an architectural bias of self-attention, not a necessity of the prediction task (RNNs solve it too but without the clean separation).",
+    "key_claims": [
+      "The setup is a random walker on a 2D grid making moves L/R/U/D that must reach a target in exactly T steps; three variants — Walker L (return to start), Walker D (two possible targets, must infer which), Walker O (obstacles break symmetry) — give a world whose full predictive structure is exactly computable.",
+      "Fair sampling uses Doob's h-transform / Bayes: Pr(delta | x, tau) = H(tau-1, x+delta) / H(tau, x), where H(tau, z) is the number of valid length-tau paths from z to the target (dead-ends get probability 0).",
+      "The next-step distribution decomposes in diagonal coordinates u = x+y, v = x-y into an 'effective field' q = (q_u, q_v, q_uv): q_uv = 0 for Walker L (2D field), q_uv != 0 for Walker D (Bayesian uncertainty over which target), and all three components live for Walker O.",
+      "The core mechanistic finding: the first attention head does three things — (A) uniform attention over all past positions, (B) additive value-writes (each token contributes a token-code plus a position-code), (C) token-codes arranged so their average equals the average displacement, i.e. <token-code> = A * (x_t/t) — so one round of uniform averaging computes the world's coordinate system x_t/t plus a log t time code.",
+      "Two-stage layer pipeline: after attention the activation is ~ [x_t/t, y_t/t, log t] (a world coordinate system, invariant across variants, cross-variant CKA 0.95-0.97); after MLP -> LN-final it becomes q_t (the effective field, specialized to the variant, cross-variant CKA drops sharply).",
+      "The net represents *more* than the loss requires (the full world-state, not just the next step): this is not poor compression but an architectural bias — self-attention makes this rich representation cheap.",
+      "RNN comparison: LSTMs and GRUs reach the same Bayes-optimal prediction quality (they must track the world-state too), but the world-state is *mixed* with other variance — no separate 'world layer' — so the world/task separation is architecture-dependent, a 'Rashomon effect'."
+    ],
+    "methods_math": [
+      "Doob h-transform / conditional bridge random walk (Pr(delta|x,tau) = H(tau-1,x+delta)/H(tau,x))",
+      "path counting H(tau, z -> p) via dynamic programming / reverse BFS, with parity and reachability constraints",
+      "diagonal coordinates u = x+y, v = x-y and the log-probability decomposition -q_u du - q_v dv - q_uv du dv (effective field q in R^3)",
+      "linear probes in two directions (decode a -> y vs encode y -> a), read off as R^2",
+      "Centered Kernel Alignment (CKA), invariant to rotation and scaling",
+      "attention mechanics: uniform attention, additive value-writes, and token-codes whose mean equals x_t/t"
+    ],
+    "visualizations": [
+      "a 10-chapter sectioned page with a sticky TOC and sliders/click controls throughout",
+      "Chapter 2: an interactive grid-walker canvas — pick variant (L/D/O) and horizon T, sample random valid paths, and play them back step by step",
+      "Chapter 3: a Bayes / h-transform panel — a heatmap of cells reachable in tau steps (intensity = path count) plus arrow/probability bars for the four next-step probabilities, all slider-driven",
+      "Chapter 4: a vector-field canvas of the effective field q over the grid (drift q_u, q_v arrows, or a q_uv coupling heatmap), switching between Walker L and Walker D",
+      "Chapters 5/6: a clickable attention-matrix canvas (uniform / recent / decay modes) with a per-query contribution bar, plus a 'compass' canvas where clicking L/R/U/D builds a sequence and shows the mean token-code equals x_t/t",
+      "Chapter 7: a simulated linear-probe lab (noise and extra-dimension sliders -> R^2) and a CKA lab (rotation leaves CKA unchanged; only noise lowers it)",
+      "Chapter 8: a grouped Plotly bar chart of decode/encode R^2 for z_t vs q_t across layer hooks (pre / post-attn / post-MLP / LN-final) and a Plotly heatmap of the cross-variant CKA matrix (post-attn vs post-MLP)",
+      "Chapter 9: a Plotly grouped bar chart comparing Transformer vs RNN encoding-R^2 for the world-state across the three walkers"
+    ],
+    "internal_tensions": [
+      "The 'world-state is represented more than the loss requires' claim is a strong interpretability claim; the piece presents the linear-probe/CKA evidence as decisive, but high probe R^2 can coexist with the information being non-causal, and the 'cheapness' argument for attention is asserted rather than proven.",
+      "The two-stage story (attention = universal world-state, MLP = variant-specialized) is clean, but the cross-variant CKA numbers are quoted from the paper and the RNN 'no clean separation' is shown via a small chart; the mechanistic decomposition (uniform attention + additive value-writes) is stated, not derived.",
+      "The whole construction is a discrete, exactly-solvable toy; generalizing its 'predictive statistics shape emergent world representations' conclusion to LLMs is the implicit leap the motivation gestures at but does not establish."
+    ],
+    "related_files": ["coherent_world_models", "coherent_differences_and_world_model", "coherent_worldview", "transformer_dynamics", "qkv", "talking_heads", "position", "geometrie_neuronaler_populationen"]
+  },
+  {
+    "path": "token_manifold_verletzt_simple.html",
+    "slug": "token_manifold_verletzt_simple",
+    "title": "Token-Embeddings verletzen die Manifold-Hypothese - Einfach erklaert",
+    "lang": "de",
+    "size_kb": 48.3,
+    "category": "ki",
+    "category_reason": "It is a simple German explainer of Robinson, Dey & Chiang (2025, arXiv:2504.01002) testing the manifold hypothesis on the token-embedding spaces of real LLMs (GPT2, Llemma7B, Mistral7B, Pythia6.9B) — topology/geometry applied directly to language-model embeddings.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["manifold-hypothesis", "fiber-bundles", "topology-of-nns", "statistics-inference"],
+    "thesis": "A simple German 9-station interactive explainer of Robinson, Dey & Chiang (2025, NeurIPS, arXiv:2504.01002): it builds a per-token statistical test of the assumption that data live on a smooth manifold by reading local dimension as the slope of a log-log (volume vs radius) curve and detecting *kinks* (not mere bends), and shows that the token-embedding spaces of four real LLMs all reject the manifold hypothesis (and three of four reject the milder fiber-bundle hypothesis) — i.e. their 'thought space' has bruchkanten (singularities).",
+    "key_claims": [
+      "The manifold hypothesis — that (almost) every ML work tacitly assumes — is that data lie on a smooth curved surface where each point has a neighborhood like a flat patch of R^d; the paper tests it per token and finds it *false* for real LLM token inputs, which instead have bruchkanten (singularities).",
+      "The core trick: count the neighbors in radius r (the 'volume'), which grows like r^d in d dimensions, so the slope of log(Volume) vs log(r) is the dimension d (the volume is estimated by point-counting / Monte-Carlo).",
+      "The test detects *kinks* (sudden slope changes), not *bends*: a smooth bend can come from curvature (Gray 1974's ball-volume correction K*r^d + (...)r^{d+1}), but an upward kink cannot come from any smooth surface, so it signals a genuine singularity.",
+      "Fiber-bundle hypothesis (Satz 1, the milder model): each neighborhood looks like base space x fiber, so the log-log curve is piecewise linear with slopes that may only *fall* as r grows (fiber dimension -> base dimension); an *upward* kink is impossible and refutes the bundle.",
+      "The machinery: distance matrix -> per-token sorted distances (volume = rank) -> log-log slopes via 3-point differences -> sliding-window t-test -> p-values -> Holm-Bonferroni (multiple-testing correction for 50,257 tokens); the Manifold test is two-sided (any slope change) and the Bundle test one-sided (only rising).",
+      "Validation on three known shapes: the sphere (true 2D manifold — not rejected), the cusp z^8 + x^2 + y^2 = 0 (manifold rejected at the tip, bundle not — exactly the mathematical truth), and the lollipop (1D stem + 2D ball — both rejected); the cusp is the discriminative proof, and edge points are missed (sensitivity costs specificity).",
+      "Results on four real LLMs (~12 h CPU each, mostly the distance matrix): all four reject the manifold hypothesis (min p down to ~3e-8); GPT2's dimension ranges from 20 (numbers, months, weekdays) to 531 (word-fragments), i.e. not constant; Llemma7B (median dim 4096) vs Mistral7B (median dim 48) share a 32,016-token vocab but differ wildly — a 'gDNA' training fingerprint; singular tokens include affect, monitor, aunder, ember, Xan, *.",
+      "Lemma 1 (product/quotient) plus Satz 2: more context does not permanently heal the singularities (for every window size a longer one re-exposes them); singularities can reach the output whenever 2d < ell (d = ambient dimension, ell = latency), i.e. when m > 2*w*d/ell and w >= m is satisfiable."
+    ],
+    "methods_math": [
+      "manifold and manifold-with-boundary definitions, singularities (cusp, dimension jump), and the reach tau",
+      "local dimension via the log-log slope: log V = log K + d * log r (volume ~ K * r^d)",
+      "Gray (1974) ball-volume expansion K*r^d + (...)r^{d+1} as the curvature correction",
+      "the fiber-bundle hypothesis: base space x fiber, piecewise-linear log-log with only-falling slopes",
+      "3-point-difference slope estimation and a sliding-window t-test",
+      "multiple-testing correction via step-down Holm-Bonferroni (compare sorted p_(k) to alpha/(n-k+1))",
+      "Lemma 1 (product/quotient) and the Satz-2 reach-to-output condition m > 2*w*d/ell with w >= m (equivalently 2d < ell)"
+    ],
+    "visualizations": [
+      "a 9-station scroll page with a sticky nav, a progress bar, and per-station Canvas 2D demos (all 2D; this 'simple' version replaces the original's three.js/CDN 3D plots)",
+      "Station 1: a 'two identical prompts, two answers' scatter — a stable cloud A vs cloud B that fragments as a 'naehe zur Bruchkante' slider pushes it toward a bruchkante",
+      "Station 2: a zoom-explorer switching shapes (circle / segment / cusp / lollipop) with a position slider that magnifies a local neighborhood and verdicts it smooth / edge / cusp / dimension-jump",
+      "Station 3: a build-your-own log-log curve with left/right slope and kink-point sliders, flagging 'Steigung STEIGT -> Bruchkante!'",
+      "Station 4: a bend-vs-kink plot (base slope + curvature + a 'Knick einbauen' toggle) with a note on the reach-tau limitation",
+      "Station 5: a fiber-bundle 'strip' demo — a ball of radius r inside/outside a strip of fiber-width, reading slope ~ 2 (fiber) vs ~ 1 (base)",
+      "Station 6: a Holm-Bonferroni plot (sorted p-values vs the step-down threshold plus a Bonferroni line) with a tests-n slider and false-positive / pass counts",
+      "Station 8: a Satz-2 playground (latency ell, dimension d, window w sliders) plotting m_min(d) = 2*w*d/ell against the w bound to test whether singularities survive to the output",
+      "a validation table (sphere / cusp / lollipop), a four-model results table, and a 6-question self-test quiz"
+    ],
+    "internal_tensions": [
+      "The 'simple' version explicitly replaces all 3D/three.js plots with 2D Canvas and calls the synthetic point-clouds 'Nachbauten' (reconstructions), not model weights — so the interactive demos are didactic, and only the reported p-values and dimensions come from the paper.",
+      "The test has an admitted limitation: it cannot say *which* singularity (cusp vs pinch vs jump) and it misses edge/boundary points (a sensitivity-vs-specificity trade-off); moreover non-rejection does not mean 'is smooth' (Pythia6.9B could be a bundle or just high curvature).",
+      "The reach tau (only radii below it are valid) is 'hard to estimate', so the practical validity of each per-token test is itself uncertain; and the method requires open-weight embedding-matrix access, limiting it to a subset of models.",
+      "Satz 2's claim that singularities 'reach the output' is a conditional theorem (2d < ell) recast as a practical 'always satisfiable' rule — a strong extrapolation from the static embedding space all the way to generation."
+    ],
+    "related_files": ["token_manifold_verletzt", "token_manifold_verletzt_very_simple", "llm_topology", "latent_semantic_manifolds_in_llm", "latent_semantic_manifolds_in_llm_simple", "topologie_tiefer_neuronaler_netze", "intrinsische_dimensionen_tiefer_neuronaler_netze", "intrinsische_dimensionen_tiefer_neuronaler_netze_simple", "geometry_of_meaning", "concept_attractors_in_llm"]
+  },
+  {
+    "path": "holes.html",
+    "slug": "holes",
+    "title": "Topologische Loecher - Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 48.3,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive journey through algebraic topology and topological data analysis (holes, homotopy, simplicial complexes, homology, Betti numbers, persistent homology); machine learning (NN latent space, GANs, OOD) is only one of six application domains, not the focus.",
+    "theme": "persistent-homology",
+    "themes": ["algebraic-topology", "topological-data-analysis", "betti-numbers", "topology-of-nns"],
+    "thesis": "A German interactive 8-part journey through the mathematics of topological 'holes': what a hole is (coffee mug = donut), homotopy (a loop that cannot be contracted to a point), simplicial complexes, homology (counting holes as cycles modulo boundaries), Betti numbers, and — the payoff — persistent homology / Vietoris-Rips filtration, which turns 'which holes are signal vs noise' into a persistence diagram (the fingerprint of TDA), closing with applications from neuroscience and biology to machine learning and cosmology.",
+    "key_claims": [
+      "Topology is the art of not being fooled by distortion: a shape's 'form' is what survives continuous deformation (no tearing or gluing) — a coffee mug and a donut are the same (both have one hole), a sphere has zero, and a trefoil / pretzel has three.",
+      "The elegant definition of a hole is a closed loop that cannot be continuously contracted to a point; two loops are homotopic iff one can be deformed into the other.",
+      "To compute with shapes, discretize into a simplicial complex (0-simplex = vertex, 1 = edge, 2 = triangle, 3 = tetrahedron); the Euler characteristic chi = V - E + F is the first topological invariant (sphere chi = 2, torus chi = 0).",
+      "Homology translates geometry into linear algebra: a k-cycle is a closed k-shape, a boundary is a cycle that bounds a region, and a hole is a cycle that is *not* a boundary; H_k = Z_k / B_k and its dimension is the k-th Betti number beta_k.",
+      "Betti numbers are the fingerprint of a shape: point (1,0,0,...); S^1 (1,1); S^2 (1,0,1); torus (1,2,1); genus-3 pretzel (1,6,1); they are topological invariants unchanged by continuous deformation.",
+      "Persistent homology (the TDA core): grow a ball of radius epsilon around each point (Vietoris-Rips filtration) and track which holes are born and when they die as epsilon grows; long-lived holes (points far above the diagonal in the persistence diagram) are real structure, short-lived ones are noise; the diagram is stable under small data changes and machine-readable.",
+      "Applications: grid cells in the hippocampus code a torus; cancer cells show different topological fingerprints; the latent space of neural nets has topology (persistent homology for improving GANs / detecting out-of-distribution data); large-scale cosmic structure (voids/filaments) is quantified by Betti numbers; and sensor-network 'uncovered holes' become beta_1 computations."
+    ],
+    "methods_math": [
+      "topological invariants under homeomorphism / continuous deformation",
+      "homotopy of loops (contractibility) and the homotopy equivalence of loops",
+      "simplicial complexes and the Euler characteristic chi = V - E + F",
+      "homology H_k = Z_k / B_k (cycles modulo boundaries) and the Betti numbers beta_0, beta_1, beta_2",
+      "Vietoris-Rips filtration / epsilon-balls, with union-find for connected components",
+      "persistence diagrams (birth/death pairs), persistence, and stability under perturbation",
+      "an approximate beta_1 via the Euler estimate b1 ~ E - V + C - T with crude 3-clique (triangle) counting"
+    ],
+    "visualizations": [
+      "a sticky 8-part nav plus TOC cards, each part an annotated Canvas 2D / three.js / Plotly demo",
+      "Part 1: a noisy-ring scatter (point count, noise, ring-fraction sliders) posing 'is this a ring or chance?'",
+      "Part 2: a free-deformation demo (deformation slider over disk / annulus / double / triple) with live beta_1 / beta_0 readouts",
+      "Part 3: a loop-contraction demo (shrink slider, encloses-hole yes/no) showing a loop stuck on a hole versus one that contracts to a point",
+      "Part 4: a click-to-build simplicial complex (add vertices / edges / faces) with live V, E, F, and chi = V - E + F",
+      "Part 5: a cycle-vs-boundary toggle (filled triangle = boundary / no hole vs hollow triangle = cycle-not-boundary / hole)",
+      "Part 6: a three.js 3D viewer (sphere / torus / double-torus / pretzel, auto-rotate) with live beta_0, beta_1, beta_2 and chi readouts",
+      "Part 7: a Vietoris-Rips filtration canvas (epsilon slider plus an animation) with live beta_0 / beta_1, a Plotly persistence diagram (birth vs death for H_0 / H_1), and a Plotly Betti-curves-over-epsilon plot",
+      "Part 8: application cards (neuroscience, biology, machine learning, cosmology, time series, sensor networks) plus a written summary of the whole journey"
+    ],
+    "internal_tensions": [
+      "The piece repeatedly promises 'mathematisch rigoros, stabil' for persistent homology, but the actual beta_1 in the demo is an *approximation* (Euler estimate E - V + C - T with crude triangle counting), not true persistent homology — a gap between the advertised rigor and the toy implementation.",
+      "It says a point cloud 'has no holes' and only gains them via the epsilon-filtration, yet also that the answer is stable and machine-readable — the tension being that the answer depends on the chosen epsilon band (scale), so 'which holes are real' is relative to the scale window.",
+      "The applications section makes bold, un-argued claims (grid cells 'code a torus'; cancer cells have distinct topological fingerprints; TDA improves GANs) presented as settled fact without evidence; and the piece is general TDA, not specifically about NN/LLM embeddings, so the ML application is thin relative to the topology core."
+    ],
+    "related_files": ["topological_data_analysis", "persistent_topology", "persistent_landscape", "betti", "algebraische_topologie", "cohomology", "kokettenkomplex", "topologie_tiefer_neuronaler_netze", "llm_topology"]
+  }
+]

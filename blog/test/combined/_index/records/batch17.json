@@ -1,0 +1,610 @@
+[
+  {
+    "path": "linear_seperability.html",
+    "slug": "linear_seperability",
+    "title": "Lineare Separierbarkeit in tiefen neuronalen Netzen — Interaktive Erkundung",
+    "lang": "de",
+    "size_kb": 54.3,
+    "category": "ki",
+    "category_reason": "It is a German interactive explainer of a deep-learning paper (Zhang et al., arXiv:2307.13962, 2023) that measures per-layer linear separability of hidden-layer activations in deep neural networks and uses it to explain why larger nets generalize; the whole content is about neural nets, training, and generalization.",
+    "theme": "linear-separability",
+    "themes": ["deep-learning-theory", "representation-geometry", "generalization", "neural-network-interpretability"],
+    "thesis": "An interactive German walkthrough of Zhang et al. (arXiv:2307.13962, 2023): the paper asks whether the internal work of a deep network can be measured layer by layer, and answers yes by defining a geometric 'linear separability' (LS) of each hidden layer's activations, showing that training and separability rise in lockstep ('synchronicity'), and using random-matrix bounds to explain why deeper and wider nets generalize better even though classical VC/Rademacher theory predicts overfitting.",
+    "key_claims": [
+      "The motivating gap: classical complexity theory (VC dimension, Rademacher) says large nets overfit, but practice shows large nets generalize better; the paper proposes a simple per-layer geometric measure — how well a hyperplane separates the two class clouds of a layer's activations.",
+      "Theorem 3: two sets A, B are linearly separable iff every point of the Minkowski difference MD(A,B) = {a_i - b_j} lies on one side of a hyperplane through the origin; the Minkowski-difference trick reduces 'two clouds, one separating line' to 'one cloud, one hyperplane through the origin'.",
+      "The MD-LSM gives four numeric LS measures: LS* (fraction of MD-points on the better side; NP-hard to optimize), LS_1 (ratio of absolute distances, in (0,1], 1 = perfectly separable), and LS_2 (squared; rewrites as a generalized eigenvalue problem with a closed, efficiently solvable form — the reason it is usable in practice); a cheap approximation sets MM^T = I so omega_hat = m_tilde/||m_tilde|| is just a sum, no eigendecomposition.",
+      "Theorem 1 (synchronicity): whenever training raises the training accuracy in an epoch, the linear separability of the hidden layer rises in the same epoch, and conversely; the per-layer LS curves track the accuracy curve, with deeper layers (closer to the output) showing higher LS.",
+      "Theorem 9: a purely linear transformation cannot change separability (only rotation/stretch); it is the non-linear activation that lets a net reorder the points and 'untangle' the classes.",
+      "Theorem 11: if F_sigma(x,y) > 2 then the activation moves MD-points from the minor side to the major side, i.e. it increases separability; sigmoid, tanh, arctan, and softsign all satisfy this.",
+      "Theorem 12 / Corollary 13 (random-matrix bounds): the probability that separability increases rises with width H (term H * exp(-LS_2^2 / 8 sigma^2) is linear in H but then dominated by the exponential once LS_2 is already high), so a wider or deeper net has a higher chance of increasing LS — the structural explanation for why bigger nets need not overfit.",
+      "Best linear classification accuracy is always >= LS* (Theorem 7), and all four measures are monotone in separability; the four measures are validated empirically on MLPs, CNNs, ResNets and ViTs."
+    ],
+    "methods_math": [
+      "linear separability and separating hyperplanes in R^n",
+      "Minkowski (Minkowski-set) difference MD(A,B) = {a_i - b_j}",
+      "four LS functionals: counting (LS*), L1-ratio (LS_1), L2 (LS_2) and their optimization",
+      "generalized eigenvalue problems and the MM^T = I approximation",
+      "convex geometry of two class clouds, major/minor side, overlap and spread parameters",
+      "activation functions (identity, tanh, sigmoid, ReLU, softsign) as non-linear reordering maps",
+      "random matrix theory / concentration bounds for width and depth (Theorem 12, Corollary 13)",
+      "epoch-by-epoch training dynamics (accuracy vs per-layer LS synchronicity)"
+    ],
+    "visualizations": [
+      "a layer-by-layer 'untangling' animation: two interlaced point clouds become linearly separable as a 'layer depth' slider moves, with a live linear-separation score and a 'tangled/separated' readout",
+      "a draw-your-own-points linear-separability lab: add class A / class B points, rotate the separating line and shift the bias, with live accuracy and a separable/not-separable verdict",
+      "a side-by-side original-vs-Minkowski-difference panel with a rotatable separating hyperplane through the origin and config presets (separable / overlapping / XOR-like)",
+      "a tabbed LS* / LS_1 / LS_2 explorer with overlap and spread sliders, a scatter plot plus a Plotly bar comparison of the three measures and best linear accuracy",
+      "a live training simulator (canvas + Plotly): choose number of layers and epochs, run a small net, and watch each layer's LS curve follow the accuracy curve over training",
+      "a linear-vs-nonlinear activation comparison: the same point cloud under identity (no untangling) vs tanh/sigmoid/relu/softsign (classes untangle), with an activation-shape Plotly plot",
+      "a width/depth bound explorer: sliders for width H, depth L and initial LS_2 driving a Plotly of the random-matrix probability bound and the width/depth bound readouts",
+      "a final 'Frage / Idee / Antwort' synthesis panel plus a summary table of the four LS measures"
+    ],
+    "internal_tensions": [
+      "Theory-vs-practice is the driving tension: classical generalization bounds predict overfitting for large nets, while the paper's structural separability argument says size helps; the piece leans on the latter to close the gap.",
+      "LS* is the most intuitive measure but NP-hard to optimize, so the practically useful LS_2 relies on the MM^T = I approximation — a deliberate loss of exactness for speed that the paper flags.",
+      "It is a visualization/interpretation piece, not a proof: the deep theorems are asserted and illustrated, and the claims are validated empirically rather than derived end-to-end here."
+    ],
+    "related_files": ["generalisierung_im_deep_learning", "topologie_tiefer_neuronaler_netze", "topologie_tiefer_neuronaler_netze_2", "why_deep_learning_works", "understanding_deep_learning", "theory_of_deep_learning", "llm_topology", "attn_as_optimal_transport_simple"]
+  },
+  {
+    "path": "buecher/kritik_der_reinen_vernunft.html",
+    "slug": "kritik_der_reinen_vernunft",
+    "title": "Kants Kritik der reinen Vernunft – Interaktiv",
+    "lang": "de",
+    "size_kb": 54.2,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive companion to Kant's Critique of Pure Reason, covering the architecture of the Critique, the Copernican turn, space and time as forms of intuition, the categories, analytic/synthetic judgments, appearance vs thing-in-itself, and the transcendental dialectic; it is a philosophy-of-mind/epistemology piece with no ML/neural-net focus.",
+    "theme": "philosophy",
+    "themes": ["kant", "epistemology", "transcendental-idealism", "critique-of-pure-reason"],
+    "thesis": "An interactive German companion to Kant's Critique of Pure Reason: it asks 'what can we know at all?', turns the inquiry from the world to the faculties of cognition themselves, and stages each core idea — the Copernican reversal, space/time as a priori forms of intuition, the categories of the understanding, the analytic/synthetic distinction, appearance vs. thing-in-itself, and the transcendental dialectic — as a clickable Canvas demo.",
+    "key_claims": [
+      "The Critique is a map of our thinking: it does not investigate the world but the cognitive faculty, showing where secure knowledge is possible and where we drift into illusion.",
+      "The Copernican turn: it is not our knowledge that conforms to objects but objects that conform to our knowledge; like Copernicus rotating the observer instead of the stars, Kant reverses the subject-object relation (pre-Kant dogmatism = the mind as a passive mirror of reality).",
+      "Space and time are not properties of things-in-themselves but a priori forms of our intuition — the 'glasses' through which all experience is possible; they precede experience and make it possible.",
+      "The categories of the understanding are the a priori concepts the mind applies to synthesize the manifold of intuition into objects of experience.",
+      "Judgments split into analytic (predicate contained in subject) and synthetic (predicate adds something); Kant's project is to explain how synthetic a priori judgments (e.g. mathematics) are possible.",
+      "The distinction between appearance (phenomena, things as they appear to us) and the thing-in-itself (noumenon, the thing independent of our cognition) is the backbone of the system.",
+      "The transcendental dialectic shows how reason, when it goes beyond possible experience, falls into illusions/antinomies (the famous contradictory demands about the world as a whole)."
+    ],
+    "methods_math": [],
+    "visualizations": [
+      "a tabbed (nav-button) interactive layout with eight sections, each an annotated Canvas 2D diagram plus controls",
+      "an overview diagram of the architecture of the Critique with animated build-up and clickable elements",
+      "a 'Copernican revolution' slider that rotates the perspective from pre-Kant (mind mirrors world) to post-Kant (world conforms to mind)",
+      "a space-and-time demo with toggles to turn the forms of intuition 'on/off' and see what happens to experience",
+      "a categories diagram, an analytic/synthetic-judgment demo, an appearance-vs-thing-in-itself diagram, and a transcendental-dialectic diagram",
+      "a closing self-test quiz"
+    ],
+    "internal_tensions": [
+      "The appearance/thing-in-itself split is the load-bearing tension: the mind can know phenomena but never the noumenon, so the very framework that makes knowledge possible also limits it.",
+      "The Copernican turn is presented as the fix for dogmatism, but it is itself a radical, hard-to-justify move (objects conforming to the knowing subject), which the piece stages rather than defends.",
+      "No AI/ML content; this is a pedagogical philosophy piece, and its demos are illustrative diagrams rather than rigorous reconstructions of Kant's arguments."
+    ],
+    "related_files": ["analytischer_idealismus", "analytic_idealism", "buecher/sein_und_zeit", "philosophy", "philosophy2", "warum_fuehlt_sich_raum_so_an", "buecher/antioed"]
+  },
+  {
+    "path": "attn_as_optimal_transport_simple.html",
+    "slug": "attn_as_optimal_transport_simple",
+    "title": "Attention ist Optimaler Transport — Einfach erklärt",
+    "lang": "de",
+    "size_kb": 54.2,
+    "category": "ki",
+    "category_reason": "It is a German interactive explainer of a 2025 deep-learning theory paper (Litman, Stanford, arXiv:2508.08369) that derives softmax attention from one-sided entropic optimal transport and shows backprop through attention is a REINFORCE policy-gradient; it is squarely about transformer attention and learning.",
+    "theme": "transformer-attention",
+    "themes": ["optimal-transport", "information-geometry", "reinforcement-learning", "softmax", "scaled-dot-product-attention"],
+    "thesis": "An interactive German 'simple' version of Litman (Stanford, 2025, arXiv:2508.08369), 'Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport': softmax attention, invented in 2017 by intuition, is shown to be the UNIQUE solution of a clean optimization problem — maximize similarity while staying maximally undecisive while being a probability — and, more surprisingly, the gradient used to learn attention is a REINFORCE policy-gradient whose variance-reducing baseline falls out for free; the two routes (optimal transport and RL) are then shown to be the same object via the Fisher matrix.",
+    "key_claims": [
+      "Softmax is a choice made in 2017 that simply worked; the paper's point is that softmax is not a design choice but the unique solution of a well-posed problem on the simplex (maximize similarity, stay maximally undecisive, be a probability).",
+      "The decisive trick: classical optimal transport fixes both marginals (a source pile and a target pile, solved by Sinkhorn iteration); here only ONE side is fixed — a single source (one Dirac = one 'quantum of attention') with a free target — so the plan matrix collapses to a single row vector and the feasible region is exactly the simplex, giving a closed-form solution with no iteration (this is the distinction from 'Sinkhorn attention').",
+      "Theorem 3.3 (exists / unique / form): the objective J(p) = -<p, s> + tau * sum p_j log p_j over the simplex attains a minimum (extreme-value theorem), the minimum is unique (linear <p,s> plus the strictly convex entropy term make J strictly convex), and Lagrange/KKT stationarity gives p_j proportional to exp(s_j / tau), i.e. exactly softmax.",
+      "Remark 3.4 (why tau = sqrt(d_k)): if q and k have independent mean-0 variance-1 components then <q,k> has variance d_k; dividing by sqrt(d_k) rescales the variance back to 1, otherwise softmax saturates to one-hot and the gradients vanish — the division is a variance normalization / a matching of the entropic-regularization strength to the dimension.",
+      "One regularizer, many mechanisms: argmin_p -<p,s> + Omega(p) over the simplex; swapping Omega gives softmax (Omega = -tau H, dense), sparsemax (Omega = 1/2 sum p_j^2, exact zeros via L2 projection), alpha-entmax (Tsallis, continuously tunable sparsity), and ALiBi (Omega = -tau H + gamma sum p_j |i-j|, a linear distance penalty / local bias).",
+      "Theorem 5.2 (the backpass = REINFORCE): with context c(p) = sum p_j v_j, utility u_j = -dL/dp_j and advantage A_j = u_j - E_p[u], the gradient is dL/ds_j = -(p_j*/tau)(u_j - E_p[u]) = -(p_j*/tau) A_j — literally REINFORCE with an expectation baseline; the baseline is a free gift because the softmax Jacobian (1/tau) p_k (delta_kj - p_j) has column sum 0, a pure consequence of sum p_j = 1, which makes the gradient low-variance and training stable.",
+      "Theorem 6.3 (the dual potential): minimizing J yields the dual potential phi*(s) = tau log(sum_j exp(s_j/tau)) = Log-Sum-Exp, with the three identities phi* = -V, grad phi* = p*, and Hessian phi* = tau F(s) — the value, gradient and curvature of a single scalar encode the problem, the solution and the learning dynamics.",
+      "Corollary 7.5 (the 'ring closure'): d2/ds2 phi*(s) = tau F(s) = (1/tau)(diag(p*) - p*(p*)^T) — the curvature of the dual potential equals (up to tau) the Fisher information matrix equals the RL 'transducer'; three perspectives (optimal transport, information geometry, reinforcement learning) land on the same one matrix, which acts as a 'gearbox' damping the learning signal where the strategy has already decided (at the simplex boundary) — manifold-aware learning.",
+      "Honesty section: no new mechanism (SDPA is bit-for-bit identical), no experiments (a purely theoretical paper), and the max-entropy/Gibbs link is classical (Jaynes 1957); what is new is the one-sided entropic-OT embedding (closed form, no Sinkhorn), the policy-gradient bridge (baseline for free), and the geometric explanation of why they belong together (Corollary 7.5)."
+    ],
+    "methods_math": [
+      "the probability simplex Delta^(m-1) and its entropy H(p) = -sum p_j log p_j (strict convexity of x log x)",
+      "(one-sided) entropic optimal transport with a single Dirac source and a free target",
+      "convex optimization on the simplex: existence (extreme-value theorem), strict convexity, KKT/Lagrange conditions",
+      "temperature/regularization tau and the sqrt(d_k) variance-normalization argument",
+      "a family of regularizers (softmax, sparsemax, alpha-entmax/Tsallis, ALiBi) from a single variational problem",
+      "policy-gradient (REINFORCE) and the advantage/baseline decomposition of the attention backprop",
+      "the Log-Sum-Exp (soft-max) dual potential and the envelope theorem",
+      "Fisher information geometry: F = (1/tau)(diag(p) - p p^T) as the metric on the simplex"
+    ],
+    "visualizations": [
+      "a 'touch it first' attention demo: five key words in a circle, a draggable query arrow in the centre, with the attention 'wandering' and a temperature slider (narrow/safe vs broad/open) and winner-key / entropy readouts (2D Canvas)",
+      "a draggable simplex: move a point around the 2-simplex, keep it a valid distribution, read p1/p2/p3 and entropy (corner = committed, centre = maximally open)",
+      "a one-sided transport animation stepping full OT (two marginals, square) -> single Dirac source -> drop the column condition -> one row = simplex",
+      "a live optimizer demo: a mirror-descent numerical solver rolling into the valley of J, racing the analytic softmax (star); the gap between them goes to zero as scores/temperature change",
+      "a family-comparison plot: same scores, four distributions (softmax / sparsemax / entmax / ALiBi) with alpha and gamma sliders and non-zero-entry / entropy readouts",
+      "an 'attention bandit' (2D Canvas): rows for strategy p, utility u, advantage A and the update Delta s; E[u] climbs monotonically to the best arm as the policy gradient runs",
+      "a Log-Sum-Exp plot as a 'soft max' with a temperature slider, overlaid with the hard max and the softmax component (its gradient)",
+      "a Fisher-matrix-as-gearbox plot: an 'enthusiasm' (score sharpness) slider showing edge damping where p is concentrated",
+      "a six-question self-test quiz with a live score"
+    ],
+    "internal_tensions": [
+      "The tension between 'it was a lucky 2017 guess' and 'it is forced by mathematics' — the piece's entire point is that the guess is actually the unique optimum, which it proves via strict convexity rather than by re-inventing anything.",
+      "One-sided vs full optimal transport: dropping the second marginal is what turns an intractable (Sinkhorn-iterated) problem into a closed-form one; the piece is careful to mark this as the real novelty and to avoid conflating it with existing Sinkhorn-attention work.",
+      "It is purely theoretical with no experiments, so all 'results' are identities and geometric explanations of an already-shipped mechanism (SDPA), not performance gains — the piece states this explicitly as a boundary of the claim."
+    ],
+    "related_files": ["attn_as_optimal_transport", "attn_as_optimal_transport_very_simple", "attn", "qkv", "qkv2", "talking_heads", "transformer_rein_geometrisch", "buecher/attention_is_all_you_need"]
+  },
+  {
+    "path": "ologs.html",
+    "slug": "ologs",
+    "title": "Ologs – Interaktive Reise durch Spivak & Kent (2012)",
+    "lang": "de",
+    "size_kb": 54.1,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive companion to Spivak & Kent (2012), 'Ologs: A Categorical Framework for Knowledge Representation'; although knowledge representation is a classical AI sub-field, the content here is pure categorical logic (categories, functors, limits, database schemas) with no ML/neural-net component.",
+    "theme": "category-theory",
+    "themes": ["knowledge-representation", "categorical-logic", "database-schemas", "functors"],
+    "thesis": "An interactive German journey through Spivak & Kent (2012), 'Ologs: A Categorical Framework for Knowledge Representation': it argues that scientific and corporate knowledge is trapped in 'silos' of prose that cannot be precisely linked, and that ologs — labelled categories / sketches — give a language that is both human-readable and machine-precise, serving as database schemas, expressing primitive recursion, and being composable between authors via functors.",
+    "key_claims": [
+      "The problem ologs solve: knowledge is stored in prose 'silos' that cannot be precisely linked; we need a language that is human-readable AND machine-precise and can translate ideas between different authors.",
+      "The idea is to use the language of category theory: boxes for concepts (types), arrows for functional relations (aspects), and commutative diagrams for facts; a basic olog is exactly a category with English labels, where each element has a meaning.",
+      "An olog-arrow IS a function between sets: every source element has exactly one arrow out, no source may point at two targets (no ambiguity), but two sources may point at the same target.",
+      "Categories = graphs plus path-equivalences: arrows compose, and two different paths A -> C may be declared equal (a commutative diagram); this is what 'pins down' meaning and is the key difference from RDF/OWL/semantic nets.",
+      "Building blocks: a Type is a box labelled with a noun ('a person', 'a woman', 'a pair (a,b) where ...'); an Aspect is an arrow = function ('a woman is a person'); a Fact is a commutative diagram ('the female parent of a person is their mother' = two paths are equivalent); good style has boxes start with 'a/an' and arrows form English sentences.",
+      "Instances: ologs double as database schemas — a schema (the olog) and a set of instances (a model/functor into Set) are cleanly separated, and primitive recursion can be expressed.",
+      "Functors connect ologs (e.g. products, pullbacks, coproducts, pushouts), letting one knowledge model be translated into another and composed, which is what makes them more composable than RDF/OWL/semantic nets in precision."
+    ],
+    "methods_math": [
+      "sets, functions, and the definition of a function (total, single-valued, not necessarily injective)",
+      "categories, composition, identities, commutative diagrams / path equivalence",
+      "labels-as-English (types, aspects, facts) and the discipline of 'good style'",
+      "categories with distinguished objects/sketches (basic ologs)",
+      "models of an olog as functors into Set (instances as database rows)",
+      "products, pullbacks, coproducts, pushouts, and functors between ologs",
+      "a fact-tree / metric structure for relating knowledge models"
+    ],
+    "visualizations": [
+      "a silo-vs-olog toggle (Canvas): prose silos that cannot be linked vs an olog network, with a random-seed slider",
+      "a function-building game: drag arrows from set A to set B and check whether the result is a valid function (|A|, |B| sliders)",
+      "a category/path-building demo: click arrows to build paths, and reveal the commutative area when two paths are declared equal",
+      "a live olog editor ('family'): sliders resize the 'woman' and 'person' boxes and a checkbox toggles the 'mother = female parent' fact (the checkmark appears when the diagram commutes)",
+      "an instances / database-schema demo (olog as schema, models as rows)",
+      "a functors / products / pullback / coproduct / pushout section with Canvas diagrams",
+      "a fact-olog and a knowledge-network (Canvas) plus a Plotly fact-tree and a Plotly metric plot"
+    ],
+    "internal_tensions": [
+      "The central tension is precision-vs-readability: ologs try to be both human-readable English and machine-precise category theory, and the piece leans on commutative diagrams to do the 'pinning down' that prose cannot.",
+      "It is explicitly positioned against RDF/OWL/semantic nets as more precise and composable, but that is a comparative claim about expressivity/compositionality, not an empirical one — the value is structural, and the piece is a categorical-logic tutorial rather than a KR system.",
+      "Though knowledge representation is a long-standing AI sub-field, this particular artefact has no learning/neural content; the 'AI' is classical symbolic/compositional knowledge modelling."
+    ],
+    "related_files": ["paper/olog", "kategorientheorie", "categorytheorie", "commutative_diagram", "adjunct_functor", "monoid", "darstellungstheorie", "kategorientheorie"]
+  },
+  {
+    "path": "warum_fuehlt_sich_raum_so_an.html",
+    "slug": "warum_fuehlt_sich_raum_so_an",
+    "title": "Warum fühlt sich Raum so an? - Interaktive Erklärung",
+    "lang": "de",
+    "size_kb": 53.9,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive explainer of a consciousness/perception paper (built on Integrated Information Theory) about why spatial experience feels extended — 'spots', extendedness, the 5 axioms of experience, a grid substrate, and testable predictions — with no ML/neural-net focus (the 'grid' and 'attention = gain increase' are about the brain, not about machine learning).",
+    "theme": "consciousness",
+    "themes": ["integrated-information-theory", "perception", "space", "consciousness-theory"],
+    "thesis": "An interactive German explainer of a paper (framed via Integrated Information Theory) that asks why spatial experience feels the way it does: not 'why do we see certain objects' but 'why does the canvas itself feel extended'; it introduces 'spots' (indistinguishable regions of experienced space), argues space is chosen over colour because it is introspectively decomposable and universal, derives extendedness from connection/fusion/inclusion, states the 5 axioms of experience and a central thesis, and models experience on a grid substrate whose inhomogeneities become 'stars in the sky'.",
+    "key_claims": [
+      "The central question is reframed from 'why do we see certain objects' to 'why does the extended canvas itself feel extended' — spatial experience is modelled as a 'painting' whose surface, not just its content, is what we feel.",
+      "Space is the right place to start (rather than, e.g., colour) because it is introspectively decomposable (has internal structure), is universal (visual + bodily + ...), and is scientifically accessible.",
+      "A 'spot' is any distinguishable region of experienced space, from a tiny point to the whole visual field; space exists even with no objects in it (the empty night sky still feels extended).",
+      "Extendedness is derived from three primitive relations: Connection (Verbindung), Fusion (Verschmelzung), and Inclusion (Einschluss); from these, further spatial properties are derived.",
+      "The framework is grounded in Integrated Information Theory (IIT): the 5 axioms of experience are the basis, and the theory is used to explain why experience has the structure it does.",
+      "Experience is modelled on a grid (Gitter) substrate with connections between nodes; the 'unfolded structure' of the grid and a comparison against a random network show the grid is the right substrate (it yields the right kind of spatial structure that a random net does not).",
+      "Inhomogeneities in the grid correspond to 'stars in the sky' (features of experience), and 'attention' is modelled as a gain-increase on some connections; the piece distinguishes a genuine inhomogeneity (a feature) from attention (a modulation of gain), and derives four testable predictions (space needs no 'fire'; changing connections distorts space; a lesion makes space disappear; extending the grid extends space)."
+    ],
+    "methods_math": [
+      "Integrated Information Theory (IIT) and its 5 axioms of experience",
+      "'spots' as distinguishable regions of experienced space and their nesting",
+      "extendedness decomposed into connection, fusion and inclusion relations",
+      "a grid substrate with weighted connections as a model of experience",
+      "comparison of a grid against a random network (what structure the grid uniquely yields)",
+      "inhomogeneities as features ('stars') vs attention as a gain-increase on connections",
+      "four empirical predictions derived from the model (lesions, distortion, extension)"
+    ],
+    "visualizations": [
+      "a 'night sky' canvas to move the mouse over, evoking the felt extension of empty space (the central-question hook)",
+      "an SVG Venn-style diagram of nested spots (whole space -> middle spot -> small spot -> point)",
+      "diagrams for connection / fusion / inclusion and for derived spatial properties",
+      "a grid-substrate visualization with connections, an 'unfolded structure' view, and a side-by-side grid-vs-random-network comparison",
+      "an 'inhomogeneities = stars in the sky' visualization and a 'what changes' panel",
+      "an 'attention = gain increase' visualization and an inhomogeneity-vs-attention comparison",
+      "a 'predictions & evidence' panel with the four testable predictions, plus a five-question comprehension quiz"
+    ],
+    "internal_tensions": [
+      "The core tension is between the felt, all-pervasive extension of experience and a discrete grid substrate — the piece has to show that a grid of connected nodes reproduces the continuous 'canvas' feel, and it uses the grid-vs-random-network contrast to argue the grid is special.",
+      "It is a paper-explainer built on IIT, a contested framework, so the strong claims (why space, the 5 axioms, the grid) inherit IIT's own controversies; the piece presents them as the paper's thesis rather than proving them independently.",
+      "No AI/ML content: the 'grid' and 'attention = gain increase' are models of the brain's spatial experience, not of a trained model, so the ML-adjacent vocabulary is about neuroscience, not machine learning."
+    ],
+    "related_files": ["bewusstsein", "consciousness_overview", "coherent_worldview", "coherent_differences_and_world_model", "homological_scaffolding_psilocybin", "buecher/kritik_der_reinen_vernunft"]
+  },
+  {
+    "path": "garben_weltsicht.html",
+    "slug": "garben_weltsicht",
+    "title": "Kohärente Welt — Garben, Keime, Situs",
+    "lang": "de",
+    "size_kb": 53.8,
+    "category": "nicht-ki",
+    "category_reason": "It is a German slide-deck (arrow-key presentation) that builds sheaf/germ/situs and infinity-coherence theory from the ground up (point -> neighborhood -> measurement -> stalk -> germ -> gluing -> situs -> limits); it is pure math (sheaf and infinity-category theory) with no ML/neural-net focus.",
+    "theme": "sheaves",
+    "themes": ["coherence", "infinity-topos", "situs", "world-model"],
+    "thesis": "A German slide-deck, 'Kohärente Welt' (a coherent world), that reconstructs the sheaf-theoretic worldview step by step: from a single point, to a neighborhood (without distance), to a measurement (thermometer -> number), to a stalk (many measurements at one point), to germs (behaviour in arbitrarily small neighbourhoods), to compatibility/incompatibility on overlaps (where incompatibility is glossed as measurement error, wrong model, lie, or 'hallucination'), to the presheaf -> sheaf gluing condition, to an infinity-sheaf / infinity-coherence upgrade, and finally to situs and limits.",
+    "key_claims": [
+      "The whole sheaf-theoretic vocabulary can be built up from a single point: a point, then a neighbourhood (a notion of 'near' without any metric/distance), then a measurement (a thermometer that turns a point into a number).",
+      "Many measurements at the same point (temperature, colour, tone, humidity, pressure, ...) bundle into a stalk (Halm); a germ (Keim) is the behaviour of a local section in arbitrarily small neighbourhoods of a point.",
+      "On overlapping neighbourhoods, two local sections are compatible iff their restrictions agree on the overlap (s_1|_{U intersect V} = s_2|_{U intersect V}); when they disagree (s_1| != s_2|) that signals a measurement error, a wrong model, a different object, a lie, or a 'hallucination'.",
+      "The presheaf -> sheaf step is the gluing condition: compatible local sections glue to a single global section; a sheaf is exactly the data where local information coheres into global information.",
+      "The 'Blitz und Donner' (lightning and thunder) slide exposes the subtlety: two stalks with the same origin that are NOT equal on the time axis; they are reconciled by an equalizer (f(x) = g(y), e.g. t_Ton = t_Blitz + d/v_Schall), so the stalks are 'homotopic' (connected by a reversible transformation).",
+      "The infinity-sheaf / infinity-coherence (infinite-Koherenz) step generalizes the classical sheaf gluing to higher coherences, and the deck closes by moving to situs and to limits — the abstract, category-theoretic form of 'a coherent world'."
+    ],
+    "methods_math": [
+      "points, neighbourhoods and a notion of 'near' without a metric",
+      "measurements / sections and the stalk (Halm) at a point",
+      "germs (Keime) as equivalence classes of sections in arbitrarily small neighbourhoods",
+      "the compatibility condition on overlaps and the presheaf -> sheaf gluing (COM) condition",
+      "equalizers and reversible (homotopy-like) identifications of stalks",
+      "infinity-sheaves / infinity-coherence (higher coherences)",
+      "situs and limits (the categorical generalization of a coherent world)"
+    ],
+    "visualizations": [
+      "an arrow-key slide-deck (click/keyboard navigation) of ~14+ slides, each with one or more Plotly plots",
+      "Plotly slides building up the vocabulary: a point, a neighbourhood (without distance), a thermometer measurement (space + value), many measurements at one point (stalk)",
+      "Plotly slides for germs, multiple germs, overlapping neighbourhoods, the compatible (equal-on-overlap) case and the incompatible case",
+      "a presheaf -> sheaf gluing plot, a 'Blitz und Donner' (lightning/thunder) plot, and the equalizer (f(x)=g(y)) plot showing the homotopy/reversible-identification",
+      "a classic-vs-infinity-sheaf comparison and plots for the infinity-coherence concept, situs, and limits",
+      "a closing 'coherent-not-true' Plotly plot (coherence is not the same as truth)"
+    ],
+    "internal_tensions": [
+      "The load-bearing tension is coherence-vs-truth: compatible local data glues into a global object (coherence), but coherence is explicitly NOT truth — the deck carries a dedicated 'coherent but not true' slide to keep the two apart.",
+      "Incompatibility on overlaps is the flashpoint: the same mathematical condition (disagreement on the overlap) is glossed in many different ways (measurement error, wrong model, different object, lie, hallucination), which is a deliberate interpretive stretch from pure sheaf theory.",
+      "The leap from classical sheaves to infinity-sheaves / situs / limits is the big conceptual jump; the deck presents it as a natural upgrade, but it is the move from a set-valued gluing condition to higher-categorical coherence."
+    ],
+    "related_files": ["garben", "garben_2", "garben_in_transformern", "garbentheorie", "garben_uebersicht", "sheaves", "sheaf", "stacks", "garben_zug"]
+  },
+  {
+    "path": "grokking2.html",
+    "slug": "grokking2",
+    "title": "Grokking Experiments — What They Actually Did",
+    "lang": "en",
+    "size_kb": 53.5,
+    "category": "ki",
+    "category_reason": "It is an English interactive breakdown of the deep-learning 'grokking' experiments (Power et al., 2021) in which a tiny transformer learns binary operation tables and later generalizes; it is squarely about neural-network training and generalization.",
+    "theme": "grokking-generalization",
+    "themes": ["deep-learning", "generalization", "double-descent", "transformer", "weight-decay"],
+    "thesis": "An interactive English reconstruction of exactly what Power et al. (2021), 'Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets', experimented with: a tiny overparameterized transformer (~400K params) learns binary operation tables over abstract symbols, and the piece walks through seven experiments to show which operations generalize, what makes generalization happen (weight decay + noise), the dramatic memorization-then-grokking gap (double descent), robustness to wrong labels, the geometric structure learned inside (t-SNE of embeddings), and a hidden isomorphism between different operations.",
+    "key_claims": [
+      "The setup: a decoder-only transformer (2 layers, width 128, 4 heads, ~400K non-embedding params) trained on 5 tokens <a> <op> <b> = <c> with loss only on the answer token c, where each element is an ABSTRACT SYMBOL (no numeric structure given), AdamW lr=1e-3 weight-decay=1, batch 512, 10^5-step budget — massively overparameterized, so classical theory predicts mere memorization.",
+      "Experiment 1 (which operations generalize): symmetric operations (x+y, x^2+y^2) need less data than asymmetric ones (x-y, x/y); x+y mod (p-1) and x*y mod p are mathematically equivalent via primitive roots and indeed show identical curves; some operations (e.g. x^3 + x y^2 + y) never generalize even at 95% data; and mixed operations (divide if odd, subtract if even) CAN generalize — the network learns to dispatch.",
+      "Experiment 2 (ablations on the S_5 group product, 120 elements / 14400 equations): weight decay is 'king' and roughly halves the data needed; weight decay toward the origin beats decay toward the initialization; any source of noise (mini-batch SGD, gradient noise, weight noise) helps, consistent with 'noise finds flatter minima'; the learning rate must be within ~1 order of magnitude; and ALL configurations reach 100% training accuracy in 10^3-10^4 steps, so generalization — not optimization — is the bottleneck.",
+      "Experiment 3 (time to generalize): near 25-30% of the data, removing just 1% of data requires 40-50% MORE optimization steps (an exponential blowup); meanwhile the time to reach 99% training accuracy actually DECREASES with less data (fewer examples are easier to memorize); this is a genuine compute-for-data tradeoff.",
+      "Experiment 4 (the dramatic grokking demo, division mod 97, 50% data, Adam with NO weight decay, 10^6 steps): training accuracy hits 100% by ~10^3 steps, validation accuracy stays at chance (1/97 ~ 1%) until ~10^5 steps, then suddenly shoots to 100% by ~10^6 steps; the validation LOSS actually INCREASES during memorization (double descent), peaking around 10^5 before the second descent — showing grokking can happen without explicit regularization, just from SGD noise over long training.",
+      "Experiment 5 (outlier robustness / wrong labels): the network always reaches 100% training accuracy (it memorizes the wrong labels too); generalization is barely affected up to k=1000 corrupted labels but degrades at k=2000-3000 — evidence that the network has capacity far beyond what memorization needs and that generalization requires a 'non-trivial explanation', not just capacity constraints.",
+      "Experiment 6 (what the network learns inside): t-SNE of the output-layer weights shows modular addition forms a CIRCLE (the network discovered Z/pZ is cyclic), with adding 8 tracing a path around it and residue classes mod 8 clustering; S_5 forms coset clusters; weight decay makes the structure more apparent; and at 0% training progress (before grokking) the embedding is just noise.",
+      "Experiment 7 (the hidden equivalence): x+y mod (p-1) is isomorphic to x*y mod p (via the discrete logarithm / primitive roots), and x-y mod (p-1) is isomorphic to x/y mod p; the data-efficiency curves of these isomorphic pairs match."
+    ],
+    "methods_math": [
+      "tiny decoder-only transformer architecture (2 layers, 128 width, 4 heads) and the abstract-symbol operation-table task",
+      "a sweep over training-data fraction (10%-95%) and best validation accuracy as the generalization metric",
+      "ablation over optimizer/regularization: AdamW weight decay, decay-to-origin vs decay-to-init, mini-batch/gradient/weight noise, learning-rate sensitivity",
+      "the compute-for-data tradeoff and the critical data threshold (exponential blowup near 25-30% data)",
+      "double descent: training accuracy saturating while validation loss first rises then falls (the dramatic grokking curve)",
+      "robustness to corrupted labels (memorizing wrong answers) as evidence about capacity vs explanation",
+      "t-SNE visualization of output-layer embeddings revealing group/coset structure (cyclic Z/pZ, S_5 cosets)",
+      "isomorphisms between operations via primitive roots / discrete logarithm (x+y mod p-1 ~ x*y mod p)"
+    ],
+    "visualizations": [
+      "a 'what they built' architecture box (a code-styled block) spelling out the transformer, input format, abstract-symbol caveat, and optimizer",
+      "Experiment 1: a 12-operation grid plus a Plotly of best validation accuracy vs data-fraction with a fraction slider",
+      "Experiment 2: a Plotly of the 9 ablation curves (AdamW-the-winner, Adam, full-batch, full-batch+noise, dropout, decay-to-init, low/high LR, weight-noise) with a method-highlight dropdown and an optional training-accuracy toggle",
+      "Experiment 3: a Plotly of optimization-steps-to-99%-validation vs data-fraction with a critical-threshold and steepness slider and an optional train-time overlay",
+      "Experiment 4: the hero grokking plot (division mod 97) — training accuracy, validation accuracy and optionally loss vs steps — with data-fraction and weight-decay sliders and a Run button",
+      "Experiment 5: a Plotly of generalization vs number of corrupted labels (k) with a k slider and an Update button",
+      "Experiment 6: a t-SNE Canvas (650x650) of the output embeddings with task (mod-add / S_5), modulus, training-progress (noise -> structure) and colour-by-residue-mod sliders",
+      "Experiment 7: two side-by-side Plotly panels (isomorphic data-efficiency curves) with a prime-p slider, plus a small Canvas for the isomorphism map"
+    ],
+    "internal_tensions": [
+      "The headline tension is memorization-vs-generalization: an overparameterized model that should just memorize instead, after a long delay, 'groks' and generalizes — the double-descent loss curve (val loss rising then falling) is the visual signature of this paradox.",
+      "Regularization is both the driver and the complicating factor: Experiment 4 shows grokking happens even with NO explicit weight decay (just SGD noise), while Experiment 2 shows weight decay dramatically accelerates it — the piece holds both true at once.",
+      "It is a careful 'what they actually did' reconstruction of another group's experiments, so the claims are about faithfully reproducing the power et al. findings (and their interpretations, e.g. 'noise finds flatter minima') rather than presenting new results."
+    ],
+    "related_files": ["grokking", "grokking_addition", "grokking_paper", "grokking_addition_internal", "grokking_addition_internal2", "fourier_addition", "hott_addition", "generalisierung_im_deep_learning"]
+  },
+  {
+    "path": "topoi.html",
+    "slug": "topoi",
+    "title": "Topoi - Interaktive Einführung",
+    "lang": "de",
+    "size_kb": 52.8,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive introduction to topos theory (the big idea, the three roots, category preliminaries, the elementary-topos definition, the subobject classifier, examples, internal intuitionistic logic, Heyting algebras, and sheaves); it is pure category theory / mathematical logic with no ML focus.",
+    "theme": "topos-theory",
+    "themes": ["category-theory", "intuitionistic-logic", "sheaves", "heyting-algebras", "subobject-classifier"],
+    "thesis": "An interactive German introduction to topoi: it gives the big idea (a topos as a 'universe of sets' that can support its own internal logic), traces the three roots (algebraic geometry, category theory, logic/set theory) that united around 1970, reviews the category preliminaries ('instead of epsilon': monos, products, pullbacks), states the elementary-topos definition, builds up the subobject classifier Omega, walks through concrete examples (Set^2, Set^->, bundles Bn(I), the M2 counterexample), shows that the internal logic is in general intuitionistic (and related to Kripke models), and develops Heyting algebras and the sheaf (geometric) root before a panorama.",
+    "key_claims": [
+      "A topos is a category that behaves like a 'universe of sets' rich enough to support its own internal logic; the three historical roots — algebraic geometry (Grothendieck topologies / sheaves), category theory, and logic/set theory — merged around 1970 into topos theory.",
+      "The category preliminaries are recast 'instead of epsilon': injective arrows as monomorphisms, products done categorially, and the pullback (fibre product) as the key construction.",
+      "An elementary topos is defined axiomatically (finite limits, a terminal object, exponentials, and a subobject classifier Omega satisfying the Omega axiom).",
+      "In Set the subobject classifier is Omega = {0,1}; the defining property is the pullback square, and the general Omega-axiom says subobjects of X correspond to arrows X -> Omega.",
+      "Concrete examples: Set^2 (pairs of sets), Set^-> ('sets through time' / arrows), Bn(I) (bundles of sets), and M2 as the canonical counterexample to some tempting generalization.",
+      "The internal logic of a topos is in general INTUITIONISTIC, not classical; the logical operations are themselves arrows, and topos logic connects to Kripke models.",
+      "Heyting algebras (e.g. the Heyting algebra of open sets of a space) formalize this intuitionistic logic; the sheaf condition (COM) is the geometric root of all of it, and Grothendieck topologies generalize it."
+    ],
+    "methods_math": [
+      "categories, objects, arrows, composition",
+      "monomorphisms, products, pullbacks (fibre products)",
+      "the elementary-topos axioms (finite limits, terminal object, exponentials, subobject classifier)",
+      "the subobject classifier Omega and the subobject correspondence (subobjects of X ~ arrows X -> Omega)",
+      "concrete topoi: Set^2, Set^->, bundles Bn(I), and the M2 counterexample",
+      "internal/intuitionistic logic of a topos and its relation to Kripke models",
+      "Heyting algebras (open sets of a space)",
+      "the sheaf (gluing/COM) condition and Grothendieck topologies"
+    ],
+    "visualizations": [
+      "a MathJax-rendered, canvas-driven single-page intro with 11 sections",
+      "an 'from element to arrow' interactive canvas (the big idea)",
+      "a category-builder canvas ('build arrows') for the category preliminaries",
+      "canvases for monomorphisms, products, and the pullback",
+      "a subobject-classifier canvas (Omega = {0,1} in Set) and the pullback square",
+      "a canvas for the concrete examples (Set^2, Set^->, bundles, M2)",
+      "a logic-as-arrows canvas and a Heyting-algebra canvas (open sets of a space)",
+      "a sheaf / Grothendieck-topology canvas and a 'panorama' summary of the three faces of a topos"
+    ],
+    "internal_tensions": [
+      "The central tension is classical-vs-intuitionistic logic: the internal logic of a topos is generally intuitionistic (not bivalent), which is the whole point of the subobject classifier and is tied to Kripke models.",
+      "It is an introductory panorama that unifies three deep roots (algebraic geometry, category theory, logic) in one page, so depth is traded for breadth — the definitions and examples are stated and illustrated rather than proved.",
+      "No AI/ML content; this is foundational category theory / mathematical logic."
+    ],
+    "related_files": ["higher_topos_theory", "inftytopoi", "sheaves", "sheaf", "grothendiek", "grothendiek2", "kategorientheorie", "categorytheorie"]
+  },
+  {
+    "path": "making_it_explicit.html",
+    "slug": "making_it_explicit",
+    "title": "Making It Explicit — Interaktive Reise durch Brandoms Meisterwerk",
+    "lang": "de",
+    "size_kb": 52.3,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive journey through Robert Brandom's 'Making It Explicit' (inferentialism, norms, deontic scorekeeping, anaphora, de re/de dicto, objectivity); it is a philosophy-of-language piece with no ML/neural-net focus.",
+    "theme": "philosophy-of-language",
+    "themes": ["inferentialism", "deontic-scorekeeping", "norms", "brandom", "meaning"],
+    "thesis": "An interactive German journey through Robert Brandom's 'Making It Explicit': it is driven by the question of what makes a system genuinely discursive, and argues that meaning is inferential (the role a content plays in inferences) and that discursive practice is grounded in 'deontic scorekeeping' — the bookkeeping of commitments and entitlements that participants track for one another — from which objectivity (norms pointing beyond any individual) and the anaphoric (not substantial) character of truth and reference follow.",
+    "key_claims": [
+      "The driving question is what separates a genuinely discursive (reason-giving) practice from a mere stimulus-response system (the thermostat-vs-reporter contrast): a system is discursive when its responses are subject to the give-and-take of reasons.",
+      "Norms are the 'invisible architecture of the mind': a rule is not a regularity (the rule-regress / Wittgenstein point, and the gerrymandering contrast show that mere regularity is not normativity), and what is normative is the entitlement to count a response as correct.",
+      "Inferentialism: the meaning (content) of a claim is its role in inferences — you 'build meaning through inferences'; logic has an expressive role (it is not a body of truths but the machinery for tracking the consequences of commitments).",
+      "Deontic scorekeeping is the heart of the book: a discursive practice is the game of tracking one another's commitments and entitlements; an interactive scorekeeper 'game' lets the reader play it.",
+      "Perception and action are the inputs and outputs of the scorekeeping: the thermometer-vs-reporter (Sellars) contrast shows the difference between a mere indicator and a reason-giving reporter, and practical inference is the move from a belief to an action.",
+      "Truth and reference are ANAPHORIC, not substantial: truth is best understood via the prosentence operator (a device that repeats/endorses a prior assertion), and reference is likewise anaphoric rather than a direct 'naming' relation.",
+      "Substitution is how sentences are decomposed: Frege's substitution test (contexts that preserve truth value) identifies the parts a sentence is built from; anaphoric chains link subsequent references back to what was asserted.",
+      "De re vs de dicto are the two perspectives on attribution (attributing to an object vs to a description); and objectivity is how norms point beyond any single scorekeeper — the 'objectivity proof' shows that a practice with mutual scorekeeping is answerable to norms no individual sets.",
+      "The closing move is 'who we are': the scorekeeping picture is offered as an account of what it is to be a discursive agent."
+    ],
+    "methods_math": [],
+    "visualizations": [
+      "a Plotly/Temml interactive single-page with ~10 sections, each a heading plus an interactive 'Demo' (canvas/Plotly + Temml formulas)",
+      "Demo 0: thermostat vs reporter — the indicator-vs-reason-giver contrast",
+      "Demo 1a: the rule-regress (Wittgenstein) and Demo 1b: regularity is not norm (a gerrymandering-style contrast)",
+      "Demo 2: 'build meaning through inferences' (an inferential-role builder) and Demo 2b: the expressive role of logic",
+      "Demo 3: an interactive deontic scorekeeper 'game' (play the commit/entitle bookkeeping)",
+      "Demo 4a: the thermometer and the reporter (Sellars) and Demo 4b: practical inference (belief -> action)",
+      "Demo 5: the prosentence operator (truth as anaphoric endorsement)",
+      "Demo 6: Frege's substitution test (sentence decomposition)",
+      "Demo 7: anaphoric chains (linking references back to prior assertions)",
+      "Demo 8: de dicto vs de re attribution, and Demo 9: the objectivity proof"
+    ],
+    "internal_tensions": [
+      "The core tension is regularity-vs-normativity: Brandom must explain how a practice of responses (which is, at bottom, a regularity) comes to be governed by norms, and the rule-regress and the scorekeeper game are the tools offered for this.",
+      "The anaphoric turn (truth and reference are anaphoric, not substantial) is the bold, counter-intuitive claim: 'truth' is not a property a sentence has but a role in a prosentential endorsement, which the piece presents as a resolution of the traditional problem of truth.",
+      "It is a philosophy-of-language companion that stages Brandom's dense system as interactive demos, so it is necessarily a mental-model rendering of the book rather than a formal treatment, and it contains no AI/ML content."
+    ],
+    "related_files": ["buecher/antioed", "frege", "analytischer_idealismus", "analytic_idealism", "philosophy", "philosophy2", "was_heisst_denken", "buecher/sein_und_zeit"]
+  },
+  {
+    "path": "game.html",
+    "slug": "game",
+    "title": "Infinite Wanderer",
+    "lang": "en",
+    "size_kb": 52.0,
+    "category": "nicht-ki",
+    "category_reason": "It is a self-contained English browser game ('Infinite Wanderer'), a procedurally generated infinite exploration game with biomes, depth, discoveries, streaks, combos and a minimap; it is a generative/interactive game with no AI/ML subject matter.",
+    "theme": "procedural-game",
+    "themes": ["generative-art", "exploration", "browser-game"],
+    "thesis": "A self-contained English canvas game, 'Infinite Wanderer': you click-and-drag to wander a procedurally generated, effectively infinite world and scroll to zoom, while the game tracks your biome, depth, speed, a discoveries counter, a streak, your rarest find, a combo meter and a minimap — a meditative, endless exploration toy with a 'just wander' ethos and periodic discovery popups.",
+    "key_claims": [
+      "It is an endless, procedurally generated exploration game: the world is effectively infinite, you 'click & drag to explore' and 'scroll to zoom', and the ethos is explicitly 'just wander'.",
+      "The HUD tracks a biome (starting 'The Beginning'), a depth counter, a speed multiplier, a discoveries counter, a streak counter, and the 'rarest' thing found so far.",
+      "A combo meter (large orange number) pops up to reward sustained/streaked discovery, and a minimap (bottom-right) shows where you are in the generated space.",
+      "Discoveries trigger a centered popup (title + description) that scales in with a springy easing, giving each find a moment of focus.",
+      "The whole thing is a single file: a fixed canvas, an HUD overlay, a minimap canvas, a custom cursor, and a game loop — no external libraries."
+    ],
+    "methods_math": [
+      "procedural / deterministic world generation across an effectively unbounded coordinate space",
+      "a camera + zoom transform mapping world coordinates to the screen and to a minimap",
+      "discovery/streak/combo bookkeeping as a lightweight reward system"
+    ],
+    "visualizations": [
+      "a full-window 2D canvas rendering the procedurally generated world with a custom circular cursor",
+      "an HUD (top-left) for biome/depth/speed and a discoveries panel (top-right) for count/streak/rarest",
+      "a 150x150 minimap (bottom-right) mirroring the world view",
+      "a springy discovery popup (center) and a large combo meter",
+      "a pulsing hint bar ('Click & drag to explore - Scroll to zoom - Just wander...')"
+    ],
+    "internal_tensions": [
+      "The tension is minimal by design: it is a low-stakes, meditative exploration toy rather than a goal-driven game — the 'challenge' is to keep wandering, find rare things, and build a streak, with no fail state emphasized.",
+      "As a one-file canvas game it trades any real world-building depth for a single, self-contained generative loop; it has no AI/ML or mathematical-theory content."
+    ],
+    "related_files": ["game2", "fun", "mood_explorer", "spiegelsaal", "grid_walker"]
+  },
+  {
+    "path": "buecher/attention_is_all_you_need.html",
+    "slug": "attention_is_all_you_need",
+    "title": "Attention – Geometrisch Verstehen",
+    "lang": "de",
+    "size_kb": 51.8,
+    "category": "ki",
+    "category_reason": "It is a German interactive, geometry-first explanation of the transformer attention mechanism from 'Attention Is All You Need' (Vaswani et al., 2017), covering Q/K/V subspaces, the dot-product score, scaled softmax, the convex-combination output, and multi-head attention; it is squarely about transformers/neural nets.",
+    "theme": "transformer-attention",
+    "themes": ["geometry", "multi-head-attention", "embeddings", "transformer", "qkv"],
+    "thesis": "A German interactive, geometry-first explanation of the attention mechanism in 'Attention Is All You Need' (Vaswani et al., 2017): attention is content-dependent routing — each token sends a query into the embedding space, matches it against other tokens' keys (similarity = dot product / projected length), normalizes to weights with softmax, and outputs a convex combination of the values; the Q/K/V matrices cut slanted subspaces to specialize the comparison, and multi-head attention runs several such 'views' in parallel.",
+    "key_claims": [
+      "The core idea: embeddings are points in a high-dimensional space where directions can carry meaning; attention adds content-dependent routing — 'whom do I ask, and what do I get back' — letting each token deliberately gather information from other tokens.",
+      "W^Q, W^K, W^V cut slanted 64-dim subspaces out of the full 512-dim embedding space, giving specialized views: the query space ('what am I looking for?'), the key space ('what do I offer?'), and the value space ('what do I pass on?'); they are oblique projections, not axis-aligned slices, so different aspects (syntax / semantics / position) can be emphasised.",
+      "Q * K is the dot product, geometrically the projected length of one vector onto the other: same direction -> large positive score -> high attention; perpendicular -> ~0; opposite -> negative -> ~0 after softmax.",
+      "Division by sqrt(d_k) (here sqrt(64) = 8) normalizes the dot-product variance (which is ~d_k in 64 dims) back to ~1; without it softmax saturates and the gradients vanish.",
+      "Softmax turns the scaled scores into a probability distribution (all positive, sum to 1); temperature controls sharpness — low temperature = one token dominates (near a hard lookup), high temperature = near-uniform.",
+      "The weighted sum of the values is a CONVEX combination, so the output point lies inside the convex hull (simplex) of the values: attention can only MIX existing information, not invent new information; the following FFN layer then transforms non-linearly.",
+      "Multi-head attention cuts 8 different 64-dim subspaces (each with its own W^Q, W^K, W^V), each attending to a different aspect (syntax / semantics / local / verb-noun / reference / position / negation / long-range); the 8 outputs (64d each) are concatenated (to 512d) and projected back by W^O.",
+      "Why attention is so powerful: content-dependent routing (any token to any other, strength by content), parallel perspectives (8 heads ask different 'questions'), O(1) path length (information flows in one step, unlike RNNs), and learnable subspaces (the model decides which aspects to compare)."
+    ],
+    "methods_math": [
+      "embeddings as points in a high-dimensional vector space with directional meaning",
+      "linear projections W^Q, W^K, W^V as oblique subspaces of the embedding space",
+      "the dot product as projected length / similarity and the 1/sqrt(d_k) variance normalization",
+      "softmax as a probability distribution and its temperature/sharpness",
+      "the output as a convex combination of value vectors (the value simplex)",
+      "multi-head attention and the concat + W^O re-projection",
+      "scaled dot-product attention (SDPA) and O(1) path length"
+    ],
+    "visualizations": [
+      "a MathJax + Canvas 2D single-page with 7 sections, each a heading, prose, a math block and an interactive canvas",
+      "an overview canvas: a 2D simplification where 'sitzt' (red) queries the space, thick lines = high attention, the green diamond = output",
+      "a subspace canvas showing W^Q projecting the full (grey) space onto a slanted (red) subspace, with an angle slider",
+      "a dot-product canvas: rotate the query (white) and read its projection onto each key, with a query-angle slider",
+      "a softmax bar chart of attention weights for the query 'sitzt' over all keys, with a sharpness (1/temperature) slider",
+      "a weighted-sum canvas: the green output point moves inside the triangle (simplex) of three values as alpha_1/alpha_2/alpha_3 sliders change",
+      "a multi-head canvas: 8 heads cutting different slanted planes out of the whole space, with buttons to select each head (syntax/semantics/local/verb-noun/reference/position/negation/long-range)",
+      "a full-flow canvas: click any token to make it the query and observe the whole attention flow, with a token row below"
+    ],
+    "internal_tensions": [
+      "The load-bearing insight/tension is that attention can only produce a point inside the convex hull of the values — it mixes, it does not invent; the non-linearity that adds new information comes from the FFN, not from attention itself.",
+      "There is a real 512-dim object being explained in 2D/3D canvases, so the geometric pictures are faithful analogies (slanted subspaces, a triangle of values) rather than literal pictures of the high-dimensional space.",
+      "It is a visualization/interpretation piece on a well-known 2017 paper, so it explains rather than extends; it contains no new mechanism, only a geometric re-telling of SDPA and multi-head attention."
+    ],
+    "related_files": ["attn_as_optimal_transport_simple", "attn_as_optimal_transport", "attn", "qkv", "qkv2", "talking_heads", "transformer_rein_geometrisch", "paper/AttentionViz"]
+  },
+  {
+    "path": "paper/perceive_this_as_that.html",
+    "slug": "perceive_this_as_that",
+    "title": "Sorting with Bialgebras and Distributive Laws — Interactive Explainer",
+    "lang": "en",
+    "size_kb": 51.8,
+    "category": "nicht-ki",
+    "category_reason": "It is an English interactive explainer of a category-theory / functional-programming paper (Hinze, James, Harper, Wu & Magalhães, WGP'12) on the categorical structure of sorting algorithms via bialgebras and distributive laws; it is pure category theory / programming-language theory with no ML focus.",
+    "theme": "category-theory",
+    "themes": ["functional-programming", "sorting-algorithms", "bialgebras", "duality", "catamorphism-anamorphism"],
+    "thesis": "An interactive English visual guide to the categorical structure of sorting algorithms (based on Hinze, James, Harper, Wu & Magalhães, WGP'12): sorting algorithms come in DUAL pairs, and using bialgebras and distributive laws from category theory one can formalize this duality and derive one algorithm from another 'for free' — e.g. insertion sort (a fold/insert) is the dual of selection sort (an unfold/select), and the computational essence shared by bubble sort and naive insertion sort is a single natural transformation called 'swap'.",
+    "key_claims": [
+      "The core thesis: sorting algorithms come in dual pairs, and bialgebras + distributive laws let you formalize this duality and derive one algorithm from another for free.",
+      "Folds (catamorphisms) consume a data structure by replacing its constructors with operations; unfolds (anamorphisms) produce a data structure from a seed using a coalgebra; a sort is a map from the initial (unsorted) list mu-List to the final (sorted) list nu-List, and can be built as a fold of an unfold or an unfold of a fold.",
+      "Insertion sort is a fold (insert) and its dual selection sort is an unfold (select).",
+      "The 'essence' of bubble sort and naive insertion sort is a single natural transformation called swap — it swaps two adjacent elements if they are out of order — and the interactive shows one swap step at a time.",
+      "A bialgebra (the interplay of the algebra and coalgebra structures) together with a distributive law captures how the fold and unfold compose, which is what makes the duality rigorous and the derivations 'for free'.",
+      "The duality table / summary plot contrasts the paired algorithms and the algebraic data types involved."
+    ],
+    "methods_math": [
+      "catamorphisms (folds) and anamorphisms (unfolds) over (co)algebras",
+      "initial (mu-List) vs final (nu-List) list types and the type of a sort",
+      "bialgebras and distributive laws for composing folds and unfolds",
+      "the 'swap' natural transformation as the shared computational essence of bubble/insertion sort",
+      "dual pairs of sorting algorithms (insertion <-> selection)"
+    ],
+    "visualizations": [
+      "a Plotly + Temml single-page with ~5 sections, each a heading, a key-idea box, Temml math blocks and canvas demos",
+      "a 'big picture' flow diagram: fold (consumes) <-> unfold (produces), and insertion sort (fold/insert) <-> selection sort (unfold/select)",
+      "side-by-side fold (catamorphism) and unfold (anamorphism) canvases with their type signatures",
+      "an interactive 'swap' sorter: Step / Run / Reset to watch the adjacent-swap natural transformation perform a sort",
+      "a bialgebra canvas showing the algebra/coalgebra interplay and the distributive law",
+      "a tree canvas and a heap canvas for the related structures, and a final summary Plotly contrasting the paired algorithms"
+    ],
+    "internal_tensions": [
+      "The central tension is the fold/unfold duality: the same sorting task (mu-List -> nu-List) can be decomposed as a fold of an unfold or an unfold of a fold, and the bialgebra/distributive-law machinery is precisely what makes these two routes agree.",
+      "It is a category-theory / functional-programming paper explainer, so the 'results' are structural (a duality, a free derivation, a shared 'swap' essence) rather than empirical or about performance; it contains no AI/ML content.",
+      "The 'for free' derivations are powerful but abstract — the interactive leans on the swap step and the flow diagrams to make the abstract duality concrete."
+    ],
+    "related_files": ["paper/sorting_with_bialgebras", "kategorientheorie", "categorytheorie", "higher_algebra", "monoid", "commutative_diagram", "product_coproduct"]
+  },
+  {
+    "path": "schleifenraum.html",
+    "slug": "schleifenraum",
+    "title": "Schleifenraum – interaktiv verstehen",
+    "lang": "de",
+    "size_kb": 51.6,
+    "category": "nicht-ki",
+    "category_reason": "It is a German interactive exposition of the loop space Omega(X) and its role in algebraic topology (pointed spaces, loops, the compact-open topology, concatenation, the fundamental group, suspension, the Sigma/adjunction, Eckmann-Hilton, and higher homotopy groups); it is pure algebraic topology with no ML focus.",
+    "theme": "algebraic-topology",
+    "themes": ["loop-space", "homotopy-groups", "eckmann-hilton", "suspension"],
+    "thesis": "A German interactive explanation of the loop space Omega(X): starting from why loops matter and a pointed space (X, x_0), it defines a loop, forms the space of all such loops Omega(X), explains how to topologize a space of functions (the compact-open topology), shows how two loops deform and concatenate (v * w), extracts the fundamental group pi_1(X, x_0), builds the suspension Sigma(X), states the adjunction Sigma left-adjoint Omega (and the Eckmann-Hilton duality), and finally shows how higher homotopy groups arise from iterating Omega.",
+    "key_claims": [
+      "Loops (maps S^1 -> X based at x_0) are the entry point to the higher homotopy groups; the loop space Omega(X, x_0) collects all such loops into a single space whose points are loops.",
+      "A pointed space (X, x_0) and a pointed map are the required setup: the basepoint is what makes 'loop' meaningful.",
+      "A loop is a continuous map from the circle (or interval with endpoints identified) that starts and ends at x_0.",
+      "To make Omega(X) a genuine topological space one must topologize a space of functions; the compact-open topology is the standard choice (subbasis from preimages of open sets on compact domains).",
+      "Two loops can be deformed and concatenated: the product v * w means 'run v first, then run w', and this operation (up to homotopy) is what gives Omega(X) its group structure.",
+      "The fundamental group pi_1(X, x_0) is the set of free homotopy classes of based loops under concatenation.",
+      "The suspension Sigma(X) and the loop space Omega(X) are related by an adjunction Sigma left-adjoint Omega; this is the setting for the Eckmann-Hilton argument (two compatible operations force equality and commutativity, showing pi_n is abelian for n >= 2).",
+      "Higher homotopy groups pi_n(X, x_0) are obtained by iterating the loop space: pi_n(X) = pi_1(Omega^{n-1}(X))."
+    ],
+    "methods_math": [
+      "pointed spaces (X, x_0) and pointed maps",
+      "loops S^1 -> X based at x_0 and their (free) homotopy classes",
+      "the loop space Omega(X, x_0) as a topological space",
+      "the compact-open topology on function spaces",
+      "concatenation of loops (v * w) and the group structure on [S^1, X]_0",
+      "the fundamental group pi_1(X, x_0)",
+      "the suspension Sigma(X) and the adjunction Sigma left-adjoint Omega",
+      "the Eckmann-Hilton argument and abelianness of pi_n for n >= 2",
+      "iterated loop spaces giving the higher homotopy groups pi_n"
+    ],
+    "visualizations": [
+      "a KaTeX + Plotly + Three.js single-page with 10 numbered sections, each a heading, prose and a canvas/plot",
+      "a motivation canvas (why loops), a pointed-space canvas, a 'what is a loop' canvas, and an Omega(X) canvas",
+      "a compact-open-topology canvas, a deform/concatenate canvas, and a concatenation (v * w) canvas",
+      "a fundamental-group canvas",
+      "a Plotly 3D suspension canvas (Sigma(X))",
+      "an adjunction (Sigma left-adjoint Omega) canvas and an iterated-loop / higher-homotopy-groups canvas"
+    ],
+    "internal_tensions": [
+      "The load-bearing tension is the adjunction Sigma left-adjoint Omega: looping and suspending are dual operations, and the Eckmann-Hilton theorem (two compatible unital operations force each other to be equal and commutative) is the algebraic heart that makes higher homotopy groups abelian.",
+      "Topologizing a space of functions (the compact-open topology) is a subtle step that is glossed rather than fully developed, but it is what turns 'the set of loops' into the topological space Omega(X).",
+      "No AI/ML content; this is classical algebraic topology / homotopy theory."
+    ],
+    "related_files": ["loopspaces", "homotopie", "homotopie_kurz", "cohomology", "higher_topos_theory", "hott", "hott_book"]
+  },
+  {
+    "path": "finneganswake.html",
+    "slug": "finneganswake",
+    "title": "Finnegans Wake: The Dreaming",
+    "lang": "en",
+    "size_kb": 51.1,
+    "category": "nicht-ki",
+    "category_reason": "It is an English interactive cyclical text-adventure game set in the dreamworld of James Joyce's 'Finnegans Wake' (scenes, choices, inventory, an HCE guilt/innocence reputation, and a cycling structure); it is a literary game with no AI/ML subject matter.",
+    "theme": "literary-game",
+    "themes": ["james-joyce", "finnegans-wake", "text-adventure", "cyclical-narrative"],
+    "thesis": "An interactive English cyclical text adventure, 'Finnegans Wake: The Dreaming': you drift through the dreamworld of Dublin, where a fallen publican sleeps by the River Liffey and all of history swirls in the night — you collect fragments of the Letter, witness the Fall and the Rise, and (because the dream is cyclical) everything returns to the river; a cycle counter, an inventory (Letter, Key, Salmon of Wisdom, Blarney Stone) and an HCE guilt-vs-innocence reputation track your progress.",
+    "key_claims": [
+      "It is a cyclical text adventure: the dream 'always returns to the river', and a cycle counter tracks how many times the loop has completed.",
+      "The narrative is drawn from James Joyce's 'Finnegans Wake': the opening 'riverrun...' passage, the Fall of Finnegan (the builder/giant who fell from his scaffold/ladder at the Magazine Wall, head at Howth, feet at the Magazine), and his 'Rise' (whiskey splashed on his lips and he sits up), with HCE as the new master.",
+      "You make choices at each scene (e.g. follow the thunderclap to the Fall, drift to the pub, follow the river to the washerwomen), and an inventory collects the Letter, the Pub Key, the Salmon of Wisdom, and the Blarney Stone.",
+      "An HCE reputation value (roughly -5 to +5) tracks guilt vs innocence across your decisions.",
+      "The title screen sets the tone ('a cyclical text adventure through the dreamworld of Dublin'), and the game is a single self-contained HTML file with a scenes object, a choices UI, a location bar and an inventory bar."
+    ],
+    "methods_math": [],
+    "visualizations": [
+      "a single-file HTML text adventure with a title screen (Enter the dream... button)",
+      "a scene container with a location bar, story text (including Joyce-voice quoted passages), and a choices panel",
+      "an inventory bar (Letter / Key / Salmon / Stone) that lights up as items are collected",
+      "a cycle counter showing how many times the cyclical dream has looped",
+      "a state object (cycle, scene, inventory, visited, hceReputation, choices, dreaming) driving the scene graph"
+    ],
+    "internal_tensions": [
+      "The central structural tension is cyclicity: the narrative is explicitly a loop (the dream returns to the river, the Fall and the Rise recur), and the cycle counter is the mechanical expression of that.",
+      "It is a literary pastiche of Joyce's extremely dense, punning text, so it necessarily simplifies and dramatizes 'Finnegans Wake' into a playable scene graph; the tension is between the source's density and the game's accessibility.",
+      "No AI/ML content; this is a creative/literary browser game."
+    ],
+    "related_files": ["finneganswake2", "finneganswake3", "game", "game2", "buecher/antioed"]
+  }
+]

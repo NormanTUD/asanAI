@@ -1,0 +1,367 @@
+[
+  {
+    "path": "bordism.html",
+    "slug": "bordism",
+    "title": "Interactive Bordism Explorer",
+    "lang": "en",
+    "size_kb": 26.2,
+    "category": "nicht-ki",
+    "category_reason": "Reine Visualisierung von Bordismen (Cobordismen) in der algebraischen Topologie / TQFT; keine Anwendung auf KI/ML oder neuronale Netze",
+    "theme": "algebraic-topology",
+    "themes": ["bordism", "cobordism", "tqft", "manifolds"],
+    "thesis": "Ein Bordismus zwischen zwei Mannigfaltigkeiten M1 und M2 ist eine Mannigfaltigkeit W, deren Rand die disjunkte Vereinigung von M1 und M2 ist; die Seite ist ein interaktiver 3D-Explorer verschiedener Bordismustypen und ihrer Gruppen-/Ringstruktur",
+    "key_claims": [
+      "Ein Bordismus (Cobordismus) zwischen M1 und M2 ist eine Mannigfaltigkeit W mit ∂W = M1 ⊔ M2",
+      "Zwei Mannigfaltigkeiten sind bordant, wenn sie zusammen den Rand einer höherdimensionalen Mannigfaltigkeit bilden; Bordismus ist eine Äquivalenzrelation",
+      "Die Menge der Mannigfaltigkeiten modulo Bordismus bildet eine abelsche Gruppe unter disjunkter Vereinigung; die 'Hose' (pair of pants) liefert eine Ringstruktur (Multiplikation in einer TQFT)",
+      "Die Kappe (Kreis, der eine Scheibe randiert) ist bordant zur leeren Menge ∅; die 'Geburt' ist die Umkehrung",
+      "Der Cross-Section-Sweep zeigt, wie sich der Rand ändert, wenn man durch W 'schneidet'"
+    ],
+    "methods_math": ["Bordismus/Cobordismus", "Mannigfaltigkeiten mit Rand", "disjunkte Vereinigung", "Bordismusgruppen (abelsch)", "Ringstruktur/TQFT", "Geschlecht (genus)"],
+    "visualizations": ["Interaktive 3D-Wireframe-/Flächendarstellung von Bordismen (Custom-3D-Projektion auf 2D-Canvas, Painters-Algorithmus)", "Drag-Rotation + Wheel-Zoom", "Cross-Section-Sweep-Animation", "8 Beispiel-Bordismen (Zylinder, Hose, Kappe, Geburt, Merge, Genus, Identität, Annihilation) mit Farbverlauf links→rechts"],
+    "internal_tensions": [
+      "Das 'Genus Change'-Beispiel ist in Wahrheit nur ein Zylinder mit einem Bump (exponentieller Radius-Modulation) und kein echter Handle-übergang — es ist visuelle Kurzform, kein richtiger Cobordismus mit Geschlechterwechsel",
+      "Stark intuitiv-visualisierendes Werkzeug, das die strenge Invarianz des Rand-Konzepts (∂W) zugunsten der Optik vereinfacht"
+    ],
+    "related_files": ["topology", "algebraische_topologie", "loopspaces", "kokettenkomplex", "persistent_topology", "topological_data_analysis", "topologie_biologischer_systeme", "topologie_tiefer_neuronaler_netze"]
+  },
+  {
+    "path": "buecher/schreber.html",
+    "slug": "schreber",
+    "title": "Denkwürdigkeiten eines Nervenkranken — Daniel Paul Schreber, 1903",
+    "lang": "de",
+    "size_kb": 26.2,
+    "category": "nicht-ki",
+    "category_reason": "Interaktive Studie eines psychiatrischen Falles (Schreber) mit Philosophie-des-Gemüts/Erlebens; keine ML- oder neuronale-Netz-Komponente",
+    "theme": "consciousness",
+    "themes": ["philosophy-of-mind", "psychiatry", "delusional-systems", "history"],
+    "thesis": "Interaktive visuelle Studie zu Daniel Paul Schrebers 'Denkwürdigkeiten eines Nervenkranken' (1903) — dem delusionalen System eines Richters, in dem Gott = Nerven = Strahlen, sein Arzt einen 'Seelenmord' begangen hat und er zur Neuschaffung der Menschheit in eine Frau verwandelt wird",
+    "key_claims": [
+      "Schreber glaubte, Gott bestehe aus Nerven ('Strahlen'), die alles erschaffen; die menschliche Seele sei ebenfalls Nerven; nach dem Tod stiegen reine Nerven zu Gott auf",
+      "Er hielt seinen Arzt Prof. Flechsig für einen 'Seelenmörder', der sich Gottes Nerven angeeignet und dadurch die Weltordnung zerrissen habe",
+      "Unaufhörliche Stimmen sprächen in seine Nerven, stellten sinnlose Fragen ('Warum nur?') und zwangen ihn zum Denken — ohne Pause, Tag und Nacht (Denkzwang)",
+      "Er glaubte, die Weltordnung verlange seine Verwandlung in eine Frau zur Neuerschaffung der Menschheit; 'Wollustnerven' durchzögen seinen Körper",
+      "Trotz allem sah sich Schreber als Sieger: die Weltordnung trage 'die Heilmittel für die ihr geschlagenen Wunden in sich selbst'; er wurde entlassen und gewann seinen Prozess"
+    ],
+    "methods_math": [],
+    "visualizations": ["6 animierte 2D-Canvas-Szenen: (1) Neuronen-Netzwerk-Intro (Partikelsystem mit Verbindungslinien), (2) Gott-als-Strahlen mit Arimann/Ormuzd-Wechsel, (3) Krise/'Seelenmord' mit Riss-Animation, (4) Stimmen & Denkzwang mit Tipp-Animation, (5) Körper-Verwandlungs-Morph, (6) Weltordnung mit orbitalen Partikeln + Sternenfeld", "Scroll-Navigation mit IntersectionObserver-Dots", "Slider (Stimmtempo) und Toggle-Buttons (Gott-Modus, Krise, Verwandlung, Ordnung)"],
+    "internal_tensions": [
+      "Ein psychiatrischer Falldarstellung mit fast poetisch-empathischer Rahmung — passt thematisch auffällig in ein Mathematik/KI-Korpus; die Resonanz liegt im Kontrast zwischen strukturiertem Delir (Schrebers 'konsistentes formales System' seiner Welt) und strukturiertem Wissen",
+      "Kein mathematischer Inhalt; die 'Nerven/Strahlen' sind ein Wahn-System, keine reale Neuroanatomie"
+    ],
+    "related_files": ["bewusstsein", "consciousness_overview", "philosophy2", "analytischer_idealismus", "koerper", "latter_inner", "kastrup_jung", "psychologische_feldtheorie", "buecher/daniel_paul_schreber"]
+  },
+  {
+    "path": "kluever2.html",
+    "slug": "kluever2",
+    "title": "Warum du auf Lachgas eine Spirale gesehen hast",
+    "lang": "de",
+    "size_kb": 26.0,
+    "category": "nicht-ki",
+    "category_reason": "Neurowissenschaft/Visuelle Wahrnehmung und Musterbildung im visuellen Kortex V1; kein ML/neuronale-Netz-Bezug (biologischer Kortex, nicht künstliches Netz)",
+    "theme": "dynamical-systems",
+    "themes": ["perception", "cognition", "pattern-formation", "turing-mechanism", "hallucination"],
+    "thesis": "Visuelle Halluzinationen (z.B. Spiralen unter Lachgas N2O) entstehen im primären visuellen Kortex V1: Die Log-Polar-Abbildung von Gesichtsfeld nach V1 wandelt diagonale neuronale Streifen in Spiralen um, und N2O versetzt den Kortex in eine Instabilität, aus der spontane Turing-Muster (Aktivator-Inhibitor) aus dem Rauschen wachsen",
+    "key_claims": [
+      "Halluzinationen entstehen im Gehirn (V1), nicht im Auge — deshalb sieht man sie auch mit geschlossenen Augen",
+      "Die Abbildung von Gesichtsfeld auf V1 ist logarithmisch: Kreise→waagerechte Streifen, Strahlen→senkrechte Streifen, Spiralen→schräge Streifen in V1; umgekehrt werden schräge Streifen in V1 als Spirale wahrgenommen",
+      "Die periodischen Streifen in V1 entstehen durch einen Turing-Mechanismus (Aktivator-Inhibitor, nach Turing 1952) — wie Leopardenflecken und Zebrastreifen",
+      "Lachgas blockiert NMDA-Rezeptoren und verstärkt GABA (Hemmung), destabilisiert paradox den Ruhezustand von V1, sodass spontane Muster aus dem neuronalen Rauschen wachsen",
+      "Die Dispersionsrelation λ(q) bestimmt die Instabilität: Steigt die Kurve über λ=0, wächst ein Muster dieser Wellenlänge → Halluzination",
+      "Klüver (1920er) klassifizierte Halluzinationen in 4 'Formkonstanten' (Tunnel, Spiralen, Gitter, Spinnweben); Bressloff/Cowan/Goldenfeld erklären sie über Orientierungsselektivität"
+    ],
+    "methods_math": ["Log-Polar-Koordinatentransformation", "Turing-Musterbildung/Reaktions-Diffusion", "Aktivator-Inhibitor", "Dispersionsrelation λ(q)", "Stabilitätsanalyse (λ=0-Grenze)", "Orientierungsselektivität"],
+    "visualizations": ["Plotly-Dispersionsrelations-Plot mit μ-Regler (Lachgas-Effekt), Instabilitäts-Anzeige", "Interaktives 2D-Pixel-Grid-Muster-Generator: V1-Streifen → Gesichtsfeld via inverse Log-Polar-Abbildung (Muster/Dichte/Rotation/Hex-Regler)", "Statische Canvas-Diagramme (Auge→Gehirn, V1-Karte, Neuronen-Streifen, Warum-Spirale-3-Panel)", "7-Schritt-Tab-Navigation"],
+    "internal_tensions": [
+      "Warum gerade diagonale Streifen (→ Spiralen) entstehen, wird behauptet (anisotrope, entlang der Orientierung verknüpfte Neuronen), aber nicht hergeleitet",
+      "N2Os exakter kortikaler Effekt (Enthemmung der Enthemmung) ist physiologisch umstritten; das Modell ist eine plausible mechanistische Darstellung, kein abgeschlossener Beweis"
+    ],
+    "related_files": ["signal_analysis", "signal_analysis2", "kluever", "chaos", "topology_of_attractors", "posembed7", "geometry_of_meaning_test", "hologram5"]
+  },
+  {
+    "path": "garben.html",
+    "slug": "garben",
+    "title": "Garbentheorie: Intuition, Visualisierung & Formalismus",
+    "lang": "de",
+    "size_kb": 25.8,
+    "category": "nicht-ki",
+    "category_reason": "Reine Garbentheorie mit dem durchgängigen Beispiel X=ℝ, F(U)=C(U,ℝ) (stetige Funktionen); die Mathematik wird nicht auf neuronale Netze/Transformers/Embeddings angewandt",
+    "theme": "sheaves",
+    "themes": ["algebraic-geometry", "topology", "presheaf", "category-theory"],
+    "thesis": "Intuitiv-bildhafter Einstieg in die Garbentheorie (topologischer Raum, Schnitt, Einschränkung, Halm, Keim, Prägarbe, Garbe) mit dem durchgängigen Beispiel X=ℝ und F(U)=C(U,ℝ), gipfeln in den zwei Garben-Axiomen (Eindeutigkeit/Trenntheit und Verklebbarkeit/Existenz), die als ein einziges Equalizer-Diagramm vereinigt werden",
+    "key_claims": [
+      "Ein topologischer Raum (X,τ) ist eine Menge mit einer Topologie (System offener Teilmengen); Basisbeispiel ist X=ℝ mit offenen Intervallen",
+      "Ein Schnitt s∈F(U) ist ein über einem Gebiet U definiertes Datum (z.B. s(x)=x² auf U=(0,2)); die Einschränkung ρ_{U,V} schneidet es auf ein kleineres V zu",
+      "Der Halm F_x ist der direkte Limes von F(U) über alle offenen Umgebungen von x; der Keim [s]_x ist die Äquivalenzklasse der Funktionen, die nahe x übereinstimmen",
+      "Eine Prägarbe ist ein kontravarianter Funktor F:O(X)^op→Set ohne Verklebungs-Garantie; eine Garbe erfüllt zusätzlich die Verklebbarkeit",
+      "Axiom ① (Trenntheit/Eindeutigkeit): Zwei globale Schnitte, die auf jedem Teil einer Überdeckung gleich sind, sind überall gleich",
+      "Axiom ② (Verklebbarkeit/Existenz): Lokal konsistente Schnitte verkleben sich zu genau einem globalen Schnitt; beide Axiome ⇔ das eine Equalizer-Diagramm F(U)→∏F(Uᵢ)⇉∏F(Uᵢ∩Uⱼ)"
+    ],
+    "methods_math": ["Garbentheorie", "topologische Räume", "Prägarbe/kontravarianter Funktor", "Halm (direkter Limes/colim)", "Keim (Äquivalenzklasse)", "Einschränkungsmorphismen", "Equalizer", "Verklebungs-/Trenntheitsaxiom"],
+    "visualizations": ["Inline-SVG-Diagramm pro Begriff (Funktionskurven auf ℝ mit markierten Regionen, geschachtelte Umgebungen, überlappende Intervalle mit Konflikt-/Match-Markierung)", "Druckoptimiertes A4-Quer-Layout, auf Mobilgeräten in gestapelte Karten umgebaut (CSS-Media-Query)"],
+    "internal_tensions": [
+      "Bewusst ohne KI-Rahmung geschrieben (reine Funktionen auf ℝ) — es ist der 'allgemein-mathematische' Zwilling zu garben_2 (das KI-Dokument-Beispiel)",
+      "Reine Darstellungs-/Didaktik-Seite; der 'Wissensraum'-Charakter (Tabelle Begriff/Intuition/Beispiel/Viz/Formalismus) dient dem Lernen, nicht einer Anwendung"
+    ],
+    "related_files": ["garben_2", "sheaves", "sheaf", "garben_uebersicht", "garbentheorie", "garben_weltsicht", "garben_zug", "sheaving", "garben_in_transformers", "nn_as_sheaf"]
+  },
+  {
+    "path": "garben_2.html",
+    "slug": "garben_2",
+    "title": "Garbentheorie am realen Beispiel: Ein KI-Dokument mit einem Widerspruch",
+    "lang": "de",
+    "size_kb": 25.8,
+    "category": "nicht-ki",
+    "category_reason": "Garbentheorie angewandt auf die Konsistenz eines mehrkapiteligen Textes; die KI ist nur das Beispielthema (KI-Geschichte), nicht das Ziel der Mathematik (neuronale Netze/Embeddings)",
+    "theme": "sheaves",
+    "themes": ["knowledge-representation", "consistency", "category-theory", "algebraic-geometry"],
+    "thesis": "Garbentheorie angewandt auf die Konsistenz eines mehrkapiteligen KI-Geschichte-Dokuments: Die Zuordnung 'Thema ↦ Kapiteltext' ist eine Prägarbe, deren Verklebungsaxiom am überlappenden Thema 'erstes neuronales Netz' (SNARC 1951 vs. Perzeptron 1958) scheitert, also keine Garbe ist; Garbenifizierung bedeutet, den Widerspruch aufzulösen, damit ein konsistenter globaler Text existiert",
+    "key_claims": [
+      "X = das Themenfeld 'KI-Geschichte und -Techniken'; offene Mengen U sind Themenbereiche (z.B. 'Frühgeschichte', 'Neuronale Netze'); Kapitel sind konkrete Auswahlen solcher Bereiche",
+      "Ein Schnitt über U ist der konkrete Text zum Thema U; F(U) ist die Menge aller möglichen Texte über U",
+      "Der Halm am Punkt x='erstes neuronales Netz' enthält zwei verschiedene Keime [s1]_x (SNARC) und [s5]_x (Perzeptron) — ein Fingerabdruck der Inkonsistenz an einem einzelnen Punkt",
+      "Axiom ① (Eindeutigkeit) ist trivial erfüllt; Axiom ② (Verklebbarkeit) scheitert: ρ_{U1,V}(s1)='SNARC' ≠ ρ_{U5,V}(s5)='Perzeptron', also existiert kein globaler Schnitt",
+      "Garbenifizierung in der Praxis: Konflikt über Halme lokalisieren, faktisch entscheiden (SNARC, Minsky & Edmonds 1951, ist älter als Perzeptron, Rosenblatt 1958), beide Kapitel angleichen, Verklebbarkeit neu prüfen"
+    ],
+    "methods_math": ["Garbentheorie", "topologische Räume", "Schnitte", "Einschränkungsmorphismen", "Halm/Keim", "Prägarbe", "Verklebungsaxiom (Equalizer)", "Garbenifizierung"],
+    "visualizations": ["Inline-SVG-Diagramme (Themen als überlappende Ellipsen, Kapitel-Boxen, Halm als geschachtelte Regionen, Keim-Vergleichs-Boxen)", "Diagnose-Sektion mit Axiom-Prüfung und 'Fix'-Box", "Druckoptimiertes A4-Quer-Layout, responsiv"],
+    "internal_tensions": [
+      "Die KI ist nur Beispiel-Domäne, nicht Ziel der Mathematik — die eigentliche Anwendung ist Text-/Wissens-Konsistenz (allgemein); daher streng genommen nicht 'Mathematik FÜR KI'",
+      "Die für den 'Fix' benutzte Tatsache (SNARC 1951 vs. Perzeptron 1958 als 'erstes NN') ist selbst ein Punkt wissenschaftlicher Kontroverse"
+    ],
+    "related_files": ["garben", "sheaves", "sheaf", "garben_in_transformers", "nn_as_sheaf", "nn_as_sheaf_2", "olog", "commutative_diagram", "coherent_worldview", "making_it_explicit"]
+  },
+  {
+    "path": "posembed7.html",
+    "slug": "posembed7",
+    "title": "A Word Is Not a Point — It's a Helix",
+    "lang": "en",
+    "size_kb": 25.8,
+    "category": "ki",
+    "category_reason": "Geometrie der sinusoidal positional encoding in Transformers (Embedding-Raum); zentrale KI/Transformer- und Embedding-Geometrie",
+    "theme": "geometry-of-embeddings",
+    "themes": ["transformer-attention", "positional-encoding", "torus-geometry", "group-structure"],
+    "thesis": "Adding sinusoidal positional encoding to a word's fixed embedding sweeps it along a high-dimensional helical curve (a curve on a product-of-circles torus); because the FFN only ever sees the combined sum (not the embedding or PE separately), it must disentangle 'which helix' (word identity) from 'where on the helix' (position)",
+    "key_claims": [
+      "The raw embedding is a single fixed point; positional encoding PE(pos,2i)=sin(pos/10000^(2i/d)), PE(pos,2i+1)=cos(...) makes each dim-pair a circle rotating at a different frequency, producing a corkscrew/helix",
+      "In the full d-dimensional space the curve lies on a high-dimensional torus (a product of circles)",
+      "The FFN never sees the raw embedding or the positional encoding separately — only their sum (after self-attention mixing); it must learn to disentangle word identity ('which helix') from position ('where on the helix')",
+      "Adjacent positions are adjacent points on the curve, so sequential ordering is preserved geometrically; a relative offset k corresponds to a fixed rotation matrix M_k (translational symmetry), enabling generalization to unseen sequence lengths",
+      "The incommensurate frequencies make the helix never self-intersect (like irrational rotations on a torus giving dense non-repeating orbits), so every position is uniquely encoded",
+      "tanh/sigmoid positional encodings would fail because they lack the rotation property (there is no matrix M_k with tanh(pos+k)=M_k·tanh(pos)), so the model could not generalize relative distances"
+    ],
+    "methods_math": ["sinusoidal positional encoding", "product-of-circles torus", "helix/multi-frequency harmonics", "incommensurate frequencies", "rotation matrices / group structure (translational symmetry)", "irrational rotations on a torus"],
+    "visualizations": ["Interaktiver 3D-Plotly-Helix (scatter3d + mesh3d-Tube) mit Reglern für Positionen/Dimensionen/Tube/Wort", "2D-Dimension-Pair-Slice-Grid (Lissajous-artige Projektionen aller Dimensionspaare) via Plotly", "Diagramm: Token-Embedding + Positional Encoding → Self-Attention → FFN sees one vector", "IntersectionObserver-basiertes Lazy-Loading des Plotly-Skripts"],
+    "internal_tensions": [
+      "Die These 'das FFN muss Wort und Position entwirren' ist eine interpretive Rahmung, kein gemessener Fakt",
+      "Die Wort-Embedding-Basisektoren (king/queen/the) sind hartkodierte illustrative Werte, keine echten Modell-Embeddings",
+      "'Warum nicht Kugel / warum nicht tanh' ist als Design-Rationale argumentiert; die Rotations-Eigenschafts-Verallgemeinerung ist kein Theorem"
+    ],
+    "related_files": ["positional", "qkv", "qkv2", "attn", "attn_as_optimal_transport", "transformer_dynamics", "geometry_of_meaning_test", "latent_semantic_manifolds_in_llm", "decode_holo", "space_morph", "how_ai_approximates"]
+  },
+  {
+    "path": "generalisierung_im_deep_learning_very_simple.html",
+    "slug": "generalisierung_im_deep_learning_very_simple",
+    "title": "Warum Auswendiglernen nicht schadet — ganz einfach erklärt",
+    "lang": "de",
+    "size_kb": 25.7,
+    "category": "ki",
+    "category_reason": "Theorie der Generalisierung überparametrisierter neuronaler Netze (benignes Overfitting, Grokking, double descent) inkl. praktischem SNR-Update-Gate",
+    "theme": "grokking-generalization",
+    "themes": ["overparameterization", "benign-overfitting", "implicit-bias", "double-descent", "optimization"],
+    "thesis": "Eine Theorie der Generalisierung im Deep Learning: Der Ausgaberaum spaltet sich in einen Signalkanal (Bildraum kumulativer Erreichbarkeit W) und ein Reservoir (Kern von W), in dem auswendig gelerntes Rauschen für jede Testfrage unsichtbar 'geparkt' wird; im Signalkanal trennt SGD kohärente Drift (∝T) von Rausch-Diffusion (∝√T), was benignes Overfitting, Double Descent, Implicit Bias und Grokking vereinigt und zu einem einzeiligen SNR-Gate (Update nur wenn Signal² > Rausch²/(b−1)) führt",
+    "key_claims": [
+      "Schau auf die Ausgaben des Netzes (eine pro Trainingsbeispiel), nicht auf die Milliarden Gewichte; der Ausgaberaum spaltet in zwei senkrechte 'Zimmer': Signalkanal (wo Training Fehler abbaute → im Test sichtbar) und Reservoir (wo Training nicht hinkam → für jede Testfrage unsichtbar)",
+      "Das Reservoir wird über W, die über die gesamte Trainingslaufzeit summierte 'kumulative Erreichbarkeit', definiert; große W = Signalkanal, W=0 = Reservoir; bei echten Netzen fällt W's Spektrum über viele Größenordnungen ab, also ist das Reservoir riesig und der Signalkanal winzig",
+      "Im Signalkanal wächst kohärentes Signal wie T (geradeaus), während Rauschen wie √T random-walkt (Zickzack); langes Training lässt das Signal das Rauschen überholen",
+      "Die vier bekannten Mysterien sind derselbe Mechanismus: benignes Overfitting (Rauschen liegt physisch im Reservoir), Double Descent (neue Kapazität hilft nur, wenn die neue Richtung mehr Signal als Rauschen bringt), Implicit Bias (SGD passt 'leichte' Richtungen zuerst an), Grokking (Signal wandert aus dem Reservoir in den Signalkanal; Testgenauigkeit springt beim Überholen)",
+      "Praktischer Bonus: pro-Parameter-Gate — Parameter k aktualisieren nur wenn Signal²(k) > Rausch²(k)/(b−1); eine Zeile in AdamW (ein zusätzlicher Vektor), kein Validierungsdatensatz nötig; in 5 Domänen getestet (PINNs, Grokking, DPO-Finetuning, INR-Bildkodierung, Lorenz)",
+      "Die Theorie verlangt ein zweimal differenzierbares Netz und einen konvexen Ausgangsverlust; die exakte Kopplung gilt nur für quadratischen Verlust (kleiner Rest, der mit Glattheit/Datendichte schrumpft); sie vermeidet 'Breite→∞', eingefrorene Kerne, Asymptotik und 'mit hoher Wahrscheinlichkeit'"
+    ],
+    "methods_math": ["empirischer Tangentenkern", "Ausgaberaum-Zerlegung (range/kernel)", "kumulative Dissipation/Erreichbarkeit W", "SGD-Drift (∝T) vs. Diffusion (∝√T)", "SNR-Gate μ²>σ²/(b−1)", "double descent", "benignes Overfitting", "implicit bias", "grokking"],
+    "visualizations": ["3 interaktive Canvas-Demos: (1) Reservoir-Unsichtbarkeit (Restfehler- + Testpunkt-Vektoren drehen, zeigt Testbewegung=0 wenn Fehler im Reservoir liegt), (2) T-vs-√T Signal-vs-Rauschen-Rennen mit Random Walks, (3) SNR-Gate-Streu Diagramm (Parameter nach Pass/Block gefärbt vs. Schwelle 1/(b−1))", "Live-Anzeigen (Trainingsfehler, Testbewegung, Signal:Rauschen, Pass/Block-Anteil)"],
+    "internal_tensions": [
+      "'Sehr einfache' Popularisierung eines arXiv-Preprints (2605.01172 — eine future-dated ID, möglicherweise fehlerhaft/unkontrollierbar); die Kernaussage 'eine Zeile Code verbessert Training in 5 Experimenten' ist stark und nicht unabhängig verifizierbar",
+      "Die 'Honesty Corner' gibt zu, dass exakte Ergebnisse quadratischen Verlust voraussetzen; das eine-Parameter-Gate setzt unabhängige Batches voraus (bei Multi-Epochen bleibt ein Restterm)"
+    ],
+    "related_files": ["generalisierung_im_deep_learning", "grokking", "grokking2", "why_deep_learning_works", "understanding_deep_learning", "theory_of_deep_learning", "low_dim_learning", "minima_explorer", "gradient_flow", "grokking_addition"]
+  },
+  {
+    "path": "paper/olog.html",
+    "slug": "olog",
+    "title": "Ologs — Ontology Logs interaktiv erklärt (nach David Spivak)",
+    "lang": "de",
+    "size_kb": 25.7,
+    "category": "nicht-ki",
+    "category_reason": "Kategoriale Wissensrepräsentation (Spivaks Ologs); die KI wird nur als eine von mehreren Anwendungen genannt (Datenbanken, Bioinformatik, Systems Engineering), nicht als Ziel der Mathematik",
+    "theme": "category-theory",
+    "themes": ["knowledge-representation", "formal-ontology", "commutative-diagrams", "categorical-logic"],
+    "thesis": "Interaktiver Einstieg in David Spivaks Ologs (Ontology Logs) — ein kategorieller Rahmen zur Strukturierung von Wissen, in dem Boxen Typen (Substantive) und Pfeile Funktionen (Aspekte) sind und alle Pfade zwischen zwei Boxen kommutieren müssen; angewandt auf Datenbank-Design, Bioinformatik, Wissensgraphen und Systems Engineering",
+    "key_claims": [
+      "Ein Olog besteht aus zwei Zutaten: Typen (Objekte, als Boxen mit Substantiven wie 'ein Mensch') und Aspekte (Morphismen/Pfeile, Funktionen wie 'hat als Mutter')",
+      "Vier goldene Regeln: Boxen enthalten Substantive (beginnen mit 'ein/eine'); Pfeile sind Funktionen (jedes Element von A wird auf genau eines von B abgebildet); der Text muss einen sinnvollen Satz bilden; Kompositionen müssen kommutieren (zwei Wege zwischen denselben Boxen liefern dasselbe Ergebnis)",
+      "Kommutative Diagramme sind die Korrektheitsbedingung: z.B. 'jedes Kind hat eine Mutter, jede Mutter ist eine Frau, also hat jedes Kind eine Mutter, die eine Frau ist' — beide Wege enden bei derselben Frau",
+      "Pfeile sind Funktionen (ein Wert pro Input), daher passen multi-valued Relationen wie 'ein Auto hat 4 Räder' nicht direkt (brauchen eine Menge oder den umgekehrten Pfeil)",
+      "Anwendungen: Datenbank-Design (mächtiger als ER-Diagramme), Bioinformatik, Wissensgraphen & KI, Systems Engineering, Wissenschaftskommunikation"
+    ],
+    "methods_math": ["Kategorientheorie", "Funkatoren/Morphismen", "kommutative Diagramme", "Komposition", "Wissensrepräsentation/formale Ontologie", "relationale Schemata"],
+    "visualizations": ["Interaktive SVG-Olog-Diagramme (klickbare Knoten/Pfeile mit Info-Tooltips)", "Tab-Galerie (Bibliothek/Restaurant/Auto/Molekül/Musik)", "Schritt-für-Schritt-Olog-Builder (Person→Adresse→Stadt→Land→Kontinent) mit Kommutativitäts-Hervorhebung", "Animierte Pfad-Highlighting für Kommutativität"],
+    "internal_tensions": [
+      "Ologs erfassen nur funktionale (einwertige) Relationen sauber; Multi-valued Relationen und nicht-funktionale Abhängigkeiten sind unbequem (im 'Auto hat 4 Räder'-Beispiel explizit markiert)",
+      "Der kategorielle Rahmen ist ausdrucksstark, aber seine praktische Adoption abseits von Nischen-Wissensrepräsentation ist unbewiesen; die 'KI'-Anwendung bleibt vage (semantische Repräsentation/Wissensgraphen)"
+    ],
+    "related_files": ["kategorientheorie", "categorytheorie", "ologs", "commutative_diagram", "adjunct_functor", "category_theory", "garben_2", "backprop_als_funktor", "product_coproduct", "coherent_worldview", "making_it_explicit"]
+  },
+  {
+    "path": "simplicial_complex_attention2.html",
+    "slug": "simplicial_complex_attention2",
+    "title": "Simplicial Complexes — Visual Explorer (mit Attention-Tab)",
+    "lang": "en",
+    "size_kb": 25.2,
+    "category": "ki",
+    "category_reason": "Algebraische Topologie/TDA (Simplicial Complexes, Vietoris–Rips, persistente Homologie) explizit auf Transformer-Attention (Simplicial Attention Networks) angewandt",
+    "theme": "topological-data-analysis",
+    "themes": ["transformer-attention", "topology-of-nns", "algebraic-topology", "persistent-homology"],
+    "thesis": "Interaktiver 3D-Explorer für Simplexe (Vertex→Edge→Triangle→Tetrahedron→Pentachoron) und den Aufbau von Simplicial Complexes (Vietoris–Rips), mit einem 'Attention'-Tab, der argumentiert, dass standard Transformer-Attention nur 1-Simplexe (paarweise Kanten) erfasst, während Simplicial Attention (SAN/topologisches message passing) höherdimensionale (2-/3-Simplex)-Interaktionen einfängt, die paarwise Attention verfehlt",
+    "key_claims": [
+      "Ein 1-Simplex (Kante) ist genau das, was standard Attention berechnet — ein Gewicht zwischen jedem Token-Paar (softmax(QKᵀ/√d)); der Graph aller paarweisen Attention-Scores ist ein 1-dimensionaler Simplicial Complex",
+      "Ein 2-Simplex (gefülltes Dreieck) erfasst eine Dreier-Beziehung, die nicht auf Paare reduzierbar ist; Simplicial Attention (SAN) modelliert diese höherdimensionalen Interaktionen explizit",
+      "Ein Simplicial Complex muss alle Faces jedes Simplex enthalten (Closure-Eigenschaft); der Vietoris–Rips-Complex baut Simplexe aus einem Distanz-Schweller, und bei wachsendem Schwellwert erscheinen höherdimensionale Simplexe und offenbaren die Topologie der Daten",
+      "Simplicial Attention erfasst nicht-dekomponierbare Mehrwege-Abhängigkeiten (z.B. 'on' hängt simultan von 'cat', 'sat' und 'mat' ab); Architekturen: Simplicial Transformers, SAN, topologisches message passing",
+      "TDA-Pipelines (persistente Homologie) bauen diese Simplexe aus Daten, um hochdimensionale 'Shapes' in Feature-Räumen zu detektieren"
+    ],
+    "methods_math": ["Simplicial Complexes", "Simplexe (0-4)", "Vietoris–Rips-Complex", "Closure-Eigenschaft", "persistente Homologie", "Simplicial Attention Networks (SAN)", "Attention softmax(QKᵀ/√d)"],
+    "visualizations": ["Interaktiver 2D-Canvas mit Custom-3D-Projektion (Drag-Rotation + Wheel-Zoom) jedes Simplex mit Build-Slider (Edges/Faces/Tets progressiv)", "Complex-Build-Szene (Vietoris–Rips-Threshold-Slider zeigt V/E/F/T-Zähler live)", "Attention-Szene (Tokens 'The cat sat on the mat' mit paarweisen Kanten + Simplicial-Dreiecke/Tetra, animierte Flow-Partikel, phasiert pairwise→3-way→4-way)"],
+    "internal_tensions": [
+      "Die Behauptung, standard Attention erfasse 'nur' Kanten und Simplicial Attention sei strikt besser, ist ein Forschungsprogramm (SAN etc.) ohne empirische Dominanz — die meisten deployed Transformer nutzen immer noch paarweise Attention",
+      "Die gezeigten Token-Attention-Gewichte sind simuliert/hartkodiert, nicht von einem echten Modell"
+    ],
+    "related_files": ["simplicial_complex_attention", "simplicial_complex_attention3", "simplicial_complex_attention4", "attn", "attn_as_optimal_transport", "garben_in_transformers", "topological_data_analysis", "persistent_topology", "topologie_tiefer_neuronaler_netze", "llm_topology", "betti", "persistent_landscape", "holes"]
+  },
+  {
+    "path": "adjunct_functor.html",
+    "slug": "adjunct_functor",
+    "title": "Adjoint Functors – Interactive Explorer",
+    "lang": "en",
+    "size_kb": 25.2,
+    "category": "nicht-ki",
+    "category_reason": "Reine Kategorientheorie (adjungierte Funktoren, Hom-Mengen-Bijektion, Unit/Counit, Triangle-Identities); keine KI/ML-Anwendung",
+    "theme": "category-theory",
+    "themes": ["adjoint-functors", "hom-set-bijection", "free-constructions", "categorical-logic"],
+    "thesis": "Interaktiver Explorer für adjungierte Funktoren: Wähle Objekte in Kategorien 𝒞 und 𝒟, sieh zu, wie Funktoren L ⊣ R sie abbilden, und beobachte die Hom-Mengen-Bijektion Hom_𝒟(L(c),d) ≅ Hom_𝒞(c,R(d)) in Aktion, inkl. Unit η, Counit ε und den (Zig-Zag-)Triangle-Identities",
+    "key_claims": [
+      "Adjungierte Funktoren sind Paare L:𝒞→𝒟 (links) und R:𝒟→𝒞 (rechts), bei denen Morphismen L(c)→d in 𝒟 bijektiv zu Morphismen c→R(d) in 𝒞 korrespondieren",
+      "L (linker adjungierter) ist der 'freie'/'beste Approximation'-Funktor; R (rechter adjungierter) ist der 'vergessende'/'zugrunde liegende' Funktor",
+      "Die Unit η_c:c→R(L(c)) ist der Adjunkt von id_{L(c)} ('beste Approximation' von c im Bild von R); der Counit ε_d:L(R(d))→d ist der Adjunkt von id_{R(d)}",
+      "Die Triangle-/Zig-Zag-Identities: ε_{L(c)}∘L(η_c)=id_{L(c)} und R(ε_d)∘η_{R(d)}=id_{R(d)}",
+      "Beispiele: Freie Gruppe ⊣ zugrunde liegende Menge (Sets↔Grps); diskrete Topologie ⊣ vergessender (Sets↔Top)"
+    ],
+    "methods_math": ["Kategorientheorie", "adjungierte Funktoren", "natürliche Hom-Mengen-Bijektion", "Unit/Counit", "Triangle-/Zig-Zag-Identities", "freie Konstruktionen", "vergessende Funktoren"],
+    "visualizations": ["Interaktives SVG-Kategorie/Funktor-Diagramm (Klick auf Objekte wählt c∈𝒞, d∈𝒟; zeigt L(c)-, R(d)-Abbildungslinien)", "Hom-Mengen-Bijection-Display (Klick auf Morphismen zeigt deren Adjunkten)", "Unit/Counit/Triangle-Tabs mit live-aktualisierten Formel-Boxen"],
+    "internal_tensions": [
+      "Die Morphismen-Listen im Free-Forget-Beispiel sind heuristisch/illustrativ (hand-crafted Hom-Mengen-Generatoren), nicht die vollständigen Hom-Mengen freier Gruppen — die 'Bijektion' wird an einer kuratierten Teilmenge demonstriert, nicht exhaustiv"
+    ],
+    "related_files": ["categorytheorie", "kategorientheorie", "olog", "ologs", "commutative_diagram", "backprop_als_funktor", "product_coproduct", "monoid", "sheaves", "higher_algebra"]
+  },
+  {
+    "path": "backprop.html",
+    "slug": "backprop",
+    "title": "Backpropagation – Schicht für Schicht",
+    "lang": "de",
+    "size_kb": 24.9,
+    "category": "ki",
+    "category_reason": "Schritt-für-Schritt-Visualisierung der Rückwärtspropagation (Gradientenfluss, Kettenregel) in einem Feedforward-Neuronen-Netz",
+    "theme": "backpropagation",
+    "themes": ["gradient-descent", "chain-rule", "neural-networks", "training"],
+    "thesis": "Schritt-für-Schritt-Interaktive Durchlauf von Backpropagation durch ein kleines Feedforward-Netz (Input→2 Hidden→Output, Sigmoid, quadratischer Verlust): zuerst Forward-Pass, dann wandert ein 'Fokus' von rechts nach links und berechnet pro Schicht den Gradienten (Delta) über die Kettenregel, mit Gewichtsanpassungen und Live-Loss-Chart",
+    "key_claims": [
+      "Forward-Pass: jedes Neuron berechnet (Eingaben × Gewichte + Bias) → Sigmoid → Ausgabe; Verlust = ½Σ(Ziel−Ausgabe)²",
+      "Backprop: der Fokus bewegt sich von der Ausgabeschicht rückwärts; jede Schicht fragt 'Was hätte ich anders machen sollen?' — die Kettenregel schiebt den gewünschten Wandel ('Wäre besser') durch das Netz",
+      "Der Ausgabeschicht-Gradient ist Δ = Ausgabe-Fehler × sigmoid'(Ausgabe); Hidden-Schichten akkumulieren den von der nächsten Schicht zurückgeschobenen Fehler, multipliziert mit ihrem eigenen sigmoid'",
+      "Jedes Gewicht wird um Gradient × Lernrate (hier LR=0.5) angepasst; der Loss sinkt über Runden"
+    ],
+    "methods_math": ["Backpropagation", "Kettenregel", "Sigmoid und abgeleitete", "mittlerer quadratischer Fehler (MSE)", "Gradientenabstieg", "Gewichts-Update"],
+    "visualizations": ["Interaktives 2D-Canvas des Netzes (Neuronen + Verbindungen) mit 'Nächster Schritt'-Button, das Forward/Backward-Passes steuert", "Pro-Neuron-Gradient-∇-Pills, Verbindungs-Gradient-Färbung/Dicke, Ist-vs-Soll-Vergleichsbalken", "Animierter Fokus-Highlight (Schicht für Schicht), Mini-Loss-Chart"],
+    "internal_tensions": [
+      "Pädagogisches Spielzeug (2-2-2-2, hartkodierte Ziele [0.9,0.1], feste LR=0.5) — es illustriert den Mechanismus, verbirgt aber die eigentlichen Schwierigkeiten (Vanishing Gradients, Nicht-Konvexität, Batch/Mini-Batch, moderne Optimizer)",
+      "Das 'Soll'-Ziel an Hidden-Schichten ist eine didaktische Vereinfachung — ein echtes Netz hat keine Zielwerte für Hidden-Units"
+    ],
+    "related_files": ["backprop_als_funktor", "gradient_flow", "dense_relu_dense", "minima_explorer", "understanding_deep_learning", "why_deep_learning_works", "theory_of_deep_learning", "energy_based_learning", "generalisierung_im_deep_learning"]
+  },
+  {
+    "path": "monoid.html",
+    "slug": "monoid",
+    "title": "What is a Monoid? — Interactive Visual Explainer",
+    "lang": "en",
+    "size_kb": 24.8,
+    "category": "nicht-ki",
+    "category_reason": "Reine Algebra/Kategorientheorie (Monoid = Menge + assoziative Operation + neutrales Element); keine KI/ML-Anwendung",
+    "theme": "algebra",
+    "themes": ["category-theory", "universal-algebra", "monoids", "identity-element"],
+    "thesis": "Interaktiver visueller Erklärer für Monoiden — eine Menge mit einer assoziativen binären Operation und einem neutralen Element — demonstriert an drei konkreten Monoiden (Zahlen+Addition, Strings+Konkatenation, Farben+Mischen) über Combine-, Assoziativitäts- und Identitäts-Widgets",
+    "key_claims": [
+      "Ein Monoid hat drei Regeln: Closure (Kombinieren zweier Elemente liefert wieder ein Element der Menge), Assoziativität ((a∘b)∘c = a∘(b∘c), Gruppierung egal), Identität (ein spezielles e mit a∘e = e∘a = a)",
+      "Zahlen mit Addition (Identität 0), Strings mit Konkatenation (Identität \"\") und Farben mit Mittelwert-Mischen (Identität transparent) sind alle Monoiden",
+      "Assoziativität bedeutet, dass die Reihenfolge der Gruppierung von drei Elementen das Ergebnis nie ändert",
+      "Kombiniert man jedes Element mit dem neutralen Element, erhält man das Element zurück (a∘e = e∘a = a)"
+    ],
+    "methods_math": ["Monoiden", "binäre Operation", "Assoziativität", "neutrales Element/Identität", "Schlusstheit (Closure)", "universelle Algebra/Kategorientheorie"],
+    "visualizations": ["Interaktive DOM-Widgets: klickbare Element-Pool, der Combine-Slots füllt (zeigt Ergebnis + hervorhebt die erfüllte Regel), Assoziativitäts-'Shuffle/Animate' (wählt 3 zufällige Elemente, berechnet beide Gruppierungen), Identitäts-Proof (Element∘e mit e∘a-Swap)", "Tab-Schalter zwischen den drei Monoiden (Zahlen/Strings/Farben)"],
+    "internal_tensions": [
+      "Das 'Farben + Mischen'-Monoid ist nur annähernd ein Monoid: die implementierte Mittelwert-Misch-Operation (mit dem Alpha-Floor Math.min(1,(a.a+b.a)/2+0.1)) ist nicht strikt assoziativ — es ist eine didaktische Approximation, kein echtes Monoid"
+    ],
+    "related_files": ["categorytheorie", "kategorientheorie", "group", "product_coproduct", "olog", "adjunct_functor", "category_theory", "commutative_diagram", "higher_algebra", "algebra"]
+  },
+  {
+    "path": "hologram5.html",
+    "slug": "hologram5",
+    "title": "Stacked Holographic Lens Explorer – Infinite Zoom",
+    "lang": "en",
+    "size_kb": 24.8,
+    "category": "nicht-ki",
+    "category_reason": "Bildverarbeitung/Sampling/FFT mit einer 'Halluzination'-Metapher für Over-Zoom-Artefakte; kein ML-Modell, keine neuronalen Netze",
+    "theme": "signal-analysis",
+    "themes": ["image-sampling", "fft", "interpolation", "hallucination-metaphor", "perception"],
+    "thesis": "Ein interaktiver 'gestapelter holographischer Linsen'-Bild-Explorer: 7 Ebenen, jede in ein Grid von Linsen-Zellen unterteilt; Klick auf eine Zelle erhöht additiv den Fokus (Zoom) in dieser und allen oberen Ebenen und bilinear resampelt die Quelle — und jenseits der nativen Auflösung erzeugt sichtbare 'Halluzinations'-Artefakte (Farb-Quantisierung, Fringing, Pseudo-Noise), als Metapher für Halluzination-durch-Extrapolation gerahmt",
+    "key_claims": [
+      "Jede Ebene zeigt fortschreitend mehr Detail (Base-Fokus steigt pro Ebene); Klick auf eine Zelle fokussiert diesen Bereich in dieser und allen darüberliegenden Ebenen (additiver Zoom, ohne Limit)",
+      "Das Bild wird pro Zelle bilinear resampelt; unterhalb der nativen Auflösung zeigt es einfach einen schärferen Teilbereich",
+      "Zoomen über die native Auflösung hinaus (Fokus > Schwelle 7) erzeugt 'Halluzination' — sichtbare Artefakte aus Farb-Quantisierung, sinusförmigem Fringing und Pseudo-Noise",
+      "Jede Ebene zeigt zusätzlich ihr 2D-FFT-Amplitudenspektrum (Log-Skala), sodass man den Frequenzgehalt beim Zoomen/Fokussieren beobachten kann"
+    ],
+    "methods_math": ["bilinterpolation/Sampling", "2D-DFT/FFT (Amplitudenspektrum)", "blockige (Area-)Down-Sampling", "Farb-Quantisierung", "Frequenzbereichsanalyse"],
+    "visualizations": ["7 gestapelte Ebenen, jede mit einem 6×5-Grid von Linsen-Zellen-Canvas (Klick/Rechtsklick/Scroll zum Fokussieren)", "Layer-Image-Preview-Canvas und FFT-Spektrum-Heatmap-Canvas (Custom 2D-DFT)", "SVG-Connectoren zwischen Ebenen", "Live-Stats (Source-Auflösung, fokussierte Zellen, halluzinierende Zellen, max. Zoom)"],
+    "internal_tensions": [
+      "Die 'Halluzination' ist eine absichtlich konstruierte visuelle Metapher (eingespritzte Artefakte), keine echte KI-Halluzination — es ist ein Lehrspielzeug darüber, warum Extrapolation jenseits verfügbarer Auflösung Detail erfindet",
+      "Der 'holographische Linsen'-Rahmen ist poetisch, nicht physikalisch (echte Holographie wird nicht modelliert)"
+    ],
+    "related_files": ["hologram", "hologram2", "hologram3", "hologram4", "holographic_principle", "decode_holo", "kluever2", "signal_analysis", "signal_analysis2", "space_morph", "new_space"]
+  },
+  {
+    "path": "johnson_lindenstrauss_very_simple.html",
+    "slug": "johnson_lindenstrauss_very_simple",
+    "title": "Hohe Dimensionen komprimieren — Ganz einfach erklärt",
+    "lang": "de",
+    "size_kb": 24.7,
+    "category": "ki",
+    "category_reason": "Johnson–Lindenstrauss-Lemma / Random Projection für Geometrie von Embeddings hoherdimensionaler Daten (Fotos als Punkte); zentrale Geometrie hinter ML-Embeddings und Dimensionsreduktion",
+    "theme": "geometry-of-embeddings",
+    "themes": ["dimensionality-reduction", "random-projection", "high-dimensional-geometry", "curse-of-dimensionality"],
+    "thesis": "Sehr einfache, interaktive Erklärung des Johnson–Lindenstrauss-Lemmas: n hochdimensionale Punkte lassen sich zufällig auf ein Handvoll Dimensionen projizieren (≈O(log n), abhängig nur von der Anzahl der Punkte, nicht von der Ausgangsdimension d), während fast alle paarweisen Abstände erhalten bleiben — weil in hohen Dimensionen zufällige Richtungen nahezu orthogonal sind und Abstände selten kollidieren",
+    "key_claims": [
+      "Ein Punkt in d Dimensionen ist nur eine Liste von d Zahlen; ein Foto mit 1 Million Pixeln ist ein Punkt mit einer Million Koordinaten; 'Ähnlichkeit' = kleiner Abstand zwischen Punkten, also ist das Erhalten der Abstände das Ziel",
+      "Der Trick: Punkte zufällig auf wenige Dimensionen werfen (wie ein Foto der Punktwolke aus einem zufälligen Winkel) — fast alle paarweisen Abstände überleben",
+      "Die Anzahl benötigter Ziel-Dimensionen hängt nur von n (Anzahl der Punkte) ab, nicht von der Ausgangsdimension d: ~O(log n) (illustriert als ≈4·log₂ n)",
+      "Mit einer einzigen zufälligen Richtung (1 Dim) brechen viele Abstände; mit einem Handvoll (2–3) überleben fast alle — die zentrale Beobachtung hinter dem Lemma",
+      "Warum es funktioniert: In hohen Dimensionen sind die individuellen Abstandsstörungen nahezu unabhängig (kaum Kollisionen), sodass der allergrößte Teil aller Abstände 'auf einmal, gleichzeitig' überlebt"
+    ],
+    "methods_math": ["Johnson–Lindenstrauss-Lemma", "Random Projection", "höherdimensionale Geometrie", "paarweise Abstände", "O(log n)-Dimensions-Schranke", "Nahe-Orthogonalität zufälliger Vektoren"],
+    "visualizations": ["3 interaktive Canvas-Demos: (1) 'was eine Dimension ist' (2D/3D-Ebenen), (2) 'der Wurf' (Random-Projection einer 3D-Wolke auf 1/2/3 Dimensionen mit Nachbar-Kanten + Abstands-Ratio-Histogramm, zeigt %-Anteil innerhalb ±25%), (3) 'wie viele Dimensionen reichen' (Balken davor vs. benötigtes k=4·log₂ n, demonstriert k unabhängig von d)"],
+    "internal_tensions": [
+      "Popularisierung, die nur 3D-Punktwolken verwendet (das '1M-Pixel-Foto' ist Rhetorik; das eigentliche Demo projiziert 3D→weniger Dimensionen)",
+      "'≈4·log₂ n' ist eine Heuristik-Konstante, nicht die exakte JL-Schranke (die spezifische ε,δ-abhängige Konstanten hat); die Unabhängigkeits-Intuition der Störungen blendet die concentration-of-measure-Maschinerie hinter dem echten Beweis aus",
+      "Grenze der Klassifikation: Die Mathematik (JL/Embeddings-Geometrie) ist grundlegend für ML-Embeddings, aber die Seite rahmt es als reine Daten-Kompressions-Geometrie, ohne ML/Neuronale Netze explizit zu benennen"
+    ],
+    "related_files": ["johnson_lindenstrauss", "latent_semantic_manifolds_in_llm", "geometry_of_meaning_test", "token_manifold_verletzt", "low_dim_learning", "intrinsische_dimensionen_tiefer_neuronaler_netze", "manifold_flattening", "space_algorithm", "new_space", "projection"]
+  }
+]

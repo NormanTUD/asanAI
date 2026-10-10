@@ -1,0 +1,172 @@
+[
+  {
+    "path": "verweigerungsrichtung.html",
+    "slug": "verweigerungsrichtung",
+    "title": "Die Verweigerungs-Richtung · Interaktive Reise durch ein KI-Paper",
+    "lang": "de",
+    "size_kb": 189.3,
+    "category": "ki",
+    "category_reason": "LLM-Interpretierbarkeit und -Sicherheit: analysiert Transformer-Aufmerksamkeits-Köpfe und eine einzelne Aktivierungs-Richtung in Sprachmodellen (Arditi et al., NeurIPS 2024).",
+    "theme": "interpretability",
+    "themes": ["interpretability", "llm-safety", "transformer-attention", "representation-engineering"],
+    "thesis": "Refusal (Verweigerung) in Sprachmodellen wird von einer einzigen linearen Richtung im Aktivierungsraum vermittelt, die man identifizieren und ablatieren kann.",
+    "key_claims": [
+      "Verweigerung wird von einer einzelnen Richtung r-hat in der Aktivierungsebene getragen.",
+      "Richtungsabliteration senkt den refusal_score von 0.93 auf 0.07.",
+      "Gleichzeitig sinkt der safety_score auf etwa 0.25 (Sicherheit wird mit abgetragen).",
+      "Die Richtung laesst sich per CKA oder als mittlere Differenz zwischen verweigern/verhandeln identifizieren.",
+      "Ein linearer Probe kann die Verweigerung praezise vorhersagen.",
+      "Bestimmte Kopfpaare (z.B. H12.10, H12.8, H14.2, H14.12) tragen die Richtung."
+    ],
+    "methods_math": ["lineare Projektion / Richtung im Aktivierungsraum", "directional ablation", "CKA", "linearer Probe", "Mehrfach-Modell-Vergleich"],
+    "visualizations": ["Interaktive Abliteration der Verweigerungs-Richtung", "Score-Balken (refusal/safety) vor/nach", "Kopf-/Ebene-Karte mit beteiligten Attention-Heads", "100 JailbreakBench-Queries, 13 Modelle"],
+    "internal_tensions": [
+      "Die Richtung ist sicherheits-relevant: Ablation macht das Modell angreifbar.",
+      "Eine einzelne Richtung faengt nur einen Teil der Verweigerung; uebertragbarkeit ueber Modelle/Abstraktion ist begrenzt."
+    ],
+    "related_files": ["talking_heads.html", "latent_semantic_manifolds_in_llm.html", "semantic_steering.html", "wie_ein_llm_denkt.html"]
+  },
+  {
+    "path": "hopf_faserung.html",
+    "slug": "hopf_faserung",
+    "title": "Die Hopf-Faserung — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 188.6,
+    "category": "nicht-ki",
+    "category_reason": "Reine Mathematik (Topologie / Faserbuendel / Quaternionen). Keine ML-/KI-Inhalte; Anwendungen sind Quantenmechanik und Robotik.",
+    "theme": "fiber-bundles",
+    "themes": ["fiber-bundles", "algebraic-topology", "geometry-manifolds", "quaternions"],
+    "thesis": "Die Hopf-Faserung S^3 -> S^2 faesst die 3-Sphaeere auf die 2-Sphaere, wobei je zwei Fasern Verhaeltniszahl 1 verknuepfen sind (nach Zachary Treisman 2009).",
+    "key_claims": [
+      "Jedes Faserpaar hat linking number = 1.",
+      "Fasern entstehen als Ueberlagerungen von Breitengrad-Toren in C^2.",
+      "Quaternionen beschreiben die Fasern als 1-parameter-Untergruppen.",
+      "Stereographische Projektion bringt S^3 nach C^2 zur Darstellung.",
+      "Die Faserung belegt pi_3(S^2) = Z und definiert die Hopf-Invariante.",
+      "Anwendungen: Spin-1/2 / Bloch-Kugel (QM) und Quaternion-Slerp (Robotik)."
+    ],
+    "methods_math": ["Hopf-Faserung", "linking number", "Breitengrad-Toren", "Quaternionen", "stereographische Projektion", "pi_3(S^2), Hopf-Invariante"],
+    "visualizations": ["Dreidimensionale Faser-Darstellung (three.js)", "Breitengrad-Tore in C^2", "Verknuepfung/Faserpaare (Plotly)", "Bloch-Kugel / Slerp"],
+    "internal_tensions": [
+      "Die Faserung ist nicht trivial und schwer in 3D intuitionsfreundlich darzustellen.",
+      "Verbindung zu Quantenmechanik/Robotik wird nur andeutungsweise ausgebaut."
+    ],
+    "related_files": ["faserbuendel_und_fibrationen.html", "fibrebundles.html", "bundles.html"]
+  },
+  {
+    "path": "covers_theorem.html",
+    "slug": "covers_theorem",
+    "title": "Cover 1965 — Interaktiv: Trennende Flaechen, Kapazitaet 2d, Generalisierung",
+    "lang": "de",
+    "size_kb": 188.3,
+    "category": "ki",
+    "category_reason": "Mathematische Grundlagen des maschinellen Lernens: Kapazitaet linearer Trenner, VC-artige Zaedhung und Generalisierung (Cover 1965).",
+    "theme": "generalization",
+    "themes": ["generalization", "mathematical-foundations", "statistics-inference", "convex-geometry"],
+    "thesis": "Die Anzahl der von N Punkten in d Dimensionen linear trennbaren Aufteilungen ist C(N,d) = 2 * sum_{k=0}^{d-1} binom(N-1, k); die Kapazitaet waechst linear mit 2d (Cover 1965).",
+    "key_claims": [
+      "C(N,d) = 2 * sum_{k=0}^{d-1} binom(N-1, k) zaehlt trennbare Aufteilungen.",
+      "Im Grenzfall ist die Kapazitaet 2d — zwei Muster pro Gewicht.",
+      "Phi-Trick: gekruemmte Trennflaechen sind Hyperebenen im Merkmalsraum (Vorlaeufer des Kernel-Tricks).",
+      "Dualitaet Punkte <-> Hyperebenen (Trotter-Sheridan / polar duality).",
+      "Generalisierung beginnt erst ueber der Kapazitaet 2d.",
+      "Extrem-/Stuetzvektoren sind die einzigen, die eine Trennung tragen.",
+      "XOR ist in 2D nicht linear trennbar."
+    ],
+    "methods_math": ["Zaedhungen binomialer Summen", "Duality Punkte/Hyperebenen", "Phi-Merkmalsraum (Kernel-Trick)", "Stuetzvektoren", "Komplementaer-Klassen / Dualitaet"],
+    "visualizations": ["Plotly-Kurve C(N,d) ueber d", "N Punkte im Raum + trennende Flaechen", "Stuetzvektor-/Extrempunktdemo", "XOR-nicht-trennbar-Demo"],
+    "internal_tensions": [
+      "Die Formel ist exakt, aber die Uebertragung auf neuronale Netze (hoehere Kapazitaet) bleibt offen.",
+      "Der Phi-Trick ist ein Vorlaeufer, kein vollständiger Nachweis fuer moderne Netze."
+    ],
+    "related_files": ["generalisierung_im_deep_learning.html", "linear_seperability.html", "support_vector_machines.html"]
+  },
+  {
+    "path": "origami_1.html",
+    "slug": "origami_1",
+    "title": "Origami in N Dimensionen — Wie neuronale Netze Raum falten",
+    "lang": "de",
+    "size_kb": 186.1,
+    "category": "ki",
+    "category_reason": "Geometrie/Topologie tiefer neuronaler Netze: ReLU-Falten, lineare Regionen, topologisches Entwirren und Neural Collapse.",
+    "theme": "topological-unfolding",
+    "themes": ["topological-unfolding", "deep-learning-geometry", "neural-collapse", "universal-approximation"],
+    "thesis": "Ein ReLU-Neuron ist eine Faltung (Hyperebene) des Eingabe-Raums: Netze tauschen nichtlineare Trennung gegen falten, und eine breite Schicht koennte das N-dimensionale Ei in einer Schicht (N+1 Neuronen) falten.",
+    "key_claims": [
+      "Affine Schicht = Amboss (W*x+b); ReLU = Hammerschlag (Faltachse).",
+      "Falten ist injektiv auf den Daten; Plattdruecken (Crushing) ist es nicht.",
+      "Falten benoetigt unbesetzte Richtungen (breitere Schicht als die Daten).",
+      "Lineare Regionen wachsen exponentiell mit der Tiefe (2^L) — Tiefe schlaegt Breite.",
+      "Fingerabdruck eines Faltneurons: bimodale Tuningkurve mit Delle bei z=0.",
+      "ReLU ist kein Homeomorphismus und schliesst Loecher (Betti b1 faellt); tanh ist Homeomorphismus.",
+      "Neural Collapse: Klassenmittel kollabieren zu einem Simplex-ETF (Soll-Kosinus -1/(K-1)).",
+      "Fold-and-Cut: N-dim. Origami + ein flacher Schnitt = universelle Approximation.",
+      "Uebertragbar: Dense ja, Conv teilweise, Attention nein (Lewandowski et al. 2025), RNN unklar, Residual+Norm ja."
+    ],
+    "methods_math": ["stueckweise affine Abbildung", "konvexe Huelle", "Betti-Zahlen / Topologisches Entwirren", "Johnson-Lindenstrauss", "Cover", "Konzentration des Masses", "Neural Collapse / Simplex-ETF", "Chi-Faltmass", "Hartigan-Dip-Statistik"],
+    "visualizations": ["2D-Ei: Falten + flacher Schnitt (Canvas/Plotly)", "3D-Faltflaeche (scatter3d)", "Aktivierungsfunktions-Vergleich (ReLU/Leaky/GELU/SiLU/tanh/Sigmoid)", "Betti-Evolution ueber Schichten", "lineare Regionen + Depth-vs-Width Kurve", "Saegzahn T(x) iteriert", "Neural-Collapse-3D + Kosinus-Heatmap", "Fold-and-Cut-Papierschneiderei", "Maekawa/Kawasaki + Miura-Ori", "Quiz / Selbsttest"],
+    "internal_tensions": [
+      "Falten setzt eine breitere Schicht als die Daten voraus — schmale Netze koennen nicht falten, nur scheren.",
+      "Das Chi-Mass ist auf Attention/transformer-Strukturen in dieser Form nicht anwendbar.",
+      "Die exakte Regionenzahl ist im trainierten Netz weit kleiner als die Worst-Case-Grenze 2^L."
+    ],
+    "related_files": ["origami_2.html", "topologie_tiefer_neuronaler_netze.html", "tropische_geometrie_tiefer_neuronaler_netze.html", "linear_seperability.html"]
+  },
+  {
+    "path": "kult_der_statistischen_signifikanz.html",
+    "slug": "kult_der_statistischen_signifikanz",
+    "title": "Der Kult der statistischen Signifikanz — Interaktiv",
+    "lang": "de",
+    "size_kb": 182.4,
+    "category": "nicht-ki",
+    "category_reason": "Statistik / Okonometrie / Wissenschaftssoziologie: Philosophie des t-Tests, p-Werte und Signifikanzritual (Ziliak & McCloskey 2009). Keine KI-Inhalte.",
+    "theme": "statistics-inference",
+    "themes": ["statistics-inference", "meta-science", "econometrics", "decision-theory"],
+    "thesis": "Gosset (der t-Test-Erfinder) hatte recht, Fisher unrecht: Signifikanz (Praezision) sagt nichts ueber die Groesse des Effekts (Oomph) — 'Size matters no matter where you draw the line of precision' (Ziliak & McCloskey, JSM 2009).",
+    "key_claims": [
+      "Praezision (scharfe Messung) und Oomph (Effektgroesse) sind orthogonal.",
+      "Die 5%-Linie ist Fishers 'bequeme' Festsetzung (1926/1935), keine Herleitung.",
+      "DeGroots 20000: mit grossen n wird jeder Effekt > 0 'signifikant' — Signifikanz misst das Budget, nicht die Natur.",
+      "Vioxx (Merck, Lisse et al. 2003): 5 statt 8 Infarkte gemeldet; 'nicht signifikant' wurde zu 'kein Effekt' gelesen.",
+      "Sterling 1959: 362 Artikel, 0 Replikationen; Publikationsbias blaeht Effekte systematisch auf.",
+      "Minimax: In allen Zustaenden der Welt dominiert Oomph die Precision-Pille (Pillendemo 20±10 vs 5±0.5).",
+      "Fisher ignoriert Power (Fehler 2. Art) und Verlustfunktionen; Gosset arbeitet mit 'real error' und Replikation (19 von 20 Stationen).",
+      "Auch bei ±14 (t=1.43) bleibt die Antwort Oomph — Groesse zaeht."
+    ],
+    "methods_math": ["Normalverteilung / zweiseitiger p-Wert", "Standardfehler sigma/sqrt(n)", "t-Statistik (Signal/Rauschen)", "Power und Fehler 1./2. Art", "Minimax / Verlustfunktion", "Fishers exakter Test", "Box-Muller + Acklam-Invers der Normalverteilung"],
+    "visualizations": ["Pillensimulation (400 Moetter)", "Standardabweichung ziehen", "Glockenkurve ±1/2/3 sigma", "Signal/Rauschen Radio + t-Heatmap (Oomph vs Precision)", "p-Wert + 5%-Linie", "CDC-Grid (16 p, 0 Oomph)", "Minimax-Balken", "DeGroot 20000 + n-Map", "Vioxx 5-vs-8 + Drop-Regler", "Sterling-Aktenschrank / Publikationsbias-Simulation", "Power-Zwei-Glocken + Johnston-Autobahn", "Gosset-Brauer-Entscheidungsrechner", "Abschluss-Quiz"],
+    "internal_tensions": [
+      "Das Werk kritisiert ein Ritual, das es selbst fuer die Simulationen (Alpha, p) verwendet.",
+      "Die Oomph-Dominanz gilt nur, solange die Intervalle nicht ueberlappen — im Ueberlappungsfall braucht es tatsaechlich eine Verlustfunktion.",
+      "Gossets Ansatz wird als 'richtig' gerahmt, waehrend Fishers Einfluss historisch faktisch dominant blieb."
+    ],
+    "related_files": ["kult_der_statistischen_signifikanz_simple.html", "kult_der_statistischen_signifikanz_very_simple.html", "wahrscheinlichkeit.html"]
+  },
+  {
+    "path": "narcissism.html",
+    "slug": "narcissism",
+    "title": "Narzisstische Manipulationsstrategien – Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 41.5,
+    "category": "nicht-ki",
+    "category_reason": "Psychologie: narzisstische Manipulation, Gaslighting und Erholung. Keine Mathematik/ML-Inhalte.",
+    "theme": "psychology",
+    "themes": ["psychology", "manipulation", "recovery"],
+    "thesis": "Der narzisstische Beziehungskreislauf (Idealisierung → Abwertung → Verwerfen → Hoovering) nutzt intermittierende Verstärkung, um Trauma-Bindungen zu erzeugen; Erholung ist ueber No-Contact und Therapie moeglich.",
+    "key_claims": [
+      "Typischer Zyklus: Love Bombing (Idealisierung) → Abwertung → Verwerfen → Hoovering.",
+      "Intermittierende Verstaerking erzeugt eine suchtaehnliche Trauma-Bindung.",
+      "Gaslighting verschiebt die Wahrnehmung des Opfers gegen die objektive Realitaet und senkt das Selbstvertrauen.",
+      "Taktiken: Love Bombing, Gaslighting, Silent Treatment, Triangulation, Projektion, Blame Shifting, Hoovering, Flying Monkeys.",
+      "Ueber Zeit steigen Angst und Isolation, faellt das Selbstwertgefuehl, waechst die Abhaengigkeit.",
+      "Erholung verlaeuft nach No-Contact + Therapie; Rueckschlaege bei unvollstaendigem Kontaktabbruch."
+    ],
+    "methods_math": ["Phasen-Moellung des Beziehungszylus", "exponentielle Dekaay- / Healing-Kurven", "Macht-und-Kontroll-Rad (Radial-Diagramm)"],
+    "visualizations": ["Zykluskurve (Zuneigung vs Selbstwert ueber Monate)", "Gaslighting-Canvas (Realitaet vs verzerrte Wahrnehmung + Phrasen-Overlay)", "Manipulations-Radar (8 Taktiken)", "Emotionale Auswirkung ueber Zeit (4 Kennwerte)", "Macht-und-Kontroll-Rad (klickbar, 8 Segmente)", "Erholungskurve (Selbstwert/Angst/Freiheit)"],
+    "internal_tensions": [
+      "Die Simulationen sind illustrative Annahmen, keine klinisch validierten Modelle.",
+      "Die Seite ersetzt keine professionelle Beratung (ausdruecklich ausgewiesen)."
+    ],
+    "related_files": ["kastrup_jung.html", "psychologische_feldtheorie.html"]
+  }
+]

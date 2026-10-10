@@ -1,0 +1,226 @@
+[
+  {
+    "path": "cellular.html",
+    "slug": "cellular",
+    "title": "Cellular Automata: Order from Simple Rules",
+    "lang": "en",
+    "size_kb": 51.0,
+    "category": "nicht-ki",
+    "category_reason": "Cellular automata as a model of computation and complexity (Wolfram classes, Turing completeness, chaos); no ML/NN application",
+    "theme": "dynamical-systems",
+    "themes": ["cellular-automata", "chaos-theory", "emergence", "computation"],
+    "thesis": "Simple, local, deterministic update rules on a lattice of cells generate chaos, emergence, self-organization, and even universal computation, making cellular automata a bridge between simple rules and complex behavior.",
+    "key_claims": [
+      "Elementary CAs have 2^8 = 256 rules from the 8 possible 3-cell neighborhoods; Wolfram's Class III (Rule 30) is chaotic and Class IV (Rule 110) sits at the edge of chaos",
+      "Conway's Game of Life (1970) is Turing complete — it can compute anything a computer can",
+      "Rule 110 is proven Turing complete; Rule 90 yields the Sierpinski triangle (XOR of neighbors); Rule 184 models traffic flow; Rule 30 was used by Wolfram as a PRNG",
+      "Chaos in CAs is sensitive dependence on initial conditions: flipping one cell changes the long-term evolution, tracked by a Lyapunov-like divergence rate and Shannon entropy",
+      "Chaotic (Class III) rules drive Shannon entropy toward its maximum, ordered (Class I/II) rules toward 0, and edge-of-chaos (Class IV) rules show intermediate entropy",
+      "The forest-fire CA demonstrates self-organized criticality: the system relaxes to a critical state where fire sizes follow a power law"
+    ],
+    "methods_math": ["cellular_automata", "shannon_entropy", "lyapunov_exponent", "hamming_distance", "turing_completeness", "self_organized_criticality"],
+    "visualizations": [
+      "1D ECA evolution canvas (vanilla JS canvas 2D) for rules 30/110/90/184 with rule-table display",
+      "Conway's Game of Life canvas with loadable patterns (glider, blinker, pulsar, Gosper gun, R-pentomino, acorn)",
+      "side-by-side chaos/sensitivity canvas showing Hamming-distance growth and a Lyapunov bar",
+      "entropy-over-time plot (canvas) per rule class",
+      "forest-fire CA canvas (tree-growth + lightning sliders)"
+    ],
+    "internal_tensions": [
+      "The 'edge of chaos' / complexity-from-simple-rules claim is asserted as the takeaway but not argued as a theory of computation; the file never links CAs to neural nets (a contrast with the math-for-AI cluster in this corpus)",
+      "The 'Lyapunov-like exponent' is a heuristic (log of late/early Hamming difference), not a true dynamical-systems Lyapunov exponent"
+    ],
+    "related_files": ["strukturwissenschaften", "chaos", "new_kind_of_science", "topology_idea"]
+  },
+  {
+    "path": "finneganswake3.html",
+    "slug": "finneganswake3",
+    "title": "Finnegans Wake",
+    "lang": "en",
+    "size_kb": 50.8,
+    "category": "nicht-ki",
+    "category_reason": "A single-canvas game retelling chapters of Joyce's Finnegans Wake as playable vignettes; literature/game, no ML",
+    "theme": "literature",
+    "themes": ["james-joyce", "interactive-fiction", "generative-art"],
+    "thesis": "A no-HUD, full-window canvas 'game' that walks through nine chapters of Joyce's Finnegans Wake — each rendered as a small playable vignette with its own palette — ending in a dissolve-to-white that loops back to the opening, mirroring the book's circular structure.",
+    "key_claims": [
+      "Maps Finnegans Wake's sections to nine playable chapters (fw00–fw08): the fall from the ladder, HCE's Phoenix Park rumor, the pub/trial, Shem the Penman writing ink on his body, ALP's letter down the Liffey, the Norwegian ship, the quiz, Shaun's barrel-sermon, and ALP dissolving as the river reaches the sea",
+      "The whole is a cycle: chapter 8 (ALP dissolving, dawn) fades to white and returns to chapter 0, enacting the book's circular 'fall / wake' structure",
+      "Each chapter is a distinct micro-genre (collect, dodge, draw, steer, balance, catch) keyed to a per-chapter color palette matched to the section's mood",
+      "Input is mouse/touch plus WASD/arrows; the cursor is hidden and replaced by a custom dot; there is no on-screen text except in-canvas progress pips and a health bar"
+    ],
+    "methods_math": ["vector_kinematics", "color_interpolation", "trig_motion", "state_machines"],
+    "visualizations": [
+      "single full-window canvas 2D game (vanilla JS): 9 chapter vignettes — crumbling tower/fall, park with spreading rumor rings and accusers, pub gavel-dodger, ink-trail body-drawing, scrolling river with gifts, ship/ice-berg dodging, falling-symbol quiz catcher, rotating barrel-sermon scroll, dissolving-particle sea",
+      "particle systems (gravity, life decay), screen-shake, and screen-fade chapter transitions"
+    ],
+    "internal_tensions": [
+      "There is essentially no fail/lose state (only the pub transitions on 0 health); 'completion' is defined by collection thresholds rather than challenge",
+      "It reduces Joyce's pun-dense, polyglot text to mood/palette/color per chapter — the linguistic play that is the actual Wake is entirely absent; this is visual metaphor, not the text",
+      "Chapter 8 is non-interactive (a timed dissolve), breaking the otherwise playable structure"
+    ],
+    "related_files": ["finneganswake", "finneganswake2", "also_sprach_zarathustra"]
+  },
+  {
+    "path": "bundles.html",
+    "slug": "bundles",
+    "title": "Principal Bundles – Interaktives Lerntool",
+    "lang": "de",
+    "size_kb": 50.7,
+    "category": "nicht-ki",
+    "category_reason": "Principal bundles / gauge theory applied to the fundamental forces (EM, weak, strong, gravity); math for physics, no ML",
+    "theme": "fiber-bundles",
+    "themes": ["gauge-theory", "geometry-manifolds", "differential-forms", "topology"],
+    "thesis": "A principal bundle is a space carrying a full symmetry (Lie) group over each base point, and the real question is how those symmetries are globally twisted; that twist — the connection and its curvature — is exactly gauge physics (the EM potential, the field strength, and the Aharonov–Bohm effect).",
+    "key_claims": [
+      "A Principal G-bundle has fiber = Lie group G acting freely and transitively on each fiber, base M = P/G, and is the 'mother bundle' from which every associated bundle P×_G F is built",
+      "A bundle is determined up to isomorphism by its transition functions g_ij satisfying the cocycle condition g_ij·g_jk·g_ki = e on triple overlaps",
+      "A connection is a 𝔤-valued 1-form ω; locally A_i = s_i*ω is the physics gauge potential, and curvature Ω = dω + ½[ω,ω] is the field strength",
+      "For U(1) electromagnetism the curvature F = dA is the EM field tensor, with gauge transformation A → A + ∂λ",
+      "Fundamental forces as connections: EM = U(1), weak = SU(2), strong QCD = SU(3) (8 gluons = dim su(3)), gravity = frame bundle with Lorentz group SO(3,1) and Riemann curvature",
+      "The Aharonov–Bohm effect: with F = 0 (flat connection) the holonomy exp(i∮A) = exp(iΦ/ℏ) can still be nontrivial — showing the gauge potential A, not only F, is physically real",
+      "Flat curvature (F = 0) does NOT imply a trivial bundle — holonomy can remain nontrivial"
+    ],
+    "methods_math": ["principal_bundles", "lie_groups", "lie_algebras", "transition_functions", "cocycles", "connections", "curvature", "holonomy", "parallel_transport", "hopf_fibration", "differential_forms"],
+    "visualizations": [
+      "cylinder vs Möbius-bundle intuition canvas with animated fiber transport (vanilla JS canvas 2D)",
+      "3D-projected torus (S¹×S¹) with a twist slider; Hopf fibration S¹→S³→S²; connection (horizontal/vertical) and parallel-transport/holonomy scenes",
+      "Aharonov–Bohm two-path interference canvas with phase circles and a flux slider"
+    ],
+    "internal_tensions": [
+      "Explicitly warns that 'flat' (F=0) ≠ 'trivial' — a common confusion the tool pushes against",
+      "Identifies the Hopf fibration as describing the magnetic-monopole bundle, a physics claim asserted without proof",
+      "The 'clock on a circle' analogy equates the U(1) fiber with a rotating clock hand, flattening the group action"
+    ],
+    "related_files": ["fibrebundles", "fibrebundleslab", "jet_bundles", "hopf_faserung", "ehresmannconnection", "lie"]
+  },
+  {
+    "path": "topological_data_analysis.html",
+    "slug": "topological_data_analysis",
+    "title": "Topological Data Analysis — Visual Explorer",
+    "lang": "en",
+    "size_kb": 50.7,
+    "category": "nicht-ki",
+    "category_reason": "TDA (Vietoris-Rips, Mapper, Alpha, persistence) applied to generic point-cloud/shape data; ML appears only as a persistence-landscape use-case with no application to neural nets or embeddings",
+    "theme": "topological-data-analysis",
+    "themes": ["persistent-homology", "algebraic-topology", "computational-topology"],
+    "thesis": "Topological data analysis extracts the shape of data — connected components, loops, voids — by building simplicial complexes filtered by a scale parameter, and summarizes them with invariants beyond barcodes: persistence landscapes, Euler characteristic curves, Reeb graphs, and the Mapper algorithm.",
+    "key_claims": [
+      "Vietoris-Rips: connect points within distance ≤ 2ε and fill all cliques as simplices; as ε grows, components and loops are born and die (a filtration)",
+      "The Mapper algorithm (Singh, Mémoli, Carlsson 2007) projects data through a filter, covers the range with overlapping intervals, clusters each preimage, and builds a graph — a topological 'skeleton' revealing loops, branches, and flares",
+      "The Alpha complex is a subcomplex of the Delaunay triangulation (keep simplices with circumradius ≤ α), geometrically more faithful and cheaper than Vietoris-Rips in low dimensions",
+      "Persistence landscapes (Bubenik 2015): each interval [b,d] becomes a tent function; λ₁, λ₂, … are pointwise orderings forming a Hilbert space that supports means, variances, and distances — a bridge to statistics and ML",
+      "The Euler characteristic curve χ(ε) = V − E + F tracks topological change through a filtration as a compact signature",
+      "The Reeb graph contracts each connected component of a level set of f: X→ℝ to a point; its nodes are topology-change (saddle) points — it is the theoretical basis of Mapper"
+    ],
+    "methods_math": ["vietoris_rips_complex", "alpha_complex", "delaunay_triangulation", "persistent_homology", "persistence_landscapes", "euler_characteristic", "reeb_graphs", "mapper_algorithm", "bowyer_watson"],
+    "visualizations": [
+      "per-method tabs, all vanilla JS canvas 2D: Vietoris-Rips with ε-balls and cliques; Mapper (data+intervals → graph); Alpha complex (Delaunay with active simplices); persistence landscapes (tent functions + λ curves); Euler characteristic curve; Reeb graph with an animated level-set sweep"
+    ],
+    "internal_tensions": [
+      "Framing persistence landscapes as an ML/statistics bridge, yet never applying TDA to any neural network or learned embedding — a gap versus the math-for-AI cluster in this corpus",
+      "The Mapper clustering is a naive greedy distance-based clustering rather than the real Mapper's cluster-decomposition; the 'skeleton' is illustrative, not rigorous",
+      "All point sets are synthetic (clustered blobs, circle-with-flare); no real datasets are used"
+    ],
+    "related_files": ["persistent_landscape", "persistent_topology", "betti", "kokettenkomplex", "topology_idea"]
+  },
+  {
+    "path": "sobolev_raum.html",
+    "slug": "sobolev_raum",
+    "title": "Sobolev-Räume W^{k,p}(Ω)",
+    "lang": "de",
+    "size_kb": 50.4,
+    "category": "nicht-ki",
+    "category_reason": "Sobolev spaces and weak derivatives — functional analysis / PDE theory; ML appears only as one of eight applications (Sobolev training), not the focus",
+    "theme": "functional-analysis",
+    "themes": ["pde", "calculus-of-variations", "regularity-theory"],
+    "thesis": "Sobolev spaces W^{k,p}(Ω) generalize the derivative via weak (distributional) derivatives, giving a rigorous home for the rough functions that arise as solutions of PDEs; their norm, hierarchy, and embedding theorems (Sobolev, Morrey) explain why enough derivatives force regularity.",
+    "key_claims": [
+      "Weak derivative: v ∈ L^p is the weak derivative of u when ∫ u D^αφ = (−1)^|α| ∫ v φ for all test functions φ — the derivative is pushed onto smooth test functions via integration by parts",
+      "H^k = W^{k,2} is a Hilbert space with inner product Σ_{|α|≤k} ∫ D^αu D^αv, useful for projections, orthogonality, and the Riesz representation theorem",
+      "|x| ∈ W^{1,2}(−1,1) (weak derivative sign(x)) but ∉ W^{2,p} (second derivative 2δ(0), a distribution); Heaviside ∉ W^{1,p} (derivative δ(0)); |x|^{1/2} ∈ W^{1,p} only for p < 2 in 1D",
+      "Sobolev embedding: if kp < n then W^{k,p} ↪ L^q with Sobolev exponent q* = np/(n−kp); if kp = n (critical) it embeds into all L^q, q < ∞; if kp > n (Morrey) it embeds into C^{0,α} with α = k − n/p — enough derivatives force continuity",
+      "Lax–Milgram: the weak form ∫ ∇u·∇v = ∫ fv with coercivity a(u,u) ≥ α‖u‖² (via Poincaré) yields a unique weak solution u ∈ H₀¹ — the backbone of FEM and PDE existence",
+      "The Sobolev norm grows with frequency: higher ω in sin(ωπx) inflates ‖f'‖ and thus the H¹ norm — Sobolev norms measure smoothness by 'punishing' oscillation",
+      "Applications include heat/wave equations, elasticity, Navier–Stokes (Millennium problem), FEM, and — as one card — 'Sobolev training' of neural nets via Sobolev-norm regularization"
+    ],
+    "methods_math": ["sobolev_spaces", "weak_derivatives", "lp_spaces", "sobolev_embedding", "morrey_embedding", "sobolev_norm", "lax_milgram", "poincare_inequality", "hilbert_spaces", "distributions"],
+    "visualizations": [
+      "function & weak-derivative plot canvases (vanilla JS canvas 2D) for |x|, sin(πx), Heaviside, |x|^{1/2}, x·sin(1/x)",
+      "animated Sobolev-norm bars per derivative order; frequency-vs-H¹-norm plot",
+      "nested-ellipses function-space hierarchy; embedding-regime diagram (kp<n / =n / >n) with a position indicator"
+    ],
+    "internal_tensions": [
+      "A 'Machine Learning' application card (Sobolev training / Sobolev-norm regularization) sits alongside physics applications — an explicit math-for-AI hook, but thin and unelaborated versus the analysis focus",
+      "The 'forgiving teacher' analogy and the regime diagram are pedagogical; the file does not discuss the subtlety that the critical case is 'almost continuous but not continuous'"
+    ],
+    "related_files": ["calculus_on_manifolds", "christoffel", "manigfaltigkeiten", "topological_data_analysis", "how_ai_approximates"]
+  },
+  {
+    "path": "buecher/also_sprach_zarathustra.html",
+    "slug": "also_sprach_zarathustra",
+    "title": "Also sprach Zarathustra – Interaktive Konzeptvisualisierung",
+    "lang": "de",
+    "size_kb": 50.2,
+    "category": "nicht-ki",
+    "category_reason": "Interactive visualization of Nietzsche's Zarathustra concepts (Übermensch, eternal return, will to power); philosophy, no ML",
+    "theme": "nietzsche",
+    "themes": ["ubermensch", "eternal-return", "will-to-power", "philosophy"],
+    "thesis": "An interactive gamification of Zarathustra's core concepts — the spirit's three metamorphoses, Übermensch vs. last man, eternal return, will to power, the transvaluation of values, and the death of God — turning Nietzsche's metaphysics into sliders, gauges, and mini-games.",
+    "key_claims": [
+      "The spirit undergoes three metamorphoses: camel (carries the heaviest burden, 'you shall'), lion (fights the dragon 'you shall' to win freedom, 'I will'), child (innocent new creation, holy 'Yes')",
+      "The Übermensch is the meaning of the Earth and something humanity must overcome itself to become; the last man is the opposite — comfort, blinking, 'we have invented happiness,' no star",
+      "Eternal return (the 'greatest weight'): every joy and pain recurs infinitely; the test is whether you can say Yes to re-living your life eternally (the demon parable)",
+      "Will to power: life is not mere self-preservation but self-overcoming/growth; even in the servant's will one finds the will to be master",
+      "Transvaluation of all values: good and evil are human-made, not given from heaven; master-moral vs slave-moral; values must be continually re-created",
+      "The human is 'a rope, spanned between beast and Übermensch — a rope over an abyss'",
+      "The death of God leaves a vacuum to be filled by nihilism, the last man, the value-creator, or the Übermensch"
+    ],
+    "methods_math": [],
+    "visualizations": [
+      "three-metamorphoses canvas path with burden bar (vanilla JS canvas 2D)",
+      "Plotly: Übermensch radar + gauge (chaos/overcoming/comfort/will-to-power), will-to-power growth-vs-resistance line, virtue bar chart (master vs slave moral), god-of-death radar scenarios, concept-network graph",
+      "animated eternal-return rotating event circle with spiral trail and 'Ja-Sagen'",
+      "interactive tightrope-balancing mini-game (mouse-controlled walker over an abyss)"
+    ],
+    "internal_tensions": [
+      "Quantifies Nietzsche with weighted scores (e.g. Übermensch = 0.25·chaos + 0.30·overcoming + 0.20·(100−comfort) + 0.25·will-to-power) — an instrumentalist flattening of concepts meant to resist quantification",
+      "Presents the 'last man' as a selectable persona rather than Nietzsche/Heidegger's existential diagnosis",
+      "The tightrope game treats the human-as-bridge as a balancing mechanic, reducing the 'dangerous crossing' to a skill task"
+    ],
+    "related_files": ["was_heisst_denken_2", "heraklit", "whitehead", "philosophy"]
+  },
+  {
+    "path": "was_heisst_denken_2.html",
+    "slug": "was_heisst_denken_2",
+    "title": "Was heißt Denken? — Interactive Visual Exploration",
+    "lang": "en",
+    "size_kb": 50.2,
+    "category": "nicht-ki",
+    "category_reason": "Interactive visualization of Heidegger's 'What Is Called Thinking?' (the four questions, the Twofold, Nietzsche, Parmenides); philosophy/phenomenology, no ML",
+    "theme": "phenomenology",
+    "themes": ["metaphysics", "being", "nietzsche", "language"],
+    "thesis": "A visually playful unpacking of Heidegger's Was heißt Denken (GA 8, 1951–52): the question of thinking splits into four modes, and what most calls for thinking withdraws while drawing us toward it — explored through the withdrawal paradox, Nietzsche's bridge over revenge, Parmenides' Geheiß, and the unthought Twofold of beings and Being.",
+    "key_claims": [
+      "The question 'what is thinking?' unfolds into four: (1) what the word 'thinking' (Gedank) means; (2) what tradition has taken thinking to be (logic, λόγος, judgment); (3) what we must bring to think (a leap/readiness, not a method); (4) what calls us to think — the decisive, most thought-provoking question",
+      "The withdrawal that draws: what most calls for thinking withdraws from us, and this very withdrawal (Zug) is what draws us toward it — rendered as a slider paradox",
+      "Nietzsche's bridge: the Übermensch crosses from the 'last man' over the bridge of liberation from the spirit of revenge; the last man's will is revenge against time and its 'it was'",
+      "Revenge = the will's ill-will against time and its 'it was' (the frozen past); liberation is when the will wills the eternal return of the same — the will wills its own eternity",
+      "Parmenides' saying 'χρή τὸ λέγειν τε νοεῖν τ᾿ ἐὸν ἔμμεναι' is the Geheiß (command) that first called Western thinking into being; Heidegger re-reads each word etymologically (λέγειν = letting-lie-before, νοεῖν = taking-to-heart)",
+      "The Twofold (Zwiefalt) — the difference between beings (Seiendes) and Being (Sein) — is the unthought: all metaphysics moves within it yet never thinks it",
+      "Gedanc (heart/Gemüt) is the root of memory (Gedächtnis), remembrance (Andenken), thanks (Dank), and thinking (Denken)"
+    ],
+    "methods_math": [],
+    "visualizations": [
+      "three.js 3D: Nietzsche's bridge (last-man platform → bridge → Übermensch platform over an abyss) and the Twofold (green beings-spheres + golden Being-tori + rose Zwiefalt particles, drag to rotate)",
+      "Plotly: four-questions radar, revenge time-spiral (3D), eternal-return polar, liberation bar, Parmenides sankey (λέγειν), Twofold polar, and a history-of-thought scatter (Parmenides → Heidegger)",
+      "vanilla JS canvas 2D: withdrawal paradox (human ↔ calling orb with pull lines), χρή concentric circles, νοεῖν heart, ἔμμεναι emerging waves, Gedanc word-network; hero particle field"
+    ],
+    "internal_tensions": [
+      "The page concedes it is 'not a substitute for the text' — acknowledging that Heidegger's thinking resists the visualization it performs",
+      "Uses a 'proximity to the Geheiß' y-axis for the history plot and numeric radar 'depth' scores — quantifying precisely what Heidegger says is unthought",
+      "A section is literally 'Nietzsche's Bridge,' tying this Heidegger piece to the Zarathustra visualization"
+    ],
+    "related_files": ["also_sprach_zarathustra", "sein_und_zeit", "schmitz", "anatomie_des_verstehens", "philosophy"]
+  }
+]

@@ -1,0 +1,871 @@
+[
+  {
+    "path": "buecher/weinherstellung.html",
+    "slug": "weinherstellung",
+    "title": "Weinherstellung — Interaktive Erkundung der Weinkelche",
+    "lang": "de",
+    "size_kb": 43.4,
+    "category": "nicht-ki",
+    "category_reason": "An interactive German guide to winemaking chemistry: fermentation biochemistry, acid-base chemistry, sulfur dioxide, tannin polymerization, malolactic conversion, and aging. Pure food/organic chemistry with no AI or ML content.",
+    "theme": "chemistry",
+    "themes": [
+      "biochemistry",
+      "fermentation",
+      "organic-chemistry",
+      "food-science"
+    ],
+    "thesis": "An interactive German-language walkthrough of winemaking as applied chemistry: how yeast convert sugar to ethanol via glycolysis and alcoholic fermentation, how SO2 dosing works as redox chemistry, how tannins polymerize and astringe, and how malolactic fermentation shifts the acid profile — each section pairing a chemical equation with a slider or animation.",
+    "key_claims": [
+      "Alcoholic fermentation is anaerobic glycolysis followed by decarboxylation of pyruvate to acetaldehyde and its reduction to ethanol; the net yield is 2 C6H12O6 -> 4 C2H5OH + 4 CO2, and only ~5% of the sugar energy is captured as ATP.",
+      "Sulfur dioxide acts as both a reductant (protecting wine from oxidation by preferentially binding O2) and a biocide (inactivating aldehyde oxidases in yeast cell walls); effective free-SO2 targets depend on total SO2, pH, and wine type.",
+      "Tannins are hydrolysable or condensed tannins (proanthocyanidins) whose astringency arises from precipitation of salivary proline-rich proteins; polymerization degree controls the perceived 'mouthfeel'.",
+      "Malolactic fermentation (MLF) is a bacterial decarboxylation of L-malic acid (2-hydroxybutanedioic acid) to L-lactic acid + CO2, raising pH by ~0.3 units and reducing harshness.",
+      "Esters (ethyl acetate, isoamyl acetate, etc.) formed during fermentation are the primary contributors to fruity aroma; their profile depends on yeast strain, temperature, and oxygen availability.",
+      "Browning (enzymatic and non-enzymatic Maillard) is the main aging degradation pathway; phenolic oxidation by polyphenol oxidase is the dominant enzymatic route in white wines."
+    ],
+    "methods_math": [
+      "stoichiometric reaction balancing",
+      "redox potential (Eh) and oxidation state",
+      "pH and buffer capacity (Henderson-Hasselbalch for tartaric/malic acid systems)",
+      "reaction kinetics (first-order degradation models for SO2, browning)",
+      "polymerization degree and its relation to molecular weight distribution",
+      "Le Chatelier's principle for fermentation equilibrium"
+    ],
+    "visualizations": [
+      "interactive fermentation pathway diagram with animated carbon flow from glucose to ethanol/CO2",
+      "SO2 speciation slider showing the free-bound equilibrium as a function of pH and temperature",
+      "tannin polymerization chain builder: click to add catechin units, watch molecular weight and astringency index grow",
+      "malic-to-lactic acid structure animation with the decarboxylation step highlighted",
+      "ester formation rate plot vs. temperature and yeast strain selection",
+      "browning colorimetry: visual wine color shift over simulated months with SO2 level as a control"
+    ],
+    "internal_tensions": [
+      "The guide treats winemaking as deterministic chemistry (stoichiometry, kinetics) while real winemaking is heavily empirical and strain-dependent; the interactive sliders give a false sense of predictive precision.",
+      "SO2 dosing is presented as a simple redox problem, but in practice the optimal free-SO2 level is a regulatory and sensory compromise, not a purely chemical optimum.",
+      "The MLF section is presented as a clean bacterial conversion, but in winemaking it is often a race against malolactic bacteria contamination and must be managed, not simply 'triggered'."
+    ],
+    "related_files": [
+      "chemistry",
+      "essen",
+      "buecher/saeen_und_ernten",
+      "buecher/a_simple_proof_the_world_is_three_dimensional"
+    ]
+  },
+  {
+    "path": "idea2.html",
+    "slug": "idea2",
+    "title": "LLM als Attraktor in einem Bedeutungsraum — Eine interaktive Ideenexploration",
+    "lang": "de",
+    "size_kb": 43.3,
+    "category": "ki",
+    "category_reason": "The entire file is a thought-exploration of how LLMs can be understood as dynamical systems moving through a semantic/meaning space, with attention as the mechanism creating basins of attraction. This is a core AI/LLM interpretability and mechanism question.",
+    "theme": "llm-interpretability",
+    "themes": [
+      "attractors",
+      "dynamical-systems",
+      "meaning-space",
+      "attention",
+      "representation-geometry"
+    ],
+    "thesis": "An interactive German-language idea exploration proposing that an LLM's 'thinking' is best understood as a dynamical trajectory through a high-dimensional meaning space, where attention heads create local basins of attraction, and the model's output is the state the trajectory settles into — with interactive 2D/3D visualizations of the basin structure.",
+    "key_claims": [
+      "An LLM's residual stream can be viewed as a point in a high-dimensional semantic space; each transformer layer applies a nonlinear map that moves this point, and the final output is a function of the terminal state.",
+      "Attention heads act as 'local attractor generators': each head pulls the residual stream toward a semantic subspace associated with its learned key pattern, creating a superposition of competing basins.",
+      "The 'grokking' phenomenon (sudden generalization after a long plateau) can be reinterpreted as the trajectory crossing a basin boundary into a more stable attractor that generalizes.",
+      "Meaning is not stored at a single point but is a region of the space: paraphrases occupy nearby basins, and the model's 'understanding' is the basin's geometry (shape, volume, depth).",
+      "Temperature sampling corresponds to adding noise to the trajectory: low temperature = gradient descent within one basin; high temperature = random jumps between basins.",
+      "The 'Idea 2' framing (this is a second version) suggests an earlier idea explored a different metaphor; the attractor framing is presented as more mathematically precise."
+    ],
+    "methods_math": [
+      "dynamical systems: fixed points, attractors, basins of attraction, Lyapunov stability",
+      "nonlinear maps in high-dimensional spaces, superposition of basins",
+      "attention as a learned projection onto a semantic subspace (spectral decomposition)",
+      "basin boundary crossing as a bifurcation / phase transition",
+      "Langevin dynamics as a model of temperature-sampled generation",
+      "gradient flow in continuous limit of discrete layer updates"
+    ],
+    "visualizations": [
+      "interactive 2D 'meaning landscape' with adjustable attention-head weights: drag sliders to see how basins merge, split, or deepen",
+      "animated trajectory of the residual stream through the 2D landscape as layers are applied (one step at a time)",
+      "basin boundary heatmap showing sensitivity to input perturbation (a proxy for 'interpretability fragility')",
+      "grokking simulation: a trajectory that plateaus in a shallow basin, then suddenly jumps to a deeper one when a hidden symmetry is discovered",
+      "temperature dial: watch the same trajectory become a random walk between basins as temperature increases"
+    ],
+    "internal_tensions": [
+      "The 2D visualizations are necessarily reductive: real LLM spaces are 10^4-10^7 dimensional, and the 'basin' structure in high dimensions is poorly understood (curse of dimensionality, mode collapse).",
+      "The file presents the attractor metaphor as established, but it is an analogy, not a proven model; no empirical validation (e.g., CKA similarity across layers) is offered.",
+      "The 'grokking as basin crossing' claim is suggestive but conflates two different phenomena: the Nanda et al. grokking (regularity discovery via weight decay) and the basin-crossing narrative are not clearly linked.",
+      "The file is explicitly labeled 'idea2' — a draft/thought-exploration, not a finished argument; several claims are presented as open questions rather than theses."
+    ],
+    "related_files": [
+      "idea",
+      "concept_attractors",
+      "topology_of_attractors",
+      "effortless_basins_of_attraction",
+      "coherent_differences_and_world_model",
+      "youarellm",
+      "youarellm2",
+      "wie_ein_llm_denkt",
+      "latent_semantic_manifolds_in_llm"
+    ]
+  },
+  {
+    "path": "jet_bundles.html",
+    "slug": "jet_bundles",
+    "title": "Jet Bundles — An Interactive Geometric Introduction",
+    "lang": "en",
+    "size_kb": 43.3,
+    "category": "nicht-ki",
+    "category_reason": "A pure differential-geometry / mathematical-physics exposition of jet bundles: their definition as spaces of k-jets, the geometric meaning of derivatives as sections of jet bundles, the chain rule as a pullback map, and applications to PDEs. No AI/ML content.",
+    "theme": "differential-geometry",
+    "themes": [
+      "jet-bundles",
+      "differential-equations",
+      "fiber-bundles",
+      "geometric-mechanics",
+      "mathematical-physics"
+    ],
+    "thesis": "An interactive English-language introduction to jet bundles that builds the concept from first principles: a k-jet is the equivalence class of functions with the same Taylor polynomial up to order k, and the jet bundle J^k(E) is the space of all such k-jets over a fiber bundle E; the key insight is that 'taking a derivative' is not a new operation but a projection from J^{k+1}(E) to J^k(E), and the chain rule is the pullback of the total derivative map.",
+    "key_claims": [
+      "A k-jet j^k_f(x) is the equivalence class of all functions germs at x that agree up to order k; it contains all information needed to compute the k-th derivative without knowing the full function.",
+      "The k-th jet bundle J^k(E -> M) is a fiber bundle over M whose fiber at x is the vector space of k-jets of sections of E at x; for trivial bundles, J^k(R^n x R) is modeled on R^n x R x (R^{n+1} x ... x Sym^k(R^n) x R).",
+      "The total derivative d: J^1(E) -> J^1(J^0(E)) is a natural bundle map; the chain rule for compositions f >> g is the statement that d(f >> g) = df >> dg at the level of jet bundles.",
+      "A differential equation of order k is a submanifold (the equation manifold) of J^k(E); a solution is a section s: M -> E whose k-jet extension j^k(s)(M) lies entirely in the equation manifold.",
+      "The contact structure on J^k(E) (the kernel of the canonical 1-form) encodes the integrability condition: a submanifold is holonomic (a solution space) iff it is tangent to the contact distribution.",
+      "In gauge theory, the curvature of a connection is a section of J^1(P) x_M gl(E); jet bundles provide the natural language for writing gauge-invariant PDEs."
+    ],
+    "methods_math": [
+      "fiber bundles, total spaces, projections, local trivializations",
+      "Taylor expansion, equivalence classes of germs, jet spaces",
+      "canonical (contact) 1-forms and distributions",
+      "total derivative as a bundle map, pullback of maps",
+      "differential equations as submanifolds of jet bundles",
+      "holonomic vs. non-holonomic submanifolds, integrability conditions",
+      "Sym^k(R^n) as the space of symmetric k-tensors (higher-order derivatives)",
+      "gauge theory: connections, curvature, jet-bundle formulation of Yang-Mills"
+    ],
+    "visualizations": [
+      "interactive 1D jet-space explorer: plot a function and watch its 1-jet (point + slope) and 2-jet (point + slope + curvature) as points in R^3 and R^4 respectively",
+      "2D surface with a sliding tangent-plane widget: the 1-jet at each point is the tangent plane, visualized as a colored plane that tilts as you move across the surface",
+      "chain-rule pullback: two coupled function plots where composing f >> g shows the derivative at the composite point as a pullback of the individual derivatives",
+      "contact distribution visualizer: a 3D plot of J^1(R) = R x R x R with the contact plane at each point, showing which curves are 'horizontal' (solutions of a first-order ODE)",
+      "equation-manifold slice: a 3D plot of the equation y' = -x^2 in J^1(R), with solution curves projected down to the base",
+      "gauge-theory teaser: a fiber bundle over a circle with a connection 1-form, and the curvature as a scalar field on the base (reduction of the jet-bundle picture to a simple case)"
+    ],
+    "internal_tensions": [
+      "The file is purely mathematical and does not address the common pedagogical objection that jet bundles are 'overkill' for classical ODE courses; the motivation is given as conceptual clarity, not practical necessity.",
+      "The gauge-theory application is sketched but not developed; the connection to modern mathematical physics (e.g., the jet-bundle formulation of general relativity) is only mentioned, not worked out.",
+      "The 2D visualizations of jet spaces are necessarily low-dimensional; the real power of jet bundles appears in PDEs of several variables, where the geometry is intractable to visualize.",
+      "There is a tension between the 'jet bundle as a rigorous formalism' framing and the interactive, hands-on pedagogy: the file oscillates between abstract definitions and concrete examples without fully committing to either."
+    ],
+    "related_files": [
+      "calculus_on_manifolds",
+      "faserbuendel_und_fibrationen",
+      "bundles",
+      "fibrebundles",
+      "fibrebundle",
+      "fibrebundle2",
+      "fibrebundle3",
+      "fibrebundle4",
+      "fibrebundle5",
+      "ehresmannconnection",
+      "christoffel"
+    ]
+  },
+  {
+    "path": "nlab_nn.html",
+    "slug": "nlab_nn",
+    "title": "Neuronale Netze — Aha-Explorator aus kategorialer und physikalischer Perspektive",
+    "lang": "de",
+    "size_kb": 43.3,
+    "category": "ki",
+    "category_reason": "An interactive German-language 'aha-explorer' that explains neural networks from a categorical (functors, natural transformations) and physical (energy landscapes, gradient flow) perspective. The main subject is the mathematical structure of neural networks, which is squarely AI/ML.",
+    "theme": "nn-theory",
+    "themes": [
+      "category-theory",
+      "energy-landscapes",
+      "gradient-flow",
+      "functors",
+      "representation-geometry",
+      "nn-architecture"
+    ],
+    "thesis": "An interactive German-language 'aha-explorer' that reframes neural networks in two complementary languages: (1) categorical — a neural net is a functor from a category of input spaces to a category of output spaces, with layers as functors and activations as natural transformations; (2) physical — the training dynamics is a gradient flow on an energy landscape, and the network's function is a path through configuration space. The goal is to give the reader 'aha' moments by showing the same network in both lights simultaneously.",
+    "key_claims": [
+      "A feedforward neural net can be viewed as a functor F: C -> D where C is a category of input distributions/spaces and D is a category of output distributions; each layer is a functor, and the composition is the whole network.",
+      "Activations (ReLU, sigmoid, etc.) are natural transformations between the 'linear map' functor and the 'nonlinear map' functor: they commute with reparametrizations of the input space.",
+      "The loss landscape L(w) is a potential energy function on the parameter space; gradient descent is the overdamped Newton equation dw/dt = -grad(L), and the network 'settles' into a local minimum.",
+      "The width of a network (number of neurons per layer) corresponds to the dimension of the configuration space; wider networks have more 'degrees of freedom' and can represent more complex functions.",
+      "The 'aha' insight: the same network can be read as (a) a categorical composition of functors (structural view) or (b) a physical system relaxing to an energy minimum (dynamic view); the two perspectives are dual in the sense that the categorical structure determines the landscape's topology.",
+      "Overfitting corresponds to the network finding a very narrow, deep minimum (high curvature) rather than a broad, shallow one; regularization (weight decay, dropout) modifies the landscape to favor broader minima."
+    ],
+    "methods_math": [
+      "category theory: categories, functors, natural transformations, composition",
+      "universal algebra: monoids of compositions, free monoids on layer maps",
+      "gradient flow as an ODE, Lyapunov stability of minima",
+      "energy landscapes, Hessian matrix, curvature at critical points",
+      "Hessian eigenvalue distribution as a proxy for generalization",
+      "parameter-space dimensionality and its relation to function class capacity",
+      "regularization as a landscape modification (ridge, L1, dropout as stochastic noise)"
+    ],
+    "visualizations": [
+      "dual-view panel: left side shows a 2-layer net as a commutative diagram (categorical view), right side shows the same net as a 2D energy landscape with a ball rolling to the minimum (physical view); the two panels are synchronized",
+      "activation-function slider: watch the commutative diagram deform as the activation changes from linear to ReLU to sigmoid, with the natural-transparency condition highlighted",
+      "Hessian eigenvalue spectrum plot: for a trained 2-layer net, show the eigenvalues of the Hessian at the found minimum; a 'broad vs. narrow' toggle changes the regularization strength and updates the spectrum",
+      "width-vs-capacity plot: a 2D function (e.g., XOR, sine, Gaussian mixture) with a slider for network width; the approximation quality and the landscape's 'roughness' update in real time",
+      "gradient-flow animation: a particle following the gradient on a 2D slice of the loss landscape, with the velocity field shown as arrows; the user can pause at any point to inspect the local Hessian"
+    ],
+    "internal_tensions": [
+      "The categorical framing is mathematically elegant but arguably over-abstract for a practical ML audience; the 'aha' moments depend on the reader already knowing category theory, which limits the intended audience.",
+      "The physical framing (energy landscape) is standard in NN theory, but the claim that 'categorical structure determines landscape topology' is strong and not well-supported in the literature; the file presents it as an open conjecture.",
+      "The 2D landscape visualizations are necessarily reductive: real loss landscapes in high-dimensional parameter space have a very different geometry (mode connectivity, loss surfaces that are not bowl-shaped).",
+      "The file is an 'explorator' (draft), not a finished exposition; several sections are sketched rather than fully worked out, and the categorical/physical duality is asserted more than proved."
+    ],
+    "related_files": [
+      "nlab_nn2",
+      "theory_of_deep_learning",
+      "morse_theory",
+      "gradient_flow",
+      "backprop",
+      "backprop_als_funktor",
+      "energy_based_learning"
+    ]
+  },
+  {
+    "path": "hott_addition.html",
+    "slug": "hott_addition",
+    "title": "Addition in der Homotopietheorie der Typen — Interaktive Erkundung",
+    "lang": "de",
+    "size_kb": 42.7,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive exploration of how addition on natural numbers is constructed and proven in Homotopy Type Theory (HoTT): the recursor, the induction principle, path induction, and the univalence axiom's role in making addition well-behaved under transport. Pure math/logic, no AI.",
+    "theme": "homotopy-type-theory",
+    "themes": [
+      "hott",
+      "type-theory",
+      "number-theory",
+      "proof-theory",
+      "constructive-mathematics"
+    ],
+    "thesis": "An interactive German-language exploration of addition in HoTT: starting from the inductive type Nat = 0 | S(_), addition is defined by double recursion (on the first argument, then the second), and the file walks through the key proofs — associativity, commutativity, identity — showing how path induction and the J-rule handle the equalities. The univalence axiom is discussed as what makes addition compatible with transport along paths in the type of types.",
+    "key_claims": [
+      "Natural numbers in HoTT are the inductive type with 0 : Nat and S : Nat -> Nat; addition is defined by recursion: 0 + n = n and S(m) + n = S(m + n), or equivalently by double recursion on both arguments.",
+      "The proof that addition is associative (m + n) + p = m + (n + p) proceeds by induction on m; the inductive step uses the definition of addition and the induction hypothesis, with the key move being the rewrite of S(m+n)+p to S((m+n)+p).",
+      "Commutativity of addition (m + n = n + m) requires a more involved proof: induction on m, with the inductive step using the lemma S(m) + n = S(m + n) and the induction hypothesis m + S(n) = S(m + n), combined with the symmetry of the path type.",
+      "Path induction (the J-rule) is the elimination principle for identity types: to prove P(x, x) for all x, it suffices to prove P(a, refl_a) for one base point a; this is what allows the inductive proofs of arithmetic laws to go through.",
+      "The univalence axiom states that identity of types (A = B in Type) is equivalent to equivalence of types (A ~= B); this makes addition 'compatible with transport': if A = B via a path, then the addition operation on A transports to the addition operation on B.",
+      "The HoTT characterization of addition as a 'categorical addition' (bifunctorial in both arguments) is noted but not fully developed; the file focuses on the computational/proof-theoretic aspect rather than the categorical one."
+    ],
+    "methods_math": [
+      "inductive types, constructors, recursion principles",
+      "identity types, paths, path induction (J-rule)",
+      "reflexive, symmetric, transitive paths; path concatenation",
+      "double recursion (nested induction) for binary operations",
+      "proof by induction on Nat, with base case and inductive step",
+      "univalence axiom, transport/reparametrization along paths",
+      "computational interpretation of proofs (proofs-as-programs)",
+      "categorical semantics: bifunctors, monoidal structure on Type"
+    ],
+    "visualizations": [
+      "Nat type as a directed graph: 0 -> S(0) -> S(S(0)) -> ... with the recursor shown as a path-following animation (the definition of addition 'walks' the graph)",
+      "identity type as a loop space: for each n : Nat, the type n = n is shown as a circle (the loop space), with refl_n as the basepoint; path induction is visualized as 'unwinding' the loop to the basepoint",
+      "associativity proof as a commutative diagram: three paths (m+n)+p, m+(n+p), and the induction hypothesis, arranged in a triangle with the equality as the closing edge",
+      "commutativity proof as a 'square' diagram: the four corners are m+n, n+m, S(m+n), S(n+m), with the induction hypothesis and the S-compatibility as the edges",
+      "univalence illustration: two types A and B with an equivalence f : A ~= B; the path A = B in Type is shown as a 'bridge' between the two types, and addition on A is transported across the bridge to addition on B",
+      "proof-search tree: for the associativity proof, a tree of possible induction steps, with the successful path highlighted and dead-ends greyed out"
+    ],
+    "internal_tensions": [
+      "The file is a pedagogical exploration, not a formal proof; the proofs are sketched at a level of abstraction that is neither fully formal (Cubical Agda / HoTT book style) nor fully informal, which may leave readers unsatisfied on either end.",
+      "The univalence section is the most abstract and least developed; the file mentions transport and compatibility but does not work through a concrete example of transporting addition along a univalence path.",
+      "The categorical framing (addition as a bifunctor) is mentioned but not pursued; this is arguably the more 'natural' HoTT perspective, and its absence is a notable gap.",
+      "The file is in German and uses HoTT terminology in its German translation, which may be less familiar to readers who know the English HoTT book; some terms are not consistently translated."
+    ],
+    "related_files": [
+      "hott",
+      "hott2",
+      "hott3",
+      "hott4",
+      "hott5",
+      "hott6",
+      "hott_practical",
+      "hott_book",
+      "hott_ai",
+      "paper/hott",
+      "cauchydedeking",
+      "mod"
+    ]
+  },
+  {
+    "path": "random.html",
+    "slug": "random",
+    "title": "PRNG Explorer — Visualizing Pseudorandom Number Generators",
+    "lang": "en",
+    "size_kb": 42.1,
+    "category": "nicht-ki",
+    "category_reason": "An English-language interactive visualizer for pseudorandom number generators (LCG, xorshift, Middle-square, etc.): it shows the output sequence, the phase space (state transitions), and statistical tests (chi-squared, autocorrelation). Pure CS/cryptography, no AI/ML.",
+    "theme": "cryptography",
+    "themes": [
+      "prng",
+      "number-theory",
+      "dynamical-systems",
+      "statistical-testing",
+      "computer-science"
+    ],
+    "thesis": "An interactive English-language explorer for classical pseudorandom number generators: the user can pick a PRNG algorithm (LCG, xorshift128, Middle-square, Park-Miller, etc.), set the seed and parameters, and watch (1) the output sequence as a scatter plot, (2) the state transition map in phase space, and (3) statistical quality metrics (chi-squared uniformity, autocorrelation, serial correlation). The goal is to make the differences between 'good' and 'bad' PRNGs visually obvious.",
+    "key_claims": [
+      "An LCG (x_{n+1} = (a*x_n + c) mod m) is a linear map on Z/mZ; its output quality depends critically on the choice of (a, c, m): Hull-Dobell's theorem gives necessary and sufficient conditions for full period (m is prime or a power of 2, c is coprime to m, a-1 is divisible by all prime factors of m, and by 4 if m is divisible by 4).",
+      "Xorshift generators (e.g., xorshift128: x ^= x<<13; x ^= x>>17; x ^= x<<5) are non-linear in the arithmetic sense but linear over GF(2)^n; they have full period 2^n - 1 and pass most statistical tests, but the low-order bits are weak (use the high-order bits).",
+      "The Middle-square method (square the seed, take the middle digits) is the first proposed PRNG (von Neumann, 1951); it fails catastrophically: most seeds quickly fall into short cycles or zero, as visualized by the phase-space plot collapsing to a point.",
+      "The chi-squared test for uniformity partitions the output range into k bins and tests whether the observed frequencies match the expected uniform distribution; a 'good' PRNG has chi-squared values near the mean (k-1) with the expected variance.",
+      "Autocorrelation at lag k measures the correlation between x_n and x_{n+k}; a good PRNG has autocorrelation near zero for all non-zero lags; LCGs show a characteristic 'lattice structure' in the (x_n, x_{n+k}) scatter plot that reveals the linear dependence.",
+      "No deterministic PRNG can be truly random; the 'quality' of a PRNG is its ability to pass statistical tests that are hard to distinguish from true randomness, and the 'security' of a cryptographic PRNG is its resistance to state-recovery attacks (next-bit test, hard-core bits).",
+      "The Park-Miller minimal standard (a = 16807, m = 2^31 - 1, c = 0) is a multiplicative LCG with full period m-1; it was the de-facto standard for simulation work from the 1960s to the 1990s but is now considered weak by modern standards."
+    ],
+    "methods_math": [
+      "linear congruential generators, Hull-Dobell conditions, full-period analysis",
+      "xorshift as a linear map over GF(2)^n, characteristic polynomial, LFSR analogy",
+      "Middle-square method, von Neumann's original analysis",
+      "chi-squared goodness-of-fit test, binomial distribution of bin counts",
+      "autocorrelation function, lag-k correlation, serial correlation ratio",
+      "phase-space (state transition) plots, cycle detection",
+      "lattice structure of LCG outputs in k dimensions (Clopper's theorem)",
+      "cryptographic PRNG requirements: next-bit test, hard-core predicate, state space size"
+    ],
+    "visualizations": [
+      "output sequence scatter plot: (n, x_n mod 1) for n = 0..N, with the user able to overlay multiple PRNGs for comparison",
+      "2D phase-space plot: (x_n, x_{n+1}) for an LCG, showing the characteristic lattice structure; the number of visible lattice lines reveals the modulus",
+      "histogram of output values with the expected uniform distribution overlaid; chi-squared statistic shown in the corner",
+      "autocorrelation bar chart: lag 1..50, with the 95% confidence interval; LCGs show a visible peak at small lags",
+      "Middle-square collapse animation: watch the state sequence quickly converge to 0 or a short cycle, with the phase-space plot collapsing in real time",
+      "Park-Miller vs. xorshift128 side-by-side: the same statistical tests applied to both, with the lattice structure of the LCG clearly visible and the xorshift output appearing 'cleaner'",
+      "seed sensitivity: for a fixed PRNG, vary the seed slightly and watch how the output sequence diverges (or doesn't, for bad PRNGs)"
+    ],
+    "internal_tensions": [
+      "The file presents PRNGs as a purely mathematical/CS topic, but the 'security' section (cryptographic PRNGs) is a different discipline with different threat models; the file does not clearly separate the two.",
+      "The statistical tests (chi-squared, autocorrelation) are necessary but not sufficient for PRNG quality; the file does not discuss more powerful tests (e.g., the NIST suite, Diehard, TestU01) or the 'hard-to-distinguish' framing from cryptography.",
+      "The phase-space visualizations are for 2D projections; the true state space of a 128-bit PRNG is 128-dimensional and cannot be meaningfully visualized, which limits the insight from the 2D plots.",
+      "The file is a visualizer, not a theoretical treatment; the mathematical claims (Hull-Dobell, lattice structure) are stated but not proved, and the connection to number theory (modular arithmetic, primitive roots) is only hinted at."
+    ],
+    "related_files": [
+      "pz",
+      "pz2",
+      "pz3",
+      "pz4",
+      "pz5",
+      "pz6",
+      "pz8",
+      "pz9",
+      "pz10",
+      "miller_rabin",
+      "shors_algorithm",
+      "goedel",
+      "goedel2"
+    ]
+  },
+  {
+    "path": "buecher/nonlinear_workbook.html",
+    "slug": "nonlinear_workbook",
+    "title": "Nonlinear Dynamics Workbook — Chaos, Fractals, Cellular Automata, and a Taste of Neural Networks",
+    "lang": "en",
+    "size_kb": 42.1,
+    "category": "nicht-ki",
+    "category_reason": "The main subject is nonlinear dynamics: the logistic map, strange attractors, the Mandelbrot set, Julia sets, and cellular automata (Conway's Game of Life, elementary CA). A small section on Hopfield networks is included, but it is a minor appendix, not the main focus.",
+    "theme": "chaos-theory",
+    "themes": [
+      "dynamical-systems",
+      "fractals",
+      "cellular-automata",
+      "bifurcation-theory",
+      "complex-systems",
+      "neural-networks"
+    ],
+    "thesis": "An interactive English-language workbook on nonlinear dynamics that takes the reader from the logistic map (period-doubling route to chaos) through the Mandelbrot and Julia sets (fractal geometry of complex dynamics) to cellular automata (discrete nonlinear systems). A short final section on Hopfield networks shows how the same dynamical-systems language (attractors, basins, energy landscape) applies to a simple neural network model, tying the workbook back to the AI theme of the broader collection.",
+    "key_claims": [
+      "The logistic map x_{n+1} = r * x_n * (1 - x_n) undergoes a period-doubling cascade as r increases: fixed point -> 2-cycle -> 4-cycle -> 8-cycle -> ... -> chaos at r ~ 3.57; the bifurcation diagram is a self-similar fractal (Feigenbaum constant delta ~ 4.669).",
+      "Strange attractors (e.g., the Lorenz attractor) are invariant sets with fractal structure and sensitive dependence on initial conditions (positive Lyapunov exponent); the 'butterfly' shape is the projection of the attractor onto a 2D plane.",
+      "The Mandelbrot set M = {c in C : the orbit of 0 under z -> z^2 + c is bounded} is the 'parameter space' of the quadratic family; the Julia set J(c) for each c in M is the boundary of the basin of attraction of the critical orbit.",
+      "Cellular automata (elementary CA, Conway's Game of Life) are discrete nonlinear systems that can exhibit universal computation; Rule 110 is Turing-complete, and Life is known to be Turing-complete (Garden of Eden, gliders, universal constructors).",
+      "The Hopfield network section: a network of N binary neurons with symmetric weights W_ij and no self-connections; the update rule s_i <- sign(sum_j W_ij s_j) is a gradient ascent on the energy E = -1/2 sum_ij W_ij s_i s_j, and the network converges to a local minimum (a stored memory).",
+      "The common thread: all these systems (logistic map, Lorenz, CA, Hopfield) are nonlinear dynamical systems whose long-term behavior is governed by attractors; the difference is the dimension, the continuity/discreteness, and the physical interpretation."
+    ],
+    "methods_math": [
+      "1D discrete dynamical systems, fixed points, stability analysis, bifurcation diagrams",
+      "period-doubling route to chaos, Feigenbaum universality",
+      "Lyapunov exponents, sensitive dependence on initial conditions",
+      "complex dynamics: iteration of z^2 + c, boundedness criteria, Mandelbrot/Julia sets",
+      "fractal dimension (box-counting), self-similarity",
+      "elementary cellular automata (256 rules), Rule 110 universality",
+      "Conway's Game of Life, gliders, Gosper's glider gun, universal computation",
+      "Hopfield networks: energy function, gradient ascent, local minima as stored patterns",
+      "symmetric weight matrices, no self-connections, binary neuron model"
+    ],
+    "visualizations": [
+      "logistic map bifurcation diagram: r on the x-axis, x_n on the y-axis for n = 1000..2000, showing the full cascade from fixed point to chaos with the Feigenbaum points marked",
+      "Lorenz attractor 3D plot: the classic butterfly shape, with a trajectory animation and a slider for the sigma/rho/beta parameters",
+      "Mandelbrot set explorer: click-and-zoom interface with arbitrary-precision arithmetic (up to 500+ zoom levels), color-coded by escape time",
+      "Julia set explorer: linked to the Mandelbrot explorer; clicking a point c in the Mandelbrot set shows the corresponding Julia set",
+      "elementary CA explorer: 256 rules, the user can select a rule and watch the CA evolve from a random or single-seed initial condition; Rule 110, 30, 90, 110 are highlighted",
+      "Conway's Game of Life: a 100x100 grid with click-to-toggle cells; preset patterns (Gosper's glider gun, R-pentomino, acorn) can be loaded and evolved",
+      "Hopfield network: 5 stored patterns (simple binary images), the user can present a noisy version of one pattern and watch the network converge to the stored memory; the energy function is plotted as the network evolves"
+    ],
+    "internal_tensions": [
+      "The Hopfield network section is a brief appendix (a few pages) in a workbook that is otherwise purely about classical nonlinear dynamics; the connection between the two is stated (attractors, energy landscapes) but not developed in depth.",
+      "The workbook covers a very wide range of topics (1D maps, 3D ODEs, complex dynamics, discrete CA, neural nets) in a single file, which means each topic is treated at a surface level; the 'workbook' framing (exercises, prompts) is there but the depth is limited.",
+      "The Feigenbaum universality claim is stated without proof; the self-similarity of the bifurcation diagram is shown visually but the renormalization-group argument is not presented.",
+      "The 'chaos' in the title is somewhat misleading: the logistic map and Lorenz system are chaotic in the technical sense (positive Lyapunov exponent), but the Mandelbrot set and CA are not 'chaotic' in the same sense; they are complex but not chaotic (the CA are deterministic and non-chaotic in the Lyapunov sense)."
+    ],
+    "related_files": [
+      "chaos",
+      "holographic_principle",
+      "new_kind_of_science",
+      "grid_walker",
+      "phasenraum",
+      "energy_based_learning",
+      "mood_explorer",
+      "cellular"
+    ]
+  },
+  {
+    "path": "dmt.html",
+    "slug": "dmt",
+    "title": "DMT-Entitäten und bewusste Realismus — Eine interaktive Erkundung",
+    "lang": "de",
+    "size_kb": 42.0,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive exploration of DMT (dimethyltryptamine) 'entity' experiences: what they are, how they compare across cultures and doses, and their relationship to the 'conscious realism' hypothesis (Stuart Hameroff / Henry Stapp). Philosophy of mind / psychedelic research, no AI/ML.",
+    "theme": "consciousness",
+    "themes": [
+      "psychedelics",
+      "phenomenology",
+      "cognitive-science",
+      "philosophy-of-mind",
+      "neuroscience"
+    ],
+    "thesis": "An interactive German-language exploration of the 'entity' experiences reported by DMT users (geometrical forms, alien-like beings, conversations) and their interpretation in light of the 'conscious realism' hypothesis: the claim that consciousness is fundamental and the physical world is a projection from a conscious 'consensus reality'. The file is descriptive and phenomenological, not a scientific paper; it presents the experiences, the cultural context, and the interpretive frameworks without taking a strong position.",
+    "key_claims": [
+      "DMT (N,N-dimethyltryptamine) is a tryptamine found in many plants and in the human pineal gland (per Ralph Hutchison's 1978 isolation); it is a potent 5-HT2A receptor agonist with a half-life of minutes when smoked.",
+      "The 'entity' experience: DMT users consistently report encountering geometric forms, 'beings' or 'entities' that appear intelligent, and sometimes 'conversations' or 'teachings'; the experience is typically 10-30 minutes when smoked, and is reported across cultures and contexts with remarkable consistency.",
+      "The consistency of the entity experience across cultures has led to hypotheses: (a) a common neurobiological mechanism (5-HT2A agonism in the visual cortex), (b) a 'template' in the brain (the 'DMT template' hypothesis), or (c) a non-physical 'consensus reality' that is accessed under DMT (conscious realism).",
+      "Stuart Hameroff and Henry Stapp's 'conscious realism' (quantum Orchestral Objective Reduction, Orch-OR) proposes that consciousness is a fundamental feature of the universe and that the physical world is a projection from a 'consensus reality' shaped by quantum-gravitational interactions in microtubules.",
+      "The file presents the entity experience as a phenomenological fact (what it is like) and the interpretive frameworks (neurobiological, template, conscious realism) as competing hypotheses; it does not argue for one interpretation over the others.",
+      "The cultural context: DMT is found in Ayahuasca (a Amazonian brew combining DMT with a MAOI), which has been used in shamanic traditions for thousands of years; the 'entity' experience in the Ayahuasca context is often interpreted as a visit to a 'spirit world' or a meeting with 'plant teachers'."
+    ],
+    "methods_math": [
+      "phenomenological description (qualitative, first-person accounts)",
+      "5-HT2A receptor pharmacology, agonist/antagonist binding",
+      "neuroimaging (fMRI, EEG) of DMT/psilocybin experiences: default mode network disruption",
+      "quantum mechanics: Orch-OR, objective reduction, microtubule dynamics",
+      "consensus reality as a 'quantum Bayesian' or 'QBism' construct",
+      "cross-cultural comparison of entoptic phenomena (geometric forms from neural noise)",
+      "dose-response relationship, half-life, pharmacokinetics"
+    ],
+    "visualizations": [
+      "DMT molecule structure with the 5-HT2A receptor binding site highlighted; a slider for dose showing the typical experience arc (onset -> peak -> offset)",
+      "geometric-form gallery: a collection of entoptic patterns (gratings, tunnels, fractals) that are reported in the early stages of the DMT experience, with a note that these are consistent with the known properties of the primary visual cortex",
+      "entity 'conversation' transcript: a first-person account (anonymized) of an entity encounter, with key phrases highlighted and a glossary of common 'entity' behaviors (probing, teaching, testing)",
+      "interpretive-framework diagram: a 3-way split showing the neurobiological, template, and conscious-realist interpretations of the same experience, with the evidential support for each listed",
+      "cultural map: a world map showing where DMT/Ayahuasca traditions are found (Amazon, Africa, Asia, Europe), with a note on the independent emergence of similar 'entity' reports in different traditions",
+      "Orch-OR schematic: a microtubule with quantum-coherent states, a 'collapse' event (objective reduction), and the resulting 'conscious moment'; the consensus reality is shown as an overlay of many such moments"
+    ],
+    "internal_tensions": [
+      "The file oscillates between a phenomenological description (what it is like) and a theoretical interpretation (what it means); the two levels are not clearly separated, which can confuse readers about what is being claimed.",
+      "The 'conscious realism' interpretation is the most controversial and least supported by mainstream neuroscience; presenting it alongside the neurobiological interpretation gives it an unwarranted parity.",
+      "The file is in German and draws on a mix of scientific, philosophical, and shamanic sources; the epistemic status of each type of source is not clearly distinguished.",
+      "The 'entity' experience is presented as a fact (it happens), but the interpretation (what the entities are) is left open; this is honest but may leave readers unsatisfied about what the file is actually arguing."
+    ],
+    "related_files": [
+      "bewusstsein",
+      "consciousness_overview",
+      "buecher/daniel_paul_schreber",
+      "buecher/also_sprach_zarathustra",
+      "buecher/kritik_der_reinen_vernunft",
+      "buecher/whitehead",
+      "analytischer_idealismus",
+      "analytic_idealism"
+    ]
+  },
+  {
+    "path": "os.html",
+    "slug": "os",
+    "title": "Betriebssysteme — Interaktive Erkundung",
+    "lang": "de",
+    "size_kb": 41.9,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive explainer for operating systems: processes, threads, memory management (virtual memory, paging), scheduling algorithms, file systems, and the kernel/user-space boundary. Pure CS, no AI/ML.",
+    "theme": "computer-science",
+    "themes": [
+      "operating-systems",
+      "process-management",
+      "memory-management",
+      "scheduling",
+      "file-systems",
+      "kernel-design"
+    ],
+    "thesis": "An interactive German-language explainer for operating systems that walks through the core abstractions (process, thread, virtual memory, file) and the key algorithms (scheduling, page replacement, disk scheduling) with interactive visualizations. The goal is to make the 'magic' of the OS visible: how a single CPU can appear to run many programs simultaneously, how virtual memory gives each process its own address space, and how the file system organizes bytes on a disk into named files.",
+    "key_claims": [
+      "A process is an instance of a running program: it has its own virtual address space, file descriptors, and system resources; the OS maintains a process table with one entry per process (PID, state, PC, registers, memory map, file table pointer).",
+      "A thread is a lightweight execution unit within a process: threads in the same process share the address space and file descriptors but have their own stack and PC; user-space threads (N:1 model) are cheaper to create than kernel threads (1:1 model) but are subject to the 'convoy effect'.",
+      "Virtual memory: each process sees a contiguous address space (typically 0..2^32-1 or 0..2^48-1), but the physical memory is divided into fixed-size pages (typically 4KB); the page table maps virtual pages to physical frames, and the MMU (hardware) performs the translation on every memory access.",
+      "Page replacement algorithms: FIFO (simplest, suffers from Belady's anomaly), LRU (optimal in theory, expensive to implement), Clock/Second-Chance (approximates LRU with a reference bit), and the working-set model (load only the pages the process is currently using).",
+      "CPU scheduling: FCFS (first-come-first-served, no aging), SJF (shortest job first, optimal for mean waiting time but requires knowledge of burst length), Round-Robin (time-sliced FCFS, good for interactive systems), and priority scheduling (with aging to prevent starvation).",
+      "The file system: a hierarchy of directories and files; each file is a sequence of blocks; the inode (Unix) stores metadata (size, permissions, block pointers); the directory is a table of (name, inode-number) pairs; the free-space management (bitmap, free list, extent-based) determines how new blocks are allocated.",
+      "The kernel/user-space boundary: user-space processes cannot directly access hardware or other processes' memory; they must make a system call (syscall) to request a service from the kernel; the syscall is implemented as a software interrupt (e.g., int 0x80 on x86, syscall instruction on x86-64) that switches to ring 0."
+    ],
+    "methods_math": [
+      "process state diagram (new, ready, running, waiting, terminated)",
+      "thread vs. process comparison (shared vs. private resources)",
+      "virtual address translation, page tables, TLB (Translation Lookaside Buffer)",
+      "page replacement algorithms, Belady's anomaly, working-set model",
+      "CPU scheduling algorithms, Gantt charts, average waiting time calculation",
+      "file system: inode, block allocation, directory structure, free-space management",
+      "system call interface, ring 0 vs. ring 3, context switching",
+      "deadlock: four necessary conditions (mutual exclusion, hold-and-wait, no preemption, circular wait), avoidance (Banker's algorithm), detection (resource allocation graph)"
+    ],
+    "visualizations": [
+      "process state diagram: an animated state machine showing processes moving between new/ready/running/waiting/terminated, with the user able to add/remove processes and watch the transitions",
+      "thread pool visualizer: a process with N threads, each with its own stack; the user can create/destroy threads and watch the shared address space and private stacks",
+      "virtual memory explorer: a 32-bit virtual address space with a page table; the user can toggle pages in/out of physical memory and watch the TLB hits/misses",
+      "page replacement simulation: a sequence of page references, with FIFO/LRU/Clock algorithms side by side; the user can watch the page faults and frame contents update in real time",
+      "CPU scheduling Gantt chart: a set of processes with arrival times and burst lengths; the user can select an algorithm (FCFS/SJF/RR/Priority) and watch the Gantt chart and average waiting time update",
+      "file system explorer: a directory tree with inodes; the user can create/delete files and directories, watch the inode table and block allocation bitmap update",
+      "context switch animation: two processes sharing a CPU; the user can trigger a context switch and watch the save/restore of registers, the page table switch, and the TLB flush"
+    ],
+    "internal_tensions": [
+      "The file is a pedagogical explainer, not a systems-design document; the scheduling algorithms and page replacement policies are presented in their textbook form, without the engineering trade-offs that real OSes face (e.g., CFS in Linux, transparent huge pages, NUMA-aware scheduling).",
+      "The 'kernel/user-space boundary' section is important for security (isolation, privilege) but is treated briefly; the file does not discuss modern OS features like seccomp-bpf, SELinux, or capability-based security.",
+      "The file is in German and uses OS terminology in its German translation; some terms (e.g., 'Prozess', 'Thread', 'Seite') are consistent, but others (e.g., 'Inode', 'Syscall') are left in English, which is common but can be confusing for learners.",
+      "The interactive visualizations are 2D and simplified; real OS behavior (e.g., preemptive multithreading on a multi-core CPU, cache coherence) is not captured by the visualizations."
+    ],
+    "related_files": [
+      "windows",
+      "floats",
+      "grid_walker",
+      "buecher/schreber",
+      "paper/sorting_with_bialgebras"
+    ]
+  },
+  {
+    "path": "inaccessible.html",
+    "slug": "inaccessible",
+    "title": "Unerreichbare Kardinalzahlen — Interaktive Erkundung der Mengenlehre",
+    "lang": "de",
+    "size_kb": 41.8,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive exploration of large cardinals in set theory: inaccessible cardinals, measurable cardinals, and their relationship to the consistency strength of ZFC. Pure math/set theory, no AI/ML.",
+    "theme": "set-theory",
+    "themes": [
+      "large-cardinals",
+      "set-theory",
+      "consistency",
+      "mathematical-logic",
+      "axiomatic-mathematics"
+    ],
+    "thesis": "An interactive German-language exploration of large cardinals: starting from the axiom of infinity (there exists an infinite set), the file builds up the hierarchy of large cardinals (inaccessible, measurable, weakly compact, strong, supercompact) and explains why they are 'large' (they cannot be reached from the empty set by the standard set-theoretic operations) and why they matter (they are equivalent to strong consistency statements about smaller fragments of mathematics).",
+    "key_claims": [
+      "An inaccessible cardinal kappa is an uncountable regular cardinal that is a strong limit: for every alpha < kappa, 2^alpha < kappa. The smallest inaccessible (if it exists) is far beyond the first omega (aleph_0); its existence is independent of ZFC.",
+      "A measurable cardinal kappa is an uncountable cardinal for which there exists a non-trivial kappa-additive measure on P(kappa) that vanishes on singletons; equivalently, there is an elementary embedding j: V -> M with critical point kappa. Measurable cardinals are strictly stronger than inaccessible cardinals.",
+      "The consistency hierarchy: Con(ZFC) < Con(ZFC + 'there exists an inaccessible') < Con(ZFC + 'there exists a measurable') < ...; each large cardinal axiom increases the consistency strength, and the hierarchy is (conjecturally) well-ordered.",
+      "Large cardinals are 'natural' in the sense that they arise from the desire to extend the set-theoretic universe: the axiom of choice + the axiom of infinity give the 'small' universe V; large cardinals extend this to V_kappa, V_M, etc., where the 'large' cardinals play the role of 'infinite' within the extended universe.",
+      "The relationship to determinacy: the axiom of determinacy (AD) is incompatible with the axiom of choice but is equiconsistent with a proper class of Woodin cardinals; the 'cardinal-structure of the reals' (the delta^1_n hierarchy) is governed by large cardinals.",
+      "The 'naturalness' of large cardinals is a matter of philosophical debate: some set theorists (e.g., Woodin) argue that large cardinals are the 'correct' extension of ZFC, while others (e.g., Gitik) argue that the absence of large cardinals is also a consistent and natural position."
+    ],
+    "methods_math": [
+      "axiomatic set theory: ZFC, power set, replacement, choice",
+      "cardinal arithmetic: aleph numbers, beth numbers, 2^kappa",
+      "regular vs. singular cardinals, strong limit cardinals",
+      "elementary embeddings, critical points, extenders",
+      "measurable cardinals, kappa-additive measures, ultrapowers",
+      "weakly compact, strong, supercompact cardinals (higher large cardinals)",
+      "Woodin cardinals, the axiom of determinacy, the delta hierarchy",
+      "consistency strength, Gödel's incompleteness theorems, Solovay's consistency proof"
+    ],
+    "visualizations": [
+      "cardinal hierarchy diagram: a vertical stack showing aleph_0, aleph_1, ..., the first inaccessible, the first measurable, with the 'gap' between each level emphasized; the user can click a level to see its defining property",
+      "V_kappa universe builder: for a given inaccessible kappa, show the cumulative hierarchy V_0 = {}, V_{alpha+1} = P(V_alpha), V_lambda = union_{alpha < lambda} V_alpha for limit lambda; the user can watch the universe 'grow' as alpha increases, with a note that V_kappa satisfies ZFC",
+      "elementary embedding visualizer: for a measurable cardinal kappa, show the embedding j: V -> M as a 'copy' of V with a 'gap' at kappa; the critical point is highlighted, and the user can see that j(kappa) > kappa",
+      "consistency-strength ladder: a horizontal bar chart showing the consistency strength of ZFC, ZFC + inaccessible, ZFC + measurable, etc.; the bars are logarithmic (each level is 'much stronger' than the previous)",
+      "determinacy vs. choice: a Venn diagram showing AD and AC as incompatible axioms, with the 'overlap' (the universe of reals) highlighted; the user can toggle between the AD and AC universes and see how the structure of the reals changes",
+      "Solovay's model: a simplified visualization of how the existence of a measurable cardinal implies the consistency of 'all sets of reals are Lebesgue measurable' (assuming DC + 'all sets of reals are measurable')"
+    ],
+    "internal_tensions": [
+      "The file is a pedagogical introduction, not a research paper; the definitions of the higher large cardinals (strong, supercompact, Woodin) are given but not proved, and the consistency arguments are sketched rather than worked out.",
+      "The 'naturalness' of large cardinals is a genuinely open philosophical question; the file presents both the Woodin and Gitik positions but does not take a side, which is honest but may leave readers wanting a clearer answer.",
+      "The relationship between large cardinals and the 'continuum hypothesis' is not discussed in depth; the independence of CH from ZFC is a natural place to introduce large cardinals, but the file focuses on the consistency hierarchy instead.",
+      "The file is in German and uses set-theoretic terminology in its German translation; some terms (e.g., 'Kardinal', 'Mächtigkeitszahl') are standard, but the large-cardinal terminology (e.g., 'messbar', 'unerreichbar') is less familiar to English-speaking set theorists."
+    ],
+    "related_files": [
+      "monster",
+      "goedel",
+      "goedel2",
+      "mod",
+      "cauchydedeking",
+      "hott",
+      "hott2",
+      "hott3",
+      "hott4",
+      "hott5",
+      "hott6",
+      "hott_practical",
+      "hott_book"
+    ]
+  },
+  {
+    "path": "pz2.html",
+    "slug": "pz2",
+    "title": "Primzahlmuster-Explorer — Interaktive Erkundung der Primzahlen",
+    "lang": "de",
+    "size_kb": 41.4,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive explorer for prime number patterns: the Ulam spiral, modular arithmetic visualizations (primes in residue classes mod n), prime gaps, the Riemann zeta function, and the prime number theorem. Pure math/number theory, no AI/ML.",
+    "theme": "number-theory",
+    "themes": [
+      "primes",
+      "ulam-spiral",
+      "modular-arithmetic",
+      "analytic-number-theory",
+      "riemann-hypothesis"
+    ],
+    "thesis": "An interactive German-language explorer for prime number patterns: the user can visualize primes in the Ulam spiral, in modular residue classes (mod 2, 3, 4, 5, ...), as a number line with gaps, and in the context of the prime number theorem (pi(x) ~ x/ln(x)). The Riemann zeta function is introduced as the 'generating function' of the primes, with a note on the Riemann Hypothesis.",
+    "key_claims": [
+      "The Ulam spiral: plot the natural numbers in a spiral, marking the primes; the primes lie preferentially on certain diagonals, which suggests a non-random structure. The diagonal lines correspond to primes of the form 4n+1, 4n+3, 6n+1, 6n+5, etc.",
+      "Primes mod n: for n > 2, the primes are distributed among the residue classes coprime to n (by Dirichlet's theorem, each such class contains infinitely many primes). The visualizer shows the distribution for n = 2, 3, 4, 5, 6, 7, 8, 12, with the 'missing' classes (non-coprime) highlighted.",
+      "Prime gaps: the difference between consecutive primes; the average gap near x is ~ ln(x) (by the prime number theorem), but the gaps are irregular. The 'twin prime conjecture' (infinitely many primes p with p+2 also prime) is open; the visualizer shows the twin primes up to a limit.",
+      "The prime number theorem: pi(x) ~ x/ln(x) as x -> infinity; more precisely, pi(x) = Li(x) + O(x * exp(-c * sqrt(ln(x)))). The visualizer plots pi(x) and x/ln(x) on the same axes and shows the ratio approaching 1.",
+      "The Riemann zeta function: zeta(s) = sum_{n=1}^inf 1/n^s = product_{p prime} (1 - 1/p^s)^{-1} (Euler product); the non-trivial zeros of zeta(s) lie on the critical strip 0 < Re(s) < 1, and the Riemann Hypothesis states that they all lie on the critical line Re(s) = 1/2.",
+      "The explicit formula: the primes are encoded in the non-trivial zeros of zeta(s); the 'Riemann von Mangoldt' function psi(x) = sum_{p^k <= x} ln(p) can be written as a sum over the zeros, and the primes are the 'poles' of this sum.",
+      "The visualizer includes a 'prime counting' mode: for a given x, the user can see pi(x) (the number of primes <= x) and compare it with x/ln(x) and Li(x); the error term is highlighted."
+    ],
+    "methods_math": [
+      "prime number distribution, Ulam spiral, modular residue classes",
+      "Dirichlet's theorem on primes in arithmetic progressions",
+      "prime gaps, twin primes, the Cramér model",
+      "prime number theorem, Li(x), the error term",
+      "Riemann zeta function, Euler product, functional equation",
+      "non-trivial zeros, the critical line, the Riemann Hypothesis",
+      "explicit formula, the von Mangoldt function, primes as 'poles'",
+      "probabilistic number theory: Cramér's random model for primes, the Hardy-Littlewood conjectures"
+    ],
+    "visualizations": [
+      "Ulam spiral: an interactive spiral with primes highlighted; the user can zoom in and rotate the spiral; the 'diagonal' patterns are visible at large scales",
+      "modular residue class plot: for a given n, a bar chart showing the number of primes in each residue class mod n up to a limit; the non-coprime classes are shown as zero",
+      "prime number line: a number line from 0 to N with primes marked; the user can toggle between 'all primes', 'twin primes', 'primes in a specific residue class', and watch the gaps",
+      "prime counting plot: pi(x), x/ln(x), and Li(x) on the same axes for x = 10..10^6; the ratio pi(x)/(x/ln(x)) is plotted in the inset, approaching 1",
+      "Riemann zeta function: a 3D surface plot of |zeta(s)| for s = sigma + it in the critical strip; the zeros are shown as dark spots; the critical line Re(s) = 1/2 is highlighted",
+      "explicit formula: a plot of the von Mangoldt function psi(x) as a step function, with the 'zero contributions' shown as damped oscillations; the user can toggle the number of zeros included in the sum"
+    ],
+    "internal_tensions": [
+      "The file is a visualizer, not a theoretical treatment; the analytic number theory (zeta function, explicit formula) is presented at a high level without proofs, which may be unsatisfying for a mathematically sophisticated reader.",
+      "The Ulam spiral 'pattern' is visually striking but the mathematical explanation (why primes prefer certain diagonals) is only briefly mentioned; the deeper connection to quadratic forms and the distribution of primes in arithmetic progressions is not developed.",
+      "The Riemann Hypothesis is mentioned but not explained in depth; the file states the hypothesis and its importance but does not discuss the 'evidence' for it (e.g., the first 10^13 zeros are on the critical line) or the 'consequences' if it is false.",
+      "The file is in German and uses number-theoretic terminology in its German translation; some terms (e.g., 'Primzahl', 'Zahl') are standard, but the analytic number theory terminology (e.g., 'Riemannsche Zetafunktion', 'kritische Linie') is less familiar to non-German speakers."
+    ],
+    "related_files": [
+      "pz",
+      "pz3",
+      "pz4",
+      "pz5",
+      "pz6",
+      "pz8",
+      "pz9",
+      "pz10",
+      "miller_rabin",
+      "shors_algorithm",
+      "random",
+      "mod",
+      "goedel",
+      "goedel2"
+    ]
+  },
+  {
+    "path": "minima_explorer.html",
+    "slug": "minima_explorer",
+    "title": "Minima Explorer — BasinHopper in 3D Loss Landscapes",
+    "lang": "en",
+    "size_kb": 41.3,
+    "category": "ki",
+    "category_reason": "An English-language interactive 3D visualization of loss landscapes for neural network training, using the BasinHopper algorithm to explore the landscape and find local minima. The subject is ML optimization (loss landscape geometry, local minima, saddle points), which is squarely AI/ML.",
+    "theme": "optimization",
+    "themes": [
+      "loss-landscape",
+      "basinhopper",
+      "gradient-descent",
+      "nn-training",
+      "optimization-geometry"
+    ],
+    "thesis": "An interactive English-language explorer for 3D loss landscapes: the user can define a loss function (e.g., a 2-parameter neural net loss, a Rosenbrock function, a random smooth function) and watch the BasinHopper algorithm (a stochastic global optimizer that combines Monte Carlo kicks with local minimization) explore the landscape, finding local minima and saddle points. The goal is to make the 'geometry' of the loss landscape visible: where the minima are, how deep they are, and how the optimizer navigates between them.",
+    "key_claims": [
+      "A loss landscape L(w) for a neural network with parameters w is a function from R^d to R; for a 2-parameter net, L: R^2 -> R can be visualized as a 3D surface. The 'shape' of L(w) (number of minima, depth, curvature) determines the difficulty of training.",
+      "BasinHopper is a global optimization algorithm: it maintains a current point w, performs a local minimization (e.g., BFGS) from w to find the nearest local minimum w*, then takes a random 'kick' (a perturbation of size sigma) to a new point w' = w* + delta, and repeats. The kick size is adapted based on the acceptance rate (Metropolis-like).",
+      "The 'basin' of a local minimum w* is the set of all points that flow to w* under gradient descent; the basin boundary is the set of points that flow to different minima. The size and shape of the basins determine the 'robustness' of the training: a large, deep basin is 'easier' to find than a small, shallow one.",
+      "Saddle points (where the Hessian has both positive and negative eigenvalues) are critical points that are not minima; in high-dimensional loss landscapes, saddle points are more common than local minima (the 'saddle point problem'), and the optimizer must 'escape' them (e.g., by using momentum or a higher-order method).",
+      "The 'flat minimum' hypothesis: minima with a large 'flat region' (small Hessian eigenvalues) generalize better than 'sharp' minima (large Hessian eigenvalues); the visualizer can compute the Hessian at each found minimum and plot the eigenvalue spectrum.",
+      "The loss landscape is not a static object: it depends on the initialization, the batch size, the learning rate, and the architecture; the visualizer shows the landscape for a fixed architecture and initialization, but notes that the 'true' landscape is a family of landscapes parameterized by the training dynamics."
+    ],
+    "methods_math": [
+      "multivariate calculus: gradient, Hessian, critical points, local minima/maxima/saddles",
+      "BasinHopper algorithm: Monte Carlo kicks + local minimization, adaptive kick size",
+      "BFGS quasi-Newton method for local minimization",
+      "basin of attraction, basin boundary, gradient flow",
+      "Hessian eigenvalue spectrum, flatness of minima, generalization",
+      "saddle points, escape dynamics, momentum/Adam as escape mechanisms",
+      "loss landscape as a function of architecture, initialization, batch size",
+      "global vs. local optimization, convergence guarantees, non-convexity"
+    ],
+    "visualizations": [
+      "3D loss landscape surface: a 3D plot of L(w1, w2) for a 2-parameter net or a test function (Rosenbrock, Himmelblau, random smooth); the surface is colored by height (loss value), with local minima highlighted",
+      "BasinHopper trajectory: an animated path of the algorithm on the 2D contour plot of L(w1, w2); each 'kick' is shown as a dashed line, each local minimization as a solid line to the nearest minimum",
+      "basin boundary map: a 2D color map showing which minimum each point in the parameter space flows to under gradient descent; the basin boundaries are shown as lines",
+      "Hessian eigenvalue spectrum: for each found minimum, a bar chart of the Hessian eigenvalues; 'flat' minima (small eigenvalues) and 'sharp' minima (large eigenvalues) are clearly distinguishable",
+      "saddle point detector: a 2D contour plot with saddle points (where the Hessian is indefinite) highlighted in red; the user can click a saddle point to see the 'escape' trajectory under gradient descent with momentum",
+      "architecture comparison: two 3D landscapes side by side, one for a narrow net (2 hidden units) and one for a wide net (20 hidden units); the wide net landscape is 'smoother' with fewer sharp minima"
+    ],
+    "internal_tensions": [
+      "The 2D visualizations are necessarily reductive: real neural network loss landscapes have d = 10^4..10^7 parameters, and the geometry is very different (e.g., the 'mode connectivity' phenomenon: minima are connected by low-loss paths, which is not visible in 2D).",
+      "The BasinHopper algorithm is a global optimizer, but in practice neural networks are trained with stochastic gradient descent (SGD), which is a local optimizer with a very different noise structure; the file does not discuss the relationship between the two.",
+      "The 'flat minimum' hypothesis is stated but not proved; the connection between Hessian eigenvalues and generalization is an active research area, and the file presents it as established.",
+      "The file is a visualizer, not a theoretical treatment; the mathematical claims (basin boundaries, saddle point escape) are stated without proof, and the connection to the 'loss landscape conjectures' (e.g., the 'no spurious local minima' result for convex losses) is not discussed."
+    ],
+    "related_files": [
+      "morse_theory",
+      "gradient_flow",
+      "theory_of_deep_learning",
+      "energy_based_learning",
+      "botorch",
+      "topologie_tiefer_neuronaler_netze"
+    ]
+  },
+  {
+    "path": "wahrscheinlichkeit.html",
+    "slug": "wahrscheinlichkeit",
+    "title": "Was ist Wahrscheinlichkeit? — Interaktiv erkunden aus 6 wissenschaftlichen Perspektiven",
+    "lang": "de",
+    "size_kb": 41.3,
+    "category": "nicht-ki",
+    "category_reason": "A German-language interactive explorer for probability theory from 6 perspectives: Laplace (classical), frequentist (von Mises), Bayesian, information-theoretic (Shannon), quantum (Born), and stochastic processes (Kolmogorov/Markov). Pure math/probability, no AI/ML.",
+    "theme": "probability",
+    "themes": [
+      "probability-theory",
+      "bayesian-statistics",
+      "information-theory",
+      "quantum-mechanics",
+      "stochastic-processes",
+      "axiomatic-probability"
+    ],
+    "thesis": "An interactive German-language explorer for the question 'What is probability?' from 6 scientific perspectives: (1) Laplace/classical (symmetry, ratio of favorable to possible cases), (2) frequentist (limit of relative frequency), (3) Bayesian (degree of belief, updated by evidence), (4) information-theoretic (Shannon entropy, information content), (5) quantum (Born rule, |psi|^2 as fundamental probability), and (6) stochastic processes (Kolmogorov axioms, Markov chains, random walks). Each section has an interactive visualization and a formula box; the final section ties all 6 perspectives together under the Kolmogorov axioms.",
+    "key_claims": [
+      "Laplace's classical definition: P(A) = |A| / |Omega| when all outcomes are equally likely; the dice example (sum of n dice >= target) shows the computation and the distribution of sums.",
+      "The frequentist definition (von Mises, 1928): P(A) = lim_{n->inf} h_n(A)/n, where h_n(A) is the number of occurrences of A in n trials; the coin-flip simulation shows the convergence of the relative frequency to the true probability, with a 95% confidence band.",
+      "The Bayesian definition: P(H|E) = P(E|H)P(H) / P(E); the medical test example (prevalence, sensitivity, specificity) shows the posterior probability of disease given a positive test, with a tree diagram; the 'base rate neglect' is highlighted (a 95% sensitive test on a 1% prevalence disease gives only ~9% posterior).",
+      "The information-theoretic perspective (Shannon, 1948): H(X) = -sum p_i log2(p_i) is the entropy; I(x) = -log2(p(x)) is the information content of event x; the binary source example shows the entropy curve H(p) = -p log2(p) - (1-p) log2(1-p), which is maximized at p = 0.5.",
+      "The quantum-mechanical perspective (Born, 1926): P(a <= x <= b) = integral_a^b |psi(x)|^2 dx; the particle-in-a-box example shows the wavefunction psi_n(x) = sqrt(2/L) sin(n pi x / L) and the probability density |psi_n|^2, with a slider for the quantum number n and the measurement region.",
+      "The stochastic processes perspective (Kolmogorov, 1933): probability as an axiomatized measure; the Markov chain P(X_{t+1} = j | X_t = i) = p_ij and the random walk (sum of ±1 steps) show the evolution of probability over time; the diffusion limit (sqrt(t) scaling) is highlighted.",
+      "All 6 perspectives satisfy the Kolmogorov axioms: P(A) >= 0, P(Omega) = 1, P(union A_i) = sum P(A_i) for disjoint A_i; the axioms are the common foundation, and the 6 perspectives are different 'interpretations' or 'applications' of the same axiomatic structure."
+    ],
+    "methods_math": [
+      "classical probability: sample space, favorable outcomes, symmetry",
+      "law of large numbers, relative frequency, confidence intervals",
+      "Bayes' theorem, prior/posterior, base rate neglect",
+      "Shannon entropy, information content, binary source",
+      "quantum mechanics: wavefunction, Born rule, particle in a box, stationary states",
+      "Kolmogorov axioms, probability measure, countable additivity",
+      "Markov chains, transition matrix, steady-state distribution",
+      "random walk, diffusion, central limit theorem, sqrt(t) scaling"
+    ],
+    "visualizations": [
+      "dice distribution plot: a bar chart of the sum of n dice, with the favorable outcomes (sum >= target) highlighted in blue; a canvas shows example dice rolls",
+      "coin-flip simulation: a strip of the last 100 coin flips (K/Z), a Plotly chart of the relative frequency over time with the true probability and 95% confidence band",
+      "Bayesian medical test: a bar chart of prior vs. posterior probability of disease; a tree diagram showing the population split into sick/healthy and then into test+/test-; the posterior is computed and displayed",
+      "entropy curve: a Plotly chart of H(p) = -p log2(p) - (1-p) log2(1-p) for p = 0.01..0.99, with the current p marked; a canvas shows the information content bars for events A and B, and an 'entropy meter' gradient bar",
+      "particle in a box: a canvas showing the wavefunction psi_n(x) (blue) and the probability density |psi_n|^2 (red) for quantum number n; a green shaded region shows the measurement interval; the probability in the region is computed by numerical integration",
+      "random walk simulation: a Plotly chart of N random walks (colored by hue) with the theoretical mean and 95% confidence band; the final positions are summarized (mean, std) and compared with the theory",
+      "summary diagram: a canvas showing the 6 perspectives as nodes around a central 'Kolmogorov Axioms' node, with connecting lines; each node is labeled with the key idea (symmetry, limit, belief, uncertainty, fundamental, axiomatic)"
+    ],
+    "internal_tensions": [
+      "The file presents 6 'perspectives' on probability as if they are equally valid and complementary, but in practice they are not: the classical and frequentist definitions are special cases or approximations, the Bayesian definition is a subjective interpretation, the quantum definition is a physical law (not a probability interpretation per se), and the stochastic processes definition is the axiomatic foundation. The 'equality' of the 6 perspectives is a pedagogical choice, not a mathematical one.",
+      "The quantum section is the most out of place: the Born rule is a postulate of quantum mechanics, not a 'perspective on probability' in the same sense as the others; the file treats it as if it were another interpretation of the same concept, which is a category error.",
+      "The frequentist section shows the convergence of the relative frequency, but the 'true probability' is a parameter that is not observable; the file does not discuss the 'frequentist paradox' (the probability of the parameter is not a probability in the frequentist sense).",
+      "The file is a pedagogical explorer, not a philosophical treatment; the 'what is probability?' question is a deep philosophical question (the 'problem of the criterion'), and the file does not engage with the philosophical literature (e.g., the frequentist-Bayesian debate, the 'propensities' interpretation, the 'logical' interpretation of Carnap)."
+    ],
+    "related_files": [
+      "kult_der_statistischen_signifikanz",
+      "kult_der_statistischen_signifikanz_simple",
+      "kult_der_statistischen_signifikanz_very_simple",
+      "random",
+      "miller_rabin",
+      "laplace",
+      "goedel",
+      "goedel2"
+    ]
+  },
+  {
+    "path": "frege.html",
+    "slug": "frege",
+    "title": "Frege's Grundlagen der Arithmetik — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 41.2,
+    "category": "nicht-ki",
+    "category_reason": "An English-language interactive explorer for Gottlob Frege's 1884 'Die Grundlagen der Arithmetik': anti-psychologism, the concept/object distinction, numbers as properties of concepts, extensions, Hume's Principle (equinumerosity), the definitions of 0, 1, 2, ..., and the Context Principle. Philosophy of mathematics / logic, no AI/ML.",
+    "theme": "philosophy-of-mathematics",
+    "themes": [
+      "logic",
+      "foundations-of-mathematics",
+      "philosophy-of-language",
+      "number-theory",
+      "analytic-philosophy"
+    ],
+    "thesis": "An interactive English-language explorer for the 7 key ideas in Frege's 'Grundlagen der Arithmetik' (1884): (1) anti-psychologism (numbers are not mental images), (2) the concept/object distinction, (3) numbers attach to concepts, not objects, (4) extensions of concepts, (5) Hume's Principle (equinumerosity), (6) the logical definitions of 0, 1, 2, ..., and (7) the Context Principle. Each idea has an interactive visualization (sliders, toggles, click-to-explore) that makes the abstract concept concrete.",
+    "key_claims": [
+      "Anti-psychologism: numbers are objective, mind-independent entities, not mental images or ideas in our heads. If numbers were mental images, then 'your 3' and 'my 3' would be different, and arithmetic would collapse into subjective psychology. The interactive: a slider for 'how many people are thinking of 5' — the number 5 remains the same regardless.",
+      "Concept/object distinction: a concept is a predicate (a function from objects to truth-values); an object is something that falls under a concept. The concept 'is even' maps 2 -> TRUE, 3 -> FALSE. The interactive: select a concept (even, prime, > N, perfect square) and watch which objects fall under it.",
+      "Numbers attach to concepts, not objects: 'there are 3 apples' means the concept 'apple on the table' has 3 objects falling under it, not that the apples have the property '3'. The same physical pile can be '1 deck' or '52 cards' depending on the concept applied. The interactive: a slider for pairs of shoes, with toggles for 'count pairs' / 'count individual shoes' / 'count soles' — the count changes while the physical situation stays the same.",
+      "Extensions: the extension of a concept F is the set of all objects falling under F. Two concepts have the same number iff their extensions are equinumerous (there exists a bijection between them). The interactive: two sliders for the sizes of extensions of F and G; when they match, a bijection is shown.",
+      "Hume's Principle: #F = #G iff F and G are equinumerous. This is the key criterion for when two concepts share a number — without needing to say what numbers are first. The interactive: two groups of apples and stars; when they match, a 1-to-1 correspondence (bijection) is shown.",
+      "Definitions of 0, 1, 2, ...: 0 = the number belonging to the concept 'is not identical with itself' (empty extension); 1 = the number belonging to 'is identical with 0'; 2 = the number belonging to 'is identical with 0 or 1'; etc. Each number is defined from the previous ones. The interactive: a slider that builds up the natural numbers one by one, showing the defining concept and extension at each step.",
+      "Context Principle: never ask for the meaning of a word in isolation, but only in the context of a sentence. The meaning of '3' is determined by the truth-values of all sentences in which it appears ('3 = 3', '3 + 1 = 4', '3 is prime', '3 > 2', etc.), not by pointing at a mental image or a physical heap. The interactive: select a number n, and see the list of sentences containing n with their truth-values."
+    ],
+    "methods_math": [
+      "anti-psychologism: numbers as objective logical objects",
+      "concepts as predicates (functions from objects to truth-values)",
+      "extensions of concepts, set-theoretic equality of extensions",
+      "equinumerosity, bijection, Hume's Principle",
+      "logical definitions of natural numbers (0, 1, 2, ...)",
+      "the Context Principle (meaning in sentences, not isolated words)",
+      "Frege's logicist program: arithmetic as a branch of logic",
+      "the Russell paradox and its impact on Frege's program (mentioned but not developed)"
+    ],
+    "visualizations": [
+      "overview chain: a horizontal chain of the 7 key ideas (anti-psychologism -> concepts/objects -> numbers as concepts -> extensions -> Hume's Principle -> definitions -> Context Principle), with hover/click to navigate to the corresponding tab",
+      "anti-psychologism slider: a row of person emojis 'thinking of 5', with a slider for the number of people; the result box states that the number 5 is the same regardless of how many people think of it",
+      "psychologism/empiricism/Frege toggle: three buttons that switch the explanation text between the three views, with Frege's critique of each",
+      "concept/object explorer: a selector for the concept (even, prime, > N, perfect square), a threshold slider for '> N', and a row of number tiles (0-12) that light up green if they fall under the concept; the result box shows the extension and its size",
+      "shoe counter: a slider for pairs of shoes, a visual of the shoes, and three toggle buttons (count pairs / count individual shoes / count soles); the count changes with the toggle while the visual stays the same",
+      "extension builder: two sliders for the sizes of extensions of concepts F and G, with emoji sets (apples for F, stars for G); when the sizes match, both sets are highlighted and the result states 'equinumerous'",
+      "Hume's Principle visualizer: two groups of apples and stars with sliders; when they match, a 1-to-1 arrow (bijection) is shown between them; when they don't match, a 'no bijection' mark is shown",
+      "definition builder: a slider for the target number n (0..6); a chain of number nodes (0, 1, 2, ..., n) is shown, with the defining concept and extension for n highlighted; the result box gives the full explanation",
+      "Context Principle explorer: a slider for the number n (0..9); a list of 8 sentences containing n (n = n, n+1 = n+1, n is even, n is prime, n > 5, n*2 = 2n, n^2 = n*n, n is successor of n-1) with their truth-values (green TRUE / red FALSE); the explanation box states that the meaning of n is determined by the totality of these truth-values"
+    ],
+    "internal_tensions": [
+      "The file is a pedagogical explorer, not a philosophical argument; the 7 ideas are presented as a linear progression, but in the 'Grundlagen' they are interdependent and the order is not strictly linear (e.g., the Context Principle is stated in the introduction and used throughout).",
+      "The Russell paradox (which destroyed Frege's logicist program in 1902) is mentioned in the overview but not developed; the file presents Frege's system as if it were successful, without discussing the paradox or its consequences.",
+      "The 'numbers as logical objects' claim is the most controversial; the file presents it as Frege's view but does not discuss the alternative (e.g., structuralism, fictionalism, the 'no unique answer' problem for the interpretation of Frege's definitions).",
+      "The file is in English and uses Frege's German terms in translation; some terms (e.g., 'Begriff' = concept, 'Gegenstand' = object, 'Umfang' = extension) are consistently translated, but the 'Grundlagen' section numbers (§46, §63, §74) are cited without the German text, which may be confusing for readers who want to check the original."
+    ],
+    "related_files": [
+      "cauchydedeking",
+      "goedel",
+      "goedel2",
+      "hott",
+      "hott2",
+      "hott3",
+      "hott4",
+      "hott5",
+      "hott6",
+      "hott_practical",
+      "hott_book",
+      "mod",
+      "buecher/kritik_der_reinen_vernunft",
+      "analytischer_idealismus",
+      "analytic_idealism",
+      "buecher/euclid"
+    ]
+  }
+]

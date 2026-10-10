@@ -1,0 +1,399 @@
+[
+  {
+    "path": "buecher/saeen_und_ernten.html",
+    "slug": "saeen_und_ernten",
+    "title": "Récoltes et Semailles — Interaktiv",
+    "lang": "de",
+    "size_kb": 29.5,
+    "category": "nicht-ki",
+    "category_reason": "A meditative tour of Grothendieck's 'Récoltes et Semailles' (sheaves, schemes, topoi, motives, and his method/philosophy of math); no AI application.",
+    "theme": "sheaves",
+    "themes": ["topoi", "motive"],
+    "thesis": "An interactive walk through Grothendieck's mathematical universe and his method: vision from many viewpoints, sheaves as a 'fan of measuring sticks', schemes uniting all characteristics, topoi as the 'double bed' of discrete arithmetic and continuous geometry, and the 'rising tide' that makes hard problems trivial via general theory.",
+    "key_claims": [
+      "A single object is silent; a Vision emerges only when many viewpoints fall on the same reality (like sunlight from spectral colors).",
+      "A sheaf (Leray) measures a space with a fan of local measuring sticks, gluing local data into global information under consistency on overlaps.",
+      "Grothendieck's scheme replaces one geometry per prime characteristic with a single 'fan' (e.g. y²=x³+ax+b over char 0 and all 𝔽p) — 'childlike simplicity'.",
+      "A topos is a space without points, defined only by what sheaves live on it; it reconciles discrete arithmetic and continuous geometry.",
+      "Motives: different cohomology theories (ℓ-adic, de Rham, Hodge, crystalline) are like different 'keys' of the same melody, and all return the same Betti numbers.",
+      "Grothendieck's method: the 'rising tide' (steigende Flut) of a sufficiently general theory lifts a problem until it becomes trivial, rather than hammer-and-chisel.",
+      "Two inseparable creative forces: Yin (receiving/dreaming the form) and Yang (building/proving/chiselling); 'there is no concluding word' in the work or life."
+    ],
+    "methods_math": ["sheaves & cohomology (Leray)", "schemes / arithmetic geometry over varying characteristics", "topoi", "motives & cohomology theories (ℓ-adic, de Rham, Hodge, crystalline)", "Betti numbers"],
+    "visualizations": ["Canvas 2D: rotating viewpoints revealing a hidden rose curve; click-to-place sheaf measurements with coherence check; topos discrete↔continuous transform; Yin-Yang balance; animated rising-tide sea; walking 'child'. Plotly: scheme 'fan' of elliptic curve over characteristics; motive Betti-number bar charts across cohomology theories."],
+    "internal_tensions": [
+      "Tension between rigorous construction (Yang) and receptive intuition (Yin) — the doc frames both as indispensable.",
+      "Grothendieck's later life (the 'child', solitude, independence from consensus) is folded into a math-methodology narrative, blurring biography and doctrine.",
+      "The 'topos without points' pushes against the naive point-based picture of geometric space."
+    ],
+    "related_files": ["garben", "garben_zug", "topos", "grothendiek", "sheaves", "sheaf", "garbentheorie", "garben_2", "garben_weltsicht", "garben_in_transformern", "topology_of_attractors"]
+  },
+  {
+    "path": "qkv2.html",
+    "slug": "qkv2",
+    "title": "What Attention Actually Does — Geometrically",
+    "lang": "en",
+    "size_kb": 29.3,
+    "category": "ki",
+    "category_reason": "Explains transformer self-attention (Q,K,V, softmax, multi-head) geometrically.",
+    "theme": "transformer-attention",
+    "themes": ["geometry-of-embeddings"],
+    "thesis": "Attention is not a surface or simplicial complex but a data-dependent convex combination of value vectors: Q·K measures angular alignment in a query-key subspace, softmax maps the scores onto the probability simplex, and the output is a weighted centroid inside the convex hull of the V vectors.",
+    "key_claims": [
+      "Attention does NOT lay a surface or a simplicial complex — it computes a convex combination of value vectors with position determined by query-key similarity.",
+      "score(i,j) = q_i·k_j/√d_k = |q_i||k_j|cos(θ_ij)/√d_k, i.e. Q·K is scaled cosine similarity (angular alignment).",
+      "The √d_k factor normalizes the dot product (variance d_k for unit-variance random vectors) so softmax does not saturate — a geometric rescaling to keep angles meaningful.",
+      "Softmax first exponentiates, amplifying differences (3 vs 1 → e³:e¹ ≈ 20:2.7), so attention is either diffuse or concentrated; the temperature is 1/√d_k.",
+      "Every attention pattern is a point on the (n-1)-simplex Δⁿ⁻¹; vertices = hard attention (copy one token), center = uniform average.",
+      "out_i = Σ_j softmax(q_i·k_j/√d_k)·v_j — a weighted centroid in the convex hull of {v_j}; attention interpolates between copying and averaging.",
+      "Multi-head = multiple independent (Q,K,V) triples in different subspaces, concatenated — attend to different things simultaneously."
+    ],
+    "methods_math": ["softmax / probability simplex Δⁿ⁻¹", "convex combination / convex hull", "angular (cosine) similarity, dot products", "subspace projections W_Q,W_K,W_V,W_O"],
+    "visualizations": ["Canvas 2D, four scenes: (1) tokens with convex hull of V vectors and animated attention lines + moving output centroid; (2) unit circle in Q-K subspace with selectable query and per-key cosine bars; (3) 2-simplex (probability triangle) with the softmax point; (4) draggable V points + weight sliders tracking the output point inside the convex hull."],
+    "internal_tensions": [
+      "Explicitly rejects a topological/simplicial reading of attention ('does NOT lay a surface or a simplicial complex') — directly in tension with the simplicial-complex/nerve accounts (e.g. simplicial_complex_attention4, simplicial_complex_attention*).",
+      "Uses idealized, hand-set Q/K/V and a single illustrative sentence rather than a trained model, so it is a pedagogical model of the mechanism, not empirical evidence.",
+      "Frames √d_k as 'just a geometric rescaling' — glosses over the deeper role of scaling in gradient/temperature behavior."
+    ],
+    "related_files": ["qkv", "attn", "attn_as_optimal_transport", "simplicial_complex_attention4", "simplicial_complex_attention", "attn_as_optimal_transport_simple", "math_framework_for_transformers", "transformer_dynamics", "positional", "dynamic_residual_stream_paper"]
+  },
+  {
+    "path": "product_coproduct.html",
+    "slug": "product_coproduct",
+    "title": "Products & Coproducts — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 29.1,
+    "category": "nicht-ki",
+    "category_reason": "Pure category theory (limits/colimits and duality) with no machine-learning application.",
+    "theme": "category-theory",
+    "themes": ["mathematical-foundations"],
+    "thesis": "Products and coproducts are dual universal constructions: the product A×B comes with projections and is the 'best' object receiving maps into both A and B, while the coproduct A+B comes with injections and is the 'best' object sending maps out — one is the other with all arrows reversed.",
+    "key_claims": [
+      "Product universal property: for any X with f:X→A and g:X→B there is a unique ⟨f,g⟩:X→A×B with π₁∘⟨f,g⟩=f and π₂∘⟨f,g⟩=g.",
+      "Coproduct universal property (dual): for any f:A→X, g:B→X there is a unique [f,g]:A+B→X with [f,g]∘ι₁=f and [f,g]∘ι₂=g.",
+      "Duality principle: a product in C is a coproduct in C^op — every product theorem yields a coproduct theorem by reversing arrows.",
+      "In Set: product = Cartesian product, coproduct = disjoint union.",
+      "Cardinalities: |A×B| = |A|·|B| and |A+B| = |A|+|B|."
+    ],
+    "methods_math": ["limits & colimits (universal properties)", "Cartesian product", "disjoint union", "opposite category / duality"],
+    "visualizations": ["Tabbed SVG diagrams (product / coproduct / side-by-side duality) with draggable X object, toggleable universal arrow, and extra objects Y,Z all factoring through; an animated duality mirror; a 'Play with Sets' panel where clicking elements of A×B (projections) and A+B (injections/source) shows the universal property concretely. Temml-rendered math."],
+    "internal_tensions": [
+      "Purely expository — the main open question is whether the duality intuition (arrow-reversal) survives when moved from Set to other categories.",
+      "The SVG arrows rely on a (broken/unused) getComputedStyle('--x') styling call, so some arrow colors fall back; minor, cosmetic."
+    ],
+    "related_files": ["categorytheorie", "kategorientheorie", "adjunct_functor", "paper/olog", "paper/sorting_with_bialgebras", "backprop_als_funktor", "hott2", "monoid", "commutative_diagram", "ologs"]
+  },
+  {
+    "path": "miller_rabin.html",
+    "slug": "miller_rabin",
+    "title": "Miller-Rabin Primzahltest – Interaktiv erklärt",
+    "lang": "de",
+    "size_kb": 28.9,
+    "category": "nicht-ki",
+    "category_reason": "Interactive exposition of a probabilistic primality test from number theory / modular arithmetic; no AI focus.",
+    "theme": "number-theory",
+    "themes": ["information-theory"],
+    "thesis": "Miller-Rabin is a probabilistic primality test: write n−1 = 2^s·d, and for a base 'witness' a, if a^d ≡ 1 (mod n) or some a^(2^r·d) ≡ −1 (mod n) then n passes as 'probably prime'; otherwise a single witness proves n composite, with error bounded by (1/4)^k over k rounds.",
+    "key_claims": [
+      "Decompose n−1 = 2^s·d with d odd; s counts the squaring steps, d is the odd start.",
+      "n is definitely composite if no term in the sequence a^d, a^(2d), …, a^(2^s·d) mod n equals 1 or −1; a single such witness 'proves' compositeness.",
+      "A single witness can 'be wrong' with probability at most 25%; k independent rounds drop the error to (1/4)^k.",
+      "Modular exponentiation is done by repeated squaring (binary exponent decomposition).",
+      "The geometric picture: numbers 0…n−1 on a clock/circle; primality corresponds to predictable squaring jumps toward 1 or passing −1."
+    ],
+    "methods_math": ["modular arithmetic / modular exponentiation (repeated squaring)", "decomposition n−1=2^s·d", "witness / strong probable prime", "probabilistic error bounds (1/4)^k"],
+    "visualizations": ["Canvas 2D 'Zahlenkreis mod n': the relevant residues plotted on a circle with 0, 1, n−1(≡−1) marked, arrows tracing the squaring sequence a^d→a^(2d)→…; DOM: decomposition tree, witness sequence pills (colored for 1 / −1 / suspicious), multi-round witness results, hand-calculation detail."],
+    "internal_tensions": [
+      "The 'clock' visualization is a loose analogy — modular squaring is not literal spatial motion on the circle, and it does not capture the group-theoretic (quadratic-residue) structure that actually drives the test.",
+      "Frames the test in terms of 'Zeugen' (witnesses) that 'interrogate' the number, a personification that elides the deterministic-vs-probabilistic subtlety (the test never 'proves' primality, only compositeness).",
+      "The example n=221=13·17 with a=174 is chosen to expose a composite; the 'Zufällig' candidate list mixes primes and composites but the random pick may silently land on an even/invalid number."
+    ],
+    "related_files": ["shors_algorithm", "mod", "monoid", "algebra", "number-theory"]
+  },
+  {
+    "path": "paper/power_of_analogy.html",
+    "slug": "power_of_analogy",
+    "title": "Spinnenseide ↔ Musik — Visuelle Paper-Tour",
+    "lang": "de",
+    "size_kb": 28.9,
+    "category": "nicht-ki",
+    "category_reason": "A visual tour of a 2011 paper using category theory (Ologs/functors) to prove a structural analogy between spider silk and music; no machine-learning application.",
+    "theme": "category-theory",
+    "themes": ["analogy", "mathematical-foundations"],
+    "thesis": "Spider silk (a hierarchical biomaterial) and classical music share the same hierarchical structure, and this can be made a provable functorial isomorphism via Ologs (category-theoretic 'ontology logs'); the paper contributes 'hierarchical Ologs' (nested snapshot boxes) as a new notation.",
+    "key_claims": [
+      "Two very different systems — silk (amino acids → bonds → polypeptides → proteins → nanocomposite) and music (sound waves → stacks → notes → chords → riffs) — share an identical 5-level hierarchy.",
+      "An Olog is a category-theoretic map (objects = sets, arrows = functions, functors = structure-preserving analogies); a functor is what makes the analogy a mathematical proof, not a metaphor.",
+      "New contribution: 'hierarchical Ologs' — nested boxes (snapshots) making the hierarchy visible; formally a category C with a subcategory H having a tree structure and Ob(C)=Ob(H).",
+      "Both systems have a distinguished sub-group: enzymes with an active center (silk) ↔ major chords with a root note (music) — 'distinguished members' bound to a lower level.",
+      "Music consonance condition: c·log2(f₂/f₁) ∈ ℤ with c=12 (equal-tempered scale, 12 semitones/octave); all pairwise frequency-ratio entries of a chord being (near-)integral = consonant.",
+      "Material analogue: 3–4 hydrogen bonds clustering in β-sheets give super-proportional shear strength (τ_cluster(N) ≫ N·τ_single for N≈3–4); 'more is not better' — over-long clusters fail weakly.",
+      "Both systems are damage-tolerant (local defects don't break global function) and show emergent macro-function from pattern-building.",
+      "Ologs force rigor: every term in system A must map precisely to a term in B, otherwise it is not a functor — 'superior to usual ontological or heuristic approaches'."
+    ],
+    "methods_math": ["category theory / functors (Ologs, 'ontology logs')", "hierarchical/nested categories", "logarithmic frequency ratios & equal-tempered scale (c·log2(f₂/f₁)∈ℤ)", "weighted graphs (chord=nnode, length=edge-weight)"],
+    "visualizations": ["Tabbed tour (Idee/Methode/Hierarchie/Formel/Demo/Ergebnisse/Kritik/Fazit) with clickable hierarchy levels; Web Audio API demo playing single frequencies and consonant (C major) vs dissonant (cluster) chords; Canvas: H-bond cluster in a β-sheet (1/3/4/8 bonds with strength bar) and a step-by-step hierarchy build animation (silk boxes ≅ music boxes)."],
+    "internal_tensions": [
+      "CRITIQUE 1: protein secondary structure is not always deterministic (same protein can fold multiple ways), threatening the uniqueness of the functional relations in the Olog.",
+      "CRITIQUE 2: material properties are objective/messurable while musical perception is subjective/cultural — the functor transfers structure but not the evaluative (aesthetic) content.",
+      "CRITIQUE 3: the two Ologs are only fragments of a larger, still-incomplete Olog (anchor object 'a bond'/'a stack' for extension).",
+      "CRITIQUE 4: in hierarchical systems function arises from structural arrangement (clustering/stacking), so structure and function are often inseparable (Table 1 deliberately overlaps them)."
+    ],
+    "related_files": ["paper/olog", "ologs", "kategorientheorie", "categorytheorie", "backprop_als_funktor", "paper/sorting_with_bialgebras", "adjunct_functor", "product_coproduct"]
+  },
+  {
+    "path": "buecher/hermann_schmitz2.html",
+    "slug": "hermann_schmitz2",
+    "title": "Hermann Schmitz – Philosophie des Leibes | Interaktiv",
+    "lang": "de",
+    "size_kb": 28.8,
+    "category": "nicht-ki",
+    "category_reason": "Interactive exposition of Hermann Schmitz's philosophy of the body (Leib), feelings, personhood and the ethics of the atomic bomb; philosophy, not AI.",
+    "theme": "consciousness",
+    "themes": ["philosophy", "philosophy-of-mind"],
+    "thesis": "Schmitz's 'philosophy of the body' (Leib): felt body is not the measurable Körper but a surfaceless, borderless field of coming-and-going 'islands'; its basic dynamic is Enge (narrowing/tension) ↔ Weite (widening/swelling), the 'vital drive' underlying all consciousness; feelings are not private soul-states but spatially spread atmospheres one 'enters', and personhood (self-attribution) requires being affectively affected by a Leib.",
+    "key_claims": [
+      "Leib ≠ Körper: the body-as-object is visible/touchable/measurable (surfaces, borders, places); the Leib is felt without seeing — surfaceless, borderless, organized in transient 'islands', a 'surging of blurred islands'.",
+      "Enge ↔ Weite (narrowing vs widening) is the 'vitaler Antrieb' (vital drive: Spannung vs Schwellung) and the basis of all consciousness — without it there is no consciousness.",
+      "Feelings are spatial atmospheres, not private mental states — like weather one 'enters'; gestures come from themselves (joy-spring, hunched sitting in grief).",
+      "Einleibung (incorporation): bodies merge into a common vital drive — antagonistic (glance, wrestling; dominance fluctuates) or solidaristic (singing, marching); even machines (car, motorcycle) can be incorporated.",
+      "Person = capacity for self-attribution, which requires affective involvement (leiblich); the person lives in a tension between 'personale Emanzipation' (reason, distance) and 'personale Regression' (seizure, surrender), which need each other.",
+      "The atomic bomb destroyed war as the 'serious school' that balanced emancipation and regression; humanity is 'stuck at too high a level of personal emancipation', with unmet regression demand met only inadequately by traffic, sport, festivals.",
+      "Tiere: 'Du-Evidenz' (certainty of facing a consciousness-holder) arises through mutual incorporation / fluctuating dominance — it works with animals too, without language and without an argument from analogy."
+    ],
+    "methods_math": ["(no formal math) phenomenological / qualitative categories: Enge↔Weite, Spannung↔Schwellung, Emanzipation↔Regression, Einleibung, Du-Evidenz"],
+    "visualizations": ["Canvas 2D throughout: hero 'breathing' vital-drive wave (Spannung/Schwellung); Leib islands (click to spawn, fade/pulse, body outline); Enge↔Weite particle field with slider; Gefühle atmospheres (freude/trauer/zorn/scham/angst particle dynamics around a 'Leib'); Einleibung antagonistic dominance fluctuation (mouse-driven); Person concentric wobbly layers (Emanzipation/Fassung/Vitaler Antrieb/Regression); Bombe before/after/verklemmung bar pairs; Tiere eye with mouse-following pupil + Du-Evidenz connection."],
+    "internal_tensions": [
+      "The doc asserts animals are full consciousness-holders via Du-Evidenz — a strong, contested stance that rejects the standard inference-to-best-explanation / analogy objection.",
+      "The atomic-bomb 'emancipation stuck too high' thesis is a sweeping sociological-ethical claim that is hard to test and internally depends on the emancipation/regression duality.",
+      "The visualizations are decorative analogies (particles, waves) that do not formalize Schmitz's concepts; they risk making a non-quantitative philosophy look mechanistic."
+    ],
+    "related_files": ["bewusstsein", "narcissism", "kastrup_jung", "schreber", "buecher/schreber", "buecher/daniel_paul_schreber", "joaxiannothingness", "philosophy", "philosophy2", "was_heisst_denken", "buecher/hermann_schmitz", "buecher/hermann_schmitz3"]
+  },
+  {
+    "path": "goedel.html",
+    "slug": "goedel",
+    "title": "Gödel's Incompleteness Theorems — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 27.7,
+    "category": "nicht-ki",
+    "category_reason": "Interactive explanation of Gödel's incompleteness theorems (logic / foundations of mathematics); no AI application.",
+    "theme": "mathematical-foundations",
+    "themes": ["categorical-logic", "number-theory"],
+    "thesis": "Gödel's first theorem says any consistent formal system strong enough for arithmetic contains true-but-unprovable statements (via a self-referential Gödel sentence G = 'I am not provable'); the second theorem says such a system cannot prove its own consistency — so you must sacrifice completeness or consistency, and consistency proofs always require a stronger system.",
+    "key_claims": [
+      "First Incompleteness Theorem: any consistent system strong enough to express arithmetic has true statements it cannot prove; adding axioms does not remove this as long as it stays consistent.",
+      "Gödel numbering: every symbol/formula/proof gets a unique number via a prime-power product, letting the system reason about its own sentences arithmetically.",
+      "The Gödel sentence G = 'I am not provable in S': if G is provable → contradiction (a consistent system can't prove a falsehood); so G is not provable, hence G is true-but-unprovable.",
+      "Consistency vs completeness trade-off: you cannot have both in a sufficiently powerful system; a system proving 'everything' is trivially inconsistent.",
+      "Second Incompleteness Theorem: 'S is consistent' is equivalent to G, so it is also unprovable in S; proving consistency needs a strictly stronger system — 'turtles all the way down'.",
+      "An inconsistent system 'proves' almost anything (useless, proves contradictions)."
+    ],
+    "methods_math": ["formal systems / axioms and proof rules", "Gödel (arithmetization) numbering via prime powers / BigInt", "self-reference / diagonalization (Gödel sentence)", "consistency vs completeness"],
+    "visualizations": ["DOM: formal-system statement grid (provable / true-unprovable / independent) driven by axiom-strength, statement-count and consistency sliders; live Gödel-numbering of a typed formula (per-symbol prime-power chips + BigInt product); SVG self-reference loop that animates under the two assumptions of G; Canvas: consistency-vs-completeness trade-off plane with an 'IMPOSSIBLE (by Gödel)' region and a moving system dot; a button-driven 'attempt to prove own consistency' sequence ending in a shattering mirror box."],
+    "internal_tensions": [
+      "The statement-grid 'provable/true-unprovable' split is a synthetic, seeded-rng simulation, not a real consistency/completeness computation — it conveys the flavor but not the actual arithmetized proof.",
+      "Framing the second theorem as 'turtles all the way down' leans into a popular (somewhat uncharitable) reading of foundational regress that formalists dispute.",
+      "The consistency-off slider implies inconsistency lets you prove 'almost anything', which is correct but glosses over the principle of explosion."
+    ],
+    "related_files": ["goedel2", "frege", "modelltheorie", "categorical-logic", "proof", "paper/formal_proof", "analytischer_idealismus", "analytic_idealism", "mccarthy_heyes_1969"]
+  },
+  {
+    "path": "simplicial_complex_attention4.html",
+    "slug": "simplicial_complex_attention4",
+    "title": "Attention = Nerve + Sheaf (Simplicial Complex of Self-Attention)",
+    "lang": "en",
+    "size_kb": 27.4,
+    "category": "ki",
+    "category_reason": "Math FOR AI: frames transformer self-attention as constructing a simplicial complex (nerve) plus a sheaf (value transport) — topology/sheaves applied to attention.",
+    "theme": "sheaves",
+    "themes": ["transformer-attention", "fiber-bundles", "topology-of-nns", "topological-data-analysis"],
+    "thesis": "Self-attention has exactly two roles: a boundary operator (the bilinear form Q·Kᵀ, i.e. a metric tensor G=(W_Q)ᵀW_K) that defines a weighted simplicial skeleton (the nerve of semantic overlap), and a sheaf (V) that assigns a stalk to each token and, via the attention weights as restriction maps, transports meaning so the output is a 'global section'; RoPE is a connection (parallel transport) on a vector bundle with only relative position m−n mattering (gauge invariance).",
+    "key_claims": [
+      "Attention = Nerve + Sheaf: Q·Kᵀ defines the simplicial skeleton (which tokens form vertices/edges/triangles), purely combinatorial; V transports meaning along it.",
+      "The nerve condition: a k-simplex exists iff all its (k−1)-faces exist (downward-closure axiom); an edge {i,j} exists iff min(α_ij, α_ji) > ε.",
+      "The attention output s_i = Σ_j α_ij·v_j is 'literally a weighted average of sheaf stalks' — a smoothed global section over the complex.",
+      "Q and K are not separate objects — two halves of a single bilinear form B(x_i,x_j) = x_iᵀ G x_j where G=(W_Q)ᵀW_K is a learned metric tensor on the embedding space.",
+      "RoPE is a connection on a vector bundle: <R_m q, R_n k> = qᵀ R_{m−n} k, so only the relative position (m−n) matters — gauge invariance.",
+      "Triangles (2-simplices) are where three tokens jointly compose/reconcile meaning, not just pairwise.",
+      "Betti numbers (β₀ components, β₁ loops) are computed and displayed for the attention complex."
+    ],
+    "methods_math": ["simplicial complexes / nerve construction & downward-closure axiom", "sheaves (stalks, restriction maps, global sections)", "bilinear form / learned metric tensor G", "RoPE as connection / parallel transport / gauge invariance", "Betti numbers / (rudimentary) persistent-style topology"],
+    "visualizations": ["Plotly 3D (scatter3d + mesh3d): tokens as points in a 3D semantic space (X=Gender, Y=Being animal/human/divine, Z=Power) with green edges (restriction maps), gold triangles (2-simplices), red sheaf-flow arrows to the output points; a Plotly attention-matrix heatmap; a 2D 'sheaf transport' plot (input embeddings → output). Editable embedding table, metric tensor G, and W_V; sliders for temperature τ, threshold ε, RoPE base b; 5 sentences."],
+    "internal_tensions": [
+      "Directly CONTRADICTS qkv2.html, which insists attention 'does NOT lay a surface or a simplicial complex' but is merely a convex combination of V vectors — same mechanism, opposite topological reading.",
+      "The 'two things, not three' claim (Q,K = one bilinear form; V = the content) is an interpretive framing; real attention uses separate, independently-trained W_Q, W_K, W_V per head, so G is not explicitly a chosen metric.",
+      "Embeddings are hand-authored 3D vectors (Gender/Being/Power) and the complex is built on a tiny set of sentences — illustrative of the formalism, not evidence that real models build such nerves/sheaves.",
+      "The 'sheaf-consistency problem' is asserted but the restriction maps α_ij·v_j are not actual sheaf morphisms satisfying the sheaf axioms — an analogy dressed as structure."
+    ],
+    "related_files": ["qkv2", "qkv", "attn", "simplicial_complex_attention", "simplicial_complex_attention2", "simplicial_complex_attention3", "simplicial_complex_attention4", "nn_as_sheaf", "garben_in_transformern", "llm_topology", "sheaves", "garben", "fiber-bundles", "fibrebundles", "positional"]
+  },
+  {
+    "path": "nn_as_sheaf.html",
+    "slug": "nn_as_sheaf",
+    "title": "Neural Networks as Sheaves: Gluing Local Approximations",
+    "lang": "en",
+    "size_kb": 27.2,
+    "category": "ki",
+    "category_reason": "Math FOR AI: interprets a ReLU neural network (function approximation + SGD training) through sheaf gluing — local affine sections glued by the optimizer.",
+    "theme": "sheaves",
+    "themes": ["topology-of-nns", "universal-approximation"],
+    "thesis": "A ReLU network is a machine for constructing piecewise-linear sheaves: each neuron is an affine local section, each ReLU is a restriction map (folding ℝ into U⁺/U⁻), the output layer is the gluing axiom (weighted sum = global section), and the optimizer is the gluing morphism that nudges the local pieces until they are globally compatible with the data.",
+    "key_claims": [
+      "Each hidden neuron computes an affine map z_j = w_j·x + b_j — a 'local section' of a sheaf on ℝ.",
+      "ReLU partitions ℝ into open sets U_j⁺={w_j x+b_j>0} and U_j⁻={w_j x+b_j<0}; on U⁺ the section is the affine function, on U⁻ it is 0; the bend is the 'gluing locus'.",
+      "The output ŷ(x)=Σ_j α_j·ReLU(w_j x+b_j)+β is the sheaf gluing axiom in action: compatible local sections assemble into a unique global section.",
+      "The loss + gradient-descent optimizer enforces compatibility (adjusts slopes, offsets, combination weights) — the 'gluing morphism' that reduces the discrepancy between the assembled global section and the target.",
+      "More neurons = finer open cover = better approximation (function approximation).",
+      "Concept map: open cover = regions where each ReLU is active/inactive; local section = affine piece; restriction map = ReLU; gluing axiom = output-layer weighted sum; gluing morphism/cocycle = optimizer."
+    ],
+    "methods_math": ["sheaves (open covers, local sections, restriction maps, gluing axiom)", "piecewise-linear / ReLU function approximation", "gradient descent / MSE loss"],
+    "visualizations": ["Canvas 2D: (3) a single ReLU neuron hinge with w,b,α sliders marking the bend point; (4) N bent pieces (faint) summed to a global curve against targets sin/|x|/step/bump, with neuron-count and target selectors; (5) live training — a ReLU net fit to sin(1.5x) with a function-approximation canvas and a loss curve, live epoch/loss readout, neuron-count and learning-rate sliders. Temml-rendered equations."],
+    "internal_tensions": [
+      "The sheaf correspondence is structural analogy rather than theorem: ReLU 'restriction' and the output 'gluing' do not satisfy the literal sheaf axioms (no restriction maps between overlapping covers are defined, no Cech cocycles are formed).",
+      "The optimizer as 'gluing morphism' is a metaphor for weight updates; it does not compute an actual gluing datum or cocycle.",
+      "Directly comparable/contrasting with simplicial_complex_attention4 (which applies sheaves to attention) and with universal-approximation literature — the 'finer cover = better approximation' line echoes universal approximation but without its rate guarantees."
+    ],
+    "related_files": ["nn_as_sheaf_2", "simplicial_complex_attention4", "sheaves", "garben", "garbentheorie", "garben_zug", "dense_relu_dense", "universal_approximation_theorem", "theory_of_deep_learning", "why_deep_learning_works", "energy_based_learning", "minima_explorer", "gradient_flow"]
+  },
+  {
+    "path": "shors_algorithm.html",
+    "slug": "shors_algorithm",
+    "title": "Shor's Algorithm Interactive Demo",
+    "lang": "en",
+    "size_kb": 27.1,
+    "category": "nicht-ki",
+    "category_reason": "An interactive (partial) exposition of quantum factoring (Shor's algorithm, QFT, period finding) for cryptography; no AI/ML focus.",
+    "theme": "quantum",
+    "themes": ["number-theory", "information-theory"],
+    "thesis": "TRUNCATED/STUB document (793 lines, no <script>, ends mid-step-6, missing 'step 7: Why It Matters' and all closing tags): it lays out, in structure only, Shor's algorithm as an exponential-speedup quantum factoring method — reducing factoring to period-finding of f(x)=a^x mod N, solved by the quantum Fourier transform — presented across 8 planned interactive steps with CSS and markup but no working JavaScript.",
+    "key_claims": [
+      "Shor's algorithm factors large numbers exponentially faster than any known classical algorithm, threatening RSA.",
+      "Factoring reduces to finding the period r of f(x)=a^x mod N (smallest r with a^r ≡ 1 mod N).",
+      "Once r is known, factors come from GCD(a^(r/2)−1, N) and GCD(a^(r/2)+1, N) (when r is even and a^(r/2)≠−1).",
+      "The quantum part uses superposition + interference; the circuit is |0⟩ → Hadamard (superposition) → modular exponentiation → inverse QFT → measure.",
+      "The QFT converts the periodic pattern into a measurable frequency, like a Fourier transform reading the frequency of a note; QFT|x⟩ = (1/√N)Σ_k e^{2πixk/N}|k⟩.",
+      "Continued fractions extract the period r from a measurement ≈ j·(Q/r).",
+      "Complexity contrast: classical trial division O(√N) (~10^300 ops for 2048 bits) vs quantum O((log N)³) (~10^10 ops)."
+    ],
+    "methods_math": ["modular exponentiation & order/period finding", "quantum Fourier transform (QFT)", "continued fractions", "GCD-based factor extraction", "quantum gates (Hadamard, modular exponentiation, measure) / superposition & interference", "big-O complexity (classical vs quantum)"],
+    "visualizations": ["Intended (markup defined, JS absent): quick factoring demo, trial-division log, difficulty-scaling canvas, classical-vs-quantum race canvas, modular-exponentiation table + period canvas, factor-extraction log, step-by-step quantum-circuit canvas (hoverable gates), superposition canvas, QFT frequency-peak canvas + continued-fraction readout, full Shor run. As shipped, none execute (no script)."],
+    "internal_tensions": [
+      "The file is incomplete — it presents an 8-step interactive demo but ships only CSS + markup for steps 0–6 (partially), with no JavaScript, no step-7, and no closing </body>/</html>; the interactivity it advertises does not work.",
+      "Complexity claims (O(√N) classical) conflate trial division with the actual best classical algorithms (general number field sieve, sub-exponential), a common popularization simplification.",
+      "The RSA 'break in minutes to hours' framing elides the engineering/quantum-error-correction gap between algorithmic complexity and a real large-scale quantum computer."
+    ],
+    "related_files": ["miller_rabin", "mod", "quantum_cryptography", "dmt", "algebra", "number-theory", "monoid"]
+  },
+  {
+    "path": "attn.html",
+    "slug": "attn",
+    "title": "Self-Attention — Tokens as Gravitational Particles",
+    "lang": "en",
+    "size_kb": 26.7,
+    "category": "ki",
+    "category_reason": "Interactive model of transformer self-attention (Q/K/V, attention heads) as a gravitational particle system.",
+    "theme": "transformer-attention",
+    "themes": ["geometry-of-embeddings", "interpretability"],
+    "thesis": "Self-attention can be pictured as a gravitational particle system: each token emits a Query ('what am I looking for?'), Key ('what do I contain?') and Value ('what do I contribute?'); attention weights act as attractive forces, so stronger attention pulls tokens together, and different attention heads encode different relation patterns (positional, syntactic, semantic).",
+    "key_claims": [
+      "Each token generates a Query, a Key and a Value; attention scores come from the Query×Key dot product, shown as gravitational attraction (stronger attention = stronger pull).",
+      "Different attention heads learn different relationship patterns — here Positional (nearby tokens), Syntactic (subject–verb, pronoun–antecedent), and Semantic (shared entity, causal, polysemy).",
+      "Coreference: 'it' strongly attends to 'cat' (its antecedent).",
+      "Polysemy disambiguation: in 'The bank by the river…', 'bank' attends to 'interest/rates' (financial) while 'river' pulls toward the geographic 'bank'.",
+      "Clicking/hovering a token highlights its attention row (top-3 attended, with percentages) in both the particle scene and the matrix."
+    ],
+    "methods_math": ["attention as pairwise attractive force (weight ∝ pull)", "multi-head attention (positional/syntactic/semantic)", "softmax-style attention matrices", "distance-based (exponential) positional attention exp(−0.6·dist)"],
+    "visualizations": ["Canvas 2D particle system: tokens as glowing circles connected by curved, color-gradient attention lines whose width/opacity encode weight; physics integration (attraction ∝ weight, inverse-square repulsion, spring-to-home, damping) with a 'Physics' strength slider; a live attention-matrix heatmap (query rows × key columns) that highlights the selected token; token chips and sentence/head selectors; 3 example sentences."],
+    "internal_tensions": [
+      "The attention matrices are FAKE / hand-simulated (code comment: 'simulate plausible attention patterns for different heads') — this is an explanatory model of what attention 'could' look like, not output of a real transformer; it should not be read as empirical.",
+      "The gravitational metaphor (attractive force) is evocative but not the actual mechanics: real attention does not move token embeddings by a force field — it computes a static weighted sum per position.",
+      "Only three hand-authored sentences with manually-tuned head matrices, so the 'heads learn different patterns' claim is stipulated, not derived from training."
+    ],
+    "related_files": ["qkv2", "qkv", "paper/AttentionViz", "attn_as_optimal_transport", "concept_attractors", "concept_attractors_in_llm", "talking_heads", "interpretability", "llm_topology", "wie_ein_llm_denkt"]
+  },
+  {
+    "path": "idea.html",
+    "slug": "idea",
+    "title": "LLM Transformer – Attraktoren & Bedeutungsraum (Embedding Space)",
+    "lang": "de",
+    "size_kb": 26.4,
+    "category": "ki",
+    "category_reason": "Visualizes an LLM/transformer's embedding space, per-layer attractors, context accumulation and unembedding — an interpretability picture of LLMs.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["transformer-attention", "dynamical-systems", "interpretability"],
+    "thesis": "Meaning is a point in a high-dimensional space; transformer layers act as attractors that pull token embeddings (early layers = fixed/syntactic like POS, middle = semantic like 'capital of X', late = dynamic/context-dependent), the last vector of the last layer carries the mixed total context meaning (like a clock that extends with each token), and the next token is the nearest point in the vocabulary (unembedding via cosine similarity).",
+    "key_claims": [
+      "Each token is a point in high-dim space; similar meanings lie close (2D projection shown); a 'CAPITAL_OF' convergence attractor is drawn.",
+      "Layer attractors are layer-typed: early (0–3) = fixed/syntactic (POS, article, preposition), middle (3–8) = semantic (e.g. CAPITAL_OF, COUNTRY), late (9–11) = dynamic, context-dependent (NEXT_TOKEN).",
+      "The last vector of the last layer contains the 'gemischte Gesamtbedeutung' (mixed total meaning) — metaphorically a clock that extends with each added token/frame.",
+      "Partial inhibition: attention selectively masks past tokens (illustrated with per-token attention-weight bars).",
+      "Unembedding / next-token prediction = nearest point in the vocabulary space (cosine similarity, e.g. 'Die Hauptstadt von Frankreich ist' → 'Paris', d≈0.06, cosine 0.94).",
+      "Cross-lingual: German and English tokens for the same meanings are placed near each other and connected (both → 'paris' attractor)."
+    ],
+    "methods_math": ["embedding spaces & (2D) projection", "attractors / basins of attraction", "cosine similarity / nearest-neighbor", "softmax-style next-token probability bars", "layer-wise dynamics"],
+    "visualizations": ["Plotly: 2D embedding space (DE / EN / both, with the CAPITAL_OF star attractor and cross-lingual connector lines); a layer-attractor plot with a layer slider (0–11) where active attractor basins (circles) and token positions shift toward them (early=solid syntax, late=dashed dynamic). Canvas: 'context accumulation' — a growing context frame of token boxes with attention-weight bars, a gradient 'mixed vector', and a clock whose hand sweeps with context steps; an unembedding canvas placing the accumulated context vector with candidate tokens at distance-proportional radii plus a softmax probability bar."],
+    "internal_tensions": [
+      "The 'layer attractor' picture (early=syntax, mid=semantics, late=next-token) is a specific, partly contested interpretability narrative; it is not universally supported across architectures/depths.",
+      "All token coordinates and attractor positions are hand-authored 2D values, and the context/'clock' and unembedding panels use randomized/fake vectors — illustrative, not read from a real model.",
+      "The claim that the final-layer last-position vector 'contains the whole meaning' (the 'clock extends') echoes the pooled/last-token representation debate; here it is asserted as a metaphor without qualification."
+    ],
+    "related_files": ["concept_attractors", "concept_attractors_in_llm", "latent_semantic_manifolds_in_llm", "geometry_of_meaning_test", "foam_of_meaning", "semantic_steering", "llm_topology", "attn", "qkv2", "dynamic_residual_stream_paper", "posembed1", "posembed2"]
+  },
+  {
+    "path": "lawsofform.html",
+    "slug": "lawsofform",
+    "title": "Laws of Form — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 26.4,
+    "category": "nicht-ki",
+    "category_reason": "Interactive exposition of G. Spencer-Brown's 'Laws of Form' (calculus of indications) — formal logic / foundations, with no machine-learning application.",
+    "theme": "mathematical-foundations",
+    "themes": ["categorical-logic", "dynamical-systems"],
+    "thesis": "Spencer-Brown's calculus of indications derives all of Boolean logic from a single mark and two axioms (Law of Calling, Law of Crossing) built on the primordial act of making a distinction; its most radical extension, 're-entry' (f = ⌐(f)), has no fixed Boolean solution and instead oscillates — an 'imaginary' third value analogous to √(−1) that anticipates time, cybernetics and self-reference.",
+    "key_claims": [
+      "Everything begins with a distinction: drawing a boundary splits the void into a marked (inside) and an unmarked (outside) state; the mark '⌐' is both the act and the name of the marked state.",
+      "Law of Calling (idempotence): ⌐⌐ = ⌐ — repeating a distinction side-by-side doesn't change its value (any number of adjacent marks = one).",
+      "Law of Crossing (double negation): ⌐(⌐) = ∅ — crossing a boundary twice returns to the start; even depth = unmarked, odd depth = marked.",
+      "The calculus is equivalent to Boolean algebra: mark = True, unmarked = False, cross = NOT, adjacency (calling) = OR; e.g. ⌐(⌐p ⌐q) = p AND q, ⌐p q = p → q.",
+      "Re-entry: f = ⌐(f) has no fixed Boolean value (if f is marked then ⌐f is unmarked, contradiction); Spencer-Brown resolves it by letting f oscillate over time — a third, 'imaginary' value analogous to √(−1).",
+      "Re-entry is the seed of time, oscillation and self-reference, anticipating cybernetics, autopoiesis and the foundations of computation; 'the universe begins with a distinction'."
+    ],
+    "methods_math": ["calculus of indications / Spencer-Brown notation (marked ⌐ / unmarked ∅)", "idempotence & double-negation laws", "Boolean algebra (NOT, OR, AND, NOR, NAND, implication, equivalence)", "self-reference / re-entry & oscillation (time-dependent 'imaginary' value, √(−1) analogy)"],
+    "visualizations": ["DOM/interactive (no canvas): a distinction box toggling void↔marked; a Law-of-Calling mark-count slider condensing n marks to one; a Law-of-Crossing nesting-depth slider with nested colored depth rings and even/odd result; a combined expression evaluator with step-by-step reduction; a Boolean-logic panel with p/q toggles and a live operation table; a re-entry panel with a time-step slider and auto-oscillate toggle showing the marked/unmarked history trail."],
+    "internal_tensions": [
+      "The re-entry 'oscillation = imaginary value' move is a non-standard, interpretive extension of a two-valued logic; it is often read as suggestive rather than a rigorous logic (the 'imaginary' third value is a metaphor, not a constructed field).",
+      "The grand claim that one symbol + two axioms 'derive the entirety of Boolean algebra' is accurate for the static calculus, but the philosophical overreach ('the universe begins with a distinction', foundations of computation) is much harder to defend.",
+      "The even/odd-depth reading of crossing quietly assumes a consistent time-orientation; re-entry shows exactly where that assumption breaks, which the doc treats as a feature (oscillation) rather than an inconsistency to resolve."
+    ],
+    "related_files": ["lawsofform2", "categorical-logic", "goedel", "goedel2", "new_kind_of_science", "hott", "hott2", "monoid", "algebra", "voidstar", "foam_of_meaning"]
+  },
+  {
+    "path": "grokking.html",
+    "slug": "grokking",
+    "title": "Grokking — Phase Transition onto the Torus (Optimal Manifold)",
+    "lang": "en",
+    "size_kb": 26.3,
+    "category": "ki",
+    "category_reason": "An interactive model of 'grokking' (the memorization→generalization phase transition in over-training) for neural networks.",
+    "theme": "grokking-generalization",
+    "themes": ["topology-of-nns", "dynamical-systems", "geometry-manifolds"],
+    "thesis": "Grokking is a genuine phase transition from memorization to generalization: during SGD the weight vectors wander noisily through high-dimensional space while a faint implicit-regularization pull holds a loss plateau, until a critical 'seed' discovers the optimal manifold (symbolized by a torus) and the remaining points cascade onto it; the torus is a compact manifold on which the data's structure can be perfectly encoded.",
+    "key_claims": [
+      "Grokking is a phase transition from memorization to generalization, not a smooth improvement.",
+      "The torus is symbolic for the optimal topological representation — a compact manifold that perfectly encodes the data's structure.",
+      "During SGD the weights wander noisily (momentum-correlated noise), while an extremely faint implicit-regularization (weight-decay-like) pull toward the manifold keeps them from escaping; a loss plateau persists.",
+      "A critical seed that reaches the manifold triggers a cascade: points nearer the surface collapse first, then it spreads (nonlinear quadratic stagger).",
+      "Two loss curves: test loss (distance to the manifold/generalization) and train loss (distance from initial position/memorization); generalization = all weights on the optimal manifold.",
+      "Implicit regularization alone is too faint to break the plateau on its own — the phase transition needs the seed + cascade."
+    ],
+    "methods_math": ["torus geometry (parametric torus, closest-point projection, distance to surface)", "phase transition / percolation-like cascade", "SGD dynamics with momentum-correlated (fbm/value-noise) stochastic gradients", "implicit regularization / weight decay", "train-vs-test (memorization-vs-generalization) loss"],
+    "visualizations": ["Canvas 3D (software-projected, depth-sorted quads, drag/auto-rotate): a glowing torus 'OPTIMAL MANIFOLD' with 30 points transitioning through states scattered(red, wandering) → seed(gold, locked) → collapsing(green, gravitational capture with trails + dashed slot links) → snapped(green, breathing on slot); a separate Canvas loss plot with test-loss gradient stroke + faint train-loss line + a 'seeds found manifold' cascade marker; Start/Reset controls and a speed slider; live epoch / test-loss / nearest-to-manifold / on-torus metrics."],
+    "internal_tensions": [
+      "The torus is explicitly 'symbolic' — it is a chosen compact manifold to dramatize the transition, not a claim that real grokking solutions live on a torus; the geometry is a metaphor for 'the optimal topological representation'.",
+      "The whole dynamics (noise, faint regularization, seed proximity threshold, cascade stagger) is hand-tuned to reproduce the SHAPE of grokking (plateau then sudden drop), not a real trained model — it is an animated hypothesis, not a measurement.",
+      "Contrasts with mechanistic grokking accounts (e.g. fourier_addition / grokking_addition*) where a specific inductive bias or modular-arithmetic circuit is the generalizing solution; here generalization is framed topologically (landing on a manifold) rather than as discovering a specific rule."
+    ],
+    "related_files": ["grokking2", "grokking_addition", "grokking_addition_internal", "grokking_addition_internal2", "grokking_addition_internal3", "grokking_paper", "fourier_addition", "phasenuebergaenge", "phasetransition", "dynamical_systems_und_konflikte", "buecher/dynamische_systeme_und_konflikte", "topology_of_attractors", "topology_examples"]
+  }
+]

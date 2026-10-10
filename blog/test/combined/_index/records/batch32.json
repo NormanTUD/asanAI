@@ -1,0 +1,358 @@
+[
+  {
+    "path": "inftytopoi.html",
+    "slug": "inftytopoi",
+    "title": "∞-Topoi — Interactive Visual Explorer",
+    "lang": "en",
+    "size_kb": 13.0,
+    "category": "nicht-ki",
+    "category_reason": "A pure higher-category-theory exploration of ∞-topoi (higher coherences, sheaves, functors) with no ML application.",
+    "theme": "hott",
+    "themes": ["category-theory", "sheaves"],
+    "thesis": "An interactive D3 force-graph model of an ∞-topos as a 'universe of spaces' whose points carry towers of coherent higher symmetries, where local data glue into global sheaves.",
+    "key_claims": [
+      "An ∞-topos is 'a universe of spaces where every point can have symmetries, and those symmetries themselves have higher symmetries — towers of coherent structure going up forever.'",
+      "Structure is a tower of levels: 0-cells (objects/points), 1-cells (morphisms/paths), 2-morphisms (homotopies), 3/4/5-morphisms — 'in an ∞-topos this never stops.'",
+      "Objects behave 'like open sets in a topological space', and local sections can glue into global sheaves (the Sheaf Gluing mode).",
+      "Functoriality is a first-class phenomenon: structure maps coherently across the layered levels (the Functoriality mode).",
+      "The tower is genuinely unbounded; the depth cap at 5 (MAX_DEPTH) is only a visualization truncation."
+    ],
+    "methods_math": ["∞-category / higher category theory", "∞-topos", "higher coherences (n-morphisms)", "sheaf gluing", "functors"],
+    "visualizations": ["D3.js force-directed graph (drag + click to expand a node into its higher morphisms) with three animated modes: Explore Levels, Sheaf Gluing (phase-highlighted links), Functoriality (layer-by-layer emphasis), plus a live level legend and tooltips"],
+    "internal_tensions": [
+      "The Sheaf-Gluing and Functoriality animations are purely cosmetic (they just highlight links/nodes by a rotating index phase), not a faithful model of the actual sheaf or functoriality conditions — the math is rendered as a metaphor.",
+      "Node expansion is randomized (child count and angles use Math.random), so the depicted 'coherent tower' has no real mathematical structure behind it."
+    ],
+    "related_files": ["topoi", "higher_topos_theory", "hott", "sheaves", "kategorientheorie", "stacks"]
+  },
+  {
+    "path": "posembed8.html",
+    "slug": "posembed8",
+    "title": "3D Positional Encoding Helices (3 words in 3D space)",
+    "lang": "de",
+    "size_kb": 11.5,
+    "category": "ki",
+    "category_reason": "Directly visualizes sinusoidal positional encoding, a core mechanism of the Transformer.",
+    "theme": "transformer-attention",
+    "themes": ["geometry-of-embeddings"],
+    "thesis": "A 3D Plotly lab showing how the Transformer's sinusoidal positional encoding displaces a fixed word embedding along a helix as the sequence position p varies.",
+    "key_claims": [
+      "Each word has a fixed base embedding (the ◆ diamond); at every sequence position the effective vector is e(word) + PE(p).",
+      "It uses the standard formulae PE(pos, 2i) = sin(pos / 10000^(2i/d_model)) and PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model)).",
+      "Adding PE to a word embedding traces a helix through embedding space (the 'word helix'), with points colored by position.",
+      "The three word directions (king/queen/the) are deliberately chosen near-orthogonal so the helices stay separable in the 3D view.",
+      "A 'Separation' slider scales the base embeddings apart to control how distinguishable the word helices are."
+    ],
+    "methods_math": ["sinusoidal positional encoding", "base-10000 logarithmic frequency spacing", "vector addition in embedding space", "near-orthogonal basis directions"],
+    "visualizations": ["Plotly 3D (scatter3d) helices with position-colored markers, base-embedding diamonds, and an origin cross; sliders for #positions, d_model, separation, and X/Y/Z axis-projection dropdowns"],
+    "internal_tensions": [
+      "Only d_model ≤ 12 and three words are shown, and the view is a 3-dimensional projection (3 of d_model dims at a time), not the true high-dimensional geometry.",
+      "The word embeddings are hand-picked near-orthogonal directions rather than real learned embeddings, so it illustrates the mechanism but not actual learned structure."
+    ],
+    "related_files": ["positional", "posembed7", "qkv", "transformer_rein_geometrisch", "AttentionViz"]
+  },
+  {
+    "path": "mnist_foam/viewer.html",
+    "slug": "viewer",
+    "title": "MNIST Foam Viewer",
+    "lang": "en",
+    "size_kb": 10.1,
+    "category": "nicht-ki",
+    "category_reason": "A 3D voxel-density viewer for the raw MNIST digit images (x, y, brightness); it is a data-geometry tool with no ML model or learning involved.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["topological-data-analysis"],
+    "thesis": "An interactive three.js viewer that treats the MNIST digit dataset as a 3D 'foam' (a voxel grid over x, y, and brightness-bin) and lets you inspect its density in several render modes.",
+    "key_claims": [
+      "MNIST digits are represented as a 3D volume: a voxel is (x, y, brightness-bin) accumulating a count over all samples.",
+      "The dataset is split into 'raw only', 'augmented (rot + shift)', and their difference 'Δ aug − raw (augmentation only)'.",
+      "Render modes include surface shell (marching-cubes-like), points, ray-marched volume, and max-intensity projection (MIP).",
+      "Orthogonal slices (x, y, brightness), a 2D focus slice, and clipping let you section the foam.",
+      "Histograms track the voxel-count distribution and the brightness-bin hit distribution."
+    ],
+    "methods_math": ["voxelization / 3D density field", "max-intensity projection (MIP)", "ray marching / volume rendering", "surface (marching-cubes-style) extraction", "log-scale density mapping"],
+    "visualizations": ["three.js 3D stage (points / surface / volume / MIP) plus three 2D slice canvases and two 2D histogram canvases; many sliders for slices, count threshold, opacity, color map, log-scale, clipping, and focus"],
+    "internal_tensions": [
+      "The third axis is a discretized 'brightness bin' (a re-bucketing of pixel intensity), not a learned latent dimension — so the 'foam' is raw pixel geometry, not a model-derived embedding.",
+      "The viewer depends on an external viewer.js and a data file; it shows an error overlay if the data cannot be loaded."
+    ],
+    "related_files": ["foam_of_meaning", "topological_data_analysis", "intrinsische_dimensionen_tiefer_neuronaler_netze", "holes"]
+  },
+  {
+    "path": "fibrebundle5.html",
+    "slug": "fibrebundle5",
+    "title": "Topological Manifold Lab v9 — Topological Sculptor",
+    "lang": "de",
+    "size_kb": 9.0,
+    "category": "ki",
+    "category_reason": "Models Transformer layers as stacked deformable manifolds through which token tubes pass, i.e. the geometry of the embedding space across network layers.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["topology-of-nns", "fiber-bundles", "transformer-attention"],
+    "thesis": "An interactive three.js 'sculptor' in which six stacked wireframe layers (network layers) and vertical token tubes ('kelp', the sentence 'The cat sits on the mat') can be deformed by the user, with deformations cascading upward through the stack.",
+    "key_claims": [
+      "The network is drawn as six stacked horizontal wireframe planes (layers) with vertical token 'kelp' tubes rising through them.",
+      "Left-click = expansion (stretch space), right-click = compression, Shift+click = vortex (torus twist/rotation), Alt+click = reset that layer's geometry.",
+      "Deformations cascade upward ('Verformungen vererben sich nach oben') with decaying strength s / (1 + (i − lIdx)·0.3).",
+      "Each deformation's influence falls off with distance via a Gaussian, exp(−distSq/25).",
+      "The vortex type performs a local rotation (angle ∝ s·influence) — a 'torus twist' applied to the layer."
+    ],
+    "methods_math": ["diffeomorphic / smooth field deformation", "Gaussian spatial falloff", "local rotation (vortex/torus twist)", "forward-cascading propagation through layers"],
+    "visualizations": ["three.js scene: six wireframe PlaneGeometry layers, six TubeGeometry token 'kelp' lines with canvas-text labels, OrbitControls, raycast-driven local deformations, per-frame geometry rewrite"],
+    "internal_tensions": [
+      "The 'cascading upward' is a one-way (forward) propagation with no residual connection or learned weights — it is a metaphor for how lower-layer geometry influences higher layers, not a real network.",
+      "The deformation is user-driven sculpting, so the 'network computation' is whatever the user paints, not a forward pass."
+    ],
+    "related_files": ["fibrebundle4", "fibrebundles", "dynamic_residual_stream_paper", "manifold_flattening", "transformer_dynamics"]
+  },
+  {
+    "path": "kohonen.html",
+    "slug": "kohonen",
+    "title": "Self-Organizing Map (SOM) · Kohonen",
+    "lang": "de",
+    "size_kb": 8.7,
+    "category": "ki",
+    "category_reason": "Implements and animates a Kohonen Self-Organizing Map, an unsupervised neural-network / dimensionality-reduction algorithm.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["topological-data-analysis", "topology-of-nns"],
+    "thesis": "A real-time canvas animation of Kohonen SOM learning, showing how a 14×14 grid of neurons self-organizes to map a data set onto a fixed topological grid while preserving the data's shape.",
+    "key_claims": [
+      "The SOM repeatedly picks a data point, finds its best-matching unit (BMU), and moves the BMU and its grid neighbors toward it.",
+      "Learning rate decays from 0.46 and the neighborhood radius decays over the horizon T=9000: lr = .46·(.008/.46)^f, rad = (G·.62)·(.9/(G·.62))^f.",
+      "Neighbor influence is a Gaussian over grid distance: h = exp(−g²/s)·lr.",
+      "The grid topology (Panel B) is fixed, while the neuron positions in data space (Panel A) deform to match the data shape.",
+      "Five data shapes (ring, blobs, square, spiral, cross) are offered to show the SOM recovering the input's topology."
+    ],
+    "methods_math": ["Kohonen SOM / competitive learning", "best-matching unit (BMU)", "Gaussian neighborhood kernel", "annealing (decaying learning rate and radius)"],
+    "visualizations": ["Two 2D canvas panels: left = data-space view (data points + deforming gradient-colored grid + BMU pulse), right = fixed grid topology (colored cells) with BMU highlight; shape selector, play/pause, reset, click-to-inject a data point, and a progress bar"],
+    "internal_tensions": [
+      "The data is 2-D, so this demonstrates the SOM's topology-preservation rather than true high→low dimensional reduction.",
+      "Color is mapped by polar angle/radius in data space, not by a learned codebook cluster, so the 'map' coloring is a visual aid, not a model readout."
+    ],
+    "related_files": ["topological_data_analysis", "geometry_neuronaler_populationen", "conceptual_spaces", "johnson_lindenstrauss"]
+  },
+  {
+    "path": "pz.html",
+    "slug": "pz",
+    "title": "Prime Pattern Explorer",
+    "lang": "en",
+    "size_kb": 8.6,
+    "category": "nicht-ki",
+    "category_reason": "Pure number-theory visualization of primes (polar, phyllotaxis, Ulam spiral) with no ML application.",
+    "theme": "number-theory",
+    "themes": ["dynamical-systems"],
+    "thesis": "An interactive canvas explorer that plots primes in three geometric mappings (polar, phyllotaxis, Ulam spiral) to reveal geometric 'structures' in the prime sequence.",
+    "key_claims": [
+      "Three mappings: Polar (r = p, θ = p·k), Phyllotaxis (r = √p, θ = p·k), and the Ulam square spiral.",
+      "The angle multiplier k is the key knob — 'values near PI or fractions of PI create massive galactic structures.'",
+      "Primes are generated by a fast Sieve of Eratosthenes (Uint8Array-backed).",
+      "The sieve limit is estimated from the prime number theorem, P_n ~ n·ln(n)."
+    ],
+    "methods_math": ["sieve of Eratosthenes", "prime number theorem (nth-prime estimate)", "polar / phyllotaxis parameterization", "Ulam spiral coordinates"],
+    "visualizations": ["2D canvas with three switchable prime mappings; sliders for #primes (up to 50k), zoom, angle multiplier k, and dot size"],
+    "internal_tensions": [
+      "The 'structures' (galaxies, spirals) are artifacts of the chosen polar/phyllotaxis coordinate map and the angle k, not established number-theoretic structure — the tool invites pattern-hunting without asserting any theorem."
+    ],
+    "related_files": ["pz5", "pz6", "pz8", "pz9", "pz10", "miller_rabin", "shors_algorithm"]
+  },
+  {
+    "path": "pz10.html",
+    "slug": "pz10",
+    "title": "Arithmetic Fiber Bundle — Spectral Phase",
+    "lang": "de",
+    "size_kb": 8.1,
+    "category": "nicht-ki",
+    "category_reason": "Number theory (prime factorization) recast as a fiber-bundle geometry; no ML application.",
+    "theme": "fiber-bundles",
+    "themes": ["number-theory"],
+    "thesis": "Maps the integers 2..N onto a 3D fiber bundle where the base is a ring (position along the number line) and each fiber is a circle whose twist encodes the number's prime factorization, with primes as the 'section zero'.",
+    "key_claims": [
+      "Base coordinate u = i·0.025 places each integer on a base ring; fiber coordinate v = (Σ √(prime factors))·torsion rotates within the local fiber.",
+      "Fiber radius grows with 'complexity' (number of prime factors): rFiber = 60 + complexity·10.",
+      "Primes (a single factor equal to itself) are glowing cyan 'Sektions-Nullpunkt' (section zero points); composites are dimmer magenta with hue shifted by complexity.",
+      "Color is described as tracking the 'Homotopie-Grad' (homotopy degree), i.e. complexity.",
+      "A number's factorization can be read off its 'section' on hover (HUD shows value, factors, complexity)."
+    ],
+    "methods_math": ["fiber bundle (base ring × circular fiber)", "prime factorization / prime signature", "torsion as fiber rotation", "complexity = number of prime factors"],
+    "visualizations": ["2D canvas with a hand-rolled 3D projection (perspective + X/Y rotation); drag to rotate, scroll to zoom, hover HUD for factorization; sliders for limit N, fiber torsion, and a 'show composites' toggle"],
+    "internal_tensions": [
+      "The 'fiber bundle' is a purely aesthetic encoding — the factor→twist map (Σ√p) is not a mathematically canonical connection on any bundle; it is a visualization metaphor, not a genuine geometric object.",
+      "Primes/composites are separated by a filter, so the 'noise' (composites) can be hidden — the structure shown is the prime/composite distinction, not deep arithmetic."
+    ],
+    "related_files": ["fibrebundle", "faserbuendel_und_fibrationen", "bundles", "pz5", "pz6", "pz9"]
+  },
+  {
+    "path": "transformer_rein_geometrisch3.html",
+    "slug": "transformer_rein_geometrisch3",
+    "title": "Attention (purely geometric, 4-step)",
+    "lang": "de",
+    "size_kb": 7.5,
+    "category": "ki",
+    "category_reason": "A 4-step geometric animation of self-attention: query, projection/softmax, and weighted update for disambiguating the word 'Bank'.",
+    "theme": "transformer-attention",
+    "themes": ["geometry-of-embeddings", "interpretability"],
+    "thesis": "A minimal 4-step canvas animation explaining self-attention geometrically: the query word 'Bank' measures its alignment with the other words, turns the lengths into softmax proportions, and moves to their weighted center of mass — resolving the 'Sitzbank' vs 'Geldhaus' ambiguity.",
+    "key_claims": [
+      "'Bank' sits exactly in the middle of two meanings — Sitzbank (bench/seat, MO) and Geldhaus (bank/financial, GE) — i.e. 'Bank' = the midpoint of the two meaning points.",
+      "Step 1: each word is a point in space; Step 2: the query 'Bank' asks 'who fits me?' by dropping perpendiculars (Lot fällen) and measuring the projection length onto the query axis.",
+      "Step 3: the measured (signed) lengths become attention weights via softmax — 'a₁ + a₂ + a₃ = 1'; negative projections yield red (down-weighting).",
+      "Step 4: 'Bank' moves to the weighted center of mass: neu = a₁·P₁ + a₂·P₂ + a₃·P₃.",
+      "The query axis is R = normalize(e_kalt − e_Bank); scores are s_k = 2.2·⟨e_k − e_Bank, R⟩ with a self-term bias s_Q = 0.5 and a temperature τ."
+    ],
+    "methods_math": ["self-attention as softmax over projections", "inner-product / cosine alignment", "softmax + temperature", "convex combination (center of mass)"],
+    "visualizations": ["2D canvas with a 3D-projected scene and four keyboard-steps (←/→), drag-to-rotate; shows the two meaning points, the perpendiculars (Lote), an attention-weight bar, and the weighted center-of-mass update with 'lever' lines"],
+    "internal_tensions": [
+      "The two meanings and the query axis R are hand-placed (MO, GE fixed; R = normalize(e_kalt − e_Bank)), so the disambiguation is scripted rather than emergent from learned attention.",
+      "Attention is reduced to a single query word over three points — a toy, not a real multi-head, multi-token Transformer."
+    ],
+    "related_files": ["transformer_rein_geometrisch", "transformer_rein_geometrisch2", "attn", "attn_as_optimal_transport", "qkv", "AttentionViz"]
+  },
+  {
+    "path": "pz6.html",
+    "slug": "pz6",
+    "title": "Prime Geometry Decoder (residue class vs gap)",
+    "lang": "en",
+    "size_kb": 7.2,
+    "category": "nicht-ki",
+    "category_reason": "Number-theory exploration of prime distribution (residue classes mod m vs prime gaps); no ML application.",
+    "theme": "number-theory",
+    "themes": ["dynamical-systems", "statistics-inference"],
+    "thesis": "Plots each prime by its residue class mod m (x-axis, 'the clock beat') against the gap to the next prime (y-axis), to hunt for vertical alignments (favored residues) and preferred gap sizes.",
+    "key_claims": [
+      "x = (p mod m)/m locates the prime on an m-beat 'clock'; y = the gap to the next prime (scaled).",
+      "The modulus m is the key knob — the hint says 'try 30 or 210' (primorials) to expose symmetry.",
+      "'Vertical lines = primes that always land on the same beat; horizontal gaps = preferred distances between primes.'",
+      "Points are drawn with additive blending ('lighter') so density shows as brightness."
+    ],
+    "methods_math": ["modular arithmetic / residue classes", "prime gaps", "primorial moduli (30, 210)", "additive density plotting"],
+    "visualizations": ["2D canvas scatter of primes (residue class vs gap) with additive glow; sliders for #primes (up to 100k), modulus m, and vertical stretch; hover HUD explaining a point's residue and gap"],
+    "internal_tensions": [
+      "Vertical alignments at certain residues mostly reflect trivial modular facts (e.g. primes avoid even multiples), not deep structure — the 'decoder' framing risks over-reading trivial modular constraints as discovered 'patterns'."
+    ],
+    "related_files": ["pz5", "pz", "pz8", "pz9", "asymptotische_gleichverteilungseigenschaft", "mod"]
+  },
+  {
+    "path": "pz8.html",
+    "slug": "pz8",
+    "title": "3D Prime Origami Explorer",
+    "lang": "de",
+    "size_kb": 7.1,
+    "category": "nicht-ki",
+    "category_reason": "Number-theory visualization: each integer bends a 3D path by its prime factors; no ML application.",
+    "theme": "number-theory",
+    "themes": ["dynamical-systems", "geometry"],
+    "thesis": "Walks a 3D path where each integer 2..N bends the direction of travel according to its prime factorization; primes appear as the bright 'resting' nodes where the path does not bend.",
+    "key_claims": [
+      "Each integer's factors drive the turn: rx += sin(f·fold), ry += cos(f·fold), rz += atan(f·fold)·0.2, then a step of fixed length.",
+      "Primes (a single factor equal to itself) are the bright green 'PRIMZAHL-KNOTEN' (prime knots) where the path 'rests'; composites are 'STRUKTUR-KNICK' (bends).",
+      "The 'Faltungs-Winkel' (fold angle) slider changes how strongly each factor bends the path.",
+      "The path is a cumulative trajectory shaped entirely by the multiplicative (prime-factor) structure of consecutive integers."
+    ],
+    "methods_math": ["prime factorization as a control signal", "cumulative 3D path integration", "trigonometric / atan bending map", "discrete path dynamics"],
+    "visualizations": ["2D canvas with a hand-rolled 3D perspective projection of a continuous path; primes as glowing nodes; drag to rotate, scroll to zoom, hover HUD for value + factors; sliders for #numbers, fold angle, and step size"],
+    "internal_tensions": [
+      "The factor→bend map (sin/cos/atan of f·fold) is an aesthetic choice, not a canonical 'origami' rule; 'primes as resting nodes' is a property of the encoding (a prime contributes exactly one fold), not a theorem."
+    ],
+    "related_files": ["origami", "origami_1", "origami_2", "pz", "pz5", "pz9"]
+  },
+  {
+    "path": "fibrebundle4.html",
+    "slug": "fibrebundle4",
+    "title": "Manifold Liquify — Residual Stream & Diffeomorphisms",
+    "lang": "de",
+    "size_kb": 7.0,
+    "category": "ki",
+    "category_reason": "Models a Transformer as a stack of diffeomorphic manifold layers with a residual stream (traveling signal), i.e. the geometry of the network's embedding space.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["fiber-bundles", "transformer-attention", "topology-of-nns"],
+    "thesis": "A three.js scene drawing a Transformer as five stacked 'liquify' wireframe grids (layers) with per-token vertical residual-stream tubes carrying a traveling signal pulse; the mouse locally warps each grid like a diffeomorphism (attention focus).",
+    "key_claims": [
+      "The network is a stack of diffeomorphic manifolds — each layer is a deformable grid that the 'attention focus' (mouse) locally warps: force = exp(−dist·0.5)·1.2.",
+      "The 'electricity' running up each token column is explicitly identified as the residual stream (Residual Stream / skip connection).",
+      "Tokens are labeled 'THE MATH IS THE KEY TO FREEDOM', each with a vertical residual tube and a traveling signal sphere.",
+      "Each layer is labeled LAYER 0..4; the deformation is a smooth, localized warp of the grid (a diffeomorphism)."
+    ],
+    "methods_math": ["diffeomorphism (smooth invertible warp)", "Gaussian / local falloff of the attention force", "residual / skip connection (signal propagation up layers)", "stacked manifold layers"],
+    "visualizations": ["three.js scene: five wireframe PlaneGeometry 'liquify' grids, per-token CatmullRomCurve3 residual tubes with traveling signal spheres, canvas-text layer/token labels, exponential fog, OrbitControls, mouse-driven local warp"],
+    "internal_tensions": [
+      "The 'diffeomorphism' is a mouse-driven artistic warp, not the actual (generally non-invertible, attention-based) layer map — the invertibility claim is a visual metaphor.",
+      "There is no attention computation or learned content; the residual stream is a scripted pulse, so the 'network' computes nothing."
+    ],
+    "related_files": ["dynamic_residual_stream_paper", "dynamic_residual_stream_paper2", "fibrebundle5", "fibrebundles", "transformer_dynamics"]
+  },
+  {
+    "path": "pz9.html",
+    "slug": "pz9",
+    "title": "HoTT Prime Topology (Homotopy Type)",
+    "lang": "de",
+    "size_kb": 6.3,
+    "category": "nicht-ki",
+    "category_reason": "Number theory (prime factorization) recast in HoTT vocabulary (fundamental loops, univalence); no ML application.",
+    "theme": "hott",
+    "themes": ["number-theory"],
+    "thesis": "Maps the integers 2..N to points in a 3D 'toroidal' space using their prime factors as coordinates, and frames primes as 'fundamental loops' under a claimed univalence: numbers with the same factors occupy the same structural position.",
+    "key_claims": [
+      "Each number's prime factors are used as coordinates in a toroidal/Hilbert space: for factor p at index idx, tx += sin(p·curve)·(100/(idx+1)), ty += cos(p·curve)·(100/(idx+1)), tz += sin(p·curve·0.5)·50.",
+      "'Every prime is a fundamental loop' (jede Primzahl ein fundamentaler Loop).",
+      "A claimed 'univalence': 'if two paths (numbers) have the same factors, they are structurally identical (homotopic) in the HoTT sense.'",
+      "A 'Topologische Krümmung' (curvature) slider (curve) changes the phase and reshapes the space.",
+      "The number of factors is labeled the 'Homotopie-Ebene' (homotopy level) in the HUD."
+    ],
+    "methods_math": ["prime factorization → coordinate map", "HoTT vocabulary: fundamental loops, univalence, homotopy levels", "toroidal/Hilbert space, damped series (1/(idx+1))"],
+    "visualizations": ["2D canvas with a hand-rolled 3D perspective projection of the node cloud; primes glow teal, composites are dim; drag to rotate, scroll to zoom, hover HUD for value/factors/homotopy level; sliders for #numbers and curvature"],
+    "internal_tensions": [
+      "The HoTT framing (univalence, fundamental loops, homotopy levels) is a loose metaphor — the coordinate map is just a damped trigonometric hash of the prime factors, with no genuine identity-of-types or path structure.",
+      "The 'univalence' claim (same factors ⇒ same position) holds only because the map ignores factor order/multiplicity beyond the indexed damped sum — a property of the chosen encoding, not a HoTT theorem."
+    ],
+    "related_files": ["hott", "hott_ai", "homotopie", "pz", "pz5", "pz10"]
+  },
+  {
+    "path": "turing3.html",
+    "slug": "turing3",
+    "title": "The Topological Slice: 3D to 2D Logic (Turing Head)",
+    "lang": "en",
+    "size_kb": 6.1,
+    "category": "ki",
+    "category_reason": "Frames an attention head as a 'Turing head' that reads a bit from a 3D hidden state via a 2D feature-plane slice — an interpretability / attention model.",
+    "theme": "transformer-attention",
+    "themes": ["interpretability", "dynamical-systems"],
+    "thesis": "A split-screen three.js + DOM animation arguing that an attention 'Turing head' reduces a 3D hidden-state spiral to a 2D read-out: it fires (writes a 1-bit) only when the spiral's cross-section lands in a specific feature circle.",
+    "key_claims": [
+      "The 'spiral' is the hidden state; the white ring is the 'Feature Plane' (the slice the head looks at).",
+      "The 2D detector 'only cares if the spiral is inside this specific circle' — a binary in/out feature test.",
+      "The head is a Turing-style bit reader: when the cross-section distance is in the annulus [1.8, 2.2] (the ring radius) it writes a '1' ('BIT WRITE: ACTIVE'), else '0' ('SCANNING TAPE...').",
+      "A running binary stream accumulates the read bits, framing the head as a tape-scanning computational device.",
+      "The 3D→2D reduction is a 'topological slice': a 2D feature is extracted from a 3D state by intersecting it with a plane."
+    ],
+    "methods_math": ["3D→2D cross-section (slice) of a curve", "radial feature detector (in/out of a circle, distance in an annulus [1.8, 2.2])", "binary feature read-out / bit stream", "Turing-tape metaphor"],
+    "visualizations": ["Left: three.js 3D spiral passing through a feature ring; right: DOM 2D crosshair disk with a moving dot, a large bit read-out (0/1), a scrolling binary stream, and a 'TURING HEAD STATE' readout"],
+    "internal_tensions": [
+      "The 'Turing head' logic is hard-coded geometry (a fixed annulus test on a scripted spiral motion), not a learned feature detector — the claim that an attention head 'is' a Turing tape-reader is an analogy, not a demonstrated mechanism.",
+      "The bit stream updates are random (random() > 0.9 shifts a bit), so the 'computation' is decorative."
+    ],
+    "related_files": ["turing", "turing2", "token_manifold_verletzt", "how_ai_approximates", "attn"]
+  },
+  {
+    "path": "pz5.html",
+    "slug": "pz5",
+    "title": "Prime Phase-Portrait Explorer",
+    "lang": "en",
+    "size_kb": 6.0,
+    "category": "nicht-ki",
+    "category_reason": "Number-theory phase portrait of primes (residue class mod m vs gap phase); no ML application.",
+    "theme": "number-theory",
+    "themes": ["dynamical-systems"],
+    "thesis": "A phase portrait of the primes — x = residue class mod m, y = 'gap phase' ((gap·k) mod m)/m — so that at primorial moduli (6, 30, 210, 2310) the primes collapse into vertical 'ribbons' that braid as the modulus breaks symmetry.",
+    "key_claims": [
+      "x = (p mod m)/m is the position in the modulo cycle; y = ((gap·k) mod m)/m is the 'gap phase' (gap velocity relative to the modulus).",
+      "Base modulus M is the key knob — 'values like 210 (2·3·5·7) create massive symmetry'; primorials 6, 30, 210, 2310 make primes 'collapse into vertical ribbons.'",
+      "Moving the modulus in 0.1 increments makes the ribbons 'braid' as the symmetry breaks.",
+      "'Dense clusters show statistical attractors in the prime flow' — the portrait is framed as a dynamical system / flow.",
+      "Points are drawn additively ('lighter') with per-prime hue to show density."
+    ],
+    "methods_math": ["modular arithmetic / residue classes", "primorials (2·3·5·7)", "phase portrait / torus (mod m) coordinates", "additive density / glow plotting"],
+    "visualizations": ["2D canvas phase portrait (residue × gap-phase) with additive glow; sliders for prime limit, base modulus M, interference K, and glow intensity; a hover 'locus coordinates' data panel"],
+    "internal_tensions": [
+      "The vertical ribbons at primorial moduli are a direct consequence of the modular constraint (primes must be coprime to m), i.e. trivial arithmetic, not deep structure — the 'attractor'/'flow' language over-claims on a simple modular effect."
+    ],
+    "related_files": ["pz6", "pz", "pz8", "pz9", "asymptotische_gleichverteilungseigenschaft", "miller_rabin"]
+  }
+]

@@ -1,0 +1,849 @@
+[
+  {
+    "path": "paper/manifold_flattening.html",
+    "slug": "manifold_flattening",
+    "title": "FlatNet: Manifold Flattening & Reconstruction — Visual Guide",
+    "lang": "en",
+    "size_kb": 31.6,
+    "category": "ki",
+    "category_reason": "An interactive visual guide to FlatNet, a white-box autoencoder that flattens curved data manifolds layer-by-layer using local differential geometry. The entire subject is representation learning / autoencoding, a core ML task.",
+    "theme": "representation-learning",
+    "themes": [
+      "manifold-hypothesis",
+      "autoencoders",
+      "differential-geometry",
+      "manifold-learning",
+      "pca"
+    ],
+    "thesis": "An interactive English-language visual tour of FlatNet (JMLR 2024, Psenka et al.): a white-box autoencoder that constructs encoder/decoder layers greedily — no backprop — by using a local quadratic model (the second fundamental form) to peel off curvature one wrinkle at a time, with intrinsic dimension and network depth discovered automatically.",
+    "key_claims": [
+      "Real-world data sits on a curved low-dimensional manifold inside a high-dimensional space; FlatNet uncurls this surface into a flat affine plane where PCA becomes trivial.",
+      "Theorem 6: if (φ, ψ) flatten the manifold M, then φ(M) is a convex subset of a d-dimensional affine subspace — so PCA on top of φ gives the minimal encoder for free.",
+      "Around any point x₀, the manifold is modeled as x₀ + v + ½·II_{x₀}(v,v), where II is the second fundamental form (extrinsic curvature); projecting onto the tangent plane removes the curvature term, which is the local flattening step.",
+      "Local flattenings are glued globally via a partition of unity (smooth Gaussian weights), so each layer is well-defined on the whole dataset.",
+      "Iterating local flattenings acts as a convexification flow: each layer nudges points toward the local mean (inside the convex hull), and the manifold uncurls into a flat plane.",
+      "The algorithm is O(N·D·d²) per layer — linear in samples and ambient dimension, polynomial only in intrinsic dimension — and uses Stiefel-manifold optimization for the tangent basis plus closed-form least squares for the curvature tensor.",
+      "FlatNet is genuinely new vs. VAEs (no backprop, provably flat latent space, auto-discovered dimension) and vs. classical manifold learning (t-SNE, ISOMAP): it has explicit encoder/decoder maps (out-of-sample works) and uses second-order geometry, not just first-order distances."
+    ],
+    "methods_math": [
+      "manifold hypothesis, intrinsic dimension estimation",
+      "second fundamental form, tangent space, normal space",
+      "partition of unity (smooth Gaussian blending)",
+      "convex hull, convexity certificate (M = conv(M) iff flat)",
+      "Stiefel manifold optimization (tangent basis)",
+      "PCA as minimal compression of a flat affine subspace",
+      "convexification flow (geometric PDE evolving M toward conv(M))",
+      "autoencoder equivalence (flattening ≡ minimal autoencoding)"
+    ],
+    "visualizations": [
+      "Plotly 3D manifold explorer: curved 1D manifold embedded in 2D with adjustable curvature amplitude, noise, and sample count",
+      "Flatten progress slider (t: 0→1): watch the manifold uncurl into an affine subspace where PCA compresses it to 1D",
+      "Interactive tangent + curvature widget: pick a base point x₀, see the quadratic fit, and how projecting onto the tangent plane removes curvature",
+      "Partition-of-unity visualizer: blue (weight ψ), orange (local flattened field), green (blended global map) with adjustable radius λ",
+      "three.js 3D convexification flow: animate 60 layers of flattening on a wavy sheet / bowl / saddle, drag to rotate",
+      "Encoder layer diagram: concrete 5-step algorithm visualization",
+      "Reconstruction error bar chart: FlatNet vs. FactorVAE on Gaussian-process manifolds at various intrinsic dimensions"
+    ],
+    "internal_tensions": [
+      "The method assumes the manifold is connected and flattenable; it fails on closed-loop manifolds (e.g., rotation groups) and struggles with self-colliding hypersurfaces (Swiss roll) where compression causes overlap.",
+      "The single-manifold assumption is a significant limitation: multi-class data (e.g., MNIST digits) requires a mixture-of-manifolds treatment that is left as future work.",
+      "The 'white-box, no backprop' framing is compelling but the per-layer greedy construction may miss globally optimal flattenings; the convexification flow convergence is visualized but not proved in the guide.",
+      "The guide is a visual tour of a published paper (JMLR 2024), so the mathematical claims (Theorem 6, convexity certificate) are stated but not proved in this file; the reader must trust the paper for the proofs."
+    ],
+    "related_files": [
+      "latent_semantic_manifolds_in_llm",
+      "latent_semantic_manifolds_in_llm_simple",
+      "calculus_on_manifolds",
+      "calculus_on_manifolds_very_simple",
+      "mannigfaltigkeiten",
+      "topology_of_attractors",
+      "concept_attractors",
+      "johnson_lindenstrauss"
+    ]
+  },
+  {
+    "path": "garben_zug.html",
+    "slug": "garben_zug",
+    "title": "🚂 Garbentheorie des vorbeifahrenden Zuges",
+    "lang": "de",
+    "size_kb": 31.5,
+    "category": "nicht-ki",
+    "category_reason": "A pure sheaf-theory pedagogy piece using the metaphor of a passing train: germs, stalks, sections, presheaves, and the gluing axiom. No AI/ML content whatsoever.",
+    "theme": "sheaf-theory",
+    "themes": [
+      "sheaf-theory",
+      "algebraic-geometry",
+      "category-theory",
+      "topology",
+      "perception"
+    ],
+    "thesis": "An interactive German-language walkthrough of sheaf theory built around the concrete metaphor of watching a train pass by: from the germ (what you perceive at a single instant) through the stalk (all sensory modalities at that point), the section (the film over a time interval), the presheaf (all possible film clips), to the sheaf (the unique global event — the train — that local data glue together to form).",
+    "key_claims": [
+      "A germ [s]_x is an equivalence class of sections that agree on some arbitrarily small neighborhood of x; formally, the stalk F_x is the direct limit over the directed system of open neighborhoods of x.",
+      "The stalk at a point decomposes as a direct sum of modality-specific stalks (visual ⊕ auditory ⊕ vibrational ⊕ pressure ⊕ temperature), modeling independent sensory channels as a product sheaf F = ∏ᵢ F⁽ⁱ⁾.",
+      "A section s ∈ F(U) over an open set U is a compatible assignment of local data; restriction morphisms ρ^U_V satisfy the functoriality condition ρ^V_W ∘ ρ^U_V = ρ^U_W.",
+      "A presheaf is a contravariant functor F: Op(X)^op → Ab (or Set, Mod_R); it collects local data but does not yet guarantee that local data from different sensors belong to the same global object.",
+      "The sheaf condition (gluing + local uniqueness) is what turns a presheaf into a sheaf: if local sections agree on all overlaps, they glue to a unique global section. This is expressed as the equalizer sequence F(U) → ∏ᵢ F(Uᵢ) ⇉ ∏_{i,j} F(Uᵢ ∩ Uⱼ).",
+      "The étale space (disjoint union of all stalks) π: Ét(F) → X provides the geometric picture: the stalk F_x is the fiber of π over x, and sections are continuous sections of this space."
+    ],
+    "methods_math": [
+      "germs, stalks, direct limits over directed systems",
+      "sections, restriction morphisms, presheaves as contravariant functors",
+      "sheaf axioms: local uniqueness + gluing",
+      "equalizer sequence for the sheaf condition",
+      "étale space, continuous sections",
+      "product sheaves for independent modality bundles",
+      "open covers, category Op(X) of open sets"
+    ],
+    "visualizations": [
+      "Interactive timeline: a train passes along the x-axis (time); click to select a point, see the germ; drag to select an interval U, see the section",
+      "Doppler sound: audio playback simulates the train's approaching/receding pitch shift, synced to the timeline",
+      "Stalk visualization: at the selected point, a vertical stack of sensory modality icons (light, sound, vibration, pressure, temperature) represents the stalk F_x",
+      "Presheaf collection: all possible time windows and their associated 'film clips' are shown as a growing library",
+      "Gluing demo: two sections (visual + auditory) over overlapping intervals; a 'Bereit' (Ready) button triggers the gluing when they agree on the overlap, producing the single global object 'DER Zug'",
+      "Canvas-based train animation with the observer's perspective changing as the train passes"
+    ],
+    "internal_tensions": [
+      "The train metaphor is vivid but potentially misleading: a real train event is temporally bounded and causally connected, whereas sheaf-theoretic gluing is a purely local-to-global principle that does not require causal structure.",
+      "The file treats the sensory modalities as a direct sum (independent channels), but in real perception the modalities are cross-calibrated (e.g., lip-reading helps hearing); the product-sheaf model does not capture this coupling.",
+      "The gluing axiom is presented as 'the magic' that produces the unique global train, but the file does not discuss what happens when the local data do NOT agree on overlaps (the presheaf fails to be a sheaf) — a case that is arguably more interesting in practice.",
+      "The mathematical notation (direct limits, equalizer sequences, étale spaces) is introduced without derivation; the file assumes the reader can follow the formalism or is satisfied with the metaphor as a heuristic."
+    ],
+    "related_files": [
+      "garben",
+      "garben_2",
+      "garben_in_transformern",
+      "garben_uebersicht",
+      "garbentheorie",
+      "garben_weltsicht",
+      "sheaves",
+      "sheaf",
+      "new_space",
+      "coherent_differences_and_world_model_very_simple"
+    ]
+  },
+  {
+    "path": "spatiotemporal_composability.html",
+    "slug": "spatiotemporal_composability",
+    "title": "Spatiotemporal Composability — Interactive Explainer",
+    "lang": "en",
+    "size_kb": 31.4,
+    "category": "nicht-ki",
+    "category_reason": "An explainer for the Cordis software-architecture paradigm: revertible effects (temporal composability) and reactive coeffects (spatial composability) for dynamic component systems. AI agent harnesses are mentioned as one motivating use case alongside VSCode plugins, but the main subject is software engineering / component architecture.",
+    "theme": "software-architecture",
+    "themes": [
+      "component-systems",
+      "effect-systems",
+      "dependency-injection",
+      "state-machines",
+      "plugin-architecture"
+    ],
+    "thesis": "An interactive English-language explainer for the Cordis paradigm of dynamic software composability, which identifies two orthogonal dimensions: temporal (revertible effects — every side-effect carries its inverse so components can be cleanly unloaded) and spatial (reactive coeffects — components declare dependencies and are automatically activated/deactivated as providers appear and disappear).",
+    "key_claims": [
+      "An effect is modeled as a function Γ → Γ × (Γ → Γ): it transforms the context and returns an inverse; inverses are composed onto an accumulator in LIFO order, so unloading a component perfectly undoes everything in reverse order (Theorem 16 in the paper).",
+      "Reactive coeffects: a component declares which coeffects (dependencies) it needs; the runtime classifies every context change as activating, deactivating, or neutral, and components spring to life or gracefully deactivate as providers appear or vanish.",
+      "Provider withdrawal is guarded: when a provider is removed, the runtime waits until all dependents finish their teardown before the provider is actually removed (Section 4.2.2).",
+      "Every component instance (fiber) moves through a four-state machine: INACTIVE → LOADING → ACTIVE → UNLOADING, with transitions driven by comparing the target view (what should be running) against the committed view (what is running).",
+      "Current practice (VSCode, AI agent harnesses) handles dynamic composition by restarting the whole process; Cordis provides a structured, tracked alternative where each component's lifecycle is independently manageable.",
+      "The two dimensions (temporal and spatial) are orthogonal: revertible effects solve the 'clean unload' problem, while reactive coeffects solve the 'when should this component run' problem."
+    ],
+    "methods_math": [
+      "effect systems (forward action + inverse pair)",
+      "LIFO accumulator for inverse composition",
+      "coeffects as dependency declarations",
+      "context classification (activating / deactivating / neutral)",
+      "four-state component lifecycle machine",
+      "guarded provider withdrawal (synchronized teardown)",
+      "target view vs. committed view reconciliation"
+    ],
+    "visualizations": [
+      "Naive vs. Revertible comparison: side-by-side panels showing what happens when a component is removed without vs. with proper effect tracking (leaked resources visible in the naive case)",
+      "Revertible effect stack: an animated list of effects (open file, bind port, subscribe, cache) with a forward-order forward stack and a LIFO inverse accumulator; 'Unload Component' runs the inverses in reverse",
+      "Reactive coeffect toggle: three provider toggles (Database, Logger, Auth) with dependent components (UserService, etc.) that light up or dim as providers appear/disappear",
+      "Component state machine diagram: INACTIVE → LOADING → ACTIVE → UNLOADING with labeled transitions",
+      "Full system playground: a live application orchestrating multiple components with real-time state display"
+    ],
+    "internal_tensions": [
+      "The Cordis paradigm is presented as solving a real problem, but the file does not discuss the performance cost of tracking every effect and maintaining the inverse accumulator — in practice, this bookkeeping can be expensive for high-frequency effects.",
+      "The four-state machine is clean but assumes well-behaved components; in practice, components may fail mid-loading or mid-unloading, and the file does not discuss error recovery or partial teardown.",
+      "The mention of 'AI agent harnesses' as a use case is intriguing but underdeveloped: the file does not explain what specific composability challenges AI agents face that traditional plugin systems do not.",
+      "The 'Theorem 16' reference to the paper suggests a formal foundation, but the file is an explainer, not a proof; the correctness of the LIFO inverse composition (especially with concurrent effects) is asserted, not argued."
+    ],
+    "related_files": [
+      "framespotting",
+      "game",
+      "game2",
+      "paper/sorting_with_bialgebras",
+      "paper/perceive_this_as_that"
+    ]
+  },
+  {
+    "path": "principia.html",
+    "slug": "principia",
+    "title": "Principia Mathematica — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 31.2,
+    "category": "nicht-ki",
+    "category_reason": "An interactive explorer for Russell & Whitehead's Principia Mathematica (1910–1913): propositional logic, type theory, construction of natural numbers from pure logic, and the logicist programme. Pure mathematical logic / foundations, no AI/ML.",
+    "theme": "mathematical-logic",
+    "themes": [
+      "propositional-logic",
+      "type-theory",
+      "logicism",
+      "foundations-of-mathematics",
+      "predicate-logic"
+    ],
+    "thesis": "An interactive English-language explorer for Russell & Whitehead's Principia Mathematica: the user can manipulate truth values to evaluate propositional connectives, explore truth tables for tautologies and contradictions, step through the type hierarchy that tames Russell's paradox, watch natural numbers being constructed as classes of classes, build deduction chains via modus ponens, evaluate quantified statements over adjustable domains, and slide through the layers of the logicist programme.",
+    "key_claims": [
+      "Russell & Whitehead showed that just ¬ (not) and ∨ (or) are sufficient to define all propositional logic; every other connective (∧, →, ↔) is definable from these two.",
+      "Type theory resolves Russell's paradox ('the set of all sets that don't contain themselves') by introducing a hierarchy of types: a set at level n can only contain members of level n−1, making the paradoxical question ill-formed.",
+      "Natural numbers are defined as classes of classes: 0 = the class of all empty classes, 1 = the class of all singleton classes, n+1 = the successor of n; it takes Russell & Whitehead until page 379 of Volume I to prove that 1 + 1 = 2.",
+      "Modus ponens ('if p and p→q, then q') is the primary inference rule of Principia; combined with a small set of axioms, it generates all theorems of propositional and predicate logic.",
+      "Predicate logic extends propositional logic with ∀ (for all) and ∃ (there exists) to reason about properties of objects; the truth of a quantified statement depends on the domain and the predicate.",
+      "The logicist programme claims that all of mathematics reduces to logic; in 1931, Gödel's incompleteness theorems showed that any consistent system powerful enough to express arithmetic contains true statements it cannot prove, fundamentally limiting the logicist vision."
+    ],
+    "methods_math": [
+      "propositional logic: connectives, truth values, truth tables",
+      "tautologies, contradictions, logical equivalence",
+      "type theory: type levels, well-formed formulas, Russell's paradox",
+      "logicist construction of natural numbers as classes of classes",
+      "modus ponens, axiom systems, deduction chains",
+      "predicate logic: quantifiers (∀, ∃), predicates, domains",
+      "Gödel's incompleteness theorems (1931)"
+    ],
+    "visualizations": [
+      "Propositional logic playground: sliders for p and q truth values, with all connectives (¬, ∨, ∧, →, ↔) evaluated in real time",
+      "Truth table explorer: select a formula (axiom-like, excluded middle, contradiction, contrapositive, De Morgan, Peirce's law) and see its full truth table with tautology/contradiction classification",
+      "Type hierarchy slider: visualize type levels 0, 1, 2, ... with the constraint that a set at level n only contains members of level n−1; the paradoxical self-reference is shown as ill-formed",
+      "Number construction: a step-by-step animation building 0, 1, 2, 3, ... as classes of classes, with a 'count up to' slider",
+      "Modus ponens chain builder: select premises and implications to build a deduction chain, with the chain length displayed",
+      "Predicate logic explorer: adjustable domain size and predicate selection (even, prime, >0, perfect square) with real-time quantifier evaluation",
+      "Logicist programme layer reveal: slide through the layers showing how each mathematical concept (numbers, reals, analysis) is built from the one below it, all the way down to pure logic"
+    ],
+    "internal_tensions": [
+      "The file presents the logicist programme as a coherent grand vision, but Gödel's 1931 incompleteness theorems (mentioned only in a historical note) fundamentally undermine the claim that 'all of mathematics reduces to logic'; the tension between the Principia's ambition and Gödel's result is not explored in depth.",
+      "The type theory section is the most abstract and least interactive: the slider shows type levels, but the file does not let the reader actually try to form the paradoxical set and see why it is rejected; the 'ill-formed' verdict is stated, not demonstrated.",
+      "The 1+1=2 reference (page 379) is famous but potentially misleading: the proof is not difficult in isolation; the difficulty is the enormous scaffolding of definitions that must be established first. The file does not make this distinction clear.",
+      "The file is an explorer, not a rigorous treatment: the axioms of Principia (e.g., *1.2, *1.3) are not listed, and the connection between the truth-table visualizations and the actual axiomatic system is implicit rather than explicit."
+    ],
+    "related_files": [
+      "frege",
+      "goedel",
+      "goedel2",
+      "mod",
+      "proof",
+      "formal_proof",
+      "buecher/euclid",
+      "buecher/kritik_der_reinen_vernunft",
+      "cauchydedeking",
+      "paper/formal_proof"
+    ]
+  },
+  {
+    "path": "ideen2.html",
+    "slug": "ideen2",
+    "title": "Kohärente Welten – 20 Konzepte zum Anfassen",
+    "lang": "de",
+    "size_kb": 31.2,
+    "category": "ki",
+    "category_reason": "An interactive German-language collection of ~17 canvas mini-visualizations on coherent world models, with explicit LLM connections: the 'Hallucination (Selbst-Kohärenz ≠ Wahrheit)' concept, 'Kohärenz vs. Korrespondenz' framed in terms of LLMs, and 'Embedding-Raum' as a core concept. The file directly discusses how LLMs confuse internal coherence with world knowledge.",
+    "theme": "world-models",
+    "themes": [
+      "coherence",
+      "sheaf-theory",
+      "embedding-spaces",
+      "homotopy",
+      "llm-interpretability",
+      "representation-geometry"
+    ],
+    "thesis": "An interactive German-language collection of ~17 canvas-based mini-visualizations exploring how multiple local viewpoints cohere into a single 'world': from Spencer-Brown's primitive act of drawing a distinction, through topology without metric, sheaf gluing, homotopy as coherence-without-equality, embedding spaces where meaning = position, to the critical distinction between coherence (internal consistency) and correspondence (external anchor) — with an explicit application to LLM hallucination.",
+    "key_claims": [
+      "Distinktion (Spencer-Brown): before anything exists, a boundary must be drawn; every distinction creates an inside and an outside — all mathematics begins here.",
+      "Lokalität ohne Metrik: a topological space is a set of points plus a specification of which subsets are 'open' (neighborhoods); proximity arises from membership in common neighborhoods, not from distances or coordinates.",
+      "Sheaf & Gluing: two observers see parts of the world; their views must agree on the overlap for a coherent global picture to exist — this is the sheaf axiom made tactile.",
+      "Kohärenz statt Gleichheit: two things need not be identical to belong together; it suffices that there is a continuous deformation (homotopy) between them — the core of ∞-categories and HoTT.",
+      "Embedding-Raum: words have no intrinsic meaning; their meaning is their position in the network of differences to all other words — the space is the pattern of their relations, not a container.",
+      "Hallucination (Selbst-Kohärenz ≠ Wahrheit): an LLM can generate internally coherent text that has no correspondence to the world; coherence is necessary but not sufficient for truth.",
+      "Kohärenz vs. Korrespondenz: coherence checks whether a model is internally consistent; correspondence checks whether it is anchored to the world; these are two different tests, and one alone is never enough."
+    ],
+    "methods_math": [
+      "Spencer-Brown's Laws of Form (distinction as primitive)",
+      "topological spaces, open sets, neighborhoods (without metric)",
+      "sheaf theory: gluing axiom, local-to-global principle",
+      "homotopy, continuous deformation, ∞-categories",
+      "embedding spaces, word vectors, relational meaning",
+      "coherence vs. correspondence (Tarski/Popper distinction)",
+      "Topos theory (Welt zum Rechnen — worlds for computation)"
+    ],
+    "visualizations": [
+      "Distinktion: click to draw a boundary line; the canvas splits into marked/unmarked regions",
+      "Lokalität: click to place points, right-click (or Shift+click) to draw open sets (neighborhoods); observe proximity emerging from shared neighborhoods",
+      "Overlap & Kompatibilität: two curve sections over overlapping domains; adjust sliders to see when they match on the overlap",
+      "Sheaf & Gluing: interactive gluing of local data into a global whole",
+      "Traces: visualizing traces as underdetermined signals",
+      "Drei Ebenen der Differenz: three levels of difference (syntactic, semantic, pragmatic)",
+      "Hierarchie der Gleichheit: hierarchy of equality (identity, equivalence, coherence)",
+      "Admissible Transitions 𝒯: state transitions that preserve coherence",
+      "Hallucination: a self-coherent but world-disconnected text generation demo",
+      "Topos: a computational world with its own internal logic",
+      "Embedding-Raum: drag words around in a 2D space; watch how proximity reshapes meaning",
+      "Kohärenz vs. Korrespondenz: two dials (coherence, correspondence) with a status readout",
+      "Die Kette der Weltmodellierung: the full pipeline from raw trace to world model"
+    ],
+    "internal_tensions": [
+      "The file covers 17 concepts in a single page, which means each mini-visualization is necessarily shallow; the 'tactile' (zum Anfassen) promise is kept at the interaction level but not at the conceptual depth.",
+      "The jump from Spencer-Brown's distinction (a philosophical/logical primitive) to sheaf theory (a sophisticated algebraic-geometric tool) to LLM hallucination (a practical AI concern) is large; the connecting thread (coherence) is stated but not argued.",
+      "The 'Hallucination' concept is the most practically relevant but also the least developed: the file states that self-coherence ≠ truth but does not offer a concrete mechanism for detecting or mitigating hallucination.",
+      "The file is labeled 'ideen2' (ideas 2), suggesting it is a draft or second iteration of an earlier exploration; the concepts are presented as a gallery rather than a unified argument, and the relationship between the 17 concepts is implicit."
+    ],
+    "related_files": [
+      "coherent_differences_and_world_model",
+      "coherent_differences_and_world_model_very_simple",
+      "coherent_worldview",
+      "coherent_world_models",
+      "new_space",
+      "kohaerente_differenz",
+      "idea",
+      "idea2",
+      "kohaerente_modelle"
+    ]
+  },
+  {
+    "path": "gradient_flow.html",
+    "slug": "gradient_flow",
+    "title": "Gradient Flow — Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 31.2,
+    "category": "ki",
+    "category_reason": "An interactive visualization of forward pass, loss computation, and backpropagation in a neural network. The entire subject is the training dynamics of a neural network, which is core ML.",
+    "theme": "nn-training",
+    "themes": [
+      "backpropagation",
+      "gradient-descent",
+      "neural-networks",
+      "residual-connections",
+      "training-dynamics"
+    ],
+    "thesis": "An interactive German-language visualization of gradient flow through a neural network: the user watches forward-pass activations (green) and backward-pass gradients (red) propagate through the network in real time, with controls for learning rate, animation speed, target output, and residual connections; edge thickness encodes |weight| and edge glow encodes |update|.",
+    "key_claims": [
+      "The forward pass propagates activations from input to output; each edge's thickness is proportional to the absolute value of its weight.",
+      "The backward pass (backpropagation) propagates gradients from the loss back to the input; each edge's glow intensity is proportional to the magnitude of the weight update.",
+      "Residual (skip) connections are shown as zigzag edges: they carry the identity signal, allowing gradients to flow directly through the network without degradation.",
+      "The learning rate controls the step size of each weight update; too large causes oscillation, too small causes slow convergence.",
+      "The loss is computed at the output layer and drives the entire backward pass; the gradient magnitude |∇| is displayed alongside the epoch and loss value.",
+      "The user can step through the animation frame-by-frame ('Step') or run it continuously ('Play'), and can reset or generate a new random input to observe different training trajectories."
+    ],
+    "methods_math": [
+      "forward propagation (matrix-vector products + activation)",
+      "backpropagation (chain rule applied layer by layer)",
+      "gradient descent (weight update: w ← w - lr · ∂L/∂w)",
+      "residual connections (identity skip paths for gradient flow)",
+      "learning rate as step-size parameter",
+      "loss function (e.g., MSE) at the output"
+    ],
+    "visualizations": [
+      "Canvas-based neural network diagram: nodes (neurons) connected by edges; forward signal (green) flows left-to-right, backward signal (red) flows right-to-left",
+      "Edge encoding: thickness = |weight|, glow = |update|, zigzag style = residual (identity) connection",
+      "Controls: learning rate slider, speed slider, target-y input, residual toggle",
+      "Transportation controls: Play / Step / Reset / New Input buttons",
+      "Live readout: epoch counter, loss value, gradient magnitude |∇|",
+      "Legend panel explaining the color and edge encodings"
+    ],
+    "internal_tensions": [
+      "The visualization is 2D and shows a small network; the true power of backpropagation (and its challenges: vanishing/exploding gradients, saddle points) does not appear at this scale.",
+      "The learning rate is a single global parameter; in practice, modern optimizers (Adam, LAMB) use per-parameter adaptive learning rates, which this visualization does not capture.",
+      "The residual connection is shown as a binary toggle; in real networks (ResNet, transformer), residual connections are integral to every block, and their effect on the gradient flow is more subtle than 'identity path'.",
+      "The file is a visualization, not an explanation: it shows the flow but does not derive the chain rule or explain why the gradient points in the direction of steepest descent; the 'Aha' is visual, not conceptual."
+    ],
+    "related_files": [
+      "backprop",
+      "backprop_als_funktor",
+      "theory_of_deep_learning",
+      "theory_of_deep_learning_simple",
+      "theory_of_deep_learning_very_simple",
+      "nlab_nn",
+      "morse_theory"
+    ]
+  },
+  {
+    "path": "feedback.html",
+    "slug": "feedback",
+    "title": "Feedback Loops — Visual Mental Model",
+    "lang": "en",
+    "size_kb": 30.8,
+    "category": "nicht-ki",
+    "category_reason": "A general systems-thinking explainer about positive (reinforcing) and negative (balancing) feedback loops, with examples from finance, biology, ecology, and social systems. No AI/ML content.",
+    "theme": "systems-thinking",
+    "themes": [
+      "feedback-loops",
+      "dynamical-systems",
+      "exponential-growth",
+      "homeostasis",
+      "logistic-growth"
+    ],
+    "thesis": "An interactive English-language mental model for feedback loops: positive (reinforcing) loops amplify small changes into exponential growth or collapse, negative (balancing) loops self-correct toward a target (homeostasis), and real systems combine both to produce the S-curve (logistic growth with carrying capacity). Each loop type is illustrated with a live simulation and six real-world examples.",
+    "key_claims": [
+      "Positive (reinforcing) feedback: the output amplifies the input; small changes snowball into massive effects. This is the engine behind exponential growth (compound interest, viral spread) and exponential collapse (anxiety spirals, market crashes).",
+      "Positive feedback loops are inherently unstable — they always accelerate toward explosion or collapse; nothing in nature grows forever. When you spot a positive loop, always ask: 'What will eventually stop this?'",
+      "Negative (balancing) feedback: the system self-corrects toward a target; deviations are counteracted. This is the engine behind stability, homeostasis, and regulation (thermostats, blood sugar, supply & demand).",
+      "Negative feedback loops create stability but can also create stagnation: every system that 'resists change' is running a balancing loop. To change, you must disrupt the loop or change the target.",
+      "Real systems have both loops running simultaneously: a positive loop drives growth, but a negative loop enforces a carrying capacity, producing the S-curve (logistic growth).",
+      "The S-curve is ubiquitous: population growth, technology adoption, product lifecycles, and organizational growth all follow the same pattern of initial exponential growth, slowing as resources constrain, and eventual saturation."
+    ],
+    "methods_math": [
+      "positive feedback: x_{n+1} = x_n · (1 + r) (exponential growth)",
+      "negative feedback: error-driven correction toward a setpoint (first-order system)",
+      "combined loops: logistic growth dx/dt = r·x·(1 - x/K)",
+      "carrying capacity K as the saturation level",
+      "homeostasis: negative feedback maintaining a variable within a range",
+      "S-curve (sigmoid) as the universal growth pattern"
+    ],
+    "visualizations": [
+      "Positive feedback simulation: canvas showing exponential growth with adjustable feedback strength (growth rate) and starting value; 'Run' and 'Reset' buttons",
+      "Negative feedback simulation: canvas showing error-driven correction toward a target with adjustable correction strength and disturbance size",
+      "Combined S-curve simulation: canvas showing logistic growth where a positive loop drives growth and a negative loop enforces carrying capacity",
+      "Six real-world examples per loop type: compound interest, viral spread, anxiety spirals (positive); thermostat, blood sugar, supply & demand (negative); etc.",
+      "Key insight callouts: 'What will eventually stop this?' (positive), 'To change, disrupt the loop or change the target' (negative)"
+    ],
+    "internal_tensions": [
+      "The file presents feedback loops as a universal mental model, but the simulations are 1D and linear; real feedback systems are often multi-variable, nonlinear, and delayed, which can produce oscillations, chaos, or other behaviors not captured by the simple models.",
+      "The 'S-curve is everywhere' claim is strong but potentially overgeneralized: many real-world growth processes follow power laws, stretched exponentials, or multiple successive S-curves (technological paradigm shifts) rather than a single logistic curve.",
+      "The file does not discuss the role of time delays in feedback loops, which are often the source of oscillation and instability in real systems (e.g., the cobweb model in economics, predator-prey cycles in ecology).",
+      "The six examples per loop type are illustrative but not quantitatively grounded; the file does not provide parameters or data, so the 'mental model' is qualitative rather than predictive."
+    ],
+    "related_files": [
+      "chaos",
+      "phasenraum",
+      "phasenuebergaenge",
+      "phasenuebergaenge",
+      "new_kind_of_science",
+      "buecher/dynamische_systeme_und_konflikte",
+      "psychologische_feldtheorie"
+    ]
+  },
+  {
+    "path": "new_space.html",
+    "slug": "new_space",
+    "title": "Coherent Difference — Interaktiv",
+    "lang": "de",
+    "size_kb": 30.7,
+    "category": "ki",
+    "category_reason": "An interactive German-language exploration of how a coherent space (and meaning within it) emerges from local differences, with an explicit 'Embedding-Raum' section on word meaning as position in a relational space. The overall framework — local differences gluing into a global coherent space — is the mathematical foundation of representation learning and embedding-based models.",
+    "theme": "representation-geometry",
+    "themes": [
+      "coherence",
+      "sheaf-theory",
+      "topology",
+      "embedding-spaces",
+      "homotopy",
+      "spencer-brown"
+    ],
+    "thesis": "An interactive German-language exploration of 'Coherent Difference' in eight steps: how a space (and meaning within it) emerges from local differences rather than from a pre-existing container. The steps range from Spencer-Brown's primitive act of drawing a distinction, through topology without metric, sheaf gluing, homotopy as coherence-without-equality, to an embedding space where word meaning is its position in the network of differences, and finally the train-at-the-platform as a phenomenological synthesis.",
+    "key_claims": [
+      "Distinktion (Spencer-Brown): before anything is, a boundary must be drawn; every distinction creates an inside and an outside — all mathematics begins with this act of differentiation.",
+      "Lokalität ohne Metrik: a topological space does not require distances or coordinates; it is a set of points plus the specification of which subsets are 'open' (neighborhoods). Two points are 'near' if every neighborhood of one also contains the other.",
+      "Gluing (Sheaf): two observers see parts of the world; their views must agree on the overlap for a coherent global picture to exist. The sheaf axiom in one sentence: if local data agree on overlaps, there exists exactly one global extension.",
+      "Kohärenz statt Gleichheit: lightning and thunder are not equal — they are coherently connected (by a time delay). Two things need not be identical to belong together; it suffices that there is a continuous deformation (homotopy) between them.",
+      "Embedding-Raum: words have no meaning in themselves; their meaning is their position in the network of differences to all other words. The space is not a container that words occupy — the space IS the pattern of their relations.",
+      "Der Zug am Bahnsteig: a train is not 'behind' its appearances (sight, sound, touch, spatial presence) — it IS the coherent network of its appearances. Each sensory modality is a 'face' of the same underlying event, related by coherence, not identity.",
+      "The whole document is a chain of eight steps, each clicking on the previous: distinction → locality → gluing → coherence → embedding → phenomenology, building from the simplest possible act (drawing a line) to a full account of how a 'world' emerges from local differences."
+    ],
+    "methods_math": [
+      "Spencer-Brown's Laws of Form (distinction, mark, unmark)",
+      "topological spaces: open sets, neighborhoods, proximity without metric",
+      "sheaf theory: gluing axiom, local-to-global principle",
+      "homotopy: continuous deformation, coherence without equality",
+      "∞-sheaves / ∞-categories (higher coherence)",
+      "embedding spaces: words as points, meaning as position",
+      "phenomenology: the train as the coherent network of its sensory appearances"
+    ],
+    "visualizations": [
+      "Distinktion: click to draw a boundary line on the canvas; the area splits into marked/unmarked regions; 'Löschen' (erase) to reset",
+      "Lokalität: click to place points, right-click (or Shift+click) to draw open sets (circles = neighborhoods); 'Zufällige Nachbarschaften' (random neighborhoods) and 'Reset' buttons; observe proximity emerging from shared neighborhood membership",
+      "Gluing: two curve sections (left and right) over overlapping domains; adjust sliders to see when the curves match on the overlap ('Kohärent ✓' indicator)",
+      "Kohärenz statt Gleichheit: two paths with a homotopy animation ('Weg-Deformation: Animiere Homotopie') showing one path continuously deforming into the other",
+      "Embedding-Raum: drag words around in a 2D space; 'Cluster nach Ähnlichkeit' (cluster by similarity) button; 'Nachbarschafts-Radius' slider; observe how moving one word reshapes the meaning landscape",
+      "Der Zug am Bahnsteig: click on sensory modality icons (👁 See, 👂 Hear, ✋ Feel, 📐 Space) to see how each modality contributes a 'face' of the train; the coherent whole emerges from the network of appearances"
+    ],
+    "internal_tensions": [
+      "The eight steps cover an enormous range (philosophy, topology, algebraic geometry, machine learning, phenomenology) in a single file; each step is interactive but shallow, and the connecting logic between steps is asserted rather than argued.",
+      "The 'Embedding-Raum' section is the most directly AI-relevant (word embeddings, relational meaning), but it is presented as a philosophical claim ('the space IS the pattern of their relations') rather than a technical one; the connection to actual embedding-based models (word2vec, BERT) is not made.",
+      "The Spencer-Brown starting point is provocative but potentially misleading: 'all mathematics begins with a distinction' is a philosophical claim, not a mathematical one; the file does not address the objection that mathematics also requires composition, iteration, and quantification, not just distinction.",
+      "The train metaphor in the final step is poetic but underdeveloped: the file does not explain how the 'coherent network of appearances' is formally specified, or how this differs from the sheaf-theoretic gluing in step 3."
+    ],
+    "related_files": [
+      "coherent_differences_and_world_model",
+      "coherent_differences_and_world_model_very_simple",
+      "coherent_worldview",
+      "coherent_world_models",
+      "ideen2",
+      "kohaerente_differenz",
+      "garben_zug",
+      "conceptual_spaces",
+      "geometry_of_meaning_test"
+    ]
+  },
+  {
+    "path": "ehresmannconnection.html",
+    "slug": "ehresmannconnection",
+    "title": "Ehresmann Connection – Interactive Visual Explainer",
+    "lang": "en",
+    "size_kb": 30.4,
+    "category": "nicht-ki",
+    "category_reason": "A pure differential-geometry exposition of Ehresmann connections on fibre bundles: vertical subspaces, horizontal distributions, parallel transport, and curvature/holonomy. No AI/ML content.",
+    "theme": "differential-geometry",
+    "themes": [
+      "fibre-bundles",
+      "connections",
+      "parallel-transport",
+      "curvature",
+      "holonomy"
+    ],
+    "thesis": "An interactive English-language visual guide to Ehresmann connections on fibre bundles: the user explores (1) what a fibre bundle is (total space E, base M, fibre F), (2) the vertical subspace (canonical, ker dπ), (3) choosing a horizontal distribution (the connection — not canonical), (4) parallel transport along curves (depends on the connection), and (5) curvature as the failure of the horizontal distribution to be integrable (holonomy after a closed loop).",
+    "key_claims": [
+      "A fibre bundle π: E → M is a total space E that locally looks like M × F; the projection π maps each point in E to its base point in M.",
+      "At any point p ∈ E, the vertical subspace V_pE = ker(dπ_p) consists of tangent vectors that point along the fibre; this subspace is canonical (requires no extra choice).",
+      "An Ehresmann connection is a smooth choice of a horizontal subspace H_pE at every point such that T_pE = V_pE ⊕ H_pE; this choice is NOT canonical — there are many possible connections.",
+      "Once a connection is chosen, parallel transport along a curve in the base is defined by always moving in the horizontal direction (the unique lift of the base velocity into H_pE); different connections yield different transport results.",
+      "The curvature of a connection measures whether the horizontal distribution is integrable: if curvature is zero, parallel transport around any closed loop is trivial; if nonzero, you get holonomy (a net shift in the fibre after a round trip).",
+      "The connection angle slider demonstrates that the horizontal distribution is a choice: rotating the angle changes the connection, which changes the parallel transport result and the holonomy."
+    ],
+    "methods_math": [
+      "fibre bundles: total space, base, fibre, projection",
+      "tangent space decomposition T_pE = V_pE ⊕ H_pE",
+      "vertical subspace as ker(dπ_p) (canonical)",
+      "horizontal distribution as a choice (connection)",
+      "parallel transport along curves via horizontal lift",
+      "curvature as integrability failure of the horizontal distribution",
+      "holonomy: fibre shift after parallel transport around a closed loop"
+    ],
+    "visualizations": [
+      "Fibre bundle explorer: drag a red point along the base manifold M; the fibre F above it is shown, with a blue dot in the total space E",
+      "Vertical subspace: move a point up and down the fibre to see the vertical tangent vector; the full tangent space T_pE is shown with the vertical component highlighted",
+      "Horizontal choice: an angle slider rotates the horizontal subspace H_pE relative to the vertical; 'Other possible horizontals' are shown as faded lines",
+      "Parallel transport: click 'Transport!' to watch a point in the fibre being carried along a base curve; change the connection angle to see different transport results",
+      "Curvature / holonomy: a curvature slider κ; 'Go Around Loop!' button; the holonomy (fibre shift after a closed loop) is displayed; κ = 0 gives trivial transport, κ > 0 gives a visible shift"
+    ],
+    "internal_tensions": [
+      "The file is a visual explainer, not a rigorous treatment: the mathematical definitions (fibre bundle, connection, curvature) are stated but not derived, and the relationship to the Levi-Civita connection (the canonical connection on the tangent bundle of a Riemannian manifold) is not discussed.",
+      "The 2D visualizations are necessarily reductive: real fibre bundles (e.g., principal bundles in gauge theory) have much richer structure, and the 'connection angle' is a 2D simplification that does not capture the full generality of connection 1-forms.",
+      "The holonomy demonstration is limited to a single closed loop on a 1D base; the full holonomy group (a subgroup of the structure group) and its relationship to the curvature via the Ambrose-Singer theorem are not discussed.",
+      "The file does not connect the Ehresmann connection to its physical applications (gauge theory, general relativity, Yang-Mills theory), where it is the central mathematical object; the connection is presented as a purely geometric concept."
+    ],
+    "related_files": [
+      "fibrebundles",
+      "fibrebundle",
+      "fibrebundle2",
+      "fibrebundle3",
+      "fibrebundle4",
+      "fibrebundle5",
+      "faserbuendel_und_fibrationen",
+      "bundles",
+      "christoffel",
+      "jet_bundles",
+      "calculus_on_manifolds"
+    ]
+  },
+  {
+    "path": "coherent_differences_and_world_model_very_simple.html",
+    "slug": "coherent_differences_and_world_model_very_simple",
+    "title": "Was ein Weltmodell ist — ganz einfach erklärt",
+    "lang": "de",
+    "size_kb": 30.3,
+    "category": "ki",
+    "category_reason": "A very simple German-language interactive explanation of world models with explicit LLM connections: 'Genau das verwechselt ein LLM: Es hat eine brillante innere Struktur und hält sie dann für Weltwissen.' The file discusses coherence vs. correspondence, the five pathologies of broken models, and truth as a limit — all framed with direct relevance to LLMs.",
+    "theme": "world-models",
+    "themes": [
+      "world-models",
+      "coherence",
+      "correspondence-theory",
+      "sheaf-theory",
+      "llm-interpretability",
+      "epistemology"
+    ],
+    "thesis": "A very simple German-language interactive explanation of what a world model is: you never perceive the world directly (only underdetermined traces), a world model stitches local patches into a coherent whole (sheaf condition on overlaps), coherence ≠ truth (coherence is internal consistency, correspondence is external anchor — two different tests), there are five ways a model can be 'broken,' and truth is a regulative ideal (a limit) rather than an attained state. The file explicitly applies this framework to LLMs, which confuse internal coherence with world knowledge.",
+    "key_claims": [
+      "You never perceive the thing itself: between the world W and the trace r you receive, there is always an access function O; the trace is underdetermined — many different (W, O) combinations produce the same r.",
+      "A world model consists of many local patches (measurements, perspectives, sensors); it can only call itself a 'whole' if the patches agree where they overlap — this is the sheaf (gluing) condition, or 'Garbenbedingung'.",
+      "Coherence (internal consistency) and correspondence (external anchor to the world) are two different tests: a model can be perfectly coherent and still have nothing to do with the world. A theory that can never fail is not an untested theory — it is a coherent fiction.",
+      "The error of many systems (including LLMs): they optimize almost exclusively for coherence (self-consistency) and then hold the result to be true. An LLM has a brilliant internal structure and then mistakes it for world knowledge.",
+      "There are exactly five basic ways a model can be 'broken' (pathologies), and each requires its own specific remedy; 'the model is wrong' is too coarse — you need to know WHERE it is wrong.",
+      "Truth = lim(coherence ∧ correspondence): as you add more independent, world-anchored access points, you approach truth, but you never fully reach it; truth remains a regulative ideal. What you can actually do every day is 'justified acceptance': the model is coherent on your current coverage and has not yet failed at any hard contact point with an independent source."
+    ],
+    "methods_math": [
+      "underdetermination: many (world, access) pairs produce the same trace",
+      "sheaf condition (gluing): local patches must agree on overlaps",
+      "coherence vs. correspondence (Tarski's correspondence theory, Popper's falsifiability)",
+      "five pathologies of broken models (didactically condensed)",
+      "truth as a limit: lim(coherence ∧ correspondence)",
+      "justified acceptance: coherent + no failed contact points",
+      "regulative ideal (Kant): truth as a goal, not a state"
+    ],
+    "visualizations": [
+      "Experiment 1 — Trace Machine: a thing W in the world and an access function O; choose W and O, see the underdetermined trace r; 'Erkennbar?' (Recognizable?) readout",
+      "Experiment 2 — Patchwork (Flickenteppich): four patches with overlapping seams; adjust how many patches agree on their shared seams; 'Globales Bild?' (Global picture?) readout; 4/4 agreement = yes",
+      "Experiment 3 — Two Tests: sliders for coherence (internal consistency) and correspondence (external anchor); the status readout shows how the model fares on each test independently",
+      "Experiment 4 — Pathology Simulator: select one of five error types; read where exactly the model is broken and what heals it",
+      "Experiment 5 — Truth Status Calculator: three sliders (coherence, correspondence, hard contact points); compute the model's truth status live"
+    ],
+    "internal_tensions": [
+      "The file is explicitly 'ganz einfach erklärt' (very simply explained) and 'keine Mathematik-Vorwissen nötig' (no math background needed), which means the sheaf-theoretic and epistemological content is heavily condensed; the 'five pathologies' are 'didactically condensed' (didaktisch verdichtet) and may not correspond cleanly to standard philosophical or mathematical categories.",
+      "The LLM application is the most practically relevant but also the least developed: the file states that LLMs confuse coherence with correspondence but does not offer a concrete mechanism for testing an LLM's correspondence (beyond 'hard contact points'), which is the hard problem in AI evaluation.",
+      "The 'truth as a limit' framing is philosophically rich (Kant's regulative ideal, Popper's conjectural knowledge) but potentially deflationary: if truth is never attained, what does 'justified acceptance' buy you in practice? The file does not address this operational question.",
+      "The file is a 'stark vereinfachte Darstellung' (strongly simplified representation) of a larger work ('From World to Model: Coherent Difference — Teil 4, Kapitel 3'); the simplifications are acknowledged but may lose important qualifications present in the full treatment."
+    ],
+    "related_files": [
+      "coherent_differences_and_world_model",
+      "coherent_worldview",
+      "coherent_world_models",
+      "ideen2",
+      "new_space",
+      "kohaerente_differenz",
+      "wie_ein_llm_denkt",
+      "illusion_erklaerender_tiefe"
+    ]
+  },
+  {
+    "path": "paperidea6.html",
+    "slug": "paperidea6",
+    "title": "Lipschitz Lenses — Homotopic Focus Stack v3",
+    "lang": "en",
+    "size_kb": 30.2,
+    "category": "ki",
+    "category_reason": "A mathematical model of attention mechanisms using FFT as the encoding: 'lenses' (analogous to attention heads) locally increase frequency resolution, with a conserved budget enforcing a resolution–breadth tradeoff. The key conjecture (Conjecture 6) is explicitly about attention entropy and resolution, making this a direct AI/attention-mechanisms piece.",
+    "theme": "attention-mechanisms",
+    "themes": [
+      "fft",
+      "frequency-domain",
+      "attention",
+      "resolution-breadth-tradeoff",
+      "lipschitz-continuity",
+      "homotopy"
+    ],
+    "thesis": "An interactive English-language mathematical model ('v3') of attention as a frequency-domain focus mechanism: the image is encoded via FFT, and 'lenses' (analogous to attention heads) locally increase the frequency cutoff for sharper reconstruction. The total resolution budget is finite and conserved, enforcing a resolution–breadth tradeoff: narrow attention (low entropy) yields a sharp view of few regions; broad attention yields a blurred view of many. The key conjecture: this tradeoff is enforced by the convex combination in fixed dimensionality d.",
+    "key_claims": [
+      "The image is encoded via FFT into frequency coefficients; without lenses, only the lowest frequencies are used, producing a maximally blurry reconstruction (LEGO pixels).",
+      "Each lens locally includes more frequency coefficients (increases the local frequency cutoff), producing a sharper local reconstruction; overlapping lenses compound, giving even finer detail in the overlap region.",
+      "The total resolution budget is finite and conserved: more lenses = less budget per lens; the user can adjust the radius, budget, and max frequency percentage.",
+      "Conjecture 6: 'Narrow attention (low entropy) yields a sharp view of few stalks; broad attention yields a blurred view of many — a resolution–breadth tradeoff enforced by the convex combination in fixed dimensionality d.'",
+      "The model connects to Lipschitz continuity: the frequency cutoff acts as a Lipschitz bound on the reconstructed image; higher frequencies = sharper (less Lipschitz) reconstruction.",
+      "The 'homotopic focus stack' framing suggests that the lenses can be continuously deformed (homotoped) into one another, and the focus (resolution) is a stack of such deformations."
+    ],
+    "methods_math": [
+      "FFT / IFFT (frequency-domain encoding/decoding)",
+      "frequency cutoff as resolution control",
+      "Gaussian lens profiles (local frequency boost)",
+      "budget conservation (finite total resolution)",
+      "resolution–breadth tradeoff (entropy of attention)",
+      "Lipschitz continuity as a smoothness bound",
+      "convex combination in fixed dimensionality"
+    ],
+    "visualizations": [
+      "Dual-panel canvas: left = FFT magnitude spectrum (frequency domain) of the selected image; right = IFFT-decoded reconstruction with frequency cutoff controlled by lenses",
+      "Lens placement: click on the RIGHT panel to place lenses; each lens locally sharpens the reconstruction; overlapping lenses compound",
+      "Controls: radius slider, budget slider, max frequency % slider, base blur slider",
+      "Clear / Undo buttons for lens management",
+      "Multiple texture patterns: torus, loop space (figure-8), spiral, graph network — each with different frequency structure"
+    ],
+    "internal_tensions": [
+      "The FFT model is a 2D spatial analogy for attention; real attention in transformers operates on sequence positions (not spatial locations) and uses dot-product similarity (not frequency cutoffs), so the analogy is suggestive but not literal.",
+      "The 'budget conservation' is a design choice of the model, not a theorem: real attention heads do not share a fixed budget, and the number of heads is a hyperparameter, not a conserved quantity.",
+      "Conjecture 6 is stated but not proved; the connection between attention entropy and the convex combination in fixed dimensionality d is asserted, not derived.",
+      "The 'homotopic' framing in the title is not developed in the file: the lenses can be moved and resized, but there is no explicit homotopy (continuous deformation) between lens configurations; the title promises more than the file delivers."
+    ],
+    "related_files": [
+      "attn",
+      "attn_as_optimal_transport",
+      "attn_as_optimal_transport_simple",
+      "attn_as_optimal_transport_very_simple",
+      "qkv",
+      "qkv2",
+      "paper/AttentionViz",
+      "simplicial_complex_attention",
+      "space_warps"
+    ]
+  },
+  {
+    "path": "group.html",
+    "slug": "group",
+    "title": "What is Group Theory? — An Interactive Visual Guide",
+    "lang": "en",
+    "size_kb": 30.0,
+    "category": "nicht-ki",
+    "category_reason": "A pure abstract-algebra visual guide to group theory: symmetries of a square (dihedral group D₄), the four group axioms, Cayley tables, cyclic groups, and subgroups. No AI/ML content.",
+    "theme": "group-theory",
+    "themes": [
+      "group-theory",
+      "symmetry",
+      "dihedral-group",
+      "cyclic-groups",
+      "abstract-algebra"
+    ],
+    "thesis": "An interactive English-language visual guide to group theory starting from the symmetries of a square (the dihedral group D₄ with 8 elements): the user applies rotations and flips to see the symmetries in action, clicks through the four group axioms (closure, associativity, identity, inverses) with live demonstrations, explores the Cayley table (noting the group is non-abelian), plays with cyclic groups via clock arithmetic, and navigates the subgroup lattice of ℤ₁₂.",
+    "key_claims": [
+      "A group captures the idea of symmetry: the square has 8 symmetries (4 rotations + 4 reflections), each of which leaves the square looking the same.",
+      "The four group axioms: (1) Closure — combining any two symmetries gives another symmetry in the set; (2) Associativity — (a∘b)∘c = a∘(b∘c); (3) Identity — there is a 'do nothing' element (R₀) that leaves everything unchanged; (4) Inverses — every symmetry can be undone by another symmetry.",
+      "The Cayley table (multiplication table) of D₄ is not symmetric across the diagonal — the group is non-abelian (order matters: rotating then flipping ≠ flipping then rotating).",
+      "Cyclic groups ℤₙ are the simplest groups: think of a clock with n hours where you add and wrap around; every element generates the whole group.",
+      "A subgroup is a subset that is itself a group under the same operation; the subgroups of ℤ₁₂ form a lattice (partially ordered set) where lines connect a subgroup to those it contains.",
+      "Group theory underpins physics (particle symmetries), chemistry (molecular symmetries), cryptography (elliptic curves), music theory (transpositions), and Rubik's cube solutions: every time you see symmetry or structure-preserving transformations, there is a group hiding underneath."
+    ],
+    "methods_math": [
+      "dihedral group D₄ (symmetries of a square: 4 rotations + 4 reflections)",
+      "group axioms: closure, associativity, identity, inverses",
+      "Cayley table (multiplication table), non-abelian groups",
+      "cyclic groups ℤₙ, modular arithmetic",
+      "subgroups, subgroup lattice",
+      "group action on the square (labeled corners)"
+    ],
+    "visualizations": [
+      "Square symmetries: a labeled square with 8 transformation buttons (R₀, R₉₀, R₁₈₀, R₂₇₀, Flip H, Flip V, Flip ╲, Flip ╱); click to apply and watch the corners move",
+      "Group axioms: four clickable axiom cards (Closure, Associativity, Identity, Inverses); clicking one shows a live demonstration with the square symmetries",
+      "Cayley table: an 8×8 multiplication table for D₄; hover over a cell to see 'row ∘ column = result'; the table's asymmetry highlights non-abelianness",
+      "Cyclic group clock: a clock face with n hours (adjustable via slider); click two numbers to add them (mod n); 'Reset' button",
+      "Subgroup lattice of ℤ₁₂: a node-and-edge diagram showing the subgroup hierarchy; click a node to highlight that subgroup's elements on the clock"
+    ],
+    "internal_tensions": [
+      "The file starts with the specific example (D₄) and never generalizes: the reader sees one group in detail but does not get a sense of the vast variety of groups (abelian vs. non-abelian, finite vs. infinite, solvable vs. simple).",
+      "The 'What's Next?' section lists applications (physics, chemistry, cryptography, music, Rubik's cube) but does not develop any of them; the connection between the square's symmetries and, say, elliptic-curve cryptography is asserted, not shown.",
+      "The cyclic group clock is a good intuition-builder but is presented as a separate example rather than as a special case of the general theory; the relationship between ℤₙ and D₄ (both finite groups, but one abelian and one not) is not drawn.",
+      "The file is a visual guide, not a proof: the group axioms are demonstrated with the square, but the reader is not asked to verify associativity for all 512 triples (a∘b)∘c vs. a∘(b∘c); the 'live demonstration' is a single example, not a proof."
+    ],
+    "related_files": [
+      "monoid",
+      "product_coproduct",
+      "narc_group",
+      "narc_group2",
+      "darstellungstheorie",
+      "higher_algebra",
+      "buecher/history_of_mathematical_notation",
+      "adjunct_functor",
+      "categorytheorie"
+    ]
+  },
+  {
+    "path": "theory_of_deep_learning_very_simple.html",
+    "slug": "theory_of_deep_learning_very_simple",
+    "title": "Die mathematische Theorie des Deep Learning — Ganz einfach erklärt",
+    "lang": "de",
+    "size_kb": 29.7,
+    "category": "ki",
+    "category_reason": "A very simple German-language interactive explanation of the three pillars of deep learning theory: approximation (universal approximation, depth vs. width), optimization (gradient descent, saddle points), and generalization (double descent, neural tangent kernel). Directly about why neural networks work.",
+    "theme": "dl-theory",
+    "themes": [
+      "approximation-theory",
+      "optimization",
+      "generalization",
+      "double-descent",
+      "neural-tangent-kernel",
+      "relu"
+    ],
+    "thesis": "A very simple German-language interactive explanation of the three great pillars of deep learning theory with five hands-on experiments: (1) the central tension — the model must be complex enough to capture the truth but simple enough to find it (bias-variance tradeoff); (2) approximation — neural nets are piecewise-linear 'folded cards' and depth multiplies the number of pieces while width adds them; (3) optimization — gradient descent on a rugged loss landscape, where saddle points (not local minima) are the real obstacle in high dimensions; (4) generalization — the double-descent phenomenon where test error drops again after overparameterization, explained by the neural tangent kernel making overparameterized nets behave linearly.",
+    "key_claims": [
+      "The entire theory of deep learning is one tension: the model must be large enough to represent the truth and small enough to find it. Set 'very complex' (degree 12) with only 8 training examples: training error → 0, but true (test) error explodes — the model memorized, it did not understand.",
+      "A neural network is a piecewise-linear function: a chain of 'weights times input plus shift' with a kink function (ReLU) between each layer. Each kink creates a sharp edge in the output; the network is a 'folded card' of many small flat pieces.",
+      "Universal approximation: every continuous function can be approximated arbitrarily well by a neural network with enough neurons — but the theorem says nothing about how many neurons are needed.",
+      "Depth multiplies, width adds: a 'hat' function h₁ from 2 ReLUs has 2 kinks; chain it n times → 2ⁿ⁻¹ kinks with only linearly growing size. With 30 neurons: 1 layer → ~31 pieces; 10 layers of 3 → up to 6¹⁰ ≈ 60 million pieces. Same budget, millions-fold reach. This is why nets are built deep.",
+      "In high dimensions, saddle points (points that go uphill in one direction and downhill in another) dominate over true local minima. With suitable architectures (very wide nets), the loss landscape becomes nearly convex — there is essentially only good and bad valley, no deceptive fake minimum.",
+      "Double descent: the classical prediction is that test error rises once the model has more parameters than data points (the 1.0 mark). In practice, test error drops again (the 'second descent'). The reason: very wide nets become surprisingly linear during training (Neural Tangent Kernel theory) — gradient descent then systematically finds a solution that generalizes.",
+      "The interpolation paradox is resolved: overparameterized nets can fit the training data perfectly (interpolate) AND generalize well, because the NTK makes the training dynamics linear and the found solution is the minimum-norm interpolant."
+    ],
+    "methods_math": [
+      "bias-variance tradeoff (fit the data vs. generalize)",
+      "piecewise-linear functions, ReLU activations, kink counting",
+      "universal approximation theorem (Cybenko, Hornik)",
+      "depth vs. width: piece count grows exponentially in depth, linearly in width",
+      "gradient descent, learning rate, loss landscape",
+      "saddle points, Hessian eigenvalues, high-dimensional optimization",
+      "double descent (test error as a function of model size)",
+      "Neural Tangent Kernel (NTK) theory, overparameterized linearization",
+      "interpolation paradox, minimum-norm interpolant"
+    ],
+    "visualizations": [
+      "Experiment 1 — Outfitting Game: green dashed = true rule, red curve = model fit; adjust training examples and model complexity (polynomial degree); watch training error and true (test) error; 'Neue Stichprobe ziehen' (draw new sample) button",
+      "Experiment 2 — Knuckle Builder: green dashed = target curve, red = folded card from n neurons; adjust width (number of neurons); watch the kinks get denser and the curve approach the target; 'Zickzack', 'Runge-Funktion', 'Stufensprung' target selections",
+      "Experiment 3 — Sawtooth Telemetry: chain a 'hat' function n times; watch the kinks double per layer (2ⁿ⁻¹) while the network size grows linearly; 'Stücke-Budget' panel: fixed 30 neurons, different depth/width splits, log-scale piece count",
+      "Experiment 4 — Gradient Descent: a white dot descends a rugged 2D loss landscape (dark = low error); learning rate slider controls step size; 'Ein Schritt' (one step) for frame-by-frame; 'Zurücksetzen' (reset)",
+      "Experiment 5 — Double Descent: grey dashed = classical prediction (error rises after 1.0 mark), solid = actual (second descent); slider for model size (parameters/data points); watch the test error drop again in the overparameterized regime"
+    ],
+    "internal_tensions": [
+      "The file is explicitly 'ganz einfach erklärt' (very simply explained) and 'nur Schulmathematik' (only school math), which means the NTK theory and double descent are heavily condensed; the reader gets the intuition but not the mathematical content (e.g., the NTK is a specific kernel that depends on the initialization, not just 'the net becomes linear').",
+      "The 'depth multiplies, width adds' claim is the most striking but also the most easily misread: the piece-count argument assumes the kinks are all in 'general position' (no two kinks coincide), which is not guaranteed in practice; the actual expressive power of deep vs. wide nets is more subtle.",
+      "The saddle-point discussion is important but brief: the file states that saddle points dominate in high dimensions and that wide nets make the landscape 'nearly convex,' but does not explain WHY (the connection to the Hessian eigenvalue distribution and the NTK regime is only hinted at).",
+      "The double-descent visualization is a 2D plot of test error vs. model size; the real phenomenon is that the double descent depends on the training algorithm (gradient descent finds the minimum-norm solution, while other algorithms may not), and this dependence is not captured in the visualization."
+    ],
+    "related_files": [
+      "theory_of_deep_learning",
+      "theory_of_deep_learning_simple",
+      "why_deep_learning_works",
+      "universal_approximation_theorem",
+      "understanding_deep_learning",
+      "morse_theory",
+      "generalisierung_im_deep_learning",
+      "generalisierung_im_deep_learning_very_simple",
+      "gradient_flow",
+      "nlab_nn"
+    ]
+  },
+  {
+    "path": "positional.html",
+    "slug": "positional",
+    "title": "RoPE 3D Slice Visualizer (1-64D)",
+    "lang": "de",
+    "size_kb": 29.6,
+    "category": "ki",
+    "category_reason": "An interactive 3D visualizer for Rotary Position Embeddings (RoPE), a core positional-encoding mechanism used in modern transformer architectures (LLaMA, etc.). The entire subject is a transformer component, which is directly AI/ML.",
+    "theme": "transformer-architecture",
+    "themes": [
+      "positional-encoding",
+      "rope",
+      "transformer",
+      "rotation-matrices",
+      "frequency-spectrum"
+    ],
+    "thesis": "An interactive German-language 3D visualizer for Rotary Position Embeddings (RoPE): the user selects dimension pairs, sets input values (x₁, x₂), the base frequency, and the number of positions, then watches how the RoPE rotation matrix acts on the embedding in 2D, 3D, or multi-slice views, with an animation mode that sweeps positions from 0 to 199. The key insight is that RoPE encodes position as an independent 2D rotation in each dimension pair, with a geometrically spaced frequency spectrum.",
+    "key_claims": [
+      "RoPE encodes position as a rotation in 2D subspaces: for dimension pair i, the rotation angle is position × θᵢ, where θᵢ = base^(-2i/d) (a geometrically decreasing frequency spectrum).",
+      "The rotation is applied independently to each dimension pair: the full d-dimensional RoPE is a block-diagonal matrix of d/2 independent 2D rotations, each with its own frequency.",
+      "Higher-index dimension pairs have lower frequencies (longer wavelengths) and thus encode slower-varying positional information; lower-index pairs have higher frequencies and encode fine-grained position.",
+      "The 3D view shows how multiple dimension pairs' rotations compose: each pair traces a circle (or ellipse, depending on x₁, x₂) in its own 2D subspace, and the full embedding is the composition of all these rotations.",
+      "The multi-slice mode shows several dimension pairs simultaneously, making the frequency spectrum visible: low-index pairs rotate fast (tight circles), high-index pairs rotate slow (wide circles).",
+      "The animation mode sweeps the position from 0 to 199, showing how the embedding point traces a path in the high-dimensional space as the position changes."
+    ],
+    "methods_math": [
+      "Rotary Position Embedding (RoPE): x'ᵢ = xᵢ·cos(pos·θᵢ) - xᵢ₊₁·sin(pos·θᵢ), x'ᵢ₊₁ = xᵢ·sin(pos·θᵢ) + xᵢ₊₁·cos(pos·θᵢ)",
+      "frequency spectrum: θᵢ = base^(-2i/d) (geometric progression)",
+      "2D rotation matrices, block-diagonal composition",
+      "position encoding as a function of token index",
+      "base frequency parameter (controls the frequency range)"
+    ],
+    "visualizations": [
+      "2D mode: a single dimension pair's rotation shown as a point moving on a circle in the (x₁, x₂) plane as position changes",
+      "3D mode: multiple dimension pairs' rotations composed in 3D space; the embedding point traces a helical path",
+      "Multi-slice mode: several dimension pairs shown simultaneously in parallel 2D slices, making the frequency spectrum visible",
+      "Controls: x₁, x₂ input fields, base frequency slider, position count slider, max dimension selector (8D/16D/32D/64D/128D)",
+      "Animation: '▶ Animieren' button sweeps position from 0 to 199; 'Aktualisieren' (update) for static view",
+      "Dimension pair selector: choose which pairs to display in the current mode"
+    ],
+    "internal_tensions": [
+      "The visualizer shows the RoPE rotation in isolation; it does not show how RoPE interacts with the attention mechanism (the key insight of RoPE is that it makes the attention score depend only on the relative position, not the absolute position).",
+      "The 2D/3D views are necessarily reductive: a 64D RoPE is a composition of 32 independent 2D rotations in a 64D space, and the 3D projection loses most of the structure.",
+      "The file does not compare RoPE to other positional encodings (sinusoidal, learned, ALiBi); the reader sees how RoPE works but not why it was chosen over alternatives.",
+      "The 'Max Dim' selector goes up to 128D, but the animation only sweeps to position 199; for real transformer context lengths (4K, 8K, 128K), the behavior of RoPE at very long positions (frequency aliasing, extrapolation) is not explored."
+    ],
+    "related_files": [
+      "attn",
+      "attn_as_optimal_transport",
+      "qkv",
+      "qkv2",
+      "posembed1",
+      "posembed2",
+      "posembed3",
+      "posembed4",
+      "posembed5",
+      "posembed7",
+      "posembed8",
+      "buecher/attention_is_all_you_need"
+    ]
+  }
+]

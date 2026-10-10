@@ -1,0 +1,351 @@
+[
+  {
+    "path": "shepard.html",
+    "slug": "shepard",
+    "title": "Shepard 1987 · Ein universelles Gesetz der Generalisierung",
+    "lang": "de",
+    "size_kb": 58.6,
+    "category": "ki",
+    "category_reason": "Main subject is generalization in classification / machine learning; discusses how Minkowski distance exponents relate to generalization performance of classifiers.",
+    "theme": "generalization, minkowski-distance, classification",
+    "themes": ["generalization", "minkowski-distance", "classification"],
+    "thesis": "Shepard's 1987 universal law of generalization — that the probability of generalizing a stimulus to a similar one follows a power law of psychological distance — can be understood and visualized through Minkowski distance metrics, revealing how the exponent of the distance metric shapes the geometry of generalization in classification tasks.",
+    "key_claims": [
+      "Generalization follows a power law: the probability of generalizing decreases as a power of the distance between stimuli.",
+      "The Minkowski exponent controls the shape of the generalization surface: low exponents produce 'boxy' generalization, high exponents produce 'spherical' generalization.",
+      "Different distance metrics (L1 Manhattan, L2 Euclidean, L∞ Chebyshev) produce qualitatively different generalization patterns.",
+      "The universal law provides a quantitative bridge between psychological similarity and computational classification."
+    ],
+    "methods_math": ["Minkowski distance metrics", "power-law generalization curves", "3D response surfaces", "KaTeX typeset mathematics"],
+    "visualizations": ["Plotly 3D surface plots of generalization response", "KaTeX inline math", "canvas animations of distance fields"],
+    "internal_tensions": [
+      "The law is described as 'universal' but the exponent itself varies across tasks and organisms, so universality is really about the functional form, not the parameter value."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "concept_attractors_in_llm.html",
+    "slug": "concept_attractors_in_llm",
+    "title": "Concept Attractors in LLMs – Interaktive Erklärung",
+    "lang": "de",
+    "size_kb": 58.6,
+    "category": "ki",
+    "category_reason": "Main subject is how concepts form attractor states in the representation space of large language models — a core topic in LLM interpretability.",
+    "theme": "llm-interpretability, attractor-dynamics",
+    "themes": ["llm-interpretability", "attractor-dynamics"],
+    "thesis": "Concepts in LLMs are not stored as fixed locations but emerge as attractor basins in the model's activation space: nearby inputs in semantic space are pulled toward a shared stable state, and the geometry of these basins (depth, width, noise sensitivity) explains both the robustness and the fragility of LLM concept representations.",
+    "key_claims": [
+      "Concepts correspond to attractor regions in LLM hidden-state space where many nearby inputs converge to a common representation.",
+      "The depth and shape of an attractor basin determine how robust a concept is to paraphrase, noise, and distributional shift.",
+      "Data-generation quality (diversity, coverage) shapes the landscape: sparse training data produces shallow, easily-escaped attractors.",
+      "The attractor picture unifies otherwise separate observations — synonym robustness, concept confusion, and hallucination — under one geometric account."
+    ],
+    "methods_math": ["dynamical-systems attractor analysis", "activation-space geometry", "canvas-based phase-portrait rendering"],
+    "visualizations": ["canvas attractor-basin animations with particle trajectories", "interactive sliders controlling basin shape and noise"],
+    "internal_tensions": [
+      "The attractor metaphor is geometrically evocative but the LLM forward pass is a fixed (non-iterative) map, so 'dynamics' here are really iterated applications of the layer map, not a true continuous-time dynamical system."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "signal_analysis.html",
+    "slug": "signal_analysis",
+    "title": "Interactive Signal Analysis Explorer",
+    "lang": "en",
+    "size_kb": 58.6,
+    "category": "nicht-ki",
+    "category_reason": "Main subject is wave optics, holography, and diffraction patterns; no ML/AI component — it is a physics/signal-processing explainer.",
+    "theme": "optics, fourier-analysis, holography",
+    "themes": ["optics", "fourier-analysis", "holography"],
+    "thesis": "Holography and diffraction are two sides of the same Fourier-analytic coin: a hologram records the full complex amplitude (amplitude + phase) of a wavefront, and the reconstruction process is an inverse Fourier transform that recovers the 3D light field from a 2D interference pattern.",
+    "key_claims": [
+      "A diffraction pattern is the Fourier transform of the aperture, so the far-field pattern encodes the spatial frequency content of the object.",
+      "A hologram is an interference pattern between object and reference beams; it stores both amplitude and phase information in the fringe spacing and orientation.",
+      "Reconstructing a hologram is equivalent to performing an inverse Fourier transform, which recovers the original wavefront including its 3D depth information.",
+      "The trade-off between spatial resolution and field-of-view in holography mirrors the uncertainty principle in Fourier analysis."
+    ],
+    "methods_math": ["Fourier transform and inverse Fourier transform", "wave interference and diffraction integrals", "spatial frequency decomposition", "Temml typeset mathematics"],
+    "visualizations": ["Plotly line/scatter plots of amplitude and phase spectra", "Temml-rendered equations", "interactive frequency-domain exploration"],
+    "internal_tensions": [
+      "The page presents holography as a clean Fourier-transform story, but real holographic reconstruction involves coherent illumination, finite apertures, and numerical artifacts that the idealized model glosses over."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "takens_embedding_theorem.html",
+    "slug": "takens_embedding_theorem",
+    "title": "Takens' Embedding Theorem — An Interactive Exploration",
+    "lang": "en",
+    "size_kb": 58.2,
+    "category": "nicht-ki",
+    "category_reason": "Main subject is the Takens embedding theorem from dynamical-systems theory — reconstructing an attractor from a scalar time series via delay coordinates. No ML/AI application is the focus.",
+    "theme": "dynamical-systems, delay-embedding, phase-space",
+    "themes": ["dynamical-systems", "delay-embedding", "phase-space"],
+    "thesis": "Takens' theorem guarantees that a generic time-delay embedding of a scalar observation from a chaotic dynamical system reconstructs the original attractor up to a diffeomorphism, provided the embedding dimension exceeds twice the attractor's topological dimension — making it possible to recover the full geometry of a system from a single measured signal.",
+    "key_claims": [
+      "For a smooth flow on a compact manifold with topological dimension d, a delay embedding with dimension m > 2d is generically a diffeomorphism onto its image.",
+      "The delay time τ must be chosen to decorrelate successive coordinates: too short gives redundant axes, too long gives noise-dominated axes.",
+      "The reconstructed attractor preserves the topological invariants (Lyapunov exponents, fractal dimension) of the original system.",
+      "The theorem is generic: it holds for almost all observation functions, so a single well-chosen sensor suffices in principle."
+    ],
+    "methods_math": ["delay-coordinate embedding", "topological dimension and embedding dimension", "Lyapunov exponents", "diffeomorphism and genericity arguments", "canvas-based phase-space plots"],
+    "visualizations": ["canvas animations of delay embeddings in increasing dimension", "interactive τ and m sliders showing attractor reconstruction quality"],
+    "internal_tensions": [
+      "The theorem is a generic existence result — it does not tell you how to find the right dimension or delay time in practice, which remains a data-dependent heuristic."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "higher_topos_theory.html",
+    "slug": "higher_topos_theory",
+    "title": "Higher Topos Theory — Interaktiver Explorer",
+    "lang": "de",
+    "size_kb": 58.0,
+    "category": "nicht-ki",
+    "category_reason": "Main subject is higher topos theory (∞-topoi, Grothendieck topos theory, descent, effective epimorphisms) — pure algebraic geometry / higher category theory with no AI application.",
+    "theme": "higher-category-theory, topos-theory, algebraic-geometry",
+    "themes": ["higher-category-theory", "topos-theory", "algebraic-geometry"],
+    "thesis": "Higher topos theory generalizes Grothendieck's classical topos theory to the ∞-categorical setting, where objects are not just sets but spaces (∞-groupoids) and descent data are controlled by homotopy-coherent diagrams; this framework unifies algebraic geometry, homotopy theory, and logic under a single categorical roof.",
+    "key_claims": [
+      "An ∞-topos is the ∞-categorical analogue of a Grothendieck topos: it is an ∞-category satisfying higher descent conditions (effective descent for effective epimorphisms).",
+      "In classical topos theory, effective epimorphisms are the categorical notion of surjection; in the ∞-setting, they must be homotopy-coherent, which is strictly stronger.",
+      "Descent theory — the study of when local data glues to global data — is the engine of topos theory: the topos of sheaves on a site is built from descent data.",
+      "Lurie'sHigher Algebra and Higher Topos Theory provide the ∞-categorical foundations that make this framework precise and computable."
+    ],
+    "methods_math": ["∞-category theory", "Grothendieck topos axioms", "descent and effective epimorphisms", "homotopy-coherent diagrams", "MathJax typeset mathematics"],
+    "visualizations": ["Plotly interactive diagrams of topos structures", "MathJax-rendered ∞-categorical diagrams", "step-by-step conceptual explorer with collapsible sections"],
+    "internal_tensions": [
+      "The page presents ∞-topos theory as a natural generalization, but the gap between classical 1-categorical topos theory and the ∞-categorical version is enormous — the homotopy-coherence conditions are not a minor technicality but change the entire proof-theoretic content."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "buecher/ai.html",
+    "slug": "buecher-ai",
+    "title": "Visuelle Wissenslandkarte – Schlüsselkonzepte",
+    "lang": "de",
+    "size_kb": 57.9,
+    "category": "ki",
+    "category_reason": "Main subject is a visual knowledge map of AI/ML concepts (LSTM, Transformer, Word Embeddings, etc.) — an overview of the AI field.",
+    "theme": "ai-knowledge-graph, machine-learning-overview",
+    "themes": ["ai-knowledge-graph", "machine-learning-overview"],
+    "thesis": "The landscape of modern AI can be organized as a connected knowledge graph where core concepts (neural networks, attention, embeddings, optimization) form a backbone, and each node's position reflects its conceptual dependencies and historical development rather than a simple taxonomy.",
+    "key_claims": [
+      "AI concepts form a dependency graph: e.g., Transformers depend on attention, which depends on sequence modeling, which depends on RNNs, which depend on basic neural networks.",
+      "Word embeddings and contextual embeddings (BERT/ELMo) represent a qualitative shift from static to dynamic representation learning.",
+      "The graph structure reveals that 'AI' is not one field but a web of interlocking subfields — NLP, computer vision, reinforcement learning — that share foundational machinery.",
+      "Historical progression is visible: earlier concepts (perceptron, backprop) sit at the root, and newer concepts (transformers, diffusion models) at the periphery."
+    ],
+    "methods_math": ["force-directed graph layout", "ECharts interactive visualization", "D3.js network simulation", "Plotly supplementary charts"],
+    "visualizations": ["ECharts force-directed knowledge graph with color-coded concept categories", "D3.js interactive network", "Plotly supplementary bar/radar charts"],
+    "internal_tensions": [
+      "A knowledge graph inevitably imposes a structure that is contested — where exactly 'attention' sits relative to 'RNNs' or how to group 'diffusion models' is a matter of perspective, not fact."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "space_algorithm.html",
+    "slug": "space_algorithm",
+    "title": "Metric Space Explorer — Deep Algorithm Visualizer",
+    "lang": "en",
+    "size_kb": 56.9,
+    "category": "ki",
+    "category_reason": "Main subject is how neural-network layers transform metric spaces (distances between data points), with 'strain maps' and 'layers' — the geometric effect of deep learning on data geometry.",
+    "theme": "metric-geometry, neural-network-geometry",
+    "themes": ["metric-geometry", "neural-network-geometry"],
+    "thesis": "Each layer of a deep neural network acts as a map between metric spaces that systematically distorts distances — compressing directions the network deems irrelevant and expanding directions it deems informative; the cumulative 'strain' across layers is what makes a high-dimensional, entangled input space into a cleanly separable representation.",
+    "key_claims": [
+      "A neural-network layer is a (generally non-linear) map between metric spaces; its effect can be measured by how it stretches or compresses pairwise distances.",
+      "Early layers tend to preserve local geometry (small strain), while later layers perform large-scale reorganization (high strain) that separates classes.",
+      "The 'strain map' — a visualization of local distance distortion — reveals which regions of input space are being compressed and which are being expanded.",
+      "The composition of many mildly-distorting layers produces a globally dramatic transformation, analogous to how small rotations compose into large rotations."
+    ],
+    "methods_math": ["metric space and distance distortion", "strain tensor / Jacobian analysis", "layer-wise composition of maps", "Temml typeset mathematics"],
+    "visualizations": ["canvas animations showing point-clouds deforming through layers", "strain-map heatmaps", "interactive layer-depth slider"],
+    "internal_tensions": [
+      "The 'strain' picture is a local, linear approximation (Jacobian-based) and can miss global topological effects — e.g., a layer can have small local strain everywhere yet still fold the space in a way that changes its topology."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "botorch.html",
+    "slug": "botorch",
+    "title": "How BoTorch Works Internally — A Visual Explainer",
+    "lang": "en",
+    "size_kb": 56.2,
+    "category": "ki",
+    "category_reason": "Main subject is BoTorch, a Bayesian optimization library — a core ML/optimization topic.",
+    "theme": "bayesian-optimization, acquisition-functions",
+    "themes": ["bayesian-optimization", "acquisition-functions"],
+    "thesis": "BoTorch implements Bayesian optimization as a two-stage loop — fit a Gaussian-process surrogate to observed (x, f(x)) pairs, then choose the next query point by maximizing an acquisition function that balances exploration and exploitation — and its modular architecture (separate GP model, acquisition function, and optimizer) makes each stage independently swappable.",
+    "key_claims": [
+      "Bayesian optimization treats the unknown objective as a Gaussian process: after observing n points, the posterior GP gives a mean and uncertainty at every candidate x.",
+      "The acquisition function (e.g., Expected Improvement, Upper Confidence Bound, Probability of Improvement) converts the GP posterior into a single scalar to maximize over the candidate set.",
+      "BoTorch separates the GP model, the acquisition function, and the optimizer into independent modules, so users can swap any component without affecting the others.",
+      "Batch acquisition functions (q-EI, q-NEGF) extend the single-point logic to parallel queries by integrating over the joint posterior of multiple candidate points."
+    ],
+    "methods_math": ["Gaussian processes and posterior inference", "acquisition functions (EI, UCB, PI)", "Monte Carlo integration for batch acquisitions", "visual explainer charts"],
+    "visualizations": ["interactive charts showing GP posterior evolution", "acquisition-function landscape plots", "module-architecture diagram"],
+    "internal_tensions": [
+      "The GP surrogate is a modeling choice, not a truth — for highly multimodal or discontinuous objectives the GP can be badly miscalibrated, and no amount of acquisition-function cleverness fixes a wrong posterior."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "donalds_theorem.html",
+    "slug": "donalds_theorem",
+    "title": "Donaldsons Theorem — Interaktive Reise",
+    "lang": "de",
+    "size_kb": 55.7,
+    "category": "nicht-ki",
+    "category_reason": "Main subject is Donaldson's theorem in 4-manifold differential topology and gauge theory — pure mathematics with no AI/ML connection.",
+    "theme": "differential-topology, gauge-theory, four-manifolds, intersection-form",
+    "themes": ["differential-topology", "gauge-theory", "four-manifolds", "intersection-form"],
+    "thesis": "Donaldson's theorem (1983) shows that if a smooth, closed, oriented 4-manifold has a definite intersection form, that form must be diagonalizable over the integers — a result so strong that it implies the existence of topological 4-manifolds that cannot be smoothed, proving that dimension 4 is fundamentally different from all other dimensions.",
+    "key_claims": [
+      "The intersection form Q of a 4-manifold records the signed intersection numbers of all pairs of 2-cycles; it is a symmetric integer matrix.",
+      "If Q is definite (all eigenvalues same sign), Donaldson's theorem forces Q to be diagonalizable over ℤ, i.e., equivalent to ±I.",
+      "The proof uses Yang–Mills gauge theory: ASD (anti-self-dual) connections on an SU(2) bundle over the manifold form a moduli space whose topology constrains Q.",
+      "The E₈ lattice is a definite, unimodular intersection form that is not diagonalizable — so Freedman's topological 4-manifold with E₈ form cannot carry a smooth structure.",
+      "The cobordism argument: compactify the moduli space by gluing in copies of ℂP² at singularities and X at infinity; the signature invariant then forces n(Q) = rank(Q), hence diagonalizability."
+    ],
+    "methods_math": ["intersection forms and their classification", "Yang–Mills gauge theory and ASD connections", "moduli space of ASD connections", "Atiyah–Singer index theorem", "cobordism and signature invariance", "KaTeX typeset mathematics"],
+    "visualizations": ["Plotly 3D manifold surfaces with zoom", "canvas: dimension-comparison scale", "canvas: two-surface intersection with signed count", "matrix editor with live positive-definiteness check (Sylvester criterion)", "canvas: quadratic form on unit circle", "canvas: topological-vs-smooth blob animation", "Plotly 3D parallel transport on sphere with holonomy readout", "canvas: self-dual vs anti-self-dual field visualization", "Plotly 3D moduli space schematic", "canvas: reducible-connection counting for E₈ and diagonal forms", "canvas: 4-stage cobordism construction"],
+    "internal_tensions": [
+      "The proof is presented as a sequence of 'interactive demos', but the actual mathematical content — the Uhlenbeck compactness theorem, the structure of the moduli space at infinity — is entirely glossed over; the interactivity illustrates the shape of the argument, not its substance."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "buecher/kc.html",
+    "slug": "buecher-kc",
+    "title": "In den Unterwelten des Web 2.0 – Visuelle Konzeptkarte",
+    "lang": "de",
+    "size_kb": 55.6,
+    "category": "nicht-ki",
+    "category_reason": "Main subject is a visual concept map of Nils Löber's 2011 ethnography of the imageboard Krautchan/4chan — sociology/cultural studies of internet subculture, no AI/ML.",
+    "theme": "internet-culture, imageboard-ethnography, meme-studies",
+    "themes": ["internet-culture", "imageboard-ethnography", "meme-studies"],
+    "thesis": "Imageboards like Krautchan and 4chan are a sociotechnical system in which enforced anonymity, rulelessness, and ephemerality produce a distinctive culture organized around 'Lulz' (schadenfreude) as an ideological frame; this culture simultaneously generates creative meme production and aggressive raiding, and provides a space for a precarious, oscillating masculinity that fails its own hegemonic ideals.",
+    "key_claims": [
+      "Imageboards differ from classical forums (phpBB) along six dimensions: anonymity, anarchy, ephemerality, multimedia, egalitarianism, and non-commercialism — these structural features produce a fundamentally different communication culture.",
+      "Enforced anonymity creates a collective identity ('Anonymous' / 'Bernd') with three modes of identification: individual adoption, collective sum, and transpersonal entity.",
+      "Memes function as cultural replicators with three rule levels (syntactic, semantic, pragmatic); their knowledge serves as a distinction marker and form of cultural capital.",
+      "Aggression (raids, trolling, bullying) serves both as self-purpose (Lulz) and as group-formation / deterrence; the 'Lulz frame' immunizes participants against moral criticism.",
+      "The central contradiction: Krautchan is an explicitly masculine space where the hegemonic masculinity ideal is simultaneously affirmed and perpetually failed — 'Bernd' fails at his own gender ideal.",
+      "The 'Unterwelt' (underworld) metaphor: imageboards are the repressed, drive-near stratum beneath the polished Web 2.0 surface, with bidirectional exchange in both directions."
+    ],
+    "methods_math": ["sociotechnical systems analysis", "ethnographic method (Löber 2011)", "concept-card taxonomy", "ECharts force-directed graphs, radar charts, treemaps, Sankey diagrams", "D3.js force-directed network", "Plotly polar and line charts"],
+    "visualizations": ["ECharts force-directed mind map of imageboard culture concepts", "ECharts radar chart comparing imageboard vs phpBB vs Usenet", "ECharts log-scale bar chart of board sizes", "ECharts sunburst diagram of identity modes", "ECharts horizontal bar chart of the 'Bernd' stereotype", "ECharts treemap of meme types", "Plotly line chart of meme lifecycle", "ECharts force-directed graph of meme rule structure", "ECharts combined bar/line chart of aggression spectrum", "ECharts Sankey diagram of raid mechanism flow", "ECharts pie chart of gender dynamics", "Plotly scatterpolar tension chart (Bernd self-image vs hegemonic ideal)", "ECharts layered graph (Oberwelt vs Unterwelt)", "D3.js force-directed network of platforms and archives", "Plotly line chart of content ephemerality over time", "ECharts force-directed theoretical model graph"],
+    "internal_tensions": [
+      "The page presents the ethnography's findings as settled fact, but Löber's 2011 study was a single-site ethnography of one board at one moment; the generalization to 'imageboard culture' as a whole is an interpretive leap the page does not flag."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "paper/geometric_structure_of_layer_updates.html",
+    "slug": "geometric_structure_of_layer_updates",
+    "title": "Interactive Explainer: Geometric Structure of Layer Updates",
+    "lang": "en",
+    "size_kb": 55.2,
+    "category": "ki",
+    "category_reason": "Main subject is the geometric structure of how representations change from layer to layer in deep language models (Pythia, Mamba, DistilGPT2) — a core LLM interpretability topic.",
+    "theme": "llm-interpretability, layer-geometry, tokenwise-residual-decomposition",
+    "themes": ["llm-interpretability", "layer-geometry", "tokenwise-residual-decomposition"],
+    "thesis": "Each layer update in a deep language model decomposes into a 'tokenwise' component (a local, input-conditioned linear map applied to each token independently) and a 'residual' component; the full update is almost perfectly aligned with the tokenwise part, while the residual — though small in norm — points in a geometrically distinct direction and is where the functionally important computation lives, as evidenced by its strong correlation with output-perturbation (KL divergence).",
+    "key_claims": [
+      "The layer update h_{ℓ+1} − h_ℓ decomposes as T(h_ℓ) + r(h_ℓ), where T is a local, input-conditioned tokenwise map (locally linear, globally nonlinear) and r is the residual.",
+      "The full update is nearly parallel to the tokenwise component: angular deviation is typically < 10°, while the residual often exceeds 60° from the tokenwise direction.",
+      "When the tokenwise approximation is poor (large residual), the model's output changes significantly: Spearman ρ between approximation error and KL output deviation is 0.80–0.91 for Pythia models.",
+      "The full and tokenwise updates live in a low-dimensional subspace (well-captured by 1–8 top singular vectors), while the residual is spread across many more dimensions.",
+      "These geometric properties hold across architectures: both Transformers (Pythia, DistilGPT2) and state-space models (Mamba) show the same tokenwise/residual separation, even though Mamba has no attention mechanism."
+    ],
+    "methods_math": ["local linear approximation of layer maps", "cosine similarity and angular deviation", "SVD / singular-value decomposition for subspace projection", "Spearman rank correlation", "KL divergence for output perturbation", "Plotly violin, histogram, box, scatter, bar charts", "canvas vector-geometry animations"],
+    "visualizations": ["canvas: overview of layer update decomposition with arrows", "canvas: tokenwise + residual decomposition for different function classes", "Plotly: violin plot of error distributions by function class", "canvas: interactive vector geometry with angle arcs", "Plotly: angular distribution histograms (paper Fig. 3b recreation)", "Plotly: box plots of alignment distributions", "Plotly: scatter of error vs KL output perturbation with trend line", "Plotly: layerwise Spearman ρ curves (paper Fig. 2c recreation)", "Plotly: subspace projection fractions vs top-k singular vectors", "canvas: subspace ellipse with vector projections", "Plotly: bar chart of Spearman ρ across 7 models (architecture comparison)", "Plotly: model-size effects", "Plotly: regime trade-off chart", "Plotly: sensitivity analysis (rank/neighborhood sweeps)"],
+    "internal_tensions": [
+      "The 'tokenwise' map T(x) = A(x)·x is fit as a local approximation — the choice of function class (diagonal, low-rank, orthogonal, MLP) changes the residual, so the decomposition is not unique; the paper's findings are relative to a particular approximation family.",
+      "The geometric separation is real but the functional claim — that the residual 'is where the important computation lives' — is supported by correlation (error ↔ KL), not by an intervention showing that removing the residual specifically breaks the function."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "johnson_lindenstrauss.html",
+    "slug": "johnson_lindenstrauss",
+    "title": "Johnson–Lindenstrauss · visuell",
+    "lang": "de",
+    "size_kb": 55.0,
+    "category": "nicht-ki",
+    "category_reason": "Main subject is the Johnson–Lindenstrauss lemma in metric geometry and the probabilistic method — a pure mathematics theorem. While JL has ML applications, the page is about the theorem and its proof, not about ML.",
+    "theme": "dimensionality-reduction, metric-geometry, measure-concentration, union-bound",
+    "themes": ["dimensionality-reduction", "metric-geometry", "measure-concentration", "union-bound"],
+    "thesis": "The Johnson–Lindenstrauss lemma states that any set of n points in a high-dimensional Euclidean space can be projected into a space of dimension k = O(log n / ε²) such that all pairwise distances are preserved within a factor of (1 ± ε); the proof rests on measure concentration on the sphere (Lévy's inequality) and a union bound over all n²/2 pairs, and the log n bound is essentially tight by a volume-packing argument.",
+    "key_claims": [
+      "A random rank-k orthogonal projection, scaled by √(d/k), preserves all pairwise distances of n points within (1 ± ε) with positive probability, provided k ≥ K(ε)·log n.",
+      "The key ingredient is Lévy's inequality / the isoperimetric inequality on S^{n−1}: the projection length of a random vector concentrates exponentially around its median, with deviation probability ≤ 4·exp(−nε²).",
+      "The union bound over all n(n−1)/2 pairs converts the single-pair concentration into a simultaneous statement: the failure probability is at most 2n(n+1)·exp(−nτ²), which is < 1 when k is large enough.",
+      "The log n bound is tight up to constants: a ball of radius 2 in ℓ₂^k contains at most 4^k vectors with pairwise distance ≥ 1, so n separated points require k ≥ log n / log 4.",
+      "The original 1984 paper by Johnson and Lindenstrauss was not about dimensionality reduction — it was about Lipschitz extensions into Hilbert space, and the famous lemma was a 'simply stated elementary geometric lemma' on page 2."
+    ],
+    "methods_math": ["random orthogonal projection", "Lévy's inequality / isoperimetric inequality on the sphere", "union bound", "Khintchine's inequality", "Kirszbraun's extension theorem", "volume packing bound", "canvas: 3D→2D projection with distortion stats", "canvas: concentration histogram", "canvas: sphere belt visualization", "canvas: union-bound phase transition", "canvas: distance-matrix heatmaps", "canvas: proof-chain interactive diagram"],
+    "visualizations": ["canvas: hero animation of point cloud collapsing onto a plane", "canvas: log-scale comparison of exact (n−1) vs JL (log n) dimension", "canvas: interactive 3D→2D projection with drag-to-orbit, random plane, distortion readouts", "canvas: concentration histogram of projection lengths", "canvas: sphere belt — mass near equator in high dimension", "canvas: union-bound phase transition with point/edge visualization", "canvas: distance-matrix heatmaps (original vs projected)", "canvas: interactive proof-chain diagram (6 steps, clickable)", "canvas: packing bound 4^k visualization", "canvas: finale proof animation"],
+    "internal_tensions": [
+      "The page presents the JL lemma as a clean, solved problem, but the constants in K(ε) are far from optimal and the lemma says nothing about which random projection to use in practice (the existence proof is non-constructive).",
+      "The 'original context' section reveals that the lemma was a tool, not the point — this historical nuance complicates the common narrative that JL is 'about' dimensionality reduction."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "paper/formal_proof.html",
+    "slug": "formal_proof",
+    "title": "Formal Proof – Interactive Visual Explainer",
+    "lang": "en",
+    "size_kb": 54.6,
+    "category": "nicht-ki",
+    "category_reason": "Main subject is formal proof systems (HOL Light, Coq, Isabelle) and the Flyspeck project — computer-aided mathematical verification, not AI/ML.",
+    "theme": "formal-verification, proof-assistants, hol-light, kepler-conjecture",
+    "themes": ["formal-verification", "proof-assistants", "hol-light", "kepler-conjecture"],
+    "thesis": "Formal proof systems like HOL Light, Coq, and Isabelle allow mathematical theorems to be verified by machine with near-absolute certainty: the system's kernel is a tiny, scrutinized core of inference rules, and every theorem is traced back to a handful of axioms; the Flyspeck project's formal verification of the Kepler conjecture demonstrated that this approach can handle proofs of genuine research-level mathematics.",
+    "key_claims": [
+      "A programmer introduces ~1.5 bugs per line; ~1 bug per 100 lines ships undetected. HOL Light's kernel is < 500 lines and has had only ~3–5 bugs found over 15–20 years of scrutiny.",
+      "HOL Light's type system, 10 inference rules, and 3 axioms (extensionality, infinity, choice) form a foundation small enough to be fully audited.",
+      "Cross-verification between independent proof systems drops the failure probability as p^n, making formal proofs effectively certain.",
+      "The de Bruijn factor — the ratio of formal proof length to traditional proof length — is remarkably stable at ~4× across different theorems.",
+      "The Flyspeck project formalized the Kepler conjecture (no ball packing exceeds FCC density π/(3√2) ≈ 74.05%) in ~20 work-years, 300 pages, and 40,000 lines of HOL Light.",
+      "The QED vision envisions a complete library of all significant mathematical results as formal proofs — 'the sequencing of a mathematical genome.'"
+    ],
+    "methods_math": ["higher-order logic", "type theory and Church's λ-calculus", "sequent calculus", "inference rules (reflexivity, β-reduction, modus ponens, etc.)", "axioms of extensionality, infinity, choice", "sphere packing geometry", "Temml typeset mathematics", "Plotly bar/line charts", "canvas: concentric kernel architecture", "canvas: world map of proof systems", "canvas: formalization pipeline", "canvas: FCC sphere packing with rotation"],
+    "visualizations": ["Plotly: bug-density bar chart (log scale)", "interactive proof-step animation (1+1=2)", "canvas: HOL Light kernel architecture (concentric circles)", "tabbed interface: types, terms, theorems, inference rules, axioms", "Plotly: cross-verification failure probability chart", "reliability comparison stat bars", "interactive historical timeline (1954–2008)", "canvas: world map of proof-assistant preferences", "canvas: 5-stage formalization pipeline (clickable)", "Plotly: de Bruijn factor chart", "canvas: FCC sphere packing with rotation slider", "Plotly: QED scale chart", "canvas: automation spectrum"],
+    "internal_tensions": [
+      "The page presents formal proof as a near-solved reliability problem, but the de Bruijn factor of ~4× and the ~1 week per page cost mean that formalizing all of mathematics remains infeasible; the QED vision is aspirational, not imminent.",
+      "The 'reliability' comparison bars (90% → 99.99% → 99.9999% → ≈ certainty) are illustrative, not measured — the actual bug rates of proof-system kernels are not well-quantified."
+    ],
+    "related_files": []
+  },
+  {
+    "path": "theory_of_deep_learning_simple.html",
+    "slug": "theory_of_deep_learning_simple",
+    "title": "Die mathematische Theorie des Deep Learning — Einfach erklärt",
+    "lang": "de",
+    "size_kb": 54.5,
+    "category": "ki",
+    "category_reason": "Main subject is the mathematical theory of deep learning: approximation, optimization, and generalization of neural networks — core ML theory.",
+    "theme": "deep-learning-theory, approximation-theory, optimization, generalization, adversarial-examples, vanishing-gradient",
+    "themes": ["deep-learning-theory", "approximation-theory", "optimization", "generalization", "adversarial-examples", "vanishing-gradient"],
+    "thesis": "The mathematical theory of deep learning rests on three pillars — approximation (what can a network represent?), optimization (how do we find good weights?), and generalization (why does it work on unseen data?) — and the unifying insight is that depth, not width, is the source of neural networks' expressive power: chaining ReLU kinks multiplies the number of piecewise-linear regions exponentially, while adding them only grows linearly.",
+    "key_claims": [
+      "A ReLU network is a piecewise-linear function: each neuron adds one kink, and the network's representational power is bounded by the number of linear regions it can form.",
+      "Telgarsky's bound: a ReLU network of depth L and width w has at most (2w)^L piecewise-linear regions; with 30 neurons arranged deep-and-narrow (w=3, L≈10), this reaches ~60 million regions vs ~31 for a single wide layer.",
+      "Yarotsky's 2017 result: the piecewise-linear interpolant of x² at 2ⁿ knot points can be built with only O(n) parameters (not O(2ⁿ)), via a telescoping sum of the sawtooth function — giving exponential accuracy at linear cost.",
+      "Vanishing gradients: with sigmoid (max σ′ = 0.25), the gradient after n layers shrinks as 0.25^n ≈ 10⁻²⁴ at n=40; ReLU (σ′ ∈ {0,1}) avoids this, which is why it enabled modern deep learning.",
+      "Double descent: in the overparameterized regime (more parameters than data points), the test error decreases again after the interpolation point, contradicting the classical bias-variance tradeoff.",
+      "Adversarial examples are not a bug but a necessity: any smoothly classifying function in high dimensions must have decision boundaries that can be crossed by arbitrarily small perturbations."
+    ],
+    "methods_math": ["piecewise-linear approximation theory", "Telgarsky's region-counting bound", "Yarotsky's telescoping-sum construction", "gradient descent and loss-landscape analysis", "Neural Tangent Kernel (NTK) theory", "double descent phenomenon", "adversarial perturbation geometry", "vanishing gradient analysis", "canvas: all interactive demos"],
+    "visualizations": ["canvas: overfitting demo — polynomial degree vs training/test error with live polynomial fit", "canvas: vanishing gradient — (max σ′)^n readout for sigmoid vs ReLU", "canvas: universal approximation — piecewise-linear interpolant of target functions (zigzag, Runge, step)", "canvas: sawtooth chaining — h₁(x) iterated n times, teeth doubling per layer", "canvas: piece-count budget — (2w)^L vs depth allocation for fixed 30 neurons", "canvas: Yarotsky x² — piecewise-linear interpolant at 2ⁿ knots with error/bound/size readouts", "canvas: gradient descent — 2D loss landscape heatmap with step-by-step trajectory", "canvas: double descent — classical vs observed test error vs model size", "canvas: adversarial example — decision boundary with shortest adversarial step"],
+    "internal_tensions": [
+      "The page explicitly flags its own limitations in the 'Grenzen' section: the exponential region bounds are not achieved by randomly-initialized networks (expected region count grows only linearly in depth per Hanin & Rolnick), and Yarotsky's optimal weights are discontinuous — no stable training algorithm can reach them.",
+      "The 'Honesty corner' acknowledges that all diagrams are 1D/2D pedagogical reconstructions, not the actual high-dimensional phenomena."
+    ],
+    "related_files": []
+  }
+]

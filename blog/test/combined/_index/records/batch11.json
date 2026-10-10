@@ -1,0 +1,495 @@
+[
+  {
+    "path": "token_manifold_verletzt.html",
+    "slug": "token_manifold_verletzt",
+    "title": "Token-Embeddings verletzen die Manifold-Hypothese — Interaktiv",
+    "lang": "de",
+    "size_kb": 85.0,
+    "category": "ki",
+    "category_reason": "Geometrie der Embeddings: statistischer Test, ob die Token-Eingabematrix realer LLMs ein glattes Manifold (bzw. Fiber Bundle) ist — Ergebnis: nein (Robinson, Dey, Chiang, NeurIPS 2025).",
+    "theme": "geometry-of-embeddings",
+    "themes": ["geometry-of-embeddings", "manifold-hypothesis", "fiber-bundles", "token-geometry", "out-of-distribution"],
+    "thesis": "Die Token-Embeddings realer Sprachmodelle liegen nicht auf einem glatten Manifold (und meist nicht einmal auf einem Fiber Bundle); sie enthalten Singularitäten, die Prompt-Fragilität erklären und in die Ausgabe hineinwandern.",
+    "key_claims": [
+      "Manifold-Hypothese wird für alle vier getesteten Modelle (GPT2, Llemma7B, Mistral7B, Pythia6.9B) hochsignifikant verworfen (p bis 3×10⁻⁸ nach Holm-Bonferroni).",
+      "Fiber-Bundle-Hypothese wird für drei von vier Modellen verworfen (Pythia6.9B nicht).",
+      "Der Test misst Dimension als Steigung im log-log-Plot (Volumen ≈ Punktzahl im Radius r); Krümmung = Korrekturterm, Singularität = Knick nach oben.",
+      "GPT2-Embedding ist Mischverteilung mit drei Dimensionsgipfeln (~20, ~389, ~531); es gibt sogar Tokens mit Dimension 0 (isolierte Punkte).",
+      "Irreguläre Tokens sind Wortanfangstokens, Homonyme (affect, monitor, wins, aunder) und Tokens, die Sprach-Manifolds unterschiedlicher Dimension verkleben.",
+      "Zwei Modelle mit identischem Vokabular (Llemma7B/Mistral7B) haben sehr verschiedene Geometrie (Median-Dimension 4096 vs 48) — Training hinterlässt einen Fingerabdruck.",
+      "Lemma 1: längerer Kontext beseitigt Singularitäten nicht dauerhaft; Theorem 2: Singularitäten wandern in die Transformer-Ausgabe, sofern 2d < ℓ.",
+      "Praxisfolge: UMAP/t-SNE-Schlüsse, geodätische Abstände und De-Embedding per Skalarprodukt über Token-Räumen sind fragwürdig; Prompts nicht zwischen Modellen portabel."
+    ],
+    "methods_math": ["Manifold-Hypothese", "Fiber-Bundle-Hypothese", "Dimensionsmessung als log-log-Steigung (Monte-Carlo)", "Reach (τ)", "Gray-Krümungskorrektur (1974)", "einseitiger t-Test", "Holm-Bonferroni-Korrektur", "Quotienten-Lemma (Manifold × Y)", "PCA"],
+    "visualizations": [
+      "Prompt-Fragilitäts-Demo (semantisch gleiche Prompts → zwei Antwortwolken)",
+      "Zoom-Radius Manifold-Test (flache Scheibe vs Singularität)",
+      "Monte-Carlo Dimensionsmessung und Krümmungskorrektur",
+      "Reach-Test (Eindeutigkeit des nächsten Punkts)",
+      "Fiber-Bundle-Streifen (Signal × Rauschen, zwei Größenskalen)",
+      "Zwei-Nullhypothesen-Diagramm (Manifold- vs Bündel-Test)",
+      "Algorithmus-7-Schritte an echten Punkten",
+      "t-Test und 50.000-Tests mit Holm-Schwelle",
+      "3 Validierungsformen in 3D (Sphäre / Cusp / Lollipop)",
+      "GPT2-Dimensionshistogramm (drei Gipfel) und Token-Suchtabelle",
+      "PCA-Nachbarschaft von 'ember' in Mistral7B (Cusp/Pinch-Punkte)",
+      "Kontextfenster-Experiment und Theorem-2-Prüfer"
+    ],
+    "internal_tensions": [
+      "Nicht-Verwerfen ≠ 'ist ein Manifold' (Test ist uninformativ, nur Verwerfen ist eine Aussage).",
+      "Ein Verwerfen sagt nicht, welche Art Singularität vorliegt.",
+      "Nur Radien r < Reach τ sind gültig; τ ist schwer zu schätzen (zentrale Limitation).",
+      "Test brauchbar nur mit Zugriff auf die Embedding-Matrix (Open Weights).",
+      "Cusp wird erkannt (p<5×10⁻⁸), aber ein Rand wird übersehen (p>0,001) — Sensitivität kostet Spezifität, wird offen berichtet."
+    ],
+    "related_files": ["phasenraum.html", "wie_ein_llm_denkt.html", "paper.html", "latter_inner.html"]
+  },
+  {
+    "path": "topologische_quantenfeldtheorie.html",
+    "slug": "topologische_quantenfeldtheorie",
+    "title": "Topological Quantum Field Theory — Visual Explorer",
+    "lang": "en",
+    "size_kb": 84.3,
+    "category": "nicht-ki",
+    "category_reason": "Reine Topologie/Quantenfeldtheorie: TQFT als Funktor Z: Cob → Vect, Cobordismen, Genus, Knoteninvarianten; kein Bezug zu ML/NN/Transformer.",
+    "theme": "algebraic-topology",
+    "themes": ["algebraic-topology", "tqft", "cobordism", "knot-theory", "functor", "monoidal-category"],
+    "thesis": "Eine TQFT weist Räumen topologische Invarianten zu, die nur von der Form (Verbindungszahl/Genus) und nicht von Größe oder Winkel abhängen — formal ein monoidaler Funktor von der Kategorie der Cobordismen nach Vektorräumen.",
+    "key_claims": [
+      "Topologisch äquivalente Räume (Kaffeebecher/Tonne, gleiche Genus) erhalten denselben TQFT-Wert; Geometrie wird ignoriert, nur Verbindungszahl zählt.",
+      "Oberflächen werden durch ihre Genus (Anzahl Löcher) klassifiziert; Genus bleibt unter stetiger Deformation erhalten.",
+      "Cobordismen (z.B. 'Pair of Pants' 1→2 Kreise) werden zu linearen Abbildungen; Pair-of-Pants = Multiplikation, Cap/Cup = Erzeugen/Bewerten = Trace.",
+      "Knoten (Unknot, Trefoil, Figure-8, Hopf Link) haben aus der TQFT berechenbare Invarianten; das Jones-Polynom stammt aus einer TQFT.",
+      "Functor-Axiome: Funktionalität (Kleben von Cobordismen = Komposition von Maps) und Monoidalität (disjoint union = Tensorprodukt)."
+    ],
+    "methods_math": ["Genus / Verbindungszahl", "Cobordismen (Mannigfaltigkeiten mit Rand)", "monoidaler Funktor Z: Cob → Vect", "Knoten-/Link-Invarianten", "Jones-Polynom", "Trace / Cap / Cup"],
+    "visualizations": [
+      "Shape-Invariant-Demo (Hover zeigt Invarianten, Click morphen)",
+      "Topology-Playground (Genus-Slider + Drag-Deformation)",
+      "Cobordismen-Builder (Kreise platzieren, 'Connect')",
+      "Pair-of-Pants und Cap/Cup",
+      "Topological-Invariants-Spiel (äquivalent oder nicht)",
+      "Knot Lab (Presets + eigene Knoten, Invariant 'real-time')",
+      "TQFT-Funktor-Mapping (Topologie → Algebra, Komposition)",
+      "Axiome-Visualisierung (Funktionalität, Monoidalität)"
+    ],
+    "internal_tensions": [
+      "Didaktische Vereinfachung: 'Quantum Dim' / 'Quantum State Space' nur heuristisch beschriftet, echte 2D-TQFT (Reshetikhin–Turaev) wird nicht berechnet.",
+      "'Knoten-Invarianten in real-time' ist didaktisch überhöht; die zugrundeliegende Algebra wird nicht wirklich ausgeführt."
+    ],
+    "related_files": ["kategorientheorie.html", "hott_book.html", "paper.html", "coherent_worldview.html"]
+  },
+  {
+    "path": "buecher/antioed.html",
+    "slug": "buecher/antioed",
+    "title": "Wie ein Sprachmodell denkt — Attention, FFN und die Rolle der Schichten",
+    "lang": "de",
+    "size_kb": 84.2,
+    "category": "ki",
+    "category_reason": "Transformer-Erklärbarkeit: Attention/Kollaps (Geshkovski), FFN als Key-Value-Speicher (Geva), Superposition (Elhage), SwiGLU (Shazeer). EXAKTES DUPLIKAT von wie_ein_llm_denkt.html (gleicher Titel und Inhalt).",
+    "theme": "transformer-attention",
+    "themes": ["transformer-attention", "transformer-ffn", "ffn-memory", "superposition", "interpretability", "metastability"],
+    "thesis": "Ein Transformer-Block ist ein Gleichgewicht aus Kontraktion (Attention zieht Tokens zu Clustern, ohne Gegenkraft Kollaps) und Verfeinerung (FFN als Key-Value-Speicher addiert auf den Residual-Stream), das über zwei orthogonale Achsen (Positionen vs Features) läuft.",
+    "key_claims": [
+      "Attention arbeitet über Positionen, das FFN über Features — orthogonal, daher können sie sich nicht in die Quere kommen [Vaswani §3.3].",
+      "Attention ohne Gegenkraft kollabiert fast alle Tokens zu einem einzigen Punkt (bewiesen für d≥3, exponentiell schnell für d≥n) [Geshkovski 2024]; reale Modelle leben in einem metastabilen Zustand (zu wenig Schichten für Phase 2).",
+      "Die Form des Kollaps hängt vom Spektrum der Value-Matrix V ab — vier Fälle (Identität / einfach λ>0 / paranormal / −Identität) [Geshkovski 2023].",
+      "Das FFN ist ein Key-Value-Speicher: erste Matrix = Schlüssel (Muster), zweite = Werte (nächste-Wort-Verteilung); 3,6 Muster pro Schlüssel [Geva].",
+      "Der Residual-Stream dominiert die endgültige Vorhersage; das FFN verfeinert (Kom-promiss), ersetzt die Vorhersage selten [Geva].",
+      "Superposition: spärliche Features werden als fast-orthogonale Richtungen übereinandergelegt (Phasenübergang, nicht graduell) [Elhage] — widerspricht Keups Falt-Bild.",
+      "SwiGLU ist multiplikatives Gating (Produkt zweier Projektionen), keine elementweise Nichtlinearität; GLU-Varianten schlagen ReLU [Shazeer]."
+    ],
+    "methods_math": ["Self-Attention (Q/K/V)", "inverse Temperatur β (statistische Physik)", "LayerNorm (Kugel-Projektion)", "Eigenwerte von V", "Key-Value-Deutung (Geva)", "Superposition / Phasenübergang (Elhage)", "SwiGLU/GELU (Shazeer)", "Residual Stream"],
+    "visualizations": [
+      "Zwei-Achsen-Tabelle (Attention über Positionen →, FFN über Features ↓)",
+      "Attention live (Linien = Gewichte, Temperatur-β)",
+      "Tokens auf der Kugel + Kollaps-Animation + Histogramm der Skalarprodukte",
+      "Vier Kollaps-Fälle (je nach Spektrum von V)",
+      "FFN-Speicher (Präfix → anspringende Schlüssel → nächste-Wort-Verteilung)",
+      "Origami-Falten (Flachtrennung in 3D)",
+      "Superpositions-Schieberegler (Sparsity)",
+      "Residual-Stream-Balken über 16 Schichten",
+      "Der vollständige Block (beide Kräfte + Residual)"
+    ],
+    "internal_tensions": [
+      "Keups Falt-Bild vs Superposition: widersprüchliche Dimensionsregime (Dimensionen > Begriffe vs Features ≫ Dimensionen); kein Papier zitiert das andere.",
+      "Falten unter SwiGLU (multiplikatives Gating) greift als Hyperebenen-Bild nicht — offen.",
+      "LayerNorm-Effekt auf die Geometrie von keinem der 7 Papiere untersucht.",
+      "Visualisierungen sind 2D/3D-Vereinfachungen; echte Modelle arbeiten in 512–4096 Dimensionen.",
+      "EXAKTES DUPLIKAT von wie_ein_llm_denkt.html."
+    ],
+    "related_files": ["wie_ein_llm_denkt.html", "token_manifold_verletzt.html", "latter_inner.html", "paper.html"]
+  },
+  {
+    "path": "wie_ein_llm_denkt.html",
+    "slug": "wie_ein_llm_denkt",
+    "title": "Wie ein Sprachmodell denkt — Attention, FFN und die Rolle der Schichten",
+    "lang": "de",
+    "size_kb": 84.2,
+    "category": "ki",
+    "category_reason": "Transformer-Erklärbarkeit: Attention/Kollaps (Geshkovski), FFN als Key-Value-Speicher (Geva), Superposition (Elhage), SwiGLU (Shazeer). Original; Duplikat unter buecher/antioed.html.",
+    "theme": "transformer-attention",
+    "themes": ["transformer-attention", "transformer-ffn", "ffn-memory", "superposition", "interpretability", "metastability"],
+    "thesis": "Ein Transformer-Block ist ein Gleichgewicht aus Kontraktion (Attention zieht Tokens zu Clustern, ohne Gegenkraft Kollaps) und Verfeinerung (FFN als Key-Value-Speicher addiert auf den Residual-Stream), das über zwei orthogonale Achsen (Positionen vs Features) läuft.",
+    "key_claims": [
+      "Attention arbeitet über Positionen, das FFN über Features — orthogonal, daher keine gegenseitige Störung [Vaswani §3.3].",
+      "Attention ohne Gegenkraft kollabiert fast alle Tokens zu einem Punkt (bewiesen für d≥3, exponentiell für d≥n) [Geshkovski 2024]; reale Modelle leben metastabil (empirisch an ALBERT XLarge v2, d=4096, n≈512–1024).",
+      "Die Form des Kollaps hängt vom Spektrum der Value-Matrix V ab — vier Fälle [Geshkovski 2023, Tab. 1].",
+      "Das FFN ist ein Key-Value-Speicher (Schlüssel = Muster, Werte = nächste-Wort-Verteilung); 3,6 Muster/Schlüssel; Schicht 1–9 oberflächlich, 10–16 semantisch, mit Aktivitätseinbruch um Schicht 10 [Geva].",
+      "Der Residual-Stream dominiert die Vorhersage; das FFN verfeinert (Kompromiss), ersetzt sie selten [Geva Fig. 9 & 11].",
+      "Superposition: spärliche Features werden als fast-orthogonale Richtungen übereinandergelegt, erkauft mit Interferenz und polysemantischen Neuronen (Phasenwechsel) [Elhage].",
+      "SwiGLU ist multiplikatives Gating (Produkt zweier Projektionen), keine elementweise Nichtlinearität; GLU-Varianten schlagen ReLU, d_ff wird um ⅔ reduziert [Shazeer]."
+    ],
+    "methods_math": ["Self-Attention (Q/K/V)", "inverse Temperatur β", "LayerNorm (Kugel-Projektion)", "Eigenwerte von V (Kollaps-Geometrie)", "Key-Value-Deutung (Geva)", "Superposition / Phasenübergang (Elhage)", "SwiGLU/GELU (Shazeer)", "Residual Stream"],
+    "visualizations": [
+      "Zwei-Achsen-Tabelle (Attention über Positionen →, FFN über Features ↓)",
+      "Attention live (Linien = Gewicht, Schärfe-β, 'Bank am Fluss' vs 'Bank Kredit')",
+      "Tokens auf der Kugel + Kollaps + Histogramm der paarweisen Skalarprodukte (ALBERT-Messung)",
+      "Vier Kollaps-Fälle (Spektrum von V)",
+      "FFN-Speicher (Präfix → Schlüssel → nächste-Wort-Verteilung, Schicht 13)",
+      "Origami-Falten (Flachtrennung, Anzahl Falten)",
+      "Superpositions-Schieberegler (Sparsity, 2D-Regime)",
+      "Residual-Stream-Balken (16 Schichten, Geva-Fig. 9/11)",
+      "Der vollständige Block (Attention-Stärke, FFN-Stärke, Schichten)"
+    ],
+    "internal_tensions": [
+      "Keups Falt-Bild vs Superposition: direkte, echte Spannung — widersprüchliche Dimensionsregime, keine Synthese, beide Papiere zitieren sich nicht (als 'Interpretation, nicht belegt' markiert).",
+      "Falten unter SwiGLU greift als Hyperebenen-Bild nicht (multiplikatives Gating).",
+      "LayerNorm-Effekt auf die Geometrie von keinem der 7 Papiere untersucht.",
+      "Keups Falt-Bild gilt laut Autoren selbst nur für vollverbundene FFNs, nicht für Transformer; zentrale Behauptung 'nicht durch strenge Rechnung quantifiziert'.",
+      "Visualisierungen sind 2D/3D-Vereinfachungen; echte Modelle arbeiten in 512–4096 Dimensionen.",
+      "Kapitel 10 'Belegstatus' kennzeichnet offen, welche Aussagen belegt, welche Analogie, welche offen/widersprüchlich sind."
+    ],
+    "related_files": ["buecher/antioed.html", "token_manifold_verletzt.html", "latter_inner.html", "paper.html"]
+  },
+  {
+    "path": "kategorientheorie.html",
+    "slug": "kategorientheorie",
+    "title": "Interaktive Kategorientheorie",
+    "lang": "de",
+    "size_kb": 84.0,
+    "category": "nicht-ki",
+    "category_reason": "Reine Kategorientheorie: Kategorien, Morphismen, Funktoren, natürliche Transformationen, Limiten/Kolimiten, Adjunktionen, Yoneda-Lemma, Monaden (Eilenberg & Mac Lane, 1940er); kein ML-Bezug.",
+    "theme": "category-theory",
+    "themes": ["category-theory", "functors", "natural-transformations", "limits", "adjunction", "yoneda", "monads"],
+    "thesis": "Kategorientheorie ist die 'Mathematik der Mathematik': statt einzelner Objekte studiert sie die Strukturen und Beziehungen zwischen ihnen — Morphismen, strukturerhaltende Funktoren und universelle Eigenschaften.",
+    "key_claims": [
+      "Eine Kategorie C besteht aus Objekten, Morphismen Hom(A,B), assoziativer Komposition und Identitätsmorphismen.",
+      "Beispiel-Kategorien: Set, Grp, Top, Vect_K (je mit ihren Morphismen).",
+      "Spezielle Morphismen: Mono (injektiv), Epi (surjektiv), Iso (bijektiv), Endo, Auto.",
+      "Funktoren F: C → D sind strukturerhaltend (erhalten Komposition und Identitäten); kovariant/kontravariant, Vergiss-, Freier Funktor.",
+      "Natürliche Transformation η: F ⇒ G = Familie von Morphismen mit kommutativem Diagramm (G(f)∘η_A = η_B∘F(f)).",
+      "Produkte/Koprodukte und Limiten/Kolimiten (Pullback, Pushout, Equalizer, initial/terminal Objekt) sind universelle Eigenschaften.",
+      "Adjunktion F ⊣ G: natürliche Bijektion Hom_D(F(A),B) ≅ Hom_C(A,G(B)).",
+      "Yoneda-Lemma: Nat(Hom(—,A), F) ≅ F(A) — ein Objekt ist durch die in es hineinführenden Morphismen bestimmt.",
+      "Monade (T, η, μ) mit Assoziativitäts- und Einheitsaxiomen; Grundlage in der Programmierung (Haskell)."
+    ],
+    "methods_math": ["Kategorie", "Morphismus / Komposition", "Funktor", "natürliche Transformation", "universelle Eigenschaft (Produkt/Limit/Kolimit)", "Adjunktion", "Yoneda-Lemma / Yoneda-Einbettung", "Monade (Endofunktor, Unit, Join)"],
+    "visualizations": [
+      "Drei Grundbausteine (Animation, Objekte klickbar, Pfeile mit Tooltip)",
+      "Eigene Kategorie bauen (Objekte/Morphismen, Axiome prüfen; Set/Grp/Poset-Beispiele)",
+      "Morphismus-Typen (Mono/Epi/Iso/Endo/Auto) animiert",
+      "Komposition Schritt-für-Schritt (f, g, g∘f)",
+      "Funktor-Typen (kovariant/kontravariant/Vergiss/frei)",
+      "Natürliche Transformation (3 Schritte: F,G → Komponenten → Kommutativität)",
+      "Produkt/Koprodukt (universelle Eigenschaft)",
+      "Limiten/Kolimiten (5 Konstruktions-Typen)",
+      "Adjunktion (Bijektion Hom_D ≅ Hom_C)",
+      "Yoneda (3 Schritte: Hom-Funktor → F → Bijektion)",
+      "Monade (3 Schritte: Endofunktor → Unit → Multiplikation; Maybe/Liste/abstrakt)"
+    ],
+    "internal_tensions": [
+      "Monaden werden mit Haskell verknüpft, aber die Seite behandelt sie als reine Mathematik (keine Programmiersemantik).",
+      "Stark didaktisch vereinfacht (Eilenberg & Mac Lane 1940er); 'bekannte Kategorien' nur schematisch."
+    ],
+    "related_files": ["hott_book.html", "topologische_quantenfeldtheorie.html", "coherent_worldview.html", "hott_ai.html"]
+  },
+  {
+    "path": "coherent_worldview.html",
+    "slug": "coherent_worldview",
+    "title": "COHERENT — a wordless visual essay",
+    "lang": "en",
+    "size_kb": 82.4,
+    "category": "nicht-ki",
+    "category_reason": "Wortloser visueller Essay über Kohärenz/World-Models/Embodiment über Sheaf-Metaphorik (Lokalität, Gluing, offene Mengen); keine konkrete Anwendung auf NN/Transformer/ML.",
+    "theme": "world-models",
+    "themes": ["world-models", "sheaves", "coherence", "locality", "embodiment", "category-theory"],
+    "thesis": "Eine kohärente Weltsicht entsteht, wenn lokale Stücke (Patches) nach der Sheaf-Bedingung zu einem Ganzen verklebt werden; Inkohärenz zeigt sich an Fugen und Pathologien — ausgedrückt als 19-szeniger wordless Canvas-Essay.",
+    "key_claims": [
+      "Aufbau (S0 Hero): Line → Distinction → Patches → Whole, d.h. ein Ganzer wird aus lokalen Unterschieden zusammengebaut.",
+      "S5 'The Sheaf': ein Panorama, das man durch Misalignement (Verkleben-Lassen) zerbricht — die Sheaf/Gluing-Kondition.",
+      "S4 Locality (verschachtelte offene Mengen), S3 Partition (Punkte sortieren in Boxen), S2 Distinction (einen Cut zeichnen).",
+      "S6 'Train': fünf Streams, die desynchronisiert werden — Kohärenz = Phasentreue vieler Signale.",
+      "S7 Gleichheit → Äquivalenz ('lightning triangle'), S8 drei Arten von Unterschied, S9 'Sameness ladder'.",
+      "S10 admissible transitions (T-Slider weiten), S12 'Truth 2×2' (Kohärenz × Correspondence), S13 fünf Pathologien.",
+      "S16 History-Constellation, S17 Embodiment-Ladder, S18 Coda — Fugen sichtbar im Ganzen."
+    ],
+    "methods_math": ["Sheaf-Theory (Lokalität, Gluing, offene Mengen)", "Distinction / Partition", "Gleichheit → Äquivalenz", "Metaphorik von Wellen/Phasen (Train)"],
+    "visualizations": [
+      "19 wordless Canvas-Szenen (S0–S18)",
+      "S1 The Chain (9 Leisten, sequenzielles Glühen)",
+      "S2 Distinction (Cut zeichnen)",
+      "S3 Partition (Punkte in Boxen sortieren)",
+      "S4 Locality (verschachtelte offene Mengen)",
+      "S5 The Sheaf (Panorama, misalignen um zu brechen)",
+      "S6 Train (5 Streams desyncen)",
+      "S7 Lightning triangle (Gleichheit→Äquivalenz)",
+      "S8 drei Arten von Unterschied",
+      "S9 Sameness-Ladder",
+      "S10 admissible transitions (T-Slider)",
+      "S12 Truth 2×2 (Kohärenz × Correspondence)",
+      "S13 fünf Pathologien",
+      "S16 History-Constellation (Punkte mit Jahren)",
+      "S17 Embodiment-Ladder",
+      "S18 Coda (Fugen sichtbar im Ganzen)"
+    ],
+    "internal_tensions": [
+      "Wordless — die Bedeutung hängt an visueller Metaphorik; es gibt keine explizite Verbindung zu ML/LLMs.",
+      "Sheaf-Metaphorik ist philosophisch/nachvollziehbar, aber nicht formal auf ein neuronales Modell oder Transformer angewandt (daher nicht-ki).",
+      "Zwei Abschnitte (S11, S14/15) fehlen in der Kommentar-Nummerierung — Essay ist absichtlich lückenhaft/kunstvoll."
+    ],
+    "related_files": ["phasenraum.html", "kategorientheorie.html", "hott_book.html", "token_manifold_verletzt.html"]
+  },
+  {
+    "path": "hott_ai.html",
+    "slug": "hott_ai",
+    "title": "Homotopie-Typentheorie für KI — Interaktive Reise",
+    "lang": "de",
+    "size_kb": 81.4,
+    "category": "ki",
+    "category_reason": "Mathematik-für-KI: HoTT als neues Fundament der KI-Architektur (Douglas C. Youvan, April 2024, Positionspapier) — formale Verifikation, Unsicherheit höherer Ordnung, Semantic Web, Quanten-KI, XAI.",
+    "theme": "hott",
+    "themes": ["hott", "univalent-foundations", "type-theory", "ai-foundation", "formal-verification", "xai", "quantum-ml"],
+    "thesis": "HoTT (Typen als Räume, Gleichheit als Pfad, ∞-Gruppoid, Unvalenz) kann als Fundament KI-Systeme verifizierbar, erklärbar und robust machen — als Positionsvorschlag, nicht als implementiertes System (Youvan 2024).",
+    "key_claims": [
+      "Drei Kernprobleme heutiger KI: Blackbox, Brüchigkeit, fehlende Garantien; HoTT soll diese an der Wurzel angehen.",
+      "Curry-Howard: Sätze sind Typen, Beweise sind Programme; ein reiches Typsystem fängt Fehler vor der Ausführung (Tensor-Shape, PII, Wahrscheinlichkeit).",
+      "Identitätstypen: 'a = b' ist nicht Wahr/Falsch, sondern der Typ aller Pfade zwischen a und b — mehrere Gleichheitsarten möglich (z.B. zwei Bilder derselben Katze).",
+      "Höhere Dimensionen: Pfade zwischen Pfaden (2-, 3-Pfade …) ergeben ein ∞-Gruppoid; erlaubt formale Rechtfertigung von Refaktorisierungen.",
+      "Sechs Anwendungsgebiete: formale Verifikation (Differential Privacy, Fairness, Adversarial Robustness), Unsicherheit höherer Ordnung ('Sicherheit über Sicherheit' als 2-Pfad), Semantic Web/Knowledge-Graph via Identitätspfade, Quanten-KI (Qubit auf Bloch-Kugel, Gates als Pfade), XAI (nachvollziehbare Entscheidungspfade).",
+      "Das Paper ist explizit ein Positionspapier/Vision: kein Experiment, keine Benchmark-Zahlen, kein Code, keine Beweis-Konstruktion — die Aufgabe ist Tooling/Sprachen/Community."
+    ],
+    "methods_math": ["Homotopie-Typentheorie", "Identitätstypen (Pfade)", "∞-Gruppoid", "Unvalenz", "Curry-Howard-Isomorphismus", "Beweisassistenten (Coq/Lean/Agda)", "Bloch-Kugel / Qubit", "höherdimensionale Typen für Superposition"],
+    "visualizations": [
+      "Landkarte der Reise (Prereq gelb, Kern blau, Anwendung lila)",
+      "Typ-Check-Playground (Wert + Funktion)",
+      "Curry-Howard-Regler (LOGIK ↔ TYPEN)",
+      "Homotopie-Pfad-Deformation (Bogen → Zielform, Deformation-Regler)",
+      "Identitätstypen (Pfade zwischen zwei Punkten, Anzahl Pfade)",
+      "3D 'Turm der Gleichheiten' (∞-Gruppoid, Punkte→Pfade→Flächen→Volumina)",
+      "Verifikations-Szenarien (Privacy/Fairness/Robustness)",
+      "Medizinische Diagnose (Symptom/Test/Vertrauen → Wahrscheinlichkeitsverteilung, Meta-Unsicherheit)",
+      "Ontologie-Graph (Krankheiten/Symptome/Behandlungen, HoTT-Äquivalenzen, Datenquellen)",
+      "Qubit auf der Bloch-Kugel (θ/φ, Messen)",
+      "Entscheidungspfad-Explorer (Pfad durch das Modell, Äquivalenz-Klassen)"
+    ],
+    "internal_tensions": [
+      "Positionspapier ohne Implementierung/Benchmark — 'Was NICHT im Paper steht' wird explizit aufgeführt (kein Experiment, keine Zahlen, kein Code, kein Beweis).",
+      "Nannte Herausforderungen: HoTT mathematisch schwer, bestehende ML-Frameworks passen nicht, Rechenoverhead.",
+      "Alle Visualisierungen sind didaktische Vereinfachungen; volle Tiefe verweist aufs HoTT-Book (2013)."
+    ],
+    "related_files": ["hott_book.html", "paper.html", "kategorientheorie.html", "coherent_worldview.html"]
+  },
+  {
+    "path": "paper.html",
+    "slug": "paper",
+    "title": "Transformer Layers as Space-Morphing Maps — Interactive Explorer",
+    "lang": "en",
+    "size_kb": 81.4,
+    "category": "ki",
+    "category_reason": "Transformer-Geometrie: Layer als Faser-Bündel-Morphismen / Space-Morphing, Jacobian-Zerlegung (Divergenz/Curl/Shear), Coq-verifizierte Eigenschaften (Norman Koch, April 2026).",
+    "theme": "transformer-geometry",
+    "themes": ["transformer-geometry", "fibre-bundles", "jacobian", "differential-geometry", "interpretability", "holographic-representation"],
+    "thesis": "Transformer-Schichten 'bewegen' Token-Vektoren nicht, sondern verzerren den Repräsentationsraum (Space-Morphing / Faser-Bündel-Morphismus); der lokale Verzug wird vom Jacobian beschrieben, das Coq-verifiziert in einen symmetrischen (Stretch/Shear/Divergenz) und einen antisymmetrischen (Rotation/Curl) Teil zerfällt.",
+    "key_claims": [
+      "Gleiche Endlage, andere Interpretation: 'point moves' (traditionell) vs 'space warps' (neu) — die Schicht formt den gesamten Raum, der Punkt reitet nur mit.",
+      "Faser-Bündel: Base = Token-Positionen {1..n}, Faser = Repräsentation je Schicht (wie Etagen), Layer-Map = 'Aufzug' zwischen Etagen.",
+      "Das Jacobian J zerfällt in J_sym + J_antisym; 10 Eigenschaften sind in Coq verifiziert (z.B. J_antisym antisymmetrisch und trace-free, ⟨J_sym,J_antisym⟩_F = 0, Divergenz kommt nur vom Strain).",
+      "Divergenz = tr(J) (Expansion/Kontraktion), Curl = Rotation (trace-free), Shear = spurlöser symmetrischer Teil (reine Formänderung ohne Volumenänderung), Determinante = Volumenänderung.",
+      "Residual-Stream: h[l+1] = h[l] + Δ[l]; J = I + J_Δ; verifiziert tr(I + J_Δ) = n + tr(J_Δ).",
+      "Inner Layers machen die schwerste Arbeit — Layer-Activity-Profil low→high→low, letzte Schicht zeigt oft eine 'Reversal' (un-warps den Raum zurück).",
+      "Holographische Distribution/Polysemantik: Konzepte sind über viele Neuronen/Schichten verteilt; Entfernen von Dimensionen degradiert graceful (wie ein geschnittenes Hologramm), nicht katastrophal."
+    ],
+    "methods_math": ["Differentialgeometrie", "Faserbündel (Base/Faser/Map)", "Jacobian-Matrix", "symmetrische/antisymmetrische Zerlegung", "Divergenz/Curl/Shear/Determinante", "Residual Stream (Identität + Delta)", "Coq-Formalverifikation"],
+    "visualizations": [
+      "Point-Moving vs Space-Morphing (Canvas, Warp-Stärke/Typ)",
+      "Faser-Bündel-Builder (Satz → Token-Fasern → Layer, Displacement = Morphing)",
+      "Interaktive Jacobian-Zerlegung (2×2-Matrix → symmetrisch/antisymmetrisch auf Einheitsquadrat)",
+      "10 Coq-Properties (klickbar, an eigener Matrix)",
+      "Layer-by-Layer Grid Deformation (Layer-Slider, Strain-Farben)",
+      "Interaktives Jacobian-Feld (Divergenz/Curl/Shear/Combined, Flow-Pfeile, Hover)",
+      "Residual-Stream-Akkumulation (per-Layer Deltas + Running Sum)",
+      "Layer Activity Profile (low→high→low, Reversal-Stärke)",
+      "Holographic Encoding Simulator (Konzepte → hochdim. Encoding → Dimensionen entfernen)",
+      "Concept Map (alle Ideen verknüpft, klickbar)"
+    ],
+    "internal_tensions": [
+      "Simulierter Transformer (heuristische Warps), keine echten Modellgewichte.",
+      "Coq-Proofs verifizieren die Jacobian-Zerlegung, nicht echte LLM-Layer (Proof-Quelle: github.com/NormanTUD/llm_grid).",
+      "'Warp complexity' und 'Reversal strength' sind didaktische Heuristiken."
+    ],
+    "related_files": ["hott_ai.html", "token_manifold_verletzt.html", "wie_ein_llm_denkt.html", "latter_inner.html"]
+  },
+  {
+    "path": "phasenraum.html",
+    "slug": "phasenraum",
+    "title": "Phasenraum — Die dünne Scheibe der Nützlichkeit",
+    "lang": "de",
+    "size_kb": 80.9,
+    "category": "ki",
+    "category_reason": "Physik-für-KI: Phasenraum/Hamilton-Mechanik, energiebasierende Modelle (LeCun), Mannigfaltigkeits-Hypothese, Temperatur/Boltzmann, Halluzination als 'neben die Scheibe fallen' — explizit auf LLMs angewandt.",
+    "theme": "phase-space",
+    "themes": ["phase-space", "energy-based-models", "manifold-hypothesis", "temperature-boltzmann", "out-of-distribution", "hallucination"],
+    "thesis": "Ein KI-Modell ist nur auf einer dünnen, energiearmen 'Scheibe' seines Möglichkeitenraums nützlich — der Scheibe, die sein gelerntes Energiefeld wahrscheinlich gemacht hat; Nützlichkeit = auf der Scheibe, Halluzination = daneben, aber überzeugend klingend.",
+    "key_claims": [
+      "Ein Zustand ist mehr als ein Ort — er ist Ort plus Impuls (q, p); der Phasenraum ist der Raum aller möglichen Zustände.",
+      "Hamiltonsche Energie H = kinetisch + potentiell; Energieerhaltung sperrt das System auf eine dünne Kurve/Fläche (ein Phasenporträt zeigt das: Pendel lebt auf einer einzigen Kurve, Separatrix = knife-edge).",
+      "Bei Temperatur T>0 folgt die Aufenthaltswahrscheinlichkeit der Boltzmann-Verteilung P ∝ e^(−E/T); T ist buchstäblich der Kreativitäts-Regler eines Chatbots (kalt=präzise, heiß=kreativ/chaotisch).",
+      "In hohen Dimensionen wird 'dünn' exponentiell extrem: |V|ⁿ mögliche Antworten (10⁴⁰⁰) übersteigt die Atome im Universum (10⁸⁰) um 10³²⁰ — sinnvolle Antworten sind eine hauchdünne Untermenge.",
+      "Mannigfaltigkeits-Hypothese: sinnvolle Daten liegen auf einer niedrig-dimensionalen Fläche (der Buchstabe 'A' hat nur 2 Freiheitsgrade in 1024 Dimensionen).",
+      "Ein neuronales Netz ist eine Energie über allen (Input,Output)-Paaren (LeCun); Training formt die Energie so, dass die Datenmannigfaltigkeit = das niedrigenergetische Tal wird.",
+      "Halluzination = Input/interner Zustand neben die Scheibe; ein falsches Tal (lokale Mulde ohne Datenbasis) klingt trotzdem überzeugend; das Modell hat keinen eingebauten OOD-Alarm.",
+      "Die Physik ist Metapher, nicht wörtlich — aber die Form ist exakt."
+    ],
+    "methods_math": ["Hamilton-Mechanik (H = T + V)", "Phasenraum / Phasenporträt", "Energieerhaltung & Separatrix", "Boltzmann-Verteilung P ∝ e^(−E/T)", "Mannigfaltigkeits-Hypothese", "Energy-based Models (LeCun)", "Out-of-distribution"],
+    "visualizations": [
+      "Perle auf einem Draht (Ort + Impuls, drei Start-Impulse)",
+      "Harmonischer Oszillator (Ortsraum neben Phasenraum, elliptische Bahnen)",
+      "Energie-Landschaft (Kugel, 4 Landschaftsformen, Umkehrpunkte)",
+      "Phasenporträt eines Pendels (Schwingung/Separatrix/Überschlag, Vektorfeld)",
+      "Temperatur regelt die Verteilung (Energie-Landschaft neben P(q), Auto-Animation)",
+      "Dimensionalitäts-Demo (Vokabular × Länge → 10⁴⁰⁰)",
+      "Buchstabe 'A' (2D-Mannigfaltigkeit in 1024D, Größe × Rotation)",
+      "Training formt die Energie-Landschaft (Datenpunkte drücken Täler)",
+      "Auf der Scheibe vs daneben (Energie, Trainingsdaten, Modell-Zustand, Halluzination)",
+      "Synthese: Phasenraum + Energiescheibe + Boltzmann-Verteilung (Temperatur, Scheibendicke)"
+    ],
+    "internal_tensions": [
+      "Explizit: 'Die Physik ist Metapher, nicht wörtlich — aber die Form ist exakt.'",
+      "'Falsche Taler' = lokale Minima ohne Datenbasis — das Modell fühlt sich sicher und liegt daneben.",
+      "Kein OOD-Alarm: das Modell weiß nicht von selbst, wann es die Scheibe verlässt.",
+      "Scheibendicke/Temperatur sind didaktische Regler, keine gemessenen Modellparameter."
+    ],
+    "related_files": ["token_manifold_verletzt.html", "coherent_worldview.html", "hott_ai.html", "paper.html"]
+  },
+  {
+    "path": "hott_book.html",
+    "slug": "hott_book",
+    "title": "Interactive HoTT Explorer",
+    "lang": "en",
+    "size_kb": 79.9,
+    "category": "nicht-ki",
+    "category_reason": "Reine Homotopie-Typentheorie (HoTT Book, Univalent Foundations Program, IAS 2013): Typen als Räume, Identitätstypen/Pfade, Äquivalenzen, Kontrahierbarkeit, Truncation, Unvalenz, Higher Inductive Types (Kreis S¹); keine KI-Anwendung.",
+    "theme": "hott",
+    "themes": ["hott", "univalent-foundations", "type-theory", "higher-inductive-types", "univalence", "fibration", "identity-types"],
+    "thesis": "In HoTT sind Typen topologische Räume, Element-Zugehörigkeit ein Urteil und Identifikationen Pfade — und die Unvalenz-Axiom macht äquivalente Typen (A ≃ B) gleich (A = B); Höhere inductive Typen definieren Räume wie den Kreis S¹ mit Pfad-Constructoren, deren Loop-Raum ℤ ist.",
+    "key_claims": [
+      "Typ = Raum, Element = Punkt; a : A ist ein Urteil (kein globales ∈ wie in Mengen); vier Urteilstypen (Type, Element, Type-Equality, Element-Equality).",
+      "Typ-Familien über A sind Faserbündel; ein Π-Typ (abhängige Funktion) ist eine Sektion dieses Bündels.",
+      "Die Identitätstypen haben eine ∞-Gruppoid-Struktur: refl, Inverse, Konkatenation, Assoziativität, Einheiten- und Inverse-Gesetze; alle 'Gleichheiten' sind selbst Pfade.",
+      "Transport tr_B(p) bewegt Elemente entlang Pfade — analog zum parallelen Transport der Differentialgeometrie.",
+      "Eine Äquivalenz ist bijektiv auf Punkten und strukturerhaltend; is-equiv(f) ist immer eine Proposition (≤1 Beweis), während has-inverse(f) homotopisch komplex sein kann.",
+      "Kontrahierbare Typen (center c mit c=x für alle x); Σ(x:A) a=x ist kontrahierbar — Fundament für das Fundamental-Theorem der Identitätstypen.",
+      "Truncation-Hierarchie: -2 kontrahierbar, -1 Proposition, 0 Set, 1 1-Gruppoid, k+1 (k+1)-Typ; der Kreis S¹ ist ein 1-Gruppoid.",
+      "Unvalenz: (A = B) ≃ (A ≃ B); folgt daraus Struktur-Identitäts-Prinzip und Funktionserweiterung; der Universum ist kein Set.",
+      "Kreis S¹ = base + loop; π₁(S¹) ≅ ℤ (Windungszahl via encode-decode); Universal-Abdeckung = Helix; weitere HITs: Suspension, Pushout, Truncation, Quotient."
+    ],
+    "methods_math": ["Homotopie-Typentheorie", "Typentheorie (Urteile, Kontexte)", "abhängige Typen / Faserbündel", "Π-Typen", "Identitätstypen (Pfade, ∞-Gruppoid)", "Transport (paralleler Transport)", "Äquivalenzen / is-equiv", "Kontrahierbarkeit", "Truncation-Level", "Unvalenz-Axiom", "Higher Inductive Types", "encode-decode-Methode"],
+    "visualizations": [
+      "The Type Universe (Typen klickbar, Elemente anzeigen)",
+      "Functions as Sections (Faserbündel-Slider, Wigglen/Animate)",
+      "Induction Machine (add/mul/fibonacci/triangular/factorial)",
+      "Paths, Concatenation & Inversion (Gruppoid-Struktur)",
+      "Equivalence Explorer (id/neg/succ/swap, Fibers)",
+      "Contracting a Space (Animation auf Center)",
+      "Truncation Hierarchy (Stufen -2 … k+1)",
+      "Is it a Proposition? A Set? (Typen testen)",
+      "Univalence in Action (Pfad im Universum verbindet äquivalente Typen)",
+      "Walking Around the Circle (Windungszahl, loopⁿ)",
+      "Universal Cover (Helix, Transport verschiebt um 1)"
+    ],
+    "internal_tensions": [
+      "Reine Mathematik ohne KI-Bezug (Referenzwerk; die KI-Anwendung steht in hott_ai.html).",
+      "Subtile Unterscheidung 'has-inverse vs is-equiv' (homotopische Komplexität vs Proposition).",
+      "Didaktisch vereinfacht; basiert auf dem HoTT-Book (UFP, IAS 2013)."
+    ],
+    "related_files": ["hott_ai.html", "kategorientheorie.html", "topologische_quantenfeldtheorie.html", "coherent_worldview.html"]
+  },
+  {
+    "path": "latter_inner.html",
+    "slug": "latter_inner",
+    "title": "Neural Network Internal Topology: How Deep Layers Decode Superposition",
+    "lang": "en",
+    "size_kb": 79.6,
+    "category": "ki",
+    "category_reason": "Mechanistische Interpretierbarkeit: Superposition, Fourier-Zerlegung, modular addition (mod 113), konstruktive Interferenz, Grokking — explizit über den internen Ablauf eines Transformer.",
+    "theme": "superposition",
+    "themes": ["superposition", "mechanistic-interpretability", "modular-addition", "fourier", "grokking", "constructive-interference"],
+    "thesis": "Tiefe Schichten dekodieren Superposition topologisch: Embeddings als Rotationen auf Kreisen (Homomorphismus Z/PZ → S¹, Produkt der Kreise = Torus), Fourier-Sparc bei wenigen Key-Frequenzen, Schichten berechnen a+b mod P über trigonometrische Identitäten, und die Antwort entsteht durch konstruktive Interferenz; Grokking ist drei kontinuierliche Phasen, angetrieben von Weight Decay.",
+    "key_claims": [
+      "Das Embedding mappt a, b auf sin(w_k·a), cos(w_k·a), sin(w_k·b), cos(w_k·b) bei Key-Frequenzen w_k; der Kreis S¹ ist der fundamentale topologische Raum, das Produkt mehrerer Kreise ein Torus.",
+      "In einem trainierten Transformer (modular addition, mod 113) ist die Embedding-Matrix W_E Fourier-sparse: nur 5 Key-Frequenzen (k = 14, 35, 41, 42, 52) haben signifikante Norm; jedes Neuron operiert primär auf einer Frequenz.",
+      "Algorithmus: Embed → Attention+MLP (cos(w_k(a+b)), sin(w_k(a+b)) via trigonometrische Identitäten) → Unembed (cos(w_k(a+b−c))) → Interferenz; die Antwort ist c* = a+b mod P.",
+      "84,6 % der MLP-Neuronen lassen sich gut durch Grad-2-Polynome einer einzelnen Frequenz approximieren; jedes Neuron 'spezialisiert' sich auf eine Frequenz.",
+      "Konstruktive Interferenz: mehrere Cosinuswellen auf verschiedenen Key-Frequenzen peaken nur bei c* mod P; alle anderen Peaks heben sich durch destruktive Interferenz auf.",
+      "Ablation: Entfernen der Key-Frequenzen zerstört die Performance; das Entfernen aller ANDEREN Frequenzen verbessert sie sogar (Fourier-Multiplikations-Zirkuit).",
+      "Grokking läuft in drei Phasen: Memorization (0–1,4k Epochs) → Circuit Formation (1,4k–9,4k, Weight Decay treibt den Fourier-Zirkuit) → Cleanup (9,4k–14k, Test-Accuracy springt)."
+    ],
+    "methods_math": ["Superposition", "Fourier-Transformation / -Zerlegung", "modular addition (Z/PZ)", "Grupp-Homomorphismus Z/PZ → S¹ (Kreis/Torus)", "konstruktive/destruktive Interferenz", "trigonometrische Identitäten", "Grokking / Progress Measures (Mechanistic Interpretability)", "Weight Decay als Regularizer", "Gini-Koeffizient (Sparsity)"],
+    "visualizations": [
+      "Embedding als Rotation auf einem Kreis (Input a, Frequenz k, Prime P, Fourier-Spektrum)",
+      "Fourier-Zerlegung der Neuron-logit-Map W_L (Frequenz-Toggles k=14/35/41/42/52)",
+      "Topological Manifold (zwei Frequenzen → Torus T²)",
+      "Step-by-Step Computation Flow (Embed → Attention/MLP → Unembed → Interferenz)",
+      "Neuron Activation Patterns (Raw vs Grad-2-Polynom-Fit vs Residual, je Frequenz)",
+      "Interference Pattern (einzelne Frequenz-Beiträge + Summe, c* markiert)",
+      "Ablation Study (No Ablation / Remove Key / Remove Non-Key / Remove Single Key)",
+      "Training Dynamics (Epoch-Animation: Train/Test/Restricted/Excluded Loss, SSWeighs, Gini)"
+    ],
+    "internal_tensions": [
+      "Spezifisch auf modular addition (mod 113) — die Verallgemeinerung auf freie Sprache/natürliche Token ist offen.",
+      "Zwei Ebenen vermischt: 'From the Research' (echtes Paper mit echten Gewichten) vs didaktischer Nachbau mit simulierten Werten.",
+      "Das Ablation-Ergebnis (Nicht-Key-Frequenzen entfernen verbessert die Performance) ist kontraintuitiv und braucht den Fourier-Multiplikations-Zirkuit, um zu tragen."
+    ],
+    "related_files": ["wie_ein_llm_denkt.html", "token_manifold_verletzt.html", "paper.html", "hott_ai.html"]
+  },
+  {
+    "path": "essen.html",
+    "slug": "essen",
+    "title": "Körper-System Visualisierung",
+    "lang": "de",
+    "size_kb": 69.0,
+    "category": "nicht-ki",
+    "category_reason": "Interaktive Körper-/Ernährungs-Simulation (Energiebilanz, Makronährstoffe, Blutzucker, Fette/Cholesterin); kein ML/NN-Bezug.",
+    "theme": "body-systems",
+    "themes": ["body-systems", "nutrition", "energy-balance", "metabolism", "health"],
+    "thesis": "Der Körper als System: alles Essen besteht aus Kohlenhydraten/Fetten/Protein; die Energiebilanz (Aufnahme − Verbrauch) entscheidet über Zunahme/Abnahme (~7700 kcal = 1 kg Fett), und Makro-Verteilung, Blutzucker-Spikes und Fettart haben konkrete gesundheitliche Konsequenzen.",
+    "key_claims": [
+      "Alles Essen besteht aus drei Bausteinen: Kohlenhydrate (→ Zucker → Energie/Fett), Fette (→ Energie/Speicher/Zellbau), Protein (→ Muskeln/Reparatur); Überschuss wird als Fett gespeichert.",
+      "Energiebilanz: z.B. 2400 kcal Aufnahme − 2100 kcal Verbrauch = +300 kcal/Tag → Zunahme; ~7700 kcal Überschuss = 1 kg Fett.",
+      "Ideal für Abnehmen + stabilen Blutzucker: ~40 % Kohlenhydrate, ~30 % Fett, ~30 % Protein; zu viele (schnelle) Kohlenhydrate = Blutzucker-Spikes = Schwitzen/Heißhunger/Fetteinlagerung.",
+      "Blutzucker-Verlauf: jeder Spike löst viel Insulin aus → schneller Abfall → Müdigkeit/Heißhunger; Ziel ist eine flache Kurve.",
+      "Fett ≠ Fett: gesättigtes (Butter, Käse) erhöht Cholesterin (schlecht fürs Herz), ungesättigtes (Olivenöl, Nüsse, Avocado) senkt es; Verhältnis ⅔ ungesättigt / ⅓ gesättigt.",
+      "Alles hängt zusammen: zu viel gesättigtes Fett → Cholesterin → verstopfte Arterien → Herz; zu viel Zucker → Insulin-Resistenz → Diabetes-Risiko; zu viel Kalorien → Übergewicht → belastet alles."
+    ],
+    "methods_math": ["Energiebilanz (Aufnahme − Verbrauch)", "Makronährstoff-Zusammensetzung (KH/Fett/Protein)", "Blutzucker-Regulation / Insulin-Response", "Cholesterin-Stoffwechsel (gesättigt vs ungesättigt)"],
+    "visualizations": [
+      "Deine Daten (Gewicht/Größe/Bewegung-Regler)",
+      "Typischer Tag — Essen (Lebensmittel-Regler: Pommes, Pizza, Nudeln, Käse, Mayo, Salat, Hülsenfrüchte, Nüsse, Gemüse, Obst)",
+      "Getränke (Cola, Radler, Bier, Saft)",
+      "Gesamtsystem-Fluss (3 Bausteine → Überschuss/Verbrauch)",
+      "Energiebilanz (Aufnahme − Verbrauch = Überschuss)",
+      "Makronährstoff-Verteilung (Pie, ~40/30/30)",
+      "Blutzucker-Verlauf über den Tag (Normal/Erhöht/Zu hoch)",
+      "Auswirkungen auf den Körper (Fett/Zucker/Kalorien → Organe)",
+      "Fette verstehen (gesättigt vs ungesättigt, Quellen)",
+      "Konkrete Empfehlungen für den User"
+    ],
+    "internal_tensions": [
+      "Vereinfachtes physiologisches Modell (z.B. fester Verbrauch 2100 kcal, fester Faktor 7700 kcal/kg) ohne individuelle Kalibrierung.",
+      "'Konkrete Empfehlungen' sind heuristisch und ersetzen keine ärztliche Beratung.",
+      "Kaufland/Marken-Referenzen und Portionsangaben sind didaktisch, keine exakte Nährstoffbilanz."
+    ],
+    "related_files": []
+  }
+]

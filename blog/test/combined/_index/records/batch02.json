@@ -1,0 +1,186 @@
+[
+  {
+    "path": "good/good.html",
+    "slug": "good",
+    "title": "How to Live Well — A Formally Verified Ethical Logic",
+    "lang": "en",
+    "size_kb": 290.1,
+    "category": "nicht-ki",
+    "category_reason": "Formal ethics / applied mathematics, not machine learning. It builds an axiomatic ethical system whose internal contradictions are resolved and whose global consistency is certified by a sheaf-theoretic gluing condition and machine-checked in Coq. No neural networks, training, or data/learning involved.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "category-theory", "formal-ethics", "axiomatic-systems", "proof-theory", "coq"],
+    "thesis": "A complete, self-consistent ethics can be written down as an explicit axiomatic system in which every principle is bundled with its own failure modes and edge-case resolutions, conflicts are settled by an explicit priority ordering and contextual weighting, and global consistency is certified by the sheaf gluing condition (local sections must agree on overlaps) and machine-verified in Coq.",
+    "key_claims": [
+      "The system consists of 10 principles, 12 axioms, 47 theorems, and 23 edge-case resolutions.",
+      "Ethical principles are modeled as sheaf sections over five 'open sets' (domains): Self, Other, Community, Temporal, Emergency.",
+      "Consistency is the sheaf gluing axiom: on overlaps (e.g. Self ∩ Other) the harm-assessment sections must agree — you cannot score your own harm as zero on Self and nonzero on Other.",
+      "Each axiom is also assigned a category-theoretic role (e.g. minimize-net-harm is the initial object / universal lower bound that every other principle factors through).",
+      "Conflicts between principles are deemed inevitable and are resolved by explicit priority ordering and contextual weighting rather than by retraction.",
+      "Twelve bedrock values are stated as chosen, not proved, and each carries its own vulnerability to critique.",
+      "Classic dilemmas are resolved explicitly (Trolley Problem, Ticking Time Bomb, Omission vs Commission, Aggregation, Moral Luck, Self-Sacrifice, Future Persons).",
+      "Principles are grounded in lived examples and counter-examples (Janusz Korczak, Harriet Tubman, Semmelweis, WWI tit-for-tat, Frederick Douglass, Unit 731, Theranos, Leopold II, climate denial).",
+      "Every proof is meant to be explicit and step-by-step, available in natural language, as philosophical argument, and machine-checkable in Coq."
+    ],
+    "methods_math": [
+      "Hilbert-style axiomatic specification of 12 axioms.",
+      "Sheaf theory: sections over open sets plus the gluing condition as a local-to-global consistency certificate.",
+      "Category theory: initial/limit objects and factorization to encode principle priority.",
+      "Formal verification in Coq (machine-checked proofs).",
+      "Priority ordering / contextual weighting as a conflict-resolution (weighting) rule."
+    ],
+    "visualizations": [
+      "Data-driven single-page app: all content lives in a JS object (no static headings), defaulting to a 'steps' view.",
+      "Interactive principle/axiom navigation; each principle expands to definition, expansion, sheaf condition, category role, edge cases, and a Coq snippet.",
+      "Sheaf domain diagram: the five open sets (Self/Other/Community/Temporal/Emergency) with explicit overlap-gluing annotations."
+    ],
+    "internal_tensions": [
+      "Claims machine-verifiable consistency while resting on twelve explicitly chosen (unproved) bedrock values — the axioms are stipulated, not derived.",
+      "The sheaf gluing condition enforces local-to-global consistency, but the priority ordering is a global hand-tuned device that lives outside the sheaf itself.",
+      "Presents itself as a 'coherent system' yet dedicates 23 edge-case resolutions to the inevitable local failures, so coherence is achieved through exceptions rather than their elimination.",
+      "Humanistic / lived-example grounding coexists with a hard formalist apparatus (Coq, category theory) — a tension between narrative ethics and proof-theoretic rigor."
+    ],
+    "related_files": ["sheaves.html", "kategorientheorie.html", "categorytheorie.html", "proof.html", "hott_practical.html", "commutative_diagram.html", "nn_as_sheaf.html"]
+  },
+  {
+    "path": "theory_of_deep_learning.html",
+    "slug": "theory_of_deep_learning",
+    "title": "Die mathematische Theorie des Deep Learning — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 268.6,
+    "category": "ki",
+    "category_reason": "A math textbook FOR machine learning: it explains why deep neural networks work via approximation, optimization, and generalization theory. Entirely about neural-net learning.",
+    "theme": "deep-learning-theory",
+    "themes": ["deep-learning-theory", "approximation-theory", "optimization", "loss-landscape", "generalization", "double-descent", "architecture"],
+    "thesis": "Deep learning works because three pillars line up at once: (1) approximation — ReLU nets are universal and, via Yarotsky's sawtooth trick, can build polynomials and thus approximate smooth functions exponentially efficiently in depth; (2) optimization — the loss landscape is non-convex but benign (high loss is likely a saddle; very wide nets become linear / Gaussian-process-like); (3) generalization — despite the overparameterization paradox, data structure (low Barron norm, compositionality, manifolds) plus Lipschitz regularization resolve double descent. The curse of dimensionality is a genuine hard limit that real-data structure sidesteps.",
+    "key_claims": [
+      "Universal approximation holds, and depth is exponentially more economical than width (sawtooth / piece-count budget argument).",
+      "Yarotsky's sawtooth plus the polarization identity lets ReLU nets compute multiplication → monomials → polynomials → all smooth functions.",
+      "The curse of dimensionality is a genuine hardness barrier, but real data escape it via low Barron norm, compositionality, or manifold structure.",
+      "High-loss points in the landscape are overwhelmingly saddles rather than bad local minima; backprop makes training feasible.",
+      "Very wide nets behave like linear models / Gaussian processes, which rescues optimization.",
+      "One cannot optimize over the function space (non-star-shaped with few centers, no ε-convexity, no best approximation → exploding weights).",
+      "Double descent is real (the interactive Runge experiment); the peak is explained by singular values and resolved by Lipschitz regularization.",
+      "Adversarial examples (the panda that becomes a wombat) stem from high dimension; Lipschitz bounds and Interval-Bound Propagation give certified defenses.",
+      "Architecture chapters cover ResNets (skip connections vs vanishing gradients), CNNs (translational equivariance + locality), and Transformers (global dependence via attention; sinusoidal positional encoding)."
+    ],
+    "methods_math": [
+      "Approximation theory: universal approximation, Hölder convergence rates, Barron norm.",
+      "Yarotsky sawtooth + polarization identity for constructing multiplication / polynomials.",
+      "Optimization: saddle-point structure of loss landscapes; Gaussian-process view of wide nets.",
+      "Statistical learning: error decomposition, covering numbers, VC dimension, approximation-complexity tradeoff.",
+      "Double descent via singular-value analysis; Lipschitz regularization.",
+      "Certified adversarial robustness via Lipschitz bounds and Interval-Bound Propagation."
+    ],
+    "visualizations": [
+      "Per-section interactive sliders/buttons (KaTeX math, ~25 <canvas> plots, ~37 Plotly references, a little d3).",
+      "Step-by-step sawtooth / polynomial-construction diagrams.",
+      "Loss-landscape and saddle-point interactive 'games'.",
+      "Interactive Runge double-descent curve.",
+      "Adversarial panda→wombat demo plus an IBP forward-pass certificate.",
+      "A final interactive overall map and a side-by-side table of all convergence rates."
+    ],
+    "internal_tensions": [
+      "Presents deep learning as 'explained' by three pillars while repeatedly flagging hard limits (curse of dimensionality, non-convexity, no best approximation) — explanation coexists with open questions.",
+      "Tension between the idealized 'benign landscape' narrative and the explicit warning that the landscape is non-convex and convergence is not guaranteed.",
+      "The 'magic activation' used for clean approximation is a warning shot: the theory leans on activations that real nets do not use.",
+      "Ends with an 'open questions' section, undercutting the confident three-pillar framing."
+    ],
+    "related_files": ["universal_approximation_theorem.html", "generalisierung_im_deep_learning.html", "why_deep_learning_works.html", "understanding_deep_learning.html", "morse_theory.html", "gradient_flow.html", "minima_explorer.html"]
+  },
+  {
+    "path": "rome2.html",
+    "slug": "rome2",
+    "title": "ROME — Wo ein Sprachmodell seine Fakten aufbewahrt",
+    "lang": "de",
+    "size_kb": 225.2,
+    "category": "ki",
+    "category_reason": "Explains a mechanistic-interpretability / model-editing paper (ROME, Meng, Bau, Andonian, Belinkov — NeurIPS 2022, arXiv:2202.05262) about locating and editing factual associations inside GPT transformers.",
+    "theme": "model-editing",
+    "themes": ["model-editing", "mechanistic-interpretability", "transformer-attention", "causal-tracing", "llm-internals", "linear-associative-memory"],
+    "thesis": "Factual knowledge in a transformer is stored as linear associative memories in the MLP layers (W_proj acts as a key→value store keyed by the last subject token). Causal tracing localizes each (subject, relation, object) fact to two 'hot spots' — a mid-MLP write at the last subject token and a late attention read. ROME then rewrites a single fact with a rank-1 weight edit ΔW = Λ·u·vᵀ that routes a new answer v* to the subject's key u, under a Lagrange constraint that keeps the rest of the model's behavior intact; a harmonic-mean COUNTERFACT score (five tests, including neighbor-subject generalization) verifies the edit.",
+    "key_claims": [
+      "A 'fact' for the model is an association (s, r, o): subject → relation → object.",
+      "Causal tracing (three passes: no masking, mask the MLPs, mask the attention) yields a heatmap that localizes the fact to two hot spots.",
+      "Hot spot 1 (the new finding): a mid-layer MLP writing the object at the LAST subject token; hot spot 2: a late attention layer reading it.",
+      "The MLP is a linear associative memory: W_proj stores key→value pairs — the write direction is the key, the projected direction the value.",
+      "The edit is rank-1: ΔW = Λ·u·vᵀ, with the Lagrange multiplier Λ computed from the covariance matrix C of existing keys so the new key is orthogonal to 'occupied' directions.",
+      "Pipeline: choose k* (the subject's layer/token), optimize v* for the new answer, then insert via a single rank-1 update — about 2 seconds per fact.",
+      "COUNTERFACT (21 919 entries with neighbor subjects) separates generalization from specificity; the overall score S is a harmonic mean over the test dimensions (one failing test tanks the score); neighbor-subject generalization is the key trick.",
+      "ROME works on GPT-2 XL (zsRE and COUNTERFACT) and scales across model sizes; Figure 5 confirms the mechanism. On neighbor subjects ROME scores 89.2 vs the next best 66.9 (MEND-CF drops to 5.5).",
+      "Compositionality tests (Appendix G) and human evaluation mostly pass; a counter-probe shows editing the attention instead of the MLP does not work as well."
+    ],
+    "methods_math": [
+      "Representation engineering / causal tracing (total effect TE, average indirect effect AIE).",
+      "Linear algebra: the MLP as a key→value associative memory; rank-1 matrix updates; covariance matrix of keys.",
+      "Constrained optimization: Lagrange multipliers (Λ) for the rank-1 edit under a 'do-not-disturb' constraint.",
+      "Least squares as the best-compromise solution.",
+      "Scoring via a harmonic mean over the COUNTERFACT test dimensions."
+    ],
+    "visualizations": [
+      "Interactive sliders/cliques throughout (~30 <canvas> plots, ~16 Plotly references).",
+      "'Build your own memory' — a playable linear associative memory.",
+      "A self-generated causal-tracing heatmap (three passes).",
+      "Transformer-as-a-lattice (residual-stream) diagram with an MLP-block zoom.",
+      "Step-through rank-1 derivation (Appendix A) and Λ computation.",
+      "ROME three-step pipeline animation (k*, v*, insert)."
+    ],
+    "internal_tensions": [
+      "Claims to locate WHERE facts are stored, yet also admits the model 'keeps guessing — convincingly and wrong' after an edit.",
+      "Presents the MLP-as-key-value-store as a clean mechanism while conceding facts are only one kind of association (directed, factual) and edits are applied one at a time.",
+      "The 'two hot spots' localization is robust for typical facts but explicitly 'not always the last subject token' (App. B.4) — the clean story has exceptions.",
+      "Raises the misuse potential (editing is dual-use) while championing the technique's elegance.",
+      "Human evaluation surfaces an 'honest weakness', tempering the otherwise strong quantitative results."
+    ],
+    "related_files": ["rome.html", "attn.html", "qkv.html", "dynamic_residual_stream_paper.html", "wie_ein_llm_denkt.html", "concept_attractors.html", "talking_heads.html", "attn_as_optimal_transport.html"]
+  },
+  {
+    "path": "topologie_tiefer_neuronaler_netze.html",
+    "slug": "topologie_tiefer_neuronaler_netze",
+    "title": "Die Topologie tiefer neuronaler Netze — Interaktiv erklärt",
+    "lang": "de",
+    "size_kb": 192.3,
+    "category": "ki",
+    "category_reason": "Explains a paper (Naitzat, Zhitnikov, Lim — arXiv:2004.06093, 2020) about how deep neural networks change the topology of their data — squarely machine learning + topological data analysis.",
+    "theme": "topology-of-nns",
+    "themes": ["topology-of-nns", "persistent-homology", "beti-numbers", "tlda", "relu", "depth-vs-width"],
+    "thesis": "A deep network is not a function approximator but a 'shape-transformation machine': layer by layer it untangles a topologically knotted data manifold until the Betti numbers collapse to their minimum (β₀ = 1, βₖ = 0 for k ≥ 1). ReLU untangles faster than tanh because ReLU induces non-homeomorphic maps that can CHANGE topology (kill holes), whereas tanh induces homeomorphisms that preserve it. Both depth and width accelerate the collapse, and the effect holds on real data.",
+    "key_claims": [
+      "Two old puzzles — (1) why ReLU beats tanh and (2) why depth helps — are both answered by topology change.",
+      "The central claim: networks work by changing topology, not merely geometry (folding is not the same as untangling).",
+      "A homeomorphism CANNOT untangle (Jordan curve theorem; folding is topology-preserving), so the untangling must come from non-homeomorphic maps.",
+      "ReLU is the mechanism: its non-homeomorphic, piecewise-linear 'folding' kills holes; a tanh rounding-error trick shows tanh only occasionally fakes it.",
+      "The experiment (datasets D-I/D-II/D-III, architectures from Table 1, sample sizes from Table 2) runs a real ReLU net to untangle two interlocked rings, with on the order of ten thousand homology computations.",
+      "Finding 1: the Betti-collapse profiles are robust (not chance).",
+      "Finding 2: non-homeomorphic activations (ReLU) collapse Betti numbers faster than homeomorphic ones (tanh).",
+      "Finding 3: some shapes are harder to untangle than others.",
+      "Finding 4: width accelerates the collapse; Finding 5: depth does too (answering puzzle 2).",
+      "The effect holds on real data (MNIST, Table 3; barcode diagrams Figs 17/19/20); the donut→croissant animation (Fig 22) illustrates the mechanism."
+    ],
+    "methods_math": [
+      "Algebraic topology: Betti numbers β₀/β₁/β₂ as shape measures.",
+      "Vietoris–Rips complex to build a simplicial shape from a point cloud.",
+      "Persistent homology (birth–death of holes; barcode diagrams) to separate real from spurious topology; the non-Euclidean distance is noted as decisive.",
+      "Homeomorphism vs non-homeomorphism; Jordan curve theorem; a 3D 'extra-dimension' escape route.",
+      "ReLU's folding (piecewise-linear, non-injective) as the topology-changing mechanism.",
+      "Controlled experiment design across architectures (depth/width sweeps) with parameter selection k*, ε*."
+    ],
+    "visualizations": [
+      "An interactive Betti lab (drag objects, count holes).",
+      "A Vietoris–Rips point-cloud → shape builder.",
+      "Persistent-homology / barcode plots.",
+      "A single-layer play plus a direct comparison of the four activations (ReLU vs tanh).",
+      "Figure 2 rebuilt: five discs in a square driven by a real ReLU net.",
+      "A 3D 'extra-dimension' demo of the non-homeomorphic escape.",
+      "Real-data barcode diagrams (MNIST; Figs 17/19/20) and a donut→croissant animation (Fig 22).",
+      "The paper's Figure 1 rendered 'alive' plus a self-test quiz."
+    ],
+    "internal_tensions": [
+      "The 'shape-transformation machine' headline vs the caution that a homeomorphism alone CANNOT untangle — the whole story hinges on ReLU breaking homeomorphism, a degenerate / non-injective property.",
+      "tanh 'sometimes succeeds' via a rounding-error trick, muddying the clean ReLU-better-than-tanh claim.",
+      "Synthetic-ring untangling is clean, but the real-data results (MNIST, etc.) are messier and only partly confirm the synthetic picture.",
+      "A 'what the paper does NOT claim' section explicitly bounds the mechanism, tempering the 'answer in three sentences' framing.",
+      "Persistent homology depends on distance / parameter choices (k*, ε*), so 'real holes' are only real relative to a chosen scale."
+    ],
+    "related_files": ["topologie_tiefer_neuronaler_netze_2.html", "betti.html", "holes.html", "topological_data_analysis.html", "persistent_landscape.html", "algebraische_topologie.html", "llm_topology.html"]
+  }
+]

@@ -1,0 +1,1735 @@
+{
+  "count": 34,
+  "target_kb": 976,
+  "max_files": 14,
+  "batches": [
+    {
+      "id": 0,
+      "total_kb": 975.2,
+      "files": [
+        {
+          "path": "mannigfaltigkeiten.html",
+          "size_kb": 439.1
+        },
+        {
+          "path": "homotopie.html",
+          "size_kb": 374.0
+        },
+        {
+          "path": "hott_practical.html",
+          "size_kb": 159.7
+        },
+        {
+          "path": "intro_preview.html",
+          "size_kb": 1.2
+        },
+        {
+          "path": "intro_preview_light.html",
+          "size_kb": 1.2
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "total_kb": 976.5,
+      "files": [
+        {
+          "path": "calculus_on_manifolds.html",
+          "size_kb": 355.6
+        },
+        {
+          "path": "coherent_differences_and_world_model.html",
+          "size_kb": 312.2
+        },
+        {
+          "path": "latent_semantic_manifolds_in_llm.html",
+          "size_kb": 292.3
+        },
+        {
+          "path": "transformer_rein_geometrisch2.html",
+          "size_kb": 16.4
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "total_kb": 976.1,
+      "files": [
+        {
+          "path": "good/good.html",
+          "size_kb": 290.1
+        },
+        {
+          "path": "theory_of_deep_learning.html",
+          "size_kb": 268.6
+        },
+        {
+          "path": "rome2.html",
+          "size_kb": 225.2
+        },
+        {
+          "path": "topologie_tiefer_neuronaler_netze.html",
+          "size_kb": 192.3
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "total_kb": 974.0,
+      "files": [
+        {
+          "path": "tropische_geometrie_tiefer_neuronaler_netze.html",
+          "size_kb": 224.2
+        },
+        {
+          "path": "origami_2.html",
+          "size_kb": 216.6
+        },
+        {
+          "path": "darstellungstheorie.html",
+          "size_kb": 210.8
+        },
+        {
+          "path": "intrinsische_dimensionen_tiefer_neuronaler_netze.html",
+          "size_kb": 205.6
+        },
+        {
+          "path": "test2.html",
+          "size_kb": 116.7
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "total_kb": 976.3,
+      "files": [
+        {
+          "path": "topology.html",
+          "size_kb": 202.7
+        },
+        {
+          "path": "deep.html",
+          "size_kb": 197.7
+        },
+        {
+          "path": "faserbuendel_und_fibrationen.html",
+          "size_kb": 193.1
+        },
+        {
+          "path": "backprop_als_funktor.html",
+          "size_kb": 192.2
+        },
+        {
+          "path": "geometrie_der_wahrheit.html",
+          "size_kb": 190.6
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "total_kb": 976.2,
+      "files": [
+        {
+          "path": "verweigerungsrichtung.html",
+          "size_kb": 189.3
+        },
+        {
+          "path": "hopf_faserung.html",
+          "size_kb": 188.6
+        },
+        {
+          "path": "covers_theorem.html",
+          "size_kb": 188.3
+        },
+        {
+          "path": "origami_1.html",
+          "size_kb": 186.1
+        },
+        {
+          "path": "kult_der_statistischen_signifikanz.html",
+          "size_kb": 182.4
+        },
+        {
+          "path": "narcissism.html",
+          "size_kb": 41.5
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "total_kb": 975.0,
+      "files": [
+        {
+          "path": "generalisierung_im_deep_learning.html",
+          "size_kb": 179.5
+        },
+        {
+          "path": "talking_heads.html",
+          "size_kb": 175.8
+        },
+        {
+          "path": "attn_as_optimal_transport.html",
+          "size_kb": 173.3
+        },
+        {
+          "path": "geheimwissen.html",
+          "size_kb": 172.7
+        },
+        {
+          "path": "garben_in_transformern.html",
+          "size_kb": 169.9
+        },
+        {
+          "path": "proof.html",
+          "size_kb": 103.8
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "total_kb": 976.6,
+      "files": [
+        {
+          "path": "topologie_tiefer_neuronaler_netze_2.html",
+          "size_kb": 168.4
+        },
+        {
+          "path": "in-context-learning_through_gradient.html",
+          "size_kb": 167.7
+        },
+        {
+          "path": "informationsgravitation.html",
+          "size_kb": 159.4
+        },
+        {
+          "path": "symmetrie_in_sprachstatistik.html",
+          "size_kb": 159.4
+        },
+        {
+          "path": "hott5.html",
+          "size_kb": 158.7
+        },
+        {
+          "path": "random_hierarchy_model.html",
+          "size_kb": 153.7
+        },
+        {
+          "path": "garben_uebersicht.html",
+          "size_kb": 9.1
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "total_kb": 976.3,
+      "files": [
+        {
+          "path": "geometrie_neuronaler_populationen.html",
+          "size_kb": 145.7
+        },
+        {
+          "path": "grothendiek_raum.html",
+          "size_kb": 142.0
+        },
+        {
+          "path": "quantum_cryptography.html",
+          "size_kb": 138.2
+        },
+        {
+          "path": "secure_hpc_workflow.html",
+          "size_kb": 134.0
+        },
+        {
+          "path": "homological_scaffolding_psilocybin.html",
+          "size_kb": 133.4
+        },
+        {
+          "path": "good.html",
+          "size_kb": 131.0
+        },
+        {
+          "path": "llm_topology.html",
+          "size_kb": 129.2
+        },
+        {
+          "path": "buecher/history_of_mathematical_notation.html",
+          "size_kb": 22.8
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "total_kb": 975.5,
+      "files": [
+        {
+          "path": "philosophy2.html",
+          "size_kb": 127.7
+        },
+        {
+          "path": "relativity.html",
+          "size_kb": 108.3
+        },
+        {
+          "path": "koerper.html",
+          "size_kb": 107.7
+        },
+        {
+          "path": "narc_group.html",
+          "size_kb": 105.5
+        },
+        {
+          "path": "signal_analysis2.html",
+          "size_kb": 103.3
+        },
+        {
+          "path": "floats.html",
+          "size_kb": 101.1
+        },
+        {
+          "path": "topologie_biologischer_systeme.html",
+          "size_kb": 100.6
+        },
+        {
+          "path": "analytischer_idealismus.html",
+          "size_kb": 97.9
+        },
+        {
+          "path": "grothendiek2.html",
+          "size_kb": 95.7
+        },
+        {
+          "path": "buecher/an_experiment_with_time.html",
+          "size_kb": 27.7
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "total_kb": 976.4,
+      "files": [
+        {
+          "path": "geometry_of_meaning_test.html",
+          "size_kb": 95.5
+        },
+        {
+          "path": "brain.html",
+          "size_kb": 94.9
+        },
+        {
+          "path": "grothendiek.html",
+          "size_kb": 92.5
+        },
+        {
+          "path": "concept_attractors.html",
+          "size_kb": 91.2
+        },
+        {
+          "path": "paperidea3.html",
+          "size_kb": 90.5
+        },
+        {
+          "path": "youarellm2.html",
+          "size_kb": 89.9
+        },
+        {
+          "path": "topology_of_attractors.html",
+          "size_kb": 89.8
+        },
+        {
+          "path": "narc_group2.html",
+          "size_kb": 89.0
+        },
+        {
+          "path": "conceptual_spaces.html",
+          "size_kb": 88.1
+        },
+        {
+          "path": "math_framework_for_transformers.html",
+          "size_kb": 86.6
+        },
+        {
+          "path": "space_warps.html",
+          "size_kb": 68.4
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "total_kb": 976.5,
+      "files": [
+        {
+          "path": "token_manifold_verletzt.html",
+          "size_kb": 85.0
+        },
+        {
+          "path": "topologische_quantenfeldtheorie.html",
+          "size_kb": 84.3
+        },
+        {
+          "path": "buecher/antioed.html",
+          "size_kb": 84.2
+        },
+        {
+          "path": "wie_ein_llm_denkt.html",
+          "size_kb": 84.2
+        },
+        {
+          "path": "kategorientheorie.html",
+          "size_kb": 84.0
+        },
+        {
+          "path": "coherent_worldview.html",
+          "size_kb": 82.4
+        },
+        {
+          "path": "hott_ai.html",
+          "size_kb": 81.4
+        },
+        {
+          "path": "paper.html",
+          "size_kb": 81.4
+        },
+        {
+          "path": "phasenraum.html",
+          "size_kb": 80.9
+        },
+        {
+          "path": "hott_book.html",
+          "size_kb": 79.9
+        },
+        {
+          "path": "latter_inner.html",
+          "size_kb": 79.6
+        },
+        {
+          "path": "essen.html",
+          "size_kb": 69.0
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "total_kb": 976.1,
+      "files": [
+        {
+          "path": "framespotting.html",
+          "size_kb": 79.0
+        },
+        {
+          "path": "kastrup_jung.html",
+          "size_kb": 78.4
+        },
+        {
+          "path": "kohaerente_differenz.html",
+          "size_kb": 78.3
+        },
+        {
+          "path": "chaos.html",
+          "size_kb": 78.1
+        },
+        {
+          "path": "othellogpt.html",
+          "size_kb": 76.0
+        },
+        {
+          "path": "paper/sorting_with_bialgebras.html",
+          "size_kb": 75.0
+        },
+        {
+          "path": "grokking_addition.html",
+          "size_kb": 74.7
+        },
+        {
+          "path": "game2.html",
+          "size_kb": 74.6
+        },
+        {
+          "path": "hott2.html",
+          "size_kb": 74.4
+        },
+        {
+          "path": "cohomology.html",
+          "size_kb": 74.1
+        },
+        {
+          "path": "understanding_deep_learning.html",
+          "size_kb": 73.6
+        },
+        {
+          "path": "hott3.html",
+          "size_kb": 73.2
+        },
+        {
+          "path": "useful_math.html",
+          "size_kb": 66.6
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "total_kb": 976.3,
+      "files": [
+        {
+          "path": "paperidea4.html",
+          "size_kb": 73.2
+        },
+        {
+          "path": "s_theory.html",
+          "size_kb": 72.0
+        },
+        {
+          "path": "morse_theory.html",
+          "size_kb": 71.4
+        },
+        {
+          "path": "egg.html",
+          "size_kb": 70.8
+        },
+        {
+          "path": "mod.html",
+          "size_kb": 70.4
+        },
+        {
+          "path": "homotopie_kurz.html",
+          "size_kb": 70.1
+        },
+        {
+          "path": "algebraische_topologie.html",
+          "size_kb": 69.7
+        },
+        {
+          "path": "catastrophe_theory.html",
+          "size_kb": 69.5
+        },
+        {
+          "path": "was_heisst_denken.html",
+          "size_kb": 69.4
+        },
+        {
+          "path": "kokettenkomplex.html",
+          "size_kb": 69.0
+        },
+        {
+          "path": "exotic_spheres.html",
+          "size_kb": 68.9
+        },
+        {
+          "path": "low_dim_learning.html",
+          "size_kb": 68.9
+        },
+        {
+          "path": "eigen.html",
+          "size_kb": 68.8
+        },
+        {
+          "path": "higher_algebra.html",
+          "size_kb": 64.1
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "total_kb": 927.6,
+      "files": [
+        {
+          "path": "j_space.html",
+          "size_kb": 68.2
+        },
+        {
+          "path": "commutative_diagram.html",
+          "size_kb": 67.8
+        },
+        {
+          "path": "understanding.html",
+          "size_kb": 67.7
+        },
+        {
+          "path": "voidstar.html",
+          "size_kb": 67.3
+        },
+        {
+          "path": "orbifold.html",
+          "size_kb": 67.2
+        },
+        {
+          "path": "sheaves.html",
+          "size_kb": 66.1
+        },
+        {
+          "path": "grokking_paper.html",
+          "size_kb": 65.9
+        },
+        {
+          "path": "transformer_dynamics.html",
+          "size_kb": 65.9
+        },
+        {
+          "path": "berkeley.html",
+          "size_kb": 65.5
+        },
+        {
+          "path": "kult_der_statistischen_signifikanz_simple.html",
+          "size_kb": 65.3
+        },
+        {
+          "path": "semantic_steering.html",
+          "size_kb": 65.2
+        },
+        {
+          "path": "teichmueller.html",
+          "size_kb": 65.1
+        },
+        {
+          "path": "mccarthy_heyes_1969.html",
+          "size_kb": 65.1
+        },
+        {
+          "path": "test.html",
+          "size_kb": 65.1
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "total_kb": 878.6,
+      "files": [
+        {
+          "path": "buecher/the_book_of_the_taboo_of_knowing_who_you_are.html",
+          "size_kb": 64.8
+        },
+        {
+          "path": "categorial_homotopy_for_llm.html",
+          "size_kb": 64.6
+        },
+        {
+          "path": "fun.html",
+          "size_kb": 64.5
+        },
+        {
+          "path": "effortless_basins_of_attraction.html",
+          "size_kb": 64.1
+        },
+        {
+          "path": "energy_based_learning.html",
+          "size_kb": 64.0
+        },
+        {
+          "path": "latent_semantic_manifolds_in_llm_simple.html",
+          "size_kb": 63.6
+        },
+        {
+          "path": "grokking_addition_internal2.html",
+          "size_kb": 63.0
+        },
+        {
+          "path": "intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html",
+          "size_kb": 62.8
+        },
+        {
+          "path": "fibrebundle3.html",
+          "size_kb": 62.5
+        },
+        {
+          "path": "sheaving.html",
+          "size_kb": 62.1
+        },
+        {
+          "path": "grokking_addition_internal.html",
+          "size_kb": 61.9
+        },
+        {
+          "path": "holographic_principle.html",
+          "size_kb": 61.1
+        },
+        {
+          "path": "fibrebundles.html",
+          "size_kb": 60.1
+        },
+        {
+          "path": "coherent_world_models.html",
+          "size_kb": 59.4
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "total_kb": 793.6,
+      "files": [
+        {
+          "path": "shepard.html",
+          "size_kb": 58.6
+        },
+        {
+          "path": "concept_attractors_in_llm.html",
+          "size_kb": 58.6
+        },
+        {
+          "path": "signal_analysis.html",
+          "size_kb": 58.6
+        },
+        {
+          "path": "takens_embedding_theorem.html",
+          "size_kb": 58.2
+        },
+        {
+          "path": "higher_topos_theory.html",
+          "size_kb": 58.0
+        },
+        {
+          "path": "buecher/ai.html",
+          "size_kb": 57.9
+        },
+        {
+          "path": "space_algorithm.html",
+          "size_kb": 56.9
+        },
+        {
+          "path": "botorch.html",
+          "size_kb": 56.2
+        },
+        {
+          "path": "donalds_theorem.html",
+          "size_kb": 55.7
+        },
+        {
+          "path": "buecher/kc.html",
+          "size_kb": 55.6
+        },
+        {
+          "path": "paper/geometric_structure_of_layer_updates.html",
+          "size_kb": 55.2
+        },
+        {
+          "path": "johnson_lindenstrauss.html",
+          "size_kb": 55.0
+        },
+        {
+          "path": "paper/formal_proof.html",
+          "size_kb": 54.6
+        },
+        {
+          "path": "theory_of_deep_learning_simple.html",
+          "size_kb": 54.5
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "total_kb": 741.6,
+      "files": [
+        {
+          "path": "linear_seperability.html",
+          "size_kb": 54.3
+        },
+        {
+          "path": "buecher/kritik_der_reinen_vernunft.html",
+          "size_kb": 54.2
+        },
+        {
+          "path": "attn_as_optimal_transport_simple.html",
+          "size_kb": 54.2
+        },
+        {
+          "path": "ologs.html",
+          "size_kb": 54.1
+        },
+        {
+          "path": "warum_fuehlt_sich_raum_so_an.html",
+          "size_kb": 53.9
+        },
+        {
+          "path": "garben_weltsicht.html",
+          "size_kb": 53.8
+        },
+        {
+          "path": "grokking2.html",
+          "size_kb": 53.5
+        },
+        {
+          "path": "topoi.html",
+          "size_kb": 52.8
+        },
+        {
+          "path": "making_it_explicit.html",
+          "size_kb": 52.3
+        },
+        {
+          "path": "game.html",
+          "size_kb": 52.0
+        },
+        {
+          "path": "buecher/attention_is_all_you_need.html",
+          "size_kb": 51.8
+        },
+        {
+          "path": "paper/perceive_this_as_that.html",
+          "size_kb": 51.8
+        },
+        {
+          "path": "schleifenraum.html",
+          "size_kb": 51.6
+        },
+        {
+          "path": "finneganswake.html",
+          "size_kb": 51.1
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "total_kb": 696.7,
+      "files": [
+        {
+          "path": "cellular.html",
+          "size_kb": 51.0
+        },
+        {
+          "path": "finneganswake3.html",
+          "size_kb": 50.8
+        },
+        {
+          "path": "bundles.html",
+          "size_kb": 50.7
+        },
+        {
+          "path": "topological_data_analysis.html",
+          "size_kb": 50.7
+        },
+        {
+          "path": "sobolev_raum.html",
+          "size_kb": 50.4
+        },
+        {
+          "path": "buecher/also_sprach_zarathustra.html",
+          "size_kb": 50.2
+        },
+        {
+          "path": "was_heisst_denken_2.html",
+          "size_kb": 50.2
+        },
+        {
+          "path": "hott4.html",
+          "size_kb": 50.0
+        },
+        {
+          "path": "fourier_addition.html",
+          "size_kb": 49.6
+        },
+        {
+          "path": "consciousness_overview.html",
+          "size_kb": 49.4
+        },
+        {
+          "path": "history.html",
+          "size_kb": 48.6
+        },
+        {
+          "path": "grid_walker.html",
+          "size_kb": 48.6
+        },
+        {
+          "path": "token_manifold_verletzt_simple.html",
+          "size_kb": 48.3
+        },
+        {
+          "path": "holes.html",
+          "size_kb": 48.3
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "total_kb": 654.1,
+      "files": [
+        {
+          "path": "buecher/a_simple_proof_the_world_is_three_dimensional.html",
+          "size_kb": 48.2
+        },
+        {
+          "path": "cauchydedeking.html",
+          "size_kb": 47.9
+        },
+        {
+          "path": "model_decomposition.html",
+          "size_kb": 47.7
+        },
+        {
+          "path": "paperidea5.html",
+          "size_kb": 47.0
+        },
+        {
+          "path": "grokking_addition_internal3.html",
+          "size_kb": 47.0
+        },
+        {
+          "path": "betti.html",
+          "size_kb": 47.0
+        },
+        {
+          "path": "schmitz.html",
+          "size_kb": 46.6
+        },
+        {
+          "path": "persistent_landscape.html",
+          "size_kb": 46.5
+        },
+        {
+          "path": "topology_idea.html",
+          "size_kb": 46.3
+        },
+        {
+          "path": "lie.html",
+          "size_kb": 46.3
+        },
+        {
+          "path": "psychologische_feldtheorie.html",
+          "size_kb": 46.0
+        },
+        {
+          "path": "simplicial_complex_attention.html",
+          "size_kb": 45.9
+        },
+        {
+          "path": "strukturwissenschaften.html",
+          "size_kb": 45.8
+        },
+        {
+          "path": "fourier_projection.html",
+          "size_kb": 45.8
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "total_kb": 623.6,
+      "files": [
+        {
+          "path": "hausdorff.html",
+          "size_kb": 45.5
+        },
+        {
+          "path": "youarellm.html",
+          "size_kb": 45.2
+        },
+        {
+          "path": "decode_holo.html",
+          "size_kb": 44.8
+        },
+        {
+          "path": "paperidea2.html",
+          "size_kb": 44.8
+        },
+        {
+          "path": "dynamic_residual_stream_paper.html",
+          "size_kb": 44.7
+        },
+        {
+          "path": "france.html",
+          "size_kb": 44.7
+        },
+        {
+          "path": "monster.html",
+          "size_kb": 44.6
+        },
+        {
+          "path": "finneganswake2.html",
+          "size_kb": 44.5
+        },
+        {
+          "path": "asymptotische_gleichverteilungseigenschaft.html",
+          "size_kb": 44.5
+        },
+        {
+          "path": "tropische_geometrie_tiefer_neuronaler_netze_simple.html",
+          "size_kb": 44.4
+        },
+        {
+          "path": "hott6.html",
+          "size_kb": 44.3
+        },
+        {
+          "path": "chemistry.html",
+          "size_kb": 44.2
+        },
+        {
+          "path": "illusion_erklaerender_tiefe.html",
+          "size_kb": 43.9
+        },
+        {
+          "path": "buecher/euclid.html",
+          "size_kb": 43.4
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "total_kb": 591.0,
+      "files": [
+        {
+          "path": "buecher/weinherstellung.html",
+          "size_kb": 43.4
+        },
+        {
+          "path": "idea2.html",
+          "size_kb": 43.3
+        },
+        {
+          "path": "jet_bundles.html",
+          "size_kb": 43.3
+        },
+        {
+          "path": "nlab_nn.html",
+          "size_kb": 43.3
+        },
+        {
+          "path": "hott_addition.html",
+          "size_kb": 42.7
+        },
+        {
+          "path": "random.html",
+          "size_kb": 42.1
+        },
+        {
+          "path": "buecher/nonlinear_workbook.html",
+          "size_kb": 42.1
+        },
+        {
+          "path": "dmt.html",
+          "size_kb": 42.0
+        },
+        {
+          "path": "os.html",
+          "size_kb": 41.9
+        },
+        {
+          "path": "inaccessible.html",
+          "size_kb": 41.8
+        },
+        {
+          "path": "pz2.html",
+          "size_kb": 41.4
+        },
+        {
+          "path": "minima_explorer.html",
+          "size_kb": 41.3
+        },
+        {
+          "path": "wahrscheinlichkeit.html",
+          "size_kb": 41.3
+        },
+        {
+          "path": "frege.html",
+          "size_kb": 41.2
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "total_kb": 560.7,
+      "files": [
+        {
+          "path": "windows.html",
+          "size_kb": 41.1
+        },
+        {
+          "path": "fibrebundle2.html",
+          "size_kb": 41.0
+        },
+        {
+          "path": "bewusstsein.html",
+          "size_kb": 41.0
+        },
+        {
+          "path": "stacks.html",
+          "size_kb": 40.6
+        },
+        {
+          "path": "montana_sacra.html",
+          "size_kb": 40.4
+        },
+        {
+          "path": "calculus_on_manifolds_very_simple.html",
+          "size_kb": 40.3
+        },
+        {
+          "path": "persistent_topology.html",
+          "size_kb": 40.2
+        },
+        {
+          "path": "joaxiannothingness.html",
+          "size_kb": 40.2
+        },
+        {
+          "path": "fibrebundle.html",
+          "size_kb": 40.1
+        },
+        {
+          "path": "nn_as_sheaf_2.html",
+          "size_kb": 39.8
+        },
+        {
+          "path": "origami.html",
+          "size_kb": 39.2
+        },
+        {
+          "path": "brednich.html",
+          "size_kb": 39.0
+        },
+        {
+          "path": "buecher/dynamische_systeme_und_konflikte.html",
+          "size_kb": 38.9
+        },
+        {
+          "path": "garbentheorie.html",
+          "size_kb": 38.8
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "total_kb": 528.2,
+      "files": [
+        {
+          "path": "laplace.html",
+          "size_kb": 38.8
+        },
+        {
+          "path": "loopspaces.html",
+          "size_kb": 38.6
+        },
+        {
+          "path": "topology_examples.html",
+          "size_kb": 38.4
+        },
+        {
+          "path": "paper/fibrations.html",
+          "size_kb": 38.4
+        },
+        {
+          "path": "buecher/zen_und_die_kunst_ein_motorrad_zu_warten.html",
+          "size_kb": 38.3
+        },
+        {
+          "path": "simplicial_complex_attention3.html",
+          "size_kb": 38.2
+        },
+        {
+          "path": "why_deep_learning_works.html",
+          "size_kb": 37.8
+        },
+        {
+          "path": "lawsofform2.html",
+          "size_kb": 37.5
+        },
+        {
+          "path": "spiegelsaal.html",
+          "size_kb": 37.3
+        },
+        {
+          "path": "buecher/raetsch.html",
+          "size_kb": 37.2
+        },
+        {
+          "path": "categorytheorie.html",
+          "size_kb": 37.0
+        },
+        {
+          "path": "nlab_nn2.html",
+          "size_kb": 37.0
+        },
+        {
+          "path": "abstract.html",
+          "size_kb": 36.9
+        },
+        {
+          "path": "homological_scaffolds/index.html",
+          "size_kb": 36.7
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "total_kb": 503.3,
+      "files": [
+        {
+          "path": "sheaf.html",
+          "size_kb": 36.4
+        },
+        {
+          "path": "foam_of_meaning.html",
+          "size_kb": 36.4
+        },
+        {
+          "path": "kohaerente_modelle.html",
+          "size_kb": 36.3
+        },
+        {
+          "path": "ricci_fluss.html",
+          "size_kb": 36.3
+        },
+        {
+          "path": "buecher/daniel_paul_schreber.html",
+          "size_kb": 36.2
+        },
+        {
+          "path": "buecher/heraklit.html",
+          "size_kb": 36.2
+        },
+        {
+          "path": "mathe_abi.html",
+          "size_kb": 36.1
+        },
+        {
+          "path": "rome.html",
+          "size_kb": 36.0
+        },
+        {
+          "path": "neumuenster.html",
+          "size_kb": 36.0
+        },
+        {
+          "path": "how_ai_approximates.html",
+          "size_kb": 35.6
+        },
+        {
+          "path": "paris.html",
+          "size_kb": 35.6
+        },
+        {
+          "path": "pullback2.html",
+          "size_kb": 35.6
+        },
+        {
+          "path": "hott.html",
+          "size_kb": 35.4
+        },
+        {
+          "path": "paper/hott.html",
+          "size_kb": 35.2
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "total_kb": 466.8,
+      "files": [
+        {
+          "path": "pullback.html",
+          "size_kb": 35.0
+        },
+        {
+          "path": "christoffel.html",
+          "size_kb": 34.7
+        },
+        {
+          "path": "dynamic_residual_stream_paper2.html",
+          "size_kb": 34.7
+        },
+        {
+          "path": "fibrebundleslab.html",
+          "size_kb": 34.3
+        },
+        {
+          "path": "deep2.html",
+          "size_kb": 33.8
+        },
+        {
+          "path": "kult_der_statistischen_signifikanz_very_simple.html",
+          "size_kb": 33.7
+        },
+        {
+          "path": "new_kind_of_science.html",
+          "size_kb": 33.5
+        },
+        {
+          "path": "buecher/what_the_frogs_eye_tell_the_frogs_brain.html",
+          "size_kb": 33.5
+        },
+        {
+          "path": "j_space2.html",
+          "size_kb": 33.0
+        },
+        {
+          "path": "buecher/sein_und_zeit.html",
+          "size_kb": 32.8
+        },
+        {
+          "path": "hologram.html",
+          "size_kb": 32.2
+        },
+        {
+          "path": "universal_approximation_theorem.html",
+          "size_kb": 32.1
+        },
+        {
+          "path": "modelltheorie.html",
+          "size_kb": 31.8
+        },
+        {
+          "path": "analytic_idealism.html",
+          "size_kb": 31.8
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "total_kb": 429.8,
+      "files": [
+        {
+          "path": "paper/manifold_flattening.html",
+          "size_kb": 31.6
+        },
+        {
+          "path": "garben_zug.html",
+          "size_kb": 31.5
+        },
+        {
+          "path": "spatiotemporal_composability.html",
+          "size_kb": 31.4
+        },
+        {
+          "path": "principia.html",
+          "size_kb": 31.2
+        },
+        {
+          "path": "ideen2.html",
+          "size_kb": 31.2
+        },
+        {
+          "path": "gradient_flow.html",
+          "size_kb": 31.2
+        },
+        {
+          "path": "feedback.html",
+          "size_kb": 30.8
+        },
+        {
+          "path": "new_space.html",
+          "size_kb": 30.7
+        },
+        {
+          "path": "ehresmannconnection.html",
+          "size_kb": 30.4
+        },
+        {
+          "path": "coherent_differences_and_world_model_very_simple.html",
+          "size_kb": 30.3
+        },
+        {
+          "path": "paperidea6.html",
+          "size_kb": 30.2
+        },
+        {
+          "path": "group.html",
+          "size_kb": 30.0
+        },
+        {
+          "path": "theory_of_deep_learning_very_simple.html",
+          "size_kb": 29.7
+        },
+        {
+          "path": "positional.html",
+          "size_kb": 29.6
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "total_kb": 389.9,
+      "files": [
+        {
+          "path": "buecher/saeen_und_ernten.html",
+          "size_kb": 29.5
+        },
+        {
+          "path": "qkv2.html",
+          "size_kb": 29.3
+        },
+        {
+          "path": "product_coproduct.html",
+          "size_kb": 29.1
+        },
+        {
+          "path": "miller_rabin.html",
+          "size_kb": 28.9
+        },
+        {
+          "path": "paper/power_of_analogy.html",
+          "size_kb": 28.9
+        },
+        {
+          "path": "buecher/hermann_schmitz2.html",
+          "size_kb": 28.8
+        },
+        {
+          "path": "goedel.html",
+          "size_kb": 27.7
+        },
+        {
+          "path": "simplicial_complex_attention4.html",
+          "size_kb": 27.4
+        },
+        {
+          "path": "nn_as_sheaf.html",
+          "size_kb": 27.2
+        },
+        {
+          "path": "shors_algorithm.html",
+          "size_kb": 27.1
+        },
+        {
+          "path": "attn.html",
+          "size_kb": 26.7
+        },
+        {
+          "path": "idea.html",
+          "size_kb": 26.4
+        },
+        {
+          "path": "lawsofform.html",
+          "size_kb": 26.4
+        },
+        {
+          "path": "grokking.html",
+          "size_kb": 26.3
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "total_kb": 356.9,
+      "files": [
+        {
+          "path": "bordism.html",
+          "size_kb": 26.2
+        },
+        {
+          "path": "buecher/schreber.html",
+          "size_kb": 26.2
+        },
+        {
+          "path": "kluever2.html",
+          "size_kb": 26.0
+        },
+        {
+          "path": "garben.html",
+          "size_kb": 25.8
+        },
+        {
+          "path": "garben_2.html",
+          "size_kb": 25.8
+        },
+        {
+          "path": "posembed7.html",
+          "size_kb": 25.8
+        },
+        {
+          "path": "generalisierung_im_deep_learning_very_simple.html",
+          "size_kb": 25.7
+        },
+        {
+          "path": "paper/olog.html",
+          "size_kb": 25.7
+        },
+        {
+          "path": "simplicial_complex_attention2.html",
+          "size_kb": 25.2
+        },
+        {
+          "path": "adjunct_functor.html",
+          "size_kb": 25.2
+        },
+        {
+          "path": "backprop.html",
+          "size_kb": 24.9
+        },
+        {
+          "path": "monoid.html",
+          "size_kb": 24.8
+        },
+        {
+          "path": "hologram5.html",
+          "size_kb": 24.8
+        },
+        {
+          "path": "johnson_lindenstrauss_very_simple.html",
+          "size_kb": 24.7
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "total_kb": 329.8,
+      "files": [
+        {
+          "path": "support_vector_machines.html",
+          "size_kb": 24.6
+        },
+        {
+          "path": "buecher/mcculloch_pitts.html",
+          "size_kb": 24.4
+        },
+        {
+          "path": "hologram2.html",
+          "size_kb": 24.4
+        },
+        {
+          "path": "phasetransition.html",
+          "size_kb": 24.3
+        },
+        {
+          "path": "simplicial_complex_attention6.html",
+          "size_kb": 24.3
+        },
+        {
+          "path": "whitehead.html",
+          "size_kb": 24.0
+        },
+        {
+          "path": "buecher/fritz_zorn.html",
+          "size_kb": 23.7
+        },
+        {
+          "path": "phasenuebergaenge.html",
+          "size_kb": 23.7
+        },
+        {
+          "path": "goedel2.html",
+          "size_kb": 23.7
+        },
+        {
+          "path": "posembed4.html",
+          "size_kb": 23.3
+        },
+        {
+          "path": "\u00c9taleRaum.html",
+          "size_kb": 22.7
+        },
+        {
+          "path": "buecher/hermann_schmitz.html",
+          "size_kb": 22.3
+        },
+        {
+          "path": "token_manifold_verletzt_very_simple.html",
+          "size_kb": 22.3
+        },
+        {
+          "path": "posembed5.html",
+          "size_kb": 22.2
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "total_kb": 282.4,
+      "files": [
+        {
+          "path": "anatomie_des_verstehens.html",
+          "size_kb": 22.1
+        },
+        {
+          "path": "dense_relu_dense.html",
+          "size_kb": 21.9
+        },
+        {
+          "path": "transformer_rein_geometrisch.html",
+          "size_kb": 21.4
+        },
+        {
+          "path": "simplicial_complex_attention8.html",
+          "size_kb": 21.1
+        },
+        {
+          "path": "zug_idee.html",
+          "size_kb": 20.9
+        },
+        {
+          "path": "attn_as_optimal_transport_very_simple.html",
+          "size_kb": 20.8
+        },
+        {
+          "path": "philosophy.html",
+          "size_kb": 19.8
+        },
+        {
+          "path": "mood_explorer.html",
+          "size_kb": 19.8
+        },
+        {
+          "path": "intrinsische_dimensionen_tiefer_neuronaler_netze_very_simple.html",
+          "size_kb": 19.8
+        },
+        {
+          "path": "posembed1.html",
+          "size_kb": 19.4
+        },
+        {
+          "path": "new_idea.html",
+          "size_kb": 19.2
+        },
+        {
+          "path": "hologram3.html",
+          "size_kb": 18.9
+        },
+        {
+          "path": "tropische_geometrie_tiefer_neuronaler_netze_very_simple.html",
+          "size_kb": 18.8
+        },
+        {
+          "path": "wisdom.html",
+          "size_kb": 18.6
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "total_kb": 231.1,
+      "files": [
+        {
+          "path": "posembed2.html",
+          "size_kb": 18.4
+        },
+        {
+          "path": "latent_semantic_manifolds_in_llm_very_simple.html",
+          "size_kb": 18.3
+        },
+        {
+          "path": "task.html",
+          "size_kb": 18.3
+        },
+        {
+          "path": "kluever.html",
+          "size_kb": 18.0
+        },
+        {
+          "path": "paper/AttentionViz.html",
+          "size_kb": 17.8
+        },
+        {
+          "path": "hologram4.html",
+          "size_kb": 17.2
+        },
+        {
+          "path": "buecher/whitehead.html",
+          "size_kb": 16.8
+        },
+        {
+          "path": "simplicial_complex_attention7.html",
+          "size_kb": 16.3
+        },
+        {
+          "path": "buecher/hermann_schmitz3.html",
+          "size_kb": 16.1
+        },
+        {
+          "path": "posembed3.html",
+          "size_kb": 15.8
+        },
+        {
+          "path": "intuition_idee.html",
+          "size_kb": 15.1
+        },
+        {
+          "path": "simplicial_complex_attention5.html",
+          "size_kb": 14.9
+        },
+        {
+          "path": "qkv.html",
+          "size_kb": 14.4
+        },
+        {
+          "path": "space_morph.html",
+          "size_kb": 13.8
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "total_kb": 116.2,
+      "files": [
+        {
+          "path": "inftytopoi.html",
+          "size_kb": 13.0
+        },
+        {
+          "path": "posembed8.html",
+          "size_kb": 11.5
+        },
+        {
+          "path": "mnist_foam/viewer.html",
+          "size_kb": 10.1
+        },
+        {
+          "path": "fibrebundle5.html",
+          "size_kb": 9.0
+        },
+        {
+          "path": "kohonen.html",
+          "size_kb": 8.7
+        },
+        {
+          "path": "pz.html",
+          "size_kb": 8.6
+        },
+        {
+          "path": "pz10.html",
+          "size_kb": 8.1
+        },
+        {
+          "path": "transformer_rein_geometrisch3.html",
+          "size_kb": 7.5
+        },
+        {
+          "path": "pz6.html",
+          "size_kb": 7.2
+        },
+        {
+          "path": "pz8.html",
+          "size_kb": 7.1
+        },
+        {
+          "path": "fibrebundle4.html",
+          "size_kb": 7.0
+        },
+        {
+          "path": "pz9.html",
+          "size_kb": 6.3
+        },
+        {
+          "path": "turing3.html",
+          "size_kb": 6.1
+        },
+        {
+          "path": "pz5.html",
+          "size_kb": 6.0
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "total_kb": 24.8,
+      "files": [
+        {
+          "path": "turing2.html",
+          "size_kb": 5.6
+        },
+        {
+          "path": "pz3.html",
+          "size_kb": 5.0
+        },
+        {
+          "path": "turing.html",
+          "size_kb": 4.9
+        },
+        {
+          "path": "pz4.html",
+          "size_kb": 4.9
+        },
+        {
+          "path": "projection.html",
+          "size_kb": 4.3
+        }
+      ]
+    }
+  ]
+}

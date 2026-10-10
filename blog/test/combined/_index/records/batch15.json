@@ -1,0 +1,393 @@
+[
+  {
+    "path": "buecher/the_book_of_the_taboo_of_knowing_who_you_are.html",
+    "slug": "the_book_of_the_taboo_of_knowing_who_you_are",
+    "title": "Alan Watts — The Book: On the Taboo Against Knowing Who You Are (Interaktive Konzeptvisualisierung)",
+    "lang": "de",
+    "size_kb": 64.8,
+    "category": "nicht-ki",
+    "category_reason": "Philosophie/Psychologie: interaktive Konzept-Visualisierung von Alan Watts' Buch 'The Book: on the Taboo Against Knowing Who You Are' (Ego, Selbstbild, Selbstwissen). Keine ML-/KI-Inhalte.",
+    "theme": "self-identity",
+    "themes": ["self-identity", "ego-psychology", "philosophy-of-mind", "alan-watts", "consciousness"],
+    "thesis": "Watts' 'The Book' behauptet, dass das menschliche Ego ein Selbstbild (ein mentales Modell des 'Ich') ist, das wir mit dem eigentlichen Selbst verwechseln; das 'Tabu' ist, dass es gesellschaftlich geahndet wird, dieses Selbstbild abzulegen bzw. wahrzunehmen, wer man wirklich ist — dass man nicht ein abgegrenztes Ego, sondern der ganze Prozess ist. Die interaktive Konzept-Map macht die Kernideen (Ego, Selbstbild, Selbstwissen, Bewusstsein, Tabu) als vernetzte Knoten erfahrbar.",
+    "key_claims": [
+      "Das Ego ist ein Selbstbild — ein mentales Modell des 'Ich', das wir fälschlich für das reale Selbst halten.",
+      "Selbstwissen ist im gewöhnlichen Sinn unmöglich: wie ein Auge, das sich nicht selbst sehen kann, kann das Bewusstsein nicht auf sich selbst 'blicken', ohne ein (falsches) Bild zu erzeugen.",
+      "Das 'Tabu gegen zu wissen, wer du bist' ist eine soziale Norm: Wer aus dem zugewiesenen Selbstbild ausbricht, wird sozial bestraft — das Tabu hält das Ego am Leben.",
+      "Das 'Selbst' ist ein Prozess, nicht eine Sache: Du bist der Vorgang (Atmen, Denken, Reagieren), nicht das Produkt.",
+      "Die Trennung zwischen 'ich' und 'Welt' ist eine Illusion, die vom Ego-Bild erzeugt wird; die Wirklichkeit ist ein ungeteilter Fluss.",
+      "Bewusstsein wird als 'Raum' beschrieben, in dem Gedanken erscheinen — nicht als der Inhalt, sondern als das Feld."
+    ],
+    "methods_math": ["keine formale Mathematik — philosophische/psychologische Konzeptanalyse", "Selbst-Referenz-Problem (das Auge, das sich nicht sieht)", "Prozess-vs.-Objekt-Zerlegung des Selbst"],
+    "visualizations": ["Plotly: interaktives Konzept-Netz (Begriffsknoten, klickbar, Hover-Details)", "konzeptionelle Karten der Kernideen (Ego, Selbstbild, Tabu, Prozess, Raum)"],
+    "internal_tensions": [
+      "Watts' Ideen sind bewusst anti-systematisch und paradox; sie in ein starres Konzept-Netz zu gießen, erzeugt genau die Struktur, die das Buch verweigert.",
+      "Die zentralen Behauptungen (keines festen Selbst, Ego als Illusion) sind nicht 'visualisierbar' — die Netz-Karte ist eine didaktische Vereinfachung, keine Darstellung der Argumentation.",
+      "Die Unterscheidung 'Prozess vs. Objekt' wird behauptet, aber die epistemische Schwierigkeit (wie kann der Prozess sich als Prozess erkennen?) wird nur gestreift."
+    ],
+    "related_files": ["philosophy2.html", "bewusstsein.html", "consciousness_overview.html", "buecher/sein_und_zeit.html"]
+  },
+  {
+    "path": "categorial_homotopy_for_llm.html",
+    "slug": "categorial_homotopy_for_llm",
+    "title": "Eine Rose mit anderem Namen — Kategorielle Homotopie für LLMs",
+    "lang": "de",
+    "size_kb": 64.6,
+    "category": "ki",
+    "category_reason": "Mathematik FÜR KI: Kategorielle Homotopie (Homotopie-Äquivalenz, n-Simplex, Nerv) wird explizit als Linse auf LLM-Repräsentationen angewendet — semantisch äquivalente Darstellungen sind 'die gleiche Rose unter anderem Namen'. Klare KI-Kopplung.",
+    "theme": "categorical-homotopy",
+    "themes": ["categorical-homotopy", "homotopy-equivalence", "simplicial-sets", "geometry-of-embeddings", "semantic-invariance", "transformer-attention"],
+    "thesis": "Kategorielle Homotopie liefert eine mathematische Linse für LLMs: Zwei Repräsentationen (z.B. zwei Paraphrasen, zwei Embedding-Punkte desselben Begriffs) sind 'die gleiche Rose unter anderem Namen', wenn sie homotopisch äquivalent sind — es gibt Abbildungen zwischen ihnen, deren Kompositionen (bis auf Homotopie) die Identität ergeben. Das n-Simplex zeigt, wie ein semantischer Raum trianguliert wird und wie Homotopie die Invarianz der Bedeutung unter stetiger Verformung der Repräsentation formalisiert.",
+    "key_claims": [
+      "Zwei Objekte (Repräsentationen) sind homotopisch äquivalent, wenn Abbildungen f, g existieren mit f∘g ≃ id und g∘f ≃ id — 'eine Rose mit jedem anderen Namen' (Shakespeare).",
+      "Der Nerv einer Kategorie / ein simplicial set kodiert Relationen höherer Ordnung: ein n-Simplex ist eine (n+1)-stellige Relation (Dreieck = 3-ary, Tetraeder = 4-ary …).",
+      "In einem LLM belegen semantisch äquivalente Texte (Paraphrasen) homotopisch äquivalente Regionen des Embedding-/Latentraums — die Bedeutung ist invariant unter stetiger Verformung der Oberfläche.",
+      "Homotopie-Äquivalenz gibt eine formale Version von 'Bedeutung bleibt erhalten, während sich die Repräsentation stetig ändert' — der Kern des Sprachverstehens.",
+      "Die n-Simplex-Darstellung macht sichtbar, wie Komposition (Wort → Phrase → Satz) als Verklebung von Simplexen modelliert werden kann."
+    ],
+    "methods_math": ["Homotopie-Äquivalenz (f∘g ≃ id, g∘f ≃ id)", "n-Simplex / simplicial sets", "Nerv-Konstruktion (Kategorie → simplicial set)", "kategoriale Komposition", "Invarianz unter stetiger Deformation"],
+    "visualizations": ["Plotly: n-Simplex (2D/3D, Dreieck/Tetraeder, klickbare Ecken/Kanten)", "Temml: Formel-Rendering der Homotopie-Äquivalenz-Identitäten", "Diagramm: Paraphrase ↔ Paraphrase als homotopisch äquivalente Punkte"],
+    "internal_tensions": [
+      "Die LLM-Kopplung ist metaphorisch/aspirativ: es wird kein Theorem bewiesen, dass reale Embedding-Räume unter Paraphrasierung tatsächlich homotopie-invariant sind.",
+      "Die n-Simplex-Visualisierung ist niedrig-dimensional; reale Embedding-/Latenträume sind hochdimensional, und der Nerv eines 'Bedeutungskategories' wird nicht konkret konstruiert.",
+      "Die 'Kategorie der Bedeutungen' wird nicht exakt definiert (Objekte = Wörter? Sätze? Embeddings?) — die Homotopie hängt an einer unbestimmten Grundkategorie."
+    ],
+    "related_files": ["paperidea4.html", "garben_in_transformern.html", "latent_semantic_manifolds_in_llm.html", "higher_algebra.html"]
+  },
+  {
+    "path": "fun.html",
+    "slug": "fun",
+    "title": "The Science of FUN",
+    "lang": "en",
+    "size_kb": 64.5,
+    "category": "nicht-ki",
+    "category_reason": "Neurowissenschaft: die Wissenschaft von Spass/Freude (Belohnungssystem, Dopamin, Flow, Spiel, Neugier). Keine ML-/KI-Inhalte.",
+    "theme": "neuroscience-pleasure",
+    "themes": ["neuroscience-pleasure", "dopamine-reward", "flow", "play-curiosity", "brain"],
+    "thesis": "Spass/Freude ist ein neurobiologischer Prozess: Das Belohnungssystem des Gehirns (Dopamin als 'wanting'/Antizipation, opioide/Endocannabinoide als 'liking'/momentane Freude) erzeugt Freude; 'Fun' entsteht, wenn eine Aktivität diese Belohnungskreise mit optimaler Herausforderung (Flow — weder zu leicht noch zu schwer), Neugier, Überraschung und Kompetenz aktiviert. Die interaktiven Diagramme zerlegen den Belohnungslauf in seine Komponenten.",
+    "key_claims": [
+      "Freude hat zwei Komponenten: die momentane hedonische Freude ('liking') und die antizipierende Freude ('wanting') auf eine belohnende Zukunft.",
+      "Dopamin ist primär das 'wanting'/Belohnungs-Prädiktions-Signal (Verlangen, Antizipation), nicht die Freude selbst — die 'liking'-Empfindung trägt mehr Opioide/Endocannabinoide.",
+      "Flow (Csikszentmihalyi): Spass braucht optimale Herausforderung — die Schwierigkeit muss zur Fähigkeit passen (zu leicht = Langeweile, zu schwer = Angst).",
+      "Neugier, Überraschung und Spiel sind zentrale Treiber von Spass: ungelöste Information ('Information-Gap') und das 'Was-wäre-wenn' halten den Belohnungskreis aktiv.",
+      "Meisterhaftigkeit/Kompetenz (mastery) und die Möglichkeit zu spielen (ohne externe Belohnung) verstärken die Freude — intrinsische Motivation.",
+      "Der Belohnungslauf ist ein Feedback-Zyklus: Antizipation → Handlung → Belohnung → Lernen → neue Antizipation."
+    ],
+    "methods_math": ["keine formale Mathematik — neurowissenschaftliche Modellierung", "Dopamin = Belohnungs-Prädiktionsfehler (RPE)", "Flow-Kanal (Herausforderung vs. Fähigkeit)"],
+    "visualizations": ["Canvas/Plotly: Belohnungslauf (Antizipation → Handlung → Belohnung, animiert)", "Flow-Kurve (Herausforderung vs. Fähigkeit, Flow-Zone)", "Dopamin/Antizipations-Kurven", "Komponenten-Grid (Neugier, Überraschung, Spiel, Meisterhaftigkeit)"],
+    "internal_tensions": [
+      "Die Unterscheidung 'Dopamin = wanting, nicht liking' ist eine starke Vereinfachung umstrittener Neurowissenschaft (Berridge & Robinson) und wird hier als Konsens präsentiert.",
+      "'Fun' ist ein Volksbegriff; seine Zerlegung in Belohnungskreise ist reduktiv und übersieht kulturelle/soziale Dimensionen von Spass.",
+      "Die Flow-Kurve ist eine glatte, schematische Darstellung — reale Motivation ist rauschiger und von Kontext abhängig."
+    ],
+    "related_files": ["brain.html", "consciousness_overview.html", "bewusstsein.html", "essen.html"]
+  },
+  {
+    "path": "effortless_basins_of_attraction.html",
+    "slug": "effortless_basins_of_attraction",
+    "title": "Basins of Attraction — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 64.1,
+    "category": "nicht-ki",
+    "category_reason": "Dynamische Systeme: Attraktoren und deren Einzugsgebiete (Basins of Attraction), Separatrices, Bistabilität; interaktive Visualisierung nach Datseris & Wagemakers (2021). Keine ML-/KI-Inhalte.",
+    "theme": "basins-of-attraction",
+    "themes": ["basins-of-attraction", "dynamical-systems", "attractors", "separatrices", "bistability"],
+    "thesis": "Der Phasenraum eines dynamischen Systems ist in Einzugsgebiete (Basins of Attraction) zerlegt — Regionen, deren Trajektorien zum selben Attraktor konvergieren; die Grenzen (Separatrices) zwischen den Becken sind die 'Entscheidungsgrenzen', für multistabile/nichtlineare Systeme oft fraktal. Die interaktive Visualisierung (u.a. nach Datseris & Wagemakers 2021) zeigt die Becken einer Systemfamilie und wie Parameteränderungen verschieben, welchen Attraktor das System 'wählt'.",
+    "key_claims": [
+      "Ein dynamisches System besitzt Attraktoren (Fixpunkte, Grenzzyklen, seltsame Attraktoren); jeder Attraktor hat ein Einzugsgebiet — die Menge aller Anfangszustände, die darauf zustreben.",
+      "Die Einzugsgebiete kacheln den Phasenraum; ihre Grenzen (Separatrices) sind die 'Entscheidungsgrenzen' zwischen Attraktoren.",
+      "Für nichtlineare/multistabile Systeme können die Becken fraktal sein und extrem parameter-empfindlich (chaotische Grenzen).",
+      "Die Becken-Struktur erklärt Bistabilität und Hysterese: Welcher Zustand sich einstellt, hängt vom Startpunkt (und von der Geschichte) ab.",
+      "Datseris & Wagemakers (2021) liefern eine Methode zur Schätzung/Visualisierung von Einzugsgebieten (z.B. durch Trajektorien-Integration und 'attractor-landscape'-Darstellung).",
+      "Parameteränderungen verformen die Becken — ein Attraktor kann schrumpfen, verschwinden oder sich spalten (Bifurkation)."
+    ],
+    "methods_math": ["dynamische Systeme & Flows", "Attraktoren (Fixpunkt/Zykel/seltsam)", "Einzugsgebiete (Basins of Attraction)", "Separatrices / fraktale Beckengrenzen", "Bifurkationen / Parameter-Sweeps", "numerische Trajektorien-Integration"],
+    "visualizations": ["Plotly 2D: Becken-Diagramm (nach Attraktor gefärbt), animierte Trajektorien", "Parameter-Sweep (Becken verformen sich live)", "Separatrix / fraktale Grenz-Darstellung", "Bistabilitäts-Demo (zwei stabile Zustände, Entscheidung durch Startpunkt)"],
+    "internal_tensions": [
+      "Beckengrenzen sind bei chaotischen Systemen fraktal; die diskrete Gitterauflösung der Visualisierung erfasst nur endlich viel Fraktal-Struktur.",
+      "'Welcher Attraktor' ist parameter-abhängig — ein einzelnes Becken-Bild ist ein Snapshot, nicht die volle Bifurkationsgeschichte.",
+      "Die Datseris-&-Wagemakers-Methode wird als Werkzeug herangezogen, aber ihre Genauigkeits-/Konvergenz-Eigenschaften werden nicht quantitativ behandelt."
+    ],
+    "related_files": ["catastrophe_theory.html", "topology_of_attractors.html", "phasenraum.html", "chaos.html"]
+  },
+  {
+    "path": "energy_based_learning.html",
+    "slug": "energy_based_learning",
+    "title": "Energy-Based Learning — Interaktive Reise durch LeCun et al. 2006",
+    "lang": "de",
+    "size_kb": 64.0,
+    "category": "ki",
+    "category_reason": "Maschinelles Lernen: Energie-basierte Modelle (LeCun et al. 2006, 'A Tutorial on Energy-Based Learning') — Energie-Landschaften, Minimization, Contrastive Divergence, MRF/Boltzmann. Klare KI-Kopplung.",
+    "theme": "energy-based-models",
+    "themes": ["energy-based-models", "energy-minimization", "contrastive-divergence", "mrf-boltzmann", "structured-prediction"],
+    "thesis": "Energie-basierte Modelle (EBM) definieren eine skalare Energie E(x[, y]) über Eingaben (und optionalen Labels): gültige/daten-nahe Konfigurationen haben niedrige Energie, ungültige hohe. Lernen formt die Energie-Landschaft so, dass echte Daten in Täler fallen und korrupte Daten auf Berge; Inferenz ist Energiminimierung. LeCun et al. (2006) stellen EBMs als allgemeines, diskriminative und generative Sichtweisen vereinigendes Rahmenwerk dar (Klassifikation, Rekonstruktion, strukturierte Vorhersage).",
+    "key_claims": [
+      "Ein EBM ordnet jeder Konfiguration eine skalare Energie E(x, y) zu; das Modell 'erklärt' Daten, indem es echte Daten niedrig-energetisch macht.",
+      "Training drückt die Energie echter Daten herunter und die Energie korrupter/abwesender Daten hoch (Contrastive Divergence / Noise Contrastive Estimation).",
+      "Inferenz ist Energiminimierung: Um das beste Label y für Eingabe x zu finden, minimiert man E(x, y) über y.",
+      "EBMs verallgemeinern sowohl den generativen (modellierte gemeinsame Verteilung) als auch den diskriminativen (bedingte Verteilung) Blick.",
+      "Strukturierte Vorhersage: E(x, y) über strukturierte y (Sequenzen, Graphen, Segmentierungen) — die Energie kodiert Kompatibilitäts-Constraints.",
+      "Verbindung zu Markov-Zufallsfeldern, Boltzmann-Maschinen und Hopfield-Netzen (in Sonderfällen Energie = −log Wahrscheinlichkeit)."
+    ],
+    "methods_math": ["Energiefunktionen E(x, y)", "Energiminimierung / Gradientenabstieg", "Contrastive Divergence", "Markov-Zufallsfelder / Boltzmann-Verteilung", "strukturierte Vorhersage (Sequenzen/Graphen)", "generativ vs. diskriminativ"],
+    "visualizations": ["Plotly: 2D Energie-Landschaft (Täler/Berge), vor/nach Training", "Plotly: Energiewerte echter vs. korrupter Daten (Gap)", "Schematische Inferenz (Minimierung über y)", "Verbindungsdigramm EBM ↔ MRF ↔ Boltzmann ↔ Hopfield"],
+    "internal_tensions": [
+      "Das Training von EBMs ist rechnerisch schwer (Partitionssummen unzugänglich); Contrastive Divergence ist eine Approximation, keine exakte Schätzung.",
+      "Die 2D 'Energie-Landschaft' ist schematisch; reale EBM-Landschaften sind hochdimensional und nicht direkt darstellbar.",
+      "Die Einheit mit generativen/diskriminativen Modellen wird behauptet, aber die Bedingungen (z.B. Existenz einer normalisierenden Verteilung) werden nur angerissen."
+    ],
+    "related_files": ["topologie_tiefer_neuronaler_netze.html", "universal_approximation_theorem.html", "backprop.html", "why_deep_learning_works.html"]
+  },
+  {
+    "path": "latent_semantic_manifolds_in_llm_simple.html",
+    "slug": "latent_semantic_manifolds_in_llm_simple",
+    "title": "Latente Semantische Mannigfaltigkeiten in LLMs — Einfach erklärt",
+    "lang": "de",
+    "size_kb": 63.6,
+    "category": "ki",
+    "category_reason": "Geometrie der Embeddings / LLM-Internes: Wort-/Begriffs-Embeddings liegen auf (nahe) einer niedrig-dimensionalen semantischen Mannigfaltigkeit; deren Geometrie kodiert Bedeutungsrelationen. Klare KI-Kopplung.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["geometry-of-embeddings", "manifold-hypothesis", "word-analogies", "dimensionality-reduction", "llm-internals"],
+    "thesis": "Die Wort-/Begriffs-Embeddings eines LLM liegen auf (oder nahe) einer niedrig-dimensionalen semantischen Mannigfaltigkeit im hochdimensionalen Embedding-Raum; die Geometrie dieser Mannigfaltigkeit (Distanzen, Krümmung, Vektorrelationen) spiegelt Bedeutungszusammenhänge — ähnliche Bedeutungen sind geometrisch nah, Analogien sind (nahezu) parallele Vektoren, und die Form der Mannigfaltigkeit erfasst den gelernten 'Bedeutungsraum'.",
+    "key_claims": [
+      "LLM-Embeddings besetzen einen strukturierten niedrig-dimensionalen Unterraum ('semantische Mannigfaltigkeit') im hochdimensionalen Raum — die Mannigfaltigkeits-Hypothese für Sprache.",
+      "Ähnliche Bedeutungen sind geometrisch nah (Cosinus-Distanz); Wort-Analogien (König − Mann + Frau ≈ Königin) sind Vektorarithmetik auf der Mannigfaltigkeit.",
+      "Die Krümmung/Geometrie der Mannigfaltigkeit kodiert semantische Struktur — sie ist nicht zufällig, sondern vom Training geformt.",
+      "Dimensionsreduktion (PCA/UMAP/t-SNE) projiziert die Mannigfaltigkeit in 2D/3D und macht die Begriffskluster sichtbar.",
+      "Je kontextreicher das Embedding (LLM vs. statisches Word2Vec), desto 'beugbarer' ist der Punkt — dieselbe Wortform landet je nach Kontext an verschiedenen Stellen der Mannigfaltigkeit."
+    ],
+    "methods_math": ["Embedding-Geometrie", "Mannigfaltigkeits-Hypothese", "PCA/UMAP/t-SNE Projektion", "Cosinus-Ähnlichkeit", "Vektorarithmetik (Wort-Analogien)"],
+    "visualizations": ["Canvas 2D/3D: Embedding-Projektion (Begriffskluster)", "Vektor-Analogie-Demo (König/Mann/Frau/Königin)", "Distanz-Geometrie (Cosinus, Nähe = Bedeutung)", "Mannigfaltigkeits-Krümmungs-Skizze"],
+    "internal_tensions": [
+      "Die 'Mannigfaltigkeit' wird indirekt (per Dimensionsreduktion) inferiert, nicht direkt beobachtet; verschiedene Projektionen erzählen verschiedene Geschichten.",
+      "Statische Word2Vec-Embeddings und kontextuelle LLM-Embeddings unterscheiden sich fundamental; das saubere 'Mannigfaltigkeits'-Bild gilt klarer für statische Embeddings.",
+      "'Niedrig-dimensionale Mannigfaltigkeit' ist ein heuristischer Begriff — die effektive intrinsische Dimension ist estimiert, keine feste Invariante."
+    ],
+    "related_files": ["latent_semantic_manifolds_in_llm.html", "latent_semantic_manifolds_in_llm_very_simple.html", "low_dim_learning.html", "geometry_of_meaning_test.html"]
+  },
+  {
+    "path": "grokking_addition_internal2.html",
+    "slug": "grokking_addition_internal2",
+    "title": "How Transformers Learn Modular Addition — Interactive Playground",
+    "lang": "en",
+    "size_kb": 63.0,
+    "category": "ki",
+    "category_reason": "KI-Interpretierbarkeit: wie Transformer modulare Addition (a+b mod P) lernen — Grokking (verzögerte Generalisierung), Attention/FFN-Zirkuits, Fourier/Spektral-Bias. Klare KI-Kopplung.",
+    "theme": "grokking-transformers",
+    "themes": ["grokking-transformers", "modular-arithmetic", "fourier-analysis", "spectral-bias", "attention-ffn-circuits", "delayed-generalization"],
+    "thesis": "Ein auf modulare Addition (a+b mod P) trainierter Transformer 'memorisiert' zunächst und 'grokt' dann: nach einer langen Verlust-Platte findet er die zugrunde liegende Additionsregel (eine Fourier-/positions-basierte Repräsentation) und generalisiert plötzlich auf unbekannte Eingaben. Das interaktive Playground lässt Schritt für Schritt durchschauen, wie die Attention-/FFN-Schichten die Addition implementieren.",
+    "key_claims": [
+      "Modulare Addition (a+b mod P) ist die kanonische Grokking-Aufgabe: das Modell memorisiert erst, dann (nach einer flachen Loss-Phase) generalisiert es plötzlich.",
+      "Grokking = verzögerte Generalisierung: das Netz findet eine einfachere, allgemeinere Lösung (die Additionsregel) statt der auswendig gelernten Tabelle.",
+      "Der Transformer implementiert Addition über Attention (relative Position / Index-Rückholung) + FFN (Index-Arithmetik).",
+      "Die Fourierspektral-Analyse der Aufgabe: die Additionsfunktion ist eine Summe von Fourier-Moden; das Modell lernt niederfrequente Moden zuerst (Spektral-Bias).",
+      "Die lange Loss-Platte vor dem sprunghaften Abfallen ist die Signatur von Grokking (oft getrieben von Weight Decay, das zur Einfachheit zwingt).",
+      "Interaktiv: man kann die Schichten durchschauen und sehen, wie Indizes zu der Summe kombiniert werden."
+    ],
+    "methods_math": ["modulare Arithmetik (mod P)", "Fourier-Analyse / Spektral-Bias", "Attention als relative-Position-Lookup", "FFN als Index-Arithmetik", "Memorisierung → Generalisierung (Grokking)", "Weight-Decay-getriebene Einfachheit"],
+    "visualizations": ["Canvas: Attention/FFN-Zirkuit-Walkthrough (Schicht für Schicht)", "Fourier-Moden-Plot (welche Moden sind aktiv)", "Loss-Kurve (Memorisation → Platte → Grokking-Abfall)", "interaktives Playground (Eingabe a, b, P, Schicht-Einblick)"],
+    "internal_tensions": [
+      "'Grokking' wird verhaltensmäßig definiert (verzögerte Generalisierung); der Mechanismus (Weight Decay zwingt zur Einfachheit) ist eine Hypothese, hier nicht bewiesen.",
+      "Der interaktive Zirkuit ist ein vereinfachtes Spielzeug, nicht exakt die Gewichte eines trainierten Modells.",
+      "Die Spektral-Bias-Annahme (niederfrequente Moden zuerst) gilt für die ideale/lineare Aufgabe; reale ReLU-Netze approximieren sie nur ungefähr."
+    ],
+    "related_files": ["grokking_addition_internal.html", "grokking_addition.html", "grokking_paper.html", "mod.html", "fourier_addition.html"]
+  },
+  {
+    "path": "intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html",
+    "slug": "intrinsische_dimensionen_tiefer_neuronaler_netze_simple",
+    "title": "Intrinsische Dimension tiefer Netze — Einfach erklärt",
+    "lang": "de",
+    "size_kb": 62.8,
+    "category": "ki",
+    "category_reason": "ML-Theorie: intrinsische Dimension neuronaler Repräsentationen (Ansuini et al. 2019, TwoNN-Schätzer); 'Dimension sinkt mit der Tiefe'. Klare KI-Kopplung.",
+    "theme": "intrinsic-dimension",
+    "themes": ["intrinsic-dimension", "two-nn-estimator", "depth-compression", "manifold-learning", "neural-representations"],
+    "thesis": "Tiefe neuronale Netze lernen Repräsentationen, deren intrinsische Dimension (die effektive Anzahl der Dimensionen, die die Daten tatsächlich nutzen) mit der Tiefe sinkt — ein 'Ahnungs'-Ergebnis, dass tiefe Netze die Daten-Mannigfaltigkeit schrittweise komprimieren. Ansuini et al. (2019) schätzen diese intrinsische Dimension mit der TwoNN-Methode und zeigen, dass sie über die Schichten hinweg abnimmt: tiefere Schichten fassen zunehmend niedriger-dimensionale Struktur.",
+    "key_claims": [
+      "Die intrinsische Dimension einer Datenmenge/einer Repräsentation ist die effektive Anzahl der Dimensionen, die die Daten besetzen — kleiner als die Umgebungsdimension.",
+      "TwoNN (Ansuini et al. 2019): schätzt die intrinsische Dimension aus der Verteilung des Verhältnisses der Distanzen zum 2. vs. 1. nächsten Nachbarn (Peak = Dimension).",
+      "In tiefen Netzen sinkt die intrinsische Dimension der versteckten Repräsentationen tendenziell mit der Tiefe — das Netz 'komprimiert' die Daten.",
+      "Diese 'Dimensionsreduktion mit der Tiefe' ist eine Signatur dafür, dass das Netz bedeutungsvolle, kompakte Repräsentationen lernt.",
+      "PCA-basierte Schätzungen können irreführend sein; TwoNN ist für mannigfaltigkeits-artige Daten robuster.",
+      "Niedrigere intrinsische Dimension in tieferen Schichten korreliert mit besserer Generalisierung/Robustheit (vereinfachte Repräsentation)."
+    ],
+    "methods_math": ["intrinsische Dimension", "TwoNN-Schätzer (Nächste-Nachbarn-Verhältnis)", "PCA (Vergleichsschätzer)", "Nächste-Nachbarn-Distanzen", "Mannigfaltigkeits-Lernen", "Tiefe-Kompression"],
+    "visualizations": ["Canvas/Plotly: TwoNN-Histogramm (Peak = intrinsische Dimension)", "Plotly: intrinsische Dimension vs. Schichttiefe (abfallend)", "Vergleich PCA vs. TwoNN", "Mannigfaltigkeits-Skizze (Daten in hoch-/niedrig-dimensionalem Raum)"],
+    "internal_tensions": [
+      "Die intrinsische Dimension ist eine heuristische Schätzung, keine wohldefinierte Invariante — der Wert hängt vom Schätzer und den Parametern ab.",
+      "'Dimension sinkt mit der Tiefe' wird beobachtet, aber die kausale Mechanik (warum tiefer = niedriger-dimensionaler) ist nicht vollständig verstanden.",
+      "Die TwoNN-Schätzung setzt eine (nahezu) uniforme Verteilung auf der Mannigfaltigkeit voraus — für real ungleichmäßig verteilte Daten ist sie verzerrt."
+    ],
+    "related_files": ["intrinsische_dimensionen_tiefer_neuronaler_netze.html", "intrinsische_dimensionen_tiefer_neuronaler_netze_very_simple.html", "low_dim_learning.html", "topologie_tiefer_neuronaler_netze.html"]
+  },
+  {
+    "path": "fibrebundle3.html",
+    "slug": "fibrebundle3",
+    "title": "LLM Kelp-Wald v4 – Vollständige Faserbündel-Visualisierung",
+    "lang": "de",
+    "size_kb": 62.5,
+    "category": "ki",
+    "category_reason": "KI-Architektur: ein Transformer als 'Kelp-Wald' in der Faserbündel-Sprache (Residual-Stream = Stängel, Attention = Faser-Äste, FFN = andere Äste); Defekte (Halluzination, Schleife, Unsicherheit) als topologische Anomalien. Klare KI-Kopplung.",
+    "theme": "fiber-bundle-llm",
+    "themes": ["fiber-bundle-llm", "residual-stream", "attention-fibers", "beam-search", "hallucination", "transformer-architecture"],
+    "thesis": "Ein Transformer wird als 'Kelp-Wald' visualisiert: der Residual-Stream ist der vertikale Kelp-Stängel, der alle Schichten an jeder Token-Position verbindet; Attention-Köpfe sind Seitenäste (Fasern), die andere Positionen 'probieren'; FFN-Schichten sind weitere Äste. Die Faserbündel-Sicht (Basis = Token-Sequenz, Faser = Hidden-Vektor an der Position, Totalraum = alle Schichten-Zustände) macht die Transformer-Geometrie konkret; Defekte (Halluzination, Schleife, Unsicherheit) erscheinen als topologische Anomalien im Bündel.",
+    "key_claims": [
+      "Der Residual-Stream ist der 'Stängel' — eine vertikale Linie, die alle Schichten an jeder Token-Position verbindet.",
+      "Jeder Attention-Kopf ist ein 'Seitenast' (Faser), der verschiedene Token-Positionen verbindet (er 'probiert' andere Positionen aus).",
+      "Faserbündel-Sicht: Basisraum = Token-Positionen, Faser = Hidden-Vektor an der Position, Totalraum = alle (Position, Schicht)-Hidden-Zustände.",
+      "Beam Search wird als Animation des 'Wachsens' des Kelps gezeigt (Erkundung möglicher Fortsetzungen).",
+      "Defekte: Halluzination = ein Ast ohne 'Boden' (keine Stütze in der Basis), Schleife = eine zyklische Attention, Unsicherheit = ein dünner/unscharfer Ast.",
+      "Volle Fullscreen-Canvas-Ansicht, Scrollen zum Durchzoomen der Schichten."
+    ],
+    "methods_math": ["Faserbündel (Basis/Faser/Totalraum)", "Residual-Stream als vertikales Bündel", "Attention als Faser-Abbildung zwischen Positionen", "Monodromie / Verklebung (informell)"],
+    "visualizations": ["Fullscreen-Canvas: Kelp-Wald (3D-artige Ansicht, Schichten vertikal)", "Beam-Search-Animation (Kelp 'wächst', Kandidaten-Äste)", "Defekt-Marker (Halluzination/Schleife/Unsicherheit als Anomalien)", "Scroll-Zoom durch die Schichten"],
+    "internal_tensions": [
+      "Die Kelp-Metapher ist anschaulich, aber die Faserbündel-Formalisierung wird nicht rigoros angewendet (keine echte Bündel-Abbildung / Strukturgruppe).",
+      "'Defekte als topologische Anomalien' ist illustrativ, keine formale topologische Klassifikation.",
+      "Der 'Kelp' ist eine 2.5D/3D-Heuristik — der echte Hidden-Verlauf ist hochdimensional und pro Token/Schicht diskret, nicht ein glatter Stängel."
+    ],
+    "related_files": ["fibrebundles.html", "fibrebundle2.html", "fibrebundle.html", "garben_in_transformern.html", "faserbuendel_und_fibrationen.html"]
+  },
+  {
+    "path": "sheaving.html",
+    "slug": "sheaving",
+    "title": "Sheaving — Interaktive Reise durch Phillips (2019)",
+    "lang": "de",
+    "size_kb": 62.1,
+    "category": "nicht-ki",
+    "category_reason": "Kategoriale Topologie / Kognitionswissenschaft: 'Sheaving' (Phillips 2019) als universelle Garben-ähnliche Konstruktion für semantische Komposition (lokale → globale Bedeutung). Philosophie des Geistes, keine ML-/KI-Inhalte.",
+    "theme": "sheaf-theory",
+    "themes": ["sheaf-theory", "categorical-topology", "semantic-compositionality", "local-to-global", "cognitive-science", "philosophy-of-mind"],
+    "thesis": "Phillips (2019) führt 'Sheaving' als kategoriale-topologische Konstruktion ein, die Garben (Sheaves) verallgemeinert/verwandt; sie liefert ein mathematisches Rahmenwerk dafür, wie lokale Bedeutungsfetzen zu globaler Bedeutung 'verklebt' werden (semantische Komposition) — eine Brücke zwischen kategoriale Topologie und der Komposition von Bedeutung in Sprache/Geist.",
+    "key_claims": [
+      "Eine Garbe ordnet jeder offenen Menge eine Menge von 'Schnitten' (lokale Daten) zu, mit Restriktionsabbildungen, und 'verklebt' kompatible lokale Schnitte zu globalen.",
+      "'Sheaving' (Phillips 2019) ist die universelle kategoriale Konstruktion 'die Garbe von …' — sie erfasst formal, wie lokale Daten kohärent zusammenpassen.",
+      "Angewandt auf Bedeutung: lokale Bedeutungsfetzen (Wörter/Phrasen) sind 'Schnitte', die auf Überlappungen kompatibel sein müssen, um eine globale Bedeutung (einen Satz) zu bilden — Komposition als Verklebung.",
+      "Die universelle Eigenschaft macht die Kompatibilitäts-/Kohärenz-Anforderungen präzise: es gibt genau einen globalen Schnitt, der alle lokalen 'deckt'.",
+      "Dies verbindet sich mit dem breiteren 'Geometrie der Bedeutung' / Garben-und-Geist-Programm (lokale Konsistenz ⇒ globale Bedeutung)."
+    ],
+    "methods_math": ["Garben (Schnitte, Restriktionsabbildungen, Verklebung)", "universelle kategoriale Konstruktion ('sheaving')", "lokal → global (Kohärenz auf Überlappungen)", "universelle Eigenschaft (eindeutiger globaler Schnitt)", "Komposition der Bedeutung"],
+    "visualizations": ["KaTeX: Garben-/Sheaving-Definitionen & Diagramme", "Plotly/Canvas: Garben-Verklebung (lokale Schnitte → globaler Schnitt)", "Diagramm: lokale Bedeutung → globale Bedeutung (Komposition)", "universelle-Eigenschaft-Explorer (eindeutiger globaler Schnitt)"],
+    "internal_tensions": [
+      "'Sheaving' ist eine Nischen-Konstruktion der kategoriellen Topologie; die kognitive/semantische Anwendung ist spekulativ.",
+      "Die Verbindung zur echten Semantik (wie Geister Bedeutung tatsächlich komponieren) ist formal, aber nicht empirisch begründet.",
+      "Die 'Bedeutungsgarbe' wird nicht auf ein konkretes Sprachmodell angewendet — es bleibt eine formale Analogie, keine Berechnung."
+    ],
+    "related_files": ["sheaves.html", "sheaf.html", "garben_weltsicht.html", "garben_in_transformern.html", "paperidea4.html", "geometry_of_meaning_test.html"]
+  },
+  {
+    "path": "grokking_addition_internal.html",
+    "slug": "grokking_addition_internal",
+    "title": "Where Does Sine Live in a Transformer?",
+    "lang": "en",
+    "size_kb": 61.9,
+    "category": "ki",
+    "category_reason": "KI-Interpretierbarkeit (Nanda et al. 2023): wo die sinusförmigen/Fourier-Komponenten bei der Grokking-von-modularer-Addition in den Gewichten eines Transformers 'leben'. Klare KI-Kopplung.",
+    "theme": "grokking-transformers",
+    "themes": ["grokking-transformers", "fourier-analysis", "modular-arithmetic", "roots-of-unity", "spectral-decomposition", "transformer-interpretability", "nanda-2023"],
+    "thesis": "(Nanda et al. 2023) Wenn ein Transformer modulare Addition lernt, 'wo lebt der Sinus?': Die Fourier-/sinusförmigen Komponenten der Additionsfunktion sind in bestimmten Gewichten des Netzes (Attention + FFN) kodiert. Dieser interaktive Erklärer zeigt, wo die sinusförmigen/Fourier-Komponenten im Transformer verankert sind und verbindet Grokking mit Fourier-Analyse — das Netz konvergiert gegen eine saubere spektrale Repräsentation statt einer memorisierten Tabelle.",
+    "key_claims": [
+      "Modulare Addition (mod P) hat eine Fourier-Zerlegung: sie ist eine Summe von P komplexen sinusförmigen Moden (Einheitswurzeln).",
+      "Ein Transformer, der modulare Addition 'grokt', hat diese Fourier-Repräsentation gelernt — die sinusförmigen Komponenten sind in bestimmten Gewichten kodiert.",
+      "'Wo lebt der Sinus?': Die Fourier-Moden sind über Attention (Position/relativ) und FFN (Index-Arithmetik) verteilt, nicht an einem Ort.",
+      "Grokking = das Netz konvergiert gegen diese saubere Fourier-Repräsentation (eine einfache, allgemeine Lösung) statt einer auswendig gelernten Tabelle.",
+      "Die Fourier-Sicht erklärt, warum Addition 'grokt': die Aufgabe ist exakt ein endliches Fourier-Problem, und GD findet die spektrale Lösung.",
+      "Nanda et al. (2023) identifizieren diese spektrale/Zirkuits-Struktur als den Mechanismus hinter Grokking bei modularer Addition."
+    ],
+    "methods_math": ["Fourier-Analyse (diskret, Einheitswurzeln)", "modulare Addition (mod P)", "spektrale Zerlegung", "Attention/FFN-Zirkuits", "Nanda et al. (2023) Grokking-Mechanismus", "Spektral-Bias"],
+    "visualizations": ["Canvas: Fourier-Moden-Plot (Additionsfunktion vs. Fourier-Rekonstruktion)", "Gewicht-Heatmaps (wo 'lebt' der Sinus)", "Zirkuit-Diagramm (Attention/FFN tragen die Moden)", "interaktiver Erklärer (Schicht-/Moden-Einblick)"],
+    "internal_tensions": [
+      "Die Fourier-Zerlegung ist für die lineare/idealisierte Aufgabe exakt; reale ReLU-Transformer approximieren sie nur ungefähr.",
+      "'Wo der Sinus lebt' wird für ein kleines trainiertes Modell gezeigt; die Übertragung auf große LLMs ist nicht nachgewiesen.",
+      "Die Nanda-2023-These (spektrale Repräsentation als Grokking-Mechanismus) wird dargelegt, aber hier nicht auf den exakten Daten-/Gewichts-Set belegt."
+    ],
+    "related_files": ["grokking_addition_internal2.html", "grokking_addition.html", "grokking_paper.html", "mod.html", "fourier_addition.html", "fourier_projection.html"]
+  },
+  {
+    "path": "holographic_principle.html",
+    "slug": "holographic_principle",
+    "title": "Holografisches Prinzip & Deep Learning — Interaktiv",
+    "lang": "de",
+    "size_kb": 61.1,
+    "category": "ki",
+    "category_reason": "Physik-des-ML / Deep Learning: das holografische Prinzip (AdS/CFT) als Linse auf Deep Learning — Boundary kodiert Bulk, mutual information / Verschränkungsentropie als Brücke, Architekturen als 'holografische Kodierungen'. Klare KI-Kopplung.",
+    "theme": "holographic-principle",
+    "themes": ["holographic-principle", "ads-cft", "mutual-information", "entanglement-entropy", "vae-bottleneck", "deep-learning-architecture"],
+    "thesis": "Das holografische Prinzip der Physik (AdS/CFT — eine gravitatorische Theorie im (d+1)-dimensionalen Bulk ist vollständig auf der d-dimensionalen Boundary kodiert) wird als Analogie/Linse für Deep Learning verwendet: die 'Boundary' (Eingabe/Ausgabe) kodiert den 'Bulk' (interne Repräsentationen), und mutual information / Verschränkungsentropie sind die quantitative Brücke. Verschiedene Architekturen (gleichförmig, Encoder-Decoder, VAE-Bottleneck, wide-narrow-wide) entsprechen verschiedenen 'holografischen Kodierungen' derselben Information.",
+    "key_claims": [
+      "Holografisches Prinzip: eine (d+1)-dim gravitatorische Bulk-Theorie ist äquivalent zu einer d-dim Boundary-Theorie — die gesamte Bulk-Information ist auf der Boundary kodiert.",
+      "In Deep Learning kodiert die 'Boundary' (Input/Output) den 'Bulk' (innere Schichten) — eine niedrig-dimensionale Boundary kann die Information eines hochdimensionalen Interieurs tragen.",
+      "Mutual information und (in der Physik) Verschränkungsentropie quantifizieren, wie viel Boundary-Information über den Bulk vorhanden ist — der 'holografische Code'.",
+      "Verschiedene Architekturen implementieren verschiedene holografische Kodierungen: gleichförmiges Netz, Encoder-Decoder, VAE-Bottleneck, wide-narrow-wide — jede komprimiert die Info anderswo.",
+      "Das VAE-Bottleneck ist eine 'holografische' Kompression: ein niedrig-dimensionales Latent (Boundary) kodiert die hoch-dimensionale Daten (Bulk).",
+      "Die Menge an Informationsfluss (MI) durch die Engstellen bestimmt, wie 'holografisch' die Kodierung ist."
+    ],
+    "methods_math": ["AdS/CFT holografisches Prinzip", "mutual information", "Verschränkungsentropie (Analogie)", "Bottleneck-/Latent-Kompression", "Informationsfluss durch Schichten", "Architektur-Vergleich"],
+    "visualizations": ["Canvas: Bulk/Boundary-Diagramm (holografische Kodierung)", "Architektur-Vergleich (gleichförmig/Enc-Dec/VAE/wide-narrow-wide)", "mutual-information-Plots (Informationsfluss über Schichten)", "VAE-Bottleneck-Animation (hoch-dim → Latent → hoch-dim)"],
+    "internal_tensions": [
+      "Die AdS/CFT-Verbindung ist eine Analogie, kein Theorem — reale neuronale Netze sind keine AdS-Gravitationstheorien.",
+      "'Holografische Kodierung' in Netzen wird über mutual information definiert, die eine Schätzung ist und für hochdimensionale Daten verrauscht sein kann.",
+      "Die Quantitative Brücke (Verschränkungsentropie ↔ MI) ist heuristisch; die exakte Korrespondenz zwischen den physikalischen und ML-Begriffen bleibt offen."
+    ],
+    "related_files": ["paperidea4.html", "hologram.html", "decode_holo.html", "low_dim_learning.html", "informationsgravitation.html"]
+  },
+  {
+    "path": "fibrebundles.html",
+    "slug": "fibrebundles",
+    "title": "Interactive Fiber Bundles Explorer",
+    "lang": "en",
+    "size_kb": 60.1,
+    "category": "nicht-ki",
+    "category_reason": "Reine Differentialtopologie: Faserbündel interaktiv erkunden (triviales Zylinder-Bündel, Möbius-Band, Tangentialbündel von S¹, Hopf-Faserung, Custom-Builder mit Twist/Faser-Steuerung). Keine ML-/KI-Inhalte.",
+    "theme": "fiber-bundle-topology",
+    "themes": ["fiber-bundle-topology", "mobius-strip", "tangent-bundle", "hopf-fibration", "monodromy", "differential-topology"],
+    "thesis": "Ein Faserbündel ist ein topologischer Raum (Totalraum E), der lokal wie ein Produkt (Basis B × Faser F) aussieht, aber global 'verdreht' sein kann; die klassischen Beispiele (triviales Zylinder-Bündel, verdrehtes Möbius-Band, Tangentialbündel des Kreises, Hopf-Faserung S³→S²) zeigen, wie lokale Trivialität globale Struktur verbergen kann, und ein interaktiver Builder lässt Bündel durch Wahl von Basis, Faser und Verdrehung konstruieren.",
+    "key_claims": [
+      "Ein Faserbündel π: E → B hat einen Totalraum E, eine Basis B und eine Faser F, mit lokalen Trivialisierungen (E sieht über offenen Teilmengen U ⊂ B aus wie U × F).",
+      "Das triviale Bündel ist einfach ein Produkt B × F (z.B. ein Zylinder); die Faser zu 'verdrillen', während man die Basis entlang geht, ergibt nicht-triviale Bündel (z.B. das Möbius-Band).",
+      "Das Tangentialbündel des Kreises S¹ ist trivial (S¹ × ℝ) — man kann ein Vektorfeld rundherum 'kämmen' ohne Singularität (im Gegensatz zu S²).",
+      "Die Hopf-Faserung S³ → S² hat Kreise als Fasern — eine 3-Sphäre ist ein Bündel von Kreisen über einer 2-Sphäre.",
+      "Die Verdrehung (Monodromie / Übergangsabbildungen) ist es, was Bündel unterscheidet; die 'Twist-Zahl' im Builder steuert die globale Struktur.",
+      "Lokale Trivialität + nicht-triviale globale Verklebung = der Kern des Faserbündel-Begriffs."
+    ],
+    "methods_math": ["Faserbündel (Totalraum/Basis/Faser)", "lokale Trivialität / Trivialisierungen", "Übergangsabbildungen / Monodromie", "Möbius-Band", "Tangentialbündel (S¹ trivial, S² nicht)", "Hopf-Faserung (S³→S²)"],
+    "visualizations": ["Canvas 3D interaktiv: Zylinder (triviales Bündel)", "Canvas 3D: Möbius-Band (verdrehtes Bündel)", "Canvas 3D: Tangentialbündel des Kreises", "Canvas 3D: Hopf-Faserung (Kreisleiter über S²)", "Custom-Builder (Basis/Faser/Twist-Steuerung, live)"],
+    "internal_tensions": [
+      "Die Hopf-Faserung (S³→S²) ist in 3D schwer darzustellen (S³ ist 4-dim); die Projektion ist eine Vereinfachung.",
+      "Die 'Twist-Zahl' im Builder erfasst die einfachste (abelsche) Verdrehung; allgemeine Bündel haben nicht-abelsche Übergangsabbildungen, die hier nicht vollständig erfasst werden.",
+      "Die 3D-Visualisierung von 4-dim Totalräumen (S³) ist eine Projektion mit Informationsverlust — die echte Faserung bleibt abstrakt."
+    ],
+    "related_files": ["fibrebundle3.html", "fibrebundle2.html", "fibrebundle.html", "bundles.html", "hopf_faserung.html", "faserbuendel_und_fibrationen.html"]
+  },
+  {
+    "path": "coherent_world_models.html",
+    "slug": "coherent_world_models",
+    "title": "Coherent World Models — Interaktive Visualisierung",
+    "lang": "de",
+    "size_kb": 59.4,
+    "category": "ki",
+    "category_reason": "Mathematik FÜR KI: Kohärente Weltmodelle (Traces, Descent/Garben, Tarski-Wahrheit, Korrespondenz vs. Kohärenz) werden explizit auf LLMs angewendet — Halluzination = Kohärenz ohne Korrespondenz, Korrektur über 'Korrespondenz-Brücken' (In-Context, RAG, Tools, formale Verifikation). Klare KI-Kopplung.",
+    "theme": "coherent-world-models",
+    "themes": ["coherent-world-models", "sheaf-descent", "tarski-truth", "correspondence-coherence", "llm-hallucination", "rag-tools-verification"],
+    "thesis": "Ein 'kohärentes Weltmodell' ist eine Struktur (𝒞 Kontext-Stellen, 𝒱 Ziel der Repräsentationen, 𝒯 zulässige Übergänge), in der lokale Daten (Traces) per Descent/Garben-Verklebung kohärent sind und ein Tarski-artiger Wahrheitsbegriff Behauptungen in der Welt (W) verankert; angewandt auf LLMs zeigt sich: ein Baseline-LLM hat interne Kohärenz (𝒯) aber keine Korrespondenz (keine Observation-Pfeile O_i: W→R_i), daher halluziniert es außerhalb der Trainingsverteilung — und der Fix ist nicht Skalierung, sondern das Stück-für-Stück Anhängen von 'Korrespondenz-Brücken' (In-Context, RAG, Tools, formale Verifikation).",
+    "key_claims": [
+      "Ein Weltmodell hat drei Zutaten: 𝒞 (Stellen der Kontexte), 𝒱 (Ziel der Repräsentationen), 𝒯 (zulässige Übergänge).",
+      "'Kohärenz' = lokale Traces (Daten) verkleben/deszendieren konsistent (garben-ähnlich); 'Korrespondenz' = Behauptungen sind per Observation-Pfeile O_i: W→R_i in der Welt W verankert (Tarski-Wahrheit, Convention T).",
+      "Ein Baseline-LLM hat internen 𝒯 (Tokenisierung, Attention, MLP, Logits), aber KEINE Observation-Pfeile — sein Trainingskorpus ist selbst ein transformierter Trace, nicht direkte W-Daten.",
+      "Halluzination = Kohärenz ohne Korrespondenz: das LLM ist intern kohärent, aber ohne Korrespondenz-Check erfindet es bei Out-of-Distribution-Anfragen Inhalt.",
+      "In-Context Learning fügt einen 'Cover-Patch' (den Prompt) hinzu — einen flachen Observation-Pfeil zum eingefügten Dokument, nicht zu W.",
+      "RAG fügt zur Inferenz neue Observation-Pfeile hinzu (erholte Passagen sind näher an W als die Parameter, aber der Retriever braucht Kalibrierung).",
+      "Tools/Code-Execution fügen echte W→R_i-Pfeile hinzu (das Programmverhalten ist ein Fakt über die Hardware); formale Verifikation (Coq/Lean) ist der stärkste Tarski-Check (ein typgeprüfter Proof).",
+      "'Der einzige Weg': Kohärenz nicht durch Skalierung reparieren — Korrespondenz Stück für Stück anhängen (Context, RAG, Tools, formale Verifikation), jeder Pfeil einzeln lizenziert/auditierbar."
+    ],
+    "methods_math": ["Garben-Descent/Verklebung (Kohärenz)", "Tarski-Wahrheitsbegriff (Convention T)", "Trace-Theorie (lokale Daten)", "Observation-Pfeile O_i: W→R_i (Korrespondenz)", "Kohärenz vs. Korrespondenz-Zerlegung", "universelle (kategoriale) Struktur 𝒞/𝒱/𝒯"],
+    "visualizations": ["SVG: Augmentations-Diagramm (Baseline→Context→RAG→Tools→formal→Full, klickbar)", "Canvas: finale Zusammenfassung (die drei Zutaten 𝒞/𝒱/𝒯)", "Plotly + MathJax: Formel-Rendering der Weltmodell-Komponenten", "SVG-Welt-/LLM-Diagramm (W, R_i, G, Out, Pfeile)"],
+    "internal_tensions": [
+      "Das Rahmenwerk (Traces, Descent, Tarski) ist philosophisch/aspirativ; 'Kohärenz' und 'Korrespondenz' werden definiert, aber es gibt kein formales Modell oder eine Messgröße für das 𝒯 oder die O_i eines LLMs.",
+      "'Halluzination = Kohärenz ohne Korrespondenz' ist eine nützliche Diagnose, aber die Zuordnung zu echten LLM-Fehlmodi bleibt qualitativ.",
+      "Die Augmentations-Leiter (Context→RAG→Tools→formal) ist eine Design-Vorschrift, kein empirisches Ergebnis — der 'einzige Weg' wird behauptet, nicht nachgewiesen."
+    ],
+    "related_files": ["coherent_differences_and_world_model.html", "coherent_worldview.html", "kohaerente_modelle.html", "kohaerente_differenz.html", "paperidea4.html", "garben_in_transformern.html"]
+  }
+]

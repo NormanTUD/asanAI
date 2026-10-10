@@ -1,0 +1,371 @@
+[
+  {
+    "path": "posembed2.html",
+    "slug": "posembed2",
+    "title": "Positional Encoding as Overlapping Circles",
+    "lang": "en",
+    "size_kb": 18.4,
+    "category": "ki",
+    "category_reason": "Explains transformer sinusoidal positional encoding, a core transformer mechanism.",
+    "theme": "positional-encoding",
+    "themes": ["transformer-attention", "geometry-of-embeddings"],
+    "thesis": "Each token position is a point on each of several frequency circles; where all the points converge is a unique 'fingerprint' of that position, visualizing sinusoidal positional encoding as an interference pattern.",
+    "key_claims": [
+      "Each circle represents a frequency dimension; the token's position is a point on each circle via sin/cos of position*frequency.",
+      "Small circles = high frequency (fine detail), large circles = low frequency (coarse structure); frequencies follow 1/10000^(2i/d).",
+      "The combination of angles across all circles is unique per position, like clock hands — the convergence zone is the unique encoding.",
+      "Nearby positions have similar convergence zones, distant positions produce completely different patterns.",
+      "The dot product between two positional encodings captures their relative distance (implied by the interference framing)."
+    ],
+    "methods_math": ["sinusoidal positional encoding", "frequency spectrum / wavelength", "geometric interference and convergence", "clock-hand (multi-rate) analogy"],
+    "visualizations": ["Canvas 2D interactive: overlapping frequency circles with a position point, three modes (interference / connections / field), sliders for position / num-frequencies / sequence-length / compare-position, and spacebar auto-play."],
+    "internal_tensions": [
+      "The 'convergence = unique fingerprint' framing is heuristic rather than a rigorous statement about the embedding.",
+      "The 'field' mode renders a full pixel-level interference field and is noted as expensive to recompute."
+    ],
+    "related_files": ["posembed3", "posembed1", "positional", "qkv", "attn"]
+  },
+  {
+    "path": "latent_semantic_manifolds_in_llm_very_simple.html",
+    "slug": "latent_semantic_manifolds_in_llm_very_simple",
+    "title": "Wenn aus Gedanken Woerter werden (ganz einfach erklaert)",
+    "lang": "de",
+    "size_kb": 18.3,
+    "category": "ki",
+    "category_reason": "Plain-language explainer of an LLM paper on latent semantic manifolds and the expressibility gap.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["latent-manifolds", "interpretability", "transformer-attention"],
+    "thesis": "Language models 'think' in continuous latent number spaces but always output discrete words from a finite vocabulary; some thoughts never fit exactly into a word, leaving an unavoidable 'unsure zone' the paper calls the Expressibility Gap.",
+    "key_claims": [
+      "The model organizes its data on thin 'sheets' (manifolds) — idea from Ansuini et al. 2019, confirmed for large transformers by Valeriani et al. 2023.",
+      "About 40-51% of word predictions fall in the 'unsure zone' (nearly equidistant between two words) across six real models from 124M to 1.5B parameters.",
+      "Larger models are on average slightly more confident, but the hardest ~5% of predictions stay equally hard for all models — because the language itself is ambiguous there, not the training.",
+      "To halve the error you need roughly 1000x more words, since the thought-space has ~20 effective degrees of freedom (error ~ (1/N)^(2/20)).",
+      "Language is a lossy compression of meaning (a map that always leaves something out); the named loss is the 'Expressibility Gap'.",
+      "Suggested uses: models could self-report 'I hesitate here', insert new subwords where the unsure zone is widest, and reframe some 'hallucinations' as thoughts sitting on a word boundary."
+    ],
+    "methods_math": ["nearest-neighbor / Voronoi cells", "margin (distance between top two scores)", "intrinsic degrees of freedom (~20)", "quasi-Monte-Carlo / covering error ~ (1/N)^(2/d)", "temperature / softmax"],
+    "visualizations": ["Canvas 2D 'meadow of words': nearest-word Voronoi region with a gold boundary (unsure) zone; hover to read winner word, win-probability, and gap fraction; sliders for vocabulary size and temperature; all local in-browser."],
+    "internal_tensions": [
+      "Admitted simplifications: the field is 2D vs ~20D real, words are randomly placed vs semantically placed, and the 'unsure zone' is measured by geometric distance vs the paper's margin.",
+      "The 'floor' that no technique can reach rests on the intrinsic-dimension / covering-rate argument applied to real language."
+    ],
+    "related_files": ["latent_semantic_manifolds_in_llm", "latent_semantic_manifolds_in_llm_simple", "geometry_of_meaning_test"]
+  },
+  {
+    "path": "task.html",
+    "slug": "task",
+    "title": "Boundary maps by hand — the pictures",
+    "lang": "en",
+    "size_kb": 18.3,
+    "category": "nicht-ki",
+    "category_reason": "Pure algebraic-topology pedagogy (simplices, boundary operator) with no AI application.",
+    "theme": "algebraic-topology",
+    "themes": ["mathematical-foundations", "topology-of-nns"],
+    "thesis": "A shape is glued from simplices and the boundary map records each piece's edge/rim/skin; walking through orientation, head/tail, chains, and the animated boundary of a triangle explains why boundary-of-boundary is zero and how Betti numbers count holes.",
+    "key_claims": [
+      "An n-simplex has n+1 corners and lives in n dimensions: point, edge, triangle, tetrahedron.",
+      "Ordering vertices by index puts arrows on edges (low to high index), fixing an orientation; swapping two vertices flips the sign.",
+      "The boundary of an edge is head minus tail: partial[v_i, v_j] = v_j - v_i.",
+      "The boundary of a triangle is built by a ritual — delete each vertex in turn, giving +[v1,v2] - [v0,v2] + [v0,v1] with signs (-1)^i.",
+      "partial o partial = 0: at each corner a +1 (one edge's head) meets a -1 (the next edge's tail) and cancels, so a rim has no ends.",
+      "Holes are counted by Betti numbers b_n = (# n-simplices) - rank partial_n - rank partial_{n+1}: clusters, loops, hollow voids."
+    ],
+    "methods_math": ["simplicial complexes", "oriented chains (formal real combinations)", "boundary operator", "partial*partial = 0", "Betti numbers via ranks"],
+    "visualizations": ["Static canvas drawings (four simplices, oriented edge/triangle, head/tail, chain 2a+b-c, partial*partial=0 cancellation) plus one animated canvas stepping through deleting each vertex of a triangle with a pause/play button and a paper-pencil exercise with a reveal-answer spoiler."],
+    "internal_tensions": [
+      "It is deliberately a minimal, intuition/formalism/example teaching doc with no application, so its only open question is why one would learn this (no AI link provided here)."
+    ],
+    "related_files": ["cohomology", "algebraische_topologie", "betti", "topological_data_analysis"]
+  },
+  {
+    "path": "kluever.html",
+    "slug": "kluever",
+    "title": "Geometrische Visuelle Halluzinationen — Interaktiv",
+    "lang": "de",
+    "size_kb": 18.0,
+    "category": "nicht-ki",
+    "category_reason": "Physics/dynamical-systems account of hallucination patterns in the biological visual cortex, not ML.",
+    "theme": "dynamical-systems",
+    "themes": ["perception", "symmetry", "cognition"],
+    "thesis": "Geometric visual hallucinations (Kluver's form constants) arise from Turing-type pattern formation in V1, and the log-polar retino-cortical map turns simple cortical activity stripes into spirals, tunnels, and grids in the visual field.",
+    "key_claims": [
+      "Kluver (1920s) classified hallucination patterns under mescaline into 4 form constants: tunnels/funnels, spirals, grids/honeycombs, spiderwebs.",
+      "Ermentrout & Cowan (1979) gave the first mathematical model: V1 activity forms periodic patterns via Turing instability (bifurcation + group theory).",
+      "Bressloff et al. (2001) added orientation selectivity and Euclidean symmetry (shift-twist), explaining all Kluever form constants.",
+      "The retino-cortical map is x = ln(r), y = theta: circles map to vertical lines, rays to horizontal lines, spirals to diagonal lines; so V1 stripes appear as spirals/tunnels/grids.",
+      "The dispersion relation lambda(q) = -1 + mu * w_hat(q) decides which wavelength destabilizes first; short-range excitation = activator, long-range inhibition = inhibitor.",
+      "Goldenfeld (2018): we do not constantly hallucinate because sparse inhibitory connections suppress spontaneous patterns, which drugs then disturb."
+    ],
+    "methods_math": ["reaction-diffusion (Turing instability)", "bifurcation theory", "Euclidean group E(2) and axial subgroups (planforms)", "log-polar (retino-cortical) coordinate transform", "dispersion relation", "Wilson-Cowan activator-inhibitor model"],
+    "visualizations": ["Canvas pattern generators comparing V1 (cortex) vs the visual field via inverse log-polar mapping, with a pattern selector and wave-number slider; a Plotly dispersion-relation plot with excitability and inhibition-range sliders; a live 2D Wilson-Cowan simulation (start/reset/speed); and planform tabs (rolls/squares/hexagons)."],
+    "internal_tensions": [
+      "It is a physics/model of a biological system, not of an artificial network — the 'neural computation' citations do not make it ML.",
+      "The stochastic-Turing suppression account (why we don't always hallucinate) is a proposed mechanism, not fully established."
+    ],
+    "related_files": ["chaos", "phasenraum", "phasenuebergaenge"]
+  },
+  {
+    "path": "paper/AttentionViz.html",
+    "slug": "AttentionViz",
+    "title": "AttentionViz — Interaktive Erklärun (Yeh et al. 2023)",
+    "lang": "de",
+    "size_kb": 17.8,
+    "category": "ki",
+    "category_reason": "Explains a transformer-attention interpretability tool (joint Q/K embedding, global head view).",
+    "theme": "transformer-attention",
+    "themes": ["interpretability", "geometry-of-embeddings"],
+    "thesis": "AttentionViz projects Queries and Keys into a shared 2D space so that nearby points mean high attention, giving a global (matrix) view of what each head generally does across thousands of examples, instead of one sentence at a time.",
+    "key_claims": [
+      "Attention depends on the Q-K dot product, which is closely related to distance, so nearby points in the plot correspond to high attention — the head's shape becomes a visual signature.",
+      "Trick 1 (Key-Translation): softmax is translation-invariant, so all keys can be shifted by a constant vector without changing attention, letting the two clouds be centered together.",
+      "Trick 2 (QK-Skalierung): scaling queries by c and keys by 1/c preserves the dot product but changes visual distance; c is chosen so distance correlates optimally with attention.",
+      "Empirically in BERT the average Spearman correlation between Query-Key distance and dot product is about -0.938 (near-perfect negative).",
+      "Findings: BERT heads show 'positional spirals' and semantic clusters; ViT heads sort patches by brightness, hue, and frequency/angle; GPT-2 shows an 'attend-to-first' anomaly with large Query/Key norm differences (~ -4.6 average).",
+      "Builds on Activation Atlas (Carter et al.), t-SNE/UMAP/PCA, and BertViz (Vig 2019)."
+    ],
+    "methods_math": ["self-attention", "softmax invariances (translation, reciprocal scaling)", "dot product vs distance", "t-SNE / UMAP / PCA dimensionality reduction", "Spearman rank correlation"],
+    "visualizations": ["Canvas attention demo (drag a query; circle size = attention to each key), a trick canvas with translation/scale sliders to mix the Q/K clouds, a Plotly distance-vs-dot-product scatter, a canvas morph between a positional spiral and semantic clusters, and a Plotly ViT hue/frequency scatter; Temml for the equations."],
+    "internal_tensions": [
+      "Distance is a proxy for attention (a correlation, not an identity); the 'nahe Punkte = hohe Attention' claim is approximate.",
+      "Several plots (e.g. the -0.94 correlation) use simulated/illustrative data in this page even though the paper reports real BERT numbers."
+    ],
+    "related_files": ["attn", "qkv", "qkv2", "attn_as_optimal_transport", "transformer_dynamics", "geometry_of_meaning_test"]
+  },
+  {
+    "path": "hologram4.html",
+    "slug": "hologram4",
+    "title": "Lens Focus Explorer — Image on Ground",
+    "lang": "en",
+    "size_kb": 17.2,
+    "category": "nicht-ki",
+    "category_reason": "An image-interpolation/super-resolution demo about a focus limit, with no ML model.",
+    "theme": "perception",
+    "themes": ["hallucination", "information-limits"],
+    "thesis": "A lens-focus tool over an image lying on a ground plane: focusing a region past its native resolution produces 'hallucination' — detail that is interpolated, not real data — making the information limit of reconstruction tangible.",
+    "key_claims": [
+      "Focus level maps to a blur: low focus = large block-averaging; at native resolution it switches to bilinear interpolation.",
+      "Focus beyond native resolution (level above a NATIVE_THRESHOLD of 7) means sampling/interpolating beyond the real data, labeled 'HALLUCINATION'.",
+      "Focus is blended smoothly across the 3x3 neighboring cells with Gaussian weights so transitions are seamless.",
+      "Hallucinating cells are tinted red/magenta and badged; live stats show average focus and the count of hallucinating cells.",
+      "Any same-folder image can be loaded; otherwise a generated smiley pattern is used as fallback."
+    ],
+    "methods_math": ["bilinear interpolation", "block averaging (box blur)", "Gaussian-weighted spatial blending", "native-resolution / Nyquist-style sampling limit"],
+    "visualizations": ["CSS 3D ground plane with a 6x5 grid of lenses: left-click to focus, right-click to defocus, scroll wheel for fine control; per-pixel rendering with focus-dependent sampling and red 'hallucination' tinting; live stats row."],
+    "internal_tensions": [
+      "'Hallucination' here means interpolation beyond available data, not generative-model hallucination — the metaphor borrows ML language for a purely classical image-processing limit."
+    ],
+    "related_files": ["hologram", "hologram2", "hologram3", "hologram5", "decode_holo"]
+  },
+  {
+    "path": "buecher/whitehead.html",
+    "slug": "whitehead",
+    "title": "Process & Reality — Interaktiv Erleben (A.N. Whitehead)",
+    "lang": "de",
+    "size_kb": 16.8,
+    "category": "nicht-ki",
+    "category_reason": "Interactive guide to Whitehead's process philosophy; no ML content.",
+    "theme": "philosophy-of-mind",
+    "themes": ["process-philosophy", "consciousness"],
+    "thesis": "Whitehead's process philosophy holds that reality is made of 'actual entities' — drops of experience — not things; process/becoming replaces substance, and creativity is the ultimate principle by which the many become one and are increased by one.",
+    "key_claims": [
+      "The fundamental building blocks of reality are 'actual entities' (drops of experience), not dead matter particles — an anti-materialist stance.",
+      "Process over substance: nothing simply 'is', everything 'becomes' (concrescence); each moment is a new actual occasion.",
+      "Principle of relativity: every entity is a potential for every becoming; the universe is a network of mutual 'prehensions'.",
+      "Each actual entity has a 'subjective aim' — an inner teleology, so final causality runs alongside efficient causality.",
+      "'Eternal objects' (colors, forms, math structures) are pure potentials that 'ingress' into concrete experiences.",
+      "'Creativity' is the ultimate principle: the many become one and are increased by one.",
+      "Dipolar theology: God has a primordial nature (order of all possibilities) and a consequent nature; God is 'Poet of the World' who lures rather than coerces, so freedom is real.",
+      "Objective immortality / 'perpetual perishing': past entities live on as objective data for all future experiences."
+    ],
+    "methods_math": [],
+    "visualizations": ["Particle-network background canvas, a 'Concrescence' simulation (scattered data points merge into one unit = 'satisfaction'), clickable discovery cards with a progress/score bar, a philosophy genealogy timeline, and two multiple-choice quizzes."],
+    "internal_tensions": [
+      "Panexperientialism (even electrons 'prehend') is in direct tension with scientific materialism, which the page flags as 'anti-materialism'.",
+      "A non-coercive, luring God is a contested middle position between classical theism and naturalism."
+    ],
+    "related_files": ["whitehead", "philosophy", "philosophy2", "analytischer_idealismus"]
+  },
+  {
+    "path": "simplicial_complex_attention7.html",
+    "slug": "simplicial_complex_attention7",
+    "title": "Attention = Points That Pull Each Other Closer",
+    "lang": "en",
+    "size_kb": 16.3,
+    "category": "ki",
+    "category_reason": "Models transformer attention as point motion and reads its output as a simplicial complex of meaning.",
+    "theme": "transformer-attention",
+    "themes": ["topology-of-nns", "topological-data-analysis", "geometry-of-embeddings"],
+    "thesis": "Attention makes each word (a point in meaning-space) move toward the points it finds relevant; the simplicial complex (edges and triangles) that forms shows where words clump together — that clumping is the 'meaning' attention composes.",
+    "key_claims": [
+      "Each word is a point in a 3D semantic space with axes [gender, being, power].",
+      "Relevance score(i,j) is the dot product (the Q-K part), treated as a similarity measure.",
+      "Each word then moves to the weighted center of all words weighted by relevance — the V part of attention.",
+      "An edge means the two found each other interesting (mutual weight above epsilon); a triangle means three all found each other interesting, forming a tight group.",
+      "The 'party' analogy: each person looks (Q) at name-tags (K) and walks toward those whose tags match; the friend-groups that form are the simplices.",
+      "A triangle is where meaning gets 'composed' — three words pulled into one region form one combined concept."
+    ],
+    "methods_math": ["dot-product attention (identity projections)", "softmax with sharpness (inverse temperature)", "weighted centroid update", "simplicial complex of 1- and 2-simplices via threshold epsilon"],
+    "visualizations": ["Plotly 3D (3D scatter markers with labels, edge lines, and mesh3d triangles) with an eased animation interpolating words from their original to post-attention positions; sliders for sharpness and threshold epsilon; live sentence input; a simplex/edges/triangles info panel and a 'biggest move' readout."],
+    "internal_tensions": [
+      "The 'attention' uses the identity as W (no learned projections), so it is a toy single-head model.",
+      "The claim that triangles = 'composed meaning' is a heuristic interpretation, not a demonstrated representational fact."
+    ],
+    "related_files": ["simplicial_complex_attention5", "simplicial_complex_attention", "topology_of_attractors", "concept_attractors", "qkv"]
+  },
+  {
+    "path": "buecher/hermann_schmitz3.html",
+    "slug": "hermann_schmitz3",
+    "title": "Der Leib — Hermann Schmitz interaktiv",
+    "lang": "de",
+    "size_kb": 16.1,
+    "category": "nicht-ki",
+    "category_reason": "Interactive guide to Hermann Schmitz's philosophy/anthropology of the lived body; no ML.",
+    "theme": "philosophy-of-mind",
+    "themes": ["embodiment", "anthropology"],
+    "thesis": "In Hermann Schmitz's anthropology the 'Leib' (lived body) lives between tension (Engung) and expansion (Weitung), is not a continuous whole but a flux of blurred 'islands', and mediates these poles through irreversible bodily directions.",
+    "key_claims": [
+      "The vital drive is tension against swelling (Schwellung) — the body oscillates between Engung (contraction) and Weitung (expansion).",
+      "The body is not a continuous whole but a 'Gewoge' (swell) of blurred islands without definite surfaces or borders (Leibesinseln).",
+      "Leibliche Richtung (bodily direction — e.g. gaze, exhale) is an irreversible direction from Enge toward Weite that mediates between the two.",
+      "Einleibung: two bodies connect through a common vital drive (antagonistic embodiment / bodily communication).",
+      "Perception splits into the protopathic (dull, blurred, dark) and the epikritic (pointed, sharp, light) poles."
+    ],
+    "methods_math": [],
+    "visualizations": ["Five interactive canvases navigated by a bottom bar: Engung/Weitung (hold to contract), Leibesinseln (tap to spawn fading islands over a body outline), Leibliche Richtung (drag rays from center), Einleibung (drag two bodies together to connect), and a Protopathisch-<->-Epikritisch slider morphing soft blobs into sharp points."],
+    "internal_tensions": [
+      "The body as a borderless field of islands opposes the body-as-bounded-object picture in physiology and cognition science.",
+      "Antagonistic embodiment (bodies binding through a shared drive) is a speculative anthropological claim."
+    ],
+    "related_files": ["hermann_schmitz", "hermann_schmitz2", "koerper", "bewusstsein"]
+  },
+  {
+    "path": "posembed3.html",
+    "slug": "posembed3",
+    "title": "Positional Encoding = Wave Interference (Wave Collapse)",
+    "lang": "en",
+    "size_kb": 15.8,
+    "category": "ki",
+    "category_reason": "Visualizes transformer sinusoidal positional encoding as constructive wave interference.",
+    "theme": "positional-encoding",
+    "themes": ["transformer-attention"],
+    "thesis": "Positional encoding can be read as wave interference: each frequency dimension is a source point on its circle that emits ripples, and where all ripples constructively overlap is the unique fingerprint of that position.",
+    "key_claims": [
+      "Five frequency circles; the leftmost is the highest frequency (spins fast, encodes fine position differences) and the rightmost the lowest (spins slow, encodes coarse structure).",
+      "At each position the combination of angles across all circles is unique — like clock hands: the second hand distinguishes nearby positions, the hour hand distinguishes distant ones.",
+      "Each source emits cosine ripples that decay with distance; the field is the sum of all ripples, with bright zones = constructive (waves in phase) and dark zones = destructive.",
+      "This is analogous to how the dot product between two positional encodings captures their relative distance — nearby positions share similar bright zones."
+    ],
+    "methods_math": ["sinusoidal positional encoding", "frequency spectrum / wavelength", "constructive and destructive wave interference", "cosine ripple field with distance decay", "clock-hand (multi-rate) analogy"],
+    "visualizations": ["Canvas 2D pixel-level interference field plus the five circles, source points with ripple rings, a local-search 'wave collapse' convergence crosshair, a colored sin/cos encoding-vector readout, a token-position slider, and arrow-key / spacebar control for stepping and auto-play."],
+    "internal_tensions": [
+      "The 'fingerprint'/'collapse' reading is an interpretive overlay; a position's identity is really the full vector of sin/cos values, not a single bright spot.",
+      "The interference-field rendering is computed per pixel each frame, so it is a heavy visualization."
+    ],
+    "related_files": ["posembed2", "posembed1", "posembed4", "positional", "qkv"]
+  },
+  {
+    "path": "intuition_idee.html",
+    "slug": "intuition_idee",
+    "title": "Attention Heads als 'Augen'",
+    "lang": "de",
+    "size_kb": 15.1,
+    "category": "ki",
+    "category_reason": "Explains transformer attention heads and the causal attention matrix with an interactive demo.",
+    "theme": "transformer-attention",
+    "themes": ["interpretability"],
+    "thesis": "Each attention head is an 'eye' attending to a different aspect of token relations; the attention matrix (rows = query tokens 'I look from here', columns = key tokens 'I look there') can be read directly, with the causal mask zeroing the upper-right triangle.",
+    "key_claims": [
+      "Rows of the matrix are Query tokens ('I look from here'), columns are Key tokens ('I look there'); each cell is that head's attention score for the pair.",
+      "The upper-right triangle is set to 0 by the causal mask — a token can only attend to itself and earlier tokens.",
+      "Eight hand-defined head 'scorers' model different behaviors: previous token, sentence start (BOS-like), self-reference, word-length match, repetition detector, far-back exponential decay, vowel-pattern similarity, and token-2-back.",
+      "Softmax is applied per row after masking, producing weights that sum to 1.",
+      "After attention each token gets a new vector that is the (causally limited) weighted sum of the context."
+    ],
+    "methods_math": ["self-attention", "row-wise softmax", "causal (autoregressive) masking", "toy per-head scoring functions"],
+    "visualizations": ["An interactive HTML attention matrix with color-coded cells (click any cell for details), a legend of head-buttons (each with an emoji and behavior), a selectable head count, and an output-vector panel showing each token's weighted context aggregation; live sentence input."],
+    "internal_tensions": [
+      "The heads are hand-coded toy scorers standing in for learned projections, so the 'specialization' is illustrative rather than empirical.",
+      "The 'eyes' metaphor risks over-reading intentionality into a linear-algebraic operation."
+    ],
+    "related_files": ["qkv", "attn", "AttentionViz", "transformer_dynamics"]
+  },
+  {
+    "path": "simplicial_complex_attention5.html",
+    "slug": "simplicial_complex_attention5",
+    "title": "Attention Creates Simplicial Complexes",
+    "lang": "en",
+    "size_kb": 14.9,
+    "category": "ki",
+    "category_reason": "Builds a simplicial complex (with Betti numbers) directly from transformer attention scores.",
+    "theme": "transformer-attention",
+    "themes": ["topology-of-nns", "topological-data-analysis", "algebraic-topology"],
+    "thesis": "Type a sentence and each word gets a 3D embedding; attention scores (dot product) decide which words connect (edges) and which form triangles (2-simplices) — a simplicial complex that even yields Betti numbers, showing how meaning focuses locally.",
+    "key_claims": [
+      "Each word maps to a 3D embedding [gender, being, power] in [-1,1] x [-1,1] x [0,1].",
+      "Attention is the dot product (a bilinear form with the identity), softmaxed row-wise with a sharpness (inverse temperature).",
+      "An edge is a pair whose mutual attention exceeds threshold epsilon; a triangle is three tokens all mutually connected.",
+      "Betti numbers are computed: beta_0 (connected components, via union-find) and beta_1 (loops) approximated as edges - (n - beta_0) - triangles.",
+      "Triangles mark where attention jointly composes three tokens into a single semantic focus — words 'thought about together'."
+    ],
+    "methods_math": ["dot-product attention", "row-wise softmax", "simplicial complex (0/1/2-simplices)", "Betti numbers", "union-find for connected components"],
+    "visualizations": ["Plotly 3D (3D scatter markers with labels, edge lines, mesh3d triangles), a token-embedding table, a simplicial-complex panel listing vertices/edges/triangles and Betti numbers with a meaning interpretation, and sliders for threshold epsilon and sharpness with live sentence input."],
+    "internal_tensions": [
+      "The beta_1 formula is a rough approximation (edges - cyclomatic - triangles), not a proper homology computation.",
+      "A single simplified head (identity weights) is used, so the topological 'meaning' is heuristic."
+    ],
+    "related_files": ["simplicial_complex_attention7", "simplicial_complex_attention", "betti", "topological_data_analysis", "cohomology"]
+  },
+  {
+    "path": "qkv.html",
+    "slug": "qkv",
+    "title": "Attention — Watch It Work",
+    "lang": "en",
+    "size_kb": 14.4,
+    "category": "ki",
+    "category_reason": "Interactive visualization of the Q/K/V attention computation and information flow.",
+    "theme": "transformer-attention",
+    "themes": ["geometry-of-embeddings"],
+    "thesis": "An interactive single-token attention flow: watch how a chosen query token aligns most with one key (smallest angle, highest weight) so its output is pulled toward that key's V vector; twisting the W_Q/W_K/W_V 'rotations' changes what counts as relevant versus what gets read.",
+    "key_claims": [
+      "alpha_j = softmax(q . k_j / sqrt(d_k)) and output o = sum_j alpha_j v_j.",
+      "Q, K, and V are rotations of the same 2D token embeddings, controlled by W_Q / W_K / W_V twist sliders.",
+      "The query aligns most with the key whose angle to Q is smallest, giving it the largest weight and pulling the output toward that key's V vector.",
+      "Twisting W_Q / W_K changes what counts as relevant (the matching); twisting W_V changes what gets read (the content).",
+      "The 'focus' slider acts as softmax temperature, sharpening or flattening the weights."
+    ],
+    "methods_math": ["scaled dot-product attention", "row-wise softmax", "linear maps realized as 2D rotations", "weighted vector sum", "temperature"],
+    "visualizations": ["A canvas 2D three-zone scene: a left 'MATCHING (Q-K)' zone with angle arcs between the query and each key, a right 'READING (V)' zone with weight-sized circles and the output vector, and a middle of bezier 'pipes' whose thickness equals each weight; controls for which token asks, W_Q/W_K/W_V twist, and focus; a Temml math panel and a plain-English story line."],
+    "internal_tensions": [
+      "The projection matrices are restricted to 2D rotations of hand-picked embeddings rather than learned, full-rank matrices.",
+      "A single query and single head are shown, so it illustrates the mechanics but not multi-head composition."
+    ],
+    "related_files": ["qkv2", "attn", "AttentionViz", "intuition_idee"]
+  },
+  {
+    "path": "space_morph.html",
+    "slug": "space_morph",
+    "title": "Layer als Raumkrümmung (A Layer Curves Space)",
+    "lang": "de",
+    "size_kb": 13.8,
+    "category": "ki",
+    "category_reason": "Explains a neural layer as a nonlinear warp that makes non-separable data separable.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["nonlinear-separability", "transformer-attention"],
+    "thesis": "A neural network layer is a bending of space: a 2D dataset that is not linearly separable (inner core vs outer ring) becomes linearly separable once a layer lifts it into R^3 as phi(x,y) = (x, y, x^2 + y^2) and a plane slides between the classes — after which the plane collapses to a line and the space 'falls to a number'.",
+    "key_claims": [
+      "Two classes (an inner point cloud and an outer ring) are not linearly separable in R^2 — no single straight cut separates them; topology forbids it.",
+      "Add a dimension: the old picture becomes the floor and a new z-axis stands up (embedding R^2 into R^3, no curvature yet).",
+      "The layer curves the space: phi(x,y) = (x, y, x^2 + y^2) — it bends, not tears; inner points sink, outer points rise into a shell.",
+      "A flat plane then slides cleanly between the classes in R^3, a linear separation w^T phi(x) + b = 0 that was impossible in 2D.",
+      "The plane is then squashed along the viewing direction into a line, and the space 'falls to a number' R^3 -> R, where a single point separates the classes."
+    ],
+    "methods_math": ["linear separability", "feature map / embedding into higher dimension", "quadratic nonlinear lift phi(x,y)=(x,y,x^2+y^2)", "linear separation in R^3", "projection R^3 -> R"],
+    "visualizations": ["A full-screen custom-projection canvas running a 7-step animated walkthrough (top view to side view camera moves, grid warping, the separating plane appearing and collapsing to a line, then a 1D score axis); navigate with arrow keys, drag to rotate, R to reset."],
+    "internal_tensions": [
+      "It presents the canonical 'deep nets learn to warp space' story with a specific quadratic example, which is suggestive but not general (most real feature maps are far richer).",
+      "The 'plane becomes a line becomes a number' collapse is a visualization device that can overstate how a single scalar score is produced."
+    ],
+    "related_files": ["linear_seperability", "space_algorithm", "space_warps", "manifold_flattening", "transformer_rein_geometrisch"]
+  }
+]

@@ -1,0 +1,363 @@
+[
+  {
+    "path": "anatomie_des_verstehens.html",
+    "slug": "anatomie_des_verstehens",
+    "title": "Die Anatomie des Verstehens",
+    "lang": "de",
+    "size_kb": 22.1,
+    "category": "nicht-ki",
+    "category_reason": "A meditative interactive essay on how human understanding works (chaos -> structure -> phase transition); no ML model is the subject.",
+    "theme": "understanding",
+    "themes": ["consciousness", "dynamical-systems"],
+    "thesis": "Understanding is not a state you reach but a network that closes: it emerges when enough connections between pieces of information form, via a sudden phase transition rather than gradual accumulation.",
+    "key_claims": [
+      "The feeling of not understanding is a lack of order, not a lack of information: it starts from overabundance (chaos, all details equally loud).",
+      "Understanding = connecting: a single fact is near-worthless; its meaning arises only from its relations to what you already know.",
+      "Understanding is a phase transition (percolation): for a long time nothing seems to happen, then one tiny extra connection flips the whole system.",
+      "Four levers accelerate understanding: reduction (remove what does not carry), analogy (build bridges with old material), self-activity (retrieval/teaching beats reading), pause (offline consolidation)."
+    ],
+    "methods_math": ["percolation / phase transition", "union-find (giant connected component)", "graph/network connectivity", "golden-angle phyllotaxis layout"],
+    "visualizations": ["canvas 2D constellation field (hero)", "chaos-to-order 'lens' that organizes the grid under the cursor", "points-linking-to-neighbours 'Gewebe' weave", "interactive percolation/phase-transition with a Verknuepfung slider + union-find giant component + flash on tip-over", "golden-spiral final breathing field"],
+    "internal_tensions": [
+      "The 'phase transition' framing of understanding is a physics analogy (percolation) applied to cognition, not a measured claim.",
+      "Reduction as a virtue tensions with the opening claim that understanding begins from overabundance (Ueberfluss)."
+    ],
+    "related_files": ["was_heisst_denken", "was_heisst_denken_2", "geheimwissen", "coherent_worldview"]
+  },
+  {
+    "path": "dense_relu_dense.html",
+    "slug": "dense_relu_dense",
+    "title": "Dense -> ReLU -> Dense Explorer",
+    "lang": "de",
+    "size_kb": 21.9,
+    "category": "ki",
+    "category_reason": "Interactive lab visualizing what a two-layer (affine + ReLU + affine) neural-network block does to input space geometrically.",
+    "theme": "topology-of-nns",
+    "themes": ["geometry-of-embeddings", "algebra"],
+    "thesis": "A 'Dense -> ReLU -> Dense' layer is a piecewise-linear map of input space: two affine transforms with a ReLU fold in between, so you can watch the same point/grid get stretched, folded (negative -> 0), and re-stretched across 1D-5D.",
+    "key_claims": [
+      "The network function is out = A2 * max(0, A1*x + b1) + b2: two affine maps with one ReLU nonlinearity between them.",
+      "ReLU 'folds' the space (negative values -> 0); it is the only nonlinearity in the block.",
+      "Each stage (x -> A1x+b1 -> ReLU -> A2z+b2) is rendered as a separate view of the same point/cloud, so the composition is decomposable step by step.",
+      "Above 3D the view switches to parallel coordinates, one colored polyline per dimension across the four stages."
+    ],
+    "methods_math": ["affine transformations (matrix-vector product, translation)", "ReLU / piecewise-linear (max) nonlinearity", "parallel coordinates for high-D", "isometric 3D projection"],
+    "visualizations": ["canvas 2D explorer with 1D function plots, 2D grid-warp, isometric 3D grid, and N-D parallel coordinates; editable A1/b1/A2/b2/x matrices plus presets (scale/translate/fold/shear/rotate) and a 1D-5D dimension switcher"],
+    "internal_tensions": [
+      "It shows only a single forward pass for one point/one grid; it says nothing about training or expressiveness (no depth-vs-width claim here, unlike the tropical page)."
+    ],
+    "related_files": ["tropische_geometrie_tiefer_neuronaler_netze", "deep", "space_morph", "universal_approximation_theorem"]
+  },
+  {
+    "path": "transformer_rein_geometrisch.html",
+    "slug": "transformer_rein_geometrisch",
+    "title": "Transformer — rein geometrisch",
+    "lang": "de",
+    "size_kb": 21.4,
+    "category": "ki",
+    "category_reason": "A pure-geometric 9-step 3D walk-through of how a transformer layer (embeddings, positional encoding, QK attention, softmax, residual/LayerNorm, FFN, depth) acts on token points.",
+    "theme": "transformer-attention",
+    "themes": ["optimal-transport", "geometry-manifolds", "dynamical-systems"],
+    "thesis": "A transformer can be read as pure geometry in R3: tokens are points, attention pulls each point toward a softmax-weighted barycenter of the values, LayerNorm re-projects onto a sphere, the FFN bends the space, and stacking 6 layers makes each token trace a trajectory; a code comment even ties the softmax temperature tau to the regularization epsilon of an entropy-optimal-transport formulation.",
+    "key_claims": [
+      "Token -> point: a word is a point in R3 and similar meaning = short distance (hand-set embeddings).",
+      "Positional encoding is a helix: PE(pos,2i)=sin, PE(pos,2i+1)=cos at several frequencies, so a fixed offset k is a fixed rotation.",
+      "The attention score <q,k_j> is the length of the projection of the key onto the query 'gaze' direction.",
+      "Softmax turns scores into a probability 'mass' that sums to 1 (temperature tau animates from broad to sharp).",
+      "Output = sum(alpha_j * v_j): the point falls to the barycenter (center of mass) of the value vectors.",
+      "Residual + LayerNorm = 'shift, don't jump': keep the residual path and re-project onto the LayerNorm sphere.",
+      "FFN(x)=max(0,xW1+b1)W2+b2 bends space so things become linearly separable; 6 layers = 6 trajectories (depth as a trajectory through layer-space)."
+    ],
+    "methods_math": ["sinusoidal positional encoding (helix / rotation groups)", "dot-product attention & softmax with temperature tau", "barycenter / convex combination of value vectors", "residual connection + LayerNorm (radial projection onto a sphere)", "FFN as local space-warp / curvature", "stacked layers as a dynamical trajectory"],
+    "visualizations": ["full-screen canvas 2D with a hand-rolled 3D camera (drag-rotate, arrow-key steps): 9 choreographed 'Akts' animating embeddings, positional helix, Q/K projection, softmax mass bars, barycenter pull, LayerNorm sphere, FFN grid-warp, and 6-layer trajectories"],
+    "internal_tensions": [
+      "A code comment explicitly ties temperature tau to the 'regularization epsilon of the EOT formulation' (borrowing Litman's OT reading of attention), but the viz uses fixed, hand-set Q/K/V directions, not learned weights.",
+      "It fuses the geometric 'pull-to-barycenter' picture with the actual linear Attention(Q,K,V) math in an illustrative, not proof-of-equivalence, way."
+    ],
+    "related_files": ["transformer_rein_geometrisch2", "transformer_rein_geometrisch3", "attn_as_optimal_transport", "attn", "positional", "qkv"]
+  },
+  {
+    "path": "simplicial_complex_attention8.html",
+    "slug": "simplicial_complex_attention8",
+    "title": "Attention: Q, K, V — Geometrisch erklaert (Simplicial Complex)",
+    "lang": "mixed",
+    "size_kb": 21.1,
+    "category": "ki",
+    "category_reason": "Explains QKV attention geometrically and builds a simplicial complex (edges/triangles) from mutual attention weights between word embeddings.",
+    "theme": "transformer-attention",
+    "themes": ["topological-data-analysis", "geometry-of-embeddings"],
+    "thesis": "Attention is a geometric projection story: each word has an embedding point X; Q (W_Q·X, the 'spotlight'/question) and K (W_K·X, the 'sign'/offer) are two projections of X; the score is how parallel Q_i is to K_j; and words that mutually attend above a threshold epsilon form a simplicial complex (edges = pairs, triangles = 'meaning clumps').",
+    "key_claims": [
+      "Each word has a fixed 3D embedding along (informally) a gender / being / power axis.",
+      "Q = W_Q·X is the word's 'question' (whom am I looking for?), K = W_K·X its 'offer' (here I am, find me); both are linear warps (rotations/scalings) of X.",
+      "Score = Q_i·K_j (/sqrt(3)); geometrically it is how parallel the two vectors are; softmax -> attention weights alpha.",
+      "The output of word i = sum(alpha_ij * V_j), a point lying geometrically 'between' the V-points it strongly attends to.",
+      "If two words attend to each other above epsilon (both alpha_ij and alpha_ji), they form a 1-simplex (edge); three pairwise-connected words form a 2-simplex (triangle) = a 'Bedeutungsklumpen' (coherent concept).",
+      "Uses a hand-crafted ~60-word lexicon (king/queen/lion/goddess/power/etc.) with fixed W_Q, W_K, W_V; unknown words get a hash-based embedding."
+    ],
+    "methods_math": ["linear projections (Q/K/V matrices)", "dot-product similarity + temperature-scaled softmax", "simplicial complex from a mutual-attention threshold (Vietoris-Rips style)", "1-simplices (edges) and 2-simplices (triangles)"],
+    "visualizations": ["Plotly 3D: embedding points, X->Q and X->K projection lines, Q·K attention lines, output points, plus mesh3d triangles and line edges of the simplicial complex; live sentence input + epsilon / sharpness sliders + toggle checkboxes and a step-by-step info panel"],
+    "internal_tensions": [
+      "The simplicial-complex 'meaning clump' is built from a threshold on a symmetric (min) of attention — a TDA-style move on attention, but the embedding and W matrices are hand-authored, so the structure found is partly an artifact of the toy lexicon.",
+      "Attention is asymmetric in real models; using min(alpha_ij, alpha_ji) to make edges symmetric is a simplification."
+    ],
+    "related_files": ["simplicial_complex_attention", "simplicial_complex_attention2", "attn", "attn_as_optimal_transport", "latent_semantic_manifolds_in_llm", "topological_data_analysis"]
+  },
+  {
+    "path": "zug_idee.html",
+    "slug": "zug_idee",
+    "title": "Raum, Zug und kohaerente Verschiedenheit",
+    "lang": "de",
+    "size_kb": 20.9,
+    "category": "nicht-ki",
+    "category_reason": "A philosophical 'worldview' essay arguing that the train, word-embeddings, HoTT, sheaves and Schmitz all instantiate one idea — coherent difference — with AI only one illustration among several.",
+    "theme": "world-models",
+    "themes": ["sheaves", "hott", "geometry-of-embeddings", "philosophy-of-math"],
+    "thesis": "Maybe space is not the fundamental thing; 'coherent difference' is. An object (the train, a word's meaning, an equality in HoTT, a sheaf) is not a hidden central thing behind its perspectives but the very network of coherences between them — and that same structure recurs across perception, AI embeddings, homotopy type theory, and sheaf theory.",
+    "key_claims": [
+      "You can never point to a single sensation and say 'that is the train'; the train is what it is that all the senses (seeing, hearing, feeling, locating) cohere / fit together without contradicting.",
+      "The classical answer — there is a central thing (Ding) behind the perspectives — is challenged: the center can be removed and the coherence structure remains (marked as a mere equivalence, 'nur Kohaerenz').",
+      "The same move happens in AI: a language model does not know what 'Katze' is, only where it sits in a relation network; meaning = position in the relation network, not a property of the word.",
+      "HoTT: equality a=b is not primitive yes/no but a space of paths, with homotopies between paths ad infinitum — again a space of connections, not a single identity.",
+      "Sheaves: local data over open sets that agree on overlaps glue into a global object — local coherence produces the global.",
+      "Conclusion: space is just the most immediate form in which we can see coherent difference (as nearness, farness, direction, path)."
+    ],
+    "methods_math": ["graphs (centered vs. centerless coherence)", "sheaf gluing (local -> global)", "homotopy type theory (paths, homotopies)", "embedding / relation-network geometry (analogy)"],
+    "visualizations": ["interactive SVG/HTML scenes: clickable senses, a centered graph whose center can be removed (becoming a centerless coherence net), a word-embedding space (Katze/Hund/... vs Quasar/Galaxie), a click-to-draw paths-between-a-and-b HoTT canvas, and a 6-card 'map' (Zug/KI/HoTT/Schmitz/Garbe/Kern) showing the correspondences"],
+    "internal_tensions": [
+      "The unifying claim ('all is the same structure') is explicitly a philosophical thesis, not a formal result — the file itself calls it a 'gemeinsame strukturelle Linse' (common structural lens), not an established ontology.",
+      "It treats sheaf gluing, HoTT identity types, and embedding geometry as literally the same thing, erasing real formal differences (sheaf equality is strict, HoTT equality is identity types, embeddings are metrical)."
+    ],
+    "related_files": ["new_idea", "coherent_worldview", "coherent_world_models", "coherent_differences_and_world_model", "kohaerente_differenz", "garben", "hott"]
+  },
+  {
+    "path": "attn_as_optimal_transport_very_simple.html",
+    "slug": "attn_as_optimal_transport_very_simple",
+    "title": "Attention ist Optimaler Transport — ganz einfach erklaert",
+    "lang": "de",
+    "size_kb": 20.8,
+    "category": "ki",
+    "category_reason": "Explains (via Litman 2025) why scaled-dot-product attention has its softmax form and why the backprop update is a policy-gradient RL step — a theory of attention/optimization.",
+    "theme": "optimal-transport",
+    "themes": ["transformer-attention", "information-theory", "dynamical-systems"],
+    "thesis": "Softmax attention was not invented, it is forced: it is the unique solution of a simple optimization problem ('go where it is similar, but do not commit too hard' + the constraint that weights sum to 1). Even more, the backward pass is secretly REINFORCE-style policy-gradient RL, and the whole thing is unified by one matrix (1/tau)(diag(p) - pp^T) that is simultaneously the OT dual-potential curvature, the Fisher information matrix, and the RL 'gearbox'.",
+    "key_claims": [
+      "Attention balances two opposing forces — maximize similarity vs. stay broad (high entropy) — plus the constraint sum(alpha)=1; softmax is the enforced compromise, not a choice.",
+      "Dividing scores by sqrt(d_k) is required: with independent equal-strength components the score has variance d_k, so unscaled softmax saturates (collapses to one ~100% answer, vanishing gradients) for large d_k; /sqrt(d_k) restores variance 1 and keeps the distribution formable.",
+      "The backward pass is exactly the REINFORCE policy-gradient update (with a baseline trick that comes for free from the sum-to-1 constraint).",
+      "One matrix (1/tau)(diag(p) - pp^T) unifies three fields: optimal transport (curvature of the log-sum-exp dual potential), information geometry (~the Fisher matrix), and RL (damps the learning update once the policy has committed).",
+      "Honesty corner: SDPA stays bit-identical (it explains, not invents); it is purely theoretical (no experiments); no Sinkhorn needed because only one marginal (rows sum to 1) is fixed; the entropy link to Jaynes (1957) is classical — the novelty is the one-sided-transport embedding + the policy-gradient bridge."
+    ],
+    "methods_math": ["softmax / Gibbs-Boltzmann (max-entropy) distribution", "one-sided entropic optimal transport (log-sum-exp dual potential)", "temperature tau as regularization", "sqrt(d_k) score scaling (variance argument)", "policy-gradient / REINFORCE with baseline", "Fisher information matrix / information geometry"],
+    "visualizations": ["three canvas 2D experiments: (1) a query arrow rotating around 5 keys with angle/length/temperature sliders + winner and entropy readouts, (2) a d_k slider showing softmax saturation without vs with /sqrt(d_k), (3) an 'attention bandit' stepping/auto-running a policy-gradient update toward the best key"],
+    "internal_tensions": [
+      "The 'RL' reading of backprop is a reformulation that holds under specific assumptions (single fixed marginal, softmax policy); it is an elegant unification but the file stresses it changes no bit of SDPA — a lens, not a new mechanism.",
+      "Claims the entropy link is classical (Jaynes 1957) while presenting the EOT framing as the contribution — the contested point is whether 'attention as OT' is genuinely new or a reframing."
+    ],
+    "related_files": ["attn_as_optimal_transport", "attn_as_optimal_transport_simple", "attn", "transformer_rein_geometrisch", "buecher/attention_is_all_you_need"]
+  },
+  {
+    "path": "philosophy.html",
+    "slug": "philosophy",
+    "title": "Philosophy — Made Simple (What is Philosophy?)",
+    "lang": "en",
+    "size_kb": 19.8,
+    "category": "nicht-ki",
+    "category_reason": "A general-purpose interactive intro to the branches, questions, and history of philosophy; AI appears only as one timeline item, not the subject.",
+    "theme": "philosophy",
+    "themes": ["epistemology", "ethics"],
+    "thesis": "An approachable, tap-to-explore primer framing philosophy as the biggest questions humans ask, organized into five branches (metaphysics, epistemology, ethics, logic, aesthetics), classic thought-experiments, and a timeline from the Pre-Socratics to 'AI & Philosophy'.",
+    "key_claims": [
+      "Philosophy splits into 5 branches: Metaphysics (what is reality?), Epistemology (what can we know?), Ethics (right/wrong), Logic (how to reason), Aesthetics (beauty).",
+      "The 'falling tree' puzzle is mostly a question about the definition of 'sound', not physics; Berkeley's 'to exist is to be perceived' is one classic answer.",
+      "The medicine-theft dilemma maps onto utilitarianism / Kant's universalizability / Kohlberg's moral development; most ethicists say 'it's complicated'.",
+      "Free-will options map to libertarianism / hard determinism (Spinoza) / compatibilism (Hume).",
+      "'Can a machine think?' maps to Turing's behavioral test, Searle's Chinese Room, and Chalmers' hard problem of consciousness — explicitly flagged as open.",
+      "Existentialism (Sartre: existence precedes essence) and Nietzsche ('God is dead') are presented as competing answers to the question of meaning."
+    ],
+    "methods_math": [],
+    "visualizations": ["pure JS interactive: expandable branch cards, a 'Think About It' multiple-choice with philosopher responses, a scroll-reveal timeline, and a click-to-match philosopher-to-idea game"],
+    "internal_tensions": [
+      "It is a popularization that compresses contested positions into tidy 3-option multiple choice (e.g. attributing 'early readings' nihilism to Nietzsche), flattening the actual debates."
+    ],
+    "related_files": ["philosophy2", "wisdom", "was_heisst_denken", "buecher/kritik_der_reinen_vernunft"]
+  },
+  {
+    "path": "mood_explorer.html",
+    "slug": "mood_explorer",
+    "title": "Vektor-Alchemie: Semantische Navigation im Latent Space",
+    "lang": "de",
+    "size_kb": 19.8,
+    "category": "ki",
+    "category_reason": "A toy 'latent-space' model where German words are 3D vectors and 'mood/formality/era/intensity' joystick sliders steer a target vector that re-weights the next-token distribution.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["transformer-attention", "information-theory"],
+    "thesis": "Meaning is a coordinate: words are points in a (hand-built) 3D latent space with axes like mood/formality/era/intensity, and moving a 'latent joystick' changes a target vector whose direction re-scores (via a softmax over relevance) which word is most likely next — a concrete, steerable picture of how vector arithmetic in an embedding space selects the next token.",
+    "key_claims": [
+      "Each word is a 3D vector with scalar features (mood, formality, era, intensity) added to a base position; the embedding space is hand-authored, not learned.",
+      "A 'target vector' is set by four sliders (mood, formality, era, intensity); each word's relevance is the dot product of its feature vector with the target direction.",
+      "The next-token distribution is a temperature-scaled (x3) softmax over those relevances; the top-10 words are shown as a ranked probability bar list.",
+      "The overarching claim is that 'meaning is a coordinate' — a sentence's character can be navigated by moving a vector through this semantic space."
+    ],
+    "methods_math": ["3D vector embeddings (hand-crafted feature axes)", "dot-product relevance scoring", "softmax next-token distribution (temperature scaling)"],
+    "visualizations": ["Plotly 3D scatter of ~40 words colored/sized by relevance + a target-vector arrow from the origin; 4 sliders + a sentence input; and a live top-10 next-token probability bar panel"],
+    "internal_tensions": [
+      "The 'latent space' is entirely hand-built with a few human-chosen axes (mood/formality/era/intensity), so the 'semantic navigation' demonstrates the concept of vector arithmetic but is not a real language model's latent space.",
+      "The input sentence only affects the target vector via a proxy formula (sentenceX/Y/Z) rather than the words of the sentence — so 'project the sentence' is largely cosmetic."
+    ],
+    "related_files": ["latent_semantic_manifolds_in_llm", "concept_attractors", "concept_attractors_in_llm", "conceptual_spaces", "space_algorithm", "geometry_of_meaning_test"]
+  },
+  {
+    "path": "intrinsische_dimensionen_tiefer_neuronaler_netze_very_simple.html",
+    "slug": "intrinsische_dimensionen_tiefer_neuronaler_netze_very_simple",
+    "title": "Wie viele Regler stecken in einem Gedanken? (Intrinsic Dimension of Deep NNs, very simple)",
+    "lang": "de",
+    "size_kb": 19.8,
+    "category": "ki",
+    "category_reason": "A plain-language explainer of Ansuini et al. 2019: the low intrinsic dimension of deep CNN representations and its correlation with generalization.",
+    "theme": "geometry-of-embeddings",
+    "themes": ["grokking-generalization", "topology-of-nns"],
+    "thesis": "Even though a CNN layer stores 100,000+ numbers, the information the network 'really knows' lives in only a few dozen 'knobs' (a low-dimensional, curved manifold) — and the intrinsic dimension of the final layer strongly predicts how well the network generalizes (r ~ 0.94).",
+    "key_claims": [
+      "A digital face image has 150,528 numbers, but ~4 'knobs' (position x/y, size, smile) nearly capture it — the essential degrees of freedom are far fewer than the storage.",
+      "In a VGG-16 CNN the intrinsic dimension is a 'Buckel' (bump): high in early layers, lowest in the last (pool4 ~19 knobs vs 100,352 stored numbers, ratio ~2e-4).",
+      "The data in deep layers is curved, not flat: PCA (a linear method) estimates ~200 components while the nonlinear TwoNN method estimates ~19 — a factor >10 — so a nonlinear view is needed to see the true dimension.",
+      "The intrinsic dimension of the final layer predicts generalization: across 14 architectures the correlation with test accuracy is r = 0.94 (a thinner folded manifold -> better generalization).",
+      "Honesty corner: TwoNN is accurate only up to ~dimension 20 (above that the values are lower bounds); the paper is CNN-only (Transformers/LLMs open); simplifying MNIST digits drops ID from 13 to 3, showing ID tracks data complexity, not just architecture."
+    ],
+    "methods_math": ["intrinsic (effective) dimension", "manifold hypothesis (data on a low-dim curved manifold in high-dim space)", "TwoNN (two-nearest-neighbour) dimension estimator", "PCA (linear contrast)", "correlation (Pearson r) with test accuracy"],
+    "visualizations": ["two canvas 2D demos: (1) a face you shape with 4 sliders showing the 'knobs vs stored numbers' ratio, (2) the 'Buckel' (bump) curve of intrinsic dimension across VGG-16 pooling layers with a layer selector and ID/embedded-dim/ratio readouts"],
+    "internal_tensions": [
+      "It presents the low-ID -> better-generalization correlation as suggestive, but correlation is not causation; the file frames it as 'the geometry of the learned representation co-determines generalization', a hypothesis rather than a proven mechanism.",
+      "TwoNN's reliability ceiling (dim ~20) and the CNN-only scope are real limits the file itself flags."
+    ],
+    "related_files": ["intrinsische_dimensionen_tiefer_neuronaler_netze", "intrinsische_dimensionen_tiefer_neuronaler_netze_simple", "latent_semantic_manifolds_in_llm", "topology_of_attractors"]
+  },
+  {
+    "path": "posembed1.html",
+    "slug": "posembed1",
+    "title": "Sinusoidal Positional Embeddings — Interactive Visualization",
+    "lang": "en",
+    "size_kb": 19.4,
+    "category": "ki",
+    "category_reason": "An interactive visualization of the sinusoidal positional encodings used in Transformers (PE(pos,2i)=sin, PE(pos,2i+1)=cos).",
+    "theme": "transformer-attention",
+    "themes": ["geometry-of-embeddings", "dynamical-systems"],
+    "thesis": "Transformer positional encodings are a set of sinusoid/cosine waves at geometrically spaced frequencies (a 'clock' — fast low dims, slow high dims); each (sin,cos) pair traces a rotating circle, and the dot product of two position encodings depends only on their relative distance, which is what lets attention reason about relative position. It is a smooth, continuous generalization of binary counting.",
+    "key_claims": [
+      "PE(pos, 2i) = sin(pos / 10000^(2i/d)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d)) — each dimension is a wave at a different frequency.",
+      "Low dimensions oscillate fast (fine-grained position), high dimensions slowly (coarse) — like a clock where the second hand spins fast and the hour hand slow, together uniquely identifying a time.",
+      "Each (sin, cos) frequency pair traces a circle as position advances; different pairs rotate at different speeds.",
+      "The dot product of two positional encodings depends only on their distance, not absolute position (a symmetric, distance-dependent pattern).",
+      "The full encoding is a 'barcode' heatmap, and it is a smooth continuous generalization of binary counting (shown side by side)."
+    ],
+    "methods_math": ["sinusoidal positional encoding (Vaswani et al. 2017)", "frequency spectrum 1/10000^(2i/d)", "circle parametrization of (sin,cos) pairs", "dot product / relative-position dependence", "binary-counter analogy"],
+    "visualizations": ["five canvas 2D panels with live sliders (sequence length, embedding dim, highlighted position): individual waves, rotating circles, the dot-product-vs-position bar chart, the full PE heatmap, and a binary-vs-sinusoidal comparison"],
+    "internal_tensions": [
+      "It presents the binary-counter analogy as if the sinusoidal encoding 'is' smooth binary counting; in practice the 1/10000 base and the (sin,cos) pairing are what give the clean relative-position property, which the panel states but does not prove."
+    ],
+    "related_files": ["positional", "transformer_rein_geometrisch", "buecher/attention_is_all_you_need", "posembed2", "posembed3"]
+  },
+  {
+    "path": "new_idea.html",
+    "slug": "new_idea",
+    "title": "Kohärente Verschiedenheit — interaktive Reise",
+    "lang": "de",
+    "size_kb": 19.2,
+    "category": "nicht-ki",
+    "category_reason": "An interactive mathematical-philosophical journey from Spencer-Brown's distinction through relation, locality, sheaves, infinity-coherence, to topos — a structural lens, not an AI/ML paper.",
+    "theme": "world-models",
+    "themes": ["sheaves", "hott", "topos", "category-theory"],
+    "thesis": "A step-by-step visual derivation that 'coherent difference' — not space — is fundamental: starting from a bare distinction (Spencer-Brown), then relation, locality, sheaf gluing (local -> global), infinity-coherence (equality becomes equivalence with higher coherences), and finally the idea that an 'object' can be the coherent net of its manifestations, all the way to a topos as a whole local mathematical world. It is explicitly a didactic model / shared structural lens, not an established ontology.",
+    "key_claims": [
+      "Spencer-Brown's distinction (A|B) is the minimal starting point: a boundary makes two sides distinguishable but says nothing about how they connect.",
+      "Relation (R(A,B)) then locality (a neighbourhood U(x)) organize connections into a structure; locality here is still more metric than general topology.",
+      "A (ordinary) sheaf: local data s_i in F(U_i) must be equal on overlaps (s_i|_{U cap V} = s_j|_{U cap V}) to glue into a global section.",
+      "infinity-sheaves / infinity-coherence replace strict equality by equivalence (homotopy): data need not be literally equal, there are equivalences between them, and those equivalences have their own (higher, e.g. 2-dimensional) coherences.",
+      "The stronger abstraction: an object = the coherent net of its manifestations (visual/auditory/bodily/spatial), with no privileged center — a philosophical-mathematical model, not a claim that perceptions are literally infinity-sheaves.",
+      "A topos is more than a space: it carries a category of objects and an internal (typically intuitionistic, not necessarily classical) logic; 'true' means structurally true in that world."
+    ],
+    "methods_math": ["Law of Form / Spencer-Brown distinction", "relations and morphisms", "topological neighbourhoods", "sheaves and gluing (s_i|_{U cap V} = s_j|_{U cap V})", "infinity-sheaves / infinity-groupoids (equivalence, higher coherences)", "topos theory / Sh(X) (sheaves on X), intuitionistic internal logic"],
+    "visualizations": ["a tabbed canvas 2D lab with 8 steps, each with sliders/controls: a draggable A|B boundary, a draggable A/B(+C) relation graph, a draggable point x with a neighbourhood radius, 4 local maps that 'glue' into a global section (a local-deviation slider breaks/glues compatibility), a triangle of A=B=C (equivalence) with a toggleable 2-dimensional coherence, a draggable 4-perspective equivalence net, a topos 'world map' (switchable classical vs intuitionistic logic), and a final 8-term concept ladder"],
+    "internal_tensions": [
+      "The file is very honest that the visualizations are 'didactic models' and that the equivalence sign for infinity-sheaves denotes equivalence/homotopy, 'not the same as a merely metric nearness' — the risk is over-reading pretty diagrams as literal formalisms.",
+      "It runs a continuum from very concrete (Spencer-Brown boundary, metric neighbourhoods) to very abstract (topos with internal logic) that are related only by analogy; the final step explicitly says the thesis is 'a common structural lens under which the discussed theories become comparable', not an established ontology."
+    ],
+    "related_files": ["zug_idee", "coherent_worldview", "coherent_world_models", "kohaerente_differenz", "sheaves", "garbentheorie", "topoi", "hott"]
+  },
+  {
+    "path": "hologram3.html",
+    "slug": "hologram3",
+    "title": "5-Layer Stacked Holographic FFT Smiley — Additive Focus",
+    "lang": "en",
+    "size_kb": 18.9,
+    "category": "nicht-ki",
+    "category_reason": "A signal-processing / holography demo (multi-resolution reconstruction + 2D DFT) on a smiley image; no ML or learning is involved.",
+    "theme": "holography",
+    "themes": ["information-theory", "dynamical-systems"],
+    "thesis": "A multi-layer 'holographic' reconstruction where 5 resolution levels (low -> high) of a smiley are stacked; clicking a 3x3 cell adds focus (more blocks) that propagates additively to all layers above, with each layer also showing the 2D DFT magnitude spectrum and a tilted (perspective) reconstruction — a toy model of how localized focus and Fourier content combine across scales.",
+    "key_claims": [
+      "Resolution is additive and never removed: each layer has a base block count (2,5,10,18,30) and focusing a cell adds blocks with a Gaussian falloff to neighbours, propagating to all layers above the clicked one.",
+      "Each layer displays three things: a 3x3 grid of small smiley cells, a 2D DFT magnitude spectrum (log-scaled), and a full 'reconstructed' (tilted, perspective) smiley.",
+      "The DFT magnitude is computed by a direct O(N^4) 2D DFT over a blocky-downsampled version of the smiley.",
+      "The idea is a 'holographic' / multi-scale picture: detail is additive across layers, and a local focus sharpens that region across the whole stack."
+    ],
+    "methods_math": ["2D discrete Fourier transform (DFT) / magnitude spectrum", "block-averaging / multi-resolution downsampling", "Gaussian (3x3) neighbour-blend for focus falloff", "perspective (tilted) rendering"],
+    "visualizations": ["stacked HTML/canvas layers (each with a 3x3 clickable smiley-cell grid, a 120px FFT-spectrum canvas, and a tilted CSS-perspective smiley canvas), SVG 'lens line' connectors between layers, and a stats row (layers, focused cells, grid, mode)"],
+    "internal_tensions": [
+      "'Holographic' here is a loose metaphor for additive multi-scale reconstruction; it is not the physics holographic principle or holographic data compression — the naming borrows the term for a layered-FFT visualization."
+    ],
+    "related_files": ["hologram", "hologram2", "hologram4", "hologram5", "decode_holo", "holographic_principle"]
+  },
+  {
+    "path": "tropische_geometrie_tiefer_neuronaler_netze_very_simple.html",
+    "slug": "tropische_geometrie_tiefer_neuronaler_netze_very_simple",
+    "title": "Die geheime Rechenkunst hinter neuronalen Netzen (Tropical Geometry of Deep NNs, very simple)",
+    "lang": "de",
+    "size_kb": 18.8,
+    "category": "ki",
+    "category_reason": "Explains (via Zhang, Naitzat & Li 2018) that ReLU nets are exactly tropical geometric objects and why depth beats width — math for understanding neural nets.",
+    "theme": "tropical-geometry",
+    "themes": ["topology-of-nns", "grokking-generalization"],
+    "thesis": "Replace + with max and * with + and you get tropical mathematics — and ReLU nets are exactly its objects: a ReLU net (with integer weights) is precisely a continuous piecewise-linear function, precisely a 'tropical rational function'. This explains, geometrically, why depth wins: each layer 'folds' the existing pieces, so the number of linear regions grows exponentially in depth (while width only grows it linearly).",
+    "key_claims": [
+      "Tropical math swaps the operations: instead of + and * it uses max(x,y) and x+y; ReLU(x) = max(x, 0) is literally a tropical operation, so a ReLU net is 'identical' (not merely similar) to a tropical object.",
+      "A 1D ReLU net draws a piecewise-linear ('knicked') line; each neuron contributes one kink; the 'intelligence' is where and how many kinks (linear regions) there are.",
+      "Equivalence (the paper's main point): ReLU nets with integer weights = continuous piecewise-linear functions with integer slopes = tropical rational functions (differences of 'max-of-lines'); you can switch between them losslessly, and the family is closed under tropical add/mul/div (an algebra).",
+      "Depth beats width: a flat net makes ~#neurons regions, but a deeper net stacks folds so regions grow as k^L (exponential in depth) while neurons grow only as L*k (linear) — e.g. 1024 regions with just 20 neurons (k=4, L=5).",
+      "Honesty corner: only piecewise-linear activations qualify (ReLU, Leaky-ReLU, abs, Max-Pool — but NOT tanh/Sigmoid); integer weights are required for the tropical geometry (not just cosmetic); it explains why depth wins but NOT why nets generalize (that stays open); Theorem 6.3 reformulates, not improves, the Raghu et al. (2017) bound."
+    ],
+    "methods_math": ["tropical (max-plus) algebra", "piecewise-linear functions and linear regions", "tropical rational functions (differences of max-of-lines)", "depth-vs-width region counting (k^L)", "convex geometry / zonotopes (Maclagan-Sturmfels duality, Gritzmann-Sturmfels zonotope vertex theorem)"],
+    "visualizations": ["two canvas 2D demos: (1) a 1-D 'Knick-Maschine' — three ReLU neurons whose kink position/strength you slide, counting kinks and linear regions live; (2) a 'Falt-Experiment' — applying a k-tooth fold L times, showing regions = k^L exploding while neurons = L*k stay small"],
+    "internal_tensions": [
+      "The equivalence holds only for piecewise-linear activations and integer weights, so it does not cover the tanh/sigmoid nets many people picture as 'the' neural net — a real scope limit the file flags.",
+      "It is explicit that the tropical view explains the depth/width expressiveness advantage but leaves the central generalization question unanswered — a language to pose the question, not an answer."
+    ],
+    "related_files": ["tropische_geometrie_tiefer_neuronaler_netze", "tropische_geometrie_tiefer_neuronaler_netze_simple", "dense_relu_dense", "topologie_tiefer_neuronaler_netze"]
+  },
+  {
+    "path": "wisdom.html",
+    "slug": "wisdom",
+    "title": "What is Wisdom?",
+    "lang": "en",
+    "size_kb": 18.6,
+    "category": "nicht-ki",
+    "category_reason": "A self-help / practical-philosophy interactive on the nature of wisdom; no math or ML involved.",
+    "theme": "ethics",
+    "themes": ["philosophy", "consciousness"],
+    "thesis": "Wisdom is not knowledge but knowing when to act and when to walk away; it lives in balance between opposites (courage/caution) and is a practice built from five pillars (self-awareness, long-term thinking, empathy, comfort with uncertainty, learning from pain) — the quiet voice that says 'wait' when everything screams 'go'.",
+    "key_claims": [
+      "Wisdom != knowledge: knowing fire is hot is knowledge; knowing when to use fire and when to walk away is wisdom.",
+      "Wisdom 'holds the tension between extremes' — a balance slider shows all-caution (fear disguised as prudence) vs all-impulse (confidence without awareness = recklessness), with the sweet spot holding both courage and caution.",
+      "Five pillars: Self-Awareness (seeing clearly vs. what you want to see), Long-term Thinking (right over easy, 'the marshmallow test of life every day'), Empathy (people as whole, not roles), Comfort with Uncertainty (saying 'I don't know' without panic), Learning from Pain (reflection, not suffering, creates wisdom).",
+      "Wisdom vs. not-wisdom contrasts: listening to understand vs. speaking to prove smart; responding from clarity vs. reacting from emotion; wanting to understand vs. needing to be right; living one truth deeply vs. collecting unused advice.",
+      "'Suffering does not automatically create wisdom; reflection on suffering does — the scar becomes a teacher only if you listen.'"
+    ],
+    "methods_math": [],
+    "visualizations": ["pure JS interactive: scroll-reveal cards, a courage/caution balance slider with 5 banded messages, a 'spot the wiser response' choice with feedback, 5 click-to-reveal pillars, a wisdom-vs-not comparison grid, and a final-insight reveal with a progress bar"],
+    "internal_tensions": [
+      "It is normative self-help that treats 'wisdom' as a single coherent virtue with 5 fixed pillars; it offers no definition rigorous enough to test, and the 'wise' vs 'learning' choice labels quietly privilege one response (pause over react)."
+    ],
+    "related_files": ["philosophy", "philosophy2", "was_heisst_denken"]
+  }
+]

@@ -1,0 +1,256 @@
+[
+  {
+    "path": "generalisierung_im_deep_learning.html",
+    "slug": "generalisierung_im_deep_learning",
+    "title": "Eine Theorie der Generalisierung im Deep Learning — Interaktiv",
+    "lang": "de",
+    "size_kb": 179.5,
+    "category": "ki",
+    "category_reason": "Mathematische Generalisierungstheorie fuer ueberparametrisierte neuronale Netze: erklaert, warum ueberparametrisierte Netze trotzdem generalisieren, ueber Output-Raum-Dynamik, Tangentenkern und Signal/Reservoir-Zerlegung (Litman & Guo, arXiv 2605.01172).",
+    "theme": "generalization",
+    "themes": ["generalization", "deep-learning-theory", "optimization", "loss-landscape"],
+    "thesis": "Generalisierung in ueberparametrisierten Netzen ist kein Zufall, sondern folgt aus der Output-Raum-Dynamik: ein einheitlicher spectraler Filter M (getrieben vom Tangentenkern K = J J^T und der kumulativen Dissipation W) erklmaert Grokking, Double Descent, implizite Bias und benigne Ueberanpassung gleichzeitig; ein Signal-Kanal trennt sich vom prinzipiell unsichtbaren Reservoir, und ein SNR-Tor mu^2 > sigma^2/(b-1) liefert den einzeiligen Adam-Fix.",
+    "key_claims": [
+      "Die Tangentengradienten bilden den Tangentenkern K = J J^T, der die Output-Dynamik des Trainings steuert.",
+      "Die kumulative Dissipation W zerlegt die Update-Richtung in einen Signal-Kanal und einen Rest.",
+      "Reservoir-Unsichtbarkeit: G * P_res = 0 — das Reservoir beeinflusst den Test-Fehler nicht.",
+      "Drift skaliert mit T, Diffusion mit sqrt(T); diese Trennung erklmaert die zeitliche Lage des Grokking-Fensters.",
+      "Eine Four-Zellen-Fehlerzerlegung (train/test x signal/reservoir) macht den Uebertrag von train nach test sichtbar.",
+      "Ein einziger spectraler Filter M erklmaert Grokking, Double Descent, implizite Bias und benigne Ueberanpassung in einem Zug.",
+      "Das SNR-Tor mu^2 > sigma^2/(b-1) ist die einzeilige Adam-Korrektur, um das Rauschen unter dem Signal zu halten."
+    ],
+    "methods_math": [
+      "Output-Raum-Dynamik des Trainings",
+      "Tangentenkern K = J J^T",
+      "kumulative Dissipation W",
+      "Signal/Reservoir-Zerlegung mit P_res",
+      "Drift-vs-Diffusion-Scaling (T vs sqrt(T))",
+      "Four-Zellen-Fehlerzerlegung",
+      "einheitlicher spectraler Filter M",
+      "SNR-Kriterium mu^2 > sigma^2/(b-1)"
+    ],
+    "visualizations": [
+      "Plotly + Canvas-Animationen des Trainingslaufs",
+      "Temml-Formeln fuer K, W und den Filter M",
+      "Interaktive Drift/Diffusion-Regler",
+      "Four-Zellen-Heatmap (train/test x signal/reservoir)",
+      "Spectraler-Filter-Kurve M ueber den Eigenwerten",
+      "SNR-Tor-Demo (mu^2 gegen sigma^2/(b-1))"
+    ],
+    "internal_tensions": [
+      "Die Theorie ist elegant und einheitlich, aber die Drift/Diffusion-Skalierung (T vs sqrt(T)) gilt fuer ideale Trajektorien und braucht Empirie an realen Netzen.",
+      "Das Reservoir ist zwar test-unsichtbar, veraendert aber den Trainingsverlauf — seine praktische Rolle bleibt interpretativ.",
+      "Der einzeilige Adam-Fix ist ein klarer Handlungsansatz, setzt aber genaue Schmaetzung von Signal- und Rauschen-Lautstaerke voraus."
+    ],
+    "related_files": ["covers_theorem.html", "theory_of_deep_learning_very_simple.html", "grokking.html", "gradient_flow.html", "effortless_basins_of_attraction.html", "math_framework_for_transformers.html"]
+  },
+  {
+    "path": "talking_heads.html",
+    "slug": "talking_heads",
+    "title": "Talking Heads · Interaktive Erklärung",
+    "lang": "de",
+    "size_kb": 175.8,
+    "category": "ki",
+    "category_reason": "Mechanistische Interpretierbarkeit / Modell-Editierung eines NeurIPS-2024-Papers (Merullo, Eickhoff, Pavlick, arXiv:2406.09519) ueber die Kopff-zu-Kopf-Kommunikation in der Transformer-Attention.",
+    "theme": "transformer-attention",
+    "themes": ["transformer-attention", "interpretability", "mechanistic-interpretability"],
+    "thesis": "Transformer-Kopfe kommunizieren ueber die Attention-Map: die QK^T-Matrix laesst sich per SVD in rank-1-Komponenten zerlegen, und einzelne Komponenten sind messbare 'Kommunikationskanael' zwischen Kopfpaaren (Composition Score). Diese Kanael koennen isoliert bearbeitet, gesteuert und — wenn ein Circuit beschmadigt wurde — genutzt werden, um die Schmaedigung zu reparieren.",
+    "key_claims": [
+      "Attention ist nicht nur token-zu-token, sondern kopf-zu-kopf: Kopfe tauschen ueber die Attention-Map Informationen aus.",
+      "Die QK^T-Interaktionsmatrix laesst sich per SVD in rank-1-Komponenten zerlegen.",
+      "Der Composition Score (Spitze einer Komponente) massst die Staerke eines Kopfpaar-Kanals.",
+      "Bestimmte Komponenten sind statistisch auffaellig (z.B. ein Kopf bei ~5 sigma) und damit echte Kommunikationsspur.",
+      "Isolierte Komponenten koennen ueber Gewichts-Editing bzw. Steering gezielt verstmaerkt oder unterdrueckt werden.",
+      "Die Kommunikation hat eine 3D-Unterraum-Geometrie (kompatibler Quell-/Ziel-Unterraum).",
+      "Beschmadigte Circuits lassen sich ueber die identifizierten Komponenten reparieren."
+    ],
+    "methods_math": [
+      "SVD-Zerlegung der Attention-Interaktionsmatrix QK^T in rank-1-Komponenten",
+      "Composition Score als Kopfpaar-Kanalmasse",
+      "Ausreiuer-Identifikation (sigma-Test ueber Komponenten)",
+      "Gewichts-Editing / Steering entlang isolierter Komponenten",
+      "3D-Unterraum-Geometrie der Kopffkommunikation",
+      "Circuit-Reparatur ueber Komponenten"
+    ],
+    "visualizations": [
+      "Plotly + Canvas-Demos der Komponentenzerlegung",
+      "Composition-Score-Heatmap ueber Kopfpaare",
+      "3D-Unterraum-Darstellung der Kommunikationskanael",
+      "Steering-/Editing-Demo vor/nach",
+      "Circuit-Reparatur-Animation"
+    ],
+    "internal_tensions": [
+      "Kopf-zu-Kopf-Kommunikation wird als strukturierter Kanal gerahmt, ist aber eine SVD-Abstraktion der Attention-Map — die 'Kanael' sind keine expliziten Einheiten des Netzes.",
+      "Die 5-sigma-Komponente ist ein Ausreiuer; ob die uebrigen schwmaecheren Komponenten Kausalitaet tragen, bleibt offen.",
+      "Repair/Steering funktioniert an der isolierten Komponente, uebertragbar auf ganze Aufgaben bleibt aber begrenzt."
+    ],
+    "related_files": ["transformer_rein_geometrisch.html", "llm_topology.html", "categorial_homotopy_for_llm.html", "latent_semantic_manifolds_in_llm_very_simple.html", "math_framework_for_transformers.html"]
+  },
+  {
+    "path": "attn_as_optimal_transport.html",
+    "slug": "attn_as_optimal_transport",
+    "title": "Attention als Optimaler Transport — Eine interaktive Reise",
+    "lang": "de",
+    "size_kb": 173.3,
+    "category": "ki",
+    "category_reason": "Mathematische Neuinterpretation der Transformer-Attention: Scaled-Dot-Product Attention als einseitiger entropischer optimaler Transport (Entropic OT) auf dem Simplex (Elon Litman, Stanford, arXiv:2508.08369v2).",
+    "theme": "transformer-attention",
+    "themes": ["transformer-attention", "optimization", "information-theory", "convex-geometry"],
+    "thesis": "Softmax-Attention ist nicht heuristisch, sondern die eindeutige Loesung eines entropischen optimalen Transports auf dem Simplex: im einseitigen degenerierten Fall (Dirac-Quelle, freies Ziel) ergibt sich die bekannte Softmax-Form als geschlossen Loesung (Theorem 3.3), und tau = sqrt(d_k) ist die varianzausgeglichene Regularisierung. Dasselbe Prinzip generalisiert (sparsemax, alpha-entmax, ALiBi), die Rueckwaertspassage ist REINFORCE mit Baseline (Theorem 5.2), und die Dualitaet schliesst den Ring ueber LogSumExp und Informationengeometrie (Korollar 7.5).",
+    "key_claims": [
+      "Softmax-Attention ist die eindeutige Loesung eines entropischen OT-Problem auf dem Simplex — nicht Sinkhorn.",
+      "Einseitige Degeneration (Dirac-Quelle, freies Ziel) liefert die Softmax-Form in geschlossener Form (Theorem 3.3: Lagrange + strenge Konvexitaet -> p_j proportional exp(<q,k_j>/tau)).",
+      "tau = sqrt(d_k) ist die varianzausgeglichene Regularisierung, die die Skala der Attention stabilisiert.",
+      "Das allgemeine Prinzip argmin -<p,s> + Omega(p) erlaubst, Omega auszutauschen (sparsemax, alpha-entmax, ALiBi) — dieselbe Struktur, andere Geometrie.",
+      "Die Rueckwaertspassage ist REINFORCE mit Baseline (Theorem 5.2).",
+      "Dualitaet: das duale Potential ist LogSumExp und sein Gradient ist p* (Theorem 6.3, LSE).",
+      "Informationengeometrischer Ringschluss: Hesse(duales Potential) = tau * Fisher-Metrik (Korollar 7.5)."
+    ],
+    "methods_math": [
+      "entropischer optimaler Transport auf dem Simplex",
+      "Lagrange-Dualitaet + strenge Konvexitaet (Theorem 3.3)",
+      "varianzausgeglichene Regularisierung tau = sqrt(d_k)",
+      "allgemeine Form argmin -<p,s> + Omega(p) (Sparsemax/alpha-entmax/ALiBi)",
+      "Rueckwaertspassage als REINFORCE mit Baseline (Theorem 5.2)",
+      "LogSumExp-Dualitaet (Theorem 6.3)",
+      "Informationengeometrie: Hesse = tau * Fisher-Metrik (Korollar 7.5)"
+    ],
+    "visualizations": [
+      "HiDPI-Canvas-Hero-Animation der Transport-Interpretation",
+      "Interaktive Spiele (Spiel 0-3) fuer Quelle/Ziel/Regularisierung",
+      "Plotly-Diagramme der Simplex-Geometrie und der duale LSE-Kurve",
+      "Temml-Formeln fuer die Theoreme 3.3/5.2/6.3/7.5",
+      "Vergleich der Geometrien (softmax vs sparsemax vs entmax)"
+    ],
+    "internal_tensions": [
+      "Die Interpretation ist elegant, betont aber ausdrucklich: Attention ist NICHT Sinkhorn — die einseitige Degeneration ist der entscheidende Sonderfall.",
+      "tau = sqrt(d_k) wird als 'richtige' Skala motiviert, ist aber eine Konvention, keine abgeleitete Notwendigkeit.",
+      "Die informationengeometrische Unifikation ist ein Ringschluss, der die Theorie verschmaert, aber neue Vorhersagen kaum liefert."
+    ],
+    "related_files": ["attn_as_optimal_transport_very_simple.html", "transformer_rein_geometrisch.html", "positional.html", "math_framework_for_transformers.html"]
+  },
+  {
+    "path": "geheimwissen.html",
+    "slug": "geheimwissen",
+    "title": "Geheimwissen der Welt — Eine Tiefenrecherche",
+    "lang": "de",
+    "size_kb": 172.7,
+    "category": "nicht-ki",
+    "category_reason": "Historisch-kulturelle Tiefenrecherche ueber Geheimwissen: esoterische Traditionen, Geheimgesellschaften, Verschworungstheorien, entzaehnte echte Geheime (UAP/AARO, David Grusch, Luis Elizondo), digitale Esoterik und unentzifferte Codes. Keine ML/KI-Inhalte.",
+    "theme": "secret-knowledge",
+    "themes": ["secret-knowledge", "esoterik", "secret-societies", "epistemology"],
+    "thesis": "'Geheimwissen' ist kein einheitliches Phaenomen, sondern ein Spektrum vom dokumentierten Mythos (Rosenkreuzertum) ueber lebende geheime Religionen und Verschworungserzaehlungen bis zu tatsaechlich entzaehnten Geheime und unentzifferten Codes — und die Schwierigkeit liegt nicht im Zugriff auf das Wissen, sondern in der Epistemologie: zu trennen, was Fakt, was Mythos und was unklar ist.",
+    "key_claims": [
+      "Das Rosenkreuzertum ist ein dokumentierter Mythos (Fama, Confessio, Chymische Hochzeit), keine belegte Organisation.",
+      "Mysterienreligionen und Geheimgesellschaften mischen rituelles Wissen, Ausschluss und Selbstbehauptung.",
+      "Verschworungstheorien nutzen die gleiche Struktur (verborgenes Wissen + auserwaelte Kennern) wie echte Geheimhaltung.",
+      "Es gibt tatsaechlich entzaehnte echte Geheime: UAP/AARO, die Statements von David Grusch und Luis Elizondo.",
+      "Digitale Esoterik und lebende geheime Religionen zeigen, dass Geheimwissen heute weiter produziert wird.",
+      "Unentzifferte Codes und verbotene Texte bilden eine Grenze: hier ist das Geheimnis nicht behauptet, sondern noch nicht geloest.",
+      "Die Epistemologie des Geheimwissens — Fakt vs Mythos vs unklar — ist der eigentliche Kern der Recherche."
+    ],
+    "methods_math": [
+      "quellenkritische Trennung von Fakt / Mythos / unklar (Badge-System)",
+      "historisch-dokumentarische Recherche (entzaehnte Akten, UAP/AARO)",
+      "Typologie des Geheimwissens (Mythos, Ritual, Verschworung, echt, unentziffert)",
+      "epistemologische Abgrenzung von Geheimhaltung vs Geheimnis"
+    ],
+    "visualizations": [
+      "Sidebar-TOC mit klickbaren Abschnitten",
+      "Fakt/Mythos/unklar-Badge-System ueber den Behauptungen",
+      "Karten-/Zeitstrahl-Darstellungen der Traditionen und Entzaehnungen"
+    ],
+    "internal_tensions": [
+      "Die Seite trennt streng zwischen Mythos und Fakt, muss aber ueber lebende geheime Gruppen und unbelegte Behauptungen zwangslaeufig spekulieren.",
+      "Entzaehnte echte Geheime (UAP) werden nebeneinander mit dokumentierten Mythos gestellt — die Evidenzgrade bleiben heterogen.",
+      "Der epistemische Anspruch (Fakt vs Mythos) kollidiert mit der Natur des Themas, das gerade durch Unterdrueckung der Evidenz definiert ist."
+    ],
+    "related_files": ["philosophy.html", "was_heisst_denken.html", "history.html"]
+  },
+  {
+    "path": "garben_in_transformern.html",
+    "slug": "garben_in_transformern",
+    "title": "Garben im Transformer — Interaktiver Begleiter",
+    "lang": "de",
+    "size_kb": 169.9,
+    "category": "ki",
+    "category_reason": "Anwendung der Garben-/Kohomologietheorie auf Transformer-Representationen (NeurIPS 2026, Bryce Grant & Peng Wang, Case Western Reserve University): Zerlegung des Aktivierungsraums in Inhalt (H^0) vs Formulierung (H^1) ueber einen Garben-Laplace-Operator.",
+    "theme": "sheaves",
+    "themes": ["sheaves", "interpretability", "transformer-attention", "representation-engineering"],
+    "thesis": "Der Repräsentationsraum eines Transformer-Abstraktionskopfs laesst sich ueber einen Garben-Laplace-Operator auf einem Paraphrased-Graphen in 'Bedeutung' (H^0-Content) und 'Formulierung' (H^1-Einfluss) zerlegen; der Content liegt im Kern der Paardifferenz-Kovarianz, ist robust gegen die Wahl des Projektionsoperators P (PCA-P 81,6 %, Random-P 74,2 %, Identity-P 77,5 %), schlaegt alle label-freien Baselines um +9 bis +36 Prozentpunkte und uebertraegt sich cross-lingual (EN-FR).",
+    "key_claims": [
+      "Ein Garben-Laplace-Operator auf einem Paraphrased-Graphen zerlegt den Aktivierungsraum in H^0 (Content) und H^1 (Formulierungs-Einfluss).",
+      "Der Content liegt im Kern der Paardifferenz-Kovarianz — die Kernwahl ist der aktive Wirkmechanismus.",
+      "Content ist P-robust: PCA-P 81,6 %, Identity-P 77,5 %, Random-P 74,2 % — die Zerlegung haengt nicht an einem speziellen P.",
+      "H^0 schlaegt alle label-freien Baselines um +9 bis +36 pp und liegt nur ~2 pp unter der label-benoetigenden Obergrenze (LDA, NCA).",
+      "Die Methode uebertraegt sich cross-lingual (EN-FR) ohne Neu-Training.",
+      "Die H^0/H^1-Spalte ist damit ein messbares, interpretierbares Trennkriterium fuer 'was bedeutet' vs 'wie formuliert'."
+    ],
+    "methods_math": [
+      "Garben-/Kohomologietheorie (H^0 vs H^1) auf einem Paraphrased-Graphen",
+      "Garben-Laplace-Operator als Zerlegungs-Operator",
+      "Kern der Paardifferenz-Kovarianz als Content-Raum",
+      "Robustheits-Test ueber Projektionsoperatoren P (PCA/Identity/Random)",
+      "Benchmarks gegen label-freie und label-bezogene Baselines (LDA, NCA)",
+      "cross-lingualer Transfer EN-FR"
+    ],
+    "visualizations": [
+      "Plotly-Diagramme der H^0/H^1-Zerlegung",
+      "Robustheits-Tabelle ueber P (PCA/Identity/Random)",
+      "Baseline-Vergleichs-Balken (+9 bis +36 pp)",
+      "cross-linguale EN-FR-Transfer-Demo",
+      "Temml-Formeln fuer den Garben-Laplace-Operator"
+    ],
+    "internal_tensions": [
+      "Die Zerlegung ist P-robust, aber der Kern der Paardifferenz-Kovarianz ist eine Modellannahme — 'Bedeutung' wird operational, nicht abgeleitet, definiert.",
+      "Die Methodik schlaegt label-freie Baselines deutlich, liegt aber ~2 pp unter der label-bezogenen Obergrenze — das Label-Limit bleibt das Ziel.",
+      "Cross-lingualer Transfer (EN-FR) ist belegt, aber die Uebertragbarkeit ueber noch mehr Sprachen/Modelle ist ungeprueft."
+    ],
+    "related_files": ["garben_zug.html", "categorial_homotopy_for_llm.html", "llm_topology.html", "kohaerente_modelle.html", "coherent_worldview.html", "stacks.html"]
+  },
+  {
+    "path": "proof.html",
+    "slug": "proof",
+    "title": "Interactive Coq Proof Explorer: Transformer Jacobian Geometry — Deep Dive",
+    "lang": "en",
+    "size_kb": 103.8,
+    "category": "ki",
+    "category_reason": "Machine-checked (Coq) geometry of the Jacobian matrix of a single transformer layer — the subject is the mathematics of transformers (Jacobian decomposition, residual connections), i.e. math-for-AI.",
+    "theme": "formal-verification",
+    "themes": ["formal-verification", "coq", "proof-theory", "transformer-attention", "deep-learning-theory"],
+    "thesis": "The Jacobian matrix of a transformer layer obeys a small set of exact, machine-checked geometric laws — decomposition into symmetric and antisymmetric parts, trace as divergence, Frobenius orthogonality of the two parts, idempotence of the symmetrization, the shear tensor being trace-free, the residual connection giving J = I + delta, trace cyclicity, and invariance under orthogonal similarity — and all ten bundle into a single conjunction transformer_jacobian_geometry_complete.",
+    "key_claims": [
+      "Every layer Jacobian splits uniquely into a symmetric and an antisymmetric part (J = S + A).",
+      "The trace of the Jacobian is its divergence; trace is a first-order local quantity.",
+      "The symmetric and antisymmetric parts are Frobenius-orthogonal (their inner product is zero).",
+      "Symmetrization (J + J^T)/2 is idempotent: applying it twice is the same as applying it once.",
+      "The shear (antisymmetric) tensor is trace-free.",
+      "A residual connection gives J = I + delta, so the identity is the background and the layer adds a perturbation.",
+      "The trace is cyclic: trace(AB) = trace(BA).",
+      "The spectral/geometric facts are invariant under orthogonal similarity transforms.",
+      "All ten theorems are machine-checked in Coq and combine into one conjunction transformer_jacobian_geometry_complete."
+    ],
+    "methods_math": [
+      "Jacobian matrix analysis of a single transformer layer",
+      "symmetric/antisymmetric decomposition J = S + A",
+      "trace = divergence and trace cyclicity",
+      "Frobenius inner product and orthogonality of S and A",
+      "idempotence of symmetrization (S + A^T)/2",
+      "trace-free property of the shear/antisymmetric tensor",
+      "residual connection J = I + delta",
+      "orthogonal-similarity invariance",
+      "formal verification / machine-checked proofs in Coq"
+    ],
+    "visualizations": [
+      "Interactive Coq proof explorer: expandable steps for each of the ten theorems",
+      "Plotly + canvas rotation-invariance demo (orthogonal similarity)",
+      "Grand-Summary view bundling all ten theorems into one conjunction"
+    ],
+    "internal_tensions": [
+      "The results are exact for the abstract linear layer Jacobian; their transfer to real, trained, non-linear transformer layers is asserted, not measured.",
+      "Ten individually elementary theorems are packaged as a 'complete geometry', which can overstate how much structure a single layer's Jacobian actually carries.",
+      "Formal verification certifies the stated lemmas, not the adequacy of the linear-Jacobian model as a picture of transformer dynamics."
+    ],
+    "related_files": ["hott_practical.html", "hott6.html", "hott_ai.html", "categorial_homotopy_for_llm.html", "math_framework_for_transformers.html"]
+  }
+]
