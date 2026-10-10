@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R3 Fusion 004 — Ein Feld, ein Regler, das Überlebende: Persistenz als gemeinsame Invariante</title>
+<style>
+:root{
+  --bg:#f6f4ec; --bg2:#fbfaf4; --panel:#fffdf7; --card:#fffdf7; --text:#1a1f2e; --muted:#5b6478;
+  --accent:#0e7490; --accent2:#b45309; --accent3:#b91c1c; --border:#dcd6c6;
+  --field-low:#efe8d6; --field-high:#c0392b;
+  --edge:#0e7490; --query:#b91c1c; --tri:#7c3aed; --node:#1a1f2e;
+  --bar:#b45309; --noise:#9aa0b0;
+}
+html.dark{
+  --bg:#0b0f1c; --bg2:#111827; --panel:#151b2e; --card:#151b2e; --text:#e6edf7; --muted:#8892b0;
+  --accent:#00d4ff; --accent2:#ff3d7f; --accent3:#ffcc00; --border:#2a3352;
+  --field-low:#0a1424; --field-high:#ff9d3d;
+  --edge:#00d4ff; --query:#ffcc00; --tri:#c084fc; --node:#e6edf7;
+  --bar:#ff3d7f; --noise:#3a4358;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  line-height:1.65;transition:background .25s,color .25s}
+.article{max-width:820px;margin:0 auto;padding:46px 22px 90px}
+header{text-align:center;margin-bottom:30px}
+.kicker{display:inline-block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--border);border-radius:100px;padding:5px 14px;margin-bottom:14px}
+h1{font-size:clamp(1.5rem,4.4vw,2.45rem);line-height:1.15;margin:.2em 0 .3em;font-weight:800;letter-spacing:-.02em}
+.fusion{color:var(--muted);font-size:.9rem;font-family:ui-monospace,Menlo,Consolas,monospace;margin-top:8px}
+section{margin:30px 0;padding:24px;background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;transition:background .25s,border-color .25s}
+h2{font-size:1.35rem;margin:0 0 14px;font-weight:700;color:var(--accent)}
+h3{font-size:1.03rem;margin:20px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px;font-size:.99rem}
+.lead{color:var(--muted);font-size:1rem}
+.tag{display:inline-block;font-size:.7rem;padding:2px 9px;border-radius:6px;font-weight:700;
+  margin-right:6px;letter-spacing:.04em;vertical-align:middle}
+.tag.a{background:color-mix(in srgb,var(--accent) 16%, transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 40%, transparent)}
+.tag.b{background:color-mix(in srgb,var(--accent2) 16%, transparent);color:var(--accent2);
+  border:1px solid color-mix(in srgb,var(--accent2) 40%, transparent)}
+ul{margin:0 0 14px;padding-left:20px}
+li{margin-bottom:9px}
+.math{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.93rem;
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:13px 15px;margin:14px 0;overflow-x:auto;line-height:1.75;white-space:pre-wrap}
+.note{background:color-mix(in srgb,var(--accent) 8%, transparent);border-left:3px solid var(--accent);
+  padding:12px 16px;border-radius:8px;margin:16px 0;font-size:.95rem}
+.warn{background:color-mix(in srgb,var(--accent2) 8%, transparent);border-left:3px solid var(--accent2);
+  padding:12px 16px;border-radius:8px;margin:16px 0;font-size:.95rem}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.86rem}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg2);color:var(--accent)}
+.vizwrap{border:1px solid var(--border);border-radius:14px;padding:16px;background:var(--bg2);margin-top:6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin-bottom:12px;font-size:.82rem}
+.toolbar label{color:var(--muted)}
+.toolbar select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:3px 8px}
+.toolbar .v{font-family:ui-monospace,monospace;color:var(--accent);font-weight:700}
+.toolbar .chk{display:inline-flex;align-items:center;gap:7px}
+input[type=range]{width:118px;accent-color:var(--accent);vertical-align:middle}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+button{background:var(--accent);color:var(--bg);border:none;padding:8px 14px;border-radius:9px;
+  cursor:pointer;font-weight:700;font-size:.82rem;transition:transform .12s}
+button:hover{transform:translateY(-1px)}
+canvas#cv{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--border);background:var(--bg2)}
+#readout{font-family:ui-monospace,monospace;font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.95;min-height:1.2em}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.75rem;color:var(--muted);margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:20px;height:0;border-top-width:3px;border-top-style:solid;display:inline-block}
+.dotc{width:11px;height:11px;border-radius:50%;display:inline-block}
+.prov{list-style:none;margin:0;padding:0}
+.prov li{margin-bottom:10px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+#themeBtn{position:fixed;top:14px;right:14px;background:var(--panel);color:var(--text);
+  border:1px solid var(--border);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:.8rem;z-index:9}
+.foot{color:var(--muted);font-size:.82rem;text-align:center;margin-top:30px}
+a{color:var(--accent)}
+code{font-family:ui-monospace,monospace;font-size:.9em;background:var(--bg2);
+  border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+sub{font-size:.72em}
+b{font-weight:700}
+</style>
+</head>
+<body>
+<button id="themeBtn" type="button">☾ dunkel / ☀ hell</button>
+<div class="article">
+
+<header>
+  <div class="kicker">Knockout-Synthese · Runde 3 · Paar 004</div>
+  <h1>Ein Feld, ein Regler, das Überlebende — Persistenz als gemeinsame Invariante</h1>
+  <div class="fusion">Fusion aus: r2-004.html ✕ r2-019.html  (Round 3)</div>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide R2-Papiere beschreiben — aus zwei verschiedenen Domänen — <b>dasselbe Phänomen in einer Formel</b>: Es gibt <b>ein skalares Objekt, das über einen Parameter getragen wird, gesteuert von EINEM Regler; und die Bedeutung ist genau das, was den Durchlauf dieses Reglers überlebt.</b></p>
+  <p><span class="tag a">A</span> (r2-004) nannte das Objekt ein <b>Skalarfeld F</b> (Attention-Feld s(i,j) <i>oder</i> Energie-Landschaft E(y,x)) und den Regler die <b>Temperatur β</b>. Es las das Feld auf <b>zwei Arten</b> — <em>weich</em> (o<sub>i</sub> = Σ<sub>j</sub> α<sub>ij</sub> v<sub>j</sub> bzw. Y* = argmin<sub>y</sub> E) und <em>hart</em> (die <b>Komponenten</b> des gekühlten, geschwellten Felds, mit Betti-Zahlen β₀/β₁ und Triangeln). Kühlen schärft die weiche Ablesung (→ Argmin) <em>und</em> macht die harte fein (mehr Komponenten); Erhitzen kollabiert alles zu einer Klasse. A's Bedeutung = die Komponenten des gekühlten Felds + ihre kanonischen Argmin-Vertreter; <b>β₀ = Anzahl der Bedeutungen</b>.</p>
+  <p><span class="tag b">B</span> (r2-019) nannte das Objekt eine <b>born–persist–die–glue-Maschine</b> (Residual-Stream / Feature-Aktivierungen über Tiefe/Skala) und den Regler die <b>Lebensdauer-Schwelle θ</b>. Es las die Maschine auf <b>zwei Ebenen</b> — <em>strukturell</em> (der Identitätsterm x<sub>[h+1]</sub> = x<sub>[h]</sub> + Δ trägt das Signal von Schicht zu Schicht) und <em>topologisch</em> (der <b>Barcode</b> mit [Geburt, Tod]-Bars über den Parameter). B's Bedeutung = der <b>persistente Teil</b>; die „Form" (formale Logik ↔ gelernte Geometrie) ist nur <em>wo man den Schwellenwert einstellt</em>.</p>
+  <p><b>Die eine gefasste Position:</b> β und θ sind <b>derselbe eine Regler</b>. A's <em>Kühlen</em> des Felds <i>ist</i> B's <em>Erhöhen</em> der Lebensdauer-Schwelle — beides verwirft die „kurzlebigen / hochenergetischen" Strukturen und behält den robusten Kern. Die <b>Bedeutung ist die überlebende Struktur</b>: in A die Komponenten des gekühlten Felds + ihre Argmin-Vertreter, in B die langen Bars. A's <em>weiche Ablesung</em> (Argmin / konvexe Kombination) und B's <em>strukturelle Identität</em> (x<sub>[h+1]</sub> = x<sub>[h]</sub> + Δ) sind derselbe „laufende Vertreter" des überlebenden Kerns; A's <em>harte Struktur</em> (Komponenten/Betti an einer Ebene) und B's <em>topologischer Barcode</em> (Bars über den ganzen Durchlauf) sind dieselbe „Durchlauf-Invariante", an einer fixen Ebene gelesen (A) bzw. über den ganzen Durchlauf (B).</p>
+  <p class="note"><b>Kurz:</b> <em>ein skalares Feld, ein Regler (β = θ), zwei Ablesungen (weicher Vertreter / harte Durchlauf-Invariante); Bedeutung = das Überlebende.</em> Der <i>Generator</i> des Felds (Q·K-Attention vs. EBM-Energie; formale Logik vs. gelernte Geometrie) und die <i>Position</i> auf dem Regler sind sekundär — die Invariante ist, <b>was den Durchlauf überlebt</b>.</p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die zwei teilen die tiefste Struktur (ein Objekt, ein Regler, Überleben = Bedeutung), stehen aber in drei konkreten Punkten auf unvereinbaren Positionen:</p>
+
+  <h3>C1 · Wo Bedeutung auf dem Regler liegt: die kalte Extremseite (A) vs. das endliche Innere (B)</h3>
+  <p><span class="tag a">A</span> liest die Bedeutung an der <b>kalten Extremseite</b>: „Kühlt man das Feld (T↓, β↑), wird die weiche Ablesung scharf <em>und</em> die harte Ablesung feiner (mehr, striktere Klassen)"; Erhitzen ist der Verlust („verwascht sich alles … Kollaps"). A impliziert: je kälter, desto <i>besser</i> — die feineste Komponentenzahl ist das Ziel.
+  <span class="tag b">B</span> erklärt dagegen <b>beide</b> Extremen für <em>degeneriert</em>: θ = 0 ist Superposition (Signal <i>und</i> Rauschen bleiben, „nicht auswählbar"), θ → ∞ ist explizite Logik (nur hand-assertierte Axiome). Die eigentliche Bedeutung liegt am <b>endlichen Inneren</b> θ = δ („separate signal from noise").
+  <b>Streitpunkt:</b> Ist die Bedeutung am <i>Extrem</i> des Reglers (maximale Struktur, A) oder am <i>endlichen Sweet-Spot</i> (B, wo beide Extremen degeneriert sind)?</p>
+
+  <h3>C2 · Die Geometrie des „Überlebens": fix-ebenen-Schnitt (A) vs. Lebensdauer-Track (B)</h3>
+  <p><span class="tag a">A</span> liest das Überleben als <b>Schnappschuss an einer Ebene</b>: das Feld bei τ(β) schwellen → Graph → Komponenten, dann Betti-Zahlen (β₀ Komponenten, β₁ ≈ Schleifen, gefüllte Triangel). Das ist eine <em>einzelne, fixe</em> Invariante an einer Stelle des Durchlaufs.
+  <span class="tag b">B</span> liest das Überleben als <b>Track über den ganzen Durchlauf</b>: der Barcode mit [Geburt, Tod]-Bars; die Länge der Bar <em>ist</em> die Lebensdauer. Das ist eine <em>Über-durchlauf</em>-Invariante, kein Schnappschuss.
+  <b>Streitpunkt:</b> Ist die bedeutende Struktur ein <i>fixer Schnitt</i> an einer Ebene (A: Komponenten/Betti bei τ) oder ein <i>Lebensdauer-Track</i> über die ganze Skala (B: Bars)? (Beides ist verwandt — Sublevel-Persistenz ist eine <em>Familie</em> solcher Schnitte — aber die Papiere fassen die Invariante unterschiedlich: A fixiert eine Ebene und liest Betti; B integriert den ganzen Durchlauf und liest Bar-Längen.)</p>
+
+  <h3>C3 · Alle Komponenten sind Bedeutung (A) vs. nur die Langlebigen sind es (B)</h3>
+  <p><span class="tag a">A</span>: die Komponenten des gekühlten Felds <b>sind</b> die Bedeutungen; „β₀ = Anzahl der Bedeutungen"; jede Komponente ist eine Bedeutungsklasse mit einem kanonischen Vertreter. Der Schwellenwert <em>produziert</em> die bedeutende Struktur — alles, was unter der Schwelle ist, zählt.
+  <span class="tag b">B</span>: Features werden <b>in der Masse geboren</b> und <b>nach Lebensdauer gefiltert</b>; „Short bars = noise. Long bars = real structure." Die meisten geborenen Features werden <i>expressis verbis</i> weggeworfen; nur die langlebigen zählen. Der Schwellenwert <em>selektiert</em> aus einer Überfülle.
+  <b>Streitpunkt:</b> <i>erzeugt</i> der Regler die Bedeutungen (A: Komponenten unter der Schwelle <em>sind</em> die Bedeutungen) oder <i>selektiert</i> er sie aus einer vorgegebenen Überfülle (B: nur lange Bars sind „real", der Rest ist Rauschen)?</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>R1 (für C1) · Ein Regler, aber „Bedeutung" ist nicht monoton in ihm</h3>
+  <p>A's „kalt = fein" und B's „endliches Innere = selektiv" stimmen überein, wenn man beachtet, dass β <em>zwei</em> gekoppelte Dinge steuert (Weichheit der weichen Ablesung <em>und</em> Granularität des Schnitts), während θ <em>ein</em> Ding (den Lebensdauer-Schnitt) steuert. Der echte Reim: am <b>heißen/unteren</b> Ende überlebt alles, aber nichts wird unterschieden (A's Kollaps zu einer Klasse ↔ B's Superposition, Signal + Rauschen); am <b>kalten/oberen</b> Ende ist die Struktur maximal fein <em>und</em> maximal leer (A: jedes Node = eigene Singleton-Klasse, keine Gruppierung ↔ B: nur Axiome). Das <b>informative Mittel</b> ist, wo <i>sowohl</i> „unterschiedene Struktur" <i>als</i> „Robustheit" koexistieren. B's explizites Dreiregime (0 / δ / ∞) verallgemeinert A's implizite Zwei-Zustände (hot = Kollaps / cold = fein) zu drei — und zeigt, dass das kalte Extrem von A die <em>dritte</em> (degenerierte) Markierung ist.
+  <b>Fusion:</b> <em>ein</em> Regler; die Bedeutung ist am <b>Mittel</b> maximal <i>informativ</i>, die beiden Extremen sind die beiden Entartungen (alles-überlebt / nur-Axiome).</p>
+
+  <h3>R2 (für C2) · Fixer Schnitt und Lebensdauer-Track sind zwei Auflösungen derselben H₀-Persistenz</h3>
+  <p>Sublevel-Persistenz ist buchstäblich eine <em>Familie</em> geschwellter Schnitte: Beim Durchlauf des Parameters werden Komponenten <b>geboren</b> (ein Minimum entsteht / ein Token-Paar überschreitet die Schwelle) und <b>töten</b> sich gegenseitig (eine Komponente verschmilzt in eine größere). A's Betti-Zahlen an einer fixen Ebene sind der <em>sofortige Zählwert</em> an <i>einem Punkt</i> dieses Durchlaufs; B's Barcode ist der <em>ganze Track</em> (Geburt/Tod jeder Komponente). Die Bar-Längen <em>sind</em> die Lebensdauern von A's Komponenten.
+  <b>Fusion:</b> die überlebende Struktur ist die <em>Familie</em> der Komponenten über den Durchlauf; A liest <b>eine Ebene</b> (Betti), B liest <b>den Track</b> (Bars). Die langen Bars = die Komponenten, die über ein weites Intervall von β/θ überleben = die <em>robusten</em> Komponenten = die Bedeutungen. A's „Komponente an der gekühlten Ebene" ist der <i>Querschnitt</i>; B's „lange Bar" ist das <i>Integral dieses Querschnitts über den Durchlauf</i> — dasselbe Objekt, zwei Auflösungen.</p>
+
+  <h3>R3 (für C3) · „Alle sind Bedeutung" und „nur die Langlebigen" sind dasselbe bei zwei Auflösungen</h3>
+  <p>Dank R2: A <em>fixiert</em> die Ebene, also ist <i>jede</i> an dieser Ebene vorhandene Komponente, an dieser Ebene, eine Bedeutung; B <em>läuft</em>, also sind nur die <em>langlebigen</em> Komponenten (an vielen Ebenen vorhanden) „real structure", die kurzen sind ebenenabhängiges Rauschen. A's Zählung β₀ an einer <i>gut gewählten</i> gekühlten Ebene <em>ist bereits</em> B's Zählung der langen Bars (an der Ebene, wo robuste Komponenten dominieren, sind kurzlebige entweder noch nicht geboren oder bereits verschmolzen). Die Rolle des Reglers ist dieselbe: A's τ(β) und B's θ entscheiden beide, „<i>welche</i> Komponenten zählen".
+  <b>Fusion:</b> der Regler entscheidet zugleich den <em>Schnitt</em> (A) und die <em>Lebensdauer-Untergrenze</em> (B). Eine Komponente ist „Bedeutung" <i>genau dann</i>, wenn sie den Durchlauf überlebt (B) = genau dann, wenn sie an der gekühlten Ebene eine Komponente ist, die stabil unter kleinen β/θ-Änderungen ist (A). „Alle Komponenten sind Bedeutungen" (A, an einer fixen Ebene) und „nur lange Bars sind Bedeutungen" (B, über den Durchlauf) sind der <em>selbe Satz</em> bei zwei Auflösungen.</p>
+
+  <div class="note"><b>Die zentrale Brücke (verknüpft alle drei):</b> A's Argmin-Vertreter (kanonische Form einer Komponente) <em>ist</em> B's persistente Richtung / Identitätsterm — der <i>weiche Vertreter</i> des überlebenden Kerns. A's Komponenten/Betti (fixe Ebene) und B's Barcode (ganzer Durchlauf) sind der <i>harte</i> Lesart des überlebenden Kerns — ein Schnitt gegen den Track. <b>Ein Feld, ein Regler (β = θ), zwei Ablesungen, Bedeutung = das Überlebende.</b> Die Form des Felds (Q·K vs. EBM; Logik vs. Geometrie) ist, <em>wo man den Regler einstellt</em> — sie ist nicht die Invariante.</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Das abstrakte Schema, aus dem beide R2-Papiere als Spezialfälle hervorgehen — in einer Form, aus der eine spätere Runde allein weiterarbeiten kann.</p>
+
+  <h3>Das Schema „Skalarobjekt über einen Parameter → ein Regler → zwei Ablesungen → Überleben = Bedeutung"</h3>
+  <div class="math">
+Objekt F: jede skalare Zuordnung über einer Menge von Konfigurationen
+  (A: wechselseitige Attention w<sub>ij</sub>  ODER  Energie E(y,x);
+   B: Feature-Aktivierung / Residual-Stream über Tiefe/Skala τ).
+Regler: EIN kontinuierlicher Parameter.
+  (A: Temperatur β ↔ τ(β), T(β);   B: Lebensdauer-Schwelle θ.)
+  β = θ — dieselbe Achse; „Kühlen" (A) = „θ erhöhen" (B).
+Weiche Ablesung (Punkt / Vertreter):
+  (A: o<sub>i</sub> = Σ<sub>j</sub> α<sub>ij</sub> v<sub>j</sub>,  Y* = argmin<sub>y</sub> E(y,x);
+   B: x<sub>[h+1]</sub> = x<sub>[h]</sub> + Δ,  die persistente Richtung.)
+Harte Ablesung (Struktur / Invariante):
+  (A: Feld bei τ(β) schwellen → Graph → Komponenten → Betti β₀/β₁, Triangel;
+   B: Durchlauf → Barcode H₀/H₁/H₂, Bars [Geburt, Tod].)
+Überleben = Bedeutung:
+  (A: Komponenten des gekühlten Felds + Argmin-Vertreter; β₀ = # Bedeutungen;
+   B: die langen Bars = „real structure"; der Rest = Rauschen.)
+Drei Regime auf dem EINEN Regler:
+  heiß/unten (β↓, θ→0):  alles überlebt, nichts unterschieden  (Kollaps / Superposition)
+  mittel       (β≈β*, θ=δ): robuste, unterscheidene Komponenten = Bedeutung  (der informative Sweet-Spot)
+  kalt/oben   (β↑, θ→∞):  maximal fein, maximal leer  (Singleton-Klassen / nur Axiome)
+  </div>
+
+  <h3>Was A (r2-004) beiträgt</h3>
+  <ul>
+    <li>Das <b>Skalarfeld → zwei Ablesungen</b>-Schema und die <b>temperatur-basierte</b> Lesart: Q = XW<sub>Q</sub>, K = XW<sub>K</sub>, V = XW<sub>V</sub>; α<sub>ij</sub> = softmax<sub>j</sub>( (W<sub>Q</sub>x<sub>i</sub>·W<sub>K</sub>x<sub>j</sub>)/√d/T ); weiche Ablesung o<sub>i</sub> = Σ α<sub>ij</sub> v<sub>j</sub> (konvex, Σα = 1).</li>
+    <li>Harte Ablesung: w<sub>ij</sub> = min(α<sub>ij</sub>, α<sub>ji</sub>); Kante ⇔ w<sub>ij</sub> &gt; ε; Triangel ⇔ drei wechselseitige Kanten; <b>β₀</b> = Komponenten (Union-Find), <b>β₁ ≈ |E| − (n − β₀) − |F|</b> (zyklomatische Approximation).</li>
+    <li>Der <b>eine thermische Regler</b> β: kalt (β↑) → T↓ (weiche Zeile scharf → Argmin) &amp; fein (strikte Komponenten); heiß (β↓) → flach &amp; Kollaps. Vorzeichen: ε = Unter-Grenze (steigend in β), τ = Ober-Grenze (fallend in β) — <em>dieselbe Strenge, entgegengesetztes Vorzeichen</em>.</li>
+    <li><b>„W steuert Topologie, nicht nur Ablesung"</b>: die Betti-Zahlen sind eine Funktion von (Feld-Form, β). Kontext hebt ein Tal hervor.</li>
+    <li>Geerbtes aus A's B-Seite (r1-054): Energie E(Y,X), Gibbs-Brücke P(Y|X) = e<sup>−βE</sup>/Z (β→∞ = argmin, β→0 = Gleichverteilung), Viterbi/min-sum, Homotopie/Model-Kategorien/Lokalisierung; Tal = Äquivalenzklasse, Stern = Argmin.</li>
+  </ul>
+
+  <h3>Was B (r2-019) beiträgt</h3>
+  <ul>
+    <li>Die <b>born–persist–die–glue-Maschine</b> über einen Parameter: jedes Stück wird <em>geboren</em>, <em>persistiert</em> über ein Intervall, <em>stirbt</em> durch eine Boundary-/Restriction-Operation; die Überlebenden werden zu einem globalen Gegenstand (Colimit) zusammengebaut.</li>
+    <li><b>Strukturelle Persistenz</b> (A-Pol r1-055): der Residual-Identitätsterm x<sub>[h+1]</sub> = x<sub>[h]</sub> + Δ ist das hart verdrahtete Frame-Axiom — das Signal fließt per Konstruktion durch alle Schichten; MLP als Key-Value; Superposition (m ≫ d, Johnson–Lindenstrauss d ≥ 8 ln m/ε²); Polysemie; deterministische Inferenz auf zwei Ebenen.</li>
+    <li><b>Topologische Persistenz</b> (B-Pol r1-035): Netz als Garbe (ReLU = Restriction, additive Verklebung); Sublevel-Persistenz X<sub>t</sub> = {y&#770; ≤ t}; Rips-Filtration; H₀/H₁/H₂ mit Geburt/Tod; Barcode; <b>Stabilitätstheorem</b> d<sub>B</sub>(D, D′) ≤ δ; „Short bars = noise. Long bars = real structure."</li>
+    <li>Der <b>Lebensdauer-Dial</b> mit drei Markierungen: θ ≈ 0 = Superposition (alles behalten), θ = δ = Persistenz (Signal selektieren), θ → ∞ = explizite Logik (nur Axiome). <b>„Form = wo man den Regler einstellt"</b>.</li>
+    <li><b>Drei kompositionierbare Garantien</b> auf drei Grobheits-Stufen: Beweis (lokal/exakt) → Identität (Design) → Stabilität (Störung). „Man verliert die Garantie nicht — man wechselt ihre Ebene."</li>
+  </ul>
+
+  <h3>Die fusionierte Konstruktion (in der Visualisierung implementiert)</h3>
+  <div class="math">
+Man wendet B's Barcode auf A's Feld an:
+  1) Berechne das Skalarfeld F (Attention-Feld oder Energie-Landschaft).
+  2) Laufe den Regler (β, bzw. τ(β) = θ) von heiß nach kalt durch.
+  3) Verfolge jede H₀-Komponente: GEBURT (ein Minimum / ein Paar überschreitet die
+     Schwelle) und TOD (Verschmelzung in eine größere Komponente).
+  4) Bar-Länge = Lebensdauer = Robustheit gegen β/θ.
+  5) Die LANGLEBEN Komponenten (lange Bars) = die robusten Bedeutungen;
+     der Argmin in jeder = der kanonische Vertreter (B's „Stern" = A's Argmin).
+  6) Die weiche Ablesung (o = Σ αv / Y* = argmin E / x<sub>[h+1]</sub> = x<sub>[h]</sub> + Δ)
+     ist der <i>laufende Vertreter</i> des überlebenden Kerns.
+
+  Ein Regler, drei Regime:
+     heiß/unten  →  1 Komponente        (Kollaps / Superposition: alles, nichts)
+     mittel      →  k robuste Komponenten (Bedeutung; β₀ = k = # lange Bars)
+     kalt/oben   →  n Singleton-Klassen  (fein/leer / nur Axiome)
+
+  „Form" = Generator des Felds (Q·K Attention ↔ EBM Energie; formale Logik ↔
+  gelernte Geometrie) — sekundär. „Ablesung" = Position auf dem Regler — sekundär.
+  „Bedeutung" = die überlebende Struktur — die Invariante.
+  </div>
+  <div class="warn">Die guten Losses von A (Hinge/NLL) und die Stabilität von B (Bottleneck-Schranke) sind die Mechanik, die die Täler <i>wohlgetrennt</i> hält — also die Komponenten langlebig macht und damit die Äquivalenz-Klassen wohldefiniert; die schlechten lassen sie ineinanderfließen (Kollaps = heiß / θ→0, eine einzige Klasse).</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — Ein Feld, ein Regler, zwei Ablesungen, das Überlebende</h2>
+  <p class="lead">EIN Regler (β) bewegt <b>beide</b> Ablesungen gleichzeitig. <b>Oben</b> (A): das Skalarfeld als Heatmap (Energie-Landschaft; dunkel = niedrig = „gut") mit zwei Ablesungen bei der aktuellen Ebene τ(β) — <em>hart</em>: Kanten (Barrier &lt; τ), gefüllte Triangel, farbige Flächen = <b>Komponenten</b>, Sterne = <b>Argmin-Vertreter</b>; <em>weich</em>: der Query-Knoten zeigt seine Attention-Kanten (Dicke = α) und den Output-Vektor <code>o = Σ α v</code>. <b>Unten</b> (B): der <b>Persistenz-Barcode</b> (H₀-Geburt/Tod über den ganzen β-Durchlauf) — jede Bar ist die <em>Lebensdauer</em> einer Komponente. <b>Die Fusion in Aktion:</b> die <i>lebenden</i> Bars (bei τ_now) <em>stammen exakt</em> von den oberen Komponenten; die <i>langen</i> Bars (länger als 40 % der Max-Lebensdauer) = die robusten = die <b>Bedeutungen</b>.</p>
+
+  <div class="vizwrap">
+    <div class="toolbar">
+      <label>Query <select id="who"></select></label>
+      <label>β (Regler; kalt→fein) <input type="range" id="beta" min="0.5" max="8" step="0.1" value="5.5"><span class="v" id="beta-v"></span></label>
+      <label>Feld formen (W-Twist) <input type="range" id="twist" min="-60" max="60" step="1" value="0"><span class="v" id="twist-v"></span></label>
+      <label class="chk"><input type="checkbox" id="paths"> Pfade → Vertreter</label>
+      <button id="ctxBtn">Kontext X₁</button>
+    </div>
+    <canvas id="cv" width="760" height="600"></canvas>
+    <div class="legend">
+      <span><span class="sw" style="border-color:var(--edge)"></span> Kante (Barrier&lt;τ)</span>
+      <span><span class="dotc" style="background:var(--tri);opacity:.5"></span> 2-Simplex</span>
+      <span><span class="sw" style="border-color:var(--query)"></span> Attention (α)</span>
+      <span><span class="sw" style="border-color:var(--accent);border-top-width:4px"></span> o = Σα·v</span>
+      <span>★ Argmin / Bedeutung</span>
+      <span><span class="sw" style="border-color:var(--bar);border-top-width:5px"></span> Bar: Komponente (Lebensdauer)</span>
+      <span>★ lange Bar = robust = Bedeutung (B)</span>
+    </div>
+    <div id="readout"></div>
+  </div>
+  <div class="warn" style="margin-top:14px"><b>Ziehen Sie β</b>: kalt (β↑) → wenige Kanten, viele Komponenten, weiche Zeile scharf (A) — <i>und</i> nur die <i>längsten</i> Bars überleben lange (B). Heiß (β↓) → Kollaps zu einer Komponente (A) — <i>und</i> alle Bars enden früh (B). <b>Feld formen (W-Twist)</b> verschiebt die Täler und damit die ganze Barcode-Topologie („W steuert Topologie"); <b>Kontext</b> hebt ein Tal hervor.</div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul class="prov">
+    <li><a href="../2/r2-004.html">r2-004.html</a> — „Ein Skalarfeld, zwei Ablesungen, ein thermischer Regler" (Fusion r1-007 ✕ r1-054): ein Skalarfeld (Attention-Feld s(i,j) <i>oder</i> Energie-Landschaft E(y,x)) mit zwei Ablesungen — konvexe Kombination o = Σαv / Argmin (weich) und ε/τ-geschwellter Simplizial-Skelett mit Betti-Zahlen β₀/β₁ (hart); ein thermischer Regler β (ε und τ mit entgegengesetztem Vorzeichen); „W steuert Topologie".</li>
+    <li><a href="../2/r2-019.html">r2-019.html</a> — „Was bleibt, trägt die Bedeutung — Persistenz als die eine Invariante" (Fusion r1-055 ✕ r1-035): die born–persist–die–glue-Maschine; strukturelle Persistenz (Residual-Identität x<sub>[h+1]</sub> = x<sub>[h]</sub> + Δ) + topologische Persistenz (Barcode mit [Geburt, Tod]); der Lebensdauer-Dial mit drei Markierungen (θ = 0 Superposition, θ = δ Persistenz, θ → ∞ Logik); „Bedeutung = der persistente Teil", „Form = wo man den Regler einstellt"; drei kompositionierbare Garantien (Beweis → Identität → Stabilität).</li>
+  </ul>
+</section>
+
+<div class="foot">Runde 3, Paar 004 — Fusion: <code>r2-004.html</code> ✕ <code>r2-019.html</code></div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('cv');
+if(!cv)return;
+var ctx=cv.getContext('2d');
+var off=document.createElement('canvas');
+var octx=off.getContext('2d');
+var H=600, W=760;
+var LAMBDA=1.2, S=0.13;
+
+var nodes=[
+ {x:0.16,y:0.30,l:"wrote"},
+ {x:0.27,y:0.40,l:"authored"},
+ {x:0.20,y:0.48,l:"author of"},
+ {x:0.66,y:0.26,l:"composed"},
+ {x:0.78,y:0.33,l:"penned"},
+ {x:0.70,y:0.42,l:"drafted"},
+ {x:0.42,y:0.74,l:"said"},
+ {x:0.56,y:0.82,l:"uttered"},
+ {x:0.50,y:0.90,l:"voiced"}
+];
+var n=nodes.length;
+var vals=nodes.map(function(nd){return [nd.x-0.5, nd.y-0.5];});
+var baseValleys=[{x:0.22,y:0.42},{x:0.73,y:0.33},{x:0.50,y:0.82}];
+var ctxIdx=0;
+var CTXNAMES=["Kontext X₁","Kontext X₂","Kontext X₃"];
+
+function rotAround(px,py,cx,cy,deg){
+  var r=deg*Math.PI/180, c=Math.cos(r), s=Math.sin(r);
+  var dx=px-cx, dy=py-cy;
+  return [cx+dx*c-dy*s, cy+dx*s+dy*c];
+}
+function valCenters(tw){return baseValleys.map(function(v){var p=rotAround(v.x,v.y,0.5,0.5,tw);return {x:p[0],y:p[1]};});}
+function E(px,py,tw){
+  var cs=valCenters(tw), boost, a, d2, e=0.95, k;
+  for(k=0;k<cs.length;k++){
+    boost=(k===ctxIdx)?1.0:0.78;
+    a=0.86*boost;
+    d2=(px-cs[k].x)*(px-cs[k].x)+(py-cs[k].y)*(py-cs[k].y);
+    e-=a*Math.exp(-d2/(2*S*S));
+  }
+  return e;
+}
+function hexToRgb(h){h=(h||"").replace("#","").trim();if(!/^[0-9a-fA-F]{6}$/.test(h))return[128,128,128];var v=parseInt(h,16);return[(v>>16)&255,(v>>8)&255,v&255];}
+function lerp(a,b,t){return[Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)];}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function softmax(arr,T){var m=-1e9,i;for(i=0;i<arr.length;i++)if(arr[i]>m)m=arr[i];var e=arr.map(function(x){return Math.exp((x-m)/T);});var s=0;for(i=0;i<e.length;i++)s+=e[i];return e.map(function(x){return x/s;});}
+function hexA(hex,a){var c=hexToRgb(hex);return "rgba("+c[0]+","+c[1]+","+c[2]+","+a+")";}
+
+var tc={};
+function readTheme(){
+  var cs=getComputedStyle(document.documentElement);
+  var g=function(nm){return cs.getPropertyValue(nm).trim();};
+  tc={
+    text:g("--text")||"#1a1f2e", muted:g("--muted")||"#5b6478",
+    accent:g("--accent")||"#0e7490", accent2:g("--accent2")||"#b45309", accent3:g("--accent3")||"#b91c1c",
+    edge:g("--edge")||"#0e7490", query:g("--query")||"#b91c1c",
+    tri:g("--tri")||"#7c3aed", bar:g("--bar")||"#b45309", noise:g("--noise")||"#9aa0b0",
+    bg2:g("--bg2")||"#fbfaf4", border:g("--border")||"#dcd6c6",
+    fieldLow:g("--field-low")||"#efe8d6", fieldHigh:g("--field-high")||"#c0392b"
+  };
+}
+
+function computeAll(tw){
+  var eArr=nodes.map(function(nd){return E(nd.x,nd.y,tw);});
+  var pairs=[],i,j,a,b,mx,k,t,nx,ny,val,bv;
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++){
+    a=nodes[i];b=nodes[j];mx=-1e9;
+    for(k=0;k<=16;k++){t=k/16;nx=a.x+(b.x-a.x)*t;ny=a.y+(b.y-a.y)*t;val=E(nx,ny,tw);if(val>mx)mx=val;}
+    bv=mx-Math.min(eArr[i],eArr[j]);
+    pairs.push([bv,i,j]);
+  }
+  return {eArr:eArr, pairs:pairs};
+}
+
+function computeBars(pairs, eArr){
+  var ps=pairs.slice(); ps.sort(function(a,b){return a[0]-b[0];});
+  var parent=[],minE=[],arg=[],size=[],i;
+  for(i=0;i<n;i++){parent[i]=i;minE[i]=eArr[i];arg[i]=i;size[i]=1;}
+  function find(x){while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];}return x;}
+  var bars=[],tauMax=0,s;
+  for(s=0;s<ps.length;s++){ if(ps[s][0]>tauMax)tauMax=ps[s][0]; }
+  for(var p=0;p<ps.length;p++){
+    var b=ps[p][0], i2=ps[p][1], j2=ps[p][2];
+    var ri=find(i2), rj=find(j2);
+    if(ri===rj)continue;
+    var surv,die;
+    if(minE[ri]<minE[rj]){surv=ri;die=rj;}else{surv=rj;die=ri;}
+    bars.push({b:0,d:b,rep:arg[die],size:size[die]});
+    parent[die]=surv;
+    size[surv]+=size[die];
+    minE[surv]=Math.min(minE[surv],minE[die]);
+    if(eArr[arg[die]]<eArr[arg[surv]])arg[surv]=arg[die];
+  }
+  var root=find(0);
+  bars.push({b:0,d:tauMax,rep:arg[root],size:n,inf:true});
+  return {bars:bars, tauMax:tauMax};
+}
+
+function buildField(tw, pw, ph){
+  off.width=pw; off.height=ph;
+  var img=octx.createImageData(pw,ph);
+  var lo=hexToRgb(tc.fieldLow), hi=hexToRgb(tc.fieldHigh);
+  var d=img.data,x,y,nx,ny,e,t2,c,pp;
+  for(y=0;y<ph;y++){ny=y/((ph-1)||1);
+    for(x=0;x<pw;x++){nx=x/((pw-1)||1);
+      e=E(nx,ny,tw); t2=clamp(e/0.95,0,1); c=lerp(lo,hi,t2);
+      pp=(y*pw+x)*4; d[pp]=c[0];d[pp+1]=c[1];d[pp+2]=c[2];d[pp+3]=255;
+    }}
+  octx.putImageData(img,0,0);
+}
+function star(cx,cy,r,fill){
+  ctx.beginPath();
+  for(var i=0;i<10;i++){var ang=-Math.PI/2+i*Math.PI/5;var rr=(i%2===0)?r:r*0.45;
+    var px=cx+rr*Math.cos(ang), py=cy+rr*Math.sin(ang);
+    if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+  ctx.closePath();ctx.fillStyle=fill;ctx.fill();
+}
+function arrow(x1,y1,x2,y2,col,w){
+  var ang=Math.atan2(y2-y1,x2-x1),hl=11;
+  ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hl*Math.cos(ang-0.35),y2-hl*Math.sin(ang-0.35));
+  ctx.lineTo(x2-hl*Math.cos(ang+0.35),y2-hl*Math.sin(ang+0.35));ctx.closePath();ctx.fill();
+}
+
+function render(){
+  try{
+    var tw=parseFloat(document.getElementById('twist').value)||0;
+    var beta=parseFloat(document.getElementById('beta').value);
+    var qi=parseInt(document.getElementById('who').value,10);
+    var showPaths=document.getElementById('paths').checked;
+    document.getElementById('twist-v').textContent=tw.toFixed(0)+"°";
+    document.getElementById('beta-v').textContent=beta.toFixed(1);
+
+    var all=computeAll(tw);
+    var eArr=all.eArr, pairs=all.pairs;
+    var res=computeBars(pairs, eArr);
+    var tauMax=res.tauMax>1e-6?res.tauMax:1;
+
+    var tNorm=clamp((beta-0.5)/7.5,0,1);
+    var tauNow=tauMax*(1-tNorm);
+    var T=0.2+(1-tNorm)*2.5;
+
+    // ---- geometry ----
+    var padL=20, padR=20, padT=16, topBottom=300;
+    var plotW=W-padL-padR, plotH=topBottom-padT;
+    var botTop=352, botBottom=566;
+    function PX(x){return padL+x*plotW;}
+    function PY(y){return padT+y*plotH;}
+
+    // ---- top clusters at tauNow (A hard readout) ----
+    var topEdges=[],i,j;
+    for(i=0;i<pairs.length;i++){ if(pairs[i][0]<tauNow)topEdges.push([pairs[i][1],pairs[i][2],pairs[i][0]]); }
+    var parent=[];for(i=0;i<n;i++)parent[i]=i;
+    function find(x){while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];}return x;}
+    function un(a,b){var ra=find(a),rb=find(b);if(ra!==rb)parent[rb]=ra;}
+    for(i=0;i<topEdges.length;i++)un(topEdges[i][0],topEdges[i][1]);
+    var cmap={};for(i=0;i<n;i++){var r=find(i);(cmap[r]=cmap[r]||[]).push(i);}
+    var clusters=Object.keys(cmap).map(function(k){return cmap[k];});
+    clusters.forEach(function(cl){cl.sort(function(a,b){return eArr[a]-eArr[b];});});
+    var argmin=clusters.map(function(cl){return cl[0];});
+    var b0=clusters.length;
+    var Bset={};topEdges.forEach(function(ed){Bset[ed[0]+"_"+ed[1]]=1;Bset[ed[1]+"_"+ed[0]]=1;});
+    var tris=[];
+    for(i=0;i<n;i++)for(var j3=i+1;j3<n;j3++)for(var k3=j3+1;k3<n;k3++)
+      if(Bset[i+"_"+j3]&&Bset[j3+"_"+k3]&&Bset[i+"_"+k3])tris.push([i,j3,k3]);
+    var b1=Math.max(0,topEdges.length-(n-b0)-tris.length);
+
+    // stable color order: sort clusters + alive bars by argmin energy asc
+    var clusterOrder=clusters.slice().sort(function(a,b){return eArr[a[0]]-eArr[b[0]];});
+    var ccols=[tc.accent,tc.accent2,tc.accent3,tc.tri];
+    var colorByNode={};
+    clusterOrder.forEach(function(cl,ci){cl.forEach(function(idx){colorByNode[idx]=ccols[ci%ccols.length];});});
+
+    // ---- soft readout (attention for query) ----
+    var scores=[];
+    for(j=0;j<n;j++){var ddx=nodes[qi].x-nodes[j].x, ddy=nodes[qi].y-nodes[j].y;
+      scores.push(-(eArr[j]+LAMBDA*(ddx*ddx+ddy*ddy)));}
+    var alpha=softmax(scores,T);
+    var o=[0,0];for(j=0;j<n;j++){o[0]+=alpha[j]*vals[j][0];o[1]+=alpha[j]*vals[j][1];}
+    var topJ=0;for(j=1;j<n;j++)if(alpha[j]>alpha[topJ])topJ=j;
+    var qClass=-1;for(var ci=0;ci<clusters.length;ci++){for(var mi=0;mi<clusters[ci].length;mi++)if(clusters[ci][mi]===qi){qClass=ci;}}
+
+    // ---- draw ----
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=tc.bg2; ctx.fillRect(0,0,W,H);
+    buildField(tw, plotW, plotH);
+    ctx.drawImage(off, padL, padT);
+
+    // panel title (top)
+    ctx.fillStyle=tc.muted; ctx.font="bold 12px system-ui, sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+    ctx.fillText("A — harte & weiche Ablesung bei Ebene τ(β)  (Skalarfeld → Komponenten + Vertreter)", padL, padT+12);
+
+    // triangles
+    var tI;
+    for(tI=0;tI<tris.length;tI++){var tr=tris[tI];
+      ctx.fillStyle=hexA(tc.tri,0.10);ctx.strokeStyle=hexA(tc.tri,0.45);ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(PX(nodes[tr[0]].x),PY(nodes[tr[0]].y));
+      ctx.lineTo(PX(nodes[tr[1]].x),PY(nodes[tr[1]].y));
+      ctx.lineTo(PX(nodes[tr[2]].x),PY(nodes[tr[2]].y));
+      ctx.closePath();ctx.fill();ctx.stroke();
+    }
+    // edges
+    ctx.strokeStyle=tc.edge;ctx.globalAlpha=0.72;
+    for(i=0;i<topEdges.length;i++){var ed=topEdges[i];
+      ctx.lineWidth=1.4+Math.max(0,0.6-ed[2])*2;
+      ctx.beginPath();ctx.moveTo(PX(nodes[ed[0]].x),PY(nodes[ed[0]].y));ctx.lineTo(PX(nodes[ed[1]].x),PY(nodes[ed[1]].y));ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    // cluster fills
+    ctx.save();
+    for(var cI=0;cI<clusters.length;cI++){var cl=clusters[cI];
+      ctx.globalAlpha=0.10;ctx.fillStyle=colorByNode[cl[0]];
+      cl.forEach(function(idx){ctx.beginPath();ctx.arc(PX(nodes[idx].x),PY(nodes[idx].y),34,0,Math.PI*2);ctx.fill();});
+    }
+    ctx.restore();
+    // paths to representative
+    if(showPaths){
+      ctx.save();
+      for(var cP=0;cP<clusters.length;cP++){var cl2=clusters[cP];var am=argmin[cP];
+        ctx.strokeStyle=colorByNode[cl2[0]];ctx.globalAlpha=0.5;ctx.lineWidth=1.2;ctx.setLineDash([5,4]);
+        cl2.forEach(function(idx){if(idx===am)return;ctx.beginPath();ctx.moveTo(PX(nodes[am].x),PY(nodes[am].y));ctx.lineTo(PX(nodes[idx].x),PY(nodes[idx].y));ctx.stroke();});
+      }
+      ctx.restore();
+    }
+    // cluster labels
+    ctx.font="bold 11px system-ui";ctx.textAlign="center";
+    for(var cL=0;cL<clusters.length;cL++){var cl3=clusters[cL];var cx=0,cy=0,k3;
+      cl3.forEach(function(idx){cx+=nodes[idx].x;cy+=nodes[idx].y;});
+      cx=PX(cx/cl3.length);cy=PY(cy/cl3.length);
+      ctx.fillStyle=colorByNode[cl3[0]];
+      ctx.fillText("[Klasse "+(cL+1)+"] ("+cl3.length+")",cx,Math.max(14,cy-40));
+    }
+    // attention lines + alpha
+    for(var sj=0;sj<n;sj++){if(sj===qi)continue;
+      var q1=[PX(nodes[qi].x),PY(nodes[qi].y)],q2=[PX(nodes[sj].x),PY(nodes[sj].y)];
+      ctx.strokeStyle=hexA(tc.query,0.12+alpha[sj]*0.8);ctx.lineWidth=1+alpha[sj]*9;
+      ctx.beginPath();ctx.moveTo(q1[0],q1[1]);ctx.lineTo(q2[0],q2[1]);ctx.stroke();
+      if(alpha[sj]>0.05){var mx=(q1[0]+q2[0])/2,my=(q1[1]+q2[1])/2;
+        ctx.fillStyle=hexA(tc.query,0.95);ctx.font="10px ui-monospace,monospace";ctx.textAlign="center";
+        ctx.fillText((alpha[sj]*100).toFixed(0)+"%",mx,my-3);ctx.textAlign="left";}
+    }
+    // nodes
+    for(i=0;i<n;i++){var np=[PX(nodes[i].x),PY(nodes[i].y)];
+      ctx.beginPath();ctx.arc(np[0],np[1],(i===qi)?8:6,0,Math.PI*2);
+      ctx.fillStyle=tc.bg2;ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=(i===qi)?tc.query:colorByNode[i];ctx.stroke();
+      ctx.fillStyle=tc.text;ctx.font="11px ui-monospace,monospace";ctx.textAlign="left";
+      ctx.fillText(nodes[i].l,np[0]+9,np[1]-8);
+      ctx.fillStyle=tc.muted;ctx.font="9px ui-monospace,monospace";
+      ctx.fillText("E="+eArr[i].toFixed(2),np[0]+9,np[1]+15);
+    }
+    // argmin stars
+    for(var cS=0;cS<clusters.length;cS++){var am2=argmin[cS];
+      star(PX(nodes[am2].x),PY(nodes[am2].y),12,tc.accent3);
+    }
+    // output vector (soft readout)
+    var qp=[PX(nodes[qi].x),PY(nodes[qi].y)];
+    var op=[qp[0]+o[0]*plotW, qp[1]+o[1]*plotH];
+    arrow(qp[0],qp[1],op[0],op[1],tc.accent,3.2);
+    ctx.beginPath();ctx.arc(op[0],op[1],5,0,Math.PI*2);ctx.fillStyle=tc.accent;ctx.fill();
+    ctx.fillStyle=tc.text;ctx.font="bold 11px system-ui";ctx.textAlign="left";
+    ctx.fillText("o = Σα·v",op[0]+9,op[1]-6);
+
+    // divider
+    ctx.strokeStyle=tc.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,318);ctx.lineTo(W-padR,318);ctx.stroke();
+    ctx.fillStyle=tc.muted;ctx.font="bold 12px system-ui, sans-serif";ctx.textAlign="left";
+    ctx.fillText("B — Lebensdauer-Barcode über den β-Durchlauf  (H₀: Geburt → Tod)", padL, 340);
+    ctx.fillStyle=tc.muted;ctx.font="11px system-ui, sans-serif";
+    ctx.fillText("τ_now = "+tauNow.toFixed(2)+"  (lebende Bars = obere Komponenten; lange Bars = Bedeutung)", padL, botBottom+26);
+
+    // ---- bottom: barcode ----
+    var bars=res.bars;
+    var alive=[];for(i=0;i<bars.length;i++){if(bars[i].d>=tauNow-1e-9)alive.push(i);}
+    alive.sort(function(a,b){return eArr[bars[a].rep]-eArr[bars[b].rep];});
+    var barColor={};
+    alive.forEach(function(bi,ai){barColor[bi]=ccols[ai%ccols.length];});
+    var floor=0.4*tauMax;
+
+    var byTop=botTop, byBot=botBottom;
+    ctx.strokeStyle=tc.border;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,byBot);ctx.lineTo(W-padR,byBot);ctx.stroke();
+    ctx.fillStyle=tc.muted;ctx.font="10px ui-monospace,monospace";ctx.textAlign="center";
+    ctx.fillText("0",padL,byBot+16);
+    ctx.fillText("τ", (padL+W-padR)/2, byBot+16);
+    ctx.fillText("τ_max", W-padR, byBot+16);
+    // tauNow marker line
+    var tnX=padL+(tauNow/tauMax)*plotW;
+    ctx.strokeStyle=tc.accent3;ctx.lineWidth=1.4;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(tnX,byTop-4);ctx.lineTo(tnX,byBot);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=tc.accent3;ctx.font="bold 10px ui-monospace,monospace";ctx.textAlign="center";
+    ctx.fillText("τ_now", tnX, byTop-6);
+
+    var nB=bars.length, rowH=(byBot-byTop)/nB, bh=Math.max(3,rowH*0.52);
+    var nAlive=alive.length, nMeaningful=0;
+    for(var bi=0;bi<nB;bi++){
+      var bar=bars[bi];
+      var isAlive=(bar.d>=tauNow-1e-9);
+      var life=bar.d-bar.b;
+      var isMeaningful=isAlive && (life>=floor);
+      if(isMeaningful)nMeaningful++;
+      var x1=padL+(bar.b/tauMax)*plotW, x2=padL+(bar.d/tauMax)*plotW;
+      var yTop=byTop+bi*rowH+(rowH-bh)/2;
+      ctx.globalAlpha=isAlive?1:0.25;
+      ctx.fillStyle=isAlive?(barColor[bi]||tc.accent):tc.noise;
+      ctx.fillRect(x1,yTop,Math.max(x2-x1,2),bh);
+      ctx.globalAlpha=1;
+      if(isMeaningful){ star(x2-2, yTop+bh/2, 8, tc.accent3); }
+    }
+
+    // readout
+    var html="β="+beta.toFixed(1)+"  (τ_now="+tauNow.toFixed(2)+", T="+T.toFixed(2)+")  ·  ";
+    html+="Komponenten β₀="+b0+" · Kanten="+topEdges.length+" · Triangel="+tris.length+" · β₁≈"+b1+"  ·  ";
+    html+="Bars total="+nB+" · lebend="+nAlive+" · <b>lang/Bedeutung="+nMeaningful+"</b>  ·  ";
+    html+="Query \""+nodes[qi].l+"\" → top "+(alpha[topJ]*100).toFixed(0)+"% auf \""+nodes[topJ].l+"\""+(qClass>=0?"  ·  Klasse["+qClass+"]-Vertreter (Argmin): \""+nodes[argmin[qClass]].l+"\"":"");
+    document.getElementById('readout').innerHTML=html;
+  }catch(err){
+    /* keep console silent */
+  }
+}
+
+function buildWho(){
+  var sel=document.getElementById('who');
+  for(var i=0;i<n;i++){var op=document.createElement('option');op.value=i;op.textContent=nodes[i].l;sel.appendChild(op);}
+  sel.value='0';
+}
+function updateCtxLabel(){document.getElementById('ctxBtn').textContent=CTXNAMES[ctxIdx];}
+
+function sizeCanvas(){
+  var dpr=window.devicePixelRatio||1;
+  var w=cv.clientWidth||760;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr);
+  cv.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  W=w;
+}
+
+document.getElementById('who').addEventListener('change',render);
+document.getElementById('beta').addEventListener('input',render);
+document.getElementById('twist').addEventListener('input',render);
+document.getElementById('paths').addEventListener('change',render);
+document.getElementById('ctxBtn').addEventListener('click',function(){ctxIdx=(ctxIdx+1)%3;updateCtxLabel();render();});
+document.getElementById('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');readTheme();render();});
+var rt;
+window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){sizeCanvas();render();},120);});
+
+buildWho();
+updateCtxLabel();
+readTheme();
+sizeCanvas();
+render();
+})();
+</script>
+</body>
+</html>

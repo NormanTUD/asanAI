@@ -1,0 +1,17 @@
+{
+  "no": "006",
+  "a": "combined/2/r2-016.html",
+  "b": "combined/2/r2-009.html",
+  "a_title": "Tiefe ist RG-Skala: das Low-Rank-Kollaps des Jacobian-Flusses (A) und die freie-Feld-Koarse-Graining (B) sind dieselbe Kompression",
+  "b_title": "Drei Geometrien, eine Maschine: Proben → Nichtlinearität → Readout",
+  "combined_theme": "self-similar-machine-sigma-geometry-rg-flow",
+  "one_line": "B's σ-Geometrie-Zelle (lineare Probe → σ → linearer Readout) ist die Einheitszelle, die A entlang der Tiefe (Tiefe = RG-Skala = Flusszeit) iteriert: der Low-Rank-Kanal kollabiert, die skalengefeste σ-Geometrie (holographisches Wissen) bleibt und wird vom linearen Nearest-Point-Readout decodiert.",
+  "contradictions": [
+    "W1: Wo die Maschine sitzt — B: 'Die Nichtlinearität ist die Maschine' (σ erzeugt Geometrie und rechnet, lineare Probe/Readout sind Gerüst); A: die Maschine ist der Jacobian-Fluss, getrieben von der nicht-normalen Komponente N (Kollaps liegt in der nicht-normalen Struktur, nicht im Spektrum).",
+    "W2: Was die Maschine produziert — B: ein kategorischer Nearest-Point-Readout snappt die Geometrie auf EINEN diskreten Token/Relation; A: was dem Tiefenfluss überlebt, ist ein kontinuierlicher, skalengefester, holographischer ≈d-dim Vektor (polysem verteilt, kein Punkt).",
+    "W3: Die Rolle der Tiefe — A: Tiefe ist Reduktion/Kompression (Tiefergehen integriert Detail heraus, erank 4096→≈7); B: Tiefe ist Organisation/Stufung der Absolute-Natur (früh POS/Syntax, mittel semantisch, spät kontext), keine Kompression genannt.",
+    "W4: Der Motor des Routings — A: strukturelle Nicht-Normalität des kumulativen Jacobians (deterministisch, trainiert installiert, Kontrolle = Dosis c); B: normierendes Softmax über Q·K-Scores als lokales kompetitives Kraftfeld (→ Becken)."
+  ],
+  "resolution": "σ (B) und Jacobian (A) sind dasselbe Objekt auf zwei Ebenen: σ ist die Quellgeometrie, der Jacobian ist ihr linearer Schatten (Tangentialfluss); der nicht-normale Anteil N ist der asymmetrische Teil, der routet und Detail integriert. A's holographischer Überlebender ist die Eingabe, B's diskreter Nearest-Point-Readout die Ausgabe desselben Readout. Tiefe tut beides — organisiert (B) und komprimiert (A) — und das ist eine Kurve mit zwei Namen. Softmax (B) ist der lokale Einheitsschritt des Routings, N (A) seine akkumulierte/trainierte Form; die skalengefeste σ-Geometrie (Region/Becken/Torus) ist der RG-invariante Kern, der dem Low-Rank-Kollaps überlebt.",
+  "viz": "Canvas-Plot über die Tiefe ℓ (0..32): A's kollabierender Fluss-Kanal erank(Pℓ) (blau, log-Achse) gegen B's erhaltene σ-Geometrie/holographischer Überlebender (violett, ≈d, bleibt hoch); oberes Band färbt die drei σ-Geometrien nach Regime (Early sin/cos→Torus/relativ, Mid ReLU→Polyeder/absolut, Late Softmax→Becken/relational, Outer Readout); untere Readout-Achse snappt den Überlebenden per Nearest-Point auf die finale Geometrie (Softmax/Becken) mit Konfidenz-Ring (maximal im trainierten c≈1); Slider c (0..2) + c-Sweep-Animation; theme-aware (CSS-Variablen), alle Daten inline, kein externes Skript."
+}

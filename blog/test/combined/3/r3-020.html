@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symmetrie und Krümmung sind dieselbe Kante — Form fixiert, Auflösung kippt · Fusion r3-020</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --head:#3b2f63; --warn:#c2410c; --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-bg:#ffffff; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333; --viz-faint:#6b7488;
+  --viz-curve:#6451d8; --viz-ok:#2f8f4b; --viz-void:#c2410c; --viz-cusp:#c93a86;
+  --viz-gd:#b57e00; --viz-probe:#6451d8; --viz-spec:#0d8f80; --viz-floor:#c93a86;
+  --viz-circle:#0d8f80;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --head:#b9a7f0; --warn:#fb923c;
+  --viz-bg:#0c1120; --viz-grid:rgba(255,255,255,0.07); --viz-txt:#e8ecf6; --viz-faint:#64708c;
+  --viz-curve:#8a7cff; --viz-ok:#6ee88a; --viz-void:#fb923c; --viz-cusp:#ff7ac0;
+  --viz-gd:#ffc860; --viz-probe:#8a7cff; --viz-spec:#5ee0d0; --viz-floor:#ff7ac0;
+  --viz-circle:#5ee0d0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.68;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:22px 22px 60px}
+h1{font-size:clamp(26px,5vw,40px);line-height:1.09;letter-spacing:-.025em;font-weight:760;margin:14px 0 10px;color:var(--head)}
+h2{font-size:clamp(21px,3.4vw,28px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px;color:var(--head)}
+h2 .tag{font-size:.55em;font-family:var(--mono);vertical-align:middle;padding:3px 9px;border-radius:20px;color:var(--panel-solid);background:var(--acc4);margin-left:9px;letter-spacing:.05em}
+h3{font-size:16px;font-weight:660;margin:22px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:76ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px;color:var(--txt)}
+a{color:var(--acc4);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc4) 55%,transparent)}
+a:hover{color:var(--acc)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.01em;margin-bottom:8px}
+.badge{display:inline-block;font-family:var(--mono);font-size:.72em;font-weight:700;padding:1px 8px;border-radius:12px;vertical-align:middle}
+.badge.a{background:var(--acc4);color:var(--panel-solid)}
+.badge.b{background:var(--acc);color:var(--panel-solid)}
+.badge.f{background:var(--acc3);color:var(--panel-solid)}
+section{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:22px 24px;margin:22px 0}
+section>h2{border-bottom:2px solid var(--stroke);padding-bottom:10px}
+.note{border-left:3px solid var(--acc4);background:color-mix(in srgb,var(--acc4) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 8%,transparent)}
+.note.g{border-color:var(--acc5);background:color-mix(in srgb,var(--acc5) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc4);margin-bottom:6px;display:block}
+.note.w .h{color:var(--warn)}.note.g .h{color:var(--acc5)}
+.box{background:color-mix(in srgb,var(--acc3) 6%,var(--panel-solid));border:1px solid color-mix(in srgb,var(--acc3) 40%,transparent);border-radius:var(--r);padding:16px 18px;margin:16px 0}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc3);font-weight:660;margin-bottom:8px;display:block}
+.conflict{border:1px solid var(--stroke);border-left:4px solid var(--warn);background:var(--panel-solid);border-radius:0 11px 11px 0;padding:14px 16px;margin:14px 0}
+.conflict .who{font-family:var(--mono);font-size:12px;color:var(--head);margin-bottom:7px;letter-spacing:.02em;font-weight:660}
+.conflict .incomp{margin:10px 0 0;font-size:13px;color:var(--txt-dim);border-top:1px dashed var(--stroke);padding-top:9px}
+.conflict .incomp b{color:var(--warn)}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}
+ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.eq{overflow-x:auto;padding:12px 15px;font-size:13.5px;color:var(--txt);font-family:var(--mono);background:var(--panel-solid);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;margin:14px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}.eq .a{color:var(--acc4)}.eq .b{color:var(--acc)}
+table.map{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+table.map th,table.map td{border:1px solid var(--stroke);padding:8px 11px;text-align:left;vertical-align:top;color:var(--txt-dim)}
+table.map th{background:color-mix(in srgb,var(--acc4) 10%,var(--panel-solid));color:var(--head);font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+table.map td.g{color:var(--acc4);font-weight:600}
+table.map td.f{color:var(--acc);font-weight:600}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0;font-size:15px;color:var(--txt-dim)}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden;margin-bottom:10px}
+canvas{display:block;width:100%;height:auto}
+.leg{display:flex;gap:13px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:11px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt)}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;margin:14px 0}
+.ro{background:var(--panel-solid);border:1px solid var(--stroke);border-radius:9px;padding:8px 10px;text-align:center}
+.ro .k{font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--txt-faint);display:block;margin-bottom:3px;font-family:var(--mono)}
+.ro .v{font-family:var(--mono);font-size:15px;font-weight:640;line-height:1.2}
+.ro.a .v{color:var(--acc4)}.ro.b .v{color:var(--acc)}.ro.hero .v{color:var(--warn)}.ro.ok .v{color:var(--acc5)}.ro.bad .v{color:var(--viz-void)}
+.readout{background:var(--panel-solid);border:1px solid var(--stroke);border-left:3px solid var(--acc3);border-radius:0 10px 10px 0;padding:11px 14px;font-size:13px;color:var(--txt-dim);margin-top:6px}
+.readout b{color:var(--txt)}
+.prov{display:flex;gap:16px;flex-wrap:wrap}
+.prov a{flex:1 1 280px;display:block;background:var(--panel-solid);border:1px solid var(--stroke);border-radius:11px;padding:13px 15px;color:var(--txt);text-decoration:none}
+.prov a:hover{border-color:var(--acc4)}
+.prov a .n{font-weight:700;display:block;color:var(--head);margin-bottom:5px}
+.prov a .d{font-size:13px;color:var(--txt-dim)}
+footer{border-top:1px solid var(--stroke);padding:24px 22px;text-align:center;color:var(--txt-faint);font-size:12px;margin-top:18px}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap;text-decoration:none;border:none}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+@media(max-width:560px){section{padding:18px 15px}}
+</style>
+</head>
+<body>
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r3-020</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+<article>
+  <p class="sub">Fusion aus: r2-039.html ✕ r2-037.html &nbsp;·&nbsp; Round 3</p>
+  <h1>Symmetrie und Krümmung sind dieselbe Kante</h1>
+  <p><em>A</em> (r2-039): die Geometrie, die das Netz lernt, <em>ist</em> die Symmetrie-adaptierte Basis der Datenstatistik (Fourier&nbsp;→&nbsp;Kreis); Grokking ist der Phasenübergang „Fingerabdruck&nbsp;&gt;&nbsp;Rauschen" (Regler Compute/Daten). <em>B</em> (r2-037): eine mehrskalige Potentialfläche&nbsp;Φ wird auf zwei verdeckten Achsen gelesen; Krümmung/Nicht-Flachheit ist die gemeinsame Währung; die Bruchkante (räumlich) = Divergenz-/Capture-Kante (dynamisch). <strong>Fusion: die fixierte Form (Symmetrie&nbsp;A&nbsp;↔&nbsp;Krümmung&nbsp;B) und der Kipppunkt (P<sub>c</sub>&nbsp;A&nbsp;↔&nbsp;η=2/λmax&nbsp;B) sind zwei Lesarten ein und derselben Kante.</strong></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <h2>Kernthese der Fusion<span class="tag">These</span></h2>
+    <p>Beide R2-Fusionen landen auf demselben Meta-Prinzip, nur an unterschiedlichen Enden desselben Objekts: <strong>der Ausgang eines Netzes an einer Stelle ist kein Ja/Nein-Urteil, sondern eine stetige Funktion eines verdeckten Auflösungs-/Rauschen-Parameters — und er kippt an einer Kante, deren <em>Form</em> von einer tiefen Invarianz der Daten gesetzt ist und deren <em>Erreichbarkeit</em> vom anwendbaren Rauschen/Limit bestimmt wird.</strong> <span class="badge a">A</span> (r2-039) macht die <em>Form</em> aus der <em>Symmetrie</em> der Datenstatistik (die konvergierte Repräsentation ist die Symmetrie-adaptierte Basis der Symmetriegruppe T; zirkulant&nbsp;⇒&nbsp;Fourier&nbsp;⇒&nbsp;Kreis) und den <em>Kipppunkt</em> aus <em>Grokking</em> — dem Moment, in dem der Symmetrie-Fingerabdruck das Rauschen übersteigt (P<sub>c</sub>&nbsp;=&nbsp;n<sub>c</sub>·m<sup>L</sup>; Regler Compute/Daten).</p>
+    <p><span class="badge b">B</span> (r2-037) macht dasselbe aus der <em>Krümmung</em> — die <em>Form</em> ist die Nicht-Flachheit einer Potentialfläche&nbsp;Φ (Bruchkante/Cusp; F(r), d(r), Konditionszahl κ=λ₁/λ₂ von H=XXᵀ), der <em>Kipppunkt</em> ist die Stelle, an der ein Durchlauf unter einem dynamischen Limit (T→0&nbsp;=&nbsp;Capture, η&gt;2/λmax&nbsp;=&nbsp;Divergenz, γ&nbsp;=&nbsp;GD++) genau dort kippt. <strong>Einheitliche Position:</strong> die Symmetrie-adaptierte Basis (A) und die Krümmung/Cusp (B) sind <em>zwei Lesarten derselben fixierten Form</em>; die Schwellwerte P<sub>c</sub> (A) und η=2/λmax, T→0 (B) sind <em>zwei Lesarten derselben Kante</em>. In beiden ist die Struktur des Kipppunkts identisch: <code>stetige Form, die stark genug ist &gt; anwendbares Rauschen / Limit</code> — nur die Quelle des Rauschens (Stichprobe/SGD vs. Prozess-Limit) und der Regler (Compute/Daten vs. T,η,γ) unterscheiden sich. <em>Netto:</em> <code>Symmetrie-Basis [A] × Krümmung/Φ [B] = eine fixierte Form; Fingerprint&gt;Rauschen [A] × η&gt;Kante [B] = eine Kante, an der der Durchlauf kippt.</code></p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B<span class="tag">Konflikt</span></h2>
+    <p>Im <em>Ziel</em> (ein Netz liest eine Daten-Struktur, die bei einem Schwellwert sichtbar wird) widersprechen sie sich nicht. Aber an der <em>Naht</em> stehen drei Stellungen in echtem, spezifischem Konflikt:</p>
+
+    <div class="conflict">
+      <div class="who">W1 · Die Form: <span class="badge a">A</span> „exakte algebraische Gruppe" vs. <span class="badge b">B</span> „gemessene kontinuierliche Krümmung"</div>
+      <p><span class="badge a">A</span> (r2-039): die gelernte Form ist eine <strong>algebraische Symmetriegruppe</strong> der Operation — „discovered <em>ℤ/pℤ is cyclic</em>", S₅-Cosets — <em>exakt, kombinatorisch, „entdeckt"</em>; die Geometrie spiegelt die Gruppe.</p>
+      <p><span class="badge b">B</span> (r2-037): die Form ist <strong>kontinuierliche, empirisch gemessene Nicht-Flachheit</strong> des Potentials — Bruchkante/Cusp, F(r) (Abweichung von der flachen Scheibe), d(r), Hesse-Eigenwerte; ein <em>Statistik-Objekt</em>, das man <em>misst</em> (4 Modelle, p≈3×10⁻⁸), nicht „entdeckt" als Gesetzmäßigkeit.</p>
+      <p class="incomp"><b>Inkompatibel (Art des Objekts):</b> exakte Gruppe (A) vs. gemessene kontinuierliche Kurve (B) — zwei kategorisch verschiedene Dinge, dieselbe „fixierte Form" unterstellt.</p>
+    </div>
+
+    <div class="conflict">
+      <div class="who">W2 · Der Kipppunkt-Regler: <span class="badge a">A</span> „Rauschen-Ausmittelung via Compute/Daten" vs. <span class="badge b">B</span> „Prozess-Limit des Durchlaufs"</div>
+      <p><span class="badge a">A</span> (r2-039): der Kipppunkt ist eine <strong>Rauschen-Schwelle</strong> — der Fingerabdruck übersteigt das Rauschen (∝1/√P); der Regler ist <em>Compute/Daten</em> (Training/SGD, „Weight decay is king", Datenmenge); fixe Daten, Rauschen = Optimierung.</p>
+      <p><span class="badge b">B</span> (r2-037): der Kipppunkt ist ein <strong>dynamisches Limit eines (eingefrorenen) Durchlaufs</strong> — T→0 (Capture), η&gt;2/λmax (Divergenz), γ (GD++ rundet); der Regler ist <em>den Durchlauf/optimizer steuern</em>, nicht die Daten oder das Training.</p>
+      <p class="incomp"><b>Inkompatibel (der „Wann"-Regler):</b> Compute/Daten (A) vs. Prozess-Limit T,η,γ (B) — unterschiedliche Quellen und unterschiedliche Hebel für denselben Kipppunkt.</p>
+    </div>
+
+    <div class="conflict">
+      <div class="who">W3 · Status der Geometrie: <span class="badge a">A</span> „von der Lern-Dynamik erzeugt" vs. <span class="badge b">B</span> „fixes, gemessenes Terrain"</div>
+      <p><span class="badge a">A</span> (r2-039): die Geometrie wird <strong>von der Lern-Dynamik erzeugt</strong> — Grokking: Memorize&nbsp;→&nbsp;Sprung&nbsp;→&nbsp;Struktur, vorher Rauschen, nachher gesnappt; die Maschine + ihr Training <em>bauen</em> die Struktur.</p>
+      <p><span class="badge b">B</span> (r2-037): die <strong>Hintergrund-Geometrie ist fix, gemessen, gegeben</strong> (r1-016-Seite: der Manifold-Test <em>detektiert</em> Bruchkanten, <em>entfernt</em> sie nicht; „Honesty-Corner"); nur die <em>Prozess</em>-Fläche wird vom Durchlauf erzeugt (r1-072-Seite).</p>
+      <p class="incomp"><b>Inkompatibel (Ursprung):</b> Geometrie als <em>gelernt/erzeugt</em> (A) vs. Geometrie als <em>gegeben/nur gemessen</em> (B).</p>
+    </div>
+    <div class="note w"><span class="h">Ehrliche Einordnung</span>Die schärfste Spannung ist <b>W3</b> (erzeugt vs. gegeben) — sie ist die Wurzel. <b>W1</b> und <b>W2</b> sind zwei Gesichter derselben Naht: ob man die Form als <em>exakte Gruppe</em> oder <em>gemessene Krümmung</em> liest, und ob der Kipppunkt über <em>Compute/Daten</em> oder über <em>Prozess-Limits</em> passiert. Die Auflösung zeigt, dass beide „wahr" sind — weil sie dieselbe Kante auf zwei Ebenen/Achsen lesen.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <h2>Auflösung<span class="tag">Synthese</span></h2>
+
+    <p><strong>1. Symmetrie erzeugt die Krümmung (→ W1). Ursache &amp; Spektral-Schatten.</strong> <span class="badge a">A</span>'s algebraische Gruppe ist die <em>Generierungsregel</em>; <span class="badge b">B</span>'s Krümmung/Nicht-Flachheit ist deren <em>Spektral-Schatten</em>. Eine Translationssymmetrie (A) erzeugt einen <em>zirkulanten</em> Kookkurrenz-Kern → dessen Eigenvektoren sind <em>universell</em> Fourier (Sinus/Kosinus) → das ist ein <em>gebogenes</em> Potential mit charakteristischem Eigenwert-Spektrum (B). Der <em>Kreis</em> (A's t-SNE, „ℤ/pℤ ist zyklisch") ist exakt die <em>glatteste Eigenrichtung</em> (Mode&nbsp;1) derselben Kante (B's Cusp). Fixierte Form = Invarianz: <code>Symmetrie (A) → zirkulant → Fourier → Kreis = glatteste Eigenrichtung der Krümmung (B)</code>. Eine Symmetrie, zwei Ebenen (Generator vs. statistischer Schatten).</p>
+
+    <p><strong>2. Derselbe Kipppunkt, anderes Rauschen, anderer Regler (→ W2).</strong> Beide Schwellen haben <em>dieselbe Struktur</em>: „Fixierte-Form-Stärke&nbsp;&gt;&nbsp;anwendbares Rauschen/Limit". <span class="badge a">A</span>: Fingerabdruck-Amplitude vs. Rauschen ∝1/√P (Regler Compute/Daten). <span class="badge b">B</span>: Krümmung λmax setzt die Kante η=2/λmax (Regler Prozess-Limit). In <em>beiden</em> setzt die <em>fixierte Form die Höhe</em> der Kante: größerer Symmetrie-Fingerabdruck (A) bzw. <em>schärfere</em> Cusp (B) → höheres λmax → <em>früherer</em> Kipppunkt (kleineres P<sub>c</sub> / kleinere η-Kante). Der Regler unterscheidet sich (Compute/Daten vs. T,η,γ), aber der <em>Kipppunkt</em> ist derselbe Objekt-Klass. <span class="badge f">Fusion:</span> <code>Kante = Form-Stärke / Rauschen(Limit) — Form (Symmetrie A ↔ Krümmung B) parametrisiert die Höhe, Regler (Compute/Daten A ↔ T,η,γ B) steuert das Überschreiten.</code></p>
+
+    <p><strong>3. Erzeugt vs. gegeben = Mechanismus vs. Ziel (→ W3).</strong> <span class="badge a">A</span>'s „gelernte Geometrie" ist <span class="badge b">B</span>'s <em>Prozess</em>-Fläche (r1-072: Attention = im Vorwärtsdurchlauf berechnete Least-Squares-Approximation, eine Schicht = ein GD-Schritt — der Durchlauf <em>erbaut</em> die Landschaft). <span class="badge b">B</span>'s „gegebenes Terrain" (r1-016) ist <span class="badge a">A</span>'s <em>Ziel</em> — die Symmetrie-adaptierte Basis, auf die der Durchlauf konvergiert. Die Naht ist exakt die Rollenverteilung: <span class="badge a">A</span> = Maschine&nbsp;+&nbsp;Dynamik (Mechanismus) <em>mit</em> Ziel = Symmetrie; <span class="badge b">B</span> = gegebenes Terrain (Ziel) <em>mit</em> Prozess (Mechanismus), der es abfährt und dessen <em>Prozess</em>-Krümmung (GD++) rundet. <span class="badge f">Fusion:</span> <code>A's erzeugte Geometrie = B's Prozess-Fläche · B's gegebenes Terrain = A's Ziel-Geometrie (Symmetrie-Basis).</code></p>
+
+    <div class="box"><span class="tag">Fusionierte Schlussfolgerung</span>
+    <p style="margin-bottom:0">Die <strong>Symmetrie-adaptierte Basis</strong> (A) und die <strong>Krümmung/Cusp</strong> (B) sind <strong>die gleiche fixierte Form</strong>, die <strong>Grokking-Schwelle P<sub>c</sub></strong> (A) und die <strong>Divergenz-/Capture-Kante η=2/λmax</strong> (B) sind <strong>die gleiche Kante</strong>. Die Form ist eine Invarianz (Symmetrie A ↔ Nicht-Flachheit B); die Kante ist „Form-Stärke &gt; Rauschen/Limit", deren Höhe die Form setzt und deren Überschreiten ein Regler (Compute/Daten A ↔ T,η,γ B) steuert. A = <em>Mechanismus</em> (lernbares Routing) + <em>Dynamik</em> (Grokking) + <em>Ziel</em> (Symmetrie); B = <em>Mechanismus</em> (GD im Durchlauf) + <em>Ziel</em> (gegebenes Terrain) + <em>Prozess-Krümmung</em> (GD++). <em>Netto:</em> <code>ein Netz, das eine fixierte Daten-Form als Geometrie lernt — und der Durchlauf kippt an derselben Kante, die diese Form setzt, sobald die Form das anwendbare Rauschen/Limit schlägt.</code></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt<span class="tag">Materie</span></h2>
+
+    <h3>Gemeinsamer Rücken: fixierte Form + Kante + Kippen</h3>
+    <ul class="cl">
+      <li><b>Ein Objekt, drei Teile.</b> (1) Eine <em>fixierte Form</em> — eine Invarianz der Daten, die die Geometrie festlegt (Symmetrie-Gruppe A / Nicht-Flachheit B). (2) Eine <em>Kante</em> — der Ort/Wert, an dem Nicht-Flachheit groß genug ist, dass der Ausgang kippt (Schwellwert P<sub>c</sub> A / η=2/λmax, T→0 B). (3) Ein <em>Kippen</em> — darunter: Rauschen/Memorized/Capture/Divergenz (falsch); darüber: Struktur/Generalisiert/Konvergenz-wahr (richtig).</li>
+      <li><b>Gemeinsame Währung: Nicht-Flachheit.</b> A misst sie als <em>Abweichung der Eigenmoden vom Rauschen</em> (Fourier-Amplitude a<sub>n</sub>&nbsp;=&nbsp;√(2σ/(1+σ²k<sub>n</sub>²)) vs. Rauschenboden ∝1/√P). B misst sie als <em>Krümmung/Konditionszahl</em> (Hesse-Eigenwerte, κ=λ₁/λ₂ von H=XXᵀ, Cusp=max|Φ''|). Beide fragen: „Wo ist die Fläche nicht flach — und schlägt die Form das Rauschen?"</li>
+      <li><b>Die Brücke (die eigentliche Fusion).</b> Die <em>algebraische Gruppe</em> (A, exakt) ist der <em>Generator</em>; die <em>statistische Translationssymmetrie</em> → zirkulanter Kern → Fourier-Moden (A→B) ist der <em>Schatten</em>; und die <em>Krümmung/Cusp</em> (B) ist, wo dieser Schatten im gewichtsräumlichen Loss <em>steil</em> wird. Kreis (A) = Mode-1-Eigenvektor (A) = glatteste Eigenrichtung der Cusp (B). <code>Gruppe → zirkulant → Fourier → Kreis = glatteste Eigenrichtung der Krümmung.</code></li>
+    </ul>
+
+    <h3>Die fixierte Form — A (Symmetrie) &amp; B (Krümmung) integriert</h3>
+    <ul class="cl">
+      <li><b>A — Symmetrie-adaptierte Basis:</b> <code>Daten → Kookkurrenzstatistik → Operator M*≈PMI → Symmetrie-adaptierte Eigenbasis = die Repräsentation.</code> Attention-Output „konvexe Kombination der Values" (Σαᵢ·vᵢ) ist exakt ein <em>M*-gewichtetes Ablesen</em>. Die Invarianz T = die Algebra der Operation (diskret, exakt); zirkulant ⇒ Eigenvektoren universell Sinus/Kosinus; a<sub>n</sub> fällt mit der Frequenz ⇒ zuerst Kreis (Mode&nbsp;1), dann Rippel, 2D&nbsp;→&nbsp;Landkarte. word2vec ≈ Eigenzerlegung (Eckart–Young–Mirsky); Gram&nbsp;=&nbsp;M*.</li>
+      <li><b>B — Nicht-Flachheit/Cusp:</b> die Potential-/Loss-Fläche Φ — als <em>semantisches</em> Potential Φ(t,Q)=−log&nbsp;P(t|Q) und als <em>gewichtsräumlicher</em> Loss L(W)=(1/2N)Σ‖Wxᵢ−yᵢ‖². „Nicht-Flach" = Hesse-Eigenwerte / κ=λ₁/λ₂ von H=XXᵀ; räumlich: F(r) (Abweichung von der flachen Scheibe) &amp; d(r) (Steigung von log&nbsp;V(r), „Steigung&nbsp;=&nbsp;Dimension") <em>steigen</em> mit r. Empirie: 4/4 verwerfen die Mannigfaltigkeits-Hypothese, d&nbsp;20→531, Cusp/Bruchkante an der Grobskala. <em>Glatt in der Nähe, scharf in der Ferne.</em></li>
+    </ul>
+
+    <h3>Die Kante &amp; der Kipppunkt — P<sub>c</sub> (A) ↔ η=2/λmax (B)</h3>
+    <ul class="cl">
+      <li><b>A — Grokking als Phasenübergang:</b> winziger Transformer (2 Layer, ~400K) lernt Operationstabellen mit abstrakten Symbolen (≤97²); Train→100&nbsp;% bei ~10³, Val chance(1/97)→100&nbsp;% bei ~10⁶, Val-Loss im Double Descent; geht <em>ohne</em> Weight Decay (nur SGD-Rauschen + lange Zeit, fixe Daten). Stichprobenkomplexität: Signal √(v/m<sup>L</sup>) vs. Rauschen √(v·n<sub>c</sub>/P) ⇒ <code>P<sub>c</sub>&nbsp;=&nbsp;n<sub>c</sub>·m<sup>L</sup></code>. Flache Netze P*∝n<sub>c</sub>·m<sup>(d−1)/(s−1)</sup> (<em>exponentiell</em> „verflucht"); Tiefe P*&nbsp;=&nbsp;n<sub>c</sub>·m<sup>L</sup> (polynomiell). Davis–Kahan: Lücke&nbsp;∝&nbsp;N &gt; Störung ⇒ Kreis überlebt Löschung direkter Statistik (kollektiver, redundanz-getragener Effekt).</li>
+      <li><b>B — Divergenz/Capture als Kante:</b> einer Schicht = ein GD-Schritt: e<sub>j</sub>←e<sub>j</sub>+P·W<sub>V</sub>Σ(e<sub>i</sub>⊗e<sub>i</sub>)·W<sub>K</sub>ᵀW<sub>Q</sub>e<sub>j</sub> (Form von −(η/N)Σ(Wxᵢ−yᵢ)xᵢᵀ); Tiefe&nbsp;=&nbsp;K Schritte. GD++: x<sub>j</sub>←(I−γXXᵀ)x<sub>j</sub>, Eigenwert-Map f(λ,γ)=λ−2γλ²+γ²λ³ → κ↓ (rundet); Divergenz η&gt;2/λmax, γ&gt;1/λ; T→0&nbsp;⇒&nbsp;Capture (deterministisch). Halluzination: hohe Hesse-Eigenwerte auf kleinen Gebieten + P(t)≪1 ⇒ Einfang in falsches Minimum (semantische Leere flach ↔ Informations-Schwarzloch tief).</li>
+    </ul>
+
+    <h3>Die Schlüsselgrößen nebeneinander</h3>
+    <table class="map">
+      <tr><th>Gemeinsame Größe</th><th><span class="badge a">A</span> r2-039 (Symmetrie + Grokking)</th><th><span class="badge b">B</span> r2-037 (Krümmung + Φ)</th></tr>
+      <tr><td>Fixierte Form</td><td class="g">Symmetrie-adaptierte Basis der Symmetriegruppe T (Fourier/Kreis)</td><td class="f">Nicht-Flachheit/Krümmung von Φ (Cusp/Bruchkante, F(r), d(r), κ=λ₁/λ₂)</td></tr>
+      <tr><td>Exaktheit</td><td class="g">exakt / algebraisch, „entdeckt" (ℤ/pℤ, S₅)</td><td class="f">kontinuierlich / gemessen (4 Modelle, p≈3×10⁻⁸), „nur messen"</td></tr>
+      <tr><td>Die Kante</td><td class="g">P<sub>c</sub> = Fingerabdruck = Rauschen</td><td class="f">η=2/λmax / T→0 (Capture)</td></tr>
+      <tr><td>Regler („Wann")</td><td class="g">Compute / Daten (Training, SGD, „Weight decay is king")</td><td class="f">Prozess-Limit des Durchlaufs (T, η, K, γ)</td></tr>
+      <tr><td>Das Kippen</td><td class="g">Memorize → Sprung → Generalisieren (Val chance→100&nbsp;%, Double Descent)</td><td class="f">Capture / Divergenz (falsches Minimum = Halluzination)</td></tr>
+      <tr><td>Mechanismus</td><td class="g">lernbare W<sup>Q/K/V</sup>-Unterraum-Routing; Softmax; konvex</td><td class="f">eine Schicht = ein GD-Schritt; GD++ x←(I−γXXᵀ)x, f(λ,γ)=λ−2γλ²+γ²λ³</td></tr>
+      <tr><td>Ziel-Geometrie</td><td class="g">ℤ/pℤ-Kreis, S₅-Cosets (t-SNE)</td><td class="f">Wissens-/Void-Tal, Bruchkante an der Grobskala</td></tr>
+      <tr><td>Tiefe</td><td class="g">Expressivität (O(1)-Pfad, Multi-Head); P* polynomiell</td><td class="f">≈ Anzahl komponierter Invarianz-Faktoren (= K GD-Schritte)</td></tr>
+      <tr><td>Robustheit</td><td class="g">Lücke ∝ N &gt; Störung (Davis–Kahan), redundant getragen</td><td class="f">GD++ rundet die Cusp, schiebt die Kante nach rechts</td></tr>
+    </table>
+
+    <div class="eq">
+      <span class="a">[A · Form]</span> Attention(Q,K,V)=softmax(Q·K<sup>T</sup>/√d<sub>k</sub>)·V = konvex = M*-gewichtetes Ablesen ; a<sub>n</sub>=√(2σ/(1+σ²k<sub>n</sub>²)), k<sub>n</sub>=πn<br>
+      <span class="a">[A · Kante]</span> Signal √(v/m<sup>L</sup>) &gt; Rauschen √(v·n<sub>c</sub>/P) ⟹ P<sub>c</sub>=n<sub>c</sub>·m<sup>L</sup> ; flach P*∝n<sub>c</sub>·m<sup>(d−1)/(s−1)</sup> (exp) · tief P*=n<sub>c</sub>·m<sup>L</sup> (poly)<br>
+      <span class="b">[B · Form]</span> Φ(t,Q)=−log P(t|Q) · L(W)=(1/2N)Σ‖Wxᵢ−yᵢ‖² · Krümmung: Hesse, κ=λ₁/λ₂ von H=XXᵀ · F(r), d(r) steigen mit r<br>
+      <span class="b">[B · Kante]</span> Attention = 1 GD-Schritt, Tiefe = K Schritte · GD++ x←(I−γXXᵀ)x, f(λ,γ)=λ−2γλ²+γ²λ³ → κ↓ · Divergenz η&gt;2/λmax, T→0 = Capture<br>
+      <span class="c">// FUSION: Symmetrie (A) → zirkulant → Fourier → Kreis = glatteste Eigenrichtung der Cusp (B)<br>
+      //          Form (Symmetrie A ↔ Krümmung B) setzt die Kanten-Höhe · Kippen = Form &gt; Rauschen(Limit)<br>
+      //          Regler: Compute/Daten (A) ↔ T,η,γ (B) · A's erzeugt = B's Prozess · B's gegeben = A's Ziel</span>
+    </div>
+
+    <div class="note g"><span class="h">Warum die Fusion mehr ist als die Summe</span>A allein sagt „Geometrie&nbsp;=&nbsp;Daten-Symmetrie, Kippen&nbsp;=&nbsp;Rauschen" — aber <em>warum</em> ausgerechnet eine <em>krumme</em> Fläche / ein <em>Steil</em> gewordener Loss, wenn die Symmetrie „einreißt"? B allein sagt „es gibt eine Cusp und eine Divergenz-Kante" — aber <em>warum</em> hat die Form ausgerechnet die Gestalt eines <em>Kreises</em> (Symmetrie), und <em>was</em> erzeugt sie mechanistisch? Erst zusammen: A liefert die <em>Generierungsregel</em> (Gruppe → Kreis) und die <em>Trainings-Dynamik</em> (Grokking); B liefert die <em>gekrümmte Realisierung</em> (Cusp) und den <em>mechanistischen Durchlauf</em> (GD/GD++), der diese Kante abfährt und deren Prozess-Krümmung rundet. A = Bühne + Auftritt + Skript-Regel; B = Terrain + Regieanweisung (γ) + der Gang (GD) darüber.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung" class="viz">
+    <h2>Interaktive Visualisierung<span class="tag">Demo</span></h2>
+    <div class="head"><span class="dot"></span><h3>Eine fixierte Form, eine Kante, ein Kippen — Symmetrie-Kreis (A) × Krümmung/Cusp (B), ein Auflösungs-Regler R</h3><span class="tg">interaktiv · inline data · canvas</span></div>
+    <p style="margin-bottom:8px">Ein <strong>einziges</strong> Potential&nbsp;Φ mit einem <em>Wissens-Tal</em> (wahr), einem <em>Void-Tal</em> (falsch) und einer scharfen <em>Cusp</em> (hohe lokale Krümmung = die fixierte Form, B) wird von <em>einem</em> Regler <strong>R&nbsp;=&nbsp;Auflösung</strong> durchfahren, der zwei Lesarten trägt: <strong>A (Symmetrie/Rauschen)</strong> — R&nbsp;=&nbsp;P/P<sub>c</sub> senkt den Rauschenboden, der <em>ℤ/12ℤ-Kreis</em> (Fourier der zirkulanten Statistik) scharft sich; <strong>B (Krümmung/GD++)</strong> — R rundet die Cusp (γ∝R), senkt λmax und schiebt die Divergenz-Kante η=2/λmax nach rechts. Unter der Kante: A Kreis verwaschen (Memorisiert) &amp; B Divergenz/Capture (falsch). Über der Kante: A Kreis scharf (Generalisiert) &amp; B Konvergenz in das Wissens-Tal (wahr). <strong>Ziehe R von klein nach groß</strong> und schau, wie <em>derselbe</em> Kipppunkt auf beiden Lesarten gleichzeitig kippt.</p>
+    <div class="cwrap"><canvas id="cvMain" width="780" height="440"></canvas></div>
+    <div class="leg">
+      <span><i style="background:var(--viz-curve)"></i>Φ(x) (Form, B)</span>
+      <span><i style="background:var(--viz-ok)"></i>Wissens-Tal (wahr)</span>
+      <span><i style="background:var(--viz-void)"></i>Void-Tal (falsch)</span>
+      <span><i style="background:var(--viz-cusp)"></i>Cusp / Bruchkante (Fixierte Form)</span>
+      <span><i style="background:var(--viz-gd)"></i>GD-Pfad (B)</span>
+      <span><i style="background:var(--viz-circle)"></i>ℤ/12ℤ-Kreis (A, Fourier)</span>
+    </div>
+    <div class="cwrap"><canvas id="cvSpec" width="780" height="140"></canvas></div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>R — Auflösung (fusionierter Regler: A&nbsp;= P/P<sub>c</sub> Rauschen-Ausmittelung · B&nbsp;= GD++ γ rundet die Cusp)</span><b id="Rval">—</b></div>
+      <input type="range" id="sR" min="0" max="100" step="1" value="55">
+      <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Klein = viel Rauschen / scharfe Cusp (Kippen: Kreis verwaschen, GD divergiert). Groß = Rauschen nachgelassen / Cusp gerundet (Kreis scharf, GD konvergiert wahr). Markierte Kante = der fusionierte Kipppunkt.</div>
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><span>η — Schrittweite des GD-Durchlaufs (B)</span><b id="etaval">—</b></div>
+      <input type="range" id="sEta" min="0.05" max="1.5" step="0.01" value="0.30">
+      <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">η &gt; Kante (2/λmax) ⇒ Divergenz. Größere Auflösung (R) senkt λmax ⇒ Kante wandert rechts ⇒ dasselbe η wird sicher.</div>
+    </div>
+    <div class="btnrow">
+      <button id="playBtn">▶ Auflösung abspielen</button>
+    </div>
+    <div class="ro-grid">
+      <div class="ro hero"><span class="k">Kippen (Fusion)</span><span class="v" id="r-flip">—</span></div>
+      <div class="ro a"><span class="k">A · Kreis-Qualität</span><span class="v" id="r-q">—</span></div>
+      <div class="ro a"><span class="k">A · Phase</span><span class="v" id="r-aphase" style="font-size:.82em">—</span></div>
+      <div class="ro a"><span class="k">A · Mode &gt; Boden</span><span class="v" id="r-aedge">—</span></div>
+      <div class="ro b"><span class="k">B · λmax (Cusp)</span><span class="v" id="r-lam">—</span></div>
+      <div class="ro b"><span class="k">B · Kante η=2/λmax</span><span class="v" id="r-etaC">—</span></div>
+      <div class="ro b"><span class="k">B · GD-Status</span><span class="v" id="r-bstat" style="font-size:.82em">—</span></div>
+      <div class="ro b"><span class="k">B · Rauschenboden</span><span class="v" id="r-floor">—</span></div>
+    </div>
+    <div class="readout" id="r-readout">…</div>
+    <div class="note w" style="margin-top:14px"><span class="h">Was das ist (und was nicht)</span>Der Kreis wird <em>live aus einem zirkulanten Kookkurrenz-Kern</em> (A) per Eigenzerlegung gebaut und scharft mit P/P<sub>c</sub>; die Cusp/Krümmung (B) wird <em>tatsächlich</em> als max|Φ''| berechnet und durch GD++ (γ∝R) gerundet; die GD-Dynamik ist ein didaktisches 1-D-Modell (inline, keine Modellgewichte). Das Viz zeigt das <em>gemeinsame Maß</em> — den Punkt, an dem die fixierte Form (Symmetrie A ↔ Krümmung B) das anwendbare Rauschen/Limit übersteigt. Alle Daten inline, kein Netzabruf.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <h2>Provenienz<span class="tag">Quellen</span></h2>
+    <div class="prov">
+      <a href="../2/r2-039.html">
+        <span class="n">A · r2-039.html — „Die Geometrie, die das Netz lernt, ist die Symmetrie der Daten — Grokking ist ihr Phasenübergang"</span>
+        <span class="d">R2-Fusion (r1-045 Attention als lernbare Unterraum-Routing-Maschine + Grokking-Phasenübergang ✕ r1-071 Symmetrie-adaptierte Basis der Datenstatistik, Fourier&nbsp;→&nbsp;Kreis, Kosten P<sub>c</sub>&nbsp;=&nbsp;n<sub>c</sub>·m<sup>L</sup>). Liefert die <strong>Symmetrie-Form</strong> und die <strong>Grokking-Kante</strong> (Fingerprint&nbsp;&gt;&nbsp;Rauschen, Regler Compute/Daten).</span>
+      </a>
+      <a href="../2/r2-037.html">
+        <span class="n">B · r2-037.html — „Eine Fläche, zwei verdeckte Auflösungsachsen — multiskale Potentialfläche Φ"</span>
+        <span class="d">R2-Fusion (r1-016 Token-Mannigfaltigkeit: glatt in der Nähe, scharf in der Ferne, Bruchkanten, Cusp ✕ r1-072 Informationsgravitation × Gradientenabstieg: GD im Durchlauf, GD++ rundet κ, Divergenz η&gt;2/λmax, Capture T→0). Liefert die <strong>Krümmungs-Form</strong> und die <strong>Divergenz-Kante</strong> (Regler T,η,K,γ).</span>
+      </a>
+    </div>
+  </section>
+</article>
+<footer>
+  Fusion 020 · Round 3 · Pair: r2-039 ✕ r2-037. Alle Claims aus den Quellen paraphrasiert. Das Potenzial-Φ und der Kreis im Viz sind didaktische 1-D/2-D-Modelle (inline, echte Krümmungs-/Eigenwert-Berechnung, keine Modellgewichte). Selbstständig, ohne Netz-Datenabruf, theme-aware.
+</footer>
+
+<script>
+(function(){
+'use strict';
+var TAU=Math.PI*2;
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var s=String(hex);if(s.charAt(0)!=='#'){return s;}var h=s.replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return s;}return 'rgba('+r+','+g+','+b+','+a+')';}
+function mulberry32(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^a>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function jacobiEigen(Ain,iters){
+  var n=Ain.length,A=Ain.map(function(r){return r.slice();});
+  var V=[],i;
+  for(i=0;i<n;i++){V.push(new Array(n).fill(0));V[i][i]=1;}
+  iters=iters||40;
+  for(var sw=0;sw<iters;sw++){
+    var off=0,q;
+    for(i=0;i<n;i++)for(q=i+1;q<n;q++)off+=A[i][q]*A[i][q];
+    if(off<1e-18)break;
+    for(var p=0;p<n-1;p++)for(q=p+1;q<n;q++){
+      if(Math.abs(A[p][q])<1e-15)continue;
+      var th=(A[q][q]-A[p][p])/(2*A[p][q]);
+      var t=(th>=0?1:-1)/(Math.abs(th)+Math.sqrt(th*th+1));
+      var c=1/Math.sqrt(t*t+1),s=t*c,k,akp,akq,apk,aqk,vkp,vkq;
+      for(k=0;k<n;k++){akp=A[k][p];akq=A[k][q];A[k][p]=c*akp-s*akq;A[k][q]=s*akp+c*akq;}
+      for(k=0;k<n;k++){apk=A[p][k];aqk=A[q][k];A[p][k]=c*apk-s*aqk;A[q][k]=s*apk+c*aqk;}
+      for(k=0;k<n;k++){vkp=V[k][p];vkq=V[k][q];V[k][p]=c*vkp-s*vkq;V[k][q]=s*vkp+c*vkq;}
+    }
+  }
+  var vals=[];for(i=0;i<n;i++)vals.push(A[i][i]);
+  var idx=vals.map(function(v,i){return i;}).sort(function(a,b){return vals[b]-vals[a];});
+  return {values:idx.map(function(i){return vals[i];}),vectors:idx.map(function(i){return V.map(function(row){return row[i];});})};
+}
+
+var themeBtn=document.getElementById('themeBtn');
+function setBtn(){if(themeBtn){themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel';}}
+if(themeBtn){themeBtn.onclick=function(){document.documentElement.classList.toggle('dark');setBtn();draw();};}
+setBtn();
+
+var cvMain=document.getElementById('cvMain'),cvSpec=document.getElementById('cvSpec');
+if(!cvMain){return;}
+var dpr=window.devicePixelRatio||1;
+var MW=780,MH=440,SW=780,SH=140;
+function fit(cv,W,H){if(!cv){return null;}cv.style.width='100%';cv.style.aspectRatio=W+'/'+H;cv.width=W*dpr;cv.height=H*dpr;var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return c;}
+var ctx=fit(cvMain,MW,MH),sctx=fit(cvSpec,SW,SH);
+
+var N=12,chance=100/N;
+var PAL={};
+function readPal(){['--viz-bg','--viz-grid','--viz-txt','--viz-faint','--viz-curve','--viz-ok','--viz-void','--viz-cusp','--viz-gd','--viz-probe','--viz-spec','--viz-floor','--viz-circle'].forEach(function(n){PAL[n]=getVar(n);});}
+readPal();
+
+var state={R:0.55,eta:0.30,playing:false};
+
+function cyc(a,b){var d=Math.abs(a-b);return Math.min(d,N-d);}
+function buildClean(sigma){
+  var K=[],i,j;
+  for(i=0;i<N;i++){K.push(new Array(N));}
+  for(i=0;i<N;i++)for(j=0;j<N;j++)K[i][j]=Math.exp(-cyc(i,j)/sigma);
+  var rm=new Array(N),cm=new Array(N),tot=0;
+  for(i=0;i<N;i++){var r=0,c=0;for(j=0;j<N;j++){r+=K[i][j];c+=K[j][i];}rm[i]=r/N;cm[i]=c/N;tot+=r;}
+  tot/=N*N;
+  for(i=0;i<N;i++)for(j=0;j<N;j++)K[i][j]-=rm[i]+cm[j]-tot;
+  return K;
+}
+var clean=buildClean(4);
+var G=(function(){var rnd=mulberry32(987654);function gauss(){var u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}var GG=[],i,j;for(i=0;i<N;i++){GG.push(new Array(N).fill(0));}for(i=0;i<N;i++)for(j=i;j<N;j++){var g=gauss();GG[i][j]=g;GG[j][i]=g;}return GG;})();
+var lamc=(function(){var E=jacobiEigen(clean,40);var v=Math.abs(E.values[1]||0);return v<1e-6?Math.abs(E.values[0]||1):v;})();
+function addNoise(K,sc){var A=[],i,j;for(i=0;i<N;i++){A.push(new Array(N));for(j=0;j<N;j++)A[i][j]=K[i][j]+sc*G[i][j];}return A;}
+function positionsFromEig(E){var v1=E.vectors[0],v2=E.vectors[1],raw=[],i,maxR=0;for(i=0;i<N;i++){var x=v1[i],y=v2[i];raw.push([x,y]);var h=Math.hypot(x,y);if(h>maxR)maxR=h;}var ccx=560,ccy=210,Rr=150;var sc=(maxR>1e-9)?(Rr/maxR):0,out=[];for(i=0;i<N;i++){out.push({x:ccx+raw[i][0]*sc,y:ccy+raw[i][1]*sc});}return out;}
+function circMetric(pos,ccx,ccy){var rmean=0,i;for(i=0;i<N;i++)rmean+=Math.hypot(pos[i].x-ccx,pos[i].y-ccy);rmean/=N;var rvar=0;for(i=0;i<N;i++){var rr=Math.hypot(pos[i].x-ccx,pos[i].y-ccy)-rmean;rvar+=rr*rr;}rvar/=N;return rmean>1e-6?Math.max(0,Math.min(1,1-Math.sqrt(rvar)/rmean)):0;}
+
+var xmin=-4,xmax=4;
+function phi(x,gam){var g=(gam/0.2);var rugScale=1-0.85*g;var wid=1+1.2*g;var v=0.05*x*x;v-=0.7*3.0*Math.exp(-((x+1.5)*(x+1.5))/(0.9*wid));v-=(1-0.7)*1.1*Math.exp(-((x-2.5)*(x-2.5))/(0.9*wid));v-=0.5*rugScale*2.6*Math.exp(-((x-0.4)*(x-0.4))/0.12);v+=0.5*rugScale*0.5*Math.sin(x*3.5)*Math.exp(-((x-0.4)*(x-0.4))/2.0);return v;}
+function dPhi(x,gam){var h=1e-3;return (phi(x+h,gam)-phi(x-h,gam))/(2*h);}
+function maxCurv(gam){var Nr=700,dx=(xmax-xmin)/(Nr-1),prev2,prev,cur,mx=0,x,i;prev2=phi(xmin,gam);x=xmin+dx;prev=phi(x,gam);for(i=2;i<Nr;i++){x=xmin+i*dx;cur=phi(x,gam);var d2=(cur-2*prev+prev2)/(dx*dx);if(d2>mx)mx=d2;prev2=prev;prev=cur;}return mx;}
+function runB(gam,eta,K){var x=-0.9,pts=[{x:x,y:phi(x,gam)}],diverged=false,k;for(k=0;k<K;k++){x=x-eta*dPhi(x,gam);if(!isFinite(x)||Math.abs(x)>3.8){diverged=true;break;}pts.push({x:x,y:phi(x,gam)});}var fx=pts[pts.length-1].x;var status=diverged?'div':(fx>=-2.7&&fx<=-0.4?'true':(fx>=1.3&&fx<=3.7?'false':'edge'));return {pts:pts,diverged:diverged,status:status,fx:fx};}
+
+var curB=null;
+function X(x){return 40+(x-xmin)/(xmax-xmin)*(340);}
+function Y(y,ymn,ymx){return 40+(ymx-y)/(ymx-ymn)*(MH-40-70);}
+function fmtRR(r){var e=Math.log10(Math.max(1e-9,r));return '≈10^'+e.toFixed(2);}
+
+function draw(){
+  var R=state.R,gam=R*0.2,Ppc=Math.pow(10,3*R-1);
+  var floor=Math.abs(lamc)/Math.sqrt(Math.max(1e-6,Ppc))*Math.sqrt(N);
+  var E=jacobiEigen(addNoise(clean,floor),40);
+  var ccx=560,ccy=210;
+  var pos=positionsFromEig(E);
+  var q=circMetric(pos,ccx,ccy);
+  var l2=Math.abs(E.values[1]||0);
+  var lamRaw=maxCurv(0),lam=gam>0?maxCurv(gam):lamRaw;
+  var etaC=lam>1e-6?(2/lam):99;
+  curB=runB(gam,state.eta,40);
+
+  if(ctx){
+    ctx.clearRect(0,0,MW,MH);
+    ctx.fillStyle=PAL['--viz-bg']||'#0c1120';ctx.fillRect(0,0,MW,MH);
+    // ---- LEFT: phi landscape ----
+    var mL=40,mR=380,mT=40,mB=70,pw=mR-mL,phh=MH-mT-mB;
+    var Ns=240,xs=[],rv=[];var i,x;
+    for(i=0;i<Ns;i++){x=xmin+(xmax-xmin)*i/(Ns-1);xs.push(x);rv.push(phi(x,gam));}
+    var ymin=Infinity,ymax=-Infinity;for(i=0;i<Ns;i++){if(rv[i]<ymin)ymin=rv[i];if(rv[i]>ymax)ymax=rv[i];}
+    var pad=(ymax-ymin)*0.14+0.12;ymin-=pad;ymax+=pad;
+    ctx.strokeStyle=PAL['--viz-grid']||'rgba(128,128,128,0.2)';ctx.lineWidth=1;
+    for(var gi=0;gi<=4;gi++){var gy=mT+phh*gi/4;ctx.beginPath();ctx.moveTo(mL,gy);ctx.lineTo(mR,gy);ctx.stroke();}
+    // fill
+    ctx.beginPath();ctx.moveTo(X(xs[0]),Y(rv[0],ymin,ymax));for(i=1;i<Ns;i++)ctx.lineTo(X(xs[i]),Y(rv[i],ymin,ymax));ctx.lineTo(X(xmax),mT+phh);ctx.lineTo(X(xmin),mT+phh);ctx.closePath();ctx.fillStyle=hexA(PAL['--viz-curve']||'#8a7cff',0.10);ctx.fill();
+    // curve
+    ctx.beginPath();for(i=0;i<Ns;i++){i?ctx.lineTo(X(xs[i]),Y(rv[i],ymin,ymax)):ctx.moveTo(X(xs[i]),Y(rv[i],ymin,ymax));}ctx.strokeStyle=PAL['--viz-curve']||'#8a7cff';ctx.lineWidth=2.6;ctx.stroke();
+    // wells markers
+    function marker(xw,label,col,above){var yw=phi(xw,gam),yy=Y(yw,ymin,ymax);ctx.fillStyle=col;ctx.beginPath();if(above){ctx.moveTo(X(xw),yy);ctx.lineTo(X(xw)-6,yy-10);ctx.lineTo(X(xw)+6,yy-10);ctx.closePath();}else{ctx.moveTo(X(xw),yy);ctx.lineTo(X(xw)-6,yy+10);ctx.lineTo(X(xw)+6,yy+10);ctx.closePath();}ctx.fill();ctx.font='10px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(label,X(xw),above?yy-14:yy+22);}
+    marker(-1.5,'Wissens-Tal (wahr)',PAL['--viz-ok']||'#6ee88a',true);
+    marker(2.5,'Void-Tal (falsch)',PAL['--viz-void']||'#fb923c',true);
+    marker(0.4,'Cusp (Form)',PAL['--viz-cusp']||'#ff7ac0',false);
+    // GD path
+    if(curB){
+      ctx.strokeStyle=hexA(PAL['--viz-gd']||'#ffc860',0.9);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(X(curB.pts[0].x),Y(curB.pts[0].y,ymin,ymax));
+      var bi;for(bi=1;bi<curB.pts.length;bi++){var q1=curB.pts[bi-1],q2=curB.pts[bi];ctx.lineTo(X(q2.x),Y(q2.y,ymin,ymax));}
+      ctx.stroke();
+      var en=curB.pts[curB.pts.length-1];
+      ctx.fillStyle=PAL['--viz-bg']||'#0c1120';ctx.beginPath();ctx.arc(X(curB.pts[0].x),Y(curB.pts[0].y,ymin,ymax),4.5,0,TAU);ctx.fill();ctx.strokeStyle=PAL['--viz-gd']||'#ffc860';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle=curB.diverged?(PAL['--viz-void']||'#fb923c'):(PAL['--viz-gd']||'#ffc860');ctx.beginPath();ctx.arc(X(Math.max(xmin,Math.min(xmax,en.x))),Y(Math.max(ymin,Math.min(ymax,phi(Math.max(xmin,Math.min(xmax,en.x)),gam))),ymin,ymax),5.5,0,TAU);ctx.fill();
+      if(curB.diverged){ctx.fillStyle=PAL['--viz-void']||'#fb923c';ctx.font='bold 12px ui-monospace,monospace';ctx.textAlign='left';ctx.fillText('DIVERGIERT (η > 2/λmax)',mL+4,mT+12);}
+    }
+    // eta gauge
+    var gy0=mT+phh+18,gy1=mT+phh+30;ctx.fillStyle=hexA(PAL['--viz-txt']||'#e8ecf6',0.14);ctx.fillRect(mL,gy0,pw,gy1-gy0);
+    var edgeX=mL+Math.min(1,etaC/1.5)*pw;ctx.fillStyle=hexA(PAL['--viz-void']||'#fb923c',0.28);ctx.fillRect(edgeX,gy0,mR-edgeX,gy1-gy0);
+    ctx.strokeStyle=PAL['--viz-void']||'#fb923c';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(edgeX,gy0-3);ctx.lineTo(edgeX,gy1+3);ctx.stroke();
+    ctx.fillStyle=PAL['--viz-void']||'#fb923c';ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('Kante 2/λmax',Math.min(edgeX,mR-30),gy1+12);
+    var etaX=mL+Math.min(1,state.eta/1.5)*pw;ctx.strokeStyle=PAL['--viz-gd']||'#ffc860';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(etaX,gy0-5);ctx.lineTo(etaX,gy1+5);ctx.stroke();
+    // left title
+    ctx.fillStyle=PAL['--viz-txt']||'#e8ecf6';ctx.font='bold 12px sans-serif';ctx.textAlign='left';ctx.fillText('B · Krümmung/Φ (Cusp = fixierte Form), GD + Kante',mL,20);
+    // ---- RIGHT: circle (A) ----
+    ctx.strokeStyle=hexA(PAL['--viz-grid']||'rgba(128,128,128,0.2)',0.6);ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(ccx,ccy,150,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    for(i=0;i<N;i++){var p3=pos[i];var hue=(i%N)/N*360;ctx.save();ctx.shadowColor='hsla('+hue+',72%,58%,0.8)';ctx.shadowBlur=8;ctx.beginPath();ctx.arc(p3.x,p3.y,i===0?7:5,0,TAU);ctx.fillStyle='hsl('+hue+',72%,58%)';ctx.fill();ctx.restore();ctx.strokeStyle=PAL['--viz-bg']||'#0c1120';ctx.lineWidth=1;ctx.beginPath();ctx.arc(p3.x,p3.y,i===0?7:5,0,TAU);ctx.stroke();}
+    ctx.fillStyle=PAL['--viz-circle']||'#5ee0d0';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText('A · ℤ/12ℤ-Kreis (Fourier der Symmetrie)',ccx,30);
+    ctx.font='11px sans-serif';ctx.fillStyle=hexA(PAL['--viz-txt']||'#e8ecf6',0.65);ctx.fillText('scharf ↔ Rauschenboden (P/P_c)',ccx,46);
+  }
+
+  // ---- SPEC: eigenvalues + floor ----
+  if(sctx){
+    sctx.clearRect(0,0,SW,SH);
+    sctx.fillStyle=PAL['--viz-bg']||'#0c1120';sctx.fillRect(0,0,SW,SH);
+    var sl=44,sr=14,st=16,sb=26,pww=SW-sl-sr,phh2=SH-st-sb;
+    var K=Math.min(9,E.values.length);
+    var maxv=0;for(i=0;i<K;i++)if(Math.abs(E.values[i])>maxv)maxv=Math.abs(E.values[i]);
+    if(maxv<1e-9)maxv=1;
+    var fmax=Math.max(maxv,floor)*1.15;
+    var slot=pww/K,barw=slot*0.6;
+    sctx.strokeStyle=PAL['--viz-grid']||'rgba(128,128,128,0.2)';sctx.lineWidth=1;sctx.beginPath();sctx.moveTo(sl,st);sctx.lineTo(sl,st+phh2);sctx.lineTo(sl+pww,st+phh2);sctx.stroke();
+    for(i=0;i<K;i++){var v=Math.abs(E.values[i]);var bh=v/fmax*phh2;var bx=sl+i*slot+(slot-barw)/2,by=st+phh2-bh;sctx.fillStyle=(i<2)?(PAL['--viz-spec']||'#5ee0d0'):(PAL['--viz-cusp']||'#ff7ac0');sctx.fillRect(bx,by,barw,bh);}
+    var fy=st+phh2-(Math.min(fmax,floor)/fmax*phh2);
+    sctx.strokeStyle=PAL['--viz-floor']||'#ff7ac0';sctx.lineWidth=2;sctx.setLineDash([5,4]);sctx.beginPath();sctx.moveTo(sl,fy);sctx.lineTo(sl+pww,fy);sctx.stroke();sctx.setLineDash([]);
+    sctx.fillStyle=PAL['--viz-floor']||'#ff7ac0';sctx.font='9px ui-monospace,monospace';sctx.textAlign='left';sctx.textBaseline='bottom';sctx.fillText('Rauschenboden ∝ 1/√(P/P_c)',sl+4,fy-3);
+    sctx.fillStyle=PAL['--viz-txt']||'#e8ecf6';sctx.textAlign='center';sctx.textBaseline='top';sctx.fillText('Eigenspektrum der zirkulanten Statistik (A) — Bars 0–1 = Kreis-Mode · Kippt, wenn Mode > Boden',sl+pww/2,SH-14);
+  }
+
+  // readouts
+  var aEdge=l2>floor;
+  var aPhase=q>0.7?'Generalisiert':(q>0.35?'Übergang':'Memorisiert');
+  var bOk=!curB.diverged&&curB.status==='true';
+  var flip=aEdge&&bOk;
+  function setT(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
+  function setC(id,txt,ok){var e=document.getElementById(id);if(e){e.textContent=txt;if(ok!=null)e.style.color=ok?'var(--viz-ok)':'var(--viz-void)';}}
+  setT('r-flip',flip?'kippt ✓':'verwaschen ✗');
+  var rf=document.getElementById('r-flip');if(rf)rf.style.color=flip?'var(--viz-ok)':'var(--viz-void)';
+  setT('r-q',(q*100).toFixed(0)+'%');
+  var ra=document.getElementById('r-aphase');if(ra){ra.textContent=aPhase;ra.style.color=q>0.7?'var(--viz-ok)':(q>0.35?'var(--acc3)':'var(--viz-void)');}
+  setC('r-aedge',aEdge?'ja ✓':'nein ✗',aEdge);
+  setT('r-lam',lam.toFixed(2));
+  setT('r-etaC',etaC>20?'∞ (weit)':etaC.toFixed(2));
+  var rb=document.getElementById('r-bstat');if(rb){var btxt=curB.diverged?'DIVERGIERT':(curB.status==='true'?'→ wahr':(curB.status==='false'?'→ falsch(!)':'→ Rand'));rb.textContent=btxt;rb.style.color=curB.diverged?'var(--viz-void)':(curB.status==='true'?'var(--viz-ok)':'var(--viz-void)');}
+  setT('r-floor',fmtRR(floor/Math.abs(lamc)));
+  setT('Rval',fmtRR(Ppc));setT('etaval',state.eta.toFixed(2));
+
+  var msg;
+  if(flip){msg='<b>Kippen übertroffen</b> — die fixierte Form (Symmetrie A ↔ Cusp B) übersteigt das Rauschen/Limit: A Kreis scharf (Generalisiert), B GD konvergiert in das Wissens-Tal (wahr). Dieselbe Kante, zwei Lesarten.';}
+  else if(!aEdge){msg='A unter der Kante: der Rauschenboden (∝1/√(P/P_c)) übersteigt die Kreis-Mode — ℤ/12ℤ ist verwaschen (Memorisiert). B: '+(curB.diverged?'GD <b>divergiert</b> (η &gt; 2/λmax, scharfe Cusp).':'GD konvergiert, aber nicht sicher ins Wissens-Tal.')+' Ziehe R hoch (mehr Auflösung = Rauschen-Ausmittelung A = Cusp-Rundung B).';}
+  else{msg='A über der Kante (Kreis scharf), aber B: '+(curB.diverged?'GD <b>divergiert</b> — η liegt noch über der Kante 2/λmax. Senke η oder hebe R (rundet die Cusp, schiebt die Kante rechts).':'GD '+(curB.status==='true'?'konvergiert wahr.':'konvergiert an den Rand.'))+' <em>Form stark genug</em> ist nicht dasselbe wie <em>Kante überschritten</em> — beide Lesarten müssen kippen.';}
+  var ro=document.getElementById('r-readout');if(ro)ro.innerHTML=msg;
+}
+
+var sR=document.getElementById('sR'),sEta=document.getElementById('sEta'),playBtn=document.getElementById('playBtn');
+if(sR){sR.addEventListener('input',function(){state.R=+sR.value/100;draw();});}
+if(sEta){sEta.addEventListener('input',function(){state.eta=+sEta.value;draw();});}
+if(playBtn){playBtn.onclick=function(){state.playing=!state.playing;playBtn.textContent=state.playing?'⏸ Pause':'▶ Auflösung abspielen';playBtn.classList.toggle('on',state.playing);};}
+function loop(){
+  if(state.playing){
+    state.R=Math.min(1,state.R+0.01);
+    if(sR){sR.value=(state.R*100).toFixed(0);}
+    if(state.R>=1){state.playing=false;if(playBtn){playBtn.textContent='▶ Auflösung abspielen';playBtn.classList.toggle('on',false);}}
+    draw();
+  }
+  requestAnimationFrame(loop);
+}
+draw();
+requestAnimationFrame(loop);
+window.addEventListener('resize',function(){readPal();draw();});
+try{new MutationObserver(function(){readPal();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+})();
+</script>
+</body>
+</html>

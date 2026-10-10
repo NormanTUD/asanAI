@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das d&uumlnne Kernel-Feld: Ger&uumlst, Zyklus und fragiler &uuml;bergang &middot; Fusion 014</title>
+<style>
+  :root{
+    --bg:#f7f5ee; --bg2:#ffffff; --plot-bg:#fbfaf4;
+    --ink:#1b2130; --muted:#525b6b; --faint:#8a92a3;
+    --acc:#0f9d8f; --acc2:#6b5be0; --acc3:#c07f16; --gold:#c98a12; --fog:#7c3aed;
+    --card:rgba(255,255,255,.72); --border:rgba(27,33,48,.14); --border-hi:rgba(27,33,48,.30);
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  html.dark{
+    --bg:#090d17; --bg2:#111a2b; --plot-bg:#0a1120;
+    --ink:#e8ecf6; --muted:#a0abca; --faint:#6b7794;
+    --acc:#5ee0d0; --acc2:#8a7cff; --acc3:#ffc860; --gold:#f4b73a; --fog:#a78bfa;
+    --card:rgba(255,255,255,.04); --border:rgba(255,255,255,.11); --border-hi:rgba(255,255,255,.24);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);font-family:var(--sans);line-height:1.66;-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(780px 480px at 10% -8%, color-mix(in srgb, var(--acc) 12%, transparent) 0%, transparent 60%),
+      radial-gradient(800px 520px at 94% 6%, color-mix(in srgb, var(--acc2) 11%, transparent) 0%, transparent 62%),
+      var(--bg);}
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 70px}
+  header{padding:50px 20px 6px;max-width:820px;margin:0 auto}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);margin:0 0 14px;display:flex;align-items:center;gap:10px}
+  .kicker .d{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 9px var(--acc)}
+  h1{font-size:clamp(26px,4.7vw,43px);line-height:1.09;letter-spacing:-.02em;font-weight:780;margin:0 0 12px}
+  h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),var(--acc2) 60%,var(--acc3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .subtitle{font-family:var(--mono);font-size:12.5px;color:var(--faint);margin:0 0 4px;word-break:break-word}
+  .tagline{color:var(--muted);font-size:15.5px;max-width:74ch;margin:12px 0 0}
+  .tagline em{color:var(--acc);font-style:normal;font-weight:600}
+  .themebtn{position:fixed;top:14px;right:14px;z-index:50;cursor:pointer;
+    background:var(--card);color:var(--ink);border:1px solid var(--border-hi);
+    padding:7px 13px;border-radius:999px;font:inherit;font-size:12.5px;font-family:var(--mono)}
+  section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:24px 24px 26px;margin:18px 0}
+  section h2{margin:0 0 14px;font-size:23px;letter-spacing:-.01em}
+  section h2 .n{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--acc);
+    border:1px solid var(--border);background:color-mix(in srgb, var(--acc) 12%, transparent);
+    border-radius:999px;padding:2px 9px;margin-right:10px;vertical-align:middle}
+  h3{color:var(--ink);margin:22px 0 8px;font-size:16.5px;font-weight:700}
+  p{margin:11px 0;color:var(--muted)}
+  .lead{color:var(--ink);font-size:15.8px}
+  strong{color:var(--ink);font-weight:650}
+  em{color:var(--acc);font-style:normal;font-weight:600}
+  .m{font-family:var(--mono);font-size:.86em;color:var(--ink);background:color-mix(in srgb, var(--ink) 7%, transparent);
+    border:1px solid var(--border);padding:1px 5px;border-radius:5px;white-space:nowrap}
+  .pill{display:inline-block;padding:1px 9px;border-radius:999px;font-size:11.5px;font-family:var(--mono);
+    background:color-mix(in srgb, var(--ink) 10%, transparent);color:var(--muted);margin-right:4px}
+  .pill.a{color:var(--acc);background:color-mix(in srgb, var(--acc) 14%, transparent)}
+  .pill.b{color:var(--acc2);background:color-mix(in srgb, var(--acc2) 16%, transparent)}
+  .claim{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0}
+  .claim .src{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;
+    display:inline-block;padding:3px 9px;border-radius:99px;margin-bottom:8px}
+  .claim.a{border-color:color-mix(in srgb, var(--acc) 40%, transparent)}
+  .claim.a .src{color:var(--acc);background:color-mix(in srgb, var(--acc) 12%, transparent)}
+  .claim.b{border-color:color-mix(in srgb, var(--acc2) 40%, transparent)}
+  .claim.b .src{color:var(--acc2);background:color-mix(in srgb, var(--acc2) 12%, transparent)}
+  .claim p{margin:0;font-size:14px}
+  .vs{font-family:var(--mono);color:var(--faint);font-weight:700;text-align:center;margin:2px 0}
+  .aha{background:linear-gradient(150deg,color-mix(in srgb, var(--acc) 10%, transparent),transparent);
+    border:1px solid color-mix(in srgb, var(--acc) 34%, transparent);border-radius:13px;padding:14px 17px;margin:16px 0}
+  .aha .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:7px}
+  .aha p{margin:0 0 8px;font-size:14px}
+  .aha p:last-child{margin-bottom:0}
+  .note{border-left:3px solid var(--acc2);background:color-mix(in srgb, var(--acc2) 8%, transparent);
+    padding:13px 16px;border-radius:0 12px 12px 0;margin:16px 0;font-size:14px;color:var(--muted)}
+  .note b{color:var(--ink)}
+  .math{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:11px 15px;margin:13px 0;overflow-x:auto}
+  .math .mrow{margin:5px 0;font-family:"Cambria Math","STIX Two Math",Georgia,serif;font-size:1.03rem;color:var(--ink);white-space:nowrap}
+  .math .mnote{color:var(--faint);font-size:.83rem;margin-top:5px;white-space:normal}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+  th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+  th{color:var(--ink);font-weight:700;background:color-mix(in srgb, var(--ink) 5%, transparent)}
+  .viz{background:var(--bg2);border:1px solid var(--border-hi);border-radius:14px;padding:16px;margin:16px 0}
+  .viz h4{font-size:14px;font-weight:700;margin:0 0 4px}
+  .viz .dsub{font-size:12.5px;color:var(--muted);margin:0 0 12px}
+  canvas{display:block;width:100%;border-radius:12px;border:1px solid var(--border);background:var(--plot-bg)}
+  #loopCanvas{height:380px}#specCanvas{height:220px;margin-top:12px}
+  .ctl{margin:13px 0 4px}
+  .ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+  .ctl-lab b{font-family:var(--mono);color:var(--acc);font-size:13px;white-space:nowrap}
+  input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--border);outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;border:3px solid var(--bg2)}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--acc);cursor:pointer;border:3px solid var(--bg2)}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 4px}
+  button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 13px;border-radius:10px;
+    border:1px solid var(--border-hi);background:var(--bg2);color:var(--ink);transition:.14s}
+  button:hover{border-color:var(--acc)}
+  button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+  .ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .ro .box{flex:1;min-width:100px;border:1px solid var(--border);border-radius:12px;padding:9px 11px;text-align:center;background:var(--bg)}
+  .ro .box .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+  .ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--acc)}
+  .ro .box.amber .v{color:var(--acc3)}
+  .ro .box.rose .v{color:var(--acc2)}
+  .ro .box.gold .v{color:var(--gold)}
+  .ro .box.fog .v{color:var(--fog)}
+  .leg{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:10px}
+  .leg span{display:flex;align-items:center;gap:6px}
+  .leg i{width:16px;height:3px;border-radius:2px;display:inline-block}
+  .prov{display:grid;gap:12px;margin:8px 0}
+  .prov a{display:block;text-decoration:none;color:var(--ink);background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:14px 16px;transition:.15s}
+  .prov a:hover{border-color:var(--border-hi);transform:translateY(-1px)}
+  .prov a .t{font-family:var(--mono);font-size:11.5px;color:var(--acc);margin-bottom:5px;word-break:break-all}
+  .prov a .d{font-size:13.5px;color:var(--muted)}
+  footer{border-top:1px solid var(--border);padding:22px 0 0;color:var(--faint);font-size:12px;margin-top:8px;text-align:center}
+  @media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="themebtn" id="themeBtn" type="button">&#9728;&#65038; / &#9790; Theme</button>
+
+<header>
+  <p class="kicker"><span class="d"></span>Knockout-Fusion &middot; Runde 3 &middot; Paar 014</p>
+  <h1>Das d&uuml;nne Kernel-Feld: <em>Ger&uuml;st, Zyklus</em> und fragiler &Uuml;bergang</h1>
+  <p class="subtitle">Fusion aus: r2-023.html &#10005; r2-021.html&nbsp; (Round 3)</p>
+  <p class="tagline">Beide R2-Fusionen sagen unabh&auml;ngig voneinander: Das Innere eines trainierten Modells ist
+  <em>eins</em> &mdash; ein d&uuml;nnes, <em>kernel-gewichtetes, lokal-glattes geometrisches Feld</em>, gelesen in
+  <em>zwei Modi</em> (weich/punktweise vs. scharf/topologisch). Und beide legen das Wesentliche an dieselbe
+  Stelle: <em>den fragilen &Uuml;bergang</em>. A's funktionsentscheidender <em>Rest/Knick</em> und B's
+  <em>fragiles Token / am-wenigsten-persistenter Zyklus</em> sind derselbe Gegenstand &mdash; und die
+  Robustheits-Achse (A: Rest &amp; Boden, B: Varianz &amp; Persistenz) ist ein Signal-gegen-Rauschen-Regler
+  mit zwei Gesichtern.</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ 1. THESE ============ -->
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p class="lead">Die beiden R2-Papiere <span class="pill a">A &middot; r2-023</span> (&bdquo;N&auml;chste-Nachbar auf dem
+  linearen Ger&uuml;st&ldquo;) und <span class="pill b">B &middot; r2-021</span> (&bdquo;Das Kernel-Feld ist der
+  persistente 1-Zyklus&ldquo;) haben jeweils bereits zwei R1-Papiere verschmolzen &mdash; und beide landen auf dem
+  selben tieferen Objekt. A's <em>lokal-lineares Ger&uuml;st</em> <span class="m">T(x)=A(x)&middot;x</span> (eine
+  Gaussian/RBF-N&auml;chste-Nachbar-Karte, in der Distanz = &Auml;hnlichkeit) und B's <em>GP/RBF-Surrogat</em>
+  <span class="m">q(x)</span> mit Kernel <span class="m">k(x,x&#7522;)=exp(&minus;&mdash;x&minus;x&#7522;&mdash;&sup2;/2&sigma;&sup2;)</span> sind
+  <em>derselbe</em> kernel-gewichtete Blend; A's Attention-1-Ger&uuml;st und B's Simplexkomplex sind der
+  <em>Graph</em> dieses Feldes. Das Objekt ist auf mehreren Ebenen <em>d&uuml;nn</em> (A: der Update lebt in 1&ndash;8
+  Singul&auml;rvektoren, der Inhalt auf einer ~20-d-Mannigfaltigkeit; B: das Feld in einem niedrigdimensionalen
+  Betriebspunkt).</p>
+  <p>Es wird in <strong>zwei komplement&auml;ren Modi</strong> gelesen: <em>weich/punktweise</em> (A's weiche
+  Attention mit Spearman &asymp; &minus;0.94; B's Surrogat-Mittelwert <span class="m">&mu;*(x)</span> &plusmn; Varianz)
+  und <em>scharf/strukturiert</em> (A's Knick/Rest <span class="m">r</span> und harte Wort-Entscheidung an der
+  Voronoi-Grenze; B's persistenter 1-Zyklus <span class="m">&beta;&#8321;</span> &plusmn; Persistenz
+  <span class="m">&tau;</span>). Und beide verlegen das Wesentliche an dieselbe Stelle &mdash;
+  <strong>den fragilen &Uuml;bergang</strong>: A's funktionsentscheidender Rest (<span class="m">&mdash;r&mdash;</span> sagt die
+  Ausgabendest&ouml;rung KL, Spearman <span class="m">&rho; &asymp; 0,8&ndash;0,9</span>; &bdquo;small in norm,
+  large in function&ldquo;) und B's fragiles Token / am-wenigsten-persistenter Zyklus.</p>
+  <p>Die integrierte Position: <strong>Ein trainiertes Modell ist ein d&uuml;nnes, kernel-gewichtetes,
+  lokal-glattes Feld, das in zwei Modi gelesen wird und dessen fragiler &Uuml;bergang &mdash; A's Rest/Knick
+  (lokale Singularit&auml;t) und B's 1-Zyklus (globale Topologie) &mdash; Bedeutung und Unsicherheit zugleich
+  tr&auml;gt.</strong> Die Robustheits-Achse &mdash; A liest sie als <em>Rest + Quantisierungs-Boden</em>, B als
+  <em>Varianz + Persistenz</em> &mdash; ist ein <em>einziges Signal-gegen-Rauschen-Reglerpaar</em> mit zwei
+  Stellr&auml;dern (A: Rauschen <span class="m">&sigma;&#8345;</span>, B: Schwelle <span class="m">&epsilon;</span>).
+  Sie markiert exakt die <em>fragilen Regionen</em>: dort, wo Bedeutung, Unsicherheit und &mdash; in B &mdash; die
+  n&auml;chste teure Probe sich konzentrieren. Das fusionierte Instrument: <em>eins</em> kernel-gewichtetes Feld mit
+  weicher Punktlesung, scharfer Strukturlesung und einer Robustheits-Achse, die die fragilen Regionen anzeigt;
+  deskriptiv gelesen beschreibt es das Modell (A), instrumental gelesen w&auml;hlt es die n&auml;chste Probe (B).</p>
+</section>
+
+<!-- ============ 2. WIDERSPR&uml;CHE ============ -->
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden R2-Papiere widersprechen sich <strong>nicht faktisch</strong> &mdash; beide sind &bdquo;ein
+  d&uuml;nnes, kernel-gewichtetes Objekt, zweimal gelesen&ldquo;. Sie nehmen aber zu <em>drei konkreten
+  Fragen</em> <strong>inkompatible Stellungen</strong> ein: wo der Inhalt sitzt, was die Grenze ist, und wof&uuml;r
+  das Objekt da ist.</p>
+
+  <h3>W1 &middot; Locus des Inhalts: lokaler scharfer Knick (A) vs. geschlossener globaler Zyklus (B)</h3>
+  <div class="claim a"><span class="src">A &middot; r2-023</span>
+    <p>Der funktionsentscheidende Inhalt sitzt an einer <strong>lokalen</strong> scharfen Abweichung vom linearen
+    Regime &mdash; der Knick / der Rest <span class="m">r</span> an der Voronoi-Grenze, &bdquo;small in norm, large in
+    function&ldquo;. Bedeutung und Unsicherheit konzentrieren sich <em>an der Kante / dem Schnitt</em> (dort, wo zwei
+    W&ouml;rter fast gleich nah sind).</p></div>
+  <div class="vs">&#8596;</div>
+  <div class="claim b"><span class="src">B &middot; r2-021</span>
+    <p>&bdquo;Der Inhalt ist <em>kein</em> Punkt-Wert, sondern eine <strong>geschlossene Struktur</strong>&ldquo; &mdash; ein
+    globaler 1-Zyklus mit Windungszahl <span class="m">k</span> und Persistenz <span class="m">&tau;</span>.
+    Bedeutung konzentriert sich <em>im Loop</em>, in der geschlossenen Zyklen-Struktur, nicht an einem Schnitt.</p></div>
+  <p style="font-size:13.5px;margin-top:10px">Lokale scharfe Kante (A) vs. geschlossener globaler Zyklus (B): Ist der
+  Inhalt eine <em>lokale</em> Singularit&auml;t oder eine <em>globale</em> geschlossene Struktur? A sagt &bdquo;an der
+  Kante&ldquo;, B sagt &bdquo;in der Schleife&ldquo;.</p>
+
+  <h3>W2 &middot; Natur der Grenze: irreduzierbarer prinzipbedingter Boden (A) vs. handlungs-/reparierbare Degradation (B)</h3>
+  <div class="claim a"><span class="src">A &middot; r2-023</span>
+    <p>Tr&auml;gt den <strong>prinzipbedingten</strong> Quantisierungs-Boden (Expressibility Gap): 40&ndash;51 % unsicher,
+    die schwersten ~5 % bei <em>allen</em> Modellen gleich schwer, <span class="m">Fehler &prop; (1/N)^(2/20)
+    &asymp; (1/N)^0.1</span> &mdash; &bdquo;einen Boden, den keine Technik erreichen kann&ldquo;. Der Rest ist eine
+    <em>feste Eigenschaft</em> des Modells, die die Funktion vorhersagt; der Boden ist <em>irreduzierbar</em>.</p></div>
+  <div class="vs">&#8596;</div>
+  <div class="claim b"><span class="src">B &middot; r2-021</span>
+    <p>Macht dasselbe Objekt <strong>proberbar</strong>: Die Persistenz <span class="m">&tau;</span>
+    <em>degradiert</em> kontinuierlich, wenn <span class="m">&epsilon;</span>/Rauschen steigen &mdash; und man kann
+    das fragilste Token <em>Evaluate</em>n (&#9733;), was den lokalen Fog schrumpft und den Loop <em>repariert</em>.
+    Unsicherheit ist etwas, das man <em>handelnd</em> bearbeitet, nicht ein fester blinder Fleck.</p></div>
+  <p style="font-size:13.5px;margin-top:10px">A: &bdquo;da geht nichts mehr&ldquo; (irreduzierbarer Boden, Rest = feste
+  Eigenschaft). B: &bdquo;fragil, aber proberbar&ldquo; (Persistenz degradiert, und ein Probe-Schritt repariert den
+  fragilsten Zyklus). Feste, prinzipbedingte Grenze (A) vs. aktive, reparierbare Degradation (B).</p>
+
+  <h3>W3 &middot; Rolle/Ausgabe: statische Charakterisierung (A) vs. aktive Akquisitions-Loop (B)</h3>
+  <div class="claim a"><span class="src">A &middot; r2-023</span>
+    <p>Das Modell wird als <strong>festes Objekt</strong> gelesen und <em>beschrieben</em>: sein Betriebspunkt,
+    seine zwei Grenzen (Kapazit&auml;ts-L&uuml;cke + Quantisierungs-Boden) und seine drei d&uuml;nnen Ebenen. Die
+    Ausgabe ist <em>Deskription</em> &mdash; die &bdquo;Folgen&ldquo; sind diagnostisch (Unsicherheit messen, dort
+    Teilew&ouml;rter einf&uuml;gen).</p></div>
+  <div class="vs">&#8596;</div>
+  <div class="claim b"><span class="src">B &middot; r2-021</span>
+    <p>Dasselbe kernel-gewichtete Objekt wird zu einem <strong>Instrument</strong>: Der BO-Loop
+    <em>w&auml;hlt</em> die n&auml;chste teure Probe per Acquisition (EI/UCB/POI), Evaluate f&uuml;gt eine
+    Beobachtung ein. Die Ausgabe ist <em>Entscheidung/Handlung</em> &mdash; ein aktiver Erkundungs-Loop.</p></div>
+  <p style="font-size:13.5px;margin-top:10px">Beschreibung eines festen Objekts (A) vs. ein aktiver Probe-Loop, auf
+  dem man handelt (B). A: &bdquo;hier ist das Modell und seine Grenzen&ldquo;. B: &bdquo;hier ist, wie man auf dem
+  Objekt handelt &mdash; w&auml;hle die n&auml;chste Probe&ldquo;.</p>
+</section>
+
+<!-- ============ 3. AUFL&Ouml;SUNG ============ -->
+<section id="aufloesung">
+  <h2><span class="n">3</span>Aufl&ouml;sung</h2>
+
+  <h3>Aufl&ouml;sung zu W1 &mdash; der Knick ist die lokale Singularit&auml;t, der Zyklus die globale Topologie desselben Feldes</h3>
+  <p>A und B lesen <em>dasselbe</em> d&uuml;nne kernel-gewichtete Feld mit zwei verschiedenen Invarianten. A liest
+  die <em>lokale Differentialgeometrie</em> des Feldes: wo die lokal-lineare Karte sich knickt (die Singularit&auml;t
+  / der Knick). B liest die <em>globale Homologie</em> des selben kernel-gewichteten Graphen: der geschlossene
+  Loop / die nichttriviale <span class="m">H&#8321;</span>. Ein Feld kann <em>beides</em> haben &mdash; lokale
+  Singularit&auml;ten (Knicke) und globale L&ouml;cher (Zyklen). A's Voronoi-Schnitte sind exakt die Stellen, an
+  denen B's kernel-gewichteter Graph seine Zyklen schlie&szlig;t.</p>
+  <div class="aha"><div class="h">Fusionierter Schluss 1</div>
+  <p>Der scharfe <em>lokale</em> &Uuml;bergang (A's Knick/Rest) ist die <strong>Singularit&auml;ts-/Kanten-
+  Entscheidung</strong>; der <em>globale</em> Zyklus (B's 1-Zyklus) ist die <strong>Topologie</strong> desselben
+  d&uuml;nnen kernel-Feldes. Punktweise sieht man den Knick, topologisch sieht man den Loop, dem er angeh&ouml;rt.
+  Lokale Differentialgeometrie (A) + globale Homologie (B) = ein Feld. &bdquo;Der Knick ist die Kante des Zyklus;
+  der Zyklus ist die Schleife, die den Knick umschlie&szlig;t.&ldquo;</p></div>
+
+  <h3>Aufl&ouml;sung zu W2 &mdash; der Boden grenzt das Unm&ouml;gliche ein; das Probing die proberbare Schicht</h3>
+  <p>A's prinzipbedingter Boden und B's proberbare Degradation sitzen auf <em>verschiedenen Ebenen</em> und
+  koexistieren. A's Quantisierungs-Boden (ein ~20-d-Gedanke, zerbrochen in ein endliches W&ouml;rterbuch,
+  <span class="m">Fehler &prop; (1/N)^0.1</span>) ist eine <em>Kapazit&auml;ts-Grenze</em> &mdash; sie setzt, was
+  <em>unm&ouml;glich</em> ist, selbst bei unendlichem Probing. B's proberbare Schicht (Akquisition am fragilsten
+  Punkt) ist eine <em>epistemische</em> Grenze &mdash; sie setzt, was sich <em>n&auml;chste</em> lohnt, und sie
+  <em>degradiert</em> (kein harter Boden).</p>
+  <div class="aha"><div class="h">Fusionierter Schluss 2</div>
+  <p>Das Objekt hat (i) einen <strong>irreduzierbaren Quantisierungs-Boden</strong> (A: manches ist blind, keine
+  Technik erreicht es) und (ii) eine <strong>proberbare fragile Schicht</strong> (B: die n&auml;chste teure Probe
+  repariert den fragilsten Zyklus und schrumpft den Fog). <strong>B's Fog schrumpft unter Probing, bis er an
+  A's Boden sto&szlig;t.</strong> Der Boden begrenzt, was Probing leisten kann; die Akquisition verbraucht Proben
+  dort, wo die Fragilit&auml;t am h&ouml;chsten ist.</p></div>
+
+  <h3>Aufl&ouml;sung zu W3 &mdash; Deskription und Akquisition sind zwei Modi desselben Instruments</h3>
+  <p>A's Charakterisierung und B's Handlungs-Loop sind <em>zwei Modi</em> eines Instruments. A = der
+  <em>Monitoring-/Deskriptions-Modus</em> (Feld + Rest + Boden + d&uuml;nne Ebenen rendern: was das Objekt
+  <em>ist</em>). B = der <em>Akquisitions-/Entscheidungs-Modus</em> (die fragilen Regionen nutzen, um die n&auml;chste
+  Probe zu w&auml;hlen: was man <em>tut</em>). Der Rest (A) <em>ist</em> genau die Fragilit&auml;t, die B's
+  Akquisition anvisiert.</p>
+  <div class="aha"><div class="h">Fusionierter Schluss 3</div>
+  <p>Ein kernel-gewichtetes Feld, <strong>deskriptiv</strong> gelesen (A: Betriebspunkt, zwei Grenzen, drei d&uuml;nne
+  Ebenen) <em>und</em> als <strong>Akquisitions-Instrument</strong> (B: fragil &rarr; n&auml;chste Probe).
+  Beschreibung und Entscheidung sind zwei Lesarten eines Feldes; die gemeinsame Robustheits-Achse
+  (Rest/Varianz/Persistenz) ist das Signal, das beide konsumieren.</p></div>
+
+  <table>
+    <tr><th>Punkt</th><th>A &middot; r2-023</th><th>B &middot; r2-021</th><th>Fusion</th></tr>
+    <tr><td>Objekt</td><td>d&uuml;nn, lokal-lineares N&auml;chste-Nachbar-Ger&uuml;st</td><td>kernel-gewichtetes 1-Ger&uuml;st / Simplexkomplex</td><td>eins: ein d&uuml;nnes, kernel-gewichtetes Feld</td></tr>
+    <tr><td>Locus Inhalt</td><td>lokaler Knick / Rest an der Grenze</td><td>geschlossener 1-Zyklus (k, &tau;)</td><td>Singularit&auml;t (A) + Topologie (B) eines Feldes</td></tr>
+    <tr><td>Grenze</td><td>irreduzierbarer Quantisierungs-Boden</td><td>reparierbare Degradation (Probing)</td><td>Boden (unm&ouml;glich) + proberbare Schicht (n&auml;chste Probe)</td></tr>
+    <tr><td>Rolle</td><td>Deskription (Betriebspunkt, Grenzen)</td><td>Instrument (BO-Akquisition, Evaluate)</td><td>zwei Modi eines Instruments</td></tr>
+    <tr><td>Robustheit</td><td>Rest &mdash;r&mdash; (sagt KL) + Boden</td><td>Varianz var*(x) + Persistenz &tau;</td><td>eine Signal-gegen-Rauschen-Achse (&sigma;&#8345; / &epsilon;)</td></tr>
+  </table>
+</section>
+
+<!-- ============ 4. INHALT ============ -->
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+  <p>Der konsolidierte, zusammenh&auml;ngende Kern beider R2-Papiere &mdash; dicht genug, dass eine sp&auml;tere
+  Runde allein daraus arbeitet.</p>
+
+  <h3>1 &middot; Das eine Objekt: ein d&uuml;nnes, kernel-gewichtetes, lokal-glattes Feld <span class="pill a">A</span><span class="pill b">B</span></h3>
+  <p>Beide Seiten gl&auml;ttten sp&auml;rliche, gewichtete Punkte mit demselben Gaussian-Kernel:</p>
+  <div class="math">
+    <div class="mrow">k(x, x&#7522;) = exp( &minus; &mdash;x &minus; x&#7522;&mdash;&sup2; / (2&sigma;&sup2;) )</div>
+    <div class="mnote">A (r2-023): das lokal-lineare Ger&uuml;st T(x&#7522;)=A(x&#7522;)&middot;x&#7522; &mdash; eine Gaussian/RBF-N&auml;chste-Nachbar-Karte
+    (linear lokal, global nichtlinear, weil A von der Eingabe abh&auml;ngt); in B's Sublinie = die Distanz-Attention.</div>
+    <div class="mnote">B (r2-021): der GP/RBF-Kernel (&sigma; = lengthscale &ell;) des Surrogats; und das Kanten-Gewicht, das den
+    Attention-Token-Graphen zum kernel-gewichteten 1-Ger&uuml;st (Simplexkomplex) macht. Beide = ein Gaussian-Blend.</div>
+  </div>
+  <p>Das Objekt ist <em>d&uuml;nn</em>: A's Update lebt in einem Unterraum aus <strong>1&ndash;8 Singul&auml;rvektoren</strong>;
+  der Inhalt auf einer <strong>~20-d intrinsischen Mannigfaltigkeit</strong>; B's Feld in einem niedrigdimensionalen
+  Betriebspunkt. Der Graph des Feldes (A's Attention / B's Simplex-1-Ger&uuml;st) ist mit demselben Gaussian
+  gewichtet.</p>
+
+  <h3>2 &middot; Zwei Lesarten (zwei Temperaturen) <span class="pill a">A</span><span class="pill b">B</span></h3>
+  <p><strong>Weich/punktweise:</strong> A's weiche Attention (Softmax des skalierten Skalarprodukts,
+  Distanz = &Auml;hnlichkeit, Spearman &asymp; <strong>&minus;0.94</strong>; Invarianz-Tricks Key-Translation &amp;
+  Query-Key-Skalierung) und B's Surrogat-Mittelwert
+  <span class="m">&mu;*(x)=k(x,X)&sup1;(K+&sigma;&#8345;&sup2;I)&minus;&sup1;y</span>. Man liest einen <em>Wert an einem
+  Punkt</em>. <strong>Scharf/strukturiert:</strong> A's harte Wort-Entscheidung an der Voronoi-Grenze + der
+  Knick/Rest; B's persistenter 1-Zyklus <span class="m">&beta;&#8321;</span> &plusmn; Persistenz. Man liest die
+  <em>Struktur</em>, nicht den Wert. Dieselbe Maschine, zwei Aufl&ouml;sungen; der Regler dazwischen ist die
+  <em>Weichheit/Schwelle</em>.</p>
+
+  <h3>3 &middot; Der scharfe &Uuml;bergang: Rest (A) &amp; Zyklus (B) &mdash; der gemeinsame Kern <span class="pill a">A</span><span class="pill b">B</span></h3>
+  <p><strong>A (der Rest):</strong> Zerlegung in lokale Karte + Rest:</p>
+  <div class="math">
+    <div class="mrow">h&#7501;&#8349;1; = T(h&#7501;) + r(h&#7501;), &nbsp; T(x&#7522;) = A(x&#7522;)&middot;x&#7522;, &nbsp; r = h&#7501;&#8349;1; &minus; T(h&#7501;)</div>
+    <div class="mnote">Der volle Update weicht &lt; 10&deg; vom tokenweisen ab, der Rest oft &gt; 60&deg;
+    (Align(v,u)=|v&sup1;u|/(&mdash;v&mdash;&mdash;u&mdash;) &asymp; 0.92&ndash;0.99, steigt mit Modellgr&ouml;&szlig;e). Full- &amp; token-wise
+    Update leben in 1&ndash;8 Singul&auml;rvektoren; der Rest ist &uuml;ber den Raum verstreut. Architekturen&uuml;bergreifend
+    (Pythia, Mamba, DistilGPT2). St&auml;rkster Befund: &mdash;r&mdash; sagt die Ausgabendest&ouml;rung (KL) stark,
+    Spearman &rho; &asymp; 0,8&ndash;0,9 (DistilGPT2 &rho; &asymp; 0,32). &bdquo;small in norm, large in
+    function&ldquo;.</div>
+  </div>
+  <p><strong>B (der Zyklus):</strong> Attention ist ein vollst&auml;ndiger gewichteter Graph = 1-Ger&uuml;st eines
+  Simplexkomplexes; &epsilon;-Filterung (Kanten &ge; &epsilon;) + Clique-Komplex &uuml;ber &epsilon; von 1&rarr;0
+  ergibt eine Filtration mit persistenter Homologie:</p>
+  <div class="math">
+    <div class="mrow">&beta;&#8321;(&epsilon;) = E(&epsilon;) &minus; V + C(&epsilon;) &nbsp;(cyclomatic); &nbsp; &tau; = &epsilon;_death &minus; &epsilon;_birth</div>
+    <div class="mrow">proj_k(x) = (&lang;x, cos(w_k&middot;)&rang;, &lang;x, sin(w_k&middot;)&rang;), &nbsp; w_k = 2&pi;k/P</div>
+    <div class="mnote">Logit(c) = &Sigma; &alpha;_k cos(w_k(a+b&minus;c)) &rarr; max bei c &equiv; a+b (mod P) &mdash; konstruktive
+    Interferenz: alle Key-Frequenzen interferieren bei der korrekten Antwort konstruktiv (cos 0 = 1), sonst
+    destruktiv. Der fragilste Token = der, wo der Zyklus am wenigsten persistiert.</div>
+  </div>
+  <p><strong>Fusion:</strong> beides ist die <em>funktionsentscheidende Abweichung vom glatten Regime</em> &mdash;
+  lokal der Knick/Rest (A), global der geschlossene Loop (B). <em>Fusionssatz:</em> je weiter ein Punkt in seiner
+  Zelle, desto eindeutiger das Ergebnis; je n&auml;her an der Grenze, desto &bdquo;leiser&ldquo; das Ger&uuml;st und
+  desto &bdquo;lauter&ldquo; der Rest (A) / desto <em>fragiler</em> der Zyklus (B).</p>
+
+  <h3>4 &middot; Die Robustheits-Achse &mdash; zwei Gesichter, ein Signal-gegen-Rauschen-Regler <span class="pill a">A</span><span class="pill b">B</span></h3>
+  <p><strong>A's Gesichter:</strong> die Rest-Gr&ouml;&szlig;e <span class="m">&mdash;r&mdash;</span> (funktional, sagt KL),
+  der Quantisierungs-Boden (prinzipbedingt, <span class="m">(1/N)^0.1</span>) und die Kapazit&auml;ts-L&uuml;cke
+  (kontingent). <strong>B's Gesichter:</strong> die punktuelle Varianz
+  <span class="m">var*(x)=k(x,x)&minus;k(x,X)&sup1;(K+&sigma;&#8345;&sup2;I)&minus;&sup1;k(X,x)</span> (gegen Rauschen
+  <span class="m">&sigma;&#8345;</span>) und die zyklische Persistenz <span class="m">&tau;</span> (gegen Schwelle
+  <span class="m">&epsilon;</span>). <span class="m">&sigma;&#8345;</span> (A) und <span class="m">&epsilon;</span> (B)
+  sind zwei Stellr&auml;der &uuml;ber <em>einer</em> Signal-gegen-Rauschen-Achse. A meldet den Peak (eine Windung,
+  ein Wert), B das ganze Persistenzdiagramm &mdash; A ist ein 1-dimensionaler Schnitt von B.</p>
+
+  <h3>5 &middot; Zwei Grenzen &amp; die proberbare Schicht <span class="pill a">A</span><span class="pill b">B</span></h3>
+  <p><strong>Irreduzierbarer Boden (A):</strong> um den Fehler der Wort-Voronoi-Zerlegung zu <em>halbieren</em>,
+  braucht man in ~20 d etwa <strong>1000&times; so viele W&ouml;rter</strong> (<span class="m">Fehler &prop;
+  (1/N)^(2/20) &asymp; (1/N)^0.1</span>). Dazu die kontingente Kapazit&auml;ts-L&uuml;cke: exponentielle Decke
+  <span class="m">(2w)^L</span> (Telgarsky) vs. Betriebspunkt &mdash; 10 Schichten &agrave; 3 &rarr;
+  <span class="m">6&sup1;&sup0; &asymp; 60 Mio.</span> St&uuml;cke, trainierte Netze nutzen aber nur einen d&uuml;nnen
+  Betriebspunkt (Zufalls-Init linear in der Tiefe, Hanin &amp; Rolnick). <strong>Proberbare Schicht (B):</strong> der
+  BO-Loop &mdash; Acquisition <span class="m">EI(x)=(&mu;&minus;f_best)&Phi;(z)+&sigma;&phi;(z)</span>,
+  <span class="m">UCB(x)=&mu;+&beta;&sigma;</span>, <span class="m">POI(x)=&Phi;(z)</span>
+  (z=(&mu;&minus;f_best)/&sigma;); Reparameterization <span class="m">&xi;=&mu;+&sigma;&epsilon;</span>;
+  SAA-Konvergenz (Plain-MC O(1/&radic;N), Sobol-QMC O(1/N) &mdash; &bdquo;64 samples&ldquo; &asymp; 4096 MC).
+  <em>Evaluate &#9733;</em> f&uuml;gt am fragilsten Token eine Beobachtung ein &rarr; lokaler Fog schrumpft, Loop
+  repariert.</p>
+
+  <h3>6 &middot; Drei d&uuml;nne Ebenen (A) + Topologie &amp; Fourier (B) <span class="pill a">A</span><span class="pill b">B</span></h3>
+  <p>(a) <em>Update-Unterraum</em> (A: 1&ndash;8 Singul&auml;rvektoren); (b) <em>intrinsische Mannigfaltigkeit</em>
+  (~20 d, A/B); (c) <em>Attention-Projektion</em> (64 d/Head &rarr; 2D, A/B); plus (B) der <em>persistente 1-Zyklus /
+  Fourier-Modus k</em> (die Windung). Das daten-gefittete MLL-lengthscale (B's A-Arm) ist genau die <em>Windung,
+  deren Persistenz die Daten realisieren</em> (B) &mdash; der richtige <span class="m">k</span> ist nicht von Hand
+  gesetzt, sondern <span class="m">argmax|DFT|</span> / der Persistenz-Peak. Sie nesten sich (Update bewegt den
+  Inhalt; Attention projiziert ihn; der Fourier-Modus windet den Zyklus) &mdash; der nominell hohe Raum bleibt
+  gr&ouml;&szlig;tenteils ungenutzt: A's &bdquo;Kapazit&auml;t vs. Nutzung&ldquo;, angewandt auf die
+  Repr&auml;sentation.</p>
+
+  <div class="note"><b>Fazit f&uuml;r die n&auml;chste Runde:</b> Ein trainiertes Modell = <strong>eins: ein
+  d&uuml;nnes, kernel-gewichtetes, lokal-glattes Feld</strong> (A: T=A(x)&middot;x / Distanz-Attention; B:
+  GP/RBF-Surrogat + kernel-gewichteter Simplex-1-Ger&uuml;st). Gelesen in <strong>zwei Modi</strong>
+  (weich/punktweise = Scaffold + &mu;&plusmn;var; scharf/topologisch = Rest/Knick + 1-Zyklus &plusmn; &tau;). Sein
+  <strong>fragiler &Uuml;bergang</strong> &mdash; A's Rest/Knick (lokale Singularit&auml;t, sagt KL) und B's fragiles
+  Token / 1-Zyklus (globale Topologie) &mdash; tr&auml;gt Bedeutung und Unsicherheit. Die <strong>Robustheits-
+  Achse</strong> (A: Rest+Boden; B: Varianz+Persistenz) ist ein Signal-gegen-Rauschen-Regler (&sigma;&#8345;/&epsilon;),
+  der die fragilen Regionen markiert; <strong>deskriptiv</strong> gelesen beschreibt sie das Modell (zwei Grenzen,
+  drei d&uuml;nne Ebenen), <strong>instrumental</strong> gelesen w&auml;hlt sie die n&auml;chste teure Probe
+  (Akquisition) &mdash; bis B's Fog an A's irreduzierbaren Boden sto&szlig;t.</div>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="n">5</span>Interaktive Visualisierung</h2>
+  <p>Der fusionierte Kern, lebendig: <em>ein</em> kernel-gewichteter Token-Ring, der zugleich
+  <strong>A's d&uuml;nnes Ger&uuml;st</strong> (die weich geblendete Scaffold-Farbe, goldene <em>Knick-/Rest-</em>
+  Highlights = die lokalen Singularit&auml;ten) und <strong>B's 1-Zyklus</strong> (&epsilon;-gefilterte
+  Kernel-Kanten, <span class="m">&beta;&#8321;</span>, Persistenz <span class="m">&tau;</span>, lila
+  <em>Varianz-Fog</em>) ist. Der rosa <strong>&#9733;</strong> markiert das <em>fragilste Token</em> &mdash; zugleich
+  A's n&auml;chster Knick und B's Acquisition-Ziel. Erh&ouml;he <strong>Rauschen &sigma;&#8345;</strong>: A's Fog
+  <em>und</em> B's Persistenz degradieren <em>zusammen</em> (eine Achse, zwei Gesichter). <strong>Fit &sigma;
+  (MLL)</strong> fittet die Kernbreite datengetrieben = die realisierte Persistenz-Peak-Windung.
+  <strong>Evaluate &#9733;</strong> f&uuml;gt am fragilsten Token eine Beobachtung ein &rarr; lokaler Fog schrumpft
+  <em>und</em> lokaler Rest wird aufgel&ouml;st (B's Repair). Unten: DFT-Spektrum (Peak bei k) +
+  Persistenzband.</p>
+
+  <div class="viz">
+    <h4>Kernel-gewichtetes Feld: Ger&uuml;st (A) &times; Zyklus (B) &times; fragiler &Uuml;bergang</h4>
+    <p class="dsub">Kernbreite &sigma;, Rauschen &sigma;&#8345;, Schwelle &epsilon; &amp; Windung k regeln. Gold =
+    Knick/Rest (A), lila = Fog (A/B-Varianz), &nbsp;rosa&#9733; = fragilste Probe. Kanten &ge; &epsilon; = Zyklus lebt
+    (B).</p>
+    <canvas id="loopCanvas"></canvas>
+    <canvas id="specCanvas"></canvas>
+    <div class="leg">
+      <span><i style="background:var(--acc)"></i> Scaffold / weiche Lesung (A)</span>
+      <span><i style="background:var(--acc3)"></i> Zyklus-Kanten &ge; &epsilon; (B)</span>
+      <span><i style="background:var(--gold)"></i> Knick / Rest (A's scharfer &Uuml;bergang)</span>
+      <span><i style="background:var(--fog)"></i> Fog = Varianz (A/B)</span>
+      <span><i style="background:var(--acc2)"></i> &#9733; fragilste Probe / n&auml;chste Probe (B's Akquisition)</span>
+      <span><i style="background:var(--acc5,#6ee88a)"></i> beobachtet (Evaluate)</span>
+    </div>
+    <div class="ro">
+      <div class="box"><div class="k">k &middot; Windung/Modus</div><div class="v" id="roK">2</div></div>
+      <div class="box"><div class="k">&beta;&#8321; &middot; Zyklus lebt</div><div class="v rose" id="roBetti">1</div></div>
+      <div class="box amber"><div class="k">&tau; &middot; Persistenz</div><div class="v" id="roTau">&ndash;</div></div>
+      <div class="box"><div class="k">&sigma; &middot; Kernbreite</div><div class="v" id="roSigma">0.160</div></div>
+      <div class="box gold"><div class="k">max Rest |Q&minus;S| (A)</div><div class="v" id="roRes">&ndash;</div></div>
+      <div class="box fog"><div class="k">&#9733; fragil @ (A/B)</div><div class="v" id="roFrag">&ndash;</div></div>
+      <div class="box"><div class="k">SNR &middot; |DFT|-Peak</div><div class="v" id="roSNR">&ndash;</div></div>
+    </div>
+    <div class="ctl"><div class="ctl-lab"><span>Fourier-Modus / Windungszahl k (B: &bdquo;welcher Zyklus&ldquo;)</span><b id="valK">2</b></div>
+      <input type="range" id="ctlK" min="1" max="8" step="1" value="2"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Kernbreite &sigma; / lengthscale &ell; (A) &mdash; Fit-Button = MLL (datengefitet)</span><b id="valSigma">0.160</b></div>
+      <input type="range" id="ctlSigma" min="5" max="50" step="1" value="16"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Rauschen &sigma;&#8345; (A's Fog <em>und</em> B's &tau; degradieren zugleich &mdash; eine Achse)</span><b id="valSigmaN">0.012</b></div>
+      <input type="range" id="ctlSigmaN" min="0" max="50" step="1" value="12"></div>
+    <div class="ctl"><div class="ctl-lab"><span>Schwelle &epsilon; (B's Filtration des Zyklus)</span><b id="valEps">0.45</b></div>
+      <input type="range" id="ctlEps" min="0" max="100" step="1" value="45"></div>
+    <div class="btnrow">
+      <button id="btnFit" type="button">&#9672; Fit &sigma; (MLL)</button>
+      <button id="btnEval" type="button">&#9733; Evaluate (fragilste Probe)</button>
+      <button id="btnFilt" type="button">&#9654; &epsilon;-Filtration animieren</button>
+      <button id="btnReset" type="button">&#8634; Reset</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="prov">
+    <a href="../2/r2-023.html">
+      <div class="t">A &middot; ../2/r2-023.html</div>
+      <div class="d">R2-Fusion 023 &bdquo;N&auml;chste-Nachbar auf dem linearen Ger&uuml;st&ldquo; (r1-047 &times; r1-010):
+      Ein trainiertes Modell = N&auml;chste-Nachbar-Maschine auf einem d&uuml;nnen, lokal-linearen
+      Distanz-Ger&uuml;st; der Schicht-Update zerf&auml;llt in tokenweisen Anteil <span class="m">T=A(x)x</span> +
+      funktionsentscheidenden Rest <span class="m">r</span> (sagt KL, &rho;&asymp;0.8&ndash;0.9), lebt in 1&ndash;8
+      Singul&auml;rvektoren; weiche Attention (Spearman &asymp; &minus;0.94) + harte Wort-Entscheidung an der
+      Voronoi-Grenze; zwei Grenzen (kontingente Kapazit&auml;ts-L&uuml;cke + prinzipbedingter Quantisierungs-Boden,
+      Fehler &prop; (1/N)^0.1); drei d&uuml;nne Ebenen (Update, intrinsisch, Attention-Projektion).</div>
+    </a>
+    <a href="../2/r2-021.html">
+      <div class="t">B &middot; ../2/r2-021.html</div>
+      <div class="d">R2-Fusion 021 &bdquo;Das Kernel-Feld ist der persistente 1-Zyklus&ldquo; (r1-048 &times; r1-041):
+      Aus sparsamen Proben ein kernel-gewichtetes Objekt (GP/RBF-Surrogat Mean &plusmn; Varianz, lengthscale via
+      Marginal likelihood; BO-Loop mit EI/UCB/POI, SAA/QMC) &mdash; das <em>selbe</em> Gaussian macht den
+      Attention-Graphen zu einem kernel-gewichteten 1-Ger&uuml;st, dessen Loops persistente Homologie (&beta;&#8321;,
+      &tau;) liest; Varianzband (Fog) und Persistenzband sind zwei Gesichter einer Robustheits-Achse
+      (&sigma;&#8345;/&epsilon;); fragile Regionen zeigen, wo die n&auml;chste teure Probe hingeh&ouml;rt.</div>
+    </a>
+  </div>
+  <footer>Fusion 014 &middot; Runde 3 &middot; Alle Daten inline, keine Netz-Fetches. Visualisierung: reines
+  Canvas, theme-aware (CSS-Variablen), keine Konsolenfehler.</footer>
+</section>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+  function byId(id){return document.getElementById(id);}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+  function cssVar(n){return (getComputedStyle(document.documentElement).getPropertyValue(n)||'').trim();}
+  function hexToRgb(hex){hex=(hex||"").trim().replace(/^#/,"");if(hex.length===3){hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];}var n=parseInt(hex,16);if(isNaN(n)){return [200,150,40];}return [(n>>16)&255,(n>>8)&255,n&255];}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function lerpRgb(c1,c2,t){return [Math.round(lerp(c1[0],c2[0],t)),Math.round(lerp(c1[1],c2[1],t)),Math.round(lerp(c1[2],c2[2],t))];}
+
+  var rnd=mulberry32(20260410);
+  function gauss(){var u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+  var N=64, AMP=0.16;
+  var K=2, SIGMA=0.16, SIGMA_N=0.012, EPS=0.45;
+  var fitLS=false, epsAnim=false, epsAnimStart=0;
+  var NOISE=[], BV=[];
+  for(var i0=0;i0<N;i0++){NOISE.push([gauss(),gauss()]);}
+  var K0=Math.floor(N*0.28), K1=Math.floor(N*0.72);
+  for(var i1=0;i1<N;i1++){
+    var base=0.5+0.26*Math.sin(2*Math.PI*2*i1/N);
+    if(i1>=K0 && i1<K0+4){base+=0.45;}
+    if(i1>=K1 && i1<K1+3){base-=0.5;}
+    BV.push(clamp(base,0,1));
+  }
+
+  var pts=[], S=[], w=[], vars=[], res=[], spec=[];
+  var obs=[];
+  var betti1=0, tau=0, peakFreq=K, peakSNR=0, fragIdx=0, maxRes=0;
+  var loopCanvas, loopCtx, specCanvas, specCtx;
+  var roK,roBetti,roTau,roSigma,roRes,roFrag,roSNR;
+  var elK,elSigma,elSigmaN,elEps, valK,valSigma,valSigmaN,valEps;
+  var btnFit,btnEval,btnFilt,btnReset;
+  var COL={};
+
+  function angDist(a,b){var d=Math.abs(a-b)%(2*Math.PI);return Math.min(d,2*Math.PI-d);}
+  function damp(n){return 1/(1+2*(obs[n]||0));}
+
+  function readColors(){
+    COL={
+      plotBg:hexToRgb(cssVar('--plot-bg')),
+      ink:cssVar('--ink'), muted:cssVar('--muted'), faint:cssVar('--faint'),
+      acc:hexToRgb(cssVar('--acc')), acc2:hexToRgb(cssVar('--acc2')), acc3:hexToRgb(cssVar('--acc3')),
+      gold:hexToRgb(cssVar('--gold')), fog:hexToRgb(cssVar('--fog')),
+      node:hexToRgb(cssVar('--acc')), nodeDim:hexToRgb(cssVar('--faint')),
+      best:[110,232,138]
+    };
+  }
+
+  function idealPoint(n){
+    n=((n%N)+N)%N;
+    var th=2*Math.PI*n/N;
+    var rad=1+AMP*Math.cos(2*Math.PI*K*n/N);
+    return {x:rad*Math.cos(th), y:rad*Math.sin(th), th:th};
+  }
+
+  function recompute(){
+    var n;
+    pts=[];
+    for(n=0;n<N;n++){var ip=idealPoint(n), dp=damp(n);
+      pts.push({x:ip.x+NOISE[n][0]*SIGMA_N*dp, y:ip.y+NOISE[n][1]*SIGMA_N*dp, th:ip.th});}
+    S=[];
+    var sa=SIGMA*1.25, sa2=2*sa*sa;
+    for(n=0;n<N;n++){var num=0,den=0;
+      for(var m=0;m<N;m++){var ad=angDist(pts[n].th,pts[m].th);var wgt=Math.exp(-ad*ad/sa2);num+=wgt*BV[m];den+=wgt;}
+      S.push(den>0?num/den:BV[n]);}
+    w=[];
+    for(n=0;n<N;n++){var a=pts[n],b=pts[(n+1)%N];
+      var d=Math.hypot(a.x-b.x,a.y-b.y);
+      w.push(Math.exp(-(d*d)/(2*SIGMA*SIGMA)));}
+    res=[]; maxRes=0;
+    for(n=0;n<N;n++){var r=Math.abs(BV[n]-S[n])*damp(n);res.push(r);if(r>maxRes)maxRes=r;}
+    var sig=[];for(n=0;n<N;n++){sig.push(Math.hypot(pts[n].x,pts[n].y)-1);}
+    var half=N>>1; spec=[];
+    for(var f=0;f<=half;f++){var re=0,im=0;
+      for(n=0;n<N;n++){var ang=2*Math.PI*f*n/N;re+=sig[n]*Math.cos(ang);im-=sig[n]*Math.sin(ang);}
+      spec.push(Math.hypot(re,im)/N);}
+    peakFreq=1;
+    for(f=2;f<=half;f++){if(spec[f]>spec[peakFreq])peakFreq=f;}
+    var floor=0,cnt=0;
+    for(f=1;f<=half;f++){if(f===peakFreq)continue;floor+=spec[f];cnt++;}
+    floor=cnt?floor/cnt:0;
+    peakSNR=(spec[peakFreq]>1e-6&&floor>1e-9)?spec[peakFreq]/floor:(spec[peakFreq]>1e-6?999:0);
+    tau=1;for(n=0;n<N;n++){if(w[n]<tau)tau=w[n];}
+    var alive=0;for(n=0;n<N;n++){if(w[n]>=EPS)alive++;}
+    betti1=(alive===N)?1:0;
+    vars=[]; var fragV=-1;
+    var noiseT=clamp(SIGMA_N/0.03,0,1);
+    for(n=0;n<N;n++){
+      var cov=(w[n]+w[(n-1+N)%N])/2; var gap=1-cov;
+      var vn=clamp(0.55*gap+0.45*noiseT*damp(n),0,1); vars.push(vn);
+      var frag=0.4*vn+0.35*clamp(res[n]*3,0,1)+0.25*(1-Math.min(w[n],w[(n-1+N)%N]));
+      if(frag>fragV){fragV=frag;fragIdx=n;}
+    }
+    updateReadouts();
+  }
+
+  function invertWithLogDet(M){
+    var n=M.length,a=[],I=[],i,j,c;
+    for(i=0;i<n;i++){a.push(M[i].slice());var row=new Array(n);for(j=0;j<n;j++)row[j]=(i===j?1:0);I.push(row);}
+    var logdet=0;
+    for(c=0;c<n;c++){
+      var pr=c;for(var r=c+1;r<n;r++)if(Math.abs(a[r][c])>Math.abs(a[pr][c]))pr=r;
+      if(Math.abs(a[pr][c])<1e-12)return null;
+      if(pr!==c){var tt=a[pr];a[pr]=a[c];a[c]=tt;tt=I[pr];I[pr]=I[c];I[c]=tt;}
+      var piv=a[c][c];logdet+=Math.log(Math.abs(piv));
+      for(j=0;j<n;j++){a[c][j]/=piv;I[c][j]/=piv;}
+      for(var r2=0;r2<n;r2++){if(r2===c)continue;var f=a[r2][c];if(f===0)continue;
+        for(j=0;j<n;j++){a[r2][j]-=f*a[c][j];I[r2][j]-=f*I[c][j];}}
+    }
+    return {inv:I,logdet:logdet};
+  }
+  function matVec(M,v){var n=M.length,o=new Array(n);for(var i=0;i<n;i++){var s=0;for(var j=0;j<n;j++)s+=M[i][j]*v[j];o[i]=s;}return o;}
+
+  function fitSigma(){
+    var n=N,f;
+    var sig=[];for(f=0;f<n;f++)sig.push(Math.hypot(pts[f].x,pts[f].y)-1);
+    var m=0;for(f=0;f<n;f++)m+=sig[f];for(f=0;f<n;f++)sig[f]-=m/n;
+    var angles=[];for(f=0;f<n;f++)angles.push(2*Math.PI*f/N);
+    var best=-1e18,bl=SIGMA;
+    for(var l=0.05;l<=0.6101;l+=0.012){
+      var Kk=new Array(n);
+      for(var i=0;i<n;i++){Kk[i]=new Array(n);
+        for(var j=0;j<n;j++){var dd=angDist(angles[i],angles[j]);Kk[i][j]=Math.exp(-(dd*dd)/(2*l*l));if(i===j)Kk[i][j]+=0.02;}}
+      var resIn=invertWithLogDet(Kk);if(!resIn)continue;
+      var Ky=matVec(resIn.inv,sig),a=0;
+      for(f=0;f<n;f++)a+=sig[f]*Ky[f];
+      var mll=-0.5*a-0.5*resIn.logdet-0.5*n*Math.log(2*Math.PI);
+      if(mll>best){best=mll;bl=l;}
+    }
+    SIGMA=bl;fitLS=true;
+    if(elSigma)elSigma.value=Math.round(SIGMA*100);
+    if(valSigma)valSigma.textContent=SIGMA.toFixed(3);
+    recompute();
+  }
+
+  function updateReadouts(){
+    if(roK)roK.textContent=K;
+    if(roBetti)roBetti.textContent=betti1;
+    if(roTau)roTau.textContent=tau.toFixed(3);
+    if(roSigma)roSigma.textContent=SIGMA.toFixed(3)+(fitLS?' (fit)':'');
+    if(roRes)roRes.textContent=Math.round(maxRes*100)+'%';
+    if(roFrag)roFrag.textContent=fragIdx;
+    if(roSNR)roSNR.textContent=(peakSNR>900?'\u221e':peakSNR.toFixed(1));
+  }
+
+  function drawStar(cx,cy,size,color){
+    loopCtx.save();loopCtx.translate(cx,cy);loopCtx.beginPath();loopCtx.fillStyle=color;
+    for(var i=0;i<5;i++){var a=(i*4*Math.PI)/5-Math.PI/2;var X=Math.cos(a)*size,Y=Math.sin(a)*size;if(i===0)loopCtx.moveTo(X,Y);else loopCtx.lineTo(X,Y);}
+    loopCtx.closePath();loopCtx.fill();loopCtx.restore();
+  }
+
+  function drawLoop(now){
+    if(!loopCtx)return;
+    var W=loopCanvas.clientWidth,H=loopCanvas.clientHeight;
+    if(W<2||H<2)return;
+    loopCtx.clearRect(0,0,W,H);
+    var cx=W/2,cy=H/2,R=Math.min(W,H)*0.36,n,X,Y;
+    loopCtx.strokeStyle=COL.faint;loopCtx.lineWidth=1;loopCtx.setLineDash([3,6]);
+    loopCtx.beginPath();loopCtx.arc(cx,cy,R,0,Math.PI*2);loopCtx.stroke();loopCtx.setLineDash([]);
+    loopCtx.lineCap='round';
+    for(n=0;n<N;n++){
+      var pa=pts[n],pb=pts[(n+1)%N];
+      var sv=(S[n]+S[(n+1)%N])/2;
+      var cc=lerpRgb(COL.acc,COL.acc2,clamp(sv,0,1));
+      loopCtx.strokeStyle='rgba('+cc[0]+','+cc[1]+','+cc[2]+',0.55)';
+      loopCtx.lineWidth=13;
+      loopCtx.beginPath();loopCtx.moveTo(cx+pa.x*R,cy+pa.y*R);loopCtx.lineTo(cx+pb.x*R,cy+pb.y*R);loopCtx.stroke();
+    }
+    loopCtx.lineCap='butt';
+    for(n=0;n<N;n++){
+      var on=w[n]>=EPS;
+      var a2=pts[n],b2=pts[(n+1)%N];
+      loopCtx.beginPath();loopCtx.moveTo(cx+a2.x*R,cy+a2.y*R);loopCtx.lineTo(cx+b2.x*R,cy+b2.y*R);
+      loopCtx.strokeStyle=on?'rgba('+COL.acc3[0]+','+COL.acc3[1]+','+COL.acc3[2]+',0.95)':'rgba('+COL.faint[0]+','+COL.faint[1]+','+COL.faint[2]+',0.5)';
+      loopCtx.lineWidth=on?(1+3*w[n]):1;loopCtx.stroke();
+    }
+    for(n=0;n<N;n++){
+      X=cx+pts[n].x*R;Y=cy+pts[n].y*R;var vn=vars[n];
+      if(vn>0.03){loopCtx.globalAlpha=vn*0.42;loopCtx.fillStyle='rgba('+COL.fog[0]+','+COL.fog[1]+','+COL.fog[2]+',1)';
+        loopCtx.beginPath();loopCtx.arc(X,Y,8+16*vn,0,Math.PI*2);loopCtx.fill();loopCtx.globalAlpha=1;}
+    }
+    for(n=0;n<N;n++){
+      if(res[n]>0.08){
+        var gA=0.4+clamp(res[n],0,1)*0.6;
+        loopCtx.strokeStyle='rgba('+COL.gold[0]+','+COL.gold[1]+','+COL.gold[2]+','+gA.toFixed(3)+')';
+        loopCtx.lineWidth=1.5+res[n]*3;
+        loopCtx.beginPath();loopCtx.arc(cx+pts[n].x*R,cy+pts[n].y*R,6+res[n]*12,0,Math.PI*2);loopCtx.stroke();
+      }
+    }
+    var tm=Math.floor((now*0.02)%N);
+    for(n=0;n<N;n++){
+      X=cx+pts[n].x*R;Y=cy+pts[n].y*R;
+      var edgeOn=(w[n]>=EPS||w[(n-1+N)%N]>=EPS);
+      var r=(n===tm?6:3.5);
+      var tc=(edgeOn?COL.node:COL.nodeDim);
+      loopCtx.beginPath();loopCtx.arc(X,Y,r,0,Math.PI*2);
+      loopCtx.fillStyle='rgba('+tc[0]+','+tc[1]+','+tc[2]+',1)';loopCtx.fill();
+      if(obs[n]>0){loopCtx.beginPath();loopCtx.arc(X,Y,r+3.5,0,Math.PI*2);loopCtx.lineWidth=2;
+        loopCtx.strokeStyle='rgba(110,232,138,0.95)';loopCtx.stroke();}
+    }
+    var fp=pts[fragIdx],fX=cx+fp.x*R,fY=cy+fp.y*R;
+    drawStar(fX,fY,9,'rgb('+COL.acc2[0]+','+COL.acc2[1]+','+COL.acc2[2]+')');
+    loopCtx.fillStyle=COL.ink;loopCtx.font='12px ui-monospace,monospace';loopCtx.textAlign='left';
+    loopCtx.fillText('k = '+K,12,22);
+    loopCtx.fillText('\u03b21 = '+betti1+'  \u03c4 = '+tau.toFixed(3),12,40);
+    loopCtx.fillText('\u03c3 = '+SIGMA.toFixed(3)+(fitLS?' (fit)':'')+'   \u03b5 = '+EPS.toFixed(2),12,58);
+    loopCtx.fillText('max Rest = '+Math.round(maxRes*100)+'%   \u2605 fragil @ '+fragIdx,12,76);
+  }
+
+  function drawSpec(){
+    if(!specCtx)return;
+    var W=specCanvas.clientWidth,H=specCanvas.clientHeight;
+    if(W<2||H<2)return;
+    specCtx.clearRect(0,0,W,H);
+    var top=20,bot=H-24,ch=bot-top;
+    var leftW=W*0.42,rightX=W*0.50,rightW=W*0.46;
+    var maxv=1e-9,f;
+    for(f=0;f<spec.length;f++)if(spec[f]>maxv)maxv=spec[f];
+    var bw=leftW/spec.length;
+    for(f=0;f<spec.length;f++){
+      var h=ch*(spec[f]/maxv),x=14+f*bw,y=bot-h;
+      specCtx.fillStyle=(f===peakFreq)?'rgb('+COL.acc3[0]+','+COL.acc3[1]+','+COL.acc3[2]+')':(f===0?'rgba('+COL.faint[0]+','+COL.faint[1]+','+COL.faint[2]+',1)':'rgb('+COL.acc2[0]+','+COL.acc2[1]+','+COL.acc2[2]+')');
+      specCtx.fillRect(x,y,Math.max(1,bw-1.5),h);
+    }
+    specCtx.fillStyle=COL.muted;specCtx.font='11px ui-monospace,monospace';specCtx.textAlign='left';
+    specCtx.fillText('DFT |rad-1|  Peak \u2192 k = '+peakFreq,14,13);
+    var rx=rightX,rw=rightW,ry=top,rh=ch;
+    specCtx.fillStyle=COL.muted;specCtx.fillText('\u03b21(\u03b5) \u2014 Persistenz des 1-Zyklusses',rx,13);
+    var aliveW=rw*clamp(tau,0,1);
+    specCtx.globalAlpha=0.26;specCtx.fillStyle='rgb('+COL.acc[0]+','+COL.acc[1]+','+COL.acc[2]+')';specCtx.fillRect(rx,ry,aliveW,rh);specCtx.globalAlpha=1;
+    specCtx.strokeStyle='rgb('+COL.acc[0]+','+COL.acc[1]+','+COL.acc[2]+')';specCtx.lineWidth=2;
+    specCtx.beginPath();specCtx.moveTo(rx,ry);specCtx.lineTo(rx+aliveW,ry);specCtx.lineTo(rx+aliveW,ry+rh);specCtx.lineTo(rx+rw,ry+rh);specCtx.stroke();
+    var ex=rx+rw*clamp(EPS,0,1);
+    specCtx.strokeStyle='rgb('+COL.acc2[0]+','+COL.acc2[1]+','+COL.acc2[2]+')';specCtx.setLineDash([4,4]);specCtx.lineWidth=1.5;
+    specCtx.beginPath();specCtx.moveTo(ex,ry);specCtx.lineTo(ex,ry+rh);specCtx.stroke();specCtx.setLineDash([]);
+    specCtx.fillStyle='rgb('+COL.acc2[0]+','+COL.acc2[1]+','+COL.acc2[2]+')';specCtx.fillText('\u03b5='+EPS.toFixed(2),ex+4,ry+12);
+    specCtx.fillStyle=COL.faint;specCtx.font='10px ui-monospace,monospace';
+    specCtx.fillText('0',rx,ry+rh+15);specCtx.fillText('1',rx+rw-6,ry+rh+15);specCtx.fillText('\u03b5 \u2192',rx+rw/2-10,ry+rh+15);
+    specCtx.fillText('\u03c4 = '+tau.toFixed(3),rx,ry-4);
+  }
+
+  function frame(now){
+    try{
+      if(epsAnim){
+        var t=(now-epsAnimStart)/3000;if(t>=1){t=1;stopEpsAnim();}
+        EPS=1-0.98*t;
+        if(elEps)elEps.value=Math.round(EPS*100);
+        if(valEps)valEps.textContent=EPS.toFixed(2);
+        var alive=0;for(var nn=0;nn<N;nn++){if(w[nn]>=EPS)alive++;}
+        betti1=(alive===N)?1:0;updateReadouts();
+      }
+      drawLoop(now);
+      drawSpec();
+    }catch(e){}
+    requestAnimationFrame(frame);
+  }
+
+  function onK(){K=parseInt(elK.value,10)||2;if(valK)valK.textContent=K;recompute();}
+  function onSigma(){SIGMA=parseFloat(elSigma.value,10)/100;if(!(SIGMA>0))SIGMA=0.16;fitLS=false;if(valSigma)valSigma.textContent=SIGMA.toFixed(3);recompute();}
+  function onSigmaN(){SIGMA_N=parseInt(elSigmaN.value,10)/1000;if(valSigmaN)valSigmaN.textContent=SIGMA_N.toFixed(3);recompute();}
+  function onEps(){stopEpsAnim();EPS=parseInt(elEps.value,10)/100;if(valEps)valEps.textContent=EPS.toFixed(2);var alive=0;for(var nn=0;nn<N;nn++){if(w[nn]>=EPS)alive++;}betti1=(alive===N)?1:0;updateReadouts();}
+  function stopEpsAnim(){epsAnim=false;if(btnFilt)btnFilt.classList.remove('on');}
+  function toggleEpsAnim(){if(epsAnim){stopEpsAnim();}else{epsAnim=true;epsAnimStart=performance.now();if(btnFilt)btnFilt.classList.add('on');}}
+  function evaluateStar(){obs[fragIdx]=(obs[fragIdx]||0)+1;recompute();}
+  function reset(){
+    K=2;SIGMA_N=0.012;SIGMA=0.16;EPS=0.45;fitLS=false;stopEpsAnim();
+    obs=[];for(var i=0;i<N;i++)obs.push(0);
+    if(elK)elK.value=K;
+    if(elSigma)elSigma.value=Math.round(SIGMA*100);
+    if(elSigmaN)elSigmaN.value=Math.round(SIGMA_N*1000);
+    if(elEps)elEps.value=Math.round(EPS*100);
+    if(valK)valK.textContent=K;
+    if(valSigma)valSigma.textContent=SIGMA.toFixed(3);
+    if(valSigmaN)valSigmaN.textContent=SIGMA_N.toFixed(3);
+    if(valEps)valEps.textContent=EPS.toFixed(2);
+    recompute();
+  }
+
+  function fit(c){
+    var dpr=window.devicePixelRatio||1;
+    c.width=Math.max(1,Math.floor(c.clientWidth*dpr));
+    c.height=Math.max(1,Math.floor(c.clientHeight*dpr));
+    var ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+    return ctx;
+  }
+
+  function init(){
+    loopCanvas=byId('loopCanvas');specCanvas=byId('specCanvas');
+    if(!loopCanvas||!specCanvas)return;
+    loopCtx=fit(loopCanvas);specCtx=fit(specCanvas);
+    roK=byId('roK');roBetti=byId('roBetti');roTau=byId('roTau');
+    roSigma=byId('roSigma');roRes=byId('roRes');roFrag=byId('roFrag');roSNR=byId('roSNR');
+    elK=byId('ctlK');elSigma=byId('ctlSigma');elSigmaN=byId('ctlSigmaN');elEps=byId('ctlEps');
+    valK=byId('valK');valSigma=byId('valSigma');valSigmaN=byId('valSigmaN');valEps=byId('valEps');
+    btnFit=byId('btnFit');btnEval=byId('btnEval');btnFilt=byId('btnFilt');btnReset=byId('btnReset');
+    if(elK)elK.addEventListener('input',onK);
+    if(elSigma)elSigma.addEventListener('input',onSigma);
+    if(elSigmaN)elSigmaN.addEventListener('input',onSigmaN);
+    if(elEps)elEps.addEventListener('input',onEps);
+    if(btnFit)btnFit.addEventListener('click',fitSigma);
+    if(btnEval)btnEval.addEventListener('click',evaluateStar);
+    if(btnFilt)btnFilt.addEventListener('click',toggleEpsAnim);
+    if(btnReset)btnReset.addEventListener('click',reset);
+    var tb=byId('themeBtn');
+    if(tb)tb.addEventListener('click',function(){document.documentElement.classList.toggle('dark');readColors();});
+    if(window.MutationObserver){
+      new MutationObserver(function(){readColors();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    }
+    readColors();
+    reset();
+    window.addEventListener('resize',function(){if(loopCanvas)loopCtx=fit(loopCanvas);if(specCanvas)specCtx=fit(specCanvas);});
+    requestAnimationFrame(frame);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+  else{init();}
+})();
+</script>
+</body>
+</html>

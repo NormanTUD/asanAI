@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 006 — Die selbst-ähnliche Maschine: σ-Geometrie-Zelle (B) × RG-Low-Rank-Fluss (A)</title>
+<style>
+  :root{
+    --bg:#faf8f1; --fg:#1c1b18; --muted:#5c574c; --card:#ffffff; --card2:#f2ede1;
+    --border:#e3dcc9; --grid:#00000014; --on-accent:#ffffff;
+    --accent:#2b6cb0; --accent2:#7c3aed;
+    --c-relu:#c2410c; --c-sincos:#0e7490; --c-softmax:#a78bfa;
+    --early:#c0564b; --mid:#c77d2f; --late:#2f855a; --outer:#6b46c1;
+  }
+  html.dark{
+    --bg:#0f172a; --fg:#e2e8f0; --muted:#94a3b8; --card:#111c30; --card2:#0b1220;
+    --border:#243449; --grid:#ffffff14; --on-accent:#0b1220;
+    --accent:#58a6ff; --accent2:#d2a8ff;
+    --c-relu:#fbbf24; --c-sincos:#38bdf8; --c-softmax:#a78bfa;
+    --early:#ff7b72; --mid:#ffa657; --late:#7ee787; --outer:#d2a8ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);line-height:1.68;
+    font-family:Georgia,'Times New Roman',serif;transition:background .3s,color .3s}
+  article{max-width:820px;margin:0 auto;padding:26px 20px 90px}
+  .topbar{max-width:820px;margin:0 auto;padding:14px 20px 0;display:flex;justify-content:flex-end}
+  #themeToggle{background:var(--card2);border:1px solid var(--border);color:var(--fg);
+    padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;font-family:system-ui,sans-serif}
+  h1{font-size:1.6rem;line-height:1.3;margin:6px 0 4px;letter-spacing:-.01em}
+  .subtitle{color:var(--muted);font-size:.82rem;margin:0 0 8px;font-family:ui-monospace,monospace}
+  .subtitle b{color:var(--accent);font-weight:600}
+  section{margin-top:34px}
+  h2{font-size:1.16rem;border-left:3px solid var(--accent);padding-left:11px;margin:0 0 10px;line-height:1.3}
+  h2 .num{color:var(--accent2);font-variant-numeric:tabular-nums;margin-right:8px}
+  h3{font-family:system-ui,sans-serif;font-size:1rem;margin:1.1rem 0 .5rem;color:var(--accent)}
+  p{margin:10px 0}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:9px 0}
+  li b,p b{font-weight:600}
+  .vs{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+    padding:.12rem .5rem;border-radius:6px;display:inline-block;margin-right:.35rem;vertical-align:middle}
+  .vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .vs.b{background:color-mix(in srgb,var(--accent2) 22%,transparent);color:var(--accent2)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;
+    padding:.85rem 1.1rem;margin:.85rem 0}
+  .card h3{margin-top:0}
+  .fused{background:color-mix(in srgb,var(--late) 14%,transparent);border-left:4px solid var(--late);
+    border-radius:0 8px 8px 0;padding:.65rem 1rem;margin:.85rem 0}
+  .fused b{color:var(--late)}
+  .anno{font-size:.85rem;color:var(--muted);font-style:italic;margin-top:.4rem}
+  .math{font-family:'Cambria Math','Latin Modern Math',Georgia,serif;background:var(--card2);
+    border:1px solid var(--border);border-radius:6px;padding:10px 14px;display:block;
+    margin:12px 0;overflow-x:auto;font-size:1rem;letter-spacing:.01em;line-height:1.8}
+  .math sub,.math sup{font-size:.72em}
+  .block{display:block;font-family:ui-monospace,monospace;background:var(--card2);
+    border:1px solid var(--border);border-radius:8px;padding:12px 15px;margin:12px 0;
+    overflow-x:auto;line-height:1.85;font-size:.88rem}
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin:1rem 0}
+  th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;background:var(--card2)}
+  .tag{display:inline-block;font-family:system-ui,sans-serif;font-size:.72rem;font-weight:600;
+    padding:.12rem .5rem;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--card)}
+  .controls{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;align-items:center;background:var(--card);
+    border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+  .controls label{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+  .controls input[type=range]{accent-color:var(--accent);width:180px}
+  .ctl-val{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;min-width:2.4em;display:inline-block}
+  .vbtn{background:var(--card2);border:1px solid var(--border);color:var(--fg);
+    padding:6px 12px;border-radius:7px;cursor:pointer;font-size:.82rem;font-family:system-ui,sans-serif}
+  .vbtn.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+  #vcanvas{width:100%;height:430px;display:block;border-radius:10px;background:var(--card2);
+    border:1px solid var(--border)}
+  .readout{font-family:ui-monospace,monospace;font-size:.8rem;background:var(--card2);
+    border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin:.6rem 0;line-height:1.7}
+  .readout b{color:var(--accent)}
+  .vnote{font-size:.8rem;color:var(--muted);margin-top:8px}
+  .prov{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .9rem;border:1px solid var(--border);
+    border-radius:8px;margin-bottom:.7rem;background:var(--card);font-size:.95rem}
+  .prov .k{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;flex:0 0 1.6em;
+    text-align:center;border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+  .prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .prov .k.b{background:color-mix(in srgb,var(--accent2) 22%,transparent);color:var(--accent2)}
+  .prov a{color:var(--accent);font-weight:600;text-decoration:none}
+  .prov a:hover{text-decoration:underline}
+  .foot{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border);
+    color:var(--muted);font-size:.85rem;font-style:italic}
+</style>
+</head>
+<body>
+<div class="topbar"><button id="themeToggle" title="Thema umschalten">Thema</button></div>
+<article>
+
+  <h1>Die selbst-&auml;hnliche Maschine: B's &sigma;-Geometrie-Zelle iteriert A's RG-Low-Rank-Fluss &mdash; was der Kanal verliert, beh&auml;lt die Geometrie</h1>
+  <p class="subtitle">Fusion aus: <b>r2-016.html</b> &#10006; <b>r2-009.html</b> &nbsp;(Round 3)</p>
+
+  <section id="these">
+    <h2><span class="num">1</span>Kernthese der Fusion</h2>
+    <p>Beide R2-Papiere beschreiben <b>dasselbe</b> tiefe Netz als eine Maschine, die <i>durch geometrische Verformung einer Darstellung rechnet</i> &mdash; sie sehen nur <b>unterschiedliche Achsen derselben Maschine</b>. <span class="vs b">B</span>&nbsp;(r2-009) liefert die <b>Mikro-Architektur</b> einer <i>Zelle</i>: eine lineare <b>Probe</b> erzeugt eine Darstellung, eine punktweise <b>Nichtlinearit&auml;t &sigma;</b> (ReLU/sin-cos/Softmax) faltet sie in eine <b>Geometrie</b> (Polyeder/Torus/Becken), und ein <b>linearer Readout</b> (Nearest-Point) decodiert sie &mdash; w&ouml;rtlich &bdquo;Die Nichtlinearit&auml;t ist die Maschine&ldquo;. <span class="vs a">A</span>&nbsp;(r2-016) liefert die <b>Makro-Dynamik</b>: dieselbe Zelle, <i>entlang der Tiefe</i> gestapelt, ist ein <b>Fluss</b> &mdash; jede Schicht ist ein lokaler (Jacobian-)Operator auf dem Residual-Stream, und die Komposition &bdquo;die Tiefe hinab&ldquo; ist eine <b>RG-Koarse-Graining / ein Low-Rank-Kollaps</b>, der feine (hochfrequente, hochdimensionale) Struktur <i>integriert</i> und nur den <b>skalengefesten, abstrakten, holographischen</b> Inhalt beh&auml;lt.</p>
+    <p>Die fusionierte Position: <b>die Tiefe ist die Iterations-Achse einer selbst-&auml;hnlichen Maschine.</b> B's Zelle &bdquo;Probe &rarr; &sigma;-Geometrie &rarr; linearer Readout&ldquo; ist die <b>Einheitszelle</b>; A's RG-/Low-Rank-Fluss ist genau das <b>Iterieren dieser Zelle entlang der Tiefe</b>. Der <b>&sigma;</b>, der die Geometrie erzeugt (B), <i>ist</i> der nicht-normalen / fein-strukturelle Anteil, den A &bdquo;die Tiefe hinab&ldquo; <i>integriert</i>; der <b>Jacobian-Fluss</b> (A) ist der <i>lineare Schatten</i> derselben &sigma;-Geometrie im Tangentialraum. Was A als <b>skalengefesten holographischen Inhalt</b> benennt, der dem Kollaps <i>&uuml;berlebt</i>, <i>ist exakt</i> die <b>stabile &sigma;-Geometrie</b> (Region/Becken/Torus), die B's Readout <i>decodiert</i> &mdash; die Geometrie ist RG-invariant.</p>
+    <p>Und A's drei Tiefenregimes (Early/Mid/Late) und B's Tiefenstufung (fr&uuml;h POS/Syntax, mittel semantisch, sp&auml;t kontextuell) sind <b>dasselbe Tiefenprofil von zwei Seiten</b>: fr&uuml;h = fein &amp; strukturiert, mittel = Hauptrechnung, sp&auml;t = abstrakt/konsolidiert. Der &bdquo;Flaschenhals&ldquo; (A, im Kanal) = B's Readout-Kollaps (viele Dimensionen &rarr; ein Token); der &bdquo;Fortschritt&ldquo; (A, im Inhalt) = B's erhaltene Geometrie (Regionen). Low-Rank-Fluss &perp; holographische Geometrie &mdash; orthogonal, kein Widerspruch.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span>Widerspr&uuml;che zwischen A (r2-016) und B (r2-009)</h2>
+    <p>Die zwei widersprechen sich <strong>nicht direkt</strong> (A &uuml;ber die Tiefe, B &uuml;ber eine Zelle), aber auf <em>dieselben</em> Designfragen nehmen sie <strong>gegenseitig unvereinbare Stellungen</strong> ein. Vier konkrete Spannungen:</p>
+
+    <div class="card">
+      <h3>W1 &middot; Wo &bdquo;die Maschine&ldquo; sitzt &mdash; &sigma;/Nichtlinearit&auml;t (B) vs. Jacobian-Fluss (A)</h3>
+      <p><span class="vs b">B</span> B: &bdquo;Die Nichtlinearit&auml;t ist die Maschine&ldquo; &mdash; <b>&sigma;</b> (ReLU/Softmax/sin-cos) erzeugt die Geometrie und rechnet; lineare Probe und Readout sind Ger&uuml;st.</p>
+      <p><span class="vs a">A</span> A: die Maschine ist der <b>Jacobian-Fluss</b> &mdash; der lokale (lineare) Operator J<sub>&ell;</sub>, und speziell seine <b>nicht-normalen</b> Komponente N, treibt den Kollaps; Schur-Chirurgie: &bdquo;der Kollaps liegt in der nicht-normalen Struktur, nicht im Spektrum&ldquo;.</p>
+      <p class="anno">B lokalisiert die Rechnung in der <i>Nichtlinearit&auml;t</i>, A im <i>linearisierten Fluss</i> (Spektrum + Nicht-Normalit&auml;t) &mdash; zwei unterschiedliche &bdquo;Herzen&ldquo; derselben Maschine.</p>
+    </div>
+
+    <div class="card">
+      <h3>W2 &middot; Was die Maschine &bdquo;produziert&ldquo; &mdash; diskreter Token (B) vs. kontinuierlicher Hologramm-Strang (A)</h3>
+      <p><span class="vs b">B</span> B: das Ende der Maschine ist ein <b>kategorischer Nearest-Point-Readout</b> &rarr; <i>ein einzelner Token</i> (oder eine Relation); der Readout <i>snappt</i> die Geometrie auf einen Punkt.</p>
+      <p><span class="vs a">A</span> A: was dem Tiefenfluss <i>&uuml;berlebt</i>, ist ein <b>kontinuierlicher, skalengefester, holographischer</b> Vektor &uuml;ber &asymp;d Dimensionen (polysem verteilt) &mdash; <i>kein</i> einzelner Punkt.</p>
+      <p class="anno">B's Output ist <i>diskret</i> (Token), A's &Uuml;berlebender ist ein <i>kontinuierlicher</i> &asymp;d-dim Raum &mdash; unterschiedliche Stufen (Ausgabe vs. interne Darstellung).</p>
+    </div>
+
+    <div class="card">
+      <h3>W3 &middot; Die Rolle der Tiefe &mdash; Reduktion/Kompression (A) vs. Organisation/Stufung (B)</h3>
+      <p><span class="vs a">A</span> A: Tiefe ist <b>Reduktion</b> &mdash; Tiefergehen <i>integriert Detail heraus</i> (erank 4096&rarr;&asymp;7, RG-Koarse-Graining); ihre Funktion ist der <i>Verlust</i> der Feinstruktur.</p>
+      <p><span class="vs b">B</span> B: Tiefe ist <b>Stufung</b> &mdash; sie <i>stuft die Absolute-Natur</i> (fr&uuml;h fix POS/Syntax, mittel semantisch, sp&auml;t dynamisch/kontext); K&ouml;pfe parallelisieren pro Layer. Keine Reduktion/Kompression genannt.</p>
+      <p class="anno">Tiefe <i>reduziert</i> (A) oder <i>organisiert</i> (B)? A: Tiefe <i>l&ouml;scht</i> Feines; B: Tiefe <i>arrangiert</i> nach Absolute-Natur.</p>
+    </div>
+
+    <div class="card">
+      <h3>W4 &middot; Der Motor des Routings &mdash; Nicht-Normalit&auml;t des Jacobians (A) vs. Softmax-Kraftfeld (B)</h3>
+      <p><span class="vs a">A</span> A: das Routing wird von der <b>nicht-normalen Komponente N</b> getrieben (deterministisch, strukturell, vom Training installiert); Kontrollparameter = Dosis c (Schur).</p>
+      <p><span class="vs b">B</span> B: das Routing wird vom <b>Softmax &uuml;ber Q&middot;K-Scores</b> getrieben (kompetitiv, normierendes Kraftfeld &rarr; Becken).</p>
+      <p class="anno">Zwei Motoren f&uuml;r dasselbe Routing &mdash; A: strukturelle Nicht-Normalit&auml;t des <i>kumulativen</i> Jacobians; B: normierendes &sigma; (Softmax) als <i>lokales</i> Kraftfeld.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span>Aufl&ouml;sung</h2>
+
+    <div class="fused"><b>R1 &middot; &sigma; (B) und Jacobian (A) sind dasselbe Objekt auf zwei Ebenen.</b>
+    &sigma; ist die <b>Quelle</b> der Geometrie (B); der Jacobian J<sub>&ell;</sub> (A) ist die <b>Linearisierung</b> derselben Abbildung &mdash; sein Spektrum (Rotationen) + Nicht-Normalit&auml;t (N) ist genau die <i>Differentialgeometrie</i> der &sigma;-Verformung. &bdquo;Die Nichtlinearit&auml;t ist die Maschine&ldquo; (B) und &bdquo;der Fluss wird von N getrieben&ldquo; (A) vers&ouml;hnen sich zu: <b>&sigma; ist die Maschine (Quellgeometrie), der Jacobian ist ihr linearer Schatten (Tangentialfluss).</b> Die nicht-normalen Teil N ist der <i>asymmetrische</i> Anteil, wie &sigma; den Raum verformt &mdash; der Anteil, der routet und Detail integriert. <b>Fused:</b> die Maschine = die &sigma;-Geometrie; ihr linearisierter Fluss (Jacobian) = die Dynamik, wie diese Geometrie sich die Tiefe hinab komprimiert. Dasselbe &sigma;, gelesen als Geometrie (B) und als Fluss (A).</div>
+
+    <div class="fused"><b>R2 &middot; Diskreter Readout (B) und holographischer &Uuml;berlebender (A) sind zwei Stufen desselben Readout.</b>
+    A's &bdquo;skalengefester holographischer Inhalt&ldquo; ist die <i>interne</i> Darstellung (Residual-Stream nahe dem Netz-Ende, &asymp;d-dim Kontinuum, das der RG-Fluss erh&auml;lt); B's &bdquo;Nearest-Point &rarr; Token&ldquo; ist der <i>letzte</i> lineare Readout, der dieses Kontinuum <i>auf einen Vokabularpunkt snappt</i>. <b>Fused:</b> der Tiefenfluss (A) <i>erh&auml;lt</i> einen skalengefesten holographischen Vektor; der <i>letzte</i> Readout (B) <i>decodiert</i> diesen Vektor zu einem Token. A's &Uuml;berlebender ist die <b>Eingabe</b> von B's Nearest-Point. &bdquo;Flaschenhals im Kanal, Fortschritt im Inhalt&ldquo; (A) = &bdquo;Readout kollabiert viele Dims auf ein Token (Kanal), beh&auml;lt aber die Region/Geometrie (Inhalt)&ldquo; (B).</div>
+
+    <div class="fused"><b>R3 &middot; Tiefe tut beides &mdash; organisiert <i>und</i> komprimiert &mdash; und beides ist eine Kurve.</b>
+    B's Stufung (fr&uuml;h POS/Syntax &rarr; mittel semantisch &rarr; sp&auml;t kontext) <i>ist</i> A's drei Regimes (Early anisotrop/reine Rotatoren &rarr; Mid Hauptrechnung &rarr; Late Konsolidierung). Fr&uuml;h = fein/strukturiert; Mittel = Rechnung; Sp&auml;t = abstrakt/konsolidiert. <b>Fused:</b> <b>das Tiefenprofil ist eine Kurve mit zwei Namen</b> &mdash; B's &bdquo;Stufung der Absolute-Natur&ldquo; und A's &bdquo;Kompression/Abstraktion&ldquo; sind dieselbe Kurve. Stufung = <i>was</i> auf jeder Tiefe fixiert ist; Kompression = <i>wie viel</i> Detail auf jeder Tiefe entfernt wird. Organisation und Reduktion sind zwei Seiten desselben RG-Flusses.</div>
+
+    <div class="fused"><b>R4 &middot; Softmax-Kraftfeld (B) und nicht-normaler Jacobian (A) sind lokale und kumulative Sicht desselben Routings.</b>
+    Softmax &uuml;ber Q&middot;K (B) ist das <i>lokale</i> (pro Schicht/Kopf) Routing &mdash; es formt das Becken, in das ein Token f&auml;llt. Die nicht-normalen Komponente N (A) ist das <i>kumulative</i> (die Tiefe hinab) Routing &mdash; die Komposition aller lokalen Routingschritte. <b>Fused:</b> Softmax ist der <i>Einheitsschritt</i> des Routings; N ist die <i>akkumulierte/trainierte</i> Form dieser Schritte. Das Kraftfeld (B) relaxiert zum <i>Becken</i> (stabile Geometrie); der nicht-normaler Fluss (A) relaxiert zum <i>Readout-Fixpunkt</i> / Low-Rank-Kanal. Kontrolle: c (A) &harr; normierende Temperatur / Kopfstruktur (B).</div>
+
+    <div class="fused"><b>Fused conclusion:</b> Ein tiefes Netz / Transformer ist eine <b>selbst-&auml;hnliche Maschine mit einer Einheitszelle</b> (B: lineare Probe &rarr; &sigma;-Geometrie &rarr; linearer Readout), <b>die entlang einer Achse iteriert wird</b> (A: Tiefe = RG-Skala = Flusszeit). &sigma; erzeugt die Geometrie (B); der Jacobian ist der lineare Schatten dieser Geometrie (A); das Iterieren der Zelle die Tiefe hinab ist der RG-/Low-Rank-Fluss (A), der feine Struktur integriert und die skalengefeste &sigma;-Geometrie = das holographische Wissen (A's &Uuml;berlebender = B's stabile Region/Becken) erh&auml;lt. Tiefe organisiert (B's Stufung) <i>und</i> komprimiert (A's Reduktion) &mdash; und das ist ein Profil. Rotationen (A's &asymp;98% Eigenpaare) = B's &bdquo;Hinzuf&uuml;gen ist Rotieren&ldquo;/Torus-Routing. Der Flaschenhals (A, Kanal) = der Readout-Kollaps (B, auf ein Token); der Fortschritt (A, Inhalt) = die erhaltene Geometrie (B, Regionen).</div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span>Fusionierter Inhalt</h2>
+
+    <h3>(a) Die einheitliche Maschine (B's Rezept) &mdash; und ihre Rolle im Fluss (A)</h3>
+    <p>B benennt die Zelle; A identifiziert sie als die <b>Einheitszelle des Flusses</b>: die lineare Form ist J<sub>&ell;</sub>, das &sigma; ist der Geometrie-Former, der Readout ist der lokale Ableser; die Iteration &uuml;ber &ell; ist der RG.</p>
+    <span class="block">rep(s) = &sigma;( p(s) ) ,   out = readout( rep(s) )<br>
+    lineare Form: (i) diagonal/frequenzbasiert (positionell) &middot; (ii) dicht/affin (MLP) &middot; (iii) paarweise/bilinear (Q&middot;K)<br>
+    &sigma;: ReLU (unbeschr&auml;nkt &rarr; Polyeder, absolut) &middot; sin/cos (beschr&auml;nkt &rarr; Torus, relativ) &middot; Softmax (beschr&auml;nkt-normierend &rarr; Becken, relational)<br>
+    readout: linear (dicht / Dot / Cosine-Nearest-Point)<br>
+    Iteration &uuml;ber &ell;:  h<sub>&ell;+1</sub> = h<sub>&ell;</sub> + f<sub>&ell;</sub>(h<sub>&ell;</sub>)  &rarr;  P<sub>&ell;</sub> = J<sub>L&minus;1</sub>&#8942;J<sub>&ell;</sub>  (RG-/Low-Rank-Fluss, A)</span>
+
+    <h3>(b) Die drei &sigma;-Geometrien (B) &mdash; mit A's Gegenst&uuml;ck</h3>
+    <div class="math">PE(pos, 2i) = sin(pos&middot;&lambda;<sub>i</sub>) ,&nbsp; PE(pos, 2i+1) = cos(pos&middot;&lambda;<sub>i</sub>) ,&nbsp; &lambda;<sub>i</sub> = 10000<sup>&minus;2i/d</sup>&nbsp;&nbsp;&rarr;&nbsp;&nbsp; PE(pos+k) = M<sub>k</sub>&middot;PE(pos) &nbsp;&bdquo;Hinzuf&uuml;gen ist Rotieren&ldquo;</div>
+    <ul>
+      <li><b>sin/cos &rarr; Torus (relativ).</b> B: &lambda;<sub>i</sub> l&auml;uft &asymp;1 &rarr; &asymp;1e-4 (Skalenhierarchie, d/2-dim Torus, &bdquo;Hinzuf&uuml;gen ist Rotieren&ldquo;). <b>A-Gegenst&uuml;ck:</b> &bdquo;&asymp;98% komplex-konjugierte Eigenwertpaare&ldquo; &mdash; dieselbe <i>rotierende</i> Struktur; Information wird &bdquo;per Rotation&ldquo; geroutet, nicht nur gestreckt.</li>
+      <li><b>ReLU &rarr; Polyeder (absolut, faltend).</b> B: ohne ReLU w&auml;re A<sub>2</sub>(A<sub>1</sub>x+b<sub>1</sub>)+b<sub>2</sub> affin; ReLU macht es st&uuml;ckweise-linear, faltet entlang y<sub>j</sub>=0; Regionenzahl = Ausdruckskraft. <b>A-Gegenst&uuml;ck:</b> die nicht-normalen Komponente N ist die <i>Asymmetrie/Faltung</i>, die routet &mdash; der Anteil, der &bdquo;die Tiefe hinab&ldquo; integriert wird (Schur: Kollaps liegt in N, nicht im Spektrum).</li>
+      <li><b>Softmax &rarr; Becken/Kraftfeld (relational, normierend).</b> B: pro Zeile &Sigma;<sub>j</sub>a<sub>ij</sub>=1, &bdquo;partielle Hemmung&ldquo; = Anziehung + Hemmung zugleich; Becken = Gleichgewicht &Sigma;<sub>j</sub>F<sub>ij</sub>=0. <b>A-Gegenst&uuml;ck:</b> das kumulative Routing relaxiert zum Readout-Fixpunkt; &auml;u&szlig;ere Schichten &bdquo;verst&auml;rken-then-r&uuml;ckdrehen&ldquo;, Netto-Holonomie H<sub>&gamma;</sub>&asymp;Identit&auml;t.</li>
+    </ul>
+
+    <h3>(c) Zwei duale lineare Formen (B) &harr; Jacobian-Fluss (A)</h3>
+    <p>B: der lineare Schritt hat zwei unabh&auml;ngige Achsen &mdash; <b>dicht/diagonal</b> (Feature-Mischen, MLP: &bdquo;jede Dimension mischt in jede versteckte Einheit&ldquo;) und <b>paarweises Q&middot;K</b> (Token-Mischen, Attention: Tokens bleiben getrennt, werden nur gepaart). A komponiert beides die Tiefe hinab: der kumulative Operator P<sub>&ell;</sub> <i>rechnet</i> beides, und <b>erank(P<sub>&ell;</sub>)</b> misst, wie viel &bdquo;Mischungs-Kanal&ldquo; &uuml;brig ist (4096&rarr;&asymp;7).</p>
+    <div class="math">a<sub>ij</sub> = softmax( q<sub>i</sub>&middot;K<sup>T</sup> / &radic;d ) &nbsp;(pro Zeile) ,&nbsp; Kraft F<sub>ij</sub> &prop; a<sub>ij</sub> ,&nbsp; Becken = &Sigma;<sub>j</sub> F<sub>ij</sub> = 0</div>
+    <div class="math">y = A<sub>1</sub>&middot;x + b<sub>1</sub> ,&nbsp; z = ReLU(y) ,&nbsp; out = A<sub>2</sub>&middot;z + b<sub>2</sub>&nbsp;&nbsp;&nbsp;(komponiert die Tiefe hinab: P<sub>&ell;</sub> = J<sub>L&minus;1</sub>&#8942;J<sub>&ell;</sub>, A)</div>
+
+    <h3>(d) Die Iteration = RG-/Low-Rank-Fluss (A) als Wiederholung der Zelle</h3>
+    <div class="math">h<sub>&ell;+1</sub> = h<sub>&ell;</sub> + f<sub>&ell;</sub>(h<sub>&ell;</sub>) ,&nbsp; J<sub>&ell;</sub> = &part;h<sub>&ell;+1</sub>/&part;h<sub>&ell;</sub> = I + &part;f<sub>&ell;</sub>/&part;h<sub>&ell;</sub></div>
+    <div class="math">P<sub>&ell;</sub> = J<sub>L&minus;1</sub>&#8942;J<sub>&ell;</sub> ,&nbsp; erank(P) = exp(&minus;&Sigma;<sub>i</sub> p<sub>i</sub> ln p<sub>i</sub>) ,&nbsp; p<sub>i</sub> = &sigma;<sub>i</sub><sup>2</sup>/&Sigma;<sub>j</sub>&sigma;<sub>j</sub><sup>2</sup> &nbsp;&nbsp; 4096 &rarr; &asymp;7</div>
+    <div class="math">J<sub>&ell;</sub> = Q<sub>&ell;</sub>( &Lambda;<sub>&ell;</sub> + c&middot;N<sub>&ell;</sub> )Q<sub>&ell;</sub><sup>*</sup> &nbsp;(Schur-Chirurgie: c=0 &rarr; erank 6&ndash;7&times; h&ouml;her &rarr; Kollaps liegt in N)</div>
+    <div class="math">RG-Low-Pass (A's B-Seite): L &rarr; L<sub>R</sub> ,&nbsp; L<sub>R</sub>(x) = &langle;L&rangle;<sub>x&plusmn;r</sub> &nbsp;(Hochfrequenz wird integriert; im unendlich-breiten Limes Netz &rarr; Gau&szlig;-Prozess = freies Feld)</div>
+    <p><b>Fusion:</b> <b>Low-Rank-Kollaps (A, Aktivierungsraum) &equiv; RG-Integrieren (A, Feldraum) &equiv; der Readout, der die &sigma;-Geometrie (B) beh&auml;lt.</b> Der &bdquo;&uuml;berlebende&ldquo; Inhalt ist zugleich <i>niederfrequent</i> und <i>abstrakt</i> und <i>&sigma;-Geometrie</i> (B's stabile Region/Becken/Torus) und <i>holographisch</i> (A: polysem &uuml;ber alle Dimensionen). A's B-Teil (holographische Speicherung) <i>ist</i> B's Region/Speicher; sie sind dieselbe skalenrobuste Fl&auml;che.</p>
+
+    <h3>(e) Das gemeinsame Tiefenprofil (eine Kurve, zwei Namen)</h3>
+    <table>
+      <thead>
+        <tr><th>Tiefe</th><th>A &middot; Operator-/RG-Fluss (Kanal)</th><th>B &middot; &sigma;-Geometrie / Stufung</th><th>Fusion</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag" style="color:var(--early)">Early</span><br>0&ndash;4</td>
+          <td>stark anisotrop, fast reine Rotatoren, Self-Alignment &asymp;0.04, nicht-normal, viel Detail</td>
+          <td>fix POS/Syntax (absolut); sin/cos-Torus = relativ</td>
+          <td><b>fein &amp; hochfrequent</b>, viel Struktur; Rotation startet, RG hat kaum integriert</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="color:var(--mid)">Mid</span><br>5&ndash;19</td>
+          <td>Konditionszahl sinkt, Hauptrechneregime, weiterhin nicht-normal</td>
+          <td>semantisch; ReLU-Polyeder = Hauptapproximation</td>
+          <td><b>Hauptrechneregime</b> &mdash; Rotation routet, N erzeugt Transienten; meiste Koarse-Graining hier</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="color:var(--late)">Late</span><br>20&ndash;31</td>
+          <td>fast symmetrisch (SA &asymp;0.55&ndash;0.70), verst&auml;rkt Grenzknoten, Fluss kollabiert zum Low-Rank-Kanal</td>
+          <td>dynamisch/kontext; Softmax-Becken = relational</td>
+          <td><b>Konsolidierung</b>; Fluss kollabiert (Flaschenhals), skalengefester Inhalt bleibt (Fortschritt)</td>
+        </tr>
+        <tr>
+          <td><span class="tag" style="color:var(--outer)">Outer</span><br>letzte 1&ndash;2</td>
+          <td>verst&auml;rken-then-r&uuml;ckdrehen; Netto-Holonomie &asymp; Identit&auml;t</td>
+          <td>Decode auf einen Token (Nearest-Point)</td>
+          <td><b>Readout</b>; RG relaxiert in den Readout-Rahmen; holographischer Vektor &rarr; Token</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>(f) Readout: B's Nearest-Point auf A's holographischen &Uuml;berlebenden</h3>
+    <div class="math">z&#775; = argmin<sub>v</sub> &nbsp;&Vert; h<sub>last</sub> &minus; e<sub>v</sub> &Vert; &nbsp;&nbsp;&hArr;&nbsp;&nbsp; cos(h<sub>last</sub>, e<sub>v</sub>) maximal &nbsp;&nbsp;(Cosine = normiertes Dot &mdash; dieselbe q/k-Geometrie)</div>
+    <p>A: h<sub>last</sub> = der skalengefeste holographische Vektor (&asymp;d, polysem); B: der Readout snappt ihn auf ein e<sub>v</sub> (Token) bzw. eine Relation. &bdquo;Flaschenhals im Kanal, Fortschritt im Inhalt&ldquo; (A) = &bdquo;Readout-Kollaps auf ein Token (Kanal), erhaltene Region (Inhalt)&ldquo; (B). Die <b>stabile &sigma;-Geometrie</b> (B's Region/Becken/Torus) ist der <b>RG-invariante Kern</b>, der dem Low-Rank-Kollaps (A) &uuml;berlebt und deshalb lesbar bleibt.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span>Interaktive Visualisierung: eine Zelle, iteriert &mdash; Kanal kollabiert, Geometrie bleibt</h2>
+    <p>Die <b>blaue Fl&auml;che</b> (log-Achse, links) ist A's <i>kumulativer Fluss-Kanal</i> erank(P<sub>&ell;</sub>) im <b>Aktivierungsraum</b> &mdash; er &bdquo;die Tiefe hinab&ldquo; kollabiert (Low-Rank-Flaschenhals). Die <b>violette Linie</b> ist die <i>erhaltene &sigma;-Geometrie</i> (B) / A's holographischer &Uuml;berlebender (&asymp;d, skalenrobust) &mdash; sie <i>bleibt hoch</i>, w&auml;hrend der Kanal kollabiert (die W2-/Fortschritt-Aufl&ouml;sung). Das <b>obere Band</b> f&auml;rbt die drei &sigma;-Geometrien nach Tiefe (B's Stufung &times; A's Regimes): Early sin/cos (Torus, relativ) &rarr; Mid ReLU (Polyeder, absolut) &rarr; Late Softmax (Becken, relational) &rarr; Outer (Readout). Die <b>untere Readout-Achse</b> snappt den &Uuml;berlebenden Vektor per Nearest-Point auf die finale Geometrie (Softmax/Becken); die <b>Konfidenz</b> (Ring-Gr&ouml;&szlig;e) ist im trainierten Regime c&asymp;1 am gr&ouml;&szlig;ten. Bewege <b>c</b> (A's Nicht-Normalit&auml;ts-Dosis / Kompressionsst&auml;rke): bei c&rarr;0 (Schur-Chirurgie, kein Kollaps) bleibt der Kanal hoch und der Readout ungenau; bei trainiertem c&asymp;1 kollabiert der Kanal und die Geometrie bleibt; bei c&gt;1 wird er &uuml;berspitzt.</p>
+
+    <div class="controls">
+      <label>Skalen-Kontrolle c (Nicht-Normalit&auml;t / Kompression): <input type="range" id="vzC" min="0" max="200" value="100"> <span class="ctl-val" id="vzCVal">1.00</span></label>
+      <button id="vzPlay" class="vbtn">&#9654; c-Sweep</button>
+    </div>
+
+    <canvas id="vcanvas"></canvas>
+    <div class="readout" id="vzReadout"></div>
+    <p class="vnote">Daten: faithful Simulation der in A berichteten Werte (erank: Llama 45.4&rarr;7.12&rarr;2.53, OLMo 314&rarr;55.5&rarr;12.4, Gemma 39.3&rarr;5.92&rarr;1.60; Self-Alignment-Regimes Early/Mid/Late). B's &sigma;-Geometrie folgt A's erhaltene Dimensionen (d &minus; Kanal). Keine Netzwerklade, alle Daten inline, kein externes Skript.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span>Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><a href="../2/r2-016.html">r2-016.html</a> &mdash; &bdquo;Tiefe als RG-Fluss&ldquo;: Operatordynamik des Residual-Streams (Jacobian-Spektrum, &asymp;98% Rotationspaare, drei Tiefenregimes, kumulativer Low-Rank-Flaschenhals 4096&rarr;&asymp;7, Schur-Chirurgie, Nicht-Normalit&auml;t als Motor) &times; freie-Feld-Koarse-Graining (Tiefe = RG-Skala, RG-Low-Pass, holographisch skalengefester &Uuml;berlebender, &bdquo;Flaschenhals vs. Fortschritt&ldquo;).</div></div>
+    <div class="prov"><span class="k b">B</span><div><a href="../2/r2-009.html">r2-009.html</a> &mdash; &bdquo;Drei Geometrien, eine Maschine&ldquo;: lineare Probe &rarr; &sigma;-Geometrie &rarr; linearer Readout (ReLU/Polyeder/absolut, sin-cos/Torus/relativ, Softmax/Becken/relational), zwei duale lineare Formen (dicht/diagonal &harr; Q&middot;K), &bdquo;Die Nichtlinearit&auml;t ist die Maschine&ldquo;, Nearest-Point-Readout, Tiefenstufung der Absolute-Natur (fr&uuml;h POS/Syntax &rarr; mittel semantisch &rarr; sp&auml;t kontext).</div></div>
+  </section>
+
+  <p class="foot">Fusion 006 &middot; Round 3, Knockout-Synthese. Beide Quellpapiere sind R2-Fusionen (simulierte Daten, keine neuen Experimente); diese Fusion &uuml;bernimmt ihre Stellungen und ihre Zahlen, erfindet keine neuen.</p>
+
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var canvas = document.getElementById('vcanvas');
+  var ctx = canvas ? canvas.getContext('2d') : null;
+  var L = 32, D = 4096;
+  var C = 1.0, playing = false, t = 0;
+  var theme = {};
+  var DH = 430;
+
+  function cv(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function readTheme() {
+    theme.fg = cv('--fg') || '#e2e8f0';
+    theme.muted = cv('--muted') || '#94a3b8';
+    theme.grid = cv('--grid') || '#ffffff22';
+    theme.accent = cv('--accent') || '#58a6ff';
+    theme.accent2 = cv('--accent2') || '#d2a8ff';
+    theme.card = cv('--card') || '#111c30';
+    theme.card2 = cv('--card2') || '#0b1220';
+    theme.early = cv('--early') || '#ff7b72';
+    theme.mid = cv('--mid') || '#ffa657';
+    theme.late = cv('--late') || '#7ee787';
+    theme.outer = cv('--outer') || '#d2a8ff';
+  }
+  function hexA(hex, a) {
+    hex = (hex || '').replace('#', '');
+    if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    var r = parseInt(hex.slice(0, 2), 16), g = parseInt(hex.slice(2, 4), 16), b = parseInt(hex.slice(4, 6), 16);
+    if (isNaN(r)) { r = 140; g = 150; b = 170; }
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  }
+
+  function endVal(c) { return 45.4 * Math.pow(7.12 / 45.4, c); }
+  function channelAt(c, ell) {
+    var ev = endVal(c);
+    var f = Math.pow(1 - ell / L, 1.25);
+    return ev * Math.pow(45.4 / ev, f);
+  }
+
+  function setup() {
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth || Math.max(1, canvas.getBoundingClientRect().width);
+    var h = DH;
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: w, h: h };
+  }
+
+  var SEGS = [
+    { x0: 0.00, x1: 0.16, col: 'early', t: 'EARLY', sub: 'sin/cos · Torus · relativ' },
+    { x0: 0.16, x1: 0.63, col: 'mid', t: 'MID', sub: 'ReLU · Polyeder · absolut' },
+    { x0: 0.63, x1: 0.94, col: 'late', t: 'LATE', sub: 'Softmax · Becken · relational' },
+    { x0: 0.94, x1: 1.00, col: 'outer', t: 'OUT', sub: 'Readout' }
+  ];
+  var CAND = ['ReLU·Polyeder', 'Sincos·Torus', 'Softmax·Becken', 'Sincos·Torus', 'ReLU·Polyeder'];
+
+  function draw() {
+    if (!ctx) return;
+    var size = setup(); var W = size.w, H = size.h; if (W < 10) return;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = theme.card; ctx.fillRect(0, 0, W, H);
+
+    var plotL = W * 0.08, plotR = W * 0.96;
+    var bandTop = 34, bandBot = 66;
+    var curTop = 96, curBot = 300;
+    var readTop = 336, readBot = 372;
+    var yMax = Math.log10(D * 1.2);
+
+    function xMap(ell) { return plotL + (ell / L) * (plotR - plotL); }
+    function yMap(v) { var lv = Math.log10(Math.max(v, 1)); return curBot - (lv / yMax) * (curBot - curTop); }
+
+    ctx.font = '11px system-ui,sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = theme.muted;
+    ctx.fillText('Tiefe ℓ  =  Zeit / RG-Skala (A)  ·  σ-Geometrie (B) je Regime', plotL, 18);
+
+    for (var s = 0; s < SEGS.length; s++) {
+      var g = SEGS[s];
+      var gx0 = plotL + g.x0 * (plotR - plotL), gx1 = plotL + g.x1 * (plotR - plotL);
+      ctx.fillStyle = hexA(theme[g.col], 0.16);
+      ctx.fillRect(gx0, bandTop, gx1 - gx0, bandBot - bandTop);
+      ctx.strokeStyle = hexA(theme[g.col], 0.6); ctx.lineWidth = 1;
+      ctx.strokeRect(gx0, bandTop, gx1 - gx0, bandBot - bandTop);
+      ctx.fillStyle = theme[g.col]; ctx.font = '600 11px system-ui,sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(g.t, (gx0 + gx1) / 2, bandTop + 14);
+      ctx.fillStyle = theme.muted; ctx.font = '9px ui-monospace,monospace';
+      ctx.fillText(g.sub, (gx0 + gx1) / 2, bandTop + 28);
+    }
+
+    ctx.strokeStyle = theme.grid; ctx.lineWidth = 1;
+    for (var gv = 1; gv <= 3; gv++) {
+      var yy = yMap(Math.pow(10, gv));
+      ctx.beginPath(); ctx.moveTo(plotL, yy); ctx.lineTo(plotR, yy); ctx.stroke();
+      ctx.fillStyle = theme.muted; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'right';
+      ctx.fillText(Math.pow(10, gv) >= 1000 ? (Math.pow(10, gv) / 1000) + 'k' : Math.pow(10, gv), plotL - 6, yy + 3);
+    }
+
+    var ch = [], geo = [];
+    for (var ell = 0; ell <= L; ell++) {
+      ch.push(channelAt(C, ell));
+      geo.push(Math.max(D - channelAt(C, ell), 1));
+    }
+
+    ctx.beginPath();
+    for (ell = 0; ell <= L; ell++) { var px = xMap(ell), py = yMap(ch[ell]); if (ell === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
+    ctx.lineTo(xMap(L), curBot); ctx.lineTo(xMap(0), curBot); ctx.closePath();
+    ctx.fillStyle = hexA(theme.accent, 0.22); ctx.fill();
+    ctx.beginPath();
+    for (ell = 0; ell <= L; ell++) { var qx = xMap(ell), qy = yMap(ch[ell]); if (ell === 0) ctx.moveTo(qx, qy); else ctx.lineTo(qx, qy); }
+    ctx.strokeStyle = theme.accent; ctx.lineWidth = 3; ctx.stroke();
+
+    ctx.beginPath();
+    for (ell = 0; ell <= L; ell++) { var rx = xMap(ell), ry = yMap(geo[ell]); if (ell === 0) ctx.moveTo(rx, ry); else ctx.lineTo(rx, ry); }
+    ctx.strokeStyle = theme.accent2; ctx.lineWidth = 2.5; ctx.stroke();
+
+    ctx.font = '11px system-ui,sans-serif'; ctx.textAlign = 'left';
+    ctx.fillStyle = theme.accent; ctx.fillText('A · Fluss-Kanal erank(Pℓ) [Aktivierung]', plotL, curTop - 8);
+    ctx.fillStyle = theme.accent2; ctx.fillText('B · σ-Geometrie / holographisch (≈d) [erhalten]', plotL + (plotR - plotL) * 0.5, curTop - 8);
+
+    var conf = Math.exp(-Math.pow(C - 1, 2) / 0.18);
+    var best = 2;
+    ctx.strokeStyle = theme.grid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(plotL, readTop); ctx.lineTo(plotR, readTop); ctx.stroke();
+    for (var i = 0; i < 5; i++) {
+      var cx = plotL + (i / 4) * (plotR - plotL);
+      var isWin = (i === best);
+      ctx.fillStyle = isWin ? theme.accent2 : hexA(theme.muted, 0.5);
+      ctx.beginPath(); ctx.arc(cx, readTop, isWin ? 5 + 5 * conf : 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillStyle = isWin ? theme.fg : theme.muted;
+      ctx.font = (isWin ? '600 10px ' : '10px ') + 'ui-monospace,monospace'; ctx.textAlign = 'center';
+      ctx.fillText(CAND[i], cx, readBot + 6);
+    }
+    var wx = plotL + (best / 4) * (plotR - plotL);
+    ctx.strokeStyle = hexA(theme.accent2, 0.8); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(wx, readTop, 9 + 12 * (1 - conf), 0, 2 * Math.PI); ctx.stroke();
+    ctx.fillStyle = theme.fg; ctx.font = '10px ui-monospace,monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Readout (Nearest-Point)', plotL, readTop - 8);
+
+    var ev = endVal(C);
+    var rd = document.getElementById('vzReadout');
+    var regime = C < 0.15 ? 'c→0 (Schur-Chirurgie): kein Kollaps — Detail bleibt (A≡B), Readout ungenau'
+      : C < 1.15 ? 'trainiert (c≈1): Kanal kollabiert (A), HF wird integriert (B), σ-Geometrie bleibt (holographisch)'
+      : 'verstärkt (c>1): Kanal überspitzt — nur niederste Frequenzen übrig';
+    if (rd) rd.innerHTML = 'Kanaldim. ≈ <b>' + ev.toPrecision(3) + '</b> von d=' + D +
+      ' &nbsp;·&nbsp; erhaltene σ-Geometrie ≈ <b>' + (D - ev).toPrecision(3) + '</b> (holographisch, ≈d)' +
+      ' &nbsp;·&nbsp; Readout → Softmax·Becken (relational) &nbsp;·&nbsp; Konfidenz ' + (conf * 100).toFixed(0) + '% &nbsp;·&nbsp; ' + regime;
+    var cv2 = document.getElementById('vzCVal');
+    if (cv2) cv2.textContent = C.toFixed(2);
+  }
+
+  function loop() {
+    if (playing) {
+      t += 0.02;
+      C = 1 + Math.sin(t);
+      if (C < 0) C = 0; if (C > 2) C = 2;
+      var el = document.getElementById('vzC'); if (el) el.value = Math.round(C * 100);
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function wire() {
+    var el = document.getElementById('vzC');
+    if (el) el.addEventListener('input', function (e) { C = +e.target.value / 100; });
+    var bp = document.getElementById('vzPlay');
+    if (bp) bp.addEventListener('click', function () {
+      playing = !playing;
+      bp.classList.toggle('active', playing);
+      bp.innerHTML = playing ? '&#10074;&#10074; Stop' : '&#9654; c-Sweep';
+    });
+    var tb = document.getElementById('themeToggle');
+    if (tb) tb.addEventListener('click', function () {
+      document.documentElement.classList.toggle('dark');
+      readTheme(); draw();
+    });
+    window.addEventListener('resize', draw);
+    try {
+      var mo = new MutationObserver(function () { readTheme(); });
+      mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    } catch (e) {}
+  }
+
+  function init() {
+    readTheme();
+    wire();
+    draw();
+    loop();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Kohärenz-Regler — dünn, fließend, ehrlich · Fusion 011</title>
+<style>
+  :root{
+    --bg:#faf8f1; --panel:#ffffff; --card:#fffdf8; --ink:#1c1a17; --dim:#57524a; --line:#e6e1d2;
+    --plot-bg:#fbfaf3;
+    --teal:#0f766e; --amber:#b45309; --rose:#be185d; --accent3:#7c3aed; --good:#15803d; --accent4:#1d4ed8;
+  }
+  html.dark{
+    --bg:#0a0e1a; --panel:#141d31; --card:#111726; --ink:#e8ecff; --dim:#a8b3d9; --line:#26314f;
+    --plot-bg:#0d1526;
+    --teal:#2dd4bf; --amber:#fbbf24; --rose:#f472b6; --accent3:#c084fc; --good:#4ade80; --accent4:#8ab4ff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:radial-gradient(ellipse at top, var(--card) 0%, var(--bg) 62%);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;line-height:1.68;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:34px 22px 90px}
+  header{text-align:center;padding:26px 10px 12px}
+  header h1{font-size:clamp(1.85rem,4.8vw,2.85rem);margin:0;line-height:1.12;letter-spacing:-.02em;font-weight:800;
+    background:linear-gradient(135deg,var(--teal) 0%,var(--accent4) 52%,var(--rose) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .subtitle{color:var(--dim);margin-top:14px;font-size:.98rem}
+  .subtitle code{background:var(--card);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-size:.86em;color:var(--teal)}
+  .tagline{color:var(--dim);font-size:.95rem;margin-top:10px;max-width:700px;margin-left:auto;margin-right:auto}
+  .tagline b{color:var(--ink)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:18px 0 4px}
+  nav.toc a{color:var(--dim);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+  nav.toc a:hover{color:var(--teal);border-color:var(--teal);background:var(--card)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin:22px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+  section h2{margin:0 0 14px;font-size:1.5rem;letter-spacing:-.01em;color:var(--teal)}
+  section h3{color:var(--amber);margin:22px 0 8px;font-size:1.12rem}
+  p{font-size:1rem;color:var(--dim)}
+  p+p,ul+p,ol+p{margin-top:12px}
+  p b,li b,td b{color:var(--ink)}
+  .lead{font-size:1.05rem}
+  .hl{color:var(--teal);font-weight:600}
+  .hl2{color:var(--amber);font-weight:600}
+  .hl3{color:var(--rose);font-weight:600}
+  .hl4{color:var(--accent4);font-weight:600}
+  .note{border-left:3px solid var(--accent4);background:var(--bg);padding:11px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.96rem;color:var(--dim)}
+  .note b{color:var(--ink)}
+  .note.t{border-color:var(--teal)}
+  .note.r{border-color:var(--rose)}
+  .note.a{border-color:var(--amber)}
+  ul,ol{margin:10px 0;padding-left:22px}
+  li{margin:8px 0}
+  .formula{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center}
+  .m{font-family:'Cambria Math','STIX Two Math','Latin Modern Math',Georgia,serif;font-style:italic;letter-spacing:.02em;white-space:nowrap}
+  .m sup,.m sub{font-size:.72em;font-style:normal}
+  code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:color-mix(in srgb,var(--ink) 8%,transparent);padding:1px 5px;border-radius:5px}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+  .tag{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;margin-right:6px;vertical-align:middle;border:1px solid var(--line);white-space:nowrap}
+  .tag.A{color:var(--teal);background:color-mix(in srgb,var(--teal) 14%,transparent)}
+  .tag.B{color:var(--accent4);background:color-mix(in srgb,var(--accent4) 14%,transparent)}
+  .tag.F{color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent)}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+  @media(max-width:640px){.duo{grid-template-columns:1fr}}
+  .duo .col{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .duo .col h4{margin:0 0 6px;font-size:.95rem}
+  .duo .col.a h4{color:var(--teal)}
+  .duo .col.b h4{color:var(--accent4)}
+  .duo .col p{font-size:.94rem;margin:8px 0 0}
+  .viz-card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+  canvas#viz{display:block;width:100%;height:480px;border:1px solid var(--line);border-radius:10px;background:var(--plot-bg)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.82rem;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+  .viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+  @media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+  .controls{display:flex;flex-direction:column;gap:12px}
+  .ctrl{display:flex;flex-direction:column;gap:5px}
+  .ctrl label{font-size:.86rem;color:var(--dim);display:flex;justify-content:space-between}
+  .ctrl label .val{color:var(--teal);font-weight:600;font-variant-numeric:tabular-nums}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;outline:none;cursor:pointer;background:var(--line)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;box-shadow:0 0 0 2px var(--card)}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;border:2px solid var(--card)}
+  input[type=range].v::-webkit-slider-thumb{background:var(--rose)}
+  input[type=range].v::-moz-range-thumb{background:var(--rose)}
+  .chk{display:flex;flex-direction:row;align-items:center;gap:8px;font-size:.86rem;color:var(--dim);cursor:pointer}
+  .chk input{accent-color:var(--rose);width:16px;height:16px}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap}
+  button{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.86rem;transition:.15s}
+  button:hover{transform:translateY(-1px);border-color:var(--teal);color:var(--teal)}
+  button.active{background:var(--teal);color:var(--bg);border-color:var(--teal)}
+  .ro{display:flex;gap:9px;flex-wrap:wrap}
+  .ro .box{flex:1;min-width:104px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 11px;text-align:center}
+  .ro .box .k{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+  .ro .box .v{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;font-weight:700;color:var(--teal)}
+  .ro .box.a4 .v{color:var(--accent4)}
+  .ro .box.rose .v{color:var(--rose)}
+  .ro .box.amber .v{color:var(--amber)}
+  .verdict{font-weight:700;font-size:1rem;padding:9px 13px;border-radius:10px;margin-bottom:12px;border:1px solid var(--line)}
+  .verdict.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent);border-color:var(--good)}
+  .verdict.warn{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent);border-color:var(--amber)}
+  .verdict.bad{color:var(--rose);background:color-mix(in srgb,var(--rose) 12%,transparent);border-color:var(--rose)}
+  .fused-line{margin-top:12px;padding:12px 14px;border:1px dashed var(--amber);border-radius:12px;background:color-mix(in srgb,var(--amber) 8%,transparent);font-size:.92rem;color:var(--dim)}
+  .fused-line b{color:var(--amber)}
+  .theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+  .theme-toggle:hover{border-color:var(--teal);color:var(--teal)}
+  footer{text-align:center;color:var(--dim);font-size:.85rem;padding:24px 10px 6px}
+  a{color:var(--accent4)}
+  .prov{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--bg);font-size:.95rem}
+  .prov .tag{min-width:44px;text-align:center;font-size:.8rem;align-self:flex-start}
+  .prov p{margin:0;color:var(--dim)}
+  .prov a{font-weight:600}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9788; Hell / &#127769; Dunkel</button>
+<div class="wrap">
+
+<header>
+  <h1>Der Kohärenz-Regler &tau;</h1>
+  <p class="subtitle">Fusion aus: <code>r2-020.html</code> &#10007; <code>r2-024.html</code> &nbsp;(Round 3)</p>
+  <p class="tagline">Ein Netz ist <b>kein Beutel unabhängiger Zahlen</b>, sondern ein <b>niedrigdimensionales, kohärent zusammengesetztes Objekt</b> — eine dünn-fließende, sich linearisierende, verklebte Mannigfaltigkeit mit Metrik, die der Kohärenz-Fluss als Attraktor trägt. Ein bilineares/lineares Ablesen liest die Relation; <b>ein gemeinsamer Regler &tau;</b> (A: NNGP-&plusmn;2&sigma; = Softmax-Temperatur &middot; B: Fisher-Offenheit) steuert zwei Achsen der Ehrlichkeit — <b>Magnitude</b> (wie viel man traut) und <b>Form</b> (welches Werkzeug zur lokalen Krümmung).</p>
+</header>
+
+<nav class="toc">
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widersprüche</a>
+  <a href="#aufloesung">Auflösung</a>
+  <a href="#inhalt">Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<!-- 1 -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Die beiden R2-Papiere — <span class="hl">A (r2-020, &bdquo;Das Kohärenz-Band&ldquo;)</span> und <span class="hl4">B (r2-024, &bdquo;Dünn, fließend, lesbar&ldquo;)</span> — stammen aus völlig unterschiedlichen Welten. A kommt aus Garben-Kohärenz + neuronalem Lernen (das Netz als <b>globaler Schnitt</b> über lokalen Spuren; NNGP-&plusmn;2&sigma; + Cramér-Rao als Kohärenz-Metrik; Halluzination als Bruch über eine Lücke der Überdeckung) und Vektorraum-Geometrie (Skalarprodukt als Uhr/Joystick). B kommt aus Transformer-Dynamik (der Residual-Stream als <b>sich linearisierender Fluss</b> mit J-Space/J-Lens) und Informationstheorie (das Netz als <b>dünne gekrümmte Mannigfaltigkeit</b> mit <b>Fisher-Metrik</b> auf dem Wahrscheinlichkeits-Simplex). Und doch benennen sie <em>dasselbe</em> Objekt und <em>dasselbe</em> Problem: <span class="hl">ein Modell ist ein niedrigdimensionales, kohärent zusammengesetztes Objekt, und es gibt <em>einen</em> lokalen, bilinearen/linearen Prozess, der aus ihm die Relation liest, die man will — plus <em>einen</em> Regler, der sagt, wie sehr man diesem Ablesen trauen darf.</span></p>
+  <p>Die fusionierte Einzelposition: <b>Das Wesen des Netzes ist eine dünn-fließende, kohärent-verklebte Mannigfaltigkeit mit einer Metrik; der Kohärenz-Fluss (Gradientenabstieg bei A, Selbstdkorrektion / layer-Fluss bei B) kontrahiert auf sie, und sie ist der Attraktor dieses Flusses.</b> Auf ihr lesen zwei ehrliche Interaktoren: ein <b>lineares/bilineares Ablesen</b> (A: Skalarprodukt = Verklebung; B: J-Lens, ein linearer Readout, der erst dort treu ist, wo der Fluss linearisiert ist) und ein <b>gekrümmt-metrischer Schritt</b> (B: Fisher-Metrik). Und ein <b>einziges &tau;</b> regelt beides: bei A ist &tau; das NNGP-&plusmn;2&sigma;-Band = die Softmax-Temperatur (wie <em>entschieden/scharf</em> das Ablesen ist und wie viel man trauen soll); bei B ist &tau; der Skaler in der Fisher-Metrik <span class="m">(1/&tau;)(diag&#8202;p &#8722; pp&#183;)</span>, also wie <em>offen/gedämpft</em> der Schritt ist. Schmal &amp; linear = lesbar &amp; korrekt; weit &amp; gebogen = die ehrliche Antwort. Die eigentliche Frage ist nicht <em>ob</em>, sondern <em>wie</em> man &tau; wertet — und das ist der einzige Streit zwischen A und B (s. Abschnitt 2).</p>
+  <div class="note t"><b>Kurzformel:</b> Dünn (B: ID, Fisher) &#215; Kohärent/verklebt (A: globaler Schnitt, NNGP-Band) &#215; Fließend (A: Gradientenabstieg; B: Velocity/Selbstkorrektion) &#215; Lesbar (A: bilinear; B: J-Lens). <b>Ein Regler &tau;, zwei Achsen der Ehrlichkeit: Magnitude (A) &amp; Form (B).</b> Lesbar, wo linear <em>und</em> &tau; schmal; ehrlich &bdquo;weiß es nicht&ldquo;, wo &tau; weit; Schritt folgt der Krümmung, wo gebogen.</div>
+</section>
+
+<!-- 2 -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Die beiden R2-Papiere widersprechen sich nicht in Fakten (sie beschreiben unterschiedliche Systeme: A = Garben/PE-Geometrie, B = konkrete Llama-3.1-8B-Repräsentationsmessung). Aber sie beziehen zu <em>ein und demselben</em> niedrigdimensionalen, kohärenten Objekt drei <span class="hl3">inkompatible Stellungen</span>:</p>
+
+  <div class="card">
+    <p><b>W1 · Wozu das dünn/kohärente Objekt gut ist — <em>Ehrlichkeit/Vertrauen</em> <span class="tag A">A</span> vs. <em>Generalisierung/Steuerung</em> <span class="tag B">B</span></b></p>
+    <div class="duo">
+      <div class="col a"><h4>A sagt</h4>
+        <p>Der Nutzen der kohärenten/dünnen Struktur ist <b>epistemische Ehrlichkeit</b>: Das Kohärenz-Band &tau; (NNGP-&plusmn;2&sigma; + Cramér-Rao) ist ein <em>kalibrierter Vertrauensindikator, den das Modell melden muss</em>. &bdquo;Dort, wo das Band die Schwelle &alpha; überschreitet, müsste das Netz &lsquo;ich weiß es nicht&rsquo; sagen.&rdquo; Das Band ist ein <b>Ehrlichkeits-Kanal</b>; der Wert der Kohärenz liegt darin, <em>wissen, wann man nicht weiß</em>.</p>
+      </div>
+      <div class="col b"><h4>B sagt</h4>
+        <p>Der Nutzen der dünnen Struktur ist <b>funktionelle Performance</b>: Die intrinsische Dimension der letzten Schicht <em>vorhersagt die Test-Genauigkeit</em> (r = 0.94 über 14 Netze) — &bdquo;Je dünner die Faltung, desto besser generalisiert.&ldquo; Und der J-Space macht das Modell <em>steuerbar/lesbar</em> (Broadcast, France&harr;China-Swap). Der Wert der Dünnheit liegt in <em>Generalisierung + Kontrollierbarkeit</em>.</p>
+      </div>
+    </div>
+    <p>&#8594; <b>Spannung:</b> dieselbe geometrische Eigenschaft (Niedrigdimensionalität / Kohärenz), zwei verschiedene Nutzenfunktionen. A fragt &bdquo;wann soll das Modell <em>zurückhalten</em>&ldquo; (epistemisch), B fragt &bdquo;wie gut <em>transferts/steuert</em> es&ldquo; (performant). Unterschiedlicher Zweck für dieselbe Eigenschaft.</p>
+  </div>
+
+  <div class="card">
+    <p><b>W2 · Wo die Ehrlichkeit wohnt — ein <em>skalares Band</em>, das man <em>melden</em> muss <span class="tag A">A</span> vs. ein <em>lokales geometrisches Match</em>, das man <em>anwenden</em> muss <span class="tag B">B</span></b></p>
+    <div class="duo">
+      <div class="col a"><h4>A sagt</h4>
+        <p>Ehrlichkeit ist eine <b>Größenordnung (Magnitude)</b>: das Band &tau; / die Temperatur T. Der Fehler ist, dass das Modell ein <em>weites</em> Band wie ein <em>schmales</em> behandelt — es antwortet <em>entschieden</em> (T&rarr;0, hohes Selbstvertrauen), wo es &bdquo;weiß es nicht&rdquo; hätte sagen sollen. <b>Halluzination = miscalibrierte Temperatur</b>, ein <em>skalares</em> Missmatch, das <em>berichtet</em> werden muss.</p>
+      </div>
+      <div class="col b"><h4>B sagt</h4>
+        <p>Ehrlichkeit ist ein <b>lokaler Werkzeug-Match (Form/Richtung)</b>: lineares Werkzeug (J-Lens/PCA) <em>nur</em> dort, wo der Zustand wirklich linear ist; gekrümmter Schritt (Fisher) <em>an statt</em> euklidisch dort, wo gekrümmt. Der Fehler ist <em>Fehlanwendung</em>: &bdquo;lineare PCA übersteuert die Dimension um einen Faktor von über 10&rdquo;, ein euklidischer Schritt ignoriert die Fisher-Metrik. <b>Über-Linearisierung = Form-Missmatch</b>, das <em>vermieden</em> werden muss.</p>
+      </div>
+    </div>
+    <p>&#8594; <b>Spannung:</b> A warnt &bdquo;melde die <em>Breite</em> deines Vertrauens&ldquo; (einzige Größe), B warnt &bdquo;nutze das <em>richtige Werkzeug</em> für die lokale Krümmung&ldquo; (lokal, richtungsabhängig). Verschiedene Fehlschläge, verschiedene Heilungen. A ist <em>wie viel</em> vertrauen; B ist <em>wie</em> lesen/schreiten. Dies ist der schärfste, wirklichste Konflikt zwischen den beiden.</p>
+  </div>
+
+  <div class="card">
+    <p><b>W3 · Der Status des Objekts — ein <em>statischer kohärenter Zustand</em>, den man <em>findet</em> <span class="tag A">A</span> vs. ein <em>konstitutiver Fluss</em>, das <em>Objekt selbst</em> <span class="tag B">B</span></b></p>
+    <div class="duo">
+      <div class="col a"><h4>A sagt</h4>
+        <p>Das primäre Objekt ist <em>ein</em> <b>globaler Schnitt</b> — eine statische Verklebungs-/Kompatibilitäts-Relation über lokalen Stücken (<code>sᵢ|ᵢⱼ = sⱼ|ᵢⱼ</code> bzw. &cong; bis Homotopie). Der Gradientenabstieg <code>&theta;'(t) = &minus;&nabla;_&theta; &Phi;</code> ist nur ein <em>Suchprozess</em>, um diesen Schnitt zu <em>finden</em> — und das Ergebnis ist fundamental <em>nur approximat</em> (&infin;-konsistent, bis auf Homotopie, nie exakt). Das Wesentliche ist der <em> Zustand</em>; die Dynamik ist Mittel.</p>
+      </div>
+      <div class="col b"><h4>B sagt</h4>
+        <p>Das primäre Objekt ist <em>konstitutiv dynamisch/zeitlich</em>: Der Residual-Stream <span class="m">h<sub>&#8467;</sub></span> läuft &bdquo;in der Zeit&ldquo; über die 64 Sublayer — er verdichtet, beschleunigt (Velocity &darr;h&darr;) und <em>linearisiert</em> sich (MI f&auml;llt, Korrelation steigt). Das Wesentliche ist die <em>Bahn</em>; die dünne Mannigfaltigkeit ist deren <em>Attraktor</em>, auf den der Fluss kontrahiert (Selbstdkorrektion). Die Zeitentwicklung <em>ist</em> das Objekt.</p>
+      </div>
+    </div>
+    <p>&#8594; <b>Spannung:</b> A behandelt die Dynamik als <em>Suchmechanismus</em> zu einem statischen kohärenten Ziel; B behandelt die Dynamik als <em>konstitutiv</em> für das Objekt selbst. Ist das Wesentliche ein <em> Zustand, den man findet</em>, oder eine <em>Bahn, die man ist</em>?</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <div class="note t"><b>W1 &rarr; Dünn/kohärent &rarr; Invarianz, und Invarianz hat <em>zwei</em> Gesichter: Generalisierung (B) <em>und</em> kalibrierte Ehrlichkeit (A).</b>
+  Ein kohärent/dünn zusammengesetztes Objekt hat <em>wenige echte Freiheitsgrade (DOF)</em>. Wenige echte DOF bedeutet zugleich: (a) es <em>kann</em> Rauschen nicht mitfitzen &rarr; <b>Generalisierung</b> (B: ID &rarr; Test-Genauigkeit, r = 0.94), <em>und</em> (b) seine <em>Residualunsicherheit ist strukturiert und lesbar</em> &rarr; das Band &tau; ist ein <em>kalibrierbarer</em> Ableser von &bdquo;wie gut ist dieses Ablesen unterstützt&ldquo; (A). <span class="tag F">Fusion</span>: <b>Dünnheit macht das Vertrauens-Band erst <em>sinnvoll</em>.</b> Ein <em>weites</em> Band (A: geringe Daten-Unterstützung, Lücke) ist exakt eine <em>dicke/high-ID-Richtung</em> (B): dort hat das Objekt einen echten, nicht fixierten Freiheitsgrad. Wo dünn (B: low ID), ist das Band eng (A) und das Ablesen vertrauenswürdig. A's Band &tau; und B's ID sind <em>dual gemessen dieselbe Größe</em>: &tau; = Unsicherheit <em>entlang</em> der noch-ungelösten DOF, ID = deren <em>Anzahl</em>. Broadcast (B: France-Vektor liefert korrekt China/Asien über alle Prompts) ist das <em>verbal-dynamische Zwilling</em> von A's &bdquo;die Kohärenz trägt über die Abdeckung&ldquo; — ein invarianter, dünn verklebter Zustand, der überall denselben Wert liest.</div>
+
+  <div class="note r"><b>W2 &rarr; Ehrlichkeit = <em>beide</em> Achsen des einen Prinzips &bdquo;sei dem Objekt treu&ldquo;: Magnitude (A) <em>und</em> Form (B).</b>
+  A und B beschreiben <em>zwei orthogonale Achsen</em> desselben Prinzips, nicht rivalisierende:
+  <ul>
+    <li><b>Achse Magnitude (A):</b> <em>wie viel</em> vertrauen? Die Antwort ist das Band &tau; / die Temperatur. Fehlschlag = <b>Halluzination</b> — scharfe/entschiedene Ausgabe <em>trotz</em> weitem Band (miscalibrierte Temperatur, &bdquo;ohne Warnung&ldquo;).</li>
+    <li><b>Achse Form (B):</b> <em>mit welchem Werkzeug / in welche Richtung</em> lesen/schreiten? Die Antwort ist der lokale Match: linearer J-Lens auf linearisiertem Zustand, Fisher-Schritt auf gekrümmtem Objekt. Fehlschlag = <b>Über-Linearisierung</b> — lineares/PCA-/euklidisches Werkzeug auf intrinsisch Gekrümmt (ID &gt;10&times; übersteuert, Krümmung ignoriert).</li>
+  </ul>
+  <span class="tag F">Fusion</span>: <b>Der J-Lens (B) ist <em>doppelt</em> ehrlich — nur wo linearisiert (B) <em>und</em> nur wo &tau; schmal (A).</b> Im J-Space (B: &asymp;38&ndash;92 %) <em>und</em> bei guter Unterstützung (A: kleines Band) ist das lineare Ablesen treu. Der Fisher-Schritt (B) ist ehrlich, wo die Krümmung echt ist <em>und</em> wo &tau; breit genug ist, um Krümmung zu <em>brauchen</em> (A). Der Grundsatz: <b>sei treu in der Magnitude (berichte &tau;) <em>und</em> in der Form (nutze das Werkzeug der lokalen Geometrie).</b> Eine Halluzination (A) und eine Über-Linearisierung (B) sind dieselbe <em>Untreue zum Objekt</em> — nur auf verschiedenen Achsen.</div>
+
+  <div class="note a"><b>W3 &rarr; Der globale Schnitt (A) <em>ist</em> der Attraktor des Kohärenz-Flusses (B); Suchen = Ankommen.</b>
+  A's Kohärenz-Fluss (Gradientenabstieg in Parameter-Raum, minimiert den Verklebungs-Fehler &Phi;) und B's Fluss (Selbstdkorrektion im Aktivierungsraum, kontrahiert auf die dünne Mannigfaltigkeit) sind <em> dieselbe Anziehung in zwei Räumen</em>. A's <em>statischer kohärenter globaler Schnitt</em> — das Ziel, das man findet — <em>ist</em> B's <em>Attraktor-Mannigfaltigkeit</em>, auf die der Fluss sich legt. Die Dynamik, die A nur als <em>Suchmittel</em> nutzt und B als <em>konstitutiv</em> empfindet, ist derselbe Prozess: eine Kontraktion auf einen kohärenten Zustand. A's &bdquo;approximat, &infin;-konsistent, nie exakt&ldquo; (W3) ist genau B's Beobachtung, dass der Fluss <em>asymptotisch</em> linearisiert und dünn wird (MI &rarr; Boden, ID &rarr; 19). <span class="tag F">Fusion</span>: <b>Das Objekt ist eine <em>fluss-tragende dünne kohärente Mannigfaltigkeit</em> — der globale Schnitt (A) ist der Attraktor, der Kohärenz-Fluss (Gradientenabstieg / Selbstdkorrektion) ist der Weg dorthin, und &bdquo;Finden&ldquo; (A) ist &bdquo;Ankommen&ldquo; (B) des Flusses.</b> Design (A's &bdquo;a-priori-Basis&ldquo;, B's &bdquo;per-Hand prätrainiert&ldquo;) = ein Fluss, der <em>schon</em> angekommen ist und eingefroren wurde; Lernen = derselbe Fluss in Bewegung.</div>
+</section>
+
+<!-- 4 -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="muted" style="color:var(--dim);font-size:.92rem">Der konsolidierte, zusammenhängende Kern beider R2-Papiere — dicht genug, dass eine spätere Runde allein daraus arbeitet.</p>
+
+  <h3>F1 · Das eine Objekt: eine dünn-fließende, kohärent-verklebte Mannigfaltigkeit mit Metrik</h3>
+  <p><span class="tag B">B</span> Repräsentation auf einer dünnen, gekrümmten Daten-Mannigfaltigkeit (ID &rarr; Generalisierung, r = 0.94) + Entscheidung auf dem Wahrscheinlichkeits-Simplex <span class="m">{p : &Sigma;p<sub>i</sub> = 1}</span> mit Fisher-Metrik. Konkretes Leitbeispiel: VGG-16 <span class="m">pool1: ID&asymp;58 / 802 816 &middot; pool2: &asymp;28 / 201 088 &middot; pool3: &asymp;22 / 50 272 &middot; pool4: &asymp;19 / 100 352</span> — am Ende nur &asymp;0,02&nbsp;% &bdquo;echt&ldquo;.<br>
+  <span class="tag A">A</span> Dasselbe als <em>globaler Schnitt</em> einer (∞-)Garbe über lokalen Spuren <code>eᵢ = fᵢ(w)</code>; das Ding-an-sich <code>w</code> ist inaccessibel, Richtigkeit &hArr; <em>die Projektionen verkleben</em> (<code>sᵢ|₍ᵢⱼ₎ = sⱼ|₍ᵢⱼ₎</code>, bzw. &cong; bis Homotopie).</p>
+  <p><span class="tag F">Fusion</span>: B = der statische Schnitt (ID, Fisher), A = die Kohärenzbedingung (<em>wann</em> die Stücken zusammenhalten). Der globale Schnitt (A) ist der <em>Attraktor</em> des Flusses (B); B's pro-Schicht-ID (pool1&rarr;pool4 / Schicht 0&rarr;63) sind <em>Schnitte entlang As Kohärenz-/Suchzeit</em>. <b>Ein Objekt: dünn (B), kohärent/verklebt (A), fließend (A+B), metrisch (B).</b></p>
+
+  <h3>F2 · Der eine Regler &tau;: wie <em>entschieden</em> ist das Ablesen (und wie viel darf man trauen)</h3>
+  <div class="formula"><span class="m">A &middot; P(Wort) = softmax( &lang;attr(Wort), abfrage&rang; &middot; T )</span> &nbsp;— T = Softmax-Temperatur = Breite des NNGP-&plusmn;2&sigma;-Bandes &tau;</div>
+  <div class="formula"><span class="m">B &middot; Fisher = (1/&tau;)(diag&#8202;p &#8722; pp&#183;)</span> &nbsp;— &tau; skaliert den Schritt: &tau; klein = committed = gedämpft; &tau; groß = offen = frei</div>
+  <p>Beide Papiere haben <em>eine einzige Größe, die die Entscheidbarkeit des Ablesens/Schritts misst</em>. A's Softmax-Temperatur T und B's Fisher-Scaler &tau; sind <em>dieselbe Größe</em>: <b>je committed/entschiedener der Zustand, desto kleiner &tau;, desto schärfer das Ablesen (A) und desto gedämpfter der Schritt (B).</b> Committed = niedrige Entropie = niedrige ID = &bdquo;dünn&ldquo; in beiden. <span class="tag F">Fusion</span>: <b>&tau; ist der gemeinsame Regler.</b> Es steuert zugleich (i) die Scharfe der A-Antwort und (ii) die Dämpfung des B-Schritts.</p>
+
+  <h3>F3 · Die zwei ehrlichen Interaktoren: bilinear/linear lesen &amp; metrisch schreiten</h3>
+  <div class="formula"><span class="m">A &middot; &lang;PE(a), PE(b)&rang; = &Sigma;<sub>i</sub> cos(&omega;<sub>i</sub>(a&minus;b)) &nbsp;&hArr;&nbsp; hängt nur von a&minus;b ab</span></div>
+  <div class="formula"><span class="m">A &middot; s<sub>i</sub>|₍ᵢⱼ₎ = s<sub>j</sub>|₍ᵢⱼ₎ &forall;i,j &nbsp;&rArr;&nbsp; &exist;! s (Verklebung = dasselbe bilineare &bdquo;Passen-Prüfen&ldquo;)</span></div>
+  <div class="formula"><span class="m">B &middot; r<sub>&#8467;</sub> = U &middot; E<sub>x</sub>[ &part; logits / &part; h<sub>&#8467;</sub>(x) ]</span> &nbsp;— J-Lens, ein <em>linearer</em> Readout, treu erst wo linearisiert (&asymp;38&nbsp;%+)</div>
+  <p><span class="tag F">Fusion</span>: Das <em>Lesen</em> ist bilinear/linear auf <em>beiden</em> Seiten (A: Skalarprodukt &asymp; Verklebung; B: J-Lens = mittlere Jacobi &times; Unembedding, stabil über &asymp;1000 Kontexte). Das <em>Schreiten</em> (Lernen/Entscheiden) ist metrisch-gekrümmt (B: Fisher). Beides ist <b>&bdquo;der treue Umgang mit dem Objekt auf der Ebene seiner aktuellen Geometrie&ldquo;</b>: linearer Probe auf einem linearisierten Zustand (A+B), gekrümmter Schritt auf einem gekrümmten Objekt (B). Der J-Space (B: &asymp;5&ndash;10&nbsp;% Varianz, &asymp;6 Wörter) ist der <em>dünnere lineare Unterraum</em>, in dem A's bilineares Ablesen + B's J-Lens gemeinsam lesbar sind.</p>
+
+  <h3>F4 · Band &tau; &hArr; ID: die Dualität der &bdquo;noch-ungelösten Freiheitsgrade&ldquo;</h3>
+  <div class="formula"><span class="m">A &middot; Cramér&ndash;Rao: &nbsp;Var(&theta;&#770;) &ge; 1 / I(&theta;)</span> &nbsp;&hArr;&nbsp; B &middot; TwoNN: &nbsp;r = (zweitnächster / nächster Abstand) &rarr; k = ID</div>
+  <p><span class="tag A">A</span> Das Band &tau; (NNGP-&plusmn;2&sigma;, kalibriert durch Cramér&ndash;Rao) misst, wie <em>weit</em> sich lokale Sektionen unterscheiden dürfen, bevor der globale Schnitt bricht. <span class="tag B">B</span> Die ID (TwoNN-Messung) zahlt, wie <em>viele</em> echte Regler/DOF übrig sind (robust gegen Dichte/Krümmung; exakt bis ID &asymp; 20, darüber Untergrenze).<br>
+  <span class="tag F">Fusion</span>: <b>&tau; und ID sind dieselbe Größe auf zwei Skalen</b> — &tau; ist die Unsicherheit <em>entlang</em> der ungelösten DOF, ID deren <em>Anzahl</em>. Weit/hohe ID (B's &bdquo;dick&ldquo;, A's Lücke/geringe Unterstützung) = das Objekt hat dort echte, nicht fixierte Freiheitsgrade &rarr; ehrliche Antwort ist &bdquo;weiß es nicht&ldquo; (A) oder ein offener Schritt (B). Schmal/niedrige ID = fixiert &rarr; scharfes, vertrauenswürdiges Ablesen.</p>
+
+  <h3>F5 · Die zwei Fehlschläge: Halluzination (A) &amp; Über-Linearisierung (B) — eine Untreue, zwei Achsen</h3>
+  <p><span class="tag A">A</span> <b>Halluzination</b> = Ausgabe bei <em>schärferer</em> Temperatur, als das Band rechtfertigt — ein <em>weit/ununterstütztes</em> Band wird wie <em>scharf/unterstützt</em> behandelt; &bdquo;plausibel klingend, aber falsch, ohne Warnung&ldquo; (Magnitude-Missmatch).<br>
+  <span class="tag B">B</span> <b>Über-Linearisierung</b> = lineares/PCA-/euklidisches <em>Werkzeug</em> auf intrinsisch Gekrümmt — &bdquo;man darf sie nicht linear/flach behandeln — die lineare PCA übersteuert die Dimension um einen Faktor von über 10&ldquo; (Form-Missmatch).<br>
+  <span class="tag F">Fusion</span>: Beide sind <b>Untreue zum Objekt</b> — A ignoriert seine <em>Breite</em> (&tau;), B seine <em>Krümmung</em>. Ein ehrliches Modell befolgt <em>beide</em>: es <em>berichtet &tau;</em> (A) <em>und passt das Werkzeug der lokalen Geometrie an</em> (B). Die Sicherheits-Anwendung folgt direkt (A): versteckte Fehlausrichtungen zeigen Tokens wie <code>fake/trick/secretly</code> oder <code>reward/bias</code> <em>bereits im</em> J-Space, <em>bevor</em> sie Verhalten zeigen; <b>Counterfactual Reflection Training</b> senkt Fabrication 0.25&rarr;0.07, Deception 0.38&rarr;0.05 — man liest die dünnen, kohärenten Koordinaten, bevor sie sich zum Output commiten. A's &bdquo;Ehrlichkeits-Kanal&ldquo; (W1) + B's &bdquo;dünnes ehrliches Objekt inspizieren&ldquo; in einem.</p>
+
+  <h3>F6 · Nützliche Mathematik (aus beiden)</h3>
+  <div class="formula"><span class="m">PE(pos, 2i) = sin(pos&middot;&omega;<sub>i</sub>), &nbsp;PE(pos, 2i+1) = cos(pos&middot;&omega;<sub>i</sub>), &nbsp;&omega;<sub>i</sub> = 10000^(&minus;2i/d)</span> &nbsp;(A)</div>
+  <div class="formula"><span class="m">v<sub>&#8467;</sub> = &darr; h<sub>&#8467;+1</sub> &minus; h<sub>&#8467;</sub> &darr;</span> &nbsp;(Velocity — B) &nbsp;&middot;&nbsp; <span class="m">&Phi; = &Sigma;<sub>z</sub> C(f<sub>&theta;</sub>(z), y<sub>z</sub>), &nbsp;&theta;'(t) = &minus;&nabla;<sub>&theta;</sub> &Phi;</span> &nbsp;(A)</div>
+  <p><b>MI vs. Korrelation (A's Brücke zu B):</b> Korrelation erfasst nur <em>lineare</em> Abhängigkeit, MI <em>alle</em>. Dass Korrelation steigt, <em>während</em> MI fällt, heißt: das Modell <b>wirft komplexe nichtlineare Beziehungen weg und linearisiert</b> — genau die Voraussetzung, die <em>sowohl</em> B's linearer J-Lens-Readout <em>als auch</em> A's bilineares Skalarprodukt-Ablesen für &bdquo;lesbare&ldquo;, <em>treue</em> Auskünfte braucht. <b>TwoNN (B):</b> r = (zweitnächster/nächster); charakteristische Verteilung &rarr; ID. <b>Selbstdkorrektion als Kontraktion (A+B):</b> nach einer Störung kontrahiert die Bahn auf die Mannigfaltigkeit; Korrekturrate in mittleren Schichten am höchsten — die dynamische Version von &bdquo;der globale Schnitt (A) ist der Attraktor (B)&ldquo;.</p>
+
+  <div class="card">
+    <p><b>Der eine Satz der Fusion:</b> Ein neuronales Netz ist ein <b>niedrigdimensionales, kohärent zusammengesetztes Objekt</b> — eine dünn-fließende, sich linearisierende, verklebte Mannigfaltigkeit (A+B) mit einer Fisher-Metrik (B), die der Kohärenz-Fluss (Gradientenabstieg/Selbstdkorrektion) als Attraktor trägt. Es ist <em>lesbar, wo es linear wird</em> (bilinear/J-Lens) <em>und</em> <em>wo &tau; schmal ist</em> (A), und <em>generalisierend + ehrlich, weil es dünn/invariant ist</em> (ID, r = 0.94). <b>Ein Regler &tau;, zwei Achsen der Ehrlichkeit — Magnitude (A) und Form (B):</b> sei treu in <em>beiden</em>; Halluzination (A) und Über-Linearisierung (B) sind dieselbe Untreue. <b>Dünn in Form, kohärent in der Verklebung, fließend in der Zeit, lesbar wo linear, ehrlich in Metrik &amp; Band.</b></p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="visualisierung">
+  <h2>Visualisierung: das Objekt, das sich selbst liest und misst</h2>
+  <p>Ein Bild, das beide R2-Papiere vereint. <b>Oben</b> — die <b>dünn-fließende, kohärent-verklebte Mannigfaltigkeit</b> über die Schichten 0&rarr;63: sie <b>linearisiert</b> (gerade wird) und <b>dünner wird</b> (ID 58&rarr;19, B); die halbtransparente <b>Breite ist das Kohärenz-Band &tau; (A)</b>, das genau dort breit ist, wo die ID hoch ist (F4). Die schattierte <b>J-Space-Band</b> (38&ndash;92&nbsp;%, B) markiert, wo der lineare Readout lesbar ist. An der bewegten Stelle: die <b>Fisher-Schritt-Ellipse</b> (B, folgt der Tangente/Krümmung) — oder ein <b>euklidisches Quadrat</b>, wenn man das &bdquo;lineare Werkzeug auf Gekrümmt&ldquo; erzwingt (B's Über-Linearisierung). <b>Unten</b> — die Dynamik (A+B): ID (B) &hArr; Band &tau; (A) fallen zusammen (gleiche Kurve), MI f&auml;llt, Korrelation steigt (Linearisierung), Velocity beschleunigt. Bewege <b>Schicht</b> in die <em>dicke</em> (frühe) Zone, ziehe <b>&tau;</b>, und schalte die beiden Checkboxen an, um zu sehen, wie <em>dasselbe</em> Band je nach Wertung entweder &bdquo;ich weiß es nicht&ldquo; (ehrlich, A), eine <b>Halluzination</b> (A, scharf erzwungen) oder eine <b>Über-Linearisierung</b> (B, lineares Werkzeug) ist.</p>
+  <div class="viz-card">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--teal)"></i> dünn-fließende Mannigfaltigkeit (Form + Fluss)</span>
+      <span><i class="sw" style="background:var(--amber)"></i> Kohärenz-Band &tau; (A) &asymp; ID (B)</span>
+      <span><i class="sw" style="background:var(--rose)"></i> Fisher-Schritt (gekrümmt, B)</span>
+      <span><i class="sw" style="background:var(--accent4)"></i> J-Space / lesbare Band (B)</span>
+      <span><i class="sw" style="background:var(--accent3)"></i> MI (f&auml;llt)</span>
+      <span><i class="sw" style="background:var(--good)"></i> Korrelation (steigt)</span>
+    </div>
+    <div class="viz-grid">
+      <div class="controls">
+        <div class="ctrl">
+          <label>Schicht (Fluss-Zeit, B) <span class="val" id="vLayer">40</span></label>
+          <input id="layer" type="range" min="0" max="63" value="40">
+        </div>
+        <div class="ctrl">
+          <label>Regler &tau; (A: Band/Softmax-Temp &middot; B: Fisher-Offenheit) <span class="val" id="vTau">0.45</span></label>
+          <input id="sTau" type="range" min="0.05" max="1" step="0.05" value="0.45">
+        </div>
+        <label class="chk"><input id="hallu" type="checkbox"><span><b>Halluzinieren (A):</b> Ausgabe trotz weitem Band scharf halten (Selbstvertrauen ignorieren)</span></label>
+        <label class="chk"><input id="linearCurved" type="checkbox"><span><b>Über-Linearisieren (B):</b> lineares/PCA-/euklidisches Werkzeug auf Gekrümmt anwenden</span></label>
+        <div class="btnrow">
+          <button id="taskSpider" class="active" type="button">&#128031; Spinne</button>
+          <button id="taskMath" type="button">&#129518; Rechnung</button>
+          <button id="resetBtn" type="button">&#8634; Reset</button>
+        </div>
+      </div>
+      <div>
+        <div class="verdict good" id="verdict">&#8212;</div>
+        <div class="ro">
+          <div class="box"><div class="k">A &middot; ID (Regler)</div><div class="v" id="vId">&#8212;</div></div>
+          <div class="box amber"><div class="k">A &middot; Band &tau;</div><div class="v" id="vTau2">&#8212;</div></div>
+          <div class="box"><div class="k">A &middot; MI (nichtl.)</div><div class="v" id="vMi">&#8212;</div></div>
+          <div class="box"><div class="k">A &middot; Korrelation</div><div class="v" id="vCorr">&#8212;</div></div>
+          <div class="box a4"><div class="k">B &middot; Entropie H/ln8</div><div class="v" id="vEnt">&#8212;</div></div>
+          <div class="box rose"><div class="k">B &middot; Schritt (Fisher)</div><div class="v" id="vStep">&#8212;</div></div>
+        </div>
+        <div class="ro" style="margin-top:9px">
+          <div class="box a4"><div class="k">J-Lens liest (B)</div><div class="v" id="vToken">&#8212;</div></div>
+          <div class="box"><div class="k">Top-Wort (A)</div><div class="v" id="vTopW">&#8212;</div></div>
+          <div class="box amber"><div class="k">Top-Chance (A)</div><div class="v" id="vTopP">&#8212;</div></div>
+        </div>
+        <div class="fused-line" id="fusedLine"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <span class="tag A">A</span>
+    <p><a href="../2/r2-020.html">r2-020.html</a> &#8212; &#8220;Das Kohärenz-Band&rdquo; (R2-Fusion aus r1-032.html &bdquo;Lernen ist Verklebung&ldquo; &times; r1-012.html &bdquo;Ein Vektor, zwei Lesarten&ldquo;): Netz als globaler Schnitt einer (∞-)Garbe über lokalen Spuren, bilineares Ablesen (Skalarprodukt = Verklebung), NNGP-&plusmn;2&sigma; + Cramér-Rao als Kohärenz-Metrik, die Softmax-Temperatur T als Regler, Halluzination als Bruch über eine Lücke der Daten-Überdeckung (miscalibrierte Temperatur), Ding-an-sich <code>w</code> &amp; Spuren <code>eᵢ</code>.</p>
+  </div>
+  <div class="prov">
+    <span class="tag B">B</span>
+    <p><a href="../2/r2-024.html">r2-024.html</a> &#8212; &#8220;Dünn, fließend, lesbar&rdquo; (R2-Fusion aus r1-057.html &bdquo;Der lesende Fluss&ldquo; &times; r1-013.html &bdquo;Das Netz als geometrisches Objekt&ldquo;): Residual-Stream als sich linearisierender Fluss (MI f&auml;llt, Korrelation steigt, Velocity, Selbstkorrektion/Attraktor), J-Space/J-Lens-Readout (lesbar wo linear, &asymp;38&ndash;92&nbsp;%), dünne gekrümmte Repräsentations-Mannigfaltigkeit (ID &rarr; Generalisierung, r = 0.94, TwoNN), Fisher-Metrik auf dem Wahrscheinlichkeits-Simplex als gedämpfter ehrlicher Schritt, Softmax als einseitiger optimaler Transport.</p>
+  </div>
+</section>
+
+<footer>
+  Round 3 &#183; Pair 011 &#183; Fusion: <code>r2-020.html</code> &#10007; <code>r2-024.html</code><br>
+  Selbstbehaftetes Standalone-Dokument &#183; alle Daten inline &#183; theme-aware
+</footer>
+
+</div>
+
+<script>
+;(function(){
+  "use strict";
+  var root=document.documentElement;
+  var cv=document.getElementById('viz');
+  if(!cv){ return; }
+  var ctx=cv.getContext('2d');
+  var H=480;
+  var el={
+    themeBtn:document.getElementById('themeBtn'),
+    layer:document.getElementById('layer'),
+    vLayer:document.getElementById('vLayer'),
+    sTau:document.getElementById('sTau'),
+    vTau:document.getElementById('vTau'),
+    hallu:document.getElementById('hallu'),
+    linearCurved:document.getElementById('linearCurved'),
+    tSpider:document.getElementById('taskSpider'),
+    tMath:document.getElementById('taskMath'),
+    reset:document.getElementById('resetBtn'),
+    verdict:document.getElementById('verdict'),
+    vId:document.getElementById('vId'),
+    vTau2:document.getElementById('vTau2'),
+    vMi:document.getElementById('vMi'),
+    vCorr:document.getElementById('vCorr'),
+    vEnt:document.getElementById('vEnt'),
+    vStep:document.getElementById('vStep'),
+    vToken:document.getElementById('vToken'),
+    vTopW:document.getElementById('vTopW'),
+    vTopP:document.getElementById('vTopP'),
+    fused:document.getElementById('fusedLine')
+  };
+  var N=63, L_E=24, L_M=58;
+  var task='spider';
+  var TOKENS={
+    spider:[{l:28,t:'spider'},{l:36,t:'web'},{l:46,t:'insect'},{l:54,t:'eight'},{l:60,t:'8'}],
+    math:[{l:30,t:'arith.'},{l:40,t:'21'},{l:50,t:'42'},{l:59,t:'49'}]
+  };
+  var OMEGA1=1.0, OMEGA2=0.21;
+  var VOCAB=[
+    { w:'wunderbar',   a:[ 0.90,  0.20, 0.00,  0.20] },
+    { w:'fantastisch', a:[ 0.95,  0.00, 0.00,  0.30] },
+    { w:'traurig',     a:[-0.90,  0.00, 0.00, -0.20] },
+    { w:'elend',       a:[-0.95,  0.10, 0.20,  0.30] },
+    { w:'krass',       a:[ 0.20, -0.90,-0.40,  0.60] },
+    { w:'fürwahr',     a:[ 0.10,  0.60, 0.95,  0.10] },
+    { w:'brutal',      a:[-0.10, -0.30, 0.00,  0.95] },
+    { w:'chillig',     a:[ 0.40, -0.85,-0.50, -0.30] }
+  ];
+
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function smooth(t){ t=clamp(t,0,1); return t*t*(3-2*t); }
+  function idAt(l){ return 19 + 39*Math.exp(-l/15); }
+  function thickness(l){ return (idAt(l)-19)/39; }
+  function mi(l){ return clamp(0.9 - 0.62*smooth(l/14) - 0.0015*l, 0.14, 0.9); }
+  function corr(l){ return 0.78 + 0.19*(l/N); }
+  function vel(l){ return 0.28 + 0.62*Math.pow(l/N, 2.4); }
+  function honestBand(l, tauBase){
+    return (0.15 + tauBase*1.15) * (1 + 2.2*thickness(l));
+  }
+  function pe4(p){ return [Math.sin(OMEGA1*p), Math.cos(OMEGA1*p), Math.sin(OMEGA2*p), Math.cos(OMEGA2*p)]; }
+  function dot(a,b){ var s=0; for(var i=0;i<a.length;i++) s+=a[i]*b[i]; return s; }
+  function softmaxScores(query, T){
+    var scores=[]; for(var i=0;i<VOCAB.length;i++) scores.push(dot(query, VOCAB[i].a)/T);
+    var mx=-Infinity; for(var j=0;j<scores.length;j++){ if(scores[j]>mx) mx=scores[j]; }
+    var sum=0; for(var m=0;m<scores.length;m++) sum+=Math.exp(scores[m]-mx);
+    if(sum<=0) sum=1;
+    var out=[]; for(var n=0;n<VOCAB.length;n++) out.push({w:VOCAB[n].w, p:Math.exp(scores[n]-mx)/sum});
+    out.sort(function(a,b){ return b.p-a.p; });
+    return out;
+  }
+  function Hent(p){ var h=0; for(var i=0;i<p.length;i++){ if(p[i]>1e-12) h-=p[i]*Math.log(p[i]); } return h; }
+  function nearestToken(L){
+    if(L<L_E) return null;
+    var toks=TOKENS[task];
+    if(L>=L_M) return toks[toks.length-1].t;
+    var best=toks[0], bd=1e9;
+    for(var i=0;i<toks.length;i++){ var d=Math.abs(toks[i].l-L); if(d<bd){bd=d;best=toks[i];} }
+    return best.t;
+  }
+  function hexToRgb(s){
+    s=(s||'').trim();
+    if(s[0]==='#'){
+      var h=s.slice(1);
+      if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m) return [(m[0]*1|0),(m[1]*1|0),((m[2]||0)*1|0)];
+    return [128,128,128];
+  }
+  function argb(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
+  function rgb(name){ return hexToRgb(getComputedStyle(root).getPropertyValue(name)); }
+  function palette(){
+    return { panel:rgb('--panel'), plot:rgb('--plot-bg'), ink:rgb('--ink'), dim:rgb('--dim'), line:rgb('--line'),
+      teal:rgb('--teal'), amber:rgb('--amber'), rose:rgb('--rose'),
+      a3:rgb('--accent3'), good:rgb('--good'), a4:rgb('--accent4') };
+  }
+  function rr(x,y,w,h,r){
+    if(w<0)w=0; if(h<0)h=0; r=Math.min(r,w/2,h/2);
+    ctx.beginPath(); ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+  }
+  function draw(){
+    var w=cv.clientWidth; if(w<20) return;
+    var dpr=window.devicePixelRatio||1;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr);
+    cv.style.height=H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var P=palette();
+    var isDark=root.classList.contains('dark');
+    var inkStroke=isDark?'rgba(255,255,255,0.85)':'rgba(20,20,30,0.72)';
+
+    var L=clamp(Math.round(+el.layer.value),0,N);
+    el.vLayer.textContent=String(L);
+    var tauBase=clamp(+el.sTau.value,0.05,1);
+    el.vTau.textContent=tauBase.toFixed(2);
+
+    var band=honestBand(L,tauBase);            // A's coherence band (wide where ID high)
+    var hallu=el.hallu.checked;
+    var linCurved=el.linearCurved.checked;
+    var emitted=hallu?0.18:band;                // emitted temperature (A)
+    var committed=smooth(L/N);
+    var openness=clamp((band-0.2)/1.4,0.05,1)*(1-0.5*committed);
+    var inGap=thickness(L)>0.4;
+    var inLinear=(L>=L_E && L<=L_M);
+    var q=pe4(L*59/N);
+    var words=softmaxScores(q, emitted);
+    var top=words[0]||{w:'—',p:0};
+    var hmax=Math.log(VOCAB.length);
+    var pArr=[]; for(var pi=0;pi<words.length;pi++) pArr.push(words[pi].p);
+    var hEnt=Hent(pArr);
+
+    // ---- verdict (fused) ----
+    var vText, vCls;
+    if(linCurved){
+      vText='ÜBER-LINEARISIERUNG (B): lineares/PCA-/euklidisches Werkzeug auf Gekrümmt — Form ignoriert, ID &gt;10× übersteuert';
+      vCls='bad';
+    } else if(inGap){
+      if(hallu){ vText='HALLUZINATION (A): scharfe Ausgabe TROTZ weitem Band &tau; — miscalibrierte Temperatur, nicht gemeldet'; vCls='bad'; }
+      else { vText='Band &tau; weit (A) → „ich weiß es nicht“ · offene, ehrliche Verteilung (B)'; vCls='warn'; }
+    } else {
+      if(inLinear && top.p>0.6){ vText='∞-VERKLEBT &amp; LESBAR (A+B): J-Lens liest · Band schmal · Schritt gedämpft'; vCls='good'; }
+      else { vText='weich · ehrliche Verteilung (B) — die Relation ist an sich weich (A)'; vCls='warn'; }
+    }
+
+    var plotL=54, plotR=w-16;
+    function X(l){ return plotL + (l/N)*(plotR-plotL); }
+    var y0=44, y1=236, mid=(y0+y1)/2;
+    function straight(l){ return smooth(l/40); }
+    function cy(l){ var amp=48*(1-0.92*straight(l)); return mid + amp*Math.sin(l/N*Math.PI*2.2+0.3); }
+    function thHalf(l){ return 7 + thickness(l)*30; }
+
+    // J-space readable band (B)
+    ctx.fillStyle=argb(P.a4,0.10);
+    ctx.fillRect(X(L_E), y0, X(L_M)-X(L_E), y1-y0);
+    ctx.strokeStyle=argb(P.a4,0.5); ctx.setLineDash([4,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(X(L_E),y0); ctx.lineTo(X(L_E),y1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(L_M),y0); ctx.lineTo(X(L_M),y1); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // coherence band tau (A) as translucent vertical band around the manifold (width ~ thickness = ID)
+    for(var li=0;li<=N;li++){
+      var bx=X(li), bh=thHalf(li);
+      ctx.fillStyle=argb(P.amber,0.10);
+      ctx.fillRect(bx-0.6, cy(li)-bh-14, 1.2, 2*bh+28);
+    }
+
+    // manifold (thin flowing, linearizing)
+    ctx.beginPath();
+    for(var l1=0;l1<=N;l1++){ var px1=X(l1), py1=cy(l1)-thHalf(l1); if(l1===0)ctx.moveTo(px1,py1); else ctx.lineTo(px1,py1); }
+    for(var l2=N;l2>=0;l2--){ ctx.lineTo(X(l2), cy(l2)+thHalf(l2)); }
+    ctx.closePath(); ctx.fillStyle=argb(P.teal,0.16); ctx.fill();
+    ctx.beginPath();
+    for(var l3=0;l3<=N;l3++){ var px3=X(l3), py3=cy(l3); if(l3===0)ctx.moveTo(px3,py3); else ctx.lineTo(px3,py3); }
+    ctx.strokeStyle=argb(P.teal,0.92); ctx.lineWidth=1.7; ctx.stroke();
+
+    // J-Lens tokens (B) at top
+    var toks=TOKENS[task], nearTk=nearestToken(L);
+    for(var ti=0;ti<toks.length;ti++){
+      var tk=toks[ti], cxp=X(tk.l), laneY=20;
+      ctx.strokeStyle=argb(P.a4,0.32); ctx.setLineDash([2,3]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(cxp, laneY+10); ctx.lineTo(cxp, cy(tk.l)-thHalf(tk.l)); ctx.stroke(); ctx.setLineDash([]);
+      var near=(tk.t===nearTk);
+      ctx.font='11px system-ui';
+      var tw=ctx.measureText(tk.t).width+14;
+      ctx.fillStyle=argb(P.a4, near?0.32:0.12);
+      rr(cxp-tw/2, laneY-9, tw, 18, 9); ctx.fill();
+      ctx.lineWidth=near?2:1; ctx.strokeStyle=argb(P.a4, near?1:0.7);
+      rr(cxp-tw/2, laneY-9, tw, 18, 9); ctx.stroke();
+      ctx.fillStyle=argb(near?P.a4:P.dim,1);
+      ctx.font=(near?'bold ':'')+'11px system-ui'; ctx.textAlign='center';
+      ctx.fillText(tk.t, cxp, laneY+4); ctx.textAlign='left';
+    }
+
+    // query point + Fisher step ellipse (B) OR euklidian square (B over-step)
+    var mx=X(L), my=cy(L);
+    var dcy=cy(L+(L<N?1:0)) - cy(L-(L>0?1:0));
+    var ang=Math.atan2(dcy, X(1)-X(0));
+    var maj=9+openness*34, min=5+openness*13;
+    ctx.save(); ctx.translate(mx,my); ctx.rotate(ang);
+    if(linCurved){
+      var qs=Math.max(maj,min)*0.85;
+      ctx.beginPath(); ctx.rect(-qs,-qs,2*qs,2*qs);
+      ctx.fillStyle=argb(P.rose,0.10); ctx.fill();
+      ctx.lineWidth=1.8; ctx.setLineDash([4,3]); ctx.strokeStyle=argb(P.rose,0.95); ctx.stroke(); ctx.setLineDash([]);
+    } else {
+      ctx.beginPath(); ctx.ellipse(0,0,maj,min,0,0,Math.PI*2);
+      ctx.fillStyle=argb(P.rose,0.14); ctx.fill();
+      ctx.lineWidth=1.8; ctx.strokeStyle=argb(P.rose,0.95); ctx.stroke();
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(mx,my,5,0,Math.PI*2); ctx.fillStyle=argb(P.ink,1); ctx.fill();
+    ctx.lineWidth=1.5; ctx.strokeStyle=argb(P.panel,1); ctx.stroke();
+    // query marker arrow
+    ctx.strokeStyle=inkStroke; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(mx,y0); ctx.lineTo(mx,y1); ctx.stroke();
+    ctx.fillStyle=argb(P.a4,1); ctx.beginPath();
+    ctx.moveTo(mx,y0-1); ctx.lineTo(mx-5,y0-11); ctx.lineTo(mx+5,y0-11); ctx.closePath(); ctx.fill();
+
+    ctx.fillStyle=argb(P.ink,1); ctx.font='700 12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Objekt: dünne, kohärent-verklebte, fließende Mannigfaltigkeit  ·  Breite = Kohärenz-Band &tau; (A) &asymp; ID (B)', plotL, 12);
+
+    // ---- bottom: dynamics panel ----
+    var y2=288, y3=436;
+    ctx.fillStyle=argb(P.ink,1); ctx.font='700 12px system-ui'; ctx.textAlign='left';
+    ctx.fillText('Dynamik (A+B): ID (B) &hArr; Band &tau; (A) fallen zusammen · MI f&auml;llt · Korrelation steigt · Velocity beschleunigt', plotL, y2-8);
+    ctx.strokeStyle=argb(P.line,0.7); ctx.lineWidth=1;
+    for(var gv=0; gv<=1; gv+=0.5){ var gy=y3-gv*(y3-y2); ctx.beginPath(); ctx.moveTo(plotL,gy); ctx.lineTo(plotR,gy); ctx.stroke(); }
+    function Yv(v){ return y3 - clamp(v,0,1)*(y3-y2); }
+    function curve(fn,col,lw,dash){ ctx.strokeStyle=argb(col,0.95); ctx.lineWidth=lw; if(dash)ctx.setLineDash(dash); else ctx.setLineDash([]);
+      ctx.beginPath(); for(var i=0;i<=N;i++){ var px=X(i),py=Yv(fn(i)); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.stroke(); ctx.setLineDash([]); }
+    curve(thickness,P.teal,2.2,null);          // ID (B) normalized
+    curve(function(l){return 0.06+0.94*thickness(l);},P.amber,1.6,[5,3]); // band tau (A) — tracks ID
+    curve(mi,P.a3,2.0,null);
+    curve(corr,P.good,2.0,null);
+    ctx.strokeStyle=argb(P.ink,0.5); ctx.setLineDash([5,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(mx,y2); ctx.lineTo(mx,y3); ctx.stroke(); ctx.setLineDash([]);
+    var dts=[[thickness(L),P.teal],[0.06+0.94*thickness(L),P.amber],[mi(L),P.a3],[corr(L),P.good]];
+    for(var di=0;di<4;di++){ ctx.beginPath(); ctx.arc(mx,Yv(dts[di][0]),4,0,Math.PI*2); ctx.fillStyle=argb(dts[di][1],1); ctx.fill(); ctx.lineWidth=1.2; ctx.strokeStyle=argb(P.panel,1); ctx.stroke(); }
+
+    // readouts
+    el.vId.textContent=String(Math.round(idAt(L)));
+    el.vTau2.textContent=band.toFixed(2);
+    el.vMi.textContent=mi(L).toFixed(2);
+    el.vCorr.textContent=corr(L).toFixed(2);
+    el.vEnt.textContent=hEnt.toFixed(2)+' / '+hmax.toFixed(2);
+    el.vStep.textContent= openness>0.6?'frei':openness>0.3?'halb':'gedämpft';
+    el.vToken.textContent= (L<L_E)?'\u2014 (Rauschen)':nearTk;
+    el.vTopW.textContent=top.w;
+    el.vTopP.textContent=Math.round(top.p*100)+' %';
+    el.verdict.className='verdict '+vCls;
+    el.verdict.innerHTML=vText;
+    var note = (L<L_E)? '<i>Rohmaterial: reiche nichtlineare Information, dicker ID, weites Band — Readout = Rauschen.</i>'
+               : (L<L_M)? '<i>Lesbarer J-Space: linearisiert <em>und</em> Band schmal — hier ist das bilineare/J-Lens-Ablesen treu.</i>'
+               : '<i>Commitment: Velocity-Peak, &tau; klein, Schritt gedämpft — nächste Output-Entscheidung.</i>';
+    el.fused.innerHTML='Ein Regler &tau;, zwei Achsen (Schicht '+L+'): Band &tau;='+band.toFixed(2)+' &asymp; ID '+Math.round(idAt(L))+' (dieselbe Größe) &middot; MI '+mi(L).toFixed(2)+'/Korr '+corr(L).toFixed(2)+' (linearisiert) &middot; Entropie '+hEnt.toFixed(2)+'/ln8, Schritt '+el.vStep.textContent+' (Fisher) &middot; Top-Wort &bdquo;'+top.w+'&ldquo; ('+Math.round(top.p*100)+' %). '+note;
+  }
+  el.layer.addEventListener('input', function(){ draw(); });
+  el.sTau.addEventListener('input', function(){ draw(); });
+  el.hallu.addEventListener('change', function(){ draw(); });
+  el.linearCurved.addEventListener('change', function(){ draw(); });
+  el.tSpider.addEventListener('click', function(){ task='spider'; el.tSpider.classList.add('active'); el.tMath.classList.remove('active'); draw(); });
+  el.tMath.addEventListener('click', function(){ task='math'; el.tMath.classList.add('active'); el.tSpider.classList.remove('active'); draw(); });
+  el.reset.addEventListener('click', function(){
+    el.layer.value=40; el.sTau.value=0.45; el.hallu.checked=false; el.linearCurved.checked=false; draw();
+  });
+  el.themeBtn.addEventListener('click', function(){ root.classList.toggle('dark'); });
+  window.addEventListener('resize', draw);
+  if(window.MutationObserver){ new MutationObserver(function(){ draw(); }).observe(root,{attributes:true,attributeFilter:['class']}); }
+  window.addEventListener('load', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

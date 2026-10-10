@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stückweise-linear verklebt: Das Feld und seine Knick — Fusion r2-028 ✕ r2-013 (Round 3)</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ecdf; --panel:#fffdf8; --panel2:#f5f1e7;
+  --ink:#20242c; --ink2:#5b6273; --ink3:#8a8f9c;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#be185d; --accent4:#1d4ed8;
+  --good:#15803d; --bad:#b91c1c; --warn:#b45309;
+  --grid:#e6e0d0; --line:#e6e1d2; --code-bg:#efece1; --region:rgba(15,118,110,.10);
+  --canvas:#ffffff;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111726; --panel:#141d31; --panel2:#1a2439;
+  --ink:#e8ecff; --ink2:#a8b3d9; --ink3:#7d88ad;
+  --accent:#7cf5c4; --accent2:#ffb86b; --accent3:#ff7ab6; --accent4:#8ab4ff;
+  --good:#6ee7a0; --bad:#ff9b9b; --warn:#ffd166;
+  --grid:#243150; --line:#26314f; --code-bg:#0b1322; --region:rgba(124,245,196,.10);
+  --canvas:#0d1424;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 62%);
+  color:var(--ink); font-family:var(--sans); line-height:1.7;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+main{max-width:820px;margin:0 auto;padding:34px 22px 90px}
+header{padding:24px 10px 8px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--panel2);border:1px solid var(--line);color:var(--accent);padding:4px 12px;border-radius:99px;margin-bottom:14px}
+h1{font-size:clamp(26px,4.8vw,40px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin:0 0 14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--ink2);font-size:15px;margin:0 0 8px;max-width:72ch}
+.sub b{color:var(--ink)}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin-top:10px}
+.fuse-line b{color:var(--accent)}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+nav.toc a{color:var(--ink2);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);background:var(--panel2)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px 26px;margin:20px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+section h2{margin:0 0 14px;font-size:clamp(19px,3vw,24px);letter-spacing:-.01em;color:var(--accent)}
+section h2 .n{font-family:var(--mono);font-size:.5em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--panel2);border-radius:99px;padding:3px 9px}
+h3{color:var(--accent2);margin:20px 0 8px;font-size:1.06rem}
+p{font-size:1rem;color:var(--ink2);margin:0 0 13px}
+p b,li b{color:var(--ink)}
+.lead{font-size:1.03rem}
+.hl{color:var(--accent);font-weight:600}
+.hl2{color:var(--accent2);font-weight:600}
+.hl3{color:var(--accent3);font-weight:600}
+a{color:var(--accent4)}
+.note{border-left:3px solid var(--accent4);background:var(--panel2);padding:11px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.94rem;color:var(--ink2)}
+.note b{color:var(--ink)}
+.note.a{border-color:var(--accent)}
+.note.b{border-color:var(--accent2)}
+.note.rose{border-color:var(--accent3)}
+ul{margin:10px 0;padding-left:22px;color:var(--ink2);font-size:.96rem}
+li{margin:8px 0}
+.wrow{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:12px 0;background:var(--panel2)}
+.wrow .wl{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--accent);margin-bottom:7px}
+.wrow .wa{font-size:.94rem;color:var(--ink2)}
+.wrow .wa b{color:var(--ink)}
+.wrow .pa{color:var(--accent);font-weight:700}
+.wrow .pb{color:var(--accent2);font-weight:700}
+.m{font-family:'Cambria Math','STIX Two Math',Georgia,serif;font-style:italic;letter-spacing:.01em;white-space:nowrap}
+.m sup,.m sub{font-size:.72em;font-style:normal}
+.formula{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:14px 0;overflow-x:auto;text-align:center;font-size:.98rem;line-height:2}
+.formula .op{color:var(--ink3);font-style:normal}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent);font-weight:700}
+td{color:var(--ink2)}
+td b{color:var(--ink)}
+.trow-a{color:var(--accent);font-weight:600}
+.trow-b{color:var(--accent2);font-weight:600}
+.viz-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+canvas.viz{display:block;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--canvas);margin-bottom:12px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:10px 0 4px;font-size:.82rem;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:6px 0 12px;font-family:var(--mono);font-size:12.5px}
+.controls label{display:flex;align-items:center;gap:8px;color:var(--ink2)}
+.controls .val{color:var(--accent2);min-width:30px;display:inline-block}
+input[type=range]{accent-color:var(--accent);width:120px;cursor:pointer}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap}
+button{background:transparent;color:var(--ink);border:1px solid var(--line);padding:6px 14px;border-radius:9px;font-weight:600;cursor:pointer;font-size:.85rem;font-family:var(--mono);transition:.15s}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:.93rem;margin-top:10px}
+.verdict{font-weight:700;font-size:.95rem;padding:9px 12px;border-radius:10px;margin-bottom:11px;border:1px solid var(--line);background:var(--panel2)}
+.verdict.good{color:var(--good);border-color:var(--good)}
+.verdict.warn{color:var(--warn);border-color:var(--warn)}
+.verdict.bad{color:var(--bad);border-color:var(--bad)}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.9rem}
+.kv span:first-child{color:var(--ink2)}
+.kv span:last-child{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer;font-family:var(--mono)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;color:var(--ink2);font-size:.85rem;padding:24px 10px 6px}
+.prov{display:grid;gap:12px;margin-top:6px}
+.prov a{display:block;text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;transition:.15s}
+.prov a:hover{border-color:var(--accent);transform:translateY(-1px)}
+.prov .t{font-weight:700;color:var(--ink);font-size:.97rem}
+.prov .t code{font-family:var(--mono);font-size:.9em;color:var(--accent)}
+.prov .d{color:var(--ink2);font-size:.87rem;margin-top:5px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#9790; Dunkel</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 3 &middot; Paar 007 &middot; PL-Karte &times; Feld &times; Quantisierung &times; Knick</div>
+  <h1>St&uuml;ckweise-linear <em>verklebt</em>: Das Feld und seine Knick</h1>
+  <p class="sub">Beide R2-Fusionen beschreiben <b>die aus lokalen, linearen St&uuml;cken verklebte Karte</b> und deren <b>doppeltes Ablesen</b>. A (r2-028) klebt <b>additiv</b> (<span class="hl">Feld&nbsp;=&nbsp;&Sigma;&nbsp;c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub></span>, stetige Garben-/Interferenzsektion) und liest es <b>identisch</b> oder per <b>Argmax/Quantisierung</b> ab. B (r2-013) klebt <b>tropisch</b> (<span class="hl2">max&nbsp;viele&nbsp;Geraden</span>, st&uuml;ckweise-linear mit <b>Knick</b>) und liest es per <b>harten&nbsp;max/Softmax</b> ab. <b>Fusion:</b> Summe und max sind <b>zwei Klebe-/Readout-Regimen derselben PL-Karte</b> &mdash; und der irreduzible Fehler / die Empfindlichkeit sitzen <b>genau an den Zellgrenzen</b>, die zugleich A&rsquo;s Raster-/Voronoi-Gap und B&rsquo;s Knick sind.</p>
+  <p class="fuse-line">Fusion aus: <b>r2-028.html</b> &#10007; <b>r2-013.html</b> &nbsp;(Round 3)</p>
+  <nav class="toc">
+    <a href="#these">Kernthese</a>
+    <a href="#widersprueche">Widerspr&uuml;che</a>
+    <a href="#aufloesung">Aufl&ouml;sung</a>
+    <a href="#inhalt">Fusionierter Inhalt</a>
+    <a href="#visualisierung">Visualisierung</a>
+    <a href="#provenienz">Provenienz</a>
+  </nav>
+</header>
+
+<!-- ==================== 1 ==================== -->
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p class="lead">Ein neuronales Modell ist <b>eine st&uuml;ckweise-lineare (tropische) Karte <span class="m">f</span>, aus lokalen, linearen St&uuml;cken verklebt</b> &mdash; und diese Karte wird <b>zweimal abgelesen</b>. Der <b>Vorw&auml;rts-/Generations-Schritt</b> ist die (kausal, vorw&auml;rts-only iterierte) Anwendung von <span class="m">f</span> auf einen Punkt <span class="m">x</span>; <b>innerhalb einer Zelle ist <span class="m">f</span> linear und damit voll lesbar</b>, &uuml;ber die <b>Knick</b> (tropische Hyperfl&auml;chen, an denen zwei Monome exakt gleich sind) wechselt der lineare Ast und damit der <em>Winner</em>. A sieht das als <b>stetiges Feld</b> (<span class="hl">Globalsektion&nbsp;=&nbsp;Interferenz-/Logit-Feld</span>), B als <b>PL-Karte mit Regionen</b>. Die beiden sind dasselbe Objekt, nur anders verklebt und anders abgelesen.</p>
+<p>Der <b>Readout-Schritt</b> ist der Ort, an dem alles Diskrete entsteht: A liest das Feld per <span class="hl">identischem Readout</span> ab (stetig: fiten/gl&auml;tten) <b>oder</b> per <span class="hl">Argmax/Quantisierung</span> (diskret: n&auml;chster Anker auf dem Raster). B liest per <span class="hl2">hartem max/argmax &uuml;ber Vokabular-Monome</span> ab, dessen <span class="hl2">glatte</span> Version der Softmax bei Temperatur <span class="m">T&gt;0</span> ist (bei <span class="m">T&rarr;0</span> kollabiert er exakt auf den harten Winner). <b>Die eine integrierte Position:</b> <span class="hl3">lokale lineare St&uuml;cke &rarr; (verkleben: Summe <span class="m">&Sigma;c<sub>j</sub></span> = stetig, <i>oder</i> max = knickig) &rarr; eine PL-Karte / ein Feld &rarr; Readout-Funktional &Phi;</span> mit &Phi;&nbsp;&isin;&nbsp;{identisch (stetig, A), Argmax/Softmax (diskret, B)}. &Phi;=identisch ist der weich/additive Grenzfall <span class="m">T&gt;0</span>, &Phi;=Argmax der harte/tropische Grenzfall <span class="m">T&rarr;0</span> &mdash; <b>zwei Grenzen derselben gepuckten Auswahl.</b></p>
+<div class="note rose"><b>Das verbindende Herzst&uuml;ck:</b> A&rsquo;s <span class="hl">&Uuml;berdeckungs-Zellen / Quantisierungs-Voronoi-Anker</span> <b>sind</b> B&rsquo;s <span class="hl2">tropische Regionen / lineare Zellen</span>; die Grenzen dieser Zellen sind zugleich A&rsquo;s <b>Raster-/Voronoi-Gap</b> (da wohnt der irreduzible Rate-Distortion-Fehler) und B&rsquo;s <b>Knick</b> (da wohnt die konzentrierte Empfindlichkeit). <b>Innerhalb einer Zelle: linear &rarr; lesbar &rarr; robust &rarr; Quantisierung verlustfrei (A: &bdquo;ausgerichtet&rdquo;/Grokking, B: linear lesbar). An der Zellgrenze: Winner-Wechsel &rarr; irreduzibel empfindlich.</b> Die Tiefe/Kapazit&auml;t feint diese Partition &mdash; bei B <i>explizit exponentiell</i> (Theorem 6.3), bei A als qualitative feinere &Uuml;berdeckung &mdash; und dr&uuml;ckt so die L&uuml;cke, aber der diskrete Boden bleibt, solange der Peak/Punkt nicht auf dem Raster liegt.</div>
+</section>
+
+<!-- ==================== 2 ==================== -->
+<section id="widersprueche">
+<h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+<p>A = <b>r2-028</b> (Garben-Feld &times; Quantisierung), B = <b>r2-013</b> (PL-Karte &times; Attraktor). Sie stehen in drei konkreten Punkten auf unterschiedlichen Seiten desselben Objekts:</p>
+
+<div class="wrow"><div class="wl">&#9312; KOMPOSITIONSOPERATION &mdash; GEWICHTETE SUMME (A) VS. TROPISCHES MAX (B)</div>
+<div class="wa"><span class="pa">A (r2-028):</span> Das Feld ist eine <b>gewichtete Summe</b> der lokalen St&uuml;cke: <span class="m">Feld&nbsp;=&nbsp;&Sigma;<sub>j</sub> c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub></span>, Beiwerte affin/convex. Das Verschmelzen ist <b>additiv</b>; das Resultat ist ein <b>stetiges</b> Objekt (Globalsektion/Interferenzfeld).<br>
+<span class="pb">B (r2-013):</span> Die Karte ist <b>tropisch st&uuml;ckweise-linear</b>: im Semiring <span class="m">&oplus;=max, &otimes;=+</span>; ein tropisches Polynom ist das <b>max vieler Geraden</b> (nicht deren gewichtete Summe). Der Readout ist ein <b>harter max/argmax</b>.<br>
+&rarr; Beide bauen aus lokalen linearen St&uuml;cken, verkleben aber mit <b>unterschiedlicher Operation</b>: additive Summe (glatt/stetig) vs. max (knickig, nicht-differenzierbar an den Knicken).</div></div>
+
+<div class="wrow"><div class="wl">&#9313; LOKALISATION DER EMPFINDLICHKEIT &mdash; KONTINUIERLICH/GLOBAL (A) VS. AN KNIKEN KONZENTRIERT (B)</div>
+<div class="wa"><span class="pa">A (r2-028):</span> Der Fehler ist ein <b>Approximations-/Deckungsfehler</b>; &bdquo;mehr Neuronen = feinere &Uuml;berdeckung = bessere Approximation&rdquo; &mdash; Verbesserung <b>global &uuml;berall</b>, prinzipiell gegen null treibbar (stetiges Ziel). Dazu ein <b>Rate-Distortion-Boden</b> auf dem diskreten Raster, der <i>gitter-fremd</i> (Peak zwischen Ankern) irreduzibel ist.<br>
+<span class="pb">B (r2-013):</span> Die Sensitivit&auml;t ist <b>an isolierte, diskrete Knick</b> (tropische Hyperfl&auml;chen) <b>konzentriert</b>; innerhalb einer Region ist die Karte <em>exakt linear</em> &mdash; dort Empfindlichkeit = 0 (&bdquo;lesbar&rdquo;). Die Karte ist <i>nicht</i> &uuml;berall empfindlich.<br>
+&rarr; Inkompatible Lokalisation: A verortet den Fehler als <b>kontinuierlich/globale</b> Eigenschaft (+ Raster-Boden), B als <b>diskret an Knicken konzentriert</b> (sonst perfekt linear).</div></div>
+
+<div class="wrow"><div class="wl">&#9314; KAPAZIT&Auml;T/TIEFE &mdash; FEINERE &Uuml;BERDECKUNG (A) VS. EXPONENTIELLE REGIONEN-EXPLOSION (B)</div>
+<div class="wa"><span class="pa">A (r2-028):</span> Kapazit&auml;t = <b>qualitative feinere &Uuml;berdeckung</b> (mehr Neuronen), ohne Rate-Garantie, ohne explizite Exponentialit&auml;t; Ergebnis: sch&auml;rfere Approximation (stetig) bzw. kleinerer Boden (diskret).<br>
+<span class="pb">B (r2-013):</span> Tiefe = <b>explizit exponentielle Anzahl linearer Regionen/Knick</b> (Theorem 6.3: <span class="m">&prod; n<sub>l</sub><sup>d</sup></span>, polynomial in der Breite, <b>exponentiell in der Tiefe</b>) &mdash; eine diskrete, kombinatorische Gr&ouml;&szlig;e.<br>
+&rarr; Verschiedene Mechanik desselben &bdquo;immer feiner&ldquo;: A als kontinuierliche Verfeinerung (Qualit&auml;t), B als diskrete exponentielle Zersplitterung (Anzahl).</div></div>
+</section>
+
+<!-- ==================== 3 ==================== -->
+<section id="aufloesung">
+<h2><span class="n">3</span>Aufl&ouml;sung</h2>
+<div class="note"><b>Fusioniertes Grundger&uuml;st:</b> Es gibt <b>eine</b> st&uuml;ckweise-lineare Karte <span class="m">f</span> aus lokalen linearen St&uuml;cken. A und B unterscheiden sich nur in der <b>Klebeoperation</b> (Summe vs. max) und im <b>Readout-Regime</b> (identisch vs. Argmax) &mdash; beides zwei Grenzen eines Temperatur-Parameters. Die drei Punkte l&ouml;sen sich, weil Summe und max, global-verbesserbar und an-Knick-konzentriert, feinere &Uuml;berdeckung und Regionen-Explosion zwei Seiten <b>eines</b> Objekts sind.</div>
+
+<h3>&#9312; Summe vs. max &rarr; zwei Klebe-/Readout-Regimen, ein Objekt</h3>
+<p>Ein st&uuml;ckweise-lineares Feld l&auml;&szlig;t sich <b>weich/additiv</b> verkleben (A: <span class="m">&Sigma; c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub></span>, alle St&uuml;cke steuern gemischt bei &rarr; stetiges Feld) <b>oder hart/tropisch</b> (B: <span class="m">max<sub>j</sub> St&uuml;ck<sub>j</sub></span>, nur das Gewinn-St&uuml;ck z&auml;hlt &rarr; PL-Karte mit scharfen Knicken). Beide sind die <b>Temperatur-Grenzen derselben Familie</b>: der Softmax/verallgemeinerte max bei <span class="m">T&gt;0</span> ist weich (A&rsquo;s Summen-/Feld-Regime), bei <span class="m">T&rarr;0</span> hart (B&rsquo;s tropischer max). Da <span class="m">ReLU(x)=max(x,0)=x&oplus;0</span>, ist A&rsquo;s ReLU-Summen-Feld selbst schon st&uuml;ckweise-linear &mdash; die &bdquo;Stetigkeit&rdquo; besteht nur darin, dass es <i>als Objekt</i> (nicht per Auswahl) abgelesen wird. <b>Fusion:</b> ein Objekt, zwei Klebe-/Readout-Regimen, parametrisiert durch Temperatur.</p>
+
+<h3>&#9313; Global-verbesserbar vs. Knick-konzentriert &rarr; zwei Fehlerarten, ein Ort</h3>
+<p>Es gibt zwei Fehler, die <b>am selben Ort</b> zusammentreffen: (i) der <b>Approximations-/Deckungsfehler</b> (A), der durch feinere &Uuml;berdeckung <i>global</i> sinkt; (ii) der <b>Quantisierungs-/Knick-Fehler</b> (A&rsquo;s Raster-Boden + B&rsquo;s Winner-Wechsel), der <b>an den Zellgrenzen</b> irreduzibel ist. B&rsquo;s &bdquo;Sensitivit&auml;t nur an den Knicken&rdquo; ist genau A&rsquo;s &bdquo;irreduzible L&uuml;cke, wenn der Peak gitter-fremd zwischen Ankern f&auml;llt&rdquo;: <b>im Zell-Inneren robust (ausgerichtet/Grokking bzw. linear lesbar), an der Zellgrenze/Knick fragil (irreduzibel).</b> A&rsquo;s globaler Deckungsfehler beschreibt, wie man die Zellen insgesamt feiner macht; B&rsquo;s Knick beschreibt, wo der <i>individuelle</i> Punkt gerade fragil ist. <b>Fusion:</b> der irreduzible Fehler lebt an den Zell-/Voronoi-/Knick-Grenzen; das Zell-Innere ist verlustfrei.</p>
+
+<h3>&#9314; Feinere &Uuml;berdeckung vs. exponentielle Regionen &rarr; derselbe Hebel, zwei Lesarten</h3>
+<p>Feinere &Uuml;berdeckung (A) <i>ist</i> mehr Regionen/Knick (B). B liefert den <b>mechanistischen Z&auml;hl-Satz</b> (Theorem 6.3: exponentiell in der Tiefe), A die <b>funktionale Konsequenz</b> (feinere Zellen &rArr; sch&auml;rfere Approximation stetig, kleinerer Boden diskret, wie <span class="m">N<sup>&minus;2/k</sup></span>). <b>Fusion:</b> Tiefe/Kapazit&auml;t multipliziert die Zellen exponentiell (B); dadurch wird die Partition feiner (A) und die fragile Zone schrumpft &mdash; aber der diskrete Boden bleibt, solange nicht ausgerichtet.</p>
+
+<div class="note a"><b>Ein Satz (Fusion):</b> Ein Punkt <span class="m">x</span> wird von einer st&uuml;ckweise-linearen Karte <span class="m">f</span> (aus lokalen linearen St&uuml;cken, verklebt als Summe <span class="m">&Sigma;c<sub>j</sub></span> = stetiges Feld <i>oder</i> als max = knickige PL-Karte) bewegt; die Generation ist die kausale Iteration von <span class="m">f</span>. Innerhalb einer Zelle: linear &rarr; lesbar &rarr; robust. An der Knick-/Voronoi-Grenze: Winner-Wechsel &rarr; irreduzibel empfindlich. Die Ausgabe ist ein gepuckter Peak, dessen <b>Stelle</b> der Argmax-Winner (A: n&auml;chster Anker, B: gewonnene Monom-Zelle) und dessen <b>Steilheit</b> die Temperatur ist; <span class="m">T&rarr;0</span> = harter Winner.</div>
+</section>
+
+<!-- ==================== 4 ==================== -->
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+<p class="lead">Die substanzielle Verschmelzung als <b>ein</b> Schema. Die Zeile &bdquo;Fusioniertes PL-Karten-Modell&rdquo; ist das Objekt, von dem eine sp&auml;tere Runde allein arbeiten kann:</p>
+
+<table>
+<tr><th>Komponente</th><th class="trow-a">A &mdash; r2-028 (Feld &times; Quantisierung)</th><th class="trow-b">B &mdash; r2-013 (PL-Karte &times; Attraktor)</th><th>Fusioniertes PL-Karten-Modell</th></tr>
+<tr><td><b>Lokale St&uuml;cke</b></td><td>affine ReLU-Sektionen <span class="m">w<sub>j</sub>x+b<sub>j</sub></span>; Vektor-Stapel; Kosinus-Basis</td><td>tropische Monome = Gerade <span class="m">w<sub>j</sub>x+b<sub>j</sub></span>; ReLU-Neuronen</td><td>lokale lineare St&uuml;cke (Hinge/Dach-St&uuml;cke)</td></tr>
+<tr><td><b>Verkleben</b></td><td><b>Summe</b> <span class="m">Feld=&Sigma; c<sub>j</sub>&middot;St&uuml;ck<sub>j</sub></span> (gewichtet, stetig)</td><td><b>max</b> <span class="m">f=max<sub>j</sub>(w<sub>j</sub>x+b<sub>j</sub>)</span> (tropisch, knickig)</td><td>zwei Klebe-Regimen: &Sigma; (weich, T&gt;0) / max (hart, T&rarr;0)</td></tr>
+<tr><td><b>Objekt</b></td><td>Garben-Globalsektion = Interferenz-/Logit-Feld</td><td>PL-/tropische Karte mit linearen Regionen</td><td><b>dasselbe</b> st&uuml;ckweise-lineare Feld (in zwei Regimen)</td></tr>
+<tr><td><b>Zellen / Raster</b></td><td>&#8477;-&Uuml;berdeckungs-Zellen = Quantisierungs-Voronoi-Anker; gelerntes Raster <span class="m">&#8484;<sub>P</sub></span></td><td>tropische Regionen (Zellen); Knick = tropische Hyperfl&auml;che</td><td>Zellen = Regionen; <b>Grenze = Voronoi-Gap = Knick</b></td></tr>
+<tr><td><b>Readout &Phi;</b></td><td>identisch (stetig) <b>oder</b> Argmax/Quantisierung (diskret)</td><td>harter max/argmax &uuml;ber Vokabular-Monome (Softmax = glatt, T)</td><td>&Phi;&isin;{identisch, Argmax}; T&gt;0 weich &harr; T&rarr;0 hart</td></tr>
+<tr><td><b>Fehler</b></td><td>Approximations-/Deckungsfehler (global reduzierbar) + <b>Rate-Distortion-Boden</b> <span class="m">c<sub>k</sub>(V/N)<sup>2/k</sup></span> + <span class="m">m<sub>0.05</sub>&asymp;0.04&ndash;0.06</span> (irreduzibel, au&szlig;er ausgerichtet)</td><td>Sensitivit&auml;t <b>an Knicken konzentriert</b>; Winner wechselt an der Zellgrenze; sonst linear/robust</td><td>robust im Zell-Inneren; <b>irreduzibel an der Zell-/Knick-Grenze</b></td></tr>
+<tr><td><b>Kapazit&auml;t / Tiefe</b></td><td>feinere &Uuml;berdeckung (mehr Neuronen), qualitativer Hebel, wie <span class="m">N<sup>&minus;2/k</sup></span></td><td>Theorem 6.3: Regionen &le; <span class="m">&prod; n<sub>l</sub><sup>d</sup></span> (poly. Breite, <b>exp. Tiefe</b>)</td><td>Hebel = feineres Zellraster; B: exponentiell in Tiefe, A: funktionale Folge</td></tr>
+<tr><td><b>&bdquo;Ausgerichtet&rdquo; / Grokking</b></td><td>Peak trifft Anker &rarr; Quantisierung verlustfrei</td><td>nahe Kontexte laufen in dieselbe Zelle (Attraktor) &rarr; gleicher Winner</td><td><b>robust</b>: Feld-Punkt auf/nah am Raster = in Zell-Inneren</td></tr>
+</table>
+
+<h3>Schl&uuml;selmathematik A (r2-028) &mdash; Feldbau + Quantisierungs-Geometrie</h3>
+<div class="formula">
+<span class="m">St&uuml;ck: z<sub>j</sub>=w<sub>j</sub>x+b<sub>j</sub> (ReLU) &middot; Globalsektion: y&#770;(x)=&Sigma;<sub>j</sub> c<sub>j</sub>&middot;ReLU(w<sub>j</sub>x+b<sub>j</sub>)+&beta;</span><br>
+<span class="m">c<sub>j</sub> affin (frei signiert) &rArr; Ziel fiten &middot; convex (&Sigma;c<sub>j</sub>=1) &rArr; gl&auml;tten &middot; G=(W<sub>V</sub>&#8868;)<sup>T</sup>W<sub>V</sub> formt Topologie</span><br>
+<span class="m">logit(c)=&Sigma;<sub>k</sub> &alpha;<sub>k</sub>cos(&omega;<sub>k</sub>(t&minus;c)) &middot; Margin m(h)=Score(1.)&minus;Score(2.) &middot; &eta;(&epsilon;)=Vol(G<sub>&epsilon;</sub>)/Vol(Blatt)</span><br>
+<span class="m">Satz 2 (Rate-Dist.): Fehler(N) &ge; c<sub>k</sub>&middot;(V/N)<sup>2/k</sup> &middot; 5 Frequenzen k&isin;{{14,35,41,42,52}} erkl&auml;ren &gt;93&nbsp;% Varianz</span>
+</div>
+
+<h3>Schl&uuml;selmathematik B (r2-013) &mdash; tropisch/PL + Regionen-Z&auml;hlen</h3>
+<div class="formula">
+<span class="m">tropisch: &oplus;=max, &otimes;=+ &middot; ReLU(x)=max(x,0)=x&oplus;0 &middot; tropisches Polynom = max vieler Geraden (PL, konvex)</span><br>
+<span class="m">Knick: Stelle, an der zwei Monome exakt gleich sind (L&uuml;cke=0) &rArr; nicht-differenzierbar; Zellen drumherum = lineare Regionen</span><br>
+<span class="m">Theorem 6.3: Regionen &le; &prod;<sub>l</sub> &Sigma;<sub>i&le;d</sub> C(n<sub>l</sub>,i) &asymp; &prod; n<sub>l</sub><sup>d</sup> &rArr; polynomial in Breite, exponentiell in Tiefe</span><br>
+<span class="m">Glatte Ausgabe: P(w)=softmax(h&middot;W<sub>vocab</sub>/T); T&rarr;0 &rArr; harter argmax-Winner &middot; 2D-Zonotop aus m Strecken &rArr; 2m Ecken</span>
+</div>
+
+<div class="note a"><b>Folgerung A:</b> A&rsquo;s Summen-Feld ist selbst st&uuml;ckweise-linear; &bdquo;stetig&rdquo; meint das <i>Ablesen als Objekt</i>. Feinere &Uuml;berdeckung senkt den globalen Fehler; auf dem diskreten Raster bleibt der Rate-Distortion-Boden, au&szlig;er der Peak ist <i>ausgerichtet</i> (Grokking).</div>
+<div class="note b"><b>Folgerung B:</b> Die Sensitivit&auml;t ist kein kontinuierliches Ph&auml;non, sondern <i>an den Knicken lokalisiert</i>; die &bdquo;Verformung&rdquo; der Tiefe <i>ist</i> die exponentielle Regionen-Zahl. Grenzen: nur PL-Aktivierungen (nicht tanh/Sigmoid), ganzzahlige Gewichte, Regionen = <b>Untersch&auml;tzungen</b>, erkl&auml;rt Tiefe nicht Generalisierung.</div>
+<div class="note rose"><b>Br&uuml;ckenschlag (Fusion):</b> &Uuml;berdeckungs-Zellen (A) = tropische Regionen (B); Raster-/Voronoi-Gap (A) = Knick (B); feinere &Uuml;berdeckung (A) = exponentielle Regionen (B); &bdquo;ausgerichtet&rdquo;/Grokking (A) = linear lesbar im Zell-Inneren (B). Ein neuronales Modell = <span class="m">Antwort = &Phi;(verklebte-PL-Karte)</span>, &Phi;=identisch (weich, stetig) oder &Phi;=Argmax (hart, diskret); <b>robust im Zell-Inneren, irreduzibel empfindlich an der Knick-/Voronoi-Grenze.</b></div>
+</section>
+
+<!-- ==================== 5 ==================== -->
+<section id="visualisierung">
+<h2><span class="n">5</span>Visualisierung</h2>
+<p>Ein einziges interaktives Modell der fusionierten Idee: <b>lokale lineare St&uuml;cke</b> (Dach-/Hinge-St&uuml;cke an den Ankern) werden <b>zweimal verklebt und dreimal abgelesen</b>. <b>Oben</b> A&rsquo;s <span class="hl">stetiges Summen-Feld</span> <span class="m">F=&Sigma; c<sub>r</sub>(q)&middot;Dach<sub>r</sub></span> (Peak am Gedanken <span class="m">q</span>, Readout &Phi;=identisch). <b>Mitte</b> B&rsquo;s <span class="hl2">max-/tropische Karte</span> <span class="m">G=max<sub>r</sub> Dach<sub>r</sub></span> mit <b>Knick</b> an den Zellgrenzen. <b>Unten</b> der <span class="hl3">diskrete Readout</span>: gepucktes Softmax &uuml;ber die Anker (Vokabular/Raster), mit Temperatur, Margin und Jitter. Die senkrechten Linien (Knick <i>=</i> Zell-/Voronoi-Grenze) sind identisch in allen drei Panels &mdash; <b>der Ort der irreduziblen Empfindlichkeit.</b> Der <span class="hl3">Gedanke q</span> wandert &uuml;ber die Zellen: im Zell-Inneren robust (ausgerichtet/Grokking), an der Grenze kollabiert die Margin und der Jitter weicht den Winner.</p>
+<div class="viz-card">
+  <canvas id="viz" class="viz" style="height:620px"></canvas>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--accent)"></i>A &mdash; stetiges Summen-Feld (Feld=Objekt)</span>
+    <span><i class="sw" style="background:var(--accent2)"></i>B &mdash; max-/tropische Karte (Knick = Zellgrenze)</span>
+    <span><i class="sw" style="background:var(--accent4)"></i>Gedanke q</span>
+    <span><i class="sw" style="background:var(--good)"></i>gewonnener Anker (robust)</span>
+    <span><i class="sw" style="background:var(--bad)"></i>fragile Zone (an Knick/Grenze)</span>
+  </div>
+  <div class="controls">
+    <label>Zellen/Anker N (Kapazit&auml;t)
+      <span class="btnrow" id="nrow">
+        <button type="button" data-n="4">4</button>
+        <button type="button" data-n="6" class="on">6</button>
+        <button type="button" data-n="8">8</button>
+        <button type="button" data-n="10">10</button>
+      </span>
+    </label>
+    <label>Gedanke q <input type="range" id="sQ" min="0" max="10" step="0.02" value="5"><span class="val" id="vQ">5.00</span></label>
+    <label>Temperatur T <input type="range" id="sT" min="0.2" max="3" step="0.05" value="1"><span class="val" id="vT">1.00</span></label>
+    <label>Jitter &delta; <input type="range" id="sJ" min="0" max="1.5" step="0.02" value="0.4"><span class="val" id="vJ">0.40</span></label>
+    <button type="button" id="btnReset">Zur&uuml;cksetzen</button>
+  </div>
+  <div class="readout">
+    <div class="verdict" id="rStat">&mdash;</div>
+    <div class="kv"><span>gewonnener Anker (Readout)</span><span id="rWin">&mdash;</span></div>
+    <div class="kv"><span>Zelle / Region (Index)</span><span id="rCell">&mdash;</span></div>
+    <div class="kv"><span>Peak-Prob. (Softmax, T)</span><span id="rP">&mdash;</span></div>
+    <div class="kv"><span>Margin (1. &minus; 2.)</span><span id="rMar">&mdash;</span></div>
+    <div class="kv"><span>Knick / Zellgrenzen</span><span id="rKn">&mdash;</span></div>
+    <div class="kv"><span>Sensitivit&auml;t (&delta;-Test)</span><span id="rSens">&mdash;</span></div>
+  </div>
+  <div class="note" style="margin-bottom:0"><b>Fusionssatz zum Anfasst:</b> Ziehe <b>q</b> in eine Zellmitte (nah an Anker) &rarr; Peak scharf, Margin gro&szlig;, Jitter weicht <i>nicht</i> &rarr; <b>robust / verlustfrei</b> (A: ausgerichtet, B: linear lesbar). Ziehe <b>q</b> an eine <b>Knick-/Zellgrenze</b> (zwischen zwei Ankern) &rarr; Peak breit/doppelt, Margin klein, Jitter weicht den Winner &rarr; <b>irreduzible L&uuml;cke</b> (A: gitter-fremd, B: Knick). Erh&ouml;he <b>N</b> (feinere Partition = exponentielle Regionen, B / feinere &Uuml;berdeckung, A) &rarr; Zellgrenzen dichter, fragile Zone pro Zelle kleiner. Senke <b>T&rarr;0</b> &rarr; Softmax wird zum harten max (B&rsquo;s Winner).</div>
+</div>
+</section>
+
+<!-- ==================== 6 ==================== -->
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <a href="../2/r2-028.html">
+    <span class="t">A &middot; <code>r2-028.html</code> &mdash; &bdquo;Vom stetigen Feld zur diskreten Antwort&rdquo;</span>
+    <span class="d">R2-Fusion r1-023 &times; r1-053: neuronales Modell = stetiges Feld aus lokalen St&uuml;cken, gelesen als Garben-Globalsektion <i>oder</i> Interferenz-/Logit-Feld; Readout identisch (stetig) vs. Argmax/Quantisierung (diskret). Quelle des Summen-Verschmelzungsschemas, der &Uuml;berdeckungs-/Voronoi-Zellen, des Rate-Distortion-Bodens und des &bdquo;ausgerichtet=Grokking&rdquo;-Satzes.</span>
+  </a>
+  <a href="../2/r2-013.html">
+    <span class="t">B &middot; <code>r2-013.html</code> &mdash; &bdquo;Lesbar im Mikro, empfindlich an den Knicken&rdquo;</span>
+    <span class="d">R2-Fusion r1-067 &times; r1-038: Forward-Pass als st&uuml;ckweise-lineare (tropische) Karte f, Generation = Iteration, Ausgabe = gepuckte Auswahl (Softmax = glatter max, T&rarr;0 = harter argmax); Sensitivit&auml;t an tropischen Knicken konzentriert, Tiefe = exponentielle Regionen (Theorem 6.3). Quelle der tropischen/max-Geometrie, der Knick- und Regionen-Z&auml;hl-Mechanik und der Attraktor-Interpretation.</span>
+  </a>
+</div>
+</section>
+
+<footer>
+Knockout-Synthese &middot; Runde 3 &middot; Paar 007 &middot; fusioniert aus r2-028.html &#10007; r2-013.html.<br>
+Simulation l&auml;uft live im Browser &mdash; keine externen Bibliotheken, nur Inline-Daten.
+</footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('viz');
+  var st = { N: 6, q: 5.0, T: 1.0, jit: 0.4 };
+  var H = 10, DOMAIN = 10;
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+
+  function $(id){ return document.getElementById(id); }
+  function col(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function C(){ return {
+    canvas: col('--canvas') || '#0d1424', grid: col('--grid') || '#243150',
+    line: col('--line') || '#26314f', txt: col('--ink2') || '#a8b3d9',
+    ink: col('--ink') || '#e8ecff', ink3: col('--ink3') || '#7d88ad',
+    acc: col('--accent') || '#7cf5c4', acc2: col('--accent2') || '#ffb86b',
+    acc3: col('--accent3') || '#ff7ab6', acc4: col('--accent4') || '#8ab4ff',
+    good: col('--good') || '#6ee7a0', warn: col('--warn') || '#ffd166',
+    bad: col('--bad') || '#ff9b9b', region: col('--region') || 'rgba(124,245,196,.10)'
+  }; }
+  function fmt(v,n){ return Number(v).toFixed(n); }
+  function letter(i){ return String.fromCharCode(65 + (i % 26)); }
+  function G_(){ return DOMAIN / (st.N - 1); }
+
+  function tent(x, r){
+    var g = G_(), d = Math.abs(x - r * g);
+    if (d >= g) return 0;
+    return H * (1 - d / g);
+  }
+  function weights(q){
+    var N = st.N, g = G_(), sig = g * 0.6, w = [], s = 0, r;
+    for (r = 0; r < N; r++){ w.push(Math.exp(-((r * g - q) * (r * g - q)) / (2 * sig * sig))); s += w[r]; }
+    for (r = 0; r < N; r++){ w[r] /= (s || 1); }
+    return w;
+  }
+  function fieldF(x, q){
+    var w = weights(q), s = 0, r;
+    for (r = 0; r < st.N; r++){ s += w[r] * tent(x, r); }
+    return s;
+  }
+  function mapG(x){
+    var m = 0, r;
+    for (r = 0; r < st.N; r++){ var t = tent(x, r); if (t > m) m = t; }
+    return m;
+  }
+  function softmax(logit, Tv){
+    var mx = -Infinity, i;
+    for (i = 0; i < logit.length; i++){ if (logit[i] > mx) mx = logit[i]; }
+    var ex = [], s = 0;
+    for (i = 0; i < logit.length; i++){ var e = Math.exp((logit[i] - mx) / Tv); ex.push(e); s += e; }
+    if (!s || !isFinite(s)){ var u = []; for (var k = 0; k < logit.length; k++) u.push(1 / logit.length); return u; }
+    var p = []; for (i = 0; i < ex.length; i++) p.push(ex[i] / s); return p;
+  }
+  function readout(q, T){
+    var N = st.N, g = G_(), s = g * 0.6, logit = [], r;
+    for (r = 0; r < N; r++){ logit.push(-Math.abs(q - r * g) / s); }
+    var p = softmax(logit, T), win = 0, winv = -1, sec = -1;
+    for (r = 0; r < N; r++){ if (p[r] > winv){ winv = p[r]; win = r; } }
+    for (r = 0; r < N; r++){ if (r !== win && p[r] > sec) sec = p[r]; }
+    return { p: p, win: win, sec: sec, margin: winv - sec };
+  }
+  function compute(){
+    var g = G_(), N = st.N;
+    var rd = readout(st.q, st.T);
+    var q2 = Math.min(DOMAIN, st.q + st.jit);
+    var rd2 = readout(q2, st.T);
+    var flip = rd2.win !== rd.win;
+    var mids = [], r, dTk = Infinity;
+    for (r = 0; r < N - 1; r++){ var m = (r + 1) * g / 2; mids.push(m); var d = Math.abs(st.q - m); if (d < dTk) dTk = d; }
+    var robust = (!flip && dTk > 0.34 * g);
+    return { g: g, N: N, rd: rd, rd2: rd2, flip: flip, mids: mids, dTk: dTk, robust: robust };
+  }
+
+  function hidpi(h){
+    var w = cv.clientWidth || 640; if (w < 300) w = 300;
+    cv.width = Math.max(1, Math.round(w * dpr));
+    cv.height = Math.max(1, Math.round(h * dpr));
+    cv.style.width = w + 'px'; cv.style.height = h + 'px';
+    var c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { c: c, w: w, h: h };
+  }
+
+  function draw(){
+    if (!cv || !cv.getContext) return;
+    var th = C(), dim = hidpi(620), c = dim.c, w = dim.w, hgt = dim.h;
+    c.clearRect(0, 0, w, hgt);
+    c.fillStyle = th.canvas; c.fillRect(0, 0, w, hgt);
+    var data = compute(), g = data.g, N = data.N;
+    var padL = 46, padR = 16, pw = w - padL - padR;
+    function X(x){ return padL + (x / DOMAIN) * pw; }
+    var TOP0 = 16, TOP1 = 178, MID0 = 210, MID1 = 372, BOT0 = 396, BOT1 = 604;
+
+    function midlines(y0, y1, strong){
+      var m;
+      for (m = 0; m < data.mids.length; m++){
+        var mx = X(data.mids[m]);
+        c.strokeStyle = strong ? th.bad : th.line;
+        c.setLineDash([5,4]); c.lineWidth = strong ? 1.6 : 1; c.globalAlpha = strong ? 0.85 : 0.45;
+        c.beginPath(); c.moveTo(mx, y0); c.lineTo(mx, y1); c.stroke();
+      }
+      c.setLineDash([]); c.globalAlpha = 1;
+    }
+
+    /* TOP: A — stetiges Summen-Feld */
+    (function(){
+      var gl, r, i, x, y, px, py;
+      c.strokeStyle = th.grid; c.lineWidth = 1;
+      for (gl = 0; gl <= 3; gl++){ var gy = TOP0 + (TOP1 - TOP0) * gl / 3; c.beginPath(); c.moveTo(padL, gy); c.lineTo(w - padR, gy); c.stroke(); }
+      c.strokeStyle = th.acc; c.globalAlpha = 0.2; c.lineWidth = 1;
+      for (r = 0; r < N; r++){
+        c.beginPath(); var started = false;
+        for (i = 0; i <= 120; i++){ x = i / 120 * DOMAIN; y = tent(x, r); px = X(x); py = TOP1 - (y / (H + 0.5)) * (TOP1 - TOP0);
+          if (!started){ c.moveTo(px, py); started = true; } else c.lineTo(px, py); }
+        c.stroke();
+      }
+      c.globalAlpha = 1;
+      c.strokeStyle = th.acc; c.lineWidth = 2.8; c.beginPath();
+      for (i = 0; i <= 240; i++){ x = i / 240 * DOMAIN; y = fieldF(x, st.q); px = X(x); py = TOP1 - (y / (H + 0.5)) * (TOP1 - TOP0);
+        if (i === 0) c.moveTo(px, py); else c.lineTo(px, py); }
+      c.stroke();
+      var fq = fieldF(st.q, st.q), qx = X(st.q), qy = TOP1 - (fq / (H + 0.5)) * (TOP1 - TOP0);
+      c.fillStyle = th.acc4; c.beginPath(); c.arc(qx, qy, 5.5, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = th.ink; c.lineWidth = 1.4; c.stroke();
+      midlines(TOP0, TOP1, false);
+      c.fillStyle = th.ink; c.font = '700 12px ui-monospace,monospace'; c.textAlign = 'left';
+      c.fillText('A — stetiges Summen-Feld  F = Σ c_r(q)·Dach_r  (Readout Φ = identisch)', padL, TOP0 - 3);
+      c.fillStyle = th.txt; c.font = '10px ui-monospace,monospace';
+      c.fillText('lokale Stücke (hell) + gewichtete Summe (dick) · Peak am Gedanken q', padL, TOP1 + 14);
+    })();
+
+    /* MID: B — max-/tropische Karte */
+    (function(){
+      var gl, r, i, x, y, px, py;
+      c.strokeStyle = th.grid; c.lineWidth = 1;
+      for (gl = 0; gl <= 3; gl++){ var gy = MID0 + (MID1 - MID0) * gl / 3; c.beginPath(); c.moveTo(padL, gy); c.lineTo(w - padR, gy); c.stroke(); }
+      c.fillStyle = th.region;
+      for (r = 0; r < N; r++){
+        var x0 = (r === 0) ? padL : X((r - 0.5) * g);
+        var x1 = (r === N - 1) ? X(DOMAIN) : X((r + 0.5) * g);
+        c.fillRect(x0, MID0, x1 - x0, MID1 - MID0);
+      }
+      c.strokeStyle = th.acc2; c.lineWidth = 2.8; c.beginPath();
+      for (i = 0; i <= 300; i++){ x = i / 300 * DOMAIN; y = mapG(x); px = X(x); py = MID1 - (y / (H + 0.5)) * (MID1 - MID0);
+        if (i === 0) c.moveTo(px, py); else c.lineTo(px, py); }
+      c.stroke();
+      for (r = 0; r < N; r++){ var ax = X(r * g), ay = MID1 - (mapG(r * g) / (H + 0.5)) * (MID1 - MID0);
+        c.fillStyle = th.acc2; c.beginPath(); c.arc(ax, ay, 3.2, 0, Math.PI * 2); c.fill(); }
+      for (r = 0; r < data.mids.length; r++){ var kx = X(data.mids[r]), ky = MID1 - (mapG(data.mids[r]) / (H + 0.5)) * (MID1 - MID0);
+        c.fillStyle = th.bad; c.beginPath(); c.arc(kx, ky, 4, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = th.canvas; c.lineWidth = 1.4; c.stroke(); }
+      var qmx = X(st.q), qmy = MID1 - (mapG(st.q) / (H + 0.5)) * (MID1 - MID0);
+      c.fillStyle = th.acc4; c.beginPath(); c.arc(qmx, qmy, 5.5, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = th.ink; c.lineWidth = 1.4; c.stroke();
+      midlines(MID0, MID1, !data.robust);
+      c.fillStyle = th.ink; c.font = '700 12px ui-monospace,monospace'; c.textAlign = 'left';
+      c.fillText('B — max-/tropische Karte  G = max_r Dach_r  (Readout Φ = Argmax)', padL, MID0 - 3);
+      c.fillStyle = th.txt; c.font = '10px ui-monospace,monospace';
+      c.fillText('Regionen/Zellen (schraffiert) · Peaks=Anker (orange) · Knick an der Zellgrenze (rot)', padL, MID1 + 14);
+    })();
+
+    /* BOT: diskreter Readout (Softmax/Argmax über Anker) */
+    (function(){
+      var rd = data.rd, r, i;
+      var base = BOT1 - 20, maxH = BOT1 - BOT0 - 40;
+      c.strokeStyle = th.grid; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(padL, base); c.lineTo(w - padR, base); c.stroke();
+      c.fillStyle = th.txt; c.font = '10px ui-monospace,monospace'; c.textAlign = 'left';
+      c.fillText('diskreter Readout: gepucktes Softmax über die Anker (Vokabular/Raster) · Stelle=Argmax, Steilheit=T', padL, BOT0 - 3);
+      var bw = Math.min(20, pw / N * 0.5);
+      for (r = 0; r < N; r++){
+        var bx = X(r * g), bh = Math.max(2, rd.p[r] * maxH), isW = (r === rd.win);
+        c.fillStyle = isW ? (data.robust ? th.good : th.acc2) : th.acc4;
+        c.globalAlpha = isW ? 1 : 0.55;
+        c.fillRect(bx - bw / 2, base - bh, bw, bh);
+        c.globalAlpha = 1;
+        c.fillStyle = isW ? th.ink : th.ink3;
+        c.font = (isW ? '700 ' : '') + '10px ui-monospace,monospace'; c.textAlign = 'center';
+        c.fillText(letter(r), bx, base + 13);
+        if (isW){ c.fillStyle = (data.robust ? th.good : th.acc2); c.font = '700 11px ui-monospace,monospace';
+          c.fillText(fmt(rd.p[r] * 100, 1) + '%', bx, base - bh - 6); }
+      }
+      if (rd.sec > 0){
+        var my = base - rd.sec * maxH;
+        c.strokeStyle = th.acc3; c.setLineDash([5,4]); c.lineWidth = 1.2;
+        c.beginPath(); c.moveTo(padL, my); c.lineTo(w - padR, my); c.stroke(); c.setLineDash([]);
+        c.fillStyle = th.acc3; c.font = '10px ui-monospace,monospace'; c.textAlign = 'left';
+        c.fillText('Margin = 1. − 2.', padL + 4, my - 4);
+      }
+      if (data.flip){
+        var gx = X(data.rd2.win * g), gh = Math.max(14, data.rd2.p[data.rd2.win] * maxH);
+        c.strokeStyle = th.bad; c.setLineDash([4,3]); c.lineWidth = 1.4;
+        c.beginPath(); c.moveTo(gx, base); c.lineTo(gx, base - gh); c.stroke(); c.setLineDash([]);
+        c.fillStyle = th.bad; c.font = '9px ui-monospace,monospace'; c.textAlign = 'center';
+        c.fillText('Jitter→' + letter(data.rd2.win), gx, base - gh - 5);
+      }
+      var qx = X(st.q);
+      c.strokeStyle = th.acc4; c.setLineDash([2,3]); c.lineWidth = 1.2;
+      c.beginPath(); c.moveTo(qx, BOT0 + 4); c.lineTo(qx, base); c.stroke(); c.setLineDash([]);
+      midlines(BOT0 + 6, base, !data.robust);
+
+      $('rWin').textContent = 'Anker ' + letter(rd.win) + '  (x = ' + fmt(rd.win * g, 2) + ')';
+      $('rCell').textContent = 'Zelle ' + rd.win + '  von ' + (N - 1);
+      $('rP').textContent = fmt(rd.p[rd.win] * 100, 1) + ' %';
+      $('rMar').textContent = fmt(rd.margin, 3);
+      $('rKn').textContent = (N - 1) + '  (≈ exponentiell in Tiefe, B)';
+      var sens = data.flip ? ('weicht: ' + letter(rd.win) + '→' + letter(data.rd2.win)) : 'stabil (kein Winner-Wechsel)';
+      $('rSens').textContent = sens;
+      var v = $('rStat');
+      if (data.robust){ v.textContent = 'ROBUST · Zell-Inneren → Quantisierung verlustfrei (A: ausgerichtet/Grokking · B: linear lesbar)'; v.className = 'verdict good'; }
+      else if (data.flip){ v.textContent = 'EMPFLINDLICH · Knick-/Zellgrenze → Winner weicht, irreduzible Lücke (A: gitter-fremd · B: Knick)'; v.className = 'verdict bad'; }
+      else { v.textContent = 'RANDEMPFLINDLICH · nahe Zellgrenze → kleine Margin, irreduzibler Boden in Reichweite'; v.className = 'verdict warn'; }
+    })();
+  }
+
+  function setN(n){
+    st.N = n;
+    var btns = document.querySelectorAll('#nrow button');
+    for (var i = 0; i < btns.length; i++){ var b = +btns[i].getAttribute('data-n'); btns[i].classList.toggle('on', b === n); }
+    draw();
+  }
+
+  function init(){
+    var btns = document.querySelectorAll('#nrow button');
+    for (var i = 0; i < btns.length; i++){ btns[i].addEventListener('click', function(){ setN(+this.getAttribute('data-n')); }); }
+    $('sQ').addEventListener('input', function(){ st.q = +this.value; $('vQ').textContent = fmt(st.q, 2); draw(); });
+    $('sT').addEventListener('input', function(){ st.T = +this.value; $('vT').textContent = fmt(st.T, 2); draw(); });
+    $('sJ').addEventListener('input', function(){ st.jit = +this.value; $('vJ').textContent = fmt(st.jit, 2); draw(); });
+    $('btnReset').addEventListener('click', function(){
+      st.N = 6; st.q = 5.0; st.T = 1.0; st.jit = 0.4;
+      $('sQ').value = 5; $('vQ').textContent = '5.00'; $('sT').value = 1; $('vT').textContent = '1.00';
+      $('sJ').value = 0.4; $('vJ').textContent = '0.40'; setN(6);
+    });
+    $('themeBtn').addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); draw(); });
+    window.addEventListener('resize', draw);
+    if (window.MutationObserver){
+      new MutationObserver(function(){ draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    }
+    draw();
+  }
+  if (document.readyState === 'complete') init(); else window.addEventListener('load', init);
+})();
+</script>
+</body>
+</html>

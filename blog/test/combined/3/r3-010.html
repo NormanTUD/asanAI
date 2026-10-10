@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koordinatenwechsel als weicher Schnitt — Basis-Code-Probe ✕ Kohärenz-Korrespondenz-Struktur</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --fg:#1f2328; --muted:#5b6068; --card:#ffffff;
+    --grid:#e7e1d7; --border:#e2ddd2; --link:#2b6cb0;
+    --accent:#2b6cb0; --accent2:#c9771b; --good:#1f9d57; --bad:#cf3b53;
+    --ring:#a12a8f; --code-bg:#f1ede3; --plot-bg:#ffffff;
+    --shadow:0 6px 24px rgba(20,40,80,.08);
+  }
+  html.dark{
+    --bg:#0a0e1a; --fg:#e8ecf5; --muted:#8b95a8; --card:#111827;
+    --grid:#1a2540; --border:#243049; --link:#58a6ff;
+    --accent:#58a6ff; --accent2:#ffb84d; --good:#4fd08a; --bad:#ff6b7d;
+    --ring:#e879f9; --code-bg:#0a1122; --plot-bg:#0e1019;
+    --shadow:0 8px 28px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:Georgia,'Times New Roman',serif;
+       line-height:1.7;padding:2.2rem 1rem 4rem;-webkit-font-smoothing:antialiased}
+  article{max-width:820px;margin:0 auto}
+  h1{font-size:1.95rem;line-height:1.25;margin-bottom:.4rem;letter-spacing:-.01em}
+  h2{font-family:system-ui,sans-serif;font-size:1.35rem;margin:2.4rem 0 .9rem;
+     padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  h2 .no{color:var(--accent);font-variant-numeric:tabular-nums}
+  h3{font-family:system-ui,sans-serif;font-size:1.05rem;margin:1.5rem 0 .55rem;color:var(--accent)}
+  .subtitle{color:var(--muted);font-style:italic;font-size:.97rem;margin-bottom:.6rem}
+  .lede{font-size:1.06rem}
+  p{margin-bottom:.85rem}
+  ul{margin:.4rem 0 1rem 1.3rem}
+  li{margin-bottom:.55rem}
+  a{color:var(--link)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+        padding:1.1rem 1.3rem;margin:1.1rem 0;box-shadow:var(--shadow)}
+  .formula{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;
+           padding:.8rem 1.1rem;margin:.9rem 0;text-align:center;overflow-x:auto;font-size:1.12rem}
+  .vs{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+      padding:.15rem .5rem;border-radius:6px;display:inline-block;margin-right:.4rem}
+  .vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .vs.b{background:color-mix(in srgb,var(--accent2) 26%,transparent);color:var(--accent2)}
+  .fused{background:color-mix(in srgb,var(--good) 13%,transparent);
+         border-left:4px solid var(--good);border-radius:0 8px 8px 0;padding:.75rem 1.05rem;margin:.95rem 0}
+  .fused b{color:var(--good)}
+  .leg{background:var(--code-bg);border:1px dashed var(--border);border-radius:10px;
+       padding:.9rem 1.1rem;margin:.9rem 0;font-family:ui-monospace,Menlo,monospace;font-size:.95rem;line-height:2}
+  .leg .k{color:var(--good)} .leg .o{color:var(--accent)} .leg .w{color:var(--accent2)} .leg .r{color:var(--ring)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1rem 0}
+  th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;background:var(--code-bg)}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.86em;background:var(--code-bg);
+       padding:.1em .35em;border-radius:4px}
+  .controls{font-family:system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:.9rem 1.3rem;
+            align-items:center;background:var(--card);border:1px solid var(--border);
+            border-radius:10px;padding:.8rem 1rem;margin:1rem 0;box-shadow:var(--shadow)}
+  .controls label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+  .controls input[type=range]{accent-color:var(--accent);width:118px}
+  .controls .chk{display:flex;align-items:center;gap:.4rem;cursor:pointer}
+  .controls .chk input{accent-color:var(--bad)}
+  .ctl-val{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;min-width:1.8em;display:inline-block}
+  .viz-wrap{display:flex;gap:16px;flex-wrap:wrap;margin:1rem 0}
+  .viz-stage{flex:1 1 420px;min-width:300px}
+  #fusedCanvas{width:100%;height:470px;display:block;background:var(--plot-bg);
+               border:1px solid var(--border);border-radius:12px;margin:.4rem 0}
+  .viz-side{flex:1 1 250px;min-width:230px;display:flex;flex-direction:column;gap:12px}
+  .gauge .glabel{font-family:system-ui,sans-serif;font-size:.83rem;font-weight:650;margin-bottom:5px;
+                 display:flex;justify-content:space-between;align-items:baseline}
+  .gauge .gtag{font-size:.66rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .bar{height:14px;border-radius:8px;background:var(--code-bg);border:1px solid var(--border);overflow:hidden}
+  .bar .fill{height:100%;width:0%;transition:width .12s linear;border-radius:8px}
+  .fill.coh{background:var(--accent)} .fill.cor{background:var(--accent2)} .fill.str{background:var(--ring)}
+  .fill.off{opacity:.4}
+  .gnote{font-size:.74rem;color:var(--muted);margin-top:5px;min-height:1.1em}
+  .truth{display:flex;gap:11px;align-items:flex-start;background:var(--card);
+         border:1px solid var(--border);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow)}
+  .led{width:16px;height:16px;border-radius:50%;margin-top:3px;flex:0 0 16px;background:var(--muted);
+       transition:background .2s, box-shadow .2s}
+  .led.good{background:var(--good);box-shadow:0 0 12px var(--good)}
+  .led.warn{background:var(--accent2);box-shadow:0 0 10px var(--accent2)}
+  .led.bad{background:var(--bad);box-shadow:0 0 12px var(--bad)}
+  .tlabel{font-family:system-ui,sans-serif;font-size:.85rem;font-weight:700}
+  .tnote{font-size:.77rem;color:var(--muted);margin-top:3px}
+  .readout{font-family:ui-monospace,monospace;font-size:.82rem;background:var(--code-bg);
+           border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin:.5rem 0;line-height:1.85}
+  .readout b{color:var(--accent2)}
+  .anno{font-size:.85rem;color:var(--muted);font-style:italic}
+  .prov{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .9rem;border:1px solid var(--border);
+        border-radius:8px;margin-bottom:.7rem;background:var(--card)}
+  .prov .k{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;flex:0 0 1.6em;
+           text-align:center;border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+  .prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+  .prov .k.b{background:color-mix(in srgb,var(--accent2) 26%,transparent);color:var(--accent2)}
+  .foot{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border);
+        color:var(--muted);font-size:.85rem;font-style:italic}
+  #themeToggle{position:fixed;top:14px;right:14px;z-index:50;font-family:system-ui,sans-serif;
+    font-size:.8rem;background:var(--card);color:var(--fg);border:1px solid var(--border);
+    border-radius:20px;padding:.4rem .8rem;cursor:pointer}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Theme umschalten">&#9680; Theme</button>
+<article>
+
+  <h1>Koordinatenwechsel als weicher Schnitt &mdash; die Basis, der Code und die Probe, gehalten durch Koh&auml;renz, Korrespondenz und Struktur</h1>
+  <p class="subtitle">Fusion aus: r2-015.html &#10005; r2-018.html &nbsp;(Round 3)</p>
+  <p class="lede">A sagt: ein Netz rechnet, indem es eine <b>aufgabenangepasste Basis</b> w&auml;hlt, den daraus folgenden <b>Code</b> durch die Layer transportiert und die Antwort per <b>lokaler Matched-Filter-Probe</b> liest. B sagt: genau diese Basis ist ein <b>weicher, differenzierbarer Schnitt</b> harter Topologie, dessen Kleben die <b>Kettenregel</b> (Koh&auml;renz) ist und dessen Echtheit ein <b>live Korrespondenz-Signal</b> h&auml;lt. Die Fusion: A ist das <i>Was</i> der Rechnung (Basis &#8594; Code &#8594; Probe), B das <i>Wie&nbsp;+</n&nbsp;Warum-wahr</i> (weicher Cut, Kettenregel-Klebung, live Ziel, d<sub>eff</sub>=1).</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2><span class="no">1.</span> Kernthese der Fusion</h2>
+    <p>Die beiden R2-Papiere beschreiben denselben Mechanismus auf zwei Ebenen. <span class="vs a">A &middot; r2-015</span> A ist eine <b>Repr&auml;sentations-These</b>: ein Netz rechnet, indem es (1) in eine aufgabenangepasste Basis wechselt &mdash; Positions-/Zustands-Basis (Grid-Walker), Fourier-/Phasen-Basis (modulare Addition), st&uuml;ckweise-lineare Falz-Basis (Disk/Ring) &mdash;, (2) den daraus folgenden Code (suffiziente Statistik, Phasenvektor, Bit-Muster) durch die Layer <i>transportiert</i> und (3) die Antwort per <b>lokaler Ausrichtungsprobe</b> liest: einer <b>Matched-Filter-Projektion</b>, deren Vorlagen-Anzahl der Anzahl der Antwortklassen entspricht. A ist dabei eine <i>lesende, deskriptive</i> Erz&auml;hlung &mdash; sie erkl&auml;rt, <i>was</i> ein trainiertes Netz rechnet, nicht <i>wie es dorthin kommt</i>.</p>
+    <p><span class="vs b">B &middot; r2-018</span> B ist eine <b>Lern-Dynamik-These</b>: ein lernbares Weltmodell ist eine <i>koh&auml;rente Welt</i>, deren Zellen <b>differenzierbare Weichrelaxationen harter topologischer Featureschnitte</b> sind; Koh&auml;renz = Kettenregel-Klebung (die <i>nur</i> durch, weil die Zellen weich sind), Korrespondenz = live Loss zum echten Ziel, Struktur = der niedrigerdimensionale Cut, der den Fluch der Dimension bricht (<code>d<sub>eff</sub>=1</code>). B ist eine <i>erzeugende, generative</i> Erz&auml;hlung &mdash; sie erkl&auml;rt, <i>wie ein solches Objekt entsteht und warum es wahr ist</i>.</p>
+    <p>Die einzelne integrierte Position lautet: <b>Ein Netz erzeugt eine Wahrheit, indem es (1) per weicher Relaxation eines harten topologischen Schnitts jene niedrigerdimensionale Koordinate w&auml;hlt, in der die Antwort lokal lesbar ist (A&rsquo;s Basiswechsel = B&rsquo;s strukturierender Cut, d<sub>eff</sub>=1); (2) den Code durch kettenregel-geklebte weiche Zellen transportiert (A&rsquo;s Transport = B&rsquo;s Koh&auml;renz &mdash; die nur h&auml;lt, weil der Cut weich ist); und (3) per lokaler Matched-Filter-Probe die Antwort liest &mdash; gehalten von einem <i>live</i> Korrespondenz-Signal (A&rsquo;s lokale Probe = B&rsquo;s Korrespondenz-Test).</b></p>
+    <div class="leg"><span class="k">Wahrheit(&theta;)</span> = <span class="o">Koh&auml;renz(&theta;)</span> &and; <span class="w">Korrespondenz(&theta;)</span> &and; <span class="r">Struktur(&theta;)</span> &mdash;
+    Koh&auml;renz: Kettenregel-Klebung, braucht weiche Zellen (B).
+    Korrespondenz: live Loss zur Wahrheit, <i>gepr&uuml;ft durch A&rsquo;s lokale Probe</i> (B+A).
+    Struktur: die Basis/Cut macht die Antwort lokal, <code>d<sub>eff</sub>=1</code> (A+B).
+    F&auml;llt <i>ein</i> der drei weg &rarr; kein wahrhaftiges Weltmodell.</div>
+  </section>
+
+  <!-- ============ 2. WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2><span class="no">2.</span> Widerspr&uuml;che zwischen A und B</h2>
+    <p>Die beiden sind komplement&auml;r, stehen aber an drei Punkten auf unterschiedlichen Seiten &mdash; echte Stance-Differenzen, die in den Quellen stehen (keine erfundenen).</p>
+
+    <div class="card">
+      <h3>W1 &middot; Fundament: die Basis/Probe (A) oder der weiche Cut + der Gradientenfluss (B)?</h3>
+      <p><span class="vs a">A &middot; r2-015</span> A ist <b>Repr&auml;sentations-/Lese-Logik, deskriptiv &amp; top-down</b>: ihr Zentrum sind <b>die gew&auml;hlte Basis</b> und <b>die lokale Matched-Filter-Probe</b>. A beschreibt ein <i>trainiertes</i> Netz als feste <i>Koordinatenmaschine</i>: die Basis ist ein <i>gegebenes</i> Merkmal der Aufgabe (Fourier-Dualit&auml;t, Falz, Zustand), und alles ist <i>vorab da</i>. Lernen/Dynamik ist bei A kein Gegenstand &mdash; man <i>liest</i> die Struktur aus einem fertigen Gewichtssatz.</p>
+      <p><span class="vs b">B &middot; r2-018</span> B ist <b>Lern-/Erzeugungs-Logik, generativ &amp; bottom-up</b>: ihr Zentrum sind <b>der weiche Cut</b> (die relaxierte Zelle), <b>die Kettenregel</b> (Koh&auml;renz) und <b>der live Gradientenfluss</b> bis zur Invarianz <code>&nabla;L=0</code>. Die Basis/Cut ist bei B <i>kein Gegebenes</i>, sondern etwas, das <i>aus Zufalls-Initialisierung heraus vom Loss gew&auml;hlt, gesch&auml;rfelt und gehalten</i> wird.</p>
+      <p class="anno">A: das Netz <i>ist</i> eine Koordinatenmaschine (Basis/Probe zuerst). B: das Netz <i>wird</i> eine koh&auml;rente Welt (weicher Cut + Fluss zuerst). A ist statisch/deskriptiv, B dynamisch/generativ &mdash; A&rsquo;s &bdquo;Basis&ldquo; erscheint als Fakt, B sagt, sie wird <i>gelernt und scharf gestellt</i>.</p>
+    </div>
+
+    <div class="card">
+      <h3>W2 &middot; Warum ist die Repr&auml;sentation sauber/lokal &mdash; wegen der Basis-Geometrie (A) oder wegen Weichheit + live Ziel (B)?</h3>
+      <p><span class="vs a">A &middot; r2-015</span> A erkl&auml;rt die saubere, lokal lesbare Antwort <b>strukturell-geometrisch</b>: weil man in der <i>richtigen Basis</i> rechnet (Fourier-Dualit&auml;t macht Addition zur Rotation; die Falz-Basis macht Disk &lt; Ring in der H&ouml;he; die Zustands-Basis tr&auml;gt [x<sub>t</sub>/t, y<sub>t</sub>/t, log t]). A debate sogar, ob diese Sauberheit <i>notwendig</i> (d&uuml;nner L&ouml;sungsraum, &bdquo;nur dieser Ort&ldquo;) oder <i>kontingent</i> (Rashomon, RNNs gleich guter Loss ohne saubere Trennung) ist &mdash; aber <i>beides</i> ist ein Struktur-Argument.</p>
+      <p><span class="vs b">B &middot; r2-018</span> B erkl&auml;rt dieselbe Sauberheit <b>dynamisch-mechanisch</b>: (a) der Cut ist <i>weich/differenzierbar</i>, also klebt die Kettenregel (Koh&auml;renz), und (b) ein <i>live</i> Korrespondenz-Ziel <i>zieht</i> den Cut auf die echte Datenstruktur (top-down Vorlage, bottom-up Inhalt). Ohne Weichheit bricht der Fluss (nicht lernbar); ohne live Ziel ist er sauber <i>geklebt, aber falsch verankert</i> (Halluzination).</p>
+      <p class="anno">A ortet die Erkl&auml;rung einer lokalen Repr&auml;sentation in <b>der Geometrie der Basis</b> (Struktur-Fakt); B in <b>der Lern-Mechanik</b> (Weichheit + Korrespondenz). Zwei verschiedene Prim&auml;ursachen f&uuml;r dasselbe Ph&auml;nomen.</p>
+    </div>
+
+    <div class="card">
+      <h3>W3 &middot; Was hei&szlig;t &bdquo;gut&ldquo; &mdash; funktionale Korrektheit der Rechnung (A) oder epistemische Wahrheit (B)?</h3>
+      <p><span class="vs a">A &middot; r2-015</span> A definiert G&uuml;te <b>funktional</b>: das Netz liest die <i>richtige lokale Antwort</i> (Bayes-optimaler Loss, Peak der Matched-Filter-Probe auf a+b, 100 % Trennung). A ist <i>agnostisch gegen&uuml;ber B&rsquo;s epistemischem Wahrheitsbegriff</i> &mdash; ein perfekt selbstkonsistentes, aber <i>eingefrorenes</i> Netz w&uuml;rdet A trotzdem als <i>erfolgreich</i> gelten lassen (es liest ja immer noch die richtige lokale Antwort).</p>
+      <p><span class="vs b">B &middot; r2-018</span> B definiert G&uuml;te <b>epistemisch</b>: Wahrheit = Koh&auml;renz &and; Korrespondenz &and; Struktur &mdash; und Korrespondenz muss <i>live</i> bleiben. Ein Modell, das koh&auml;rent + strukturiert ist aber das live Ziel verliert (frozen), ist per Definition eine <b>Halluzination</b>: &bdquo;koh&auml;rent, aber nicht wahr&ldquo;. G&uuml;te = nicht nur &bdquo;liest die richtige Antwort&ldquo;, sondern &bdquo;liest sie <i>an die echte Welt verankert</i>&ldquo;.</p>
+      <p class="anno">A&rsquo;s funktionale Korrektheit ist <i>notwendig, aber nicht hinreichend</i> f&uuml;r B&rsquo;s epistemische Wahrheit. Ein eingefrorenes, sauber rechnendes Netz: A sagt <i>gut</i>, B sagt <i>Halluzination</i>.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2><span class="no">3.</span> Aufl&ouml;sung</h2>
+
+    <div class="fused"><b>Zu W1 &mdash; A ist das &bdquo;Was&ldquo;, B das &bdquo;Wie&nbsp;+&nbsp;Warum-wahr&ldquo;; die Koordinatenmaschine ist der Attraktor der koh&auml;renten Welt.</b>
+    A&rsquo;s &bdquo;Basis &#8594; Code &#8594; Probe&ldquo; beschreibt die <i>Form</i> der Rechnung; B&rsquo;s &bdquo;weicher Cut &#8594; Kettenregel &#8594; live Fluss&ldquo; beschreibt den <i>Mechanismus, der diese Form erzeugt und h&auml;lt</i>. A&rsquo;s scheinbar <i>gegebene</i> Basis wird bei B <i>generiert und gesch&auml;rfelt</i>: der weiche Cut w&auml;hlt die Koordinate, der Gradientenfluss stellt sie scharf, die Kettenregel klebt sie zusammen. <b>Fused:</b> die statische Koordinatenmaschine (A) ist exakt der <i>Invarianz-Punkt</i> <code>&nabla;L=0</code>, zu dem die dynamisch erzeugte koh&auml;rente Welt (B) konvergiert. A liest den Attraktor, B erzeugt ihn.</div>
+
+    <div class="fused"><b>Zu W2 &mdash; Struktur als Vorlage, Weichheit als Erlauber, Korrespondenz als Anker: die saubere Basis ist a-priori in der Form und a-posteriori im Inhalt.</b>
+    Beide Einigungen brauchen eine <i>niedrigerdimensionale, lokale</i> Repr&auml;sentation (A: die Antwort wird in der Basis lokal; B: der Cut bricht den Fluch, <code>d<sub>eff</sub>=1</code>) &mdash; sie streiten nur &uuml;ber die <i>Ursache</i>. Fused: die <b>Form</b> des Cuts ist a-priori niedrigdimensional (A&rsquo;s Basis = B&rsquo;s Cut &mdash; dieselbe Koordinate), die <b>Weichheit</b> ist der <i>Erlauber</i> (ohne &sigma;&rarr;0 bricht die Kettenregel, A&rsquo;s saubere Basis w&auml;re <i>nicht lernbar</i>), und die <b>Korrespondenz</b> ist der <i>Anker</i> (sie w&auml;hlt, <i>in welche Ecke</i> des Cuts die Struktur sich stellt &mdash; das ist A&rsquo;s Rashomon-Eck, das B&rsquo;s live Ziel bestimmt). A&rsquo;s &bdquo;notwendig vs. kontingent&ldquo; (d&uuml;nner Kern vs. Rashomon-H&uuml;lle) wird dadurch eins: es <i>muss</i> eine Basis/Code geben, um zu rechnen (Notwendigkeit, B&rsquo;s d&uuml;nner Kern), <i>welche saubere Ecke</i> ist eine Lern-/Architektur-Entscheidung (Kontingenz, B&rsquo;s Loss w&auml;hlt die Ecke).</div>
+
+    <div class="fused"><b>Zu W3 &mdash; A&rsquo;s lokale Probe <i>ist</i> B&rsquo;s Korrespondenz-Test; B&rsquo;s &bdquo;live&ldquo;-Klausel erhebt funktionale Korrektheit zur Wahrheit.</b>
+    A&rsquo;s Matched-Filter-Probe pr&uuml;ft genau, ob die lokale Antwort stimmt &mdash; das ist B&rsquo;s Korrespondenz-Test <i>in der Tat</i>. B f&uuml;gt den entscheidenden Zusatz hinzu: die Probe muss gegen ein <i>live</i> Ziel gepr&uuml;ft werden, sonst ist sie koh&auml;rent + strukturiert, aber un-verankert = Halluzination. <b>Fused:</b> funktionale Korrektheit (A) ist <i>notwendig</i>, epistemische Wahrheit (B) ist <i>notwendig &amp; hinreichend</i>. Das fusionierte Legesatz erhebt A&rsquo;s &bdquo;liest die richtige lokale Antwort&ldquo; zu &bdquo;liest sie, koh&auml;rent ge klebt (weiche Zellen) und an die live Welt verankert&ldquo;: <b>Wahrheit = Koh&auml;renz &and; Korrespondenz(live) &and; Struktur(lokal, d<sub>eff</sub>=1)</b>.</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2><span class="no">4.</span> Fusionierter Inhalt</h2>
+    <p>Das gemeinsame Schema in drei Stufen &mdash; jede Stufe mit A-Facet (Basis/Code/Probe) und B-Facet (Cut/Weichheit/Fluss/Truth):</p>
+    <table>
+      <thead><tr><th>Stufe</th><th>A-Facet (r2-015): Was</th><th>B-Facet (r2-018): Wie + Warum-wahr</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>1 &middot; Embedding</b></td>
+          <td>Basiswahl: Zustands-Basis (x<sub>t</sub>/t), Phasen-Basis (n&#8614;e<sup>i2&#960;kn/P</sup>), Falz-Basis (ReLU-Falts)</td>
+          <td>niedrigerdimensionaler topologischer Cut, <code>d<sub>eff</sub>=1</code>; harter Test f<sub>hard</sub>(d)=&#8713;<sub>|d&minus;r|&lt;w</sub>, weicher f<sub>soft</sub>(d;&#963;)=exp(&minus;(d&minus;r)&sup2;/2&#963;&sup2;)</td>
+          <td>die Basis <i>ist</i> der Cut: w&auml;hlt die Koordinate, in der die Antwort lokal &amp; separabel ist</td>
+        </tr>
+        <tr>
+          <td><b>2 &middot; Transport</b></td>
+          <td>Code durch Layer: [x<sub>t</sub>/t,y<sub>t</sub>/t,log t], Phasenvektor &#966;(c), Bit-Muster &#960;(x); bei mod = Additionstheoreme cos(&alpha;+&beta;)</td>
+          <td>Kettenregel-Klebung weicher Zellen; dL/dz = dL/dy &#8855; &#963;&prime;(z); klebt nur, weil &#963;&prime; existiert</td>
+          <td>der Transport ist <i>von</i> der Koh&auml;renz angetrieben; bei &#963;&rarr;0 bricht er (nicht lernbar)</td>
+        </tr>
+        <tr>
+          <td><b>3 &middot; Readout</b></td>
+          <td>Matched-Filter-Projektion, Bank-Dim = #Klassen; logit(c)=&#931;&#7522; &#945;&#7522; cos(&#969;&#7522;(a+b&minus;c)); lin. Probe / CKA / argmax</td>
+          <td>harter Cut &#8594; Bit auf Tape (Template = Ring); Korrespondenz L=&#189;(&yuml;&#770;&minus;t)&sup2;, <i>muss live</i> bleiben</td>
+          <td>die lokale Probe <i>ist</i> der Korrespondenz-Test &mdash; aber er muss live verankert sein, sonst Halluzination</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Stufe 1 &mdash; Embedding = weicher Cut der lokalen Koordinate</h3>
+    <p>Der Koordinatenwechsel (A) w&auml;hlt die Basis, in der die Antwort <b>lokal lesbar</b> wird; das ist exakt der niedrigerdimensionale Cut (B), der den Fluch der Dimension bricht (<code>d<sub>eff</sub>=1</code> &rarr; Mannigfaltigkeits-Rate <code>N<sup>&minus;k/m</sup></code> statt Glattkeits-Rate <code>N<sup>&minus;d/k</sup></code>). Die drei A-Basen sind drei solcher Cuts:</p>
+    <div class="formula" id="f-cuts">Zustand: &lang;code&rang;=(1/t)&#931;<sub>i</sub>d<sub>i</sub>=A&middot;x<sub>t</sub>/t &nbsp;|&nbsp; Phase: n&#8614;e<sup>i2&#960;kn/P</sup> &nbsp;|&nbsp; Falz: h(x)=&#931;<sub>i</sub>ReLU(w<sub>i</sub>&middot;x+b<sub>i</sub>)</div>
+    <p>B liefert die <i>Zelle</i>, die jeden dieser Wechsel durchf&uuml;hrt: ein harter topologischer Test (die Semantik, <i>welche</i> Koordinate) und seine weiche Relaxation (die Mechanik, die sie <i>lernbar</i> macht). &Sigma; ist der Regler: gro&szlig; &#8594; flach (nichts gelernt, koh&auml;rent aber trivial), klein &#8594; scharf (ein Feature, d<sub>eff</sub>=1, aber die Ableitung bricht am harten Cut).</p>
+    <div class="formula" id="f-soft">f<sub>soft</sub>(d;&#963;)=exp(&minus;(d&minus;r)&sup2;/2&#963;&sup2;) ,&nbsp; f<sub>hard</sub>=lim<sub>&sigma;&rarr;0</sub> f<sub>soft</sub> &nbsp;(Bang&ndash;Bang)</div>
+
+    <h3>Stufe 2 &mdash; Transport = kettenregel-geklebte weiche Zellen</h3>
+    <p>Der transportierte Code (A) reist durch die Layer &mdash; und diese Reise <i>ist</i> B&rsquo;s Koh&auml;renz: die Kettenregel klebt die Zellen nur, weil jede weich/differenzierbar ist. Bei der modularen Addition sind die Transport-Abbildungen exakt die <b>Additionstheoreme</b> (Grad-2-Polynome, die Attention aus den Embeddings bilden kann):</p>
+    <div class="formula" id="f-addthm">cos(&alpha;+&beta;)=cos&alpha;cos&beta;&minus;sin&alpha;sin&beta; ;&nbsp; sin(&alpha;+&beta;)=sin&alpha;cos&beta;+cos&alpha;sin&beta;</div>
+    <p>Der Backprop-Fluss, der diese Zellen trainiert, braucht die Ableitung: dL/dz=dL/dy &#8855; &#963;&prime;(z). <b>Bei &#963;&rarr;0 verschwindet &#963;&prime;, die Kettenregel bricht, und A&rsquo;s Transport wird nicht lernbar</b> (B&rsquo;s &bdquo;Nicht lernbar&ldquo;-Zustand). A&rsquo;s saubere Basis ist also <i>nur deshalb erzielbar</i>, weil B&rsquo;s Cut weich bleibt &mdash; Weichheit ist der Grund, warum A&rsquo;s lokale Koordinate &uuml;berhaupt hergestellt werden kann.</p>
+
+    <h3>Stufe 3 &mdash; Probe = Matched-Filter-Projektion, gehalten vom live Ziel</h3>
+    <p>Beide Ausleseverfahren sind <b>Projektionen (Innenprodukte) auf feste Vorlagen</b>, Bank-Dimension = #Antwortklassen: Grid-Walker liest eine suffiziente Zustands-Richtung linear (CKA 0.95&ndash;0.97), die Addition scoret <code>logit(c)=&#931;&#7522; &#945;&#7522; cos(&#969;&#7522;(a+b&minus;c))</code> per argmax &uuml;ber P=113 Korrelatoren, Disk/Ring liest <code>&yuml;&#770;=r&middot;h+b&#8322;</code> mit <i>einem</i> Template r=(1,1,1)+Schwelle. In der Phasen-Basis ist die Antwort die Stelle, an der <i>alle</i> Komponenten gleichzeitig 0 (mod 2&#960;) sind: dort ist jeder Cosinus 1 und die Koeffizienten addieren sich konstruktiv (Peak); an falschen Stellen k&uuml;rzen sie sich destruktiv weg. <b>Eine</b> Frequenz reicht nicht (bei c*+8 bleibt cos(2&#960;&middot;14/113&middot;8)&#8776;0.998 ein gef&auml;hrlicher falscher Peak); K Frequenzen t&ouml;ten die falschen Peaks.</p>
+    <div class="formula" id="f-proj">S(c)=Re[e<sup>i2&#960;k(a+b)/P</sup>&middot;e<sup>&minus;i2&#960;kc/P</sup>] = Projektion auf Kandidat c ;&nbsp; logit(c)=&#931;<sub>k</sub>&#945;<sub>k</sub>cos(&#969;<sub>k</sub>(a+b&minus;c))</div>
+    <p>B f&uuml;gt die <i>Wahrheits-Bedingung</i> hinzu: dieser Peak ist nur <b>wahr</b>, wenn er gegen ein <i>live</i> Korrespondenz-Ziel gepr&uuml;ft wird (L=&#189;(&yuml;&#770;&minus;t)&sup2;, &nabla;L&#8594;0). Die Probe ist der Test; das live Ziel ist der Anker. <b>Die ganze Arbeit des Netzes besteht darin, das globale Problem lokal zu machen (A) &mdash; und die Probe ist die Matched-Filter-Projektion, gehalten vom live Ziel (B).</b></p>
+
+    <h3>Warum der Abstieg konvergiert &mdash; A&rsquo;s Basis ist B&rsquo;s Ausweg</h3>
+    <p>F&uuml;r <i>alle</i> glatten Funktionen gilt die harte untere Schranke <code>N &ge; C&middot;&#949;<sup>&minus;d/k</sup></code> (der Fluch). B&rsquo;s Cut ist genau einer der Auswege &mdash; und <i>weil</i> A die Basis w&auml;hlt, in der die Antwort lokal ist, wird B&rsquo;s Abstieg effizient:</p>
+    <ul>
+      <li><b>Struktur/Mannigfaltigkeit</b> (A&rsquo;s Basis = B&rsquo;s Cut): die Daten leben auf einer niedrigdimensionalen Struktur; der Cut projiziert auf die Koordinate, in der die Ziel-Funktion separabel ist &#8594; <code>d<sub>eff</sub>=1</code>, Rate <code>N<sup>&minus;k/m</sup></code>. <i>Der Cut w&auml;hlt die Koordinate, in der der Fluch minimal ist.</i></li>
+      <li><b>Barron/Kompositionalit&auml;t</b>: glatt-komponierbare Funktionen werden mit <code>N<sup>&minus;1/2</sup></code> getroffen &mdash; &bdquo;Struktur schl&auml;gt Glattheit&ldquo;.</li>
+      <li><b>Tiefe</b>: bei Komposition multiply die St&uuml;ckezahl, <code>Pieces &le; (2w)<sup>L</sup></code> &mdash; Tiefe stapelt weich geschnittene Zellen.</li>
+      <li><b>Yarotsky</b>: S&auml;gez&auml;hne erzeugen <code>2<sup>n&minus;1</sup></code> St&uuml;cke mit <code>O(n)</code> Parametern &mdash; die Baueinheit, aus der alles Glatte w&auml;chst.</li>
+    </ul>
+    <p class="anno">A-Seite des Optimierens: GD-Rate (1&minus;&#956;/L)<sup>k</sup>, Kondition &#954;=L/&#956;; Nesterov (1&minus;&#8730;(&#956;/L))<sup>k</sup>; Backprop O(L); NTK linearisiert ein breites Netz, Konvergenz O(n<sup>&minus;1/2</sup>). <i>Weichheit (B) ist der Grund, warum all das funktioniert.</i></p>
+
+    <h3>Die sechs Zust&auml;nde &mdash; die gemeinsame Landkarte</h3>
+    <div class="leg">
+      koh&auml;rent + korrespondierend(live) + strukturiert &nbsp;&rarr;&nbsp; <span class="k">WAHR / invariant (&nabla;L&#8776;0, d<sub>eff</sub>=1)</span><br>
+      koh&auml;rent + strukturiert, aber <i>nicht</i> korrespondierend (live Ziel gekappt) &nbsp;&rarr;&nbsp; <span class="w">HALLUZINATION</span> (A&rsquo;s Probe zeigt, aber verankert an nichts &mdash; B)<br>
+      strukturiert + korrespondierend, aber <i>nicht</i> koh&auml;rent (&#963;&rarr;0, harter Cut) &nbsp;&rarr;&nbsp; <span class="r">NICHT LERNBAR</span> (Kettenregel bricht &mdash; B)<br>
+      korrespondierend, aber <i>unstrukturiert</i> (hohe d, keine lokale Basis) &nbsp;&rarr;&nbsp; <span class="w">FLUCH</span> (N<sup>d/k</sup>, langsam &mdash; B)<br>
+      koh&auml;rent + korrespondierend, aber inkoh&auml;rent im Detail (Daten ohne Struktur) &nbsp;&rarr;&nbsp; Faktbuch (A)<br>
+      inkoh&auml;rent + nicht korrespondierend &nbsp;&rarr;&nbsp; falsch / Rauschen (A)
+    </div>
+    <p>Gradientenabstieg ist der Weg von &bdquo;Rauschen&ldquo; nach &bdquo;WAHR&ldquo;: Koh&auml;renz bleibt (weiche Zellen, &#963; nicht &rarr;0), Korrespondenz wird gezogen (live Loss &#8594; 0, A&rsquo;s Probe triff t das Ziel), Struktur wird genutzt (Cut h&auml;lt d<sub>eff</sub> klein, Basis macht die Antwort lokal).</p>
+
+    <h3>Ein konkretes Beispiel in allen Basen (P=7, a=3, b=5) + Wahrheits-Check</h3>
+    <table>
+      <thead><tr><th>Basis (A)</th><th>Ablauf</th><th>Ergebnis</th><th>Truth-Check (B)</th></tr></thead>
+      <tbody>
+        <tr><td>Positions-/Zustands-Basis</td><td>Start 3; 5 Einheiten-Schritte: 3&#8594;4&#8594;5&#8594;6&#8594;0&#8594;1. Netto-Verschiebung = &minus;2 &#8773; 5.</td><td>landet auf <b>1</b></td><td rowspan="3">Koh&auml;renz: weicher Cut klebt. Korrespondenz(live): Probe-Peak = live Ziel 1. Struktur: d<sub>eff</sub>=1. &rarr; <b>WAHR</b>.</td></tr>
+        <tr><td>Phasen-Basis (k=1..K)</td><td>S(c)=&#931;<sub>k</sub>cos(2&#960;k(8&minus;c)/7). Bei c=1: cos(2&#960;k)=1 f&uuml;r jedes k &#8594; S=K (Max). Bei c&#8800;1: k&uuml;rzen sich.</td><td>Peak bei <b>1</b></td></tr>
+        <tr><td>Falz-Basis</td><td>h(x)=&#931;ReLU(w<sub>i</sub>&middot;x); Disk flacher (&#8804;&#8776;0.45) als Ring (&#8805;&#8776;0.48).</td><td>Seite der Ebene = <b>1</b></td></tr>
+      </tbody>
+    </table>
+    <div class="fused"><b>Alle Basen liefern denselben Wert: 3 + 5 &#8773; 1 (mod 7)</b> &mdash; und der Wahrheits-Check ist gr&uuml;n, weil (B) Koh&auml;renz (weiche Zellen), Korrespondenz (live: Peak = Ziel 1) und Struktur (d<sub>eff</sub>=1, lokale Basis) <i>alle</i> zutreffen. W&auml;re das Ziel <i>eingefroren</i>, w&auml;re die Rechnung zwar koh&auml;rent + strukturiert, aber un-verankert &#8594; Halluzination (B), auch wenn A &bdquo;die richtige lokale Antwort&ldquo; liest.</div>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2><span class="no">5.</span> Interaktive Visualisierung: Basis + weicher Cut + lokale Probe, gehalten vom live Ziel</h2>
+    <p>Oben: die <b>Positions-/Zustands-Basis</b> (A) auf dem Kreis &mdash; a (rot), b (Bogen), a+b mod P (gold) &mdash; &uuml;berlagert von B&rsquo;s <b>weichem Featureschnitt</b> (Glow um die Antwort, Breite &#8773; &#963;): &#963;&rarr;0 macht den Cut scharf auf der Antwort (<code>d<sub>eff</sub>=1</code>), &#963; gro&szlig; macht ihn diffus (trivial). Unten: A&rsquo;s <b>Code/lokalen Probe</b> &mdash; die Matched-Filter-Landschaft S(c)=&#931;<sub>k=1..K</sub>cos(2&#960;k(res&minus;c)/P) &uuml;ber alle Kandidaten c; der goldene Peak steht auf res. Der <b>gr&uuml;ne Ground-Truth-Diamond</b> ist B&rsquo;s Korrespondenz-Ziel: <i>live</i> sitzt er auf dem Peak (Probe = Ziel, wahr); <i>frozen</i> driftet er weg (koh&auml;rent + strukturiert, aber un-verankert &#8594; Halluzination). Bewege <b>K</b> (mehr Frequenzen = sch&auml;rfere konstruktive Interferenz, A), <b>&#963;</b> (Weichheit des Cuts, B) und klicke <b>frozen</b> (B&rsquo;s live-Ziel kappen).</p>
+
+    <div class="controls">
+      <label>P (Uhr): <input type="range" id="vzP" min="3" max="15" value="7"> <span class="ctl-val" id="vzPVal">7</span></label>
+      <label>a: <input type="range" id="vzA" min="0" max="14" value="3"> <span class="ctl-val" id="vzAVal">3</span></label>
+      <label>b: <input type="range" id="vzB" min="0" max="14" value="5"> <span class="ctl-val" id="vzBVal">5</span></label>
+      <label>Frequenzen K: <input type="range" id="vzK" min="1" max="8" value="3"> <span class="ctl-val" id="vzKVal">3</span></label>
+      <label>Weichheit &#963;: <input type="range" id="vzSig" min="0.03" max="1" step="0.01" value="0.35"> <span class="ctl-val" id="vzSigVal">0.35</span></label>
+      <label class="chk"><input type="checkbox" id="vzFreeze"> Ziel kappen (frozen) &rarr; Halluzination</label>
+    </div>
+
+    <div class="viz-wrap">
+      <div class="viz-stage"><canvas id="fusedCanvas"></canvas></div>
+      <div class="viz-side">
+        <div class="gauge">
+          <div class="glabel">Koh&auml;renz <span class="gtag">Kettenregel / &#963; (B)</span></div>
+          <div class="bar"><div class="fill coh" id="cohBar"></div></div>
+          <div class="gnote" id="cohNote">weiche Zellen &rarr; klebt exakt</div>
+        </div>
+        <div class="gauge">
+          <div class="glabel">Korrespondenz <span class="gtag">live Ziel (B+A)</span></div>
+          <div class="bar"><div class="fill cor" id="corBar"></div></div>
+          <div class="gnote" id="corNote">Probe-Peak trifft das live Ziel</div>
+        </div>
+        <div class="gauge">
+          <div class="glabel">Struktur <span class="gtag">d<sub>eff</sub>=1 (A+B)</span></div>
+          <div class="bar"><div class="fill str" id="strBar"></div></div>
+          <div class="gnote" id="strNote">lokale Basis + scharfer Cut</div>
+        </div>
+        <div class="truth">
+          <span class="led warn" id="led"></span>
+          <div>
+            <div class="tlabel">Wahrheit = Koh&auml;renz &and; Korrespondenz &and; Struktur</div>
+            <div class="tnote" id="truthNote">ann&auml;hert sich dem strukturierten Ziel&hellip;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="readout" id="vzReadout"></div>
+    <p class="anno">Alle Werte werden live aus a, b, P, K, &#963; berechnet &mdash; keine Netzwerklade, keine externen Daten. Farb-/Hintergrundwerte stammen aus den CSS-Theme-Variablen (<code>:root</code> / <code>html.dark</code>). Die realen Key-Frequenzen des trainierten Netzes sind k&#8712;{14,35,41,42,52} bei P=113; hier wird f&uuml;r den kleinen Kreis k=1..K verwendet.</p>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2><span class="no">6.</span> Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><a href="../2/r2-015.html">r2-015.html</a> &mdash; &bdquo;Berechnen als Koordinatenwechsel: drei Basen, eine Matched-Filter-Projektion&ldquo; (R2-Fusion aus r1-044 &times; r1-059): ein Netz rechnet per Basiswechsel (Zustand/Phase/Falz) &#8594; Code-Transport &#8594; lokaler Matched-Filter-Probe (Bank-Dim = #Klassen); Fourier-Dualit&auml;t als abelscher Spezialfall; Grid-Walker (Doob-h, x<sub>t</sub>/t, CKA), modulare Addition mod 113 (FVE &#8776;95 %, Nanda et al.), Disk/Ring (Space-Folding, &#967;=&#8722;r<sub>1</sub>/r<sub>2</sub>, Lewandowski et al.).</div></div>
+    <div class="prov"><span class="k b">B</span><div><a href="../2/r2-018.html">r2-018.html</a> &mdash; &bdquo;Koh&auml;rente Welten aus weichen Schnitten&ldquo; (R2-Fusion aus r1-027 &times; r1-003): ein lernbares Weltmodell ist eine koh&auml;rente Welt, deren Zellen weiche Relaxationen harter topologischer Featureschnitte sind; Legesatz Wahrheit = Koh&auml;renz (Kettenregel, braucht Weichheit) &and; Korrespondenz (live Ziel, sonst Halluzination) &and; Struktur (Cut, d<sub>eff</sub>=1); f<sub>hard</sub>=lim<sub>&sigma;&rarr;0</sub>f<sub>soft</sub>; Fluch der Dimension + vier Auswege; Gradientenabstieg bis &nabla;L=0.</div></div>
+  </section>
+
+  <p class="foot">Fusion r3-010 &middot; Round 3, Knockout-Synthese. Beide Quellen sind R2-Fusionspapiere und damit bereits Erkl&auml;r-Synthesen (simulierte/&uuml;bernommene Werte, keine neuen Experimente); diese Runde &uuml;bernimmt ihre Stellungen und Zahlen, erfindet keine. Die Br&uuml;cke dieser Runde: A&rsquo;s &bdquo;Basis &#8594; Code &#8594; lokale Matched-Filter-Probe&ldquo; (das <i>Was</i>) wird zu B&rsquo;s &bdquo;weicher Cut + Kettenregel-Koh&auml;renz + live Korrespondenz, d<sub>eff</sub>=1&ldquo; (das <i>Wie&nbsp;+&nbsp;Warum-wahr</i>); die Koordinatenmaschine (A) ist der Invarianz-Punkt, zu dem die koh&auml;rente Welt (B) konvergiert.</p>
+
+</article>
+
+<script>
+(function(){
+  "use strict";
+  function g(id){ return document.getElementById(id); }
+
+  function renderMath(){
+    if(!window.temml) return;
+    var pairs=[
+      ["f-cuts","\\langle\\text{code}\\rangle=\\tfrac{1}{t}\\sum_{i} d_i = A\\,\\tfrac{x_t}{t}\\;\\;\\mid\\;\\; n\\longmapsto e^{\\,i2\\pi k n/P}\\;\\;\\mid\\;\\; h(x)=\\sum_{i}\\mathrm{ReLU}(w_i\\cdot x+b_i)"],
+      ["f-soft","f_{\\text{soft}}(d;\\sigma)=\\exp\\!\\big(-\\tfrac{(d-r)^2}{2\\sigma^2}\\big),\\qquad f_{\\text{hard}}=\\lim_{\\sigma\\to 0} f_{\\text{soft}}\\;\\;\\text{(Bang-Bang)}"],
+      ["f-addthm","\\cos(\\alpha+\\beta)=\\cos\\alpha\\cos\\beta-\\sin\\alpha\\sin\\beta\\qquad\\sin(\\alpha+\\beta)=\\sin\\alpha\\cos\\beta+\\cos\\alpha\\sin\\beta"],
+      ["f-proj","S(c)=\\operatorname{Re}\\big[\\,e^{\\,i2\\pi k(a+b)/P}\\,e^{-\\,i2\\pi k c/P}\\,\\big]=\\text{Projektion auf }c\\;\\;\\;\\operatorname{logit}(c)=\\sum_{k}\\alpha_k\\,\\cos\\big(\\omega_k(a+b-c)\\big)"]
+    ];
+    for(var i=0;i<pairs.length;i++){
+      var el=g(pairs[i][0]);
+      if(el){ try{ temml.render(pairs[i][1], el); }catch(e){} }
+    }
+  }
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function T(){
+    return {
+      fg:cssVar("--fg"), muted:cssVar("--muted"), grid:cssVar("--grid"),
+      accent:cssVar("--accent"), accent2:cssVar("--accent2"),
+      good:cssVar("--good"), bad:cssVar("--bad"), ring:cssVar("--ring"),
+      plotbg:cssVar("--plot-bg")
+    };
+  }
+  function mod(n,m){ return ((n % m) + m) % m; }
+  function clampInt(v,lo,hi){ v=Math.round(v); if(v<lo)v=lo; if(v>hi)v=hi; return v; }
+  function ang(i,P){ return -Math.PI/2 + 2*Math.PI*i/P; }
+
+  function arrowhead(ctx,x1,y1,angR,color,s){
+    ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-s*Math.cos(angR-0.45), y1-s*Math.sin(angR-0.45));
+    ctx.lineTo(x1-s*Math.cos(angR+0.45), y1-s*Math.sin(angR+0.45));
+    ctx.closePath(); ctx.fill();
+  }
+  function drawArrow(ctx,x0,y0,x1,y1,color,w){
+    ctx.strokeStyle=color; ctx.lineWidth=w; ctx.beginPath();
+    ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    arrowhead(ctx,x1,y1,Math.atan2(y1-y0,x1-x0),color,Math.max(8,2.2*w));
+  }
+  function diamond(ctx,x,y,r,color){
+    ctx.fillStyle=color; ctx.beginPath();
+    ctx.moveTo(x,y-r); ctx.lineTo(x+r,y); ctx.lineTo(x,y+r); ctx.lineTo(x-r,y);
+    ctx.closePath(); ctx.fill();
+  }
+
+  var vc=g("fusedCanvas");
+
+  function metrics(P,a,b,K,sig,live){
+    var res=mod(a+b,P), second=-1e9, c,k,s;
+    var scores=[];
+    for(c=0;c<P;c++){ s=0; for(k=1;k<=K;k++){ s+=Math.cos(2*Math.PI*k*mod(res-c,P)/P); } scores.push(s); }
+    for(c=0;c<P;c++){ if(c!==res && scores[c]>second) second=scores[c]; }
+    var peakMargin=Math.max(0,(scores[res]-second)/K);
+    var cutSharp=1/(1+3*sig);
+    var coh=sig/(sig+0.12);
+    var stru=0.6*peakMargin+0.4*cutSharp;
+    var cor=live ? (0.4+0.6*peakMargin) : 0.05;
+    return {res:res, scores:scores, second:second, peakMargin:peakMargin, cutSharp:cutSharp, coh:coh, stru:stru, cor:cor};
+  }
+
+  function draw(){
+    if(!vc) return;
+    var rect=vc.getBoundingClientRect(); if(!rect.width) return;
+    var dpr=window.devicePixelRatio||1, W=rect.width, LH=rect.height;
+    vc.width=Math.round(W*dpr); vc.height=Math.round(LH*dpr);
+    var ctx=vc.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,LH);
+    var t=T();
+
+    var P=clampInt(+g("vzP").value,3,15);
+    var K=clampInt(+g("vzK").value,1,8);
+    var a=clampInt(+g("vzA").value,0,P-1);
+    var b=clampInt(+g("vzB").value,0,P-1);
+    var sig=parseFloat(g("vzSig").value); if(isNaN(sig))sig=0.35; sig=Math.max(0.03,Math.min(1,sig));
+    var live=!g("vzFreeze").checked;
+    var m=metrics(P,a,b,K,sig,live);
+    var res=m.res, c_drift=mod(res+Math.floor(P/2),P);
+
+    g("vzPVal").textContent=P; g("vzAVal").textContent=a; g("vzBVal").textContent=b;
+    g("vzKVal").textContent=K; g("vzSigVal").textContent=sig.toFixed(2);
+
+    var i,angR;
+
+    /* ============ TOP: circle (basis A) + soft cut (B) ============ */
+    var cy=128, R=Math.min(92, W*0.16, 96), cx=W*0.5;
+    ctx.fillStyle=t.fg; ctx.font="600 14px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText("Koordinatenwechsel (A) + weicher Cut (B, d_eff=1)", cx, 22);
+
+    // soft-cut glow (B) centered on res, angular half-width ~ sig
+    var hw=0.06+0.5*sig;
+    ctx.save();
+    for(var rad=3;rad>=1;rad--){
+      var gs=Math.exp(-0.15*rad);
+      ctx.strokeStyle=t.ring; ctx.globalAlpha=gs*0.55*(0.5+0.5*(1-sig));
+      ctx.lineWidth=8+rad*4; ctx.beginPath();
+      ctx.arc(cx,cy,R,ang(res,P)-hw*1.35,ang(res,P)+hw*1.35); ctx.stroke();
+    }
+    ctx.globalAlpha=0.9; ctx.lineWidth=3; ctx.strokeStyle=t.ring;
+    ctx.beginPath(); ctx.arc(cx,cy,R,ang(res,P)-hw,ang(res,P)+hw); ctx.stroke();
+    ctx.restore();
+
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+    for(i=0;i<P;i++){
+      angR=ang(i,P);
+      var tx=cx+R*Math.cos(angR), ty=cy+R*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.accent2:(i===a)?t.bad:t.muted;
+      ctx.beginPath(); ctx.arc(tx,ty,(i===res||i===a)?6:3,0,2*Math.PI); ctx.fill();
+      var lx=cx+(R+16)*Math.cos(angR), ly=cy+(R+16)*Math.sin(angR);
+      ctx.fillStyle=(i===res)?t.accent2:(i===a)?t.bad:t.muted;
+      ctx.font=(i===res||i===a)?"bold 13px ui-monospace,monospace":"11px ui-monospace,monospace";
+      ctx.textAlign="center"; ctx.textBaseline="middle";
+      ctx.fillText(i,lx,ly);
+    }
+    var angA=ang(a,P), angE=angA+2*Math.PI*b/P;
+    ctx.strokeStyle=t.accent; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.arc(cx,cy,R,angA,angE,false); ctx.stroke(); ctx.setLineDash([]);
+    var spx=cx+R*Math.cos(angA), spy=cy+R*Math.sin(angA);
+    var epx=cx+R*Math.cos(angE), epy=cy+R*Math.sin(angE);
+    drawArrow(ctx,spx,spy,epx,epy,t.accent,2.5);
+    ctx.fillStyle=t.bad; ctx.beginPath(); ctx.arc(spx,spy,7,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle=t.accent2; ctx.beginPath(); ctx.arc(epx,epy,8,0,2*Math.PI); ctx.fill();
+    ctx.fillStyle=t.fg; ctx.font="bold 12px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillStyle=t.bad; ctx.fillText("a="+a, spx, spy-15);
+    ctx.fillStyle=t.accent2; ctx.fillText("res="+(res), epx, epy-17);
+
+    /* ============ BOTTOM: matched-filter landscape S(c) (A code/probe) + live GT (B) ============ */
+    var by0=LH*0.55, by1=LH*0.92, bx0=W*0.06, bx1=W*0.94;
+    var bw=(bx1-bx0)/P, zeroY=by1-8, topY=by0+14, half=(zeroY-topY);
+
+    ctx.fillStyle=t.fg; ctx.font="600 13px system-ui,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+    ctx.fillText("Code / lokale Probe (A):  S(c) = \u03A3\u2096\u208C\u2081.." + K + " cos(2\u03C0k(res\u2212c)/P)", bx0, by0-2);
+
+    ctx.strokeStyle=t.grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(bx0,zeroY); ctx.lineTo(bx1,zeroY); ctx.stroke();
+    for(c=0;c<P;c++){
+      var sc=m.scores[c];
+      var barH=(sc/K)*half;
+      var x=bx0+c*bw, ytop=zeroY-Math.abs(barH);
+      var col=(c===res)?t.accent2:(sc>=0?t.accent:t.bad);
+      ctx.fillStyle=col;
+      ctx.fillRect(x+1, ytop, Math.max(1,bw-2), Math.max(1,Math.abs(barH)));
+    }
+    // second-best marker label
+    ctx.fillStyle=t.muted; ctx.font="11px ui-monospace,monospace"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    var gx=bx0+res*bw+bw/2;
+    ctx.fillStyle=t.accent2;
+    ctx.fillText("Peak c="+(res)+" (="+K+")", gx, topY-4);
+    ctx.fillStyle=t.muted; ctx.textAlign="center";
+    ctx.fillText("m\u00F6gliche Antwort c  (0 \u2026 "+(P-1)+")", (bx0+bx1)/2, by1+16);
+
+    // live ground-truth diamond (B correspondence): on res if live, at c_drift if frozen
+    var gt = live? res : c_drift;
+    var gtx = bx0+gt*bw+bw/2;
+    diamond(ctx, gtx, by0+2, 7, live?t.good:t.bad);
+    ctx.strokeStyle=live? t.good : t.bad; ctx.lineWidth=1.4; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(gtx,by0+10); ctx.lineTo(gtx,zeroY-2); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=live?t.good:t.bad; ctx.font="bold 11px system-ui,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillText((live?"live Ziel":"frozen Ziel")+" c="+(gt), gtx, by0-10);
+
+    /* gauges + truth */
+    var elc=g("cohBar"), elr=g("corBar"), els=g("strBar");
+    if(elc){ elc.style.width=(m.coh*100).toFixed(1)+"%"; elc.classList.toggle("off",m.coh<0.45); }
+    if(elr){ elr.style.width=(m.cor*100).toFixed(1)+"%"; elr.classList.toggle("off",!live||m.cor<0.45); }
+    if(els){ els.style.width=(m.stru*100).toFixed(1)+"%"; els.classList.toggle("off",m.stru<0.45); }
+
+    var cn=g("cohNote"), rn=g("corNote"), sn=g("strNote");
+    if(cn) cn.textContent = m.coh<0.45 ? "harter Cut (\u03C3\u21920) \u2014 Ableitung bricht" : "weiche Zellen \u2192 klebt exakt";
+    if(rn) rn.textContent = !live ? "kein live Ziel (frozen) \u2014 Probe un-verankert"
+        : (m.peakMargin>0.6 ? "Peak trifft das live Ziel (K killt falsche Peaks)" : "Probe schwach \u2014 eine Frequenz nicht genug");
+    if(sn) sn.textContent = (m.stru>0.6 ? "lokale Basis + scharfer Cut (d_eff=1)" : "Cut diffus / Peak breit \u2014 Struktur schwach");
+
+    var led=g("led"), tn=g("truthNote");
+    function setLed(cls){ if(led) led.className="led "+cls; }
+    if(led){
+      if(!live){ setLed("bad"); if(tn) tn.textContent="HALLUZINATION: koh\u00E4rent + strukturiert, aber ohne live Ziel \u2014 nicht wahr (B)"; }
+      else if(m.coh<0.45){ setLed("bad"); if(tn) tn.textContent="NICHT LERNBAR: harter Cut bricht die Kettenregel \u2014 Koh\u00E4renz fehlt (B)"; }
+      else if(m.cor>0.7 && m.stru>0.6 && m.coh>0.6){ setLed("good"); if(tn) tn.textContent="WAHR / invariant: koh\u00E4rent \u2227 korrespondierend(live) \u2227 strukturiert (\u2207L\u22480, d_eff=1)"; }
+      else { setLed("warn"); if(tn) tn.textContent="ann\u00E4hert sich \u2014 erh\u00F6he K (Interferenz) und/oder \u03C3, um Cut + Peak zu sch\u00E4rfen"; }
+    }
+
+    var ro=g("vzReadout");
+    if(ro){
+      var net=mod(res-a,P);
+      ro.innerHTML="Basis (A):  a="+a+" + b="+b+" \u2261 <b>"+res+"</b> (mod "+P+")  \u00B7  Netto-Verschiebung "+net+".<br>"+
+        "Code (A):  S(c)=\u03A3\u2096\u208C\u2081.." + K + " cos(2\u03C0k\u00B7(" + res + "\u2212c)/" + P + ")  \u2192  Peak bei c = <b>" + res +
+        "</b>  (H\u00F6he " + K + ", Margin zu 2. bestem = " + (K-m.second).toFixed(2) + ").<br>"+
+        "Cut (B):  \u03C3 = " + sig.toFixed(2) + " \u2192 Koh\u00E4renz " + (m.coh*100).toFixed(0) +
+        "% ; live Ziel " + (live? "AN (Probe=Ziel)" : "GEKAPPT (driftet auf c=" + c_drift + ")") + " \u2192 Korrespondenz " + (m.cor*100).toFixed(0) +
+        "% ; Struktur d_eff=1 " + (m.stru*100).toFixed(0) + "%.<br>"+
+        (live ? (m.peakMargin<=0.6 ? "\u2192 eine Frequenz reicht nicht \u2014 mehr K (destruktive Interferenz, A). " : "") : "\u2192 koh\u00E4rent + strukturiert, aber un-verankert = HALLUZINATION (B). ") +
+        "Fused:  <b>" + a + " + " + b + " \u2261 " + res + " (mod " + P + ")</b> " + (m.coh>0.6 && m.cor>0.7 && m.stru>0.6 && live ? "\u2713 WAHR" : (live? "\u2026 (noch nicht voll wahr)" : "\u2717")) + ".";
+    }
+  }
+
+  function wire(){
+    var ids=["vzP","vzA","vzB","vzK","vzSig"];
+    ids.forEach(function(id){
+      var el=g(id);
+      if(el) el.addEventListener("input", function(){
+        if(id==="vzP"){
+          var P=clampInt(+g("vzP").value,3,15);
+          var as=g("vzA"), bs=g("vzB");
+          if(as){as.max=P-1; if(+as.value>P-1)as.value=P-1;}
+          if(bs){bs.max=P-1; if(+bs.value>P-1)bs.value=P-1;}
+        }
+        draw();
+      });
+    });
+    var fr=g("vzFreeze"); if(fr) fr.addEventListener("change", draw);
+    var btn=g("themeToggle");
+    if(btn) btn.addEventListener("click",function(){
+      document.documentElement.classList.toggle("dark"); draw();
+    });
+    try{
+      var mo=new MutationObserver(function(){ draw(); });
+      mo.observe(document.documentElement,{attributes:true,attributeFilter:["class"]});
+    }catch(e){}
+    window.addEventListener("resize",function(){ draw(); });
+  }
+
+  function init(){ renderMath(); wire(); draw(); }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+  else init();
+})();
+</script>
+</body>
+</html>

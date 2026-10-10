@@ -1,0 +1,16 @@
+{
+  "no": "015",
+  "a": "combined/2/r2-025.html",
+  "b": "combined/2/r2-034.html",
+  "a_title": "Fusion 025 — Leere Richtungen und der dünne Hebel (Falten/Parken ✕ lineares Objekt)",
+  "b_title": "Fusion 034 — Der Komplexitäts-Regler des Bulks — Holographie trifft Krümmung",
+  "combined_theme": "low-rank-skeleton-and-complexity-regulator",
+  "one_line": "Das wahre Innere eines Netzes ist ein niedrig-rangiges Skelett (wenige geladene Richtungen / ein d-affiner Unterraum) in einem großen, meist leeren Umgebungsraum; Komplexität = Rang × Regler θ (Scrambling + Krümmung), und am Eckpunkt niedriger Rang + θ→0 sind A's dünner Hebel und B's trivialer Code identisch — linear, flach und direkt lesbar.",
+  "contradictions": [
+    "A: die wenigen geladenen Richtungen / die eine Richtung r̂ SIND das Verhalten und das lineare Read-out (niedrig-rangig ⇒ einfach/steuerbar, der Rang zählt); B: dieselbe niedrig-rangige Struktur ist nur der θ=0-Limes — generisch ist der Code gescrambelt + die Geometrie gekrümmt, und Rang allein bestimmt die Lesbarkeit nicht (zweiter Regler θ nötig).",
+    "A: die leere Überzahl ist ein Tresor/Reservoir, der den Restfehler schluckt und am Test unsichtbar macht (G·P_res=0) — Funktion: Fehler wegstecken/verwerfen; B: derselbe große Raum ist die Boundary, auf der der Bulk exakt kodiert ist — Funktion: den Code robust tragen/speichern.",
+    "A: Lesen ist an sich eine lineare Projektion auf den dünnen Hebel (x·r̂), trivial per Konstruktion; B: Lesen ist generisch ein nicht-triviales Fehlerkorrektur-Dekodieren (MERA/RT), trivial nur bei θ=0."
+  ],
+  "resolution": "EIN niedrig-rangiges Skelett, zwei Komplexitäts-Achsen: A zählt den Rang (d, Kapazität 2d), B misst zusätzlich, wie weit die Realisierung vom triviale Limes weg ist (θ = Scrambling + Krümmung). A's dünner Hebel = B's θ=0-Code; A ist der niedrig-rangige, θ→0-Eckpunkt von B. Der große leere Raum ist zugleich Tresor (A: Fehler→0 in den Achsen, die das Skelett nicht belegt) und redundanter Code-Träger/Boundary (B). Lesen = das Skelett lesen: lineare Projektion bei θ=0 (A) ↔ Bulk-Rekonstruktion/MERA-RT bei θ→1 (B). 'Gut' = niedrig-rangig + θ→0, wo A's Generalisierung (β>2, Kapazität 2d) und B's 'gut gebaut' (flache konvexe affine Latente, Theorem 6) auf denselben Punkt fallen.",
+  "viz": "2D-Diskus aus D leeren orthogonalen Richtungen (A's leere Meer = B's Boundary); r davon geladen = niedrig-rangiges Skelett. Der Komplexitäts-Regler θ dreht die Code-Richtung w(θ) vom triviale Limes (θ=0: alles auf EINE Achse r̂ = A's dünner Hebel = B's trivialer Code, lineares Read-out 100%) zum gescrammelten Zustand (θ→1: auf die r Achsen verteilt). Das lineare Read-out (fester A-Hebel) bricht mit θ ein, der volle Fehlerkorrektur-Decode (B) bleibt 100%; Reservoir-Fehler (⊥ zum Skelett) → 0 am Test (G·P_res=0); plus A's Cover-Kapazität 2r mit Phasenübergang bei β=2. Slider θ / r / β + Theme-Umschalter; inline, theme-aware, kein Netzwerk."
+}

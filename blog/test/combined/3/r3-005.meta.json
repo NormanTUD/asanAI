@@ -1,0 +1,16 @@
+{
+  "no": "005",
+  "a": "combined/2/r2-010.html",
+  "b": "combined/2/r2-011.html",
+  "a_title": "Schwerpunktfluss auf dem Torus — Bedeutung als Fläche, die gebaut oder gefunden wird",
+  "b_title": "Kontraktion & Expansion: ein Operator, zwei Wirkungen",
+  "combined_theme": "rotation-invarianter-attraktor",
+  "one_line": "Verstehen ist ein kompakter, rotationsstrukturierter Attraktor — linear als ~7-dim-Code/range(W) (r2-011) und global als geschlossener Torus S¹×S¹ (r2-010) abgelesen — auf den ein einziter iterativer Fluss kohärentes Signal konzentriert, Rauschen unsichtbar parkt und (über höherstufige Simplexe) den Entscheidungsraum expandiert; erreicht glatt wenn die Rotation a-priori gebaut ist, per Phasenübergang wenn sie emergent gefunden wird.",
+  "contradictions": [
+    "Das kompakte Objekt: A macht die gekrümmte, kompakte Fläche — den Torus S¹×S¹ — zum Gegenstand ('die Fläche der Bedeutung'); B arbeitet durchweg mit flachen linearen Unterräumen (lineares Spektral-/Rang-Objekt range(W), erank 4096→7, Reservoir ker(W)). Gekrümmt/Topologisch (A) vs. flach/linear/algebraisch (B).",
+    "Wie man den Attraktor erreicht: A zentriert die Dynamik — emergentes Erreichen als stochastischer SGD-Walk + scharfer Phasenübergang/Grokking durch das Memorizations-Plateau; B's Signatur-Resultat ist statisch — der erank-Kollaps folgt der Nicht-Normalität/Rotation des per-layer-Operators (Schur-Chirurgie hebt erank 7→45, 6.4×), unabhängig von der Trainingsdynamik. Stochastisches Schwelle-Event (A) vs. deterministische statische Operator-Eigenschaft (B).",
+    "Ein Effekt vs. zwei: A erzählt einseitige Konvergenz auf einen kompakten Attraktor (Punkte landen auf dem Torus — danach fast Schluss); B besteht auf zwei ko-equalen Wirkungen desselben Operators — Kontraktion des Zustands UND Expansion der Entscheidungsgrenze (exponentielle lineare Regionen), beide nötig. Einseitige Konzentration (A) vs. Ko-Expansion (B)."
+  ],
+  "resolution": "Der Attraktor ist eine abelsche Rotationsgruppe: linear/in der Tangente gelesen = der ~7-dim-Code/range(W) (B), global/als geschlossener Orbit der Fixed-Rotation M_k gelesen = der Torus (A) — M_k ist lineare Algebra, deren Orbit eine gekrümmte Fläche ist. Nicht-Normalität/Rotation (statisch, B) definiert den Torus; das Drift(∝T)-vs-Diffusion(∝√T)-Rennen (dynamisch, A) entscheidet, wann Training ihn erreicht (gebaut=glatt, gefunden=Phasenübergang). Die Expansion (B) ist A's Simplizialkomplex, die Kontraktion (B) ist A's 'Punkte landen auf dem Torus' — ein Invariant, zwei Ablesungen (linear/gekrümmt, lokal/global), zwei Seiten (Kontraktion/Expansion), zwei Routen (gebaut/gefunden = statisch/dynamisch).",
+  "viz": "Canvas mit zwei gekoppelten Regionen desselben Punkt-Satzes und derselben Konvergenz t: oben ein 3D-Torus mit der Fixed-Rotation-Helix und den per Schwerpunktfluss einlaufenden Punkten + grünem Simplizialkomplex (A, gekrümmte Ablesung); unten links die lineare Projektion, die in einen ~7-Richtungen-Code kollabiert (erank 4096→7) (B, flache Ablesung); unten rechts Signalkanal mit kohärentem Drift-∝T-Pfeil (Simplicial-Badge) + unsichtbares Reservoir ker(W) mit Rausch-Zickzacks (Diffusion ∝ √T). Regler Konvergenz t / Windung U / Rauschen σ; theme-reaktiv, alle Daten inline, drag-zoom."
+}

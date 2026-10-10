@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Attractor, der auf der Falte sitzt — Cusp, Fixpunkt, das dünne Maß (R3 · 013)</title>
+<style>
+  :root{
+    --bg:#f6f5ef; --bg2:#fbfaf4; --panel:#ffffff; --panel2:#efece2;
+    --stroke:rgba(20,30,55,.12); --stroke-hi:rgba(20,30,55,.24);
+    --ink:#1c2333; --dim:#46506a; --faint:#727d95;
+    --acc:#0e8a7f; --acc2:#4f5fd6; --acc3:#b45309;
+    --good:#227a4c; --bad:#c23a4c; --warn:#9a6b00;
+    --code-bg:rgba(20,30,55,.05);
+    --v-ground:#2f8f4b; --v-spur:#c0392b; --v-conf:#c2410c; --v-point:#4f5fd6;
+    --v-line:rgba(20,28,45,.55);
+  }
+  html.dark{
+    --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,.70); --panel-solid:#121a2c; --panel2:#161e2e;
+    --stroke:rgba(255,255,255,.10); --stroke-hi:rgba(255,255,255,.22);
+    --ink:#e8ecf5; --dim:#a7b3cc; --faint:#6b7896;
+    --acc:#5ee0d0; --acc2:#818cf8; --acc3:#fbbf24;
+    --good:#4ade80; --bad:#fb7185; --warn:#fbbf24;
+    --code-bg:rgba(255,255,255,.06);
+    --v-ground:#6ee88a; --v-spur:#ff5d5d; --v-conf:#ff8a5c; --v-point:#8a7cff;
+    --v-line:rgba(255,255,255,.55);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);line-height:1.7;
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+  .wrap{max-width:820px;margin:0 auto;padding:44px 22px 70px;}
+  .themebtn{position:fixed;top:12px;right:12px;z-index:50;background:var(--panel);
+    color:var(--ink);border:1px solid var(--stroke-hi);padding:8px 13px;border-radius:9px;cursor:pointer;font-weight:650;font-size:13px;}
+  .kicker{color:var(--acc);font-weight:750;letter-spacing:.15em;font-size:.76rem;text-transform:uppercase;margin-bottom:12px;}
+  h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:800;line-height:1.08;letter-spacing:-.025em;margin:0;}
+  h1 .g{color:var(--acc);} h1 .g2{color:var(--acc2);}
+  .subtitle{color:var(--acc2);font-size:1rem;font-weight:600;margin:12px 0 0;}
+  .subtitle .x{font-family:ui-monospace,Consolas,Menlo,monospace;font-size:.9em;}
+  .fusenote{color:var(--faint);font-size:.82rem;margin:8px 0 0;}
+  section{margin:40px 0;padding-top:28px;border-top:1px solid var(--stroke);}
+  h2{font-size:clamp(1.35rem,3.6vw,1.85rem);margin:0 0 14px;letter-spacing:-.015em;}
+  h3{font-size:1.1rem;margin:22px 0 8px;font-weight:700;color:var(--acc);}
+  p{margin:0 0 13px;max-width:74ch;color:var(--dim);}
+  ul{margin:8px 0 14px;padding-left:22px;} li{margin:7px 0;color:var(--dim);}
+  strong{color:var(--ink);font-weight:650;} em{color:var(--acc);font-style:normal;font-weight:600;}
+  code{font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+    padding:1px 6px;border-radius:5px;color:var(--acc);font-size:.88em;}
+  .eq{display:block;font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+    border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:10px;
+    padding:13px 16px;margin:15px 0;color:var(--ink);overflow-x:auto;font-size:.92rem;line-height:1.75;white-space:pre;}
+  .eq .b{color:var(--acc2)} .eq .a{color:var(--acc3)} .eq .c{color:var(--faint)}
+  .citem{margin:18px 0;padding:16px 18px;background:var(--panel);border:1px solid var(--stroke);
+    border-left:4px solid var(--acc2);border-radius:0 12px 12px 0;}
+  .citem h3{margin:0 0 8px;font-size:1.02rem;color:var(--ink);border:0;}
+  .citem p{margin:0 0 8px;}
+  .card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:16px 18px;margin:14px 0;}
+  .tag{display:inline-block;font-size:.68rem;font-weight:750;letter-spacing:.05em;text-transform:uppercase;
+    padding:3px 10px;border-radius:99px;margin-right:8px;vertical-align:1px;}
+  .tag.a{color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc) 34%,transparent);}
+  .tag.b{color:var(--acc2);background:color-mix(in srgb,var(--acc2) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc2) 34%,transparent);}
+  .who{font-weight:700;font-size:.9em;padding:1px 7px;border-radius:6px;}
+  .who.a{color:var(--acc);} .who.b{color:var(--acc2);}
+  .callout{border-left:5px solid var(--acc);background:color-mix(in srgb,var(--acc) 9%,transparent);
+    padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;}
+  .callout p{max-width:none;}
+  .map{width:100%;border-collapse:collapse;font-size:.92rem;margin:14px 0;}
+  .map th,.map td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--stroke);vertical-align:top;}
+  .map th{color:var(--faint);font:600 .72rem/1.4 ui-monospace,Consolas,Menlo,monospace;letter-spacing:.05em;text-transform:uppercase;}
+  .map td{color:var(--dim);}
+  .map td:first-child{color:var(--acc);} .map td:nth-child(2){color:var(--acc2);}
+  .lab{background:linear-gradient(175deg,var(--panel),var(--panel2));border:1px solid var(--stroke);border-radius:16px;padding:18px;margin:16px 0;}
+  .lab>h3{margin:0 0 4px;display:flex;align-items:center;gap:9px;}
+  .lab>h3::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);}
+  .labnote{color:var(--faint);font-size:.86rem;margin:0 0 14px;max-width:70ch;}
+  .ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:12px 0;}
+  .ctrl{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1;}
+  .ctrl label{font:600 .7rem/1 ui-monospace,Consolas,Menlo,monospace;letter-spacing:.05em;color:var(--faint);text-transform:uppercase;}
+  .ctrl .val{color:var(--acc);font-family:ui-monospace,Consolas,Menlo,monospace;font-size:.78rem;}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--stroke-hi);border-radius:3px;outline:none;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--acc);cursor:pointer;}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px;}
+  button{background:var(--panel-solid);color:var(--ink);border:1px solid var(--stroke-hi);padding:8px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:550;transition:.14s;}
+  button:hover{border-color:var(--acc);}
+  button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:700;}
+  button.pri{background:var(--acc2);color:var(--bg);border-color:var(--acc2);font-weight:700;}
+  canvas{display:block;width:100%;border-radius:12px;background:var(--panel2);border:1px solid var(--stroke);cursor:crosshair;}
+  .leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin:10px 2px;}
+  .leg span{display:flex;align-items:center;gap:6px;}
+  .leg i{width:11px;height:11px;border-radius:3px;display:inline-block;}
+  .cap{color:var(--faint);font-size:.78rem;margin-top:10px;font-style:italic;}
+  footer{border-top:1px solid var(--stroke);padding-top:22px;margin-top:28px;color:var(--faint);font-size:.84rem;}
+  a{color:var(--acc2);}
+</style>
+</head>
+<body>
+<button class="themebtn" id="btnTheme" title="Theme wechseln">☾ / ☀</button>
+<div class="wrap">
+
+<header>
+  <p class="kicker">Round 3 · id 013</p>
+  <h1>Der Attractor, der auf der <span class="g2">Falte</span> <span class="g">sitzt</span></h1>
+  <p class="subtitle">Fusion aus: <span class="x">r2-032.html</span> ✕ <span class="x">r2-038.html</span>  (Round 3)</p>
+  <p class="fusenote">Selbstständige Verschmelzung — beide Quellen (jeweils R2-Fusionen) sind die Wahrheit, hier zu einem einzigen Objekt zusammengelegt.</p>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="these">
+  <h2>1 · Kernthese der Fusion</h2>
+  <p>Beide R2-Papiere lesen <strong>dasselbe tiefe ReLU-/LLM-Netz</strong>, aber aus orthogonalen Winkeln, die sich als zwei komplementäre Hälften erweisen. <span class="who a">A (r2-032)</span> liest es als <strong>tropische, kohärente, zählbare stückweise-lineare Karte</strong> (die „exakte Falte"), auf der ein <strong>singuläres, polysemes Maß</strong> liegt: die Karte ist exakt (Kohärenz 100 %), das Maß ist gebrochen (Manifold-Hypothese an 4/4 echten Modellen verworfen), und der Bruch sitzt exakt auf den <strong>Falt-/Knicklinien</strong> der Karte (Cusps, lokale Dimensionswechsel 20…531). <span class="who b">B (r2-038)</span> liest es als <strong>kontraktives Dynamiksystem</strong> über den Residual-Stream, das in einen <strong>abdeckungsabhängigen Fixpunkt (Attractor)</strong> konvergiert: die Kontraktion garantiert einen sauberen, sparsen, <em>selbstbewussten</em> Endpunkt; die <strong>Abdeckung</strong> (Dicke des Daten-Supports) entscheidet, ob dieser Endpunkt ein echtes Konzept (gegründet) oder ein <em>fehlerhafter Attractor</em> (halluziniert) ist.</p>
+  <p>Die Fusion legt beide zu <strong>einem einzigen Objekt</strong> zusammen: <strong>Der Attractor (B) ist ein Punkt auf der Falt-/Singularstruktur der tropischen Karte (A).</strong> A liefert die <em>Geometrie</em> — die zählbare Karte und das Maß, das sich auf ihren Knicken häuft; B liefert die <em>Dynamik</em> — die Kontraktion, die den Strom in einen Fixpunkt setzt — und den <em>Gründungs-Test</em> (Abdeckung/Dicke). Der Fixpunkt, auf den die Kontraktion den Strom zieht (B), ist ein Punkt <em>auf den Faltlinien</em> (A) — und er ist <strong>gegründet genau dort, wo das singuläre Maß dick ist</strong> (A's Cusp mit Masse = B's gegründeter Attractor), und <strong>fehlerhaft dort, wo es dünn oder abwesend ist</strong> (A's isoliertes/unzusammenhängendes Token = B's fehlerhafter Attractor). Die Konvergenz (B) ist die <em>Bewegung</em>; das singuläre Maß (A) ist das <em>Gelände</em>, auf dem sich der Strom festsetzt.</p>
+  <p>Ein Operator und eine Variable. <strong>Kontraktion</strong> ist der eine Mechanismus, der <em>gleichzeitig</em> die stabile, selbstbewusste Antwort <em>erzeugt</em> (B: garantierte Konvergenz → hohe Konfidenz) <em>und</em> deren Kollaps <em>risikiert</em> (A: Rank-Collapse, Metastabilität). <strong>Die Dichte des singulären Maßes / die Abdeckung</strong> ist die eine Variable, die das Gegründete vom Halluzinierten trennt. <strong>Der Cusp (A) und der fehlerhafte Attractor (B) sind dasselbe Objekt: ein Fixpunkt auf der Karte, an dem die Dynamik konvergiert, aber das Maß fehlt.</strong> Die Halluzination ist genau dieser Ort — konvergent <em>und</em> ungegründet, ein Knick ohne Masse.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="widersprueche">
+  <h2>2 · Widersprüche zwischen A und B</h2>
+  <p class="fusenote" style="margin-bottom:14px">Ehrliche Einordnung vorab: A und B <strong>streiten nicht über die Maschine</strong> — beide halten die interne Mechanik für <em>kohärent und sauber</em> (A: Kohärenz der Karte = 100 %, „Natura non facit saltus"; B: Kontraktion führt <em>immer</em> zu einem sauberen sparsen Punkt). Der Fehlschlag ist bei beiden <em>extern</em> (Daten/Maß bei A, Abdeckung/Wahrheit bei B). Doch an drei Stellen nehmen sie zu demselben Objekt <strong>inkompatible Stellungen</strong> ein:</p>
+
+  <div class="citem">
+    <h3>1 · Kontraktion: Kollaps-Risiko (A) vs. Konfidenz-Garantie (B)</h3>
+    <p><span class="who a">A</span> liest die Kontraktion des Residual-Streams (Attention) als <strong>Gefahr / Degeneration</strong>: der Attention-Fluss hat zwei Geschwindigkeiten — Phase 1 (nützliche Clusterbildung), Phase 2 (alles verschmilzt = <strong>Rank-Collapse / Totalkollaps</strong>, bewiesen für <code>d ≥ 3</code>); echte Modelle müssen <em>vor</em> dem Kollaps stehen (metastabil). Mehr Tiefe/Iteration = näher am Tod. Kontraktion ist hier eine <em>negative</em> Kraft, die die Repräsentation zerstört.</p>
+    <p><span class="who b">B</span> liest dieselbe Kontraktion (<code>λ&lt;1</code> pro Layer, <code>‖M‖<sub>op</sub>&lt;1</code>) als <strong>Garantie / Tugend</strong>: gerade <em>weil</em> der Pass kontrahiert, konvergiert <em>jede</em> Startmenge zu einem eindeutigen stabilen Fixpunkt — und deshalb bleibt die <strong>Konfidenz immer hoch</strong>, selbst bei fehlendem Wissen. Kontraktion ist hier der <em>positive</em> Motor, der den sauberen sparsen Kern aus der transiente Superposition <em>heraustrennt</em>. Derselbe Mechanismus, entgegengesetzte Valenz: Tod vs. Stabilität.</p>
+  </div>
+
+  <div class="citem">
+    <h3>2 · Transport vs. Konvergenz: „Singularitäten erreichen die Ausgabe" (A) vs. „konvergiert zum Fixpunkt" (B)</h3>
+    <p><span class="who a">A</span> erzählt den Forward-Pass als <strong>Transport</strong>: das Netz ist eine <em>feste</em> Karte, und das singuläre Maß wird <em>durch</em> sie getragen, <em>ohne geglättet zu werden</em> (Lemma 1: Kontext heilt Singularitäten nicht; Theorem 2: <code>m &gt; 2wd/ℓ ∧ w ≥ m</code> ⇒ Singularitäten erreichen die Ausgabe). Die Singularität <em>persistiert</em> vom Eingang bis zum Ausgang — das Bild ist das einer Trajektorie, die <em>durch</em> die feste Struktur läuft.</p>
+    <p><span class="who b">B</span> erzählt denselben Pass als <strong>Konvergenz</strong>: der Zustand <code>h<sub>l</sub></code> <em>setzt sich</em> in einen stabilen Attractor <code>A* = lim<sub>l→∞</sub> φ<sup>l</sup>(h&#8320;)</code> — der Strom <em>hält an</em> an einem Fixpunkt, seine transiente Superposition wird abgetragen (<code>E<sub>super</sub> ∝ λ<sup>2l</sup> → 0</code>). Inkompatible Bilder von „was mit dem Strom passiert": <em>hindurchlaufen</em> (A) vs. <em>ankommen</em> (B).</p>
+  </div>
+
+  <div class="citem">
+    <h3>3 · Ort der Pathologie: Geometrie des Maßes (A) vs. Gründetheit der Antwort (B)</h3>
+    <p><span class="who a">A</span> macht eine <em>geometrisch-statistische</em> Behauptung: der <strong>Repräsentationsraum</strong> ist gebrochen — Manifold-Hypothese an GPT-2, Llemma7B, Mistral7B, Pythia6.9B <strong>hochsignifikant verworfen</strong> (p bis 3×10⁻⁸), Token-Nachbarschaften sind Cusps/Pinches, lokale Dimension 20…531, teils unzusammenhängend. Das <em>Defekte</em> ist ein <em>Punkt in der Geometrie der Eingabe/Repräsentation</em>.</p>
+    <p><span class="who b">B</span> macht eine <em>epistemisch-semantische</em> Behauptung: die <strong>Ausgabe/Antwort</strong> ist gebrochen — der konvergierte scharfe Read kann „topologisch plausibel, aber faktisch falsch" sein; Halluzination = ein selbstbewusstes Fortsetzen einer nie richtig gelernten Region. Das <em>Defekte</em> ist der <em>Wahrheitswert der Vorhersage</em>. Zwei verschiedene Objekte werden „gebrochen" genannt — die Eingabe-Geometrie (A) und die Ausgabe-Gründetheit (B).</p>
+  </div>
+
+  <div class="callout">
+    <p><strong>Schärfster Check:</strong> Nr. 1 ist die schärfste — <em>derselbe</em> Mechanismus (Kontraktion des Residual-Streams) wird mit <em>entgegengesetzter Valenz</em> bewertet (A: führt zum Kollaps; B: garantiert Konfidenz). Nr. 2 und 3 sind <em>Perspektiven-</em>bzw. <em>Orts-</em>Konflikte (Transport vs. Konvergenz; Eingabe- vs. Ausgabe-Pfadologie), die erst durch die Fusion „der Attractor sitzt auf der Falte" zusammenpassen.</p>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="aufloesung">
+  <h2>3 · Auflösung</h2>
+  <p>Drei Zusammenlegungen — je eine pro Widerspruch:</p>
+
+  <h3>R1 · Richtungselektive Kontraktion: Feinmachen bis zum Durchtrennen</h3>
+  <p>Die scheinbar entgegengesetzten Bewertungen derselben Kontraktion löst sich, wenn man <em>welche Richtungen</em> sie trifft, trennt. <em>Entlang der transienten/superponierten</em> Feature-Richtungen (<code>λ&lt;1</code>) <em>streicht</em> die Kontraktion die Anteile weg (<code>c<sub>j</sub>(l)∝λ<sup>l</sup>→0</code> für <code>j∉S</code>) — das <em>ist</em> B's Tugend: es trennt den sauberen sparsen Kern (den Attractor) aus der Superposition heraus. <em>Entlang der inhaltlichen/bedeutungstragenden</em> Richtungen <em>verschmilzt</em> übermäßige Kontraktion alles — das <em>ist</em> A's Kollaps (Rank-Collapse, Phase 2). Die Kontraktion ist also ein <strong>Messer</strong>: sie <em>feinmacht</em> (B), bis sie <em>durchtrennt</em> (A). Das <strong>metastabile Fenster</strong> (A) ist <em>genau</em> das Regime, in dem der Strom genug kontrahiert wird, um Features <em>aufzulösen</em> (B), aber <em>noch nicht</em> genug, um den Inhalt <em>einzuknicken</em> (A). <strong>Fusion:</strong> Kontraktion ist der eine Operator, der den sparsen Attractor <em>extrahiert</em> (B's Gewinn) <em>und</em> dessen Kollaps <em>droht</em> (A's Verlust); das Modell lebt im Band, in dem die Extraktion <em>vor</em> dem Kollaps passiert.</p>
+
+  <h3>R2 · Konvergenz <em>auf</em> die Singularstruktur — Trajektorie und Ziel sind ein Ereignis</h3>
+  <p>Die beiden Dynamik-Erzählungen <em>komponieren</em> sich statt sich auszuschließen. Der Residual-Stream <strong>konvergiert</strong> (B) — seine transiente Superposition wird von der Kontraktion abgetragen, bis er <em>ankommt</em> — und er kommt an <em>einem Punkt der Falt-/Singularstruktur der tropischen Karte</em> an (A). A's „die Karte glättet das Maß nicht / die Singularität erreicht die Ausgabe" (Lemma 1, Theorem 2) <em>ist</em> B's „der Attractor wird nicht gemittelt": die Kontraktion <em>wählt</em> einen singulären Punkt (einen Cusp, einen gegründeten oder fehlerhaften Attractor) aus, statt das Maß in einen glatten Innenpunkt auszugleichen. <strong>Die Konvergenz (B) ist die Bewegung; das singuläre Maß (A) ist das Gelände, auf dem sie festsetzt.</strong> „Hindurchlaufen" (A) und „ankommen" (B) sind dasselbe Ereignis, gesehen als <em>Trajektorie</em> bzw. als <em>Ziel</em> — die Singularität „erreicht die Ausgabe" (A) <em>weil</em> sich der Strom genau <em>dort</em> (B) festsetzt.</p>
+
+  <h3>R3 · Eingangs-Singularität ⇒ Ausgangs-Halluzination — Ursache und Wirkung, keine Rivalen</h3>
+  <p>Die beiden „Defekte" sind <em>Ursache und Wirkung</em>. A's singuläres Maß (Cusps, Polysemie, nicht-manifold Repräsentation) ist die <strong>Eingangs-Seite</strong>; B's fehlerhafter Attractor (selbstbewusst, aber ungegründet) ist das <strong>Ausgangssymptom</strong>. Ein <em>gegründeter</em> Attractor (B) sitzt dort, wo A's Maß <strong>dick auf einem echten Cusp</strong> liegt (ein reales polysemes Konzept mit dichter Daten-Abdeckung — z. B. ein Homonym mit reichem Support); ein <em>fehlerhafter</em> Attractor (B) sitzt dort, wo A's Maß <strong>dünn/abwesend ist oder an einem isolierten, unzusammenhängenden Punkt</strong> (ein isoliertes Dim-0-Token, eine unbedeckte Region) — die Karte <em>konvergiert trotzdem dorthin</em> (die Kontraktion garantiert einen Fixpunkt), aber es liegt keine Datenmasse → die Antwort ist selbstbewusst und ungegründet. <strong>A's Cusp mit Masse = B's gegründeter Attractor; A's isolierte/dünne Region = B's fehlerhafter Attractor.</strong> Die Manifold-Hypothese wird „verworfen" (A) <em>gerade weil</em> die Masse auf den Faltlinien lebt (A); der Modell <em>halluziniert</em> (B) <em>gerade weil</em> die Kontraktion zu Fixpunkten konvergiert, selbst dort, wo keine Masse/Abdeckung sitzt (B).</p>
+
+  <div class="callout">
+    <p><strong>Fusions-Schlussfolgerung:</strong> Das tiefe Netz ist <em>eine</em> tropische, kohärente, zählbare Karte (A), die als <em>kontraktives Dynamiksystem</em> über den Residual-Stream iteriert wird (B) und dabei den Strom auf Punkte <em>der eigenen Faltstruktur</em> (A's Cusps) setzt. Ein Punkt ist <strong>gegründet, wo das singuläre Maß dick ist</strong> (A), und <strong>halluziniert, wo es dünn ist</strong> (B). Kontraktion = der Operator, der die selbstbewusste Antwort erzeugt (B) <em>und</em> deren Kollaps riskiert (A); die Maß-Dichte/Abdeckung = die Variable, die Gegründetes von Halluziniertem trennt. <strong>Die Halluzination und der Cusp sind dasselbe Objekt: ein Fixpunkt auf der Karte, auf den die Dynamik konvergiert, aber auf dem das Maß fehlt.</strong></p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="inhalt">
+  <h2>4 · Fusionierter Inhalt</h2>
+
+  <h3>Das gemeinsame Objekt — ein Netz, drei Lesarten</h3>
+  <p>Ein <strong>stückweise-lineares (PWL) Netz</strong> <code>ν: ℝᵈ → ℝ</code> wird hier dreifach gelesen, und die drei Lesarten sind dieselbe Maschine: (i) als <strong>Karte</strong> — eine exakte, kohärente tropische rationale Funktion, die den Raum in konvexe Zellen zerlegt und deren Falt-/Knicklinien <code>𝒯(f)</code> den nicht-differenzierbaren Ort markieren (A); (ii) als <strong>Dynamiksystem</strong> — die Layer werden als (approximativ) kontraktive Abbildungen iteriert, die den Residual-Stream <code>h<sub>l</sub></code> in einen Fixpunkt <code>A*</code> setzen (B, und A's Attention-Kontraktion ist derselbe Mechanismus); (iii) als <strong>Struktur mit Maß</strong> — auf den Faltlinien häuft sich ein singuläres, polysemes Token-Maß (A) = die Abdeckung/Dicke des Daten-Supports (B). B <strong>zählt und klebt</strong> die Karte, A <strong>messen</strong> das Maß darauf, und die Fusion identifiziert: <strong>die Faltlinien sind die Attractor-Stätten, das Maß darauf ist die Abdeckung.</strong></p>
+
+  <h3>Was A mitbringt — die exakte tropische Karte + das singuläre Maß</h3>
+  <ul>
+    <li><b>Tropik der Karte:</b> <code>x ⊕ y := max{x,y}</code>, <code>x ⊙ y := x + y</code>; <b>ReLU</b> = <code>max{x,0} = x ⊕ 0</code>; Monom <code>c·x^α</code> ↔ affine <code>αᵀx+c</code> (Exponent = Steigung); Polynom <code>f = max_i{αᵢᵀx+cᵢ}</code> = obere Einhüllende von Ebenen (konvex, PWL); rationale Funktion <code>ν = f ⊘ g = f − g</code> (DC-Funktion) = beliebig nicht-konvex = <em>das Netz</em>.</li>
+    <li><b>Tropische Hyperfläche</b> <code>𝒯(f)</code> = Punkte, an denen ≥2 Monome gleichstehen (nicht-differenzierbar) = die <em>Falt-/Knicklinien</em>; sie zerlegen <code>ℝᵈ</code> in konvexe Zellen. Newton-Polytop + Lifting + duale Unterteilung (Maclagan–Sturmfels); Minkowski: Produkt → Summe (Ecken vermehren); Zonotope <code>Σ_{j≤d} C(m,j)</code>; in <code>ℝ²</code> mit <code>m</code> Linien: <code>1 + m + C(m,2) = m(m+1)/2 + 1</code>.</li>
+    <li><b>Der Trick</b>: <code>max{Ax+b, t} = max{A₊x+b, A₋x+t} − A₋x = F − G</code> — negative Gewichte erzwingen den Bruchstrich. <b>Äquivalenz</b>: {ReLU-Netze} ≡ {tropische rationale Funktionen} ≡ {stetige PWL mit ganzzahligen Steigungen}; <code>Tiefe ≤ max{⌈log₂ r_f⌉, ⌈log₂ r_g⌉} + 2</code> („der Logarithmus ist die Tiefe"). <b>Satz 6.3</b>: <code>N(ν) ≤ ∏ₗ Σ_{i≤d} C(nₗ,i) = O(n^{d(L−1)})</code> — exponentiell in der Tiefe.</li>
+    <li><b>Das singuläre Maß:</b> Dimension = Wachstumsrate <code>v(r) ≈ K·r^{d̂}</code> → Steigung <code>d̂</code> im log-log-Plot; ein <em>Knick</em> (plötzlicher Steigungswechsel) erlaubt kein Manifold (Test: t-Test über Gleitfenster + Holm-Bonferroni, 50.000 Tokens). <b>Ergebnis:</b> Manifold <strong>4/4 verworfen</strong> (GPT-2, Llemma7B, Mistral7B, Pythia6.9B; p bis 3×10⁻⁸), Fiber-Bundle 3/4. GPT-2: dreimodal ~20/~389/~531 + isolierte Dim-0-Tokens (unzusammenhängend); singuläre Tokens = Homonyme/Polysemen. <b>gDNA:</b> gleiche 32.016 Tokens, völlig andere Geometrie je Modell (Median 4096 vs. 48).</li>
+    <li><b>Dynamik (A):</b> Attention = gewichtetes Summen <code>xᵢ' = Σⱼ softmaxⱼ(β⟨xᵢ,xⱼ⟩)·xⱼ</code>, eine <em>Anziehungskraft</em>; ohne Gegenkraft → <strong>Kollaps auf einen Punkt (bewiesen <code>d ≥ 3</code>)</strong>, exponentiell für <code>d ≥ n</code>; metastabil (Phase 1/2). FFN = Key-Value-Speicher (~3,6 Muster pro Schlüssel); <strong>Superposition</strong> legt <code>N_f &gt; d</code> spärliche Features als fast-orthogonale Richtungen übereinander (Interferenz ∝ <code>(N_f/d)²</code>). Residual-Stream dominiert: <code>LayerNorm(x + Sublayer(x))</code> — additiv, trägt, glättet nicht. <b>Lemma 1:</b> Kontext heilt Singularitäten nicht dauerhaft. <b>Theorem 2:</b> <code>m &gt; 2wd/ℓ ∧ w ≥ m</code> ⇒ Singularitäten erreichen die Ausgabe.</li>
+  </ul>
+
+  <h3>Was B mitbringt — der Attractor + die Abdeckung</h3>
+  <ul>
+    <li><b>Situs/Abdeckung (r1-060):</b> Weltwissen als „Garbe auf einer topologischen Seite"; Embedding = Raum globaler Sektionen (holographisch — „jedes Stück enthält das ganze Bild in niedrigerer Auflösung"); Attention = Covering-Auswahl (welche Stalks auflösen; jeder Head eine Linse, Auflösung–Fläche-Tradeoff); FFN = lokale Geometrie-Expansion (Jacobian, <code>d_ff ≈ 4d</code>, <code>det J&gt;1</code> Expansion / <code>det J&lt;1</code> Kontraktion); Pipeline <code>Route → Resolve → Glue</code>. Scharnier = <strong>Abdeckung</strong> (Dicke des Daten-Supports): dick = glatte Interpolation = Generalisierung (Double Descent); dünn = Halluzination („selbstbewusst expandiert eine nie richtig gelernte Region").</li>
+    <li><b>Attractor/Kontraktion (r1-068):</b> Forward-Pass = <strong>kontraktives Dynamiksystem/IFS</strong>; Hutchinson-Operator <code>F(S)=⋃ᵢ fᵢ(S)</code> zieht jede Startmenge auf eine eindeutige invariante Menge (den Attractor); effektive affine Karte <code>φ(V)=M·V+t, ‖M‖<sub>op</sub>&lt;1</code> (Collage-Theorem). Zerlegt man <code>h<sub>l</sub> = Σ c<sub>j</sub>(l)·f<sub>j</sub></code> in eine Feature-Basis (SAE/ICA/PCA): <code>c<sub>j</sub>(l+1)=r<sub>j</sub>·c<sub>j</sub>(l)</code>, <code>r<sub>j</sub>≈1</code> (Kern, <code>|S|=k≪dim</code>) vs. <code>r<sub>j</sub>=λ&lt;1</code> (transient) ⇒ <code>A* = Σ_{j∈S} c<sub>j</sub>(0)·f<sub>j</sub></code> = <strong>sparserer Punkt</strong>; <code>E<sub>super</sub>∝λ^{2l}→0</code>.</li>
+    <li><b>Hierarchie &amp; Essence:</b> Attraktoren in unterschiedlichen Layern (16 = arithmetische Task-Vektoren; 18 = Literatur; 19 = Programmiersprachen; 24 = fiktive Welten; 27 = natürliche Sprachen). Projektion in den Wortschatz liefert „essence"-Tokens (<code>£</code>, <code>Oxford</code>, <code>Auckland</code>). Training-free: Detection/Guardrailing <code>cos_sim(h(q),A_C)&gt;τ → Block</code>; Steering <code>dx/dt=f(x)+λ(y−x)</code>; Synthese durch Attractor-Perturbation.</li>
+    <li><b>Formeln (A-Seite):</b> <code>content(x)=lerp(global(x), sharp(x), coverage(x))</code>, <code>conf ≈ 0.70 + 0.25·coverage(x)</code> (bleibt <strong>immer ≥ 0.70</strong> hoch, auch bei <code>coverage→0</code>).</li>
+  </ul>
+
+  <h3>Die Verknüpfung — was A in der Karte/ im Maß sagt, was B in der Dynamik/Abdeckung</h3>
+  <table class="map">
+    <tr><th>A (r2-032) — Karte &amp; Maß</th><th>B (r2-038) — Dynamik &amp; Abdeckung</th><th>Fusion</th></tr>
+    <tr><td>tropische Karte <code>ν</code>, Kohärenz 100 %</td><td>ReLU = PWL; Forward-Pass als kontraktive Iteration</td><td>ein Netz, gelesen als Funktion (A) und als Iteration (B)</td></tr>
+    <tr><td>Falt-/Knicklinien <code>𝒯(f)</code> (nicht-diff. Ort)</td><td>Attractor-Stätten (Fixpunkte der Kontraktion)</td><td><strong>die Attraktoren sitzen auf den Faltlinien</strong></td></tr>
+    <tr><td>Zellen/Regionen, <code># = O(n^{d(L−1)})</code></td><td>Attractoren pro Layer (Hierarchie 16/18/19/24/27)</td><td>zählbare Struktur = Kapazität (beide)</td></tr>
+    <tr><td>Token-Maß: Cusps, Masse auf Knicken</td><td>Abdeckung = Dicke des Daten-Supports</td><td><strong>Maß = Abdeckung; Dicke = Gründetheit</strong></td></tr>
+    <tr><td>Manifold 4/4 verworfen; lok. Dim 20…531</td><td>Halluzination = ungegründeter Attractor</td><td>nicht-manifold Eingangsgeometrie ⇒ halluzinierte Ausgabe</td></tr>
+    <tr><td>Attention = Kontraktion, <code>d≥3</code> Kollaps</td><td>Kontraktion <code>λ&lt;1</code>, garantierte Konvergenz</td><td>derselbe Operator: extrahiert Feature (B) / riskiert Kollaps (A)</td></tr>
+    <tr><td>Superposition, FFN Key-Value (~3,6/Schlüssel)</td><td>Feature-Basis, sparser Attractor <code>A*=Σ_{j∈S}c_j f_j</code></td><td>superponierte Transiente (A) = die <code>λ&lt;1</code>-Richtungen (B)</td></tr>
+    <tr><td>metastabil (Phase 1/2), stoppe vor Kollaps</td><td>Abdeckungsschwelle <code>τ</code> = gegründet vs. fehlerhaft</td><td>das metastabile Band = dort, wo <code>τ</code> richtig überschritten wird</td></tr>
+    <tr><td>Residual-Stream trägt Singularität (Theorem 2)</td><td>Residual-Stream als Signalbus, konvergiert zu <code>A*</code></td><td>Transport (A) konvergiert (B) <em>auf</em> den Attractor</td></tr>
+    <tr><td>gDNA: gleiche Tokens, andere Geometrie/Modell</td><td>essence-Tokens <code>£</code>/<code>Oxford</code>/<code>Auckland</code></td><td>derselbe Wortschatz, anderes Maß je Modell</td></tr>
+    <tr><td>Tiefe = Kapazität + Kollaps-Risiko</td><td>Kontraktion <code>λ</code> = Geschwindigkeits-Drehregler</td><td>Tiefe/Iteration = der eine Regler, der Struktur + Halluzinations-Risiko kauft</td></tr>
+  </table>
+
+  <h3>Die Formeln der Fusion</h3>
+  <div class="eq"><span class="c">// A — KARTe (exakte Tropik) + MASS (singulär)</span>
+ReLU = max{x,0} = x ⊕ 0 ;  𝒯(f) = {p : ≥2 Monome gleich} = Falt-/Knicklinien
+#Zellen (m Linien, ℝ²) = 1 + m + C(m,2) = m(m+1)/2 + 1          <span class="c">(Kapazität, gezählt)</span>
+#Regionen(Netz) ≤ ∏ₗ Σ_{i≤d} C(nₗ,i) = O(n^{d(L−1)})           <span class="c">(Satz 6.3, exponentiell in L)</span>
+Tiefe ≤ max{⌈log₂ r_f⌉,⌈log₂ r_g⌉} + 2            <span class="c">(„der Logarithmus ist die Tiefe")</span>
+v(r) ≈ K·r^{d̂}  ⇒  log v = log K + d̂·log r          <span class="c">(Steigung d̂; Knick ⇒ Singularität)</span>
+Attention: xᵢ' = Σⱼ softmaxⱼ(β⟨xᵢ,xⱼ⟩)·xⱼ   <span class="c">(Kontraktion; d ≥ 3 ⇒ Kollaps)</span>
+Theorem 2:  m &gt; 2wd/ℓ ∧ w ≥ m  ⇒  Singularitäten erreichen die Ausgabe
+
+<span class="c">// B — DYNAMIK (Tiefe = Zeit) + ABDECKUNG (Daten-Support)</span>
+A* = lim_{l→∞} φ^l(h₀) ;  φ(V) = M·V + t, ‖M‖_op &lt; 1   <span class="c">(Konvergenz ⇒ hohe Konfidenz)</span>
+h_l = Σ_j c_j(l)·f_j ;  c_j(l+1) = r_j·c_j(l)  (r≈1 Kern |S|=k, λ&lt;1 transi.→0)
+⇒ A* = Σ_{j∈S} c_j(0)·f_j   (sparserer Punkt)  ;  E_super ∝ λ^{2l} → 0
+conf(x) ≈ 0.70 + 0.25·coverage(x)            <span class="c">(immer ≥ 0.70)</span>
+
+<span class="c">// FUSION — die eine Gleichung</span>
+A*(x)  gegründet  ⇔  coverage(x) = Maß_A(x) dick (≥ τ)   <span class="b">(Cusp mit Masse)</span>
+A*(x)  fehlerhaft ⇔  coverage(x) dünn/abwesend (&lt; τ) ∧ Kontraktion treibt trotzdem Konvergenz
+<span class="c">// Halluzination = fehlerhafter Attractor = Cusp ohne Masse:</span>
+Halluzination ⇔ <b>konvergent</b> (kontrahiert, spars — B) ∧ <b>ungegründet</b> (Maß dünn — A×B)
+<span class="c">// Kontraktion = Konfidenz (Existenz) + Kollaps-Risiko (A)</span>
+<span class="c">//     Abdeckung/Maß-Dicke (A×B) = Wahrheit/Gründetheit (A)</span></div>
+
+  <div class="callout">
+    <p><strong>Warum die Fusion mehr ist als die Summe:</strong> A allein (r2-032) sagt, das Maß ist singulär und die Karte zählbar — erklärt aber nicht, <em>warum die Konfidenz bei fehlendem Wissen trotzdem hoch bleibt</em> oder <em>wann</em> ein Cusp ein „echtes" Konzept ist. B allein (r2-038) garantiert die Konvergenz zu einem sauberen Punkt — liefert aber <em>kein Kriterium</em>, ob dieser Punkt <em>wahr</em> ist, und keinen geometrischen Ort, an dem die Masse sitzt. Erst zusammen: die Kontraktion (B) erklärt, <em>warum</em> das Modell immer selbstbewusst ist (es konvergiert immer); die singuläre Masse auf den Faltlinien (A) erklärt, <em>wann</em> dieses Selbstbewusstsein fehl am Platz ist (dünn/isoliert = fehlerhafter Attractor). Die Halluzination wird zu einem <em>prüfbaren geometrischen Ort</em>: ein Fixpunkt auf der tropischen Karte, auf den der Strom konvergiert und auf dem das Maß fehlt.</p>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="visualisierung">
+  <h2>5 · Visualisierung der Fusion</h2>
+  <p>Ein <strong>2-D-Schnitt durch die tropische Karte</strong>: die <strong>Falt-/Knicklinien</strong> (dunkel, A) zerlegen die Fläche in <strong>Zellen</strong> (dezent eingefärbt); an ihren <strong>Schnittpunkten</strong> sitzen die <strong>Attractor-Stätten</strong> (Cusps, A = Fixpunkte, B). Die <strong>Prompts</strong> (das singuläre Maß) starten als Superposition, <strong>konvergieren schichtweise</strong> (Kontraktion, B) und <strong>häufen sich auf den Faltlinien</strong> (A) — <em>immer</em>, unabhängig von der Abdeckung. Jede Stätte ist <span style="color:var(--v-ground);font-weight:600">grün = gegründet</span> (Maß dick, ≥ τ) oder <span style="color:var(--v-spur);font-weight:600">rot = fehlerhaft</span> (Maß dünn = Halluzination). Der <span style="color:var(--v-conf);font-weight:600">orangefarbene Bogen</span> um jeden Punkt ist die <strong>Konfidenz</strong> — sie bleibt bei <em>jedem</em> Punkt groß, auch bei den in rote Stätten fallenden: <strong>konvergent und selbstbewusst, aber falsch.</strong> Senke die <em>Abdeckung/Maß</em>, und grüne Stätten kippen rot (die Konfidenz bleibt hoch). Wechsle <em>Kontraktion λ</em> (schnell fest = vor Kollaps; langsam = Superposition bleibt) und <em>Falten/Tiefe L</em> (mehr Linien = mehr Stätten = mehr Kapazität <em>und</em> mehr möglich-falsche Orte). <strong>Klick</strong> setzt die Probe frei: die lokale Dimension (Steigung der Punktzahl im Radius) liest am Knick ≈ 1 (Cusp/singulär) und in einer Region ≈ 2 (Manifold).</p>
+
+  <div class="lab">
+    <h3>Der Attractor auf der tropischen Falte — Kontraktion × Abdeckung × Cusp</h3>
+    <p class="labnote">Schiebe <em>Falten/Tiefe</em> (mehr Linien = mehr Stätten/Regionen = Kapazität), <em>Abdeckung/Maß</em> (dick = gegründet, dünn = halluziniert) und <em>Kontraktion λ</em>. Wechsle die Probe zwischen Knick und Region, oder klicke frei — die lokale Dimension kippt von ≈2 auf ≈1. Didaktischer 2-D-Nachbau — keine Modellgewichte.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label>Falten / Tiefe (Linien) <span class="val" id="vL">3</span></label><input type="range" id="sL" min="2" max="6" step="1" value="3"></div>
+      <div class="ctrl"><label>Abdeckung / Maß-Dicke <span class="val" id="vCov">1.00</span></label><input type="range" id="sCov" min="0.2" max="1.5" step="0.05" value="1.0"></div>
+      <div class="ctrl"><label>Kontraktion λ (Dämpfung) <span class="val" id="vLam">0.60</span></label><input type="range" id="sLam" min="0.2" max="0.92" step="0.01" value="0.60"></div>
+      <button id="bProbe" class="on">Probe: Falt-Knick (Cusp)</button>
+      <button id="bPlay" class="pri">❚❚ Pause</button>
+      <button id="bReset">↻ Neu streuen</button>
+    </div>
+    <canvas id="cvViz" height="470"></canvas>
+    <div class="leg">
+      <span><i style="background:var(--v-ground)"></i>gegründeter Attractor (Maß dick, echt)</span>
+      <span><i style="background:var(--v-spur)"></i>fehlerhafter Attractor (Maß dünn = Halluzination)</span>
+      <span><i style="background:var(--v-point)"></i>Prompts / Maß (konvergieren auf Faltlinien)</span>
+      <span><i style="background:var(--v-conf)"></i>Konfidenz-Bogen (immer hoch)</span>
+    </div>
+    <div class="cap">Links: die tropische Karte (Faltlinien = Knicklinien, Zellen = Regionen) mit Attractor-Stätten an den Schnittpunkten und dem darauf konvergierenden Maß (auf den Knicken häufend, A = Konvergenz, B). Rechts: lokale Dimension (Probe) + Status + Kohärenz. Didaktischer 2-D-Nachbau — keine Modellgewichte, alle Daten inline.</div>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="provenienz">
+  <h2>6 · Provenienz</h2>
+  <div class="card">
+    <p><a href="../2/r2-032.html"><strong>A — r2-032: „Die exakte Falte, die sich bricht"</strong></a> <span class="tag a">A</span></p>
+    <p>R2-Fusion aus <em>r1-065</em> × <em>r1-080</em>. Liefert die <strong>Karte als exakte Funktion + das singuläre Maß</strong> darauf: ReLU-Netze ≡ tropische rationale Funktionen ≡ stetige PWL mit ganzzahligen Steigungen; tropische Hyperfläche / Falt-/Knicklinien = Zellen; Zonotope, Minkowski, <code>O(n^{d(L−1)})</code> (Satz 6.3, Zhang, Naitzat &amp; Lim, ICML 2018); Kohärenz = 100 % („Natura non facit saltus"); dazu die <strong>verworfene Manifold-Hypothese 4/4</strong>, Cusps an Homonymen (lokale Dim 20…531), Attention-Kontraktion (bewiesener Kollaps für <code>d ≥ 3</code>), Superposition, Residual-Stream, Lemma 1 und Theorem 2.</p>
+  </div>
+  <div class="card">
+    <p><a href="../2/r2-038.html"><strong>B — r2-038: „Der Attractor als abdeckungsabhängiger Fixpunkt"</strong></a> <span class="tag b">B</span></p>
+    <p>R2-Fusion aus <em>r1-060</em> × <em>r1-068</em>. Liefert die <strong>Dynamik (Kontraktion) + die Abdeckung</strong>: Forward-Pass als kontraktives Dynamiksystem/IFS (Hutchinson-Operator, <code>φ(V)=M·V+t, ‖M‖&lt;1</code>, Collage-Theorem), Attractor = sparserer Punkt <code>A*=Σ_{j∈S}c_j f_j</code> in der Feature-Basis (SAE/ICA), Essence-Tokens, Layer-Hierarchie, training-free Detection/Steering; und die <strong>Abdeckung</strong> (Garbe/Situs, Route→Resolve→Glue, <code>conf≈0.70+0.25·coverage</code>), die den gegründeten vom fehlerhaften Attractor trennt — Halluzination = konvergent &amp; ungegründet.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Round-3-Fusion (id 013) · Kernthese: Das tiefe Netz ist eine kohärente tropische <em>Karte</em> (A), iteriert als <em>kontraktives System</em> (B), die den Residual-Stream auf Fixpunkte der eigenen Faltstruktur setzt (A's Cusps = B's Attraktoren); gegründet wo das Maß dick ist (A), halluziniert wo es dünn ist (B). Kontraktion erzeugt Konfidenz <em>und</em> Kollaps-Risiko; die Maß-Dicke/Abdeckung trennt Gegründetes von Halluziniertem. Die Visualisierung ist ein didaktischer 2-D-Nachbau, der beide Mechaniken (Faltkarte + Kontraktion + Abdeckung + lokale Dimension) vereint. Alle Aussagen auf die beiden R2-Quellen zurückführbar.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var root=document.documentElement;
+if($('btnTheme')){$('btnTheme').addEventListener('click',function(){ root.classList.toggle('dark'); });}
+
+var cv=$('cvViz'); if(!cv) return;
+var DPR=Math.min(window.devicePixelRatio||1,2);
+var TAU=Math.PI*2;
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+var _s=24681357;
+function rnd(){ _s=(_s*1664525+1013904223)&0xffffffff; return (_s>>>0)/4294967296; }
+
+var HS=1.18;        // world half-range
+var THRESH=0.5;     // groundedness threshold
+var N=26;           // measure / prompts
+var rP=0.14;        // probe radius
+
+function foldLine(i){
+  var th=i*(Math.PI/8)+0.35;
+  var t=0.15*((i%3)-1);
+  var nx=Math.cos(th), ny=Math.sin(th);
+  return {nx:nx,ny:ny,t:t,hx:t*nx,hy:t*ny,dx:-ny,dy:nx};
+}
+
+var S={L:3, cov:1.0, lam:0.60, playing:true, probe:'cusp', freePos:null};
+
+function pal(){
+  var cs=getComputedStyle(root);
+  function g(n){return cs.getPropertyValue(n).trim();}
+  return { bg:g('--panel2')||'#111', ink:g('--ink')||'#eee', ink2:g('--dim')||'#aaa',
+    ink3:g('--faint')||'#777', line:g('--stroke')||'#333', acc:g('--acc')||'#5ee0d0',
+    acc2:g('--acc2')||'#818cf8', warn:g('--warn')||'#fbbf24', err:g('--bad')||'#fb7185',
+    ok:g('--good')||'#4ade80', ground:g('--v-ground')||'#4ade80', spur:g('--v-spur')||'#fb7185',
+    conf:g('--v-conf')||'#fbbf24', point:g('--v-point')||'#818cf8', vline:g('--v-line')||'#555' };
+}
+function hexToRgb(str){
+  str=(str||'').trim();
+  if(str.charAt(0)==='#'){ var h=str.slice(1); if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+    var n=parseInt(h,16); if(isNaN(n))return[200,200,200]; return[(n>>16)&255,(n>>8)&255,n&255]; }
+  var m=str.match(/rgba?\(([^)]+)\)/);
+  if(m){ var p=m[1].split(',').map(function(x){return parseFloat(x);}); return[p[0]||0,p[1]||0,p[2]||0]; }
+  return[200,200,200];
+}
+function rgba(rgb,a){ return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')'; }
+function colToRGB(hsla){
+  var m=hsla.match(/hsla\(([\d.]+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+)\)/);
+  if(!m){ return [120,120,140,255]; }
+  var h=+m[1],s=+m[2]/100,l=+m[3]/100,a=+m[4]*255;
+  var c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), mm=c-x, r=0,g=0,b=0;
+  if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
+  var ad=l-c/2;
+  return [Math.round((r+ad)*255),Math.round((g+ad)*255),Math.round((b+ad)*255),Math.round(a)];
+}
+
+/* sites = intersections of fold-line pairs within the view (the cusps / attractor sites) */
+function computeSites(){
+  var sites=[], L=S.L, i, j;
+  for(i=0;i<L;i++){ for(j=i+1;j<L;j++){
+    var fi=foldLine(i), fj=foldLine(j);
+    var det=fi.nx*fj.ny-fi.ny*fj.nx;
+    if(Math.abs(det)<1e-6) continue;
+    var x=(fi.t*fj.ny-fj.t*fi.ny)/det;
+    var y=(fi.nx*fj.t-fj.nx*fi.t)/det;
+    if(Math.abs(x)<=HS && Math.abs(y)<=HS){
+      var base=0.32+0.58*((Math.sin(x*3.1+y*2.7)+1)/2);
+      sites.push({x:x,y:y,base:base,li:i,lj:j});
+    }
+  }}
+  return sites;
+}
+function eff(i){ if(i<0||i>=SITES.length) return 0; return clamp(SITES[i].base*S.cov,0,1); }
+function grounded(i){ return i>=0 && i<SITES.length && eff(i)>=THRESH; }
+function confAt(i){ if(i<0||i>=SITES.length) return 0.70; return 0.70+0.25*eff(i); }
+function nearestSite(x,y){
+  if(!SITES.length) return -1;
+  var best=0,bd=1e18,i,d;
+  for(i=0;i<SITES.length;i++){var s=SITES[i];d=(x-s.x)*(x-s.x)+(y-s.y)*(y-s.y);if(d<bd){bd=d;best=i;}}
+  return best;
+}
+
+var SITES=computeSites();
+var prompts=[];
+function makePrompt(){
+  var sx=rnd()*2*HS-HS, sy=rnd()*2*HS-HS;
+  var si=nearestSite(sx,sy);
+  var p={x:sx,y:sy,site:si,trail:[]};
+  retarget(p);
+  return p;
+}
+function retarget(p){
+  var si=nearestSite(p.x,p.y);
+  p.site=si;
+  if(si<0){ return; }
+  var s=SITES[si];
+  var li = rnd()<0.5 ? s.li : s.lj;
+  var f=foldLine(li);
+  var along=(rnd()*2-1)*0.40;
+  var perp=(rnd()*2-1)*0.03;
+  p.tx=s.x+f.dx*along+f.nx*perp;
+  p.ty=s.y+f.dy*along+f.ny*perp;
+}
+function initPrompts(){
+  prompts=[];
+  for(var i=0;i<N;i++){ prompts.push(makePrompt()); }
+}
+initPrompts();
+
+function step(){
+  var f=Math.pow(S.lam, 0.05);
+  for(var i=0;i<prompts.length;i++){
+    var p=prompts[i];
+    if(p.site<0 || p.site>=SITES.length){ retarget(p); }
+    if(p.tx===undefined){ p.tx=p.x; p.ty=p.y; }
+    p.x+=(p.tx-p.x)*(1-f)+(rnd()-0.5)*0.004;
+    p.y+=(p.ty-p.y)*(1-f)+(rnd()-0.5)*0.004;
+    p.trail.push({x:p.x,y:p.y}); if(p.trail.length>16){ p.trail.shift(); }
+  }
+}
+
+function allPts(){
+  var P=[];
+  for(var i=0;i<prompts.length;i++){ P.push([prompts[i].x,prompts[i].y]); }
+  return P;
+}
+function cellIndex(p){
+  var idx=0;
+  for(var i=0;i<S.L;i++){ var f=foldLine(i); if(f.nx*p[0]+f.ny*p[1]-f.t>0){ idx|=(1<<i); } }
+  return idx;
+}
+function localSlope(pos,pts){
+  var r1=0.05, r2=0.22, c1=0, c2=0, i;
+  for(i=0;i<pts.length;i++){
+    var d=Math.hypot(pts[i][0]-pos[0],pts[i][1]-pos[1]);
+    if(d<=r1) c1++;
+    if(d<=r2) c2++;
+  }
+  if(c2<3) return {slope:2, sparse:true, c1:c1, c2:c2};
+  c1=Math.max(c1,0.6);
+  return {slope:clamp(Math.log(c2/c1)/Math.log(r2/r1),0,3), sparse:false, c1:c1, c2:c2};
+}
+function probeXY(){
+  if(S.probe==='free'){ return S.freePos || [0,0]; }
+  if(S.probe==='cusp' && SITES.length){ return [SITES[0].x,SITES[0].y]; }
+  return [0,0];
+}
+
+var LAY=null, cellCache=null;
+function buildCellTint(){
+  var dark=root.classList.contains('dark');
+  var key=S.L+'|'+(dark?1:0);
+  if(cellCache && cellCache.key===key) return cellCache.cv;
+  var G=40;
+  var o=document.createElement('canvas'); o.width=G; o.height=G;
+  var oc=o.getContext('2d'), im=oc.createImageData(G,G);
+  for(var j=0;j<G;j++){ for(var i=0;i<G;i++){
+    var wx=-HS+(i/(G-1))*2*HS, wy=HS-(j/(G-1))*2*HS;
+    var ix=cellIndex([wx,wy]);
+    var hu=(ix*47+(dark?150:200))%360;
+    var co=colToRGB('hsla('+hu+',40%,'+(dark?38:76)+'%,'+(dark?0.08:0.10)+')');
+    var q=(j*G+i)*4; im.data[q]=co[0];im.data[q+1]=co[1];im.data[q+2]=co[2];im.data[q+3]=co[3];
+  }}
+  oc.putImageData(im,0,0);
+  cellCache={key:key,cv:o};
+  return o;
+}
+
+function draw(){
+  var P=pal();
+  var w=cv.clientWidth||600, h=parseInt(cv.getAttribute('height'),10)||470;
+  cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
+  var ctx=cv.getContext('2d'); ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.fillStyle=P.bg; ctx.fillRect(0,0,w,h);
+
+  var mX0=38, mY0=16, mW=w*0.60-mX0-4, mH=h-66;
+  var mCx=mX0+mW/2, mCy=mY0+mH/2;
+  var mainScale=Math.min(mW,mH)/(2*HS);
+  function X(x){return mCx+x*mainScale;}
+  function Y(y){return mCy-y*mainScale;}
+  LAY={mCx:mCx,mCy:mCy,mainScale:mainScale};
+  var dark=root.classList.contains('dark');
+
+  SITES=computeSites();
+
+  ctx.save(); ctx.beginPath(); ctx.rect(mX0,mY0,mW,mH); ctx.clip();
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(buildCellTint(), mX0, mY0, mW, mH);
+  ctx.restore();
+
+  ctx.strokeStyle=P.vline; ctx.lineWidth=1.5;
+  for(var li=0; li<S.L; li++){
+    var f=foldLine(li), ptsL=[];
+    if(Math.abs(f.dy)>1e-6){ ptsL.push([-HS,(-f.t-f.nx*(-HS))/f.dy]); ptsL.push([HS,(-f.t-f.nx*HS)/f.dy]); }
+    if(Math.abs(f.dx)>1e-6){ ptsL.push([( -f.t-f.ny*(-HS))/f.dx,-HS]); ptsL.push([( -f.t-f.ny*HS)/f.dx,HS]); }
+    var inb=ptsL.filter(function(p){return Math.abs(p[0])<=HS+1e-6 && Math.abs(p[1])<=HS+1e-6;});
+    if(inb.length>=2){ ctx.beginPath(); ctx.moveTo(X(inb[0][0]),Y(inb[0][1])); ctx.lineTo(X(inb[inb.length-1][0]),Y(inb[inb.length-1][1])); ctx.stroke(); }
+  }
+
+  ctx.strokeStyle=P.line; ctx.lineWidth=1;
+  ctx.strokeRect(mX0,mY0,mW,mH);
+  ctx.globalAlpha=0.4;
+  ctx.beginPath(); ctx.moveTo(mX0,mCy); ctx.lineTo(mX0+mW,mCy); ctx.moveTo(mCx,mY0); ctx.lineTo(mCx,mY0+mH); ctx.stroke();
+  ctx.globalAlpha=1;
+
+  for(var s2=0;s2<SITES.length;s2++){
+    var st=SITES[s2], sp=tc2(X,Y,st.x,st.y), e=eff(s2), gr=grounded(s2);
+    var mc=gr?hexToRgb(P.ground):hexToRgb(P.spur);
+    var rad=26+34*e;
+    var grd=ctx.createRadialGradient(sp[0],sp[1],2,sp[0],sp[1],rad);
+    grd.addColorStop(0,rgba(mc,0.12+0.34*e));
+    grd.addColorStop(1,rgba(mc,0));
+    ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(sp[0],sp[1],rad,0,TAU); ctx.fill();
+    ctx.save(); ctx.shadowColor=rgba(mc,0.9); ctx.shadowBlur=8;
+    ctx.fillStyle=rgba(mc,0.95); ctx.beginPath(); ctx.arc(sp[0],sp[1],5,0,TAU); ctx.fill(); ctx.restore();
+    ctx.strokeStyle=rgba(mc,0.9); ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(sp[0],sp[1],10,0,TAU); ctx.stroke();
+    ctx.fillStyle=P.ink; ctx.font='700 10px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText(gr?('A* '+Math.round(e*100)+'%'):('A*✗ '+Math.round(e*100)+'%'), sp[0], sp[1]-15);
+  }
+
+  function tc2(Xf,Yf,x,y){return [Xf(x),Yf(y)];}
+
+  var raw=allPts();
+  for(var q=0;q<prompts.length;q++){
+    var p=prompts[q], pp=tc2(X,Y,p.x,p.y), gr2=grounded(p.site);
+    var tr=p.trail;
+    for(var k=1;k<tr.length;k++){
+      var al=k/tr.length;
+      ctx.strokeStyle=rgba(gr2?hexToRgb(P.ok):hexToRgb(P.err), al*0.4); ctx.lineWidth=1.2;
+      var tp=tc2(X,Y,tr[k-1].x,tr[k-1].y), tp2=tc2(X,Y,tr[k].x,tr[k].y);
+      ctx.beginPath(); ctx.moveTo(tp[0],tp[1]); ctx.lineTo(tp2[0],tp2[1]); ctx.stroke();
+    }
+    var cf=p.site>=0?confAt(p.site):0.7;
+    ctx.strokeStyle=rgba(hexToRgb(P.conf),0.85); ctx.lineWidth=2.0;
+    ctx.beginPath(); ctx.arc(pp[0],pp[1],8,-Math.PI/2,-Math.PI/2+cf*TAU); ctx.stroke();
+    ctx.fillStyle=rgba(hexToRgb(P.point),0.95);
+    ctx.beginPath(); ctx.arc(pp[0],pp[1],3.4,0,TAU); ctx.fill();
+  }
+
+  var pos=probeXY(), posPx=tc2(X,Y,pos[0],pos[1]);
+  ctx.strokeStyle=rgba(hexToRgb(P.warn),0.85); ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.arc(posPx[0],posPx[1],rP*mainScale,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=rgba(hexToRgb(P.warn),0.06);
+  ctx.beginPath(); ctx.arc(posPx[0],posPx[1],rP*mainScale,0,TAU); ctx.fill();
+  ctx.fillStyle=P.ink; ctx.beginPath(); ctx.arc(posPx[0],posPx[1],5,0,TAU); ctx.fill();
+  ctx.strokeStyle=P.bg; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=P.ink; ctx.font='600 11px ui-monospace,monospace'; ctx.textAlign='left';
+  var lbl= S.probe==='cusp'?'Probe: Falt-Knick (Cusp)' : (S.probe==='region'?'Probe: Region (Manifold)':'Probe: frei');
+  ctx.fillText(lbl, mX0+8, mY0+16);
+
+  var rX0=w*0.62, rW=w-rX0-12;
+  var stY0=16;
+  ctx.fillStyle=P.ink3; ctx.font='600 11px ui-monospace,monospace'; ctx.textAlign='left';
+  ctx.fillText('L E S E R E I E   (Fusion)', rX0, stY0+2);
+
+  var dim=localSlope(pos,raw);
+  var sing=!dim.sparse && dim.slope<1.6;
+  var y0=stY0+26;
+  ctx.font='600 13px ui-monospace,monospace'; ctx.fillStyle=P.ink;
+  ctx.fillText('lokale Dimension  d̂ ≈ '+dim.slope.toFixed(2), rX0, y0);
+  ctx.font='600 11.5px ui-monospace,monospace';
+  ctx.fillStyle= (dim.sparse?P.ok : (sing?P.err:P.ok));
+  ctx.fillText(dim.sparse?'dünnes Maß → lokal Region [A]' : (sing?'≈ 1 · Knick → SINGULÄR (Cusp) [A]':'≈ 2 · flach → lokal Manifold [A]'), rX0, y0+18);
+
+  var grN=0, confSum=0, m=0;
+  for(m=0;m<prompts.length;m++){ if(grounded(prompts[m].site))grN++; confSum+=(prompts[m].site>=0?confAt(prompts[m].site):0.7); }
+  var confMean=confSum/prompts.length, halluc=N-grN;
+  y0+=44;
+  ctx.font='600 12px ui-monospace,monospace';
+  ctx.fillStyle=P.ok;   ctx.fillText('Konfidenz Ø  '+Math.round(confMean*100)+'%   (immer ≥ 70 % — B: Konvergenz)', rX0, y0);
+  ctx.fillStyle=P.ground; ctx.fillText('gegründet   '+grN+'/'+N+'   (Maß dick, ≥ τ)', rX0, y0+18);
+  ctx.fillStyle=P.err;    ctx.fillText('halluziniert '+halluc+'   (Maß dünn = fehlerhafter Attractor)', rX0, y0+36);
+  ctx.fillStyle=P.ink2;   ctx.fillText('Abdeckung / Maß   '+S.cov.toFixed(2)+'   (A: Dicke des Supports)', rX0, y0+54);
+  ctx.fillText('Kontraktion λ = '+S.lam.toFixed(2)+'   (B: Dämpfung pro Schicht)', rX0, y0+72);
+  ctx.fillText('Falten / Tiefe  L = '+S.L+'   → Zellen ≤ m(m+1)/2+1 = '+ (S.L*(S.L+1)/2+1)+' (B)', rX0, y0+90);
+
+  var stage, sc;
+  if(S.lam<0.42){ stage='stark konzentriert → vor Kollaps [A]'; sc=P.err; }
+  else if(S.cov>=0.85){ stage='metastabil — Kapazität & Konzentration im Gleichgewicht'; sc=P.ok; }
+  else { stage='ausgebreitet / dünn → Kapazität (B) & Halluzinations-Risiko (A)'; sc=P.acc2; }
+  ctx.font='600 11px ui-monospace,monospace'; ctx.fillStyle=sc;
+  ctx.fillText(stage, rX0, y0+112);
+  ctx.fillStyle=P.ink3; ctx.font='10.5px ui-monospace,monospace';
+  ctx.fillText('Kohärenz der KARTe = 100 % [B] · Cusps = Attractor-Stätten [A]', rX0, y0+130);
+  ctx.fillText('Maß auf den Knicken: c(r/2)='+dim.c1+'   c(2r)='+dim.c2, rX0, y0+148);
+}
+
+function probeLabel(){
+  var b=$('bProbe'); if(!b) return;
+  b.textContent = S.probe==='cusp' ? 'Probe: Falt-Knick (Cusp)' : (S.probe==='region'?'Probe: Region (Manifold)':'Probe: frei (Klick)');
+}
+if($('sL')){$('sL').addEventListener('input',function(e){ S.L=+e.target.value; $('vL').textContent=S.L; });}
+if($('sCov')){$('sCov').addEventListener('input',function(e){ S.cov=+e.target.value; $('vCov').textContent=S.cov.toFixed(2); });}
+if($('sLam')){$('sLam').addEventListener('input',function(e){ S.lam=+e.target.value; $('vLam').textContent=S.lam.toFixed(2); });}
+var bPlay=$('bPlay');
+if(bPlay){bPlay.addEventListener('click',function(){ S.playing=!S.playing; bPlay.textContent=S.playing?'❚❚ Pause':'▶ Animieren'; bPlay.classList.toggle('pri',S.playing); });}
+var bReset=$('bReset');
+if(bReset){bReset.addEventListener('click',function(){ initPrompts(); });}
+var bProbe=$('bProbe');
+if(bProbe){bProbe.addEventListener('click',function(){
+  S.probe = (S.probe==='cusp') ? 'region' : 'cusp';
+  S.freePos=null; probeLabel();
+});}
+cv.addEventListener('click',function(e){
+  if(!LAY) return;
+  var rct=cv.getBoundingClientRect();
+  var px=e.clientX-rct.left, py=e.clientY-rct.top;
+  S.freePos=[(px-LAY.mCx)/LAY.mainScale, -(py-LAY.mCy)/LAY.mainScale];
+  S.probe='free'; probeLabel();
+});
+try{ new MutationObserver(function(){ cellCache=null; }).observe(root,{attributes:true,attributeFilter:['class']}); }catch(e){}
+window.addEventListener('resize',function(){ draw(); });
+
+probeLabel();
+(function loop(){
+  if(S.playing){ step(); }
+  draw();
+  requestAnimationFrame(loop);
+})();
+})();
+</script>
+</body>
+</html>

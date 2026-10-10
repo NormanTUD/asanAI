@@ -1,0 +1,16 @@
+{
+  "no": "004",
+  "a": "combined/2/r2-004.html",
+  "b": "combined/2/r2-019.html",
+  "a_title": "Ein Skalarfeld, zwei Ablesungen, ein thermischer Regler",
+  "b_title": "Was bleibt, trägt die Bedeutung — Persistenz als die eine Invariante beider Fusionen",
+  "combined_theme": "ein-skalarfeld-ein-regler-das-ueberlebende",
+  "one_line": "Ein Skalarobjekt über einen Parameter, ein einziger Regler (β = θ), zwei Ablesungen (weicher Vertreter / harte Durchlauf-Invariante): die Bedeutung ist genau die überlebende Struktur des gekühlten Felds.",
+  "contradictions": [
+    "C1: Wo Bedeutung auf dem Regler liegt — A an der kalten Extremseite (je kälter, desto feinere Komponenten = Ziel), B am endlichen Inneren (θ=δ; beide Extremen degeneriert: θ=0 Superposition, θ→∞ nur Axiome).",
+    "C2: Geometrie des Überlebens — A liest einen fix-ebenen-Schnitt (Komponenten/Betti β₀/β₁ an einer Ebene τ), B liest einen Lebensdauer-Track über den ganzen Durchlauf (Barcode mit [Geburt, Tod]-Bars).",
+    "C3: Alle Komponenten sind Bedeutung (A: β₀ = Anzahl der Bedeutungen, der Schnitt erzeugt sie) vs. nur die Langlebigen sind es (B: kurze Bars = Rauschen, der Regler selektiert aus der Überfülle)."
+  ],
+  "resolution": "Ein einziger Regler, aber 'Bedeutung' ist nicht monoton in ihm: beide Extremen sind Entartungen (alles-überlebt/Kollaps ↔ nur-Axiome/Singletons), das informative Mittel ist die Bedeutung. Fixer Schnitt (A) und Lebensdauer-Track (B) sind zwei Auflösungen derselben H₀-Persistenz: die Komponenten an der gekühlten Ebene sind die lebenden Bars bei τ_now, die langen Bars sind die robusten Komponenten. 'Alle sind Bedeutung' (A, fix Ebene) und 'nur die Langlebigen' (B, Durchlauf) sind derselbe Satz bei zwei Auflösungen. A's Argmin-Vertreter = B's persistente Richtung/Identitätsterm (weicher Vertreter); A's Komponenten/Betti = B's Barcode (harter Schnitt gegen Track).",
+  "viz": "Canvas: Skalarfeld-Heatmap oben mit A's zwei Ablesungen bei der aktuellen Ebene τ(β) (hart: Kanten/Triangel/Komponenten/Argmin-Sterne; weich: Query-Attention o=Σαv) + Persistenz-Barcode unten (H₀-Geburt/Tod über den ganzen β-Durchlauf). Ein β-Regler bewegt τ_now: die lebenden Bars (bei τ_now) stammen exakt von den oberen Komponenten, die langen Bars (>40% Max-Lebensdauer) = die robusten = die Bedeutungen. Twist verformt das Feld (→ 'W steuert Topologie'), Kontext hebt ein Tal hervor."
+}

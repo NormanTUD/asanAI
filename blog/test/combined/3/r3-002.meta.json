@@ -1,0 +1,16 @@
+{
+  "no": "002",
+  "a": "combined/2/r2-001.html",
+  "b": "combined/2/r2-002.html",
+  "a_title": "Der Rang-1-Fakt im selbstorganisierten Speicherbündel",
+  "b_title": "Lineare Lesbarkeit: Lift trifft Hologramm",
+  "combined_theme": "duale-basis-assoziativspeicher",
+  "one_line": "Ein einziger linearer Assoziativspeicher liest und schreibt über die duale (inverse) Basis seiner zweiten-Moment-Matrix M (≈ C ≈ G): M⁻¹ lenkt jeden Rang-1-Fakt beim Schreiben in leere Richtungen (Spezifität, A) und entzerrt die Superposition beim Lesen (Dekodierbarkeit, B) — gesteuert von einer einzigen Größe, dem Hologramm-Grad ‖M−I‖ (= Belegung) von geräumt bis eng.",
+  "contradictions": [
+    "Zweck des inversen Moments: A verwendet C⁻¹ beim SCHREIBEN (lenkt den Rang-1-Fakt in leere Schlüsselrichtungen, Spezifität vorab), B verwendet G⁻¹ beim LESEN (entzerrt die Superposition nachträglich, Dekodierbarkeit) — dasselbe Objekt, entgegengesetzte Lebensphase.",
+    "Herkunft der Struktur: A's Speicherbündel organisiert sich selbst aus den Daten (emergent, SOM, C wird gemessen), B (r1-040) behandelt die Gewichte als gegeben und dekodiert sie per reiner Lineare Algebra (Lernen ist kein Teil des Lesens).",
+    "Der gute Zustand auf derselben Achse: A will einen geräumten/leeren Schlüsselraum (geringer Spillover = hohe Spezifität), B-A nennt den engen, überlasteten Fall (d=3, 'Zu wenig Platz', G weit von I) den interessanten — dieselbe Belegungsachse ‖M−I‖, entgegengesetzte Bewertung."
+  ],
+  "resolution": "Eine einzige zweite-Moment-Matrix M (Korrelation/Streuung der belegten Richtungen; A: C, B: G) mit einem einzigen Inversen M⁻¹ (Whitening = duale Basis): Schreiben und Lesen sind duale Operationen derselben linearen (De-)Kodiermaschinerie. Selbstorganisation (SOM/Bündel) formt M bottom-up; das eingefrorene M ist exakt das 'Gegebene', was B per Lineare Algebra top-down dekodiert. Spezifität (Schreibzeit, nicht über andere Fakten laufen) und Dekodierbarkeit (Leszeit, aus anderen Fakten wieder herauslösen) sind dieselbe Invariante. Der Hologramm-Grad ‖M−I‖ = Belegung ist die eine gemeinsame Steuergröße: geräumt (M≈I, billig/sauber) bis eng (M weit von I, nur via M⁻¹).",
+  "viz": "Ein Regler 'Belegung d' (1=eng/holographisch … 6=geräumt) fährt die zweite-Moment-Matrix M. Links die Schreibseite (A): selbstorganisierter Schlüsselraum (anisotrope Ellipse = belegte Geometrie), neuer Schlüssel k*, naiver Schreibzug (grau) vs. M⁻¹-gelenkter Zug (blau) mit Spillover in die belegteste Richtung als Spezifitäts-Maß. Mitte die Gram/Belegungs-Heatmap (Crosstalk) + Hologramm-Grad-Balken. Rechts die Leseseite (B): lineares Readout über 13 Kandidaten, naiv vs. M⁻¹-entzerrt, mit ★-markierter korrekter Antwort. Dieselbe Achse treibt Spezifität (A) und Dekodierbarkeit (B) gleichzeitig."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "003",
+  "a": "combined/2/r2-007.html",
+  "b": "combined/2/r2-006.html",
+  "a_title": "Topologie im Falten: von der freien Dimension zum Phasenübergang",
+  "b_title": "Die Karte ist das Weltmodell (PE × Grokking/Othello)",
+  "combined_theme": "geometrisches-weltobjekt-kritische-konfiguration",
+  "one_line": "Ein neuronales System ist ein niedrig-dimensionales geometrisches Objekt im höheren Raum; seine Fähigkeiten sind kritische Konfigurationen (topologisch: ein Loop, harmonisch: ein Peak), erzeugt durch kontinuierliche Verformung und am selben kritischen Punkt in beiden Lesarten diskret ablesbar.",
+  "contradictions": [
+    "Welche Geometrie: A (r2-007) liest das Objekt topologisch (Konnektivität, Betti-Zahlen β0/β1, Phasenübergang einer Invariante), B (r2-006) liest dasselbe Objekt harmonisch (rotierende Frequenz-Koordinaten, Interferenz-Peak, Auswahl eines Offsets).",
+    "Wessen Geometrie: A setzt die niedrig-dim Geometrie als Prämisse über die DATEN voraus (Manifold-Hypothese, freie Dimension), B hält die Geometrie für ein gelerntes, emergentes WELTMODELL des Modells (Grokking, Othello-GPT).",
+    "Wie der diskrete Vorgang: A = nicht-analytischer Sprung einer einzelnen Invariante (β1: 0→1 an der Schwelle ε); B = Auswahl/Übernahme unter mehreren Kandidaten (einzigartiger Peak; Strategie-Übernahme unter Weight Decay)."
+  ],
+  "resolution": "Dasselbe niedrig-dim Objekt im höheren Raum, zweimal gelesen: topologisch (Loop/β1) und harmonisch (Peak/Phase). Die Daten-Geometrie (A) ist das Substrat/Prior, die Modell-Geometrie (B) die gelernte Instanz. Der diskrete Vorgang ist eine kritische Konfiguration, erreicht durch kontinuierliche Verformung; ihre Form (reiner Sprung vs. Strategie-Übernahme) hängt von der Zahl konkurrierender Kandidaten ab.",
+  "viz": "Canvas mit geteilter Lesart: links die topologische Falte (Pfad im Ambient-Raum, β1 springt 0→1, wenn die Falt-Kante die Schwelle ε kreuzt), rechts der harmonische Interferenz-Peak Score(c) über 113 Antworten (einzigartiger Peak, wenn sich genug Frequenzen konstruktiv ausrichten). Ein gemeinsamer Kontrollparameter g (Verformung/Ausrichtung) erzeugt beide diskreten Signaturen am selben kritischen Punkt; eine Brüchigkeits-Anzeige markiert den Ort des Doppelschwerts."
+}

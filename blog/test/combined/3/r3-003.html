@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 003 — Ein Objekt, zwei Lesarten: topologisch &amp; harmonisch</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#faf8f1; --panel:#ffffff; --ink:#1f2430; --muted:#5b6472;
+    --accent:#2563eb; --accent2:#d97706; --edge:#16a34a; --danger:#dc2626;
+    --gold:#0a7a55;
+    --line:#e2ddd0; --code-bg:#f2efe6; --ok:#16a34a; --warn:#d97706;
+  }
+  html.dark{
+    --bg:#0b0f1a; --panel:#121a2b; --ink:#e8eefc; --muted:#8aa0c8;
+    --accent:#60a5fa; --accent2:#f59e0b; --edge:#22c55e; --danger:#ff6b6b;
+    --gold:#34d399;
+    --line:#22304a; --code-bg:#0a1223; --ok:#7cf9d0; --warn:#ffd166;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.65;
+    font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif}
+  article{max-width:820px;margin:0 auto;padding:26px 20px 70px}
+  header{margin:14px 0 6px}
+  h1{font-size:clamp(1.5rem,4vw,2.3rem);margin:.2rem 0;line-height:1.15;font-weight:800;letter-spacing:-.5px}
+  .subtitle{color:var(--muted);font-size:.95rem;margin:0}
+  .tags{margin:10px 0 2px}
+  .tag{display:inline-block;font-size:.72rem;padding:2px 10px;border-radius:999px;
+    border:1px solid var(--line);color:var(--muted);margin:2px 4px 2px 0}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:22px 24px;margin:22px 0;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+  h2{margin:0 0 8px;font-size:1.28rem;color:var(--accent)}
+  h3{margin:18px 0 6px;font-size:1.03rem;color:var(--accent2)}
+  p{margin:.55rem 0}
+  .lead{color:var(--muted)}
+  .pill{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:999px;border:1px solid var(--line);margin-right:6px}
+  .pill.a{color:var(--accent)} .pill.b{color:var(--accent2)} .pill.f{color:var(--gold)}
+  ul,ol{padding-left:1.2rem;margin:.5rem 0}
+  li{margin:.4rem 0}
+  .formula{background:var(--code-bg);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+  .formula .cap{color:var(--muted);font-size:.8rem;margin-top:6px}
+  .callout{border-radius:10px;padding:12px 16px;margin:12px 0;font-size:.96rem}
+  .callout.fused{background:color-mix(in srgb,var(--gold) 12%,transparent);border-left:3px solid var(--gold)}
+  .callout.fused b{color:var(--gold)}
+  .callout.tension{background:color-mix(in srgb,var(--accent2) 10%,transparent);border-left:3px solid var(--accent2)}
+  .callout.tension b{color:var(--accent2)}
+  .tension{border-left:4px solid var(--accent2);background:var(--code-bg);border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0}
+  .tension .who{font-size:.82em;color:var(--muted);display:block;margin-bottom:5px}
+  .res{border-left:4px solid var(--gold);background:var(--code-bg);border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0}
+  .card-row{display:flex;gap:14px;flex-wrap:wrap}
+  .paper{flex:1 1 260px;background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .paper h4{margin:0 0 6px;font-size:.96em}
+  .paper.a h4{color:var(--accent)} .paper.b h4{color:var(--accent2)}
+  .paper p{font-size:.9em;margin:.4em 0}
+  code{font:500 13px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--code-bg);padding:1px 5px;border-radius:4px}
+  canvas.viz{width:100%;height:auto;background:var(--code-bg);border:1px solid var(--line);
+    border-radius:12px;display:block;touch-action:manipulation}
+  .ctrls{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end;margin:14px 0 6px}
+  .ctrls label{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:5px;min-width:180px}
+  .ctrls input[type=range]{accent-color:var(--accent);width:100%}
+  .ctrls .val{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+  button{background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:8px 14px;
+    border-radius:10px;cursor:pointer;font-weight:600;transition:.15s}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  .readout{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .stat{flex:1;min-width:96px;background:var(--code-bg);border:1px solid var(--line);
+    border-radius:10px;padding:10px;text-align:center}
+  .stat .n{font-size:1.4rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+  .stat.b .n{color:var(--accent2)}
+  .stat .t{font-size:.72rem;color:var(--muted)}
+  .ro-label{font-size:.82rem;color:var(--muted);margin:14px 0 2px;font-weight:600}
+  .fragbar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:6px}
+  .fragbar > div{height:100%;background:var(--danger);width:0%}
+  .phase-name{margin-top:12px;font-size:.9rem;color:var(--gold);font-weight:600}
+  .caption{font-size:.8rem;color:var(--muted);margin-top:10px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin-top:10px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:600}
+  .prov a:hover{text-decoration:underline}
+  .prov li{margin:.55rem 0}
+  .prov .desc{color:var(--muted);display:block;font-size:.9rem;margin-top:2px}
+  .katex{font-size:1.02em}
+  footer{color:var(--muted);text-align:center;padding:24px 10px;font-size:.85rem}
+  @media (max-width:600px){section{padding:18px}}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Ein Objekt, zwei Lesarten — das kritische Konfigurations-Prinzip</h1>
+    <p class="subtitle">Fusion aus: r2-007.html &#10005; r2-006.html  (Round 3)</p>
+  </header>
+  <p class="tags">
+    <span class="tag">niedrig-dim. Objekt im höheren Raum</span>
+    <span class="tag">topologische Lesart (Loop / Betti-Zahl)</span>
+    <span class="tag">harmonische Lesart (rotierende Frequenzen / Peak)</span>
+    <span class="tag">kontinuierliche Verformung &rarr; diskrete Struktur</span>
+    <span class="tag">Doppelschwert: Capability &#8805; Brüchigkeit an der Schwelle</span>
+  </p>
+
+  <section id="these">
+    <h2>1 &middot; Kernthese der Fusion</h2>
+    <p class="lead">Beide R2-Papiere beschreiben, aus zwei geometrischen Sprachen kommend,
+    <em>dasselbe</em> tiefe Objekt: Ein neuronales System ist ein <b>niedrig-dimensionales
+    geometrisches Objekt in einem höheren Raum</b> (Repräsentations-/Gewichtsraum), und seine
+    <em>Fähigkeiten</em> sind <b>kritische Konfigurationen</b> dieses Objekts — Strukturen, die
+    durch eine <b>kontinuierliche Verformung</b> erzeugt werden und deshalb <b>diskret</b> aufscheinen.</p>
+    <p><span class="pill a">A &middot; r2-007</span> liest das Objekt <b>topologisch</b>: Die
+    Repräsentations-Punkte bilden einen Simplizialkomplex / eine Mannigfaltigkeit; die diskrete
+    Struktur ist <em>Konnektivität</em> (zusammenhängende Komponenten, Schleifen, Löcher), gemessen an
+    den Betti-Zahlen $\beta_0,\beta_1$; der diskrete Vorgang ist ein <em>Phasenübergang</em> — eine
+    Invariante springt stückweise, wenn ein kontinuierlicher Parameter eine Schwelle $\varepsilon$
+    kreuzt. <span class="pill b">B &middot; r2-006</span> liest dasselbe Objekt <b>harmonisch</b>:
+    Es ist ein System <em>rotierender Mehrfrequenz-Koordinaten</em> (Fourier- / Wellengeometrie);
+    die diskrete Struktur ist <em>Phasenkohärenz</em> — Wellen verstärken sich zu einem
+    <em>Interferenz-Peak</em>; Addition ist eine <em>Drehung</em>, das Ergebnis der eindeutige Peak.
+    Position (B) und der Weltmodell-/Additions-Mechanismus (B) sind dieselbe Interferenzgeometrie,
+    auf unterschiedlichen Skalen gelesen.</p>
+    <div class="callout fused">
+      <b>Einheitliche Position:</b> <b>Topologisch</b> und <b>harmonisch</b> sind <em>zwei Lesarten
+      ein und desselben kritischen Konfigurations-Prinzips</em>. Ein geschlossener Loop (A) und ein
+      konstruktiver Peak (B) sind beide <em>kritische Konfigurationen</em>, die entstehen, wenn die
+      <em>kontinuierliche Verformung</em> des Objekts — Falten (A), Ausrichtung der Rotoren (B),
+      Attention-Schärfe / Weight Decay — einen kritischen Wert erreicht. <b>Falten (A) und
+      Rotoren-Phase (B) sind zwei Seiten derselben Verformung; der Loop und der Peak sind zwei
+      Seiten derselben diskreten Struktur.</b>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>2 &middot; Widersprüche zwischen A und B</h2>
+    <p>Die beiden R2-Papiere widersprechen sich nicht im Ergebnis, aber sie treffen drei reale,
+    inkompatible Stellungen aufeinander — jede wörtlich in den Quellen:</p>
+    <ol>
+      <li><b>Welche Geometrie — topologisch (A) vs. harmonisch (B).</b>
+        <span class="pill a">A &middot; r2-007</span> macht das Objekt zu einem <em>topologischen</em>
+        Simplizialkomplex / einer Mannigfaltigkeit; die diskrete Struktur ist <b>Konnektivität</b>
+        (Zusammenhängendes, Schleifen, Löcher), gemessen an den <b>Betti-Zahlen</b> $\beta_0,\beta_1$;
+        der diskrete Vorgang ist ein <em>Phasenübergang</em> (Invariante springt stückweise).
+        <span class="pill b">B &middot; r2-006</span> macht das Objekt zu einem <em>harmonischen</em>
+        System <b>rotierender Frequenz-Koordinaten</b>; die diskrete Struktur ist <b>Phasenkohärenz</b>
+        (konstruktive Überlagerung &rarr; ein Interferenz-Peak); der diskrete Vorgang ist die
+        <em>Auswahl</em> eines Offsets durch einen (fast) eindeutigen Peak.
+        <b>Inkompatibel:</b> A <em>zählt Löcher/Komponenten</em> (Konnektivität), B <em>misst
+        konstruktive Überlagerung</em> (Phase).</li>
+      <li><b>Wessen Geometrie — der Daten (A) vs. des Modells (B).</b>
+        <span class="pill a">A &middot; r2-007</span> setzt die zentrale geometrische Tatsache als
+        Eigenschaft der <em>Daten</em> voraus — die <b>Manifold-Hypothese</b> (Daten liegen auf einer
+        niedrig-dim Mannigfaltigkeit $M$ im Ambient-Raum, freie Dimension $d-d_x$) ist die
+        <em>Prämisse</em>, die das Netz <em>ausnutzt</em> (Falten in die freie Dimension).
+        <span class="pill b">B &middot; r2-006</span> macht die zentrale geometrische Tatsache zur
+        Eigenschaft des <em>Modells</em> — die rotierenden Frequenz-Koordinaten sind ein
+        <em>gelerntes, emergentes Weltmodell</em>, das sich <em>während des Trainings aufbaut</em>
+        (Grokking-Phasen, Othello-GPT).
+        <b>Inkompatibel:</b> A: die Geometrie liegt <em>an den Daten</em> (vor-geschriebene Prämisse);
+        B: die Geometrie liegt <em>im Modell</em> (gelernt / emergiert).</li>
+      <li><b>Wie der diskrete Vorgang — Sprung in einer Invariante (A) vs. Auswahl/Übernahme durch einen Peak (B).</b>
+        <span class="pill a">A &middot; r2-007</span>: die diskrete Größe ist eine
+        <em>Ordnungsgröße, die an einer Schwelle springt</em> ($\beta_1:0\to1$, wenn die Falt-Kante
+        $\varepsilon$ kreuzt) — ein stückweise-konstanter, rein topologischer <em>Phasenübergang</em>
+        einer <em>einzelnen</em> Invariante.
+        <span class="pill b">B &middot; r2-006</span>: die diskrete Größe ist ein <em>argmax über
+        Kandidaten</em> (der beste Peak gewinnt) plus eine <em>Strategie-Übernahme</em>
+        (Memorisierung vs. Algorithmus; Weight Decay bricht das Gleichgewicht) — ein
+        <em>Wettbewerb zwischen mehreren Lösungen</em>, kein stufenförmiger Sprung einer einzelnen
+        Größe.
+        <b>Inkompatibel:</b> A: nicht-analytischer Sprung <em>einer einzelnen</em> Invariante; B:
+        Auswahl/Übernahme <em>unter mehreren</em> Kandidaten.</li>
+    </ol>
+  </section>
+
+  <section id="aufloesung">
+    <h2>3 &middot; Auflösung</h2>
+    <p>Die drei Spannungen sind keine Fehler, sondern <em>zwei Lesarten / zwei Ebenen</em> desselben
+    Objekts.</p>
+    <div class="res">
+      <p><b>1. Topologisch vs. harmonisch &rarr; dieselbe kritische Konfiguration, zwei Lesarten.</b>
+      Ein geschlossener Loop (A) und ein konstruktiver Peak (B) sind beide <em>kritische
+      Konfigurationen</em>, die entstehen, wenn eine kontinuierliche Verformung einen Wert erreicht.
+      A liest das Substrat als <em>Konnektivität</em> (welche Punkte sind verbunden/nah &rarr; Loop),
+      B liest dasselbe Substrat als <em>Phase</em> (welche Frequenzen richten sich aus &rarr; Peak).
+      Falten (A) ändert die <em>Abstände</em> im Ambient-Raum — und genau das ändert, <em>welche
+      Rotoren</em> sich ausrichten (B). <span class="pill f">Fused</span>
+      <b>Ein Objekt, zweimal gelesen — topologisch (Löcher/Loops) und harmonisch (Peaks/Phasen);
+      beide Signaturen erscheinen am selben kritischen Punkt der Verformung.</b></p>
+    </div>
+    <div class="res">
+      <p><b>2. Daten-Geometrie vs. Modell-Geometrie &rarr; Substrat vs. Instanz.</b>
+      Die niedrig-dim Geometrie der <em>Daten</em> (A: Mannigfaltigkeit / freie Dimension) ist die
+      <em>billige, allgemeine Prior</em> — das Substrat, in dem das Objekt lebt (dasselbe wie
+      B&rsquo;s „das Gerüst ist Prior“). Das <em>konkrete</em> Muster (welcher Loop schließt, welche
+      Rotoren kombinieren) wird <em>gelernt</em> (A: die Repräsentations-Topologie wird pro Durchlauf
+      berechnet; B: Grokking/Othello). A&rsquo;s Manifold-Hypothese = B&rsquo;s feste Kreis-/Wellen-
+      Basis-Prior; A&rsquo;s Falten = B&rsquo;s Auswahl/Kombination der Rotoren.
+      <span class="pill f">Fused</span> <b>Substrat (A) = Prior, gelerntes Muster (B) = Instanz —
+      dieselbe Karte, einmal gegeben, einmal erworben.</b></p>
+    </div>
+    <div class="res">
+      <p><b>3. Sprung vs. Auswahl &rarr; ein kritischer Mechanismus, zwei Spezialfälle.</b>
+      Beide brauchen (i) einen <em>kontinuierlichen</em> Kontrollparameter (Faltgrad / Schärfe /
+      Rotoren-Ausrichtung / Weight Decay) und (ii) eine <em>diskrete</em> Größe. A&rsquo;s
+      Phasenübergang ist die <em>reine Form</em> (eine Invariante springt); B&rsquo;s Grokking ist der
+      <em>Wettbewerbsfall</em> (zwei Kandidaten, der bessere generalisierbare gewinnt — Weight Decay
+      bricht das Gleichgewicht). <span class="pill f">Fused</span> <b>Die diskrete Capability ist
+      eine kritische Konfiguration, erreicht durch kontinuierliche Verformung; ob sie als reiner
+      Sprung (A) oder als Strategie-Übernahme (B) auftritt, hängt davon ab, wie viele Kandidaten
+      konkurrieren.</b></p>
+    </div>
+    <div class="callout fused">
+      <b>Fused-Schlussfolgerung:</b> Dieselbe kritische Konfiguration, die die Capability erzeugt, ist
+      der Ort der Brüchigkeit — <b>Nutzen und Risiko sind zwei Seiten derselben kritischen
+      Geometrie</b> (Doppelschwert durch beide Lesarten).
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>4 &middot; Fusionierter Inhalt</h2>
+
+    <h3>4.1 Gemeinsames Substrat — niedrig-dim Objekt im höheren Raum</h3>
+    <p><span class="pill a">A</span> Ein 28&times;28-Bild in $\mathbb{R}^{784}$, sinnvolle Bilder
+    bedecken nur einen winzigen Teil — eine Mannigfaltigkeit $M$ mit $d_x \ll 784$, dazwischen die
+    freie Dimension $d-d_x$. <span class="pill b">B</span> Zahlen/Wort-Embeddings in einem
+    (3D-)Semantikraum; die Punkte liegen auf <em>rotierenden Kreisen</em> bei mehreren Frequenzen.
+    <b>Beide:</b> ein niedrig-dimensionales, strukturiertes Objekt, eingebettet in einen höheren
+    Raum, auf dem eine topologisch/geometrische Struktur (A: Kanten/Loops/Betti, B: Frequenzen/Peaks)
+    aufgebaut ist.</p>
+
+    <h3>4.2 Zwei Lesarten desselben Objekts</h3>
+    <div class="card-row">
+      <div class="paper a">
+        <h4>Topologische Lesart (A &middot; r2-007)</h4>
+        <p><strong>Komplex aus Attention:</strong> Score $Q_i\!\cdot\!K_j/\sqrt d$,
+        $\alpha_{ij}=\mathrm{softmax}(\mathrm{sharp}\cdot Q_i\!\cdot\!K_j/\sqrt d)$. Kante
+        $\{i,j\}$ g.d. $\min(\alpha_{ij},\alpha_{ji})>\varepsilon$; Dreieck g.d. alle drei Kanten.</p>
+        <p><strong>Invarianten:</strong> $\beta_0$ = zusammenhängende Komponenten (Union-Find),
+        $\beta_1 = E - V + \beta_0$. <em>Stückweise konstant</em>, Sprünge bei der Schwelle =
+        <em>Phasenübergänge</em>.</p>
+        <p><strong>Falten-Mechanismus:</strong> affine Schicht = Homöomorphismus (ändert nie die
+        Trennbarkeit); ReLU in die <em>freie Dimension</em> = Falte; Fold-and-Cut-Theorem (Demaine
+        et&nbsp;al. 1998) erklärt Universal-Approximation. Empirisch: bimodale Tuning-Kurven,
+        „mixed selectivity“ ist Feature.</p>
+      </div>
+      <div class="paper b">
+        <h4>Harmonische Lesart (B &middot; r2-006)</h4>
+        <p><strong>Karte (PE):</strong> $PE(p,i)=(\sin(p\omega_i),\cos(p\omega_i))$,
+        $\omega_i=10000^{(-2i/d)}$ — rotierende Frequenzen („Uhrzeiger“); $PE(p)\cdot PE(p+k)=\Sigma_i
+        \cos(k\omega_i)$ hängt nur vom Offset $k$ ab.</p>
+        <p><strong>Schaltwerk (Addition):</strong> $(a+b)\bmod P$ ($P=113$), Frequenzen
+        $k\in\{14,35,41,42,52\}$; $Score(c)=\Sigma_f \cos(2\pi f(a+b-c)/P)$, maximal bei
+        $c=(a+b)\bmod P$ — <em>Addition = Drehung</em>.</p>
+        <p><strong>Grokking/Othello:</strong> Memorisierung &rarr; Algorithmus bildet sich im
+        Plateau &rarr; Weight Decay räumt auf &rarr; plötzlicher Test-Loss-Einbruch ($\lambda=0$
+        grokkt nie). Othello: linearer Probe ~20–25&nbsp;% Fehler, nichtlinear <strong>1,7&nbsp;%</strong>
+        (Layer&nbsp;7, 98,3&nbsp;%); Skewed-Test &rarr; 0,02&nbsp;% (untrainiert 93,29&nbsp;%).</p>
+      </div>
+    </div>
+
+    <h3>4.3 Der einheitliche Mechanismus — ein $g$ steuert, die Struktur erscheint diskret</h3>
+    <p>Sei $g$ ein <em>kontinuierlicher</em> Kontrollparameter (Faltgrad bei A, Rotoren-Ausrichtung /
+    Schärfe / Weight Decay bei B) und $w_{ij}(g)\in[0,1]$ eine Affinität, die $g$ moduliert. Das Objekt
+    verformt sich mit $g$; diskrete Strukturen erscheinen, sobald eine kritische Bedingung erfüllt ist:</p>
+    <div class="formula"><div id="fTopo"></div>
+      <div class="cap"><b>Topologisch (A):</b> Falten ändert die <em>Abstände</em> im Ambient-Raum, also
+      die Affinität „sind die beiden Enden jetzt nah genug?“. Überschreitet die Falt-Affinität
+      $\varepsilon$, <em>schließt sich der Loop</em> und $\beta_1$ springt $0\to1$.</div>
+    </div>
+    <div class="formula"><div id="fHarm"></div>
+      <div class="cap"><b>Harmonisch (B):</b> Je mehr Frequenzen sich konstruktiv ausrichten, desto
+      eindeutiger der Peak. Bei $n=1$ ist der Peak diffus (viele nahe Falsche), bei voller Ausrichtung
+      ist er <em>einzigartig</em> — dieselbe diskrete Erscheingung wie der Loop, in der Sprache der
+      Phase gelesen.</div>
+    </div>
+    <div class="formula"><div id="fFused"></div>
+      <div class="cap"><b>Fused:</b> dieselbe kontinuierliche Verformung $g$, am selben kritischen Punkt
+      $g^{*}$ zwei diskrete Signaturen — <em>Loop geschlossen</em> (topologisch) <em>und</em>
+      <em>einzigartiger Peak</em> (harmonisch). Der Fold von A <em>ist</em> ein Phasenübergang; der
+      Peak von B <em>ist</em> derselbe Übergang in der Phase-Sprache.</div>
+    </div>
+
+    <h3>4.4 Das Doppelschwert, in beiden Sprachen</h3>
+    <p><span class="pill a">A</span> Die <em>genutzte</em> freie Dimension (Faltregion) ist kontrolliert
+    und informativ; die <em>unbenutzte</em> (Normal-/off-manifold-Richtung) bleibt willkürlich —
+    $\|\Delta_y f\|^2 \le (\prod_{\ell=3}^{L}\|W^\ell\|^2)(\cdots)$, also <em>exponentiell mit der
+    Tiefe</em> instabil (Adversarial). <span class="pill b">B</span> Das interne Bild ist
+    <em>unterbestimmt</em>: nahe der kritischen Konfiguration und im datenabhängigen Wettstreit der
+    Kandidaten ist das System am     <em>brüchigsten</em>. <b>Fused:</b> Nutzen (Loop/Peak/Trennbarkeit)
+    und Risiko (freie Normal-Richtung / Schwelle / Unterbestimmtheit) sitzen am <em>gleichen
+    kritischen Punkt</em>: man kann die Capability nicht haben, ohne die Brüchigkeit mitzuliefern —
+    <em>Brüchigkeit ist die Schatten-Seite der Capability</em>.</p>
+
+    <h3>4.5 Lese-Tiefe (B) trifft Mischtrennbarkeit (A)</h3>
+    <p>B liest dieselbe Karte in drei <em>Tiefen</em>: Position &rarr; Tiefe 1 (vor-gelöst, geschlossene
+    Form), modulare Addition &rarr; Tiefe 2 (kompaktes Schaltwerk), Othello-Brett &rarr; Tiefe $n$
+    (verteiltes nichtlineares Bild). B&rsquo;s saubere Zweiterm-Zerlegung $s=f(\text{Inhalt})+g(\text{Offset})$
+    ist die <em>Linearisierung / erste Ordnung</em>; das volle Weltmodell ist nichtlinear/verteilt
+    (linearer Probe scheitert). Das trifft A&rsquo;s „mixed selectivity ist Feature“ und die
+    <em>bimodalen Tuning-Kurven</em>: je komplexer der Generator, desto <em>tieferer</em> (nichtlinearer)
+    die Lesart der <em>selben</em> Karte. <b>Fused:</b> eine Karte, Lese-Tiefe $= f(\text{Generator-
+    Komplexität})$; A ist der Eindeutigkeits-Limes, B der reichere Fall.</p>
+
+    <h3>4.6 Kanonische Form, unterbestimmter Inhalt</h3>
+    <p>Die <em>Form</em> — die Kreis-/Wellengeometrie (B) bzw. die Struktur des Komplexes (A) — ist
+    <em>kanonisch und geteilt</em> (die gemeinsame Mathematik beider Papiere). Der <em>Inhalt</em> —
+    <em>welche</em> Rotoren / <em>welcher</em> Loop / welche Gewichte — ist <em>unterbestimmt</em> und
+    wird von den Daten gewählt (B). A scheint „die eine Lösung“ zu haben, nur weil sein Generator
+    (zyklische Position) so simpel ist, dass die kanonische Basis sie mit fester Leiter eindeutig löst;
+    B&rsquo;s reichere Generatoren zulassen viele Lösungen. <b>Fused:</b> A ist der Eindeutigkeits-
+    Limes von B&rsquo;s unterbestimmtem Bild — <em>Form kanonisch, Inhalt daten gewählt</em>.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>5 &middot; Interaktive Visualisierung — ein Objekt, zwei Lesarten</h2>
+    <p class="lead">Ein <b>gemeinsamer</b> Kontrollparameter <b>g (Verformung / Ausrichtung)</b>
+    deformiert ein niedrig-dim Objekt im höheren Raum. <b>Links (topologisch, A):</b> ein Pfad, der sich
+    faltet — schließt er einen Loop, springt $\beta_1$ diskret $0\to1$. <b>Rechts (harmonisch, B):</b>
+    die Interferenz-Scores $Score(c)$ über 113 Antworten; je mehr Frequenzen sich konstruktiv
+    ausrichten, desto <em>einzigartiger</em> der Peak.     <b>Beide diskreten Signaturen erscheinen am selben
+    kritischen Punkt.</b> Der Schwellwert $\varepsilon$ (A) verschiebt die topologische Schwelle.
+    Unten: <b>Brüchigkeit</b> — an der Schwelle ist das System am brüchigsten (das Doppelschwert).</p>
+
+    <canvas id="vz" class="viz" width="760" height="460"></canvas>
+
+    <div class="ctrls">
+      <label>Verformung / Ausrichtung g <span class="val" id="vG">0.60</span>
+        <input id="cG" type="range" min="0" max="1" step="0.01" value="0.60"></label>
+      <label>Schwellwert &epsilon; (topologisch) <span class="val" id="vE">0.70</span>
+        <input id="cE" type="range" min="0" max="1" step="0.01" value="0.70"></label>
+      <button id="themeBtn">&#9790;/&#9788; Theme umschalten</button>
+    </div>
+
+    <div class="ro-label">Topologische Lesart (A) — Kanten, Komponenten, Schleifen</div>
+    <div class="readout">
+      <div class="stat"><div class="n" id="s-b0">&ndash;</div><div class="t">&beta;&#8320; Komponenten</div></div>
+      <div class="stat"><div class="n" id="s-b1">&ndash;</div><div class="t">&beta;&#8321; Schleifen (Loop)</div></div>
+      <div class="stat"><div class="n" id="s-e">&ndash;</div><div class="t">Kanten E</div></div>
+    </div>
+    <div class="ro-label">Harmonische Lesart (B) — Interferenz-Peak &uuml;ber 113 Antworten</div>
+    <div class="readout">
+      <div class="stat b"><div class="n" id="s-n">&ndash;</div><div class="t">aktive Frequenzen</div></div>
+      <div class="stat b"><div class="n" id="s-peak">&ndash;</div><div class="t">Peak (richtig)</div></div>
+      <div class="stat b"><div class="n" id="s-bf">&ndash;</div><div class="t">bester Falscher</div></div>
+      <div class="stat b"><div class="n" id="s-m">&ndash;</div><div class="t">Margin (Peak &minus; Falscher)</div></div>
+      <div class="stat b"><div class="n" id="s-uniq" style="font-size:1.1rem">&ndash;</div><div class="t">einzigartiger Peak?</div></div>
+    </div>
+    <div class="readout">
+      <div class="stat" style="min-width:200px;flex:2"><div class="n" id="s-f" style="font-size:1.1rem;color:var(--danger)">&ndash;</div>
+        <div class="t">Br&uuml;chigkeit (nahe der kritischen Schwelle — Doppelschwert)</div>
+        <div class="fragbar"><div id="fragfill"></div></div></div>
+    </div>
+    <div class="phase-name" id="phaseName"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--edge)"></span>Pfad (Kanten)</span>
+      <span><span class="dot" style="background:var(--accent)"></span>Falt-Kante (0&ndash;7) / geschlossener Loop</span>
+      <span><span class="dot" style="background:var(--danger)"></span>gefillter Innenraum = geschlossener Loop / genutzte freie Dimension</span>
+      <span><span class="dot" style="background:var(--gold)"></span>Peak (richtige Antwort)</span>
+    </div>
+    <p class="caption">Alle Daten inline (feste Faltfunktion + Frequenzmenge), keine Netzwerk-Abrufe.
+    Kontinuierlicher Parameter g &rarr; diskrete Struktur (Loop / Peak), am selben kritischen Punkt in
+    beiden Lesarten. Diskreter Sprung = Phasenübergang.</p>
+  </section>
+
+  <section id="provenienz" class="prov">
+    <h2>6 &middot; Provenienz</h2>
+    <ul>
+      <li><a href="../2/r2-007.html">r2-007.html</a>
+        <span class="desc">„Topologie im Falten: von der freien Dimension zum Phasenübergang“ (R2) —
+        niedrig-dim topologisches Objekt im höheren Raum; der <em>Fold</em> ist ein konkreter Fall des
+        allgemeinen Mechanismus, bei dem ein kontinuierlicher Parameter eine diskrete topologische Größe
+        (Trennbarkeit, $\beta_1$) umschaltet; Doppelschwert Capability &ge; Brüchigkeit. = Quelle A.</span></li>
+      <li><a href="../2/r2-006.html">r2-006.html</a>
+        <span class="desc">„Die Karte ist das Weltmodell (PE &times; Grokking/Othello)“ (R2) — ein
+        Sequenzmodell kodiert seine Welt als komprimiertes System <em>rotierender Mehrfrequenz-
+        Koordinaten</em>; Position und Addition/Weltmodell sind dieselbe Interferenzgeometrie in
+        unterschiedlicher Lesetiefe; ein Peak = die eindeutige Antwort. = Quelle B.</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    Fusion 003 (Runde 3) &middot; Ein Objekt, zwei Lesarten &middot; Alle Berechnungen lokal im Browser,
+    keine Netzwerk-Datenabrufe.
+  </footer>
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var TAU = Math.PI * 2, N = 8, P = 113;
+  var KEY_FREQS = [14, 35, 41, 42, 52];
+  var SANS = 'ui-sans-serif,system-ui,"Segoe UI",Inter,sans-serif';
+
+  function tex(id, s) {
+    var el = document.getElementById(id); if (!el) return;
+    el.innerHTML = s;
+  }
+  tex('fTopo', '$$K(g):\\ \\{i,j\\}\\ \\text{g.d.}\\ w_{ij}(g)>\\varepsilon,\\quad \\beta_1(g)=E(g)-V+\\beta_0(g)\\ \\text{(stückweise konstant)}$$');
+  tex('fHarm', '$$\\mathrm{Score}(c)=\\sum_{f}\\cos\\!\\big(2\\pi f\\,(a+b-c)/P\\big),\\quad \\text{einzigartiger Peak bei }c=(a+b)\\bmod P$$');
+  tex('fFused', '$$g\\ \\text{kontinuierlich}\\ \\xrightarrow{\\ \\,g^{*}\\,\\ }\\ \\begin{cases}\\text{topologisch: Loop, }\\beta_1:0\\to1\\\\\\text{harmonisch: eindeutiger Peak}\\end{cases}$$');
+
+  var cv = document.getElementById('vz');
+  if (!cv) return;
+  var ctx = cv.getContext('2d');
+  var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  var cssW = 760, cssH = 460;
+
+  function cssVar(name, fb) {
+    var x = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return x || fb;
+  }
+  function readPal() {
+    return {
+      canvas: cssVar('--code-bg', '#0a1223'), ink: cssVar('--ink', '#e8eefc'),
+      muted: cssVar('--muted', '#8aa0c8'), line: cssVar('--line', '#22304a'),
+      accent: cssVar('--accent', '#60a5fa'), accent2: cssVar('--accent2', '#f59e0b'),
+      edge: cssVar('--edge', '#22c55e'), danger: cssVar('--danger', '#ff6b6b'),
+      gold: cssVar('--gold', '#34d399')
+    };
+  }
+  var pal = null;
+
+  function v(id) { var e = document.getElementById(id); return e ? +e.value : 0; }
+
+  function topoStats(g, eps) {
+    var w = [], i;
+    for (i = 0; i < N - 1; i++) w.push([i, i + 1, 0.90]);
+    w.push([0, N - 1, 0.5 + 0.5 * g]);
+    var edges = [];
+    for (i = 0; i < w.length; i++) if (w[i][2] > eps) edges.push([w[i][0], w[i][1]]);
+    var parent = []; for (i = 0; i < N; i++) parent[i] = i;
+    function find(x) { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+    edges.forEach(function (e) { parent[find(e[0])] = find(e[1]); });
+    var roots = {}; for (i = 0; i < N; i++) roots[find(i)] = 1;
+    var b0 = Object.keys(roots).length;
+    var b1 = Math.max(0, edges.length - N + b0);
+    return { b0: b0, b1: b1, E: edges.length, wC: 0.5 + 0.5 * g };
+  }
+  function fragility(g, eps) {
+    var wC = 0.5 + 0.5 * g;
+    return Math.max(0, 1 - Math.abs(wC - eps) / 0.2);
+  }
+  function harmStats(g) {
+    var n = Math.min(5, Math.max(1, 1 + Math.floor(5 * g)));
+    var act = KEY_FREQS.slice(0, n);
+    var a = 37, b = 58, target = (a + b) % P;
+    var peak = 0, bf = -Infinity, c, s, i;
+    var scores = [];
+    for (c = 0; c < P; c++) {
+      s = 0; for (i = 0; i < act.length; i++) s += Math.cos(TAU * act[i] * (target - c) / P);
+      scores.push(s);
+      if (c === target) peak = s; else if (s > bf) bf = s;
+    }
+    return { n: n, target: target, peak: peak, bf: bf, margin: peak - bf,
+      unique: (peak - bf) > 0.5, scores: scores };
+  }
+  function phaseLabel(s, h, frag) {
+    if (s.b1 > 0 && h.unique) return "KRITISCHE KONFIGURATION — Loop geschlossen (topologisch, A) + einzigartiger Peak (harmonisch, B): dieselbe Schwelle, zwei Lesarten.";
+    if (frag > 0.6) return "An der Schwelle — das System ist am brüchigsten (Doppelschwert): der diskrete Sprung steht unmittelbar bevor.";
+    if (s.b1 === 0 && !h.unique) return "Unterhalb der Schwelle — kein Loop, kein eindeutiger Peak: das Substrat ist noch diffus.";
+    return "Übergang — eine Lesart hat bereits gesprungen, die andere noch nicht.";
+  }
+
+  function draw() {
+    if (!pal) pal = readPal();
+    var C = pal;
+    var g = v('cG'), eps = v('cE');
+    document.getElementById('vG').textContent = g.toFixed(2);
+    document.getElementById('vE').textContent = eps.toFixed(2);
+    ctx.clearRect(0, 0, cssW, cssH);
+    ctx.fillStyle = C.canvas; ctx.fillRect(0, 0, cssW, cssH);
+
+    var s = topoStats(g, eps);
+    var h = harmStats(g);
+    var frag = fragility(g, eps);
+
+    // ---------- LEFT: topological fold (A) ----------
+    (function () {
+      var Lx = 178, Ly = 250, R = 128;
+      var span = TAU * (0.55 + 0.45 * g);
+      var pos = [], i;
+      for (i = 0; i < N; i++) { var a = (i / (N - 1)) * span - TAU / 4; pos.push({ x: Lx + R * Math.cos(a), y: Ly + R * Math.sin(a) }); }
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.globalAlpha = 0.35;
+      for (var gx = Lx - R; gx <= Lx + R; gx += 48) { ctx.beginPath(); ctx.moveTo(gx, Ly - R); ctx.lineTo(gx, Ly + R); ctx.stroke(); }
+      for (var gy = Ly - R; gy <= Ly + R; gy += 48) { ctx.beginPath(); ctx.moveTo(Lx - R, gy); ctx.lineTo(Lx + R, gy); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+      if (s.b1 > 0) { ctx.fillStyle = C.accent; ctx.globalAlpha = 0.12;
+        ctx.beginPath(); for (i = 0; i < N; i++) { if (i === 0) ctx.moveTo(pos[i].x, pos[i].y); else ctx.lineTo(pos[i].x, pos[i].y); } ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; }
+      ctx.strokeStyle = C.edge; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+      ctx.beginPath(); for (i = 0; i < N; i++) { if (i === 0) ctx.moveTo(pos[i].x, pos[i].y); else ctx.lineTo(pos[i].x, pos[i].y); } ctx.stroke();
+      var closeOn = s.wC > eps;
+      ctx.setLineDash(closeOn ? [] : [4, 5]); ctx.strokeStyle = C.accent; ctx.lineWidth = closeOn ? 4 : 1.5;
+      ctx.globalAlpha = closeOn ? 1 : 0.4;
+      ctx.beginPath(); ctx.moveTo(pos[0].x, pos[0].y); ctx.lineTo(pos[N - 1].x, pos[N - 1].y); ctx.stroke();
+      ctx.globalAlpha = 1; ctx.setLineDash([]);
+      for (i = 0; i < N; i++) { ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(pos[i].x, pos[i].y, 4, 0, TAU); ctx.fill(); }
+      ctx.fillStyle = C.muted; ctx.font = '12px ' + SANS; ctx.textAlign = 'center';
+      ctx.fillText('Mannigfaltigkeit im 2D-Ambient (topologisch — A)', Lx, 30);
+      ctx.fillText('Falten schließt den Loop → β₁ springt 0→1', Lx, cssH - 12);
+    })();
+
+    // ---------- RIGHT: harmonic interference peak (B) ----------
+    (function () {
+      var bx0 = 380, bx1 = cssW - 22, by0 = 92, by1 = cssH - 58;
+      if (bx1 - bx0 < 60) return;
+      var W = bx1 - bx0, H = by1 - by0, bw = W / P;
+      var sc = h.scores, maxS = -Infinity, minS = Infinity, i;
+      for (i = 0; i < sc.length; i++) { if (sc[i] > maxS) maxS = sc[i]; if (sc[i] < minS) minS = sc[i]; }
+      var range = (maxS - minS) || 1;
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(bx0, by0); ctx.lineTo(bx0, by1); ctx.lineTo(bx1, by1); ctx.stroke();
+      for (var c = 0; c < P; c++) {
+        var hh = ((sc[c] - minS) / range) * H, x = bx0 + c * bw, y = by1 - hh;
+        if (c === h.target) { ctx.fillStyle = C.gold; ctx.globalAlpha = 1; }
+        else { ctx.fillStyle = C.accent2; ctx.globalAlpha = 0.4; }
+        ctx.fillRect(x, y, Math.max(1, bw - 0.5), hh);
+        ctx.globalAlpha = 1;
+      }
+      var cxp = bx0 + h.target * bw + bw / 2;
+      ctx.fillStyle = C.gold; ctx.textAlign = 'center'; ctx.font = 'bold 13px ' + SANS;
+      ctx.fillText(String(h.target), cxp, by0 - 18);
+      ctx.font = '11px ' + SANS; ctx.fillText('richtig', cxp, by0 - 6);
+      ctx.fillStyle = C.ink; ctx.textAlign = 'left'; ctx.font = 'bold 12px ' + SANS;
+      ctx.fillText('Interferenz-Peak Score(c)  (harmonisch — B)', bx0, by0 - 34);
+      ctx.textAlign = 'center'; ctx.fillStyle = C.muted; ctx.font = '11px ' + SANS;
+      ctx.fillText('Antwort c  (0 … ' + (P - 1) + ')', bx0 + W / 2, by1 + 20);
+    })();
+
+    // ---------- readout ----------
+    document.getElementById('s-b0').textContent = s.b0;
+    document.getElementById('s-b1').textContent = s.b1;
+    document.getElementById('s-e').textContent = s.E;
+    document.getElementById('s-n').textContent = h.n;
+    document.getElementById('s-peak').textContent = h.peak.toFixed(2);
+    document.getElementById('s-bf').textContent = h.bf.toFixed(2);
+    document.getElementById('s-m').textContent = h.margin.toFixed(2);
+    var uq = document.getElementById('s-uniq');
+    uq.textContent = h.unique ? 'JA' : 'nein';
+    uq.style.color = h.unique ? 'var(--gold)' : 'var(--muted)';
+    document.getElementById('s-f').textContent = (frag * 100).toFixed(0) + '%';
+    document.getElementById('fragfill').style.width = (frag * 100).toFixed(0) + '%';
+    document.getElementById('phaseName').textContent = phaseLabel(s, h, frag);
+  }
+
+  function resize() {
+    var r = cv.getBoundingClientRect();
+    cssW = Math.max(420, r.width || 760);
+    cssH = 460;
+    cv.width = Math.round(cssW * DPR);
+    cv.height = Math.round(cssH * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    draw();
+  }
+  function onInput() { draw(); }
+
+  function init() {
+    ['cG', 'cE'].forEach(function (id) { var e = document.getElementById(id); if (e) e.addEventListener('input', onInput); });
+    var t = document.getElementById('themeBtn');
+    if (t) t.addEventListener('click', function () {
+      document.documentElement.classList.toggle('dark');
+      pal = readPal(); draw();
+    });
+    pal = readPal();
+    resize();
+  }
+
+  window.addEventListener('resize', resize);
+  new MutationObserver(function () { pal = readPal(); draw(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      init();
+      if (window.renderMathInElement) {
+        try { renderMathInElement(document.body, { delimiters: [
+          { left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }
+        ] }); } catch (e) {}
+      }
+    });
+  } else {
+    init();
+    if (window.renderMathInElement) {
+      try { renderMathInElement(document.body, { delimiters: [
+        { left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }
+      ] }); } catch (e) {}
+    }
+  }
+})();
+</script>
+</body>
+</html>

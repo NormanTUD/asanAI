@@ -1,0 +1,16 @@
+{
+  "no": "016",
+  "a": "combined/2/r2-029.html",
+  "b": "combined/2/r2-026.html",
+  "a_title": "Kapazität lizenziert, Mechanismus liefert",
+  "b_title": "Eine inkoherente Geometrie macht Komprimieren, Lernen, Robustheit & Lesen fast umsonst",
+  "combined_theme": "inkoharenter-quotient-lokales-zum-globalen",
+  "one_line": "Ein lokaler viele-zu-eins-Quotient (Faltung/Klebung in A, inkoherente Dimension-Reduktion in B) liefert ein globales Ganze genau dann, wenn Inkoherenz (B) A's bloße Kapazität zum Mechanismus macht und Korrespondenz (A) es real macht — topologisch verliert er, metrisch behält er.",
+  "contradictions": [
+    "W1 · A: der Quotient ist von Design her verlustreich und der Verlust IST der Mechanismus (ReLU-Faltung bricht β₁ 1→0 in einem kategoriale Schritt, 'Verlust = Gewinn', irreversibel); B: die inkoherente Reduktion ist (nahezu) verlustfrei und die Erhaltung IST der Gewinn (JL hält Abstände bei 1±ε, Hologramm degradiert glatt nach √(k/d) und 'verschwindet nie, wird nur weicher').",
+    "W2 · A: Legitimität des Globalen braucht externe Korrespondenz (Tarski-Convention-T / NSW), 'Korrespondenz ist Konvention, von innen nicht entscheidbar', das Modell/Welt-Gap bleibt prinzipiell offen (G≠W, provisorisch, revidierbar); B: Legitimität ist interne, strukturelle Invariante (Inkoherenz — JL gilt für jede zufällige Projektion, J-Lens fix pro Modell), das Gap wird von der Struktur selbst geschlossen, kein externer Tarski-Test.",
+    "W3 · A: 'Kapazität lizenziert, Mechanismus liefert' — Kapazität (O(N^L), 'vermag') ist notwendig aber NICHT hinreichend, Ergebnis bleibt provisorisch, permanentes Lizenz/Lieferung-Gap; B: 'fast gratis' — Inkoherenz ist hinreichend, die Struktur (Zufallsprojektion, faktorierte Jakobis, J-Lens) tut die Arbeit ohne zusätzliche Lizenz."
+  ],
+  "resolution": "Inkoherenz (B) ist genau der Mechanismus, den A verlangt: Sie verwandelt A's notwendige-aber-nicht-hinreichende Kapazität in ein geliefertes, 'gratises' (geometrisches) Ganzes. A's topologischer Verlust (β₁→0) und B's metrische Erhaltung (1±ε, √(k/d)) sind dieselbe viele-zu-eins-Operation auf zwei Skalen (A reduziert Punkte/Orte, B reduziert Dimensionen/Achsen). Legitimität hat zwei Regime: geometrisch (strukturell schließbar durch Inkoherenz/NSW, B) und kategoriale/semantisch (konventionsgebunden, offen, A's Tarski) — B ist genau das geometrische Korrespondenz-Regime, das A herausgeschnitten hat. Fused: Kapazität lizenziert, Inkoherenz macht's gratis, Korrespondenz macht's real.",
+  "viz": "Zwei ineinanderliegende Ringe (Klasse A außen grün, Klasse B innen rot = Testreiz Y) durchlaufen einen inkoherenten Quotienten: Fortschritt p durch Geometrie→Faltung (x,y)→(|x|,|y|)→Spalt. Toggle 'Inkoherent (ReLU, faltet)' / 'Kohärent (tanh, Homöomorphismus)' = der fusionierte Gate. Links die topologische Skala (A: β₀/β₁ live, Regionen O(N^L), d*=ln2/λ + Klebkraft-Feld, Separierbarkeit als Korrespondenz-Proxy); rechts die metrische Skala (B: J-Lens-Sparstreifen ≤4 Richtungen + Qualität √(k/d), glatt). Fused-Verdikt: topologischer Verlust + metrische Erhaltung, gated by Inkoherenz. Canvas, theme-aware, inline data, zero console errors."
+}

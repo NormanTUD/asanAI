@@ -1,0 +1,16 @@
+{
+  "no": "014",
+  "a": "combined/2/r2-023.html",
+  "b": "combined/2/r2-021.html",
+  "a_title": "Nächste-Nachbar auf dem linearen Gerüst",
+  "b_title": "Das Kernel-Feld ist der persistente 1-Zyklus",
+  "combined_theme": "kernel-scaffold-cycle-fragility",
+  "one_line": "Ein trainiertes Modell ist ein dünnes, kernel-gewichtetes, lokal-glattes Feld, das in zwei Modi gelesen wird (weich/punktweise vs. scharf/topologisch), dessen fragiler Übergang — A's Rest/Knick (lokale Singularität) und B's 1-Zyklus (globale Topologie) — Bedeutung und Unsicherheit trägt und die Robustheits-Achse (Rest/Varianz/Persistenz) die fragilen Regionen markiert.",
+  "contradictions": [
+    "Locus des Inhalts: A verortet den funktionsentscheidenden Inhalt am lokalen scharfen Knick/Rest an der Voronoi-Grenze ('small in norm, large in function'); B verortet ihn in einer geschlossenen globalen 1-Zyklus-Struktur mit Windung k und Persistenz — lokale Kante vs. geschlossener Loop.",
+    "Natur der Grenze: A trägt einen prinzipbedingten, irreduzierbaren Quantisierungs-Boden (Expressibility Gap, Fehler ∝ (1/N)^0.1) und den Rest als feste Eigenschaft; B macht dasselbe Objekt proberbar — Persistenz τ degradiert kontinuierlich und ein Evaluate-Schritt repariert den fragilsten Zyklus (irreduzierbar vs. handlungs-/reparierbar).",
+    "Rolle/Ausgabe: A beschreibt das Modell als festes Objekt (Betriebspunkt, zwei Grenzen, drei dünne Ebenen — Deskription); B macht aus demselben Kernel-Objekt ein aktives BO-Instrument mit Acquisition (nächste teure Probe, Evaluate — Entscheidungs-/Handlungs-Loop)."
+  ],
+  "resolution": "Knick und Zyklus sind dasselbe dünne kernel-gewichtete Feld, gelesen auf zwei Ebenen: A liest die lokale Differentialgeometrie (die Singularität/Knick), B die globale Homologie (der geschlossene 1-Zyklus); der lokale scharfe Übergang ist die Kanten-/Singularitäts-Entscheidung, der Zyklus die globale Topologie desselben Feldes. Der irreduzierbare Quantisierungs-Boden (A) grenzt das Unmögliche ein; die proberbare fragile Schicht (B) gibt an, wo die nächste teure Probe hingehört — B's Fog schrumpft unter Probing bis an A's Boden. Deskription (A) und Akquisition (B) sind zwei Modi desselben Instruments, die die gemeinsame Robustheits-Achse (Rest/Varianz/Persistenz) konsumieren.",
+  "viz": "Einer kernel-gewichteter Token-Ring im Canvas, der zugleich A's dünnes Gerüst (weich geblendete Scaffold-Farbe, goldene Knick-/Rest-Highlights = lokale Singularitäten) und B's 1-Zyklus (ε-gefilterte Kernel-Kanten, β₁, Persistenz τ, lila Varianz-Fog) zeigt; der rosa ★ markiert das fragilste Token (B's Acquisition-Ziel / A's nächster Knick). Slider für Windung k, Kernbreite σ, Rauschen σₙ (degradiert Fog & τ zugleich — eine Achse) und Schwelle ε; Buttons: Fit σ (MLL), Evaluate ★ (repariert den fragilsten Zyklus), ε-Filtration animieren, Reset. Unten: DFT-Spektrum (Peak bei k) + Persistenzband. Theme-aware, inline data, kein Netzwerk."
+}

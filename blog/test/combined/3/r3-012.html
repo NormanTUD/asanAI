@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheibe ≃ Schnitt — die homotopische Lese-Schreib-Maschine (R3 · 012)</title>
+<style>
+  :root{
+    --bg:#f6f5ef; --panel:#ffffff; --panel-solid:#ffffff; --panel2:#efece2;
+    --stroke:rgba(20,30,55,.12);
+    --ink:#1c2333; --dim:#46506a; --faint:#727d95;
+    --acc:#0e8a7f; --acc2:#7c3aed; --acc3:#b45309; --acc4:#be123c;
+    --good:#227a4c; --bad:#c23a4c; --warn:#9a6b00;
+    --code-bg:rgba(20,30,55,.05); --viz-bg:#fbfaf4;
+  }
+  html.dark{
+    --bg:#060912; --panel:rgba(18,25,42,.72); --panel-solid:#0e1524; --panel2:#151c2c;
+    --stroke:rgba(255,255,255,.10);
+    --ink:#e8ecf5; --dim:#a7b3cc; --faint:#6b7896;
+    --acc:#5eead4; --acc2:#a78bfa; --acc3:#fbbf24; --acc4:#fb7185;
+    --good:#6ee7a8; --bad:#ff6b6b; --warn:#fbbf24;
+    --code-bg:rgba(255,255,255,.06); --viz-bg:#05060f;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.72;
+    -webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+  .wrap{max-width:820px;margin:0 auto;padding:52px 22px 60px;}
+  .themebtn{position:fixed;top:12px;right:12px;z-index:50;background:var(--panel);
+    color:var(--ink);border:1px solid var(--stroke);padding:8px 13px;border-radius:9px;cursor:pointer;font-weight:650;}
+  .kicker{color:var(--acc);font-weight:750;letter-spacing:.16em;font-size:.78rem;text-align:center;margin-bottom:14px;}
+  h1{font-size:clamp(2rem,5.2vw,3.1rem);font-weight:800;color:var(--ink);line-height:1.08;letter-spacing:-.025em;margin:0;}
+  h1 .x{color:var(--acc2);}
+  .subtitle{color:var(--acc2);font-size:1.02rem;font-weight:600;margin:12px 0 0;}
+  .lede{color:var(--ink);font-size:1.05rem;margin:20px 0 6px;max-width:74ch;}
+  section{margin:42px 0;padding-top:30px;border-top:1px solid var(--stroke);}
+  h2{font-size:clamp(1.4rem,3.6vw,1.95rem);color:var(--ink);margin:0 0 14px;letter-spacing:-.015em;}
+  h3{font-size:1.12rem;color:var(--ink);margin:22px 0 8px;font-weight:700;}
+  p{margin:0 0 13px;max-width:74ch;}
+  ul{margin:8px 0;padding-left:22px;}
+  li{margin:7px 0;}
+  strong{color:var(--ink);font-weight:650;}
+  em{color:var(--acc);font-style:normal;font-weight:600;}
+  code{font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+    padding:1px 6px;border-radius:5px;color:var(--acc);font-size:.9em;}
+  .eq{display:block;font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+    border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:10px;
+    padding:12px 16px;margin:14px 0;color:var(--ink);overflow-x:auto;font-size:.95rem;}
+  .eq .b{color:var(--acc2)} .eq .a{color:var(--acc3)}
+  .callout{border-left:5px solid var(--acc);background:color-mix(in srgb,var(--acc) 10%,transparent);
+    padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;}
+  .callout.big{border-left-width:7px;font-size:1.04rem;}
+  .citem{margin:18px 0;padding-left:16px;border-left:2px solid var(--stroke);}
+  .citem h3{margin:0 0 6px;font-size:1.04rem;}
+  .citem p{margin:0 0 8px;}
+  .card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:16px 18px;margin:16px 0;}
+  .tag{display:inline-block;font-size:.68rem;font-weight:750;letter-spacing:.05em;text-transform:uppercase;
+    padding:3px 10px;border-radius:99px;margin-right:8px;vertical-align:1px;}
+  .tag.a{color:var(--acc);background:color-mix(in srgb,var(--acc) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc) 34%,transparent);}
+  .tag.b{color:var(--acc2);background:color-mix(in srgb,var(--acc2) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc2) 34%,transparent);}
+  .tag.x{color:var(--acc3);background:color-mix(in srgb,var(--acc3) 15%,transparent);border:1px solid color-mix(in srgb,var(--acc3) 34%,transparent);}
+  .viz-stage{position:relative;width:100%;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;background:var(--viz-bg);aspect-ratio:800/520;}
+  .viz-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:none;}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin-top:16px;}
+  @media(max-width:620px){.controls{grid-template-columns:1fr;}}
+  .ctrl label{font-size:.83rem;color:var(--dim);display:flex;justify-content:space-between;margin-bottom:5px;}
+  .ctrl .val{font-family:ui-monospace,monospace;color:var(--acc);font-weight:650;}
+  .chk{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--dim);cursor:pointer;user-select:none;}
+  input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer;height:6px;}
+  button{background:var(--panel);color:var(--ink);border:1px solid var(--stroke);padding:8px 15px;
+    border-radius:9px;cursor:pointer;font-weight:650;font-size:.86rem;}
+  button:hover{border-color:var(--acc);}
+  .readouts{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 4px;}
+  .ro{flex:1;min-width:112px;background:var(--panel);border:1px solid var(--stroke);border-radius:10px;padding:10px 12px;}
+  .ro .k{font-size:.64rem;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);margin-bottom:3px;}
+  .ro .v{font-family:ui-monospace,monospace;font-size:1.16rem;font-weight:700;color:var(--ink);}
+  .ro.hl .v{color:var(--acc4);}
+  .bar{height:7px;border-radius:6px;background:var(--panel2);margin-top:8px;overflow:hidden;border:1px solid var(--stroke);}
+  .bar>i{display:block;height:100%;width:0;background:var(--acc);transition:width .1s linear;}
+  .status{margin-top:12px;padding:11px 14px;border-radius:9px;font-size:.94rem;font-weight:600;
+    border:1px solid var(--stroke);background:var(--panel);color:var(--dim);}
+  .status.ok{color:var(--good);border-color:var(--good);}
+  .status.bad{color:var(--bad);border-color:var(--bad);}
+  .status.warn{color:var(--warn);border-color:var(--warn);}
+  .legend{display:flex;flex-wrap:wrap;gap:9px 18px;font-size:.85rem;color:var(--dim);margin-top:12px;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .legend i{width:14px;height:14px;border-radius:3px;display:inline-block;}
+  .caption{font-size:.88rem;color:var(--faint);margin-top:12px;max-width:74ch;}
+  .prov{display:flex;flex-direction:column;gap:14px;}
+  .prov a{color:var(--acc);font-weight:650;text-decoration:none;border-bottom:1px dotted var(--acc);}
+  .prov .desc{color:var(--dim);font-size:.92rem;margin:5px 0 0;}
+  .footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--stroke);color:var(--faint);
+    font-size:.85rem;text-align:center;}
+</style>
+</head>
+<body>
+<button class="themebtn" id="btnTheme" title="Theme wechseln">☾ / ☀</button>
+<div class="wrap">
+
+  <div class="kicker">FUSION · KNOCKOUT RUNDE 3 · PAAR 012</div>
+  <h1>Die homotopische <span class="x">Lese-Schreib-Scheibe</span></h1>
+  <p class="subtitle">Fusion aus: r2-022.html ✕ r2-012.html  (Round 3)</p>
+  <p class="lede">Beide R2-Papiere mappen die empirische Mechanik eines trainierten Transformers auf eine formale
+  Struktur und verwerfen beide exakte Gleichheit als ehrliche Relation. <b>A</b> (r2-022) ist die
+  <strong>konkrete, quantifizierte Realisierung</strong>: ein Stapel lokaler Lese-Schreib-Operatoren
+  (entropische OT-Lesung × niedrig-rangiges SVD-Schreiben), deren Komposition den Raum
+  <em>jacobian-morphed</em> und auf einer dünnen, niedrigenergetischen <strong>Nützlichkeitsscheibe</strong>
+  mündet (Boltzmann-Temperatur <code>T</code>, Halluzination = danebenfallen). <b>B</b> (r2-012) ist die
+  <strong>abstrakte homotopische Typisierung</strong> desselben Netzes: eine <strong>∞-Garbe von
+  ∞-Gruppoiden</strong> über der Tiefe, deren Verklebungsaxiom eine Struktur-Garantie liefert und das Ganze
+  metastabil macht. Fusion: <em>die Scheibe ist eine Homotopie-Klasse</em> — Energie (A) und Homotopie (B)
+  sind zwei Lesarten derselben weichen Relation; der Attraktor (A) realisiert die Garantie (B) metastabil.</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p><b>A</b> <span class="tag a">r2-022</span> sieht das Ganze als <strong>dynamisches System</strong>:
+    Layer sind Jacobian-Morphismen (Space-Morphing), Training formt die Datenmannigfaltigkeit zu einer
+    <strong>dünnen, niedrigenergetischen Scheibe</strong>, auf der Nützlichkeit lebt. Boltzmann
+    <code>P ∝ e^(−E/T)</code> steuert die Streuung; Halluzination = neben die Scheibe in ein falsches Tal
+    fallen, ohne OOD-Alarm. Der Mechanismus ist lokal und verifizierbar: jeder Kopf <em>liest</em> dicht und
+    entropisch (Softmax als <em>hergeleitetes</em> einseitiges OT-Optimum) und <em>schrift</em> ein
+    <strong>niedrig-rangiges</strong> (Rang-1, SVD-)Ergebnis in den Residual-Stream; die Komposition dieser
+    Lese-Schreib-Operatoren <em>ist</em> der globale Jacobian-Flow, und Backprop ist ein Policy-Gradient auf
+    der Fisher-Geometrie (verifiziert: IOI-Schaltkreis, +22&nbsp;% Listenkapazität).</p>
+    <p><b>B</b> <span class="tag b">r2-012</span> sieht denselben Transformer <strong>abstrakt-homotopisch</strong>:
+    ein trainiertes Netz ist ein <strong>∞-Garben-Objekt von ∞-Gruppoiden</strong> über der Tiefe. Die
+    beherrschende ehrliche Relation ist <strong>Homotopie (≃, nicht =)</strong> — Zustände sind „nicht exakt
+    gleich, sondern ineinander verformbar“. Die <strong>Struktur-Garantie</strong> kommt von der Garben-Seite
+    (lokal verträglich ⇒ eindeutiger globaler Schnitt = die flache Ausgabehyperebene); die
+    <strong>dynamische Fragilität</strong> von der Gruppoid-Seite (metastabil, Superposition als höhere
+    Identität, Phase-2-Kollaps). Homotopie ist die geteilte Währung, die die formale Lage gegenüber einem
+    <em>echten, trainierten</em> Netz ehrlich macht — echte Netze stimmen nur <em>bis auf Homotopie</em> überein.</p>
+    <p>Die fusionierte Position: <strong>Ein trainiertes Transformer ist ein einziger Gegenstand auf zwei
+    komplementären Ebenen.</strong> A liefert den <em>verifizierbaren Mechanismus</em> und seine Zahlen
+    (Rang-1-Kanäle, Energie <code>T</code>, IOI, +22&nbsp;%); B liefert die <em>strukturelle Garantie</em> und
+    die <em>Ehrlichkeits-Disziplin</em> (Verkleben, Homotopie). Die <strong>niedrigenergetische Scheibe (A) und
+    der eindeutige globale Schnitt (B) sind derselbe Gegenstand</strong>. <strong>Boltzmann-Energie (A) und
+    Homotopie (B) sind zwei Lesarten derselben weichen Relation</strong> — die Zustände eines trainierten Netzes
+    hängen zusammen durch <em>niedrigenergetische Verformbarkeit</em>, nicht exakte Gleichheit. Das Netz
+    <strong>besitzt</strong> einen eindeutigen globalen Schnitt (B, durch verträgliche lokale
+    Lese-Schreib-Operationen garantiert) und <strong>besetzt</strong> ihn metastabil als niedrigenergetischen
+    Attraktor (A, vom Lese-Schreib-Flow erreicht, temperaturgesteuert, und es kann danebenfallen = Halluzination
+    = Eintritt in ein anderes metastabiles Regime).</p>
+    <div class="callout big">
+      <b>Die eine fused Idee:</b> <strong>Die Scheibe ist eine Homotopie-Klasse.</strong> Lese-Schreiben
+      (A) = lokales Falten/Verkleben (B); deren Komposition = Jacobian-Flow (A) = Verkleben zum globalen Schnitt
+      (B); die Energie-Scheibe (A) = der eindeutige globale Schnitt (B) = eine Homotopie-Klasse;
+      <code>T</code> (A) = die Bandbreite dieser Klasse; die Halluzination (A) = eine <em>andere</em>
+      Homotopie-Klasse / ein fremdes metastabiles Tal (B). <em>Attraktor (A) realisiert die Garantie (B) metastabil.</em>
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die philosophische Grundhaltung ist fast identisch (formale Struktur + empirische Mechanik,
+    exakte Gleichheit verworfen, zwei Skalen/Seiten eines Netzes). Aber an drei Stellen nehmen A und B
+    <strong>inkompatible Stellungen</strong> ein:</p>
+
+    <div class="citem">
+      <h3>① Konkrete, verifizierbare Mechanik (A) vs. abstrakte, homotopische Typisierung (B)</h3>
+      <p><span class="tag a">A · r2-022</span> verankert alles in <strong>falsifizierbarer, quantitativer
+      Mechanik</strong>: Softmax als <em>hergeleitete</em> geschlossene OT-Lösung („die geschlossene,
+      nicht-iterative Form ist die Pointe“), SVD-Rang-1-Kanäle kausal verifiziert, IOI-Schaltkreis
+      (Duplicate → Inhibition → Mover), <strong>+22&nbsp;%</strong> Listenkapazität <em>ohne Training</em>.
+      Das Objekt ist <em>berechenbar und überprüfbar</em>.</p>
+      <p><span class="tag b">B · r2-012</span> spricht in <strong>∞-kategorialer Homotopie</strong>
+      (∞-Gruppoid, ∞-Garbe, Identitätstypen, Verklebungsaxiom) — einer formalen, <em>existenz-behauprenden</em>,
+      strukturellen Sprache ohne konkrete Zahlen. Das Objekt ist <em>formal und strukturell</em>.</p>
+      <p><em>&rarr; Echte Spannung: Welche Sprache ist die richtige — konkret/berechenbar/falsifizierbar (A)
+      oder abstrakt/strukturell/existenz-behauprend (B)?</em></p>
+    </div>
+
+    <div class="citem">
+      <h3>② Die „weiche Relation“ — Boltzmann-Energie (A) vs. Homotopie (B)</h3>
+      <p><span class="tag a">A · r2-022</span> lehnt exakte Gleichheit ab, weil die ehrliche Relation
+      <strong>Nähe durch Energie/Minimierung</strong> ist: Zustände ballen sich um die niedrigenergetische
+      Scheibe; <code>T</code> steuert die Streuung; eine Halluzination ist ein <em>falsches,
+      niedrigenergetisches Tal</em>. Die Weichheit ist <em>energetisch</em>.</p>
+      <p><span class="tag b">B · r2-012</span> lehnt exakte Gleichheit ab, weil die ehrliche Relation
+      <strong>Homotopie</strong> ist: Zustände sind „nicht exakt gleich, sondern ineinander verformbar“ (≃).
+      Die Weichheit ist <em>topologisch/deformationsbasiert</em>.</p>
+      <p><em>&rarr; Echte Spannung: Sind die Zustände durch <b>Energie-Nähe</b> (A) oder durch
+      <b>Verformbarkeit/Homotopie</b> (B) mit einander verbunden?</em></p>
+    </div>
+
+    <div class="citem">
+      <h3>③ Globales Objekt = dynamischer Attraktor (A) vs. strukturelle Garantie (B)</h3>
+      <p><span class="tag a">A · r2-022</span> Das globale Objekt ist die <strong>Energie-Scheibe als
+      dynamischer Attraktor</strong> — etwas, das von einem Flow (Training + Temperatur) <em>erreicht</em> wird;
+      es geht um den <em>Prozess</em>. Und es ist fragil: „kein OOD-Alarm, es glättet weiter.“</p>
+      <p><span class="tag b">B · r2-012</span> Das globale Objekt ist ein <strong>eindeutiger globaler
+      Schnitt als Struktur-Theorem</strong> — etwas, das von einem Axiom (lokal verträglich ⇒ global
+      eindeutig) <em>garantiert</em> wird; es geht um <em>Existenz/Struktur</em>. Und es ist fragil:
+      „metastabil, Phase 2 = alles verschmilzt = Tod.“</p>
+      <p><em>&rarr; Echte Spannung: Ist das globale Objekt etwas, das <b>von einem Flow erreicht</b> wird
+      (A, dynamisch) oder etwas, das <b>von einem Axiom garantiert</b> wird (B, strukturell/existentiell)?</em></p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0">① Zwei Ebenen desselben Objekts — Modell und Typtheorie</h3>
+      <p>A und B sind keine Rivalen, sondern <strong>zwei Ebenen desselben Gegenstands</strong>. A ist die
+      <em>konkrete, berechenbare Realisierung</em> (das „Modell“ — die tatsächlichen Operatoren, Kanäle,
+      Energien); B ist die <em>abstrakte, formale Typisierung</em> davon (die „Typtheorie“ — die Struktur, die
+      diese Operatoren instanziieren). A’s Lese-Schreib-Operatoren <strong>sind</strong> B’s lokale
+      Falten/Schnitte; A’s Komposition-zum-Flow <strong>ist</strong> B’s Verkleben; A’s Scheibe <strong>ist</strong>
+      B’s globaler Schnitt. A’s Zahlen (Rang-1, <code>T</code>, +22&nbsp;%) sind die <em>Zeugen</em>, dass B’s
+      abstrakte ∞-Garbe von ∞-Gruppoiden nicht nur formal, sondern <strong>tatsächlich realisiert</strong> ist.
+      <strong>Fusion:</strong> die ∞-Garbe (B) wird vom konkreten Lese-Schreib-Flow (A) <em>besetzt</em> — formale
+      Struktur und Mechanismus sind die zwei Seiten eines Objekts.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">② Energie und Homotopie sind zwei Messtasten derselben Weichheit</h3>
+      <p>Die niedrigenergetische Scheibe (A) ist genau der Ort, an dem eine <strong>Homotopie-Klasse</strong>
+      (B) stabil ist: zwei Zustände auf der Scheibe sind homotop (entlang der Scheibe niedrigenergetisch
+      verformbar). Eine <strong>Halluzination</strong> (A: danebenfallen ins falsche Tal) <strong>ist</strong> der
+      <em>Verlass der Homotopie-Klasse</em> in ein <em>anderes</em> niedrigenergetisches Tal (A) = eine
+      <em>andere</em> Homotopie-Klasse / ein fremdes metastabiles Regime (B). Energie-Distanz ≈
+      Homotopie-Distanz im trainierten Netz: <code>T</code> (A) = wie weit man <em>innerhalb</em> seiner Klasse
+      wandern darf, bevor man sie verlässt; Homotopie-Weichheit (B) = die <em>Bandbreite</em> dieser Klasse.
+      <strong>Fusion:</strong> dieselbe Weichheit, zwei Messtasten — energetisch (A) und topologisch (B).</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">③ Existenz (B) + Dynamik (A) sind die beiden Fragen</h3>
+      <p>Genau wie B für sein eigenes Paar (R1) aufgelöst hat: Die <strong>Garben-Seite</strong> (B) beantwortet
+      die <em>existenzielle</em> Frage — <em>Gibt</em> es, wenn lokal verträglich, ein eindeutiges globales Map?
+      Antwort: ja (Struktur-Garantie, bedingt an Verträglichkeit/Breite). Die <strong>Gruppoid-/Flow-Seite</strong>
+      (A) beantwortet die <em>dynamische</em> Frage — <em>Verweilt</em> das trainierte Netz in einem Zustand, der
+      zusammenhält? Antwort: nur metastabil (Attraktor, <code>T</code>-gesteuert, kann danebenfallen).
+      <strong>Fusion:</strong> Das Netz <strong>besitzt</strong> einen eindeutigen globalen Schnitt (B,
+      garantiert) <strong>und besetzt</strong> ihn metastabil als niedrigenergetischen Attraktor (A, vom
+      Lese-Schreib-Flow erreicht). Garantie auf Struktur-Ebene, Fragilität auf Dynamik-Ebene.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3><span class="tag a">A · r2-022</span> Die konkrete Lese-Schreib-Dynamik (Morphing × Scheibe × OT)</h3>
+    <ul>
+      <li><b>Space-Morphing statt Point-Moving:</b> Layer verzerren den Raum (Einstein-Analogie). Residual-Stream
+        <code>h[l+1]=h[l]+Δ[l]</code>, Jacobian <code>J=I+J_Δ</code>. Innere Layer leisten die „schwere Arbeit“
+        (größte Warps); der letzte Layer dreht zurück.</li>
+      <li><b>Jacobian = lokale Röntgenaufnahme des Warps:</b> <code>J=J_sym+J_antisym</code>; Divergenz=tr(J),
+        Wirbel/Curl, Scherung, Det (Flip). Coq-verifizierte Identitäten: <code>tr(J_antisym)=0</code>,
+        <code>tr(I+Δ)=n+tr(Δ)</code>.</li>
+      <li><b>Energie-Landschaft (LeCun):</b> niedrige Energie &harr; korrekt. Training formt die Landschaft, bis
+        Datenmannigfaltigkeit = Tal = <em>Nützlichkeitsscheibe</em>. Mannigfaltigkeits-Hypothese: sinnvolle Daten
+        auf niedrig-dimensionaler Fläche; <code>|V|^n</code> Antworten gegen ~10<sup>80</sup> Atome.</li>
+      <li><b>Boltzmann / Temperatur:</b> <code>P ∝ e^(−E/T)</code>; kalt = präzise, heiß = kreativ. „Kreativität
+        ist buchstäblich Temperatur-Erhöhung.“ Die Physik ist Metapher, die <em>Form</em> ist exakt.</li>
+      <li><b>Halluzination:</b> neben die Scheibe in ein <em>falsches Tal</em> fallen (lokal
+        niedrigenergetisch), <strong>kein eingebauter OOD-Alarm</strong> — es glättet weiter.</li>
+      <li><b>Lokales Lesen (r1-074):</b> jede Attention-Zeile = einseitiges entropisches OT-Problem
+        <code>min −⟨p,s⟩+εΣp log p</code> &rarr; Softmax <em>hergeleitet, nicht gewählt</em>;
+        <code>τ=√d_k</code>; Regularisierer-Familie (Sparsemax, α-entmax, ALiBi); Dual: <code>∇²φ=τF</code>.</li>
+      <li><b>Lernen:</b> Backprop-Gradient = REINFORCE-Policy-Gradient mit Simplex-Baseline;
+        <code>F=(1/τ²)(diag(p)−pp⊤)</code> = Fisher = OT-Krümmung = Rao-Metrik = RL.</li>
+      <li><b>Lokales Schreiben (r1-074):</b> <code>OV=U·S·V⊤=Σ s_i(U_i⊗V_i)</code> = Rang-1-Kanäle. Kanäle
+        tragen <strong>Position, nicht Inhalt</strong> (Zeiger/Variablen-Bindung). IOI-Schaltkreis;
+        Laundry-List-Fehler (3D-Indexraum, fragmentiert ab ~9–10 Objekten); gezieltes Steuern = <strong>+22&nbsp;%</strong>
+        Listenkapazität ohne Training.</li>
+    </ul>
+
+    <h3><span class="tag b">B · r2-012</span> Die abstrakte homotopische Typisierung (∞-Gruppoid × ∞-Garbe)</h3>
+    <ul>
+      <li><b>∞-Gruppoid (Identität = Pfad):</b> <code>Id_A(a,b)</code>; Superposition = <em>höhere Identität</em>
+        (2-/3-Pfade, „mehrere Arten, gleich zu sein“), zahlt den Interferenzpreis. Nicht-injektiv, polysemantisch.</li>
+      <li><b>∞-Garbe über der Tiefe:</b> lokale Falten (Schnitte in ungenutzte Dimensionen) <em>verkleben</em>;
+        verträglich ⇒ <strong>eindeutiger globaler Schnitt</strong> (die flache Ausgabehyperebene).</li>
+      <li><b>Verklebungsaxiom (Garben-Garantie):</b> lokal verträglich ⇒ global eindeutig — eine
+        <em>Struktur-Zusicherung</em>, bedingt an Breite/Verträglichkeit.</li>
+      <li><b>ReLU als verlustvolle Restriktion:</b> negative Hälfte weg (einweg) — „der Verlust ermöglicht
+        Verkleben“. Im Ast (FFN) restringierend, an der Residual-Verbindung erhaltend.</li>
+      <li><b>Metastabilität:</b> Phase 1 (schnell, nützliche Cluster) vs. Phase 2 (sehr langsam, „alles
+        verschmilzt = Tod“); 12/24/96 Schichten reichen für Phase 1, nicht für Phase 2.</li>
+      <li><b>Block-Mechanik als Garben-Operationen:</b> Attention = Kontraktion auf der Positionsachse (bewiesener
+        Kollaps <code>d≥3</code>); FFN = Key-Value-Speicher auf der Featureachse; Residual-Stream dominiert.</li>
+      <li><b>Effizienz-Kalkül &amp; Preis:</b> Falten (Ast breiter als Datendimension) &rarr; <code>N^L</code>
+        lineare Regionen (exponentiell); Shear (keine freien Dimensionen) &rarr; polynomial/sehr tief. Preis =
+        Interferenz (A) + verworfene negative Hälfte (B) = Distanz zwischen „exakt“ und „bis auf Homotopie“
+        verträglich.</li>
+      <li><b>Das ∞-Objekt &amp; Ehrlichkeits-Disziplin:</b> <code>F: Depth^op → Spaces</code>, Stiele =
+        Trajektorien-∞-Gruppoiden, bis-auf-Homotopie-Verkleben. Disziplin: <em>typisiere die Konstruktion
+        (Garbe/∞-Gruppoid), kennezeichne die Behauptung (Belegstatus/Homotopie-Fehler).</em></li>
+    </ul>
+
+    <h3><span class="tag x">Fusion</span> Die Brücke — wie die zwei Ebenen ineinandergreifen</h3>
+    <div class="eq">Scheibe (A)  ≅  globaler Schnitt (B)  ≅  eine Homotopie-Klasse
+      <span class="a">— derselbe Gegenstand, zwei Lesarten</span></div>
+    <div class="eq">Lese-Schreib-Operator (A) = lokales Falten/Verkleben (B);
+      <span class="b">Komposition &rarr; Jacobian-Flow (A) = Verkleben &rarr; globaler Schnitt (B)</span></div>
+    <ul>
+      <li><b>Lesen = Operator, Schreiben = Warp (A) ≅ Verkleben (B):</b> das dichte entropische Lesen ist der
+        lokale Operator, das niedrig-rangige SVD-Schreiben der Rang-1-Beitrag zum Layer-Jacobian; zusammen sind es
+        B’s lokale Schnitte, die über die Tiefe verklebt werden.</li>
+      <li><b>Energie-Scheibe (A) = eindeutiger globaler Schnitt (B):</b> die Scheibe ist die Fixstruktur, auf die
+        die Rang-1-Schreiben kollabieren — und zugleich die Homotopie-Klasse, auf die sich die lokalen,
+        verträglichen Operationen verkleben.</li>
+      <li><b>Zwei Weichheits-Messtasten:</b> <code>T</code> (A, Boltzmann) steuert die Streuung <em>um</em> die
+        Klasse; Homotopie-Weichheit (B) steuert die Bandbreite <em>der</em> Klasse. Beide messen, wie weit man
+        „noch gleich“ ist.</li>
+      <li><b>Fisher-Dämpfung / kein OOD-Alarm (A) ≅ Metastabilität (B):</b> dieselbe Eigenschaft — eine
+        selbstbewusste, niedrig-entropische Vorwärtskarte flaggt sich nicht selbst; das Netz bleibt in einer
+        Klasse, bis es (durch Temperatur/Fehltraining) danebenfällt.</li>
+      <li><b>Halluzination (fused):</b> Lesen (dicht) + Schreiben (dünn) + <code>T</code> (A) tragen den Zustand
+        neben die Scheibe ins falsche Tal — und das ist exakt das <em>Verlassen der Homotopie-Klasse</em> in ein
+        fremdes metastabiles Regime (B).</li>
+    </ul>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — die Scheibe als Homotopie-Klasse</h2>
+    <p style="max-width:74ch">Ein Bild, beide Ebenen zugleich: In einem <strong>space-morphenden</strong>
+    Gitter (A) schwimmt die <strong>Nützlichkeitsscheibe</strong> — zugleich ist sie die
+    <strong>globale Schnitt-Klasse</strong> (B). Der <strong>Energie-Heatmap</strong> (Boltzmann, <code>T</code>, A)
+    zeigt, wo es niedrigenergetisch ist; das <strong>falsche Tal</strong> ist eine <em>andere</em>
+    Homotopie-Klasse (A+B). Die <strong>Homotopie-Weiche ∞</strong> (B) verbreitert die Klasse (exakt
+    <code>=</code> &rarr; weich <code>≃</code>) — je weicher, desto mehr „zwischenliegende“ Punkte gelten als
+    verträglich, und der <strong>globale Schnitt</strong> (B’s Garantie) wird stabiler. Der
+    <strong>dragbare Query-Punkt</strong> zeigt live, ob er in derselben Homotopie-Klasse wie die Scheibe liegt
+    (Nützlichkeit), daneben (weich) oder im falschen Tal (Halluzination / andere Klasse).</p>
+
+    <div class="viz-stage">
+      <canvas id="viz" width="800" height="520"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl"><label>Space-Morphing / Warp  <span class="val" id="vWarp">55</span></label>
+        <input type="range" id="sWarp" min="0" max="100" step="1" value="55"></div>
+      <div class="ctrl"><label>Temperatur T (Boltzmann)  <span class="val" id="vT">0.50</span></label>
+        <input type="range" id="sT" min="0.05" max="2.5" step="0.05" value="0.5"></div>
+      <div class="ctrl"><label>Homotopie-Weiche ∞  <span class="val" id="vHom">25</span></label>
+        <input type="range" id="sHom" min="0" max="100" step="1" value="25"></div>
+      <div class="ctrl" style="display:flex;align-items:center;gap:18px;padding-top:14px;flex-wrap:wrap">
+        <label class="chk"><input type="checkbox" id="cPath" checked> Identitätspfade (B)</label>
+        <button id="bRand">🎲 Zufalls-Query</button>
+      </div>
+    </div>
+
+    <div class="readouts">
+      <div class="ro"><div class="k">Scheiben-Distanz · A</div><div class="v" id="roDist">—</div></div>
+      <div class="ro"><div class="k">Energie E(q) · A</div><div class="v" id="roE">—</div></div>
+      <div class="ro"><div class="k">Boltzmann T · A</div><div class="v" id="roT">—</div></div>
+      <div class="ro"><div class="k">Homotopie-Relation · B</div><div class="v" id="roHom">—</div></div>
+      <div class="ro hl"><div class="k">Klasse(q) · Fusion</div><div class="v" id="roClass">—</div></div>
+      <div class="ro"><div class="k">Globaler Schnitt · B</div><div class="v" id="roGlue">—</div>
+        <div class="bar"><i id="roGlueBar"></i></div></div>
+    </div>
+    <div class="status" id="roStatus">–</div>
+
+    <div class="legend">
+      <span><i style="background:var(--acc2)"></i> Nützlichkeitsscheibe = globale Schnitt-Klasse (A+B)</span>
+      <span><i style="background:var(--bad)"></i> Falsches Tal = andere Homotopie-Klasse (A+B)</span>
+      <span><i style="background:var(--acc3)"></i> Boltzmann-Wolke / Energiefeld (A)</span>
+      <span><i style="background:var(--acc)"></i> Identitätspfade / Verformung (B)</span>
+      <span><i style="background:var(--good)"></i> Query: gleiche Klasse</span>
+      <span><i style="background:var(--warn)"></i> Query: zwischen (≃)</span>
+    </div>
+    <p class="caption"><strong>Klasse(q)</strong> ist die fusionierte Brücke: „auf der Scheibe liegen“ (A)
+    <em>bedeutet</em> „in derselben Homotopie-Klasse wie die Scheibe“ (B). Je weicher die Homotopie (B), desto
+    enger rücken die Energieminima (A) zu einer Klasse zusammen — und desto stabiler wird der globale Schnitt,
+    den das Verklebungsaxiom garantiert. Die Halluzination ist in beiden Sprachen derselbe Vorgang:
+    <em>danebenfallen in eine andere Klasse</em>.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../2/r2-022.html">r2-022.html</a>
+        <div class="desc">A — „Die morphende Lese-Schreib-Maschine“ (R2 · 022): globale dynamische
+        System-Ansicht (Jacobian-Morphing, Energie-Scheibe, Boltzmann-T, kein OOD-Alarm) verschmolzen mit dem
+        lokalen Kopf (entropisches-OT-Softmax, Backprop als Policy-Gradient/Fisher, niedrig-rangige SVD-Kanäle,
+        IOI-Schaltkreis, +22&nbsp;%). Liefert den <strong>konkreten, verifizierbaren Mechanismus</strong>.</div>
+      </div>
+      <div>
+        <a href="../2/r2-012.html">r2-012.html</a>
+        <div class="desc">B — „Das homotopische Netz — ∞-Garbe von ∞-Gruppoiden“ (R2): ∞-Gruppoid
+        (Identität = Pfad, Superposition als höhere Identität, metastabil, nicht-injektiv) verschmolzen mit der
+        ∞-Garbe über der Tiefe (Verklebungsaxiom, Homotopie statt =, ReLU als verlustvolle Restriktion,
+        exponentielle Regionen). Liefert die <strong>abstrakte homotopische Typisierung</strong> und die
+        Ehrlichkeits-Disziplin.</div>
+      </div>
+    </div>
+    <div class="footer">
+      Knockout-Fusion · Runde 3 · Paar 012 · Die Scheibe ist eine Homotopie-Klasse: A = Mechanismus,
+      B = Typisierung · Alle Daten inline, keine Netzabrufe.
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz');
+  if(!cv||!cv.getContext) return;
+  var ctx=cv.getContext('2d');
+  var DPR=Math.min(window.devicePixelRatio||1,2);
+  var W=800,H=520,CX=400,CY=250,U=200,TAU=Math.PI*2;
+  var FAKE={x:0.62,y:-0.5}, RF=0.16, FAKEDEPTH=1.1, SIGMA=0.11;
+  var state={warp:55, T:0.5, hom:25, showPath:true};
+  var q={x:-0.3,y:0.16};
+  var dragging=false;
+
+  var sheetBase=[];
+  (function(){for(var i=0;i<=60;i++){var t=-1+2*i/60; sheetBase.push({x:t,y:0.22*Math.sin(1.5*t)+0.05});}})();
+
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function PX(x){return CX+x*U;}
+  function PY(y){return CY-y*U;}
+  function IX(cx){return (cx-CX)/U;}
+  function IY(cy){return (CY-cy)/U;}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);
+    t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  function F(x,y,s){
+    var r=Math.hypot(x,y)+1e-6, ang=Math.atan2(y,x);
+    var th=s*0.9*Math.exp(-r*1.2);
+    var sc=1+0.22*s*Math.exp(-r*1.0);
+    var nr=r*sc, na=ang+th;
+    return {x:nr*Math.cos(na)+0.05*s*Math.sin(y*3), y:nr*Math.sin(na)+0.05*s*Math.cos(x*3)};
+  }
+  function warp(arr,s){var o=[];for(var i=0;i<arr.length;i++)o.push(F(arr[i].x,arr[i].y,s));return o;}
+  function minDist(pt,arr){var m=1e9;for(var i=0;i<arr.length;i++){var d=Math.hypot(pt.x-arr[i].x,pt.y-arr[i].y);if(d<m)m=d;}return m;}
+  function centroid(arr){var sx=0,sy=0;for(var i=0;i<arr.length;i++){sx+=arr[i].x;sy+=arr[i].y;}return {x:sx/arr.length,y:sy/arr.length};}
+  function energy(x,y,sheet){
+    var d=minDist({x:x,y:y},sheet);
+    var df=Math.hypot(x-FAKE.x,y-FAKE.y);
+    return 0.6*Math.pow(d/SIGMA,2)-FAKEDEPTH*Math.exp(-df*df/(2*RF*RF));
+  }
+  function makeData(s){
+    var on=[];
+    for(var i=0;i<8;i++){var p=sheetBase[Math.round(3+(i/7)*(59-3))];var wp=F(p.x,p.y,s);
+      on.push({x:wp.x+0.04*Math.sin(i*1.3),y:wp.y+0.04*Math.cos(i*0.9),c:'on'});}
+    var bet=[];
+    for(var j=0;j<6;j++){var p2=sheetBase[Math.round(4+(j/5)*(58-4))];var wp2=F(p2.x,p2.y,s);
+      var dir=Math.sin(j*1.1+0.4);
+      bet.push({x:wp2.x+0.05*Math.cos(j*2.0),y:wp2.y+0.18*dir+0.05*Math.sin(j*1.7),c:'bet'});}
+    var off=[];var rr=mulberry32(77);
+    for(var k=0;k<5;k++){var a=rr()*TAU,r=0.03+rr()*0.11;off.push({x:FAKE.x+Math.cos(a)*r,y:FAKE.y+Math.sin(a)*r,c:'off'});}
+    return on.concat(bet,off);
+  }
+  function themeColors(){
+    var cs=getComputedStyle(document.documentElement);
+    function g(n){return cs.getPropertyValue(n).trim();}
+    return {bg:g('--viz-bg')||'#05060f', stroke:g('--stroke')||'rgba(255,255,255,.10)',
+      ink:g('--ink')||'#e8ecf5', dim:g('--dim')||'#a7b3cc',
+      acc:g('--acc')||'#5eead4', acc2:g('--acc2')||'#a78bfa', acc3:g('--acc3')||'#fbbf24',
+      acc4:g('--acc4')||'#fb7185', good:g('--good')||'#6ee7a8', bad:g('--bad')||'#ff6b6b', warn:g('--warn')||'#fbbf24'};
+  }
+  function hexA(hex,a){
+    if(!hex)return 'rgba(128,128,128,'+a+')';
+    var h=String(hex).replace('#','');
+    if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+    var n=parseInt(h,16);
+    if(isNaN(n))return 'rgba(128,128,128,'+a+')';
+    return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';
+  }
+  function set(id,v){var el=document.getElementById(id);if(el)el.textContent=v;}
+
+  function draw(){
+    try{
+      var TC=themeColors();
+      var s=state.warp/100;
+      var sheet=warp(sheetBase,s);
+      var band=0.10+(state.hom/100)*0.5;
+      var data=makeData(s);
+      var sheetCen=centroid(sheet);
+
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle=TC.bg; ctx.fillRect(0,0,W,H);
+
+      /* Boltzmann energy heatmap (A) */
+      (function(){
+        var cols=40, rows=26, cw=W/cols, ch=H/rows, P=[],pmin=1e9,pmax=-1e9;
+        for(var gy=0;gy<rows;gy++){for(var gx=0;gx<cols;gx++){
+          var wx=IX((gx+0.5)*cw), wy=IY((gy+0.5)*ch);
+          var Pv=Math.exp(-energy(wx,wy,sheet)/Math.max(0.05,state.T));
+          P.push(Pv); if(Pv<pmin)pmin=Pv; if(Pv>pmax)pmax=Pv;
+        }}
+        for(var gy2=0;gy2<rows;gy2++){for(var gx2=0;gx2<cols;gx2++){
+          var idx=gy2*cols+gx2, tt=(P[idx]-pmin)/((pmax-pmin)||1);
+          tt=Math.pow(clamp(tt,0,1),1.7);
+          ctx.fillStyle=hexA(TC.acc3,0.03+tt*0.42);
+          ctx.fillRect(gx2*cw,gy2*ch,cw+1,ch+1);
+        }}
+      })();
+
+      /* warped coordinate grid (A space-morphing) */
+      ctx.lineWidth=1; ctx.strokeStyle=TC.stroke; ctx.globalAlpha=0.6;
+      var step=0.2, gxv, yv, pf, first;
+      for(gxv=-1.1;gxv<=1.101;gxv+=step){
+        ctx.beginPath();first=true;
+        for(yv=-1.35;yv<=1.251;yv+=step){pf=F(gxv,yv,s);var X=PX(pf.x),Y=PY(pf.y);
+          if(first){ctx.moveTo(X,Y);first=false;}else ctx.lineTo(X,Y);}
+        ctx.stroke();
+      }
+      for(yv=-1.35;yv<=1.251;yv+=step){
+        ctx.beginPath();var f2=true;
+        for(gxv=-1.15;gxv<=1.101;gxv+=step){pf=F(gxv,yv,s);var X2=PX(pf.x),Y2=PY(pf.y);
+          if(f2){ctx.moveTo(X2,Y2);f2=false;}else ctx.lineTo(X2,Y2);}
+        ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+
+      /* sheet = global cut-class = homotopy class (glow width = class band, B) */
+      ctx.lineJoin='round'; ctx.lineCap='round';
+      ctx.beginPath();
+      for(var a=0;a<sheet.length;a++){var Pp=sheet[a];var Xp=PX(Pp.x),Yp=PY(Pp.y);if(a===0)ctx.moveTo(Xp,Yp);else ctx.lineTo(Xp,Yp);}
+      ctx.strokeStyle=hexA(TC.acc2,0.15); ctx.lineWidth=Math.max(4,band*U); ctx.stroke();
+      ctx.beginPath();
+      for(var b=0;b<sheet.length;b++){var Qp=sheet[b];var Xq=PX(Qp.x),Yq=PY(Qp.y);if(b===0)ctx.moveTo(Xq,Yq);else ctx.lineTo(Xq,Yq);}
+      ctx.strokeStyle=TC.acc2; ctx.lineWidth=2.6; ctx.stroke();
+
+      /* false valley = other homotopy class (A+B) */
+      ctx.setLineDash([5,4]); ctx.strokeStyle=TC.bad; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(PX(FAKE.x),PY(FAKE.y),RF*U,0,TAU); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=TC.bad; ctx.font='bold 11px system-ui,sans-serif'; ctx.textAlign='left';
+      ctx.fillText('FALSCHES TAL = andere Homotopie-Klasse', PX(FAKE.x)+RF*U+8, PY(FAKE.y)+4);
+      ctx.fillStyle=TC.dim; ctx.font='700 12px system-ui,sans-serif';
+      ctx.fillText('Nützlichkeitsscheibe = globale Schnitt-Klasse (A+B)', 12, 20);
+
+      /* identity paths (B) / groupoid paths (A) */
+      if(state.showPath){
+        for(var i=0;i<data.length;i++){
+          var pt=data[i];
+          var cen=(pt.c==='off')?FAKE:sheetCen;
+          var X=PX(pt.x),Y=PY(pt.y),XC=PX(cen.x),YC=PY(cen.y);
+          var mx=(X+XC)/2, my=(Y+YC)/2;
+          var dx=XC-X, dy=YC-Y, ln=Math.hypot(dx,dy)||1;
+          var ox=-dy/ln*10, oy=dx/ln*10;
+          var same=(pt.c!=='off');
+          ctx.strokeStyle=same?hexA(TC.acc,0.30):hexA(TC.bad,0.30);
+          ctx.lineWidth=1.1; ctx.beginPath();
+          ctx.moveTo(X,Y); ctx.quadraticCurveTo(mx+ox,my+oy,XC,YC); ctx.stroke();
+        }
+      }
+
+      /* data points */
+      for(var j=0;j<data.length;j++){
+        var p3=data[j], X3=PX(p3.x),Y3=PY(p3.y);
+        var col=p3.c==='on'?TC.good:(p3.c==='bet'?TC.warn:TC.bad);
+        ctx.fillStyle=col; ctx.beginPath(); ctx.arc(X3,Y3,p3.c==='on'?4:3,0,TAU); ctx.fill();
+        ctx.strokeStyle=TC.bg; ctx.lineWidth=1; ctx.stroke();
+      }
+
+      /* query point + status */
+      var d=minDist(q,sheet), df=Math.hypot(q.x-FAKE.x,q.y-FAKE.y);
+      var qc;
+      if(df<0.20 && df<d+0.06) qc='hallu';
+      else if(d<band) qc='on';
+      else qc='off';
+      var qcen=(qc==='hallu')?FAKE:sheetCen;
+      var Xq=PX(q.x),Yq=PY(q.y),Xqc=PX(qcen.x),Yqc=PY(qcen.y);
+      ctx.setLineDash([4,4]); ctx.strokeStyle=hexA(TC.ink,0.5); ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(Xq,Yq); ctx.lineTo(Xqc,Yqc); ctx.stroke(); ctx.setLineDash([]);
+      var qcol=qc==='on'?TC.good:qc==='hallu'?TC.bad:TC.warn;
+      ctx.fillStyle=qcol; ctx.beginPath(); ctx.arc(Xq,Yq,9,0,TAU); ctx.fill();
+      ctx.strokeStyle=TC.ink; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(Xq,Yq,9,0,TAU); ctx.stroke(); ctx.lineWidth=1;
+      ctx.fillStyle=qcol; ctx.font='bold 13px system-ui,sans-serif'; ctx.textAlign='left';
+      var lab=qc==='on'?'AUF DER SCHEIBE ≃ GLEICHE KLASSE':qc==='hallu'?'HALLUZINATION / ANDERE KLASSE':'ZWISCHEN (≃)';
+      var lx=clamp(Xq+14,10,W-270); ctx.fillText(lab,lx,clamp(Yq-14,18,H-10));
+
+      /* readouts */
+      var E=energy(q.x,q.y,sheet);
+      var within=0;
+      for(var k2=0;k2<data.length;k2++){if(minDist(data[k2],sheet)<band)within++;}
+      var glue=within/data.length;
+      set('roDist',d.toFixed(2));
+      set('roE',E.toFixed(2));
+      set('roT',state.T.toFixed(2));
+      set('roHom',state.hom<5?'exakt (=)':'weich (≃)');
+      var rc=document.getElementById('roClass');
+      if(rc){rc.textContent=qc==='on'?'GLEICH (≃)':qc==='hallu'?'ANDERE':'ZWISCHEN';rc.style.color=qcol;}
+      set('roGlue',(glue*100).toFixed(0)+'%');
+      var bar=document.getElementById('roGlueBar'); if(bar)bar.style.width=(glue*100).toFixed(0)+'%';
+      var st=document.getElementById('roStatus');
+      if(st){
+        if(qc==='on'){st.className='status ok';
+          st.textContent='✓ AUF DER SCHEIBE ≃ GLEICHE HOMOTOPIE-KLASSE — Garben-Garantie: eindeutiger globaler Schnitt (B), metastabil besetzt vom Lese-Schreib-Flow (A).';}
+        else if(qc==='hallu'){st.className='status bad';
+          st.textContent='✗ HALLUZINATION / ANDERE HOMOTOPIE-KLASSE — lokales falsches Tal (A), kein OOD-Alarm (A), fremdes metastabiles Regime (B). Keine Garantie.';}
+        else {st.className='status warn';
+          st.textContent='● ZWISCHEN — weich (≃), Kollaps-/Halluzinations-Risiko. Sucht noch die eigene Homotopie-Klasse.';}
+      }
+    }catch(e){}
+  }
+
+  function bind(id,fn){var e=document.getElementById(id);if(e){e.addEventListener('input',function(ev){fn(ev.target.value);draw();});}}
+  function wire(){
+    bind('sWarp',function(v){state.warp=+v; set('vWarp',Math.round(v));});
+    bind('sT',function(v){state.T=Math.max(0.05,+v); set('vT',state.T.toFixed(2));});
+    bind('sHom',function(v){state.hom=+v; set('vHom',Math.round(v));});
+    var cp=document.getElementById('cPath'); if(cp)cp.addEventListener('change',function(e){state.showPath=e.target.checked;draw();});
+    var rb=document.getElementById('bRand'); if(rb)rb.addEventListener('click',function(){
+      q={x:(Math.random()*2-1)*0.9, y:(Math.random()*1.5-0.75)}; draw();});
+  }
+  function toWorld(e){
+    var r=cv.getBoundingClientRect();
+    var cx=(e.clientX-r.left)*(W/r.width);
+    var cy=(e.clientY-r.top)*(H/r.height);
+    return {x:clamp(IX(cx),-1.3,1.3), y:clamp(IY(cy),-1.4,1.3)};
+  }
+  cv.addEventListener('mousedown',function(e){dragging=true;var w=toWorld(e);q={x:w.x,y:w.y};draw();});
+  window.addEventListener('mousemove',function(e){if(dragging){var w=toWorld(e);q={x:w.x,y:w.y};draw();}});
+  window.addEventListener('mouseup',function(){dragging=false;});
+  cv.addEventListener('touchstart',function(e){dragging=true;var w=toWorld(e.touches[0]);q={x:w.x,y:w.y};e.preventDefault();draw();},{passive:false});
+  cv.addEventListener('touchmove',function(e){if(dragging){var w=toWorld(e.touches[0]);q={x:w.x,y:w.y};e.preventDefault();draw();}},{passive:false});
+  cv.addEventListener('touchend',function(){dragging=false;});
+
+  var thBtn=document.getElementById('btnTheme');
+  if(thBtn)thBtn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');setTimeout(draw,20);});
+  if(typeof MutationObserver!=='undefined'){
+    new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+
+  cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+  wire();
+  draw();
+})();
+</script>
+</body>
+</html>

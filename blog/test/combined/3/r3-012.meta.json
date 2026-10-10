@@ -1,0 +1,16 @@
+{
+  "no": "012",
+  "a": "combined/2/r2-022.html",
+  "b": "combined/2/r2-012.html",
+  "a_title": "Die morphende Lese-Schreib-Maschine (R2 · 022)",
+  "b_title": "Das homotopische Netz — ∞-Garbe von ∞-Gruppoiden (R2)",
+  "combined_theme": "scheibe-als-homotopieklasse",
+  "one_line": "Ein trainiertes Netz ist ein Objekt auf zwei Ebenen — ein konkretes Lese-Schreib-Dynamiksystem (Scheibe als Attraktor) und seine abstrakte homotopische Typisierung (∞-Garbe von ∞-Gruppoiden); die Nützlichkeitsscheibe ist eine Homotopie-Klasse, und Boltzmann-Energie (A) und Homotopie (B) sind dieselbe weiche Relation.",
+  "contradictions": [
+    "Sprache: A verankert alles in falsifizierbarer, quantitativer Mechanik (hergeleitetes OT-Softmax, kausal verifizierte SVD-Rang-1-Kanäle, IOI-Schaltkreis, +22% ohne Training); B spricht in abstrakter ∞-kategorialer Homotopie (∞-Gruppoid, ∞-Garbe, Identitätstypen, Verklebungsaxiom) ohne konkrete Zahlen — konkret/berechenbar/falsifizierbar (A) vs. formal/strukturell/existenz-behauprend (B).",
+    "Die weiche Relation: A verwirft exakte Gleichheit zugunsten von Energie-Nähe/Minimierung (Boltzmann-T, niedrigenergetische Scheibe, Halluzination = falsches Tal); B verwirft sie zugunsten von Homotopie (≃, ineinander verformbar) — energetische Weichheit (A) vs. topologische Weichheit (B).",
+    "Das globale Objekt: A = die Energie-Scheibe als dynamischer Attraktor (von einem Flow erreicht, fragil: kein OOD-Alarm); B = ein eindeutiger globaler Schnitt als Struktur-Theorem (von einem Axiom garantiert, fragil: metastabil, Phase-2-Kollaps) — Attraktor/Prozess (A) vs. Garantie/Existenz (B)."
+  ],
+  "resolution": "Zwei komplementäre Ebenen desselben Objekts: A = Modell/Mechanismus (konkrete Operatoren), B = Typtheorie/Garantie (formale Struktur); die ∞-Garbe (B) wird vom Lese-Schreib-Flow (A) besetzt. Energie und Homotopie sind zwei Messtasten derselben Weichheit — die Scheibe ist eine Homotopie-Klasse, T (A) ist ihre Bandbreite, die Halluzination ist das Verlassen dieser Klasse in ein fremdes metastabiles Tal. Existenz (B, Garantie) + Dynamik (A, Attraktor) sind die beiden Fragen: das Netz besitzt den eindeutigen globalen Schnitt und besetzt ihn metastabil.",
+  "viz": "Space-morphendes Gitter mit Nützlichkeitsscheibe (= globale Schnitt-Klasse), Boltzmann-Energie-Heatmap (T), falschem Tal (= andere Homotopie-Klasse), Homotopie-Weiche ∞ (verbreitert die Klasse, exakt = → weich ≃), Identitätspfaden und einem dragbaren Query-Punkt, der live Klasse(q), den globalen Schnitt (B) und den Status anzeigt."
+}

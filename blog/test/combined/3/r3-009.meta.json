@@ -1,0 +1,16 @@
+{
+  "no": "009",
+  "a": "combined/2/r2-008.html",
+  "b": "combined/2/r2-031.html",
+  "a_title": "Bedeutung ist ein Ort, eine Richtung und ein Kanal (Attraktor-Geometrie × Wahrheits-Backprop)",
+  "b_title": "Der gekrümmte Faserbündel-Fluss: gerichtete Attention, ihr Simplizial-Schatten und die intrinsische Dimension",
+  "combined_theme": "bedeutung-dunne-gekrummte-mannigfaltigkeit",
+  "one_line": "Bedeutung ist eine dünne, gekrümmte Mannigfaltigkeit, die sie zugleich als lineare Richtungen θ an Attraktor-Orten (A) und als Simplizial-Skelett von Bedeutungsklumpen mit intrinsischer Dimension (B) trägt — über die Schichten hin getragen von einem ID-Buckel (B), auf dem die Kristallisationsschichten (A) liegen, und gelesen/schrieben über denselben bidirektionalen Kanal.",
+  "contradictions": [
+    "Träger der Bedeutung: A liest Bedeutung als lineare Richtung θ / Attraktor-Ort (Projektion σ(θ·h), linear-algebraisch), B als kombinatorisch-topologisches Simplizial-Skelett + intrinsische Dimension (Kanten/Dreiecke/Kliken, Dimensionszahl).",
+    "Schicht-Achse: A = diskrete, konzeptspezifische Kristallisationsschichten (L18/L19/L24/L27 — 'in welcher Schicht kristallisiert dieses Konzept?'), B = ein einziger universeller, kontinuierlicher ID-Buckel (Anstieg → Gipfel 20–40 % → Abfall auf log₂(#Klassen), 'wie dünnt sich der Inhalt universell?').",
+    "Garantierte Struktur & Pathologie: A nimmt eine garantierte lineare Tangentengeometrie (Riemann/IFS/Funktor) und behandelt Fehlleistung nur am Rande (Guardrail/Abstand, metrisch); B nimmt ein gesundes Simplizial-Skelett und macht Fehler zu Top-Defekten (Riss=Halluzination, Schleife, Auffächerung = Risse des Skeletts)."
+  ],
+  "resolution": "Die Richtung θ (A) ist ein 1-Simplex des Skeletts — A liest die Order-0/1-Ebene linear, B die volle kombinatorische Ordnung; die diskreten Kristallisationsschichten (A) liegen auf dem universellen ID-Buckel (B) (Buckel = Bühne, Kristallisation = Akte); das gesunde Skelett (B) und die lineare Tangente (A) sind dasselbe gesunde Objekt, und ein Fehler ist ein Riss, an dem beides zugleich bricht (falscher Ort + falsche Richtung + global steigende ID).",
+  "viz": "2D-Schnitt: drei Attraktor-Klumpen (A=Ort/B=Sklumpen) mit linearem Richtung θ (A), draggable h, Guardrail-Ring, ∇ₕP∥θ; darüber die Schicht-Achse als ID-Buckel (B) mit A's Kristallisationsticks (L18/19/27); Schicht-Regler morpht das Simplizial-Skelett (Kanten/Dreiecke, B) entlang des Buckels; Buttons Kausal schreiben/Steern (A); Readout mit ID, Kanten, Basin-Distanz, σ(θ·h), Guardrail."
+}

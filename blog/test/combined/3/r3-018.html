@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Attraktor als niedrig-belegtes Register — zwei Gates, ein Budget (R3-018)</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#b8860b; --green:#2f8f4b; --panel:rgba(255,253,248,.95); --vizbg:#f4f0e7;
+  --r:16px; --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4c43a; --green:#6ee88a; --panel:rgba(20,27,36,.92); --vizbg:#0c1120;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:64px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,43px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)} h1 em.b{color:var(--amber)} h1 em.v{color:var(--violet)}
+.sub{font-size:15.5px;color:var(--muted);max-width:70ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:12px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:26px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+em{color:var(--violet);font-style:normal;font-weight:560}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.rose{border-color:var(--accent2);background:var(--accent2-soft)}
+.note.ok{border-color:var(--green);background:var(--accent-soft)}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin:1px 4px 1px 0}
+.tag.b{background:var(--amber-soft);color:var(--amber)}
+.eq{font-family:var(--mono);font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto;line-height:1.95;white-space:pre}
+.eq sup,.eq sub{font-size:.72em} .eq .op{color:var(--accent);font-weight:700} .eq .op2{color:var(--amber);font-weight:700} .eq .opv{color:var(--violet);font-weight:700} .eq .c{color:var(--muted)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700} .tbl td.k{color:var(--violet);font-weight:600}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px} li{margin-bottom:9px}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0} .viz .dsub{font-size:13px;color:var(--muted);margin-bottom:12px}
+#fuz{display:block;width:100%;height:470px;border-radius:12px;border:1px solid var(--line)}
+.ctl{margin:12px 0} .ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap} .ctl-lab b.v{color:var(--violet)}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].v::-webkit-slider-thumb{background:var(--violet)} input[type=range].v::-moz-range-thumb{background:var(--violet)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:104px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent)}
+.ro .box.violet{background:var(--violet-soft)} .ro .box.violet .v{color:var(--violet)}
+.ro .box.amber{background:var(--amber-soft)} .ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--accent2-soft)} .ro .box.rose .v{color:var(--accent2)}
+.ro .box.gold{background:var(--card)} .ro .box.gold .v{color:var(--gold)}
+.ro .box.green{background:var(--accent-soft)} .ro .box.green .v{color:var(--green)}
+.stat{font-size:13.5px;color:var(--muted);margin-top:12px} .stat b{color:var(--amber)}
+.legend{display:flex;gap:8px 18px;flex-wrap:wrap;margin:14px 0 4px;font-size:12.5px;color:var(--muted)}
+.lg{display:inline-flex;align-items:center;gap:7px} .lg i{width:22px;height:0;border-top:3px solid;display:inline-block}
+.viz-note{font-size:12.5px;color:var(--muted);margin-top:12px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;display:block;margin-bottom:4px}
+.prov .item .lbl.b{color:var(--amber)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">&#9728;&#65038; / &#9790;</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 3 &middot; Paar 018 &middot; Lokale Dynamik &times; Globale Topologie</div>
+  <h1>Der <em>Attraktor</em> als <em class="b">niedrig-belegtes</em> <em class="v">Register</em></h1>
+  <p class="sub">Zwei R2-Fusionen, <b>ein Objekt</b>: das <b>trainierte Netz</b>, gelesen als <b>niedrigzyklischer, niedrig-belegter Attraktor im festen Budget</b>. <b>A (r2-033)</b> misst es <b>metrisch-statistisch</b> &mdash; die lokale Tangente (Jacobi: Stretch+Rotate, renormierte Power-Iteration &rarr; Attraktor) koppelt an einen <b>festen Moduli-Raum der Kapazit&auml;t C = #E&#8728;&minus;#V&rarr;</b>, dessen Datenbild eine <b>intrinsische Dimension ID</b> belegt; das Maß ist <b>ID/C</b>, und <b>lokale Konvergenz ist die Vorbedingung</b> des Einbruchs. <b>B (r2-035)</b> misst es <b>topologisch-kombinatorisch</b> &mdash; das Netz ist ein <b>filtrierter Simplizialkomplex, zugleich ein dynamischer Attraktor</b>, dessen <b>Betti-Zyklen &beta;&#8320;/&beta;&#8321;/&beta;&#8322; als Register</b> doppelt arbeiten (Bedeutung ordnen / Transformation ausf&uuml;hren, z.&nbsp;B. der 5-Frequenz-Torus mod&nbsp;113); das Gesetz ist <b>Rechnung&nbsp;=&nbsp;Topologie, Lesbarkeit&nbsp;=&nbsp;f(Aufgabe-Symmetrie)</b>.</p>
+  <p class="fuse-line">Fusion aus: <b>r2-033.html</b> &#10005; <b>r2-035.html</b>&nbsp;&nbsp;(Round 3)</p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide R2-Papiere sind <em>Meta-Positionen</em> zur selben tiefen Frage: <i>Was ist ein trainiertes Netz, und was macht es &bdquo;einfach&ldquo; (generalisierend)?</i> <b>A (r2-033)</b> liest es als <b>zwei gekoppelte Aufl&ouml;sungen desselben Objekts</b>: eine <b>lokale lineare Tangente</b> (Jacobi-Matrix J in Stretch + Rotate; die renormierte Iteration ist eine Power-Iteration, die auf den dominanten Eigenvektor = Attraktor zueinanderl&auml;uft, Coq-exakt) und einen <b>globalen kombinatorischen Moduli-Raum</b> fester Kapazit&auml;t C, in dem nur das Datenbild &phi;(D) wandert und dessen <b>intrinsische Dimension ID</b> einen <em>Buckel</em> zeichnet und auf &asymp;&thinsp;log&#8322;&thinsp;N<sub>c</sub> einbrechen <em>darf</em>. Das Maß ist <b>ID/C</b>; <b>lokale Konvergenz (gro&szlig;e Eigenwert-L&uuml;cke) ist die <em>Vorbedingung</em> f&uuml;r diesen Einbruch</b>. <b>B (r2-035)</b> liest dasselbe Objekt als <b>topologisches Rechenobjekt</b>: einen gefilterten Simplizialkomplex, der zugleich ein dynamischer Attraktor ist, dessen <b>Betti-Zyklen &beta;&#8321;</b> <em>Register</em> sind &mdash; und zwar <em>doppelt</em>: bei niedriger Aufgabe-Symmetrie (generisch) ordnen sie Bedeutung, bei hoher (z.&nbsp;B. der zyklische Ring Z/113) f&uuml;hren sie eine Transformation aus (der verifizierte 5-Frequenz-Additions-Torus, &beta;&#8321;=5, Ablation&nbsp;&minus;70&nbsp;%). Das Gesetz: <b>Rechnung&nbsp;=&nbsp;Topologie; die Lesbarkeit (harmonisch/linear) ist f(Symmetrie der Aufgabe).</b></p>
+<p>Die <b>einheitliche Position</b>: Ein trainiertes Netz &bdquo;rechnet&ldquo;, indem es einen <b>niedrigzyklischen, niedrig-belegten Attraktor im festen Budget</b> realisiert &mdash; und es generalisiert genau dann, wenn <b>zwei Gates offen sind und eine Ungleichung gilt</b>. <b>Gate&nbsp;1 (B, strukturell):</b> die <em>Gruppensymmetrie der Aufgabe</em> <em>erm&ouml;glicht</em> einen niedrigzyklischen Attraktor (hohe Symmetrie &rarr; sauberer harmonischer Torus mit wenigen &beta;&#8321;-Registern). <b>Gate&nbsp;2 (A, dynamisch):</b> die <em>lokale Tangente konvergiert</em> (reelle, getrennte Eigenwerte &rarr; Eigenwert-L&uuml;cke), damit der nicht-autonome Schicht-Fluss den Attraktor tats&auml;chlich <em>erreicht</em>. <b>Ungleichung:</b> die <em>aktive Belegung</em> bleibt weit unter dem Budget &mdash; das ist <b>A&rsquo;s ID/C&nbsp;&lt;&lt;&nbsp;1</b>, und es ist <em>dasselbe</em> wie <b>B&rsquo;s aktive &beta;&#8321; &lt;&lt; volle &beta;-Inventur</b>.</p>
+<p>Die entscheidende <b>fusionierte Identifikation</b>: <b>A&rsquo;s ID und B&rsquo;s &beta;&#8321; sind dieselbe Gr&ouml;&szlig;e in zwei Lesarten.</b> A misst die &bdquo;aktive Struktur&ldquo; des Netzes <em>metrisch-statistisch</em> (intrinsische Dimension der Datenwolke, eine kontinuierliche TwoNN-Sch&auml;tzung) gegen ein <em>kombinatorisches</em> Budget (C). B misst sie <em>topologisch</em> (Betti-Zyklen, eine diskrete, ablation-verifizierte Z&auml;hlung) gegen die Register-Kapazit&auml;t der Architektur. A liefert die <em>Dynamik/Mechanismus</em> (lokale Power-Iteration, der Fluss); B liefert die <em>Ontologie/Funktion</em> (die Zyklen, die rechnen, die Lesart). Weder A allein noch B allein tragen die Geschichte: die Zyklen (B) sind das <em>Was</em>, die Belegung (A) das <em>Wie viel</em>, die Tangenten-Konvergenz (A) das <em>Ob erreicht</em>, die Aufgabe-Symmetrie (B) das <em>Ob existiert</em>. <b>Fusion: Lokale Konvergenz (A) &times; Aufgabe-Symmetrie (B) &times; festes Budget = ein Attraktor, dessen Belegung (ID/C) und dessen Register (&beta;&#8321;) dasselbe Maß f&uuml;r Generalisierung sind.</b></p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+<p class="note violet"><b>Vorab:</b> A und B widersprechen sich nicht in einem <em>gemeinsamen Faktum</em> (keines behauptet das Negat des anderen). Aber sie nehmen zu <b>vier Stellen inkompatible Stellungen</b> zum <em>selben</em> Thema &mdash; dem &bdquo;Einfachsein&ldquo; eines Netzes &mdash; ein. Die sch&auml;rfsten beiden sind T1 (Belegung vs. Register) und T2 (dynamisches vs. strukturelles Gate).</p>
+
+<h3>T1 &mdash; Die Essenz des Netzes: Belegung eines festen Beh&auml;lters (A) vs. eine Register-Inventur, die rechnet (B)</h3>
+<p><span class="tag">A &middot; r2-033</span> Die Essenz ist ein <b>Skalar-Verh&auml;ltnis</b>: das Netz ist ein <em>Punkt</em> im festen Moduli-Raum, Training ist das <em>Einbrechen</em> der besetzten intrinsischen Dimension; die entscheidende Gr&ouml;&szlig;e ist <b>ID/C</b> &mdash; wie <em>viel</em> des fixen Budgets C = #E&#8728;&minus;#V&rarr; ist belegt. Ontologie: <b>metrische Belegung eines festen Containers</b>.</p>
+<p><span class="tag b">B &middot; r2-035</span> Die Essenz ist eine <b>diskrete Inventur mit Funktion</b>: das Netz ist ein topologisches Objekt, dessen <em>Rechnung = seine Zyklen</em>; die entscheidende Gr&ouml;&szlig;e ist <b>&beta;&#8321;</b> (Anzahl unabh&auml;ngiger Register, z.&nbsp;B. =5 beim Torus) und <em>was sie tun</em> (ordnen / ausf&uuml;hren). Ontologie: <b>topologische Register-Inventur, die die Transformation ausf&uuml;hrt</b>.</p>
+<p class="note rose"><b>Die Spannung:</b> A w&uuml;rde sagen: &bdquo;der Torus ist nur ein niedriger-ID-Eckpunkt&ldquo;; B w&uuml;rde sagen: &bdquo;die ID ist nur der Schatten der &beta;&#8321;-Zyklus-Zahl&ldquo;. Sie streiten darum, <b>was prim&auml;r ist: die geometrische Belegung (A) oder die zyklische Registerstruktur (B).</b> A z&auml;hlt <em>Dimensionen</em>, B z&auml;hlt <em>Zyklen, die rechnen</em> &mdash; zwei verschiedene Ontologien desselben &bdquo;Komplexit&auml;tsma&szlig;es&ldquo;.</p>
+
+<h3>T2 &mdash; Das Gate, das aufl&ouml;st: Konvergenz der lokalen Tangente (A) vs. Symmetrie der Aufgabe (B)</h3>
+<p><span class="tag">A &middot; r2-033</span> Das, was die ID <em>unter C fallen l&auml;sst</em>, ist die <b>Konvergenz der lokalen Tangente</b> (reelle, getrennte Eigenwerte &rarr; Eigenwert-L&uuml;cke) &mdash; eine Eigenschaft der <em>eigenen Dynamik</em> des Netzes, <em>punktweise und daten-/gewicht-abh&auml;ngig</em>. Konvergiert sie (gro&szlig;e L&uuml;cke) &rarr; ID bricht ein (Regeln). Ist sie zyklisch (&omega; dominiert, komplexe Eigenwerte) &rarr; ID <em>darf nicht</em> fallen (memorisiert).</p>
+<p><span class="tag b">B &middot; r2-035</span> Das, was die Lesung <em>harmonisch/sauber macht</em>, ist die <b>Gruppensymmetrie der Aufgabe</b> &mdash; eine Eigenschaft der <em>Task</em>, <em>nicht</em> der Netz-Dynamik. Hohe Symmetrie (Z/113, kompakte abelsche Gruppe) &rarr; <em>ein</em> bilinearer Schritt, voll harmonisch/linear. Niedrige Symmetrie (generisch) &rarr; st&uuml;ckweise-linear, braucht Tiefe. Der verifizierte Fall l&ouml;st sich, <em>weil die Aufgabe ein Ring ist</em>, nicht weil die Dynamik konvergiert.</p>
+<p class="note rose"><b>Die Spannung:</b> A lokalisiert das &bdquo;Aufl&ouml;sen&ldquo; in der <em>Dynamik des Netzes</em> (dasselbe Netz kann &mdash; je nach lokaler Konvergenz &mdash; memorisieren <em>oder</em> generalisieren); B lokalisiert es in der <em>Algebra der Aufgabe</em> (dasselbe 1-Layer-Netz l&ouml;st mod&nbsp;113 <em>weil</em> die Aufgabe symmetrisch ist). Zwei verschiedene <b>Kausal-Orte</b> f&uuml;r dasselbe Ph&auml;nomen: <em>warum</em> ist die Repr&auml;sentation einfach? A: <em>weil der lokale Fluss konvergiert</em>; B: <em>weil die Aufgabe einen harmonischen Torus erlaubt</em>.</p>
+
+<h3>T3 &mdash; Die Rolle der Tiefe: nicht-autonomer Fluss (A) vs. komprimierbarer Ein-Schritt (B)</h3>
+<p><span class="tag">A &middot; r2-033</span> Tiefe ist eine <b>nicht-autonome Folge verschiedener Karten</b> f<sub>&ell;</sub> (&bdquo;fr&uuml;he Schichten expandieren, sp&auml;te komprimieren&ldquo;); die ID zeichnet ihren <b>Buckel &uuml;ber der Tiefe</b> (steigt, f&auml;llt monoton auf &asymp;log&#8322;N<sub>c</sub>). Der Einbruch <em>passiert &uuml;ber die Schichten</em>; Tiefe ist der <em>Fluss selbst</em> und <em>nicht wegzudenken</em>.</p>
+<p><span class="tag b">B &middot; r2-035</span> Im verifizierten hoch-symmetrischen Fall ist die <b>ganze Rechnung EIN Layer &uuml;ber EINEN bilinearen Schritt</b> &mdash; der Torus entsteht <em>nicht</em> durch Stacking, Tiefe <em>verschwindet</em>. (Nur im niedrig-symmetrischen Fall ist Tiefe = Stacking = Kapazit&auml;t.)</p>
+<p class="note rose"><b>Die Spannung:</b> A&rsquo;s <b>Buckel &uuml;ber der Tiefe</b> hat in B&rsquo;s Ein-Schritt-Torus <em>kein Gegenst&uuml;ck</em>; B&rsquo;s <b>einschrittige Komprimierung</b> hat in A&rsquo;s nicht-autonomen Folge <em>kein Gegenst&uuml;ck</em>. Sie widersprechen sich darin, ob &bdquo;die Tiefe&ldquo; <em>Last</em> ist (A: der Fluss, der Buckel muss &uuml;ber Tiefe ablaufen) oder <em>komprimierbar</em> (B: bei Symmetrie auf einen Schritt zusammenfaltbar).</p>
+
+<h3>T4 &mdash; Die Linearit&auml;t: lokale Tangente einer generischen Karte (A) vs. globale harmonische Lesart (B)</h3>
+<p><span class="tag">A &middot; r2-033</span> &bdquo;Linear&ldquo; bedeutet hier die <b>1.-Ordnungs-Tangente</b> der lokalen Karte (J, Stretch+Rotate) &mdash; <em>punktweise, pro Schicht, generisch</em>. Die Nichtlinearit&auml;t taucht nur als <em>Abh&auml;ngigkeit J(x)</em> von der Stelle auf; die Tangente ist <em>blind</em> f&uuml;r h&ouml;here Ordnung (Gau&szlig;-Zwilling mit gleicher Kovarianzmatrix hat <em>andere</em> ID &mdash; die Tangente sieht beides fast gleich).</p>
+<p><span class="tag b">B &middot; r2-035</span> &bdquo;Linear&ldquo; bedeutet die <b>globale Fourier-/harmonische Lesart des Attraktors</b>: die Antwort ist eine <em>lineare</em> Summe von Kosinus-Wellen, Softmax &bdquo;97,5&nbsp;% linear&ldquo;, 84,6&nbsp;% der Neuronen sind Grad-2-Polynome <em>einer</em> Frequenz &mdash; <em>nur</em> weil die Aufgabe ein kompakter Ring ist. Die Nichtlinearit&auml;t ist ein <em>einzelner bilinearer Generator</em> (cos&nbsp;a&middot;cos&nbsp;b), dessen <em>Ergebnis</em> voll linear lesbar ist.</p>
+<p class="note rose"><b>Die Spannung:</b> A&rsquo;s &bdquo;linear&ldquo; ist die <em>lokale Tangente einer generischen (ggf. zyklischen) Karte</em>; B&rsquo;s &bdquo;linear&ldquo; ist die <em>globale Fourier-Lesart eines symmetrischen Attraktors</em>. Dasselbe Adjektiv, zwei <em>verschiedene Objekte</em> (Bewegung vs. Ergebnis). A sagt: die Tangente ist f&uuml;r h&ouml;here Ordnung blind; B sagt: das Ergebnis ist f&uuml;r Symmetrie voll linear. Wer sie verwechselt, irrt &mdash; sie beschreiben <em>andere</em> Ebenen.</p>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Aufl&ouml;sung</h2>
+
+<div class="card">
+<h3 style="margin-top:0">R1 &rarr; T1: Belegung ist der Schatten der Register-Inventur &mdash; zwei Projektionen einer aktiven Struktur</h3>
+<p>A&rsquo;s ID/C und B&rsquo;s &beta;&#8321;/&beta;-total sind <em>zwei Projektionen</em> derselben Gr&ouml;&szlig;e: <b>wie viele Freiheitsgrade das trainierte Netz f&uuml;r die Aufgabe tats&auml;chlich belegt</b>. A misst sie <em>statistisch-metrisch</em> (ID = TwoNN-Sch&auml;tzung der Datenwolke, kontinuierlich); B misst sie <em>topologisch-kombinatorisch</em> (&beta;&#8321; = Zyklus-Z&auml;hlung, diskret, ablation-verifiziert). A&rsquo;s Budget C und B&rsquo;s volle &beta;-Inventur sind <em>dasselbe fixe Budget</em> von zwei Seiten (A: #E&#8728;&minus;#V&rarr; = Basispfade; B: die Zyklen, die die Architektur prinzipiell tragen k&ouml;nnte). <b>Fusion:</b> Die Zyklen (B) sind der <em>Mechanismus</em>, die Belegung (A) das <em>Ma&szlig;</em>. A&rsquo;s Gau&szlig;-Zwilling (h&ouml;here Ordnung) und B&rsquo;s Frequenz-Torus (verifiziert) sind <em>dasselbe Ph&auml;nomen in zwei Aufl&ouml;sungen</em> &mdash; ein niedrigzyklischer Attraktor, einmal statistisch, einmal topologisch gemessen. Generalisierung = aktive Belegung weit unter Budget = <b>ID/C&nbsp;&lt;&lt;&nbsp;1 &hArr; aktives &beta;&#8321; &lt;&lt; volle &beta;-Inventur</b>.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">R2 &rarr; T2: Die beiden Gates sind <em>sequentiell</em>, nicht rivalisierend &mdash; Symmetrie strukturell, Konvergenz dynamisch</h3>
+<p>Die Frage &bdquo;warum ist die Repr&auml;sentation einfach&ldquo; hat <em>zwei</em> Gates, und A und B halten je <em>eines</em>: <b>Gate&nbsp;1 (strukturell, B)</b> &mdash; die <em>Task</em> muss einen niedrigzyklischen Attraktor <em>erm&ouml;glichen</em>: hat sie eine kompakte Gruppenstruktur (Z/113, Rotation), so hat der <em>Attraktor</em> eine saubere Torus-Form und die <em>Registerzahl</em> (&beta;&#8321;) ist klein &amp; harmonisch. Das ist eine Eigenschaft der <em>Task</em>, noch ohne Konvergenzfrage &mdash; es geht darum, <em>ob</em> ein niedrigzyklisches Objekt &uuml;berhaupt existiert. <b>Gate&nbsp;2 (dynamisch, A)</b> &mdash; selbst wenn die Task den Attraktor erlaubt, muss der <em>Trainingsfluss</em> (die nicht-autonome Schichtfolge) in den relevanten Schichten <em>reelle, getrennte Eigenwerte</em> haben, damit die Daten-Belegung (ID) tats&auml;chlich <em>dorthin einbricht</em>; ist die Tangente zyklisch (&omega; dominiert), so setzt sich der Fluss nie &mdash; ID bleibt hoch &mdash; memorisiert. <b>Fusion:</b> <em>Symmetrie (B) bestimmt, ob ein niedrig-belegter Attraktor existiert; Konvergenz (A) bestimmt, ob der Training ihn dorthin zieht.</em> A&rsquo;s &bdquo;lokale Konvergenz ist die Vorbedingung f&uuml;r den ID-Einbruch&ldquo; wird <em>verfeinert</em> zu &bdquo;... gegeben, dass die Task den Attraktor erlaubt&ldquo;; B&rsquo;s &bdquo;Symmetrie bestimmt die Lesbarkeit&ldquo; wird zu &bdquo;... die Form/Lesbarkeit; Konvergenz entscheidet, ob sie erreicht wird&ldquo;. Generalisierung verlangt <em>alle</em>: (i) Task symmetrisch genug f&uuml;r einen niedrigzyklischen Attraktor (B) <em>und</em> (ii) lokale Tangente konvergiert (A) <em>und</em> (iii) aktive Belegung &lt;&lt; Budget (A/B).</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">R3 &rarr; T3: Der Ein-Schritt ist die <em>symmetrische Komprimierung</em> des Tiefen-Flusses &mdash; Tiefe wird erhalten, nicht verneint</h3>
+<p>A&rsquo;s nicht-autonome Tiefen-Folge und B&rsquo;s Ein-Schritt-Torus werden durch <em>Symmetrie</em> vers&ouml;hnt &mdash; genau wie B es intern schon tat (seine R2: &bdquo;der Torus ist das, was &uuml;brigbleibt, wenn man A&rsquo;s Tiefe in einen gruppenstrukturierten Schritt komprimiert&ldquo;). A&rsquo;s &bdquo;Fluss &uuml;ber die Tiefe&ldquo; ist der <em>generische</em> (niedrig-symmetrische) Fall: jede Schicht f<sub>&ell;</sub> ist anders, die ID zeichnet einen Buckel &uuml;ber der Tiefe, der Einbruch passiert <em>&uuml;ber</em> Schichten. B&rsquo;s &bdquo;ein Schritt&ldquo; ist der <em>hoch-symmetrische</em> Grenzfall: die Gruppenstruktur faltet den <em>ganzen</em> Tiefen-Fluss in <em>einen</em> bilinearen/harmonischen Schritt auf dem Torus zusammen &mdash; der Buckel <em>gl&auml;ttet sich ab</em> (es gibt keine Tiefe, &uuml;ber die er laufen m&uuml;sste). <b>Fusion:</b> <em>Tiefe ist eine erhaltene Ressource, die Symmetrie auf einen Schlag ausgeben kann (B) oder &uuml;ber viele Schichten muss (A).</em> A&rsquo;s Buckel ist die <em>niedrig-symmetrische Signatur</em> (keine Komprimierung m&ouml;glich, Einbruch muss &uuml;ber Tiefe laufen); B&rsquo;s glatter Ein-Schritt die <em>hoch-symmetrische Signatur</em> (Komprimierung auf einen Schritt). Beide sind die <em>Grenzf&auml;lle desselben &bdquo;Tiefe-Ausgabeprozesses&ldquo;</em>.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">R4 &rarr; T4: &bdquo;linear&ldquo; hat zwei Grade &mdash; lokale Tangente (A) ist die Dynamik, globale Fourier-Lesart (B) ist das Ablesen; Nichtlinearit&auml;t ist immer der Generator</h3>
+<p>Die beiden &bdquo;Linearit&auml;t&ldquo;-Aussagen arbeiten auf <em>verschiedenen Grades</em> und sind <em>komplement&auml;r</em>: <b>Nichtlinearit&auml;t ist der Generator</b> (B&rsquo;s Aussage, von A &uuml;ber das Residual &Delta;=J&minus;I &uuml;bernommen): der <em>bilineare/residuale Schritt</em> (A: &Delta;; B: cos&nbsp;a&middot;cos&nbsp;b) ist der Ort, wo die Struktur <em>gemacht</em> wird. <b>Lokale Linearit&auml;t (A)</b> ist die <em>Tangente der Dynamik</em> &mdash; die pro-Schicht-Jacobi, die regelt, <em>wie sich der Fluss bewegt</em> (Stretch tr&auml;gt Divergenz, Rotate kr&uuml;mmt nur); sie ist <em>immer</em> da (jede Karte hat eine Jacobi), aber <em>blind</em> f&uuml;r h&ouml;here/globale Struktur. <b>Global e Linearit&auml;t (B)</b> ist die <em>Lesart des Attraktors</em> &mdash; die Fourier-/harmonische Zerlegung des <em>Endobjekts</em>, vorhanden <em>nur</em>, wenn die Task symmetrisch ist. <b>Fusion:</b> Nichtlinearit&auml;t (der residuale/bilineare Generator) baut die Struktur; lokale Linearit&auml;t (die Tangente) regelt die Dynamik, die sie baut; globale (Fourier-)Linearit&auml;t (die Lesart) ist, <em>wie man sie abliest</em>, und ist voll nur bei Symmetrie verf&uuml;gbar. A&rsquo;s &bdquo;lineare Tangente&ldquo; und B&rsquo;s &bdquo;lineare Lesart&ldquo; sind <em>derselbe Begriff auf zwei Objekten</em> angewandt: die <em>Bewegung</em> (A) vs. das <em>Ergebnis</em> (B). Zusammengef&uuml;gt eine Kette: <b>Generator &rarr; Dynamik &rarr; Lesart</b>.</p>
+</div>
+
+<div class="note ok"><b>Die fusionierte Schlussfolgerung:</b> Ein Netz generalisiert, wenn es einen <b>niedrigzyklischen, niedrig-belegten Attraktor im festen Budget</b> einnimmt &mdash; und das passiert genau dann, wenn <b>(i)</b> die <em>Aufgabe-Symmetrie</em> (B) einen niedrigzyklischen Attraktor <em>erm&ouml;glicht</em>, <b>(ii)</b> die <em>lokale Tangente konvergiert</em> (A: Eigenwert-L&uuml;cke, reelle getrennte Eigenwerte), damit der nicht-autonome Fluss <em>dorthin landet</em>, und <b>(iii)</b> die <em>aktive Belegung</em> weit unter dem Budget bleibt (A: ID/C&nbsp;&lt;&lt;&nbsp;1 &asymp; B: aktives &beta;&#8321;&nbsp;&lt;&lt;&nbsp;volle &beta;-Inventur). Die &bdquo;Gr&ouml;&szlig;e&ldquo; des Attraktors ist dieselbe Gr&ouml;&szlig;e in zwei Lesarten: <b>metrische Belegung (A&rsquo;s ID)</b> und <b>topologische Register-Inventur (B&rsquo;s &beta;&#8321;)</b>. Tiefe ist die Ressource, die der Prozess &uuml;ber Schichten ausgibt (A&rsquo;s Buckel, niedrig-symmetrisch) oder in einen bilinearen Schritt komprimiert (B&rsquo;s Torus, hoch-symmetrisch); Nichtlinearit&auml;t ist der Generator, lokale Linearit&auml;t die Dynamik, globale (Fourier-)Linearit&auml;t die Lesart &mdash; und die <em>Aufgabe-Symmetrie</em> entscheidet, wie viel der Lesart harmonisch ist.</div>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>Von A &mdash; die lokale lineare Dynamik &times; die globale Kapazit&auml;t (r2-033: r1-069 &times; r1-079)</h3>
+<div class="eq"><span class="op">J = J<sub>sym</sub> + J<sub>antisym</sub></span> ,  J<sub>sym</sub>=(J+J&#7488;)/2 ,  J<sub>antisym</sub>=(J&minus;J&#7488;)/2 ,  &lang;J<sub>sym</sub>,J<sub>antisym</sub>&rang;<sub>F</sub>=0  <span class="c">(Frobenius, Pythagoras)</span>
+<span class="op">tr(J)=tr(J<sub>sym</sub>)</span> ,  tr(J<sub>antisym</sub>)=0  <span class="c">(Divergenz/Volumen nur aus Stretch)</span> ,  <span class="op">J=I+&Delta;</span> (Residual) ,  tr(I+&Delta;)=n+tr(&Delta;)
+<span class="op2">h<sup>(&ell;+1)</sup>=h<sup>(&ell;)</sup>+f<sub>&ell;</sub>(h<sup>(&ell;)</sup>)</span>  <span class="c">(Euler, nicht-autonom; f<sub>&ell;</sub>=Attn+FFN)</span> ,  LN &rarr; S<sup>d&minus;1</sup> (Richtung &gt; Magnitude)
+<span class="op2">Power-Iteration:</span>  v<sub>k+1</sub>=normalize(J&middot;v<sub>k</sub>) &rarr; dominanten Eigenvektor = <b>Attraktor</b>  <span class="c">(Stretch=Eigenwert-L&uuml;cke, Rotate kr&uuml;mmt nur)</span>
+<span class="opv">ID (TwoNN):</span>  &mu;<sub>i</sub>=r<sub>i,2</sub>/r<sub>i,1</sub>&ge;1 ,  d&#770;<sub>ML</sub>=N/&Sigma;&ln;&mu;<sub>i</sub>  <span class="c">(Skaleninvarianz; &gt;~20 = untere Schranken)</span>
+<span class="opv">ED vs. ID:</span>  ED&asymp;10&#8312;&#8322;&#8322; (VGG pool4) ,  ID&asymp;19 &rarr; ID/ED&asymp;2&middot;10&#8315;&sup4;  <span class="c">(d&uuml;nn; PC-ID&asymp;200 &gt; ID&asymp;18 &rarr; Gau&szlig;-Zwilling nichtlinear)</span>
+<span class="opv">C (Moduli):</span>  Netz = d&uuml;nne K&ouml;cherdarstellung + Aktivierungen ,  <span class="op">dim&nbsp;d&#8321;(&#10216;) = #E&#8728;&minus;#V&rarr;</span> (Thm&nbsp;7.16 = Basispfade) ,  isomorph &rArr; gleiche Funktion (Thm&nbsp;4.13) ,  &Psi;=&Psi;&#770;&circ;&phi; &mdash; Moduli-Raum <b>starr</b>, nur &phi;(D) wandert
+<span class="opv">Der Buckel:</span>  ID steigt fr&uuml;h (Whitening/Beschneiden), f&auml;llt sp&auml;t monoton auf &asymp;log&#8322;N<sub>c</sub>  <span class="c">(N<sub>c</sub>&le;2<sup>ID</sup>; ID&rarr;Testfehler r=0,94, Korrelation&ne;Kausalit&auml;t)</span>
+</div>
+<ul>
+  <li><b>Stretch (symmetrisch)</b>: Dehnung, reelle Eigenwerte, tr&auml;gt Divergenz; bestimmt Attraktor-Position + Konvergenzgeschwindigkeit (Eigenwert-L&uuml;cke).</li>
+  <li><b>Rotate (antisymmetrisch)</b>: reine Rotation, tr=0, kr&uuml;mmt nur; zu gro&szlig;es &omega; &rarr; komplexe Eigenwerte &rarr; <em>keine</em> Konvergenz (Grenzzyklus).</li>
+  <li><b>Status A:</b> lokal exakt, Coq-verifiziert, dimensionsfrei; aber <em>keine</em> Konvergenz-/Generalisierungs-Aussage (Identit&auml;ten &ne; Stabilit&auml;tss&auml;tzen).</li>
+  <li><b>C</b> exakt, architekturfixiert, datenunabh&auml;ngig; <b>Moduli-Raum starr</b>; <b>ID</b> datenabh&auml;ngig, statistisch, lokal; <b>ID/C</b> = Generalisierungs-Ma&szlig; (gut &hArr; ID/C&nbsp;&lt;&lt;&nbsp;1; memorisiert &hArr; ID/C&rarr;1).</li>
+</ul>
+
+<h3>Von B &mdash; der gewarbte Raum &times; der addierende Torus (r2-035: r1-033 &times; r1-042)</h3>
+<div class="eq"><span class="c">// A-Seite &mdash; Komplex &amp; Filtration (deskriptiv, niedrig-symmetrisch)</span>
+Neuron:  y = s(w&middot;x+b)  <span class="c">(s = der Bogen; linear&circ;linear = linear)</span>
+Tiefe:   f = s(W<sub>a</sub>&middot;s(W<sub>b</sub>&middot;&hellip;))  <span class="c">(ReLU-Regionen exponentiell in der Tiefe)</span>
+Komplex: s<sub>1</sub>={i,j} wenn &alpha;<sub>ij</sub>&gt;&epsilon; ;  s<sub>2</sub>={i,j,k} wenn alle 3 Paare &gt;&epsilon;
+Topologie: &chi;=V&minus;E+F ;  &beta;&#8320;=Komponenten ;  &beta;&#8321;=E&minus;V+&beta;&#8320;&minus;F
+Filtration: K<sub>&epsilon;&#8320;</sub> &supset; K<sub>&epsilon;&#8321;</sub> &supset; &hellip;  <span class="c">(&epsilon; sinkt &hArr; Tiefe/Runden)</span>
+Trennung &rArr; &beta;&#8320;=2 ;  Zusammensetzung &rArr; gef&uuml;lltes within-group-2-Simplex
+<span class="c">// B-Seite &mdash; Attraktor &amp; Torus (funktional, hoch-symmetrisch; mod 113 verifiziert)</span>
+System:  x<sub>l+1</sub> = x<sub>l</sub> + Attn<sub>l</sub>(x<sub>l</sub>) + MLP<sub>l</sub>(x<sub>l</sub>)   <span class="c">(Zeit = Layer; Attraktoren/Becken/Tori)</span>
+Rotation: x &rarr; x + b (mod 113)   <span class="c">(Gruppenaktion = Kreis-Rotation)</span>
+Addition: cos(A+B) = cosA&middot;cosB &minus; sinA&middot;sinB   <span class="c">(via bilineare Attention cos a&middot;cos b)</span>
+Score:   score(c) = cos(&omega;(a+b&minus;c))   <span class="c">(&mdash; = 1 bei c = c*</span>)
+Frequenzen {14,35,41,42,52}, &alpha;=44,1/42,2/44,8/66,6/63,0 (&Sigma;&asymp;260,7)
+Torus:   &beta;&#8320;=1 ,  &beta;&#8321;=5 (5 Frequenz-Register)  <span class="c">(1 Frequenz &rarr; c*&plusmn;8&asymp;0,998 = fast unverf&auml;lschbar)</span>
+Grokking: Memorization &rarr; Circuit Formation (verborgener Fourier-Torus) &rarr; Cleanup
+          5 Frequenzen = 95&nbsp;% Logit-Varianz ; 84,6&nbsp;% Neuronen &asymp; Grad-2 ; Softmax 97,5&nbsp;% linear
+          Ablation nicht-schl&uuml;ssfrequenzen <b>verbessert</b> (Loss &minus;70&nbsp;%)
+</div>
+<ul>
+  <li><b>Betti-Register (B&rsquo;s Kern):</b> &beta;&#8320; z&auml;hlt getrennte Komponenten (A: zwei Klassen; B: ein zusammenh&auml;ngender Attraktor); &beta;&#8321; z&auml;hlt unabh&auml;ngige 1-Zyklen (A: Bedeutungsschleifen; B: Frequenz-Kreise, die die Addition <em>ausf&uuml;hren</em>); &beta;&#8322; Hohlr&auml;ume/Tori.</li>
+  <li><b>Aufgabe-Symmetrie steuert die Lesart:</b> hohe, gruppenstrukturierte Symmetrie (B, Rotation) &rarr; voll harmonisch/linear lesbar, ein bilinearer Schritt; niedrige (A, generisch) &rarr; st&uuml;ckweise-linear, zahlt Tiefe/Stacking.</li>
+  <li><b>Grokking = der Einbruch &uuml;ber Zeit:</b> Memorization &rarr; verborgener Torus &rarr; Cleanup (Weight Decay er&auml;t das Memorieren, Test springt auf 100&nbsp;%) &mdash; B&rsquo;s dynamisches Gegenst&uuml;ck zu A&rsquo;s statischem Buckel.</li>
+</ul>
+
+<h3>Die Br&uuml;cke &mdash; A &harr; B, dieselbe Gr&ouml;&szlig;e in zwei Lesarten</h3>
+<table class="tbl">
+  <tr><th>Gr&ouml;&szlig;e / Ebene</th><th>A (r2-033)</th><th>B (r2-035)</th><th>Rolle in der Fusion</th></tr>
+  <tr><td class="k">Die Rechnung</td><td>Einbruch der Belegung ID im Moduli-Raum</td><td>Der Attraktor-Torus, dessen Zyklen rechnen</td><td>Ein Attraktor, niedrigzyklisch &amp; niedrig-belegt</td></tr>
+  <tr><td class="k">Belegung vs. Register</td><td>ID (statistisch, TwoNN)</td><td>&beta;&#8321; (topologisch, ablation-verifiziert)</td><td><b>dieselbe Gr&ouml;&szlig;e</b>, zwei Projektionen</td></tr>
+  <tr><td class="k">Festes Budget</td><td>C = #E&#8728;&minus;#V&rarr; (Thm 7.16)</td><td>volle &beta;-Inventur der Architektur</td><td>Die Obergrenze, gegen die belegt wird</td></tr>
+  <tr><td class="k">Das Gate</td><td>Konvergenz der Tangente (dynamisch)</td><td>Symmetrie der Aufgabe (strukturell)</td><td><b>zwei sequentielle Gates</b></td></tr>
+  <tr><td class="k">Tiefe</td><td>nicht-autonomer Fluss, Buckel &uuml;ber der Tiefe</td><td>komprimierbar auf 1 bilinearen Schritt (bei Symmetrie)</td><td>einer erhaltene Ressource, zwei Ausgabemodi</td></tr>
+  <tr><td class="k">Linearit&auml;t</td><td>lokale Tangente der Dynamik (1. Ordnung)</td><td>globale Fourier-/harmonische Lesart</td><td>Generator &rarr; Dynamik &rarr; Lesart</td></tr>
+  <tr><td class="k">Generalisierung</td><td>ID/C &lt;&lt; 1 (ID bricht ein)</td><td>aktives &beta;&#8321; &lt;&lt; volle &beta;-Inventur (harmonisch)</td><td><b>das fusionierte Maß</b></td></tr>
+</table>
+<div class="note ok"><b>Der fusionierte Kernsatz:</b> <span class="op">Lokale Konvergenz (A) &times; Aufgabe-Symmetrie (B) &times; festes Budget = ein Attraktor, dessen Belegung (ID/C) und Register (&beta;&#8321;) dasselbe Maß sind.</span> A und B sind <em>zwei Projektionen einer aktiven Register-Struktur</em>: B liefert die Zyklen (das Was), A die Belegung (das Wie viel) und die Dynamik, die sie einnimmt. Erst die Kopplung &mdash; <em>die Symmetrie erlaubt den Attraktor, die Konvergenz erreicht ihn, und die Belegung bleibt unter dem Budget</em> &mdash; ergibt den fusionierten Satz.</div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Fusion: zwei Gates steuern, ob die Belegung unter das Budget f&auml;llt</h2>
+<div class="viz">
+  <h3>Links = A (lokale Tangente / Konvergenz-Gate) &middot; rechts = B&times;A (Belegung &beta;&#8321;/ID gegen Budget C / Symmetrie-Gate)</h3>
+  <p class="dsub">Zwei Regler, zwei Gates. <b>Konvergenz der Tangente (A)</b> steuert die linke Jacobi-Karte J&nbsp;=&nbsp;I+&sigma;&middot;S+&omega;&middot;R: gro&szlig;e <b>Eigenwert-L&uuml;cke</b> (reelle getrennte Eigenwerte) &rarr; Karte <b>konvergiert</b> auf den dominanten Eigenvektor (goldener Stern = momentaner Attraktor); kleine L&uuml;cke (komplexe Eigenwerte) &rarr; Karte <b>zyklisch</b> (Grenzzyklus, keine Entscheidung). <b>Symmetrie der Aufgabe (B)</b> steuert, wie tief die <b>Belegung</b> rechts in den sp&auml;ten Schichten fallen darf. Die <b>Belegungskurve (Buckel)</b> l&auml;uft gegen das fixe <b>Budget C</b> (gold, gestrichelt) und den Beh&auml;lter ED (grau). <b>Der Koppelpunkt der Fusion:</b> Die Belegung f&auml;llt nur unter C, wenn <em>beide</em> Gates offen sind &mdash; <em>Symmetrie erlaubt den Attraktor (B)</em> und <em>Konvergenz erreicht ihn (A)</em>. Senke <em>Konvergenz</em>: die Belegung <em>darf nicht</em> einbrechen (memorisiert, &gt;C), selbst bei hoher Symmetrie. Senke <em>Symmetrie</em>: die Belegung f&auml;llt nur <em>teilweise</em> (st&uuml;ckweise, &gt;&asymp;C/2), kein sauberer Torus. Die <b>&beta;&#8321;-Register (B)</b> und die <b>Tiefe-Ausgabe</b> sind die topologischen Zwillinge: hohe Symmetrie &rarr; wenige Register (5, harmonisch), 1 Schritt; niedrige &rarr; viele Register, viele Schichten.</p>
+  <canvas id="fuz"></canvas>
+  <div class="legend">
+    <span class="lg"><i style="border-color:var(--accent)"></i>Belegung aktuell (Gate-gesteuert)</span>
+    <span class="lg"><i style="border-color:var(--accent);border-top-style:dotted"></i>Belegung gelernt (beide Gates offen)</span>
+    <span class="lg"><i style="border-color:var(--accent2);border-top-style:dotted"></i>Belegung memorisiert (Gates zu)</span>
+    <span class="lg"><i style="border-color:var(--muted);border-top-style:dotted"></i>ED (Beh&auml;lter)</span>
+    <span class="lg"><i style="border-color:var(--gold);border-top-style:dashed"></i>Budget C (B) = #E&#8728;&minus;#V&rarr;</span>
+  </div>
+
+  <div class="ctl">
+    <div class="ctl-lab"><span>Konvergenz der Tangente &nbsp;<span style="opacity:.7">(A: Eigenwert-L&uuml;cke; &lt;~0.39 &rarr; zyklisch)</span></span><b id="vG">0.85</b></div>
+    <input type="range" id="slG" min="0" max="1" step="0.02" value="0.85">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Symmetrie der Aufgabe &nbsp;<span style="opacity:.7">(B: niedrig = generisch, hoch = Z/113-Ring)</span></span><b class="v" id="vS">0.80</b></div>
+    <input type="range" class="v" id="slS" min="0" max="1" step="0.05" value="0.8">
+  </div>
+
+  <div class="ro">
+    <div class="box" id="roStatBox"><div class="k">Tangente (A)</div><div class="v" id="roStat">konvergiert</div></div>
+    <div class="box violet"><div class="k">Eigenwert-L&uuml;cke</div><div class="v" id="roGap">0.00</div></div>
+    <div class="box amber"><div class="k">Belegung (ID) letzte Schicht</div><div class="v" id="roID">&ndash;</div></div>
+    <div class="box gold"><div class="k">Budget C (B)</div><div class="v" id="roC">&ndash;</div></div>
+    <div class="box rose"><div class="k">Belegung/Budget</div><div class="v" id="roFuse">&ndash;</div></div>
+    <div class="box green"><div class="k">&beta;&#8321; aktiv (B)</div><div class="v" id="roBeta">&ndash;</div></div>
+    <div class="box green"><div class="k">&beta;&#8321;/&beta;-total</div><div class="v" id="roBetaR">&ndash;</div></div>
+    <div class="box"><div class="k">Tiefe-Ausgabe</div><div class="v" id="roLayers">&ndash;</div></div>
+  </div>
+  <p class="stat" id="stat"></p>
+  <p class="viz-note">Alle Daten inline; keine Netzwerk-Calls. Theme-aware &uuml;ber CSS-Variablen (<code>html.dark</code>) + MutationObserver. C wird f&uuml;r eine fixe Architektur (d=4, L=3, w=6, k=4) exakt per #E&#8728;&minus;#V&rarr; (Thm&nbsp;7.16, B) berechnet; die Belegungs-/Buckel-Formen sind dem Paper (Ansuini et&nbsp;al.) <em>angelehnt</em> (schematisch); der Konvergenzstatus aus der lokalen Jacobi-Matrix (A) und die Symmetrie (B) bestimmen per Gate, wie tief die Belegung rechts fallen darf. &beta;&#8321;-Zwilling: 5 (harmonischer Torus) &hellip; &beta;-total=24 (viele Register).</p>
+</div>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <div class="item"><span class="lbl">A &middot; <a href="../2/r2-033.html">r2-033.html</a></span>
+  <b>&bdquo;Der Stretch an der Tangente und die Kapazit&auml;t auf der B&uuml;hne&ldquo;</b> (R2-Fusion aus r1-069 &times; r1-079): lokale Coq-exakte lineare Geometrie der Jacobi-Matrix (Stretch/Rotate, Frobenius-Orthogonalit&auml;t, Spur=Divergenz, Residual J=I+&Delta;, renormierte Power-Iteration &rarr; Attraktor) &times; globale kombinatorische Kapazit&auml;t (Moduli-Raum, C=#E&#8728;&minus;#V&rarr;, intrinsische Dimension ID, der Buckel, ID/C) &mdash; die <b>metrisch-dynamische / Belegungs-Seite</b> der Fusion (Gate&nbsp;2, Konvergenz).</div>
+  <div class="item"><span class="lbl b">B &middot; <a href="../2/r2-035.html">r2-035.html</a></span>
+  <b>&bdquo;Die Rechnung ist die Topologie &mdash; Betti-Register, die doppelt arbeiten&ldquo;</b> (R2-Fusion aus r1-033 &times; r1-042): das Netz als gefilterter Simplizialkomplex, zugleich dynamischer Attraktor (Betti-Zyklen &beta;&#8320;/&beta;&#8321;/&beta;&#8322; als Register, gewarbter Raum &times; addierender 5-Frequenz-Torus mod&nbsp;113, Aufgabe-Symmetrie &rarr; Lesbarkeit, Grokking) &mdash; die <b>topologisch-kombinatorische / Register-Seite</b> der Fusion (Gate&nbsp;1, Symmetrie).</div>
+</div>
+</section>
+
+<footer>
+  Fusion 018 &middot; r2-033.html &times; r2-035.html &middot; Runde 3 &middot; alles l&auml;uft lokal im Browser, keine Daten verlassen diese Seite.
+</footer>
+
+</main>
+<script>
+(function(){
+"use strict";
+function $(id){return document.getElementById(id);}
+var cv=$('fuz'); if(!cv) return;
+var ctx=cv.getContext('2d');
+var TAU=Math.PI*2;
+var slG=$('slG'),slS=$('slS'),vG=$('vG'),vS=$('vS');
+var roStat=$('roStat'),roStatBox=$('roStatBox'),roGap=$('roGap'),roID=$('roID'),roC=$('roC'),roFuse=$('roFuse'),roBeta=$('roBeta'),roBetaR=$('roBetaR'),roLayers=$('roLayers'),stat=$('stat');
+var html=document.documentElement;
+
+function C(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function h2r(h){h=(h||'').replace('#','').trim();if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var n=parseInt(h,16);if(isNaN(n))return[0,0,0];return[(n>>16)&255,(n>>8)&255,n&255];}
+function rgba(r,a){return 'rgba('+r[0]+','+r[1]+','+r[2]+','+a+')';}
+function mixc(a,b,t){var A=h2r(a),B=h2r(b);return 'rgb('+[0,1,2].map(function(i){return Math.round(A[i]+(B[i]-A[i])*t);}).join(',')+')';}
+function fmt(v){if(v>=100000)return (v/1000).toFixed(0)+'k';if(v>=1000)return(v/1000).toFixed(1)+'k';return String(Math.round(v));}
+
+var depth=[0,.07,.14,.21,.29,.36,.43,.5,.57,.64,.71,.79,.86,.93,1.0];
+var IDl=[18,42,74,100,112,104,82,56,38,27,20,15,12,10,8];
+var IDm=[18,42,74,100,118,135,152,170,188,206,224,242,260,272,280];
+var C_BUDGET=102, ED_VAL=100000, YLO=0, YHI=5.5;
+var BETA_TOTAL=24, BETA_HARM=5, LMAX=8;
+
+function buildS(sigma,phi){var p2=2*phi;var P=[[Math.cos(p2),Math.sin(p2)],[Math.sin(p2),-Math.cos(p2)]];return [[1+sigma*P[0][0],sigma*P[0][1]],[sigma*P[1][0],1+sigma*P[1][1]]];}
+function buildA(omega){return [[0,-omega],[omega,0]];}
+function matAdd(A,B){return [[A[0][0]+B[0][0],A[0][1]+B[0][1]],[A[1][0]+B[1][0],A[1][1]+B[1][1]]];}
+function applyM(M,x,y){return [M[0][0]*x+M[0][1]*y,M[1][0]*x+M[1][1]*y];}
+function trM(M){return M[0][0]+M[1][1];}
+function detM(M){return M[0][0]*M[1][1]-M[0][1]*M[1][0];}
+function stepN(v,M){var nv=applyM(M,v[0],v[1]);var n=Math.sqrt(nv[0]*nv[0]+nv[1]*nv[1]);if(n<1e-12)return[1,0];return[nv[0]/n,nv[1]/n];}
+function powerDir(M){var v=[Math.cos(-2.2),Math.sin(-2.2)];for(var k=0;k<80;k++){v=stepN(v,M);}return v;}
+function eigGap(M){var tr=trM(M),det=detM(M),disc=tr*tr-4*det;if(disc<0){return{converged:false,gap:0,complex:true};}var s=Math.sqrt(disc),l1=(tr+s)/2,l2=(tr-s)/2;var a1=Math.abs(l1),a2=Math.abs(l2),mx=Math.max(a1,a2),mn=Math.min(a1,a2);if(mx<1e-9){return{converged:false,gap:0,complex:false};}var gap=(mx-mn)/mx;return{converged:gap>0.02,gap:gap,complex:false};}
+
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function ellipse(M,cx,cy,R,color,width){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();var N=120;for(var i=0;i<=N;i++){var t=TAU*i/N;var p=applyM(M,Math.cos(t),Math.sin(t));var X=cx+p[0]*R,Y=cy-p[1]*R;if(i===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);}ctx.stroke();ctx.restore();}
+function star(x,y,color,r){ctx.fillStyle=color;ctx.beginPath();for(var i=0;i<10;i++){var rad=(i%2===0)?r:r*0.45;var a=-Math.PI/2+i*Math.PI/5;var px=x+Math.cos(a)*rad,py=y+Math.sin(a)*rad;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.closePath();ctx.fill();}
+function rotArrow(cx,cy,R,dir,color){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();var a0=-0.5,a1=0.5;if(dir<0){a0=0.5;a1=-0.5;}var N=24;for(var i=0;i<=N;i++){var a=a0+(a1-a0)*(i/N);var X=cx+R*Math.cos(a),Y=cy-R*Math.sin(a);if(i===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);}ctx.stroke();var ex=cx+R*Math.cos(a1),ey=cy-R*Math.sin(a1);var tx=-Math.sin(a1)*dir,ty=Math.cos(a1)*dir;ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-7*tx-4*(-ty*dir),ey-7*ty-4*(tx*dir));ctx.lineTo(ex-7*tx+4*(ty*dir),ey-7*ty+4*(-tx*dir));ctx.closePath();ctx.fill();ctx.restore();}
+
+function compute(g,s){
+  var sigma=1.4*g, omega=0.9*(1-g), phi=40*Math.PI/180;
+  var S=buildS(sigma,phi),A=buildA(omega),J=matAdd(S,A);
+  var eig=eigGap(J);
+  var G=clamp((g-0.35)/0.25,0,1);
+  var eff=depth.map(function(_,i){return lerp(IDm[i],IDl[i],G);});
+  var floorRaise=1-s, targetFloor=lerp(8,62,floorRaise);
+  for(var i=8;i<eff.length;i++){eff[i]=Math.max(eff[i],targetFloor);}
+  for(var j=0;j<eff.length;j++){eff[j]=Math.max(1e-3,eff[j]);}
+  var idLast=eff[eff.length-1];
+  var ratio=idLast/C_BUDGET;
+  var beta=Math.round(lerp(BETA_TOTAL,BETA_HARM,G*s));
+  var layers=Math.round(lerp(1,LMAX,(1-s)));
+  var state;
+  if(G<0.4) state='mem';
+  else if(s<0.45) state='stueck';
+  else if(ratio<0.5) state='gen';
+  else state='grenz';
+  return {S:S,A:A,J:J,eig:eig,G:G,eff:eff,idLast:idLast,ratio:ratio,beta:beta,layers:layers,state:state,tr:trM(J)};
+}
+
+function draw(){
+  var dpr=Math.min(2,window.devicePixelRatio||1);
+  var w=cv.clientWidth||760,H=cv.clientHeight||470;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(H*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,H);
+
+  var panel=C('--panel'),line=C('--line'),fg=C('--fg'),muted=C('--muted'),
+      accent=C('--accent'),accent2=C('--accent2'),violet=C('--violet'),amber=C('--amber'),gold=C('--gold'),green=C('--green'),
+      vizbg=C('--vizbg');
+  var g=+slG.value, s=+slS.value;
+  var r=compute(g,s);
+  var st=r.state;
+  var effCol = st==='mem'?accent2 : st==='stueck'?amber : st==='gen'?accent : mixc(amber,accent,0.5);
+
+  // panel boxes
+  var lbx=8,lby=26,lbw=w*0.47-6,lbh=H-90;
+  var rbx=w*0.49,rby=26,rbw=w*0.49-8,rbh=H-90;
+  ctx.fillStyle=vizbg;rr(ctx,lbx,lby,lbw,lbh,12);ctx.fill();ctx.strokeStyle=line;ctx.lineWidth=1;ctx.stroke();
+  rr(ctx,rbx,rby,rbw,rbh,12);ctx.fill();ctx.stroke();
+
+  ctx.textAlign='center';ctx.textBaseline='alphabetic';ctx.font='700 12.5px system-ui, sans-serif';
+  ctx.fillStyle=accent;ctx.fillText('A \u00b7 Lokale Tangente   J = I + \u03c3\u00b7S + \u03c9\u00b7R',lbx+lbw/2,lby+18);
+  ctx.fillStyle=amber;ctx.fillText('B\u00d7A \u00b7 Belegung gegen Budget C',rbx+rbw/2,rby+18);
+
+  // ---------- LEFT: tangent ----------
+  var R=Math.min(lbw*0.28,86);
+  var lc={x:lbx+lbw/2,y:lby+118};
+  ctx.strokeStyle=line;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(lc.x-R-14,lc.y);ctx.lineTo(lc.x+R+14,lc.y);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lc.x,lc.y-R-14);ctx.lineTo(lc.x,lc.y+R+14);ctx.stroke();
+  ctx.strokeStyle=muted;ctx.globalAlpha=.5;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.arc(lc.x,lc.y,R,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  ellipse(r.S,lc.x,lc.y,R,accent,2.4);
+  ellipse(r.J,lc.x,lc.y,R,violet,2.0);
+  if(r.A[0][1]<-0.05) rotArrow(lc.x,lc.y,R*0.5,-1,accent2);
+  else if(r.A[0][1]>0.05) rotArrow(lc.x,lc.y,R*0.5,1,accent2);
+  var dir=powerDir(r.J);
+  var ax=lc.x+dir[0]*R,ay=lc.y-dir[1]*R;
+  ctx.strokeStyle=gold;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(lc.x,lc.y);ctx.lineTo(ax,ay);ctx.stroke();
+  var g2=ctx.createRadialGradient(ax,ay,0,ax,ay,20);g2.addColorStop(0,gold);g2.addColorStop(1,'transparent');
+  ctx.globalAlpha=.28;ctx.fillStyle=g2;ctx.beginPath();ctx.arc(ax,ay,20,0,TAU);ctx.fill();ctx.globalAlpha=1;
+  star(ax,ay,gold,9);
+  ctx.font='600 10.5px ui-monospace, monospace';ctx.textAlign='left';
+  ctx.fillStyle=accent;ctx.fillText('\u2014 J_sym (Stretch)',lbx+12,lc.y+R+24);
+  ctx.fillStyle=violet;ctx.fillText('\u2014 J (voll)',lbx+12,lc.y+R+38);
+  ctx.fillStyle=accent2;ctx.fillText('\u21ba J_antisym (Rotation)',lbx+lbw*0.55,lc.y+R+24);
+  ctx.fillStyle=gold;ctx.fillText('\u2605 momentaner Attraktor',lbx+lbw*0.55,lc.y+R+38);
+
+  // convergence badge under left panel
+  var convCol=r.eig.converged?accent:accent2;
+  ctx.textAlign='center';ctx.fillStyle=convCol;ctx.font='700 12px system-ui';
+  ctx.fillText(r.eig.converged?'\u2713 konvergiert (reelle Eigenwerte)':'\u2717 zyklisch (komplexe \u2014 Grenzzyklus)',lbx+lbw/2,lby+lbh-14);
+
+  // ---------- RIGHT: occupancy vs budget ----------
+  var pmL=rbx+42,pmR=rbx+rbw-16,pmT=rby+30,pmB=rby+rbh-30;
+  function X(dd){return pmL+dd*(pmR-pmL);}
+  function Y(v){var lg=Math.log10(Math.max(v,1e-4));var t=clamp((lg-YLO)/(YHI-YLO),0,1);return pmB-t*(pmB-pmT);}
+  ctx.strokeStyle=line;ctx.lineWidth=1;
+  ctx.fillStyle=muted;ctx.font='10.5px system-ui';ctx.textAlign='right';ctx.textBaseline='middle';
+  for(var gr=0;gr<=5;gr++){var val=Math.pow(10,gr);var y=Y(val);if(y<pmT-1||y>pmB+1)continue;
+    ctx.beginPath();ctx.moveTo(pmL,y);ctx.lineTo(pmR,y);ctx.stroke();ctx.fillText(fmt(val),pmL-6,y);}
+  ctx.textAlign='center';ctx.textBaseline='top';
+  for(var gx=0;gx<=5;gx++){var dd=gx/5;var x=X(dd);
+    ctx.strokeStyle=line;ctx.globalAlpha=.5;ctx.beginPath();ctx.moveTo(x,pmT);ctx.lineTo(x,pmB);ctx.stroke();ctx.globalAlpha=1;
+    ctx.fillStyle=muted;ctx.fillText(dd.toFixed(1),x,pmB+6);}
+  ctx.fillStyle=muted;ctx.fillText('relative Tiefe',X(0.5),pmB+18);
+  ctx.save();ctx.translate(rbx+12,(pmT+pmB)/2);ctx.rotate(-Math.PI/2);ctx.fillText('Belegung (log)',0,0);ctx.restore();
+
+  function trace(vals,col,dash,lw,alpha){ctx.globalAlpha=alpha==null?1:alpha;ctx.setLineDash(dash||[]);ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.beginPath();for(var i=0;i<depth.length;i++){var x=X(depth[i]),yy=Y(vals[i]);if(i===0)ctx.moveTo(x,yy);else ctx.lineTo(x,yy);}ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;}
+  trace([ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL,ED_VAL],muted,[2,4],1.3,0.7);
+  trace(IDl,rgba(h2r(accent),1),[2,4],1.4,0.45);
+  trace(IDm,rgba(h2r(accent2),1),[2,4],1.4,0.45);
+  var cy=Y(C_BUDGET);
+  ctx.setLineDash([8,5]);ctx.strokeStyle=gold;ctx.lineWidth=1.7;ctx.beginPath();ctx.moveTo(pmL,cy);ctx.lineTo(pmR,cy);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=gold;ctx.font='700 11px ui-monospace,monospace';ctx.textAlign='right';ctx.textBaseline='bottom';
+  ctx.fillText('C = '+C_BUDGET,pmR-2,cy-3);
+  trace(r.eff,effCol,[],3.2,1);
+  for(var i2=0;i2<r.eff.length;i2++){var x2=X(depth[i2]),y2=Y(r.eff[i2]);ctx.beginPath();ctx.arc(x2,y2,i2===r.eff.length-1?5:3,0,TAU);ctx.fillStyle=effCol;ctx.fill();}
+  ctx.fillStyle=effCol;ctx.font='700 12px ui-monospace,monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText(fmt(r.idLast),pmR-40,Y(r.idLast)-12);
+
+  // ---------- DOM readouts ----------
+  vG.textContent=g.toFixed(2);vS.textContent=s.toFixed(2);
+  roStat.textContent=r.eig.converged?'konvergiert':'zyklisch';
+  roStatBox.className='box'+(r.eig.converged?'':' rose');
+  roGap.textContent=r.eig.gap.toFixed(3);
+  roID.textContent=fmt(r.idLast);roC.textContent=C_BUDGET;roFuse.textContent=r.ratio.toFixed(2);
+  roBeta.textContent=r.beta;roBetaR.textContent=r.beta+' / '+BETA_TOTAL;
+  roLayers.textContent=r.layers+(r.layers===1?' Schritt':' Schichten');
+
+  var smsg;
+  if(st==='mem'){
+    smsg='Tangente <b>zyklisch</b> (Eigenwert-L&uuml;cke='+r.eig.gap.toFixed(2)+', komplexe): die lokale Karte trifft <b>keine Entscheidung</b> &rarr; die Belegung <b>darf nicht unter C fallen</b>, selbst bei hoher Symmetrie &rarr; <b>MEMORISIERT</b> (A-Gate zu). Symmetrie allein (B) reicht nicht &mdash; der Fluss erreicht den erlaubten Attraktor nicht.';
+  }else if(st==='stueck'){
+    smsg='<b>St&uuml;ckweise / bedingt.</b> Tangente konvergiert, aber die <b>Symmetrie ist niedrig</b>: kein sauberer harmonischer Torus &rarr; Belegung f&auml;llt nur <em>teilweise</em> (Bettung bleibt moderat, ~C/2), &beta;&#8321; bleibt hoch, die Tiefe m&uuml;ssen viele Schichten ausgeben (B-Gate nur teilweise). Generalisierung <em>br&uuml;chig</em>.';
+  }else if(st==='gen'){
+    smsg='<b>GENERALISIERT &mdash; beide Gates offen.</b> Die <b>Symmetrie (B)</b> erlaubt einen niedrigzyklischen harmonischen Attraktor, die <b>Konvergenz (A)</b> (L&uuml;cke='+r.eig.gap.toFixed(2)+') zieht den Fluss dorthin: Belegung bricht unter C ein (Belegung/C='+r.ratio.toFixed(2)+', &beta;&#8321;='+r.beta+'). <b>Lokale Konvergenz (A) &times; Aufgabe-Symmetrie (B) = ein Attraktor, dessen Belegung und Register dieselbe Gr&ouml;&szlig;e sind.</b>';
+  }else{
+    smsg='<b>Grenzwertig.</b> Beide Gates weitgehend offen, aber Belegung/C='+r.ratio.toFixed(2)+' n&auml;hert sich dem Budget: die Repr&auml;sentation belegt einen gro&szlig;en Teil der verf&uuml;gbaren Struktur; Generalisierung wird <em>br&uuml;chig</em>.';
+  }
+  stat.innerHTML=smsg;
+}
+
+if(slG)slG.addEventListener('input',draw);
+if(slS)slS.addEventListener('input',draw);
+window.addEventListener('resize',draw);
+var btn=$('themeBtn');
+if(btn)btn.addEventListener('click',function(){html.classList.toggle('dark');draw();});
+if(window.MutationObserver){try{new MutationObserver(function(){draw();}).observe(html,{attributes:true,attributeFilter:['class']});}catch(e){}}
+if(window.matchMedia){try{var mq=window.matchMedia('(prefers-color-scheme: dark)');var f=function(){html.classList.add('dark');draw();};if(mq.addEventListener)mq.addEventListener('change',f);}catch(e){}}
+draw();
+})();
+</script>
+</body>
+</html>

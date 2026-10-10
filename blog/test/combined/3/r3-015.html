@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 015 — Das niedrig-rangige Skelett und der Komplexitäts-Regler</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b22; --card:#ffffff; --card2:#f3efe6;
+  --border:#ddd6c6; --muted:#5d5a68; --head:#3b2f63;
+  --cA:#6a4fa3; --cB:#0d8f80; --c-res:#c2410c;
+  --c-safe:#2f9e44; --c-harm:#c93a86; --c-empty:#b7ad98;
+  --chart-bg:#faf8f1; --grid:#e6e0d2;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e6e8ef; --card:#152036; --card2:#182238;
+  --border:#2a3552; --muted:#9aa6c0; --head:#b9a7f0;
+  --cA:#a78bfa; --cB:#5ee0d0; --c-res:#fb923c;
+  --c-safe:#4ade80; --c-harm:#ff7ac0; --c-empty:#46536e;
+  --chart-bg:#0f172a; --grid:#243050;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--bg); color:var(--fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,system-ui,sans-serif;
+  line-height:1.72; -webkit-font-smoothing:antialiased;}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px;}
+h1{font-size:1.85em;line-height:1.24;margin:.15em 0 .25em;color:var(--head);}
+.subtitle{font-size:.95em;color:var(--muted);border-left:3px solid var(--cA);padding-left:12px;margin:0 0 8px;}
+.meta-line{font-size:.85em;color:var(--muted);margin-bottom:26px;}
+section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:26px 0;}
+section>h2{font-size:1.28em;color:var(--head);margin:.1em 0 .6em;border-bottom:2px solid var(--border);padding-bottom:8px;}
+section>h2 .tag{font-size:.58em;vertical-align:middle;padding:2px 8px;border-radius:20px;color:#fff;background:var(--cA);margin-left:8px;}
+h3{color:var(--head);font-size:1.06em;margin:1.3em 0 .4em;}
+p{margin:.7em 0;}
+strong{color:var(--fg);}
+em{color:var(--head);font-style:normal;font-weight:600;}
+code{background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.88em;font-family:ui-monospace,Menlo,Consolas,monospace;}
+ul,ol{margin:.5em 0 .5em 1.2em;padding:0;}
+li{margin:.42em 0;}
+.formula{background:var(--card2);border:1px dashed var(--border);border-radius:8px;padding:10px 14px;margin:.8em 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;text-align:center;line-height:1.9;overflow-x:auto;}
+.badge{display:inline-block;font-size:.7em;font-weight:bold;padding:1px 8px;border-radius:12px;vertical-align:middle;color:#fff;}
+.badge.a{background:var(--cA);}
+.badge.b{background:var(--cB);}
+.card-row{display:flex;gap:14px;flex-wrap:wrap;margin:.6em 0;}
+.paper{flex:1 1 240px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.paper h4{margin:.1em 0 .4em;font-size:.96em;}
+.paper.a h4{color:var(--cA);}
+.paper.b h4{color:var(--cB);}
+.paper p{font-size:.9em;margin:.35em 0;}
+.who{border-left:4px solid var(--c-res);background:var(--card2);border-radius:0 8px 8px 0;padding:10px 14px;margin:.7em 0;}
+.who .lbl{font-size:.8em;color:var(--muted);display:block;margin-bottom:3px;font-family:ui-monospace,monospace;letter-spacing:.03em;}
+.who .lbl.a{color:var(--cA);}
+.who .lbl.b{color:var(--cB);}
+.who .lbl.f{color:var(--head);}
+.who p{margin:.3em 0;}
+table.map{width:100%;border-collapse:collapse;margin:.8em 0;font-size:.88em;}
+table.map th,table.map td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top;}
+table.map th{background:var(--card2);color:var(--head);font-size:.8em;letter-spacing:.03em;}
+table.map td.a{color:var(--cA);font-weight:600;}
+table.map td.b{color:var(--cB);font-weight:600;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin:10px 0;}
+.viz-controls .grp{display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:120px;}
+.viz-controls label{font-size:.8em;color:var(--muted);}
+.viz-controls .val{font-family:ui-monospace,monospace;color:var(--head);font-weight:bold;}
+.viz-controls button{background:var(--cA);color:#fff;border:none;border-radius:8px;padding:8px 13px;cursor:pointer;font-size:.82em;margin-left:auto;}
+input[type=range]{accent-color:var(--cA);width:130px;}
+canvas{display:block;width:100%;height:auto;background:var(--chart-bg);border:1px solid var(--border);border-radius:10px;margin:8px auto;}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:14px 0 4px;}
+.ro{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center;}
+.ro .k{font-size:.7em;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;}
+.ro .v{font-family:ui-monospace,monospace;font-size:1.05em;font-weight:700;}
+.ro.a .v{color:var(--cA);}
+.ro.b .v{color:var(--cB);}
+.ro.hero .v{color:var(--c-res);}
+.viz-note{font-size:.84em;color:var(--muted);margin-top:8px;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:.82em;color:var(--muted);margin:4px 0 10px;}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle;}
+.prov{display:flex;gap:16px;flex-wrap:wrap;}
+.prov a{flex:1 1 260px;display:block;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--fg);text-decoration:none;}
+.prov a:hover{border-color:var(--cA);}
+.prov a .n{font-weight:bold;display:block;color:var(--head);margin-bottom:4px;}
+.prov a .d{font-size:.86em;color:var(--muted);}
+footer{font-size:.8em;color:var(--muted);text-align:center;margin-top:30px;}
+@media(max-width:560px){.viz-controls{gap:12px;}input[type=range]{width:100px;}}
+</style>
+</head>
+<body>
+<article>
+  <h1>Das niedrig-rangige Skelett und der Komplexitäts-Regler</h1>
+  <p class="subtitle">Fusion aus: r2-025.html &#10005; r2-034.html  (Round 3)</p>
+  <p class="meta-line">Round 3 &#183; Pair 015 &#183; A: r2-025.html &#8212; &bdquo;Leere Richtungen und der dünne Hebel&rdquo; (lineare Algebra / Nullraum) &#183; B: r2-034.html &#8212; &bdquo;Der Komplexitäts-Regler des Bulks&rdquo; (Holographie / Differentialgeometrie)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion<span class="tag">These</span></h2>
+    <p>Beide R2-Fusionen beantworten aus völlig verschiedenen Registern dieselbe Frage &#8212; <em>Was ist das wahre
+      Innere eines trainierten Netzes, und was macht es lesbar/steuerbar?</em> &#8212; und treffen auf
+      <strong>genau dieselbe Struktur</strong>: Das echte Innere ist ein <strong>niedrig-rangiges Skelett</strong>
+      (wenige Richtungen, bzw. ein d-affiner Unterraum), das in einem <strong>riesigen, größtenteils leeren,
+      hochdimensionalen Umgebungsraum</strong> sitzt, und dessen Komplexität von <em>einer</em> Größe gesteuert wird.</p>
+    <p><span class="badge a">A (r2-025)</span> sagt: Das Skelett sind die <em>wenigen geladenen Richtungen</em>
+      <code>d</code> im leeren orthogonalen Raum; eine <em>einzelne</em> Richtung <code>r&#770;</code> trägt ein ganzes
+      Verhalten (Rang&nbsp;1). Die leere Überzahl ist ein <em>Tresor/Reservoir</em>, der den Restfehler schluckt und am
+      Test exakt unsichtbar macht (<code>G&#183;P<sub>res</sub>=0</code>). Lesen ist eine <em>lineare Projektion</em> auf
+      den dünnen Hebel. <span class="badge b">B (r2-034)</span> sagt: Das Skelett ist der <em>niedrigdimensionale
+      Bulk</em> (d-affiner Unterraum, Rang&nbsp;<code>r</code>&asymp;10, 5 Schüssel-Frequenzen), <em>exakt von der
+      Boundary kodiert</em>; Komplexität ist <em>ein</em> Regler <strong>&theta;</strong>, der Scrambling und Krümmung
+      vereint &#8212; <code>&theta;=0</code> linear/trivial (Fourier/PWL, direkt ablesbar), <code>&theta;&#8594;1</code>
+      gekrümmt <em>und</em> gescrambelt (braucht 2.&nbsp;Grundform zum Modellieren <em>und</em> MERA/RT zum Lesen).</p>
+    <p>Der Fusionskern: <strong>Beide beschreiben EINE niedrig-rangige Adressstruktur in einem leeren Raum.
+      A&rsquo;s &bdquo;Anzahl geladener Richtungen / Rang&rdquo; und B&rsquo;s &bdquo;Regler&nbsp;&theta;&rdquo; sind die
+      zwei Achsen derselben Komplexität.</strong> Das &bdquo;gute&rdquo; Netz liegt an der Ecke
+      <strong>niedriger Rang + &theta;&#8594;0</strong>: linear, flach, direkt lesbar, Task exakt kodiert. Dort fallen
+      A&rsquo;s Generalisierung (Kapazität&nbsp;<code>2d</code>, Phasenübergang <code>&beta;=N/d=2</code>) und B&rsquo;s
+      &bdquo;gut gebaut&rdquo; (flache konvexe affine Latente, Theorem&nbsp;6) auf denselben Punkt. Lesen (A: Projektion
+      / Hebel; B: Bulk-Rekonstruktion) und Steuern/Bauen (A: Rang-1-Edit; B: White-Box-Konstruktion) sind am
+      niedrig-rangigen, <code>&theta;=0</code>-Ende dasselbe.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B<span class="tag">Spannung</span></h2>
+    <p>Beide teilen einen harten Boden (ein niedrig-rangiges Skelett, <code>d&#8804;D</code>, in einem großen Raum;
+      Mechanismus aus <em>Struktur</em> &#8212; Rang, Richtungen, Unterraum, Nullraum &#8212; nicht aus Gewichtswerten;
+      Konzentration <code>|&lt;u,v&gt;|&sim;1/&#8730;d</code>). Trotzdem nehmen sie zu drei Größen
+      <em>inkompatible</em> Stellungen ein. Die Kontraste sind interpretativ (kein formell-widriger Konflikt) &#8212;
+      A ist am stärksten genau im linear-gelesenen Regime, das B als <code>&theta;=0</code> bezeichnet.</p>
+
+    <div class="who"><span class="lbl a">Widerspruch 1 (schärfster) &#183; Ist die lineare/dünne Struktur das ganze Objekt? &#8212; A sagt</span>
+      <p>Die wenigen geladenen Richtungen / die eine Richtung <code>r&#770;</code> <strong>SIND</strong> das Verhalten
+        und das Read-out &#8212; linear, Rang&nbsp;1, voll steuerbar, <code>G&#183;P<sub>res</sub>=0</code>, Kapazität
+        <code>2d</code>, Phasenübergang <code>&beta;=2</code>. &bdquo;Der dünne Hebel&rdquo; ist die ganze Geschichte;
+        das Objekt ist <em>linear lesbar</em>. <em>Niedrig-rangig &#8658; einfach/steuerbar &#8212; der Rang zählt.</em></p></div>
+    <div class="who"><span class="lbl b">B sagt im Gegenteil</span>
+      <p>Genau diese lineare/niedrig-rangige Struktur ist <strong>nur der <code>&theta;=0</code>-Limes</strong>.
+        Generisch ist derselbe niedrig-rangige Code <strong>gescrambelt</strong> und die Geometrie
+        <strong>gekrümmt</strong> (<code>&theta;&gt;0</code>); <strong>Rang allein bestimmt die Lesbarkeit NICHT</strong>
+        &#8212; man braucht den zweiten Regler (Scrambling+Krümmung) und dazu MERA/RT + 2.&nbsp;Grundform.
+        <em>Niedrig-rangig ist nötig, aber NICHT hinreichend: ein niedrig-rangiger Code kann maximal gescrambelt sein
+        (<code>&theta;&#8594;1</code>).</em></p></div>
+
+    <div class="who"><span class="lbl a">Widerspruch 2 &#183; Rolle des großen Raums &#8212; A sagt: inertes Parkhaus</span>
+      <p>Die leere Überzahl ist ein <strong>Tresor/Reservoir</strong>, der den Restfehler schluckt und am Test exakt
+        unsichtbar macht (<code>G&#183;P<sub>res</sub>=0</code>). Seine Funktion: <em>den Fehler wegstecken/verwerfen</em>
+        &#8212; &bdquo;der Überfluss schluckt den Fehler.&rdquo;</p></div>
+    <div class="who"><span class="lbl b">B sagt im Gegenteil: aktiver Code-Träger / Boundary</span>
+      <p>Der hohe I/O-Raum ist die <strong>Boundary</strong>, auf der der Bulk <strong>exakt kodiert</strong> ist und von
+        der die Bulk-Rekonstruktion/Decode läuft. Seine Funktion: <em>den Code robust tragen/speichern</em> &#8212;
+        &bdquo;die Boundary kodiert den Bulk exakt.&rdquo; <em>Derselbe große Raum, entgegengesetzte Funktion:
+        wegwerfen (A) vs. tragen (B).</em></p></div>
+
+    <div class="who"><span class="lbl a">Widerspruch 3 &#183; Wie man liest &#8212; A sagt: immer lineare Projektion</span>
+      <p>Read-out = <strong>Koordinate/Projektion auf den dünnen Hebel</strong> (<code>x&#183;r&#770;</code>,
+        <code>sign(w&#183;x)</code>) &#8212; linear und trivial <em>per Konstruktion</em>; der Hebel <em>ist</em> das
+        Read-out.</p></div>
+    <div class="who"><span class="lbl b">B sagt im Gegenteil: generisch nicht-triviales Dekodieren</span>
+      <p>Lesen = <strong>Bulk-Rekonstruktion aus der Boundary</strong>; nur bei <code>&theta;=0</code> trivial
+        (identity/linear-Decode), generisch ein <strong>Fehlerkorrektur-Problem</strong> (MERA / Ryu&#8211;Takayanagi).
+        <em>Lesen ist an sich (A) linear/trivial vs. (B) generisch ein nicht-triviales Dekodierproblem, trivial nur am
+        degenerierten Ende.</em></p></div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung<span class="tag">Fusion</span></h2>
+
+    <h3>1 &#183; &bdquo;Rang zählt&rdquo; vs. &bdquo;Regler &theta;&rdquo; &#8594; EINES Objekts, zwei Achsen</h3>
+    <p>A und B messen <em>dasselbe</em> niedrig-rangige Skelett, aber A zählt nur den <strong>Rang</strong> (Anzahl
+      geladener Richtungen <code>d</code>), während B zusätzlich misst, <strong>wie weit die Realisierung vom
+      triviale Limes weg</strong> ist (<strong>&theta;</strong> = Scrambling + Krümmung). A&rsquo;s &bdquo;dünner
+      Hebel&rdquo; <code>r&#770;</code> <strong>ist</strong> B&rsquo;s &bdquo;<code>&theta;=0</code>, niedrig-rangiger
+      Code&rdquo; &#8212; dieselbe Struktur. <strong>Fused Schluss:</strong> Einfachheit = <em>niedriger Rang</em> (A)
+      <em>und</em> <em>niedriger &theta;</em> (B). A ist der <strong>niedrig-rangige, &theta;&#8594;0-Eckpunkt</strong>
+      von B&rsquo;s Landschaft; B verallgemeinert A. &bdquo;Niedrig-rangig &#8658; lesbar&rdquo; gilt, solange
+      <code>&theta;&#8776;0</code>; bei <code>&theta;&gt;0</code> braucht man B&rsquo;s Decoder auf <em>dasselbe</em>
+      Skelett (A).</p>
+
+    <h3>2 &#183; Parkhaus vs. Code-Träger &#8594; EIN Raum, zwei sich nicht ausschließende Funktionen</h3>
+    <p>Das Skelett belegt <strong>wenige</strong> Richtungen. Deshalb ist die Überzahl <em>relativ dazu leer</em>
+      (A: Parkhaus, Fehler&nbsp;&#8594;&nbsp;0) <strong>und zugleich</strong> die Boundary, auf der das Wenige
+      <em>exakt/redundant</em> kodiert ist (B: robust lesbar). Leere (A) und Robustheit (B) sind zwei Seiten: Der Code
+      nutzt wenige Achsen &#8594; der Rest ist leer und <em>parkfähig</em> (A), während die Boundary das Wenige
+      redundanter <em>trägt</em> (B). <strong>Fused Schluss:</strong> Der Fehler parkt in den Achsen, die das Skelett
+      <em>nicht</em> belegt (<code>G&#183;P<sub>res</sub>=0</code>); das Skelett selbst ist von der Boundary robust
+      lesbar. <em>Leer (A) und robust (B) widersprechen sich nicht &#8212; sie sind die beiden Seiten eines
+      niedrig-rangigen Codes in einem großen Raum.</em></p>
+
+    <h3>3 &#183; lineare Projektion vs. Fehlerkorrektur-Decode &#8594; dasselbe Read-out, gestuft nach &theta;</h3>
+    <p>Bei <code>&theta;=0</code> (A&rsquo;s Regime) <strong>ist</strong> das Read-out eine lineare Projektion auf den
+      dünnen Hebel (<code>x&#183;r&#770;</code>). Mit wachsendem <code>&theta;</code> genügt die <em>feste</em>
+      Projektion nicht mehr &#8594; B&rsquo;s Fehlerkorrektur-Decode (MERA/RT). <strong>Fused Schluss:</strong> A&rsquo;s
+      Hebel ist der <strong><code>&theta;=0</code>-Fall</strong> von B&rsquo;s Decode; B verallgemeinert A. Das Read-out
+      ist <em>so einfach, wie &theta; es erlaubt</em> &#8212; lineare Projektion bei <code>&theta;&#8776;0</code>,
+      volle Rekonstruktion bei <code>&theta;&#8594;1</code>.</p>
+
+    <div class="formula">
+      EIN niedrig-rangiges Skelett:  Rang <code>d</code> (A) &#8801; d-affiner Unterraum, Rang <code>r</code> (B)<br>
+      Komplexität = 2 Achsen:  Rang (A: Kapazität <code>2d</code>)  &#215;  Regler <code>&theta;</code> (B: Scrambling + Krümmung)<br>
+      &theta;=0 :  <code>r&#770;</code> = dünner Hebel = trivialer Code &#8594; lineare Projektion, direkt lesbar (A &#8801; B)<br>
+      &theta;&#8594;1 :  gescrambelt + gekrümmt &#8594; 2. Grundform (modellieren) + MERA/RT (lesen) (nur B)<br>
+      leere Überzahl :  Tresor (A: <code>G&#183;P<sub>res</sub>=0</code>)  =  redundanter Code-Träger/Boundary (B)
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt<span class="tag">Stoff</span></h2>
+
+    <h3>Gemeinsame Grundlage</h3>
+    <p>Beide Systeme sind <em>niedrig-rangig entscheidend</em>: das relevante Innere ist ein Unterraum/Richtungs-Set von
+      Rang <code>&lt;&#8804;D</code> in einem großen Umgebungsraum; Mechanismus aus <em>Struktur</em> (Rang, Richtungen,
+      Unterraum, Nullraum) nicht aus Gewichtswerten; beide berufen sich auf die Hochdimensionalität (Konzentration
+      <code>|&lt;u,v&gt;|&sim;1/&#8730;d</code>, Johnson&#8211;Lindenstrauss; bei B: <code>d&#8804;D</code>, d-affiner
+      Unterraum). Die Ausgabe/Verhalten ist eine <strong>Koordinate/Projektion</strong> auf das Skelett (A:
+      <code>x&#183;r&#770;</code>; B: Bulk-Koordinate, exakt von der Boundary kodiert).</p>
+
+    <div class="card-row">
+      <div class="paper a"><h4>A (r2-025) &#183; Leere Richtungen &amp; der dünne Hebel</h4>
+        <p><strong>Geometrie des leeren Raums:</strong> Überparametrisierung erzeugt leere/Null-Richtungen.
+          <em>Werkbank</em> (Input): ReLU <em>faltet</em> injektiv, 2D-Ei &#8594; 3 ReLU, N-dim. Ei &#8594; N+1 Neuronen,
+          Tiefe &#8658; 2<sup>L</sup> lineare Regionen; Neural Collapse &#8594; Simplex-ETF (Kosinus
+          <code>&#8722;1/(K&#8722;1)</code>). <em>Tresor</em> (Output): Signalkanal=<code>range(W)</code> /
+          Reservoir=<code>ker(W)</code>, <code>W=&#8747;K(&tau;)d&tau;</code>; <strong>Kernsatz
+          <code>G&#183;P<sub>res</sub>=0</code></strong> (Restfehler am Test exakt 0, ohne Annahmen); Drift&#8776;T vs.
+          Diffusion&#8776;&#8730;T; Invarianz unter 4,8&#215; Kern-Drift; SNR-Gate
+          <code>&mu;&#178;&gt;&sigma;&#178;/(b&#8722;1)</code>.</p>
+        <p><strong>Der dünne Hebel &amp; die Kapazität:</strong> Verhalten = <code>x&#183;r&#770;</code> (Rang&nbsp;1;
+          Arditi: <code>r&#770;=(&mu;<sub>harm</sub>&#8722;&mu;<sub>safe</sub>)/&#8477;&mu;<sub>harm</sub>&#8722;&mu;<sub>safe</sub>&#8477;</code>,
+          notwendig+hinreichend); Rang-1-Edit <code>W&prime;=W&#8722;r&#770;r&#770;<sup>&#7488;</sup>W</code> (&lt;5&nbsp;$).
+          Cover 1965: <code>C(N,d)=2&#931;<sub>k&lt;d</sub> C(N&#8722;1,k)</code>, Kapazität <code>2d</code>,
+          Phasenübergang <code>&beta;=N/d=2</code>; Mehrdeutigkeit <code>&#8594;1/(&beta;&#8722;1)</code>
+          (<code>&beta;&#8804;2 &#8658; 100&nbsp;% auswendig</code>).</p>
+      </div>
+      <div class="paper b"><h4>B (r2-034) &#183; Der Komplexitäts-Regler des Bulks</h4>
+        <p><strong>Holographie (Seite r1-051):</strong> Bulk (innere Schichten) ist <em>exakt</em> auf der
+          niedrigdimensionalen Boundary (I/O) kodiert; Interpretierbarkeit = Bulk-Rekonstruktion.
+          <em>Grokking exakt:</em> Addition mod&nbsp;113, Embedding spars in Fourier-Basis (5 Schüssel-Frequenzen
+          {14,35,41,42,52}, <code>w<sub>k</sub>=2&pi;k/113</code>), Unembedding Rang&#8776;10,
+          <code>e<sup>iw(a+b)</sup>=e<sup>iwa</sup>e<sup>iwb</sup></code> (Addition&nbsp;=&nbsp;Rotation),
+          <code>cos(w(a+b))=cos(wa)cos(wb)&#8722;sin(wa)sin(wb)</code>. RG-Flow
+          <code>A<sub>f</sub>(L)=A<sub>f</sub>e<sup>&#8722;&lambda;L(f&#8722;f<sub>task</sub>)</sup></code> (verlustfrei
+          am Task); Scrambling-Spektrum: trivial-linear &#8660; maximal gescrambelt (MERA/RT).</p>
+        <p><strong>Geometrie (Seite r1-028):</strong> UAT (Cybenko/Hornik: <code>&#8704;&epsilon;&gt;0 &#8747;N</code>),
+          Bumps = ReLU-Differenz; FlatNet (White-Box, kein Backprop, <code>d&#770;</code>/Tiefe auto,
+          <code>O(N&#183;D&#183;d&#178;)</code>); <strong>Theorem&nbsp;6:</strong> <code>&#966;(&#8499)</code> konvexer
+          Teil eines d-affinen Unterraums + expliziter Decoder; 2.&nbsp;Grundform
+          <code>exp<sub>x&#8320;</sub>(v)&#8776;x&#8320;+v+&#189;&#183;II(v,v)</code>,
+          <code>&kappa;=f&#8243;/(1+f&#8242;&#178;)<super>3/2</super></code>; Partition of Unity;
+          <em>Krümmungs-Limes</em>: <code>II&#8594;0 &#8658; linear/PWL = ReLU</code>.</p>
+      </div>
+    </div>
+
+    <h3>Die fusionierte Brücke (A &#8596; B)</h3>
+    <table class="map">
+      <tr><th>A (r2-025)</th><th>B (r2-034)</th><th>Fusion</th></tr>
+      <tr><td class="a">ein großer, leere orthogonaler Raum (<code>d<sub>model</sub>&asymp;4096</code>)</td><td class="b">die Boundary / der hohe I/O-Raum, auf dem der Bulk kodiert ist</td><td><strong>der große, meist leere Umgebungsraum</strong> um das Skelett</td></tr>
+      <tr><td class="a">wenige geladene Richtungen <code>d</code> / eine Richtung <code>r&#770;</code></td><td class="b">der niedrigdimensionale Bulk (d-affiner Unterraum, <code>d&#8804;D</code>, Rang <code>r</code>&asymp;10)</td><td><strong>das niedrig-rangige Skelett</strong></td></tr>
+      <tr><td class="a">Verhalten = <code>x&#183;r&#770;</code> (Rang&nbsp;1, lineares Read-out)</td><td class="b">Bulk = Code, exakt von der Boundary kodiert</td><td>das Skelett <em>ist</em> der Code; lesen = das Skelett lesen</td></tr>
+      <tr><td class="a">leere Überzahl = Tresor/Reservoir, <code>G&#183;P<sub>res</sub>=0</code></td><td class="b">Bulk ist exakt (redundant) von der Boundary kodiert &#8594; robust</td><td><strong>leere Überzahl = Tresor (Fehler&#8594;0) <em>und</em> Code-Träger</strong></td></tr>
+      <tr><td class="a">Kapazität <code>2d</code>, Phasenübergang <code>&beta;=N/d=2</code></td><td class="b">Komplexitäts-Regler <code>&theta;</code> (Scrambling + Krümmung)</td><td><strong>zwei Komplexitäts-Achsen: Rang (A) &#215; &theta; (B)</strong></td></tr>
+      <tr><td class="a">Rang-1-Edit <code>W&prime;=W&#8722;r&#770;r&#770;<sup>&#7488;</sup>W</code> (dünn, editierbar)</td><td class="b">White-Box-Konstruktion ohne Backprop (Theorem&nbsp;6)</td><td>das Skelett ist <em>editierbar</em> (A) <em>und konstruierbar</em> (B)</td></tr>
+      <tr><td class="a">lineares Read-out (Projektion auf den Hebel)</td><td class="b"><code>&theta;=0</code>: identity/linear-Decode; <code>&theta;&#8594;1</code>: MERA/RT</td><td>Read-out so einfach, wie <code>&theta;</code> es erlaubt</td></tr>
+      <tr><td class="a">Neural Collapse / Simplex-ETF (Kosinus <code>&#8722;1/(K&#8722;1)</code>)</td><td class="b">Partition of Unity / lokale Patches &#8594; global</td><td>lokale Patches &#8594; global; orthogonale Achsen = ETF/Partition</td></tr>
+      <tr><td class="a">ReLU-Faltung (Werkbank, injektiv), <code>2<sup>L</sup></code> Regionen</td><td class="b">UAT + Bumps + Flattening (Theorem&nbsp;6)</td><td>flach/trivial = <code>&theta;=0</code> = ReLU/PWL-Limes</td></tr>
+      <tr><td class="a">Drift&#8776;T vs. Diffusion&#8776;&#8730;T; SNR-Gate</td><td class="b">RG-Flow <code>A<sub>f</sub>(L)=A<sub>f</sub>e<sup>&#8722;&lambda;L(f&#8722;f<sub>task</sub>)</sup></code></td><td>task-relevant überlebt, task-irrelevant wird verworfen/diffundiert</td></tr>
+    </table>
+
+    <h3>Die fusionierte Pipeline</h3>
+    <ol>
+      <li><strong>EIN großer, meist leere Umgebungsraum</strong> (Überparametrisierung / <code>d<sub>model</sub>&asymp;4096</code>
+        = A; der I/O-Raum / Boundary = B). Konzentration <code>|&lt;u,v&gt;|&sim;1/&#8730;d</code>.</li>
+      <li><strong>Ein niedrig-rangiges Skelett wird geladen</strong> (A: <code>d</code> geladene Richtungen, injektiv
+        dorthin gefaltet; B: d-affiner Unterraum, <code>d&#8804;D</code>). Das Skelett trägt das Verhalten als
+        adressierbare Achsen (A: <code>r&#770;</code>, <code>w</code>) <em>und</em> ist der Bulk-Code (B).</li>
+      <li><strong>Die leere Überzahl tut beides zugleich:</strong> sie ist <em>Tresor</em> (A: Restfehler geparkt,
+        <code>G&#183;P<sub>res</sub>=0</code>) <em>und</em> <em>redundanter Code-Träger/Boundary</em> (B: Bulk exakt
+        lesbar). <em>Gerade weil nur wenige Achsen geladen sind, bleibt der Rest leer &#8212; parkfähig <em>und</em>
+        robust.</em></li>
+      <li><strong>Komplexität = zwei Achsen:</strong> der <em>Rang</em> (A: Kapazität <code>2d</code>, Phasenübergang
+        <code>&beta;=N/d=2</code>; man kann nicht beliebig viele Achsen laden <em>und</em> noch generalisieren)
+        <em>und</em> der <em>Regler &theta;</em> (B: Scrambling+Krümmung; <code>&theta;=0</code> trivial,
+        <code>&theta;&#8594;1</code> schwer).</li>
+      <li><strong>Lesen &amp; Bauen am gleichen Eckpunkt:</strong> bei <em>niedrigem Rang + &theta;&#8594;0</em> ist das
+        Read-out eine lineare Projektion auf den dünnen Hebel (A) = trivialer Code, direkt ablesbar (B); dort fallen
+        A&rsquo;s Generalisierung und B&rsquo;s &bdquo;gut gebaut&rdquo; (flache konvexe affine Latente, Theorem&nbsp;6)
+        zusammen. <em>Robust in der Gesamtheit, dünn im Einzelnen; trivial am Ende, schwer gescrambelt im Zentrum.</em></li>
+    </ol>
+    <div class="formula">
+      A:  Signalkanal = range(W),  Reservoir = ker(W),  G&#183;P<sub>res</sub> = 0,  Kapazität = 2d,  &beta;=N/d=2<br>
+      B:  Bulk = d-affiner Unterraum (Rang r),  &theta;=0 &#8658; linear/Fourier/PWL,  &theta;&#8594;1 &#8658; MERA/RT + 2. Grundform<br>
+      &#8776;  EIN niedrig-rangiges Skelett in einem leeren Raum;  Komplexität = Rang &#215; &theta;;
+      <em>gut</em> = niedrig-rangig + &theta;&#8594;0 (linear, flach, direkt lesbar, Task exakt kodiert)
+    </div>
+
+    <h3>Gemeinsame Grenzen</h3>
+    <p>A: braucht ein C&#178;-Netz, konkaven Output-Verlust, exakte Kopplung nur bei quadratischem Verlust;
+      Origami-Falt-Effizienz argumentiert intuitiv (nicht bewiesen), <code>&chi;</code> trägt nicht direkt auf
+      Attention; am stärksten für dichte ReLU-Blöcke. B: Cover braucht allgemeine Lage; Arditi ist an eine Richtung pro
+      Modell gebunden und setzt hochdimensionale Orthogonalität + Base-Model-Präexistenz voraus; UAT ist Existenz
+      (nicht algorithmisch), FlatNet setzt eine echte Mannigfaltigkeit voraus. <strong>Beides ist im dichten /
+      hochdimensionalen / linear-gelesenen Regime am stärksten &#8212; genau dort (niedriger Rang, &theta;&#8594;0)
+      überlappen A und B und schließen nahtlos aneinander an.</strong></p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktiv: ein Skelett im leeren Raum, gesteuert vom Regler &theta;<span class="tag">Viz</span></h2>
+    <p>Links (fusioniert): ein Diskus aus vielen <strong>leeren (hellen) orthogonalen Richtungen</strong> (A&rsquo;s
+      leere Meer = B&rsquo;s Boundary); davon sind <strong>r geladen</strong> (helle, dicke) = das
+      <strong>niedrig-rangige Skelett</strong>. Der <strong>Komplexitäts-Regler &theta;</strong> dreht die
+      <strong>Code-Richtung</strong>: bei <code>&theta;=0</code> liegt das Signal auf <em>einer</em> Achse
+      (<code>r&#770;</code> = A&rsquo;s dünner Hebel = B&rsquo;s trivialer Code) &#8212; lineares Read-out perfekt.
+      Bei <code>&theta;&#8594;1</code> verteilt es sich auf die r Skelett-Achsen (gescrambelt/gekrümmt) &#8212; die
+      <em>feste</em> lineare Projektion bricht ein, der volle Decode bleibt. Rechts: A&rsquo;s Kapazität <code>2d</code>
+      mit Phasenübergang bei <code>&beta;=2</code>.</p>
+
+    <div class="viz-controls">
+      <div class="grp"><label>Komplexitäts-Regler &theta; <span class="val" id="vTheta">0.00</span></label>
+        <input type="range" id="vTheta" min="0" max="1" step="0.01" value="0"></div>
+      <div class="grp"><label>Geladene Richtungen / Rang r <span class="val" id="vR">4</span></label>
+        <input type="range" id="vR" min="1" max="8" value="4"></div>
+      <div class="grp"><label>&beta; = N/d <span class="val" id="vBeta">4</span></label>
+        <input type="range" id="vBeta" min="1" max="12" value="4"></div>
+      <button id="b_theme">Theme umschalten</button>
+    </div>
+
+    <canvas id="viz" height="480"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--c-empty)"></i>leere Richtung (Vault/Boundary)</span>
+      <span><i style="background:var(--cA)"></i>geladenes Skelett (Rang r)</span>
+      <span><i style="background:var(--cB)"></i>Code-Richtung w(&theta;)</span>
+      <span><i style="background:var(--c-res)"></i>Reservoir-Fehler (&#8869; zum Skelett)</span>
+    </div>
+
+    <div class="ro-grid">
+      <div class="ro a"><span class="k">Rang r (geladene Richtungen)</span><span class="v" id="roR">4</span></div>
+      <div class="ro a"><span class="k">Kapazität 2r</span><span class="v" id="roCap">8</span></div>
+      <div class="ro hero"><span class="k">Regler &theta;</span><span class="v" id="roTheta">0.00</span></div>
+      <div class="ro a"><span class="k">Lineares Read-out (A-Hebel)</span><span class="v" id="roNaive">100 %</span></div>
+      <div class="ro b"><span class="k">Fehlerkorrektur-Decode (B)</span><span class="v" id="roFull">100 %</span></div>
+      <div class="ro b"><span class="k">Generalisiert? (&beta;&gt;2)</span><span class="v" id="roGen">&#8212;</span></div>
+      <div class="ro hero"><span class="k">Reservoir am Test</span><span class="v" id="roInv">0 (G&#183;P<sub>res</sub>=0)</span></div>
+    </div>
+    <p class="viz-note">Alle Daten inline (deterministischer PRNG); keine Netzwerk-Calls. Theme-aware über CSS-Variablen
+      (<code>html.dark</code>) + MutationObserver. Links: der leere orthogonale Raum mit r geladenen Achsen; die
+      Code-Richtung w(&theta;) dreht vom triviale Limes (alles auf <code>r&#770;</code>, &theta;=0) zum gescrammelten
+      Zustand (auf die r Achsen verteilt, &theta;&#8594;1). Der Reservoir-Fehler steht &#8869; zum Skelett &#8594; 0 am
+      Test (A: <code>G&#183;P<sub>res</sub>=0</code>). Rechts: lineares Read-out (fester A-Hebel) bricht mit &theta;
+      ein, der volle Decode (B) bleibt =1; plus A&rsquo;s Cover-Kapazität 2r mit Phasenübergang bei &beta;=2.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz<span class="tag">Quellen</span></h2>
+    <div class="prov">
+      <a href="../2/r2-025.html">
+        <span class="n">A &#183; r2-025.html</span>
+        <span class="d">R2-Fusion &bdquo;Leere Richtungen und der dünner Hebel&rdquo; (r1-075 Falten/Parken &#10005;
+        r1-076 dünner Hebel) &#8212; ein großer, meist leere orthogonaler Raum; wenige geladene Richtungen tragen das
+        Verhalten (Rang 1, <code>r&#770;</code>), die leere Überzahl ist der Tresor/Reservoir
+        (<code>G&#183;P<sub>res</sub>=0</code>); Kapazität <code>2d</code>, Phasenübergang <code>&beta;=N/d=2</code>.
+        Liefert <em>Rang/leere Richtungen</em> und den <em>dünnen Hebel</em>.</span>
+      </a>
+      <a href="../2/r2-034.html">
+        <span class="n">B &#183; r2-034.html</span>
+        <span class="d">R2-Fusion &bdquo;Der Komplexitäts-Regler des Bulks&rdquo; (r1-051 Holographie/Grokking
+        &#10005; r1-028 Universalität/Krümmung) &#8212; das Innere ist ein niedrigdimensionaler, von der Boundary
+        exakt kodierter Bulk; Komplexität = EINER Regler &theta; (Scrambling + Krümmung), &theta;=0 linear/trivial,
+        &theta;&#8594;1 MERA/RT + 2. Grundform; Theorem&nbsp;6 (konvexe affine d-Latente). Liefert den
+        <em>Regler &theta;</em> und die <em>Bulk-/Boundary-Ansicht</em>.</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>Fusion 015 &#183; Round 3 &#183; Selbständige Darstellung; beide Quellen in combined/2/ (../2/).</footer>
+
+</article>
+<script>
+(function(){
+  try{
+    var cv=document.getElementById('viz');
+    if(!cv) return;
+    var ctx=cv.getContext('2d');
+    var $=function(id){return document.getElementById(id);};
+    var el={theta:$('vTheta'),r:$('vR'),beta:$('vBeta')};
+    var TAU=Math.PI*2, D=24;
+    var logF=[0];for(var i=1;i<=400;i++)logF[i]=logF[i-1]+Math.log(i);
+    function lchoose(n,k){if(k<0||k>n)return -Infinity;return logF[n]-logF[k]-logF[n-k];}
+    function logC(N,d){if(N<1||d<1)return -Infinity;if(d>=N)return N*Math.LN2;var mx=-Infinity,ts=[],k,t;for(k=0;k<d;k++){t=lchoose(N-1,k);ts.push(t);if(t>mx)mx=t;}var s=0,q;for(q=0;q<ts.length;q++)s+=Math.exp(ts[q]-mx);return Math.log(2)+mx+Math.log(s);}
+    function Pnd(N,d){if(d<1)return 0;if(d>=N)return 1;var p=Math.exp(logC(N,d)-N*Math.LN2);if(p>1)p=1;if(p<0)p=0;return p;}
+    function css(n,fb){var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return (v&&v.length)?v:fb;}
+    function pal(){return{
+      chart:css('--chart-bg','#0f172a'),grid:css('--grid','#243050'),
+      fg:css('--fg','#e6e8ef'),mut:css('--muted','#9aa6c0'),
+      A:css('--cA','#a78bfa'),B:css('--cB','#5ee0d0'),
+      res:css('--c-res','#fb923c'),safe:css('--c-safe','#4ade80'),
+      empty:css('--c-empty','#46536e')
+    };}
+    var W=0,H=480,dpr=1;
+    function resize(){dpr=window.devicePixelRatio||1;var rr=cv.getBoundingClientRect();W=rr.width;H=480;
+      cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);}
+    function setTxt(id,t){var e=$(id);if(e)e.textContent=t;}
+    function arrow(x0,y0,x1,y1,color,w,hl){
+      ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w;
+      ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+      var ang=Math.atan2(y1-y0,x1-x0);hl=hl||9;
+      ctx.beginPath();ctx.moveTo(x1,y1);
+      ctx.lineTo(x1-hl*Math.cos(ang-0.4),y1-hl*Math.sin(ang-0.4));
+      ctx.lineTo(x1-hl*Math.cos(ang+0.4),y1-hl*Math.sin(ang+0.4));
+      ctx.closePath();ctx.fill();
+    }
+    function unit(a){return {x:Math.cos(a),y:Math.sin(a)};}
+    function drawInner(){
+      if(!W)resize();
+      if(W<10)return;
+      ctx.clearRect(0,0,W,H);
+      var C=pal();
+      var theta=el.theta?(+el.theta.value):0;
+      var r=el.r?(+el.r.value):4; if(r<1)r=1;
+      var beta=el.beta?(+el.beta.value):4;
+      setTxt('vTheta',theta.toFixed(2));
+      setTxt('vR',String(r));
+      setTxt('vBeta',String(Math.round(beta)));
+      var divX=W*0.56;
+      var Rnaive=(r===1)?1:Math.abs(Math.cos(Math.PI*theta/2));
+
+      /* ===== LEFT: disk ===== */
+      var top=58,bottom=H-14;
+      var cx=10+(divX-10)/2, cy=(top+bottom)/2;
+      var R=Math.min(cx-16,(bottom-top)/2-14); if(R<30)R=40;
+      ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.strokeRect(8,44,divX-16,bottom-44);
+      ctx.lineWidth=1;ctx.globalAlpha=0.5;
+      for(var k=0;k<D;k++){var aa=k*TAU/D;
+        ctx.strokeStyle=C.empty;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(aa),cy+R*Math.sin(aa));ctx.stroke();}
+      ctx.globalAlpha=1;
+      var sks=[],phi=[],m;
+      for(m=0;m<r;m++){phi[m]=TAU*m/r; sks[m]=unit(phi[m]);}
+      var comps=[],wvec;
+      if(r===1){ wvec={x:1,y:0}; comps=[1]; }
+      else{
+        var c=Math.cos(Math.PI*theta/2), s=Math.sin(Math.PI*theta/2);
+        var u={x:0,y:0};
+        for(var i2=1;i2<r;i2++){u.x+=sks[i2].x/Math.sqrt(r-1);u.y+=sks[i2].y/Math.sqrt(r-1);}
+        wvec={x:c*sks[0].x+s*u.x, y:c*sks[0].y+s*u.y};
+        comps=[c];
+        for(var i3=1;i3<r;i3++)comps.push(s/Math.sqrt(r-1));
+      }
+      for(m=0;m<r;m++){
+        ctx.strokeStyle=C.A;ctx.lineWidth=3;ctx.globalAlpha=0.9;
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*sks[m].x,cy+R*sks[m].y);ctx.stroke();ctx.globalAlpha=1;
+        var hr=2+7*Math.min(1,Math.abs(comps[m]));
+        ctx.beginPath();ctx.arc(cx+R*sks[m].x,cy+R*sks[m].y,hr,0,TAU);ctx.fillStyle=C.A;ctx.fill();
+      }
+      ctx.fillStyle=C.A;ctx.font='bold 12px ui-monospace,monospace';ctx.textAlign='left';
+      ctx.fillText('r\u0302 (d\u00FCnner Hebel)',cx+R*0.14+2,cy-10);
+      arrow(cx,cy,cx+R*0.92*wvec.x,cy+R*0.92*wvec.y,C.B,3.6,12);
+      ctx.fillStyle=C.B;ctx.font='bold 12px ui-monospace,monospace';
+      ctx.fillText('w(\u03B8)',cx+R*0.92*wvec.x+6,cy+R*0.92*wvec.y+(wvec.y<0?-6:14));
+      var pxv=-wvec.y, pyv=wvec.x;
+      arrow(cx,cy,cx+R*0.45*pxv,cy+R*0.45*pyv,C.res,2.4,8);
+      ctx.fillStyle=C.res;ctx.font='11px ui-monospace,monospace';
+      ctx.fillText('Reservoir (\u21920)',cx+R*0.45*pxv+6,cy+R*0.45*pyv+4);
+      ctx.fillStyle=C.fg;ctx.font='bold 15px sans-serif';ctx.textAlign='left';
+      ctx.fillText('\u2460 Leerer Raum, r geladene Achsen',12,26);
+      ctx.fillStyle=C.mut;ctx.font='11.5px sans-serif';
+      ctx.fillText('r\u0302 (A-Hebel) + w(\u03B8) (Code); leere \u00DCberzahl = Tresor/Boundary',12,40);
+      var l3= Rnaive>0.85? '\u25B8 A-Hebel liest perfekt (\u03B8\u22480)'
+              : (Rnaive>0.15? '\u25B8 A-Hebel bricht ein (\u03B8\u2191)' : '\u25B8 A-Hebel blind \u2014 Decode n\u00F6tig (\u03B8\u21921)');
+      ctx.font='bold 12.5px sans-serif';ctx.textAlign='left';
+      ctx.fillStyle= Rnaive>0.5? C.safe : C.res;
+      ctx.fillText(l3,12,H-16);
+
+      /* ===== RIGHT: readout bars + phase plot ===== */
+      var rx0=divX+12, rx1=W-12, pw=rx1-rx0;
+      ctx.fillStyle=C.fg;ctx.font='bold 15px sans-serif';ctx.textAlign='left';
+      ctx.fillText('\u2461 Read-out & Kapazit\u00E4t',rx0,26);
+      var barX=rx0+4, barLen=pw-64, barY=46, barH=16, gapY=40;
+      function hbar(y,frac,color,lbl){
+        ctx.fillStyle=C.grid;ctx.fillRect(barX,y,barLen,barH);
+        ctx.fillStyle=color;ctx.fillRect(barX,y,barLen*frac,barH);
+        ctx.strokeStyle=C.grid;ctx.strokeRect(barX,y,barLen,barH);
+        ctx.fillStyle=C.fg;ctx.font='10.5px ui-monospace,monospace';ctx.textAlign='left';
+        ctx.fillText(lbl,barX,y-5);
+        ctx.textAlign='right';ctx.fillStyle=color;
+        ctx.fillText(Math.round(frac*100)+' %',barX+barLen,y+barH-3);
+      }
+      hbar(barY,Rnaive,C.A,'Lineares Read-out (fester A-Hebel, \u03B8=0)');
+      hbar(barY+gapY,1,C.B,'Fehlerkorrektur-Decode (B, MERA/RT)');
+      var py0=barY+gapY+barH+30, py1=H-30, px0=rx0+40, px1=rx1-12, pw2=px1-px0;
+      if(py1-py0<70)py1=py0+70;
+      var bMin=0.3,bMax=8;
+      function X(b){return px0+(b-bMin)/(bMax-bMin)*pw2;}
+      function Y(p){return py0+(1-Math.min(1,Math.max(0,p)))*(py1-py0);}
+      ctx.save();ctx.globalAlpha=0.10;ctx.fillStyle=C.res;
+      ctx.fillRect(X(bMin),py0,X(Math.min(2,bMax))-X(bMin),py1-py0);ctx.restore();
+      ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.strokeRect(px0,py0,pw2,py1-py0);
+      ctx.strokeStyle=C.A;ctx.setLineDash([5,4]);ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(X(2),py0);ctx.lineTo(X(2),py1);ctx.stroke();ctx.setLineDash([]);
+      ctx.strokeStyle=C.B;ctx.lineWidth=2;ctx.beginPath();var st=false,b,N,p,xx,yy;
+      for(b=bMin;b<=bMax;b+=0.05){N=Math.max(1,Math.round(b*r));p=Pnd(N,r);xx=X(b);yy=Y(p);if(!st){ctx.moveTo(xx,yy);st=true;}else ctx.lineTo(xx,yy);}
+      ctx.stroke();
+      var Nb=Math.max(1,Math.round(beta*r));var pb=Pnd(Nb,r);
+      var bcl=Math.max(bMin,Math.min(bMax,beta));
+      ctx.beginPath();ctx.arc(X(bcl),Y(pb),5,0,TAU);ctx.fillStyle=C.A;ctx.fill();
+      ctx.lineWidth=1.5;ctx.strokeStyle=C.fg;ctx.stroke();
+      ctx.fillStyle=C.mut;ctx.font='11px ui-monospace,monospace';ctx.textAlign='center';
+      ctx.fillText('\u03B2 = N/d',px0+pw2/2,py1+16);
+      ctx.save();ctx.translate(px0-10,py0+(py1-py0)/2);ctx.rotate(-Math.PI/2);ctx.fillText('P trennbar',0,0);ctx.restore();
+      ctx.textAlign='left';ctx.fillStyle=C.mut;
+      ctx.fillText('merken (\u03B2<2)',px0+4,py1-6);
+      ctx.fillText('verstehen (\u03B2>2)',X(2)+6,py1-6);
+      ctx.fillStyle=C.A;ctx.fillText('2d-Schwelle',X(2)+4,py0+12);
+      ctx.fillStyle=C.fg;ctx.font='bold 12px ui-monospace,monospace';ctx.textAlign='right';
+      ctx.fillText('d='+r+' \u2192 2d='+2*r,rx1,py0-6);
+      ctx.textAlign='left';ctx.fillStyle=C.mut;ctx.font='11px ui-monospace,monospace';
+      ctx.fillText('P(\u03B2) = Anteil trennbarer F\u00E4rbungen (Cover)',px0,py0-6);
+
+      /* ===== readouts ===== */
+      setTxt('roR',String(r));
+      setTxt('roCap',String(2*r));
+      setTxt('roTheta',theta.toFixed(2));
+      setTxt('roNaive',Math.round(Rnaive*100)+' %');
+      setTxt('roFull','100 %');
+      var gen=beta>2; setTxt('roGen',gen?'JA':'NEIN');
+      var ge=$('roGen'); if(ge)ge.style.color=gen?C.safe:C.res;
+      var rn=$('roNaive'); if(rn)rn.style.color= Rnaive>0.5? C.A : C.res;
+    }
+    function draw(){ try{ drawInner(); }catch(e){} }
+    Object.keys(el).forEach(function(k){if(!el[k])return;el[k].addEventListener('input',draw);el[k].addEventListener('change',draw);});
+    var tid=null;
+    window.addEventListener('resize',function(){clearTimeout(tid);tid=setTimeout(function(){resize();draw();},150);});
+    var btn=$('b_theme');
+    if(btn)btn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+    var mo=new MutationObserver(function(){draw();});
+    mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    resize();draw();
+    window.addEventListener('load',function(){setTimeout(function(){resize();draw();},60);});
+  }catch(e){/* no-op: keep zero console errors */}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 009 · Bedeutung als dünne, gekrümmte Mannigfaltigkeit — Richtung, Klumpen, Dimension (Round 3)</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --ink:#22201b; --dim:#6f6a60; --line:#d8d2c4;
+    --acc:#c2410c; --acc2:#2a4bd7; --gold:#0a7a55;
+    --canvas:#f2ede1; --code:#efe9dc;
+    --grid:#e7e1d2; --onacc:#ffffff;
+    --true:#0f7a5f; --false:#b0256b; --theta:#2a4bd7; --req:#9a6a06;
+    --c-lit:#e5484d; --c-prog:#0f9d8f; --c-lang:#c98a00;
+  }
+  html.dark{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#8b97b8; --line:#1c2740;
+    --acc:#ff9a6b; --acc2:#7c9cff; --gold:#34d399;
+    --canvas:#05070E; --code:#0f1626;
+    --grid:#1c2740; --onacc:#0b1220;
+    --true:#34d399; --false:#f472b6; --theta:#8fb0ff; --req:#ffd166;
+    --c-lit:#ff6b6b; --c-prog:#4ecdc4; --c-lang:#ffe66d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);
+    font:400 16px/1.62 ui-sans-serif,system-ui,"Segoe UI",Inter,Georgia,serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+  h1{font-size:clamp(25px,5vw,37px);font-weight:650;letter-spacing:-.01em;line-height:1.14;margin-bottom:8px}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.02em;margin-bottom:6px}
+  .sub .x{color:var(--acc2)}
+  .meta{color:var(--dim);font-size:12.5px;margin-bottom:26px;line-height:1.5}
+  h2{font-size:20px;font-weight:650;margin:44px 0 12px;padding-top:16px;border-top:1px solid var(--line)}
+  h3{font-size:16px;font-weight:650;margin:22px 0 8px;color:var(--ink)}
+  p{margin:0 0 14px}
+  strong{font-weight:650}
+  em{color:var(--ink)}
+  code{font:500 13.5px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+  .lead{font-size:17.5px}
+  ul,ol{margin:0 0 14px 22px}
+  li{margin:0 0 11px}
+  .roleA{color:var(--acc);font-weight:650}
+  .roleB{color:var(--acc2);font-weight:650}
+  .roleF{color:var(--gold);font-weight:650}
+  .formula{background:var(--code);border:1px dashed var(--line);border-radius:8px;
+    padding:11px 15px;margin:12px 0;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:13.5px;text-align:left;overflow-x:auto;white-space:pre-wrap;line-height:1.6}
+  .tension{border-left:4px solid var(--acc2);background:var(--code);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0}
+  .tension .who{font-size:.82em;color:var(--dim);display:block;margin-bottom:6px}
+  .res{border-left:4px solid var(--gold);background:var(--code);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0}
+  .badge{display:inline-block;font-size:.72em;font-weight:700;padding:1px 8px;border-radius:12px;vertical-align:middle;color:var(--onacc)}
+  .badge.a{background:var(--acc)}
+  .badge.b{background:var(--acc2)}
+  .badge.f{background:var(--gold)}
+  .card-row{display:flex;gap:14px;flex-wrap:wrap}
+  .paper{flex:1 1 260px;background:var(--code);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .paper h4{margin:0 0 6px;font-size:.98em}
+  .paper.a h4{color:var(--acc)}
+  .paper.b h4{color:var(--acc2)}
+  .paper p{font-size:.9em;margin:.5em 0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.9rem}
+  th,td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:var(--code)}
+  .viz-box{background:var(--canvas);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+  canvas#viz{width:100%;height:560px;display:block;background:var(--canvas);border-radius:10px;touch-action:none;cursor:crosshair}
+  .hud{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  .grp{display:flex;flex-direction:column;gap:4px;align-items:center}
+  .grp label{font-size:12px;color:var(--dim)}
+  input[type=range]{accent-color:var(--acc);width:150px}
+  button{font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--line);padding:8px 13px;border-radius:999px;cursor:pointer}
+  button:hover{border-color:var(--acc2)}
+  .readout{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:11px 15px;font-size:13.5px;margin-top:10px;line-height:1.65}
+  .readout b{color:var(--ink)}
+  .legend{display:flex;gap:15px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--dim)}
+  .legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+  .prov{display:flex;flex-direction:column;gap:12px}
+  .prov a{color:var(--acc2);text-decoration:none;font-weight:650}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:3px;line-height:1.55}
+  .note{color:var(--dim);font-size:13.5px;margin-bottom:12px;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Bedeutung als dünne, gekrümmte Mannigfaltigkeit — Richtung, Klumpen, Dimension</h1>
+  <div class="sub">Fusion aus: r2-008.html <span class="x">✕</span> r2-031.html  (Round 3)</div>
+  <div class="meta">Round 3 · Pair 009 · A = „Bedeutung ist ein Ort, eine Richtung und ein Kanal“ (Attraktor-Geometrie × Wahrheits-Backprop) · B = „Der gekrümmte Faserbündel-Fluss“ (gerichtete Attention × Simplizial-Schatten × intrinsische Dimension)</div>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide R2-Papiere lesen <em>denselben</em> internen Zustand eines trainierten Netzes — das Residual-Stream-Feld <code>h_{i,ℓ}</code> (Token <code>i</code>, Schicht <code>ℓ</code>) — und beide bestehen auf <em>dieselben</em> tiefen Teilung: eine <strong>mathematisch garantierte</strong> Struktur gegenüber einem <strong>gelernten</strong>, mit der Modellgröße emergierenden Inhalt. Sie nennen aber dem Trägertyp je ein anderes Wort. <span class="roleA">A (r2-008)</span> sagt, die garantiert-Struktur sei <em>linear-geometrisch</em> (Riemannsche Tangente, IFS-Attraktoren, Backprop-Funktor) und der Inhalt sei eine <em>lineare Richtung</em> <code>θ</code> an einem <em>Attraktor-Ort</em> (Schicht&nbsp;×&nbsp;Position&nbsp;×&nbsp;Token), gelesen/geschrieben über einen <em>bidirektionalen Kanal</em>. <span class="roleB">B (r2-031)</span> sagt, die garantiert-Struktur sei <em>topologisch-kombinatorisch</em> (Faserbündel + FFN-Krümmungskapazität + Simplizial-Skelett) und der Inhalt sei eine <em>dünne, gekrümmte Daten-Mannigfaltigkeit</em> mit einer <em>intrinsischen Dimension</em>, die über die Schichten einen <em>Buckel</em> bildet.</p>
+    <p>Die eine, beide vereinigende Position: <span class="roleF">Bedeutung ist eine dünne, gekrümmte Mannigfaltigkeit im lokal-linearen, global-FFN-gekrümmten Residual-Stream. Sie trägt ihre Bedeutung auf zwei ineinandergreifenden Ebenen zugleich — als <em>lineare Richtungen θ an Attraktor-Orten</em> (A) und als <em>Simplizial-Skelett von „Bedeutungsklumpen“ mit einer intrinsischen Dimension</em> (B). Die Attraktor-Orte (A) sind genau die Simplizial-Klumpen (B); die Richtung θ (A) ist die Tangente an eben solche Klumpen (B). Über die Schichten hin trägt die Mannigfaltigkeit einen intrinsischen Dimensions-Buckel (B), in dem die konzeptspezifischen Attraktoren in ihren Kristallisationsschichten kristallisieren (A). Lesen (Sonde&nbsp;/&nbsp;Projektion&nbsp;/&nbsp;Attention) und Schreiben (Intervention&nbsp;/&nbsp;Steering&nbsp;/&nbsp;FFN-Krümmung) sind die beiden Beine desselben bidirektionalen Kanals. Struktur (lineare Tangente + Simplizial-Skelett + Faser-Geometrie) ist garantiert; die semantische Belegung (welcher Attraktor, welche Richtung&nbsp;=&nbsp;Wahrheit, welche Klumpen, welcher Buckel) ist gelernt und emergiert mit Größe. Ein Fehler (Halluzination) ist ein <em>Riss</em> im gesunden Skelett (B), der genau dort liegt, wo der Zustand das falsche Bassin betritt / die falsche Richtung liest (A).</span></p>
+    <p>So sind A und B keine Rivalen: A liefert die <em>lineare, metrische</em> Lesart (Ort + Richtung + Kanal), B die <em>topologische, dimensionale</em> Lesart (Skelett + Dimension + Buckel). Die Fusion ist ein <em>dreistufiges</em> Modell derselben Mannigfaltigkeit — Punkte (Attraktoren/Klumpen), Linien (Richtungen/Kanten), Flächen (Kliken) — plus einer Dimension, die sagt, wie viele davon aktiv sind.</p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Über die <em>Existenz</em> einer strukturierten, aus- und beschreibbaren Semantik im internen Zustand sind beide R2-Papiere einig, und beide teilen die Teilung „Struktur ist garantiert, Semantik ist gelernt“. Die Spannungen liegen in <em>der Art des Trägers</em>, in <em>der Schicht-Achse</em> und in <em>der Ontologie der garantiert-Struktur</em>:</p>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „lineare Richtung θ / Attraktor-Ort“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „kombinatorisches Simplizial-Skelett + Dimension“</span>
+      <strong>Was ist die Grund-Form der Bedeutung — ein Vektor oder ein Skelett?</strong>
+      <span class="roleA">A</span>: Bedeutung wohnt in <strong>linearen Objekten</strong> — einem Attraktor-<em>Ort</em> <code>A_c</code> und einer Richtung <code>θ</code> darauf. Man liest sie <em>linear-algebraisch</em>: Projektion <code>sign(θ·h)</code>, Wahrscheinlichkeit <code>P=σ(θ·h)</code>, Gradient <code>∇ₕP=P(1−P)θ</code>. Die Einheit ist ein Punkt&nbsp;+&nbsp;ein Vektor / ein lineares Funktional.
+      <span class="roleB">B</span>: Bedeutung wohnt in <strong>kombinatorisch-topologischen Objekten</strong> — einem <em>Simplizialkomplex</em> (Kanten&nbsp;=&nbsp;gegenseitige Attention <code>min(αᵢⱼ,αⱼᵢ)&gt;ε</code>, Dreiecke&nbsp;=&nbsp;Kliken = „Bedeutungsklumpen“) plus der <em>intrinsischen Dimension</em> der Daten-Mannigfaltigkeit. Man liest sie <em>kombinatorisch</em> (welche Kanten/Flächen?) und <em>dimensional</em> (wie viele unabhängige Richtungen?).
+      <em>Spannung:</em> Bedeutung als <em>lineare Richtung, auf die man projiziert</em> (A) vs. Bedeutung als <em>kombinatorisches Skelett + Dimensionszahl, die man durchwandert/zählt</em> (B). Linearer Algebra/Metrik vs. Topologie/Kombinatorik.
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „diskrete Kristallisationsschichten“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „ein kontinuierlicher universeller Buckel“</span>
+      <strong>Organisiert die Schicht-Achse diskret nach Konzept oder kontinuierlich nach Gesetz?</strong>
+      <span class="roleA">A</span>: Die Schicht-Achse trägt <em>konzeptspezifische Konvergenz-/Kristallisationsschichten</em> <code>ℓ_c</code> — verschiedene Konzepte kristallisieren in <em>verschiedenen</em> Schichten (Literatur&nbsp;L18, Programmierung&nbsp;L19, fiktive Welten&nbsp;L24, Sprachen&nbsp;L27). Die Frage ist <em>„in welcher Schicht kristallisiert dieses Konzept?“</em> — diskrete, konzept-spezifische Landmarken.
+      <span class="roleB">B</span>: dieselbe Achse ist ein <em>einziges quantitatives, nicht-monotones Gesetz</em> — die intrinsische Dimension <em>steigt</em>, erreicht ein <em>Gipfel</em> (20–40&nbsp;% Tiefe, Werte&nbsp;100–120) und <em>fällt monoton</em> auf&nbsp;≈&nbsp;<code>log₂(#Klassen)</code> — in <em>allen</em> 14 getesteten Netzen gemessen, unabhängig vom Inhalt. Die Frage ist <em>„wie dünnt sich der Inhalt über die Tiefe, universell?“</em>
+      <em>Spannung:</em> diskrete, konzept-spezifische Kristallisation (A: welche Schicht für welches Konzept) vs. ein kontinuierlicher, universeller ID-Buckel (B: wie der Inhalt sich allgemein verdünnt).
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „garantierte lineare Tangente, Fehlleistung am Rande“ &nbsp;vs.&nbsp; <span class="badge b">B</span> „gesundes Skelett, Defekte sind seine Risse“</span>
+      <strong>Was ist die garantiert-Struktur — und wie steht sie zum Fehler?</strong>
+      <span class="roleA">A</span>: Die garantiert-Struktur ist <em>lineare Geometrie</em> — Riemannsche Tangenten überall vorhanden, IFS-Kontraktion, funktoriale Komposition (Backprop). Fehlleistung wird nur <em>am Rand</em> behandelt: Guardrail (blockiere, wenn <code>cos(h,A_c)&gt;τ</code>), Halluzinationsreduktion über den <em>Abstand</em> zum Attraktor. Das gesunde Objekt ist eine lineare Mannigfaltigkeit; der Fehler wird <em>außen</em> gehalten.
+      <span class="roleB">B</span>: Die garantiert-Struktur ist ein <em>gesundes Simplizial-Skelett</em> (kohärente Bedeutungsklumpen) — und der Fehler ist <em>first-class</em>: <em>topologische Defekte</em> (<em>Riss</em>&nbsp;=&nbsp;Halluzination&nbsp;=&nbsp;falsche/fehlende Kante, <em>Schleife</em>&nbsp;=&nbsp;Kreisschluss, <em>Auffächerung</em>&nbsp;=&nbsp;diffuse Unsicherheit) sind buchstäblich <em>die Stellen, an denen das Skelett reißt</em>.
+      <em>Spannung:</em> A nimmt die gesunde <em>lineare</em> Struktur als Invariante und hält den Fehler draußen (metrisch); B nimmt das gesunde <em>kombinatorische</em> Skelett als Invariante und <em>ist</em> der Fehler seine Singularität (topologisch).
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="res">
+      <p><strong>1. Die Richtung ist ein 1-Simplex des Skeletts; A ist der Order-0/1-Schnitt, B das volle kombinatorische Readout.</strong>
+      A's lineare Richtung <code>θ</code> ist <em>genau eine</em> 1-dimensionale Struktur im Tangentialraum — ein „1-Simplex-Richtungsvektor“. B's Simplizialkomplex ist das kombinatorische Gebilde, dessen <em>Kanten</em> die Richtungen sind, die zwei Bedeutungsklumpen verbinden, und dessen <em>Flächen</em> (Dreiecke/Kliken) Richtungen sind, die drei gemeinsam tragen. Ein Attraktor-Ort (A) ist ein <em>0-Simplex</em>; die Richtung <code>θ</code> (A) ist eine <em>Kante</em>; eine Klique „wahr+deutsch+kurz“ (B) ist eine <em>Fläche</em>. A's lineare Algebra (<code>σ(θ·h)</code>, <code>∇ₕP∥θ</code>) ist der <em>Order-0/1-Schnitt</em> dieser Struktur; B's Komplex ist der <em>vollständige</em> Readout. <span class="badge f">Fusion</span> <strong>Bedeutung hat eine Simplizial-Ordnung — Punkte (Attraktoren), Linien (Richtungen/Kanten), Flächen (Kliken); A liest die niedere Ordnung linear, B die volle Ordnung kombinatorisch.</strong></p>
+    </div>
+
+    <div class="res">
+      <p><strong>2. Die diskreten Kristallisationsschichten (A) liegen <em>auf</em> dem universellen Buckel (B).</strong>
+      B's ID-Buckel ist der <em>universelle Rahmen</em> — wie viel repräsentativer „Platz“ (Dimension) in jeder Schicht verfügbar ist. A's Kristallisationsschichten sind die <em>Ereignisse</em> auf diesem Rahmen: ein Konzept kristallisiert in Schicht <code>ℓ_c</code>, weil dort der lokale ID-Buckel so breit ist, dass genau dieses Konzept stabil wird. Die Breite des Buckels (ID&nbsp;↑ in der Mitte) ist der <em>Platz</em>, in dem viele Konzepte ko-kristallisieren können; der Abfall auf <code>log₂(#Klassen)</code> (ID&nbsp;↓) ist die <em>Kompression</em> zur Entscheidung, in der die Kristallisationsschichten (L18/19/24/27) liegen. <span class="badge f">Fusion</span> <strong>Der Buckel (B) ist die Bühne, die Kristallisationsschichten (A) die Akte auf dieser Bühne an ihren Tiefen — zwei Funktionen derselben Schicht-Achse, ein Hüllkurven- und ein Ereignis-Readout.</strong></p>
+    </div>
+
+    <div class="res">
+      <p><strong>3. Gesundes Skelett und lineare Tangente sind dasselbe gesunde Objekt; ein Fehler ist ein Riss, an dem <em>beide</em> brechen.</strong>
+      A's garantierte <em>lineare</em> Tangente und B's garantierte <em>kombinatorische</em> Skelett sind zwei Beschreibungen derselben gesunden Mannigfaltigkeit: die lineare Tangente ist die lokale lineare Näherung, das Skelett die globale kombinatorische Näherung. Ein topologischer <em>Riss</em> (B: fehlende/falsche Kante = Halluzination) fällt <em>genau</em> mit dem Fall zusammen, in dem der Zustand das <em>falsche Bassin</em> betritt / die <em>falsche Richtung</em> liest (A: <code>cos(h,A_c)&gt;τ</code>, <code>σ(θ·h)</code> liest „wahr“ für ein falsches Statement). A's Guardrail (metrisch, Abstand zum Ort) und B's „falsche Kante“ (kombinatorisch) sind <em>zwei Detektoren desselben Defekts</em>. <span class="badge f">Fusion</span> <strong>Gesundheit = dünne, gekrümmte Mannigfaltigkeit mit kohärentem Skelett, dessen Tangente die richtigen Richtungen trägt; ein Defekt = ein Riss, an dem Skelett (B) und lineare Tangente (A) zugleich brechen — global signiert durch die Dimension (gesunde&nbsp;=&nbsp;fallende ID, memorisierende&nbsp;=&nbsp;steigende ID&nbsp;→&nbsp;ED).</strong></p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <div class="card-row">
+      <div class="paper a">
+        <h4>A · Ort + Richtung + Kanal (r2-008)</h4>
+        <p><strong>Geometrie:</strong> verteilte Repräsentationen (Bengio 2003); Word2Vec-Linialgeometrie (Mikolov 2013) <code>König − Mann + Frau ≈ Königin</code>; Riemann (1854) — Raum = Mannigfaltigkeit, global gekrümmt/fraktal, lokal flach (Tangente).</p>
+        <p><strong>Dynamik:</strong> Konzept-Attraktoren (Chytas &amp; Singh 2025) — IFS: jede Schicht ≈ kontraktive Abbildung, Komposition → kompaktes, fraktales invariantes Set <code>A_c</code> in der <em>Konvergenzschicht</em> <code>ℓ_c</code> (L18/L19/L24/L27).</p>
+        <p><strong>Richtung &amp; Kanal:</strong> Wahrheit = lineare Richtung <code>θ</code> (Marks &amp; Tegmark 2024): <code>P=σ(θ·h)</code>, <code>∇ₕP=P(1−P)θ∥θ</code>, Request <code>h←h+(σ⁻¹(b)−θ·h)θ</code>, kausal <code>h←h+αθ</code>; Backprop = Funktor <code>Para→Learn</code> (Fong/Spivak/Tuyéras). Apps: Sonde, Guardrail <code>cos(h,A_c)&gt;τ</code>, Steering <code>h←h+λ(A_target−h)</code>.</p>
+      </div>
+      <div class="paper b">
+        <h4>B · Skelett + Dimension + Buckel (r2-031)</h4>
+        <p><strong>Faserbündel (Container):</strong> Basis = Token-Sequenz, Faser = <code>d_model</code>-Vektor (ED), Totalraum = alle (Position,Schicht)-Zustände, Residual Stream = Stängel; Attention = horizontale Faser-Mischung, FFN = lokaler Raumkrümmer, LayerNorm = Kugel.</p>
+        <p><strong>Inhalt (Maß):</strong> dünne, global gekrümmte Daten-Mannigfaltigkeit mit <em>intrinsischer Dimension</em> (ID); TwoNN-Schätzer (Facco 2017): <code>μ=r₂/r₁</code>, Pareto <code>f(μ)∝μ^{−(k+1)}</code>, Steigung&nbsp;=&nbsp;k. <em>Buckel:</em> ID steigt, Gipfel 20–40&nbsp;% (100–120), fällt auf ≈&nbsp;<code>log₂(#Klassen)</code>; ID&nbsp;↔&nbsp;Leistung r&nbsp;=&nbsp;0,94.</p>
+        <p><strong>Invariante:</strong> gerichteter Attention-Fluss q→k (Score&nbsp;=&nbsp;Projektion, Softmax = eine Einheit Masse, Output = Schwerpunkt); symmetrischer Schatten <code>min(αᵢⱼ,αⱼᵢ)&gt;ε</code> = Simplizialkomplex (Kanten/Dreiecke = „Bedeutungsklumpen“). Defekte = Riss/Schleife/Auffächerung = Risse des Skeletts.</p>
+      </div>
+    </div>
+
+    <h3>Das geteilte Objekt: <code>h_{i,ℓ}</code> als Punkt auf einer dünnen, gekrümmten Mannigfaltigkeit</h3>
+    <p>A und B nennen <em>dasselbe</em> Feld zwei Namen — und beide lesen es als <em>einen Punkt auf einer dünnen, gekrümmten Mannigfaltigkeit</em>, die in einem hohen, lokal-linearen, global-gekrümmten Behälter eingebettet ist. Für A ist der Behälter die <em>Riemannsche/IFS-Attraktor-Mannigfaltigkeit</em> mit linearen Tangenten; für B ist er das <em>Faserbündel</em> (Faser = ED) mit FFN-Krümmung. Der „Residual Stream“ ist für beide das <em>Förderband</em>: A's IFS-Schichten falten darauf Zustände zu Attraktoren zusammen, B's Attention/FFN biegen darauf den Fluss:</p>
+    <div class="formula">A (Ort+Richtung):     h_ℓ = L_ℓ(h_{ℓ−1}),  L_ℓ kontraktiv  ⇒  iteriert → Attraktor A_c  (Schicht ℓ_c)
+                          lokal: Tangente T A_c  (linear);  Richtung θ ∈ T A_c ;  P=σ(θ·(h−c_c))
+B (Skelett+Dimension): Behälter = Faserbündel (Faser=ED, global FFN-gekrümmt); Inhalt = dünne gekr. Fläche
+                          Komplex K(ℓ): Kante {i,j} iff min(αᵢⱼ,αⱼᵢ)&gt;ε ; Dreieck = Klique ;  ID(ℓ) = Buckel
+FUSION:                h_{i,ℓ}  =  Punkt der Attraktor-Mannigfaltigkeit (A)
+                          UND    Punkt der dünnen, gekrümmten Daten-Mannigfaltigkeit (B)
+                          Attraktor A_c (A)  ≡  Simplizial-Klumpen (B)   [derselbe „Klumpen“]
+                          Richtung θ (A)      ≡  Tangente/Kante an diesen Klumpen (B)   [dieselbe Linie]
+                          ID(ℓ) (B)  =  wie viele Richtungen/Kanten aktiv sind   (A's „wie viel θ-Belegung“)</div>
+
+    <h3>Der dreistufige Knoten — alle Operationen an einer Adresse, in einer Richtung, als ein Klumpen</h3>
+    <p>Setzt man A's Wahrheits-Sonde in B's Attraktor-Adresse ein und B's Skelett auf dieselben Punkte, laufen <em>alle</em> Operationen in <strong>einer Richtung <code>θ</code> an einem Ort <code>(A_c, ℓ_c, i)</code></strong> — gelesen zugleich als metrische Projektion (A) und als kombinatorische Nachbarschaft (B):</p>
+    <div class="formula">Lesen (A):        P(true) = σ(θ·(h − c_c))          → Eigenschaft ablesen (linear)
+Lesen (B):        Kante {h,j} im Komplex K(ℓ)       → Nachbarschaft ablesen (kombinatorisch)
+Gradient (A):     ∇ₕP = P(1−P)·θ  (immer ∥ θ)       → Backprop-Gradient
+Request (A):      h ← h + (σ⁻¹(b) − θ·h)·θ          → „wie viel θ, damit Output = b?“
+Kausal (A):       h ← h + α·θ  dreht die Eigenschaft  → B: schiebt h über Kanten zu anderen Klumpen
+Steering (A):     h ← h + λ(A_target − h)            → zum Ziel-ATTRAKTOR = Ziel-KLUMPEN
+Guardrail (A):    blockiere, wenn cos(h, A_c) &gt; τ     → B: Riss = fehlende/falsche Kante
+ID-Buckel (B):    ID(ℓ): ↑ → Gipfel (20–40 %) → ↓ ≈ log₂(#Klassen)  ;  Kristallisation ℓ_c (A) liegt auf ihm</div>
+    <ul>
+      <li><strong>Lesen hat zwei Beine.</strong> A liest eine <em>Eigenschaft</em> (<code>σ(θ·h)</code>, linear) und B liest eine <em>Relation</em> (welche Kanten/Flächen verbindet h, kombinatorisch) — dieselbe Abfrage auf derselben Mannigfaltigkeit, auf niedriger vs. voller Simplizial-Ordnung.</li>
+      <li><strong>Schreiben hat zwei Ziele, eine Operation.</strong> A's kausale Intervention <code>h←h+αθ</code> bewegt den Zustand <em>entlang der Eigenschafts-Achse</em>; A's Steering <code>h←h+λ(A_target−h)</code> bewegt ihn <em>zum Ziel-Ort</em>. B sieht beides als <em>Bewegung entlang des Skeletts</em> (über Kanten zu anderen Klumpen), wobei die FFN-Krümmung den Weg biegt. Dieselbe bidirektionale Operation, zwei Ziele (Eigenschaft vs. Ort/Klumpen).</li>
+      <li><strong>Die Dimension zählt die Richtungen.</strong> B's intrinsische Dimension ist, in A's Sprache, <em>wie viele unabhängige semantische Richtungen/Klumpen in Schicht ℓ aktiv sind</em>. Der Buckel (ID&nbsp;↑ dann&nbsp;↓) ist A's „das Netz öffnet sich, dann komprimiert es zur Entscheidung“ — die Breite des Buckels ist der Platz, in dem A's Attraktoren ko-kristallisieren können.</li>
+      <li><strong>Der Fehler ist ein doppelter Bruch.</strong> A's Guardrail (<em>Abstand</em> zum Attraktor über <code>τ</code>) und B's topologischer Riss (<em>fehlende/falsche Kante</em>) triggern an derselben Stelle: der Zustand hat das falsche Bassin / den falschen Klumpen erreicht <em>und</em> die Richtung <code>θ</code> liest dort falsch. Ein globaler Defekt (B) ist in A's Sprache ein Zustand außerhalb aller Attraktor-Bassins, an dem <code>θ</code> eine falsche Eigenschaft meldet.</li>
+    </ul>
+
+    <table>
+      <tr><th>Aspekt</th><th>A — Ort / Richtung / Kanal (r2-008)</th><th>B — Skelett / Dimension / Buckel (r2-031)</th><th>Fusion</th></tr>
+      <tr><td>Träger der Bedeutung</td><td>Attraktor-Ort <code>A_c</code> + lineare Richtung <code>θ</code></td><td>Simplizial-Komplex (Kanten/Flächen) + intrinsische Dimension</td><td>Punkte + Linien + Flächen + Dimensionszahl derselben Mannigfaltigkeit</td></tr>
+      <tr><td>Grund-Form</td><td>linear / metrisch (Vektoren, Projektion)</td><td>kombinatorisch / topologisch (Skelett, Defekte)</td><td>lineare Tangente (A) ≡ Tangenten an das Skelett (B)</td></tr>
+      <tr><td>Adresse</td><td>Attraktor-Ort × Schicht <code>ℓ_c</code> × Token-Position <code>i</code></td><td>Klumpen × Schicht (Buckel) × Basis-Position</td><td><code>(A_c / Klumpen, ℓ, i)</code> — Ort = Klumpen, beide Achsen echt</td></tr>
+      <tr><td>Schicht-Achse</td><td>diskrete Kristallisationsschichten (L18/19/24/27)</td><td>ein universeller ID-Buckel (↑→Gipfel→↓)</td><td>Buckel = Bühne, Kristallisationsschichten = Akte auf ihr</td></tr>
+      <tr><td>Garantiert vs. gelernt</td><td>lineare Tangente / IFS / Funktor garantiert; <code>θ</code>&nbsp;=&nbsp;Wahrheit gelernt</td><td>Faserbündel / FFN-Kapazität garantiert; dünne, gekrümmte Fläche + Buckel gelernt</td><td>Struktur (linear+kombinatorisch+dimensional) garantiert; Belegung gelernt, emergiert</td></tr>
+      <tr><td>Lesen</td><td>Sonde <code>σ(θ·h)</code>, Bassin-Identität</td><td>symmetrischer Schatten (Kanten/Dreiecke)</td><td>Eigenschaft (linear) + Relation (kombinatorisch) desselben Zustands</td></tr>
+      <tr><td>Schreiben</td><td>Intervention <code>h←h+αθ</code>, Steering</td><td>FFN biegt den Fluss; Bewegung entlang des Skeletts</td><td>bidirektionaler Kanal, zwei Ziele (Eigenschaft vs. Klumpen)</td></tr>
+      <tr><td>Fehler</td><td>Abstand zum Attraktor &gt; <code>τ</code> (Guardrail)</td><td>topologischer Riss / Schleife / Auffächerung</td><td>dopelter Bruch: falscher Ort + falsche Richtung + (global) steigende ID</td></tr>
+    </table>
+
+    <h3>Die unitierte Lesart der „großen Frage“</h3>
+    <p>A's Meta-Frage — „Wie entsteht aus lokalen Operationen globale Bedeutung?“ — und B's — „Wie trägt eine dünne Fläche in einem hohen Raum so viel Semantik?“ — haben <em>die</em> gemeinsame fused Antwort: <span class="roleF">Ein trainiertes Netz ist eine <em>dünne, gekrümmte Mannigfaltigkeit</em> in einem hohen, lokal-linearen, global-FFN-gekrümmten Faserbündel. Vorwärts (A's IFS-Kontraktion = B's Attention-Fluss) rechnet Zustände und konvergiert sie zu Attraktoren, die zugleich Simplizial-Klumpen sind; rückwärts (A's Request/Backprop = B's Skelett-Readout) liest man dieselben Zustände <em>linear</em> (Eigenschaft <code>θ</code>) und <em>kombinatorisch</em> (Kanten/Flächen) — und misst, wie viele Richtungen aktiv sind (ID). Die Mannigfaltigkeit dünnt sich über die Schichten hin buckelförmig (B); in dem Platz, den der Buckel gibt, kristallisieren die konzeptspezifischen Attraktoren in ihren Schichten (A). Bedeutung ist weder „magisch im Vektor“ noch „nur Statistik“: sie ist ein <em>dreistufiges, lineares + kombinatorisches + dimensionales</em> Objekt an einer Adresse in einer strukturierten Mannigfaltigkeit — genau das, was sie aus- und beschreibbar macht. Die Struktur ist mathematisch garantiert; ihre semantische Ausrichtung ist gelernt und emergiert mit Größe. Ein Defekt ist ein Riss, an dem lineare Tangente und Skelett zugleich brechen.</span></p>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Visualisierung — eine dünne, gekrümmte Mannigfaltigkeit: Richtung × Klumpen × Dimension</h2>
+    <p class="note"><strong>Unten — der 2D-Schnitt</strong> der gewählten Schicht: drei Konzept-<em>Attraktoren/Klumpen</em> (A's Orte = B's Simplizial-Klumpen). Zwischen den Punkten liegt das <em>Simplizial-Skelett</em> (B): Kanten (1-Simplizes) und Dreiecke (2-Simplizes = Kliken), deren <em>Anzahl entlang des ID-Buckels morphed</em>. Im <em>aktiven</em> Klumpen (dem, dem <b>h</b> am nächsten ist) steht die semantische <em>Richtung θ</em> (A) mit ihrer Entscheidungsgrenze, dem Backprop-Gradienten <code>∇ₕP∥θ</code> und dem Guardrail-Ring (A). <strong>Oben — die Schicht-Achse</strong>: der gemessene <em>ID-Buckel</em> (B, türkis) mit A's <em>Kristallisationsticks</em> (L18/L19/L27, gold). <b>h anklicken/ziehen.</b> Der <b>Schicht-Regler</b> morpht alles: früh = weit gestreut (ID&nbsp;↑, aufweitendes Skelett), spät = enge Klumpen (ID&nbsp;↓&nbsp;→&nbsp;<code>log₂</code>), und der jeweilige Attraktor kristallisiert in <em>seiner</em> Schicht. Zwei Schreib-Operationen desselben Kanals: <b>Kausal schreiben</b> (<code>h←h+αθ</code>, A) und <b>Steern</b> (<code>h←h+λ(A_target−h)</code>, A → B: zu einem anderen Klumpen).</p>
+
+    <div class="viz-box">
+      <canvas id="viz"></canvas>
+      <div class="hud">
+        <div class="grp"><label>Schicht ℓ (0–31)</label><input type="range" id="layerSlider" min="0" max="31" value="9"></div>
+        <button id="poke">⚡ Kausal schreiben (h←h+αθ)</button>
+        <button id="steer">→ Steern (h←h+λ(A&#8211;h))</button>
+        <button id="reset">↺ Reset</button>
+        <button id="themeBtn">◐ Theme</button>
+      </div>
+      <div class="readout" id="ro">…</div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--c-lit)"></i>Literatur (L18)</span>
+        <span><i class="dot" style="background:var(--c-prog)"></i>Programmierung (L19)</span>
+        <span><i class="dot" style="background:var(--c-lang)"></i>Sprachen (L27)</span>
+        <span><i class="dot" style="background:var(--acc)"></i>ID-Buckel (B)</span>
+        <span><i class="dot" style="background:var(--gold)"></i>Kristallisation (A)</span>
+        <span><i class="dot" style="background:var(--theta)"></i>θ = Richtung (A)</span>
+        <span><i class="dot" style="background:var(--acc2)"></i>Kanten/Flächen = Skelett (B)</span>
+        <span><i class="dot" style="background:var(--req)"></i>∇ₕP / Request ∥ θ (A)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../2/r2-008.html">r2-008.html — „Bedeutung ist ein Ort, eine Richtung und ein Kanal“</a>
+        <div class="d">R2-Fusion aus <code>r1-049.html</code> (Repräsentations-Geometrie × Konzept-Attraktoren: Word2Vec, Riemannsche Mannigfaltigkeit, IFS/Hutchinson, Konvergenzschichten L18/19/24/27, trainingsfreie Apps) × <code>r1-077.html</code> (Geometrie der Wahrheit × Backprop als Funktor: lineare Richtung <code>θ</code>, Mass-Mean, PCA, kausale Intervention, Lerner <code>(P,I,U,r)</code>, <code>Para→Learn</code>). Liefert die <em>Ort + Richtung + Kanal</em>-Seite (linear/metrisch).</div>
+      </div>
+      <div>
+        <a href="../2/r2-031.html">r2-031.html — „Der gekrümmte Faserbündel-Fluss: gerichtete Attention, ihr Simplizial-Schatten und die intrinsische Dimension“</a>
+        <div class="d">R2-Fusion aus <code>r1-052.html</code> (Transformer als Faserbündel mit intrinsischer Dimension: ED vs. ID, TwoNN, der Buckel, „gekrümmt, nicht flach“ als Lerneffekt, ID↔Leistung r&nbsp;=&nbsp;0,94, Defekte = Riss/Schleife/Auffächerung) × <code>r1-014.html</code> (gerichteter Attention-Fluss: Score = Projektion, Softmax = eine Einheit Masse, Output = Schwerpunkt, LayerNorm = Kugel, FFN = Raumkrümmer; symmetrischer Schatten als Simplizialkomplex). Liefert die <em>Skelett + Dimension + Buckel</em>-Seite (topologisch/kombinatorisch).</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz'); if(!cv) return;
+  var ctx=cv.getContext('2d'); if(!ctx) return;
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var W=0,H=0;
+  var MAXLAYER=31, IDMAX=120;
+  var WX0=-1.8,WX1=1.8,WY0=-1.45,WY1=1.45,M=46;
+  var ang=-0.6;
+  var th=[Math.cos(ang),Math.sin(ang)];
+  var nv=[-th[1],th[0]];
+
+  function sig(x){return 1/(1+Math.exp(-x));}
+  function invSig(b){b=Math.max(0.02,Math.min(0.98,b));return Math.log(b/(1-b));}
+  function dot(a,b){return a[0]*b[0]+a[1]*b[1];}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+  var concepts=[
+    {key:'lit',  label:'Literatur',      layer:18, center:{x:-0.95,y:0.55}},
+    {key:'prog', label:'Programmierung', layer:19, center:{x:0.95, y:0.50}},
+    {key:'lang', label:'Sprachen',       layer:27, center:{x:0.02, y:-0.92}}
+  ];
+
+  var members=[];
+  concepts.forEach(function(c,ci){
+    var rnd=mulberry32(ci*97+13);
+    for(var k=0;k<6;k++){
+      var a=(k/6)*Math.PI*2 + 0.35;
+      members.push({c:ci, a:a, sx:-1.55+rnd()*3.1, sy:-1.2+rnd()*2.4});
+    }
+  });
+
+  function IDval(l){
+    var x=l/MAXLAYER;
+    var g=Math.exp(-Math.pow(x-0.30,2)/(2*0.18*0.18));
+    return 10+110*g;
+  }
+  function IDnorm(l){return IDval(l)/IDMAX;}
+  function posOf(m,l){
+    var c=concepts[m.c];
+    var on=Math.max(2,c.layer-7), done=c.layer+9;
+    var t=clamp((l-on)/(done-on),0,1); t=t*t*(3-2*t);
+    var idn=IDnorm(l);
+    var orb=0.12+0.20*idn;
+    var gx=c.center.x+Math.cos(m.a)*orb;
+    var gy=c.center.y+Math.sin(m.a)*orb;
+    return [m.sx+(gx-m.sx)*t, m.sy+(gy-m.sy)*t];
+  }
+
+  var h=[concepts[0].center.x+0.18*th[0], concepts[0].center.y+0.18*th[1]];
+  var layer=9, anim=null, dash=0, lastRo='';
+  var KMIN=7, KMAX=34;
+
+  function isDark(){return document.documentElement.classList.contains('dark');}
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){var x=cs.getPropertyValue(n).trim();return x||fb;}
+    return {
+      canvas:v('--canvas','#05070E'), ink:v('--ink','#EAF0FF'), dim:v('--dim','#8b97b8'),
+      line:v('--line','#1c2740'),
+      acc:v('--acc','#ff9a6b'), acc2:v('--acc2','#7c9cff'), gold:v('--gold','#34d399'),
+      lit:v('--c-lit','#ff6b6b'), prog:v('--c-prog','#4ecdc4'), lang:v('--c-lang','#ffe66d'),
+      tcol:v('--true','#34d399'), fcol:v('--false','#f472b6'),
+      theta:v('--theta','#8fb0ff'), req:v('--req','#ffd166'),
+      grid:isDark()?'rgba(255,255,255,.06)':'rgba(20,30,60,.08)'
+    };
+  }
+  var P=readTheme();
+  function conceptColor(c){return c.key==='lit'?P.lit:(c.key==='prog'?P.prog:P.lang);}
+  function hexA(hex,a){
+    hex=String(hex||'').trim();
+    if(hex.charAt(0)==='#'){
+      hex=hex.slice(1);
+      if(hex.length===3)hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+      if(hex.length>=6){var n=parseInt(hex.slice(0,6),16);
+        if(!isNaN(n))return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+    }
+    return 'rgba(140,140,140,'+a+')';
+  }
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    W=r.width;H=r.height;
+    cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function stripH(){return Math.round(H*0.30);}
+  function sliceTop(){return stripH()+12;}
+  function px(x){return M+(x-WX0)/(WX1-WX0)*(W-2*M);}
+  function py(y){return sliceTop()+M+(y-WY0)/(WY1-WY0)*(H-sliceTop()-2*M);}
+  function invX(pxx){return WX0+(pxx-M)/(W-2*M)*(WX1-WX0);}
+  function invY(pyy){return WY0+(pyy-(sliceTop()+M))/(H-sliceTop()-2*M)*(WY1-WY0);}
+
+  function arrow(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w||2;
+    if(dashed){ctx.setLineDash([7,6]);ctx.lineDashOffset=-dash;}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);
+    var a=Math.atan2(y2-y1,x2-x1),hs=8;
+    ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));
+    ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));
+    ctx.closePath();ctx.fill();ctx.restore();
+  }
+  function line(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w||1.2;
+    if(dashed){ctx.setLineDash([5,6]);ctx.lineDashOffset=-dash;}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+  }
+  function label(t,x,y,color,align,size,font){
+    ctx.save();ctx.fillStyle=color;ctx.font='600 '+(size||12)+'px '+(font||'ui-monospace,Menlo,monospace');
+    ctx.textAlign=align||'left';ctx.textBaseline='middle';ctx.fillText(t,x,y);ctx.restore();
+  }
+  function activeIndex(){
+    var best=0,bd=1e9;
+    for(var i=0;i<concepts.length;i++){
+      var dx=h[0]-concepts[i].center.x,dy=h[1]-concepts[i].center.y,d=dx*dx+dy*dy;
+      if(d<bd){bd=d;best=i;}
+    }
+    return best;
+  }
+  function computeSkel(l){
+    var pts=members.map(function(m){return posOf(m,l);});
+    var n=members.length,w=[];
+    for(var i=0;i<n;i++)for(var j=i+1;j<n;j++){
+      var dx=pts[i][0]-pts[j][0],dy=pts[i][1]-pts[j][1],d2=dx*dx+dy*dy;
+      var same=(members[i].c===members[j].c)?1:0.12;
+      w.push([i,j,same*Math.exp(-d2/(2*0.45*0.45))]);
+    }
+    w.sort(function(a,b){return b[2]-a[2];});
+    var K=Math.round(KMIN+(KMAX-KMIN)*IDnorm(l));
+    var kept=w.slice(0,K);
+    var set={};
+    kept.forEach(function(e){set[e[0]+'_'+e[1]]=1;set[e[1]+'_'+e[0]]=1;});
+    var tris=[];
+    for(var a=0;a<n;a++)for(var b=a+1;b<n;b++)for(var c=b+1;c<n;c++){
+      if(set[a+'_'+b]&&set[b+'_'+c]&&set[a+'_'+c])tris.push([a,b,c]);
+    }
+    return {pts:pts,kept:kept,keptCount:kept.length,tris:tris};
+  }
+
+  function drawStrip(){
+    var sh=stripH(), padL=48,padR=42,padT=24,padB=26;
+    var pw=W-padL-padR, ph=sh-padT-padB;
+    if(pw<20||ph<20)return;
+    var xF=function(l){return padL+pw*(l/MAXLAYER);};
+    var yF=function(v){return padT+ph*(1-v/130);};
+    ctx.strokeStyle=P.grid;ctx.lineWidth=1;
+    for(var g=0;g<=120;g+=40){
+      var gy=yF(g);
+      ctx.beginPath();ctx.moveTo(padL,gy);ctx.lineTo(W-padR,gy);ctx.stroke();
+      ctx.fillStyle=P.dim;ctx.font='9px ui-monospace,monospace';ctx.textAlign='right';
+      ctx.fillText(String(g),padL-6,gy+3);
+    }
+    ctx.textAlign='left';
+    var yb=yF(10);
+    ctx.save();ctx.strokeStyle=hexA(P.gold,0.5);ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(padL,yb);ctx.lineTo(W-padR,yb);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    ctx.fillStyle=hexA(P.gold,0.85);ctx.font='9px ui-monospace,monospace';ctx.textAlign='right';
+    ctx.fillText('log2(#Kl) ~ 10',W-padR,yb-4);ctx.textAlign='left';
+    ctx.beginPath();ctx.moveTo(xF(0),yF(IDval(0)));
+    for(var l=0;l<=MAXLAYER;l++)ctx.lineTo(xF(l),yF(IDval(l)));
+    ctx.lineTo(xF(MAXLAYER),padT+ph);ctx.lineTo(xF(0),padT+ph);ctx.closePath();
+    ctx.fillStyle=hexA(P.acc,0.14);ctx.fill();
+    ctx.strokeStyle=P.acc;ctx.lineWidth=2.4;ctx.lineJoin='round';
+    ctx.beginPath();
+    for(var l2=0;l2<=MAXLAYER;l2++){ if(l2===0)ctx.moveTo(xF(l2),yF(IDval(l2))); else ctx.lineTo(xF(l2),yF(IDval(l2))); }
+    ctx.stroke();
+    concepts.forEach(function(c){
+      var tx=xF(c.layer);
+      ctx.save();ctx.strokeStyle=hexA(P.gold,0.7);ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.moveTo(tx,padT);ctx.lineTo(tx,padT+ph);ctx.stroke();ctx.restore();
+      ctx.fillStyle=P.gold;ctx.font='600 9px system-ui';ctx.textAlign='center';
+      ctx.fillText('L'+c.layer,tx,padT-5);
+    });
+    var mx=xF(layer);
+    ctx.save();ctx.strokeStyle=hexA(P.ink,0.4);ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(mx,padT);ctx.lineTo(mx,padT+ph);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    ctx.fillStyle=P.ink;ctx.beginPath();ctx.arc(mx,yF(IDval(layer)),4,0,6.2832);ctx.fill();
+    ctx.fillStyle=P.dim;ctx.font='11px system-ui';ctx.textAlign='left';
+    ctx.fillText('Schicht-Achse: ID-Buckel (B, fliessend) + Kristallisationsticks (A, diskret)',padL,sh-5);
+  }
+
+  function drawSlice(){
+    var ai=activeIndex(), active=concepts[ai];
+    var sk=computeSkel(layer);
+    var pts=sk.pts, n=pts.length;
+    var rPx=0.52/(WX1-WX0)*(W-2*M);
+    for(var i=0;i<concepts.length;i++){
+      var cc=concepts[i], colc=conceptColor(cc), cxp=px(cc.center.x), cyp=py(cc.center.y);
+      var cryst=Math.abs(layer-cc.layer)<6;
+      var rr=cryst?rPx*0.72:rPx;
+      ctx.beginPath();ctx.arc(cxp,cyp,rr,0,6.2832);
+      ctx.fillStyle=hexA(colc, i===ai?0.16:0.08);ctx.fill();
+      ctx.strokeStyle=hexA(colc, cryst?0.8:0.45);ctx.lineWidth=cryst?2:1.3;ctx.stroke();
+      if(cryst){ctx.save();ctx.strokeStyle=hexA(P.gold,0.5);ctx.setLineDash([4,4]);ctx.lineWidth=1;
+        ctx.beginPath();ctx.arc(cxp,cyp,rr+6,0,6.2832);ctx.stroke();ctx.setLineDash([]);ctx.restore();}
+      ctx.fillStyle=colc;ctx.font='600 13px ui-monospace,Menlo,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(cc.label, cxp, cyp-rr-12);
+      ctx.fillStyle=P.dim;ctx.font='11px ui-monospace,Menlo,monospace';
+      ctx.fillText('L'+cc.layer+(cryst?'  (kristallisiert)':''), cxp, cyp-rr+2);
+    }
+    for(var q=0;q<sk.tris.length;q++){
+      var tr=sk.tris[q], a=pts[tr[0]],b=pts[tr[1]],c=pts[tr[2]];
+      ctx.beginPath();ctx.moveTo(px(a[0]),py(a[1]));ctx.lineTo(px(b[0]),py(b[1]));ctx.lineTo(px(c[0]),py(c[1]));ctx.closePath();
+      ctx.fillStyle=hexA(P.acc2,0.10);ctx.fill();
+    }
+    for(var e=0;e<sk.kept.length;e++){
+      var ed=sk.kept[e], pa=pts[ed[0]],pb=pts[ed[1]];
+      var same=(members[ed[0]].c===members[ed[1]].c);
+      ctx.strokeStyle=hexA(same?P.acc2:P.dim, same?0.7:0.22);
+      ctx.lineWidth=1+ed[2]*2.4;
+      ctx.beginPath();ctx.moveTo(px(pa[0]),py(pa[1]));ctx.lineTo(px(pb[0]),py(pb[1]));ctx.stroke();
+    }
+    for(var m=0;m<n;m++){
+      var pm=pts[m], mcol=conceptColor(concepts[members[m].c]);
+      ctx.beginPath();ctx.arc(px(pm[0]),py(pm[1]),3.2,0,6.2832);ctx.fillStyle=hexA(mcol,0.9);ctx.fill();
+    }
+    var cc2=active.center;
+    var ext=1.5;
+    line(px(cc2.x-ext*nv[0]),py(cc2.y-ext*nv[1]),px(cc2.x+ext*nv[0]),py(cc2.y+ext*nv[1]),hexA(P.ink,0.16),1.2,true);
+    arrow(px(cc2.x),py(cc2.y),px(cc2.x+th[0]*0.8),py(cc2.y+th[1]*0.8),P.theta,2.4,false);
+    label('θ',px(cc2.x+th[0]*0.94),py(cc2.y+th[1]*0.94)-13,P.theta,'center',15);
+    var tau=0.55, tauPx=tau/(WX1-WX0)*(W-2*M);
+    var dist=Math.sqrt((h[0]-cc2.x)*(h[0]-cc2.x)+(h[1]-cc2.y)*(h[1]-cc2.y));
+    var blocked=dist>tau;
+    ctx.save();ctx.strokeStyle=hexA(blocked?P.fcol:P.gold,0.6);ctx.lineWidth=1.4;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.arc(px(cc2.x),py(cc2.y),tauPx,0,6.2832);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    var s=dot([h[0]-cc2.x,h[1]-cc2.y],th), Pv=sig(s), gmag=Pv*(1-Pv);
+    var b=0.9, delta=invSig(b)-s, dClamp=clamp(delta,-1.3,1.3);
+    line(px(h[0]),py(h[1]),px(h[0]+dClamp*th[0]),py(h[1]+dClamp*th[1]),P.req,1.4,true);
+    ctx.save();ctx.strokeStyle=P.req;ctx.lineWidth=1.4;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.arc(px(h[0]+dClamp*th[0]),py(h[1]+dClamp*th[1]),6,0,6.2832);ctx.stroke();ctx.restore();
+    var glen=gmag*1.7;
+    if(glen>0.01) arrow(px(h[0]),py(h[1]),px(h[0]+glen*th[0]),py(h[1]+glen*th[1]),P.req,2.6,false);
+    ctx.save();ctx.shadowBlur=14;ctx.shadowColor=P.ink;ctx.fillStyle=P.ink;
+    ctx.beginPath();ctx.arc(px(h[0]),py(h[1]),6,0,6.2832);ctx.fill();ctx.restore();
+    label('h',px(h[0])+11,py(h[1])-11,P.ink,'left',13);
+    return {ai:ai,active:active,dist:dist,blocked:blocked,P:Pv,gmag:gmag,kept:sk.keptCount,id:IDval(layer)};
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=P.canvas;ctx.fillRect(0,0,W,H);
+    var st=sliceTop();
+    ctx.strokeStyle=P.grid;ctx.lineWidth=0.5;
+    for(var gx=0;gx<W;gx+=36){ctx.beginPath();ctx.moveTo(gx,st);ctx.lineTo(gx,H);ctx.stroke();}
+    for(var gy=st;gy<H;gy+=36){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+    drawStrip();
+    var info=drawSlice();
+    var lbl=info.P>=0.5?'WAHR':'FALSCH', lc=info.P>=0.5?P.tcol:P.fcol;
+    var ro='ℓ = <b>'+layer+'</b> · ID ≈ <b>'+info.id.toFixed(0)+'</b> (B) &nbsp;|&nbsp; Kanten im Skelett = <b>'+info.kept+'</b> (B)'+
+      '<br>Aktiver Attraktor/Klumpen: <b style="color:'+conceptColor(info.active)+'">'+info.active.label+'</b> (L'+info.active.layer+')'+
+      '<br>Basin-Distanz |h−c| = <b>'+info.dist.toFixed(2)+'</b> · Guardrail (A): <b style="color:'+(info.blocked?P.fcol:P.gold)+'">'+(info.blocked?'BLOCKIERT':'ok')+'</b>'+
+      '<br>σ(θ·(h−c)) = <b>'+info.P.toFixed(3)+'</b> → Eigenschaft: <b style="color:'+lc+'">'+lbl+'</b> · |∇ₕP| = <b>'+info.gmag.toFixed(3)+'</b> ∥ θ (A)';
+    if(ro!==lastRo){var roEl=document.getElementById('ro');if(roEl)roEl.innerHTML=ro;lastRo=ro;}
+  }
+
+  function loop(){
+    dash=(dash+0.5)%1000;
+    if(anim){h[0]+=(anim[0]-h[0])*0.2;h[1]+=(anim[1]-h[1])*0.2;
+      if(Math.abs(anim[0]-h[0])+Math.abs(anim[1]-h[1])<0.004){h[0]=anim[0];h[1]=anim[1];anim=null;}}
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function worldAt(e){var r=cv.getBoundingClientRect();return [invX(e.clientX-r.left), invY(e.clientY-r.top)];}
+  var dragging=false;
+  cv.addEventListener('pointerdown',function(e){dragging=true;try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    var w=worldAt(e);h[0]=clamp(w[0],WX0,WX1);h[1]=clamp(w[1],WY0,WY1);anim=null;});
+  cv.addEventListener('pointermove',function(e){if(!dragging)return;var w=worldAt(e);h[0]=clamp(w[0],WX0,WX1);h[1]=clamp(w[1],WY0,WY1);});
+  cv.addEventListener('pointerup',function(){dragging=false;});
+  cv.addEventListener('pointerleave',function(){dragging=false;});
+
+  var layerSlider=document.getElementById('layerSlider');
+  if(layerSlider)layerSlider.addEventListener('input',function(){layer=parseInt(this.value,10)||0;});
+  var pokeBtn=document.getElementById('poke');
+  if(pokeBtn)pokeBtn.addEventListener('click',function(){anim=[h[0]+0.6*th[0],h[1]+0.6*th[1]];});
+  var steerBtn=document.getElementById('steer');
+  if(steerBtn)steerBtn.addEventListener('click',function(){
+    var next=concepts[(activeIndex()+1)%concepts.length];anim=[next.center.x,next.center.y];});
+  var resetBtn=document.getElementById('reset');
+  if(resetBtn)resetBtn.addEventListener('click',function(){
+    h=[concepts[0].center.x+0.18*th[0],concepts[0].center.y+0.18*th[1]];anim=null;layer=9;if(layerSlider)layerSlider.value=9;});
+  var themeBtn=document.getElementById('themeBtn');
+  if(themeBtn)themeBtn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');P=readTheme();});
+  window.addEventListener('resize',function(){resize();draw();});
+  new MutationObserver(function(){P=readTheme();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  P=readTheme();resize();
+  if(layerSlider)layerSlider.value=9;
+  loop();
+})();
+</script>
+</body>
+</html>

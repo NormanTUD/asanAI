@@ -1,0 +1,16 @@
+{
+  "no": "001",
+  "a": "combined/2/r2-005.html",
+  "b": "combined/2/r2-003.html",
+  "a_title": "Diffeomorphismus als Eigen-Spektrum — Fusion (R2)",
+  "b_title": "Das entscheidende Funktionsal — Attention-Kernel trifft Max-Margin (Fusion 003, R2)",
+  "combined_theme": "one-operator-one-dial-two-poles",
+  "one_line": "Der Attention-Layer ist ein lineares (bilineares) Funktionsal auf spektral- und positionsaufgerichteten Features, durchzogen von EINEM Hard↔Soft-Regler (A: Aperture α = B: Temperatur τ/C): weicher Pol = Identität/Diffeomorphismus + Gleichverteilung (invertibel, alles mischt), harter Pol = Rang-k-Projektor + Argmax/Schwelle (eine Einheit feuert); die gemeinsame Rotation (A: Addition=Rotation, B: RoPE) ist ein orthogonaler, invertibler Diffeomorphismus.",
+  "contradictions": [
+    "Der Regler: A steuert hart/weich über die spektrale Aperture α als lineare Eigenwert-Gains des Conceptors (Stufe innerhalb des Operators), B über die Softmax-Temperatur τ/SVM-C als nichtlineare Readout-Schärfe (Stufe am Ausgang) — linear-spektral vs. nichtlinear-logistisch, fraglich ob derselbe Regler.",
+    "Der harte Pol: A's harte Grenze ist ein linearer Rang-k-Projektor (Spektralschnitt, bleibt bei α>0 ein Diffeomorphismus, bleibt linear), B's harte Grenze ist ein nichtlinearer Schwellwert/Argmax (sign, Alles-oder-nichts, Veto) — lineares vs. nichtlineares 'hart'.",
+    "Primärobjekt: A liest den Layer als geometrische Abbildung/Diffeomorphismus auf der Repräsentations-Mannigfaltigkeit (Invertierbarkeit, Tiefe=Komposition, kaum Dimension), B als algebraisches Skalarprodukt-Kernel im Feature-Raum (Dimension als Hebel: RoPE dreht bei fester Dimension, SVM hebt sie) — geometrischer Fluss vs. algebraisches Kernel."
+  ],
+  "resolution": "α und τ sind zwei komplementäre Stufen einer zweistufigen Pipeline (lineares spektrales Gating → nichtlineares weiches Readout), keine Rivalen; der harte Pol zerfällt in lineare Auswahl (A's Projektor) × nichtlineares Commit (B's Argmax/Schwelle); das Kernel (B) und der Diffeomorphismus (A) sind derselbe Operator auf zwei Skalen — tangentiales bilineares Form (B) vs. endlicher Fluss (A), beides per Komposition strukturiert; A's det C=Πγⱼ und B's Margin 2/‖w‖ sind derselbe Abstand vom harten Limes.",
+  "viz": "Ein einzelner Hard↔Soft-Regler (0=hart, 1=weich) steuert gekoppelt beide Gesichter desselben Operators: oben links das Conceptor-Spektrum (A) — 12 Eigenrichtungen (4 Frequenz-Kern, 8 Hintergrund), Gains γⱼ=σⱼ/(σⱼ+α⁻²) kürzen die Pfeile (weich≈Identität, hart≈Projektor); unten das Softmax-Readout (B) — Commit-Verteilung w=softmax(γσ/τ) von Gleichverteilung (weich) zu Argmax (hart); oben rechts die gemeinsame Rotation als normerhaltender (invertibler) Diffeomorphismus; Readouts det C, Effektiv-Rang, Quota, Top-1, Margin-B, Entropie, Regime."
+}

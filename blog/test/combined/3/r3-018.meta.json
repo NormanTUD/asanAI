@@ -1,0 +1,17 @@
+{
+  "no": "018",
+  "a": "combined/2/r2-033.html",
+  "b": "combined/2/r2-035.html",
+  "a_title": "Der Stretch an der Tangente und die Kapazität auf der Bühne (R2-033)",
+  "b_title": "Die Rechnung ist die Topologie — Betti-Register ✕ Fusions-Attraktor (R2-035)",
+  "combined_theme": "lokal-dynamische-global-topologische-repraesentation",
+  "one_line": "Ein trainiertes Netz ist ein niedrigzyklischer, niedrig-belegter Attraktor im festen Budget; Generalisierung gelingt, wenn die Aufgabe-Symmetrie (B) einen solchen Attraktor erlaubt UND die lokale Tangente konvergiert (A), damit der Fluss dort landet — die Belegung (A: ID/C) und die Register (B: β₁) sind dieselbe Größe, zwei Lesarten.",
+  "contradictions": [
+    "T1 · Essenz des Netzes: A misst es als Skalar-Belegung eines fixen Containers (ID/C, metrisch-statistisch); B als diskrete Register-Inventur, die rechnet (β₁-Zyklen, topologisch) — Belegung vs. Register als Primärgesichtspunkt.",
+    "T2 · Das auflösende Gate: A legt es in die Konvergenz der lokalen Tangente (Eigenwert-Lücke, dynamik-/datenabhängig); B in die Gruppensymmetrie der Aufgabe (strukturabhängig) — zwei verschiedene Kausal-Orte fürs 'Einfachsein'.",
+    "T3 · Rolle der Tiefe: A braucht sie als nicht-autonomen Fluss (Buckel über der Tiefe, Einbruch läuft über Schichten); B's verifizierter Fall komprimiert sie auf EINEN bilinearen Schritt (Torus braucht keine Tiefe) — Tiefe als Last vs. komprimierbar.",
+    "T4 · Linearität: A's 'linear' = lokale 1.-Ordnungs-Tangente einer generischen (ggf. zyklischen) Karte, blind für höhere Ordnung; B's 'linear' = globale Fourier-/harmonische Lesart des Attraktors, nur bei Symmetrie — Lokal- vs. Global-Linearität."
+  ],
+  "resolution": "Belegung (A: ID) und Register (B: β₁) sind zwei Projektionen derselben aktiven Struktur; die beiden Gates sind sequentiell, nicht rivalisierend — Symmetrie (B, strukturell) bestimmt, ob ein niedrigzyklischer Attraktor existiert, Konvergenz (A, dynamisch) ob der Fluss ihn erreicht; Tiefe ist eine erhaltene Ressource, die Symmetrie auf einen Schritt (B) oder über viele Schichten (A) ausgibt; Nichtlinearität ist der Generator, lokale Linearität die Dynamik, globale (Fourier-)Linearität die Lesart, gesteuert von der Aufgabe-Symmetrie. Generalisierung verlangt alle drei: Symmetrie erlaubt den Attraktor, Konvergenz erreicht ihn, aktive Belegung bleibt << Budget (ID/C << 1 ≈ aktives β₁ << volle β-Inventur).",
+  "viz": "2-Gates-Attraktor-Plot: links die lokale Tangente J=I+σS+ωR (Attraktor-Stern + Eigenwert-Lücke, gesteuert vom Konvergenz-Regler; reelle/zyklische Eigenwerte), rechts die Belegungskurve (Buckel) über der Tiefe gegen das fixe Budget C (gold) — die Belegung fällt nur unter C, wenn Symmetrie (B) UND Konvergenz (A) beide offen sind; Readouts für ID/C, β₁ aktiv, β₁/total und Tiefe-Ausgabe (Schritte) zeigen die beiden Lesarten und den Lesart-Umschlag stückweise↔harmonisch."
+}

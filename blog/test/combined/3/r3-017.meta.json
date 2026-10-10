@@ -1,0 +1,16 @@
+{
+  "no": "017",
+  "a": "combined/2/r2-027.html",
+  "b": "combined/2/r2-030.html",
+  "a_title": "Die Form der Wolke: gemacht durch Optima, gelesen in zwei Auflösungen",
+  "b_title": "Zirkuits schreiben, Topologie liest: das Loch als gemeinsame Währung",
+  "combined_theme": "residual-topology-as-currency",
+  "one_line": "Die (residuelle) Topologie einer Repräsentation — Löcher/Zyklen β₁, Kern eines Laplace, harmonische Masse — ist eine einzige, messbare Währung, die das Netz durch seine Schicht-Dynamik SCHREIBT (A: selbst-dämpfende entropische OT-Optima + nicht-lineares Biegen; B: ReLU-Chirurgie + Zirkuit-Eigenwert α als Bifurkationsparameter) und in MEHREREN AUFLÖSUNGEN LIEST (A: grob-linear LS/c/a/PR + fein-topologisch β/Mapper/Holonomie; B: persistente Homologie der Wolke + harmonische Masse); die Valenz eines überlebenden Lochs (Feature vs Defekt) wird von EINEM Fusionskriterium gesetzt: maintained ∧ passt-zum-Latenten.",
+  "contradictions": [
+    "Primärobjekt: A liest eine statisch geformte Punkt­wolke (Form, in zwei Auflösungen grob/fein) vs. B liest eine Schicht-Zeit-Trajektorie des Residual-Streams (diskretes dynamisches System), deren Attraktor (Grenzzyklus/Fixpunkt) der Bifurkationsparameter α auswählt.",
+    "Default-Vorzeichen eines β₁-Lochs: A — topologische Reichheit (β₁/Loops) ist GUT, wenn sie zum Latenten passt ('reich = gut', zyklistisches Latentes) vs. B — Löcher sind Defekt/Fragilität PER DEFAULT (β→(1,0,0), 'was übrig bleibt macht fragil'), nur ein maintained-Attraktor ist Feature.",
+    "Mach-Maschine: A — die Form wird als LÖSUNG eines selbst-dämpfenden (entropisch-OT) Optimierungsproblems gemacht und akkumuliert (Fisher-Dämpfung, Thm 3.3/5.2/6.3/7.5) vs. B — die Topologie wird vom linearen BIFURKATIONS-PARAMETER α gewählt (α>0 → Grenzzyklus, α<0 → Fixpunkt) + ReLU-Chirurgie; Optimierungs-Fixpunkt vs. dynamisch-systemischer Attraktor-Auswahl."
+  ],
+  "resolution": "Die Wolke ist ein Zeitquerschnitt des Flusses: A's fein-topologische β₁ ist der Querschnitt von B's Grenzzyklus, und α (B) sagt vorher, ob der Zyklus bei wachsender Tiefe persistiert oder kollabiert (verschachtelte Auflösungen, keine Rivalen). 'Reich = gut' (A) und 'Loch = Defekt' (B) sind dieselbe Diskriminator: ein Loch ist Feature ⟺ maintained UND passt zum Latenten (A's 'passt' = B's 'maintained'), Defekt ⟺ leftover ODER passt nicht. A liefert den lokalen Generator (selbst-dämpfende Optima akkumulieren OHNE zu verwischen — die mechanische Voraussetzung dafür, dass ein Zyklus maintained bleibt), B den globalen Selektor (α wählt den Attraktor); unter B's ehrlichem Rahmen bleibt die lokale Seite (Theoreme) gut gestützt und die globale α-Brücke eine prünfbare Hypothese.",
+  "viz": "Canvas-Phase-Porträt des Residual-Streams in Schicht-Zeit: Zirkuit-Gain α + akkumuliertes Biegen/Chirurgie k treiben α_eff=α−0,12k, das den Attraktor wählt (Grenzzyklus β₁=1 vs Fixpunkt β₁=0); dieselbe Trajektorie-Wolke wird zweigleichzeitig gelesen — grob/linear (2.-Moment ⟨r²⟩: konvergiert zu 0 oder zu α?) und fein/topologisch (Vietoris-Rips β₁/β₀ über ε); Rauschen macht den Attraktor fragil; die Valenz (Feature/Defekt/Flach/Lücke/Spur) wird aus maintained ∧ passt-zum-Latenten (umschaltbares latentes Ziel: zyklisch vs diskret) bestimmt."
+}
