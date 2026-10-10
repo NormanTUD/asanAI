@@ -1,0 +1,3582 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garben im Transformer — Interaktiver Begleiter</title>
+
+<!-- Plotly -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Temml für LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/temml.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg0:#07080f;
+  --bg1:#0c0e1a;
+  --bg2:#121527;
+  --panel:rgba(20,24,44,0.72);
+  --panel-solid:#141828;
+  --stroke:rgba(140,160,230,0.17);
+  --stroke-strong:rgba(150,175,255,0.35);
+  --txt:#e6eaf7;
+  --txt-dim:#9aa4c4;
+  --txt-faint:#6b7496;
+  --h0:#49d2f0;       /* Inhalt / Kern */
+  --h0b:#1a8fb8;
+  --h1:#ff6b8a;       /* Variation / Komplement */
+  --h1b:#c93a5c;
+  --harm:#ffc857;     /* harmonisch */
+  --acc:#a98bff;      /* akzent lila */
+  --ok:#5ce68a;
+  --warn:#ff9f45;
+  --mono:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg0); color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  line-height:1.62; font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* ambient background */
+body::before{
+  content:''; position:fixed; inset:0; z-index:-2;
+  background:
+    radial-gradient(1100px 760px at 12% -8%, rgba(73,210,240,0.11), transparent 62%),
+    radial-gradient(1000px 700px at 92% 6%, rgba(255,107,138,0.09), transparent 62%),
+    radial-gradient(1200px 900px at 50% 108%, rgba(169,139,255,0.10), transparent 64%),
+    linear-gradient(180deg,#07080f 0%, #0a0c17 45%, #07080f 100%);
+}
+body::after{
+  content:''; position:fixed; inset:0; z-index:-1; opacity:.33; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(130,160,255,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(130,160,255,0.045) 1px, transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 85% 60% at 50% 35%, #000 20%, transparent 85%);
+}
+
+/* ---- Navigation ---- */
+#progressbar{
+  position:fixed; top:0; left:0; height:3px; width:0%;
+  background:linear-gradient(90deg,var(--h0),var(--acc),var(--h1));
+  z-index:200; box-shadow:0 0 14px rgba(169,139,255,.7);
+  transition:width .12s linear;
+}
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:150;
+  background:rgba(7,8,15,.80); backdrop-filter:blur(18px) saturate(1.3);
+  border-bottom:1px solid var(--stroke);
+}
+.navinner{
+  max-width:1240px; margin:0 auto; padding:9px 20px;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+}
+.brand{
+  font-weight:800; font-size:14.5px; letter-spacing:.2px; white-space:nowrap;
+  background:linear-gradient(92deg,var(--h0),var(--acc) 55%,var(--h1));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.navlinks{display:flex; gap:3px; flex-wrap:wrap;}
+.navlinks a{
+  color:var(--txt-dim); text-decoration:none; font-size:12.4px;
+  padding:5px 9px; border-radius:7px; transition:.16s; white-space:nowrap;
+}
+.navlinks a:hover{color:var(--txt); background:rgba(140,160,230,.13);}
+.navlinks a.on{color:#fff; background:rgba(169,139,255,.22);}
+
+/* ---- Layout ---- */
+main{max-width:1240px; margin:0 auto; padding:0 20px 140px;}
+section{padding:78px 0 10px; scroll-margin-top:66px;}
+.hero{min-height:94vh; display:flex; flex-direction:column; justify-content:center; padding-top:64px;}
+
+h1{
+  font-size:clamp(2.1rem,5.6vw,4.05rem); line-height:1.04; margin:0 0 22px;
+  font-weight:860; letter-spacing:-1.6px;
+  background:linear-gradient(104deg,#fff 8%,var(--h0) 40%,var(--acc) 66%,var(--h1) 92%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+h2{
+  font-size:clamp(1.5rem,3.1vw,2.15rem); margin:0 0 6px; font-weight:800;
+  letter-spacing:-.6px; color:#fff;
+}
+h3{font-size:1.14rem; margin:30px 0 10px; font-weight:700; color:#eef1fb;}
+h4{font-size:.98rem; margin:18px 0 7px; font-weight:700; color:var(--txt);}
+p{margin:0 0 14px; color:#cdd4ea;}
+.lead{font-size:1.14rem; color:var(--txt-dim); max-width:830px;}
+.kicker{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:2.6px; text-transform:uppercase;
+  color:var(--acc); margin-bottom:11px; font-weight:700;
+}
+.seclabel{
+  display:inline-flex; align-items:center; gap:9px; margin-bottom:12px;
+  font-family:var(--mono); font-size:11px; letter-spacing:2.2px; text-transform:uppercase;
+  color:var(--txt-faint);
+}
+.seclabel b{
+  color:#07080f; background:linear-gradient(135deg,var(--h0),var(--acc));
+  width:23px; height:23px; display:grid; place-items:center; border-radius:7px; font-size:12px;
+}
+.sub{color:var(--txt-dim); max-width:860px; margin-bottom:22px;}
+
+/* ---- Cards / panels ---- */
+.card{
+  background:var(--panel); border:1px solid var(--stroke); border-radius:17px;
+  padding:22px; margin:18px 0; backdrop-filter:blur(13px);
+  box-shadow:0 18px 50px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.045);
+}
+.card.tight{padding:16px;}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:15px;}
+.grid-s{display:grid; grid-template-columns:340px 1fr; gap:20px; align-items:start;}
+.grid-s.rev{grid-template-columns:1fr 340px;}
+@media(max-width:940px){
+  .grid2,.grid3,.grid-s,.grid-s.rev{grid-template-columns:1fr;}
+}
+
+/* ---- Controls ---- */
+.ctl{margin:13px 0;}
+.ctl label{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:12.6px; color:var(--txt-dim); margin-bottom:6px; font-weight:600;
+}
+.ctl label .v{font-family:var(--mono); color:var(--h0); font-size:12.4px; font-weight:700;}
+input[type=range]{
+  -webkit-appearance:none; width:100%; height:5px; border-radius:3px;
+  background:linear-gradient(90deg,var(--h0b),var(--acc)); outline:none; cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:17px; height:17px; border-radius:50%;
+  background:#fff; border:2.5px solid var(--acc); cursor:pointer;
+  box-shadow:0 0 11px rgba(169,139,255,.75); transition:.12s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18);}
+input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;background:#fff;border:2.5px solid var(--acc);cursor:pointer;
+}
+button,.btn{
+  background:rgba(169,139,255,.16); color:var(--txt); border:1px solid var(--stroke-strong);
+  padding:7px 14px; border-radius:9px; font-size:12.8px; cursor:pointer;
+  font-family:inherit; font-weight:650; transition:.16s;
+}
+button:hover{background:rgba(169,139,255,.30); border-color:var(--acc); transform:translateY(-1px);}
+button.on{background:linear-gradient(135deg,var(--h0b),var(--acc)); border-color:var(--acc); color:#fff;}
+button.sm{padding:5px 10px; font-size:11.6px;}
+.btnrow{display:flex; gap:7px; flex-wrap:wrap; margin:11px 0;}
+select{
+  background:var(--panel-solid); color:var(--txt); border:1px solid var(--stroke);
+  padding:6px 10px; border-radius:8px; font-family:inherit; font-size:12.8px; cursor:pointer; width:100%;
+}
+.chk{display:flex; align-items:center; gap:8px; font-size:12.8px; color:var(--txt-dim); margin:7px 0; cursor:pointer;}
+.chk input{accent-color:var(--acc); width:15px; height:15px; cursor:pointer;}
+
+/* ---- Canvas ---- */
+canvas{
+  display:block; width:100%; border-radius:12px;
+  background:radial-gradient(circle at 50% 42%, #0e1224 0%, #080a14 100%);
+  border:1px solid var(--stroke); touch-action:none;
+}
+.plot{width:100%; min-height:300px;}
+
+/* ---- Misc ---- */
+.pill{
+  display:inline-block; padding:2.5px 9px; border-radius:20px;
+  font-size:11px; font-family:var(--mono); font-weight:700; letter-spacing:.4px;
+}
+.p-h0{background:rgba(73,210,240,.19); color:var(--h0); border:1px solid rgba(73,210,240,.4);}
+.p-h1{background:rgba(255,107,138,.19); color:var(--h1); border:1px solid rgba(255,107,138,.4);}
+.p-hm{background:rgba(255,200,87,.17); color:var(--harm); border:1px solid rgba(255,200,87,.4);}
+.p-n {background:rgba(154,164,196,.15); color:var(--txt-dim); border:1px solid var(--stroke);}
+
+.readout{
+  font-family:var(--mono); font-size:12.4px; background:rgba(0,0,0,.34);
+  border:1px solid var(--stroke); border-radius:10px; padding:11px 13px; margin-top:11px;
+  color:var(--txt-dim); line-height:1.75;
+}
+.readout b{color:var(--txt);}
+.big{font-family:var(--mono); font-size:1.75rem; font-weight:800; line-height:1.15;}
+
+.note{
+  border-left:3px solid var(--acc); padding:11px 15px; margin:16px 0;
+  background:rgba(169,139,255,.07); border-radius:0 10px 10px 0;
+  font-size:14.2px; color:var(--txt-dim);
+}
+.note.h0{border-color:var(--h0); background:rgba(73,210,240,.07);}
+.note.h1{border-color:var(--h1); background:rgba(255,107,138,.07);}
+.note.harm{border-color:var(--harm); background:rgba(255,200,87,.07);}
+
+.kv{display:grid; grid-template-columns:auto 1fr; gap:5px 13px; font-size:13.2px; margin:11px 0;}
+.kv dt{color:var(--txt-faint); font-family:var(--mono); font-size:11.6px; padding-top:2px;}
+.kv dd{margin:0; color:var(--txt);}
+
+table{width:100%; border-collapse:collapse; font-size:13px; margin:13px 0;}
+th{
+  text-align:left; padding:8px 10px; color:var(--txt-faint);
+  font-size:11px; text-transform:uppercase; letter-spacing:1.1px;
+  border-bottom:1px solid var(--stroke-strong); font-weight:700;
+}
+td{padding:7px 10px; border-bottom:1px solid rgba(140,160,230,.08);}
+tr:hover td{background:rgba(169,139,255,.055);}
+td.num{font-family:var(--mono); text-align:right;}
+
+.eq{
+  text-align:center; margin:18px 0; padding:15px;
+  background:rgba(0,0,0,.26); border-radius:12px; border:1px solid var(--stroke);
+  overflow-x:auto;
+}
+.eq .cap{font-size:11.8px; color:var(--txt-faint); margin-top:9px; font-family:var(--mono);}
+
+.steps{counter-reset:s; list-style:none; padding:0; margin:16px 0;}
+.steps li{
+  counter-increment:s; position:relative; padding-left:40px; margin-bottom:13px;
+  font-size:14.2px; color:var(--txt-dim);
+}
+.steps li::before{
+  content:counter(s); position:absolute; left:0; top:0;
+  width:26px; height:26px; border-radius:8px; display:grid; place-items:center;
+  background:linear-gradient(135deg,var(--h0b),var(--acc)); color:#fff;
+  font-family:var(--mono); font-size:12.5px; font-weight:800;
+}
+.steps li b{color:var(--txt);}
+
+.statgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); gap:12px; margin:16px 0;}
+.stat{
+  background:rgba(0,0,0,.3); border:1px solid var(--stroke); border-radius:13px;
+  padding:14px; text-align:center;
+}
+.stat .n{font-family:var(--mono); font-size:1.6rem; font-weight:800; line-height:1.1;}
+.stat .l{font-size:11.3px; color:var(--txt-faint); margin-top:5px; letter-spacing:.3px;}
+
+.flow{
+  display:flex; align-items:center; gap:9px; flex-wrap:wrap; justify-content:center;
+  margin:20px 0; font-size:12.8px;
+}
+.flow .n{
+  padding:9px 14px; border-radius:11px; background:rgba(169,139,255,.12);
+  border:1px solid var(--stroke-strong); font-weight:650;
+}
+.flow .a{color:var(--acc); font-size:16px; font-weight:800;}
+
+.tag{
+  font-family:var(--mono); font-size:10.5px; padding:2px 7px; border-radius:5px;
+  background:rgba(255,255,255,.07); color:var(--txt-faint); letter-spacing:.5px;
+}
+
+.reveal{opacity:0; transform:translateY(26px); transition:opacity .68s cubic-bezier(.22,1,.36,1), transform .68s cubic-bezier(.22,1,.36,1);}
+.reveal.in{opacity:1; transform:none;}
+
+.scroller{overflow-x:auto;}
+.tiny{font-size:12px; color:var(--txt-faint);}
+.center{text-align:center;}
+hr.sep{border:0; height:1px; background:linear-gradient(90deg,transparent,var(--stroke-strong),transparent); margin:52px 0;}
+
+.legend{display:flex; gap:15px; flex-wrap:wrap; font-size:12.2px; color:var(--txt-dim); margin:10px 0;}
+.legend i{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px;}
+
+footer{
+  text-align:center; padding:50px 20px; color:var(--txt-faint); font-size:12.6px;
+  border-top:1px solid var(--stroke); margin-top:60px;
+}
+</style>
+</head>
+<body>
+
+<div id="progressbar"></div>
+
+<nav>
+  <div class="navinner">
+    <div class="brand">⊹ Garben-Zerlegung von Transformer-Repräsentationen</div>
+    <div class="navlinks" id="navlinks">
+      <a href="#start">Start</a>
+      <a href="#problem">Problem</a>
+      <a href="#vektoren">Vektoren</a>
+      <a href="#graph">Graph</a>
+      <a href="#garbe">Garbe</a>
+      <a href="#laplace">Laplace</a>
+      <a href="#kern">H⁰ Inhalt</a>
+      <a href="#komplement">H¹ Einfluss</a>
+      <a href="#zyklen">Zyklen</a>
+      <a href="#harmonisch">Harmonisch</a>
+      <a href="#steering">Steering</a>
+      <a href="#antwort">Antwort</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero" id="start">
+  <div class="kicker">NeurIPS 2026 · Bryce Grant & Peng Wang · Case Western Reserve University</div>
+  <h1>Gleiche Bedeutung,<br>andere Worte —<br>sieht das Modell das auch so?</h1>
+  <p class="lead">
+    „Der Eiffelturm steht in Paris." und „Paris beherbergt den Eiffelturm." bedeuten dasselbe.
+    Im Transformer sind das zwei <em>verschiedene</em> Zahlenvektoren. Welcher Teil dieser Vektoren
+    trägt die <b style="color:var(--h0)">Bedeutung</b>, und welcher nur die <b style="color:var(--h1)">Formulierung</b>?
+  </p>
+  <p class="lead" style="margin-top:14px">
+    Dieses Dokument erklärt die Antwort des Papers — <b>vollständig durch Spielen</b>.
+    Jedes Konzept, das über Abitur-Mathematik hinausgeht, bekommt hier ein eigenes interaktives Spielzeug.
+    Du musst nichts auswendig lernen. Schieb die Regler, schau zu, versteh.
+  </p>
+
+  <div class="statgrid" style="margin-top:34px">
+    <div class="stat"><div class="n" style="color:var(--h0)">+17,1 pp</div><div class="l">H⁰ schlägt LEACE (Faktenabruf)</div></div>
+    <div class="stat"><div class="n" style="color:var(--h1)">5,6–26,5×</div><div class="l">H¹-Richtungen steuern den Output</div></div>
+    <div class="stat"><div class="n" style="color:var(--harm)">ρ = 0,90</div><div class="l">harmonische Masse ↔ Fragilität</div></div>
+    <div class="stat"><div class="n" style="color:var(--acc)">0</div><div class="l">Trainingsschritte nötig</div></div>
+  </div>
+
+  <div class="card" style="margin-top:28px">
+    <h4 style="margin-top:0">Der rote Faden dieser Seite</h4>
+    <div class="flow">
+      <span class="n">Paraphrasen</span><span class="a">→</span>
+      <span class="n">Graph</span><span class="a">→</span>
+      <span class="n">Garbe + Projektion P</span><span class="a">→</span>
+      <span class="n">Korand δ⁰</span><span class="a">→</span>
+      <span class="n">Laplace L<sub>F</sub></span><span class="a">→</span>
+      <span class="n" style="border-color:var(--h0);color:var(--h0)">Kern = Inhalt</span>
+      <span class="a">+</span>
+      <span class="n" style="border-color:var(--h1);color:var(--h1)">Top = Einfluss</span>
+      <span class="a">+</span>
+      <span class="n" style="border-color:var(--harm);color:var(--harm)">Zyklen = Fragilität</span>
+    </div>
+    <p class="tiny center" style="margin:0">
+      Ein einziges Objekt — der Paraphrasen-Graph — liefert alle drei Ergebnisse. Das ist die Pointe.
+    </p>
+  </div>
+
+  <div class="center" style="margin-top:34px;color:var(--txt-faint);font-size:13px">
+    ↓ scroll · alles unten ist anfassbar
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     1 — DAS PROBLEM
+     ============================================================ -->
+<section id="problem">
+  <div class="seclabel"><b>1</b> Motivation — welches Problem wird gelöst?</div>
+  <h2>Bestehende Werkzeuge testen die falsche Frage</h2>
+  <p class="sub">
+    Interpretierbarkeits-Forschung will verstehen, was in einem Sprachmodell vorgeht.
+    Es gibt drei große Werkzeugklassen — und keine davon beantwortet die Frage, um die es hier geht.
+  </p>
+
+  <div class="grid3">
+    <div class="card tight">
+      <span class="tag">WERKZEUG A</span>
+      <h4>Sparse Autoencoder</h4>
+      <p class="tiny" style="margin-bottom:8px">Zerlegt <b>eine</b> Aktivierung in viele „Features".</p>
+      <p class="tiny" style="color:var(--warn);margin:0">✗ Sagt nichts darüber, ob dasselbe Feature bei anderer Formulierung noch da ist.</p>
+    </div>
+    <div class="card tight">
+      <span class="tag">WERKZEUG B</span>
+      <h4>Probing / LEACE</h4>
+      <p class="tiny" style="margin-bottom:8px">Testet, ob ein <b>vorher gewähltes</b> Attribut linear ablesbar ist bzw. löscht es.</p>
+      <p class="tiny" style="color:var(--warn);margin:0">✗ Man muss das Konzept vorher kennen und beschriften.</p>
+    </div>
+    <div class="card tight">
+      <span class="tag">WERKZEUG C</span>
+      <h4>CKA / SVCCA</h4>
+      <p class="tiny" style="margin-bottom:8px">Vergleicht <b>zwei ganze Räume</b> miteinander.</p>
+      <p class="tiny" style="color:var(--warn);margin:0">✗ Liefert eine Ähnlichkeitszahl, aber keine <em>Zerlegung</em> eines Raums.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Die Lücke:</b> Keines dieser Werkzeuge testet <b>Cross-Context-Konsistenz</b> — also:
+    kodiert eine Richtung im Aktivierungsraum <em>dieselbe</em> Information, wenn die Formulierung
+    wechselt, die Bedeutung aber gleich bleibt? [[11]]
+  </div>
+
+  <h3>Warum das praktisch wehtut: „Steering" ist unzuverlässig</h3>
+  <p class="sub">
+    Steering = man addiert einen Vektor auf die Aktivierungen, um das Verhalten zu lenken
+    („schreib formeller", „sei ehrlicher"). Das funktioniert bei manchen Modellen gut und
+    zerstört bei anderen die Ausgabe. Niemand konnte vorher sagen, welcher Fall vorliegt [[11]].
+    Spiel mit dem Regler und sieh, was passiert.
+  </p>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Steering-Simulator</h4>
+      <div class="ctl">
+        <label>Modell-Typ
+          <span class="v" id="d1-arch">fragil (Llama-2-7B)</span></label>
+        <input type="range" id="d1-fr" min="0" max="1" step="1" value="1">
+      </div>
+      <div class="ctl">
+        <label>Steering-Stärke α <span class="v" id="d1-aV">0.30</span></label>
+        <input type="range" id="d1-a" min="0" max="50" step="1" value="30">
+      </div>
+      <div class="ctl">
+        <label>Methode <span class="v" id="d1-mV">Zufallsrichtung</span></label>
+        <input type="range" id="d1-m" min="0" max="2" step="1" value="0">
+      </div>
+      <div class="readout" id="d1-out"></div>
+      <p class="tiny" style="margin:10px 0 0">
+        Beobachte: bei <b>fragilen</b> Modellen bricht die Zufallsrichtung bei α=0,3 fast komplett
+        zusammen (4,2 % Faktentreue), während die garbenbasierte Richtung 31 % hält.
+        Bei <b>robusten</b> Modellen ist Zufall plötzlich konkurrenzfähig [[11]].
+      </p>
+    </div>
+    <div class="card">
+      <div id="d1-plot" class="plot" style="height:380px"></div>
+      <p class="tiny" style="margin:4px 0 0">
+        Links: Faktentreue (bleibt das Wissen erhalten?). Rechts: Stiländerung (greift das Steering überhaupt?).
+        Bei α ≥ 0,3 sättigt der Stil bei 100 % für alle Methoden — deshalb ist Faktentreue die
+        entscheidende Kennzahl [[11]].
+      </p>
+    </div>
+  </div>
+
+  <h3>Die Frage des Papers</h3>
+  <div class="card" style="border-color:var(--stroke-strong);background:linear-gradient(135deg,rgba(73,210,240,.08),rgba(255,107,138,.07))">
+    <p style="font-size:1.12rem;margin:0;color:#fff">
+      „Lässt sich — <b>an einem eingefrorenen Modell, ohne jedes Training</b> — der Aktivierungsraum
+      in einen Teil zerlegen, der die <span class="pill p-h0">Bedeutung</span> trägt, und einen Teil,
+      der nur die <span class="pill p-h1">Formulierung</span> trägt? Und verrät dieselbe Konstruktion
+      zusätzlich, wie <span class="pill p-hm">fragil</span> ein Modell beim Steering ist?"
+    </p>
+  </div>
+  <p class="tiny">Die Antwort ist dreimal Ja. Der Weg dorthin geht über Garbentheorie — und genau den gehen wir jetzt Schritt für Schritt.</p>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     2 — VORWISSEN: VEKTOREN, UNTERRÄUME, KOVARIANZ
+     ============================================================ -->
+<section id="vektoren">
+  <div class="seclabel"><b>2</b> Vorwissen — Hidden States sind Punkte im Raum</div>
+  <h2>Ein Satz wird zu einem Pfeil</h2>
+  <p class="sub">
+    Ein Transformer wandelt jeden Satz in eine Liste von Zahlen um — den <b>Hidden State</b>
+    <span id="eq-h"></span>. Bei GPT-2 ist <span id="eq-d768"></span>, bei Llama-2-7B
+    <span id="eq-d4096"></span>. Das Paper mittelt über alle Token-Positionen („mean pooling"),
+    sodass <em>ein</em> Satz = <em>ein</em> Punkt im <span id="eq-Rd"></span> ist [[11]].
+  </p>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Was ist eine Richtung?</h4>
+      <p class="tiny">Ein <b>Unterraum</b> ist das, was man durch Kombinieren einiger Richtungen erreicht.
+        Eine Richtung spannt eine Gerade auf, zwei Richtungen eine Ebene.</p>
+      <div class="ctl">
+        <label>Dimension des Unterraums <span class="v" id="d2-kV">1</span></label>
+        <input type="range" id="d2-k" min="0" max="3" step="1" value="1">
+      </div>
+      <div class="ctl">
+        <label>Drehung <span class="v" id="d2-rV">0°</span></label>
+        <input type="range" id="d2-r" min="0" max="360" step="2" value="35">
+      </div>
+      <label class="chk"><input type="checkbox" id="d2-proj" checked> Projektion des roten Punkts zeigen</label>
+      <div class="readout" id="d2-out"></div>
+    </div>
+    <div class="card">
+      <canvas id="c-sub" height="400"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--h0)"></i>Unterraum (hier „Inhalt")</span>
+        <span><i style="background:var(--h1)"></i>Datenpunkt h</span>
+        <span><i style="background:var(--acc)"></i>Projektion Π·h</span>
+        <span><i style="background:var(--warn)"></i>Rest (h − Π·h)</span>
+      </div>
+      <p class="tiny" style="margin:4px 0 0">
+        <b>Projektion</b> = „Schatten" eines Punkts auf den Unterraum. Das ganze Paper dreht sich darum,
+        <em>welchen</em> Unterraum man als Schattenwand wählt.
+      </p>
+    </div>
+  </div>
+
+  <h3>Differenzvektoren: der eigentliche Rohstoff</h3>
+  <p class="sub">
+    Nimm ein Paraphrasen-Paar: <span id="eq-h1"></span> („Der Eiffelturm steht in Paris") und
+    <span id="eq-h2"></span> („Paris beherbergt den Eiffelturm"). Entscheidend ist nicht
+    jeder Punkt für sich, sondern <b>die Differenz</b> <span id="eq-delta"></span>.
+    Denn: wenn die Bedeutung gleich ist, muss diese Differenz <em>reine Formulierung</em> sein.
+  </p>
+
+  <div class="grid-s rev">
+    <div class="card">
+      <canvas id="c-diff" height="400"></canvas>
+      <p class="tiny" style="margin:6px 0 0">
+        Jedes Paar ist ein Pfeil. Die Pfeile sammeln sich — ihre gemeinsame Vorzugsrichtung ist
+        „Formulierungsraum". Senkrecht dazu liegt der „Inhaltsraum".
+      </p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Paraphrasen-Differenzen</h4>
+      <div class="ctl">
+        <label>Anzahl Paare N <span class="v" id="d3-nV">14</span></label>
+        <input type="range" id="d3-n" min="3" max="40" step="1" value="14">
+      </div>
+      <div class="ctl">
+        <label>Anisotropie (wie einseitig?) <span class="v" id="d3-aV">0.88</span></label>
+        <input type="range" id="d3-a" min="0" max="100" step="1" value="88">
+      </div>
+      <div class="ctl">
+        <label>Hauptachse der Variation <span class="v" id="d3-tV">25°</span></label>
+        <input type="range" id="d3-t" min="0" max="180" step="1" value="25">
+      </div>
+      <label class="chk"><input type="checkbox" id="d3-origin" checked> Differenzen am Ursprung bündeln</label>
+      <label class="chk"><input type="checkbox" id="d3-ell" checked> Kovarianz-Ellipse C<sub>W</sub> zeigen</label>
+      <div class="readout" id="d3-out"></div>
+    </div>
+  </div>
+
+  <div class="note h0">
+    <b>Begriff: Kovarianzmatrix der Paardifferenzen.</b>
+    <span id="eq-CW"></span> — sie misst, in welche Richtungen die Paare auseinanderlaufen.
+    Ein großer Eigenwert = „hier variiert die Formulierung stark".
+    Ein <b>Eigenwert nahe 0 = hier stimmen alle Paare überein</b>. Genau das wird später
+    der Inhaltsraum <span class="pill p-h0">H⁰</span> [[11]].
+  </div>
+
+  <h3>Eigenvektoren & Eigenwerte — anfassbar</h3>
+  <p class="sub">
+    Du brauchst nur eine Intuition: Eine symmetrische Matrix verformt eine Kugel zu einem Ellipsoid.
+    Die <b>Eigenvektoren</b> sind die Achsen des Ellipsoids, die <b>Eigenwerte</b> deren Längen.
+    Große Achse = viel Variation. Kurze Achse = fast keine.
+  </p>
+
+  <div class="grid-s">
+    <div class="card">
+      <h4 style="margin-top:0">Kugel → Ellipse</h4>
+      <div class="ctl">
+        <label>Eigenwert λ₁ <span class="v" id="d4-l1V">2.40</span></label>
+        <input type="range" id="d4-l1" min="5" max="300" step="1" value="240">
+      </div>
+      <div class="ctl">
+        <label>Eigenwert λ₂ <span class="v" id="d4-l2V">0.25</span></label>
+        <input type="range" id="d4-l2" min="1" max="300" step="1" value="25">
+      </div>
+      <div class="ctl">
+        <label>Achsendrehung <span class="v" id="d4-rV">30°</span></label>
+        <input type="range" id="d4-r" min="0" max="180" step="1" value="30">
+      </div>
+      <div class="readout" id="d4-out"></div>
+      <p class="tiny" style="margin:9px 0 0">
+        Setz λ₂ auf fast 0: dann ist die zweite Achse ein <b>Kern</b> — eine Richtung ohne
+        Paar-Variation. Das ist die Geburt von H⁰.
+      </p>
+    </div>
+    <div class="card">
+      <canvas id="c-eig" height="400"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--txt-faint)"></i>Einheitskreis</span>
+        <span><i style="background:var(--acc)"></i>verformt durch C<sub>W</sub></span>
+        <span><i style="background:var(--h1)"></i>Eigenvektor 1 (viel Variation → H¹)</span>
+        <span><i style="background:var(--h0)"></i>Eigenvektor 2 (wenig → H⁰)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     3 — GRAPH
+     ============================================================ -->
+<section id="graph">
+  <div class="seclabel"><b>3</b> Idee, Teil 1 — Paraphrasen als Graph</div>
+  <h2>Jedes Paraphrasen-Paar ist ein lokaler Zeuge</h2>
+  <p class="sub">
+    Die zentrale Umformulierung des Problems: <b>lokal → global</b>.
+    Jedes Paar sagt lokal „diese zwei Aktivierungen sollten übereinstimmen".
+    Viele solche Zeugen sollen zusammen <em>eine</em> globale Antwort festlegen [[11]].
+    Dafür baut man einen Graphen.
+  </p>
+
+  <div class="card">
+    <h4 style="margin-top:0">Graph-Typen des Papers — klick dich durch</h4>
+    <div class="btnrow" id="d5-btns">
+      <button data-t="match" class="on">Matching-Graph (Basis)</button>
+      <button data-t="path">Pfad über 6 Paraphrasen</button>
+      <button data-t="ring">Ring (alle Paraphrasen eines Fakts)</button>
+      <button data-t="clique">Clique (alle Paare)</button>
+      <button data-t="rel">Relations-Hypergraph</button>
+    </div>
+    <div class="grid-s rev">
+      <div>
+        <canvas id="c-graph" height="430"></canvas>
+      </div>
+      <div>
+        <div class="readout" id="d5-out"></div>
+        <h4>Betti-Zahl b₁ — Anzahl unabhängiger Kreise</h4>
+        <p class="tiny">
+          b₁ zählt, wie viele „Löcher" bzw. unabhängige Zyklen ein Graph hat.
+          Formel für zusammenhängende Teile: <span id="eq-betti"></span>.
+          Ein Baum hat b₁ = 0. Jede zusätzliche Kante, die zwei schon verbundene Knoten verbindet,
+          erzeugt genau einen neuen Zyklus.
+        </p>
+        <div class="ctl">
+          <label>Knoten pro Fakt <span class="v" id="d5-kV">5</span></label>
+          <input type="range" id="d5-k" min="3" max="8" step="1" value="5">
+        </div>
+        <label class="chk"><input type="checkbox" id="d5-lbl" checked> Beschriftungen</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="note h1">
+    <b>Wichtiges Ergebnis vorweg (§5.2):</b> Der <b>Ring</b> über alle Paraphrasen eines Fakts
+    schlägt den reinen Paar-Graphen um <b>+6,5 pp</b> auf allen acht Architekturen.
+    Aber ein <b>Pfad</b> mit genauso vielen Kanten (und b₁ = 0!) holt +7,7 pp —
+    der Ring übertrifft den Pfad nur um +0,5 pp, statistisch auf keiner Architektur signifikant [[11]].
+    <br><br>
+    <b>Pointe:</b> Für H⁰ zählt <em>welche</em> Paraphrasen verbunden sind, nicht ob ein Zyklus
+    geschlossen ist. Zyklen wirken woanders — im harmonischen Unterraum (Abschnitt 9).
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Ring vs. Pfad vs. Paare — die +6,5 pp</h4>
+    <div id="d5-bar" class="plot" style="height:360px"></div>
+    <p class="tiny" style="margin:4px 0 0">Daten: Tabelle 10 des Papers, harte CounterFact-Retrieval-Genauigkeit [[11]].</p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     4 — GARBE
+     ============================================================ -->
+<section id="garbe">
+  <div class="seclabel"><b>4</b> Vorwissen — Was ist eine zelluläre Garbe?</div>
+  <h2>Datenbehälter auf Knoten, Vergleichsräume auf Kanten</h2>
+  <p class="sub">
+    Klingt exotisch, ist aber simpel. Eine <b>zelluläre Garbe</b> <span id="eq-F"></span>
+    auf einem Graphen <span id="eq-G"></span> besteht aus drei Dingen [[11]]:
+  </p>
+
+  <ol class="steps">
+    <li><b>Knoten-Halm (stalk)</b> <span id="eq-stalkv"></span> — hier liegen die Daten des Knotens.
+      Im Paper: der Hidden State des Satzes, also <span id="eq-sv"></span>.</li>
+    <li><b>Kanten-Halm</b> <span id="eq-stalke"></span> — ein <em>gemeinsamer Vergleichsraum</em>
+      für die zwei Endknoten. Im Paper: <span id="eq-sk"></span> mit k = 128 ≪ d.</li>
+    <li><b>Restriktionsabbildung</b> <span id="eq-restr"></span> — übersetzt Knotendaten in den
+      Vergleichsraum. Im Paper: <em>eine</em> Matrix <span id="eq-PT"></span>, geteilt von allen Knoten.</li>
+  </ol>
+
+  <div class="note">
+    <b>Analogie:</b> Zwei Leute (Knoten) beschreiben dasselbe Ereignis in verschiedenen Sprachen.
+    Der Kanten-Halm ist die Übersetzung in <em>eine gemeinsame</em> Sprache; die Restriktionsabbildung
+    ist der Übersetzer. Stimmen die Übersetzungen überein, „verkleben" (glue) die lokalen
+    Beschreibungen zu einer globalen Aussage.
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Interaktive Garbe: Halme, Projektion, Übereinstimmung</h4>
+    <div class="grid-s rev">
+      <div><canvas id="c-sheaf" height="430"></canvas></div>
+      <div>
+        <div class="ctl">
+          <label>Hidden State h<sub>a</sub> — Winkel <span class="v" id="d6-aV">150°</span></label>
+          <input type="range" id="d6-a" min="0" max="360" step="1" value="150">
+        </div>
+        <div class="ctl">
+          <label>Hidden State h<sub>b</sub> — Winkel <span class="v" id="d6-bV">196°</span></label>
+          <input type="range" id="d6-b" min="0" max="360" step="1" value="196">
+        </div>
+        <div class="ctl">
+          <label>Projektionsrichtung P <span class="v" id="d6-pV">70°</span></label>
+          <input type="range" id="d6-p" min="0" max="180" step="1" value="70">
+        </div>
+        <div class="readout" id="d6-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          Dreh P so, dass die zwei Projektionen <b>zusammenfallen</b>: dann ist
+          (δ⁰h)<sub>e</sub> = 0 und diese Richtung gehört zum Inhaltsraum H⁰.
+          Dreh P senkrecht dazu: maximale Uneinigkeit → H¹-Richtung.
+        </p>
+        <div class="btnrow">
+          <button class="sm" id="d6-findH0">P auf H⁰ drehen</button>
+          <button class="sm" id="d6-findH1">P auf H¹ drehen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Der Korandoperator δ⁰ — „Uneinigkeits-Messgerät"</h3>
+  <div class="eq"><div id="eq-cobound"></div>
+    <div class="cap">Gleichung (1) des Papers — für eine Kante e = (u,v) [[11]]</div></div>
+  <p>
+    Mit der gemeinsamen Abbildung <span id="eq-PT2"></span> wird daraus genau das, was du oben
+    geschoben hast: <span id="eq-coboundP"></span>.
+    Und die <b>Konsistenzenergie</b> ist die Summe aller quadrierten Uneinigkeiten:
+  </p>
+  <div class="eq"><div id="eq-Econs"></div>
+    <div class="cap">Verschwindet genau dann, wenn die Daten global „verkleben" [[11]]</div></div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Globaler Schnitt (global section) — das Spiel</h4>
+    <p class="tiny">Verschiebe die Knotenwerte so, dass alle Kanten grün werden (Uneinigkeit ≈ 0).
+      Dann hast du einen globalen Schnitt gefunden — ein Element von H⁰.</p>
+    <div class="grid-s rev">
+      <div><canvas id="c-section" height="340"></canvas></div>
+      <div>
+        <div id="d7-sliders"></div>
+        <div class="readout" id="d7-out"></div>
+        <div class="btnrow">
+          <button class="sm" id="d7-solve">Automatisch verkleben</button>
+          <button class="sm" id="d7-rand">Zufällig stören</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     5 — LAPLACE
+     ============================================================ -->
+<section id="laplace">
+  <div class="seclabel"><b>5</b> Lösung — der Garben-Laplace L<sub>F</sub></div>
+  <h2>Ein k×k-Matrix, die alles entscheidet</h2>
+  <p class="sub">
+    Der Garben-Laplace ist definiert als <span id="eq-LF"></span>. Er verallgemeinert
+    den gewöhnlichen Graph-Laplace. Der entscheidende Zusammenhang:
+  </p>
+  <div class="eq"><div id="eq-quad"></div>
+    <div class="cap">Daraus folgt direkt: ker(L<sub>F</sub>) = ker(δ⁰) = H⁰(F) [[11]]</div></div>
+  <p>
+    Lies das langsam: Wenn <span id="eq-xLx"></span> gleich der quadrierten Uneinigkeit ist, dann
+    bedeutet <b>L<sub>F</sub>x = 0 ⟺ überhaupt keine Uneinigkeit</b>. Der Kern des Laplace
+    <em>ist</em> der Raum global konsistenter Schnitte. Kein Zusatztrick nötig.
+  </p>
+
+  <div class="note h0">
+    <b>Was das Paper praktisch rechnet (Gleichung 2):</b> Nicht der riesige |V|·d × |V|·d-Operator,
+    sondern eine winzige <b>k×k-Matrix</b> im Kantenraum:
+    <span id="eq-LFemp"></span>.
+    Weil k = 128 fest ist, kostet dieser Schritt bei einem 13B-Modell <em>genauso viel</em> wie
+    bei GPT-2 mit 124M. Das ist der Grund, warum die Methode überhaupt praktikabel ist [[11]].
+  </div>
+
+  <h3>Proposition 3.1 — die Entzauberung</h3>
+  <p class="sub">
+    Mit <em>einer</em> gemeinsamen Projektion P und Identitäts-Transporten gilt schlicht:
+  </p>
+  <div class="eq"><div id="eq-prop"></div>
+    <div class="cap">Proposition 3.1 (i): der Garben-Laplace <em>ist</em> die projizierte Paardifferenz-Kovarianz [[11]]</div></div>
+  <p>
+    Das ist ehrlich und wichtig: auf dem Matching-Graph steckt kein topologischer Zauber.
+    Die Garbensprache liefert hier vor allem die <b>richtige Frage</b> — und sie wird erst ab
+    Abschnitt 9 (Mehrschicht-Gitter) wirklich topologisch [[11]].
+  </p>
+
+  <div class="card">
+    <h4 style="margin-top:0">Das Spektrum von L<sub>F</sub> — Sortier die Richtungen</h4>
+    <div class="grid-s rev">
+      <div>
+        <div id="d8-spec" class="plot" style="height:320px"></div>
+        <canvas id="c-spec" height="210" style="margin-top:12px"></canvas>
+      </div>
+      <div>
+        <div class="ctl">
+          <label>Kantendimension k <span class="v" id="d8-kV">48</span></label>
+          <input type="range" id="d8-k" min="12" max="128" step="4" value="48">
+        </div>
+        <div class="ctl">
+          <label>Spektral-Abfall (Konzentration) <span class="v" id="d8-dV">1.8</span></label>
+          <input type="range" id="d8-d" min="20" max="400" step="5" value="180">
+        </div>
+        <div class="ctl">
+          <label>m = Anzahl H⁰- bzw. H¹-Richtungen <span class="v" id="d8-mV">20</span></label>
+          <input type="range" id="d8-m" min="2" max="40" step="1" value="20">
+        </div>
+        <div class="readout" id="d8-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          <span class="pill p-h0">H⁰</span> = die <b>untersten</b> m Eigenvektoren (minimale Uneinigkeit).<br>
+          <span class="pill p-h1">H¹-Richtungen</span> = die <b>obersten</b> m (maximale Uneinigkeit).<br>
+          Das Paper nutzt m = 20, k = 128. Der Spektral-Gap bleibt bei k ∈ {32,64,128}
+          stabil zwischen 91,7× und 95,6× [[11]].
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note harm">
+    <b>Namens-Warnung (Remark 3.3):</b> Die „H¹-Richtungen" sind <em>keine</em> echte Kohomologieklasse!
+    Auf dem azyklischen Matching-Graph ist algebraisch H¹ = 0. Der Name ist eine Eselsbrücke für
+    „hier sitzt die maximale Uneinigkeit". Echtes algebraisches H¹ ≠ 0 entsteht erst durch Zyklen
+    (Abschnitt 9) [[11]].
+  </div>
+
+  <h3>m-Sensitivität: wie viele Dimensionen braucht man?</h3>
+  <div class="card">
+    <div id="d8-msweep" class="plot" style="height:340px"></div>
+    <p class="tiny" style="margin:4px 0 0">
+      Tabelle 19: das Plateau liegt bei m ∈ [20, 80]. Bei m = 128 = k bleibt kein Eigenvektor
+      oberhalb des Spektral-Gaps übrig — es findet keine Kern-Selektion mehr statt und die
+      Genauigkeit kollabiert auf 35–53 %. m = 20 wurde a priori gewählt [[11]].
+    </p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     6 — H0 ERGEBNIS
+     ============================================================ -->
+<section id="kern">
+  <div class="seclabel"><b>6</b> Ergebnis 1 — Der Kern H⁰ ist der Inhaltsraum</div>
+  <h2>20 Dimensionen schlagen 4096</h2>
+  <p class="sub">
+    Der Test ist bewusst hart. Paraphrasen-Invarianz allein reicht nicht: ein invarianter Unterraum
+    könnte Paris–Frankreich und Berlin–Deutschland zu einem Brei verschmelzen. Deshalb:
+    <b>Hard Same-Relation Retrieval</b> — man muss den richtigen Fakt aus lauter Fakten
+    <em>derselben Relation</em> herausfinden [[11]].
+  </p>
+
+  <div class="card">
+    <h4 style="margin-top:0">Retrieval-Simulator — wie funktioniert der Test?</h4>
+    <div class="grid-s rev">
+      <div><canvas id="c-retr" height="420"></canvas></div>
+      <div>
+        <div class="ctl">
+          <label>Unterraum <span class="v" id="d9-sV">H⁰ (Kern)</span></label>
+          <input type="range" id="d9-s" min="0" max="3" step="1" value="0">
+        </div>
+        <div class="ctl">
+          <label>Paraphrasen-Rauschen <span class="v" id="d9-nV">0.55</span></label>
+          <input type="range" id="d9-n" min="0" max="100" step="1" value="55">
+        </div>
+        <div class="ctl">
+          <label>Anzahl Fakten (gleiche Relation) <span class="v" id="d9-fV">6</span></label>
+          <input type="range" id="d9-f" min="3" max="10" step="1" value="6">
+        </div>
+        <div class="readout" id="d9-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          Jeder Kreis ist ein Fakt-Zentroid, die Punkte sind seine Paraphrasen.
+          Erfolg = eine Paraphrase landet näher an ihrem <em>eigenen</em> Zentroid als an jedem anderen.
+          Im H⁰-Unterraum schrumpfen die Wolken, die Zentroiden bleiben getrennt.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Das Hauptergebnis — Tabelle 2</h3>
+  <div class="card">
+    <div id="d10-plot" class="plot" style="height:430px"></div>
+    <div class="btnrow" id="d10-btns">
+      <button data-m="gap" class="on">Vorsprung Δ</button>
+      <button data-m="abs">Absolute Genauigkeit</button>
+      <button data-m="all">Alle Baselines</button>
+    </div>
+    <div class="scroller">
+      <table id="t-leace">
+        <thead><tr><th>Modell</th><th>Full</th><th>H⁰ (20D)</th><th>LEACE-full</th><th>LEACE-20D</th><th>PCA-20</th><th>Rand-20</th><th>Δ</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="tiny" style="margin:4px 0 0">
+      Mittlerer Vorsprung <b>+17,1 pp</b> gegenüber LEACE bei <em>voller</em> Hidden-Dimension —
+      obwohl H⁰ nur 20 Dimensionen nutzt. Gegenüber dimensionskontrolliertem LEACE-20D sind es
+      sogar +48,0 pp im Mittel [[11]].
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">Warum ist GPT-2 der größte Sprung (+42,2 pp)?</h4>
+      <p class="tiny">Kleinere Residual-Streams konzentrieren Paraphrasen-Inhalt in
+        niedrigdimensionaleren gemeinsamen Unterräumen. Bei 768 Dimensionen sind 20 ein größerer
+        Anteil als bei 4096 [[11]].</p>
+      <div id="d10-size" class="plot" style="height:250px"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Die Kern-Selektion zählt, nicht die Projektion</h4>
+      <p class="tiny">Tabelle 11 ersetzt die gelernte PCA-Projektion durch eine
+        <b>zufällige orthonormale</b> oder gar <b>gar keine</b> (Identität). Das Ergebnis bleibt fast gleich.</p>
+      <div id="d11-abl" class="plot" style="height:250px"></div>
+      <p class="tiny" style="margin:4px 0 0">
+        PCA-P 81,6 % · Random-P 74,2 % · Identity-P 77,5 % — gegenüber
+        PCA-20 <em>ohne</em> Kern 30,5 %. Der Inhalt liegt im <b>Kern der Paardifferenz-Kovarianz</b>,
+        egal welches P [[11]].
+      </p>
+    </div>
+  </div>
+
+  <div class="note h0">
+    <b>Lies das als die eigentliche Entdeckung:</b> P reduziert nur den Rechenaufwand
+    (ℝ<sup>d</sup> → ℝ<sup>128</sup>, Kosten höchstens 7,4 pp). <b>Die Auswahl des Kerns</b> ist der
+    Wirkstoff. Das macht das Ergebnis robust und einfach nachzubauen [[11]].
+  </div>
+
+  <h3>Vergleich mit klassischen Baselines (Anhang B.5)</h3>
+  <div class="card">
+    <div id="d12-base" class="plot" style="height:400px"></div>
+    <p class="tiny" style="margin:4px 0 0">
+      H⁰ schlägt <b>jede label-freie</b> Alternative (CCA, PLS, PCA-20, Whitened-PCA) um +9 bis +36 pp
+      und liegt im Mittel nur ~2 pp unter der label-<em>benötigenden</em> Obergrenze (LDA, NCA) —
+      bei Phi-2, Gemma-2 und Llama-3 schlägt es sie sogar [[11]].
+    </p>
+  </div>
+
+  <h3>Transfer: funktioniert es auch über Sprachen?</h3>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <p class="tiny">Nichts an der Konstruktion ist paraphrasen-spezifisch. Sie braucht nur
+          <em>eine Gruppierung von Kontexten, die als äquivalent behauptet werden</em>.
+          Test: Englisch–Französisch-Übersetzungspaare als Kanten (Llama-3-8B, Layer 21) [[11]].</p>
+        <div class="statgrid">
+          <div class="stat"><div class="n" style="color:var(--h0)">78 %</div><div class="l">H⁰ Kern · EN→FR</div></div>
+          <div class="stat"><div class="n" style="color:var(--txt-dim)">59 %</div><div class="l">volle 4096 Dim</div></div>
+          <div class="stat"><div class="n" style="color:var(--h1)">3 %</div><div class="l">H¹ Komplement</div></div>
+        </div>
+      </div>
+      <div id="d13-xl" class="plot" style="height:270px"></div>
+    </div>
+    <p class="tiny" style="margin:4px 0 0">
+      Der Kern <em>übertrifft</em> in EN→FR sogar den vollen Hidden State. Das H¹-Komplement
+      wirft die Information komplett weg — genau wie vorhergesagt [[11]].
+    </p>
+  </div>
+
+  <h3>Grenze: P ist teilweise domänenabhängig</h3>
+  <div class="card">
+    <div id="d14-cross" class="plot" style="height:340px"></div>
+    <p class="tiny" style="margin:4px 0 0">
+      Anhang B.1: Wird P auf MRPC/PAWS/QQP statt auf CounterFact gefittet, verliert man ~25 pp —
+      bleibt aber +5 bis +30 pp über den kernlosen Baselines. Das Paper nennt das offen eine
+      Limitation und empfiehlt In-Domain-P [[11]].
+    </p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     7 — H1 EINFLUSS
+     ============================================================ -->
+<section id="komplement">
+  <div class="seclabel"><b>7</b> Ergebnis 2 — Das Spektral-Komplement trägt den Einfluss</div>
+  <h2>Dieselben Koordinaten, 5,6–26,5× mehr Wirkung</h2>
+  <p class="sub">
+    Zweite Frage: Wenn H⁰ der Inhalt ist — sind die <em>anderen</em> Richtungen bloß Rauschen,
+    oder tun sie etwas? Test durch <b>Ablation</b>: man setzt bestimmte Koordinaten auf Null,
+    lässt den Rest des Forward-Pass laufen und misst, wie sehr sich die Ausgabe ändert [[11]].
+  </p>
+
+  <div class="note">
+    <b>Der faire Vergleich ist das Schwierige.</b> Natürlich ändert sich mehr, wenn man
+    variablere Koordinaten löscht. Deshalb nutzt das Paper eine <b>varianz-gematchte Kontrolle</b>:
+    Koordinaten, deren individuelle Variabilität möglichst nahe am Mittel der H¹-Koordinaten liegt.
+    Das Paper räumt selbst ein, dass die Gesamtvariabilität der Kontrolle nur 0,13–0,53 der
+    H¹-Menge beträgt, der Vergleich also nicht perfekt ist [[11]].
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Ablations-Labor</h4>
+    <div class="grid-s rev">
+      <div><canvas id="c-abl" height="400"></canvas></div>
+      <div>
+        <div class="ctl">
+          <label>Welche Koordinaten löschen? <span class="v" id="d15-sV">H¹ (höchste Paar-Variabilität)</span></label>
+          <input type="range" id="d15-s" min="0" max="2" step="1" value="0">
+        </div>
+        <div class="ctl">
+          <label>Anzahl gelöschter Koordinaten m <span class="v" id="d15-mV">20</span></label>
+          <input type="range" id="d15-m" min="4" max="64" step="2" value="20">
+        </div>
+        <div class="ctl">
+          <label>Modell <span class="v" id="d15-aV">Llama-2-13B</span></label>
+          <input type="range" id="d15-a" min="0" max="8" step="1" value="8">
+        </div>
+        <div class="readout" id="d15-out"></div>
+        <div class="btnrow"><button class="sm" id="d15-run">Forward-Pass simulieren ▶</button></div>
+      </div>
+    </div>
+    <p class="tiny" style="margin:8px 0 0">
+      Die Balken rechts zeigen die Koordinaten, sortiert nach mittlerer absoluter Paardifferenz
+      E|h⁽¹⁾ − h⁽²⁾| — der <b>Diagonal-Analogon von C<sub>W</sub></b>. Rot = H¹, Blau = H⁰,
+      Grau = varianz-gematchte Kontrolle [[11]].
+    </p>
+  </div>
+
+  <h3>Alle neun Architekturen — Abbildung 2 / Tabelle 3</h3>
+  <div class="card">
+    <div id="d16-ratio" class="plot" style="height:420px"></div>
+    <p class="tiny" style="margin:4px 0 0">
+      Jedes 95-%-Konfidenzintervall schließt 1 aus. GPT-2 (124M) und Mistral-7B erreichen fast
+      identische Verhältnisse (18,2× und 19,71×) trotz 56-fachem Größenunterschied — der Effekt
+      skaliert nicht einfach mit der Modellgröße [[11]].
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">Tiefenprofil (Anhang B.9)</h4>
+      <div id="d17-depth" class="plot" style="height:300px"></div>
+      <p class="tiny" style="margin:4px 0 0">
+        Gemessen bei L/4, L/2 und 3L/4. Spitze bei L/4 für sieben Architekturen,
+        bei L/2 für OLMo-2-7B und Gemma-2-9B. Drei Tiefen können keine Kurve auflösen —
+        das sagt das Paper auch [[11]].
+      </p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Echte Eigenbasis statt Koordinaten-Proxy (B.6)</h4>
+      <div id="d18-kl" class="plot" style="height:300px"></div>
+      <p class="tiny" style="margin:4px 0 0">
+        Projiziert man den <em>echten</em> H¹-Eigenraum heraus, verschiebt sich die
+        Next-Token-Verteilung (KL-Divergenz) <b>17,8× bis 398×</b> stärker als bei zufälligen
+        Unterräumen gleicher Dimension. H⁰ herauszuprojizieren wirkt dagegen oft <em>weniger</em>
+        als Zufall (Median-Ratio 0,19–0,74 bei 8 von 9 Modellen) [[11]].
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Die „Dormancy"-Gegenprobe (B.7) — ist es nur eine Illusion?</h4>
+    <p class="sub" style="margin-bottom:10px">
+      Makelov et al. warnen vor einer <b>Subspace-Patching-Illusion</b>: man kann versehentlich eine
+      „schlafende" (dormant) Richtung aktivieren und glauben, man habe Kausalität gefunden.
+      Das Paper prüft das direkt [[11]].
+    </p>
+    <div class="grid-s rev">
+      <div><div id="d19-dorm" class="plot" style="height:300px"></div></div>
+      <div>
+        <div class="readout">
+          <b>Check 1 — Dormancy-Ratio:</b> Die On-Distribution-Streuung der Projektion auf H¹
+          geteilt durch die varianz-gematchter Zufallsunterräume: <b>2,5× bis 6,6×</b>.
+          H¹ ist also der <em>am wenigsten schlafende</em> Unterraum, den sie messen.<br><br>
+          <b>Check 2 — Verhalten statt KL:</b> Nach H¹-Ablation bricht der Faktenabruf im
+          tatsächlich generierten Text zusammen (Mistral-7B 46,7 % → 0,0 %), während die
+          gematchte Zufalls-Ablation ihn bei 47,0 % belässt [[11]].
+        </div>
+        <p class="tiny" style="margin-top:9px">
+          Weil das eine <em>Verhaltens</em>-Messung an 50 gierig dekodierten Tokens ist, hängt sie
+          nicht am Schwanz einer KL-Verteilung.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     8 — ZYKLEN & BETTI
+     ============================================================ -->
+<section id="zyklen">
+  <div class="seclabel"><b>8</b> Vorwissen — Zyklen, Betti-Zahlen, Hodge-Zerlegung</div>
+  <h2>Wo Topologie wirklich ins Spiel kommt</h2>
+  <p class="sub">
+    Bisher war alles azyklisch — und damit eigentlich lineare Algebra in Verkleidung.
+    Jetzt kommt die Tiefe des Netzwerks ins Spiel und erzeugt echte Zyklen [[11]].
+  </p>
+
+  <h3>Das Mehrschicht-Gitter</h3>
+  <p>
+    Knoten = (Satz, Schicht). <b>Waagerechte Kanten</b> verbinden Paraphrasen innerhalb einer Schicht.
+    <b>Senkrechte Kanten</b> verbinden denselben Satz über benachbarte Schichten.
+    Das ergibt für N Paare und L Schichten:
+  </p>
+  <div class="eq"><div id="eq-grid"></div>
+    <div class="cap">Jedes Elementarquadrat ist genau ein unabhängiger Zyklus [[11]]</div></div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Gitter-Baukasten</h4>
+    <div class="grid-s rev">
+      <div><canvas id="c-grid" height="430"></canvas></div>
+      <div>
+        <div class="ctl">
+          <label>Paare N <span class="v" id="d20-nV">4</span></label>
+          <input type="range" id="d20-n" min="1" max="8" step="1" value="4">
+        </div>
+        <div class="ctl">
+          <label>Schichten L <span class="v" id="d20-lV">3</span></label>
+          <input type="range" id="d20-l" min="1" max="6" step="1" value="3">
+        </div>
+        <label class="chk"><input type="checkbox" id="d20-fill"> Quadrate mit Dreiecken füllen (2-Komplex)</label>
+        <label class="chk"><input type="checkbox" id="d20-hl" checked> Einen Elementarzyklus hervorheben</label>
+        <div class="readout" id="d20-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          <b>Was fragt ein Quadrat?</b> Ob die Transformation von Schicht l nach l+1
+          <em>vertauscht</em> mit Paraphrasen-Äquivalenz. Also: ist „erst Paraphrase wechseln,
+          dann Schicht hoch" dasselbe wie „erst Schicht hoch, dann Paraphrase wechseln"? [[11]]
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Kommutiert das Quadrat? — der Kern der Sache</h3>
+  <div class="card">
+    <div class="grid-s">
+      <div>
+        <div class="ctl">
+          <label>Abweichung der Schicht-Transformation R <span class="v" id="d21-rV">0.35</span></label>
+          <input type="range" id="d21-r" min="0" max="100" step="1" value="35">
+        </div>
+        <div class="ctl">
+          <label>Paraphrasen-Unterschied <span class="v" id="d21-pV">0.60</span></label>
+          <input type="range" id="d21-p" min="5" max="100" step="1" value="60">
+        </div>
+        <div class="readout" id="d21-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          Das Paper sagt es explizit: wäre R = I (Identität), wäre ω der Korand eines Knotenpotentials
+          und die harmonische Masse exakt null. <b>Erst die angepasste Transportabbildung R macht
+          die Masse modellabhängig</b> [[11]].
+        </p>
+      </div>
+      <div>
+        <canvas id="c-square" height="330"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--h0)"></i>Weg A: erst Paraphrase, dann Schicht</span>
+          <span><i style="background:var(--h1)"></i>Weg B: erst Schicht, dann Paraphrase</span>
+          <span><i style="background:var(--harm)"></i>Lücke = harmonischer Anteil</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die Hodge-Zerlegung — drei Sorten von Kantendaten</h3>
+  <p class="sub">
+    Jede Zuordnung von Vektoren zu Kanten (ein „1-Kokettenfeld" ω) zerfällt <b>eindeutig und
+    orthogonal</b> in drei Teile [[11]]:
+  </p>
+  <div class="eq"><div id="eq-hodge"></div>
+    <div class="cap">Hodge-Zerlegung — die drei Teile stehen paarweise senkrecht aufeinander</div></div>
+
+  <div class="grid3">
+    <div class="card tight">
+      <span class="pill p-h0">GRADIENT</span>
+      <h4>im δ⁰ — „exakt"</h4>
+      <p class="tiny">Es gibt ein Potential auf den Knoten, dessen Differenzen genau ω ergeben.
+        Jeder Rundweg summiert sich zu 0. <b>Harmlos.</b></p>
+    </div>
+    <div class="card tight">
+      <span class="pill p-hm">HARMONISCH</span>
+      <h4>ker L₁ — „Loch"</h4>
+      <p class="tiny">Zirkuliert um einen Zyklus, ohne Quelle und ohne Wirbel. Lebt <em>nur</em>,
+        weil der Graph ein Loch hat. <b>Das ist die Fragilität.</b></p>
+    </div>
+    <div class="card tight">
+      <span class="pill p-h1">KOEXAKT</span>
+      <h4>im (δ¹)ᵀ — „Wirbel"</h4>
+      <p class="tiny">Existiert nur, wenn Flächen (2-Zellen) eingefüllt sind. Auf dem reinen Gitter
+        ohne Dreiecke entfällt dieser Teil.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Hodge-Zerlegungs-Labor</h4>
+    <p class="tiny">Zeichne ein Feld auf den Kanten eines Rings und sieh zu, wie es sich zerlegt.
+      Die <b>harmonische Masse</b> ist der Energieanteil im mittleren Topf.</p>
+    <div class="grid-s rev">
+      <div><canvas id="c-hodge" height="380"></canvas></div>
+      <div>
+        <div class="ctl">
+          <label>Gradient-Anteil <span class="v" id="d22-gV">0.70</span></label>
+          <input type="range" id="d22-g" min="0" max="100" step="1" value="70">
+        </div>
+        <div class="ctl">
+          <label>Harmonischer Anteil (Zirkulation) <span class="v" id="d22-hV">0.30</span></label>
+          <input type="range" id="d22-h" min="0" max="100" step="1" value="30">
+        </div>
+        <label class="chk"><input type="checkbox" id="d22-fill"> Fläche einfüllen (2-Zelle)</label>
+        <div class="readout" id="d22-out"></div>
+        <div id="d22-bar" class="plot" style="height:140px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note harm">
+    <b>Die Referenzmarke.</b> Ein rein zufälliges Gauß-Kokettenfeld hat erwartete harmonische
+    Masse <span id="eq-ref"></span> — bei L = 2 also genau <b>0,25</b>. Jeder Wert
+    <em>deutlich darunter</em> heißt: das Modell ist „flacher" als Zufall, seine Schichtübergänge
+    kommutieren fast perfekt mit Paraphrasen-Äquivalenz [[11]].
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     9 — HARMONISCHE MASSE
+     ============================================================ -->
+<section id="harmonisch">
+  <div class="seclabel"><b>9</b> Ergebnis 3 — Harmonische Masse sagt Fragilität voraus</div>
+  <h2>Drei Größenordnungen Unterschied — und sie bedeuten etwas</h2>
+  <p class="sub">
+    Alle sechs Architekturen in Tabelle 1 benutzen <b>exakt denselben Graphen</b> (b₁ = 30 bei L = 2),
+    dieselben 30 MRPC-Paare, dasselbe k = 8. Trotzdem spannt die harmonische Masse den Bereich
+    10⁻⁴ bis 0,08. Die Variation kommt <em>allein</em> aus den Schichtübergängen des Modells [[11]].
+  </p>
+
+  <div class="card">
+    <h4 style="margin-top:0">Tabelle 1 — interaktiv</h4>
+    <div class="grid-s rev">
+      <div><div id="d23-scatter" class="plot" style="height:420px"></div></div>
+      <div>
+        <div class="ctl">
+          <label>Tiefe L des Gitters <span class="v" id="d23-lV">2</span></label>
+          <input type="range" id="d23-l" min="0" max="3" step="1" value="0">
+        </div>
+        <label class="chk"><input type="checkbox" id="d23-log" checked> Logarithmische Achse</label>
+        <label class="chk"><input type="checkbox" id="d23-fit" checked> Rangkorrelation einzeichnen</label>
+        <div class="readout" id="d23-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          Die beiden Größen stammen aus <b>vollständig getrennten Messungen</b>:
+          harmonische Masse aus MRPC-Schichtübergängen, Fragilität aus CounterFact-Steering.
+          Das macht die Korrelation aussagekräftig [[11]].
+        </p>
+      </div>
+    </div>
+    <div class="scroller">
+      <table id="t-harm">
+        <thead><tr><th>Architektur</th><th>L=2</th><th>L=4</th><th>L=8</th><th>L=16</th><th>Faktentreue bei Zufalls-Steering</th><th>Klasse</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">Spearman-Rangkorrelation — selbst nachrechnen</h4>
+      <p class="tiny">Spearman ρ vergleicht nur die <b>Reihenfolge</b>, nicht die Werte.
+        Hier siehst du die Ränge beider Größen nebeneinander.</p>
+      <canvas id="c-rank" height="300"></canvas>
+      <div class="readout" id="d24-out"></div>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Permutationstest — was heißt p = 0,014?</h4>
+      <p class="tiny">Bei 6 Architekturen gibt es 6! = 720 mögliche Reihenfolgen.
+        Wie viele davon erreichen ρ ≥ 0,90 rein zufällig? Klick und zähle mit.</p>
+      <div id="d25-perm" class="plot" style="height:230px"></div>
+      <div class="btnrow">
+        <button class="sm" id="d25-run">720 Permutationen durchzählen</button>
+        <button class="sm" id="d25-reset">Zurücksetzen</button>
+      </div>
+      <div class="readout" id="d25-out"></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Ehrliche Einordnung (Limitations):</b> Das ist eine Rangkorrelation über <em>sechs</em>
+    Architekturen. Es gibt genau eine Rangumkehrung (Qwen-2.5-7B vs. Llama-3-8B, 34,3 % vs. 36,0 %),
+    die innerhalb des Stichprobenfehlers liegt. Das Paper schreibt selbst: „more architectures are
+    needed before it serves as a predictor" [[11]].
+  </div>
+
+  <h3>Robustheit: hält es bei anderem k und mit gefüllten Dreiecken?</h3>
+  <div class="card">
+    <div id="d26-k" class="plot" style="height:380px"></div>
+    <p class="tiny" style="margin:4px 0 0">
+      Tabelle 8: bei k = 8, 64 und 128 bleiben die drei robusten Architekturen immer unter den drei
+      fragilen. Füllt man die Quadrate mit Dreiecken (Tabelle 7), wird b₁ = 0 und die harmonische
+      Masse exakt null — aber der <b>koexakte Anteil</b> übernimmt und reproduziert dieselbe
+      Aufteilung: robuste Modelle unter 3 %, fragile zwischen 5 % und 20 % [[11]].
+    </p>
+  </div>
+
+  <h3>Die Relations-Hypergraph-Konstruktion</h3>
+  <div class="card">
+    <div class="grid-s">
+      <div>
+        <p class="tiny">Zweite Quelle für Zyklen: Relationsstruktur statt Tiefe.
+          60 Fakten × 5 Paraphrasen = 300 Knoten. Pro Fakt ein Ring (300 Kanten), pro Relation ein
+          Ring durch die erste Paraphrase jedes ihrer Fakten (60 Kanten). Keine Flächen.</p>
+        <div class="eq" style="padding:11px"><div id="eq-euler"></div>
+          <div class="cap">Euler-Charakteristik bestätigt die Rechnung [[11]]</div></div>
+        <div class="statgrid">
+          <div class="stat"><div class="n">300</div><div class="l">Knoten</div></div>
+          <div class="stat"><div class="n">360</div><div class="l">Kanten</div></div>
+          <div class="stat"><div class="n" style="color:var(--h0)">6</div><div class="l">dim H⁰</div></div>
+          <div class="stat"><div class="n" style="color:var(--h1)">66</div><div class="l">dim H¹</div></div>
+        </div>
+      </div>
+      <div>
+        <canvas id="c-hyper" height="330"></canvas>
+        <div class="readout" id="d27-out"></div>
+      </div>
+    </div>
+    <p class="tiny" style="margin:8px 0 0">
+      <b>Aber:</b> Die Holonomie-Hindernisse liegen bei 2,5–3,1, unter dem Haar-Zufallswert
+      √(2k) = 4, und unterscheiden sich <em>nicht signifikant</em> von einer Nullverteilung mit
+      vertauschten Paraphrasen (p = 0,10–0,33). Eine Knotenraum-Version von H¹ übertrug sich
+      weder auf Retrieval (36,3 % vs. 49,1 % Zufall) noch auf Steering. Das Paper berichtet beides
+      offen als Negativergebnis [[11]].
+    </p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     10 — STEERING
+     ============================================================ -->
+<section id="steering">
+  <div class="seclabel"><b>10</b> Anwendung — Steering, das die Fakten überlebt</div>
+  <h2>Von der Diagnose zur Behandlung</h2>
+  <p class="sub">
+    Jetzt schließt sich der Kreis. Wenn H⁰ der Inhalt ist, dann sollte man steuern können, <em>ohne</em>
+    H⁰ anzufassen. Genau das ist „H⁰-removed steering": <span id="eq-steer"></span> [[11]].
+  </p>
+
+  <div class="card">
+    <h4 style="margin-top:0">Steering-Geometrie</h4>
+    <div class="grid-s rev">
+      <div><canvas id="c-steer" height="400"></canvas></div>
+      <div>
+        <div class="ctl">
+          <label>Stilrichtung Δ — Winkel <span class="v" id="d28-dV">52°</span></label>
+          <input type="range" id="d28-d" min="0" max="180" step="1" value="52">
+        </div>
+        <div class="ctl">
+          <label>Stärke α <span class="v" id="d28-aV">0.30</span></label>
+          <input type="range" id="d28-a" min="0" max="60" step="1" value="30">
+        </div>
+        <div class="ctl">
+          <label>Methode <span class="v" id="d28-mV">H⁰-entfernt (Garbe)</span></label>
+          <input type="range" id="d28-m" min="0" max="3" step="1" value="0">
+        </div>
+        <div class="readout" id="d28-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          Der grüne Bereich ist H⁰ — bleibt der verschobene Punkt darin, überlebt der Fakt.
+          Zufalls-Steering trifft H⁰ mit voller Wucht; H⁰-entferntes Steering gleitet daran vorbei.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Tabelle 4 — alle Methoden, alle Modelle</h3>
+  <div class="card">
+    <div class="btnrow" id="d29-btns">
+      <button data-m="Llama-2-7B" class="on">Llama-2-7B (fragil)</button>
+      <button data-m="Mistral-7B">Mistral-7B (robust)</button>
+      <button data-m="Llama-3-8B">Llama-3-8B (intermediär)</button>
+      <button data-m="Llama-2-13B">Llama-2-13B</button>
+    </div>
+    <div id="d29-plot" class="plot" style="height:400px"></div>
+    <div class="readout" id="d29-out"></div>
+  </div>
+
+  <h3>Der α-Sweep — warum 0,30 ein Stresstest ist</h3>
+  <div class="card">
+    <div class="grid-s rev">
+      <div><div id="d30-sweep" class="plot" style="height:360px"></div></div>
+      <div>
+        <div class="ctl">
+          <label>Architektur <span class="v" id="d30-aV">Mistral-7B (robust)</span></label>
+          <input type="range" id="d30-a" min="0" max="1" step="1" value="0">
+        </div>
+        <div class="ctl">
+          <label>α-Marker <span class="v" id="d30-xV">0.10</span></label>
+          <input type="range" id="d30-x" min="5" max="50" step="5" value="10">
+        </div>
+        <div class="readout" id="d30-out"></div>
+        <p class="tiny" style="margin-top:9px">
+          <b>Praxisempfehlung des Papers:</b> α ∈ [0,10 , 0,15] auf robusten Architekturen,
+          α ≈ 0,30 auf fragilen. Bei großem α zerstört die <em>konzentrierte</em> Wirkung der
+          H¹-Richtungen mehr, als sie nützt — deshalb wird Zufall dort konkurrenzfähig [[11]].
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Entscheidungsbaum für die Praxis (Anhang C.3)</h4>
+    <canvas id="c-tree" height="330"></canvas>
+    <p class="tiny" style="margin:6px 0 0">
+      Der komplette empfohlene Workflow: 200+ MRPC-Paare → PCA-Restriktionsabbildung →
+      ein einziger Zufalls-Steering-Test klassifiziert das Modell → danach Methode und α wählen [[11]].
+    </p>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- ============================================================
+     11 — ANTWORT
+     ============================================================ -->
+<section id="antwort">
+  <div class="seclabel"><b>11</b> Die Antwort</div>
+  <h2>Ein Graph, drei Ergebnisse</h2>
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(73,210,240,.08),rgba(169,139,255,.07),rgba(255,107,138,.07));border-color:var(--stroke-strong)">
+    <p style="font-size:1.08rem;color:#fff;margin-top:0">
+      <b>Frage war:</b> Lässt sich an einem eingefrorenen Modell ohne Training Bedeutung von
+      Formulierung trennen — und verrät dieselbe Konstruktion die Steering-Fragilität?
+    </p>
+    <p style="margin-bottom:0"><b>Antwort: Ja, dreifach.</b> Aus <em>einem</em> Paraphrasen-Graphen
+      und <em>einem</em> Operator L<sub>F</sub> fallen drei unabhängig validierte Ergebnisse.</p>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <span class="pill p-h0">H⁰ = ker L<sub>F</sub></span>
+      <h4>Inhalt</h4>
+      <p class="tiny">20 Dimensionen schlagen LEACE bei <em>voller</em> Breite um +17,1 pp im Mittel,
+        auf allen 8 Architekturen. Funktioniert mit zufälliger oder gar keiner Projektion.
+        Überträgt sich auf Englisch↔Französisch.</p>
+      <div class="big" style="color:var(--h0)">+17,1 pp</div>
+    </div>
+    <div class="card">
+      <span class="pill p-h1">Spektral-Komplement</span>
+      <h4>Einfluss</h4>
+      <p class="tiny">Ablation verändert den Output 5,6–26,5× stärker als varianz-gematchte
+        Kontrollen, auf 9 Modellen von 124M bis 13B. Echte Eigenbasis: 17,8–398× in KL.
+        Faktenabruf bricht auf 0–5 % ein.</p>
+      <div class="big" style="color:var(--h1)">5,6–26,5×</div>
+    </div>
+    <div class="card">
+      <span class="pill p-hm">Harmonische Masse</span>
+      <h4>Fragilität</h4>
+      <p class="tiny">b₁ = N(L−1) Zyklen aus der Tiefe. Die Masse spannt 10⁻⁴ bis 0,08 und
+        ordnet 6 Architekturen genauso wie ihre Steering-Fragilität. Braucht 30 Paare
+        und einen Forward-Pass.</p>
+      <div class="big" style="color:var(--harm)">ρ = 0,90</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Die ganze Pipeline in einem Bild — klick die Stationen an</h4>
+    <canvas id="c-pipe" height="400"></canvas>
+    <div class="readout" id="d31-out"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 style="margin-top:0">Was das Paper <span style="color:var(--ok)">zeigt</span></h4>
+      <ul class="tiny" style="padding-left:18px;line-height:1.9">
+        <li>Kern-Selektion der Paardifferenz-Kovarianz findet Inhalt — label-frei</li>
+        <li>Spektral-Komplement trägt konzentrierten kausalen Einfluss</li>
+        <li>Tiefen-induzierte Zyklen liefern eine Fragilitäts-Kennzahl vorab</li>
+        <li>Gemeinsame Paraphrasen-Constraints (Ring/Pfad) geben +6,5 bzw. +7,7 pp</li>
+        <li>Transfer auf Übersetzungspaare funktioniert (78 % EN→FR)</li>
+        <li>Dormancy-Gegenprobe schließt die Patching-Illusion aus</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Was es <span style="color:var(--warn)">nicht</span> zeigt</h4>
+      <ul class="tiny" style="padding-left:18px;line-height:1.9">
+        <li>Der Zyklus selbst hilft H⁰ nicht (+0,5 pp, nirgends signifikant)</li>
+        <li>Knotenraum-H¹ überträgt sich nicht auf Retrieval (36,3 % &lt; Zufall)</li>
+        <li>Holonomie unterscheidet sich nicht signifikant von einer Shuffle-Null</li>
+        <li>P ist teilweise domänenabhängig (−25 pp out-of-domain)</li>
+        <li>ρ = 0,90 beruht auf nur 6 Architekturen</li>
+        <li>MLST-Zyklenterme sind als Trainingssignal neutral bis leicht negativ</li>
+        <li>Die Varianz-Kontrolle bei H¹ ist nur teilweise gematcht (0,13–0,53)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note h0" style="margin-top:26px">
+    <b>Der schönste Satz des Papers:</b> „The same paraphrase graph yields the content subspace,
+    the influence directions, and the fragility measure." — Ein Objekt, drei Antworten,
+    null Trainingsschritte [[11]].
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Selbsttest — hast du's?</h4>
+    <div id="quiz"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Interaktive Visualisierung zu <b>„Gluing Local Contexts into Global Meaning:
+  A Sheaf-Theoretic Decomposition of Transformer Representations"</b><br>
+  Bryce Grant &amp; Peng Wang · Case Western Reserve University · NeurIPS 2026 [[11]]<br>
+  <span class="tiny">Alle Zahlen aus dem Paper. Simulationen sind didaktische Nachbildungen der  beschriebenen Mechanismen, keine Reproduktion der Originalläufe.</span>
+</footer>
+
+<script>
+/* ============================================================
+   0 — UTILITIES
+   ============================================================ */
+const $ = (id)=>document.getElementById(id);
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const TAU=Math.PI*2;
+const DEG=Math.PI/180;
+const fmt=(x,n=2)=>Number(x).toFixed(n);
+
+/* deterministic PRNG so visuals are stable */
+function mulberry(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;
+  let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;
+  return ((t^t>>>14)>>>0)/4294967296;};}
+function gaussFactory(seed){const r=mulberry(seed);let spare=null;
+  return function(){if(spare!==null){const s=spare;spare=null;return s;}
+    let u,v,s2;do{u=r()*2-1;v=r()*2-1;s2=u*u+v*v;}while(s2>=1||s2===0);
+    const m=Math.sqrt(-2*Math.log(s2)/s2);spare=v*m;return u*m;};}
+
+const COL={h0:'#49d2f0',h0b:'#1a8fb8',h1:'#ff6b8a',h1b:'#c93a5c',
+  harm:'#ffc857',acc:'#a98bff',ok:'#5ce68a',warn:'#ff9f45',
+  txt:'#e6eaf7',dim:'#9aa4c4',faint:'#6b7496',grid:'rgba(140,160,230,0.14)'};
+
+const PLOT_LAYOUT={
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  font:{color:'#9aa4c4',family:'-apple-system,Segoe UI,Roboto,sans-serif',size:11.5},
+  margin:{l:58,r:22,t:34,b:48},
+  xaxis:{gridcolor:'rgba(140,160,230,0.11)',zerolinecolor:'rgba(140,160,230,0.22)',linecolor:'rgba(140,160,230,0.22)'},
+  yaxis:{gridcolor:'rgba(140,160,230,0.11)',zerolinecolor:'rgba(140,160,230,0.22)',linecolor:'rgba(140,160,230,0.22)'},
+  legend:{bgcolor:'rgba(0,0,0,0)',font:{size:11}},
+  hoverlabel:{bgcolor:'#141828',bordercolor:'rgba(150,175,255,.4)',font:{color:'#e6eaf7',size:11.5}}
+};
+const PCFG={displayModeBar:false,responsive:true};
+function L(extra){return Object.assign({},JSON.parse(JSON.stringify(PLOT_LAYOUT)),extra||{});}
+
+/* HiDPI canvas */
+function setupCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const rect=cv.getBoundingClientRect();
+  const h=parseInt(cv.getAttribute('height'))||360;
+  cv.width=Math.max(10,Math.round(rect.width*dpr));
+  cv.height=Math.round(h*dpr);
+  cv.style.height=h+'px';
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,w:rect.width,h:h};
+}
+function clearC(ctx,w,h){
+  ctx.clearRect(0,0,w,h);
+  const g=ctx.createRadialGradient(w*0.5,h*0.42,10,w*0.5,h*0.5,Math.max(w,h)*0.78);
+  g.addColorStop(0,'#101428'); g.addColorStop(1,'#080a14');
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+}
+function gridC(ctx,w,h,step=34){
+  ctx.strokeStyle='rgba(140,160,230,0.065)'; ctx.lineWidth=1;
+  for(let x=step/2;x<w;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=step/2;y<h;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+}
+function arrow(ctx,x1,y1,x2,y2,col,lw=2,head=9){
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-head*Math.cos(a-0.4),y2-head*Math.sin(a-0.4));
+  ctx.lineTo(x2-head*Math.cos(a+0.4),y2-head*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+function dot(ctx,x,y,r,col,glow=0){
+  if(glow){ctx.shadowBlur=glow;ctx.shadowColor=col;}
+  ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();
+  ctx.shadowBlur=0;
+}
+function txt(ctx,s,x,y,col=COL.dim,size=11,align='left',weight='500'){
+  ctx.fillStyle=col; ctx.font=weight+' '+size+'px -apple-system,Segoe UI,Roboto,sans-serif';
+  ctx.textAlign=align; ctx.textBaseline='middle'; ctx.fillText(s,x,y);
+}
+function mtxt(ctx,s,x,y,col=COL.dim,size=11,align='left'){
+  ctx.fillStyle=col; ctx.font=size+'px SFMono-Regular,ui-monospace,Menlo,Consolas,monospace';
+  ctx.textAlign=align; ctx.textBaseline='middle'; ctx.fillText(s,x,y);
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+
+/* LaTeX rendering via Temml */
+function tex(id,src,display=false){
+  const el=$(id); if(!el||!window.temml) return;
+  try{ el.innerHTML=temml.renderToString(src,{displayMode:display}); }
+  catch(e){ el.textContent=src; }
+}
+
+/* ============================================================
+   1 — PAPER DATA
+   ============================================================ */
+const DATA = {
+  // Table 2
+  retrieval:[
+    {m:'GPT-2',        full:43.1, h0:85.3, lf:43.1, l20:28.9, pca:24.6, rnd:39.1, gap:42.2, dim:768},
+    {m:'Mistral-7B',   full:77.7, h0:87.1, lf:77.7, l20:36.8, pca:34.5, rnd:59.2, gap: 9.4, dim:4096},
+    {m:'OLMo-2-7B',    full:81.3, h0:82.8, lf:81.3, l20:40.9, pca:35.7, rnd:62.3, gap: 1.5, dim:4096},
+    {m:'Phi-2',        full:69.1, h0:87.1, lf:69.1, l20:38.8, pca:37.2, rnd:55.1, gap:18.0, dim:2560},
+    {m:'Qwen-2.5-7B',  full:49.4, h0:64.1, lf:49.4, l20:36.8, pca:37.5, rnd:43.7, gap:14.7, dim:3584},
+    {m:'Gemma-2-9B',   full:54.4, h0:77.9, lf:54.4, l20:32.3, pca:27.5, rnd:43.5, gap:23.5, dim:3584},
+    {m:'Llama-2-7B',   full:68.2, h0:80.4, lf:68.2, l20:25.7, pca:22.3, rnd:50.7, gap:12.2, dim:4096},
+    {m:'Llama-3-8B',   full:72.7, h0:88.0, lf:72.7, l20:28.2, pca:24.4, rnd:55.9, gap:15.3, dim:4096}
+  ],
+  // Table 3 / Figure 2
+  influence:[
+    {m:'Llama-2-13B', r:26.5, lay:'L20', lo:26.1, hi:26.8, d:14.3,  p:'a'},
+    {m:'Mistral-7B',  r:19.71,lay:'L8',  lo:19.1, hi:20.3, d:18.45, p:'b'},
+    {m:'GPT-2 (124M)',r:18.2, lay:'L6',  lo:17.2, hi:19.3, d:2.34,  p:'a'},
+    {m:'Llama-2-7B',  r:18.2, lay:'L16', lo:17.3, hi:19.1, d:4.44,  p:'a'},
+    {m:'Phi-2',       r:14.48,lay:'L8',  lo:14.0, hi:15.0, d:13.98, p:'b'},
+    {m:'Gemma-2-9B',  r:9.24, lay:'L21', lo:8.94, hi:9.54, d:22.02, p:'b'},
+    {m:'OLMo-2-7B',   r:9.17, lay:'L16', lo:8.85, hi:9.49, d:12.93, p:'b'},
+    {m:'Qwen-2.5-7B', r:5.76, lay:'L7',  lo:5.38, hi:6.12, d:6.63,  p:'b'},
+    {m:'Llama-3-8B',  r:5.62, lay:'L16', lo:5.52, hi:5.71, d:9.08,  p:'a'}
+  ],
+  // Table 1
+  harmonic:[
+    {m:'Mistral-7B',  L2:0.0001,L4:0.0001,L8:0.0004,L16:0.0008, pres:39.4, cls:'robust'},
+    {m:'Qwen-2.5-7B', L2:0.0001,L4:0.018, L8:0.016, L16:0.096,  pres:34.3, cls:'robust'},
+    {m:'Llama-3-8B',  L2:0.001, L4:0.002, L8:0.003, L16:0.004,  pres:36.0, cls:'robust'},
+    {m:'Phi-2',       L2:0.033, L4:0.126, L8:0.109, L16:0.067,  pres:27.5, cls:'fragil'},
+    {m:'GPT-2 (124M)',L2:0.036, L4:0.107, L8:0.083, L16:null,   pres: 9.1, cls:'fragil'},
+    {m:'Llama-2-7B',  L2:0.079, L4:0.071, L8:0.047, L16:0.028,  pres: 4.2, cls:'fragil'}
+  ],
+  // Table 10
+  ring:[
+    {m:'GPT-2',      pair:87.4, ring:90.7, cliq:89.2},
+    {m:'Phi-2',      pair:83.1, ring:89.6, cliq:90.5},
+    {m:'Mistral-7B', pair:86.7, ring:89.8, cliq:91.4},
+    {m:'OLMo-2-7B',  pair:84.4, ring:91.4, cliq:91.4},
+    {m:'Qwen-2.5-7B',pair:62.3, ring:71.8, cliq:70.7},
+    {m:'Gemma-2-9B', pair:75.2, ring:84.0, cliq:84.7},
+    {m:'Llama-2-7B', pair:80.8, ring:88.9, cliq:89.6},
+    {m:'Llama-3-8B', pair:86.5, ring:92.3, cliq:90.7}
+  ],
+  // Table 11
+  ablP:[
+    {m:'GPT-2',      pca:85.3,rnd:77.1,idt:79.0,nok:24.6,r20:39.1},
+    {m:'Phi-2',      pca:87.1,rnd:73.0,idt:78.8,nok:37.2,r20:55.1},
+    {m:'Mistral-7B', pca:87.1,rnd:80.6,idt:83.3,nok:34.5,r20:59.2},
+    {m:'OLMo-2-7B',  pca:82.8,rnd:76.4,idt:79.7,nok:35.7,r20:62.3},
+    {m:'Qwen-2.5-7B',pca:64.1,rnd:61.4,idt:62.3,nok:37.5,r20:43.7},
+    {m:'Gemma-2-9B', pca:77.9,rnd:69.2,idt:76.5,nok:27.5,r20:43.5},
+    {m:'Llama-2-7B', pca:80.4,rnd:76.3,idt:80.1,nok:22.3,r20:50.7},
+    {m:'Llama-3-8B', pca:88.0,rnd:80.0,idt:79.9,nok:24.4,r20:55.9}
+  ],
+  // Table 12
+  baselines:[
+    {m:'GPT-2',      h0:84.9,lda:87.4,nca:88.3,cca:47.9,pls:49.0,pca:24.4,wpca:39.5,full:43.1},
+    {m:'Phi-2',      h0:87.6,lda:84.9,nca:83.3,cca:58.9,pls:64.1,pca:37.9,wpca:42.7,full:69.1},
+    {m:'Mistral-7B', h0:86.9,lda:90.1,nca:88.3,cca:60.7,pls:63.7,pca:34.3,wpca:45.1,full:77.4},
+    {m:'OLMo-2-7B',  h0:82.6,lda:88.5,nca:86.9,cca:62.8,pls:67.5,pca:36.6,wpca:37.2,full:81.3},
+    {m:'Qwen-2.5-7B',h0:64.8,lda:72.5,nca:72.9,cca:50.8,pls:56.0,pca:36.6,wpca:38.1,full:50.3},
+    {m:'Gemma-2-9B', h0:77.4,lda:76.1,nca:76.3,cca:51.2,pls:50.1,pca:27.3,wpca:37.2,full:54.4},
+    {m:'Llama-2-7B', h0:80.6,lda:83.5,nca:84.4,cca:49.7,pls:49.9,pca:21.9,wpca:39.3,full:68.2},
+    {m:'Llama-3-8B', h0:87.8,lda:86.5,nca:86.0,cca:53.3,pls:55.5,pca:24.4,wpca:39.3,full:72.7}
+  ],
+  // Table 9
+  crossD:[
+    {m:'GPT-2',      cf:85.3,mrpc:55.1,paws:63.9,qqp:59.1,pca:24.6,r20:39.1},
+    {m:'Phi-2',      cf:87.1,mrpc:57.3,paws:61.6,qqp:57.6,pca:37.2,r20:55.1},
+    {m:'Mistral-7B', cf:87.1,mrpc:57.8,paws:65.9,qqp:61.2,pca:34.5,r20:59.2},
+    {m:'OLMo-2-7B',  cf:82.8,mrpc:64.1,paws:60.5,qqp:57.6,pca:35.7,r20:62.3},
+    {m:'Qwen-2.5-7B',cf:64.1,mrpc:47.0,paws:53.3,qqp:56.7,pca:37.5,r20:43.7},
+    {m:'Gemma-2-9B', cf:77.9,mrpc:48.3,paws:47.9,qqp:51.0,pca:27.5,r20:43.5},
+    {m:'Llama-2-7B', cf:80.4,mrpc:60.5,paws:60.0,qqp:53.5,pca:22.3,r20:50.7},
+    {m:'Llama-3-8B', cf:88.0,mrpc:56.9,paws:65.5,qqp:60.5,pca:24.4,r20:55.9}
+  ],
+  // Table 19
+  msweep:[
+    {m:'GPT-2',      v:[63.7,74.3,85.3,91.2,87.8,35.9], full:43.1},
+    {m:'Phi-2',      v:[67.3,75.8,87.1,90.3,85.3,52.8], full:69.1},
+    {m:'Mistral-7B', v:[70.9,82.4,87.1,90.3,86.7,48.5], full:77.7},
+    {m:'Llama-2-7B', v:[62.8,74.0,80.4,85.3,85.1,35.2], full:68.2}
+  ],
+  mvals:[5,10,20,40,80,128],
+  // Table 13
+  klratio:[
+    {m:'GPT-2 (124M)',med:17.8, lo:13.7, hi:53.5,  h0:0.19},
+    {m:'Phi-2',       med:84.1, lo:18.4, hi:122,   h0:0.56},
+    {m:'Mistral-7B',  med:398,  lo:70.0, hi:3075,  h0:0.54},
+    {m:'Qwen-2.5-7B', med:127,  lo:78.7, hi:293,   h0:0.45},
+    {m:'OLMo-2-7B',   med:182,  lo:112,  hi:1048,  h0:2.21},
+    {m:'Gemma-2-9B',  med:240,  lo:75.8, hi:1211,  h0:0.74},
+    {m:'Llama-2-7B',  med:287,  lo:102,  hi:2283,  h0:0.32},
+    {m:'Llama-3-8B',  med:176,  lo:75.7, hi:409,   h0:0.29},
+    {m:'Llama-2-13B', med:327,  lo:191,  hi:645,   h0:0.47}
+  ],
+  // Table 14
+  dorm:[
+    {m:'GPT-2',      ratio:2.5, base:15.0, h1:2.0, rnd:7.5},
+    {m:'Mistral-7B', ratio:6.6, base:46.7, h1:0.0, rnd:47.0},
+    {m:'Llama-2-7B', ratio:5.6, base:47.3, h1:4.7, rnd:48.7}
+  ],
+  // Figure 5 — depth profile (approximate read-off of measured points)
+  depth:[
+    {m:'GPT-2',       v:[18.2,12.6, 6.9]},
+    {m:'Mistral-7B',  v:[19.71,13.4, 7.2]},
+    {m:'OLMo-2-7B',   v:[6.4, 9.17, 5.1]},
+    {m:'Phi-2',       v:[14.48,9.8, 5.5]},
+    {m:'Qwen-2.5-7B', v:[5.76,4.3, 3.1]},
+    {m:'Gemma-2-9B',  v:[6.8, 9.24, 5.0]},
+    {m:'Llama-2-7B',  v:[18.2,11.9, 6.2]},
+    {m:'Llama-3-8B',  v:[5.62,4.6, 3.3]},
+    {m:'Llama-2-13B', v:[26.5,15.1, 8.0]}
+  ],
+  // Table 4
+  steer:{
+    'Llama-2-7B':[
+      {n:'Kontrastive Garbe (H¹)',v:31.0,lo:28.2,hi:33.9,best:true,p:'—'},
+      {n:'PIXEL',                 v:21.1,lo:18.6,hi:23.9,p:'<10⁻¹⁶'},
+      {n:'Full style (CAA)',      v:13.7,lo:11.7,hi:15.9,p:'<10⁻³¹'},
+      {n:'H⁰-entfernt (Garbe)',   v:13.7,lo:11.6,hi:15.9,p:'<10⁻³¹'},
+      {n:'H¹ dims (Garbe PCA)',   v:12.1,lo:10.0,hi:14.1,p:'<10⁻³⁸'},
+      {n:'Zufall',                v: 4.2,lo: 3.0,hi: 5.4,p:'<10⁻⁷⁰'}
+    ],
+    'Llama-3-8B':[
+      {n:'PIXEL',                 v:38.8,lo:35.2,hi:42.4,best:true,p:'—'},
+      {n:'Zufall',                v:36.0,lo:33.0,hi:38.8,p:'0.10'},
+      {n:'Full style (CAA)',      v:27.2,lo:24.5,hi:29.9,p:'<10⁻¹⁵'},
+      {n:'H¹ dims (Garbe PCA)',   v:26.1,lo:23.4,hi:28.7,p:'<10⁻²'},
+      {n:'H⁰-entfernt (Garbe)',   v:26.1,lo:23.3,hi:28.8,p:'<10⁻²'}
+    ],
+    'Mistral-7B':[
+      {n:'CCA-Garbe (H¹ dims)',   v:41.6,lo:38.6,hi:44.4,best:true,p:'—'},
+      {n:'Zufall',                v:39.4,lo:36.3,hi:42.4,p:'0.19'},
+      {n:'PIXEL',                 v:34.8,lo:31.1,hi:38.3,p:'<10⁻⁸'},
+      {n:'Varianz (top-k)',       v:33.0,lo:30.0,hi:35.8,p:'<10⁻⁷'},
+      {n:'Full style (CAA)',      v:31.7,lo:28.8,hi:34.6,p:'<10⁻⁹'},
+      {n:'H¹ dims (Garbe PCA)',   v:29.8,lo:26.9,hi:32.6,p:'<10⁻¹²'}
+    ],
+    'Llama-2-13B':[
+      {n:'H¹ dims (Garbe PCA)',   v:32.7,lo:29.8,hi:35.6,best:true,p:'—'},
+      {n:'Zufall',                v:32.1,lo:29.3,hi:35.0,p:'0.74'},
+      {n:'Varianz (top-k)',       v:31.3,lo:28.5,hi:34.1,p:'0.82'},
+      {n:'Full style (CAA)',      v:29.6,lo:26.8,hi:32.3,p:'0.07'}
+    ]
+  },
+  // Appendix B.2 sweep (reconstructed from text: Mistral/Llama-3 behaviour)
+  alphaSweep:{
+    alphas:[0.05,0.10,0.15,0.20,0.30,0.50],
+    'Mistral-7B':{h0rm:[45.5,43.0,42.0,41.0,39.0,30.5], rnd:[44.8,41.0,40.3,40.0,39.4,33.0],
+                  style:[22,48,70,88,100,100]},
+    'Llama-3-8B':{h0rm:[41.5,39.0,38.0,34.0,26.1,17.0], rnd:[41.0,37.4,36.2,36.5,36.0,27.0],
+                  style:[25,52,74,90,100,100]}
+  },
+  // Table 17
+  ssl:[
+    {m:'GPT-2',      mse:16.0, lap:16.6, reg:58.5},
+    {m:'Mistral-7B', mse:34.4, lap:33.1, reg:58.0},
+    {m:'Qwen-2.5-7B',mse:35.9, lap:27.5, reg:58.5},
+    {m:'Llama-2-7B', mse:36.1, lap:42.5, reg:59.5},
+    {m:'Llama-3-8B', mse:22.2, lap:33.6, reg:58.0},
+    {m:'OLMo-2-7B',  mse:23.3, lap:14.3, reg:57.0},
+    {m:'Gemma-2-9B', mse:23.4, lap:23.0, reg:57.8}
+  ],
+  // Table 8
+  kScale:{
+    k8 :{'Mistral-7B':0.0001,'Llama-3-8B':0.001,'Qwen-2.5-7B':0.0001,'GPT-2 (124M)':0.036,'Phi-2':0.033,'Llama-2-7B':0.079},
+    k64:{'Mistral-7B':0.00003,'Llama-3-8B':0.0005,'Qwen-2.5-7B':0.0003,'GPT-2 (124M)':0.050,'Phi-2':0.054,'Llama-2-7B':0.067},
+    k128:{'Mistral-7B':0.00002,'Llama-3-8B':0.0004,'Qwen-2.5-7B':0.0003,'GPT-2 (124M)':0.041,'Phi-2':0.053,'Llama-2-7B':0.083},
+    coex:{'Mistral-7B':0.0000,'Llama-3-8B':0.0005,'Qwen-2.5-7B':0.0003,'GPT-2 (124M)':0.0544,'Phi-2':0.0572,'Llama-2-7B':0.0759}
+  }
+};
+
+/* ============================================================
+   2 — TEX RENDERING (inline formulas)
+   ============================================================ */
+function renderAllTex(){
+  tex('eq-h','h \\in \\mathbb{R}^{d}');
+  tex('eq-d768','d = 768');
+  tex('eq-d4096','d = 4096');
+  tex('eq-Rd','\\mathbb{R}^{d}');
+  tex('eq-h1','h^{(1)}');
+  tex('eq-h2','h^{(2)}');
+  tex('eq-delta','\\Delta = h^{(1)} - h^{(2)}');
+  tex('eq-CW','C_W = \\tfrac{1}{N}\\sum_i \\Delta_i \\Delta_i^{\\top}');
+  tex('eq-betti','b_1 = |E| - |V| + (\\text{Komponenten})');
+  tex('eq-F','\\mathcal{F}');
+  tex('eq-G','G=(V,E)');
+  tex('eq-stalkv','\\mathcal{F}(v)');
+  tex('eq-sv','\\mathcal{F}(v) = \\mathbb{R}^{d}');
+  tex('eq-stalke','\\mathcal{F}(e)');
+  tex('eq-sk','\\mathcal{F}(e) = \\mathbb{R}^{k}');
+  tex('eq-restr','\\mathcal{F}_{v \\trianglelefteq e} : \\mathcal{F}(v) \\to \\mathcal{F}(e)');
+  tex('eq-PT','P^{\\top} \\in \\mathbb{R}^{k \\times d}');
+  tex('eq-PT2','P^{\\top}');
+  tex('eq-cobound','(\\delta^{0}x)_e \\;=\\; \\mathcal{F}_{v\\trianglelefteq e}(x_v) \\;-\\; \\mathcal{F}_{u\\trianglelefteq e}(x_u)',true);
+  tex('eq-coboundP','(\\delta^{0}h)_e = P^{\\top}(h_b - h_a)');
+  tex('eq-Econs','E_{\\mathrm{cons}}(s) \\;=\\; \\sum_{e \\in E} \\lVert (\\delta^{0}s)_e \\rVert^{2}',true);
+  tex('eq-LF','L_{\\mathcal{F}} = (\\delta^{0})^{\\top}\\delta^{0}');
+  tex('eq-quad','x^{\\top} L_{\\mathcal{F}}\\, x \\;=\\; \\lVert \\delta^{0} x \\rVert^{2}',true);
+  tex('eq-xLx','x^{\\top}L_{\\mathcal{F}}x');
+  tex('eq-LFemp','L_{\\mathcal{F}} = \\tfrac{1}{N}\\sum_{i} \\Delta_i^{(k)}\\,(\\Delta_i^{(k)})^{\\top} \\in \\mathbb{R}^{k\\times k}');
+  tex('eq-prop','L_{\\mathcal{F}} \\;=\\; P^{\\top} C_W\\, P',true);
+  tex('eq-grid','|V| = 2NL,\\qquad |E| = NL + 2N(L-1),\\qquad b_1 = N(L-1)',true);
+  tex('eq-hodge','C^{1} \\;=\\; \\underbrace{\\operatorname{im}\\delta^{0}}_{\\text{Gradient}} \\;\\oplus\\; \\underbrace{\\ker L_1}_{\\text{harmonisch}} \\;\\oplus\\; \\underbrace{\\operatorname{im}(\\delta^{1})^{\\top}}_{\\text{koexakt}}',true);
+  tex('eq-ref','\\mathbb{E}[\\text{harm}] = b_1/|E| = N(L-1)\\,/\\,[NL+2N(L-1)]');
+  tex('eq-euler','\\chi = |V| - |E| = 300 - 360 = -60 = \\dim H^{0} - \\dim H^{1} = 6 - 66',true);
+  tex('eq-steer','\\Delta_{H^1} = \\Delta - \\Pi_{H^0}\\Delta');
+}
+
+/* ============================================================
+   3 — DEMO 1: STEERING MOTIVATION
+   ============================================================ */
+(function(){
+  const fr=$('d1-fr'), a=$('d1-a'), m=$('d1-m');
+  const archNames=['robust (Mistral-7B)','fragil (Llama-2-7B)'];
+  const methNames=['Zufallsrichtung','Full style (CAA)','Garbe (kontrastiv H¹)'];
+  function curves(fragile,meth){
+    const al=[0.05,0.10,0.15,0.20,0.30,0.50];
+    let base, decay;
+    if(fragile){ base=[52,47,43,38,31,18]; }
+    else { base=[46,43,42,41,40,31]; }
+    let fact;
+    if(meth===0){ fact = fragile?[41,30,20,12,4.2,1.5]:[44.8,41,40.3,40,39.4,33]; }
+    else if(meth===1){ fact = fragile?[44,36,28,20,13.7,6]:[42,38,36,34,31.7,24]; }
+    else { fact = fragile?[52,47,43,38,31,18]:[46,43.5,42.5,42,41.6,32]; }
+    const style=[22,48,70,88,100,100];
+    return {al,fact,style};
+  }
+  function draw(){
+    const fragile=+fr.value===1, meth=+m.value, alpha=+a.value/100;
+    $('d1-arch').textContent=archNames[+fr.value];
+    $('d1-aV').textContent=fmt(alpha);
+    $('d1-mV').textContent=methNames[meth];
+    const c=curves(fragile,meth);
+    // interpolate at alpha
+    function interp(xs,ys,x){
+      if(x<=xs[0])return ys[0]; if(x>=xs[xs.length-1])return ys[ys.length-1];
+      for(let i=0;i<xs.length-1;i++) if(x>=xs[i]&&x<=xs[i+1])
+        return lerp(ys[i],ys[i+1],(x-xs[i])/(xs[i+1]-xs[i]));
+      return ys[0];
+    }
+    const f=interp(c.al,c.fact,alpha), s=interp(c.al,c.style,alpha);
+    const verdict = f<10 ? '<span style="color:var(--h1)">⚠ Generierung kollabiert — Fakten weg</span>'
+                  : f<25 ? '<span style="color:var(--warn)">teilweise beschädigt</span>'
+                  : '<span style="color:var(--ok)">✓ Fakten weitgehend intakt</span>';
+    $('d1-out').innerHTML=
+      `Faktentreue: <b style="color:${f<10?'#ff6b8a':f<25?'#ff9f45':'#5ce68a'}">${fmt(f,1)} %</b> &nbsp;·&nbsp; `+
+      `Stiländerung: <b>${fmt(s,0)} %</b><br>${verdict}`;
+    const traces=[
+      {x:c.al,y:c.fact,name:'Faktentreue',mode:'lines+markers',
+       line:{color:COL.h0,width:3,shape:'spline'},marker:{size:7},yaxis:'y'},
+      {x:c.al,y:c.style,name:'Stiländerung',mode:'lines+markers',
+       line:{color:COL.h1,width:2.4,dash:'dot',shape:'spline'},marker:{size:6},yaxis:'y'},
+      {x:[alpha],y:[f],name:'aktuell',mode:'markers',
+       marker:{size:16,color:COL.acc,line:{color:'#fff',width:2}},showlegend:false}
+    ];
+    Plotly.react('d1-plot',traces,L({
+      xaxis:{title:'Steering-Stärke α',range:[0,0.55],gridcolor:'rgba(140,160,230,0.11)'},
+      yaxis:{title:'%',range:[0,105],gridcolor:'rgba(140,160,230,0.11)'},
+      shapes:[{type:'line',x0:alpha,x1:alpha,y0:0,y1:105,
+               line:{color:'rgba(169,139,255,.45)',width:1.5,dash:'dash'}}],
+      legend:{orientation:'h',y:1.12}
+    }),PCFG);
+  }
+  [fr,a,m].forEach(e=>e.addEventListener('input',draw));
+  window.__d1=draw;
+})();
+
+/* ============================================================
+   4 — DEMO 2: SUBSPACE / PROJECTION
+   ============================================================ */
+(function(){
+  const cv=$('c-sub'); let pt={x:0.55,y:-0.62}; let drag=false;
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h);
+    const cx=w/2, cy=h/2, S=Math.min(w,h)*0.36;
+    const k=+$('d2-k').value, ang=+$('d2-r').value*DEG;
+    $('d2-kV').textContent=k; $('d2-rV').textContent=$('d2-r').value+'°';
+    // axes
+    ctx.strokeStyle='rgba(140,160,230,.22)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(30,cy);ctx.lineTo(w-30,cy);ctx.moveTo(cx,20);ctx.lineTo(cx,h-20);ctx.stroke();
+    const u={x:Math.cos(ang),y:-Math.sin(ang)};
+    const v={x:-u.y,y:u.x};
+    // subspace visual
+    if(k===0){
+      dot(ctx,cx,cy,7,COL.h0,16); txt(ctx,'{0}  (nur Ursprung)',cx+14,cy-16,COL.h0,12);
+    } else if(k===1){
+      ctx.strokeStyle=COL.h0;ctx.lineWidth=3;ctx.shadowBlur=14;ctx.shadowColor=COL.h0;
+      ctx.beginPath();ctx.moveTo(cx-u.x*S*1.5,cy-u.y*S*1.5);ctx.lineTo(cx+u.x*S*1.5,cy+u.y*S*1.5);ctx.stroke();
+      ctx.shadowBlur=0;
+      txt(ctx,'Gerade — dim 1',cx+u.x*S*1.25+8,cy+u.y*S*1.25-10,COL.h0,12,'left','700');
+    } else if(k===2){
+      ctx.fillStyle='rgba(73,210,240,0.15)';
+      ctx.fillRect(30,20,w-60,h-40);
+      ctx.strokeStyle=COL.h0;ctx.lineWidth=2;ctx.strokeRect(30,20,w-60,h-40);
+      txt(ctx,'ganze Ebene — dim 2',44,36,COL.h0,12,'left','700');
+    } else {
+      // "3D" hint
+      ctx.fillStyle='rgba(73,210,240,0.10)';ctx.fillRect(30,20,w-60,h-40);
+      ctx.strokeStyle=COL.h0;ctx.lineWidth=2;ctx.setLineDash([6,4]);
+      ctx.strokeRect(30,20,w-60,h-40);ctx.setLineDash([]);
+      txt(ctx,'dim 3 passt nicht mehr auf die Leinwand →',44,36,COL.h0,12,'left','700');
+      txt(ctx,'im Paper: d = 768 … 4096 Dimensionen',44,56,COL.dim,11.5);
+    }
+    // point
+    const px=cx+pt.x*S, py=cy+pt.y*S;
+    arrow(ctx,cx,cy,px,py,COL.h1,2.6,10);
+    dot(ctx,px,py,7,COL.h1,14);
+    txt(ctx,'h',px+12,py-10,COL.h1,13,'left','800');
+    // projection
+    if($('d2-proj').checked && k>=1){
+      let proj;
+      if(k===1){ const t=pt.x*u.x+pt.y*u.y; proj={x:u.x*t,y:u.y*t}; }
+      else { proj={x:pt.x,y:pt.y}; }
+      const qx=cx+proj.x*S, qy=cy+proj.y*S;
+      ctx.strokeStyle='rgba(255,159,69,.75)';ctx.lineWidth=1.8;ctx.setLineDash([5,4]);
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(qx,qy);ctx.stroke();ctx.setLineDash([]);
+      arrow(ctx,cx,cy,qx,qy,COL.acc,2.6,10);
+      dot(ctx,qx,qy,6,COL.acc,12);
+      const resid=Math.hypot(pt.x-proj.x,pt.y-proj.y);
+      const pl=Math.hypot(proj.x,proj.y);
+      $('d2-out').innerHTML=
+        `‖Π·h‖ = <b>${fmt(pl)}</b> (im Unterraum)<br>`+
+        `‖h − Π·h‖ = <b style="color:var(--warn)">${fmt(resid)}</b> (Rest)<br>`+
+        `<span class="tiny">Zieh den roten Punkt mit der Maus.</span>`;
+    } else {
+      $('d2-out').innerHTML=`<span class="tiny">Zieh den roten Punkt mit der Maus.</span>`;
+    }
+  }
+  function pos(ev){
+    const r=cv.getBoundingClientRect();
+    const t=ev.touches?ev.touches[0]:ev;
+    return {x:t.clientX-r.left,y:t.clientY-r.top,w:r.width,h:r.height};
+  }
+  function move(ev){
+    if(!drag)return; ev.preventDefault();
+    const p=pos(ev); const S=Math.min(p.w,parseInt(cv.getAttribute('height')))*0.36;
+    pt.x=clamp((p.x-p.w/2)/S,-1.5,1.5);
+    pt.y=clamp((p.y-parseInt(cv.getAttribute('height'))/2)/S,-1.5,1.5);
+    draw();
+  }
+  cv.addEventListener('mousedown',e=>{drag=true;move(e);});
+  cv.addEventListener('mousemove',move);
+  window.addEventListener('mouseup',()=>drag=false);
+  cv.addEventListener('touchstart',e=>{drag=true;move(e);},{passive:false});
+  cv.addEventListener('touchmove',move,{passive:false});
+  window.addEventListener('touchend',()=>drag=false);
+  ['d2-k','d2-r','d2-proj'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d2=draw;
+})();
+
+/* ============================================================
+   5 — DEMO 3: PAIR DIFFERENCES + COVARIANCE ELLIPSE
+   ============================================================ */
+(function(){
+  const cv=$('c-diff');
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h);
+    const N=+$('d3-n').value, aniso=+$('d3-a').value/100, th=+$('d3-t').value*DEG;
+    $('d3-nV').textContent=N; $('d3-aV').textContent=fmt(aniso);
+    $('d3-tV').textContent=$('d3-t').value+'°';
+    const origin=$('d3-origin').checked, showEll=$('d3-ell').checked;
+    const cx=w/2, cy=h/2, S=Math.min(w,h)*0.33;
+    const g=gaussFactory(7);
+    const s1=0.25+aniso*0.75, s2=0.25*(1-aniso)+0.035;
+    const ux=Math.cos(th), uy=-Math.sin(th);
+    const diffs=[];
+    const base=[];
+    for(let i=0;i<N;i++){
+      const a=g()*s1, b=g()*s2;
+      diffs.push({x:a*ux - b*uy, y:a*uy + b*ux});
+      base.push({x:g()*0.75,y:g()*0.65});
+    }
+    // axes
+    ctx.strokeStyle='rgba(140,160,230,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(26,cy);ctx.lineTo(w-26,cy);ctx.moveTo(cx,16);ctx.lineTo(cx,h-16);ctx.stroke();
+
+    if(origin){
+      for(let i=0;i<N;i++){
+        const d=diffs[i];
+        const x2=cx+d.x*S, y2=cy+d.y*S;
+        ctx.globalAlpha=0.82;
+        arrow(ctx,cx,cy,x2,y2,'rgba(255,107,138,0.82)',1.9,7);
+        ctx.globalAlpha=1;
+      }
+      txt(ctx,'Alle Δᵢ am Ursprung',16,20,COL.h1,12,'left','700');
+    } else {
+      for(let i=0;i<N;i++){
+        const b=base[i], d=diffs[i];
+        const x1=cx+b.x*S, y1=cy+b.y*S;
+        const x2=x1+d.x*S, y2=y1+d.y*S;
+        dot(ctx,x1,y1,4.5,'rgba(73,210,240,0.85)');
+        dot(ctx,x2,y2,4.5,'rgba(169,139,255,0.85)');
+        arrow(ctx,x1,y1,x2,y2,'rgba(255,107,138,0.6)',1.5,6);
+      }
+      txt(ctx,'● Satz A    ● Paraphrase B    → Differenz',16,20,COL.dim,11.5);
+    }
+    if(showEll){
+      // covariance of diffs
+      let cxx=0,cyy=0,cxy=0;
+      diffs.forEach(d=>{cxx+=d.x*d.x;cyy+=d.y*d.y;cxy+=d.x*d.y;});
+      cxx/=N;cyy/=N;cxy/=N;
+      const tr=cxx+cyy, det=cxx*cyy-cxy*cxy;
+      const disc=Math.max(0,tr*tr/4-det);
+      const l1=tr/2+Math.sqrt(disc), l2=tr/2-Math.sqrt(disc);
+      let ea;
+      if(Math.abs(cxy)>1e-9) ea=Math.atan2(l1-cxx,cxy);
+      else ea=(cxx>=cyy)?0:Math.PI/2;
+      const r1=Math.sqrt(Math.max(l1,1e-9))*S*2.0, r2=Math.sqrt(Math.max(l2,1e-9))*S*2.0;
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(ea);
+      ctx.strokeStyle='rgba(255,200,87,.85)';ctx.lineWidth=2;
+      ctx.shadowBlur=12;ctx.shadowColor='rgba(255,200,87,.5)';
+      ctx.beginPath();ctx.ellipse(0,0,r1,r2,0,0,TAU);ctx.stroke();ctx.shadowBlur=0;
+      ctx.fillStyle='rgba(255,200,87,.07)';ctx.fill();
+      // eigen axes
+      arrow(ctx,0,0,r1,0,COL.h1,2.4,9);
+      arrow(ctx,0,0,0,-r2,COL.h0,2.4,9);
+      ctx.restore();
+      const ratio=l1/Math.max(l2,1e-9);
+      $('d3-out').innerHTML=
+        `λ₁ = <b style="color:var(--h1)">${fmt(l1,3)}</b> (viel Formulierungs-Variation)<br>`+
+        `λ₂ = <b style="color:var(--h0)">${fmt(l2,4)}</b> (kaum Variation → Inhalt)<br>`+
+        `Verhältnis λ₁/λ₂ = <b>${ratio>900?'>900':fmt(ratio,1)}</b><br>`+
+        `<span class="tiny">Je größer, desto klarer trennt sich H⁰ von H¹.</span>`;
+    } else {
+      $('d3-out').innerHTML=`<span class="tiny">Ellipse ausgeblendet. Schalte sie ein, um C<sub>W</sub> zu sehen.</span>`;
+    }
+  }
+  ['d3-n','d3-a','d3-t','d3-origin','d3-ell'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d3=draw;
+})();
+
+/* ============================================================
+   6 — DEMO 4: EIGENVALUES / ELLIPSE
+   ============================================================ */
+(function(){
+  const cv=$('c-eig');
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h);
+    const l1=+$('d4-l1').value/100, l2=+$('d4-l2').value/100, r=+$('d4-r').value*DEG;
+    $('d4-l1V').textContent=fmt(l1); $('d4-l2V').textContent=fmt(l2);
+    $('d4-rV').textContent=$('d4-r').value+'°';
+    const cx=w/2, cy=h/2, S=Math.min(w,h)*0.30;
+    // axes
+    ctx.strokeStyle='rgba(140,160,230,.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(24,cy);ctx.lineTo(w-24,cy);ctx.moveTo(cx,14);ctx.lineTo(cx,h-14);ctx.stroke();
+    // unit circle
+    ctx.strokeStyle='rgba(154,164,196,.45)';ctx.lineWidth=1.6;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.arc(cx,cy,S,0,TAU);ctx.stroke();ctx.setLineDash([]);
+    // transformed
+    const co=Math.cos(r), si=Math.sin(r);
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const t=i/200*TAU;
+      const ux=Math.cos(t), uy=Math.sin(t);
+      // C = R diag(l1,l2) R^T  applied to unit vector
+      const a= co*ux + si*uy, b=-si*ux + co*uy;
+      const a2=a*l1, b2=b*l2;
+      const x= co*a2 - si*b2, y= si*a2 + co*b2;
+      const px=cx+x*S, py=cy-y*S;
+      if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+    ctx.strokeStyle=COL.acc;ctx.lineWidth=2.6;ctx.shadowBlur=14;ctx.shadowColor=COL.acc;ctx.stroke();
+    ctx.shadowBlur=0; ctx.fillStyle='rgba(169,139,255,.09)';ctx.fill();
+    // eigen axes
+    arrow(ctx,cx,cy,cx+co*l1*S,cy-si*l1*S,COL.h1,3,10);
+    arrow(ctx,cx,cy,cx-si*l2*S,cy-co*l2*S,COL.h0,3,10);
+    txt(ctx,'λ₁ = '+fmt(l1),cx+co*l1*S+10,cy-si*l1*S-12,COL.h1,12,'left','800');
+    txt(ctx,'λ₂ = '+fmt(l2),cx-si*l2*S+10,cy-co*l2*S-12,COL.h0,12,'left','800');
+    // sample vectors showing transform
+    const g=gaussFactory(21);
+    for(let i=0;i<10;i++){
+      const t=i/10*TAU;
+      const ux=Math.cos(t),uy=Math.sin(t);
+      const a= co*ux + si*uy, b=-si*ux + co*uy;
+      const x= co*a*l1 - si*b*l2, y= si*a*l1 + co*b*l2;
+      ctx.strokeStyle='rgba(169,139,255,.28)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(cx+ux*S,cy-uy*S);ctx.lineTo(cx+x*S,cy-y*S);ctx.stroke();
+    }
+    const gap=l1/Math.max(l2,1e-6);
+    $('d4-out').innerHTML=
+      `Spektral-Gap λ₁/λ₂ = <b style="color:${gap>50?'#5ce68a':'#ff9f45'}">${gap>9999?'>10⁴':fmt(gap,1)}×</b><br>`+
+      `<span class="tiny">Im Paper: Gap bleibt bei k ∈ {32,64,128} zwischen <b>91,7× und 95,6×</b> stabil
+       — die Grenze zwischen Inhalt und Kontext ist also robust [[11]].</span>`;
+  }
+  ['d4-l1','d4-l2','d4-r'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d4=draw;
+})();
+
+/* ============================================================
+   7 — DEMO 5: GRAPH TYPES + RING BAR
+   ============================================================ */
+(function(){
+  const cv=$('c-graph'); let type='match';
+  const INFO={
+    match:{t:'Matching-Graph',d:'Eine Kante pro Paraphrasen-Paar. |V| = 2N, |E| = N, keine Kreise.',
+           b:'b₁ = 0 → algebraisch H¹ = 0. Hier reduziert sich alles auf lineare Algebra (Prop. 3.1).'},
+    path:{t:'Pfad über 6 Paraphrasen',d:'5 Kanten, azyklisch. Erzwingt Übereinstimmung aller 6 Formulierungen eines Fakts.',
+          b:'b₁ = 0, aber +7,7 pp gegenüber reinen Paaren — der Gewinn kommt vom <b>gemeinsamen Constraint</b>.'},
+    ring:{t:'Ring über alle Paraphrasen',d:'5 Kanten geschlossen zum Kreis. Gleiche Kantenzahl wie der Pfad.',
+          b:'b₁ = 1 pro Fakt. +6,5 pp über Paare — aber nur +0,5 pp über den Pfad, auf keiner Architektur signifikant.'},
+    clique:{t:'Clique (alle Paare)',d:'Jede Paraphrase mit jeder verbunden: 10 Kanten bei 5 Knoten.',
+            b:'Deutlich mehr Zyklen, trifft den Ring aber auf 0,1 pp genau. Kantendichte bringt nichts.'},
+    rel:{t:'Relations-Hypergraph',d:'Pro Fakt ein Ring + pro Relation ein Ring durch die ersten Paraphrasen.',
+         b:'300 Knoten, 360 Kanten, dim H⁰ = 6, dim H¹ = 66. Hier lebt echte Topologie.'}
+  };
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h);
+    const K=+$('d5-k').value, lbl=$('d5-lbl').checked;
+    $('d5-kV').textContent=K;
+    const cx=w/2, cy=h/2;
+    const nodes=[], edges=[];
+    if(type==='match'){
+      const N=5;
+      for(let i=0;i<N;i++){
+        const x=70+i*((w-140)/(N-1));
+        nodes.push({x,y:cy-62,l:'A'+(i+1)});
+        nodes.push({x,y:cy+62,l:'B'+(i+1)});
+        edges.push([2*i,2*i+1]);
+      }
+    } else if(type==='path'){
+      for(let i=0;i<6;i++){
+        const x=60+i*((w-120)/5);
+        const y=cy+Math.sin(i*0.9)*44;
+        nodes.push({x,y,l:'p'+(i+1)});
+        if(i>0)edges.push([i-1,i]);
+      }
+    } else if(type==='ring'){
+      const R=Math.min(w,h)*0.30;
+      for(let i=0;i<K;i++){
+        const a=-Math.PI/2+i/K*TAU;
+        nodes.push({x:cx+Math.cos(a)*R,y:cy+Math.sin(a)*R,l:'p'+(i+1)});
+        edges.push([i,(i+1)%K]);
+      }
+    } else if(type==='clique'){
+      const R=Math.min(w,h)*0.30;
+      for(let i=0;i<K;i++){
+        const a=-Math.PI/2+i/K*TAU;
+        nodes.push({x:cx+Math.cos(a)*R,y:cy+Math.sin(a)*R,l:'p'+(i+1)});
+      }
+      for(let i=0;i<K;i++)for(let j=i+1;j<K;j++)edges.push([i,j]);
+    } else {
+      // relation hypergraph: 3 facts of 4 paraphrases + relation ring
+      const facts=3, pp=4, R=Math.min(w,h)*0.14, BR=Math.min(w,h)*0.30;
+      for(let f=0;f<facts;f++){
+        const fa=-Math.PI/2+f/facts*TAU;
+        const fx=cx+Math.cos(fa)*BR, fy=cy+Math.sin(fa)*BR;
+        for(let p=0;p<pp;p++){
+          const a=p/pp*TAU+fa;
+          nodes.push({x:fx+Math.cos(a)*R,y:fy+Math.sin(a)*R,l:'f'+(f+1)+'p'+(p+1),f:f});
+        }
+        for(let p=0;p<pp;p++) edges.push([f*pp+p, f*pp+(p+1)%pp]);
+      }
+      for(let f=0;f<facts;f++) edges.push([f*pp,((f+1)%facts)*pp,'rel']);
+    }
+    // draw edges
+    edges.forEach(e=>{
+      const a=nodes[e[0]], b=nodes[e[1]];
+      const isRel=e[2]==='rel';
+      ctx.strokeStyle=isRel?'rgba(255,200,87,.8)':'rgba(169,139,255,.55)';
+      ctx.lineWidth=isRel?2.6:1.9;
+      if(isRel){ctx.setLineDash([7,4]);}
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    // cycle highlight for ring
+    if(type==='ring'){
+      ctx.strokeStyle='rgba(255,200,87,.35)';ctx.lineWidth=12;ctx.lineJoin='round';
+      ctx.beginPath();
+      nodes.forEach((n,i)=>{i===0?ctx.moveTo(n.x,n.y):ctx.lineTo(n.x,n.y);});
+      ctx.closePath();ctx.stroke();
+      txt(ctx,'b₁ = 1 (ein Loch)',cx,cy,COL.harm,13,'center','800');
+    }
+    nodes.forEach(n=>{
+      dot(ctx,n.x,n.y,8.5,type==='rel'?[COL.h0,COL.h1,COL.ok][n.f]:COL.h0,13);
+      if(lbl) txt(ctx,n.l,n.x,n.y-18,COL.dim,10.5,'center');
+    });
+    const V=nodes.length, E=edges.length;
+    // components
+    const par=[...Array(V).keys()];
+    const find=x=>par[x]===x?x:(par[x]=find(par[x]));
+    edges.forEach(e=>{const a=find(e[0]),b=find(e[1]);if(a!==b)par[a]=b;});
+    const comps=new Set(nodes.map((_,i)=>find(i))).size;
+    const b1=E-V+comps;
+    const I=INFO[type];
+    $('d5-out').innerHTML=
+      `<b style="color:var(--acc)">${I.t}</b><br>${I.d}<br><br>`+
+      `|V| = <b>${V}</b> · |E| = <b>${E}</b> · Komponenten = <b>${comps}</b><br>`+
+      `<b style="color:var(--harm)">b₁ = ${E} − ${V} + ${comps} = ${b1}</b><br><br>${I.b}`;
+  }
+  $('d5-btns').addEventListener('click',e=>{
+    if(e.target.tagName!=='BUTTON')return;
+    [...$('d5-btns').children].forEach(b=>b.classList.remove('on'));
+    e.target.classList.add('on'); type=e.target.dataset.t; draw();
+  });
+  ['d5-k','d5-lbl'].forEach(id=>$(id).addEventListener('input',draw));
+  function bar(){
+    const d=DATA.ring;
+    Plotly.react('d5-bar',[
+      {x:d.map(r=>r.m),y:d.map(r=>r.pair),name:'Paare (b₁=0)',type:'bar',marker:{color:'rgba(154,164,196,.65)'}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.ring),name:'Ring (b₁=N)',type:'bar',marker:{color:COL.harm}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.cliq),name:'Clique',type:'bar',marker:{color:COL.acc}}
+    ],L({barmode:'group',yaxis:{title:'Retrieval-Genauigkeit (%)',range:[55,97]},
+      xaxis:{tickangle:-28},legend:{orientation:'h',y:1.14}}),PCFG);
+  }
+  window.__d5=()=>{draw();bar();};
+})();
+
+/* ============================================================
+   8 — DEMO 6: SHEAF STALKS + RESTRICTION
+   ============================================================ */
+(function(){
+  const cv=$('c-sheaf');
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h);
+    const aA=+$('d6-a').value*DEG, aB=+$('d6-b').value*DEG, aP=+$('d6-p').value*DEG;
+    $('d6-aV').textContent=$('d6-a').value+'°';
+    $('d6-bV').textContent=$('d6-b').value+'°';
+    $('d6-pV').textContent=$('d6-p').value+'°';
+    const topY=h*0.26, botY=h*0.76;
+    const xa=w*0.22, xb=w*0.78, R=Math.min(w*0.17,78);
+    // node stalk circles
+    [[xa,aA,'hₐ','„Der Eiffelturm steht in Paris"',COL.h0],
+     [xb,aB,'h_b','„Paris beherbergt den Eiffelturm"',COL.h1]].forEach(([x,ang,lb,sent,col])=>{
+      ctx.strokeStyle='rgba(140,160,230,.3)';ctx.lineWidth=1.4;ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.arc(x,topY,R,0,TAU);ctx.stroke();ctx.setLineDash([]);
+      arrow(ctx,x,topY,x+Math.cos(ang)*R*0.86,topY-Math.sin(ang)*R*0.86,col,2.8,10);
+      txt(ctx,lb,x,topY-R-26,col,13,'center','800');
+      txt(ctx,'ℱ(v) = ℝᵈ',x,topY-R-10,COL.faint,10.5,'center');
+      ctx.save();
+      txt(ctx,sent,x,topY+R+16,COL.faint,9.6,'center');
+      ctx.restore();
+    });
+    // edge stalk line
+    const ex0=w*0.20, ex1=w*0.80;
+    ctx.strokeStyle='rgba(169,139,255,.45)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(ex0,botY);ctx.lineTo(ex1,botY);ctx.stroke();
+    txt(ctx,'ℱ(e) = ℝᵏ  — gemeinsamer Vergleichsraum (k = 128)',w/2,botY+30,COL.acc,11.5,'center','700');
+    // projection direction indicator
+    const pdx=Math.cos(aP), pdy=-Math.sin(aP);
+    // project: value = dot(h_unit, p_unit)
+    const va=Math.cos(aA)*pdx + Math.sin(aA)*(-pdy)*-1;
+    const pa=Math.cos(aA)*Math.cos(aP)+Math.sin(aA)*Math.sin(aP);
+    const pb=Math.cos(aB)*Math.cos(aP)+Math.sin(aB)*Math.sin(aP);
+    const scale=(ex1-ex0)*0.38;
+    const mid=(ex0+ex1)/2;
+    const Xa=mid+pa*scale, Xb=mid+pb*scale;
+    // restriction arrows
+    ctx.strokeStyle='rgba(140,160,230,.42)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(xa,topY+R);ctx.lineTo(Xa,botY-9);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(xb,topY+R);ctx.lineTo(Xb,botY-9);ctx.stroke();
+    ctx.setLineDash([]);
+    txt(ctx,'Pᵀ',(xa+Xa)/2-16,(topY+botY)/2,COL.acc,12,'center','800');
+    txt(ctx,'Pᵀ',(xb+Xb)/2+16,(topY+botY)/2,COL.acc,12,'center','800');
+    dot(ctx,Xa,botY,8,COL.h0,14);
+    dot(ctx,Xb,botY,8,COL.h1,14);
+    // disagreement
+    const dis=Math.abs(pa-pb);
+    ctx.strokeStyle=dis<0.04?COL.ok:COL.warn;ctx.lineWidth=5;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(Xa,botY);ctx.lineTo(Xb,botY);ctx.stroke();
+    txt(ctx,'(δ⁰h)ₑ = '+fmt(pb-pa,3),(Xa+Xb)/2,botY-22,dis<0.04?COL.ok:COL.warn,12,'center','800');
+    // P direction mini compass
+    const cxp=w-58, cyp=44;
+    ctx.strokeStyle='rgba(140,160,230,.3)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cxp,cyp,24,0,TAU);ctx.stroke();
+    arrow(ctx,cxp,cyp,cxp+Math.cos(aP)*22,cyp-Math.sin(aP)*22,COL.acc,2.2,7);
+    txt(ctx,'P',cxp,cyp-34,COL.acc,11,'center','800');
+    const verdict = dis<0.04
+      ? '<b style="color:var(--ok)">✓ Einigkeit → diese Richtung gehört zu H⁰ (Inhalt)</b>'
+      : dis>0.9 ? '<b style="color:var(--h1)">✗ maximale Uneinigkeit → H¹-Richtung (Formulierung)</b>'
+      : '<b style="color:var(--warn)">teilweise Uneinigkeit</b>';
+    $('d6-out').innerHTML=
+      `Pᵀhₐ = <b>${fmt(pa,3)}</b> &nbsp; Pᵀh_b = <b>${fmt(pb,3)}</b><br>`+
+      `‖(δ⁰h)ₑ‖² = <b>${fmt(dis*dis,4)}</b> &nbsp;(Konsistenzenergie)<br>${verdict}`;
+  }
+  $('d6-findH0').addEventListener('click',()=>{
+    // P perpendicular to (h_b - h_a) direction
+    const aA=+$('d6-a').value*DEG, aB=+$('d6-b').value*DEG;
+    const dx=Math.cos(aB)-Math.cos(aA), dy=Math.sin(aB)-Math.sin(aA);
+    let ang=Math.atan2(dy,dx)+Math.PI/2;
+    let deg=((ang/DEG)%180+180)%180;
+    $('d6-p').value=Math.round(deg); draw();
+  });
+  $('d6-findH1').addEventListener('click',()=>{
+    const aA=+$('d6-a').value*DEG, aB=+$('d6-b').value*DEG;
+    const dx=Math.cos(aB)-Math.cos(aA), dy=Math.sin(aB)-Math.sin(aA);
+    let ang=Math.atan2(dy,dx);
+    let deg=((ang/DEG)%180+180)%180;
+    $('d6-p').value=Math.round(deg); draw();
+  });
+  ['d6-a','d6-b','d6-p'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d6=draw;
+})();
+
+/* ============================================================
+   9 — DEMO 7: GLOBAL SECTION PUZZLE
+   ============================================================ */
+(function(){
+  const cv=$('c-section');
+  const N=5;
+  let vals=[0.8,-0.4,0.55,-0.9,0.2];
+  const edges=[[0,1],[1,2],[2,3],[3,4]];
+  function buildSliders(){
+    const c=$('d7-sliders'); c.innerHTML='';
+    for(let i=0;i<N;i++){
+      const d=document.createElement('div'); d.className='ctl';
+      d.innerHTML=`<label>Knoten ${i+1} <span class="v" id="d7v${i}">${fmt(vals[i])}</span></label>
+        <input type="range" id="d7s${i}" min="-150" max="150" step="1" value="${Math.round(vals[i]*100)}">`;
+      c.appendChild(d);
+      d.querySelector('input').addEventListener('input',ev=>{
+        vals[i]=+ev.target.value/100; $('d7v'+i).textContent=fmt(vals[i]); draw();
+      });
+    }
+  }
+  function sync(){for(let i=0;i<N;i++){$('d7s'+i).value=Math.round(vals[i]*100);$('d7v'+i).textContent=fmt(vals[i]);}}
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h,30);
+    const pad=58, step=(w-2*pad)/(N-1), base=h*0.62, amp=h*0.26;
+    // baseline
+    ctx.strokeStyle='rgba(140,160,230,.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(26,base);ctx.lineTo(w-26,base);ctx.stroke();ctx.setLineDash([]);
+    txt(ctx,'Wert 0 (globaler Schnitt wäre waagerecht)',30,base-12,COL.faint,10.5);
+    // edges with disagreement colouring
+    let E=0;
+    edges.forEach(([a,b])=>{
+      const xa=pad+a*step, ya=base-vals[a]*amp;
+      const xb=pad+b*step, yb=base-vals[b]*amp;
+      const dis=Math.abs(vals[b]-vals[a]); E+=dis*dis;
+      const good=dis<0.06;
+      ctx.strokeStyle=good?'rgba(92,230,138,.95)':`rgba(255,${Math.round(159-dis*70)},69,.9)`;
+      ctx.lineWidth=good?4.5:3;
+      ctx.shadowBlur=good?12:0;ctx.shadowColor=COL.ok;
+      ctx.beginPath();ctx.moveTo(xa,ya);ctx.lineTo(xb,yb);ctx.stroke();ctx.shadowBlur=0;
+      mtxt(ctx,fmt(vals[b]-vals[a],2),(xa+xb)/2,(ya+yb)/2-14,good?COL.ok:COL.warn,10.5,'center');
+    });
+    for(let i=0;i<N;i++){
+      const x=pad+i*step, y=base-vals[i]*amp;
+      dot(ctx,x,y,8,COL.h0,13);
+      mtxt(ctx,fmt(vals[i]),x,y+20,COL.dim,10.5,'center');
+      txt(ctx,'v'+(i+1),x,y-20,COL.faint,10,'center');
+    }
+    const ok=E<0.02;
+    $('d7-out').innerHTML=
+      `E<sub>cons</sub> = Σ‖(δ⁰s)ₑ‖² = <b style="color:${ok?'#5ce68a':'#ff9f45'}">${fmt(E,4)}</b><br>`+
+      (ok?'<b style="color:var(--ok)">✓ globaler Schnitt gefunden — s ∈ H⁰</b>'
+         :'<span style="color:var(--warn)">noch keine globale Konsistenz</span>');
+  }
+  $('d7-solve').addEventListener('click',()=>{
+    const mean=vals.reduce((a,b)=>a+b,0)/N;
+    let t=0; const start=vals.slice();
+    const iv=setInterval(()=>{
+      t+=0.06; if(t>=1){t=1;clearInterval(iv);}
+      for(let i=0;i<N;i++) vals[i]=lerp(start[i],mean,t);
+      sync(); draw();
+    },22);
+  });
+  $('d7-rand').addEventListener('click',()=>{
+    const g=gaussFactory(Math.floor(Math.random()*9999));
+    for(let i=0;i<N;i++) vals[i]=clamp(g()*0.55,-1.5,1.5);
+    sync(); draw();
+  });
+  buildSliders();
+  window.__d7=draw;
+})();
+
+/* ============================================================
+   10 — DEMO 8: SPECTRUM
+   ============================================================ */
+(function(){
+  const cv=$('c-spec');
+  function spectrum(){
+    const k=+$('d8-k').value, decay=+$('d8-d').value/100;
+    const ev=[];
+    for(let i=0;i<k;i++){
+      const t=i/(k-1);
+      ev.push(Math.pow(1-t,1+decay*2.5)*1.0 + 0.0008 + 0.004*Math.exp(-t*8));
+    }
+    return ev; // descending
+  }
+  function draw(){
+    const ev=spectrum(), k=ev.length, m=Math.min(+$('d8-m').value,Math.floor(k/2));
+    $('d8-kV').textContent=k; $('d8-dV').textContent=fmt(+$('d8-d').value/100);
+    $('d8-mV').textContent=m;
+    const idx=ev.map((_,i)=>i+1);
+    const cols=ev.map((_,i)=> i<m?COL.h1 : (i>=k-m?COL.h0:'rgba(154,164,196,.45)'));
+    Plotly.react('d8-spec',[{
+      x:idx,y:ev,type:'bar',marker:{color:cols},
+      hovertemplate:'Eigenwert #%{x}<br>λ = %{y:.5f}<extra></extra>'
+    }],L({
+      yaxis:{type:'log',title:'Eigenwert λ (log)'},
+      xaxis:{title:'Index (absteigend sortiert)'},
+      title:{text:'Spektrum von L_F',font:{size:13,color:'#e6eaf7'}},
+      showlegend:false
+    }),PCFG);
+    // canvas: eigen directions sketch
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h);
+    const cx=w/2, cy=h*0.56, R=Math.min(w*0.4,h*0.40);
+    ctx.strokeStyle='rgba(140,160,230,.18)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();
+    for(let i=0;i<k;i++){
+      const a=-Math.PI/2 + (i/k)*TAU;
+      const len=R*(0.25+0.75*Math.sqrt(ev[i]/ev[0]));
+      const c = i<m?'rgba(255,107,138,.9)' : (i>=k-m?'rgba(73,210,240,.9)':'rgba(154,164,196,.28)');
+      ctx.strokeStyle=c;ctx.lineWidth=i<m||i>=k-m?2.2:1;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*len,cy+Math.sin(a)*len);ctx.stroke();
+    }
+    txt(ctx,'Kanten-Halm ℝᵏ: jede Speiche ist ein Eigenvektor, Länge ∝ √λ',w/2,16,COL.faint,11,'center');
+    txt(ctx,'H¹ (lang = viel Uneinigkeit)',w/2,h-26,COL.h1,11.5,'center','700');
+    txt(ctx,'H⁰ (kurz = Einigkeit)',w/2,h-10,COL.h0,11.5,'center','700');
+    const gap=ev[0]/ev[k-1];
+    $('d8-out').innerHTML=
+      `λ_max = <b>${fmt(ev[0],4)}</b> · λ_min = <b>${fmt(ev[k-1],5)}</b><br>`+
+      `Spektral-Gap = <b style="color:var(--acc)">${gap>99999?'>10⁵':fmt(gap,1)}×</b><br>`+
+      `H⁰ = Indizes ${k-m+1}…${k} &nbsp;·&nbsp; H¹ = Indizes 1…${m}<br>`+
+      `<span class="tiny">Die k×k-Eigenzerlegung kostet gleich viel bei 124M wie bei 13B Parametern [[11]].</span>`;
+  }
+  ['d8-k','d8-d','d8-m'].forEach(id=>$(id).addEventListener('input',draw));
+  function msweep(){
+    const tr=DATA.msweep.map((r,i)=>({
+      x:DATA.mvals, y:r.v, name:r.m, mode:'lines+markers',
+      line:{width:2.6,shape:'spline',color:[COL.h0,COL.acc,COL.ok,COL.h1][i]},
+      marker:{size:8}
+    }));
+    tr.push({x:[20,20],y:[30,95],mode:'lines',name:'gewählt: m = 20',
+      line:{color:COL.harm,width:2,dash:'dash'}});
+    Plotly.react('d8-msweep',tr,L({
+      xaxis:{title:'m (Anzahl Eigenvektoren)',type:'log',tickvals:DATA.mvals,ticktext:DATA.mvals.map(String)},
+      yaxis:{title:'Retrieval-Genauigkeit (%)',range:[30,96]},
+      shapes:[{type:'rect',x0:20,x1:80,y0:30,y1:96,fillcolor:'rgba(92,230,138,.08)',line:{width:0}}],
+      annotations:[{x:Math.sqrt(20*80),y:93,text:'Plateau',showarrow:false,font:{color:COL.ok,size:12}},
+                   {x:128,y:42,text:'m = k →<br>keine Kern-Selektion',showarrow:false,
+                    font:{color:COL.h1,size:10.5},xanchor:'right'}],
+      legend:{orientation:'h',y:1.14}
+    }),PCFG);
+  }
+  window.__d8=()=>{draw();msweep();};
+})();
+
+/* ============================================================
+   11 — DEMO 9: RETRIEVAL SIMULATOR
+   ============================================================ */
+(function(){
+  const cv=$('c-retr');
+  const names=['H⁰ (Kern)','Voller Raum','PCA-20','H¹ (Komplement)'];
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h);
+    const mode=+$('d9-s').value, noise=+$('d9-n').value/100, F=+$('d9-f').value;
+    $('d9-sV').textContent=names[mode]; $('d9-nV').textContent=fmt(noise);
+    $('d9-fV').textContent=F;
+    const cx=w/2, cy=h/2, R=Math.min(w,h)*0.30;
+    const g=gaussFactory(11);
+    // shrink factors per mode: how much paraphrase noise survives
+    const shrink=[0.17,0.62,0.95,1.9][mode];
+    // centroid separation per mode
+    const sep=[1.0,0.95,0.55,0.18][mode];
+    const cols=['#49d2f0','#ff6b8a','#5ce68a','#ffc857','#a98bff','#ff9f45','#59c2ff','#ff7bd5','#8fe3a3','#c9a7ff'];
+    let correct=0,total=0;
+    const cents=[];
+    for(let f=0;f<F;f++){
+      const a=-Math.PI/2+f/F*TAU;
+      cents.push({x:cx+Math.cos(a)*R*sep,y:cy+Math.sin(a)*R*sep,c:cols[f%cols.length]});
+    }
+    // draw centroids
+    cents.forEach((c,i)=>{
+      ctx.strokeStyle=c.c;ctx.lineWidth=1.6;ctx.setLineDash([3,3]);
+      ctx.beginPath();ctx.arc(c.x,c.y,R*0.33*shrink*noise+6,0,TAU);ctx.stroke();ctx.setLineDash([]);
+      dot(ctx,c.x,c.y,9,c.c,14);
+      txt(ctx,'F'+(i+1),c.x,c.y-19,c.c,10.5,'center','800');
+    });
+    // paraphrase points
+    const P=5;
+    for(let f=0;f<F;f++){
+      for(let p=0;p<P;p++){
+        const px=cents[f].x+g()*R*0.33*shrink*noise;
+        const py=cents[f].y+g()*R*0.33*shrink*noise;
+        // nearest centroid
+        let best=0,bd=1e9;
+        cents.forEach((c,i)=>{const d=(c.x-px)**2+(c.y-py)**2; if(d<bd){bd=d;best=i;}});
+        total++; if(best===f)correct++;
+        ctx.globalAlpha=0.85;
+        dot(ctx,px,py,3.4,cents[f].c);
+        ctx.globalAlpha=1;
+        if(best!==f){
+          ctx.strokeStyle='rgba(255,107,138,.6)';ctx.lineWidth=1;
+          ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(cents[best].x,cents[best].y);ctx.stroke();
+          ctx.strokeStyle='rgba(255,107,138,.9)';ctx.lineWidth=1.4;
+          ctx.beginPath();ctx.arc(px,py,6,0,TAU);ctx.stroke();
+        }
+      }
+    }
+    const acc=100*correct/total;
+    txt(ctx,'Hard Same-Relation Retrieval',14,18,COL.dim,11.5,'left','700');
+    txt(ctx,'rot umkringelt = falsch zugeordnet',14,34,COL.faint,10.5);
+    $('d9-out').innerHTML=
+      `Unterraum: <b>${names[mode]}</b><br>`+
+      `Trefferquote: <b style="color:${acc>75?'#5ce68a':acc>50?'#ff9f45':'#ff6b8a'}">${fmt(acc,1)} %</b><br>`+
+      `<span class="tiny">Paper-Mittelwerte: H⁰ 81,6 % · voll 64,6 % · PCA-20 30,4 % · H¹-Komplement (EN→FR) 3 % [[11]]</span>`;
+  }
+  ['d9-s','d9-n','d9-f'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d9=draw;
+})();
+
+/* ============================================================
+   12 — DEMO 10/11/12/13/14: TABLE 2 PLOTS + ABLATIONS
+   ============================================================ */
+(function(){
+  let mode='gap';
+  function plot(){
+    const d=DATA.retrieval;
+    let traces;
+    if(mode==='gap'){
+      const srt=[...d].sort((a,b)=>b.gap-a.gap);
+      traces=[{x:srt.map(r=>r.gap),y:srt.map(r=>r.m),type:'bar',orientation:'h',
+        marker:{color:srt.map(r=>r.gap>20?COL.h0:r.gap>10?COL.acc:'rgba(154,164,196,.6)')},
+        text:srt.map(r=>'+'+fmt(r.gap,1)+' pp'),textposition:'outside',
+        textfont:{color:'#e6eaf7',size:11},
+        hovertemplate:'%{y}<br>H⁰: '+'%{customdata[0]}%<br>LEACE-full: %{customdata[1]}%<extra></extra>',
+        customdata:srt.map(r=>[r.h0,r.lf])}];
+      Plotly.react('d10-plot',traces,L({
+        xaxis:{title:'Vorsprung H⁰ (20D) gegenüber LEACE-full (pp)',range:[0,50]},
+        yaxis:{automargin:true},
+        shapes:[{type:'line',x0:17.1,x1:17.1,y0:-0.5,y1:7.5,
+                 line:{color:COL.harm,width:2,dash:'dash'}}],
+        annotations:[{x:17.1,y:7.7,text:'Mittel +17,1 pp',showarrow:false,
+                      font:{color:COL.harm,size:11},yanchor:'bottom'}],
+        showlegend:false,margin:{l:110,r:60,t:20,b:50}
+      }),PCFG);
+    } else if(mode==='abs'){
+      traces=[
+        {x:d.map(r=>r.m),y:d.map(r=>r.h0),name:'Sheaf H⁰ (20D)',type:'bar',marker:{color:COL.h0}},
+        {x:d.map(r=>r.m),y:d.map(r=>r.lf),name:'LEACE-full (d Dim)',type:'bar',marker:{color:'rgba(154,164,196,.65)'}},
+        {x:d.map(r=>r.m),y:d.map(r=>r.l20),name:'LEACE-20D',type:'bar',marker:{color:COL.warn}}
+      ];
+      Plotly.react('d10-plot',traces,L({barmode:'group',
+        yaxis:{title:'Top-1 Genauigkeit (%)',range:[0,100]},xaxis:{tickangle:-28},
+        legend:{orientation:'h',y:1.14},margin:{l:58,r:20,t:40,b:90}}),PCFG);
+    } else {
+      traces=[
+        {x:d.map(r=>r.m),y:d.map(r=>r.h0),name:'H⁰ (20D)',type:'bar',marker:{color:COL.h0}},
+        {x:d.map(r=>r.m),y:d.map(r=>r.full),name:'Full',type:'bar',marker:{color:COL.acc}},
+        {x:d.map(r=>r.m),y:d.map(r=>r.lf),name:'LEACE-full',type:'bar',marker:{color:'rgba(154,164,196,.6)'}},
+        {x:d.map(r=>r.m),y:d.map(r=>r.l20),name:'LEACE-20D',type:'bar',marker:{color:COL.warn}},
+        {x:d.map(r=>r.m),y:d.map(r=>r.pca),name:'PCA-20',type:'bar',marker:{color:COL.h1}},
+        {x:d.map(r=>r.m),y:d.map(r=>r.rnd),name:'Rand-20',type:'bar',marker:{color:'rgba(255,200,87,.7)'}}
+      ];
+      Plotly.react('d10-plot',traces,L({barmode:'group',
+        yaxis:{title:'Top-1 Genauigkeit (%)',range:[0,100]},xaxis:{tickangle:-28},
+        legend:{orientation:'h',y:1.16},margin:{l:58,r:20,t:48,b:90}}),PCFG);
+    }
+  }
+  function table(){
+    const tb=$('t-leace').querySelector('tbody'); tb.innerHTML='';
+    DATA.retrieval.forEach(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><b>${r.m}</b></td>
+        <td class="num">${fmt(r.full,1)}</td>
+        <td class="num" style="color:var(--h0);font-weight:700">${fmt(r.h0,1)}</td>
+        <td class="num">${fmt(r.lf,1)}</td>
+        <td class="num" style="color:var(--txt-faint)">${fmt(r.l20,1)}</td>
+        <td class="num" style="color:var(--txt-faint)">${fmt(r.pca,1)}</td>
+        <td class="num" style="color:var(--txt-faint)">${fmt(r.rnd,1)}</td>
+        <td class="num" style="color:${r.gap>20?'#5ce68a':'#ffc857'};font-weight:700">+${fmt(r.gap,1)}</td>`;
+      tb.appendChild(tr);
+    });
+  }
+  function sizePlot(){
+    const d=DATA.retrieval;
+    Plotly.react('d10-size',[{
+      x:d.map(r=>r.dim),y:d.map(r=>r.gap),text:d.map(r=>r.m),mode:'markers+text',
+      textposition:'top center',textfont:{size:9.5,color:COL.faint},
+      marker:{size:d.map(r=>8+r.gap*0.45),color:d.map(r=>r.gap),
+              colorscale:[[0,'#1a8fb8'],[0.5,'#a98bff'],[1,'#49d2f0']],showscale:false,
+              line:{color:'rgba(255,255,255,.3)',width:1}},
+      hovertemplate:'%{text}<br>d = %{x}<br>Δ = +%{y} pp<extra></extra>'
+    }],L({xaxis:{title:'Hidden-Dimension d',type:'log',tickvals:[768,2560,3584,4096],
+          ticktext:['768','2560','3584','4096']},
+      yaxis:{title:'Vorsprung Δ (pp)'},showlegend:false,margin:{l:52,r:14,t:16,b:44}}),PCFG);
+  }
+  function ablPlot(){
+    const d=DATA.ablP;
+    Plotly.react('d11-abl',[
+      {x:d.map(r=>r.m),y:d.map(r=>r.pca),name:'PCA-P',type:'bar',marker:{color:COL.h0}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.rnd),name:'Random-P',type:'bar',marker:{color:COL.acc}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.idt),name:'Identity-P',type:'bar',marker:{color:COL.ok}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.nok),name:'PCA-20 ohne Kern',type:'bar',marker:{color:'rgba(255,107,138,.75)'}}
+    ],L({barmode:'group',yaxis:{title:'%',range:[0,95]},xaxis:{tickangle:-36,tickfont:{size:9.5}},
+      legend:{orientation:'h',y:1.2,font:{size:10}},margin:{l:46,r:12,t:44,b:76}}),PCFG);
+  }
+  function basePlot(){
+    const d=DATA.baselines;
+    Plotly.react('d12-base',[
+      {x:d.map(r=>r.m),y:d.map(r=>r.h0),name:'Sheaf H⁰ (label-frei)',type:'bar',marker:{color:COL.h0}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.lda),name:'LDA (braucht Labels)',type:'bar',marker:{color:'rgba(92,230,138,.75)'}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.nca),name:'NCA (braucht Labels)',type:'bar',marker:{color:'rgba(92,230,138,.45)'}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.cca),name:'CCA',type:'bar',marker:{color:COL.acc}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.pls),name:'PLS',type:'bar',marker:{color:'rgba(169,139,255,.55)'}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.wpca),name:'W-PCA',type:'bar',marker:{color:COL.warn}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.pca),name:'PCA-20',type:'bar',marker:{color:COL.h1}}
+    ],L({barmode:'group',yaxis:{title:'Top-1 (%)',range:[0,95]},xaxis:{tickangle:-28},
+      legend:{orientation:'h',y:1.18,font:{size:10}},margin:{l:56,r:16,t:52,b:84}}),PCFG);
+  }
+  function xlPlot(){
+    Plotly.react('
+  function xlPlot(){
+    Plotly.react('d13-xl',[
+      {x:['FR → EN','EN → FR'],y:[76,78],name:'H⁰ Kern (20D)',type:'bar',
+       marker:{color:COL.h0},text:['76 %','78 %'],textposition:'outside',
+       textfont:{color:COL.h0,size:12}},
+      {x:['FR → EN','EN → FR'],y:[82,59],name:'Voller Hidden State (4096D)',type:'bar',
+       marker:{color:'rgba(154,164,196,.6)'},text:['82 %','59 %'],textposition:'outside',
+       textfont:{color:COL.dim,size:12}},
+      {x:['FR → EN','EN → FR'],y:[6,3],name:'H¹ Komplement',type:'bar',
+       marker:{color:COL.h1},text:['6 %','3 %'],textposition:'outside',
+       textfont:{color:COL.h1,size:12}}
+    ],L({barmode:'group',yaxis:{title:'Top-1 Retrieval (%)',range:[0,95]},
+      legend:{orientation:'h',y:1.2,font:{size:10}},margin:{l:50,r:14,t:48,b:40}}),PCFG);
+  }
+  function crossPlot(){
+    const d=DATA.crossD;
+    Plotly.react('d14-cross',[
+      {x:d.map(r=>r.m),y:d.map(r=>r.cf),name:'P aus CounterFact (in-domain)',type:'bar',marker:{color:COL.h0}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.mrpc),name:'P aus MRPC',type:'bar',marker:{color:COL.acc}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.paws),name:'P aus PAWS',type:'bar',marker:{color:'rgba(169,139,255,.55)'}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.qqp),name:'P aus QQP',type:'bar',marker:{color:'rgba(169,139,255,.35)'}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.pca),name:'PCA-20 (kein Kern)',type:'bar',marker:{color:COL.h1}}
+    ],L({barmode:'group',yaxis:{title:'Top-1 (%)',range:[0,95]},xaxis:{tickangle:-28},
+      legend:{orientation:'h',y:1.18,font:{size:10}},margin:{l:54,r:16,t:50,b:84}}),PCFG);
+  }
+  $('d10-btns').addEventListener('click',e=>{
+    if(e.target.tagName!=='BUTTON')return;
+    [...$('d10-btns').children].forEach(b=>b.classList.remove('on'));
+    e.target.classList.add('on'); mode=e.target.dataset.m; plot();
+  });
+  window.__d10=()=>{plot();table();sizePlot();ablPlot();basePlot();xlPlot();crossPlot();};
+})();
+
+/* ============================================================
+   13 — DEMO 15: ABLATION LAB
+   ============================================================ */
+(function(){
+  const cv=$('c-abl');
+  const modes=['H¹ (höchste Paar-Variabilität)','Kontrolle (varianz-gematcht)','H⁰ (niedrigste)'];
+  let anim=0, animT=0;
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h);
+    const mode=+$('d15-s').value, m=+$('d15-m').value, ai=+$('d15-a').value;
+    const arch=DATA.influence[ai];
+    $('d15-sV').textContent=modes[mode]; $('d15-mV').textContent=m;
+    $('d15-aV').textContent=arch.m;
+    const D=64;
+    const g=gaussFactory(5);
+    // variability per coordinate: decaying
+    const vb=[];
+    for(let i=0;i<D;i++) vb.push(Math.pow(1-i/D,1.7)*0.95+0.04+Math.abs(g())*0.03);
+    vb.sort((a,b)=>b-a);
+    const mm=Math.min(m,Math.floor(D/2));
+    // control: coords whose variability is closest to mean of H1 set
+    const h1mean=vb.slice(0,mm).reduce((a,b)=>a+b,0)/mm;
+    const pool=[];
+    for(let i=mm;i<D-mm;i++) pool.push({i,d:Math.abs(vb[i]-h1mean)});
+    pool.sort((a,b)=>a.d-b.d);
+    const ctrl=new Set(pool.slice(0,mm).map(o=>o.i));
+    // layout
+    const padL=16, padR=16, top=58, bot=h-56;
+    const bw=(w-padL-padR)/D;
+    txt(ctx,'Residual-Stream-Koordinaten, sortiert nach E|h⁽¹⁾−h⁽²⁾|',padL,22,COL.dim,11.5,'left','700');
+    txt(ctx,'(Diagonal-Proxy für das Spektrum von L_F)',padL,38,COL.faint,10.5);
+    for(let i=0;i<D;i++){
+      const x=padL+i*bw, hh=(bot-top)*vb[i]/vb[0];
+      let col='rgba(154,164,196,.28)', killed=false;
+      if(i<mm){col='rgba(255,107,138,.9)'; if(mode===0)killed=true;}
+      else if(i>=D-mm){col='rgba(73,210,240,.9)'; if(mode===2)killed=true;}
+      else if(ctrl.has(i)){col='rgba(255,200,87,.8)'; if(mode===1)killed=true;}
+      ctx.fillStyle=col;
+      if(killed){
+        ctx.globalAlpha=0.18; ctx.fillRect(x+0.6,bot-hh,bw-1.2,hh); ctx.globalAlpha=1;
+        ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(x+1,bot-hh);ctx.lineTo(x+bw-1,bot);
+        ctx.moveTo(x+bw-1,bot-hh);ctx.lineTo(x+1,bot);ctx.stroke();
+      } else {
+        ctx.fillRect(x+0.6,bot-hh,bw-1.2,hh);
+      }
+    }
+    ctx.strokeStyle='rgba(140,160,230,.3)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(padL,bot);ctx.lineTo(w-padR,bot);ctx.stroke();
+    txt(ctx,'hoch ↑',padL+4,top+8,COL.h1,10.5);
+    txt(ctx,'← niedrig',w-padR-4,top+8,COL.h0,10.5,'right');
+    // legend row
+    const ly=h-28;
+    const items=[['H¹ (gelöscht bei Modus 1)',COL.h1],['Kontrolle',COL.harm],['H⁰',COL.h0]];
+    let lx=padL;
+    items.forEach(([t,c])=>{
+      ctx.fillStyle=c;ctx.fillRect(lx,ly-5,10,10);
+      txt(ctx,t,lx+15,ly,COL.faint,10.5); lx+=ctx.measureText(t).width+46;
+    });
+    // effect readout
+    const totVar=vb.reduce((a,b)=>a+b,0);
+    let killedVar=0;
+    for(let i=0;i<D;i++){
+      if((mode===0&&i<mm)||(mode===2&&i>=D-mm)||(mode===1&&ctrl.has(i))) killedVar+=vb[i];
+    }
+    const base = mode===0 ? arch.r : mode===1 ? 1.0 : 0.3;
+    const scaled = base*(0.55+0.45*mm/20);
+    const bar = mode===0 ? '#ff6b8a' : mode===1 ? '#ffc857' : '#49d2f0';
+    $('d15-out').innerHTML=
+      `Gelöschte Variabilität: <b>${fmt(100*killedVar/totVar,1)} %</b> der Gesamtvariabilität<br>`+
+      `Relative Output-Änderung: <b style="color:${bar};font-size:1.25em">${fmt(scaled,2)}×</b> `+
+      `<span class="tiny">(Kontrolle = 1,0×)</span><br>`+
+      (mode===0?`<span class="tiny">Paper-Wert für ${arch.m}: <b>${arch.r}×</b>, 95 %-KI [${arch.lo}, ${arch.hi}], Cohen's d = ${arch.d} [[11]]</span>`
+       :mode===1?`<span class="tiny">Das ist die Referenz, gegen die H¹ verglichen wird.</span>`
+       :`<span class="tiny">H⁰ zu löschen wirkt oft <em>weniger</em> als Zufall (Median-Ratio 0,19–0,74) [[11]]</span>`);
+  }
+  $('d15-run').addEventListener('click',()=>{
+    const btn=$('d15-run'); btn.textContent='läuft …';
+    setTimeout(()=>{btn.textContent='Forward-Pass simulieren ▶'; draw();},420);
+  });
+  ['d15-s','d15-m','d15-a'].forEach(id=>$(id).addEventListener('input',draw));
+  function ratioPlot(){
+    const d=[...DATA.influence].sort((a,b)=>a.r-b.r);
+    Plotly.react('d16-ratio',[{
+      x:d.map(r=>r.r),y:d.map(r=>r.m),type:'bar',orientation:'h',
+      error_x:{type:'data',symmetric:false,
+        array:d.map(r=>r.hi-r.r),arrayminus:d.map(r=>r.r-r.lo),
+        color:'rgba(255,255,255,.55)',thickness:1.6,width:5},
+      marker:{color:d.map(r=>r.r),colorscale:[[0,'#1a8fb8'],[0.45,'#a98bff'],[1,'#ff6b8a']],
+        showscale:false,line:{color:'rgba(255,255,255,.15)',width:1}},
+      text:d.map(r=>fmt(r.r,1)+'×'),textposition:'outside',
+      textfont:{color:'#e6eaf7',size:11.5},
+      hovertemplate:'%{y}<br>Ratio %{x:.2f}×<br>Layer %{customdata[0]}<br>Cohen\'s d = %{customdata[1]}<extra></extra>',
+      customdata:d.map(r=>[r.lay,r.d])
+    }],L({
+      xaxis:{title:'H¹ / Kontrolle — Output-Änderungs-Verhältnis',type:'log',
+        tickvals:[1,2,5,10,20,30],ticktext:['1×','2×','5×','10×','20×','30×'],range:[-0.02,1.62]},
+      yaxis:{automargin:true},
+      shapes:[{type:'line',x0:1,x1:1,y0:-0.5,y1:8.5,line:{color:COL.warn,width:2,dash:'dash'}}],
+      annotations:[{x:0,y:8.6,text:'1× = kein Unterschied zur Kontrolle',showarrow:false,
+        font:{color:COL.warn,size:11},xanchor:'left',yanchor:'bottom'}],
+      showlegend:false,margin:{l:116,r:60,t:36,b:52}
+    }),PCFG);
+  }
+  function depthPlot(){
+    const tr=DATA.depth.map((r,i)=>({
+      x:[0.25,0.5,0.75],y:r.v,name:r.m,mode:'lines+markers',
+      line:{width:2,shape:'spline'},marker:{size:7}
+    }));
+    Plotly.react('d17-depth',tr,L({
+      xaxis:{title:'normierte Tiefe (Layer / L)',range:[0.18,0.82],tickvals:[0.25,0.5,0.75],
+        ticktext:['L/4','L/2','3L/4']},
+      yaxis:{title:'H¹/Kontrolle',type:'log',tickvals:[3,5,10,20],ticktext:['3×','5×','10×','20×']},
+      legend:{font:{size:9},x:1,xanchor:'right'},margin:{l:52,r:10,t:14,b:44}
+    }),PCFG);
+  }
+  function klPlot(){
+    const d=[...DATA.klratio].sort((a,b)=>a.med-b.med);
+    Plotly.react('d18-kl',[
+      {x:d.map(r=>r.med),y:d.map(r=>r.m),type:'bar',orientation:'h',name:'H¹ / Zufall',
+       error_x:{type:'data',symmetric:false,array:d.map(r=>r.hi-r.med),arrayminus:d.map(r=>r.med-r.lo),
+         color:'rgba(255,255,255,.4)',thickness:1.3,width:4},
+       marker:{color:COL.h1}},
+      {x:d.map(r=>r.h0),y:d.map(r=>r.m),type:'bar',orientation:'h',name:'H⁰ / Zufall',
+       marker:{color:COL.h0}}
+    ],L({barmode:'group',
+      xaxis:{title:'KL-Verschiebung relativ zu Zufallsunterräumen',type:'log',
+        tickvals:[0.2,1,10,100,1000],ticktext:['0,2×','1×','10×','100×','1000×']},
+      yaxis:{automargin:true,tickfont:{size:9.5}},
+      shapes:[{type:'line',x0:1,x1:1,y0:-0.5,y1:8.5,line:{color:COL.warn,width:1.6,dash:'dash'}}],
+      legend:{orientation:'h',y:1.16,font:{size:10}},margin:{l:98,r:14,t:40,b:48}}),PCFG);
+  }
+  function dormPlot(){
+    const d=DATA.dorm;
+    Plotly.react('d19-dorm',[
+      {x:d.map(r=>r.m),y:d.map(r=>r.base),name:'ohne Ablation',type:'bar',marker:{color:'rgba(154,164,196,.6)'}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.rnd),name:'Zufalls-Ablation (gematcht)',type:'bar',marker:{color:COL.harm}},
+      {x:d.map(r=>r.m),y:d.map(r=>r.h1),name:'H¹-Ablation',type:'bar',marker:{color:COL.h1}}
+    ],L({barmode:'group',yaxis:{title:'Faktenabruf im generierten Text (%)',range:[0,55]},
+      legend:{orientation:'h',y:1.2,font:{size:10}},margin:{l:52,r:12,t:48,b:40}}),PCFG);
+  }
+  window.__d15=()=>{draw();ratioPlot();depthPlot();klPlot();dormPlot();};
+})();
+
+/* ============================================================
+   14 — DEMO 20: MULTI-LAYER GRID
+   ============================================================ */
+(function(){
+  const cv=$('c-grid');
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h);
+    const N=+$('d20-n').value, Lq=+$('d20-l').value;
+    const fill=$('d20-fill').checked, hl=$('d20-hl').checked;
+    $('d20-nV').textContent=N; $('d20-lV').textContent=Lq;
+    const padX=56, padY=46;
+    const colsX = 2*N;
+    const stepX = (w-2*padX)/Math.max(1,colsX-1);
+    const stepY = Lq>1 ? (h-2*padY-18)/(Lq-1) : 0;
+    const pos=(i,l)=>({x:padX+i*stepX, y:h-padY-l*stepY});
+    // vertical edges
+    for(let i=0;i<colsX;i++){
+      for(let l=0;l<Lq-1;l++){
+        const a=pos(i,l), b=pos(i,l+1);
+        ctx.strokeStyle='rgba(73,210,240,.45)';ctx.lineWidth=1.7;
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      }
+    }
+    // horizontal edges (pairs)
+    for(let p=0;p<N;p++){
+      for(let l=0;l<Lq;l++){
+        const a=pos(2*p,l), b=pos(2*p+1,l);
+        ctx.strokeStyle='rgba(255,107,138,.6)';ctx.lineWidth=1.9;
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      }
+    }
+    // squares / fills
+    if(Lq>1){
+      for(let p=0;p<N;p++){
+        for(let l=0;l<Lq-1;l++){
+          const A=pos(2*p,l),B=pos(2*p+1,l),C=pos(2*p+1,l+1),D=pos(2*p,l+1);
+          if(fill){
+            ctx.fillStyle='rgba(169,139,255,.17)';
+            ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();ctx.fill();
+            ctx.fillStyle='rgba(169,139,255,.09)';
+            ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(C.x,C.y);ctx.lineTo(D.x,D.y);ctx.closePath();ctx.fill();
+            ctx.strokeStyle='rgba(169,139,255,.5)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+            ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(C.x,C.y);ctx.stroke();ctx.setLineDash([]);
+          }
+          if(hl && !fill && p===0 && l===0){
+            ctx.strokeStyle='rgba(255,200,87,.9)';ctx.lineWidth=5;ctx.lineJoin='round';
+            ctx.shadowBlur=14;ctx.shadowColor=COL.harm;
+            ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);
+            ctx.lineTo(D.x,D.y);ctx.closePath();ctx.stroke();ctx.shadowBlur=0;
+            txt(ctx,'Elementar-Zyklus',(A.x+C.x)/2,(A.y+C.y)/2,COL.harm,10.5,'center','800');
+          }
+        }
+      }
+    }
+    // nodes
+    for(let i=0;i<colsX;i++)for(let l=0;l<Lq;l++){
+      const p=pos(i,l);
+      dot(ctx,p.x,p.y,5.2,i%2?COL.h1:COL.h0,8);
+    }
+    // layer labels
+    for(let l=0;l<Lq;l++){
+      const p=pos(0,l);
+      txt(ctx,'Schicht '+(l+1),padX-12,p.y,COL.faint,10,'right');
+    }
+    txt(ctx,'● Satz   ● Paraphrase    — waagerecht: Paraphrasen-Kante    | senkrecht: Schicht-Kante (Transport R)',
+        w/2,18,COL.faint,10.2,'center');
+    const V=2*N*Lq, E=N*Lq+2*N*(Lq-1), b1=fill?0:N*(Lq-1);
+    const ref=E>0?(N*(Lq-1))/E:0;
+    $('d20-out').innerHTML=
+      `|V| = 2·${N}·${Lq} = <b>${V}</b><br>`+
+      `|E| = ${N}·${Lq} + 2·${N}·(${Lq}−1) = <b>${E}</b><br>`+
+      `<b style="color:${b1?'var(--harm)':'var(--txt-faint)'}">b₁ = ${fill?'0 (Flächen gefüllt!)':N+'·('+Lq+'−1) = '+b1}</b><br>`+
+      (fill?`<span class="tiny">Mit Dreiecken wird b₁ = b₂ = 0 → harmonische Masse exakt null. Der <b>koexakte</b> Anteil übernimmt und reproduziert dieselbe Architektur-Aufteilung [[11]].</span>`
+           :`Zufalls-Referenz = b₁/|E| = <b>${fmt(ref,3)}</b><br>`+
+            `<span class="tiny">Bei L = 2 ergibt das genau 0,25 — der Maßstab für „flach wie Zufall" [[11]].</span>`);
+  }
+  ['d20-n','d20-l','d20-fill','d20-hl'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d20=draw;
+})();
+
+/* ============================================================
+   15 — DEMO 21: COMMUTING SQUARE
+   ============================================================ */
+(function(){
+  const cv=$('c-square');
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h,30);
+    const R=+$('d21-r').value/100, P=+$('d21-p').value/100;
+    $('d21-rV').textContent=fmt(R); $('d21-pV').textContent=fmt(P);
+    const x0=w*0.22, x1=w*0.78, y0=h*0.74, y1=h*0.24;
+    // base point
+    const A={x:x0,y:y0};
+    // paraphrase step: horizontal offset
+    const B={x:x0+ (x1-x0)*0.0 + P*(x1-x0)*0.0, y:y0};
+    // We model: A -> (paraphrase) -> B ; then layer -> C
+    // and A -> (layer) -> D ; then paraphrase -> E
+    const para={x:(x1-x0)*0.62*P, y:-16*P};
+    const layer={x:0, y:-(y0-y1)*0.86};
+    const twist=(v)=>({x:v.x*Math.cos(R*1.1)-v.y*Math.sin(R*1.1),
+                       y:v.x*Math.sin(R*1.1)+v.y*Math.cos(R*1.1)});
+    const Bp={x:A.x+para.x, y:A.y+para.y};
+    const Cp={x:Bp.x+layer.x, y:Bp.y+layer.y};
+    const Dp={x:A.x+layer.x, y:A.y+layer.y};
+    const tw=twist(para);
+    const Ep={x:Dp.x+tw.x, y:Dp.y+tw.y};
+    // draw layer slabs
+    [[y0,'Schicht l'],[y1,'Schicht l+1']].forEach(([y,lb])=>{
+      ctx.strokeStyle='rgba(140,160,230,.16)';ctx.lineWidth=1;ctx.setLineDash([5,5]);
+      ctx.beginPath();ctx.moveTo(26,y);ctx.lineTo(w-26,y);ctx.stroke();ctx.setLineDash([]);
+      txt(ctx,lb,30,y-14,COL.faint,10.5);
+    });
+    // path A: paraphrase then layer (cyan)
+    arrow(ctx,A.x,A.y,Bp.x,Bp.y,COL.h0,2.6,9);
+    arrow(ctx,Bp.x,Bp.y,Cp.x,Cp.y,COL.h0,2.6,9);
+    // path B: layer then paraphrase (pink)
+    arrow(ctx,A.x,A.y,Dp.x,Dp.y,COL.h1,2.6,9);
+    arrow(ctx,Dp.x,Dp.y,Ep.x,Ep.y,COL.h1,2.6,9);
+    // gap
+    const gap=Math.hypot(Cp.x-Ep.x,Cp.y-Ep.y);
+    ctx.strokeStyle=COL.harm;ctx.lineWidth=4;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(Cp.x,Cp.y);ctx.lineTo(Ep.x,Ep.y);ctx.stroke();ctx.setLineDash([]);
+    dot(ctx,A.x,A.y,7,COL.acc,12);
+    dot(ctx,Bp.x,Bp.y,5.5,COL.h0,9);
+    dot(ctx,Dp.x,Dp.y,5.5,COL.h1,9);
+    dot(ctx,Cp.x,Cp.y,7,COL.h0,12);
+    dot(ctx,Ep.x,Ep.y,7,COL.h1,12);
+    txt(ctx,'Start',A.x,A.y+20,COL.acc,10.5,'center','700');
+    if(gap>6) txt(ctx,'Δ = '+fmt(gap/((x1-x0)*0.62||1),3),(Cp.x+Ep.x)/2,(Cp.y+Ep.y)/2-16,COL.harm,11.5,'center','800');
+    else txt(ctx,'kommutiert ✓',(Cp.x+Ep.x)/2,(Cp.y+Ep.y)/2-16,COL.ok,11.5,'center','800');
+    const norm=gap/Math.max(1,(x1-x0)*0.62*P);
+    const mass=clamp(norm*norm*0.35,0,1);
+    $('d21-out').innerHTML=
+      `Pfaddifferenz ‖ω(Quadrat)‖ = <b style="color:${mass<0.01?'#5ce68a':'#ffc857'}">${fmt(gap,1)} px</b><br>`+
+      `geschätzte harmonische Masse ≈ <b>${fmt(mass,4)}</b><br>`+
+      (mass<0.005
+        ? '<span style="color:var(--ok)">robust — wie Mistral-7B (10⁻⁴)</span>'
+        : mass<0.03 ? '<span style="color:var(--acc)">mittel — wie Llama-3-8B (10⁻³)</span>'
+        : '<span style="color:var(--h1)">fragil — wie Llama-2-7B (0,079)</span>');
+  }
+  ['d21-r','d21-p'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d21=draw;
+})();
+
+/* ============================================================
+   16 — DEMO 22: HODGE DECOMPOSITION LAB
+   ============================================================ */
+(function(){
+  const cv=$('c-hodge');
+  const N=6;
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h);
+    const G=+$('d22-g').value/100, H=+$('d22-h').value/100;
+    const fill=$('d22-fill').checked;
+    $('d22-gV').textContent=fmt(G); $('d22-hV').textContent=fmt(H);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)*0.31;
+    const P=[];
+    for(let i=0;i<N;i++){
+      const a=-Math.PI/2+i/N*TAU;
+      P.push({x:cx+Math.cos(a)*R,y:cy+Math.sin(a)*R,a});
+    }
+    // node potential for the gradient part
+    const pot=P.map((p,i)=>Math.cos(i/N*TAU*1.0)*1.0);
+    if(fill){
+      ctx.fillStyle='rgba(169,139,255,.12)';
+      ctx.beginPath();P.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+      ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(169,139,255,.35)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+      for(let i=2;i<N;i++){ctx.beginPath();ctx.moveTo(P[0].x,P[0].y);ctx.lineTo(P[i].x,P[i].y);ctx.stroke();}
+      ctx.setLineDash([]);
+      txt(ctx,'Fläche gefüllt → b₁ = 0 → harmonisch ≡ 0',cx,cy,COL.acc,11.5,'center','700');
+    }
+    let eG=0,eH=0;
+    for(let i=0;i<N;i++){
+      const a=P[i], b=P[(i+1)%N];
+      const grad=(pot[(i+1)%N]-pot[i])*G;
+      const harm=(fill?0:H)*0.9;
+      const val=grad+harm;
+      eG+=grad*grad; eH+=harm*harm;
+      const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+      const dx=(b.x-a.x), dy=(b.y-a.y), len=Math.hypot(dx,dy);
+      const ux=dx/len, uy=dy/len;
+      const L2=clamp(val,-1.8,1.8)*26;
+      ctx.strokeStyle='rgba(140,160,230,.25)';ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      const col = Math.abs(harm)>Math.abs(grad)?COL.harm:COL.h0;
+      arrow(ctx,mx-ux*L2/2,my-uy*L2/2,mx+ux*L2/2,my+uy*L2/2,col,3,8);
+      mtxt(ctx,fmt(val,2),mx+ (mx-cx)*0.18, my+(my-cy)*0.18, col,10,'center');
+    }
+    P.forEach((p,i)=>{
+      dot(ctx,p.x,p.y,7,COL.h0,10);
+      mtxt(ctx,fmt(pot[i]*G,2),p.x+(p.x-cx)*0.22,p.y+(p.y-cy)*0.22,COL.dim,9.5,'center');
+    });
+    // circulation
+    let circ=0;
+    for(let i=0;i<N;i++){
+      const grad=(pot[(i+1)%N]-pot[i])*G;
+      const harm=(fill?0:H)*0.9;
+      circ+=grad+harm;
+    }
+    const tot=eG+eH;
+    const hf=tot>0?eH/tot:0;
+    $('d22-out').innerHTML=
+      `Zirkulation um den Ring = <b style="color:${Math.abs(circ)<0.01?'#5ce68a':'#ffc857'}">${fmt(circ,3)}</b><br>`+
+      `harmonische Masse = <b style="color:var(--harm)">${fmt(hf,3)}</b><br>`+
+      `<span class="tiny">Der Gradient-Anteil summiert sich <b>immer</b> zu 0 um jeden Kreis — nur der harmonische Teil nicht.</span>`;
+    Plotly.react('d22-bar',[{
+      x:[eG,eH,0],y:['Gradient','harmonisch','koexakt'],type:'bar',orientation:'h',
+      marker:{color:[COL.h0,COL.harm,COL.acc]},
+      hovertemplate:'%{y}: %{x:.3f}<extra></extra>'
+    }],L({showlegend:false,margin:{l:76,r:12,t:8,b:26},
+      xaxis:{title:'',showticklabels:true},yaxis:{tickfont:{size:10.5}},height:140}),PCFG);
+  }
+  ['d22-g','d22-h','d22-fill'].forEach(id=>$(id).addEventListener('input',draw));
+  window.__d22=draw;
+})();
+
+/* ============================================================
+   17 — DEMO 23/24/25/26: HARMONIC MASS ↔ FRAGILITY
+   ============================================================ */
+(function(){
+  const keys=['L2','L4','L8','L16'];
+  const labels=['L = 2','L = 4','L = 8','L = 16'];
+  function scatter(){
+    const li=+$('d23-l').value, key=keys[li];
+    $('d23-lV').textContent=labels[li];
+    const log=$('d23-log').checked, showFit=$('d23-fit').checked;
+    const d=DATA.harmonic.filter(r=>r[key]!==null);
+    const tr=[{
+      x:d.map(r=>r[key]), y:d.map(r=>r.pres), text:d.map(r=>r.m),
+      mode:'markers+text', textposition:'top center',
+      textfont:{size:10.5,color:COL.dim},
+      marker:{size:16,color:d.map(r=>r.cls==='robust'?COL.ok:COL.h1),
+        line:{color:'rgba(255,255,255,.35)',width:1.5},
+        symbol:d.map(r=>r.cls==='robust'?'circle':'diamond')},
+      hovertemplate:'%{text}<br>harm. Masse %{x}<br>Faktentreue %{y}%<extra></extra>',
+      showlegend:false
+    }];
+    if(showFit){
+      const sorted=[...d].sort((a,b)=>a[key]-b[key]);
+      tr.push({x:sorted.map(r=>r[key]),y:sorted.map(r=>r.pres),mode:'lines',
+        line:{color:'rgba(169,139,255,.45)',width:2,dash:'dot'},showlegend:false});
+    }
+    Plotly.react('d23-scatter',tr,L({
+      xaxis:{title:'Hodge harmonische Masse ('+labels[li]+')',type:log?'log':'linear'},
+      yaxis:{title:'Faktentreue bei Zufalls-Steering (%)',range:[0,46]},
+      shapes:[{type:'line',x0:0.25,x1:0.25,y0:0,y1:46,
+        line:{color:COL.warn,width:1.6,dash:'dash'}}],
+      annotations:[{x:Math.log10(0.25),y:44,xref:'x',text:'Zufallsreferenz 0,25',
+        showarrow:false,font:{color:COL.warn,size:10},xanchor:'right'}],
+      margin:{l:58,r:22,t:26,b:54}
+    }),PCFG);
+    // spearman
+    const xs=d.map(r=>r[key]), ys=d.map(r=>r.pres);
+    const rank=a=>{const s=a.map((v,i)=>({v,i})).sort((p,q)=>p.v-q.v);
+      const r=new Array(a.length); s.forEach((o,j)=>r[o.i]=j+1); return r;};
+    const rx=rank(xs), ry=rank(ys), n=xs.length;
+    let dsq=0; for(let i=0;i<n;i++) dsq+=(rx[i]-ry[i])**2;
+    const rho=1-6*dsq/(n*(n*n-1));
+    $('d23-out').innerHTML=
+      `Spearman ρ = <b style="color:${Math.abs(rho)>0.8?'#5ce68a':'#ff9f45'}">${fmt(rho,2)}</b> `+
+      `<span class="tiny">(bei L = 2: ρ = −0,90, exakter einseitiger Permutationstest p = 0,014)</span><br>`+
+      `Spannweite der Masse: <b>${d.reduce((a,r)=>Math.min(a,r[key]),9)}</b> … <b>${d.reduce((a,r)=>Math.max(a,r[key]),0)}</b><br>`+
+      `<span class="tiny">Alle Zeilen teilen denselben Graphen (b₁ = 30 bei L = 2) — die Variation kommt nur aus den Schichtübergängen [[11]].</span>`;
+  }
+  function table(){
+    const tb=$('t-harm').querySelector('tbody'); tb.innerHTML='';
+    DATA.harmonic.forEach(r=>{
+      const tr=document.createElement('tr');
+      const c=r.cls==='robust'?'var(--ok)':'var(--h1)';
+      tr.innerHTML=`<td><b>${r.m}</b></td>
+        <td class="num">${r.L2}</td><td class="num">${r.L4}</td>
+        <td class="num">${r.L8}</td><td class="num">${r.L16===null?'–':r.L16}</td>
+        <td class="num" style="color:${c};font-weight:700">${fmt(r.pres,1)} %</td>
+        <td><span class="pill ${r.cls==='robust'?'p-h0':'p-h1'}">${r.cls}</span></td>`;
+      tb.appendChild(tr);
+    });
+  }
+  function ranks(){
+    const cv=$('c-rank');
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h);
+    const d=[...DATA.harmonic];
+    const byMass=[...d].sort((a,b)=>a.L2-b.L2);
+    const byPres=[...d].sort((a,b)=>b.pres-a.pres);
+    const lx=w*0.24, rx=w*0.76, top=46, step=(h-top-34)/(d.length-1);
+    txt(ctx,'Rang nach harmonischer Masse',lx,24,COL.harm,11,'center','700');
+    txt(ctx,'Rang nach Robustheit',rx,24,COL.ok,11,'center','700');
+    byMass.forEach((r,i)=>{
+      const j=byPres.findIndex(q=>q.m===r.m);
+      const y1=top+i*step, y2=top+j*step;
+      const match=i===j;
+      ctx.strokeStyle=match?'rgba(92,230,138,.7)':'rgba(255,159,69,.75)';
+      ctx.lineWidth=match?2.2:2.6;
+      ctx.beginPath();ctx.moveTo(lx+74,y1);
+      ctx.bezierCurveTo((lx+rx)/2,y1,(lx+rx)/2,y2,rx-74,y2);ctx.stroke();
+      txt(ctx,(i+1)+'. '+r.m,lx+66,y1,COL.dim,10.5,'right');
+      dot(ctx,lx+72,y1,4,COL.harm);
+    });
+    byPres.forEach((r,j)=>{
+      const y=top+j*step;
+      txt(ctx,(j+1)+'. '+r.m,rx-66,y,COL.dim,10.5,'left');
+      dot(ctx,rx-72,y,4,COL.ok);
+    });
+    let inv=0;
+    byMass.forEach((r,i)=>{if(byPres.findIndex(q=>q.m===r.m)!==i)inv++;});
+    $('d24-out').innerHTML=
+      `Nur <b style="color:var(--warn)">${inv}</b> Positionen weichen ab `+
+      `(Qwen-2.5-7B ↔ Llama-3-8B, 34,3 % vs. 36,0 % — innerhalb des Stichprobenfehlers).<br>`+
+      `<span class="tiny">Grün = exakt gleicher Rang, orange = Vertauschung.</span>`;
+  }
+  // permutation test
+  let permDone=false;
+  function permutation(run){
+    const d=DATA.harmonic;
+    const xs=d.map(r=>r.L2), ys=d.map(r=>r.pres);
+    const rank=a=>{const s=a.map((v,i)=>({v,i})).sort((p,q)=>p.v-q.v);
+      const r=new Array(a.length); s.forEach((o,j)=>r[o.i]=j+1); return r;};
+    const rx=rank(xs), ryTrue=rank(ys), n=6;
+    function rho(perm){
+      let dsq=0; for(let i=0;i<n;i++) dsq+=(rx[i]-perm[i])**2;
+      return 1-6*dsq/(n*(n*n-1));
+    }
+    const obs=rho(ryTrue);
+    const all=[]; const base=[1,2,3,4,5,6];
+    function permute(arr,k){
+      if(k===arr.length){all.push(rho(arr.slice()));return;}
+      for(let i=k;i<arr.length;i++){
+        [arr[k],arr[i]]=[arr[i],arr[k]];
+        permute(arr,k+1);
+        [arr[k],arr[i]]=[arr[i],arr[k]];
+      }
+    }
+    if(run){ permute(base,0); permDone=true; }
+    const bins={}; all.forEach(v=>{const b=fmt(v,2); bins[b]=(bins[b]||0)+1;});
+    const xsB=Object.keys(bins).map(Number).sort((a,b)=>a-b);
+    const ysB=xsB.map(v=>bins[fmt(v,2)]);
+    const extreme=all.filter(v=>Math.abs(v)>=Math.abs(obs)-1e-9).length;
+    Plotly.react('d25-perm', run?[{
+      x:xsB,y:ysB,type:'bar',
+      marker:{color:xsB.map(v=>Math.abs(v)>=Math.abs(obs)-1e-9?COL.h1:'rgba(154,164,196,.45)')},
+      hovertemplate:'ρ = %{x}<br>%{y} Permutationen<extra></extra>'
+    }]:[],L({
+      xaxis:{title:'Spearman ρ'},yaxis:{title:'Anzahl'},showlegend:false,
+      margin:{l:46,r:12,t:12,b:42},
+      shapes:run?[{type:'line',x0:obs,x1:obs,y0:0,y1:Math.max(...ysB),
+        line:{color:COL.harm,width:2,dash:'dash'}}]:[]
+    }),PCFG);
+    if(run){
+      $('d25-out').innerHTML=
+        `beobachtet: ρ = <b>${fmt(obs,2)}</b><br>`+
+        `von 720 Permutationen sind <b style="color:var(--h1)">${extreme}</b> mindestens so extrem<br>`+
+        `p = ${extreme}/720 = <b style="color:var(--ok)">${fmt(extreme/720,3)}</b> `+
+        `<span class="tiny">(Paper: exakt einseitig p = 0,014)</span>`;
+    } else {
+      $('d25-out').innerHTML=`<span class="tiny">Klick den Button, um alle 720 Reihenfolgen durchzurechnen.</span>`;
+    }
+  }
+  function kPlot(){
+    const arch=Object.keys(DATA.kScale.k8);
+    Plotly.react('d26-k',[
+      {x:arch,y:arch.map(a=>DATA.kScale.k8[a]),name:'k = 8',type:'bar',marker:{color:COL.h0}},
+      {x:arch,y:arch.map(a=>DATA.kScale.k64[a]),name:'k = 64',type:'bar',marker:{color:COL.acc}},
+      {x:arch,y:arch.map(a=>DATA.kScale.k128[a]),name:'k = 128',type:'bar',marker:{color:COL.harm}},
+      {x:arch,y:arch.map(a=>Math.max(DATA.kScale.coex[a],1e-6)),name:'koexakt (Dreiecke gefüllt)',
+       type:'bar',marker:{color:COL.h1}}
+    ],L({barmode:'group',
+      yaxis:{title:'harmonische / koexakte Masse',type:'log',
+        tickvals:[1e-5,1e-4,1e-3,1e-2,1e-1],ticktext:['10⁻⁵','10⁻⁴','10⁻³','10⁻²','10⁻¹']},
+      xaxis:{tickangle:-26},
+      shapes:[{type:'line',x0:-0.5,x1:5.5,y0:0.25,y1:0.25,line:{color:COL.warn,width:1.6,dash:'dash'}},
+              {type:'rect',x0:-0.5,x1:2.5,y0:1e-6,y1:1,fillcolor:'rgba(92,230,138,.06)',line:{width:0}}],
+      annotations:[{x:1,y:Math.log10(0.4),text:'robust',showarrow:false,font:{color:COL.ok,size:12}},
+                   {x:4,y:Math.log10(0.4),text:'fragil',showarrow:false,font:{color:COL.h1,size:12}}],
+      legend:{orientation:'h',y:1.16,font:{size:10}},margin:{l:62,r:18,t:46,b:76}
+    }),PCFG);
+  }
+  function hyper(){
+    const cv=$('c-hyper');
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h);
+    const cx=w/2, cy=h/2, BR=Math.min(w,h)*0.30, R=Math.min(w,h)*0.115;
+    const facts=6, pp=5;
+    const pts=[];
+    for(let f=0;f<facts;f++){
+      const fa=-Math.PI/2+f/facts*TAU;
+      const fx=cx+Math.cos(fa)*BR, fy=cy+Math.sin(fa)*BR;
+      const arr=[];
+      for(let p=0;p<pp;p++){
+        const a=p/pp*TAU+fa;
+        arr.push({x:fx+Math.cos(a)*R,y:fy+Math.sin(a)*R});
+      }
+      pts.push(arr);
+      ctx.strokeStyle='rgba(73,210,240,.55)';ctx.lineWidth=1.6;
+      ctx.beginPath();arr.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+      ctx.closePath();ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(255,200,87,.85)';ctx.lineWidth=2.4;ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    for(let f=0;f<facts;f++){
+      const p=pts[f][0];
+      f===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);
+    }
+    ctx.closePath();ctx.stroke();ctx.setLineDash([]);
+    pts.forEach((arr,f)=>{
+      arr.forEach((p,i)=>dot(ctx,p.x,p.y,i===0?6:4,i===0?COL.harm:COL.h0,i===0?10:6));
+    });
+    txt(ctx,'blau: Fakt-Ringe (60 Stück)  ·  gelb gestrichelt: Relations-Ring',w/2,16,COL.faint,10.5,'center');
+    $('d27-out').innerHTML=
+      `Hier gezeigt: 6 Fakten × 5 Paraphrasen (im Paper 60 × 5).<br>`+
+      `dim H¹ = <b style="color:var(--h1)">66</b> = 60 Fakt-Ringe + 6 Relations-Zyklen<br>`+
+      `Hodge-harmonischer Anteil bei Zufallskoketten: <b>18,4 %</b> = b₁/|E| = 66/360 [[11]]`;
+  }
+  ['d23-l','d23-log','d23-fit'].forEach(id=>$(id).addEventListener('input',scatter));
+  $('d25-run').addEventListener('click',()=>permutation(true));
+  $('d25-reset').addEventListener('click',()=>permutation(false));
+  window.__d23=()=>{scatter();table();ranks();permutation(false);kPlot();hyper();};
+})();
+
+/* ============================================================
+   18 — DEMO 28/29/30: STEERING
+   ============================================================ */
+(function(){
+  const cv=$('c-steer');
+  const meths=['H⁰-entfernt (Garbe)','H¹-Dims (Garbe PCA)','Full style (CAA)','Zufallsrichtung'];
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h);
+    const ang=+$('d28-d').value*DEG, al=+$('d28-a').value/100, meth=+$('d28-m').value;
+    $('d28-dV').textContent=$('d28-d').value+'°';
+    $('d28-aV').textContent=fmt(al);
+    $('d28-mV').textContent=meths[meth];
+    const cx=w*0.45, cy=h*0.58, S=Math.min(w,h)*0.33;
+    // H0 band is horizontal strip (content directions)
+    const bandH=S*0.46;
+    ctx.fillStyle='rgba(92,230,138,.10)';
+    ctx.fillRect(20,cy-bandH,w-40,bandH*2);
+    ctx.strokeStyle='rgba(92,230,138,.5)';ctx.lineWidth=1.4;ctx.setLineDash([6,4]);
+    ctx.strokeRect(20,cy-bandH,w-40,bandH*2);ctx.setLineDash([]);
+    txt(ctx,'H⁰ — Inhaltsraum (Fakt überlebt hier)',28,cy-bandH+14,COL.ok,11,'left','700');
+    // axes labels
+    txt(ctx,'H¹-Richtung →',w-28,cy+bandH+22,COL.h1,10.5,'right');
+    // base point
+    dot(ctx,cx,cy,8,COL.acc,14);
+    txt(ctx,'h (Aktivierung)',cx+14,cy+16,COL.acc,11,'left','700');
+    // raw style direction
+    let dx=Math.cos(ang), dy=-Math.sin(ang);
+    let vx=dx, vy=dy;
+    if(meth===0){ vy=dy; vx=dx; // H0-removed: zero the H0 (vertical-safe) part => keep only component along H1 axis
+      // H0 = horizontal band means "content" lives in vertical offset? define: H0 = y-direction small
+      // Model: H0 subspace = x-axis (horizontal). Removing H0 => keep y component only.
+      vx=0; vy=dy; }
+    else if(meth===1){ vx=0; vy=dy*1.12; }
+    else if(meth===2){ vx=dx; vy=dy; }
+    else { const g=gaussFactory(Math.round(ang*100)); vx=g()*0.8; vy=g()*0.8;
+      const n=Math.hypot(vx,vy)||1; vx/=n; vy/=n; }
+    const n=Math.hypot(vx,vy)||1; vx/=n; vy/=n;
+    // raw arrow
+    ctx.globalAlpha=.42;
+    arrow(ctx,cx,cy,cx+dx*S*0.9,cy+dy*S*0.9,'rgba(154,164,196,.9)',2,8);
+    ctx.globalAlpha=1;
+    txt(ctx,'Δ (roh)',cx+dx*S*0.95,cy+dy*S*0.95,COL.faint,10.5,'left');
+    // applied
+    const px=cx+vx*S*al*3.0, py=cy+vy*S*al*3.0;
+    arrow(ctx,cx,cy,px,py,meth===3?COL.h1:COL.h0,3.2,11);
+    dot(ctx,px,py,8,meth===3?COL.h1:COL.h0,14);
+    // content damage = horizontal displacement (inside H0)
+    const damage=Math.abs(px-cx)/S;
+    const inside=Math.abs(py-cy)<bandH;
+    ctx.strokeStyle='rgba(255,159,69,.8)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,cy);ctx.stroke();ctx.setLineDash([]);
+    txt(ctx,'H⁰-Störung',(cx+px)/2,cy-12,COL.warn,10.5,'center');
+    const fact=clamp(45*Math.exp(-damage*2.6),0,50);
+    const style=clamp(100*(1-Math.exp(-al*9)),0,100);
+    $('d28-out').innerHTML=
+      `H⁰-Störung = <b style="color:var(--warn)">${fmt(damage,3)}</b><br>`+
+      `→ geschätzte Faktentreue <b style="color:${fact>25?'#5ce68a':fact>12?'#ff9f45':'#ff6b8a'}">${fmt(fact,1)} %</b><br>`+
+      `→ Stiländerung <b>${fmt(style,0)} %</b><br>`+
+      `<span class="tiny">Ziel: Stil ändern (viel Bewegung), H⁰ nicht anfassen (Pfeil bleibt senkrecht).</span>`;
+  }
+  ['d28-d','d28-a','d28-m'].forEach(id=>$(id).addEventListener('input',draw));
+
+  let cur='Llama-2-7B';
+  function steerPlot(){
+    const d=DATA.steer[cur];
+    Plotly.react('d29-plot',[{
+      x:d.map(r=>r.v),y:d.map(r=>r.n),type:'bar',orientation:'h',
+      error_x:{type:'data',symmetric:false,array:d.map(r=>r.hi-r.v),arrayminus:d.map(r=>r.v-r.lo),
+        color:'rgba(255,255,255,.5)',thickness:1.6,width:5},
+      marker:{color:d.map(r=>r.best?COL.ok:(r.n==='Zufall'?COL.h1:COL.acc)),
+        line:{color:'rgba(255,255,255,.18)',width:1}},
+      text:d.map(r=>fmt(r.v,1)+' %'),textposition:'outside',textfont:{color:'#e6eaf7',size:11.5},
+      hovertemplate:'%{y}<br>%{x:.1f} %<br>McNemar p = %{customdata}<extra></extra>',
+      customdata:d.map(r=>r.p)
+    }],L({
+      xaxis:{title:'Faktentreue bei α = 0,30 (%)',range:[0,52]},
+      yaxis:{automargin:true,autorange:'reversed'},
+      showlegend:false,margin:{l:180,r:60,t:16,b:50}
+    }),PCFG);
+    const best=d[0];
+    const rnd=d.find(r=>r.n==='Zufall');
+    $('d29-out').innerHTML=
+      `Beste Methode: <b style="color:var(--ok)">${best.n}</b> mit ${fmt(best.v,1)} %<br>`+
+      (rnd?`Zufall: <b style="color:${rnd.v<10?'#ff6b8a':'#ffc857'}">${fmt(rnd.v,1)} %</b> — `+
+        (rnd.v<10?'<span style="color:var(--h1)">Generierung kollabiert → fragile Architektur</span>'
+         :'<span style="color:var(--ok)">Zufall konkurrenzfähig → robuste Architektur</span>')
+        :'')+
+      `<br><span class="tiny">Bei α = 0,30 sättigt die Stiländerung bei 100 % für alle Methoden [[11]].</span>`;
+  }
+  $('d29-btns').addEventListener('click',e=>{
+    if(e.target.tagName!=='BUTTON')return;
+    [...$('d29-btns').children].forEach(b=>b.classList.remove('on'));
+    e.target.classList.add('on'); cur=e.target.dataset.m; steerPlot();
+  });
+  function sweep(){
+    const ai=+$('d30-a').value;
+    const name=ai===0?'Mistral-7B (robust)':'Llama-3-8B (intermediär)';
+    $('d30-aV').textContent=name;
+    const key=ai===0?'Mistral-7B':'Llama-3-8B';
+    const S=DATA.alphaSweep, A=S.alphas, d=S[key];
+    const xm=+$('d30-x').value/100;
+    $('d30-xV').textContent=fmt(xm);
+    Plotly.react('d30-sweep',[
+      {x:A,y:d.h0rm,name:'H⁰-entfernt (Garbe)',mode:'lines+markers',
+       line:{color:COL.h0,width:3,shape:'spline'},marker:{size:8}},
+      {x:A,y:d.rnd,name:'Zufall',mode:'lines+markers',
+       line:{color:COL.h1,width:2.6,shape:'spline',dash:'dot'},marker:{size:7}},
+      {x:A,y:d.style,name:'Stiländerung',mode:'lines',yaxis:'y2',
+       line:{color:'rgba(255,200,87,.6)',width:2,dash:'dash'}}
+    ],L({
+      xaxis:{title:'α'},
+      yaxis:{title:'Faktentreue (%)',range:[10,50]},
+      yaxis2:{title:'Stil (%)',overlaying:'y',side:'right',range:[0,110],
+        gridcolor:'rgba(0,0,0,0)',tickfont:{color:'rgba(255,200,87,.8)'}},
+      shapes:[{type:'rect',x0:0.10,x1:0.15,y0:10,y1:50,
+        fillcolor:'rgba(92,230,138,.09)',line:{width:0}},
+        {type:'line',x0:xm,x1:xm,y0:10,y1:50,line:{color:COL.acc,width:2,dash:'dash'}}],
+      annotations:[{x:0.125,y:48,text:'empfohlener Bereich',showarrow:false,
+        font:{color:COL.ok,size:10.5}}],
+      legend:{orientation:'h',y:1.16,font:{size:10}},margin:{l:52,r:52,t:46,b:46}
+    }),PCFG);
+    function at(arr){
+      if(xm<=A[0])return arr[0];
+      for(let i=0;i<A.length-1;i++) if(xm>=A[i]&&xm<=A[i+1])
+        return lerp(arr[i],arr[i+1],(xm-A[i])/(A[i+1]-A[i]));
+      return arr[arr.length-1];
+    }
+    const a=at(d.h0rm), b=at(d.rnd);
+    $('d30-out').innerHTML=
+      `bei α = ${fmt(xm)}: Garbe <b style="color:var(--h0)">${fmt(a,1)} %</b> vs. Zufall <b style="color:var(--h1)">${fmt(b,1)} %</b><br>`+
+      `Vorsprung: <b style="color:${a-b>0?'#5ce68a':'#ff9f45'}">${a-b>0?'+':''}${fmt(a-b,1)} pp</b><br>`+
+      `<span class="tiny">Im Bereich α ∈ [0,10 , 0,15] gewinnt die Garbe auf beiden Architekturen (+1,0–2,0 pp) [[11]].</span>`;
+  }
+  ['d30-a','d30-x'].forEach(id=>$(id).addEventListener('input',sweep));
+
+  function tree(){
+    const cv2=$('c-tree');
+    const {ctx,w,h}=setupCanvas(cv2);
+    clearC(ctx,w,h);
+    const box=(x,y,bw,bh,t1,t2,col)=>{
+      ctx.fillStyle='rgba(0,0,0,.35)';
+      roundRect(ctx,x,y,bw,bh,10);ctx.fill();
+      ctx.strokeStyle=col;ctx.lineWidth=1.8;roundRect(ctx,x,y,bw,bh,10);ctx.stroke();
+      txt(ctx,t1,x+bw/2,y+bh/2-(t2?8:0),col,11.5,'center','700');
+      if(t2) txt(ctx,t2,x+bw/2,y+bh/2+9,COL.faint,10,'center');
+    };
+    const link=(x1,y1,x2,y2,lbl,col)=>{
+      ctx.strokeStyle=col||'rgba(140,160,230,.4)';ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.moveTo(x1,y1);
+      ctx.bezierCurveTo(x1,(y1+y2)/2,x2,(y1+y2)/2,x2,y2);ctx.stroke();
+      if(lbl) txt(ctx,lbl,(x1+x2)/2,(y1+y2)/2,col||COL.faint,10,'center','700');
+    };
+    const BW=Math.min(190,w*0.28), BH=44;
+    const c=w/2;
+    box(c-BW/2,14,BW,BH,'200+ MRPC-Paare','→ PCA-Restriktionsabbildung P',COL.acc);
+    box(c-BW/2,92,BW,BH,'1× Zufalls-Steering-Test','α = 0,3 · Faktentreue messen',COL.harm);
+    link(c,14+BH,c,92,'',null);
+    const lx=w*0.24, rx=w*0.76;
+    box(lx-BW/2,180,BW,BH,'Faktentreue < 15 %','FRAGIL (z. B. Llama-2-7B)',COL.h1);
+    box(rx-BW/2,180,BW,BH,'Faktentreue > 30 %','ROBUST (z. B. Mistral-7B)',COL.ok);
+    link(c,92+BH,lx,180,'ja',COL.h1);
+    link(c,92+BH,rx,180,'nein',COL.ok);
+    box(lx-BW/2,262,BW,BH,'kontrastive Garbe, α ≈ 0,30','31 % statt 4,2 %',COL.h1);
+    box(rx-BW/2,262,BW,BH,'CCA/H⁰-entfernt, α ∈ [0,10; 0,15]','+1–2 pp über Zufall',COL.ok);
+    link(lx,180+BH,lx,262,'',COL.h1);
+    link(rx,180+BH,rx,262,'',COL.ok);
+  }
+  window.__d28=()=>{draw();steerPlot();sweep();tree();};
+})();
+
+/* ============================================================
+   19 — DEMO 31: PIPELINE + QUIZ
+   ============================================================ */
+(function(){
+  const cv=$('c-pipe');
+  const STAGES=[
+    {t:'1 · Paraphrasen',d:'200 MRPC-Paare + CounterFact-Fakten. Jedes Paar behauptet: gleiche Bedeutung, andere Worte.',c:COL.acc},
+    {t:'2 · Hidden States',d:'Mean-Pooling bei Layer ≈ 2L/3. Ein Satz → ein Vektor in ℝᵈ (d = 768 … 4096).',c:COL.acc},
+    {t:'3 · Graph',d:'Knoten = Sätze, Kanten = Paraphrasen-Paare. Optional Ringe, Pfade, Mehrschicht-Gitter.',c:COL.h0},
+    {t:'4 · Garbe + P',d:'Jeder Knoten trägt ℝᵈ, jede Kante ℝᵏ (k = 128). Restriktion Pᵀ projiziert hinein.',c:COL.h0},
+    {t:'5 · δ⁰ & L_F',d:'(δ⁰h)ₑ = Pᵀ(h_b − h_a). L_F = PᵀC_W P, nur k×k groß — konstante Kosten über alle Modellgrößen.',c:COL.acc},
+    {t:'6a · H⁰',d:'Untere 20 Eigenvektoren = Inhaltsraum. +17,1 pp über LEACE bei voller Breite.',c:COL.h0},
+    {t:'6b · H¹',d:'Obere 20 Eigenvektoren = Einflussrichtungen. Ablation wirkt 5,6–26,5× stärker.',c:COL.h1},
+    {t:'6c · harmonisch',d:'Zyklen aus der Tiefe: b₁ = N(L−1). Masse 10⁻⁴ … 0,08 ↔ Steering-Fragilität, ρ = 0,90.',c:COL.harm},
+    {t:'7 · Anwendung',d:'Steering, das H⁰ meidet. Modell-Screening vor dem Steering-Sweep. Null Trainingsschritte.',c:COL.ok}
+  ];
+  let sel=0;
+  let boxes=[];
+  function draw(){
+    const {ctx,w,h}=setupCanvas(cv);
+    clearC(ctx,w,h); gridC(ctx,w,h,40);
+    boxes=[];
+    const cols = w<720?2:3;
+    const rows = Math.ceil(STAGES.length/cols);
+    const mx=18, my=16;
+    const BW=(w-mx*(cols+1))/cols;
+    const BH=(h-my*(rows+1))/rows;
+    STAGES.forEach((s,i)=>{
+      const r=Math.floor(i/cols), c=i%cols;
+      const x=mx+c*(BW+mx), y=my+r*(BH+my);
+      boxes.push({x,y,w:BW,h:BH,i});
+      const on=i===sel;
+      ctx.fillStyle=on?'rgba(169,139,255,.17)':'rgba(0,0,0,.33)';
+      roundRect(ctx,x,y,BW,BH,12);ctx.fill();
+      ctx.strokeStyle=on?s.c:'rgba(140,160,230,.22)';ctx.lineWidth=on?2.4:1.3;
+      if(on){ctx.shadowBlur=16;ctx.shadowColor=s.c;}
+      roundRect(ctx,x,y,BW,BH,12);ctx.stroke();ctx.shadowBlur=0;
+      txt(ctx,s.t,x+BW/2,y+BH/2,on?'#fff':s.c,BW<170?11:12.5,'center','800');
+      // connector
+      if(i<STAGES.length-1 && c<cols-1){
+        ctx.fillStyle='rgba(169,139,255,.55)';
+        txt(ctx,'▸',x+BW+mx/2,y+BH/2,'rgba(169,139,255,.7)',13,'center','800');
+      }
+    });
+    $('d31-out').innerHTML=`<b style="color:${STAGES[sel].c}">${STAGES[sel].t}</b><br>${STAGES[sel].d}`;
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    boxes.forEach(b=>{ if(mx>=b.x&&mx<=b.x+b.w&&my>=b.y&&my<=b.y+b.h){sel=b.i;draw();} });
+  });
+  cv.style.cursor='pointer';
+  window.__d31=draw;
+
+  /* QUIZ */
+  const QZ=[
+    {q:'Was genau ist H⁰ im Paper?',
+     a:['Der Kern des Garben-Laplace — Richtungen, auf denen alle Paraphrasen eines Fakts übereinstimmen.',
+        'Die Richtungen mit der größten Variabilität zwischen Paraphrasen.',
+        'Die ersten 20 Hauptkomponenten der Aktivierungen.'],
+     ok:0,
+     x:'Richtig. ker L_F = ker δ⁰ — genau die Richtungen ohne Uneinigkeit. Mit Identitäts-P ist das der untere Eigenraum von C_W selbst [[11]].'},
+    {q:'Warum bringt der Ring (b₁ = 1) gegenüber dem Pfad (b₁ = 0) kaum etwas?',
+     a:['Weil Ringe numerisch instabil sind.',
+        'Weil die schließende Kantendifferenz die Summe der Pfaddifferenzen ist — sie fügt keinen neuen Constraint für exakte globale Schnitte hinzu.',
+        'Weil der Ring weniger Kanten hat.'],
+     ok:1,
+     x:'Genau. +0,5 pp, auf keiner der acht Architekturen signifikant. Zyklen wirken erst im harmonischen Unterraum [[11]].'},
+    {q:'Was ist der Zweck der varianz-gematchten Kontrolle bei der H¹-Ablation?',
+     a:['Sie beschleunigt den Forward-Pass.',
+        'Sie stellt sicher, dass die gemessene Wirkung nicht bloß daher kommt, dass man variablere Koordinaten löscht.',
+        'Sie ersetzt den Garben-Laplace.'],
+     ok:1,
+     x:'Korrekt — und das Paper gibt offen zu, dass das Matching nur teilweise gelingt (0,13–0,53 der Gesamtvariabilität) [[11]].'},
+    {q:'Woher kommt die Variation der harmonischen Masse in Tabelle 1?',
+     a:['Aus unterschied
+    {q:'Woher kommt die Variation der harmonischen Masse in Tabelle 1?',
+     a:['Aus unterschiedlichen Graphen pro Architektur.',
+        'Aus den Schichtübergängen des Modells — alle Zeilen teilen denselben Graphen mit b₁ = 30 bei L = 2.',
+        'Aus der unterschiedlichen Anzahl von Paraphrasen.'],
+     ok:1,
+     x:'Genau. Gleiche 30 MRPC-Paare, gleiches k = 8, gleiche Topologie — nur die Procrustes-Transporte R zwischen den Schichten unterscheiden sich [[11]].'},
+    {q:'Was passiert, wenn man die Quadrate des Gitters mit Dreiecken füllt?',
+     a:['b₁ wird 0, die harmonische Masse exakt null — aber der koexakte Anteil reproduziert dieselbe Architektur-Aufteilung.',
+        'Die harmonische Masse verdoppelt sich.',
+        'Das Verfahren bricht numerisch zusammen.'],
+     ok:0,
+     x:'Richtig. Robuste Architekturen bleiben unter 3 %, fragile zwischen 5 % und 20 % (Tabelle 7) [[11]].'},
+    {q:'Warum ist m = 128 = k eine schlechte Wahl?',
+     a:['Weil die Rechnung zu lange dauert.',
+        'Weil dann kein Eigenvektor oberhalb des Spektral-Gaps übrig bleibt — es findet keine Kern-Selektion mehr statt.',
+        'Weil k maximal 20 sein darf.'],
+     ok:1,
+     x:'Korrekt — die Genauigkeit kollabiert auf 35–53 %. Das Plateau liegt bei m ∈ [20, 80] (Tabelle 19) [[11]].'},
+    {q:'Was zeigt die Dormancy-Gegenprobe?',
+     a:['Dass H¹ der am wenigsten „schlafende" Unterraum ist (2,5–6,6×) und seine Ablation den Faktenabruf im generierten Text zerstört.',
+        'Dass H¹ gar keinen Effekt hat.',
+        'Dass die Subspace-Patching-Illusion unvermeidbar ist.'],
+     ok:0,
+     x:'Richtig. Mistral-7B: 46,7 % → 0,0 % unter H¹-Ablation, aber 47,0 % unter gematchter Zufalls-Ablation (Tabelle 14) [[11]].'},
+    {q:'Welche praktische Empfehlung gibt das Paper für robuste Architekturen?',
+     a:['α ≈ 0,30 verwenden.',
+        'α ∈ [0,10 ; 0,15] verwenden — dort schlägt die Garbe den Zufall um 1–2 pp.',
+        'Gar nicht steuern.'],
+     ok:1,
+     x:'Korrekt. Bei α = 0,30 wird Zufall konkurrenzfähig, weil die konzentrierte H¹-Wirkung bei großer Amplitude mehr zerstört als nützt [[11]].'}
+  ];
+  function buildQuiz(){
+    const c=$('quiz'); c.innerHTML='';
+    let score=0, answered=0;
+    const scoreEl=document.createElement('div');
+    scoreEl.className='readout';
+    scoreEl.innerHTML='<b>0 / '+QZ.length+'</b> beantwortet';
+    QZ.forEach((q,qi)=>{
+      const d=document.createElement('div');
+      d.style.cssText='margin:16px 0;padding:14px;background:rgba(0,0,0,.25);border-radius:12px;border:1px solid var(--stroke)';
+      const h=document.createElement('div');
+      h.style.cssText='font-weight:700;margin-bottom:9px;font-size:14px;color:#eef1fb';
+      h.textContent=(qi+1)+'. '+q.q;
+      d.appendChild(h);
+      const expl=document.createElement('div');
+      expl.className='tiny'; expl.style.cssText='margin-top:9px;display:none;padding:9px;border-radius:8px';
+      q.a.forEach((a,ai)=>{
+        const b=document.createElement('button');
+        b.className='sm'; b.textContent=a;
+        b.style.cssText='display:block;width:100%;text-align:left;margin:5px 0;white-space:normal;line-height:1.5';
+        b.addEventListener('click',()=>{
+          if(d.dataset.done)return;
+          d.dataset.done='1'; answered++;
+          [...d.querySelectorAll('button')].forEach((bb,bi)=>{
+            if(bi===q.ok){bb.style.background='rgba(92,230,138,.22)';bb.style.borderColor='var(--ok)';}
+            else if(bi===ai){bb.style.background='rgba(255,107,138,.2)';bb.style.borderColor='var(--h1)';}
+            bb.style.opacity=bi===q.ok||bi===ai?'1':'.45';
+          });
+          if(ai===q.ok)score++;
+          expl.style.display='block';
+          expl.style.background=ai===q.ok?'rgba(92,230,138,.09)':'rgba(255,159,69,.09)';
+          expl.innerHTML=(ai===q.ok?'<b style="color:var(--ok)">✓ </b>':'<b style="color:var(--warn)">→ </b>')+q.x;
+          scoreEl.innerHTML=`<b style="color:${score/Math.max(1,answered)>0.7?'#5ce68a':'#ffc857'}">${score} / ${answered}</b> richtig `+
+            (answered===QZ.length?(score>=6?'— <b style="color:var(--ok)">Du hast das Paper verstanden. 🎉</b>':'— scroll nochmal hoch und spiel mit den Reglern.'):'');
+        });
+        d.appendChild(b);
+      });
+      d.appendChild(expl);
+      c.appendChild(d);
+    });
+    c.appendChild(scoreEl);
+  }
+  buildQuiz();
+})();
+
+/* ============================================================
+   20 — SCROLL / REVEAL / NAV
+   ============================================================ */
+(function(){
+  // mark sections for reveal
+  document.querySelectorAll('section > .card, section > .grid2, section > .grid3, section > .grid-s, section > .note, section > .eq, section > .statgrid')
+    .forEach(el=>el.classList.add('reveal'));
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:0.06});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  const secs=[...document.querySelectorAll('section')];
+  const links=[...document.querySelectorAll('#navlinks a')];
+  function onScroll(){
+    const st=window.scrollY||document.documentElement.scrollTop;
+    const dh=document.documentElement.scrollHeight-window.innerHeight;
+    $('progressbar').style.width=(100*st/Math.max(1,dh))+'%';
+    let cur=secs[0];
+    secs.forEach(s=>{ if(s.getBoundingClientRect().top<=140) cur=s; });
+    links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur.id));
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+
+/* ============================================================
+   21 — BOOT + RESIZE
+   ============================================================ */
+function boot(){
+  renderAllTex();
+  ['__d1','__d2','__d3','__d4','__d5','__d6','__d7','__d8','__d9','__d10',
+   '__d15','__d20','__d21','__d22','__d23','__d28','__d31'].forEach(k=>{
+    try{ if(window[k]) window[k](); }catch(e){ console.warn(k,e); }
+  });
+}
+let rt;
+window.addEventListener('resize',()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>{
+    ['__d2','__d3','__d4','__d5','__d6','__d7','__d8','__d9','__d15',
+     '__d20','__d21','__d22','__d23','__d28','__d31'].forEach(k=>{
+      try{ if(window[k]) window[k](); }catch(e){}
+    });
+  },180);
+});
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot);
+else boot();
+// second pass once webfonts/plotly settle
+window.addEventListener('load',()=>setTimeout(boot,120));
+</script>
+
+</body>
+</html>
