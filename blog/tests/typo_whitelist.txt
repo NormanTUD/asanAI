@@ -555,3 +555,5 @@ iii vii
 cueva las manos scuola atene thaumazein ideengeschichte unpuzzled
 # interior / phenomenology (human_mind.php)
 dasein schmitz uncommanded
+# t-test / "Student" at the Guinness brewery (statistics_i.php)
+gosset sealy biometrika metron
