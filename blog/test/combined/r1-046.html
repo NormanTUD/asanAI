@@ -50,7 +50,7 @@ section:first-of-type{border-top:none}
 .note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
 .note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
 .note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
-.note e, .note b{color:var(--txt)}
+.note b{color:var(--txt)}
 .note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
 .note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
 .who{display:flex;gap:10px;align-items:flex-start;margin:12px 0}
@@ -223,7 +223,7 @@ footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;co
       <h3>Entwirrung (B) schärft das entropische Optimum (A)</h3>
       <span class="tg">Fusion</span>
     </div>
-    <p>Zwei verschlungene Klassen. Der Regler <strong>„Tiefe / Aktivierung"</strong> wendet einen <em>nicht-linearen</em> Bogen an (B): Je tiefer, desto mehr entwirren sich die Klassen und die <em>lineare Separierbarkeit LS₁</em> steigt. Die <strong>selbe</strong> Geometrie treibt gleichzeitig ein <em>Softmax-„Attention"</em>-Optimum über die beiden Klassen-Schwerpunkte (A): je besser getrennt, desto <em>schärfer</em> wird p (Entropie ↓) und desto <em>stärker</em> dämpft sich der Update über den Fisher-Term p(1−p) (↓). Der Temperatur-Regler τ steuert, wie „entschlossen" das Optimum ist.</p>
+    <p>Zwei verschlungene Klassen. Der Regler <strong>„Tiefe / Aktivierung"</strong> wendet einen <em>nicht-linearen</em> Bogen an (B): mehr Tiefe → entwirrtere Klassen → LS₁ steigt. Die <strong>selbe</strong> Geometrie schärft ein <em>Softmax-„Attention"</em>-Optimum (A) über die beiden Klassen-Schwerpunkte: p wird schärfer (Entropie ↓), der Fisher-Term p(1−p) (Selbst-Dämpfung) sinkt. τ steuert die Entschlossenheit des Optimums.</p>
 
     <div class="cwrap"><canvas id="viz" style="height:380px"></canvas></div>
     <div class="leg">
