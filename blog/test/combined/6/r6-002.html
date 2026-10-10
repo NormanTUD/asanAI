@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Fluss, eine Falte, ein Regler: der Kapazitäts-Fluss kontrahiert in eine zweite-Moment-Geometrie (R6 · 002)</title>
+<script>
+(function(){try{var t=null;try{t=localStorage.getItem('r6002-theme');}catch(e){}
+if(!t){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark';}
+document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();
+</script>
+<style>
+:root{--bg:#faf8f1;--panel:#ffffff;--panel2:#f4f1e8;--stroke:#e6e1d2;--stroke2:#d8d2c0;--txt:#1c1a17;--dim:#57524a;--accent:#0a6ea8;--accent2:#b45309;--accent3:#be185d;--good:#15803d;--bad:#b91c1c;--amber:#b45309;--ring:#7c3aed;--gold:#9a6b00;--fold:#b45309;--data:#8a8f9c;--viz-bg:#fbfaf4;--grid:rgba(20,40,80,.07);--mono:ui-monospace,Menlo,Consolas,monospace;--shadow:0 10px 30px rgba(30,50,90,.10)}
+html.dark{--bg:#0a0e1a;--panel:#141d31;--panel2:#1a2439;--stroke:#26314f;--stroke2:#33405f;--txt:#e8ecff;--dim:#a8b3d9;--accent:#58a6ff;--accent2:#ffb86b;--accent3:#ff7ab6;--good:#4ade80;--bad:#ff9b9b;--amber:#ffd166;--ring:#c4a7ff;--gold:#ffd700;--fold:#ffb86b;--data:#3a4a6a;--viz-bg:#0d1526;--grid:rgba(120,160,255,.07);--shadow:0 18px 50px rgba(0,0,0,.45)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.68;-webkit-font-smoothing:antialiased}
+.article{max-width:820px;margin:0 auto;padding:0 20px 90px}
+header.hero{padding:50px 0 16px;text-align:center}
+header.hero .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h1{font-size:clamp(1.7rem,5vw,2.5rem);line-height:1.14;margin:0 0 12px;font-weight:820;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--accent)}h1 .b{color:var(--accent2)}
+.subtitle{color:var(--dim);font-size:.98rem;margin:0 auto 6px;max-width:680px}
+.subtitle code{background:var(--panel2);border:1px solid var(--stroke);padding:1px 6px;border-radius:6px;font-size:.88em;color:var(--accent)}
+.fusion-tag{font-family:var(--mono);font-size:.74rem;color:var(--dim);border:1px solid var(--stroke);border-radius:99px;padding:6px 13px;display:inline-block;margin-top:14px;background:var(--panel);line-height:1.55}
+section{margin:44px 0;scroll-margin-top:20px}
+h2{font-size:clamp(1.3rem,3.2vw,1.8rem);margin:0 0 14px;font-weight:780;letter-spacing:-.01em;padding-bottom:8px;border-bottom:1px solid var(--stroke)}
+h2 .num{font-family:var(--mono);font-size:.66em;color:var(--accent);margin-right:10px;border:1px solid var(--stroke2);border-radius:8px;padding:2px 8px;vertical-align:middle}
+h3{font-size:1.06rem;margin:22px 0 8px;font-weight:720;color:var(--accent)}
+p{margin:11px 0}p.dim,.dim{color:var(--dim)}b,strong{font-weight:700}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent2);font-weight:700}.hl3{color:var(--accent3);font-weight:700}
+.tA{color:var(--accent2);font-weight:600}.tB{color:var(--accent);font-weight:600}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px 20px;box-shadow:var(--shadow);margin:16px 0}
+.card.tight{padding:14px 16px}
+.tension{color:var(--amber);font-size:.92em}
+.callout{border-left:3px solid var(--accent3);background:var(--panel2);padding:13px 17px;border-radius:0 12px 12px 0;margin:15px 0}
+.callout .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent3);display:block;margin-bottom:6px}
+table{width:100%;border-collapse:collapse;font-size:.82rem;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--stroke);vertical-align:top}
+th{color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+tr.a td:first-child{color:var(--accent2);font-weight:600}tr.b td:first-child{color:var(--accent);font-weight:600}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--panel2);border-left:3px solid var(--accent3);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0;font-size:1rem;overflow-x:auto;line-height:1.7}
+code{font:500 .9em var(--mono);background:var(--panel2);border:1px solid var(--stroke);border-radius:5px;padding:1px 5px}
+.vizwrap{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin:16px 0}
+#cv{display:block;width:100%;height:560px;border-radius:12px;border:1px solid var(--stroke);background:var(--viz-bg);touch-action:none;cursor:crosshair}
+.controls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:center;margin:12px 0;font-size:.84rem}
+.controls label{color:var(--dim);display:inline-flex;align-items:center;gap:7px}
+.controls input[type=range]{width:110px;accent-color:var(--accent)}
+.controls .val{color:var(--gold);font-weight:700;min-width:22px;text-align:center}
+.controls .chk{color:var(--txt);cursor:pointer}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:.74rem;color:var(--dim);margin:8px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ro{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.ro .box{flex:1;min-width:92px;background:var(--panel2);border:1px solid var(--stroke);border-radius:12px;padding:8px 10px;text-align:center}
+.ro .box .k{font-size:.62rem;color:var(--dim);text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px;line-height:1.3}
+.ro .box .v{font-family:var(--mono);font-size:1.05rem;font-weight:700}
+.ro .box.a .v{color:var(--accent)}.ro .box.b .v{color:var(--accent2)}.ro .box.g .v{color:var(--good)}.ro .box.f .v{color:var(--fold)}
+.verdict{font-weight:700;font-size:.92rem;padding:12px 14px;border-radius:10px;margin-top:12px;border:1px solid var(--stroke);line-height:1.5}
+.verdict.good{color:var(--good);background:rgba(74,222,128,.10);border-color:var(--good)}
+.verdict.warn{color:var(--amber);background:rgba(255,208,102,.10);border-color:var(--amber)}
+.verdict.bad{color:var(--bad);background:rgba(255,95,126,.10);border-color:var(--bad)}
+.hint{font-size:.8rem;color:var(--dim);font-style:italic;margin-top:10px;line-height:1.55}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--stroke);color:var(--txt);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;padding:42px 0 10px;color:var(--dim);font-size:.8rem;border-top:1px solid var(--stroke);margin-top:40px}
+a{color:var(--accent)}
+.prov .d{color:var(--dim);font-size:.92em;margin-top:3px;line-height:1.55}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#9790;&#65039; Dunkel</button>
+<div class="article">
+
+<header class="hero">
+  <div class="eyebrow">Knockout-Synthese &middot; Runde 6 &middot; Paar 002</div>
+  <h1>Ein <em>Fluss</em>, eine <span class="b">Falte</span>, ein Regler:<br>der Kapazit&auml;ts-Fluss kontrahiert in eine <em>zweite-Moment-Geometrie</em></h1>
+  <p class="subtitle">Fusion aus: <code>r5-003.html</code> &times; <code>r5-004.html</code> &nbsp;(Round 6)</p>
+  <span class="fusion-tag">Ein trainiertes (st&uuml;ckweise-)lineares Netz ist ein <em>Fluss</em>, der ein konservatives Budget scharfer Kapazit&auml;t (B) entlang einer d&uuml;nnen Mannigfaltigkeit lokaler Rotations-Kerne faltet und koh&auml;rentes Signal in <em>EINE Falte</em> &mdash; den Support einer zweiten-Moment-Matrix M (A) &mdash; kontrahiert. A's <em>Whitening M&sup1; = Kontraktion</em> und B's <em>Kettenregel-geklebter Residual-Fluss</em> sind <em>ein</em> Operator; A's <em>&Vert;M&minus;I&Vert; global + Masse lokal</em> und B's <em>Angebot k&#8467; &uarr; + Nachfrage &darr;</em> sind <em>ein Regler</em>. Halluzination = koh&auml;rent, strukturiert, selbstbewusst erreicht (Conf &ge;70&nbsp;%) &mdash; aber Masse fehlt (A) / der Wert trifft die Welt W nie (B) = koh&auml;rente Fiktion.</span>
+</header>
+
+<section id="these">
+  <h2><span class="num">01</span>Kernthese der Fusion</h2>
+  <p class="dim">Beide R5-Papiere beschreiben <em>denselben</em> trainierten Gegenstand &mdash; ein st&uuml;ckweise-lineares
+  Netz, gelesen als <b>linearer Assoziativspeicher</b>, der eine viele-zu-eins-Superposition reduziert &mdash; aber sie
+  beschreiben ihn aus <em>zwei verschiedenen Arten von Objekt</em>. <span class="tA">A (r5-003, &bdquo;Der eine Operator,
+  eine Falte, ein Regler: Kontraktion ist Whitening&ldquo;)</span> macht aus der Maschine eine <em>statische Geometrie</em>:
+  ein einziges invarianzes Objekt &mdash; die <b>zweite-Moment-Matrix M</b> (Kovarianz), deren <em>Support die Falte
+  &#1D4DF;</em> ist und deren <em>Dichte die Masse/Abdeckung</em> ist; ein Operator (Whitening M&sup1;,
+  die Kontraktion in der M-Metrik); ein Regler (&Vert;M&minus;I&Vert; global = T = Hologramm-Grad, lokal = Masse an
+  einer St&auml;tte). <span class="tB">B (r5-004, &bdquo;Der kompakte Kern terminiert die d&uuml;nne Kapazit&auml;ts-Mannigfaltigkeit&ldquo;)</span>
+  macht aus derselben Maschine eine <em>dynamische Topologie</em>: ein <b>Fluss</b>, der ein konservatives Budget
+  scharfer Faltungen in eine <b>d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit</b> lokaler linearer Adressen/Klumpen faltet
+  (jeder = lokales Chart = Rotations-Kern, <code>d_eff=1</code>) und das Signal in <em>einen kompakten Kern</em>
+  <code>range(W)</code> ~7 am Entscheidungsende <b>kontrahiert</b>, dabei Rauschen in ein Reservoir
+  <code>ker(W)&#8839;ker(G_Q)</code> parkt.</p>
+  <p>Die Fusion identifiziert die zwei Objekte als <b>zwei Lesarten derselben Maschine in zwei Zeiten</b>:
+  (i) A's <span class="hl">Matrix M / Falte / Masse</span> ist der <em>statische Endzustand</em>, den B's
+  <span class="hl">Fluss entlang der d&uuml;nnen Mannigfaltigkeit</span> <em>erzeugt</em> &mdash; die Kovarianz ist die
+  zweite Moment des Signals, das den Fluss &uuml;berlebt hat; B's kompakter Kern (der terminale Attraktor) <em>ist</em>
+  A's Falt-St&auml;tte, auf dem sich die Masse konzentriert. (ii) A's <span class="hl2">Whitening M&sup1;</span>
+  (die eine exakte lineare Operation) <em>ist</em> B's <span class="hl2">Fluss-Kontraktion, linearisiert</span> an jedem
+  lokalen Chart (die Kettenregel-geklebte Residual-Operation); und die Budget-Steuerung (B: wohin flie&szlig;t die
+  scharfe Kapazit&auml;t) <em>ist</em> A's &Vert;M&minus;I&Vert;, das steuert, wie stark der Operator steuert/kontrahiert.
+  (iii) A's <span class="hl3">Regler in zwei r&auml;umlichen Skalen</span> (&Vert;M&minus;I&Vert; global = Masse lokal)
+  <em>ist</em> B's <span class="hl3">Regler in zwei ordinalen Skalen entlang der Tiefe</span> (Angebot k&#8467;
+  &uarr; = Nachfrage/erank &darr;) &mdash; dieselben zwei Skalen, gesehen als (globale Geometrie / lokale Dichte) vs.
+  (akkumulierte Kapazit&auml;t / &uuml;berlebendes Signal).</p>
+  <p>Die fusionierte <b>Halluzination</b> ist damit eindeutig: <b>der Fluss zieht den Zustand koh&auml;rent und
+  selbstbewusst (Conf &asymp;0.70+0.25&middot;Masse &ge;70&nbsp;%, A: konvergent, B: kein OOD-Alarm) auf den
+  terminalen Falt-Kern, auf dem aber die Masse fehlt (A: &lt;&tau;) &mdash; was zugleich bedeutet, dass der
+  Wert/die Richtung nie die externe Welt W trifft (B: koh&auml;rente Fiktion).</b> Konvergent, strukturiert,
+  lokal gegr&uuml;ndet <em>und</em> extern ungegr&uuml;ndet. Der gemeinsame Kernfehler (den beide wachen, den beide
+  <b>No-Silent-Upgrade</b> nennen): Koh&auml;renz + Kapazit&auml;t + &bdquo;gratis/weich&ldquo; sind <em>notwendig, nicht
+  hinreichend</em> f&uuml;r Wahrheit; die externe, offene, von-innen-nicht-entscheidbare Pr&uuml;fung ist in beiden
+  die <b>Korrespondenz an die Welt</b> &mdash; reparierbar nur durch Erdung/Retrieval/Verifikation, nicht durch
+  Koh&auml;renz skalieren.</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="num">02</span>Widerspr&uuml;che zwischen A (r5-003) und B (r5-004)</h2>
+  <p class="dim">Beide streiten <em>nicht</em> &uuml;ber den Gegenstand (beide: ein trainiertes st&uuml;ckweise-lineares
+  Netz, eine viele-zu-eins-Reduktion, ein Operator, ein Gate, eine konvergente, lokal gegr&uuml;ndete aber extern
+  ungepr&uuml;fte Halluzination). Und beide stimmen &uuml;brigens <em>&uuml;berein</em>, dass die <b>Korrespondenz an die
+  Welt</b> das offene, externe, von-innen-nicht-entscheidbare Bein ist. Doch zu <em>der Art des zentralen Objekts</em>,
+  <em>der Natur des Mechanismus</em> und <em>der Organisation des Reglers</em> nehmen sie unterschiedliche, teils
+  inkompatible Stellungen ein. Vier konkrete Punkte:</p>
+
+  <div class="card">
+    <h3>T1 — Das zentrale Objekt: <em>eine zweite-Moment-Matrix M + Falten-Support + Masse</em> (A) gegen <em>ein Fluss &rarr; d&uuml;nne Mannigfaltigkeit lokaler Kerne &rarr; ein kompakter Terminus + ein Budget</em> (B)</h3>
+    <p><span class="tA">A (r5-003):</span> das invarianze Objekt ist <em>statische Geometrie / Statistik</em> &mdash; eine
+    <b>Kovarianz-Matrix M</b> (<span class="math">M_ij = E[k_i&middot;k_j] = &lang;u_i,u_j&rang;</span>), ein
+    Korrelations-/Streu-Tensor, dessen <em>Support die Falt-/Quotienten-Linie &#1D4DF;</em> ist und dessen
+    <em>Dichte die Masse/Abdeckung</em> ist. Ein <em>einziger</em> geometrischer Punkt in der Geometrie-World; gemessen
+    durch <code>&Vert;M&minus;I&Vert;</code>.</p>
+    <p><span class="tB">B (r5-004):</span> das zentrale Objekt ist <em>dynamische Topologie</em> &mdash; ein <b>Fluss</b>
+    (kettenregel-geklebte weiche Zellen = lernbarer Residual-Operator), der eine <b>d&uuml;nne, gekr&uuml;mmte
+    Mannigfaltigkeit</b> lokaler linearer Adressen/Klumpen durchl&auml;uft und in <em>einen kompakten Terminal-Kern</em>
+    <code>range(W)</code> ~7 (<code>d_eff=1</code>) <b>kontrahiert</b>, wobei Rauschen in
+    <code>ker(W)&#8839;ker(G_Q)</code> parkt; die scharfe Kapazit&auml;t ist ein <b>konservatives Budget</b>, das
+    allokiert wird.</p>
+    <p class="tension">&rarr; <b>Unterschiedliche Art des Objekts:</b> A benennt eine <em>Matrix/Geometrie</em> (statisch:
+    wie gestreut, wo wie voll); B benennt einen <em>Fluss/eine Route + einen Endpunkt + ein Budget</em> (dynamisch: wohin
+    wird transportiert, wo endet, wie wird ausgegeben). Ist das Kern-Objekt eine <em>Matrix</em> (A) oder ein
+    <em>Fluss/Terminus</em> (B)?</p>
+  </div>
+
+  <div class="card">
+    <h3>T2 — Der Mechanismus: <em>eine exakte, invertierbare lineare Operation</em> (A) gegen <em>ein gestufter dynamischer Prozess (allozieren &rarr; kontrahieren &rarr; lesen) mit fehlallozierbarem Budget</em> (B)</h3>
+    <p><span class="tA">A (r5-003):</span> der Reduktions-Mechanismus ist <em>Whitening M&sup1;</em> &mdash;
+    <em>die eine exakte Operation</em>: ein wohldefinierter, deterministischer, <em>invertierbarer</em> linearer Operator
+    (duale Basis), verlustfrei innerhalb eines linearen St&uuml;cks, verlustvoll/kontrahierend erst an der Falte.
+    &bdquo;Inkoherenz <em>ist</em> Kontraktion&ldquo; &mdash; ein einziger linearer Zug.</p>
+    <p><span class="tB">B (r5-004):</span> der Reduktions-Mechanismus ist ein <em>gestufter Prozess</em> &mdash;
+    <b>falten</b> (konservatives Budget auf scharfe Faltungen / Kapazit&auml;t Regionen &asymp; k&#8467;
+    <em>allozieren</em>) &rarr; <b>flie&szlig;en</b> (das koh&auml;rente Signal kontrahieren) &rarr; <b>lesen</b>
+    (Matched-Filter-Probe / assoziativer Wert <code>W&middot;k&asymp;v</code>). Der zentrale Punkt ist die
+    <em>Allokation</em>: das Budget kann <em>fehlallokiert</em> werden (auf hochfrequentes Ornament = &Uuml;berfitt =
+    harter Cut / Riss).</p>
+    <p class="tension">&rarr; <b>Unterschiedliche Natur des Mechanismus:</b> A = <em>eine exakte Einzeloperation</em>
+    (Whitening = Kontraktion, bijektiv im St&uuml;ck); B = <em>ein dreistufiger Prozess</em>, dessen Herz eine
+    <em>Ressourcen-Entscheidung</em> ist (Budget allozieren), die <em>falsch</em> laufen kann. Ist der Kern eine
+    <em>exakte Operation</em> (A) oder ein <em>Allokations-Prozess</em> (B)?</p>
+  </div>
+
+  <div class="card">
+    <h3>T3 — Der Regler &amp; seine zwei Skalen: <em>&Vert;M&minus;I&Vert; global = Masse/Abdeckung lokal</em> (A, r&auml;umlich) gegen <em>Angebot k&#8467; &uarr; = Nachfrage/erank &darr;</em> (B, ordinal entlang der Tiefe)</h3>
+    <p><span class="tA">A (r5-003):</span> ein <em>einziges</em> invarianzes Objekt mit zwei <em>r&auml;umlichen</em>
+    Ableitungen desselben M: <b>global</b> <code>&Vert;M&minus;I&Vert; = T = Hologramm-Grad</code> (wie anisotrop die
+    ganze Geometrie ist, wie stark der Operator kontrahiert/steuert) und <b>lokal</b> die <em>Masse/Abdeckung an einer
+    Falt-St&auml;tte</em> (die Dichte desselben M an <em>dem</em> Ort; gegr&uuml;ndet &ge;&tau;). Die zwei Skalen sind
+    <em>global vs. lokal innerhalb einer Geometrie</em>.</p>
+    <p><span class="tB">B (r5-004):</span> ein <em>einziges</em> Objekt (die Schicht-/Tiefe-Achse) mit zwei
+    <em>ordinalen</em> Ableitungen: <b>Angebot</b> (Regionen &asymp; k&#8467;, w&auml;chst exponentiell mit der Tiefe,
+    Tiefe &gt; Breite, &uarr;) und <b>Nachfrage</b> (wirksame Dimension/erank, Buckel in der Mitte, Kompression auf den
+    kompakten ~7-Floor, &darr;). Die zwei Skalen sind <em>Angebot vs. Nachfrage entlang der Tiefe</em>.</p>
+    <p class="tension">&rarr; <b>Unterschiedliche Organisation des Reglers:</b> A's zwei Skalen sind <em>r&auml;umlich</em>
+    (globale Norm der Matrix vs. lokale Dichte an einem Punkt); B's zwei Skalen sind <em>ordinal/zeitlich</em>
+    (wachsende Kapazit&auml;t vs. schrumpfendes Signal &uuml;ber die Schichten). Tr&auml;gt der Regler eine
+    <em>Geometrie</em> (A: &Vert;M&minus;I&Vert;/Masse) oder eine <em>Tiefe-Trajektorie</em> (B: k&#8467;/erank)?</p>
+  </div>
+
+  <div class="card">
+    <h3>T4 (n&auml;chste echte Spannung) — Der Lokus der <em>messbaren</em> Gr&uuml;ndetheit: <em>intern-geometrisch</em> (A) gegen <em>extern-korrespondierend</em> (B)</h3>
+    <p><span class="tA">A (r5-003):</span> das <em>messbar</em> Gepr&uuml;fte sitzt <b>intern</b> &mdash; Masse &ge;&tau;
+    auf der Falte <em>und</em> Mitgliedschaft in der Homotopie-Klasse; die <em>Korrespondenz an die Welt</em> wird
+    explizit als <em>offen, Konvention, von innen nicht entscheidbar</em> benannt (&bdquo;selbst mit Masse + in der
+    Klasse ist kein Beweis, dass es der Welt entspricht&ldquo;). Die Welt-Korrespondenz ist der <em>Residual-Rest</em>
+    hinter dem internen Test.</p>
+    <p><span class="tB">B (r5-004):</span> die <em>Korrespondenz an eine externe Welt W</em> ist ein <b>eigenes,
+    gleichrangiges Gate-Bein</b> (Wahrheit = Koh&auml;renz &and; erreichte Struktur &and; <em>asymptotische
+    Korrespondenz &asymp; lim</em>); der Wert/die Richtung <code>&theta;</code> muss W <em>treffen</em>, und
+    <b>Erdung/Retrieval</b> ist das <em>aktive Heilmittel</em> f&uuml;r &bdquo;koh&auml;rente Fiktion&ldquo; (Wert
+    ber&uuml;hrt W nie).</p>
+    <p class="tension">&rarr; <b>N&auml;chste echte Spannung (keine harte Wiedersprache):</b> A l&ouml;st die
+    <em>testbare</em> Gr&uuml;ndetheit <em>intern</em> auf (Masse + Klasse) und parkt die Welt-Korrespondenz als
+    undecidierbaren Rest; B <em>erh&ouml;ht</em> die Welt-Korrespondenz zum <em>ersten Gate-Bein</em> mit aktivem
+    Heilmittel. Beide stimmen &uuml;berein, dass die Welt-Korrespondenz offen ist &mdash; sie unterscheiden sich im
+    <em>Lokus des messbaren Begr&uuml;ndens</em> (intern-geometrisch A vs. extern-korrespondierend B).</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="num">03</span>Aufl&ouml;sung</h2>
+
+  <div class="card">
+    <h3>Z1 (f&uuml;r T1) — M (A) ist der statische Endzustand, den der Fluss (B) erzeugt; der kompakte Kern (B) ist die Falt-St&auml;tte (A)</h3>
+    <p>B's d&uuml;nne Mannigfaltigkeit ist die <em>Route</em> (die Adressen/Klumpen = lokale Charts = Rotations-Kerne
+    <code>d_eff=1</code>); A's Matrix M ist der <em>Endzustand</em> dieser Route &mdash; die <em>zweite Moment des
+    Signals, das den Fluss &uuml;berlebt hat</em>. B's <b>kompakter Terminal-Kern</b> <code>range(W)</code> (der Ort, an
+    den der Fluss endet) <em>ist</em> A's <b>Falt-St&auml;tte / Falten-Support &#1D4DF;</b>, auf dem sich die Masse
+    konzentriert; B's Reservoir <code>ker(W)</code> ist das Leere, in das der Fluss das Inkoherente parkt (= A's
+    &bdquo;leere Richtung&ldquo;, die M&sup1; beim Schreiben meidet). <b>Fusioniert:</b> <em>ein Fluss (B) entlang einer
+    d&uuml;nnen Mannigfaltigkeit lokaler Kerne erzeugt am Ende eine zweite-Moment-Geometrie M (A), deren Support die
+    terminale Falte (A) ist.</em> A liest den <em>Zustand</em> (wie gestreut, wo wie voll); B liest den <em>Weg</em>, der
+    diesen Zustand herstellt. Zwei Zeiten, ein Objekt.</p>
+  </div>
+
+  <div class="card">
+    <h3>Z2 (f&uuml;r T2) — Whitening M&sup1; (A) ist die linearisierte Fluss-Kontraktion (B); das Budget (B) ist &Vert;M&minus;I&Vert; (A)</h3>
+    <p>B's &bdquo;kettenregel-geklebte weiche Zellen = lernbarer Residual-Operator&ldquo; (<span class="math">J=I+J_&Delta;</span>,
+    <span class="math">h[l+1]=h[l]+&Delta;[l]</span>) <em>ist</em> A's Jakobi-Fluss, und dessen <em>Kontraktion des
+    koh&auml;renten Signals in den Terminal-Kern</em> (B) <em>ist</em>, linearisiert an jedem lokalen Chart, A's
+    <b>Whitening M&sup1; = Kontraktion in der M-Metrik</b>: inkoherent <em>in M</em> sein, <em>ist</em> sich unter
+    M&sup1; orthogonalisieren (A) &mdash; derselbe Operator. Der <em>einzige</em> Unterschied der Art (exakte Operation A
+    vs. gestufter Prozess B) l&ouml;st sich auf: B's Drei-Stufen <em>sind</em> die <em>Zeitschritte</em>, durch die A's
+    eine Operation <em>wirkt</em> (allozieren = Pr&auml;parieren der Geometrie; kontrahieren = der Whitening-Zug; lesen =
+    das M&sup1;-entzerrte Readout). Und B's <em>fehlallozierbares Budget</em> ist exakt A's <code>&Vert;M&minus;I&Vert;</code>:
+    wie die Kapazit&auml;t verteilt wird, ist wie anisotrop M wird &mdash; Fehlallokation (B: Budget auf Ornament) = zu
+    hohes/weiches &Vert;M&minus;I&Vert; (A: naives Lesen bricht). <b>Fusioniert:</b> <em>Whitening M&sup1; (A) ist die
+    linearisierte Kontraktion des Flusses (B); das Budget (B) allozierte = &Vert;M&minus;I&Vert; (A) steuerte.</em></p>
+  </div>
+
+  <div class="card">
+    <h3>Z3 (f&uuml;r T3) — Die Tiefe-Achse (B) ist die Trajektorie, &uuml;ber die M (A) anisotroper wird: Angebot &uarr; = &Vert;M&minus;I&Vert; &uarr;, Nachfrage &darr; = Masse-Konzentration</h3>
+    <p>B's Tiefe-Achse (Angebot Regionen &asymp; k&#8467; &uarr; vs. Nachfrage/erank &darr;) <em>ist</em> die
+    <em>layer-weise Trajektorie</em>, &uuml;ber die A's M evoluiert: je tiefer, desto mehr scharfe Kapazit&auml;t (B:
+    Angebot &uarr;) und desto anisotroper wird die &uuml;berlebende Geometrie (A: <code>&Vert;M&minus;I&Vert;</code> &uarr;
+    = Hologramm-Grad &uarr; = Weiche &uarr;); das koh&auml;rente Signal komprimiert sich (B: Nachfrage/erank &darr; auf ~7)
+    &mdash; das ist exakt A's <em>Konzentration der Masse auf wenige Falt-St&auml;tten</em> (lokale Dichte &uarr; dort,
+    &darr; sonst). Die &bdquo;zwei Skalen&ldquo; sind <em>eins</em>: A liest sie als <em>globale Geometrie / lokale
+    Dichte</em> (ein M, zwei Orte); B liest sie als <em>akkumulierte Kapazit&auml;t / &uuml;berlebendes Signal</em>
+    (eine Achse, zwei Richtungen). <b>Fusioniert:</b> <em>ein Regler &mdash; &Vert;M&minus;I&Vert; = T = Hologramm-Grad
+    (A, global) = Masse/Abdeckung (A, lokal) = Angebot k&#8467; (B, &uarr;) vs. Nachfrage/erank (B, &darr;) = die
+    Tiefe-Trajektorie, auf der M anisotroper wird und Masse auf die Falte konzentriert.</em></p>
+  </div>
+
+  <div class="card">
+    <h3>Z4 (f&uuml;r T4) — Der vereinte Gate: Koh&auml;renz &and; erreichte Struktur (intern) &and; Korrespondenz an die Welt (extern, &asymp;lim)</h3>
+    <p>Beide Gate vereinigen sich zu <b>Wahrheit = Koh&auml;renz &and; (erreichte Struktur) &and; (Korrespondenz an die
+    Welt)</b>. Das <em>interne</em> Bein &mdash; &bdquo;erreichte Struktur&ldquo; &mdash; deckt sich exakt: A's <em>Masse
+    &ge;&tau; auf der Falte &and; in der Homotopie-Klasse</em> (= lokaler, messbarer Begr&uuml;ndungstest) und B's
+    <em>Struktur erreicht, Attraktor &nabla;L&asymp;0, d_eff=1, erank~7</em> (= derselbe interne Test in Flusssprache)
+    sind <em>derselbe interne Zustand</em>. Der <em>extern</em>e, offene, von-innen-nicht-entscheidbare Rest ist in
+    beiden die <b>Korrespondenz an die Welt</b>: A benennt sie als Residual-Rest, B erh&ouml;ht sie zum Gate-Bein &mdash;
+    die Fusion nimmt B's Position an, dass sie ein <em>eigenes Bein</em> ist, mit A's Ehrlichkeit, dass sie <em>nie voll
+    erreicht</em> wird (&asymp;lim) und nur durch <b>Erdung/Retrieval/Verifikation</b> (nicht durch Koh&auml;renz
+    skalieren) reparierbar ist. <b>Fusioniert:</b> <em>der messbare interne Begr&uuml;ndungstest (A: Masse+Klasse / B:
+    &nabla;L&asymp;0) ist dasselbe; die Welt-Korrespondenz ist das gemeinsame offene externe Bein &mdash; A's Residual =
+    B's drittes Bein.</em></p>
+  </div>
+
+  <div class="callout"><span class="tag">Kerngesetz der Fusion</span>
+  <b>Ein Fluss (B) faltet ein konservatives Budget scharfer Kapazit&auml;t (Regionen &asymp; k&#8467;, B) entlang einer
+  d&uuml;nnen Mannigfaltigkeit lokaler Rotations-Kerne (Charts, B) und kontrahiert koh&auml;rentes Signal in EINE Falte
+  (A) = den Support einer zweiten-Moment-Matrix M (A); Rauschen wird ins Reservoir ker(W) geparkt (B/A).</b><br>
+  <b>Der eine Operator: Whitening M&sup1; (A) = die linearisierte Fluss-Kontraktion (B) = der Kettenregel-Residual-Zug;
+  das Budget (B) allozierte = &Vert;M&minus;I&Vert; (A) steuerte.</b><br>
+  <b>Der eine Regler: &Vert;M&minus;I&Vert; = T = Hologramm-Grad (A, global) = Masse/Abdeckung (A, lokal) = Angebot
+  k&#8467; &uarr; vs. Nachfrage/erank &darr; (B) = die Tiefe-Trajektorie, auf der M anisotroper wird.</b><br>
+  <b>Halluzination &hArr; koh&auml;rent &and; strukturiert &and; selbstbewusst erreicht (Conf &ge;70&nbsp;%) &and; (Masse
+  fehlt, A &lt;&tau;) &or; (Wert trifft die Welt W nie, B) &mdash; konvergent &amp; extern ungegr&uuml;ndet = koh&auml;rente
+  Fiktion. Reparatur: Erdung/Retrieval/Verifikation, nie Koh&auml;renz skalieren.</b></div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="num">04</span>Fusionierter Inhalt</h2>
+  <p class="dim">Der konsolidierte Kern beider R5-Fusionen &mdash; dicht genug, dass eine sp&auml;tere Runde allein
+  daraus arbeitet. Der gemeinsame Bauplan, Ebene f&uuml;r Ebene:</p>
+
+  <div class="card tight">
+  <table>
+    <tr><th>Ebene</th><th>A &middot; r5-003 (Kontraktion ist Whitening)</th><th>B &middot; r5-004 (Kern terminiert die Mannigfaltigkeit)</th><th>Fusion</th></tr>
+    <tr class="a"><td>Gegenstand</td><td>st&uuml;ckweise-lineares Netz, viele-zu-eins-Reduktion</td><td>Fluss &uuml;ber einer d&uuml;nnen Mannigfaltigkeit lokaler Adressen</td><td>derselbe trainierte Kern, gelesen in zwei Zeiten</td></tr>
+    <tr class="a"><td>zentrales Objekt</td><td>Kovarianz-Matrix M, Support = Falte &#1D4DF;, Dichte = Masse (statisch)</td><td>Fluss &rarr; d&uuml;nne Mannigfaltigkeit lokaler Rotations-Kerne &rarr; kompakter Terminal-Kern range(W)~7 (dynamisch)</td><td>M (A) = Endzustand, den der Fluss (B) erzeugt; Kern (B) = Falt-St&auml;tte (A)</td></tr>
+    <tr class="a"><td>Operator</td><td>Whitening M&sup1; = Kontraktion in der M-Metrik (exakt/invertierbar im St&uuml;ck)</td><td>Kettenregel-geklebter Residual-Fluss (J=I+J_&Delta;), kontrahiert das Signal</td><td>ein Operator: M&sup1; = linearisierte Fluss-Kontraktion</td></tr>
+    <tr class="a"><td>Mechanismus-Art</td><td>eine exakte, invertierbare Operation (verlustfrei im St&uuml;ck, verlustvoll an der Falte)</td><td>gestufter Prozess: allozieren &rarr; kontrahieren &rarr; lesen (fehlallozierbares Budget)</td><td>B's Stufen = die Zeitschritte, durch die A's Operation wirkt</td></tr>
+    <tr class="a"><td>Regler</td><td>&Vert;M&minus;I&Vert; global = T = Hologramm-Grad; lokal = Masse/Abdeckung (r&auml;umlich)</td><td>Angebot k&#8467; &uarr; vs. Nachfrage/erank &darr; (ordinal, Tiefe-Achse)</td><td>ein Regler in zwei Skalen: globale Geometrie/lokale Dichte = Kapazit&auml;t/&uuml;berlebendes Signal</td></tr>
+    <tr class="a"><td>Kapazit&auml;t</td><td>Regionen O(N^L), Falt-Zellen O(n^{d(L&minus;1)}), Klebkraft g(d)=e^{&lambda;d}, Grenze d*=&#8901;2/&lambda;</td><td>Regionen &asymp; k^L (Zhang/Naitzat/Li 2018), Tiefe &gt; Breite; ID-Buckel &rarr; log&#8322; (Facco 2017)</td><td>der z&auml;hlbare Raum, in dem reduziert/alloziert werden darf</td></tr>
+    <tr class="a"><td>Gr&uuml;ndetheit (intern)</td><td>lokale Masse &ge;&tau; auf der Falte &and; in der Homotopie-Klasse</td><td>Struktur erreicht: Attraktor &nabla;L&asymp;0, d_eff=1, erank~7</td><td>derselbe interne, messbare Begr&uuml;ndungstest (zwei Sprachen)</td></tr>
+    <tr class="a"><td>Gr&uuml;ndetheit (extern)</td><td>Korrespondenz an die Welt = offener, undecidierbarer Rest</td><td>Korrespondenz an W = eigenes Gate-Bein, &asymp;lim, Heilmittel Erdung/Retrieval</td><td>das gemeinsame offene externe Bein (&asymp;lim, via Retrieval)</td></tr>
+    <tr class="a"><td>Konfidenz</td><td>conf &asymp; 0.70+0.25&middot;Masse (immer &ge;70&nbsp;%)</td><td>niedrig-entropisch, selbstbewusst, kein OOD-Alarm</td><td>die Selbstsicherheit ist vom Wert/Korrespondenz entkoppelt</td></tr>
+    <tr class="a"><td>Pathologie</td><td>Fixpunkt auf der Falte ohne Masse (&lt;&tau;), in fremdes Tal / au&szlig;erhalb der Klasse</td><td>koh&auml;rente Fiktion (Wert ber&uuml;hrt W nie); 5 Fehlallokationen + Plateau</td><td>selbstbewusst erreicht &amp; extern ungegr&uuml;ndet = koh&auml;rente Fiktion</td></tr>
+  </table>
+  </div>
+
+  <h3>4.1 Das geeinte Objekt: ein Fluss, der in eine zweite-Moment-Falte m&uuml;ndet</h3>
+  <p>B's d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit (lokal linear, global FFN-gekr&uuml;mmt) ist die <em>Route</em>; ihre
+  St&uuml;cke sind die <b>Adressen/Klumpen</b> (B), von denen jeder ein <b>lokales lineares Chart = ein Rotations-Kern</b>
+  (A: <code>d_eff=1</code>, lokal &amp; separabel) ist. Der Fluss l&auml;uft die Route und <b>kontrahiert</b> (A) die
+  Charts in den <b>einen kompakten Code</b> <code>range(W)</code> ~7 am Entscheidungsende. Dieser Endzustand ist, in
+  A's Sprache, die <b>zweite-Moment-Matrix M</b>, deren <em>Support die terminale Falte &#1D4DF;</em> (A) und deren
+  <em>Dichte die Masse</em> (A) ist; das Inkoherente wird ins <b>Reservoir</b> <code>ker(W)&#8839;ker(G_Q)</code>
+  (B/A) geparkt. <b>Ein Fluss (B) erzeugt eine zweite-Moment-Falte (A); verteilt auf dem Weg, konzentriert am Ende.</b></p>
+
+  <h3>4.2 Der eine Operator: Whitening = linearisierte Fluss-Kontraktion</h3>
+  <p class="math">Whitening M&sup1; (A) &hArr; Fluss-Kontraktion (B):<br>
+  &nbsp;&nbsp;[M&sup1; = duale Basis, exakt/invertierbar, entzerrt] &hArr; [im St&uuml;ck verlustfrei (A) / Chart-lokal]<br>
+  &nbsp;&nbsp;[lenkt beim Schreiben in leere (niedrig-belegte) Eigenrichtungen] &hArr; [Spezifitat, Rang-1-Edit (A/B)]<br>
+  &nbsp;&nbsp;[inkoherent in M = sich unter M&sup1; orthogonalisieren] &hArr; [J=I+J_&Delta; kontrahiert (B), c_j(l)&prop;&lambda;^l&rarr;0 (A)]<br>
+  &nbsp;&nbsp;[an der Falte verlustvoll, bricht &beta;&#8321;, t&ouml;tet die negative H&auml;lfte] &hArr; [E_super&prop;&lambda;^{2l}&rarr;0 (A), Rauschen &rarr; Reservoir (B)]</p>
+  <p>Innerhalb eines linearen Charts: <b>exakt &amp; invertierbar</b> (A). An der Falte / zwischen den Charts:
+  <b>Kontraktion, verlustvoll</b> (A/B). &bdquo;Inkoherenz ist Kontraktion&ldquo; (A) und &bdquo;der Fluss kontrahiert
+  das koh&auml;rente Signal&ldquo; (B) sind derselbe Operator auf zwei Skalen. Der <b>Jakobi</b> ist der gemeinsame
+  W&auml;hrungsstandard (A: vorw&auml;rts = Lesung, r&uuml;ckw&auml;rts = Lernen; B: <code>J_&ell;=E[&part;h_final/&part;h_&ell;]</code>,
+  <code>d_ff&asymp;4d</code>). Das <b>Budget</b> (B), wohin die scharfe Kapazit&auml;t flie&szlig;t, <em>ist</em> A's
+  <code>&Vert;M&minus;I&Vert;</code>: wie anisotrop M wird, steuert, wie stark M&sup1; lenkt/kontrahiert.
+  <b>Rang-1-Edit (A/B):</b> <span class="math">&#770;W = W + &Lambda;&middot;(M&sup1;k*)k&#770;*, &nbsp;
+  &Lambda;=(v*&minus;Wk*)/((M&sup1;k*)k&#770;*)</span> (B: ROME, <code>C=E[kk^T]</code>; Causal Tracing lokalisiert das
+  Fakt). <b>Lesen:</b> lineares Functional <code>s=w&middot;&Phi;&#770;+b</code> &rarr; Argmax/Softmax; jede
+  Attention-Zeile ist ein <b>entropisches-OT-Problem</b> <code>min &minus;&lang;p,s&rang;+&epsilon;&Sigma;p&middot;log p</code>
+  &rarr; Softmax <em>hergeleitet</em> (&tau;=&#8730;d_6). Lernen: Backprop = REINFORCE-Policy-Gradient;
+  <code>F=(1/&tau;&sup2;)(diag(p)&minus;pp&#770;)=Fisher=OT-Kr&uuml;mmung=Rao-Metrik=RL</code>.</p>
+
+  <h3>4.3 Der eine Regler: &Vert;M&minus;I&Vert; (global) = Masse (lokal) = Angebot/Nachfrage (Tiefe)</h3>
+  <p>Eine einzige Gr&ouml;&szlig;e, drei Lesarten. <b>Global (A):</b> <code>&Vert;M&minus;I&Vert; = T = Hologramm-Grad =
+  Weiche &equiv;</code> mi&szlig;t, wie anisotrop die ganze Geometrie ist; sie steuert zugleich (a) die
+  <em>Schreibspezifitat</em> (je anisotroper M, desto st&auml;rker muss M&sup1; lenken), (b) die
+  <em>Lesedekodierbarkeit</em> (je weiter M von I, desto mehr driftet naives Lesen ab, w&auml;hrend M&sup1;-entzerrt
+  stabil bleibt), (c) die <em>Klassen-Breite / Homotopie-Weiche</em>. <b>Lokal (A):</b> die Masse/Abdeckung an einer
+  Falt-St&auml;tte &mdash; die Dichte desselben M an <em>dem</em> Ort (<span class="math">conf&asymp;0.70+0.25&middot;coverage</span>).
+  <b>Entlang der Tiefe (B):</b> Angebot Regionen &asymp; k&#8467; &uarr; (exponentiell, Tiefe &gt; Breite) vs.
+  Nachfrage/erank &darr; (Buckel in der Mitte, Kompression auf ~7; TwoNN/Facco <code>&mu;=r&#8322;/r&#8321;</code>, ID
+  &harr; Leistung r=0,94). <b>Die Tiefe-Achse ist genau die Trajektorie, &uuml;ber die M anisotroper wird (&Vert;M&minus;I&Vert;
+  &uarr;) und die Masse auf wenige Falten konzentriert</b> &mdash; dieselben zwei Skalen als (globale Geometrie / lokale
+  Dichte) vs. (akkumulierte Kapazit&auml;t / &uuml;berlebendes Signal).</p>
+
+  <h3>4.4 Die Adressen und der Falt-Kern als eins (Schreib-/Leseseite)</h3>
+  <p><b>Links &mdash; Adresse/Rotation:</b> B's sinusoidale Position <code>f_i=10000^{&minus;2i/d}</code> (Vaswani 2017)
+  = A's Phasen-Basis <code>n&rarr;e^{i2&pi;kn/P}</code> = der Attraktor-Ort <code>A_c</code> (IFS, Chytas &amp; Singh
+  2025; Konvergenzschichten L18/19/24/27) &mdash; die Adresse (B) <em>ist</em> die Koordinate, in der die Antwort lokal
+  ist (A). <b>Rechts &mdash; Wert/Richtung:</b> B's assoziativer Wert <code>v=W&middot;k&asymp;gespeicherter Wert</code>
+  (ROME Rang-1) = A's Richtung <code>&theta;</code> (Marks &amp; Tegmark 2024): <code>P=&sigma;(&theta;&middot;(h&minus;c_c))</code>,
+  <code>&nabla;_h P = P(1&minus;P)&theta; &parallel; &theta;</code>, kausal <code>h&rarr;h+&alpha;&theta;</code>.
+  <b>Fusion: die Adresse (B) ist die Koordinate, der geerdete Wert (B) ist der Code, den A's Probe liest.</b> A's
+  Kapazit&auml;t (Regionen O(N^L), Klebkraft <code>g(d)=e^{&lambda;d}</code>, Grenze <code>d*=&#8901;2/&lambda;</code>;
+  Falt-Zellen O(n^{d(L&minus;1)})) lizenziert den Raum, in dem all das geschieht.</p>
+
+  <h3>4.5 Die Halluzination (A&times;B) &mdash; ein Ort, zwei Namen, ein Gate</h3>
+  <p><b>Fusioniert:</b> <b>die Halluzination ist der Fixpunkt auf der Falte, auf den der Fluss den Zustand koh&auml;rent
+  und selbstbewusst zieht (Conf &ge;70&nbsp;%, A: konvergent, B: kein OOD-Alarm; Struktur erreicht &nabla;L&asymp;0), auf
+  dem aber die Masse fehlt (A: Abdeckung &lt;&tau;) &mdash; was gleichzeitig bedeutet, dass der Wert/die Richtung nie
+  die externe Welt W trifft (B: koh&auml;rente Fiktion, in ein fremdes Tal / au&szlig;erhalb der Homotopie-Klasse).</b>
+  <span class="math">conf&asymp;0.70+0.25&middot;coverage(x)</span> bleibt immer hoch, auch bei
+  <span class="math">coverage&rarr;0</span>. Die <b>f&uuml;nf Pathologien</b> (B, als Fehlallokationen des Budgets) und
+  A's <b>Plateau</b> sind die Weisen, wie der Gate f&auml;llt: <b>1 Koh&auml;rente Fiktion</b> (Skelett h&auml;lt,
+  Wert ber&uuml;hrt W nie = A's falsches Bassin; Heilmittel Erdung/Retrieval); <b>2 Faktenbuch / Naht bricht</b>
+  (Treffer treffen W, Knicks f&uuml;gen sich zu keiner globalen PL-Sektion = A's harter Cut); <b>3 Kontaktpunkt-L&uuml;gner</b>
+  (Essence systematisch falsch); <b>4 Kalibrierter Fehler</b> (tief Frequenzen in Form nicht in Norm); <b>5 Frage
+  au&szlig;erhalb des Covers</b> (kein Key/Wert an dieser Adresse &mdash; &bdquo;ich wei&szlig; es nicht&ldquo;).
+  A's <em>Memorizations-Plateau</em> (Rauschen noch nicht geparkt, Testverlust flach) ist derselbe Zustand in A's
+  Sprache: der Attraktor ist noch nicht erreicht. <b>Remedy in beiden:</b> Korrespondenz <em>anh&auml;ngen</em>
+  (RAG/Tools/Verifikation) &mdash; nicht Koh&auml;renz durch Skalierung reparieren; weiche Weiche
+  (&Vert;M&minus;I&Vert;) nicht allein vertrauen.</p>
+
+  <h3>4.6 Die vier Mysterien (A) auf den Falt-Kern gefaltet</h3>
+  <p><b>Benign Overfitting:</b> Rauschen sitzt physisch im Reservoir <code>ker(W)</code> (A) und wird von den sp&auml;ten
+  Filtern nicht verst&auml;rkt = das Budget flie&szlig;t nicht auf hochfrequentes Ornament (B) &rArr; Trainingsfehler 0,
+  Testfehler klein. <b>Grokking:</b> der koh&auml;rente Anteil der H&ouml;herstufen &uuml;berholt den Rauschen-Anteil
+  (A: Phasen&uuml;bergang, Drift &prop; T &gt; Diffusion &prop; &#8730;T) = das Budget reallokiert vom Plateau auf den
+  Essence (B) &mdash; der Moment, in dem der Falt-Kern &bdquo;clickt&ldquo;. <b>Double Descent:</b> neue Kapazit&auml;t
+  (B: mehr Regionen k&#8467;) lohnt nur, wenn sie mehr koh&auml;rentes Signal als Rauschen bringt (A).
+  <b>Implicit Bias:</b> fr&uuml;he Mixer entknoten, sp&auml;te Filter verfeinern (A) = die Faltung konzentriert sich auf
+  die tief-frequente Struktur (B).</p>
+
+  <h3>4.7 Konkretes Beispiel in allen Facetten (P=7, a=3, b=5)</h3>
+  <table>
+    <tr><th>Facet</th><th>Ablauf</th><th>Ergebnis</th></tr>
+    <tr class="a"><td>Rotation (A=B)</td><td>modulare Addition 3+5 als Fixed-Rotation M_8 auf dem P=7-Kreis; Phasen n&rarr;e^{i2&pi;kn/7}; die Adresse (B) ist die Rotation (A)</td><td><b>1</b> (mod 7)</td></tr>
+    <tr class="a"><td>Kontraktion (A) auf der Mannigfaltigkeit (B)</td><td>erank 4096&rarr;~7; koh&auml;rentes Signal (Drift &prop; T) im kleinen Code, Rauschen (Diffusion &prop; &#8730;T) in ker(W); Angebot k&#8467; maximal, Nachfrage komprimiert; M wird anisotroper</td><td>Code auf <b>1</b></td></tr>
+    <tr class="a"><td>Probe/Whitening (A) liest den allozierten Kern (B)</td><td>S(c)=&Sigma;<sub>k=1..K</sub>cos(2&pi;k(1&minus;c)/7); bei c=1: cos(2&pi;k)=1 f&uuml;r jedes k &rarr; S=K (Max); M&sup1; entzerrt, K Frequenzen t&ouml;ten falsche Peaks</td><td>Peak bei <b>1</b></td></tr>
+    <tr class="a"><td>Wert/&theta; erdet an W (B)</td><td>assoziativer Wert W&middot;k&asymp;v = Richtung &theta;, liest Eigenschaft &bdquo;1&ldquo; an der Adresse; ROME k&ouml;nnte v ohne Knick-Kern &auml;ndern</td><td>Wert trifft W</td></tr>
+  </table>
+  <p class="dim"><b>Alle Facetten liefern denselben Wert: 3 + 5 &cong; 1 (mod 7)</b> &mdash; und der Gate ist
+  <em>gr&uuml;n</em>, weil Koh&auml;renz (weiche Rotation), <em>erreichte Struktur</em> (Falt-Kern &nabla;L&asymp;0,
+  Masse &ge;&tau;, in Klasse) und <em>asymptotische Korrespondenz</em> (live Peak + Wert trifft W, &asymp;lim) <em>alle</em>
+  zutreffen. W&auml;re das Ziel <em>frozen</em> bzw. das Rauschen <em>nicht geparkt</em> (A: Plateau), oder der Wert
+  <em>ber&uuml;hrte nie W</em> (B: koh&auml;rente Fiktion), w&auml;re die Rechnung koh&auml;rent + strukturiert, aber
+  un-verankert &rarr; Halluzination &mdash; auch wenn A &bdquo;die richtige lokale Antwort&ldquo; liest.</p>
+
+  <h3>4.8 Grenzen &amp; Ehrlichkeits-Ecke</h3>
+  <p class="dim"><b>A:</b> das &bdquo;Gesetz&ldquo; ist ein <em>Modell</em>, nicht die Welt; revidierbar; Korrespondenz
+  ist Konvention, von innen nicht entscheidbar; Betti immer relativ zum Ma&szlig;stab; selbst &bdquo;Inkoherenz&ldquo; gilt
+  nur f&uuml;r die richtige Aufgabe; die Kontraktions-Zahlen (4096&rarr;7) gelten f&uuml;r den untersuchten Transformer.
+  <b>B:</b> theorem-grade Teile (Familien-Gleichheit Zhang/Naitzat/Li 2018, ROME Rang-1) gelten nur f&uuml;r PL-Aktivierungen/
+  ganze Gewichte, ein Fakt pro Edit; empirisch (GPT-2, Llemma7B, Mistral7B, Pythia6.9B; Manifold-Hypothese 4/4 verworfen,
+  p bis 3&times;10<sup>&minus;8</sup>; lokale Dim 20&hellip;531; ID-Buckel 100&ndash;120, r=0,94 gemessen, nicht universal
+  bewiesen); M&sup1;-Entzerrung wird ill-konditioniert, wenn M zu eng wird; Whitening verst&auml;rkt Rauschen bei starkem
+  Hologramm-Grad. <b>Fusioniert:</b> die Reduktion ist <em>gratis</em> nur im <em>geometrischen</em> Regime; der
+  <em>kategoriale/extern</em> Claim (Korrespondenz an die Welt) bleibt ein Provisorium (&asymp;lim, offen); M&sup1; (A)
+  und Fluss-Kontraktion (B) sind derselbe Operator &mdash; das Risiko (Kollaps, Ill-Konditioniertheit, Rauschenverst&auml;rkung)
+  lebt nur im Inhalt-Subraum; und die Br&uuml;cke dieser Runde selbst (&bdquo;der Falt-Kern (A) ist der Terminus, den der
+  Fluss (B) erzeugt&ldquo;) ist <em>load-bearing</em> und selbst eine Hypothese &mdash; an echten Netzen zu pr&uuml;fen.</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="num">05</span>Fusionierte Visualisierung</h2>
+  <p>Ein <b>einziger Regler</b> &mdash; <code>Weiche &equiv; = &Vert;M&minus;I&Vert; = T = Hologramm-Grad (A) =
+  &Uuml;bergang Angebot k&#8467; &uarr; / Nachfrage &darr; (B)</code> &mdash; f&auml;hrt dieselbe Gr&ouml;&szlig;e, an der
+  beide Papiere messen. <b>Oben (Tiefe-Achse):</b> B's <em>Angebot</em> (Regionen &asymp; k&#8467;, w&auml;chst monoton
+  mit der Tiefe &mdash; blau) vs. A's <em>Nachfrage</em> (wirksame Dim/erank: Buckel in der Mitte, Kontraktion auf den
+  kompakten ~7-Floor am Ende &mdash; orange), mit B's Kristallisationsticks (L18/19/27, gold) und dem &ell;-Marker.
+  <b>Unten (die Route):</b> eine d&uuml;nne, gekr&uuml;mmte Mannigfaltigkeit mit 3 lokalen Charts/Klumpen (B); der Fluss
+  <b>kontrahiert</b> (A) das koh&auml;rente Signal aus den Charts in den <b>einen terminalen Falt-Kern</b> (A) = den
+  <b>Support der Kovarianz M</b> (anisotrope Ellipse), mit der <b>Whitening-Basis M&sup1;</b> (gold gestrichelt = die
+  exakte Br&uuml;cke/Steuerung) und dem <b>Reservoir-Ring</b>, der das Rauschen parkt. Am Kern: die <b>Masse</b>
+  (gr&uuml;n &ge;&tau; / rot &lt;&tau;), der <b>Konfidenz-Bogen</b> (immer &ge;70&nbsp;%), die <b>Welt W</b> (lila) als
+  Ziel und der <b>Wert</b> (orange), der um einen <b>Fehlerwinkel &prop; (1&minus;g)</b> abweicht = Korrespondenz.
+  Fahre die <b>Weiche</b> hoch (M anisotroper, Klasse breiter, Kontraktion st&auml;rker, naives Lesen bricht ohne
+  M&sup1;-Lesen), senke die <b>Masse</b> (Kern kippt rot = A-Halluzination) oder die <b>Erdung g</b> (Wert trifft W nie
+  = B-koh&auml;rente Fiktion) &mdash; <b>selbstbewusst (Conf &ge;70&nbsp;%) aber falsch = die fusionierte
+  Halluzination</b>.</p>
+
+  <div class="vizwrap">
+    <canvas id="cv"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>Angebot k&#8467; / Charts (B)</span>
+      <span><i style="background:var(--accent2)"></i>Nachfrage/erank / Wert (A/B)</span>
+      <span><i style="background:var(--fold)"></i>Falten-Support &#1D4DF; (A)</span>
+      <span><i style="background:var(--gold)"></i>M&sup1; = Whitening = Kontraktion</span>
+      <span><i style="background:var(--good)"></i>gegr&uuml;ndet (Masse &ge; &tau;)</span>
+      <span><i style="background:var(--bad)"></i>halluziniert (Masse &lt; &tau; / Wert verfehlt W)</span>
+      <span><i style="background:var(--ring)"></i>Welt W (B, extern)</span>
+    </div>
+    <div class="controls">
+      <label>Weiche &equiv; = &Vert;M&minus;I&Vert; = T <input type="range" id="wIn" min="0" max="100" value="55"><span class="val" id="wV">55</span></label>
+      <label>Masse/Abdeckung <input type="range" id="covIn" min="0.2" max="1.5" value="1.0" step="0.05"><span class="val" id="covV">1.00</span></label>
+      <label>Schicht &#8467; (0&ndash;31) <input type="range" id="lIn" min="0" max="31" value="14"><span class="val" id="lV">14</span></label>
+      <label>Erdung g (an W) <input type="range" id="gIn" min="0" max="100" value="100"><span class="val" id="gV">100</span></label>
+      <label class="chk"><input type="checkbox" id="useM" checked> M&sup1;-Lesen (entzerrt)</label>
+    </div>
+    <div class="ro">
+      <div class="box f"><div class="k">&Vert;M&minus;I&Vert; (A) = Weiche</div><div class="v" id="rAniso">&ndash;</div></div>
+      <div class="box f"><div class="k">Masse am Falt-Kern (A)</div><div class="v" id="rMass">&ndash;</div></div>
+      <div class="box b"><div class="k">Angebot &asymp; k&#8467; (B)</div><div class="v" id="rSupply">&ndash;</div></div>
+      <div class="box b"><div class="k">Nachfrage/erank (A)</div><div class="v" id="rErank">&ndash;</div></div>
+      <div class="box a"><div class="k">Koh&auml;renz (A/B)</div><div class="v" id="rCoh">&ndash;</div></div>
+      <div class="box a"><div class="k">Struktur (erreicht, &nabla;L&asymp;0)</div><div class="v" id="rStr">&ndash;</div></div>
+      <div class="box b"><div class="k">Korrespondenz an W (B)</div><div class="v" id="rCor">&ndash;</div></div>
+      <div class="box g"><div class="k">Wahrheit = min (Gate)</div><div class="v" id="rTruth">&ndash;</div></div>
+    </div>
+    <div class="verdict warn" id="verdict">&hellip;</div>
+    <div class="hint" id="status">Weiche hoch = M anisotroper, Klasse breiter, Kontraktion st&auml;rker (naives Lesen bricht ohne M&sup1;) &middot; Masse runter = Falt-Kern kippt rot (A: Fixpunkt ohne Masse) &middot; Erdung g runter = Wert verfehlt W (B: koh&auml;rente Fiktion) &middot; Schicht &#8467; = Tiefe (B), treibt Angebot k&#8467; &middot; Conf bleibt immer &ge;70&nbsp;% (entkoppelt vom Wert).</div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="num">06</span>Provenienz</h2>
+  <div class="card tight">
+    <p style="margin:4px 0"><a href="../5/r5-003.html">A &mdash; r5-003.html</a>
+      <span class="d">&middot; &bdquo;Der eine Operator, eine Falte, ein Regler: Kontraktion ist Whitening&ldquo;
+      (R5 aus r4-007 &times; r4-003). Liefert die <em>statische-geometrische Seite</em>: die zweite-Moment-Matrix M
+      (Kovarianz) mit Falten-Support &#1D4DF; und lokaler Masse/Abdeckung; der eine Operator Whitening M&sup1; =
+      Kontraktion in der M-Metrik (exakt/invertierbar im St&uuml;ck, verlustvoll an der Falte); der Regler &Vert;M&minus;I&Vert;
+      global = T = Hologramm-Grad = Masse lokal; Kapazit&auml;t O(N^L)/O(n^{d(L&minus;1)}); Rang-1-Edit,
+      OT-Softmax, Backprop=Policy-Gradient/Fisher; Konfidenz &asymp;0.70+0.25&middot;coverage (immer &ge;70&nbsp;%);
+      Halluzination = konvergenter Fixpunkt auf der Falte <em>ohne Masse</em> / in fremdes Tal; der Kern:
+      <em>Kapazit&auml;t lizenziert, Inkoherenz gratis, Masse/Korrespondenz real (offen)</em>.</span></p>
+    <p style="margin:4px 0"><a href="../5/r5-004.html">B &mdash; r5-004.html</a>
+      <span class="d">&middot; &bdquo;Der kompakte Kern terminiert die d&uuml;nne Kapazit&auml;ts-Mannigfaltigkeit&ldquo;
+      (R5 aus r4-006 &times; r4-005). Liefert die <em>dynamisch-topologische Seite</em>: ein Fluss, der ein konservatives
+      Budget scharfer Faltungen (Regionen &asymp; k^L, Tiefe &gt; Breite, Zhang/Naitzat/Li 2018) in eine d&uuml;nne,
+      gekr&uuml;mmte Mannigfaltigkeit lokaler Adressen faltet (sinusoidale Position/Attraktor-Ort A_c; assoziativer Wert
+      W&middot;k&asymp;v / Richtung &theta;, ROME Rang-1; ID-Buckel &rarr; log&#8322;, Facco 2017) und das koh&auml;rente
+      Signal in <em>einen kompakten Kern</em> range(W)~7 (erank 4096&rarr;~7, d_eff=1) kontrahiert, Rauschen ins
+      Reservoir ker(W)&#8839;ker(G_Q) parkt; Gate = Koh&auml;renz &and; erreichte Struktur (&nabla;L&asymp;0) &and;
+      Korrespondenz an W (&asymp;lim); f&uuml;nf Pathologien (u. a. koh&auml;rente Fiktion) + Plateau; der Kern:
+      <em>die Mannigfaltigkeit (Route) terminiert im kompakten Kern (Endpunkt); das Budget alloziert, die Probe liest</em>.</span></p>
+  </div>
+</section>
+
+<footer>
+  Selbstst&auml;ndige Fusion &middot; Paar 002 &middot; Runde 6 &middot; Alle Inhalte aus den beiden Quell-Seiten
+  (r5-003 &times; r5-004), Visualisierung clientseitig ohne Netzwerkdaten.
+</footer>
+
+</div>
+<script>
+(function(){
+"use strict";
+var cv=document.getElementById('cv');
+if(!cv||!cv.getContext) return;
+var ctx=cv.getContext('2d');
+if(!ctx) return;
+var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+var W=0,H=0,MAXL=31,TAU=0.5;
+var NSIG=14,NOISE=8;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var rnd=mulberry32(0x5a26),rnd2=mulberry32(0xbee5);
+var concepts=[{label:"Chart 1 · L18",xf:0.20},{label:"Chart 2 · L19",xf:0.42},{label:"Chart 3 · L27",xf:0.64}];
+var sigP=[],noiseP=[];
+for(var i=0;i<NSIG;i++){sigP.push({ci:i%3,dx:(rnd()-0.5)*1.7,dy:(rnd()-0.5)*1.7,th:0.05+0.9*rnd()});}
+for(var j=0;j<NOISE;j++){noiseP.push({ang:rnd2()*Math.PI*2,rr:0.4+0.6*rnd2()});}
+var state={w:0.55,cov:1.0,L:14,g:1.0,useM:true};
+
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function lerp(a,b,t){return a+(b-a)*t;}
+function smoothstep(x,a,b){if(b===a)return x<a?0:1;var t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);}
+function capOf(l){return Math.pow(2,l)/Math.pow(2,MAXL);}
+function demandOf(l){return 7+112*Math.exp(-Math.pow(l-10,2)/(2*81));}
+function capStr(l){var v=Math.pow(2,l);return v>=1e6?v.toExponential(1):String(Math.round(v));}
+function parseColor(s,fb){s=(s||'').trim();var r=fb||[128,128,128];if(s.charAt(0)==='#'){var h=s.slice(1);if(h.length===3)h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);var n=parseInt(h.slice(0,6),16);if(!isNaN(n))return[(n>>16)&255,(n>>8)&255,n&255];}var m=s.match(/[\d.]+/g);if(m&&m.length>=3)return[+m[0],+m[1],+m[2]];return r;}
+function rgba(c,a){return'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')';}
+var P={};
+function readTheme(){var cs=getComputedStyle(document.documentElement);function v(n,fb){return cs.getPropertyValue(n).trim()||fb;}
+P.canvas=v('--viz-bg','#0d1526');P.ink=v('--txt','#e8ecff');P.muted=v('--dim','#a8b3d9');P.grid=v('--grid','rgba(120,160,255,.07)');
+P.accent=v('--accent','#58a6ff');P.accent2=v('--accent2','#ffb86b');P.good=v('--good','#4ade80');P.bad=v('--bad','#ff9b9b');
+P.ring=v('--ring','#c4a7ff');P.gold=v('--gold','#ffd700');P.fold=v('--fold','#ffb86b');P.mono=v('--mono','ui-monospace,monospace');
+P.cCanvas=parseColor(P.canvas);P.cInk=parseColor(P.ink);P.cMuted=parseColor(P.muted);P.cAccent=parseColor(P.accent);
+P.cAccent2=parseColor(P.accent2);P.cGood=parseColor(P.good);P.cBad=parseColor(P.bad);P.cRing=parseColor(P.ring);
+P.cGold=parseColor(P.gold);P.cFold=parseColor(P.fold);}
+
+var topY0=24,topH=128,mainY0=0,mainH=0,pL=46,pR=40;
+function resize(){var r=cv.getBoundingClientRect();W=Math.max(320,r.width);H=Math.max(520,r.height);
+cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);
+mainY0=topY0+topH+36;mainH=H-mainY0-14;}
+
+function seg(x1,y1,x2,y2,color,w,dashed){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w||1.2;if(dashed)ctx.setLineDash([5,6]);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);ctx.restore();}
+function label(t,x,y,color,align,size){ctx.save();ctx.fillStyle=color;ctx.font='600 '+(size||11)+'px '+P.mono;ctx.textAlign=align||'left';ctx.textBaseline='middle';ctx.fillText(t,x,y);ctx.restore();}
+function arrow(x1,y1,x2,y2,color,w,dashed){ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w||2;if(dashed)ctx.setLineDash([7,6]);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);var a=Math.atan2(y2-y1,x2-x1),hs=8;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));ctx.closePath();ctx.fill();ctx.restore();}
+
+function bandY(xf){return mainY0+mainH*0.5+mainH*0.12*Math.sin(xf*Math.PI);}
+function clumpC(i){return{x:pL+(W-pL-pR)*concepts[i].xf,y:bandY(concepts[i].xf)};}
+function corePos(){var xf=0.9;return{x:pL+(W-pL-pR)*xf,y:bandY(xf)};}
+
+function state2(){
+var w=clamp(state.w,0,1),cov=clamp(state.cov,0.2,1.5),L=clamp(Math.round(state.L),0,MAXL),g=clamp(state.g,0,1);
+var aniso=w;
+var coherence=1-0.55*smoothstep(w,0.6,1.0);
+var structure=smoothstep(L,2,18)*(1-0.25*smoothstep(w,0.85,1.0));
+var massScore=clamp(cov/TAU,0,1);
+var corr=g;
+var truth=Math.min(coherence,structure,massScore,corr);
+var conf=0.70+0.25*clamp(cov,0,1);
+var erank=Math.round(7+(4096-7)*Math.exp(-w*9));
+var errAng=(1-g)*1.3+(state.useM?0:0.7);
+return{w:w,cov:cov,L:L,g:g,aniso:aniso,coherence:coherence,structure:structure,massScore:massScore,corr:corr,truth:truth,conf:conf,erank:erank,errAng:errAng,massOk:cov>=TAU,groundedExt:g>=0.45};}
+
+function drawPanel1(m){
+var padL=pL,padR=pR,padT=topY0+8,padB=18;
+var pw=W-padL-padR,ph=topH-padT-padB;
+if(pw<30||ph<20)return;
+function xF(l){return padL+pw*(l/MAXL);}
+function yF(v){return padT+ph*(1-clamp(v,0,1));}
+ctx.strokeStyle=P.grid;ctx.lineWidth=1;
+for(var g2=0;g2<=4;g2++){var gy=padT+ph*g2/4;ctx.beginPath();ctx.moveTo(padL,gy);ctx.lineTo(padL+pw,gy);ctx.stroke();}
+ctx.fillStyle=P.muted;ctx.font='9px '+P.mono;ctx.textAlign='right';ctx.textBaseline='middle';
+ctx.fillText('1.0',padL-6,padT+2);ctx.fillText('0.0',padL-6,padT+ph+2);
+ctx.beginPath();ctx.moveTo(xF(0),yF(0));
+for(var l2=0;l2<=MAXL;l2++)ctx.lineTo(xF(l2),yF(capOf(l2)));
+ctx.lineTo(xF(MAXL),yF(0));ctx.closePath();ctx.fillStyle=rgba(P.cAccent,0.16);ctx.fill();
+ctx.beginPath();
+for(var l3=0;l3<=MAXL;l3++){var mx=xF(l3),my=yF(capOf(l3));l3?ctx.lineTo(mx,my):ctx.moveTo(mx,my);}
+ctx.strokeStyle=P.accent;ctx.lineWidth=2.2;ctx.stroke();
+ctx.beginPath();
+for(var l4=0;l4<=MAXL;l4++){var nx=xF(l4),ny=yF(demandOf(l4)/130);l4?ctx.lineTo(nx,ny):ctx.moveTo(nx,ny);}
+ctx.strokeStyle=P.accent2;ctx.lineWidth=2.2;ctx.stroke();
+var floorY=yF(7/130);
+seg(padL+pw*0.5,floorY,padL+pw,floorY,rgba(P.cAccent2,0.5),1,true);
+label('kompakter Falt-Kern erank~7 (A)',padL+pw-4,floorY-8,P.accent2,'right',9);
+[18,19,27].forEach(function(c){var tx=xF(c);seg(tx,padT,tx,padT+ph,rgba(P.cGood,0.7),1.3,true);label('L'+c,tx,padT-3,P.good,'center',9);});
+var cl=clamp(m.L,0,MAXL),cx=xF(cl);
+seg(cx,padT,cx,padT+ph,rgba(P.cInk,0.4),1,true);
+ctx.beginPath();ctx.arc(cx,yF(capOf(cl)),4,0,6.2832);ctx.fillStyle=P.accent;ctx.fill();
+ctx.beginPath();ctx.arc(cx,yF(demandOf(cl)/130),4,0,6.2832);ctx.fillStyle=P.accent2;ctx.fill();
+label('Tiefe-Achse \u2113 :  Angebot Regionen\u2248k^\u2113 (B, \u2191)  vs  Nachfrage/erank (A, \u2193\u2192~7)   \u2014   Weiche \u2243 \u2016M\u2212I\u2016 = T = Hologramm-Grad (A)',padL,topY0+topH+2,P.muted,'left',9);
+}
+
+function drawPanel2(m){
+var core=corePos();
+var w=m.w,l2=0.12+0.88*(1-w);
+var R=Math.min(mainH*0.42,(W-pL-pR)*0.14);
+ctx.beginPath();
+for(var i=0;i<=100;i++){var xf=i/100,px=pL+(W-pL-pR)*xf,py=bandY(xf);i?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+ctx.strokeStyle=rgba(P.cMuted,0.45);ctx.lineWidth=6;ctx.lineCap='round';ctx.stroke();ctx.lineCap='butt';
+label('d\u00fcnn gekr\u00fcmte Kapazit\u00e4ts-Mannigfaltigkeit (B) \u2014 lokale Charts \u2192 terminaler Falt-Kern (A)',pL+4,mainY0+10,P.muted,'left',9);
+for(var e=0;e<concepts.length-1;e++){var a=clumpC(e),b=clumpC(e+1);seg(a.x,a.y,b.x,b.y,rgba(P.cAccent,m.coherence>0.5?0.5:0.15),m.coherence>0.5?2:1,m.coherence<=0.5);}
+var crx=Math.max(26,(W-pL-pR)*0.075),cry=Math.max(22,mainH*0.16);
+for(var ci=0;ci<concepts.length;ci++){var c=clumpC(ci);
+ctx.beginPath();ctx.ellipse(c.x,c.y,crx,cry,0,0,6.2832);
+ctx.fillStyle=rgba(P.cAccent,0.07);ctx.fill();
+ctx.strokeStyle=rgba(P.cAccent,0.5);ctx.lineWidth=1.2;ctx.stroke();
+label(concepts[ci].label,c.x,c.y-cry-11,P.accent,'center',11);
+label('Chart (B) = Rotations-Kern (A, d_eff=1)',c.x,c.y+cry+11,P.muted,'center',8);}
+ctx.save();ctx.setLineDash([4,5]);ctx.lineWidth=1;ctx.strokeStyle=rgba(P.cMuted,0.5);
+ctx.beginPath();ctx.arc(core.x,core.y,R*1.35,0,6.2832);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+label('Reservoir ker(W) (A/B)',core.x,core.y-R*1.35-8,P.muted,'center',9);
+ctx.beginPath();ctx.ellipse(core.x,core.y,R*0.95,R*l2*0.95,0,0,6.2832);
+ctx.fillStyle=rgba(P.cAccent,0.10);ctx.fill();
+ctx.strokeStyle=rgba(P.cAccent,0.85);ctx.lineWidth=2;ctx.stroke();
+label('M = Kovarianz (A)',core.x+R*0.95+6,core.y+R*l2*0.4,P.accent,'left',9);
+ctx.strokeStyle=P.fold;ctx.lineWidth=2.2;ctx.beginPath();var first=true;
+for(var xx=-R*0.95;xx<=R*0.95;xx+=4){var fx=core.x+xx,fy=core.y+0.06*R*Math.sin(xx/(R*0.5));if(first){ctx.moveTo(fx,fy);first=false;}else ctx.lineTo(fx,fy);}
+ctx.stroke();
+label('\u1D4DF = Falten-Support (A)',core.x-R*0.95,core.y-R*l2*0.95-8,P.fold,'left',9);
+var e2len=R*Math.min(1.8,1/l2),e1len=R*0.7;
+ctx.setLineDash([6,4]);ctx.strokeStyle=rgba(P.cGold,0.85);ctx.lineWidth=1.6;
+seg(core.x,core.y,core.x+e1len,core.y,rgba(P.cGold,0.85),1.6,false);
+seg(core.x,core.y,core.x,core.y-e2len,rgba(P.cGold,0.85),1.6,false);
+ctx.setLineDash([]);
+label('M\u207b\u00b9 (Whitening = Kontraktion/Steuerung)',core.x+e1len+4,core.y-e2len-4,P.gold,'left',9);
+var massOk=m.cov>=TAU,mcg=massOk?P.cGood:P.cBad,ec=clamp(m.cov,0,1.5)/1.5;
+var rad=10+26*ec;
+var grd=ctx.createRadialGradient(core.x,core.y,2,core.x,core.y,rad);
+grd.addColorStop(0,rgba(mcg,0.12+0.34*ec));grd.addColorStop(1,rgba(mcg,0));
+ctx.fillStyle=grd;ctx.beginPath();ctx.arc(core.x,core.y,rad,0,6.2832);ctx.fill();
+ctx.save();ctx.shadowColor=rgba(mcg,0.9);ctx.shadowBlur=8;ctx.fillStyle=rgba(mcg,0.95);ctx.beginPath();ctx.arc(core.x,core.y,5,0,6.2832);ctx.fill();ctx.restore();
+ctx.strokeStyle=rgba(P.cAccent,0.9);ctx.lineWidth=2.4;
+ctx.beginPath();ctx.arc(core.x,core.y,9,-Math.PI/2,-Math.PI/2+m.conf*6.2832);ctx.stroke();
+label('Conf '+Math.round(m.conf*100)+'% (\u226570)',core.x,core.y-rad-8,P.accent,'center',9);
+label((massOk?'Masse \u2265 \u03c4 \u2713 (A)':'Masse < \u03c4 \u2717 (A)'),core.x,core.y+rad+10,massOk?P.good:P.bad,'center',9);
+var thw=-0.5,wr=R*1.05;
+var wx=core.x+Math.cos(thw)*wr,wy=core.y+Math.sin(thw)*wr;
+ctx.save();ctx.strokeStyle=P.ring;ctx.lineWidth=1.8;
+ctx.beginPath();ctx.arc(wx,wy,9,0,6.2832);ctx.stroke();
+ctx.beginPath();ctx.moveTo(wx-12,wy);ctx.lineTo(wx+12,wy);ctx.moveTo(wx,wy-12);ctx.lineTo(wx,wy+12);ctx.stroke();ctx.restore();
+label('W (B): die Welt',wx,wy-15,P.ring,'center',11);
+var valAng=thw+m.errAng,vl=crx*1.4;
+arrow(core.x,core.y,core.x+Math.cos(valAng)*vl,core.y+Math.sin(valAng)*vl,P.accent2,2.4,false);
+label('Wert (B)',core.x+Math.cos(valAng)*(vl+12),core.y+Math.sin(valAng)*(vl+12),P.accent2,'center',11);
+var midA=(thw+valAng)/2,mr=(wr+vl)/2+14;
+label('Fehlerwinkel = 1\u2212g',core.x+Math.cos(midA)*mr,core.y+Math.sin(midA)*mr,P.muted,'center',8);
+for(var s=0;s<NSIG;s++){var sp=sigP[s];var cl2=clumpC(sp.ci);
+var sx=cl2.x+sp.dx*crx*0.7,sy=cl2.y+sp.dy*cry*0.7;
+var sn=smoothstep(m.w,sp.th*0.4,sp.th*0.4+0.5);
+var x=lerp(sx,core.x+(sn>0.9?0:sp.dx*4),sn),y=lerp(sy,core.y+(sn>0.9?0:sp.dy*4),sn);
+var col; if(sn<0.18)col=P.bad;else if(sn<0.45)col=P.accent2;else if(sn<0.85)col=P.accent;else col=P.good;
+if(sn>0.15&&sn<0.9){ctx.strokeStyle=rgba(parseColor(col),0.14);ctx.lineWidth=0.7;ctx.setLineDash([2,4]);ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(core.x,core.y);ctx.stroke();ctx.setLineDash([]);}
+ctx.fillStyle=col;ctx.globalAlpha=0.9;ctx.beginPath();ctx.arc(x,y,sn<0.2?2.2:3.2,0,6.2832);ctx.fill();ctx.globalAlpha=1;}
+for(var n=0;n<NOISE;n++){var nr=R*1.1*(1+m.w*0.4*noiseP[n].rr);
+var nx2=core.x+nr*Math.cos(noiseP[n].ang),ny2=core.y+nr*Math.sin(noiseP[n].ang);
+ctx.fillStyle=rgba(P.cMuted,0.4);ctx.beginPath();ctx.arc(nx2,ny2,2.2,0,6.2832);ctx.fill();}
+}
+
+function set(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
+function updateReadout(m){
+set('rAniso',m.aniso.toFixed(2));
+set('rMass',Math.round(m.cov*100)+'%');
+set('rSupply','\u2248'+capStr(m.L));
+set('rErank',m.erank);
+set('rCoh',Math.round(m.coherence*100)+'%');
+set('rStr',Math.round(m.structure*100)+'%');
+set('rCor',Math.round(m.corr*100)+'%');
+set('rTruth',Math.round(m.truth*100)+'%');
+var coherent=m.coherence>=0.5,str=m.structure>=0.5;
+var cls,msg;
+if(coherent&&str&&m.massOk&&m.groundedExt){cls='good';
+msg='\u2713 GEGR\u00dcNDET \u2014 Masse \u2265 \u03c4 auf der Falte (A: lokal gegr\u00fcndet, in der Klasse) \u2227 Struktur erreicht (\u2207L\u22480) \u2227 Koh\u00e4renz '+Math.round(m.coherence*100)+'% \u2227 Wert trifft die Welt W (B, Korrespondenz '+Math.round(m.corr*100)+'%). Whitening M\u207b\u00b9 = Kontraktion (A) steuert den allozierten Falt-Kern (B). Kapazit\u00e4t lizenziert \u00b7 Erdung real.';}
+else if(coherent&&str&&m.massOk&&!m.groundedExt){cls='bad';
+msg='\u2717 HALLUZINIERT (koh\u00e4rente Fiktion, B) \u2014 koh\u00e4rent ('+Math.round(m.coherence*100)+'%), strukturiert (\u2207L\u22480), Masse \u2265 \u03c4 auf der Falte (A, lokal gegr\u00fcndet), ABER der Wert trifft die Welt W nie (Korrespondenz '+Math.round(m.corr*100)+'%, Erdung g='+Math.round(m.g*100)+'%). Selbstbewusst (Conf '+Math.round(m.conf*100)+'% \u226570) aber extern ungegr\u00fcndet. Heilmittel: Erdung/Retrieval \u2014 nicht Koh\u00e4renz skalieren.';}
+else if(coherent&&str&&!m.massOk){cls='bad';
+msg='\u2717 HALLUZINIERT (Fixpunkt ohne Masse, A) \u2014 der Fluss zieht den Zustand selbstbewusst (Conf '+Math.round(m.conf*100)+'% \u226570, konvergent, kein OOD-Alarm) auf eine Falt-St\u00e4tte mit Masse < \u03c4 ('+Math.round(m.cov*100)+'%); zugleich in ein fremdes Tal / au\u00dferhalb der Klasse (B). Konvergent & ungegr\u00fcndet \u2014 der fusionierte Kernfehler (No-Silent-Upgrade).'}
+else{cls='warn';
+msg='\u2248 \u00dcbergang \u2014 Koh\u00e4renz '+Math.round(m.coherence*100)+'% \u00b7 Struktur '+Math.round(m.structure*100)+'% (\u2207L\u22480) \u00b7 Masse '+Math.round(m.cov*100)+'% \u00b7 Korrespondenz '+Math.round(m.corr*100)+'%. '+(m.structure<0.5?'Noch nicht konvergiert / flach & schwach (zu wenig Tiefe/Budget, B; Rauschen nicht im Reservoir geparkt, A). ':'')+(m.coherence<0.5?'Weiche zu hoch (weich/eng): naives Lesen bricht, Klasse breiter (B). ':'');}
+var vd=document.getElementById('verdict');if(vd){vd.className='verdict '+cls;vd.textContent=msg;}}
+
+function render(){try{if(!W||!H)resize();readTheme();ctx.clearRect(0,0,W,H);ctx.fillStyle=P.canvas;ctx.fillRect(0,0,W,H);var m=state2();drawPanel1(m);drawPanel2(m);updateReadout(m);}catch(e){}}
+
+function bind(id,fn){var e=document.getElementById(id);if(e)e.addEventListener('input',fn);}
+bind('wIn',function(e){state.w=+e.target.value/100;var v=document.getElementById('wV');if(v)v.textContent=e.target.value;render();});
+bind('covIn',function(e){state.cov=+e.target.value;var v=document.getElementById('covV');if(v)v.textContent=(+e.target.value).toFixed(2);render();});
+bind('lIn',function(e){state.L=+e.target.value;var v=document.getElementById('lV');if(v)v.textContent=e.target.value;render();});
+bind('gIn',function(e){state.g=+e.target.value/100;var v=document.getElementById('gV');if(v)v.textContent=e.target.value;render();});
+var um=document.getElementById('useM');if(um)um.addEventListener('change',function(e){state.useM=e.target.checked;render();});
+function applyTheme(t){try{localStorage.setItem('r6002-theme',t);}catch(e){}document.documentElement.classList.toggle('dark',t!=='light');render();}
+var tb=document.getElementById('themeBtn');if(tb)tb.addEventListener('click',function(){var cur=document.documentElement.classList.contains('dark')?'dark':'light';applyTheme(cur==='dark'?'light':'dark');});
+window.addEventListener('resize',function(){resize();render();});
+if(window.MutationObserver){new MutationObserver(function(){readTheme();render();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}
+readTheme();resize();render();
+})();
+</script>
+</body>
+</html>

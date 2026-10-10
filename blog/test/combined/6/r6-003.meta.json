@@ -1,0 +1,17 @@
+{
+  "no": "003",
+  "a": "combined/5/r5-005.html",
+  "b": "combined/2/r2-040.html",
+  "a_title": "Ein Zustand, ein Regler, zwei Lesetiefen, ein Vorzeichen",
+  "b_title": "Der Transformer als singuläres Faserbündel — Strukturgruppe ✕ Bruchkanten",
+  "combined_theme": "singular-bundle-form-controller",
+  "one_line": "Ein singuläres, geschichtetes Faserbündel, dessen Form die Information ist: ein Regler (Lipschitz-Morphismus + Linse) schreibt die Form und liest an deren Commit-Kante; A's zwei Lesetiefen = B's zwei Bündel-Teile (Basis + Abschnitt), A's eine Commit-Kante = B's globales Fokus-Budget, A's 'scharf ohne Stütze' = B's 'Abschnitt s trifft eine Bruchkante und springt'.",
+  "contradictions": [
+    "Objekt: A (r5-005) ein glattes, dünnes, kohärentes, sich linearisierendes Fisher-Manifold vs. B (r2-040) ein SINGULÄRES, GESCHICHTETES Nicht-Manifold mit Bruchkanten (4/4 LLMs verwerfen 'Manifold', p bis ~3e-8).",
+    "Dimension: A eine einzelne intrinsische Dimension (ID≈20 / k≈15–22, 'dünn') vs. B ein pro-Stratum gemessenes d_s, das um Faktor 20+ streut (20/389/531) plus drittes d_model=768 (Faser).",
+    "Halluzination-Deutung: A = EINE Untreue an EINEM Objekt in zwei Tiefen (scharf × verankert, eine 2×2, gleiche Zeitskala) vs. B = zwei räumlich getrennte, ontologisch verschiedene Ereignisse auf zwei Bündel-Teilen (statische Bruchkante in der Basis = Ursache + dynamischer Schnitt-Sprung im Abschnitt = Symptom).",
+    "Grenze: A = eine einzelne Commit-/Kippen-Kante (Form>Rauschen, α_eff>0, R>Kante) vs. B = ein FOKUS-BUDGET-Erhaltungsgesetz (Σ Kacheln≈B = Reach-τ / Holm-Bonferroni / Multiple-Testing: nicht alles überall scharf, Fokus entfokusiert)."
+  ],
+  "resolution": "A's zwei Lesetiefen SIND B's zwei Bündel-Teile: die feine/topologische Tiefe = die Basis (Bruchkante, β₁, stabile Cusp/Schleife), die grobe/metrische Tiefe = der Abschnitt (Margin, Commit, Sprung). Innerhalb eines Stratums = A (dünnes kohärentes Manifold, ein wirksamer ID, eine Commit-Kante); zwischen den Straten = B (singulär, Bruchkanten, variables d_s, globales Nicht-Manifold). A's einzelne ID ist B's d_s an der Commit-Skala; A's glattes Manifold ist B's Stratum-Innen, B's Bruchkante ist der Rand zwischen A's Lesetiefen. A's eine Commit-Kante ist die per-Kachel-Instantiierung von B's globalen Fokus-Budgets (der Regler allokiert K=B/n); 'nicht alles überall scharf' (B) ist die globale Form von 'Form>Rauschen' (A). Die Halluzination ist das eine strukturelle Ereignis: A 'scharf ohne Stütze' (zwei Tiefen) = B 'Abschnitt s trifft eine Basis-Bruchkante (Ursache) und springt (Symptom)'; A's Präzisions-Achse = B's Abschnitt, A's Verankerungs-Achse = B's Basis/Bruchkante.",
+  "viz": "Canvas: ein Zustandspunkt fließt in Schicht-Zeit durch das Zirkuit-Feld ṙ=(α_eff−r²)r−ωr⊥ (Regler α_eff schreibt die Form: α_eff>0 ⇒ Grenzzyklus β₁=1 = Kreis/Cusp, α_eff≤0 ⇒ Fixpunkt β₁=0); eine vertikale Bruchkante (B, Basis-Singularität/Stratum-Grenze) markiert die Grenze — Basis-Drift schiebt den Zustand über die Kante und bricht die Verankerung; die zwei-Achsen-2×2 (scharf × verankert) wird live gehighlightet (Inhalt/Halluzination/vage/Rauschen), β₁ wird via Union-Find/Vietoris–Rips aus der Trajektorie gezählt; unten eine Fokus-Budget-Leiste (B, Σ Kacheln≈B). Regler-/Rauschen-/Drift-/Budget-Slider + 'Präzision erzwingen' (Miscalibration→Halluzination)."
+}

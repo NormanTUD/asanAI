@@ -1,0 +1,46 @@
+{
+  "round": 6,
+  "seed": 20261010,
+  "big_threshold_kb": 100.0,
+  "method": "seeded-random, size-balanced (big>=threshold always paired with smallest available partner); bye advances unchanged",
+  "pool_size": 6,
+  "num_pairs": 3,
+  "num_byes": 0,
+  "max_pair_total_kb": 128.7,
+  "pairs": [
+    {
+      "id": 1,
+      "no": "001",
+      "out": "combined/6/r6-001.html",
+      "meta": "combined/6/r6-001.meta.json",
+      "a": "combined/5/r5-002.html",
+      "b": "combined/5/r5-001.html",
+      "size_a": 42.4,
+      "size_b": 51.4,
+      "total_kb": 93.8
+    },
+    {
+      "id": 2,
+      "no": "002",
+      "out": "combined/6/r6-002.html",
+      "meta": "combined/6/r6-002.meta.json",
+      "a": "combined/5/r5-003.html",
+      "b": "combined/5/r5-004.html",
+      "size_a": 57.9,
+      "size_b": 60.0,
+      "total_kb": 117.9
+    },
+    {
+      "id": 3,
+      "no": "003",
+      "out": "combined/6/r6-003.html",
+      "meta": "combined/6/r6-003.meta.json",
+      "a": "combined/5/r5-005.html",
+      "b": "combined/2/r2-040.html",
+      "size_a": 62.6,
+      "size_b": 66.1,
+      "total_kb": 128.7
+    }
+  ],
+  "byes": []
+}

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten — Fusion (R6-001)</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b18; --muted:#5c574c; --card:#ffffff; --card2:#f2ede1;
+  --border:#e3dcc9; --grid:#00000018; --on-accent:#ffffff; --plotbg:#f6f1e6;
+  --accent:#2b6cb0; --accent2:#7c3aed;
+  --early:#c0564b; --mid:#c77d2f; --late:#2f855a; --outer:#6b46c1;
+  --theta:#0e7490; --cA:#6a4fa3; --cB:#0d8f80; --dial:#0a7a55;
+  --safe:#2f9e44; --harm:#c93a86; --res:#c2410c;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e2e8f0; --muted:#94a3b8; --card:#111c30; --card2:#0b1220;
+  --border:#243449; --grid:#ffffff18; --on-accent:#0b1220; --plotbg:#0c1322;
+  --accent:#58a6ff; --accent2:#d2a8ff;
+  --early:#ff7b72; --mid:#ffa657; --late:#7ee787; --outer:#d2a8ff;
+  --theta:#38bdf8; --cA:#a78bfa; --cB:#5ee0d0; --dial:#34d399;
+  --safe:#4ade80; --harm:#ff7ac0; --res:#fb923c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);line-height:1.68;
+  font-family:Georgia,'Times New Roman',serif;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:26px 20px 90px}
+.topbar{max-width:820px;margin:0 auto;padding:12px 20px 0;display:flex;justify-content:flex-end}
+#themeToggle{background:var(--card2);border:1px solid var(--border);color:var(--fg);
+  padding:6px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;font-family:system-ui,sans-serif}
+h1{font-size:1.55rem;line-height:1.3;margin:8px 0 6px;letter-spacing:-.01em}
+.subtitle{color:var(--muted);font-size:.85rem;margin:0 0 8px;font-family:ui-monospace,monospace}
+.subtitle b{color:var(--accent);font-weight:600}
+.tagline{color:var(--muted);font-size:.94em;margin:0 0 6px}
+section{margin-top:34px}
+h2{font-size:1.16rem;border-left:3px solid var(--accent);padding-left:11px;margin:0 0 12px;line-height:1.3}
+h2 .num{color:var(--accent2);font-variant-numeric:tabular-nums;margin-right:8px}
+h3{font-family:system-ui,sans-serif;font-size:1rem;margin:1.1rem 0 .5rem;color:var(--accent)}
+p{margin:10px 0}
+ul{margin:8px 0;padding-left:20px}
+li{margin:9px 0}
+li b,p b{font-weight:600}
+em{font-style:italic}
+.vs{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.04em;
+  padding:.12rem .5rem;border-radius:6px;display:inline-block;margin-right:.35rem;vertical-align:middle}
+.vs.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+.vs.b{background:color-mix(in srgb,var(--accent2) 22%,transparent);color:var(--accent2)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.1rem;margin:.85rem 0}
+.card h3{margin-top:0}
+.fused{background:color-mix(in srgb,var(--late) 14%,transparent);border-left:4px solid var(--late);
+  border-radius:0 8px 8px 0;padding:.65rem 1rem;margin:.85rem 0}
+.fused b{color:var(--late)}
+.anno{font-size:.85rem;color:var(--muted);font-style:italic;margin-top:.4rem}
+.math{font-family:'Cambria Math','Latin Modern Math',Georgia,serif;background:var(--card2);
+  border:1px solid var(--border);border-radius:6px;padding:10px 14px;display:block;
+  margin:12px 0;overflow-x:auto;font-size:.98rem;letter-spacing:.01em;line-height:1.85;white-space:pre-wrap}
+.math sub,.math sup{font-size:.72em}
+.block{display:block;font-family:ui-monospace,monospace;background:var(--card2);
+  border:1px solid var(--border);border-radius:8px;padding:12px 15px;margin:12px 0;
+  overflow-x:auto;line-height:1.8;font-size:.85rem;white-space:pre-wrap}
+table{width:100%;border-collapse:collapse;font-size:.84rem;margin:1rem 0}
+th,td{border:1px solid var(--border);padding:.5rem .6rem;text-align:left;vertical-align:top}
+th{font-family:system-ui,sans-serif;background:var(--card2)}
+.tag{display:inline-block;font-family:system-ui,sans-serif;font-size:.72rem;font-weight:600;
+  padding:.12rem .5rem;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--card)}
+.controls{display:flex;flex-wrap:wrap;gap:.7rem 1.2rem;align-items:center;background:var(--card);
+  border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;margin:1rem 0}
+.controls label{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.45rem}
+.controls input[type=range]{accent-color:var(--accent);width:130px}
+.ctl-val{color:var(--accent);font-weight:700;font-family:ui-monospace,monospace;min-width:2.4em;display:inline-block}
+.vbtn{background:var(--card2);border:1px solid var(--border);color:var(--fg);
+  padding:6px 12px;border-radius:7px;cursor:pointer;font-size:.82rem;font-family:system-ui,sans-serif}
+.vbtn.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+#vcanvas{width:100%;height:520px;display:block;border-radius:10px;background:var(--plotbg);
+  border:1px solid var(--border)}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:.8rem 0 .3rem}
+.ro{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.55rem .7rem;text-align:center}
+.ro .k{font-size:.68rem;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;font-family:system-ui,sans-serif}
+.ro .v{font-family:ui-monospace,monospace;font-size:1.02rem;font-weight:700}
+.readout{font-family:ui-monospace,monospace;font-size:.8rem;background:var(--card2);
+  border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin:.6rem 0;line-height:1.7}
+.readout b{color:var(--accent)}
+.vnote{font-size:.8rem;color:var(--muted);margin-top:8px}
+.prov{display:flex;gap:.7rem;align-items:flex-start;padding:.7rem .9rem;border:1px solid var(--border);
+  border-radius:8px;margin-bottom:.7rem;background:var(--card);font-size:.95rem}
+.prov .k{font-family:system-ui,sans-serif;font-size:.72rem;font-weight:700;flex:0 0 1.6em;
+  text-align:center;border-radius:6px;padding:.2rem 0;margin-top:.1rem}
+.prov .k.a{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent)}
+.prov .k.b{background:color-mix(in srgb,var(--accent2) 22%,transparent);color:var(--accent2)}
+.prov a{color:var(--accent);font-weight:600;text-decoration:none}
+.prov a:hover{text-decoration:underline}
+.prov .path{font-family:ui-monospace,monospace;font-size:.78rem;color:var(--accent2);display:block;margin-bottom:2px}
+.foot{margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border);
+  color:var(--muted);font-size:.85rem;font-style:italic}
+sub{font-size:.72em}
+</style>
+</head>
+<body>
+<div class="topbar"><button id="themeToggle" title="Thema umschalten">Thema &#9790;/&#9728;</button></div>
+<article>
+
+  <h1>Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten</h1>
+  <p class="subtitle">Fusion aus: <b>r5-002.html</b> &#10005; <b>r5-001.html</b> &nbsp;(Round 6)</p>
+  <p class="tagline">A (r5-002) ist <b>zustandszentriert</b>: der f&auml;hige Kern sitzt <i>auf</i> einer Robustheits-/Regime-Achse t und tr&auml;gt zwei Bruchigkeiten an zwei Enden. B (r5-001) ist <b>prozesszentriert</b>: der f&auml;hige Kern ist, was <i>einer Fahrt</i> &uuml;ber die Tiefe &uuml;berlebt, die einen Regler f&auml;hrt. Fusion: <b>die Fahrt (B) f&auml;hrt den Regler (A); der &Uuml;berlebende (B) ist der f&auml;hige Kern (A); das Verworfene (B) ist die intrinsische Bruchigkeit (A).</b> Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten.</p>
+
+  <section id="these">
+    <h2><span class="num">1</span>Kernthese der Fusion</h2>
+    <p>Beide R5-Papiere beschreiben <b>dasselbe tiefe Objekt</b> &mdash; ein trainiertes Modell als <b>EIN niedrig-dimensionales, strukturiertes Kern</b> in einem <b>hochdimensionalen, meist inerten Umfeld</b> &mdash; und legen Capability/Bedeutung in genau den Teil dieses Kerns, der robust, niedrig belegt und direkt lesbar ist. Sie unterscheiden sich nur im <b>Ausgangspunkt</b>. <span class="vs a">A</span> (r5-002) ist <b>zustandszentriert</b>: der f&auml;hige Kern liegt <i>auf</i> EINE Robustheits-/Regime-Achse <code>t</code> (0&nbsp;=&nbsp;diffus/voll-rangig/hoch belegt &middot; 1&nbsp;=&nbsp;scharf/Rang-k/niedrig belegt), und die Capability <b>koinzidiert</b> mit dem harten Pol (Rang-k-Projektor, eindeutiger Interferenz-Peak, niedrig belegt, hoch-persistent); der Preis ist <b>ZWEI Bruchigkeiten</b> &mdash; eine <b>intrinsische</b> (Nicht-Invertierbarkeit, <code>det C &rarr; 0</code>, sitzt <i>am Ort</i> der Capability) und eine <b>grenzliche</b> (der fragile &Uuml;bergang zum Budget, ID/C&rarr;1, am <i>Rand</i>). <span class="vs b">B</span> (r5-001) ist <b>prozesszentriert</b>: der f&auml;hige Kern ist <b>das, was einer einzigen Fahrt &uuml;berlebt</b> (die Fahrt &uuml;ber die Tiefe, den RG-Fluss), die einen Knopf &theta; (Scrambling/Kr&uuml;mmung) von scrambled/gekr&uuml;mmt (&theta;&asymp;1) nach flach/linear/direkt-lesbar (&theta;&rarr;0) <b>f&auml;hrt</b>, w&auml;hrend der Kanal kollabiert (erank 4096&rarr;&asymp;7); <b>Bedeutung&nbsp;=&nbsp;das &Uuml;berlebende</b> (holographischer &asymp;d-Vektor / langlebige H&#8320;-Komponente / robustes Zell-Innere); das Irreduzible&nbsp;=&nbsp;das verworfene hoch-dimensionale Detail + die gescrammelte fr&uuml;he Schicht (kurze Bars, Rate-Distortion-Boden).</p>
+    <p>Die <b>einheitliche Position</b>: <b>Ein trainiertes Modell ist EIN niedrig-dimensionaler, strukturierter Kern in einem hochdimensionalen, inerten Raum; EINE Fahrt (B's Tiefe/RG-Fluss) f&auml;hrt EINE Regime-/Robustheits-Regler (A's <code>t</code>, mit <code>t&nbsp;=&nbsp;1&minus;&theta;</code>; B's <code>T=&theta;</code>) von diffus/gescrambelt/hoch belegt (<code>t=0</code>) zu scharf/linear/niedrig belegt/direkt-lesbar (<code>t=1</code> = die gute Ecke).</b> Die <b>Capability&nbsp;=&nbsp;Bedeutung</b> ist der eindeutige, robuste, niedrig-belegte, hoch-persistente <b>&Uuml;berlebende</b> an der guten Ecke &mdash; A's Rang-k-Kern / eindeutiger Interferenz-Peak = B's holographischer &asymp;d-Vektor / langlebige H&#8320;-Komponente / harter linearer Read-out = <b>Grokking</b>. Die <b>Fahrt vollbringt den Cut</b>: die Tiefe (B) f&auml;hrt den Regler (A); A's Cut/Commit ist das <i>Eintreffen</i> an der guten Ecke. <b>Bruchigkeit ist auf ZWEI zusammengef&uuml;hrt</b>: (i) <b>intrinsisch</b> = die verworfenen Off-Manifold-Richtungen (A's Nicht-Invertierbarkeit, <code>det C&rarr;0</code>) = B's verworfenes hoch-dim. Detail (kurze Bars / Rate-Distortion-Boden) &mdash; der Preis, niedrig-dimensional zu sein; (ii) <b>grenzlich</b> = der Regime-/Zellen-Rand (A's fragiler &Uuml;bergang zum Budget = B's Zellgrenze / Voronoi-Gap). <b>Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten.</b></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2><span class="num">2</span>Widerspr&uuml;che zwischen A (r5-002) und B (r5-001)</h2>
+    <p>Die beiden teilen die tiefste Botschaft (niedrig-dim. Kern im hoch-dim. Raum; ein Regime/Regler; Capability/Bedeutung = der robuste, niedrig-belegte &Uuml;berlebende; eine Bruchigkeit am Rand) und <strong>harte</strong> Widerspr&uuml;che gibt es <em>nicht</em>. Aber auf drei konkreten Punkten nehmen sie <strong>genuin verschiedene, anfangs unvereinbare Stellungen</strong> ein &mdash; und zwar auf einer Ebene <i>&uuml;ber</i> den jeweiligen R4-Konflikten (jedes R5-Paper hat seinen internen Konflikt bereits aufgel&ouml;st; hier kollidieren die beiden <i>Meta-Perspektiven</i>):</p>
+
+    <div class="card">
+      <h3>C1 &middot; Die Achse &mdash; ein Zustand auf einer Robustheits-Achse (A) vs. eine Fahrt durch die Tiefe (B)</h3>
+      <p><span class="vs a">A</span> A: das Regime ist ein <b>ZUSTAND / eine Koordinate</b> auf einer Robustheits-Achse &mdash; <b>&bdquo;Ein trainiertes Netz ist EIN ... Objekt auf EINE Robustheits-/Regime-Achse&ldquo;</b>. Die Capability ist ein <b>ORT</b> (der harte Pol, <code>t=1</code>), erzeugt durch einen <b>Cut/Commit</b> (eine statische Auswahl). Die Betonung liegt auf <i>wo man ist</i> (das Gleichgewichtsregime). A ist <i>atemporal</i>: ein Dial, ein Zustand.</p>
+      <p><span class="vs b">B</span> B: das Regime ist ein <b>PROZESS / ein Survivor</b> &mdash; <b>&bdquo;Bedeutung ist genau die Struktur, die einer einzigen Fahrt &uuml;berlebt&ldquo;</b>. Die Tiefe/der RG-Fluss ist eine <b>Fahrt</b> durch die Schichten; die Capability = <i>was am Ende der Fahrt &uuml;brigbleibt</i>. Die Betonung liegt auf <i>dem Trip, den man nimmt</i> (der Fluss). B ist <i>temporal/sequenziell</i>: ein Fluss, ein &Uuml;berlebender.</p>
+      <p class="anno">Spannung: <b>Gleichgewicht (ein Ort auf einer Achse, ein festes Regime) vs. Fahrt (ein Trip durch die Tiefe, ein &Uuml;berlebender).</b> Ist der f&auml;hige Zustand ein <i>Ort, an dem man sitzt</i> (A) oder ein <i>Rest, den man &uuml;berlebt hat</i> (B)?</p>
+    </div>
+
+    <div class="card">
+      <h3>C2 &middot; Die Bruchigkeit &mdash; intrinsisch im f&auml;higen Kern (A) vs. verworfener Rest au&szlig;erhalb des Kerns (B)</h3>
+      <p><span class="vs a">A</span> A: die Bruchigkeit ist <b>INTRINSISCH im f&auml;higen Kern</b> &mdash; <b>&bdquo;Bruchigkeit ist die Schatten-Seite der Capability &mdash; man kann sie nicht haben, ohne sie mitzuliefern&ldquo;</b> (Doppelschwert). Die Nicht-Invertierbarkeit (<code>det C&rarr;0</code>, exponentielle Instabilit&auml;t mit der Tiefe, adversarial) sitzt <b>am Ort der Capability</b> (<code>t=1</code>). Der f&auml;hige Kern ist <i>selbst</i> fragil (nicht-invertibel, adversarial instabil).</p>
+      <p><span class="vs b">B</span> B: die Bruchigkeit ist <b>das, was die Fahrt VERWIRFT</b> &mdash; <b>&bdquo;das Irreduzible/Fragile ist ... das verworfene hoch-dim. Detail + die gescrammelte fr&uuml;he Schicht&ldquo;</b>. Das Fragile = kurze Bars / Knick / Rate-Distortion-Boden = <i>Rauschen, keine Struktur</i>; der &Uuml;berlebende (lange Bars) ist <b>robust</b>, das Fragile ist <i>von ihm getrennt</i> (es wird wegintegriert, es bleibt nicht im Kern).</p>
+      <p class="anno">Spannung: <b>Ist der &Uuml;berlebende selbst fragil</b> (A: nicht-invertibel, Doppelschwert, <i>am</i> f&auml;higen Punkt) <b>oder ist das Fragile der Rest au&szlig;erhalb des &Uuml;berlebenden</b> (B: verworfenes Detail, kurze Bars, <i>nicht</i> der &Uuml;berlebende)?</p>
+    </div>
+
+    <div class="card">
+      <h3>C3 &middot; Der Motor &mdash; ein diskreter, aktiver Cut/Commit (A) vs. ein kontinuierlicher Tiefen-Fluss (B)</h3>
+      <p><span class="vs a">A</span> A: die Capability entsteht aus einem <b>DISKRETEN, aktiven Vorgang</b> &mdash; <b>&bdquo;die Capability entsteht durch einen aktiven, scharfen Vorgang: der Regler schneidet (Rang-k-Projektor) und committet&ldquo;</b>; ein <b>&bdquo;deterministischer Cut&ldquo;</b>, ein <b>&bdquo;topologischer Phasen&uuml;bergang&ldquo;</b> (&#946;&#8321;:0&rarr;1, ein Event). Etwas <i>schl&auml;gt zu</i> (ein Mechanismus, der zuschnappt).</p>
+      <p><span class="vs b">B</span> B: die Capability <b>ENTSTEHT aus einem KONTINUIERLICHEN Fluss</b> &mdash; <b>&bdquo;die Tiefe ... f&auml;hrt &theta; von &asymp;1 zu &rarr;0, w&auml;hrend der Kanal kollabiert&ldquo;</b>; der RG-Fluss <i>integriert Detail heraus</i> (<code>&theta;<sub>eff</sub>(&ell;)=(1&minus;&ell;/L)<sup>c</sup></code>), der &Uuml;berlebende <i>entsteht passiv</i>. Etwas <i>wird herausgefahren</i>, kein Mechanismus schl&auml;gt zu.</p>
+      <p class="anno">Spannung: <b>ein diskretes Ereignis/Cut (A: Phasen&uuml;bergang, &#946;&#8321;:0&rarr;1, ein Sprung) vs. eine kontinuierliche Fahrt/Fluss (B: die Tiefe f&auml;hrt den Knopf, Detail wird herausintegriert).</b> Ist die Capability ein <i>Moment</i> (A) oder ein <i>Weg</i> (B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2><span class="num">3</span>Aufl&ouml;sung</h2>
+
+    <div class="fused"><b>R1 &middot; (f&uuml;r C1) Der Zustand ist das ENDE des Prozesses &mdash; die Fahrt (B) f&auml;hrt den Regler (A) in die gute Ecke.</b>
+    Der Regler <code>t</code> (A) ist die <b>Koordinate</b>, die die Fahrt (B) f&auml;hrt; das <b>Gleichgewichtsregime</b> (A's harte Pol, <code>t=1</code>) ist genau der Punkt, an dem B's Fahrt <i>ankommt und stehenbleibt</i> (die gute Ecke, &theta;&rarr;0). A liest das <i>Wo</i> (eine Koordinate auf einer Achse), B liest das <i>Wie-man-dort-ankommt</i> (der Fluss, der das Detail herausintegriert hat). Beide meinen denselben Punkt: die Fahrt <i>erkl&auml;rt, warum</i> man bei <code>t=1</code> ist; der Regler <i>sagt, was</i> <code>t=1</code> ist (Rang-k, niedrig belegt, eindeutiger Peak). <b>Fused: ein Kern, und der f&auml;hige Zustand ist der Zielpunkt der Fahrt &mdash; &bdquo;die Tiefe f&auml;hrt den Knopf&ldquo; (B) + &bdquo;eine Achse, ein Regime&ldquo; (A) = die Fahrt (B) f&auml;hrt den Robustheits-Regler (A) in die gute Ecke.</b></div>
+
+    <div class="fused"><b>R2 &middot; (f&uuml;r C2) Die zwei Bruchigkeiten sind dieselben Freiheitsgrade, von innen vs. von au&szlig;en gesehen.</b>
+    A's <b>intrinsische Bruchigkeit</b> = <i>der Kern ist nicht-invertibel, weil er die Off-Manifold-Richtungen verwirft</i> (<code>det C = &Pi;&#947;&#8321; &rarr; 0</code>, &#947;&#8321;&rarr;0 f&uuml;r i&gt;k) &mdash; das IST B's <b>verworfenes hoch-dim. Detail</b> = <i>kurze Bars / Rate-Distortion-Boden = der erank-Kollaps 4096&rarr;&asymp;7</i>. Die verworfenen Richtungen bilden <b>EINEN</b> Satz: A nennt ihn <i>von innen</i> &bdquo;der &Uuml;berlebende ist nicht-invertibel&ldquo; (er IST niedrig-dimensional, also nicht-invertierbar); B nennt ihn <i>von au&szlig;en</i> &bdquo;der verworfene Teil ist Rauschen&ldquo; (die kurzen Bars sterben ab). Der &Uuml;berlebende ist also <b>robust, wo er beh&auml;lt</b> (B: lange Bars, der Kern) <b>und nicht-invertibel/fragil, wo er verwirft</b> (A: <code>det C&rarr;0</code>, das Reservoir) &mdash; kein Widerspruch, sondern <b>ein Objekt, zwei Gesichter</b>. Dazu: A's <b>grenzliche Bruchigkeit</b> (Regime-Rand, ID/C&rarr;1, &#964;&#8321;&rarr;0) = B's <b>Zellgrenze / Voronoi-Gap / Verschmelzungsereignis</b>. <b>Fused: intrinsisch = verworfenes Detail (das Reservoir) = Nicht-Invertierbarkeit; grenzlich = der Regime-/Zellen-Rand.</b></div>
+
+    <div class="fused"><b>R3 &middot; (f&uuml;r C3) Der Cut (A) ist die diskrete topologische SIGNATUR des Flusses (B).</b>
+    B's <b>kontinuierlicher Tiefen-Fluss</b> (&theta;<sub>eff</sub>=(1&minus;&ell;/L)<sup>c</sup> f&auml;hrt den Regler, der Kanal kollabiert 4096&rarr;&asymp;7) <b>vollbringt</b> A's Cut: der <b>Rang-k-Projektor / &#946;&#8321;:0&rarr;1 / die Geburt des eindeutigen Peaks</b> (A's diskretes Event) ist das <i>topologische Ereignis</i>, das <b>innerhalb</b> des Flusses an der guten Ecke auftritt &mdash; der Moment, in dem sich die 5 Frequenzen ausrichten (A) = der Moment, in dem &theta;&rarr;0 (B). A's &bdquo;diskreter Cut&ldquo; widerspricht nicht B's &bdquo;kontinuierlichem Fluss&ldquo; &mdash; der Cut ist das <b>Geburts-Event</b> (A: &#946;&#8321;:0&rarr;1, Phasen&uuml;bergang), <i>eingebettet</i> in den Fluss (B: die kontinuierliche Kompression). Der Fluss f&auml;hrt den Regler; der Cut ist das <i>Eintreffen</i> des Reglers am harten Pol. <b>Fused: B's Fahrt (Prozess) f&auml;hrt A's Regler; A's Cut/Commit (Event) ist die topologische Signatur, dass die Fahrt die gute Ecke erreicht hat.</b></div>
+
+    <div class="fused"><b>Fused conclusion:</b> Ein trainiertes Modell = <b>EIN niedrig-dimensionaler, strukturierter Kern</b> (5-Frequenz-Torus mod&nbsp;113 = Rang-10-Skelett = &sigma;-Geometrie niedrig-rangig = st&uuml;ckweise-lineares Skalarfeld aus Zellen) in einem <b>hochdimensionalen, inerten Raum</b>. <b>EINE Fahrt</b> (B's Tiefe/RG-Fluss) f&auml;hrt <b>EINEN Regler</b> (<code>t = 1&minus;&theta;</code>; Komplexit&auml;t = Rang(r) &times; &theta;) von diffus/gescrambelt/hoch belegt zu scharf/linear/niedrig belegt/direkt-lesbar. Die <b>Capability = Bedeutung = der robuste &Uuml;berlebende</b> an der guten Ecke (eindeutiger Peak = harter linearer Read-out = Grokking). <b>ZWEI Bruchigkeiten</b>: <b>intrinsisch</b> = das verworfene Off-Manifold-Detail (A's Nicht-Invertierbarkeit = B's kurze Bars / Rate-Distortion-Boden) &mdash; der Preis, niedrig-dimensional zu sein; <b>grenzlich</b> = der Regime-/Zellen-Rand (A's Budget-&Uuml;bergang = B's Voronoi-Gap). Die Fahrt vollbringt den Cut; der &Uuml;berlebende besteht beide Tests (Fluss + Filtration); das Read-out ist ein Dial T=&theta; (hart an der guten Ecke = direkt lesbar). <b>Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten.</b></div>
+  </section>
+
+  <section id="inhalt">
+    <h2><span class="num">4</span>Fusionierter Inhalt</h2>
+    <p class="anno" style="font-style:normal;color:var(--fg)">Das abstrakte Schema, aus dem beide R5-Papiere als zwei Perspektiven hervorgehen &mdash; in einer Form, aus der eine sp&auml;tere Runde allein weiterarbeiten kann.</p>
+
+    <h3>(a) Der gemeinsame Kern &mdash; drei Gesichter eines Objekts (Operator &#8660; Geometrie &#8660; Raster)</h3>
+    <span class="block">Kern = niedrig-dim. strukturiertes Objekt im hoch-dim. Raum.
+  Dynamisches Gesicht (A &mdash; r5-002, Operator/Fluss):
+    x &rarr; x + f(x) ; Conceptor C = R(R+&alpha;&#178;I)&#8315;&#185; (diagonal in Eigenbasis von R)
+    Gains &gamma;&#8321; = &sigma;&#8321;/(&sigma;&#8321;+&alpha;&#178;) &isin; [0,1] ; &alpha;&rarr;&infin; &#10233; &gamma;&rarr;1 (Identit&auml;t, weich, Voll-Rang)
+    &alpha;&rarr;0 &#10233; &gamma;&rarr;0 (Rang-k, hart) ; det C = &Pi;&#8321;&gamma;&#8321; (hart &rarr; 0 = nicht-invertibel)
+  Geometrisches Gesicht (B &mdash; r5-001, Form/Kr&uuml;mmung = &theta;):
+    &sigma;: ReLU (Polyeder, absolut) &middot; sin/cos (Torus, relativ) &middot; Softmax (Becken, relational)
+    PE(pos,2i)=sin(pos&middot;&lambda;<sub>i</sub>), PE(pos,2i+1)=cos(pos&middot;&lambda;<sub>i</sub>), &lambda;<sub>i</sub>=10000<sup>&minus;2i/d</sup> (&bdquo;Addieren = Rotieren&ldquo;)
+  Kombinatorisches Gesicht (B &mdash; Raster/Zellen):
+    tropisch G = max&#8321;(w&#8321;x+b&#8321;) ; Summen-Feld y&#770;(x)=&Sigma;&#8321; c&#8321;ReLU(w&#8321;x+b&#8321;)+&beta;
+    Zellen = tropische Regionen = H&#8320;-Komponenten ; Zellgrenze = Knick / Voronoi-Gap = Verschmelzungsereignis
+Gemeinsam: derselbe niedrige Kern = 5 Frequenzen {14,35,41,42,52} &times;2 (cos/sin) = Rang 10
+  = Rang-k-Projektor (A) = niedrig-rangiges Skelett / &sigma;-Geometrie (B) = Raster aus Zellen (B).
+  A liest ihn dynamisch (Operator/Spektrum), B liest ihn strukturell (Form/Raster) &mdash; ein Objekt, drei Gesichter.</span>
+
+    <h3>(b) Die eine Fahrt f&auml;hrt den einen Regler (Prozess f&auml;hrt Koordinate)</h3>
+    <div class="math">B &middot; Fluss (dynamisch, die MOTOR-Seite):   h<sub>&ell;+1</sub> = h<sub>&ell;</sub> + f<sub>&ell;</sub>(h<sub>&ell;</sub>) ,  P<sub>&ell;</sub> = J<sub>L&minus;1</sub>&#8942;J<sub>&ell;</sub>
+    Kanal:  erank(P) = exp(&minus;&Sigma;<sub>i</sub> p<sub>i</sub> ln p<sub>i</sub>) ,  p<sub>i</sub> = &sigma;&#8321;&#178;/&Sigma;<sub>j</sub>&sigma;<sub>j</sub>&#178;   (Llama 4096 &rarr; &asymp;7)
+    BR&Uuml;CKE:  &theta;<sub>eff</sub>(&ell;) = (1 &minus; &ell;/L)<sup>c</sup>   &mdash; die Tiefe f&auml;hrt den Knopf &theta; (Scrambling/Kr&uuml;mmung) von &asymp;1 zu 0.
+A &middot; Regler (statische Koordinate, die GEFUHRT wird):   t = 1 &minus; &theta;   (0 = diffus/voll-rangig/hoch belegt  &middot;  1 = scharf/Rang-k/niedrig belegt)
+    &gamma;&#8321; = &sigma;&#8321;/(&sigma;&#8321;+&alpha;&#178;) ,  det C = &Pi;&#947;&#8321; ;  Komplexit&auml;t = Rang(r) &times; &theta;  &equiv;  Regionsz&auml;hlung (exponentiell in Tiefe)
+Fused:  die Fahrt (B) f&auml;hrt den Regler (A):  t(&ell;) = 1 &minus; (1 &minus; &ell;/L)<sup>c</sup> .
+    Bei &ell;=L: &theta;=0, t=1 = harte Pol = Rang-k = gute Ecke.  Der Prozess (Fluss) erzeugt die Koordinate (Regime).</div>
+
+    <h3>(c) Der &Uuml;berlebende = Capability = Bedeutung (besteht beide Tests)</h3>
+    <div class="math">A &middot; Test = Fluss/Operator:   &Uuml;berlebender = der Rang-k-Kern (invarianter niedrig-dim. Unterraum),
+    eindeutiger Interferenz-Peak:  Logit(c) = &Sigma;<sub>k&isin;{14,35,41,42,52}</sub> cos((2&pi;k/113)(a+b&minus;c))  &rarr;  Peak bei c=(a+b) mod 113.
+B &middot; Test = Filtration/Geometrie:   Sublevel X<sub>t</sub> = { y&#770; &le; t } &rarr; H&#8320;-Komponenten [Geburt, Tod] ;
+    Bar-L&auml;nge = Tod &minus; Geburt = Persistenz/Robustheit ; lange Bars (robust) = langlebige H&#8320;-Komponente = robustes Zell-Innere = holographischer &asymp;d-Vektor.
+Fused:  Bedeutung = die Struktur, die robust ist (i) unter dem Fluss/Operator (A)  UND  (ii) unter der Filtration/Geometrie (B).
+    A's Rang-k-Kern (Operator) = B's langlebige H&#8320;-Komponente / robustes Zell-Innere (Geometrie) = derselbe &Uuml;berlebende,
+    der beide Tests besteht &mdash; in der guten Ecke fallen beide zusammen (niedriger Rang, &theta;&rarr;0, flach, linear, direkt-lesbar).</div>
+
+    <h3>(d) Das Read-out, gestuft nach dem Regler T = &theta; = 1 &minus; t</h3>
+    <div class="math">Ein Dial T = &theta; = 1 &minus; t :
+    hart (t=1 / T=0, gute Ecke):   A: eindeutiger Interferenz-Peak  =  B: harter Winner / lineare Projektion auf den d&uuml;nnen Hebel
+                                   z&#775; = argmin<sub>v</sub> &Vert;h<sub>last</sub>&minus;e<sub>v</sub>&Vert; &hArr; cos(h<sub>last</sub>,e<sub>v</sub>) max  &rarr;  direkt lesbar (Grokking, verlustfrei).
+    weich (t=0 / T=1, fr&uuml;h):    A: diffuses Spektrum (Voll-Rang)  =  B: konvexer Vertreter o<sub>i</sub>=&Sigma;<sub>j</sub>&alpha;<sub>ij</sub>v<sub>j</sub> (alles tr&auml;gt bei)
+                                   / voller Fehlerkorrektur-Decode (MERA/RT) ;  Gibbs: P(Y|X)=e<sup>&minus;&beta;E</sup>/Z (&beta;&rarr;&infin;=argmin, &beta;&rarr;0=Gleichverteilung).
+Fused:  das Read-out ist so einfach, wie der Regler es erlaubt &mdash; eindeutiger Peak / lineare Projektion bei t=1,
+    konvexer Vertreter / Voll-Decode bei t=0.  Die gute Ecke (t=1) ist, wo das Read-out zur trivialen linearen Projektion wird = direkt lesbar.</div>
+
+    <h3>(e) Die zwei Bruchigkeiten, fusioniert (ein Satz verworfener Freiheitsgrade, zwei R&auml;nder)</h3>
+    <table>
+      <thead><tr><th>Bruchigkeit</th><th>A &middot; r5-002 (Zustand/Operator)</th><th>B &middot; r5-001 (Fahrt/Geometrie)</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag" style="color:var(--harm)">INTRINSISCH</span> (am Ort der Capability)</td>
+          <td>Nicht-Invertierbarkeit des Rang-k-Projektor: <code>det C = &Pi;&#947;&#8321; &rarr; 0</code>; Off-Manifold-Richtung willk&uuml;rlich; <b>exponentiell mit der Tiefe instabil</b> (adversarial); Doppelschwert</td>
+          <td>das verworfene hoch-dim. Detail: erank-Kollaps 4096&rarr;&asymp;7; <b>kurze Bars / Knick / Rate-Distortion-Boden</b>; Quantisierungs-Fehler(N) &ge; c<sub>k</sub>&middot;(V/N)<super>2/k</super></td>
+          <td><b>ein Satz</b> verworfener Off-Manifold-Richtungen: robust wo behalten (Kern), nicht-invertibel wo verworfen (Reservoir); der Preis, niedrig-dimensional zu sein</td></tr>
+        <tr><td><span class="tag" style="color:var(--mid)">GRENZLICH</span> (am Rand des Regimes)</td>
+          <td>der fragile &Uuml;bergang zum festen Budget C: Belegung ID/C&rarr;1 (memorisiert), &#964;&#8321;&rarr;0; proberbar (Evaluate &#9733;)</td>
+          <td>die Zellgrenze / Voronoi-Gap / Verschmelzungsereignis; schlechte Losses lassen die T&auml;ler ineinanderflie&szlig;en (Kollaps = grob/weich)</td>
+          <td>der <b>Rand des m&ouml;glichen Containers</b>: &uuml;berkreuzt man ihn, wird man hoch belegt / memorisiert; die Grenze, die der Cut einh&auml;lt</td></tr>
+      </tbody>
+    </table>
+
+    <h3>(f) Die gute Ecke &amp; gemeinsame Grenzen</h3>
+    <div class="math">GUTE ECKE (t=1 / T=&theta;&rarr;0, &ell;&rarr;L):  flach, linear, niedrig-rangig, niedrig belegt, hoch-persistent, direkt-lesbar.
+    A: Rang-k-Projektor + eindeutiger Interferenz-Peak (Capability AM ORT der intrinsischen Bruchigkeit, det C&rarr;0).
+    B: harter Winner = lin. Projektion = verlustfrei; A's holographischer &asymp;d-Vektor = B's langlebige H&#8320;-Komponente = d&uuml;nner Hebel = gewonnener Anker = Grokking.
+    &bdquo;Ausgerichtet&ldquo; = Grokking = Peak trifft Anker = verlustfrei ; 5 Frequenzen {14,35,41,42,52} erkl&auml;ren &gt;93 % Varianz.
+    Ablation der Nicht-Schl&uuml;sselfrequenzen verbessert (Loss &minus;70 %) ; 84,6 % der Neuronen rechnen ein Polynom 2. Grades EINER Frequenz.
+
+Gemeinsame Grenzen (beide R5-Papiere, &uuml;bernommen):
+    A (r5-002): simulierte/interpretive Daten (Conceptor, Spektrum, Torus mod 113); Schur-/Adversarial-Argumente;
+      &bdquo;man handelt nicht aufs Gate&ldquo; wird verfeinert zu &bdquo;der Cut h&auml;lt die Belegung unter das Budget&ldquo;.
+    B (r5-001): nur PL-Aktivierungen, ganzzahlige Gewichte; Regions-Z&auml;hlung (Theorem 6.3, &prod; n<sub>&ell;</sub><super>d</super>) = Untersch&auml;tzungen;
+      UAT = Existenz (nicht algorithmisch); FlatNet setzt echte Mannigfaltigkeit voraus.
+    Beide: am st&auml;rksten im dichten / hochdimensionalen / linear-gelesenen Regime (niedriger Rang, &theta;&rarr;0) &mdash; dort &uuml;berlappen und schlie&szlig;en sie nahtlos an.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2><span class="num">5</span>Interaktive Visualisierung: die Fahrt f&auml;hrt den Regler &mdash; der Kanal kollabiert, der Kern flacht, der &Uuml;berlebende wird lesbar, zwei Bruchigkeiten</h2>
+    <p class="anno" style="font-style:normal;color:var(--fg)">EINER <b>Fahrt</b> (Tiefe &ell;, B's RG-Fluss) f&auml;hrt gekoppelt ALLES. <b>Oben:</b> der Regime-Band (EARLY/MID/LATE/OUTER) + die Flie&szlig;kurven &mdash; blaue Fl&auml;che = Kanal <code>erank(P&#8943;)</code> (log, kollabiert 4096&rarr;&asymp;7), t&uuml;rkis gestrichelt = <b>&theta;<sub>eff</sub>(&ell;)=(1&minus;&ell;/L)<sup>c</sup></b> (B's Scrambling &asymp;1&rarr;0), <b>gold</b> = der abgeleitete Regler <b>t&nbsp;=&nbsp;1&minus;&theta;</b> (A's Achse, von der Fahrt gefahren). <b>Mitte:</b> die Regime-Achse <b>t</b> mit den <b>zwei Bruchigkeiten</b> &mdash; &#9733; <b>intrinsisch</b> bei t=1 (rose: Nicht-Invertierbarkeit, am Ort der Capability) und &#9733; <b>grenzlich</b> bei t=0 (orange: Budget-Rand/memorisiert); der <b>goldene Punkt</b> ist der von der Fahrt erzeugte Arbeitspunkt. <b>Unten links:</b> der Kern-Querschnitt (r geladene Achsen + Code-Richtung w(&theta;), bei t=1 auf EINE Achse = direkt lesbar; das verblassende Reservoir = verworfenes Detail = intrinsische Bruchigkeit). <b>Unten rechts:</b> der Persistenz-Barcode &mdash; lange Bars = Bedeutung (der &Uuml;berlebende), kurze = verworfen; darunter das Read-out-Dial (linear vs. Voll-Decode). Bewege <b>Fahrt &ell;</b>, <b>Dosis c</b>, <b>Rang r</b>, <b>&beta;</b>.</p>
+
+    <div class="controls">
+      <label>Fahrt / Tiefe &ell; (B): <input type="range" id="vzP" min="0" max="100" step="1" value="50"> <span class="ctl-val" id="vzPVal">0.50</span></label>
+      <label>Dosis c (&theta;-Rate): <input type="range" id="vzC" min="0" max="200" step="1" value="100"> <span class="ctl-val" id="vzCVal">1.00</span></label>
+      <label>Rang r (geladene Achsen): <input type="range" id="vzR" min="1" max="8" step="1" value="4"> <span class="ctl-val" id="vzRVal">4</span></label>
+      <label>&beta; = N/d: <input type="range" id="vzB" min="1" max="12" step="1" value="4"> <span class="ctl-val" id="vzBVal">4</span></label>
+      <button id="vzPlay" class="vbtn">&#9654; Fahrt-Sweep</button>
+    </div>
+
+    <canvas id="vcanvas"></canvas>
+    <div class="ro-grid">
+      <div class="ro"><span class="k">Kanal erank(P&#8943;) (A/B)</span><span class="v" id="roChan">-</span></div>
+      <div class="ro"><span class="k">t = 1 &minus; &theta; (Regler, A)</span><span class="v" id="roT">-</span></div>
+      <div class="ro"><span class="k">&theta;<sub>eff</sub> an der Fahrt (B)</span><span class="v" id="roTheta">-</span></div>
+      <div class="ro"><span class="k">Rang r / Kapazit&auml;t 2r</span><span class="v" id="roCap">4 / 8</span></div>
+      <div class="ro"><span class="k">Lineares Read-out (t=1)</span><span class="v" id="roNaive">-</span></div>
+      <div class="ro"><span class="k">Bedeutungen (lange Bars)</span><span class="v" id="roMean">-</span></div>
+      <div class="ro"><span class="k">Intrinsisch (det C&rarr;0)</span><span class="v" id="roFragA">-</span></div>
+      <div class="ro"><span class="k">Grenzlich (t=0 Rand)</span><span class="v" id="roFragB">-</span></div>
+      <div class="ro"><span class="k">Generalisiert? (&beta;&gt;2)</span><span class="v" id="roGen">JA</span></div>
+    </div>
+    <div class="readout" id="vzReadout"></div>
+    <p class="vnote">Alle Daten inline &amp; deterministisch, keine Netzwerk-Calls. Kanal-Kollaps faithful nach B (Llama 45.4&rarr;7.12); &theta;<sub>eff</sub>(&ell;)=(1&minus;&ell;/L)<sup>c</sup> und t=1&minus;&theta; ist die R6-Br&uuml;cke (die Fahrt f&auml;hrt den Regler); Barcode + 5 Frequenzen {14,35,41,42,52} = Rang-10-Kern. Theme-aware &uuml;ber CSS-Variablen (<code>html.dark</code>) + MutationObserver, kein externes Skript.</p>
+  </section>
+
+  <section id="provenienz">
+    <h2><span class="num">6</span>Provenienz</h2>
+    <div class="prov"><span class="k a">A</span><div><span class="path">../5/r5-002.html</span><a href="../5/r5-002.html">r5-002.html</a> &mdash; &bdquo;Ein d&uuml;nner Kern, eine Achse, zwei Bruchigkeiten&ldquo; (R5-Fusion r4-001 &times; r4-009): das Modell = <b>EIN niedrig-dimensionales Objekt auf EINE Robustheits-/Regime-Achse t</b>; Capability = der niedrig-belegte, hoch-persistente Rang-k-Kern (eindeutiger Interferenz-Peak, <code>det C=&Pi;&#947;&#8321;</code>); die Capability sitzt am harten Pol = am Ort der Bruchigkeit; <b>ZWEI Bruchigkeiten</b> &mdash; intrinsisch (Nicht-Invertierbarkeit, am Ort der Capability) und grenzlich (fragiler &Uuml;bergang zum Budget, am Rand); der Cut/Commit erzeugt die Capability. Liefert die <i>zustandszentrierte Achse t</i>, den <i>Rang-k-Projektor/Conceptor</i> und die <i>zwei Bruchigkeiten</i>.</div></div>
+    <div class="prov"><span class="k b">B</span><div><span class="path">../5/r5-001.html</span><a href="../5/r5-001.html">r5-001.html</a> &mdash; &bdquo;Der Kern &uuml;berlebt die Fahrt: die Tiefe f&auml;hrt den Regler&ldquo; (R5-Fusion r4-002 &times; r4-004): das Modell = <b>niedrig-dim. strukturiertes Kern im hoch-dim. Raum</b>; die <b>Tiefe/RG-Fluss</b> (Kanal-Kollaps 4096&rarr;&asymp;7) <b>f&auml;hrt &theta; von scrambled (&asymp;1) zu flach/lesbar (&rarr;0)</b>, Komplexit&auml;t = Rang &times; &theta;; <b>Bedeutung = das &Uuml;berlebende</b> (holographischer &asymp;d-Vektor = langlebige H&#8320;-Komponente = robustes Zell-Innere); das Irreduzible = verworfenes hoch-dim. Detail / kurze Bars; Read-out ein Dial T=&theta; (weich&hArr;hart); Grokking = Peak trifft Anker = verlustfrei. Liefert die <i>prozesszentrierte Fahrt</i>, den <i>Fluss/Regler (T,&theta;)</i> und den <i>&Uuml;berlebenden = Bedeutung</i>.</div></div>
+  </section>
+
+  <p class="foot">Fusion 001 &middot; Round 6, Knockout-Synthese. Beide Quellpapiere sind R5-Fusionen (simulierte/interpretive Daten, keine neuen Experimente); diese Fusion &uuml;bernimmt ihre Stellungen und Zahlen und erfindet keine neuen. Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten.</p>
+
+</article>
+
+<script>
+(function () {
+  "use strict";
+  try {
+    var canvas = document.getElementById('vcanvas');
+    var ctx = canvas ? canvas.getContext('2d') : null;
+    if (!ctx) return;
+    var $ = function (id) { return document.getElementById(id); };
+    var L = 32, D = 4096, DH = 520, TAU = Math.PI * 2;
+    var C = 1.0, probe = 0.5, playing = false, pt = 0;
+    var pal = {};
+
+    function cv(n, fb) {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+      return (v && v.length) ? v : fb;
+    }
+    function readTheme() {
+      pal.bg = cv('--plotbg', '#0c1322'); pal.grid = cv('--grid', '#ffffff18');
+      pal.fg = cv('--fg', '#e2e8f0'); pal.muted = cv('--muted', '#94a3b8');
+      pal.accent = cv('--accent', '#58a6ff'); pal.accent2 = cv('--accent2', '#d2a8ff');
+      pal.early = cv('--early', '#ff7b72'); pal.mid = cv('--mid', '#ffa657');
+      pal.late = cv('--late', '#7ee787'); pal.outer = cv('--outer', '#d2a8ff');
+      pal.theta = cv('--theta', '#38bdf8'); pal.cA = cv('--cA', '#a78bfa');
+      pal.cB = cv('--cB', '#5ee0d0'); pal.dial = cv('--dial', '#34d399');
+      pal.safe = cv('--safe', '#4ade80'); pal.harm = cv('--harm', '#ff7ac0');
+      pal.res = cv('--res', '#fb923c');
+    }
+    function hexA(hex, a) {
+      hex = (hex || '').replace('#', '');
+      if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      var r = parseInt(hex.slice(0, 2), 16), g = parseInt(hex.slice(2, 4), 16), b = parseInt(hex.slice(4, 6), 16);
+      if (isNaN(r)) { r = 140; g = 150; b = 170; }
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+    function endVal(c) { return 45.4 * Math.pow(7.12 / 45.4, c); }
+    function channelAt(c, ell) {
+      var ev = endVal(c);
+      var f = Math.pow(Math.max(1 - ell / L, 0), 1.25);
+      return ev * Math.pow(45.4 / ev, f);
+    }
+    function thetaEff(c, ell) {
+      if (c <= 0.0001) return 1;
+      var base = 1 - ell / L; if (base < 0) base = 0;
+      return Math.pow(base, c);
+    }
+    function setup() {
+      var dpr = window.devicePixelRatio || 1;
+      var w = canvas.clientWidth || Math.max(1, canvas.getBoundingClientRect().width);
+      var h = DH;
+      canvas.width = Math.max(1, Math.round(w * dpr));
+      canvas.height = Math.max(1, Math.round(h * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { w: w, h: h };
+    }
+    function starDraw(cx, cy, r, fill) {
+      ctx.beginPath();
+      for (var i = 0; i < 10; i++) { var ang = -Math.PI / 2 + i * Math.PI / 5; var rr = (i % 2 === 0) ? r : r * 0.45;
+        var px = cx + rr * Math.cos(ang), py = cy + rr * Math.sin(ang);
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
+      ctx.closePath(); ctx.fillStyle = fill; ctx.fill();
+    }
+    function arrow(x0, y0, x1, y1, color, w, hl) {
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      var ang = Math.atan2(y1 - y0, x1 - x0); hl = hl || 9;
+      ctx.beginPath(); ctx.moveTo(x1, y1);
+      ctx.lineTo(x1 - hl * Math.cos(ang - 0.4), y1 - hl * Math.sin(ang - 0.4));
+      ctx.lineTo(x1 - hl * Math.cos(ang + 0.4), y1 - hl * Math.sin(ang + 0.4));
+      ctx.closePath(); ctx.fill();
+    }
+    var SEGS = [
+      { x0: 0.00, x1: 0.16, col: 'early', t: 'EARLY', sub: 'T\u03b8\u22481 · gescrambelt' },
+      { x0: 0.16, x1: 0.63, col: 'mid', t: 'MID', sub: 'Kondition \u2193 · Hauptrechnung' },
+      { x0: 0.63, x1: 0.94, col: 'late', t: 'LATE', sub: 'Kanal kollabiert \u2192 Low-Rank' },
+      { x0: 0.94, x1: 1.00, col: 'outer', t: 'OUT', sub: 't=1 · linear · lesbar' }
+    ];
+
+    /* deterministic field + H0 persistence bars (tied to t = 1-theta) */
+    var FN = 7, FM = 361;
+    var fcent = (function () { var a = []; for (var i = 0; i < FN; i++) a.push(i / (FN - 1)); return a; })();
+    var fbase = [0.85, 0.55, 0.90, 0.35, 0.72, 0.25, 0.60];
+    var fgrow = [0.05, 0.30, 0.05, 0.55, 0.25, 0.60, 0.30];
+    function fieldE(theta) {
+      var k = 1 - theta;
+      var base = 1.0 - 0.30 * k;
+      var sig = 0.035 + 0.015 * (1 - k);
+      var B = [], i;
+      for (i = 0; i < FM; i++) { var x = i / (FM - 1); var e = base;
+        for (var j = 0; j < FN; j++) { var amp = fbase[j] + k * fgrow[j]; var d = x - fcent[j];
+          e -= amp * Math.exp(-d * d / (2 * sig * sig)); }
+        B.push(e); }
+      return B;
+    }
+    function computeBars(E) {
+      var M = E.length, edges = [], i;
+      for (i = 0; i < M - 1; i++) edges.push({ v: Math.max(E[i], E[i + 1]), i: i, j: i + 1 });
+      edges.sort(function (a, b) { return a.v - b.v; });
+      var parent = [], minVal = [], arg = [], x;
+      for (x = 0; x < M; x++) { parent[x] = x; minVal[x] = E[x]; arg[x] = x; }
+      function find(p) { while (parent[p] !== p) { parent[p] = parent[parent[p]]; p = parent[p]; } return p; }
+      var bars = [];
+      for (var e = 0; e < edges.length; e++) { var ed = edges[e], ra = find(ed.i), rb = find(ed.j);
+        if (ra === rb) continue;
+        var die, surv;
+        if (minVal[ra] > minVal[rb]) { die = ra; surv = rb; } else { die = rb; surv = ra; }
+        bars.push({ b: minVal[die], d: ed.v });
+        parent[die] = surv;
+        if (minVal[surv] > minVal[die]) minVal[surv] = minVal[die];
+        if (E[arg[die]] < E[arg[surv]]) arg[surv] = arg[die]; }
+      var root = find(0);
+      bars.push({ b: minVal[root], d: Infinity, inf: true });
+      bars.sort(function (a, b) { return a.b - b.b; });
+      return bars;
+    }
+
+    function draw() {
+      if (!ctx) return;
+      var size = setup(); var W = size.w, H = size.h; if (W < 10) return;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H);
+
+      var rr = $('vzR') ? (+$('vzR').value) : 4; if (rr < 1) rr = 1;
+      var bb = $('vzB') ? (+$('vzB').value) : 4;
+      var pEll = probe * L;
+      var theta = thetaEff(C, pEll);
+      var t = 1 - theta;
+
+      /* ===== TOP: regime band + flow curves (journey drives dial) ===== */
+      var plotL = W * 0.08, plotR = W * 0.96;
+      var bandTop = 22, bandBot = 52;
+      var curTop = 86, curBot = 286;
+      var yMax = Math.log10(D * 1.2);
+      function xMap(ell) { return plotL + (ell / L) * (plotR - plotL); }
+      function yMap(v) { var lv = Math.log10(Math.max(v, 1)); return curBot - (lv / yMax) * (curBot - curTop); }
+      function thMap(v) { return curBot - v * (curBot - curTop); }
+
+      ctx.font = '11px system-ui,sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = pal.muted;
+      ctx.fillText('Fahrt \u2113 = RG-Fluss (B) \u00b7 Kanal erank(P) kollabiert \u00b7 \u03b8_eff=(1\u2212\u2113/L)^c \u00b7 gold t=1\u2212\u03b8 f\u00e4hrt A\u2019s Regler', plotL, 15);
+
+      for (var s = 0; s < SEGS.length; s++) {
+        var g = SEGS[s];
+        var gx0 = plotL + g.x0 * (plotR - plotL), gx1 = plotL + g.x1 * (plotR - plotL);
+        ctx.fillStyle = hexA(pal[g.col], 0.16);
+        ctx.fillRect(gx0, bandTop, gx1 - gx0, bandBot - bandTop);
+        ctx.strokeStyle = hexA(pal[g.col], 0.6); ctx.lineWidth = 1;
+        ctx.strokeRect(gx0, bandTop, gx1 - gx0, bandBot - bandTop);
+        ctx.fillStyle = pal[g.col]; ctx.font = '600 11px system-ui,sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(g.t, (gx0 + gx1) / 2, bandTop + 13);
+        ctx.fillStyle = pal.muted; ctx.font = '9px ui-monospace,monospace';
+        ctx.fillText(g.sub, (gx0 + gx1) / 2, bandTop + 27);
+      }
+      ctx.strokeStyle = pal.grid; ctx.lineWidth = 1;
+      var gvs = [10, 100, 1000];
+      for (var gi = 0; gi < gvs.length; gi++) {
+        var yy = yMap(gvs[gi]);
+        ctx.beginPath(); ctx.moveTo(plotL, yy); ctx.lineTo(plotR, yy); ctx.stroke();
+        ctx.fillStyle = pal.muted; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'right';
+        ctx.fillText(gvs[gi] >= 1000 ? (gvs[gi] / 1000) + 'k' : gvs[gi], plotL - 6, yy + 3);
+      }
+      var ch = [], ell;
+      for (ell = 0; ell <= L; ell++) ch.push(channelAt(C, ell));
+      ctx.beginPath();
+      for (ell = 0; ell <= L; ell++) { var px = xMap(ell), py = yMap(ch[ell]); if (ell === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
+      ctx.lineTo(xMap(L), curBot); ctx.lineTo(xMap(0), curBot); ctx.closePath();
+      ctx.fillStyle = hexA(pal.accent, 0.22); ctx.fill();
+      ctx.beginPath();
+      for (ell = 0; ell <= L; ell++) { var qx = xMap(ell), qy = yMap(ch[ell]); if (ell === 0) ctx.moveTo(qx, qy); else ctx.lineTo(qx, qy); }
+      ctx.strokeStyle = pal.accent; ctx.lineWidth = 3; ctx.stroke();
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      for (ell = 0; ell <= L; ell++) { var tx = xMap(ell), ty = thMap(thetaEff(C, ell)); if (ell === 0) ctx.moveTo(tx, ty); else ctx.lineTo(tx, ty); }
+      ctx.strokeStyle = pal.theta; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.beginPath();
+      for (ell = 0; ell <= L; ell++) { var dx = xMap(ell), dy = thMap(1 - thetaEff(C, ell)); if (ell === 0) ctx.moveTo(dx, dy); else ctx.lineTo(dx, dy); }
+      ctx.strokeStyle = pal.dial; ctx.lineWidth = 3; ctx.stroke();
+      ctx.setLineDash([]);
+
+      var pxp = xMap(pEll);
+      ctx.strokeStyle = hexA(pal.fg, 0.5); ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(pxp, bandTop); ctx.lineTo(pxp, curBot); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = pal.fg; ctx.beginPath(); ctx.arc(pxp, yMap(ch[pEll | 0]), 4, 0, TAU); ctx.fill();
+      ctx.fillStyle = pal.theta; ctx.beginPath(); ctx.arc(pxp, thMap(theta), 4, 0, TAU); ctx.fill();
+      ctx.fillStyle = pal.dial; ctx.beginPath(); ctx.arc(pxp, thMap(t), 4, 0, TAU); ctx.fill();
+      ctx.font = '11px system-ui,sans-serif'; ctx.textAlign = 'left';
+      ctx.fillStyle = pal.accent; ctx.fillText('Kanal erank(P\u2113) [log]', plotL, curTop - 8);
+      ctx.fillStyle = pal.theta; ctx.fillText('\u03b8_eff [0..1]', plotL + (plotR - plotL) * 0.44, curTop - 8);
+      ctx.fillStyle = pal.dial; ctx.fillText('t = 1\u2212\u03b8 (A-Regler)', plotL + (plotR - plotL) * 0.70, curTop - 8);
+
+      /* ===== MIDDLE: regime axis t with two fragilities ===== */
+      var axTop = 310, axBot = 374, axCy = (axTop + axBot) / 2, axH = 20;
+      var axX0 = W * 0.10, axX1 = W * 0.90, axW = axX1 - axX0;
+      ctx.fillStyle = hexA(pal.muted, 0.12);
+      ctx.fillRect(axX0, axCy - axH / 2, axW, axH);
+      ctx.strokeStyle = pal.grid; ctx.lineWidth = 1;
+      ctx.strokeRect(axX0, axCy - axH / 2, axW, axH);
+      ctx.fillStyle = pal.fg; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText('Regime-Achse t = 1\u2212\u03b8 \u00b7 zwei Bruchigkeiten (Doppelschwert, fusioniert)', axX0, axTop - 6);
+      ctx.fillStyle = pal.muted; ctx.font = '10px ui-monospace,monospace';
+      ctx.textAlign = 'left'; ctx.fillText('t=0  diffus/voll-rangig/hoch belegt', axX0, axBot + 14);
+      ctx.textAlign = 'right'; ctx.fillText('t=1  scharf/Rang-k/niedrig belegt  \u2192', axX1, axBot + 14);
+      starDraw(axX1, axCy, 9, pal.harm);
+      starDraw(axX0, axCy, 9, pal.res);
+      ctx.fillStyle = pal.harm; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'right';
+      ctx.fillText('\u2605 intrinsisch: det C\u21920 (am Ort der Capability)', axX1 - 2, axCy - axH / 2 - 4);
+      ctx.fillStyle = pal.res; ctx.textAlign = 'left';
+      ctx.fillText('\u2605 grenzlich: Budget-Rand (ID/C\u21921)', axX0 + 2, axCy + axH / 2 + 12);
+      var opX = axX0 + t * axW;
+      ctx.strokeStyle = hexA(pal.dial, 0.8); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(opX, axCy - axH / 2 - 6); ctx.lineTo(opX, axCy + axH / 2 + 6); ctx.stroke();
+      ctx.fillStyle = pal.dial; ctx.beginPath(); ctx.arc(opX, axCy, 6, 0, TAU); ctx.fill();
+
+      /* ===== BOTTOM-LEFT: core cross-section ===== */
+      var botTop = 392, botBot = H - 12;
+      var divX = W * 0.5;
+      var cx = 10 + (divX - 10) / 2, cy = (botTop + botBot) / 2;
+      var R = Math.min(cx - 16, (botBot - botTop) / 2 - 12); if (R < 30) R = 40;
+      ctx.strokeStyle = pal.grid; ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.45;
+      for (var k = 0; k < 24; k++) { var aa = k * TAU / 24;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * Math.cos(aa), cy + R * Math.sin(aa)); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+
+      var sks = [], m;
+      for (m = 0; m < rr; m++) { var ph = TAU * m / rr; sks[m] = { x: Math.cos(ph), y: Math.sin(ph) }; }
+      var wv, comps;
+      if (rr === 1) { wv = { x: 1, y: 0 }; comps = [1]; }
+      else {
+        var cTh = Math.cos(Math.PI * theta / 2), sTh = Math.sin(Math.PI * theta / 2);
+        var u = { x: 0, y: 0 };
+        for (var i2 = 1; i2 < rr; i2++) { u.x += sks[i2].x / Math.sqrt(rr - 1); u.y += sks[i2].y / Math.sqrt(rr - 1); }
+        wv = { x: cTh * sks[0].x + sTh * u.x, y: cTh * sks[0].y + sTh * u.y };
+        comps = [cTh];
+        for (var i3 = 1; i3 < rr; i3++) comps.push(sTh / Math.sqrt(rr - 1));
+      }
+      for (m = 0; m < rr; m++) {
+        ctx.strokeStyle = pal.cA; ctx.lineWidth = 3; ctx.globalAlpha = 0.9;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + R * sks[m].x, cy + R * sks[m].y); ctx.stroke(); ctx.globalAlpha = 1;
+        var hr = 2 + 6 * Math.min(1, Math.abs(comps[m]));
+        ctx.fillStyle = pal.cA; ctx.beginPath(); ctx.arc(cx + R * sks[m].x, cy + R * sks[m].y, hr, 0, TAU); ctx.fill();
+      }
+      arrow(cx, cy, cx + R * 0.9 * wv.x, cy + R * 0.9 * wv.y, pal.cB, 3.6, 12);
+      var pxv = -wv.y, pyv = wv.x;
+      ctx.globalAlpha = 0.5;
+      arrow(cx, cy, cx + R * 0.42 * pxv, cy + R * 0.42 * pyv, pal.res, 2.2, 8);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = pal.muted; ctx.font = '10px ui-monospace,monospace'; ctx.textAlign = 'left';
+      ctx.fillText('Reservoir (\u22a5, verworfen) = intrins. Bruchigkeit', cx + R * 0.42 * pxv + 5, cy + R * 0.42 * pyv + 4);
+      ctx.fillStyle = pal.fg; ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('\u2460 Kern-Querschnitt \u00b7 t=' + t.toFixed(2) + ' \u00b7 \u03b8=' + theta.toFixed(2), 12, botTop - 6);
+      ctx.fillStyle = pal.muted; ctx.font = '11px sans-serif';
+      ctx.fillText('r geladene Achsen + Code w(\u03b8); flach bei t=1 (1 Achse) = direkt-lesbar', 12, botTop + 10);
+
+      /* ===== BOTTOM-RIGHT: persistence barcode + readout ===== */
+      var rx0 = divX + 12, rx1 = W - 12, pw = rx1 - rx0;
+      ctx.fillStyle = pal.fg; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText('\u2461 Persistenz-Barcode \u00b7 lange Bars = Bedeutung (der \u00dcberlebende)', rx0, botTop - 6);
+      var F = fieldE(theta);
+      var Emin = F[0], Emax = F[0], ii;
+      for (ii = 1; ii < FM; ii++) { if (F[ii] < Emin) Emin = F[ii]; if (F[ii] > Emax) Emax = F[ii]; }
+      var span = (Emax - Emin) || 1e-6;
+      var bars = computeBars(F);
+      var maxP = 0;
+      for (ii = 0; ii < bars.length; ii++) { if (!bars[ii].inf) { var pp = bars[ii].d - bars[ii].b; if (pp > maxP) maxP = pp; } }
+      if (maxP <= 1e-6) maxP = 1e-6;
+      var floor = 0.4 * maxP;
+      var barTop = botTop + 24, barBot = barTop + 108;
+      ctx.strokeStyle = pal.grid; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(rx0, barBot); ctx.lineTo(rx1, barBot); ctx.stroke();
+      ctx.fillStyle = pal.muted; ctx.font = '9px ui-monospace,monospace'; ctx.textAlign = 'left';
+      ctx.fillText('Emin \u2192', rx0, barBot + 12);
+      ctx.textAlign = 'right'; ctx.fillText('Emax \u2192', rx1, barBot + 12);
+      var nb = bars.length, rowH = (barBot - barTop) / nb, bh = Math.max(3, rowH * 0.5);
+      var ccols = [pal.accent, pal.cA, pal.cB, pal.theta, pal.mid];
+      var longc = 0;
+      for (var bi = 0; bi < nb; bi++) { var bar = bars[bi];
+        if (bar.inf) continue;
+        var x1 = rx0 + ((bar.b - Emin) / span) * pw, x2 = rx0 + ((bar.d - Emin) / span) * pw;
+        var yT = barTop + bi * rowH + (rowH - bh) / 2;
+        var isLong = (bar.d - bar.b) >= floor;
+        ctx.globalAlpha = 0.85; ctx.fillStyle = ccols[bi % ccols.length];
+        ctx.fillRect(x1, yT, Math.max(x2 - x1, 2), bh); ctx.globalAlpha = 1;
+        if (isLong) { longc++; starDraw(x2 - 1, yT + bh / 2, 5, pal.fg); }
+      }
+      var Rnaive = (rr === 1) ? 1 : Math.abs(Math.cos(Math.PI * theta / 2));
+      var ry0 = barBot + 22;
+      function hbar(y, frac, color, lbl) {
+        ctx.fillStyle = pal.grid; ctx.fillRect(rx0, y, pw - 64, 15);
+        ctx.fillStyle = color; ctx.fillRect(rx0, y, (pw - 64) * frac, 15);
+        ctx.strokeStyle = pal.grid; ctx.strokeRect(rx0, y, pw - 64, 15);
+        ctx.fillStyle = pal.muted; ctx.font = '10px ui-monospace,monospace'; ctx.textAlign = 'left';
+        ctx.fillText(lbl, rx0, y - 4);
+        ctx.textAlign = 'right'; ctx.fillStyle = color;
+        ctx.fillText(Math.round(frac * 100) + ' %', rx1, y + 12);
+      }
+      hbar(ry0, Rnaive, pal.cA, 'Lineares Read-out (t=1)');
+      hbar(ry0 + 30, 1, pal.cB, 'Voll-Decode (t=0)');
+      ctx.fillStyle = pal.muted; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText('Bedeutungen (lange Bars) = ' + longc + '   \u00b7   Kapazit\u00e4t 2r = ' + (2 * rr), rx0, ry0 + 58);
+
+      /* ===== readouts ===== */
+      var evProbe = channelAt(C, pEll);
+      var fragA = Math.max(0, 1 - Math.min(1, evProbe / 8));
+      var fragB = 1 - t;
+      var rd = $('vzReadout');
+      var gen = bb > 2;
+      if ($('roChan')) $('roChan').textContent = evProbe.toPrecision(3);
+      if ($('roT')) $('roT').textContent = t.toFixed(2);
+      if ($('roTheta')) $('roTheta').textContent = theta.toFixed(2);
+      if ($('roCap')) $('roCap').textContent = rr + ' / ' + (2 * rr);
+      if ($('roNaive')) $('roNaive').textContent = Math.round(Rnaive * 100) + ' %';
+      if ($('roMean')) $('roMean').textContent = longc;
+      if ($('roFragA')) $('roFragA').textContent = Math.round(fragA * 100) + ' %';
+      if ($('roFragB')) $('roFragB').textContent = Math.round(fragB * 100) + ' %';
+      var ge = $('roGen'); if (ge) { ge.textContent = gen ? 'JA' : 'NEIN'; ge.style.color = gen ? pal.safe : pal.harm; }
+      var rn = $('roNaive'); if (rn) rn.style.color = Rnaive > 0.5 ? pal.cA : pal.harm;
+      var regime = (t > 0.85) ? 't=1\u2212\u03b8\u22481 / T=\u03b8\u21920: GUTE ECKE \u2014 Fahrt am Ende; Cut/Commit vollbracht (A: Rang-k, eindeutiger Peak); Read-out=linear/Winner=verlustfrei (B: Grokking); intrinsische Bruchigkeit (det C\u21920) am Ort der Capability.'
+        : (t > 0.15) ? 't=1\u2212\u03b8 mittig: Fahrt l\u00e4uft; Frequenzen richten sich aus, Kanal kollabiert; weiche+harte Ablesung koexistieren; beide Bruchigkeiten niedrig in der Mitte.'
+          : 't=1\u2212\u03b8\u22480 / T=\u03b8\u21921: FR\u00dcH/scrambled \u2014 Kanal voll, Hebel blind, Voll-Decode n\u00f6tig; grenzliche Bruchigkeit (Budget-Rand, ID/C\u21921) maximal.';
+      if (rd) rd.innerHTML = '\u2113=' + (pEll).toFixed(1) + ': Kanal \u2248 <b>' + evProbe.toPrecision(3) +
+        '</b> \u00b7 t = 1\u2212\u03b8 \u2248 <b>' + t.toFixed(2) + '</b> \u00b7 \u03b8_eff \u2248 <b>' + theta.toFixed(2) +
+        '</b> \u00b7 c=' + C.toFixed(2) + ' f\u00e4hrt \u03b8 ' + (C >= 1 ? 'schnell' : 'langsam') +
+        ' \u00b7 Bedeutungen = <b>' + longc + '</b> \u00b7 ' + regime;
+      if ($('vzRVal')) $('vzRVal').textContent = rr;
+      if ($('vzCVal')) $('vzCVal').textContent = C.toFixed(2);
+      if ($('vzPVal')) $('vzPVal').textContent = probe.toFixed(2);
+      if ($('vzBVal')) $('vzBVal').textContent = Math.round(bb);
+    }
+
+    function loop() {
+      if (playing) {
+        pt += 0.012;
+        probe = 0.5 - 0.5 * Math.cos(pt);
+        var pe = $('vzP'); if (pe) pe.value = Math.round(probe * 100);
+      }
+      draw();
+      requestAnimationFrame(loop);
+    }
+    function wire() {
+      var eR = $('vzR'), eC = $('vzC'), eP = $('vzP'), eB = $('vzB');
+      if (eR) eR.addEventListener('input', function () { draw(); });
+      if (eC) eC.addEventListener('input', function (e) { C = +e.target.value / 100; draw(); });
+      if (eP) eP.addEventListener('input', function (e) { probe = +e.target.value / 100; draw(); });
+      if (eB) eB.addEventListener('input', function () { draw(); });
+      var bp = $('vzPlay');
+      if (bp) bp.addEventListener('click', function () {
+        playing = !playing;
+        bp.classList.toggle('active', playing);
+        bp.innerHTML = playing ? '&#10074;&#10074; Stop' : '&#9654; Fahrt-Sweep';
+      });
+      var tb = $('themeToggle');
+      if (tb) tb.addEventListener('click', function () {
+        document.documentElement.classList.toggle('dark');
+        readTheme(); draw();
+      });
+      window.addEventListener('resize', function () { draw(); });
+      try {
+        var mo = new MutationObserver(function () { readTheme(); draw(); });
+        mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      } catch (e) {}
+    }
+    function init() {
+      C = 1.0;
+      readTheme(); wire(); draw(); loop();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  } catch (e) { /* zero console errors: swallow init faults */ }
+})();
+</script>
+</body>
+</html>
