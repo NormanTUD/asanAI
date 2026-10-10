@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der lesende Fluss — Fusion transformer_dynamics ✕ j_space</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ecdf; --panel:#ffffff; --panel2:#f6f3ea;
+  --ink:#1c1a17; --ink2:#57524a;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#be185d; --accent4:#1d4ed8;
+  --grid:#e3ddcb; --line:#e6e1d2;
+  --good:#15803d; --bad:#b91c1c; --warn:#b45309;
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111726; --panel:#141d31; --panel2:#1a2439;
+  --ink:#e8ecff; --ink2:#a8b3d9;
+  --accent:#7cf5c4; --accent2:#ffb86b; --accent3:#ff7ab6; --accent4:#8ab4ff;
+  --grid:#243150; --line:#26314f;
+  --good:#6ee7a0; --bad:#ff9b9b; --warn:#ffd166;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 62%);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:34px 22px 80px}
+header{text-align:center;padding:30px 10px 18px}
+header h1{
+  font-size:clamp(1.9rem,4.8vw,2.9rem);margin:0;line-height:1.12;letter-spacing:-.02em;font-weight:800;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent4) 55%,var(--accent3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.subtitle{color:var(--ink2);margin-top:14px;font-size:1rem}
+.subtitle code{background:var(--panel2);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-size:.9em;color:var(--accent)}
+.tagline{color:var(--ink2);font-size:.94rem;margin-top:10px;max-width:660px;margin-left:auto;margin-right:auto;opacity:.9}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:18px 0 4px}
+nav.toc a{color:var(--ink2);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);background:var(--panel2)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin:22px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+section h2{margin:0 0 14px;font-size:1.5rem;letter-spacing:-.01em;color:var(--accent)}
+section h3{color:var(--accent2);margin:22px 0 8px;font-size:1.1rem}
+p{font-size:1rem;color:var(--ink)}
+p+p{margin-top:12px}
+.lead{font-size:1.05rem}
+.hl{color:var(--accent);font-weight:600}
+.hl2{color:var(--accent2);font-weight:600}
+.hl3{color:var(--accent3);font-weight:600}
+.hl4{color:var(--accent4);font-weight:600}
+.note{border-left:3px solid var(--accent4);background:var(--panel2);padding:10px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.95rem;color:var(--ink2)}
+.note b{color:var(--ink)}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:8px 0}
+.formula{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center}
+.m{font-family:'Cambria Math','STIX Two Math','Latin Modern Math',Georgia,'Times New Roman',serif;font-style:italic;letter-spacing:.02em;white-space:nowrap}
+.m sup,.m sub{font-size:.72em;font-style:normal}
+.m .op{font-style:normal}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent);font-weight:600}
+td{color:var(--ink)}
+.trow-a{color:var(--accent2);font-weight:600}
+.trow-b{color:var(--accent4);font-weight:600}
+.viz-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px}
+canvas#viz{display:block;width:100%;height:452px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.82rem;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+@media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+.controls{display:flex;flex-direction:column;gap:12px}
+.ctrl{display:flex;flex-direction:column;gap:5px}
+.ctrl label{font-size:.86rem;color:var(--ink2);display:flex;justify-content:space-between}
+.ctrl label .val{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:999px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--accent) 0%,var(--accent4) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;box-shadow:0 0 0 2px var(--accent)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;border:2px solid var(--accent)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
+button{background:var(--accent);color:var(--bg);border:none;padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.86rem;transition:.15s}
+button:hover{transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--accent)}
+button.active{background:var(--accent4);color:var(--bg)}
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:.95rem}
+.verdict{font-weight:700;font-size:1rem;padding:9px 13px;border-radius:10px;margin-bottom:12px;border:1px solid var(--line)}
+.verdict.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent);border-color:var(--good)}
+.verdict.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);border-color:var(--warn)}
+.verdict.neutral{color:var(--accent2);background:color-mix(in srgb,var(--accent2) 12%,transparent);border-color:var(--accent2)}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.kv span:first-child{color:var(--ink2)}
+.kv span:last-child{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600;text-align:right}
+.tarski-line{margin-top:10px;font-size:.9rem;color:var(--ink2)}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;color:var(--ink2);font-size:.85rem;padding:26px 10px 6px}
+a{color:var(--accent4)}
+footer code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:.85em}
+.prov{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--panel2);font-size:.95rem}
+.prov .tag{min-width:44px;text-align:center;font-weight:800;font-size:.8rem;color:var(--bg);background:var(--accent);border-radius:6px;align-self:flex-start}
+.prov .tag.b{background:var(--accent4)}
+.prov p{margin:0}
+.prov a{font-weight:600}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">☀︎ Hell / 🌙 Dunkel</button>
+<div class="wrap">
+
+<header>
+  <h1>Der lesende Fluss</h1>
+  <p class="subtitle">Fusion aus: <code>transformer_dynamics.html</code> ✕ <code>j_space.html</code></p>
+  <p class="tagline">Wie ein Transformer als <b>dynamisches System</b> durch seine Schichten strömt (A) — und wo auf genau diesem Fluss ein kleiner, <b>lesbarer „Arbeitsraum"</b> (J-Space) auftaucht, in dem das Modell seine Gedanken lesen, tauschen und gezielt setzen kann (B).</p>
+</header>
+
+<nav class="toc">
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widersprüche</a>
+  <a href="#aufloesung">Auflösung</a>
+  <a href="#inhalt">Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<!-- 1. THESE -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere blicken auf denselben Gegenstand — <span class="hl">was mit der Repräsentation passiert, während sie durch den Stapel Transformer-Schichten fließt</span> — und beide importieren die Neurowissenschaft. <span class="hl2">A (Fernando &amp; Guitchounts, 2025, Llama 3.1 8B)</span> behandelt den <b>Residual-Stream</b> wie ein dynamisches System, das über die Schichten hinweg „in der Zeit" läuft: Er verdichtet sich, beschleunigt, linearisiert, rotiert im Phasenraum, ist überraschend niedrig-dimensional und korrigiert sich selbst. <span class="hl4">B (Gurnee et&nbsp;al., 2026)</span> entdeckt <b>innerhalb</b> desselben Flusses einen kleinen, privilegierten Unterraum — den <b>J-Space</b> (≈5–10&nbsp;% der Aktivierungsvarianz) — dessen Inhalt aus <b>lesbaren, tauschbaren, berichtbaren Konzepten</b> besteht, die eine „Jacobian Lens" (J-Lens) ausliest und die die fünf Markierungen eines „globalen Arbeitsraums" erfüllen.</p>
+  <p>Die fusionierte Einzelposition: <b>Die Berechnung eines Transformers ist ein niedrig-dimensionaler dynamischer Fluss durch den Residual-Stream (A); das „Denken", das das Modell berichten, modulieren und multi-stufig nutzen kann, ist eine spärliche, lesbare Projektion genau dieses Flusses — der J-Space (B).</b> Der globale Arbeitsraum ist der Ort, an dem der Fluss <span class="hl">linearisiert, stabilisierbar und „broadcast-fähig"</span> wird — und damit erst lesbar. A ist die <b>Geometrie/Dynamik des Flusses</b>, B die <b>lesbaren Koordinaten darauf</b>. Sie sind keine Rivalen, sondern zwei Auflösungen einer Struktur.</p>
+  <div class="note"><b>Kurzformel:</b> Fluss (A) = das <i>Wo</i> und <i>Wie</i> der Information; J-Space (B) = das <i>Was</i>, das man davon aussprechen kann. Lesbarkeit entsteht, wo der Fluss linear wird.</div>
+</section>
+
+<!-- 2. WIDERSPRÜCHE -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Sie widersprechen sich nicht im Ziel (beide: „Neurowissenschaft für KI", beide layer-basiert, beide auf mittleren Modellen), aber sie nehmen drei <span class="hl3">inkompatible Stellungen</span> zu ein und derselben Frage — „aus was besteht eigentlich die Berechnung" — ein:</p>
+
+  <ol>
+    <li><span class="hl2">Verteilt &amp; kontinuierlich (A) vs. kleiner privilegierter symbolischer Unterraum (B).</span>
+      <ul>
+        <li><b>A</b> sagt: „Transformers rechnen nicht über isolierte Grandmother-Cells oder spärliche Schaltkreise — sie implementieren <i>verteilte, fließende</i> Berechnungen, eher ein Flusssystem mit Strömungen und Wirbeln."</li>
+        <li><b>A</b> betont zugleich: der Residual-Stream hat <b>keine privilegierte Basis</b> — „die Koordinatenachsen sind nicht bedeutsam". Die Einheit der Analyse ist der kontinuierliche 4096-dim-Vektor/Ort auf der Bahn.</li>
+        <li><b>B</b> lokalisiert den kausal wirksamen Kern dagegen in einem <b>kleinen, privilegierten</b> Unterraum (≈5–10&nbsp;% der Varianz, ≈6 Wörter, 1–2 pro Schicht), der aus <b>benannten, austauschbaren Tokens</b> besteht (<span class="m">spider</span>, <span class="m">France</span>, <span class="m">42</span>) — also diskret, fast schon Grandmother-Cell-artig.</li>
+      </ul>
+    </li>
+    <li><span class="hl3">Frühe Schichten: informationsreich (A) vs. Rauschen (B).</span>
+      <ul>
+        <li><b>A:</b> Die <b>mutuelle Information</b> (MI) ist in den <b>frühen</b> Schichten <i>hoch</i> und fällt dort scharf ab — früh liegt also viel (nichtlineare) Information; die Zusammenfassung nennt die frühen Schichten „hohe MI, komplexe nichtlineare Beziehungen".</li>
+        <li><b>B:</b> Die frühen Schichten (≈0–38&nbsp;%) zeigen in der J-Lens „nur Rauschen — es gibt noch keinen 'bewussten' Inhalt" — früh ist also <b>bedeutungslos</b> für den lesbaren Readout.</li>
+        <li><i>Anmerkung:</i> Sie messen unterschiedliche Größen (Gesamtinformation vs. verbalisierbarer Anteil), daher ist dies die <b>nächste echte Spannung</b> zwischen den Bildern, kein harter logischer Widerspruch.</li>
+      </ul>
+    </li>
+    <li><span class="hl4">Kontinuierliche Geometrie (A) vs. diskrete lesbare Symbole (B).</span>
+      <ul>
+        <li><b>A</b> reduziert nie auf Wörter: seine Analyseobjekte sind <i>magnitudes</i>, Geschwindigkeiten, Korrelationen, MI, Phasenorbieten und eine niedrig-dimensionale Mannigfaltigkeit.</li>
+        <li><b>B</b> reduziert den internen Zustand ganz auf <i>diskrete, lesbare Wörter</i>, die das Modell „sagen könnte"; der Arbeitsraum-Inhalt ist symbolisch.</li>
+      </ul>
+    </li>
+  </ol>
+</section>
+
+<!-- 3. AUFLÖSUNG -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p>Zu jedem Punkt die Versöhnung und der fusionierte Schluss:</p>
+  <ol>
+    <li><b>„Keine privilegierte Basis" ≠ „keine privilegierten Richtungen".</b>
+      <p>A meint mit „keine privilegierte Basis" die <b>Standard-4096-Achsen</b> des Residual-Streams. B's J-Space ist <b>nicht</b> diese Basis — er ist ein <i>kleiner Satz gelernter, schiefer, niedrig-dimensionaler Richtungen auf dem Fluss</i>. Und A's <b>Finding&nbsp;6</b> zeigt ja bereits, dass die Dynamik niedrig-dimensional ist. Der J-Space ist also ein <b>lesbares, niedrig-dimensionales Koordinatensystem</b> für genau die Mannigfaltigkeit, die A findet. Die J-Lens ist ein <b>linearer Readout</b> (mittlere Jacobi × Unembedding), der lesbare Koordinaten aus dem Fluss zurücksichert. <span class="hl">Fusion:</span> verteilter Fluss (A) = Substrat; verbaler Arbeitsraum (B) = spärliche lesbare Projektion darauf — kompatibel.</p>
+    </li>
+    <li><b>Informationsgehalt von verbalisierbarem Inhalt trennen.</b>
+      <p>Frühe Schichten halten viel <b>nichtlineare</b> Information (A: hohe MI), die aber noch nicht in lesbare Konzepte organisiert ist (B: J-Lens = Rauschen). A's „MI-Abfall + Linearisierung" in den frühen Schichten ist <b>genau der Prozess</b>, der die J-Lens erst ab ≈38&nbsp;% lesbar macht. <span class="hl">Fusion:</span> ein Pipeline-Modell — <b>rohe Information (früh, A) → Linearisierung → lesbarer Arbeitsraum-Band (B)</b>. Das „Reiche" der frühen Schichten ist das Rohmaterial; der Workspace ist die Destillation daraus.</p>
+    </li>
+    <li><b>Wörter sind die Quantisierung des Flusses.</b>
+      <p>Die diskreten Tokens (B) sind eine <b>symbolische Beschriftung</b> des kontinuierlichen Flusses (A). A liefert die <b>Geometrie</b> (Mannigfaltigkeit/Orbieten), B das <b>Vokabular</b> (die Wörter, die ein linearer Readout an Punkte auf ihr vergibt). <span class="hl">Fusion:</span> Der Fluss ist, <i>wo</i> es geschieht; der J-Space ist, <i>was</i> man davon benennen kann. Die beiden komponieren sich statt sich auszuschließen.</p>
+    </li>
+  </ol>
+  <div class="note"><b>Fusionierter Schluss:</b> <i>Berechnung = ein niedrig-dimensionaler dynamischer Fluss; „bewusste" Zugänglichkeit = ein spärlicher linearer Readout der lesbaren Richtungen innerhalb dieses Flusses — lokalisiert dort, wo der Fluss linearisiert, stabil und broadcast-fähig ist.</i></div>
+</section>
+
+<!-- 4. INHALT -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>Das gemeinsame Substrat und die Modelle</h3>
+  <p>Beide analysieren den Zustand <span class="m">h<sub>ℓ</sub></span> (der <b>Residual-Stream</b>) über die Schicht-Indizes <span class="m">ℓ</span>. A arbeitet mit <b>Llama 3.1 8B</b>: <span class="hl2">4096</span>-dim Residual-Stream, <span class="hl2">64</span> Sublayer (32 Attention + 32 MLP), ~1000 Daten-Batches. B importiert die <b>Global-Workspace-Theorie</b> (Baars 1988; Dehaene 1998) und liest den Zustand mit der <b>J-Lens</b> aus — dem <i>durchschnittlichen</i> linearen Effekt einer Aktivierung auf die Outputs über ~1000 Kontexte, multipliziert mit der Unembedding:</p>
+  <div class="formula"><span class="m">J<sub>ℓ</sub> = E<sub>x</sub>[ ∂ logits / ∂ h<sub>ℓ</sub>(x) ]  , &nbsp;  r<sub>ℓ</sub> = U · J<sub>ℓ</sub>  , &nbsp;  Wort<sub>ℓ</sub> = argmax<sub>vocab</sub> r<sub>ℓ</sub></span></div>
+  <p>Im Unterschied zur älteren Logit Lens, die in frühen Schichten „Müll" liest, macht die J-Lens den Readout dadurch kontextstabil, dass sie über viele Kontexte <i>mittelt</i> — und liest damit erst dort sinnvoll, wo der Fluss linearisiert ist (→ Punkt 2 der Auflösung).</p>
+
+  <h3>Die sieben A-Beobachtungen (Fluss) ↔ die fünf B-Eigenschaften (Workspace)</h3>
+  <table>
+    <tr><th>A — dynamische Beobachtung des Flusses</th><th>B — Phänomen im J-Space</th></tr>
+    <tr><td class="trow-a">MI fällt früh scharf; Korrelation steigt ⇒ Linearisierung (A-F4)</td><td class="trow-b">Readout erst ab ≈38&nbsp;% lesbar; frühe Schichten = Rauschen</td></tr>
+    <tr><td class="trow-a">Niedrig-dimensionale, gekrümmte Bahn, die spät gerade wird; wenige PCs spät nötig (A-F6)</td><td class="trow-b">Träger-Mannigfaltigkeit des J-Space; Geraderwerden = Konzepte stabilisieren/broadcasten</td></tr>
+    <tr><td class="trow-a">Stetigkeit: starke Korrelationen trotz „keiner privilegierten Basis"; Attn→MLP &gt; MLP→Attn+1 (A-F2)</td><td class="trow-b">„Broadcast-Format": ein lesbarer Vektor (z.&nbsp;B. <span class="m">France</span>) funktioniert für viele nachgelagerte Aufgaben (B-E4)</td></tr>
+    <tr><td class="trow-a">Selbstkorrigierende, attraktor-artige Dynamik; mittlere Schichten (7/15/23) korrigieren am besten (A-F7)</td><td class="trow-b">Workspace-Band ≈38–92&nbsp;%: Reasoning robust gegen Störung; Ablation bricht Multi-Hop (~100&nbsp;%→~0&nbsp;%) aber nicht Grammatik</td></tr>
+    <tr><td class="trow-a">Velocity: früh flach, im letzten Drittel steile Beschleunigung (A-F3)</td><td class="trow-b">„Motor"-Schichten ≈92–100&nbsp;%: J-Lens zeigt nur noch den nächsten Output-Token</td></tr>
+    <tr><td class="trow-a">Phasenporträt: Einheiten beschreiben instabile Perioden-Orbieten (~10.74 Umdrehungen vs. ~0 im Shuffle) (A-F5)</td><td class="trow-b">— (keine direkte B-Gegenstelle; bleibt A-spezifisch)</td></tr>
+    <tr><td class="trow-a">Aktivierungen verdichten sich, Vorzeichen bleiben erhalten (A-F1)</td><td class="trow-b">Kapazität des Workspaces ≈6 Wörter / 1–2 pro Schicht; nach Kategorien organisiert (≈ Miller-Zahl)</td></tr>
+  </table>
+
+  <h3>Die fünf B-Eigenschaften (kurz)</h3>
+  <ul>
+    <li><b>1. Verbaler Bericht</b> — das Modell kann berichten, was im Workspace ist; ≈6–7&nbsp;% Varianz sind für ≈59&nbsp;% der Berichts-Änderungen verantwortlich (kausal: <span class="m">Soccer</span>→<span class="m">Rugby</span> tauschen ändert die Antwort).</li>
+    <li><b>2. Gerichtete Modulation</b> — „Denke an Zitrusfrüchte, während du kopierst" lässt <span class="m">orange/lemon/fruit</span> erscheinen; „Denke <i>nicht</i> an X" → X erscheint trotzdem („Weißer-Bär"-Effekt).</li>
+    <li><b>3. Internes Reasoning</b> — Zwischenschritte sichtbar: „Beine des Tieres, das Netze spinnt" → <span class="m">spider</span>→<span class="m">eight</span>; <span class="m">(4+17)×2+7</span> → <span class="m">21→42→49</span>; Reim <span class="m">fight</span> wird <i>vor</i> Zeile 2 geplant.</li>
+    <li><b>4. Flexible Generalisierung</b> — ein <span class="m">France</span>-Vektor, zu <span class="m">China</span> getauscht, liefert korrekt Beijing/Chinesisch/Asien über alle Prompts (Broadcast).</li>
+    <li><b>5. Selektivität</b> — Grammatik/Fortsetzung/Sprach-Erkennung brauchen den Workspace unterschiedlich; komplette Ablation lässt Routine laufen, aber Multi-Hop/Übersetzung/kreatives Schreiben brechen.</li>
+  </ul>
+
+  <h3>Nützliche Mathematik (aus beiden)</h3>
+  <div class="formula"><span class="m">v<sub>ℓ</sub> = ‖ h<sub>ℓ+1</sub> − h<sub>ℓ</sub> ‖</span> &nbsp;<span style="color:var(--ink2);font-style:normal;font-size:.9em">(Velocity — A)</span></div>
+  <div class="formula"><span class="m">r<sub>ℓ</sub> = U · E<sub>x</sub>[∂ logits/∂h<sub>ℓ</sub>(x)]</span> &nbsp;<span style="color:var(--ink2);font-style:normal;font-size:.9em">(J-Lens-Readout — B)</span></div>
+  <p><b>MI vs. Korrelation (der A-Paradox, die Brücke zu B):</b> Korrelation erfasst nur <i>lineare</i> Abhängigkeit, MI <i>alle</i> (linear + nichtlinear). Dass Korrelation steigt <i>während</i> MI fällt, heißt: das Modell <b>wirft komplexe nichtlineare Beziehungen weg</b> und linearisiert. Genau diese Linearisierung ist die Voraussetzung, die B's linearer J-Lens-Readout für „lesbare" Auskünfte braucht. So erklärt sich B's „Rauschen früh / lesbar spät" aus A's „MI fällt früh".</p>
+  <p><b>Selbstkorrektion als Kontraktion:</b> Nach einer Störung (Teleport in den reduzierten Raum) kontrahiert die Bahn zur Mannigfaltigkeit; die Korrekturrate ist in mittleren Schichten am höchsten — das ist die dynamische Version von B's robusterem Workspace-Band. <b>Sicherheits-/Trainings-Hinweise (B):</b> versteckte Fehlausrichtungen zeigen Tokens wie <span class="m">fake/trick/secretly</span> oder <span class="m">reward/bias</span> schon im Workspace, bevor sie Verhalten zeigen; <b>Counterfactual Reflection Training</b> (man trainiert, was das Modell <i>sagen würde</i>, wenn man es zur Reflexion auffordert) senkt Fabrication 0.25→0.07 und Deception 0.38→0.05 — kausal, weil danach <span class="m">ethical/honest/integrity</span> im Workspace auftauchen.</p>
+</section>
+
+<!-- 5. VISUALISIERUNG -->
+<section id="visualisierung">
+  <h2>Visualisierung: der Fluss, durch den man denkt</h2>
+  <p>Ein Diagramm, das beide Papiere in einem Bild vereint. Die <b>Horizontale = die Schicht</b> (0 → 63). Drei Kurven sind A's Dynamik des Flusses; die <b>farbenen Blasen</b> oben sind B's lesbare J-Space-Konzepte, die erst im Workspace-Band (≈38–92&nbsp;%) erscheinen. Bewege den <b>Layer-Slider</b> und wechsle die <b>Aufgabe</b>, um zu sehen, wie der Readout sich mit der Schicht und der Task ändert.</p>
+  <div class="viz-card">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--accent3)"></i> MI (nichtlineare Abhängigkeit) — fällt früh scharf (A)</span>
+      <span><i class="sw" style="background:var(--good)"></i> Korrelation / lineare Stetigkeit — steigt (A)</span>
+      <span><i class="sw" style="background:var(--accent2)"></i> Velocity ‖Δh‖ — beschleunigt im letzten Drittel (A)</span>
+      <span><i class="sw" style="background:var(--accent4)"></i> J-Space-Konzepte (lesbar, tauschbar) — B</span>
+    </div>
+    <div class="viz-grid">
+      <div class="controls">
+        <div class="ctrl">
+          <label>Layer <span class="val" id="vLayer">40</span></label>
+          <input id="layer" type="range" min="0" max="63" value="40">
+        </div>
+        <div class="btnrow">
+          <button id="taskSpider" class="ghost active" type="button">🕷️ Spinne</button>
+          <button id="taskMath" class="ghost" type="button">🧮 Rechnung</button>
+        </div>
+        <button id="playBtn" class="ghost" type="button">▶ Durch die Schichten</button>
+      </div>
+      <div class="readout">
+        <div class="verdict good" id="verdict">J-Space aktiv</div>
+        <div class="kv"><span>Zone</span><span id="kZone">—</span></div>
+        <div class="kv"><span>J-Lens liest aktuell</span><span id="kToken">—</span></div>
+        <div class="kv"><span>MI (nichtlinear)</span><span id="kMi">—</span></div>
+        <div class="kv"><span>Korrelation (linear)</span><span id="kCorr">—</span></div>
+        <div class="kv"><span>Velocity ‖Δh‖</span><span id="kVel">—</span></div>
+        <div class="tarski-line" id="kNote">—</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. PROVENIENZ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <span class="tag">A</span>
+    <p><a href="../transformer_dynamics.html">transformer_dynamics.html</a> — Fernando &amp; Guitchounts (2025), <i>Transformer Dynamics: A neuroscientific approach to interpretability of LLMs</i> (arXiv:2502.12131); der Residual-Stream als dynamisches System über die Schichten (Llama 3.1 8B): Verdichtung, Beschleunigung, MI-Abfall, Phasenorbieten, niedrig-dimensionale Bahnen, Selbstkorrektion.</p>
+  </div>
+  <div class="prov">
+    <span class="tag b">B</span>
+    <p><a href="../j_space.html">j_space.html</a> — Gurnee et&nbsp;al. (2026), <i>Verbalizable Representations Form a Global Workspace in Language Models</i>; die Jacobian Lens (J-Lens) und der J-Space als globaler Arbeitsraum mit den fünf Eigenschaften (Bericht, Modulation, internes Reasoning, Generalisierung, Selektivität) plus Sicherheits- und Trainings-Anwendungen.</p>
+  </div>
+</section>
+
+<footer>
+  Round 1 · Pair 057 · Fusion: <code>transformer_dynamics.html</code> ✕ <code>j_space.html</code><br>
+  Selbstbehaftetes Standalone-Dokument · alle Daten inline · theme-aware
+</footer>
+
+</div>
+
+<script>
+;(function(){
+  "use strict";
+  var root=document.documentElement;
+  var themeBtn=document.getElementById('themeBtn');
+  themeBtn.addEventListener('click',function(){ root.classList.toggle('dark'); });
+
+  var canvas=document.getElementById('viz');
+  var el={
+    layer:document.getElementById('layer'),
+    vLayer:document.getElementById('vLayer'),
+    tSpider:document.getElementById('taskSpider'),
+    tMath:document.getElementById('taskMath'),
+    play:document.getElementById('playBtn')
+  };
+  var R={
+    verdict:document.getElementById('verdict'),
+    kZone:document.getElementById('kZone'),
+    kToken:document.getElementById('kToken'),
+    kMi:document.getElementById('kMi'),
+    kCorr:document.getElementById('kCorr'),
+    kVel:document.getElementById('kVel'),
+    kNote:document.getElementById('kNote')
+  };
+
+  var N=64, L_E=24, L_M=58;
+  var TOKENS={
+    spider:[{l:26,t:'spider'},{l:35,t:'web'},{l:45,t:'insect'},{l:54,t:'eight'},{l:61,t:'8'}],
+    math:[{l:26,t:'arithmetic'},{l:37,t:'21'},{l:50,t:'42'},{l:61,t:'49'}]
+  };
+  var task='spider';
+  function activeTokens(){ return TOKENS[task]; }
+
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function smooth(t){ t=clamp(t,0,1); return t*t*(3-2*t); }
+  function corr(l){ return 0.78 + 0.19*(l/(N-1)); }
+  function mi(l){ return clamp(0.9 - 0.62*smooth(l/14) - 0.0015*l, 0.14, 0.9); }
+  function vel(l){ return 0.28 + 0.62*Math.pow(l/(N-1), 2.4); }
+
+  function cssRGB(name){
+    var s=getComputedStyle(root).getPropertyValue(name).trim();
+    if(!s) return [128,128,128];
+    if(s[0]==='#'){
+      var h=s.slice(1);
+      if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m) return [+m[0],+m[1],+(m[2]||0)];
+    return [128,128,128];
+  }
+  function argb(c,a){ return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  function mix(c1,c2,t){ return [c1[0]+(c2[0]-c1[0])*t, c1[1]+(c2[1]-c1[1])*t, c1[2]+(c2[2]-c1[2])*t]; }
+
+  function setup(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    if(w<10||h<10) return null;
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    var ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx,w:w,h:h};
+  }
+  function rr(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  var rafId=null;
+  function stopPlay(){ if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+  function play(){
+    stopPlay();
+    el.layer.value=0;
+    (function step(){
+      var v=(+el.layer.value)+1;
+      if(v>N-1){ el.layer.value=N-1; draw(); rafId=null; return; }
+      el.layer.value=v; draw();
+      rafId=requestAnimationFrame(step);
+    })();
+  }
+
+  function currentToken(L){
+    if(L<L_E) return null;
+    var toks=activeTokens(), best=null, bd=1e9, i, d;
+    for(i=0;i<toks.length;i++){ d=Math.abs(toks[i].l-L); if(d<bd){ bd=d; best=toks[i]; } }
+    if(L>=L_M) best=toks[toks.length-1];
+    return best;
+  }
+
+  function draw(){
+    var S=setup();
+    if(!S) return;
+    var ctx=S.ctx, w=S.w, h=S.h;
+    var col={
+      panel:cssRGB('--panel'), ink:cssRGB('--ink'), ink2:cssRGB('--ink2'),
+      accent:cssRGB('--accent'), accent2:cssRGB('--accent2'),
+      accent3:cssRGB('--accent3'), accent4:cssRGB('--accent4'),
+      good:cssRGB('--good'), warn:cssRGB('--warn'), line:cssRGB('--line')
+    };
+
+    var L=clamp(Math.round(+el.layer.value),0,N-1);
+    el.vLayer.textContent=String(L);
+
+    var plotL=54, plotR=w-16, plotTop=72, plotBot=h-34;
+    var plotW=plotR-plotL, plotH=plotBot-plotTop;
+    var zoneTop=22, laneA=34, laneB=56, labelY=14;
+    function X(l){ return plotL + (l/(N-1))*plotW; }
+    function Y(v){ return plotBot - v*plotH; }
+
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=argb(col.panel,1);
+    ctx.fillRect(0,0,w,h);
+
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+
+    var zones=[
+      {a:0, b:L_E, name:'Vorverarbeitung', sub:'J-Lens: Rauschen', c:col.ink2, a2:0.06},
+      {a:L_E, b:L_M, name:'J-Space / Workspace', sub:'≈ 38–92 % · lesbar', c:col.accent4, a2:0.12},
+      {a:L_M, b:N-1, name:'Motor / Output', sub:'≈ 92–100 %', c:col.accent2, a2:0.09}
+    ];
+    for(var zi=0; zi<zones.length; zi++){
+      var z=zones[zi];
+      var zx0=X(z.a), zx1=X(z.b);
+      ctx.fillStyle=argb(z.c, z.a2);
+      ctx.fillRect(zx0, zoneTop, zx1-zx0, plotBot-zoneTop);
+      ctx.fillStyle=argb(z.c, 0.9);
+      ctx.font='bold 11px system-ui';
+      ctx.fillText(z.name, zx0+6, labelY);
+      ctx.fillStyle=argb(col.ink2, 0.75);
+      ctx.font='10px system-ui';
+      ctx.fillText(z.sub, zx0+6, laneA-4);
+    }
+
+    ctx.strokeStyle=argb(col.ink2, 0.5);
+    ctx.setLineDash([4,4]); ctx.lineWidth=1;
+    for(var bl=0; bl<2; bl++){
+      var bx=bl===0?X(L_E):X(L_M);
+      ctx.beginPath(); ctx.moveTo(bx, zoneTop); ctx.lineTo(bx, plotBot); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.fillStyle=argb(col.ink2, 0.8); ctx.font='10px system-ui';
+    ctx.fillText('38 %', X(L_E)-22, plotBot+16);
+    ctx.fillText('92 %', X(L_M)-22, plotBot+16);
+    ctx.fillText('0', plotL, plotBot+16);
+    ctx.textAlign='right';
+    ctx.fillText('63', plotR, plotBot+16);
+    ctx.textAlign='left';
+
+    ctx.strokeStyle=argb(col.line, 0.7); ctx.lineWidth=1;
+    for(var gv=0; gv<=1; gv+=0.25){
+      var gy=Y(gv);
+      ctx.beginPath(); ctx.moveTo(plotL, gy); ctx.lineTo(plotR, gy); ctx.stroke();
+    }
+
+    function curve(fn, c){
+      ctx.strokeStyle=argb(c,0.95); ctx.lineWidth=2.2;
+      ctx.beginPath();
+      for(var i=0;i<N;i++){
+        var px=X(i), py=Y(fn(i));
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+    curve(mi, col.accent3);
+    curve(corr, col.good);
+    curve(vel, col.accent2);
+
+    var toks=activeTokens();
+    for(var ti=0; ti<toks.length; ti++){
+      var tk=toks[ti];
+      var rowY=(ti%2===0)?laneA:laneB;
+      var near = (tk.l===currentToken(L)?true:false);
+      var cxp=X(tk.l);
+      ctx.strokeStyle=argb(col.accent4, 0.35); ctx.lineWidth=1;
+      ctx.setLineDash([2,3]);
+      ctx.beginPath(); ctx.moveTo(cxp, rowY+8); ctx.lineTo(cxp, plotTop); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font='11px system-ui';
+      var tw=ctx.measureText(tk.t).width+16;
+      var px0=cxp-tw/2, py0=rowY-10, ph=18;
+      ctx.fillStyle=argb(col.accent4, near?0.28:0.13);
+      rr(ctx,px0,py0,tw,ph,9); ctx.fill();
+      ctx.lineWidth=near?2:1;
+      ctx.strokeStyle=argb(col.accent4, near?1:0.7);
+      rr(ctx,px0,py0,tw,ph,9); ctx.stroke();
+      ctx.fillStyle=argb(near?col.accent4:col.ink2,1);
+      ctx.font=(near?'bold ':'')+'11px system-ui';
+      ctx.textAlign='center';
+      ctx.fillText(tk.t, cxp, py0+13);
+      ctx.textAlign='left';
+    }
+
+    var mx=X(L);
+    ctx.strokeStyle=argb(col.ink, 0.6); ctx.lineWidth=1.4; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(mx, zoneTop); ctx.lineTo(mx, plotBot); ctx.stroke();
+    ctx.setLineDash([]);
+    var dots=[[mi(L),col.accent3],[corr(L),col.good],[vel(L),col.accent2]];
+    for(var di=0; di<3; di++){
+      ctx.beginPath(); ctx.arc(mx, Y(dots[di][0]), 4, 0, Math.PI*2);
+      ctx.fillStyle=argb(dots[di][1],1); ctx.fill();
+      ctx.lineWidth=1.5; ctx.strokeStyle=argb(col.panel,1); ctx.stroke();
+    }
+    ctx.fillStyle=argb(col.ink,1); ctx.beginPath(); ctx.arc(mx, zoneTop-1, 3.5, 0, Math.PI*2); ctx.fill();
+
+    R.kZone.textContent = L<L_E ? 'Vorverarbeitung (0–38 %)' : (L<L_M ? 'Workspace (38–92 %)' : 'Motor (92–100 %)');
+    var cur=currentToken(L);
+    R.kToken.textContent = cur ? cur.t : '— (Rauschen)';
+    R.kMi.textContent = mi(L).toFixed(3);
+    R.kCorr.textContent = corr(L).toFixed(3);
+    R.kVel.textContent = vel(L).toFixed(3);
+
+    if(L<L_E){
+      R.verdict.className='verdict warn';
+      R.verdict.textContent='Vor dem Workspace (≈0–38 %)';
+      R.kNote.innerHTML='A: viel <b>nichtlineare</b> Information (hohe MI). B: J-Lens = Rauschen. → <i>Rohmaterial, das sich linearisiert.</i>';
+    } else if(L<L_M){
+      R.verdict.className='verdict good';
+      R.verdict.textContent='J-Space aktiv (≈38–92 %)';
+      R.kNote.innerHTML='A: Fluss linearisiert &amp; beschleunigt. B: lesbarer, tauschbarer Inhalt. → <i>der „bewusste" Kern.</i>';
+    } else {
+      R.verdict.className='verdict neutral';
+      R.verdict.textContent='Motor / Output (≈92–100 %)';
+      R.kNote.innerHTML='A: Velocity-Peak, Commitment. B: J-Lens zeigt den nächsten Output-Token. → <i>Ausführung.</i>';
+    }
+  }
+
+  el.layer.addEventListener('input', function(){ stopPlay(); draw(); });
+  el.tSpider.addEventListener('click', function(){ task='spider'; el.tSpider.classList.add('active'); el.tMath.classList.remove('active'); draw(); });
+  el.tMath.addEventListener('click', function(){ task='math'; el.tMath.classList.add('active'); el.tSpider.classList.remove('active'); draw(); });
+  el.play.addEventListener('click', play);
+  window.addEventListener('resize', draw);
+  var mo=new MutationObserver(draw);
+  mo.observe(root,{attributes:true, attributeFilter:['class']});
+  window.addEventListener('load', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

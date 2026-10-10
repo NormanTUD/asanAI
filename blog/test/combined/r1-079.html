@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wie viele Freiheitsgrade hat ein Gedanke? — intrinsische Dimension × Moduli-Raum, Fusion 079</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --gold:#b8860b; --panel:rgba(255,253,248,.95); --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --gold:#f4c43a; --panel:rgba(20,27,36,.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:66px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:16px;color:var(--muted);max-width:66ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:10px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:26px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.ok{border-color:var(--accent);background:var(--accent-soft)}
+.note.warn{border-color:var(--amber);background:var(--amber-soft)}
+.note.bad{border-color:var(--accent2);background:var(--accent2-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin:1px 4px 1px 0}
+.tag.b{background:var(--accent2-soft);color:var(--accent2)}
+.tag.v{background:var(--violet-soft);color:var(--violet)}
+.eq{font-family:var(--mono);font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto}
+.eq sup,.eq sub{font-size:.7em}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+canvas{display:block;width:100%;height:440px;border-radius:12px;border:1px solid var(--line);background:var(--bg)}
+.ctl{margin:16px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:110px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent)}
+.ro .box.amber{background:var(--amber-soft)} .ro .box.amber .v{color:var(--amber)}
+.ro .box.rose{background:var(--accent2-soft)} .ro .box.rose .v{color:var(--accent2)}
+.ro .box.gold{background:var(--card)} .ro .box.gold .v{color:var(--gold)}
+.viz-note{font-size:13px;color:var(--muted);margin-top:12px}
+.legend{display:flex;gap:8px 18px;flex-wrap:wrap;margin:14px 0 4px;font-size:12.5px;color:var(--muted)}
+.lg{display:inline-flex;align-items:center;gap:7px}
+.lg i{width:24px;height:0;border-top:3px solid;display:inline-block}
+.bpanel{margin-top:20px;border-top:1px dashed var(--line);padding-top:16px}
+.archgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 24px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;margin-bottom:5px}
+@media(max-width:600px){.ro{flex-direction:column}.archgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">&#9728;&#65038; / &#9790;</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 1 &middot; Paar 079 &middot; KI &times; Geometrie &times; Algebra</div>
+  <h1>Wie viele <em>Freiheitsgrade</em> hat ein Gedanke? — die geometrische Dimension trifft die algebraische Kapazität</h1>
+  <p class="sub">Zwei Papiere, eine Frage &mdash; &bdquo;Wie viel kann ein Netz wirklich darstellen, und was macht Generalisierung möglich?&ldquo; A (Ansuini et&nbsp;al. 2019) misst es von <b>unten</b>: die <b>intrinsische Dimension (ID)</b> der Datenmannigfaltigkeit, die sich Schicht für Schicht durch das Netz windet. B (Armenta &amp; Jodoin 2020) beweist es von <b>oben</b>: Ein Netz ist <em>exakt</em> eine dünne Köcherdarstellung, und seine Isomorphieklassen füllen einen <b>Moduli-Raum</b> von kombinatorischer Dimension. Die Fusion: <b>Generalisierung regelt die effektive Dimension &mdash; gemessen als Besetzung (A), begrenzt als Kapazität (B).</b></p>
+  <p class="fuse-line">Fusion aus: <b>intrinsische_dimensionen_tiefer_neuronaler_netze.html</b> &#10007; <b>darstellungstheorie.html</b></p>
+</header>
+
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p>Beide Papiere beantworten dieselben drei großen Fragen (Warum konvergiert es? Was ist seine Kapazität? Warum generalisiert es?), aber aus entgegengesetzten Richtungen. <span class="tag">A</span> ist ein <b>empirisches, geometrisches</b> Programm: Es misst die <em>Form</em> der Daten in jeder Schicht (zwei-Abstand-Nachbarn &rarr; TwoNN-Schätzer) und findet eine erstaunlich einfache, robuste Geometrie. <span class="tag b">B</span> ist ein <b>exaktes, algebraisches</b> Programm: Es zeigt, dass ein Netzwerk ein Paar <b>(W, f)</b> aus einer dünnen Köcherdarstellung <i>W</i> und Aktivierungen <i>f</i> ist, dass Isomorphismen die Funktion automatisch erhalten (Theorem&nbsp;4.13), und dass die Isomorphieklassen einen <b>Moduli-Raum</b> bilden, dessen Dimension rein kombinatorisch ist (<span class="eq" style="display:inline;padding:1px 8px">dim = #E&#8728; &minus; #V&rarr;</span>).</p>
+  <p>Die integrierte Position lautet: <b>Ein trainiertes Netz ist ein Punkt (eine Isomorphieklasse) in einem festen kombinatorischen Moduli-Raum (B), und die <em>Daten</em>, die es verarbeitet, zeichnen in seinen Schichten eine dünne, gekrümte, niedrigdimensionale Mannigfaltigkeit (A).</b> Die Einbettungsdimension <i>ED</i> (Anzahl der gespeicherten Zahlen, z.&nbsp;B. ~100&nbsp;000 in pool4 von VGG) ist in beiden Papiern die <em>falsche</em> Größe. Was zählt, ist die <b>effektive Dimension</b>: Sie wird von A <em>geometrisch gemessen</em> (ID der Datenabbildung) und von B <em>strukturell begrenzt</em> (kombinatorische Kapazität des Moduli-Raums). <b>Generalisierung ist gut, wenn die Besetzung weit unter der Kapazität liegt; Auswendiglernen ist die Signatur, dass die Besetzung die Kapazität füllt.</b></p>
+  <p class="note violet"><b>Der Schraubstock der Fusion:</b> A liefert die <em>Messung</em> (den Schatten &mdash; was im Datenraum messbar ist), B liefert das <em>exakte Gerüst</em> (die Bühne &mdash; was durch die Verdrahtung fixiert ist). Das fusionierte Forschungsprogramm: Verwende Bs Invarianten (Moduli-Dimension, Basispfade), um As Phänomene (den &bdquo;Buckel&ldquo;, ID&rarr;Generalisierung, Krümmung) zu <em>erklären</em>; verwende As Messungen, um Bs Theoreme <em>zu testen</em>. Genau das hofft A selbst an (datengestützte Messung soll &bdquo;theoretische Erklärungen inspirieren&ldquo;), und genau das bietet B (ein exaktes Objekt, das <em>jede</em> Architektur, Aktivierung und jede Datenmenge trägt).</p>
+</section>
+
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+  <p>Die beiden widersprechen sich nicht in den Fakten &mdash; sie können nebeneinander wahr sein. Aber sie nehmen zu ein und derselben Struktur <b>inkompatible Stellungen</b> ein. Vier konkrete Punkte:</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">W1 &middot; &bdquo;Die Dimension&ldquo; ist eine andere Größe</h3>
+    <p><span class="tag">A</span> Die intrinsische Dimension ist <b>datenabhängig, statistisch, skalenabhängig und lokal</b>. Sie wird aus der <em>Verteilung der Datenpunkte</em> geschätzt (Verhältnis &mu;=r<sub>2</sub>/r<sub>1</sub> zum ersten/zweiten Nachbarn), variiert von Schicht zu Schicht und ist nur wohldefiniert, wenn ein <em>Dezimierungs-Test</em> (Skaleninvarianz) bestanden wird. Ihre Werte &gt; ~20 sind nur <em>untere Schranken</em>.</p>
+    <p><span class="tag b">B</span> Die Dimension des Moduli-Raums <span class="eq" style="display:inline;padding:1px 8px">dim&#8201;d&#8321;(&#10216;) = #E&#8728; &minus; #V&rarr;</span> ist eine <b>kombinatorische, exakte, architekturfixierte</b> Ganzzahl &mdash; unabhängig von Daten, Gewichten und Aktivierungen. Sie hängt <em>nur</em> von der Verdrahtung ab.</p>
+    <p><b>Tension:</b> Was ist &bdquo;die Dimension der Berechnung eines Netzes&ldquo;? A sagt: eine Eigenschaft der <em>Daten in einer Schicht</em>. B sagt: eine Eigenschaft der <em>Verdrahtung des Netzes</em>. Zwei fundamental verschiedene Objekte.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W2 &middot; Was regelt Generalisierung &mdash; und ist es kausal?</h3>
+    <p><span class="tag">A</span> Die ID der <em>Trainingsdaten in der letzten versteckten Schicht</em> korreliert mit r&nbsp;=&nbsp;0,94 mit dem Top-5-Testfehler. A betont ausdrücklich: es ist eine <b>Korrelation, keine bewiesene Kausalität</b>, und sie kommt von <em>Architekturunterschieden</em> (über 50 Zufalls-Initialisierungen desselben Netzes: r&nbsp;=&nbsp;&minus;0,003). Es ist also ein <em>statistischer, datenabhängiger, korrelativer</em> Prädiktor.</p>
+    <p><span class="tag b">B</span> Die <em>Dimension des Moduli-Raums</em> (= Anzahl der Basispfade, Theorem&nbsp;7.16) <em>ist</em> die Kapazitäts-/Generalisierungsgröße &mdash; ein <b>exakter struktureller Invariant</b>, der &bdquo;für <em>jede</em> Architektur, nicht nur ReLU&ldquo; gilt und als Satz bewiesen wird (B führt Zheng et&nbsp;al. 2019 als empirische Bestätigung an).</p>
+    <p><b>Tension:</b> Ein datenabhängiger statistischer Korrelat (A) vs. ein datenunabhängiger exakter Struktur-Invariant (B) &mdash; beide bezeichnen sich als <em>die</em> Ursache von Generalisierung, deuten aber auf verschiedene Objekte.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W3 &middot; Krumm &amp; dünner wird (A) vs. die Bühne bleibt starr (B)</h3>
+    <p><span class="tag">A</span> Training macht die Datenflächen <b>nicht flach</b> &mdash; es macht sie <em>dünn</em> und <em>gekrümmt</em>. Die <em>eigene Geometrie</em> der Daten ändert sich: Der &bdquo;Buckel&ldquo; (ID steigt zuerst, dann fällt) ist ein <em>echtes Trainingsergebnis</em> (untrainiert ist die ID flach). Die Datenmannigfaltigkeit <em>morphen</em>.</p>
+    <p><span class="tag b">B</span> Der <b>Moduli-Raum selbst ändert sich während des Trainings nie</b> &mdash; nur das <em>Bild</em> &phi;(W,f)(&#120580;) der Daten <em>bewegt sich innerhalb</em> des festen Moduli-Raums (modifizierte Mannigfaltigkeitshypothese, Korollar&nbsp;7.18: &Psi; = &Psi;&#770; &circ; &phi;). Die Struktur ist starr; nur ein Schatten wandert.</p>
+    <p><b>Tension:</b> Eine Erzählung sagt &bdquo;die Datenmannigfaltigkeit morphen&ldquo; (A), die andere &bdquo;die Bühne ist starr, nur der Schatten wandert&ldquo; (B). Inkompatible Beschreibungen davon, was Training eigentlich <em>tut</em>.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">W4 &middot; Nichtlinearität: Substanz (A) vs. Buchhaltung (B)</h3>
+    <p><span class="tag">A</span> Nichtlinearität ist <b>essenziell und nicht reduzierbar</b>: Die lineare PCA scheitert; der <em>Gauß-Zwilling mit identischer Kovarianzmatrix</em> hat eine sehr andere (höhere) ID &mdash; der saubere Beweis, dass <em>starke nichtlineare</em> Struktur vorliegt. ReLU-Knicke erzeugen die Krümmung.</p>
+    <p><span class="tag b">B</span> Das <b>Kernobjekt ist linear</b>: Eine dünne Köcherdarstellung ist reine Lineare Algebra. Der Forward-Pass eines <em>festen</em> Eingabepunkts lässt sich in ein <em>lineares</em> Objekt W<sup>xf</sup> einpacken &bdquo;ohne Informationsverlust&ldquo; (Theorem&nbsp;6.4); die Feature-Map ist &bdquo;buchstäblich eine Ein/Aus-Maske auf den Gewichten&ldquo;.</p>
+    <p><b>Tension:</b> Ist die Nichtlinearität der <em>Stoff</em> der Berechnung (A) oder <em>Buchhaltung</em>, die ein lineares Objekt trägt (B)?</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <h2><span class="n">3</span>Auflösung</h2>
+
+  <div class="card">
+    <h3 style="margin-top:0">A1 &middot; Zwei verschiedene Räume &mdash; zwei komplementäre Koordinaten</h3>
+    <p>Die beiden Dimensionen leben auf <b>zwei verschiedenen Räumen</b> und messen zwei verschiedene Dinge: As ID ist die Dimension des <em>Daten-Bilds</em> &#120580; im <em>Ambient</em>&#8202;&#8477;<sup>n<sub>l</sub></sup> einer Schicht; Bs C ist die Dimension des <em>Raums der Netze</em> (der Isomorphieklassen, d.&nbsp;h. der realisierbaren Funktionen). <b>Fusion:</b> Ein Netz ist eine <em>Isomorphieklasse im Moduli-Raum</em> (B), deren <em>Datenbild</em> in jeder Schicht eine <em>intrinsische Dimension</em> ID (A) hat. C ist die <em>strukturelle Kapazität</em>; ID ist die <em>Besetzung</em> der verfügbaren Koordinaten durch die Daten. &bdquo;Effektive Dimension = wie viel von der Kapazität die Daten benutzen.&ldquo; Die Visualisierung unten legt genau diese zwei Lagen übereinander.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">A2 &middot; Kapazität vs. Komplexität der gelernten Funktion</h3>
+    <p>Bs C ist die <b>Kapazität</b> (wie viel das Netz <em>müssen</em> können &mdash; wie viele verschiedene Funktionen die Architektur trägt). As ID der letzten Schicht ist die <b>Komplexität der tatsächlich gelernten Funktion</b> an den Daten. <b>Fusion:</b> Generalisierung ist gut &hArr; <em>gelernte Komplexität (ID)</em> &lt;&lt; <em>Kapazität (C)</em>; Overfitting ist Komplexität &rarr; Kapazität. Das erklärt A's <em>Zufalls-Label-Ergebnis</em> aus Bs Sicht: Wenn das Netz <em>memorieren</em> muss (Zufalls-Labels), wächst die ID in der zweiten Netzhälfte stark an und sättigt nahe der ED &mdash; die Daten <em>füllen</em> die verfügbare Struktur, das Netz nutzt seine volle kombinatorische Kapazität. A's &bdquo;ID sagt Testfehler voraus&ldquo; (r=0,94) wird damit zu einem <em>datenseitigen Proxy</em> für &bdquo;wie nah an der kombinatorischen Kapazität (B) arbeitet das Netz&ldquo; &mdash; die Korrelation ist real, weil sie auf der strukturellen Größe aufsetzt.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">A3 &middot; Dieselbe Bewegung in zwei Räumen</h3>
+    <p>Die <em>Ambient-Geometrie</em> einer Schicht (A: gekrümmt, dünner werdend, der Buckel) ändert sich beim Training, während die <em>abstrakte Moduli-Struktur</em> (B: fix) nicht ändert. <b>Fusion:</b> Training = das Datenbild &phi;(&#120580;) <em>wandert</em> im <em>festen</em> Moduli-Raum (B) <em>und</em> seine <em>intrinsische Geometrie</em> im <em>Ambient</em>-Schichtraum <em>dünnt aus und krümmt sich</em> (A). Beide Sätze sind wahr, weil sie über verschiedene Räume sprechen. Der &bdquo;Buckel&ldquo; ist der <em>Schatten</em> des Datenbilds, das den Moduli-Raum durchläuft: die <em>frühen</em> Schichten <em>expandieren</em> (Whitening/Beschneiden irrelevanter, korrelierter Eingangsmerkmale &mdash; A's MNIST&star;-Helligkeitsexperiment &mdash; treibt die ID hoch), die <em>späten</em> <em>komprimieren</em> (ID fällt auf &asymp; log&#8322;&thinsp;N<sub>c</sub> an der Ausgabe, weil N<sub>c</sub> &le; 2<sup>ID</sup>).</p>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">A4 &middot; Stückweise-linear: dieselbe Sache von zwei Seiten</h3>
+    <p>Für <em>einen</em> Eingabepunkt <i>x</i> ist der Forward-Pass ein <em>lineares</em> Objekt W<sup>xf</sup> (B) &mdash; die ganze Nichtlinearität wird für dieses <i>x</i> in die Gewichte eingebacken. Für den <em>ganzen Datensatz</em> ist die <em>Familie</em> dieser linearen Objekte eine <em>gekrümmte, niedrigdimensionale</em> Menge (A). <b>Fusion:</b> ReLU macht die Abbildung <em>stückweise linear</em>. A sieht die <em>Union der Stücke</em> als gekrümte niedrigdimensionale Mannigfaltigkeit; B sieht das <em>Umstell-Muster</em> (welche Gewichte ein/aus) als die kombinatorische Datenlage &mdash; das ist exakt die <em>aktive Basis-Pfad-Klasse</em> im Moduli-Raum. A's Krümmung und B's Linearität sind <em>dasselbe Objekt</em>: die Krümmung kommt vom <em>Umstellen</em> der linearen Stücke. B's &bdquo;Feature-Map = Ein/Aus-Maske auf den Gewichten&ldquo; ist das <em>kombinatorische Skelett</em> von A's &bdquo;gekrümmte niedrigdimensionale Datenmannigfaltigkeit&ldquo;; A's Gauß-Zwillings-Test (gleiche Kovarianz, andere ID) ist der <em>datenseitige Beweis</em>, dass dieses Skelett &mdash; nicht die Kovarianz &mdash; die Struktur trägt.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+  <h3>Von A — die empirische Geometrie der Repräsentationen (Ansuini, Laio, Macke, Zoccolan 2019)</h3>
+  <ul>
+    <li><b>ED vs. ID:</b> ED = gespeicherte Koordinaten (Neuronen <i>n<sub>l</sub></i>, ~100&nbsp;352 in VGG-pool4); ID = minimale Parameter ohne wesentlichen Verlust (&asymp; 19 in pool4 &rarr; ID/ED &asymp; 2&middot;10&#8315;&sup4;).</li>
+    <li><b>TwoNN (Facco et&nbsp;al. 2017):</b> &mu;<sub>i</sub>=r<sub>i,2</sub>/r<sub>i,1</sub>&ge;1 (dichte-unabhängig); für eine d-dimensional gleichverteilte Fläche folgt &mu; ~ Pareto f(&mu;|d)=d&middot;&mu;<sup>&minus;(d+1)</sup>; Schätzung d&#770;<sub>ML</sub>=N/&Sigma;&ln;&mu;<sub>i</sub> oder &minus;ln(1&minus;F(&mu;))=d&middot;ln&mu; &middot; <b>Skaleninvarianz</b> via Dezimierungstest; Werte &gt; ~20 = untere Schranken.</li>
+    <li><b>PC-ID (90&nbsp;% Varianz) als lineare Basislinie:</b> in echten Schichten &asymp; 200 vs. ID &asymp; 18 (Faktor &gt; 10, kein Spektral-&bdquo;Gap&ldquo;); der <b>Gauß-Zwilling</b> (gleiche Kovarianz) hat eine viel höhere ID &rarr; Beweis für <em>nichtlineare</em> Struktur. <b>Netze flachen nicht ab &mdash; sie verdünnen.</b></li>
+    <li><b>Der Buckel (Q1):</b> ID steigt in frühen Schichten (Gipfel bei 20&ndash;40&nbsp;% Tiefe, 100&ndash;120), fällt dann <em>monoton</em> auf 12&ndash;25; in <em>allen</em> 14 Architekturen; untrainiert flach (Zufallsgewichte &asymp; orthogonale Drehung, ändert Abstände/ID nicht).</li>
+    <li><b>Warum steigt es? (MNIST&star;):</b> irrelevante, stark korrelierte Eingangsmerkmale (z.&nbsp;B. globale Helligkeit, Streckung entlang [1,1,&hellip;,1]) drücken die Eingangs-ID künstlich niedrig; die ersten Schichten <em>whitening</em>/beschneiden sie &rarr; ID steigt (biologische Parallele im visuellen Cortex).</li>
+    <li><b>ID &hArr; Generalisierung (Q3):</b> ID der Trainingsdaten in der letzten versteckten Schicht korreliert mit r=0,94 (ResNets r=0,99) mit dem Top-5-Testfehler &mdash; messbar <em>ohne Testset</em>, aber nur <em>zwischen</em> Architekturen (Korrelation, keine Kausalität).</li>
+    <li><b>Zufalls-Labels (Q4):</b> ID fällt nicht monoton, <em>wächst</em> in der zweiten Netzhälfte an, sättigt nahe der ED (Auswendiglernen braucht Dimensionen); Ausgabe-ID &asymp; log&#8322;&thinsp;N<sub>c</sub> (ImageNet &asymp; 10), weil N<sub>c</sub> &le; 2<sup>ID</sup>.</li>
+    <li><b>Widerlegt:</b> Flattening/Untangling (DiCarlo &amp; Cox), monotone Abnahme, &bdquo;PCA reicht&ldquo;, &bdquo;ID signalisiert Overfitting&ldquo; (Ma et&nbsp;al. 2018). <b>Grenzen:</b> global (nicht lokal), skalenabhängig, nur Bildklassifikation, Dynamik explorativ.</li>
+  </ul>
+
+  <h3>Von B — die exakte Algebra (Armenta &amp; Jodoin, arXiv:2007.12213)</h3>
+  <ul>
+    <li><b>Netz = dünne Köcherdarstellung + Aktivierungen:</b> Knoten tragen &#8450; (dim 1) &rarr; jede Kante = eine Zahl = ein Gewicht; Basiswechselgruppe G=&prod;<sub>v</sub>&#8450;* &middot; Kommutativität U<sub>&#949;</sub>=W<sub>&#949;</sub>&middot;&tau;<sub>t</sub>/&tau;<sub>s</sub> (Gl.&nbsp;1) &middot; Morphismus = Familie &tau;<sub>v</sub> mit kommutierenden Quadraten; alle invertierbar &rarr; isomorph.</li>
+    <li><b>Theorem 4.13 (Eckpfeiler):</b> isomorphe Netze haben <em>dieselbe</em> Funktion &Psi;(W,f)=&Psi;(V,g); Beweis a<sub>(V,g)</sub,v>=&tau;<sub>v</sub>&middot;a<sub>(W,f)</sub,v>, &tau;<sub>v</sub>=1 an den Ausgängen &rarr; heben sich exakt auf. <b>Kor. 4.15</b> (unendlich viele Zwillinge) &middot; <b>Kor. 4.16</b> (ReLU-Skaleninvarianz = Spezialfall) &middot; <b>Teleportation</b> (Def.&nbsp;5.6): &tau;<sub>v</sub>&lt;0 dreht ReLU zu min(0,x) &rarr; die Loss-Landschaft wechselt, Funktion gleich.</li>
+    <li><b>Daten als Darstellung (Theorem 6.4):</b> &Psi;(W<sup>xf</sup>,1)(1)=&Psi;(W,f)(x) &mdash; ein rein lineares Netz, das am Einsvektor dasselbe ausgibt (alle Nichtlinearität in W<sup>xf</sup>); für ReLU (W<sup>xf</sup>)<sub>&#949;</sub>=0 oder =W<sub>&#949;</sub> &rarr; <b>Feature-Map = Ein/Aus-Maske auf den Gewichten</b> &middot; <b>Kor. 6.5</b>: isomorphe Daten &rarr; gleiche Vorhersage, Punkt wird als Isomorphieklasse gespeichert.</li>
+    <li><b>Moduli-Raum d&#8201;d&#8321;(&#10216;)</b> (stabile doppelt-gerahmte Darstellungen): <b>Theorem 7.16</b> dim = #E&#8728;&minus;#V&rarr; (= Basispfade, Zheng et&nbsp;al. 2019, Generalisierungs-Prädiktor für <em>alle</em> Architekturen) &middot; <b>Kor. 7.18</b> &Psi; = &Psi;&#770; &circ; &phi; &mdash; <em>jede Entscheidung</em> faktorisiert durch den Moduli-Raum &middot; <b>modif. Mannigfaltigkeitshypothese:</b> Moduli-Raum starr, nur &phi;(&#120580;) deformiert &middot; <b>Pruning:</b> (W<sup>xf</sup>)<sub>&#949;</sub>=0 bleibt in jeder isomorphen Darstellung 0.</li>
+  </ul>
+
+  <h3>Das fusionierte Objekt</h3>
+  <div class="card">
+    <table class="tbl">
+      <tr><th>Größe</th><th>Seite</th><th>Bedeutung</th></tr>
+      <tr><td><b>&#8477;<sup>n<sub>l</sub></sup> / ED</b></td><td>beide</td><td>Speicher-/Behälter-Größe. Die <em>falsche</em> Größe für Generalisierung.</td></tr>
+      <tr><td><b>ID</b></td><td><span class="tag">A</span></td><td>Geometrische <em>Besetzung</em>: intrinsische Dimension des Datenbilds in der Schicht. Gemessen, skalenabhängig, datenabhängig.</td></tr>
+      <tr><td><b>C = #E&#8728;&minus;#V&rarr;</b></td><td><span class="tag b">B</span></td><td>Kombinatorische <em>Kapazität</em>: Dimension des Moduli-Raums = Anzahl realisierbarer Funktionen/Basispfade. Exakt, architekturfixiert, datenunabhängig.</td></tr>
+      <tr><td><b>&phi;(&#120580;)</b></td><td><span class="tag b">B</span>&times;<span class="tag">A</span></td><td>Die Brücke: transportiert die Datenmannigfaltigkeit &#120580; in den Moduli-Raum. A misst die <em>Form</em> von &phi;(&#120580;) (ID), B den <em> Raum</em>, in dem es wandert (C).</td></tr>
+      <tr><td><b>ID / C</b></td><td>Fusion</td><td><b>Das fusionierte Maß.</b> Generalisierung gut &hArr; ID/C &lt;&lt; 1. Overfitting/Memorization &hArr; ID/C &rarr; 1 (ID &rarr; ED).</td></tr>
+    </table>
+    <p class="viz-note">Schlüsselformeln: &mu;<sub>i</sub>=r<sub>i,2</sub>/r<sub>i,1</sub> &middot; f(&mu;|d)=d&middot;&mu;<sup>&minus;(d+1)</sup> &middot; d&#770;<sub>ML</sub>=N/&Sigma;&ln;&mu;<sub>i</sub> &middot; N<sub>c</sub> &le; 2<sup>ID</sup> &rArr; ID &succ; log&#8322;&thinsp;N<sub>c</sub> &middot; U<sub>&#949;</sub>=W<sub>&#949;</sub>&tau;<sub>t</sub>/&tau;<sub>s</sub> &middot; a<sub>&tau;&middot;W</sub,v>=&tau;<sub>v</sub>a<sub>W</sub,v> &middot; dim&#8201;d&#8321;=&#8203;#E&#8728;&minus;#V&rarr; &middot; &Psi;=&Psi;&#770;&circ;&phi;</p>
+  </div>
+  <p class="note"><b>Fusioniertes Forschungsprogramm (offene Fragen, vereint):</b> (i) Mach die Trainingsdynamik <em>im Moduli-Raum</em> explizit (B, Inquiry&nbsp;2), so dass As empirische Dynamik (Buckel-Entstehung, Fig.&nbsp;9) als Bewegung &phi;<sub>i</sub>(&#120580;) im <em>festen</em> Raum gedeutet wird. (ii) Teste C&rarr;Generalisierung <em>über Architekturen hinweg</em> (B) und prüfe, ob As ID der letzten Schicht ein <em>monotoner Proxy</em> für ID/C ist. (iii) Setze A's Krümmung (Gauß-Zwilling) mit B's aktivem Basis-Pfad (= Isomorphieklasse) gleich &mdash; ist die ID die &bdquo;Menge der unterschiedlich aktiven Pfade&ldquo;?</p>
+</section>
+
+<section id="visualisierung">
+  <h2><span class="n">5</span>Interaktive Visualisierung</h2>
+  <div class="viz">
+    <h3>Besetzung einer festen Kapazität: die ID im Vergleich zum kombinatorischen Moduli-Maß</h3>
+    <p class="dsub">Linie <b>ID (TwoNN, A)</b> über die relative Tiefe &mdash; der &bdquo;Buckel&ldquo; &mdash; überlagert mit <b>ED</b> (Behälter), <b>PC-ID</b> (lineare Überschätzung &rarr; gekrümmt, nicht flach) und der <b>kombinatorischen Kapazität C</b> (B, horizontale Linie). Zieh den Regler <b>&rho;</b> (Label-Noise/Auswendiglernen): die ID-Kurve morphen von &bdquo;gelernt&ldquo; (Regeln, fällt) zu &bdquo;memorisiert&ldquo; (Zufalls-Labels, steigt nach rechts in Richtung ED = füllt die Struktur). Die Kurvenformen sind dem Paper (Ansuini et&nbsp;al., Fig.&nbsp;2A/4/6) <em>angelehnt</em> (schematisch); C wird aus B (Theorem&nbsp;7.16) exakt für die gewählte Architektur berechnet.</p>
+    <canvas id="fuz" height="440"></canvas>
+    <div class="legend">
+      <span class="lg"><i style="border-color:var(--accent)"></i>ID &mdash; aktuell (&rho;-Mischung)</span>
+      <span class="lg"><i style="border-color:var(--accent);border-top-style:dotted"></i>ID gelernt (Regeln)</span>
+      <span class="lg"><i style="border-color:var(--accent2);border-top-style:dotted"></i>ID Auswendiglernen</span>
+      <span class="lg"><i style="border-color:var(--amber);border-top-style:dashed"></i>PC-ID (linear, überschätzt)</span>
+      <span class="lg"><i style="border-color:var(--muted);border-top-style:dotted"></i>ED (Behälter)</span>
+      <span class="lg"><i style="border-color:var(--gold);border-top-style:dashed"></i>C = #E&#8728;&minus;#V&rarr; (B)</span>
+    </div>
+
+    <div class="ctl">
+      <div class="ctl-lab"><span>Label-Noise / Auswendiglernen &rho; &nbsp;<span class="faint" style="opacity:.7">(0 = gelernt &rarr; 1 = Zufalls-Labels)</span></span><b id="vRho">0.00</b></div>
+      <input type="range" id="sRho" min="0" max="1" step="0.02" value="0">
+    </div>
+
+    <div class="ro">
+      <div class="box"><div class="k">ID letzte Schicht</div><div class="v" id="roID">&ndash;</div></div>
+      <div class="box rose"><div class="k">PC-ID letzte Schicht</div><div class="v" id="roPC">&ndash;</div></div>
+      <div class="box amber"><div class="k">ID / ED (dünne?)</div><div class="v" id="roRatio">&ndash;</div></div>
+      <div class="box gold"><div class="k">Kapazität C (B)</div><div class="v" id="roC">&ndash;</div></div>
+      <div class="box"><div class="k">Besetzung ID / C</div><div class="v" id="roFuse">&ndash;</div></div>
+    </div>
+
+    <div class="note ok" id="verdict" style="margin-top:14px"></div>
+
+    <div class="bpanel">
+      <h3 style="margin-top:0">B &middot; Moduli-Kapazität (kombinatorisch, exakt)</h3>
+      <p class="dsub">Architektur wählen &rarr; C = #E&#8728; &minus; #V&rarr; (Theorem&nbsp;7.16, B) = Anzahl der Basispfade (Zheng et&nbsp;al. 2019). Echter Netz-Kapazität, <em>unabhängig</em> von Daten &amp; Aktivierung. Vergleiche sie links mit der gemessenen ID.</p>
+      <div class="archgrid">
+        <div class="ctl"><div class="ctl-lab"><span>Eingabeneuronen d</span><b id="vd">2</b></div><input type="range" id="ad" min="1" max="8" step="1" value="2"></div>
+        <div class="ctl"><div class="ctl-lab"><span>Ausgabeneuronen k</span><b id="vk">2</b></div><input type="range" id="ak" min="1" max="6" step="1" value="2"></div>
+        <div class="ctl"><div class="ctl-lab"><span>versteckte Schichten L</span><b id="vl">3</b></div><input type="range" id="al" min="1" max="5" step="1" value="3"></div>
+        <div class="ctl"><div class="ctl-lab"><span>Breite pro Schicht w</span><b id="vw">4</b></div><input type="range" id="aw" min="1" max="8" step="1" value="4"></div>
+      </div>
+      <div class="ro">
+        <div class="box gold"><div class="k">#E&#8728; (Kanten)</div><div class="v" id="roE">&ndash;</div></div>
+        <div class="box gold"><div class="k">#V&rarr; (versteckt)</div><div class="v" id="roH">&ndash;</div></div>
+        <div class="box gold"><div class="k">C = #E&#8728;&minus;#V&rarr;</div><div class="v" id="roCC">&ndash;</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="prov">
+    <div class="item">
+      <div class="lbl">QUELLE A</div>
+      <a href="../intrinsische_dimensionen_tiefer_neuronaler_netze.html">intrinsische_dimensionen_tiefer_neuronaler_netze.html</a> &mdash; Interaktive Erklärung (deutsch) zu <b>&bdquo;Intrinsic dimension of data representations in deep neural networks&ldquo;</b> (Ansuini, Laio, Macke, Zoccolan, NeurIPS 2019). Empirische Geometrie: ED vs. ID, TwoNN-Schätzer (Pareto/ML), Skaleninvarianz, PC-ID &amp; Gauß-Zwillings-Test, der &bdquo;Buckel&ldquo;, ID&rarr;Generalisierung (r=0,94), Zufalls-Labels, Whitening-Erklärung (MNIST&star;).
+    </div>
+    <div class="item">
+      <div class="lbl">QUELLE B</div>
+      <a href="../darstellungstheorie.html">darstellungstheorie.html</a> &mdash; Interaktive Erklärung (deutsch) zu <b>&bdquo;The Representation Theory of Neural Networks&ldquo;</b> (Armenta &amp; Jodoin, arXiv:2007.12213). Exakte Algebra: Netz = dünne Köcherdarstellung + Aktivierungen, Theorem&nbsp;4.13 (isomorph &rArr; gleiche Funktion), Kor.&nbsp;4.15/4.16, Teleportation, Daten als W<sup>xf</sup> (Theorem&nbsp;6.4), Moduli-Raum mit dim&nbsp;=&nbsp;#E&#8728;&minus;#V&rarr; (Theorem&nbsp;7.16) und &Psi;=&Psi;&#770;&circ;&phi; (Kor.&nbsp;7.18).
+    </div>
+  </div>
+  <footer>Eine Knockout-Fusion (Runde 1, Paar 079) aus zwei lokalen Erklärungen. Alles läuft lokal im Browser &mdash; keine Daten verlassen diese Seite. Kurvenwerte sind schematisch an A angelehnt; die Kapazität C ist aus B exakt berechnet. Theme-Umschaltung oben rechts.</footer>
+</section>
+
+</main>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function h2r(h){h=(h||'').replace('#','').trim();if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var n=parseInt(h,16);if(isNaN(n))return[0,0,0];return[(n>>16)&255,(n>>8)&255,n&255];}
+function rgba(r,a){return 'rgba('+r[0]+','+r[1]+','+r[2]+','+a+')';}
+function mixc(a,b,t){var A=h2r(a),B=h2r(b);return 'rgb('+[0,1,2].map(function(i){return Math.round(A[i]+(B[i]-A[i])*t);}).join(',')+')';}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+var depth=[0,.07,.14,.21,.29,.36,.43,.5,.57,.64,.71,.79,.86,.93,1.0];
+var ED=[5.3,5.2,5.1,5.0,4.9,4.8,4.7,4.6,4.5,4.5,4.5,4.5,4.5,4.5,4.48].map(function(v){return Math.pow(10,v);});
+var IDl=[8,22,55,95,120,115,90,60,40,28,20,16,13,11,10];
+var IDm=[8,22,55,95,120,115,110,150,300,700,1500,3500,7000,15000,25000];
+var PCID=[80,150,300,400,420,400,360,330,320,340,380,430,500,560,620];
+var YLO=0.5,YHI=5.6;
+
+function modC(d,L,w,k){var e=d*w+(L-1)*w*w+w*k;var h=L*w;return{e:e,h:h,C:e-h};}
+
+var cv=$('#fuz');
+function hidpi(){var dpr=Math.min(2,window.devicePixelRatio||1);var w=cv.clientWidth||760,h=cv.clientHeight||440;cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return{c:c,w:w,h:h};}
+
+function fmt(v){if(v>=100000)return Math.round(v/1000)+'k';if(v>=1000)return(v/1000).toFixed(1)+'k';return String(Math.round(v));}
+function fmtSci(v){return v.toExponential(1);}
+
+function draw(){
+  var g=hidpi();var c=g.c,w=g.w,h=g.h;
+  c.clearRect(0,0,w,h);
+  var fg=cssVar('--fg'),muted=cssVar('--muted'),line=cssVar('--line'),
+      accent=cssVar('--accent'),accent2=cssVar('--accent2'),amber=cssVar('--amber'),gold=cssVar('--gold'),bg=cssVar('--bg');
+  var acc=h2r(accent),acc2=h2r(accent2);
+  var d=+$('#ad').value,L=+$('#al').value,ww=+$('#aw').value,k=+$('#ak').value;
+  var rho=+$('#sRho').value;
+  var MC=modC(d,L,ww,k);
+
+  var Lm=56,Rm=70,Tm=24,Bm=46;
+  var px0=Lm,px1=w-Rm,py0=Tm,py1=h-Bm,pw=px1-px0,ph=py1-py0;
+  function X(dd){return px0+dd*pw;}
+  function Y(v){var lg=Math.log10(Math.max(v,1e-6));var t=(YHI-lg)/(YHI-YLO);return py0+t*ph;}
+
+  c.strokeStyle=line;c.lineWidth=1;
+  c.fillStyle=muted;c.font='11px system-ui';c.textAlign='right';c.textBaseline='middle';
+  for(var gr=1;gr<=5;gr++){var val=Math.pow(10,gr);var y=Y(val);if(y<py0-1||y>py1+1)continue;
+    c.beginPath();c.moveTo(px0,y);c.lineTo(px1,y);c.stroke();c.fillText(fmt(val),px0-8,y);}
+  c.textAlign='center';c.textBaseline='top';
+  for(var gx=0;gx<=5;gx++){var dd=gx/5;var x=X(dd);
+    c.strokeStyle=line;c.beginPath();c.moveTo(x,py0);c.lineTo(x,py1);c.stroke();
+    c.fillStyle=muted;c.fillText(dd.toFixed(1),x,py1+6);}
+  c.fillStyle=muted;c.textAlign='center';c.fillText('relative Tiefe (Schicht / Gesamttiefe)',(px0+px1)/2,py1+22);
+  c.save();c.translate(16,(py0+py1)/2);c.rotate(-Math.PI/2);c.fillText('Dimension (log)',0,0);c.restore();
+
+  c.font='600 11px system-ui';c.fillStyle=fg;c.textAlign='left';c.textBaseline='top';
+  c.fillText('ID-Profil über die Tiefe  ·  A: Buckel (dünn + gekrümmt)  ·  B: feste Kapazität C',px0,py0-16);
+
+  function trace(vals,col,dash,lw,alpha){c.globalAlpha=alpha==null?1:alpha;c.setLineDash(dash||[]);c.strokeStyle=col;c.lineWidth=lw;c.lineJoin='round';c.beginPath();for(var i=0;i<depth.length;i++){var x=X(depth[i]),yy=Y(vals[i]);if(i===0)c.moveTo(x,yy);else c.lineTo(x,yy);}c.stroke();c.setLineDash([]);c.globalAlpha=1;}
+
+  trace(ED,muted,[2,4],1.3,0.8);
+  trace(PCID,amber,[7,4],1.6,0.9);
+  trace(IDl,rgba(acc,1),[2,4],1.4,0.5);
+  trace(IDm,rgba(acc2,1),[2,4],1.4,0.5);
+
+  var IDcur=IDl.map(function(v,i){return lerp(v,IDm[i],rho);});
+  var curCol=mixc(accent,accent2,rho);
+
+  var lgC=clamp(Math.log10(Math.max(MC.C,1e-9)),YLO,YHI);
+  var cy=Y(Math.pow(10,lgC));
+  c.setLineDash([8,5]);c.strokeStyle=gold;c.lineWidth=1.7;c.beginPath();c.moveTo(px0,cy);c.lineTo(px1,cy);c.stroke();c.setLineDash([]);
+  c.fillStyle=gold;c.font='700 11px ui-monospace,monospace';c.textAlign='left';c.textBaseline='bottom';
+  c.fillText('C = '+MC.C+' (B)',px1+6,cy-2);
+
+  trace(IDcur,curCol,[],3.2,1);
+  for(var i2=0;i2<IDcur.length;i2++){var x2=X(depth[i2]),y2=Y(IDcur[i2]);c.beginPath();c.arc(x2,y2,i2===IDcur.length-1?5:3,0,7);c.fillStyle=curCol;c.fill();}
+  var lx=X(1),ly=Y(IDcur[IDcur.length-1]);
+  c.fillStyle=curCol;c.font='700 12px ui-monospace,monospace';c.textAlign='left';c.textBaseline='middle';
+  c.fillText(fmt(IDcur[IDcur.length-1]),px1+6,ly);
+
+  $('#vRho').textContent=rho.toFixed(2);
+  $('#vd').textContent=d;$('#vk').textContent=k;$('#vl').textContent=L;$('#vw').textContent=ww;
+  $('#roE').textContent=MC.e;$('#roH').textContent=MC.h;$('#roCC').textContent=MC.C;
+  var idLast=IDcur[IDcur.length-1],pcLast=PCID[PCID.length-1],edLast=ED[ED.length-1];
+  $('#roID').textContent=fmt(idLast);
+  $('#roPC').textContent=fmt(pcLast);
+  $('#roRatio').textContent=fmtSci(idLast/edLast);
+  $('#roFuse').textContent=(idLast/MC.C).toExponential(1);
+
+  var r=idLast/MC.C,v=$('#verdict');
+  if(r<0.5){v.className='note ok';v.innerHTML='<b>'+ (r<0.1?'Sehr gut generalisiert':'Gut generalisiert') +'</b> &mdash; Besetzung ID &asymp; '+fmt(idLast)+' ist weit unter der kombinatorischen Kapazität C = '+MC.C+'. Das Netz lernt <b>Regeln</b> (A: dünne, gekrümte Fläche; B: nutzt nur einen Bruchteil des Moduli-Raums). ID/ED = '+fmtSci(idLast/edLast)+' &rarr; fast alles am Behälter ist überflüssig.';}
+  else if(r<3){v.className='note warn';v.innerHTML='<b>Grenzwertig</b> &mdash; Besetzung nähert sich der Kapazität (ID/C = '+(idLast/MC.C).toFixed(1)+'). Die Repräsentation nutzt immer mehr der verfügbaren Struktur; Generalisierung wird brüchig (A: ID in der letzten Schicht steigt, Testfehler wächst).';}
+  else{v.className='note bad';v.innerHTML='<b>Memorisiert &mdash; keine Generalisierung</b> &mdash; Besetzung &gt;= Kapazität (ID/C = '+(idLast/MC.C).toExponential(1)+'). A (Zufalls-Labels): ID steigt nach rechts in Richtung ED und füllt die Struktur; B: das Netz nutzt seine <em>volle</em> kombinatorische Kapazität, um Einzelfälle zu speichern, statt Regeln zu lernen. Test-Genauigkeit = Zufall.';}
+}
+
+['sRho','ad','al','aw','ak'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('input',draw);});
+window.addEventListener('resize',draw);
+var btn=$('#themeBtn');
+if(btn){btn.addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});}
+if(window.MutationObserver){new MutationObserver(function(){draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}
+draw();
+})();
+</script>
+</body>
+</html>

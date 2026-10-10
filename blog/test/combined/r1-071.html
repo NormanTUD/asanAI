@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Invarianz als gemeinsame Wurzel: Geometrie und Lernkosten — Fusion r1-071</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d7f8f; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-txt:#1c2333; --viz-grid:rgba(20,28,45,0.08); --viz-bg:#ffffff;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ecfe0; --acc2:#b388ff; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-txt:#e8ecf6; --viz-grid:rgba(255,255,255,0.07); --viz-bg:#0c1120;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc2) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.1;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note.g{border-color:var(--acc5);background:color-mix(in srgb,var(--acc5) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}.note.g .h{color:var(--acc5)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:11px 14px;font-size:14px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:6px;overflow:hidden}
+.plotbox{width:100%;height:470px}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:14px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-071</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: random_hierarchy_model.html ✕ symmetrie_in_sprachstatistik.html</p>
+  <h1>Die Invarianz als gemeinsame Wurzel: Geometrie und Lernkosten</h1>
+  <p>A (Random Hierarchy Model, EPFL) und B (Symmetry in Language Statistics, ICML 2026 — beide mit <em>Wyart</em> als Mitautor) beantworten zwei scheinbar verschiedene Fragen: <strong>A</strong>, <em>wie viele Daten</em> ein tiefes Netz braucht, um hochdimensionale kompositionelle Daten zu lernen; <strong>B</strong>, <em>warum</em> Sprachmodelle Monate im Kreis, Jahre auf einer gewellten Linie und US-Staaten auf einer Landkarte anordnen. Die Fusion: <strong>Beides ist dieselbe Sache — die Invarianz der Datenstatistik unter label-erhaltenden Transformationen.</strong> A liefert die <em>Dynamik + Kosten</em>, B die <em>geschlossene Form + Geometrie</em> desselben Prinzips.</p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Ein Prinzip, zwei Seiten: Symmetrie der Statistik = Geometrie + Lernkosten</h2>
+    <p>Beide Seiten reduzieren „was das Modell intern lernt" auf <em>einen</em> Gegenstand: die <strong>Symmetriegruppe T der bedingten Statistik</strong> P(label&nbsp;|&nbsp;x) — die Menge aller Transformationen, die das Label (bzw. die Statistik) nicht ändern. <strong>A</strong> nennt sie <em>Synonym-Invarianz</em>: „Tausche ein Teil-Tupel gegen ein Synonym → der Eingabevektor ändert sich, das Label <b>nicht</b>" — das Netz lernt genau dann effizient, wenn es Darstellungen baut, die <em>dieser</em> Invarianz gehorchen (Synonymische Sensitivität S<sub>k,l</sub> → 0), und zwar ab P* = n<sub>c</sub>·m<sup>L</sup> (polynomiell statt exponentiell). <strong>B</strong> nennt sie <em>Translationssymmetrie</em>: „Wie oft zwei Zeit-/Ortswörter gemeinsam auftreten, hängt fast nur von ihrem <b>Abstand</b> ab" — die normalisierte Kookkurrenz M* ist dann <em>zirkulant</em>, und zirkulante Matrizen „werden <b>immer</b> von Fourier-Moden diagonalisiert". Die PCA-Achsen sind folglich Sinus-/Kosinuswellen in der latenten Koordinate → zwei Achsen = <b>Kreis</b>.</p>
+    <p>Die <strong>einheitliche Position</strong> lautet: <em>Die Repräsentation, auf die ein Modell konvergiert, ist die Symmetrie-adaptierte Basis (bzw. der Invariante-Unterraum) der Symmetriegruppe der Datenstatistik.</em> Die Geometrie, die man sieht (Kreise/Landkarten bei B, hierarchische Abstraktion bei A), <em>ist</em> diese Basis. Und die <em>Kosten</em>, sie zu erreichen (A's Stichprobenkomplexität), sind der Punkt, an dem der <em>statistische Fingerabdruck</em> dieser Symmetrie — A's „Zählen-Signal" √(v/m<sup>L</sup> / B's Kern C(Δ) — das <em>Stichprobenrauschen</em> ∝ 1/√P übersteigt. A beschreibt den <strong>Weg + Preis</strong> (Dynamik, warum Tiefe), B den <strong>Zustand + Form</strong> (Eigenspektrum, warum Kreis).</p>
+    <p>Der verbindende Satz, den man aus beiden ableiten kann: <strong>Die Lernkosten werden dadurch gesetzt, dass die Daten-Symmetrie statistisch auflösbar wird</strong> — dieselbe Größe, die in B als „wie groß muss die Eigenlücke sein, damit sie die Störung schlägt" (Davis–Kahan, Lücke ∝ N) und in A als „wann wird das Zählen-Signal größer als das Rauschen" (P_c = n<sub>c</sub>·m<sup>L</sup>) auftritt.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei Stellungen, die aufeinanderprallen</h2>
+    <p>Die beiden widersprechen sich nicht im Ziel, aber zu drei Stellen nehmen sie unvereinbare Stellungen ein — jeweils mit dem, was A und was B konkret sagt:</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Aktives tiefes Netz vs. passiver Spektral-Leser</span>
+      <p><b>A</b> ist auf Tiefe + Feature-Learning gebaut: „<b>Flache Netze sind verflucht</b>" (ein 2-Schicht-Netz lernt erst, wenn es einen nennenswerten Bruchteil aller P<sub>max</sub> Daten gesehen hat, P* ∝ P<sub>max</sub>, exponentiell) und „<b>Tiefe Netze brechen den Fluch</b>" (P* = n<sub>c</sub>·m<sup>L</sup>); „Tiefe ist nicht optional, sondern notwendig". Die Kontrolle „Lazy statt Feature-Regime" zeigt: ohne Gewichts-Bewegung kein Durchbruch. Das Netz <em>baut</em> die invariante Repräsentation selbst („Das Netz entdeckt die Hierarchie selbst", „Das ist der Algorithmus, den das Netz finden muss").</p>
+      <p><b>B</b> behandelt das Modell dagegen als im Kern <em>lineare Spektral-/Eigenzerlegung</em>: „word2vec ≈ Eigenzerlegung von M*" (Eckart–Young–Mirsky, „Man nimmt die Eigenvektoren mit den größten Eigenwerten"), und „Wenn die Einbettungsdimension groß genug ist, gilt: Gram-Matrix der Vektoren = M*-Matrix". Die Geometrie ist <b>architekturunabhängig</b> — „dieselbe in word2vec (flach), EmbeddingGemma (mittel) und Gemma 2 2B (tief)", „task- und architekturagnostische Prinzipien". Tiefe/Feature-Learning spielt für die <em>Form</em> keine Rolle.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: das Netz muss <em>tief und aktiv</em> die Struktur <em>konstruieren</em> (flach/linear scheitert). B: das Netz liest eine <em>vorhandene</em> Statistik <em>linear</em> ab; flach reicht, Tiefe ist irrelevant. Die Rolle des Netzes und die Notwendigkeit von Tiefe sind vertauscht.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Exakte algebraische Invarianz vs. ungenaue statistische Symmetrie</span>
+      <p><b>A</b>: die Synonym-Invarianz ist <em>exakt und diskret</em>. Sie ist eine <em>algebraische</em> Eigenschaft der <em>genauen</em> Generierungsregeln: jedes der m Synonyme erzeugt <em>exakt</em> dasselbe Label. Das Netz muss die Äquivalenzklasse <em>exakt</em> wiederfinden; das Signal ist <em>präzise</em> (Synonyme haben <em>identische</em> Häufigkeitsprofile f(α|μ)).</p>
+      <p><b>B</b>: die Translationssymmetrie ist <em>ungenau und kontinuierlich</em>. C(Δx) ≈ exp(−|Δx|/σ) ist eine <em>statistische</em> Regelmäßigkeit, keine exakte Invarianz — sie wird durch <em>Polysemie</em> („May"/„may" fällt aus der Reihe) und durch die <em>Weltkriege</em> („Knicke … weil die Zeit-Translationssymmetrie dort schwach gebrochen wird") gebrochen. Der Kreis <em>überlebt</em> die Löschung der Monat-Monat-Statistik nur, weil eine <em>latente Variable</em> („Jahreszeit") von <em>vielen</em> saisonalen Wörtern getragen wird (kollektiver Effekt, Eigenlücken ∝ N).</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: exakte, diskrete, <em>algebraische</em> Invarianz, die <em>exakt</em> gelernt werden muss. B: ungefähre, kontinuierliche, <em>statistische</em> Symmetrie, die <em>robust aber brechbar</em> ist. Natur der Symmetrie steht auf unterschiedlichen Füßen.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Stichprobenkomplexität / Dynamik vs. geschlossene Gleichgewichtsform</span>
+      <p><b>A</b> stellt eine <em>endliche-Daten- / Optimierungs-Dynamik-</em>Frage: „<b>Wie viele Trainingsbeispiele braucht ein tiefes Netz</b>, um eine typische Instanz … zu lernen?" — P* = n<sub>c</sub>·m<sup>L</sup>, hergeleitet aus Signal √(v/m<sup>L</sup>) vs. Rauschen √(v·n<sub>c</sub>/P), analysiert an einem <em>einzigen Gradientenschritt</em> und über SGD-Trainings. Die zentrale Größe ist der <em>Übergang über P</em>.</p>
+      <p><b>B</b> hat <em>keine</em> Lern-Dynamik- / Stichprobenkomplexitätsfrage. Das Resultat ist eine <em>geschlossene spektrale Formel</em> (a<sub>n</sub> = √(2σ/(1+σ²k<sub>n</sub>²)), k<sub>n</sub> = πn); die Geometrie ist das <em>Gleichgewicht</em> für große Dimension. Die einzige Datenmengengröße (Double-Descent einer <em>linearen Sonde</em>) betrifft das <em>Dekodieren</em>, nicht das Repräsentationslernen.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A quantifiziert <em>wie viele Daten / wie schnell</em> die richtige Repräsentation erreicht wird (Dynamik). B gibt nur das <em>Ziel</em> (Symmetrie-basierte Eigenbasis) und lässt die Lern-Dynamik vollständig weg.</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>Beide sind <em>konstruktive Erklärungen</em> (A: ein lösbares Toy-Modell + SGD-Nachbildung der Paper-Figures; B: analytische Herleitung + numerische Nachbildung der Paper-Figures) und teilen den Mitautor Wyart. Die Widersprüche sind <em>perspektivisch</em> (Weg vs. Ziel, exakt vs. statistisch, aktiv vs. passiv) und fallen genau auf der Naht zusammen — nicht in einem formellen Konflikt. Umso schärfer ist W1: A macht Tiefe zur <em>Bedingung</em> des Lernens, B zeigt dieselbe Geometrie <em>trotz</em> flacher Architektur.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie sie zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>Weg und Ziel</strong> desselben Prinzips. Zu jedem Widerspruch die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: Tiefe ≈ Anzahl der Invarianz-Faktoren</h3>
+      <p>B's „architekturunabhängige Geometrie" ist der <em>Anziehungspunkt / Fixpunkt</em>, den ein <em>voll konvergierendes, weites, feature-lernendes</em> Netz in A einnimmt. B's „flaches word2vec reicht" gilt <em>genau dann</em>, wenn die relevante Symmetrie eine <em>einzige globale</em> (Translations-)Invarianz ist, die in <em>einem</em> Spektralschritt faktorisiert werden kann. In A ist die Invarianz dagegen ein <em>Produkt aus L lokalen Operatoren</em> (hierarchisch komponiert); ein flacher linearer Abgriff kann ein solches Produkt <em>nicht</em> in einem Schritt zerlegen — man muss es <em>L-mal komponieren = Tiefe</em>. Feature-Learning (A) ist exakt der Prozess, die (möglicherweise komponierte) Invarianz zu <em>entdecken</em>; in B ist sie ein <em>einzelner</em> Operator, daher ist die Entdeckung trivial/1-Schritt. <strong>Fusion:</strong> <code>notwendige Tiefe ≈ Anzahl der Invarianz-Faktoren, die man komponieren muss</code>. Eine globale Symmetrie → 1 Schicht (flaches word2vec, B). L komponierte Symmetrien → L Schichten (tiefes Netz, A). B's „tiefenunabhängige" Geometrie ist der <em>Zustand nach</em> L Kompositionen — sie erscheint architektur-unabhängig, weil das <em>Ergebnis</em> gleich ist; A beschreibt den <em>Weg dorthin</em> und warum er Tiefe braucht.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: dieselbe Gruppe, zwei Realisierungen (diskret-exakt / kontinuierlich-naherungsweise)</h3>
+      <p>Beide sind <strong>Invarianzen unter einer Gruppe T label-erhaltender Transformationen</strong>; der Unterschied ist nur die <em>Gruppe</em>: A = <em>diskrete</em> Gruppe (Synonym-Substitutionen, exakt, von den Regeln erzeugt), B = <em>kontinuierliche (zyklische)</em> Translationen (statistisch, näherungsweise). Das gemeinsame Objekt ist: <strong>die (möglicherweise ungefähre) Symmetriegruppe der bedingten Statistik</strong>, und die gelernte Repräsentation ist ihre <strong>Symmetrie-adaptierte Basis</strong> (Eigenvektoren des unter T invarianten Operators) bzw. der <strong>Invariante-Unterraum</strong>. A's „Zählen-Signal" (identische Häufigkeitsprofile) <em>ist</em> der messbare <em>Fingerabdruck</em> von T in den Kookkurrenzzählungen — genau die Kerne C(Δ)/M*, die B diagonalisiert. <strong>Fusion:</strong> <code>gelernte Geometrie = Invariante/Symmetrie-basierte Repräsentation der Daten-Symmetriegruppe</code>; ob die Gruppe diskret-exakt (A) oder kontinuierlich-naherungsweise (B) ist, bestimmt nur, ob man <em>exakte Äquivalenzklassen</em> (Synonyme) oder <em>Fourier-Moden</em> (Kreise/Landkarten) sieht — und ob sie exakt oder nur robust-ungefähr gilt.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: A gibt die Rate, B das Ziel</h3>
+      <p>Das <em>Ziel</em> ist die Symmetrie-adaptierte Repräsentation (B: die Fourier-/Sinus-Basis, der Kreis). Die <em>Kosten</em>, sie zu erreichen (A), sind der Punkt, an dem der statistische <em>Fingerabdruck</em> der Symmetrie — A's Signal √(v/m<sup>L</sup>) / B's Kern — über dem <em>Stichprobenrauschen</em> ∝ 1/√P liegt → P ≳ P_c = n<sub>c</sub>·m<sup>L</sup>. Dasselbe in B's Sprache: der Kreis ist <em>auflösbar</em>, sobald die <em>Eigenlücke</em> (∝ N, viele Helferwörter) die <em>Störung</em> schlägt (Davis–Kahan). <strong>Fusion:</strong> <code>Lernkosten = Punkt, an dem der Symmetrie-Fingerabdruck das Rauschen übersteigt</code>. A liefert die <em>Formel + Dynamik</em> dieses Schwellwerts, B die <em>Ziel-Geometrie</em>, die bei ihm eintritt — zwei Seiten derselben Größe.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Netzgeometrie und Stichprobenkomplexität sind <em>ein</em> Phänomen: die Symmetriegruppe T der Datenstatistik. Die <strong>Form</strong>, die das Netz lernt, ist T's Symmetrie-adaptierte Basis (B: Fourier → Kreise/Landkarten; A: hierarchische Abstraktion, die eff. Dimension sinkt Schicht für Schicht). Die <strong>Kosten</strong>, sie zu lernen, sind der Punkt, an dem T's Fingerabdruck aus dem Stichprobenrauschen auftaucht (A: P* = n<sub>c</sub>·m<sup>L</sup>; B: Eigenlücke ∝ N &gt; Störung). <strong>Netto:</strong> <code>Geometrie (B) + Lernkosten (A) = Symmetrie der Statistik (gemeinsam)</code>; <code>Tiefe = Anzahl der komponierten Invarianz-Faktoren</code>.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substantielle Kern</h2>
+
+    <h3>Die gemeinsame Architektur: Statistik → Operator → Symmetrie-adaptierte Basis</h3>
+    <ul class="cl">
+      <li><b>Gemeinsamer Rücken:</b> <code>Daten → (label-conditional) Kookkurrenzstatistik → Operator M* → Symmetrie-adaptierte Eigenbasis = die Repräsentation</code>. B macht dies für Wort-Einbettungen explizit (word2vec ≈ Eckart–Young–Mirsky von M*, Gram = M*); A macht es für kompositionelle Klassifikation (das Netz findet die Basis, die die Synonym-Äquivalenz respektiert).</li>
+      <li><b>Der Operator M*</b> ist in beiden Fällen die normalisierte Kookkurrenz: B definiert M<sub>ij</sub>* = (P<sub>ij</sub> − P<sub>i</sub>P<sub>j</sub>)/(½(P<sub>ij</sub>+P<sub>i</sub>P<sub>j</sub>)) ≈ PMI (beschränkt auf ±2); A's „Zählen" f(α|μ) = N(μ;α)/N(μ) ist derselbe bedingte Kookkurrenz-Quotient, hier nach <em>Position/Patch</em> statt nach Wortpaar.</li>
+      <li><b>Die Invarianz T:</b> die Transformationen mit M*(Tx, Ty) = M*(x,y) / label(Tx)=label(x). B: zyklische Translationen (kontinuierlich, auf Kreis/Linie). A: Synonym-Substitutionen (diskret), <em>L-mal komponiert</em> (hierarchisch).</li>
+    </ul>
+
+    <h3>Die Geometrie — was die Basis <em>aussehen</em> lässt</h3>
+    <ul class="cl">
+      <li><b>B (Fourier):</b> zirkulantes M* ⇒ Eigenvektoren sind <em>universell</em> Sinus/Kosinus (unabhängig vom Kern); nur die <em>Eigenwerte</em> = Fourier-Transformierte des Kerns. Amplituden <code>a<sub>n</sub> = √(2σ/(1+σ²k<sub>n</sub>²))</code>, k<sub>n</sub> = πn (periodisch) / Quantisierungsbedingung (offen, krumme Frequenzen). Weil a<sub>n</sub> mit der Frequenz <em>fällt</em>: zuerst Kreis (Mode 1), dann Rippel/Sättel (Oberschwingungen), 2D → Landkarte (ebene Wellen cos(k<sub>x</sub>x)cos(k<sub>y</sub>y)).</li>
+      <li><b>A (hierarchisch):</b> die Basis ist <em>schichtweise</em>: Ebene k des Netzes wird invariant gegenüber den Synonymen auf Ebene k−1 (S<sub>k,l</sub> → 0, „alle Ebenen lernen gleichzeitig"). Die <em>effektive Dimension</em> sinkt monoton mit der Tiefe (im Paper: 7,1 → 6,9 → 3,9 → 3,7 → 2,3) — das Netz <em>komprimiert</em> das Problem, genau wie B's fallende a<sub>n</sub> die langsamen Moden dominieren lässt.</li>
+      <li><b>Gemeinsam:</b> „die obersten Moden variieren langsam, die feinen Struktur" — B's Faller Amplituden und A's fallende eff. Dimension sind dieselbe Aussage in zwei Registern: <em>die Symmetrie-adaptierte Basis ist eine von langsam zu schnell geordnete Wellen-/Abstraktionsleiter.</em></li>
+    </ul>
+
+    <h3>Die Kosten — wann die Basis <em>lernbar</em> wird</h3>
+    <ul class="cl">
+      <li><b>A (Stichprobenkomplexität):</b> Signal = √(v/m<sup>L</sup>) (typische Abweichung des Zähl-Profils von 1/n<sub>c</sub>), Rauschen = √(v·n<sub>c</sub>/P) (Stichprobenfehler). Gleichsetzen ⇒ <code>P_c = n<sub>c</sub>·m<sup>L</sup></code> — und empirisch ist genau dort P* (Testfehler < ε<sub>rand</sub>/10), P<sub>inv</sub> (Invarianz) und P<sub>c</sub> (Theorie) <em>drei gleiche Zahlen</em>. Flache Netze: P* ∝ P<sub>max</sub> = n<sub>c</sub>·m^((d−1)/(s−1)) (exponentiell). Tiefe: P* = n<sub>c</sub>·m<sup>L</sup> = n<sub>c</sub>·d^(ln m/ln s) (polynomiell).</li>
+      <li><b>B (Robustheit):</b> der Kreis <em>überlebt</em> die Löschung der direkten Monat-Monat-Statistik, weil viele saisonale „Helferwörter" dieselbe latente Koordinate tragen; die Eigenlücken <em>wachsen ∝ N</em>, die Störung ist <em>fest</em> (12×12) ⇒ Davis–Kahan: große N ⇒ Eigenvektoren stabil. Der Kreis ist also ein <em>kollektiver, redundanz-getragener</em> Effekt.</li>
+      <li><b>Gemeinsam (die fusionierte Größe):</b> <code>P_c = Punkt, an dem der Symmetrie-Fingerabdruck (B's Kern / A's Signal) das Stichprobenrauschen (∝ 1/√P; B: Störung) übersteigt</code>. A nennt ihn P* = n<sub>c</sub>·m<sup>L</sup>; B erreicht ihn durch N große Redundanz. Beide beschreiben <em>einen</em> Schwellwert.</li>
+    </ul>
+
+    <h3>A vs. B — die Schlüsselgrößen nebeneinander</h3>
+    <table>
+      <thead><tr><th></th><th>A · Random Hierarchy Model</th><th>B · Symmetry in Language Statistics</th></tr></thead>
+      <tbody>
+        <tr><td class="n">Symmetrie T</td><td>Synonym-Substitution, diskret, L-mal komponiert</td><td>zyklische Translation, kontinuierlich</td></tr>
+        <tr><td class="n">Operator</td><td>bedingte Kookkurrenz f(α|μ) pro Patch</td><td>M* (≈ PMI) pro Wortpaar</td></tr>
+        <tr><td class="n">Basis/Form</td><td>hierarchische Abstraktion, eff. Dim. sinkt</td><td>Fourier-Moden → Kreis/Landkarte</td></tr>
+        <tr><td class="n">Kostengröße</td><td class="hi">P* = n<sub>c</sub>·m<sup>L</sup> (Stichprobenkomplexität)</td><td class="hi">Eigenlücke ∝ N &gt; Störung (Davis–Kahan)</td></tr>
+        <tr><td class="n">Rolle des Netzes</td><td>aktives Feature-Learning, Tiefe nötig</td><td>lineare Spektral-Lesung, architektur-unabhängig</td></tr>
+        <tr><td class="n">Exakt vs. ungefährt</td><td>exakt (algebraisch), aus genauen Regeln</td><td>ungefähr (statistisch), brechbar (Polysemie/Kriege)</td></tr>
+        <tr><td class="n">Zentrale Frage</td><td>wie viele Beispiele? (Dynamik)</td><td>welche Form? (Gleichgewicht)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die Rolle des Netzes / warum Tiefe — fusioniert</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">1 globale Symmetrie (B)</div><div class="v">→ 1 Operator → <b>1 Spektralschicht</b> genügt (flaches word2vec). B's „architektur-unabhängig": das Ergebnis ist bereits nach 1 Faktor erreicht.</div></div>
+      <div class="r"><div class="k">L komponierte Symmetrien (A)</div><div class="v">→ Produkt aus L lokalen Operatoren → <b>L Kompositionen = Tiefe ≥ L</b>. Flach/linear scheitert (P* ∝ P<sub>max</sub>); Feature-Learning entdeckt die Komposition.</div></div>
+      <div class="r"><div class="k">Feature-Learning (A)</div><div class="v">= der Mechanismus, T <em>zu entdecken</em>. In B ist T ein einzelner, sofort sichtbarer Operator ⇒ Entdeckung trivial; in A muss sie <em>geschichtet</em> aufgebaut werden (Schicht k ↔ Ebene k−1).</div></div>
+      <div class="r"><div class="k">Invarianz als Ergebnis (A)</div><div class="v">vs. <em>als Eingabe</em> (B): A's Netz <em>lernt</em> die Invarianz (S<sub>k,l</sub> → 0); B's lineare Abbildung <em>erbt</em> sie automatisch von der Symmetrie des Operators. Fusion: invarianz <em>entsteht</em> (A) genau <em>dort</em>, wo sie <em>vorgeschrieben</em> ist (B).</div></div>
+    </div>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq">
+      <span class="c">// A — Random Hierarchy Model (EPFL, arXiv:2307.02129)</span><br>
+      d = s<sup>L</sup> ; &nbsp; P<sub>max</sub> = n<sub>c</sub>·m<sup>(d−1)/(s−1)</sup> &nbsp;<span class="c">// exponentiell (flach)</span><br>
+      P* = P<sub>inv</sub> = P_c = n<sub>c</sub>·m<sup>L</sup> = n<sub>c</sub>·d<sup>ln m/ln s</sup> &nbsp;<span class="c">// polynomiell (tief, ≥ L)</span><br>
+      Signal = √(v/m<sup>L</sup>) &nbsp;=&nbsp; Rauschen = √(v·n<sub>c</sub>/P) &nbsp;⟹&nbsp; P_c = n<sub>c</sub>·m<sup>L</sup><br>
+      S<sub>k,l</sub> = ⟨‖f<sub>k</sub>(x) − f<sub>k</sub>(P<sub>l</sub>x)‖²⟩ / ⟨‖f<sub>k</sub>(x) − f<sub>k</sub>(y)‖²⟩ &nbsp;<span class="c">// → 0 bei P*</span><br>
+      <span class="c">// B — Symmetry in Language Statistics (ICML 2026, arXiv:2602.15029)</span><br>
+      M*<sub>ij</sub> = (P<sub>ij</sub> − P<sub>i</sub>P<sub>j</sub>) / ½(P<sub>ij</sub>+P<sub>i</sub>P<sub>j</sub>) ≈ PMI<sub>ij</sub> &nbsp;<span class="c">// zirkulant ⇐ Translationssymmetrie</span><br>
+      w<sub>i</sub> = √(2/|S|)·[ a<sub>1</sub>cos(k<sub>1</sub>x<sub>i</sub>), a<sub>1</sub>sin(k<sub>1</sub>x<sub>i</sub>), a<sub>2</sub>cos(k<sub>2</sub>x<sub>i</sub>), … ]<br>
+      a<sub>n</sub> = √(2σ/(1+σ²k<sub>n</sub>²)) , &nbsp; k<sub>n</sub> = πn &nbsp;<span class="c">// periodisch; offen: Quantisierungsbed. (krumme k<sub>n</sub>)</span><br>
+      Gram = M* &nbsp;(dim groß genug) ; &nbsp; ε² ~ r<sup>−1/D</sup> &nbsp;<span class="c">// Dekodieren</span><br>
+      <span class="c">// FUSION</span><br>
+      gelernte Geometrie = Symmetrie-adaptierte Basis von T(P(label|x)) &nbsp;<span class="c">// B: Fourier-Kreis · A: hierarchische Abstraktion</span><br>
+      Lernkosten P_c = Punkt, an dem T's Fingerabdruck &gt; Stichprobenrauschen &nbsp;<span class="c">// A: n<sub>c</sub>·m<sup>L</sup> · B: Lücke ∝ N &gt; Störung</span><br>
+      Tiefe ≈ Anzahl der komponierten Invarianz-Faktoren &nbsp;<span class="c">// 1 global → flach (B) · L hierarchisch → tief (A)</span>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Vom Symmetrie-Fingerabdruck zum gelernten Kreis — und wann er lesbar wird</h2>
+    <p>Die fusionierte Idee wird <em>in einer</em> Matrix live ausgerechnet: 12 latente Begriffe auf einem Kreis (B's Translationssymmetrie), <em>jeder</em> mit 3 Synonym-Oberflächens (A's Synonym-Invarianz). Daraus wird die zentrierte Kookkurrenz M* gebaut, mit <em>Stichprobenrauschen</em> ∝ 1/√P (A's endliche Daten) kontaminiert, eigenzerlegt (Jacobi) und in die Top-2-Eigenmoden projiziert. <strong>Links:</strong> die Synonyme <em>kollabieren</em> auf ihren Begriff (A) und die 12 Begriffe bilden einen <em>Kreis</em> (B) — ab P ≥ P_c sauber, darunter verwaschen. <strong>Rechts:</strong> das Eigenspektrum mit <em>Rauschenboden</em>; der Kreis-Mode (2.) ist lesbar, sobald er über dem Boden liegt — das ist A's P_c / B's „Lücke &gt; Störung".</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Symmetrie → Invariante Basis (Kreis) + Synonym-Kollaps + P_c</h3><span class="tg">interaktiv · inline data · Plotly</span></div>
+      <div class="cwrap"><div id="vizfig" class="plotbox"></div></div>
+      <div class="leg">
+        <span><i style="background:var(--acc)"></i>12 Begriffe (Kreis = B's Translationssymmetrie)</span>
+        <span><i style="background:var(--acc2)"></i>Eigenspektrum (Fourier-Moden)</span>
+        <span><i style="background:var(--acc3)"></i>synonyme Oberflächen (→ A's Kollaps)</span>
+        <span><i style="background:var(--acc4)"></i>Rauschenboden (∝ 1/√P)</span>
+      </div>
+      <div id="viewCap">Schiebe P über P_c: die Synonyme ziehen sich zusammen und der Kreis wird scharf.</div>
+      <div class="ro">
+        <div class="b"><div class="k">Beispiele P</div><div class="v" id="roP">—</div><div class="u">Stichprobengröße</div></div>
+        <div class="b"><div class="k">P_c (geschätzt)</div><div class="v e" id="roPc">—</div><div class="u">Signal = Rauschen</div></div>
+        <div class="b"><div class="k">Kreis-Qualität</div><div class="v g" id="roQ">—</div><div class="u">Kreiskreis</div></div>
+        <div class="b"><div class="k">Mode 2 &gt; Boden</div><div class="v m" id="roM">—</div><div class="u">= lesbar (P ≥ P_c)</div></div>
+        <div class="b"><div class="k">Begriffe / Syn.</div><div class="v" id="roNM">—</div><div class="u">12 / 3 (fix)</div></div>
+        <div class="b"><div class="k">Status</div><div class="v g" id="roS">—</div><div class="u">gelernt / Übergang / Rauschen</div></div>
+      </div>
+      <div class="ctl" style="margin-top:16px">
+        <div class="ctl-lab"><span>Beispiele P (log) — Stichprobenrauschen ∝ 1/√P</span><b id="Pval">—</b></div>
+        <input type="range" id="sP" min="2" max="6" step="0.05" value="4">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Klein = wenige Daten = Rauschen verwascht den Symmetrie-Fingerabdruck. Groß = der Kreis wird scharf. Markierung bei P_c.</div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>σ — Korrelationsreichweite des Kerns C(Δ) = exp(−|Δ|/σ) (B)</span><b id="sval">—</b></div>
+        <input type="range" id="sS" min="1" max="10" step="0.1" value="4.2">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Großes σ = Korrelation über weite Abstände = nur die langsamste Mode zählt = sauberer Kreis. Kleines σ = viele Moden = zackig.</div>
+      </div>
+      <div class="note t"><span class="h">Was das ist (und was nicht)</span>Die interaktive Matrix realisiert die <em>einstufige</em> (L=1) Form der Fusion: <em>diskrete</em> Synonym-Invarianz (A) ⊕ <em>kontinuierliche</em> Translationssymmetrie (B) in <em>einem</em> zirkulanten Blockoperator. Der Schwellwert P_c wird hier <em>gemessen/geschätzt</em> (2. saubere Eigenwert = Rauschenboden). A's volle Gesetzmäßigkeit <code>P* = n<sub>c</sub>·m<sup>L</sup></code> und B's Robustheit über <em>vielen</em> Helferwörtern (Lücke ∝ N) werden im Text abgeleitet; das Viz zeigt ihr <em>gemeinsames</em> Maß — den Punkt, an dem der Symmetrie-Fingerabdruck aus dem Rauschen auftaucht.</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <p><a href="../random_hierarchy_model.html">A — Das Random Hierarchy Model: Wie tiefe Netze kompositionelle Daten lernen</a> (Cagnetta, Petrini, Tomasini, Favero, Wyart, EPFL, arXiv:2307.02129): Interaktive Aufbereitung — Fluch der Dimensionalität, vier (verletzte) Strukturannahmen, RHM-Generator (n<sub>c</sub>, v, m, s, L), Synonym vs. Rauschen, flach (verflucht) vs. tief (P* = n<sub>c</sub>·m<sup>L</sup>), Synonymische Invarianz S<sub>k,l</sub>, Zählen-Signal √(v/m<sup>L</sup>) vs. Rauschen √(v·n<sub>c</sub>/P), ein GD-Schritt, Gegenproben (Parität, Lazy, tiefes FC, Clustering) und CIFAR10-Vorhersage. Alle Zähl-/Spektral-Größen werden live im Browser gerechnet.</p>
+    <p><a href="../symmetrie_in_sprachstatistik.html">B — Symmetrie in Sprachstatistik: Warum Sprachmodelle die Monate im Kreis anordnen</a> (Karkada, Korchinski, Nava, Wyart, Bahri, ICML 2026, arXiv:2602.15029): Interaktiver Erklärer — Kookkurrenz → PMI/M* → word2vec ≈ Eigenzerlegung (Eckart–Young–Mirsky) → zirkulante Matrizen ⇒ Fourier-Eigenvektoren → Kreis (Monate), gewellte Linie (Jahre, offene Ränder), Landkarte (US-Staaten, D=2), Lissajous-Figuren, lineares Dekodieren (ε² ~ r<sup>−1/D</sup>), Double-Descent, Robustheit via latente Variable („Jahreszeit") + Davis–Kahan (Lücke ∝ N).</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>random_hierarchy_model.html</strong> (Tiefe + Feature-Learning — P* = n<sub>c</sub>·m<sup>L</sup>, der Weg + Preis) ✕ <strong>symmetrie_in_sprachstatistik.html</strong> (Fourier/Zirkulanz — der Ziel-Kreis, die Form). Alle Claims aus den Quellen paraphrasiert; Viz-Daten inline/analytisch. Selbstständig, ohne Netz-Datenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return hex;}return 'rgba('+r+','+g+','+b+','+a+')';}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ if(themeBtn){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; } }
+  function red(){ setBtn(); draw(); }
+  if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); red(); }; }
+  setBtn();
+
+  var N=12, M=3, NOISE=40;           // 12 Begriffe, je 3 Synonyme (fix)
+  var S={P:1e4, sigma:4.2};
+  var clean=null, G=null, dim=0, Pc=1e4;
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+  function jacobiEigen(Ain, iters){
+    var n=Ain.length, A=Ain.map(function(r){return r.slice();});
+    var V=[],i;
+    for(i=0;i<n;i++){V.push(new Array(n).fill(0));V[i][i]=1;}
+    iters=iters||80;
+    for(var sw=0;sw<iters;sw++){
+      var off=0,p,q;
+      for(i=0;i<n;i++)for(q=i+1;q<n;q++)off+=A[i][q]*A[i][q];
+      if(off<1e-18)break;
+      for(p=0;p<n-1;p++)for(q=p+1;q<n;q++){
+        if(Math.abs(A[p][q])<1e-15)continue;
+        var th=(A[q][q]-A[p][p])/(2*A[p][q]);
+        var t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1));
+        var c=1/Math.sqrt(t*t+1), s=t*c,k,akp,akq,apk,aqk,vkp,vkq;
+        for(k=0;k<n;k++){akp=A[k][p];akq=A[k][q];A[k][p]=c*akp-s*akq;A[k][q]=s*akp+c*akq;}
+        for(k=0;k<n;k++){apk=A[p][k];aqk=A[q][k];A[p][k]=c*apk-s*aqk;A[q][k]=s*apk+c*aqk;}
+        for(k=0;k<n;k++){vkp=V[k][p];vkq=V[k][q];V[k][p]=c*vkp-s*vkq;V[k][q]=s*vkp+c*vkq;}
+      }
+    }
+    var vals=[];for(i=0;i<n;i++)vals.push(A[i][i]);
+    var idx=vals.map(function(v,i){return i;}).sort(function(a,b){return vals[b]-vals[a];});
+    return {values:idx.map(function(i){return vals[i];}),
+            vectors:idx.map(function(i){return V.map(function(row){return row[i];});})};
+  }
+
+  function makeNoise(n, seed){
+    var rnd=mulberry32(seed);
+    function gauss(){var u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(6.283185307*v);}
+    var G=[],i,j;
+    for(i=0;i<n;i++){G.push(new Array(n).fill(0));}
+    for(i=0;i<n;i++)for(j=i;j<n;j++){var g=gauss();G[i][j]=g;G[j][i]=g;}
+    return G;
+  }
+
+  function buildClean(sigma){
+    dim=N*M;
+    var cyc=function(a,b){var d=Math.abs(a-b);return Math.min(d,N-d);};
+    var c=function(p){return Math.floor(p/M);};
+    var base=[],i,j;
+    for(i=0;i<dim;i++){base.push(new Array(dim).fill(0));}
+    for(i=0;i<dim;i++)for(j=0;j<dim;j++)base[i][j]=Math.exp(-cyc(c(i),c(j))/sigma);
+    var rm=new Array(dim),cm=new Array(dim),tot=0;
+    for(i=0;i<dim;i++){var r=0,cc=0;for(j=0;j<dim;j++){r+=base[i][j];cc+=base[j][i];}rm[i]=r/dim;cm[i]=cc/dim;tot+=r;}
+    tot/=dim*dim;
+    for(i=0;i<dim;i++)for(j=0;j<dim;j++)base[i][j]-=rm[i]+cm[j]-tot;
+    return base;
+  }
+
+  function addNoise(clean,G,P){
+    var sc=NOISE/Math.sqrt(P), n=clean.length, A=[],i,j;
+    for(i=0;i<n;i++){A.push(new Array(n));for(j=0;j<n;j++)A[i][j]=clean[i][j]+sc*G[i][j];}
+    return A;
+  }
+  function hsl(i){return 'hsl('+Math.round(360*i/N)+',72%,58%)';}
+  function fmtP(p){var e=Math.log10(p);if(e>=4)return '≈10^'+e.toFixed(1);if(e>=3)return (p/1000).toFixed(1)+'·10³';return String(Math.round(p));}
+
+  function rebuild(){
+    dim=N*M;
+    clean=buildClean(S.sigma);
+    G=makeNoise(dim, 987654);
+    var Ec=jacobiEigen(clean,80);
+    var l2=Math.abs(Ec.values[1]);
+    Pc=Math.pow(NOISE*Math.sqrt(dim)/Math.max(l2,1e-6),2);
+    Pc=Math.max(1e2,Math.min(1e6,Pc));
+    S.P=Pc;
+    var sp=document.getElementById('sP'); if(sp)sp.value=(Math.log10(Pc)).toFixed(2);
+  }
+
+  var elP=document.getElementById('sP'), elS=document.getElementById('sS');
+
+  function draw(){
+    if(!clean) return;
+    if(!window.Plotly){ setTimeout(draw,80); return; }
+    var P=S.P;
+    var E=jacobiEigen(addNoise(clean,G,P),80);
+    var n=clean.length, v1=E.vectors[0], v2=E.vectors[1], l0=Math.abs(E.values[0]), l1=Math.abs(E.values[1]);
+    var xs=[],ys=[],cols=[],p,g;
+    for(p=0;p<n;p++){xs.push(v1[p]*Math.sqrt(l0));ys.push(v2[p]*Math.sqrt(l1));cols.push(hsl(Math.floor(p/M)));}
+    var cx=[],cy=[];
+    for(g=0;g<N;g++){var sx=0,sy=0;for(var k=0;k<M;k++){var pp=g*M+k;sx+=xs[pp];sy+=ys[pp];}cx.push(sx/M);cy.push(sy/M);}
+    var rmean=0;for(g=0;g<N;g++)rmean+=Math.hypot(cx[g],cy[g]);rmean/=N;
+    var rvar=0;for(g=0;g<N;g++){var rr=Math.hypot(cx[g],cy[g])-rmean;rvar+=rr*rr;}rvar/=N;
+    var qual=rmean>1e-6?Math.max(0,1-Math.sqrt(rvar)/rmean):0;
+    var K=Math.min(9,E.values.length), idx=[],i;
+    for(i=0;i<K;i++)idx.push(i+1);
+    var vals=E.values.slice(0,K);
+    var floor=NOISE/Math.sqrt(P)*Math.sqrt(n);
+    var acc=getVar('--acc'),acc2=getVar('--acc2'),bad=getVar('--bad4')||getVar('--acc3');
+    var grid=getVar('--viz-grid'),txt=getVar('--txt-dim'),panel=getVar('--viz-bg');
+    var tr=[];
+    tr.push({x:cx.concat([cx[0]]),y:cy.concat([cy[0]]),mode:'lines',line:{color:hexA(acc,0.30),width:2,shape:'spline'},hoverinfo:'skip',xaxis:'x1',yaxis:'y1'});
+    tr.push({x:xs,y:ys,mode:'markers',marker:{size:6,color:cols,line:{color:'rgba(0,0,0,0.25)',width:0.5}},hoverinfo:'skip',xaxis:'x1',yaxis:'y1'});
+    tr.push({x:cx,y:cy,mode:'markers',marker:{size:13,symbol:'circle-open',line:{color:acc,width:2},color:cols},hoverinfo:'skip',xaxis:'x1',yaxis:'y1'});
+    tr.push({type:'bar',x:idx,y:vals,marker:{color:acc2,line:{color:'rgba(0,0,0,0.2)',width:0.5}},hovertemplate:'Mode %{x}<br>λ=%{y:.3f}<extra></extra>',xaxis:'x2',yaxis:'y2'});
+    tr.push({x:[1,K],y:[floor,floor],mode:'lines',line:{color:bad,width:2,dash:'dash'},name:'Rauschenboden',hoverinfo:'skip',xaxis:'x2',yaxis:'y2'});
+    tr.push({x:[2],y:[vals[1]],mode:'markers',marker:{size:17,color:acc,symbol:'star',line:{color:panel,width:2}},name:'Kreis-Mode (2.)',hoverinfo:'skip',xaxis:'x2',yaxis:'y2'});
+    var lay={
+      grid:{rows:1,columns:2,pattern:'independent',xgap:0.12,subplots:'xy xy'},
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+      font:{color:txt,family:'-apple-system,Inter,sans-serif',size:11},
+      margin:{l:40,r:14,t:36,b:40},
+      title:{text:'Symmetrie-adaptierte Repräsentation · lesbar bei P ≥ P_c',font:{size:13,color:getVar('--txt')}},
+      showlegend:false,
+      xaxis1:{title:'',gridcolor:grid,zerolinecolor:hexA(acc,0.22),showticklabels:false},
+      yaxis1:{title:'',gridcolor:grid,zerolinecolor:hexA(acc,0.22),showticklabels:false,scaleanchor:'x1',scaleratio:1},
+      xaxis2:{title:'Fourier-Mode n',gridcolor:grid,dtick:1,tickfont:{size:9},range:[0.5,K+0.5]},
+      yaxis2:{title:'Eigenwert λ',gridcolor:grid,tickfont:{size:9}}
+    };
+    Plotly.react('vizfig',tr,lay,{displayModeBar:false,responsive:true});
+
+    var leM=vals[1]>floor;
+    document.getElementById('roP').textContent=fmtP(P);
+    document.getElementById('roPc').textContent=fmtP(Pc);
+    document.getElementById('roQ').textContent=(qual*100).toFixed(0)+'%';
+    document.getElementById('roM').textContent=leM?'ja ✓':'nein ✗';
+    document.getElementById('roNM').textContent=N+' / '+M;
+    var st=qual>0.7?['Kreis gelernt','g']:qual>0.35?['am Übergang','m']:['nur Rauschen','e'];
+    var rs=document.getElementById('roS');rs.textContent=st[0];rs.className='v '+st[1];
+    document.getElementById('Pval').textContent=fmtP(P);
+    document.getElementById('sval').textContent=S.sigma.toFixed(1);
+    var cap=document.getElementById('viewCap');
+    cap.textContent= P>=Pc
+      ? 'P ≥ P_c: Der Symmetrie-Fingerabdruck übersteigt das Rauschen — die Synonyme (A) kollabieren und die 12 Begriffe (B) liegen sauber auf dem Kreis.'
+      : 'P < P_c: Das Stichprobenrauschen ∝ 1/√P ist größer als der Fingerabdruck — der Kreis ist verwaschen, die Synonyme sind noch nicht zusammengefallen. Schiebe P nach rechts.';
+  }
+
+  rebuild();
+  elP.addEventListener('input',function(){S.P=Math.pow(10,+elP.value);draw();});
+  elS.addEventListener('input',function(){S.sigma=+elS.value;rebuild();draw();});
+  window.addEventListener('resize',function(){var el=document.getElementById('vizfig');if(el&&el.data)Plotly.Plots.resize(el);});
+  draw();
+});
+</script>
+</body>
+</html>

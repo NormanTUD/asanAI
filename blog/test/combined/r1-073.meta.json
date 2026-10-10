@@ -1,0 +1,16 @@
+{
+  "no": "073",
+  "a": "topologie_tiefer_neuronaler_netze_2.html",
+  "b": "garben_in_transformern.html",
+  "a_title": "Topologie tiefer neuronaler Netze (Naitzat, Zhitnikov, Lim, arXiv:2004.06093, 2020)",
+  "b_title": "Garben im Transformer — Gluing Local Contexts into Global Meaning (Grant & Wang, NeurIPS 2026)",
+  "combined_theme": "topologie-schreiben-und-lesen",
+  "one_line": "Netze schreiben Topologie (A: ReLU zerreißt Datenlöcher, Tiefe=Zeit) und man kann sie am eingefrorenen Modell lesen (B: harmonische Masse auf dem Äquivalenz-Zyklus = Fragilität) — dieselbe Größe, zwei Linsen.",
+  "contradictions": [
+    "A: Topologie ist der kausale Mechanismus (ReLU non-injektiv); B: fürs H0-Kopf-Ergebnis ist die Garbensprache nur Eselsbrücke (L_F -> P^T C_W P), echte H1-Zyklen nur +0,5pp/unecht",
+    "A: Löcher sind Hindernis, das das Netz zum (1,0,0) nähen muss; B: der Zyklus ist fix und die harmonische Masse auf ihm das zu lesende Fragilitäts-Signal",
+    "A: topologische Arbeit konzentriert sich in den späten Schichten; B: H1-Einfluss/Fragilität wirkt am stärksten in den frühen (L/4)"
+  ],
+  "resolution": "Alle drei sind Kategorienverwechslungen: A's Topologie ist die der Datenmannigfaltigkeit (aktiver Chirurg, wirkt auf den Daten), B's die eines von außen konstruierten Äquivalenz-Graphen (eingefroren, absichtlich azyklisch fürs H0). Die 'residuelle topologische Aktivität' ist dieselbe Größe: A liest sie als noch-zu-reißendes Datenloch, B als Fragilitäts-Sensor; Chirurgie spät, kausale Wirkung früh.",
+  "viz": "Canvas (kein CDN): ein Ring (beta_1=1) fließt durch k Schichten der gewählten Aktivierung; links kollabiert das Datenloch (ReLU>LeakyReLU>tanh), rechts sinkt die harmonische Masse auf dem fixen Äquivalenz-Zyklus; beide zeigen dieselbe Größe, gestrichelte Zufalls-Referenz b_1/|E|=0.25, theme-aware, inline-Daten."
+}

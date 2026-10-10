@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Singuläre Token-Geometrie ✕ Kontraktions-Dynamik</title>
+<style>
+  :root{
+    --bg:#f5f4ef; --bg2:#fbfaf7; --panel:#ffffff; --panel2:#f0efe8;
+    --ink:#1c2333; --ink2:#454f66; --ink3:#727d95;
+    --acc:#1f7a68; --acc2:#4f5fd6; --warn:#9a6b00; --err:#c23a4c; --ok:#227a4c;
+    --line:#d9d7cc;
+  }
+  html.dark{
+    --bg:#0b0e14; --bg2:#121722; --panel:#161c2a; --panel2:#1d2433;
+    --ink:#e8ecf4; --ink2:#a9b4c8; --ink3:#6b7689;
+    --acc:#5eead4; --acc2:#818cf8; --warn:#fbbf24; --err:#fb7185; --ok:#4ade80;
+    --line:#2a3344;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+  header{padding:26px 0 10px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  h1{font-size:clamp(26px,4.6vw,40px);line-height:1.1;margin:0 0 10px;letter-spacing:-.02em}
+  h1 .g{color:var(--acc)}
+  h1 .g2{color:var(--acc2)}
+  .sub{color:var(--ink2);margin:0;font-size:15px}
+  .sub .x{color:var(--acc2);font-family:ui-monospace,Menlo,monospace;font-size:.92em}
+  .fusenote{margin-top:10px;color:var(--ink3);font-size:13.5px}
+  section{margin:0 0 46px}
+  .chap{font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;margin-bottom:8px;display:block}
+  h2{font-size:clamp(21px,3.2vw,30px);margin:0 0 14px;letter-spacing:-.01em}
+  h3{font-size:18px;margin:26px 0 10px}
+  p{color:var(--ink2);max-width:72ch}
+  p strong,li strong{color:var(--ink);font-weight:600}
+  ul,ol{color:var(--ink2);max-width:74ch}
+  li{margin:7px 0}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:var(--panel2);padding:2px 6px;border-radius:5px;color:var(--acc)}
+  .m{font-family:ui-monospace,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:10px;display:block;margin:14px 0;font-size:14px;color:var(--ink);border:1px solid var(--line);overflow-x:auto;line-height:1.55}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0}
+  .tag{display:inline-block;padding:2px 9px;border-radius:999px;font:600 11px/1.7 ui-monospace,Menlo,monospace}
+  .t-a{background:color-mix(in srgb, var(--acc) 16%, transparent);color:var(--acc)}
+  .t-b{background:color-mix(in srgb, var(--acc2) 16%, transparent);color:var(--acc2)}
+  .t-c{background:color-mix(in srgb, var(--warn) 18%, transparent);color:var(--warn)}
+  .note,.honest,.warn{border-radius:12px;padding:14px 16px;margin:16px 0;font-size:14.5px;line-height:1.6}
+  .note{background:color-mix(in srgb, var(--acc) 8%, transparent);border-left:3px solid var(--acc)}
+  .honest{background:color-mix(in srgb, var(--err) 9%, transparent);border-left:3px solid var(--err)}
+  .warn{background:color-mix(in srgb, var(--warn) 10%, transparent);border-left:3px solid var(--warn)}
+  .note b,.honest b,.warn b{color:var(--ink)}
+  .note p,.honest p,.warn p{margin:6px 0;max-width:none}
+  .cbox{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--bg2)}
+  .cbox .head{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15px}
+  .cbox p{margin:4px 0;font-size:14.5px}
+  .who{font-weight:600;font-size:.92em;padding:1px 7px;border-radius:6px}
+  .who.a{color:var(--acc)}
+  .who.b{color:var(--acc2)}
+  .map{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
+  .map th,.map td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .map th{color:var(--ink3);font:600 11px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase}
+  .map td{color:var(--ink2)}
+  .map td:first-child{color:var(--acc2)}
+  .lab{background:linear-gradient(170deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0}
+  .lab > h4{margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:9px}
+  .lab > h4::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+  .labnote{color:var(--ink3);font-size:13.5px;margin:0 0 14px;max-width:70ch}
+  .ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:12px 0}
+  .ctrl{display:flex;flex-direction:column;gap:5px;min-width:150px}
+  .ctrl label{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;color:var(--ink3);text-transform:uppercase}
+  .ctrl .val{color:var(--acc);font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line);border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--acc);cursor:pointer}
+  button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:8px 15px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:500;transition:.15s}
+  button:hover{border-color:var(--acc)}
+  button.pri{background:var(--acc);color:var(--bg);border:0;font-weight:700}
+  button.on{border-color:var(--acc);color:var(--acc)}
+  canvas{display:block;width:100%;border-radius:12px;background:var(--panel2);border:1px solid var(--line);cursor:crosshair}
+  .cap{color:var(--ink3);font-size:12.5px;margin-top:10px;font-style:italic}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:30px;color:var(--ink3);font-size:13.5px}
+  a{color:var(--acc2)}
+  .themebtn{position:fixed;top:12px;right:12px;z-index:50}
+</style>
+</head>
+<body>
+<button class="themebtn" id="btnTheme" title="Theme wechseln">☾ / ☀</button>
+<div class="wrap">
+
+<header>
+  <h1>Ein <span class="g2">singulärer</span> Raum, der sich <span class="g">zusammenzieht</span></h1>
+  <p class="sub">Fusion aus: <span class="x">buecher/antioed.html</span> ✕ <span class="x">token_manifold_verletzt.html</span></p>
+  <p class="fusenote">Round 1 · id 065 · Selbstständige Aufbereitung — beide Quellen sind die Wahrheit, hier verschmolzen.</p>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="these">
+  <span class="chap">Kernthese der Fusion</span>
+  <h2>Das eine Objekt, das beide beschreiben</h2>
+  <p>Beide Seiten betrachten <strong>dasselbe Objekt</strong> — den Raum, in dem ein Transformer seine Repräsentationen bewegt — aber von zwei entgegengesetzten Enden. <span class="who a">A („Wie ein LLM denkt“)</span> beschreibt die <strong>Dynamik über die Schichten</strong>: Attention <em>kontrahiert</em> Tokens zu Clustern (und ohne Gegenkraft zu einem einzigen Punkt — bewiesen für <code>d ≥ 3</code>), das FFN/Superposition <em>bläst</em> Kapazität in mehr fast-orthogonale Richtungen als Dimensionen auf; der Residual-Stream trägt die Information, das Modell lebt im <strong>metastabilen Gleichgewicht</strong> dazwischen. <span class="who b">B („Token-Embeddings verletzen die Manifold-Hypothese“)</span> beschreibt die <strong>statische Geometrie des Eingabe-Embedding-Raums</strong>: er ist <em>kein</em> glattes Manifold — die Manifold-Hypothese wird an vier echten Modellen hochsignifikant verworfen, die lokale intrinsische Dimension ist wild nicht-konstant (GPT-2: Q1 = 20 … Q3 = 531), und die singulären Stellen sitzen genau an <strong>Homonymen und Polysemen</strong> (Cusps, Pinches), die sogar bis in die <em>Ausgabe</em> überleben.</p>
+  <p><strong>Die verschmolzene These:</strong> Ein Transformer arbeitet auf einer <strong>singulären, inhomogenen, hochkapazitiven Geometrie</strong> — noch nicht einmal eine „glatte Fläche“ (B: 4/4 verworfen) und auch keine gleichmäßig verteilte Wolke (A: sie zieht zum Kollaps). Er ist eine Maschine, die genau diese Geometrie <strong>dauerhaft umformt</strong>: <em>kontrahiert</em> sie (Attention) und <em>expandidert</em> sie (Superposition/FFN); sein nutzbarer Zustand ist das <strong>metastabile Gleichgewicht</strong>, in dem die Kontraktion gerade kurz vor dem Totalkollaps und die Expansion gerade kurz vor totaler Interferenz steht. Der nicht-glatte Eingabe-Raum (B) ist der <strong>statische Fußabdruck</strong> genau dieser Kontraktions-/Expansions-Dynamik (A) — und dieselbe Kontraktions-Maschinerie ist der Grund, warum die Singularitäten der Eingabe nicht <em>geglättet</em>, sondern bis in die Ausgabe <em>getragen</em> werden. A liefert die <strong>Verben</strong> (sich zusammenziehen, sich aufblähen); B liefert das <strong>Nomen</strong> (den singulären Raum, auf dem diese Verben wirken).</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="widersprueche">
+  <span class="chap">Widersprüche zwischen A und B</span>
+  <h2>Wo die beiden unvereinbar stehen</h2>
+  <p class="fusenote" style="margin:0 0 12px">Faire Einordnung vorweg: A untersucht die <em>Schicht-Dynamik</em>, B die <em>Eingabe-Geometrie</em> — also zwei verschiedene Objekte desselben Systems. Sie kollidieren daher nicht an einer einzelnen Aussage. Aber es gibt drei <strong>echte Spannungslinien</strong>, die nur die Fusion auflöst:</p>
+
+  <div class="cbox">
+    <div class="head">1 · Glatte Umgebung (A) vs. nachgewiesene Nonsingularität (B)</div>
+    <p><span class="who a">A</span> modelliert die Tokens als Punkte, die <em>stetig</em> auf einer Hypersphäre fließen (LayerNorm → <code>S<sup>d−1</sup></code>); Attention ist eine glatte Anziehungskraft, und die Sätze (Geshkovski 2024) setzen eine <strong>glatte Umgebung</strong> voraus — die Dynamik ist ein sauberer Gradientenfluss.</p>
+    <p><span class="who b">B</span> widerlegt genau diese Glattheit für die <em>echten</em> Token-Eingaben: Die Manifold-Hypothese (jeder Punkt lokal wie ein flaches <code>ℝ<sup>d</sup></code>) wird an GPT-2, Llemma7B, Mistral7B und Pythia6.9B <strong>hochsignifikant verworfen</strong> (p bis 3×10⁻⁸ <em>nach</em> Multiplikationstest-Korrektur); Token-Nachbarschaften sind Cusps, Pinches und lokale Dimensionswechsel, der Raum ist sogar <strong>unzusammenhängend</strong> (isolierte Tokens mit Dimension 0). A's Dynamik nimmt eine glatte Fläche an, die B zeigt, dass der reale Eingabe-Raum <em>nicht</em> ist.</p>
+  </div>
+
+  <div class="cbox">
+    <div class="head">2 · Squeeze vs. Expand — zwei entgegengesetzte Kräfte im selben Modell</div>
+    <p><span class="who a">A</span> enthält <strong>zwei geometrisch entgegengesetzte Operationen</strong> im selben Block: Attention <em>kontrahiert</em> Tokens gegen einen Punkt (Rank-Collapse, Over-Smoothing), während Superposition/FFN sie in <em>mehr fast-orthogonale Richtungen als Dimensionen</em> <em>aufbläst</em> (Kapazitätsgewinn). Welches Bild gilt — Zusammenquetschen oder Auseinanderdehnen?</p>
+    <p><span class="who b">B</span> misst den <strong>statischen Fußabdruck</strong> genau dieses Widerspruchs: eine <em>radikal nicht-konstante</em> lokale intrinsische Dimension (GPT-2 Q1 = 20, Q2 = 389, Q3 = 531 — dreimodal; Llemma7B hat Median-Dimension 4096, Mistral7B nur 48 <em>bei identischem Vokabular</em>). Der Raum wird <em>gleichzeitig</em> zu niedriger Dimension gequetscht (der Gipfel bei ~20) und zu hoher Dimension expandiert (der Gipfel bei ~531). Beide Papiere tragen Daten für <em>beide</em> Enden; keines benennt eines als „die“ Geschichte.</p>
+  </div>
+
+  <div class="cbox">
+    <div class="head">3 · Polysemie: Pathologie (B) vs. Ressource (A) — die schärfste Linie</div>
+    <p><span class="who b">B</span> liest Homonyme und Polysemen („affect“, „monitor“, „aunder“) als <strong>Singularitäten</strong>: Sie sitzen an Cusps und sind die <em>Quelle</em> der beobachteten Prompt-Fragilität / Instabilität. Polysemie ist hier ein <strong>Problem</strong> (Fragilitätsquelle).</p>
+    <p><span class="who a">A</span> liest dieselbe Polysemie als <strong>Ressource</strong>: Elhages <em>Superposition</em> (mehr Features als Dimensionen, als fast-orthogonale Richtungen übereinandergelegt) und Gevas gemessene <em>3,6 Muster pro Schlüssel</em> sind der ökonomische <strong>Kapazitätsmechanismus</strong>. Polysemie ist hier ein <strong>Vorteil</strong> (Kapazitätsgewinn). Beide stimmen überein, dass Polysemie allgegenwärtig ist — sie nehmen <em>inkompatible Stellungen</em> ein, ob sie gut oder schlecht ist.</p>
+  </div>
+
+  <div class="warn">
+    <p><b>Fairst Check:</b> Nr. 3 ist die einzige Stelle, an der beide über <em>dasselbe Phänomen</em> (mehrdeutige Tokens) sprechen und zu <em>entgegengesetzten Werturteilen</em> kommen — das ist der engste echte Widerspruch. Nr. 1 und 2 sind Komplementaritäten, die erst durch die Trennung „Verben (A) vs. Nomen (B)“ zusammenpassen.</p>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="aufloesung">
+  <span class="chap">Auflösung</span>
+  <h2>Wie man die Spannungen zusammenlegt — und die verschmolzene Schlussfolgerung</h2>
+
+  <h3>R1 · Ein glatter Fluss auf einem singulären Maß</h3>
+  <p>Der scheinbare Widerspruch „glatte Dynamik (A) vs. nonsingulärer Raum (B)“ löst sich, indem man <em>Fluss</em> und <em>Maß</em> trennt. A's Theoreme betreffen das <strong>Vektorfeld</strong> (einen glatten Gradientenfluss auf der Kugel) — das ist die <em>Bewegungsgesetz</em>. B beschreibt die <strong>Verteilung der Punkte</strong>, auf die dieses Feld wirkt — das ist <em>nicht glatt</em>. Ein <strong>glatter Kontraktionsfluss, der auf eine singuläre Verteilung wirkt, glättet die Singularitäten nicht — er schärft sie.</strong> An einer Stelle, die schon ein Cusp ist (ein Homonym), erzeugt die Konzentration eine <em>schärfere</em> Spitze, keinen glatten Klumpen. A und B widersprechen sich also nicht: A sagt, <em>wie</em> sich Masse bewegt; B sagt, <em>wo</em> sie schon gebrochen ist. Zusammen: <strong>glatte Verben auf einem gebrochenen Nomen.</strong></p>
+
+  <h3>R2 · Squeeze und Expand sind eine einzige Spannung, nicht zwei Geschichten</h3>
+  <p>Die Kontraktion (A) setzt die <strong>untere</strong> Kante der lokalen-Distributionskurve, die Expansion/Superposition (A) die <strong>obere</strong> Kante. B's nicht-konstante Dimension ist der <strong>Gleichgewichtsfußabdruck beider</strong>. Das „metastabile Fenster“ (A — zu viele Schichten = Kollaps, zu wenige = kein Kontext-Binding) und B's „endliche, dreimodale, nicht-konstante Dimension“ sind <em>zwei Beschreibungen desselben Balances</em>: Die Dimension ist <em>aufgespreizt, aber endlich</em> — weder kollabiert auf 0 noch aufgefüllt bis zum Maximum. Beide Papiere messen dasselbe Gleichgewicht von der Zeit- bzw. von der Raum-Seite.</p>
+
+  <h3>R3 · Das Scharnier — Polysemie vereinigt beide Seiten</h3>
+  <p>Ein polysemes Token ist ein <strong>Keil/Fächer aus fast-orthogonalen Bedeutungsrichtungen, die an einem Hub zusammenlaufen</strong>. Genau diese Struktur ist <em>zugleich</em> (a) Elhages <strong>Superposition</strong> (Kapazität: viele Bedeutungen in fast-orthogonalen Richtungen) <em>und</em> (b) B's <strong>Cusp</strong> (eine singuläre Stelle, an der die lokale Geometrie 1D-ähnlich / nicht-manifold ist). Die <em>selbe</em> Struktur ist also sowohl Kapazitätsquelle (A) als auch Fragilitätsquelle (B). Die verschmolzene Schlussfolgerung: <strong>günstige polysemische Kapazität hat einen geometrischen Preis — sie erzeugt genau die singulären, fragilen Richtungen.</strong> B's „Problem“ (fragile Homonyme) ist eine <em>Direktfolge</em> von A's „Vorteil“ (Superposition): Man kann nicht billige, mehrdeutige Kapazität haben, ohne den Preis in Form geometrischer Singularität zu zahlen.</p>
+
+  <h3>R4 · „Verfeinerung“ ≠ „Glättung“</h3>
+  <p>A's Residual-/Verfeinerungs-Narrativ (der Residual-Stream dominiert, „sanftes Nachjustieren“) <em>klingt</em>, als würde das Netz die Repräsentation glätten. B's Theorem 2 sagt das Gegenteil: Singularitäten <em>überleben bis in die Ausgabe</em>. Auflösung: Der Residual-Stream <em>addiert auf / erhält</em> Information (<code>LayerNorm(x + Sublayer(x))</code>) — er <em>trägt</em> die Singularität nach vorn, er <em>vermittelt</em> sie nicht weg. Und A's Metastabilität (vor dem Kollaps aufhören) ist ein <strong>stabilen Mittelzustand</strong>, keine Glättung. Liest man „Verfeinerung“ als <em>informationserhaltenden Transport</em> statt als geometrisches Ausgleichen, stimmen beide überein: <strong>das Netz trägt seine singuläre Geometrie durch die Schichten bis in die Ausgabe.</strong></p>
+
+  <div class="note">
+    <p><b>Ein Bonus-Fit:</b> B's ehrliche, <em>per-Token</em> geteilte p-Werte (welcher Token ist singulär, welcher glatt) sind das <em>empirische</em> Pendant zu A's <em>per-Schicht</em>-Status-Tags (belegt / Analogie / offen / widersprüchlich). Beide sind „Lokalisierungsinstrumente“, die genau <em>wo</em> die Regel bricht anzeigen — der eine im Raum (Token), der andere in der Tiefe (Schicht/Mechanismus). Die Fusion führt beides zu einer einzigen Karte: <em>wo im Raum und in welcher Tiefe die Geometrie gebrochen ist.</em></p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="inhalt">
+  <span class="chap">Fusionierter Inhalt</span>
+  <h2>Was beide zusammen sagen</h2>
+
+  <h3>Das gemeinsame Objekt</h3>
+  <p>Ein Token-Raum ist eine <strong>Mischung</strong> aus (i) <em>regulären Regionen</em> — glatte, niedrigdimensionale Flächen (einzelne Wörter, Zahlen, Monate), und (ii) <em>singulären Stellen</em> — Cusps, Pinches, Dimensionswechsel und isolierte Punkte, die an mehrdeutigen, mehrsprachigen und fragmentären Tokens hängen. Auf genau diesem Objekt wirken zwei Verben des Blocks: <strong>Kontraktion</strong> (Attention, Positionsachse) und <strong>Expansion/Verfeinerung</strong> (FFN + Superposition, Featureachse).</p>
+
+  <h3>Eingabe-Geometrie (von B, belegt)</h3>
+  <p>Die <strong>Manifold-Hypothese</strong>: jeder Punkt hat eine Umgebung wie ein flaches <code>ℝ<sup>d</sup></code>. <strong>Dimension = Wachstumsrate</strong>: <code>v(r) ≈ K·r<sup>d</sup></code>, also Steigung <code>d</code> im log-log-Plot von „Volumen“ gegen „Radius“; Volumen ≈ Anzahl Punkte im Radius r (Monte-Carlo). Krümmung sind Korrekturterme (Gray 1974) — eine <em>Biegung</em> erlaubt ein glattes Manifold, ein <em>Knick</em> (plötzlicher Steigungswechsel) nicht; der Test sucht <strong>Knicke</strong>. Der <strong>Reach τ</strong> begrenzt, für welche Radien die Messung gültig ist (<code>r &lt; τ</code>). Die <strong>Fiber-Bundle</strong>-Verallgemeinerung: Umgebung <code>B × F</code> → log-log-Kurve <em>stückweise linear</em>, Steigungen = Dimensionen, und sie <strong>dürfen nur fallen</em>, wenn r wächst (<code>dim T → dim S</code>, <code>dim S &lt; dim T</code>); ein Knick nach <em>oben</em> widerlegt das Bündel. <strong>Der Test</strong> = Knick-Erkennung: Manifold-Test reagiert auf <em>jede</em> Steigungsänderung, Bündel-Test nur auf <em>Anstiege</em>; t-Test über Gleitfenster + <strong>Holm-Bonferroni</strong> (50.000 Tokens = 50.000 Tests). Validiert an drei bekannten Formen: Sphäre → keine Verwerfung; Cusp → Manifold verworfen, Bündel nicht (korrekt); Lollipop → beide. <strong>Ergebnis an echten Modellen:</strong> Manifold <strong>4/4 verworfen</strong> (p bis 3×10⁻⁸ nach Korrektur), Fiber-Bundle <strong>3/4</strong> (Pythia6.9B überlebt). GPT-2: <strong>dreimodal ~20 / ~389 / ~531</strong> + isolierte Dim-0-Tokens (unzusammenhängend). Singuläre Tokens = Homonyme/Polysemen + mehrsprachige/Fragment-Tokens. <strong>gDNA</strong>: Llemma7B &amp; Mistral7B, <em>dieselben</em> 32.016 Tokens, völlig andere Geometrie (Median 4096 vs. 48) → Prompts sind zwischen Modellen <strong>nicht portabel</strong>. <strong>Lemma 1:</strong> Kontext heilt die Singularitäten <em>nicht</em> dauerhaft. <strong>Theorem 2:</strong> Ein generischer Transformer trägt die Singularitäten <em>bis in die Ausgabe</em>, sobald <code>m &gt; 2wd/ℓ</code> und <code>w ≥ m</code>.</p>
+
+  <h3>Schicht-Dynamik (von A, belegt)</h3>
+  <p>Alles geschieht in einer <strong>Tabelle</strong>: Tokens als Zeilen, Features als Spalten. <strong>Attention arbeitet auf der Positionsachse</strong> (gewichtetes Summen über alle Positionen; Q/K/V; <code>β</code> = inverse Temperatur, die die Auswahl schärft), <strong>das FFN auf der Featureachse</strong> (auf jede Position separat und identisch). Weil sie in verschiedenen Richtungen schauen, stören sie sich nicht gegenseitig. <strong>Attention ist eine Anziehungskraft</strong>: ohne Gegenkraft kollabieren fast alle Tokens zu <em>einem</em> Punkt (bewiesen für <code>d ≥ 3</code>, exponentiell schnell für <code>d ≥ n</code>). Reale Modelle leben im <strong>metastabilen Zustand</strong> — zwei Geschwindigkeiten: Phase 1 (schnell, nützliche Clusterbildung), Phase 2 (sehr viel langsamer, alles verschmilzt = Tod); 12/24/96 Schichten reichen für Phase 1, nicht für Phase 2 (empirisch: token-uniformity, over-smoothing, rank-collapse, gemessen an ALBERT XLarge v2). Die <strong>Form</strong> des Kollaps hängt vom Spektrum der Value-Matrix V ab (V = I → Ecken eines Polytops; einfach positives Leit-Eigenwert → 3 parallele Hyperebenen; paranormal → Polytop × Unterräume; V = −I → ein Punkt im Ursprung). Das <strong>FFN ist ein Key-Value-Speicher</strong> (W₁ = Schlüssel/Muster, W₂ = Werte/nächste-Wort-Verteilung; ~3,6 Muster pro Schlüssel; Schicht 1–9 oberflächlich, 10–16 semantisch; nur 10–50 % der 4096 Zellen aktiv = Sparsity). <strong>Superposition:</strong> spärliche Features werden als fast-orthogonale Richtungen übereinandergelegt (mehr Features als Dimensionen), erkauft mit Interferenz und polysemantischen Neuronen; ein echter Phasenwechsel; <em>widerspricht</em> Keups „Falten“-Bild, das leere Dimensionen <em>braucht</em> (unterschiedliche Dimensionsregime). Der <strong>Residual-Stream dominiert</strong>: <code>LayerNorm(x + Sublayer(x))</code> — das FFN <em>addiert</em> statt zu ersetzen, es <em>verfeinert</em> (Kompro­miss, selten Ersetzung).</p>
+
+  <h3>Die Verschmelzung — zwei Verben auf einem Objekt</h3>
+  <table class="map">
+    <tr><th>Was B im Raum misst</th><th>Was A in der Tiefe dazu sagt</th></tr>
+    <tr><td>nicht-konstante lokale Dimension (20 … 531)</td><td>Unterkante = Kontraktion, Oberkante = Superposition; Metastabilität hält die Spreizung endlich</td></tr>
+    <tr><td>Cusps / Pinches an Homonymen</td><td>Superposition: dieselben Richtungen sind Kapazität; Kontraktion schärft sie</td></tr>
+    <tr><td>Rank-Collapse / „alles → 1 Punkt“ (empirisch)</td><td>der bewiesene Kollaps von Attention; Phase 2 des metastabilen Prozesses</td></tr>
+    <tr><td>Singularitäten in der Ausgabe (Theorem 2)</td><td>Residual-Stream trägt sie (additiv, nicht glättend) — „Verfeinerung“ ≠ „Glättung“</td></tr>
+    <tr><td>Prompts nicht portabel (gDNA)</td><td>Training formt die singuläre Geometrie je Modell — der metastabile Punkt ist modell-spezifisch</td></tr>
+    <tr><td>Lemma 1: Kontext heilt nicht</td><td>Kontraktion erzeugt die Konzentration <em>erneut</em> in jeder Schicht</td></tr>
+  </table>
+
+  <div class="m">B · Eingabe:   v(r) ≈ K·r<sup>d</sup>  ⇒  log v = log K + d·log r   (Steigung = d; Knick ⇒ Singularität)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bündel:    O(r<sup>dim T</sup>) (r ≤ ρ) ,  + O((r−ρ)<sup>dim S</sup>) (r &gt; ρ),  dim S &lt; dim T   (nur fallende Steigungen)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Theorem 2: m &gt; 2wd/ℓ  ∧  w ≥ m   ⇒  Singularitäten erreichen die Ausgabe<br>
+  A · Schicht:  Attn = Σⱼ softmaxⱼ(β·⟨xᵢ,xⱼ⟩)·xⱼ   (Kontraktion, Positionsachse; β = 1/T)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kollaps:    x₁…xₙ → ein Punkt,  d ≥ 3   (exponentiell, d ≥ n)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FFN:        x'' = LayerNorm( x' + W₂·σ(W₁ x') )   (additive Verfeinerung, Featureachse)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Superposition: N<sub>f</sub> &gt; d Features, fast-orthogonal, Interferenz ∝ (N<sub>f</sub>/d)²<br>
+  FUSION:     glatter Kontraktionsfluss (A)  ∘  singuläres, polysemes Maß (B)  =  Cusps schärfen sich und überleben.</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="visualisierung">
+  <span class="chap">Visualisierung</span>
+  <h2>Kontraktion (A) trifft singuläre Geometrie (B)</h2>
+  <p>Eine Token-Wolke mit <strong>regulären Konzept-Clustern</strong> (glatte 2D-Flächen) und <strong>singulären Homonym-Cusps</strong> (Fächer aus fast-orthogonalen Bedeutungsrichtungen — die „affect/monitor“-Stellen von B). Der <strong>Kontraktions-Regler</strong> spielt A's Dynamik ab: Phase 1 zieht die Cluster zusammen <em>und schärft dabei die Cusps</em> (die Fächer werden zu spitzen Stacheln); Phase 2 (Rank-Collapse) zieht die regulären Wolken zum Mittelpunkt — aber die <strong>Cusps überleben</strong> (sie kollabieren langsamer) und bleiben als singuläre Richtungen stehen. Der <strong>Probe</strong> misst B: die lokale intrinsische Dimension (Steigung der Punktzahl im Radius). Auf einem Cusp zeigt sie den <strong>Knick ≈ 1</strong> (Singularität), auf einem Cluster eine Gerade ≈ 2 (Manifold). Das ist die Fusion in einem Bild: A's Verben formen B's Nomen.</p>
+
+  <div class="lab">
+    <h4>Token-Wolke unter Kontraktion</h4>
+    <p class="labnote">Schiebe <em>Kontraktion</em> (oder „Durchlaufen“) und beobachte, wie die Cusps (rosa) sich schärfen und den Kollaps überleben. Wechsle die <em>Probe</em> zwischen Cusp und Cluster — die lokale Dimension (rechte Seite) kippt von ≈2 auf ≈1. Klick setzt die Probe frei.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Kontraktion / Schicht <span class="val" id="vL">0</span></label>
+        <input type="range" id="sL" min="0" max="40" step="1" value="0">
+      </div>
+      <button id="bProbe" class="on">Probe: Homonym-Cusp</button>
+      <button id="bPlay" class="pri">▶ Durchlaufen</button>
+    </div>
+    <canvas id="cViz" height="440"></canvas>
+    <div class="cap">Links: die Wolke (rosa Fächer = Cusps, Klicke zum Setzen der Probe). Rechts: log-log Punktzahl → lokale Dimension + Kontraktions-Status. Didaktischer 2D-Nachbau — keine Modellgewichte.</div>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="provenienz">
+  <span class="chap">Provenienz</span>
+  <h2>Die beiden Quellen</h2>
+  <div class="card">
+    <p><a href="../buecher/antioed.html"><strong>buecher/antioed.html</strong></a> <span class="tag t-a">A</span></p>
+    <p>„Wie ein Sprachmodell denkt“ (≈ <em>wie ein LLM denkt</em>): auf sieben Facharbeiten (Vaswani, Geshkovski 2023/24, Geva, Elhage, Shazeer, Keup) zurückgeführte Erklärung, was ein Transformer-Block tut — Attention als Kontraktion (bewiesener Kollaps für <code>d ≥ 3</code>, Metastabilität, gemessen an ALBERT XLarge v2), das FFN als Key-Value-Speicher, der dominierende Residual-Stream, Superposition, mit ehrlichen Belegstatus-Tags (belegt / Analogie / offen / widersprüchlich).</p>
+  </div>
+  <div class="card">
+    <p><a href="../token_manifold_verletzt.html"><strong>token_manifold_verletzt.html</strong></a> <span class="tag t-b">B</span></p>
+    <p>Interaktive Aufbereitung von Robinson, Dey &amp; Chiang (NeurIPS 2025, arXiv:2504.01002): ein statistischer <em>Manifold-Test</em> (Dimension = Steigung, Knick-Erkennung, Fiber-Bundle, Holm-Bonferroni), der die Manifold-Hypothese für die Token-Embeddings von GPT-2, Llemma7B, Mistral7B, Pythia6.9B <strong>4/4 verworfen</strong> zeigt; Cusps/Pinches an Homonymen, Lemma 1 (Kontext heilt nicht) und Theorem 2 (Singularitäten überleben bis in die Ausgabe).</p>
+  </div>
+</section>
+
+<footer>
+  <p>Round-1-Fusion (id 065) · Kernthese: A liefert die Verben (Kontraktion + Expansion), B das Nomen (der singuläre, polyseme Token-Raum); Polysemie ist das Scharnier, das beides verbindet. Alle Aussagen sind auf die beiden Quellen zurückführbar; die Visualisierung ist ein didaktischer 2D-Nachbau, der beide Mechaniken vereint.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+document.documentElement.classList.toggle('dark', true);
+$('btnTheme').addEventListener('click',function(){ document.documentElement.classList.toggle('dark'); });
+
+var cv=$('cViz'); if(!cv) return;
+var DPR=Math.min(window.devicePixelRatio||1,2);
+var TAU=Math.PI*2;
+function lerp(a,b,t){return a+(b-a)*t;}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+/* ---- deterministic PRNG ---- */
+var _s=987654321;
+function rnd(){ _s=(_s*1664525+1013904223)&0xffffffff; return (_s>>>0)/4294967296; }
+
+/* ---- build the token cloud ---- */
+var CLUSTERS=[ {x:-0.55,y:0.50}, {x:0.55,y:0.50}, {x:0.55,y:-0.50}, {x:-0.55,y:-0.50} ];
+var CR=0.22, CPER=40;
+var tokens=[];
+CLUSTERS.forEach(function(c,gi){
+  for(var k=0;k<CPER;k++){
+    var a=rnd()*TAU, rr=CR*Math.sqrt(rnd());
+    tokens.push({kind:'reg',g:gi,cx:c.x,cy:c.y,bx:c.x+Math.cos(a)*rr,by:c.y+Math.sin(a)*rr});
+  }
+});
+var HUBS=[ {x:0.0,y:0.02}, {x:-0.02,y:0.34}, {x:0.34,y:-0.14} ];
+var ARMN=8, ARMLEN=0.15, TILT=0.36;
+HUBS.forEach(function(h){
+  tokens.push({kind:'hub',cx:h.x,cy:h.y,bx:h.x,by:h.y});
+  for(var side=-1;side<=1;side+=2){
+    var baseAng=(rnd()-0.5)*0.14;
+    for(var i=1;i<=ARMN;i++){
+      tokens.push({kind:'arm',cx:h.x,cy:h.y,hubX:h.x,hubY:h.y,baseAng:baseAng,side:side,frac:i/ARMN});
+    }
+  }
+});
+var N=tokens.length;
+var LCRIT=16;
+var rP=0.10;
+
+function ptPos(t,L){
+  var cl=1-Math.exp(-0.12*L);
+  var co=L>LCRIT ? 1-Math.exp(-(L-LCRIT)*0.14) : 0;
+  var x,y;
+  if(t.kind==='reg'){
+    x=lerp(t.bx,t.cx,cl); y=lerp(t.by,t.cy,cl);
+    x=lerp(x,0,co); y=lerp(y,0,co);
+  } else if(t.kind==='hub'){
+    var cc=co*0.55; x=t.cx; y=t.cy;
+    x=lerp(x,0,cc); y=lerp(y,0,cc);
+  } else {
+    var ang=t.baseAng + t.side*TILT*(1-0.85*cl);
+    var len=ARMLEN*t.frac*(1-0.45*cl);
+    x=t.hubX+Math.cos(ang)*len; y=t.hubY+Math.sin(ang)*len;
+    var cc2=co*0.55; x=lerp(x,0,cc2); y=lerp(y,0,cc2);
+  }
+  return [x,y];
+}
+
+/* ---- palette from CSS vars (theme-reactive) ---- */
+function pal(){
+  var cs=getComputedStyle(document.documentElement);
+  function g(n){return cs.getPropertyValue(n).trim();}
+  return { bg:g('--panel2')||'#111', ink:g('--ink')||'#eee', ink2:g('--ink2')||'#aaa',
+           ink3:g('--ink3')||'#777', line:g('--line')||'#333', acc:g('--acc')||'#5eead4',
+           acc2:g('--acc2')||'#818cf8', warn:g('--warn')||'#fbbf24', err:g('--err')||'#fb7185', ok:g('--ok')||'#4ade80' };
+}
+function hexToRgb(str){
+  str=(str||'').trim();
+  if(str.charAt(0)==='#'){
+    var h=str.slice(1);
+    if(h.length===3){ h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    var n=parseInt(h,16);
+    if(isNaN(n)) return [200,200,200];
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  var m=str.match(/rgba?\(([^)]+)\)/);
+  if(m){ var p=m[1].split(',').map(function(x){return parseFloat(x);}); return [p[0]||0,p[1]||0,p[2]||0]; }
+  return [200,200,200];
+}
+function rgba(rgb,a){ return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')'; }
+
+/* ---- state ---- */
+var L=0, playing=false, probeMode='cusp', freePos=null, LAY=null;
+
+function probeXY(){
+  var co=L>LCRIT ? 1-Math.exp(-(L-LCRIT)*0.14) : 0;
+  if(probeMode==='free'){ return freePos; }
+  if(probeMode==='cusp'){ var h=HUBS[0], cc=co*0.55; return [lerp(h.x,0,cc), lerp(h.y,0,cc)]; }
+  var c=CLUSTERS[0]; return [lerp(c.x,0,co), lerp(c.y,0,co)];
+}
+
+/* local dimension = log-log slope of count(r) using a fixed radius */
+function localDim(pos,pts){
+  var c1=0,c2=0,i;
+  for(i=0;i<pts.length;i++){
+    var d=Math.hypot(pts[i][0]-pos[0],pts[i][1]-pos[1]);
+    if(d<=rP*0.5) c1++;
+    if(d<=rP*2) c2++;
+  }
+  c1=Math.max(c1,1); c2=Math.max(c2,c1);
+  var slope=Math.log10(c2)/Math.log10(4);  /* /log10(2rP / (rP/2)) = /log10(4) */
+  return {slope:slope,c1:c1,c2:c2};
+}
+function curveFor(pos,pts){
+  var D=[];
+  for(var i=0;i<pts.length;i++){ var d=Math.hypot(pts[i][0]-pos[0],pts[i][1]-pos[1]); if(d>1e-6) D.push(d); }
+  D.sort(function(a,b){return a-b;});
+  var curve=[];
+  for(var k=1;k<D.length;k++){ curve.push([Math.log10(D[k]+1e-6), Math.log10(k)]); }
+  return curve;
+}
+
+function draw(){
+  var P=pal();
+  var w=cv.clientWidth, h=parseInt(cv.getAttribute('height'),10)||440;
+  cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
+  var ctx=cv.getContext('2d'); ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.fillStyle=P.bg; ctx.fillRect(0,0,w,h);
+
+  /* layout */
+  var mX0=40, mY0=16, mW=w*0.585-mX0-6, mH=h-64;
+  var mCx=mX0+mW/2, mCy=mY0+mH/2;
+  var mainScale=Math.min(mW,mH)/2.3;
+  function X(x){return mCx+x*mainScale;}
+  function Y(y){return mCy-y*mainScale;}
+  LAY={mCx:mCx,mCy:mCy,mainScale:mainScale};
+
+  var pts=[]; for(var i=0;i<N;i++){ pts.push(ptPos(tokens[i],L)); }
+  var pos=probeXY();
+
+  /* main frame */
+  ctx.strokeStyle=P.line; ctx.lineWidth=1;
+  ctx.strokeRect(mX0,mY0,mW,mH);
+  ctx.globalAlpha=0.5;
+  ctx.beginPath(); ctx.moveTo(mX0,mCy); ctx.lineTo(mX0+mW,mCy);
+  ctx.moveTo(mCx,mY0); ctx.lineTo(mCx,mY0+mH); ctx.stroke();
+  ctx.globalAlpha=1;
+
+  /* cusp spokes */
+  var hubRgb=hexToRgb(P.err);
+  for(var i2=0;i2<N;i2++){
+    var t=tokens[i2];
+    if(t.kind!=='arm') continue;
+    var hp=ptPos({kind:'hub',cx:t.hubX,cy:t.hubY,bx:t.hubX,by:t.hubY},L);
+    ctx.strokeStyle=rgba(hubRgb,0.28); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(X(hp[0]),Y(hp[1])); ctx.lineTo(X(pts[i2][0]),Y(pts[i2][1])); ctx.stroke();
+  }
+
+  /* probe radius circle */
+  var posPx=[X(pos[0]),Y(pos[1])];
+  ctx.strokeStyle=rgba(hexToRgb(P.warn),0.85); ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.arc(posPx[0],posPx[1],rP*mainScale,0,TAU); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle=rgba(hexToRgb(P.warn),0.06);
+  ctx.beginPath(); ctx.arc(posPx[0],posPx[1],rP*mainScale,0,TAU); ctx.fill();
+
+  /* points */
+  var GCOL=[hexToRgb(P.acc),hexToRgb(P.acc2),hexToRgb(P.warn),hexToRgb(P.ok)];
+  for(var i3=0;i3<N;i3++){
+    var tk=tokens[i3], p=pts[i3];
+    var inside=Math.hypot(p[0]-pos[0],p[1]-pos[1])<=rP;
+    var col= tk.kind==='reg'? GCOL[tk.g] : hubRgb;
+    var r= tk.kind==='hub'?6 : (tk.kind==='arm'?3.1:3.4);
+    if(inside) r+=1.2;
+    ctx.fillStyle=rgba(col, inside?1:0.9);
+    ctx.beginPath(); ctx.arc(X(p[0]),Y(p[1]),r,0,TAU); ctx.fill();
+    if(tk.kind==='hub'){ ctx.strokeStyle=P.bg; ctx.lineWidth=1.5; ctx.stroke(); }
+  }
+
+  /* probe marker */
+  ctx.fillStyle=P.ink; ctx.beginPath(); ctx.arc(posPx[0],posPx[1],5,0,TAU); ctx.fill();
+  ctx.strokeStyle=P.bg; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=P.ink; ctx.font='600 11px ui-monospace,monospace'; ctx.textAlign='left';
+  var lbl= probeMode==='cusp'?'Probe: Homonym-Cusp' : (probeMode==='cluster'?'Probe: Konzept-Cluster':'Probe: frei');
+  ctx.fillText(lbl, mX0+8, mY0+16);
+
+  /* ---- right panel ---- */
+  var rX0=w*0.605, rW=w-rX0-12;
+  var mpY0=16, mpH=(h-64)*0.5;
+  var stY0=mpY0+mpH+12, stH=(h-64)-mpH-12;
+
+  /* mini log-log curve */
+  var curve=curveFor(pos,pts);
+  ctx.strokeStyle=P.line; ctx.lineWidth=1; ctx.strokeRect(rX0,mpY0,rW,mpH);
+  if(curve.length>1){
+    var xs=curve.map(function(c){return c[0];});
+    var xmin=Math.min.apply(null,xs), xmax=Math.max.apply(null,xs);
+    var ymin=0, ymax=Math.log10(curve.length);
+    function MX(x){ return rX0+12 + (x-xmin)/(xmax-xmin+1e-9)*(rW-24); }
+    function MY(y){ return mpY0+mpH-12 - (y-ymin)/(ymax-ymin+1e-9)*(mpH-24); }
+    ctx.strokeStyle=P.acc; ctx.lineWidth=2; ctx.beginPath();
+    for(var k=0;k<curve.length;k++){ var XX=MX(curve[k][0]), YY=MY(curve[k][1]); if(k===0)ctx.moveTo(XX,YY); else ctx.lineTo(XX,YY); }
+    ctx.stroke();
+  }
+  ctx.fillStyle=P.ink3; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='left';
+  ctx.fillText('log Punktzahl  vs.  log Radius', rX0+8, mpY0+14);
+  ctx.fillText('Knick ⇒ Singularität [B]', rX0+8, mpY0+mpH-8);
+
+  /* readouts */
+  var dim=localDim(pos,pts);
+  var sing=dim.slope<1.6;
+  ctx.font='600 13px ui-monospace,monospace'; ctx.textAlign='left';
+  ctx.fillStyle=P.ink;
+  ctx.fillText('lokale Dimension  d̂ ≈ '+dim.slope.toFixed(2), rX0+4, stY0+4);
+  ctx.font='600 12px ui-monospace,monospace';
+  ctx.fillStyle= sing?P.err:P.ok;
+  ctx.fillText(sing? '≈ 1 · Knick → SINGULÄR (Cusp) [B]' : '≈ 2 · flach → lokal Manifold [B]', rX0+4, stY0+24);
+
+  var phase, pc;
+  if(L<8){ phase='Phase 1 · Kontraktion bildet Cluster (A)'; pc=P.acc; }
+  else if(L<LCRIT){ phase='metastabil · Zustand echter Modelle (A)'; pc=P.ok; }
+  else { phase='Phase 2 · Rank-Collapse (A)'; pc=P.err; }
+  ctx.font='600 11.5px ui-monospace,monospace';
+  ctx.fillStyle=pc; ctx.fillText(phase, rX0+4, stY0+48);
+  ctx.fillStyle=P.ink2;
+  ctx.fillText('Cusps schärfen sich & überleben → Output (Theorem 2, B)', rX0+4, stY0+66);
+  ctx.fillStyle=P.ink3; ctx.font='10.5px ui-monospace,monospace';
+  ctx.fillText('Zählen: c(r/2)='+dim.c1+'  c(2r)='+dim.c2, rX0+4, stY0+84);
+
+  /* bottom time axis */
+  var x0=44, x1=w-18, y=h-26;
+  ctx.strokeStyle=P.line; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+  var bx0=x0+(8/40)*(x1-x0), bx1=x0+(24/40)*(x1-x0);
+  ctx.fillStyle=rgba(hexToRgb(P.ok),0.16);
+  ctx.fillRect(bx0,y-9,bx1-bx0,18);
+  ctx.fillStyle=P.ink3; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+  for(var tt=0;tt<=40;tt+=10){ var xx=x0+(tt/40)*(x1-x0); ctx.strokeStyle=P.line; ctx.beginPath(); ctx.moveTo(xx,y); ctx.lineTo(xx,y+4); ctx.stroke(); ctx.fillText(tt,xx,y+15); }
+  ctx.fillText('metastabile Zone',(bx0+bx1)/2,y-13);
+  var mx=x0+(clamp(L,0,40)/40)*(x1-x0);
+  ctx.strokeStyle=P.acc; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(mx,y-12); ctx.lineTo(mx,y+12); ctx.stroke();
+}
+
+/* ---- interactions ---- */
+function probeLabel(){
+  $('bProbe').textContent = probeMode==='cusp' ? 'Probe: Homonym-Cusp' : (probeMode==='cluster'?'Probe: Konzept-Cluster':'Probe: frei (Klick)');
+}
+$('sL').addEventListener('input',function(e){ L=+e.target.value; playing=false; $('vL').textContent=Math.round(L); });
+$('bPlay').addEventListener('click',function(){ playing=!playing; if(playing) L=0; });
+$('bProbe').addEventListener('click',function(){
+  if(probeMode==='cusp'){ probeMode='cluster'; }
+  else { probeMode='cusp'; freePos=null; }
+  probeLabel();
+});
+cv.addEventListener('click',function(e){
+  if(!LAY) return;
+  var rct=cv.getBoundingClientRect();
+  var px=e.clientX-rct.left, py=e.clientY-rct.top;
+  freePos=[(px-LAY.mCx)/LAY.mainScale, -(py-LAY.mCy)/LAY.mainScale];
+  probeMode='free'; probeLabel();
+});
+
+function loop(){
+  if(playing){ L+=0.22; if(L>=40){ L=40; playing=false; } $('sL').value=Math.round(L); $('vL').textContent=Math.round(L); }
+  draw();
+  requestAnimationFrame(loop);
+}
+probeLabel();
+loop();
+})();
+</script>
+</body>
+</html>

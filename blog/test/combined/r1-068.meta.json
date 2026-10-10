@@ -1,0 +1,16 @@
+{
+  "no": "068",
+  "a": "concept_attractors.html",
+  "b": "signal_analysis2.html",
+  "a_title": "Concept Attractors in LLMs — Interactive Explainer (Chytas & Singh, UW-Madison 2025)",
+  "b_title": "Signalanalyse für LLM-Internals – Interaktiv (Fourier bis SAE)",
+  "combined_theme": "attractor-dynamics-signal-decomposition",
+  "one_line": "LLM-Layer als kontraktives Dynamiksystem, dessen Attractor (A) man als sparsenen Punkt in der Feature-Basis der Signalanalyse (B) liest; die Kontraktion (A) drückt die Superposition/Interferenz (B) asympotisch (∝ λ^l), sodass nur der spare Attractor-Kern bleibt — Wohin (A) × Woraus (B).",
+  "contradictions": [
+    "Saubere Punkt-Konvergenz (A: Prompts 'converge to nearly the same point', Attractor = eindeutige invariante Menge, Detektion per Cosinus-Distanz) vs. unvermeidbare Superposition (B: 'Mehre Features als Dimensionen', 'Interferenz unvermeidbar', Konzepte in denselben Neuronen gemischt) — A setzt eine trennbare Punkt-Struktur voraus, B sagt, der Zustand ist ein gemischtes Superpositionssignal.",
+    "Training-free direct read-off (A: 'single forward pass', kein Training/keine Gradienten) vs. interpretierbare Features nur via gelerntem, sparsen, überbestimmten SAE-Decoder (B: SAEs 'werden auf Residual-Stream-Aktivierungen trainiert') — A liest den Vektor direkt ab, B's interpretierbare Features entstehen erst durch Basis-Fitting.",
+    "Rolle der Nicht-Linearität: A macht die kontraktive/Nichtlinearität zum Kern des Phänomens (erzeugt den Attractor), B behandelt den Bus als linear-additiv und die Nicht-Linearität (GELU) nur als 'Harmonikengenerator' neuer Frequenzen — zwei entgegengesetzte Bewertungen derselben Nicht-Linearität."
+  ],
+  "resolution": "A = Längs-/Dynamikstruktur (Wohin konvergiert), B = Querschnitts-/Basisstruktur (Woraus besteht jeder Zustand). Der Attractor (A) ist der Fixpunkt der Layer-Iteration, gelesen als sparer Punkt (|S|=k) in B's Feature-Basis; die Kontraktion (A) skaliert genau die transienten Superpositions-Koeffizienten (B) mit λ<1 pro Schritt, sodass E_super ∝ λ^l → 0 und der spare Kern = Attractor bleibt. Training-free gilt für die Intervention (A), die Basiswahl (PCA/ICA unsupervised, SAE gelernt) dient dem Lesen (B); Nicht-Linearität erzeugt Features (B) und deren iterierte, kontraktive Komposition konvergiert (A). Steering = Schritt entlang sparer Feature-Richtung, Detektion = Abgleich der sparen Feature-Signatur statt rohem Cosinus.",
+  "viz": "2D-Schnitt einer 6-Feature-Basis: helle Kern-Features bauen den Attractor A* auf, gedämpfte transiente Features tragen die Superposition; 14 gestreute Prompts starten als Superposition und konvergieren schichtweise (Tiefe als Zeit) zu A*. Regler für Kontraktion λ und Sparsity |S|, Play/Reset; Live-Readouts Tiefe l, dist→A*, Kern |S|, λ, Verdict. Zeigt die fusionierte Formel: Kontraktion drückt die Superposition (∝ λ^l) und lässt den sparen Attractor-Kern übrig."
+}

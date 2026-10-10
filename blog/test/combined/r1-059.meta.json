@@ -1,0 +1,16 @@
+{
+  "no": "059",
+  "a": "mod.html",
+  "b": "egg.html",
+  "a_title": "How a Neural Network Learns Addition on a Circle",
+  "b_title": "Origami in N Dimensions – Dense–ReLU–Dense Network",
+  "combined_theme": "falten-phasen-als-koordinatenwechsel",
+  "one_line": "Beide Netze rechnen nicht im Eingaberaum, sondern wechseln Koordinaten (Falten in 3D bzw. Fourier-Phasen auf dem Torus), bis die Antwort lokal lesbar wird — als Seite einer Readout-Ebene bzw. als Interferenzmaximum; das Readout ist in beiden Fällen Korrelation gegen feste Vorlagen (eine Ebenennormale vs. P Fourier-Templates), und die Gewichte sind lesbar, weil der Lösungsraum dünn ist.",
+  "contradictions": [
+    "Readout: egg.html entscheidet mit genau einer linearen Hyperebene (Klasse = sign eines Skalars, Schwelle = Mittelpunkt der beiden Klassen-Höhen), mod.html mit einer Bank aus P=113 Kandidaten-Korrelatoren logit(c)=Σₖ αₖ cos(ωₖ(a+b−c)) und argmax — eine Ebene kann keine Phasen-Korrelator-Bank implementieren.",
+    "Erste Schicht: egg.htmls Lemma 1 (Space-Folding) sagt, eine Dense-ReLU-Schicht bilde gerade Pfade auf gerade (konvexe) Bahnen ab, χ≈0, echte nicht-konvexe Falten erst mit 2 Hidden-Layer — mod.htmls erster Block (Attention+MLP) tut dagegen schon global nicht-stückweise-lineare Arbeit (Grad-2-Produkte, trigonometrische Additionstheoreme).",
+    "Erklärung: mod.html behauptet Selbsterfindung (das Netz hat den Fourier-Algorithmus selbst entdeckt; 5 Cosinus-Terme: 95% FVE, Projektion verbessert Test-Loss 2.4e-7→4.7e-8), egg.html behandelt die Lösung als geometrisch erzwungen (Button 'Optimal' lädt die bekannte Paper-Lösung: 3 Faltlinien mit Normalen im 120°, Readout (1,1,1))."
+  ],
+  "resolution": "Kein Fakt-Widerspruch, sondern verschiedene Architekturkanonen und Perspektiven: Lemma 1 gilt nur für stückweise lineare Netze, mod.htmls quadratischer Phasen-Transport liegt außerhalb des Anwendungsbereichs. Beide Readouts sind dieselbe Operation in zwei Auflösungen — Korrelation gegen feste Vorlagen plus lokale Probe (1 Template/1 Schwelle für 2 Klassen vs. P Templates/argmax für P Antworten). Diskretes Aktivierungsmuster (Hamming-Würfel, χ=1−r₁/r₂) und kontinuierlicher Phasen-Code (Torus, Ausrichtung bei cos=1) sind zwei Code-Arten desselben Transports. 'Entdeckung' (A) und 'Notwendigkeit' (B) sind zwei Seiten desselben dünnen Lösungsrands: Optimizer und Analyst landen am gleichen Ort, weil es fast nur diesen gibt.",
+  "viz": "Zweipanel-Canvas (theme-aware, Inline-Daten, seeded PRNG): links egg — Disk/Ring-Punkte, 3 Faltlinien (Normalen 120°), verschiebbare Sehne Γ mit Falthöhe h(t), Readout-Ebene bei der analytischen Mittelpunktsschwelle, rote Kreuzungen an der Schwelle, goldene Falz-Markierungen, Bit-Muster-Codes und N1–N3-Aktivierungs-Lanes; rechts mod — P=113-Uhr mit a, b, c*=(a+b) mod 113 und Logit-Kurve Σₖ cos(ωₖ(a+b−c)) über alle Kandidaten mit den realen Key-Frequenzen {14,35,41,42,52}; Regler für Pfad y₀, a, b und K∈1..5 zeigen, wie konstruktive Interferenz den Peak bei c* spitzt und falsche Positionen abstummt."
+}

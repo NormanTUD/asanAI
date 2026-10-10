@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Token-Fokus — Die lesbare Reise durch den chaotischen Raum</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1c2b; --muted:#6b6b7b; --card:#ffffff; --card-border:#e3ddcd;
+  --panel:#f1eee4; --grid:#dcd6c8; --accent:#2b6cb0; --accent2:#c05621;
+  --probe:#c0392b; --bar:#3182ce; --bar-muted:#b7b0a2; --link:#2b6cb0; --code-bg:#efece2;
+}
+html.dark{
+  --bg:#0f1626; --fg:#e2e8f0; --muted:#8fa0bb; --card:#111a2e; --card-border:#26374f;
+  --panel:#0d1526; --grid:#1d2b45; --accent:#59b7ff; --accent2:#f0a35e;
+  --probe:#ff7675; --bar:#63b3ed; --bar-muted:#3a4a63; --link:#6fb5ff; --code-bg:#0c1424;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:Georgia,"Times New Roman",serif;line-height:1.62;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:32px 22px 80px}
+h1{font-size:2.05em;line-height:1.18;letter-spacing:-.01em;margin-bottom:8px}
+.subtitle{color:var(--muted);font-size:.95em;font-style:italic;margin-bottom:26px;border-bottom:1px solid var(--card-border);padding-bottom:18px}
+section{margin-top:30px}
+h2{font-size:1.4em;margin:26px 0 12px;color:var(--accent);letter-spacing:-.01em}
+h3{font-size:1.08em;margin:18px 0 8px;color:var(--fg)}
+p{margin-bottom:12px}
+.lead{font-size:1.06em}
+b,strong{color:var(--fg)}
+.tag{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78em;background:var(--code-bg);color:var(--accent2);border:1px solid var(--card-border);border-radius:5px;padding:1px 6px;margin:0 1px}
+.cite-src{color:var(--muted);font-style:italic;font-size:.92em}
+blockquote{border-left:3px solid var(--accent2);margin:14px 0;padding:8px 16px;background:var(--panel);border-radius:0 8px 8px 0;color:var(--fg)}
+blockquote .by{display:block;margin-top:6px;color:var(--muted);font-size:.86em;font-style:italic}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92em}
+th,td{border:1px solid var(--card-border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel);color:var(--accent);font-weight:700}
+td:first-child{color:var(--muted);white-space:nowrap;font-weight:600}
+ul,ol{margin:0 0 12px 22px}
+li{margin-bottom:6px}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--code-bg);border:1px solid var(--card-border);border-radius:7px;padding:10px 14px;margin:10px 0;overflow-x:auto;font-size:.92em;color:var(--fg);line-height:1.5}
+.formula i{color:var(--accent2)}
+.wbox{background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:14px 16px;margin:14px 0}
+.wbox h4{margin:0 0 6px;color:var(--accent2);font-size:1em}
+.wbox .vs{color:var(--muted);font-size:.86em}
+.viz-controls{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;background:var(--card);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;margin:14px 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82em}
+.viz-controls label{display:flex;align-items:center;gap:7px;color:var(--muted)}
+.viz-controls .val{color:var(--accent2);min-width:34px}
+input[type=range]{accent-color:var(--accent);width:118px}
+input[type=checkbox]{accent-color:var(--accent2)}
+button.vbtn{font-family:inherit;font-size:.82em;background:var(--accent);color:var(--bg);border:none;border-radius:7px;padding:6px 14px;cursor:pointer}
+button.vbtn:hover{opacity:.9}
+canvas#fviz{width:100%;height:470px;display:block;border:1px solid var(--card-border);border-radius:10px;background:var(--card);touch-action:none;cursor:grab}
+canvas#fviz:active{cursor:grabbing}
+.viz-readout{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82em}
+.viz-readout span{color:var(--muted)}
+.viz-readout b{color:var(--accent2)}
+.viz-intro{color:var(--muted);font-size:.95em;margin-bottom:6px}
+.caveat{color:var(--muted);font-size:.82em;font-style:italic;margin-top:10px}
+a{color:var(--link)}
+.prov{list-style:none;margin:0 0 10px 0}
+.prov li{margin-bottom:10px;padding:12px 14px;background:var(--card);border:1px solid var(--card-border);border-radius:10px}
+.prov b{color:var(--accent)}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--card-border);color:var(--muted);font-size:.82em;font-style:italic}
+@media(max-width:560px){h1{font-size:1.6em}.viz-controls{font-size:.76em}input[type=range]{width:96px}}
+</style>
+</head>
+<body>
+<article>
+  <h1>Token-Fokus: Die lesbare Reise durch den chaotischen Raum</h1>
+  <p class="subtitle">Fusion aus: youarellm2.html &times; paperidea3.html</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere fragen nach demselben, aber von zwei Seiten her: <b>Was bestimmt das Schicksal eines einzelnen Tokens in einem Transformer?</b> <span class="tag">youarellm2.html</span> lässt den Leser <i>in das Token schlüpfen</i> und führt es durch eine <b>lesbare, stufenweise Pipeline</b> — Embedding &rarr; Positional Encoding &rarr; Self-Attention (QKV, kausal) &rarr; FFN &rarr; Softmax &rarr; nächstes Token. Jede Stufe kann man Schritt für Schritt <i>ablesen</i>. <span class="tag">paperidea3.html</span> nimmt stattdessen einen Punkt im Embedding-Raum und zeigt, wie seine <b>Position</b> über eine <b>chaotische, invertierbare Abbildung</b> (Arnold-Katzen-Map) bestimmt, welche Regionen eines Bildes scharf sind und welche pixeliert — eine Beziehung, die ausdrücklich »non-obvious« ist und empirisch erforscht werden muss.</p>
+    <p>Die <b>einheitliche These</b> der Fusion lautet: <i>Das Verhalten eines Tokens wird von seiner Position in einem hochdimensionalen Raum gesteuert, und diese Position&rarr;Wirkung-Abbildung ist gleichzeitig (a) lokal lesbar — jede Stufe der Pipeline lässt sich einzeln nachvollziehen — und (b) global chaotisch — kleine Änderungen der Position erzeugen große, nicht unmittelbar vorhersehbare Verschiebungen des Ergebnisses.</i></p>
+    <p>Ein Token ist also ein <b>Punkt</b>, der eine <b>interpretierbare Pipeline</b> durchläuft, die jedoch auf einer <b>empfindlichen, chaotischen Geometrie</b> operiert: <b>lokal verständlich, global unvorhersagbar.</b> Die »Reise« (A) und die »Linsencode« (B) sind keine Gegensätze, sondern die <i>Mikro-</i> und <i>Makro-Seite</i> derselben Transformation.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+
+    <div class="wbox">
+      <h4>1. Lesbarkeit vs. Chaos der Position&rarr;Wirkung-Abbildung</h4>
+      <p><b>A (<span class="cite-src">youarellm2.html</span>):</b> Die Pipeline ist glatt und durchschaubar — »ähnliche Wörter sind nahe bei mir«; man kann jede Stufe (Embedding-Raum, Attention-Heatmap, Softmax-Balken) <i>lesen</i>. Die Geometrie des Embedding-Raums wird als <b>semantisch und interpretierbar</b> vorgestellt.</p>
+      <p><b>B (<span class="cite-src">paperidea3.html</span>):</b> Die Abbildung von der Token-Position zur Wirkung ist <i>absichtlich</i> »non-obvious — explore it!«; kleine Verschiebungen können den Fokus dramatisch verschieben. Die Map ist eine <b>chaotische Faltung</b>, die »manchmal springt«.</p>
+      <p class="vs">&rarr; A: die Geometrie ist ein lesbarer, glatter Sinn-Raum. B: dieselbe Art von Abbildung ist ein chaotisches Scramble, das man erforschen, aber nicht ablesen kann.</p>
+    </div>
+
+    <div class="wbox">
+      <h4>2. Lineare/positional vs. chaotische Positions-Kodierung</h4>
+      <p><b>A:</b> Die Position wird <b>additiv und glatt</b> kodiert — sin/cos-Positional-Encodings werden zum Embedding <i>addiert</i> (<span class="tag">x = Embedding + PE<sub>pos</sub></span>); ein einfaches, lineares, invertierbares Positions-Signal.</p>
+      <p><b>B:</b> positioniert sich <i>explizit gegen</i> lineare/positional Kodierung: Positionen sollen <b>statt</b> linearer Kodierung durch eine <b>chaotische, invertierbare</b> Abbildung (Arnold-Katzen-Map) auf eine »Lens«-Karte gehasht werden, die den räumlichen Fokus verteilt.</p>
+      <p class="vs">&rarr; A <i>addiert</i> eine glatte Positions-Kodierung; B <i>ersetzt</i> sie durch eine nichtlineare (wenn auch invertierbare) Faltung.</p>
+    </div>
+
+    <div class="wbox">
+      <h4>3. Kausal/asymmetrisch vs. symmetrisch-räumliche Kopplung</h4>
+      <p><b>A:</b> Aufmerksamkeit ist <b>kausal</b> (Maskierung <span class="tag">j &le; i</span>) — Information fließt streng in eine Richtung (Vergangenheit &rarr; Gegenwart).</p>
+      <p><b>B:</b> Das »parallel transport« zwischen Stalks ist <b>symmetrisch und räumlich</b>: Gewichte <span class="tag">w<sub>ij</sub> = 0,35&middot;exp(&minus;d&sup2;/2&sigma;&sup2;)</span> nach euklidischer Distanz, bidirektional, <i>ohne</i> Reihenfolge.</p>
+      <p class="vs">&rarr; A koppelt über kausale Ordnung (asymmetrisch), B über räumliche Nähe (symmetrisch).</p>
+    </div>
+
+    <div class="wbox">
+      <h4>4. Tiefe: Verfeinerung vs. sich verstärkendes Chaos</h4>
+      <p><b>A:</b> Tiefere Schichten <i>verfeinern</i> den Vektor sauber; LayerNorm stabilisiert (Mittelwert 0, Varianz 1).</p>
+      <p><b>B:</b> »Each layer adds more warping complexity«; <span class="tag">warpScale &prop; 1,8<sup>l</sup></span>, die Jacobi-Verzerrung »wächst nach unten« — Tiefe = wachsende Nichtlinearität.</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p>Der Kern aller vier Spannungen ist derselbe: <b>der Maßstab.</b> Beide Abbildungen sind <i>deterministisch</i> (A: seeded Matrizen, B: deterministic Chaotic-Hash). Der Widerspruch liegt nicht im Mechanismus, sondern in der Perspektive — lokal vs. global.</p>
+
+    <h3>Zu 1 &amp; 4 — lesbar im Mikro, chaotisch im Makro</h3>
+    <p>Lesbarkeit ist <b>lokal/stufenweise</b>: jede einzelne Schicht (Embedding, Attention, FFN) kann man nachvollziehen. Chaos ist <b>global/kompositiv</b>: die End-zu-Ende-Map <i>summiert</i> Faltungen und Ähnlichkeitsgewichte über viele Schichten, und genau diese Komposition macht sie empfindlich. <b>Fusionierter Schluss:</b> Man kann jeden Schritt lesen (A), aber <i>wo</i> der Fokus / das nächste Token am Ende landet, ist empfindlich von der Eingabe-Position (B). Tiefe (Punkt 4) ist dann einfach der Prozess, durch den sich diese Empfindlichkeit <i>aufsummiert</i> — pro Schicht lesbar, im Ganzen chaotisch; LayerNorm begrenzt dabei die Drift, ohne die empfindliche Geometrie aufzuheben.</p>
+
+    <h3>Zu 2 — die additive PE ist der glatte Sonderfall der chaotischen Linsen</h3>
+    <p>Sowohl A's sin/cos-PE als auch B's chaotische Map sind <b>invertierbare Positions-Encodings</b>. A verwendet den <i>glatten, additiven</i> Fall, B den <i>nichtlinearen</i> Fall. <b>Fusion:</b> Eine Positions-Kodierung ist eine (möglicherweise nichtlineare, lernbare, invertierbare) Map von Index+Identität &rarr; Punkt. Der Token hat <i>beides</i>: einen <b>Sequenz-Index</b>, der Ordnung/Kausalität trägt (A), und eine <b>Koordinate</b> im Raum, die die räumliche Fokus-Metrik trägt (B). Die additive PE ist der interpretierbare Grenzfall; die chaotische Linsen die expressive Verallgemeinerung — und reale Modelle könnten dazwischen liegen (lernbare, nicht-additive PE).</p>
+
+    <h3>Zu 3 — kausal (Richtung) + ähnlichkeitsgewichtet (Art des Mischens)</h3>
+    <p>A's Attention mischt über ein <b>Ähnlichkeits-Maß</b> (<span class="tag">QK<sup>T</sup></span> = Skalarprodukt &asymp; negative Distanz) und maskiert kausal. B's Gauß-Distanz-Kopplung ist genau das <i>symmetrische Analogen</i> desselben Ähnlichkeits-Mischens. <b>Fusion:</b> A liefert die <i>asymmetrische Flussrichtung</i> (nur nach links), B liefert die <i>Art des Mischens</i> (nah/ähnlich = stark gekoppelt). Attention = kausal (A) <i>und</i> ähnlichkeits-/distanzgewichtet gemischt (B) — das scheinbar Symmetrische wird durch die kausale Maske in einen gerichteten Fluss geformt.</p>
+
+    <blockquote>
+      Ein Token ist ein Punkt in einem hochdimensionalen Raum. Es <b>hat</b> eine Position (Index &rarr; Kausalität, glatte PE) <b>und ist</b> eine Position (Koordinate &rarr; chaotische Fokus-Metrik). Die Pipeline, die es durchläuft, ist schrittweise lesbar; die Metrik, auf der sie operiert, ist chaotisch. Lokal verständlich — global unvorhersagbar.
+      <span class="by">— Fusionierte Kernposition</span>
+    </blockquote>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Das Token als Punkt</h3>
+    <p>Amb gemeinsame Grundidee: ein Token ist ein <b>Punkt</b> in einem (hoch-)dimensionalen Raum. A: der Punkt ist das Embedding <span class="tag">W<sub>E</sub>[id] &isin; &mathbb;R}<sup>d</sup></span> (Einheitskugel, ähnliche Wörter nahe) plus Positions-Fingerabdruck. B: der Punkt ist ein frei platzierbarer »Stalk« im 2D-Raum, dessen Lage die Fokus-Metrik steuert. Die Fusion behält beide: <b>Index</b> für die Rolle, <b>Koordinate</b> für die Kopplung.</p>
+
+    <h3>Die Pipeline (aus A)</h3>
+    <p>Stufenweise, lesbar — jede eine kleine, nachvollziehbare Transformation:</p>
+    <div class="formula">
+      <b>PE</b>: &nbsp;PE<sub>(pos,2i)</sub> = sin( pos / 10000<sup>2i/d</sup> ),&nbsp; PE<sub>(pos,2i+1)</sub> = cos( pos / 10000<sup>2i/d</sup> )<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;x = Embedding(token) + PE<sub>pos</sub><br><br>
+      <b>Attention</b>: &nbsp;Q = xW<sup>Q</sup>, K = xW<sup>K</sup>, V = xW<sup>V</sup>;&nbsp; Attention(Q,K,V) = softmax( QK<sup>T</sup> / &radic;d<sub>k</sub> ) V;&nbsp; kausal: nur j &le; i<br><br>
+      <b>FFN</b>: &nbsp;FFN(x) = ReLU(xW<sub>1</sub>+b<sub>1</sub>)W<sub>2</sub>+b<sub>2</sub>,&nbsp; W<sub>1</sub> &isin; &mathbb;R}<sup>d&times;4d</sup> (Flaschenhals)<br>
+      <b>LayerNorm</b>: &nbsp;(x &minus; &mu;) / &radic;(&sigma;&sup2;+&epsilon;) &middot; &gamma; + &beta;<br><br>
+      <b>Output</b>: &nbsp;logits = h&middot;W<sub>vocab</sub>;&nbsp; P(w<sub>i</sub>) = softmax(logits / T)<sub>i</sub>;&nbsp; Greedy = argmax, Sampling &sim; Categorical(P)
+    </div>
+
+    <h3>Der chaotische räumliche Aspekt (aus B)</h3>
+    <div class="formula">
+      <b>Chaotische Faltung</b> (Arnold-Katzen-Variante): &nbsp;focus(pos) = Fold( pos &oplus layer_freq ),&nbsp; zwei Runden sinusoidale Faltung + Wrap mod 1 — »manchmal springt«<br><br>
+      <b>Fokus = Scharfe</b>: &nbsp;f(p) = exp( &minus;d(p, focus)&sup2; / (2 r&sup2;) ) &rarr; scharf nahe, pixeliert fern<br><br>
+      <b>Parallel transport</b>: &nbsp;w<sub>ij</sub> = 0,35&middot;exp( &minus;d<sub>ij</sub>&sup2; / (2&sigma;&sup2;) ), normalisiert (i=j &rarr; 1); residual stream<br><br>
+      <b>Warp pro Layer</b>: &nbsp;warpScale &prop; 1,8<sup>l</sup>;&nbsp; Jacobi J = [ &part;u/&part;x &part;u/&part;y ; &part;v/&part;x &part;v/&part;y ] &mdash; Fokus-Punkte sind <i>fixe Anker</i>, der Raum verformt sich um sie<br><br>
+      <b>Sway</b>: &nbsp;&Sigma; |pos &minus; pos<sub>default</sub>| steuert die Intensität
+    </div>
+
+    <h3>Die Integration — ein einziges Modell</h3>
+    <p>Der entscheidende Schritt der Fusion: <b>A's Softmax über dem Vokabular und B's Fokus-Map über dem Bild sind derselbe Mechanismus.</b> In beiden Fällen erzeugt <i>ein Punkt im Embedding-Raum</i> eine <b>gepuckte Verteilung über einen Ausgaberäum</b>:</p>
+    <ul>
+      <li>A: Punkt (finaler Vektor) &rarr; Softmax &rarr; Wahrscheinlichkeit über <i>Kandidatentokens</i> — »hoch wo attended, niedrig wo nicht«.</li>
+      <li>B: Punkt (chaotisch abgebildet) &rarr; Fokus-Glocke &rarr; Scharfe über <i>Bildregionen</i> — »scharf wo gefokust, pixeliert wo nicht«.</li>
+    </ul>
+    <p>Der <b>chaotische Fold</b> (B) ist die <i>akkumulierte Empfindlichkeit</i> der End-zu-Ende-Transformation (A's Schichtenkette): er ist der Grund, warum zwei <i>nahe</i> Kontexte unterschiedliche nächste Tokens erzeugen können, auch wenn jede einzelne Schicht lesbar ist. Attention mischt dabei über Ähnlichkeit (A's <span class="tag">QK<sup>T</sup></span> &asymp; B's negative Distanz) mit kausaler Maske (A) — B's symmetrische Distanz-Kopplung ist das ungeformte Vorbild dieses gerichteten Mischens.</p>
+
+    <table>
+      <thead><tr><th>Aspekt</th><th>A — Token Odyssey</th><th>B — Chaotic Lens</th><th>Fusion</th></tr></thead>
+      <tbody>
+        <tr><td>Token</td><td>diskretes Wort + Index</td><td>kontinuierlicher Punkt (»Stalk«)</td><td>Punkt: Index <i>und</i> Koordinate</td></tr>
+        <tr><td>Position</td><td>additive glatte PE (sin/cos)</td><td>chaotische, invertierbare Map</td><td>invertierbare PE; glatter vs. nichtl. Fall</td></tr>
+        <tr><td>Kopplung</td><td>kausal, asymmetrisch (j&le;i)</td><td>symmetrisch-räumlich (Gauß/Distanz)</td><td>kausal <i>+</i> ähnlichkeitsgewichtet</td></tr>
+        <tr><td>Tiefe</td><td>Verfeinerung + LayerNorm</td><td>1,8<sup>l</sup> wachsende Komplexität</td><td>pro Schicht lesbar, global kompositional</td></tr>
+        <tr><td>Ausgabe</td><td>Softmax über Vokabular</td><td>Fokus-Map über Bild</td><td>eine gepuckte Verteilung über ein Ausgaberäum</td></tr>
+        <tr><td>Lesbarkeit</td><td>lokal/ab lesbar</td><td>global/non-obvious</td><td>lesbar im Mikro, chaotisch im Makro</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung</h2>
+    <p class="viz-intro">Links: der <b>Embedding-Raum</b> — ziehe den roten <b>Probe-Token</b> («du»). Rechts: die daraus berechnete <b>Fokus-/Wahrscheinlichkeits-Landschaft</b> über den Kandidatentokens — ein Punkt erzeugt eine gepuckte Verteilung. Die <b>Tiefe</b> wendet die chaotische Faltung mehrfach an (B), die <b>Temperatur</b> formt den Softmax (A), die <b>kausale Maske</b> (gestrichelte Linie) blendet alles rechts des Tokens aus (A), und der <b>Jitter</b> macht sichtbar, wie eine <i>winzige</i> Bewegung den Peak <i>weit</i> verschiebt (B). <span class="caveat">Synthetisch/illustrativ — wie beide Quellen, kein echtes trainiertes Modell.</span></p>
+    <div class="viz-controls">
+      <label>Temperatur T <input type="range" id="cT" min="0.3" max="3" step="0.05" value="1"><span class="val" id="vT">1.00</span></label>
+      <label>Tiefe (Faltungen) <input type="range" id="cD" min="1" max="6" step="1" value="2"><span class="val" id="vD">2</span></label>
+      <label>Jitter <input type="range" id="cJ" min="0" max="0.06" step="0.002" value="0.01"><span class="val" id="vJ">0.010</span></label>
+      <label><input type="checkbox" id="cC" checked> kausal (nur &le; x)</label>
+      <button class="vbtn" id="cR">Zurücksetzen</button>
+    </div>
+    <canvas id="fviz"></canvas>
+    <div class="viz-readout" id="fvizReadout"></div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul class="prov">
+      <li><b><a href="../youarellm2.html">youarellm2.html</a></b> — «Token Odyssey» (DE): immersive Erste-Person-Reise eines Tokens durch die sechs Transformer-Stufen (Embedding &rarr; PE &rarr; Self-Attention QKV + kausale Maske &rarr; FFN + LayerNorm &rarr; Softmax/Temperatur &rarr; nächstes Token); die Pipeline wird als <i>lesbare</i>, stufenweise interpretierbare Datenströmung dargestellt (synthetische, seeded Matrizen).</li>
+      <li><b><a href="../paperidea3.html">paperidea3.html</a></b> — «Spatial Focus Explorer — Chaotic Lens Encoding» (EN): Design-Idee, bei der Token-Embedding-Positionen durch eine <i>chaotische, invertierbare</i> Karte (Arnold-Katzen-Map) auf eine »Lens« gehasht werden, die den räumlichen Fokus steuert; residual stream, paralleler Transport (Gauß-Gewichte nach Distanz) und Jacobi-Matrix/Warp pro Layer.</li>
+    </ul>
+  </section>
+
+  <footer>Fusion r1-067 &mdash; «lesbar im Mikro, chaotisch im Makro». Alle Daten inline; keine Netzwerk-Aufrufe.</footer>
+</article>
+
+<script>
+(function(){
+'use strict';
+var canvas=document.getElementById('fviz');
+var ctx=canvas.getContext('2d');
+var DPR=(window.devicePixelRatio||1);
+var W=0,H=0,leftW=0;
+function cssVar(n){try{return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}catch(e){return '#fff';}}
+
+var WORDS=['die','katze','sitzt','auf','matte','und','hund','tisch','ist','schön','groß','rot'];
+var TARGETS=[];
+(function(){
+  var s=1337;function r(){s=(s*1664525+1013904223)>>>0;return s/4294967296;}
+  for(var i=0;i<WORDS.length;i++){
+    TARGETS.push({x:0.12+0.76*r(),y:0.14+0.72*r(),w:WORDS[i]});
+  }
+  TARGETS.sort(function(a,b){return a.x-b.x;});
+})();
+
+var state={probe:{x:0.5,y:0.46},T:1.0,depth:2,causal:true,jitter:0.01,dragging:false};
+function clamp(v){return Math.max(0.03,Math.min(0.97,v));}
+
+function chaoticFold(px,py,depth){
+  var x=px,y=py;
+  for(var l=0;l<depth;l++){
+    var s1=l*0.6180339+0.317,s2=l*0.4142135+0.211;
+    var nx=x+0.10*Math.sin(y*6.28318+s1*7.13)+0.025*(l+1);
+    var ny=y+0.10*Math.sin(x*6.28318+s2*5.71)+0.018*(l+1);
+    nx%=1;if(nx<0)nx+=1;ny%=1;if(ny<0)ny+=1;
+    x=nx;y=ny;
+  }
+  return {x:x,y:y};
+}
+function dists(query,cutoff){
+  var out=[];
+  for(var j=0;j<TARGETS.length;j++){
+    var t=TARGETS[j];
+    var sim=(query.x-0.5)*(t.x-0.5)+(query.y-0.5)*(t.y-0.5);
+    var logit=sim*11;
+    if(state.causal && t.x>cutoff+0.001){logit=-Infinity;}
+    out.push(logit);
+  }
+  return out;
+}
+function softmax(logits,T){
+  var finite=[];
+  for(var i=0;i<logits.length;i++){if(logits[i]!==-Infinity)finite.push(logits[i]);}
+  if(finite.length===0){var n=logits.length;var u=[];for(var k=0;k<n;k++)u.push(1/n);return u;}
+  var mx=-Infinity;for(var m=0;m<finite.length;m++)if(finite[m]>mx)mx=finite[m];
+  var ex=[];var s=0;
+  for(var j=0;j<logits.length;j++){
+    var e=logits[j]===-Infinity?0:Math.exp((logits[j]-mx)/T);
+    ex.push(e);s+=e;
+  }
+  if(s===0){s=1;}
+  var p=[];for(var q=0;q<ex.length;q++)p.push(ex[q]/s);
+  return p;
+}
+function argmax(p){var bi=0,bv=-1;for(var i=0;i<p.length;i++){if(p[i]>bv){bv=p[i];bi=i;}}return bi;}
+function entropy(p){var e=0;for(var i=0;i<p.length;i++){if(p[i]>0)e-=p[i]*Math.log2(p[i]);}return e;}
+
+function compute(){
+  var q=chaoticFold(state.probe.x,state.probe.y,state.depth);
+  var p1=softmax(dists(q,state.probe.x),state.T);
+  var a1=argmax(p1);
+  var dl=Math.hypot(0.6,0.4);
+  var jp={x:clamp(state.probe.x+0.6/dl*state.jitter),y:clamp(state.probe.y+0.4/dl*state.jitter)};
+  var q2=chaoticFold(jp.x,jp.y,state.depth);
+  var p2=softmax(dists(q2,state.probe.x),state.T);
+  var a2=argmax(p2);
+  var r2=-1;for(var i=0;i<p2.length;i++){if(p2[i]===p2[a2]&&i===a2)r2=i;}
+  var rankOfOrig=-1;var best=-1;for(var k2=0;k2<p2.length;k2++){if(p2[k2]>best){best=p2[k2];}}
+  var origRank=p2.slice().sort(function(x,y){return y-x;}).indexOf(p2[a1]);
+  var foldDist=Math.hypot(q.x-state.probe.x,q.y-state.probe.y);
+  return {q:q,p1:p1,a1:a1,p2:p2,a2:a2,origRank:origRank,foldDist:foldDist,jp:jp,ent:entropy(p1)};
+}
+
+function resize(){
+  var cw=canvas.parentElement?canvas.parentElement.clientWidth:600;
+  W=Math.max(340,cw-2);H=470;
+  canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  leftW=Math.round(W*0.44);
+}
+
+function draw(now){
+  var cBg=cssVar('--card'),cGrid=cssVar('--grid'),cFg=cssVar('--fg'),cMuted=cssVar('--muted');
+  var cAccent=cssVar('--accent'),cAccent2=cssVar('--accent2'),cProbe=cssVar('--probe');
+  var cBar=cssVar('--bar'),cBarMuted=cssVar('--bar-muted');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=cBg;ctx.fillRect(0,0,W,H);
+
+  var res=compute();
+  var pad=18;
+
+  /* ---- LEFT: embedding space ---- */
+  ctx.strokeStyle=cGrid;ctx.lineWidth=1;
+  for(var g=0;g<=8;g++){
+    var gx=pad+(leftW-2*pad)*g/8,gy=pad+(H-2*pad)*g/8;
+    ctx.beginPath();ctx.moveTo(gx,pad);ctx.lineTo(gx,H-pad);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(pad,gy);ctx.lineTo(leftW-pad,gy);ctx.stroke();
+  }
+  function L2N(x){return pad+(leftW-2*pad)*x;}
+  for(var i=0;i<TARGETS.length;i++){
+    var t=TARGETS[i];
+    var px=L2N(t.x),py=L2N(t.y);
+    ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle=cBar;ctx.globalAlpha=0.55;ctx.fill();ctx.globalAlpha=1;
+    ctx.fillStyle=cMuted;ctx.font='10px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+    ctx.fillText(t.w,px,py-8);
+  }
+  // jitter ghost
+  if(state.jitter>0.001){
+    ctx.setLineDash([4,3]);ctx.strokeStyle=cAccent;ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.moveTo(L2N(state.probe.x),L2N(state.probe.y));
+    ctx.lineTo(L2N(res.jp.x),L2N(res.jp.y));ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(L2N(res.jp.x),L2N(res.jp.y),7,0,Math.PI*2);
+    ctx.strokeStyle=cAccent;ctx.lineWidth=1.5;ctx.stroke();
+  }
+  // probe (pulsing)
+  var pulse=1+0.18*Math.sin(now/300);
+  var prx=L2N(state.probe.x),pry=L2N(state.probe.y);
+  ctx.beginPath();ctx.arc(prx,pry,11*pulse,0,Math.PI*2);
+  ctx.fillStyle=cProbe;ctx.globalAlpha=0.22;ctx.fill();ctx.globalAlpha=1;
+  ctx.beginPath();ctx.arc(prx,pry,7,0,Math.PI*2);
+  ctx.fillStyle=cProbe;ctx.fill();
+  ctx.fillStyle=cFg;ctx.font='bold 11px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+  ctx.fillText('du',prx,pry-14);
+  // folded query marker (where the pipeline sends it)
+  ctx.beginPath();ctx.arc(L2N(res.q.x),L2N(res.q.y),4,0,Math.PI*2);
+  ctx.fillStyle=cAccent2;ctx.fill();
+  ctx.fillStyle=cAccent2;ctx.font='9px ui-monospace,Menlo,monospace';ctx.textAlign='left';
+  ctx.fillText('Fold\u2192',(L2N(res.q.x)+6),L2N(res.q.y)+3);
+
+  ctx.fillStyle=cMuted;ctx.font='11px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+  ctx.fillText('Embedding-Raum (2D)',leftW/2,14);
+
+  /* ---- divider ---- */
+  ctx.strokeStyle=cGrid;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(leftW,0);ctx.lineTo(leftW,H);ctx.stroke();
+
+  /* ---- RIGHT: focus/probability landscape ---- */
+  var rx0=leftW+pad,rx1=W-pad,ry0=pad+18,ry1=H-pad;
+  var rh=ry1-ry0;
+  // axis
+  ctx.strokeStyle=cGrid;ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(rx0,ry1);ctx.lineTo(rx1,ry1);ctx.stroke();
+  function R2N(x){return rx0+(rx1-rx0)*x;}
+  // causal cutoff line
+  if(state.causal){
+    var cx=R2N(state.probe.x);
+    ctx.setLineDash([5,4]);ctx.strokeStyle=cAccent2;ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(cx,ry0);ctx.lineTo(cx,ry1);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=cAccent2;ctx.font='9px ui-monospace,Menlo,monospace';ctx.textAlign='left';
+    ctx.fillText('kausal',cx+4,ry0+10);
+  }
+  var maxP=0;for(var m=0;m<res.p1.length;m++)if(res.p1[m]>maxP)maxP=res.p1[m];
+  var scale=(maxP>0.02)?(rh*0.9)/ (0.6):rh*0.9; // so ~0.6 prob fills panel
+  // landscape line + bars
+  ctx.beginPath();
+  for(var j=0;j<TARGETS.length;j++){
+    var bx=R2N(TARGETS[j].x);
+    var bh=res.p1[j]*scale;
+    var by=ry1-bh;
+    if(j===0)ctx.moveTo(bx,ry1);
+    ctx.lineTo(bx,by);
+    if(j===0){}
+  }
+  ctx.strokeStyle=cAccent;ctx.lineWidth=1.4;ctx.globalAlpha=0.5;ctx.stroke();ctx.globalAlpha=1;
+  for(var j2=0;j2<TARGETS.length;j2++){
+    var masked=state.causal&&TARGETS[j2].x>state.probe.x+0.001;
+    var bx2=R2N(TARGETS[j2].x);
+    var bh2=res.p1[j2]*scale;
+    var by2=ry1-bh2;
+    var isTop=(j2===res.a1);
+    ctx.fillStyle=masked?cBarMuted:(isTop?cAccent2:cBar);
+    ctx.globalAlpha=masked?0.5:(isTop?1:0.85);
+    ctx.fillRect(bx2-4,by2,8,bh2);
+    ctx.globalAlpha=1;
+    ctx.fillStyle=masked?cMuted:(isTop?cFg:cMuted);
+    ctx.font=(isTop?'bold ':'')+'9px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+    ctx.save();ctx.translate(bx2,ry1+10);ctx.rotate(-0.5);ctx.fillText(TARGETS[j2].w,0,0);ctx.restore();
+    if(isTop){
+      ctx.fillStyle=cAccent2;ctx.font='bold 10px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+      ctx.fillText((res.p1[j2]*100).toFixed(1)+'%',bx2,by2-6);
+      ctx.beginPath();ctx.arc(bx2,by2,4+1.5*Math.sin(now/200),0,Math.PI*2);
+      ctx.strokeStyle=cAccent2;ctx.lineWidth=1.5;ctx.stroke();
+    }
+  }
+  ctx.fillStyle=cMuted;ctx.font='11px ui-monospace,Menlo,monospace';ctx.textAlign='center';
+  ctx.fillText('Fokus / P(nächstes Token)  \u2190 links scharf, rechts maskiert', (rx0+rx1)/2, 14);
+
+  /* ---- readout ---- */
+  var ro=document.getElementById('fvizReadout');
+  var delta=(res.a2!==res.a1)?'Peak weicht! \u0394Platz='+res.origRank:'Peak stabil';
+  ro.innerHTML=
+    '<span>T = <b>'+state.T.toFixed(2)+'</b></span>'+
+    '<span>Tiefe = <b>'+state.depth+'</b></span>'+
+    '<span>kausal = <b>'+(state.causal?'an':'aus')+'</b></span>'+
+    '<span>Top = <b>"'+TARGETS[res.a1].w+'" ('+(res.p1[res.a1]*100).toFixed(1)+'%)</b></span>'+
+    '<span>Entropie = <b>'+res.ent.toFixed(2)+'</b> bit</span>'+
+    '<span>Fold-Drift = <b>'+(res.foldDist*100).toFixed(1)+'%</b></span>'+
+    '<span>Sensitivität (\u0394='+state.jitter.toFixed(3)+'): <b>'+delta+'</b></span>';
+}
+
+var t0=performance.now?performance.now():0;
+function loop(){
+  draw(performance.now?performance.now():t0);
+  requestAnimationFrame(loop);
+}
+
+/* controls */
+function bind(id,fn){var el=document.getElementById(id);if(el)el.addEventListener('input',fn);}
+bind('cT',function(){state.T=parseFloat(this.value);document.getElementById('vT').textContent=state.T.toFixed(2);});
+bind('cD',function(){state.depth=parseInt(this.value,10);document.getElementById('vD').textContent=state.depth;});
+bind('cJ',function(){state.jitter=parseFloat(this.value);document.getElementById('vJ').textContent=state.jitter.toFixed(3);});
+bind('cC',function(){state.causal=this.checked;});
+document.getElementById('cR').addEventListener('click',function(){
+  state.probe={x:0.5,y:0.46};state.T=1.0;state.depth=2;state.causal=true;state.jitter=0.01;
+  document.getElementById('cT').value=1;document.getElementById('vT').textContent='1.00';
+  document.getElementById('cD').value=2;document.getElementById('vD').textContent='2';
+  document.getElementById('cJ').value=0.01;document.getElementById('vJ').textContent='0.010';
+  document.getElementById('cC').checked=true;
+});
+
+/* pointer: drag the probe (left panel) */
+function toNorm(e){
+  var rect=canvas.getBoundingClientRect();
+  var mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  return {x:(mx-pad)/(leftW-2*pad),y:(my-pad)/(H-2*pad)};
+}
+canvas.addEventListener('pointerdown',function(e){
+  e.preventDefault();
+  var p=toNorm(e);
+  if(p.x>0&&p.x<1&&p.y>0&&p.y<1){state.probe.x=clamp(p.x);state.probe.y=clamp(p.y);state.dragging=true;}
+});
+window.addEventListener('pointermove',function(e){
+  if(!state.dragging)return;
+  var p=toNorm(e);
+  if(p.x>0&&p.x<1&&p.y>0&&p.y<1){state.probe.x=clamp(p.x);state.probe.y=clamp(p.y);}
+});
+window.addEventListener('pointerup',function(){state.dragging=false;});
+
+window.addEventListener('resize',resize);
+resize();
+loop();
+})();
+</script>
+</body>
+</html>

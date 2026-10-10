@@ -1,0 +1,16 @@
+{
+  "no": "061",
+  "a": "grokking_addition.html",
+  "b": "othellogpt.html",
+  "a_title": "Grokking Addition — Wie Netzwerke plötzlich 'verstehen'",
+  "b_title": "Othello-GPT — Wie Transformer die Welt repräsentieren",
+  "combined_theme": "emergente-konzeptionelle-weltmodelle",
+  "one_line": "Sequenzmodelle bauen kausale, generalisierende Weltmodelle des Erzeugungsprozesses auf — als kompaktes Fourier-Kreisschaltwerk bei regulären Aufgaben (modulare Addition) und als reiches nichtlineares latentes Modell bei komplexen (Othello); Bildung ist kontinuierlich, Übernahme kann diskret sein.",
+  "contradictions": [
+    "Form: A findet ein kompaktes, geschlossenes Fourier-Schaltwerk (5 Frequenzen + Additionsformel cos(α)cos(β)−sin(α)sin(β)=cos(α+β)); B ein reiches, nichtlinear kodiertes, verteiltes Brett-Weltmodell ohne einfache Formel (linearer Probe ~20–25 %, nichtlinear 1,7 %).",
+    "Dynamik: A betont den plötzlichen Grokking-Sprung (Memorierung wird via Weight Decay verworfen, Test-Loss fällt nach Plateau); B ein stetiges, durchgängig kausal genutztes Emergieren ohne scharfen Sprung.",
+    "Eindeutigkeit: A = eine kanonische Lösung (Fourier-Kreisschaltung bei Primmodul P=113); B = dieselbe Architektur lernt je nach Daten unterschiedliche Repräsentationen (synthetisch→Regeln, Championship→Strategie)."
+  ],
+  "resolution": "Die Repräsentationsform skaliert mit der Struktur/Komplexität der Aufgabe: klein, regelmäßig, endlich → auf wenige Fourier-Normale komprimierbares explizites Schaltwerk; groß, räumlich, kombinatorisch → verteiltes nichtlineares latentes Modell. Beide sind 'Weltmodelle' des Generators auf verschiedenen Kompressionstufen. Die scheinbar diskrete Übernahme (A) ist die dominante Überholung einer konkurrierenden Memorierungsstrategie nach kontinuierlicher Bildung (Algorithmus-Stärke steigt schon im Plateau); bei B fehlt diese Konkurrenz, daher wirkt das Lernen glatt. Die Lösung ist unterbestimmt (viele interne Modelle ⇒ gleiche Vorhersage); Trainingsverteilung wählt die konkrete Variante, die Interpretationsproben (Schaltwerk-Rekonstruktion/Progress-Maße; Probes/Intervention/Saliency) sichtbar machen.",
+  "viz": "Theme-aware Canvas-Interaktives: Fourier-Interferenz-Decoder für modulare Addition (P=113). Regler für a, b und Anzahl der Frequenzen (1–5); Balkendiagramm des Interferenz-Scores Σ_k cos(w_k(a+b−c)) über alle 113 Antworten, korrekte Antwort konstruktiv verstärkt; companion-Einheitskreis zeigt die Einbettung von a, b und (a+b) mod 113. Inline-Daten, keine Netzwerk-Fetches, light/dark über CSS-Variablen."
+}

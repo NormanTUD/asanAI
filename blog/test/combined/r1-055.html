@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wissen als Geometrie — Fusion: McCarthy &amp; Hayes (1969) × How LLMs Store Information</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+:root{
+  --bg:#f6f4ee; --card:#ffffff; --card2:#efede4;
+  --text:#1c1b17; --dim:#6b685d; --border:#d8d4c6;
+  --accent:#5a4fcf; --accent2:#0e8a6d; --accent3:#d1495b; --accent4:#9a6a00; --resid:#2b6cb0;
+  --grid:#e2ded1; --axis:#c9c4b4; --canvas-bg:#fbfaf5; --callout:#f1eee2;
+}
+html.dark{
+  --bg:#0c0e16; --card:#151825; --card2:#1c2035;
+  --text:#dde1ea; --dim:#8a8fa3; --border:#282c44;
+  --accent:#8b7cff; --accent2:#22d3a7; --accent3:#ff6b6b; --accent4:#ffbe0b; --resid:#56b4e9;
+  --grid:#1e2140; --axis:#2a2d50; --canvas-bg:#0d0f18; --callout:#161a2b;
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+article{max-width:820px;margin:0 auto;padding:28px 20px 60px}
+header.hero{margin-bottom:6px}
+h1{font-size:1.7em;line-height:1.25;margin:4px 0 4px}
+.subtitle{color:var(--dim);font-size:1em;margin-bottom:16px}
+.toggle{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.85em}
+.toggle:hover{border-color:var(--accent)}
+section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:18px 0}
+section h2{font-size:1.3em;margin-bottom:12px;color:var(--accent)}
+section h3{font-size:1.05em;margin:18px 0 6px;color:var(--accent2)}
+p{margin:9px 0}
+ul{margin:8px 0 8px 20px}
+li{margin:5px 0}
+.formula{background:var(--card2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 14px;margin:12px 0;font-family:'Courier New',monospace;font-size:.95em;overflow-x:auto;line-height:1.65;white-space:pre-wrap}
+.callout{background:var(--callout);border:1px solid var(--border);border-left:4px solid var(--accent2);border-radius:0 10px 10px 0;padding:14px 16px;margin:14px 0}
+.callout strong{color:var(--accent2)}
+.tag{display:inline-block;font-size:.72em;font-weight:700;padding:2px 9px;border-radius:20px;border:1px solid var(--border);color:var(--dim);margin:0 4px 0 0}
+.tagA{color:var(--accent4);border-color:var(--accent4)}
+.tagB{color:var(--accent);border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.88em}
+th,td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--card2);color:var(--accent2)}
+tr:nth-child(even) td{background:var(--card2)}
+.viz-canvas{display:block;max-width:560px;width:100%;height:auto;margin:0 auto;border:1px solid var(--border);border-radius:12px;background:var(--canvas-bg);cursor:crosshair;touch-action:none}
+.ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:12px;background:var(--card2);border-radius:10px;margin:12px 0}
+.ctrl label{color:var(--accent2);font-weight:600;font-size:.9em}
+.ctrl input[type=range]{accent-color:var(--accent);width:130px}
+.ctrl .val{color:var(--accent4);font-family:monospace;font-weight:700;min-width:30px}
+.btn{background:var(--card);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.85em}
+.btn:hover{border-color:var(--accent)}
+.readout{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'Courier New',monospace;font-size:.82em;line-height:1.7;margin:12px 0;overflow-x:auto}
+.readout div{white-space:pre-wrap}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82em;color:var(--dim);margin:10px 0 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+footer{color:var(--dim);font-size:.82em;text-align:center;margin-top:22px}
+a{color:var(--accent)}
+b{font-weight:700}
+</style>
+</head>
+<body>
+<article>
+  <header class="hero">
+    <button class="toggle" id="themeBtn">🌗 Theme wechseln</button>
+    <h1>Wissen als Geometrie — wenn formale Logik wird, was ein LLM aus Gewichten macht</h1>
+    <p class="subtitle">Fusion aus: test.html ✕ mccarthy_heyes_1969.html</p>
+  </header>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>1 · Kernthese der Fusion</h2>
+    <p>Beide Quellen beantworten <b>dieselbe Grundfrage</b> — <em>Wie repräsentiert ein rechnergestütztes System Wissen über die Welt, damit es daraus schlussfolgern und handeln kann?</em> — aber von zwei entgegengesetzten Enden aus. <span class="tag tagB">B</span> McCarthy &amp; Hayes (1969) fordern eine <b>explizite, symbolische</b> Repräsentation: die Welt wird als Sätze formaler Logik (Fluenten über Situationen) modelliert, und ein „Reasoning Program“ leitet Strategien per Deduktion ab und <i>beweist</i>, dass sie das Ziel erreichen. <span class="tag tagA">A</span> der Demonstrator „How LLMs Store Information“ zeigt das Gegenbild: moderne LLMs speichern Wissen <b>implizit und geometrisch</b> — als Richtungen in einem hochdimensionalen Residual-Stream, abgerufen über lineare Projektionen (Key-Value-Speicher, Attention), ohne dass ein einzelner Fakt irgendwo explizit steht.</p>
+    <p>Die integrierte Position der Fusion lautet: <b>Repräsentation ist die gemeinsame Invariante — nicht die Form.</b> B’s Struktur ist „Set logischer Fluenten + Deduktion“; A’s Struktur ist „Set Feature-Richtungen + lineare Projektion“. A’s MLP-as-Key-Value ist der geometrische, <i>gelernte</i> Nachfahre von B’s handgeschriebener Lookup-Funktion (<code>lookup(q, Phone-book)</code>, <code>result(p, σ, s)</code>); A’s Residual-Verbindung ist eine direkte geometrische Lösung von B’s Frame-Problem (das, was sich <em>nicht</em> ändert, ist der Identitätsterm, der durch alle Schichten unverändert fließt).</p>
+    <div class="callout"><strong>Gefasste Fusionsposition:</strong> Das moderne LLM ist die <i>lineare-algebraische / geometrische</i> Antwort auf genau die Repräsentations-, Abruf- und Handlungsprobleme, die McCarthy &amp; Hayes 1969 mit formaler Logik gestellt haben — Flexibilität und Skalierbarkeit erkauft man mit dem Preis von Explizizität, Transparenz und Beweisgarantien. Die beiden sind nicht falsche Varianten desselben Vorschlags, sondern die beiden Enden <em>einer</em> Design-Achse.</div>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>2 · Widersprüche zwischen A und B</h2>
+
+    <h3>W1 · Explizizität der Wissensrepräsentation</h3>
+    <ul>
+      <li><span class="tag tagB">B</span> „Um eine echte KI zu bauen, muss man philosophische Probleme lösen — insbesondere: Wie repräsentiert man Wissen über die Welt so, dass ein Programm daraus schlussfolgern und handeln kann?“ Wissen <b>muss</b> als explizite, überprüfbare Sätze in formaler Logik vorliegen (Fluenten, Axiome). Explizizität ist eine <i>Voraussetzung</i> für echte Intelligenz.</li>
+      <li><span class="tag tagA">A</span> Wissen ist <b>überall verteilt und nicht kompositional</b>: Superposition packt „m ≫ d“ Features in „d“ Dimensionen, und ein polysemantisches Neuron „kann nicht unterscheiden, welches Feature es feuern ließ“ — kein einzelner Fakt steht explizit in den Gewichten.</li>
+    </ul>
+    <p><b>Unvereinbar:</b> B verlangt Explizizität als Bedingung; A zeigt, dass Repräsentation grundlegend implizit und unverdeutlichbar sein <i>muss</i>, um überhaupt Kapazität zu haben.</p>
+
+    <h3>W2 · Beweis-Garantien vs. statistischer Fit</h3>
+    <ul>
+      <li><span class="tag tagB">B</span> Das Reasoning Program „beweist, dass eine Strategie ein Ziel erreicht“; „Alles ist deterministisch. Kennt man die Anfangszustände und Eingaben, ist die gesamte Zukunft bestimmt.“ → lokale, beweisgesicherte Korrektheit, keine Näherung.</li>
+      <li><span class="tag tagA">A</span> Wissen entsteht durch Gradientenabstieg, der einen MSE-Loss minimiert — ein statistischer Fit <b>ohne Garantien</b>. B selbst (Sektion „Relevanz für heutige KI“): LLMs lösen Probleme „ohne den formalen Apparat — durch statistische Muster. Aber sie haben dafür neue Probleme (Halluzinationen, fehlende Garantien).“</li>
+    </ul>
+    <p><b>Unvereinbar:</b> exakte lokale Beweisbarkeit (B) vs. garantiefreie globale Generalisierung (A).</p>
+
+    <h3>W3 · Transparenz / Interpretierbarkeit <span style="font-weight:400;color:var(--dim);font-size:.85em;">(eng mit W1 verwandt — die nächste echte Spannung)</span></h3>
+    <ul>
+      <li><span class="tag tagB">B</span> B’s Vergleichs-Radar vergibt dem formalen Ansatz hohe „Transparenz“ (Axiome sind lesbar) und dem statistischen Ansatz (LLMs) niedrige.</li>
+      <li><span class="tag tagA">A</span> A’s Kernmechanismen (Superposition + Polysemie) sind <i>bewusst nicht-interpretierbar</i> konstruiert.</li>
+    </ul>
+    <p>Diese drei Punkte sind keine Stellschrauben, die man „auf gleiche Stufe bringt“ — sie sind <b>wirkliche, benannte Gegenpositionen</b> beider Papiere (B benennt Transparenz &amp; Garantien explizit im Radar; A benennt Ambiguität explizit im Polysemantic-Abschnitt).</p>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>3 · Auflösung</h2>
+
+    <h3>A1 · Explizizität → eine Design-Achse, nicht ein Entweder-Oder</h3>
+    <p>Symbolisch/explizit (B): kompositional &amp; lesbar — aber Preis ist das Frame-Problem (n×m-Explosion) und das Qualifikationsproblem (unendlich viele Ausnahmen). Geometrisch/implizit (A): Kapazität &amp; Flexibilität (Superposition: m ≫ d in d Dimensionen) — aber Interpretierbarkeitsverlust. <b>Fusion:</b> B’s harter 0/1-Fluent und A’s weiche, superponierte Richtung sind <em>derselbe</em> Mechanismus („ein Feature, das in einer Situation an/aus ist“) an zwei Polen einer Kodierungs-Achse. Man kann A’s „Logik“ aus der Geometrie <i>ablesen</i> (welche Keys feuern = welche Fluenten wahr), und B’s Lookup-Tabelle als <i>handgeschriebenes</i> Vorbild von A’s <i>gelerntem</i> Key-Value-Speicher lesen.</p>
+
+    <h3>A2 · Garantien → Beweis (lokal) + Generalisierung (global) sind komplementär</h3>
+    <p>Formale Systeme geben <b>lokale</b> Beweisbarkeit; statistische Systeme geben <b>globale</b> Generalisierung — keines ist gratis. <b>Fusion:</b> B’s „die Zukunft ist bestimmt“ gilt über die <em>Welt</em>; A’s Determinismus gilt über die <em>Inferenz</em> (feste Gewichte ⇒ feste Funktion), aber das <em>Modell selbst</em> ist eine statistische Näherung. Der Kernkonflikt löst sich in „welche Ebene“: Beweis liefert exakte lokale Korrektheit, das Trainieren liefert breite, aber ungarantierte Gültigkeit.</p>
+
+    <h3>A3 · Transparenz → liegt auf der Geometrie statt auf den Sätzen</h3>
+    <p><b>Fusion:</b> Das Residual-Stream (A) ist eine <i>kontinuierliche, gelernte</i> Verallgemeinerung der „Welt-Situation“ (B). Die Identitätsverbindung macht das, was sich <em>nicht</em> ändert, sichtbar, während nur das Delta (Attention/MLP-Ausgabe) die Änderung codiert. Transparenz wechselt die Ebene: in B liegt sie in den Sätzen, in A in den Richtungen und Projektionen.</p>
+
+    <div class="callout"><strong>Die zentrale gefasste Brücke (verknüpft alle drei):</strong> <b>Die Residual-Verbindung von A ist die geometrische Lösung des Frame-Problems von B.</b> B fragt: „Wenn eine Aktion passiert, was ändert sich <i>nicht</i>?“ — und brauchte explizite Frame-Axiome. A beantwortet das strukturell: <code>x⁽ʰ⁺¹⁾ = x⁽ʰ⁾ + Δ</code>. Der Identitätsterm <code>x⁽ʰ⁾</code> ist buchstäblich „das, was sich nicht ändert“ und bleibt erhalten; nur <code>Δ</code> (Attention/MLP) trägt die Änderung. B’s explizites „nenn, was bleibt“ wird in A zu „der Identitätsterm, den man nie löscht“.</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>4 · Fusionierter Inhalt</h2>
+    <p>Der gemeinsame Kern, aus dem eine spätere Runde allein weiterarbeiten kann.</p>
+
+    <h3>B — die symbolische Antwort (McCarthy &amp; Hayes 1969)</h3>
+    <ul>
+      <li><b>Zwei Teile der Intelligenz:</b> der <i>epistemische</i> Teil (Repräsentation der Welt, aus der Lösungen <em>folgen</em> — Fokus des Papiers) und der <i>heuristische</i> Teil (Such-/Beweis-Mechanismus).</li>
+      <li><b>Drei Stufen der Adäquatheit:</b> metaphysisch (die Welt <em>könnte</em> so aussehen), epistemologisch (tatsächliche Fakten sind darin ausdrückbar, z. B. „John ist zu Hause“), heuristisch (die Denkprozesse selbst sind darin ausdrückbar — die härteste Stufe).</li>
+      <li><b>Welt als deterministische Automatensysteme:</b> <code>a₁(t+1)=A₁(a₁(t),s₂(t))</code>, Signale <code>sᵢ(t)=Sᵢ(aᵢ(t))</code>. Kennt man Anfangszustände + Eingaben, ist die Zukunft bestimmt.</li>
+      <li><b>„can“ durch Disconnection:</b> was ein Agent <em>kann</em>, definiert man, indem man ihn vom System „trennt“ und fragt, welche Zustände erreichbar wären, wenn er beliebige Ausgaben erzeugte. Mehrere Ebenen (Gelenke/Muskeln/Nerven/Wille).</li>
+      <li><b>Situationskalkül:</b> Situationen <code>s</code>; Aktionen transformieren: <code>result(p, σ, s) = s′</code>. <b>Fluenten</b> = Funktionen auf Situationen (<code>raining(x,s)</code>, <code>at(p,x,s)</code>, <code>has(Monkey,Bananas,s)</code>). Strategien = Programme (Affen-Bananen: <code>move(Box, Under-Bananas); climb(Box); reach-for(Bananas)</code>).</li>
+      <li><b>Frame-Problem:</b> Eine Aktion zu beschreiben, erfordert, auch zu sagen, was sich <i>nicht</i> ändert — bei n Aktionen × m Fluenten Explosion der Axiome. Lösungsansätze: Frame-Deklarationen, <code>normally</code>-Operator (Default-Reasoning).</li>
+      <li><b>Wissen &amp; Glauben (Modallogik, Kripke/Hintikka):</b> <code>Kₚ(q) ≡ ∀t. shrug(p,t,s) → q(t)</code> — „p weiß q“ heißt „q gilt in allen Situationen, die p nicht ausschließen kann“ (Axiome K1 reflexiv, K2 transitiv). <b>Referentielle Opazität:</b> im Glauben/Wissen darf man Gleiches nicht ersetzen (George IV / Walter Scott).</li>
+    </ul>
+
+    <h3>A — die geometrische Antwort (How LLMs Store Information)</h3>
+    <ul>
+      <li><b>Residual-Stream:</b> jedes Token ist ein Vektor <code>x ∈ ℝ^d</code>; Konzepte sind <b>Richtungen</b>. Projektion <code>⟨x, f̂⟩</code> = „wie stark ist das Feature aktiv“.</li>
+      <li><b>MLP als Key-Value-Speicher:</b> <code>MLP(x) = Σᵢ ReLU(kᵢ·x + bᵢ) vᵢ</code> — Neuron = <i>Key</i> kᵢ (erkennt Muster) + <i>Value</i> vᵢ (schreibt Richtung).</li>
+      <li><b>Superposition:</b> in d Dimensionen nur d orthogonale Vektoren — aber mit „kleiner“ Interferenz |⟨f̂ᵢ,f̂ⱼ⟩| ≤ ε ≪ 1 packt man m ≫ d. <b>Johnson–Lindenstrauss:</b> <code>d ≥ 8·ln(m)/ε² ⟹ m ≤ e^(ε²d/8)</code> — in hohen d astronomisch viele fast-orthogonale Richtungen.</li>
+      <li><b>Polysemantische Neuronen:</b> Key = Mischung mehrerer Feature-Richtungen <code>kᵢ = Σ αⱼ f̂ⱼ</code> — der Preis: das Neuron kann die auslösende Kombination nicht benennen (Ambiguität).</li>
+      <li><b>Training:</b> <code>L = (1/N)Σ ‖W_out·ReLU(W_in·xₙ+b) − yₙ‖²</code> — Wissen entsteht aus Gradientenabstieg; Key- und Value-Geometrie formen sich.</li>
+      <li><b>Vollständiger Vorwärtspass (Mini-Transformer):</b> Embedding → Q,K,V = W·x → Attention-Gewichte <code>αᵢⱼ = softmax(qᵢ·kⱼ/√d)</code> → gewichteter Wert-Mix → Residual-Add → MLP → Residual-Add → Unembedding → Logits.</li>
+    </ul>
+
+    <h3>Die Brücke — wie die beiden ineinandergreifen</h3>
+    <table>
+      <tr><th>Aspekt</th><th>B (symbolisch)</th><th>A (geometrisch)</th><th>Brücke</th></tr>
+      <tr><td>Repräsentation</td><td>explizite logische Sätze (Fluenten)</td><td>Richtungen im Residual-Stream</td><td>harter 0/1-Fluent ↔ weiche superponierte Richtung</td></tr>
+      <tr><td>Abruf / Inferenz</td><td>Deduktion / Lookup</td><td>Projektion ⟨x,k⟩, Attention</td><td>MLP-Key-Value = <i>gelernter</i> Lookup</td></tr>
+      <tr><td>Was bleibt erhalten?</td><td>Frame-Axiome (explizit)</td><td>Residual-Verbindung (Identität)</td><td>Identitätsterm = „was sich nicht ändert“</td></tr>
+      <tr><td>Kapazität vs. Explosion</td><td>n×m Frame-/Qualifikationsproblem</td><td>Superposition (JL-Bound)</td><td>m ≫ d Features in d Dimensionen</td></tr>
+      <tr><td>Garantie</td><td>Beweis (lokal, exakt)</td><td>statistischer Fit (global)</td><td>Determinismus: Welt (B) vs. Inferenz (A)</td></tr>
+    </table>
+    <p><b>Key-Value ⊃ Lookup.</b> B’s <code>lookup(q, Phone-book)</code> / <code>result(p,σ,s)</code> ist eine <i>handgeschriebene</i> Key→Value-Map. A’s MLP ist dieselbe Idee, <i>gelernt, kontinuierlich und superponiert</i>: statt eines exakten Treffers wird der nächste Key über <code>ReLU(kᵢ·x)</code> „angedudelt“ und sein Value proportional beigesteuert. Die formale Aktion wird zum weichen Muster-Match.</p>
+    <p><b>Attention = weiche Situationstransformation.</b> Statt einem deterministischen <code>result(p,σ,s)</code> berechnet Attention einen <i>gewichteten</i> Mix über die „Situationen“ (die anderen Tokens): der nächste Zustand ist keine einzige Nachfolge, sondern eine Summe über mögliche Nachfolgen, gewichtet mit <code>αᵢⱼ</code>.</p>
+    <p><b>Superposition löst die Explosion.</b> B’s n×m-Frame-/Qualifikationsproblem ist in A ein O(d)-Problem: statt eines expliziten Axioms pro Fluent superponiert man m Features in d Dimensionen — mit dem Preis von Interferenz &amp; Ambiguität (exakt der Preis, den A selbst als „fundamentalen Kosten“ der Polysemie nennt).</p>
+    <p><b>Determinismus auf zwei Ebenen.</b> B: die Welt ist ein deterministisches Automatensystem — die Zukunft ist fest. A: zur Inferenzzeit ist das Netz eine feste (deterministische) Funktion, aber die <em>Gewichte</em> sind Produkt statistischen Lernens. B’s „Zukunft ist bestimmt“ gilt über die Welt; A’s „Zukunft ist bestimmt“ gilt über die Inferenz.</p>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>5 · Visualisierung — dieselbe Operation in zwei Sprachen</h2>
+    <p>Der zentrale Fusionspunkt als spielbares Diagramm: ein 2-D-Residual-Stream mit Key-Value-Speicher. Ziehe <b>x</b> (gelb, die „Situation“) sowie die Keys/Values. Jeder Key kᵢ prüft über <code>ReLU(kᵢ·x)</code>, ob das Muster in der Situation vorkommt, und schreibt dann seinen Value vᵢ — das ist A’s <i>gelernter Lookup</i>. Die rote Komponente <b>Δ</b> ist „was sich ändert“; die gelbe Identitätskomponente <b>x</b> ist „was sich <u>nicht</u> ändert“ — zusammen <code>x+Δ</code> = B’s <code>result(p,σ,s)=s′</code>. Das ist die geometrische Antwort auf B’s Frame-Problem.</p>
+
+    <canvas id="viz" class="viz-canvas" width="560" height="560"></canvas>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--accent4)"></i> x — Situation (ziehbar)</span>
+      <span><i class="dot" style="background:var(--accent)"></i> Key kᵢ — Muster erkennen</span>
+      <span><i class="dot" style="background:var(--accent2)"></i> Value vᵢ — schreibt Richtung</span>
+      <span><i class="dot" style="background:var(--accent3)"></i> Δ = Σ aᵢvᵢ — geändert</span>
+      <span><i class="dot" style="background:var(--resid)"></i> x+Δ — neue Situation</span>
+    </div>
+    <div class="ctrl">
+      <label>Neuronen (Key/Value):</label>
+      <input id="nNeurons" type="range" min="1" max="5" value="2">
+      <span class="val" id="nNeuronsVal">2</span>
+      <button class="btn" id="rand">Zufällig</button>
+      <button class="btn" id="reset">Reset</button>
+      <label style="margin-left:6px"><input id="chkResid" type="checkbox" checked> Residual (Frame-Problem)</label>
+    </div>
+    <div id="readout" class="readout"></div>
+
+    <h3>Warum LLMs die kombinatorische Explosion umgehen: Superposition</h3>
+    <p>B’s Frame-/Qualifikationsproblem wächst mit der Anzahl der Fluenten; A’s Johnson–Lindenstrauss-Grenze zeigt, dass eine <i>feste</i> Dimensionalität d bis zu <code>m ≈ e^(ε²·d/8)</code> fast-orthogonale Feature-Richtungen fasst — exponentiell in d, bei nur kleiner Interferenz ε. Rutsche d und ε: So packt ein LLM m ≫ d „Axiome“ in einen Raum, ohne n×m Sätze zu schreiben.</p>
+    <div class="ctrl">
+      <label>d (Dimensionen):</label>
+      <input id="jlD" type="range" min="2" max="2048" step="2" value="256">
+      <span class="val" id="jlDVal">256</span>
+      <label>ε (Interferenz):</label>
+      <input id="jlEps" type="range" min="0.02" max="0.5" step="0.01" value="0.10">
+      <span class="val" id="jlEpsVal">0.10</span>
+    </div>
+    <div id="jl" style="width:100%;height:300px"></div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>6 · Provenienz</h2>
+    <ul>
+      <li><a href="../test.html">test.html</a> — „How LLMs Store Information“ (englisch): interaktiver Demonstrator dafür, wie LLMs Wissen als <b>Richtungen im Residual-Stream</b> speichern — Vektoren &amp; Projektionen, MLP als Key-Value-Speicher, Superposition (JL-Bound), polysemantische Neuronen, Live-Training und ein Mini-Transformer im Schritt-für-Schritt-Vorwärtspass.</li>
+      <li><a href="../mccarthy_heyes_1969.html">mccarthy_heyes_1969.html</a> — McCarthy &amp; Hayes 1969 (deutsch): „Some Philosophical Problems from the Standpoint of Artificial Intelligence“ interaktiv — Epistemologie vs. Heuristik, die drei Adäquatheits-Stufen, die Welt als deterministische Automaten, „can“ via Disconnection, Situationskalkül (result, Fluenten, Strategien), das Frame-Problem, Wissen via Modallogik/Kripke-Hintikka und das Vermächtnis für LLMs.</li>
+    </ul>
+  </section>
+
+  <footer>Knockout-Synthese, Runde 1 · Pair 055 · Selbst-contained, inline data, theme-reactive.</footer>
+</article>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  function $(id){ return document.getElementById(id); }
+  function cssVar(n){ var v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return v; }
+  function dot(a,b){ return a[0]*b[0] + a[1]*b[1]; }
+  function add(a,b){ return [a[0]+b[0], a[1]+b[1]]; }
+  function norm(a){ return Math.sqrt(a[0]*a[0] + a[1]*a[1]); }
+  function normalize(a){ var n = norm(a) || 1; return [a[0]/n, a[1]/n]; }
+  function fmtNum(v){
+    if(!isFinite(v)) return "∞";
+    if(v >= 1e5) return v.toExponential(2).replace("e+","e");
+    if(v >= 1000) return Math.round(v).toLocaleString("de-DE");
+    return String(Math.round(v*100)/100);
+  }
+
+  function VecCanvas(id){
+    this.c = $(id); this.ctx = this.c.getContext("2d");
+    this.w = this.c.width; this.h = this.c.height;
+    this.cx = this.w/2; this.cy = this.h/2; this.scale = 150;
+    this.handles = []; this.drag = null; this.after = null;
+    var self = this;
+    function pos(e){ var r = self.c.getBoundingClientRect(); var p = e.touches ? e.touches[0] : e;
+      return [(p.clientX - r.left)*(self.c.width/r.width), (p.clientY - r.top)*(self.c.height/r.height)]; }
+    function down(e){ var s = pos(e); var sx = s[0], sy = s[1];
+      for(var i=self.handles.length-1;i>=0;i--){ if(!self.handles[i].draggable) continue;
+        var sp = self.toScreen(self.handles[i].pos); var dx = sx-sp[0], dy = sy-sp[1];
+        if(dx*dx+dy*dy < 500){ self.drag = i; return true; } } return false; }
+    function move(e){ if(self.drag===null) return; var s = pos(e);
+      self.handles[self.drag].pos = self.fromScreen(s[0], s[1]); if(self.after) self.after(); }
+    function up(){ self.drag = null; }
+    this.c.addEventListener("mousedown", function(e){ down(e); });
+    this.c.addEventListener("mousemove", function(e){ move(e); });
+    window.addEventListener("mouseup", up);
+    this.c.addEventListener("touchstart", function(e){ if(down(e)) e.preventDefault(); }, {passive:false});
+    this.c.addEventListener("touchmove", function(e){ e.preventDefault(); move(e); }, {passive:false});
+    this.c.addEventListener("touchend", up);
+  }
+  VecCanvas.prototype.toScreen = function(p){ return [this.cx + p[0]*this.scale, this.cy - p[1]*this.scale]; };
+  VecCanvas.prototype.fromScreen = function(sx,sy){ return [(sx-this.cx)/this.scale, (this.cy-sy)/this.scale]; };
+  VecCanvas.prototype.addHandle = function(p, draggable){ this.handles.push({pos:p.slice(), draggable:!!draggable}); return this.handles.length-1; };
+  VecCanvas.prototype.arrow = function(from,to,color,w,dashed){
+    var ctx=this.ctx, f=this.toScreen(from), t=this.toScreen(to);
+    ctx.save(); if(dashed) ctx.setLineDash([7,5]);
+    ctx.beginPath(); ctx.moveTo(f[0],f[1]); ctx.lineTo(t[0],t[1]);
+    ctx.strokeStyle=color; ctx.lineWidth=w; ctx.stroke(); ctx.setLineDash([]);
+    var dx=t[0]-f[0], dy=t[1]-f[1], len=Math.sqrt(dx*dx+dy*dy);
+    if(len>8){ var ux=dx/len, uy=dy/len, hs=Math.min(12,len*0.35);
+      ctx.beginPath(); ctx.moveTo(t[0],t[1]);
+      ctx.lineTo(t[0]-ux*hs+uy*hs*0.4, t[1]-uy*hs-ux*hs*0.4);
+      ctx.lineTo(t[0]-ux*hs-uy*hs*0.4, t[1]-uy*hs+ux*hs*0.4);
+      ctx.closePath(); ctx.fillStyle=color; ctx.fill(); }
+    ctx.restore();
+  };
+  VecCanvas.prototype.label = function(p,text,color,ox,oy){
+    var s=this.toScreen(p); ox=(ox==null?10:ox); oy=(oy==null?-10:oy);
+    this.ctx.font="bold 13px Segoe UI,system-ui,sans-serif"; this.ctx.fillStyle=color;
+    this.ctx.fillText(text, s[0]+ox, s[1]+oy);
+  };
+  VecCanvas.prototype.draw = function(scene){
+    var ctx=this.ctx; ctx.clearRect(0,0,this.w,this.h);
+    ctx.fillStyle = cssVar("--canvas-bg") || "#0d0f18"; ctx.fillRect(0,0,this.w,this.h);
+    var step=this.scale*0.5, x, y;
+    ctx.strokeStyle = cssVar("--grid") || "#1e2140"; ctx.lineWidth=1;
+    for(x=this.cx%step; x<this.w; x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,this.h); ctx.stroke(); }
+    for(y=this.cy%step; y<this.h; y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(this.w,y); ctx.stroke(); }
+    ctx.strokeStyle = cssVar("--axis") || "#2a2d50"; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(0,this.cy); ctx.lineTo(this.w,this.cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(this.cx,0); ctx.lineTo(this.cx,this.h); ctx.stroke();
+    ctx.beginPath(); ctx.arc(this.cx,this.cy,this.scale,0,TAU); ctx.strokeStyle=cssVar("--axis")||"#2a2d50";
+    ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+    scene(this);
+  };
+
+  var viz;
+  var state = {
+    input:[0.55,0.5], N:2, showResid:true,
+    neurons:[
+      {key:[0.9,0.2], value:[0.3,0.9]},
+      {key:[-0.2,0.9], value:[-0.5,-0.7]},
+      {key:[0.2,-0.9], value:[0.8,-0.3]},
+      {key:[-0.7,0.5], value:[-0.9,-0.2]},
+      {key:[0.5,0.8], value:[0.1,-0.9]}
+    ]
+  };
+  function colorFor(i){
+    if(i===0) return cssVar("--accent4") || "#ffbe0b";
+    if(i%2===1) return cssVar("--accent") || "#8b7cff";
+    return cssVar("--accent2") || "#22d3a7";
+  }
+  function computeOutput(x){
+    var h=viz.handles, y=[0,0], i, kn, a;
+    for(i=1;i<h.length;i+=2){ kn=normalize(h[i].pos); a=Math.max(0, dot(x,kn)); y[0]+=a*h[i+1].pos[0]; y[1]+=a*h[i+1].pos[1]; }
+    return y;
+  }
+  function buildHandles(){
+    viz.handles.length=0; viz.addHandle(state.input,true);
+    for(var i=0;i<state.N;i++){ viz.addHandle(state.neurons[i].key,true); viz.addHandle(state.neurons[i].value,true); }
+  }
+  function scene(vc){
+    var x=vc.handles[0].pos, y=computeOutput(x), i, isKey, n;
+    for(i=1;i<vc.handles.length;i++){
+      isKey=(i%2===1); n=Math.floor((i-1)/2)+1;
+      vc.arrow([0,0], vc.handles[i].pos, colorFor(i), isKey?2:1.6, !isKey);
+      vc.label(vc.handles[i].pos, (isKey?"k":"v")+n, colorFor(i));
+    }
+    if(norm(y)>0.02){ vc.arrow([0,0], y, cssVar("--accent3")||"#ff6b6b", 4, false); vc.label(y, "Δ", cssVar("--accent3")||"#ff6b6b"); }
+    if(state.showResid){
+      var xo=add(x,y);
+      vc.ctx.save(); vc.ctx.globalAlpha=0.45; vc.arrow(x, xo, cssVar("--resid")||"#56b4e9", 1.5, true); vc.ctx.restore();
+      vc.arrow([0,0], xo, cssVar("--resid")||"#56b4e9", 4, false); vc.label(xo, "x+Δ", cssVar("--resid")||"#56b4e9", 8, 18);
+    }
+    vc.arrow([0,0], x, cssVar("--accent4")||"#ffbe0b", 3, false);
+    vc.label(x, "x (Situation)", cssVar("--accent4")||"#ffbe0b", 8, -12);
+  }
+  function updateReadout(){
+    var x=viz.handles[0].pos, h=viz.handles, y=computeOutput(x), xo=add(x,y);
+    var key=cssVar("--accent")||"#8b7cff", dim=cssVar("--dim")||"#888", lines=[];
+    for(var i=1;i<h.length;i+=2){
+      var n=Math.floor((i-1)/2)+1, k=h[i].pos, kn=normalize(k), d=dot(x,kn), a=Math.max(0,d), hit=a>0.02;
+      lines.push('<div style="color:'+key+'">k'+n+'</div>' +
+        '<div>  ⟨k'+n+', x̂⟩ = ' + (d>=0?"+":"") + d.toFixed(3) + '   →   a'+n+' = ' + a.toFixed(3) +
+        (hit ? '   → schreibt a·v' : '   → <span style="color:'+dim+'">stumm</span>') + '</div>');
+    }
+    lines.push('<div style="margin-top:8px"><b>Δ = Σ aᵢ·vᵢ</b> = [' + y[0].toFixed(2) + ', ' + y[1].toFixed(2) + ']   →  <i>was sich ändert</i></div>');
+    lines.push('<div><b>x (Identität)</b> = [' + x[0].toFixed(2) + ', ' + x[1].toFixed(2) + ']   →  <i>was sich NICHT ändert</i> (Frame)</div>');
+    lines.push('<div><b>x+Δ</b> = [' + xo[0].toFixed(2) + ', ' + xo[1].toFixed(2) + ']   →  <i>result(p, σ, s) = s′</i></div>');
+    $("readout").innerHTML = lines.join("");
+  }
+  function jlPlot(){
+    if(!window.Plotly) return;
+    var d0=+$("jlD").value, eps=+$("jlEps").value;
+    $("jlDVal").textContent=d0; $("jlEpsVal").textContent=eps.toFixed(2);
+    var ds=[], d; for(d=2; d<=2048; d*=1.3){ ds.push(Math.round(d)); }
+    var ys=ds.map(function(dd){ return Math.exp(eps*eps*dd/8); });
+    var txt=cssVar("--text")||"#dde1ea", grid=cssVar("--grid")||"#1e2140";
+    Plotly.react("jl", [
+      {x:ds, y:ys, type:"scatter", mode:"lines", line:{color:cssVar("--accent2")||"#22d3a7", width:2}, name:"m_max"},
+      {x:[d0], y:[Math.exp(eps*eps*d0/8)], type:"scatter", mode:"markers", marker:{size:11, color:cssVar("--accent4")||"#ffbe0b"}, name:"aktuell d"}
+    ], {
+      paper_bgcolor:"transparent", plot_bgcolor:"transparent",
+      font:{color:txt, family:"Segoe UI,system-ui,sans-serif", size:12},
+      title:{text:"Superposition:  d = "+d0+",  ε = "+eps.toFixed(2)+"   →   m_max ≈ "+fmtNum(Math.exp(eps*eps*d0/8)), font:{size:12, color:txt}},
+      xaxis:{title:"d (Dimensionen)", type:"log", gridcolor:grid},
+      yaxis:{title:"m_max ≈ e^(ε²·d/8)", type:"log", gridcolor:grid},
+      margin:{l:64, r:16, t:44, b:44}, height:300, showlegend:false
+    }, {responsive:true, displayModeBar:false});
+  }
+  function renderAll(){ if(viz) viz.draw(scene); updateReadout(); jlPlot(); }
+
+  function wire(){
+    $("nNeurons").addEventListener("input", function(e){ state.N=+e.target.value; $("nNeuronsVal").textContent=state.N; buildHandles(); renderAll(); });
+    $("rand").addEventListener("click", function(){
+      for(var i=0;i<5;i++){ var a1=Math.random()*TAU, a2=Math.random()*TAU;
+        state.neurons[i].key=[Math.cos(a1)*0.9, Math.sin(a1)*0.9];
+        state.neurons[i].value=[Math.cos(a2)*0.8, Math.sin(a2)*0.8]; }
+      buildHandles(); renderAll();
+    });
+    $("reset").addEventListener("click", function(){
+      state.input=[0.55,0.5]; state.N=2; $("nNeurons").value=2; $("nNeuronsVal").textContent=2;
+      state.showResid=true; $("chkResid").checked=true;
+      state.neurons=[
+        {key:[0.9,0.2], value:[0.3,0.9]},{key:[-0.2,0.9], value:[-0.5,-0.7]},
+        {key:[0.2,-0.9], value:[0.8,-0.3]},{key:[-0.7,0.5], value:[-0.9,-0.2]},
+        {key:[0.5,0.8], value:[0.1,-0.9]}
+      ];
+      buildHandles(); renderAll();
+    });
+    $("chkResid").addEventListener("change", function(e){ state.showResid=e.target.checked; renderAll(); });
+    $("jlD").addEventListener("input", jlPlot);
+    $("jlEps").addEventListener("input", jlPlot);
+    $("themeBtn").addEventListener("click", function(){ document.documentElement.classList.toggle("dark"); renderAll(); });
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    viz=new VecCanvas("viz");
+    viz.after=function(){ updateReadout(); };
+    buildHandles();
+    wire();
+    renderAll();
+  });
+})();
+</script>
+</body>
+</html>

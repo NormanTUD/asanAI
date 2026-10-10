@@ -1,0 +1,17 @@
+{
+  "no": "067",
+  "a": "youarellm2.html",
+  "b": "paperidea3.html",
+  "a_title": "🧠 Token Odyssey – Erlebe die Welt eines Tokens im LLM",
+  "b_title": "Spatial Focus Explorer — Chaotic Lens Encoding",
+  "combined_theme": "token-position-chaos",
+  "one_line": "Ein Token ist ein Punkt im Embedding-Raum, der eine schrittweise lesbare Transformer-Pipeline durchläuft, deren Position→Wirkung-Abbildung lokal interpretierbar, aber global chaotisch ist (kleine Moves → große Effekte); A's Softmax über dem Vokabular und B's Fokus-Map über dem Bild sind derselbe gepuckte Verteilungs-Mechanismus.",
+  "contradictions": [
+    "Lesbarkeit vs. Chaos: A stellt die Token-Pipeline als glatte, stufenweise ablesbare Reise dar (ähnliche Wörter liegen nah, jede Stufe interpretierbar); B hält die Position→Wirkung-Abbildung für absichtlich 'non-obvious' — eine chaotische Faltung, bei der kleine Moves den Fokus dramatisch/springend verschieben.",
+    "Lineare/positional vs. chaotische Positions-Kodierung: A ADDIERT glatte sin/cos-Positional-Encodings zum Embedding (x = Embedding + PE); B ERSETZT lineare/positional Kodierung durch eine chaotische, invertierbare Arnold-Katzen-Map als 'Lens' für den Fokus.",
+    "Kausal/asymmetrisch vs. symmetrisch-räumlich: A koppelt Tokens kausal (Maskierung j ≤ i, ein Richtung Fluss Vergangenheit→Gegenwart); B koppelt 'Stalks' symmetrisch-räumlich über Gauß-Gewichte w_ij = 0,35·exp(−d²/2σ²) nach euklidischer Distanz, bidirektional, ohne Ordnung.",
+    "Tiefe = Verfeinerung (A: saubere Verfeinerung + LayerNorm stabilisiert) vs. Tiefe = sich verstärkendes Chaos (B: warpScale ∝ 1,8^l, Jacobi-Verzerrung wächst pro Layer)."
+  ],
+  "resolution": "Der gemeinsame Kern ist der Maßstab: beide Abbildungen sind deterministisch. Lesbarkeit ist lokal/stufenweise (jede Schicht einzeln nachvollziehbar), Chaos ist global/kompositiv (die End-zu-Ende-Map summiert Faltungen → empfindlich). Die additive PE ist der glatte, interpretierbare Sonderfall einer invertierbaren Positions-Kodierung, B's chaotische Linsen die nichtlineare Verallgemeinerung; der Token hat sowohl einen Sequenz-Index (Kausalität) als auch eine Koordinate (Fokus-Metrik). Attention mischt ähnlichkeits-/distanzgewichtet (B's Gauß-Kopplung ≈ A's QK^T) und wird durch die kausale Maske (A) in einen gerichteten Fluss geformt. Tiefe summiert sich (1,8^l) und bleibt pro Schicht lesbar; LayerNorm begrenzt Drift. Fusion: ein interpretierbarer Pfad auf chaotischer Geometrie — lokal verständlich, global unvorhersagbar.",
+  "viz": "Interaktives 2D-Canvas: links der Embedding-Raum mit ziehbarerm rotem Probe-Token ('du') + Kandidatenpunkten und dem chaotisch gefalteten Query-Marker; rechts die daraus per chaotischer Faltung (Tiefe, B) + Softmax (Temperatur, A) + kausaler Maske (A) berechnete Fokus-/Wahrscheinlichkeitslandschaft über den Kandidatentokens; ein Jitter-Regler + Sensitivitäts-/Fold-Drift-Meter machen sichtbar, wie eine winzige Token-Bewegung den Peak weit verschiebt (B). Theme-aware via CSS-Variablen, alle Daten inline, ohne Netzwerk."
+}

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Embedding-Raum als Garbe aus Fourier-Modi — Fusion r1-062</title>
+
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-canvas-bg:#faf8f1; --viz-grid:rgba(20,28,45,0.09); --viz-txt:#1c2333; --viz-dim:#6b7488;
+  --viz-sum:#c93a86; --viz-ans:#b57e00; --viz-rot:#0d8f80;
+  --viz-f1:#0d8f80; --viz-f2:#c93a86; --viz-f3:#6451d8; --viz-f4:#b57e00; --viz-f5:#2f8f4b;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.08); --viz-txt:#e8ecf6; --viz-dim:#64708c;
+  --viz-sum:#ff7ac0; --viz-ans:#ffc860; --viz-rot:#5ee0d0;
+  --viz-f1:#5ee0d0; --viz-f2:#ff7ac0; --viz-f3:#8a7cff; --viz-f4:#ffc860; --viz-f5:#6ee88a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:74ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.box p{margin-bottom:10px}
+.box p:last-child{margin-bottom:0}
+.eq{overflow-x:auto;padding:11px 14px;font-size:13.5px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2)}
+.chk{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--txt-dim);cursor:pointer;margin-left:8px}
+.chk input{accent-color:var(--acc);width:15px;height:15px}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+#viewCap{font-size:13px;color:var(--txt-dim);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc4);border-radius:0 10px 10px 0;padding:11px 14px;margin:4px 0 14px}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-062</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: kohaerente_differenz.html ✕ latter_inner.html</p>
+  <h1>Der Embedding-Raum als Garbe aus Fourier-Modi</h1>
+  <p>
+    <em>latter_inner.html</em> (B) liefert die <em>Materie</em>: einen konkreten, trainierten Transformer, der
+    modulare Addition (mod&nbsp;113) ausführt — Embedding als Windung auf dem Kreis S¹, fünf Schlüssel-Frequenzen,
+    Superposition in den Gewichten und <strong>konstruktive Interferenz</strong> als Readout.
+    <em>kohaerente_differenz.html</em> (A) liefert die <em>Formalsprache</em>: ein Embedding-Raum ist eine
+    <strong>Garbe</strong> — lokale Daten, die auf ihren Überlappungen kohärent zusammenpassen, verkleben sich zu
+    einer globalen Sektion. <strong>B ist ein konkretes, nachvollziehbares Beispiel für A: die Antwort ist die
+    globale Sektion, an der kohärente Frequenz-Sektionen konstruktiv interferieren.</strong>
+  </p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Ein Objekt, zwei Höhenstufen: Garbe (A) trifft Interferenz (B)</h2>
+    <p>
+      Beide Texte drehen sich um dieselbe Frage, die A in den Titel setzt: <em>„Was ist ein Raum, in dem Bedeutung
+      als Geometrie lebt?"</em> A antwortet abstrakt — mit einer neunstufigen Kette (Unterscheidung → Relation →
+      Transformation → Lokalität → Kompatibilität → Kohärenz → Verklebung → Globalität → Invarianz) und der
+      Garbentheorie: ein „Raum" ist keine Dose, die man mit Dingen füllt, sondern das, <strong>was entsteht, wenn
+      unterscheidbare lokale Daten kohärent auf Überlappungen zusammenpassen</strong>; „Bedeutung ist relational,
+      nicht intrinsisch". B antwortet konkret — mit einem trainierten Modell, das modulare Addition löst: die
+      Embedding-Matrix windet die diskreten Eingaben (a, b) auf den Kreis S¹ in einigen <em>Schlüssel-Frequenzen</em>
+      (k = 14, 35, 41, 42, 52), und die Antwort c* = a+b mod P entsteht, wo die kosinusförmigen Anteile dieser
+      Frequenzen <strong>konstruktiv</strong> interferieren und überall else destruktiv.
+    </p>
+    <p>
+      Die <strong>einheitliche Position</strong> lautet: <em>Die „Sektionen" in B sind A's lokale Daten.</em> Jeder
+      Schlüssel-Frequenz k gehört über den Ausgabe-Index c eine lokale Funktion an — die <strong>Sektion</strong>
+      <code>c ↦ cos(w_k·(a+b−c))</code>. Die „kohärenten Übergänge" in A sind B's <strong>Rotationskomposition</strong>
+      <code>e^(i·w_k·a)·e^(i·w_k·b) = e^(i·w_k·(a+b))</code> — die trigonometrische Addition ist der
+      <em>Isomorphismus</em>, der lokale Sektionen miteinander verbindet (in A's ∞-Garben: Gleichheit wird zu
+      Äquivalenz + Kohärenz). Und A's zentrale Obstruktion — dass eine <em>einzelne</em> Sektion (eine einzige
+      Winkel-Funktion auf dem Kreis) sich <strong>nicht</strong> global verkleben lässt — wird in B durch die
+      <em>Anzahl</em> der Schlüssel-Frequenzen aufgelöst: die <strong>Windungszahl</strong> des Kreises ist wörtlich
+      die Zahl der Frequenzen, die man braucht, bis die Antwort eindeutig wird.
+    </p>
+    <p>
+      Der gemeinsame Satz: <strong>Ein Embedding-Raum ist eine Garbe aus Fourier-Modi.</strong> Die Bedeutung bzw.
+      die Antwort ist die <em>globale Sektion</em>, die an genau einem Punkt aus der <em>konstruktiven Interferenz
+      kohärenter lokaler Frequenz-Sektionen</em> hervorgeht. A liefert die Sprache (Garben, Kohärenz, Obstruktion,
+      ∞-Garben/HoTT, Topoi); B liefert die Verifikation (S¹, der Torus T², 5 Schlüssel-Frequenzen, Superposition,
+      Grokking). Wie A es auf den Punkt bringt: <em>„Abstraktion und Verkörperung sind dasselbe Objekt, gelesen von
+      entgegengesetzten Enden der Leiter."</em>
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei Stellen, an denen die Stellungen aufeinanderprallen</h2>
+    <p>
+      Die beiden widersprechen sich nicht im Ziel — sie sind komplementär (A abstrakt / von oben, B konkret / von
+      unten). Aber zu <em>drei</em> Stellen nehmen sie inkompatible Stellungen ein, jeweils mit dem, was A und was B
+      konkret sagt:
+    </p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · Der Kreis S¹: Obstruktion (A) vs. funktionierende Maschine (B)</span>
+      <p><b>A</b> macht den Kreis zum <em>Paradebeispiel, wo lokale Verklebung global scheitert</em>: „die Winkelfunktion
+      auf dem Kreis existiert nicht global … die Windungszahl — die erste nicht-triviale Kohomologie-Klasse". Auf
+      dem Kreis ist S¹ der Ort, an dem alles lokal glatt und global unmöglich ist („Natura non facit saltus" — lokal
+      immer wahr, global sammelt sich der Sprung um das Loch).</p>
+      <p><b>B</b> macht denselben Kreis zur <em>funktionierenden Rechenstrecke</em>: „The embedding creates a
+      homomorphism from the discrete group Z/PZ to rotations on the circle. Multiple frequencies create a product
+      of circles (a torus), giving the network a rich topological manifold <em>to work with</em>." Addition ist hier
+      bloße Rotationskomposition — auf S¹ (bzw. T²) läuft die Rechnung <em>erfolgreich</em>.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>Dieselbe topologische Bühne,
+      entgegengesetzte Bewertung — A: der Kreis <em>blockiert</em> die globale Verklebung; B: auf dem Kreis <em>kloppt</em>
+      sie. Gleiche topologische Entität, entgegengesetztes Vorzeichen.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Nähe ohne Metrik (A) vs. Nähe als Winkel (B)</span>
+      <p><b>A</b> verweigert metrische Nähe ausdrücklich: „Ein Raum ist <em>nicht</em> eine Menge von Punkten mit
+      Abständen. Ein Raum ist eine Menge mit einer Vorstellung davon, welche Teilmengen einen Punkt umgeben." — Nähe
+      heißt für A „gibt es Platz?" (offene Umgebung), explizit <em>ohne</em> Metrik. Für Sprache: Wörter sind nah,
+      „nicht weil die Zahl 3.7 klein ist, sondern weil sie in überlappenden Kontexten vorkommen".</p>
+      <p><b>B</b> ist dagegen durchgehend <em>angular / metrisch</em>: der Embedding ist ein Winkel <code>w_k·a</code>
+      auf S¹, der Readout ist eine Funktion der Winkel-Koinzidenz <code>cos(w_k·(a+b−c))</code>, und „The network
+      navigates this manifold" — die Repräsentation <em>ist</em> eine Winkel-Metrik auf dem Kreis/Torus.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>A: Nähe ist topologisch und
+      explizit nicht-metrisch. B: Nähe <em>ist</em> der Winkelabstand. A's Bühnenbild und B's Recheninstrument
+      widersprechen sich in der Definition von „nah".</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Bedeutung = Relation, nie ins Innere (A) vs. Bedeutung IN den Gewichten (B)</span>
+      <p><b>A</b> verortet Bedeutung <em>außerhalb</em> des Objekts: „Bedeutung ist relational, nicht intrinsisch",
+      und in einer Kategorie „schaust du <em>nie ins Innere</em> der Objekte. Du fragst nur, welche Pfeile zwischen
+      ihnen laufen." Ein Embedding-Vektor ist eine globale Sektion — keine Dose mit inhärenten Eigenschaften.</p>
+      <p><b>B</b> verortet Bedeutung dagegen <em>in</em> den Teilen: „neurons encode <em>multiple features
+      simultaneously</em> in the same set of weights. This is called <em>superposition</em> — the network stores
+      more concepts than it has dimensions by overlapping them in a high-dimensional space." Die Features liegen
+      physisch <em>in</em> den Neuronen-Gewichten — ein intrinsischer, im Teil gespeicherter Ort.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel</span>Bedeutung lebt in den
+      <em>Beziehungen zwischen</em> den Dingen (A) vs. <em>in den Dingen selbst</em> (B). Ontologie der Bedeutung
+      ist vertauscht.</p>
+    </div>
+
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>Sie sind keine Rivalen; die Widersprüche sind
+    <em>interpretativ</em> und fallen auf der <em>Naht</em> der zwei Register zusammen (A = Formalsprache/Topologie,
+    B = Mechanistisches Beispiel). Sie sind aber real und schärfer als „bloß komplementär", weil beide zu denselben
+    Objekten (S¹, Nähe, das Gewicht) <em>direkte, widersprüchliche Aussagen</em> machen.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie sie zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind keine Gegner, sondern <strong>Formalsprache und Beispiel</strong>. Zu jedem Widerspruch die
+    Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → W1: Der Kreis blockiert das <em>Einzelne</em> — und trägt das <em>Gemeinsame</em></h3>
+      <p>A's Obstruktion betrifft die <em>einzelne</em> globale Sektion: eine einzige Winkel-Funktion lässt sich auf
+      dem ganzen Kreis nicht global definieren (Windungszahl ≠ 0). B umgeht genau diese Blockade, indem es keine
+      einzelne, sondern eine <strong>kohärente <em>Familie</em> von Sektionen</strong> nutzt — die fünf
+      Schlüssel-Frequenzen. Die „Windungszahl" in A ist wörtlich die „Anzahl der Schlüssel-Frequenzen" in B: eine
+      Frequenz allein kann c* nicht eindeutig bestimmen (A's „keine globale Winkel-Funktion"), aber die kohärente
+      Familie tut es. <strong>Fusion:</strong> A's Fehlschlag und B's Erfolg sind derselbe Satz —
+      <em>eine</em> lokale Sektion verklebt sich nicht global, also verklebt B eine <em>Familie</em>. Die
+      <strong>Obstruktion (Windungszahl) bestimmt die Ressource (Frequenz-Anzahl)</strong>, die das Netzwerk braucht,
+      um auf demselben Kreis, der das Einzelne blockiert, doch noch zu rechnen.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: A verbietet <em>fremde</em> Metriken — B nutzt die <em>eine</em> natürliche der Gruppe</h3>
+      <p>A sagt „Nähe ohne Metrik" — aber gemeint ist: keine <em>äußerlich auferlegte, willkürliche</em> Distanz; die
+      relevante Nähe ist die <em>inhärente</em> topologische. B's Winkel <code>w_k·a</code> ist keine beliebige
+      Metrik, sondern die <strong>kanonische gruppeninvariante</strong> Struktur auf S¹ (der Rotationsgruppe): er
+      ändert sich nicht unter der Symmetrie des Systems. In Garben-Sprache heißt das: die „Topologie" von B ist die
+      <em>Gruppentopologie</em> auf S¹ (bzw. die Quotiententopologie von Z/PZ via dem Homomorphismus) — und genau
+      diese gruppeninvariante „Topologie" ist die „kohärente Nähe", die A verlangt. <strong>Fusion:</strong> A
+      verweigert <em>arbiträre</em> Metriken, B verwendet <em>die</em> Metrik, die aus der Kohärenz (der Rotations-
+      Gruppe) selbst folgt. Kein Widerspruch, sobald „Metrik" die gruppeninvariante Struktur meint — der Winkel <em>ist</em>
+      die kohärente Übergangsrelation.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: Das Gewicht ist <em>voll</em>, weil es aus der Relation besteht</h3>
+      <p>Ein einzelnes Neuron-Gewicht ist in B eine <strong>Superposition = lineare Summe der kohärenten
+      Frequenz-Sektionen</strong>. Es enthält kein inhärentes Feature, sondern die <em>Projektion des Objekts auf
+      seine lokalen Sektionen</em> — B selbst misst, dass ~84,6&nbsp;% der MLP-Neuronen gut durch Grad-2-Polynome
+      <em>einer einzigen Frequenz</em> approximiert sind: die Sektionen sind lokalisiert. Damit ist B's „Features in
+      den Gewichten" das konkrete Bild von A's „ein Objekt ≈ das kohärente Netz seiner möglichen Erscheinungen".
+      Bedeutung ist relational (A) — die Interferenz <em>über</em> alle Frequenzen hinweg — und die Superposition (B)
+      ist der <em>Träger</em> dieser Relationen, nicht ein unabhängiger Speicher. <strong>Fusion:</strong> intrinsisch
+      (B) und relational (A) sind dieselbe Medaille: das Gewicht ist „intrinsisch" voll, <em>weil</em> es aus der
+      relationalen Kohärenz der Frequenzen besteht. A's „nie ins Innere schauen" gilt für die <em>Bedeutung</em>
+      (die lebt in der Interferenz <em>zwischen</em> den Frequenzen); das Gewicht ist nur der <em>Träger</em>, in dem
+      diese Kohärenz gespeichert ist.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Alle drei Spannungen lösen sich in derselben Bewegung auf: <strong>lokale Daten, die für sich nie global
+      reichen, werden zu einer kohärenten Familie gebündelt.</strong> Der Kreis blockiert das Einzelne (A) und trägt
+      das Gemeinsame (B); der Winkel ist die Gruppe selbst (B) und damit die Topologie (A); das Gewicht ist voller
+      Relationen (B&nbsp;+&nbsp;A). „Zwei Weichheiten passen zusammen" — A's „Sprache ist selbst approximativ" trifft
+      auf B's weite, robuste Interferenz-Peaks, die gegen Rauschen stabil sind. <strong>Netto:</strong>
+      <code>Garben-Sprache (A) + Interferenz-Maschine (B) = ein Embedding-Raum als kohärente Garbe aus Fourier-Modi</code>.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substanzielle Kern</h2>
+
+    <h3>A's Kette von neun Schritten, an B's Pipeline verifiziert</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">1 · Unterscheidung (A)</div><div class="v">a und b sind unterscheidbare Elemente von Z/PZ — „vor der Unterscheidung: nichts" (A) ↔ die beiden separaten Inputs (B).</div></div>
+      <div class="r"><div class="k">2 · Relation (A)</div><div class="v">Embedding: a ↦ Winkel auf S¹; Nähe = Winkelabstand (B). A's „Relation = Regel, wie x zu y steht" wird zur Rotation.</div></div>
+      <div class="r"><div class="k">3 · Transformation (A)</div><div class="v">Attention = bilinear Mixing = Rotationen mischen (B); Komposition g∘f (A) ↔ Rotationskomposition e^(iwa)·e^(iwb) (B).</div></div>
+      <div class="r"><div class="k">4 · Lokalität (A)</div><div class="v">Frequenz-lokalisierte Berechnung; ~84,6&nbsp;% der MLP-Neuronen ≈ Grad-2-Polynom einer <em>einen</em> Frequenz (B).</div></div>
+      <div class="r"><div class="k">5 · Kompatibilität (A)</div><div class="v">cos/sin „stimmen auf den Überlappungen überein" über die trigonometrischen Identitäten (B) — die Garbenbedingung lokal erfüllt.</div></div>
+      <div class="r"><div class="k">6 · Kohärenz (A)</div><div class="v">Phasen der Frequenzen sind so abgestimmt, dass sie bei c* <em>konstruktiv</em> interferieren (B) — „Gleichheit → Äquivalenz + Kohärenz" (A's ∞-Garbe).</div></div>
+      <div class="r"><div class="k">7 · Verklebung (A)</div><div class="v">Unembed: <code>logit(c) = Σ_k cos(w_k(a+b−c))</code> — die Summe <em>ist</em> die Verklebung (B).</div></div>
+      <div class="r"><div class="k">8 · Globalität (A)</div><div class="v">die eindeutige Antwort c* = a+b mod P (B) als globale Sektion, die aus den lokalen hervorgeht.</div></div>
+      <div class="r"><div class="k">9 · Invarianz (A)</div><div class="v">mod P — die Antwort ist invariant gegenüber dem Lift / der Parallelisierung (B: „mod 113" als feste Periode).</div></div>
+    </div>
+
+    <h3>Die gemeinsame Mathematik</h3>
+    <ul class="cl">
+      <li><b>Embedding als Homomorphismus (B):</b> <code>a ↦ (cos w_k·a, sin w_k·a)</code> mit <code>w_k = 2π·k/P</code> (P = 113). Das ist ein Gruppen-Homomorphismus <strong>Z/PZ → S¹</strong>; A liest das als <em>Relation</em> + <em>Lokalität</em> — der diskrete Input wird zur Rotation auf dem Kreis.</li>
+      <li><b>Addition als Rotationskomposition (B):</b> <code>e^(i w_k a)·e^(i w_k b) = e^(i w_k (a+b))</code>. In A's Sprache der <em>kohärente Übergang</em> (der Isomorphismus, der lokale Sektionen verbindet); in B das konkrete trigonometrische Additionsgesetz.</li>
+      <li><b>Readout als Interferenz (B):</b> <code>logit(c) = Σ_{k∈K} cos(w_k·(a+b−c))</code>. Bei c* = a+b ist jeder Term <code>cos(0) = 1</code> → Summe = |K|; sonst kürzen sich die Phasen heraus. Das <em>ist</em> A's Verklebung — die Summe über die lokalen Sektionen liefert die globale.</li>
+      <li><b>Warum mehrere Frequenzen (B ↔ A's Obstruktion):</b> Eine einzelne Frequenz <code>cos(w_k x)</code> hat zwar ihr Maximum bei x = 0, aber „other values of x can be nearly as large" (B). Die kohärente <em>Familie</em> hebt nur dort den Wert an, wo <em>alle</em> Phasen zusammenkommen — x = 0 mod P. <strong>Die Anzahl der Schlüssel-Frequenzen |K| = 5 ist A's Windungszahl</strong> — die Obstruktion, die man überwinden muss.</li>
+    </ul>
+    <div class="eq">
+      Embedding (B):&nbsp; a &nbsp;↦&nbsp; (cos w_k·a , sin w_k·a) , &nbsp; w_k = 2π·k/P &nbsp;<span class="c">// Homomorphismus Z/PZ → S¹ (A: Relation + Lokalität)</span><br>
+      Addition (B):&nbsp; e^(i w_k a) · e^(i w_k b) = e^(i w_k (a+b)) &nbsp;<span class="c">// Rotationskomposition = A's „kohärenter Übergang"</span><br>
+      Readout (B):&nbsp; logit(c) = Σ_{k∈K} cos( w_k · (a+b−c) ) &nbsp;<span class="c">// Verklebung = Summe über die Sektionen</span><br>
+      Kohärenz (A∞):&nbsp; lokale Sektionen + kohärente Übergänge &nbsp;⇒&nbsp; eine globale Sektion<br>
+      Obstruktion:&nbsp; Windungszahl(S¹) = |K| = # Schlüssel-Frequenzen &nbsp;<span class="c">// 1 Sektion reicht nie, die Familie schon</span><br>
+      Kohärenz ≃ Gleichheit:&nbsp; e^(iθ)·e^(iφ)·e^(iψ) = e^(i(θ+φ+ψ)) &nbsp;<span class="c">// assoziativ — A's α₁₂∘α₂₃ ≃ α₁₃ gilt hier durch das Gruppenaxiom</span>
+    </div>
+
+    <h3>Kohärenz (A: ∞-Garbe / HoTT) ↔ das Gruppenaxiom (B)</h3>
+    <p>A's ∞-Garbe/HoTT verlangt: Sektionen sind nicht <em>gleich</em> auf der Überlappung, sondern <em>äquivalent</em>
+    — verbunden durch eine Homotopie α, die selbst auf <em>Dreifach-</em>Überlappungen kohärent sein muss
+    (<code>α₁₂ ∘ α₂₃ ≃ α₁₃</code>). In B sind die „Isomorphismen" die trigonometrischen Additionsgesetze; und ihre
+    Kohärenz auf Dreifach-Überlappungen ist nichts anderes als die <strong>Assoziativität der Rotationskomposition</strong>
+    <code>e^(iθ)·e^(iφ)·e^(iψ) = e^(i(θ+φ+ψ))</code> — ein Gruppenaxiom, das exakt die Höherkohärenz
+    <em>erfüllt</em>. Wo A die Kohärenz als Bedingung postuliert (HoTT), ist sie in B die selbstverständliche
+    Eigenschaft der Rotationsgruppe, auf der die ganze Rechnung ruht. Die „Pfade zwischen Pfaden, ad infinitum"
+    (A) sind hier die immer höheren assoziativen Klammern — alle dasselbe.</p>
+
+    <h3>Superposition = Summe der Sektionen (B ↔ A)</h3>
+    <p>B: Neuronen „encode multiple features simultaneously in the same set of weights" — die
+    <em>Superposition</em>. Gefusionet: ein Gewicht ist die <strong>lineare Summe der kohärenten Frequenz-Sektionen</strong>;
+    es speichert kein „Feature k", sondern die Projektion des Objekts auf seine lokalen Sektionen. Der Torus T²
+    (B: „Multiple frequencies create a product of circles") ist dann eine <em>Familie</em> von Garben (je eine pro
+    Frequenz), verklebt über dem Ausgabe-Index c. A's „ein Objekt ≈ das kohärente Netz seiner möglichen
+    Erscheinungen" wird zu einer Gleichung: <em>Objekt (Vektor) = kohärente Überlagerung seiner Sektionen
+    (Frequenzen).</em></p>
+
+    <h3>Obstruktion &amp; Ablation — die Zahlen von B, gelesen als Garben-Theorie (A)</h3>
+    <table>
+      <thead><tr><th>#</th><th>B — empirische Behauptung (mod 113)</th><th>Gelesen als A (Garben/Topologie)</th></tr></thead>
+      <tbody>
+        <tr><td class="n">5</td><td class="hi">5 Schlüssel-Frequenzen k = 14, 35, 41, 42, 52 tragen die Information (rest ist Rauschen)</td><td>die <em>Zahl</em> der Sektionen = Windungszahl des Kreises — die Obstruktion, die die globale Verklebung erzwingt.</td></tr>
+        <tr><td class="n">Abl.</td><td>Alle Schlüssel-Frequenzen entfernen → Leistung <em>zerstört</em> (schlechter als Zufall)</td><td>ohne kohärente Sektionen existiert <em>keine</em> globale Sektion — die Garbe fällt in sich zusammen.</td></tr>
+        <tr><td class="n">Abl.</td><td>Alle <em>anderen</em> (nicht-Schlüssel-)Frequenzen entfernen → Leistung <em>verbessert</em> (sie sind Rauschen)</td><td>die Überdeckung braucht nur die <em>relevanten</em> Flicken; redundante/invariante Flicken tragen nichts zur Kohärenz bei.</td></tr>
+        <tr><td class="n">Abl.</td><td>Einzelne Schlüssel-Frequenz entfernen (k = 42) → deutlicher Verlust</td><td>die Kohärenz einer Garbe bricht, wenn ein Flicken fehlt — jede Sektion trägt zur eindeutigen globalen Sektion bei.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Zwei Approximationen, gestapelt</h3>
+    <p>A endet mit: <code>Kette → ℝᵈ → Float-Gitter → Silizium</code> — „Der Vektorraum eines LLM ist <em>kein</em>
+    Vektorraum im axiomatischen Sinne", nur zwei gestapelte Approximationen, und „weil Sprache selbst approximativ
+    ist … zwei Weichheiten passen zusammen". B liefert die <em>konkrete</em> Stapelung:
+    <code>superponierte Gewichte → Fourier-sparse (5 Frequenzen) → Interferenz → Logit → Bucket c mod 113</code>.
+    Die Antwort ist ein <em>grob</em>es Objekt (1 von 113 Buckets), daher reicht die Winkel-Präzision der Floats —
+    der Interferenz-Peak ist weit und rauschstabil. Abstraktion (A) und Verkörperung (B) schließen sich auf
+    derselben Stufe: <strong>kohärente Differenz, berechenbar gemacht — und real gemacht.</strong></p>
+
+    <h3>Grokking als Dynamik des Verklebens</h3>
+    <p>B zeigt, dass sich das „Verkleben" in drei <em>Phasen</em> vollzieht: <b>(1) Memorization</b> (0–1,4k Epochs,
+    Schlüssel-Frequenzen ungenutzt) → <b>(2) Circuit Formation</b> (1,4k–9,4k, das Fourier-Multiplikations-Zirkuit
+    bildet sich, Weight Decay treibt es an) → <b>(3) Cleanup</b> (9,4k–14k, Weight Decay entfernt die
+    Memorization, Test-Genauigkeit springt plötzlich). Gefusionet: A's „Kohärenz wird vom Training über den ganzen
+    Korpus <em>erzwungen</em>" ist hier sichtbar. Das Netzwerk beginnt <em>inkohärent</em> (Memorization = lokale
+    Daten, die nicht zusammenpassen), und Weight Decay wirkt wie die Garben-Konditionierung: er drückt die
+    Norm des kohärenten (Fourier-)Zirkuits gegenüber dem inkohärenten (Memorization-)Zirkuits, bis die
+    <strong>eindeutige globale Sektion</strong> übrig bleibt — Grokking ist das Verkleben, das erst kohärent wird,
+    wenn das Inkohärente weggefallen ist.</p>
+
+    <div class="note"><span class="h">Warum die Fusion mehr ist als die Summe</span>A allein hätte eine schöne
+    Formalsprache ohne ein einziges konkretes Beispiel, das sie trägt. B allein wäre ein cleverer, aber
+    <em>bloß empirischer</em> Mechanismus (Frequenzen + Interferenz) ohne Begründung, <em>warum</em> das die
+    richtige Geometrie ist. Erst zusammen: B ist das <em>Beispiel</em>, an dem A's „Garbenbedingung" sich
+    <em>auszahlt</em> — und A ist die <em>Gründe-Schicht</em>, die erklärt, warum der Kreis und warum genau
+    <em>kohärente</em> (nicht beliebige) Frequenzen die Antwort tragen.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Die Logit-Landschaft: von der Obstruktion zur Verklebung</h2>
+    <p style="margin-bottom:4px">
+      Die gefusionierte Idee live: Oben der Kreis S¹ mit der <strong>Rotationskomposition</strong> (B's „kohärenter
+      Übergang" = A's Isomorphismus zwischen lokalen Sektionen). Unten die <strong>Logit-Landschaft</strong>
+      <code>logit(c) = Σ_k cos(w_k·(a+b−c))</code> über den Ausgabe-Index c: mit <em>1 Sektion</em> (einer
+      Frequenz) entstehen viele (Nah-)Peaks — das ist A's Obstruktion (eine Sektion verklebt sich nicht global).
+      Füge <em>kohärente</em> Frequenzen hinzu → nur <em>ein</em> Peak bleibt bei c* — die Verklebung gelingt (B's
+      konstruktive Interferenz). Ziehe die Regler, wechsele den Modus, oder animiere.
+    </p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Kreis (S¹) → kohärente Frequenz-Sektionen → globale Sektion</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvViz" width="760" height="470"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-rot)"></i>Rotation a (S¹, B)</span>
+        <span><i style="background:var(--viz-f3)"></i>Rotation b</span>
+        <span><i style="background:var(--viz-ans)"></i>c* = a+b (Antwort)</span>
+        <span><i style="background:var(--viz-sum)"></i>Summe = globale Sektion</span>
+        <span><i style="background:var(--viz-f1)"></i>k₁ <i style="background:var(--viz-f2)"></i>k₂ <i style="background:var(--viz-f4)"></i>k₃ <i style="background:var(--viz-f5)"></i>k₄ (Sektionen)</span>
+      </div>
+      <div class="btnrow">
+        <button id="playBtn">▶ Verklebung animieren</button>
+        <button id="modeObs">Obstruktion · 1 Sektion</button>
+        <button id="modeGlue" class="on">Verklebung · 5 Sektionen</button>
+        <label class="chk"><input type="checkbox" id="secChk" checked> Einzel-Sektionen zeigen</label>
+      </div>
+      <div id="viewCap"></div>
+      <p style="font-size:12px;color:var(--txt-faint);margin-bottom:6px">
+        P = 113, Schlüssel-Frequenzen k = 14, 35, 41, 42, 52 (aus B). Der obere Kreis zeigt die Rotation für die
+        erste Frequenz: der Punkt „a" wird um „b" gedreht → „a+b". Die untere Kurve ist die Summe der aktiven
+        Frequenz-Sektionen; die dünnen Linien sind die einzelnen Sektionen. Alles wird aus <code>cos()</code>
+        berechnet — keine Netzwert-Daten.
+      </p>
+      <div class="ro">
+        <div class="b"><div class="k">Antwort c*</div><div class="v" id="roAns">—</div><div class="u">(a+b) mod P</div></div>
+        <div class="b"><div class="k">|K| = Windungszahl</div><div class="v" id="roK">—</div><div class="u"># Frequenzen</div></div>
+        <div class="b"><div class="k">Höhe an c*</div><div class="v" id="roPeak">—</div><div class="u">= Σ 1 = |K|</div></div>
+        <div class="b"><div class="k">Höchster Fehlpik</div><div class="v" id="roOther">—</div><div class="u">außerhalb c*</div></div>
+        <div class="b"><div class="k">Fusion-Verdict</div><div class="v" id="roStat">—</div><div class="u">Obstruktion / Verklebung</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Input a</span><b id="aVal">7</b></div>
+        <input type="range" id="aSl" min="0" max="112" step="1" value="7">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Input b</span><b id="bVal">23</b></div>
+        <input type="range" id="bSl" min="0" max="112" step="1" value="23">
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Kohärente Frequenzen |K| (= Windungszahl)</span><b id="nfVal">5</b></div>
+        <input type="range" id="nfSl" min="1" max="5" step="1" value="5">
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <p>
+      <a href="../kohaerente_differenz.html">A — Kohärente Differenz (de)</a>: Interaktive, garbentheoretische
+      Formalsprache für Embedding-Räume. Neunstufen-Kette (Unterscheidung→Invarianz), Garben/∞-Garben/HoTT
+      (Gleichheit→Äquivalenz+Kohärenz), der Kreis S¹ mit der Windungszahl als erste Obstruktion, Topoi &amp;
+      Subobjekt-Klassifizierer, und die Kondensation „Kette → ℝᵈ → Float → Silizium".
+    </p>
+    <p>
+      <a href="../latter_inner.html">B — Neural Network Internal Topology: How Deep Layers Decode Superposition
+      (en)</a>: Mechanistische Interpretation modulare Addition (mod 113) — Embedding als Homomorphismus Z/113Z → S¹,
+      fünf Schlüssel-Frequenzen, Superposition in den Gewichten, konstruktive Interferenz als Readout, Ablation
+      (Schlüssel-Frequenzen tragen, andere sind Rauschen) und Grokking in drei Phasen (Memorization / Circuit
+      Formation / Cleanup, angetrieben von Weight Decay).
+    </p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>kohaerente_differenz.html</strong> (Garben/Kohärenz/Obstruktion — die Formalsprache) ✕
+  <strong>latter_inner.html</strong> (Fourier/Superposition/Interferenz — die Maschine). Alle Claims aus den
+  Quellen paraphrasiert; Frequenz-/Antwort-Werte inline berechnet. Selbstständig, ohne Netzdatenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return hex;}return 'rgba('+r+','+g+','+b+','+a+')';}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ if(themeBtn){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; } }
+  if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); readPal(); }; }
+  setBtn();
+
+  var cv=document.getElementById('cvViz'); if(!cv){return;}
+  var dpr=window.devicePixelRatio||1, LW=760, LH=470;
+  cv.style.width='100%'; cv.style.aspectRatio=LW+'/'+LH;
+  cv.width=LW*dpr; cv.height=LH*dpr;
+  var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var TAU=Math.PI*2, P=113, keyFreqs=[14,35,41,42,52];
+  var MONO="ui-monospace,Menlo,Consolas,monospace";
+  var SANS="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif";
+  var PAL={};
+  function readPal(){
+    ['--viz-canvas-bg','--viz-grid','--viz-txt','--viz-dim','--viz-sum','--viz-ans','--viz-rot','--viz-f1','--viz-f2','--viz-f3','--viz-f4','--viz-f5'].forEach(function(n){PAL[n]=getVar(n);});
+  }
+  readPal();
+
+  var aEl=document.getElementById('aSl'), bEl=document.getElementById('bSl'), nfEl=document.getElementById('nfSl');
+  var aVal=document.getElementById('aVal'), bVal=document.getElementById('bVal'), nfVal=document.getElementById('nfVal');
+  var secEl=document.getElementById('secChk');
+  var roAns=document.getElementById('roAns'), roK=document.getElementById('roK'), roPeak=document.getElementById('roPeak'),
+      roOther=document.getElementById('roOther'), roStat=document.getElementById('roStat');
+  var playBtn=document.getElementById('playBtn'), modeObs=document.getElementById('modeObs'), modeGlue=document.getElementById('modeGlue');
+  var viewCap=document.getElementById('viewCap');
+
+  var state={sweep:false, ph:0};
+
+  function cap(){
+    var nf=+nfEl.value;
+    if(nf===1){
+      viewCap.innerHTML='<b>1 Sektion (Obstruktion):</b> die eine kosinusförmige Sektion <code>cos(w·(a+b−c))</code> schwingt über den Index c mehrfach hin und her — viele (Nah-)Peaks, kein eindeutiger Sieger. Das ist A&#39;s „keine globale Winkel-Funktion": eine <em>einzelne</em> Sektion verklebt sich nicht global.';
+    } else if(nf>=5){
+      viewCap.innerHTML='<b>5 kohärente Sektionen (Verklebung):</b> die Phasen der fünf Frequenzen sind bei c* abgestimmt (Addition = Rotationskomposition). Dort addieren sie sich (jeder Term = cos 0 = 1 → Höhe = 5), überall else kürzen sie sich heraus → <em>einzig</em> großer Peak. Das ist A&#39;s Verklebung durch eine kohärente Familie; |K| = 5 = Windungszahl.';
+    } else {
+      viewCap.innerHTML='<b>'+nf+' kohärente Sektionen:</b> die Teilsumme hebt den Peak an c* bereits auf '+nf+', und die meisten Fehlpiks fallen — die Verklebung wird <em>scharfer</em>, je mehr Frequenzen kohärent mitschwingen. Bei 5 ist sie eindeutig.';
+    }
+  }
+
+  function drawAll(t){
+    var a=+aEl.value, b=+bEl.value, nf=+nfEl.value, showSec=secEl.checked;
+    var answer=(a+b)%P;
+    var pulse=0.5+0.5*Math.sin(t*2.2);
+
+    ctx.clearRect(0,0,LW,LH);
+    ctx.fillStyle=PAL['--viz-canvas-bg']||'#0c1120';ctx.fillRect(0,0,LW,LH);
+
+    // ---- TOP: circle inset (rotation composition, freq k0) ----
+    var topH=150, cx=88, cy=topH/2, r=52, k0=keyFreqs[0];
+    ctx.strokeStyle=PAL['--viz-grid'];ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.stroke();
+    ctx.save();ctx.globalAlpha=0.5;ctx.strokeStyle=PAL['--viz-grid'];ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(cx-r-8,cy);ctx.lineTo(cx+r+8,cy);ctx.moveTo(cx,cy-r-8);ctx.lineTo(cx,cy+r+8);ctx.stroke();ctx.restore();
+    function cpoint(val){var ang=-TAU*k0*val/P;return{x:cx+r*Math.cos(ang),y:cy+r*Math.sin(ang)};}
+    function rdot(p,col,lab,dx,dy){
+      ctx.strokeStyle=col;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(p.x,p.y);ctx.stroke();
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(p.x,p.y,5.5,0,TAU);ctx.fill();
+      ctx.fillStyle=PAL['--viz-txt'];ctx.font='11px '+MONO;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lab,p.x+dx,p.y+dy);
+    }
+    rdot(cpoint(a),PAL['--viz-rot'],'a',-13,-10);
+    rdot(cpoint(b),PAL['--viz-f3'],'b',15,11);
+    rdot(cpoint(answer),PAL['--viz-ans'],'a+b',7,-15);
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillStyle=PAL['--viz-txt'];ctx.font='700 13px '+SANS;
+    ctx.fillText('Rotationskomposition  (Frequenz k='+k0+')',168,30);
+    ctx.fillStyle=PAL['--viz-dim'];ctx.font='12px '+SANS;
+    ctx.fillText('e^(i·w·a) · e^(i·w·b) = e^(i·w·(a+b))   —  Addition = Drehung um b',168,50);
+    ctx.fillText('A&#39;s „kohärenter Übergang": der Isomorphismus, der lokale',168,68);
+    ctx.fillText('Sektionen verbindet (B). Auf S¹ winden die 5 Frequenzen',168,86);
+    ctx.fillText('eine Garbe über Z/PZ = 113.',168,104);
+    ctx.fillStyle=PAL['--viz-rot'];ctx.font='11px '+MONO;
+    ctx.fillText('a='+a+'   b='+b+'   a+b mod P = '+answer,168,128);
+    ctx.strokeStyle=PAL['--viz-grid'];ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(16,topH+6);ctx.lineTo(LW-16,topH+6);ctx.stroke();
+
+    // ---- BOTTOM: logit landscape ----
+    var m={top:topH+30,right:24,bottom:48,left:56};
+    var pw=LW-m.left-m.right, ph=LH-m.bottom-m.top;
+    var yMin=-5.5,yMax=5.5;
+    function X(c){return m.left+(c/(P-1))*pw;}
+    function Y(v){return m.top+ph*(1-(v-yMin)/(yMax-yMin));}
+    ctx.strokeStyle=PAL['--viz-grid'];ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(m.left,m.top);ctx.lineTo(m.left,m.top+ph);ctx.lineTo(m.left+pw,m.top+ph);ctx.stroke();
+    ctx.font='10px '+MONO;
+    for(var g=-5;g<=5;g++){
+      var gy=Y(g);
+      ctx.save();ctx.strokeStyle=PAL['--viz-grid'];ctx.globalAlpha=(g===0?0.9:0.4);ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(m.left,gy);ctx.lineTo(m.left+pw,gy);ctx.stroke();ctx.restore();
+      ctx.fillStyle=PAL['--viz-dim'];ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText(String(g),m.left-6,gy);
+    }
+    ctx.textAlign='center';ctx.textBaseline='top';
+    for(var c0=0;c0<P;c0+=10){ctx.fillStyle=PAL['--viz-dim'];ctx.fillText(String(c0),X(c0),m.top+ph+6);}
+    ctx.fillStyle=PAL['--viz-dim'];ctx.font='11px '+SANS;
+    ctx.fillText('Ausgabe-Klasse c  (mod P='+P+')',m.left+pw/2,m.top+ph+22);
+    ctx.save();ctx.translate(14,m.top+ph/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=PAL['--viz-dim'];ctx.font='11px '+SANS;ctx.fillText('logit(c) = Σ_k cos(w_k·(a+b−c))',0,0);ctx.restore();
+
+    var logits=new Array(P), secs=[];
+    for(var fi=0;fi<nf;fi++){
+      var arr=new Array(P), k=keyFreqs[fi];
+      for(var ci=0;ci<P;ci++){arr[ci]=Math.cos(TAU*k*(a+b-ci)/P);}
+      secs.push(arr);
+    }
+    for(var c=0;c<P;c++){var tot=0;for(var f=0;f<nf;f++)tot+=secs[f][c];logits[c]=tot;}
+
+    if(showSec){
+      for(var s=0;s<nf;s++){
+        ctx.save();ctx.strokeStyle=PAL['--viz-f'+(s+1)];ctx.lineWidth=1.3;ctx.globalAlpha=0.55;ctx.beginPath();
+        for(var c2=0;c2<P;c2++){var xx=X(c2),yy=Y(secs[s][c2]);if(c2===0){ctx.moveTo(xx,yy);}else{ctx.lineTo(xx,yy);}}
+        ctx.stroke();ctx.restore();
+      }
+    }
+    ctx.save();ctx.strokeStyle=PAL['--viz-sum'];ctx.lineWidth=3;ctx.lineJoin='round';ctx.beginPath();
+    for(var c3=0;c3<P;c3++){var x3=X(c3),y3=Y(logits[c3]);if(c3===0){ctx.moveTo(x3,y3);}else{ctx.lineTo(x3,y3);}}
+    ctx.stroke();ctx.restore();
+
+    var ax=X(answer), peakY=Y(logits[answer]);
+    ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle=PAL['--viz-ans'];ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(ax,m.top);ctx.lineTo(ax,m.top+ph);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    ctx.save();ctx.globalAlpha=0.22+0.35*pulse;ctx.fillStyle=PAL['--viz-ans'];ctx.beginPath();ctx.arc(ax,peakY,10+pulse*6,0,TAU);ctx.fill();ctx.restore();
+    ctx.fillStyle=PAL['--viz-ans'];ctx.beginPath();ctx.arc(ax,peakY,4,0,TAU);ctx.fill();
+    ctx.fillStyle=PAL['--viz-ans'];ctx.font='700 12px '+MONO;ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillText('c* = '+answer,ax,m.top-6);
+
+    if(nf===1){
+      ctx.fillStyle=PAL['--viz-ans'];ctx.font='700 11px '+SANS;ctx.textAlign='center';ctx.textBaseline='top';
+      ctx.fillText('1 Sektion → mehrere (Nah-)Peaks  =  A&#39;s Obstruktion (keine globale Winkel-Funktion)',LW/2,m.top-20);
+    } else {
+      ctx.fillStyle=PAL['--viz-f5'];ctx.font='700 11px '+SANS;ctx.textAlign='center';ctx.textBaseline='top';
+      ctx.fillText(nf+' kohärente Sektionen → einziger Peak  =  Verklebung gelingt (B: konstruktive Interferenz)',LW/2,m.top-20);
+    }
+
+    // readouts
+    roAns.textContent=answer;
+    roK.textContent=nf;
+    roPeak.textContent=logits[answer].toFixed(2);
+    var bestOther=-Infinity;
+    for(var c4=0;c4<P;c4++){if(c4===answer){continue;}if(logits[c4]>bestOther){bestOther=logits[c4];}}
+    roOther.textContent=bestOther.toFixed(2);
+    if(nf===1){roStat.textContent='Obstruktion (mehrdeutig)';roStat.className='v e';}
+    else if(nf>=5){roStat.textContent='Verklebt (eindeutig)';roStat.className='v g';}
+    else{roStat.textContent='Teilverklebt';roStat.className='v m';}
+  }
+
+  aEl.addEventListener('input',function(){aVal.textContent=aEl.value;});
+  bEl.addEventListener('input',function(){bVal.textContent=bEl.value;});
+  nfEl.addEventListener('input',function(){nfVal.textContent=nfEl.value;cap();});
+  modeObs.onclick=function(){state.sweep=false;playBtn.textContent='▶ Verklebung animieren';playBtn.classList.remove('on');nfEl.value=1;nfVal.textContent='1';modeObs.classList.add('on');modeGlue.classList.remove('on');cap();};
+  modeGlue.onclick=function(){state.sweep=false;playBtn.textContent='▶ Verklebung animieren';playBtn.classList.remove('on');nfEl.value=5;nfVal.textContent='5';modeGlue.classList.add('on');modeObs.classList.remove('on');cap();};
+  playBtn.onclick=function(){state.sweep=!state.sweep;if(state.sweep){state.ph=0;playBtn.textContent='⏸ Stop';playBtn.classList.add('on');}else{playBtn.textContent='▶ Verklebung animieren';playBtn.classList.remove('on');}};
+
+  function loop(){
+    var t=performance.now()/1000;
+    if(state.sweep){
+      state.ph=(state.ph+0.004)%1;
+      var tri=state.ph<0.5?state.ph*2:(1-state.ph)*2;
+      var nfv=1+Math.round(tri*4);
+      nfEl.value=nfv;nfVal.textContent=nfv;cap();
+    }
+    drawAll(t);
+    requestAnimationFrame(loop);
+  }
+  cap();
+  requestAnimationFrame(loop);
+
+  window.addEventListener('resize',function(){readPal();});
+  try{new MutationObserver(function(){readPal();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+});
+</script>
+</body>
+</html>

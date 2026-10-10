@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 054 — Energie-Landschaften × Homotopie-Klassen</title>
+<style>
+:root{
+  --bg:#f6f4ec; --bg2:#fbfaf4; --panel:#fffdf7; --text:#1a1f2e; --muted:#5b6478;
+  --accent:#0e7490; --accent2:#b45309; --accent3:#b91c1c; --border:#dcd6c6;
+  --field-low:#efe8d6; --field-high:#c0392b;
+}
+html.dark{
+  --bg:#0b0f1c; --bg2:#111827; --panel:#151b2e; --text:#e6edf7; --muted:#8892b0;
+  --accent:#00d4ff; --accent2:#ff3d7f; --accent3:#ffcc00; --border:#2a3352;
+  --field-low:#0a1424; --field-high:#ff9d3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+  line-height:1.65;transition:background .25s,color .25s}
+.article{max-width:820px;margin:0 auto;padding:48px 22px 90px}
+header{text-align:center;margin-bottom:38px}
+.kicker{display:inline-block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent);border:1px solid var(--border);border-radius:100px;padding:5px 14px;margin-bottom:16px}
+h1{font-size:clamp(1.7rem,4.5vw,2.7rem);line-height:1.15;margin:.2em 0 .3em;font-weight:800;letter-spacing:-.02em}
+.fusion{color:var(--muted);font-size:.95rem;font-family:ui-monospace,Menlo,Consolas,monospace;margin-top:8px}
+section{margin:40px 0;padding:26px;background:var(--panel);border:1px solid var(--border);
+  border-radius:16px;transition:background .25s,border-color .25s}
+h2{font-size:1.4rem;margin:0 0 14px;font-weight:700;color:var(--accent)}
+h3{font-size:1.05rem;margin:22px 0 8px;color:var(--accent2)}
+p{margin:0 0 14px;font-size:1rem}
+.lead{color:var(--muted);font-size:1.02rem}
+.tag{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:6px;font-weight:700;
+  margin-right:6px;letter-spacing:.04em}
+.tag.a{background:color-mix(in srgb,var(--accent) 16%, transparent);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%, transparent)}
+.tag.b{background:color-mix(in srgb,var(--accent2) 16%, transparent);color:var(--accent2);border:1px solid color-mix(in srgb,var(--accent2) 40%, transparent)}
+ul{margin:0 0 14px;padding-left:20px}
+li{margin-bottom:8px}
+.math{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.98rem;
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin:14px 0;overflow-x:auto}
+.note{background:color-mix(in srgb,var(--accent) 8%, transparent);border-left:3px solid var(--accent);
+  padding:12px 16px;border-radius:8px;margin:16px 0;font-size:.95rem}
+.warn{background:color-mix(in srgb,var(--accent2) 8%, transparent);border-left:3px solid var(--accent2);
+  padding:12px 16px;border-radius:8px;margin:16px 0;font-size:.95rem}
+.vizwrap{border:1px solid var(--border);border-radius:14px;padding:18px;background:var(--bg2)}
+.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-bottom:14px}
+.control{display:flex;flex-direction:column;gap:6px;font-size:.82rem;color:var(--muted)}
+.control label{display:flex;justify-content:space-between;gap:10px}
+.control label span{color:var(--accent);font-family:ui-monospace,monospace;font-weight:700}
+input[type=range]{width:200px;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+button{background:var(--accent);color:var(--bg);border:none;padding:9px 16px;border-radius:9px;
+  cursor:pointer;font-weight:700;font-size:.85rem;transition:transform .12s}
+button:hover{transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+canvas#viz{width:100%;height:auto;display:block;border-radius:10px;background:var(--field-low)}
+#readout{font-family:ui-monospace,monospace;font-size:.85rem;color:var(--muted);margin-top:12px;min-height:1.2em}
+.foot{color:var(--muted);font-size:.85rem;text-align:center;margin-top:36px}
+a{color:var(--accent)}
+code{font-family:ui-monospace,monospace;font-size:.9em;background:var(--bg2);
+  border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+</style>
+</head>
+<body>
+<div class="article">
+
+<header>
+  <div class="kicker">Knockout-Synthese · Runde 1 · Paar 054</div>
+  <h1>Energie-Landschaften treffen Homotopie-Klassen</h1>
+  <div class="fusion">Fusion aus: energy_based_learning.html ✕ categorial_homotopy_for_llm.html</div>
+</header>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p>Beide Papiere stellen dieselbe Meta-Frage: <b>Wann darf eine Maschine zwei verschiedene Formen als dasselbe behandeln?</b> <span class="tag a">A</span> LeCun et al. (2006) antworten mit einem <b>Skalar</b>: Weise jeder Konfiguration eine Energie&nbsp;<code>E(Y,X)</code> zu, und die Antwort ist das Minimum <code>Y* = argmin E(Y,X)</code>. „Gleich“ heißt dabei: beide liegen im selben niedrigen Tal. <span class="tag b">B</span> Mahadevan (2025) antwortet mit <b>Struktur</b>: Baue eine Kategorie aus Satz-Formen; zwei Formen sind gleich, wenn eine <b>Homotopie</b> (eine schwache Äquivalenz) sie verbindet — „gleich“ heißt: gleiche Homotopie-Klasse.</p>
+  <p>Die Fusion identifiziert das Skalar von A als die <b>Metrik</b> für die Äquivalenz von B. Eine Paraphrase ist ein Morphismus in einer Kategorie (B); ihre Energie im Kontext&nbsp;X (A) ist die Kosten einer Umformung; zwei Formen sind homotop / schwach-äquivalent (B), <i>aufeinander reduziert:</i> genau dann, wenn ein <b>niedrigenergetischer Pfad</b> sie verbindet — und genau diese Pfadsuche ist Viterbi/min-sum auf dem Faktor-Graphen (A). Die niedrigen Täler der Energie-Landschaft <b>sind</b> die Äquivalenz-Klassen; das Argmin in einem Tal ist der kanonische Vertreter; und die Gibbs-Temperatur&nbsp;β von A ist derselbe Regler wie die Äquivalenz-Schwelle&nbsp;τ von B.</p>
+  <p>Ein einziges Objekt vereint beide: <b>der mit einer Energie gewichtete Paraphrase-Graph, dessen niedrigenergetische zusammenhängende Komponenten die Homotopie-Klassen sind und deren Komponenten-Argmin die inferierte Antwort ist.</b></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <h3>1. Ziel: eine beste Antwort oder eine Äquivalenzklasse?</h3>
+  <p><span class="tag a">A</span> LeCun: „Um zu antworten, wähle die Antwort mit der niedrigsten Energie.“ Das Liefere ist ein <b>einzelner Punkt</b> <code>Y*</code>; das ganze Framework dient dem Finden des Minimums.
+  <span class="tag b">B</span> Mahadevan: Das Ziel ist, zwei Formen als <b>dasselbe</b> zu erkennen („Semantische Äquivalenz = Homotopie-Klasse“). Es gibt bewusst <b>keinen</b> einzelnen Vertreter — man bildet einen Quotienten <code>Ho𝓛 = 𝓛[Σ⁻¹]</code>, also man sagt „all diese sind eines“.</p>
+
+  <h3>2. Wahrscheinlichkeit: zu vermeiden oder fundamental?</h3>
+  <p><span class="tag a">A</span> LeCun: „Vergiss Wahrscheinlichkeiten.“ Normalisierung (die Partition-Zahl&nbsp;Z) ist der Feind, teuer und oft unmöglich; Wahrscheinlichkeit wird erst „am Ende mit Gibbs“ nachgerechnet, falls man sie doch will.
+  <span class="tag b">B</span> Mahadevan: Wahrscheinlichkeit ist <b>fundamental</b> — die Kategorie ist über&nbsp;[0,1] <i>angereichert</i>, die Stärke eines Morphismus <i>ist</i> <code>P(y|x)</code>, und copy/delete/tensor der Markov-Kategorie <i>sind</i> Wahrscheinlichkeitsoperationen (Marginalisieren). Ohne Wahrscheinlichkeit bricht die Struktur zusammen.</p>
+
+  <h3>3. Kriterium für „gleich“: metrisch oder topologisch?</h3>
+  <p><span class="tag a">A</span> LeCun: Zwei Antworten sind (nahezu) gleich, wenn ihre <b>Energiewerte</b> niedrig bzw. nah beieinander liegen — ein <b>metrisches, skalares</b> Kriterium (Ähnlichkeit = Nähe in einem Zahlenwert).
+  <span class="tag b">B</span> Mahadevan: Zwei Sätze sind gleich, wenn ein <b>Pfad semantisch erhaltender Umformungen</b> (eine Homotopie / schwache Äquivalenz) sie verbindet — ein <b>strukturelles, topologisches</b> Kriterium (Ähnlichkeit = Verbundenheit, nicht numerische Nähe).</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <h3>1. Punkt ↔ Klasse</h3>
+  <p>Der „Talgrund“ des EBMs — bei A die <i>implizite Regression</i> <code>E = ‖G₁(X) − G₂(Y)‖</code>, die mehrere gute&nbsp;Y für ein X erlaubt — <b>ist</b> eine Homotopie-Klasse von B. Innerhalb der Klasse: <b>Argmin</b> (A) = kanonischer Vertreter. Die Klasse selbst (B) = die wahre semantische Einheit. Man tut beides zugleich: man <i>quotientiert</i> zu einer Klasse <i>und</i> wählt in ihr das Minimum.</p>
+
+  <h3>2. Wahrscheinlichkeit weder vergessen noch fundamental</h3>
+  <p>Die Energie bleibt für die Inferenz primär (keine Normalisierung nötig — A bleibt wahr). Aber die [0,1]-Anreicherung / die Gibbs-Verteilung liefert die <b>Stärke der Kanten</b> des Paraphrase-Graphen und erlaubt es, <i>zwischen</i> Klassen zu vergleichen (B wird wahr). Gibbs-β ist der Regler: bei der Inferenz braucht man Z nicht, aber die Anreichtung gibt jeder Umformung ein Gewicht. Wahrscheinlichkeit ist also die <b>Kantengewichtung</b> — weder überflüssig noch das Fundament allein.</p>
+
+  <h3>3. skalar ↔ strukturell</h3>
+  <p>A’s Viterbi/min-sum auf dem Faktor-Graphen berechnet die <b>günstigste Pfadenergie</b> zwischen zwei Konfigurationen. Ist sie unter der Schwelle&nbsp;τ, sind die Konfigurationen homotop / schwach-äquivalent (B). Skalar (Energie) und Struktur (Pfad) werden eins: <b>Äquivalenz = Existenz eines niedrigenergetischen Pfades</b>; τ ist B’s Schwellwert; die Pfadsuche ist A’s min-sum. Und <b>β ↔ τ</b> ist derselbe Regler: β hoch (kalt) → τ klein → viele, strikte Klassen; β niedrig (heiß) → τ groß → alles verschmelzt.</p>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Das vereinigte Modell, aus dem beide Papiere als Spezialfälle hervorgehen.</p>
+
+  <h3>Woraus A beiträgt (LeCun et al. 2006)</h3>
+  <ul>
+    <li>Die Energie-Funktion <code>E(Y,X)</code> und Inferenz als <code>Y* = argmin<sub>Y</sub> E(Y,X)</code>.</li>
+    <li>Die Gibbs-Brücke <code>P(Y|X) = e<sup>−βE(Y,X)</sup> / Z</code>, mit β = inverse Temperatur: β→∞ liefert argmin, β→0 die Gleichverteilung.</li>
+    <li>Lernen als <b>Push-Down</b> (korrekte Antwort) + <b>Pull-Up</b> (falsche); der „most-offending“ Konkurrent Ȳ ist die niedrigste falsche Energie.</li>
+    <li>Der Loss-Zoo: Hinge <code>max(0, m+E<sub>C</sub>−E<sub>I</sub>)</code>, NLL, Sq-Sq — gute Losses erzeugen eine echte Energielücke, schlechte (Energy, Perceptron) können <b>kollabieren</b> (Landschaft wird flach).</li>
+    <li><b>Viterbi / min-sum</b> auf einem Faktor-Graph / Trellis — exponentiell schnellere Inferenz, wenn die Energie sich als Summe lokaler Faktoren schreibt; latente Variablen via <code>E(Y,X)=min<sub>Z</sub> E(Z,Y,X)</code>; GTN (Segmentation + Recognition gemeinsam, end-to-end differenzierbar).</li>
+  </ul>
+
+  <h3>Woraus B beiträgt (Mahadevan 2025)</h3>
+  <ul>
+    <li>Das Problem: Paraphrasen liefern unterschiedliche Next-Word-Verteilungen, obwohl sie dasselbe meinen.</li>
+    <li>Kategorien (Objekte = Satzfragmente, Morphismen = Fortsetzungen, Komposition, Identität); Funktoren &amp; <b>Yoneda</b> (ein Wort ist durch seine Kontextverteilung bestimmt = Embedding).</li>
+    <li><b>Anreicherung über [0,1]</b> mit <code>P(y|x)</code> und der Kompositions-Ungleichung <code>P(z|x) ≥ P(y|x)·P(z|y)</code>; monoidale &amp; <b>Markov-Kategorien</b> (⊗, copy, delete = Marginalisieren); String-Diagramme (Selinger).</li>
+    <li><b>Homotopie</b> (stetige Deformation h(t,x)); Lifting-Diagramme (zwei Sätze = Endpunkte eines Zylinders S×[0,1]); simpliziale Mengen (n-Simplex = Sequenz der Länge n+1) &amp; Kan-Komplexe (Hörner füllen).</li>
+    <li><b>Model-Kategorien</b> (Quillen 1967): Fibrationen, Kofibrationen, schwache Äquivalenzen, Axiome MC1–MC5; <b>Theorem 12</b>: LLM-Markov-Kategorien bilden Model-Kategorien; <b>Lokalisierung</b> <code>Ho𝓛 = 𝓛[Σ⁻¹]</code> und K-Theorie <code>π₀(𝓚𝓛)</code> = Grothendieck-Gruppe.</li>
+  </ul>
+
+  <h3>Das fusionierte Modell</h3>
+  <div class="math">
+    𝓛 = Paraphrase-Kategorie (B); Objekte y = Satz-Formen.<br>
+    E(y, x) = Energie der Form y im Kontext x (A).<br>
+    Kantenkosten&nbsp; c(f: y → y′) = Energie-Barrier = max<sub>Pfad</sub> E − min(E(y), E(y′)).<br>
+    min-sum-Distanz&nbsp; d(y, y′; x) = min<sub>über alle Umformungs-Pfade</sub> Σ c(f).<br>
+    y ~ y′ &nbsp;(homotop / schwach äquivalent, B) &nbsp;⟺&nbsp; d(y, y′; x) &lt; τ.<br>
+    Klasse [y] = niedrigenergetische zusammenhängende Komponente.<br>
+    Antwort&nbsp; Y* = argmin<sub>y ∈ [y]</sub> E(y, x) &nbsp;(kanonischer Vertreter, A).
+  </div>
+  <p>Das Boltzmann-Gewicht eines Pfades ist <code>e<sup>−β · Pfadenergie</sup></code>: <b>β und τ sind derselbe Regler</b> (β hoch/kalt ⇒ τ klein ⇒ strenge, viele Klassen; β niedrig/heiß ⇒ τ groß ⇒ alles eine Klasse). Der <b>Kollaps</b> von A (flache Landschaft) ist genau der degenerierte Grenzfall β→0 / τ→∞, in dem alle Klassen zu einer verschmelzen. Die <b>guten Losses</b> von A (Hinge/NLL) sind die Mechanik, die die Täler <i>wohlgetrennt</i> hält — also die Äquivalenz-Klassen wohldefiniert macht; die schlechten lassen sie ineinanderfließen.</p>
+  <div class="note">Kurz: <b>Homotopie (B) heißt „es existiert ein niedrigenergetischer Pfad“ (A).</b> Die Energie-Landschaft ist die Metrik der Homotopietheorie; die Täler sind die Äquivalenz-Klassen; das Argmin ist der Vertreter; β ist τ.</div>
+</section>
+
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung — Paraphrase-Kategorien auf einer Energie-Landschaft</h2>
+  <p class="lead">Dreizehn Satz-Formen liegen auf einer Energie-Landschaft <code>E(y,x)</code> (A). Jede Form hat eine Energie; die Kantenkosten zwischen zwei Formen ist die <b>Energie-Barrier</b> (wie hoch man über die „Wand“ zwischen ihnen klettern muss). Zwei Formen fallen in dieselbe <b>Homotopie-Klasse</b> (B), wenn die Barrier unter der Schwelle&nbsp;τ liegt. Die Klassen sind die niedrigenergetischen Täler; der <b>Stern</b> markiert deren Argmin <code>Y*</code>.</p>
+  <p>Bewege <b>β</b> (Gibbs-Temperatur = Äquivalenz-Schwelle): <i>kalt</i> (β hoch, τ klein) → viele strikte Klassen; <i>heiß</i> (β niedrig, τ groß) → alles verschmilzt. <b>Kontext wechseln</b> verändert <code>E(y,x)</code> und damit, welches Tal am tiefsten liegt. <b>Pfade</b> zeigt die min-sum-Verbindung jeder Form zum Vertreter ihrer Klasse.</p>
+
+  <div class="vizwrap">
+    <div class="controls">
+      <div class="control">
+        <label>β (inverse T.) / τ <span id="betaVal">7.0</span></label>
+        <input type="range" id="beta" min="0.5" max="8" step="0.1" value="7">
+      </div>
+      <div class="control" style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" id="paths"> <span>Pfade (min-sum) zeigen</span>
+      </div>
+      <div class="control" style="flex-direction:row;gap:10px">
+        <button id="ctxBtn">Kontext wechseln (X₁)</button>
+        <button id="themeBtn" class="ghost">Theme</button>
+      </div>
+    </div>
+    <canvas id="viz" width="760" height="430"></canvas>
+    <div id="readout"></div>
+  </div>
+  <div class="warn" style="margin-top:16px">Zu sehen ist die Kernthese in Aktion: <b>Tal = Homotopie-Klasse</b>, <b>Stern = Argmin = kanonischer Vertreter</b>, <b>β ↔ τ</b> derselbe Regler, der die Klassen spaltet oder verschmilzt.</div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a href="../energy_based_learning.html"><code>energy_based_learning.html</code></a> — Interaktive Reise durch LeCun, Chopra, Hadsell, Ranzato &amp; Huang (2006), „A Tutorial on Energy-Based Learning“: Energie-Landschaften, argmin-Inferenz, Gibbs/β, Push-Down/Pull-Up, Loss-Zoo, Kollaps, Viterbi/Faktor-Graphen, GTN.</li>
+    <li><a href="../categorial_homotopy_for_llm.html"><code>categorial_homotopy_for_llm.html</code></a> — Interaktive Erkundung von Mahadevan (2025), „Kategorielle Homotopietheorie für LLMs“: Kategorien/Funktoren/Yoneda, [0,1]-Anreicherung, Markov-Kategorien, Homotopie, Lifting, simpliziale Mengen, Model-Kategorien (Theorem 12), Lokalisierung.</li>
+  </ul>
+</section>
+
+<div class="foot">Runde 1, Paar 054 — Fusion: <code>energy_based_learning.html</code> ✕ <code>categorial_homotopy_for_llm.html</code></div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var W=760, H=430;
+  var cv=document.getElementById('viz');
+  var ctx=cv.getContext('2d');
+  var off=document.createElement('canvas'); off.width=W; off.height=H;
+  var octx=off.getContext('2d');
+  var betaEl=document.getElementById('beta');
+  var betaVal=document.getElementById('betaVal');
+  var pathsEl=document.getElementById('paths');
+  var ctxBtn=document.getElementById('ctxBtn');
+  var themeBtn=document.getElementById('themeBtn');
+  var readout=document.getElementById('readout');
+
+  var ctxIdx=0;
+  var CTXNAMES=["Kontext X₁","Kontext X₂","Kontext X₃"];
+
+  // Paraphrase nodes (normalized 0..1) in three semantic valleys
+  var nodes=[
+    {x:0.17,y:0.32,l:"Darwin wrote"},
+    {x:0.27,y:0.40,l:"Darwin authored"},
+    {x:0.20,y:0.44,l:"Darwin is the author of"},
+    {x:0.29,y:0.31,l:"Darwin composed"},
+    {x:0.68,y:0.27,l:"Einstein wrote"},
+    {x:0.78,y:0.35,l:"Einstein published"},
+    {x:0.71,y:0.40,l:"Einstein is the author of"},
+    {x:0.80,y:0.26,l:"Einstein penned"},
+    {x:0.45,y:0.72,l:"Kafka wrote"},
+    {x:0.55,y:0.82,l:"Kafka penned"},
+    {x:0.58,y:0.74,l:"Kafka is the author of"},
+    {x:0.46,y:0.86,l:"Kafka authored"}
+  ];
+
+  function E(nx,ny,ci){
+    var valleys=[
+      {x:0.22,y:0.36,s:0.13},
+      {x:0.73,y:0.31,s:0.13},
+      {x:0.50,y:0.78,s:0.13}
+    ];
+    var e=0.95, k, v, boost, a, d2;
+    for(k=0;k<valleys.length;k++){
+      v=valleys[k];
+      boost=(k===ci)?1.0:0.78;
+      a=0.86*boost;
+      d2=(nx-v.x)*(nx-v.x)+(ny-v.y)*(ny-v.y);
+      e-=a*Math.exp(-d2/(2*v.s*v.s));
+    }
+    return e;
+  }
+
+  function hexToRgb(h){
+    h=(h||"").replace("#","").trim();
+    if(!/^[0-9a-fA-F]{6}$/.test(h)) return [128,128,128];
+    var n=parseInt(h,16);
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  function lerp(a,b,t){return [
+    Math.round(a[0]+(b[0]-a[0])*t),
+    Math.round(a[1]+(b[1]-a[1])*t),
+    Math.round(a[2]+(b[2]-a[2])*t)
+  ];}
+  function rgbStr(c){return "rgb("+c[0]+","+c[1]+","+c[2]+")";}
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+  var tc={};
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    var g=function(n){return cs.getPropertyValue(n).trim();};
+    tc={
+      text:g("--text")||"#1a1f2e",
+      muted:g("--muted")||"#5b6478",
+      accent:g("--accent")||"#0e7490",
+      accent2:g("--accent2")||"#b45309",
+      accent3:g("--accent3")||"#b91c1c",
+      bg:g("--bg")||"#f6f4ec",
+      bg2:g("--bg2")||"#fbfaf4",
+      border:g("--border")||"#dcd6c6",
+      fieldLow:g("--field-low")||"#efe8d6",
+      fieldHigh:g("--field-high")||"#c0392b"
+    };
+  }
+
+  var eArr=[];
+  function computeEnergies(){
+    eArr=nodes.map(function(n){return E(n.x,n.y,ctxIdx);});
+  }
+
+  function barrier(i,j){
+    var a=nodes[i], b=nodes[j], mx=-1e9, k, t, nx, ny, val;
+    for(k=0;k<=16;k++){
+      t=k/16;
+      nx=a.x+(b.x-a.x)*t;
+      ny=a.y+(b.y-a.y)*t;
+      val=E(nx,ny,ctxIdx);
+      if(val>mx) mx=val;
+    }
+    return mx - Math.min(eArr[i], eArr[j]);
+  }
+
+  var parent=[], clusters=[], cidx=[], argmin=[];
+  function find(a){while(parent[a]!==a){parent[a]=parent[parent[a]];a=parent[a];}return a;}
+  function un(a,b){var ra=find(a),rb=find(b); if(ra!==rb) parent[rb]=ra;}
+
+  function tauFromBeta(b){
+    var t=(b-0.5)/(8-0.5);
+    return 0.92 - t*(0.92-0.16);
+  }
+
+  function cluster(){
+    var tau=tauFromBeta(parseFloat(betaEl.value));
+    var i,j;
+    parent=nodes.map(function(_,k){return k;});
+    for(i=0;i<nodes.length;i++) for(j=i+1;j<nodes.length;j++){
+      if(barrier(i,j)<tau) un(i,j);
+    }
+    var map={};
+    nodes.forEach(function(_,i){var r=find(i); (map[r]=map[r]||[]).push(i);});
+    clusters=Object.keys(map).map(function(k){return map[k];});
+    clusters.forEach(function(cl){cl.sort(function(a,b){return eArr[a]-eArr[b];});});
+    cidx=nodes.map(function(){return 0;});
+    clusters.forEach(function(cl,ci){cl.forEach(function(i){cidx[i]=ci;});});
+    argmin=clusters.map(function(cl){return cl[0];});
+    return tau;
+  }
+
+  function buildField(){
+    var img=octx.createImageData(W,H);
+    var lo=hexToRgb(tc.fieldLow), hi=hexToRgb(tc.fieldHigh);
+    var d=img.data, x,y,nx,ny,e,t,c;
+    for(y=0;y<H;y++){
+      ny=y/(H-1);
+      for(x=0;x<W;x++){
+        nx=x/(W-1);
+        e=E(nx,ny,ctxIdx);
+        t=clamp(e/0.95,0,1);
+        c=lerp(lo,hi,t);
+        var p=(y*W+x)*4;
+        d[p]=c[0]; d[p+1]=c[1]; d[p+2]=c[2]; d[p+3]=255;
+      }
+    }
+    octx.putImageData(img,0,0);
+  }
+
+  function star(cx,cy,r,fill){
+    ctx.beginPath();
+    for(var i=0;i<10;i++){
+      var ang=-Math.PI/2 + i*Math.PI/5;
+      var rr=(i%2===0)?r:r*0.45;
+      var px=cx+rr*Math.cos(ang), py=cy+rr*Math.sin(ang);
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+    ctx.fillStyle=fill; ctx.fill();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.drawImage(off,0,0);
+    var ccols=[tc.accent2, tc.accent, tc.accent3];
+    var i, ci, cl;
+
+    // cluster blobs
+    ctx.save();
+    for(ci=0;ci<clusters.length;ci++){
+      cl=clusters[ci];
+      var col=ccols[ci%3];
+      ctx.globalAlpha=0.12; ctx.fillStyle=col;
+      cl.forEach(function(idx){
+        ctx.beginPath();
+        ctx.arc(nodes[idx].x*W, nodes[idx].y*H, 46, 0, Math.PI*2);
+        ctx.fill();
+      });
+    }
+    ctx.restore();
+
+    // min-sum paths to argmin
+    if(pathsEl.checked){
+      ctx.save();
+      for(ci=0;ci<clusters.length;ci++){
+        cl=clusters[ci];
+        var am=argmin[ci];
+        ctx.strokeStyle=ccols[ci%3];
+        ctx.globalAlpha=0.5; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+        cl.forEach(function(idx){
+          if(idx===am) return;
+          ctx.beginPath();
+          ctx.moveTo(nodes[am].x*W, nodes[am].y*H);
+          ctx.lineTo(nodes[idx].x*W, nodes[idx].y*H);
+          ctx.stroke();
+        });
+      }
+      ctx.restore();
+    }
+
+    // cluster labels
+    ctx.font="bold 13px system-ui"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    for(ci=0;ci<clusters.length;ci++){
+      cl=clusters[ci];
+      var cx=0, cy=0, k;
+      cl.forEach(function(idx){cx+=nodes[idx].x; cy+=nodes[idx].y;});
+      cx=cx/cl.length*W; cy=cy/cl.length*H;
+      ctx.fillStyle=ccols[ci%3];
+      ctx.fillText("[Klasse "+(ci+1)+"]  ("+cl.length+")", cx, Math.max(16, cy-52));
+    }
+
+    // nodes
+    ctx.font="11px ui-monospace,monospace";
+    nodes.forEach(function(n,idx){
+      var px=n.x*W, py=n.y*H;
+      var col=ccols[cidx[idx]%3];
+      ctx.beginPath();
+      ctx.arc(px,py,9,0,Math.PI*2);
+      ctx.fillStyle=tc.bg2; ctx.fill();
+      ctx.lineWidth=2; ctx.strokeStyle=col; ctx.stroke();
+      ctx.fillStyle=tc.text;
+      ctx.fillText(n.l, px, py-14);
+      ctx.fillStyle=tc.muted;
+      ctx.font="10px ui-monospace,monospace";
+      ctx.fillText("E="+eArr[idx].toFixed(2), px, py+22);
+      ctx.font="11px ui-monospace,monospace";
+    });
+
+    // argmin stars
+    for(ci=0;ci<clusters.length;ci++){
+      var am=argmin[ci];
+      var px=nodes[am].x*W, py=nodes[am].y*H;
+      star(px,py,15,tc.accent3);
+      ctx.fillStyle=tc.accent3;
+      ctx.font="bold 11px system-ui"; ctx.textAlign="left";
+      ctx.fillText("Y* = argmin E", px+13, py+4);
+      ctx.textAlign="center";
+    }
+  }
+
+  function update(){
+    var tau=cluster();
+    draw();
+    betaVal.textContent=parseFloat(betaEl.value).toFixed(1);
+    readout.textContent=CTXNAMES[ctxIdx]+"   |   τ = "+tau.toFixed(2)+
+      "   |   β = "+parseFloat(betaEl.value).toFixed(1)+
+      "   |   Homotopie-Klassen: "+clusters.length+
+      "   |   Vertreter: "+argmin.map(function(i){return nodes[i].l;}).join(", ");
+  }
+
+  betaEl.addEventListener('input',update);
+  pathsEl.addEventListener('change',draw);
+  ctxBtn.addEventListener('click',function(){
+    ctxIdx=(ctxIdx+1)%3;
+    ctxBtn.textContent="Kontext wechseln ("+CTXNAMES[ctxIdx]+")";
+    computeEnergies(); buildField(); update();
+  });
+  themeBtn.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    readTheme(); buildField(); update();
+  });
+
+  readTheme();
+  computeEnergies();
+  buildField();
+  update();
+})();
+</script>
+</body>
+</html>

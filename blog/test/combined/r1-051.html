@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holografischer Fourier-Code — Fusion Holographie ✕ Grokking-Addition</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ecdf; --panel:#ffffff; --panel2:#f6f3ea;
+  --ink:#1c1a17; --ink2:#57524a;
+  --accent:#5b52e0; --accent2:#0a9d7f; --accent3:#e0564f; --accent4:#b45309;
+  --grid:#e3ddcb; --line:#e6e1d2;
+  --good:#15803d; --bad:#b91c1c; --warn:#b45309;
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111726; --panel:#141d31; --panel2:#1a2439;
+  --ink:#e8ecff; --ink2:#a8b3d9;
+  --accent:#8a7dff; --accent2:#2ee6c2; --accent3:#ff7b72; --accent4:#ffb86b;
+  --grid:#243150; --line:#26314f;
+  --good:#6ee7a0; --bad:#ff9b9b; --warn:#ffd166;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 62%);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:36px 22px 80px}
+header{text-align:center;padding:34px 10px 22px}
+header h1{
+  font-size:clamp(1.9rem,4.6vw,2.9rem);margin:0;line-height:1.15;letter-spacing:-.02em;font-weight:800;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent4) 55%,var(--accent3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.subtitle{color:var(--ink2);margin-top:14px;font-size:1.02rem}
+.subtitle code{background:var(--panel2);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-size:.9em;color:var(--accent)}
+.tagline{color:var(--ink2);font-size:.9rem;margin-top:8px;opacity:.85}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:18px 0 6px}
+nav.toc a{color:var(--ink2);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);background:var(--panel2)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin:22px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+section h2{margin:0 0 14px;font-size:1.5rem;letter-spacing:-.01em;color:var(--accent)}
+section h3{color:var(--accent2);margin:22px 0 8px;font-size:1.12rem}
+p{font-size:1rem;color:var(--ink)}
+p+p{margin-top:12px}
+.lead{font-size:1.04rem}
+.hl{color:var(--accent);font-weight:600}
+.hl2{color:var(--accent2);font-weight:600}
+.hl3{color:var(--accent3);font-weight:600}
+.note{border-left:3px solid var(--accent4);background:var(--panel2);padding:10px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.95rem;color:var(--ink2)}
+.note b{color:var(--ink)}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:7px 0}
+.formula{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center;font-size:.98rem}
+.m{font-family:'Cambria Math','STIX Two Math','Latin Modern Math',Georgia,'Times New Roman',serif;font-style:italic;letter-spacing:.02em;white-space:nowrap}
+.m sup,.m sub{font-size:.72em;font-style:normal}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent);font-weight:600}
+td{color:var(--ink)}
+.trow-a{color:var(--accent);font-weight:600}
+.trow-b{color:var(--accent2);font-weight:600}
+.viz-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px}
+canvas#viz{display:block;width:100%;height:460px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.82rem;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+@media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+.controls{display:flex;flex-direction:column;gap:12px}
+.ctrl{display:flex;flex-direction:column;gap:5px}
+.ctrl label{font-size:.86rem;color:var(--ink2);display:flex;justify-content:space-between}
+.ctrl label .val{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--accent) 0%,var(--accent4) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;box-shadow:0 0 0 2px var(--accent)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;border:2px solid var(--accent)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+button{background:var(--accent);color:var(--bg);border:none;padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.86rem;transition:.15s}
+button:hover{transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--accent)}
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:.95rem}
+.verdict{font-weight:700;font-size:1.02rem;padding:10px 13px;border-radius:10px;margin-bottom:12px;border:1px solid var(--line)}
+.verdict.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent);border-color:var(--good)}
+.verdict.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);border-color:var(--warn)}
+.verdict.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:var(--bad)}
+.kv{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.kv span:first-child{color:var(--ink2)}
+.kv span:last-child{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;color:var(--ink2);font-size:.85rem;padding:26px 10px 6px}
+a{color:var(--accent)}
+footer code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:.85em}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">&#9728;&#65038; Hell / &#127769; Dunkel</button>
+<div class="wrap">
+
+<header>
+  <h1>Holografischer Fourier-Code</h1>
+  <div class="subtitle">Fusion aus: <code>holographic_principle.html</code> &#10005; <code>grokking_addition_internal.html</code></div>
+  <div class="tagline">Klopf-Runde 1 &middot; Paar 051 &middot; Der Bulk, der auf dem Papier verschleiert ist &mdash; im exakten Spezialfall ein spars ablesbarer Fourier-Code.</div>
+</header>
+
+<nav class="toc">
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widerspr&uuml;che</a>
+  <a href="#aufloesung">Aufl&ouml;sung</a>
+  <a href="#inhalt">Fusionierter Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<!-- ============ 1. KERNTHESE ============ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere stellen &mdash; aus zwei Richtungen &mdash; <em>dieselbe</em> Frage: <em>Was ist der innere (Bulk) Zustand eines trainierten Netzes, und wie l&auml;sst er sich von au&szlig;en (Boundary) aus lesen?</em> <em>Holographie&nbsp;A</em> sagt: Der Bulk ist der <span class="hl">reichere, h&ouml;herdimensionale</span> Repr&auml;sentationsraum, der von der Boundary <em>vollst&auml;ndig kodiert</em> ist; Interpretierbarkeit sei <em>Bulk-Rekonstruktion</em> aus Boundary-Daten &mdash; und die inneren Repr&auml;sentationen seien <span class="hl3">gescrambelt</span> (zum Dekodieren brauche man Ryu&ndash;Takayanagi, MERA-Tensornetzwerke, holographische Fehlerkorrektur). <em>Grokking&nbsp;B</em> liefert eine <em>exakte, mechanische L&ouml;sung</em> f&uuml;r ein konkretes Netz (1-Layer-Transformer, modulare Addition mod&nbsp;113): Die innere Repr&auml;sentation ist ein <span class="hl2">sparses, niederrangiges Fourier-Code</span> (5 Sch&uuml;ssel-Frequenzen, Unembedding-Rang &asymp;&nbsp;10), das die Boundary <em>exakt</em> kodiert und das man <em>direkt ablesen</em> kann.</p>
+  <p>Die Fusion lautet: <span class="hl3">Ein trainiertes Netz ist ein holografisches Objekt, dessen Bulk ein task-orientierter, niederrangiger Fourier-Code ist.</span> Der Bulk ist (i) von <em>hoher Kapazitat / hohem ambienten Rang</em>, die sich nach dem Training in einen <em>niedrigen, besetzten Unterraum</em> (die sparsen Sch&uuml;ssel-Frequenzen) <em>einkollabiert</em>; (ii) <em>exakt</em> von der Boundary kodiert (Bulk-Rekonstruktion ist kein Mysterium, sondern Projektion auf wenige gelernte Richtungen); (iii) geglaetted durch einen <em>RG-Flow, der am rohen Signal verlustbehaftet, am Task verlustfrei</em> ist; (iv) <em>radial (Tiefe/RG) gekr&uuml;mmt, in der Feature-Richtung (Kreis/Gruppe) aber flach</em>; und (v) &bdquo;korreliert&bdquo; &uuml;ber Schichten hinweg <em>nur im Sinne eines geteilten niederrangigen Code-Basis</em>. <b>A liefert die Grammatik</b> (Bulk/Boundary, RG-Flow, Entanglement&nbsp;&harr;&nbsp;MI, Rekonstruktion); <b>B liefert den ausgerechneten Beispiel-Bulk.</b></p>
+  <p>Und die beiden Extremf&auml;lle &mdash; A&rsquo;s <em>gescrambelter</em> Bulk und B&rsquo;s <em>transparenter Fourier-&bdquo;Rechner&bdquo;</em> &mdash; sind <em>derselbe Gegenstand auf einem Komplexit&auml;tsspektrum</em>: ein <em>holographischer Fehlerkorrektur-Code</em> des Tasks. Die Grokking-L&ouml;sung ist der <em>trivial-lineare</em> Spezialfall (Code = spars Fourier-Basis, Dekodieren = &bdquo;die 5 Frequenzen ablesen&bdquo;); der generische Fall (Vision, Sprache) der <em>maximal gescrambelte</em> (Code = komplexer ECC, Dekodieren = MERA/RT). <span class="hl">Dasselbe Objekt, zwei Punkte auf derselben Skala.</span></p>
+</section>
+
+<!-- ============ 2. WIDERSPR&uml;CHE ============ -->
+<section id="widersprueche">
+  <h2>Widerspr&uuml;che zwischen A und B</h2>
+  <p>Die beiden widersprechen sich faktisch nicht (einer ist eine spekulative Physik-Analogie, der andere ein empirischer mechanistischer Befund), aber sie nehmen zu <em>denselben Gegenst&auml;nden</em> <em>inkompatible Stellungen</em> ein:</p>
+
+  <h3>&#9312; Dimension des Bulk: h&ouml;herdimensional (A) vs. niederrangig (B)</h3>
+  <p><b>A sagt:</b> Der Bulk (innere Schichten) sei ein <em>reicheres, h&ouml;herdimensionales</em> Repr&auml;sentationsgef&uuml;ge als die Boundary &mdash; Daten flie&szlig;en vom Rand in den Bulk und bilden dort eine &bdquo;reichere, h&ouml;herdimensionale Struktur&bdquo; (Demo&nbsp;2). Inner <em>&#8827;</em> Au&szlig;en (dimensional).</p>
+  <p><b>B sagt:</b> Die <em>effektive</em> innere Repr&auml;sentation sei <em>niederrangig</em>: das Embedding sei in der Fourier-Basis <em>spars</em> (nur 5 von &asymp;56 Frequenzen haben Gewicht), die Unembedding-Matrix <span class="m">W<sub>L</sub> = W<sub>U</sub>W<sub>out</sub></span> habe <em>Rang&nbsp;&asymp;&nbsp;10</em> (5 Frequenzen &times; sin/cos). Effektiver Bulk-Rang &asymp;&nbsp;10 statt 128.</p>
+  <p class="note"><b>Spannung:</b> A sagt <em>inner &#8827; au&szlig;en</em> (Dimension), B sagt <em>die effektive innere Dimension ist klein / niederrangig</em>. Das sind komplement&auml;re Gegenbehauptungen &uuml;ber dieselbe Gro&szlig;e.</p>
+
+  <h3>&#9313; Gescrambelt &amp; opak (A) vs. trivial ablesbar (B)</h3>
+  <p><b>A sagt:</b> Die zentrale Frage lautet w&ouml;rtlich <em>&bdquo;Wie dekodiere ich die gescrambleten inneren Repr&auml;sentationen?&bdquo;</em> &mdash; man brauche ein ganzes Arsenal (Ryu&ndash;Takayanagi, MERA, holographische Fehlerkorrektur-Codes). Der Bulk ist <em>opak</em>.</p>
+  <p><b>B sagt:</b> Der Bulk sei <em>komplett explizit und trivial ablesbar</em>: man liest ab, welche der 5 Frequenzen Gewicht hat, welche Neuronen Trig machen; <span class="m">W<sub>L</sub></span> gibt die Logits direkt. &bdquo;The whole thing is a learned Fourier calculator.&bdquo; Kein Fehlerkorrektur-Dekodieren n&ouml;tig.</p>
+  <p class="note"><b>Spannung:</b> A postuliert einen <em>opak/verschr&auml;nkten/gescrambelten</em> Bulk (braucht schweres Dekodieren); B zeigt einen <em>transparenten/niederrangigen/linear lesbaren</em> Bulk (Dekodieren = Ablesen).</p>
+
+  <h3>&#9314; RG-Flow: verlustbehaftet (A) vs. verlustfrei (B)</h3>
+  <p><b>A sagt:</b> Der RG-Flow sei <em>irreversible</em> Grobk&ouml;rnung: &bdquo;jede Schicht integriert kurze Wellenl&auml;ngen aus&bdquo;, hohe Frequenzen werden <em>weggeworfen</em>; der Anteil &bdquo;Information erhalten&bdquo; kann &lt;&nbsp;100&nbsp;% sein. Ein <em>verlustbehafteter</em> Low-Pass.</p>
+  <p><b>B sagt:</b> Die Transformation sei eine <em>verlustfreie</em> Basiswechsel &mdash; Addition = <em>Rotation</em> auf dem Kreis (unit&auml;r, ma&szlig;treu), <span class="m">e<sup>iw(a+b)</sup> = e<sup>iwa</sup> &middot; e<sup>iwb</sup></span>; die 5 Frequenzen <em>rekonstruieren</em> die Antwort exakt (konstruktive Interferenz, P(correct)&nbsp;&asymp;&nbsp;1). <em>Verlustfrei</em> auf dem relevanten Subraum.</p>
+  <p class="note"><b>Spannung:</b> A wirft Details <em>weg</em> (verlustbehaftet), B macht eine <em>unit&auml;re</em> Rotation (verlustfrei). Auf den ersten Blick ein Widerspruch &mdash; die Aufl&ouml;sung trennt rohe von task-relevanter Information.</p>
+
+  <h3>&#9315; Geometrie: gekr&uuml;mmter AdS-Bulk (A) vs. flache Gruppe/Kreis (B)</h3>
+  <p><b>A sagt:</b> Der Bulk sei <em>gekr&uuml;mmt</em> (AdS, negative Kr&uuml;mmung), Geod&auml;ten <em>w&ouml;lben</em> sich zum Zentrum; &bdquo;Nichtlinearit&auml;t (Kr&uuml;mmung)&bdquo; ist ein Kern-Regler.</p>
+  <p><b>B sagt:</b> Die exakte Rechnung lebe auf einem <em>flachen</em> Objekt &mdash; der <em>abelschen Gruppe</em> / dem <em>Kreis</em> S&sup1; (Addition = Gruppenrotation, Tangente flach, keine negative Kr&uuml;mmung).</p>
+  <p class="note"><b>Spannung:</b> A besteht auf <em>gekr&uuml;mmter</em> Bulk-Geometrie, B&rsquo;s exakte L&ouml;sung lebt auf einer <em>flachen</em> Gruppe/Kreis &mdash; verschiedene Kr&uuml;mmungsannahmen f&uuml;r denselben &bdquo;inneren Raum&bdquo;.</p>
+
+  <h3>&#9316; Korrelationsstruktur: Verschr&auml;nkung (A) vs. kanalsepariert (B)</h3>
+  <p><b>A sagt:</b> Die zentrale Gr&ouml;&szlig;e sei <em>Entanglement-Entropie</em> &harr; <em>Mutual Information zwischen Schichten</em> (Ryu&ndash;Takayanagi, area law) &mdash; also <em>Korrelation / Nicht-separierbarkeit</em> zwischen Teilen des Bulk.</p>
+  <p><b>B sagt:</b> Die Struktur sei <em>per Frequenz kanalsepariert</em> &mdash; jeder Kanal ist ein <em>unabh&auml;ngiges</em> degree-2-Polynom einer <em>einzelnen</em> Frequenz (direkte Summe), nicht verschr&auml;nkt.</p>
+  <p class="note"><b>Spannung:</b> A&rsquo;s Kernmechanismus ist <em>Korrelation/Verschr&auml;nkung</em>, B&rsquo;s Struktur ist <em>kanalsepariert</em> &mdash; scheinbar das Gegenteil. Die Aufl&ouml;sung liest &bdquo;Verschr&auml;nkung&bdquo; neu als geteilten Code-Basis.</p>
+</section>
+
+<!-- ============ 3. AUFL&Ouml;SUNG ============ -->
+<section id="aufloesung">
+  <h2>Aufl&ouml;sung</h2>
+
+  <h3>&#9312; Ambienter vs. effektiver Rang</h3>
+  <p>A&rsquo;s &bdquo;h&ouml;herdimensionaler Bulk&bdquo; ist die <em>ambient</em> Dimension (128-dim Aktivierungen, viele Neuronen, hohe Kapazitat); B&rsquo;s &bdquo;Rang&nbsp;10&bdquo; ist die <em>effektive / besetzte</em> Dimension (die sparsen Sch&uuml;ssel-Frequenzen). Holographie behauptet, dass ein <em>niedrigerdimensionaler</em> Rand einen Bulk <em>vollst&auml;ndig kodiert</em> &mdash; das ist ein <em>Kodierungs-Claim</em>, kein Dimensionsz&auml;hlungs-Claim. Beide stimmen also: <em>hohe ambient Dimension, niedrige effektive</em>, und die Boundary kodiert genau den <em>effektiven</em> Teil exakt. <span class="hl">Fusionierter Schluss:</span> Der Bulk hat <em>hohe Kapazitat</em>, <em>setzt</em> sich aber in einen <em>niedrigen, task-alignierten</em> Unterraum; das &bdquo;Hologramm&bdquo; ist der <em>niederrangige Code</em>, nicht der volle ambient Raum.</p>
+
+  <h3>&#9313; Scrambling ist task-/trainings-abh&auml;ngig &mdash; derselbe Code auf einem Spektrum</h3>
+  <p>Der Grad des &bdquo;Scramblings&bdquo; ist <em>task-abh&auml;ngig</em>. Die modulare Addition ist <em>abelsch und Fourier-selbst-duell</em>, also ist die <em>minimal-komplexe</em> L&ouml;sung ein <em>transparenter</em> Fourier-Code (Scrambling&nbsp;&asymp;&nbsp;0). Bei einem generischen, harten Task (Vision, Sprache) <em>w&auml;re</em> der Bulk tats&auml;chlich gescrambelt und br&auml;uchte Fehlerkorrektur-Dekodieren. Holographische Fehlerkorrektur-Codes <em>beschreiben genau dieses</em>: eine Abbildung des logischen (Task-)Raums in einen physischen (Bulk-)Raum &mdash; in Grokking ist der Code <em>trivial/linear</em>, im generischen Fall <em>komplex</em>. <span class="hl">Fusionierter Schluss:</span> Der Bulk ist <em>immer</em> ein (holographischer) Fehlerkorrektur-Code des Tasks; seine <em>Komplexit&auml;t</em> reicht von <em>trivial-linear</em> (Fourier/Grokking) bis <em>maximal gescrambelt</em> (generisch). MERA/RT sind der <em>allgemeine</em> Dekoder; im Fourier-Fall ist der Dekoder einfach &bdquo;die 5 Frequenzen ablesen&bdquo;.</p>
+
+  <h3>&#9314; Verlustbehaftet am Input, verlustfrei am Task</h3>
+  <p>Man trennt <em>volles Signal</em> von <em>task-relevantem Signal</em>. Der RG-Flow wirft <em>irrelevante</em> hohe Frequenzen (task-irrelevante Details/Noise) weg &mdash; <em>verlustbehaftet</em> bez&uuml;glich des rohen Inputs, aber <em>verlustfrei</em> bez&uuml;glich des Tasks. B&rsquo;s Rotation ist <em>verlustfrei</em> auf dem <em>task-relevanten</em> Kreis (die a+b mod&nbsp;P-Information). A&rsquo;s &bdquo;Information erhalten &lt; 100&nbsp;%&bdquo; bezieht sich auf das <em>rohe</em> Signal; B&rsquo;s &bdquo;Probability = 1.0&bdquo; auf die <em>Task-Korrektheit</em>. Kein Widerspruch, sobald man task-relevante von task-irrelevanter Information trennt. <span class="hl">Fusionierter Schluss:</span> Der RG-Flow ist eine <em>task-gesteuerte</em> Grobk&ouml;rnung: <em>verlustbehaftet</em> auf dem ambienten Signal, <em>verlustfrei (unit&auml;r)</em> auf dem task-relevanten Fourier-Subraum; die &bdquo;grobe Struktur, die &uuml;brig bleibt&bdquo; (A) <em>ist</em> genau die 5 Sch&uuml;ssel-Frequenzen (B).</p>
+
+  <h3>&#9315; Warped Product: gekr&uuml;mmt radial, flach angular</h3>
+  <p>Die AdS-Kr&uuml;mmung (A) modelliert die <em>radiale/Tiefen</em>-Koordinate (wie sich die Geometrie mit der Tiefe dehnt); B&rsquo;s flacher Kreis ist die <em>winkel/Feature</em>-Koordinate (wie Addition komponiert). Sie wirken auf <em>verschiedene</em> Koordinaten: die <em>radiale</em> (Tiefe/RG) tr&auml;gt Kr&uuml;mmung/Grobk&ouml;rnung, die <em>winkel</em> (Feature) ist eine <em>flache abelsche Gruppe</em>. Der volle Bulk ist ein <em>warped product</em> (gekr&uuml;mmter radialer Teil &times; flacher angularer Teil) &mdash; genau wie AdS selbst ein warped product aus radial + angular ist. <span class="hl">Fusionierter Schluss:</span> Der Bulk = <em>warped product</em>: <em>gekr&uuml;mmt</em> in der Tiefen(RG)-Richtung (A), <em>flach</em> (gruppenstrukturiert) in der Feature(Fourier/Kreis)-Richtung (B).</p>
+
+  <h3>&#9316; &bdquo;Verschr&auml;nkung&bdquo; = geteilte Code-Basis, keine Quanten-Nicht-separierbarkeit</h3>
+  <p>Die Frequenz-Kan&auml;le sind <em>innerhalb eines Tasks</em> <em>unabh&auml;ngig</em> (separiert), aber <em>&uuml;ber Schichten hinweg</em> ist die Struktur <em>korreliert</em>, weil alle Schichten <em>dieselbe</em> Fourier-Basis (dieselben 5 Frequenzen) &bdquo;sprechen&bdquo;. Das <em>ist</em> genau A&rsquo;s Mutual-Information zwischen Schichten: hohe MI, weil ein <em>gemeinsamer</em> Code-Basis geteilt wird. &bdquo;Verschr&auml;nkung&bdquo; im DL-Sinn = <em>geteilter niederrangiger Code</em>, nicht Quanten-Nicht-separierbarkeit. <span class="hl">Fusionierter Schluss:</span> &bdquo;Entanglement&bdquo;/MI (A) = <em>gemeinsamer niederrangiger Code-Basis</em> &uuml;ber Schichten (B); die Kan&auml;le sind <em>per Frequenz separiert</em>, aber <em>&uuml;ber Schichten korreliert</em> (gemeinsame Basis) &mdash; genau die MI-Gr&ouml;&szlig;e, die A trackt.</p>
+</section>
+
+<!-- ============ 4. FUSIONIERTER INHALT ============ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>1 &middot; Die gemeinsame Zuordnung</h3>
+  <p>Beide Papiere operationalisieren <em>eine</em> Maschine (Bulk &harr; Boundary, Grobk&ouml;rnung, Rekonstruktion) in zwei Registern: A <em>geometrisch-analog</em>, B <em>mechanisch-exakt</em>. Unten die Zuordnung, die die ganze Fusion tr&auml;gt:</p>
+  <table>
+    <tr><th>A &middot; Holographie</th><th>B &middot; Grokking-Addition</th><th>Fusion</th></tr>
+    <tr><td class="trow-a">Bulk (h&ouml;herdimensional)</td><td class="trow-b">innere Repr&auml;sentation (Embedding/MLP)</td><td>der kodierte Task-Zustand</td></tr>
+    <tr><td class="trow-a">Boundary (Input/Output)</td><td class="trow-b">Input/Output-Token</td><td>was von au&szlig;en lesbar ist</td></tr>
+    <tr><td class="trow-a">RG-Flow (Schicht-Transformation)</td><td class="trow-b">spars Fourier-Projektion / Low-Pass</td><td>Grobk&ouml;rnung (task-relevant verlustfrei)</td></tr>
+    <tr><td class="trow-a">hohe Frequenzen &bdquo;integriert aus&bdquo;</td><td class="trow-b">nur 5 Sch&uuml;ssel-Frequenzen &uuml;berleben</td><td>der spars Code = die &bdquo;grobe Struktur&bdquo;</td></tr>
+    <tr><td class="trow-a">Entanglement-Entropie / MI</td><td class="trow-b">geteilte Frequenz-Basis &uuml;ber Schichten</td><td>die MI-Gr&ouml;&szlig;e (gemeinsamer Code)</td></tr>
+    <tr><td class="trow-a">Geod&auml;ten (optimale Pfade)</td><td class="trow-b"><span class="m">e<sup>iw(a+b)</sup>=e<sup>iwa</sup>e<sup>iwb</sup></span> (Rotation)</td><td>Zusammensetzen = Gruppenoperation</td></tr>
+    <tr><td class="trow-a">gescrambelter Bulk + Fehlerkorrektur</td><td class="trow-b">transparenter Fourier-&bdquo;Rechner&bdquo;</td><td>derselbe Code auf dem Komplexit&auml;tsspektrum</td></tr>
+    <tr><td class="trow-a">AdS-Kr&uuml;mmung (radial)</td><td class="trow-b">Kreis S&sup1; (angular / Gruppe)</td><td>warped product (radial &times; angular)</td></tr>
+    <tr><td class="trow-a">Bulk-Rekonstruktion aus Boundary</td><td class="trow-b"><span class="m">W<sub>L</sub>=W<sub>U</sub>W<sub>out</sub></span> (Rang&nbsp;10)</td><td>Dekodieren = Projektion auf wenige Frequenzen</td></tr>
+  </table>
+
+  <h3>2 &middot; A&rsquo;s Beitrag &mdash; die holographische Grammatik</h3>
+  <ul>
+    <li><b>Holographisches Prinzip:</b> Die Physik eines h&ouml;herdimensionalen Raums (Bulk) ist <em>vollst&auml;ndig</em> auf seinem niedrigerdimensionalen Rand (Boundary) kodiert &mdash; wie ein 3D-Bild auf einem 2D-Hologramm.</li>
+    <li><b>RG-Flow = Schicht-Transformation:</b> Jede Schicht &bdquo;integriert kurze Wellenl&auml;ngen aus&bdquo;; Pixel &rarr; Kanten &rarr; Objekte &rarr; Konzepte. Hohe Frequenzen (feine Details) verschwinden Schicht f&uuml;r Schicht.</li>
+    <li><b>Ryu&ndash;Takayanagi:</b> <span class="m">S<sub>A</sub> = Area(&gamma;<sub>A</sub>) / (4G<sub>N</sub>)</span>; in der Analogie <span class="m">S<sub>A</sub> &prop; log(sin(&pi;&middot;&ell;/L))</span> (area law auf der Boundary).</li>
+    <li><b>MI-Bottleneck:</b> <span class="m">I(Input; Schicht<sub>k</sub>)</span> f&auml;llt Richtung Bulk, <span class="m">I(Output; Schicht<sub>k</sub>)</span> steigt Richtung Output &mdash; ein <em>Information-Bottleneck</em> in der Mitte.</li>
+    <li><b>Geod&auml;ten</b> = optimale Informationspfade; Poincar&eacute;-Disk; &bdquo;Nichtlinearit&auml;t (Kr&uuml;mmung)&bdquo; = AdS-Kr&uuml;mmung des Bulk.</li>
+    <li><b>Bulk-Rekonstruktion</b> = Interpretierbarkeit; Werkzeuge: MERA-Tensornetzwerke, holographische Fehlerkorrektur-Codes, RT-Formel.</li>
+  </ul>
+
+  <h3>3 &middot; B&rsquo;s Beitrag &mdash; die exakte mechanische L&ouml;sung</h3>
+  <ul>
+    <li><b>Setup:</b> 1-Layer-Transformer, modulare Addition <span class="m">a + b mod P</span>, <span class="m">P = 113</span> (prim), <span class="m">d = 128</span>; Embedding <span class="m">128 &times; 113</span>.</li>
+    <li><b>Sch&uuml;ssel-Frequenzen</b> <span class="m">&#123;14, 35, 41, 42, 52&#125;</span>; <span class="m">w<sub>k</sub> = 2&pi;k/P</span>. Embedding <em>spars</em> in der Fourier-Basis:
+      <div class="formula"><span class="m">W<sub>E</sub>[a] &asymp; &Sigma;<sub>k</sub> [ &alpha;<sub>k</sub> cos(2&pi;k&middot;a/P) + &beta;<sub>k</sub> sin(2&pi;k&middot;a/P) ] &middot; dir<sub>k</sub></span></div>
+      Sin/Cos sind <em>gelernte Gewichte</em>, keine Vorberechnung.</li>
+    <li><b>Attention (bilinear):</b> erzeugt Produkte <span class="m">cos(wa)cos(wb), sin(wa)sin(wb), sin(wa)cos(wb), cos(wa)sin(wb)</span>. Score &asymp; <span class="m">0.5 + &alpha;(cos(wa)&minus;cos(wb)) + &beta;(sin(wa)&minus;sin(wb))</span>.</li>
+    <li><b>MLP:</b>
+      <div class="formula"><span class="m">cos(w(a+b)) = cos(wa)cos(wb) &minus; sin(wa)sin(wb)</span><br><span class="m">sin(w(a+b)) = sin(wa)cos(wb) + cos(wa)sin(wb)</span></div>
+      84,6&nbsp;% der Neuronen (433/512) &asymp; degree-2-Polynom einer einzelnen Frequenz (&gt;85&nbsp;% Varianz).</li>
+    <li><b>Unembedding</b> <span class="m">W<sub>L</sub> = W<sub>U</sub>W<sub>out</sub></span>, Rang&nbsp;&asymp;&nbsp;10:
+      <div class="formula"><span class="m">logit(c) &asymp; &Sigma;<sub>k</sub> &alpha;<sub>k</sub> cos(w<sub>k</sub>(a+b&minus;c)),&nbsp; &alpha; = [44.1, 42.2, 44.8, 66.6, 63.0]</span></div>
+      Max bei <span class="m">c = a+b mod P</span> (weil <span class="m">cos(0)=1</span>).</li>
+    <li><b>Interferenz:</b> <span class="m">&Sigma;<sub>k</sub> cos(w<sub>k</sub>&middot;x) &asymp; 5</span> bei <span class="m">x=0</span>, &asymp;&nbsp;0 sonst &rarr; Softmax &rarr; P(correct) &asymp; 1.</li>
+    <li><b>Addition = Rotation:</b> <span class="m">e<sup>iw(a+b)</sup> = e<sup>iwa</sup>&middot;e<sup>iwb</sup></span>; der Winkel von <span class="m">(a+b) mod P</span> ist Winkel(a)+Winkel(b).</li>
+  </ul>
+
+  <h3>4 &middot; Die fused Math in einem Zug</h3>
+  <p>Alles l&auml;uft auf eine Kette: <em>hoher ambienter Bulk &rarr; RG-Flow (task-ideal Low-Pass) &rarr; Kollaps auf die Sch&uuml;ssel-Frequenzen &rarr; exakte Boundary-Kodierung.</em></p>
+  <div class="formula"><span class="m">A<sub>f</sub>(L) = A<sub>f</sub> &middot; exp(&minus;&lambda;&middot;L&middot;(f &minus; f<sub>task</sub>))&nbsp;&nbsp;(f &gt; f<sub>task</sub>);&nbsp;&nbsp; A<sub>task</sub>(L) = A<sub>task</sub></span></div>
+  <ul>
+    <li><b>Rohe Retention</b> <span class="m">&Sigma;<sub>f</sub> A<sub>f</sub>(L) / &Sigma;<sub>f</sub> A<sub>f</sub> &lt; 1</span> (verlustbehaftet am Input) &mdash; A&rsquo;s &bdquo;Information erhalten &lt; 100&nbsp;%&bdquo;.</li>
+    <li><b>Task-Retention</b> <span class="m">= 1</span> (verlustfrei am Task) &mdash; B&rsquo;s &bdquo;Probability = 1.0&bdquo;.</li>
+    <li><b>Effektive Bulk-Dimension (Rang)</b> <span class="m">= |&#123; f : A<sub>f</sub>(L) &ge; &epsilon; &#125;|</span> &rarr; kollabiert auf die #Sch&uuml;ssel-Frequenzen (= B&rsquo;s Rang&nbsp;10 / 5 Frequenzen).</li>
+    <li><b>Bulk = warped product:</b> gekr&uuml;mmt radial (Tiefe/RG, A) &times; flach angular (Gruppe S&sup1;, B).</li>
+    <li><b>&bdquo;Entanglement&bdquo;/MI</b> = geteilte niederrangige Code-Basis &uuml;ber Schichten; Kan&auml;le per Frequenz separiert.</li>
+    <li><b>Holographischer Fehlerkorrektur-Code:</b> trivial-linear (Fourier/Grokking) &harr; maximal gescrambelt (generisch); Dekodieren = Projektion auf die Sch&uuml;ssel-Frequenzen.</li>
+  </ul>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung</h2>
+  <p>Ein mehrfrequentes Boundary-Signal wird <em>Schicht f&uuml;r Schicht geglaetted</em> (RG-Flow): die <span class="hl3">task-irrelevanten</span> h&ouml;hen Frequenzen sterben, w&auml;hrend der <span class="hl2">task-relevante Kanal</span> (f&nbsp;=&nbsp;1, gestrichelt) <em>exakt</em> erhalten bleibt. Rechts: das <em>endg&uuml;ltige Bulk-Spektrum</em> (sparser Code). Die Readouts zeigen den Kernpunkt der Fusion &mdash; <em>rohe Retention sinkt, Task-Retention bleibt 100&nbsp;%, der effektive Bulk-Rang kollabiert</em>.</p>
+  <div class="viz-card">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--accent)"></i> RG-Trace (Boundary&rarr;Bulk)</span>
+      <span><i class="sw" style="background:var(--accent2)"></i> Task-Kanal f=1 (gestrichelt)</span>
+      <span><i class="sw" style="background:var(--accent4)"></i> Detail-Frequenzen</span>
+      <span><i class="sw" style="background:var(--accent2)"></i> Task-Balken (Spectrum)</span>
+    </div>
+    <div class="viz-grid">
+      <div class="controls">
+        <div class="ctrl">
+          <label>RG-Schritte (Tiefe) <span class="val" id="lvL">6</span></label>
+          <input type="range" id="inL" min="1" max="12" step="1" value="6">
+        </div>
+        <div class="ctrl">
+          <label>Cutoff-Steilheit &lambda; <span class="val" id="lvS">0.50</span></label>
+          <input type="range" id="inS" min="0.05" max="1" step="0.05" value="0.5">
+        </div>
+        <div class="ctrl">
+          <label>Detail-Frequenzen (task-irrelevant) <span class="val" id="lvD">8</span></label>
+          <input type="range" id="inD" min="0" max="12" step="1" value="8">
+        </div>
+        <div class="btnrow">
+          <button id="resetBtn" class="ghost" type="button">&#8634; Reset</button>
+          <button id="glowBtn" type="button">&#9660; Voll gl&auml;tten</button>
+        </div>
+      </div>
+      <div class="readout">
+        <div class="verdict" id="verdict">&hellip;</div>
+        <div class="kv"><span>Rohe Retention (Input)</span><span id="lvRaw">&ndash;</span></div>
+        <div class="kv"><span>Task-Retention (Antwort)</span><span id="lvTask">&ndash;</span></div>
+        <div class="kv"><span>Effektive Bulk-Dim. (Rang)</span><span id="lvDim">&ndash;</span></div>
+        <div class="kv"><span>Frequenzkan&auml;le (gesamt)</span><span id="lvChan">&ndash;</span></div>
+        <div class="kv"><span>Dekodierbarkeit des Bulk</span><span id="lvDecode">&ndash;</span></div>
+        <p style="margin:12px 0 0;font-size:.85rem;color:var(--ink2)">&bdquo;Voll gl&auml;tten&bdquo; = viele RG-Schritte: der Bulk kollabiert auf den Task-Kanal &mdash; verlustbehaftet am rohen Signal, verlustfrei am Task, niederrangig.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a href="../holographic_principle.html"><code>holographic_principle.html</code></a> &mdash; <em>&bdquo;Holografisches Prinzip &amp; Deep Learning &mdash; Interaktiv&bdquo;</em>: AdS/CFT &harr; Deep-Learning-Analogie (Bulk&nbsp;=&nbsp;innere Schichten, Boundary&nbsp;=&nbsp;I/O, RG-Flow&nbsp;=&nbsp;Abstraktion, Entanglement&nbsp;&harr;&nbsp;MI), Ryu&ndash;Takayanagi, Poincar&eacute;-Disk/Geod&auml;ten, MERA + holographische Fehlerkorrektur, Bulk-Rekonstruktion aus Boundary-Daten.</li>
+    <li><a href="../grokking_addition_internal.html"><code>grokking_addition_internal.html</code></a> &mdash; <em>&bdquo;Where Does Sine Live in a Transformer?&bdquo;</em> (Nanda et&nbsp;al., ICLR 2023): modulare Addition mod&nbsp;113, Fourier-Repr&auml;sentation (Embedding spars, Attention bilinear, MLP Trig-Identit&auml;ten, <span class="m">W<sub>L</sub></span> Rang&nbsp;10, 5 Sch&uuml;ssel-Frequenzen, konstruktive Interferenz, Softmax), Addition&nbsp;=&nbsp;Rotation auf dem Kreis.</li>
+  </ul>
+</section>
+
+<footer>
+  Fusion &middot; Klopf-Runde 1, Paar 051 &middot; <code>holographic-principle</code> &times; <code>grokking-addition</code><br>
+  Alle Formeln und Daten inline; keine Netz-Datenabrufe.
+</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+  var themeBtn=document.getElementById('themeBtn');
+  themeBtn.addEventListener('click',function(){ root.classList.toggle('dark'); draw(); });
+
+  var canvas=document.getElementById('viz');
+  var el={
+    L:document.getElementById('inL'),
+    S:document.getElementById('inS'),
+    D:document.getElementById('inD')
+  };
+  var labels={
+    vL:document.getElementById('lvL'), vS:document.getElementById('lvS'), vD:document.getElementById('lvD'),
+    vRaw:document.getElementById('lvRaw'), vTask:document.getElementById('lvTask'),
+    vDim:document.getElementById('lvDim'), vChan:document.getElementById('lvChan'), vDecode:document.getElementById('lvDecode')
+  };
+  var verdict=document.getElementById('verdict');
+
+  function cssRGB(name){
+    var s=getComputedStyle(root).getPropertyValue(name).trim();
+    if(!s) return [128,128,128];
+    if(s[0]==='#'){
+      var h=s.slice(1);
+      if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m) return [+m[0],+m[1],+(m[2]||0)];
+    return [128,128,128];
+  }
+  function argb(c,a){ return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+  function mixc(a,b,t){
+    return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)];
+  }
+  function setup(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    if(w<10||h<10) return null;
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    var ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx,w:w,h:h};
+  }
+
+  var TWOPI=6.283185307179586;
+
+  function draw(){
+    var S=setup(); if(!S) return;
+    var ctx=S.ctx, w=S.w, h=S.h;
+    var col={
+      panel:cssRGB('--panel'), ink2:cssRGB('--ink2'),
+      accent:cssRGB('--accent'), accent2:cssRGB('--accent2'), accent4:cssRGB('--accent4'),
+      grid:cssRGB('--grid')
+    };
+
+    var L=+el.L.value, strength=+el.S.value, detail=+el.D.value;
+    var decay=strength*1.2;
+
+    // frequency model: f=1 is the task channel (always survives); f>=2 are task-irrelevant detail
+    var freqs=[{f:1,task:true,amp:1.0,ph:0}];
+    for(var f=2; f<=detail+1; f++){ freqs.push({f:f,task:false,amp:0.9/f,ph:f*0.7}); }
+    function surv(fr,l){ return fr.f===1?1:Math.exp(-decay*l*(fr.f-1)); }
+
+    var N=220;
+    var traces=[], gmax=0, totAmp0=0, totAmpL=0;
+    for(var l=0;l<=L;l++){
+      var sig=new Array(N);
+      for(var i=0;i<N;i++){
+        var x=i/(N-1); var y=0;
+        for(var j=0;j<freqs.length;j++){ var fr=freqs[j]; y+=fr.amp*surv(fr,l)*Math.sin(TWOPI*fr.f*x+fr.ph); }
+        sig[i]=y; var aa=Math.abs(y); if(aa>gmax) gmax=aa;
+      }
+      traces.push(sig);
+    }
+    for(var j=0;j<freqs.length;j++){ var fr=freqs[j]; totAmp0+=fr.amp; totAmpL+=fr.amp*surv(fr,L); }
+    var rawRet=totAmpL/totAmp0;
+    var taskRet=surv(freqs[0],L); // = 1
+    var effDim=0;
+    for(var j=0;j<freqs.length;j++){ if(freqs[j].amp*surv(freqs[j],L)>=0.04) effDim++; }
+    if(gmax===0) gmax=1;
+
+    // clear + bg
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=argb(col.panel,1); ctx.fillRect(0,0,w,h);
+
+    var leftPad=46, topPad=30, botPad=26;
+    var midX=w*0.55;
+    var rightX0=midX+22, rightX1=w-12;
+    var leftPlotW=midX-leftPad;
+    var rightPlotW=rightX1-rightX0;
+    var plotH=h-topPad-botPad;
+
+    // divider
+    ctx.strokeStyle=argb(col.grid,0.8); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(midX+8, topPad-6); ctx.lineTo(midX+8, topPad+plotH+6); ctx.stroke();
+
+    // ---- LEFT: RG-flow traces ----
+    ctx.textAlign='left'; ctx.font='11px system-ui';
+    ctx.fillStyle=argb(col.ink2,0.95);
+    ctx.fillText('RG-Flow:  Boundary (Input)  →  Bulk  →  Boundary (Output)', leftPad, topPad-12);
+
+    var bands=L>=1?L:1;
+    var bandH=plotH/bands;
+    for(var l=0;l<=L;l++){
+      var yc=topPad+(l+0.5)*bandH;
+      var amp=bandH*0.36;
+      var t=L>=1? l/L : 0;
+      ctx.strokeStyle=argb(col.grid,0.7); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(leftPad,yc); ctx.lineTo(leftPad+leftPlotW,yc); ctx.stroke();
+      var c=mixc(col.accent,col.accent2,t);
+      ctx.strokeStyle=argb(c,0.95); ctx.lineWidth=1.6;
+      ctx.beginPath();
+      var sig=traces[l];
+      for(var i=0;i<N;i++){ var px=leftPad+(i/(N-1))*leftPlotW; var py=yc-(sig[i]/gmax)*amp; if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py); }
+      ctx.stroke();
+      // task component (constant across layers) as dashed guide
+      ctx.strokeStyle=argb(col.accent2,0.85); ctx.setLineDash([4,3]); ctx.lineWidth=1.2;
+      ctx.beginPath();
+      for(var i=0;i<N;i++){ var px2=leftPad+(i/(N-1))*leftPlotW; var py2=yc-((Math.sin(TWOPI*(i/(N-1)))/gmax)*amp); if(i===0)ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2); }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.textAlign='left'; ctx.font='bold 11px system-ui';
+    ctx.fillStyle=argb(col.accent,0.95);
+    ctx.fillText('Input', 4, topPad+6);
+    ctx.fillText('Output', 4, topPad+plotH-2);
+    ctx.fillStyle=argb(col.accent2,0.95);
+    ctx.fillText('Bulk', 4, topPad+plotH*0.5-2);
+    ctx.fillStyle=argb(col.ink2,0.6); ctx.font='9px system-ui';
+    ctx.fillText('Details sterben', 4, topPad+plotH*0.5+11);
+
+    // ---- RIGHT: Fourier spectrum at output ----
+    ctx.textAlign='left'; ctx.font='11px system-ui';
+    ctx.fillStyle=argb(col.ink2,0.95);
+    ctx.fillText('Bulk-Spektrum am Output (sparser Code)', rightX0, topPad-12);
+    ctx.strokeStyle=argb(col.grid,0.8); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(rightX0, topPad); ctx.lineTo(rightX0, topPad+plotH); ctx.lineTo(rightX1, topPad+plotH); ctx.stroke();
+    var maxAmp=1;
+    var n=detail+1;
+    var slotW=rightPlotW/n;
+    var barW=Math.max(3, slotW*0.62);
+    for(var j=0;j<n;j++){
+      var fr=freqs[j];
+      var hgt=(fr.amp*surv(fr,L))/maxAmp;
+      var bx=rightX0+j*slotW+slotW/2-barW/2;
+      var by=topPad+plotH-hgt*plotH;
+      if(fr.task){
+        ctx.fillStyle=argb(col.accent2,0.9);
+        ctx.fillRect(bx,by,barW,Math.max(1,hgt*plotH));
+      }else{
+        ctx.fillStyle=argb(col.accent4,0.25+0.65*Math.min(1,hgt*4));
+        ctx.fillRect(bx,by,barW,Math.max(1,hgt*plotH));
+      }
+    }
+    ctx.fillStyle=argb(col.ink2,0.7); ctx.font='9px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Frequenz f   (1 = Task-Kanal)', (rightX0+rightX1)/2, topPad+plotH+16);
+    ctx.textAlign='left';
+    ctx.fillText('f=1', rightX0+2, topPad+plotH+28);
+    ctx.fillText('f='+(detail+1), rightX1-26, topPad+plotH+28);
+
+    // ---- readout ----
+    labels.vL.textContent=L;
+    labels.vS.textContent=strength.toFixed(2);
+    labels.vD.textContent=detail;
+    labels.vRaw.textContent=(rawRet*100).toFixed(1)+' %';
+    labels.vTask.textContent=(taskRet*100).toFixed(1)+' %';
+    labels.vDim.textContent=effDim;
+    labels.vChan.textContent=n;
+    var decode = effDim<=2 ? 'linear spars (Fourier)' : (effDim>=6 ? 'gescrambelt (MERA/RT)' : 'teilweise spars');
+    labels.vDecode.textContent=decode;
+
+    var good=(L>=6 && effDim<=2);
+    var bad=effDim>=6;
+    if(good){ verdict.className='verdict good'; verdict.textContent='✓ Verlustfrei auf Task: Bulk kollabiert auf den Task-Kanal (Rang → #Kanäle)'; }
+    else if(bad){ verdict.className='verdict bad'; verdict.textContent='✗ Zu wenig RG-Schritte: Bulk noch hochdimensional — Details überleben'; }
+    else { verdict.className='verdict warn'; verdict.textContent='◐ Grobkörnung läuft: Details sterben, Task bleibt erhalten'; }
+  }
+
+  var inputs=[el.L,el.S,el.D];
+  inputs.forEach(function(inp){ inp.addEventListener('input',draw); });
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    el.L.value=6; el.S.value=0.5; el.D.value=8; draw();
+  });
+  document.getElementById('glowBtn').addEventListener('click',function(){
+    el.L.value=12; draw();
+  });
+  window.addEventListener('resize',draw);
+  var mo=new MutationObserver(draw);
+  mo.observe(root,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('load',function(){ draw(); });
+  draw();
+})();
+</script>
+</body>
+</html>

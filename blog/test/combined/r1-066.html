@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Transformer als Zirkuit-Strömung — lineare Pfade treffen topologische Attraktoren (Fusion 066)</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e2dac9; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0;
+  --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb;
+  --amber:#b45309; --amber-soft:#fdf3e3;
+  --green:#15803d; --green-soft:#e7f4ec;
+  --danger:#b91c1c;
+  --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a;
+  --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830;
+  --amber:#f0a656; --amber-soft:#2a2113;
+  --green:#86efac; --green-soft:#10231a;
+  --danger:#fb7185;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 110px}
+header{padding:64px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(27px,5.2vw,43px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{font-size:16px;color:var(--muted);max-width:66ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:14px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:780;letter-spacing:-.015em;margin:56px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:730;margin:26px 0 8px}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b,li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.b{border-color:var(--accent2);background:var(--accent2-soft)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.green{border-color:var(--green);background:var(--green-soft)}
+ul,ol{margin:0 0 16px 22px;color:var(--muted);font-size:15px}
+li{margin-bottom:10px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin-right:6px;vertical-align:middle}
+.tag.b{background:var(--accent2-soft);color:var(--accent2)}
+.tag.f{background:var(--amber-soft);color:var(--amber)}
+.eq{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto;line-height:1.95}
+.eq .c{color:var(--muted)}
+.eq b{color:var(--amber);font-weight:600}
+.eq i{color:var(--accent);font-style:normal}
+.eq .bb{color:var(--accent2);font-style:normal}
+.eq sup,.eq sub{font-size:.7em}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:9px 11px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:720;font-size:12px}
+.tbl td b{color:var(--fg)}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7}
+#phase-canvas{width:100%;display:block;border-radius:12px;border:1px solid var(--line)}
+.viz-row{display:grid;grid-template-columns:1fr 210px;gap:16px;align-items:start}
+@media (max-width:680px){.viz-row{grid-template-columns:1fr}}
+.viz-side{display:flex;flex-direction:column;gap:12px}
+.betti{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.betti .l{display:flex;justify-content:space-between;margin-bottom:4px}
+.betti .l b{font-size:15px}
+.betti .b1 b{color:var(--green)}
+.betti .b0 b{color:var(--accent)}
+.betti .b2 b{color:var(--accent2)}
+.readout{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7}
+.readout div{margin-bottom:6px}
+.readout .ev{color:var(--amber);font-weight:600}
+.readout .cyc{color:var(--green)}
+.readout .pt{color:var(--accent)}
+.readout .warn{color:var(--danger)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px;flex-wrap:wrap}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+.ctl-lab .bv{font-family:var(--mono);color:var(--amber);font-size:13px;white-space:nowrap}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:19px;height:19px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg)}
+.chkrow{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--muted);margin-top:10px}
+.chkrow label{display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+.chkrow input{accent-color:var(--accent)}
+.btnrow{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:12.5px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.alt{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px;font-family:var(--mono)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;font-family:var(--mono);font-size:12px;padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+footer{margin-top:70px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.8}
+footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<button id="theme-toggle" class="theme-toggle" type="button">☀ / ☾</button>
+<main>
+<header>
+  <span class="badge">Fusion · Runde 1 · #066</span>
+  <h1>Der Transformer als <em>Zirkuit-Strömung</em> — lineare Pfade treffen topologische Attraktoren</h1>
+  <p class="sub"><b>A</b> (Transformer Circuits) zerlegt das Modell in benannte, lineare <b>Pfad-Zirkuits</b>; <b>B</b> (Topologie von Attraktoren) liest denselben Aktivierungsraum als <b>Strömung</b> mit stabilen, persistenten Formen. Die Fusion: beides ist ein und dasselbe Residual-Stream-System — in zwei Skalen.</p>
+  <p class="fuse-line">Fusion aus: <b>math_framework_for_transformers.html</b> ✕ <b>topology_of_attractors.html</b></p>
+</header>
+
+<!-- ============ 1. THESE ============ -->
+<section id="these">
+  <h2><span class="n">1</span>Kernthese der Fusion</h2>
+  <p>Beide Papiere sind Interpretierbarkeits-Ansätze für <b>denselben</b> Gegenstand — einen Transformer — und nehmen dabei zwei senkrechte Haltungen ein.
+  <span class="tag">A</span><b>Mechanistisch / linear / kombinatorisch:</b> das Modell ist eine <i>Summe additiver, linearer Pfade</i> durch einen <b>Residual Stream</b>; jeder Attention-Head ist ein <b>benannter Zirkuit</b> (QK-Kreis = „wohin schauen", OV-Kreis = „welche Information bewegen"), und das Ganze ist ein <b>exakt ablesbares, diskretes Programm</b> — 0-Layer Bigramme, 1-Layer Skip-Trigramme, 2-Layer <b>Induction Heads</b>.
+  <span class="tag b">B</span><b>Geometrisch / topologisch / dynamisch:</b> dieselben Aktivierungen sind eine <b>Punktwolke in einem hochdimensionalen Raum</b>; eine Vietoris-Rips-Filtration + persistente Homologie machen <b>stabile</b> Merkmale (Betti-Zahlen β₀/β₁/β₂) sichtbar, die als <b>Attraktoren</b> (Punkt, Grenzzyklus, Torus) funktionieren, in die eine Trajektorie fließt — <b>robust gegen Rauschen</b>. Dazu das Faserbündel-Bild: Basis = Kontext, Faser = der Aktivierungsraum pro Schicht.</p>
+  <p>Die <b>einzige integrierte Position</b> lautet: <b>Der Residual Stream von A ist die Zustandsvariable von B.</b> Die Schicht-für-Schicht-Addition
+  <div class="eq"><i>r</i><sub>l+1</sub> = <i>r</i><sub>l</sub> + <b>f</b><sub>l</sub>(<i>r</i><sub>l</sub>) &nbsp;&nbsp;<span class="c">ist ein <u>diskretes dynamisches System in der Schicht-Indiz-Zeit</u></span></div>
+  ist die gemeinsame Wurzel. <span class="tag">A</span> liest den <b>lokalen linearen Teil</b> <b>f</b><sub>l</sub> (die Zirkuits + deren Eigenwerte); <span class="tag b">B</span> liest das <b>globale Phasenporträt</b> (in welchen Attraktor der Zustand konvergiert). Die zwei Papiere sind zwei Projektionen eines Objekts: <b>lokal/linear/mechanisch</b> (A: <i>was jeder Schritt tut</i>) × <b>global/topologisch/dynamisch</b> (B: <i>wo der Zustand hinkommt und warum das stabil ist</i>).</p>
+  <div class="note amber"><b>Der Schlüsselstein:</b> Der Eigenwert, den <b>A</b> benutzt, um einen Head <i>zu benennen</i>, ist der <b>Bifurkationsparameter</b>, mit dem <b>B</b> den Attraktor <i>auswählt</i>. „Positiver Realteil = copying" (A) ist exakt ein <b>instabiler Fixpunkt</b>, aus dem der Fluss in einen <b>Grenzzyklus</b> (B, β₁ = 1) geschleudert wird — das Induction-Motiv. Negativer Realteil (A) = stabiler Fixpunkt = Punkt-Attraktor (B, β₁ = 0). Ein Transformer rechnet also, indem er einen Zustandspunkt entlang eines Pfades bewegt, der <b>zugleich</b> (a) eine Summe benannter linearer Zirkuits (A) und (b) eine in stabile topologische Strukturen hineinfließende Trajektorie (B) ist.</div>
+</section>
+
+<!-- ============ 2. WIDERSPRUECHE ============ -->
+<section id="widersprueche">
+  <h2><span class="n">2</span>Widersprüche zwischen A und B</h2>
+  <p>Es gibt keine hart gegenläufige <i>Behauptung</i> („A sagt X, B sagt ¬X") — die zwei arbeiten auf verschiedenen Ebenen. Aber es gibt vier konkrete, unvereinbare <b>Standpunkte über die Art des Objekts</b>:</p>
+  <ul>
+    <li><span class="tag">A</span><b>Statische Funktion</b> — der Transformer ist eine <b>einmalige Feed-Forward-Abbildung</b> T(x) durch feste Gewichtsmatrizen; die „Pfade" sind Informationsflüsse in einem Berechnungsgraphen. Es gibt <i>kein Zeitfortschreiten, keine Trajektorie</i>. <span class="tag b">B</span><b>Dynamisches System</b> — dasselbe Modell ist ein System mit <b>Trajektorien, die in Attraktoren fließen</b>; Schichttiefe und Token-Verlauf werden als „Zeit" gelesen, Takens-Embedding explizit als <b>Zeitreihe eines dynamischen Systems</b>. <i>Konflikt: Einmalige lineare Abbildung (A) vs. iterierter Zustand mit Langzeitverhalten (B). A würde sagen: „Es gibt keine Dynamik, nur einen Pass — von Attraktoren zu sprechen ist ein Kategorienfehler." B würde sagen: „Die Schicht-Updates <u>sind</u> ein dynamisches System; seine Fixpunkte sind Attraktoren."</i></li>
+    <li><span class="tag">A</span><b>Lokaler linearer Zirkuit</b> — die Interpretationseinheit ist der <b>einzelne Head</b> (W<sub>QK</sub>, W<sub>OV</sub>): lokal, linear, niedrigdimensional, exakt aus den Gewichten ablesbar. <span class="tag b">B</span><b>Globale topologische Invariante</b> — die Einheit ist die <b>Topologie der ganzen Aktivierungswolke</b> (Betti-Zahlen, Persistenz): global, nichtlinear, hochdimensional, <b>unabhängig von jedem einzelnen Head</b> und robust gegen Störung. <i>Konflikt: Reduktionistisch-lokal-exakt (A) vs. holistisch-global-robust (B). Und A bricht laut A <u>selbst</u> bei „schierer Größe" zusammen — genau dem Regime, in dem B's Robustheit zuhause ist.</i></li>
+    <li><span class="tag">A</span><b>Diskrete symbolische Algorithmen</b> — Zirkuits werden als <b>Sprachregeln/Programme</b> gelesen: „kopiere das vorherige Token", „\left … \ → \right", Induktion „[A][B] … [A] → [B]". Der Output ist kombinatorisch (Token-Vorhersage). <span class="tag b">B</span><b>Kontinuierliche geometrische Struktur</b> — Struktur wird als <b>Geometrie</b> gelesen: Torus, Sphäre, Lorenz, Grenzzyklus; die Klassifikation läuft über <b>Mannigfaltigkeiten</b>, nicht über Symbolregeln. <i>Konflikt: Ist ein Induction Head eine diskrete Regel (A) oder ein geometrischer Attraktor (B)?</i></li>
+    <li><span class="tag">A</span><b>Exakt, klein, konkret</b> — „man kann sie direkt in den Gewichten sehen"; die Path-Expansion ist eine <b>exakte Formel</b>, an <b>echten, kleinen, attention-only Modellen</b> demonstriert; „Bugs by design" sind exakte Artefakte. <span class="tag b">B</span><b>Robust, groß, hypothetisch</b> — „die eigentliche Struktur ist hochdimensional"; man <b>approximiert</b> über eine Filtration, und <b>Persistenz</b> trennt Signal von Rauschen; die Attraktor-Bilder sind (größerenteils) <b>synthetisch konstruiert</b> und das Faserbündel ein <b>konzeptionelles Framework</b>. <i>Konflikt: Exaktheit als Ideal (A) vs. Robustheit gegen Rauschen als Ideal (B) — und Mechanik-an-echten-Modellen (A) vs. geometrische Hypothese (B).</i></li>
+  </ul>
+</section>
+
+<!-- ============ 3. AUFLOESUNG ============ -->
+<section id="aufloesung">
+  <h2><span class="n">3</span>Auflösung</h2>
+  <div class="card"><b>(1) Funktion ↔ dynamisches System.</b> Die Schicht-Updates <i>r</i><sub>l+1</sub> = <i>r</i><sub>l</sub> + <b>f</b><sub>l</sub>(<i>r</i><sub>l</sub>) <b>bilden</b> ein (nicht-autonomes) diskretes dynamisches System in der <i>Schicht-Zeit</i>. A's Path-Expansion ist die <b>lineare, einmalige Auswertung</b> dieses Systems; B's Attraktoren sind seine <b>Fixpunkte / invarianten Mengen</b>. Auflösung: <b>Residual Stream = Zustandsvariable · Schicht-Index = Zeit · Zirkuits = lokales Vektorfeld · Attraktoren = invariante Mengen.</b> A liest die lineare/Jacobischicht, B das globale Phasenporträt — beides dasselbe System.</div>
+  <div class="card"><b>(2) Lokal-linear ↔ global-topologisch.</b> Das sind <b>zwei Skalen eines Vektorfelds</b>. A liefert das <b>lokale lineare Feld</b> (die Zirkuits); das <b>Komponieren/Iterieren</b> dieser lokalen Felder — A's „virtual weights" und Q/K/V-Composition — <b>ist</b> die globale Dynamik; B misst, wie diese Dynamik <b>langfristig aussieht</b>. A's Exaktheit ist <i>notwendig, um das Feld zu konstruieren</i>; B's Robustheit ist <i>notwendig, um stabile Struktur im großen Regime abzulesen</i>. Fusion: <b>A baut das Feld, B charakterisiert sein Langzeitverhalten.</b></div>
+  <div class="card"><b>(3) Diskrete Regel ↔ kontinuierlicher Attraktor.</b> Die diskrete Regel [A][B] … [A] → [B] (A) ist die <b>symbolische Projektion eines geschlossenen Orbits / Grenzzyklus</b> (B, β₁): das „A … B"-Muster ist eine <b>geschlossene Trajektorie, die die Berechnung immer wieder abläuft</b>; „vorheriges Token kopieren" = der Zustand <b>besucht einen früheren Punkt desselben Attraktors erneut</b>. A's „positive Eigenwerte in QK <em>und</em> OV" sind die <b>Stabilitätsbedingung</b> für diesen Zyklus. Auflösung: <b>jeder benannte Zirkuit (A) realisiert ein topologisches Motiv (B)</b> — Kopieren = Fixpunkt (β₀), Induktion/Matching = Zyklus (β₁), Skip-Trigramm/Composition = Verbindung zwischen Zyklen.</div>
+  <div class="card"><b>(4) Exakt ↔ robust.</b> Sie zielen auf <b>unterschiedliche Regime</b>. A's exakte Path-Expansion gilt <b>nur für kleine, attention-only, lineare Modelle</b> (0–2 Layer) — A's selbstgenannte Grenze („schiere Größe"). B's Persistenz ist <b>für das große, laute Regime gebaut</b>. Auflösung: <b>A ist der Hypothesengenerator</b> (exakt, klein, kontrolliert) — es <i>sagt vorher, welchen Attraktor ein Zirkuit erzeugen sollte</i>; <b>B ist der robuste Detektor</b> (groß, real) — es <i>verifiziert, ob dieser Attraktor im echten Modell persistiert</i>. A sagt vorher, B zertifiziert. Komplementär, nicht widersprüchlich.</div>
+</section>
+
+<!-- ============ 4. INHALT ============ -->
+<section id="inhalt">
+  <h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+  <h3>(a) Gemeinsames Fundament — der Residual Stream als Zustand</h3>
+  <p>Beide Papiere drehen sich um denselben Vektor. <span class="tag">A</span> Der Residual Stream ist ein <b>Anschlagbrett</b>: jeder Head liest <b>linear</b> daran, rechnet, und schreibt <b>linear additiv</b> hinein — „nichts wird gelöscht, nur addiert". Er ist hochdimensional (z. B. 768), jeder Head nutzt ~64 Dimensionen; verschiedene Heads können <b>disjunkte Unterräume</b> verwenden und stören sich nicht („Superposition"). Weil alles linear ist, gibt es <b>virtuelle Gewichte</b>: die Matrix, die Layer 1 mit Layer 5 verbindet, ist einfach das Produkt der Gewichtsmatrizen dazwischen — der Schlüssel zum Reverse-Engineering. <span class="tag b">B</span> Dieser Vektor <b>r</b> ist genau der Punkt, dessen <b>Verlauf über (Schicht, Token)</b> die Trajektorie auf einem Aktivierungs-Mannigfaltigkeit ist; im Faserbündel-Bild ist die <b>Basis</b> der Kontext, jede <b>Faser</b> der Aktivierungsraum einer Schicht, und Attention/FFN „transportieren Krümmung zwischen Fasern". <b>Die Trajektorie <i>r</i><sub>l</sub> über die Schichten ist die gemeinsame Größe.</b></p>
+  <div class="eq"><i>r</i><sub>l+1</sub> = <i>r</i><sub>l</sub> + Σ<sub>h</sub> A<sup>h</sup> · <i>r</i><sub>l</sub> &nbsp;&nbsp;<span class="c">A: attention-only Update, linear/additiv</span><br>
+  <b>f</b><sub>l</sub>(<i>r</i><sub>l</sub>) = Σ<sub>h</sub> A<sup>h</sup> <i>r</i><sub>l</sub> &nbsp;&nbsp;<span class="c">A's Zirkuits = B's lokales Vektorfeld in Schicht-Zeit</span></div>
+
+  <h3>(b) A — Die Zirkuit-Zerlegung (lokal, linear, exakt)</h3>
+  <p>Ein Head wird nicht in Q,K,V zerlegt, sondern in zwei Produkte: <b>W<sub>QK</sub> = W<sub>Q</sub><sup>⊤</sup>W<sub>K</sub></b> (wohin schauen, Attention-Pattern <i>A</i> = softmax(<i>x</i><sup>⊤</sup>W<sub>QK</sub><i>x</i>)) und <b>W<sub>OV</sub> = W<sub>O</sub>W<sub>V</sub></b> (welche Info bewegt sich / ändert die Logits). Attention hat die tensorielle Form <b><i>A</i> ⊗ W<sub>OV</sub></b>: <i>A</i> mischt entlang der Positionen, W<sub>OV</sub> wirkt auf jeden Vektor.</p>
+  <div class="eq"><span class="c">0-Layer:</span> T = W<sub>U</sub> W<sub>E</sub> &nbsp;→&nbsp; reine <b>Bigramm-Statistik</b> (keine Info zwischen Positionen)<br>
+  <span class="c">Path-Expansion (1-Layer):</span> T = W<sub>U</sub> ( Id + Σ<sub>h</sub> <i>A</i><sup>h</sup> ⊗ W<sub>OV</sub><sup>h</sup> ) W<sub>E</sub> &nbsp;= Summe unabhängiger <b>Pfade</b><br>
+  <span class="c">1-Layer:</span> <b>Skip-Trigramme</b> [A] … [B] → [C]; Copying-Heads = <b>positive Eigenwerte in W<sub>OV</sub></b><br>
+  <span class="c">2-Layer:</span> <b>Composition</b> (Q/K/V) → <b>Induction Heads</b>: [A][B] … [A] → [B]<br>
+  <span class="c">Signatur:</span> positive Eigenwerte in QK <b>und</b> OV &nbsp;&nbsp; <span class="c">λ = (tr ± √(tr² − 4 det)) / 2</span></div>
+  <p>Der Punkt von A: ein Induction Head ist „ein <b>echter Algorithmus</b> im Modell — nicht Statistik, sondern Programm", und man kann ihn „direkt in den Gewichten sehen". A's Schluss: „Transformer sind nicht magisch … die Herausforderung ist nicht Unverständlichkeit — sondern <b>schiere Größe</b>."</p>
+
+  <h3>(c) B — Die topologische Charakterisierung (global, robust)</h3>
+  <p>Aktivierungen = Punktwolke. <b>Vietoris-Rips-Filtration</b>: Punkte werden zu Simplizes (Kante, Dreieck) verbunden, sobald ihr Abstand ≤ ε; bei kleinem ε isolierte Punkte, bei großem ε ein Blob — <b>dazwischen</b> die echte Struktur. <b>Persistente Homologie</b> zählt über alle ε hinweg die <b>Betti-Zahlen</b>:</p>
+  <ul>
+    <li><b>β₀</b> = Zusammenhangskomponenten, <b>β₁</b> = unabhängige Schleifen/Zyklen, <b>β₂</b> = Hohlräume.</li>
+    <li><b>Persistenz</b> = Robustheit: Features weit über der Diagonalen (birth, death) = langlebig = <i>echte Struktur</i>; nah an der Diagonalen = kurzlebig = <i>Rauschen</i>.</li>
+    <li><b>Klassifikation</b> über die persistente Betti-Signatur: Punkt (1,0,0) · Kreis S¹ (1,1,0) · Torus T² (1,2,1) · Sphäre S² (1,0,1) · Figur-8 (1,2,0) · zwei Kreise (2,2,0).</li>
+    <li><b>Takens-Embedding</b>: aus <i>einer</i> skalaren Observable eines dynamischen Systems rekonstruiert man den vollen Attraktor via <i>v</i>(t) = (<i>x</i>(t), <i>x</i>(t+τ), …, <i>x</i>(t+(m−1)τ)), sofern m ≥ 2d+1.</li>
+  </ul>
+  <p>Das konzeptionelle Herz von B: die Attraktoren sind <b>stabile Strukturen im Totalraum, die per Filtration/Barcode über die Schichten hinweg persistieren</b>.</p>
+
+  <h3>(d) Die Brücke — Zirkuit (A) ↔ Attraktor-Motiv (B)</h3>
+  <p>Die Fusion macht die Brücke <b>exakt</b> mit der Normalform eines Grenzzyklus. Setze die Zirkuit-Verstärkung α = Realteil der Eigenwerte des lokalen Feldes (A's „copying"-Maß). Die Dynamik des Zustands <i>r</i> = (x, y) lautet:</p>
+  <div class="eq">ẋ = (<b>α</b> − (x²+y²))·x − ω·y &nbsp;&nbsp; <span class="c">(A: lineares Zirkuit-Feld + radialer Dämpfungs-/Zyklus-Term)</span><br>
+  ẏ = (<b>α</b> − (x²+y²))·y + ω·x &nbsp;&nbsp; <span class="c">Jacobian am Fixpunkt: λ = α ± iω → Realteil = α (A's Eigenwert)</span></div>
+  <p>Dann ist d(x²+y²)/dt = 2(<b>α</b> − (x²+y²))(x²+y²) — der Zustand strebt zu</p>
+  <table class="tbl">
+    <tr><th>Zirkuit (A)</th><th>Eigenwert (Brücke)</th><th>Attraktor-Motiv (B)</th><th>Betti-Signatur</th></tr>
+    <tr><td><b>Copying / Memory</b> (stabil)</td><td>Re(λ) = α &lt; 0 → Fixpunkt stabil</td><td><b>Punkt-Attraktor</b></td><td>(1, 0, 0)</td></tr>
+    <tr><td><b>Induktion / Matching</b> (QK+OV positiv)</td><td>Re(λ) = α &gt; 0 → Fixpunkt instabil, Zyklus radius √α</td><td><b>Grenzzyklus</b> (das [A][B]…[A]→[B]-Motiv)</td><td>(1, 1, 0)</td></tr>
+    <tr><td><b>Composition / Virtual Head</b> (h₂∘h₁, Schicht-für-Schicht)</td><td>zwei gekoppelte Felder / mehrere α</td><td><b>Wedge / mehrere Zyklen, Heteroklin</b></td><td>(1, 2, 0) …</td></tr>
+  </table>
+  <div class="note"><b>Lesart:</b> A's Eigenwert ist <u>lokal</u> der Name eines Heads; <b>B</b> liest denselben Wert <u>global</u> als Bifurkationsparameter. <span class="tag f">Brücke</span> <b>α &gt; 0 ⇒ Grenzzyklus (β₁ = 1) · α &lt; 0 ⇒ Fixpunkt (β₁ = 0).</b> Die symbolische Regel von A ist der <b>diskrete Schatten</b> eines kontinuierlichen Attraktors von B.</div>
+
+  <h3>(e) Das fusionierte Interpretierbarkeits-Protokoll</h3>
+  <ol>
+    <li><b>Zerlege</b> in Zirkuits (A): W<sub>QK</sub>, W<sub>OV</sub>, Path-Expansion, Composition.</li>
+    <li><b>Lies die Eigenwerte</b> jedes Zirkuits (A) → <b>vorhersage seinen Attraktor-Motiv</b> (Brücke d: α &gt; 0 ⇒ Zyklus, α &lt; 0 ⇒ Punkt).</li>
+    <li><b>Mess die Persistenz</b> der Aktivierungswolke (B) → <b>verifiziere robust</b>, ob das vorhergesagte Motiv im echten, großen, lauten Modell tatsächlich persistiert.</li>
+  </ol>
+  <p>So wird aus A's „Die Herausforderung ist schiere Größe" eine <b>Arbeitsteilung</b>: A liefert die <b>Theorie</b> (was ein Zirkuit erzeugen <i>sollte</i>), B die <b>Messung</b> (ob es im Großmodell <i>tatsächlich</i> stabil auftritt). Das ist der Inhalt, von dem eine spätere Runde allein ausarbeiten kann.</p>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="n">5</span>Interaktive Visualisierung — die Brücke α ↔ Attraktor</h2>
+  <div class="viz">
+    <h3>Residual-Stream als Phase-Porträt: Zirkuit (A) × Attraktor (B)</h3>
+    <p class="dsub">Ein Zustandspunkt <b>r</b> (2D-Projektion des Residual Streams) wird schrittweise in <b>Schicht-Zeit</b> fortbewegt: <i>r</i> ← <i>r</i> + <b>f</b>(<i>r</i>). Der <b>Zirkuit</b> (A, türkis = lokales Vektorfeld) ist das lineare Feld; sein Eigenwert-Realteil <b>α</b> (amber) ist der Regler. Bei <b>α &gt; 0</b> (A: „copying", instabiler Fixpunkt) wird der Zustand in einen <b>Grenzzyklus</b> (B, grün, β₁ = 1) geschleudert — das Induction-Motiv. Bei <b>α &lt; 0</b> konvergiert er in einen <b>Fixpunkt</b> (B, β₁ = 0). Rauschen (B) zeigt, wann der Attraktor <i>nicht mehr persistent</i> ist.</p>
+
+    <div class="viz-row">
+      <canvas id="phase-canvas"></canvas>
+      <div class="viz-side">
+        <div class="betti">
+          <div class="l b0">β₀ (Komponenten) <b>1</b></div>
+          <div class="l b1">β₁ (Zyklen) <b id="b1-val">1</b></div>
+          <div class="l b2">β₂ (Hohlräume) <b>0</b></div>
+        </div>
+        <div class="readout" id="phase-readout"></div>
+      </div>
+    </div>
+
+    <div class="ctl">
+      <div class="ctl-lab"><b>Zirkuit-Verstärkung α  (Realteil λ, A)</b><span class="bv" id="ctl-alpha-val">0.70</span></div>
+      <input id="ctl-alpha" type="range" min="-1.5" max="1.5" step="0.05" value="0.7">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><b>Rotation ω  (Zyklus-Tangentialkomponente)</b><span class="bv" id="ctl-omega-val">1.00</span></div>
+      <input id="ctl-omega" type="range" min="0.2" max="2.5" step="0.1" value="1">
+    </div>
+    <div class="ctl">
+      <div class="ctl-lab"><b>Rauschen  (B: Persistenz/Robustheit)</b><span class="bv" id="ctl-noise-val">0.00</span></div>
+      <input id="ctl-noise" type="range" min="0" max="1.5" step="0.05" value="0">
+    </div>
+    <div class="chkrow">
+      <label><input id="ctl-field" type="checkbox" checked> Zirkuit-Vektorfeld (A)</label>
+      <label><input id="ctl-loop" type="checkbox" checked> Topologischer Zyklus (B)</label>
+    </div>
+    <div class="btnrow">
+      <button id="ctl-play" class="btn alt" type="button">⏸ Pause</button>
+      <button id="ctl-reset" class="btn" type="button">↺ Neustart</button>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i> Zirkuit-Feld (A)</span>
+      <span><i style="background:var(--green)"></i> Grenzzyklus β₁ (B)</span>
+      <span><i style="background:var(--amber)"></i> Eigenwert-Brücke α</span>
+      <span><i style="background:var(--accent2)"></i> Zustand / Trajektorie (B)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2><span class="n">6</span>Provenienz</h2>
+  <div class="note"><b><a href="../math_framework_for_transformers.html">A · math_framework_for_transformers.html</a></b> — „Ein mathematisches Framework für Transformer" (Transformer Circuits, Elhage/Nanda/Olsson et al., Anthropic 2021): Residual Stream als Anschlagbrett, QK/OV-Zirkuits, Path-Expansion, Skip-Trigramme, Induction Heads, Eigenwert-Signaturen.</div>
+  <div class="note b"><b><a href="../topology_of_attractors.html">B · topology_of_attractors.html</a></b> — „Topologie von Attraktoren — TDA auf LLM-Aktivierungen": Punktwolke → Vietoris-Rips-Filtration → persistente Homologie (Betti-Zahlen, Barcode, Persistenz), Klassifikation über Betti-Signatur, Takens-Embedding, Faserbündel-Bild (Basis = Kontext, Faser = Schicht).</div>
+  <footer>
+    Selbstständige Fusion (Runde 1, #066) — kein externes Netzwerk-Fetching, alle Daten inline, Visualisierung in reinem Canvas 2D, theme-aware über CSS-Variablen. Die „Fusion" ist eine interpretatorische Synthese: A's und B's <i>eigene</i> Aussagen bleiben wörtlich erhalten; die Brücke (α ↔ Attraktor) ist das fusionierte Fazit dieser Arbeit.
+  </footer>
+</section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  function onReady(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+  onReady(function () {
+    var canvas = document.getElementById('phase-canvas');
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+    var R = 2.6;
+    var view = { w: 680, h: 440, scale: 84 };
+    var state = {
+      alpha: 0.7, omega: 1.0, noise: 0.0,
+      showField: true, showLoop: true, running: true,
+      p: { x: 1.8, y: 0.4 }, trail: []
+    };
+    var C = null;
+
+    function cssVar(name, fb) {
+      try {
+        var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fb;
+      } catch (e) { return fb; }
+    }
+    function readColors() {
+      C = {
+        text: cssVar('--fg', '#e8ecf1'),
+        muted: cssVar('--muted', '#9aa6b6'),
+        card: cssVar('--card', '#141b24'),
+        line: cssVar('--line', '#243040'),
+        accent: cssVar('--accent', '#2dd4bf'),
+        accent2: cssVar('--accent2', '#f472b6'),
+        amber: cssVar('--amber', '#f0a656'),
+        green: cssVar('--green', '#86efac'),
+        danger: cssVar('--danger', '#fb7185'),
+        bg: cssVar('--bg', '#0f1319')
+      };
+    }
+    function sx(x) { return view.w / 2 + x * view.scale; }
+    function sy(y) { return view.h / 2 - y * view.scale; }
+    function field(x, y) {
+      var r2 = x * x + y * y;
+      var a = state.alpha, w = state.omega;
+      return [(a - r2) * x - w * y, (a - r2) * y + w * x];
+    }
+    function setupCanvas() {
+      var dpr = window.devicePixelRatio || 1;
+      var W = canvas.clientWidth || 680;
+      var H = 440;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      view.w = W; view.h = H; view.scale = H / (2 * R);
+    }
+    function arrow(x1, y1, x2, y2, color, width, alpha) {
+      var a = Math.atan2(y2 - y1, x2 - x1);
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      var h = 4 + width;
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - h * Math.cos(a - 0.4), y2 - h * Math.sin(a - 0.4));
+      ctx.lineTo(x2 - h * Math.cos(a + 0.4), y2 - h * Math.sin(a + 0.4));
+      ctx.closePath(); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    function drawField() {
+      var stepW = 0.9;
+      var xmin = -view.w / 2 / view.scale, xmax = view.w / 2 / view.scale;
+      var ymin = -R, ymax = R;
+      for (var gx = Math.ceil(xmin / stepW) * stepW; gx <= xmax; gx += stepW) {
+        for (var gy = Math.ceil(ymin / stepW) * stepW; gy <= ymax; gy += stepW) {
+          var f = field(gx, gy);
+          var m = Math.sqrt(f[0] * f[0] + f[1] * f[1]) || 1;
+          var L = Math.min(0.42, m * 0.13);
+          var ux = f[0] / m, uy = f[1] / m;
+          arrow(sx(gx), sy(gy), sx(gx + ux * L), sy(gy + uy * L), C.accent, 1, 0.32);
+        }
+      }
+    }
+    function drawLoop() {
+      if (state.alpha <= 0) return;
+      var r = Math.sqrt(state.alpha);
+      ctx.setLineDash([6, 5]);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = C.green;
+      ctx.beginPath();
+      ctx.arc(sx(0), sy(0), r * view.scale, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = C.green; ctx.font = '12px monospace'; ctx.textAlign = 'left';
+      ctx.fillText('Grenzzyklus  β₁ = 1  (Induction-Motiv)', sx(r) + 8, sy(0) - 6);
+    }
+    function drawFixed() {
+      var stable = state.alpha < 0;
+      var col = stable ? C.accent : C.danger;
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(sx(0), sy(0), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = col; ctx.font = '12px monospace'; ctx.textAlign = 'left';
+      ctx.fillText(stable ? 'Fixpunkt (stabil, β₁=0)' : 'Fixpunkt (instabil)', sx(0) + 9, sy(0) + 14);
+    }
+    function drawTrail() {
+      var n = state.trail.length;
+      for (var i = 1; i < n; i++) {
+        var a0 = state.trail[i - 1], a1 = state.trail[i];
+        var t = i / n;
+        ctx.strokeStyle = t < 0.5 ? C.accent : C.amber;
+        ctx.globalAlpha = 0.12 + 0.8 * t;
+        ctx.lineWidth = 1.2 + 1.8 * t;
+        ctx.beginPath(); ctx.moveTo(sx(a0.x), sy(a0.y)); ctx.lineTo(sx(a1.x), sy(a1.y)); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    function drawParticle() {
+      var p = state.p;
+      ctx.fillStyle = C.text;
+      ctx.beginPath(); ctx.arc(sx(p.x), sy(p.y), 5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = C.accent2; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(sx(p.x), sy(p.y), 9, 0, Math.PI * 2); ctx.stroke();
+    }
+    function updateReadout() {
+      var el = document.getElementById('phase-readout');
+      var b1 = document.getElementById('b1-val');
+      var re = state.alpha, im = state.omega;
+      var cycle = state.alpha > 0;
+      var noisy = state.noise > 0.6 * Math.max(0.2, Math.abs(state.alpha));
+      var beta1 = (cycle && !noisy) ? 1 : 0;
+      if (b1) b1.textContent = String(beta1);
+      var html = '<div class="ev">λ = ' + re.toFixed(2) + ' ± ' + im.toFixed(2) + '·i</div>';
+      html += '<div class="ev" style="font-weight:400">Realteil = Zirkuit-Verstärkung α (A)</div>';
+      if (cycle) {
+        html += '<div class="cyc">Re(λ) &gt; 0 → (A) „copying", Fixpunkt instabil ⇒ (B) Grenzzyklus, β₁ = 1 → Induction [A][B]…[A]→[B]</div>';
+      } else {
+        html += '<div class="pt">Re(λ) &lt; 0 → (A) stabiler Zirkuit ⇒ (B) Punkt-Attraktor (Fixpunkt), β₁ = 0</div>';
+      }
+      if (noisy) {
+        html += '<div class="warn">⚠ Rauschen &gt; Signal — Attraktor nicht mehr persistent (B).</div>';
+      }
+      if (el) el.innerHTML = html;
+    }
+    function resetParticle() {
+      var ang = Math.random() * Math.PI * 2;
+      var rad = 1.5 + Math.random() * 0.7;
+      state.p = { x: Math.cos(ang) * rad, y: Math.sin(ang) * rad };
+      state.trail = [];
+    }
+    function step() {
+      var dt = 0.02;
+      var p = state.p;
+      var f = field(p.x, p.y);
+      var nx = p.x + dt * f[0], ny = p.y + dt * f[1];
+      if (state.noise > 0) {
+        nx += (Math.random() - 0.5) * state.noise;
+        ny += (Math.random() - 0.5) * state.noise;
+      }
+      p.x = nx; p.y = ny;
+      if (p.x > 3.8 || p.x < -3.8 || p.y > R + 0.8 || p.y < -R - 0.8) resetParticle();
+      state.trail.push({ x: p.x, y: p.y });
+      if (state.trail.length > 520) state.trail.shift();
+    }
+    function draw() {
+      ctx.clearRect(0, 0, view.w, view.h);
+      ctx.fillStyle = C.bg; ctx.fillRect(0, 0, view.w, view.h);
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+      var gx, gy;
+      for (gx = -3; gx <= 3; gx++) { var X = sx(gx); ctx.beginPath(); ctx.moveTo(X, 0); ctx.lineTo(X, view.h); ctx.stroke(); }
+      for (gy = -2; gy <= 2; gy++) { var Y = sy(gy); ctx.beginPath(); ctx.moveTo(0, Y); ctx.lineTo(view.w, Y); ctx.stroke(); }
+      ctx.strokeStyle = C.muted; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(sx(0), 0); ctx.lineTo(sx(0), view.h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, sy(0)); ctx.lineTo(view.w, sy(0)); ctx.stroke();
+      if (state.showField) drawField();
+      if (state.showLoop) drawLoop();
+      drawFixed();
+      drawTrail();
+      drawParticle();
+      updateReadout();
+    }
+    function loop() {
+      if (state.running) step();
+      draw();
+      requestAnimationFrame(loop);
+    }
+    function bindRange(id, valId, cb) {
+      var el = document.getElementById(id), disp = document.getElementById(valId);
+      if (!el) return;
+      var upd = function () {
+        var v = parseFloat(el.value);
+        if (disp) disp.textContent = v.toFixed(2);
+        cb(v);
+      };
+      el.addEventListener('input', upd);
+      upd();
+    }
+    bindRange('ctl-alpha', 'ctl-alpha-val', function (v) { state.alpha = v; });
+    bindRange('ctl-omega', 'ctl-omega-val', function (v) { state.omega = v; });
+    bindRange('ctl-noise', 'ctl-noise-val', function (v) { state.noise = v; });
+    function bindCheck(id, cb) {
+      var el = document.getElementById(id); if (!el) return;
+      el.addEventListener('change', function () { cb(el.checked); });
+      cb(el.checked);
+    }
+    bindCheck('ctl-field', function (v) { state.showField = v; });
+    bindCheck('ctl-loop', function (v) { state.showLoop = v; });
+    var playBtn = document.getElementById('ctl-play');
+    if (playBtn) playBtn.addEventListener('click', function () {
+      state.running = !state.running;
+      playBtn.textContent = state.running ? '⏸ Pause' : '▶ Los';
+    });
+    var resetBtn = document.getElementById('ctl-reset');
+    if (resetBtn) resetBtn.addEventListener('click', resetParticle);
+    function applyTheme(dark) {
+      document.documentElement.classList.toggle('dark', dark);
+      try { localStorage.setItem('r1066-theme', dark ? 'dark' : 'light'); } catch (e) {}
+      readColors();
+    }
+    var themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) themeBtn.addEventListener('click', function () {
+      applyTheme(!document.documentElement.classList.contains('dark'));
+    });
+    var stored = null;
+    try { stored = localStorage.getItem('r1066-theme'); } catch (e) {}
+    applyTheme(stored !== 'light');
+    window.addEventListener('resize', function () { setupCanvas(); });
+    setupCanvas();
+    readColors();
+    resetParticle();
+    updateReadout();
+    loop();
+  });
+})();
+</script>
+</body>
+</html>

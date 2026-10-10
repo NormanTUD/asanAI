@@ -1,0 +1,18 @@
+{
+  "no": "051",
+  "a": "holographic_principle.html",
+  "b": "grokking_addition_internal.html",
+  "a_title": "Holografisches Prinzip & Deep Learning — Interaktiv",
+  "b_title": "Where Does Sine Live in a Transformer? — Interactive Explainer",
+  "combined_theme": "holographic-fourier-code",
+  "one_line": "Ein trainiertes Netz ist ein holografisches Objekt, dessen Bulk ein task-orientierter, niederrangiger Fourier-Code ist: der RG-Flow ist am rohen Signal verlustbehaftet, am Task aber verlustfrei, und der Bulk (hoher ambienter Rang) kollabiert auf wenige Schlüssel-Frequenzen, die die Boundary exakt kodiert — A liefert die Grammatik (Bulk/Boundary, RG-Flow, Entanglement↔MI), B den ausgerechneten Beispiel-Bulk.",
+  "contradictions": [
+    "Dimension des Bulk: A sagt, die inneren Schichten seien ein reicherer, höherdimensionaler Raum als die Boundary; B zeigt, die effektive innere Repräsentation sei niederrangig (Unembedding-Rang ≈ 10, nur 5 von ≈56 Schlüssel-Frequenzen).",
+    "Verdunkelung: A nennt die inneren Repräsentationen 'gescrambelt' und braucht holographische Fehlerkorrektur (MERA, Ryu–Takayanagi) zum Dekodieren; B zeigt einen linearen, sparsen, direkt ablesbaren Fourier-Code — ohne Dekodier-Maschinerie.",
+    "Verlustigkeit des RG-Flows: A's RG-Flow ist ein verlustbehafteter Low-Pass-Filter, der hohe Frequenzen 'integriert aus' (wegwirft); B's Grobkörnung ist eine verlustfreie Basiswechsel (Addition = Rotation auf dem Kreis, unitär).",
+    "Geometrie: A's Bulk ist gekrümmt (AdS, negative Krümmung, gewölbte Geodäten); B's exakte Rechnung lebt auf einer flachen abelschen Gruppe/Kreis (S^1) ohne negative Krümmung.",
+    "Korrelationsstruktur: A's Kerngröße ist Entanglement/Mutual-Information (nicht-separabel); B's Kanäle sind per Frequenz separiert (direkte Summe)."
+  ],
+  "resolution": "Man unterscheidet ambient vs. effektive Dimension (hohe Kapazität, niedriger besetzter Unterraum), rohe vs. task-relevante Information (verlustbehaftet am Input, verlustfrei am Task), radial (gekrümmt/RG) vs. angular (flach/Gruppe) Geometrie als warped product, und 'Verschränkung' als geteilte niederrangige Code-Basis über Schichten (MI). Der Bulk ist immer ein holographischer Fehlerkorrektur-Code des Tasks; die Grokking-Fourier-Lösung ist der trivial-lineare Spezialfall, A's 'gescrambelter Bulk' der generische — beide liegen auf demselben Komplexitätsspektrum (trivial-linear ↔ maximal gescrambelt).",
+  "viz": "RG-Flow-Canvas (2D): ein mehrfrequentes Boundary-Signal wird Schicht für Schicht geglättet (task-irrelevante hohe Frequenzen sterben, task-relevanter Kanal f=1 gestrichelt bleibt exakt); rechts das endgültige sparser Bulk-Fourier-Spektrum (Task-Balken hoch, Detail-Balken → 0). Readouts zeigen 'Rohe Retention < 100 %' aber 'Task-Retention = 100 %' und den kollabierenden effektiven Bulk-Rang (= #Kanäle). Slider: RG-Schritte, Cutoff-Steilheit, Detail-Frequenzen; Buttons Reset / Voll glätten; Theme-Toggle. Theme-aware, nur Inline-Daten, 0 Console-Meldungen."
+}

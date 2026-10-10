@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jacobi-Zerlegung &times; Attraktor-Konvergenz &mdash; Fusion 069</title>
+<style>
+:root{
+  --bg:#f6f3ec; --fg:#262a33; --muted:#5b6273; --line:#e5ddcc; --card:#fffdf8;
+  --accent:#0f766e; --accent-soft:#e6f2f0; --accent2:#be185d; --accent2-soft:#fdeef4;
+  --violet:#6d28d9; --violet-soft:#f1ecfb; --amber:#b45309; --amber-soft:#fdf3e3;
+  --panel:rgba(255,253,248,.95); --r:16px;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+}
+html.dark{
+  --bg:#0f1319; --fg:#e8ecf1; --muted:#9aa6b6; --line:#243040; --card:#141b24;
+  --accent:#2dd4bf; --accent-soft:#12282a; --accent2:#f472b6; --accent2-soft:#2a1620;
+  --violet:#a78bfa; --violet-soft:#1e1830; --amber:#f0a656; --amber-soft:#2a2113;
+  --panel:rgba(20,27,36,.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.72;-webkit-font-smoothing:antialiased}
+main{max-width:820px;margin:0 auto;padding:0 22px 100px}
+header{padding:66px 0 6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);padding:4px 12px;border-radius:99px;margin-bottom:16px}
+h1{font-size:clamp(28px,5.4vw,44px);line-height:1.12;letter-spacing:-.02em;font-weight:800;margin-bottom:14px}
+h1 em{font-style:normal;color:var(--accent)}
+h1 em.b{color:var(--amber)}
+.sub{font-size:16px;color:var(--muted);max-width:66ch}
+.fuse-line{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:10px;word-break:break-word}
+.fuse-line b{color:var(--accent)}
+h2{font-size:clamp(20px,3.3vw,27px);font-weight:760;letter-spacing:-.015em;margin:54px 0 14px}
+h2 .n{font-family:var(--mono);font-size:.55em;color:var(--accent);vertical-align:middle;margin-right:10px;border:1px solid var(--line);background:var(--accent-soft);border-radius:99px;padding:3px 10px}
+h3{font-size:16.5px;font-weight:720;margin:24px 0 8px;color:var(--fg)}
+p{color:var(--muted);margin-bottom:14px;font-size:15.5px}
+p b, li b{color:var(--fg)}
+a{color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;padding:13px 16px;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.note b{color:var(--fg)}
+.note.amber{border-color:var(--amber);background:var(--amber-soft)}
+.note.violet{border-color:var(--violet);background:var(--violet-soft)}
+.note.rose{border-color:var(--accent2);background:var(--accent2-soft)}
+ul{margin:0 0 14px 20px;color:var(--muted);font-size:15px}
+li{margin-bottom:9px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);margin:1px 4px 1px 0}
+.tag.b{background:var(--amber-soft);color:var(--amber)}
+.eq{font-family:var(--mono);font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0;color:var(--fg);overflow-x:auto;line-height:1.9}
+.eq .op{color:var(--accent);font-weight:700}
+.eq .op2{color:var(--amber);font-weight:700}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;margin:14px 0}
+.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--muted);vertical-align:top}
+.tbl th{background:var(--card);color:var(--fg);font-weight:700}
+.viz{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:22px 0;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.viz h3{margin-top:0}
+.viz .dsub{font-size:13px;color:var(--muted);margin-bottom:12px}
+#viz{display:block;width:100%;height:470px;border-radius:12px;border:1px solid var(--line)}
+.ctl{margin:12px 0}
+.ctl-lab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:6px;gap:10px}
+.ctl-lab b{font-family:var(--mono);color:var(--accent);font-size:13.5px;white-space:nowrap}
+.ctl-lab b.b{color:var(--amber)}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--line);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:3px solid var(--bg);box-shadow:0 1px 5px rgba(0,0,0,.25)}
+input[type=range].b::-webkit-slider-thumb{background:var(--amber)}
+input[type=range].b::-moz-range-thumb{background:var(--amber)}
+.btnrow{display:flex;gap:10px;margin:8px 0 4px}
+.btnrow button{font-family:var(--mono);font-size:13px;background:var(--card);color:var(--accent);border:1px solid var(--line);border-radius:99px;padding:8px 18px;cursor:pointer}
+.btnrow button:hover{background:var(--accent-soft)}
+.ro{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.ro .box{flex:1;min-width:104px;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.ro .box .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.ro .box .v{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent)}
+.ro .box.amber{background:var(--amber-soft)}
+.ro .box.amber .v{color:var(--amber)}
+.ro .box.violet{background:var(--violet-soft)}
+.ro .box.violet .v{color:var(--violet)}
+.ro .box.rose{background:var(--accent2-soft)}
+.ro .box.rose .v{color:var(--accent2)}
+.stat{font-size:13px;color:var(--muted);margin-top:12px}
+.stat b{color:var(--amber)}
+.viz-note{font-size:12.5px;color:var(--muted);margin-top:12px}
+.theme-btn{position:fixed;top:14px;right:14px;z-index:50;background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:var(--mono)}
+footer{border-top:1px solid var(--line);margin-top:60px;padding:26px 0 0;text-align:center;color:var(--muted);font-size:12.5px}
+.prov{display:grid;gap:12px;margin:16px 0}
+.prov .item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--muted)}
+.prov .item .lbl{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.05em;display:block;margin-bottom:4px}
+.prov .item .lbl.b{color:var(--amber)}
+@media(max-width:600px){.ro{flex-direction:column}}
+</style>
+</head>
+<body>
+<button class="theme-btn" id="themeBtn" type="button">&#9788; / &#9790;</button>
+<main>
+
+<header>
+  <div class="badge">Knockout-Fusion &middot; Runde 1 &middot; Paar 069 &middot; Lokale Geometrie &times; Globale Dynamik</div>
+  <h1>Die <em class="a">Jacobi-Zerlegung</em> am Punkt und die <em class="b">Attraktor-Konvergenz</em> im Lauf</h1>
+  <p class="sub">Zwei Papiere, <b>ein Objekt</b>: ein <b>Transformer-Layer</b>, der auf einem Hidden-State wirkt. <b>A</b> linearisiert ihn <b>am Punkt</b> und zerlegt seine Jacobi-Matrix in <b>Stretch</b> (symmetrisch) und <b>Rotation</b> (antisymmetrisch) &mdash; exakt und <b>Coq-verifiziert</b>. <b>B</b> iteriert denselben Layer <b>&uuml;ber die Zeit</b> als Schritt eines dynamischen Systems, normalisiert auf die <b>Hypersph&auml;re</b> und liest <b>Attraktoren</b> und <b>Bassins</b> ab. A ist die <i>Tangente</i>, B die <i>Trajektorie</i> &mdash; und die Jacobi-Matrix ist genau die <b>Linearisierung der Karte, die B iteriert</b>.</p>
+  <p class="fuse-line">Fusion aus: <b>proof.html</b> &#10005; <b>test2.html</b></p>
+</header>
+
+<section id="these">
+<h2><span class="n">1</span>Kernthese der Fusion</h2>
+<p>Beide Seiten beschreiben dasselbe &mdash; die Wirkung <b>eines einzelnen Transformer-Layers auf eine Repr&auml;sentation</b> &mdash; nur auf zwei verschiedenen Aufl&ouml;sungen. <b>A</b> arbeitet <b>lokal, infinitesimal und linear</b> (die Jacobi-Matrix an einem Punkt); <b>B</b> arbeitet <b>global, endlich und iterativ</b> (die Schicht als Zeitschritt, L-mal komponiert, auf der Sph&auml;re). Die Fusion besteht darin, die beiden als <b>zwei Aufl&ouml;sungen eines einzigen Objekts</b> zu lesen und die <b>Jacobi-Matrix als das lineare Lokalmodell der Karte zu identifizieren, die B iteriert</b>.</p>
+<p><span class="tag">A &middot; lokal</span> A behauptet: Jede Jacobi-Matrix J zerf&auml;llt <b>eindeutig und orthogonal</b> in einen symmetrischen <b>Stretch</b>-Teil J<sub>sym</sub>=(J+J&#7488;)/2 und einen antisymmetrischen <b>Rotate</b>-Teil J<sub>antisym</sub>=(J&minus;J&#7488;)/2. Die <b>Divergenz = Spur = tr(J)</b> &mdash; die lokale Volumen-/Fl&auml;chen&auml;nderung, in A die &bdquo;Informationskapazit&auml;ts&auml;nderung&ldquo; &mdash; kommt <b>komplett aus dem Stretch-Teil</b>; der Rotate-Teil hat <b>Spur 0</b> (dreht nur, &auml;ndert kein Volumen). Die beiden Teile sind <b>Frobenius-orthogonal</b> (&dagger;Pythagoras&dagger; ‖J‖&sup2;=‖J<sub>sym</sub>‖&sup2;+‖J<sub>antisym</sub>‖&sup2;). Das sind <b>maschinengepr&uuml;fte, exakte S&auml;tze</b>, punktweise und dimensionsfrei g&uuml;ltig.</p>
+<p><span class="tag b">B &middot; global</span> B behauptet: Ein Layer ist ein <b>Euler-Schritt</b> eines (nicht-autonomen) dynamischen Systems, h<sup>(&ell;+1)</sup>=h<sup>(&ell;)</sup>+f<sub>&ell;</sub>(h<sup>(&ell;)</sup>) mit f<sub>&ell;</sub>=Attn+FFN. <b>Attention</b> erzeugt <b>Kontext-Kr&auml;fte</b> (bewegt Tokens <i>nacheinander</i>), das <b>FFN</b> ist ein assoziativer Speicher, der Tokens <b>zu Attraktoren zieht</b>. <b>LayerNorm</b> projiziert nach jedem Schritt auf die Hypersph&auml;re S<sup>d&minus;1</sup> (Richtung z&auml;hlt, nicht Magnitude). &Uuml;ber die L Schichten <b>konvergieren</b> die Trajektorien gegen stabile Regionen (Attraktoren), deren <b>Bassins sich progressiv sch&auml;rfen</b> (Hypothesen 1&ndash;3).</p>
+<p><b>Die fusionierte Position:</b> Die Karte, die B iteriert, ist T<sub>&ell;</sub>(h)=h+f<sub>&ell;</sub>(h). Ihre Jacobi-Matrix ist <b>genau J = I + J<sub>f&sub;&ell;</sub> = I + &Delta;</b> &mdash; die <b>Residual-Form von A</b> (&sect;7 dort: tr(I+&Delta;)=n+tr(&Delta;), antisym(I+&Delta;)=antisym(&Delta;)). Damit sind A und B <b>keine konkurrierenden Theorien, sondern zwei Aufl&ouml;sungen derselben Abbildung</b>: A liefert das <b>exakte lineare Skelett am Punkt</b>, B die <b>Trajektorie, die diese linearen Schritte im Lauf beschreiben</b>. Der <b>Stretch</b>-Teil bestimmt, <b>wo</b> der Attraktor liegt und <b>wie schnell</b> die Iteration konvergiert (renormierte Iteration = Power-Iteration); der <b>Rotate</b>-Teil <b>kr&uuml;mmt nur den Pfad</b> (keine Volumen&auml;nderung); und <b>LayerNorm ist eine &bdquo;volume-erasing&ldquo;-Renormierung</b>, die A&rsquo;s Divergenz zwischen den Schritten wieder ausl&ouml;scht.</p>
+</section>
+
+<section id="widersprueche">
+<h2><span class="n">2</span>Widerspr&uuml;che zwischen A und B</h2>
+<p class="note violet"><b>Wichtig vorab:</b> A und B <b>widersprechen sich nicht auf Behauptungsebene</b> &mdash; sie sind <b>komplement&auml;re Aufl&ouml;sungen desselben Objekts</b> (lokale Tangente vs. globale Trajektorie). Es gibt jedoch drei <b>echte Spannungen</b> in ihrer St&auml;rke und ihrem Standpunkt, die benannt werden m&uuml;ssen.</p>
+
+<h3>Widerspruch 1 &mdash; Bewiesen oder vermutet: exakte lokale S&auml;tze (A) vs. globalen Hypothesen (B)</h3>
+<p><b>A sagt:</b> Die 10 Eigenschaften seien <b>kein Approximation</b>, sondern <i>„mathematisch exakt, von einem Computer-Beweis-Assistenten verifiziert&rdquo;</i> &mdash; <b>kein logischer Schritt kann falsch sein</b>. G&uuml;ltig f&uuml;r <b>jeden Punkt, jede Dimension</b>.</p>
+<p><b>B sagt:</b> Die zentralen globalen Aussagen sind <b>Hypothesen</b>, keine S&auml;tze: <i>„Hypothese 1 &mdash; Attraktor-Existenz: h<sup>(&ell;)</sup> &rarr; A<sub>k</sub> f&uuml;r &ell;&rarr;L&rdquo;</i>, <i>„Hypothese 3 &mdash; Progressive Sch&auml;rfung: ‖f<sub>&ell;</sub>(h)‖ nimmt mit &ell; ab&rdquo;</i> &mdash; nur <b>simuliert/illustriert</b>, nicht bewiesen.</p>
+<p class="note rose"><b>Die Spannung:</b> A steht im Register des <b>Bewiesenen</b> (lokal, exakt, dimensionsfrei); B im Register des <b>Vermuteten</b> (global, asymptotisch, typische Inputs). &Uuml;ber <em>Konvergenz</em> sagt A nichts &mdash; ihre S&auml;tze sind Identit&auml;ten, keine Stabilit&auml;tss&auml;tze.</p>
+
+<h3>Widerspruch 2 &mdash; &Auml;ndert sich das Volumen?: Stretch &auml;ndert lokale Fl&auml;che (A) vs. Norm ist fixiert (B)</h3>
+<p><b>A sagt:</b> Der <b>symmetrische Teil &auml;ndert die lokale Volumen-/Fl&auml;che</b>: <i>„Positive Spur = Expansion, negative = Kompression&rdquo;</i>, und die &bdquo;Informationskapazit&auml;ts&auml;nderung&ldquo; sei <i>„komplett durch den symmetrischen Teil bestimmt&rdquo;</i>. Divergenz=tr(J) ist im Allgemeinen <b>&ne; 0</b>.</p>
+<p><b>B sagt:</b> <b>LayerNorm fixiert nach jedem Schritt die Norm</b> auf der Sph&auml;re: <i>„Richtung (Winkel) ist wichtiger als Magnitude&rdquo;</i>, <i>„kein Punkt kann unendlich weit von einem anderen sein&rdquo;</i>. Die wirksame Dynamik ist damit <b>im Wesentlichen richtungs-/rotationsartig</b>, nicht volumen&auml;ndernd.</p>
+<p class="note rose"><b>Die Spannung:</b> A hebt die <b>Volumen-/Kapazit&auml;ts&auml;nderung</b> (Stretch, tr&ne;0) als tr&auml;genden Teil hervor; B <b>wirft genau diese Magnit&uuml;den&auml;nderung per Renormierung wieder weg</b> und h&auml;lt nur die Richtung. A&rsquo;s &bdquo;Kapazit&auml;ts&auml;nderung&ldquo; und B&rsquo;s &bdquo;Richtung z&auml;hlt&ldquo; scheinen von zwei verschiedenen Teilen der selben Abbildung zu berichten.</p>
+
+<h3>Widerspruch 3 (zarter) &mdash; Eindeutig oder empfindlich?: einzigartige Zerlegung (A) vs. fraktale, kippanf&auml;llige Grenzen (B)</h3>
+<p><b>A sagt:</b> Die Zerlegung sei <b>eindeutig, orthogonal und unmissverständlich</b> &mdash; <i>„es gibt genau eine Art, J in Stretch und Rotation zu zerlegen&rdquo;</i>; Messungen von Verzerrung und Rotation seien <b>eindeutig</b>.</p>
+<p><b>B sagt:</b> Das <b>Endergebnis sei perturbations-empfindlich und unsicher</b>: <i>„Bassins-Grenzen &hellip; m&ouml;glicherweise fraktal&rdquo;</i>, <i>„Nahe der Grenze: hohe Unsicherheit (flache Softmax-Verteilung)&rdquo;</i>; am <b>Saddle-Point</b> <i>„k&ouml;nnen kleine Perturbationen den Token in ein anderes Basin kippen&rdquo;</i>.</p>
+<p class="note rose"><b>Die Spannung:</b> A&rsquo;s Welt ist eine <b>deterministische, eindeutig zerlegbare</b> lineare Struktur; B&rsquo;s Welt eine, in der das <b>Ergebnis von winzigen Anfangsunterschieden</b> abh&auml;ngt. Lokal eindeutig vs. global empfindlich.</p>
+</section>
+
+<section id="aufloesung">
+<h2><span class="n">3</span>Aufl&ouml;sung</h2>
+<p><b>Zu Widerspruch 1 (bewiesen vs. vermutet):</b> Sie wirken auf <b>unterschiedlichen Skalen</b> und <b>verpflichten einander nicht</b>. A beweist <b>lokale Identit&auml;ten, die an jedem Punkt und in jeder Dimension gelten</b> &mdash; das ist die <i>notwendige</i> Struktur. B vermutet <b>asymptotisches Verhalten der <i>Komposition</i> vieler solcher Karten</b>, und genau das beweisen A&rsquo;s Identit&auml;ten <b>weder, noch verbieten sie es</b>. <b>Konvergenz/Progressive Sch&auml;rfung ist eine zus&auml;tzliche, unbewiesene Eigenschaft des iterierten Ganzen</b>, die auf A&rsquo;s lokalem Skelett <i>ruht</i>, aber daraus nicht folgt. Ehrliche Grenze: <i>„lokal exakt&rdquo; &ne; „global konvergent&rdquo;</i>.</p>
+<p><b>Zu Widerspruch 2 (Volumen &auml;ndern?):</b> <b>LayerNorm ist eine zwischen den Schritten wirkende, volumen-ausl&ouml;schende Renormierung.</b> A misst die <b>rohe</b> (vor-Normierung) Jacobi-Matrix der Schicht &mdash; deren symmetrischer Teil &auml;ndert lokal wirklich Volumen (tr&ne;0). B <b>projiziert danach auf die Sph&auml;re</b> und beh&auml;lt nur die <b>tangentialen/richtungsbestimmten</b> Komponente. Fusion: <b>tr(J) (A) misst genau die Expansion, die LayerNorm (B) verwirft</b>; was auf der Sph&auml;re &uuml;brig bleibt, ist die tangentielle Bewegung &mdash; dominiert von der Rotation (keine Volumen&auml;nderung) plus der <i> tangentialen Projektion</i> des Stretch, die den Punkt gerade in Richtung Attraktor schiebt. A&rsquo;s &bdquo;Kapazit&auml;ts&auml;nderung&ldquo; (volle Abbildung) und B&rsquo;s &bdquo;Richtung z&auml;hlt&ldquo; (tangentielle Projektion) sind damit <b>zwei Projektionen derselben Karte</b>.</p>
+<p><b>Zu Widerspruch 3 (einzigartig vs. empfindlich):</b> A&rsquo;s Eindeutigkeit ist eine Eigenschaft <b>der linearen Karte an jedem einzelnen Punkt</b> (die Zerlegung ist immer wohldefiniert). B&rsquo;s Empfindlichkeit ist eine Eigenschaft <b>der Iteration vieler Karten</b>: selbst glatte, sogar orthogonal-zerlegbare Karten k&ouml;nnen beim <i>Wiederholen</i> fraktale Bassins und Saddle-Points erzeugen. <b>Lokale Eindeutigkeit und globale Empfindlichkeit sind vollst&auml;ndig vereinbar</b> &mdash; A verspricht schlicht keine stabilen globalen Iterierten. Fusion: saubere lokale Lineargeometrie (A) + Iteration (B) = genau das Regime, in dem Attraktoren und fraktale Grenzen leben.</p>
+</section>
+
+<section id="inhalt">
+<h2><span class="n">4</span>Fusionierter Inhalt</h2>
+
+<h3>Was A mitbringt (lokale Jacobi-Geometrie, Coq-verifiziert)</h3>
+<div class="eq">
+  <span class="op">J = J<sub>sym</sub> + J<sub>antisym</sub></span> , &nbsp; J<sub>sym</sub> = (J+J&#7488;)/2 , &nbsp; J<sub>antisym</sub> = (J&minus;J&#7488;)/2<br>
+  J<sub>sym</sub>&#7488; = J<sub>sym</sub> , &nbsp; J<sub>antisym</sub>&#7488; = &minus;J<sub>antisym</sub> , &nbsp; &lang;J<sub>sym</sub>, J<sub>antisym</sub>&rang;<sub>F</sub> = 0<br>
+  &dagger; &nbsp; ‖J‖&sup2;<sub>F</sub> = ‖J<sub>sym</sub>‖&sup2;<sub>F</sub> + ‖J<sub>antisym</sub>‖&sup2;<sub>F</sub> &nbsp;(Pythagoras f&uuml;r Matrizen)<br>
+  <span class="op">tr(J) = tr(J<sub>sym</sub>)</span> , &nbsp; tr(J<sub>antisym</sub>) = 0 &nbsp;&nbsp;(Divergenz kommt nur aus Stretch)<br>
+  Idempotenz + Kreuzannulierung: sym&circ;sym=sym , antisym&circ;antisym=antisym , <span class="op">sym(antisym(J))=0</span> , antisym(sym(J))=0<br>
+  <span class="op">J = I + &Delta;</span> , &nbsp; tr(I+&Delta;) = n + tr(&Delta;) , &nbsp; antisym(I+&Delta;) = antisym(&Delta;) &nbsp;(Residual)<br>
+  J<sub>sym</sub> = Shear + (tr/n)&middot;I , &nbsp; tr(Shear) = 0 &nbsp;(scherspannungsfrei)<br>
+  tr(ABC) = tr(BCA) , &nbsp; tr(Q&#7488;JQ) = tr(J) &nbsp;f&uuml;r QQ&#7488; = I &nbsp;(orthogonale &Auml;hnlichkeitsinvarianz)
+</div>
+<ul>
+  <li><b>Stretch (symmetrisch)</b> = Dehnung/Kompression, diagonalisierbar mit reellen Eigenwerten (Hauptdehnrichtungen); tr&auml;gt die Divergenz.</li>
+  <li><b>Rotate (antisymmetrisch)</b> = reine Rotation, Spur 0, erzeugt Drehung ohne Volumen&auml;nderung; Diagonale = 0.</li>
+  <li><b>Pythagoras</b>: Stretch-Energie und Rotations-Energie sind unabh&auml;ngig (Frobenius-orthogonal), &bdquo;keine Kreuzterme&ldquo;.</li>
+  <li><b>Residual J=I+&Delta;</b>: die Identit&auml;t liefert eine Grund-Divergenz von n; die Rotation kommt <b>komplett</b> vom Residual-Block &Delta; (I ist symmetrisch).</li>
+  <li><b>Spur-Invarianz</b>: Divergenz ist ein Skalar, unabh&auml;ngig vom gew&auml;hlten (orthogonalen) Koordinatensystem &mdash; relevant, weil verschiedene Heads in gedrehten Unterr&auml;umen operieren.</li>
+</ul>
+
+<h3>Was B mitbringt (globale Attraktor-Dynamik auf der Sph&auml;re)</h3>
+<div class="eq">
+  <span class="op">h<sup>(&ell;+1)</sup> = h<sup>(&ell;)</sup> + f<sub>&ell;</sub>(h<sup>(&ell;)</sup>)</span> , &nbsp; f<sub>&ell;</sub> = Attn<sup>(&ell;)</sup> + FFN<sup>(&ell;)</sup> &nbsp;(Euler-Schritt, &Delta;t=1, t=&ell;)<br>
+  Attn(Q,K,V) = softmax(QK&#7488;/&radic;d<sub>k</sub>) V &nbsp;&nbsp;(Kontext-Kraft <i>zwischen</i> Tokens; multi-head: parallele Unterr&auml;ume)<br>
+  FFN(x) = W<sub>2</sub>&middot;ReLU(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub> &nbsp;&nbsp;(assoziativer Key-Value-Speicher = <span class="op2">Attraktor-Kraft</span>)<br>
+  LN(h) = &gamma; &odot; (h&minus;&mu;)/&sigma; + &beta; &nbsp;&rarr;&nbsp; h auf S<sup>d&minus;1</sup> &nbsp;(Richtung &gt; Magnitude)<br>
+  <span class="op2">Hyp 1:</span> h<sup>(&ell;)</sup> &rarr; A<sub>k</sub> f&uuml;r &ell;&rarr;L &nbsp;(Attraktor-Existenz) &nbsp;&middot;&nbsp; <span class="op2">Hyp 2:</span> B<sub>k</sub>={h&sup0;: Traj&rarr;A<sub>k</sub>}, fraktale Grenzen &nbsp;&middot;&nbsp; <span class="op2">Hyp 3:</span> ‖f<sub>&ell;</sub>(h)‖ nimmt mit &ell; ab (progressive Sch&auml;rfung)
+</div>
+<ul>
+  <li><b>Layer = Zeitschritt</b> (Chen et al. 2018: ResNets als diskretisierte ODEs); <b>nicht-autonom</b>: f<sub>1</sub>&ne;f<sub>2</sub>&ne;&hellip; (fr&uuml;he Schichten weite Bassins, sp&auml;te sch&auml;rfen).</li>
+  <li><b>Attention</b> bewegt Tokens <i>nicht</i> zu Attraktoren, sondern <i>nacheinander</i> (Kontext); das <b>FFN</b> (W<sub>1</sub>=Schl&uuml;ssel/Pattern, W<sub>2</sub>=Wert) ist die Kraft, die zu Attraktoren zieht (Geva et al. 2021).</li>
+  <li><b>Superposition</b>: ein Vektor der Dimension d kodiert &gt;d Konzepte (fast-orthogonale Richtungen); Entscheidungen fallen oft in wenigen kritischen Dimensionen.</li>
+  <li><b>Output</b>: Unembedding W<sub>U</sub>, Logits, softmax; <b>Temperatur</b> steuert, wie &bdquo;scharf&ldquo; die Bassins-Grenzen sind.</li>
+</ul>
+
+<h3>Die Integration &mdash; eine Karte, zwei Aufl&ouml;sungen</h3>
+<table class="tbl">
+  <tr><th>Achse</th><th>A &middot; lokal (Tangente)</th><th>B &middot; global (Trajektorie)</th></tr>
+  <tr><td><b>Objekt</b></td><td>Jacobi-Matrix J &mdash; lineares Lokalmodell am Punkt</td><td>diskrete Karte T<sub>&ell;</sub>(h)=h+f<sub>&ell;</sub>(h), L-mal iteriert</td></tr>
+  <tr><td><b>Skala</b></td><td>infinitesimal, punktweise, dimensionsfrei</td><td>endliche Zeit, global, typische Inputs</td></tr>
+  <tr><td><b>Stretch J<sub>sym</sub></b></td><td>Volumen-/Kapazit&auml;ts&auml;nderung (tr&ne;0)</td><td>legt <b>Attraktor-Position</b> + <b>Konvergenzgeschwindigkeit</b> fest (Power-Iteration)</td></tr>
+  <tr><td><b>Rotate J<sub>antisym</sub></b></td><td>keine Volumen&auml;nderung (tr=0)</td><td>kr&uuml;mmt den Pfad / Kontext-Reorientierung (Attention)</td></tr>
+  <tr><td><b>tr(J)</b></td><td>lokale Divergenz (Expansion/Kompression)</td><td>wird von <b>LayerNorm verworfen</b> (Sph&auml;re: Richtung z&auml;hlt)</td></tr>
+  <tr><td><b>Residual</b></td><td>J = I + &Delta;</td><td>h<sup>(&ell;+1)</sup>=h<sup>(&ell;)</sup>+f<sub>&ell;</sub> &mdash; Residual-Stream = Identit&auml;t I</td></tr>
+  <tr><td><b>Status</b></td><td>Coq-verifiziert, exakt</td><td>Hypothesen, simuliert</td></tr>
+</table>
+<div class="note"><b>Der fusionierte Kernsatz:</b> Die <b>renormierte Iteration</b> der Jacobi-Matrix einer Schicht ist eine <b>Power-Iteration</b>: <b>v<sub>k+1</sub> = normalize(J &middot; v<sub>k</sub>)</b> konvergiert gegen den <b>dominanten Eigenvektor von J</b> &mdash; und genau dieser ist der <b>Attraktor</b> aus B. A&rsquo;s Stretch bestimmt, <em>wo</em> dieser Eigenvektor zeigt und <em>wie schnell</em> (Eigenwert-L&uuml;cke) man dorthin kommt; A&rsquo;s Rotate kr&uuml;mmt den Weg; B&rsquo;s LayerNorm ist der <em>normalize</em>-Schritt selbst. <b>LoKale Lineargeometrie (A) &times; Iteration (B) = Attraktor-Konvergenz.</b></div>
+</section>
+
+<section id="visualisierung">
+<h2><span class="n">5</span>Interaktive Fusion: Power-Iteration als Br&uuml;cke zwischen Tangente und Attraktor</h2>
+<div class="viz">
+  <h3>Linke Seite = A (lokale Linearisierung) &middot; rechte Seite = B (Iteration auf der Sph&auml;re)</h3>
+  <p class="dsub">Links zeigt A&rsquo;s Jacobi-Zerlegung J=J<sub>sym</sub>+J<sub>antisym</sub> an einem Punkt: der <b>Einheitskreis der St&ouml;rungen</b> wird von <b>Stretch</b> (t&uuml;rkis, Ellipse-Achsen) und von der <b>vollen Karte</b> (violett) gedehnt; <b>Rotation</b> (rosa Pfeile) dreht nur, ohne die Form zu &auml;ndern. Rechts wird genau diese lineare Karte <b>24-mal auf der Sph&auml;re (2D-Schnitt = Kreis) iteriert</b>, wobei <b>LayerNorm</b> nach jedem Schritt auf den Kreis zur&uuml;ckprojiziert &mdash; das ist die <b>Power-Iteration</b>, die gegen den <b>dominanten Eigenvektor = Attraktor</b> (Stern) l&auml;uft. Unten: die Schrittgr&ouml;&szlig;e ‖&Delta;v‖ pro Schicht &mdash; ihr Abfall ist B&rsquo;s <b>progressive Sch&auml;rfung / Konvergenz</b>. Zieh <i>Stretch &sigma;</i> und <i>Winkel &phi;</i>, um den Attraktor zu bewegen; dreh <i>Rotation &omega;</i>, um den Pfad zu kr&uuml;mmen (zu gro&szlig;es &omega; &rarr; Zyklen, s. B, Frage Q3).</p>
+  <canvas id="viz"></canvas>
+
+  <div class="btnrow">
+    <button id="btnPlay" type="button">&#9654; Trajektorie abspielen</button>
+    <button id="btnReset" type="button">&#8635; Reset (volle Trajektorie)</button>
+    <span class="dsub" style="margin:0 0 0 6px">L = 24 Schichten (fix)</span>
+  </div>
+
+  <div class="ctl">
+    <div class="ctl-lab"><span>Stretch &sigma; <span style="color:var(--accent)">(A: symmetrischer Teil / Eigenwert-L&uuml;cke)</span></span><b id="vSigma">0.80</b></div>
+    <input type="range" id="slSigma" min="0" max="1.5" step="0.01" value="0.8">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Dehnachsen-Winkel &phi; <span style="color:var(--accent)">(A: wo zeigt der dominante Eigenvektor)</span></span><b id="vPhi">40&deg;</b></div>
+    <input type="range" id="slPhi" min="0" max="360" step="1" value="40">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Rotation &omega; <span style="color:var(--accent2)">(A: antisymmetrischer Teil, tr=0)</span></span><b id="vOmega">0.35</b></div>
+    <input type="range" id="slOmega" min="-1.2" max="1.2" step="0.01" value="0.35">
+  </div>
+  <div class="ctl">
+    <div class="ctl-lab"><span>Startwinkel &theta;&sub0; <span style="color:var(--amber)">(B: Startpunkt des Tokens auf der Sph&auml;re)</span></span><b class="b" id="vTh0">240&deg;</b></div>
+    <input type="range" class="b" id="slTh0" min="0" max="360" step="1" value="240">
+  </div>
+
+  <div class="ro">
+    <div class="box"><div class="k">Stretch &sigma;</div><div class="v" id="roSig">0.80</div></div>
+    <div class="box violet"><div class="k">tr(J) = Divergenz</div><div class="v" id="roTr">2.000</div></div>
+    <div class="box"><div class="k">det(J) = Fl&auml;chenfaktor</div><div class="v" id="roDet">0.483</div></div>
+    <div class="box amber"><div class="k">‖&Delta;v‖ letzte Schicht</div><div class="v" id="roLast">0.000</div></div>
+    <div class="box amber" id="roStatusBox"><div class="k">Iteration</div><div class="v" id="roStatus">konvergiert</div></div>
+  </div>
+  <p class="stat" id="stat"></p>
+</div>
+<p class="viz-note">Alle Daten inline; keine Netzwerke-Calls. Theme-aware &uuml;ber CSS-Variablen (<code>html.dark</code>) + MutationObserver. Die Karte ist J = I + &sigma;&middot;Shear(&phi;) + &omega;&middot;Rot &mdash; exakt A&rsquo;s Residual-Form J=I+&Delta;; wegen I+scherspannungsfrei ist <b>tr(J)=n=2 konstant</b> (A, &sect;7), die Fl&auml;che &auml;ndert sich nur &uuml;ber det(J).</p>
+</section>
+
+<section id="provenienz">
+<h2><span class="n">6</span>Provenienz</h2>
+<div class="prov">
+  <div class="item"><span class="lbl">A &middot; <a href="../proof.html">proof.html</a></span>
+  <b>„Transformer Jacobian Geometry &mdash; Interactive Coq Proof Explorer&rdquo;</b>: 10 maschinengepr&uuml;fte geometrische Eigenschaften der Transformer-Jacobi-Matrix (Zerlegung in symmetrischen/antisymmetrischen Teil, Frobenius-Orthogonalit&auml;t, Spur=Divergenz, Residual J=I+&Delta;, Scherspannung, Spur-Zyklizit&auml;t, orthogonale &Auml;hnlichkeitsinvarianz) &mdash; die <b>lokale lineare Tangente</b> der Fusion.</div>
+  <div class="item"><span class="lbl b">B &middot; <a href="../test2.html">test2.html</a></span>
+  <b>„Transformer Attractor Dynamics&rdquo;</b>: Framework „Layer als Zeitschritt, Bedeutung als Attraktor&rdquo; &mdash; Euler-Dynamik auf der Hypersph&auml;re S<sup>d&minus;1</sup>, Attention (Kontext) vs. FFN (Attraktor), LayerNorm, Bassins/Saddle-Points, progressive Sch&auml;rfung, Superposition, Softmax/Temperatur &mdash; die <b>globale Trajektorie</b> der Fusion.</div>
+</div>
+</section>
+
+<footer>
+  Fusion 069 &middot; proof.html &times; test2.html &middot; alles l&auml;uft lokal im Browser.
+</footer>
+
+</main>
+
+<script>
+"use strict";
+(function(){
+  function $(id){ return document.getElementById(id); }
+  var cv = $('viz');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var TAU = Math.PI*2;
+  var L = 24;
+
+  var slSigma=$('slSigma'), slPhi=$('slPhi'), slOmega=$('slOmega'), slTh0=$('slTh0');
+  var vSigma=$('vSigma'), vPhi=$('vPhi'), vOmega=$('vOmega'), vTh0=$('vTh0');
+  var roTr=$('roTr'), roDet=$('roDet'), roLast=$('roLast'), roSig=$('roSig');
+  var roStatus=$('roStatus'), roStatusBox=$('roStatusBox'), stat=$('stat');
+  var btnPlay=$('btnPlay'), btnReset=$('btnReset');
+
+  function C(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function applyM(M,x,y){ return [M[0][0]*x+M[0][1]*y, M[1][0]*x+M[1][1]*y]; }
+  function matAdd(A,B){ return [[A[0][0]+B[0][0],A[0][1]+B[0][1]],[A[1][0]+B[1][0],A[1][1]+B[1][1]]]; }
+  function trM(M){ return M[0][0]+M[1][1]; }
+  function detM(M){ return M[0][0]*M[1][1]-M[0][1]*M[1][0]; }
+  function buildS(sigma,phi){
+    var p2=2*phi;
+    var P=[[Math.cos(p2),Math.sin(p2)],[Math.sin(p2),-Math.cos(p2)]];
+    return [[1+sigma*P[0][0], sigma*P[0][1]],[sigma*P[1][0], 1+sigma*P[1][1]]];
+  }
+  function buildA(omega){ return [[0,-omega],[omega,0]]; }
+  function step(v,J){
+    var nv=applyM(J,v[0],v[1]);
+    var n=Math.sqrt(nv[0]*nv[0]+nv[1]*nv[1]);
+    if(n<1e-12) return [1,0];
+    return [nv[0]/n, nv[1]/n];
+  }
+  function iterate(J,th0){
+    var v=[Math.cos(th0),Math.sin(th0)], pts=[v.slice()], steps=[];
+    for(var k=0;k<L;k++){
+      var pv=v.slice();
+      v=step(v,J);
+      pts.push(v.slice());
+      steps.push(Math.sqrt((v[0]-pv[0])*(v[0]-pv[0])+(v[1]-pv[1])*(v[1]-pv[1])));
+    }
+    return {pts:pts, steps:steps};
+  }
+  function findAttractor(J){
+    var v=[Math.cos(-2.2),Math.sin(-2.2)], k;
+    for(k=0;k<300;k++){ v=step(v,J); }
+    var a=v.slice();
+    for(k=0;k<300;k++){ v=step(v,J); }
+    var d=Math.sqrt((v[0]-a[0])*(v[0]-a[0])+(v[1]-a[1])*(v[1]-a[1]));
+    return {dir:v, converged: d<1e-3};
+  }
+  function rr(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+  }
+  function ellipse(M,cx,cy,R,color,width){
+    ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=width; ctx.beginPath();
+    var N=120;
+    for(var i=0;i<=N;i++){
+      var t=TAU*i/N; var p=applyM(M,Math.cos(t),Math.sin(t));
+      var X=cx+p[0]*R, Y=cy-p[1]*R;
+      if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  function arrow(x0,y0,ang,len,color,width){
+    var dirx=Math.cos(ang), diry=-Math.sin(ang);
+    var x1=x0+dirx*len, y1=y0+diry*len;
+    ctx.strokeStyle=color; ctx.lineWidth=width;
+    ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-8*(dirx*Math.cos(0.4)-diry*Math.sin(0.4)), y1-8*(dirx*Math.sin(0.4)+diry*Math.cos(0.4)));
+    ctx.lineTo(x1-8*(dirx*Math.cos(0.4)+diry*Math.sin(0.4)), y1-8*(-dirx*Math.sin(0.4)+diry*Math.cos(0.4)));
+    ctx.closePath(); ctx.fill();
+  }
+  function star(x,y,color,r){
+    ctx.fillStyle=color; ctx.beginPath();
+    for(var i=0;i<10;i++){
+      var rad=(i%2===0)?r:r*0.45; var a=-Math.PI/2+i*Math.PI/5;
+      var px=x+Math.cos(a)*rad, py=y+Math.sin(a)*rad;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath(); ctx.fill();
+  }
+
+  var reveal=L, playing=false, animId=null;
+
+  function draw(){
+    var dpr=Math.min(2, window.devicePixelRatio||1);
+    var w=cv.clientWidth||720, H=470;
+    cv.width=Math.round(w*dpr); cv.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.imageSmoothingEnabled=true;
+    ctx.clearRect(0,0,w,H);
+
+    var panel=C('--panel'), line=C('--line'), fg=C('--fg'), muted=C('--muted'),
+        accent=C('--accent'), amber=C('--amber'), violet=C('--violet'), accent2=C('--accent2');
+
+    var sigma=+slSigma.value, phiDeg=+slPhi.value, omega=+slOmega.value, th0Deg=+slTh0.value;
+    var phi=phiDeg*Math.PI/180, th0=th0Deg*Math.PI/180;
+    var S=buildS(sigma,phi), A=buildA(omega), J=matAdd(S,A);
+    var it=iterate(J,th0), att=findAttractor(J);
+    var trJ=trM(J), detJ=detM(J);
+    var lastStep=it.steps.length?it.steps[it.steps.length-1]:0;
+
+    var R=Math.min(w*0.205,112);
+    var lc={x:w*0.27,y:172}, rc={x:w*0.73,y:172};
+
+    rr(ctx,8,26,w*0.485,250,12); ctx.fillStyle=panel; ctx.fill(); ctx.strokeStyle=line; ctx.lineWidth=1; ctx.stroke();
+    rr(ctx,w*0.505,26,w*0.485,250,12); ctx.fillStyle=panel; ctx.fill(); ctx.stroke();
+    rr(ctx,8,292,w-16,172,12); ctx.fillStyle=panel; ctx.fill(); ctx.stroke();
+
+    ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.font='700 13px system-ui, sans-serif';
+    ctx.fillStyle=accent; ctx.fillText('A \u00b7 Lokale Linearisierung  J = J_sym + J_antisym', lc.x, 18);
+    ctx.fillStyle=amber;  ctx.fillText('B \u00b7 Iteration auf der Sph\u00e4re (Power-Iteration)', rc.x, 18);
+    ctx.fillStyle=amber;  ctx.fillText('\u2016\u0394v\u2016 pro Schicht \u2014 Konvergenz / progressive Sch\u00e4rfung', w/2, 312);
+
+    // LEFT
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(lc.x-R-14,lc.y); ctx.lineTo(lc.x+R+14,lc.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lc.x,lc.y-R-14); ctx.lineTo(lc.x,lc.y+R+14); ctx.stroke();
+    ctx.strokeStyle=muted; ctx.globalAlpha=.5; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.arc(lc.x,lc.y,R,0,TAU); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha=1;
+    ellipse(S,lc.x,lc.y,R,accent,2.6);
+    ellipse(J,lc.x,lc.y,R,violet,2.2);
+    var alen=R*0.62;
+    arrow(lc.x,lc.y,(omega>=0?Math.PI/2:-Math.PI/2),alen,accent2,2.4);
+    arrow(lc.x,lc.y,(omega>=0?Math.PI:0),alen,accent2,2.4);
+    ctx.font='600 11px ui-monospace, monospace'; ctx.textAlign='left';
+    ctx.fillStyle=accent;  ctx.fillText('\u2014 J_sym (Stretch)', lc.x-R-4, lc.y+R+30);
+    ctx.fillStyle=violet;  ctx.fillText('\u2014 J (voll)', lc.x+6, lc.y+R+30);
+    ctx.fillStyle=accent2; ctx.fillText('\u2192 J_antisym (Rotation)', lc.x+6, lc.y+R+44);
+
+    // RIGHT
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(rc.x-R-14,rc.y); ctx.lineTo(rc.x+R+14,rc.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(rc.x,rc.y-R-14); ctx.lineTo(rc.x,rc.y+R+14); ctx.stroke();
+    ctx.strokeStyle=accent; ctx.globalAlpha=.7; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.arc(rc.x,rc.y,R,0,TAU); ctx.stroke();
+    ctx.globalAlpha=1;
+    var ax=rc.x+att.dir[0]*R, ay=rc.y-att.dir[1]*R;
+    var g=ctx.createRadialGradient(ax,ay,0,ax,ay,22); g.addColorStop(0,amber); g.addColorStop(1,'transparent');
+    ctx.globalAlpha=.25; ctx.fillStyle=g; ctx.beginPath(); ctx.arc(ax,ay,22,0,TAU); ctx.fill(); ctx.globalAlpha=1;
+    star(ax,ay,amber,10);
+    var n=Math.min(reveal, it.pts.length-1), k;
+    ctx.strokeStyle=accent; ctx.globalAlpha=.5; ctx.lineWidth=1.4; ctx.beginPath();
+    for(k=0;k<=n;k++){ var p=it.pts[k]; var X=rc.x+p[0]*R, Y=rc.y-p[1]*R; if(k===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+    ctx.stroke(); ctx.globalAlpha=1;
+    for(k=0;k<=n;k++){
+      p=it.pts[k]; X=rc.x+p[0]*R; Y=rc.y-p[1]*R;
+      var t=n>0?k/n:0;
+      ctx.fillStyle= t<0.5?accent:amber;
+      ctx.beginPath(); ctx.arc(X,Y,(k===0)?4:3,0,TAU); ctx.fill();
+    }
+    var p0=it.pts[0];
+    ctx.strokeStyle=fg; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(rc.x+p0[0]*R, rc.y-p0[1]*R, 7,0,TAU); ctx.stroke();
+    ctx.font='600 11px ui-monospace, monospace'; ctx.textAlign='left';
+    ctx.fillStyle=fg; ctx.fillText('Start (L0)', rc.x-R-6, rc.y-R-8);
+    ctx.fillStyle=amber; ctx.fillText('\u2605 Attraktor', ax+13, ay-6);
+
+    // SPARKLINE
+    var sx0=w*0.07, sx1=w*0.93, sy0=352, sy1=436;
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(sx0,sy0); ctx.lineTo(sx0,sy1); ctx.lineTo(sx1,sy1); ctx.stroke();
+    var maxS=1e-6; for(k=0;k<it.steps.length;k++){ if(it.steps[k]>maxS)maxS=it.steps[k]; }
+    ctx.strokeStyle=line; ctx.globalAlpha=.5;
+    for(k=0;k<=4;k++){ var gy=sy0+(sy1-sy0)*k/4; ctx.beginPath(); ctx.moveTo(sx0,gy); ctx.lineTo(sx1,gy); ctx.stroke(); }
+    ctx.globalAlpha=1;
+    var ns=Math.min(reveal, it.steps.length);
+    if(ns>0){
+      ctx.beginPath(); ctx.moveTo(sx0, sy1);
+      for(k=0;k<ns;k++){ var X2=sx0+(k/(L-1))*(sx1-sx0); var Y2=sy1-(it.steps[k]/maxS)*(sy1-sy0); ctx.lineTo(X2,Y2); }
+      ctx.lineTo(sx0+(ns-1)/(L-1)*(sx1-sx0), sy1);
+      ctx.closePath(); ctx.fillStyle=amber; ctx.globalAlpha=.18; ctx.fill(); ctx.globalAlpha=1;
+      ctx.strokeStyle=amber; ctx.lineWidth=2; ctx.beginPath();
+      for(k=0;k<ns;k++){ var X3=sx0+(k/(L-1))*(sx1-sx0); var Y3=sy1-(it.steps[k]/maxS)*(sy1-sy0); if(k===0)ctx.moveTo(X3,Y3); else ctx.lineTo(X3,Y3); }
+      ctx.stroke();
+    }
+    ctx.fillStyle=muted; ctx.font='11px ui-monospace, monospace'; ctx.textAlign='left';
+    ctx.fillText('L0', sx0, sy1+14); ctx.textAlign='right'; ctx.fillText('L'+L, sx1, sy1+14);
+
+    // readouts
+    vSigma.textContent=sigma.toFixed(2);
+    vPhi.textContent=phiDeg.toFixed(0)+'\u00b0';
+    vOmega.textContent=omega.toFixed(2);
+    vTh0.textContent=th0Deg.toFixed(0)+'\u00b0';
+    roSig.textContent=sigma.toFixed(2);
+    roTr.textContent=trJ.toFixed(3);
+    roDet.textContent=detJ.toFixed(3);
+    roLast.textContent=lastStep.toFixed(4);
+    roStatus.textContent = att.converged ? 'konvergiert' : 'zyklisch';
+    roStatusBox.className = 'box amber' + (att.converged ? '' : '');
+    if(!att.converged){ roStatusBox.className='box rose'; }
+    stat.innerHTML = att.converged
+      ? 'Die renormierte Iteration der Jacobi-Matrix (Power-Iteration) l\u00e4uft auf den <b>dominanten Eigenvektor</b> \u2192 den <b>Attraktor</b> (B) zu. <b>Stretch \u03c3</b> setzt Attraktor-Position &amp; Geschwindigkeit (Eigenwert-L\u00fccke), <b>Rotation \u03c9</b> kr\u00fcmmt nur den Pfad (keine Volumen\u00e4nderung, tr=0). tr(J)=n=2 bleibt konstant (Residual-Identit\u00e4t, A).'
+      : '\u03c9 dominiert \u03c3: komplexe Eigenwerte gleichen Betrags \u2192 die Iteration <b>konvergiert nicht</b>, sondern rotiert &mdash; genau <b>Bs offene Frage Q3 (Limit Cycles)</b>. \u03c3 erh\u00f6hen, um wieder zu konvergieren.';
+  }
+
+  function stopPlay(){ if(animId){clearTimeout(animId); animId=null;} playing=false; btnPlay.innerHTML='\u25b6 Trajektorie abspielen'; }
+  function play(){
+    if(playing){ stopPlay(); return; }
+    playing=true; btnPlay.innerHTML='\u23f8 Pause'; reveal=0;
+    (function loop(){
+      if(!playing) return;
+      reveal++;
+      if(reveal>=L){ reveal=L; draw(); stopPlay(); return; }
+      draw();
+      animId=setTimeout(loop,70);
+    })();
+  }
+
+  function bind(id){ $(id).addEventListener('input', function(){ draw(); }); }
+  bind('slSigma'); bind('slPhi'); bind('slOmega'); bind('slTh0');
+  btnPlay.addEventListener('click', play);
+  btnReset.addEventListener('click', function(){ stopPlay(); reveal=L; draw(); });
+
+  var btn=$('themeBtn');
+  if(btn){ btn.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); }); }
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['class']});
+  }
+  window.addEventListener('resize', draw);
+  draw();
+})();
+</script>
+</body>
+</html>

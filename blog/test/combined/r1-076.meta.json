@@ -1,0 +1,15 @@
+{
+  "no": "076",
+  "a": "covers_theorem.html",
+  "b": "verweigerungsrichtung.html",
+  "a_title": "Cover 1965 — Interaktiv: Trennende Flächen, Kapazität 2d, Generalisierung",
+  "b_title": "Die Verweigerungs-Richtung · Interaktive Reise durch ein KI-Paper",
+  "combined_theme": "linear-object-controls-behavior",
+  "one_line": "Lineaer ist der dünne Hebel auf Komplexität: ein kleines lineares Objekt — ein Gewichtvektor (Cover, Kapazität 2d, Phasenübergang Merken/Verstehen) bzw. eine einzelne Richtung im Residual Stream (Arditi, Rang-1, notwendig & hinreichend) — bestimmt das Verhalten eines viel größeren Systems und ist damit gleichzeitig manipulierbar und kapazitätsgrenziert.",
+  "contradictions": [
+    "Robustheit des linearen Objekts: A (Cover) nennt lineare Schwellwertgeräte 'selbstheilend' — die Trennwahrscheinlichkeit ist oberhalb der Schwelle unempfindlich gegenüber d, man 'übersteht kaputte Gewichte', Information komprimiert fast immer auf <=2d (Markov). B (Arditi) zeigt das Gegenteil für dasselbe Objekt: eine einzelne Rang-1-Gewichtsänderung W'=W-r r^T W (<5$, kein Gradient) bricht die Verweigerung komplett weg — 'Sicherheit ist dünn', 'Rang-1-Änderung entfernt vom Zusammenbruch'.",
+    "Leistungsfähigkeit eines niedrig-d linearen Objekts: A sagt, die Kapazität skaliert mit d (=2d); ein d=1-Regler ist das schwächste lineare Objekt (Kapazität 2) und Generalisierung braucht beta=N/d>2 (sonst nur Auswendiglernen). B findet, dass EINE Richtung (d=1 effektiv) sowohl notwendig als auch hinreichend für das gesamte Verweigerungsverhalten ist — ein 1-dimensionales Objekt trägt ein hohes, komplexes Verhalten vollständig über 13 Modelle."
+  ],
+  "resolution": "Beide messen anderes: A misst die Robustheit der LÖSUNGSMENGE (viele w realisieren dieselbe Dichotomie => die Funktion/Karte ist robust), B die Robustheit einer namentlichen KOORDINATE (die Richtung r in der das Verhalten abgelegt ist; eine Rang-1-Projektion tötet genau diese Achse, während der Rest der Funktion — Sprache, Wissen — intakt bleibt). Zum d: A's d = Parameterzahl eines Separators über die Daten, B's 'eine Richtung' = eine von ~d_model≈4096 nahezu orthogonalen Konzept-Achsen (|cos|~1/sqrt(d)) im bereits φ-anhobenen Merkmalraum (Residual Stream). Verweigerung ist also eine Koordinate, kein d=1-Modell; die Orthogonalität hoher Dimensionen ist dieselbe 'allgemeine Lage'-Bedingung, die A's Zählung kombinatorisch macht. Fused: ein lineares Objekt kann zugleich robuster Träger der Entscheidung (A) und zerbrechlicher Griff (B) sein — dieselbe Wahrheit von zwei Seiten.",
+  "viz": "Vanilla-Canvas (keine CDN/Netz-Daten), theme-aware über CSS-Variablen, rAF-Animation, null Konsolenfehler. Links (B): 2D-Konzeptgeometrie mit r^2 (Richtung), harmloser/schädlicher Cluster, Trennebene ⟂ r; Addition α schiebt den Testpunkt über die Ebene (refusal), Ablation projiziert alles auf die Ebene (Trennung kollabiert) — Toggle. Rechts (A): Covers Kapazitäts-/Phasenübergangs-Kurve P(N,d)=C(N,d)/2^N und A(β)=1/(β-1) über β=N/d mit 2d-Schwelle und Merken/Verstehen-Region, gesteuert über einen d-Regler; gemeinsame Lesezeile (Verweigert? / Trennung? / d / 2d)."
+}

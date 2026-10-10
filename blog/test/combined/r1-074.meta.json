@@ -1,0 +1,16 @@
+{
+  "no": "074",
+  "a": "attn_as_optimal_transport.html",
+  "b": "talking_heads.html",
+  "a_title": "Attention ist Optimaler Transport (Scaled-Dot-Product Attention as One-Sided Entropic Optimal Transport)",
+  "b_title": "Talking Heads: Understanding Inter-layer Communication in Transformer Language Models",
+  "combined_theme": "attention-first-principles-x-low-rank-channel-interpretability",
+  "one_line": "Attention ist die eindeutige Lösung eines einseitigen entropischen Transportproblems (A) und ihre Köpfe schreiben niedrig-rangige Signale in schmale inter-schichtige Kanäle (B) — eine einzige mechanistische Lesart von Lesen (dicht/entropisch/Fisher) und Schreiben (dünn/Rang-1/SVD) im Transformer.",
+  "contradictions": [
+    "A behandelt Attention als lokale, pro-Zeile geschlossene Aufgabe ohne Zeilen-Kopplung (einseitiges OT, keine Spaltenbedingung, kein Sinkhorn, Matrix 'zerfällt zufällig zeilenweise'); B behauptet, genau die Kopplung zwischen Köpfen über den Residual-Stream sei das eigentliche Objekt.",
+    "A beschreibt das natürliche Vorwärts-Objekt als dichte, entropische Verteilung über alle Keys (Softmax, kein exaktes Nullgewicht, Sparsity nur per Regularisierer-Tausch); B betont, dass Information nur über extrem niedrig-rangige (Rang-1, 1-3D) Unterräume fließt, der Rest der Kopf-Matrix sei Rauschen.",
+    "A hält die elegante Struktur (Baseline, Fisher-manifold-awaree Dämpfung) für eine notwendige, in der Attention-Form eingebaute Konsequenz ('kommt geschenkt'); B stellt empirisch fest, dass die Kanäle vom Training gelernt, nicht in der Architektur eingebaut sind ('gelernt, nicht eingebaut')."
+  ],
+  "resolution": "Unterschiedliche Skalen, kein echter Widerspruch: A erklärt die lokale Lese-Hälfte (QK -> Softmax, Fisher-Geometrie), B die globale Schreib-/Kopplungs-Hälfte (OV -> SVD-Rang-1-Kanäle). Die dichte Lese-Verteilung (A) und die niedrig-rangige Schreib-Kompression (B) sitzen auf zwei verschiedenen Matrizen (Attention-Gewichte vs. Value-Transformation). Eingebaute Mechanik (A) trifft auf gelerntes Verdrahten (B): 'built-in mechanism, learned wiring'.",
+  "viz": "Interaktives Canvas: ein Query verteilt Masse über m Keys via Softmax (entropisches Lesen, A, Temperatur tau); die Value-Vektoren bilden den Kontextvektor c, der auf einen Rang-1-Kanal v-hat projiziert wird (niedrig-rangiges Schreiben, B). Massepartikel fließen in den Kanal; der 'Captured'-Wert alpha^2/||c||^2 misst, wie viel vom dichten Lesen im schmalen Kanal ankommt. Theme-aware (CSS-Variablen, dunkel = Standard), inline-Daten, kein Netzwerkabruf."
+}

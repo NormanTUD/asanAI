@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: Attention als Optimaler Transport ✕ Talking Heads</title>
+<style>
+:root{
+  --bg:#faf8f1; --panel-solid:#ffffff; --panel:#ffffff; --stroke:rgba(20,30,55,.12);
+  --txt:#1c2333; --txt-2:#46506a; --txt-3:#77809a;
+  --acc:#0f9488; --acc2:#7c3aed; --acc3:#b45309; --acc4:#be123c;
+  --code-bg:rgba(20,30,55,.05);
+}
+html.dark{
+  --bg:#070b14; --panel-solid:#0e1524; --panel:rgba(18,25,42,.72); --stroke:rgba(255,255,255,.09);
+  --txt:#e8edf7; --txt-2:#a7b3cc; --txt-3:#6b7896;
+  --acc:#5eead4; --acc2:#a78bfa; --acc3:#fbbf24; --acc4:#fb7185;
+  --code-bg:rgba(255,255,255,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt-2);
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.72;
+  -webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+article{max-width:820px;margin:0 auto;padding:52px 22px 60px;}
+h1{font-size:clamp(2rem,5.2vw,3.1rem);font-weight:800;color:var(--txt);line-height:1.08;
+  letter-spacing:-.025em;margin:0;}
+.subtitle{color:var(--acc2);font-size:1.02rem;font-weight:600;margin:12px 0 0;}
+section{margin:40px 0;padding-top:32px;border-top:1px solid var(--stroke);}
+h2{font-size:clamp(1.4rem,3.6vw,1.95rem);color:var(--txt);margin:0 0 16px;letter-spacing:-.015em;}
+h3{font-size:1.12rem;color:var(--txt);margin:24px 0 8px;font-weight:700;}
+p{margin:0 0 14px;max-width:74ch;}
+strong{color:var(--txt);font-weight:650;}
+em{color:var(--acc);font-style:normal;font-weight:600;}
+code{font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+  padding:1px 6px;border-radius:5px;color:var(--acc);font-size:.9em;}
+.eq{display:block;font-family:ui-monospace,Consolas,Menlo,monospace;background:var(--code-bg);
+  border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:10px;
+  padding:12px 16px;margin:14px 0;color:var(--txt);overflow-x:auto;font-size:.96rem;}
+.eq .b{color:var(--acc2)} .eq .a{color:var(--acc3)} .eq .r{color:var(--acc4)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;
+  padding:16px 18px;margin:16px 0;}
+.tag{display:inline-block;font-size:.68rem;font-weight:750;letter-spacing:.05em;
+  text-transform:uppercase;padding:3px 10px;border-radius:99px;margin-right:8px;vertical-align:1px;}
+.tag.a{color:var(--acc);background:rgba(94,234,212,.13);border:1px solid rgba(94,234,212,.32);}
+.tag.b{color:var(--acc2);background:rgba(167,139,250,.13);border:1px solid rgba(167,139,250,.32);}
+.tag.x{color:var(--acc3);background:rgba(251,191,36,.13);border:1px solid rgba(251,191,36,.32);}
+.citem{margin:18px 0;padding-left:16px;border-left:2px solid var(--stroke);}
+.citem h3{margin:0 0 6px;font-size:1.02rem;}
+.citem p{margin:0 0 8px;}
+.canvas-wrap{border:1px solid var(--stroke);border-radius:12px;overflow:hidden;background:var(--panel-solid);}
+canvas{width:100%;height:440px;display:block;background:var(--panel-solid);}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px;margin-top:14px;}
+@media(max-width:620px){.controls{grid-template-columns:1fr}}
+.ctrl label{font-size:.82rem;color:var(--txt-2);display:flex;justify-content:space-between;margin-bottom:4px;}
+.ctrl .val{font-family:ui-monospace,monospace;color:var(--acc);font-weight:650;}
+input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer;}
+.btnrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+button{background:var(--panel);color:var(--txt);border:1px solid var(--stroke);
+  padding:8px 15px;border-radius:9px;cursor:pointer;font-weight:650;font-size:.86rem;}
+button:hover{border-color:var(--acc);}
+.readouts{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0;}
+.ro{flex:1;min-width:112px;background:var(--panel);border:1px solid var(--stroke);border-radius:10px;padding:10px 12px;}
+.ro .k{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--txt-3);margin-bottom:3px;}
+.ro .v{font-family:ui-monospace,monospace;font-size:1.22rem;font-weight:700;color:var(--txt);}
+.ro.hl .v{color:var(--acc4);}
+.caption{font-size:.86rem;color:var(--txt-3);margin-top:12px;}
+.prov{display:flex;flex-direction:column;gap:14px;}
+.prov .card{margin:0;}
+.prov a{color:var(--acc);font-weight:650;text-decoration:none;border-bottom:1px dotted var(--acc);}
+.prov p{margin:6px 0 0;font-size:.92rem;}
+footer{color:var(--txt-3);font-size:.85rem;text-align:center;padding:26px 20px 40px;
+  border-top:1px solid var(--stroke);max-width:820px;margin:0 auto;}
+</style>
+</head>
+<body>
+<article>
+
+  <h1>Attention als Optimaler Transport <span style="color:var(--acc2)">✕</span> Talking Heads</h1>
+  <p class="subtitle">Fusion aus: attn_as_optimal_transport.html ✕ talking_heads.html</p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Beide Papiere bekämpfen dieselbe Antwort — <em>„es funktioniert"</em>. Litman <span class="tag a">A</span>
+    zeigt, dass die Softmax-Attention nicht geraten, sondern die <strong>einzelne eindeutige Lösung</strong> eines
+    wohldefinierten Problems ist: eines <em>einseitigen entropischen Optimal-Transport-Problems</em>, bei dem eine
+    Einheit Aufmerksamkeitsmasse über&nbsp;m Keys verteilt wird, Kosten minimiert und zugleich die Entropie maximiert —
+    und dass ihr Backprop-Gradient <strong>heimlich ein Policy-Gradient aus dem Reinforcement Learning</strong> ist.
+    Merullo, Eickhoff &amp; Pavlick <span class="tag b">B</span> greifen eine Ebene darüber an: Sie zeigen, dass
+    Schichten in echten Sprachmodellen über <strong>winzige 1–3-dimensionale Unterräume</strong> im Residual-Stream
+    kommunizieren — „Kanäle", die man allein in den <em>Gewichten</em>, ohne das Modell laufen zu lassen, finden und
+    <em>kausal</em> verifizieren kann.</p>
+    <p>Die fusionierte Position: Ein Transformer ist ein Stapel von <strong>optimalen Lese-Einheiten</strong> (jede
+    Attention-Zeile ist ein entropisches-OT-Problem mit geschlossener Softmax-Lösung), deren
+    <strong>niedrig-rangige Schreib-Ausgaben</strong> über den Residual-Stream zu schmalen, inter-schichtigen Kanälen
+    verdrahtet sind. A liefert das <em>Warum</em> des lokalen Operators (warum ausgerechnet diese Formel, warum sie so
+    robust trainierbar ist); B liefert das <em>Wo und Was</em> der globalen Verdrahtung (wo die Information tatsächlich
+    sitzt und wie man sie anfasst).</p>
+    <p>Die zwei Hälften schließen sich zu einer mechanistischen Lesart zusammen: Die
+    <strong>Fisher-Geometrie</strong> (A) regiert das <em>Lesen</em> — sie erklärt, warum der Backprop-Gradient
+    automatisch ein advantage-basierter Policy-Gradient mit Baseline ist. Die <strong>SVD-/Rang-Struktur</strong> (B)
+    regiert das <em>Schreiben</em> — sie erklärt, wo Information fließt und warum scheinbar „willkürliche" Fehler
+    (z.&nbsp;B. die Laundry-List) ein messbares Kapazitätslimit eines sichtbaren 3D-Indexraums sind.
+    <em>Dichte entropische Lese × niedrig-rangige Schreib-Kompression</em> = ein Transformer, den man von beiden Seiten
+    her versteht.</p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Die Papiere arbeiten auf unterschiedlichen Objekten, nehmen aber an drei Stellen
+    <strong>inkompatible Stellungen</strong> ein:</p>
+
+    <div class="citem">
+      <h3>① „Lokal &amp; entkoppelt" (A) gegen „global gekoppelt" (B)</h3>
+      <p><span class="tag a">A</span> Attention ist eine <strong>einseitige, pro-Zeile geschlossene</strong> Aufgabe:
+      Das Zielmaß wird frei gelassen („keine Spaltenbedingung, kein Sinkhorn"), und die volle n×m-Matrix ist „die
+      Lösung eines einzigen globalen EOT-Problems, das <em>zufällig zeilenweise zerfällt</em>". Die Zeilen sind
+      unabhängig; die geschlossene, nicht-iterative Form ist die Pointe.</p>
+      <p><span class="tag b">B</span> Das eigentliche Objekt ist genau die <strong>Kopplung zwischen Köpfen</strong>
+      über den Residual-Stream („Kommunikationskanäle … mehrere Schichten auseinanderliegen"). Ein einzelner Kopf
+      isoliert ist nicht die Frage; man muss Köpfe korrelieren und ihre <em>Composition</em> finden.</p>
+      <p><em>→ Unvereinbar, wenn man „Attention" auf eine Ebene festlegt: A will die Kopplung wegrechnen
+      (eine Zeile, geschlossen), B lebt davon, die Kopplung zu messen.</em></p>
+    </div>
+
+    <div class="citem">
+      <h3>② „Dichte entropische Verteilung" (A) gegen „niedrig-rangige Kanäle" (B)</h3>
+      <p><span class="tag a">A</span> Das natürliche Vorwärts-Objekt ist eine <strong>dichte, glatte</strong>
+      Verteilung — Softmax gibt jedem Key ein Gewicht, das <em>von null verschieden</em> ist („dichte, glatte
+      Verteilung aus Entropie-Maximierung"). Sparsity (Sparsemax) ist ein <em>bewusster</em> Tausch des
+      Regularisierers, nicht der Normalfall.</p>
+      <p><span class="tag b">B</span> Was Information trägt, ist <strong>extrem niedrig-rangig</strong> (Rang&nbsp;1,
+      1–3 Dimensionen); der Großteil der 64-dimensionalen Kopf-Matrix ist Rauschen, und „Lautstärke&nbsp;≠&nbsp;Bedeutung"
+      (der größte Singulärwert ist nicht der wichtige).</p>
+      <p><em>→ Spannung: A's Normalfall ist dicht/entropisch, B's Struktur ist dünn/niedrig-rangig.</em></p>
+    </div>
+
+    <div class="citem">
+      <h3>③ „Eingebaut in der Form" (A) gegen „vom Training gelernt" (B)</h3>
+      <p><span class="tag a">A</span> Die elegante Struktur — Baseline, mannigfaltigkeitsbewusste Dämpfung — ist
+      <strong>nicht</strong> Ingenieursarbeit; sie „kommt … <em>geschenkt</em>" als <strong>notwendige geometrische
+      Konsequenz</strong> der Attention-Form selbst.</p>
+      <p><span class="tag b">B</span> Die Kanäle sind <strong>empirisch gefunden</strong> und „wird <em>gelernt, nicht
+      eingebaut</em>" — erst das Training verdrahtet, welche Unterräume was tragen.</p>
+      <p><em>→ Spannung: Ist das Interessante eine a-priori-Folge der Operation (A) oder ein emergentes, gelerntes
+      Ergebnis (B)?</em></p>
+    </div>
+  </section>
+
+  <!-- ============ 3. AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="card">
+      <h3 style="margin-top:0">① Verschiedene Skalen, keine Konkurrenten</h3>
+      <p>A beschreibt die <strong>intra-head, einzelne-Zeile</strong>-Primitive (das QK-<em>Lesen</em>). B beschreibt
+      die <strong>inter-head, inter-schichtige</strong> Composition (das OV-<em>Schreiben</em> und wie spätere Köpfe es
+      lesen). Dass A's Matrix „zeilenweise zerfällt", ist eine Eigenschaft des QK-Produkts; die Kopplung, die B findet,
+      sitzt im OV-Ausgang und im Lesen späterer Köpfe. <strong>Fusioniert:</strong> Jeder Kopf führt ein
+      einseitiges-OT-Softmax-Lesen (A) aus und schreibt ein niedrig-rangiges Ergebnis (B) in den geteilten
+      Residual-Stream; die Köpfe komponieren sich über genau diese Schreib-Lese-Paare. Beide Aussagen gelten auf ihrer
+      eigenen Skala.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">② Lesen vs. Schreiben — zwei verschiedene Matrizen</h3>
+      <p>A's <strong>Dichte</strong> lebt in den <em>Attention-Gewichten</em> (QK&nbsp;→&nbsp;softmax): einer Zeile
+      Wahrscheinlichkeiten über Keys. B's <strong>Niedrig-Rang</strong> lebt in der <em>Value-Transformation</em> (OV):
+      dem Vektor, der geschrieben wird. <strong>Kein Widerspruch:</strong> Die Lese-Verteilung kann dicht/entropisch
+      sein, während der Schreib-Kanal niedrig-rangig ist. <strong>Fusioniert:</strong> Das dichte entropische Lesen
+      wählt einen Kontextvektor aus; das niedrig-rangige Schreiben komprimiert ihn in einen schmalen Kanal. A
+      (Fisher/Entropie) regiert das Lesen, B (SVD/Rang) regiert das Schreiben.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">③ Eingebaute Mechanik, gelerntes Verdrahten</h3>
+      <p>A's These gilt für die <strong>Form</strong> der Operation: Der Gradient einer Softmax-Attention ist
+      <em>notwendig</em> ein advantage-basierter, Fisher-vorkonditionierter Policy-Gradient — für jeden Kopf, der
+      Softmax nutzt, trainiert oder nicht. B's These gilt für <strong>Gewichte/Inhalt</strong>: Welche konkreten 1–3D-
+      Unterräume verdrahtet sind und was sie tragen, wird im Training gelernt. <strong>Beide kompatibel:</strong> Die
+      Architektur liefert den <em>Mechanismus</em> (niedrig-rangiges OV + entropisches Softmax-Lesen — in A hergeleitet),
+      das Training wählt die <em>Verdrahtung</em> (in B gefunden).</p>
+      <p style="margin-bottom:0"><em>Zusammenfassung: A und B widersprechen sich nicht — sie beschreiben dieselbe
+      Maschine auf zwei Ebenen und mit zwei Werkzeugen (Variationsrechnung/Informationengeometrie vs. lineare
+      Algebra/Intervention). Die Brücke ist, dass Lesen und Schreiben zwei Hälften eines einzigen Kopfes sind.</em></p>
+    </div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3><span class="tag a">A</span> 4.1 Die Lese-Hälfte — Attention als einseitiges entropisches OT</h3>
+    <p>Jede Attention-Ausgabe ist ein Punkt im Wahrscheinlichkeitssimplex
+    <code>Δ<sup>m−1</sup> = {p : p<sub>j</sub>≥0, Σp<sub>j</sub>=1}</code>. Der einseitige Trick: eine einzige Quelle
+    (der Query <code>q</code> mit einer Einheit Masse, <code>a = δ_q</code>), das <strong>Zielmaß bleibt frei</strong>.
+    Dann kollabiert die Transportmatrix zu einem Zeilenvektor und das Problem zu:</p>
+    <div class="eq">J(p) = −⟨p, s⟩ + ε·Σ<sub>j</sub> p<sub>j</sub> log p<sub>j</sub> ,&nbsp;
+      p<sup>★</sup> = argmin<sub>p∈Δ</sub> J(p) <span class="a">→</span>
+      p<sub>j</sub><sup>★</sup> = exp(s<sub>j</sub>/τ) / Σ<sub>l</sub> exp(s<sub>l</sub>/τ) <span class="b">(Theorem 3.3)</span></div>
+    <p>Existenz (Δ konvex &amp; kompakt, J stetig), Eindeutigkeit (x·log&nbsp;x strikt konvex, f''=1/x&gt;0) und die
+    Lagrange/KKT-Stationarität <code>p<sub>j</sub> ∝ exp(⟨q, k_j⟩/τ)</code> liefern: <em>Softmax ist nicht gewählt,
+    sie ist hergeleitet.</em> Der Skaliierungsfaktor ist <code>τ = √d<sub>k</sub></code> — er normiert die Score-Varianz
+    zurück auf 1, sonst sättigt Softmax zu One-Hot und die Gradienten sterben. Tauscht man den Regularisierer
+    <code>Ω(p)</code>, bekommt man die ganze bekannte Familie: <code>−τH(p)</code>→Softmax,
+    <code>½‖p‖²</code>→Sparsemax (exakte Nullen), Tsallis→α-entmax, <code>−τH(p)+γΣp<sub>j</sub>|i−j|</code>→ALiBi.
+    Dual ist das Potential <code>φ<sup>★</sup>(s) = τ·log Σ exp(s<sub>l</sub>/τ)</code> (Log-Sum-Exp) mit
+    <code>∇φ<sup>★</sup> = p<sup>★</sup></code> und <code>∇²φ<sup>★</sup> = τF</code>.</p>
+
+    <h3><span class="tag a">A</span> 4.2 Die Lern-Hälfte — Backprop als Policy-Gradient auf einer Fisher-Mannigfaltigkeit</h3>
+    <p>Setzt man den Kontextvektor <code>c = Σ p<sub>j</sub>v<sub>j</sub></code> und den Grenznutzen
+    <code>u<sub>j</sub> = −∂ℒ/∂p<sub>j</sub></code> ein, kollabiert die Kettenregel über die Softmax-Jacobi-Matrix
+    <code>∂p<sub>k</sub>/∂s<sub>j</sub> = (1/τ)p<sub>k</sub>(δ<sub>kj</sub> − p<sub>j</sub>)</code> (jede Spalte
+    summiert zu 0) zu:</p>
+    <div class="eq">∂ℒ/∂s<sub>j</sub> = −(p<sub>j</sub><sup>★</sup>/τ)·(u<sub>j</sub> − 𝔼<sub>p</sub><sup>★</sup>[u])
+      <span class="a">= REINFORCE mit Erwartungswert-Baseline</span> <span class="b">(Theorem 5.2)</span></div>
+    <p>Die Baseline entsteht <em>geschenkt</em> aus der Simplex-Invariante Σp=1. Die Fisher-Matrix
+    <code>F = (1/τ²)(diag(p) − pp<sup>⊤</sup>)</code> verbindet alles: <code>∇ℒ = −τFu</code> (der gewöhnliche Gradient
+    ist der Nutzen, <em>vorkonditioniert mit der Krümmung</em>) und der natürliche Gradient ist einfach
+    <code>τ·u</code>. Corollary 7.5 schließt den Ring: <code>∇²φ<sup>★</sup> = τF</code> — <strong>dieselbe Matrix</strong>
+    aus drei Sichtweisen (OT-Krümmung, Fisher-Rao-Metrik, RL-Transducer). Ein sicheres Netz (niedrige Entropie) wird
+    von F gedämpft: <em>manifold-awarees, rationales Lernen, ohne dass es jemand eingebaut hätte.</em></p>
+
+    <h3><span class="tag b">B</span> 4.3 Die Schreib-Hälfte — Köpfe als Rang-1-Summen &amp; Composition</h3>
+    <p>In GPT-2 ist der Residual-Stream 768-dimensional, ein Kopf arbeitet mit 64 — also hat <code>OV = O·V</code>
+    höchstens Rang 64. Die SVD zerlegt jede Kopf-Matrix in Einzelsignale:</p>
+    <div class="eq">OV = U·S·V<sup>⊤</sup> = Σ<sub>i</sub> s<sub>i</sub>·(U<sub>i</sub> ⊗ V<sub>i</sub>)
+      <span class="a">— jeder Summand ist ein Rang-1-Baustein = ein möglicher Kanal</span></div>
+    <p>Das Paper misst, ob zwei Köpfe „mitsprechen", mit dem
+    <code>Composition Score</code> <code>CS(W₁,W₂) = ‖W₁W₂‖<sub>F</sub> / (‖W₁‖<sub>F</sub>·‖W₂‖<sub>F</sub>)</code>.
+    Auf <em>ganzen</em> Matrizen ist er Rauschen; auf den <em>zerlegten</em> Rang-1-Komponenten tauchen
+    <strong>5σ-Ausreißer</strong> auf — der Kanal. Im IOI-Schaltkreis: Duplicate-Kopf <code>3.0</code> →
+    Inhibition-Köpfe <code>7.9 / 8.6 / 8.10</code> → Mover-Kopf <code>9.9</code> (Query-Composition). Die Kanäle
+    tragen <strong>Position, nicht Inhalt</strong> — ein Zeiger (Variablen-Bindung). Kausal verifiziert: Löscht man
+    genau die richtige Komponente, fällt der Inhibition-Score um 7–14&nbsp;%.</p>
+
+    <h3><span class="tag b">B</span> 4.4 Der Fehler &amp; die Reparatur</h3>
+    <p>Drei Inhibition-Komponenten (<code>7.9.6, 8.6.2, 8.6.10</code>) spannen einen <strong>3D-Indexraum</strong> auf,
+    der in <em>Keile</em> zerfällt — einen pro Listenindex. Kommen Objekte dazu, werden die Keile dünner; ab ~9–10
+    fragmentieren die mittleren — das <em>ist</em> der Laundry-List-Fehler („Lost in the Middle"). Zielt man die drei
+    Komponenten manuell auf den richtigen Index, steigt die Genauigkeit um <strong>+22&nbsp;%</strong> — die effektive
+    Listenkapazität wird verdoppelt, <em>ohne Training, ohne neue Parameter</em>.</p>
+
+    <h3><span class="tag x">Fusion</span> 4.5 Die Brücke — warum das zusammengehört</h3>
+    <p>A zeigt, dass das <strong>lokale</strong> Objekt wohlgeposes und stabil ist (geschlossene Lösung,
+    Fisher-vorkonditioniertes Lernen) — man kann die Attention-Zeile als <em>vertrauenswürdige Primitive</em> nutzen.
+    B zeigt, <strong>wo</strong> Information lebt und wie man sie anfasst (SVD-Kanäle, kausal, steuerbar). Zusammen:
+    <em>das dichte, entropische, Fisher-regierte Lesen</em> (A) und <em>das niedrig-rangige, SVD-strukturierte
+    Schreiben</em> (B) sind zwei Hälften desselben Mechanismus. Damit beantwortet die Fusion sowohl <strong>„warum die
+    Formel so aussieht"</strong> (A) als auch <strong>„warum ein bestimmter Fehler existiert"</strong> (B).</p>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Visualisierung — eine fusionierte Einheit</h2>
+    <p style="max-width:74ch">Eine einzige Lese-/Schreib-Unit: Links das <strong>entropische Lesen</strong> (A) — ein
+    Query verteilt Masse über m Keys via Softmax; Temperatur&nbsp;τ steuert die Breite. Rechts das
+    <strong>niedrig-rangige Schreiben</strong> (B) — die gewichteten Value-Vektoren ergeben den Kontextvektor
+    <code>c = Σ p<sub>j</sub>v<sub>j</sub></code>, der auf einen <em>Rang-1-Kanal</em> <code>v̂</code> projiziert wird.
+    Nur die eine Zahl <code>α = ⟨c, v̂⟩</code> „passt den Kanal" — das sind die Massepartikel, die in den schmalen
+    Kanal fließen. Ziehe τ und den Kanal-Winkel und beobachte den <em>Captured</em>-Anteil.</p>
+
+    <div class="canvas-wrap"><canvas id="fzCanvas"></canvas></div>
+
+    <div class="controls">
+      <div class="ctrl"><label>Temperatur τ (A: Lese-Breite) <span class="val" id="vzTau">1.00</span></label>
+        <input type="range" id="fzTau" min="0.2" max="3" step="0.05" value="1"></div>
+      <div class="ctrl"><label>Kanal-Winkel v̂ (B: Schreib-Richtung) <span class="val" id="vzCh">40°</span></label>
+        <input type="range" id="fzCh" min="-90" max="270" step="1" value="40"></div>
+      <div class="ctrl"><label>Query-Richtung θ<sub>q</sub> <span class="val" id="vzQ">45°</span></label>
+        <input type="range" id="fzQ" min="0" max="359" step="1" value="45"></div>
+      <div class="ctrl"><label>Anzahl Keys m <span class="val" id="vzM">6</span></label>
+        <input type="range" id="fzM" min="3" max="8" step="1" value="6"></div>
+    </div>
+    <div class="btnrow">
+      <button id="fzRe">🎲 Neuer Query</button>
+      <button id="fzTheme">☀ hell</button>
+    </div>
+
+    <div class="readouts">
+      <div class="ro"><div class="k">Entropie H(p) — A</div><div class="v" id="fzH">—</div></div>
+      <div class="ro"><div class="k">max pⱼ (Konzentration)</div><div class="v" id="fzMax">—</div></div>
+      <div class="ro"><div class="k">‖c‖ (Kontextstärke)</div><div class="v" id="fzC">—</div></div>
+      <div class="ro"><div class="k">α = ⟨c,v̂⟩ — B</div><div class="v" id="fzA">—</div></div>
+      <div class="ro hl"><div class="k">Captured α²/‖c‖² (Fusion)</div><div class="v" id="fzCap">—</div></div>
+    </div>
+    <p class="caption"><strong>Captured</strong> ist die fusionierte Kennzahl: Wie viel vom <em>dichten</em>
+    entropischen Lesen (A) überlebt in dem <em>schmalen</em> Rang-1-Kanal (B)? Richte den Kanal parallel zu c →
+    ~100&nbsp;%; senkrecht → ~0&nbsp;%. So wird aus zwei scheinbar widersprüchlichen Aussagen ein einziger messbarer
+    Kompromiss zwischen „dicht lesen" und „dünn schreiben".</p>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div class="card">
+        <a href="../attn_as_optimal_transport.html">attn_as_optimal_transport.html</a>
+        <p><strong>„Attention ist Optimaler Transport"</strong> (Elon Litman, Stanford · arXiv:2508.08369v2):
+        Softmax als eindeutige Lösung eines einseitigen entropischen OT-Problems; Backprop als advantage-Policy-Gradient;
+        Fisher-Information verbindet Vorwärts-, Rückwärts- und Potential-Geometrie in einer Matrix.</p>
+      </div>
+      <div class="card">
+        <a href="../talking_heads.html">talking_heads.html</a>
+        <p><strong>„Talking Heads: Understanding Inter-layer Communication in Transformer Language Models"</strong>
+        (Merullo, Eickhoff &amp; Pavlick · NeurIPS 2024 · arXiv:2406.09519): Inter-schichtige Kommunikation über 1–3D-
+        Unterräume, gefunden via SVD-Zerlegung des Composition Score; IOI-Schaltkreis, 3D-Indexraum mit Keilen, +22&nbsp;%
+        durch gezieltes Steuern.</p>
+      </div>
+    </div>
+  </section>
+
+</article>
+
+<footer>Round 1 · Fusion #074 · Selbstbezügliches HTML, keine externen Datenabrufe. Farben über CSS-Variablen (hell/dunkel, dunkel = Standard).</footer>
+
+<script>
+(function(){
+  "use strict";
+  var cv = document.getElementById('fzCanvas');
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+  var COL = {};
+
+  function readColors(){
+    var s = getComputedStyle(document.documentElement);
+    function g(n){ return s.getPropertyValue(n).trim(); }
+    COL = {
+      bg:   g('--panel-solid') || '#0e1524',
+      txt:  g('--txt')  || '#e8edf7',
+      dim:  g('--txt-2')|| '#a7b3cc',
+      acc:  g('--acc')  || '#5eead4',
+      acc2: g('--acc2') || '#a78bfa',
+      acc3: g('--acc3') || '#fbbf24',
+      acc4: g('--acc4') || '#fb7185',
+      stroke: g('--stroke') || 'rgba(255,255,255,.12)'
+    };
+  }
+
+  var state = { m:6, tau:1.0, chAng:40, qAng:45 };
+  var W=0, H=0, dpr=1;
+  function setup(){
+    dpr = Math.min(window.devicePixelRatio||1, 2);
+    var r = cv.getBoundingClientRect();
+    W = Math.max(320, r.width || 700);
+    H = 440;
+    cv.width = Math.round(W*dpr);
+    cv.height = Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function softmax(s, tau){
+    var mx=-Infinity, i; for(i=0;i<s.length;i++) if(s[i]>mx) mx=s[i];
+    var e=[]; for(i=0;i<s.length;i++) e.push(Math.exp((s[i]-mx)/tau));
+    var Z=0; for(i=0;i<e.length;i++) Z+=e[i];
+    var o=[]; for(i=0;i<e.length;i++) o.push(e[i]/Z);
+    return o;
+  }
+  function entropy(p){ var a=0,i; for(i=0;i<p.length;i++) if(p[i]>1e-12) a-=p[i]*Math.log(p[i]); return a; }
+
+  function geom(){
+    var m=state.m, keys=[], vals=[], j, th, vlen;
+    for(j=0;j<m;j++){
+      th = j*2*Math.PI/m - Math.PI/2;
+      keys.push([Math.cos(th), Math.sin(th)]);
+      vlen = 1.0 + 0.25*Math.cos(th*2 + 0.5);
+      vals.push([Math.cos(th)*vlen, Math.sin(th)*vlen]);
+    }
+    return {keys:keys, vals:vals};
+  }
+  function compute(){
+    var m=state.m, gm=geom(), keys=gm.keys, vals=gm.vals;
+    var lenQ=1.35, qa=state.qAng*Math.PI/180;
+    var q=[Math.cos(qa)*lenQ, Math.sin(qa)*lenQ];
+    var s=[], j;
+    for(j=0;j<m;j++) s.push(q[0]*keys[j][0] + q[1]*keys[j][1]);
+    var p=softmax(s, state.tau);
+    var c=[0,0];
+    for(j=0;j<m;j++){ c[0]+=p[j]*vals[j][0]; c[1]+=p[j]*vals[j][1]; }
+    var ph=state.chAng*Math.PI/180, vhat=[Math.cos(ph), Math.sin(ph)];
+    var alpha = c[0]*vhat[0] + c[1]*vhat[1];
+    var nc = Math.sqrt(c[0]*c[0] + c[1]*c[1]);
+    var captured = nc>1e-6 ? (alpha*alpha)/(nc*nc) : 0;
+    var maxp=0; for(j=0;j<m;j++) if(p[j]>maxp) maxp=p[j];
+    return {keys:keys, vals:vals, q:q, p:p, c:c, vhat:vhat, alpha:alpha, nc:nc, captured:captured, Hp:entropy(p), maxp:maxp};
+  }
+
+  var parts=[];
+  function seedParts(){ parts=[]; var i; for(i=0;i<34;i++) parts.push({t:Math.random(), j:0, sp:Math.random()}); }
+  function respawn(pt, p){
+    pt.t=0; pt.sp=Math.random();
+    var r=Math.random(), acc=0, k=0;
+    for(k=0;k<p.length;k++){ acc+=p[k]; if(r<=acc){ pt.j=k; break; } }
+    if(pt.j>=p.length) pt.j=0;
+  }
+
+  function roundRect(x,y,w,h,r){
+    r=Math.min(r, Math.abs(w)/2, Math.abs(h)/2); if(h<0.6) h=0.6;
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+  function arrow(x1,y1,x2,y2,col,lw,head){
+    ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    var a=Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath(); ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-head*Math.cos(a-0.4), y2-head*Math.sin(a-0.4));
+    ctx.lineTo(x2-head*Math.cos(a+0.4), y2-head*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(){
+    if(!W) setup();
+    var R=compute(), m=R.p.length;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=COL.bg; ctx.fillRect(0,0,W,H);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+
+    var barX=18, barW=W*0.30, barTop=72, barBot=H-58;
+    var plotCX=W*0.69, plotCY=H*0.52, plotR=Math.min(W*0.25, H*0.34);
+    var sc=plotR/1.6;
+
+    // --- LEFT: softmax bars (A) ---
+    ctx.fillStyle=COL.dim; ctx.font='700 12px system-ui,sans-serif';
+    ctx.fillText('①  ENTROPISCHES LESEN  (A)', barX, 40);
+    ctx.fillStyle=COL.dim; ctx.font='500 10.5px system-ui,sans-serif';
+    ctx.fillText('softmax(s/τ) — dichte Verteilung, jeder Key > 0', barX, 56);
+    var bw=barW/m, j;
+    for(j=0;j<m;j++){
+      var h=R.p[j]*(barBot-barTop);
+      var x=barX + j*bw + bw*0.16, w=bw*0.68;
+      ctx.globalAlpha=0.30+0.7*R.p[j]; ctx.fillStyle=COL.acc;
+      roundRect(x, barBot-h, w, h, 4); ctx.fill(); ctx.globalAlpha=1;
+      ctx.fillStyle=COL.dim; ctx.font='600 10px system-ui,sans-serif'; ctx.textAlign='center';
+      ctx.fillText(String(j+1), x+w/2, barBot+16); ctx.textAlign='left';
+    }
+    ctx.strokeStyle=COL.stroke; ctx.beginPath(); ctx.moveTo(barX,barBot); ctx.lineTo(barX+barW,barBot); ctx.stroke();
+
+    // --- RIGHT: value space + channel (B) ---
+    ctx.fillStyle=COL.dim; ctx.font='700 12px system-ui,sans-serif';
+    ctx.fillText('②  NIEDRIG-RANGIGES SCHREIBEN  (B)', W*0.43, 40);
+
+    // channel line
+    var cl=plotR*1.2;
+    ctx.globalAlpha=0.9; ctx.lineWidth=2.5; ctx.lineCap='round';
+    ctx.strokeStyle=COL.acc2;
+    ctx.beginPath();
+    ctx.moveTo(plotCX - R.vhat[0]*cl, plotCY - R.vhat[1]*cl);
+    ctx.lineTo(plotCX + R.vhat[0]*cl, plotCY + R.vhat[1]*cl);
+    ctx.stroke(); ctx.globalAlpha=1; ctx.lineWidth=1;
+    ctx.fillStyle=COL.acc2; ctx.font='600 11px system-ui,sans-serif';
+    ctx.fillText('Kanal v̂  (Rang 1)', plotCX + R.vhat[0]*cl - 4, plotCY + R.vhat[1]*cl - 10);
+
+    // origin
+    ctx.fillStyle=COL.dim; ctx.beginPath(); ctx.arc(plotCX,plotCY,2.4,0,7); ctx.fill();
+
+    // value vectors
+    for(j=0;j<m;j++){
+      var v=R.vals[j];
+      var vx=plotCX + v[0]*sc, vy=plotCY - v[1]*sc;
+      ctx.globalAlpha=0.22+0.62*R.p[j]; ctx.lineWidth=2; ctx.strokeStyle=COL.acc;
+      ctx.beginPath(); ctx.moveTo(plotCX,plotCY); ctx.lineTo(vx,vy); ctx.stroke();
+      ctx.globalAlpha=1; ctx.lineWidth=1;
+      ctx.fillStyle=COL.acc; ctx.beginPath(); ctx.arc(vx,vy,3+3.2*R.p[j],0,7); ctx.fill();
+    }
+
+    // context vector c (amber)
+    var cxp=plotCX + R.c[0]*sc, cyp=plotCY - R.c[1]*sc;
+    if(R.nc>0.01) arrow(plotCX,plotCY,cxp,cyp,COL.acc3,4,12);
+    ctx.fillStyle=COL.acc3; ctx.font='600 11px system-ui,sans-serif';
+    ctx.fillText('c = Σ pⱼ·vⱼ', cxp+9, cyp-7);
+
+    // projection point on channel at distance alpha
+    var px=plotCX + R.vhat[0]*R.alpha*sc, py=plotCY - R.vhat[1]*R.alpha*sc;
+    ctx.setLineDash([4,4]); ctx.strokeStyle=COL.txt; ctx.globalAlpha=0.5; ctx.lineWidth=1.3;
+    ctx.beginPath(); ctx.moveTo(cxp,cyp); ctx.lineTo(px,py); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha=1;
+    ctx.fillStyle=COL.acc4; ctx.beginPath(); ctx.arc(px,py,6,0,7); ctx.fill();
+    ctx.strokeStyle=COL.txt; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(px,py,6,0,7); ctx.stroke(); ctx.lineWidth=1;
+    ctx.fillStyle=COL.acc4; ctx.font='600 11px system-ui,sans-serif';
+    ctx.fillText('α = ⟨c,v̂⟩  →  was den Kanal passiert', px+11, py+15);
+
+    // particles: mass flowing from keys into the channel
+    for(j=0;j<parts.length;j++){
+      var pt=parts[j];
+      pt.t += 0.012 + 0.02*pt.sp;
+      if(pt.t>=1 || pt.j>=m) respawn(pt, R.p);
+      var vv=R.vals[pt.j];
+      var sx=plotCX + vv[0]*sc, sy=plotCY - vv[1]*sc;
+      var xx=sx + (px-sx)*pt.t, yy=sy + (py-sy)*pt.t;
+      ctx.fillStyle=COL.acc; ctx.globalAlpha=0.15+0.55*pt.t;
+      ctx.beginPath(); ctx.arc(xx,yy,2.4,0,7); ctx.fill(); ctx.globalAlpha=1;
+    }
+
+    // bottom legend strip
+    ctx.fillStyle=COL.dim; ctx.font='500 11px system-ui,sans-serif';
+    ctx.fillText('Lese (A)  ──dicht/entropisch──▶   Schreib (B)  ──Rang-1-Kanal──▶  α', barX, H-14);
+  }
+
+  function setT(id,v){ var el=document.getElementById(id); if(el) el.textContent=v; }
+  function updateReadout(){
+    var R=compute();
+    setT('fzH', R.Hp.toFixed(3));
+    setT('fzMax', (R.maxp*100).toFixed(1)+'%');
+    setT('fzC', R.nc.toFixed(2));
+    setT('fzA', R.alpha.toFixed(2));
+    setT('fzCap', (R.captured*100).toFixed(1)+'%');
+  }
+  function sync(){
+    function v(id,val){ var el=document.getElementById(id); if(el) el.value=val; }
+    function l(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+    v('fzTau', state.tau); v('fzCh', state.chAng); v('fzQ', Math.round(state.qAng)); v('fzM', state.m);
+    l('vzTau', state.tau.toFixed(2)); l('vzCh', Math.round(state.chAng)+'°');
+    l('vzQ', Math.round(state.qAng)+'°'); l('vzM', state.m);
+  }
+  function wire(){
+    function bind(id,fn){ var el=document.getElementById(id); if(el) el.addEventListener('input', function(){ fn(parseFloat(el.value)); updateReadout(); }); }
+    bind('fzTau', function(val){ state.tau=Math.max(0.05,val); l2('vzTau', state.tau.toFixed(2)); });
+    bind('fzCh',  function(val){ state.chAng=val; l2('vzCh', Math.round(val)+'°'); });
+    bind('fzQ',   function(val){ state.qAng=val; l2('vzQ', Math.round(val)+'°'); });
+    bind('fzM',   function(val){ state.m=Math.round(val); l2('vzM', state.m); seedParts(); });
+    function l2(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+    var rt=document.getElementById('fzRe');
+    if(rt) rt.addEventListener('click', function(){ state.qAng=Math.random()*360; sync(); updateReadout(); });
+    window.addEventListener('resize', function(){ setup(); });
+  }
+  function themeToggle(){
+    var h=document.documentElement;
+    var dark=h.classList.toggle('dark');
+    readColors(); draw();
+    var b=document.getElementById('fzTheme'); if(b) b.textContent = dark ? '☀ hell' : '🌙 dunkel';
+  }
+  function loop(){
+    try{
+      var r=cv.getBoundingClientRect();
+      if(r.top < window.innerHeight && r.bottom > 0) draw();
+    }catch(e){}
+    requestAnimationFrame(loop);
+  }
+  function init(){
+    readColors(); setup(); seedParts(); sync(); wire(); updateReadout(); draw();
+    var tb=document.getElementById('fzTheme'); if(tb) tb.addEventListener('click', themeToggle);
+    requestAnimationFrame(loop);
+  }
+  if(document.readyState==='loading') window.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "055",
+  "a": "test.html",
+  "b": "mccarthy_heyes_1969.html",
+  "a_title": "How LLMs Store Information — Deep Interactive Demonstrator",
+  "b_title": "McCarthy & Hayes (1969) – Some Philosophical Problems from the Standpoint of Artificial Intelligence",
+  "combined_theme": "wissensrepraesentation-symbolisch-geometrisch",
+  "one_line": "Beide beantworten dieselbe Frage — wie ein System Wissen über die Welt repräsentiert, um daraus zu schlussfolgern und zu handeln — von zwei Enden: B explizit-symbolisch-logisch (Fluenten, Deduktion, Beweis), A implizit-geometrisch (Richtungen im Residual-Stream, Projektionen); die Residual-Verbindung des LLMs ist die geometrische Lösung des Frame-Problems.",
+  "contradictions": [
+    "Explizizität: B verlangt explizite, deduktive Wissensrepräsentation (logische Sätze/Fluenten) als Voraussetzung für echte KI; A speichert Wissen implizit, verteilt und superponiert (m≫d), und polysemantische Neuronen können nicht einmal benennen, welches Feature sie feuern ließ.",
+    "Garantien: B's Reasoning Program beweist lokal, dass eine Strategie das Ziel erreicht (deterministische Deduktion: 'die gesamte Zukunft ist bestimmt'); A erhält Wissen nur durch statistischen Fit (Gradientenabstieg/MSE) ohne Garantien — B selbst benennt dafür bei LLMs 'Halluzinationen, fehlende Garantien'.",
+    "Transparenz: B vergibt dem formalen Ansatz hohe Transparenz (Axiome lesbar) und dem statistischen (LLMs) niedrige; A ist bewusst nicht-interpretierbar konstruiert (Superposition + Polysemie)."
+  ],
+  "resolution": "Die Punkte sind keine falschen Varianten, sondern die beiden Enden einer Design-Achse (Explizizität/Kapazität): B's harter 0/1-Fluent und A's weiche superponierte Richtung sind dasselbe 'Feature, das in einer Situation an/aus ist'. Beweis (lokal, exakt) und Generalisierung (global, statistisch) sind komplementär; B's Determinismus gilt über die Welt, A's über die Inferenz. Zentrale Brücke: A's Residual-Verbindung x' = x + Δ ist die geometrische Lösung von B's Frame-Problem — der Identitätsterm x ist buchstäblich 'das, was sich nicht ändert', nur Δ (Attention/MLP) trägt die Änderung.",
+  "viz": "Interaktives 2-D-Residual-Stream-Diagramm (Canvas2D, ziehbare Situation + Key/Value): MLP-Key-Value als gelernter Lookup, mit Residual-Verbindung = Frame-Problem-Lösung; plus Johnson–Lindenstrauss-Superpositions-Plot (d, ε-Slider) als Lösung der kombinatorischen n×m-Explosion. Theme-reactive, inline data, Plotly+Canvas."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "054",
+  "a": "energy_based_learning.html",
+  "b": "categorial_homotopy_for_llm.html",
+  "a_title": "Energy-Based Learning (LeCun et al. 2006) — Interaktive Reise",
+  "b_title": "Kategorielle Homotopietheorie für LLMs (Mahadevan 2025)",
+  "combined_theme": "energy-landscape-homotopy-classes",
+  "one_line": "Die Energie-Landschaft des EBMs ist die Metrik der Homotopietheorie: niedrigenergetische Täler sind die Homotopie-Klassen (Paraphrasen-Äquivalenz), das Argmin in einem Tal der kanonische Vertreter, und Gibbs-β ist dieselbe Schwelle τ, die die Klassen spaltet oder verschmilzt.",
+  "contradictions": [
+    "Ziel: A (LeCun) wählt eine einzelne beste Antwort Y* = argmin E(Y,X); B (Mahadevan) bildet einen Quotienten HoL = L[Sigma^-1] und will bewusst keine einzelne Form, sondern die gesamte Homotopie-Klasse.",
+    "Wahrscheinlichkeit: A sagt 'Vergiss Wahrscheinlichkeiten' (Normalisierung ist der Feind, Gibbs nur optional am Ende); B macht Wahrscheinlichkeit fundamental (Kategorie über [0,1] angereichert, P(y|x) ist die Morphismus-Stärke, copy/delete/tensor sind Wahrscheinlichkeitsoperationen).",
+    "Kriterium für 'gleich': A ist metrisch/skalar (zwei Antworten gleich wenn ihre Energien niedrig/nah beieinander); B ist strukturell/topologisch (zwei Sätze gleich wenn ein Pfad semantisch erhaltender Umformungen, d.h. eine Homotopie/schwache Äquivalenz, sie verbindet)."
+  ],
+  "resolution": "Talgrund des EBMs (= implizite Regression mit mehreren guten Y) IST eine Homotopie-Klasse: man quotientiert zu einer Klasse UND wählt in ihr das Argmin. Wahrscheinlichkeit wird die Kantengewichtung des Paraphrase-Graphen (weder vergessen noch fundamental). A's Viterbi/min-sum liefert die günstigste Pfadenergie; ist sie < tau, sind die Formen homotop — also: Aequivalenz = Existenz eines niedrigenergetischen Pfades, mit beta und tau als demselben Regler (beta hoch/kalt -> tau klein -> strenge Klassen; beta niedrig/heiss -> tau gross -> Kollaps/alle verschmelzen).",
+  "viz": "Canvas: 12 Paraphrase-Formen auf einer Energie-Landschaft E(y,x); Kantenkosten = Energie-Barrier; Homotopie-Klassen = niedrigenergetische Komponenten; Stern = Argmin-Vertreter. Regler beta (= tau) spaltet/verschmilzt Klassen, 'Kontext wechseln' verschiebt die Täler, 'Pfade' zeigt die min-sum-Verbindung zum Vertreter; theme-aware (CSS-Variablen)."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "070",
+  "a": "llm_topology.html",
+  "b": "geometrie_neuronaler_populationen.html",
+  "a_title": "Topology for LLM Interpretability — Interactive Explorer",
+  "b_title": "Die Geometrie neuronaler Populationen — Wakhloo, Slatton & Chung (2024), arXiv:2402.16770",
+  "combined_theme": "repraesentations-geometrie",
+  "one_line": "Die Form der Aktivierungswolke ist die Information — B liest sie grob als drei Population-Invarianten (Korrelation c, Alignment a, Partizipationsverhältnis PR) mit geschlossener Fehlerformel und normativem Optimum (entwirrter Code), A liest dieselbe Wolke fein mit topologischen Instrumenten (persistente Homologie, Mapper/Reeb, Faserbündel, Sheaves, Superposition); gut ist eine Darstellung, die grob linear faktorisiert und fein topologisch strukturiert ist.",
+  "contradictions": [
+    "Geometrie-Ziel: A feiert nichttriviale Topologie als das Wesentliche (Möbius-/Tangentialbündel, nichtverschwindende Holonomie, Brauergruppen, Superpositions-Polytope); Bs normatives Optimum ist ein entwirrter/faktorierter Code — unabhängige, lineare Achsen, also die topologisch trivialste Form.",
+    "Dimension: A's Heldphänomen ist Superposition = mehr Features in WENIGER Dimensionen gepackt (niedriges d_int relativ zur Feature-Anzahl); Bs Mechanismus belohnt VIELE Dimensionen (hohes PR), weil Rauschen über viele Richtungen beim Mitteln aufhebt (Fehler ~ 1/(p·PR)).",
+    "Der Leser: B's Fehlerformel ist relativ zu einem einzigen linearen Probe (sign w·x) normiert und räumt ein, dass 'bei komplexeren Lesern andere Geometrien optimal sein können'; A's Instrumente (persistente Homologie, Sheaf-Kohomologie, zirkulare Koordinaten) sind genau diese reicheren, globalen/topologischen Leser, für die Bs 'linear ist optimal' falsch sein kann."
+  ],
+  "resolution": "Auflösung über Auflösung/Skala und Rollen­teilung: B's Faktorisation ist das Optimum auf der groben, linearen, 2.-Moment-Ebene (was ein linearer Reader sieht: Eigenbasis + PR); A's topologische Reichweite (Loops, Löcher, zirkulare Koordinaten, Holonomie, Sheaf-H¹) lebt auf der feinen, höherordnigen Ebene, die kein 2.-Moment-/lineares Invariant sehen kann — 'grob linear faktorisiert und fein topologisch strukturiert' koexistieren, weil sie unterschiedliche Auflösungen derselben Wolke sind. Die drei B-Zahlen sind die groben Invarianten, die A's feinere Zerlegung zusammenfassen; B = normativer Score des linearen Readers, A = Diagnose der topologischen Struktur.",
+  "viz": "Theme-aware Canvas (2D, keine CDN): ein elliptischer Ring (zirkuläres/periodisches latentes Feature) wird zweimal zugleich gelesen — grob via Kovarianz (Hauptachsen, Eigenwerte λ₁/λ₂, Partizipationsverhältnis PR; ε-unabhängig und blind fürs Loch) und fein via Vietoris–Rips persistente Homologie (β₀/β₁/χ über ε; langes β₁ = zirkulares Feature; Punkte nach zirkulärer Koordinate θ eingefärbt). ε wird auf das Mitte des Persistenz-Fensters zentriert, sodass der Loop (β₁=1, χ=0) default sichtbar ist. Regler ε, Rauschen, Elliptizität (→ PR); Toggles 'Loop unterbrechen' und 'Loch füllen' (beide ⇒ β₁=0: ein Loop braucht geschlossene Kurve UND Loch). Inline-Daten, keine Netzwerk-Fetches, light/dark über CSS-Variablen."
+}

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Attractor als sparsener Punkt in der Feature-Basis — Fusion r1-068</title>
+
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-core:#0d8f80; --viz-trans:#b57e00; --viz-point:#c93a86;
+  --viz-trail:#6451d8; --viz-target:#2f8f4b;
+  --viz-canvas-bg:#faf8f1; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333;
+  --viz-good:#2f8f4b; --viz-warn:#b57e00;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-core:#5ee0d0; --viz-trans:#ffc860; --viz-point:#ff7ac0;
+  --viz-trail:#8a7cff; --viz-target:#6ee88a;
+  --viz-canvas-bg:#0c1120; --viz-grid:rgba(255,255,255,0.08); --viz-txt:#e8ecf6;
+  --viz-good:#6ee88a; --viz-warn:#ffc860;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(820px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(820px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:72ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:11px 14px;font-size:14px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2.05}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-068</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: concept_attractors.html ✕ signal_analysis2.html</p>
+  <h1>Der Attractor als sparsener Punkt in der Feature-Basis</h1>
+  <p>concept_attractors.html (A) liest den LLM-Forward-Pass als <em>Dynamiksystem</em> — Layer sind (approximativ) kontraktive Abbildungen, und semantisch verwandte Prompts <strong>kollabieren zu einem konzeptspezifischen Attractor</strong>. signal_analysis2.html (B) liest denselben Residual-Stream als <em>hochdimensionales Signal</em> und zerlegt ihn in eine <strong>Feature-Basis</strong> (Fourier/STFT/Wavelet, PCA/SVD, ICA, spares Coding/SAE). <strong>A gibt die Längsstruktur (Wohin konvergiert die Trajektorie?), B die Querschnittsstruktur (Woraus besteht jeder Zustand?). Der Attractor ist der Punkt, an dem die Dynamik sich festsetzt — ausgedrückt in der Basis, die die Zerlegung liefert.</strong></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Zwei mathematische Blicke auf denselben Zustandsfluss</h2>
+    <p>Beide Seiten betrachten dasselbe Objekt — den internen Zustand <code>h<sub>l</sub></code> des Residual-Streams, wie er <em>schichtweise</em> durchs Modell wandert — aber mit unterschiedlicher Mathematik. <strong>A</strong> (Chytas &amp; Singh 2025) sagt: „the internal representations <em>converge to nearly the same point</em>", und dieser Kollaps ist „the behavior of a <strong>dynamical system</strong> with concept-specific <em>Attractors</em>". Layer werden als Iteration eines Iterated Function Systems gedeutet — der <strong>Hutchinson-Operator</strong> <code>F(S) = ⋃ᵢ fᵢ(S)</code> zieht jede Startmenge auf eine eindeutige invariante Menge zu; die Layer wirken als <em>kontraktive Abbildungen</em> mit einer effektiven affinen Karte <code>φ(V) = M·V + t, ‖M‖<sub>op</sub> &lt; 1</code>. <strong>B</strong> sagt: der Residual-Stream ist „als hochdimensionalen Signalbus" zu verstehen, <code>x<sup>(l)</sup> = x<sup>(l-1)</sup> + Attn + MLP</code>, und jedes <code>x<sup>(l)</sup></code> ist ein <em>Signal</em>, das man mit linearen Zerlegungswerkzeugen in Basis-Features auflöst.</p>
+    <p>Die <strong>einheitliche Position</strong> der Fusion: <em>Der Attractor (A) ist der Fixpunkt der Layer-Iteration, und die Features, die B findet (Haupt-Richtungen, spare Atome, Frequenzkomponenten), sind die Koordinaten, in denen man diesen Fixpunkt — und den Weg dorthin — abliest.</em> Man schreibe die Trajektorie <code>h₀, h₁, …, h<sub>L</sub></code> als „Zeitreihe" über der Tiefe (Tiefe = „Zeit") und zerlege jeden Zustand in eine Feature-Basis <code>{f<sub>j</sub>}</code> (B's SAE/ICA/PCA-Wörterbuch). Dann ist die fusionierte Arbeitsformel: <strong>Der Attractor ist ein <em>sparsener</em> Punkt in der Feature-Basis</strong> — die Kontraktion (A) drückt genau die <em>superponierten, transienten</em> Anteile (die B als unvermeidbare Interferenz kennzeichnet) asympotisch hinab, sodass am Ende nur der spare, stabile Kern übrig bleibt: der Attractor.</p>
+    <p>Kurz: <code>A = Wohin (Dynamik) · B = Woraus (Zerlegung)</code>. A's „Attractor-Vektor" ist ein reeller Vektor — <em>basisunabhängig</em>. B's Basis ist das <em>Lesegerät</em>, das ihm Bedeutung gibt. In der Feature-Basis gelesen, wird A's mysteriöse „essence" (z. B. <code>£</code> für Harry Potter, <code>Auckland/NZ</code> für LOTR, <code>Oxford</code> für Narnia) zu etwas, das B schon kennt: <em>der sparsen Aktivierung weniger interpretierbarer Features</em> (SAE).</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei echte Spannungslinien an der Naht</h2>
+    <p>Die beiden <strong>widersprechen sich nicht formal</strong> — sie sind zwei komplementäre Linsen. Aber an <em>drei</em> Stellen nehmen sie zu derselben Sache unvereinbare Stellungen ein. Jede wird hier mit dem konkret benannt, was A und was B jeweils sagt:</p>
+
+    <div class="box hl">
+      <span class="tag">Spannung 1 · Saubere Punkt-Konvergenz (A) vs. unvermeidbare Superposition (B)</span>
+      <p><b>A</b> setzt eine <em>trennbare Punkt-Struktur</em> voraus: verwandte Prompts „converge to nearly the same point", der Attractor ist eine <em>eindeutige</em> invariante Menge, und Detektion ist „cos_sim(h<sub>l</sub>(query), Attractor<sub>C</sub>) &gt; τ → Block". Ein Konzept = <em>eine</em> Vektor-Position, zu der man den Cosinus-Abstand misst.</p>
+      <p><b>B</b> sagt im Gegenteil: „Mehre Features als Dimensionen — Features teilen sich den Raum", „Interferenz unvermeidbar" (§8), und „Features in Superposition … sind genau dieses Problem! Mehrere semantische Konzepte (Quellen) sind in denselben Neuronen (Beobachtungen) gemischt" (§5 ICA). Der Zustand an jedem Punkt ist also eine <em>lineare Superposition vieler features</em> — nicht ein saubere, isolierte Punkt.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Spannung</span>A misst den Abstand zu <em>einem</em> Vektor, als wäre das Konzept sauber herauslesbar. B warnt, dass genau dieses „einer" in Wirklichkeit eine <em>gemischte Superposition</em> ist, aus der man ein Konzept erst <em>entmischen</em> muss (ICA/SAE). Ob Konzept-Representationen nun <em>sauber trennbar</em> (A) oder <em>interferenz-belastet</em> (B) sind, ist die echte Diskrepanz.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Spannung 2 · Training-free Read-off (A) vs. Features via gelerntem Decoder (B)</span>
+      <p><b>A</b> macht den Claim zur <em>Kopfzeile</em>: „no training required", „single forward pass to estimate Attractors. No gradient computation. No auxiliary networks." Die Konzept-Struktur ist <em>direkt ablesbar</em> (Hidden-States mitteln → Attractor-Vektor, fertig).</p>
+      <p><b>B</b> verleiht die interpretierbaren Features allerdings erst durch <em>Fitting</em>: „Sparse Autoencoders sind DAS Werkzeug der aktuellen Mechanistic Interpretability. Sie werden <em>auf Residual-Stream-Aktivierungen trainiert</em> und finden interpretierbare Features" (§6). Die interpretierbare Lesart entsteht also <em>nach</em> dem Lernen eines überbestimmten, sparsen Wörterbuchs — nicht aus dem rohen Vektor allein.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Spannung</span>A: „Lies es direkt ab, trainiere nichts." B: „Die <em>interpretierbaren</em> Features erscheinen erst, nachdem man einen (sparsen, trainierten) Decoder auf den Stream gefittet hat." Ist das Konzept <em>schon da</em> im Vektor (A), oder <em>erst</em> durch eine gewählte/gelernte Basis (B) existent? (PCA/SVD/ICA sind unsupervised — der Knackpunkt ist das <em>SAE</em>, das gradienten-basiert trainiert wird.)</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Spannung 3 · Die Rolle der Nicht-Linearität: Kern vs. Störsignal</span>
+      <p><b>A</b> macht die (kontraktive, nichtlineare) Layer-Karte zum <em>Kern</em> des Phänomens: „each layer of an LLM acts like one iteration of a contractive mapping" — die Kontraktion/Nichtlinearität ist es, was den Attractor <em>erst erzeugt</em> (der Affinitätsansatz <code>φ = M·V + t</code> ist nur ein <em>Fitting</em> der echten, nichtlinearen Layer).</p>
+      <p><b>B</b> behandelt den Bus als <em>linear-additiv</em> (<code>x<sup>(l)</sup> = x<sup>(l-1)</sup> + Attn + MLP</code>) und stuft die Nicht-Linearität (GELU/ReLU) als <em>Quelle neuer Komponenten</em> ein: „Aktivierungsfunktionen … sind nicht-linear. Wenn ein Signal durch eine Nicht-Linearität geht, entstehen neue Frequenzen (Harmonische)" (§7). Nicht-Linearität ist hier der <em>Generator</em> von Basis-Komponenten, nicht die Konvergenz-Geometrie.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Spannung</span>Dieselbe Nicht-Linearität wird entgegengesetzt bewertet: Für A ist sie <em>das, was konvergiert</em> (essentiell); für B ist sie <em>das, was man linear zerlegt</em> (Komponentengenerator). Ohne eine gemeinsame Sicht kann Nicht-Linearität nicht zugleich „Kern der Konvergenz" und „Störsignal zur Dekomposition" sein.</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>Kein direkter formeller Konflikt — A ist eine bewusste Dynamiksystem-/IFS-Lesart mit Benchmarks (TOFU, ParaDetox, CHAIR), B ein Werkzeugkasten linearer Zerlegungen mit LLM-Bezugs-Boxen. Die Spannungen fallen auf der <em>Naht</em> der beiden Register (Dynamik vs. Dekomposition) zusammen. Schärfst ist Spannung 1, weil sie über denselben Gegenstand (das „einer") uneinige Stellungen einnimmt.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie sie zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>Dynamik und Dekomposition desselben Zustandsflusses</strong>. Zu jeder Spannung die Auflösung:</p>
+
+    <div class="card">
+      <h3>R1 → Spannung 1: Der Attractor ist der spare Kern; die Superposition ist das, was die Kontraktion unterdrückt</h3>
+      <p>Zerlege jeden Zustand in B's Feature-Basis <code>{f<sub>j</sub>}</code> mit Koeffizienten <code>c<sub>j</sub>(l)</code>. Nenne eine kleine Teilmenge <code>S</code> („Kern", |S| = k) die <em>stabilen</em> Features und den Rest „transient". Der Attractor ist der Fixpunkt, an dem <em>nur noch</em> die Kern-Koeffizienten übrig sind. Die Superposition, die B als „unvermeidbare Interferenz" beschreibt, lebt in den <em>transienten</em> Koeffizienten — und die Kontraktion (A) skaliert genau diese mit <code>λ &lt; 1</code> pro Schritt: <code>c<sub>j</sub>(l) ∝ λ<sup>l</sup> → 0</code> für <code>j ∉ S</code>. <strong>Fusion:</strong> <code>Attractor = Fixpunkt gelesen in der Feature-Basis = sparer Punkt (|S| = k)</code>. A's „sauberer Punkt" ist der <em>spare Kern</em>; B's Interferenz ist der <em>restliche Superpositions-Anteil, den die Kontraktion asympotisch löscht</em>. Detektion gehört <em>in der Basis</em> gemacht (spare Feature-Signatur abgleichen), nicht als roher Cosinus — dann ist beides wahr: Der Punkt <em>konvergiert</em> (A), und er ist <em>Superposition</em>, aus der der Kern <em>heraus</em>konvergiert (B).</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → Spannung 2: Training-free gilt für die Intervention, die Basiswahl dient dem Lesen</h3>
+      <p>Trenne <em>Intervention</em> von <em>Interpretation</em>. A's „training-free" meint: man muss das <em>Modell</em> nicht weitertrainieren, um den Attractor zu <em>nutzen</em> (steuern, detektieren, stören) — der Attractor-Vektor ist ein realer, basisunabhängiger Vektor, den man in einem Forward-Pass schätzt. B's SAE/PCA/ICA sind Werkzeuge, um <em>auszulesen, was dieser Vektor bedeutet</em>: PCA/ICA sind <em>unsupervised</em> (keine Gradienten) und finden die Basis direkt aus denselben Aktivierungen; das SAE ist nur die <em>sparsere, feinere</em> Variante desselben Basis-Foundings. <strong>Fusion:</strong> <code>Intervention: training-free (A) + Basis: unsupervised (PCA/ICA) oder gelernt (SAE), nur fürs Lesen (B)</code>. Widerspruch aufgelöst in eine <em>Arbeitsteilung</em>: A steuert ohne Training; B liefert die Koordinaten, in denen das Ergebnis lesbar wird. A's „essence-Tokens" (<code>£</code>, <code>Oxford</code>) sind genau die sparsen SAE-Features des Attractor-Vektors.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → Spannung 3: Nicht-Linearität spielt auf zwei Skalen zwei Rollen</h3>
+      <p>Nicht-Linearität ist nicht <em>entweder</em> Kern <em>oder</em> Störgröße — sie tut beides auf <em>zwei Skalen</em>. <em>Innere/schichtweise Skala:</em> die MLP-/Attention-Nicht-Linearität <em>erzeugt</em> neue Komponenten (B's Harmonische) — das ist der <em>Feature-Generator</em>. <em>Quere/über-schichtige Skala:</em> die <em>Komposition</em> dieser nichtlinearen Layer über viele Schichten ist <em>kontraktiv</em> und konvergiert dadurch zum Attractor (A). B's Harmonische sind also die <em>Eingaben</em> in genau jene Kontraktion, die A ausnutzt: <strong>Nicht-Linearität <em>erzeugt</em> den Feature-Inhalt (B), und die iterierte Kontraktion <em>selektiert/festigt</em> ihn (A).</strong> <strong>Fusion:</em> <code>nichtlineare Layer = Feature-Generatoren (B), deren komponierte Iteration ein kontraktives Dynamiksystem ist (A); Attractor = Limes dieser Generator-und-Kontraktions-Dynamik.</code></p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Der LLM-Forward-Pass ist ein <strong>Dynamiksystem</strong> (A), dessen Zustand in jeder Schicht ein <strong>hochdimensionales Signal</strong> ist (B). <strong>A liefert die Längsstruktur</strong> (Trajektorie + Limes = Attractor), <strong>B die Querschnittsstruktur</strong> (die Basis/Zerlegung jedes Zustands). Der Attractor ist, in der Feature-Basis gelesen, ein <em>sparer Punkt</em> — der stabile, spare Kern, den die Kontraktion aus der <em>superponierten, interferierenden</em> Transient-Content <em>heraus</em>selektiert. <strong>Steering</em> (A) = Vektor addieren/subtrahieren <em>entlang einer Feature-Richtung</em> (einem sparen Feature bzw. einer Haupt-Richtung aus B). <strong>Detektion</em> = Abgleich der <em>sparen Feature-Signatur</em> (B's ICA/SAE/PCA-Sicht) statt rohem Cosinus. <strong>Netto:</strong> <code>Wohin (A) × Woraus (B) = Attractor als sparer Punkt in der Feature-Basis.</code></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substantielle Kern</h2>
+
+    <h3>Was A mitbringt — die Dynamik (Wohin)</h3>
+    <ul class="cl">
+      <li><b>LLM als Dynamiksystem / IFS:</b> „LLM ≈ IFS"; Layer = Iterationen <em>kontraktiver</em> Abbildungen; der Hutchinson-Operator <code>F(S)=⋃ᵢ fᵢ(S)</code> konvergiert jede Startmenge auf eine eindeutige invariante Menge <code>S*</code> (den Attractor).</li>
+      <li><b>Effektive Karte &amp; Collage-Theorem:</b> man fittet je Konzept die affine Kontraktion <code>φ(V)=M·V+t</code> mit <code>‖M‖<sub>op</sub>&lt;1</code>, minimierend <code>Σⱼ D(h<sub>l</sub>(pⱼ), φ<sup>iter</sup>(h₀(pⱼ)))</code>. Die Collage-Theorem rechtfertigt, dass ein gutes „Kollagen"-Fitting einen Attractor nahe dem Ziel liefert.</li>
+      <li><b>Attractoren liegen in unterschiedlichen Layern (Hierarchie):</b> Layer 16 = arithmetische Task-Vektoren (fraktale Struktur nach Ziffernanzahl); 18 = Literatur; 19 = Programmiersprachen; 24 = fiktive Welten; 27 = natürliche Sprachen.</li>
+      <li><b>Attractor „enthält" mehr als die Prompts:</b> Projektion in den Wortschatz liefert die „essence" — <code>£</code> (Harry Potter, britischer Setting), <code>Auckland/NZ</code> (LOTR, Drehort), <code>Oxford</code> (Narnia, C.S. Lewis).</li>
+      <li><b>Training-free Anwendungen:</b> <em>Detection/Guardrailing</em> <code>cos_sim(h<sub>l</sub>(q), A<sub>C</sub>) &gt; τ → Block</code> (TOFU, 90 %+ Cutoff, schlägt Gradient Ascent/NPO/ECO); <em>Steering/Traversals</em> <code>dx/dt = f(x) + λ(y − x)</code> via Forward-Hook (Toxizität = Attractor <em>abziehen</em>, Layer 16; Transpilation Python→JS, Layer 19; VLM-Halluzinationen = visuellen Attractor in jedem Schritt <em>neu addieren</em>); <em>Synthese-Daten</em> durch Attractor-Perturbation (20 %+ Faktizität vs. Temperatur-Sampling; sample-wise Attractors, Layer 16).</li>
+      <li><b>Fraktale/hierarchische Struktur:</b> der arithmetische Attractor splittet nach Ziffernanzahl → Operationstyp → Wert; <em>naives Mitteln auf der falschen Ebene</em> liefert einen verrauschten, weniger wirksamen Repräsentanten.</li>
+    </ul>
+
+    <h3>Was B mitbringt — die Zerlegung (Woraus)</h3>
+    <ul class="cl">
+      <li><b>Residual-Stream als Signalbus:</b> <code>x<sup>(l)</sup> = x<sup>(l-1)</sup> + Attn<sup>(l)</sup>(x<sup>(l-1)</sup>) + MLP<sup>(l)</sup>(x<sup>(l-1)</sup>)</code> — jede Schicht <em>addiert</em> Information; der Stream ist ein hochdimensionales Signal über Positionen.</li>
+      <li><b>Fourier/STFT/Wavelet (periodisch &amp; transient):</b> <code>X[k]=Σ<sub>n</sub> x[n] e^{−i2πkn/N}</code>; STFT = Zeit-Frequenz; <em>Heisenberg</em> <code>Δt·Δω ≥ 1/2</code>; Wavelets lösen das mit Multi-Skalen — „die Multi-Skalen-Eigenschaft entspricht der Hierarchie von Features in verschiedenen Layern". LLM-Bezug: Grokking (Nanda) → „nur bestimmte Frequenzen" → scharfe Peaks = „saubere" Fourier-Darstellung; Spektrogramm der Aktivierungen = welche Features an welchen Token-Positionen aktiv.</li>
+      <li><b>PCA/SVD (niedriger Rang):</b> <code>Cv<sub>i</sub>=λ<sub>i</sub>v<sub>i</sub></code>; <code>A=UΣVᵀ ≈ Σ<sub>i≤k</sub> σ<sub>i</sub> u<sub>i</sub> v<sub>i</sub>ᵀ</code>. „Die Gewichtsmatrizen in Transformern haben oft niedrigen effektiven Rang — wenige Singulärwerte dominieren. Das ist die Grundlage für LoRA … und erklärt, warum LLMs komprimierbar sind."</li>
+      <li><b>ICA (Superposition entmischen):</b> <code>x = A s, W ≈ A⁻¹</code> — Cocktaelparty-Problem. „Features in Superposition … sind genau dieses Problem! Mehrere semantische Konzepte (Quellen) sind in denselben Neuronen (Beobachtungen) gemischt."</li>
+      <li><b>Sparse Coding / SAE (das Werkzeug der Mechanistic Interpretability):</b> überbestimmtes Wörterbuch <code>D ∈ ℝ<sup>n×h</sup>, h ≫ n</code>; <code>min ‖x − Da‖² + λ‖a‖₁</code>; SAE <code>x̂ = W<sub>dec</sub>·ReLU(W<sub>enc</sub>·x + b)</code>. „Sie werden auf Residual-Stream-Aktivierungen trainiert und finden interpretierbare Features … pro Input nur wenige Features aktiv."</li>
+      <li><b>Nicht-Linearität als Harmonikengenerator:</b> ReLU/GELU erzeugen „neue Frequenzen (Harmonische)" — „der Mechanismus, durch den tiefe Netze komplexe Features aus einfachen aufbauen".</li>
+    </ul>
+
+    <h3>Die Verknüpfung — wie A und B sich verschalten</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">Layer-Iteration (A)</div><div class="v">= der „zeitliche" Ablauf der <b>Signalbus-Zustände</b> x<sup>(l)</sup> (B). Tiefe l ist die Zeitachse; B zerlegt jeden Zustand, A verbindet sie zur Trajektorie.</div></div>
+      <div class="r"><div class="k">Attractor A* (A)</div><div class="v">= <b>Fixpunkt</b> der Iteration <code>lim<sub>l→∞</sub> φ<sup>l</sup>(h₀)</code>; gelesen in B's Basis ist er ein <b>sparer Punkt</b> <code>A* ≈ Σ<sub>j∈S</sub> α<sub>j</sub> f<sub>j</sub>, |S|=k ≪ dim</code>.</div></div>
+      <div class="r"><div class="k">„Essence"-Tokens (A)</div><div class="v"><code>£</code> / <code>Oxford</code> / <code>Auckland</code> = die <b>sparsen, interpretierbaren SAE-Features</b> (B), die der Attractor-Vektor in der Feature-Basis aktiviert.</div></div>
+      <div class="r"><div class="k">Superposition/Interferenz (B)</div><div class="v">= der <b>transiente, superponierte Anteil</b> der Koeffizienten <code>c<sub>j</sub> (j∉S)</code> — genau das, was A's <b>Kontraktion</b> mit <code>λ<sup>l</sup></code> asympotisch löscht.</div></div>
+      <div class="r"><div class="k">Steering dx/dt=f(x)+λ(y−x) (A)</div><div class="v">= Vektoren <b>entlang Feature-Richtungen</b> (B) addieren/subtrahieren — z. B. den Toxizitäts-Attractor (einen sparen Feature-Vektor) <em>abziehen</em>.</div></div>
+      <div class="r"><div class="k">Nicht-Linearität (beide)</div><div class="v">schichtweise = <b>Feature-Generator/Harmonikengenerator</b> (B); über-schichtig komponiert = <b>kontraktive Konvergenz</b> zum Attractor (A).</div></div>
+      <div class="r"><div class="k">Detektion cos_sim &gt; τ (A)</div><div class="v">robuster als <b>Abgleich der sparen Feature-Signatur</b> (B: ICA/SAE/PCA) — gleicht den Kern <code>S</code> ab, statt rohen Abstand zu messen.</div></div>
+    </div>
+
+    <h3>Die Formeln der Fusion</h3>
+    <div class="eq">
+      <span class="c">// A — Dynamik (Tiefe = Zeit)</span><br>
+      A* = lim<sub>&nbsp;l→∞</sub> φ<sup>l</sup>(h₀) &nbsp;<span class="c">// Attractor = Limes der Layer-Iteration</span><br>
+      φ(V) = M·V + t,&nbsp; ‖M‖<sub>op</sub> &lt; 1 &nbsp;<span class="c">// effektive (affine) Kontraktion, gefittet per Collage-Thm.</span><br>
+      <span class="c">// B — Zerlegung (Feature-Basis)</span><br>
+      h<sub>l</sub> = Σ<sub>j</sub> c<sub>j</sub>(l)·f<sub>j</sub> &nbsp;<span class="c">// Zustand in der Feature-Basis {f_j} (SAE/ICA/PCA)</span><br>
+      <span class="c">// FUSION — die eine Gleichung</span><br>
+      c<sub>j</sub>(l+1) = r<sub>j</sub>·c<sub>j</sub>(l),&nbsp; r<sub>j</sub> ≈ 1 für j∈S (Kern, |S|=k),&nbsp; r<sub>j</sub> = λ&lt;1 für j∉S (transient)<br>
+      ⇒&nbsp; c<sub>j</sub>(l) = r<sub>j</sub><sup>l</sup>·c<sub>j</sub>(0) &nbsp;<span class="c">// transiente Superposition zerfällt wie λ<sup>l</sup>, Kern bleibt</span><br>
+      ⇒&nbsp; A* = Σ<sub>j∈S</sub> c<sub>j</sub>(0)·f<sub>j</sub> &nbsp;<span class="c">// Attractor = sparer Punkt in der Feature-Basis</span><br>
+      E<sub>super</sub>(l) = Σ<sub>j∉S</sub> c<sub>j</sub>(l)² ∝ λ<sup>2l</sup> → 0 &nbsp;<span class="c">// B's Interferenz wird von A's Kontraktion unterdrückt</span><br>
+      <span class="c">// Konsequenzen</span><br>
+      Steering: h ← h + λ·(A<sub>ziel</sub> − h) &nbsp;<span class="c">// = Schritt entlang sparer Feature-Richtung</span><br>
+      Detection: match( sparsity-Signatur(h<sub>l</sub>) , S<sub>C</sub> ) &gt; τ &nbsp;<span class="c">// statt rohem Cosinus → robust gegen Superposition</span>
+    </div>
+
+    <h3>Warum die Fusion mehr ist als die Summe</h3>
+    <p>A allein würde den Attractor als <em>magischen</em> Punkt verkaufen (abstandsmäßig, ohne zu sagen, <em>woraus</em> er besteht) — und ran an B's Superposition-Limit stoßen. B allein hätte <em>keine Längsdynamik</em>: es zerlegt jeden Zustand, erklärt aber nicht, <em>warum</em> verwandte Prompts in einer bestimmten Tiefe zusammenrücken und wie man das <em>ohne Training</em> nutzt. Erst zusammen entsteht ein <em>prüfbares Modell</em>: Die Konvergenz (A) ist das <em>asymptotische Unterdrücken der Superposition (B)</em> durch Kontraktion; der Attractor ist der <em>spare Überlebende</em>. Das macht A's „training-free" zu einer <em>mechanistischen</em> Behauptung (B liefert den Mechanismus) und B's „interpretierbare Features" zu einem <em>dynamisch begründeten</em> (A erklärt, warum gerade <em>ein</em> starrer Kern übrig bleibt).</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Tiefe als Zeit: Trajektorien konvergieren zum Attractor in der Feature-Basis</h2>
+    <p>Ein 2-D-Schnitt durch die Feature-Basis (sechs Feature-Richtungen <code>f<sub>0…5</sub></code>). Die <em>hellen</em> Pfeile sind die <strong>Kern-Features</strong> (die den Attractor <code>A*</code> aufbauen), die <em>gedämpften</em> die <strong>transienten</strong> (die die Superposition tragen). Vierzehn gestreute Prompts starten als <em>Superposition</em> (Attractor + transiente Offset) und folgen der Kontraktion <em>schichtweise</em> Richtung <code>A*</code> — während die Superpositions-Energie <code>∝ λ<sup>l</sup></code> zerfällt. Wechsle die Kontraktion λ, die Sparsity |S| und animiere die Tiefe.</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Attractor-Dynamik × spare Feature-Basis</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvViz" width="680" height="440"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-core)"></i>Kern-Features (bauen A* auf)</span>
+        <span><i style="background:var(--viz-trans)"></i>transiente Features (Superposition)</span>
+        <span><i style="background:var(--viz-target)"></i>Attractor A*</span>
+        <span><i style="background:var(--viz-point)"></i>Prompts (Superposition)</span>
+        <span><i style="background:var(--viz-trail)"></i>Trajektorien (Tiefe → A*)</span>
+      </div>
+      <div class="btnrow">
+        <button id="playBtn" class="on">⏸ Pause</button>
+        <button id="resetBtn">↻ Neu streuen</button>
+      </div>
+      <div class="ro">
+        <div class="b"><div class="k">Tiefe l</div><div class="v" id="roDepth">0</div><div class="u">Iterationsschritte</div></div>
+        <div class="b"><div class="k">dist → A*</div><div class="v" id="roDist">100%</div><div class="u">mittl. Superpositions-Abstand</div></div>
+        <div class="b"><div class="k">Kern |S|</div><div class="v" id="roCore">2</div><div class="u">aktive Kern-Features</div></div>
+        <div class="b"><div class="k">Kontraktion λ</div><div class="v" id="roLambda">0.60</div><div class="u">Dämpfung pro Schritt</div></div>
+        <div class="b"><div class="k">Fusion-Verdict</div><div class="v" id="roStat">—</div><div class="u">Kern / Konvergenz / Superposition</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Kontraktion λ — wie stark drücken die Layer die transiente Superposition?</span><b id="lamVal">0.60</b></div>
+        <input type="range" id="lamSl" min="0.20" max="0.92" step="0.01" value="0.60">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Hoch (λ→1) = Superposition bleibt lange (langsame Konvergenz). Niedrig (λ→0) = Superposition zerfällt schnell, Attractor schnell stabil.</div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Sparsity |S| — wie viele Features bilden den Attractor-Kern?</span><b id="coreVal">2</b></div>
+        <input type="range" id="coreSl" min="1" max="4" step="1" value="2">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Der Attractor ist ein <em>sparer</em> Punkt: nur |S| Kern-Features bleiben stabil, der Rest ist transiente Superposition. (Neustreuen bei Änderung.)</div>
+      </div>
+      <p style="font-size:12px;color:var(--txt-faint)">Die gestreckten Trajektorien sind B's „Interferenz", die A's Kontraktion <code>∝ λ<sup>l</sup></code> löscht; übrig bleibt der spare, stabile Attractor-Kern <code>A*</code> — die eine Gleichung der Fusion, live.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <p><a href="../concept_attractors.html">A — Concept Attractors in LLMs (Chytas &amp; Singh, UW-Madison 2025)</a>: Interaktive Erklärung, die LLM-Layer als Iterated Function System / kontraktive Abbildungen liest, bei denen semantisch verwandte Prompts konzeptspezifische Attractor in bestimmten Layern bilden (16/18/19/24/27); training-free Anwendungen per Collage-Theorem, Cosinus-Detektion (<code>τ</code>), Attractor-Steering (<code>dx/dt = f(x)+λ(y−x)</code>) und Attractor-Perturbation für Synthese-Daten; fraktale/hierarchische Attractor-Struktur.</p>
+    <p><a href="../signal_analysis2.html">B — Signalanalyse für LLM-Internals (Interaktiv)</a>: Acht Abschnitte, die den Residual-Stream als hochdimensionalen Signalbus behandeln — Fourier/STFT/Spektrogramm (Heisenberg), Wavelets, PCA/SVD (niedriger Rang → LoRA), ICA (Superposition/Cocktaelparty), Sparse Coding/SAE („DAS Werkzeug der Mechanistic Interpretability", trainiert auf Residual-Stream-Aktivierungen), Nicht-Linearität als Harmonikengenerator, und die Zusammenführung in „Superposition: mehr Features als Dimensionen, Interferenz unvermeidbar".</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>concept_attractors.html</strong> (Attractor-Dynamik — Wohin) ✕ <strong>signal_analysis2.html</strong> (Feature-Zerlegung — Woraus). Alle Claims aus den Quellen paraphrasiert; die Punkt-/Feature-Geometrie im Viz ist ein synthetisches Inline-Modell der fusionierten Arbeitsformel (Attractor = sparer Punkt; Kontraktion drückt Superposition). Selbstständig, ohne Netzwerk-Datenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return hex;}return 'rgba('+r+','+g+','+b+','+a+')';}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ if(themeBtn){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; } }
+  if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); readPal(); }; }
+  setBtn();
+
+  var cv=document.getElementById('cvViz'); if(!cv){return;}
+  var dpr=window.devicePixelRatio||1, LW=680, LH=440;
+  cv.style.width='100%'; cv.style.aspectRatio=LW+'/'+LH;
+  cv.width=LW*dpr; cv.height=LH*dpr;
+  var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var TAU=Math.PI*2, K=6, N=14, W=LW, H=LH;
+  var coreA=[1.0,0.8,0.6,0.5];
+  var ang=[]; for(var j=0;j<K;j++){ ang.push((TAU*j/K) - TAU/4); }
+
+  var PAL={};
+  function readPal(){
+    ['--viz-core','--viz-trans','--viz-point','--viz-trail','--viz-target','--viz-canvas-bg','--viz-grid','--viz-txt','--viz-good','--viz-warn'].forEach(function(n){PAL[n]=getVar(n);});
+  }
+  readPal();
+
+  var O={x:W/2,y:H/2};
+  var R=Math.min(W,H)/2-24;
+  var L=R*0.92;
+
+  var state={lambda:0.60, coreK:2, playing:true, lFloat:0};
+  var A={x:0,y:0};
+  var points=[];      // {o:{x,y}, trail:[{x,y}]}
+  var initNorm=1;
+
+  function coreDir(j){ return {x:Math.cos(ang[j]), y:Math.sin(ang[j])}; }
+
+  function computeA(){
+    A.x=O.x; A.y=O.y;
+    for(var j=0;j<state.coreK;j++){ var d=coreDir(j); A.x+=L*coreA[j]*d.x; A.y+=L*coreA[j]*d.y; }
+  }
+
+  function init(){
+    computeA();
+    points=[];
+    var sum=0;
+    for(var i=0;i<N;i++){
+      var o={x:0,y:0};
+      for(var j=state.coreK;j<K;j++){
+        var b=(Math.random()*2-1)*0.75;
+        var d=coreDir(j);
+        o.x+=L*b*d.x; o.y+=L*b*d.y;
+      }
+      // clamp offset so points stay on canvas
+      var lim=L*0.95, m=Math.sqrt(o.x*o.x+o.y*o.y);
+      if(m>lim){ o.x*=lim/m; o.y*=lim/m; m=lim; }
+      sum+=m;
+      points.push({o:{x:o.x,y:o.y}, trail:[]});
+    }
+    initNorm=sum/N||1;
+    state.lFloat=0;
+  }
+
+  var playBtn=document.getElementById('playBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var lamEl=document.getElementById('lamSl'), lamVal=document.getElementById('lamVal');
+  var coreEl=document.getElementById('coreSl'), coreVal=document.getElementById('coreVal');
+  var roDepth=document.getElementById('roDepth'), roDist=document.getElementById('roDist'),
+      roCore=document.getElementById('roCore'), roLambda=document.getElementById('roLambda'),
+      roStat=document.getElementById('roStat');
+
+  function togglePlay(){
+    state.playing=!state.playing;
+    playBtn.textContent=state.playing?'⏸ Pause':'▶ Animieren';
+    playBtn.classList.toggle('on',state.playing);
+  }
+  playBtn.onclick=togglePlay;
+  resetBtn.onclick=function(){ init(); };
+  lamEl.addEventListener('input',function(){ state.lambda=+lamEl.value; lamVal.textContent=(+lamEl.value).toFixed(2); roLambda.textContent=(+lamEl.value).toFixed(2); });
+  coreEl.addEventListener('input',function(){ state.coreK=+coreEl.value; coreVal.textContent=coreEl.value; roCore.textContent=coreEl.value; init(); });
+
+  function step(){
+    var f=Math.pow(state.lambda, 0.6); // one frame ≈ 0.6 "Schichten"
+    state.lFloat+=0.6;
+    var sum=0;
+    for(var i=0;i<points.length;i++){
+      var o=points[i].o;
+      o.x*=f; o.y*=f;
+      var m=Math.sqrt(o.x*o.x+o.y*o.y); sum+=m;
+      var pos={x:A.x+o.x,y:A.y+o.y};
+      var tr=points[i].trail; tr.push(pos); if(tr.length>26){tr.shift();}
+    }
+    var mean=sum/points.length;
+    if(mean/initNorm<0.002 && state.playing){ togglePlay(); }
+  }
+
+  function drawArrow(d,color,w,tipR){
+    var tx=O.x+L*d.x, ty=O.y+L*d.y;
+    ctx.strokeStyle=color; ctx.lineWidth=w; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(O.x,O.y); ctx.lineTo(tx,ty); ctx.stroke();
+    var ah=Math.atan2(d.y,d.x), as=7+w;
+    ctx.fillStyle=color; ctx.beginPath();
+    ctx.moveTo(tx,ty);
+    ctx.lineTo(tx-as*Math.cos(ah-0.4), ty-as*Math.sin(ah-0.4));
+    ctx.lineTo(tx-as*Math.cos(ah+0.4), ty-as*Math.sin(ah+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=PAL['--viz-canvas-bg']||'#0c1120'; ctx.fillRect(0,0,W,H);
+
+    // grid rings + spokes
+    ctx.strokeStyle=PAL['--viz-grid']||'rgba(120,120,120,0.1)'; ctx.lineWidth=1;
+    for(var rr=1;rr<=3;rr++){ ctx.beginPath(); ctx.arc(O.x,O.y,L*rr/3.2,0,TAU); ctx.stroke(); }
+
+    // feature arrows
+    for(var j=0;j<K;j++){
+      var d=coreDir(j), core=j<state.coreK;
+      if(core){
+        ctx.save(); ctx.shadowColor=PAL['--viz-core']; ctx.shadowBlur=10;
+        drawArrow(d, PAL['--viz-core'], 2.6, 7); ctx.restore();
+      }else{
+        drawArrow(d, hexA(PAL['--viz-trans'],0.55), 1.6, 5);
+      }
+      var tx=O.x+L*d.x, ty=O.y+L*d.y;
+      ctx.fillStyle=PAL['--viz-txt']; ctx.font='9px ui-monospace,Menlo,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('f'+j, tx+d.x*10, ty+d.y*10);
+    }
+
+    // origin
+    ctx.fillStyle=PAL['--viz-txt']; ctx.beginPath(); ctx.arc(O.x,O.y,2.5,0,TAU); ctx.fill();
+
+    // Attractor build chain (core arrow sum)
+    var cx=O.x, cy=O.y;
+    ctx.strokeStyle=hexA(PAL['--viz-core'],0.5); ctx.lineWidth=1.2; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    for(var c2=0;c2<state.coreK;c2++){ var d2=coreDir(c2); cx+=L*coreA[c2]*d2.x; cy+=L*coreA[c2]*d2.y; ctx.lineTo(cx,cy); }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Attractor target
+    ctx.save(); ctx.shadowColor=PAL['--viz-target']; ctx.shadowBlur=18;
+    ctx.fillStyle=PAL['--viz-target']; ctx.beginPath(); ctx.arc(A.x,A.y,7,0,TAU); ctx.fill(); ctx.restore();
+    ctx.strokeStyle=PAL['--viz-target']; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.arc(A.x,A.y,13,0,TAU); ctx.stroke();
+    ctx.fillStyle=PAL['--viz-txt']; ctx.font='700 11px ui-monospace,Menlo,monospace';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('A*', A.x, A.y-20);
+
+    // points + trails
+    for(var i=0;i<points.length;i++){
+      var p=points[i], tr=p.trail;
+      if(tr.length>1){
+        for(var k=1;k<tr.length;k++){
+          var a=(k/tr.length);
+          ctx.strokeStyle=hexA(PAL['--viz-trail'], a*0.5);
+          ctx.lineWidth=1.4;
+          ctx.beginPath(); ctx.moveTo(tr[k-1].x,tr[k-1].y); ctx.lineTo(tr[k].x,tr[k].y); ctx.stroke();
+        }
+      }
+      var px=A.x+p.o.x, py=A.y+p.o.y;
+      ctx.save(); ctx.shadowColor=PAL['--viz-point']; ctx.shadowBlur=8;
+      ctx.fillStyle=PAL['--viz-point']; ctx.beginPath(); ctx.arc(px,py,4,0,TAU); ctx.fill(); ctx.restore();
+    }
+
+    // readouts
+    var sum=0; for(var q=0;q<points.length;q++){ var o2=points[q].o; sum+=Math.sqrt(o2.x*o2.x+o2.y*o2.y); }
+    var mean=sum/points.length;
+    var ratio=Math.min(1, mean/initNorm);
+    var pct=Math.round(ratio*100);
+    roDepth.textContent=Math.floor(state.lFloat);
+    roDist.textContent=pct+'%';
+    roDist.className='v '+(pct<5?'g':(pct<40?'m':''));
+    roCore.textContent=state.coreK;
+    roLambda.textContent=state.lambda.toFixed(2);
+    if(ratio<0.03){ roStat.textContent='Kern stabil'; roStat.className='v g'; }
+    else if(ratio<0.35){ roStat.textContent='konvergiert'; roStat.className='v m'; }
+    else { roStat.textContent='Superposition'; roStat.className='v e'; }
+  }
+
+  function loop(){
+    if(state.playing){ step(); }
+    draw();
+    requestAnimationFrame(loop);
+  }
+  init();
+  draw();
+  requestAnimationFrame(loop);
+
+  window.addEventListener('resize',function(){ readPal(); });
+  try{ new MutationObserver(function(){ readPal(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']}); }catch(e){}
+});
+</script>
+</body>
+</html>

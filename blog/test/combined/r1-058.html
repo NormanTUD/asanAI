@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fusion 058 — Die freie Dimension als Doppelschwert</title>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  :root{
+    --bg:#FAF8F1; --panel:#ffffff; --ink:#1f2430; --muted:#5b6472;
+    --accent:#0f766e; --accent2:#b83280; --accent3:#b45309;
+    --line:#d9d2c4; --danger:#c0392b; --ok:#0f766e; --warn:#b45309;
+    --code-bg:#f1ede2;
+  }
+  html.dark{
+    --bg:#0b0f1a; --panel:#121a2b; --ink:#e8eefc; --muted:#8aa0c8;
+    --accent:#7cf9d0; --accent2:#ff9ec7; --accent3:#ffd166;
+    --line:#22304a; --danger:#ff6b6b; --ok:#7cf9d0; --warn:#ffd166;
+    --code-bg:#0a1223;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.6;
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  article{max-width:820px;margin:0 auto;padding:28px 20px 70px}
+  header{margin:14px 0 6px}
+  h1{font-size:clamp(1.6rem,4vw,2.5rem);margin:.2rem 0;line-height:1.15;font-weight:800;letter-spacing:-.5px}
+  .subtitle{color:var(--muted);font-size:1rem;margin:0}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:22px 24px;margin:22px 0;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+  h2{margin:0 0 6px;font-size:1.3rem;color:var(--accent)}
+  h3{margin:18px 0 6px;font-size:1.05rem;color:var(--accent2)}
+  p{margin:.55rem 0}
+  .lead{color:var(--muted)}
+  .tag{display:inline-block;font-size:.72rem;padding:2px 9px;border-radius:999px;
+    border:1px solid var(--line);color:var(--muted);margin-right:6px}
+  .tag.a{color:var(--accent)} .tag.b{color:var(--accent2)}
+  ul,ol{padding-left:1.2rem;margin:.5rem 0}
+  li{margin:.35rem 0}
+  .formula{background:var(--code-bg);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:10px 14px;margin:10px 0;overflow-x:auto}
+  .formula .cap{color:var(--muted);font-size:.8rem;margin-top:6px}
+  .callout{border-radius:10px;padding:12px 16px;margin:12px 0;font-size:.95rem}
+  .callout.fused{background:color-mix(in srgb,var(--accent) 10%,transparent);border-left:3px solid var(--accent)}
+  .callout.fused b{color:var(--accent)}
+  canvas.viz{width:100%;height:auto;background:var(--code-bg);border:1px solid var(--line);
+    border-radius:12px;display:block}
+  .ctrls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;margin:14px 0 6px}
+  .ctrls label{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:5px;min-width:150px}
+  .ctrls input[type=range]{accent-color:var(--accent);width:100%}
+  .ctrls .val{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+  button{background:var(--panel);border:1px solid var(--line);color:var(--ink);padding:8px 14px;
+    border-radius:10px;cursor:pointer;font-weight:600;transition:.15s}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  .verdict{display:inline-block;font-weight:700;padding:4px 12px;border-radius:8px;border:1px solid var(--line);
+    font-variant-numeric:tabular-nums;margin-right:8px}
+  .verdict.ok{color:var(--ok);border-color:var(--ok)}
+  .verdict.no{color:var(--danger);border-color:var(--danger)}
+  .verdict.warn{color:var(--warn);border-color:var(--warn)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin-top:10px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .prov a{color:var(--accent);text-decoration:none;font-weight:600}
+  .prov li{margin:.5rem 0}
+  .prov .desc{color:var(--muted);display:block;font-size:.9rem;margin-top:2px}
+  footer{color:var(--muted);text-align:center;padding:26px 10px;font-size:.85rem}
+  @media (max-width:600px){section{padding:18px}}
+</style>
+</head>
+<body>
+<article>
+  <header>
+    <h1>Die freie Dimension als Doppelschwert</h1>
+    <p class="subtitle">Fusion aus: space_warps.html ✕ low_dim_learning.html</p>
+  </header>
+
+  <section id="these">
+    <h2>1 · Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere starten von <em>dasselben</em> geometrischen Fakt und lesen ihn spiegelbildlich.
+    Die <b>Manifold-Hypothese</b>: Reale Daten liegen auf einer niedrig-dimensionalen Mannigfaltigkeit
+    $M$ mit Dimension $d_x$, eingebettet in einen <em>höherdimensionalen</em> Raum — die Ambient-/Layer-Dimension
+    ist <em>größer</em> als $d_x$. Dazwischen liegt ein Überfluss an <b>freien Richtungen</b>
+    (Kodimension $d - d_x$).</p>
+    <p><span class="tag a">A</span> Keup &amp; Helias (2022) erklären genau diesen Überfluss als den
+    <b>Motor</b> des Netzes: eine Schicht <em>faltet</em> die Datenmannigfaltigkeit in die ungenutzten
+    höheren Dimensionen, und erst dadurch entsteht lineare Trennbarkeit. <span class="tag b">B</span>
+    He, Tsai &amp; Ward (2023) erklären denselben Überfluss als die <b>Gefahr</b>: in den freien
+    (Normal-)Richtungen ist die gelernte Funktion <em>nicht</em> von den Daten bestimmt und bleibt
+    willkürlich — die Quelle von Distribution-Shift- und Adversarial-Brüchigkeit.</p>
+    <div class="callout fused">
+      <b>Einheitliche Position:</b> Der Spalt zwischen Daten-Dimension und Layer-/Ambient-Dimension ist
+      <b>ein Doppelschwert</b>. Er ist das, was ein Feedforward-Netz <em>tut</em> — es nutzt die freie
+      Dimension, um durch Falten Trennbarkeit zu <b>erstellen</b> (A) — und zugleich das, was ein Netz
+      <em>nicht kontrolliert</em> — die freien Richtungen bleiben off-manifold unbestimmt (B).
+      Die freie Dimension ist <b>Nutzen und Risiko derselben Geometrie</b>: Man kann nicht die Mechanik
+      von A haben, ohne die Fragilität von B mitzuliefern — und umgekehrt.
+    </div>
+  </section>
+
+  <section id="widersprueche">
+    <h2>2 · Widersprüche zwischen A und B</h2>
+
+    <h3>(i) Der Wert der zusätzlichen Dimension / der Breite</h3>
+    <p><span class="tag a">A</span> behauptet: Die zusätzliche Dimension ist der <b>Nutzen</b>.
+    „Schichten müssen <em>breiter</em> sein als die Datendimensionalität, sonst ist kein Falten in
+    freie Dimensionen möglich." Mehr Breite = mehr freie Dimension = mehr und <em>effizientere</em>
+    Approximationskraft. Tiefe, schmale Netze sind dagegen <em>keine</em> universellen Approximatoren.</p>
+    <p><span class="tag b">B</span> behauptet: Die zusätzliche Dimension ist das <b>Risiko</b>.
+    „Jede zusätzliche Kodimension bedeutet <em>mehr uneingeschränkte Parameter</em>, mehr Anfälligkeit
+    für Distribution Shift und Adversarial Examples." Mehr freie Richtungen = mehr unkontrollierte
+    Parameter = mehr Gefahr.</p>
+    <p><b>Unvereinbare Stance:</b> A: „mehr freie Dimension &rarr; besser". B: „mehr freie Dimension
+    &rarr; unkontrollierter". Dieselbe Größe wird einmal als Gewinn, einmal als Last bewertet.</p>
+
+    <h3>(ii) Wird die freie Dimension <em>benutzt</em> oder bleibt sie <em>willkürlich</em>?</h3>
+    <p><span class="tag a">A</span>: Die freie Dimension wird <b>konstruktiv genutzt</b>. Ein ReLU,
+    dessen Normale in die freie Dimension zeigt, wird zur <em>Falte</em> statt zur Quetschung —
+    die Abbildung ist <b>injektiv</b>, es geht <em>keine</em> Information verloren. Die Richtung wird
+    vom Netz <em>gesteuert</em> (gelernte Rotation richtet die Faltlinie aus).</p>
+    <p><span class="tag b">B</span>: Die freie/Normal-Richtung ist <b>nicht</b> von den Daten bestimmt.
+    Die Normalenableitung $\partial f/\partial n_M$ ist <em>willkürlich</em>; bei ReLU und $\sigma=0$
+    bleiben die Normal-Gewichte $W_y^1$ während des <em>ganzen</em> Trainings <b>eingefroren</b> auf
+    ihrer Initialisierung (Lemma 3.1). Die Richtung wird vom Netz <em>nicht</em> gesteuert.</p>
+    <p><b>Unvereinbare Stance:</b> A: „die freie Dimension wird gesteuert &amp; informativ". B:
+    „die freie Dimension bleibt ungesteuert &amp; unbestimmt".</p>
+
+    <h3>(iii) Tiefe: Kapazität oder Verstärkung?</h3>
+    <p><span class="tag a">A</span>: Tiefe erzeugt <b>Kapazität</b> — eine Hierarchie von Falten mit
+    <em>exponentiell vielen</em> Kanten erklärt die Universal-Approximation.</p>
+    <p><span class="tag b">B</span>: Tiefe erzeugt <b>Verstärkung der Gefahr</b> — bei ReLU wächst die
+    Instabilität in der Normal-Richtung wie $\prod_{\ell=3}^{L}\|W^\ell\|^2$, also
+    <em>exponentiell mit der Tiefe</em> $L$.</p>
+    <p><b>Unvereinbare Stance:</b> A: „tiefer/breiter = mächtiger". B: „tiefer = die unkontrollierte
+    Komponente wird exponentiell schlimmer".</p>
+  </section>
+
+  <section id="aufloesung">
+    <h2>3 · Auflösung</h2>
+    <p>Die drei „Widersprüche" sind keine logischen Fehler, sondern zwei Seiten desselben Sachverhalts.
+    Die Auflösung liest sich wie ein Schalter in der freien Dimension.</p>
+
+    <h3>(i) Breite = Preis und Nutzen zugleich</h3>
+    <p>Beide beschreiben dieselbe Größe $d - d_x$. A hat recht, dass Breite $&gt; d_x$
+    <b>erforderlich</b> ist, um durch Falten Trennbarkeit zu <em>erstellen</em> (ohne freie Dimension
+    kann man nur quetschen, nicht falten). Genau diese Notwendigkeit <em>schafft</em> aber B's Risiko:
+    die freie Richtung ist off-manifold und damit unter-bestimmt. Die fused-Konsequenz:
+    <b>Kapazität und Exposition skalieren zusammen</b> — man kauft sich Approximationskraft, indem man
+    sich die Angriffsfläche für B mitkauft.</p>
+
+    <h3>(ii) Die freie Dimension ist schaltbar: genutzt (A) oder ungenutzt (B)</h3>
+    <p>Die freie Dimension ist eine <b>umschaltbare Ressource</b>. Wo das Netz <em>faltet</em> (A),
+    wird diese Richtung <em>informativ und kontrolliert</em>. Wo sie <em>nicht</em> von Daten/Labels
+    gepinnt ist (off-manifold, B), bleibt sie willkürlich. <b>Falten (A) ist genau eine Art, die
+    Surplus-Dimension aktiv zu nutzen</b>; alles, was die Daten nicht festschreiben, muss man
+    <em>regularisieren</em> (Normal-Rauschen $\sigma$, kleine Initialisierung von $W_y^1$, begrenzte
+    Tiefe, Augmentation). Fused: <b>aktiv nutzen, was A tut; stabilisieren, was B warnt.</b></p>
+
+    <h3>(iii) Tiefe baut Mechanik <em>und</em> multipliziert die Fragilität</h3>
+    <p>Ein tieferes/breiteres Netz kann mehr falten (A) <em>und</em> multipliziert die unkontrollierte
+    Normal-Komponente (B, $\prod\|W^\ell\|^2$). Die Architektur-Entscheidung ist damit ein
+    <b>Capability-vs-Fragility-Trade-off</b>. Der Fix ist <em>nicht</em> „shallow", sondern: die Falten
+    (Mechanik) behalten <em>und</em> die Normal-Richtung regularisieren, damit sie nicht exponentiell
+    dominiert. Fused: <b>tief genug für die Mechanik, regularisiert genug für die Stabilität.</b></p>
+
+    <div class="callout fused">
+      <b>Fused-Schlussfolgerung:</b> B wörtlich: die Manifold-Hypothese ist ein „zweischneidiges
+      Schwert". A's Falten ist die <em>geschärfte</em> Kante — die aktive, kontrollierte Nutzung der
+      Surplus-Dimension. B's unkontrollierte Normal-Richtungen sind die <em>unbenutzte</em> Kante.
+      Ein gutes Netz muss beides: die freie Dimension <em>für Trennbarkeit</em> ausbeuten (A)
+      <em>und</em> den Teil regularisieren, den es <em>unbenutzt lässt</em> (B).
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>4 · Fusionierter Inhalt</h2>
+
+    <h3>4.1 Gemeinsame Prämisse</h3>
+    <p>Manifold-Hypothese: ein 28&times;28-Bild lebt in $\mathbb{R}^{784}$, aber „sinnvolle" Bilder
+    bedecken nur einen winzigen Teil. Man zerlegt jeden Punkt formal als</p>
+    <div class="formula"><div id="fSetup"></div>
+      <div class="cap">$x$ auf der Mannigfaltigkeit, $y$ normal dazu, $\sigma$ = Normal-Rauschen.
+      Labels $g_i=g(x_i)$ hängen nur von $x$ ab — <em>nicht</em> von $y$. Genau diese Unabhängigkeit
+      ist der Keim beider Papiere.</div>
+    </div>
+
+    <h3>4.2 A — der Mechanismus: Falten als Motor</h3>
+    <p>Ein Dense Layer ist <b>affin dann nicht-linear</b>:</p>
+    <div class="formula"><div id="fLayer"></div>
+      <div class="cap">Der affine Teil ist ein <b>Homöomorphismus</b> (Linien&twoWayDot;Linien,
+      Kreise&twoWayDot;Ellipsen) und <em>ändert nie</em> die Trennbarkeit. Der ReLU-Hammer
+      drückt die halbe Ebene auf Null — die erste echte topologische Verformung.</div>
+    </div>
+    <p>Der zentrale Trick: liegt die Mannigfaltigkeit in <em>weniger</em> Dimensionen als die Schicht
+    breit ist, wird ein ReLU mit Normalenrichtung in die <b>freie Dimension</b> zur <b>Falte</b>
+    (injektiv, keine Info verloren) statt zur Quetschung. Das 2D-Ei (Kern + Ring) ist in 2D nicht
+    linear trennbar; hebt man den Kern in die dritte Dimension an, mit $N$ Neuronen als $N$-Eck-Dom
+    $z=\min_k \mathrm{ReLU}(L-2L(\hat u_k\cdot x))$, trennt <b>eine</b> Ebene innen vom außen. Die
+    <b>gelernte Rotation</b> richtet die Daten so aus, dass die wahre Grenze auf die feste Faltlinie
+    fällt. Das <b>Fold-and-Cut-Theorem</b> (Demaine et&nbsp;al. 1998) liefert die Analogie: erst
+    alle Ränder <em>überlappen</em> (versteckte Schichten falten), dann <em>ein gerader Schnitt</em>
+    (letzte Schicht = Hyperebene) — das erklärt die Universal-Approximation von ReLU-Netzen.
+    Empirisch bestätigt durch <b>bimodale Tuning-Kurven</b> an Faltkanten (Poker-Netz): zwei Peaks
+    mit Tal bei $\tilde x=0$; „mixed selectivity" ist Feature, kein Bug.</p>
+
+    <h3>4.3 B — die Analyse: die freie Richtung ist unbestimmt</h3>
+    <p>Die Normalenableitung $\partial f/\partial n_M$ wird von den Trainingsdaten <em>überhaupt
+    nicht</em> festgelegt. Für lineare Modelle: bei $\sigma=0$ bleibt $w_y$ auf seiner Initialisierung
+    (willkürlich); bei $\sigma&gt;0$ gilt</p>
+    <div class="formula"><div id="fScale"></div>
+      <div class="cap">Damit $\|w_y^*\|$ klein (stabil) bleibt, muss $N\sim\mathcal O(\sigma^{-2})$ —
+      <em>superlinear</em>. Tiefe lineare Netze: nichtlinearer Fluss, <b>Slow Manifold</b>, zwei
+      Zeitskalen, Konvergenz $\sim 1/\sigma^2$. Tiefe als Regularisierer <em>nur</em> in der Region
+      $U^+$ (außerhalb des Ellipsoids $E$); in $E^-$ verschlechtert sie die Instabilität.</div>
+    </div>
+    <p>Für ReLU (Lemma 3.1): bei $\sigma=0$ bleibt $W_y^1$ <b>komplett eingefroren</b>. Die
+    Normal-Instabilität ist nach oben abgeschätzt durch</p>
+    <div class="formula"><div id="fRelu"></div>
+      <div class="cap">Das Produkt der Operatornormen wächst <em>exponentiell mit der Tiefe</em> —
+      winzige Perturbationen <em>normal</em> zur Mannigfaltigkeit können die Klassifikation umwerfen
+      (Adversarial-Beziehung). Der Trade-off (Gl.&nbsp;4.4/4.5): Genauigkeit
+      $\lesssim\mathcal O(\sigma^2)+\mathcal O(N^{-1})$ vs. Stabilität
+      $\sim\mathcal O(1/(\sigma^2 N^\beta))$ mit $\beta&lt;\tfrac12$ für ReLU (härter als linear).</div>
+    </div>
+
+    <h3>4.4 Verschmolzen</h3>
+    <p>Die Falte (A) <em>baut</em> auf Breite $&gt; d_x$ — genau $B$'s Kodimension. Die Falte
+    <em>verbraucht</em> die freie Dimension in der Faltregion und macht sie kontrolliert; der
+    <em>Rest</em> (off-manifold, normal) ist $B$'s unkontrollierter Teil. Beide Signaturen
+    lokalisieren den Effekt am <b>gleichen Ort</b>: A's bimodale Kurve sitzt an der <em>Faltkante</em>
+    (dem ReLU-Knick), B's Adversarial-Sensitivität in der <em>freien Normal-Richtung</em>.
+    <b>Fused:</b> Der Knick, der die Daten falten lässt, ist dieselbe Geometrie, die — unregularisiert
+    — die Schwachstelle ist. Breite erzeugt die Falte <em>und</em> die Angriffsfläche.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>5 · Interaktive Visualisierung — der Doppelschwert-Querschnitt</h2>
+    <p class="lead">Ein 2D-Querschnitt: Die Daten-Mannigfaltigkeit $M$ liegt auf der
+    <b>x-Achse</b> (rote Kerne bei $|x|&lt;0.35$, blaue Außen bei $|x|&gt;0.55$). Die
+    <b>y-Achse</b> ist die <em>freie / Normal-Dimension</em>.</p>
+    <p>Ziehe <b>Falt-Stärke $L$</b>: ein ReLU-Dom $y=L\max(0,1-2|x|)$ hebt den roten Kern in die
+    freie Dimension — <em>wo die freie Dimension genutzt wird, entsteht Trennbarkeit</em> (A).
+    Passe die <b>Trennebene $c$</b>: liegt sie im Spalt, trennt sie. Ziehe
+    <b>Normalen-Rauschen $\sigma$</b>: in der <em>unbenutzten</em> Außenregion schrumpft die
+    Ungewissheits-Bande $\partial f/\partial n\approx 1/(\sigma\sqrt N)$ — bei $\sigma=0$ ist sie
+    <em>willkürlich</em> (∞) (B). Ziehe <b>$N$</b>: mehr Daten schmalen die Bande.</p>
+
+    <canvas id="fusedCanvas" class="viz" width="760" height="430"></canvas>
+
+    <div class="ctrls">
+      <label>Falt-Stärke L <span class="val" id="vL">1.20</span>
+        <input id="cL" type="range" min="0" max="2" step="0.02" value="1.2"></label>
+      <label>Trennebene c <span class="val" id="vC">0.15</span>
+        <input id="cC" type="range" min="0" max="1" step="0.01" value="0.15"></label>
+      <label>Normalen-Rauschen σ <span class="val" id="vS">0.15</span>
+        <input id="cS" type="range" min="0" max="1" step="0.01" value="0.15"></label>
+      <label>Datenpunkte N <span class="val" id="vN">300</span>
+        <input id="cN" type="range" min="40" max="1000" step="10" value="300"></label>
+    </div>
+
+    <div style="margin-top:6px">
+      <span class="verdict" id="vA">—</span>
+      <span class="verdict" id="vB">—</span>
+      <span class="verdict" id="vS2">—</span>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--danger)"></span>Kern (innen, gefaltet)</span>
+      <span><span class="dot" style="background:#4c8bf5"></span>Außen (frei, unbenutzt)</span>
+      <span><span class="dot" style="background:var(--accent)"></span>ReLU-Falte / Dom (A)</span>
+      <span><span class="dot" style="background:var(--accent2)"></span>Trennebene c</span>
+      <span>rot-gepunktet = Normalen-Ungewissheit (B)</span>
+    </div>
+    <button id="themeBtn" style="margin-top:14px">☾/☀ Theme umschalten</button>
+  </section>
+
+  <section id="provenienz" class="prov">
+    <h2>6 · Provenienz</h2>
+    <ul>
+      <li><a href="../space_warps.html">space_warps.html</a>
+        <span class="desc">Keup &amp; Helias (2022), „Origami in N dimensions" — ReLU als Falten-Hammer;
+        Falten in ungenutzte höhere Dimensionen erzeugt lineare Trennbarkeit (Fold-and-Cut, bimodale
+        Tuning-Kurven). = Quelle A.</span></li>
+      <li><a href="../low_dim_learning.html">low_dim_learning.html</a>
+        <span class="desc">He, Tsai &amp; Ward (2023), „Side Effects of Learning from Low-dimensional
+        Data" — die Normalenableitung ist unbestimmt; Rauschen/Tiefe als Regularisierer, Adversarial-
+        und Kodimension-Verbindung. = Quelle B.</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    Fusion 058 (Runde 1) · Raum-Falten (A) × niedrig-dimensionales Lernen (B) ·
+    Alle Berechnungen lokal im Browser, keine Netzwerk-Datenabrufe.
+  </footer>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var TAU=Math.PI*2;
+  function tex(id,s){var el=document.getElementById(id);if(!el)return;
+    if(typeof temml!=="undefined"){try{el.innerHTML=temml.renderToString(s,{displayMode:true});return;}catch(e){}}
+    el.textContent=s;}
+  tex('fSetup','\\mathbf{x}=\\begin{pmatrix}x\\\\ \\sigma\\, y\\end{pmatrix},\\;\\;x\\in\\mathbb{R}^{d_x}\\text{ (auf }M\\text{)},\\;\\;y\\in\\mathbb{R}^{d_y}\\text{ (normal)}');
+  tex('fLayer','\\mathbf{z}=\\Phi\\bigl(\\underbrace{\\mathbf{W}\\mathbf{x}}_{\\text{affin (Homöomorphismus)}}+\\underbrace{\\mathbf{b}}_{\\text{Bias}}\\bigr),\\;\\;\\Phi=\\mathrm{ReLU}');
+  tex('fScale','\\|w_y^{*}\\|\\sim\\mathcal{O}\\!\\left(\\tfrac{1}{\\sigma\\sqrt{N}}\\right)\\quad\\Longrightarrow\\quad N\\sim\\mathcal{O}(\\sigma^{-2})\\text{ (superlinear)}');
+  tex('fRelu','\\|\\Delta_y f\\|^{2}_{L^{2}}\\le\\Bigl(\\prod_{\\ell=3}^{L}\\|W^{\\ell}\\|^{2}\\Bigr)\\,\\Bigl[\\sum_{i,j}\\bigl(\\tfrac{\\|W_{j,y}^{1}y\\|^{2}\\|\\nabla h_{i,j}\\|^{2}}{\\|W_{j,x}^{1}\\|^{2}}+C_{d_x}\\tfrac{|W^{2}_{i,j}|^{2}\\|W_{j,y}^{1}y\\|^{3}}{\\|W_{j,x}^{1}\\|}\\bigr)\\Bigr]');
+
+  var canvas=document.getElementById('fusedCanvas'), ctx=canvas.getContext('2d');
+  var DATA=[];
+  function genData(){DATA=[];
+    for(var i=0;i<180;i++){DATA.push({x:(Math.random()*2-1)*0.35,cl:0});}
+    for(var j=0;j<320;j++){var s=Math.random()<0.5?-1:1;DATA.push({x:s*(0.55+Math.random()*0.45),cl:1});}}
+  genData();
+
+  function themeColors(){var cs=getComputedStyle(document.documentElement);
+    function g(n){var v=cs.getPropertyValue(n).trim();return v;}
+    return {bg:g('--code-bg')||'#0a1223',ink:g('--ink')||'#e8eefc',muted:g('--muted')||'#8aa0c8',
+      accent:g('--accent')||'#7cf9d0',accent2:g('--accent2')||'#ff9ec7',
+      line:g('--line')||'#22304a',red:'#ff6b6b',blue:'#4c8bf5'};}
+
+  function draw(){
+    var C=themeColors();
+    var L=+document.getElementById('cL').value;
+    var c=+document.getElementById('cC').value;
+    var sigma=+document.getElementById('cS').value;
+    var N=+document.getElementById('cN').value;
+    document.getElementById('vL').textContent=L.toFixed(2);
+    document.getElementById('vC').textContent=c.toFixed(2);
+    document.getElementById('vS').textContent=sigma.toFixed(2);
+    document.getElementById('vN').textContent=N;
+
+    var W=canvas.width,H=canvas.height,pad=46;
+    var X0=-1.05,X1=1.05,Y0=-2.6,Y1=2.6;
+    function px(x){return pad+(x-X0)/(X1-X0)*(W-2*pad);}
+    function py(y){return H-pad-(y-Y0)/(Y1-Y0)*(H-2*pad);}
+    function yOf(x){return L*Math.max(0,1-2*Math.abs(x));}
+
+    ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);
+    // grid
+    ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.globalAlpha=0.5;
+    for(var gx=-1;gx<=1;gx+=0.5){ctx.beginPath();ctx.moveTo(px(gx),py(Y0));ctx.lineTo(px(gx),py(Y1));ctx.stroke();}
+    for(var gy=-2;gy<=2;gy++){ctx.beginPath();ctx.moveTo(px(X0),py(gy));ctx.lineTo(px(X1),py(gy));ctx.stroke();}
+    ctx.globalAlpha=1;
+    // manifold line y=0
+    ctx.strokeStyle=C.muted;ctx.lineWidth=2;ctx.setLineDash([6,5]);
+    ctx.beginPath();ctx.moveTo(px(X0),py(0));ctx.lineTo(px(X1),py(0));ctx.stroke();ctx.setLineDash([]);
+    // axes
+    ctx.strokeStyle=C.muted;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(px(0),py(Y0));ctx.lineTo(px(0),py(Y1));ctx.stroke();
+
+    // B uncertainty band in outer region (unused free dim)
+    var S=sigma>0.005?1/(sigma*Math.sqrt(N)):Infinity;
+    var Sc=Math.min(S,2.5);
+    ctx.fillStyle='rgba(255,107,107,0.14)';
+    ctx.fillRect(px(0.55),py(Sc),px(1)-px(0.55),py(-Sc)-py(Sc));
+    ctx.fillRect(px(-1),py(Sc),px(-0.55)-px(-1),py(-Sc)-py(Sc));
+    ctx.strokeStyle='rgba(255,107,107,0.55)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(px(0.55),py(Sc));ctx.lineTo(px(1),py(Sc));ctx.stroke();
+    ctx.beginPath();ctx.moveTo(px(-1),py(Sc));ctx.lineTo(px(-0.55),py(Sc));ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=C.red;ctx.font='12px Inter, sans-serif';ctx.textAlign='left';
+    ctx.fillText('∂f/∂n ≈ '+(S===Infinity?'∞ (willkürlich)':(S>=2.5?'> 2.5':S.toFixed(2))),px(0.62),py(Sc)-6);
+
+    // dome curve (A)
+    ctx.strokeStyle=C.accent;ctx.lineWidth=2.5;ctx.beginPath();
+    for(var k=0;k<=200;k++){var xx=X0+(X1-X0)*k/200;var yy=yOf(xx);
+      if(k===0)ctx.moveTo(px(xx),py(yy));else ctx.lineTo(px(xx),py(yy));}
+    ctx.stroke();
+
+    // data points (lifted)
+    for(var m=0;m<DATA.length;m++){var p=DATA[m];var yv=yOf(p.x);
+      ctx.fillStyle=p.cl===0?C.red:C.blue;
+      ctx.beginPath();ctx.arc(px(p.x),py(yv),2.4,0,TAU);ctx.fill();}
+
+    // separating plane c
+    ctx.strokeStyle=C.accent2;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(px(X0),py(c));ctx.lineTo(px(X1),py(c));ctx.stroke();
+    ctx.fillStyle=C.accent2;ctx.textAlign='right';
+    ctx.fillText('Trennebene c='+c.toFixed(2),px(X1)-4,py(c)-6);
+
+    // labels
+    ctx.fillStyle=C.muted;ctx.textAlign='left';ctx.font='12px Inter, sans-serif';
+    ctx.fillText('Daten-Mannigfaltigkeit M (x)',px(-1),H-8);
+    ctx.save();ctx.translate(14,(py(Y1)+py(Y0))/2);ctx.rotate(-Math.PI/2);
+    ctx.textAlign='center';ctx.fillText('freie / Normal-Dimension (y)',0,0);ctx.restore();
+
+    // verdicts
+    var minCore=0.3*L;
+    var sepA=(c>0.001&&c<minCore);
+    var vA=document.getElementById('vA');
+    vA.textContent=sepA?('A · Falte trennt ✓ (c < 0.3·L='+minCore.toFixed(2)+')'):('A · Falte trennt nicht ✗');
+    vA.className='verdict '+(sepA?'ok':'no');
+    var vB=document.getElementById('vB');
+    if(S===Infinity){vB.textContent='B · Normal: willkürlich (σ=0)';vB.className='verdict no';}
+    else if(Sc<0.3){vB.textContent='B · Normal stabil ✓ (‖·‖≈'+S.toFixed(2)+')';vB.className='verdict ok';}
+    else {vB.textContent='B · Normal unruhig (‖·‖≈'+(S>=2.5?'>2.5':S.toFixed(2))+')';vB.className='verdict warn';}
+    var v2=document.getElementById('vS2');
+    v2.textContent='Fusion · genutzt=A, unbenutzt=B';
+    v2.className='verdict warn';
+  }
+
+  ['cL','cC','cS','cN'].forEach(function(id){document.getElementById(id).addEventListener('input',draw);});
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');draw();});
+  window.addEventListener('resize',draw);
+  draw();
+})();
+</script>
+</body>
+</html>

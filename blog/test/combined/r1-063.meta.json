@@ -1,0 +1,16 @@
+{
+  "no": "063",
+  "a": "phasenraum.html",
+  "b": "paper.html",
+  "a_title": "Phasenraum — Die dünne Scheibe der Nützlichkeit",
+  "b_title": "Transformer Layers as Space-Morphing Maps — Interactive Explorer",
+  "combined_theme": "energiescheibe-space-morphing",
+  "one_line": "Ein Transformer verformt den Repräsentationsraum layerweise (Jacobian/Morphismus, B) und formt dabei unter einer gelernten Energie eine dünne, niedrigenergetische 'Nützlichkeitsscheibe' (A), auf der das Modell zuverlässig ist — Nützlichkeit ist der Ort, die Verformung das Wie.",
+  "contradictions": [
+    "A betrachtet die Geometrie als (weitgehend) fixierte Energie-Landschaft, auf der das Modell steht (statischer Attraktor, Gleichgewicht/Scheibe); B betrachtet sie als fortwährend von den Layern verformten Raum (Space-Morphing, aktiver Prozess).",
+    "A lokalisiert Nützlichkeit in einer dünnen niedrigenergetischen Scheibe/Mannigfaltigkeit (einem Ort/Region); B lokalisiert sie im layerweisen Verformungsprofil, in dem die inneren Layer die 'schwere Arbeit' leisten und der letzte Layer die Verformung zurückdreht (ein Prozess, kein Ort).",
+    "A ist statistisch-mechanisch (Energie/Loss, Temperatur T, Boltzmann P proportional e^(-E/T), Wahrscheinlichkeit, 'Kreativität ist Temperatur-Erhöhung'); B ist deterministisch-differentialgeometrisch (Jacobian, Divergenz/Curl/Shear, Coq-bewiesene Identitäten) ohne Temperatur- und ohne Loss-Parameter."
+  ],
+  "resolution": "Die Energie-Landschaft (A) ist der globale Attraktor, den die kumulierten Layer-Verformungen (B) beim Inference ergeben — B beschreibt das Wie (lokal pro Layer via Jacobian), A das Wo (die dünne Scheibe im un-verformten Ausgabe-Raum, wo B's Reversal landet). Temperatur (A) steuert die stochastische Auswahl auf der Scheibe, die Jacobian-Divergenz (B) die lokale Raum-Expansion/Kontraktion: zwei Ebenen (Thermodynamik vs. Differentialgeometrie) desselben dynamischen Systems.",
+  "viz": "Interaktive 'morphende Nützlichkeitsscheibe': 2D-Repräsentationsraum, dessen Gitter layerweise von einem Jacobian-Morphismus verformt wird (B), während die Daten-Mannigfaltigkeit als dünne niedrigenergetische Scheibe mitschwimmt und ein rot gestricheltes falsches Tal die Halluzination markiert (A); ein Temperatur-Regler streut die Boltzmann-Wolke proportional e^(-E/T) über die Scheibe (A) und ein umschaltbares Divergenz-Feld färbt Kontraktion/Expansion (B)."
+}

@@ -1,0 +1,16 @@
+{
+  "no": "065",
+  "a": "buecher/antioed.html",
+  "b": "token_manifold_verletzt.html",
+  "a_title": "Wie ein Sprachmodell denkt — Attention, FFN und die Rolle der Schichten",
+  "b_title": "Token-Embeddings verletzen die Manifold-Hypothese — Interaktiv",
+  "combined_theme": "singulare-token-geometrie-unter-kontraktion",
+  "one_line": "Beide Papiere beschreiben dasselbe Objekt von zwei Enden: einen nicht-glatten, singulären, polysemen Token-Raum, den das Modell durch Kontraktion (Attention) und Expansion (Superposition) dauerhaft umformt und dessen Singularitäten (Homonym-Cusps) dabei bis in die Ausgabe überleben.",
+  "contradictions": [
+    "A modelliert Tokens als Punkte, die glatt auf der Hypersphäre fließen (LayerNorm, Attention = glatte Anziehung; Sätze setzen eine glatte Umgebung voraus); B widerlegt genau diese Glattheit an echten Token-Eingaben — die Manifold-Hypothese wird 4/4 verworfen (p bis 3e-8), mit Cusps, Pinches, Dimensionswechseln und unzusammenhängenden (Dim-0-)Tokens.",
+    "A enthält zwei entgegengesetzte Kräfte im selben Modell: Attention kontrahiert Tokens zu einem Punkt (Rank-Collapse), während Superposition/FFN sie in mehr fast-orthogonale Richtungen als Dimensionen expandiert; B misst den statischen Fußabdruck genau dieses Squeeze-vs-Expand-Widerspruchs als radikal nicht-konstante lokale Dimension (GPT-2 Q1=20 … Q3=531, dreimodal; Llemma Median 4096 vs. Mistral 48 bei identischem Vokabular).",
+    "Polysemie/Homonyme: B liest sie als Pathologie — homonyme Tokens (affect, monitor, aunder) sitzen an Cusps und sind die Quelle der Prompt-Fragilität; A liest dieselbe Polysemie als Ressource — Elhages Superposition (mehr Features als Dimensionen) und Gevas 3,6 Muster pro Schlüssel sind der ökonomische Kapazitätsmechanismus."
+  ],
+  "resolution": "Keine direkte Kollision (verschiedene Objekte: A = Schicht-Dynamik/Verben, B = Eingabe-Geometrie/Nomen), aber drei echte Spannungen. (R1) glatter Kontraktionsfluss (A) auf einem singulären Maß (B) schärft die Cusps statt sie zu glätten. (R2) Kontraktion und Expansion sind eine einzige Spannung — B's nicht-konstante Dimension ist der Gleichgewichtsfußabdruck beider; A's metastabiles Fenster = B's endliche, dreimodale Dimension. (R3) Polysemie ist das Scharnier: ein polysemes Token ist zugleich Superposition (Kapazität, A) und Cusp (Fragilität, B) — günstige Kapazität zahlt den Preis geometrischer Singularität. (R4) 'Verfeinerung' (Residual-Stream, A) = informationserhaltender Transport, keine Glättung — deshalb tragen die Singularitäten bis in die Ausgabe (Theorem 2, B).",
+  "viz": "Interaktive 2D-Token-Wolke (Canvas, theme-aware, inline Daten): reguläre Konzept-Cluster + singuläre Homonym-Cusps. Ein Kontraktions-Regler spielt A ab (Phase 1: Cluster ziehen sich zusammen und die Cusps schärfen sich zu Stacheln; Phase 2: Rank-Collapse — reguläre Wolken fallen zusammen, Cusps überleben). Eine wählbare/freie Probe misst B: die lokale intrinsische Dimension (Steigung der Punktzahl im Radius) — am Cusp ≈1 (Knick/Singularität), im Cluster ≈2 (Manifold)."
+}

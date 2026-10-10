@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 061 — Emergente Weltmodelle: Fourier-Kreisschaltung × Othello-Latentmodell</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b22; --card:#ffffff; --card2:#f3efe6;
+  --border:#ddd6c6; --muted:#5d5a68; --head:#3b2f63;
+  --accent:#6a4fa3; --accent2:#2f7d6d;
+  --num-a:#2b6cb0; --num-b:#805ad5; --correct:#2f9e44; --warn:#c2410c;
+  --chart-bg:#ffffff; --grid:#e6e0d2;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e6e8ef; --card:#152036; --card2:#182238;
+  --border:#2a3552; --muted:#9aa6c0; --head:#b9a7f0;
+  --accent:#a78bfa; --accent2:#34d399;
+  --num-a:#60a5fa; --num-b:#b794f6; --correct:#4ade80; --warn:#fb923c;
+  --chart-bg:#0f172a; --grid:#243050;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,system-ui,sans-serif;
+  line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+article{
+  max-width:820px; margin:0 auto; padding:48px 22px 90px;
+}
+h1{font-size:1.9em; line-height:1.25; margin:.2em 0 .2em; color:var(--head);}
+.subtitle{
+  font-size:.95em; color:var(--muted); border-left:3px solid var(--accent);
+  padding-left:12px; margin:0 0 8px;
+}
+.meta-line{font-size:.85em; color:var(--muted); margin-bottom:26px;}
+section{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:22px 24px; margin:26px 0;
+}
+section > h2{
+  font-size:1.28em; color:var(--head); margin:.1em 0 .6em;
+  border-bottom:2px solid var(--border); padding-bottom:8px;
+}
+section > h2 .tag{
+  font-size:.62em; vertical-align:middle; padding:2px 8px; border-radius:20px;
+  color:var(--card); background:var(--accent); margin-left:8px;
+}
+p{margin:.7em 0;}
+strong{color:var(--fg);}
+code{
+  background:var(--card2); border:1px solid var(--border); border-radius:5px;
+  padding:1px 6px; font-size:.9em; font-family:ui-monospace,Menlo,Consolas,monospace;
+}
+ul,ol{margin:.5em 0 .5em 1.2em; padding:0;}
+li{margin:.35em 0;}
+.formula{
+  background:var(--card2); border:1px dashed var(--border); border-radius:8px;
+  padding:10px 14px; margin:.8em 0; font-family:ui-monospace,Menlo,Consolas,monospace;
+  font-size:.95em; text-align:center;
+}
+.card-row{display:flex; gap:14px; flex-wrap:wrap;}
+.paper{
+  flex:1 1 240px; background:var(--card2); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px;
+}
+.paper h4{margin:.1em 0 .4em; font-size:.98em;}
+.paper.a h4{color:var(--num-a);}
+.paper.b h4{color:var(--accent2);}
+.paper p{font-size:.9em; margin:.3em 0;}
+.tension{
+  border-left:4px solid var(--warn); background:var(--card2);
+  border-radius:0 8px 8px 0; padding:10px 14px; margin:.7em 0;
+}
+.tension .who{font-size:.82em; color:var(--muted); display:block; margin-bottom:2px;}
+.badge{
+  display:inline-block; font-size:.72em; font-weight:bold; padding:1px 8px;
+  border-radius:12px; vertical-align:middle;
+}
+.badge.a{background:var(--num-a); color:var(--card);}
+.badge.b{background:var(--accent2); color:var(--card);}
+.badge.f{background:var(--accent); color:var(--card);}
+.viz-controls{
+  display:flex; flex-wrap:wrap; gap:18px; align-items:center;
+  background:var(--card2); border:1px solid var(--border);
+  border-radius:10px; padding:14px; margin:10px 0;
+}
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; align-items:center;}
+.viz-controls label{font-size:.82em; color:var(--muted);}
+.viz-controls .val{font-family:ui-monospace,monospace; color:var(--head); font-weight:bold;}
+input[type=range]{accent-color:var(--accent); width:150px;}
+button.theme{
+  background:var(--accent); color:var(--card); border:none; border-radius:8px;
+  padding:9px 16px; cursor:pointer; font-size:.88em; margin-left:auto;
+}
+canvas{display:block; max-width:100%; height:auto; background:var(--chart-bg);
+  border:1px solid var(--border); border-radius:10px; margin:8px auto;}
+.readout{
+  background:var(--card2); border:1px solid var(--border); border-radius:8px;
+  padding:10px 14px; font-size:.9em; margin-top:6px;
+}
+.prov{display:flex; gap:16px; flex-wrap:wrap;}
+.prov a{
+  flex:1 1 260px; display:block; background:var(--card2); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px; color:var(--fg); text-decoration:none;
+}
+.prov a:hover{border-color:var(--accent);}
+.prov a .n{font-weight:bold; display:block; color:var(--head); margin-bottom:4px;}
+.prov a .d{font-size:.86em; color:var(--muted);}
+footer{font-size:.8em; color:var(--muted); text-align:center; margin-top:30px;}
+@media(max-width:560px){ .viz-controls{gap:12px;} input[type=range]{width:120px;} }
+</style>
+</head>
+<body>
+<article>
+  <h1>Emergente Weltmodelle: die Fourier-Kreisschaltung trifft Othello-Latentmodell</h1>
+  <p class="subtitle">Fusion aus: grokking_addition.html ✕ othellogpt.html</p>
+  <p class="meta-line">Round 1 · Pair 061 · Quellen: Nanda et al. (ICLR 2023) · Li et al. (ICLR 2023)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion<span class="tag">These</span></h2>
+    <p>Zwei ICLR-2023-Arbeiten, die auf den ersten Blick völlig unterschiedliche Probleme behandeln —
+      <strong>modulare Addition</strong> (A) und <strong>Othello</strong> (B) — teilen exakt dieselbe Grundbehauptung:
+      Ein Sequenzmodell, das <em>einzig</em> darauf trainiert ist, das nächste Token vorherzusagen, baut sich ein
+      <strong>echtes, internes, kausales Abbild des Prozesses</strong> auf, der die Sequenzen erzeugt. Es ist
+      weder bloßes Auswendiglernen noch ein „stochastischer Papagei", der nur statistische Korrelationen
+      nachplappert.</p>
+    <p>Beide Papiere belegen diese These mit derselben drei-fachen Signature, und genau das ist der Fusionskern:
+      die Repräsentation ist (1) <strong>nicht trivial ablesbar</strong> — sie lässt sich nicht als einfache
+      Zahlenliste oder lineare Formel abgreifen; (2) <strong>kausal wirksam</strong> — sie wird aktiv zur
+      Vorhersage benutzt, nicht nur passiv gespeichert; und (3) <strong>generalisiert</strong> — sie liefert
+      korrekte Antworten auf Eingaben, die im Training nie vorkamen. Der einzige Unterschied zwischen A und B
+      ist die <em>Form</em> dieses Weltmodells: bei der Addition ein <strong>komprimiertes, geschlossenes
+      Schaltwerk</strong> (Frequenzkreise + Trigonometrie), bei Othello ein <strong>reiches, nichtlinear
+      kodiertes latentes Modell</strong> des Spielbretts. Beide sind „Weltmodelle" — nur auf verschiedenen
+      Kompressionsstufen desselben Prinzips.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B<span class="tag">Konflikt</span></h2>
+    <p>Die beiden sind kein Widerspruch im Ergebnis, aber sie treffen drei reale Spannungen aufeinander, die
+      unterschiedliche Bilder von „Verständnis" zeichnen:</p>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> grokking_addition — „den Trick gefunden" vs. <span class="badge b">B</span> othellogpt — „ein inneres Bild gebaut"</span>
+      <strong>Form der Repräsentation.</strong> A behauptet: das Netz implementiert die modulare Addition über
+      ein <em>geschlossenes Fourier-Schaltwerk</em> — Zahlen werden auf Kreise gelegt, mit der Additionsformel
+      <code>cos(α)·cos(β) − sin(α)·sin(β) = cos(α+β)</code> kombiniert und über Wellen-Interferenz entschlüsselt.
+      „Verständnis" ist hier eine <em>einfache, aufschreibbare Regel</em>. B behauptet das Gegenteil im Geiste:
+      Das Modell baut ein <em>reiches, verteiltes, nichtlinear kodiertes Weltbild</em> des Bretts auf, das sich
+      <em>nur</em> mit einem nichtlinearen Probe entschlüsselt und <em>keiner</em> einfachen Formel gehorcht
+      (linearer Probe ~20–25 % Fehler, nichtlinearer 1,7 %). A: Verständnis = kompakter Algorithmus. B:
+      Verständnis = komplexes inneres Bild.
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „plötzlicher Grokking-Sprung" vs. <span class="badge b">B</span> „stetiges Emergieren"</span>
+      <strong>Dynamik des Lernens.</strong> A erzählt eine <em>dramatische, diskrete Phasen-Umstellung</em>:
+      erst wird gememorisiert, dann bildet sich im Verborgenen der Algorithmus, und schließlich — getrieben
+      durch <strong>Weight Decay</strong> — fällt der Test-Loss nach langem Plateau <em>plötzlich</em>, die
+      Memorierung wird verworfen. B kennt keinen solchen Sprung: die Repräsentation ist durchgängig vorhanden,
+      in mittleren Layern am stärksten, und wird kontinuierlich kausal genutzt. A: Verständnis „explodiert".
+      B: Verständnis „emergiert" schrittweise und stabil.
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „die eine kanonische Lösung" vs. <span class="badge b">B</span> „mehrere, datenabhängige Lösungen"</span>
+      <strong>Eindeutigkeit der Lösung.</strong> A liefert <em>die</em> eindeutige Lösung: bei Primmodul P=113
+      ist das Fourier-Schaltwerk (Frequenzen 14, 35, 41, 42, 52) die kanonische, fast zwingende Generalisierung.
+      B zeigt dagegen, dass <em>dieselbe Architektur</em> je nach Trainingsverteilung fundamental verschiedene
+      Repräsentationen lernt — das synthetische Modell „denkt regelbasiert" (Saliency nur auf Legalitäts-Felder),
+      das Championship-Modell „denkt strategisch" (Saliency über Ecken/Kanten/global). A: eine Lösung. B:
+      viele mögliche, durch die Daten ausgewählte Lösungen.
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung<span class="tag">Synthese</span></h2>
+    <p><strong>1. Die Form skaliert mit der Struktur der Aufgabe.</strong> Beide Repräsentationen sind Weltmodelle
+      des Erzeugungsprozesses — ihre <em>Dimensionalität</em> ist nur unterschiedlich. Modulare Addition über einem
+      Primmodul ist klein, regelmäßig und endlich: Der gesamte Zustandsraum lässt sich auf <em>wenige
+      Fourier-Normale</em> zusammenfassen, also auf ein explizites Schaltwerk. Das ist keine „einfache Regel
+      statt Weltmodell", sondern ein Weltmodell einer zyklischen Gruppe, das sich hier gerade extrem komprimieren
+      lässt. Das Othello-Brett ist ein großer, räumlicher, kombinatorischer Zustand — da reicht keine Formel,
+      sondern ein verteiltes latentes Modell. <span class="badge f">Fusion</span> <code>Form ∝ Komplexität des
+      Generators</code>: Die Fourier-Zerlegung und das latente Brett sind dieselbe Idee auf zwei Kompressionstufen.</p>
+    <p><strong>2. Kontinuierliche Bildung, diskrete Übernahme.</strong> Die scheinbare Diskrepanz „plötzlich vs.
+      stetig" löst sich, wenn man in A auf die <em>Algorithmus-Stärke</em> schaut: Sie steigt <em>bereits während
+      des Plateaus</em> (Phase 2), also bildet sich der Algorithmus kontinuierlich. Das sichtbare „Aha" ist nur
+      die Moment der <em>dominanten Übernahme</em> — sobald die konkurrierende Memorierung durch Weight Decay
+      weggeprüft ist, springt der Test-Loss. B hat diese scharfe Übernahme nicht, weil dort die Repräsentation
+      durchgängig genutzt wird und kein gleich starker Memorierungswettbewerb existiert.
+      <span class="badge f">Fusion</span> Lernen ist <em>immer</em> kontinuierlich; die <em>verhaltensmaßbare</em>
+      Übernahme kann diskret sein, wenn zwei Strategien konkurrieren (und eine entfernt wird) — bei Othello fehlt
+      diese Konkurrenz, daher wirkt das Lernen glatt.</p>
+    <p><strong>3. Unterbestimmtheit + Interpretation.</strong> Dass A „die eine" und B „viele" Lösungen sieht, ist
+      kein Widerspruch, sondern ein <em>Unterschied des Instruments</em>. Beide nutzen Interpretationswerkzeuge,
+      um herauszufinden, welche Lösung ein <em>konkretes</em> Modell gefunden hat: A rekonstruiert das Schaltwerk
+      (Progress-Maße: Train-/Test-Loss, Algorithmus-Stärke, Gewichts-Norm); B setzt Probes, kausale Intervention
+      und Latent Saliency Maps ein. Die Repräsentation ist <em>unterbestimmt</em> — viele interne Modelle
+      erzeugen dieselbe Vorhersage; die Trainingsverteilung wählt die konkrete Variante, und Interpretationsproben
+      machen sie sichtbar. <span class="badge f">Fusion</span> „Verständnis" ist ein Ensemble möglicher interner
+      Modelle; die Aufgabe + die Daten wählen eines, und man kann es <em>nachweisen</em> (kausal + generalisiert).</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt<span class="tag">Materie</span></h2>
+
+    <div class="card-row">
+      <div class="paper a">
+        <h4>A · Grokking / modulare Addition</h4>
+        <p><strong>Aufgabe:</strong> <code>(a+b) mod P</code> mit Primmodul P=113.</p>
+        <p><strong>Trick:</strong> Zahlen → Punkte auf Kreisen (cos/sin) bei Frequenzen
+          <code>k ∈ {14,35,41,42,52}</code>; Kombination über die Additionstheoreme; Antwort =
+          Wellen-Interferenz <code>Σ_k cos(w_k·(a+b−c))</code>, maximal bei <code>c=(a+b) mod P</code>.</p>
+        <p><strong>Phasen:</strong> ① Memorierung → ② Algorithmus bildet sich (Test-Loss flach) → ③ Aufräumen
+          via Weight Decay → plötzlicher Test-Loss-Einbruch.</p>
+        <p><strong>Schlüssel:</strong> λ=0 ⇒ grokkt nie; stärkere λ ⇒ schneller. Das Memorieren wird <em>verworfen</em>.</p>
+      </div>
+      <div class="paper b">
+        <h4>B · Othello-GPT / Weltrepräsentation</h4>
+        <p><strong>Aufgabe:</strong> GPT (8 Layer, 8 Heads, 512-Dim) nur auf Zug-<em>Sequenzen</em>
+          (Token 1–60) — sieht nie Brett, Regeln, Farben oder Geometrie.</p>
+        <p><strong>Probes:</strong> linear ~20–25 % Fehler, nichtlinear <strong>1,7 %</strong> (bester Layer 7,
+          98,3 % Genauigkeit). Information ist da, aber <em>nichtlinear</em> kodiert.</p>
+        <p><strong>Intervention:</strong> Aktivierungen so ändern, dass ein Feld anders „gesehen" wird ⇒ Vorhersage
+          ändert sich — auch für <em>unmöglich</em> („unnatural") Zustände. Kausal: 0,12 / 0,06 Fehler vs. 2,68 / 2,59.</p>
+        <p><strong>Saliency:</strong> synthetisch = regelbasiert, Championship = strategisch (Ecken/Kanten).</p>
+      </div>
+    </div>
+
+    <h3 style="color:var(--head); margin:1.2em 0 .4em;">Gemeinsame Signatur (der eigentliche Fusionsinhalt)</h3>
+    <ol>
+      <li><strong>Generalisierung jenseits des Gesehenen.</strong> A: das Schaltwerk liefert für <em>jede</em>
+        (a,b)-Kombination — auch nie trainierte — die korrekte Summe. B: Skewed-Dataset-Test (¼ aller Partien
+        entfernt) ⇒ trotzdem 0,02 % Fehler; untrainiert: 93,29 %. Beides widerlegt reines Memorizing.</li>
+      <li><strong>Kausalität, nicht Nebenprodukt.</strong> A: das Schaltwerk <em>berechnet</em> die Antwort (es ist
+        der Inferenzweg). B: Intervention am internen Zustand ändert die Ausgabe. In beiden Fällen ist die interne
+        Struktur <em>kausal verantwortlich</em> für das Verhalten.</li>
+      <li><strong>Interpretierbarkeit als Beweisführung.</strong> Beide Papiere beweisen „Verständnis" nicht per
+        Blackbox, sondern indem sie die interne Struktur <em>lesen und manipulieren</em>: A via Schaltwerk-Rekonstruktion
+        und Progress-Maßen, B via Probes / Intervention / Latent Saliency. Das ist die gemeinsame Methodik der
+        mechanistischen Interpretierbarkeit.</li>
+      <li><strong>Einheitliches Prinzip.</strong> <span class="formula">
+        Sequenzlernen → internes Weltmodell des Generators<br>
+        Form = f(Generator-Komplexität) &nbsp;·&nbsp; Bildung = kontinuierlich &nbsp;·&nbsp;
+        Übernahme = (kann) diskret &nbsp;·&nbsp; Lösung = unterbestimmt (datenabhängig)
+        </span></li>
+    </ol>
+    <p><strong>Warum das wichtig ist:</strong> Die beiden Papiere zusammen zeigen, dass „Verstehen" im
+      Next-Token-Lernen kein binäres Merkmal ist, sondern ein <em>Kontinuum</em>: Von einem auf wenige
+      Normalen komprimierbaren Schaltwerk (Addition) bis zu einem ausgedehnten nichtlinearen Latentmodell
+      (Brett) — verbunden durch dieselben drei Nachweise (kausal, generalisiert, interpretierbar).</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung<span class="tag">Demo</span></h2>
+    <p>Die <strong>Fourier-Interferenz</strong> aus A, die den Fusionskern trägt: Ein <em>kausal</em> arbeitendes,
+      <em>generalisierendes</em> und <em>extrem kompaktes</em> Weltmodell der modularen Addition. Wähle <code>a</code>,
+      <code>b</code> und die Anzahl der Frequenzen. Der Score <code>Σ_k cos(w_k·(a+b−c))</code> über alle 113
+      Antworten <code>c</code> zeigt: Bei der richtigen Antwort verstärken sich alle Wellen konstruktiv (Peak =
+      Anzahl der Frequenzen), bei falschen heben sie sich auf. <strong>Dasselbe</strong> Schaltwerk antwortet für
+      <em>jede</em> Kombination korrekt — auch nie trainierte (das ist der Generalisierungs-Beweis, den B mit
+      Skewed-/Unnatural-Tests an Othello liefert). Der rechte Kreis zeigt die Einbettung: Addition „ohne
+      Addieren", nur durch Drehung.</p>
+
+    <div class="viz-controls">
+      <div class="grp">
+        <label>Zahl a <span class="val" id="va">37</span></label>
+        <input type="range" id="fused-a" min="0" max="112" value="37">
+      </div>
+      <div class="grp">
+        <label>Zahl b <span class="val" id="vb">58</span></label>
+        <input type="range" id="fused-b" min="0" max="112" value="58">
+      </div>
+      <div class="grp">
+        <label>Frequenzen <span class="val" id="vn">5</span></label>
+        <input type="range" id="fused-n" min="1" max="5" value="5">
+      </div>
+      <button class="theme" id="theme-toggle">Thema: Hell/Dunkel</button>
+    </div>
+
+    <canvas id="fusedCanvas" width="780" height="400"></canvas>
+    <div class="readout" id="fused-readout">…</div>
+
+    <canvas id="circCanvas" width="360" height="320"></canvas>
+    <div class="readout" id="circ-readout">…</div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz<span class="tag">Quellen</span></h2>
+    <div class="prov">
+      <a href="../grokking_addition.html">
+        <span class="n">A · grokking_addition.html</span>
+        <span class="d">„Grokking verstehen – Schritt für Schritt" (Nanda et al., ICLR 2023): modulare Addition
+        über einem Primmodul, Fourier-Kreisschaltung, 3 Phasen, Weight Decay als Treiber des Grokking-Sprungs.</span>
+      </a>
+      <a href="../othellogpt.html">
+        <span class="n">B · othellogpt.html</span>
+        <span class="d">„Emergent World Representations" (Li et al., ICLR 2023): Othello-GPT baut ein nichtlineares,
+        kausales latentes Brett-Modell auf; Probes, kausale Intervention, Latent Saliency Maps.</span>
+      </a>
+    </div>
+    <footer>Fusion 061 · Round 1 · selbstbeobachteter HTML, keine Netzwerk-Daten, theme-aware Canvas-Visualisierung.</footer>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var P = 113;
+  var KEY_FREQS = [14, 35, 41, 42, 52];
+
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function palette(){
+    return {
+      bg: cssVar('--chart-bg') || '#ffffff',
+      fg: cssVar('--fg') || '#111111',
+      muted: cssVar('--muted') || '#666666',
+      numA: cssVar('--num-a') || '#2b6cb0',
+      numB: cssVar('--num-b') || '#805ad5',
+      correct: cssVar('--correct') || '#2f9e44',
+      accent: cssVar('--accent') || '#6a4fa3',
+      grid: cssVar('--grid') || '#e6e0d2'
+    };
+  }
+  function v(id){ var e=document.getElementById(id); return e? +e.value : 0; }
+
+  function drawMain(){
+    var cv=document.getElementById('fusedCanvas'); if(!cv) return;
+    var ctx=cv.getContext('2d'); var pal=palette();
+    var W=cv.width, H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    var a=v('fused-a'), b=v('fused-b'), n=v('fused-n');
+    var freqs=KEY_FREQS.slice(0,Math.max(1,Math.min(5,n)));
+    var correct=((a+b)%P+P)%P;
+    var scores=[];
+    for(var c=0;c<P;c++){
+      var s=0;
+      for(var i=0;i<freqs.length;i++){
+        s+=Math.cos(2*Math.PI*freqs[i]/P*(a+b-c));
+      }
+      scores.push(s);
+    }
+    var maxS=-Infinity,minS=Infinity;
+    for(i=0;i<scores.length;i++){ if(scores[i]>maxS)maxS=scores[i]; if(scores[i]<minS)minS=scores[i]; }
+    var pad={l:46,r:16,t:30,b:42};
+    var pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+    ctx.strokeStyle=pal.grid; ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ph); ctx.lineTo(pad.l+pw,pad.t+ph);
+    ctx.stroke();
+    var range=(maxS-minS)||1, bw=pw/P;
+    for(c=0;c<P;c++){
+      var h=((scores[c]-minS)/range)*ph;
+      var x=pad.l+c*bw, y=pad.t+ph-h;
+      if(c===correct){ ctx.fillStyle=pal.correct; ctx.globalAlpha=1; }
+      else { ctx.fillStyle=pal.accent; ctx.globalAlpha=0.42; }
+      ctx.fillRect(x,y,Math.max(1,bw-0.6),h);
+      ctx.globalAlpha=1;
+    }
+    var cx=pad.l+correct*bw+bw/2;
+    var cyTop=pad.t+ph-((scores[correct]-minS)/range)*ph;
+    ctx.fillStyle=pal.correct; ctx.textAlign='center';
+    ctx.font='bold 13px sans-serif';
+    ctx.fillText(String(correct), cx, Math.max(pad.t+13, cyTop-15));
+    ctx.font='11px sans-serif';
+    ctx.fillText('richtig', cx, Math.max(pad.t+13, cyTop-2));
+    ctx.textAlign='left'; ctx.fillStyle=pal.fg; ctx.font='bold 13px sans-serif';
+    ctx.fillText('Fourier-Interferenz · Score(c) über alle Antworten', pad.l, 16);
+    ctx.textAlign='center'; ctx.fillStyle=pal.muted; ctx.font='11px sans-serif';
+    ctx.fillText('Antwort c (0…'+(P-1)+')', pad.l+pw/2, H-8);
+    ctx.textAlign='right';
+    ctx.fillText('max', pad.l-6, pad.t+9);
+    ctx.fillText('min', pad.l-6, pad.t+ph);
+
+    var second=-Infinity;
+    for(c=0;c<P;c++){ if(c!==correct && scores[c]>second) second=scores[c]; }
+    var margin=scores[correct]-second;
+    var ro=document.getElementById('fused-readout');
+    if(ro){
+      ro.innerHTML='a+b mod '+P+' = <strong>'+correct+'</strong> · Peak = <strong>'+scores[correct].toFixed(2)+
+        '</strong> (='+freqs.length+' Frequenzen × 1) · Bester Falscher = '+second.toFixed(2)+
+        ' · <strong>Abstand = '+margin.toFixed(2)+'</strong>. Mit '+freqs.length+
+        ' Frequenz(en) ist die richtige Antwort durch konstruktive Interferenz klar herausgehoben. Dieser exakte'+
+        ' Mechanismus antwortet für <em>jede</em> (nie gememorisierte) Kombination korrekt — das ist die'+
+        ' Generalisierung, die B per Skewed-/Unnatural-Test an Othello nachweist.';
+    }
+  }
+
+  function drawCircles(){
+    var cv=document.getElementById('circCanvas'); if(!cv) return;
+    var ctx=cv.getContext('2d'); var pal=palette();
+    var W=cv.width, H=cv.height;
+    ctx.clearRect(0,0,W,H);
+    var a=v('fused-a'), b=v('fused-b');
+    var correct=((a+b)%P+P)%P;
+    var k=KEY_FREQS[0], w=2*Math.PI*k/P;
+    var cx=W/2, cy=H/2, r=Math.min(W,H)/2-34;
+    ctx.strokeStyle=pal.grid; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,2*Math.PI); ctx.stroke();
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(cx-r-8,cy); ctx.lineTo(cx+r+8,cy);
+    ctx.moveTo(cx,cy-r-8); ctx.lineTo(cx,cy+r+8);
+    ctx.stroke();
+    function pt(x,col,lab,dy){
+      var ang=w*x, px=cx+r*Math.cos(ang), py=cy-r*Math.sin(ang);
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+      ctx.fillStyle=col;
+      ctx.beginPath(); ctx.arc(px,py,6,0,2*Math.PI); ctx.fill();
+      ctx.fillStyle=col; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(lab, px, py+dy);
+    }
+    pt(a,pal.numA,'a = '+a,-12);
+    pt(b,pal.numB,'b = '+b,20);
+    pt(correct,pal.correct,'a+b = '+correct,-12);
+    ctx.fillStyle=pal.fg; ctx.font='bold 12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Einbettung (k='+k+'): Addition ohne Addieren', cx, 16);
+    var cr=document.getElementById('circ-readout');
+    if(cr){
+      cr.innerHTML='Die Zahlen werden als Punkte auf dem Kreis bei Frequenz k='+k+' gelegt. Die Summe'+
+        ' (a+b) mod '+P+' liegt einfach um den Winkel von b hinter a — das Schaltwerk „addiert" damit nur'+
+        ' durch Drehen, nie durch Zählen.';
+    }
+  }
+
+  function draw(){ drawMain(); drawCircles(); }
+  function syncLabels(){
+    var ea=document.getElementById('va'), eb=document.getElementById('vb'), en=document.getElementById('vn');
+    if(ea) ea.textContent=v('fused-a');
+    if(eb) eb.textContent=v('fused-b');
+    if(en) en.textContent=v('fused-n');
+  }
+  function onInput(){ syncLabels(); draw(); }
+  function toggleTheme(){
+    var h=document.documentElement;
+    h.classList.toggle('dark');
+    draw();
+  }
+
+  function init(){
+    var ids=['fused-a','fused-b','fused-n'];
+    for(var i=0;i<ids.length;i++){
+      var e=document.getElementById(ids[i]);
+      if(e) e.addEventListener('input', onInput);
+    }
+    var t=document.getElementById('theme-toggle');
+    if(t) t.addEventListener('click', toggleTheme);
+    if(!document.documentElement.classList.contains('dark')){
+      document.documentElement.classList.add('dark');
+    }
+    syncLabels();
+    draw();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

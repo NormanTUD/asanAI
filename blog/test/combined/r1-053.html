@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der diskrete Antworten-Engpass — Fusion: Grokking-Addition ✕ Latente Semantische Mannigfaltigkeiten</title>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ecdf; --panel:#ffffff; --panel2:#f6f3ea;
+  --ink:#1c1a17; --ink2:#57524a;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#be185d; --accent4:#1d4ed8;
+  --grid:#e3ddcb; --line:#e6e1d2;
+  --good:#15803d; --bad:#b91c1c; --warn:#b45309;
+  --canvas:#ffffff;
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111726; --panel:#141d31; --panel2:#1a2439;
+  --ink:#e8ecff; --ink2:#a8b3d9;
+  --accent:#7cf5c4; --accent2:#ffb86b; --accent3:#ff7ab6; --accent4:#8ab4ff;
+  --grid:#243150; --line:#26314f;
+  --good:#6ee7a0; --bad:#ff9b9b; --warn:#ffd166;
+  --canvas:#0d1424;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 62%);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.wrap{max-width:820px;margin:0 auto;padding:36px 22px 80px}
+header{text-align:center;padding:30px 10px 18px}
+header h1{
+  font-size:clamp(1.9rem,4.6vw,2.8rem);margin:0;line-height:1.15;letter-spacing:-.02em;font-weight:800;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent4) 55%,var(--accent2) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.subtitle{color:var(--ink2);margin-top:14px;font-size:1rem}
+.subtitle code{background:var(--panel2);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-size:.86em;color:var(--accent)}
+.tagline{color:var(--ink2);font-size:.9rem;margin-top:8px;opacity:.85}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:18px 0 6px}
+nav.toc a{color:var(--ink2);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);background:var(--panel2)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin:22px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+section h2{margin:0 0 14px;font-size:1.5rem;letter-spacing:-.01em;color:var(--accent)}
+section h3{color:var(--accent2);margin:22px 0 8px;font-size:1.12rem}
+p{font-size:1rem;color:var(--ink)}
+p+p{margin-top:12px}
+.lead{font-size:1.04rem}
+.hl{color:var(--accent);font-weight:600}
+.hl2{color:var(--accent2);font-weight:600}
+.hl3{color:var(--accent3);font-weight:600}
+.hla{color:var(--accent4);font-weight:600}
+.note{border-left:3px solid var(--accent4);background:var(--panel2);padding:10px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.95rem;color:var(--ink2)}
+.note b{color:var(--ink)}
+.note.a{border-color:var(--accent)} .note.b{border-color:var(--accent2)}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:8px 0}
+li b{color:var(--ink)}
+.formula{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 15px;margin:14px 0;overflow-x:auto;text-align:center;font-size:1.05rem}
+.m{font-family:'Cambria Math','STIX Two Math',Georgia,'Times New Roman',serif;font-style:italic;letter-spacing:.01em;white-space:nowrap}
+.m sup,.m sub{font-size:.72em;font-style:normal}
+.m .op{font-style:normal;color:var(--ink2)}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent);font-weight:600}
+td{color:var(--ink2)}
+td b{color:var(--ink)}
+.trow-a{color:var(--accent);font-weight:600}
+.trow-b{color:var(--accent2);font-weight:600}
+/* viz */
+.viz-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px}
+canvas.viz{display:block;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--canvas)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.82rem;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+@media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+.controls{display:flex;flex-direction:column;gap:12px}
+.ctrl{display:flex;flex-direction:column;gap:5px}
+.ctrl label{font-size:.86rem;color:var(--ink2);display:flex;justify-content:space-between}
+.ctrl label .val{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;outline:none;cursor:pointer;background:var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 0 2px var(--panel)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--panel)}
+input[type=range]:disabled{opacity:.4;cursor:not-allowed}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+button{background:transparent;color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:9px;font-weight:600;cursor:pointer;font-size:.86rem;transition:.15s}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.on{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:.95rem}
+.verdict{font-weight:700;font-size:.98rem;padding:10px 13px;border-radius:10px;margin-bottom:12px;border:1px solid var(--line);background:var(--panel2)}
+.verdict.good{color:var(--good);border-color:var(--good)}
+.verdict.warn{color:var(--warn);border-color:var(--warn)}
+.verdict.bad{color:var(--bad);border-color:var(--bad)}
+.kv{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.kv span:first-child{color:var(--ink2)}
+.kv span:last-child{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;color:var(--ink2);font-size:.85rem;padding:26px 10px 6px}
+a{color:var(--accent4)}
+.prov{display:grid;gap:12px;margin-top:6px}
+.prov a{display:block;text-decoration:none;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 16px;transition:.15s}
+.prov a:hover{border-color:var(--accent);transform:translateY(-1px)}
+.prov .t{font-weight:700;color:var(--ink);font-size:.98rem}
+.prov .d{color:var(--ink2);font-size:.88rem;margin-top:4px}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">☀︎ Hell / 🌙 Dunkel</button>
+<div class="wrap">
+
+<header>
+  <h1>Der diskrete Antworten-Engpass</h1>
+  <p class="subtitle">Fusion aus: <code>grokking_addition_internal2.html</code> ✕ <code>latent_semantic_manifolds_in_llm_simple.html</code></p>
+  <p class="tagline">Wie ein Transformer aus einem <em>kontinuierlichen</em> Gedanken genau <em>ein</em> Wort bzw. eine Antwort macht — und was das kostet.</p>
+</header>
+
+<nav class="toc">
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widersprüche</a>
+  <a href="#aufloesung">Auflösung</a>
+  <a href="#inhalt">Fusionierter Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere untersuchen denselben Engpass: einen Transformer, der einen <span class="hl">kontinuierlichen</span> internen Zustand in <span class="hl2">genau ein diskretes</span> Symbol umwandeln muss. A&nbsp;(<b>Nanda et&nbsp;al., „Grokking" modularen Addition</b>) zeigt, dass dieser Schritt unter der richtigen Aufgabenstruktur <em>exakt und sauber</em> gelingt: Ein Fourier-Schaltkreis (Embed&nbsp;→&nbsp;Attention&nbsp;→&nbsp;Trig-MLP&nbsp;→&nbsp;Interferenz&nbsp;→&nbsp;Softmax) treibt den Logit der richtigen Antwort auf einen scharfen Peak, den Softmap zu ~100&nbsp;% Konfidenz macht.</p>
+  <p>B&nbsp;(<b>Mabrok, „Latent Semantic Manifolds"</b>) zeigt den <em>allgemeinen Preis</em> dieses diskreten Drucks: Die Hidden States liegen auf einer dünnen Mannigfaltigkeit (intrinsische Dimension <span class="m">k≈20</span> in einem Raum von <span class="m">d=768–2048</span>), Wortwahl ist „nächster Anker", und ein bewiesener Satz liefert eine Untergrenze <span class="m">Fehler(N) ≥ c<sub>k</sub>·(V/N)<sup>2/k</sup></span> plus einen <em>irreduziblen Boden</em> (<span class="m">m<sub>0.05</sub>≈0.04–0.06</span>), unter dem 40–51&nbsp;% aller Vorhersagen in einer „Zwischenzone" hängen — egal wie viel Training, egal wie groß das Wörterbuch.</p>
+  <p><span class="hl">Fusionierte Position:</span> Die diskrete Antwort eines Transformers ist eine <b>Quantisierung einer niedrigdimensionalen (Fourier-/Mannigfaltigen-)Repräsentation</b>. Ob diese Quantisierung verlustfrei ist, hängt von der <span class="hla">Ausrichtung</span> zwischen der Struktur der Aufgabe und dem diskreten Antwort-Raster ab. Modulare Addition ist der <em>ausgerichtete</em> Grenzfall: ihr Zielspace <span class="m">ℤ<sub>113</sub></span> ist selbst eine endliche zyklische Gruppe, und ihre Fourier-Basis <em>ist</em> genau das Antwort-Raster — deshalb treibt „Grokking" den Fehler gegen null. Natürliche Sprache ist der <em>fehlgesteuerte</em> Grenzfall: freier Gedanke liegt nicht auf einem Gitter, das zum Vokabular passt — deshalb bleibt die Lücke irreduzibel. Ein vereinter Satz: <b>A ist B's Spezialfall „ausrichtetes Raster"; B's Boden verschwindet genau dort, wo A's sauberer Peak entsteht.</b></p>
+</section>
+
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>A und B stehen in drei konkreten Punkten auf unvereinbaren Seiten. (Hinweis: Sie modellieren <em>verschiedene</em> Aufgaben — geschlossene Arithmetik vs. offene Sprache — aber die Stancen, die sie über „Was leistet ein Transformer?" aufstellen, kollidieren direkt.)</p>
+
+  <h3>1. Exakte Berechnung vs. irreduzibler Verlust</h3>
+  <p><span class="trow-a">A behauptet:</span> Nach dem Training berechnet der Transformer <span class="m">(a+b) mod 113</span> <b>exakt</b>. Durch konstruktive Interferenz wird bei der richtigen Antwort <span class="m">c*</span> <em>jeder</em> Kosinus gleich 1, also der Logit zum Maximum; Softmax liefert daraus eine Wahrscheinlichkeit ≈&nbsp;1.000. „Grokking" ist gerade das Phänomen, nach langem Training plötzliche, <em>deterministische</em> Perfektion zu erreichen — ein Modell, das die Aufgabe „gelöst" hat.</p>
+  <p><span class="trow-b">B behauptet:</span> Das Gegenteil <em>als Theorem</em>. Für <b>jedes</b> endliche diskrete Ausgabewörterbuch gilt eine Rate-Distortion-Untergrenze <span class="m">Fehler(N) ≥ c<sub>k</sub>·(V/N)<sup>2/k</sup></span> plus ein irreduzibles Minimum (der 5&nbsp;%-Boden <span class="m">m<sub>0.05</sub>≈0.04–0.06</span>). Der Satz heißt wörtlich: kein Training und kein größeres Vokabular drücken den Fehler auf null — ein Teil der Antworten ist in der Aufgabe selbst zweideutig.</p>
+
+  <h3>2. Starrer Fourier-Torus vs. glatte dünne Mannigfaltigkeit</h3>
+  <p><span class="trow-a">A beschreibt</span> die Repräsentation als <b>starr-periodisch</b>: jede Zahl wird zu Winkeln auf Kreisen bei nur 5 festen Frequenzen <span class="m">k∈{14,35,41,42,52}</span>; &gt;93&nbsp;% der Varianz der Embedding-Matrix sind von genau diesen Sinus/Kosinus erklärt. Die „bewohnten" Richtungen sind eine saubere <em>diskrete Fourier-Basis</em> — strukturell ein Torus.</p>
+  <p><span class="trow-b">B beschreibt</span> dieselbe Niedrigdimensionalität als <b>glatt-gekrümmte</b> Mannigfaltigkeit intrinsischer Dimension <span class="m">k≈20</span> <em>ohne</em> Periodizität — „eine Landkarte, die in einem 100-dimensionalen Lagerhaus hängt". A impliziert: diskret-periodische Struktur. B impliziert: kontinuierlich-allgemeine Struktur.</p>
+
+  <h3>3. Berechnungsschaltkreis vs. Quantisierung als Engpass</h3>
+  <p><span class="trow-a">A rahmt</span> das Innenleben als <b>Berechnungsschaltkreis</b>, der echte Arithmetik vollzieht — einen Algorithmus, dessen einziger Verlust der Softmax-Rausche ist. Der Engpass liegt in der <em>Rechnung</em> (und die wird fehlerfrei), nicht im Runden.</p>
+  <p><span class="trow-b">B rahmt</span> den Engpass als <b>Quantisierung</b>: diskret&nbsp;→&nbsp;kontinuierlich&nbsp;→&nbsp;diskret, bei der der feine Gedanke auf den <em>nächsten Vokabular-Anker</em> gerundet wird. Der eigentliche Verlust sitzt im <em>Runden</em>, nicht in einer Rechnung — und er ist prinzipiell positiv.</p>
+</section>
+
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>1. Exakt ↔ irreduzibel → „Rauschen" ist die Ausrichtung</h3>
+  <p>Exaktheit ist möglich <em>genau dann</em>, wenn die natürliche Struktur der Aufgabe mit dem diskreten Antwort-Raster zusammenfällt. <span class="m">(a+b) mod 113</span> lebt auf <span class="m">ℤ<sub>113</sub></span> — einer endlichen zyklischen Gruppe. Die 5 Fourier-Frequenzen von A sind die <em>eigenen</em> Frequenzen dieses Rasters; die Zielfunktion ist bandbegrenzt und periodisch. Weil Signal- und Raster identisch sind, kann der Quantisierungsfehler auf null getrieben werden (Grokking). In natürlicher Sprache gibt es ein solches Raster nicht: freie Bedeutungen liegen nicht auf einem Gitter, das zum Vokabular passt. <b>Fusionierter Schluss:</b> A ist der <em>ausgerichtete</em> Spezialfall von B; B's irreduzibler Boden schrumpft exakt dann gegen null, wenn das Aufgaben-„Gitter" die Antwort-Anker überdeckt — also genau im Zustand, in dem A's scharfer Peak erscheint.</p>
+
+  <h3>2. Torus ↔ dünnes Blatt → beide sind „Niedrigdimensionalität"</h3>
+  <p>Beide Papiere sagen im Kern dasselbe: <em>Fast nichts spielt sich in allen verfügbaren Dimensionen ab.</em> B's intrinsische Dimension <span class="m">k≈20</span> ist die <em>allgemeine</em> Größe; A's „5 Frequenzen" (jeweils ein Sinus- und ein Kosinus-Regler) sind ein <em>periodischer, starrer</em> Sonderfall — ein Torus <span class="m">𝕋<sup>r</sup></span> bei den Key-Frequenzen. A's 5 Frequenzen ≈ 10 effektive Winkelkoordinaten, dieselbe Größenordnung wie B's <span class="m">k≈19–22</span>. <b>Fusionierter Schluss:</b> Die Mannigfaltigkeits-Hypothese (B) verallgemeinert den Fourier-Torus-Schaltkreis (A). „Intrinsische Dimension" ist die richtige Invariante; A zeigt, wie sie sich <em>auf der Addition-Aufgabe</em> konkret anfühlt (als Torus), B wie sie sich <em>auf Sprache</em> (als glattes Blatt).</p>
+
+  <h3>3. Schaltkreis ↔ Quantisierung → zwei Stufen desselben Rohrs</h3>
+  <p>A's komplette Pipeline ist buchstäblich B's <span class="hla">diskret→kontinuierlich→diskret</span>: Embedding diskretisiert die Eingabe (Zahlen→Winkel), die Mannigfaltigkeit ist die kontinuierliche Mitte (die Trig/Attention-Rechnung läuft <em>auf</em> ihr), und Unembed+Softmax ist <em>genau</em> der Quantisierungsschritt (jeden Anker scoren, Softmax). Der Schaltkreis baut ein <b>gepeaktes Logit-Feld</b> über den 113 Ankern; Softmax ist die nächste-Anker-Regel; und die <em>Höhe des Peaks</em> ist exakt B's <span class="hl2">Margin</span>. <b>Fusionierter Schluss:</b> A beschreibt, was <em>vor</em> der Quantisierung passiert (der Schaltkreis erzeugt das Feld); B studiert die Quantisierung selbst. Die Margin entscheidet „klar" vs. „Zwischenzone" — dieselbe Zahl, zwei Namen.</p>
+
+  <div class="note"><b>Einheitendes Bild:</b> Ein Transformer ist ein <b>Quantizer auf einer dünnen Mannigfaltigkeit</b>. Der Schaltkreis von A erzeugt die Score-Landschaft; die Geometrie von B sagt, wie breit das „Zögern" um jede Entscheidungsgrenze ist und wie teuer es ist, sie zu verkleinern. Verlustfrei ist die Quantisierung nur im ausgerichteten Grenzfall (Addition/Grokking); sonst bleibt der Rate-Distortion-Boden (Sprache).</div>
+</section>
+
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Die substanzielle Verschmelzung — Schlüsselideen, Zahlen und Formeln beider Papiere, als ein zusammenhängendes Bild.</p>
+
+  <h3>Der Schaltkreis (A) erzeugt ein Logit-Feld über dem Raster</h3>
+  <p>Modulare Addition auf <span class="m">ℤ<sub>P</sub></span> mit <span class="m">P=113</span>. Jede Zahl wird zu Winkeln: <span class="m">ω<sub>k</sub>=2πk/P</span>. Die Pipeline:</p>
+  <div class="formula">Embed: <span class="m">e(a)=[cos(ω<sub>k</sub>a), sin(ω<sub>k</sub>a)]</span> &nbsp;<span class="op">→</span>&nbsp; Attention (bilinear): <span class="m">attn(a)·value(b)</span> &nbsp;<span class="op">→</span>&nbsp; MLP (Trig): <span class="m">cos(ω(a+b))=cos(ωa)cos(ωb)−sin(ωa)sin(ωb)</span> &nbsp;<span class="op">→</span>&nbsp; Interferenz &nbsp;<span class="op">→</span>&nbsp; Softmax</div>
+  <ul>
+    <li><b>Fourier-Spartheit:</b> &gt;93&nbsp;% der Varianz der Embedding-Matrix kommen von nur 5 Frequenzen <span class="m">k∈{14,35,41,42,52}</span>. Die Attention-Softmax läuft fast linear (97,5&nbsp;% Varianz durch einen linearen Fit) — deshalb ist das Ganze ein sauberer bilinearer Produktterm.</li>
+    <li><b>Konstruktive Interferenz:</b> <span class="m">logit(c)=Σ<sub>k</sub> α<sub>k</sub>·cos(ω<sub>k</sub>(a+b−c))</span> mit <span class="m">α=[44.1,42.2,44.8,66.6,63.0]</span>. Bei <span class="m">c*=(a+b) mod P</span> ist <span class="m">a+b−c*=0</span>, also <em>alle</em> Kosinus = 1 und <span class="m">logit(c*)=Σ α<sub>k</sub></span> = Maximum. An jeder falschen Antwort zeigen die Wellen in zufällige Richtungen und heben sich fast auf.</li>
+    <li><b>Softmax</b> <span class="m">P(c)=e^{logit(c)}/Σ<sub>j</sub>e^{logit(j)}</span> macht den Peak zu einer Wahrscheinlichkeit ≈&nbsp;1.000. Mehr Frequenzen → schärferer Peak → mehr Konfidenz.</li>
+  </ul>
+
+  <h3>Die Geometrie (B) misst, wie breit das Zögern ist</h3>
+  <ul>
+    <li><b>Dünnes Blatt:</b> <span class="m">k≈19–22</span> bei <span class="m">d=768–2048</span> (1–3&nbsp;% „bewohnt"); Sanduhr-Verlauf in der Tiefe. Robust über GPT-2/OPT/Pythia → Eigenschaft der <em>Aufgabe</em>, nicht der Architektur. (Schicht 0, die rohen Embeddings, verletzt die Hypothese — das Blatt wird vom Transformer <em>erst erzeugt</em>.)</li>
+    <li><b>Drei Größen</b> (hängen an einer Zahl pro Vorhersage): <span class="hl2">Margin</span> <span class="m">m(h)=Score(Sieger)−Score(Zweitbester)</span>; <b>Gap</b> <span class="m">G<sub>ε</sub>={h:m(h)&lt;ε}</span>; <b>normalisiert</b> <span class="m">η(ε)=Vol(G<sub>ε</sub>)/Vol(Blatt)∈[0,1]</span>.</li>
+    <li><b>Satz 1 (Schlauch-Trick):</b> <span class="m">η(ε)=[Grenzfläche/(λ·Vol)]·ε + O(ε²)</span> — für kleine ε <em>linear</em>. Die Zwischenzone ist ein dünner Schlauch um die Wortgrenzen; Volumen ≈ Oberfläche × Dicke (Dicke = ε/λ). Gemessen: Steigung β≈0.873–1.117&nbsp;≈&nbsp;1, R²&gt;0.985 an 6 Modellen.</li>
+    <li><b>Satz 2 (Rate-Distortion):</b> <span class="m">Fehler(N) ≥ c<sub>k</sub>·(Vol/N)<sup>2/k</sup></span>. Fehler halbiert sich nur mit <span class="m">2<sup>k/2</sup></span> mehr Wörtern (<span class="m">k=20→×1024</span>, <span class="m">k=50→×33 Mio</span>). Selbst der <em>perfekte</em> Fall (gleich große Voronoi-Zellen, Jensen) erreicht diese Schranke nur — unentrinnbar.</li>
+    <li><b>Empirie + Folgen:</b> Median-Margin steigt mit der Größe (0.49→0.64), der Boden <span class="m">m<sub>0.05</sub>≈0.04–0.06</span> bleibt. Perplexität = geometrisch: Skalierung wandert Zustände von den Grenzen in die Zellinnern — bis an den Boden. Konsequenzen: LoRA-Rang <span class="m">r≈k</span>, layer-adaptives Pruning, Dekodierung (Margin = „zögert"), Tokenizer-Design (Lloyd).</li>
+  </ul>
+
+  <h3>Wie sich die zwei Bilder verweben</h3>
+  <table>
+    <thead><tr><th>Aspekt</th><th>A — Grokking / Addition</th><th>B — Mabrok / Sprache</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td><b>Was gemessen wird</b></td><td class="trow-a">Logit-Feld über 113 Resten</td><td class="trow-b">Score-Feld über N Vokabular-Ankern</td><td>Beide: Score-Landschaft, Peak = Antwort</td></tr>
+      <tr><td><b>Niedrigdimensionalität</b></td><td>5 Fourier-Frequenzen (Torus)</td><td>intrins. Dim <span class="m">k≈20</span> (Blatt)</td><td>Ein <span class="m">k</span>: A ist der periodische Sonderfall</td></tr>
+      <tr><td><b>Sicherheits-Maß</b></td><td>Höhe des Interferenz-Peaks <span class="m">Σα<sub>k</sub></span></td><td>Margin <span class="m">m(h)</span></td><td><b> dieselbe Zahl</b>: Peak-Höhe = Margin</td></tr>
+      <tr><td><b>Zögern</b></td><td>Flatte bei wenigen Frequenzen</td><td>Gap <span class="m">G<sub>ε</sub></span>, Anteil η(ε)</td><td>Flache Felder = große Zwischenzone</td></tr>
+      <tr><td><b>Schärfe-Hebel</b></td><td>mehr Frequenzen</td><td>größeres Vokabular <span class="m">N</span></td><td>Beide: Fehler fällt nur wie <span class="m">N<sup>−2/k</sup></span> bzw. mit <span class="m">2<sup>k/2</sup></span></td></tr>
+      <tr><td><b>Endzustand</b></td><td>verlustfrei (Peak auf Rasterpunkt)</td><td>irreduzibler Boden</td><td>entscheidet die <b>Ausrichtung</b> Aufgabe↔Raster</td></tr>
+    </tbody>
+  </table>
+
+  <div class="formula">Fusionierte These in Formel: <span class="m">Antwort = Quantisierer<sub>Raster</sub>( Gedanken ∈ Blatt<sub>k</sub> )</span> &nbsp;·&nbsp; <span class="m">Fehler → 0</span> &nbsp;<span class="op">gdn.</span>&nbsp; <span class="m">Raster ≅ Struktur(Aufgabe)</span> &nbsp;<span class="op">·</span>&nbsp; sonst <span class="m">Fehler ≥ c<sub>k</sub>·(V/N)<sup>2/k</sup> &gt; 0</span></div>
+</section>
+
+<section id="visualisierung">
+  <h2>Visualisierung — Interferenz × Quantisierung</h2>
+  <p>Ein zusammenhängendes interaktives Modell der fusionierten Idee. Das große Feld ist A's <b>konstruktive Interferenz</b> über den 113 Antwort-Resten: <span class="m">logit(c)=Σ α<sub>k</sub>cos(ω<sub>k</sub>(target−c))</span>. Der <span class="hl">grüne Punkt</span> ist der Peak, das <span class="hl2">goldene Band</span> ist B's <b>Zwischenzone</b> (alle Kandidaten innerhalb von ε unter dem Peak = η(ε)). Der <span class="hl3">rosa Punkt</span> markiert den Zweitplatzierten; die Lücke dazwischen ist die <b>Margin</b>.</p>
+  <div class="note b"><b>Fusionssatz zum Anfasst:</b> <b>Gitter-aligned (Addition)</b> → Peak trifft exakt einen Kandidaten, Zwischenzone schrumpft, Verlust → 0 (Grokking). <b>Gitter-fremd (freier Gedanke)</b>, Offset ≈ 0.5 → Peak fällt <em>zwischen</em> zwei Kandidaten, Margin kollabiert, die goldene Lücke bleibt (irreduzibler Boden). Mehr Frequenzen (≈ mehr „freie Regler" k ≈ größeres Vokabular) drücken die Lücke — aber nur wie <span class="m">N<sup>−2/k</sup></span> (Satz 2 rechts).</div>
+
+  <div class="viz-card">
+    <canvas id="cvMain" class="viz" style="height:380px"></canvas>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--accent)"></i>logit(c) (Interferenz)</span>
+      <span><i class="sw" style="background:var(--accent2)"></i>Zwischenzone (Gap, η(ε))</span>
+      <span><i class="sw" style="background:var(--good)"></i>Peak = Antwort c*</span>
+      <span><i class="sw" style="background:var(--accent3)"></i>Zweitbester (Margin davor)</span>
+    </div>
+
+    <div class="viz-grid">
+      <div class="controls">
+        <div>
+          <label style="font-size:.86rem;color:var(--ink2);display:block;margin-bottom:6px">Modus — die Ausrichtung</label>
+          <div class="btnrow">
+            <button id="modeAligned" class="on" type="button">Gitter-aligned (Addition)</button>
+            <button id="modeMis" type="button">Gitter-fremd (freier Gedanke)</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <label>Nominale Antwort c* <span class="val" id="vCstar">72</span></label>
+          <input type="range" id="sCstar" min="0" max="112" step="1" value="72">
+        </div>
+        <div class="ctrl">
+          <label>Offset δ (nur gitter-fremd) <span class="val" id="vOff">0.00</span></label>
+          <input type="range" id="sOff" min="0" max="0.9" step="0.02" value="0" disabled>
+        </div>
+        <div class="ctrl">
+          <label>Frequenzen k (A) ≈ freie Regler <span class="val" id="vFreq">5</span></label>
+          <input type="range" id="sFreq" min="1" max="5" step="1" value="5">
+        </div>
+        <div class="ctrl">
+          <label>Schwelle ε (B) — was zählt als „Zwischenzone" <span class="val" id="vEps">40</span></label>
+          <input type="range" id="sEps" min="0" max="150" step="2" value="40">
+        </div>
+
+        <div class="readout">
+          <div class="verdict" id="rStat">—</div>
+          <div class="kv"><span>Ziel (Gedanke)</span><span id="rCstar">72</span></div>
+          <div class="kv"><span>Antwort c* (Peak)</span><span id="rWin">—</span></div>
+          <div class="kv"><span>Margin m = Peak − 2.</span><span id="rMar">—</span></div>
+          <div class="kv"><span>Zwischenzone η(ε)</span><span id="rEta">—</span></div>
+        </div>
+      </div>
+
+      <div>
+        <canvas id="cvRD" class="viz" style="height:380px"></canvas>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--accent)"></i>k = 5</span>
+          <span><i class="sw" style="background:var(--accent3)"></i>k = 20 (gemessen)</span>
+          <span><i class="sw" style="background:var(--accent4)"></i>k = 50</span>
+        </div>
+        <div class="readout" style="margin-top:12px">
+          <div class="kv"><span>Intrins. Dim k (B)</span><span id="vKrd">20</span></div>
+          <input type="range" id="sKrd" min="2" max="60" step="1" value="20" style="margin-top:8px">
+          <div class="kv" style="margin-top:10px"><span>Faktor, um Fehler zu halbieren = 2<sup>k/2</sup></span><span id="rFac">—</span></div>
+          <div class="kv"><span>Konstante c<sub>k</sub></span><span id="rCk">—</span></div>
+        </div>
+        <div class="note" style="margin-bottom:0"><b>Satz 2 (B):</b> <span class="m">Fehler(N) ≥ c<sub>k</sub>·(V/N)<sup>2/k</sup></span>. Links unten: wie groß das Wörterbuch sein muss, um den Fehler zu halbieren — <span class="m">k=20→×1024</span>, <span class="m">k=50→×33&nbsp;Mio</span>. Das ist der Grund, warum die Zwischenzone nicht einfach „wegtrainiert" werden kann.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="prov">
+    <a href="../grokking_addition_internal2.html">
+      <span class="t">A · grokking_addition_internal2.html — „How a Transformer Learns (a + b) mod 113"</span>
+      <span class="d">Interaktiver Playground zu Nanda et al. (ICLR 2023): Fourier-Embedding, bilineare Attention, Trig-MLP, konstruktive Interferenz &amp; Softmax — der exakte, „grokkende" Schaltkreis. Quelle der Key-Frequenzen, der α-Werte und des Logit-Felds in der Visualisierung.</span>
+    </a>
+    <a href="../latent_semantic_manifolds_in_llm_simple.html">
+      <span class="t">B · latent_semantic_manifolds_in_llm_simple.html — „Latente Semantische Mannigfaltigkeiten in LLMs — Einfach erklärt"</span>
+      <span class="d">Einfache Version zu Mabrok (2026, arXiv:2603.22301): dünne Mannigfaltigkeit k≈20, Margin/Gap/η(ε), Satz 1 (Schlauch-Trick) &amp; Satz 2 (Rate-Distortion 2<sup>k/2</sup>), Messwerte an 6 Modellen. Quelle der Quantisierungs-Geometrie und des c<sub>k</sub>-Terms im kleinen Plot.</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  Fusion (Round 1, id 053) — verschmelzt A (Fourier/Grokking) mit B (Mannigfaltigkeit/Quantisierung).<br>
+  Alle Zahlen aus den Originalplaygrounds. Simulationen laufen live im Browser — ohne externe Bibliotheken, nur Inline-Daten.
+</footer>
+
+</div>
+
+<script>
+"use strict";
+(function(){
+  var P=113;
+  var KF=[14,35,41,42,52];
+  var AL=[44.1,42.2,44.8,66.6,63.0];
+  var st={mode:'aligned',cstar:72,off:0,freq:5,eps:40,krd:20};
+
+  function $(id){return document.getElementById(id);}
+  function col(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function C(){return {
+    canvas:col('--canvas')||'#0d1424',
+    grid:col('--grid')||'#243150',
+    line:col('--line')||'#26314f',
+    txt:col('--ink2')||'#a8b3d9',
+    ink:col('--ink')||'#e8ecff',
+    acc:col('--accent')||'#7cf5c4',
+    acc2:col('--accent2')||'#ffb86b',
+    acc3:col('--accent3')||'#ff7ab6',
+    acc4:col('--accent4')||'#8ab4ff',
+    good:col('--good')||'#6ee7a0'
+  };}
+  function hidpi(cv,h){
+    var dpr=Math.min(2,window.devicePixelRatio||1);
+    var w=cv.clientWidth||600;
+    cv.width=w*dpr;cv.height=h*dpr;
+    cv.style.height=h+'px';
+    var c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);
+    return {c:c,w:w,h:h};
+  }
+  function fmt(v,n){return Number(v).toFixed(n);}
+  function target(){return st.cstar+(st.mode==='misaligned'?st.off:0);}
+  function logits(nf,tg){
+    var a=[],c,i,v;
+    for(c=0;c<P;c++){v=0;for(i=0;i<nf;i++){v+=AL[i]*Math.cos(2*Math.PI*KF[i]*(tg-c)/P);}a.push(v);}
+    return a;
+  }
+
+  function drawMain(){
+    var th=C();
+    var cv=$('cvMain');var o=hidpi(cv,380);var c=o.c,w=o.w,h=o.h;
+    c.clearRect(0,0,w,h);
+    var padL=50,padR=16,padT=20,padB=32;
+    var pw=w-padL-padR,ph=h-padT-padB;
+    var lg=logits(st.freq,target());
+    var peak=-1e9,winner=0,cb;
+    for(cb=0;cb<P;cb++){if(lg[cb]>peak){peak=lg[cb];winner=cb;}}
+    var second=-1e9;
+    for(cb=0;cb<P;cb++){if(cb!==winner&&lg[cb]>second){second=lg[cb];}}
+    var margin=peak-second;
+    var gap=0;for(cb=0;cb<P;cb++){if(lg[cb]>=peak-st.eps)gap++;}
+    var eta=gap/P;
+    var lo=1e9;for(cb=0;cb<P;cb++){if(lg[cb]<lo)lo=lg[cb];}
+    var hi=peak,range=(hi-lo)||1;
+    function X(cc){return padL+(cc/(P-1))*pw;}
+    function Y(vv){return padT+ph*(1-(vv-lo)/range);}
+
+    // gridlines
+    c.strokeStyle=th.grid;c.lineWidth=1;
+    for(var g=0;g<=4;g++){var gy=padT+ph*g/4;c.beginPath();c.moveTo(padL,gy);c.lineTo(w-padR,gy);c.stroke();}
+    // baseline
+    c.strokeStyle=th.line;c.beginPath();c.moveTo(padL,padT+ph);c.lineTo(w-padR,padT+ph);c.stroke();
+
+    // gap bars (amber)
+    var step=pw/(P-1);
+    for(cb=0;cb<P;cb++){
+      if(lg[cb]>=peak-st.eps){
+        var bx=X(cb);var by=Y(lg[cb]);
+        c.fillStyle=th.acc2+'55';
+        c.fillRect(bx-step/2,by,step,padT+ph-by);
+      }
+    }
+    // threshold line
+    if(peak-st.eps>lo){
+      var ty=Y(peak-st.eps);
+      c.strokeStyle=th.acc2;c.setLineDash([5,4]);c.lineWidth=1.2;
+      c.beginPath();c.moveTo(padL,ty);c.lineTo(w-padR,ty);c.stroke();c.setLineDash([]);
+      c.fillStyle=th.acc2;c.font='11px ui-monospace,monospace';c.textAlign='left';
+      c.fillText('ε-Schwelle',padL+4,ty-4);
+    }
+    // curve
+    c.strokeStyle=th.acc;c.lineWidth=2.4;c.beginPath();
+    for(cb=0;cb<P;cb++){var px=X(cb),py=Y(lg[cb]);cb?c.lineTo(px,py):c.moveTo(px,py);}
+    c.stroke();
+
+    // second-best marker
+    var sb=0;for(cb=0;cb<P;cb++){if(cb!==winner&&lg[cb]>lg[sb])sb=cb;}
+    c.strokeStyle=th.acc3;c.setLineDash([3,3]);c.lineWidth=1;
+    c.beginPath();c.moveTo(X(sb),padT);c.lineTo(X(sb),padT+ph);c.stroke();c.setLineDash([]);
+    c.fillStyle=th.acc3;c.beginPath();c.arc(X(sb),Y(lg[sb]),4,0,2*Math.PI);c.fill();
+
+    // peak dot
+    c.fillStyle=th.good;c.beginPath();c.arc(X(winner),Y(peak),6,0,2*Math.PI);c.fill();
+    c.strokeStyle=th.ink;c.lineWidth=1.5;c.stroke();
+    c.fillStyle=th.good;c.font='600 12px ui-monospace,monospace';c.textAlign='left';
+    c.fillText('c*='+winner,Math.min(X(winner)+9,w-60),Math.max(Y(peak)-9,padT+12));
+
+    // axes labels
+    c.fillStyle=th.txt;c.font='10px ui-monospace,monospace';c.textAlign='center';
+    for(var cc=0;cc<=112;cc+=20){c.fillText(cc,X(cc),h-10);}
+    c.fillText('Antwort c (0–112)',padL+pw/2,h-1);
+    c.textAlign='left';
+    c.fillText('logit(c)',padL-46,padT-6);
+
+    // readouts
+    $('rCstar').textContent=st.mode==='aligned'?('c* = '+st.cstar):('c* = '+st.cstar+' + δ='+fmt(st.off,2));
+    $('rWin').textContent=winner;
+    $('rMar').textContent=fmt(margin,1);
+    $('rEta').textContent=fmt(eta*100,1)+' %';
+    var v=$('rStat');
+    if(st.mode==='aligned'){
+      v.textContent='KLAR · Peak auf Gitterpunkt → Verlust → 0 (Grokking)';
+      v.className='verdict good';
+    }else{
+      var rel=peak>0?margin/peak:0;
+      if(rel<0.10){v.textContent='ZWISCHENZONE · Margin kollabiert → irreduzible Lücke (B)';v.className='verdict bad';}
+      else{v.textContent='annähernd klar · gitter-fremd, aber Peak lokalisiert';v.className='verdict warn';}
+    }
+  }
+
+  // --- Rate-Distortion (Satz 2, portiert aus B) ---
+  function logGamma(z){
+    var cf=[676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+    if(z<0.5)return Math.log(Math.PI/Math.sin(Math.PI*z))-logGamma(1-z);
+    z-=1;var x=0.99999999999980993;
+    for(var i=0;i<8;i++)x+=cf[i]/(z+i+1);
+    var t=z+7.5;
+    return 0.5*Math.log(2*Math.PI)+(z+0.5)*Math.log(t)-t+Math.log(x);
+  }
+  function ck(k){var logW=(k/2)*Math.log(Math.PI)-logGamma(k/2+1);return (k/(k+2))*Math.exp(-(2/k)*logW);}
+  function D(k,N){return ck(k)*Math.pow(1/N,2/k);}
+  function drawRD(){
+    var th=C();
+    var cv=$('cvRD');var o=hidpi(cv,380);var c=o.c,w=o.w,h=o.h;
+    c.clearRect(0,0,w,h);
+    var padL=50,padR=14,padT=18,padB=32;
+    var pw=w-padL-padR,ph=h-padT-padB;
+    var dMin=0.001,dMax=1;
+    c.strokeStyle=th.grid;c.lineWidth=1;
+    for(var i=0;i<=4;i++){var y=padT+ph*i/4;c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+      c.fillStyle=th.txt;c.font='10px ui-monospace,monospace';c.textAlign='left';
+      c.fillText(Math.pow(10,-0.75*i).toExponential(1),8,y+3);}
+    var labs=['','10','100','1k','10k','100k','1M'];
+    for(var lg2=1;lg2<=6;lg2++){var x=padL+pw*((lg2-0.3)/5.7);c.fillStyle=th.txt;c.font='10px ui-monospace,monospace';c.textAlign='center';c.fillText(labs[lg2],x,h-10);}
+    c.strokeStyle=th.line;c.beginPath();c.moveTo(padL,padT);c.lineTo(padL,h-padB);c.lineTo(w-padR,h-padB);c.stroke();
+    function yy(dd){var lgd=Math.log10(Math.max(dd,dMin*0.5));return padT+ph*(1-(lgd-Math.log10(dMin))/(Math.log10(dMax)-Math.log10(dMin)));}
+    function xx(nn){var lgn=Math.log10(nn);return padL+pw*((lgn-0.3)/5.7);}
+    var curves=[[5,th.acc],[20,th.acc3],[50,th.acc4]];
+    for(var ci=0;ci<curves.length;ci++){
+      var kk=curves[ci][0],colr=curves[ci][1];
+      c.beginPath();var started=false;
+      for(var s=0;s<=140;s++){
+        var lgv=0.3+(s/140)*5.7;var NN=Math.pow(10,lgv);var dd=D(kk,NN);
+        var Y=yy(dd);var X=xx(NN);
+        if(Y<h-padB+40&&Y>padT-40){if(started)c.lineTo(X,Y);else{c.moveTo(X,Y);started=true;}}
+        else{started=false;}
+      }
+      c.strokeStyle=colr;c.lineWidth=3;c.stroke();
+    }
+    // current k highlight
+    var k=st.krd;var dCur=D(k,50257);
+    c.fillStyle=th.acc2;c.font='600 11px ui-monospace,monospace';c.textAlign='left';
+    c.fillText('k='+k,padL+6,padT+12);
+
+    $('vKrd').textContent=k;
+    var fac=Math.pow(2,k/2);
+    $('rFac').textContent='×'+(fac>=100?Math.round(fac).toLocaleString('de-DE'):fmt(fac,1));
+    $('rCk').textContent=fmt(ck(k),3);
+  }
+
+  function draw(){drawMain();drawRD();}
+
+  // wire controls
+  function bind(id,fn){$(id).addEventListener('input',fn);}
+  bind('sCstar',function(){st.cstar=+$('sCstar').value;$('vCstar').textContent=st.cstar;draw();});
+  bind('sOff',function(){st.off=+$('sOff').value;$('vOff').textContent=fmt(st.off,2);draw();});
+  bind('sFreq',function(){st.freq=+$('sFreq').value;$('vFreq').textContent=st.freq;draw();});
+  bind('sEps',function(){st.eps=+$('sEps').value;$('vEps').textContent=st.eps;draw();});
+  bind('sKrd',function(){st.krd=+$('sKrd').value;draw();});
+
+  function setMode(m){
+    st.mode=m;
+    $('modeAligned').classList.toggle('on',m==='aligned');
+    $('modeMis').classList.toggle('on',m==='misaligned');
+    if(m==='aligned'){st.off=0;$('sOff').value=0;$('vOff').textContent='0.00';$('sOff').disabled=true;}
+    else{$('sOff').disabled=false;if(st.off===0){st.off=0.4;$('sOff').value=0.4;$('vOff').textContent='0.40';}}
+    draw();
+  }
+  $('modeAligned').addEventListener('click',function(){setMode('aligned');});
+  $('modeMis').addEventListener('click',function(){setMode('misaligned');});
+
+  $('themeBtn').addEventListener('click',function(){document.documentElement.classList.toggle('dark');draw();});
+
+  window.addEventListener('resize',draw);
+  draw();
+})();
+</script>
+</body>
+</html>

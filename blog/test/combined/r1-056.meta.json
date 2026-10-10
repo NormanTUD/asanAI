@@ -1,0 +1,16 @@
+{
+  "no": "056",
+  "a": "semantic_steering.html",
+  "b": "grokking_paper.html",
+  "a_title": "Conceptors für Semantic Steering – Interaktive Reise",
+  "b_title": "Wie ein Transformer rechnen lernt",
+  "combined_theme": "weichen-untersraum-vs-frequenzkern",
+  "one_line": "Ein Konzept in einem Netz ist ein Spektrum aus Eigenrichtungen: von außen steuert man es weich per Conceptor-Aperture (A), von innen organisiert sich die Rechnung in einen strukturierten low-rank Frequenz-Kern (B); die Aperture alpha verbindet beide als Endpunkte einer einzigen Eigenzerlegung.",
+  "contradictions": [
+    "A: 'Konzepte sind Räume, keine Pfeile' - weicher, breiter, kontinuierlicher Unterraum, den man nicht auf einen Vektor zusammenklappen darf; B: die gesamte Rechnung a+b mod 113 lebt in exakt Rang 10 (5 diskrete Frequenzen x cos/sin) - eng, diskret, strukturiert, 'alles andere ist Linearkombination'.",
+    "A lehnt harte PCA-Truncation ausdrücklich ab ('sanfte Umschaltung' vs. 'ab Richtung k+1 alles wegwirft'); B zeigt ein Netz, das hart spezialisiert: 84,6% der Neuronen berechnen ein Polynom einer einzelnen Frequenz, genau 5 Frequenzen, Unembedding ist Rang 10 - der Rest wird verworfen.",
+    "A liest die Konzepte-Unterräume aus der Datenverteilung ab (daten-gegeben, pos/neg Cluster) und steuert von außen; B sagt, die Rotations-/Fourier-Geometrie wird vom Netz beim Training selbst erfunden (lösung-gegeben, 'effizientester Weg') - nicht a priori ablesbar."
+  ],
+  "resolution": "A und B sind zwei Seiten derselben Eigenzerlegung des Aktivierungsraums: der weiche Gesamtraum (A) ENTHAHLT den strukturierten low-rank Kern (B). Harte PCA-Truncation ist der Limit alpha->0 des Conceptors, also weiche und harte Selektion sind Endpunkte einer kontinuierlichen Familie. Die Conceptor-Aperture alpha interpoliert: alpha->unendlich = Identitaet = A's weicher Raum, alpha->0 = harter Projektor auf die Top-Eigenrichtungen = B's Rang-10-Frequenzkern. Ein Conceptor auf B's Spektrum reproduziert dessen gelernte Fourier-Grundlage; A's Boolean-Operationen werden dann zu Mengenoperationen auf diesen Frequenz-Richtungen.",
+  "viz": "Interaktives canvas-Spektrum mit Aperture-Dial: 12 Eigenrichtungen (4 Frequenz-Kern + 8 semant. Hintergrund), Slider alpha steuert die weichen Gates gamma_j = sigma_j/(sigma_j + alpha^-2); zeigt Effektiv-Rang (gamma>=0.5), Durchlass Soma gamma/d und Regime-Wechsel 'Weicher Raum (A)' <-> 'Strukturierte Kern (B)' <-> 'Uebergang'. Theme-aware (CSS-Variablen, Dark default), alle Daten inline, kein Netzwerk."
+}

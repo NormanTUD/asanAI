@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 072 — Loss-Landschaft: Informationsgravitation × Gradientenabstieg</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b22; --card:#ffffff; --card2:#f3efe6;
+  --border:#ddd6c6; --muted:#5d5a68; --head:#3b2f63;
+  --accent:#6a4fa3; --accent2:#2f7d6d;
+  --num-a:#2b6cb0; --num-b:#805ad5; --correct:#2f9e44; --warn:#c2410c;
+  --chart-bg:#faf8f1; --grid:#e6e0d2;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e6e8ef; --card:#152036; --card2:#182238;
+  --border:#2a3552; --muted:#9aa6c0; --head:#b9a7f0;
+  --accent:#a78bfa; --accent2:#34d399;
+  --num-a:#60a5fa; --num-b:#b794f6; --correct:#4ade80; --warn:#fb923c;
+  --chart-bg:#0f172a; --grid:#243050;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,system-ui,sans-serif;
+  line-height:1.75; -webkit-font-smoothing:antialiased;
+}
+article{ max-width:820px; margin:0 auto; padding:48px 22px 90px; }
+h1{font-size:1.85em; line-height:1.25; margin:.2em 0 .2em; color:var(--head);}
+.subtitle{ font-size:.95em; color:var(--muted); border-left:3px solid var(--accent); padding-left:12px; margin:0 0 8px; }
+.meta-line{font-size:.85em; color:var(--muted); margin-bottom:26px;}
+section{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px 24px; margin:26px 0; }
+section > h2{ font-size:1.26em; color:var(--head); margin:.1em 0 .6em; border-bottom:2px solid var(--border); padding-bottom:8px; }
+section > h2 .tag{ font-size:.62em; vertical-align:middle; padding:2px 8px; border-radius:20px; color:var(--card); background:var(--accent); margin-left:8px; }
+h3{color:var(--head); font-size:1.08em; margin:1.3em 0 .4em;}
+p{margin:.7em 0;}
+strong{color:var(--fg);}
+code{ background:var(--card2); border:1px solid var(--border); border-radius:5px; padding:1px 6px; font-size:.9em; font-family:ui-monospace,Menlo,Consolas,monospace; }
+ul,ol{margin:.5em 0 .5em 1.2em; padding:0;}
+li{margin:.35em 0;}
+.formula{ background:var(--card2); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; margin:.8em 0; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.9em; text-align:left; line-height:1.9; overflow-x:auto; }
+.card-row{display:flex; gap:14px; flex-wrap:wrap;}
+.paper{ flex:1 1 240px; background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.paper h4{margin:.1em 0 .4em; font-size:.98em;}
+.paper.a h4{color:var(--num-a);}
+.paper.b h4{color:var(--accent2);}
+.paper p{font-size:.9em; margin:.4em 0;}
+.tension{ border-left:4px solid var(--warn); background:var(--card2); border-radius:0 8px 8px 0; padding:10px 14px; margin:.7em 0; }
+.tension .who{font-size:.82em; color:var(--muted); display:block; margin-bottom:3px;}
+.badge{ display:inline-block; font-size:.72em; font-weight:bold; padding:1px 8px; border-radius:12px; vertical-align:middle; }
+.badge.a{background:var(--num-a); color:#fff;}
+.badge.b{background:var(--accent2); color:#fff;}
+.badge.f{background:var(--accent); color:#fff;}
+table.map{width:100%; border-collapse:collapse; margin:.8em 0; font-size:.9em;}
+table.map th,table.map td{border:1px solid var(--border); padding:7px 10px; text-align:left; vertical-align:top;}
+table.map th{background:var(--card2); color:var(--head); font-size:.8em; letter-spacing:.03em;}
+table.map td.g{color:var(--num-a); font-weight:600;}
+table.map td.f{color:var(--accent2); font-weight:600;}
+.viz-controls{ display:flex; flex-wrap:wrap; gap:14px 16px; align-items:center; background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:14px; margin:10px 0; }
+.viz-controls .grp{display:flex; flex-direction:column; gap:4px; align-items:flex-start;}
+.viz-controls label{font-size:.8em; color:var(--muted);}
+.viz-controls .val{font-family:ui-monospace,monospace; color:var(--head); font-weight:bold;}
+.viz-controls .chk{display:flex; align-items:center; gap:5px; font-size:.84em; color:var(--muted);}
+input[type=range]{accent-color:var(--accent); width:132px;}
+input[type=checkbox]{accent-color:var(--accent); width:15px; height:15px;}
+button.theme,button.act{ background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 14px; cursor:pointer; font-size:.85em; }
+button.act{background:var(--accent2);}
+button.theme{margin-left:auto;}
+canvas{display:block; max-width:100%; height:auto; background:var(--chart-bg); border:1px solid var(--border); border-radius:10px; margin:8px auto;}
+.readout{ background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-size:.9em; margin-top:6px; }
+.ro-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:8px; margin:12px 0;}
+.ro{background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:8px 10px; text-align:center;}
+.ro .k{font-size:.7em; letter-spacing:.03em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:2px;}
+.ro .v{font-family:ui-monospace,monospace; font-size:1.08em; font-weight:700;}
+.ro.a .v{color:var(--num-a);}
+.ro.b .v{color:var(--accent2);}
+.ro.hero .v{color:var(--warn);}
+.legend{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; font-size:.8em; color:var(--muted); margin:4px 0 10px;}
+.legend i{width:11px; height:11px; border-radius:3px; display:inline-block; margin-right:5px; vertical-align:middle;}
+.prov{display:flex; gap:16px; flex-wrap:wrap;}
+.prov a{ flex:1 1 260px; display:block; background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; color:var(--fg); text-decoration:none; }
+.prov a:hover{border-color:var(--accent);}
+.prov a .n{font-weight:bold; display:block; color:var(--head); margin-bottom:4px;}
+.prov a .d{font-size:.86em; color:var(--muted);}
+footer{font-size:.8em; color:var(--muted); text-align:center; margin-top:30px;}
+@media(max-width:560px){ .viz-controls{gap:10px;} input[type=range]{width:104px;} }
+</style>
+</head>
+<body>
+<article>
+  <h1>Die Loss-Landschaft im Vorwärtsdurchlauf: rollender Ball vs. ausgeführter Optimierer</h1>
+  <p class="subtitle">Fusion aus: informationsgravitation.html ✕ in-context-learning_through_gradient.html</p>
+  <p class="meta-line">Round 1 · Pair 072 · Quellen: „Information Gravity“ (Vyshnyvetska, arXiv:2504.20951, 2025) · „Transformers Learn In Context by Gradient Descent“ (von Oswald et al., ICML 2023)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion<span class="tag">These</span></h2>
+    <p>Beide Papiere beschreiben, was ein <strong>eingefrorener</strong> Transformer-Vorwärtsdurchlauf tut, indem sie ihn als
+      <strong>Bewegung auf einer Verlust-/Potentialfläche</strong> lesen. <span class="badge a">A</span> (Informationsgravitation):
+      Eine Nutzerfrage&nbsp;Q trägt eine <em>Informationsmasse</em> <code>M(Q)=α·H(Q)+β·D(Q)+γ·N(Q)</code> (Entropie, Kontexttiefe,
+      Novelty), die einen semantischen Raum krümmt; die Token-Generierung ist ein <em>Ball</em>, der in dem Potential
+      <code>Φ(t,Q)=−log P(t|Q)</code> rollt, wobei die Temperatur&nbsp;T das Rauschen setzt. Wo die Fläche stark gekrümmt ist,
+      wird der Ball eingefangen — und die drei bekannten Phänomene (Zufallszahl-Bias zur „5“, Prompt-Sensitivität über 56
+      Prozentpunkte, Halluzinationen) sind <em>dieselbe Dynamik</em> in verschiedenen Parameterbereichen.
+      <span class="badge b">B</span> (In-Context-Learning via GD) macht einen viel schärferen Claim: Der
+      <em>selbe</em> eingefrorene Vorwärtsdurchlauf <strong>führt Gradientenabstieg aus</strong>. Jede lineare
+      Attention-Schicht ist <em>exakt ein GD-Schritt</em> auf einer aus den Kontext-Beispielen&nbsp;(xᵢ,yᵢ)
+      <em>gebauten</em> Least-Squares-Loss; K Schichten = K Schritte; tiefe Netze = <strong>GD++</strong> (eine
+      Krümmungskorrektur); Nichtlinearität über ein vorgeschaltetes MLP = kernalisierte Regression; die Tokens selbst baut
+      eine Kopier-/Induktions-Kopie zusammen. Der Transformer ist ein <strong>Mesa-Optimierer</strong>.</p>
+    <p>Der vereinigende Zug: <strong>A’s <code>Φ(t,Q)=−log P(t|Q)</code> <em>ist</em> eine Negative-Log-Likelihood — also
+      eine <em>Loss-Funktion</em>.</strong> A und B lesen damit <em>dasselbe Objekt</em>, eine Log-Loss-/Potentialfläche über
+      den Zustand des Modells, nur zweimal: <span class="badge a">A</span> liest sie
+      <strong>statistisch/thermodynamisch</strong> — <em>aus welcher Verteilung</em> samplemt das Netz, und <em>wo die Fläche
+      das Netz zum Scheitern bringt</em> (falsche Minima, Bifurkationen, T→0-Capture); <span class="badge b">B</span> liest sie
+      <strong>mechanistisch/konstruktiv</strong> — <em>wie die Fläche in den Gewichten berechnet</em> wird (Attention = Summe
+      äußerer Produkte = im Vorwärtsdurchlauf berechnete Least-Squares-Approximation) und <em>wie sie abgestiegen</em> wird
+      (eine Schicht pro GD-Schritt). <span class="badge f">Fusion</span> <strong>B ist der Mechanismus, den A als gegeben
+      voraussetzt.</strong></p>
+    <p>Die gemeinsame Währung ist die <strong>Krümmung</strong> (Hessematrix / Konditionszahl). A sagt: <em>dort, wo die
+      Krümmung hoch und T niedrig ist</em>, bricht das Sampling — hohe Hesse-Eigenwerte auf kleinen Gebieten +
+      <code>P(t)≪1</code> ⇒ Einfang in ein falsches Minimum = Halluzination. B zeigt: das Netz <em>ingenieurt die Krümmung
+      aktiv</em> — tiefe Netze setzen GD++ ein, das die Fläche <em>rundet</em> (κ senkt), und das Ganze an einer
+      <strong>Divergenzkante</strong> scheitert, wenn der Schritt zu groß ist (η&nbsp;&gt;&nbsp;2/λ<sub>max</sub>; bei GD++
+      γ&nbsp;&gt;&nbsp;1/λ). Dieselbe Kante, zwei Bewertungen: „wo das Sampling bricht“ (A) vs. „wo der eingebaute Optimierer
+      divergiert“ (B).</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B<span class="tag">Konflikt</span></h2>
+    <p>Im Ergebnis widersprechen sie sich <strong>nicht direkt</strong> — sie beantworten zwei verschiedene Fragen
+      (A: <em>welche</em> Ausgaben produziert der eingefrorene Durchlauf und warum; B: <em>welchen</em> Rechenbetrieb führt
+      er aus). Aber ihre Stancen stehen an drei Stellen in echtem, spezifischem Konflikt:</p>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „ein Durchlauf = eine Stichprobe“ vs. <span class="badge b">B</span> „ein Durchlauf = eine ausgeführte Optimierung“</span>
+      <strong>Was ein eingefrorener Vorwärtsdurchlauf <em>tut</em>.</strong> A beschreibt Generierung als <em>Stichprobenziehung
+      aus einer festen Verteilung</em> P(·|Q) (Boltzmann-/Softmax bei Temperatur T): die Dynamik ist <strong>stochastisches
+      Sampling</strong> über einem <em>vorgegebenen</em> Potential, das der Durchlauf nur offenbart. B dagegen sagt, der
+      Durchlauf <em>rechnet</em> etwas aus: Er führt K Gradientenschritte aus und <strong>konvergiert in die Lösung</strong>
+      einer Kontext-Loss (deterministische Optimierung, Cos-Ähnlichkeit→1, L2→0 im Experiment). „Aus einer Verteilung ziehen“
+      (A) und „<em>die eine</em> Antwort berechnen“ (B) sind entgegengesetzte Bilder desselben eingefrorenen Durchlaufs.
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „in ein Tal fallen = Risiko (Capture)“ vs. <span class="badge b">B</span> „in ein Tal fallen = Erfolg (Konvergenz)“</span>
+      <strong>Der Talgrund als Gefahr oder als Ziel.</strong> Für A ist „in ein Tal rollen“ (T→0, Greedy, „Gravitational
+      Capture“) ein <em>Fehlschlagsmodus</em>: man kann in ein <strong>falsches</strong> Minimum fallen → Halluzination;
+      deshalb soll man die Temperatur <em>hoch</em> halten, um <em>herauszusklingen</em>. Für B ist genau das
+      <em>konvergieren</em> in den Talgrund (GD erreicht das Least-Squares-Optimum) <strong>der Punkt und ein Erfolg</strong> —
+      den Tiefe (K Schritte) und GD++ sogar <em>verbessern</em>. Dasselbe „Bergabrollen in ein Minimum“ ist also A’s Gefahr
+      und B’s Ziel.
+    </div>
+
+    <div class="tension">
+      <span class="who"><span class="badge a">A</span> „Krümmung = externer Unfall“ vs. <span class="badge b">B</span> „Krümmung = vom Netz gedrehtes Einstellrad“</span>
+      <strong>Die Rolle der Krümmung / der Hesse-Matrix.</strong> Bei A ist hohe Krümmung (Hesse-Eigenwerte auf kleinen
+      Gebieten) ein <em>exogenes</em> Risiko aus den (nicht modellierten) Gewichten, das Halluzinationen verursacht — und dem
+      man <em>von außen</em> entgeht (T erhöhen, Anker setzen, Adaptive Temperatur T(Q)=f(M(Q))). Das Netz <em>steuert seine
+      eigene Krümmung nicht</em>; sie ist eine Eigenschaft des Feldes. Bei B ist die Krümmung (Konditionszahl κ der
+      Hesse-Matrix H=XXᵀ) <em>endogen und aktiv optimiert</em>: tiefe Netze bauen GD++ ein, das die Daten transformiert und κ
+      <strong>reduziert</strong> (Eigenwert-Map <code>f(λ,γ)=λ−2γλ²+γ²λ³</code>), und wählen γ <em>knapp unter</em> der
+      Kante. A: Krümmung ist eine Falle, aus der man flieht. B: Krümmung ist ein Rad, das das Netz <em>selbst</em> dreht.
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung<span class="tag">Synthese</span></h2>
+    <p><strong>1. Sampler und Optimierer sind zwei Temperaturlimits derselben Dynamik.</strong> A’s Durchlauf <em>mit</em>
+      Temperatur T ist ein <em>stochastisches</em> Abstieg-/Sampling-Verfahren (Langevin-artig) auf Φ.
+      <strong>Setzt man T→0, wird daraus ein deterministisches Abfahren des Tals — also exakt B’s Gradientenabstieg.</strong>
+      <span class="badge f">Fusion</span> B ist A’s <em>T→0-Limit</em> (deterministisch, konvergiert in <em>ein</em> Minimum);
+      A ist B <em>+ Temperatur/Noise</em> (erprobt mehrere Täler). „Ziehen aus P(·|Q)“ und „in die Lösung konvergieren“ sind
+      dieselbe Bergab-Dynamik auf derselben Fläche, nur unterschiedlich temperiert — kein Widerspruch, zwei Grenzfälle.</p>
+    <p><strong>2. Der Talgrund ist Erfolg oder Fehlschlag — je nachdem, <em> welches </em> Minimum es ist.</strong> Beide
+      stimmen zu, dass „Bergabrollen“ die Grunddynamik ist. Der Unterschied ist, <em>zu welchem</em> Minimum man kommt: Ist
+      es das <strong>wahre Minimum der Kontext-Loss</strong> (B, in-Distribution, GD findet das LS-Optimum) → Erfolg. Ist es
+      ein <strong>spuriöses lokales Minimum, das hohe Masse auf semantischer Leere erzeugt</strong> (A) → Halluzination.
+      <span class="badge f">Fusion</span> „Konvergiert zum Optimum“ (B) und „halluziniert“ (A) sind <em>derselbe
+      Vorgang</em>, wenn das Optimum selbst spuriös ist — und zwar genau dort, wo A „Capture in ein falsches Minimum“ und B
+      „konvergiert“ zusammentreffen. A’s „Temperatur halten, um herausspringen zu können“ ist der Selbstschutz gegen den
+      Fall, in dem das Netz deterministisch im falschen Tal hängt.</p>
+    <p><strong>3. Krümmung: exogen von außen, endogen von innen — dieselbe Größe auf zwei Ebenen.</strong> A misst Krümmung
+      als Eigenschaft eines <em>schwarzkastigen</em> Feldes, das vom Input (Masse M(Q)) geformt wird — für A ist sie
+      „exogen“, weil A die Gewichte nicht öffnet. B öffnet die Kiste und zeigt: dieselbe Krümmung (κ von H=XXᵀ) wird
+      <em>über die Schichtgewichte</em> (P·W<sub>V</sub>, W<sub>K</sub>W<sub>Q</sub>) gesetzt und durch GD++
+      <em>aktiv reduziert</em>. <span class="badge f">Fusion</span> „Exogen“ (A) und „endogen“ (B) sind dieselbe Größe,
+      einmal <em>von außen</em> gelesen (Feature der Fläche, das den Output verdirbt), einmal <em>von innen</em> (vom Netz
+      eingestelltes Parameter, das es optimiert). Die Divergenzkante (η&gt;2/λ<sub>max</sub>) ist die <em>selbe</em> Kante, an
+      der A’s „Capture / Informations-Schwarzloch“ (übermäßige Anziehung) und B’s „Abstieg explodiert“ zusammentreffen.</p>
+    <p><strong>Fusierter Schluss:</strong> <strong>B erklärt das, was A als gegeben annimmt.</strong> A’s „feste Fläche, auf
+      der der Ball rollt“ wird von B <em>erzeugt</em> (Attention = im Vorwärtsdurchlauf berechnete Least-Squares-Approximation)
+      und <em>abgestiegen</em> (eine Schicht = ein GD-Schritt). A’s <em>Temperatur</em> ↔ B’s <em>Stochastik</em>; A’s
+      <em>adaptive T(Q)=f(M(Q))</em> ↔ B’s <em>meta-gelerntes, pro-Schicht η und GD++-γ</em> (beide: Schrittweite/Exploration
+      muss zur Landschaft passen). A’s <em>bewegliche Gravitationsquelle / Informations-Trägheit</em> (jeder Token verformt
+      das Feld neu) ↔ B’s <em>jede Schicht schreibt die Zielwerte um und stapelt einen Schritt</em>. Eine Landschaft, zwei
+      Lesarten — und die Krümmung ist der Punkt, an dem beide sich berühren: einmal als <em>Ort des Bruchs</em> (A), einmal als
+      <em>vom Netz gedrehtes Rad</em> (B).</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt<span class="tag">Materie</span></h2>
+
+    <div class="card-row">
+      <div class="paper a">
+        <h4>A · informationsgravitation.html — Feldtheorie der Generierung</h4>
+        <p><strong>Informationsmasse:</strong> <code>M(Q)=α·H(Q)+β·D(Q)+γ·N(Q)</code> — Entropie H (Mehrdeutigkeit),
+          Kontexttiefe D (Mutual Information mit Vor-Kontext), Novelty N (KL-Distanz zu den Trainingsdaten).</p>
+        <p><strong>Potential &amp; Gravitation:</strong> <code>Φ(t,Q)=−log P(t|Q)</code>; <code>g=−∇Φ</code> zeigt zum
+          wahrscheinlichsten Token. Tiefe = Wahrscheinlichkeit.</p>
+        <p><strong>Sampling &amp; Temperatur:</strong> Boltzmann/Softmax <code>P(t)=exp(−Φ/T)/Z</code>.
+          <strong>Grenzwerte:</strong> T→0 ⇒ H→0 (deterministisch, „Gravitational Capture“); T→∞ ⇒ H→log|V| (gleichverteilt).</p>
+        <p><strong>Wirkung &amp; Trägheit:</strong> ein Text ist eine Bahn <code>S[τ]=∫Φ dτ</code>; jeder gewählte Token
+          verschiebt die Gravitationsquelle → „bewegliche Quelle“ / Informations-Trägheit (erklärt Stil-Beharrung &amp;
+          Wiederholungsschleifen).</p>
+        <p><strong>Halluzination (scharf):</strong> hohe Hesse-Eigenwerte auf <em>kleinen</em> Gebieten +
+          <code>P(t)≪1</code> ⇒ Einfang in falsches lokales Minimum. Zwei Gegenpole: <em>semantische Leere</em> (flach,
+          schwache Verbindungen → Halluzination) vs. <em>Informations-Schwarzloch</em> (Alignment, extrem tief →
+          Standardantwort).</p>
+        <p><strong>Hebel:</strong> Entropy Balancing, Kontext-Stabilisierung, Anchoring, adaptive
+          <code>T(Q)=f(M(Q))</code>, drei Metriken (Curvature, Conductivity, Field Stability).</p>
+      </div>
+      <div class="paper b">
+        <h4>B · in-context-learning_through_gradient.html — GD im Vorwärtsdurchlauf</h4>
+        <p><strong>Das Rätsel:</strong> In-Context-Lernen ohne Gewichtsänderung. Frage: <em> welchen </em> Algorithmus führt
+          der eingefrorene Durchlauf aus?</p>
+        <p><strong>Der Trick (Gl. 4):</strong> Gewichtsänderung = Datenänderung: <code>L(W+ΔW)=L(W)</code> mit neuen Zielen
+          <code>yᵢ−ΔW·xᵢ</code>. Ein Netz, das nur Tokens verändert, kann also „lernen“.</p>
+        <p><strong>Attention als GD:</strong> <code>e_j ← e_j + P·W_V·Σᵢ(eᵢ⊗eᵢ)·W_KᵀW_Q·e_j</code> — exakt die Form des
+          Gradienten <code>−(η/N)Σ(Wxᵢ−yᵢ)xᵢᵀ</code>. <strong>Prop. 1:</strong> explizite Matrizen
+          (W_K=W_Q=diag(I,0), W_V=[[0,0],[W₀,−I]], P=(η/N)I) ⇒ <code>(x_j,y_j)→(x_j, y_j−ΔW·x_j)</code>.</p>
+        <p><strong>Beweis:</strong> echtes Adam-Training erreicht <em>exakt</em> den GD-Verlust (Cos→1, L2→0,
+          Interpolation verlustfrei, OOD-Verhalten identisch, Gewichte visuell deckungsgleich).</p>
+        <p><strong>Tiefe = K Schritte; GD++:</strong> zusätzlich <code>x_j←(I−γXXᵀ)x_j</code>; Eigenwert-Map
+          <code>f(λ,γ)=λ−2γλ²+γ²λ³</code> staucht große λ → κ ↓ (Landschaft wird runder). γ wird knapp unter der Kante
+          gewählt (γ&gt;1/λ ⇒ Kante/Divergenz).</p>
+        <p><strong>Nichtlinearität &amp; Tokens:</strong> MLP vor der Attention ⇒ <code>ŷ=Σ yᵢ·m(xᵢ)ᵀm(x_test)</code> =
+          kernalisierte Regression (Prop. 2); eine Softmax-Kopierschicht baut die Tokens selbst (Induktionskopf, Prop. 3).</p>
+      </div>
+    </div>
+
+    <h3>Die gemeinsame Struktur — Zeile für Zeile dasselbe Objekt</h3>
+    <table class="map">
+      <tr><th>Gemeinsames Objekt</th><th><span class="badge a">A</span> Informationsgravitation</th>
+          <th><span class="badge b">B</span> ICL via Gradientenabstieg</th></tr>
+      <tr><td>Die Fläche</td><td class="g">semantisches Potential Φ(t,Q)=−log P(t|Q)</td>
+          <td class="f">Negative-Log-Likelihood / Least-Squares-Loss L(W)=(1/2N)Σ‖Wxᵢ−yᵢ‖²</td></tr>
+      <tr><td>Was die Fläche formt</td><td class="g">die Frage: M(Q)=αH+βD+γN</td>
+          <td class="f">die Kontext-Beispiele (xᵢ,yᵢ) → Hesse-Matrix H=XXᵀ (Kovarianz der Eingaben)</td></tr>
+      <tr><td>Die Bewegung</td><td class="g">Ball rollt (Sampling über ein vorgegebenes Feld)</td>
+          <td class="f">GD-Schritt; eine Schicht = ein Schritt, K Schichten = K Schritte</td></tr>
+      <tr><td>Schrittweite / Exploration</td><td class="g">Temperatur T; adaptiv T(Q)=f(M(Q))</td>
+          <td class="f">Lernrate η; GD++-Parameter γ (beide meta-gelernt / aufgabenabhängig)</td></tr>
+      <tr><td>Krümmung</td><td class="g">Hesse-Eigenwerte → Halluzination an falschen Minima</td>
+          <td class="f">Konditionszahl κ=λ₁/λ₂; GD++ rundet via f(λ,γ)=λ−2γλ²+γ²λ³</td></tr>
+      <tr><td>Bruch / Divergenz</td><td class="g">T→0 „Capture“, Informations-Schwarzloch</td>
+          <td class="f">η&gt;2/λ<sub>max</sub> ⇒ Abstieg divergiert; GD++: γ&gt;1/λ ⇒ Kante</td></tr>
+      <tr><td>Token / Schicht</td><td class="g">bewegliche Gravitationsquelle, Informations-Trägheit</td>
+          <td class="f">jede Schicht schreibt die Ziele um und stapelt einen Schritt</td></tr>
+    </table>
+
+    <h3>Die Mathematik beider Papiere (kompakt)</h3>
+    <div class="formula">
+A · Feldtheorie der Generierung<br>
+&nbsp;&nbsp;M(Q) = α·H(Q) + β·D(Q) + γ·N(Q) &nbsp;&nbsp;&nbsp;&nbsp; # Masse<br>
+&nbsp;&nbsp;Φ(t,Q) = −log P(t|Q) &nbsp;,&nbsp; g(t) = −∇Φ &nbsp;&nbsp; # Potential / Gravitation<br>
+&nbsp;&nbsp;P(t|Q) = exp(−Φ(t)/T) / Z &nbsp;&nbsp; # Boltzmann = Softmax<br>
+&nbsp;&nbsp;S[τ] = ∫ Φ(t(τ),Q) dτ &nbsp;&nbsp; # Wirkung einer Generierungs-Bahn<br>
+&nbsp;&nbsp;H_ij = ∂²Φ/∂x_i∂x_j &nbsp;&nbsp; # Krümmung (Hesse)<br>
+&nbsp;&nbsp;T→0 ⇒ H→0 (Capture) &nbsp;&nbsp; T→∞ ⇒ H→log|V| &nbsp;&nbsp; # Grenzwerte<br>
+&nbsp;&nbsp;T_adaptive(Q) = f(M(Q)) &nbsp;&nbsp; # Hebel
+    </div>
+    <div class="formula">
+B · GD im Vorwärtsdurchlauf<br>
+&nbsp;&nbsp;L(W) = (1/2N) Σᵢ ‖W xᵢ − yᵢ‖² &nbsp;&nbsp; # Kontext-Loss<br>
+&nbsp;&nbsp;ΔW = −η ∇_W L = −(η/N) Σᵢ (W xᵢ − yᵢ) xᵢᵀ &nbsp;&nbsp; # GD-Schritt = Summe äußerer Produkte<br>
+&nbsp;&nbsp;Trick: L(W+ΔW) = L(W) &nbsp;mit Zielen yᵢ − ΔW xᵢ &nbsp;&nbsp; # Gewichts- = Datenänderung<br>
+&nbsp;&nbsp;e_j ← e_j + P·W_V Σᵢ (eᵢ⊗eᵢ) W_Kᵀ W_Q e_j &nbsp;&nbsp; # Attention<br>
+&nbsp;&nbsp;Prop.1: W_K=W_Q=diag(I,0), W_V=[[0,0],[W₀,−I]], P=(η/N)I ⇒ (x_j,y_j)→(x_j, y_j−ΔW x_j)<br>
+&nbsp;&nbsp;GD++: x_j ← (I−γ X Xᵀ) x_j &nbsp;,&nbsp; f(λ,γ) = λ − 2γλ² + γ²λ³ &nbsp;&nbsp; # κ ↓<br>
+&nbsp;&nbsp;Divergenz: η &gt; 2/λ_max &nbsp;,&nbsp; GD++-Kante: γ &gt; 1/λ<br>
+&nbsp;&nbsp;Kernel: L(W)=(1/2N)Σ‖W m(xᵢ)−yᵢ‖² &nbsp;,&nbsp; ŷ = Σᵢ yᵢ·m(xᵢ)ᵀm(x_test)
+    </div>
+
+    <h3>Beider Grenzen (ehrliche Bilanz)</h3>
+    <ul>
+      <li><span class="badge a">A</span> ist eine <strong>konzeptuelle Rahmenarbeit ohne eigene Experimente</strong>;
+        α,β,γ sind nie beziffert (nicht direkt falsifizierbar); H, D, N sind verschränkt (neuartige Frage hat meist hohe
+        Entropie); die Physik-Analogie ist ausdrücklich <em>kein wörtliches Modell</em> (keine Erhaltungssätze, keine
+        Einheiten); die drei Rätsel werden post-hoc unter dieselbe Sprache gezwungen.</li>
+      <li><span class="badge b">B</span> gilt für <strong>kleine Netze auf linearen/quadratischen Tasks</strong>; der
+        Hauptbefund ist für <em>lineare</em> Selbst-Attention (Softmax verschlechtert, zwei Köpfe retten es teilweise;
+        LayerNorm verschlechtert); die Konstruktion ist <em>existenzbasiert</em> (es gibt <em>ein</em> Gewichtsmuster, nicht
+        das einzige); die Autoren schreiben selbst: es ist wohl <em>einer von mehreren</em> Mechanismen.</li>
+      <li><span class="badge f">Fusion</span> Genau das passt zusammen: A ist die <em>schwarzkastige, statistische</em>
+        Seite (was kommt raus, wo bricht’s), B die <em>geöffnete, mechanistische</em> Seite (wie entsteht die Fläche, wie wird
+        sie abgestiegen). A’s offene Gewichte α,β,γ sind die Kante, an der B’s explizite Gewichtskonstruktion ansetzt.</li>
+    </ul>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung<span class="tag">Demo</span></h2>
+    <p>Der Fusionskern in einem Bild: <strong>eine einzige Loss-Landschaft</strong> Φ(x) mit einem <em>Wissens-Tal</em>
+      (links, Tiefe ∝ Wissensdichte) und einem <em>Void-Tal</em> (rechts, Tiefe ∝ fehlende Wissensdichte) wird
+      <em>zweimal zugleich</em> auf derselben Fläche bestritten. <strong>Lesart A (Sampling, Temperatur T):</strong> viele
+      Partikel rollen mit Temperatur-Noise bergab — bei T→0 werden sie <em>eingefangen</em> („Capture“); wer im Void-Tal
+      landet, ist rot markiert = <strong>Halluzinationsrate</strong>. <strong>Lesart B (Optimierung, Schrittweite η):</strong>
+      ein deterministischer GD-Lauf steigt in das Wissens-Tal ab — die <em>selbe</em> Fläche; <strong>GD++</strong> (γ)
+      <em>rundet</em> die Krümmung (κ ↓, gestrichelte Kurve), und schiebt man η über die <strong>Divergenzkante η=2/λ<sub>max</sub></strong>,
+      <em>explodiert</em> der Abstieg — dieselbe Kante, an der A „Capture/Schwarzes-Loch“ meint. Krümmung ist die gemeinsame
+      Währung: einmal Ort des Bruchs (A), einmal vom Netz gedrehtes Rad (B).</p>
+
+    <div class="viz-controls">
+      <div class="grp"><label>Temperatur T <span class="val" id="viz-T-v">0.70</span></label>
+        <input type="range" id="viz-T" min="0.02" max="2.5" step="0.02" value="0.7"></div>
+      <div class="grp"><label>Schrittweite η <span class="val" id="viz-eta-v">0.30</span></label>
+        <input type="range" id="viz-eta" min="0.05" max="2.0" step="0.01" value="0.3"></div>
+      <div class="grp"><label>Schritte K <span class="val" id="viz-K-v">25</span></label>
+        <input type="range" id="viz-K" min="1" max="60" step="1" value="25"></div>
+      <div class="grp"><label>GD++ γ <span class="val" id="viz-gam-v">0.00</span></label>
+        <input type="range" id="viz-gam" min="0" max="0.2" step="0.005" value="0"></div>
+      <div class="grp"><label>Wissensdichte <span class="val" id="viz-Kd-v">0.70</span></label>
+        <input type="range" id="viz-Kd" min="0.05" max="1" step="0.01" value="0.7"></div>
+      <div class="grp"><label>Krümmung/Rug <span class="val" id="viz-Rug-v">0.35</span></label>
+        <input type="range" id="viz-Rug" min="0" max="1" step="0.02" value="0.35"></div>
+      <label class="chk"><input type="checkbox" id="viz-showA" checked> A: Sampling</label>
+      <label class="chk"><input type="checkbox" id="viz-showB" checked> B: Abstieg</label>
+      <button class="act" id="viz-anim">▶ Abstieg animieren</button>
+      <button class="act" id="viz-reset">⟲ Reset</button>
+      <button class="theme" id="theme-toggle">Thema: Hell/Dunkel</button>
+    </div>
+
+    <canvas id="viz-canvas" width="820" height="460"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i> Potential Φ(x)</span>
+      <span><i style="background:var(--accent2)"></i> GD++-gerundet (γ&gt;0)</span>
+      <span><i style="background:var(--correct)"></i> Wissens-Tal (wahr)</span>
+      <span><i style="background:var(--warn)"></i> Void-Tal (falsch)</span>
+      <span><i style="background:var(--num-a)"></i> A: Sampling-Partikel</span>
+      <span><i style="background:var(--num-b)"></i> B: GD-Pfad</span>
+    </div>
+
+    <div class="ro-grid">
+      <div class="ro a"><span class="k">A · Halluzinationsrate</span><span class="v" id="ro-hallu">—</span></div>
+      <div class="ro a"><span class="k">A · Regime</span><span class="v" id="ro-capture" style="font-size:.92em">—</span></div>
+      <div class="ro b"><span class="k">B · Endposition x*</span><span class="v" id="ro-bend">—</span></div>
+      <div class="ro b"><span class="k">B · Status</span><span class="v" id="ro-bstatus" style="font-size:.92em">—</span></div>
+      <div class="ro hero"><span class="k">Krümmung max|Φ''| (raw)</span><span class="v" id="ro-kraw">—</span></div>
+      <div class="ro hero"><span class="k">Krümmung (GD++)</span><span class="v" id="ro-kgpp">—</span></div>
+      <div class="ro hero"><span class="k">Divergenzkante η=2/λmax</span><span class="v" id="ro-etaC">—</span></div>
+    </div>
+    <div class="readout" id="viz-readout">…</div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz<span class="tag">Quellen</span></h2>
+    <div class="prov">
+      <a href="../informationsgravitation.html">
+        <span class="n">A · informationsgravitation.html</span>
+        <span class="d">„Informationsgravitation“ (Maryna Vyshnyvetska, „Information Gravity: A Field-Theoretic Model for
+        Token Selection in LLMs“, arXiv:2504.20951, 2025): Informationsmasse M(Q)=αH+βD+γN krümmt den semantischen Raum,
+        Φ=−log P als Potential, Temperatur-Sampling, Hesse-basierte Halluzinationsvorhersage, Capture &amp; Schwarzloch —
+        die statistische/thermodynamische Lesart der Loss-Landschaft (die „fläche, auf der der Ball rollt“).</span>
+      </a>
+      <a href="../in-context-learning_through_gradient.html">
+        <span class="n">B · in-context-learning_through_gradient.html</span>
+        <span class="d">„Transformers Learn In Context by Gradient Descent“ (von Oswald et al., ICML 2023): der
+        Vorwärtsdurchlauf führt Gradientenabstieg aus (eine lineare Attention-Schicht = ein GD-Schritt, Prop. 1),
+        Tiefe = K Schritte, GD++ rundet die Krümmung (f(λ,γ)), Divergenz bei η&gt;2/λmax, Kernregression &amp;
+        Induktionskopf — die mechanistische Lesart (wie die Fläche in den Gewichten entsteht und abgestiegen wird).</span>
+      </a>
+    </div>
+    <footer>Fusion 072 · Round 1 · selbstbeobachteter HTML, keine Netzwerk-Daten, theme-aware Canvas-Visualisierung.</footer>
+  </section>
+</article>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz-canvas');
+  var ctx=cv.getContext('2d');
+  var W=cv.width, H=cv.height;
+  var xmin=-4, xmax=4;
+  var animStep=Infinity, rafId=null, curB=null;
+
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function hexToRgba(hex,a){
+    hex=(hex||'').replace(/^#/,'').trim();
+    if(hex.length===3){ hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2]; }
+    var r=parseInt(hex.substr(0,2),16), g=parseInt(hex.substr(2,2),16), b=parseInt(hex.substr(4,2),16);
+    if(isNaN(r)||isNaN(g)||isNaN(b)){ r=120; g=130; b=160; }
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+  function palette(){
+    return {
+      bg:     cssVar('--chart-bg')||'#0f172a',
+      fg:     cssVar('--fg')||'#e6e8ef',
+      muted:  cssVar('--muted')||'#9aa6c0',
+      grid:   cssVar('--grid')||'#243050',
+      curve:  cssVar('--accent')||'#a78bfa',
+      curve2: cssVar('--accent2')||'#34d399',
+      wellOk: cssVar('--correct')||'#4ade80',
+      wellBad:cssVar('--warn')||'#fb923c',
+      aPart:  cssVar('--num-a')||'#60a5fa',
+      bPart:  cssVar('--num-b')||'#b794f6',
+      white:  '#ffffff'
+    };
+  }
+  function mulberry32(seed){
+    var a=seed>>>0;
+    return function(){
+      a|=0; a=a+0x6D2B79F5|0;
+      var t=Math.imul(a^a>>>15,1|a);
+      t=t+Math.imul(t^t>>>7,61|t)^t;
+      return ((t^t>>>14)>>>0)/4294967296;
+    };
+  }
+
+  // One loss/potential surface. gam=0 => raw (A's surface); gam>0 => GD++-rounded (B's).
+  function phiEff(x,p,gam){
+    var g=(gam/0.2);                 // 0..1
+    var rugScale=1-0.85*g;           // rugironed out as GD++ rounds
+    var wid=1+1.2*g;                 // wells widen -> curvature down
+    var v=0.05*x*x;
+    var s1=0.9*wid;
+    v -= p.Kd*3.0*Math.exp(-((x+1.5)*(x+1.5))/s1);        // knowledge well (true)
+    var s2=0.9*wid;
+    v -= (1-p.Kd)*1.1*Math.exp(-((x-2.5)*(x-2.5))/s2);    // void well (false)
+    v += p.Rug*rugScale*1.2*Math.exp(-((x+1.5)*(x+1.5))/1.0)*Math.sin(x*3.5); // localized ruggedness
+    return v;
+  }
+  function dPhi(x,p,gam){ var h=1e-3; return (phiEff(x+h,p,gam)-phiEff(x-h,p,gam))/(2*h); }
+  function maxCurv(p,gam){
+    var N=800, dx=(xmax-xmin)/(N-1), prev2=0, prev=0, cur=0, mx=0, x;
+    var a=phiEff(xmin,p,gam); prev2=a;
+    x=xmin+dx; prev=phiEff(x,p,gam);
+    for(var i=2;i<N;i++){ x=xmin+i*dx; cur=phiEff(x,p,gam);
+      var d2=(cur-2*prev+prev2)/(dx*dx); if(d2>mx) mx=d2; prev2=prev; prev=cur;
+    }
+    return mx;
+  }
+  function readParams(){
+    var g=function(id){ var e=document.getElementById(id); return e?parseFloat(e.value):0; };
+    return { T:g('viz-T'), eta:g('viz-eta'), K:Math.max(1,Math.round(g('viz-K'))),
+             gam:g('viz-gam'), Kd:g('viz-Kd'), Rug:g('viz-Rug') };
+  }
+
+  // A: stochastic sampling over the RAW surface, temperature T.
+  function runA(p,Np,seed){
+    var rng=mulberry32(seed), res=[], S=120;
+    for(var n=0;n<Np;n++){
+      var x=xmin+0.2+rng()*(xmax-xmin-0.4);
+      for(var s=0;s<S;s++){
+        x = x - 0.05*dPhi(x,p,0) + (rng()*2-1)*p.T*0.35;
+        if(x<xmin+0.05)x=xmin+0.05; if(x>xmax-0.05)x=xmax-0.05;
+      }
+      var cls=(x>=-2.7&&x<=-0.4)?'ok':(x>=1.3&&x<=3.7)?'hallu':'other';
+      res.push({x:x, y:phiEff(x,p,0), cls:cls});
+    }
+    return res;
+  }
+  // B: deterministic GD descent into the knowledge well on the (possibly rounded) surface.
+  function runB(p){
+    var x=-2.6, pts=[{x:x, y:phiEff(x,p,p.gam)}], diverged=false;
+    for(var k=0;k<p.K;k++){
+      x = x - p.eta*dPhi(x,p,p.gam);
+      if(!isFinite(x)||Math.abs(x)>3.8){ diverged=true; break; }
+      pts.push({x:x, y:phiEff(x,p,p.gam)});
+    }
+    var fx=pts[pts.length-1].x;
+    var status=diverged?'div':(fx>=-2.7&&fx<=-0.4?'true':(fx>=1.3&&fx<=3.7?'false':'edge'));
+    return {pts:pts, diverged:diverged, status:status, fx:fx};
+  }
+
+  function draw(){
+    var p=readParams(), pal=palette();
+    var Aparts=runA(p,72,12345), hallu=0;
+    for(var hc=0;hc<Aparts.length;hc++) if(Aparts[hc].cls==='hallu') hallu++;
+    var hr=(hallu/Aparts.length*100);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H);
+
+    var mL=52,mR=20,mT=34,mB=58, pw=W-mL-mR, phh=H-mT-mB;
+    var N=300, rawV=[], effV=[], xs=[];
+    for(var i=0;i<N;i++){ var x=xmin+(xmax-xmin)*i/(N-1); xs.push(x);
+      rawV.push(phiEff(x,p,0)); effV.push(phiEff(x,p,p.gam)); }
+    var yall=rawV.concat(effV), ymin=Math.min.apply(null,yall), ymax=Math.max.apply(null,yall);
+    var pad=(ymax-ymin)*0.14+0.12; ymin-=pad; ymax+=pad;
+    function X(x){ return mL+(x-xmin)/(xmax-xmin)*pw; }
+    function Y(y){ return mT+(ymax-y)/(ymax-ymin)*phh; }
+
+    // grid
+    ctx.strokeStyle=pal.grid; ctx.lineWidth=1;
+    for(var gi=0;gi<=4;gi++){ var gy=mT+phh*gi/4;
+      ctx.beginPath(); ctx.moveTo(mL,gy); ctx.lineTo(mL+pw,gy); ctx.stroke(); }
+    for(var gx=-4;gx<=4;gx++){ ctx.beginPath(); ctx.moveTo(X(gx),mT); ctx.lineTo(X(gx),mT+phh); ctx.stroke(); }
+    ctx.fillStyle=pal.muted; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+    for(var gt=-4;gt<=4;gt++){ ctx.fillText(String(gt), X(gt), mT+phh+14); }
+
+    // fill under raw
+    ctx.beginPath(); ctx.moveTo(X(xmin),Y(rawV[0]));
+    for(var fi=1;fi<N;fi++) ctx.lineTo(X(xs[fi]),Y(rawV[fi]));
+    ctx.lineTo(X(xmax),mT+phh); ctx.lineTo(X(xmin),mT+phh); ctx.closePath();
+    ctx.fillStyle=hexToRgba(pal.curve,0.10); ctx.fill();
+
+    // eff (rounded) curve if gam>0
+    if(p.gam>0.001){
+      ctx.beginPath(); for(var ei=0;ei<N;ei++){ ei?ctx.lineTo(X(xs[ei]),Y(effV[ei])):ctx.moveTo(X(xs[ei]),Y(effV[ei])); }
+      ctx.strokeStyle=pal.curve2; ctx.lineWidth=2; ctx.setLineDash([6,4]); ctx.stroke(); ctx.setLineDash([]);
+    }
+    // raw curve
+    ctx.beginPath(); for(var ri=0;ri<N;ri++){ ri?ctx.lineTo(X(xs[ri]),Y(rawV[ri])):ctx.moveTo(X(xs[ri]),Y(rawV[ri])); }
+    ctx.strokeStyle=pal.curve; ctx.lineWidth=2.6; ctx.stroke();
+
+    // well markers
+    function marker(xw,label,col){
+      var yw=phiEff(xw,p,0);
+      ctx.fillStyle=col; ctx.beginPath();
+      ctx.moveTo(X(xw),Y(yw)); ctx.lineTo(X(xw)-6,Y(yw)+10); ctx.lineTo(X(xw)+6,Y(yw)+10); ctx.closePath(); ctx.fill();
+      ctx.fillStyle=col; ctx.font='11px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(label, X(xw), Y(yw)+24);
+    }
+    marker(-1.5,'Wissens-Tal (wahr)',pal.wellOk);
+    marker( 2.5,'Void-Tal (falsch)',pal.wellBad);
+
+    // A particles
+    if(document.getElementById('viz-showA').checked){
+      for(var ai=0;ai<Aparts.length;ai++){
+        var a=Aparts[ai];
+        ctx.fillStyle = a.cls==='ok'?hexToRgba(pal.wellOk,0.85)
+                      : a.cls==='hallu'?hexToRgba(pal.wellBad,0.9)
+                      : hexToRgba(pal.muted,0.6);
+        ctx.beginPath(); ctx.arc(X(a.x), Y(a.y)-3-(ai%5), 3.1, 0, 6.2832); ctx.fill();
+      }
+    }
+
+    // B path
+    curB=runB(p);
+    var showN=(animStep===Infinity)?curB.pts.length:Math.min(animStep,curB.pts.length);
+    if(document.getElementById('viz-showB').checked){
+      ctx.strokeStyle=hexToRgba(pal.bPart,0.9); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(X(curB.pts[0].x),Y(curB.pts[0].y));
+      for(var bi=1;bi<showN;bi++){
+        var q=curB.pts[bi-1], r=curB.pts[bi];
+        var x1=X(q.x),y1=Y(q.y),x2=X(r.x),y2=Y(r.y);
+        ctx.lineTo(x2,y2);
+        var ang=Math.atan2(y2-y1,x2-x1);
+        ctx.beginPath(); ctx.moveTo(x2,y2);
+        ctx.lineTo(x2-7*Math.cos(ang-0.4),y2-7*Math.sin(ang-0.4));
+        ctx.lineTo(x2-7*Math.cos(ang+0.4),y2-7*Math.sin(ang+0.4));
+        ctx.closePath(); ctx.fillStyle=pal.bPart; ctx.fill();
+      }
+      ctx.stroke();
+      // start
+      ctx.fillStyle=pal.white; ctx.beginPath(); ctx.arc(X(curB.pts[0].x),Y(curB.pts[0].y),4.5,0,6.2832); ctx.fill();
+      ctx.strokeStyle=pal.bPart; ctx.lineWidth=1.5; ctx.stroke();
+      // end
+      var en=curB.pts[Math.min(showN-1,curB.pts.length-1)];
+      ctx.fillStyle=curB.diverged?pal.wellBad:pal.bPart;
+      ctx.beginPath(); ctx.arc(X(en.x),Y(en.y),5.5,0,6.2832); ctx.fill();
+      if(curB.diverged){
+        ctx.fillStyle=pal.wellBad; ctx.font='bold 12px sans-serif'; ctx.textAlign='left';
+        ctx.fillText('DIVERGENT  (η > 2/λmax)', mL+6, mT+14);
+      }
+    }
+
+    // eta gauge at bottom
+    var gy0=mT+phh+26, gy1=mT+phh+38, lam=maxCurv(p,p.gam), etaC=lam>1e-6?(2/lam):2.0;
+    ctx.fillStyle=hexToRgba(pal.muted,0.18); ctx.fillRect(mL,gy0,pw,gy1-gy0);
+    var edgeX=mL+Math.min(1,etaC/2.0)*pw;
+    ctx.fillStyle=hexToRgba(pal.wellBad,0.28); ctx.fillRect(edgeX,gy0,mL+pw-edgeX,gy1-gy0);
+    ctx.strokeStyle=pal.wellBad; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(edgeX,gy0-3); ctx.lineTo(edgeX,gy1+3); ctx.stroke();
+    ctx.fillStyle=pal.wellBad; ctx.font='9px ui-monospace,monospace'; ctx.textAlign='center';
+    ctx.fillText('2/λmax', edgeX, gy1+14);
+    var etaX=mL+Math.min(1,p.eta/2.0)*pw;
+    ctx.strokeStyle=pal.bPart; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(etaX,gy0-5); ctx.lineTo(etaX,gy1+5); ctx.stroke();
+    ctx.fillStyle=pal.muted; ctx.textAlign='left'; ctx.font='9px ui-monospace,monospace';
+    ctx.fillText('η', mL+2, gy0-4);
+
+    // title
+    ctx.fillStyle=pal.fg; ctx.font='bold 13px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Eine Loss-Landschaft, zwei Lesarten — Sampling (A, T) vs. Gradientenabstieg (B, η)', 12, 18);
+    ctx.font='11px sans-serif'; ctx.fillStyle=pal.muted;
+    ctx.fillText('A: Partikel rollen mit Temperatur-Noise (T→0 = Capture, rot = Void-Tal = Halluzination)   ·   B: GD steigt ins Wissens-Tal, GD++ rundet, η>2/λmax = Divergenz', 12, 32);
+
+    // readouts
+    document.getElementById('ro-hallu').textContent=hr.toFixed(0)+'%';
+    document.getElementById('ro-capture').textContent=(p.T<0.08?'T→0 · Capture':'T='+p.T.toFixed(2));
+    document.getElementById('ro-bend').textContent=curB.diverged?'∞':curB.fx.toFixed(2);
+    var bs=document.getElementById('ro-bstatus');
+    if(curB.diverged){ bs.textContent='DIVERGIERT'; bs.style.color=pal.wellBad; }
+    else if(curB.status==='true'){ bs.textContent='→ Wissens-Tal'; bs.style.color=pal.wellOk; }
+    else if(curB.status==='false'){ bs.textContent='→ Void-Tal (!)'; bs.style.color=pal.wellBad; }
+    else { bs.textContent='→ Rand'; bs.style.color=pal.muted; }
+    document.getElementById('ro-kraw').textContent=maxCurv(p,0).toFixed(2);
+    document.getElementById('ro-kgpp').textContent=lam.toFixed(2);
+    document.getElementById('ro-etaC').textContent=etaC.toFixed(3);
+
+    // summary
+    var msg;
+    if(curB.diverged){
+      msg='B divergiert (η > 2/λmax) — <b>dieselbe Kante</b>, an der A „Capture / Informations-Schwarzloch“ (übermäßige Anziehung) meint. A: '+hr.toFixed(0)+'% Sampling-Läufe landen im Void-Tal (Halluzination) bei T='+p.T.toFixed(2)+'.';
+    } else if(curB.status==='true'){
+      msg='B konvergiert in das Wissens-Tal (Talonnen — <b>Erfolg</b>, das T→0-Limit von A). A: '+hr.toFixed(0)+'% Sampling-Läufe landen im Void-Tal (Halluzination) bei T='+p.T.toFixed(2)+'. Gleiche Fläche: B <i>löst</i> (deterministisch), A <i>samplemt</i> (T>0).';
+    } else if(curB.status==='false'){
+      msg='B „konvergiert zum Optimum“ — aber das Optimum ist das <b>falsche</b> Void-Tal. Das ist A’s Halluzination, gelesen als deterministischer Optimierer: <b>konvergieren kann richtig ODER falsch sein</b>, je nach Krümmung/Wissensdichte.';
+    } else {
+      msg='B konvergiert an den Rand. A: '+hr.toFixed(0)+'% in den Void-Tälern bei T='+p.T.toFixed(2)+'.';
+    }
+    if(p.gam>0.001){
+      msg+=' — GD++ hat die Krümmung von '+maxCurv(p,0).toFixed(2)+' auf '+lam.toFixed(2)+' gerundet (κ ↓, Abstieg stabiler, Divergenzkante nach rechts geschoben).';
+    }
+    if(!curB.diverged && p.eta>etaC+1e-6){
+      msg+='  <b>η &gt; 2/λ<sub>max</sub> (Divergenzkante)</b> — der Schritt überschwingt statt sauber ins Tal zu konvergieren (B’s Instabilitätsgrenze; bei A dieselbe übermäßige „Anziehung“, die als Capture gilt).';
+    }
+    document.getElementById('viz-readout').innerHTML=msg;
+  }
+
+  function f2(v){ var n=parseFloat(v); return isFinite(n)?n.toFixed(2):'0.00'; }
+  function setL(vid,txt){ var e=document.getElementById(vid); if(e) e.textContent=txt; }
+  function syncLabels(){
+    setL('viz-T-v', f2(document.getElementById('viz-T').value));
+    setL('viz-eta-v', f2(document.getElementById('viz-eta').value));
+    setL('viz-K-v', String(Math.round(parseFloat(document.getElementById('viz-K').value))));
+    setL('viz-gam-v', f2(document.getElementById('viz-gam').value));
+    setL('viz-Kd-v', f2(document.getElementById('viz-Kd').value));
+    setL('viz-Rug-v', f2(document.getElementById('viz-Rug').value));
+  }
+  function onInput(){ animStep=Infinity; syncLabels(); draw(); }
+
+  function animate(){
+    if(rafId) cancelAnimationFrame(rafId);
+    var target=curB?curB.pts.length:30;
+    animStep=1;
+    (function loop(){
+      animStep++;
+      draw();
+      if(animStep<target){ rafId=requestAnimationFrame(loop); }
+      else { rafId=null; animStep=Infinity; draw(); }
+    })();
+  }
+  function toggleTheme(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  }
+  function init(){
+    var ids=['viz-T','viz-eta','viz-K','viz-gam','viz-Kd','viz-Rug'];
+    for(var i=0;i<ids.length;i++){ var e=document.getElementById(ids[i]); if(e) e.addEventListener('input',onInput); }
+    var cb=['viz-showA','viz-showB'];
+    for(var j=0;j<cb.length;j++){ var c=document.getElementById(cb[j]); if(c) c.addEventListener('change',draw); }
+    var an=document.getElementById('viz-anim'); if(an) an.addEventListener('click',animate);
+    var rs=document.getElementById('viz-reset'); if(rs) rs.addEventListener('click',function(){ animStep=Infinity; draw(); });
+    var th=document.getElementById('theme-toggle'); if(th) th.addEventListener('click',toggleTheme);
+    if(!document.documentElement.classList.contains('dark')) document.documentElement.classList.add('dark');
+    syncLabels();
+    draw();
+    window.addEventListener('resize',function(){ draw(); });
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>

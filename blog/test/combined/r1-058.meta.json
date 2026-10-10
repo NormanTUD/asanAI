@@ -1,0 +1,16 @@
+{
+  "no": "058",
+  "a": "space_warps.html",
+  "b": "low_dim_learning.html",
+  "a_title": "Origami in N Dimensionen (Keup & Helias 2022)",
+  "b_title": "Nebeneffekte des Lernens aus niedrig-dimensionalen Daten (He, Tsai & Ward 2023)",
+  "combined_theme": "free-dimensions-double-edged-sword",
+  "one_line": "Die freie Dimension (Layer-Breite > Daten-Dimension) ist dasselbe Schwert mit zwei Kanten: Falten hinein erzeugt lineare Trennbarkeit (A), bleibt aber in den unbenutzten Normal-Richtungen unkontrolliert und adversarial-anfällig (B).",
+  "contradictions": [
+    "A: Breite freie Dimensionen sind der Motor - Falten in sie ist injektiv und macht Trennbarkeit effizient, mehr Breite = besser. B: dieselbe Kodimension ist die Gefahr - die freien Richtungen bleiben unkontrolliert, mehr davon = mehr unbestimmte Parameter und Adversarial-Anfalligkeit.",
+    "A: Die freie Dimension wird konstruktiv BENUTZT (ReLU-Falte hebt den Kern an, injektiv, keine Info verloren, vom Netz gesteuert). B: Die freie/Normal-Richtung ist NICHT von den Daten bestimmt - ∂f/∂n ist willkürlich, bei σ=0 bleibt W_y^1 während des Trainings eingefroren auf der Initialisierung.",
+    "A: Tiefe/Breite erzeugt Kapazität (Falten-Hierarchie mit exponentiell vielen Kanten = Universal-Approximation). B: Bei ReLU wächst die Normal-Instabilität wie ∏‖W^ℓ‖², also exponentiell mit der Tiefe - Tiefe amplifiziert die unkontrollierte Komponente."
+  ],
+  "resolution": "Beide lesen dieselbe Geometrie (Daten-Dimension < Ambient-/Layer-Dimension) spiegelbildlich; die Surplus-Dimension ist ein Doppelschwert. A hat recht, dass Breite > Daten-Dim nötig ist, um durch Falten Trennbarkeit zu ERSTELLEN; B hat recht, dass genau diese Richtung unter-bestimmt bleibt und regularisiert werden muss. Falten (A) ist die aktive, kontrollierte Nutzung der Surplus-Dimension; der ungenutzte Rest bleibt willkürlich (B) und braucht Normal-Rauschen σ, kleine Init von W_y^1 und begrenzte Tiefe. Praktisch: breite Netze für die Mechanik + Regularisierung der Normal-Richtung für Stabilität.",
+  "viz": "2D-Querschnitt (Canvas, theme-aware, Inline-Daten): Daten-Mannigfaltigkeit M auf der x-Achse (rote Kerne, blaue Außen), freie/Normal-Dimension y. Regler falten den Kern per ReLU-Dom in die freie Dimension (A -> Trennebene c trennt) und regeln Normalen-Rauschen σ, das die Ungewissheits-Bande ∂f/∂n ≈ 1/(σ√N) in der unbenutzten Außenregion (B) schrumpfen lässt (σ=0 -> willkürlich/∞)."
+}

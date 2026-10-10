@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 075 — Leere Richtungen: Falten (Origami) × Parken (Generalisierung)</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b22; --card:#ffffff; --card2:#f3efe6;
+  --border:#ddd6c6; --muted:#5d5a68; --head:#3b2f63;
+  --accent:#6a4fa3; --accent2:#2f7d6d;
+  --c-inner:#c2410c; --c-outer:#2f7d6d;
+  --sig:#2f9e44; --res:#c2410c;
+  --chart-bg:#faf8f1; --grid:#e6e0d2;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e6e8ef; --card:#152036; --card2:#182238;
+  --border:#2a3552; --muted:#9aa6c0; --head:#b9a7f0;
+  --accent:#a78bfa; --accent2:#34d399;
+  --c-inner:#fb923c; --c-outer:#4ade80;
+  --sig:#4ade80; --res:#fb923c;
+  --chart-bg:#0f172a; --grid:#243050;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,system-ui,sans-serif;
+  line-height:1.72; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:46px 22px 90px;}
+h1{font-size:1.85em;line-height:1.24;margin:.15em 0 .25em;color:var(--head);}
+.subtitle{font-size:.95em;color:var(--muted);border-left:3px solid var(--accent);padding-left:12px;margin:0 0 8px;}
+.meta-line{font-size:.85em;color:var(--muted);margin-bottom:26px;}
+section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:26px 0;}
+section>h2{font-size:1.28em;color:var(--head);margin:.1em 0 .6em;border-bottom:2px solid var(--border);padding-bottom:8px;}
+section>h2 .tag{font-size:.6em;vertical-align:middle;padding:2px 8px;border-radius:20px;color:var(--card);background:var(--accent);margin-left:8px;}
+h3{color:var(--head);font-size:1.06em;margin:1.3em 0 .4em;}
+p{margin:.7em 0;}
+strong{color:var(--fg);}
+code{background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.88em;font-family:ui-monospace,Menlo,Consolas,monospace;}
+ul,ol{margin:.5em 0 .5em 1.2em;padding:0;}
+li{margin:.42em 0;}
+.formula{background:var(--card2);border:1px dashed var(--border);border-radius:8px;padding:10px 14px;margin:.8em 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;text-align:center;line-height:1.9;overflow-x:auto;}
+.badge{display:inline-block;font-size:.7em;font-weight:bold;padding:1px 8px;border-radius:12px;vertical-align:middle;}
+.badge.a{background:#2b6cb0;color:#fff;}
+.badge.b{background:var(--accent2);color:#fff;}
+.badge.f{background:var(--accent);color:#var(--card);}
+.badge.f{color:#fff;}
+.card-row{display:flex;gap:14px;flex-wrap:wrap;margin:.6em 0;}
+.paper{flex:1 1 240px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.paper h4{margin:.1em 0 .4em;font-size:.96em;}
+.paper.a h4{color:#2b6cb0;}
+.paper.b h4{color:var(--accent2);}
+.paper p{font-size:.9em;margin:.35em 0;}
+.who{border-left:4px solid var(--warn,#c2410c);background:var(--card2);border-radius:0 8px 8px 0;padding:10px 14px;margin:.7em 0;}
+.who .lbl{font-size:.8em;color:var(--muted);display:block;margin-bottom:2px;font-family:ui-monospace,monospace;letter-spacing:.03em;}
+.who .lbl.a{color:#2b6cb0;}
+.who .lbl.b{color:var(--accent2);}
+table.map{width:100%;border-collapse:collapse;margin:.8em 0;font-size:.9em;}
+table.map th,table.map td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top;}
+table.map th{background:var(--card2);color:var(--head);font-size:.8em;letter-spacing:.03em;}
+table.map td.a{color:#2b6cb0;font-weight:600;}
+table.map td.b{color:var(--accent2);font-weight:600;}
+.viz-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin:10px 0;}
+.viz-controls .grp{display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:120px;}
+.viz-controls label{font-size:.8em;color:var(--muted);}
+.viz-controls .val{font-family:ui-monospace,monospace;color:var(--head);font-weight:bold;}
+.viz-controls select{background:var(--card);color:var(--fg);border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:.85em;}
+.viz-controls button{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 13px;cursor:pointer;font-size:.82em;margin-left:auto;}
+input[type=range]{accent-color:var(--accent);width:130px;}
+canvas{display:block;width:100%;height:auto;background:var(--chart-bg);border:1px solid var(--border);border-radius:10px;margin:8px auto;}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:14px 0 4px;}
+.ro{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center;}
+.ro .k{font-size:.7em;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;}
+.ro .v{font-family:ui-monospace,monospace;font-size:1.12em;font-weight:700;}
+.ro.b .v{color:var(--accent2);}
+.ro.a .v{color:#2b6cb0;}
+.ro.hero .v{color:var(--res);}
+.viz-note{font-size:.84em;color:var(--muted);margin-top:8px;}
+.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:.82em;color:var(--muted);margin:4px 0 10px;}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle;}
+.prov{display:flex;gap:16px;flex-wrap:wrap;}
+.prov a{flex:1 1 260px;display:block;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--fg);text-decoration:none;}
+.prov a:hover{border-color:var(--accent);}
+.prov a .n{font-weight:bold;display:block;color:var(--head);margin-bottom:4px;}
+.prov a .d{font-size:.86em;color:var(--muted);}
+footer{font-size:.8em;color:var(--muted);text-align:center;margin-top:30px;}
+@media(max-width:560px){.viz-controls{gap:12px;}input[type=range]{width:100px;}}
+</style>
+</head>
+<body>
+<article>
+  <h1>Leere Richtungen: Falten <em>und</em> Parken</h1>
+  <p class="subtitle">Fusion aus: generalisierung_im_deep_learning.html &#10005; origami_1.html</p>
+  <p class="meta-line">Round 1 &#183; Pair 075 &#183; A: &ldquo;A Theory of Generalization in Deep Learning&rdquo; (Litman &amp; Guo, arXiv:2605.01172) &#183; B: &ldquo;Origami in N dimensions&rdquo; (Keup &amp; Helias, arXiv:2203.11355)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion<span class="tag">These</span></h2>
+    <p>Beide Papiere sind <strong>geometrische Theorien davon, was ein (überparametrisiertes) Netz <em>tut</em></strong>,
+      und beide weisen die klassische Antwort ab: A nennt Kapazitätsschranken (VC, Rademacher) bei realer Größe
+      <em>vakuum</em> und die eingefrorene-Kernel-Theorie (NTK) ungeeignet; B nennt das Universal-Approximations-Theorem
+      nur einen Existenzsatz, der sagt <em>ob</em>, aber nicht <em>wie</em>. Beide ersetzen das W&uuml;rfel-Wissen durch einen
+      konkreten <strong>Mechanismus</strong> &#8212; und beide sind auf <strong>dieselbe Ressource</strong> zurückzuführen:
+      die <strong>leeren (null) Richtungen</strong>, die Überparametrisierung erzeugt. Eine breite Schicht hat mehr
+      Dimensionen, als die Daten füllen; es bleiben <em>unbesetzte Richtungen</em>.</p>
+    <p>Der Fusionskern ist die <em>doppelte Rolle derselben leeren Richtungen</em>, gelesen in zwei unterschiedlichen
+      Räumen. Im <strong>Eingabe-/Featurespace</strong> (B) ist die leere Richtung die <span class="badge b">Werkbank</span>:
+      ein ReLU-Neuron <em>faltet</em> die Datenmannigfaltigkeit in sie hinein (nicht: plattdrückt), und genau dadurch wird
+      aus verschachtelten Klassen ein linear trennbares Zelt &#8212; <strong>injektiv</strong>, keine Information geht verloren,
+      Topologie wird vereinfacht (ReLU ist kein Homöomorphismus). Im <strong>Ausgabe-/Verlustspace</strong> (A) ist die
+      leere Richtung der <span class="badge a">Tresor</span>: der Kern des Trainings <code>W</code> hat einen großen
+      Nullraum, das <em>Reservoir</em>; und alles, was dort liegt, ist an <strong>jeder</strong> Testmenge
+      <strong>exakt unsichtbar</strong> &#8212; <code>G&#183;P<sub>res</sub> = 0</code>, rein algebraisch, ohne Annahmen.
+      Das Auswendiggelernte Rauschen wird dort <em>geparkt</em> und schadet nicht.</p>
+    <p>In einem Satz: <strong>Ein Netz generalisiert gut, weil es (i) die Daten injektiv in unbesetzte Richtungen faltet,
+      bis eine Ebene trennt (B), und (ii) zugleich den Restfehler in den Nullraum des Trainings verdrängt, wo er am Test
+      verschwindet (A). Dieselben leeren Richtungen sind erst Werkbank, dann Tresor.</strong></p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B<span class="tag">Spannung</span></h2>
+    <p>Es gibt keinen faktischen Frontalwiderspruch (beide stimmen z.&#8203;B. zu: ein überparametrisiertes Netz kann
+      beliebiges Rauschen auswendig lernen; beide machen den Mechanismus aus der Struktur, nicht den Parametern).
+      Die Spannung liegt in der <em>Bewertung desselben mathematischen Objekts</em> &#8212; der leeren Richtungen /
+      des Rangs der Abbildung:</p>
+
+    <div class="who"><span class="lbl b">B sagt</span>
+      &bdquo;Falten ben&ouml;tigt <strong>unbesetzte Richtungen</strong> (breitere Schicht als die Daten).&ldquo;
+      Die leeren Richtungen sind der <strong>Motor</strong>: die Faltung geht <em>in</em> sie hinein und <em>herstellt</em>
+      dort die lineare Trennbarkeit. Breite = Arbeitsfläche.</div>
+    <div class="who"><span class="lbl a">A sagt</span>
+      &bdquo;Das Reservoir ist riesig, der Signalkanal winzig. Das ist der Grund, warum &Uuml;berparametrisierung nicht
+      schadet: es gibt mehr als genug Platz, Rauschen unsch&auml;dlich zu <strong>&lsquo;parken&rsquo;</strong>.&ldquo;
+      Die leeren Richtungen (ker&nbsp;W) sind der <strong>Tresor</strong>: passiv, unsichtbar. Breite = Parkhaus.
+      <em>Dieselbe Ressource, entgegengesetztes Vorzeichen.</em></div>
+
+    <div class="who"><span class="lbl b">B sagt</span>
+      &bdquo;<strong>Fold, don&rsquo;t crush</strong>&ldquo;: die gute Schicht ist <strong>injektiv auf den Daten</strong>
+      (die Faltkante kommt aus einer unbesetzten Richtung &#8594; Relationen bleiben erhalten, keine Information geht
+      verloren). <em>Informations-Erhaltung ist die Tugend.</em></div>
+    <div class="who"><span class="lbl a">A sagt</span>
+      Die gute Dynamik ist genau die, deren Transfer <strong>nicht-injektiv</strong> ist: ker&nbsp;W ist <em>groß</em>,
+      damit <code>G&#183;P<sub>res</sub>=0</code>. Das <strong>absichtliche Vernichten</strong> dieser Richtungen ist es,
+      was auswendig gelerntes Rauschen harmlos macht. <em>Rangmangel (Nicht-Injektivität) ist die Tugend.</em>
+      <em>Dasselbe Merkmal (Rang/Invertierbarkeit) wird entgegengesetzt bewertet.</em></div>
+
+    <div class="who"><span class="lbl a">A sagt</span>
+      &bdquo;Der Kern darf sich um <strong>Faktor 4,8</strong> &auml;ndern &#8212; die Gleichung gilt trotzdem
+      <em>exakt</em>. Genau das schafft die NTK-Theorie nicht.&ldquo; Die exakte Kopplung und die Unsichtbarkeit sind
+      <strong>invariant gegen die Details</strong> der Feature-Bewegung; die Dynamik <em>washed out</em> &#8212; nur das
+      Invariante (Drift &#8733; T vs. Diffusion &#8733; &#8730;T, die Zerlegung) z&auml;hlt.</div>
+    <div class="who"><span class="lbl b">B sagt</span>
+      &bdquo;Falten (Ebene hat leere Komponente)&ldquo; vs. &bdquo;Plattdr&uuml;cken (Ebene liegt in der Datenebene)&ldquo;:
+      <strong>wie</strong> die Mannigfaltigkeit bewegt wird, <em>ist</em> der Mechanismus; &auml;ndere es, und du verlierst
+      Injektivit&auml;t / Trennbarkeit. Die konkrete Dynamik ist <strong>lasttragend, nicht wegw&auml;schbar</strong>.
+      <em>A: die Bewegung ist ein Buchhaltungsdetail, das sich herauskürzt; B: die Bewegung ist der irreduzible Kern.</em></div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung<span class="tag">Fusion</span></h2>
+    <h3>1 &#183; Werkbank vs. Tresor &#8594; zwei Stadien desselben Pools</h3>
+    <p>Es ist ein <strong>einziger Pool leerer Richtungen</strong>, der zu <em>unterschiedlichen Zeitpunkten</em> zwei
+      Jobs macht. <strong>Strukturell/ früh</strong> ist er die Werkbank: B faltet die verschachtelte Datenmannigfaltigkeit
+      in die unbesetzten Richtungen, um Trennbarkeit herzustellen. <strong>Sp&auml;t, wenn die Repr&auml;sentation
+      entfaltet und der Fit nahezu exakt ist</strong>, wird der verbleibende Spielraum (der immer noch null-Wert
+      des <code>W</code>) zum Tresor: A parkt dort den Restfehler, so dass er am Test exakt unsichtbar wird.
+      Überparametrisierung liefert einfach <em>genug</em> leere Richtungen für beide Zwecke zugleich &#8212; genug zum
+      Reinfalten <em>und</em> genug zum Parken.</p>
+    <h3>2 &#183; injektiv vs. rangm&auml;ngig &#8594; zwei verschiedene Abbildungen</h3>
+    <p>Die beiden reden &uuml;ber <strong>verschiedene Maps</strong> und stehen sich nicht entgegen. B&rsquo;s
+      Injektivit&auml;t verlangt <strong>die Feature-Map</strong> <code>x &#8594; h(x)</code> (Eingabe&#8594;Hidden)
+      auf den Daten: sie <em>muss</em> injektiv bleiben, um die Klassenstruktur, die getrennt werden soll, zu erhalten.
+      A&rsquo;s Rangmangel betrifft <strong>den Output-/Verlust-Transfer</strong> <code>W</code> (und <code>G</code> von
+      Train&#8594;Test): sein Nullraum <em>muss</em> groß sein, damit Restfehler am Test verschwinden.
+      Eine <strong>treu entfaltete Feature-Map</strong> (B) kann eine Output-Dynamik speisen, deren Transfer
+      <strong>einen großen unsichtbaren Kern</strong> hat (A). Pipeline: <em>treue, injektive Faltung (B) &#8594;
+      Interpolation (A) &#8594; Rest im Reservoir &#8594; benigne Generalisierung (A).</em></p>
+    <h3>3 &#183; wegw&auml;schbar vs. lasttragend &#8594; zwei Ebenen</h3>
+    <p>Die <strong>M&ouml;glichkeit</strong> der Trennbarkeit ist <em>mechanismus-sensibel</em> (B: man muss die richtige
+      Falte wählen, sonst kollabiert die Injektivität). Die <strong>Qualit&auml;t der Generalisierung</strong> ist
+      <em>mechanismus-robust</em> (A: einmal trennbar, steuert das Invariante &#8212; Drift/Diffusion, <code>G&#183;P_res=0</code>
+      &#8212; den Fehler, unabhängig vom Detail der Falte). <strong>Falten (B) entscheidet, ob; Parken (A) entscheidet, wie
+      gut.</strong> Neural Collapse (B) ist die geometrische Signatur des Endpunkts, an dem das Signal vollständig in den
+      erreichbaren (Signal-) Teil gewandert ist.</p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt<span class="tag">Stoff</span></h2>
+
+    <h3>Gemeinsame Ausgangslage</h3>
+    <p>Ein Netz mit mehr Parametern als Beispielen kann <strong>beliebige</strong> Labels &#8212; auch reines Rauschen
+      &#8212; auswendig lernen (A zitiert dies als Zentrales; B begründet es mit dem UAT und der Breite). Trotzdem
+      generalisiert es. Beide suchen den Mechanismus in der <strong>Struktur</strong> der Abbildung, nicht in den
+      Werten der Gewichte, und beide bauen ihn aus <em>einer einzigen Operation</em> pro Schicht auf.</p>
+
+    <div class="card-row">
+      <div class="paper b"><h4>B &#183; Eingabe-/Featurespace (Geometrie &amp; Topologie)</h4>
+        <p>Jede Schicht = <strong>Amboss</strong> (affin <code>Wx+b</code>: Geraden bleiben Geraden, <em>kann</em>
+          Trennbarkeit nicht ändern) + <strong>Hammer</strong> (ReLU = eine Faltkante/Hyperebene, eine Delle in der
+          konvexen Hülle von außen). <strong>Falten</strong> ist injektiv (Kante aus unbesetzter Richtung);
+          <strong>Plattdrücken</strong> nicht. Das 2D-Ei (Ring im Ring) löst <em>eine</em> Schicht mit 3 ReLU-Neuronen
+          (ein Zelt); ein N-dim. Ei &asymp; <strong>N+1 Neuronen</strong> in einer Schicht &#8212; konstanter, nicht
+          exponentieller Aufwand. Tiefe = Origami-Kaskade: lineare Regionen &#8733; <strong>2<sup>L</sup></strong>
+          (Breite polynomiell, Tiefe exponentiell); &bdquo;tiefe, schmale Netze sind <em>keine</em> universalen
+          Approximatoren&ldquo; (Scheren/Orange schälen, in 3D eine Spirale, eine Scheibe pro Schicht). Fingerprint eines
+          Faltneurons: <strong>bimodale Tuningkurve mit Delle bei z=0</strong>; Faltmaß <code>&chi;</code>. ReLU ist
+          <em>kein</em> Homöomorphismus &#8594; schließt Löcher (Betti <code>b&#8321;</code> fällt); tanh schon.
+          Hochdim.: Cover <code>C(N,d)</code> (<code>d&#8805;N</code> &#8594; alle trennbar), Konzentration
+          <code>&#124;&lt;u,v&gt;&#124; ~ 1/&#8730;d</code>, Johnson&#8211;Lindenstrauss, Neural Collapse zu
+          Simplex-ETF (Kosinus <code>&#8722;1/(K&#8722;1)</code>). <strong>Fold-and-Cut</strong> (Demaine et al. 1998)
+          &#8776; UAT: &bdquo;N-dimensionales Origami + ein flacher Schnitt&ldquo;. Flachfaltbarkeit lokal einfach
+          (Maekawa/Kawasaki), global NP-vollständig (Bern &amp; Hayes 1996). Trägt auf: Dense ja, Conv teilweise,
+          Attention nein, RNN unklar, Residual+Norm ja.</p>
+      </div>
+      <div class="paper a"><h4>A &#183; Ausgabe-/Verlustspace (Dynamik &amp; Risiko)</h4>
+        <p>Training als Bewegung in den <em>n</em> Ausgaben. <strong>Tangentenkern</strong> <code>K = J&#183;J&#7488;</code>
+          steuert die Output-Dynamik; <strong>kumulative Dissipation</strong> <code>W = &#8747;K(&tau;)d&tau;</code>
+          (Integrieren, weil sich K während des Trainings dreht = Feature Learning). Zerlegung: <strong>Signalkanal
+          = range(W)</strong> (&lambda;&gt;0, dort wurde Verlust abgebaut) vs. <strong>Reservoir = ker(W)</strong>
+          (&lambda;=0, dort nichts). <strong>Kernsatz (Prop. 3.2): <code>G&#183;P<sub>res</sub>=0</code></strong> &#8212;
+          Transfer von allem im Reservoir ist an <em>jeder</em> Testmenge exakt 0, ohne Annahmen (gemeinsamer Faktor
+          <code>J&#7488;</code>). <strong>Drift &asymp; T, Diffusion &asymp; &#8730;T</strong> (Thm 4.1) trennt Signal
+          von Rauschen im Signalkanal. <strong>Kopplung</strong> (Thm 5.1): <code>U_Q(T)&#8722;U_Q(s) =
+          A&#170;(U_S(T)&#8722;U_S(s))</code>, <code>A&#170;=G&#183;D&#8204;&#7488;</code> &#8212; exakt bei quadratischem
+          Verlust, gültig bei 4,8&#215; Kern-Drift. <strong>Vier-Zellen</strong>-Fehlerzerlegung (Zelle
+          Rauschen&#215;Reservoir = exakt 0). <strong>Einziger Spektralfilter M</strong> (Thm H.1) erklärt Implicit
+          Bias, Double Descent (Peak = Vorzeichenwechsel des Zuwachses), Benign Overfitting, Ridge. Populationsrisiko
+          per Austauschbarkeit, <code>&Omega;_B = tr(M&#183;A_B)</code> (Diagonale weg = kein Selbs&#8203;tenutzen).
+          <strong>Algorithmus:</strong> SNR-Gate <code>&mu;&#178; &gt; &sigma;&#178;/(b&#8722;1)</code> &#8212; eine Zeile
+          in Adam. Ergebnisse: 2,4&#215; PINN, 4,9&#215; Grokking, DPO (Genauigkeit <em>und</em> weniger Drift), INR
+          (kein Early Stopping), Lorenz (4,7&#215; bei hohem Rauschen).</p>
+      </div>
+    </div>
+
+    <h3>Die fusionierte Brücke (A &#8596; B)</h3>
+    <table class="map">
+      <tr><th>A (Output-/Verlustspace, Dynamik)</th><th>B (Input-/Featurespace, Geometrie)</th><th>Gemeinsam</th></tr>
+      <tr><td class="a">Tangentenkern <code>K=J&#183;J&#7488;</code> steuert Outputs</td><td class="b">Amboss <code>Wx+b</code> positioniert Daten</td><td>die <em>lineare</em> Schicht pro Stufe</td></tr>
+      <tr><td class="a">kumulative Dissipation <code>W</code></td><td class="b">Faltstapel (Tiefe = Kaskade)</td><td>das <em>Gesamtprodukt</em> vieler Stufen</td></tr>
+      <tr><td class="a">Signalkanal = <code>range(W)</code></td><td class="b">genutzte / aufgefüllte Richtungen</td><td>wo Struktur lebt</td></tr>
+      <tr><td class="a">Reservoir = <code>ker(W)</code> &#8594; unsichtbar</td><td class="b">unbesetzte Richtungen &#8594; reinfalten</td><td><strong>die leeren Richtungen</strong></td></tr>
+      <tr><td class="a"><code>G&#183;P_res=0</code> (Fehler wird verworfen)</td><td class="b">Faltung injektiv (Info bleibt)</td><td>Rang, in zwei Spaces</td></tr>
+      <tr><td class="a">Drift &asymp; T vs. Diffusion &asymp; &#8730;T</td><td class="b">Regionen &#8733; 2<sup>L</sup> (Tiefe schlägt Breite)</td><td>Skalierung über Zeit/Tiefe</td></tr>
+      <tr><td class="a">Spektralfilter M &#8594; 4 Phänomene</td><td class="b">Aktivierungswahl (ReLU vs. tanh-Homöomorphismus)</td><td>was die Nichtlinearität <em>darf</em></td></tr>
+      <tr><td class="a">SNR-Gate (Algorithmus)</td><td class="b">Faltmaß <code>&chi;</code> / bimodaler Fingerprint (Diagnose)</td><td>Messen des Mechanismus</td></tr>
+    </table>
+
+    <h3>Die fusionierte Pipeline</h3>
+    <ol>
+      <li><strong>Falten</strong> (B, mechanismus-sensibel): die Datenmannigfaltigkeit <em>injektiv</em> in unbesetzte
+        Richtungen falten, bis <code>d</code> hoch genug ist und <em>ein flacher Schnitt</em> (die Ausgabeschicht)
+        trennt. Neural Collapse ist das Endbild (Simplex-ETF).</li>
+      <li><strong>Interpolieren</strong> (A, mechanismus-robust): Gradientenabstieg im Signalkanal, wo Drift &asymp; T
+        das Signal trägt und Diffusion &asymp; &#8730;T das Rauschen bändigt.</li>
+      <li><strong>Benigne Generalisierung</strong> (A): der Restfehler, der nicht ins Signal wanderte, sitzt im Reservoir
+        und ist am Test exakt unsichtbar (<code>G&#183;P_res=0</code>). Überparametrisierung = genug leere Richtungen,
+        um <em>beides</em> zu können.</li>
+    </ol>
+    <div class="formula">
+      B:  h = &Sigma;_k relu(w&#7488;&#183;x + b_k)   (Faltung in unbesetzte Richtung, injektiv auf den Daten)<br>
+      A:  W = &#8747; K(&tau;) d&tau;,   Signalkanal = range(W),  Reservoir = ker(W),   G&#183;P<sub>res</sub> = 0<br>
+      &#8776;  Trennbarkeit wird in den leeren Richtungen <em>gebaut</em> (B); Restfehler wird in den leeren
+      Richtungen <em>geparkt</em> (A)
+    </div>
+
+    <h3>Gemeinsame Grenzen</h3>
+    <p>A braucht ein C&#178;-Netz, konkaven Output-Verlust, exakte Kopplung nur bei quadratischem Verlust (sonst Sobolev-Rest
+      mit <code>m &gt; d/2</code>) und Batch-Unabhängigkeit. B argumentiert Falten-vs.-Scheren-Effizienz intuitiv (nicht
+      bewiesen), die Poker-Validierung ist klein/kategorial, <code>&chi;</code> trägt nicht direkt auf Attention.
+      Beide sind auf <strong>dichte ReLU-Blöcke</strong> am stärksten; genau dort schließen sie sich aneinander an.</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Interaktiv: dieselben leeren Richtungen, zwei Jobs<span class="tag">Viz</span></h2>
+    <p>Links (B) faltet das Netz ein 2D-Ei in eine <strong>unbesetzte dritte Richtung</strong>: <em>Falten</em>
+      (Kante aus der leeren Richtung) hebt den inneren Ring &#8212; <em>injektiv</em>, und ein flacher Schnitt trennt;
+      <em>Plattdrücken</em> (Kante in der Datenebene) stapelt die Daten übereinander &#8212; nicht injektiv, kein
+      Schnitt hilft. Rechts (A) zeigt es den Restfehler: sein Anteil im <strong>Reservoir</strong> (&lambda;&#8776;0)
+      ist am Test <strong>exakt 0</strong> (<code>G&#183;P<sub>res</sub>=0</code>); nur der <strong>Signalkanal</strong>-Anteil
+      zählt. Dieselben leeren Richtungen, erst Werkbank, dann Tresor.</p>
+
+    <div class="viz-controls">
+      <div class="grp"><label>Faltung <span class="val" id="v_fold">100 %</span></label>
+        <input type="range" id="s_fold" min="0" max="100" value="100"></div>
+      <div class="grp"><label>Modus</label>
+        <select id="s_mode"><option value="fold" selected>Falten (unbesetzte Richtung)</option>
+        <option value="crush">Plattdrücken (in der Ebene)</option></select></div>
+      <div class="grp"><label>Schnittebene z = <span class="val" id="v_cut">0.10</span></label>
+        <input type="range" id="s_cut" min="0" max="150" value="10"></div>
+      <div class="grp"><label>Restfehler <span class="val" id="v_rtot">40 %</span></label>
+        <input type="range" id="s_rtot" min="0" max="100" value="40"></div>
+      <div class="grp"><label>Anteil im Reservoir <span class="val" id="v_rho">85 %</span></label>
+        <input type="range" id="s_rho" min="0" max="100" value="85"></div>
+      <button id="b_theme">Theme umschalten</button>
+    </div>
+
+    <canvas id="vizCanvas" height="440"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--c-inner)"></i>Innere Klasse</span>
+      <span><i style="background:var(--c-outer)"></i>Äußere Klasse</span>
+      <span><i style="background:var(--accent)"></i>Schnittebene (flacher Schnitt)</span>
+      <span><i style="background:var(--sig)"></i>Signalkanal (zählt)</span>
+      <span><i style="background:var(--res)"></i>Reservoir (unsichtbar)</span>
+    </div>
+
+    <div class="ro-grid">
+      <div class="ro b"><span class="k">Trennbarkeit (nach Falte)</span><span class="v" id="ro_acc">&#8212;</span></div>
+      <div class="ro b"><span class="k">Injektiv auf Daten?</span><span class="v" id="ro_inj">&#8212;</span></div>
+      <div class="ro a"><span class="k">Testfehler (Signal-Anteil)</span><span class="v" id="ro_te">&#8212;</span></div>
+      <div class="ro hero"><span class="k">Im Reservoir (am Test)</span><span class="v" id="ro_invis">= 0</span></div>
+    </div>
+    <p class="viz-note">Alle Daten inline; keine Netzwerke-Calls. Theme-aware über CSS-Variablen
+      (<code>html.dark</code>) + MutationObserver. Links: eine ReLU-Faltung (Zelt, <code>z = f&#183;relu(0.6&#8722;r)</code>)
+      hebt die eingeschlossene innere Klasse in die unbesetzte z-Richtung, die äußere bleibt flach (B, injektiv);
+      die Schnittebene <code>z = c</code> trennt. Rechts: Restfehler <code>r</code> wird zerlegt in Signalkanal-Anteil
+      <code>(1&#8722;&#961;)r</code> (grün, z&auml;hlt) und Reservoir-Anteil <code>&#961;r</code> (orange,
+      <code>G&#183;P_res=0</code> &#8594; exakt 0 am Test) (A).</p>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz<span class="tag">Quellen</span></h2>
+    <div class="prov">
+      <a href="../generalisierung_im_deep_learning.html">
+        <span class="n">A &#183; generalisierung_im_deep_learning.html</span>
+        <span class="d">&bdquo;A Theory of Generalization in Deep Learning&rdquo; (Litman &amp; Guo, arXiv:2605.01172) &#8212;
+        Output-Raum-Dynamik: Signalkanal/Reservoir, <code>G&#183;P_res=0</code>, Drift/Diffusion, ein Spektralfilter M,
+        SNR-Gate. Liefert die <em>Tresor</em>-Seite (Restfehler wird im Nullraum geparkt).</span>
+      </a>
+      <a href="../origami_1.html">
+        <span class="n">B &#183; origami_1.html</span>
+        <span class="d">&bdquo;Origami in N dimensions&rdquo; (Keup &amp; Helias, arXiv:2203.11355) &#8212; ReLU als Faltung:
+        Fold-not-crush (injektiv), 2D-Ei &#8594; 3 Neuronen, Regionen &#8733; 2<sup>L</sup>, Betti, Neural Collapse,
+        Fold-and-Cut. Liefert die <em>Werkbank</em>-Seite (Daten werden in leere Richtungen gefaltet).</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>Fusion 075 &#183; Round 1 &#183; Selbständige Darstellung; beide Quellen im selben Verzeichnis.</footer>
+</article>
+
+<script>
+(function(){
+  var cv = document.getElementById('vizCanvas');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var el = {
+    fold: document.getElementById('s_fold'),
+    mode: document.getElementById('s_mode'),
+    cut:  document.getElementById('s_cut'),
+    rtot: document.getElementById('s_rtot'),
+    rho:  document.getElementById('s_rho')
+  };
+  var TAU = Math.PI*2;
+  function rng(seed){var s=seed>>>0||1;return function(){s^=s<<13;s>>>=0;s^=s>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+  function relu(x){return x>0?x:0;}
+
+  var R = rng(7);
+  var P = [];
+  var i,a,rr;
+  for(i=0;i<110;i++){a=R()*TAU; rr=0.42*Math.sqrt(R()); P.push([rr*Math.cos(a), rr*Math.sin(a), 1]);}
+  for(i=0;i<150;i++){a=R()*TAU; rr=0.68+0.42*Math.sqrt(R()); P.push([rr*Math.cos(a), rr*Math.sin(a), 0]);}
+
+  function tent(x,y){
+    // ReLU-Zelt: hebt die eingeschlossene (innere) Klasse in die unbesetzte z-Richtung,
+    // die äußere bleibt flach. (Radialer ReLU-Kegel = Superposition von Faltkanten.)
+    var r=Math.sqrt(x*x+y*y);
+    return relu(0.6 - r);
+  }
+
+  function css(n,fb){
+    var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    return (v&&v.length)?v:fb;
+  }
+  function pal(){
+    return {
+      bg:   css('--chart-bg','#0f172a'),
+      grid: css('--grid','#243050'),
+      fg:   css('--fg','#e6e8ef'),
+      mut:  css('--muted','#9aa6c0'),
+      c1:   css('--c-inner','#fb923c'),
+      c0:   css('--c-outer','#4ade80'),
+      sig:  css('--sig','#4ade80'),
+      res:  css('--res','#fb923c'),
+      acc:  css('--accent','#a78bfa')
+    };
+  }
+
+  function transform(p,f,mode){
+    var x=p[0],y=p[1];
+    if(mode==='fold'){ return [x, y, f*0.95*tent(x,y)]; }
+    return [x, Math.abs(y), 0];
+  }
+
+  function draw(){
+    if(!cv.clientWidth) return;
+    var dpr = window.devicePixelRatio||1;
+    var w = cv.clientWidth, h = 440;
+    cv.width = Math.max(1,Math.round(w*dpr));
+    cv.height = Math.round(h*dpr);
+    cv.style.height = h+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+
+    var C = pal();
+    var f = (+el.fold.value)/100;
+    var mode = el.mode.value;
+    var cut = (+el.cut.value)/100;
+    var rtot = (+el.rtot.value)/100;
+    var rho = (+el.rho.value)/100;
+
+    document.getElementById('v_fold').textContent = Math.round(f*100)+' %';
+    document.getElementById('v_cut').textContent = cut.toFixed(2);
+    document.getElementById('v_rtot').textContent = Math.round(rtot*100)+' %';
+    document.getElementById('v_rho').textContent = Math.round(rho*100)+' %';
+
+    /* ---------- LEFT: folded egg (B) ---------- */
+    var lx0=14, lx1=Math.floor(w*0.60);
+    var padX=26, baseY=h-46;
+    var cx=(lx0+lx1)/2;
+    var scX=(lx1-lx0-2*padX)/2.5;
+    var scYd=0.30*scX, scZ=0.95*scX;
+    function SX(x){return cx + x*scX;}
+    function SY(y,z){return baseY - y*scYd - z*scZ;}
+
+    // ground grid
+    ctx.strokeStyle=C.grid; ctx.lineWidth=1;
+    for(var g=-1.2;g<=1.201;g+=0.6){
+      ctx.beginPath();ctx.moveTo(SX(g),SY(g,0));ctx.lineTo(SX(g),SY(-1.1,0));ctx.stroke();
+      ctx.beginPath();ctx.moveTo(SX(-1.2),SY(g,0));ctx.lineTo(SX(1.2),SY(g,0));ctx.stroke();
+    }
+    // axes labels
+    ctx.fillStyle=C.mut; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+    ctx.fillText('x', SX(1.25), SY(0,0)+4);
+    ctx.fillText('z (unbesetzt)', SX(-1.3), SY(0,1.35)-2);
+    ctx.fillText('y', SX(0.95), SY(-1.2,0)+12);
+
+    // cut plane: z = cut -> horizontal line
+    var cutY = baseY - cut*scZ;
+    ctx.strokeStyle=C.acc; ctx.lineWidth=2; ctx.setLineDash([7,5]);
+    ctx.beginPath();ctx.moveTo(SX(-1.3),cutY);ctx.lineTo(SX(1.3),cutY);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=C.acc; ctx.textAlign='right';
+    ctx.fillText('Schnittebene z='+cut.toFixed(2), SX(1.3)-4, cutY-6);
+
+    // points
+    var TQ=[];
+    for(var j=0;j<P.length;j++){
+      var q=transform(P[j],f,mode);
+      TQ.push(q);
+      var X=SX(q[0]), Y=SY(q[1],q[2]);
+      ctx.globalAlpha=0.9;
+      ctx.fillStyle = P[j][2]===1?C.c1:C.c0;
+      ctx.beginPath();ctx.arc(X,Y,P[j][2]===1?3.4:2.7,0,TAU);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+
+    // separability via flat cut (z > cut)
+    var ok=0;
+    for(j=0;j<TQ.length;j++){ var pred=(TQ[j][2]>cut?1:0); if(pred===P[j][2]) ok++; }
+    var acc = ok/TQ.length*100;
+
+    // injektiv auf den Daten? (B: Falten aus einer unbesetzten Richtung ist injektiv
+    // &#8594; keine Information verloren; Plattdrücken faltet die Ebene auf sich selbst
+    // &#8594; zwei Punkte fallen zusammen &#8594; nicht injektiv)
+    var inj = (mode==='fold');
+
+    document.getElementById('ro_acc').textContent = acc.toFixed(1)+' %';
+    var injEl=document.getElementById('ro_inj');
+    injEl.textContent = inj ? 'ja \u2713' : 'nein \u2717';
+    injEl.style.color = inj ? C.sig : C.res;
+
+    /* ---------- RIGHT: reservoir parking (A) ---------- */
+    var rx0=Math.floor(w*0.655), rx1=w-14;
+    ctx.strokeStyle=C.grid; ctx.strokeRect(rx0,26,rx1-rx0,h-52);
+    ctx.fillStyle=C.mut; ctx.textAlign='left'; ctx.font='11px ui-monospace,monospace';
+    ctx.fillText('Restfehler r (nach Fit)', rx0+10, 44);
+
+    var rcx=rx0+(rx1-rx0)*0.34, rcy=26+(h-52)*0.62;
+    var L=Math.min((rx1-rx0)*0.34,(h-52)*0.4);
+    var rLen=rtot*L*1.15;
+    // axes: signal = right (green), reservoir = up (orange)
+    var sAx=[L,0], rAx=[0,-L];
+    ctx.strokeStyle=C.sig; ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(rcx,rcy);ctx.lineTo(rcx+sAx[0],rcy+sAx[1]);ctx.stroke();
+    ctx.fillStyle=C.sig; ctx.textAlign='left';
+    ctx.fillText('Signalkanal', rcx+sAx[0]-40, rcy+sAx[1]+16);
+    ctx.strokeStyle=C.res;
+    ctx.beginPath();ctx.moveTo(rcx,rcy);ctx.lineTo(rcx+rAx[0],rcy+rAx[1]);ctx.stroke();
+    ctx.fillStyle=C.res; ctx.textAlign='center';
+    ctx.fillText('Reservoir', rcx+rAx[0], rcy+rAx[1]-8);
+
+    // residual split
+    var sPart=rtot*(1-rho)*L*1.15;   // along signal axis
+    var rPart=rtot*rho*L*1.15;        // along reservoir axis
+    // component arrows
+    ctx.strokeStyle=C.sig; ctx.lineWidth=3.4;
+    ctx.beginPath();ctx.moveTo(rcx,rcy);ctx.lineTo(rcx+sPart,rcy);ctx.stroke();
+    ctx.strokeStyle=C.res;
+    ctx.beginPath();ctx.moveTo(rcx,rcy);ctx.lineTo(rcx,rcy-rPart);ctx.stroke();
+    // full residual (diagonal)
+    ctx.strokeStyle=C.fg; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(rcx,rcy);ctx.lineTo(rcx+sPart,rcy-rPart);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=C.fg;
+    ctx.beginPath();ctx.arc(rcx+sPart,rcy-rPart,3.4,0,TAU);ctx.fill();
+
+    // test-movement bar
+    var barX=rx1-30, barTop=70, barH=(h-52)-90;
+    ctx.fillStyle=C.grid; ctx.fillRect(barX,barTop,16,barH);
+    var te = rtot*(1-rho);
+    var bh = Math.max(0, Math.min(1,te))*barH;
+    ctx.fillStyle = te<0.02?C.sig:C.acc;
+    ctx.fillRect(barX, barTop+barH-bh, 16, bh);
+    ctx.fillStyle=C.mut; ctx.textAlign='center'; ctx.font='10px ui-monospace,monospace';
+    ctx.fillText('Test-', barX+8, barTop-14);
+    ctx.fillText('Bewegung', barX+8, barTop-3);
+
+    var teEl=document.getElementById('ro_te');
+    teEl.textContent = te.toFixed(3);
+    var invEl=document.getElementById('ro_invis');
+    invEl.textContent = (rho>=0.999) ? 'exakt 0 \u2713' : (rtot*rho).toFixed(3)+' \u2192 0';
+    invEl.style.color = C.sig;
+
+    if(rho>=0.9){
+      ctx.fillStyle='rgba(74,222,128,.16)';
+      ctx.fillRect(rx0+10, h-78, 190, 26);
+      ctx.fillStyle=C.sig; ctx.textAlign='left'; ctx.font='12px ui-monospace,monospace';
+      ctx.fillText('\u2713 G\u00b7P_res = 0  (unsichtbar)', rx0+18, h-60);
+    }
+  }
+
+  Object.keys(el).forEach(function(k){
+    el[k].addEventListener('input', draw);
+    el[k].addEventListener('change', draw);
+  });
+  var tid=null;
+  window.addEventListener('resize', function(){clearTimeout(tid); tid=setTimeout(draw,150);});
+  var btn=document.getElementById('b_theme');
+  if(btn){btn.addEventListener('click', function(){document.documentElement.classList.toggle('dark'); draw();});}
+  var mo=new MutationObserver(function(){draw();});
+  mo.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  draw();
+  window.addEventListener('load', function(){setTimeout(draw,60);});
+})();
+</script>
+</body>
+</html>

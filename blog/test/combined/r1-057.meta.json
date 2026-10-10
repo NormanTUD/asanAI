@@ -1,0 +1,16 @@
+{
+  "no": "057",
+  "a": "transformer_dynamics.html",
+  "b": "j_space.html",
+  "a_title": "Transformer Dynamics — A neuroscientific approach to interpretability of large language models (Fernando & Guitchounts, 2025, arXiv:2502.12131)",
+  "b_title": "Verbalizable Representations Form a Global Workspace in Language Models (Gurnee et al., 2026)",
+  "combined_theme": "j-space-dynamical-flow",
+  "one_line": "Die Berechnung eines Transformers ist ein niedrig-dimensionaler dynamischer Fluss durch den Residual-Stream (A); das 'Denken' — berichtbar, modulierbar, multi-stufig — ist eine spärliche, lesbare Projektion dieses Flusses, der J-Space (B), und zwar genau dort lesbar, wo der Fluss linearisiert und broadcast-fähig wird (Workspace-Band ≈38–92 % der Schichten).",
+  "contradictions": [
+    "A: die Berechnung ist verteilt & kontinuierlich, der Residual-Stream hat 'keine privilegierte Basis', die Analyse-Einheit ist die 4096-dim-Bahn; B: der kausal wirksame Kern ist ein kleiner, privilegierter, symbolischer Unterraum (≈5–10 % Varianz, ≈6 Wörter, 1–2 pro Schicht) aus benannten, austauschbaren Konzepten (spider, France, 42) — fast Grandmother-Cell-artig.",
+    "A: die frühen Schichten sind informationsreich (mutuelle Information ist dort hoch und fällt scharf ab; 'hohe MI, komplexe nichtlineare Beziehungen'); B: die frühen Schichten (≈0–38 %) zeigen in der J-Lens 'nur Rauschen' und sind für den lesbaren Readout noch bedeutungslos — sie messen unterschiedliche Größen, daher die nächste echte Spannung zwischen den Bildern.",
+    "A's Analyseobjekt ist durchgehend kontinuierliche Geometrie (Aktivierungs-Größen, Velocity, Korrelation, MI, Phasenorbieten, niedrig-dimensionale Mannigfaltigkeit) ohne Bezug zu Wörtern; B reduziert den internen Zustand dagegen ganz auf diskrete, lesbare 'sagen-könnte'-Tokens."
+  ],
+  "resolution": "Die J-Space-Richtungen sind keine 'Basis' im A-Sinne (die Standard-4096-Achsen), sondern ein gelerntes, niedrig-dimensionales, schiefes Koordinatensystem auf A's niedrig-dimensionalem Fluss; die J-Lens ist der lineare Readout (mittlere Jacobi × Unembedding), der daraus lesbare Koordinaten zurücksichert. B's 'Rauschen früh' ist der lineare Readout auf noch nicht linearisierter Information, und A's frühe MI-Reduktion/Linearisierung ist genau der Prozess, der den J-Space ab ≈38 % lesbar macht. Diskrete Tokens sind die symbolische Quantisierung des kontinuierlichen Flusses: A liefert die Geometrie/Dynamik, B das Vokabular — die beiden komponieren sich zu einem Fluss mit lesbaren Koordinaten.",
+  "viz": "2D-Canvas, Horizontale = Schicht 0–63: drei Kurven aus A (MI fällt früh scharf, Korrelation steigt, Velocity beschleunigt im letzten Drittel) über drei farbigen Zonen (Vorverarbeitung / J-Space-Workspace 38–92 % / Motor 92–100 %); oben eine Token-Lane mit B's lesbaren J-Space-Konzepten (🕷️ spider→web→insect→eight→8 bzw. 🧮 arithmetic→21→42→49). Ein Layer-Slider bewegt einen Marker; der Readout (Zone + nächster Token + MI/Korrelation/Velocity) und ein Verdict aktualisieren live; Task-Wechsel Spinne/Rechnung + Play-Button läuft durch die Schichten. Theme-aware über CSS-Variable-Readout + MutationObserver, nur Inline-Daten, 0 Console-Fehler (headless Chromium verifiziert)."
+}

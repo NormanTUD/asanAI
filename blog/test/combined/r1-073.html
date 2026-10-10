@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topologie schreiben und lesen — Fusion aus zwei Papieren</title>
+<style>
+:root{
+  --bg:#f6f4ee; --panel:#ffffff; --panel2:#efece3; --stroke:rgba(30,42,74,.15);
+  --txt:#191d2b; --txt2:#49526a; --faint:#787f96;
+  --accent:#0e7490; --accent2:#6d28d9; --green:#15803d; --red:#be123c;
+  --amber:#b45309; --blue:#1d4ed8; --mono:'SFMono-Regular',Consolas,Menlo,monospace;
+}
+html.dark{
+  --bg:#070a12; --panel:rgba(20,26,44,.72); --panel2:rgba(28,36,60,.55);
+  --stroke:rgba(130,160,255,.16); --txt:#e8edfa; --txt2:#a6b4d6; --faint:#7c88ad;
+  --accent:#6ee7ff; --accent2:#a78bfa; --green:#4ade80; --red:#fb7185;
+  --amber:#fbbf24; --blue:#60a5fa;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);line-height:1.66;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(900px 600px at 15% -8%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 60%),
+  radial-gradient(900px 600px at 92% 6%,color-mix(in srgb,var(--accent2) 8%,transparent),transparent 60%)}
+#themeToggle{position:fixed;top:14px;right:14px;z-index:50;cursor:pointer;
+  font-family:var(--mono);font-size:.8rem;color:var(--txt2);background:var(--panel);
+  border:1px solid var(--stroke);border-radius:9px;padding:6px 11px}
+main{max-width:820px;margin:0 auto;padding:48px 22px 90px}
+h1{font-size:clamp(2rem,5.4vw,3.3rem);line-height:1.06;margin:0 0 10px;font-weight:800;letter-spacing:-.02em}
+.subline{font-family:var(--mono);font-size:.82rem;color:var(--txt2);margin-bottom:8px;word-break:break-word}
+.eyebrow{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--accent);border:1px solid var(--stroke);
+  padding:4px 11px;border-radius:999px;margin-bottom:14px}
+section{margin:40px 0}
+h2{font-size:clamp(1.4rem,3vw,1.95rem);margin:0 0 12px;font-weight:760;letter-spacing:-.01em}
+h3{font-size:1.12rem;margin:24px 0 8px;font-weight:660;color:var(--txt)}
+p{margin:0 0 13px;color:var(--txt)}
+p.lead{color:var(--txt2)}
+a{color:var(--accent)}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:15px;
+  padding:18px 20px;margin:16px 0}
+.note{border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent);
+  padding:11px 15px;border-radius:0 11px 11px 0;margin:15px 0;font-size:.93rem}
+.note.g{border-color:var(--green);background:color-mix(in srgb,var(--green) 8%,transparent)}
+.note.r{border-color:var(--red);background:color-mix(in srgb,var(--red) 8%,transparent)}
+.note.p{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 8%,transparent)}
+.note b{color:var(--txt)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:680px){.two{grid-template-columns:1fr}}
+.who{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.who.a{color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 45%,transparent)}
+.who.b{color:var(--red);border:1px solid color-mix(in srgb,var(--red) 45%,transparent)}
+blockquote{margin:0 0 12px;padding:2px 0 2px 14px;border-left:2px solid var(--stroke);color:var(--txt2);font-size:.95rem}
+blockquote b{color:var(--txt)}
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:14px 0}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--stroke);vertical-align:top}
+th{color:var(--accent);font-weight:660;font-size:.74rem;text-transform:uppercase;letter-spacing:.05em}
+td{color:var(--txt2)}
+td b,td.c{color:var(--txt)}
+.eq{font-family:var(--mono);font-size:.92rem;background:var(--panel2);border:1px solid var(--stroke);
+  border-radius:10px;padding:11px 14px;margin:12px 0;overflow-x:auto;color:var(--txt)}
+.eq .cap{display:block;font-family:-apple-system,sans-serif;font-size:.76rem;color:var(--faint);margin-top:6px}
+.badge{display:inline-block;font-family:var(--mono);font-size:.74rem;padding:2px 9px;border-radius:7px;
+  background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);margin:2px 4px 2px 0}
+ul{margin:6px 0 13px;padding-left:20px}li{margin:5px 0;color:var(--txt2)}li b{color:var(--txt)}
+.vizctl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:14px 0 10px}
+.vizctl .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vizctl label{font-size:.8rem;color:var(--txt2)}
+.vizctl .v{font-family:var(--mono);color:var(--accent)}
+button.act{font-family:inherit;font-size:.8rem;cursor:pointer;color:var(--txt2);background:var(--panel);
+  border:1px solid var(--stroke);border-radius:9px;padding:6px 13px}
+button.act.on{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:660}
+button.act.p.on{background:var(--accent2);border-color:var(--accent2)}
+button.act.g.on{background:var(--green);border-color:var(--green)}
+button.tog{font-family:inherit;font-size:.8rem;cursor:pointer;color:var(--txt2);background:var(--panel);
+  border:1px solid var(--stroke);border-radius:9px;padding:6px 13px}
+button.tog:hover{border-color:var(--accent)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:150px;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 55%,transparent),color-mix(in srgb,var(--accent2) 40%,transparent));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--accent));cursor:pointer;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--accent));cursor:pointer}
+canvas.viz{display:block;width:100%;border-radius:13px;border:1px solid var(--stroke)}
+.vizcap{font-size:.84rem;color:var(--txt2);margin-top:10px}
+.vizcap b{color:var(--txt)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--txt2);margin:8px 0}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;vertical-align:-1px;margin-right:5px}
+hr.soft{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--stroke),transparent);margin:26px 0}
+footer{text-align:center;padding:30px 20px;color:var(--faint);font-size:.8rem;border-top:1px solid var(--stroke)}
+code{font-family:var(--mono);font-size:.85em;background:color-mix(in srgb,var(--accent) 10%,transparent);
+  padding:1px 5px;border-radius:5px;color:var(--accent)}
+</style>
+</head>
+<body>
+<button id="themeToggle" title="Light/Dark umschalten">◐ Theme</button>
+<main>
+
+<header>
+  <span class="eyebrow">Fusion · Round 1 · Paar 073</span>
+  <h1>Topologie schreiben &amp; lesen:<br>das Loch als gemeinsame Währung</h1>
+  <div class="subline">Fusion aus: topologie_tiefer_neuronaler_netze_2.html ✕ garben_in_transformern.html</div>
+</header>
+
+<!-- ══════════ 1 · KERNthese ══════════ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere wetten auf denselben Perspektivwechsel: Um ein neuronales Netz zu
+  verstehen, muss man die <b>Form</b> dessen messen, was es mit seinen Repräsentationen macht — und für
+  genau das ist die algebraische Topologie (Betti-Zahlen, Zyklen, der Kern eines Laplace-Operators,
+  harmonische Formen) das passende Werkzeug. Der Unterschied liegt in der <b>Richtung des
+  Informationsflusses</b>; und genau dort schließt sich der Kreis.</p>
+  <p>Paper <b>A</b> (Naitzat–Zhitnikov–Lim, arXiv:2004.06093) liest Topologie als <b>Vorgang in der
+  Zeit</b>: ein trainiertes Netz <em>schreibt</em> Topologie — seine nicht-injektiven ReLU-Schichten
+  zerreißt und näht die Datenmannigfaltigkeit und drückt die Betti-Zahlen monoton auf (1,0,0) herunter;
+  die Arbeit konzentriert sich in den <em>späten</em> Schichten, und Tiefe ist die Zeit, die diese
+  topologische Chirurgie braucht. Paper <b>B</b> (Grant–Wang, NeurIPS 2026) liest Topologie als
+  <b>statisches Gerüst</b>: Am <em>eingefrorenen</em> Modell liest man — ohne ein einziges
+  Trainingsschritt — über eine zelluläre Garbe / einen Garben-Laplace auf einem Paraphrasen-
+  (Äquivalenz-)Graphen ab: der Kern <span class="badge">H⁰</span> = global konsistente Schnitte ist der
+  <em>Inhalt</em>, das Spektral-Komplement die <em>Einflussrichtungen</em>, und die <em>harmonische
+  Masse</em> auf den tiefe-induzierten Zyklen ist eine Fragilitäts-Prognose.</p>
+  <p>Die <b>eine integrierte Position</b>: <b>Die Löcher</b> — Zyklen, β₁, der Kern des Laplace-Operators,
+  harmonische Formen — sind die <em>gemeinsame Währung</em> beider Papiere. Auf die Datenbahn gekippt
+  misst die Topologie, wie viel Chirurgie das Netz vollbringt (A); auf ein eingefrorenes Äquivalenz-
+  Gerüst gekippt misst sie, wie konsistent das Modell Bedeutung transportiert (B). Wer A's „das Netz
+  näht Löcher zu" und B's „harmonische Masse sagt Fragilität" auf dieselbe Größe — die
+  <em>residuelle</em> topologische Aktivität — projiziert, sieht, dass sie denselben Sachverhalt aus zwei
+  Seiten beschreiben: <b>Gutes Repräsentationslernen senkt die relevante topologische Komplexität, und
+  genau das, was übrig bleibt, macht ein Modell fragil.</b> Beide Papiere sind ehrlich empirisch und
+  bezeichnen ihren Mechanismus bzw. ihre Korrelation selbst als noch keine Theorie.</p>
+</section>
+
+<!-- ══════════ 2 · WIDERSPRÜCHE ══════════ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+  <p class="lead">Die beiden nehmen an drei konkreten Stellen unvereinbare Stellungen ein.</p>
+
+  <div class="card">
+    <h3>① Wie viel „echte Topologie" steckt im Hauptergebnis?</h3>
+    <div class="two">
+      <div>
+        <span class="who a">A · maximalistisch</span>
+        <p>Topologie ist <em>der kausale Mechanismus</em>: „Hört auf, Netze als Funktionsapproximatoren zu
+        sehen. Seht sie als Maschinen, die die Form (Topologie) von Daten verändern. Dann lösen sich beide
+        Rätsel gleichzeitig auf." ReLU gewinnt, weil es <em>nicht injektiv</em> ist und damit Topologie
+        verändern kann; tanh/Leaky-ReLU sind Homöomorphismen und können das eigentlich nicht.</p>
+      </div>
+      <div>
+        <span class="who b">B · dezidiert flach</span>
+        <p>Für das H⁰/Hauptergebnis gilt: „auf dem Matching-Graph steckt <b>kein topologischer
+        Zauber</b> … sie wird erst ab Abschnitt 9 (Mehrschicht-Gitter) wirklich topologisch." Proposition 3.1
+        reduziert den Garben-Laplace auf <span class="eq" style="display:inline;padding:2px 8px">L_F = Pᵀ C_W P</span>
+        — reine Projektions-Kovarianz (lineare Algebra). Remark 3.3: Die „H¹-Richtungen" sind <em>keine</em>
+        echte Kohomologieklasse (algebraisch H¹ = 0, der Name ist eine Eselsbrücke). Und wo echte Zyklen
+        auftauchen (Ring vs. Pfad), bringt der Ring nur <b>+0,5 pp</b> — auf keiner Architektur
+        signifikant.</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:4px">A: Topologie = das Wesentliche. B: fürs Kopf-Ergebnis = eine
+    Eselsbrücke, die auf Kovarianz runterfällt; echte Zyklen sind ein kleiner/unechter Effekt.</p>
+  </div>
+
+  <div class="card">
+    <h3>② Was ist mit den Löchern: wegreißen oder behalten?</h3>
+    <div class="two">
+      <div>
+        <span class="who a">A · Löcher = Hindernis</span>
+        <blockquote>„Ein tiefes neuronales Netz ist eine Maschine, die <b>Löcher zunäht</b> und <b>Teile
+        zusammenschiebt</b>, bis … zwei einfache Klumpen werden." Ziel: β = (1,0,0). Überlebende Löcher
+        (β₁, β₂) sind der Fehlschlag/die Langsamkeit — tanh lässt β₁ sogar teils <em>ansteigen</em>.</blockquote>
+      </div>
+      <div>
+        <span class="who b">B · Löcher = Gerüst/Sensor</span>
+        <blockquote>„Alle sechs Architekturen … benutzen <b>exakt denselben Graphen</b> (b₁ = 30). …
+        Trotzdem spannt die harmonische Masse den Bereich 10⁻⁴ bis 0,08. Die Variation kommt <b>allein aus
+        den Schichtübergängen</b> des Modells." Der Zyklus ist fest; das Modell, das <em>mehr</em>
+        topologische Aktivität auf ihm zeigt (Llama-2-7B), ist das <em>fragile</em>.</blockquote>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:4px">A: Topologische Aktivität ist das, was das Netz <em>eliminieren
+    muss</em>. B: Topologische Aktivität ist der <em>diagnostische Signal</em>, den man behalten und
+    ablesen will.</p>
+  </div>
+
+  <div class="card">
+    <h3>③ Wo in der Tiefe sitzt das topologisch Relevante?</h3>
+    <div class="two">
+      <div>
+        <span class="who a">A · spät</span>
+        <blockquote>„Reduziert man die Tiefe, verteilt sich die Arbeit <b>nicht</b> gleichmäßig … sie
+        <b>konzentriert sich in den letzten Schichten</b>. Die ersten Schichten tun topologisch fast
+        nichts; sie machen nur Geometrie."</blockquote>
+      </div>
+      <div>
+        <span class="who b">B · früh</span>
+        <blockquote>Tiefenprofil der H¹-Ablationswirkung: „<b>Spitze bei L/4</b> für sieben
+        Architekturen" — also in den <em>frühen</em> Schichten; die Fragilität wird aus
+        Schichtübergängen über den ganzen Stapel abgelesen.</blockquote>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:4px">A zeigt die topologische Arbeit im <em>späten</em> Teil des Netzes;
+    B zeigt die kausale Wirkung der Topologie-relevanten Richtungen im <em>frühen</em> Teil.</p>
+  </div>
+</section>
+
+<!-- ══════════ 3 · AUFLOESUNG ══════════ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+  <p>Alle drei „Widersprüche" sind Kategorienverwechslungen, die sich auflösen, sobald man <b>welches
+  Objekt</b> und <b>welche Größe</b> jeweils gemeint ist.</p>
+
+  <div class="card">
+    <h3>① → zwei verschiedene Objekte „Topologie"</h3>
+    <p>A's Topologie ist die der <b>Datenmannigfaltigkeit</b>, auf die das Netz <em>aktuell wirkt</em>
+    (Kausalität entsteht über die Nicht-Injektivität der Aktivierung <em>auf den Daten</em>). B's Topologie
+    ist die eines <b>von außen konstruierten Äquivalenz-Graphen</b> über den Repräsentationen eines
+    <em>eingefrorenen</em> Modells, der für das Inhalts-Ergebnis <b>absichtlich azyklisch</b> gewählt wird.
+    <b>Fusion:</b> Der niedrig-eigen/Kern-Aspekt (A: β₀ → 1; B: H⁰ = ker L_F) ist die
+    <em>Konsistenz-Seite</em>; der hoch-eigen/Zyklus/Harmonik-Aspekt ist, wo sich Nicht-Trivialität zeigt —
+    und sie zeigt sich bei A als <em>Zu-tun-des-Netzes</em> (Chirurgie), bei B als <em>Fragilität</em>.
+    Nicht-Injektivität (A's Hebel) und harmonische Masse (B's Hebel) sind zwei messbare Spuren derselben
+    Sache: wie weit die Repräsentation von einem sauberen, global konsistenten, niedrig-komplexen Objekt
+    entfernt ist.</p>
+  </div>
+
+  <div class="card">
+    <h3>② → Daten-Löcher vs. Gerüst-Löcher</h3>
+    <p>Löcher in der <b>Daten</b>mannigfaltigkeit (A) sind Hindernisse, die das Netz beseitigen muss, um
+    Klassen zu trennen. Löcher im <b>Äquivalenz</b>-Graphen (B) sind Fensterscheiben, die die
+    Selbstkonsistenz des Modells offenlegen. <b>Fusion:</b> Ein Netz, das seine Daten pro Klasse auf
+    (1,0,0) zerlegt hat (A's Ziel), ist genau ein Modell, dessen Repräsentationen auf dem Gerüst
+    „global konsistent" sind und dessen harmonische Masse nahe der Zufalls-Referenz liegt (B's Robustheit).
+    Umgekehrt: ein Modell mit <em>hoher</em> harmonischer Masse (B: fragil) ist ein Modell, bei dem die
+    Daten topologisch „verknotet" bleiben — es hat die topologische Arbeit <em>nicht</em> vollbracht (A).
+    „Zerstören" (A) und „behalten/ablesen" (B) sind dieselbe Senkung der relevanten Komplexität, einmal vom
+    Daten-, einmal vom Gerüst-Standpunkt gesehen.</p>
+  </div>
+
+  <div class="card">
+    <h3>③ → zwei verschiedene Größen über der Tiefe</h3>
+    <p>A trackt eine <b>monoton sinkende Datenkomplexität</b>: die topologische Chirurgie <em>akkumuliert</em>
+    und kann nicht vor der Geometrie vollendet werden — daher konzentriert sie sich spät. B trackt einen
+    <b>Einfluss-Koeffizienten</b> (Ablationswirkung eines Unterraums auf den Output), der früh (L/4) gesetzt
+    und dann nach vorn propagiert wird. <b>Fusion:</b> Kein Widerspruch, sobald man die Größen trennt: Das
+    Netz vollbringt die topologische <em>Chirurgie</em> auf dem Weg zu den späten Schichten (A), während die
+    <em>Output-Folge</em> bestimmter Richtungen bereits früh festgelegt ist (B). Chirurgie spät, Wirkung
+    früh — beides stimmt über dieselbe Komposition.</p>
+  </div>
+</section>
+
+<!-- ══════════ 4 · FUSIONIERTER INHALT ══════════ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>Gemeinsames Fundament — ein Komplex, ein Operator, zwei Lesarten</h3>
+  <p>Beide bauen aus Punkten/Repräsentationen ein <b>kompositorisches Objekt</b> (Punktwolke →
+  Vietoris–Rips-Komplex bei A; Paraphrasen-/Gitter-Graph bei B), hängen daran Vektorräume (Repräsentationen
+  bzw. Halme) und lesen dann ab: <b>niedrig-eigen / Kern</b> = „Bedeutung bleibt erhalten",
+  <b>hoch-eigen / Zyklus / harmonisch</b> = „hier ist die eigentliche Aktion". Die Währung sind
+  Betti-Zahlen und der Laplace:</p>
+  <div class="eq">Betti:  β₀ = Komponenten · β₁ = Tunnel/Löcher · β₂ = Hohlräume &nbsp;&nbsp; ω = β₀+β₁+β₂
+    <span class="cap">A misst ω auf der Datenmannigfaltigkeit Schicht für Schicht; B misst b₁ = |E|−|V|+(# Komponenten) auf dem Graph.</span></div>
+  <p>A rekonstruiert die Form einer Punktwolke per <b>persistenter Homologie</b> (Geburt/Tod der Löcher,
+  Barcode) über eine <b>Graph-Geodätische</b> auf dem kNN-Graph (k\* = 14 / 35, ε\* = 2,5) — immun gegen
+  Streckung, also über Schichten vergleichbar.</p>
+
+  <h3>Was Paper A einbringt (Topologie schreiben)</h3>
+  <p>Die Schicht ist <span class="eq" style="display:inline;padding:2px 8px">f_j(x)=σ(A_jx+b_j)</span>.
+  Die affine Karte ist ein <b>Homöomorphismus</b> (β bleibt exakt gleich) — die <b>Aktivierung</b>
+  entscheidet: tanh (bijektiv) und Leaky-ReLU (monoton/bijektiv) sind Homöomorphismen und erhalten
+  Topologie; <b>ReLU ist nicht injektiv</b> (alles Negative → 0) und <em>kann</em> falten/kollabieren.
+  Der <b>tanh-Paradox</b>: erst Rundungsfehler (tanh(x) → exakt ±1) macht tanh nicht-injektiv — daher kann
+  niedrigere Präzision topologisch <em>vorteilhaft</em> sein. Das empirische Programm (D-I/II/III mit
+  bekannter Topologie + 4 reale Datensätze, Netze bis zur Perfektion, Homologie pro Schicht) zeigt:</p>
+  <ul>
+    <li><b>β → (1,0,0)</b> am Ausgang — jede Klasse wird ein Klumpen (robust über ≥ 30 Runs).</li>
+    <li><b>ReLU &gt; Leaky-ReLU &gt; tanh</b>, konsistent — der Nicht-Homöomorphismus gewinnt.</li>
+    <li>Manche Formen sind härter (D-II: verkettete Tori, β₁-Loops überleben; tanh lässt β₁ teils steigen).</li>
+    <li>Breite/Flaschenhals erzwingen Topologie-Änderung; <b>Tiefe = die letzte Arbeit</b> (Antwort auf
+    „warum Tiefe, wenn 2 Schichten ausreichen?": der Approximationssatz sagt nur, dass eine Lösung
+    <em>existiert</em>, nicht dass sie trainierbar ist).</li>
+    <li>Mechanismen (Spekulation): Falten (nicht-injektiv), zusätzliche Breite (höhere Dimension),
+    Tiefe = Zeit. TDA und Netze sind inverse Probleme: <em>Form lesen</em> vs. <em>Form schreiben</em>.</li>
+  </ul>
+
+  <h3>Was Paper B einbringt (Topologie lesen)</h3>
+  <p>Ein Satz = ein Hidden-State <span class="eq" style="display:inline;padding:2px 8px">h ∈ ℝᵈ</span>
+  (mean-pooling; d = 768 … 4096). Für ein Paraphrasen-Paar ist die <b>Differenz</b>
+  <span class="eq" style="display:inline;padding:2px 8px">Δ = h⁽¹⁾ − h⁽²⁾</span> reine Formulierung;
+  <span class="eq" style="display:inline;padding:2px 8px">C_W = (1/N) Σᵢ Δᵢ Δᵢᵀ</span> misst, wo die
+  Formulierung variiert — Eigenwerte nahe 0 = „alle Paare stimmen überein" = <b>Inhalt</b>. Auf dem Graphen
+  (Matching / Pfad / Ring / Clique / Relations-Hypergraph) trägt die <b>zelluläre Garbe</b> Knoten-Halm
+  ℝᵈ, Kanten-Halm ℝᵏ (k = 128 ≪ d) und eine gemeinsame Restriktion Pᵀ. Der Korand
+  <span class="eq" style="display:inline;padding:2px 8px">(δ⁰h)_e = Pᵀ(h_b − h_a)</span> misst
+  „Uneinigkeit"; der Garben-Laplace ist nur <b>k×k</b>:
+  <span class="eq" style="display:inline;padding:2px 8px">L_F = Pᵀ C_W P</span>, und
+  <span class="eq" style="display:inline;padding:2px 8px">ker L_F = ker δ⁰ = H⁰</span>. Die drei
+  Ergebnisse (alle label-frei, null Training):</p>
+  <ul>
+    <li><b>H⁰ = Inhalt:</b> die unteren m = 20 Eigenvektoren schlagen LEACE bei voller Breite um <b>+17,1 pp</b>
+    (bis +48 pp gegen dimensions-kontrolliertes LEACE-20D); robust gegen P (PCA 81,6 % / Identity 77,5 % /
+    Random 74,2 %); der <em>Kern</em> ist der Wirkstoff, nicht die Projektion; überträgt auf EN↔FR.</li>
+    <li><b>Spektral-Komplement = Einfluss:</b> Ablation der H¹-Koordinaten verändert den Output
+    <b>5,6–26,5×</b> stärker als varianz-gematchte Kontrollen (echte Eigenbasis: 17,8–398× in KL);
+    Dormancy-Gegenprobe schließt die Patching-Illusion aus.</li>
+    <li><b>harmonische Masse = Fragilität:</b> auf dem Mehrschicht-Gitter (b₁ = N(L−1)) zerlegt sich jedes
+    1-Kokettenfeld per <b>Hodge</b> in <span class="eq" style="display:inline;padding:2px 8px">im δ⁰ ⊕ ker L₁ ⊕ im(δ¹)ᵀ</span>;
+    die harmonische Masse spannt 10⁻⁴…0,08, während Graph &amp; Paare <em>fix</em> sind, und ordnet 6
+    Architekturen wie ihre Steering-Fragilität (Spearman ρ = 0,90, p = 0,014). Zufalls-Referenz
+    b₁/|E| = 0,25 (bei L = 2).</li>
+  </ul>
+
+  <h3>Die verschmolzene Lesart — eine Tabelle</h3>
+  <table>
+    <tr><th>Aspekt</th><th>Paper A (Daten, schreibt)</th><th>Paper B (Gerüst, liest)</th></tr>
+    <tr><td class="c">niedrig-eigen / Kern</td><td>β₀ → 1 — Klasse wird ein Klumpen</td>
+      <td>H⁰ = ker L_F = Inhalt (+17,1 pp)</td></tr>
+    <tr><td class="c">hoch-eigen / Zyklus / harmonisch</td>
+      <td>β₁, β₂, die das Netz <em>zumachen</em> muss</td>
+      <td>harmonische Masse = Fragilität (ρ = 0,90)</td></tr>
+    <tr><td class="c">Operator</td><td>(keine Matrix — direkte Betti-Messung)</td>
+      <td>L_F = Pᵀ C_W P (k×k, konstante Kosten)</td></tr>
+    <tr><td class="c">Rolle des Modells</td><td>aktiver Chirurg (topologie-verändernd)</td>
+      <td>eingefroren/passiv (Signatur wird abgelesen)</td></tr>
+    <tr><td class="c">Nicht-Injektivität</td><td>ReLU-Falten = <em>der</em> Hebel</td>
+      <td>Schicht-Transporte R, die nicht kommutieren (harmonisch)</td></tr>
+    <tr><td class="c">Tiefe</td><td>Chirurgie konzentriert sich <em>spät</em></td>
+      <td>Einfluss/Fragilität <em>früh</em> (L/4)</td></tr>
+    <tr><td class="c">Endzustand</td><td>β = (1,0,0) pro Klasse</td>
+      <td>niedrige harmonische Masse / konsistente Schnitte</td></tr>
+  </table>
+  <div class="note g">
+    <b>Der Punkt, an dem beide zusammenlaufen:</b> Ein Netz, das seine Daten erfolgreich zu (1,0,0)
+    zerlegt hat (A), ist genau ein Modell, dessen Repräsentationen auf dem Äquivalenz-Gerüst „global
+    konsistent" sind und dessen harmonische Masse nahe der Zufalls-Referenz liegt (B). Die
+    <em>residuelle</em> topologische Aktivität ist dieselbe Zahl, gelesen als „noch nicht zerrissenes
+    Datenloch" (A) oder als „Fragilitäts-Sensor" (B). Beides ist empirisch; beide betonen, dass
+    Mechanismus/Korrelation noch keine bewiesene Theorie sind.</div>
+</section>
+
+<!-- ══════════ 5 · VISUALISIERUNG ══════════ -->
+<section id="visualisierung">
+  <h2>Interaktiv: ein Loch, zwei Linsen</h2>
+  <p class="lead">Ein Ring (β₁ = 1) fließt durch <b>k</b> Schichten einer gewählten Aktivierung. Links
+  (A) kollabiert das <em>Daten</em>loch — ReLU reißt es am schnellsten, tanh am langsamsten. Rechts (B)
+  sinkt die <em>harmonische Masse</em> auf dem festliegenden Äquivalenz-Zyklus. Beide Anzeigen zeigen
+  dieselbe Größe — die <b>residuelle topologische Aktivität</b>.</p>
+
+  <div class="vizctl">
+    <div class="row">
+      <span style="font-size:.8rem;color:var(--txt2)">Aktivierung</span>
+      <button class="act on" data-a="relu">ReLU</button>
+      <button class="act g" data-a="lrelu">Leaky ReLU</button>
+      <button class="act p" data-a="tanh">tanh</button>
+    </div>
+    <div class="row">
+      <label>Schicht k <span class="v" id="depthVal">0</span></label>
+      <input type="range" id="depth" min="0" max="10" value="0">
+    </div>
+    <div class="row">
+      <button class="tog" id="vizPlay">▶ Animation</button>
+      <button class="tog" id="vizReset">↻ Reset</button>
+    </div>
+  </div>
+
+  <canvas id="vizCanvas" class="viz" height="420"></canvas>
+  <div class="legend">
+    <span><i style="background:#6ee7ff"></i>Datenpunkt (1 Klasse, Ring)</span>
+    <span><i style="background:#4ade80"></i>robust (niedrige harmonische Masse)</span>
+    <span><i style="background:#fbbf24"></i>mittel</span>
+    <span><i style="background:#fb7185"></i>fragil (hohe harmonische Masse)</span>
+  </div>
+  <p class="vizcap"><b>Fusion in einem Bild:</b> Die Aktivierung bestimmt, wie schnell das Netz das
+  Datenloch zerreißt (A: ReLU &gt; Leaky-ReLU &gt; tanh). Dieselbe „restliche Aktivität" ist, auf dem
+  Äquivalenz-Zyklus abgelesen, genau die harmonische Masse, die B als Fragilität deutet — der
+  gestrichelte Strich markiert die Zufalls-Referenz <b>b₁/|E| = 0,25</b> (L = 2). Didaktische
+  Nachbildung; alle Daten inline, keine Netzwerk-Fetches.</p>
+</section>
+
+<!-- ══════════ 6 · PROVENIENZ ══════════ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <div class="card">
+    <p style="margin:0"><b>A —</b>
+    <a href="../topologie_tiefer_neuronaler_netze_2.html">topologie_tiefer_neuronaler_netze_2.html</a> ·
+    „Topologie tiefer neuronaler Netze" (Naitzat, Zhitnikov, Lim, arXiv:2004.06093): Netze als
+    topologie-<em>schriftende</em> Maschinen; ReLU zerreißt Datenlöcher, Tiefe = Zeit.</p>
+  </div>
+  <div class="card">
+    <p style="margin:0"><b>B —</b>
+    <a href="../garben_in_transformern.html">garben_in_transformern.html</a> · „Garben im Transformer"
+    (Grant &amp; Wang, NeurIPS 2026): eingefrorenes Modell, Garben-Laplace auf Paraphrasen-Graph;
+    H⁰ = Inhalt, harmonische Masse = Fragilität.</p>
+  </div>
+</section>
+
+<footer>Fusion · Round 1 · Paar 073 — topologie_tiefer_neuronaler_netze_2.html ✕ garben_in_transformern.html ·
+alle Angaben an die Originalpapiere angelehnt, Simulationen sind didaktische Nachbildungen.</footer>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var TAU = Math.PI*2;
+  // theme toggle
+  var tt = document.getElementById('themeToggle');
+  if(tt){ tt.addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  }); }
+
+  var cv = document.getElementById('vizCanvas');
+  if(!cv) return;
+  var depth = document.getElementById('depth');
+  var depthVal = document.getElementById('depthVal');
+  var playBtn = document.getElementById('vizPlay');
+  var resetBtn = document.getElementById('vizReset');
+  var actBtns = Array.prototype.slice.call(document.querySelectorAll('.viz-act'));
+
+  var act = 'relu';
+  var depthN = 0;
+  var playing = false, timer = null;
+
+  function mkRnd(seed){ var s=seed>>>0; return function(){ s=(s*1664525+1013904223)>>>0; return s/4294967296; }; }
+  function gauss(r){ var u=0,v=0; while(u===0)u=r(); while(v===0)v=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v); }
+
+  // inline base ring (beta_1 = 1)
+  var rr = mkRnd(1234);
+  var BASE = [];
+  for(var i=0;i<140;i++){ var a=i/140*TAU; var rad=1.0+(rr()-0.5)*0.12; BASE.push([Math.cos(a)*rad, Math.sin(a)*rad]); }
+
+  function cssVar(name, fb){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    v = (v||'').trim(); return v||fb;
+  }
+  function fit(){
+    var dpr = window.devicePixelRatio||1;
+    var rect = cv.getBoundingClientRect();
+    var H = 420;
+    if(rect.width < 12) return null;
+    cv.width = Math.round(rect.width*dpr);
+    cv.height = Math.round(H*dpr);
+    cv.style.height = H+'px';
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx, w:rect.width, h:H};
+  }
+  function actFn(x,k){
+    if(k==='tanh') return Math.tanh(x*1.3);
+    if(k==='lrelu') return Math.max(x, 0.2*x);
+    return Math.max(x,0);
+  }
+  function net(n){
+    var rn = mkRnd(77); var Ws=[];
+    for(var i=0;i<n;i++){
+      Ws.push({a:1+0.12*(rn()-0.5), b:(rn()-0.5)*0.5, c:(rn()-0.5)*0.5, d:1+0.12*(rn()-0.5), e:(rn()-0.5)*0.4, f:(rn()-0.5)*0.4});
+    }
+    return Ws;
+  }
+  function applyLayers(n,k){
+    var Ws = net(n);
+    var P = BASE.map(function(p){return [p[0],p[1]];});
+    for(var i=0;i<n;i++){
+      var m=Ws[i];
+      P = P.map(function(p){
+        var u = m.a*p[0]+m.b*p[1]+m.e;
+        var v = m.c*p[0]+m.d*p[1]+m.f;
+        return [actFn(u,k), actFn(v,k)];
+      });
+      var mx=0,my=0; P.forEach(function(p){mx+=p[0];my+=p[1];}); mx/=P.length; my/=P.length;
+      var sd=0; P.forEach(function(p){sd+=(p[0]-mx)*(p[0]-mx)+(p[1]-my)*(p[1]-my);});
+      sd=Math.sqrt(sd/P.length)||1;
+      P = P.map(function(p){return [(p[0]-mx)/sd*1.05, (p[1]-my)/sd*1.05];});
+    }
+    return P;
+  }
+  function survival(P){
+    var n=P.length; if(n<4) return 0;
+    var mx=0,my=0; for(var i=0;i<n;i++){mx+=P[i][0];my+=P[i][1];} mx/=n;my/=n;
+    var mr=0; var rs=[];
+    for(i=0;i<n;i++){ var r=Math.hypot(P[i][0]-mx,P[i][1]-my); rs.push(r); mr+=r; } mr/=n;
+    if(mr<1e-6) return 0;
+    var sr2=0; for(i=0;i<n;i++){ sr2+=(rs[i]-mr)*(rs[i]-mr); } var sr=Math.sqrt(sr2/n);
+    var bins=new Array(24).fill(0);
+    for(i=0;i<n;i++){ var ang=Math.atan2(P[i][1]-my,P[i][0]-mx); if(ang<0)ang+=TAU; bins[Math.min(23,Math.floor(ang/TAU*24))]++; }
+    var cover=bins.filter(function(b){return b>0;}).length/24;
+    var seen={}; var uniq=0;
+    for(i=0;i<n;i++){ var key=P[i][0].toFixed(3)+','+P[i][1].toFixed(3); if(!seen[key]){seen[key]=1;uniq++;} }
+    uniq/=n;
+    var radial=Math.min(1, sr/(mr*2.5)+0.12);
+    var s=cover*(1-radial)*Math.min(1,uniq*1.35);
+    return Math.max(0,Math.min(1,s));
+  }
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+  }
+  function fragColor(t){
+    // green -> amber -> red
+    var g=[74,222,128], a=[251,191,36], r=[251,113,133];
+    var c0,c1,f;
+    if(t<0.5){ c0=g; c1=a; f=t/0.5; } else { c0=a; c1=r; f=(t-0.5)/0.5; }
+    var R=Math.round(c0[0]+(c1[0]-c0[0])*f), G=Math.round(c0[1]+(c1[1]-c0[1])*f), B=Math.round(c0[2]+(c1[2]-c0[2])*f);
+    return 'rgb('+R+','+G+','+B+')';
+  }
+
+  function draw(){
+    var f = fit(); if(!f) return;
+    var ctx=f.ctx, w=f.w, h=f.h;
+    var cTxt=cssVar('--txt','#e8edfa');
+    var cTxt2=cssVar('--txt2','#a6b4d6');
+    var cFaint=cssVar('--faint','#7c88ad');
+    var cStroke=cssVar('--stroke','rgba(130,160,255,.16)');
+    var cPanel=cssVar('--panel','rgba(20,26,44,.72)');
+    var cBg=cssVar('--bg','#070a12');
+    var cAccent=cssVar('--accent','#6ee7ff');
+
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=cBg; ctx.fillRect(0,0,w,h);
+
+    var pad=14;
+    var splitX = Math.round(w*0.58);
+    var P = applyLayers(depthN, act);
+    var surv = survival(P);
+
+    // ---- LEFT: data manifold (A) ----
+    ctx.fillStyle=cPanel; roundRect(ctx,pad,pad,splitX-pad,h-pad*1.5,12); ctx.fill();
+    ctx.strokeStyle=cStroke; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle=cTxt; ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('Datenmannigfaltigkeit  —  Paper A', pad+14, pad+26);
+    ctx.fillStyle=cTxt2; ctx.font='11px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('Ein Ring (β₁=1) fließt durch k = '+depthN+' Schichten ('+actName()+')', pad+14, pad+42);
+    var Lcx=pad+(splitX-pad)/2, Lcy=pad+(h-pad*1.5)/2+14;
+    var sL=Math.min(splitX,h)*0.30;
+    ctx.strokeStyle='rgba(130,160,255,.18)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad+10,Lcy); ctx.lineTo(splitX-10,Lcy);
+    ctx.moveTo(Lcx,pad+52); ctx.lineTo(Lcx,h-pad-44); ctx.stroke();
+    for(var i=0;i<P.length;i++){
+      ctx.fillStyle='rgba(110,231,255,'+(0.55+0.4*Math.abs(Math.sin(i*0.6)))+')';
+      ctx.beginPath(); ctx.arc(Lcx+P[i][0]*sL, Lcy-P[i][1]*sL, 2.2, 0, TAU); ctx.fill();
+    }
+    var b1 = surv>0.5?1:0;
+    ctx.fillStyle=cTxt; ctx.font='700 16px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('β₁ = '+b1, pad+14, h-pad-40);
+    ctx.fillStyle=cFaint; ctx.font='11px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('Löcher im Datenraum: '+(b1?'noch da — topologisch verknotet':'zerrissen — zu einem Klumpen'), pad+14, h-pad-24);
+    ctx.fillStyle=cAccent; ctx.font='700 13px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('top. Aktivität (Daten) = '+surv.toFixed(2), pad+14, h-pad-6);
+
+    // ---- RIGHT: scaffold + harmonic mass (B) ----
+    var rx=splitX+pad*0.4, rw=w-rx-pad;
+    ctx.fillStyle=cPanel; roundRect(ctx,rx,pad,rw,h-pad*1.5,12); ctx.fill();
+    ctx.strokeStyle=cStroke; ctx.stroke();
+    ctx.fillStyle=cTxt; ctx.font='600 13px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('Äquivalenz-Zyklus  —  Paper B', rx+14, pad+26);
+    ctx.fillStyle=cTxt2; ctx.font='11px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('harmonische Masse auf fixem b₁-Zyklus', rx+14, pad+42);
+
+    // hexagon cycle
+    var Hcx=rx+rw/2, Hcy=pad+(h-pad*1.5)*0.30;
+    var Rr=Math.min(rw,h)*0.165;
+    var hex=[];
+    for(var j=0;j<6;j++){ var ha=-Math.PI/2+j/6*TAU; hex.push([Hcx+Math.cos(ha)*Rr, Hcy+Math.sin(ha)*Rr]); }
+    // edges; opening (non-commutativity gap) grows with surv
+    var gapFrac = 0.10 + surv*0.5;
+    for(j=0;j<6;j++){
+      var p1=hex[j], p2=hex[(j+1)%6];
+      var isGap = (j===0);
+      ctx.strokeStyle='rgba(130,160,255,.5)'; ctx.lineWidth=2;
+      if(isGap){
+        var t0=gapFrac/2, t1=1-gapFrac/2;
+        ctx.beginPath(); ctx.moveTo(p1[0]+(p2[0]-p1[0])*t0, p1[1]+(p2[1]-p1[1])*t0);
+        ctx.lineTo(p2[0]-(p2[0]-p1[0])*(gapFrac/2), p2[1]-(p2[1]-p1[1])*(gapFrac/2)); ctx.stroke();
+        ctx.setLineDash([3,3]); ctx.strokeStyle=cFaint;
+        ctx.beginPath(); ctx.moveTo(p1[0]+(p2[0]-p1[0])*t0, p1[1]+(p2[1]-p1[1])*t0);
+        ctx.lineTo(p2[0]-(p2[0]-p1[0])*(gapFrac/2), p2[1]-(p2[1]-p1[1])*(gapFrac/2)); ctx.stroke(); ctx.setLineDash([]);
+      } else {
+        ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.stroke();
+      }
+    }
+    for(j=0;j<6;j++){ ctx.fillStyle=(j===0)?cFaint:cAccent; ctx.beginPath(); ctx.arc(hex[j][0],hex[j][1],4,0,TAU); ctx.fill(); }
+    ctx.fillStyle=cFaint; ctx.font='10.5px -apple-system,Segoe UI,Roboto,sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Lücke = Nichtkommutativität ∝ harmonische Masse', Hcx, Hcy+Rr+18);
+    ctx.textAlign='left';
+
+    // bar
+    var barX=rx+18, barW=rw-36, barY=pad+(h-pad*1.5)*0.62, barH=16;
+    ctx.fillStyle=cTxt2; ctx.font='11px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('harmonische Masse', barX, barY-8);
+    // track
+    ctx.fillStyle='rgba(130,160,255,.12)'; roundRect(ctx,barX,barY,barW,barH,6); ctx.fill();
+    // fill
+    var fillW=Math.max(2,barW*surv);
+    ctx.fillStyle=fragColor(surv); roundRect(ctx,barX,barY,fillW,barH,6); ctx.fill();
+    // random reference 0.25
+    var refX=barX+barW*0.25;
+    ctx.strokeStyle='rgba(154,164,196,.7)'; ctx.setLineDash([4,3]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(refX,barY-4); ctx.lineTo(refX,barY+barH+4); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=cFaint; ctx.font='10px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('Zufall b₁/|E|=0.25', refX-30, barY+barH+16);
+    // value
+    ctx.fillStyle=fragColor(surv); ctx.font='700 14px -apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText('hm = '+surv.toFixed(3)+'  ('+(surv<0.25?'robust/„flach wie Zufall"':(surv<0.6?'mittel':'fragil'))+')', barX, barY+barH+34);
+  }
+  function actName(){ return act==='relu'?'ReLU':(act==='lrelu'?'Leaky ReLU':'tanh'); }
+
+  // controls
+  actBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      actBtns.forEach(function(x){x.classList.remove('on');});
+      b.classList.add('on'); act=b.dataset.a; draw();
+    });
+  });
+  if(depth){ depth.addEventListener('input', function(){ depthN=+depth.value; depthVal.textContent=depthN; stopPlay(); draw(); }); }
+  function stopPlay(){ playing=false; if(timer){clearInterval(timer);timer=null;} if(playBtn)playBtn.textContent='▶ Animation'; }
+  function resetDepth(){ depthN=0; if(depth)depth.value=0; if(depthVal)depthVal.textContent='0'; }
+  if(playBtn){ playBtn.addEventListener('click', function(){
+    if(playing){ stopPlay(); return; }
+    if(depthN>=10) resetDepth();
+    playing=true; playBtn.textContent='⏸ Stop';
+    timer=setInterval(function(){
+      depthN++; if(depth)depth.value=depthN; if(depthVal)depthVal.textContent=depthN;
+      draw();
+      if(depthN>=10){ stopPlay(); }
+    },650);
+  }); }
+  if(resetBtn){ resetBtn.addEventListener('click', function(){ stopPlay(); resetDepth(); draw(); }); }
+
+  var rt;
+  window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,160); });
+  window.addEventListener('load', function(){ setTimeout(draw,120); });
+  setTimeout(draw,80);
+  draw();
+})();
+</script>
+</body>
+</html>

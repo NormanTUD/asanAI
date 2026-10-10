@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Transformer als Faserbündel mit intrinsischer Dimension — Fusion 052</title>
+<style>
+:root{
+  --bg:#f5f7fb; --bg2:#eef1f8; --panel:#ffffff; --panel2:#f2f5fb;
+  --txt:#1b2436; --txt-dim:#48536e; --txt-faint:#8a93a8;
+  --acc:#0f9d8f; --acc2:#d63f8f; --acc3:#c9821b; --acc4:#5b4bd6; --acc5:#2f9d55;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+}
+html.dark{
+  --bg:#0a0e18; --bg2:#0d1322; --panel:#121a2c; --panel2:#0e1524;
+  --txt:#e8ecf6; --txt-dim:#9aa6c0; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(820px 480px at 12% 4%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(760px 560px at 88% 16%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%),var(--bg)}
+article{max-width:820px;margin:0 auto;padding:46px 20px 90px}
+header.top{margin-bottom:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:99px;background:color-mix(in srgb,var(--acc) 12%,transparent);border:1px solid color-mix(in srgb,var(--acc) 34%,transparent);font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;color:var(--acc);margin-bottom:18px}
+.pill .d{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2.1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-size:clamp(27px,4.6vw,44px);line-height:1.08;letter-spacing:-.02em;font-weight:760;margin-bottom:14px}
+.sub{font-family:var(--mono);font-size:12.5px;color:var(--txt-dim);margin-bottom:6px;word-break:break-word}
+.sub b{color:var(--acc);font-weight:600}
+p{color:var(--txt-dim);margin-bottom:13px;max-width:74ch}
+p.lead{font-size:16px;color:var(--txt);max-width:72ch}
+strong{color:var(--txt);font-weight:640}
+em{color:var(--acc);font-style:normal;font-weight:560}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 60%,transparent)}
+a:hover{border-bottom-style:solid}
+section{padding:40px 0;scroll-margin-top:20px}
+section+section{border-top:1px solid color-mix(in srgb,var(--txt) 12%,transparent)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h2{font-size:clamp(21px,3vw,31px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin-bottom:14px}
+h3{font-size:16.5px;font-weight:660;margin:22px 0 8px}
+.card{background:var(--panel);border:1px solid color-mix(in srgb,var(--txt) 12%,transparent);border-radius:var(--r);padding:16px 18px;margin:12px 0}
+.card h3{margin-top:0}
+.chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.05em;padding:2px 9px;border-radius:99px;margin-right:6px;font-weight:600;vertical-align:middle}
+.chip.a{background:color-mix(in srgb,var(--acc4) 16%,transparent);color:var(--acc4);border:1px solid color-mix(in srgb,var(--acc4) 40%,transparent)}
+.chip.b{background:color-mix(in srgb,var(--acc2) 16%,transparent);color:var(--acc2);border:1px solid color-mix(in srgb,var(--acc2) 40%,transparent)}
+.chip.f{background:color-mix(in srgb,var(--acc) 16%,transparent);color:var(--acc);border:1px solid color-mix(in srgb,var(--acc) 40%,transparent)}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:14px 0;font-size:13.5px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note.e{border-color:var(--acc5);background:color-mix(in srgb,var(--acc5) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--acc);margin-bottom:5px;display:block}
+.note.w .h{color:var(--acc3)} .note.t .h{color:var(--acc4)} .note.e .h{color:var(--acc5)}
+.math{font-family:var(--mono);font-size:14px;color:var(--txt);background:var(--panel2);border:1px solid color-mix(in srgb,var(--txt) 12%,transparent);border-radius:10px;padding:13px 15px;margin:12px 0;overflow-x:auto;line-height:1.9}
+.math b{color:var(--acc3)}
+ul{color:var(--txt-dim);margin:0 0 14px 20px}
+li{margin-bottom:7px;max-width:74ch}
+code{font-family:var(--mono);font-size:.88em;background:color-mix(in srgb,var(--txt) 10%,transparent);padding:2px 6px;border-radius:5px;color:var(--acc)}
+.vz-controls{display:flex;gap:8px 14px;flex-wrap:wrap;align-items:center;margin:16px 0 10px}
+.vz-controls label{font-size:12.5px;color:var(--txt-dim);display:flex;align-items:center;gap:8px}
+.vz-controls b{font-family:var(--mono);color:var(--acc);font-weight:600}
+button{font-family:var(--sans);font-size:12px;font-weight:580;cursor:pointer;padding:7px 13px;border-radius:9px;border:1px solid color-mix(in srgb,var(--txt) 22%,transparent);background:color-mix(in srgb,var(--txt) 5%,transparent);color:var(--txt);transition:.15s}
+button:hover{background:color-mix(in srgb,var(--txt) 12%,transparent);transform:translateY(-1px)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+input[type=range]{-webkit-appearance:none;appearance:none;width:130px;height:5px;border-radius:99px;background:color-mix(in srgb,var(--txt) 16%,transparent);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg)}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg)}
+.cwrap{background:var(--panel2);border:1px solid color-mix(in srgb,var(--txt) 14%,transparent);border-radius:12px;padding:8px;overflow:hidden;margin:8px 0}
+canvas{display:block;width:100%;height:440px}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-top:12px}
+.ro .box{background:var(--panel);border:1px solid color-mix(in srgb,var(--txt) 12%,transparent);border-radius:11px;padding:10px 12px;text-align:center}
+.ro .box .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .box .v{font-family:var(--mono);font-size:17px;font-weight:660;color:var(--acc)}
+.ro .box .v.m{color:var(--acc2)} .ro .box .v.g{color:var(--acc3)} .ro .box .v.v{color:var(--acc4)}
+.hint{font-size:12px;color:var(--txt-faint);margin-top:8px;max-width:74ch}
+footer{border-top:1px solid color-mix(in srgb,var(--txt) 12%,transparent);margin-top:40px;padding-top:22px;color:var(--txt-faint);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<article>
+<header class="top">
+  <div class="pill"><span class="d"></span>KNOCKOUT-FUSION · RUNDE 1 · PAAR 052</div>
+  <h1>Der Transformer als Faserbündel mit intrinsischer Dimension</h1>
+  <p class="sub">Fusion aus: <b>fibrebundle3.html</b> ✕ <b>intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html</b></p>
+</header>
+
+<section id="these">
+  <div class="eyebrow">Sektion 1</div>
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Arbeiten untersuchen dasselbe Objekt — die Repräsentation, die ein tiefes Netz in seinen Schichten über seinen Daten anlegt — aber von entgegengesetzten Seiten. <strong>A</strong> (der „Kelp-Wald") liefert die <em>Geometrie</em>: Ein Transformer ist ein <strong>Faserbündel</strong>. Die Token-Sequenz ist der Basisraum, an jeder Position hängt eine Faser (der <code>d_model</code>-dimensionale Hidden-Vektor), alle (Position, Schicht)-Zustände bilden den Totalraum; der Residual Stream ist der durchgehende „Stängel", <em>Attention</em> mischt Fasern, <em>FFN</em> transformiert lokal, <em>LayerNorm</em> hält beschränkt.</p>
+  <p><strong>B</strong> (intrinsische Dimension) liefert das <em>Maß</em>: In genau dieser Geometrie lebt die reale Datenmenge nicht im vollen Raum, sondern auf einer <strong>dünnen, gekrümmten Mannigfaltigkeit</strong>. Ihre <em>intrinsische</em> Dimension (ID) — im Gegensatz zur gespeicherten (ED) — ist winzig (in pool4 von VGG-16: ≈19 bei 100 352 Zahlen), bildet über die Schichten einen <strong>Buckel</strong> (steigt, erreicht ein Maximum, fällt auf ≈10) und <strong>vorhersagt die Generalisierung</strong> (Korrelation r = 0,94 mit dem Testfehler).</p>
+  <p>Die Fusion zu einer einzigen Position: <strong>Der Faserbündel-Raum (A) ist der Behälter, die intrinsische Dimension (B) ist der Inhalt.</strong> Ein Transformer ist ein Bündel fester, hoher Fasern (ED), in denen die Daten eine dünne, gekrümmte, <em>nicht-flache</em> Mannigfaltigkeit ausbreiten (ID). Training <em>verdreht</em> das Bündel (Krümmung — die A nur als Möbius-Option andeutet, ist B zentraler Befund), <em>weitet</em> die besetzte Mannigfaltigkeit in frühen Schichten (ID steigt, weil irrelevante gemeinsame Eingangsmerkmale wegge-whitet werden) und <em>komprimiert</em> sie in späten Schichten auf ≈ <code>log₂(#Klassen)</code> (ID fällt). Und <em>Polysemantik</em> (A) erklärt, <em>wie</em> viele Konzepte in eine feste Faser passen (Superposition) — das verträgt sich mit niedriger ID (B), weil ID die <em>Datenmannigfaltigkeit</em> misst, nicht die <em>Kodierungskapazität</em> der Faser.</p>
+</section>
+
+<section id="widersprueche">
+  <div class="eyebrow">Sektion 2</div>
+  <h2>Widersprüche zwischen A und B</h2>
+  <p>Wichtig vorab: A ist eine <em>Interpretations-/Visualisierungsmetapher</em> für einen einzelnen Transformer, B eine <em>empirische Geometriemessung</em> über CNN-Schichten. Sie machen keine direkt konkurrierenden Messwerte. Aber sie nehmen zu <em>Form der Repräsentation</em> und zu <em>Ontologie des Fehlers</em> unvereinbare Standpunkte ein:</p>
+
+  <div class="card">
+    <h3><span class="chip a">A</span>Gerader, lokaler Stängel vs. <span class="chip b">B</span>gekrümmte, globale Mannigfaltigkeit</h3>
+    <p><strong>A</strong> modelliert die Information jedes Tokens als <em>Faser an einem stabilen, geraden Residual-Stream-„Stängel"</em>: lokal ein Produkt (Basis × Faser), mit <em>fester</em> Faserdimension <code>d_model</code> und glattem semantischem Drift (Hue-Shift) nach oben; der Standard-Basisraum ist gerade (<strong>ℝ¹</strong>). Das ist ein <em>lokal trivialisiertes, lokal flaches</em> Bild.</p>
+    <p><strong>B</strong> stellt genau das Gegenteil als Hauptbefund auf: die Repräsentation ist <em>gekrümmt, nicht flach</em> — tiefe Netze „entflechten"/abflachen <em>nicht</em>; „Flachheit" ist ein Mythos, und die Krümmung ist ein <em>Lern-Effekt</em>. Lineare Methoden (PCA) scheitern daran um ein bis zwei Größenordnungen (PC-ID ≈ 200 vs. TwoNN-ID ≈ 18).</p>
+    <p class="hint">Unvereinbarkeit: A's Stängel-/Gerade-Faser-Bild suggeriert eine lokal flache, stabile Produktstruktur; B sagt, dass Flächigkeit genau das ist, was <em>nicht</em> passiert, und dass die Geometrie intrinsisch gekrümmt ist.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip a">A</span>Feste Faserdimension + Akkumulation vs. <span class="chip b">B</span>dynamische, nicht-monotone ID</h3>
+    <p><strong>A</strong> hält die Faserdimension über alle Schichten <em>konstant</em> (<code>d_model</code>) und betont die <em>additive Akkumulation</em>: <code>Attention ⊕ FFN</code> wird zurück in den Residual Stream geschrieben, Semantik wird nach oben <em>verfeinert</em>; der Stängel wird dicker (Embedding-Norm), aber die <em>Dimensionsstruktur bleibt gleich</em>.</p>
+    <p><strong>B</strong> misst eine <em>dynamische, nicht-monotone</em> intrinsische Dimension: <em>Anstieg</em> in frühen Schichten, Gipfel bei 20–40 % der Tiefe (Werte 100–120), dann <em>monotone Abfall</em> auf ≈ 10 am Ausgang (≈ <code>log₂(1000)</code>). Die letzten Schichten <em>komprimieren</em> aggressiv.</p>
+    <p class="hint">Unvereinbarkeit: A hält die Repräsentationsdimension fest und betont Zuwachs; B zeigt, dass die <em>effektive</em> Dimensionalität zuerst <em>aufweitet</em> und dann auf ~10 <em>zusammenbricht</em> — eine Form, für die A's stabiler Stängel keinen Platz hat.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip a">A</span>Fehler = lokale topologische Defekte vs. <span class="chip b">B</span>Fehler = globale Dimensionsänderung</h3>
+    <p><strong>A</strong> erklärt Fehlleistung als <em>lokalisierte topologische Defekte</em> in einem ansonsten intakten Bündel: ein <em>Riss</em> (Halluzination — der Schnitt springt in eine falsche Bedeutungsregion), eine <em>Schleife</em> (Kreisschluss), eine <em>Auffächerung</em> (Unsicherheit). Die Struktur ist fundamental gesund; Pathologien sind lokale Singularitäten.</p>
+    <p><strong>B</strong> erklärt fehlende Generalisierung (Zufalls-Labels) als <em>globale</em> Geometrieänderung: Der Buckel <em>verschwindet</em>, und die ID <em>steigt</em> in der zweiten Netz-Hälfte Richtung der ED — es ist eine dimensionsmäßige Signatur der <em>ganzen</em> Schicht, kein lokaler Riss.</p>
+    <p class="hint">Unvereinbarkeit: lokale-Defekt-ontologie (A) vs. globale-Dimensionalsignatur (B) als Erklärung dafür, warum Netze danebengreifen.</p>
+  </div>
+</section>
+
+<section id="aufloesung">
+  <div class="eyebrow">Sektion 3</div>
+  <h2>Auflösung</h2>
+
+  <div class="card">
+    <h3><span class="chip f">→</span>Nicht-triviales Bündel: der Stängel ist nur eine lokale Trivialisierung</h3>
+    <p>Ein Faserbündel ist <em>lokal</em> ein Produkt, aber <em>global</em> darf es verdrillt/nicht-trivial sein — A bietet die Möbius-Topologie ja bereits als Option an. Der Satz „gekrümmte, nicht-flache Mannigfaltigkeit" von B ist exakt die Aussage, dass das Bündel <em>global nicht-trivial</em> ist: Der Residual Stream ist nicht eine einzige gerade Linie, sondern der <em>Totalraum eines möglicherweise verdrillten Bündels</em>; der „Stängel" in A ist nur eine <em>lokale Trivialisierung</em>. Krümmung (B) = globale Verdrillung/Holonomie (A). <strong>Fusion:</strong> Der Residual Stream ist ein (generell nicht-triviales) Faserbündel über dem Token-/Basisraum, und das Training erzeugt die globale Krümmung/Verdrillung, die PCA übersieht.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip f">→</span>Faserdimension (ED) und intrinsische Dimension (ID) sind verschiedene Dinge</h3>
+    <p>Man trennt die <em>Umgebungs-/Faserdimension</em> (<code>d_model</code> = ED, der <em>Behälter</em>, in A pro Schicht fest) von der <em>intrinsischen Dimension</em> (ID, die Dimension der <em>besetzten Daten</em> in dieser Faser — B's Maß). Dann gibt es keinen Widerspruch: Die Faser bleibt breit (ED), während die Daten, die sie belegen, eine dünne, gekrümmte Mannigfaltigkeit mit Buckel-geformter ID sind (aufweiten früh, komprimieren spät auf ~10). A's „Dickwerden"/Embedding-Norm-Animation ist ein grober Proxy dafür, <em>wie viel</em> der Faser belegt ist; die ID ist das präzise Maß. <strong>Fusion:</strong> feste, hochkapazitive Fasern + eine dünne, buckelgeformte, gekrümmte Inhaltsmannigfaltigkeit darin.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="chip f">→</span>Mikro und Makro desselben Phänomens</h3>
+    <p>Lokale Defekte (A) sind der <em>Mikro-Mechanismus</em>, die globale ID-Kurve (B) das <em>Makro-Maß</em>. Akkumulierende Risse/Defekte zeigen sich <em>global</em> als Dimensions-/Geometrieänderung. Ein generalisierendes Netz = intaktes Bündel <em>und</em> fallende ID (Buckel); ein memorisierendes Netz = akkumulierende Defekte <em>und</em> steigende ID (Buckel verschwindet). <strong>Fusion:</strong> ein topologisches (lokal, A) + ein dimensionales (global, B) Diagnosepaar — beide zusammen ergeben das vollständige Bild davon, warum und wie ein Netz danebengreift.</p>
+  </div>
+</section>
+
+<section id="inhalt">
+  <div class="eyebrow">Sektion 4</div>
+  <h2>Fusionierter Inhalt</h2>
+  <p class="lead">Die zwei Quellen verschmelzen zu einem einzigen, durchgängigen Bild: <em>ein Transformer als Faserbündel, in dessen festen Fasern eine dünne, gekrümmte Datenmannigfaltigkeit lebt, deren intrinsische Dimension einen Buckel bildet und die Generalisierung vorhersagt.</em></p>
+
+  <h3>1 · Die Faserbündel-Geometrie des Transformers <span class="chip a">A</span></h3>
+  <ul>
+    <li><strong>Basisraum B</strong> = die Token-Sequenz; Topologie wählbar als Linie <strong>ℝ¹</strong>, Ring <strong>S¹</strong> oder <strong>Möbius-Band</strong> (die nicht-triviale Verdrillung).</li>
+    <li><strong>Faser</strong> = der <code>d_model</code>-dimensionale Hidden-Vektor an einer Token-Position; <strong>Totalraum</strong> = alle (Position, Schicht)-Zustände.</li>
+    <li><strong>Residual Stream</strong> = der vertikale Stängel, der alle Schichten an einer Position verbindet; <code>x ← x + Attn(x) + FFN(x)</code>.</li>
+    <li><strong>Attention</strong> = horizontale Faser-Abbildung: liest an anderen Basispunkten, schreibt Kontext zurück (mische Fasern); <code>softmax(QKᵀ/√d_k)</code>.</li>
+    <li><strong>FFN</strong> = lokale nichtlineare Faser-Transformation, die „Wissen" in den Stream schreibt: <code>ReLU(W₁x+b₁)W₂+b₂</code>.</li>
+    <li><strong>LayerNorm</strong> = Faser-Renormierung (hält den Schnitt beschränkt); <strong>Position-Encoding</strong> = sinusoidale „Wurzeln", die jede Faser in ihre Basis-Koordinate verankern.</li>
+    <li><strong>Semantik</strong> = eine <em>Sektion</em> (Punkt-Auswahl in jeder Faser), die Schicht für Schicht driftet; <strong>Polysemantik</strong> = Superposition mehrerer Sektionen in einer Faser; <strong>Attention-Sinks</strong> = Basispunkte, die überproportional viel horizontalen Fluss absorbieren.</li>
+    <li><strong>Defekte</strong> = Riss (Halluzination: Schnitt springt in falsche Bedeutungsregion), Schleife (Kreisschluss), Auffächerung (Unsicherheit).</li>
+  </ul>
+
+  <h3>2 · Die intrinsische Dimension als Maß für den Inhalt <span class="chip b">B</span></h3>
+  <ul>
+    <li><strong>ED</strong> (Einbettungsdimension) = gespeicherte Zahlen pro Schicht (pool4: 100 352). <strong>ID</strong> (intrinsische Dimension) = minimale Parameter, die die Daten ohne wesentlichen Verlust beschreiben (pool4: ≈ 19). Verhältnis ≈ 2·10⁻⁴. Daten liegen auf einer dünnen, global gekrümmten <em>Mannigfaltigkeit</em>.</li>
+    <li><strong>PCA-Falle</strong>: lineare Methode, findet nur flache Approximation → überschätzt an gekrümmten Daten um Größenordnungen (PC-ID ≈ 200 vs. ID ≈ 18).</li>
+    <li><strong>TwoNN-Schätzer</strong> (Facco et al. 2017): braucht pro Punkt nur die Abstände r₁ (1. Nachbar) und r₂ (2. Nachbar).
+      <div class="math">
+        <b>Verhältnis:</b>&nbsp; μ = r₂ / r₁ &nbsp;(≥ 1)<br>
+        <b>Verteilung:</b>&nbsp; auf einer k-dimensionalen Fläche ist μ Pareto: f(μ) ∝ μ<sup>−(k+1)</sup><br>
+        <b>Ablesen:</b>&nbsp; trägt man <code>ln μ</code> gegen <code>−ln(1 − F(μ))</code> auf, so ist die <b>Steigung = k</b>.<br>
+        <span style="color:var(--txt-faint)">r₁ kürzt sich heraus → dichte/dünne Regionen der Fläche stören die Messung nicht.</span>
+      </div>
+    </li>
+  </ul>
+
+  <h3>3 · Der Buckel — und warum er in die Faser passt <span class="chip f">Fusion</span></h3>
+  <p>Die ID steigt in frühen Schichten, erreicht ein Maximum (Gipfel bei 20–40 % Tiefe, Werte 100–120) und fällt dann monoton auf ≈ 10 am Ausgang — in <em>allen</em> 14 getesteten Netzen. In der Faserbündel-Sprache: <strong>frühe Schichten weiten die besetzte Mannigfaltigkeit aus</strong> (ID↑), weil irrelevante, stark korrelierte Eingangsmerkmale (z. B. eine für alle Pixel gleiche Helligkeit, „MNIST⋆") die Eingangs-ID künstlich <em>drücken</em> und die ersten Schichten sie wegwhiten (Eingangs-ID ≈ 13 → ≈ 3, Testgenauigkeit trotzdem ≈ 98 %). <strong>Späte Schichten komprimieren</strong> auf die task-relevante Struktur: Für ~1000 Klassen genügen <code>log₂(1000) ≈ 10</code> Dimensionen — exakt die Größe, die in den Ausgabeschichten gemessen wird. Der Buckel passiert also <em>in der festen Faser</em>: die Faser bleibt <code>d_model</code>-breit, die darin belegte Mannigfaltigkeit formt sich zum Buckel.</p>
+
+  <h3>4 · Gekrümmt, nicht flach — und das ist ein Lern-Effekt <span class="chip b">B</span></h3>
+  <p>Tiefe Netze machen Datenflächen <em>nicht flach</em>, sie machen sie nur <em>dünn</em>. Der elegante Kontrolltest: Erzeugt man eine <strong>Gauß-Wolke mit exakt derselben Kovarianzmatrix</strong> wie die echte Schicht („Gauß-Zwilling"), so bleibt die <em>PCA</em>-Entscheidung (Streu-Ellipse) praktisch unverändert, während die <em>TwoNN-ID</em> der echten, gekrümmten Darstellung niedrig und <em>stabil</em> bleibt, die des Zwillings aber hoch und mit wachsender Stichprobe <em>wachsend</em> ist. Also: die niedrige ID ist kein Artefakt — die Daten tragen starke nichtlineare Struktur. Und: Bei <em>zufälligen</em> Gewichten ist jede Schicht näherungsweise eine <em>Drehung</em> — die ID bleibt flach, der Buckel existiert nicht. <strong>Der Buckel ist ein echtes Trainings-Ergebnis, keine Architektureigenschaft.</strong> (In der Faser-Sprache: Training erzeugt die globale Verdrillung des Bündels.)</p>
+
+  <h3>5 · Die ID sagt die Leistung voraus — und wie man Memorisierung ohne Testset sieht <span class="chip b">B</span></h3>
+  <p>Misst man die ID der <em>Trainingsdaten</em> in der letzten versteckten Schicht, so korreliert diese <em>eine Zahl</em> mit <strong>r = 0,94</strong> mit dem Top-5-Testfehler (innerhalb der ResNets sogar r = 0,99): je kleiner die ID, desto besser die Generalisierung — abschätzbar <em>ohne ein Testset anzufassen</em>. Die Gegenprobe: Bei <strong>Zufalls-Labels</strong> lernt ein tiefes Netz perfekt auswendig (Trainingsfehler 0), der Test bleibt Zufall — und die Geometrie ändert sich global: <strong>Der Buckel verschwindet, die ID steigt in der zweiten Hälfte stark an</strong> und sättigt nahe der ED der Ausgabeschicht. Eine <em>Regel</em> zu lernen genügt eine dünne Fläche; <em>Einzelfälle</em> zu adressieren verlangen Platz, also Dimensionen. <strong>Fusion:</strong> In A's Sprache: ein generalisierendes Netz = intaktes Bündel + fallende ID; ein memorisierendes Netz = akkumulierende Defekte + steigende ID.</p>
+
+  <div class="note t"><span class="h">Ehrlichkeit (von B selbst)</span>
+  Werte über ~20 sind <em>untere Schranken</em> (endliche Stichproben); die ID ist <em>global</em> (lokale Variation bleibt verborgen); Skalenstabilität muss per Dezimierungstest geprüft werden; die ID↔Leistung-Korrelation gilt <em>zwischen Architekturen</em>, nicht zwischen Zufallsinitialisierungen; Korrelation ist keine Kausalität; getestet wurde nur <em>Bildklassifikation</em> — Sprache/LLMs sind offen. A's Faserbündel-Formalisierung ist ebenfalls <em>illustrativ</em> (keine rigorose Strukturgruppe/Monodromie), der „Stängel" eine 2,5D-Heuristik für einen eigentlich hochdimensionalen, diskreten Verlauf.</div>
+
+  <h3>6 · Die Verbindung — eine Sektion, ein Maß, ein Defekt-Spektrum <span class="chip f">Fusion</span></h3>
+  <ul>
+    <li><strong>Faser = ED (Behälter), ID = Inhalt.</strong> Die feste <code>d_model</code>-Faser (A) ist der Raum, in dem die Daten eine dünne Mannigfaltigkeit spannen, deren ID (B) der Buckel trägt.</li>
+    <li><strong>Polysemantik (A) × niedrige ID (B) ist kompatibel:</strong> Superposition packt viele Konzepte in eine feste Faser, ohne die <em>Daten</em>-Mannigfaltigkeit zu verbreitern — ID misst die Daten, nicht den Codebook-Wortschatz der Faser.</li>
+    <li><strong>Defekte (A, lokal) × ID-Kurve (B, global):</strong> Riss/Schleife/Auffächerung sind der Mikro-Mechanismus; die globale ID (Buckel an/ab) deren Makro-Lesung. Ein topologisches + ein dimensionales Diagnosepaar.</li>
+    <li><strong>Gekrümmt-nicht-flach (B) = nicht-triviales Bündel (A):</strong> die Krümmung, die lineare Tools (PCA) verpassen, ist die globale Verdrillung, die ein Faserbündel global (aber lokal trivial) tragen darf.</li>
+  </ul>
+</section>
+
+<section id="visualisierung">
+  <div class="eyebrow">Sektion 5</div>
+  <h2>Interaktive Visualisierung: Das Faserbündel-Diagramm</h2>
+  <p>Achte Schichten als <strong>Fasern</strong> (Breite ∝ <code>log₁₀(ED)</code> = Behälter), die <strong>ID-Buckel-Kurve</strong> (28→52→61→19→13→12→11→10, Form nach Fig. 2A von Ansuini et al.) als strahlende Sektion durch die Fasern (Höhe ∝ ID = Inhalt). Unten: ein <strong>2D-Schnitt</strong> der gewählten Schicht — als <em>gekrümmte Spirale</em> (TwoNN niedrig &amp; stabil) oder als <em>flacher Gauß-Zwilling</em> (TwoNN steigt, PCA bleibt) bei <em>identischer Kovarianz</em> — der direkte Nachweis für „gekrümmt, nicht flach".</p>
+
+  <div class="vz-controls">
+    <button id="vzTheme">☀️ Hell</button>
+    <button id="vzCurve" class="on">Gekrümmt</button>
+    <label>Schicht <b id="vzLayerV">pool3</b>
+      <input type="range" id="vzLayer" min="0" max="7" value="2">
+    </label>
+    <label>Punkte <b id="vzNV">320</b>
+      <input type="range" id="vzN" min="140" max="600" step="20" value="320">
+    </label>
+  </div>
+
+  <div class="cwrap"><canvas id="vz"></canvas></div>
+
+  <div class="ro">
+    <div class="box"><div class="k">ED · Faser / Behälter</div><div class="v m" id="vzED">—</div></div>
+    <div class="box"><div class="k">ID · Inhalt (gemessen)</div><div class="v" id="vzID">—</div></div>
+    <div class="box"><div class="k">Verhältnis ID/ED</div><div class="v g" id="vzRatio">—</div></div>
+    <div class="box"><div class="k">TwoNN · 2D-Schnitt</div><div class="v v" id="vzTwo">—</div></div>
+    <div class="box"><div class="k">PCA · 2D (90 %)</div><div class="v" id="vzPc">—</div></div>
+  </div>
+  <p class="hint">Der 2D-Schnitt ist eine <em>Illustration</em> des Krümmungskontrasts (Spirale ≈ 1D-Ribbon, Gauß-Zwilling ≈ 2D-Blob) — der echte ID-Wert (≈ 61 etc.) lebt im hohen Raum der Schicht und wird oben als Buckel-Kurve gezeigt. Alles läuft lokal, keine Netzwerkdaten.</p>
+</section>
+
+<section id="provenienz">
+  <div class="eyebrow">Sektion 6</div>
+  <h2>Provenienz</h2>
+  <div class="card">
+    <p style="margin-bottom:6px"><span class="chip a">A</span><a href="../fibrebundle3.html">fibrebundle3.html</a></p>
+    <p style="margin:0">„LLM Kelp-Wald v4 — Vollständige Faserbündel-Visualisierung": ein Transformer als Faserbündel (Basis = Token-Sequenz, Faser = Hidden-Vektor, Totalraum = alle Schicht-Zustände), mit Residual Stream als Stängel, Attention/FFN als Ästen, Polysemantik, Attention-Sinks und topologischen Defekten (Riss/Schleife/Auffächerung).</p>
+  </div>
+  <div class="card">
+    <p style="margin-bottom:6px"><span class="chip b">B</span><a href="../intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html">intrinsische_dimensionen_tiefer_neuronaler_netze_simple.html</a></p>
+    <p style="margin:0">„Intrinsische Dimension tiefer Netze — Einfach erklärt" zu Ansuini, Laio, Macke &amp; Zoccolan (NeurIPS 2019, arXiv:1905.12784) und TwoNN (Facco et al. 2017): ED vs. ID, die PCA-Falle, der Buckel, „gekrümmt, nicht flach" als Lern-Effekt, ID→Leistung (r = 0,94), Zufalls-Labels und Grenzen.</p>
+  </div>
+</section>
+
+<footer>Knockout-Synthese · Runde 1 · Paar 052 · Faserbündel-Geometrie (A) ∩ intrinsische Dimension (B) — ein selbständiges, themenreaktives HTML-Dokument. Keine externen Daten, nur inline.</footer>
+</article>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function gauss(rng){let u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+
+const LAYERS=['pool1','pool2','pool3','pool4','pool5','fc1','fc2','fc3'];
+const ED=[802816,401408,200704,100352,25088,4096,4096,4096];
+const ID=[28,52,61,19,13,12,11,10];
+
+const S={sel:2,curved:true,N:320,cache:null};
+
+const vz=$('#vz');
+const vzED=$('#vzED'),vzID=$('#vzID'),vzRatio=$('#vzRatio'),vzTwo=$('#vzTwo'),vzPc=$('#vzPc'),vzLayerV=$('#vzLayerV'),vzNV=$('#vzNV');
+
+function cssVar(n){const v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||'#888888';}
+function hexA(hex,a){
+  hex=String(hex).replace('#','');
+  if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+  if(hex.length<6)hex=(hex+'000000').slice(0,6);
+  const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  return 'rgba('+r+','+g+','+b+','+a+')';
+}
+function palette(){
+  const dark=document.documentElement.classList.contains('dark');
+  return {
+    txt:cssVar('--txt'),dim:cssVar('--txt-dim'),faint:cssVar('--txt-faint'),
+    acc:cssVar('--acc'),acc2:cssVar('--acc2'),acc3:cssVar('--acc3'),acc4:cssVar('--acc4'),acc5:cssVar('--acc5'),
+    grid:dark?'rgba(255,255,255,.06)':'rgba(20,30,60,.07)',
+    stroke:dark?'rgba(255,255,255,.14)':'rgba(20,30,60,.22)',
+    dark:dark
+  };
+}
+
+function dist(a,b){let s=0;for(let k=0;k<a.length;k++){const d=a[k]-b[k];s+=d*d;}return Math.sqrt(s);}
+function neighbors(pts){
+  const N=pts.length,out=new Array(N);
+  for(let i=0;i<N;i++){
+    let r1=Infinity,r2=Infinity;
+    for(let j=0;j<N;j++){
+      if(i===j)continue;
+      const d=dist(pts[i],pts[j]);
+      if(d<r1){r2=r1;r1=d;}else if(d<r2){r2=d;}
+    }
+    out[i]={mu:(r1>1e-9)?r2/r1:1};
+  }
+  return out;
+}
+function twoNN(pts,discard){
+  discard=(discard==null)?0.1:discard;
+  if(pts.length<8)return {id:NaN};
+  const nb=neighbors(pts);
+  const mus=nb.map(o=>o.mu).filter(m=>isFinite(m)&&m>1+1e-9).sort((a,b)=>a-b);
+  const Nn=mus.length;
+  if(Nn<6)return {id:NaN};
+  const keep=Math.max(4,Math.floor(Nn*(1-discard)));
+  let sxy=0,sxx=0;
+  for(let i=0;i<keep;i++){
+    const F=(i+1)/(Nn+1);
+    const x=Math.log(mus[i]),y=-Math.log(1-F);
+    sxy+=x*y;sxx+=x*x;
+  }
+  return {id:(sxx>0)?sxy/sxx:NaN};
+}
+function pca2(pts){
+  const N=pts.length;let mx=0,my=0;
+  for(const p of pts){mx+=p[0];my+=p[1];}mx/=N;my/=N;
+  let cxx=0,cyy=0,cxy=0;
+  for(const p of pts){const a=p[0]-mx,b=p[1]-my;cxx+=a*a;cyy+=b*b;cxy+=a*b;}
+  cxx/=(N-1);cyy/=(N-1);cxy/=(N-1);
+  const tr=cxx+cyy,det=cxx*cyy-cxy*cxy;
+  const disc=Math.sqrt(Math.max(tr*tr/4-det,0));
+  const l1=(tr+2*disc)/2,l2=(tr-2*disc)/2;
+  const ang=Math.atan2(l1-cxx,2*cxy)/2;
+  return {mx:mx,my:my,l1:l1,l2:l2,ang:ang};
+}
+function pcID90(pts){
+  const st=pca2(pts);const tot=st.l1+st.l2;
+  if(tot<=0)return 1;
+  return (st.l1/tot>=0.9)?1:2;
+}
+
+function genSpiral(N,seed,spread){
+  const rng=mulberry32(seed);const pts=[];
+  for(let i=0;i<N;i++){
+    const t=lerp(0.15,2.9,rng());
+    const a=t*4.2,r=(0.5+t*0.55)*spread;
+    pts.push([Math.cos(a)*r+gauss(rng)*0.02*spread,Math.sin(a)*r*0.85+gauss(rng)*0.02*spread]);
+  }
+  return pts;
+}
+function genTwin(st,N,seed){
+  const rng=mulberry32(seed);const pts=[];
+  const e1=[Math.cos(st.ang),Math.sin(st.ang)],e2=[-Math.sin(st.ang),Math.cos(st.ang)];
+  const s1=Math.sqrt(Math.max(st.l1,1e-9)),s2=Math.sqrt(Math.max(st.l2,1e-9));
+  for(let i=0;i<N;i++){
+    const u=gauss(rng)*s1,v=gauss(rng)*s2;
+    pts.push([st.mx+e1[0]*u+e2[0]*v,st.my+e1[1]*u+e2[1]*v]);
+  }
+  return pts;
+}
+
+function rebuild(){
+  const li=clamp(S.sel,0,LAYERS.length-1);
+  const spread=0.8+0.5*((ID[li]-10)/51);
+  const spiral=genSpiral(S.N,1000+li,spread);
+  const st=pca2(spiral);
+  const twin=genTwin(st,S.N,2000+li);
+  const twoC=twoNN(spiral),twoF=twoNN(twin);
+  const shown=S.curved?spiral:twin;
+  S.cache={spiral:spiral,twin:twin,st:st,shown:shown,
+    twoID:(S.curved?twoC:twoF).id,
+    pcID:pcID90(shown)};
+  updateReadouts();
+}
+function updateReadouts(){
+  const li=clamp(S.sel,0,LAYERS.length-1),c=S.cache;
+  if(!c)return;
+  vzED.textContent=ED[li].toLocaleString('de-DE');
+  vzID.textContent='≈ '+ID[li];
+  const r=ID[li]/ED[li];
+  vzRatio.textContent=(r<0.001)?r.toExponential(1):r.toFixed(4);
+  vzTwo.textContent=isFinite(c.twoID)?c.twoID.toFixed(2):'—';
+  vzPc.textContent=isFinite(c.pcID)?c.pcID.toFixed(0):'—';
+  vzLayerV.textContent=LAYERS[li];
+}
+
+function roundRect(c,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  c.beginPath();
+  c.moveTo(x+r,y);
+  c.arcTo(x+w,y,x+w,y+h,r);
+  c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r);
+  c.arcTo(x,y,x+w,y,r);
+  c.closePath();
+}
+function smooth(c,pts){
+  c.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length-1;i++){
+    const xc=(pts[i].x+pts[i+1].x)/2,yc=(pts[i].y+pts[i+1].y)/2;
+    c.quadraticCurveTo(pts[i].x,pts[i].y,xc,yc);
+  }
+  c.lineTo(pts[pts.length-1].x,pts[pts.length-1].y);
+}
+function hidpi(cv){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  const w=cv.clientWidth||800;
+  const h=cv.clientHeight||440;
+  const W=Math.round(w*dpr),H=Math.round(h*dpr);
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
+  const c=cv.getContext('2d');
+  c.setTransform(dpr,0,0,dpr,0,0);
+  return {c:c,w:w,h:h};
+}
+
+function drawFibers(c,w,H,P,t){
+  const padL=46,padR=18,padT=26,padB=30;
+  const pw=w-padL-padR,ph=H-padT-padB;
+  const n=LAYERS.length,slot=pw/n;
+  const maxED=Math.log10(ED[0]);
+  const yFor=v=>padT+ph*(1-v/70);
+  c.strokeStyle=P.grid;c.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=padT+ph*i/4;
+    c.beginPath();c.moveTo(padL,y);c.lineTo(w-padR,y);c.stroke();
+    c.fillStyle=P.faint;c.font='10px ui-monospace,monospace';c.textAlign='right';
+    c.fillText(String(70-i*17.5),padL-6,y+3);
+  }
+  c.textAlign='left';
+  const nodes=[];
+  for(let i=0;i<n;i++){
+    const cx=padL+(i+0.5)*slot;
+    const fww=Math.max(10,slot*0.52*(Math.log10(ED[i])/maxED));
+    const isSel=(i===S.sel);
+    const fy=padT+6,fh=ph-6;
+    c.fillStyle=hexA(P.acc,isSel?0.15:0.06);
+    roundRect(c,cx-fww/2,fy,fww,fh,6);c.fill();
+    c.strokeStyle=hexA(P.acc,isSel?0.9:0.28);c.lineWidth=isSel?1.6:1;
+    roundRect(c,cx-fww/2,fy,fww,fh,6);c.stroke();
+    c.strokeStyle=hexA(P.acc,isSel?0.5:0.16);c.lineWidth=1;c.setLineDash([3,4]);
+    c.beginPath();c.moveTo(cx,fy);c.lineTo(cx,fy+fh);c.stroke();c.setLineDash([]);
+    c.fillStyle=isSel?P.txt:P.faint;c.font=(isSel?'600 ':'')+'10.5px system-ui';c.textAlign='center';
+    c.fillText(LAYERS[i],cx,H-18);
+    c.fillStyle=P.faint;c.font='9px ui-monospace,monospace';
+    c.fillText(ED[i].toLocaleString('de-DE'),cx,H-6);
+    nodes.push({x:cx,y:yFor(ID[i])});
+  }
+  c.strokeStyle=P.acc3;c.lineWidth=2.4;c.lineJoin='round';c.lineCap='round';
+  c.beginPath();smooth(c,nodes);c.stroke();
+  const yf=yFor(10);
+  c.setLineDash([4,4]);c.strokeStyle=hexA(P.acc5,0.5);c.lineWidth=1;
+  c.beginPath();c.moveTo(padL,yf);c.lineTo(w-padR,yf);c.stroke();c.setLineDash([]);
+  c.fillStyle=hexA(P.acc5,0.85);c.font='9px ui-monospace,monospace';c.textAlign='right';
+  c.fillText('≈ log2(#Klassen) ≈ 10',w-padR,yf-4);c.textAlign='left';
+  for(let i=0;i<n;i++){
+    const nd=nodes[i],isSel=(i===S.sel);
+    const pulse=1+Math.sin(t*3+i*0.7)*0.12;
+    const r=(4+ID[i]*0.14)*pulse;
+    const g=c.createRadialGradient(nd.x,nd.y,0,nd.x,nd.y,r*2.6);
+    g.addColorStop(0,hexA(isSel?P.acc3:P.acc,0.5));g.addColorStop(1,hexA(isSel?P.acc3:P.acc,0));
+    c.fillStyle=g;c.beginPath();c.arc(nd.x,nd.y,r*2.6,0,TAU);c.fill();
+    c.fillStyle=isSel?P.acc3:P.acc;c.beginPath();c.arc(nd.x,nd.y,r,0,TAU);c.fill();
+    c.strokeStyle=hexA(P.txt,0.6);c.lineWidth=1;c.stroke();
+  }
+  c.fillStyle=P.dim;c.font='11px system-ui';c.textAlign='left';
+  c.fillText('ID (Inhalt) durch die Schichten — „Buckel": Anstieg → Gipfel → Abfall auf ≈ 10',padL,14);
+}
+
+function drawCloud(c,w,yTop,H,P){
+  const padL=16,padR=16,padT=24,padB=12;
+  const pw=w-padL-padR,ph=H-padT-padB;
+  if(ph<20)return;
+  const cx=padL+pw/2,cy=yTop+padT+ph/2;
+  const shown=S.cache.shown,spiral=S.cache.spiral,st=S.cache.st;
+  let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+  for(const p of spiral){xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);}
+  for(const p of shown){xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);}
+  const bw=(xmax-xmin)||1,bh=(ymax-ymin)||1;
+  const sc=Math.min(pw/bw,ph/bh)*0.92;
+  c.save();
+  c.translate(cx-st.mx*sc,cy+st.my*sc);
+  c.rotate(-st.ang);
+  c.strokeStyle=hexA(P.acc4,0.55);c.setLineDash([5,4]);c.lineWidth=1.4;
+  c.beginPath();c.ellipse(0,0,Math.sqrt(Math.max(st.l1,0))*sc,Math.sqrt(Math.max(st.l2,0))*sc,0,0,TAU);c.stroke();
+  c.restore();
+  const col=S.curved?P.acc:P.acc2;
+  for(const p of shown){
+    const x=cx+p[0]*sc,y=cy-p[1]*sc;
+    c.fillStyle=hexA(col,0.72);c.beginPath();c.arc(x,y,1.9,0,TAU);c.fill();
+  }
+  c.fillStyle=P.dim;c.font='11px system-ui';c.textAlign='left';
+  c.fillText(S.curved?'Gekrümmt (Spirale): TwoNN niedrig & stabil':'Flach (Gauß-Zwilling): TwoNN steigt, PCA bleibt',padL,14);
+  c.fillStyle=P.faint;c.font='9px ui-monospace,monospace';c.textAlign='right';
+  c.fillText('gestrichelte Ellipse = Kovarianz (invariant)',w-padR,14);
+  c.textAlign='left';
+}
+
+function draw(t){
+  const {c,w,h}=hidpi(vz);
+  c.clearRect(0,0,w,h);
+  if(!S.cache)return;
+  const P=palette();
+  const gapY=12;
+  const ph1=Math.round(h*0.60),ph2=h-ph1-gapY;
+  drawFibers(c,w,ph1,P,t);
+  drawCloud(c,w,ph1+gapY,ph2,P);
+}
+
+let rafId=null;
+function frame(ts){
+  const t=ts/1000;
+  draw(t);
+  rafId=requestAnimationFrame(frame);
+}
+
+function init(){
+  vzLayer.addEventListener('input',e=>{S.sel=+e.target.value;rebuild();});
+  vzN.addEventListener('input',e=>{S.N=+e.target.value;vzNV.textContent=S.N;rebuild();});
+  vzCurve.addEventListener('click',()=>{
+    S.curved=!S.curved;
+    vzCurve.classList.toggle('on',S.curved);
+    vzCurve.textContent=S.curved?'Gekrümmt':'Flach';
+    rebuild();
+  });
+  vzTheme.addEventListener('click',()=>{
+    const el=document.documentElement;
+    el.classList.toggle('dark');
+    vzTheme.textContent=el.classList.contains('dark')?'☀️ Hell':'🌙 Dunkel';
+  });
+  window.addEventListener('resize',()=>{});
+  vzNV.textContent=S.N;
+  rebuild();
+  rafId=requestAnimationFrame(frame);
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>056 — Weiche Räume, harte Rechnungen (Conceptors ✕ Rotation)</title>
+<style>
+  :root{
+    --bg:#faf8f1; --panel:#ffffff; --panel2:#f3efe4; --text:#1c1c24; --muted:#5a5a6e;
+    --border:#e4ddcc; --accent:#6d4dd6; --accent2:#0e8ea0; --pos:#1f9d55; --neg:#d04545;
+    --warn:#b5751d; --code:#f4f0e6;
+  }
+  html.dark{
+    --bg:#0b0b12; --panel:#14141d; --panel2:#1c1c29; --text:#e9e9f1; --muted:#9c9cb4;
+    --border:#2b2b3c; --accent:#9b7bff; --accent2:#39c6e0; --pos:#4ade80; --neg:#f87171;
+    --warn:#ffa94d; --code:#101018;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px; margin:0 auto; padding:3rem 1.25rem 4rem}
+  h1{font-size:clamp(1.9rem,4.4vw,2.7rem); line-height:1.12; letter-spacing:-.02em; margin-bottom:.4rem; color:var(--accent)}
+  .subtitle{color:var(--muted); font-size:1rem; margin-bottom:.4rem}
+  .meta-line{color:var(--muted); font-size:.85rem; margin-bottom:2rem}
+  section{margin:2.6rem 0; scroll-margin-top:1rem}
+  h2{font-size:1.5rem; letter-spacing:-.01em; margin-bottom:.7rem; padding-bottom:.35rem; border-bottom:2px solid var(--border); color:var(--text)}
+  h3{font-size:1.12rem; margin:1.4rem 0 .5rem; color:var(--accent2)}
+  p{margin-bottom:.9rem}
+  strong{color:var(--text)}
+  .lead{font-size:1.06rem}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:1.1rem 1.2rem; margin:1rem 0}
+  .card.hl{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent) inset}
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:.15rem .55rem; border-radius:20px; margin-right:.4rem}
+  .tag-a{background:color-mix(in srgb,var(--accent) 18%,transparent); color:var(--accent)}
+  .tag-b{background:color-mix(in srgb,var(--accent2) 18%,transparent); color:var(--accent2)}
+  .tag-x{background:color-mix(in srgb,var(--warn) 20%,transparent); color:var(--warn)}
+  .eq{background:var(--code); border-left:3px solid var(--accent); border-radius:8px; padding:.7rem 1rem; margin:.8rem 0; overflow-x:auto; font-size:1.05rem; font-family:"Cambria Math",Georgia,serif}
+  .frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .15rem; line-height:1.05}
+  .frac .num{border-bottom:1px solid currentColor; padding:0 .35rem}
+  .frac .den{padding:0 .35rem}
+  ul,ol{margin:.4rem 0 1rem 1.3rem}
+  li{margin-bottom:.4rem}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:1rem}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+  .stat{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:.7rem .8rem; text-align:center}
+  .stat .v{font-size:1.4rem; font-weight:700; color:var(--accent)}
+  .stat .l{font-size:.74rem; color:var(--muted); margin-top:.15rem}
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:.7rem; margin:1rem 0}
+  .prose-q{font-style:italic; color:var(--muted)}
+  a{color:var(--accent2)}
+  .viz-canvas{width:100%; height:470px; display:block; border-radius:12px; background:var(--panel2); border:1px solid var(--border)}
+  .controls{display:flex; flex-wrap:wrap; align-items:center; gap:.9rem; margin:.8rem 0}
+  .controls label{font-size:.9rem; color:var(--muted)}
+  input[type=range]{width:220px; accent-color:var(--accent)}
+  .val{font-family:"JetBrains Mono",ui-monospace,monospace; color:var(--accent); min-width:44px; text-align:right; font-weight:600}
+  .readouts{display:flex; flex-wrap:wrap; gap:1.4rem; margin-top:.4rem; font-size:.9rem}
+  .readouts b{color:var(--accent)}
+  button.tbtn{background:var(--panel2); color:var(--text); border:1px solid var(--border); padding:.4rem .8rem; border-radius:8px; cursor:pointer; font-size:.85rem}
+  button.tbtn:hover{border-color:var(--accent)}
+  .note{font-size:.85rem; color:var(--muted); font-style:italic; margin-top:.5rem}
+  footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.82rem; text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Weiche Räume, harte Rechnungen</h1>
+  <p class="subtitle">Fusion aus: semantic_steering.html ✕ grokking_paper.html</p>
+  <p class="meta-line">Conceptors für Semantic Steering (Triantafyllopoulos et&nbsp;al., 2026) &nbsp;✕&nbsp; Wie ein Transformer rechnen lernt (modulare Addition a+b mod 113)</p>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Papiere sprechen über <strong>das Gleiche, von zwei Seiten</strong>: die Geometrie eines „Konzepts" in einem neuronalen Netz ist kein Pfeil und keine diffuse Wolke, sondern ein <strong>Spektrum aus Eigenrichtungen mit Energien</strong>. Es gibt zwei komplementäre Haltungen dazu.</p>
+    <p><strong>Von außen</strong> (Paper A, Semantic Steering) greift man dieses Spektrum mit einem <strong>weichen, kontinuierlichen Filter</strong> an — dem <em>Conceptor</em> <span style="font-family:Georgia,serif">C = R(R + α⁻²I)⁻¹</span> —, der jede Richtung gemäß ihrer Energie <span style="font-family:Georgia,serif">γⱼ = σⱼ/(σⱼ+α⁻²)</span> durchlässt. Die Devise: „Gib dem Modell einen <strong>weichen Raum</strong>, in dem es sich bewegen darf" — und weiche Breite, keinen einzigen harten Pfeil.</p>
+    <p><strong>Von innen</strong> (Paper B, modular addition) tut das Netz genau das Gegenstück: Es organisiert dieselbe Art von Spektrum selbstständig in einen <strong>engen, strukturierten, low-rank Kern</strong> — fünf diskrete Frequenzen (eine diskrete Fourier-Grundlage), zusammen <strong>Rang&nbsp;10</strong> von 128. Die Rechnung „a+b mod 113" ist eine <strong>Rotation auf einem Kreis</strong>; das Netz hat DFT und Rotationsmatrizen <em>selbst erfunden</em>, weil das der effizienteste Weg ist.</p>
+    <p class="lead">Die <strong>Aperture α</strong> ist der eine Parameter, der beide Pole verbindet: α→∞ macht C zur Identität (der volle, weiche Raum — A), α→0 macht C zu einem harten Projektor auf die Top-Eigenrichtungen (der strukturierte Kern — B). Weiche Gating-Matrix und harte Frequenz-Spezialisierung sind <strong> dieselbe Eigenzerlegung, von außen (Steering) und von innen (gelernte Rechnung) betrachtet</strong>.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+
+    <div class="card">
+      <span class="tag tag-a">A</span><span class="tag tag-b">B</span>
+      <h3 style="margin-top:.2rem">1. Weich &amp; breit vs. eng &amp; strukturiert</h3>
+      <p><span class="tag tag-a">A</span> „Konzepte sind Räume, keine Pfeile": Ein Konzept wie <em>Sentiment</em> ist ein <strong>mehrdimensionaler Unterraum</strong>, den man nicht auf einen Vektor zusammenklappen darf; der Conceptor hält ihn <strong>weich und breit</strong> (γⱼ&nbsp;∈&nbsp;[0,1], Aperture regelt Fokus). Weiche Breite ist das zentrale Merkmal.</p>
+      <p><span class="tag tag-b">B</span> Die gesamte Rechnung a+b mod 113 lebt in einem <strong>engen, exakt Rang-10-Unterraum</strong> (5 Frequenzen × cos/sin); „alles andere ist Linearkombination". Das Netz <strong>selbst-organisiert</strong> sich in spärliche Frequenz-Gruppen. Die Struktur ist <strong>schmal, diskret, strukturiert</strong> — das Gegenteil von „breit und weich".</p>
+      <p class="prose-q">Spannung: Ist eine „bedeutsame Einheit" ein <em>weicher, breiter, kontinuierlicher</em> Unterraum (A) oder eine <em>enge, diskrete, low-rank, strukturierte</em> Grundlage (B)?</p>
+    </div>
+
+    <div class="card">
+      <span class="tag tag-a">A</span><span class="tag tag-b">B</span>
+      <h3 style="margin-top:.2rem">2. Weiches vs. hartes Selektieren von Richtungen</h3>
+      <p><span class="tag tag-a">A</span> lehnt <strong>harte PCA-Truncation ausdrücklich ab</strong>: „Diese sanfte Umschaltung ist der zentrale Unterschied zu harten Methoden wie PCA-Truncation (die einfach ab Richtung k+1 alles wegwirft)". Alles behalten, weich gewichten.</p>
+      <p><span class="tag tag-b">B</span> Das Netz tut das Gegenteil — einen <strong>harten, strukturierten Commitment</strong>: <strong>84,6&nbsp;%</strong> der Neuronen berechnen ein Polynom 2. Grades <em>einer einzelnen</em> Frequenz; exakt 5 Frequenzen werden verwendet; das Unembedding ist <strong>Rang&nbsp;10</strong>. Der Rest wird verworfen.</p>
+      <p class="prose-q">Spannung: Weiches Gating, das <em>alle</em> Richtungen erhält (A) vs. ein Netz, das <em>hart</em> auf eine kleine diskrete Menge commit und den Rest wegwirft (B).</p>
+    </div>
+
+    <div class="card">
+      <span class="tag tag-a">A</span><span class="tag tag-b">B</span>
+      <h3 style="margin-top:.2rem">3. Geometrie abgelesen vs. erfunden</h3>
+      <p><span class="tag tag-a">A</span> Die Konzepte-Unterräume werden <strong>aus der Datenverteilung abgelesen</strong> (positive/negative Sätze clusteren in entgegengesetzten Richtungen des Hidden-Raums); man steuert dann von außen. Die Geometrie ist <strong>daten-gegeben</strong>.</p>
+      <p><span class="tag tag-b">B</span> Die Rotations-/Fourier-Geometrie wird <strong>von dem Netz beim Training selbst erfunden</strong> („selbstständig erfunden") als effizienteste Lösung; sie steckt <em>nicht</em> in der Eingabe und ist nicht a priori ablesbar. Die Geometrie ist <strong>lösung-gegeben</strong>.</p>
+      <p class="prose-q">Spannung: Ist die Geometrie eines Konzepts <em>daten-gegeben</em> (ablesbar, A) oder <em>lösung-gegeben</em> (gelernt/erfunden, B)?</p>
+    </div>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><span class="tag tag-x">1</span> <strong>Weich &amp; breit ⊃ eng &amp; strukturiert.</strong> Ein Konzept ist ein Spektrum, das einen <em>strukturierten Kern</em> (wenige hoch-energetische, gapped Richtungen ≈ B's 5 Frequenzen) <em>in sich enthält</em> sowie einen <em>weichen nied-energetischen Schweif</em> (A's viele Facetten). A und B sind zwei <strong>Skalen desselben Spektrums</strong>. Die Aperture <em>wählt die Skala</em>: kleines α isoliert den Kern (reproduziert B), großes α umfasst den Schweif (A).</p>
+    <p><span class="tag tag-x">2</span> <strong>Weich verallgemeinert hart.</strong> Harte PCA-Truncation ist der <em>Limit</em> α→0 des Conceptors (γⱼ→1 für Top-k, →0 für den Rest). „Weich" (A) und „hart" (B) sind also keine Gegensätze, sondern <strong>Endpunkte einer kontinuierlichen Familie</strong>. Weich ist <em>richtig für fuzzy semantische Konzepte</em>, deren Spektrum <em>keine saubere Lücke</em> hat (man kann nicht schneiden); hart-low-rank ist <em>das, was das Netz selbst für präzise Funktionen tut</em>, wo das Spektrum eine <em>saubere Lücke</em> hat (5 diskrete Frequenzen). Ein Conceptor mit passendem α <em>reproduziert</em> den harten Kern des Netzes.</p>
+    <p><span class="tag tag-x">3</span> <strong>Der Ursprung hängt vom Aufgabentyp ab.</strong> Für <em>semantische</em> Konzepte liegt die Geometrie in der Eingabe-Verteilung (daten-gegeben, ablesbar → A); für <em>rechnerische</em> Funktionen liegt sie in der Lösung (erfunden beim Lernen → B). Ein Conceptor lässt sich in <strong>beiden</strong> Fällen bauen — aus Daten-Aktivierungen (A) <em>oder</em> aus dem eigenen low-rank Rechn-Unterraum des Netzes (B). Gezielt auf B's Rang-10-Frequenzkern würde er <em>die Arithmetik steuern</em> — eine Anwendung, die beide Papiere vereint.</p>
+    <div class="card hl">
+      <p class="lead" style="margin:0"><strong>Fusionierte Schlussfolgerung:</strong> Weiche Gating-Matrix (A) und harte Frequenz-Spezialisierung (B) sind <em>derselbe</em> Gegenstand — eine Eigenzerlegung des Aktivierungsraums — von außen (Steering) und von innen (gelernte Rechnung) gesehen. Die Aperture α bestimmt, ob man den <strong>weichen Gesamtraum</strong> oder den <strong>strukturierten Kern</strong> adressiert.</p>
+    </div>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3><span class="tag tag-a">A</span> Das Conceptor — weiche Unterraum-Steuerung</h3>
+    <p>LLMs (Gemma-2-2B: Hidden-Raum 2304D) werden während der Generierung an <em>einer</em> Zwischenschicht gesteuert, ohne Retraining. Der naive <strong>DiffMean</strong>-Ansatz addiert einen einzigen Vektor <span style="font-family:Georgia,serif">z′ = z + β(v̄₊ − v̄₋)</span> — und verliert damit die übrigen Richtungen des Konzepts. Aus den Aktivierungen baut man die Korrelationsmatrix</p>
+    <div class="eq">R = <span class="frac"><span class="num">1</span><span class="den">N</span></span> XᵀX = U diag(σ₁,…,σ_d) Uᵀ</div>
+    <p>Der <strong>Conceptor</strong> ist eine weiche Projektion, die in derselben Eigenbasis diagonal ist:</p>
+    <div class="eq">C = R (R + α⁻² I)⁻¹ , &nbsp;&nbsp; γⱼ = <span class="frac"><span class="num">σⱼ</span><span class="den">σⱼ + α⁻²</span></span> ∈ [0,1]</div>
+    <ul>
+      <li><strong>Aperture α</strong> (Kamerablende): klein = enger Fokus auf die energiereichsten Richtungen; groß → C wird zur Identität (alles durch).</li>
+      <li><strong>Bipolar &gt; Unipolar:</strong> Auf beiden Polen (pos <em>und</em> neg) trainiert erfasst der Unterraum <strong>≥ 95&nbsp;%</strong> der DiffMean-Richtung; jeder Pol allein nur ~10&nbsp;%.</li>
+      <li><strong>Quota</strong> <span style="font-family:Georgia,serif">q(C) = (1/d)tr(C) = (1/d)Σⱼ γⱼ</span> sagt ohne Training vorher, in welcher Layer das Konzept am besten trennbar ist — Pearson-r bis <strong>0,96</strong> vs. externem Probe-AUC.</li>
+      <li><strong>Boolean-Algebra</strong> auf Matrizen: <span style="font-family:Georgia,serif">¬C = I − C</span>, <span style="font-family:Georgia,serif">A∧B = (A⁻¹ + B⁻¹ − I)⁻¹</span>, <span style="font-family:Georgia,serif">A∨B = ¬(¬A ∧ ¬B)</span>; der <em>Subspace-Overlap</em> (mittlere quadrierter Kosinus der Hauptwinkel) bestimmt, wann die Operationen sinnvoll sind.</li>
+    </ul>
+    <div class="stats">
+      <div class="stat"><div class="v">0,82</div><div class="l">Win-Ratio Conceptor (Sentiment)</div></div>
+      <div class="stat"><div class="v">0,62</div><div class="l">Win-Ratio Addition</div></div>
+      <div class="stat"><div class="v">13&nbsp;%</div><div class="l">degenerierte Outputs (Conceptor)</div></div>
+      <div class="stat"><div class="v">58&nbsp;%</div><div class="l">degenerierte Outputs (Addition)</div></div>
+    </div>
+
+    <h3><span class="tag tag-b">B</span> Die Grammatik der Rotation — modulare Addition</h3>
+    <p>Ein 1-Layer-Transformer (Embedding 128D, 4 Attention-Heads, MLP 128→512→128, Vokabular 113) lernt <span style="font-family:Georgia,serif">a + b mod 113</span> mit 100&nbsp;% Genauigkeit. Der Kerntrick:</p>
+    <ul>
+      <li><strong>Addition = Rotation.</strong> 113 Punkte auf einem Kreis; „+b" heißt „b Schritte weiterdrehen". Position = (cos θ, sin θ) mit <span style="font-family:Georgia,serif">θ_a = (2π k / 113) · a</span>; cos(0)=1 ist das Maximum.</li>
+      <li><strong>Warum cos-Maximum:</strong> <span style="font-family:Georgia,serif">Score(c) = cos((2πk/113)(a+b−c))</span> — bei korrektem c heben sich die Drehungen auf, Winkel 0, cos = 1.</li>
+      <li><strong>Konstruktive Interferenz:</strong> <span style="font-family:Georgia,serif">Logit(c) = Σ_{k∈{14,35,41,42,52}} cos((2πk/113)(a+b−c))</span> — nur die richtige Antwort hat alle 5 Cosinus-Terme gleichzeitig maximal (wie ein Beugungsgitter).</li>
+      <li><strong>Embedding</strong> kodiert Zahlen als Kreis-Positionen in 2D-Ebenen des 128D-Raums; 5 Frequenzen × 2 (cos/sin) = <strong>Rang 10</strong>.</li>
+      <li><strong>Additionstheorem:</strong> <span style="font-family:Georgia,serif">cos(α+β) = cosα·cosβ − sinα·sinβ</span>. Attention ist bilinear → erzeugt Produkte <span style="font-family:Georgia,serif">cos(wₖa)cos(wₖb)</span>; das MLP (ReLU-Knicke) realisiert daraus <span style="font-family:Georgia,serif">cos(wₖ(a+b))</span>.</li>
+      <li><strong>84,6&nbsp;%</strong> der Neuronen berechnen ein Polynom 2. Grades einer einzelnen Frequenz (selbst-organisierte Frequenz-Gruppen); das Unembedding ist Rang 10.</li>
+    </ul>
+    <p class="prose-q">„Das Netzwerk hat die diskrete Fourier-Transformation und Rotationsmatrizen selbstständig erfunden — weil das der effizienteste Weg ist, modulare Arithmetik mit linearen Operationen + ReLU zu berechnen."</p>
+
+    <h3><span class="tag tag-x">Brücke</span> Eine Eigenzerlegung, zwei Seiten</h3>
+    <p>Beide Objekte sind Eigenbasen eines 2D-Rotations-/Kovarianzoperators: orthogonale Richtungen mit Energien. In B's Aufgabe <em>ist</em> der „Konzept-Unterraum" der Arithmetik genau von den 5 cos/sin-Paaren aufgespannt — ein Spektrum mit <strong>10 großen (gapped)</strong> und 118 winzigen Eigenwerten. Ein Conceptor, auf B's Aktivierungen gebaut, hätte genau dieses Spektrum; eine <strong>kleine Aperture α</strong> lässt die 10 Frequenz-Dimensionen durch (γ≈1) und dämpft den Rest (γ≈0) — und <strong>reproduziert damit B's gelernte Rang-10-Grundlage</strong>. A's Boolean-Operationen sind dann genau <em>Mengenoperationen auf dieser Eigen-Grundlage</em>: Bei B's orthogonaler Frequenzbasis reduziert sich <em>AND-NOT</em> („ein Konzept isolieren") auf „Frequenz k behalten, die anderen unterdrücken".</p>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung: Die Aperture-Dial</h2>
+    <p>Ein Spektrum aus 12 Eigenrichtungen — 4 im <strong>Frequenz-Kern</strong> (B) und 8 im <strong>semantischen Hintergrund</strong> (A). Der Slider <strong>α</strong> steuert die weichen Gates <span style="font-family:Georgia,serif">γⱼ = σⱼ/(σⱼ+α⁻²)</span> und zeigt live, wie dieselbe Conceptor-Formel zwischen <strong>„weichem Raum" (A)</strong> bei großem α und <strong>„strukturiertem Kern" (B)</strong> bei kleinem α interpoliert. Radial: Durchlässigkeit je Richtung; Balken unten: γⱼ (dunkel = Kern).</p>
+
+    <div class="card">
+      <canvas id="specCanvas" class="viz-canvas"></canvas>
+      <div class="controls">
+        <label>Aperture α</label>
+        <input type="range" id="apSlider" min="0.4" max="3" step="0.02" value="1.0">
+        <span class="val" id="apVal">1.00</span>
+        <button class="tbtn" id="themeBtn" type="button">Theme umschalten</button>
+      </div>
+      <div class="readouts">
+        <span>Effektiver Rang (γⱼ≥0,5): <b id="rankVal">–</b></span>
+        <span>Durchlass Σγ/d: <b id="quotaVal">–</b></span>
+        <span>Regime: <b id="regimeVal" style="font-style:normal">–</b></span>
+      </div>
+      <p class="note">Klein α = harter Projektor auf die Top-Richtungen (B's low-rank Kern); groß α = Identität (A's voller weicher Raum). Zwischen beiden liegt das „Übergang"-Regime.</p>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <ul>
+      <li><a href="../semantic_steering.html">semantic_steering.html</a> — Interaktive Reise durch „Conceptors for Semantic Steering" (Triantafyllopoulos et&nbsp;al., 2026, NYU &amp; UPenn): weiche Unterraum-Steuerung von LLMs via Conceptor-Matrizen, Aperture α, Quota q(C), Boolean-Algebra auf Matrizen, bipolar ≥95&nbsp;% Capture.</li>
+      <li><a href="../grokking_paper.html">grokking_paper.html</a> — Interaktive Folien zu „Wie ein Transformer rechnen lernt": modulare Addition a+b mod 113 als Kreis-Rotation, 5-Frequenz-DFT, Additionstheorem, selbst-organisierte Frequenz-Gruppen, Rang-10-Unterraum im Unembedding.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Fusion-Paper Nr. 056 · Runde 1 · Self-contained, keine Netzwerk-Daten. Interaktive Visualisierung nachgebildet; alle Zahlen stammen aus den beiden Quell-Seiten.
+  </footer>
+</div>
+
+<script>
+(function(){
+  var cv = document.getElementById('specCanvas');
+  if(!cv) return;
+  var slider = document.getElementById('apSlider');
+  var CORE = [3.5, 3.0, 2.6, 2.2];
+  var TAIL = [1.0, 0.85, 0.7, 0.55, 0.45, 0.38, 0.32, 0.28];
+  var SIGMA = CORE.concat(TAIL);
+  var N = SIGMA.length;
+  var IS_CORE = CORE.map(function(){return true;}).concat(TAIL.map(function(){return false;}));
+  var maxS = Math.max.apply(null, SIGMA);
+
+  function gv(name, fb){
+    try{
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fb;
+    }catch(e){ return fb; }
+  }
+  function arrow(ctx,x1,y1,x2,y2,color,lw,head){
+    ctx.save();
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    if(head){
+      var a=Math.atan2(y2-y1,x2-x1), hs=9;
+      ctx.beginPath();
+      ctx.moveTo(x2,y2);
+      ctx.lineTo(x2-hs*Math.cos(a-0.4), y2-hs*Math.sin(a-0.4));
+      ctx.lineTo(x2-hs*Math.cos(a+0.4), y2-hs*Math.sin(a+0.4));
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function draw(){
+    var dpr = window.devicePixelRatio || 1;
+    var rect = cv.getBoundingClientRect();
+    var w = rect.width, h = rect.height;
+    if(w<=0 || h<=0) return;
+    cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var cPanel  = gv('--panel','#ffffff');
+    var cPanel2 = gv('--panel2','#f3efe4');
+    var cBorder = gv('--border','#cccccc');
+    var cText   = gv('--text','#111111');
+    var cMuted  = gv('--muted','#666666');
+    var cAccent = gv('--accent','#6d4dd6');
+    var cA2     = gv('--accent2','#0e8ea0');
+    var cPos    = gv('--pos','#1f9d55');
+    var cNeg    = gv('--neg','#d04545');
+    var cWarn   = gv('--warn','#b5751d');
+
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = cPanel2; ctx.fillRect(0,0,w,h);
+
+    var alpha = parseFloat(slider.value) || 1;
+    var inv2 = 1/(alpha*alpha);
+    var gamma = SIGMA.map(function(s){ return s/(s+inv2); });
+    var effrank = gamma.reduce(function(a,g){ return a + (g>=0.5?1:0); }, 0);
+    var quota = gamma.reduce(function(a,g){ return a+g; }, 0)/N;
+
+    document.getElementById('apVal').textContent = alpha.toFixed(2);
+    document.getElementById('rankVal').textContent = effrank + ' / ' + N;
+    document.getElementById('quotaVal').textContent = quota.toFixed(2);
+
+    var regime, rc;
+    if(effrank >= 10){ regime='Weicher Raum (A) – alle Facetten'; rc=cPos; }
+    else if(effrank >= 2 && effrank <= 5){ regime='Strukturierte Kern (B) – Frequenz-Unterraum'; rc=cA2; }
+    else if(effrank <= 1){ regime='Über-gated – fast nichts bleibt'; rc=cNeg; }
+    else { regime='Übergang'; rc=cWarn; }
+    var rEl = document.getElementById('regimeVal');
+    rEl.textContent = regime; rEl.style.color = rc;
+
+    var cx=w*0.44, cy=h*0.42, R=Math.min(w*0.42, h*0.32), sc=R/maxS;
+    ctx.fillStyle=cMuted; ctx.beginPath(); ctx.arc(cx,cy,3,0,Math.PI*2); ctx.fill();
+
+    for(var j=0;j<N;j++){
+      var ang=(j/N)*2*Math.PI - Math.PI/2;
+      var ux=Math.cos(ang), uy=Math.sin(ang);
+      var lenRaw=SIGMA[j]*sc;
+      var lenEff=gamma[j]*SIGMA[j]*sc;
+      ctx.save();
+      ctx.globalAlpha=0.30;
+      ctx.strokeStyle = IS_CORE[j]?cAccent:cMuted; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+ux*lenRaw, cy+uy*lenRaw); ctx.stroke();
+      ctx.restore();
+      var col = IS_CORE[j]?cAccent:cA2;
+      arrow(ctx, cx, cy, cx+ux*lenEff, cy+uy*lenEff, col, IS_CORE[j]?3:2.4, lenEff>9);
+      ctx.fillStyle=cMuted; ctx.font='10px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(String(j+1), cx+ux*(lenRaw+12), cy+uy*(lenRaw+12));
+    }
+
+    var bx0=w*0.06, bx1=w*0.94, by0=h*0.86, barMaxH=h*0.13, bw=(bx1-bx0)/N;
+    ctx.strokeStyle=cBorder; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(bx0,by0); ctx.lineTo(bx1,by0); ctx.stroke();
+    for(j=0;j<N;j++){
+      var x=bx0+j*bw+bw*0.18, bh=gamma[j]*barMaxH;
+      ctx.globalAlpha=0.9; ctx.fillStyle=IS_CORE[j]?cAccent:cA2;
+      ctx.fillRect(x, by0-bh, bw*0.64, bh); ctx.globalAlpha=1;
+      ctx.fillStyle=cMuted; ctx.font='9px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
+      ctx.fillText(String(j+1), x+bw*0.32, by0+3);
+    }
+    ctx.fillStyle=cMuted; ctx.font='11px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    ctx.fillText('γⱼ = σⱼ/(σⱼ+α⁻²)  ·  dunkle Linien/Balken = Frequenz-Kern (B), helle = semant. Hintergrund (A)', bx0, h-6);
+  }
+
+  if(slider) slider.addEventListener('input', draw);
+  var tb=document.getElementById('themeBtn');
+  if(tb) tb.addEventListener('click', function(){ document.documentElement.classList.toggle('dark'); draw(); });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,150); });
+  draw();
+})();
+</script>
+</body>
+</html>

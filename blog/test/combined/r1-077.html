@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fusion 077 · Wahrheits-Richtung als Backprop-Request (Geometrie der Wahrheit × Backprop als Funktor)</title>
+<style>
+  :root{
+    --bg:#FAF8F1; --ink:#22201b; --dim:#6f6a60; --line:#d8d2c4;
+    --panel:#ffffff; --canvas:#f3efe6; --code:#efe9dc;
+    --true:#0f7a5f; --false:#b0256b; --theta:#2a4bd7; --req:#9a6a06;
+    --acc:#0f7a5f; --acc2:#b0256b;
+  }
+  html.dark{
+    --bg:#070A12; --ink:#EAF0FF; --dim:#8b97b8; --line:#1c2740;
+    --panel:#0b1020; --canvas:#05070E; --code:#0f1626;
+    --true:#34d399; --false:#f472b6; --theta:#7c9cff; --req:#ffd166;
+    --acc:#34d399; --acc2:#f472b6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);
+    font:400 16px/1.62 ui-sans-serif,system-ui,"Segoe UI",Inter,Georgia,serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+  h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.01em;line-height:1.12;margin-bottom:6px}
+  h2{font-size:21px;font-weight:600;margin:46px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+  h3{font-size:15.5px;font-weight:650;margin:22px 0 8px;color:var(--ink)}
+  .sub{color:var(--dim);font-size:13px;letter-spacing:.04em;margin-bottom:26px}
+  p{margin:0 0 14px}
+  strong{font-weight:650}
+  code{font:500 13.5px/1.4 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+  .lead{font-size:17.5px}
+  ul,ol{margin:0 0 14px 20px}
+  li{margin:0 0 10px}
+  .roleA{color:var(--true);font-weight:650}
+  .roleB{color:var(--theta);font-weight:650}
+  .eq{font:500 14.5px/1.5 ui-monospace,Menlo,Consolas,monospace;background:var(--code);border:1px solid var(--line);border-radius:8px;padding:9px 12px;margin:10px 0;overflow-x:auto;white-space:pre-wrap}
+  .callout{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 9%,transparent);padding:11px 14px;border-radius:0 9px 9px 0;margin:14px 0;font-size:14.5px}
+  .callout.b{border-color:var(--theta);background:color-mix(in srgb,var(--theta) 9%,transparent)}
+  .viz-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:8px 0}
+  canvas#viz{width:100%;height:520px;display:block;background:var(--canvas);border-radius:9px;touch-action:none;cursor:crosshair}
+  .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+  button,select{font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:8px 13px;border-radius:999px;cursor:pointer}
+  button:hover,select:hover{border-color:var(--acc)}
+  .slider{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);letter-spacing:.03em}
+  input[type=range]{accent-color:var(--acc);width:150px}
+  .legend{display:flex;gap:15px;color:var(--dim);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-top:11px;flex-wrap:wrap}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .readout{font:500 12.5px/1.7 ui-monospace,Menlo,Consolas,monospace;color:var(--dim);margin-top:10px}
+  .readout b{color:var(--ink)}
+  .note{color:var(--dim);font-size:13.5px;margin-top:10px}
+  .prov{display:flex;flex-direction:column;gap:12px}
+  .prov a{color:var(--acc);text-decoration:none;font-weight:600}
+  .prov a:hover{text-decoration:underline}
+  .prov .d{color:var(--dim);font-size:14px;margin-top:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Die Wahrheits-Richtung als Backprop-Request</h1>
+  <div class="sub">Fusion aus: geometrie_der_wahrheit.html ✕ backprop_als_funktor.html</div>
+
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lead">Beide Seiten betrachten <strong>dieselbe Maschine</strong> — ein Netz aus differenzierbaren, parametrisierten Funktionen — aber in <strong>entgegengesetzten Richtungen</strong> und auf zwei Ebenen. <span class="roleB">Backprop-als-Funktor (B)</span> liefert die <em>Struktur­grammatik des Rückwärts-Kanals</em>: wie Information durch eine verkettete Rechnung nach hinten gefordert wird. <span class="roleA">Die Geometrie der Wahrheit (A)</span> liefert den <em>empirischen Inhalt des Vorwärts-Zustands</em>: dass in einem trainierten LLM über dem Satzende eine einzelne <em>lineare</em> Richtung <code>θ</code> steht, entlang derer Wahrheit und Lüge auseinanderliegen — und dass man in sie kausal eingreifen kann.</p>
+    <p>Die eine integrierte Position lautet: <strong><code>θ</code> ist eine linearisierte Request-Funktion.</strong> Ein trainiertes Netz ist B's Kategorie <code>Para</code> — eine Folge von Parametrisierungen <code>I : P×A→B</code> — und der Residual Stream ist genau die Folge der internen Zustände <code>h</code> dieser Kette. Die Wahrscheinlichkeit, dass das Modell „wahr“ sagt, ist <code>P(true) = σ(θ·h)</code>. Deren Gradient nach dem Zustand ist <code>∇ₕP = P(1−P)·θ</code> — also <em>parallel</em> zu <code>θ</code>. Damit ist die „Geometrie der Wahrheit“ (A) wörtlich der <strong>Tangential­schatten</strong> von B's Rückwärts-Kanal: Der Backprop-Gradient des Wahrheits-Outputs zeigt in genau die Richtung, die A als <em>Wahrheits-Richtung</em> identifiziert.</p>
+    <p>Die Konsequenz: <strong>Lesen</strong> einer Sonde ist eine Request-Auswertung am aktuellen Zustand; <strong>Anstossen</strong> einer Sonde (A's kausaler Test <code>h ← h+α·θ</code>) ist die Auswertung von B's Funktor — ein Schritt im Ausgaberaum, der per Kettenregel in den Innenraum transportiert wird. B ist der Mechanismus, A ist eine seiner beobachtbaren, semantisch bedeutenden Richtungen.</p>
+  </section>
+
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="note">Die beiden Papers beantworten unterschiedliche Fragen (Interpretierbarkeit vs. Trainings­mathematik) und widersprechen sich nicht direkt. Aber sie setzen drei reale Akzente auf entgegengesetzten Seiten derselben Rechnung:</p>
+    <ul>
+      <li><strong>Wo die Struktur liegt — vorwärts vs. rückwärts.</strong>
+        <span class="roleA">A</span>: Das Entscheidende ist der <em>Vorwärts-Zustand</em> — die Residual-Stream-Aktivierung über dem Punkt <em>enthält</em> den Wahrheitswert, den man (per Sonde) <em>liest</em> und per Intervention <em>anschreibt</em>. Die Struktur sitzt im nach vorn gerechneten Vektor.
+        <span class="roleB">B</span>: Das Strukturbestimmende ist der <em>Rückwärts-Kanal</em> — die Request-Funktion <code>r</code> (Gradient&nbsp;→&nbsp;Input). Ohne sie gibt es <em>keine</em> Komposition; die Implementierung <code>I</code> allein reicht nicht. Die Struktur sitzt im nach <em>hinten</em> geforderten Kanal.
+        <em>Spannung:</em> Dieselbe Rechnung, aber das „Wichtige“ auf zwei entgegengesetzten Seiten — der lesende Zustand vs. der fordernde Kanal.</li>
+      <li><strong>Linearität als Befund vs. als Näherung.</strong>
+        <span class="roleA">A</span> feiert die <em>Linearität</em> als überraschendes <em>Ergebnis</em>: ein einziger Vektor <code>θ</code>, lineare Sonden, „emergent linear structure“. Die ganze These hängt an dieser Linearität.
+        <span class="roleB">B</span> behandelt Linearität nur als <em>lokale</em> (Kettenregel-/Tangential-)Näherung: Der Hauptsatz gilt <em>maximal allgemein / nichtlinear</em> für <em>alle</em> differenzierbaren parametrisierten Funktionen, und die Request-Funktion benutzt die (generell nichtlineare) Umkehrung von <code>∂e/∂x</code>.
+        <em>Spannung:</em> Für A ist Linearität der Knackpunkt; für B ist Nichtlinearität die Norm und Linearität nur der lokale Schatten, der den Beweis trägt.</li>
+      <li><strong>Entsteht mit Skalierung vs. folgt aus der Mathematik.</strong>
+        <span class="roleA">A</span>: Die datensatzübergreifende, abstrakte Wahrheits-Richtung <em>emergi­ert erst mit Modellgröße</em> — kleine Modelle repräsentieren Oberflächenmerkmale, große erst das abstrakte Konzept. Das ist <em>empirisch kontingent</em>.
+        <span class="roleB">B</span>: Die Gültigkeit der Request-/Kompositions-Bewegung ist eine <em>theoretische Garantie</em> (Kettenregel + Invertierbarkeit von <code>∂e/∂x</code>), die für <em>jede</em> Größe und jedes Netz gleichermaßen gilt.
+        <em>Spannung:</em> Kontingente Empirie (die gute Struktur entsteht erst bei ausreichender Größe) vs. strukturelle Sicherheit (die gute Struktur folgt zwingend aus der Mathematik).</li>
+    </ul>
+  </section>
+
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><strong>1. Vorwärts &amp; Rückwärts sind zwei Beine eines Kreises.</strong> Der Residual-Stream-Zustand <code>h</code> ist das <em>Vorwärts-Bild</em> (A liest es); <code>θ</code> als Request-Richtung ist das <em>Rückwärts-Bein</em> (B fordert es). A's kausaler Test <code>h ← h+α·θ</code> ist exakt „Vorwärts-Abbildung, nachdem man einen Schritt entlang der rückwärts <em>geforderten</em> Richtung gemacht hat“. Der Kreis schließt sich: Vorwärts liefert den lesbaren Zustand, Rückwärts (Request) liefert die Richtung, in die dieser Zustand verschoben werden darf. Kein Widerspruch, sondern Komplementärfunktionen derselben bidirektionalen Maschine.</p>
+    <p><strong>2. A's „emergente Linearität“ ist B's Tangentialraum, gemacht empirisch.</strong> B beweist seinen <em>allgemeinen</em> Satz, indem er <em>linearisiert</em> (Kettenregel auf der Tangentialebene). A zeigt <em>empirisch</em>, dass der <em>kausal relevante</em> Teil der Repräsentation genau in dieser linearen Komponente liegt (Mass-Mean, lineare Sonde, NIE). Nichtlinearität bleibt die Norm des Netzes (B), aber das semantisch bedeutsame Signal — hier „Wahrheit“ — wohnt im linearen (Tangential-)Anteil (A). Die beiden Sätze sind dieselbe Behauptung auf zwei Stufen: <em>die Maschine ist nichtlinear, ihr kausal wirksamer Kern ist linear.</em></p>
+    <p><strong>3. Struktur garantiert, Semantik wird gelernt.</strong> B garantiert die <em>formale</em> Kompositionalität der Maschine (die Mathematik schließt, bei jeder Größe). A zeigt, <em>welche</em> Richtungen dabei <em>semantisch</em> bedeutend und datensatzübergreifend vereint sind — und dass das skalierungs­abhängig <em>gelernt</em> ist. Das fused Urteil: <em>Struktur (B) ist notwendig, Semantik (A) ist kontingent.</em> Der Funktor sagt, dass <em>eine</em> Request-Richtung existiert; Training und Größe sagen, <em>was</em> sie bedeutet. So heilen sich beide Spannungen zu einer einzigen Aussage: <em>die Geometrie der Wahrheit ist ein konkreter, gelernter Fall der funktorialen Request-Bewegung.</em></p>
+  </section>
+
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+    <p><strong>Das gemeinsame Objekt.</strong> Ein trainiertes Netz = Kette parametrisierter Funktionen. B nennt die Bausteine: ein <em>Lerner</em> <code>A→B</code> ist ein Tupel <code>(P, I, U, r)</code> mit Parameterraum <code>P</code>, Implementierung <code>I:P×A→B</code>, Update <code>U:P×A×B→P</code> und — das entscheidende fehlende Stück — der <em>Request-Funktion</em> <code>r</code> (ein Rückwärts-Kanal: „welcher Input hätte mir Output <code>b</code> geliefert?“). A's Residual Stream <code>h<sub>i,ℓ</sub></code> (Token <code>i</code>, Layer <code>ℓ</code>) ist dieselbe Kette, nur empirisch: jede Schicht addiert ihren Beitrag auf ein „Förderband“. A misst gezielt über dem <em>Satzend-Punkt</em>, weil dieser Zustand den ganzen Satz zusammenfasst.</p>
+    <p><strong>Seit A — die lineare Geometrie (Empirie, LLaMA-2).</strong>
+      <div class="eq">Sonde:  sign(θ·h)      ·      Mass-Mean:  θ_mm = μ₊ − μ₋
+IID:    σ(θ_mmᵀ Σ⁻¹ h)  (Fisher-LDA, Whitening)
+Kausal: h ← h + α·θ    ·      NIE = (P(T)−P(F)) nach Intervention
+Theorem F.1: θ_LR ∝ Σ⁻¹θ   (LR &amp; IID-Mass-Mean: gleiche Trennlinie)</div>
+      Befunde: (i) Wahrheit ist eine <em>lineare</em> Richtung in einer kleinen Gruppe von Hidden States über dem Punkt; (ii) <em>PCA</em> findet <code>θ</code> unüberwacht (maximale Streuung) — Beweislinie 1; (iii) <em>Transfer</em> (auf A trainieren, auf B testen) überlebt, weil echte Richtung ≠ Korrelat — Beweislinie 2; (iv) <em>Kausalität</em>: Mass-Mean schlägt LR/CCS in 7 von 8 Bedingungen <em>obwohl</em> alle dieselbe Genauigkeit haben — „Genauigkeit ≠ Kausalität“ — Beweislinie 3. Feinheiten: <code>larger_than</code>/<code>smaller_than</code> sind bei 13B antipodal (bei 70B vereint), <code>cities</code>/<code>neg_cities</code> fast orthogonal — erklärt durch zwei konkurrierende Merkmale <code>f⁺</code> (Wahrheit) und <code>f⁻</code> (enge Assoziation), die sich bei kombinierten Trainingsdaten (¬-Paare) aufheben. Die <code>likely</code>-Sonde (nur Plausibilität) scheitert an negierten Sätzen → LLMs repräsentieren Wahrheit <em>jenseits</em> bloßer Plausibilität. Skalierung: abstrakte, datensatzübergreifende Richtung <em>emergi­ert mit Größe</em>.</p>
+    <p><strong>Seit B — der Rückwärts-Kanal als Funktor (Theorie).</strong>
+      <div class="eq">Lerner: (P, I, U, r)    r : Q×B×C → B   (Rückwärts-Kanal)
+Hauptsatz:  L_{ε,e} : Para → Learn  — treu, obj-injektiv, stark sym. monoidal
+             I ↦ (P, I, U_I, r_I)   mit  U_I(p,a,b) = p − ε·∇ₚE_I(p,a,b)
+Backprop   =  die Kompositionsregel in Learn
+Bedingung:  y ↦ ∂e/∂x(x₀,y) invertierbar     (∂e/∂x = x₀−y ist selbst­umkehrend ⇒ ε „fällt weg“)
+Neuron     =  λ · σ · (μ) + β   (Bimonoide μ=Σ, δ=Kopie; Weight Tying ⇒ CNNs)</div>
+      Kern: (i) Die <em>Request-Funktion</em> ist das fehlende Puzzleteil — ohne sie keine Komposition von Lernern; (ii) <code>Learn</code> ist eine symmetrisch monoidale Kategorie (Serie, parallel, Kreuzung, Bimonoide); (iii) Gradientenabstieg ist ein <em>treuer Funktor</em> <code>Para→Learn</code>; (iv) <em>Backpropagation ist genau</em> die Kompositionsregel dieses Funktorbildes — „erst verketten, dann ableiten“ = „erst ableiten, dann multiplizieren“ (Kettenregel); (v) gilt für <em>alle</em> differenzierbaren parametrisierten Funktionen, nicht nur Netze. Die Request-Funktion hat drei Lesarten: <em>kompositionell</em> (erzeugt Trainingsdaten für vorgelagerte Lerner), <em>experimentell</em> (Deep Dreaming: fix <code>p</code>, wähle Wunsch-Output, <code>r</code> liefert einen „passenderen“ Input) und als <em>Lens</em>/<code>put</em>-Analogon.</p>
+    <p><strong>Der fused Knoten (wo A und B dasselbe Objekt treffen).</strong> Setze A's Sonde <code>P(true)=σ(θ·h)</code> in B's Rückwärts-Kanal ein:
+      <div class="eq">Vorwärts (A):   P = σ(θ·h)                      → Zustand h liest man ab
+Rückwärts (B):  ∇ₕP = P(1−P)·θ                    → der Backprop-Gradient ∥ θ
+Request (B):    h ← h + (σ⁻¹(b) − θ·h)·θ           → „wie viel θ, damit Output = b?“
+Kausal (A):     h ← h + α·θ  dreht das Label        → A's Test = B's Request</div>
+      Alle vier Operationen laufen in <strong>einer einzigen Richtung, <code>θ</code></strong>. Das ist die Integration:
+      <ul>
+        <li><strong>Lesen = Request auswerten.</strong> A's „Wie wahr ist dieser Satz?“ ist B's Request an den aktuellen Zustand, auf die Wahrheits-Achse projiziert.</li>
+        <li><strong>Anstossen = Funktor anwenden.</strong> A's kausale Intervention <code>h←h+αθ</code> ist B's Kompositionsregel: ein Schritt im Ausgabraum („sag wahrer“) wird per Kettenregel in den Innenraum transportiert.</li>
+        <li><strong>Der „fehlende Baustein“ heißt auf beiden Seiten Kanal.</strong> B braucht die <em>Request-Funktion</em>, um Lerner zu verketten; A braucht <em>gegenläufige Trainingsdaten</em> (¬-Paare), damit die spurige Richtung <code>f⁻</code> sich hebt und nur die <em>bekannte, transportierbare</em> Richtung <code>f⁺</code> übrig bleibt. Beide Antworten auf „was fehlt, damit sich Vorwärts-Zustände robust kombinieren/transportieren lassen?“ lauten: <em>ein wohldefiniertes Rückwärts-Kanal / eine kanonische Richtung.</em></li>
+        <li><strong>Linearität als geteilter Boden.</strong> B's Funktor ist auf der Tangentialebene definiert (Kettenregel); A's kausal wirksames Signal wohnt in genau dieser linearen Ebene. A ist der <em>beobachtete</em> Fall von B's <em>garantiertem</em> lokalem Verhalten — nur dass hier die Tangente eine semantische Bedeutung („Wahrheit“) trägt.</li>
+      </ul>
+      <div class="callout"><strong>Fused-Kernaussage.</strong> Ein trainiertes Netz ist eine <em>bidirektionale</em> Maschine: Vorwärts rechnet Zustände, Rückwärts fordert sie (Request = Backprop). „Wahrheit“ ist keine magische Eigenschaft des Vektors, sondern <strong>die semantisch bedeutsame Request-Richtung</strong> eines Ausgabs („TRUE“), linearisiert und über Themen stabil. B erklärt, <em>warum</em> eine solche Richtung existiert und wohldefiniert ist; A zeigt, <em>dass</em> sie kausal wirksam und skali­erungs­robust ist.</div>
+  </section>
+
+  <section id="visualisierung">
+    <h2>Visualisierung — eine Richtung, drei Operationen</h2>
+    <p class="note">Ein 2-D-Schnitt durch den Residual-Stream. Zwei Wolken — <span style="color:var(--true)"><b>wahr</b></span> (grün) und <span style="color:var(--false)"><b>falsch</b></span> (pink) — getrennt durch die <em>Wahrheits-Richtung</code> <b style="color:var(--theta)">θ</b> (A). Der Punkt <b>h</b> ist der Zustand eines Satzes. Drei Operationen, <strong>eine</strong> Richtung: <b>Vorwärts-Lesen</b> A rechnet <code>P(true)=σ(θ·h)</code>; <b>Backprop-Gradient</b> B zeigt <code>∇ₕP = P(1−P)·θ</code> — <em>immer parallel</em> zu θ; <b>Request</b> B verschiebt h genau entlang θ, bis der Output den Zielwert b erreicht (gestrichelte Linie). Der Button „Kausal anschreiben“ führt A's Intervention <code>h←h+αθ</code> aus — und das Label dreht sich. <span style="color:var(--dim)"><em>h anklicken/ziehen</em> zum Bewegen.</span></p>
+
+    <div class="viz-box">
+      <canvas id="viz" width="760" height="520"></canvas>
+      <div class="hud">
+        <span class="slider">Ziel-Output b
+          <input type="range" id="tgt" min="2" max="98" value="90">
+          <span id="tgtval">0.90</span>
+        </span>
+        <button id="poke">⚡ Kausal anschreiben (h ← h+αθ)</button>
+        <button id="recenter">↺ h zurück</button>
+        <button id="theme">◐ Theme</button>
+      </div>
+      <div class="readout" id="ro"></div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--true)"></i>wahr (A)</span>
+        <span><i class="dot" style="background:var(--false)"></i>falsch (A)</span>
+        <span><i class="dot" style="background:var(--theta)"></i>θ = Wahrheits-Richtung (A)</span>
+        <span><i class="dot" style="background:var(--req)"></i>∇ₕP / Request (B)</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <div class="prov">
+      <div>
+        <a href="../geometrie_der_wahrheit.html">geometrie_der_wahrheit.html</a>
+        <div class="d">„The Geometry of Truth“ (Marks &amp; Tegmark, COLM 2024, arXiv:2310.06824): LLM-Repräsentation von Wahrheit/Falschheit als <em>emergente lineare Struktur</em> im Residual Stream — lineare Sonden, Mass-Mean, PCA, Aktivierungs-Patching, Transfer und kausale Intervention (NIE); abstrakte, datensatzübergreifende Richtung entsteht mit Skalierung.</div>
+      </div>
+      <div>
+        <a href="../backprop_als_funktor.html">backprop_als_funktor.html</a>
+        <div class="d">„Backprop as Functor“ (Fong, Spivak, Tuyéras, arXiv:1711.10455): überwachtes Lernen kategorientheoretisch — Lerner als Tupel <code>(P,I,U,r)</code>, die <em>Request-Funktion</em> als fehlendes Puzzleteil, <code>Learn</code> als symmetrisch monoidale Kategorie und <strong>Gradientenabstieg als Funktor <code>Para→Learn</code></strong>; Backpropagation = die Kompositionsregel dieses Funktors (Kettenregel, Bimonoide, Weight Tying).</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById('viz'), ctx=cv.getContext('2d');
+  if(!cv||!ctx){return;}
+  var DPR=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  var W=0,H=0;
+  // world coords
+  var WX0=-1.7, WX1=1.7, WY0=-1.3, WY1=1.3;
+  var M=46;
+  // truth direction (unit) in world coords, pointing right-up (y is down on screen)
+  var ang=-0.62; // ~ -35deg
+  var th=[Math.cos(ang),Math.sin(ang)];
+  var nvec=[-th[1],th[0]]; // perpendicular
+  function sig(x){return 1/(1+Math.exp(-x));}
+  function invSig(b){b=Math.max(0.02,Math.min(0.98,b));return Math.log(b/(1-b));}
+  function dot(a,b){return a[0]*b[0]+a[1]*b[1];}
+  function gauss(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+  var clouds=[];
+  function makeClouds(){
+    clouds={t:[],f:[]};
+    var i,a,along,perp;
+    for(i=0;i<230;i++){
+      along=0.78+gauss()*0.20;
+      perp=gauss()*0.34;
+      clouds.t.push([th[0]*along+nvec[0]*perp, th[1]*along+nvec[1]*perp]);
+    }
+    for(i=0;i<230;i++){
+      along=-(0.78+gauss()*0.20);
+      perp=gauss()*0.34;
+      clouds.f.push([th[0]*along+nvec[0]*perp, th[1]*along+nvec[1]*perp]);
+    }
+  }
+  var h=[-0.55*th[0]+0.16*nvec[0], -0.55*th[1]+0.16*nvec[1]];
+  var target=0.90;
+  var theme=null, dash=0, anim=null;
+
+  function isDark(){return document.documentElement.classList.contains('dark');}
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    function v(n,fb){var x=cs.getPropertyValue(n).trim();return x||fb;}
+    return {
+      canvas:v('--canvas','#05070E'), ink:v('--ink','#EAF0FF'),
+      dim:v('--dim','#8b97b8'), line:v('--line','#1c2740'),
+      tcol:v('--true','#34d399'), fcol:v('--false','#f472b6'),
+      theta:v('--theta','#7c9cff'), req:v('--req','#ffd166')
+    };
+  }
+  function resize(){
+    var r=cv.getBoundingClientRect();
+    W=r.width;H=r.height;
+    cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function px(x){return M+(x-WX0)/(WX1-WX0)*(W-2*M);}
+  function py(y){return M+(y-WY0)/(WY1-WY0)*(H-2*M);}
+  function inv(px_,py_){
+    return [WX0+(px_-M)/(W-2*M)*(WX1-WX0), WY0+(py_-M)/(H-2*M)*(WY1-WY0)];
+  }
+
+  function arrow(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();
+    ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=w||2;
+    if(dashed){ctx.setLineDash([7,6]);ctx.lineDashOffset=-dash;}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.setLineDash([]);
+    var a=Math.atan2(y2-y1,x2-x1),hs=8;
+    ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));
+    ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));
+    ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+  function line(x1,y1,x2,y2,color,w,dashed){
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=w||1.2;
+    if(dashed){ctx.setLineDash([5,6]);ctx.lineDashOffset=-dash;}
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.setLineDash([]);ctx.restore();
+  }
+  function label(t,x,y,color,align,size){
+    ctx.save();ctx.fillStyle=color;ctx.font='600 '+(size||12)+'px ui-monospace,Menlo,monospace';
+    ctx.textAlign=align||'left';ctx.textBaseline='middle';ctx.fillText(t,x,y);ctx.restore();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=theme.canvas;ctx.fillRect(0,0,W,H);
+    // decision boundary (through origin, along nvec)
+    var ext=3.0;
+    line(px(-ext*nvec[0]),py(-ext*nvec[1]),px(ext*nvec[0]),py(ext*nvec[1]),theme.line,1.2,true);
+    // clouds
+    var i,p;
+    ctx.globalAlpha=isDark()?0.55:0.7;
+    ctx.fillStyle=theme.tcol;
+    for(i=0;i<clouds.t.length;i++){p=clouds.t[i];ctx.fillRect(px(p[0])-1,py(p[1])-1,2,2);}
+    ctx.fillStyle=theme.fcol;
+    for(i=0;i<clouds.f.length;i++){p=clouds.f[i];ctx.fillRect(px(p[0])-1,py(p[1])-1,2,2);}
+    ctx.globalAlpha=1;
+    // theta arrow from origin
+    arrow(px(0),py(0),px(th[0]*1.25),py(th[1]*1.25),theme.theta,2.4,false);
+    label('θ',px(th[0]*1.34),py(th[1]*1.34)-12,theme.theta,'center',14);
+    // score s and prob
+    var s=dot(h,th), P=sig(s), gmag=P*(1-P);
+    // request target h'
+    var delta=invSig(target)-s;
+    var hr=[h[0]+delta*th[0], h[1]+delta*th[1]];
+    // request arrow (dashed)
+    arrow(px(h[0]),py(h[1]),px(hr[0]),py(hr[1]),theme.req,1.8,true);
+    // gradient arrow (from h, parallel to theta, scaled by P(1-P))
+    var glen=gmag*0.95;
+    arrow(px(h[0]),py(h[1]),px(h[0]+glen*th[0]),py(h[1]+glen*th[1]),theme.req,2.6,false);
+    // h point
+    ctx.save();
+    ctx.shadowBlur=14;ctx.shadowColor=theme.ink;
+    ctx.fillStyle=theme.ink;
+    ctx.beginPath();ctx.arc(px(h[0]),py(h[1]),6,0,6.2832);ctx.fill();
+    ctx.restore();
+    label('h',px(h[0])+11,py(h[1])-11,theme.ink,'left',13);
+    // target marker
+    ctx.save();ctx.strokeStyle=theme.req;ctx.lineWidth=2;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.arc(px(hr[0]),py(hr[1]),7,0,6.2832);ctx.stroke();ctx.restore();
+    // readout
+    var lbl=P>=0.5?'WAHR':'FALSCH';
+    document.getElementById('ro').innerHTML=
+      's = θ·h = <b>'+s.toFixed(2)+'</b> &nbsp;·&nbsp; P(true)=σ(s) = <b>'+P.toFixed(3)+'</b> &nbsp;·&nbsp; Label: <b>'+lbl+'</b><br>'+
+      '∇ₕP = P(1−P)·θ, ‖∇ₕP‖ = <b>'+gmag.toFixed(3)+'</b> &nbsp;·&nbsp; <b style="color:var(--req)">∇ₕP ∥ θ (immer)</b><br>'+
+      'Request zu b='+target.toFixed(2)+': Δ = σ⁻¹(b)−s = <b>'+delta.toFixed(2)+'</b> &nbsp;·&nbsp; Verschiebung h ← h'+(delta>=0?'+':'')+delta.toFixed(2)+'·θ';
+  }
+
+  function loop(){
+    dash=(dash+0.5)%1000;
+    if(anim){
+      h[0]+=(anim[0]-h[0])*0.2; h[1]+=(anim[1]-h[1])*0.2;
+      if(Math.abs(anim[0]-h[0])+Math.abs(anim[1]-h[1])<0.004){h[0]=anim[0];h[1]=anim[1];anim=null;}
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  function worldAt(e){
+    var r=cv.getBoundingClientRect();
+    var cx=e.clientX-r.left, cy=e.clientY-r.top;
+    return inv(cx,cy);
+  }
+  var dragging=false;
+  cv.addEventListener('pointerdown',function(e){
+    dragging=true;try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    var w=worldAt(e);h[0]=w[0];h[1]=w[1];anim=null;
+  });
+  cv.addEventListener('pointermove',function(e){
+    if(!dragging)return;var w=worldAt(e);h[0]=w[0];h[1]=w[1];
+  });
+  cv.addEventListener('pointerup',function(){dragging=false;});
+
+  document.getElementById('tgt').addEventListener('input',function(e){
+    target=+e.target.value/100;
+    document.getElementById('tgtval').textContent=target.toFixed(2);
+  });
+  document.getElementById('recenter').addEventListener('click',function(){
+    h=[-0.55*th[0]+0.16*nvec[0], -0.55*th[1]+0.16*nvec[1]];anim=null;
+  });
+  document.getElementById('poke').addEventListener('click',function(){
+    var s=dot(h,th), d=invSig(target)-s;
+    anim=[h[0]+d*th[0], h[1]+d*th[1]];
+  });
+  document.getElementById('theme').addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+  });
+  window.addEventListener('resize',resize);
+  new MutationObserver(function(){theme=readTheme();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+
+  theme=readTheme();makeClouds();resize();loop();
+})();
+</script>
+</body>
+</html>

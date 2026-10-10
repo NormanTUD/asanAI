@@ -1,0 +1,16 @@
+{
+  "no": "078",
+  "a": "topologie_tiefer_neuronaler_netze.html",
+  "b": "deep.html",
+  "a_title": "Die Topologie tiefer neuronaler Netze — Interaktiv erklärt",
+  "b_title": "Deep Neural Networks Entmystifiziert",
+  "combined_theme": "formverformung-und-ausdruckskraft",
+  "one_line": "Ein trainiertes Netz ist eine stückweise-affine Formverformungsmaschine: die Ausdruckskraft (lineare Regionen, B) ist die notwendige Bedingung, die topologische Vereinfachung (Betti-Kollaps, A) die operative Dynamik — der ReLU-Knick ist zugleich Approximations-Baustein und Faltung.",
+  "contradictions": [
+    "A: Approximation ist nicht die richtige Denkweise (ein weites Schicht genügt) — B: die Ausdruckskraft (N^L lineare Regionen) ist der Grund, warum Tiefe mächtig ist.",
+    "A: ReLU gewinnt, weil es nicht-injektiv/faltet und Topologie zerstört (Gradient-/Schärfe-Erklärung unvollständig) — B: ReLU ist nur eine Knicke-funktion, die beliebige Kurven approximiert.",
+    "B behandelt tanh als austauschbare Aktivierungsfunktion — A: tanh ist per Konstruktion ein Homöomorphismus und kann die Topologie prinzipiell gar nicht ändern."
+  ],
+  "resolution": "Notwendige vs. hinreichende Bedingung: Ausdruckskraft macht das Entwirren möglich (Kapazität), die topologische Vereinfachung ist der beobachtete Ablauf (Mechanismus) — beide Seiten derselben Formverformung. Derselbe ReLU-Knick ist lokal ein lineare-Region-Baustein (B) und global, sobald der Bias einen Bereich negativ macht, eine viele-zu-eins-Faltung (A); tanh fehlt genau dieser Faltung (glatt + homöomorph) und baut deshalb Topologie nicht ab.",
+  "viz": "Interaktives 2D-Entwirren: zwei ineinanderliegende Ringe durchlaufen ein parametrisches ReLU-Netz (Geometrie → Faltung (x,y)↦(|x|,|y|) → Trennung). Live berechnet (ohne externe Abhängigkeiten): β₀ pro Klasse (ε-Nachbargraph), β₁ (Winkelabdeckung + Hülltest), ω und die Lineartrennbarkeit (disjunkte Hüllpolygone) mit gezeichneter Trennlinie. Regler für Fortschritt/Tiefe/Breite, Ausdruckskraft-Meter (Regionen ≈ (N/2)^2L) und Umschalter ReLU (entwirrt, β₁→0, trennbar) vs. tanh (bleibt ineinanderliegend, homöomorph). Theme-aware (light/dark), keine Netzwerkdaten."
+}

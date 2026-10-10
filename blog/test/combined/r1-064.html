@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion: HoTT-Fundament ✕ Wie ein LLM denkt</title>
+<style>
+  :root{
+    --bg:#f5f4ef; --bg2:#fbfaf7; --panel:#ffffff; --panel2:#f0efe8;
+    --ink:#1c2333; --ink2:#454f66; --ink3:#727d95;
+    --acc:#1f7a68; --acc2:#4f5fd6; --warn:#9a6b00; --err:#c23a4c; --ok:#227a4c;
+    --line:#d9d7cc;
+  }
+  html.dark{
+    --bg:#0b0e14; --bg2:#121722; --panel:#161c2a; --panel2:#1d2433;
+    --ink:#e8ecf4; --ink2:#a9b4c8; --ink3:#6b7689;
+    --acc:#5eead4; --acc2:#818cf8; --warn:#fbbf24; --err:#fb7185; --ok:#4ade80;
+    --line:#2a3344;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:34px 20px 90px}
+  header{padding:26px 0 10px;border-bottom:1px solid var(--line);margin-bottom:26px}
+  h1{font-size:clamp(26px,4.6vw,40px);line-height:1.1;margin:0 0 10px;letter-spacing:-.02em}
+  h1 .g{color:var(--acc)}
+  .sub{color:var(--ink2);margin:0;font-size:15px}
+  .sub .x{color:var(--acc2);font-family:ui-monospace,Menlo,monospace;font-size:.92em}
+  .fusenote{margin-top:10px;color:var(--ink3);font-size:13.5px}
+  section{margin:0 0 46px}
+  .chap{font:600 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:var(--acc);text-transform:uppercase;margin-bottom:8px;display:block}
+  h2{font-size:clamp(21px,3.2vw,30px);margin:0 0 14px;letter-spacing:-.01em}
+  h3{font-size:18px;margin:26px 0 10px}
+  p{color:var(--ink2);max-width:72ch}
+  p strong,li strong{color:var(--ink);font-weight:600}
+  ul,ol{color:var(--ink2);max-width:74ch}
+  li{margin:7px 0}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:var(--panel2);padding:2px 6px;border-radius:5px;color:var(--acc)}
+  .m{font-family:ui-monospace,Menlo,monospace;background:var(--panel2);padding:10px 14px;border-radius:10px;display:block;margin:14px 0;font-size:14px;color:var(--ink);border:1px solid var(--line);overflow-x:auto}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0}
+  .tag{display:inline-block;padding:2px 9px;border-radius:999px;font:600 11px/1.7 ui-monospace,Menlo,monospace}
+  .t-a{background:color-mix(in srgb, var(--acc) 16%, transparent);color:var(--acc)}
+  .t-b{background:color-mix(in srgb, var(--acc2) 16%, transparent);color:var(--acc2)}
+  .t-c{background:color-mix(in srgb, var(--warn) 18%, transparent);color:var(--warn)}
+  .note,.honest,.warn{border-radius:12px;padding:14px 16px;margin:16px 0;font-size:14.5px;line-height:1.6}
+  .note{background:color-mix(in srgb, var(--acc) 8%, transparent);border-left:3px solid var(--acc)}
+  .honest{background:color-mix(in srgb, var(--err) 9%, transparent);border-left:3px solid var(--err)}
+  .warn{background:color-mix(in srgb, var(--warn) 10%, transparent);border-left:3px solid var(--warn)}
+  .note b,.honest b,.warn b{color:var(--ink)}
+  .note p,.honest p,.warn p{margin:6px 0;max-width:none}
+  .cbox{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--bg2)}
+  .cbox .head{font-weight:600;color:var(--ink);margin-bottom:6px;font-size:15px}
+  .cbox p{margin:4px 0;font-size:14.5px}
+  .who{font-weight:600;font-size:.92em;padding:1px 7px;border-radius:6px}
+  .who.a{color:var(--acc)}
+  .who.b{color:var(--acc2)}
+  .map{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
+  .map th,.map td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  .map th{color:var(--ink3);font:600 11px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase}
+  .map td{color:var(--ink2)}
+  .map td:first-child{color:var(--acc2)}
+  .lab{background:linear-gradient(170deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0}
+  .lab > h4{margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:9px}
+  .lab > h4::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc)}
+  .labnote{color:var(--ink3);font-size:13.5px;margin:0 0 14px;max-width:70ch}
+  .ctrls{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;margin:12px 0}
+  .ctrl{display:flex;flex-direction:column;gap:5px;min-width:140px}
+  .ctrl label{font:600 11px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;color:var(--ink3);text-transform:uppercase}
+  .ctrl .val{color:var(--acc);font-family:ui-monospace,Menlo,monospace;font-size:12px}
+  .chk{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--ink2);cursor:pointer;user-select:none}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line);border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--acc);cursor:pointer}
+  button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);padding:8px 15px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:500;transition:.15s}
+  button:hover{border-color:var(--acc)}
+  button.pri{background:var(--acc);color:var(--bg);border:0;font-weight:700}
+  canvas{display:block;width:100%;border-radius:12px;background:var(--panel2);border:1px solid var(--line)}
+  .cap{color:var(--ink3);font-size:12.5px;margin-top:10px;font-style:italic}
+  #vizStatus{color:var(--ink2);font-style:normal;font-weight:600}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:30px;color:var(--ink3);font-size:13.5px}
+  a{color:var(--acc2)}
+  .themebtn{position:fixed;top:12px;right:12px;z-index:50}
+</style>
+</head>
+<body>
+<button class="themebtn" id="btnTheme" title="Theme wechseln">☾ / ☀</button>
+<div class="wrap">
+
+<header>
+  <h1>HoTT-Fundament <span class="g">✕</span> die Mechanik echter LLMs</h1>
+  <p class="sub">Fusion aus: <span class="x">hott_ai.html</span> ✕ <span class="x">wie_ein_llm_denkt.html</span></p>
+  <p class="fusenote">Round 1 · id 064 · Selbstständige Aufbereitung — beide Quellen sind die Wahrheit, hier verschmolzen.</p>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="these">
+  <span class="chap">Kernthese der Fusion</span>
+  <h2>Ein Satz, der beide verbindet</h2>
+  <p>Beide Texte fragen nach dem, was <strong>unter</strong> einem KI-System stehen muss — aber aus entgegengesetzten Richtungen. <span class="who a">A (Youvan, HoTT)</span> antwortet von oben nach unten: Baue KI auf einem tiefen mathematischen Fundament — der <strong>Homotopie-Typentheorie</strong> — auf, damit <strong>Verifikation, Erklärbarkeit und Ausdruckskraft zu eingebauten Eigenschaften</strong> werden statt zu nachträglichen Reparaturen; ihr Kernsatz ist <em>„Gleichheit ist ein Pfad“</em> (Identitätstypen). <span class="who b">B (Wie ein LLM denkt)</span> antwortet von unten nach oben, empirisch: Es kartiert, was ein <strong>echtes, trainiertes</strong> Transformer-Block <strong>tatsächlich</strong> rechnet — ein <strong>metastabiles dynamisches System</strong>, das Kontraktion (Attention auf der Positionsachse) und Verfeinerung (FFN auf der Featureachse, additiv in den Residual-Stream) über zwei orthogonale Achsen ausbalanciert — und mit ungewöhnlicher Ehrlichkeit markiert, was <em>belegt</em>, was <em>offen</em>, was <em>widersprüchlich</em> ist.</p>
+  <p><strong>Die verschmolzene These:</strong> B offenbart die <em>Struktur</em>; A liefert die <em>Sprache</em>, diese Struktur exakt und verifizierbar zu fassen. Ein echter Transformer zeigt, <em>gemessen</em> und nicht behauptet, schon genau die Objekte, die HoTT formalisieren soll — Ströme/Pfade (Tokens werden in Cluster gezogen), Äquivalenzen (Tokens, die im selben Cluster landen), höhere Relationen (zwei Phasen, überlagerte Neuronen) und nicht-injektive Repräsentationen („viele Konzepte, wenige Dimensionen“). Die Fusion ist also <strong>nicht</strong> „ersetze den Transformer durch HoTT“, sondern: <strong>type den Zweig, formalisiere die Pfade und Äquivalenzen, die das dynamische System schon zeigt, und lies Superposition als höhere Identität, die einen Interferenzpreis zahlt.</strong> Vertrauen auf das Fundament (A) ist erst dann berechtigt, wenn man den Mechanismus versteht (B) — die beiden sind Voraussetzungen voneinander.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="widersprueche">
+  <span class="chap">Widersprüche zwischen A und B</span>
+  <h2>Wo die beiden unvereinbar stehen</h2>
+
+  <div class="cbox">
+    <div class="head">1 · Konfidenz: „Fundament“ vs. „noch nicht vollständig verstanden“</div>
+    <p><span class="who a">A</span> schließt mit einem bejahenden <em>„Ja — HoTT ist kein Trick, sondern ein Fundament“</em> und listet sechs konkrete Anwendungen (Verifikation, Fairness, Privacy, Robustheit, Quanten-KI, XAI) als machbar auf.</p>
+    <p><span class="who b">B</span> eröffnet dagegen explizit mit <em>„Diese Seite erklärt etwas, das noch nicht vollständig verstanden ist“</em> und kennzeichnet sogar seine anschaulichste These (FFN = „Falten“ à la Origami) als <span class="tag t-c">offen</span> („Keup nennt Transformer explizit als Zukunftsarbeit“) sowie das Verhältnis Falten↔Superposition als <span class="tag t-c">widersprüchlich</span>. A argumentiert <em>präsriptiv und zuversichtlich</em>; B <em>deskriptiv und zurückhaltend</em>.</p>
+  </div>
+
+  <div class="cbox">
+    <div class="head">2 · Sauber getypte Transformation &amp; „nachverfolgbare Entscheidungspfade“ vs. residual-additiver, nicht-injektiver Mechanismus</div>
+    <p><span class="who a">A</span> modelliert KI als <em>Funktionen zwischen Typen mit Beweisen</em> (Curry-Howard) und verspricht XAI über „Pfade der Entscheidungsfindung, die man nachverfolgen kann“ — ein einzelner, sauberer Verfolgungspfad durch das Modell.</p>
+    <p><span class="who b">B</span> misst dagegen: Das FFN <em>ersetzt</em> die Repräsentation nicht, sondern <em>addiert</em> auf den Residual-Stream (<code>LayerNorm(x + Sublayer(x))</code>); der Residual-Stream <em>gewinnt</em> in der „überwältigenden Mehrheit“ der Fälle, das FFN <em>verfeinert</em> nur (Kompromiss); und die Repräsentation ist bei Superposition <em>nicht injektiv</em> (mehr Features als Dimensionen, polysemantische Neuronen). A's idealisiertes „Funktion/Beweis/Ein-Pfad“-Bild ist nicht der Mechanismus, den B misst.</p>
+  </div>
+
+  <div class="cbox">
+    <div class="head">3 · Identität als saubere Äquivalenz (HoTT) vs. Superposition (Elhage)</div>
+    <p><span class="who a">A</span> — Kern ist der <strong>Identitätstyp</strong>: Jedes Objekt hat eine wohldefinierte Identität, und „gleich“ Dinge werden durch <em>Pfade</em> verbunden (z.&nbsp;B. „zwei Bilder derselben Katze“). Saubere, eindeutige Äquivalenz.</p>
+    <p><span class="who b">B</span> — <strong>Superposition</strong> (Elhage) ist das Gegenregime: Das Modell lagert <em>mehr</em> Konzepte ab, als es Dimensionen hat, als fast-orthogonale, sich <em>störende</em> Richtungen — ausdrücklich <em>nicht injektiv</em>, erkauft mit Interferenz. Saubere Äquivalenz (A) vs. überlappende, interferierende, polysemantische Kapazitätsgewinnung (B).</p>
+  </div>
+
+  <div class="warn">
+    <p><b>Fairst Check:</b> Das sind keine Missverständnisse, sondern echte Spannungslinien — A ist ein <em>Positionspapier/Vision</em> (explizit: kein Experiment, keine Benchmarks, kein Code), B ein <em>belegtes deskriptives Modell</em>. A <em>verlangt</em> eine Eigenschaft (saubere Identität/Pfade), die B empirisch <em>verweigert</em> (nicht-injektive Superposition, Kompromiss statt Pfad).</p>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="aufloesung">
+  <span class="chap">Auflösung</span>
+  <h2>Wie man die Widersprüche auflöst — und die verschmolzene Schlussfolgerung</h2>
+
+  <h3>R1 · Verschiedene Ebenen, keine Konkurrenz</h3>
+  <p>B liefert das <strong>Objekt</strong> (ein metastabiles dynamisches System mit zwei orthogonalen Achsen); A liefert die <strong>formale Sprache</strong>, dieses Objekt exakt zu fassen. Man kann kein Fundament auf ein Modell bauen, dessen Mechanik man nicht versteht — also <em>B vor A</em>. Umgekehrt sind B's Befunde (Pfade/Ströme, Äquivalenzen, Superposition) <em>genau</em> die Phänomene, die HoTTs Identitätstypen, höhere Identität und Typsysteme formalisieren sollen. A ist daher keine <em>Ersetzung</em> des Transformer, sondern eine <em>Formalisierungsschicht</em> auf der Struktur, die B offenlegt. Die Konfidenzklippe löst sich, indem A von „fertiges Fundament“ zu „die richtige <em>Sprache</em> für die Struktur, die B misst“ demotiert wird — was B's epistemische Kennzeichnungen respektiert.</p>
+
+  <h3>R2 · Zweig und Stream trennen</h3>
+  <p>Der Konflikt „sauber getypte Funktion/Pfad“ vs. „residual-additiv/nicht-injektiv“ löst sich, indem man <em>Zweig</em> und <em>Stream</em> trennt: Der FFN-<strong>Zweig</strong> ist eine echte Funktion (A kann sie typisieren: <code>A → B</code> und als Beweis verifizieren); der <strong>Residual-Stream</strong> ist, wo die nicht-injektive Superposition und die Verfeinerung leben. A's Typentheorie greift am <em>Zweig</em>; B's Residual-/Superpositions-Tatsachen beschreiben den <em>Stream</em>. Beide regieren verschiedene Teile desselben Blocks. Und A's „nachverfolgbare Entscheidungspfade“ (XAI) lassen sich als B's gemessener <em>Verfeinerungsmechanismus</em> neu lesen: nicht ein Pfad <em>durch</em> eine Schicht, sondern ein Pfad <em>durch die Schichten</em> — die Folge sukzessiver Residual-Updates, die die Vorhersage sanft nachjustieren.</p>
+
+  <h3>R3 · Höhere Identität statt „ein Objekt, eine Identität“</h3>
+  <p>HoTTs <strong>höhere Identität</strong> ist gerade <em>kein</em> „ein Objekt, eine Identität“. Ein 2-Pfad ist „zwei Beweise/Pfade, die dieselben Endpunkte verbinden“ — <em>mehrere Arten, gleich zu sein</em>. Superposition (ein Neuron, viele überlappende Konzepte, Polysemie) ist der <em>empirische Schatten</em> dieser höheren Identität. Die „Interferenz“, vor der Elhage warnt, ist der <em>Preis</em> dafür, dass viele Pfade Struktur teilen; HoTT macht diesen Preis erstklassig und messbar. Der Widerspruch ist also „Identität auf Stufe 0“ (klassisch) vs. „Identität auf Stufe ≥ 1“ (HoTT) — B's Superposition ist <em>höhere Identität in Aktion</em>.</p>
+
+  <div class="note">
+    <p><b>Ein Bonus-Fit:</b> B's ehrliche Status-Tags (<em>belegt / Analogie / offen / widersprüchlich</em>) sind das <em>laufzeit-/empirische</em> Pendant zu A's <em>compile-time</em>-Typsystem. Beide sind „Wächter, die verhindern, dass man Unsinn behauptet“ — der eine bei der Konstruktion (Typen), der andere bei der Behauptung (Belegstatus). Die Fusion führt beide Wächter zu einer einzigen Disziplin zusammen: <em>typisiere die Konstruktion, kennezeichne die Behauptung.</em></p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="inhalt">
+  <span class="chap">Fusionierter Inhalt</span>
+  <h2>Was beide zusammen sagen</h2>
+
+  <h3>Die Mechanik des Blocks (von B, belegt)</h3>
+  <p>Alles geschieht in einer <strong>Tabelle</strong>: Tokens als Zeilen, Features als Spalten. <strong>Attention arbeitet auf der Positionsachse</strong> (über alle Positionen eine gewichtete Summe; Q/K/V; β = inverse Temperatur, die die Auswahl schärft), <strong>das FFN auf der Featureachse</strong> (auf jede Position separat und identisch). Weil sie in verschiedenen Richtungen schauen, stören sie sich nicht gegenseitig. <strong>Attention ist eine Anziehungskraft</strong>: ohne Gegenkraft kollabieren fast alle Tokens zu einem Punkt (bewiesen für <code>d ≥ 3</code>, exponentiell für <code>d ≥ n</code>). Reale Modelle leben im <strong>metastabilen Zustand</strong> — zwei Geschwindigkeiten: Phase 1 (schnell, nützliche Clusterbildung: „Fluss“+„Ufer“ rücken zusammen), Phase 2 (sehr viel langsamer, alles verschmilzt = Tod). 12/24/96 Schichten reichen für Phase 1, nicht für Phase 2. Die <strong>Form</strong> des Kollaps hängt vom Spektrum der Value-Matrix V ab (vier Fälle). Das <strong>FFN ist ein Key-Value-Speicher</strong> (Schlüssel = Muster, Wert = nächste-Wort-Verteilung; ~3,6 Muster pro Schlüssel; Schicht 1–9 oberflächlich, 10–16 semantisch; nur 10–50 % der Zellen aktiv). Der <strong>Residual-Stream dominiert</strong> die Vorhersage; das FFN <em>verfeinert</em> (Kompromiss, selten Ersetzung). <strong>Superposition</strong>: spärliche Features werden als fast-orthogonale Richtungen übereinandergelegt (mehr Features als Dimensionen), erkauft mit Interferenz und polysemantischen Neuronen; ein echter Phasenwechsel. Das <strong>„Falten“-Bild</strong> (Keup) erklärt, warum die innere FFN-Schicht breiter ist (<code>d_ff = 4·d_model</code>), ist aber ein reines <em>Intuitionsbild</em> (nicht für Transformer bewiesen, unter SwiGLU's multiplikativem Gating unklar).</p>
+
+  <h3>Die formale Sprache (von A)</h3>
+  <p><strong>Typen als Wächter:</strong> Statt „Elemente einer Menge“ sagt man <code>a : A</code>; ein reiches Typsystem fängt Fehler <em>vor</em> der Ausführung (Tensor-Shape, PII, „Ausgabe ist keine Wahrscheinlichkeit“). <strong>Curry-Howard:</strong> Sätze sind Typen, Beweise sind Programme — wer das richtige Programm liefert, hat die Aussage bewiesen (Grundlage von Coq/Lean/Agda). <strong>Homotopie:</strong> Zwei Wege sind „im Wesentlichen gleich“, wenn man einen stetig in den anderen deformieren kann, Endpunkte fest; Löcher sind Hindernisse (nicht alle Pfade sind homotop). <strong>Identitätstypen:</strong> <code>a = b</code> ist kein Wahr/Falsch, sondern der <em>Typ aller Pfade</em> <code>Id_A(a,b)</code> zwischen a und b — es gibt <em>mehrere Arten, gleich zu sein</em>. <strong>Höhere Dimensionen:</strong> Pfade zwischen Pfaden (2-, 3-Pfade …) ergeben ein <strong>∞-Gruppoid</strong>. <strong>Anwendungen:</strong> formale Verifikation (Differential Privacy, Kredit-Fairness, Adversarial Robustness), Unsicherheit höherer Ordnung („Sicherheit über meine Sicherheit“ als 2-Pfad zwischen Verteilungen), Semantic-Web/Knowledge-Graph via Identitätspfade zwischen verschiedenen Beschreibungen, Quanten-KI (Qubit auf der Bloch-Kugel, Gates als Pfade), XAI (strukturierte Entscheidungspfade).</p>
+
+  <h3>Die Verschmelzung — Struktur ↔ formales Objekt</h3>
+  <table class="map">
+    <tr><th>Was B misst</th><th>Was A dafür formalisiert</th></tr>
+    <tr><td>Token-Cluster („Fluss“+„Ufer“ zusammen)</td><td>Objekte in derselben Homotopie-Klasse, verbunden durch einen Identitätspfad</td></tr>
+    <tr><td>zwei Phasen (Clusterbildung → Kollaps)</td><td>höhere Identität: ein 2-Pfad ist die Relation zwischen zwei Wegen der Gruppierung</td></tr>
+    <tr><td>FFN Key-Value-Speicher</td><td>getypte Funktion <code>Schlüssel → Wert</code>, als Beweis prüfbar</td></tr>
+    <tr><td>Residual-Verfeinerung über Schichten</td><td>Entscheidungspfad = Zusammensetzung der pro-Schicht-Refinements (Pfad durch den Schicht-Stack)</td></tr>
+    <tr><td>Superposition (viele Konzepte / wenige Dimensionen, Interferenz)</td><td>höhere Identität + ein messbarer „Interferenzpreis“</td></tr>
+    <tr><td>Status-Tags <em>belegt/offen/widersprüchlich</em></td><td>der empirische Pendant zu A's compile-time Typsystem (Wächter der Behauptung)</td></tr>
+  </table>
+
+  <div class="m">Block:  x' = LayerNorm( x + Attention(x) )          — Kontraktion (Positionsachse)<br>
+  x'' = LayerNorm( x' + FFN(x') )                    — Verfeinerung (Featureachse)<br>
+  HoTT:   FFN : Key → Value   (getypter Zweig, verifizierbar)<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cluster : a = b  ⇒  p : Id_A(a, b)  ·&nbsp;Superposition ⇒ 2-Pfade mit Interferenzpreis</div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="visualisierung">
+  <span class="chap">Visualisierung</span>
+  <h2>Metastabile Kontraktion + Identitätspfade</h2>
+  <p>Drei Konzepte (Cluster), je fünf Tokens. Die <strong>Schicht</strong>-Regler steuert die Zeit: Phase 1 zieht Tokens schnell in ihre Cluster (nützlich), Phase 2 (nach der metastabilen Zone) zieht alles gegen den Mittelpunkt — Kollaps, Information geht verloren. Die eingeblendeten Kurven sind A's <strong>Identitätspfade</strong> (<code>Id_A(a,b)</code>); die halbtransparenten Flächen sind <strong>2-Pfade / höhere Identität</strong>. Das ist die Fusion in einem Bild: B's Dynamik, A's Sprache.</p>
+
+  <div class="lab">
+    <h4>Metastabilität &amp; Identitätspfade</h4>
+    <p class="labnote">Schicht nach rechts schieben oder „Durchlaufen“ drücken. β steuert, wie scharf Attention zieht. Beobachte, wie die metastabile Zone (grün) den nützlichen Cluster-Gruppenbildungsbereich markiert, bevor der Kollaps setz.</p>
+    <div class="ctrls">
+      <div class="ctrl">
+        <label>Schicht (Zeit) <span class="val" id="vL">0</span></label>
+        <input type="range" id="sL" min="0" max="40" step="1" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Schärfe β <span class="val" id="vB">3.0</span></label>
+        <input type="range" id="sB" min="0.5" max="8" step="0.1" value="3">
+      </div>
+      <label class="chk"><input type="checkbox" id="cPath" checked> Identitätspfade</label>
+      <label class="chk"><input type="checkbox" id="cHi"> 2-Pfade (höhere Identität)</label>
+      <button id="bPlay" class="pri">▶ Durchlaufen</button>
+    </div>
+    <canvas id="cViz" height="430"></canvas>
+    <div class="cap" id="vizStatus">Schicht 0 · …</div>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="provenienz">
+  <span class="chap">Provenienz</span>
+  <h2>Die beiden Quellen</h2>
+  <div class="card">
+    <p><a href="../hott_ai.html"><strong>hott_ai.html</strong></a> <span class="tag t-a">A</span></p>
+    <p>Interaktive Aufbereitung von Youvans „Homotopy Type Theory: A New Foundation for AI Architecture“ (2024): HoTT als Fundament für KI — Identitätstypen (Gleichheit = Pfad), ∞-Gruppoid, Curry-Howard, und sechs Anwendungen (Verifikation, Fairness/Privacy/Robustheit, höhere Unsicherheit, Semantic Web, Quanten-KI, XAI). Explizit ein Positionspapier/Vision ohne Experiment oder Code.</p>
+  </div>
+  <div class="card">
+    <p><a href="../wie_ein_llm_denkt.html"><strong>wie_ein_llm_denkt.html</strong></a> <span class="tag t-b">B</span></p>
+    <p>Empirisch auf sieben Facharbeiten (Vaswani, Geshkovski 2023/24, Geva, Elhage, Shazeer, Keup) zurückgeführte Erklärung, was ein Transformer-Block tut: Attention (Kontraktion, bewiesener Kollaps, Metastabilität an ALBERT), FFN als Key-Value-Speicher, der dominierende Residual-Stream, Superposition — mit ehrlichen Belegstatus-Tags.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Round-1-Fusion (id 064) · Kernthese: B liefert die Struktur, A die Sprache, sie zu formalisieren. Alle Aussagen sind auf die beiden Quellen zurückführbar; die Visualisierung ist eine didaktische Vereinfachung (2D), die beide Mechaniken vereint.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+document.documentElement.classList.toggle('dark', true);
+$('btnTheme').addEventListener('click',function(){
+  document.documentElement.classList.toggle('dark');
+});
+
+var cv=$('cViz'); if(!cv) return;
+var DPR=Math.min(window.devicePixelRatio||1,2);
+var TAU=Math.PI*2;
+function lerp(a,b,t){return a+(b-a)*t;}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+var _s=20240611;
+function rnd(){ _s=(_s*1664525+1013904223)&0xffffffff; return (_s>>>0)/4294967296; }
+
+var GROUPS=3, PER=5, N=GROUPS*PER;
+var tokens=[];
+for(var g=0;g<GROUPS;g++){
+  var ang=-Math.PI/2 + g*TAU/GROUPS;
+  var cx=Math.cos(ang)*0.55, cy=Math.sin(ang)*0.55;
+  for(var k=0;k<PER;k++){
+    var a2=rnd()*TAU, rr=0.22+rnd()*0.34;
+    tokens.push({g:g, cx:cx, cy:cy, bx:cx+Math.cos(a2)*rr, by:cy+Math.sin(a2)*rr, ph:rnd()*TAU});
+  }
+}
+
+var GRP=['#5eead4','#818cf8','#fbbf24'];
+
+function pal(){
+  var cs=getComputedStyle(document.documentElement);
+  function get(n){return cs.getPropertyValue(n).trim();}
+  return {
+    bg:get('--panel2')||'#111',
+    ink:get('--ink')||'#eee',
+    ink2:get('--ink2')||'#aaa',
+    ink3:get('--ink3')||'#777',
+    line:get('--line')||'#333',
+    acc:get('--acc')||'#5eead4',
+    ok:get('--ok')||'#4ade80'
+  };
+}
+function hexToRgb(str){
+  str=(str||'').trim();
+  if(str.charAt(0)==='#'){
+    var h=str.slice(1);
+    if(h.length===3){ h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    var n=parseInt(h,16);
+    if(isNaN(n)) return [200,200,200];
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+  var m=str.match(/rgba?\(([^)]+)\)/);
+  if(m){ var p=m[1].split(',').map(function(x){return parseFloat(x);}); return [p[0]||0,p[1]||0,p[2]||0]; }
+  return [200,200,200];
+}
+function rgba(rgb,a){ return 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+','+a+')'; }
+
+var L=0, B=3, showPath=true, showHi=false, playing=false;
+
+function toXY(x,y,w,h){
+  return [ w/2 + x*(w/2-46), h/2 + y*(h/2-52) ];
+}
+function pos(tk,L,B,w,h){
+  var t=L;
+  var t1=1-Math.exp(-0.09*B*t/PER);
+  var x=lerp(tk.bx, tk.cx, t1);
+  var y=lerp(tk.by, tk.cy, t1);
+  var Lcrit=14, gcol=0;
+  if(t>Lcrit){ gcol=1-Math.exp(-(t-Lcrit)*0.08*(B/3)); }
+  x=lerp(x,0,gcol); y=lerp(y,0,gcol);
+  x+=0.005*Math.sin(tk.ph+t*0.25);
+  y+=0.005*Math.cos(tk.ph+t*0.25);
+  return toXY(x,y,w,h);
+}
+function drawAxis(ctx,w,h,P){
+  var x0=44, x1=w-18, y=h-28;
+  ctx.strokeStyle=P.line; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke();
+  var bx0=x0+(8/40)*(x1-x0), bx1=x0+(22/40)*(x1-x0);
+  ctx.fillStyle=rgba(hexToRgb(P.ok),0.14);
+  ctx.fillRect(bx0,y-9,bx1-bx0,18);
+  ctx.fillStyle=P.ink3; ctx.font='10px ui-monospace,monospace'; ctx.textAlign='center';
+  for(var t=0;t<=40;t+=10){
+    var x=x0+(t/40)*(x1-x0);
+    ctx.strokeStyle=P.line; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y+4); ctx.stroke();
+    ctx.fillText(t,x,y+16);
+  }
+  ctx.fillText('metastabile Zone',(bx0+bx1)/2,y-14);
+  var mx=x0+(clamp(L,0,40)/40)*(x1-x0);
+  ctx.strokeStyle=P.acc; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(mx,y-12); ctx.lineTo(mx,y+12); ctx.stroke();
+}
+function draw(){
+  var P=pal();
+  var w=cv.clientWidth, h=parseInt(cv.getAttribute('height'),10)||430;
+  cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
+  var ctx=cv.getContext('2d'); ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.fillStyle=P.bg; ctx.fillRect(0,0,w,h);
+
+  var pts=[];
+  for(var i=0;i<N;i++){ pts.push(pos(tokens[i],L,B,w,h)); }
+  var cent=[];
+  for(var g=0;g<GROUPS;g++){
+    var sx=0,sy=0,n=0;
+    for(var i2=0;i2<N;i2++){ if(tokens[i2].g===g){ sx+=pts[i2][0]; sy+=pts[i2][1]; n++; } }
+    cent.push([sx/n,sy/n]);
+  }
+
+  if(showHi){
+    for(var g2=0;g2<GROUPS;g2++){
+      var idx=[];
+      for(var i3=0;i3<N;i3++){ if(tokens[i3].g===g2) idx.push(pts[i3]); }
+      var c=cent[g2];
+      idx.sort(function(p,q){
+        return Math.atan2(p[1]-c[1],p[0]-c[0]) - Math.atan2(q[1]-c[1],q[0]-c[0]);
+      });
+      ctx.beginPath();
+      for(var i4=0;i4<idx.length;i4++){
+        if(i4===0) ctx.moveTo(idx[i4][0],idx[i4][1]); else ctx.lineTo(idx[i4][0],idx[i4][1]);
+      }
+      ctx.closePath();
+      ctx.fillStyle=rgba(hexToRgb(GRP[g2]),0.10);
+      ctx.fill();
+      ctx.strokeStyle=rgba(hexToRgb(GRP[g2]),0.30);
+      ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+
+  if(showPath){
+    for(var g3=0;g3<GROUPS;g3++){
+      var cc=cent[g3]; var rgb=hexToRgb(GRP[g3]);
+      for(var i5=0;i5<N;i5++){
+        if(tokens[i5].g!==g3) continue;
+        var p=pts[i5];
+        var mx=(p[0]+cc[0])/2, my=(p[1]+cc[1])/2;
+        var dx=cc[0]-p[0], dy=cc[1]-p[1]; var len=Math.hypot(dx,dy)||1;
+        var ox=-dy/len*11, oy=dx/len*11;
+        ctx.strokeStyle=rgba(rgb,0.32); ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.quadraticCurveTo(mx+ox,my+oy,cc[0],cc[1]); ctx.stroke();
+      }
+    }
+  }
+
+  for(var g4=0;g4<GROUPS;g4++){
+    var c2=cent[g4];
+    ctx.fillStyle=rgba(hexToRgb(GRP[g4]),0.9);
+    ctx.beginPath(); ctx.arc(c2[0],c2[1],4,0,TAU); ctx.fill();
+    ctx.strokeStyle=P.bg; ctx.lineWidth=1.5; ctx.stroke();
+  }
+
+  for(var i6=0;i6<N;i6++){
+    var p2=pts[i6];
+    ctx.fillStyle=rgba(hexToRgb(GRP[tokens[i6].g]),0.95);
+    ctx.beginPath(); ctx.arc(p2[0],p2[1],5,0,TAU); ctx.fill();
+    ctx.strokeStyle=P.bg; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  drawAxis(ctx,w,h,P);
+
+  var st;
+  if(L<8) st='Phase 1 — nützliche Clusterbildung';
+  else if(L<22) st='Metastabil — der Zustand, in dem echte Modelle leben';
+  else st='Phase 2 — Kollaps: Information geht verloren';
+  $('vL').textContent=Math.round(L);
+  $('vizStatus').textContent='Schicht '+Math.round(L)+' · '+st;
+}
+
+$('sL').addEventListener('input',function(e){ L=+e.target.value; playing=false; });
+$('sB').addEventListener('input',function(e){ B=+e.target.value; $('vB').textContent=B.toFixed(1); });
+$('cPath').addEventListener('change',function(e){ showPath=e.target.checked; });
+$('cHi').addEventListener('change',function(e){ showHi=e.target.checked; });
+$('bPlay').addEventListener('click',function(){
+  if(playing){ playing=false; return; }
+  playing=true; L=0;
+});
+
+function loop(){
+  if(playing){
+    L+=0.22;
+    if(L>=40){ L=40; playing=false; }
+    $('sL').value=Math.round(L);
+  }
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
+})();
+</script>
+</body>
+</html>

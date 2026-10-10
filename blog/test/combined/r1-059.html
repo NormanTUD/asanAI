@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 059 — Falten &amp; Phasen: Berechnen als Koordinatenwechsel</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+:root {
+  --bg: #faf7f0; --fg: #26221b; --muted: #6b6459; --panel: #ffffff; --panel2: #f2eee4;
+  --line: #d9d2c3; --accent: #4a5fd0; --accent2: #b3413a; --good: #2e7d4f;
+  --warn: #a8721d; --bad: #b3261e; --inner: #b45309; --outer: #0f766e; --code-bg: #efeadd;
+}
+html.dark {
+  --bg: #101318; --fg: #dfe3ea; --muted: #98a0ad; --panel: #161a21; --panel2: #1c212b;
+  --line: #2c333f; --accent: #8b9cf5; --accent2: #f0776c; --good: #5ec98f;
+  --warn: #e0b34c; --bad: #ff6b6b; --inner: #ffb142; --outer: #19d3b5; --code-bg: #1d232d;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: Georgia, "Times New Roman", serif; line-height: 1.65; }
+article { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
+h1 { font-size: 1.85em; line-height: 1.25; margin: 0 0 6px; }
+.subtitle { color: var(--muted); font-style: italic; margin: 0 0 10px; }
+h2 { font-size: 1.3em; margin: 44px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+h3 { font-size: 1.02em; margin: 22px 0 8px; color: var(--accent); }
+p { margin: 10px 0; }
+ul { margin: 8px 0; padding-left: 22px; }
+li { margin: 6px 0; }
+a { color: var(--accent); }
+.formula { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 14px 0; overflow-x: auto; }
+.card { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent2); border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
+.card.f { border-left-color: var(--good); }
+.card h3 { margin: 0 0 8px; color: var(--fg); }
+.mono { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 0.9em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+.badge { display: inline-block; font-size: 0.68em; font-weight: 700; padding: 1px 8px; border-radius: 10px; border: 1px solid; vertical-align: 2px; margin-right: 4px; }
+.badge.a { color: var(--accent2); border-color: var(--accent2); }
+.badge.b { color: var(--accent); border-color: var(--accent); }
+canvas { display: block; width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+.controls { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; margin: 14px 0 4px; font-size: 0.88em; }
+.controls label { color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.controls input[type=range] { accent-color: var(--accent); width: 120px; }
+.controls .val { font-family: ui-monospace, monospace; color: var(--fg); }
+button { background: var(--panel2); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 0.85em; }
+button:hover { border-color: var(--accent); }
+.note { font-size: 0.85em; color: var(--muted); font-style: italic; margin-top: 8px; }
+table { border-collapse: collapse; margin: 12px 0; font-size: 0.92em; }
+td, th { border: 1px solid var(--line); padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: var(--panel2); }
+</style>
+</head>
+<body>
+<article>
+
+<h1>Falten &amp; Phasen — wenn Netze Koordinaten wechseln</h1>
+<p class="subtitle">Fusion aus: mod.html ✕ egg.html</p>
+
+<section id="these">
+<h2>Kernthese der Fusion</h2>
+<p>Beide Papiere beschreiben dasselbe Phänomen von zwei Enden her: Ein kleines Netz wird auf einer
+Aufgabe trainiert, die im Eingaberaum „schwer“ ist — <span class="badge a">A</span> modulare Addition
+<span class="mono">a + b mod 113</span> über One-Hot-Vektoren, <span class="badge b">B</span> ein Disk
+gegen einen Ring in der 2D-Ebene, den keine Gerade trennt. Am Ende tragen beide Gewichte, die wie
+<b>absichtlich konstruiert</b> aussehen — und beide Papiere reverse-engineern diese Gewichte zu einem
+sauberen geometrischen Satz. Die integrierte These lautet:</p>
+<p><b>Das Netz lernt keine Entscheidungsregel im Eingaberaum. Es lernt einen Koordinatenwechsel, der
+das Problem an einen Ort bringt, an dem die Antwort lokal lesbar ist</b> — und ein trivialer lokaler
+Probe-Mechanismus (Schwelle / Korrelationsmaximum) macht dann den Rest.</p>
+<p><span class="badge b">B</span> faltet die 2D-Ebene über
+<span class="mono">h(x) = Σ ReLU(wᵢ·x + bᵢ)</span> in den 3D-Raum: Der Disk bleibt „flacher“ als der
+Ring, und eine einzige Readout-Ebene trennt danach nach Höhe. <span class="badge a">A</span> dreht die
+One-Hots in fünf Fourier-Phasen <span class="mono">(cos ωₖn, sin ωₖn)</span> mit
+<span class="mono">ωₖ = 2πk/113</span>: Addition wird zur Rotation der Phasen, und die Stelle
+<span class="mono">c* = (a+b) mod P</span> ist genau dort, wo alle fünf Phasen gemeinsam ausrichten
+(<span class="mono">cos 0 = 1</span>) — das Unembedding liest das als Korrelationsmaximum ab. Die
+gemeinsame Struktur in einem Satz: <b>Embedding = Koordinatenwechsel, Layer = Code-Transport,
+Readout = lokale Ausrichtungsprobe</b>. Der transportierte „Code“ ist nur unterschiedlicher Art: Bei
+<span class="badge b">B</span> ein <b>diskretes</b> Aktivierungsmuster (Bitfolge, die auf dem
+Hamming-Würfel flippt), bei <span class="badge a">A</span> ein <b>kontinuierlicher</b> Phasenvektor
+(Punkt auf einem Torus, der sich dreht).</p>
+</section>
+
+<section id="widersprueche">
+<h2>Widersprüche zwischen A und B</h2>
+
+<div class="card">
+<h3>W1 — Das Readout: eine Ebene oder eine Bank aus Korrelatoren?</h3>
+<p><span class="badge b">B</span> sagt: Die gesamte Entscheidung ist <b>ein</b> lineares Readout-Neuron,
+<span class="mono">ŷ = r·h + b₂</span>, Klasse = <span class="mono">sign(ŷ)</span>. Das ganze Netz
+existiert, damit <i>eine</i> Hyperebene im Hidden-Raum die beiden Klassen trennt (die Readout-Schwelle
+wird als analytischer Mittelpunkt der beiden Klassen-Höhen gesetzt).</p>
+<p><span class="badge a">A</span> sagt: Die Entscheidung ist eine <b>Bank aus P = 113</b>
+Kandidaten-Scores <span class="mono">logit(c) = Σₖ αₖ cos(ωₖ(a+b−c))</span>, und die Antwort ist das
+<b>argmax</b> über alle c. Das Unembedding besteht aus 113 Template-Vektoren
+<span class="mono">(cos ωₖc, sin ωₖc)</span>; die „Entscheidung“ ist der Peak eines
+Korrelations-Scans.</p>
+<p><b>Kollision:</b> (B) verlegt die Entscheidung in <i>einen</i> Skalar mit <i>einer</i> Schwelle,
+(A) verteilt sie über <i>P</i> Matched-Filter. Eine einzelne Hyperebene kann keine Bank aus P
+Phasen-Korrelatoren implementieren — die beiden Papiere streiten über das, was ein Readout
+prinzipiell ist.</p>
+</div>
+
+<div class="card">
+<h3>W2 — Was die erste nichtlineare Schicht darf</h3>
+<p><span class="badge b">B</span> zitiert das Space-Folding-Ergebnis (Lewandowski et al. 2025,
+Lemma 1): Dense-ReLU-Schichten sind stückweise linear, daher bildet eine gerade Sehne im
+Eingaberaum auf eine gerade (konvexe) Bahn ab; mit <b>einem</b> Hidden-Layer ist die Falt-Metrik
+entlang gerader Pfade <span class="mono">χ ≈ 0</span>, „echte“ nicht-konvexe Falten
+(Hamming-Distanz sinkt auf dem Pfad) braucht <b>zwei</b> Hidden-Layer.</p>
+<p><span class="badge a">A</span> zeigt das Gegenteil: Der <b>erste</b> Block (Attention + MLP) tut
+schon global nicht-stückweise-lineare Arbeit — die Attention-Heads bilden Grad-2-Produkte der
+Embeddings (<span class="mono">cos·cos, sin·sin, …</span>) und die MLP kombiniert sie zu den
+trigonometrischen Additionstheoremen. In (A)s Netz ist die „Faltung“ des Aufgabenraums nach dem
+ersten Block schon vollständig — aber als <i>quadratisches Phasenmischen</i>, nicht als Falz.</p>
+<p><b>Kollision:</b> (B)s Geometrie-Theorem sagt, die erste Schicht <i>kann</i> keine
+nicht-konvexe Arbeit leisten; in (A)s Architektur leistet genau der erste Block sie (als
+Multiplikation, nicht als ReLU). Beide Papiere behaupten „die erste Schicht tut die
+Schwerarbeit“ — mit inkompatiblen Mechanismen.</p>
+</div>
+
+<div class="card">
+<h3>W3 — Was die Erklärung ist: selbst erfundener Algorithmus oder erzwungene Geometrie?</h3>
+<p><span class="badge a">A</span> behauptet als Kern, das Netz habe den Algorithmus
+<b>selbst erfunden</b>: „Nobody told the network to use circles or trig — it invented this
+approach!“ Belege: Fünf Cosinus-Terme erklären ≈ 95 % der Logit-Varianz, und das Projektieren auf
+den Algorithmus <i>verbessert</i> sogar den Test-Loss (2.4·10⁻⁷ → 4.7·10⁻⁸). Das Überraschende ist
+die <i>Entdeckung</i>.</p>
+<p><span class="badge b">B</span> behauptet als Kern, die gute Lösung sei <b>geometrisch
+erzwungen</b>: Der Button „Optimal“ lädt die bekannte Paper-Lösung (drei Faltlinien mit Normalen im
+120°-Winkel, Readout <span class="mono">(1,1,1)</span>), und das Tool <i>analysiert</i> deren
+Faltstruktur (χ, Φ̂, Aktivierungsmuster, Anzahl der Linear-Regionen). Das interessante Objekt ist
+die <i>Falt-Konfiguration</i>, nicht die Entdeckung.</p>
+<p><b>Kollision:</b> (A) erklärt die Gewichte als gefundenen <i>Algorithmus</i>; (B) erklärt sie als
+räumliche <i>Folge</i> der Daten. Auf die Frage „Warum sehen die Gewichte so aus?“ geben die beiden
+Papiere streng genommen unterschiedliche Antworten.</p>
+</div>
+</section>
+
+<section id="aufloesung">
+<h2>Auflösung</h2>
+
+<div class="card f">
+<h3>R1 zu W1 — dasselbe Operation, zwei Auflösungen: Korrelation gegen Vorlagen</h3>
+<p>Beide Readouts sind <b>Korrelation gegen bekannte Template-Richtungen plus lokales
+Extremum/Schwelle</b>. (B) projiziert den gefalteten Repräsentationsvektor auf <i>eine</i>
+Template-Richtung — die Ebenennormale <span class="mono">r = (1,1,1)</span> — und schwellt ab;
+(A) projiziert auf <i>P</i> Fourier-Templates und nimmt den Peak. Eine einzelne Ebene <i>ist</i>
+ein Matched Filter mit einem Template; das Unembedding von (A) ist derselbe Operator mit P
+Templates. Der „Widerspruch“ löst sich auf, wenn man sieht, dass die Anzahl der Templates die
+Anzahl der Antwortklassen ist: (B) hat zwei Klassen (eine Schwelle genügt), (A) hat P = 113
+Kandidatenantworten (P Korrelatoren nötig). Fused: <b>Readout = Projektion auf Templates + lokale
+Probe; die Vorlagen liegen im Unembedding fest und werden vom Input nicht verändert</b>.</p>
+</div>
+
+<div class="card f">
+<h3>R2 zu W2 — verschiedene Architekturkanonen, kein Fakt-Widerspruch</h3>
+<p>Lemma 1 ist ein Theorem über <b>stückweise lineare</b> Netze: Für PL-Abbildungen ist das Bild
+einer Geraden eine gebrochene Gerade, und daraus folgt χ ≈ 0 mit einer Schicht. (A)s Block ist
+<em>kein</em> PL-Netz — Attention ist das Produkt zweier linearer Formen (quadratisch), und das
+Bild einer „Geraden“ im Embedding-Raum ist eine quadratische Phasenkurve. (B)s Theorem gilt daher
+einfach nicht für (A)s Architektur; umgekehrt berührt (A)s „erster Block macht alles“-Klammern
+(B)s „erste PL-Schicht ist konvex“ nicht, weil (A) keine PL-Schicht ist. Der fused
+geometrische Satz: <b>Die erste Stufe transportiert den Code.</b> In PL-Netzen ist der Code
+diskret (Aktivierungsmuster, Bit-Flip-Walk auf dem Hamming-Würfel,
+<span class="mono">χ = 1 − r₁/r₂</span> misst die Faltung) und der Transport erfolgt Falz für
+Falz — Nicht-Konvexität braucht den zweiten Layer. In Fourier-/Attention-Netzen ist der Code
+kontinuierlich (Phase auf dem Torus), und der quadratische Transport kann von Beginn an
+global-nicht-lokal arbeiten (Phasenumwicklung ist der eingebaute „Falz“).</p>
+</div>
+
+<div class="card f">
+<h3>R3 zu W3 — zwei Seiten desselben dünnen Lösungsrands</h3>
+<p>Wenn eine Aufgabe ein niedrig-komplexes Koordinatensystem besitzt, in dem die Lösung
+trivial wird (Addition = Rotation; Disk/Ring = Höhenunterschied), dann (i) findet Gradient
+Descent es mit hoher Wahrscheinlichkeit — das ist (A)s „Selbsterfindung“, mit den 95 % FVE als
+Beleg — und (ii) kann ein Mensch es aus der Geometrie ableiten — das ist (B)s „Optimal“-Lösung.
+Fusion: <b>Die Gewichte sind lesbar, weil der Lösungsraum dünn ist</b> — fünf Frequenzen aus 56
+Möglichen (A), drei Faltlinien plus ein Readout-Vektor (B). „Entdeckung“ und „Notwendigkeit“ sind
+derselbe Sachverhalt aus der Perspektive des Optimizers und des Analysten: Beide landen am
+gleichen Ort, weil es (fast) nur diesen Ort gibt.</p>
+</div>
+</section>
+
+<section id="inhalt">
+<h2>Fusionierter Inhalt</h2>
+
+<h3>Das gemeinsame Schema</h3>
+<table>
+<tr><th></th><th><span class="badge a">A</span> mod.html (Fourier-Mod-Addition)</th>
+<th><span class="badge b">B</span> egg.html (Falten)</th></tr>
+<tr><td><b>Aufgabe</b></td>
+<td><span class="mono">a + b mod P</span>, P = 113 (Prim), One-Hot-Input, 113 Ausgangslogits</td>
+<td>Disk (r ≤ 0.45) vs. Ring (0.55 ≤ r ≤ 1), 2D-Punkte, 1 binäre Klasse</td></tr>
+<tr><td><b>Koordinatenwechsel</b> (Embedding)</td>
+<td><span class="mono">n ↦ (cos ωₖn, sin ωₖn)</span> für K = 5 Key-Frequenzen k ∈ {14, 35, 41, 42, 52}, ωₖ = 2πk/113; Einbettungsmatrix 113 → 128 Dim, im Fourier-Basis dünn besetzt</td>
+<td><span class="mono">h(x) = Σᵢ ReLU(wᵢ·x + bᵢ)</span> nach ℝ³; wᵢ = (0,1), (−0.87,−0.5), (0.87,−0.5) — Normalen im 120°-Winkel, bᵢ = 0</td></tr>
+<tr><td><b>Transport</b> (Layer)</td>
+<td>Attention = Grad-2-Produkte der Embeddings; MLP kombiniert sie per Additionstheorem zu <span class="mono">(cos ωₖ(a+b), sin ωₖ(a+b))</span></td>
+<td>ReLU-Falz: stückweise linear, jede Faltlinie <span class="mono">wᵢ·x + bᵢ = 0</span> flippt ein Bit des Musters; optionaler 2. Layer = echte Space-Folds</td></tr>
+<tr><td><b>Probe</b> (Readout)</td>
+<td><span class="mono">logit(c) = Σₖ αₖ cos(ωₖ(a+b−c))</span>, Antwort = argmax; reale Koeffizienten αₖ ≈ 44.1, 42.2, 44.8, 66.6, 63.0</td>
+<td><span class="mono">ŷ = r·h + b₂</span> mit r = (1,1,1); Schwelle b₂ = −(max-Disk-Höhe + min-Ring-Höhe)/2 ≈ −0.46</td></tr>
+<tr><td><b>Beweis, dass es stimmt</b></td>
+<td>FVE ≈ 95 %; Projektion auf den Algorithmus verbessert Test-Loss 2.4·10⁻⁷ → 4.7·10⁻⁸ (Nanda et al., ICLR 2023)</td>
+<td>100 % Trennung; Falthöhen: Disk ≤ ≈ 0.45 &lt; Schwelle &lt; ≈ 0.48 ≤ Ring; Metriken χ, Φ̂, Regionen-Zählung (Lewandowski et al. 2025, arXiv:2502.09954; Keup &amp; Helias 2022)</td></tr>
+</table>
+
+<h3>Der transportierte Code, zwei Arten</h3>
+<p><span class="badge b">B</span> — <b>diskret</b>: Das Aktivierungsmuster
+<span class="mono">π(x) = (sign(w₁·x+b₁), sign(w₂·x+b₂), sign(w₃·x+b₃))</span> ∈ {0,1}³ ist der
+Code. Eine gerade Sehne Γ durch den Eingaberaum kreuzt Faltlinien; an jeder Kreuzung flippt ein
+Bit — der Code läuft einen <b>Walk auf dem Hamming-Würfel</b> (8 Ecken) entlang. Metriken:
+r₂ = Gesamtzahl der Bit-Flips, r₁ = größte Hamming-Distanz vom Startmuster, Faltgrad
+</p>
+<div class="formula" id="f4"></div>
+<p>Lemma 1: Mit einem Hidden-Layer ist das Bild einer Geraden konvex, also χ ≈ 0; ein „echter
+Space-Fold“ (dH(π₁,·) sinkt zwischendurch) braucht den zweiten Layer. Φ̂ fasst das über allen
+zwischenklassigen Pfaden zusammen (Max/Ø/Anteil gefalteter Pfade), und die Anzahl der
+Linear-Regionen misst die Expressivität (Montúfar et al.).</p>
+<p><span class="badge a">A</span> — <b>kontinuierlich</b>: Der Phasen-Code
+<span class="mono">φ(c) = (ωₖ(a+b−c))ₖ</span> ∈ (S¹)⁵ ist der Code. Die Antwort ist die Stelle,
+an der <i>alle</i> Komponenten gleichzeitig 0 (mod 2π) sind — dort ist jeder Cosinus 1, und die
+Frequenzen addieren sich zu <span class="mono">Σₖ αₖ</span>. Eine einzige Frequenz reicht nicht:
+Bei c* + 8 ist cos(2π·14/113·8) ≈ 0.998 — ein gefährliches falsches Maximum — aber
+cos(2π·35/113·8) ≈ −0.990, und die Summe ≈ 0.008: Die zweite Frequenz zerstört den falschen
+Peak. Mit K Frequenzen verschwinden die falschen Peaks durch <b>destruktive Interferenz</b>; am
+richtigen Ort bleibt die <b>konstruktive</b> (reale Koeffizienten: Peak ≈ 260.7).</p>
+
+<h3>Die Mathematik, die beide zusammenhält</h3>
+<p>Das Readout von (A) ist eine Fourier-Reihe in der Kandidaten-Variablen c:</p>
+<div class="formula" id="f1"></div>
+<p>Der „Transport“ von (A) sind die Additionstheoreme — exakt die Grad-2-Polynome, die Attention
+aus den Embeddings bilden kann:</p>
+<div class="formula" id="f2"></div>
+<p>Der „Transport“ von (B) ist der stückweise lineare Falz mit linearer Probe:</p>
+<div class="formula" id="f3"></div>
+<p>Beide sind Koordinatenwechsel, nach denen die Antwort eine <b>lokale</b> Eigenschaft wird:
+Bei (A) das Maximum einer glatten Funktion (Cosinus-Summe), bei (B) die Seite einer Ebene. Die
+ganze Arbeit des Netzes besteht darin, das globale Problem lokal zu machen.</p>
+</section>
+
+<section id="visualisierung">
+<h2>Visualisierung: der Code, der sich ausrichtet</h2>
+<p>Links <span class="badge b">B</span>: Disk/Ring-Punkte, die drei Faltlinien und eine
+verschiebbare gerade Sehne Γ (y₀-Regler). Die Falthöhe <span class="mono">h(t)</span> entlang Γ
+überquert die Readout-Ebene (grün) knapp dort, wo Γ den Disk verlässt; an den Faltkreuzungen
+(gold) flippt das Bit-Muster (Lanes N1–N3, Codes oben). Rechts <span class="badge a">A</span>:
+die P = 113-Uhr mit a, b und c* = (a+b) mod 113 sowie die Logit-Kurve
+<span class="mono">Σₖ cos(ωₖ(a+b−c))</span> über alle Kandidaten — jeder hinzugefügte Frequenz
+(spitz) den Peak bei c* und flacht die falschen Positionen ab. Beide Panels, eine Botschaft:
+<b>Die Antwort sitzt genau dort, wo der transportierte Code ausrichtet</b> — Schwelle über-/unter
+(Höhe) bzw. Phase 0 (Interferenz).</p>
+<div class="controls">
+  <label>Falt-Pfad y₀ <input type="range" id="chord" min="-0.4" max="0.4" step="0.01" value="0.25"><span class="val" id="chordV">0.25</span></label>
+  <label>a <input type="range" id="ma" min="0" max="112" step="1" value="23"><span class="val" id="maV">23</span></label>
+  <label>b <input type="range" id="mb" min="0" max="112" step="1" value="47"><span class="val" id="mbV">47</span></label>
+  <label>Frequenzen <input type="range" id="mk" min="1" max="5" step="1" value="5"><span class="val" id="mkV">5</span></label>
+  <button id="themeBtn" type="button">Theme wechseln</button>
+</div>
+<canvas id="fuzcv"></canvas>
+<p class="note">Alle Daten werden deterministisch im Skript erzeugt (eingebettete Punkte, reale
+Key-Frequenzen k ∈ {14,35,41,42,52} und die Optimal-Gewichte aus egg.html). Keine externen
+Datenquellen.</p>
+</section>
+
+<section id="provenienz">
+<h2>Provenienz</h2>
+<ul>
+<li><a href="../mod.html">mod.html</a> — „How a Neural Network Learns Addition on a Circle“:
+interaktive Herleitung des Fourier-Multiplikations-Algorithmus (Nanda et al., ICLR 2023) für
+modulare Addition mod 113 — Einbettung auf fünf Kreise, Additionstheoreme in Attention/MLP,
+Interferenz-Readout, gemessene Koeffizienten des trainierten Netzes (FVE ≈ 95 %).</li>
+<li><a href="../egg.html">egg.html</a> — „Origami in N Dimensions“: 2→3→1 Dense-ReLU-Dense-Netz,
+das Disk und Ring über drei Faltlinien (Normalen im 120°-Winkel) in Höhen hebt, die eine Ebene
+trennt — mit Space-Folding-Metriken (χ, Φ̂, Hamming-Walk; Lewandowski et al. 2025) und der
+Optimal-Lösung nach Keup &amp; Helias (2022).</li>
+</ul>
+</section>
+
+</article>
+<script>
+(function () {
+  'use strict';
+  var cv = document.getElementById('fuzcv');
+  var ctx = cv.getContext('2d');
+  var W = 840, H = 690;
+  var dpr = window.devicePixelRatio || 1;
+  cv.width = W * dpr; cv.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var rnd = mulberry32(20240509);
+  var pts = [], labs = [], N = 900;
+  for (var i = 0; i < N; i++) {
+    if (rnd() < 0.4) { var r0 = 0.45 * Math.sqrt(rnd()), t0 = rnd() * 2 * Math.PI; pts.push([r0 * Math.cos(t0), r0 * Math.sin(t0)]); labs.push(0); }
+    else { var t1 = rnd() * 2 * Math.PI, r1 = 0.55 + rnd() * 0.45; pts.push([r1 * Math.cos(t1), r1 * Math.sin(t1)]); labs.push(1); }
+  }
+  var FW = [[0, 1], [-0.87, -0.5], [0.87, -0.5]];
+  function hOf(x, y) { var s = 0; for (var k = 0; k < 3; k++) s += Math.max(0, FW[k][0] * x + FW[k][1] * y); return s; }
+  var hiIn = -1e9, loOut = 1e9;
+  for (var j = 0; j < N; j++) { var hv = hOf(pts[j][0], pts[j][1]); if (labs[j] === 0) hiIn = Math.max(hiIn, hv); else loOut = Math.min(loOut, hv); }
+  var LVL = (hiIn + loOut) / 2;
+
+  var KEY = [14, 35, 41, 42, 52], P = 113;
+  function omega(k) { return 2 * Math.PI * k / P; }
+
+  function themeColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function el(id) { return document.getElementById(id); }
+
+  function draw() {
+    var C = {
+      fg: themeColor('--fg'), muted: themeColor('--muted'), panel: themeColor('--panel'),
+      line: themeColor('--line'), accent: themeColor('--accent'), accent2: themeColor('--accent2'),
+      good: themeColor('--good'), warn: themeColor('--warn'), bad: themeColor('--bad'),
+      inner: themeColor('--inner'), outer: themeColor('--outer')
+    };
+    var chord = parseFloat(el('chord').value);
+    var a = parseInt(el('ma').value, 10);
+    var b = parseInt(el('mb').value, 10);
+    var K = parseInt(el('mk').value, 10);
+    el('chordV').textContent = chord.toFixed(2);
+    el('maV').textContent = a; el('mbV').textContent = b; el('mkV').textContent = K;
+
+    ctx.clearRect(0, 0, W, H);
+
+    /* ---------------- PANEL B: FALTEN ---------------- */
+    ctx.font = 'bold 13px system-ui, sans-serif'; ctx.fillStyle = C.fg; ctx.textAlign = 'left';
+    ctx.fillText('B · Falten (2→3→1, Disk vs. Ring): Faltlinien, Sehne Γ, Falthöhe h(t)', 20, 24);
+
+    var ex = 20, ey = 40, es = 260;
+    var sc = es / 2.3;
+    function toPx(x, y) { return [ex + es / 2 + x * sc, ey + es / 2 - y * sc]; }
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.strokeRect(ex, ey, es, es);
+    ctx.save(); ctx.beginPath(); ctx.rect(ex, ey, es, es); ctx.clip();
+    ctx.setLineDash([3, 4]); ctx.strokeStyle = C.muted; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(ex + es / 2, ey + es / 2, 1.0 * sc, 0, 2 * Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ex + es / 2, ey + es / 2, 0.45 * sc, 0, 2 * Math.PI); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = C.muted; ctx.lineWidth = 1.5;
+    for (var k = 0; k < 3; k++) {
+      var w = FW[k], d = [-w[1], w[0]];
+      var p0 = toPx(0, 0), pa = toPx(-d[0] * 2, -d[1] * 2), pb = toPx(d[0] * 2, d[1] * 2);
+      ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+    }
+    for (var q = 0; q < N; q++) {
+      var pp = toPx(pts[q][0], pts[q][1]);
+      ctx.fillStyle = labs[q] === 0 ? C.inner : C.outer;
+      ctx.beginPath(); ctx.arc(pp[0], pp[1], 1.8, 0, 2 * Math.PI); ctx.fill();
+    }
+    var cA = toPx(-1.15, chord), cB = toPx(1.15, chord);
+    ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(cA[0], cA[1]); ctx.lineTo(cB[0], cB[1]); ctx.stroke();
+    ctx.fillStyle = C.accent;
+    ctx.beginPath(); ctx.arc(cA[0], cA[1], 3.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(cB[0], cB[1], 3.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.restore();
+    ctx.font = '11px system-ui, sans-serif'; ctx.fillStyle = C.muted;
+    ctx.fillText('Innen (Disk, r=0.45) / außen (Ring) · Faltlinien: wᵢ·x = 0', ex, ey + es + 16);
+
+    var sx = 312, sy = 40, sw = 508, sh = 260;
+    ctx.strokeStyle = C.line; ctx.strokeRect(sx, sy, sw, sh);
+    var hmax = 1.2;
+    function X(x) { return sx + (x + 1.15) / 2.3 * sw; }
+    function Yh(h) { return sy + sh - (h / hmax) * sh; }
+    ctx.font = '11px system-ui, sans-serif'; ctx.fillStyle = C.muted;
+    ctx.fillText('h(t) entlang Γ  ·  Muster-Codes:  ', sx, sy - 8);
+    var xD = Math.sqrt(Math.max(0, 0.45 * 0.45 - chord * chord));
+    ctx.globalAlpha = 0.10; ctx.fillStyle = C.inner;
+    ctx.fillRect(X(-xD), sy, 2 * xD * sw / 2.3, sh); ctx.globalAlpha = 1;
+    ctx.setLineDash([6, 4]); ctx.strokeStyle = C.good; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(sx, Yh(LVL)); ctx.lineTo(sx + sw, Yh(LVL)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = C.good; ctx.fillText('Readout-Ebene h ≈ ' + LVL.toFixed(2), sx + sw - 130, Yh(LVL) - 6);
+    ctx.strokeStyle = C.fg; ctx.lineWidth = 2; ctx.beginPath();
+    for (var s2 = 0; s2 <= 240; s2++) {
+      var xv = -1.15 + 2.3 * s2 / 240, hv2 = hOf(xv, chord);
+      if (s2 === 0) ctx.moveTo(X(xv), Yh(hv2)); else ctx.lineTo(X(xv), Yh(hv2));
+    }
+    ctx.stroke();
+    var prevDiff = null, crossXs = [];
+    for (var s3 = 1; s3 <= 240; s3++) {
+      var xa = -1.15 + 2.3 * (s3 - 1) / 240, xb = -1.15 + 2.3 * s3 / 240;
+      var da = hOf(xa, chord) - LVL, db = hOf(xb, chord) - LVL;
+      if (da === 0 || (da < 0) !== (db < 0)) crossXs.push((xa + xb) / 2);
+    }
+    for (var cxi = 0; cxi < crossXs.length; cxi++) {
+      var cxp = X(crossXs[cxi]), cyp = Yh(LVL);
+      ctx.strokeStyle = C.bad; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cxp - 5, cyp - 5); ctx.lineTo(cxp + 5, cyp + 5);
+      ctx.moveTo(cxp + 5, cyp - 5); ctx.lineTo(cxp - 5, cyp + 5); ctx.stroke();
+    }
+    if (Math.abs(chord) > 0.02) {
+      var fx1 = chord / 1.74, fx2 = -chord / 1.74;
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = C.warn; ctx.lineWidth = 1.5;
+      var fxs = [fx1, fx2];
+      for (var fxi = 0; fxi < 2; fxi++) {
+        if (Math.abs(fxs[fxi]) < 1.15) {
+          ctx.beginPath(); ctx.moveTo(X(fxs[fxi]), sy); ctx.lineTo(X(fxs[fxi]), sy + sh); ctx.stroke();
+          ctx.fillStyle = C.warn; ctx.font = '10px system-ui, sans-serif';
+          ctx.fillText('Falz', X(fxs[fxi]) + 3, sy + 12);
+        }
+      }
+      ctx.setLineDash([]);
+    }
+    var S = 64, codes = [];
+    for (var sg = 0; sg <= S; sg++) {
+      var xg = -1.15 + 2.3 * sg / S;
+      var n1 = chord > 0, n2 = (-0.87 * xg - 0.5 * chord) > 0, n3 = (0.87 * xg - 0.5 * chord) > 0;
+      codes.push((n1 ? 4 : 0) | (n2 ? 2 : 0) | (n3 ? 1 : 0));
+    }
+    ctx.font = '11px ui-monospace, monospace'; ctx.fillStyle = C.muted;
+    var runStart = 0;
+    for (var rg = 1; rg <= S; rg++) {
+      if (rg === S || codes[rg] !== codes[runStart]) {
+        var xm = -1.15 + 2.3 * (runStart + (rg - runStart) / 2) / S;
+        var codeStr = codes[runStart].toString(2).padStart(3, '0');
+        ctx.fillText(codeStr, X(xm) - 10, sy + sh - 8);
+        runStart = rg;
+      }
+    }
+    var laneY0 = sy + sh + 12, nCol = [C.inner, C.outer, C.accent];
+    for (var lk = 0; lk < 3; lk++) {
+      var ly = laneY0 + lk * 14;
+      ctx.font = '10px system-ui, sans-serif'; ctx.fillStyle = nCol[lk]; ctx.textAlign = 'right';
+      ctx.fillText('N' + (lk + 1), sx - 6, ly + 9); ctx.textAlign = 'left';
+      for (var sl = 0; sl < S; sl++) {
+        var xx1 = -1.15 + 2.3 * sl / S, xx2 = -1.15 + 2.3 * (sl + 1) / S;
+        var on = (lk === 0) ? chord > 0 : (lk === 1) ? (-0.87 * xx1 - 0.5 * chord) > 0 : (0.87 * xx1 - 0.5 * chord) > 0;
+        if (on) { ctx.fillStyle = nCol[lk]; ctx.globalAlpha = 0.8; ctx.fillRect(X(xx1), ly, X(xx2) - X(xx1) + 0.5, 10); ctx.globalAlpha = 1; }
+      }
+    }
+
+    /* ---------------- PANEL A: PHASEN ---------------- */
+    ctx.font = 'bold 13px system-ui, sans-serif'; ctx.fillStyle = C.fg;
+    ctx.fillText('A · Fourier-Phasen (P=113): Logit-Kurve über Kandidaten c, Peak bei c* = (a+b) mod P', 20, 380);
+
+    var ccx = 132, ccy = 508, cr = 100;
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(ccx, ccy, cr, 0, 2 * Math.PI); ctx.stroke();
+    function clockPx(n, rad) { var an = -Math.PI / 2 + 2 * Math.PI * n / P; return [ccx + rad * Math.cos(an), ccy + rad * Math.sin(an)]; }
+    ctx.fillStyle = C.muted;
+    for (var tn = 0; tn < P; tn++) { var tp = clockPx(tn, cr - 5); ctx.beginPath(); ctx.arc(tp[0], tp[1], 1.2, 0, 2 * Math.PI); ctx.fill(); }
+    var cpA = clockPx(a, cr), cpB = clockPx(b, cr), cpC = clockPx((a + b) % P, cr);
+    ctx.fillStyle = C.accent2; ctx.beginPath(); ctx.arc(cpA[0], cpA[1], 4.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(cpB[0], cpB[1], 4.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = C.good; ctx.beginPath(); ctx.arc(cpC[0], cpC[1], 5.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.font = '11px system-ui, sans-serif';
+    ctx.fillStyle = C.accent2; ctx.fillText('a=' + a, ccx - 44, ccy - cr - 8);
+    ctx.fillStyle = C.accent; ctx.fillText('b=' + b, ccx + 22, ccy - cr - 8);
+    ctx.fillStyle = C.good; ctx.fillText('c*=' + ((a + b) % P), ccx + 30, ccy + cr + 16);
+
+    var x0 = 272, x1 = 820, midY = 508, ys = 34;
+    function CX(c) { return x0 + (c / (P - 1)) * (x1 - x0); }
+    function logitAt(c) { var s4 = 0; for (var kk = 0; kk < K; kk++) s4 += Math.cos(omega(KEY[kk]) * (a + b - c)); return s4; }
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x0, midY); ctx.lineTo(x1, midY); ctx.stroke();
+    var wCols = [C.accent2, C.good, C.warn, C.accent, C.muted];
+    for (var wi = 0; wi < K; wi++) {
+      ctx.strokeStyle = wCols[wi]; ctx.globalAlpha = 0.35; ctx.lineWidth = 1; ctx.beginPath();
+      for (var c2 = 0; c2 < P; c2++) {
+        var v = Math.cos(omega(KEY[wi]) * (a + b - c2));
+        if (c2 === 0) ctx.moveTo(CX(c2), midY - v * ys); else ctx.lineTo(CX(c2), midY - v * ys);
+      }
+      ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    var sumVals = []; for (var c3 = 0; c3 < P; c3++) sumVals.push(logitAt(c3));
+    ctx.strokeStyle = C.fg; ctx.lineWidth = 2.5; ctx.beginPath();
+    for (var c4 = 0; c4 < P; c4++) { if (c4 === 0) ctx.moveTo(CX(c4), midY - sumVals[c4] * ys); else ctx.lineTo(CX(c4), midY - sumVals[c4] * ys); }
+    ctx.stroke();
+    var cStar = (a + b) % P, second = -1e9;
+    for (var c5 = 0; c5 < P; c5++) { if (c5 !== cStar && sumVals[c5] > second) second = sumVals[c5]; }
+    var pk = [CX(cStar), midY - K * ys];
+    ctx.fillStyle = C.good; ctx.beginPath(); ctx.arc(pk[0], pk[1], 5, 0, 2 * Math.PI); ctx.fill();
+    ctx.font = 'bold 12px system-ui, sans-serif';
+    ctx.fillText('c* = ' + cStar, pk[0] - 22, pk[1] - 10);
+    ctx.font = '11px system-ui, sans-serif'; ctx.fillStyle = C.muted;
+    ctx.fillText('Peak = ' + K + '  ·  Margin zu 2. bestem = ' + (K - second).toFixed(2) + '  ·  Frequenzen: 14, 35, 41, 42, 52 (K = ' + K + ' aktiv)', x0, 676);
+  }
+
+  window.addEventListener('load', function () {
+    draw();
+    ['chord', 'ma', 'mb', 'mk'].forEach(function (id) { el(id).addEventListener('input', draw); });
+    el('themeBtn').addEventListener('click', function () {
+      document.documentElement.classList.toggle('dark');
+      draw();
+    });
+    try {
+      var T = window.temml;
+      if (T) {
+        T.render(String.raw`\text{logit}(c) \;=\; \sum_{k \in \{14,35,41,42,52\}} \alpha_k \, \cos\!\left( \tfrac{2\pi k}{113}\,(a + b - c) \right)`, document.getElementById('f1'));
+        T.render(String.raw`\cos(\alpha+\beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta \qquad \sin(\alpha+\beta) = \sin\alpha\cos\beta + \cos\alpha\sin\beta`, document.getElementById('f2'));
+        T.render(String.raw`h(x) = \sum_{i=1}^{3} \mathrm{ReLU}(w_i \cdot x + b_i), \qquad \hat{y} = r \cdot h(x) + b_2, \qquad r = (1,1,1)`, document.getElementById('f3'));
+        T.render(String.raw`\chi \;=\; 1 - \frac{r_1}{r_2}, \qquad r_2 = \text{Gesamt-Bit-Flips auf } \Gamma, \qquad r_1 = \max_i \, d_H(\pi_1, \pi_i)`, document.getElementById('f4'));
+      }
+    } catch (e) { /* Formel-Rendering ist optional */ }
+  });
+})();
+</script>
+</body>
+</html>
