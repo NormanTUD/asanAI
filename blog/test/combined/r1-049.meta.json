@@ -1,0 +1,16 @@
+{
+  "no": "049",
+  "a": "buecher/ai.html",
+  "b": "concept_attractors_in_llm.html",
+  "a_title": "Visuelle Wissenslandkarte - Schlüsselkonzepte",
+  "b_title": "Concept Attractors in LLMs - Interaktive Erklärung",
+  "combined_theme": "repraesentationsgeometrie-und-attractor-dynamik",
+  "one_line": "Bedeutung in neuronalen Netzen ist Geometrie UND Dynamik eines latenten Raums: A liefert die Geometrie (verteilte Repräsentationen, Word2Vec-Linialgeometrie, Riemannsche Mannigfaltigkeit), B die Dynamik (layersweise kontraktive IFS-Abbildungen, die auf konzeptspezifische, fraktale Attraktoren konvergieren) — die Attraktoren sind genau die Geometrie, die A beschreibt.",
+  "contradictions": [
+    "Lineare vs. fraktale Struktur: A feiert die lineare/affine Word2Vec-Arithmetik (König−Mann+Frau≈Königin) auf einer glatten Riemannschen Mannigfaltigkeit; B beschreibt Attraktoren als fraktale Invariantenmengen stuckweise kontraktiver IFS-Abbildungen (nirgends glatt, selbstähnlich).",
+    "Statische vs. layer-selektierte Repräsentation: A's Kernthese 'Repräsentation ist alles' behandelt die Repräsentation als festen Fähigkeits-Träger; B bestreitet, dass es EINE Repräsentation gibt — es ist eine Schichten-Trajektorie, und nur der in der konzeptspezifischen Schicht (Programmierung L19, Sprachen L27, Literatur L18) kristallisierte Attraktor trägt die Bedeutung.",
+    "Semantik-frei vs. strukturierte Semantik: A (Frankfurt/Sparck Jones) sieht LMs als 'Bullshit-Maschinen' ohne Beziehung zur Wahrheit und ohne echte Absicht (nur Muster-Reproduktion); B behandelt die Attraktoren als echte, auslesbare und steuerbare Semantik (Induced Tokens, Steering, Unlearning)."
+  ],
+  "resolution": "Die Spannungen sind komplementär, keine echten Widersprüche: (1) die fraktale IFS-Kontraktion ist die globale (vor-Konvergenz)-Dynamik, die lineare Arithmetik die lokale Tangenten-Ablesung nach der Konvergenz im Bassin (Riemann: lokal flach, global gekrümmt); (2) 'Repräsentation ist alles' wird zu 'die konzeptspezifische, layer-selektierte Repräsentation (der Attraktor A_c in Schicht ℓ_c) ist der Fähigkeits-Träger'; (3) fehlende wahrheitsbezogene/intentionale Semantik (Frankfurt) und Anwesenheit einer strukturierten, auslesbaren latenten Semantik (Attraktoren) koexistieren — das 'Bullshit'-Modell ist ein STRUKTURIERTES Musterreproduktionssystem, was sowohl die Macht (B) als auch die Gefahr (A) erklärt.",
+  "viz": "Canvas-Simulation: Formulierungen eines Konzepts als gestreute Punkte, die über den Layer-Slider (0–31) layersweise (kontraktive IFS-Abbildung) auf konzeptspezifische Attraktoren zusammengezogen werden und erst in der eigenen Schicht (Literatur L18, Programmierung L19, Sprachen L27) kristallisieren; im konvergierten Bassin erscheint eine gestrichelte lokale affine (Word2Vec-)Parallelogramm-Relation; theme-aware über CSS-Variablen mit Theme-Umschalter; nur inline Daten, keine Netzabrufe."
+}

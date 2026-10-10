@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion r1-049 — Repräsentationsgeometrie ✕ Konzept-Attraktoren</title>
+<style>
+:root{
+  --bg:#FAF8F1; --fg:#1f2430; --muted:#5c6470; --grid:rgba(0,0,0,0.05);
+  --card:#ffffff; --border:#e2ddd0; --accent:#7b2ff7; --accent2:#0f9d8f;
+  --code:#2a2f3a; --c-lit:#e5484d; --c-prog:#0f9d8f; --c-lang:#c98a00;
+  --chip:#efece2;
+}
+html.dark{
+  --bg:#0f172a; --fg:#e6ebf3; --muted:#93a1b8; --grid:rgba(255,255,255,0.06);
+  --card:#151f37; --border:#243350; --accent:#9aa6ff; --accent2:#4ecdc4;
+  --code:#1b2740; --c-lit:#ff6b6b; --c-prog:#4ecdc4; --c-lang:#ffe66d;
+  --chip:#1b2740;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+  line-height:1.7; -webkit-font-smoothing:antialiased;
+}
+article{max-width:820px;margin:0 auto;padding:48px 24px 96px;}
+h1{font-size:2.1rem;line-height:1.2;margin:0 0 8px;}
+.sub{color:var(--muted);font-size:1rem;margin:0 0 40px;word-break:break-word;}
+.sub .x{color:var(--accent);}
+section{margin:0 0 44px;}
+h2{font-size:1.4rem;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid var(--border);color:var(--fg);}
+h3{font-size:1.08rem;margin:26px 0 8px;color:var(--accent);}
+p{margin:0 0 14px;}
+.lede{font-size:1.06rem;}
+strong{color:var(--fg);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin:14px 0;}
+.card h3{margin-top:0;}
+.tension{border-left:4px solid var(--accent);}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--muted);background:var(--chip);border:1px solid var(--border);
+  border-radius:20px;padding:2px 10px;margin-right:6px;}
+.formula{
+  font-family:"Courier New",ui-monospace,monospace;
+  background:var(--code);border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;margin:14px 0;text-align:center;font-size:1.02rem;color:var(--fg);
+  overflow-x:auto;white-space:nowrap;
+}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.95rem;}
+th,td{padding:9px 11px;border:1px solid var(--border);text-align:left;vertical-align:top;}
+th{background:var(--chip);color:var(--fg);}
+ul{margin:6px 0 14px;padding-left:20px;}
+li{margin:4px 0;}
+.prov{display:block;padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin:10px 0;background:var(--card);}
+.prov a{color:var(--accent);font-weight:600;text-decoration:none;word-break:break-all;}
+.prov a:hover{text-decoration:underline;}
+.prov .d{color:var(--muted);font-size:.94rem;margin-top:4px;}
+.viz-wrap{position:relative;width:100%;height:460px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0;}
+.viz-wrap canvas{width:100%;height:100%;display:block;}
+.controls{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:14px 0;}
+.controls label{color:var(--muted);font-size:.9rem;min-width:96px;}
+button{
+  font:inherit;cursor:pointer;border:1px solid var(--border);border-radius:8px;
+  background:var(--chip);color:var(--fg);padding:7px 14px;transition:transform .15s,box-shadow .15s;
+}
+button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.15);}
+button.primary{background:var(--accent);color:#0b0f1a;border-color:transparent;font-weight:600;}
+input[type=range]{width:220px;accent-color:var(--accent);}
+.val{color:var(--fg);font-variant-numeric:tabular-nums;min-width:22px;display:inline-block;}
+.cap{color:var(--muted);font-size:.9rem;margin-top:2px;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:.88rem;color:var(--muted);}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+footer{margin-top:40px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--border);padding-top:16px;}
+</style>
+</head>
+<body>
+<article>
+  <h1>Geometrie trifft Dynamik: Die Bedeutung im latenten Raum von LLMs</h1>
+  <p class="sub">Fusion aus: buecher/ai.html <span class="x">✕</span> concept_attractors_in_llm.html</p>
+
+  <!-- ============ THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p class="lede">Zwei Quellen mit ganz unterschiedlichem Maßstab — A ist eine 250&nbsp;Jahre spannende „Wissenslandkarte" der Ideen (Bayes 1763 bis moderne Sprachmodelle), B die interaktive Erklärung eines einzelnen Mechanismus-Papiers (Chytas&nbsp;&amp;&nbsp;Singh 2025) — convergieren auf <strong>einen einzigen Gegenstand</strong>: den <em>internen Repräsentationsraum</em> neuronaler Netze. Und beide behaupten, dass <em>wie</em> Information in diesem Raum angeordnet ist, die entscheidende Größe für „Verstehen" bzw. Computation ist.</p>
+    <p>A formuliert es als <strong>Kernthese&nbsp;3 „Repräsentation ist alles"</strong>: „Die Art, wie Information repräsentiert wird, bestimmt, was damit getan werden kann." B macht denselben Gedanken mechanisch konkret: Konzepte leben dort nicht einfach als Vektoren — sie <em>konvergieren</em> in bestimmten Schichten zu stabilen Punkten, den <strong>Attraktoren</strong>.</p>
+    <p><strong>Die fusionierte Einzelthese lautet: Bedeutung im neuronalen Netz ist Geometrie <em>und</em> Dynamik eines und desselben latenten Raums.</strong> A liefert die <em>Geometrie</em>: verteilte Repräsentationen (Bengio 2003), der Word2Vec-Vektorraum mit seinen linearen/affinen Relationen (Mikolov 2013) und — der tiefste Brückenkopf — Riemanns Idee, dass dieser Raum eine (möglicherweise gekrümmte) <em>Mannigfaltigkeit</em> ist, deren Krümmung bestimmt, wie gut Analogien funktionieren. B liefert die <em>Dynamik</em>: die Schichten des Netzes wirken als <em>kontraktive</em> Abbildungen (Iterierte Funktionensysteme / IFS, Hutchinson-Operator), die den Eingabezustand auf ein konzeptspezifisches, kompaktes, invarianes Set — den <strong>Attraktor</strong> — zusammenfalten.</p>
+    <p>Die Einheit: A's „Vektorraum / Mannigfaltigkeit" ist keine frei schwebende Geometrie, sondern <em>wird</em> von B's Kontraktion geformt. Die Menge der Konzept-Attraktoren <strong>ist</em> die Geometrie des Repräsentationsraums; die lineare Arithmetik, die A feiert (König&nbsp;−&nbsp;Mann&nbsp;+&nbsp;Frau&nbsp;≈&nbsp;Königin), ist die <em>lokale, nach der Konvergenz</em> ablesbare Form eines Raums, dessen <em>globale</em> Konstruktion eine fraktale Kontraktion ist. <strong>Ein Objekt, zwei komplementäre Beschreibungen — was Bedeutung <em>ist</em> (Geometrie) und wie sie <em>dorthin kommt</em> (Dynamik).</strong></p>
+  </section>
+
+  <!-- ============ WIDERSPRUECHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p>Über die <em>Existenz</em> einer strukturierten latenten Struktur sind sich beide einig — der Spannungen liegen in ihrer <em>Form</em> und ihrem <em>Status</em>. Drei konkrete:</p>
+
+    <div class="card tension">
+      <h3>1. Lineare vs. fraktale Struktur</h3>
+      <p><span class="tag">A</span> nimmt <strong>lineare/affine</strong> Struktur als das Wesentliche: Word2Vecs „König&nbsp;−&nbsp;Mann&nbsp;+&nbsp;Frau&nbsp;≈&nbsp;Königin" zeigt, dass „neuronale Netze implizit semantische Beziehungen als geometrische Relationen lernen"; Riemanns Mannigfaltigkeit ist (lokal) <em>glatt/flach</em> mit einer Metrik.</p>
+      <p><span class="tag">B</span> beschreibt den Attraktor explizit als <strong>fraktal</strong> („Attraktoren zeigen eine fraktale Struktur"), erzeugt durch <em>stuckweise kontraktive</em> IFS-Abbildungen — ein selbstähnliches, nirgends-glattes Set.</p>
+      <p><strong>Spannung:</strong> glatte lineare Geometrie (A) gegen nicht-lineare, fraktale Konstruktion (B).</p>
+    </div>
+
+    <div class="card tension">
+      <h3>2. „Die" Repräsentation vs. layer-selektierte Repräsentation</h3>
+      <p><span class="tag">A</span> behandelt in „Repräsentation ist alles" <em>die</em> Repräsentation als festen Fähigkeits-Träger: hat man die richtige verteilte Repräsentation, folgt die Fähigkeit.</p>
+      <p><span class="tag">B</span> bestreitet, dass es <em>eine</em> Repräsentation gibt: derselbe Prompt durchläuft als <em>Trajektorie</em> 32 Schichten und kristallisiert erst in einer <strong>konzeptspezifischen Schicht</strong> (Programmierung&nbsp;L19, natürliche Sprachen&nbsp;L27, Literatur&nbsp;L18, fiktive Welten&nbsp;L24); alle praktischen Methoden nutzen „Forward-Hooks auf <em>bestimmten</em> Schichten".</p>
+      <p><strong>Spannung:</strong> bestimmt die Fähigkeit „<em>die</em> Embedding" oder erst „das Embedding <em>in der richtigen Schicht</em>"?</p>
+    </div>
+
+    <div class="card tension">
+      <h3>3. Semantik-frei vs. strukturierte, auslesbare Semantik</h3>
+      <p><span class="tag">A</span> (Frankfurt 2005 + Sparck&nbsp;Jones 2004) ist <strong>skeptisch</strong>: Sprachmodelle sind „strukturell Bullshit-Maschinen", „ohne Beziehung zur Wahrheit", „eine statistische Maschine die Muster reproduziert", mit „keiner echten Absicht".</p>
+      <p><span class="tag">B</span> behandelt den Attraktor als die <strong>„Essenz" des Konzepts</strong>, liest ihn als „induzierte Tokens" zurück aus und <em>steuert</em> ihn (Detoxifizierung, Code-Translation) — er operiert so, als läge dort <em>echte, adressierbare, kausal steuerbare</em> Bedeutung vor.</p>
+      <p><strong>Spannung:</strong> ist die latente Struktur „Bedeutung" oder bloß ungroundetes Oberflächen-Muster?</p>
+    </div>
+  </section>
+
+  <!-- ============ AUFLOESUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+
+    <div class="card">
+      <h3>1 → Verschiedene Regimes eines Raums</h3>
+      <p>Die fraktale IFS-Kontraktion ist die <em>globale, vor-Konvergenz</em>-Geschichte (wie die Landschaft gebaut wird); die lineare Arithmetik ist die <em>lokale, nach-Konvergenz</em>-Geschichte (was man tun kann, sobald man <em>in</em> einem Bassin steht). Riemanns Mannigfaltigkeit ist exakt die Brücke: <em>global gekrümmt/fraktal, lokal flach/linear</em> (Tangentenraum). Word2Vec-Linarkombinationen funktionieren <em>nachbarschaftlich innerhalb</em> eines Attraktors, auch wenn der Attraktor global eine fraktale Kontraktion ist. <strong>Fusion:</strong> Linearität = lokale Tangenten-Ablesung; fraktale IFS = globale Konstruktion. Beides wahr, auf verschiedenen Skalen.</p>
+    </div>
+
+    <div class="card">
+      <h3>2 → „Repräsentation ist alles" wird präzisiert</h3>
+      <p>A's Leitsatz ist nicht falsch, nur unvollständig: er setzt „<em>die</em> Repräsentation" stillschweigend voraus. B liefert die <em>Adresse</em> — die Konvergenzschicht ℓ<sub>c</sub>. <strong>Fusion:</strong> „die richtige Repräsentation" heißt „die konzeptspezifische, layer-selektierte Repräsentation" — der Zustand (Attraktor&nbsp;A<sub>c</sub>, Schicht&nbsp;ℓ<sub>c</sub>). Die Schicht ist Teil der Adressfunktion, genau wie der Kontext bei A („Kontext bestimmt Bedeutung").</p>
+    </div>
+
+    <div class="card">
+      <h3>3 → Zwei Bedeutungs-Sinne koexistieren</h3>
+      <p>Frankfurts Punkt betrifft <em>epistemische Grounding / Intentionalität</em> (Wahrheits-tracking, „Absicht"); B betrifft <em>interne Struktur</em> (ein geometrisch organisierter latenter Raum, den man lesen und manipulieren kann). Ein LM kann <strong>gleichzeitig</strong> keine echte Beziehung zur Wahrheit haben (A/Frankfurt: „Bullshit-Maschine" im Wahrheits-Sinn) <em>und</em> eine reiche, kausal ausnutzbare semantische Geometrie besitzen (B: Attraktoren). B widerlegt Frankfurt nicht — es <em>verfeinert</em> das Bild: Die „Muster-Reproduktion", die Frankfurt verspottet, ist <em>kein</em> strukturloses Stats-Bündel, sondern in Konzept-Attraktoren organisiert. <strong>Fusion:</strong> die Maschine ist <em>strukturiert</em> — und genau diese Struktur macht sowohl die Macht (B's trainingsfreie Apps) als auch die Gefahr (A's Frankfurt-Punkt) real.</p>
+    </div>
+  </section>
+
+  <!-- ============ INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <h3>Der gemeinsame Gegenstand: der latente Raum</h3>
+    <p>Beide Quellen beschreiben denselben hochdimensionalen Raum der internen Zustände (Hidden States / Embeddings) eines neuronalen Netzes — A als <em>statische Geometrie</em>, B als <em>dynamisches Konvergenzsystem</em>.</p>
+
+    <h3>A — die Geometrie der Repräsentation</h3>
+    <ul>
+      <li><strong>Verteilte Repräsentationen (Bengio 2003):</strong> lösen den „Fluch der Dimensionalität". Ähnliche Wörter → ähnliche Vektoren → ein Trainingsbeispiel informiert über exponentiell viele ähnliche Sätze (~24% bessere Perplexität als n-gram).</li>
+      <li><strong>Word2Vec (Mikolov 2013):</strong> semantische Arithmetik als <em>lineare</em> Geometrie — „König&nbsp;−&nbsp;Mann&nbsp;+&nbsp;Frau&nbsp;≈&nbsp;Königin".</li>
+      <li><strong>Riemann (1854):</strong> der Raum ist eine <em>Mannigfaltigkeit</em>; Metrik ds²&nbsp;=&nbsp;Σ&nbsp;g<sub>ij</sub>&nbsp;dx<sup>i</sup>dx<sup>j</sup>; <em>Krümmung</em> variiert pro Punkt; „unbegrenzt ≠ unendlich". Embeddings leben auf einer Mannigfaltigkeit; die Krümmung bestimmt die Qualität von Analogien. Brücke zu Information Geometry (Fisher-Metrik).</li>
+      <li><strong>Kontext bestimmt Bedeutung</strong> (Skip-gram-Kontext; semantische Kontrolle).</li>
+      <li><strong>Lokales Lernen → globale Ordnung</strong> (SGD, Hebb, Wake-Sleep, Bayes-Updates) — Emergenz aus lokalen Regeln.</li>
+    </ul>
+
+    <h3>B — die Dynamik der Konvergenz</h3>
+    <ul>
+      <li><strong> Konzept-Attraktoren (Chytas &amp; Singh 2025):</strong> unterschiedlich formulierte Fragen zum selben Konzept konvergieren in einer bestimmten Schicht zu (nahezu) identischen Punkten.</li>
+      <li><strong> IFS-Erklärung:</strong> jede Schicht ≈ kontraktive Abbildung; der Hutchinson-Operator vereinigt sie und konvergiert gegen ein eindeutiges, kompaktes, invariantes Set — den Attraktor (fraktale Struktur).</li>
+      <li><strong> Schicht-spezifische Konvergenz:</strong> Literatur&nbsp;L18 · Programmierung&nbsp;L19 · fiktive Welten&nbsp;L24 · natürliche Sprachen&nbsp;L27.</li>
+      <li><strong> Induzierte Tokens:</strong> Attraktor zurück in den Vokabularraum projizieren → „Essenz" des Konzepts.</li>
+      <li><strong> Trainingsfreie Anwendungen:</strong> Guardrail/Unlearning (Cosinus-Ähnlichkeit zum gespeicherten Attraktor, &gt;90% Cutoff auf TOFU/forget10); Steering (Attraktor-Addition/-Subtraktion); Datengenerierung (Attraktor-Perturbation, +20% Faktualität); Halluzinationsreduktion in VLMs.</li>
+      <li><strong> Limitierungen:</strong> braucht Zugang zu Hidden Activations (kein Black-Box-API), getestet bis 8B, keine Garantie gegen Attraktor-Überlappung.</li>
+    </ul>
+
+    <h3>Die Integration — die fused Gleichungen</h3>
+    <div class="formula">h_ℓ = L_ℓ( h_(ℓ−1) ),  L kontraktiv  ⇒  iteriert → A_c</div>
+    <p>Seien L<sub>1</sub>…L<sub>n</sub> (stückweise) kontraktive Abbildungen der Hidden-State-Räume. Die Komposition führt den Eingabezustand x<sub>0</sub> gegen einen konzeptspezifischen <strong>Attraktor A<sub>c</sub></strong> in dessen Konvergenzschicht ℓ<sub>c</sub>; A<sub>c</sub> ist die Hutchinson-Invariantenmenge für Konzept&nbsp;c.</p>
+    <ul>
+      <li><strong>Repräsentationsraum (A)</strong> = ⋃<sub>c</sub>{A<sub>c</sub>} zuzüglich der Bassin-Geometrie, die sie verbindet.</li>
+      <li><strong>Lineare Ablesung (A's Arithmetik)</strong> = Tangenten-Näherung nahe A<sub>c</sub> (Riemann: lokal flach).</li>
+      <li><strong>Read-out (B):</strong> induzierte Tokens = argmax über Vokabular der Attraktor-Projektion.</li>
+      <li><strong>Steering (B):</strong> h ← h + λ(A<sub>target</sub> − h) — Zustandsverschiebung zum Ziel-Attraktor.</li>
+      <li><strong>Guardrail (B):</strong> blockiere, wenn cos(h_ℓ, A<sub>c</sub>) &gt; τ.</li>
+    </ul>
+
+    <table>
+      <tr><th>Aspekt</th><th>A — Geometrie</th><th>B — Dynamik</th><th>Fusion</th></tr>
+      <tr><td>Wesen</td><td>Verteilter Vektorraum / Mannigfaltigkeit</td><td>Kontraktive IFS → Attraktoren</td><td>Attraktoren <em>sind</em> die Geometrie</td></tr>
+      <tr><td>Struktur</td><td>lokal linear/affin</td><td>global fraktal</td><td>Riemann: lokal flach, global gekrümmt</td></tr>
+      <tr><td>„Die" Repräsentation</td><td>fester Träger der Fähigkeit</td><td>layer-selektierter Attraktor</td><td>Fähigkeit = Zustand in (A<sub>c</sub>, ℓ<sub>c</sub>)</td></tr>
+      <tr><td>Bezug zur Wahrheit</td><td>kein Tracking („Bullshit")</td><td>adressierbare interne Semantik</td><td>strukturierter, aber ungroundeter Raum</td></tr>
+    </table>
+
+    <h3>Einheitliche Lesart der „großen Frage"</h3>
+    <p>A's übergreifende Frage — „Wie entsteht aus einfachen lokalen Operationen (Neuronen, Bits, Wahrscheinlichkeiten, Wörtern) globale Bedeutung und Intelligenz? Durch die richtige Architektur der Verbindungen" — findet in B ihre <em>Mechanik</em>: B ist die konkrete Instanz von A's Meta-Mustern <strong>#3 „Repräsentation bestimmt Fähigkeit"</strong> und <strong>#4 „Lokales Lernen → Globale Ordnung"</strong>. Lokale kontraktive Operationen (Schichten) erzeugen globale semantische Ordnung (die Attraktor-Landschaft).</p>
+  </section>
+
+  <!-- ============ VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Interaktive Visualisierung</h2>
+    <p>Die fused Idee als Simulation: <strong>verschiedene Formulierungen</strong> eines Konzepts (gestreute Punkte) werden von <strong>layersweisen kontraktiven IFS-Abbildungen</strong> (Schicht-Slider 0–31) auf ihre <strong>konzeptspezifischen Attraktoren</strong> zusammengezogen — und zwar erst in der <em>eigenen</em> Konvergenzschicht (Literatur&nbsp;L18, Programmierung&nbsp;L19, Sprachen&nbsp;L27). Im <em>konvergierten</em> Bassin erscheint die <strong>lokale affine (Word2Vec-)Parallelogramm-Relation</strong>: die lineare Arithmetik A's als Tangenten-Ablesung der fraktalen Konvergenz B's. Alle Daten inline, keine Netzabrufe.</p>
+
+    <div class="viz-wrap"><canvas id="attractorCanvas"></canvas></div>
+
+    <div class="controls">
+      <button id="animBtn" class="primary">▶ Kontrahieren</button>
+      <button id="resetBtn">↺ Reset</button>
+      <label for="layerSlider">Layer <span id="layerVal">0</span>/31</label>
+      <input type="range" id="layerSlider" min="0" max="31" value="0">
+      <button id="themeBtn">🌗 Theme</button>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--c-lit)"></i> Literatur (L18)</span>
+      <span><i class="dot" style="background:var(--c-prog)"></i> Programmierung (L19)</span>
+      <span><i class="dot" style="background:var(--c-lang)"></i> Sprachen (L27)</span>
+      <span class="cap">gestrichelte Parallelogramm = lokale lineare Arithmetik (nur im konvergierten Bassin sichtbar)</span>
+    </div>
+  </section>
+
+  <!-- ============ PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <a class="prov" href="../buecher/ai.html">buecher/ai.html — „Visuelle Wissenslandkarte · Schlüsselkonzepte"
+      <div class="d">Interaktive Landkarte über 17 Schlüsseldokumente (Bayes 1763 → moderne LLMs): Kernthese „Repräsentation ist alles", verteilte Repräsentationen (Bengio), Word2Vec-Linialgeometrie (Mikolov), Riemannsche Mannigfaltigkeiten, 7 Meta-Muster und der Frankfurt/Sparck-Jones „Bullshit"-Einwand.</div>
+    </a>
+    <a class="prov" href="../concept_attractors_in_llm.html">concept_attractors_in_llm.html — „Concept Attractors in LLMs"
+      <div class="d">Interaktive Erklärung von Chytas &amp; Singh (2025): Konzept-Attraktoren, IFS/Hutchinson-Erklärung, schicht-spezifische Konvergenz (L18/L19/L24/L27), induzierte Tokens und trainingsfreie Anwendungen (Guardrail, Steering, Datengenerierung, Halluzinationsreduktion).</div>
+    </a>
+  </section>
+
+  <footer>r1-049 · Fusion (K.o.-Synthese) · Geometrie (A) + Dynamik (B) eines latenten Raums · keine externen Datenquellen</footer>
+</article>
+
+<script>
+(function(){
+  var canvas = document.getElementById('attractorCanvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  var concepts = [
+    { key:'lit',  label:'Literatur',       layer:18, colorVar:'--c-lit',  seed:11 },
+    { key:'prog', label:'Programmierung',  layer:19, colorVar:'--c-prog', seed:23 },
+    { key:'lang', label:'Sprachen',        layer:27, colorVar:'--c-lang', seed:41 }
+  ];
+  var centers = {
+    lit:{x:0.28,y:0.44}, prog:{x:0.70,y:0.34}, lang:{x:0.50,y:0.72}
+  };
+
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+  var points=[];
+  function buildPoints(){
+    points=[];
+    concepts.forEach(function(c){
+      var rnd=mulberry32(c.seed);
+      var t=centers[c.key];
+      for(var i=0;i<8;i++){
+        points.push({
+          concept:c.key,
+          sx:0.07+rnd()*0.86,
+          sy:0.10+rnd()*0.80,
+          tx:t.x+(rnd()-0.5)*0.06,
+          ty:t.y+(rnd()-0.5)*0.06
+        });
+      }
+    });
+  }
+  buildPoints();
+
+  var layer=0, maxLayer=31, animId=null, lastTs=0;
+
+  function tFor(conceptKey){
+    var c=null;
+    for(var i=0;i<concepts.length;i++){ if(concepts[i].key===conceptKey){c=concepts[i];break;} }
+    if(!c) return 0;
+    var onset=Math.max(2,c.layer-8), done=c.layer+9;
+    var u=(layer-onset)/(done-onset);
+    u=Math.max(0,Math.min(1,u));
+    return u*u*(3-2*u);
+  }
+  function conceptOf(key){ for(var i=0;i<concepts.length;i++){ if(concepts[i].key===key) return concepts[i]; } return null; }
+
+  function hexA(hex,a){
+    if(!hex) return 'rgba(128,128,128,0.3)';
+    if(hex.indexOf('rgba')===0||hex.indexOf('rgb')===0) return hex;
+    hex=hex.replace('#','');
+    if(hex.length===3) hex=hex.split('').map(function(x){return x+x;}).join('');
+    var n=parseInt(hex,16);
+    var r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+
+  function drawArrow(x1,y1,x2,y2,col){
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.stroke();
+    var ang=Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(ang-0.4),y2-7*Math.sin(ang-0.4));
+    ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(ang+0.4),y2-7*Math.sin(ang+0.4));
+    ctx.stroke();
+  }
+
+  function drawAffine(w,h){
+    var best=null,bt=0;
+    concepts.forEach(function(c){ var t=tFor(c.key); if(t>bt){bt=t;best=c;} });
+    if(!best||bt<0.72) return;
+    var cx=centers[best.key].x*w, cy=centers[best.key].y*h;
+    var s=34;
+    var ax=cx, ay=cy;
+    var bx=ax+s, by=ay;
+    var dx=ax, dy=cy+s*0.85;
+    var ex=ax+s, ey=cy+s*0.85;
+    var col=cssVar(best.colorVar);
+    drawArrow(ax,ay,bx,by,col);
+    drawArrow(ax,ay,dx,dy,col);
+    ctx.setLineDash([4,4]);
+    drawArrow(bx,by,ex,ey,col);
+    drawArrow(dx,dy,ex,ey,col);
+    ctx.setLineDash([]);
+    ctx.fillStyle=cssVar('--muted');ctx.font='11px system-ui, sans-serif';ctx.textAlign='left';
+    ctx.fillText('lokal affin:  B + C − A = S  (Word2Vec-Arithmetik im konvergierten Bassin)', ax+s+12, ay-4);
+  }
+
+  function draw(){
+    var wrap=canvas.parentElement;
+    var rect=wrap.getBoundingClientRect();
+    var dpr=window.devicePixelRatio||1;
+    var w=rect.width, h=rect.height;
+    var W=Math.max(1,Math.floor(w*dpr)), H=Math.max(1,Math.floor(h*dpr));
+    if(canvas.width!==W||canvas.height!==H){ canvas.width=W; canvas.height=H; }
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,w,h);
+
+    ctx.strokeStyle=cssVar('--grid');ctx.lineWidth=0.5;
+    for(var gx=0;gx<w;gx+=36){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,h);ctx.stroke();}
+    for(var gy=0;gy<h;gy+=36){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(w,gy);ctx.stroke();}
+
+    concepts.forEach(function(c){
+      var t=tFor(c.key);
+      var cx=centers[c.key].x*w, cy=centers[c.key].y*h;
+      var rad=14+t*44;
+      var col=cssVar(c.colorVar);
+      ctx.beginPath();ctx.arc(cx,cy,rad,0,Math.PI*2);
+      ctx.fillStyle=hexA(col,0.10+0.12*t);ctx.fill();
+      ctx.strokeStyle=hexA(col,0.55);ctx.lineWidth=1.5;ctx.stroke();
+      ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+      ctx.fillStyle=col;ctx.font='600 13px system-ui, sans-serif';ctx.textAlign='center';
+      ctx.fillText(c.label, cx, cy-rad-10);
+      ctx.fillStyle=cssVar('--muted');ctx.font='11px system-ui, sans-serif';
+      ctx.fillText('L'+c.layer, cx, cy-rad+4);
+    });
+
+    points.forEach(function(p){
+      var t=tFor(p.concept);
+      var x=p.sx+(p.tx-p.sx)*t;
+      var y=p.sy+(p.ty-p.sy)*t;
+      var col=cssVar(conceptOf(p.concept).colorVar);
+      if(t>0.02){
+        ctx.beginPath();ctx.moveTo(p.sx*w,p.sy*h);ctx.lineTo(x*w,y*h);
+        ctx.strokeStyle=hexA(col,0.22);ctx.lineWidth=1;ctx.stroke();
+      }
+      ctx.beginPath();ctx.arc(x*w,y*h,4,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();
+    });
+
+    drawAffine(w,h);
+
+    ctx.fillStyle=cssVar('--fg');ctx.font='600 15px system-ui, sans-serif';ctx.textAlign='left';
+    ctx.fillText('Layer '+layer+' / '+maxLayer, 12, 22);
+    ctx.fillStyle=cssVar('--muted');ctx.font='12px system-ui, sans-serif';
+    ctx.fillText('Jede Schicht = kontraktive IFS-Abbildung → Konzept-Attraktor (fraktal, schicht-spezifisch)', 12, h-12);
+  }
+
+  function stopAnim(){ if(animId){cancelAnimationFrame(animId);animId=null;} }
+  function sync(){ var el=document.getElementById('layerVal'); if(el) el.textContent=layer; }
+
+  var animBtn=document.getElementById('animBtn');
+  var resetBtn=document.getElementById('resetBtn');
+  var themeBtn=document.getElementById('themeBtn');
+  var slider=document.getElementById('layerSlider');
+
+  if(slider) slider.addEventListener('input',function(){ stopAnim(); if(animBtn)animBtn.textContent='▶ Kontrahieren'; layer=parseInt(slider.value,10)||0; sync(); draw(); });
+
+  if(animBtn) animBtn.addEventListener('click',function(){
+    if(animId){ stopAnim(); animBtn.textContent='▶ Kontrahieren'; return; }
+    animBtn.textContent='⏸ Pause';
+    lastTs=0;
+    var step=function(ts){
+      if(ts-lastTs>170){
+        lastTs=ts; layer++; if(layer>maxLayer){layer=0;}
+        if(slider) slider.value=layer; sync(); draw();
+      }
+      animId=requestAnimationFrame(step);
+    };
+    animId=requestAnimationFrame(step);
+  });
+
+  if(resetBtn) resetBtn.addEventListener('click',function(){
+    stopAnim(); if(animBtn)animBtn.textContent='▶ Kontrahieren';
+    layer=0; if(slider)slider.value=0; sync(); draw();
+  });
+
+  if(themeBtn) themeBtn.addEventListener('click',function(){
+    document.documentElement.classList.toggle('dark');
+    draw();
+  });
+
+  window.addEventListener('resize',function(){ draw(); });
+  draw();
+})();
+</script>
+</body>
+</html>

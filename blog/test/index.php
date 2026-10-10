@@ -470,7 +470,7 @@ let deepResults = null, searchToken = 0, firstRender = true, openSet = new Set()
 
 function topDir(p){ const i = p.indexOf('/'); return i === -1 ? '' : p.slice(0, i); }
 const HIDDEN_DIR = 'combined';
-function isHidden(it){ return topDir(it.path) === HIDDEN_DIR; }
+function isHidden(it){ const d = topDir(it.path); return d === HIDDEN_DIR || d.startsWith(HIDDEN_DIR + '-'); }
 let showHidden = false;
 function visibleData(){ return showHidden ? DATA : DATA.filter(it => !isHidden(it)); }
 function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }

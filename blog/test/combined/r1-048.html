@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fusion 048 — Kernel Surrogates from Sparse Data</title>
+<style>
+  :root{
+    --bg:#faf7f1; --surface:#ffffff; --surface2:#f3efe6; --text:#232733; --muted:#6b7280;
+    --border:#e3ddd0; --accent:#5b53e6; --accent2:#0a8a76;
+    --obs:#c2410c; --star:#d97706; --best:#0f766e; --uncert:#1f2733;
+    --viz-low:#dbe6ff; --viz-high:#1e2f8f; --panel:#ffffff; --link:#5b53e6;
+  }
+  html.dark{
+    --bg:#0c0e15; --surface:#151824; --surface2:#0f121b; --text:#e6e8f0; --muted:#98a0b5;
+    --border:#283043; --accent:#8f86ff; --accent2:#22d3b0;
+    --obs:#ff8a5c; --star:#ffcf5c; --best:#2fd6a8; --uncert:#05070d;
+    --viz-low:#111733; --viz-high:#8ea0ff; --panel:#151824; --link:#9a92ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  article{max-width:820px;margin:0 auto;padding:42px 22px 60px}
+  h1{font-size:2.05rem;line-height:1.2;margin:0 0 8px}
+  .fusion-sub{color:var(--muted);font-size:1rem;margin-bottom:10px}
+  .lede{font-size:1.02rem}
+  section{margin:40px 0}
+  h2{font-size:1.4rem;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  p{margin:0 0 14px}
+  a{color:var(--link)}
+  b{color:var(--text)}
+  code{background:var(--surface2);padding:1px 6px;border-radius:5px;font-size:.88em}
+  .callout{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);
+           border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0}
+  .callout p{margin:0}
+  .callout .ct{font-weight:700;margin-bottom:4px;display:block}
+  .tag{display:inline-block;font-size:.74rem;font-weight:600;padding:2px 10px;border-radius:20px;
+       background:var(--surface2);color:var(--muted);border:1px solid var(--border);margin-right:6px}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;margin:14px 0}
+  th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:var(--surface2)}
+  .math{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+        padding:12px 16px;margin:14px 0;overflow-x:auto}
+  .math .mrow{margin:6px 0;font-size:1.05rem;font-family:"Cambria Math","STIX Two Math",Georgia,serif}
+  .math .mnote{color:var(--muted);font-size:.85rem;margin-top:4px;font-family:inherit}
+  .viz-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin:18px 0}
+  .viz-card canvas{width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--border);cursor:crosshair}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+  .btn{border:1px solid var(--border);background:var(--surface2);color:var(--text);padding:8px 15px;
+       border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  input[type=range]{width:150px;accent-color:var(--accent)}
+  .readout{font-size:.9rem;color:var(--muted);margin:6px 0;min-height:1.4em}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:12px;font-size:.82rem;color:var(--muted)}
+  .legend .sw{width:14px;height:14px;border-radius:3px;display:inline-block;vertical-align:-2px;margin-right:5px}
+  .scalebar{width:140px;height:12px;border-radius:6px;background:linear-gradient(90deg,var(--viz-low),var(--viz-high));
+            display:inline-block;vertical-align:-2px;margin:0 6px}
+  .theme-toggle{position:fixed;top:16px;right:16px;z-index:50}
+  footer{max-width:820px;margin:0 auto;padding:0 22px 60px;color:var(--muted);font-size:.82rem}
+  @media(max-width:600px){h1{font-size:1.6rem}.controls{gap:8px}}
+</style>
+</head>
+<body>
+<button class="btn theme-toggle" id="themeToggle">◐ theme</button>
+
+<article>
+  <h1>From Sparse Samples to a Surrogate You Can Act On</h1>
+  <p class="fusion-sub">Fusion aus: botorch.html ✕ space_algorithm.html</p>
+  <p class="lede">Two explainers, one machine. One builds a probabilistic model of an expensive function to choose its next measurement; the other builds a smooth field from a handful of token-movements to render the whole space. Both are the same act: <em>turn a few samples into a continuous, kernel-weighted model of an "everywhere" quantity, then act on it.</em></p>
+
+  <!-- ============ 1. THESE ============ -->
+  <section id="these">
+    <h2>Kernthese der Fusion</h2>
+    <p>Both papers rest on the same epistemic move. You are given a handful of <em>samples</em> and asked to say something about <em>everywhere else</em>. The honest way to do that is to impose smoothness with a <strong>kernel</strong>: each sample carries a Gaussian "influence" that fades with distance, and the value at any unobserved point is a kernel-weighted blend of the samples. <code>botorch.html</code> (BoTorch) does exactly this with a <strong>Gaussian process</strong> — a mean prediction plus an uncertainty band over an expensive scalar function. <code>space_algorithm.html</code> (the Metric Space Explorer) does the same with <strong>RBF interpolation</strong> — turning a few token-displacements into a continuous velocity field that deforms a grid. The Gaussian kernel in the first and the RBF in the second are literally the same function, <code>exp(−‖x−xᵢ‖²/(2σ²))</code>.</p>
+    <p>The fused position is therefore: <strong>a GP is the probabilistic, uncertainty-aware version of RBF interpolation; the RBF field is the deterministic, noiseless limit of a GP mean.</strong> Where they diverge is only the <em>job</em> the surrogate does. BoTorch's surrogate is <em>instrumental</em> — it exists to pick the single next point worth measuring, balancing exploration (high uncertainty) against exploitation (near the current best) under a budget of expensive evaluations. The space-morpher's field is <em>descriptive</em> — it exists to make the entire transformation legible at once (the full deformed grid, all tokens, all layers, with strain coloring). One output is a <em>decision</em> (a coordinate); the other is a <em>picture of the whole</em>.</p>
+    <p>Put together, the two are the two ends of one spectrum of <strong>kernel surrogate modeling</strong>: the space-morpher is "a surrogate with an infinite budget whose output is a rendering," and BoTorch is "a surrogate with a tiny budget whose output is the next probe." Unify them and you get a single framework: build a kernel surrogate (learn its smoothness from the data), keep a full posterior over the quantity of interest, and let an acquisition function decide where the next — expensive — observation should go.</p>
+  </section>
+
+  <!-- ============ 2. WIDERSPRÜCHE ============ -->
+  <section id="widersprueche">
+    <h2>Widersprüche zwischen A und B</h2>
+    <p class="callout"><span class="ct">Honesty note</span>
+    The two papers come from different fields (hyperparameter optimization vs. transformer interpretability) and make no directly conflicting factual claims. The conflicts are at the level of <em>methodological stance</em> — how you build and how you use a continuous model from sparse data. Three specific, locatable tensions.</p>
+
+    <table>
+      <tr><th style="width:22%">Tension</th><th>A — botorch.html says</th><th>B — space_algorithm.html says</th></tr>
+      <tr>
+        <td><b>1. Uncertainty as first-class vs. silent point estimate</b></td>
+        <td>The GP is a <em>posterior distribution</em>: it gives "a mean prediction and an uncertainty band (how confident it is)," and "where we don't have data, uncertainty is high." The band drives the whole decision.</td>
+        <td>The RBF interpolant is a single deterministic field. "We apply the interpolated velocity field to deform a regular grid," and the strain map is presented as a measured property of space — no band, no variance, no "we don't know here."</td>
+      </tr>
+      <tr>
+        <td><b>2. The model's job: adaptive next-step decision vs. global one-shot description</b></td>
+        <td>The surrogate exists "to find the optimum in as few tries as possible." The loop is <em>sequential and adaptive</em>: each new observation refines the model and changes the next decision. Output = one coordinate.</td>
+        <td>The field exists to render <em>the whole</em> at once — deformed grid + all token trajectories + all layers + strain, in one static picture. No budget, no sequence, no decision to make.</td>
+      </tr>
+      <tr>
+        <td><b>3. Smoothness learned from data vs. hand-set by the user</b></td>
+        <td>"The GP hyperparameters (kernel lengthscale, noise variance, etc.) are fit by maximizing the marginal likelihood using L-BFGS-B via <code>fit_gpytorch_mll()</code>." The width is <em>inferred</em>.</td>
+        <td>σ (kernel width) is a literal slider the user drags; "σ controls how far each token's influence reaches." The width is <em>asserted</em>, not justified.</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- ============ 3. AUFLÖSUNG ============ -->
+  <section id="aufloesung">
+    <h2>Auflösung</h2>
+    <p><span class="tag">Tension 1</span> <b>Reconcile: the field <em>is</em> the GP mean — so wrap it in a posterior.</b> The RBF blend and the GP predictive mean are the same expression when the kernel is Gaussian and the noise → 0. So the space-morpher's "surface" is really the <em>mean</em> deformation, and the resolution is to attach a variance to it: large between tokens, small at tokens. The fused object is a <strong>probabilistic vector field</strong> — a posterior over deformations, not a single surface. The strain map stops being a number and becomes a <em>range</em> (mean strain ± uncertainty). <em>Fused conclusion: treat every interpolated quantity as mean + fog; the field is a posterior.</em></p>
+    <p><span class="tag">Tension 2</span> <b>Reconcile: description is the infinite-budget limit of the decision loop.</b> If the space-morpher's "observations" (token/layer movements) were <em>expensive to obtain</em>, then an EI/UCB acquisition function over the observation budget tells you <em>which token or layer to probe next</em> — exactly where the posterior is most uncertain or most likely to change the deformation. The acquisition function is the bridge between the two. <em>Fused conclusion: one mechanism (kernel surrogate + acquisition) subsumes both; the morpher is BO with an infinite budget and a picture as the output, BoTorch is the morpher with a scalar field, an expensive field, and the next-probe as the output.</em></p>
+    <p><span class="tag">Tension 3</span> <b>Reconcile: replace the σ slider with a marginal-likelihood fit.</b> What B does by hand (a knob) A does automatically (maximizing the log marginal likelihood). The resolution is to infer the width from the data — by MLL or cross-validation — and keep the slider only as a diagnostic override. <em>Fused conclusion: let the data set the kernel width; then the field is not "an assumption" but "the smoothness the data supports."</em></p>
+    <div class="callout"><span class="ct">Overall fused conclusion</span>
+    Build a <strong>kernel surrogate with learned width</strong>; carry a <strong>full posterior (mean + variance)</strong> over the quantity of interest (a scalar <i>f</i> in BO, a vector field <i>δ</i> in the morpher); and use an <strong>acquisition function</strong> to spend each expensive probe where it matters most. The "deformed grid" is the posterior-mean deformation; its uncertainty fog marks where the next observation belongs. Strain — a functional of the deformation field — inherits the same posterior.</div>
+  </section>
+
+  <!-- ============ 4. INHALT ============ -->
+  <section id="inhalt">
+    <h2>Fusionierter Inhalt</h2>
+
+    <p><b>The shared object — a kernel surrogate.</b> Both papers start from sparse samples <code>{(xᵢ, yᵢ)}</code> and predict a quantity at an unobserved point <code>x</code> by blending the samples with a distance kernel. The shared kernel is the Gaussian/RBF:</p>
+    <div class="math">
+      <div class="mrow">k(x, xᵢ) = exp( − ‖x − xᵢ‖² / (2σ²) )</div>
+      <div class="mnote">Same expression in both papers: BoTorch's GP kernel (σ = lengthscale ℓ) and the morpher's RBF weight (σ = "kernel width").</div>
+    </div>
+
+    <p><b>Where the morpher is the GP's mean.</b> The space-morpher's RBF field (from <code>space_algorithm.html</code>) is a normalized weighted blend of the token deltas:</p>
+    <div class="math">
+      <div class="mrow">δ(p) = ( Σᵢ wᵢ(p) · δᵢ ) / ( Σᵢ wᵢ(p) ),  &nbsp; wᵢ(p) = exp( − ‖p − pᵢ‖² / (2σ²) )</div>
+      <div class="mnote">A smooth, continuous vector field: "drop a stone in water at each token, the ripples (Gaussian bells) overlap, closer tokens weigh more."</div>
+    </div>
+    <p>BoTorch's GP (from <code>botorch.html</code>) is the same idea promoted to a distribution. With a prior <code>f ~ N(0, k)</code> and noisy observations <code>y</code>, the posterior at a test point is:</p>
+    <div class="math">
+      <div class="mrow">μ*(x) = k(x, X)ᵀ (K + σ²ₙ I)⁻¹ y &nbsp;&nbsp;&nbsp; var*(x) = k(x, x) − k(x, X)ᵀ (K + σ²ₙ I)⁻¹ k(X, x)</div>
+      <div class="mnote">As the noise σₙ → 0 with a pure-Gaussian kernel, μ* reduces exactly to the RBF blend above. <b>The morpher's field is the noiseless GP mean; the GP adds the variance the morpher never computes.</b></div>
+    </div>
+
+    <p><b>The morpher's pipeline (B).</b> A transformer's hidden state flows through the residual stream; each layer adds a delta:</p>
+    <div class="math">
+      <div class="mrow">h⁽ℓ⁺¹⁾ = h⁽ℓ⁾ + f_ℓ(h⁽ℓ⁾) &nbsp;&nbsp; δ⁽ℓ⁾ = h⁽ℓ⁺¹⁾ − h⁽ℓ⁾ &nbsp;&nbsp; h⁽ᴸ⁾ = h⁽⁰⁾ + Σ_ℓ δ⁽ℓ⁾</div>
+      <div class="mnote">Deltas <em>stack</em> head-to-tail: the final position is the embedding plus all layer deltas.</div>
+    </div>
+    <p>These high-D states are projected to 2D by PCA (center → covariance → top-2 eigenvectors), the per-token deltas are turned into a field by RBF interpolation, the field deforms a grid, and <em>strain</em> measures local distortion:</p>
+    <div class="math">
+      <div class="mrow">p′ = p + t·amp·δ(p)  &nbsp;&nbsp;(multi-layer: p⁽ℓ⁺¹⁾ = p⁽ℓ⁾ + t·amp·δ⁽ℓ⁾(p⁽ℓ⁾), applied sequentially)</div>
+      <div class="mrow">strainᵢⱼ = ‖p′ⱼ − p′ᵢ‖ / ‖pⱼ − pᵢ‖ &nbsp;&nbsp;(&gt;1 expand, &lt;1 contract, =1 isometric)</div>
+      <div class="mnote">"If the entire space were made of rubber, how would each layer stretch, compress, and twist it?"</div>
+    </div>
+
+    <p><b>The BO loop (A).</b> BoTorch runs the opposite direction — it <em>chooses</em> samples rather than rendering them. Each iteration: fit the GP (hyperparameters by maximizing the marginal likelihood) → approximate the acquisition function by Monte-Carlo samples using the <strong>reparameterization trick</strong> <code>ξ = μ + σ·ε</code> (so the acqf is differentiable) → <strong>fix those samples once (SAA)</strong> so the objective is deterministic → optimize it with multi-start <code>L-BFGS-B</code> from Sobol initializations → evaluate the true (expensive) function there → add to the data. The acquisition scores each candidate by balancing exploration vs. exploitation:</p>
+    <div class="math">
+      <div class="mrow">EI(x) = (μ(x) − f_best)·Φ(z) + σ(x)·φ(z),  &nbsp; z = (μ(x) − f_best)/σ(x)</div>
+      <div class="mrow">UCB(x) = μ(x) + β·σ(x) &nbsp;&nbsp;&nbsp; POI(x) = Φ(z)</div>
+      <div class="mnote">SAA converges to the true optimizer fast: plain MC is O(1/√N), quasi-MC (Sobol) is O(1/N) — "the QMC approximation only requires 64 samples" to match 4096 plain MC samples.</div>
+    </div>
+
+    <p><b>The unified algorithm.</b> Read both as one procedure over a <em>quantity of interest</em> <code>q(x)</code> that is a scalar <i>f</i> (BO) or a vector <i>δ</i> (morpher):</p>
+    <table>
+      <tr><th>Step</th><th>In botorch.html (decision mode)</th><th>In space_algorithm.html (description mode)</th></tr>
+      <tr><td>1. Sparse samples</td><td>expensive function evaluations (budgeted)</td><td>token deltas at layer boundaries (all present)</td></tr>
+      <tr><td>2. Kernel surrogate</td><td>GP posterior (mean + variance)</td><td>RBF field (mean only)</td></tr>
+      <tr><td>3. Width σ / ℓ</td><td>fit by marginal likelihood</td><td>hand-set slider</td></tr>
+      <tr><td>4. Act</td><td>acquisition → next probe (EI/UCB/POI)</td><td>render full deformation + strain</td></tr>
+      <tr><td>5. Output</td><td>one coordinate (the next decision)</td><td>the whole map (a picture)</td></tr>
+    </table>
+    <p>The fusion collapses the table: <strong>the deformed grid is the posterior-mean deformation, the uncertainty fog is where to spend the next probe, and the acquisition function is what turns a description into a decision when samples are expensive.</strong></p>
+  </section>
+
+  <!-- ============ 5. VISUALISIERUNG ============ -->
+  <section id="visualisierung">
+    <h2>Visualisierung — ein Surrogat, den du bewegen kannst</h2>
+    <p>The canvas below is the fusion made executable. A hidden smooth field <code>f(x,y)</code> is known only through <em>expensive</em> observations you place. From those few points a kernel surrogate (a GP — whose mean is exactly the RBF blend the space-morpher draws) fills the whole plane with a <strong>mean surface</strong> (colored) and an <strong>uncertainty fog</strong> (dark where it does not know). An <strong>acquisition function (EI)</strong> picks the <strong>★ next probe</strong> where expected improvement is highest. "Evaluate ★" spends one expensive observation there, the fog shrinks, and the star jumps — the full BO loop, while the colored field is the morpher's RBF surface. Drag the lengthscale by hand (Tension 3) or let it be fit from the data by marginal likelihood. Click anywhere on the field to place an observation.</p>
+
+    <div class="viz-card">
+      <div class="readout" id="readout">…</div>
+      <canvas id="viz" width="760" height="600"></canvas>
+      <div class="controls">
+        <button class="btn primary" id="evalStar">Evaluate ★ next probe</button>
+        <button class="btn" id="autoRun">Auto-run ×8</button>
+        <button class="btn" id="fitLS">Fit ℓ (marginal likelihood)</button>
+        <button class="btn" id="resetViz">Reset</button>
+        <span style="color:var(--muted);font-size:.85rem">ℓ (kernel width)</span>
+        <input type="range" id="lsSlider" min="0.05" max="0.5" step="0.005" value="0.16">
+        <span id="lsVal" style="color:var(--muted);font-size:.85rem">0.160</span>
+      </div>
+      <div class="legend">
+        <span>GP mean <span class="scalebar"></span> low → high</span>
+        <span><span class="sw" style="background:var(--uncert)"></span> dark fog = high uncertainty (±2σ)</span>
+        <span><span class="sw" style="background:var(--obs);border-radius:50%"></span> observation (best = ring)</span>
+        <span><span class="sw" style="background:var(--star)"></span> ★ next probe (EI argmax)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. PROVENIENZ ============ -->
+  <section id="provenienz">
+    <h2>Provenienz</h2>
+    <p><a href="../botorch.html">botorch.html</a> — <em>How BoTorch Optimizes</em>: the GP surrogate (mean + uncertainty, lengthscale fit by marginal likelihood), the reparameterization trick, SAA + multi-start L-BFGS-B, EI/UCB/POI acquisition functions, the full sequential BO loop, and the SAA convergence (MC vs. QMC).</p>
+    <p><a href="../space_algorithm.html">space_algorithm.html</a> — <em>Metric Space Explorer / How Space Morphing Works</em>: the residual stream and stacked layer deltas, PCA projection to 2D, RBF interpolation from sparse token-deltas to a continuous field, grid deformation, and the strain heatmap.</p>
+  </section>
+</article>
+
+<footer>
+  Fusion paper 048 · round 1 · self-contained, no network data. All math is the two sources' own, integrated.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var cv = document.getElementById('viz');
+  var ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height, M = 54, cols = 48, rows = 48, MAX_OBS = 40;
+
+  var lengthscale = 0.16, noise = 0.02, learnedLS = false;
+  var observations = [], next = {x:0.5, y:0.5, v:0}, autoTimer = null;
+  var gp = { Kinv:null, KinvY:null, logdet:0 };
+  var theme = {};
+
+  // ---- theme (read live from CSS variables; theme-reactive) ----
+  function parseColor(s){
+    s=(s||'').trim();
+    if(s.charAt(0)==='#'){
+      var h=s.slice(1);
+      if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
+    }
+    var m=s.match(/rgba?\(([^)]+)\)/);
+    if(m){ var p=m[1].split(',').map(function(t){return parseFloat(t);}); return [p[0],p[1],p[2]]; }
+    return [0,0,0];
+  }
+  function rgba(arr,a){ return 'rgba('+arr[0]+','+arr[1]+','+arr[2]+','+a+')'; }
+  function readTheme(){
+    var cs=getComputedStyle(document.documentElement);
+    var g=function(n){return cs.getPropertyValue(n).trim();};
+    theme={
+      text:g('--text'), muted:g('--muted'), border:g('--border'), accent:g('--accent'),
+      obs:parseColor(g('--obs')), star:parseColor(g('--star')), best:parseColor(g('--best')),
+      uncert:parseColor(g('--uncert')), panel:parseColor(g('--surface')),
+      vizLow:parseColor(g('--viz-low')), vizHigh:parseColor(g('--viz-high'))
+    };
+  }
+  function fieldColor(t){
+    t=Math.max(0,Math.min(1,t));
+    var lo=theme.vizLow, hi=theme.vizHigh;
+    return 'rgb('+Math.round(lo[0]+(hi[0]-lo[0])*t)+','+Math.round(lo[1]+(hi[1]-lo[1])*t)+','+Math.round(lo[2]+(hi[2]-lo[2])*t)+')';
+  }
+
+  // ---- math helpers (from botorch.html) ----
+  function normalPDF(x){ return Math.exp(-0.5*x*x)/Math.sqrt(2*Math.PI); }
+  function normalCDF(x){
+    var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+    var sign=x<0?-1:1; x=Math.abs(x)/Math.sqrt(2);
+    var t=1/(1+p*x);
+    var y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+    return 0.5*(1+sign*y);
+  }
+  function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  var rng=mulberry32(987654321);
+
+  // hidden "expensive" field (inline, deterministic)
+  function trueField(x,y){
+    return 0.60*Math.exp(-((x-0.30)*(x-0.30)+(y-0.34)*(y-0.34))/(2*0.11*0.11))
+         - 0.45*Math.exp(-((x-0.74)*(x-0.74)+(y-0.70)*(y-0.70))/(2*0.09*0.09))
+         + 0.32*Math.exp(-((x-0.62)*(x-0.62)+(y-0.16)*(y-0.16))/(2*0.13*0.13))
+         + 0.10*Math.exp(-((x-0.16)*(x-0.16)+(y-0.80)*(y-0.80))/(2*0.10*0.10));
+  }
+
+  // ---- linear algebra (Gauss-Jordan with log-det) ----
+  function invertWithLogDet(M){
+    var n=M.length, a=[], I=[], i, j, c;
+    for(i=0;i<n;i++){ a.push(M[i].slice()); var row=new Array(n); for(j=0;j<n;j++)row[j]=(i===j?1:0); I.push(row); }
+    var logdet=0;
+    for(c=0;c<n;c++){
+      var pr=c; for(var r=c+1;r<n;r++) if(Math.abs(a[r][c])>Math.abs(a[pr][c])) pr=r;
+      if(Math.abs(a[pr][c])<1e-12) return null;
+      if(pr!==c){ var tt=a[pr]; a[pr]=a[c]; a[c]=tt; tt=I[pr]; I[pr]=I[c]; I[c]=tt; }
+      var piv=a[c][c]; logdet+=Math.log(Math.abs(piv));
+      for(j=0;j<n;j++){ a[c][j]/=piv; I[c][j]/=piv; }
+      for(var r2=0;r2<n;r2++){ if(r2===c) continue; var f=a[r2][c]; if(f===0) continue;
+        for(j=0;j<n;j++){ a[r2][j]-=f*a[c][j]; I[r2][j]-=f*I[c][j]; } }
+    }
+    return { inv:I, logdet:logdet };
+  }
+  function matVec(M,v){ var n=M.length, o=new Array(n); for(var i=0;i<n;i++){ var s=0; for(var j=0;j<n;j++)s+=M[i][j]*v[j]; o[i]=s; } return o; }
+
+  function buildK(lsl){
+    var n=observations.length, K=[];
+    for(var i=0;i<n;i++){ K[i]=[];
+      for(var j=0;j<n;j++){ var dx=observations[i].x-observations[j].x, dy=observations[i].y-observations[j].y;
+        K[i][j]=Math.exp(-(dx*dx+dy*dy)/(2*lsl*lsl)); if(i===j) K[i][j]+=noise; } }
+    return K;
+  }
+  function recomputeGP(){
+    gp.Kinv=null; gp.KinvY=null; gp.logdet=0;
+    var n=observations.length; if(n===0) return;
+    var res=invertWithLogDet(buildK(lengthscale));
+    if(res){ gp.Kinv=res.inv; gp.logdet=res.logdet; gp.KinvY=matVec(res.inv, observations.map(function(o){return o.f;})); }
+  }
+  function gpPredict(x,y){
+    var n=observations.length;
+    if(n===0 || !gp.Kinv) return { mean:0, var:1 };
+    var k=new Array(n), mean=0, i;
+    for(i=0;i<n;i++){ var dx=x-observations[i].x, dy=y-observations[i].y;
+      k[i]=Math.exp(-(dx*dx+dy*dy)/(2*lengthscale*lengthscale)); mean+=k[i]*gp.KinvY[i]; }
+    var varr=1; // k(x,x)=1
+    for(i=0;i<n;i++){ var s=0, Ki=gp.Kinv[i]; for(var j=0;j<n;j++) s+=Ki[j]*k[j]; varr-=k[i]*s; }
+    if(varr<1e-5) varr=1e-5; if(varr>1) varr=1;
+    return { mean:mean, var:varr };
+  }
+  function ei(x,y){
+    var p=gpPredict(x,y), s=Math.sqrt(p.var), n=observations.length;
+    if(n===0) return s;
+    var fbest=-1e9; for(var i=0;i<n;i++) if(observations[i].f>fbest) fbest=observations[i].f;
+    if(s<1e-8) return 0;
+    var z=(p.mean-fbest)/s;
+    return (p.mean-fbest)*normalCDF(z)+s*normalPDF(z);
+  }
+  function logMLL(lsl){
+    var n=observations.length; if(n<2) return -1e18;
+    var res=invertWithLogDet(buildK(lsl)); if(!res) return -1e18;
+    var y=observations.map(function(o){return o.f;}), Ky=matVec(res.inv,y), a=0;
+    for(var i=0;i<n;i++) a+=y[i]*Ky[i];
+    return -0.5*a - 0.5*res.logdet - 0.5*n*Math.log(2*Math.PI);
+  }
+
+  // ---- acquisition argmax (coarse + local refinement) ----
+  function computeNext(){
+    if(!gp.Kinv){ next={x:0.5,y:0.5,v:0}; return; }
+    var best=-1e9, bx=0.5, by=0.5, i, j, x, y, v;
+    for(i=0;i<cols;i++) for(j=0;j<rows;j++){ x=(i+0.5)/cols; y=(j+0.5)/rows; v=ei(x,y); if(v>best){best=v;bx=x;by=y;} }
+    var radii=[0.06,0.025,0.01], N=15;
+    for(var rI=0;rI<radii.length;rI++){ var r=radii[rI];
+      for(i=0;i<N;i++) for(j=0;j<N;j++){ x=bx-r+2*r*i/(N-1); y=by-r+2*r*j/(N-1);
+        if(x<0||x>1||y<0||y>1) continue; v=ei(x,y); if(v>best){best=v;bx=x;by=y;} } }
+    next={x:bx,y:by,v:best};
+  }
+
+  // ---- observation sampling (the "expensive evaluation") ----
+  function addObservation(x,y,silent){
+    if(observations.length>=MAX_OBS) return;
+    x=clamp(x,0.01,0.99); y=clamp(y,0.01,0.99);
+    var f=trueField(x,y)+(rng()-0.5)*0.05;
+    observations.push({x:x,y:y,f:f});
+    recomputeGP(); computeNext(); updateReadout(); draw();
+  }
+  function seedDefault(){
+    rng=mulberry32(987654321);
+    var pts=[[0.20,0.30],[0.50,0.50],[0.75,0.28],[0.34,0.72],[0.66,0.66]];
+    return pts.map(function(p){ return {x:p[0],y:p[1],f:trueField(p[0],p[1])+(rng()-0.5)*0.05}; });
+  }
+  function reset(){ observations=seedDefault(); lengthscale=0.16; learnedLS=false;
+    document.getElementById('lsSlider').value='0.16'; document.getElementById('lsVal').textContent='0.160';
+    recomputeGP(); computeNext(); updateReadout(); draw(); }
+
+  // ---- coordinates ----
+  function px(u){ return M + u*(W-2*M); }
+  function py(v){ return M + (1-v)*(H-2*M); }
+  function canvasXY(e){
+    var r=cv.getBoundingClientRect();
+    var sx=(e.clientX-r.left)*(W/r.width), sy=(e.clientY-r.top)*(H/r.height);
+    return { x:clamp((sx-M)/(W-2*M),0,1), y:clamp(1-(sy-M)/(H-2*M),0,1) };
+  }
+
+  // ---- readout ----
+  var readoutEl=document.getElementById('readout');
+  function updateReadout(){
+    var bf=-1e9,bx=0,by=0; for(var i=0;i<observations.length;i++){ if(observations[i].f>bf){bf=observations[i].f;bx=observations[i].x;by=observations[i].y;} }
+    readoutEl.innerHTML='n = '+observations.length+' obs · best f = <b>'+(bf> -1e8?bf.toFixed(2):'—')+'</b> @ ('
+      +bx.toFixed(2)+', '+by.toFixed(2)+') · next <span style="color:var(--star)">★</span> @ ('
+      +next.x.toFixed(2)+', '+next.y.toFixed(2)+') · ℓ = <b>'+lengthscale.toFixed(3)+'</b> '
+      +(learnedLS?'(marginal likelihood)':'(manual)');
+  }
+
+  // ---- star ----
+  function drawStar(cx,cy,size,color){
+    ctx.save(); ctx.translate(cx,cy); ctx.beginPath(); ctx.fillStyle=color;
+    for(var i=0;i<5;i++){ var a=(i*4*Math.PI)/5-Math.PI/2; var X=Math.cos(a)*size, Y=Math.sin(a)*size; if(i===0)ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+
+  // ---- main draw ----
+  function draw(){
+    readTheme();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=rgba(theme.panel,1); ctx.fillRect(0,0,W,H);
+
+    // pass 1: compute field stats for normalization
+    var means=new Array(cols*rows), stds=new Array(cols*rows), mn=1e9,mxv=-1e9,smn=1e9,smx=-1e9,i,j;
+    for(j=0;j<rows;j++) for(i=0;i<cols;i++){
+      var x=(i+0.5)/cols, y=(j+0.5)/rows, p=gpPredict(x,y), s=Math.sqrt(p.var);
+      means[j*cols+i]=p.mean; stds[j*cols+i]=s;
+      if(p.mean<mn)mn=p.mean; if(p.mean>mxv)mxv=p.mean; if(s<smn)smn=s; if(s>smx)smx=s;
+    }
+    var mr=(mxv-mn)||1, sr=(smx-smn)||1;
+
+    // pass 2: mean surface
+    for(j=0;j<rows;j++) for(i=0;i<cols;i++){
+      var t=(means[j*cols+i]-mn)/mr;
+      var x0=px(i/cols), x1=px((i+1)/cols), yt=py((j+1)/rows), yb=py(j/rows);
+      ctx.fillStyle=fieldColor(t);
+      ctx.fillRect(x0,yt,(x1-x0)+1,(yb-yt)+1);
+    }
+    // pass 3: uncertainty fog (dark where variance high)
+    for(j=0;j<rows;j++) for(i=0;i<cols;i++){
+      var a=clamp((stds[j*cols+i]-smn)/sr,0,1)*0.62;
+      if(a>0.02){ var x0=px(i/cols), x1=px((i+1)/cols), yt=py((j+1)/rows), yb=py(j/rows);
+        ctx.fillStyle=rgba(theme.uncert,a); ctx.fillRect(x0,yt,(x1-x0)+1,(yb-yt)+1); }
+    }
+
+    // frame + axis ticks
+    ctx.strokeStyle=rgba(theme.border,1); ctx.lineWidth=1; ctx.strokeRect(M,M,W-2*M,H-2*M);
+    ctx.fillStyle=rgba(theme.muted,1); ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('0',px(0),H-M+16); ctx.fillText('0.5',px(0.5),H-M+16); ctx.fillText('1',px(1),H-M+16);
+
+    // observations
+    var fbest=-1e9; for(i=0;i<observations.length;i++) if(observations[i].f>fbest) fbest=observations[i].f;
+    for(i=0;i<observations.length;i++){
+      var o=observations[i], X=px(o.x), Y=py(o.y);
+      ctx.beginPath(); ctx.arc(X,Y,5.5,0,Math.PI*2); ctx.fillStyle=rgba(theme.obs,1); ctx.fill();
+      ctx.lineWidth=1.5; ctx.strokeStyle=rgba(theme.panel,1); ctx.stroke();
+      if(o.f===fbest && observations.length>1){ ctx.beginPath(); ctx.arc(X,Y,9,0,Math.PI*2); ctx.lineWidth=2; ctx.strokeStyle=rgba(theme.best,1); ctx.stroke(); }
+    }
+
+    // next probe star
+    if(next.x>0){
+      var SX=px(next.x), SY=py(next.y);
+      ctx.beginPath(); ctx.moveTo(SX,SY); ctx.lineTo(SX,M); ctx.setLineDash([3,3]); ctx.strokeStyle=rgba(theme.star,0.5); ctx.lineWidth=1; ctx.stroke(); ctx.setLineDash([]);
+      drawStar(SX,SY,9,rgba(theme.star,1));
+      ctx.fillStyle=rgba(theme.text,0.9); ctx.font='11px sans-serif'; ctx.textAlign='left';
+      ctx.fillText('next',SX+12,SY-8);
+    }
+  }
+
+  // ---- controls ----
+  function stopAuto(){ if(autoTimer){ clearInterval(autoTimer); autoTimer=null; } }
+  document.getElementById('evalStar').addEventListener('click', function(){ addObservation(next.x,next.y); });
+  document.getElementById('autoRun').addEventListener('click', function(){
+    stopAuto(); var k=0;
+    autoTimer=setInterval(function(){
+      addObservation(next.x,next.y); k++;
+      if(k>=8) stopAuto();
+    },420);
+  });
+  document.getElementById('resetViz').addEventListener('click', function(){ stopAuto(); reset(); });
+  document.getElementById('fitLS').addEventListener('click', function(){
+    var best=-1e18, bl=lengthscale;
+    for(var l=0.05;l<=0.5501;l+=0.005){ var m=logMLL(l); if(m>best){best=m;bl=l;} }
+    lengthscale=bl; learnedLS=true;
+    document.getElementById('lsSlider').value=bl;
+    document.getElementById('lsVal').textContent=bl.toFixed(3);
+    recomputeGP(); computeNext(); updateReadout(); draw();
+  });
+  var lsSlider=document.getElementById('lsSlider');
+  lsSlider.addEventListener('input', function(){
+    lengthscale=parseFloat(lsSlider.value); learnedLS=false;
+    document.getElementById('lsVal').textContent=lengthscale.toFixed(3);
+    recomputeGP(); computeNext(); updateReadout(); draw();
+  });
+  cv.addEventListener('click', function(e){ var p=canvasXY(e); addObservation(p.x,p.y); });
+
+  // theme reactivity
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    document.documentElement.classList.toggle('dark');
+  });
+  if(window.MutationObserver){
+    new MutationObserver(function(){ draw(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+  }
+
+  // init
+  reset();
+})();
+</script>
+</body>
+</html>
