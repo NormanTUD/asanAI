@@ -8,8 +8,8 @@
 <!-- Plotly für 2D/3D Plots -->
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <!-- Temml für LaTeX -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/Temml-Local.css">
-<script src="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/temml.min.js"></script>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<script src="../temml.min.js"></script>
 
 <style>
 :root{
@@ -1351,8 +1351,6 @@ const f2=v=>v.toFixed(2), f1=v=>v.toFixed(1), f0=v=>String(Math.round(v)), f4=v=
       const d = monthsData();
       Plotly.react(el, [
         {x:d.x,y:d.y,mode:'lines',line:{color:'rgba(100,224,255,0.30)',width:2},hoverinfo:'skip'},
-        {x:d.x.slice(0,12),y:d.y.slice(0,12),mode:'markers+text',text:d.lab.slice(0,12),
-         textposition:'top center', textfont:{
         {x:d.x.slice(0,12),y:d.y.slice(0,12),mode:'markers+text',text:d.lab.slice(0,12),
          textposition:'top center', textfont:{color:COL.txt,size:11},
          marker:{size:13,color:d.c,line:{color:'rgba(255,255,255,0.35)',width:1}},

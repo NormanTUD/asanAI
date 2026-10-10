@@ -7,8 +7,8 @@
 
 <!-- ============ EXTERNE BIBLIOTHEKEN (CDN) ============ -->
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
-<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<script src="../temml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
@@ -1961,8 +1961,6 @@ const DFA = {
       ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+px*s,cy-py*s); ctx.stroke();
       label(ctx,'r̂r̂ᵀx', cx+px*s/2+(uy>0?10:-10), cy-py*s/2-12, C.dir, 12, 700);
       // rechter Winkel
-      const k=10;
-      ctx.
       const k=10;
       ctx.strokeStyle='#ffffff2e'; ctx.lineWidth=1.3;
       const nx=-uy, ny=ux; // Normale zu r̂ (Bildkoordinaten: y invertiert)
