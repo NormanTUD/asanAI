@@ -1,0 +1,17 @@
+{
+  "no": "042",
+  "a": "topology_idea.html",
+  "b": "grokking_addition_internal3.html",
+  "a_title": "Attraktoren in Large Language Models – Interaktive Visualisierung",
+  "b_title": "How a Tiny AI Learned to Add — A Visual Story",
+  "combined_theme": "fourier-torus-attractor-grokking",
+  "one_line": "B's grokkter Modular-Addition-Transformer ist der kleinste, verifizierte Sonderfall von A's topologischen Attraktor-Rahmens: der Algorithmus ist ein Frequenz-Torus (5 Zyklen, β₁ = 5), erzeugt durch die bilineare Attention-Komposition, abgelesen über Interferenz als scharfes Basin, dessen Nebenpeaks die nahe falschen Becken (Halluzinationen) sind.",
+  "contradictions": [
+    "A bestreitet lineare Superposition (Komposition sei nicht bloße Vektoraddition; Nichtlinearitäten erzeugten qualitative neue Basins) und stellt die lineare Hypothese als ungenügend gegenüber der topologischen (Phasenübergänge), während B's funktionierender Algorithmus überwiegend linear/harmonisch ist (lineare Kosinus-Interferenz mit Gewichten α_k, Softmax 97,5 % linear, 84,6 % der Neuronen = Grad-2-Polynom einer Frequenz).",
+    "A will Topologie als Werkzeug nutzen (topologische Programmierung, Gewichte aus Topologie synthetisieren/editieren, LLMs programmierbar machen), B zeigt, dass der Torus ein unbeabsichtigtes Produkt der Optimierung ist (Grokking), das nicht spezialisiert, sondern erst nach ~14 000 Epochen + Weight Decay (Phase Cleanup) auftritt.",
+    "A lehnt Circuit-Analyse ab (funktioniere nur für kleine Modelle mit isolierten Aufgaben, skaliere nicht — Polysemantizität/Verwundung) zugunsten globaler Topologie; B ist genau eine lokale Circuit-Zerlegung (Embedding, bilineare Attention, MLP-Polynome, Unembedding), die für ihre Aufgabe vollständig erfolgreich ist.",
+    "A rahmt die falsche Antwort stochastisch (Rauschen schiebe das Token in ein falsches Basin = sprunghafte Halluzination), B deterministisch (Interferenz-Nebenpeak: mit einer Frequenz liege c = c* ± 8 ≈ 0.998, fast so hoch wie die richtige)."
+  ],
+  "resolution": "Zwei Ebenen eines Phänomens, keine Rivalen: A liefert Vokabular + Agenda (Attraktoren, Becken, Tori, TDA/Betti, Roadmap, topologische Programmierung), B die Instanz + Proof-of-Principle (der grokkte 5-Frequenz-Torus). (1) Nichtlinear erzeugt, linear lesbar: A's Nichtlinearität ist B's bilineare Attention, die auf der geschlossenen Kreis-/Torus-Mannigfaltigkeit der Gruppenstruktur Z/113 landet, also harmonisch lesbar; A's Phasenübergang ist B's Grokking-Sprung. (2) Erst ablesen (B, verifizierbar/ablatierbar: Ablation der Nebenfrequenzen verbessert, Loss −70 %), dann schreiben (A's offene Phasen 4–5). (3) Circuit = Zelle, Topologie = Gewebe: lokal zuerst, global, wenn Polysemantizität nicht mehr trennt. (4) Falsche Antwort = nahes falsches Becken; Nähe = Interferenz-Nebenpeak (B), Auslöser = Rauschen (A); Heilung = schärfere Becken-Grenzen (mehr Frequenzen).",
+  "viz": "Canvas-2D, inline-only, theme-aware (:root/html.dark + Dark-Toggle + matchMedia + MutationObserver, alle Farben aus CSS-Tokens, kein #ffffff, kein Netzwerk): oben B's Interferenz-Score(c) = Σ α_k·cos(ω_k·(a+b−c)) über alle 113 Kandidaten als A's Basin-Landschaft (scharfer Peak bei c* = Attraktor, Nebenpeak = falsches Becken, individuelle Frequenz-Wellen dezent), Regler a, b und n = 1…5 aktive Schlüssel-Frequenzen (mehr n = schärfere Becken, weniger Halluzination); unten links die n Frequenz-Zyklen als Torus (β₁ = n), unten rechts fused-Interpretation. Live-Readouts: a+b mod 113, Score(c*), best. falsch, Gap, β₁, Becken."
+}

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention als Maschine, Grokking als ihrem Phasenübergang — Fusion r1-045</title>
+
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1eee3; --panel:#ffffff; --panel-solid:#fffdf8;
+  --stroke:rgba(20,28,45,0.12); --stroke-hi:rgba(20,28,45,0.24);
+  --txt:#1c2333; --txt-dim:#3a4356; --txt-faint:#6b7488;
+  --acc:#0d8f80; --acc2:#c93a86; --acc3:#b57e00; --acc4:#6451d8; --acc5:#2f8f4b;
+  --r:14px;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+  --viz-bg:#ffffff; --viz-grid:rgba(20,28,45,0.08); --viz-txt:#1c2333;
+  --viz-query:#c93a86; --viz-bary:#2f8f4b; --viz-attn:#0d8f80;
+  --viz-train:#d1242f; --viz-val:#2f8f4b; --viz-loss:#b57e00;
+}
+html.dark{
+  --bg:#070a12; --bg2:#0c1120; --panel:rgba(18,24,42,0.66); --panel-solid:#121a2c;
+  --stroke:rgba(255,255,255,0.09); --stroke-hi:rgba(255,255,255,0.20);
+  --txt:#e8ecf6; --txt-dim:#a7b0c6; --txt-faint:#64708c;
+  --acc:#5ee0d0; --acc2:#ff7ac0; --acc3:#ffc860; --acc4:#8a7cff; --acc5:#6ee88a;
+  --viz-bg:#0c1120; --viz-grid:rgba(255,255,255,0.07); --viz-txt:#e8ecf6;
+  --viz-query:#ff7ac0; --viz-bary:#6ee88a; --viz-attn:#5ee0d0;
+  --viz-train:#ff7a86; --viz-val:#6ee88a; --viz-loss:#ffc860;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);line-height:1.66;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(800px 520px at 12% 0%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+             radial-gradient(800px 560px at 90% 4%,color-mix(in srgb,var(--acc4) 10%,transparent),transparent 60%)}
+article{max-width:820px;margin:0 auto;padding:20px 22px 90px}
+h1{font-size:clamp(27px,5vw,42px);line-height:1.08;letter-spacing:-.025em;font-weight:760;margin:16px 0 10px}
+h2{font-size:clamp(21px,3.4vw,29px);line-height:1.16;letter-spacing:-.015em;font-weight:720;margin:0 0 14px}
+h3{font-size:16.5px;font-weight:660;margin:24px 0 8px;color:var(--acc)}
+p{color:var(--txt-dim);margin-bottom:14px;max-width:72ch}
+strong{color:var(--txt);font-weight:650}
+em{color:var(--acc);font-style:normal;font-weight:560}
+code{font-family:var(--mono);font-size:.87em;background:color-mix(in srgb,var(--acc) 14%,transparent);padding:2px 6px;border-radius:5px}
+a{color:var(--acc);text-decoration:none;border-bottom:1px dotted color-mix(in srgb,var(--acc) 55%,transparent)}
+.sub{font-size:13px;color:var(--txt-faint);font-family:var(--mono);letter-spacing:.02em;margin-bottom:6px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--acc4);margin-bottom:10px}
+section{padding:38px 0;border-top:1px solid var(--stroke)}
+section:first-of-type{border-top:none}
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:14px 0}
+.card h3{margin-top:0}
+.note{border-left:3px solid var(--acc);background:color-mix(in srgb,var(--acc) 7%,transparent);padding:12px 15px;border-radius:0 11px 11px 0;margin:16px 0;font-size:14px;color:var(--txt-dim)}
+.note.w{border-color:var(--acc3);background:color-mix(in srgb,var(--acc3) 8%,transparent)}
+.note.t{border-color:var(--acc4);background:color-mix(in srgb,var(--acc4) 8%,transparent)}
+.note b{color:var(--txt)}
+.note .h{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px;display:block}
+.note.w .h{color:var(--acc3)}.note.t .h{color:var(--acc4)}
+.box{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r);padding:18px;margin:16px 0}
+.box.hl{border-color:color-mix(in srgb,var(--acc3) 45%,transparent);background:color-mix(in srgb,var(--acc3) 6%,var(--panel))}
+.box .tag{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc4);font-weight:660;margin-bottom:8px;display:block}
+.eq{overflow-x:auto;padding:11px 14px;font-size:14.5px;color:var(--txt);font-family:var(--mono);background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--acc);border-radius:0 10px 10px 0;margin:12px 0;line-height:2}
+.eq .c{color:var(--txt-faint)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+th{text-align:left;padding:8px 10px;border-bottom:1.5px solid var(--stroke-hi);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+td{padding:8px 10px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);vertical-align:top}
+td.n{font-family:var(--mono);color:var(--txt);white-space:nowrap}
+td.hi{color:var(--acc);font-weight:600}
+ul.cl,ol.cl{margin:0 0 14px 20px;color:var(--txt-dim)}ul.cl li,ol.cl li{margin-bottom:9px}
+ul.cl b,ol.cl b{color:var(--txt)}
+.mapt{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid var(--stroke);border-radius:12px;overflow:hidden;margin:14px 0}
+.mapt .r{display:contents}
+.mapt .k{font-family:var(--mono);font-size:11px;color:var(--acc4);background:color-mix(in srgb,var(--acc4) 9%,transparent);padding:9px 11px;border-bottom:1px solid var(--stroke)}
+.mapt .v{padding:9px 12px;border-bottom:1px solid var(--stroke);color:var(--txt-dim);font-size:13.5px}
+.mapt .r:last-child .k,.mapt .r:last-child .v{border-bottom:none}
+#bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--stroke)}
+#bar .in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:9px 22px}
+#bar .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--acc);font-weight:600;flex:1}
+#bar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+#bar nav::-webkit-scrollbar{display:none}
+#bar nav a{color:var(--txt-faint);font-size:11.5px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+#bar nav a:hover{color:var(--txt)}
+#themeBtn{font-family:var(--sans);font-size:12px;padding:6px 11px;border-radius:9px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);cursor:pointer;white-space:nowrap}
+.viz .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.viz .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);flex:none}
+.viz .head h3{margin:0}
+.viz .head .tg{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-faint);border:1px solid var(--stroke-hi);padding:3px 9px;border-radius:99px}
+.cwrap{background:var(--bg2);border:1px solid var(--stroke);border-radius:12px;padding:8px;overflow:hidden;margin-bottom:10px}
+canvas{display:block;width:100%}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--txt-dim);margin:10px 2px}
+.leg span{display:flex;align-items:center;gap:6px}
+.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.ro{display:grid;gap:9px;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));margin-top:12px}
+.ro .b{background:var(--panel);border:1px solid var(--stroke);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .b .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:4px}
+.ro .b .v{font-family:var(--mono);font-size:15px;font-weight:640;color:var(--acc);line-height:1.2}
+.ro .b .v.g{color:var(--acc5)}.ro .b .v.e{color:var(--acc2)}.ro .b .v.m{color:var(--acc3)}
+.ro .b .u{font-size:10px;color:var(--txt-faint);margin-top:3px}
+.ctl{margin-bottom:13px}
+.ctl-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--txt-dim);margin-bottom:6px}
+.ctl-lab b{font-family:var(--mono);color:var(--acc)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;background:var(--stroke);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px -1px var(--acc)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+button{font-family:var(--sans);font-size:12.5px;font-weight:560;cursor:pointer;padding:8px 14px;border-radius:10px;border:1px solid var(--stroke-hi);background:var(--panel-solid);color:var(--txt);transition:.14s}
+button:hover{border-color:var(--acc)}
+button.on{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:660}
+footer{border-top:1px solid var(--stroke);padding:26px 22px;text-align:center;color:var(--txt-faint);font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="in">
+    <span class="brand">◈ FUSION r1-045</span>
+    <nav>
+      <a href="#these">Kernthese</a>
+      <a href="#widersprueche">Widersprüche</a>
+      <a href="#aufloesung">Auflösung</a>
+      <a href="#inhalt">Inhalt</a>
+      <a href="#visualisierung">Viz</a>
+      <a href="#provenienz">Provenienz</a>
+    </nav>
+    <button id="themeBtn">☀️ Licht</button>
+  </div>
+</div>
+
+<article>
+  <p class="sub">Fusion aus: buecher/attention_is_all_you_need.html ✕ grokking2.html</p>
+  <h1>Attention als Maschine, Grokking als ihrem Phasenübergang</h1>
+  <p><em>A</em> liest einen einzigen Forward-Pass als reine Geometrie: Tokens sind Punkte, W<sup>Q</sup>/W<sup>K</sup> schneiden schräge Unterräume, das Skalarprodukt ist eine Projektion, Softmax macht daraus eine Verteilung, der Output ist eine <strong>konvexe Kombination</strong> der Values. <em>B</em> fragt, was ein <em>winziger</em> Transformer <em>während des Trainings</em> mit genau dieser Geometrie macht: erst memorisieren, dann — in einem scharfen Phasenübergang („Grokking") — die interne Struktur vom Rauschen in die <strong>wahre algebraische Struktur</strong> der Aufgabe schleifen. <strong>Fusion: A ist die Maschine, auf die geroutet wird; B ist, was diese Maschine mit ihrer eigenen Geometrie beim Training macht.</strong></p>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="these">
+    <div class="eyebrow">1 · Kernthese der Fusion</div>
+    <h2>Ein Objekt, zwei Höhenstufen: Routing-Geometrie und ihre Trainings-Dynamik</h2>
+    <p>Beide Seiten drehen sich um dasselbe Objekt — die <em>interne Geometrie eines Transformers</em> — aber auf zwei verschiedenen Höhenstufen. <strong>A</strong> (attention_is_all_you_need) ist eine statische, ein-Pass-Geometrie: Query/Key/Value-Projektionen schneiden aus dem 512d-Modellraum 64d-Unterräume; „je ähnlicher die Richtung von Query und Key, desto mehr Information fließt zurück"; der Output liegt <em>nur</em> in der konvexen Hülle der Values. <strong>B</strong> (grokking2) ist eine dynamische, Trainings-Geometrie: ein 2-Layer/128-Width/4-Head-Transformer (~400K Nicht-Embedding-Parameter), der Binär-Operationstabellen mit <em>abstrakten Symbolen</em> lernt, erreicht Trainings-Acc zu ~10³ schnell 100 %, während die Validierung bei Chance (1/n) bleibt — und erst, nach einem langen „Memosphase", plötz-lich die Val-Acc von Chance auf 100 % springt („grokking"). Die t-SNE-Struktur der Embeddings ist <em>vorher Rauschen, nachher ein Kreis</em>: „the network discovered ℤ/pℤ is cyclic".</p>
+    <p>Die <strong>einheitliche Position</strong> der Fusion: <em>Attention (A) ist die lernbare Unterraum-Routing-Maschine; Grokking (B) ist, was genau diese Maschine — über das Training laufen gelassen — mit ihrer eigenen Projektions-Geometrie tut: sie schleift W<sup>Q</sup>/W<sup>K</sup>/W<sup>V</sup>/V und die Embeddings bis sie die zugrunde liegende Algebra spiegeln (Kreis für die zyklische Gruppe, Cosets für S₅).</em> A beschreibt, <em>wie eine feste Menge Projektionen in einem Pass routet</em>; B beschreibt, <em>wie sich diese Menge über die Trainings-Trajektorie ändert, bis sie die Gruppenstruktur trifft</em>. Der Val-Acc-Sprung (B) <em>ist</em> der Moment, in dem die Geometrie, auf die Attention routet, die wahre Struktur erreicht.</p>
+    <p>Arbeitsformel: <code>A = die lernbare Geometrie, auf die geroutet wird (Unterräume, Routing, konvexe Mischung)</code> und <code>B = die Training-Dynamik, die diese Geometrie bis zur wahren Struktur schleift (Memorization → Grokking, Phasenübergang)</code>. A's „inhaltsabhängiges Routing" (Routing nach <em>Inhalt</em>, nicht Position) und B's „elements are abstract symbols / isomorphe Aufgaben → identische Kurven" (Exp. 7) sind zwei Seiten derselben Tatsache: Das Netz schließt auf <em>relationale Struktur</em> statt auf Oberflächen-Labels. A ist der Mechanismus, B der Beleg.</p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="widersprueche">
+    <div class="eyebrow">2 · Widersprüche zwischen A und B</div>
+    <h2>Drei Stellungen, die aufeinandertreffen</h2>
+    <p>Die beiden widersprechen sich nicht formell — A ist ein Geometrie-Explainer, B eine empirische Algorithmen-Studie. Aber an <em>drei</em> Stellen treffen unvereinbare Stellungen aufeinander (je mit dem, was A und was B konkret sagt):</p>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 1 · „Nur mischen" vs. „Struktur entdecken" (der schärfste)</span>
+      <p><b>A</b> (§5, Schlüssel-Einsicht): „Attention kann den Output-Punkt <em>nur innerhalb der konvexen Hülle</em> der Values platzieren. Es kann keine 'neue' Information erfinden – es kann nur bestehende Information <strong>mischen</strong>." Attention ist also <em>informations-konservativ</em>; nur das FFN danach transformiert nichtlinear.</p>
+      <p><b>B</b> (Exp. 5 + Exp. 6): Das Netz „hat capacity far beyond what's needed for memorization, and generalization requires a 'non-trivial explanation' — it's not just about capacity constraints forcing the network to learn the pattern"; und bei modularer Addition: die Embeddings formen einen <em>Kreis</em> — „the network discovered ℤ/pℤ is cyclic". B zentral: Das Netz <em>erzeugt/entdeckt</em> eine Struktur (das Gruppen-Gesetz, den Kreis), die nicht wörtlich als Muster in der memorisierten Tabelle steht.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel (wörtlich gelesen)</span>A: ein Attention-Operator erfindet <em>nichts Neues</em> (nur konvexe Mischung). B: das Gesamtmodell bringt eine <em>neue</em> Erklärung/Struktur hervor, die über das Interpolieren der memorisierten Einträge hinausgeht. Lokal konservativ vs. global generativ — genau derselbe Operationen-Komplex, gegensätzlich bewertet.</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 2 · Stabiles flexibles Routing vs. Phasenübergang</span>
+      <p><b>A</b> (§2 + §7): Die W<sup>Q</sup>,W<sup>K</sup>,W<sup>V</sup>-Unterräume „werden gelernt. Das Modell entscheidet selbst, welche Aspekte es vergleichen will." Das Bild ist ein <em>stabiles, flexibles</em> Routing-Gerät — inhaltsabhängig, in <em>jedem</em> Forward-Pass sanft anpassend.</p>
+      <p><b>B</b> (Exp. 4 + Exp. 6): Dieselben internen Parameter/die interne Geometrie sind <em>vor</em> dem Grokking „just noise" und <em>nach</em> ihm diskontinuierlich auf die wahre Struktur „gesnappt" (Phasenübergang, Val-Acc Chance→100 %, Double-Descent der Val-Loss). Die Geometrie ist also nicht sanft-flexibel, sondern <em>metastabil bis zum plötzlichen Sprung</em>.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel (Metapher)</span>A: sanft, immer-flexibel, inhaltsabhängig (pro Pass). B: unstabil bis zu einem scharfen Phasenübergang über die Trainings-Trajektorie. „Entscheidet, was zu vergleichen" (A) vs. „ist Rauschen, bis es plötz-lich die Gruppe trifft" (B).</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Widerspruch 3 · Architektur vs. Optimierungs-Dynamik</span>
+      <p><b>A</b> (§7, „Warum ist das so mächtig?"): (1) inhaltsabhängiges Routing, (2) Multi-Head-Parallelperspektiven, (3) O(1)-Pfadlänge, (4) lernbare Unterräume. A verortet die Mächtigkeit im <em>Architektur-Design</em> (Kapazität/Expressivität).</p>
+      <p><b>B</b> (Exp. 2 + Exp. 3 + Exp. 4): Generalisierung entsteht <em>nicht</em> primär durch das Routing-Design, sondern durch <em>Training-Dynamiken</em> bei massivem Overparameterizing: „Weight decay is king — halves the data needed"; „Any noise helps (minibatch SGD, gradient noise, weight noise)"; ein Compute-for-Data-Tradeoff (nahe ~25–30 % Daten: −1 % Daten → +40–50 % Schritte, exponentieller Anstieg); und das hero-Demo generalisiert <em>ohne</em> Weight Decay — nur durch SGD-Rauschen über lange Trainingszeit.</p>
+      <p class="note w" style="margin-bottom:0"><span class="h">Inkompatibel (Ursache der Generalisierung)</span>A: die Mächtigkeit liegt in der Architektur (warum es Relationen <em>repräsentieren</em> kann). B: die Generalisierung liegt in der Dynamik (warum ein <em>memorisierendes</em> überparametrisiertes Netz <em>wann</em> generalisiert). Zwei unterschiedliche „Warum-funktioniert-es".</p>
+    </div>
+    <div class="note t"><span class="h">Ehrliche Einordnung</span>A ist eine einzelne, beweisfreie Geometrie-Skizze; B ein Systematisches Experimentenset (7 Seeds, Ablationen). Die Widersprüche sind <em>interpretativ</em> und fallen an der Naht zweier Register zusammen. Am schärfsten ist W1: A macht eine starke, wörtliche Aussage („kann keine neue Information erfinden — nur mischen"), die, auf das <em>Gesamtmodell</em> hochgezogen, B's „Discovery einer non-trivial explanation" verböte — und die Auflösung ist, dass A's Aussage <em>pro Head/Schicht</em> gilt, B's aber <em>pro Netzwerk/Trajektorie</em>.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="aufloesung">
+    <div class="eyebrow">3 · Auflösung</div>
+    <h2>Wie sie zueinanderpassen — und die fusionierte Schlussfolgerung</h2>
+    <p>A und B sind keine Rivalen, sondern <strong>die Maschine und deren Training</strong>. Zu jedem Widerspruch:</p>
+
+    <div class="card">
+      <h3>R1 → W1: lokal konservativ, global generativ</h3>
+      <p>A's Konvexhüllen-Grenze gilt <em>pro Attention-Head, pro Schicht</em> (ein Operator mischt nur vorhandene Values). B's „Discovery" ist das <em>emergente</em> Ergebnis aus <strong>Tiefe × Trajektorie</strong>: Attention mischt, das FFN warpt nichtlinear, und das Ganze wird <em>trainiert</em>. <strong>Fusion:</strong> <code>ein Attention-Op: konservativ (A)</code> ∧ <code>Stack(L Schichten: mix + FFN-warp) × Optimierung: generativ (B)</code>. „Neue Struktur" (B) entsteht nicht <em>innerhalb</em> eines Attention-Operators, sondern <em>über</em> den gestapelten, trainierten Komplex. A ist eine Untergrenze eines Operators; B ist, was der ganze trainierte Apparat leistet.</p>
+    </div>
+
+    <div class="card">
+      <h3>R2 → W2: dieselben Projektionen, zwei Zeitskalen</h3>
+      <p>Fixiere einen Zeitpunkt: die W<sup>Q/K/V</sup>-Projektionen routen <em>sanft und inhaltsabhängig</em> (A's Bild — korrekt <em>auf dieser Zeitskala</em>). Betrachte die Trainings-Trajektorie: <em>dieselben</em> Projektionen sind Rauschen, bis der Phasenübergang sie auf die Gruppe snappt (B's Bild — korrekt <em>auf dieser Zeitskala</em>). <strong>Fusion:</strong> die Projektionen sind <em>zweideutig</em> — (a) zu jedem Zeitpunkt ein flexibles Router (A) und (b) über das Training ein Objekt, das grokkt (B). Vor dem Sprung „flexibel" heißt: noch <em>bedeutungslos</em> (B: noise); nach dem Sprung: auf die Struktur <em>gelist</em>, und <em>jetzt</em> routet jeder Pass danach (A). Kein Widerspruch — zwei Zeitauflösungen.</p>
+    </div>
+
+    <div class="card">
+      <h3>R3 → W3: Expressivität macht darstellbar, Dynamik wählt</h3>
+      <p>A antwortet auf <em>„warum kann ein Transformer relationale Muster <strong>repräsentieren</strong>?"</em> (Kapazität: O(1)-Pfadlänge verbindet jedes Token mit jedem; Multi-Head = parallele Perspektiven; lernbare Unterräume). B antwortet auf <em>„warum generalisiert ein <strong>overparametrisiertes, bereits memorisiertes</strong> Netz, und <strong>wann</strong>?"</em> (Dynamik: Weight Decay/Rauschen/Compute steuern, ob die Optimierung die generalisierende Lösung <em>findet</em>, statt zu memorisieren). <strong>Fusion:</strong> <code>Expressivität (A) → die Struktur ist in der Embedding-Geometrie darstellbar</code>; <code>Dynamik (B) → wählt, ob sie gefunden wird (vs. Memorization)</code>. A liefert die <em>Substanz</em> (das routbare Gerüst), B die <em>Auswahl</em> (welche Lösung die Optimierung dort hineinlegt).</p>
+    </div>
+
+    <div class="box hl">
+      <span class="tag">Fusionierte Schlussfolgerung</span>
+      <p>Der Transformer ist <strong>(A) eine lernbare Unterraum-Routing-Maschine</strong> — Query/Key-Projektionen, Ähnlichkeit als Projektion, Softmax, Output als konvexe Kombination, Multi-Head, O(1)-Pfad — und <strong>(B) beim Training eine Struktur-Discovery-Maschine</strong>: overparametrisiert und über die Memorization hinaus trainiert, schleift sie ihre <em>eigene</em> Projektions-/Embedding-Geometrie, bis sie die zugrunde liegende Algebra trifft (Kreis = ℤ/nℤ zyklisch, Cosets für S₅). Der Val-Acc-Phasenübergang (B) <em>ist</em> der Moment, in dem die Geometrie, auf die Attention routet (A), die wahre Struktur erreicht. Netto: <code>Maschine (A) + Phasenübergang (B) = ein Netz, das memorisieren kann und — wenn die Dynamik es trägt — die Struktur dahinter trifft.</code></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="inhalt">
+    <div class="eyebrow">4 · Fusionierter Inhalt</div>
+    <h2>Der zusammengeführte, substantielle Kern</h2>
+
+    <h3>Die Maschine (A) — ein Forward-Pass, geometrisch</h3>
+    <ul class="cl">
+      <li><b>Kern:</b> „Wen frage ich, und was bekomme ich zurück?" — inhaltsabhängiges Routing: jedes Token sammelt gezielt Information von anderen.</li>
+      <li><b>Unterräume:</b> W<sup>Q</sup>,W<sup>K</sup>,W<sup>V</sup> schneiden <em>schräge</em> 64d-Unterräume aus dem 512d-Modellraum; Query-Raum = „was suche ich", Key-Raum = „was biete ich", Value-Raum = „was gebe ich weiter".</li>
+      <li><b>Ähnlichkeit:</b> score = q·k = ‖q‖‖k‖cosθ (projizierte Länge); gleiche Richtung → hoch, senkrecht → 0, entgegengesetzt → negativ.</li>
+      <li><b>Scaling:</b> in 64d hat q·k Varianz ≈ 64 → drückt Softmax in Sättigung (Gradient ≈ 0); Division durch √d_k = √64 = 8 normalisiert die Varianz auf ≈ 1.</li>
+      <li><b>Softmax:</b> Scores → Verteilung αᵢ ≥ 0, Σαᵢ = 1; Schärfe = 1/Temperatur (hoch → ein Token dominiert, fast Lookup).</li>
+      <li><b>Output:</b> Σ αᵢ·vᵢ — eine <em>konvexe Kombination</em>, liegt also <em>nur</em> in der konvexen Hülle der Values (keine neue Info; FFN warpt danach nichtlinear).</li>
+      <li><b>Multi-Head:</b> 8 parallele 64d-Unterräume, jeder achtet auf andere Aspekte (Syntax, Semantik, Lokal, Verb↔Nomen, Referenz, Position, Negation, Long-Range); Concat → W<sup>O</sup> ∈ ℝ^{512×512}.</li>
+      <li><b>Macht (A §7):</b> inhaltsabhängiges Routing, parallele Perspektiven, O(1)-Pfadlänge (kein sequentielles Durchreichen wie RNN), lernbare Unterräume.</li>
+    </ul>
+    <div class="eq">
+      Attention(Q,K,V) = softmax( Q·K<sup>T</sup> / √d<sub>k</sub> ) · V &nbsp;<span class="c">// d_model=512, d_k=d_v=64, h=8</span><br>
+      Q = X·W<sup>Q</sup>, K = X·W<sup>K</sup>, V = X·W<sup>V</sup> ; &nbsp; W<sup>Q,K,V</sup> ∈ ℝ^{512×64}<br>
+      score(q,k) = q·k = ‖q‖·‖k‖·cosθ &nbsp;&nbsp;→&nbsp;&nbsp; scaled = (q·k)/√d<sub>k</sub> &nbsp;<span class="c">// Var(64)→Var(1)</span><br>
+      α<sub>i</sub> = e^{s<sub>i</sub>} / Σ<sub>j</sub> e^{s<sub>j</sub>} , &nbsp; Σ<sub>i</sub> α<sub>i</sub> = 1 &nbsp;&nbsp;→&nbsp;&nbsp; out = Σ<sub>i</sub> α<sub>i</sub>·v<sub>i</sub> ∈ conv(v₁,…,vₙ)<br>
+      MultiHead = Concat(head₁,…,head₈)·W<sup>O</sup> , &nbsp; head<sub>i</sub> = Attention(QW<sub>i</sub><sup>Q</sup>, KW<sub>i</sub><sup>K</sup>, VW<sub>i</sub><sup>V</sup>)
+    </div>
+
+    <h3>Die Dynamik (B) — die Grokking-Phasenübergang</h3>
+    <ul class="cl">
+      <li><b>Setup:</b> decoder-only Transformer (2 Layer, 128 Width, 4 Heads, ~400K Nicht-Embedding-Parameter) lernt Binär-Operationstabellen ⟨a⟩⟨op⟩⟨b⟩⟨=⟩⟨c⟩, Loss nur auf ⟨c⟩; die Elemente sind <em>abstrakte Symbole</em> (keine Zahlenstruktur gegeben). AdamW, lr=10⁻³, wd=1, Batch 512, Budget 10⁵. Massiv overparametrisiert (≤ 97² = 9409 Einträge).</li>
+      <li><b>Grokking (Exp. 4, Hero-Demo, Division mod 97):</b> Train-Acc → 100 % bei ~10³; Val-Acc bleibt bei Chance (1/97 ≈ 1 %) bis ~10⁵, dann <em>schnell</em> → 100 % bei ~10⁶. Val-Loss <em>steigt</em> während des Memorizierens (Double Descent), fällt im zweiten Abstieg. Geht <em>ohne</em> Weight Decay — nur SGD-Rauschen + lange Trainingszeit.</li>
+      <li><b>Exp. 2 (Ablationen, S₅-Produkt):</b> Weight Decay halbiert den Datenbedarf; „any noise helps" (flachere Minima); lr muss inner- halb ~1 Größenordnung liegen; <em>alle</em> Methoden erreichen 100 % Train-Acc in 10³–10⁴ — der Engpass ist <strong>Generalisierung, nicht Optimierung</strong>.</li>
+      <li><b>Exp. 3 (Zeit):</b> nahe ~25–30 % Daten: −1 % Daten → +40–50 % Schritte (exponentieller Anstieg); Train-Zeit <em>sinkt</em> mit weniger Daten (weniger zu memorisieren); echter Compute-for-Data-Tradeoff.</li>
+      <li><b>Exp. 5 (Robustheit):</b> immer 100 % Train-Acc (memorisiert auch falsche Labels); bis k=1000 Ausreißer kaum betroffen, bei 2000–3000 deutlich schlechter → Generalisierung braucht eine „non-trivial explanation", nicht nur Kapazitäts-Zwang.</li>
+      <li><b>Exp. 6 (Struktur):</b> t-SNE der Output-Gewichte/Embeddings → modular Addition formt einen <em>Kreis</em> („discovered ℤ/pℤ is cyclic"); „+8" läuft den Kreis entlang; Residuen-mod-k clustern; S₅ → Coset-Cluster; Weight Decay macht Struktur <em>mehr</em> sichtbar; <em>vor</em> Grokking = Rauschen.</li>
+      <li><b>Exp. 7 (Isomorphie):</b> x+y mod(p−1) ≅ x·y mod p (per Primwurzeln/Discrete Log); x−y ≅ x/y. Die Data-Efficiency-Kurven stimmen überein — das Netz behandelt Symbole als <em>wirklich abstrakt</em>.</li>
+    </ul>
+    <table>
+      <thead><tr><th>Operation (mod 97)</th><th>Typ</th><th>Verhalten (B)</th></tr></thead>
+      <tbody>
+        <tr><td class="n">x + y</td><td>symmetrisch, Gruppe</td><td class="hi">generalisiert (Schwelle ≈ 30 % Daten)</td></tr>
+        <tr><td class="n">x − y</td><td>asymmetrisch, Gruppe</td><td>mehr Daten nötig (≈ 38 %)</td></tr>
+        <tr><td class="n">x / y</td><td>asymmetrisch, Gruppe</td><td>≅ x − y (Primwurzeln) → identische Kurve</td></tr>
+        <tr><td class="n">x² + y²</td><td>symm. Polynom</td><td>≈ 35 %</td></tr>
+        <tr><td class="n">x·y in S₅</td><td>120-Element-Gruppe</td><td>≈ 42 %</td></tr>
+        <tr><td class="n">div if odd, sub if even</td><td>asymmetrisch, „hard"</td><td>generalisiert — Netz lernt zu „dispatchen"</td></tr>
+        <tr><td class="n">x³ + xy² + y</td><td>„hard"</td><td class="hi">generalisiert NIE (auch bei 95 % Daten)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Die Verknüpfung — wie A und B dasselbe Objekt sind</h3>
+    <div class="mapt">
+      <div class="r"><div class="k">W<sup>Q</sup>/W<sup>K</sup>/W<sup>V</sup>/V (A §2)</div><div class="v">= die <b>lernbare Unterraum-Geometrie</b>, auf die geroutet wird (A) — <em>und</em> genau die Parameter/Embeddings, die B's Training vom Rauschen in die wahre Struktur schleift (B Exp. 6).</div></div>
+      <div class="r"><div class="k">„inhaltsabhängiges Routing" (A §7)</div><div class="v">= der <b>Mechanismus</b>: nach Inhalt (Unterraum-Projektion) statt Position routen. B Exp. 7 (isomorphe Aufgaben → identische Kurven, „symbols as truly abstract") ist der <b>Beleg</b>, dass das Routing strukturell und nicht wörtlich ist.</div></div>
+      <div class="r"><div class="k">„Output = konvexe Kombination, mischt nur" (A §5)</div><div class="v">= <b>lokale</b> Gesetzmäßigkeit (pro Head/Schicht). B's „discovered the group / non-trivial explanation" ist die <b>globale</b> Konsequenz aus Tiefe (mix + FFN-warp) × Trajektorie.</div></div>
+      <div class="r"><div class="k">O(1)-Pfad + Multi-Head (A §7)</div><div class="v">= die <b>Kapazität/Expressivität</b>, die die Kreis-/Coset-Struktur in der Embedding-Geometrie <em>darstellbar</em> macht (A). B's Dynamik (WD/Rauschen/Compute) <em>wählt</em>, ob diese Darstellung gefunden wird.</div></div>
+      <div class="r"><div class="k">Val-Acc-Sprung Chance→100 % (B Exp. 4)</div><div class="v">= der <b>Phasenübergang</b>, in dem die auf A-Geometrie routende Maschine die wahre Algebra trifft — A's „flexibles Routing" wird hier erst <em>bedeutungsvoll</em>.</div></div>
+    </div>
+
+    <h3>Formeln der Fusion</h3>
+    <div class="eq">
+      σ(·) = sigmoid &nbsp;&nbsp;<span class="c">// σ(x)=1/(1+e^{−x})</span><br>
+      A (ein Pass):&nbsp; out<sub>i</sub> = Σ<sub>j</sub> softmax<sub>j</sub>(q<sub>i</sub>·k<sub>j</sub>/√d<sub>k</sub>) · v<sub>j</sub> ∈ conv(v) &nbsp;<span class="c">// konservativ, lokal</span><br>
+      B (Trajektorie):&nbsp; p = Struktur-Formierung ∈ [0,100] &nbsp;<span class="c">// 0 = memorisiert/Rauschen, 100 = grokked/Kreis</span><br>
+      Train-Acc(p) = 100 % &nbsp;<span class="c">// schnell erreicht (B Exp. 2/4) — der Engpass ist Generalisierung</span><br>
+      Val-Acc(p) ≈ c + (100−c)·σ((p−p<sub>c</sub>)/w) &nbsp;<span class="c">// c = Chance = 1/n ≈ 4 %, p<sub>c</sub> ≈ 55, scharfer Sprung</span><br>
+      Val-Loss(p) ≈ L₀ + ΔL·(1−σ((p−p<sub>c</sub>)/w)) &nbsp;<span class="c">// Double Descent: hoch beim Memorize → fällt beim Grok</span><br>
+      Geometrie(p):&nbsp; emb<sub>i</sub>(p) = lerp( noise<sub>i</sub>, circle<sub>i</sub>, σ((p−p<sub>c</sub>)/w) ) &nbsp;<span class="c">// Rauschen → Kreis (ℤ/nℤ zyklisch)</span><br>
+      <span class="c">// FUSION:</span> Expressivität(A) ⇒ Struktur darstellbar &nbsp;∧&nbsp; Dynamik(B) ⇒ wählt generalisierende Lösung
+    </div>
+    <div class="note"><span class="h">Warum die Fusion mehr ist als die Summe</span>A allein würde „nur mischen, nichts Neues" als <em>endgültig</em> verkaufen (und B's Discovery als unmöglich). B allein hätte keine <em>Geometrie des Routings</em>, <em>worin</em> der Phasenübergang stattfindet (Kreis/Cosets sind die trainierte A-Geometrie). Erst zusammen: A ist die <em>bühne</em> (routierbare Unterraum-Geometrie), B der <em>Auftritt</em> (Memorize → Grok → Struktur), und der Val-Acc-Sprung der <em>Anerkennungs-Applaus</em> — der Moment, in dem die Geometrie die Algebra trifft.</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="visualisierung">
+    <div class="eyebrow">5 · Visualisierung der Fusion</div>
+    <h2>Die Embedding-Geometrie, auf die geroutet wird — und ihr Grokking</h2>
+    <p>Die Fusion live: 24 Embeddings von ℤ/24ℤ (A's Token-Punkte im Modellraum). Der Slider <em>Struktur-Formierung</em> morphen sie von <strong>Rauschen</strong> (memorisiert, Val≈Chance) zu einem <strong>Kreis</strong> (grokked, ℤ/24ℤ zyklisch) — B Exp. 6. Der Query-Token <code>a=0</code> routet dabei per <em>A-Mechanik</em> (score = q·k, Softmax, Output = konvexe Kombination/Baryzent) über die Geometrie: Das Routing wird <em>strukturiert</em>, sobald der Kreis steht. Unten die Grokking-Kurven (B Exp. 4): Train-Acc flach bei 100 %, Val-Acc schießt vom Chance-Level auf 100 %, Val-Loss im Double-Descent. <strong>▶ „Grokking abspielen"</strong> animiert den Sprung.</p>
+    <div class="viz card">
+      <div class="head"><span class="dot"></span><h3>Attention-Routing (A) auf der grokkenden Geometrie (B)</h3><span class="tg">interaktiv · inline data</span></div>
+      <div class="cwrap"><canvas id="cvMain" width="680" height="440"></canvas></div>
+      <div class="leg">
+        <span><i style="background:var(--viz-query)"></i>Query a=0 (Source)</span>
+        <span><i style="background:var(--viz-attn)"></i>Attention-Linien (α = softmax(q·k/√d·schärfe))</span>
+        <span><i style="background:var(--viz-bary)"></i>Output = Σαᵢ·vᵢ (Baryzent, konvex)</span>
+        <span><i style="background:hsl(200,70%,55%)"></i>Embeddings (Residue mod 8)</span>
+      </div>
+      <div class="cwrap"><canvas id="cvCurve" width="680" height="150"></canvas></div>
+      <div class="ro">
+        <div class="b"><div class="k">Train-Acc (B)</div><div class="v g" id="roTrain">100%</div><div class="u">schnell 100 % — Engpass ist Generalisierung</div></div>
+        <div class="b"><div class="k">Val-Acc (B)</div><div class="v e" id="roVal">4%</div><div class="u">Chance (1/n) → 100 % (Sprung)</div></div>
+        <div class="b"><div class="k">Phase</div><div class="v e" id="roPhase">Memorisiert</div><div class="u">Memorize / Grokking / Generalisiert</div></div>
+        <div class="b"><div class="k">Val-Loss</div><div class="v m" id="roLoss">4.0</div><div class="u">Double Descent (hoch → niedrig)</div></div>
+      </div>
+      <div class="ctl" style="margin-top:14px">
+        <div class="ctl-lab"><span>Struktur-Formierung / Trainingsfortschritt — Rauschen (memorisiert) → Kreis (grokked)</span><b id="pVal">0%</b></div>
+        <input type="range" id="pSl" min="0" max="100" step="1" value="0">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">B Exp. 6: „0 % (just memorized, just noise)" ↔ „100 % (fully grokked, circle)". Der Sprung ≈ p<sub>c</sub> 55 ist der Phasenübergang.</div>
+      </div>
+      <div class="ctl">
+        <div class="ctl-lab"><span>Schärfe des Softmax (1/Temperatur) — A §4</span><b id="sVal">1.2</b></div>
+        <input type="range" id="sSl" min="0.3" max="4" step="0.1" value="1.2">
+        <div style="font-size:11px;color:var(--txt-faint);margin-top:4px">Niedrig = alle Keys gleich wichtig (breit); hoch = ein Key dominiert (Lookup). √d<sub>k</sub> im Paper hält die effektive Schärfe in hohen Dimensionen aus der Sättigung.</div>
+      </div>
+      <div class="btnrow">
+        <button id="playBtn">▶ Grokking abspielen</button>
+        <button id="attnBtn" class="on">Attention-Routing ein</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ -->
+  <section id="provenienz">
+    <div class="eyebrow">6 · Provenienz</div>
+    <h2>Die zwei Quellen</h2>
+    <p><a href="../buecher/attention_is_all_you_need.html">A — Attention – Geometrisch Verstehen</a> (basierend auf „Attention Is All You Need", Vaswani et al. 2017): Interaktive Geometrie eines Forward-Passes — W<sup>Q/K/V</sup> als schräge 64d-Unterräume, Q·K als Projektion/Ähnlichkeit, Softmax, Output als konvexe Kombination der Values („kann nur mischen, nicht erfinden"), Multi-Head, O(1)-Pfadlänge, lernbare Unterräume. Die <em>Machine</em>.</p>
+    <p><a href="../grokking2.html">B — Grokking Experiments: What They Actually Did</a> (Power et al. 2021): Systematische Experimente mit einem winzigen Transformer, der Binär-Operationstabellen mit abstrakten Symbolen lernt. 7 Experimente: welche Operationen generalisieren (Symmetrie, Isomorphie, „nie"), Ablationen (Weight Decay ist König, Rauschen hilft), Compute-for-Data-Tradeoff, das hero-Demo (Train→100 % bei 10³, Val Chance→100 % bei 10⁶, Double Descent, <em>ohne</em> Weight Decay), Outlier- Robustheit, t-SNE-Struktur (Kreis = „discovered ℤ/pℤ is cyclic", S₅-Cosets), die Isomorphie x+y≅x·y. Die <em>Dynamik/Discovery</em>.</p>
+  </section>
+
+</article>
+<footer>
+  Fusion aus <strong>buecher/attention_is_all_you_need.html</strong> (A — lernbare Unterraum-Routing-Maschine: „nur mischen") ✕ <strong>grokking2.html</strong> (B — Grokking-Phasenübergang: „Struktur entdecken"). Alle Claims aus den Quellen paraphrasiert; Embedding-Punkte/Noise im Viz synthetisch/inline. Selbstständig, ohne Netz-Datenabruf.
+</footer>
+
+<script>
+'use strict';
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+function isDark(){return document.documentElement.classList.contains('dark');}
+function hexA(hex,a){var s=String(hex);if(s.indexOf('#')!==0){return s;}var h=s.replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);if(isNaN(r)||isNaN(g)||isNaN(b)){return s;}return 'rgba('+r+','+g+','+b+','+a+')';}
+function sigmoid(x){if(x>=0){var z=Math.exp(-x);return 1/(1+z);}else{var z2=Math.exp(x);return z2/(1+z2);}}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var themeBtn=document.getElementById('themeBtn');
+  function setBtn(){ if(themeBtn){ themeBtn.textContent=isDark()?'☀️ Licht':'🌙 Dunkel'; } }
+  if(themeBtn){ themeBtn.onclick=function(){ document.documentElement.classList.toggle('dark'); setBtn(); readPal(); drawAll(); }; }
+  setBtn();
+
+  var main=document.getElementById('cvMain');
+  var curve=document.getElementById('cvCurve');
+  if(!main){ return; }
+  var dpr=window.devicePixelRatio||1;
+  var MW=680, MH=440, CW=680, CH=150;
+  function fit(cv,W,H){ cv.style.width='100%'; cv.style.aspectRatio=W+'/'+H; cv.width=W*dpr; cv.height=H*dpr; var c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); return c; }
+  var ctx=fit(main,MW,MH);
+  var cctx=curve?fit(curve,CW,CH):null;
+
+  var TAU=Math.PI*2, N=24, K=8;
+  var PAL={};
+  function readPal(){ ['--viz-bg','--viz-grid','--viz-txt','--viz-query','--viz-bary','--viz-attn','--viz-train','--viz-val','--viz-loss'].forEach(function(n){PAL[n]=getVar(n);}); }
+  readPal();
+
+  var cx=MW/2, cy=MH/2, R=150;
+  var circle=[], noise=[];
+  for(var i=0;i<N;i++){
+    var ang=TAU*i/N - Math.PI/2;
+    circle.push({x:cx+Math.cos(ang)*R, y:cy+Math.sin(ang)*R});
+    var rng=mulberry32(1000+i*77);
+    var nx=(rng()-0.5)*2, ny=(rng()-0.5)*2;
+    noise.push({x:cx+nx*R*0.85, y:cy+ny*R*0.85});
+  }
+
+  var state={p:0, sharp:1.2, playing:false, showAttn:true};
+
+  var pSl=document.getElementById('pSl'), pVal=document.getElementById('pVal');
+  var sSl=document.getElementById('sSl'), sVal=document.getElementById('sVal');
+  var playBtn=document.getElementById('playBtn');
+  var attnBtn=document.getElementById('attnBtn');
+  var roTrain=document.getElementById('roTrain'), roVal=document.getElementById('roVal');
+  var roPhase=document.getElementById('roPhase'), roLoss=document.getElementById('roLoss');
+
+  function structFactor(p){ return sigmoid((p-55)/9); }
+  function valAcc(p){ return 4 + 96*sigmoid((p-55)/9); }
+  function vLoss(p){ return 0.1 + 4.0*(1 - sigmoid((p-52)/10)); }
+  function phase(p){ if(p<40){return 'Memorisiert';} if(p<75){return 'Grokking';} return 'Generalisiert'; }
+  function lerp(a,b,t){ return {x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t}; }
+  function positions(){ var s=structFactor(state.p); var out=[]; for(var i=0;i<N;i++){ out.push(lerp(noise[i],circle[i],s)); } return out; }
+  function softmax(a){ var m=Math.max.apply(null,a); var e=a.map(function(v){return Math.exp(v-m);}); var s=e.reduce(function(x,y){return x+y;},0); return e.map(function(v){return v/s;}); }
+
+  function drawMain(){
+    ctx.clearRect(0,0,MW,MH);
+    ctx.fillStyle=PAL['--viz-bg']||'#ffffff'; ctx.fillRect(0,0,MW,MH);
+    ctx.strokeStyle=PAL['--viz-grid']||'rgba(0,0,0,0.08)'; ctx.lineWidth=1;
+    for(var rr=1;rr<=3;rr++){ ctx.beginPath(); ctx.arc(cx,cy,R*rr/3,0,TAU); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(20,cy); ctx.lineTo(MW-20,cy); ctx.moveTo(cx,20); ctx.lineTo(cx,MH-20); ctx.stroke();
+
+    var pos=positions();
+    var q=pos[0];
+    var qdx=q.x-cx, qdy=q.y-cy, ql=Math.sqrt(qdx*qdx+qdy*qdy)||1; qdx/=ql; qdy/=ql;
+    var scores=[], i;
+    for(i=0;i<N;i++){ var kx=pos[i].x-cx, ky=pos[i].y-cy, kl=Math.sqrt(kx*kx+ky*ky)||1; scores.push((qdx*(kx/kl)+qdy*(ky/kl))*state.sharp); }
+    var ws=softmax(scores);
+
+    if(state.showAttn){
+      for(i=1;i<N;i++){
+        var w=ws[i];
+        ctx.strokeStyle=hexA(PAL['--viz-attn']||'#0d8f80', 0.12+0.6*w);
+        ctx.lineWidth=0.5+w*5;
+        ctx.beginPath(); ctx.moveTo(q.x,q.y); ctx.lineTo(pos[i].x,pos[i].y); ctx.stroke();
+      }
+    }
+
+    for(i=0;i<N;i++){
+      var p3=pos[i]; var hue=(i%K)/K*360;
+      ctx.save(); ctx.shadowColor='hsla('+hue+',70%,55%,0.85)'; ctx.shadowBlur=10;
+      ctx.beginPath(); ctx.arc(p3.x,p3.y, i===0?8:5.5, 0,TAU); ctx.fillStyle='hsl('+hue+',70%,55%)'; ctx.fill(); ctx.restore();
+      ctx.strokeStyle=PAL['--viz-bg']||'#ffffff'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.arc(p3.x,p3.y, i===0?8:5.5,0,TAU); ctx.stroke();
+    }
+    ctx.strokeStyle=PAL['--viz-query']||'#c93a86'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(q.x,q.y,13,0,TAU); ctx.stroke();
+    ctx.fillStyle=PAL['--viz-txt']||'#000'; ctx.font='700 12px ui-monospace,Menlo,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('a = 0 (Query)', q.x, q.y-22);
+
+    var bx=0,by=0;
+    for(i=0;i<N;i++){ bx+=ws[i]*pos[i].x; by+=ws[i]*pos[i].y; }
+    ctx.save(); ctx.translate(bx,by); ctx.rotate(Math.PI/4); ctx.fillStyle=PAL['--viz-bary']||'#2f8f4b'; ctx.fillRect(-6,-6,12,12); ctx.restore();
+    ctx.fillStyle=PAL['--viz-bary']||'#2f8f4b'; ctx.font='700 11px ui-monospace,Menlo,monospace'; ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('Output = Σ αᵢ·vᵢ', bx+12, by+4);
+  }
+
+  function drawCurve(){
+    if(!cctx){ return; }
+    cctx.clearRect(0,0,CW,CH);
+    cctx.fillStyle=PAL['--viz-bg']||'#ffffff'; cctx.fillRect(0,0,CW,CH);
+    var ml=44, mr=16, mt=14, mb=26, pw=CW-ml-mr, ph=CH-mt-mb, p;
+    function X(pp){ return ml + (pp/100)*pw; }
+    function Y(v){ return mt + (1 - v/100)*ph; }
+    cctx.strokeStyle=PAL['--viz-grid']||'rgba(0,0,0,0.08)'; cctx.lineWidth=1;
+    cctx.beginPath(); cctx.moveTo(ml,mt); cctx.lineTo(ml,mt+ph); cctx.lineTo(ml+pw,mt+ph); cctx.stroke();
+    for(var g=0;g<=4;g++){ var gy=mt+ph*g/4; cctx.beginPath(); cctx.moveTo(ml,gy); cctx.lineTo(ml+pw,gy); cctx.stroke(); }
+
+    cctx.strokeStyle=PAL['--viz-train']||'#d1242f'; cctx.lineWidth=2; cctx.beginPath();
+    for(p=0;p<=100;p+=2){ var x=X(p), y=Y(100); if(p===0){cctx.moveTo(x,y);}else{cctx.lineTo(x,y);} } cctx.stroke();
+
+    cctx.strokeStyle=PAL['--viz-val']||'#2f8f4b'; cctx.lineWidth=2.5; cctx.beginPath();
+    for(p=0;p<=100;p+=1){ var x2=X(p), y2=Y(valAcc(p)); if(p===0){cctx.moveTo(x2,y2);}else{cctx.lineTo(x2,y2);} } cctx.stroke();
+
+    cctx.save(); cctx.setLineDash([5,4]); cctx.strokeStyle=PAL['--viz-loss']||'#b57e00'; cctx.lineWidth=2; cctx.beginPath();
+    for(p=0;p<=100;p+=2){ var x3=X(p), y3=Y(vLoss(p)/4.2*100); if(p===0){cctx.moveTo(x3,y3);}else{cctx.lineTo(x3,y3);} } cctx.stroke(); cctx.restore();
+
+    var mx=X(state.p);
+    cctx.strokeStyle=PAL['--viz-txt']||'#000'; cctx.globalAlpha=0.4; cctx.lineWidth=1.5; cctx.beginPath(); cctx.moveTo(mx,mt); cctx.lineTo(mx,mt+ph); cctx.stroke(); cctx.globalAlpha=1;
+    cctx.fillStyle=PAL['--viz-val']||'#2f8f4b'; cctx.beginPath(); cctx.arc(mx,Y(valAcc(state.p)),4,0,TAU); cctx.fill();
+
+    cctx.font='10px ui-monospace,Menlo,monospace'; cctx.textAlign='left'; cctx.textBaseline='middle';
+    cctx.fillStyle=PAL['--viz-train']||'#d1242f'; cctx.fillText('— Train-Acc (100 %, memorisiert)', ml+6, mt+10);
+    cctx.fillStyle=PAL['--viz-val']||'#2f8f4b'; cctx.fillText('— Val-Acc (Grokking-Sprung)', ml+6, mt+22);
+    cctx.fillStyle=PAL['--viz-loss']||'#b57e00'; cctx.fillText('--- Val-Loss (Double Descent, norm.)', ml+6, mt+34);
+    cctx.fillStyle=PAL['--viz-txt']||'#000'; cctx.textAlign='center'; cctx.fillText('Struktur-Formierung / Trainingsfortschritt p (%)  →', ml+pw/2, CH-10);
+  }
+
+  function updateReadouts(){
+    var va=valAcc(state.p), vl=vLoss(state.p), ph=phase(state.p);
+    if(roTrain){ roTrain.textContent='100%'; }
+    if(roVal){ roVal.textContent=va.toFixed(0)+'%'; roVal.className='v '+(state.p<40?'e':(state.p<75?'m':'g')); }
+    if(roPhase){ roPhase.textContent=ph; roPhase.className='v '+(state.p<40?'e':(state.p<75?'m':'g')); }
+    if(roLoss){ roLoss.textContent=vl.toFixed(2); roLoss.className='v '+(state.p<75?'m':'g'); }
+  }
+
+  function drawAll(){ drawMain(); drawCurve(); updateReadouts(); }
+
+  if(pSl){ pSl.addEventListener('input',function(){ state.p=+pSl.value; pVal.textContent=pSl.value+'%'; drawAll(); }); }
+  if(sSl){ sSl.addEventListener('input',function(){ state.sharp=+sSl.value; sVal.textContent=(+sSl.value).toFixed(1); drawAll(); }); }
+  if(playBtn){ playBtn.onclick=function(){ state.playing=!state.playing; playBtn.textContent=state.playing?'⏸ Pause':'▶ Grokking abspielen'; playBtn.classList.toggle('on',state.playing); }; }
+  if(attnBtn){ attnBtn.onclick=function(){ state.showAttn=!state.showAttn; attnBtn.classList.toggle('on',state.showAttn); drawAll(); }; }
+
+  function loop(){
+    if(state.playing){
+      state.p=Math.min(100, state.p+0.45);
+      pSl.value=Math.round(state.p); pVal.textContent=Math.round(state.p)+'%';
+      if(state.p>=100){ state.playing=false; playBtn.textContent='▶ Grokking abspielen'; playBtn.classList.toggle('on',false); }
+      drawAll();
+    }
+    requestAnimationFrame(loop);
+  }
+  drawAll();
+  requestAnimationFrame(loop);
+
+  window.addEventListener('resize',function(){ readPal(); drawAll(); });
+  try{ new MutationObserver(function(){ readPal(); drawAll(); }).observe(document.documentElement,{attributes:true,attributeFilter:['class']}); }catch(e){}
+});
+</script>
+</body>
+</html>

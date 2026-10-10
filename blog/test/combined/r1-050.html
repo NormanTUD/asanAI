@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generalisierung als Descent — Fusion Shepard ✕ Coherent World Models</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+:root{
+  --bg:#faf8f1; --bg2:#f1ecdf; --panel:#ffffff; --panel2:#f6f3ea;
+  --ink:#1c1a17; --ink2:#57524a;
+  --accent:#0f766e; --accent2:#b45309; --accent3:#be185d; --accent4:#1d4ed8;
+  --grid:#e3ddcb; --line:#e6e1d2;
+  --good:#15803d; --bad:#b91c1c; --warn:#b45309;
+}
+html.dark{
+  --bg:#0a0e1a; --bg2:#111726; --panel:#141d31; --panel2:#1a2439;
+  --ink:#e8ecff; --ink2:#a8b3d9;
+  --accent:#7cf5c4; --accent2:#ffb86b; --accent3:#ff7ab6; --accent4:#8ab4ff;
+  --grid:#243150; --line:#26314f;
+  --good:#6ee7a0; --bad:#ff9b9b; --warn:#ffd166;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 62%);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:820px;margin:0 auto;padding:36px 22px 80px}
+header{text-align:center;padding:34px 10px 22px}
+header h1{
+  font-size:clamp(1.9rem,4.6vw,2.9rem);margin:0;line-height:1.15;letter-spacing:-.02em;font-weight:800;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent4) 55%,var(--accent3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.subtitle{color:var(--ink2);margin-top:14px;font-size:1.02rem}
+.subtitle code{background:var(--panel2);border:1px solid var(--line);padding:1px 7px;border-radius:6px;font-size:.9em;color:var(--accent)}
+.tagline{color:var(--ink2);font-size:.9rem;margin-top:8px;opacity:.8}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:18px 0 6px}
+nav.toc a{color:var(--ink2);text-decoration:none;font-size:.8rem;padding:5px 11px;border:1px solid var(--line);border-radius:999px;transition:.18s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);background:var(--panel2)}
+section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin:22px 0;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+section h2{margin:0 0 14px;font-size:1.5rem;letter-spacing:-.01em;color:var(--accent)}
+section h3{color:var(--accent2);margin:22px 0 8px;font-size:1.12rem}
+p{font-size:1rem;color:var(--ink)}
+p+p{margin-top:12px}
+.lead{font-size:1.04rem}
+.hl{color:var(--accent);font-weight:600}
+.hl2{color:var(--accent2);font-weight:600}
+.hl3{color:var(--accent3);font-weight:600}
+.note{border-left:3px solid var(--accent4);background:var(--panel2);padding:10px 15px;border-radius:0 10px 10px 0;margin:14px 0;font-size:.95rem;color:var(--ink2)}
+.note b{color:var(--ink)}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:7px 0}
+.formula{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;overflow-x:auto;text-align:center}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--accent);font-weight:600}
+td{color:var(--ink)}
+.trow-a{color:var(--accent2);font-weight:600}
+.trow-b{color:var(--accent4);font-weight:600}
+/* viz */
+.viz-card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px}
+canvas#viz{display:block;width:100%;height:440px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 4px;font-size:.82rem;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.viz-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+@media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+.controls{display:flex;flex-direction:column;gap:12px}
+.ctrl{display:flex;flex-direction:column;gap:5px}
+.ctrl label{font-size:.86rem;color:var(--ink2);display:flex;justify-content:space-between}
+.ctrl label .val{color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:999px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--accent) 0%,var(--accent4) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;box-shadow:0 0 0 2px var(--accent)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);cursor:pointer;border:2px solid var(--accent)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+button{background:var(--accent);color:var(--bg);border:none;padding:8px 14px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.86rem;transition:.15s}
+button:hover{transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--accent)}
+.readout{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:.95rem}
+.verdict{font-weight:700;font-size:1.02rem;padding:10px 13px;border-radius:10px;margin-bottom:12px;border:1px solid var(--line)}
+.verdict.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent);border-color:var(--good)}
+.verdict.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 12%,transparent);border-color:var(--warn)}
+.verdict.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:var(--bad)}
+.kv{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.kv span:first-child{color:var(--ink2)}
+.kv span:last-child{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:600}
+.tarski-line{margin-top:10px;font-size:.9rem;color:var(--ink2)}
+.tarski-line .ok{color:var(--good);font-weight:700}
+.tarski-line .no{color:var(--bad);font-weight:700}
+/* sameness ladder */
+.ladder{list-style:none;margin:10px 0 0;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ladder li{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:.86rem;border-bottom:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.ladder li:last-child{border-bottom:none}
+.ladder li .sym{font-family:'Cambria Math',serif;min-width:118px;color:var(--ink2)}
+.ladder li .lbl{flex:1}
+.ladder li .dot{width:9px;height:9px;border-radius:50%;background:var(--grid)}
+.ladder li.earned{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--ink)}
+.ladder li.earned .sym{color:var(--accent);font-weight:700}
+.ladder li.earned .dot{background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.ladder-note{font-size:.82rem;color:var(--ink2);margin-top:8px;font-style:italic}
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;cursor:pointer}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}
+footer{text-align:center;color:var(--ink2);font-size:.85rem;padding:26px 10px 6px}
+a{color:var(--accent4)}
+footer code{background:var(--panel2);padding:1px 6px;border-radius:5px;font-size:.85em}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" type="button">☀︎ Hell / 🌙 Dunkel</button>
+<div class="wrap">
+
+<header>
+  <h1>Generalisierung als Descent</h1>
+  <div class="subtitle">Fusion aus: <code>shepard.html</code> ✕ <code>coherent_world_models.html</code></div>
+  <div class="tagline">Klopf-Runde 1 · Paar 050 · Ein metrischer Raum, der lokal klebt — und der, der prüfen muss, ob es echt ist.</div>
+</header>
+
+<nav class="toc">
+  <a href="#these">Kernthese</a>
+  <a href="#widersprueche">Widersprüche</a>
+  <a href="#aufloesung">Auflösung</a>
+  <a href="#inhalt">Fusionierter Inhalt</a>
+  <a href="#visualisierung">Visualisierung</a>
+  <a href="#provenienz">Provenienz</a>
+</nav>
+
+<!-- ============ 1. KERNTHESE ============ -->
+<section id="these">
+  <h2>Kernthese der Fusion</h2>
+  <p class="lead">Beide Papiere stellen — aus zwei Richtungen — <em>dieselbe</em> strukturelle Frage: Aus <span class="hl">partiellen, lokalen</span> Daten, wann und <span class="hl">wie stark</span> gehört ein <em>neues</em> lokales Datum zu einem <span class="hl2">kohärenten Ganzen</span>? Für <em>Shepard&nbsp;A</em> ist das der gelernte Reiz&nbsp;X und die Frage, ob ein neuer Reiz&nbsp;Y zur selben <em>natürlichen Art</em> gehört; für <em>Coherent&nbsp;World&nbsp;Models&nbsp;B</em> sind es <em>Traces</em> eines Gegenstands&nbsp;W und die Frage, ob sie per <em>Descent</em> zu einem <em>globalen Modell</em>&nbsp;G verkleben. Die Operation ist identisch — <em>lokale Daten entlang lizenzierter Übergänge auf einem Überdeckungsgitter zu einem Ganzen zusammenführen</em> — nur das Vokabular wechselt (Psychologie ↔ Kategorientheorie/Epistemologie).</p>
+  <p>Die Fusion lautet: <span class="hl3">Eine Generalisierung ist ein Descent-Problem in einem metrischen Raum.</span> Der <em>psychologische Raum</em> (A) ist die <em>Stelle</em> 𝒞; die <em>consequential regions</em> (A) bilden eine <em>zulässige Überdeckung</em>; die <em>natürliche Art</em> (A) ist der <em>globale Schnitt</em>&nbsp;G (B); der <em>psychologische Abstand</em>&nbsp;d (A) bestimmt, <em>auf welcher Stufe der „Selbigkeit"</em> (B) wir verkleben; und das <em>exponentielle Gesetz</em> <span class="ktx" data-mode="inline">g(d)=e^{-\lambda d}</span> (A) ist die <em>Klebkraft</em> bzw. der <em>Agreement-Maß</em> (B, der Equalizer). Shepards „universelles Gesetz" ist damit kein Gesetz <em>über</em> die Welt, sondern der <em>einfachste</em> globale Schnitt (minimaler Occam-Penalty), den die Spuren stützen — genau deshalb <em>wirkt</em> er so universell: niedrige Komplexität, hohe Wiederverwendbarkeit über alle Cover hinweg.</p>
+  <p>Und gerade B's Kernwarnung bleibt dabei bestehen: <span class="hl">Kohärenz ist notwendig, aber nicht hinreichend.</span> Der abgeleitte „Schnitt" ist <em>Provisorium, revidierbar, niemals identisch mit W</em>. Eine Generalisierung ist also nur dann <em>wahr</em> (nicht bloß <em>kohärent</em>), wenn sie zusätzlich einen <em>Tarski-Korrespondenztest</em> besteht. Die Fusion hält also zwei Dinge fest zusammen: <b>A liefert die Metrik und die probabilistische Herleitung der Klebkraft</b>; <b>B liefert deren epistemischen Status</b> (Modell, nicht Welt) <b>und das Korrespondenz-Prinzip</b>, das bloße Kohärenz in Wahrheit aufwertet.</p>
+</section>
+
+<!-- ============ 2. WIDERSPRÜCHE ============ -->
+<section id="widersprueche">
+  <h2>Widersprüche zwischen A und B</h2>
+
+  <h3>① Ein „universelles Gesetz" (A) gegen „nie identisch mit der Welt" (B)</h3>
+  <p><b>A sagt:</b> Es gebe <em>ein</em> exponentielles Gesetz der Generalisierung — „ein Newton-Gesetz für die Psychologie" — das für <em>alle Spezies, alle Sinnesmodalitäten, alle Reize</em> gelte, und das wohl durch <em>evolutionäre Verinnerlichung</em> universeller Weltstruktur verankert sei. Die Regelmäßigkeit wird als <em>stabil, allgemein, gesetzhaft</em> vorgestellt.</p>
+  <p><b>B sagt:</b> Der globale Schnitt G sei <em>„provisorisch, revidierbar, niemals identisch mit dem Gegenstand, den er repräsentiert"</em>; Verbot&nbsp;#3 laute wörtlich „<code>G ≡ W</code> — Modell mit Welt identifizieren". B ist anti- bzw. post-fundationalistisch (Sellars) und hält <em>Kohärenz ≠ Korrespondenz</em>.</p>
+  <p class="note"><b>Der echte Spannungsunkt:</b> A <em>hebt</em> eine Regelmäßigkeit zu einem <em>Welt-Gesetz</em> auf (eine strukturelle Behauptung <em>über</em> W); B <em>weigert sich</em> grundsätzlich, ein Modell für die Welt stehen zu lassen, und macht Kohärenz strikt <em>schwächer</em> als Wahrheit. A's Universalitäts-Anspruch ist genau der Zug, den B als riskante Identifikation markiert.</p>
+
+  <h3>② Eine einzige Metrik (A) gegen eine Hierarchie der „Selbigkeit" + „silent upgrade" (B)</h3>
+  <p><b>A sagt:</b> „Zusammengehören" reduziere sich auf <em>eine</em> kontinuierliche Größe — den Minkowski-Abstand&nbsp;d und das exponentielle g(d). „Gleiche natürliche Art" &asymp; „hohes g(d)".</p>
+  <p><b>B sagt:</b> „Gleich" sei eine <em>sechsstufige Leiter</em> (Identität&nbsp;=, Isomorphie&nbsp;≅, Homotopie&nbsp;≃, Approximation&nbsp;d&le;ε, statistisch, modelltheoretisch), jede Stufe impliziere die darunter; der <em>Kardinalfehler</em> sei der <em>„silent upgrade"</em> — eine <em>schwächere</em> Selbigkeit stillschweigend als eine <em>stärkere</em> lesen.</p>
+  <p class="note"><b>Der echte Spannungsunkt:</b> A's Sprung von „generalisiert stark" zu „ist die <em>selbe</em> Art" <em>ist</em> der Silent-Upgrade, den B verbietet. A verwendet dort <em>eine</em> Metrik, wo B auf einer <em>geschichteten</em> Selbigkeit besteht. Beide beschreiben das gleiche Phänomen, geben ihm aber <em>unterschiedlich viele Grade</em>.</p>
+
+  <h3>③ Der Charakter des A-priori: Maß über Größen (A) vs. lizenzierte Klasse (B)</h3>
+  <p><b>A sagt:</b> Die Unsicherheit sei eine <em>kontinuierliche Wahrscheinlichkeitsdichte</em> p(s) <em>über die Region-Größe</em>; das A-priori sei <em>Maximum-Entropie + Bayes</em> — ein konkretes <em>Maß</em> (Erlang).</p>
+  <p><b>B sagt:</b> Das A-priori sei die <em>admissible transition class 𝒯</em> — eine <em>strukturelle Lizenz</em> (Subkategorie erlaubter Pfeile + Occam-Penalty); „zu großes 𝒯 ⇒ Overfitting", und ein <em>unbeschränktes 𝒯 mache Kohärenz vakuös</em>.</p>
+  <p class="note"><b>Der echte Spannungsunkt:</b> Zwei <em>verschiedene Arten</em> von A-priori — ein <em>Maß über Größen</em> (A) gegen eine <em>strukturelle Einschränkung</em> darüber, welche Vergleiche überhaupt erlaubt sind (B). A's Ehrgeiz „für alle Spezies, alle Reize" ist das Risiko des <em>zu permissiven 𝒯</em>, das B als Kohärenz-aufhegend flaggt.</p>
+</section>
+
+<!-- ============ 3. AUFLÖSUNG ============ -->
+<section id="aufloesung">
+  <h2>Auflösung</h2>
+
+  <h3>① Das „Gesetz" als besonders stabiler globaler Schnitt — nicht als Identifikation</h3>
+  <p>Shepards „universelles Gesetz" <em>neu lesen</em> wir als B's globalen Schnitt: Die exponentielle Form ist <em>kein</em> W, sondern die <em>am wenigsten committed</em> (max-entropy, kleinstem Occam-Penalty) globale Struktur, die die Spuren tragen. Ihre scheinbare <em>Universalität</em> ist ihre <em>niedrige Komplexität / hohe Wiederverwendbarkeit</em> über viele Cover — eine Eigenschaft der <em>Klebkraft</em>, nicht der Welt. B's Provisorium bleibt erhalten: Das Gesetz ist <em>revidierbar</em> (Änder man 𝒯 oder die Spuren → der Schnitt verschiebt sich). <span class="hl">Fusionierter Schluss:</span> A liefert die <em>Metrik + probabilistische Herleitung</em> der Klebkraft; B liefert ihren <em>epistemischen Status</em> (Modell, provisorisch, korrespondenzgeprüft).</p>
+
+  <h3>② g(d) bleibt auf seiner Stufe — keine Identifikation</h3>
+  <p>Das exponentielle g(d) ist eine <em>statistische / approximationsartige</em> Selbigkeit (Leiterstufe&nbsp;4–5), <em>keine</em> Identität. Die Klebkraft sagt nur, <em>wie weit</em> die Leiter man erklimmen <em>darf</em>; nur ein <em>Korrespondenztest</em> (spiegelt die Region tatsächlich eine reale consequential-Struktur in W?) verleiht die nächststärkere Stufe. <span class="hl">Fusionierter Schluss:</span> g(d) wird auf der statistischen Stufe belassen; man steigt nur mit Tarski-Prüfung weiter — und liest „generalisiert" <em>nie</em> als „ist identisch". Das ist B's <em>No-Silent-Upgrade-Disziplin</em>, angewandt auf Shepard.</p>
+
+  <h3>③ 𝒯 als Träger, p(s) als Maß darauf</h3>
+  <p>Wir vereinigen die beiden A-prioris: Die admissible transition class 𝒯 (B) ist der <em>Träger</em> — der Raum lizenzierter Region-Hypothesen; die Dichte p(s) (A) ist das <em>Maß</em> auf diesem Träger. B's Occam-Penalty <em>ist</em> A's Maximum-Entropie (das am wenigsten committed Maß auf dem lizenzierten Träger wählen). Und A's <em>Robustheit</em> („jede vernünftige Dichte → ≈ exponentiell") ist B's <em>eigene Antwort</em> auf seine Vakuum-Warnung: <em>Robustheit über die Prior-Wahl ist genau das, was den globalen Schnitt stabil und nicht-vakuös macht.</em> <span class="hl">Fusionierter Schluss:</span> 𝒯 bestimmt <em>wo</em> man kleben darf; Max-Entropie bestimmt <em>wie</em> die Optionen gewichtet werden; Robustheit = Stabilität des Schnitts.</p>
+</section>
+
+<!-- ============ 4. FUSIONIERTER INHALT ============ -->
+<section id="inhalt">
+  <h2>Fusionierter Inhalt</h2>
+
+  <h3>1 · Das gemeinsame Problem</h3>
+  <p>Beide Papiere operationalisieren <em>eine</em> Operation in zwei Registern. Die <em>Gesamtfrage</em> lautet: Gegeben eine Sammlung <em>partieller, transformierter</em> lokaler Daten — wann verdienen sie den Namen eines <em>kohärenten Ganzen</em>, und wie stark gehört ein <em>neues</em> lokales Datum dazu? A antwortet <em>metrisch-probabilistisch</em> (Abstand + exponentielle Wahrscheinlichkeit), B antwortet <em>kategorie-epistemisch</em> (Descent + Korrespondenz). Unten die Zuordnung, die die ganze Fusion trägt:</p>
+  <table>
+    <tr><th>A · Shepard 1987</th><th>B · Coherent World Models</th><th>Fusion</th></tr>
+    <tr><td class="trow-a">Psychologischer Raum (via MDS)</td><td class="trow-b">Stelle der Kontexte 𝒞</td><td>Der metrische Grundraum, auf dem verklebt wird</td></tr>
+    <tr><td class="trow-a">Consequential Region (Region der natürlichen Art)</td><td class="trow-b">Patch der admissible Überdeckung</td><td>Der lokale „Klebstoff-Träger"</td></tr>
+    <tr><td class="trow-a">Natürliche Art</td><td class="trow-b">Globaler Schnitt G = lim F</td><td>Das „Ganze", das aus dem Kleben entsteht</td></tr>
+    <tr><td class="trow-a">Psychologischer Abstand d (Minkowski)</td><td class="trow-b">Stufe der „Selbigkeit" (Leiter)</td><td><em>Wie viel</em> Identität die Klebkraft rechtfertigt</td></tr>
+    <tr><td class="trow-a">g(d) = e<sup>−λd</sup> (exponentiell)</td><td class="trow-b">Equalizer / Agreement-Maß</td><td>Die Klebkraft zwischen zwei lokalen Daten</td></tr>
+    <tr><td class="trow-a">Minkowski-Exponent r (L₁/L₂)</td><td class="trow-b">Welche Sameness-Stufe + Dimensionstyp</td><td>Form der Kleberegion (Raute ↔ Kreis)</td></tr>
+    <tr><td class="trow-a">Robustheit (jede Dichte → ≈ exp)</td><td class="trow-b">Nicht-vaküser, stabiler globaler Schnitt</td><td>Niedriger Occam-Penalty der Klebkraft</td></tr>
+    <tr><td class="trow-a">„Universelles Gesetz" (Newton-Moment)</td><td class="trow-b">Provisorisches Modell, nie = W</td><td>Der einfachste stabile Schnitt — ein Modell, kein Weltbild</td></tr>
+    <tr><td class="trow-a">„Ist Y wirklich dieselbe Art?"</td><td class="trow-b">Tarski-Convention-T (S iff p)</td><td>Der Korrespondenztest, der Kohärenz zu Wahrheit macht</td></tr>
+    <tr><td class="trow-a">Über-Generalisierung</td><td class="trow-b">Non-glueable Presheaf / Self-consistent Fantasy</td><td>Halluzination = Kohärenz <em>ohne</em> echte Weltkontakte</td></tr>
+  </table>
+
+  <h3>2 · A's Beitrag — die Metrik und ihre Herleitung</h3>
+  <ul>
+    <li><b>Psychologischer Raum:</b> Aus einer Verwechslungs-Tabelle („wie oft wird Reiz&nbsp;i mit&nbsp;j verwechselt") rekonstruiert <em>Multidimensional Scaling</em> Punkte, sodass <em>Verwechslung = kleine Distanz</em>. Die physikalische Skala (Hz, nm) wird durch eine psychophysische ersetzt.</li>
+    <li><b>Exponentielles Gesetz:</b> <span class="ktx" data-mode="display">g(d) = e^{-\lambda\, d}</span> — die Wahrscheinlichkeit, von X auf Y zu generalisieren, fällt <em>exponentiell</em> mit der psychologischen Distanz; robust über Tauben/Menschen, Farben/Töne/Formen.</li>
+    <li><b>Herleitung aus zwei Prinzipien:</b> (i) <em>natural kinds</em> / consequential regions; (ii) <em>Unsicherheit</em> über Größe &amp; Position der Region. Dann <span class="ktx" data-mode="display">g(\mathbf{x}) = \int_{0}^{\infty} p(s)\,\frac{m(s,\mathbf{x})}{m(s)}\, ds</span> — das Verhältnis Überlappung/Größe, integriert über alle Region-Größen&nbsp;s.</li>
+    <li><b>Robustheit + Erlang:</b> Jede vernünftige Dichte p(s) liefert ≈ exponentiell; <em>Max-Entropie</em> <span class="ktx" data-mode="inline">q(s)=\tfrac{1}{\mu}e^{-s/\mu}</span> + <em>Bayes</em> <span class="ktx" data-mode="inline">p(s)\propto s\,q(s)</span> ergibt die <em>Erlang</em>-Dichte, die <em>exakt</em> <span class="ktx" data-mode="inline">g(d)=e^{-2d/\mu}</span> ergibt.</li>
+    <li><b>Zwei Metriken:</b> <span class="ktx" data-mode="display">d(x,y)=\Big(\sum_{k}|x_k-y_k|^{r}\Big)^{1/r}</span> — <em>separable</em> Dimensionen → L₁ (r=1, Rauten/City-Block); <em>integrale</em> Dimensionen → L₂ (r=2, Kreise/Euklidisch).</li>
+  </ul>
+
+  <h3>3 · B's Beitrag — Kohärenz, Lizenz und Wahrheit</h3>
+  <ul>
+    <li><b>Traces</b> O:W→R — <em>transformed, mediated, underdetermined, indexical</em>; nie das Ding an sich. <b>Drei Ebenen der Differenz</b> (Welt/Instrument/Interpretation): Symptom ist eins, die <em>Ursache</em> an der <em>richtigen</em> Stelle lokalisieren.</li>
+    <li><b>Sameness-Leiter</b> (=, ≅, ≃, d&le;ε, statistisch, modelltheoretisch) + Verbot des <em>silent upgrade</em>; <b>admissible 𝒯</b> = zugleich <em>Subkategorie</em>, <em>Bayesian Prior</em>, <em>Occam-Penalty</em>.</li>
+    <li><b>Sheaf/Descent + Equalizer/Pullback:</b> <span class="ktx" data-mode="display">F(c)\;\simeq\;\mathrm{Eq}\!\Big(\prod_{i}F(c_i)\;\rightrightarrows\;\prod_{ij}F(c_i\times_{c}c_j)\Big)</span> — <em>kompatible</em> lokale Sektionen auf admissible Überdeckung ⇒ <em>einziges</em> globales Datum; der <em>Equalizer</em> ist der formale <em>Agreement-Maß</em>.</li>
+    <li><b>Master-Diagramm</b> W → {R_i} → G = lim (G je nach Setting: Set-Limit, ∞-topos-Limit, Posterior-Mode, gelernter Latent).</li>
+    <li><b>Tarski Convention T:</b> <span class="ktx" data-mode="display">S \text{ ist wahr } \iff p</span> — Kohärenz <em>notwendig, nicht hinreichend</em>; drei Pathologien: <em>self-consistent fantasy</em>, <em>factbook</em>, <em>contact-point liar/Halluzination</em>.</li>
+    <li><b>LLM-Anwendung:</b> ein LLM = globaler Schnitt aus dem Korpus-Cover, <em>interne</em> 𝒯 (Tokenisierung, Attention, MLP) aber <em>keine externen</em> O_i zu W; Halluzination = <em>non-glueable presheaf</em>. Remedy: Korrespondenz <em>anhängen</em> (RAG, Tools, formale Verifikation), nicht Kohärenz durch Skalierung reparieren. Plus <b>9-Schritt-Disziplin</b> + 5 Verbote.</li>
+  </ul>
+
+  <h3>4 · Die fused Math in einem Zug</h3>
+  <p>Alles läuft auf eine Kette: <em>Wahl von 𝒯 (Träger) → p(s) (Maß, max-entropy) → Klebkraft g(d)=e<sup>−λd</sup> → Agreement-Schwelle</em>. Die <em>0.5-Schwelle</em> („dieselbe Art"-Grenze) liegt bei <span class="ktx" data-mode="display">d^{*}=\frac{\ln 2}{\lambda}</span> — in der Visualisierung die <span class="hl3">rosa</span> Iso-Kurve. Innerhalb: Kohärenz; ob die Art <em>echt</em> ist, entscheidet erst der Korrespondenztest (gibt es eine <em>gegründete</em> Region, die X <em>und</em> Y enthält?).</p>
+</section>
+
+<!-- ============ 5. VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2>Interaktive Visualisierung</h2>
+  <p>Ein metrischer Raum, in dem <em>lokal verklebt</em> wird. Der Trainingsreiz&nbsp;<b>X</b> (orange) sitzt in der Mitte. Der Testreiz&nbsp;<b>Y</b> (türkis) bewegst du mit den Reglern. Das <b>türkis-gefärbte Feld</b> ist die <em>Klebkraft</em> g(d)=e<sup>−λd</sup>; die <span class="hl3">rosa</span> Kontur ist die <em>„dieselbe-Art"-Grenze</em> (g=0.5, also d&le;d*). Die <b>blauen Figuren</b> sind <em>consequential regions</em> = die admissible Überdeckung: <b>durchgezogen</b> = echte (gegründete) natürliche Art, <b>gestrichelt</b> = bloß mögliche (spurious) Region. Die <em>Rechte Spalte</em> zeigt die <em>Verdikt-Logik</em> (Kohärenz &times; Korrespondenz) und B's <em>Sameness-Leiter</em> — wie weit die Klebkraft dich hochziehen <em>darf</em>.</p>
+  <div class="viz-card">
+    <canvas id="viz"></canvas>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--accent)"></i> Klebkraft g(d) (hell=stark)</span>
+      <span><i class="sw" style="background:var(--accent2)"></i> X (Trainingsreiz)</span>
+      <span><i class="sw" style="background:var(--accent)"></i> Y (Testreiz)</span>
+      <span><i class="sw" style="background:var(--accent3)"></i> g=0.5 „Art"-Grenze (d*)</span>
+      <span><i class="sw" style="background:var(--accent4)"></i> Region: real (durchz.) / spurious (str.)</span>
+    </div>
+    <div class="viz-grid">
+      <div class="controls">
+        <div class="ctrl">
+          <label>Y – x-Abstand <span class="val" id="vx">0.25</span></label>
+          <input type="range" id="yx" min="-1" max="1" step="0.01" value="0.25">
+        </div>
+        <div class="ctrl">
+          <label>Y – y-Abstand <span class="val" id="vy">0.15</span></label>
+          <input type="range" id="yy" min="-1" max="1" step="0.01" value="0.15">
+        </div>
+        <div class="ctrl">
+          <label>Metrik r (L₁&rarr;L₂&rarr;…) <span class="val" id="vr">2.0</span></label>
+          <input type="range" id="r" min="0.5" max="5" step="0.1" value="2">
+        </div>
+        <div class="ctrl">
+          <label>Steilheit λ <span class="val" id="vl">2.00</span></label>
+          <input type="range" id="lam" min="0.5" max="4" step="0.05" value="2">
+        </div>
+        <div class="ctrl">
+          <label>Region-Größe µ <span class="val" id="vm">1.00</span></label>
+          <input type="range" id="mu" min="0.3" max="2" step="0.05" value="1">
+        </div>
+        <div class="ctrl">
+          <label>Anzahl Regionen <span class="val" id="vn">14</span></label>
+          <input type="range" id="nreg" min="4" max="40" step="1" value="14">
+        </div>
+        <div class="btnrow">
+          <button class="ghost" data-m="1" type="button">L₁ · separable</button>
+          <button class="ghost" data-m="2" type="button">L₂ · integrale</button>
+          <button id="reshuffle" type="button">🎲 Neue Regionen</button>
+        </div>
+      </div>
+      <div class="readout">
+        <div class="verdict" id="verdict">…</div>
+        <div class="kv"><span>Abstand d(X,Y)</span><span id="kd">–</span></div>
+        <div class="kv"><span>Klebkraft g(d)</span><span id="kg">–</span></div>
+        <div class="kv"><span>„Art"-Grenze d* = ln2/λ</span><span id="kdstar">–</span></div>
+        <div class="kv"><span>Kohärenz (Descent)</span><span id="kc">–</span></div>
+        <div class="tarski-line" id="ktarski">Korrespondenz (Tarski): –</div>
+        <h3 style="margin-top:16px;margin-bottom:2px">Erreichte Sameness-Stufe</h3>
+        <ol class="ladder" id="ladder"></ol>
+        <div class="ladder-note">Auch bei voller Bestätigung bleibt die Klebkraft auf Stufe 4 (statistisch) — nie Stufe 0 (Identität). Der <em>silent upgrade</em> wäre, aus „generalisiert stark" auf „ist dasselbe" zu springen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2>Provenienz</h2>
+  <ul>
+    <li><a href="../shepard.html"><code>shepard.html</code></a> — <em>„Shepard 1987 · Ein universelles Gesetz der Generalisierung"</em>: exponentielles Gesetz g(d)=e<sup>−λd</sup>, psychologischer Raum (MDS), consequential regions, Herleitung via Max-Entropie+Bayes→Erlang, Minkowski-Metriken L₁/L₂.</li>
+    <li><a href="../coherent_world_models.html"><code>coherent_world_models.html</code></a> — <em>„Coherent World Models"</em>: Traces O:W→R, admissible transitions 𝒯 (Subkategorie+Prior+Occam), Sheaf/Descent, Pullback/Equalizer, Master-Diagramm, Tarski-Convention-T, LLM-Halluzination als non-glueable presheaf.</li>
+  </ul>
+</section>
+
+<footer>
+  Fusion · Klopf-Runde 1, Paar 050 · <code>generalization</code> × <code>coherent-world-models</code><br>
+  Alle Formeln und Daten inline; keine Netz-Datenabrufe.
+</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // ---------- KaTeX ----------
+  function renderMath(){
+    if(!window.katex) return;
+    document.querySelectorAll('.ktx').forEach(function(el){
+      try{ katex.render(el.textContent, el, {displayMode: el.dataset.mode==='display', throwOnError:false}); }catch(e){}
+    });
+  }
+
+  // ---------- theme ----------
+  var root=document.documentElement;
+  var themeBtn=document.getElementById('themeBtn');
+  themeBtn.addEventListener('click',function(){
+    root.classList.toggle('dark');
+    draw();
+  });
+
+  // ---------- viz ----------
+  var canvas=document.getElementById('viz');
+  var el={
+    yx:document.getElementById('yx'), yy:document.getElementById('yy'),
+    r:document.getElementById('r'), lam:document.getElementById('lam'),
+    mu:document.getElementById('mu'), nreg:document.getElementById('nreg')
+  };
+  var labels={
+    vx:document.getElementById('vx'), vy:document.getElementById('vy'),
+    vr:document.getElementById('vr'), vl:document.getElementById('vl'),
+    vm:document.getElementById('vm'), vn:document.getElementById('vn')
+  };
+  var verdict=document.getElementById('verdict');
+  var kd=document.getElementById('kd'), kg=document.getElementById('kg'),
+      kdstar=document.getElementById('kdstar'), kc=document.getElementById('kc'),
+      ktarski=document.getElementById('ktarski');
+  var ladder=document.getElementById('ladder');
+
+  var rungs=[
+    {s:'x = y', t:'Identität'},
+    {s:'x ≅ y', t:'Isomorphie'},
+    {s:'x ≃ y', t:'Homotopie'},
+    {s:'d(x,y) ≤ ε', t:'Approximation'},
+    {s:'P(D₁,D₂|M) hoch', t:'Statistisch'},
+    {s:'∃M : M ⊨ 𝒮', t:'Modelltheoretisch'}
+  ];
+  rungs.forEach(function(rg){
+    var li=document.createElement('li');
+    li.innerHTML='<span class="sym">'+rg.s+'</span><span class="lbl">'+rg.t+'</span><span class="dot"></span>';
+    ladder.appendChild(li);
+  });
+  var ladderItems=[].slice.call(ladder.children);
+
+  function cssRGB(name){
+    var s=getComputedStyle(root).getPropertyValue(name).trim();
+    if(!s) return [128,128,128];
+    if(s[0]==='#'){
+      var h=s.slice(1);
+      if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+      return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)];
+    }
+    var m=s.match(/[\d.]+/g);
+    if(m) return [+m[0],+m[1],+(m[2]||0)];
+    return [128,128,128];
+  }
+  function argb(c,a){return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';}
+
+  function setup(){
+    var dpr=window.devicePixelRatio||1;
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    if(w<10||h<10) return null;
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    var ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx,w:w,h:h};
+  }
+
+  function mink(dx,dy,r){
+    var ax=Math.abs(dx), ay=Math.abs(dy);
+    if(r>=8) return Math.max(ax,ay);
+    return Math.pow(Math.pow(ax,r)+Math.pow(ay,r),1/r);
+  }
+  function containsRegion(rg,px,py,r){
+    var hx=rg.s/2, circ=(r>=1.5);
+    if(circ){var dx=px-rg.cx,dy=py-rg.cy;return dx*dx+dy*dy<=hx*hx;}
+    return Math.abs(px-rg.cx)<=hx && Math.abs(py-rg.cy)<=hx;
+  }
+  function genRegions(n,mu){
+    var arr=[],i,u1,u2,s;
+    for(i=0;i<n;i++){
+      u1=Math.random();u2=Math.random();
+      if(u1<1e-9)u1=1e-9; if(u2<1e-9)u2=1e-9;
+      s=-mu/2*Math.log(u1*u2);
+      s=Math.max(0.15,Math.min(s,2.3));
+      arr.push({cx:(Math.random()-0.5)*s*0.8, cy:(Math.random()-0.5)*s*0.8, s:s, grounded:(Math.random()<0.45)});
+    }
+    arr[0]={cx:0, cy:0, s:Math.max(0.3,Math.min(mu*1.2,2.0)), grounded:true};
+    return arr;
+  }
+
+  var regions=[], lastMu=null, lastN=null;
+  function ensureRegions(){
+    var mu=+el.mu.value, n=+el.nreg.value;
+    if(mu!==lastMu || n!==lastN){ regions=genRegions(n,mu); lastMu=mu; lastN=n; }
+  }
+
+  function draw(){
+    var S=setup();
+    if(!S) return;
+    var ctx=S.ctx, w=S.w, h=S.h;
+    var col={
+      panel:cssRGB('--panel'), ink:cssRGB('--ink'), ink2:cssRGB('--ink2'),
+      accent:cssRGB('--accent'), accent2:cssRGB('--accent2'),
+      accent3:cssRGB('--accent3'), accent4:cssRGB('--accent4'),
+      good:cssRGB('--good'), bad:cssRGB('--bad')
+    };
+    var Yx=+el.yx.value, Yy=+el.yy.value,
+        r=+el.r.value, lam=+el.lam.value;
+    ensureRegions();
+
+    var half=1.25, pad=10;
+    var scale=(Math.min(w,h)/2-pad)/half;
+    var cx=w/2, cy=h/2;
+    function SX(x){return cx+x*scale;}
+    function SY(y){return cy+y*scale;}
+
+    // clear
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle=argb(col.panel,1); ctx.fillRect(0,0,w,h);
+
+    // heatmap glue field
+    var step=3, x,y;
+    for(y=0;y<h;y+=step){
+      for(x=0;x<w;x+=step){
+        var sx=(x-cx)/scale, sy=(y-cy)/scale;
+        var d=mink(sx,sy,r);
+        var gg=Math.exp(-lam*d);
+        var t=Math.pow(gg,0.7);
+        var rr=col.panel[0]+(col.accent[0]-col.panel[0])*t;
+        var g2=col.panel[1]+(col.accent[1]-col.panel[1])*t;
+        var bb=col.panel[2]+(col.accent[2]-col.panel[2])*t;
+        ctx.fillStyle='rgb('+(rr|0)+','+(g2|0)+','+(bb|0)+')';
+        ctx.fillRect(x,y,step,step);
+      }
+    }
+
+    // faint grid
+    ctx.strokeStyle=argb(col.ink2,0.12); ctx.lineWidth=1;
+    var g;
+    for(g=-1;g<=1;g+=0.5){
+      if(g===0) continue;
+      ctx.beginPath(); ctx.moveTo(SX(g),0); ctx.lineTo(SX(g),h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,SY(g)); ctx.lineTo(w,SY(g)); ctx.stroke();
+    }
+
+    // regions (admissible cover)
+    var circ=(r>=1.5), i, rg, hx;
+    for(i=0;i<regions.length;i++){
+      rg=regions[i]; hx=rg.s/2;
+      ctx.lineWidth=rg.grounded?2:1;
+      ctx.setLineDash(rg.grounded?[]:[4,4]);
+      ctx.strokeStyle=argb(rg.grounded?col.accent4:col.ink2, rg.grounded?0.85:0.4);
+      if(circ){
+        ctx.beginPath(); ctx.arc(SX(rg.cx),SY(rg.cy),hx*scale,0,Math.PI*2);
+        if(rg.grounded){ctx.fillStyle=argb(col.accent4,0.07);ctx.fill();}
+        ctx.stroke();
+      }else{
+        var x0=SX(rg.cx-hx), y0=SY(rg.cy-hx), ww=2*hx*scale, hh=2*hx*scale;
+        if(rg.grounded){ctx.fillStyle=argb(col.accent4,0.07);ctx.fillRect(x0,y0,ww,hh);}
+        ctx.strokeRect(x0,y0,ww,hh);
+      }
+    }
+    ctx.setLineDash([]);
+
+    // iso-contours
+    function ball(L,rr){
+      ctx.beginPath();
+      for(var t2=0;t2<=360;t2+=2){
+        var th=t2*Math.PI/180, c=Math.cos(th), s=Math.sin(th);
+        var rho;
+        if(rr>=8) rho=L/Math.max(Math.abs(c),Math.abs(s));
+        else rho=L/Math.pow(Math.pow(Math.abs(c),rr)+Math.pow(Math.abs(s),rr),1/rr);
+        var px=SX(c*rho), py=SY(s*rho);
+        if(t2===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath();
+    }
+    var levels=[{c:0.3,a:0.5},{c:0.15,a:0.35}];
+    levels.forEach(function(L){
+      ctx.strokeStyle=argb(col.accent,L.a); ctx.lineWidth=1.2;
+      ball(-Math.log(L.c)/lam,r); ctx.stroke();
+    });
+    // 0.5 threshold (same-kind boundary)
+    ctx.strokeStyle=argb(col.accent3,0.95); ctx.lineWidth=2.4;
+    ball(Math.log(2)/lam,r); ctx.stroke();
+
+    // X and Y
+    var YSX=SX(Yx), YSY=SY(Yy);
+    ctx.strokeStyle=argb(col.ink2,0.6); ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(YSX,YSY); ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.fillStyle=argb(col.accent2,1); ctx.beginPath(); ctx.arc(cx,cy,8,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=argb(col.ink,0.9); ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle=argb(col.accent,1); ctx.beginPath(); ctx.arc(YSX,YSY,8,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=argb(col.ink,0.9); ctx.stroke();
+
+    ctx.font='bold 13px system-ui'; ctx.textAlign='center';
+    ctx.fillStyle=argb(col.accent2,1); ctx.fillText('X',cx,cy-13);
+    ctx.fillStyle=argb(col.accent,1); ctx.fillText('Y',YSX,YSY-13);
+
+    // labels
+    ctx.textAlign='left'; ctx.font='11px system-ui'; ctx.fillStyle=argb(col.ink2,0.9);
+    ctx.fillText('rosa Kontur = „dieselbe Art"-Grenze (g=0.5)',10,h-10);
+
+    // ----- readout -----
+    var d=mink(Yx,Yy,r);
+    var gval=Math.exp(-lam*d);
+    var dStar=Math.log(2)/lam;
+    var coherence=gval>=0.5;
+    var corr=false, j;
+    for(j=0;j<regions.length;j++){
+      if(regions[j].grounded && containsRegion(regions[j],0,0,r) && containsRegion(regions[j],Yx,Yy,r)){corr=true;break;}
+    }
+
+    labels.vx.textContent=Yx.toFixed(2);
+    labels.vy.textContent=Yy.toFixed(2);
+    labels.vr.textContent=r.toFixed(1);
+    labels.vl.textContent=lam.toFixed(2);
+    labels.vm.textContent=(+el.mu.value).toFixed(2);
+    labels.vn.textContent=el.nreg.value;
+
+    kd.textContent=d.toFixed(3);
+    kg.textContent=gval.toFixed(3);
+    kdstar.textContent=dStar.toFixed(3);
+    kc.textContent=coherence?'✓ ja (≤ d*)':'✗ nein (> d*)';
+
+    if(coherence && corr){
+      verdict.className='verdict good';
+      verdict.textContent='✓ Echte Generalisierung — Kohärenz & Korrespondenz';
+    }else if(coherence && !corr){
+      verdict.className='verdict warn';
+      verdict.textContent='⚠ Selbstkonsistente Fiktion — Kohärenz ohne Korrespondenz (Halluzination)';
+    }else{
+      verdict.className='verdict bad';
+      verdict.textContent='✗ Andere natürliche Art — keine Kohärenz (keine Generalisierung)';
+    }
+    ktarski.innerHTML='Korrespondenz (Tarski): '+
+      (corr?'<span class="ok">✓ reale Art, die X und Y enthält</span>':'<span class="no">✗ keine reale Region deckt beide ab</span>');
+
+    var earned=-1;
+    if(coherence) earned = corr ? 4 : 3;
+    ladderItems.forEach(function(li,idx){
+      li.classList.toggle('earned', earned>=0 && idx>=earned);
+    });
+  }
+
+  // ---------- events ----------
+  var inputs=[el.yx,el.yy,el.r,el.lam,el.mu,el.nreg];
+  inputs.forEach(function(inp){ inp.addEventListener('input',draw); });
+  document.querySelectorAll('[data-m]').forEach(function(b){
+    b.addEventListener('click',function(){ el.r.value=b.dataset.m; draw(); });
+  });
+  document.getElementById('reshuffle').addEventListener('click',function(){
+    lastMu=null; lastN=null; draw();
+  });
+  window.addEventListener('resize',draw);
+  var mo=new MutationObserver(draw);
+  mo.observe(root,{attributes:true,attributeFilter:['class']});
+  window.addEventListener('load',function(){ renderMath(); draw(); });
+  renderMath(); draw();
+})();
+</script>
+</body>
+</html>
