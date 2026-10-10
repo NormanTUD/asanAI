@@ -2270,8 +2270,6 @@ const DFA = {
     `\\hat r=\\frac{r}{\\lVert r\\rVert}`
   ];
   function drawDM(){
-    const n=+$('#d
-  function drawDM(){
     const n=+$('#dmN').value; $('#dmNV').textContent=n;
     const gg=gaussFactory(4242);
     const H=[],S=[];
@@ -2528,8 +2526,6 @@ const DFA = {
     marker:{color:MODELS.map(m=>m.lay/m.L), colorscale:[[0,'#3ddc97'],[0.5,'#ffc84d'],[1,'#ff4d6d']], showscale:false,
             line:{color:'#26304a',width:1}},
     hovertemplate:'%{y}: Schicht bei %{x:.0%} der Tiefe<extra></extra>'
-  },{
-    x:[0.8,0.8], y:[-0.5,12.5], type:'
   },{
     x:[0.8,0.8], y:[-0.5,12.5], type:'scatter', mode:'lines',
     line:{color:C.harm, width:2, dash:'dash'}, name:'Grenze l < 0.8·L', hoverinfo:'skip'
@@ -3348,8 +3344,6 @@ const DFA = {
     ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px,py,9,0,7);ctx.stroke();
     label(ctx,'Aktivierung',px+15,py-16,col,12,750);
     label(ctx,'r̂ᵀx = '+fmt(P,2),px+15,py+1,col+'bb',11,600);
-    // Original-Position + Pfeil
-    const base=s.p.harm?2.25
     // Original-Position + Pfeil
     const base=s.p.harm?2.25:-1.55;
     if(Math.abs(base-P)>0.05){
