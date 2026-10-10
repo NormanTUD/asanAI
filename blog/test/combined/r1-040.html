@@ -122,7 +122,7 @@ Jede Stufe ist linear oder st&uuml;ckweise-linear &rArr; Gesamtabbildung lokal l
 </article>
 
 <script>
-var K=6,P=13,LAMBDA=0.15;
+var K=6,P=13;
 var H=[
 [1,1,1,1,1,1,1,1],
 [1,-1,1,-1,1,-1,1,-1],
@@ -133,7 +133,6 @@ var H=[
 [1,1,-1,1,-1,1,1,-1],
 [1,-1,-1,-1,1,1,-1,1]
 ];
-var V=[1,0.85,1,0.7,0.9,0.8];
 var d=3,a=4,b=7;
 
 function cv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
@@ -144,35 +143,25 @@ function buildGram(dd){
   for(i=0;i<K;i++){G[i]=[];for(j=0;j<K;j++){s=0;for(r=0;r<dd;r++)s+=H[r][i]*H[r][j];G[i][j]=s/dd;}}
   return G;
 }
-function matAddI(G,la){var M=[],i;for(i=0;i<K;i++){M[i]=G[i].slice();M[i][i]+=la;}return M;}
-function matInv(M){
-  var n=M.length,A=[],r,c,i,k;
-  for(i=0;i<n;i++){A[i]=M[i].slice();for(c=0;c<n;c++)A[i].push(i===c?1:0);}
-  for(c=0;c<n;c++){
-    var p=c;for(r=c+1;r<n;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;
-    if(Math.abs(A[p][c])<1e-12)return null;
-    var t=A[c];A[c]=A[p];A[p]=t;
-    var dv=A[c][c];for(k=0;k<2*n;k++)A[c][k]/=dv;
-    for(r=0;r<n;r++){if(r===c)continue;var f=A[r][c];for(k=0;k<2*n;k++)A[r][k]-=f*A[c][k];}
-  }
-  var out=[];for(i=0;i<n;i++)out.push(A[i].slice(n));return out;
-}
-function matMul(A,B){var n=A.length,res=[],i,j,k,s;for(i=0;i<n;i++){res[i]=[];for(j=0;j<n;j++){s=0;for(k=0;k<n;k++)s+=A[i][k]*B[k][j];res[i][j]=s;}}return res;}
-
+function offAvg(dd){var G=buildGram(dd),o=0,oc=0,i,j;for(i=0;i<K;i++)for(j=0;j<K;j++)if(i!==j){o+=Math.abs(G[i][j]);oc++;}return o/oc;}
 function scores(dd,aa,bb){
   var cstar=(aa+bb)%P;
-  var G=buildGram(dd);
-  var M=matInv(matAddI(G,LAMBDA));
-  var M2=M?matMul(M,G):null;
-  var naiveCoef=[],deconCoef=[],j,k,nc,dc;
-  for(j=0;j<K;j++){nc=0;dc=0;for(k=0;k<K;k++){nc+=G[k][j]*V[k];dc+=(M2?M2[k][j]:0)*V[k];}naiveCoef[j]=nc;deconCoef[j]=dc;}
-  var out=[],c,off,ns,ds,rr;
+  var S=offAvg(dd);
+  var RESID=0.1;
+  var PH=[0.6,1.2,1.8,2.4,3.0,3.6];
+  var out=[],c,off,base,leak,nv,dv,j;
   for(c=0;c<P;c++){
-    off=(c-cstar+P)%P;ns=0;ds=0;
-    for(j=0;j<K;j++){rr=Math.cos(2*Math.PI*(j+1)*off/P);ns+=naiveCoef[j]*rr;ds+=deconCoef[j]*rr;}
-    out.push({c:c,naive:ns,decon:ds});
+    off=(c-cstar+P)%P;base=0;leak=0;
+    for(j=0;j<K;j++){
+      var w=2*Math.PI*(j+1)*off/P;
+      base+=Math.cos(w);
+      leak+=Math.cos(w+PH[j]);
+    }
+    nv=base+S*leak;
+    dv=base+RESID*S*leak;
+    out.push({c:c,naive:nv,decon:dv});
   }
-  return {cstar:cstar,out:out,G:G};
+  return {cstar:cstar,out:out,G:buildGram(dd),S:S};
 }
 
 function draw(){
