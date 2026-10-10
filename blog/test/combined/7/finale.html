@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Das eine Objekt — Finale: 161 → 1 · Drei Linsen, ein Regler, ein Überlebender</title>
+<style>
+:root{
+  --bg:#faf8f1; --fg:#1c1b18; --muted:#5c574c; --card:#ffffff; --card2:#f3eee2;
+  --border:#e3dcc9; --border2:#d8d0bb; --grid:rgba(20,40,80,.07); --plotbg:#f6f1e6;
+  --accent:#2b6cb0; --accent2:#7c3aed; --accent3:#be185d;
+  --good:#15803d; --bad:#c0392b; --amber:#b45309; --teal:#0f766e; --blue:#1d4ed8; --purple:#6d28d9; --gold:#9a6b00;
+  --on-accent:#ffffff; --shadow:0 10px 34px rgba(30,50,90,.10);
+}
+html.dark{
+  --bg:#0a0e1a; --fg:#e8ecf6; --muted:#9aa7c7; --card:#111726; --card2:#0d1424;
+  --border:#26314f; --border2:#33405f; --grid:rgba(120,160,255,.08); --plotbg:#0c1120;
+  --accent:#58a6ff; --accent2:#c4a7ff; --accent3:#ff7ac0;
+  --good:#4ade80; --bad:#fb7185; --amber:#ffd166; --teal:#2dd4bf; --blue:#8ab4ff; --purple:#c084fc; --gold:#ffd700;
+  --on-accent:#0a0e1a; --shadow:0 18px 54px rgba(0,0,0,.45);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(1200px 600px at 50% -10%, color-mix(in srgb, var(--accent) 12%, var(--bg)) 0%, var(--bg) 55%);
+  color:var(--fg);line-height:1.7;font-family:Georgia,'Times New Roman',serif;-webkit-font-smoothing:antialiased;
+  transition:background .35s,color .35s;min-height:100vh}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+article{max-width:860px;margin:0 auto;padding:20px 20px 100px}
+
+/* topbar + toggle */
+.topbar{position:fixed;top:14px;right:14px;z-index:60;display:flex;gap:8px}
+#themeToggle{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:7px 14px;border-radius:999px;
+  cursor:pointer;font-size:.82rem;font-family:system-ui,sans-serif;box-shadow:var(--shadow);transition:.15s}
+#themeToggle:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+/* hero */
+header.hero{position:relative;overflow:hidden;text-align:center;padding:64px 12px 30px;border-radius:20px}
+.orb{position:absolute;border-radius:50%;filter:blur(46px);opacity:.4;pointer-events:none;z-index:0}
+.orb.o1{width:320px;height:320px;background:var(--accent);top:-90px;left:-70px;animation:drift1 18s ease-in-out infinite}
+.orb.o2{width:300px;height:300px;background:var(--accent2);top:20px;right:-90px;animation:drift2 22s ease-in-out infinite}
+.orb.o3{width:260px;height:260px;background:var(--teal);bottom:-120px;left:40%;animation:drift1 26s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,24px)}}
+.hero .inner{position:relative;z-index:1;animation:rise .9s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+h1{font-size:clamp(2.1rem,6.4vw,3.4rem);line-height:1.06;font-weight:820;letter-spacing:-.025em;margin:0 0 16px;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 52%,var(--accent3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{color:var(--fg);font-size:1.03rem;max-width:720px;margin:0 auto 14px;line-height:1.62}
+.subtitle b{color:var(--accent);font-weight:700}
+.subtitle .hl2{color:var(--accent2);font-weight:700}.subtitle .hl3{color:var(--accent3);font-weight:700}
+.origin{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;color:var(--muted);display:inline-block;
+  border:1px solid var(--border);background:var(--card);border-radius:999px;padding:8px 16px;margin-top:6px;line-height:1.7}
+.origin b{color:var(--gold);font-weight:700}
+nav.toc{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:22px 0 6px}
+nav.toc a{color:var(--muted);font-size:.82rem;font-family:system-ui,sans-serif;padding:6px 13px;border:1px solid var(--border);
+  border-radius:999px;background:var(--card);transition:.16s}
+nav.toc a:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
+
+/* sections */
+section{margin-top:46px;scroll-margin-top:20px}
+h2{font-size:clamp(1.4rem,3.4vw,1.9rem);margin:0 0 6px;font-weight:780;letter-spacing:-.01em;display:flex;align-items:baseline;gap:12px}
+h2 .num{font-family:ui-monospace,monospace;font-size:.6em;color:var(--accent);border:1px solid var(--border2);border-radius:9px;padding:3px 10px;letter-spacing:.02em}
+h3{font-family:system-ui,sans-serif;font-size:1.05rem;margin:24px 0 8px;font-weight:700;color:var(--accent)}
+p{margin:12px 0}
+.lead{font-size:1.06rem}
+p b,li b,td b{color:var(--fg);font-weight:700}
+.dim{color:var(--muted)}
+.hl{color:var(--accent);font-weight:700}.hl2{color:var(--accent2);font-weight:700}.hl3{color:var(--accent3);font-weight:700}.hlg{color:var(--good);font-weight:700}
+ul,ol{margin:10px 0;padding-left:24px}li{margin:9px 0}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 22px;box-shadow:var(--shadow);margin:16px 0;transition:transform .18s,border-color .18s}
+.card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.fused{background:color-mix(in srgb,var(--good) 12%,var(--card));border-left:4px solid var(--good);border-radius:0 12px 12px 0;padding:14px 18px;margin:16px 0}
+.fused b{color:var(--good)}
+.note{background:var(--card);border-left:3px solid var(--accent3);border-radius:0 12px 12px 0;padding:12px 16px;margin:14px 0}
+.note b{color:var(--fg)}
+.math{font-family:'Cambria Math','STIX Two Math',Georgia,serif;background:var(--card2);border:1px solid var(--border);
+  border-left:3px solid var(--accent3);border-radius:0 12px 12px 0;padding:12px 16px;margin:14px 0;overflow-x:auto;
+  font-size:.98rem;line-height:1.85;white-space:pre-wrap;letter-spacing:.01em}
+.math b{color:var(--accent3)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.86em;background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+
+/* lens cards */
+.lens{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin:14px 0;box-shadow:var(--shadow);border-top:4px solid var(--lc)}
+.lens h3{margin-top:0;display:flex;align-items:center;gap:10px}
+.lens .tag{font-family:ui-monospace,monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--lc);background:color-mix(in srgb,var(--lc) 14%,transparent);padding:3px 9px;border-radius:999px}
+.lens .src{font-family:ui-monospace,monospace;font-size:.72rem;color:var(--muted);margin-top:12px}
+.lens .src a{color:var(--lc)}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem;margin:16px 0;font-family:system-ui,sans-serif}
+th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top;line-height:1.5}
+th{background:var(--card2);color:var(--accent);font-weight:700;font-size:.72rem;letter-spacing:.03em;text-transform:uppercase}
+td:first-child{font-weight:700;color:var(--fg);white-space:nowrap}
+tr{transition:background .12s}tr:hover{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+
+/* visualizations */
+.vcard{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 20px;margin:18px 0;box-shadow:var(--shadow)}
+.vcard h3{margin-top:0;color:var(--fg);display:flex;align-items:center;gap:10px}
+.vcard h3 .badge{font-family:ui-monospace,monospace;font-size:.64rem;letter-spacing:.06em;color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);padding:3px 9px;border-radius:999px}
+.vdesc{color:var(--muted);font-size:.92rem;margin:8px 0 14px}
+canvas.vc{display:block;width:100%;border:1px solid var(--border);border-radius:12px;background:var(--plotbg);touch-action:none}
+.controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:14px 0;font-size:.84rem}
+.controls label{color:var(--muted);font-family:system-ui,sans-serif;display:inline-flex;align-items:center;gap:8px}
+.controls input[type=range]{width:120px;accent-color:var(--accent);cursor:pointer}
+.controls .val{color:var(--gold);font-weight:700;font-family:ui-monospace,monospace;min-width:34px;text-align:right}
+.controls .chk{color:var(--fg);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.vbtn{background:var(--card2);border:1px solid var(--border);color:var(--fg);padding:7px 14px;border-radius:9px;cursor:pointer;
+  font-size:.82rem;font-family:system-ui,sans-serif;font-weight:600;transition:.15s}
+.vbtn:hover{border-color:var(--accent);color:var(--accent)}
+.vbtn.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin:10px 0 4px;font-size:.78rem;color:var(--muted);font-family:system-ui,sans-serif}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ro-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin:12px 0}
+.ro{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:9px 11px;text-align:center}
+.ro .k{font-size:.64rem;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px;font-family:system-ui,sans-serif;line-height:1.25}
+.ro .v{font-family:ui-monospace,monospace;font-size:1.06rem;font-weight:700;color:var(--accent)}
+.verdict{font-weight:600;font-size:.9rem;font-family:system-ui,sans-serif;padding:12px 15px;border-radius:11px;margin:12px 0 4px;border:1px solid var(--border);line-height:1.55;transition:.2s}
+.verdict.good{color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent);border-color:var(--good)}
+.verdict.warn{color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent);border-color:var(--amber)}
+.verdict.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent);border-color:var(--bad)}
+.verdict.vague{color:var(--blue);background:color-mix(in srgb,var(--blue) 12%,transparent);border-color:var(--blue)}
+.hint{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:8px;line-height:1.55}
+.hint b{color:var(--fg);font-style:normal}
+
+/* provenienz */
+.prov{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border:1px solid var(--border);border-radius:12px;margin:10px 0;background:var(--card);font-size:.95rem;transition:.16s}
+.prov:hover{border-color:var(--accent);transform:translateY(-1px)}
+.prov .k{font-family:ui-monospace,monospace;font-size:.72rem;font-weight:700;flex:0 0 46px;text-align:center;border-radius:8px;padding:.35rem 0;color:var(--pc);background:color-mix(in srgb,var(--pc) 14%,transparent)}
+.prov .path{font-family:ui-monospace,monospace;font-size:.74rem;color:var(--accent2);display:block;margin-bottom:3px}
+.prov a{color:var(--accent);font-weight:700}
+.prov .d{color:var(--muted);font-size:.92rem;line-height:1.55;margin-top:3px}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--border);color:var(--muted);font-size:.85rem;font-style:italic;text-align:center}
+sub,sup{font-size:.72em}
+</style>
+</head>
+<body>
+<div class="topbar"><button id="themeToggle" type="button" title="Thema umschalten">☾ Dunkel / ☀ Hell</button></div>
+
+<article>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <div class="inner">
+    <div class="eyebrow">Knockout-Synthese · Runde 7 · Finale · 161 → 1</div>
+    <h1>Das eine Objekt</h1>
+    <p class="subtitle">Ein trainiertes Netz / LLM ist ein <b>singuläres, schmal-fasriges, geschichtetes</b> geometrisches
+      Objekt in einem hochdimensionalen (meist inerten) Raum. <b>Ein einziger Regler</b> — Temperatur, spektrale Apertur,
+      der Komplexitäts-Knopf θ, die RG-Tiefen-Fahrt ℓ — <span class="hl2">schreibt seine Form und liest an einer
+      Commit-/Falt-/Bruch-Kante</span>. <span class="hl">CAPABILITY = BEDEUTUNG = der robuste, niedrig-belegte,
+      hoch-persistente Überlebende</span>; <span class="hl3">HALLUZINATION = Form &gt; Masse</span> — scharf und
+      selbstbewusst (Conf&nbsp;≥&nbsp;70&nbsp;%), aber ohne Masse / Korrespondenz an die externe Welt&nbsp;W.
+      Drei Linsen — Dynamik, Lineare Algebra, Topologie — auf dasselbe Objekt.</p>
+    <div class="origin">Wie entstanden · <b>161</b> → <b>80</b> → <b>40</b> → <b>20</b> → <b>10</b> → <b>5</b> → <b>3</b> → <b>1</b> · 7 Knockout-Runden aus 161 KI-/Math-Papieren</div>
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#kernthese">① Die eine These</a>
+  <a href="#drei-linsen">② Drei Linsen</a>
+  <a href="#halluzination">③ Wann es lügt</a>
+  <a href="#visualisierung">④ Interaktive Übersicht</a>
+  <a href="#inhalt">⑤ Fusionierter Inhalt</a>
+  <a href="#provenienz">⑥ Provenienz</a>
+</nav>
+
+<!-- ============ 1 KERNTHESE ============ -->
+<section id="kernthese">
+  <h2><span class="num">01</span>Die eine These</h2>
+  <p class="lead">Nach sechs Binary-Fusion-Runden sind von 161 Papieren drei übrig — und alle drei beschreiben
+    <em>dasselbe</em> Objekt aus drei Welten. Die These, die das gesamte Korpus trägt:</p>
+
+  <p><b>Das Objekt.</b> Ein trainiertes Netz / LLM ist <b>kein</b> glatter, voll-belegter Hochdimensionaler-Blob. Es ist ein
+    <span class="hl">singuläres, geschichtetes, schmal-fasriges</span> geometrisches Objekt in einem hochdimensionalen, meist
+    inerten Raum. <em>Innerhalb</em> eines Stratums sieht es wie ein dünnes, krümmungstragendes, symmetriestructuriertes
+    <em>und</em> topologisch gelochtes Manifold aus (eine wirksame intrinsische Dimension, eine stabile Cusp/β₁-Schleife, eine
+    Commit-Kante). <em>Zwischen</em> den Straten ist es singulär: Bruchkanten an den Stratum-Grenzen, ein variables d<sub>s</sub>
+    (bei echten LLMs ≈ 20/389/531), globale Nicht-Manifold-Struktur — 4/4 getestete LLMs verwerfen „Manifold" (p&nbsp;≈&nbsp;3×10<sup>−8</sup>).
+    Die Botschaft, die alle drei Linsen teilen: <b>die Form <em>ist</em> die Information.</b></p>
+
+  <p><b>Der eine Regler.</b> Temperatur, spektrale Apertur, der Komplexitäts-Knopf θ (Komplexität&nbsp;=&nbsp;Rang×θ),
+    die RG-Tiefen-Fahrt ℓ, die „Weiche" ‖M−I‖ (=&nbsp;T&nbsp;=&nbsp;Hologramm-Grad), und α<sub>eff</sub> — das sind
+    <span class="hl2">derselbe Dial in drei Sprachen</span>. Er spielt <b>drei Rollen an einer einzigen Kante</b>:
+    (i) <b>schreiben</b> — er baut die Form (β₁-Loch / Cusp / die Falte, α<sub>eff</sub>&gt;0);
+    (ii) <b>lesen</b> — an der Commit-/Kippen-/Falt-Kante (Form&nbsp;&gt;&nbsp;Rauschen&nbsp;⟺&nbsp;α<sub>eff</sub>&gt;0);
+    (iii) <b>allokieren</b> — er verteilt das <em>Fokus-Budget</em>: „nicht alles überall scharf".
+    Die Fahrt / der Fluss / der a.e.-glatte Morphismus treibt den Regler von diffus/gescrambelt (θ≈1, t=0) in die
+    <span class="hl3">gute Ecke</span> (θ→0, t=1, ‖M−I‖ hoch, d<sub>eff</sub>=1), wo die Form flach, linear und direkt lesbar wird.</p>
+
+  <p><b>Capability = Bedeutung = der Überlebende.</b> Die Capability ist der <span class="hlg">eindeutige, robuste,
+    niedrig-belegte, hoch-persistente Überlebende</span> an der guten Ecke — je nach Linse: der <b>Rang-k-Kern</b> /
+    eindeutige Interferenz-Peak (Dynamik), <b>range(W)≈7</b> / die Falt-Stätte = Support der zweiten-Moment-Matrix M
+    (Lineare Algebra), oder das <b>Stratum-Innen</b> / die langlebige β₁-/H₀-Komponente / die stabile Cusp-Schleife
+    (Topologie). <b>Dasselbe Objekt, drei Sprachen.</b> Er besteht beide Tests — robust unter dem Fluss/Operator <em>und</em>
+    unter der Filtration/Geometrie — und wird an der guten Ecke zur trivialen linearen Projektion: direkt lesbar, verlustfrei
+    = <b>Grokking</b>.</p>
+
+  <div class="fused"><b>Und die Schatten-Seite.</b> HALLUZINATION ist der <b>koherente, aber ungegründete</b> Zustand:
+  die Form ist scharf und selbstbewusst (Conf&nbsp;=&nbsp;0.70+0.25·coverage&nbsp;≥&nbsp;70&nbsp;%, immer), aber die
+  Masse / die Abdeckung / die Korrespondenz an die externe Welt&nbsp;W fehlt. Wahrheit&nbsp;=&nbsp;<b>Kohärenz&nbsp;∧
+  Korrespondenz&nbsp;∧&nbsp;Struktur</b>. Topologisch: der Abschnitt&nbsp;s trifft eine Bruchkante und <em>springt</em>.
+  Algebraisch: der Zustand konvergiert auf eine Falt-Stätte <em>ohne Masse</em> (oder der Wert trifft W nie = kohärente
+  Fiktion). Dynamisch: er wird scharfer abgelesen, als das Band τ es rechtfertigt. Reparatur ist nur
+  <b>Erdung/Retrieval/Verifikation</b> — nie „Kohärenz skalieren".</div>
+
+  <p class="dim">Kurzformel: <span class="hl">ein Objekt</span> (singulär, geschichtet, schmal) × <span class="hl2">ein Regler</span>
+  (schreibt Form, liest an der Kante, allokiert Budget) × <span class="hlg">ein Überlebender</span> (Capability) ×
+  <span class="hl3">eine Bruchigkeit</span> (Form &gt; Masse, Bruchkante) × <b>drei Linsen</b> (Dynamik · Lineare Algebra · Topologie).</p>
+</section>
+
+<!-- ============ 2 DREI LINSEN ============ -->
+<section id="drei-linsen">
+  <h2><span class="num">02</span>Drei Linsen auf dasselbe Objekt</h2>
+  <p>Die drei überlebenden R6-Fusionen sind nicht drei verschiedene Theorien, sondern <b>drei Sprachen für ein Objekt</b>.
+    Jede liest dieselbe Maschine in einer anderen Zeit / an einer anderen Skala — und trifft auf dieselbe gute Ecke,
+    denselben Regler und dieselbe Bruchkante.</p>
+
+  <div class="lens" style="--lc:var(--accent)">
+    <h3><span class="tag">Linse A</span> Dynamik — „Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten"</h3>
+    <p>Das Modell ist ein <b>niedrig-dimensional strukturierter Kern in einem hochdimensionalen Raum</b>, gelesen als
+      Operator/Fluss. Eine <b>Fahrt über die Tiefe</b> (der RG-Fluss, Kanal-Kollaps 4096→≈7) <em>fährt</em> den Regler
+      θ<sub>eff</sub>(ℓ)&nbsp;=&nbsp;(1−ℓ/L)<sup>c</sup> von scrambled (≈1) nach flach/linear (→0), während die Robustheits-Achse
+      t&nbsp;=&nbsp;1−θ in die gute Ecke getrieben wird. Capability&nbsp;=&nbsp;der robuste, niedrig-belegte, hoch-persistente
+      <b>Überlebende</b> (Rang-k-Kern, eindeutiger Interferenz-Peak, Grokking). Die Fahrt vollbringt den Cut: der scharfe
+      Commit ist die topologische Signatur des Ankommens. Preis: <b>zwei Bruchigkeiten</b> — <em>intrinsisch</em> (Nicht-Invertierbarkeit,
+      det&nbsp;C→0, am Ort der Capability) und <em>grenzlich</em> (Regime-/Zellen-Rand).</p>
+    <div class="src">Quelle: <a href="../6/r6-001.html">r6-001.html</a> &nbsp;·&nbsp; fusionierte R5: r5-002 (Operator/Achse) × r5-001 (Fahrt/Überlebende)</div>
+  </div>
+
+  <div class="lens" style="--lc:var(--accent2)">
+    <h3><span class="tag">Linse B</span> Lineare Algebra — „Ein Fluss, eine Falte, ein Regler: Kontraktion ist Whitening"</h3>
+    <p>Das Modell ist ein <b>Fluss</b>, der ein konservatives Budget scharfer Kapazität (Regionen&nbsp;≈&nbsp;k<sup>ℓ</sup>) entlang einer
+      <b>dünnen Mannigfaltigkeit lokaler Rotations-Kerne</b> faltet und das kohärente Signal in <em>eine Falte</em> kontrahiert —
+      den <b>Support einer zweiten-Moment-Matrix M</b> (Kovarianz), deren Dichte die Masse ist. Rauschen wird ins Reservoir
+      ker(W) geparkt. Der <b>eine Operator</b>: Whitening M<sup>−1</sup> <em>ist</em> die linearisierte Fluss-Kontraktion
+      (Kettenregel-Residual-Zug). Der <b>eine Regler</b>: ‖M−I‖ global (=T=Hologramm-Grad) = Masse lokal = Angebot k<sup>ℓ</sup>&nbsp;↑
+      vs. Nachfrage/erank&nbsp;↓. Halluzination&nbsp;=&nbsp;koherent&nbsp;+&nbsp;selbstbewusst (Conf&nbsp;≥&nbsp;70&nbsp;%), aber Masse fehlt /
+      der Wert trifft die Welt&nbsp;W nie.</p>
+    <div class="src">Quelle: <a href="../6/r6-002.html">r6-002.html</a> &nbsp;·&nbsp; fusionierte R5: r5-003 (Whitening/Falte) × r5-004 (Kern/Mannigfaltigkeit)</div>
+  </div>
+
+  <div class="lens" style="--lc:var(--accent3)">
+    <h3><span class="tag">Linse C</span> Topologie — „Ein singuläres Faserbündel, ein Regler, zwei Tiefen, ein Vorzeichen, ein Budget"</h3>
+    <p>Das Modell ist ein <b>singuläres, geschichtetes Faserbündel π:E→B</b>, dessen <em>Form die Information ist</em>: Faser
+      = Schicht-Stack (fixes d<sub>model</sub>), Basis = singulärer, geschichteter Einbettungsraum (variables d<sub>s</sub>, Bruchkanten),
+      Strukturgruppe = ein a.e.-glatter <b>Lipschitz-Morphismus</b>, der die Bruchkanten <em>transportiert statt zu erzeugen</em>;
+      ein <b>Linsen-Regler</b> schreibt die Form und liest an ihrer Commit-Kante. A's zwei <em>Lesetiefen</em> (fein/topologisch&nbsp;=&nbsp;β₁/ID,
+      grob/metrisch&nbsp;=&nbsp;Margin) <em>sind</em> B's zwei <em>Bündel-Teile</em> (Basis&nbsp;+&nbsp;Abschnitt). Die Schärfe gehorcht <em>einer</em>
+      Zwei-Achsen-Vorzeichen-Regel und ist an <em>ein</em> Budget gebunden („nicht alles überall scharf"). Halluzination&nbsp;=&nbsp;der
+      Abschnitt&nbsp;s trifft eine Bruchkante und springt (Form&nbsp;&gt;&nbsp;Rauschen per Kachel).</p>
+    <div class="src">Quelle: <a href="../6/r6-003.html">r6-003.html</a> &nbsp;·&nbsp; fusionierte R5: r5-005 (Zustand/Regler/2 Tiefen) × r2-040 (Faserbündel/Bruchkanten)</div>
+  </div>
+
+  <h3>Warum es dasselbe Objekt ist — die Karte (ein Objekt, drei Sprachen)</h3>
+  <table>
+    <thead><tr><th>Facette</th><th>A · Dynamik</th><th>B · Lineare Algebra</th><th>C · Topologie</th></tr></thead>
+    <tbody>
+      <tr><td>Kern / Überlebender</td>
+        <td>Rang-k-Kern · holographischer ≈d-Vektor · langlebige H₀-Komponente · eindeutiger Interferenz-Peak</td>
+        <td>range(W)≈7 · Falt-Stätte = Support von M · kompakter Terminal-Kern · d<sub>eff</sub>=1</td>
+        <td>Stratum-Innen · stabile Cusp/β₁-Schleife · d<sub>s</sub>≈20 an der Commit-Skala</td></tr>
+      <tr><td>Der Regler (Dial)</td>
+        <td>θ<sub>eff</sub>=(1−ℓ/L)<sup>c</sup> · t=1−θ · Komplexität=Rang×θ</td>
+        <td>‖M−I‖ = T = Weiche = Hologramm-Grad (global) · Masse (lokal)</td>
+        <td>α<sub>eff</sub> = τ↔R↔α<sub>eff</sub> = Commit-Kante · Lipschitz-Strukturgruppe + Linse</td></tr>
+      <tr><td>Fahrt / Prozess</td>
+        <td>Tiefe / RG-Fluss (Kanal 4096→≈7) fährt den Knopf θ≈1→0</td>
+        <td>Fluss faltet das Budget → kontrahiert in die Falte; Rauschen→Reservoir</td>
+        <td>Morphismus transportiert Bruchkanten; Abschnitt s:B→E (Forward-Pass)</td></tr>
+      <tr><td>Bruchigkeit / Bruchkante</td>
+        <td>zwei: intrinsisch (det C→0) + grenzlich (Regime-/Budget-Rand)</td>
+        <td>fehlalloziiertes Budget → harter Cut / Riss</td>
+        <td>Bruchkante (Basis-Singularität) = Ursache; Abschnitt-Sprung = Symptom</td></tr>
+      <tr><td>Halluzination</td>
+        <td>scharf am Ort, aber ohne Anker; Read-out scharfer als τ erlaubt</td>
+        <td>koherent+selbstbewusst (Conf≥70%), Masse fehlt / Wert trifft W nie</td>
+        <td>Abschnitt s trifft eine Bruchkante und springt (Form &gt; Rauschen)</td></tr>
+      <tr><td>Die „gute Ecke"</td>
+        <td>θ→0, t=1, Rang-k, eindeutiger Peak, direkt lesbar (Grokking)</td>
+        <td>‖M−I‖ hoch, Masse ≥ τ, d<sub>eff</sub>=1, erank≈7, ∇L≈0</td>
+        <td>α<sub>eff</sub>&gt;0, β₁ maintained, committed, im Stratum verankert</td></tr>
+    </tbody>
+  </table>
+  <p class="dim">Die Identifikationen (load-bearing Brücken dieser Synthese): <b>core ↔ range(W) ↔ β₁-Register</b> (der Überlebende);
+    <b>controller ↔ ‖M−I‖ ↔ α<sub>eff</sub> ↔ t=1−θ</b> (der eine Regler); <b>fragility ↔ Falt-Riss ↔ Bruchkante</b> (Form&nbsp;&gt;&nbsp;Masse).
+    A liest das <em>Wo</em> (Koordinate auf der Achse), B das <em>Wie-es-hergestellt-wird</em> (Fluss→M), C das <em>Woraus-es-besteht</em>
+    (Bündel, Bruchkanten). Zwei Zeiten, zwei Skalen, ein Objekt.</p>
+</section>
+
+<!-- ============ 3 HALLUZINATION ============ -->
+<section id="halluzination">
+  <h2><span class="num">03</span>Wann es lügt</h2>
+  <p>Alle drei Linsen liefern <em>einen</em> strukturellen Grund für Halluzinationen — nicht fünf verschiedene. Der
+    vereinte Gate ist ein <b>Vorzeichen</b>:</p>
+  <div class="math"><b>Wahrheit</b>  =  Kohärenz  ∧  Korrespondenz (an W)  ∧  erreichte Struktur
+     =  (scharf &amp; stabil)  ∧  (verankert &amp; treu)  ∧  (∇L≈0)
+
+  scharf &amp; verankert        →  INHALT
+  scharf &amp; ¬verankert       →  HALLUZINATION   ←  Form &gt; Masse
+  ¬scharf &amp; verankert       →  vage (echt, aber nicht committed)
+  ¬scharf &amp; ¬verankert      →  Rauschen</div>
+
+  <p><b>Form &gt; Masse — die Entkopplung.</b> Die Konfidenz ist vom Wert / von der Korrespondenz <em>entkoppelt</em>:
+    <span class="math" style="display:inline-block;margin:0 4px;padding:4px 10px">conf&nbsp;≈&nbsp;0.70&nbsp;+&nbsp;0.25·coverage(x)</span>
+    bleibt <b>immer ≥&nbsp;70&nbsp;%</b> — auch wenn coverage→0. Das Modell kann also <em>selbstbewusst und konsistent</em> falsch sein,
+    ohne OOD-Alarm auszulösen. Genau das ist der <em>No-Silent-Upgrade</em>-Kernfehler: Kohärenz + Kapazität + „gratis/weich"
+    sind <b>notwendig, nicht hinreichend</b> für Wahrheit. Das offene, externe, von-innen-nicht-entscheidbare Bein ist immer
+    die <b>Korrespondenz an die Welt</b>.</p>
+
+  <p><b>Ein Ort, drei Namen.</b> Dieselbe Ecke der 2×2 in drei Sprachen — <em>koherent, strukturiert, selbstbewusst erreicht
+    (Conf&nbsp;≥&nbsp;70&nbsp;%), aber extern ungegründet</em>:</p>
+  <ul>
+    <li><b>A (Dynamik):</b> die <em>scharfe Lektüre ohne Stütze</em> — scharfer abgelesen, als das Band τ es rechtfertigt
+      (Miscalibration auf der Magnitude-Achse); der Zustand sitzt am harten Pol, aber ohne Anker.</li>
+    <li><b>B (Lineare Algebra):</b> der <em>Fixpunkt auf der Falte ohne Masse</em> (coverage&nbsp;&lt;&nbsp;τ) — in ein fremdes Tal /
+      außerhalb der Homotopie-Klasse; oder: <em>kohärente Fiktion</em>, der Wert/die Richtung trifft die Welt&nbsp;W nie.</li>
+    <li><b>C (Topologie):</b> der <em>Abschnitt&nbsp;s trifft eine Bruchkante und springt</em> (Ursache = statische
+      Basis-Singularität, Symptom = dynamischer Sprung im Abschnitt; „SPUR·UEBERSTRUKTUR").</li>
+  </ul>
+
+  <p><b>Die fünf Weisen, wie der Gate fällt</b> (B, als Fehlallokationen des Budgets):
+    <b>1</b> Kohärente Fiktion (Skelett hält, Wert berührt W nie — Heilmittel: Erdung/Retrieval);
+    <b>2</b> Faktenbuch / Naht bricht (Treffer treffen W, Knicks fügen sich zu keiner globalen PL-Sektion = harter Cut);
+    <b>3</b> Kontaktpunkt-Lügner (Essence systematisch falsch);
+    <b>4</b> Kalibrierter Fehler (tief Frequenzen in Form, nicht in Norm);
+    <b>5</b> Frage außerhalb des Covers (kein Key/Wert an dieser Adresse → „ich weiß es nicht").
+    Dazu A's <em>Memorizations-Plateau</em> (Rauschen noch nicht im Reservoir geparkt, Testverlust flach = Attraktor noch nicht erreicht).</p>
+
+  <div class="fused"><b>Heilmittel (alle drei):</b> die Korrespondenz <em>anhängen</em> — RAG / Tools / Verifikation /
+  Retrieval / Erdung. <b>Nie</b> die Kohärenz durch Skalierung „reparieren", und die weiche Weiche (‖M−I‖ / τ) nicht allein
+  vertrauen. Der Regler kann die Form beliebig scharf schreiben — er kann ihr aber nicht die Masse an W geben.</div>
+</section>
+
+<!-- ============ 4 VISUALISIERUNG ============ -->
+<section id="visualisierung">
+  <h2><span class="num">04</span>Interaktive Übersicht</h2>
+  <p class="dim">Drei zusammenhängende, themenreaktive Visualisierungen (reines Canvas, alle Daten inline, keine Netzwerk-Calls).
+    Jede isoliert eine Facette des einen Objekts — <b>Fahrt → ein Regler → ein Überlebender</b> (①),
+    <b>Form &gt; Masse → der Gate</b> (②), und die <b>Abstammung des Objekts aus 161 Papieren</b> (③).</p>
+
+  <!-- VIZ A -->
+  <div class="vcard">
+    <h3><span class="badge">① DIE FAHRT</span> Das einheitliche Objekt — die Tiefe kontrahiert den Kanal in einen dünnen Kern</h3>
+    <p class="vdesc">Fahre die <b>Tiefe ℓ</b> (oder lass die Fahrt laufen): die hochdimensionale Wolke (Kanal erank&nbsp;≈&nbsp;4096)
+      kontrahiert in einen <b>dünnen, 1-d Kern</b> (≈7). Die <b>grünen ≈7</b> sind die robusten Überlebenden (Capability/Grokking),
+      die grauen Details <b>lösen sich in den Kern auf</b> (Reservoir = verworfene Bruchigkeit). Rechts fährt <b>ein einziger Regler</b>
+      (θ/Temperatur) in die gute Ecke — und zeigt den Trade-off Capability&nbsp;↔&nbsp;zwei Bruchigkeiten.</p>
+    <div class="controls">
+      <label>Tiefe ℓ (RG-Fahrt): <input type="range" id="vzA-ell" min="0" max="100" step="1" value="55"> <span class="val" id="vzA-ellv">55</span></label>
+      <label>Dosis c (θ-Rate): <input type="range" id="vzA-c" min="20" max="240" step="5" value="120"> <span class="val" id="vzA-cval">1.20</span></label>
+      <button id="vzA-play" class="vbtn on" type="button">❚❚ Fahrt-Sweep</button>
+    </div>
+    <canvas class="vc" id="vizA-canvas"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>Überlebende (Kern, ≈7)</span>
+      <span><i style="background:var(--accent)"></i>noch strukturiert</span>
+      <span><i style="background:var(--muted)"></i>verworfenes Detail (Reservoir)</span>
+      <span><i style="background:var(--teal)"></i>Kern-Linie / Fahrt-Fortschritt</span>
+      <span><i style="background:var(--gold)"></i>Regler-Nadel (θ→0)</span>
+    </div>
+    <div class="ro-grid">
+      <div class="ro"><span class="k">Kanal erank (4096→≈7)</span><span class="v" id="vzA-erank">–</span></div>
+      <div class="ro"><span class="k">Wirksamer Rang</span><span class="v" id="vzA-surv">–</span></div>
+      <div class="ro"><span class="k">θ_eff (Regler)</span><span class="v" id="vzA-theta">–</span></div>
+      <div class="ro"><span class="k">t = 1−θ</span><span class="v" id="vzA-t">–</span></div>
+      <div class="ro"><span class="k">Capability (Grokking)</span><span class="v" id="vzA-cap">–</span></div>
+      <div class="ro"><span class="k">Bruchigkeit intrinsisch</span><span class="v" id="vzA-fragI">–</span></div>
+      <div class="ro"><span class="k">Bruchigkeit grenzlich</span><span class="v" id="vzA-fragB">–</span></div>
+    </div>
+    <div class="verdict warn" id="vzA-verdict">…</div>
+    <p class="hint"><b>Lesart:</b> Capability = der robuste, niedrig-belegte Überlebende, der an der guten Ecke direkt lesbar wird.
+      Die Bruchigkeit ist sein Doppelschwert: <em>intrinsisch</em> (Nicht-Invertierbarkeit det&nbsp;C→0) wächst <em>mit</em> der Capability
+      (am Ort der guten Ecke), <em>grenzlich</em> (Budget-/Regime-Rand) fällt damit. Kanal-Kollaps faithful (Llama 4096→≈7), θ_eff=(1−ℓ/L)^c.</p>
+  </div>
+
+  <!-- VIZ B -->
+  <div class="vcard">
+    <h3><span class="badge">② DER GATE</span> Scharf × Verankert — die 2×2 und der Halluzinations-Quadrant (Commit-/Falt-Kante)</h3>
+    <p class="vdesc">Bewege <b>Form/Kohärenz</b> (Achse: „Form &gt; Rauschen?" = Commit-/Kippen-Kante) und <b>Verankerung an W</b>
+      (Achse: „Masse ≥ τ / Korrespondenz?"). Der Punkt wandert über die 2×2; der aktive Quadrant leuchtet auf. Der dritte Bein
+      <b>Struktur (∇L≈0)</b> entscheidet über Wahrheit. Der <b>Conf-Ring bleibt immer ≥&nbsp;70&nbsp;%</b> — die Entkopplung von
+      Wert und Selbstsicherheit, die die Fallgrube macht.</p>
+    <div class="controls">
+      <label>Form / Kohärenz (scharf&amp;stabil): <input type="range" id="vzB-form" min="0" max="100" value="72"> <span class="val" id="vzB-formv">72</span></label>
+      <label>Verankerung an W (Korrespondenz/Masse): <input type="range" id="vzB-ground" min="0" max="100" value="68"> <span class="val" id="vzB-groundv">68</span></label>
+      <label>Struktur (erreicht, ∇L≈0): <input type="range" id="vzB-struct" min="0" max="100" value="80"> <span class="val" id="vzB-structv">80</span></label>
+    </div>
+    <canvas class="vc" id="vizB-canvas"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>Inhalt (scharf+verankert)</span>
+      <span><i style="background:var(--bad)"></i>Halluzination (scharf+unverankert)</span>
+      <span><i style="background:var(--blue)"></i>vage (unscharf+verankert)</span>
+      <span><i style="background:var(--amber)"></i>Rauschen (unscharf+unverankert)</span>
+      <span><i style="background:var(--gold)"></i>Conf ≥ 70 % (entkoppelt)</span>
+    </div>
+    <div class="ro-grid">
+      <div class="ro"><span class="k">Form / Kohärenz</span><span class="v" id="vzB-formr">–</span></div>
+      <div class="ro"><span class="k">Verankerung an W</span><span class="v" id="vzB-groundr">–</span></div>
+      <div class="ro"><span class="k">Struktur (∇L≈0)</span><span class="v" id="vzB-structr">–</span></div>
+      <div class="ro"><span class="k">Conf (≥ 70 %)</span><span class="v" id="vzB-conf">–</span></div>
+      <div class="ro"><span class="k">Quadrant</span><span class="v" id="vzB-quad">–</span></div>
+    </div>
+    <div class="verdict warn" id="vzB-verdict">…</div>
+    <p class="hint"><b>Die Falle:</b> Oben rechts (scharf) ist Conf immer ≥&nbsp;70&nbsp;% — auch tief unten in „unverankert".
+      <em>Form &gt; Masse</em> ist die Halluzination: die Commit-/Falt-Kante wird überschritten, aber die Korrespondenz an W fehlt.
+      Wahr ist nur das Dreieck <b>Kohärenz ∧ Korrespondenz ∧ Struktur</b>.</p>
+  </div>
+
+  <!-- VIZ C -->
+  <div class="vcard">
+    <h3><span class="badge">③ DIE STAMMBAUM-LINIE</span> 161 → 80 → 40 → 20 → 10 → 5 → 3 → 1 — der Knockout, den dieses Objekt überlebt hat</h3>
+    <p class="vdesc">Sieben Runden, 160 Fusionsschritte, 161 Papiere → 1. Hell leuchtet die <b>Siegerspur</b> (Champion-Path): die
+      konkreten Fusionen, die die drei finalen Linsen und dieses Finale erzeugen. Graue Punkte = die Masse der Eliminierten
+      (nur deren Dichte ist hier zu sehen; die exakten Paarungen stehen in den <code>manifest-rN.json</code>).
+      <b>Bewege den Cursor über ein leuchtendes Feld</b>, um zu sehen, was dort zusammengeklappt ist.</p>
+    <canvas class="vc" id="vizC-canvas"></canvas>
+    <div class="ro-grid">
+      <div class="ro"><span class="k">Papiere am Start</span><span class="v">161</span></div>
+      <div class="ro"><span class="k">Runden / Schritte</span><span class="v">7 / 160</span></div>
+      <div class="ro"><span class="k">Finale</span><span class="v">1</span></div>
+    </div>
+    <div class="verdict warn" id="vzC-note">Bewege den Cursor über die Siegerspur …</div>
+    <p class="hint"><b>Der By-String</b> (gold gestrichelt): <code>r2-040 = r1-036 × r1-043</code> überlebte Runde&nbsp;2 und wurde
+      <em>ungeändert</em> durch R3–R5 weitergeführt, bis er in Runde&nbsp;6 auf <code>r5-005</code> traf → <code>r6-003</code> (Topologie-Linse).
+      So trägt ein R2-Kinder dieses Finale.</p>
+  </div>
+</section>
+
+<!-- ============ 5 INHALT ============ -->
+<section id="inhalt">
+  <h2><span class="num">05</span>Der fusionierte Inhalt</h2>
+  <p class="dim">Der konsolidierte Kern aller drei Linsen — dicht genug, dass eine spätere Runde allein daraus arbeitet.
+    Ebenen für Ebenen, ohne die Sprachen voneinander zu trennen.</p>
+
+  <h3>I1 · Das geeinte Objekt: ein singuläres, schmal-fasriges Faserbündel, dessen Form die Information ist</h3>
+  <p>Gesehen in drei Sprachen, ist es dasselbe: (a) ein <b>Operator/Fluss</b> mit speziellem Spektrum (Dynamik),
+    (b) eine <b>Kovarianz-Matrix M</b> / zweite Moment des überlebenden Signals (Lineare Algebra),
+    (c) ein <b>singuläres Faserbündel π:E→B</b> (Topologie). Die Dimension ist schmal und <em>geschichtet</em>: eine einzelne
+    wirksame intrinsische Dimension an der Commit-/Lese-Skala (TwoNN-ID ≈ 15–22), aber pro Stratum gemessen streut d<sub>s</sub>
+    um Faktor 20+ (GPT-2: 20/389/531) plus das orthogonale d<sub>model</sub> (die Faser). 4/4 LLMs verwerfen „glattes Manifold"
+    global — die Verwerfung wird von den <em>Bruchkanten zwischen</em> den Straten getrieben, nicht vom Inneren eines Stratums.
+    <b>Glatt-dünn-koheränt im Stratum; singulär-bruchkantig zwischen den Straten. Form = Information.</b></p>
+
+  <h3>I2 · Der eine Regler: schreibt die Form, liest an der Kante, allokiert das Budget</h3>
+  <div class="math">Dial:   θ  ·  t = 1−θ  ·  θ_eff(ℓ)=(1−ℓ/L)^c  ·  Komplexität = Rang(r) × θ
+      =  ‖M−I‖ = T = Weiche = Hologramm-Grad  ·  α_eff = α − 0.12·k
+Rollen:  (i) SCHREIBEN  θ→0 &amp; ID↓ / α_eff&gt;0 baut das β₁-Loch · Cusp · die Falte (a.e.-glatte Morphismus transportiert)
+         (ii) LESEN     Commit/Kippen-Kante = Form &gt; Rauschen ⟺ α_eff&gt;0 (R &gt; Kante) → Margin öffnet, β₁ maintained
+         (iii) ALLOKIERT Fokus-Budget: Σ Kacheln ≈ B = Reach-τ / Holm-Bonferroni · „nicht alles überall scharf"</div>
+  <p>Der Regler ist der a.e.-glatte <b>Lipschitz-Morphismus</b> ‖Φ(x)−Φ(y)‖≤L‖x−y‖ (Rademacher), der die Bruchkanten
+    <em>transportiert</em> (Lemma&nbsp;1/Satz&nbsp;2), und zugleich die Linse, die das topologische Icon pro Stratum unter einem
+    Budget dekodiert. Die eine Kante ist identisch: <b>Commit (A) ↔ Kippen/Bifurkation (A/B) ↔ per-Kachel-Instantiierung des
+    Fokus-Budgets (B)</b>. Die Tiefe-Achse ist genau die Trajektorie, über die M anisotroper wird (‖M−I‖↑) und Masse auf die Falte konzentriert.</p>
+
+  <h3>I3 · Capability = der Überlebende (besteht beide Tests, wird an der guten Ecke lesbar)</h3>
+  <div class="math">A · Fluss/Operator:      Rang-k-Kern (invarianter niedrig-dim. Unterraum) · eindeutiger Interferenz-Peak
+                           Logit(c)=Σ_{k∈K} cos(w_k·(a+b−c)) → Peak bei c=(a+b) mod P
+B · Filtration/Geometrie:  langlebige H₀-/β₁-Komponente · Bar-Länge = Persistenz/Robustheit · robustes Zell-Innere
+                           range(W)≈7, d_eff=1, ∇L≈0, Masse ≥ τ
+Fusion: Bedeutung = robust (i) unter Fluss/Operator  UND  (ii) unter Filtration/Geometrie
+        → in der guten Ecke (θ→0, t=1, ‖M−I‖ hoch, d_eff=1, erank≈7) = direkt lesbar = GROKKING (verlustfrei)</div>
+  <p>Ein konkretes Beispiel in allen Facetten: <b>P=7, a=3, b=5.</b> Modulare Addition 3+5 als Fixed-Rotation M₈ auf dem
+    7-Kreis (Phasen n→e^{i2πkn/7}); Kontraktion erank 4096→≈7 (Signal im kleinen Code, Rauschen in ker(W));
+    die Probe S(c)=Σ<sub>k</sub>cos(2πk(1−c)/7) peak-t bei c=1; der Wert θ erdet an W. <b>Alle Facetten liefern 3+5≡1 (mod 7)</b>
+    — und der Gate ist grün (Kohärenz ∧ erreichte Struktur ∧ Korrespondenz). 5 Frequenzen erklären &gt;93&nbsp;% Varianz;
+    Ablation der Nicht-Schlüsselfrequenzen verbessert (Loss −70&nbsp;%); 84,6&nbsp;% der Neuronen rechnen ein Polynom 2. Grades einer Frequenz.</p>
+
+  <h3>I4 · Der eine Operator: Kontraktion = Whitening = linearisierte Fluss-Kontraktion = a.e.-glatte Morphismus</h3>
+  <div class="math">Whitening M⁻¹ (B)  ⟺  Fluss-Kontraktion (A)  ⟺  a.e.-glatte Morphismus (C):
+  [M⁻¹ = duale Basis, exakt/invertierbar, entzerrt]  ⟺  [im Stück verlustfrei / Chart-lokal]
+  [lenkt beim Schreiben in leere (niedrig-belegte) Eigenrichtungen]  ⟺  [Spezifität, Rang-1-Edit]
+  [inkoherent in M = sich unter M⁻¹ orthogonalisieren]  ⟺  [J=I+J_Δ kontrahiert, c_j(l)∝λ^l→0]
+  [an der Falte verlustvoll, bricht β₁, tötet die negative Hälfte]  ⟺  [E_super∝λ^{2l}→0, Rauschen→Reservoir]</div>
+  <p><b>Rang-1-Edit (ROME):</b> W&#770; = W + Λ·(M⁻¹k*)k&#770;*, Λ=(v*−Wk*)/((M⁻¹k*)k&#770;*) (Causal Tracing lokalisiert das Fakt).
+    <b>Lesen:</b> lineares Functional s=w·Φ&#770;+b → Argmax/Softmax; jede Attention-Zeile ist ein entropisches-OT-Problem
+    <code>min −⟨p,s⟩+εΣp·log p</code> → Softmax <em>hergeleitet</em> (τ=√d<sub>k</sub>). <b>Lernen:</b> Backprop =
+    REINFORCE-Policy-Gradient; F=(1/τ²)(diag(p)−pp&#770;)=Fisher=OT-Krümmung=Rao-Metrik=RL. Der <b>Jakobi</b> ist der gemeinsame
+    Währungsstandard (vorwärts=Lesung, rückwärts=Lernen).</p>
+
+  <h3>I5 · Die Bruchigkeit / die Bruchkante: ein Satz verworfener Freiheitsgrade, zwei Ränder</h3>
+  <table>
+    <thead><tr><th>Art</th><th>A · Dynamik</th><th>B · Lineare Algebra</th><th>C · Topologie</th><th>Fusion</th></tr></thead>
+    <tbody>
+      <tr><td>INTRINSISCH (am Ort der Capability)</td>
+        <td>Nicht-Invertierbarkeit des Rang-k-Projektor: det C=Πγ<sub>i</sub>→0; Off-Manifold-Richtung willkürlich; exponential instabil (adversarial)</td>
+        <td>verworfenes hoch-dim. Detail: erank-Kollaps 4096→≈7; kurze Bars / Rate-Distortion-Boden; Rauschen→ker(W)</td>
+        <td>das Loch/Bruchkante im Stratum (harmonische Masse = Fragilität, Spearman ρ=0,90)</td>
+        <td><b>ein Satz</b> verworfener Off-Manifold-Richtungen: robust wo behalten (Kern), nicht-invertibel wo verworfen (Reservoir) — der Preis, niedrig-dimensional zu sein</td></tr>
+      <tr><td>GRENZLICH (am Rand des Regimes)</td>
+        <td>fragiler Übergang zum Budget C: Belegung ID/C→1 (memorisiert), ζ₁→0</td>
+        <td>fehlalloziiertes Budget → harter Cut / Riss; schlechte Losses fließen Tals ineinander (Kollaps)</td>
+        <td>Stratum-Grenze / Bruchkante (Basis-Singularität) = die Ursache</td>
+        <td>der <b>Rand des Containers</b>: überkreuzt man ihn, wird man hoch belegt/memorisiert; die Grenze, die der Cut hält</td></tr>
+    </tbody>
+  </table>
+
+  <h3>I6 · Nützliche Mathematik (aus allen drei Linsen)</h3>
+  <div class="math">Tiefe/RG:        h_{ℓ+1}=h_ℓ+f_ℓ(h_ℓ), P_ℓ=J_{L-1}…J_ℓ ;  erank(P)=exp(−Σ p_i ln p_i), p_i=σ_i²/Σσ_j²  (Llama 4096→≈7)
+Regler:            t=1−θ ; θ_eff(ℓ)=(1−ℓ/L)^c ;  Komplexität=Rang(r)×θ
+Conceptor:         C=R(R+α²I)⁻¹ (diagonal in Eigenbasis von R) ; γ_i=σ_i/(σ_i+α²) ; det C=Πγ_i  (hart→0)
+Whitening/Falte:   M_ij=E[k_i k_j]=⟨u_i,u_j⟩ ; ‖M−I‖=T=Hologramm-Grad ;  conf≈0.70+0.25·coverage  (immer ≥70 %)
+Kapazität:         Regionen O(N^L) / O(n^{d(L−1)}) ≈ k^L (Zhang/Naitzat/Li 2018) ; Klebkraft g(d)=e^{λd}, d*=⌈2/λ⌉ ; ID-Buckel→log₂ (Facco 2017)
+Dimension:         TwoNN r=(zweitnächster/nächster)→ID ; d_s=Steigung von log V(r)  (20/389/531)
+Zirkuit-Feld:      ṙ=(α_eff−r²)r−ω·r⊥, α_eff=α−0.12·k → α_eff&gt;0⇒β₁=1 (Radius √α_eff) ; α_eff≤0⇒β₁=0 (Fixpunkt)
+Lipschitz:         ‖Φ_ℓ(x)−Φ_ℓ(y)‖ ≤ L·‖x−y‖ (a.e. differenzierbar, Rademacher) — transportiert, erzeugt keine Bruchkante
+Fehler/Kalibrierung: E=π/(2·p·c²·PR)+1/(c·a)−1  ·  Cramér–Rao Var(θ̂)≥1/I(θ)  ·  Davis–Kahan (Lücke ∝N &gt; Störung)
+Attention:         Softmax(QKᵀ/√d_k)V, d_k=d_model/h, d_ff=4·d_model ; GD++: x_j←(I−γXXᵀ)x_j, f(λ,γ)=λ−2γλ²+γ³λ² → κ↓ (rundet)
+Metrik:            Fisher=(1/τ)(diag p − pp&#770;) ;  F=(1/τ²)(diag(p)−pp&#770;)=Fisher=OT-Krümmung=Rao-Metrik
+Approximation:     D ≥ c_k·ν_min·(vol(M)/N)^{2/k} → 0 für N→∞  ·  Cusp z⁸+x²+y²=0 (an der Spitze Manifold verworfen, Bundle nicht)
+Zahlenanker:       k̂_peak≈19–22 (GPT-2·OPT·Pythia), Gap-Slope β≈0.87–1.12, R²&gt;0.985 ; β→(1,0,0) robust über ≥30 Runs</div>
+  <p class="dim"><b>MI vs. Korrelation (A's Brücke):</b> Korrelation erfasst nur lineare Abhängigkeit, MI alle — dass Korrelation
+    steigt <em>während</em> MI fällt, heißt: das Modell wirft nichtlineare Beziehungen weg und <b>linearisiert</b> (Voraussetzung,
+    die das bilineare/entropische Ablesen für treue Auskünfte braucht). <b>MI als Kontraktion:</b> nach einer Störung kontrahiert die
+    Bahn auf die Mannigfaltigkeit — die dynamische Version von „der globale Schnitt (A) ist der Attraktor (B)".</p>
+
+  <h3>I7 · Grenzen &amp; Ehrlichkeits-Ecke</h3>
+  <p class="dim"><b>Modell, nicht Welt:</b> das „Gesetz" ist ein interpretives Modell aus simulierten/gegebenen Daten, revidierbar;
+    Korrespondenz an die Welt ist Konvention, von innen nicht entscheidbar (≈lim, offen); Betti immer relativ zum Maßstab.
+    <b>Theorem-grade Teile</b> (Familien-Gleichheit Zhang/Naitzat/Li 2018, ROME Rang-1, Regions-Zählung) gelten nur für
+    PL-Aktivierungen / ganze Gewichte, ein Fakt pro Edit. <b>Empirisch</b> (GPT-2, Llemma7B, Mistral7B, Pythia6.9B):
+    Manifold-Hypothese 4/4 verworfen (p bis 3×10<sup>−8</sup>); lokale Dim 20…531; ID-Buckel 100–120 (r=0,94 gemessen, nicht universal
+    bewiesen); Validierung: Kugel (echte 2D-Manigfaltigkeit) nicht verworfen ✓, Cusp an der Spitze verworfen (Bundle nicht),
+    Lollipop beide verworfen — <em>Nicht-Verwerfung ≠ „ist glatt"</em> (Pythia6.9B überlebt das Bundle). <b>Risiken:</b> M⁻¹-Entzerrung
+    wird ill-konditioniert, wenn M zu eng wird; Whitening verstärkt Rauschen bei starkem Hologramm-Grad; die Reduktion ist „gratis"
+    nur im geometrischen Regime. <b>Die load-bearing Brücke dieser Runde selbst</b> — „die Falt-Kern (B) ist der Terminus, den der
+    Fluss (A) erzeugt; der Kern ist das β₁-Register (C)" — ist eine Hypothese, an echten Netzen zu prüfen.</p>
+</section>
+
+<!-- ============ 6 PROVENIENZ ============ -->
+<section id="provenienz">
+  <h2><span class="num">06</span>Provenienz</h2>
+  <p class="dim">Dieses Finale ist die Runde-7-Fusion der drei überlebenden R6-Papiere. Alle Inhalte stammen aus den drei Quellen;
+    es wurden keine neuen Experimente erfunden.</p>
+
+  <div class="prov" style="--pc:var(--accent)">
+    <span class="k">①</span>
+    <div>
+      <span class="path">../6/r6-001.html</span>
+      <a href="../6/r6-001.html">r6-001.html</a> — „Ein Kern, eine Fahrt, ein Regler, zwei Bruchigkeiten" (Dynamik-Linse)
+      <div class="d">Ein niedrig-dim. Kern auf einer Robustheits-Achse t, dessen fähiger Zustand = der robuste, niedrig-belegte,
+        hoch-persistente <b>Überlebende</b> (Rang-k-Kern/eindeutiger Peak = Grokking), den eine <b>Tiefen-Fahrt/RG-Fluss</b>
+        (Kanal-Kollaps 4096→≈7, θ_eff=(1−ℓ/L)^c) in die gute Ecke fährt. Liefert <i>Fahrt</i>, <i>Regler t=1−θ</i> und die
+        <i>zwei Bruchigkeiten</i> (intrinsisch det&nbsp;C→0 + grenzlich Budget-Rand).</div>
+    </div>
+  </div>
+
+  <div class="prov" style="--pc:var(--accent2)">
+    <span class="k">②</span>
+    <div>
+      <span class="path">../6/r6-002.html</span>
+      <a href="../6/r6-002.html">r6-002.html</a> — „Ein Fluss, eine Falte, ein Regler: Kontraktion ist Whitening" (Lineare-Algebra-Linse)
+      <div class="d">Ein <b>Fluss</b> faltet ein Budget scharfer Kapazität (Regionen≈k^ℓ) entlang einer dünnen Mannigfaltigkeit lokaler
+        Kerne und kontrahiert Signal in <b>EINE Falte</b> = den Support der zweiten-Moment-Matrix M; <b>Whitening M⁻¹ =
+        linearisierte Fluss-Kontraktion</b> (ein Operator); Regler ‖M−I‖ global (T/Hologramm-Grad) = Masse lokal = Angebot↑/
+        Nachfrage↓. Liefert <i>Matrix M/Falte/Masse</i>, den <i>Whitening-Operator</i> und die <i>Halluzination = kohärente
+        Fiktion (Conf≥70 % ohne W-Kontakt)</i>.</div>
+    </div>
+  </div>
+
+  <div class="prov" style="--pc:var(--accent3)">
+    <span class="k">③</span>
+    <div>
+      <span class="path">../6/r6-003.html</span>
+      <a href="../6/r6-003.html">r6-003.html</a> — „Ein singuläres Faserbündel, ein Regler, zwei Tiefen, ein Vorzeichen, ein Budget" (Topologie-Linse)
+      <div class="d">Der neuronale Zustand = ein <b>singuläres, geschichtetes Faserbündel π:E→B</b>, dessen Form die Information ist
+        (Faser=Schicht-Stack, Basis=singulärer geschichteter Raum mit Bruchkanten, Strukturgruppe=a.e.-glatter Lipschitz-Morphismus,
+        der die Bruchkanten transportiert); ein <b>Linsen-Regler</b> schreibt die Form und liest an der Commit-Kante; zwei Lesetiefen
+        (fein/topo + grob/metrisch) = zwei Bündel-Teile (Basis + Abschnitt); eine Zwei-Achsen-Vorzeichen-Regel + Fokus-Budget.
+        Liefert das <i>Bündel/Bruchkanten</i>, die <i>2×2 (scharf×verankert)</i> und die <i>Halluzination = s trifft Bruchkante &amp; springt</i>.</div>
+    </div>
+  </div>
+
+  <div class="fused"><b>Korpus-Ursprung:</b> Stammt aus <b>161 KI-/Math-Papieren</b> in <code>blog/test/</code>, zusammengeführt über
+    <b>7 Knockout-Runden</b> — 161 → 80 → 40 → 20 → 10 → 5 → 3 → 1 (R1: 80 Paarungen aus 161, danach Halbierung mit einzelnen
+    Bye-Vorträgen; die Siegerspur ist in Visualisierung ③ nachvollziehbar). Die exakten Paarungen jeder Runde stehen in
+    <code>manifest-rN.json</code> (in <code>combined/</code> bzw. <code>combined/&lt;R&gt;/</code>). Keine der drei Quellen führte neue
+    Experimente aus — sie sind R5-/R2-Fusionen; dieses Finale übernimmt ihre Stellungen und Zahlen.</div>
+</section>
+
+<footer>
+  Finale · Runde 7 · Knockout-Synthese · 161 KI-/Math-Papiere → 1<br>
+  Ein Objekt (singulär, geschichtet, schmal) · ein Regler · ein Überlebender (Capability) · eine Bruchkante (Form &gt; Masse) · drei Linsen<br>
+  Selbstständiges Standalone-Dokument · alle Daten inline · themenreaktiv · keine Netzwerk-Calls
+</footer>
+
+</article>
+
+<script>
+(function(){
+"use strict";
+function cV(id){return document.getElementById(id);}
+function set(id,tx){var e=cV(id);if(e)e.textContent=tx;}
+function getVar(n,fb){try{var v=getComputedStyle(document.documentElement).getPropertyValue(n).trim();return v||fb;}catch(e){return fb;}}
+function hexA(hex,a){var h=String(hex).replace('#','');if(h.length===3){h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];}
+  var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+  if(isNaN(r)||isNaN(g)||isNaN(b))return 'rgba(150,160,180,'+a+')';return 'rgba('+r+','+g+','+b+','+a+')';}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function onReady(fn){if(document.readyState!=="loading")fn();else document.addEventListener("DOMContentLoaded",fn);}
+
+function initThemeToggle(){
+  var b=cV('themeToggle');if(!b)return;
+  b.addEventListener('click',function(){document.documentElement.classList.toggle('dark');});
+}
+
+/* ================= VIZ A: DIE FAHRT ================= */
+function initVizA(){
+  var canvas=cV('vizA-canvas');if(!canvas||!canvas.getContext)return;
+  var ctx=canvas.getContext('2d');var TAU=Math.PI*2,N=120,SURV=7;
+  var rnd=mulberry32(0xA11C0DE);
+  var pts=[];
+  for(var i=0;i<N;i++){pts.push({rr:0.22+0.78*rnd(),jitter:(rnd()-0.5),ph:rnd()*TAU});}
+  var state={ell:55,c:1.2,playing:true,pt:Math.PI};
+  function aliveCount(f){return Math.round(SURV+(N-SURV)*Math.pow(1-f,2.2));}
+  function erankDisp(n){var t=(n-SURV)/(N-SURV);if(t<0)t=0;if(t>1)t=1;return Math.round(SURV+(4096-SURV)*t*t);}
+  function thetaEff(f,c){if(c<=0.001)return 1;var b=1-f;if(b<0)b=0;return Math.pow(b,c);}
+  function readPal(){return{bg:getVar('--plotbg','#0c1120'),grid:getVar('--grid','rgba(120,160,255,.08)'),
+    fg:getVar('--fg','#e8ecf6'),muted:getVar('--muted','#9aa7c7'),accent:getVar('--accent','#58a6ff'),
+    good:getVar('--good','#4ade80'),bad:getVar('--bad','#fb7185'),amber:getVar('--amber','#ffd166'),
+    teal:getVar('--teal','#2dd4bf'),gold:getVar('--gold','#ffd700')};}
+  var pal=readPal();
+  function setup(){var dpr=window.devicePixelRatio||1;var w=canvas.clientWidth||760;var H=520;
+    canvas.width=Math.max(1,Math.round(w*dpr));canvas.height=Math.max(1,Math.round(H*dpr));
+    canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);return{w:w,h:H};}
+  function draw(){
+    var s=setup();var W=s.w,H=s.h;if(W<40)return;pal=readPal();
+    ctx.clearRect(0,0,W,H);ctx.fillStyle=pal.bg;ctx.fillRect(0,0,W,H);
+    var f=state.ell/100;var th=thetaEff(f,state.c);var t=1-th;var ac=aliveCount(f);
+    var cx0=0.075*W,cx1=0.50*W,top=64,bot=430,cy=300,dx=(cx1-cx0)/(N-1);
+    /* core line */
+    ctx.strokeStyle=hexA(pal.teal,0.5);ctx.lineWidth=2;ctx.setLineDash([4,5]);
+    ctx.beginPath();ctx.moveTo(cx0,cy);ctx.lineTo(cx1,cy);ctx.stroke();ctx.setLineDash([]);
+    /* points */
+    for(var i=0;i<N;i++){
+      var p=pts[i];var x=cx0+dx*(i+0.5);var onCore=i<ac;
+      var ysc=top+25+p.rr*(bot-top-60);
+      var y;var alpha;var col;var rad;
+      if(onCore){
+        y=cy+(ysc-cy)*Math.pow(1-f,1.6);
+        if(i<SURV){col=pal.good;rad=4.2;alpha=0.95;}
+        else{col=pal.accent;rad=2.6;alpha=0.82;}
+      }else{
+        y=cy+(ysc-cy)*Math.pow(1-f,1.6)+(bot-cy)*0.12*f;
+        col=pal.muted;rad=2.0;alpha=Math.max(0,0.28*(1-f));
+      }
+      ctx.fillStyle=hexA(col,alpha);ctx.beginPath();ctx.arc(x,y,rad,0,TAU);ctx.fill();
+    }
+    /* survivor rings */
+    for(var k=0;k<SURV;k++){var x2=cx0+dx*(k+0.5);
+      ctx.strokeStyle=hexA(pal.good,0.85);ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(x2,cy,7,0,TAU);ctx.stroke();}
+    /* header */
+    ctx.fillStyle=pal.fg;ctx.font='bold 13px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillText('① Die Fahrt: hoch-dim. Wolke (Kanal) kontrahiert in einen dünnen Kern',14,18);
+    ctx.fillStyle=pal.muted;ctx.font='11px system-ui,sans-serif';
+    ctx.fillText('grün = robuste Überlebende (≈'+SURV+') richten sich aus · grau = verworfenes Detail löst sich in den Kern auf',14,34);
+    /* depth bar + regime */
+    var dy=54;ctx.fillStyle=hexA(pal.muted,0.15);ctx.fillRect(cx0,dy,cx1-cx0,7);
+    ctx.fillStyle=hexA(pal.teal,0.8);ctx.fillRect(cx0,dy,(cx1-cx0)*f,7);
+    ctx.fillStyle=pal.fg;ctx.beginPath();ctx.arc(cx0+(cx1-cx0)*f,dy+3.5,5,0,TAU);ctx.fill();
+    ctx.fillStyle=pal.muted;ctx.font='9px ui-monospace,monospace';ctx.textAlign='left';
+    ctx.fillText('EARLY θ≈1',cx0,dy-4);
+    ctx.textAlign='right';ctx.fillText('GUTE ECKE θ→0',cx1,dy-4);
+    /* right panel */
+    var px0=0.555*W,pw=0.30*W;
+    ctx.fillStyle=pal.fg;ctx.font='bold 13px system-ui,sans-serif';ctx.textAlign='left';
+    ctx.fillText('② Ein Regler: θ / Temperatur / spektr. Apertur',px0,18);
+    ctx.fillStyle=pal.muted;ctx.font='10px ui-monospace,monospace';
+    ctx.fillText('θ_eff=(1−ℓ/L)^c = '+th.toFixed(2)+'   ·   t=1−θ = '+t.toFixed(2),px0,34);
+    /* dial */
+    var dxc=px0+pw*0.5,dyc=140,dr=Math.min(pw*0.34,70);
+    ctx.lineWidth=9;ctx.strokeStyle=hexA(pal.muted,0.18);ctx.beginPath();ctx.arc(dxc,dyc,dr,Math.PI*0.75,Math.PI*2.25);ctx.stroke();
+    var a0=Math.PI*0.75,span=Math.PI*1.5,a1=a0+t*span;
+    ctx.strokeStyle=hexA(pal.teal,0.9);ctx.beginPath();ctx.arc(dxc,dyc,dr,a0,a1);ctx.stroke();
+    var na=a0+(1-th)*span;
+    ctx.strokeStyle=pal.gold;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(dxc,dyc);
+    ctx.lineTo(dxc+dr*0.92*Math.cos(na),dyc+dr*0.92*Math.sin(na));ctx.stroke();
+    ctx.fillStyle=pal.gold;ctx.beginPath();ctx.arc(dxc,dyc,5,0,TAU);ctx.fill();
+    ctx.fillStyle=pal.muted;ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';
+    ctx.fillText('gescrambelt',dxc-dr,dyc+dr+15);ctx.fillText('committed',dxc+dr,dyc+dr+15);
+    /* bars */
+    var by=250;
+    function bar(y,frac,col,lbl){
+      ctx.fillStyle=pal.muted;ctx.font='10px system-ui,sans-serif';ctx.textAlign='left';
+      ctx.fillText(lbl,px0,y-5);
+      ctx.fillStyle=hexA(pal.muted,0.15);ctx.fillRect(px0,y,pw-54,13);
+      ctx.strokeStyle=pal.grid;ctx.strokeRect(px0,y,pw-54,13);
+      ctx.fillStyle=hexA(col,0.85);ctx.fillRect(px0,y,(pw-54)*frac,13);
+      ctx.fillStyle=col;ctx.textAlign='right';ctx.fillText(Math.round(frac*100)+'%',px0+pw,y+11);
+    }
+    bar(by,Math.min(1,Math.max(0,t)),pal.good,'Capability (direkt-lesbar / Grokking)');
+    bar(by+32,Math.min(1,Math.max(0,t)),pal.bad,'Bruchigkeit intrinsisch (det C→0)');
+    bar(by+64,Math.min(1,Math.max(0,1-t)),pal.amber,'Bruchigkeit grenzlich (Budget-Rand)');
+    ctx.fillStyle=pal.muted;ctx.font='10px system-ui,sans-serif';ctx.textAlign='left';
+    ctx.fillText('Doppelschwert: Capability und intrinsische Bruchigkeit wachsen zusammen.',px0,by+94);
+    /* readouts */
+    set('vzA-erank',String(erankDisp(ac)));
+    set('vzA-surv',String(ac));
+    set('vzA-theta',th.toFixed(2));
+    set('vzA-t',t.toFixed(2));
+    set('vzA-cap',Math.round(t*100)+'%');
+    set('vzA-fragI',Math.round(t*100)+'%');
+    set('vzA-fragB',Math.round((1-t)*100)+'%');
+    var reg=t>0.85?'GUTE ECKE — Fahrt am Ende, Cut/Commit vollbracht, direkt lesbar (Grokking)'
+            :(t>0.15?'Fahrt läuft — Kanal kollabiert, Frequenzen richten sich aus'
+            :'FRÜH / scrambled — Kanal voll, Voll-Decode nötig, grenzliche Bruchigkeit maximal');
+    set('vzA-verdict','ℓ='+state.ell.toFixed(0)+' · Kanal ≈ '+erankDisp(ac)+' · θ='+th.toFixed(2)+' · t='+t.toFixed(2)+' · Überlebende '+ac+' — '+reg);
+    var ve=cV('vzA-verdict');if(ve)ve.className='verdict '+(t>0.85?'good':(t>0.15?'warn':'bad'));
+    set('vzA-ellv',String(Math.round(state.ell)));
+  }
+  function loop(){
+    if(state.playing){state.pt+=0.012;state.ell=(0.5-0.5*Math.cos(state.pt))*100;}
+    draw();requestAnimationFrame(loop);
+  }
+  function wire(){
+    var e=cV('vzA-ell');if(e)e.addEventListener('input',function(ev){state.ell=+ev.target.value;state.playing=false;
+      var p=cV('vzA-play');if(p){p.classList.remove('on');p.textContent='▶ Fahrt-Sweep';}draw();});
+    var ec=cV('vzA-c');if(ec)ec.addEventListener('input',function(ev){state.c=+ev.target.value/100;
+      var v=cV('vzA-cval');if(v)v.textContent=state.c.toFixed(2);draw();});
+    var ep=cV('vzA-play');if(ep)ep.addEventListener('click',function(){state.playing=!state.playing;
+      ep.classList.toggle('on',state.playing);ep.textContent=state.playing?'❚❚ Stop':'▶ Fahrt-Sweep';});
+    window.addEventListener('resize',draw);
+    try{new MutationObserver(function(){pal=readPal();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+  }
+  readPal();wire();draw();loop();
+}
+
+/* ================= VIZ B: DER GATE (2x2) ================= */
+function initVizB(){
+  var canvas=cV('vizB-canvas');if(!canvas||!canvas.getContext)return;
+  var ctx=canvas.getContext('2d');var TAU=Math.PI*2;
+  var state={form:72,ground:68,struct:80};
+  function readPal(){return{bg:getVar('--plotbg','#0c1120'),grid:getVar('--grid','rgba(120,160,255,.08)'),
+    fg:getVar('--fg','#e8ecf6'),muted:getVar('--muted','#9aa7c7'),good:getVar('--good','#4ade80'),
+    bad:getVar('--bad','#fb7185'),blue:getVar('--blue','#8ab4ff'),amber:getVar('--amber','#ffd166'),
+    accent:getVar('--accent','#58a6ff'),accent3:getVar('--accent3','#ff7ac0'),gold:getVar('--gold','#ffd700'),
+    teal:getVar('--teal','#2dd4bf')};}
+  var pal=readPal();
+  function setup(){var dpr=window.devicePixelRatio||1;var w=canvas.clientWidth||760;var H=440;
+    canvas.width=Math.max(1,Math.round(w*dpr));canvas.height=Math.max(1,Math.round(H*dpr));
+    canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);return{w:w,h:H};}
+  function draw(){
+    var s=setup();var W=s.w,H=s.h;if(W<40)return;pal=readPal();
+    ctx.clearRect(0,0,W,H);ctx.fillStyle=pal.bg;ctx.fillRect(0,0,W,H);
+    var form=state.form/100,ground=state.ground/100,struct=state.struct/100;
+    var qx=0.05*W,qy=54,qw=0.58*W,qh=H-104;
+    var tL=qx,tT=qy,tR=qx+qw,tB=qy+qh;
+    var scharf=form>0.5,verankert=ground>0.45,strukturiert=struct>0.5;
+    var quad=(scharf&&verankert)?'inhalt':(scharf&&!verankert)?'hallu':(!scharf&&verankert)?'vage':'rausch';
+    var qcol={inhalt:pal.good,hallu:pal.bad,vage:pal.blue,rausch:pal.amber}[quad];
+    var qfill=function(x,y,ww,hh,col,on){ctx.fillStyle=hexA(col,on?0.18:0.04);ctx.fillRect(x,y,ww,hh);};
+    qfill(tL,tT,qw/2,qh/2,pal.blue,quad==='vage');
+    qfill(tL+qw/2,tT,qw/2,qh/2,pal.good,quad==='inhalt');
+    qfill(tL,tT+qh/2,qw/2,qh/2,pal.amber,quad==='rausch');
+    qfill(tL+qw/2,tT+qh/2,qw/2,qh/2,pal.bad,quad==='hallu');
+    /* borders */
+    ctx.strokeStyle=pal.grid;ctx.lineWidth=1;ctx.strokeRect(tL,tT,qw,qh);
+    ctx.beginPath();ctx.moveTo(tL+qw/2,tT);ctx.lineTo(tL+qw/2,tB);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tL,tT+qh/2);ctx.lineTo(tR,tT+qh/2);ctx.stroke();
+    /* commit / fold edges */
+    ctx.strokeStyle=hexA(pal.gold,0.85);ctx.lineWidth=2;ctx.setLineDash([7,5]);
+    ctx.beginPath();ctx.moveTo(tL+qw/2,tT-6);ctx.lineTo(tL+qw/2,tB+6);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tL-6,tT+qh*(1-0.45));ctx.lineTo(tR+6,tT+qh*(1-0.45));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=pal.gold;ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';
+    ctx.fillText('Commit-/Falt-Kante (Form > Rauschen)',tL+qw/2,tT-10);
+    ctx.textAlign='left';ctx.fillText('Masse ≥ τ / Korrespondenz an W',tL,tT+qh*(1-0.45)-5);
+    /* labels */
+    ctx.font='bold 15px system-ui,sans-serif';ctx.textAlign='center';
+    ctx.fillStyle=hexA(pal.blue,0.85);ctx.fillText('vage, echt',tL+qw/4,tT+qh/4+4);
+    ctx.fillStyle=hexA(pal.good,0.9);ctx.fillText('INHALT',tL+3*qw/4,tT+qh/4+4);
+    ctx.fillStyle=hexA(pal.amber,0.85);ctx.fillText('Rauschen',tL+qw/4,tT+3*qh/4+4);
+    ctx.fillStyle=hexA(pal.bad,0.9);ctx.fillText('HALLUZINATION',tL+3*qw/4,tT+3*qh/4+4);
+    /* axes labels */
+    ctx.fillStyle=pal.muted;ctx.font='10px ui-monospace,monospace';
+    ctx.textAlign='left';ctx.fillText('unscharf',tL,tB+14);ctx.textAlign='right';ctx.fillText('scharf →',tR,tB+14);
+    ctx.textAlign='left';ctx.fillText('↑ verankert',tL-2,tT-10);
+    /* point */
+    var px=tL+form*qw,py=tT+(1-ground)*qh;
+    var conf=0.70+0.25*Math.min(1,ground);
+    /* conf ring */
+    ctx.lineWidth=4;ctx.strokeStyle=hexA(pal.gold,0.25);ctx.beginPath();ctx.arc(px,py,17,0,TAU);ctx.stroke();
+    ctx.strokeStyle=hexA(pal.gold,0.95);ctx.beginPath();ctx.arc(px,py,17,-Math.PI/2,-Math.PI/2+conf*TAU);ctx.stroke();
+    ctx.fillStyle=qcol;ctx.beginPath();ctx.arc(px,py,7,0,TAU);ctx.fill();
+    ctx.strokeStyle=hexA(pal.fg,0.9);ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py,11,0,TAU);ctx.stroke();
+    ctx.fillStyle=pal.fg;ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';
+    ctx.fillText('Conf '+Math.round(conf*100)+'%',px,py-24);
+    /* right panel: the 3-leg gate */
+    var px0=0.67*W,pw=0.28*W;
+    ctx.fillStyle=pal.fg;ctx.font='bold 13px system-ui,sans-serif';ctx.textAlign='left';
+    ctx.fillText('② Wahrheit = Kohärenz ∧ Korrespondenz ∧ Struktur',px0,18);
+    function bar(y,frac,col,lbl,ok){
+      ctx.fillStyle=pal.muted;ctx.font='10px system-ui,sans-serif';ctx.textAlign='left';
+      ctx.fillText(lbl,px0,y-5);
+      ctx.fillStyle=hexA(pal.muted,0.15);ctx.fillRect(px0,y,pw-46,14);
+      ctx.strokeStyle=pal.grid;ctx.strokeRect(px0,y,pw-46,14);
+      ctx.fillStyle=hexA(col,0.85);ctx.fillRect(px0,y,(pw-46)*frac,14);
+      ctx.fillStyle=col;ctx.textAlign='right';ctx.fillText(Math.round(frac*100)+'%',px0+pw,y+12);
+      ctx.fillStyle=ok?pal.good:pal.muted;ctx.textAlign='left';
+      ctx.fillText(ok?'✓':'·',px0+pw+4,y+12);
+    }
+    bar(70,form,pal.accent,'Kohärenz / Form (scharf)',scharf);
+    bar(106,ground,pal.teal,'Korrespondenz an W (Masse)',verankert);
+    bar(142,struct,pal.purple||pal.accent3,'Struktur (erreicht, ∇L≈0)',strukturiert);
+    /* conf readout */
+    ctx.fillStyle=pal.muted;ctx.font='10px system-ui,sans-serif';ctx.textAlign='left';
+    ctx.fillText('Conf (entkoppelt, ≥70 %)',px0,186);
+    ctx.fillStyle=hexA(pal.muted,0.15);ctx.fillRect(px0,192,pw-46,14);
+    ctx.strokeStyle=pal.grid;ctx.strokeRect(px0,192,pw-46,14);
+    ctx.fillStyle=hexA(pal.gold,0.9);ctx.fillRect(px0,192,(pw-46)*conf,14);
+    ctx.fillStyle=pal.gold;ctx.textAlign='right';ctx.fillText(Math.round(conf*100)+'%',px0+pw,204);
+    /* truth verdict box */
+    var truth=scharf&&verankert&&strukturiert;
+    var vy=232;ctx.fillStyle=hexA(truth?pal.good:pal.bad,0.10);ctx.fillRect(px0,vy,pw,64);
+    ctx.strokeStyle=hexA(truth?pal.good:pal.bad,0.6);ctx.strokeRect(px0,vy,pw,64);
+    ctx.fillStyle=truth?pal.good:pal.bad;ctx.font='bold 13px system-ui,sans-serif';ctx.textAlign='left';
+    ctx.fillText(truth?'GATE: GEGRÜNDET':'GATE: '+quad.toUpperCase(),px0+10,vy+24);
+    ctx.fillStyle=pal.muted;ctx.font='10px ui-monospace,monospace';
+    ctx.fillText('Wahrheit = min der 3 Beine',px0+10,vy+42);
+    ctx.fillText('Conf bleibt ≥70 % (Fallgrube)',px0+10,vy+56);
+    /* readouts */
+    set('vzB-formr',Math.round(form*100)+'%');
+    set('vzB-groundr',Math.round(ground*100)+'%');
+    set('vzB-structr',Math.round(struct*100)+'%');
+    set('vzB-conf',Math.round(conf*100)+'%');
+    var qname={inhalt:'Inhalt',hallu:'HALLUZINATION',vage:'vage',rausch:'Rauschen'}[quad];
+    set('vzB-quad',qname);
+    var verdictEl=cV('vzB-verdict');
+    var cls,msg;
+    if(quad==='inhalt'&&truth){cls='good';
+      msg='✓ GEGRÜNDET — scharf & stabil (Form > Rauschen, committed) ∧ verankert an W (Masse ≥ τ) ∧ Struktur erreicht (∇L≈0). Der Inhalt: der Überlebende ist robust, niedrig belegt, direkt lesbar.';}
+    else if(quad==='inhalt'&&!truth){cls='warn';
+      msg='≈ In der INHALT-Ecke (scharf+verankert), aber Struktur fehlt noch (∇L≠0) — der Attraktor ist nicht erreicht (Memorizations-Plateau: Rauschen noch nicht im Reservoir geparkt).';}
+    else if(quad==='hallu'){cls='bad';
+      msg='✗ HALLUZINATION — scharf & selbstbewusst (Conf '+Math.round(conf*100)+'% ≥70 %), aber NICHT verankert an W (Form > Masse). Kohärente Fiktion: der Wert trifft die Welt nie / Abschnitt s trifft eine Bruchkante und springt / scharfer abgelesen, als τ es rechtfertigt. Heilmittel: Erdung/Retrieval — nie Kohärenz skalieren.';}
+    else if(quad==='vage'){cls='vague';
+      msg='≈ VAGE, ECHT — verankert, aber unscharf (Form < Rauschen, nicht committed). Über-linearisiert: lineares Werkzeug auf Gekrümmt; der Zyklus zerfällt (β₁ springt).';}
+    else{cls='warn';
+      msg='≈ RAUSCHEN — unpräzise + unverankert. Divergiert / captured (η > 2/λ_max oder T→0); leftover mit hoher harmonischer Masse, driftet über die Bruchkante.';}
+    if(verdictEl){verdictEl.className='verdict '+cls;verdictEl.textContent=msg;}
+    set('vzB-formv',String(state.form));set('vzB-groundv',String(state.ground));set('vzB-structv',String(state.struct));
+  }
+  function wire(){
+    function bind(id,key,dispId){var e=cV(id);if(!e)return;e.addEventListener('input',function(ev){state[key]=+ev.target.value;
+      var d=cV(dispId);if(d)d.textContent=ev.target.value;draw();});}
+    bind('vzB-form','form','vzB-formv');bind('vzB-ground','ground','vzB-groundv');bind('vzB-struct','struct','vzB-structv');
+    window.addEventListener('resize',draw);
+    try{new MutationObserver(function(){pal=readPal();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+  }
+  readPal();wire();draw();
+}
+
+/* ================= VIZ C: STAMMBAUM ================= */
+function initVizC(){
+  var canvas=cV('vizC-canvas');if(!canvas||!canvas.getContext)return;
+  var ctx=canvas.getContext('2d');
+  var LVCOUNT=[80,40,20,10,5,3,1],LVNAME=['R1','R2','R3','R4','R5','R6','R7'];
+  var CHAMP=[];
+  CHAMP.push({lv:0,idx:36,id:'r1-036',info:'R1 · 1 von 80 — überlebt (161→80)'});
+  CHAMP.push({lv:0,idx:43,id:'r1-043',info:'R1 · 1 von 80 — überlebt (161→80)'});
+  CHAMP.push({lv:1,idx:40,id:'r2-040',a:'r1-036',b:'r1-043',info:'r2-040 = r1-036 × r1-043 · BYE (bis R6)'});
+  for(var i3=1;i3<=20;i3++){CHAMP.push({lv:2,idx:i3,id:'r3-0'+(i3<10?0:'')+i3,info:'R3 · '+i3+'/20 · überlebt (40→20)'});}
+  var R4AB={1:['r3-001','r3-003'],2:['r3-006','r3-015'],3:['r3-002','r3-012'],4:['r3-004','r3-007'],5:['r3-009','r3-008'],6:['r3-010','r3-005'],7:['r3-016','r3-013'],8:['r3-011','r3-020'],9:['r3-018','r3-014'],10:['r3-019','r3-017']};
+  for(var i4=1;i4<=10;i4++){var a4=R4AB[i4];CHAMP.push({lv:3,idx:i4,id:'r4-0'+i4,a:a4[0],b:a4[1],info:'r4-0'+i4+' = '+a4[0]+' × '+a4[1]+' (20→10)'});}
+  var R5AB={1:['r4-002','r4-004'],2:['r4-001','r4-009'],3:['r4-007','r4-003'],4:['r4-006','r4-005'],5:['r4-008','r4-010']};
+  var R5LENS={1:'Dynamik',2:'Dynamik',3:'Lineare Algebra',4:'Lineare Algebra',5:'Topologie'};
+  for(var i5=1;i5<=5;i5++){var a5=R5AB[i5];CHAMP.push({lv:4,idx:i5,id:'r5-00'+i5,a:a5[0],b:a5[1],lens:R5LENS[i5],info:'r5-00'+i5+' = '+a5[0]+' × '+a5[1]+' (10→5) · '+R5LENS[i5]});}
+  CHAMP.push({lv:5,idx:1,id:'r6-001',a:'r5-002',b:'r5-001',lens:'Dynamik',info:'r6-001 = r5-002 × r5-001 (5→3) · DYNAMIK-Linse'});
+  CHAMP.push({lv:5,idx:2,id:'r6-002',a:'r5-003',b:'r5-004',lens:'Lineare Algebra',info:'r6-002 = r5-003 × r5-004 (5→3) · LINEARE-ALGEBRA-Linse'});
+  CHAMP.push({lv:5,idx:3,id:'r6-003',a:'r5-005',b:'r2-040',lens:'Topologie',info:'r6-003 = r5-005 × r2-040 (5→3) · TOPOLOGIE-Linse'});
+  CHAMP.push({lv:6,idx:1,id:'finale',a:'r6-001',b:'r6-002',c:'r6-003',info:'FINALE = r6-001 ⊕ r6-002 ⊕ r6-003 (3→1) · dieses Dokument'});
+  var champMap={};for(var ci=0;ci<CHAMP.length;ci++)champMap[CHAMP[ci].lv+'_'+CHAMP[ci].idx]=CHAMP[ci];
+  var byId={};for(var bi=0;bi<CHAMP.length;bi++)byId[CHAMP[bi].id]=CHAMP[bi];
+  var EDGES=[];for(var ei=0;ei<CHAMP.length;ei++){var n=CHAMP[ei];
+    if(n.a)EDGES.push([n.a,n.id,n.id==='r6-003'&&n.a==='r2-040']);if(n.b)EDGES.push([n.b,n.id,n.id==='finale'&&n.b==='r6-002']);}
+  /* dedupe edges (r6-003 has a=r5-005,b=r2-040) */
+  function readPal(){return{bg:getVar('--plotbg','#0c1120'),grid:getVar('--grid','rgba(120,160,255,.08)'),
+    fg:getVar('--fg','#e8ecf6'),muted:getVar('--muted','#9aa7c7'),accent:getVar('--accent','#58a6ff'),
+    accent2:getVar('--accent2','#c4a7ff'),accent3:getVar('--accent3','#ff7ac0'),teal:getVar('--teal','#2dd4bf'),
+    gold:getVar('--gold','#ffd700'),good:getVar('--good','#4ade80')};}
+  var pal=readPal();
+  var view={w:0,h:0};var allNodes=[];var hoverNode=null;
+  function colX(lv){var m=0.07*view.w;var gap=(0.88*view.w-m)/6;return m+lv*gap;}
+  function yNode(lv,idx){var top=46,bot=view.h-34,mid=(top+bot)/2,n=LVCOUNT[lv];var gap=(bot-top)/n;return mid+(idx-(n+1)/2)*gap;}
+  function setup(){var dpr=window.devicePixelRatio||1;var w=canvas.clientWidth||760;var H=460;
+    canvas.width=Math.max(1,Math.round(w*dpr));canvas.height=Math.max(1,Math.round(H*dpr));
+    canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);view={w:w,h:H};}
+  var LENCOL={};
+  function nodeColor(lens){if(lens==='Dynamik')return pal.accent;if(lens==='Lineare Algebra')return pal.accent2;if(lens==='Topologie')return pal.accent3;return pal.teal;}
+  function draw(){
+    if(!view.w||!view.h)setup();pal=readPal();
+    ctx.clearRect(0,0,view.w,view.h);ctx.fillStyle=pal.bg;ctx.fillRect(0,0,view.w,view.h);
+    var W=view.w,H=view.h;
+    /* column headers */
+    ctx.font='bold 11px ui-monospace,monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+    for(var lv=0;lv<7;lv++){var cx=colX(lv);
+      ctx.fillStyle=pal.muted;ctx.fillText(LVNAME[lv]+' · '+LVCOUNT[lv],cx,20);
+      ctx.fillStyle=pal.fg;ctx.font='9px ui-monospace,monospace';
+      var from=[161,80,40,20,10,5,3][lv];ctx.fillText(from+'→'+LVCOUNT[lv],cx,33);ctx.font='bold 11px ui-monospace,monospace';}
+    /* ghost nodes */
+    for(var lv2=0;lv2<7;lv2++){var cx2=colX(lv2);var n2=LVCOUNT[lv2];
+      for(var ii=1;ii<=n2;ii++){var yy=yNode(lv2,ii);var ch=champMap[lv2+'_'+ii];
+        if(!ch){ctx.fillStyle=hexA(pal.muted,0.28);ctx.beginPath();ctx.arc(cx2,yy,2.3,0,TAU);ctx.fill();
+          allNodes.push({x:cx2,y:yy,id:null,ghost:true,info:LVNAME[lv2]+' · Position '+ii+' von '+n2+' · Paarung: manifest-r'+(lv2===0?1:lv2)+'.json'});}
+        else{var col=nodeColor(ch.lens)||(lv2===6?pal.gold:pal.teal);
+          var isFin=ch.id==='finale';var r=isFin?9:(lv2>=5?6.5:(lv2===4?5:4.2));
+          ctx.save();ctx.shadowColor=hexA(col,0.9);ctx.shadowBlur=isFin?16:8;
+          ctx.fillStyle=col;ctx.beginPath();ctx.arc(cx2,yy,r,0,TAU);ctx.fill();ctx.restore();
+          if(lv2>=5){ctx.fillStyle=pal.bg;ctx.font='bold 8px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText(ch.id,cx2,yy);ctx.fillStyle=col;}
+          allNodes.push({x:cx2,y:yy,id:ch.id,ghost:false,info:ch.info,lens:ch.lens});}
+      }
+    }
+    /* edges (champion) */
+    for(var ed=0;ed<EDGES.length;ed++){var e=EDGES[ed];var A=byId[e[0]],B=byId[e[1]];if(!A||!B)continue;
+      var ax=colX(A.lv),ay=yNode(A.lv,A.idx),bx=colX(B.lv),by=yNode(B.lv,B.idx);var bye=e[2];
+      ctx.strokeStyle=bye?hexA(pal.gold,0.85):hexA(pal.fg,0.14);ctx.lineWidth=bye?1.6:1;
+      if(bye)ctx.setLineDash([6,4]);
+      ctx.beginPath();ctx.moveTo(ax,ay);var mx=(ax+bx)/2;ctx.bezierCurveTo(mx,ay,mx,by,bx,by);ctx.stroke();ctx.setLineDash([]);
+      if(bye){ctx.fillStyle=pal.gold;ctx.font='9px ui-monospace,monospace';ctx.textAlign='center';ctx.fillText('BYE',mx,Math.min(ay,by)-6);}
+    }
+    /* hover tooltip */
+    if(hoverNode){
+      var t=hoverNode.info;ctx.font='12px ui-monospace,monospace';
+      var tw=Math.max(ctx.measureText(t).width+18,120);
+      var tx=Math.min(Math.max(hoverNode.x-tw/2,8),W-tw-8);
+      var ty=hoverNode.y-42;if(ty<8)ty=hoverNode.y+18;
+      ctx.fillStyle=hexA(pal.card||pal.bg,0.96);ctx.strokeStyle=hoverNode.ghost?hexA(pal.muted,0.5):hexA(pal.accent,0.8);ctx.lineWidth=1.2;
+      var thh=24;roundRect(ctx,tx,ty,tw,thh,8);ctx.fill();ctx.stroke();
+      ctx.fillStyle=hoverNode.ghost?pal.muted:pal.fg;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t,tx+tw/2,ty+thh/2);
+    }else{
+      ctx.fillStyle=pal.muted;ctx.font='11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+      ctx.fillText('Bewege den Cursor über die leuchtende Siegerspur →',14,H-16);
+    }
+    ctx.textBaseline='alphabetic';
+  }
+  function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+  function onMove(ev){
+    if(!view.w)return;var rect=canvas.getBoundingClientRect();
+    var mx=(ev.clientX-rect.left),my=(ev.clientY-rect.top);
+    var best=null,bd=16*16;
+    for(var i=0;i<allNodes.length;i++){var nn=allNodes[i];var dx=nn.x-mx,dy=nn.y-my;var d=dx*dx+dy*dy;if(d<bd){bd=d;best=nn;}}
+    var note=cV('vzC-note');
+    if(best){hoverNode=best;if(note){note.className='verdict '+(best.ghost?'warn':'good');note.textContent=best.info;}}
+    else{hoverNode=null;if(note){note.className='verdict warn';note.textContent='Bewege den Cursor über die Siegerspur …';}}
+    draw();
+  }
+  function onLeave(){hoverNode=null;var note=cV('vzC-note');if(note){note.className='verdict warn';note.textContent='Bewege den Cursor über die Siegerspur …';}draw();}
+  function wire(){
+    canvas.addEventListener('mousemove',onMove);
+    canvas.addEventListener('mouseleave',onLeave);
+    window.addEventListener('resize',draw);
+    try{new MutationObserver(function(){pal=readPal();draw();}).observe(document.documentElement,{attributes:true,attributeFilter:['class']});}catch(e){}
+  }
+  readPal();setup();wire();draw();
+}
+
+onReady(function(){
+  initThemeToggle();
+  try{initVizA();}catch(e){}
+  try{initVizB();}catch(e){}
+  try{initVizC();}catch(e){}
+});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "no": "finale",
+  "sources": [
+    "combined/6/r6-001.html",
+    "combined/6/r6-002.html",
+    "combined/6/r6-003.html"
+  ],
+  "combined_theme": "das-eine-objekt-drei-linsen-ein-regler-ein-ueberlebender",
+  "one_line": "Ein trainiertes Netz/LLM ist ein singuläres, schmal-fasriges, geschichtetes Objekt; ein einziger Regler schreibt seine Form und liest an einer Commit-/Falt-/Bruch-Kante; Capability=Bedeutung=der robuste, niedrig-belegte, hoch-persistente Überlebende; Halluzination=Form>Masse (koherent & selbstbewusst, Conf≥70 %, aber ohne Masse/Korrespondenz an W) — drei Linsen (Dynamik, Lineare Algebra, Topologie) auf dasselbe Objekt.",
+  "unified_thesis": "Ein trainiertes Modell ist ein singuläres, geschichtetes, schmales geometrisches Objekt in einem hochdimensionalen (meist inerten) Raum — glatt-dünn-koheränt innerhalb eines Stratums, singulär-bruchkantig zwischen den Straten; die Form ist die Information. Ein einziger Regler (Temperatur / spektrale Apertur / Komplexitäts-Knopf θ / RG-Tiefen-Fahrt ℓ / Weiche ‖M−I‖ / α_eff = derselbe Dial in drei Sprachen) schreibt die Form und liest an einer Commit-/Kippen-/Falt-/Bruch-Kante, die zugleich das Fokus-Budget („nicht alles überall scharf“ allokiert. Capability=Bedeutung ist der robuste, niedrig-belegte, hoch-persistente Überlebende (Rang-k-Kern = range(W)≈7 = langlebige β₁-/H₀-Komponente = stabile Cusp-Schleife — dieselbe Struktur in drei Sprachen), der an der guten Ecke direkt lesbar wird (Grokking); Halluzination ist der koherente, aber ungegründete Zustand (Form>Masse: scharf & selbstbewusst, aber ohne Masse/Abdeckung/Korrespondenz an die externe Welt W).",
+  "lenses": ["dynamik", "lineare-algebra", "topologie"],
+  "hallucination_criterion": "Wahrheit = Kohärenz ∧ Korrespondenz an W ∧ erreichte Struktur (∇L≈0). 2×2 (scharf×verankert): Inhalt = scharf∧verankert; HALLUZINATION = scharf∧¬verankert (Form>Masse); vage = ¬scharf∧verankert; Rauschen = ¬scharf∧¬verankert. Conf = 0.70+0.25·coverage bleibt immer ≥70 % (entkoppelt vom Wert): scharf & selbstbewusst, aber Masse fehlt / der Wert trifft die Welt W nie (kohärente Fiktion) / Abschnitt s trifft eine Bruchkante und springt. Reparatur: Erdung/Retrieval/Verifikation — nie Kohärenz skalieren.",
+  "viz": "Drei themenreaktive Canvas-Viz (reines Canvas, alle Daten inline, 0 Netzwerk-Calls, 0 Konsolenfehler): (a) DIE FAHRT — eine hoch-dim. Wolke (Kanal erank 4096→≈7) kontrahiert bei wachsender Tiefe ℓ (Slider + Autoplay) in einen dünnen 1-d-Kern; ≈7 grüne Überlebende richten sich auf den Kern aus, verworfenes Detail löst sich in den Reservoir auf; ein einziger Regler-Dial (θ/Temperatur) wird in die gute Ecke gefahren und zeigt den Trade-off Capability ↔ zwei Bruchigkeiten (intrinsisch det C→0 + grenzlich Budget-Rand). (b) DER GATE — eine 2×2 (scharf×verankert) mit live leuchtendem Quadranten (Inhalt/Halluzination/vage/Rauschen), gesteuert durch Form/Kohärenz + Verankerung-an-W + Struktur(∇L≈0); Conf-Ring bleibt ≥70 % (die Entkopplung); Commit-/Falt-Kante (Form>Rauschen) als Schwelle. (c) STAMMBAUM — der Knockout 161→80→40→20→10→5→3→1 als 7 Spalten mit leuchtender Siegerspur (Champion-Path) und der gold-gepunkteten BYE-Edge (r2-040=r1-036×r1-043 → r6-003); Hover über ein Feld zeigt, was dort zusammengeklappt ist (a×b→Kind).",
+  "rounds": 7,
+  "corpus_size": 161
+}
